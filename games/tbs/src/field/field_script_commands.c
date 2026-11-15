@@ -14,18 +14,18 @@ enum {
   SCRIPT_WANDER_TRIES = 7,          ///< random points a wander tries a frame
   /// The wander probes' distance, 8 pixels in 16.16: past the point for
   /// ground, and along the heading for solid actors (SC_WANDER_HOME).
-  SCRIPT_WANDER_PROBE_DISTANCE = px(8),
-  SCRIPT_WANDER_DIAGONAL_ANGLE = TRIG_TURN / 8, ///< one eighth of a turn
-  SCRIPT_WANDER_SIDE_ANGLE = TRIG_TURN / 4,     ///< one quarter of a turn
-  SCRIPT_HALF_TURN = TRIG_TURN / 2,
+  SCRIPT_WANDER_PROBE_DISTANCE = toFIXED(8),
+  SCRIPT_WANDER_DIAGONAL_ANGLE = DEGtoANG(45), ///< one eighth of a turn
+  SCRIPT_WANDER_SIDE_ANGLE = DEGtoANG(90),     ///< one quarter of a turn
+  SCRIPT_HALF_TURN = DEGtoANG(180),
   /// Whole pixels SC_APPROACH_WATCHED stays short of its watched actor.
   SCRIPT_APPROACH_DISTANCE = 16,
   /// Under 64 pixels (16.16) SC_CAMERA measures its distance in 16.16.
-  CAMERA_FOLLOW_FINE_DISTANCE = px(64),
+  CAMERA_FOLLOW_FINE_DISTANCE = toFIXED(64),
   /// Within a quarter pixel (16.16) SC_CAMERA lands on its point.
-  CAMERA_FOLLOW_SNAP_DISTANCE = px(1) / 4,
+  CAMERA_FOLLOW_SNAP_DISTANCE = toFIXED(1) / 4,
   /// Within half a pixel (16.16) SC_CAMERA takes the leader's height at once.
-  CAMERA_FOLLOW_HEIGHT_SNAP = px(1) / 2
+  CAMERA_FOLLOW_HEIGHT_SNAP = toFIXED(1) / 2
 };
 
 /// SC_LABEL and SC_TO differ only in bit 30; a jump searches for the label.
@@ -325,8 +325,8 @@ s32 ActorScript_StoreAngleToWatchedActor(struct Actor *actor) {
   struct Actor *target;
 
   target = actor->watchedActor;
-  actor->facing = ArcTan2((target->z.fixed - actor->z.fixed),
-                          (target->x.fixed - actor->x.fixed));
+  actor->facing = Trig_Atan((target->z.fixed - actor->z.fixed),
+                            (target->x.fixed - actor->x.fixed));
   actor->scriptCursor++;
   return 1;
 }
@@ -419,19 +419,19 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
     } else {
       // The distance in the XZ plane: dy is computed as in
       // Actor_SetMoveTarget but not used for the distance.
-      dx = (x - cameraActor->x.fixed) / Q16_ONE;
+      dx = (x - cameraActor->x.fixed) / FIXED_ONE;
       /* LEFTOVER(template): this whole-pixel dy, overwritten below and not used
        * for the distance. */
-      dy = (y - cameraActor->y.fixed) / Q16_ONE;
-      dz = (z - cameraActor->z.fixed) / Q16_ONE;
-      distance = px(Iwram_Sqrt(dx * dx + dz * dz));
+      dy = (y - cameraActor->y.fixed) / FIXED_ONE;
+      dz = (z - cameraActor->z.fixed) / FIXED_ONE;
+      distance = toFIXED(Iwram_Sqrt(dx * dx + dz * dz));
       dx = x - cameraActor->x.fixed;
       dy = y - cameraActor->y.fixed;
       dz = z - cameraActor->z.fixed;
       // The whole-pixel root is coarse; under 64 pixels the distance is
       // measured again in 16.16 for a finer result.
       if (distance < CAMERA_FOLLOW_FINE_DISTANCE)
-        distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
+        distance = Math_SqrtFX(Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz));
       if ((moveStep = distance / 8) > cameraActor->speedLimit)
         moveStep = cameraActor->speedLimit;
       // Within a quarter pixel the camera snaps to the point.
@@ -442,8 +442,8 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
         // Shorten the offset to moveStep along the same direction: dx over
         // the distance is a 16.16 fraction, times the step.
         if (distance > moveStep) {
-          dx = Iwram_MulQ16(Iwram_RatioMulQ14(distance, dx), moveStep);
-          dz = Iwram_MulQ16(Iwram_RatioMulQ14(distance, dz), moveStep);
+          dx = Iwram_MulFX(Iwram_RatioMulQ14(distance, dx), moveStep);
+          dz = Iwram_MulFX(Iwram_RatioMulQ14(distance, dz), moveStep);
         }
         cameraActor->x.fixed += dx;
         cameraActor->z.fixed += dz;
@@ -476,8 +476,8 @@ s32 Actor_ApproachWatchedActor(struct Actor *actor) {
   actor->acceleration = watchedActor->acceleration;
   dx = watchedActor->x.fixed - actor->x.fixed;
   dz = watchedActor->z.fixed - actor->z.fixed;
-  deltaXPixels = WHOLE_PIXELS(dx);
-  deltaZPixels = WHOLE_PIXELS(dz);
+  deltaXPixels = FIXEDtoINT(dx);
+  deltaZPixels = FIXEDtoINT(dz);
   distancePixels =
       Iwram_Sqrt((deltaXPixels * deltaXPixels) + (deltaZPixels * deltaZPixels));
   // Further than 16 pixels: aim at the point 16 pixels short of the watched
@@ -523,7 +523,7 @@ s32 Actor_Wander(struct Actor *actor) {
   operands = &actor->script[actor->scriptCursor + 1];
   minimumDistance = *operands++;
   distanceRange = *operands++;
-  homeRadiusSquared = *operands / Q16_ONE;
+  homeRadiusSquared = *operands / FIXED_ONE;
   attempts = 0;
   homeRadiusSquared = homeRadiusSquared * homeRadiusSquared;
 retry:
@@ -533,13 +533,13 @@ retry:
                  actor->z.fixed);
     // Random16 is a 16.16 fraction below 1, so the distance is base plus up to
     // range.
-    travelDistance = minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
+    travelDistance = minimumDistance + Iwram_MulFX(Random16(), distanceRange);
     heading = actor->facing + (Random16() >> 2) - (Random16() >> 2);
     Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
     if (ActorScript_CheckOverlap(actor, (s32 *)&candidatePosition) != 0 ||
         MapGrid_CheckCollision(actor, &candidatePosition) != COLLISION_NONE)
       goto retry;
-    // Probes 8 pixels past the point, ahead and at 45 degrees (TRIG_TURN / 8)
+    // Probes 8 pixels past the point, ahead and at 45 degrees (DEGtoANG(45))
     // either side.
     travelDistance += SCRIPT_WANDER_PROBE_DISTANCE;
     SET_POSITION(&probePosition, actor->x.fixed, actor->y.fixed,
@@ -569,11 +569,11 @@ retry:
       goto retry;
     /* FAKEMATCH(dead): the offsets in both arms of a test of actor. */
     if (actor != 0) {
-      dx = candidatePosition.x / Q16_ONE - actor->homeX;
-      dz = candidatePosition.z / Q16_ONE - actor->homeZ;
+      dx = candidatePosition.x / FIXED_ONE - actor->homeX;
+      dz = candidatePosition.z / FIXED_ONE - actor->homeZ;
     } else {
-      dx = candidatePosition.x / Q16_ONE - actor->homeX;
-      dz = candidatePosition.z / Q16_ONE - actor->homeZ;
+      dx = candidatePosition.x / FIXED_ONE - actor->homeX;
+      dz = candidatePosition.z / FIXED_ONE - actor->homeZ;
     }
     if (dx * dx + dz * dz > homeRadiusSquared)
       goto retry;
@@ -611,18 +611,17 @@ s32 ActorScript_WanderNearHome(struct Actor *actor) {
   operands = &actor->script[actor->scriptCursor + 1];
   minimumDistance = *operands++;
   distanceRange = *operands++;
-  homeRadiusSquared = *operands / Q16_ONE;
+  homeRadiusSquared = *operands / FIXED_ONE;
   angle = actor->facing;
   homeRadiusSquared *= homeRadiusSquared;
   attempts = 0;
-  dx = actor->x.fixed / Q16_ONE - actor->homeX;
-  dz = actor->z.fixed / Q16_ONE - actor->homeZ;
+  dx = actor->x.fixed / FIXED_ONE - actor->homeX;
+  dz = actor->z.fixed / FIXED_ONE - actor->homeZ;
   if (dx * dx + dz * dz <= homeRadiusSquared) {
   roam:
     attempts++;
     if (attempts <= SCRIPT_WANDER_TRIES) {
-      travelDistance =
-          minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
+      travelDistance = minimumDistance + Iwram_MulFX(Random16(), distanceRange);
       heading = angle + (Random16() >> 2) - (Random16() >> 2);
       SET_POSITION(&candidatePosition, actor->x.fixed, actor->y.fixed,
                    actor->z.fixed);
@@ -671,8 +670,8 @@ s32 ActorScript_WanderNearHome(struct Actor *actor) {
                             &probePosition);
       if (MapGrid_CheckCollision(actor, &probePosition) != COLLISION_NONE)
         goto roam;
-      dx = candidatePosition.x / Q16_ONE - actor->homeX;
-      dz = candidatePosition.z / Q16_ONE - actor->homeZ;
+      dx = candidatePosition.x / FIXED_ONE - actor->homeX;
+      dz = candidatePosition.z / FIXED_ONE - actor->homeZ;
       if (dx * dx + dz * dz > homeRadiusSquared)
         goto roam;
       actor->collisionFlags |= ACTOR_PUSHABLE;
@@ -685,11 +684,11 @@ s32 ActorScript_WanderNearHome(struct Actor *actor) {
   // measured at the start, or at the last point found too far from home), with
   // the same spread, testing only the near and far points.
   attempts = 0;
-  angle = (u16)ArcTan2(dz, dx) + SCRIPT_HALF_TURN;
+  angle = (u16)Trig_Atan(dz, dx) + SCRIPT_HALF_TURN;
 back:
   attempts++;
   if (attempts <= SCRIPT_WANDER_TRIES) {
-    travelDistance = minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
+    travelDistance = minimumDistance + Iwram_MulFX(Random16(), distanceRange);
     heading = angle + (Random16() >> 2) - (Random16() >> 2);
     SET_POSITION(&candidatePosition, actor->x.fixed, actor->y.fixed,
                  actor->z.fixed);

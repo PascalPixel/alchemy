@@ -169,8 +169,8 @@ void FieldEffect_StartBlankOverlay(s32 a);
 #define DEFINE_CHAMPA_CLIFF_CAVES_GROW(name, n1)                               \
   void name(struct RiseObject *object) {                                       \
     object->scale += n1;                                                       \
-    if (object->scale >= Q16_ONE) {                                            \
-      object->scale = Q16_ONE;                                                 \
+    if (object->scale >= FIXED_ONE) {                                          \
+      object->scale = FIXED_ONE;                                               \
       object->update = 0;                                                      \
     }                                                                          \
     object->scaleCopy = object->scale;                                         \
@@ -644,7 +644,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
     Event_Wait(3);
     Actor_ShowItemIconById(ACTOR_HELD_ITEM, animations.animations[i]);
     Actor_SetPosition(ACTOR_HELD_ITEM, 668, 200);
-    thrown->gravity = px(1) / 4;
+    thrown->gravity = toFIXED(1) / 4;
     Actor_Jump(ACTOR_HELD_ITEM, 4, 2);
     Actor_SetSpritePriority(ACTOR_HELD_ITEM, 1);
     Actor_SetSpeed(ACTOR_HELD_ITEM, 1);
@@ -716,7 +716,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Actor_SetPosition(ACTOR_HELD_ITEM, 664, 232);
   Actor_SetSpritePriority(ACTOR_HELD_ITEM, 1);
   thrown->motionFlags = ACTOR_FALLS;
-  thrown->y.fixed = px(24);
+  thrown->y.fixed = toFIXED(24);
   thrown->update = ChampaCliffCaves_GrowThrown;
   thrown->groundHeight = 0;
   thrown->scaleX = 0;
@@ -727,7 +727,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   while (thrown->y.fixed > 0)
     wait(1);
-  thrown->gravity = px(1);
+  thrown->gravity = toFIXED(1);
   thrown->y.fixed = 0;
   thrown->motionFlags = ACTOR_FLOATS;
   Scene_PlayMusic();
@@ -784,15 +784,15 @@ chosen:
       ChampaCliffCaves_ObabaAsksForSecondPiece(item);
     } else if (!GameFlag_Test_(FLAG_TRIDENT_FORGED)) {
       GameFlag_Set(FLAG_TRIDENT_FORGED);
-      FieldMapGrid_SetCellHeight(px(656), px(208), 0, -4);
-      FieldMapGrid_SetCellHeight(px(656), px(224), 0, -4);
-      FieldMapGrid_SetCellHeight(px(656), px(240), 0, -4);
-      FieldMapGrid_SetCellHeight(px(656), px(256), 0, -4);
+      FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(208), 0, -4);
+      FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(224), 0, -4);
+      FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(240), 0, -4);
+      FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(256), 0, -4);
       ChampaCliffCaves_ObabaForgesTrident(item);
-      FieldMapGrid_SetCellHeight(px(656), px(208), 0, 0);
-      FieldMapGrid_SetCellHeight(px(656), px(224), 0, 0);
-      FieldMapGrid_SetCellHeight(px(656), px(240), 0, 0);
-      FieldMapGrid_SetCellHeight(px(656), px(256), 0, 0);
+      FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(208), 0, 0);
+      FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(224), 0, 0);
+      FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(240), 0, 0);
+      FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(256), 0, 0);
     }
   } else {
     Actor_FaceActorById(actor, gMainRoutineWork.leaderActorId, 5);
@@ -938,8 +938,8 @@ void ChampaCliffCaves_FightAvimander(void) {
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_OBABA, 6);
   Actor_SetPosition(ACTOR_SALAMANDER, 724, 252);
-  Actor_GetById(ACTOR_SALAMANDER)->scaleX = Q16_ONE * 6 / 5;
-  Actor_GetById(ACTOR_SALAMANDER)->scaleY = Q16_ONE * 6 / 5;
+  Actor_GetById(ACTOR_SALAMANDER)->scaleX = FIXED_ONE * 6 / 5;
+  Actor_GetById(ACTOR_SALAMANDER)->scaleY = FIXED_ONE * 6 / 5;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SALAMANDER), 0);
   Event_OpenMessage(0x2008, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
@@ -959,13 +959,13 @@ void ChampaCliffCaves_FightAvimander(void) {
     FieldActor_ShowEmote(ACTOR_OBABA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_OBABA, 0, 5);
     Sound_Play(SOUND_FADE_OUT_BGM);
-    FieldMapGrid_SetCellHeight(px(656), px(208), 0, -4);
-    FieldMapGrid_SetCellHeight(px(656), px(224), 0, -4);
-    FieldMapGrid_SetCellHeight(px(656), px(240), 0, -4);
-    FieldMapGrid_SetCellHeight(px(656), px(256), 0, -4);
-    object->gravity = px(1) / 4;
+    FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(208), 0, -4);
+    FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(224), 0, -4);
+    FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(240), 0, -4);
+    FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(256), 0, -4);
+    object->gravity = toFIXED(1) / 4;
     object->motionFlags = ACTOR_FALLS;
-    object->groundHeight = -px(999);
+    object->groundHeight = -toFIXED(999);
     Actor_Jump(ACTOR_SALAMANDER, 10, 0);
     Sound_Play(SE_ENEMY_CRY);
     Actor_SetSpritePriority(ACTOR_SALAMANDER, 1);
@@ -993,19 +993,19 @@ void ChampaCliffCaves_FightAvimander(void) {
     ChampaCliffCaves_FadeColours(current, target, 48);
     Event_Wait(20);
     Sound_Play(SE_TABLET_RISE);
-    position.x = px(662);
+    position.x = toFIXED(662);
     position.y = 0;
-    position.z = px(238);
+    position.z = toFIXED(238);
     ChampaCliffCaves_StartForgeFire(&position);
     Sound_Play(SE_BEAST_CRY);
     Actor_SetPosition(ACTOR_AVIMANDER, 664, 248);
-    object->gravity = px(1);
+    object->gravity = toFIXED(1);
     object->motionFlags = ACTOR_FALLS;
     object->groundHeight = 0;
-    object->y.fixed = px(32);
-    object->scaleX = Q16_ONE / 4;
+    object->y.fixed = toFIXED(32);
+    object->scaleX = FIXED_ONE / 4;
     object->update = (s32)ChampaCliffCaves_GrowThrownSlowly;
-    object->scaleY = Q16_ONE / 4;
+    object->scaleY = FIXED_ONE / 4;
     Actor_Jump(ACTOR_AVIMANDER, 11, 0);
     Sound_Play(SE_BEAST_CRY);
     Actor_SetSpeed(ACTOR_AVIMANDER, 3.2);
@@ -1592,32 +1592,32 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   owner = (s32 *)(party + 532);
   leader = Actor_GetById(*owner);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_JENNA, leader->x.part[0].pixel,
-                             leader->z.part[0].pixel);
+    Actor_SetDestinationById(ACTOR_JENNA, leader->x.part[0].integer,
+                             leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_WALK);
   leader = Actor_GetById(*owner);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_SHEBA, leader->x.part[0].pixel,
-                             leader->z.part[0].pixel);
+    Actor_SetDestinationById(ACTOR_SHEBA, leader->x.part[0].integer,
+                             leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_WALK);
   leader = Actor_GetById(*owner);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_PIERS, leader->x.part[0].pixel,
-                             leader->z.part[0].pixel);
+    Actor_SetDestinationById(ACTOR_PIERS, leader->x.part[0].integer,
+                             leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimationById(ACTOR_KRADEN, 2);
   leader = Actor_GetById(*owner);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].pixel,
-                             leader->z.part[0].pixel);
+    Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].integer,
+                             leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   GameFlag_Set(FLAG_CHAMPA_AVIMANDER_BEATEN);
@@ -1671,9 +1671,9 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   sprite->x = position[0];
   sprite->y = z = position[2];
   if (mode == 1) {
-    sprite->scaleX = Q16_ONE * 2;
-    sprite->scaleY = Q16_ONE * 2;
-    sprite->y = z + px(10);
+    sprite->scaleX = FIXED_ONE * 2;
+    sprite->scaleY = FIXED_ONE * 2;
+    sprite->y = z + toFIXED(10);
   }
   Sound_Play(SE_CRASH);
   for (i = 0; i <= 71; i++) {
@@ -1857,8 +1857,8 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
   do {
     switch (state) {
     case 0:
-      if ((work->discScale.value += 0x600) >= Q16_ONE * 13 / 10) {
-        work->discScale.value = Q16_ONE * 13 / 10;
+      if ((work->discScale.value += 0x600) >= FIXED_ONE * 13 / 10) {
+        work->discScale.value = FIXED_ONE * 13 / 10;
         state = 1;
         time = -1;
       }
@@ -1870,15 +1870,15 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
       }
       break;
     case 2:
-      if ((work->columnScale.value += 0x400) >= Q16_ONE * 2 / 5) {
-        work->columnScale.value = Q16_ONE * 2 / 5;
+      if ((work->columnScale.value += 0x400) >= FIXED_ONE * 2 / 5) {
+        work->columnScale.value = FIXED_ONE * 2 / 5;
         state = 3;
         time = -1;
       }
       break;
     case 3:
-      if ((work->columnScale.value += 0x3000) >= Q16_ONE * 13 / 10) {
-        work->columnScale.value = Q16_ONE * 13 / 10;
+      if ((work->columnScale.value += 0x3000) >= FIXED_ONE * 13 / 10) {
+        work->columnScale.value = FIXED_ONE * 13 / 10;
         state = 999;
       }
       break;
@@ -1895,7 +1895,7 @@ void ChampaCliffCaves_UpdateForgeFire(void) {
   s32 time;
 
   position[0] = work->position[0];
-  position[1] = work->position[1] - px(32);
+  position[1] = work->position[1] - toFIXED(32);
   state = 0;
   time = 0;
   position[2] = work->position[2];
@@ -1958,8 +1958,8 @@ void ChampaCliffCaves_StartEmbers(const struct Vec3 *origin) {
   do {
     if (state == 0) {
       work->discScale.value += 0x1000;
-      if (work->discScale.value >= Q16_ONE * 13 / 10) {
-        work->discScale.value = Q16_ONE * 13 / 10;
+      if (work->discScale.value >= FIXED_ONE * 13 / 10) {
+        work->discScale.value = FIXED_ONE * 13 / 10;
         state = 999;
       }
     }
@@ -1984,15 +1984,15 @@ void ChampaCliffCaves_StartSparks(void) {
     switch (state) {
     case 0:
       work->columnScale.value += 0x1000;
-      if (work->columnScale.value >= Q16_ONE * 2 / 5) {
-        work->columnScale.value = Q16_ONE * 2 / 5;
+      if (work->columnScale.value >= FIXED_ONE * 2 / 5) {
+        work->columnScale.value = FIXED_ONE * 2 / 5;
         state = 1;
       }
       break;
     case 1:
       work->columnScale.value += 0x3000;
-      if (work->columnScale.value >= Q16_ONE * 13 / 10) {
-        work->columnScale.value = Q16_ONE * 13 / 10;
+      if (work->columnScale.value >= FIXED_ONE * 13 / 10) {
+        work->columnScale.value = FIXED_ONE * 13 / 10;
         state = 999;
       }
       break;
@@ -2009,15 +2009,15 @@ void ChampaCliffCaves_UpdateSparks(void) {
   do {
     switch (state) {
     case 0:
-      if ((work->columnScale.value += 0x1000) >= Q16_ONE * 2) {
-        work->columnScale.value = Q16_ONE * 2;
+      if ((work->columnScale.value += 0x1000) >= FIXED_ONE * 2) {
+        work->columnScale.value = FIXED_ONE * 2;
         state = 1;
         time = -1;
       }
       break;
     case 1:
-      if ((work->columnScale.value -= 0x1000) < Q16_ONE * 13 / 10) {
-        work->columnScale.value = Q16_ONE * 13 / 10;
+      if ((work->columnScale.value -= 0x1000) < FIXED_ONE * 13 / 10) {
+        work->columnScale.value = FIXED_ONE * 13 / 10;
         state = 2;
         time = -1;
       }

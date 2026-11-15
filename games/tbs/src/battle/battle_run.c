@@ -59,7 +59,7 @@ s32 Battle_Run(s32 enemyGroup) {
   // XXX (no evidence): what flag 0x169 marks; it is set as every battle starts
   // and nothing reads it.
   GameFlag_SetFar(0x169);
-  Transform_Reset();
+  Matrix_Initialize();
 
   Dma_Fill32Cell(fill, 0, camera, sizeof(struct BattleCamera));
   Dma_Fill32Cell(fill, 0, battle, sizeof(struct BattleWork));
@@ -78,11 +78,11 @@ s32 Battle_Run(s32 enemyGroup) {
     WindowSystem_InitBattleFar(0);
 
   // The camera's starting view, then the enemies.
-  SET_VECTOR(focus, 0, px(64), 0);
-  SET_VECTOR(camera->eye, 0, px(180), px(64));
+  SET_VECTOR(focus, 0, toFIXED(64), 0);
+  SET_VECTOR(camera->eye, 0, toFIXED(180), toFIXED(64));
   camera->yaw = TRIG_TURN * 5 / 32;
   camera->pitch = TRIG_TURN * 5 / 16;
-  camera->distance = px(256);
+  camera->distance = toFIXED(256);
   enemyCount = BattleFormation_BuildEnemyList(battle->formation);
 
   // A link battle: the opponent's party, which the Battle Arena left in
@@ -143,7 +143,7 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleBackground_Init();
   BattleBackground_Load(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   // The camera on the centre at 190 percent until the opening zooms.
-  BattleCamera_SetRange(px(160), px(80), 0, 0, 2 * Q16_ONE);
+  BattleCamera_SetRange(toFIXED(160), toFIXED(80), 0, 0, 2 * FIXED_ONE);
   BattleCamera_SetView(0, 0, 0, 190);
   Party_BattleSetupNoOp(1);
   REG_BLDCNT = 0;

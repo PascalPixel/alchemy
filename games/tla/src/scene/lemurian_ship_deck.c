@@ -82,7 +82,7 @@ void LemurianShipDeck_EnterCabin(void) {
 
       if (object != 0) {
         object->motionFlags = 0;
-        object->y.fixed = px(32);
+        object->y.fixed = toFIXED(32);
       }
     }
     i++;
@@ -173,9 +173,9 @@ void LemurianShipDeck_ScrollWaves(void) {
   s32 phase = gLemurianShipDeck_WaveScroll;
 
   layer->offsetX = phase;
-  phase += px(1) / 2;
+  phase += toFIXED(1) / 2;
   gLemurianShipDeck_WaveScroll = phase;
-  if (phase == px(32))
+  if (phase == toFIXED(32))
     gLemurianShipDeck_WaveScroll = 0;
 }
 
@@ -251,14 +251,16 @@ void LemurianShipDeck_TakeTheTiller(void) {
   FieldCamera_MoveTo(342, 48, 408, 0);
   System_Wait(1);
   MapGrid_CopyCellsTo(60, 53, 67, 16, 7, 3);
-  LemurianShipDeck_PlaceFacing(gMainRoutineWork.leaderActorId, px(552), px(376),
-                               FACING_EAST);
-  LemurianShipDeck_PlaceFacing(ACTOR_KRADEN, px(558), px(345),
+  LemurianShipDeck_PlaceFacing(gMainRoutineWork.leaderActorId, toFIXED(552),
+                               toFIXED(376), FACING_EAST);
+  LemurianShipDeck_PlaceFacing(ACTOR_KRADEN, toFIXED(558), toFIXED(345),
                                FACING_NORTH_NORTHEAST);
-  LemurianShipDeck_PlaceFacing(ACTOR_PIERS, px(534), px(404), FACING_EAST);
+  LemurianShipDeck_PlaceFacing(ACTOR_PIERS, toFIXED(534), toFIXED(404),
+                               FACING_EAST);
   turn = FACING_SOUTHEAST;
-  LemurianShipDeck_PlaceFacing(ACTOR_SHEBA, px(568), px(408), turn);
-  LemurianShipDeck_PlaceFacing(ACTOR_JENNA, px(546), px(440), FACING_SOUTH);
+  LemurianShipDeck_PlaceFacing(ACTOR_SHEBA, toFIXED(568), toFIXED(408), turn);
+  LemurianShipDeck_PlaceFacing(ACTOR_JENNA, toFIXED(546), toFIXED(440),
+                               FACING_SOUTH);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   Actor_SetScript(ACTOR_JENNA, gLemurianShipDeck_FirstCrewLooksAround);
@@ -384,7 +386,8 @@ static inline void RunToFelix(s32 id) {
   Actor_SetAnimation(id, 2);
   target = Actor_GetById(ACTOR_FELIX);
   if (target != NULL)
-    Actor_SetDestination(id, target->x.part[0].pixel, target->z.part[0].pixel);
+    Actor_SetDestination(id, target->x.part[0].integer,
+                         target->z.part[0].integer);
   Actor_WaitForMoveById(id);
   Actor_SetPosition(id, 0, 0);
 }
@@ -406,7 +409,8 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(458, 48, 408, 0);
   FieldEvent_SetMessageId(MsgLemurianShipDeckHoldOnToThatTiller);
-  Actor_SetPositionAndFacing(ACTOR_FELIX, px(470), px(392), FACING_EAST);
+  Actor_SetPositionAndFacing(ACTOR_FELIX, toFIXED(470), toFIXED(392),
+                             FACING_EAST);
   FieldActor_LaunchFromLeader(ACTOR_SHEBA, 0, -24, FACING_SOUTH);
   FieldActor_LaunchFromLeader(ACTOR_JENNA, -16, -16, FACING_SOUTHEAST);
   FieldActor_LaunchFromLeader(ACTOR_KRADEN, -24, 8, FACING_EAST_NORTHEAST);
@@ -656,18 +660,18 @@ void LemurianShipDeck_SightMenardisShip(void) {
     Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
     target = Actor_Get(ACTOR_FELIX);
     if (target != NULL)
-      Actor_SetDestination(ACTOR_KRADEN, target->x.part[0].pixel,
-                           target->z.part[0].pixel);
+      Actor_SetDestination(ACTOR_KRADEN, target->x.part[0].integer,
+                           target->z.part[0].integer);
     Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
     target = Actor_Get(ACTOR_FELIX);
     if (target != NULL)
-      Actor_SetDestination(ACTOR_JENNA, target->x.part[0].pixel,
-                           target->z.part[0].pixel);
+      Actor_SetDestination(ACTOR_JENNA, target->x.part[0].integer,
+                           target->z.part[0].integer);
     Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
     target = Actor_Get(ACTOR_FELIX);
     if (target != NULL)
-      Actor_SetDestination(ACTOR_SHEBA, target->x.part[0].pixel,
-                           target->z.part[0].pixel);
+      Actor_SetDestination(ACTOR_SHEBA, target->x.part[0].integer,
+                           target->z.part[0].integer);
   }
   FieldActor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
@@ -707,8 +711,8 @@ void LemurianShipDeck_LeaveToFindCrew(void) {
     Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
     object = Actor_Get(gMainRoutineWork.leaderActorId);
     if (object != 0)
-      Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].pixel,
-                           object->z.part[0].pixel);
+      Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].integer,
+                           object->z.part[0].integer);
     FieldActor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     Event_SetFlag(0x988);
@@ -734,14 +738,14 @@ void LemurianShipDeck_EmitSparkle(void) {
   s32 position[3];
   struct Actor *object;
 
-  SET_VECTOR(position, px(360), px(64), px(424));
+  SET_VECTOR(position, toFIXED(360), toFIXED(64), toFIXED(424));
   FieldVector_AddPolarOffset(32, Random16(), position);
   object =
       FieldActor_Create(SPRITE_GLINT, position[0], position[1], position[2]);
   if (object != NULL) {
     object->motionFlags = 0;
-    object->speedLimit = px(2);
-    object->acceleration = px(1) / 2;
+    object->speedLimit = toFIXED(2);
+    object->acceleration = toFIXED(1) / 2;
     Actor_SetSpriteFlags(object, 0);
     Actor_SelectAnimation(object, 0);
     FieldActor_SetMoveTarget(object, 360, 64, 424);
@@ -751,8 +755,8 @@ void LemurianShipDeck_EmitSparkle(void) {
 
 /// The Black Crystal (item 242's icon) as an actor on the deck.
 struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
-  struct Actor *object =
-      (struct Actor *)Import_ActorCreate(0x1e9, px(360), px(64), px(424));
+  struct Actor *object = (struct Actor *)Import_ActorCreate(
+      0x1e9, toFIXED(360), toFIXED(64), toFIXED(424));
   u8 *buffer = 0;
   struct FieldSprite *sprite;
 
@@ -843,8 +847,8 @@ void LemurianShipDeck_ReturnToShip(void) {
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
   object = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object != 0)
-    Actor_SetDestination(ACTOR_PIERS, object->x.part[0].pixel,
-                         object->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_PIERS, object->x.part[0].integer,
+                         object->z.part[0].integer);
   FieldActor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Event_SetFlag(0x985);
@@ -1166,8 +1170,8 @@ void LemurianShipDeck_SetOutForMadra(void) {
     Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
     object = Actor_Get(ACTOR_FELIX);
     if (object != 0)
-      Actor_SetDestination(ACTOR_PIERS, object->x.part[0].pixel,
-                           object->z.part[0].pixel);
+      Actor_SetDestination(ACTOR_PIERS, object->x.part[0].integer,
+                           object->z.part[0].integer);
     FieldActor_WaitForMoveById(ACTOR_PIERS);
     Actor_SetPosition(ACTOR_PIERS, 0, 0);
     Actor_Get(ACTOR_PIERS)->update = NULL;

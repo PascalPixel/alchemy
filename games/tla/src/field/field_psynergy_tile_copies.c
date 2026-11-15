@@ -80,7 +80,7 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
 void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
   s32 ownerId = Party_GetLeaderActor();
   struct Actor *owner = Actor_GetById(ownerId);
-  struct Actor *object = Actor_CreateFar(sprite, px(x), 0, px(z));
+  struct Actor *object = Actor_CreateFar(sprite, toFIXED(x), 0, toFIXED(z));
   s32 from[3];
   s32 to[3];
   s32 i;
@@ -90,14 +90,14 @@ void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
     return;
   Actor_SetSpriteFlagsFar(object, 0);
   object->gravity = 0x5999;
-  object->velocityY = px(5);
-  object->scaleY = object->scaleX = Q16_ONE * 2 / 5;
+  object->velocityY = toFIXED(5);
+  object->scaleY = object->scaleX = FIXED_ONE * 2 / 5;
   do {
     wait(1);
     object->scaleY = object->scaleX = object->scaleX + 0x3d7;
     object->facing += FACING_STEP;
   } while (object->scaleX <= 0xffff);
-  object->scaleY = object->scaleX = Q16_ONE;
+  object->scaleY = object->scaleX = FIXED_ONE;
   Actor_SelectAnimationFar(owner, 1);
   Actor_TurnPairToFaceEachOther(object, owner);
   owner->timer = owner->facing;
@@ -105,11 +105,11 @@ void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
   Actor_StartRepeatedMotion(ownerId, 3);
   FieldEffect_SetAttached(ownerId, 258);
   Event_Wait(32);
-  object->gravity = px(1);
-  object->velocityY = px(6);
+  object->gravity = toFIXED(1);
+  object->velocityY = toFIXED(6);
   Sound_PlayFar(SE_JUMP);
   Event_Wait(15);
-  object->velocityY = px(6);
+  object->velocityY = toFIXED(6);
   Sound_PlayFar(SE_JUMP);
   Event_Wait(23);
   Sound_PlayFar(SE_ENEMY_CRY);
@@ -158,9 +158,9 @@ void ParticleBurst_Start(void) {
   u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = effect->mainActor;
   struct BurstCell *cell = (struct BurstCell *)(event + 0xcc0);
-  s32 dx = FIELD_CELL_ORIGIN(cell->x) - owner->x.fixed + px(8);
-  s32 dz = FIELD_CELL_ORIGIN(cell->z) - owner->z.fixed + px(8);
-  s32 heading = (u16)ArcTan2(dz, dx);
+  s32 dx = FIELD_CELL_ORIGIN(cell->x) - owner->x.fixed + toFIXED(8);
+  s32 dz = FIELD_CELL_ORIGIN(cell->z) - owner->z.fixed + toFIXED(8);
+  s32 heading = (u16)Trig_Atan(dz, dx);
   struct EffectSprite *sprite;
   struct BurstParticle *particle;
   s32 resource;
@@ -183,7 +183,8 @@ void ParticleBurst_Start(void) {
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     SET_POSITION(particle, owner->x.fixed, owner->y.fixed, owner->z.fixed);
-    Vector_AddPolarOffset(Random16() * 8 + px(8), Random16(), &particle->x);
+    Vector_AddPolarOffset(Random16() * 8 + toFIXED(8), Random16(),
+                          &particle->x);
     particle->heading = heading;
     particle->speed = Random16() + 0x10000;
     particle->spin = (Random16() >> 6) + 384;

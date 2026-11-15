@@ -163,7 +163,7 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
   if (mode == 0 || mode == 2) {
     Event_PlaySound(SE_RISE_WITH_SPARKS_HIGH);
     for (i = 0; i <= 63; i++) {
-      left->y.fixed += px(1) / 10;
+      left->y.fixed += toFIXED(1) / 10;
       lid->y.fixed += 0x7ae;
       // Through a union, so this store may alias the sprite read after it.
       ((union ActorCoordinate *)&lid->x.fixed)->value += -0xa3d;
@@ -173,7 +173,7 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
   } else {
     Event_PlaySound(SE_RISE_WITH_SPARKS_HIGH);
     for (i = 0; i <= 63; i++) {
-      right->y.fixed += px(1) / 10;
+      right->y.fixed += toFIXED(1) / 10;
       lid->y.fixed += 0x7ae;
       lid->x.fixed += 0xa3d;
       *(u16 *)(sprite + 18) += 0xffe0;
@@ -187,9 +187,9 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
   JupiterLighthouse_StartBeamFlicker(right);
   Event_PlaySound(SE_JUPITER_LIGHTHOUSE_BEAMS);
   for (i = 255; i >= 0; i--) {
-    Actor_Get(ACTOR_LEFT_ANGEL)->y.fixed += px(1) / 10;
-    Actor_Get(ACTOR_RIGHT_ANGEL)->y.fixed += px(1) / 10;
-    lid->y.fixed += px(1) / 10;
+    Actor_Get(ACTOR_LEFT_ANGEL)->y.fixed += toFIXED(1) / 10;
+    Actor_Get(ACTOR_RIGHT_ANGEL)->y.fixed += toFIXED(1) / 10;
+    lid->y.fixed += toFIXED(1) / 10;
     System_Wait(1);
   }
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -465,20 +465,20 @@ void JupiterLighthouse_RideTheBeam(void) {
   actor->x.fixed = (((linked->x.fixed >> 19) & ~1) + (facing >> 13) - 1) << 19;
   actor->z.fixed = (((linked->z.fixed >> 19) & ~1) - ((facing >> 13) & 2) + 1)
                    << 19;
-  actor->velocityY = px(6);
+  actor->velocityY = toFIXED(6);
   actor->priorityFlags = 1;
   actor->motionFlags = 3;
   Actor_SetSpriteFlags(actor, 1);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   shadow = FieldCamera_GetActor();
-  shadow->speedLimit = px(8);
-  shadow->acceleration = px(1);
+  shadow->speedLimit = toFIXED(8);
+  shadow->acceleration = toFIXED(1);
   shadow->motionFlags = 0;
-  FieldActor_SetMoveTargetFixed(
+  FieldActor_SetMoveTargetFX(
       shadow, actor->x.fixed,
       Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed), actor->z.fixed);
   i = 0;
-  while (i <= 59 && actor->y.fixed > actor->groundHeight + px(16)) {
+  while (i <= 59 && actor->y.fixed > actor->groundHeight + toFIXED(16)) {
     i++;
     System_Wait(1);
   }
@@ -513,8 +513,8 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(SE_WHIRLWIND);
-  position.x = source->x + Math_MulQ16(px(8), Trig_Cos(source->angle));
-  position.z = source->z + Math_MulQ16(px(8), Math_Sin(source->angle));
+  position.x = source->x + Math_MulFX(toFIXED(8), Trig_Cos(source->angle));
+  position.z = source->z + Math_MulFX(toFIXED(8), Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
                                                    source->y, position.z));
   Import_ActorSelectAnimation(object, 2);
@@ -526,11 +526,11 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   object->unk62 = 0;
   object->unk63 = 0;
   object->update = Whirlwind_Update;
-  object->speedLimit = px(3) / 2;
+  object->speedLimit = toFIXED(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, px(3),
-                    &options);
+  FieldEffect_Spawn(position.x, source->y, position.z - toFIXED(6), 0, 0, 0,
+                    toFIXED(3), &options);
   return object;
 }
 
@@ -544,13 +544,14 @@ s32 JupiterLighthouse_SparkBeam(struct Actor *object) {
     s32 speed;
 
     spark.priority = 3;
-    spark.startScaleX = Q16_ONE * 7 / 10;
-    spark.startScaleY = Q16_ONE * 7 / 10;
+    spark.startScaleX = FIXED_ONE * 7 / 10;
+    spark.startScaleY = FIXED_ONE * 7 / 10;
     spark.palette = 14;
-    x = object->x.fixed + px((Random_Below(9)) - 4);
-    y = object->y.fixed + px(32 - (Random_Below(20)));
-    speed = (s32)(px(Random_Below(5)) + 0x50000) / 10;
-    FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, frame, px(11), &spark);
+    x = object->x.fixed + toFIXED((Random_Below(9)) - 4);
+    y = object->y.fixed + toFIXED(32 - (Random_Below(20)));
+    speed = (s32)(toFIXED(Random_Below(5)) + 0x50000) / 10;
+    FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, frame, toFIXED(11),
+                      &spark);
   }
   return 0;
 }
@@ -631,9 +632,9 @@ void JupiterLighthouse_UpdateBeam(void) {
   switch (work->step) {
   case 0:
     work->duration = 30;
-    aside = work->side == 0 ? px(10) : -px(10);
+    aside = work->side == 0 ? toFIXED(10) : -toFIXED(10);
     a[0] = work->from[0] - aside;
-    a[1] = work->from[1] + px(24);
+    a[1] = work->from[1] + toFIXED(24);
     a[2] = work->from[2];
     b[0] = work->from[0];
     b[1] = work->from[1];
@@ -641,7 +642,7 @@ void JupiterLighthouse_UpdateBeam(void) {
     work->pointA[0] = LERP(a[0], b[0], t, work->duration);
     work->pointA[1] = LERP(a[1], b[1], t, work->duration);
     work->pointA[2] = LERP(a[2], b[2], t, work->duration);
-    a[1] = work->from[1] - px(24);
+    a[1] = work->from[1] - toFIXED(24);
     work->pointB[0] = LERP(a[0], b[0], t, work->duration);
     work->pointB[1] = LERP(a[1], b[1], t, work->duration);
     work->pointB[2] = LERP(a[2], b[2], t, work->duration);
@@ -652,7 +653,7 @@ void JupiterLighthouse_UpdateBeam(void) {
     break;
   case 1:
     work->duration = 60;
-    aside = work->side == 0 ? px(30) : -px(30);
+    aside = work->side == 0 ? toFIXED(30) : -toFIXED(30);
     a[0] = work->from[0];
     a[1] = work->from[1];
     a[2] = work->from[2];
@@ -675,7 +676,7 @@ void JupiterLighthouse_UpdateBeam(void) {
   case 2:
     if (work->frame == 0)
       work->still = 1;
-    aside = work->side == 0 ? px(1) / 2 : -px(1) / 2;
+    aside = work->side == 0 ? toFIXED(1) / 2 : -toFIXED(1) / 2;
     work->pointA[0] += aside;
     work->pointB[0] += aside;
     if (work->frame == 14) {
@@ -693,7 +694,7 @@ void JupiterLighthouse_UpdateBeam(void) {
     work->carried[2] = LERP(work->from[2], work->to[2], t, 96);
     Actor_SetPositionAndResetMotion(carrier, work->carried[0], work->carried[1],
                                     work->carried[2]);
-    aside = work->side == 0 ? px(16) : -px(16);
+    aside = work->side == 0 ? toFIXED(16) : -toFIXED(16);
     work->pointA[0] = work->carried[0] - aside;
     work->pointA[1] = work->carried[1];
     work->pointA[2] = work->carried[2];
@@ -854,28 +855,28 @@ void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
   large->scaleX = 0;
   large->scaleY = 0;
   if (side == 0) {
-    work->from[0] = px(152);
-    work->from[1] = px(32);
-    work->from[2] = px(164);
-    work->to[0] = px(470);
-    work->to[1] = px(32);
-    work->to[2] = px(164);
+    work->from[0] = toFIXED(152);
+    work->from[1] = toFIXED(32);
+    work->from[2] = toFIXED(164);
+    work->to[0] = toFIXED(470);
+    work->to[1] = toFIXED(32);
+    work->to[2] = toFIXED(164);
   } else {
-    work->from[0] = px(872);
-    work->from[1] = px(32);
-    work->from[2] = px(164);
-    work->to[0] = px(550);
-    work->to[1] = px(32);
-    work->to[2] = px(164);
+    work->from[0] = toFIXED(872);
+    work->from[1] = toFIXED(32);
+    work->from[2] = toFIXED(164);
+    work->to[0] = toFIXED(550);
+    work->to[1] = toFIXED(32);
+    work->to[2] = toFIXED(164);
   }
   work->carried[0] = work->from[0];
   work->carried[1] = work->from[1];
   work->carried[2] = work->from[2];
-  carrier->speedLimit = px(1) / 2;
-  carrier->acceleration = px(1) / 2;
+  carrier->speedLimit = toFIXED(1) / 2;
+  carrier->acceleration = toFIXED(1) / 2;
   Actor_StartIdle(carrier);
-  FieldActor_SetMoveTargetFixed(carrier, work->carried[0], work->carried[1],
-                                work->carried[2]);
+  FieldActor_SetMoveTargetFX(carrier, work->carried[0], work->carried[1],
+                             work->carried[2]);
   Event_PlaySound(SE_SWIRL);
   JupiterLighthouse_StartBeamFlicker(work->first);
   FieldEvent_Wait(40);

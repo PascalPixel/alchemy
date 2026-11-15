@@ -70,7 +70,7 @@ void Teleport_PlayWhirl(void) {
   frame = 0;
   do {
     if (count != 0) {
-      radius = px(80);
+      radius = toFIXED(80);
       i = count;
       do {
         angle = Random16();
@@ -103,7 +103,7 @@ void Teleport_PlayWhirl(void) {
           sprite->y = position[2];
           EffectSprite_Draw(sprite);
           spark->angle += TRIG_TURN / 32;
-          spark->radius += -px(4);
+          spark->radius += -toFIXED(4);
         }
         if (++spark->age == 20)
           spark->age = -1;
@@ -121,10 +121,10 @@ void Teleport_PlayWhirl(void) {
       }
       break;
     case 1:
-      object->facing += TRIG_TURN / 8;
+      object->facing += DEGtoANG(45);
       object->scaleX = (frame << 16) / 30;
-      if (object->scaleX > Q16_ONE)
-        object->scaleX = Q16_ONE;
+      if (object->scaleX > FIXED_ONE)
+        object->scaleX = FIXED_ONE;
       object->scaleY = object->scaleX;
       if (frame == 40) {
         state = 2;
@@ -133,7 +133,7 @@ void Teleport_PlayWhirl(void) {
       break;
     case 2:
       if (frame == 0) {
-        object->facing = TRIG_TURN / 4;
+        object->facing = DEGtoANG(90);
         Actor_SetSpriteFlagsFar(object, 1);
         count = 3;
       }
@@ -227,15 +227,15 @@ void Teleport_PlaySparks(void) {
       Vector_AddPolarOffset(Random16() << 3, angle, &particle->x);
       if (next & 1) {
         particle->velocityX = zero;
-        particle->velocityY = -px(4);
+        particle->velocityY = -toFIXED(4);
         particle->velocityZ = zero;
-        Vector_AddPolarOffset((Random16() << 2) + px(4), angle,
+        Vector_AddPolarOffset((Random16() << 2) + toFIXED(4), angle,
                               &work->particles[next].velocityX);
       } else {
         particle->velocityX = 0;
-        particle->velocityY = px(5);
+        particle->velocityY = toFIXED(5);
         particle->velocityZ = 0;
-        Vector_AddPolarOffset((Random16() << 2) + px(4), angle,
+        Vector_AddPolarOffset((Random16() << 2) + toFIXED(4), angle,
                               &work->particles[next].velocityX);
       }
       next++;
@@ -267,7 +267,7 @@ void Teleport_PlaySparks(void) {
     case 0:
       if (frame == 10)
         Sound_PlayFar(SE_KOLIMA_BRIDGE_POST);
-      object->facing += TRIG_TURN / 8;
+      object->facing += DEGtoANG(45);
       if (frame == 40)
         count = 3;
       if (frame == 50)
@@ -279,8 +279,8 @@ void Teleport_PlaySparks(void) {
       }
       break;
     case 1:
-      object->facing += TRIG_TURN / 8;
-      object->scaleX = Q16_ONE - (frame << 16) / 30;
+      object->facing += DEGtoANG(45);
+      object->scaleX = FIXED_ONE - (frame << 16) / 30;
       if (object->scaleX < 0)
         object->scaleX = 0;
       object->scaleY = object->scaleX;

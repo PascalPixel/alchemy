@@ -27,23 +27,23 @@ void Leader_SlideOnIceFromEdge(void) {
   gSlideOnIce_Stopped = 0;
 retry:
   Leader_StopIfPending();
-  object->speedLimit = px(1);
-  object->acceleration = px(1) / 2;
+  object->speedLimit = toFIXED(1);
+  object->acceleration = toFIXED(1) / 2;
   object->targetX = 0x80000000;
   object->targetZ = 0x80000000;
   object->velocityX = 0;
   object->velocityZ = 0;
   p = position;
-  p[0] = x = (object->x.fixed & 0xfff00000) + px(8);
+  p[0] = x = (object->x.fixed & 0xfff00000) + toFIXED(8);
   p[1] = object->y.fixed;
-  p[2] = z = (object->z.fixed & 0xfff00000) + px(8);
+  p[2] = z = (object->z.fixed & 0xfff00000) + toFIXED(8);
   targetZ = z;
   targetX = x;
   layer = &object->layer;
   startCell = MapGrid_GetCellBehaviorAt(*layer, targetX, targetZ);
   dz = targetZ - object->z.fixed;
   dx = targetX - object->x.fixed;
-  if (Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz) < 0x40000) {
+  if (Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz) < 0x40000) {
     angle = gSlideOnIce_AnglesByKey[(gInput.held >> 4) & 15];
     // -1 for no direction, tested as its halfword.
     if ((u16)angle == 0xffff)
@@ -53,13 +53,13 @@ retry:
       goto end;
 #endif
   } else {
-    angle = ArcTan2(targetZ - object->z.fixed, targetX - object->x.fixed);
+    angle = Trig_Atan(targetZ - object->z.fixed, targetX - object->x.fixed);
     angle = (angle + 0x2000) & 0xc000;
   }
   FieldVector_AddPolarOffset(16, angle, position);
   cell = MapGrid_GetCellBehaviorAt(*layer, p[0], p[2]);
   if (cell == 255 ||
-      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y.fixed > px(8)) {
+      Map_GetTerrainHeight(*layer, p[0], p[2]) - object->y.fixed > toFIXED(8)) {
     object->facing = angle;
     object->velocityX = 0;
     object->velocityZ = 0;
@@ -69,8 +69,8 @@ retry:
   }
   p[0] = x;
   p[2] = z;
-  object->speedLimit = px(2);
-  object->acceleration = px(1) / 10;
+  object->speedLimit = toFIXED(2);
+  object->acceleration = toFIXED(1) / 10;
   object->timer = 0;
   Actor_SetMoveTarget(object, x, object->y.fixed, z);
   Actor_SelectAnimation(object, 2);
@@ -87,7 +87,7 @@ retry:
   object->update = (void (*)(void))Actor_SteerByPad;
   goto walk;
 walkNext:
-  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y.fixed > px(8))
+  if (Map_GetTerrainHeight(*layer, q[0], q[2]) - object->y.fixed > toFIXED(8))
     goto blocked;
   if (gSlideOnIce_Stopped != 0)
 #if !TLA_PATCH_1
@@ -113,8 +113,8 @@ overlap:
     goto overlap;
   targetX = q[0];
   targetZ = q[2];
-  object->speedLimit = px(2);
-  object->acceleration = px(1) / 10;
+  object->speedLimit = toFIXED(2);
+  object->acceleration = toFIXED(1) / 10;
   Actor_SetMoveTarget(object, q[0], q[1], q[2]);
   i = 0;
   goto test;
@@ -138,8 +138,8 @@ walk:
   if (cell != 255)
     goto walkNext;
 blocked:
-  object->speedLimit = px(2);
-  object->acceleration = px(1);
+  object->speedLimit = toFIXED(2);
+  object->acceleration = toFIXED(1);
   Actor_SetMoveTarget(object, targetX, object->y.fixed, targetZ);
   FieldActor_WaitForMove(object);
   System_Wait(2);
@@ -149,6 +149,6 @@ changed:
 end:
   object->update = NULL;
   object->steeringFlags |= ACTOR_FACES_MOTION;
-  object->acceleration = px(1) / 4;
+  object->acceleration = toFIXED(1) / 4;
   Actor_SelectAnimation(object, 1);
 }

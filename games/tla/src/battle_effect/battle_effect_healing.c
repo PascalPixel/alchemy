@@ -265,7 +265,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &SPARKS[i];
 
-      spark->y = px(48);
+      spark->y = toFIXED(48);
       spark->x = 0;
       spark->z = 0;
       spark->velocityX = ((Random16() & 0xff) - 127) << 8;
@@ -313,7 +313,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       s32 heading = Random16() & TRIG_ANGLE_MASK;
       s32 radius = (Random16() & 63) + 32;
 
-      SET_POSITION(spark, Trig_Sin(heading) * radius, -px(50),
+      SET_POSITION(spark, Trig_Sin(heading) * radius, -toFIXED(50),
                    Trig_Cos(heading) * radius);
       spark->velocityY = ((Random16() & 31) + 32) << 13;
       spark->variant = 0;
@@ -371,9 +371,9 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     // the first four frames it is drawn ADDITIVE as well.
     if (args->prelude == 1) {
       if (narrow == 0) {
-        s32 x = (Q_16_16_TO_INT(Trig_Sin(frame << 11) * 20)) + origin[0] +
-                shift - 20;
-        s32 y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4)) + origin[1] - 24;
+        s32 x =
+            (FIXEDtoINT(Trig_Sin(frame << 11) * 20)) + origin[0] + shift - 20;
+        s32 y = (FIXEDtoINT(Trig_Cos(frame << 11) * 4)) + origin[1] - 24;
 
         if (frame > 32)
           y = y - frame * 2 + 64;
@@ -383,9 +383,8 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
           draw[1](canvas, work->sheet + DJINNI_SHEET, x, y, DJINNI_WIDTH,
                   DJINNI_HEIGHT);
       } else {
-        s32 x =
-            (Q_16_16_TO_INT(Trig_Sin(frame << 11) * 10)) + origin[0] / 2 - 10;
-        s32 y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4)) + origin[1] - 24;
+        s32 x = (FIXEDtoINT(Trig_Sin(frame << 11) * 10)) + origin[0] / 2 - 10;
+        s32 y = (FIXEDtoINT(Trig_Cos(frame << 11) * 4)) + origin[1] - 24;
 
         if (frame > 32)
           y = y - frame * 2 + 64;
@@ -403,12 +402,12 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       s32 start = member * 8;
 
       // The motes turn about a point 40 pixels above the target.
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
       point[0] = object->x;
-      point[1] = px(40);
+      point[1] = toFIXED(40);
       point[2] = object->z;
-      Transform_ApplyPosition(point);
+      Matrix_TranslateVector(point);
       if (frame == start + 20)
         Sound_PlayFar(SE_RECOVERY);
       if (mode == HEALING_MODE_SPRING) {
@@ -427,22 +426,22 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
         if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL ||
             mode == HEALING_MODE_SALT || mode == HEALING_MODE_SPRING ||
             mode == HEALING_MODE_ETHER || mode == HEALING_MODE_EDDY) {
-          Transform_ApplyYaw((frame - start) << 9);
+          Matrix_RotateY((frame - start) << 9);
         } else if (mode == HEALING_MODE_BREATH) {
-          Transform_ApplyYaw((frame - start) << 11);
+          Matrix_RotateY((frame - start) << 11);
         } else if (mode == HEALING_MODE_AURA) {
         } else if (mode == HEALING_MODE_REVERSE_STAR) {
-          Transform_ApplyRoll(frame << 9);
+          Matrix_RotateZ(frame << 9);
         } else if (mode == HEALING_MODE_WISH) {
-          Transform_ApplyPitch(frame << 9);
-          Transform_ApplyRoll(frame << 9);
+          Matrix_RotateX(frame << 9);
+          Matrix_RotateZ(frame << 9);
         } else if (mode == HEALING_MODE_CURE || mode == HEALING_MODE_EDDY) {
-          Transform_ApplyYaw((frame - member * 40) << 9);
+          Matrix_RotateY((frame - member * 40) << 9);
         } else if (mode == HEALING_MODE_CURE_POISON) {
-          Transform_ApplyYaw((frame - start) << 9);
+          Matrix_RotateY((frame - start) << 9);
         } else {
-          Transform_ApplyYaw((frame - start) << 9);
-          Transform_ApplyPitch((frame - start) << 9);
+          Matrix_RotateY((frame - start) << 9);
+          Matrix_RotateX((frame - start) << 9);
         }
 
         // Four motes come out a frame; in modes 3-5 each fades at

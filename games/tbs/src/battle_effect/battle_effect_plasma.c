@@ -112,10 +112,10 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
               s32 angle;
 
               speed = (Random16() & 0x3ff) + 32;
-              angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
+              angle = (Random16() & 0x7fff) - DEGtoANG(90);
 
-              spark->x = px(PLASMA_COLUMN_X(work->args->side, i));
-              spark->y = px(104);
+              spark->x = INTtoFIXED(PLASMA_COLUMN_X(work->args->side, i));
+              spark->y = toFIXED(104);
               spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
               spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
               spark->variant = (Random16() & 7) + 32;
@@ -143,16 +143,16 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
       spark = &sparks[k];
       if (spark->variant > 0) {
         spark->variant--;
-        Particle_AdvanceWithGravity2D(spark, 60, px(1) / 16);
-        if (spark->y > px(104)) {
+        Particle_AdvanceWithGravity2D(spark, 60, toFIXED(1) / 16);
+        if (spark->y > toFIXED(104)) {
           spark->velocityY = -spark->velocityY / 2;
         } else {
-          s32 x = WHOLE_PIXELS(spark->x);
+          s32 x = FIXEDtoINT(spark->x);
           s32 y;
           s32 size;
 
           if (spark->x >= 0 && x <= 119 && spark->y >= 0) {
-            y = WHOLE_PIXELS(spark->y);
+            y = FIXEDtoINT(spark->y);
             size = spark->variant / 8 + 1;
             EFFECT_DRAW_MOTE(draw[k & 1], canvas, sprites, x, y, size);
           }
@@ -264,14 +264,14 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
       speed = (Random16() & 0x3ff) + 32;
       angle = Random16() & TRIG_ANGLE_MASK;
       if (work->args->side == EFFECT_SIDE_PARTY)
-        spark->x = px(
+        spark->x = INTtoFIXED(
             originX -
             gPlasma_Shapes[work->args->variant][SPARK_GROUPS_OFFSET + i] + 28);
       else
-        spark->x = px(
+        spark->x = INTtoFIXED(
             originX +
             gPlasma_Shapes[work->args->variant][SPARK_GROUPS_OFFSET + i] - 28);
-      spark->y = px(originY);
+      spark->y = INTtoFIXED(originY);
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 6;
       spark->variant = (Random16() & 7) + 32;
@@ -363,9 +363,9 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
         s32 gravity;
 
         if (mode == SPARK_GROUPS_RISING)
-          gravity = -px(1) / 16;
+          gravity = -toFIXED(1) / 16;
         else
-          gravity = px(1) / 16;
+          gravity = toFIXED(1) / 16;
         for (j = 0;
              j != gPlasma_Shapes[work->args->variant][SPARK_GROUPS_SPARKS];
              j++) {
@@ -375,11 +375,12 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
           if (spark->variant > 0) {
             Particle_AdvanceWithGravity2D(spark, 60, gravity);
             spark->variant--;
-            if (spark->y > px(108)) {
+            if (spark->y > toFIXED(108)) {
               spark->velocityY = -spark->velocityY / 2;
-            } else if (spark->x >= 0 && spark->x < px(127) && spark->y >= 0) {
-              s16 x = WHOLE_PIXELS(spark->x);
-              s16 y = WHOLE_PIXELS(spark->y);
+            } else if (spark->x >= 0 && spark->x < toFIXED(127) &&
+                       spark->y >= 0) {
+              s16 x = FIXEDtoINT(spark->x);
+              s16 y = FIXEDtoINT(spark->y);
               s32 size = spark->variant / 5 + 1;
 
               EFFECT_DRAW_MOTE(draw[j & 1], canvas, graphics, x, y, size);

@@ -51,12 +51,12 @@ const s16 gSpeakerDefinitions[][2] ALIGNED(4) = {
 // (wider, then shorter) and stretching it back over 12 frames; it starts
 // count bounces from the end. Each is 128 bytes, 32 words.
 #define VARIANT_BOUNCE                                                         \
-  SC_ADD(SW_SCALE_X, -Q16_ONE / 4), SC_ADD(SW_SCALE_Y, Q16_ONE / 8),           \
-      SC_WAIT(2), SC_ADD(SW_SCALE_X, Q16_ONE / 8),                             \
-      SC_ADD(SW_SCALE_Y, -Q16_ONE / 16), SC_WAIT(2),                           \
-      SC_ADD(SW_SCALE_X, Q16_ONE / 16), SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),     \
-      SC_WAIT(2), SC_ADD(SW_SCALE_X, Q16_ONE / 16),                            \
-      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32), SC_WAIT(4)
+  SC_ADD(SW_SCALE_X, -FIXED_ONE / 4), SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),       \
+      SC_WAIT(2), SC_ADD(SW_SCALE_X, FIXED_ONE / 8),                           \
+      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16), SC_WAIT(2),                         \
+      SC_ADD(SW_SCALE_X, FIXED_ONE / 16), SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32), \
+      SC_WAIT(2), SC_ADD(SW_SCALE_X, FIXED_ONE / 16),                          \
+      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32), SC_WAIT(4)
 const s32 gActor_VariantScripts[] = {
     VARIANT_BOUNCE,
     VARIANT_BOUNCE,

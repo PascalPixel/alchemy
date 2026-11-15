@@ -13,7 +13,7 @@ extern u32 gScanlineAngle;
 /// The world map camera's pitch the scanline parameters were built for.
 extern u32 gScanlinePitch;
 
-void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
-                              struct ScanVertex *line, struct BgAffine *affine);
+void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
+                           struct ScanVertex *line, struct BgAffine *affine);
 
 #endif

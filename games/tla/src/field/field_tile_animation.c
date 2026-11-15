@@ -86,7 +86,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     }
   }
   block = (struct WorldMapCell *)Ram_MapBlocks +
-          (((x / px(32)) & 31) + (((y / px(32)) & 31) << 5));
+          (((x / toFIXED(32)) & 31) + (((y / toFIXED(32)) & 31) << 5));
   WorldMap_UpdateRegionTint(block->region, 1);
   value = block->region;
   switch (value / 10) {
@@ -1055,8 +1055,8 @@ void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 collisionCode) {
 /// less base; a layer past 2 reads the shape grid. With no map, or while the
 /// event mode is 3, it is 0.
 s32 MapGrid_GetTerrainHeightAbove(s32 px, s32 pz, s32 layer, s32 base) {
-  s32 x = FIELD_PIXEL(px);
-  s32 z = FIELD_PIXEL(pz);
+  s32 x = FIXEDtoINT(px);
+  s32 z = FIXEDtoINT(pz);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *shapes;
@@ -1082,8 +1082,8 @@ s32 MapGrid_GetTerrainHeightAbove(s32 px, s32 pz, s32 layer, s32 base) {
 /// 2 reads the cell buffer and shape grid. With no map, or while the event
 /// mode is 3, every point is level (0).
 s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
-  s32 x = FIELD_PIXEL(px);
-  s32 z = FIELD_PIXEL(pz);
+  s32 x = FIXEDtoINT(px);
+  s32 z = FIXEDtoINT(pz);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *cells;
@@ -1111,9 +1111,9 @@ s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
   code = Ram_MapCollision + *shapes * 4;
   rise = gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
          height;
-  if (rise > px(8))
+  if (rise > toFIXED(8))
     return 1;
-  if (rise < -px(12))
+  if (rise < -toFIXED(12))
     return -1;
   return 0;
 }
@@ -1122,8 +1122,8 @@ s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
 /// its whole-pixel halves) on the actor's layer, against its ground height.
 s32 MapGrid_CheckCollision(struct Actor *actor,
                            struct FieldPosition *position) {
-  s32 x = ((struct FieldCoordinate *)&position->x)->part[0].pixel;
-  s32 z = ((struct FieldCoordinate *)&position->z)->part[0].pixel;
+  s32 x = ((struct FieldCoordinate *)&position->x)->part[0].integer;
+  s32 z = ((struct FieldCoordinate *)&position->z)->part[0].integer;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *cells;
@@ -1151,9 +1151,9 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
   code = Ram_MapCollision + *shapes * 4;
   rise = gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
          actor->groundHeight;
-  if (rise > px(8))
+  if (rise > toFIXED(8))
     return 1;
-  if (rise < -px(12))
+  if (rise < -toFIXED(12))
     return -1;
   return 0;
 }
@@ -1163,8 +1163,8 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
 /// it, else 0.
 s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
                                 struct FieldPosition *position) {
-  s32 x = ((struct FieldCoordinate *)&position->x)->part[0].pixel;
-  s32 z = ((struct FieldCoordinate *)&position->z)->part[0].pixel;
+  s32 x = ((struct FieldCoordinate *)&position->x)->part[0].integer;
+  s32 z = ((struct FieldCoordinate *)&position->z)->part[0].integer;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *cells;
@@ -1191,7 +1191,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
   code = Ram_MapCollision + *shapes * 4;
   if (gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
           actor->y.fixed >
-      px(8))
+      toFIXED(8))
     return 1;
   return 0;
 }
@@ -1200,7 +1200,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
 /// the overhead layer is a wall (cell behavior 255), else 0; also 0 before the
 /// map work exists.
 s32 MapGrid_IsWallAt(s32 *position) {
-  s32 x = position[0] / Q16_ONE;
+  s32 x = position[0] / FIXED_ONE;
   s32 z = (u32)((position[2] & FIELD_CELL_MASK) - position[1]) >> 16;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *cell;
@@ -1332,7 +1332,7 @@ s32 WorldMap_IsFlyable(struct WorldMover *mover,
 
     s32 height = mover->height;
 
-    if (height < px(4)) {
+    if (height < toFIXED(4)) {
       if ((u32)(collision - WORLD_MAP_COLLISION_SEA_FIRST) >
               WORLD_MAP_COLLISION_SEA_LAST - WORLD_MAP_COLLISION_SEA_FIRST &&
           collision != WORLD_MAP_COLLISION_SHALLOW_WATER)

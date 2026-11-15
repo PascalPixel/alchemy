@@ -122,7 +122,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 static void GomaCaveEntrance_MoveWestPillar(void) {
   s32 column;
 
-  column = Actor_Get(ACTOR_WEST_PILLAR)->x.fixed / px(16);
+  column = Actor_Get(ACTOR_WEST_PILLAR)->x.fixed / toFIXED(16);
   Event_ClearFlag(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP);
   Event_ClearFlag(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS);
   if (column == 15) {
@@ -141,7 +141,7 @@ static void GomaCaveEntrance_MoveWestPillar(void) {
 static void GomaCaveEntrance_MoveEastPillar(void) {
   s32 column;
 
-  column = Actor_Get(ACTOR_EAST_PILLAR)->x.fixed / px(16);
+  column = Actor_Get(ACTOR_EAST_PILLAR)->x.fixed / toFIXED(16);
   if (column == 23) {
     Event_Wait(10);
     Actor_Get(ACTOR_EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -266,7 +266,7 @@ static void GomaCaveEntrance_IvanRejoins(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFX(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 264, 168);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 20);
@@ -282,8 +282,8 @@ static void GomaCaveEntrance_IvanRejoins(void) {
     Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetDestination(ACTOR_GARET, leader->x.part[0].pixel,
-                           leader->z.part[0].pixel);
+      Actor_SetDestination(ACTOR_GARET, leader->x.part[0].integer,
+                           leader->z.part[0].integer);
     }
     Actor_WaitForMoveById(ACTOR_GARET);
     Actor_SetPosition(ACTOR_GARET, 0, 0);
@@ -527,11 +527,11 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   stump->update = GomaCaveEntrance_SpinStump;
   Actor_SetSpeed(stumpId, 3);
   Actor_SetDestination(stumpId, 160, 192);
-  stump->gravity = px(4) / 5;
+  stump->gravity = toFIXED(4) / 5;
   stump->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   stump->layer = 0;
   Actor_WaitForMoveById(stumpId);
-  Actor_WaitBelowHeight(stump, px(32));
+  Actor_WaitBelowHeight(stump, toFIXED(32));
   Sound_Play(SE_THUMP);
   MapGrid_SetShake(5, 5, 1);
   Sound_Play(SE_RUMBLE);
@@ -543,17 +543,17 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
     FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, dir.x,
                       dir.y, dir.z, 0, NULL);
   }
-  stump->velocityY = px(5);
+  stump->velocityY = toFIXED(5);
   Actor_SetDestination(stumpId, 139, 196);
   Actor_WaitForMoveById(stumpId);
-  Actor_WaitBelowHeight(stump, px(32));
+  Actor_WaitBelowHeight(stump, toFIXED(32));
   stump->update = NULL;
   stump->sprite->rotation = TRIG_TURN / 16;
   params.type = SPRITE_SPLASH;
-  params.startScaleX = Q16_ONE / 2;
-  params.startScaleY = 4 * Q16_ONE / 5;
-  params.targetScaleX = 3 * Q16_ONE / 2;
-  params.targetScaleY = 6 * Q16_ONE / 5;
+  params.startScaleX = FIXED_ONE / 2;
+  params.startScaleY = 4 * FIXED_ONE / 5;
+  params.targetScaleX = 3 * FIXED_ONE / 2;
+  params.targetScaleY = 6 * FIXED_ONE / 5;
   FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
                     EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                         EFFECT_SCALE_TO_TARGET,
@@ -622,7 +622,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gGomaCaveEntranceTallIvyScript[] = {
-    SC_SET(SW_SCALE_Y, 8 * Q16_ONE / 5),
+    SC_SET(SW_SCALE_Y, 8 * FIXED_ONE / 5),
     SC_END,
 };
 

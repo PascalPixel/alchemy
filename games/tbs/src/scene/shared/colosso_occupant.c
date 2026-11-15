@@ -42,7 +42,7 @@ static void Colosso_PushActorAhead(void) {
   }
 
   position.x = pushed->x.fixed;
-  position.y = pushed->y.fixed + px(16);
+  position.y = pushed->y.fixed + toFIXED(16);
   position.z = pushed->z.fixed;
 
   blocker = Actor_FindAtPosition(&position, pushed);
@@ -65,13 +65,13 @@ static void Colosso_PushActorAhead(void) {
   Actor_SelectAnimation(leader, ANIM_PUSH);
   wait(15);
 
-  pushed->speedLimit = px(1) / 5;
-  pushed->acceleration = px(1) / 5;
-  FieldActor_SetMoveTargetFixed(pushed, position.x, position.y, position.z);
+  pushed->speedLimit = toFIXED(1) / 5;
+  pushed->acceleration = toFIXED(1) / 5;
+  FieldActor_SetMoveTargetFX(pushed, position.x, position.y, position.z);
 
-  leader->speedLimit = px(1) / 5;
-  leader->acceleration = px(1) / 5;
-  FieldActor_SetMoveTargetFixed(leader, position.x, position.y, position.z);
+  leader->speedLimit = toFIXED(1) / 5;
+  leader->acceleration = toFIXED(1) / 5;
+  FieldActor_SetMoveTargetFX(leader, position.x, position.y, position.z);
 
   Sound_Play(SE_PUSH_STEP);
   Actor_WaitForMove(pushed);
@@ -98,17 +98,17 @@ void *Colosso_FindActorAhead(void) {
 
   facing = FACING_NEAREST_CARDINAL(record->facing);
 
-  position.x = (record->x.fixed & FIELD_CELL_MASK) + px(8);
+  position.x = (record->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   position.y = record->y.fixed;
-  position.z = (record->z.fixed & FIELD_CELL_MASK) + px(8);
-  Vector_AddPolarOffset(px(16), facing, &position);
+  position.z = (record->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  Vector_AddPolarOffset(toFIXED(16), facing, &position);
 
   occupant = Actor_FindAtPosition(&position, record);
   if (occupant == NULL) {
-    position.x = (record->x.fixed & FIELD_CELL_MASK) + px(8);
+    position.x = (record->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
     position.y = record->y.fixed;
-    position.z = (record->z.fixed & FIELD_CELL_MASK) + px(8);
-    Vector_AddPolarOffset(px(32), facing, &position);
+    position.z = (record->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+    Vector_AddPolarOffset(toFIXED(32), facing, &position);
 
     occupant = Actor_FindAtPosition(&position, record);
   }

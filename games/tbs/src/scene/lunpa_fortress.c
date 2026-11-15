@@ -718,8 +718,8 @@ static void LunpaFortress_TakeCellKey(void) {
 /// corridor and the cells below its gap.
 static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 leaderTileZ = leader->z.fixed / px(16);
-  s32 leaderTileX = leader->x.fixed / px(16);
+  s32 leaderTileZ = leader->z.fixed / toFIXED(16);
+  s32 leaderTileX = leader->x.fixed / toFIXED(16);
 
   if (leaderTileZ >= 5 && leaderTileZ <= 7 && leaderTileX <= 10) {
     return 1;
@@ -806,9 +806,9 @@ static void LunpaFortress_PatrolPairThrowsPartyOut(void) {
 static s32 LunpaFortress_IsLeaderPassingPatrollingGuard(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *guard = Actor_Get(ACTOR_UPPER_FLOOR_HALL_PATROL);
-  s32 leaderTileX = leader->x.fixed / px(16);
-  s32 guardTileZ = guard->z.fixed / px(16);
-  s32 guardTileX = guard->x.fixed / px(16);
+  s32 leaderTileX = leader->x.fixed / toFIXED(16);
+  s32 guardTileZ = guard->z.fixed / toFIXED(16);
+  s32 guardTileX = guard->x.fixed / toFIXED(16);
 
   if (leaderTileX == 52 && guardTileX == 57 && guardTileZ > 34 &&
       guardTileZ <= 40) {
@@ -844,8 +844,8 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
     guard->paused = 0;
     if (!GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED) &&
         guard->paused == 0) {
-      patrolLayer->phaseX = px(832) - guard->x.fixed;
-      patrolLayer->phaseY = px(576) - guard->z.fixed;
+      patrolLayer->phaseX = toFIXED(832) - guard->x.fixed;
+      patrolLayer->phaseY = toFIXED(576) - guard->z.fixed;
     }
     if (!LunpaFortress_IsLeaderPassingPatrollingGuard()) {
       LunpaFortress_IsGuardNearViewCenter(ACTOR_UPPER_FLOOR_HALL_PATROL);
@@ -878,8 +878,8 @@ static void LunpaFortress_HallPatrolThrowsPartyOut(void) {
 /// stretches of its rounds.
 static s32 LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 leaderTileZ = leader->z.fixed / px(16);
-  s32 leaderTileX = leader->x.fixed / px(16);
+  s32 leaderTileZ = leader->z.fixed / toFIXED(16);
+  s32 leaderTileX = leader->x.fixed / toFIXED(16);
 
   if (leaderTileX >= 41 && leaderTileX <= 44 && leaderTileZ > 25 &&
       leaderTileZ <= 28) {
@@ -917,8 +917,8 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
     guard->paused = 0;
     if (!GameFlag_Get(FLAG_LUNPA_FORTRESS_PARTY_SPOTTED) &&
         guard->paused == 0) {
-      patrolLayer->phaseX = px(752) - guard->x.fixed;
-      patrolLayer->phaseY = px(496) - guard->z.fixed;
+      patrolLayer->phaseX = toFIXED(752) - guard->x.fixed;
+      patrolLayer->phaseY = toFIXED(496) - guard->z.fixed;
     }
     if (!LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone()) {
       if (LunpaFortress_IsLeaderNearGuard(ACTOR_GROUND_FLOOR_PATROL_GUARD) &&
@@ -949,8 +949,8 @@ static void LunpaFortress_GroundFloorPatrolThrowsPartyOut(void) {
 /// Whether the leader is outside the upper hall the guard there watches.
 static s32 LunpaFortress_IsLeaderOutsideUpperHall(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 leaderTileZ = leader->z.fixed / px(16);
-  s32 leaderTileX = leader->x.fixed / px(16);
+  s32 leaderTileZ = leader->z.fixed / toFIXED(16);
+  s32 leaderTileX = leader->x.fixed / toFIXED(16);
 
   if (leaderTileX > 45 && leaderTileZ > 14 && leaderTileX <= 64 &&
       leaderTileZ <= 16) {
@@ -1045,10 +1045,10 @@ static void LunpaFortress_CheckSecondEntranceSentry(void) {
 static s32 LunpaFortress_IsLeaderInGuardVerticalSight(s32 actorId) {
   struct Actor *guard = Actor_Get(actorId);
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 guardTileZ = guard->z.fixed / px(16);
-  s32 guardTileX = guard->x.fixed / px(16);
-  s32 leaderTileZ = leader->z.fixed / px(16);
-  s32 leaderTileX = leader->x.fixed / px(16);
+  s32 guardTileZ = guard->z.fixed / toFIXED(16);
+  s32 guardTileX = guard->x.fixed / toFIXED(16);
+  s32 leaderTileZ = leader->z.fixed / toFIXED(16);
+  s32 leaderTileX = leader->x.fixed / toFIXED(16);
   s32 zDistance = guardTileZ - leaderTileZ;
 
   if (zDistance >= -6 && zDistance <= 6 && guardTileX - 1 < leaderTileX &&
@@ -1062,10 +1062,10 @@ static s32 LunpaFortress_IsLeaderInGuardVerticalSight(s32 actorId) {
 static s32 LunpaFortress_IsLeaderInGuardHorizontalSight(s32 actorId) {
   struct Actor *guard = Actor_Get(actorId);
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 guardTileZ = guard->z.fixed / px(16);
-  s32 guardTileX = guard->x.fixed / px(16);
-  s32 leaderTileZ = leader->z.fixed / px(16);
-  s32 leaderTileX = leader->x.fixed / px(16);
+  s32 guardTileZ = guard->z.fixed / toFIXED(16);
+  s32 guardTileX = guard->x.fixed / toFIXED(16);
+  s32 leaderTileZ = leader->z.fixed / toFIXED(16);
+  s32 leaderTileX = leader->x.fixed / toFIXED(16);
   s32 xDistance = guardTileX - leaderTileX;
 
   if (xDistance < -6 || xDistance > 6) {
@@ -1098,10 +1098,10 @@ static s32 LunpaFortress_CanGuardSeeLeader(s32 actorId) {
 static s32 LunpaFortress_IsLeaderNearGuard(s32 actorId) {
   struct Actor *guard = Actor_Get(actorId);
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 guardTileZ = guard->z.fixed / px(16);
-  s32 guardTileX = guard->x.fixed / px(16);
-  s32 leaderTileZ = leader->z.fixed / px(16);
-  s32 leaderTileX = leader->x.fixed / px(16);
+  s32 guardTileZ = guard->z.fixed / toFIXED(16);
+  s32 guardTileX = guard->x.fixed / toFIXED(16);
+  s32 leaderTileZ = leader->z.fixed / toFIXED(16);
+  s32 leaderTileX = leader->x.fixed / toFIXED(16);
   s32 xDistance = guardTileX - leaderTileX;
   s32 zDistance;
 
@@ -1124,10 +1124,10 @@ static s32 LunpaFortress_IsLeaderNearGuard(s32 actorId) {
 static s32 LunpaFortress_IsGuardNearViewCenter(s32 actorId) {
   struct Actor *guard = Actor_Get(actorId);
   struct Actor *viewCenter = FieldCamera_GetActor();
-  s32 guardTileX = guard->x.fixed / px(16);
-  s32 guardTileZ = guard->z.fixed / px(16);
-  s32 viewTileX = viewCenter->x.fixed / px(16);
-  s32 viewTileZ = viewCenter->z.fixed / px(16);
+  s32 guardTileX = guard->x.fixed / toFIXED(16);
+  s32 guardTileZ = guard->z.fixed / toFIXED(16);
+  s32 viewTileX = viewCenter->x.fixed / toFIXED(16);
+  s32 viewTileZ = viewCenter->z.fixed / toFIXED(16);
   s32 xDistance = guardTileX - viewTileX;
   s32 zDistance;
 
@@ -1150,8 +1150,8 @@ static void LunpaFortress_CheckGroundFloorDoorApproach(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (GameFlag_Get(GROUND_FLOOR_DOOR_FLAG + 1) == 0) {
-    s32 playerX = leader->x.fixed / px(16);
-    s32 playerZ = leader->z.fixed / px(16);
+    s32 playerX = leader->x.fixed / toFIXED(16);
+    s32 playerZ = leader->z.fixed / toFIXED(16);
 
     if (playerX == 43 && playerZ > 28 && playerZ <= 31) {
       s16 *touchedTrigger = &gFieldWork->stepTrigger;
@@ -1169,8 +1169,8 @@ static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if (GameFlag_Get(UPPER_FLOOR_DOOR_FLAG) == 0) {
-    s32 playerX = leader->x.fixed / px(16);
-    s32 playerZ = leader->z.fixed / px(16);
+    s32 playerX = leader->x.fixed / toFIXED(16);
+    s32 playerZ = leader->z.fixed / toFIXED(16);
 
     if (playerX == 16 && playerZ > 55 && playerZ <= 58 &&
         (leader->facing == FACING_NORTH || leader->facing == FACING_SOUTH)) {
@@ -2688,24 +2688,24 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
-                         actor->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].pixel,
-                         actor->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_MIA, actor->x.part[0].pixel,
-                         actor->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_MIA, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
@@ -3228,7 +3228,7 @@ s32 Scene_Initialize(void) {
     if (mapActor != NULL)
       Actor_SetSpriteFlags(mapActor, 0);
     mapActor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    mapActor->scaleX = 4 * Q16_ONE / 5;
+    mapActor->scaleX = 4 * FIXED_ONE / 5;
   }
   return 0;
 }
@@ -3375,8 +3375,8 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   keyActor = Actor_Get(ACTOR_UPPER_FLOOR_CELL_KEY);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_UPPER_FLOOR_CELL_KEY), 0);
   Actor_SetSpritePriority(ACTOR_UPPER_FLOOR_CELL_KEY, 1);
-  keyActor->scaleX = 3 * Q16_ONE / 4;
-  keyActor->scaleY = 3 * Q16_ONE / 4;
+  keyActor->scaleX = 3 * FIXED_ONE / 4;
+  keyActor->scaleY = 3 * FIXED_ONE / 4;
 }
 
 /// Sets LunpaFortressCave up.

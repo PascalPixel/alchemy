@@ -7,7 +7,7 @@
 #include "gamepak/far_call/battle.h"
 #include "system/system.h"
 #include "gamepak/far_call/field.h"
-#include "system/mul_q16.h"
+#include "system/mul_fx.h"
 #include "resource_ids.h"
 
 /// Who breathes the dragon's fire (BattleEffect_RunDragonFire).
@@ -85,8 +85,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0,
                                0);
     EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-    wave.x = px(128);
-    wave.y = px(40);
+    wave.x = toFIXED(128);
+    wave.y = toFIXED(40);
     drift.x = 0;
     drift.y = 0;
 
@@ -98,7 +98,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       home[index].x = object->x;
       home[index].y = object->z;
       baseAngle[index] = object->angle;
-      heading[index] = (u16)ArcTan2(object->x, object->z);
+      heading[index] = (u16)Trig_Atan(object->x, object->z);
       radius[index] = Iwram_Sqrt((object->x >> 8) * (object->x >> 8) +
                                  (object->z >> 8) * (object->z >> 8)) >>
                       7;
@@ -128,8 +128,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           frame = PROCNE_DROP_FRAME;
       }
 
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
 
       if (frame == 16)
         Sound_PlayFar(SE_RUMBLE);
@@ -157,11 +157,11 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             if (frame > index * 16 + 16)
               spin[index] += 48;
             if (radius[index] <= 31)
-              object->y += px(6);
+              object->y += toFIXED(6);
             else
-              object->y += px(1) / 2;
-            if (object->y > px(124))
-              object->y = px(124);
+              object->y += toFIXED(1) / 2;
+            if (object->y > toFIXED(124))
+              object->y = toFIXED(124);
           }
 
           if (frame <= 490) {
@@ -234,14 +234,14 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             if (point[index].z > 24)
               point[index].z -= 4;
             point[index].velocityY += point[index].velocityX * 2;
-            if (point[index].velocityY > px(1))
-              point[index].velocityY -= px(1);
+            if (point[index].velocityY > toFIXED(1))
+              point[index].velocityY -= toFIXED(1);
             point[index].velocityX += 50;
             if (point[index].velocityX > 4096)
               point[index].velocityX = 4096;
             point[index].velocityY += 2048;
             point[index].y += point[index].velocityY * 2;
-            if (point[index].y > px(48)) {
+            if (point[index].y > toFIXED(48)) {
               point[index].y = 0;
               point[index].z = 100;
               point[index].velocityY = 0;
@@ -278,7 +278,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         for (index = 0; index != args->targetCount; index++) {
           context = BattleObject_GetFar(args->targets[index]);
           object = context->object;
-          object->y = px((Random16() & 15) + 8);
+          object->y = INTtoFIXED((Random16() & 15) + 8);
         }
 
         gProjection.centerX = 72;
@@ -289,7 +289,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           angle = (Random16() & 0x7fff) + 0x9fff;
           work->particles[index].x = Trig_Sin(angle) * speed;
           work->particles[index].y = Trig_Cos(angle) * speed;
-          work->particles[index].z = px(Random16() % 200 - 100);
+          work->particles[index].z = INTtoFIXED(Random16() % 200 - 100);
           work->particles[index].variant = 0;
           index++;
         } while (index != 32);
@@ -313,14 +313,14 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         drift.x /= 2;
         drift.y /= 2;
 
-        scale.x = Q16_ONE;
-        scale.y = Q16_ONE;
+        scale.x = FIXED_ONE;
+        scale.y = FIXED_ONE;
         place[3] = 0;
         index = 0;
         do {
-          place[0] = px(gProcne_GridX[index]) + wave.x + px(40);
-          place[1] = px(255) + index * px(64);
-          place[2] = px(gProcne_GridY[index] + index * 64) + wave.y;
+          place[0] = INTtoFIXED(gProcne_GridX[index]) + wave.x + toFIXED(40);
+          place[1] = toFIXED(255) + index * toFIXED(64);
+          place[2] = INTtoFIXED(gProcne_GridY[index] + index * 64) + wave.y;
           Render_ApplyProjectedPlacementFar(
               (struct ScaledSprite *)work->sprites[index], place, &scale.x, 0);
           index++;
@@ -333,8 +333,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           alive = 0;
           shake[0] = 0;
           shake[1] = 0;
-          Transform_Reset();
-          Transform_ApplyPosition(shake);
+          Matrix_Initialize();
+          Matrix_TranslateVector(shake);
 
           // Until frame 330 the scattered sparks gather on the centre, each
           // a part of its distance a frame; those that have arrived make one
@@ -354,8 +354,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               if (dist != 0) {
                 EffectPosition_ProjectPoint(&point->x, &screen);
                 screen.x = (screen.x >> 17) + (wave.x >> 17) + 32;
-                screen.y =
-                    (Q_16_16_TO_INT(screen.y)) + (Q_16_16_TO_INT(wave.y)) - 4;
+                screen.y = (FIXEDtoINT(screen.y)) + (FIXEDtoINT(wave.y)) - 4;
                 screen.depth >>= 16;
                 if (screen.depth <= 169)
                   screen.depth = 170;
@@ -377,7 +376,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               span = alive / 10 + 1;
               draw[1](canvas, graphics + gBattleEffect_MotePictures[span - 1],
                       (wave.x >> 17) - span / 2 + 32,
-                      (Q_16_16_TO_INT(wave.y)) - span - 4, span, span * 2);
+                      (FIXEDtoINT(wave.y)) - span - 4, span, span * 2);
             }
           }
 
@@ -417,7 +416,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                     transform(&spark[index].x, result);
                   } while (0);
                   screen.x = (screen.x >> 17) + 32;
-                  screen.y = (Q_16_16_TO_INT(screen.y)) + 56;
+                  screen.y = (FIXEDtoINT(screen.y)) + 56;
                   screen.depth >>= 16;
                   if (screen.depth <= 169)
                     screen.depth = 170;
@@ -448,9 +447,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             threshold = index * 12 + 330;
             if (frame == threshold) {
               mark->x = (wave.x >> 17) + 32;
-              mark->y = (Q_16_16_TO_INT(wave.y)) - 4;
+              mark->y = (FIXEDtoINT(wave.y)) - 4;
               mark->velocityX = (wave.x >> 17) + 32;
-              mark->velocityY = (Q_16_16_TO_INT(wave.y)) - 4;
+              mark->velocityY = (FIXEDtoINT(wave.y)) - 4;
 
               slot = 0;
               do {
@@ -458,8 +457,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                 slot++;
               } while (slot != 28);
 
-              drift.x = px(8);
-              drift.y = -px(2);
+              drift.x = toFIXED(8);
+              drift.y = -toFIXED(2);
               work->shakeFrames = 8;
             }
 
@@ -476,8 +475,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               mark->y += 2;
 
               if (frame < threshold + 8) {
-                Transform_ApplyRoll(-2048);
-                Transform_ApplyYaw(-4096);
+                Matrix_RotateZ(-2048);
+                Matrix_RotateY(-4096);
 
                 slot = 0;
                 spark = &work->particles[32];
@@ -492,7 +491,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                   EffectPosition_ProjectPoint(vector, &screen);
                   screen.x =
                       (screen.x >> 17) + work->particles[index + 60].velocityX;
-                  screen.y = (Q_16_16_TO_INT(screen.y)) +
+                  screen.y = (FIXEDtoINT(screen.y)) +
                              work->particles[index + 60].velocityY;
                   screen.depth >>= 16;
                   if (screen.depth <= 169)
@@ -641,11 +640,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
     // The formation enters from above the right edge.
     if (alternate == 1) {
-      focus.x = px(220);
-      focus.y = -px(52);
+      focus.x = toFIXED(220);
+      focus.y = -toFIXED(52);
     } else {
-      focus.x = px(212);
-      focus.y = -px(60);
+      focus.x = toFIXED(212);
+      focus.y = -toFIXED(60);
     }
     EFFECT_FREE_PARTICLES(i, work->particles, 64);
     for (i = 0; i != DRAGON_FIRE_FIREBALLS; i++) {
@@ -682,8 +681,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         }
         frame = DRAGON_FIRE_FLASH_FRAME;
       }
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
       if (frame == 178)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
@@ -715,8 +714,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
           struct Particle *grain = &PARTICLES[i];
 
           if (grain->variant == -1) {
-            grain->x = px((Random16() & 255) - 32);
-            grain->y = px(112);
+            grain->x = INTtoFIXED((Random16() & 255) - 32);
+            grain->y = toFIXED(112);
             grain->velocityX = ((Random16() & 127) + gTiamat_EmberSpeeds[i & 3])
                                << 9;
             grain->velocityY =
@@ -744,15 +743,15 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
               if (mode == DRAGON_FIRE_TIAMAT) {
                 if (alternate == 1) {
-                  spark->x = px((Random16() & 7) + 78);
-                  spark->y = px(78);
+                  spark->x = INTtoFIXED((Random16() & 7) + 78);
+                  spark->y = toFIXED(78);
                 } else {
-                  spark->x = px((Random16() & 7) + 78);
-                  spark->y = px(70);
+                  spark->x = INTtoFIXED((Random16() & 7) + 78);
+                  spark->y = toFIXED(70);
                 }
               } else {
-                spark->x = px((Random16() & 7) + origin.x - 8);
-                spark->y = px(origin.y);
+                spark->x = INTtoFIXED((Random16() & 7) + origin.x - 8);
+                spark->y = INTtoFIXED(origin.y);
               }
               spark->velocityX = speed * Trig_Sin(angle) >> 9;
               spark->velocityY = speed * Trig_Cos(angle) >> 9;
@@ -782,15 +781,15 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
             if (mode == DRAGON_FIRE_TIAMAT) {
               if (alternate == 1) {
-                flash->x = px(72);
-                flash->y = px(72);
+                flash->x = toFIXED(72);
+                flash->y = toFIXED(72);
               } else {
-                flash->x = px(68);
-                flash->y = px(64);
+                flash->x = toFIXED(68);
+                flash->y = toFIXED(64);
               }
             } else {
-              flash->x = px(origin.x);
-              flash->y = px(origin.y);
+              flash->x = INTtoFIXED(origin.x);
+              flash->y = INTtoFIXED(origin.y);
             }
             flash->velocityX = speed * Trig_Sin(angle) >> 6;
             flash->velocityY = speed * Trig_Cos(angle) >> 6;
@@ -831,7 +830,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                   Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
           spark->x += spark->velocityX * dir;
           spark->y += spark->velocityY;
-          spark->velocityY += -px(1) / 64;
+          spark->velocityY += -toFIXED(1) / 64;
           spark->variant++;
           if (spark->variant == 48)
             spark->variant = -1;
@@ -855,11 +854,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
             grain->y += grain->velocityY;
             if (frame > DRAGON_FIRE_BREATH_FRAME) {
               if (i & 1)
-                grain->velocityX += -px(1) / 2;
+                grain->velocityX += -toFIXED(1) / 2;
               else
-                grain->velocityX += -px(1) / 8;
+                grain->velocityX += -toFIXED(1) / 8;
             } else {
-              grain->velocityY += -px(1) / 64;
+              grain->velocityY += -toFIXED(1) / 64;
             }
             grain->variant++;
             if (grain->variant == 256)
@@ -875,8 +874,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       if (mode == DRAGON_FIRE_TIAMAT && frame == 48)
         work->shakeFrames = 8;
       if (frame >= 40 && frame <= 47) {
-        focus.x += -px(8);
-        focus.y += px(16);
+        focus.x += -toFIXED(8);
+        focus.y += toFIXED(16);
       }
       if (mode == DRAGON_FIRE_TIAMAT) {
         if (frame == DRAGON_FIRE_BREATH_FRAME) {

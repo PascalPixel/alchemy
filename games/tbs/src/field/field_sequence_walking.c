@@ -70,7 +70,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   position.vector.x = leader->x.fixed;
   position.vector.y = leader->y.fixed;
   position.vector.z = leader->z.fixed;
-  Vector_AddPolarOffset(px(16), leader->facing, position.coordinates);
+  Vector_AddPolarOffset(toFIXED(16), leader->facing, position.coordinates);
 
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     // World Map cell pictures are 32 pixels square, 32 to a row.
@@ -95,13 +95,13 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 
     fixedX = position.vector.x;
     if (fixedX < 0)
-      fixedX += px(MAPGRID_CELL_PIXELS) - 1;
+      fixedX += toFIXED(MAPGRID_CELL_PIXELS) - 1;
     {
       u32 tileX = FIELD_CELL(fixedX);
 
       fixedZ = position.vector.z;
       if (fixedZ < 0)
-        fixedZ += px(MAPGRID_CELL_PIXELS) - 1;
+        fixedZ += toFIXED(MAPGRID_CELL_PIXELS) - 1;
 
       tile = (u8 *)((u32)tile +
                     ((tileX + FIELD_CELL(fixedZ) * MAPGRID_SIZE) << 2));
@@ -192,15 +192,15 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
     previousHp[i] = Unit_GetFar(gMainRoutineWork.party[i])->hp;
 
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    tile = &(
-        (struct MapGridCell *)
-            Ram_CellPictures)[((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)];
+    tile = &((
+        struct MapGridCell *)Ram_CellPictures)[((x / toFIXED(32)) & 31) +
+                                               (((z / toFIXED(32)) & 31) << 5)];
   } else {
     if ((u32)layer <= MAPGRID_LAYER_OVERHEAD)
       tile = gridState->layers[layer].cells;
     else
       tile = (struct MapGridCell *)gMapGridCellBuffer;
-    tile = &tile[(x / px(16)) + ((z / px(16)) << 7)];
+    tile = &tile[(x / toFIXED(16)) + ((z / toFIXED(16)) << 7)];
   }
   event = tile->behavior;
   work->previousCell = work->currentCell;
@@ -237,17 +237,17 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
       work->encounter = Encounter_RollMapStep(0, encounterSpeed);
     }
 
-    // Every Q16_ONE of distance walked (counted at half speed on ground whose
+    // Every FIXED_ONE of distance walked (counted at half speed on ground whose
     // encounter zone is 0; fullEncounterRate holds that zone, 1 on the World
     // Map), the party regains PP, Djinn recover, and poison hurts.
-    stepDistance = Iwram_MulQ16(work->walkingDistanceScale, leader->speedLimit);
+    stepDistance = Iwram_MulFX(work->walkingDistanceScale, leader->speedLimit);
     if (!fullEncounterRate)
       stepDistance /= 2;
     accumulatedDistance = work->walkingDistance + stepDistance;
     work->walkingDistance = accumulatedDistance;
-    if (accumulatedDistance >= Q16_ONE) {
-      amount = accumulatedDistance / Q16_ONE;
-      work->walkingDistance = accumulatedDistance & (Q16_ONE - 1);
+    if (accumulatedDistance >= FIXED_ONE) {
+      amount = accumulatedDistance / FIXED_ONE;
+      work->walkingDistance = accumulatedDistance & (FIXED_ONE - 1);
       Party_AddPp(amount, 0);
       if (DjinnRecovery_CountDownFar())
         Sound_PlayFar(SE_DJINNI_SET);
@@ -262,7 +262,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
     if (gMainRoutineWork.hazardMode == HAZARD_COUNT_ON_CELLS &&
         event == CELL_BEHAVIOR_DESERT_SAND) {
       if (work->previousCell->behavior == CELL_BEHAVIOR_DESERT_SAND)
-        gMainRoutineWork.hazardSteps += leader->speedLimit / Q16_ONE;
+        gMainRoutineWork.hazardSteps += leader->speedLimit / FIXED_ONE;
       else
         gMainRoutineWork.hazardSteps = gMainRoutineWork.hazardLimit / 2;
     }
@@ -307,7 +307,7 @@ void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z) {
   if (partyHurt) {
     work->fallenCount = 0;
     work->survivorCount = 0;
-    leader->velocityY = px(4);
+    leader->velocityY = toFIXED(4);
     FieldEffect_SetAttached(leaderId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     for (i = 0; i < partyCount; i++) {

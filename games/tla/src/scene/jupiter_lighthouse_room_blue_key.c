@@ -170,8 +170,8 @@ s32 PushTarget_FillFootprint(s32 id);
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = Q16_ONE * 3 / 4;
-  Actor_Get(ACTOR_ARCHER_STATUE)->scaleY = Q16_ONE * 3 / 4;
+  Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = FIXED_ONE * 3 / 4;
+  Actor_Get(ACTOR_ARCHER_STATUE)->scaleY = FIXED_ONE * 3 / 4;
   FieldActor_SetSpritePriority(ACTOR_FIRST_LOG + 1, 3);
   FieldActor_SetSpritePriority(ACTOR_FIRST_LOG + 3, 3);
   Actor_DisableById(ACTOR_FIRST_LOG);
@@ -200,8 +200,8 @@ s32 Scene_PrepareMap(void) {
     struct Actor *object = Actor_Get(ACTOR_PILLAR);
 
     object->motionFlags = 0;
-    object->groundHeight = -px(32);
-    object->y.fixed = -px(32);
+    object->groundHeight = -toFIXED(32);
+    object->y.fixed = -toFIXED(32);
     Actor_SetPosition(ACTOR_PILLAR, 104, 232);
     MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
     MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
@@ -269,8 +269,8 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(SE_WHIRLWIND);
-  position.x = source->x + Math_MulQ16(px(8), Trig_Cos(source->angle));
-  position.z = source->z + Math_MulQ16(px(8), Math_Sin(source->angle));
+  position.x = source->x + Math_MulFX(toFIXED(8), Trig_Cos(source->angle));
+  position.z = source->z + Math_MulFX(toFIXED(8), Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
                                                    source->y, position.z));
   Import_ActorSelectAnimation(object, 2);
@@ -282,11 +282,11 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   object->unk62 = 0;
   object->unk63 = 0;
   object->update = Whirlwind_Update;
-  object->speedLimit = px(3) / 2;
+  object->speedLimit = toFIXED(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, px(3),
-                    &options);
+  FieldEffect_Spawn(position.x, source->y, position.z - toFIXED(6), 0, 0, 0,
+                    toFIXED(3), &options);
   return object;
 }
 
@@ -324,8 +324,8 @@ s32 PushTarget_FillFootprint(s32 id) {
     return 0;
   width = (ABS(gPushFootprints[j][0]) + ABS(gPushFootprints[j][2])) >> 4;
   height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
-  x = FIELD_CELL(object->x.fixed + px(gPushFootprints[j][0]));
-  z = FIELD_CELL(object->z.fixed + px(gPushFootprints[j][1]));
+  x = FIELD_CELL(object->x.fixed + toFIXED(gPushFootprints[j][0]));
+  z = FIELD_CELL(object->z.fixed + toFIXED(gPushFootprints[j][1]));
   mapX = FIELD_CELL(map->layers[1].offsetX);
   i = mapX;
   mapZ = FIELD_CELL(map->layers[1].offsetY);
@@ -383,8 +383,10 @@ void PushTarget_PushFill(struct PushTarget target) {
   acceleration = leader->acceleration;
   from[0] = object->x.fixed;
   from[2] = object->z.fixed;
-  cell[0] = FIELD_CELL(object->x.fixed + px(gPushFootprints[footprint][0]));
-  cell[2] = FIELD_CELL(object->z.fixed + px(gPushFootprints[footprint][1]));
+  cell[0] =
+      FIELD_CELL(object->x.fixed + toFIXED(gPushFootprints[footprint][0]));
+  cell[2] =
+      FIELD_CELL(object->z.fixed + toFIXED(gPushFootprints[footprint][1]));
   width = (ABS(gPushFootprints[footprint][0]) +
            ABS(gPushFootprints[footprint][2])) >>
           4;
@@ -409,7 +411,7 @@ void PushTarget_PushFill(struct PushTarget target) {
     Import_ActorSelectAnimation(object, 2);
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
-  FieldActor_SetMoveTargetFixed(object, target.x, target.y, target.z);
+  FieldActor_SetMoveTargetFX(object, target.x, target.y, target.z);
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
@@ -429,8 +431,8 @@ void PushTarget_PushFill(struct PushTarget target) {
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
                                        target.z);
   Import_ActorSelectAnimation(object, 1);
-  target.x = target.x + px(gPushFootprints[footprint][0]);
-  target.z = target.z + px(gPushFootprints[footprint][1]);
+  target.x = target.x + toFIXED(gPushFootprints[footprint][0]);
+  target.z = target.z + toFIXED(gPushFootprints[footprint][1]);
   target.x >>= 20;
   target.z >>= 20;
   originX = FIELD_CELL(map->layers[1].offsetX);
@@ -441,8 +443,8 @@ void PushTarget_PushFill(struct PushTarget target) {
                                          255);
   PushedActor_FillGridAttributeRectangle(2, target.x, target.z, width, height,
                                          255);
-  cell[0] = FIELD_CELL(from[0] + px(gPushFootprints[footprint][0]));
-  cell[2] = FIELD_CELL(from[2] + px(gPushFootprints[footprint][1]));
+  cell[0] = FIELD_CELL(from[0] + toFIXED(gPushFootprints[footprint][0]));
+  cell[2] = FIELD_CELL(from[2] + toFIXED(gPushFootprints[footprint][1]));
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);

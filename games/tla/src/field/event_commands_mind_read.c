@@ -79,7 +79,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
       spriteId = descriptor->sprite;
       from.x = source->x.fixed;
       metadata = Resource_GetMetadataRecordFarFar(spriteId);
-      from.y = source->y.fixed + px((s8)metadata->boxX) - px(2);
+      from.y = source->y.fixed + INTtoFIXED((s8)metadata->boxX) - toFIXED(2);
       from.z = source->z.fixed;
       sprite = target->sprite;
       descriptor =
@@ -91,26 +91,26 @@ void FieldPsynergy_UpdateMindReadWave(void) {
         s32 box = (s8)metadata->boxX;
         s32 y = target->y.fixed;
 
-        y += px(box);
-        to.y = y - px(2);
+        y += INTtoFIXED(box);
+        to.y = y - toFIXED(2);
       }
       to.z = target->z.fixed;
-      if (sprite->rotation == TRIG_TURN / 2) {
-        to.y -= px(24);
-      } else if (sprite->rotation == TRIG_TURN / 4) {
-        to.x += px(6);
-        to.y -= px(12);
+      if (sprite->rotation == DEGtoANG(180)) {
+        to.y -= toFIXED(24);
+      } else if (sprite->rotation == DEGtoANG(90)) {
+        to.x += toFIXED(6);
+        to.y -= toFIXED(12);
       } else if (sprite->rotation == TRIG_TURN * 3 / 4) {
-        to.x -= px(6);
-        to.y -= px(12);
+        to.x -= toFIXED(6);
+        to.y -= toFIXED(12);
       }
       object = Actor_CreateFar(SPRITE_CRESCENT, to.x, to.y, to.z);
       if (object != NULL) {
         sprite = object->sprite;
         object->motionFlags = 0;
-        object->speedLimit = px(16) / 25; // 0.64 pixels a frame
-        object->acceleration = px(16) / 25;
-        object->facing = ArcTan2(from.z - to.z, from.x - to.x);
+        object->speedLimit = toFIXED(16) / 25; // 0.64 pixels a frame
+        object->acceleration = toFIXED(16) / 25;
+        object->facing = Trig_Atan(from.z - to.z, from.x - to.x);
         object->update = (void (*)(void))FieldEffect_ReleaseOnArrival;
         sprite->flags = 0;
         sprite->priority = 1;
@@ -175,7 +175,7 @@ void FieldEffect_AdvanceHueCycle(void) {
   work->red = (r / 4 + 4) & 31;
   work->green = (g / 4 + 4) & 31;
   work->blue = (b / 4 + 4) & 31;
-  limit = px(359);
+  limit = toFIXED(359);
   if ((u32)((work->hue += 4) << 16) > limit)
     work->hue = 0;
 }
@@ -240,7 +240,7 @@ void FieldEffect_UpdateMoveHand(struct Actor *source) {
     s32 dz = target->z.fixed - source->z.fixed;
 
     if (dx != 0 || dz != 0) {
-      turn = (s16)(ArcTan2(dz, dx) - source->facing);
+      turn = (s16)(Trig_Atan(dz, dx) - source->facing);
       if (turn > FACING_STEP)
         turn = FACING_STEP;
       if (turn < -FACING_STEP)
@@ -254,7 +254,7 @@ void FieldEffect_UpdateMoveHand(struct Actor *source) {
   // The particle starts 8 to 24 pixels lower and up to 48 pixels away in a
   // random direction.
   position.x = source->x.fixed;
-  position.y = source->y.fixed - (Random16() << 4) - px(8);
+  position.y = source->y.fixed - (Random16() << 4) - toFIXED(8);
   position.z = source->z.fixed;
   radius = Random16() * 3;
   radius <<= 4;
@@ -303,7 +303,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
   scene = Ram_HeapSlots->fieldEffectWork;
   user = scene->mainActor;
   target = scene->child;
-  angle = (u16)scene->angle + TRIG_TURN / 2;
+  angle = (u16)scene->angle + DEGtoANG(180);
   moved = 0;
   /* FAKEMATCH(temporary): a byte pointer standing in for target->terrainId at
    * the save and the restore. */
@@ -325,17 +325,17 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
       PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy,
       Scene_SelectPsynergyTarget(scene->fieldPsynergy));
   pusher->watchedActor = target;
-  SET_POSITION(&position, target->x.fixed, target->y.fixed + px(16),
+  SET_POSITION(&position, target->x.fixed, target->y.fixed + toFIXED(16),
                target->z.fixed);
-  Vector_AddPolarOffset(px(16), angle, &position);
+  Vector_AddPolarOffset(toFIXED(16), angle, &position);
   Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
   FieldEffect_SnapScaleToFull(pusher);
-  pusher->speedLimit = px(4);
-  pusher->acceleration = Q16_ONE / 2;
+  pusher->speedLimit = toFIXED(4);
+  pusher->acceleration = FIXED_ONE / 2;
   pusher->motionFlags = 4;
   target->update = (void (*)(void))Actor_CycleSpriteColors;
-  target->speedLimit = px(2) / 5;
-  target->acceleration = px(1) / 5;
+  target->speedLimit = toFIXED(2) / 5;
+  target->acceleration = toFIXED(1) / 5;
   target->steeringFlags = moved;
   // Through target rather than layer, which keeps moved's load after the
   target->layer = 2;
@@ -355,9 +355,9 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
       if (direction == 0xffff)
         break;
     } else if (direction == 0xffff) {
-      SET_POSITION(&position, target->x.fixed, target->y.fixed + px(16),
+      SET_POSITION(&position, target->x.fixed, target->y.fixed + toFIXED(16),
                    target->z.fixed);
-      Vector_AddPolarOffset(px(16), angle, &position);
+      Vector_AddPolarOffset(toFIXED(16), angle, &position);
       Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
       Actor_SelectAnimationFar(pusher, 1);
       pusher->velocityX = 0;
@@ -366,16 +366,16 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
       continue;
     }
 
-    SET_POSITION(&position, target->x.fixed, target->y.fixed + px(16),
+    SET_POSITION(&position, target->x.fixed, target->y.fixed + toFIXED(16),
                  target->z.fixed);
-    Vector_AddPolarOffset(px(16), angle, &position);
-    Vector_AddPolarOffset(px(2), direction, &position);
+    Vector_AddPolarOffset(toFIXED(16), angle, &position);
+    Vector_AddPolarOffset(toFIXED(2), direction, &position);
     Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
     Actor_WaitForMoveFar(pusher);
     SET_POSITION(&position, target->x.fixed, target->y.fixed, target->z.fixed);
-    Vector_AddPolarOffset(px(16), direction, &position);
+    Vector_AddPolarOffset(toFIXED(16), direction, &position);
     SET_POSITION(&beyond, target->x.fixed, target->y.fixed, target->z.fixed);
-    Vector_AddPolarOffset(px(32), direction, &beyond);
+    Vector_AddPolarOffset(toFIXED(32), direction, &beyond);
     if (MapGrid_CheckCollisionFar(target, &position) > 0) {
       Actor_SelectAnimationFar(pusher, 4);
       if ((gFrameCount & 15) == 0)
@@ -419,18 +419,19 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
     Actor_SelectAnimationFar(pusher, modes[(u16)(angle - direction) >> 14]);
     wait(15);
     target->paused = 0;
-    target->speedLimit = px(1) / 5;
-    target->acceleration = px(1) / 5;
+    target->speedLimit = toFIXED(1) / 5;
+    target->acceleration = toFIXED(1) / 5;
     Actor_SetMoveTargetFar(target, position.x, position.y, position.z);
     pusher->motionFlags = 0;
-    pusher->speedLimit = px(1) / 5;
-    pusher->acceleration = px(1) / 5;
-    Vector_AddPolarOffset(px(16), direction, &position);
-    Actor_SetMoveTargetFar(pusher, position.x, position.y + px(16), position.z);
+    pusher->speedLimit = toFIXED(1) / 5;
+    pusher->acceleration = toFIXED(1) / 5;
+    Vector_AddPolarOffset(toFIXED(16), direction, &position);
+    Actor_SetMoveTargetFar(pusher, position.x, position.y + toFIXED(16),
+                           position.z);
     if (moved == 1) {
       Actor_GetById(scene->firstActorId)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      user->speedLimit = px(1) / 5;
-      user->acceleration = px(1) / 5;
+      user->speedLimit = toFIXED(1) / 5;
+      user->acceleration = toFIXED(1) / 5;
       Actor_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);
     }
     Actor_WaitForMoveFar(target);
@@ -479,11 +480,11 @@ next_state:
     position.x = effect->originX;
     position.z = effect->originZ;
     angle = Random16();
-    Vector_AddPolarOffset(px(30), (u16)angle, &position);
+    Vector_AddPolarOffset(toFIXED(30), (u16)angle, &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
-    effect->acceleration = px(4);
-    effect->maxSpeed = px(4);
+    effect->acceleration = toFIXED(4);
+    effect->maxSpeed = toFIXED(4);
     effect->limitTurnStep = state;
     effect->state++;
     return;
@@ -548,33 +549,33 @@ void *FieldEffect_SpawnMoveHand(void *object) {
   u32 spread;
   u32 jitter;
 
-  angle = (source->facing + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
+  angle = (source->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
   parent = Actor_Spawn(SPRITE_MOVE_HAND, source->x.fixed,
-                       source->y.fixed + px(16), source->z.fixed);
+                       source->y.fixed + toFIXED(16), source->z.fixed);
   if (parent == 0)
     return 0;
-  parent->scaleY = Q16_ONE / 4;
-  parent->scaleX = Q16_ONE / 4;
+  parent->scaleY = FIXED_ONE / 4;
+  parent->scaleX = FIXED_ONE / 4;
   parent->update = FieldEffect_UpdateMoveHand;
-  parent->speedLimit = px(2);
-  parent->acceleration = px(2);
+  parent->speedLimit = toFIXED(2);
+  parent->acceleration = toFIXED(2);
   parent->motionFlags = 0;
   Actor_SelectAnimationFar(parent, 3);
-  Actor_SetTargetPositionFromMagnitudeAngle(parent, px(16), angle);
+  Actor_SetTargetPositionFromMagnitudeAngle(parent, toFIXED(16), angle);
 
   for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
     child = Actor_Spawn(SPRITE_SPARKLE, source->x.fixed,
-                        source->y.fixed + px(16), source->z.fixed);
+                        source->y.fixed + toFIXED(16), source->z.fixed);
     if (child != 0) {
       Actor_StartScriptFar(child, gFieldEffect_FragmentScript);
-      speed = Random16() + Q16_ONE;
-      child->acceleration = px(1);
+      speed = Random16() + FIXED_ONE;
+      child->acceleration = toFIXED(1);
       child->speedLimit = speed;
       child->motionFlags = 2;
-      child->gravity = px(1) / 50;
+      child->gravity = toFIXED(1) / 50;
       spread = Random16();
       child->velocityY = spread - Random16();
-      radius = Random16() * 24 + px(8);
+      radius = Random16() * 24 + toFIXED(8);
       jitter = Random16();
       Actor_SetTargetPositionFromMagnitudeAngle(
           child, radius, ((jitter - Random16()) >> 3) + source->facing);
@@ -592,11 +593,11 @@ void FieldEffect_SnapScaleToFull(struct Actor *actor) {
 
   if (actor != NULL) {
     scale = actor->scaleX;
-    if (scale < Q16_ONE) {
+    if (scale < FIXED_ONE) {
       do {
-        next = scale + Q16_ONE / 16;
+        next = scale + FIXED_ONE / 16;
         scale = next;
-      } while (next < Q16_ONE);
+      } while (next < FIXED_ONE);
       actor->scaleX = next;
       actor->scaleY = next;
     }
@@ -615,10 +616,10 @@ void UpdateRisingParticleBurst(void *object) {
 
   Sound_PlayFar(SE_CAST);
   for (i = 30; i >= 0; i--) {
-    src->y.fixed += px(1);
-    src->facing += TRIG_TURN / 8; // 1/8 turn
-    src->scaleX += -Q16_ONE / 32;
-    src->scaleY += -Q16_ONE / 32;
+    src->y.fixed += toFIXED(1);
+    src->facing += DEGtoANG(45); // 1/8 turn
+    src->scaleX += -FIXED_ONE / 32;
+    src->scaleY += -FIXED_ONE / 32;
     wait(1);
   }
   for (i = 7; i >= 0; i--) {
@@ -635,11 +636,11 @@ void UpdateRisingParticleBurst(void *object) {
       child->acceleration = unit;
       child->speedLimit = speed + unit;
       child->motionFlags = 2;
-      child->gravity = px(1) / 25;
+      child->gravity = toFIXED(1) / 25;
       spread = Random16();
       child->velocityY = spread - Random16();
       dist = Random16() * 24;
-      dist += px(8);
+      dist += toFIXED(8);
       Actor_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());
     }
   }
@@ -681,8 +682,9 @@ void FieldPsynergy_WatchLeaderDistance(void) {
   // 0.82) for the comparison, so the edge is an ellipse 60 pixels up and
   // down from the centre and about 73 to either side.
   distanceX =
-      Iwram_MulQ16(work->revealCenterX - actor->x.fixed / Q16_ONE, 0xd105);
-  distanceZ = work->revealCenterY - (actor->z.fixed - actor->y.fixed) / Q16_ONE;
+      Iwram_MulFX(work->revealCenterX - actor->x.fixed / FIXED_ONE, 0xd105);
+  distanceZ =
+      work->revealCenterY - (actor->z.fixed - actor->y.fixed) / FIXED_ONE;
   if (distanceX * distanceX + distanceZ * distanceZ >= 3600 ||
       work->revealFrames == 0) {
     // Raise Reveal as a Psynergy request that pays no PP (ACT_PACKED
@@ -714,7 +716,7 @@ void FieldPsynergy_Reveal(void) {
   caster = scene->mainActor;
   transition->centreX = caster->x.fixed;
   transition->centreY = caster->z.fixed - caster->y.fixed;
-  PaletteFade_SetSource(Q16_ONE, 0);
+  PaletteFade_SetSource(FIXED_ONE, 0);
   PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, 1);
   PaletteFade_StartInterpolation(1);
   event->revealActive = 0;
@@ -727,8 +729,8 @@ void FieldPsynergy_Reveal(void) {
     Field_RunPsynergyEvent(pending, scene->firstActorId, scene->secondActorId);
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   Io_Write8(1, &event->revealActive);
-  event->revealCenterX = transition->centreX / Q16_ONE;
-  event->revealCenterY = transition->centreY / Q16_ONE;
+  event->revealCenterX = transition->centreX / FIXED_ONE;
+  event->revealCenterY = transition->centreY / FIXED_ONE;
   event->revealFrames = REVEAL_FRAMES;
   event->effectTimerRunning = 1;
   FieldEffect_SpawnRevealMarkers();
@@ -756,10 +758,10 @@ void FieldPsynergy_EndReveal(void) {
     event->revealActive = 0;
     event->revealFrames = 0;
     Actor_SetRevealSpriteColor(0);
-    PaletteFade_SetTarget(Q16_ONE, 1);
+    PaletteFade_SetTarget(FIXED_ONE, 1);
     PaletteFade_StartInterpolation(1);
     PaletteFade_SetSource(0, 0);
-    PaletteFade_SetTarget(Q16_ONE, 0);
+    PaletteFade_SetTarget(FIXED_ONE, 0);
     PaletteFade_StartInterpolation(30);
     wait(1);
     pending = Scene_FindPsynergyTrigger(
@@ -819,7 +821,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
 
       p->values[0] = scene->x;
       p->values[2] = scene->z;
-      distance = Random16() * 6 + px(4);
+      distance = Random16() * 6 + toFIXED(4);
       Vector_AddPolarOffset(distance, Random16(), p->values);
       p->values[1] = scene->y;
       piece = Actor_Spawn(BURST_FALL_OBJECT, p->values[0], p->values[1],
@@ -893,19 +895,19 @@ void FieldEffect_SpawnBurstParticleField(void) {
     struct BurstParticleVisual *child;
     s32 dist;
 
-    if (*(u16 *)&work->angle == TRIG_TURN / 4) {
+    if (*(u16 *)&work->angle == DEGtoANG(90)) {
       pos[0] = user->x.fixed;
-      pos[1] = user->y.fixed + px(10);
+      pos[1] = user->y.fixed + toFIXED(10);
       pos[2] = user->z.fixed;
     } else if (*(u16 *)&work->angle == TRIG_TURN * 3 / 4) {
       pos[0] = user->x.fixed;
-      pos[1] = user->y.fixed + px(24);
+      pos[1] = user->y.fixed + toFIXED(24);
       pos[2] = user->z.fixed;
     } else {
       pos[0] = user->x.fixed;
-      pos[1] = user->y.fixed + px(10);
+      pos[1] = user->y.fixed + toFIXED(10);
       pos[2] = user->z.fixed;
-      Vector_AddPolarOffset(px(10), *(u16 *)&work->angle, pos);
+      Vector_AddPolarOffset(toFIXED(10), *(u16 *)&work->angle, pos);
     }
 
     obj = Actor_Spawn(SPRITE_PARTICLE, pos[0], pos[1], pos[2]);
@@ -920,8 +922,8 @@ void FieldEffect_SpawnBurstParticleField(void) {
     if (obj != 0) {
       obj->scaleY = 0xb333;
       obj->scaleX = 0xb333;
-      obj->acceleration = px(3) / 2;
-      obj->speedLimit = px(3) / 2;
+      obj->acceleration = toFIXED(3) / 2;
+      obj->speedLimit = toFIXED(3) / 2;
       obj->motionFlags = 0;
       Actor_SetSpriteColorModeFar(obj, SPRITE_COLOR_GREEN_TINT);
       Actor_SelectAnimationFar(obj, 7);
@@ -933,8 +935,8 @@ void FieldEffect_SpawnBurstParticleField(void) {
       p[1] = work->y;
       p[2] = work->z;
       if (*(u16 *)&work->angle == TRIG_TURN * 3 / 4)
-        Vector_AddPolarOffset(px(14), *(u16 *)&work->angle, p);
-      dist = Random16() * 6 + px(4);
+        Vector_AddPolarOffset(toFIXED(14), *(u16 *)&work->angle, p);
+      dist = Random16() * 6 + toFIXED(4);
       Vector_AddPolarOffset(dist, Random16(), p);
       Actor_SetMoveTargetFar(obj, p[0], p[1], p[2]);
     }
@@ -968,12 +970,12 @@ void FieldPsynergy_LiftOnTarget(void) {
 
   x = effectWork->x;
   position[0] = x;
-  y = effectWork->y + px(16);
+  y = effectWork->y + toFIXED(16);
   position[1] = y;
   z = effectWork->z;
   position[2] = z;
-  anchors[0] = FieldEffect_SpawnLiftHand(x + px(32), y, z, FACING_WEST);
-  anchors[1] = FieldEffect_SpawnLiftHand(position[0] - px(32), position[1],
+  anchors[0] = FieldEffect_SpawnLiftHand(x + toFIXED(32), y, z, FACING_WEST);
+  anchors[1] = FieldEffect_SpawnLiftHand(position[0] - toFIXED(32), position[1],
                                          position[2], FACING_EAST);
 
   wait(15);
@@ -981,7 +983,7 @@ void FieldPsynergy_LiftOnTarget(void) {
     void *anchor = anchors[index];
     if (anchor != 0)
       Actor_SetTargetPositionFromMagnitudeAngle(
-          anchor, px(14), ((struct Actor *)anchor)->facing);
+          anchor, toFIXED(14), ((struct Actor *)anchor)->facing);
   }
 
   Actor_WaitForMoveFar(anchors[0]);
@@ -991,13 +993,13 @@ void FieldPsynergy_LiftOnTarget(void) {
   ((struct EffectChild *)child)->flag = 4;
 
   startY = ((struct EffectChild *)child)->y;
-  if (anchors[0] != 0 && anchors[1] != 0 && startY <= startY + px(32)) {
+  if (anchors[0] != 0 && anchors[1] != 0 && startY <= startY + toFIXED(32)) {
     do {
-      ((struct Actor *)anchors[0])->y.fixed += px(1) / 4;
-      ((struct Actor *)anchors[1])->y.fixed += px(1) / 4;
-      ((struct EffectChild *)child)->y += px(1) / 4;
+      ((struct Actor *)anchors[0])->y.fixed += toFIXED(1) / 4;
+      ((struct Actor *)anchors[1])->y.fixed += toFIXED(1) / 4;
+      ((struct EffectChild *)child)->y += toFIXED(1) / 4;
       wait(1);
-    } while (((struct EffectChild *)child)->y <= startY + px(32));
+    } while (((struct EffectChild *)child)->y <= startY + toFIXED(32));
   }
 
   UpdateRisingParticleBurst(anchors[0]);
@@ -1019,29 +1021,30 @@ void FieldPsynergy_Lift(void) {
 
   work = Ram_HeapSlots->fieldEffectWork;
   FieldPsynergy_FadeToCastColor();
-  SET_POSITION(&pos, work->x, work->y + px(16), work->z);
-  pair[0] = FieldEffect_SpawnLiftHand(pos.x + px(32), pos.y, pos.z, 0x8000);
-  pair[1] = FieldEffect_SpawnLiftHand(pos.x - px(32), pos.y, pos.z, 0);
+  SET_POSITION(&pos, work->x, work->y + toFIXED(16), work->z);
+  pair[0] =
+      FieldEffect_SpawnLiftHand(pos.x + toFIXED(32), pos.y, pos.z, 0x8000);
+  pair[1] = FieldEffect_SpawnLiftHand(pos.x - toFIXED(32), pos.y, pos.z, 0);
 
   wait(15);
   walk = pair;
   for (n = 0; n < 2; n++) {
     obj = *walk++;
     if (obj != 0)
-      Actor_SetTargetPositionFromMagnitudeAngle(obj, px(24), obj->facing);
+      Actor_SetTargetPositionFromMagnitudeAngle(obj, toFIXED(24), obj->facing);
   }
 
   Actor_WaitForMoveFar(pair[0]);
   Sound_PlayFar(SE_HEAVY_IMPACT);
   for (n = 0; n < 24; n++) {
-    SET_POSITION(&pos, work->x, work->y + px(16), work->z);
+    SET_POSITION(&pos, work->x, work->y + toFIXED(16), work->z);
     obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (obj != 0) {
       Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);
-      obj->speedLimit = Random16() + px(2);
-      obj->acceleration = px(2);
+      obj->speedLimit = Random16() + toFIXED(2);
+      obj->acceleration = toFIXED(2);
       obj->motionFlags = 0;
-      dist = Random16() * 24 + px(8);
+      dist = Random16() * 24 + toFIXED(8);
       Actor_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());
     }
   }
@@ -1060,17 +1063,17 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
   Sound_PlayFar(SE_ITEM_BREAK);
   object = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
   if (object != NULL) {
-    object->scaleX = object->scaleY = Q16_ONE / 4;
-    object->acceleration = object->speedLimit = px(3);
+    object->scaleX = object->scaleY = FIXED_ONE / 4;
+    object->acceleration = object->speedLimit = toFIXED(3);
     ((struct Sprite *)object->sprite)->image.priority = 0;
     Actor_SelectAnimationFar(object, 3);
     scale = object->scaleX;
-    if (scale < Q16_ONE) {
+    if (scale < FIXED_ONE) {
       do {
         scale += 0x800;
         object->scaleY = scale;
         object->scaleX = scale;
-        object->facing += TRIG_TURN / 8;
+        object->facing += DEGtoANG(45);
         wait(1);
         scale = object->scaleX;
       } while (scale <= 0xffff);
@@ -1096,11 +1099,11 @@ again:
     // 25 pixels from the origin, in a random direction.
     pos.x = effect->originX;
     pos.z = effect->originZ;
-    Vector_AddPolarOffset(px(25), (u16)Random16(), &pos);
+    Vector_AddPolarOffset(toFIXED(25), (u16)Random16(), &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
-    effect->acceleration = px(3);
-    effect->maxSpeed = px(3);
+    effect->acceleration = toFIXED(3);
+    effect->maxSpeed = toFIXED(3);
     effect->limitTurnStep = 0;
     effect->state++;
     return;
@@ -1121,11 +1124,11 @@ again:
     struct Actor *caster = effectWork->mainActor;
 
     pos.x = caster->x.fixed;
-    pos.y = caster->y.fixed + px(16);
+    pos.y = caster->y.fixed + toFIXED(16);
     pos.z = caster->z.fixed;
-    Vector_AddPolarOffset(px(8), effectWork->angle, &pos);
+    Vector_AddPolarOffset(toFIXED(8), effectWork->angle, &pos);
     Camera_WorldToScreen(&pos);
-    Vector_AddPolarOffset(px(4), Random16(), &pos);
+    Vector_AddPolarOffset(toFIXED(4), Random16(), &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->maxTurnStep = TRIG_TURN / 32;
@@ -1151,7 +1154,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *source) {
   pos.x = source->x.fixed;
   pos.y = source->y.fixed;
   pos.z = source->z.fixed;
-  impact = Actor_Spawn(SPRITE_STAR_BURST, pos.x, pos.y - px(32), pos.z);
+  impact = Actor_Spawn(SPRITE_STAR_BURST, pos.x, pos.y - toFIXED(32), pos.z);
   if (impact != NULL) {
     impact->motionFlags = 0;
     impact->wait = 20;
@@ -1163,11 +1166,11 @@ s32 SpawnHeavyImpactEffect(struct Actor *source) {
     fragment = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (fragment != NULL) {
       Actor_StartScriptFar(fragment, gFieldEffect_FragmentScript);
-      fragment->speedLimit = Random16() + px(1);
-      fragment->acceleration = px(1);
+      fragment->speedLimit = Random16() + toFIXED(1);
+      fragment->acceleration = toFIXED(1);
       fragment->motionFlags = 0;
       Actor_SetTargetPositionFromMagnitudeAngle(
-          fragment, Random16() * 24 + px(8), Random16());
+          fragment, Random16() * 24 + toFIXED(8), Random16());
     }
   }
   return 0;
@@ -1200,38 +1203,38 @@ void FieldPsynergy_Force(void) {
 
   for (i = 0; i <= 11; i++) {
     source = scene->mainActor;
-    SET_POSITION(&pos, source->x.fixed, source->y.fixed + px(16),
+    SET_POSITION(&pos, source->x.fixed, source->y.fixed + toFIXED(16),
                  source->z.fixed);
     Camera_WorldToScreen(&pos);
     FieldParticle_Initialize(slot, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(slot, FieldEffect_UpdateRadialBurst);
     FieldParticle_SetActorMode(slot, 7);
     Sprite_SetAnimationColorModesFar(slot->object, SPRITE_COLOR_BLUE_TINT);
-    slot->scaleY = Q16_ONE * 7 / 10;
-    slot->scaleX = Q16_ONE * 7 / 10;
+    slot->scaleY = FIXED_ONE * 7 / 10;
+    slot->scaleX = FIXED_ONE * 7 / 10;
     wait(2);
     slot++;
   }
 
   source = scene->mainActor;
-  SET_POSITION(&pos, source->x.fixed, source->y.fixed + px(16),
+  SET_POSITION(&pos, source->x.fixed, source->y.fixed + toFIXED(16),
                source->z.fixed);
-  Vector_AddPolarOffset(px(8), scene->angle, &pos);
+  Vector_AddPolarOffset(toFIXED(8), scene->angle, &pos);
   object = Actor_Spawn(SPRITE_MOVE_HAND, pos.x, pos.y, pos.z);
   if (object == NULL) {
     FieldPsynergy_FadeFromCastColor();
     return;
   }
-  object->scaleY = Q16_ONE / 4;
-  object->scaleX = Q16_ONE / 4;
+  object->scaleY = FIXED_ONE / 4;
+  object->scaleX = FIXED_ONE / 4;
   object->facing = scene->angle;
-  object->speedLimit = px(4);
-  object->acceleration = px(4);
+  object->speedLimit = toFIXED(4);
+  object->acceleration = toFIXED(4);
   object->motionFlags = 0;
   Actor_SelectAnimationFar(object, 5);
   Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_BGR);
   scale = object->scaleX;
-  if (scale < Q16_ONE) {
+  if (scale < FIXED_ONE) {
     do {
       scale += 0x500;
       object->scaleY = scale;
@@ -1250,8 +1253,8 @@ void FieldPsynergy_Force(void) {
       copy->scaleY = AFTERIMAGE_SCALE;
       copy->scaleX = AFTERIMAGE_SCALE;
       copy->facing = scene->angle;
-      copy->speedLimit = px(4);
-      copy->acceleration = px(4);
+      copy->speedLimit = toFIXED(4);
+      copy->acceleration = toFIXED(4);
       copy->motionFlags = 0;
       Actor_SelectAnimationFar(copy, 5);
       Actor_SetSpriteColorModeFar(copy, SPRITE_COLOR_RBG);
@@ -1262,11 +1265,11 @@ void FieldPsynergy_Force(void) {
 
   if (scene->enabled != 0) {
     source = scene->mainActor;
-    SET_POSITION(&pos, source->x.fixed, source->y.fixed + px(16),
+    SET_POSITION(&pos, source->x.fixed, source->y.fixed + toFIXED(16),
                  source->z.fixed);
-    Vector_AddPolarOffset(px(56), scene->angle, &pos);
+    Vector_AddPolarOffset(toFIXED(56), scene->angle, &pos);
   } else {
-    SET_POSITION(&pos, scene->x, scene->y + px(16), scene->z);
+    SET_POSITION(&pos, scene->x, scene->y + toFIXED(16), scene->z);
   }
   Actor_SetMoveTargetFar(object, pos.x, pos.y, pos.z);
   Actor_StartScriptFar(object, gBattleEffect_HeavyImpactScript);
@@ -1284,13 +1287,13 @@ void FieldPsynergy_Force(void) {
 
   if (target != NULL && scene->childMode == 0) {
     if (scene->childOption != 0)
-      target->velocityY = px(8);
+      target->velocityY = toFIXED(8);
     SET_POSITION(&pos, target->x.fixed, target->y.fixed, target->z.fixed);
-    Vector_AddPolarOffset(px(16), scene->angle, &pos);
+    Vector_AddPolarOffset(toFIXED(16), scene->angle, &pos);
     if (MapGrid_CheckCollisionFar(target, &pos) == 0 &&
         ActorScript_CheckOverlapFar(target, &pos) == 0) {
-      target->acceleration = px(1);
-      target->speedLimit = px(1);
+      target->acceleration = toFIXED(1);
+      target->speedLimit = toFIXED(1);
       Actor_SetMoveTargetFar(target, pos.x, pos.y, pos.z);
     }
   }
@@ -1324,10 +1327,10 @@ void FieldEffect_UpdateOrbitingParticleFade(struct Actor *particle) {
   s32 scale;
 
   if (particle != NULL) {
-    scale = particle->scaleX - Q16_ONE / 16;
-    particle->scaleY -= Q16_ONE / 16;
+    scale = particle->scaleX - FIXED_ONE / 16;
+    particle->scaleY -= FIXED_ONE / 16;
     particle->scaleX = scale;
-    if (scale <= Q16_ONE / 16)
+    if (scale <= FIXED_ONE / 16)
       Actor_StartScriptFar(particle, gBattleEffect_SharedParticleScript);
   }
 }
@@ -1416,7 +1419,7 @@ void FieldPsynergy_Frost(void) {
       u32 scale;
       s32 dist;
 
-      scale = (Random16() >> 1) + Q16_ONE / 2;
+      scale = (Random16() >> 1) + FIXED_ONE / 2;
       particle->scaleY = scale;
       particle->scaleX = scale;
       if ((Random16() & 1) != 0)
@@ -1433,7 +1436,7 @@ void FieldPsynergy_Frost(void) {
                                   SPRITE_COLOR_BLUE_TINT);
 
       SET_POSITION(p, scene->x, scene->y, scene->z);
-      dist = (Random16() << 2) + px(2);
+      dist = (Random16() << 2) + toFIXED(2);
       Vector_AddPolarOffset(dist, Random16(), p);
       particle->targetX = p->x;
       particle->targetY = p->y;
@@ -1479,10 +1482,10 @@ void FieldPsynergy_Frost(void) {
 /// Per-frame update: sways 4 pixels either side of targetX, once every 128
 /// frames.
 void FieldEffect_SwayParticle(struct Actor *actor) {
-  s32 amplitude = px(4);
+  s32 amplitude = toFIXED(4);
 
   actor->x.fixed =
-      actor->targetX + Iwram_MulQ16(amplitude, Trig_Sin(actor->timer << 9));
+      actor->targetX + Iwram_MulFX(amplitude, Trig_Sin(actor->timer << 9));
   actor->timer++;
   actor->timer = (actor->timer + 128) % 128;
 }
@@ -1502,9 +1505,9 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *particle) {
     if (remainingFrames != 0) {
       // The angle turns 1/32 of a circle (TRIG_TURN / 32) each frame left.
       pos.x = effectWork->x;
-      pos.y = effectWork->y + px(10);
+      pos.y = effectWork->y + toFIXED(10);
       pos.z = effectWork->z;
-      Vector_AddPolarOffset(px(remainingFrames),
+      Vector_AddPolarOffset(INTtoFIXED(remainingFrames),
                             (s16)particle->userValue + (remainingFrames << 11),
                             &pos);
       particle->x.fixed = pos.x;
@@ -1526,19 +1529,19 @@ void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
 
   effectWork = Ram_HeapSlots->fieldEffectWork;
   if (emitter->timer != -1) {
-    s32 amplitude = px(6);
+    s32 amplitude = toFIXED(6);
 
     SET_ACTOR_POSITION(
         emitter,
-        effectWork->x + Iwram_MulQ16(amplitude, Trig_Sin(emitter->timer << 10)),
-        effectWork->y + px(16), effectWork->z);
+        effectWork->x + Iwram_MulFX(amplitude, Trig_Sin(emitter->timer << 10)),
+        effectWork->y + toFIXED(16), effectWork->z);
     emitter->timer++;
     emitter->timer = (emitter->timer + 64) % 64;
   }
   if (gFrameCount % 3 == 0) {
     // From 2 pixels up, 0 to 6 pixels in a random direction.
     pos[0] = emitter->x.fixed;
-    pos[1] = emitter->y.fixed + px(2);
+    pos[1] = emitter->y.fixed + toFIXED(2);
     pos[2] = emitter->z.fixed;
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
     spark = Actor_Spawn(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
@@ -1546,7 +1549,7 @@ void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
     // and is released after 72 frames, its script's wait (lifetime).
     if (spark != 0) {
       spark->update = (void (*)(void))FieldEffect_SwayParticle;
-      spark->scaleX = spark->scaleY = Q16_ONE * 3 / 5;
+      spark->scaleX = spark->scaleY = FIXED_ONE * 3 / 5;
       spark->motionFlags = ACTOR_FALLS;
       spark->gravity = 458;
       spark->timer = Random16() >> 9;
@@ -1580,10 +1583,10 @@ void FieldPsynergy_Ply(void) {
   last = 0;
   for (i = 0; i < 8; i++) {
     actor = Actor_Spawn(SPRITE_WINGED_FIGURE, target->x.fixed,
-                        target->y.fixed + px(32), target->z.fixed);
+                        target->y.fixed + toFIXED(32), target->z.fixed);
     if (actor != 0) {
-      actor->scaleY = Q16_ONE * 7 / 10;
-      actor->scaleX = Q16_ONE * 7 / 10;
+      actor->scaleY = FIXED_ONE * 7 / 10;
+      actor->scaleX = FIXED_ONE * 7 / 10;
       actor->update = (void (*)(void))FieldEffect_UpdateShrinkingOrbitActor;
       actor->timer = 120;
       actor->userValue = i << 13;
@@ -1605,10 +1608,10 @@ void FieldPsynergy_Ply(void) {
   target = Actor_Spawn(SPRITE_WINGED_FIGURE, 0, 0, 0);
   actor = target;
   if (target != 0) {
-    target->scaleY = Q16_ONE * 7 / 10;
-    target->scaleX = Q16_ONE * 7 / 10;
+    target->scaleY = FIXED_ONE * 7 / 10;
+    target->scaleX = FIXED_ONE * 7 / 10;
     target->x.fixed = effectWork->x;
-    target->y.fixed = effectWork->y + px(16);
+    target->y.fixed = effectWork->y + toFIXED(16);
     target->z.fixed = effectWork->z;
     target->motionFlags = ACTOR_FLOATS;
     Actor_SetSpriteColorModeFar(target, SPRITE_COLOR_WHITE);
@@ -1648,10 +1651,10 @@ void FieldPsynergy_Ply(void) {
   // arrives.
   if (target != 0) {
     target->timer = -1;
-    target->speedLimit = px(5);
-    target->acceleration = px(2) / 5;
+    target->speedLimit = toFIXED(5);
+    target->acceleration = toFIXED(2) / 5;
     target->steeringFlags = 0;
-    Actor_SetTargetPositionFromMagnitudeAngle(target, px(192),
+    Actor_SetTargetPositionFromMagnitudeAngle(target, toFIXED(192),
                                               TRIG_TURN * 29 / 32);
     Actor_WaitForMoveFar(target);
     Actor_ReleaseFar(target);

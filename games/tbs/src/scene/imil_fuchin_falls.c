@@ -1090,8 +1090,8 @@ static void FuchinFallsCave_PlaceLogAtCell(s32 id, s32 column, s32 row) {
     Actor_SetSpritePriority(id, 3);
     actor->layer = 2;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    actor->x.fixed = px(column * 16) + px(8);
-    actor->z.fixed = px(row * 16) + px(8);
+    actor->x.fixed = toFIXED(column * 16) + toFIXED(8);
+    actor->z.fixed = toFIXED(row * 16) + toFIXED(8);
   }
 }
 
@@ -1348,8 +1348,10 @@ static void ImilFuchinFalls_PrepareRoom(void) {
             FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE &&
         gMainRoutineWork.entrance <=
             FUCHIN_FALLS_CAVE_DRAGONS_EYE_FROM_FUCHIN_FALLS_CAVE_ZEPHYR) {
-      FuchinFallsCave_CreateForegroundActor(px(156), 0, px(452), SPRITE_CRATE);
-      FuchinFallsCave_CreateForegroundActor(px(188), 0, px(452), SPRITE_CRATE);
+      FuchinFallsCave_CreateForegroundActor(toFIXED(156), 0, toFIXED(452),
+                                            SPRITE_CRATE);
+      FuchinFallsCave_CreateForegroundActor(toFIXED(188), 0, toFIXED(452),
+                                            SPRITE_CRATE);
     }
   } else if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_DRAGON_STATUE) {
     // Default: NULL unless the arrival from the south half's middle takes the
@@ -1467,7 +1469,8 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
   GlyphTransfer *glyph;
   u8 clear = 0;
 
-  actor = FieldActor_Create(SPRITE_BLANK, px(248), px(8), px(152));
+  actor =
+      FieldActor_Create(SPRITE_BLANK, toFIXED(248), toFIXED(8), toFIXED(152));
   if (actor != NULL) {
     sprite = actor->sprite;
     sprite->flags = clear;
@@ -1569,8 +1572,8 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
       effect->scaleRateX = (extra->targetScaleX - effect->scaleX) / script[3];
       effect->scaleRateY = (extra->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (extra->targetScaleX - Q16_ONE) / script[3];
-      effect->scaleRateY = (extra->targetScaleY - Q16_ONE) / script[3];
+      effect->scaleRateX = (extra->targetScaleX - FIXED_ONE) / script[3];
+      effect->scaleRateY = (extra->targetScaleY - FIXED_ONE) / script[3];
     }
   }
 }
@@ -1586,16 +1589,16 @@ static void ImilFuchinFalls_BlowCaveMouthDust(void) {
   if (framePhase != 0)
     return;
   options.palette = SPRITE_COLOR_RED_TINT;
-  options.startScaleX = Q16_ONE / 2;
-  options.startScaleY = Q16_ONE / 2;
-  options.targetScaleX = 9 * Q16_ONE / 5;
-  options.targetScaleY = 9 * Q16_ONE / 5;
+  options.startScaleX = FIXED_ONE / 2;
+  options.startScaleY = FIXED_ONE / 2;
+  options.targetScaleX = 9 * FIXED_ONE / 5;
+  options.targetScaleY = 9 * FIXED_ONE / 5;
   if ((gFrameCount & 7) == 0)
     Sound_Play(SE_WHOOSH);
-  velocityX = -px(1) - px(Random_Below(2));
-  velocityY = -((Random_Below(3)) * (px(1) / 5));
+  velocityX = -toFIXED(1) - toFIXED(Random_Below(2));
+  velocityY = -((Random_Below(3)) * (toFIXED(1) / 5));
   ImilFuchinFalls_SpawnDust(
-      px(308), px(64), px(222), velocityX, velocityY, framePhase,
+      toFIXED(308), toFIXED(64), toFIXED(222), velocityX, velocityY, framePhase,
       1 | EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
       (const struct EffectOptions *)&options);
 }
@@ -1758,9 +1761,9 @@ static void Imil_SlideActorAcrossIce(void) {
 
     Event_Start();
 
-    probe.x = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
+    probe.x = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
     probe.y = actor->y.fixed;
-    probe.z = (actor->z.fixed & FIELD_CELL_MASK) + px(8);
+    probe.z = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
     z = probe.z;
     x = probe.x;
     startBehavior = MapGrid_GetCellBehaviorAt(actor->layer, x, z);
@@ -1770,17 +1773,17 @@ static void Imil_SlideActorAcrossIce(void) {
     if (nextBehavior == CELL_BEHAVIOR_WALL ||
         MapGrid_GetTerrainHeight(actor->layer, probe.x, probe.z) -
                 actor->y.fixed >
-            px(8)) {
+            toFIXED(8)) {
       actor->facing = heading;
       goto tail;
     }
 
     probe.x = x;
     probe.z = z;
-    actor->speedLimit = px(2);
-    actor->acceleration = px(1) / 10;
+    actor->speedLimit = toFIXED(2);
+    actor->acceleration = toFIXED(1) / 10;
     actor->timer = 0;
-    FieldActor_SetMoveTargetFixed(actor, x, actor->y.fixed, z);
+    FieldActor_SetMoveTargetFX(actor, x, actor->y.fixed, z);
 
     Actor_SelectAnimation(actor, ANIM_WALK);
     Actor_SetAnimationSpeed(actor, IMIL_SLIDE_ANIMATION_STEP);
@@ -1795,23 +1798,23 @@ static void Imil_SlideActorAcrossIce(void) {
       }
       if (MapGrid_GetTerrainHeight(actor->layer, probe.x, probe.z) -
               actor->y.fixed >
-          px(8)) {
+          toFIXED(8)) {
         break;
       }
       x = probe.x;
       z = probe.z;
-      actor->speedLimit = px(2);
-      actor->acceleration = px(1) / 10;
-      FieldActor_SetMoveTargetFixed(actor, probe.x, probe.y, probe.z);
+      actor->speedLimit = toFIXED(2);
+      actor->acceleration = toFIXED(1) / 10;
+      FieldActor_SetMoveTargetFX(actor, probe.x, probe.y, probe.z);
       Actor_WaitForMove(actor);
       if (nextBehavior != startBehavior) {
         goto blocked;
       }
     }
 
-    actor->speedLimit = px(2);
-    actor->acceleration = px(1);
-    FieldActor_SetMoveTargetFixed(actor, x, actor->y.fixed, z);
+    actor->speedLimit = toFIXED(2);
+    actor->acceleration = toFIXED(1);
+    FieldActor_SetMoveTargetFX(actor, x, actor->y.fixed, z);
     Actor_WaitForMove(actor);
     wait(2);
   }
@@ -1821,7 +1824,7 @@ blocked:
   actor->update = NULL;
   actor->steeringFlags |= ACTOR_FACES_MOTION;
 
-  actor->acceleration = px(1) / 4;
+  actor->acceleration = toFIXED(1) / 4;
 
 tail:
   wait(10);

@@ -203,9 +203,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       EFFECT_SHOW_DAMAGE(0);
 
     if (work->args->prelude == 1) {
-      s32 x = WHOLE_PIXELS(Trig_Sin(frame << 11) * 20) + originX +
-              canvasShiftX - 20;
-      s32 y = WHOLE_PIXELS(Trig_Cos(frame << 11) * 4) + originY - 24;
+      s32 x =
+          FIXEDtoINT(Trig_Sin(frame << 11) * 20) + originX + canvasShiftX - 20;
+      s32 y = FIXEDtoINT(Trig_Cos(frame << 11) * 4) + originY - 24;
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags ^ COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
@@ -233,7 +233,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
         Sound_PlayFar(SE_POWER_UP);
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, actor->x.fixed, height, actor->z.fixed);
-      Transform_ApplyPosition(point);
+      Matrix_TranslateVector(point);
       if (frame == member * 8 + 48)
         BattleEffect_TintBattler(work->args->targets[member],
                                  SPRITE_COLOR_WHITE, TINT_KEEP, member, 16);
@@ -246,13 +246,13 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
                             COMPOSITE_ADDITIVE);
         draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
         if (mode == STAT_BOOST_IMPACT) {
-          Transform_ApplyPitch(-frame << 10);
+          Matrix_RotateX(-frame << 10);
         } else if (mode == STAT_BOOST_GUARD) {
         } else if (mode == STAT_BOOST_WARD) {
-          Transform_ApplyYaw(frame << 10);
+          Matrix_RotateY(frame << 10);
         } else {
-          Transform_ApplyYaw(frame << 10);
-          Transform_ApplyRoll(frame << 10);
+          Matrix_RotateY(frame << 10);
+          Matrix_RotateZ(frame << 10);
         }
         for (i = 0; i != 32; i++) {
           struct Particle *flare = &PARTICLES[member * 64 + i];
@@ -466,17 +466,17 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     angle = Random16() & TRIG_ANGLE_MASK;
     shard->x = 0;
     if (mode == STAT_REDUCTION_DULL) {
-      shard->y = px((i & 31) / 4 * 6 - 10);
-      shard->z = px(i % 4 * 2 - 2);
+      shard->y = INTtoFIXED((i & 31) / 4 * 6 - 10);
+      shard->z = INTtoFIXED(i % 4 * 2 - 2);
     } else {
-      shard->y = px((i & 31) / 4 * 6 - 10);
-      shard->z = px(i % 4 * 8 - 16);
+      shard->y = INTtoFIXED((i & 31) / 4 * 6 - 10);
+      shard->z = INTtoFIXED(i % 4 * 8 - 16);
     }
     if (work->args->side == EFFECT_SIDE_PARTY)
-      shard->velocityX = px(2);
+      shard->velocityX = toFIXED(2);
     else
-      shard->velocityX = -px(2);
-    shard->velocityY = ((Trig_Cos(angle) * radius) >> 6) + px(1);
+      shard->velocityX = -toFIXED(2);
+    shard->velocityY = ((Trig_Cos(angle) * radius) >> 6) + toFIXED(1);
     shard->velocityZ = (Trig_Sin(angle) * radius) >> 6;
     shard->variant = Random16() & 0xff;
   }
@@ -507,9 +507,9 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
         // DEAD: the view set from the camera a first time, which the second
         // call repeats; the ROM keeps both calls.
         EFFECT_VIEW_FROM_CAMERA(camera);
-        SET_VECTOR(point, actor->x.fixed, px(20), actor->z.fixed);
+        SET_VECTOR(point, actor->x.fixed, toFIXED(20), actor->z.fixed);
         EFFECT_VIEW_FROM_CAMERA(camera);
-        Transform_ApplyPosition(point);
+        Matrix_TranslateVector(point);
         SET_VECTOR(origin, 0, 0, 0);
         Projection_Point(origin, &screen);
         x = screen.x + xOffset;

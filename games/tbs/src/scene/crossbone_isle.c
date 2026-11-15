@@ -384,7 +384,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_PIRATE_SHIP_MIMIC_BEATEN) == 0) {
       MapGrid_CopyCellAttributes(0, 3, 1, 1, 13, 40);
       MapGrid_CopyCellAttributes(0, 2, 1, 1, 15, 40);
-      TreasureSpot_SetPosition(101, px(216), px(648));
+      TreasureSpot_SetPosition(101, toFIXED(216), toFIXED(648));
     }
     if (gMainRoutineWork.next == sceneId) {
       if (gMainRoutineWork.entrance != ENTRANCE_AFTER_BATTLE) {
@@ -394,14 +394,14 @@ s32 Scene_Initialize(void) {
       }
       GameFlag_Set(FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED);
       MapGrid_CopyCellAttributes(0, 1, 1, 1, 13, 30);
-      TreasureSpot_SetPosition(100, px(216), px(488));
+      TreasureSpot_SetPosition(100, toFIXED(216), toFIXED(488));
       return 0;
     }
   }
   current = gMainRoutineWork.next;
   if (current == SCENE_CROSSBONE_ISLE) {
     CrossboneIsle_RestoreIvy();
-    Actor_Get(ACTOR_ISLE_NUT)->targetX = px(129);
+    Actor_Get(ACTOR_ISLE_NUT)->targetX = toFIXED(129);
     Scene_RedrawActorFootprint(ACTOR_FIRST_ISLE_LOG);
     Scene_RedrawActorFootprint(ACTOR_FIRST_ISLE_LOG + 1);
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN) != 0) {
@@ -454,7 +454,7 @@ s32 Scene_Initialize(void) {
   if (current == first) {
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN) == 0) {
       MapGrid_CopyCellAttributes(0, 0, 1, 1, 37, 10);
-      TreasureSpot_SetPosition(100, px(600), px(168));
+      TreasureSpot_SetPosition(100, toFIXED(600), toFIXED(168));
     }
   }
   current = gMainRoutineWork.next;
@@ -481,7 +481,7 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
                                 SCENE_CROSSBONE_ISLE_FIRST_FLOOR)));
   if (cleared != 0) {
     Actor_SetPosition(ACTOR_SINKING_PILLAR, 650, 168);
-    actor->y.fixed = -px(32);
+    actor->y.fixed = -toFIXED(32);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SINKING_PILLAR), 0);
     Actor_SetSpritePriority(ACTOR_SINKING_PILLAR, 3);
     actor->motionFlags = 0;
@@ -634,7 +634,8 @@ static inline void CrossboneIsle_GrowPlant(s32 actorId, s32 plant, s32 x,
     actor->collisionFlags = 0;
   }
   Actor_SetSpriteFlags(Actor_Get(actorId), 0);
-  MapGrid_SetCellBehaviorAt(0, px(x), px(z), CELL_BEHAVIOR_CLIMB);
+  MapGrid_SetCellBehaviorAt(0, INTtoFIXED(x), INTtoFIXED(z),
+                            CELL_BEHAVIOR_CLIMB);
 }
 
 /// Unused: Growth on Crossbone Isle's first plant would grow it and let the
@@ -658,8 +659,8 @@ static void CrossboneIsle_GrowThirdPlant(s32 actorId) {
 
 /// Growth on Crossbone Isle's fourth plant, which opens two cells.
 static void CrossboneIsle_GrowFourthPlant(s32 actorId) {
-  s32 eastX = px(752);
-  s32 eastZ = px(320);
+  s32 eastX = toFIXED(752);
+  s32 eastZ = toFIXED(320);
 
   CrossboneIsle_GrowPlant(actorId, 3, 144, 320);
   MapGrid_SetCellBehaviorAt(0, eastX, eastZ, CELL_BEHAVIOR_CLIMB);
@@ -700,17 +701,17 @@ static void CrossboneIsle_RestoreIvy(void) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 21);
     Actor_SetPosition(ACTOR_FIRST_IVY, 968, 968);
   } else {
-    Actor_Get(ACTOR_FIRST_IVY)->scaleY = 8 * Q16_ONE / 5;
+    Actor_Get(ACTOR_FIRST_IVY)->scaleY = 8 * FIXED_ONE / 5;
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1) != 0) {
     Actor_SetPosition(ACTOR_FIRST_IVY + 1, 968, 968);
   } else {
-    Actor_Get(ACTOR_FIRST_IVY + 1)->scaleY = 8 * Q16_ONE / 5;
+    Actor_Get(ACTOR_FIRST_IVY + 1)->scaleY = 8 * FIXED_ONE / 5;
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2) != 0) {
     Actor_SetPosition(ACTOR_FIRST_IVY + 2, 968, 968);
   } else {
-    Actor_Get(ACTOR_FIRST_IVY + 2)->scaleY = 8 * Q16_ONE / 5;
+    Actor_Get(ACTOR_FIRST_IVY + 2)->scaleY = 8 * FIXED_ONE / 5;
   }
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3) != 0) {
     Actor_SetPosition(ACTOR_FIRST_IVY + 3, 968, 968);
@@ -721,7 +722,7 @@ static void CrossboneIsle_RestoreIvy(void) {
 #ifdef BUGFIX
     if (actor != NULL)
 #endif
-      actor->scaleY = 8 * Q16_ONE / 5;
+      actor->scaleY = 8 * FIXED_ONE / 5;
   }
 }
 
@@ -749,23 +750,29 @@ static void CrossboneIsle_MoveSelectedActorAndLog(s32 actorId, s32 xOffset,
   logActor = Actor_Get(actorId);
   Event_Start();
   {
-    fixedX = ((selectedActor->x.fixed + px(xOffset)) & FIELD_CELL_MASK) + px(8);
-    fixedZ = ((selectedActor->z.fixed + px(zOffset)) & FIELD_CELL_MASK) + px(8);
+    fixedX =
+        ((selectedActor->x.fixed + INTtoFIXED(xOffset)) & FIELD_CELL_MASK) +
+        toFIXED(8);
+    fixedZ =
+        ((selectedActor->z.fixed + INTtoFIXED(zOffset)) & FIELD_CELL_MASK) +
+        toFIXED(8);
 
-    selectedActor->speedLimit = px(1);
-    selectedActor->acceleration = px(1) / 2;
-    FieldActor_SetMoveTargetFixed(selectedActor, fixedX, selectedActor->y.fixed,
-                                  fixedZ);
+    selectedActor->speedLimit = toFIXED(1);
+    selectedActor->acceleration = toFIXED(1) / 2;
+    FieldActor_SetMoveTargetFX(selectedActor, fixedX, selectedActor->y.fixed,
+                               fixedZ);
   }
   // Position the log on the same cell-center grid as the selected actor.
   Actor_SelectAnimation(selectedActor, ANIM_LEADER_WALK_BACKWARDS);
   {
-    fixedX = ((logActor->x.fixed + px(xOffset)) & FIELD_CELL_MASK) + px(8);
-    fixedZ = ((logActor->z.fixed + px(zOffset)) & FIELD_CELL_MASK) + px(8);
+    fixedX = ((logActor->x.fixed + INTtoFIXED(xOffset)) & FIELD_CELL_MASK) +
+             toFIXED(8);
+    fixedZ = ((logActor->z.fixed + INTtoFIXED(zOffset)) & FIELD_CELL_MASK) +
+             toFIXED(8);
 
-    logActor->speedLimit = px(1);
-    logActor->acceleration = px(1) / 2;
-    FieldActor_SetMoveTargetFixed(logActor, fixedX, logActor->y.fixed, fixedZ);
+    logActor->speedLimit = toFIXED(1);
+    logActor->acceleration = toFIXED(1) / 2;
+    FieldActor_SetMoveTargetFX(logActor, fixedX, logActor->y.fixed, fixedZ);
   }
   // The log's mode depends on which side of the grid it moves toward.
   if (xOffset < 0 || zOffset < 0) {
@@ -929,13 +936,13 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
 #if TBS_PATCH_1
   struct FieldPosition destination;
 
-  destination.x = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
+  destination.x = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   destination.y = actor->y.fixed;
-  destination.z = (actor->z.fixed & FIELD_CELL_MASK) + px(8);
+  destination.z = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
   {
     s32 direction = FACING_NEAREST_CARDINAL(actor->facing);
 
-    Vector_AddPolarOffset(px(32), direction, &destination);
+    Vector_AddPolarOffset(toFIXED(32), direction, &destination);
   }
   // Keep the original motion flags while playing the leader's push step.
   if (FieldActor_CheckMovementCollision(actor, &destination) == 0) {
@@ -947,14 +954,14 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
     wait(6);
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
-    actor->speedLimit = px(3);
-    actor->acceleration = px(2);
-    actor->velocityY = px(4);
+    actor->speedLimit = toFIXED(3);
+    actor->acceleration = toFIXED(2);
+    actor->velocityY = toFIXED(4);
     actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
 #if TBS_PATCH_1
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, WHOLE_PIXELS(destination.x),
-                        WHOLE_PIXELS(destination.z));
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, FIXEDtoINT(destination.x),
+                        FIXEDtoINT(destination.z));
 #else
     {
       s16 *pixelCoordinates = (s16 *)requested;
@@ -979,7 +986,7 @@ static s32 CrossboneIsle_HopNorth(void) {
 
   destination.x = actor->x.fixed;
   destination.y = actor->y.fixed;
-  destination.z = actor->z.fixed + -px(32);
+  destination.z = actor->z.fixed + -toFIXED(32);
   return CrossboneIsle_TryHop(actor, &destination);
 }
 
@@ -990,7 +997,7 @@ static s32 CrossboneIsle_HopSouth(void) {
 
   destination.x = actor->x.fixed;
   destination.y = actor->y.fixed;
-  destination.z = actor->z.fixed + px(32);
+  destination.z = actor->z.fixed + toFIXED(32);
   return CrossboneIsle_TryHop(actor, &destination);
 }
 
@@ -999,7 +1006,7 @@ static s32 CrossboneIsle_HopWest(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
 
-  destination.x = actor->x.fixed + -px(32);
+  destination.x = actor->x.fixed + -toFIXED(32);
   destination.y = actor->y.fixed;
   destination.z = actor->z.fixed;
   return CrossboneIsle_TryHop(actor, &destination);
@@ -1010,7 +1017,7 @@ static s32 CrossboneIsle_HopEast(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
 
-  destination.x = actor->x.fixed + px(32);
+  destination.x = actor->x.fixed + toFIXED(32);
   destination.y = actor->y.fixed;
   destination.z = actor->z.fixed;
   return CrossboneIsle_TryHop(actor, &destination);

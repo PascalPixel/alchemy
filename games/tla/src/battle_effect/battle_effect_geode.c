@@ -267,8 +267,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       }
       for (row = 0, height = -64, angle = 0; row != DOME_ROWS;
            height += 8, angle += 2184, row++) {
-        s32 lift = Q_16_16_TO_INT((-Trig_Cos(angle) * 3) << 4);
-        s32 reach = Q_16_16_TO_INT(Trig_Sin(angle) * 48);
+        s32 lift = FIXEDtoINT((-Trig_Cos(angle) * 3) << 4);
+        s32 reach = FIXEDtoINT(Trig_Sin(angle) * 48);
         s32 column;
         s32 y;
         s32 radius;
@@ -276,10 +276,10 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
         radius = (reach - 56) * curl / 16 + 56;
         for (column = 0; column != DOME_COLUMNS; column++) {
           vertices[row * DOME_COLUMNS + column].x =
-              Q_16_16_TO_INT(Trig_Sin(column << 12) * radius);
+              FIXEDtoINT(Trig_Sin(column << 12) * radius);
           vertices[row * DOME_COLUMNS + column].y = y;
           vertices[row * DOME_COLUMNS + column].z =
-              Q_16_16_TO_INT(Trig_Cos(column << 12) * radius);
+              FIXEDtoINT(Trig_Cos(column << 12) * radius);
         }
       }
       model = Render_AllocateModelList(1);
@@ -293,12 +293,12 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       model->vertices = projected;
       model->scrollU = 0;
       model->scrollV = 0;
-      Transform_Reset();
+      Matrix_Initialize();
       if (frame > 7) {
         pitch += Trig_Sin(frame * 924 - 7392) >> 5;
-        Transform_ApplyPitch(pitch * 3 / 2);
+        Matrix_RotateX(pitch * 3 / 2);
       }
-      Transform_ApplyYaw(frame << 9);
+      Matrix_RotateY(frame << 9);
       Render_TransformVertices(vertices, projected, 256);
       Render_DrawModelList(model);
       Heap_Release(model);
@@ -334,8 +334,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
         if (frame <= start) {
           continue;
         }
-        scale =
-            (((frame - start) * gGeode_WaveGrowth[i] * 125) << 4) + Q16_ONE / 2;
+        scale = (((frame - start) * gGeode_WaveGrowth[i] * 125) << 4) +
+                FIXED_ONE / 2;
         shade = (start - frame) * 8 + 56;
         if (shade > 0) {
           shade = 0;
@@ -344,15 +344,15 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
           continue;
         }
         rings->shade = shade;
-        Transform_Reset();
-        Transform_ApplyTranslation(px(target.x / 2 - 64),
-                                   px(gGeode_WaveHeights[i]), 0);
-        Transform_ApplyAxisScale(scale >> 1, scale << 2, scale >> 1);
-        Transform_ApplyPitch(1000);
+        Matrix_Initialize();
+        Matrix_Translate(INTtoFIXED(target.x / 2 - 64),
+                         INTtoFIXED(gGeode_WaveHeights[i]), 0);
+        Matrix_Scale(scale >> 1, scale << 2, scale >> 1);
+        Matrix_RotateX(1000);
         if (i & 1) {
-          Transform_ApplyYaw((i * 4 + frame) << 11);
+          Matrix_RotateY((i * 4 + frame) << 11);
         } else {
-          Transform_ApplyYaw((i * 4 - frame) << 11);
+          Matrix_RotateY((i * 4 - frame) << 11);
         }
         Render_TransformVertices(gGeode_RingCorners, ring, 32);
         Render_DrawModelList(rings);

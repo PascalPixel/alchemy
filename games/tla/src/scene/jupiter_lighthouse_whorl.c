@@ -241,9 +241,9 @@ void JupiterLighthouse_DrawBlocksInGaps(void) {
   Call4((void (*)())MapGrid_SetCellHeight, 0x2300000, 0xf00000, 0, -2);
   Call4((void (*)())MapGrid_SetCellHeight, 0x1f00000, 0x1000000, 0, -2);
   Call4((void (*)())MapGrid_SetCellHeight, 0x2100000, 0xa00000, 0, -2);
-  FieldMapGrid_SetCellBehavior(px(608), px(160), 2, 0);
-  FieldMapGrid_SetCellBehavior(px(496), px(160), 2, 0);
-  FieldMapGrid_SetCellBehavior(px(496), px(224), 2, 0);
+  FieldMapGrid_SetCellBehavior(toFIXED(608), toFIXED(160), 2, 0);
+  FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(160), 2, 0);
+  FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(224), 2, 0);
   if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0)) ||
       Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1)))
     MapGrid_SetCellHeight(0x2300000, 0xf00000, 0, 0);
@@ -258,19 +258,19 @@ void JupiterLighthouse_DrawBlocksInGaps(void) {
     MapGrid_CopyCellsLayered(111, 51, 1, 1, 99, 15);
     if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1))) {
       MapGrid_CopyCellsLayered(105, 51, 1, 3, 95, 14);
-      FieldMapGrid_SetCellBehavior(px(496), px(224), 2, 0xec);
+      FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(224), 2, 0xec);
     }
     if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1)))
       MapGrid_CopyCellsLayered(111, 53, 1, 1, 97, 10);
   } else if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1))) {
     MapGrid_CopyCellsLayered(98, 51, 5, 1, 98, 10);
     MapGrid_CopyCellsLayered(99, 52, 4, 5, 99, 11);
-    FieldMapGrid_SetCellBehavior(px(608), px(160), 2, 0xec);
+    FieldMapGrid_SetCellBehavior(toFIXED(608), toFIXED(160), 2, 0xec);
     if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0)))
       MapGrid_CopyCellsLayered(106, 53, 1, 1, 95, 16);
     if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0))) {
       MapGrid_CopyCellsLayered(109, 51, 3, 1, 95, 10);
-      FieldMapGrid_SetCellBehavior(px(496), px(160), 2, 0xec);
+      FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(160), 2, 0xec);
     }
   } else {
     if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0)))
@@ -315,7 +315,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
           object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
           if (JupiterLighthouse_IsOnWestPath(object)) {
             object->motionFlags = 0;
-            object->y.fixed -= px(2);
+            object->y.fixed -= toFIXED(2);
           }
         } while (++i <= 5);
         System_Wait(1);
@@ -344,7 +344,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
           object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
           if (JupiterLighthouse_IsOnWestPath(object)) {
             object->motionFlags = 0;
-            object->y.fixed += px(2);
+            object->y.fixed += toFIXED(2);
           }
         } while (++i <= 5);
         System_Wait(1);
@@ -356,7 +356,7 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
       object = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
       if (JupiterLighthouse_IsOnWestPath(object)) {
         object->motionFlags = 4;
-        object->y.fixed = px(65) / 2;
+        object->y.fixed = toFIXED(65) / 2;
       }
     } while (++i <= 5);
   }
@@ -474,11 +474,11 @@ void JupiterLighthouse_SinkPoundTarget(s32 a, s32 b) {
 void JupiterLighthouse_ThrowOutBlock(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
   struct Actor *object = Actor_Get(id);
 
-  Actor_SetPositionFixed(id, (x << 20) + px(8), (z << 20) + px(8));
+  Actor_SetPositionFX(id, (x << 20) + toFIXED(8), (z << 20) + toFIXED(8));
   object->motionFlags = 3;
-  object->groundHeight = px(-16);
-  object->y.fixed = px(-16);
-  object->velocityY = px(8);
+  object->groundHeight = toFIXED(-16);
+  object->y.fixed = toFIXED(-16);
+  object->velocityY = toFIXED(8);
   Actor_SetSpeed(id, 1.6);
   Actor_SetDestinationOffset(id, dx, dz);
   Event_PlaySound(SE_WHIRLWIND);
@@ -629,8 +629,8 @@ s32 Scene_Initialize(void) {
   if ((u16)(gMainRoutineWork.entrance - 3) <= 1)
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
-  Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = Q16_ONE * 3 / 4;
-  Actor_Get(ACTOR_ARCHER_STATUE)->scaleY = Q16_ONE * 3 / 4;
+  Actor_Get(ACTOR_ARCHER_STATUE)->scaleX = FIXED_ONE * 3 / 4;
+  Actor_Get(ACTOR_ARCHER_STATUE)->scaleY = FIXED_ONE * 3 / 4;
   Actors_SetCellsOpen((s32)&gJupiterLighthouse_WhorlPoundTargets);
   if (Event_GetFlag(FLAG_BUTTON_PILLAR_PLACED)) {
     Actor_SetPosition(ACTOR_BUTTON_PILLAR, 136, 600);
@@ -840,11 +840,11 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
         a = list[0];
         flag = list[1];
         if (count < 8)
-          object->scaleY -= Q16_ONE * 31 / 256;
+          object->scaleY -= FIXED_ONE * 31 / 256;
         if (mode == 1) {
           Event_SetFlag(flag);
           Actor_SetCellOpen(id, a, flag, object->layer);
-          object->scaleY = Q16_ONE;
+          object->scaleY = FIXED_ONE;
         }
         return;
       }

@@ -316,7 +316,7 @@ static void StuccoRoomsB_WatchWomanHideMedal(void) {
 
   // A sparkle on the floor where she finds it.
   Event_Wait(40);
-  sparkle = FieldActor_Create(SPRITE_PARTICLE, px(600), 0, px(824));
+  sparkle = FieldActor_Create(SPRITE_PARTICLE, toFIXED(600), 0, toFIXED(824));
   Actor_SetSpriteFlags(sparkle, 0);
   Actor_SelectAnimation(sparkle, 6);
   Event_Wait(10);
@@ -625,30 +625,30 @@ static void StuccoRoomsB_TalkToHealer(s32 speaker) {
 
 /// An actor that squashes and stretches twice, then rests 40 frames.
 s32 gStuccoRoomsBSquashStretch[] = {
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_ADD(SW_SCALE_X, -5 * Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 16),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
+    SC_ADD(SW_SCALE_X, -5 * FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 16),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 32),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 64),
+    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
     SC_ADD(SW_SCALE_Y, -1024),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 64),
+    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
     SC_ADD(SW_SCALE_Y, -1024),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, -5 * Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_X, -5 * FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 16),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 32),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 64),
+    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
     SC_ADD(SW_SCALE_Y, -1024),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 64),
+    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
     SC_ADD(SW_SCALE_Y, -1024),
     SC_WAIT(40),
     SC_LOOP(SC_FOREVER, SC_TOP),

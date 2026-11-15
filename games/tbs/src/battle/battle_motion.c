@@ -22,8 +22,8 @@ void BattleMotion_ReturnToSpot(s32 unitId) {
   {
     s32 stopped = 0;
 
-    actor->acceleration = px(2);
-    actor->speedLimit = px(8);
+    actor->acceleration = toFIXED(2);
+    actor->speedLimit = toFIXED(8);
     actor->gravity = BATTLE_UNIT_GRAVITY;
     actor->velocityY = stopped;
     actor->bounce = stopped;
@@ -33,8 +33,9 @@ void BattleMotion_ReturnToSpot(s32 unitId) {
     Actor_SetMoveTargetFar(actor, battleObject->anchorX, 0,
                            battleObject->anchorZ);
     // As BattleObject_Make turns a new actor.
-    actor->facing = ArcTan2(battleObject->anchorZ / 8, battleObject->anchorX) -
-                    TRIG_TURN / 2;
+    actor->facing =
+        Trig_Atan(battleObject->anchorZ / 8, battleObject->anchorX) -
+        DEGtoANG(180);
   }
 }
 
@@ -46,10 +47,10 @@ void BattleMotion_SetupEscapeObject(s32 unitId) {
 
   battleObject = BattleObject_Get(unitId);
   actor = battleObject->actor;
-  actor->acceleration = px(2);
-  actor->speedLimit = px(8);
-  actor->velocityY = px(5);
-  actor->gravity = px(47) / 100;
+  actor->acceleration = toFIXED(2);
+  actor->speedLimit = toFIXED(8);
+  actor->velocityY = toFIXED(5);
+  actor->gravity = toFIXED(47) / 100;
   actor->bounce = 0;
   actor->steeringFlags = 0;
   Actor_StartIdleFar(actor);
@@ -77,9 +78,9 @@ void BattleMotion_LeapToward(struct BattleObject *startSlot,
   startZ = start->z.fixed;
   zStep = progress * (endZ - startZ) / 100;
   REG_BLDCNT = 0;
-  start->acceleration = px(2);
-  start->speedLimit = px(8);
-  start->velocityY = px(4);
+  start->acceleration = toFIXED(2);
+  start->speedLimit = toFIXED(8);
+  start->velocityY = toFIXED(4);
   start->gravity = BATTLE_UNIT_GRAVITY;
   start->bounce = 0;
   start->steeringFlags = 1;
@@ -91,8 +92,8 @@ void BattleMotion_LeapToward(struct BattleObject *startSlot,
 void BattleMotion_ReturnObjectToSpot(struct BattleObject *battleObject) {
   struct Actor *actor = battleObject->actor;
 
-  actor->acceleration = px(2);
-  actor->speedLimit = px(8);
+  actor->acceleration = toFIXED(2);
+  actor->speedLimit = toFIXED(8);
   actor->gravity = BATTLE_UNIT_GRAVITY;
   actor->bounce = 0;
   actor->steeringFlags = 0;
@@ -108,10 +109,10 @@ void BattleMotion_HopBack(s32 unitId) {
 
   battleObject = BattleObject_Get(unitId);
   actor = battleObject->actor;
-  actor->acceleration = Q16_ONE;
-  actor->speedLimit = px(4);
-  actor->velocityY = px(3);
-  actor->gravity = px(3) / 5;
+  actor->acceleration = FIXED_ONE;
+  actor->speedLimit = toFIXED(4);
+  actor->velocityY = toFIXED(3);
+  actor->gravity = toFIXED(3) / 5;
   actor->bounce = 0;
   actor->steeringFlags = 0;
   Actor_StartIdleFar(actor);
@@ -124,16 +125,16 @@ void BattleMotion_LeapBack(s32 unitId) {
   struct BattleObject *battleObject = BattleObject_Get(unitId);
   struct Actor *actor = battleObject->actor;
 
-  actor->acceleration = px(1);
-  actor->speedLimit = px(4);
-  actor->velocityY = px(4);
-  actor->gravity = px(3) / 5;
+  actor->acceleration = toFIXED(1);
+  actor->speedLimit = toFIXED(4);
+  actor->velocityY = toFIXED(4);
+  actor->gravity = toFIXED(3) / 5;
   actor->bounce = 0;
   actor->steeringFlags = 0;
   Actor_StartIdleFar(actor);
-  Actor_SetMoveTargetFar(actor,
-                         Iwram_MulQ16(battleObject->anchorX, Q16_ONE * 13 / 10),
-                         0, battleObject->anchorZ);
+  Actor_SetMoveTargetFar(
+      actor, Iwram_MulFX(battleObject->anchorX, FIXED_ONE * 13 / 10), 0,
+      battleObject->anchorZ);
   Actor_SelectAnimationFar(actor, POSE_DAMAGE);
 }
 
@@ -153,7 +154,7 @@ void BattleMotion_ApplyKnockback(s32 unitId, s32 variant) {
     // A unit already in the air keeps its hop, except from KNOCKBACK_SKID on.
     if (actor->y.fixed == 0 || variant > KNOCKBACK_HURL)
       actor->velocityY = gBattleKnockback_VelocityY[variant];
-    actor->gravity = px(3) / 5;
+    actor->gravity = toFIXED(3) / 5;
     actor->bounce = 0;
     actor->steeringFlags = 0;
     Actor_StartIdleFar(actor);
@@ -227,7 +228,7 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   s32 secondX;
   s32 firstZ;
   s32 secondZ;
-  struct FixedPointPosition position;
+  struct Point position;
 
   first = BattleObject_Get(firstId)->actor;
   secondSlot = BattleObject_Get(secondId);
@@ -289,10 +290,10 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   UNUSED struct ScreenPoint input;
 
   BattleCamera_ApplyTransform();
-  projectionScale = Transform_ProjectPoint(&actor->x.fixed, projected);
-  spriteScale = Iwram_MulQ16(projectionScale, record->scale);
+  projectionScale = Matrix_ProjectPoint(&actor->x.fixed, projected);
+  spriteScale = Iwram_MulFX(projectionScale, record->scale);
   projectionScale =
-      Iwram_MulQ16(spriteScale, (s32)BattleUnit_GetEffectHeight(unitId) >> 16);
+      Iwram_MulFX(spriteScale, (s32)BattleUnit_GetEffectHeight(unitId) >> 16);
   projected[1] -= projectionScale;
   return 0;
 }
@@ -306,12 +307,12 @@ s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
   s32 spriteScale;
 
   BattleCamera_ApplyTransform();
-  projectedHeight = Transform_ProjectPoint(&actor->x.fixed, projected);
-  spriteScale = Iwram_MulQ16(projectedHeight, record->scale);
+  projectedHeight = Matrix_ProjectPoint(&actor->x.fixed, projected);
+  spriteScale = Iwram_MulFX(projectedHeight, record->scale);
   if (BattleSprite_IsSmall(Unit_GetFar(unitId)->id) != 0)
-    projectedHeight = Iwram_MulQ16(spriteScale, 24);
+    projectedHeight = Iwram_MulFX(spriteScale, 24);
   else
-    projectedHeight = Iwram_MulQ16(spriteScale, 48);
+    projectedHeight = Iwram_MulFX(spriteScale, 48);
   projected[1] -= projectedHeight;
   return 0;
 }
@@ -323,13 +324,13 @@ s32 BattleUnit_GetEffectHeight(s32 unitId) {
   u8 classId;
 
   classId = Unit_GetFar(unitId)->id;
-  height = px((u8)BattleSprite_GetEffectHeight(classId));
+  height = toFIXED((u8)BattleSprite_GetEffectHeight(classId));
   if (height == 0) {
     classId = Unit_GetFar(unitId)->id;
     if (BattleSprite_IsSmall(classId) != 0) {
-      height = px(24);
+      height = toFIXED(24);
     } else {
-      height = px(48);
+      height = toFIXED(48);
     }
   }
   return height;

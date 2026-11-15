@@ -126,13 +126,13 @@ void MercuryLighthouse_SpawnMotes(void) {
     object = ((struct Actor *)Import_ActorCreate(SPRITE_GLINT, 0, 0, 0));
     if (object != NULL) {
       sprite = object->sprite;
-      x = Random16() * 40 + px(812);
+      x = Random16() * 40 + toFIXED(812);
       /* FAKEMATCH(temporary): z is built before the motion flag and x are
        * stored. */
-      z = px(696);
+      z = toFIXED(696);
       object->motionFlags = phase;
       object->x.fixed = x;
-      object->y.fixed = px(160);
+      object->y.fixed = toFIXED(160);
       object->z.fixed = z;
       Actor_SetSpriteFlags(object, 0);
       object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -285,15 +285,15 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 s32 gMercuryLighthouse_MoteScript[] = {
-    SC_ADD(SW_Y, px(-2)),
+    SC_ADD(SW_Y, toFIXED(-2)),
     SC_CALL(MercuryLighthouse_FlickerMote),
     SC_WAIT(1),
-    SC_ADD(SW_Y, px(-2)),
+    SC_ADD(SW_Y, toFIXED(-2)),
     SC_CALL(MercuryLighthouse_FlickerMote),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
     SC_LABEL(1),
-    SC_ADD(SW_Y, px(-1)),
+    SC_ADD(SW_Y, toFIXED(-1)),
     SC_CALL(MercuryLighthouse_FlickerMote),
     SC_WAIT(1),
     SC_LOOP(40, SC_TO(1)),

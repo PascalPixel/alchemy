@@ -482,28 +482,28 @@ static void Bilibin_PullJillFromRiver(void) {
     jillTree->motionFlags = 0;
     // Each tug: the leader faces about, strains and draws her in, then steps
     // on.
-    leader->scaleX = -Q16_ONE;
+    leader->scaleX = -FIXED_ONE;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
     Actor_MoveToAndWait(ACTOR_JILL_TREE, 111, 196);
-    leader->scaleX = Q16_ONE;
+    leader->scaleX = FIXED_ONE;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 128, 185);
     Event_Wait(20);
-    leader->scaleX = -Q16_ONE;
+    leader->scaleX = -FIXED_ONE;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
     Actor_MoveToAndWait(ACTOR_JILL_TREE, 121, 190);
-    leader->scaleX = Q16_ONE;
+    leader->scaleX = FIXED_ONE;
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 141, 189);
     Event_Wait(20);
-    leader->scaleX = -Q16_ONE;
+    leader->scaleX = -FIXED_ONE;
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_STRIDE);
     Actor_MoveToAndWait(ACTOR_JILL_TREE, 132, 186);
-    leader->scaleX = Q16_ONE;
+    leader->scaleX = FIXED_ONE;
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.6);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 166, 185);
@@ -662,7 +662,7 @@ static void Bilibin_RestoreVillageActors(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_TREE_MAN), 0);
     Actor_SetPosition(ACTOR_FORMER_TREE_MAN, 0, 0);
   }
-  Actor_Get(ACTOR_IVY)->scaleY = 3 * Q16_ONE / 2;
+  Actor_Get(ACTOR_IVY)->scaleY = 3 * FIXED_ONE / 2;
   entrance = gMainRoutineWork.entrance;
   if (entrance == BILIBIN_FROM_BILIBIN_TREASURY_WEST) {
     Actor_SetPosition(ACTOR_IVY, 0, 0);
@@ -774,8 +774,8 @@ static void Bilibin_RestoreRiverActors(void) {
       Actor_SetPosition(ACTOR_FALLEN_TREE_STAND_IN, 142, 156);
       Actor_SetSpriteFlags(Actor_Get(ACTOR_FALLEN_TREE_STAND_IN), 0);
       Actor_SetPosition(ACTOR_MIDDLE_TREE, 142, 156);
-      fallenTree->sprite->rotation = TRIG_TURN / 4;
-      fallenTree->y.fixed -= px(8);
+      fallenTree->sprite->rotation = DEGtoANG(90);
+      fallenTree->y.fixed -= toFIXED(8);
       if (GameFlag_Get(FLAG_BILIBIN_JILL_RESCUED) != 0) {
         Actor_SetPosition(ACTOR_JILL_TREE, 132, 186);
       } else {
@@ -784,9 +784,9 @@ static void Bilibin_RestoreRiverActors(void) {
         jillTree->collisionFlags |= ACTOR_NEAR_TALK;
       }
     } else {
-      fallenTree->y.fixed = px(32);
+      fallenTree->y.fixed = toFIXED(32);
       jillTree->motionFlags = crossingState;
-      jillTree->y.fixed = px(48);
+      jillTree->y.fixed = toFIXED(48);
     }
   }
   Bilibin_UpdateCratesCells();
@@ -824,7 +824,7 @@ static void Bilibin_SetUpTreasury(void) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       Event_Start();
-      leader->y.fixed = px(16);
+      leader->y.fixed = toFIXED(16);
       FieldCamera_MoveWithinMapBounds(leader->x.fixed, leader->y.fixed,
                                       leader->z.fixed, 0);
       MapGrid_CenterOnFollowedPoint();
@@ -847,12 +847,13 @@ static void Bilibin_PushStatueOrCrates(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   direction = FACING_INDEX(leader->facing);
-  pushed = Actor_FindAtCell(
-      (leader->x.part[0].pixel +
-       (WHOLE_PIXELS(gPushedActor_DirectionSteps[direction]))) >>
-          4,
-      (leader->z.part[0].pixel + (s16)gPushedActor_DirectionSteps[direction]) >>
-          4);
+  pushed =
+      Actor_FindAtCell((leader->x.part[0].integer +
+                        (FIXEDtoINT(gPushedActor_DirectionSteps[direction]))) >>
+                           4,
+                       (leader->z.part[0].integer +
+                        (s16)gPushedActor_DirectionSteps[direction]) >>
+                           4);
   if (pushed != NULL) {
     pushed->layer = 2;
     Actor_StepFrom(&destination, pushed,
@@ -862,14 +863,14 @@ static void Bilibin_PushStatueOrCrates(void) {
       Actor_SelectAnimation(leader, ANIM_PUSH);
       wait(15);
       Sound_Play(SE_PUSH);
-      pushed->speedLimit = px(1) / 5;
-      pushed->acceleration = px(1) / 5;
-      FieldActor_SetMoveTargetFixed(pushed, destination.x, destination.y,
-                                    destination.z);
-      leader->speedLimit = px(1) / 5;
-      leader->acceleration = px(1) / 5;
-      FieldActor_SetMoveTargetFixed(leader, destination.x, destination.y,
-                                    destination.z);
+      pushed->speedLimit = toFIXED(1) / 5;
+      pushed->acceleration = toFIXED(1) / 5;
+      FieldActor_SetMoveTargetFX(pushed, destination.x, destination.y,
+                                 destination.z);
+      leader->speedLimit = toFIXED(1) / 5;
+      leader->acceleration = toFIXED(1) / 5;
+      FieldActor_SetMoveTargetFX(leader, destination.x, destination.y,
+                                 destination.z);
       Actor_WaitForMove(pushed);
       pushed->x.fixed = destination.x;
       pushed->z.fixed = destination.z;
@@ -893,8 +894,8 @@ static void Bilibin_UpdateWadingRipples(void) {
   struct Actor *actor;
 
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  if (actor->x.fixed < px(142)) {
-    if (actor->y.fixed < px(8)) {
+  if (actor->x.fixed < toFIXED(142)) {
+    if (actor->y.fixed < toFIXED(8)) {
       if (gBilibin_RippleTimer.frames == 0)
         Bilibin_SpawnRipple(actor);
       if (++gBilibin_RippleTimer.frames == 30)

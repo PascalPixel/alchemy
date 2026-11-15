@@ -103,19 +103,19 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       EffectPosition_ProjectBattler(args->user, &source);
       EffectPosition_ProjectBattler(args->targets[0], &target);
       if (mode == BOLT_TRAIL_THUNDER_MINE) {
-        ball->x = px(source.x);
-        ball->y = px(source.y - 32);
-        ball->velocityX = (px(target.x) - ball->x) / frames;
+        ball->x = INTtoFIXED(source.x);
+        ball->y = INTtoFIXED(source.y - 32);
+        ball->velocityX = (INTtoFIXED(target.x) - ball->x) / frames;
       } else {
         if (args->side == EFFECT_SIDE_ENEMIES) {
-          ball->x = px(source.x - 32);
+          ball->x = INTtoFIXED(source.x - 32);
         } else {
-          ball->x = px(source.x + 32);
+          ball->x = INTtoFIXED(source.x + 32);
         }
-        ball->y = px(source.y - 80);
-        ball->velocityX = (px(target.x - 32) - ball->x) / frames;
+        ball->y = INTtoFIXED(source.y - 80);
+        ball->velocityX = (INTtoFIXED(target.x - 32) - ball->x) / frames;
       }
-      ball->velocityY = (px(target.y - 32) - ball->y) / frames;
+      ball->velocityY = (INTtoFIXED(target.y - 32) - ball->y) / frames;
       Sound_PlayFar(SE_RISE_WITH_SPARKS);
       for (i = 0, bolt = &work->particles[1]; i != 63; i++, bolt++) {
         bolt->z = Random16();
@@ -178,7 +178,7 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
 
       ball->variant++;
       x = ball->x >> 17;
-      y = Q_16_16_TO_INT(ball->y);
+      y = FIXEDtoINT(ball->y);
       if (mode == BOLT_TRAIL_THUNDER_MINE) {
         radius = frame * 2 + 16;
         largest = 48;
@@ -205,9 +205,9 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
         s32 cell = i & 3;
         s32 half = radius / 2;
         s32 angle = Random16();
-        s32 flashX = x + (Q_16_16_TO_INT(Trig_Sin(angle) * half)) -
+        s32 flashX = x + (FIXEDtoINT(Trig_Sin(angle) * half)) -
                      (gBattleEffect_GlintPictureWidths[cell] >> 1);
-        s32 flashY = y + (Q_16_16_TO_INT(Trig_Cos(angle) * half)) -
+        s32 flashY = y + (FIXEDtoINT(Trig_Cos(angle) * half)) -
                      (gBattleEffect_GlintPictureHeights[cell] >> 1);
         s32 flags = 3 | gBoltTrail_GlintFlips[Random16() & 3];
 
@@ -235,11 +235,11 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
 
           for (step = 0; step != 8; step++) {
             draw[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
-                    (Q_16_16_TO_INT(dot->x)) - size / 2,
-                    (Q_16_16_TO_INT(dot->y)) - size, size, size * 2);
+                    (FIXEDtoINT(dot->x)) - size / 2,
+                    (FIXEDtoINT(dot->y)) - size, size, size * 2);
             BattleEffectKernels_IntegrateVector2(dot, 62, 0x200);
           }
-          if ((Q_16_16_TO_INT(dot->y)) > 111) {
+          if ((FIXEDtoINT(dot->y)) > 111) {
             dot->velocityY = -dot->velocityY * 48 / DAMPING_SCALE;
           }
           dot->variant--;
@@ -281,16 +281,16 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
         texture.pixels =
             work->sheet + BOLT_TRAIL_BOLT_COLUMNS + (bolt->variant << 12);
         model->shade = shade;
-        Transform_Reset();
-        Transform_ApplyTranslation(ball->x / 2 - px(64), ball->y - px(64), 0);
-        Transform_ApplyRoll(bolt->z);
+        Matrix_Initialize();
+        Matrix_Translate(ball->x / 2 - toFIXED(64), ball->y - toFIXED(64), 0);
+        Matrix_RotateZ(bolt->z);
         bolt->z += bolt->velocityZ;
         if (mode == BOLT_TRAIL_THUNDER_MINE) {
-          Transform_ApplyAxisScale(Q16_ONE * 4, Q16_ONE, Q16_ONE);
+          Matrix_Scale(FIXED_ONE * 4, FIXED_ONE, FIXED_ONE);
           Render_TransformVertices(gBattleEffect_TaperedBeamCorners, vertices,
                                    4);
         } else {
-          Transform_ApplyAxisScale(radius << 11, radius * 312, Q16_ONE);
+          Matrix_Scale(radius << 11, radius * 312, FIXED_ONE);
           Render_TransformVertices(gBattleEffect_BeamCorners, vertices, 4);
         }
         Render_DrawModelList(model);
@@ -366,8 +366,8 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
     p->variant = -(Random16() & 15);
   }
   for (i = 0, p = work->particles; i != 32; i++, p++) {
-    p->x = px((Random16() & 31) + 28);
-    p->y = px((Random16() % 48) + 56);
+    p->x = INTtoFIXED((Random16() & 31) + 28);
+    p->y = INTtoFIXED((Random16() % 48) + 56);
     p->velocityX = ((Random16() & 255) - 128) << 12;
     p->velocityY = (16 - (Random16() & 127)) << 10;
     p->variant = ~i;
@@ -396,10 +396,10 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
     if (frame == 0) {
-      position.x = px(32);
-      position.y = px(72);
-      velocity.x = px(9);
-      velocity.y = -px(2);
+      position.x = toFIXED(32);
+      position.y = toFIXED(72);
+      velocity.x = toFIXED(9);
+      velocity.y = -toFIXED(2);
       BattleEffect_SpawnObjects(2, 657, 2);
     }
     if (frame == 108) {
@@ -437,8 +437,8 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
               cell = &SPARKS[((t << 5) + i) & 511];
               angle = Random16();
               radius = (Random16() & 31) + 16;
-              cell->x = Trig_Sin(angle) * radius + half + px(16);
-              cell->y = Trig_Cos(angle) * radius + position.y - px(8);
+              cell->x = Trig_Sin(angle) * radius + half + toFIXED(16);
+              cell->y = Trig_Cos(angle) * radius + position.y - toFIXED(8);
               cell->velocityX = 0;
               cell->velocityY = 0;
               cell->variant = Random16() & 15;
@@ -465,7 +465,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
     if (frame > 63) {
       if (frame <= 111) {
         s32 picture = (frame / 4) % 3;
-        s32 sway = (Q_16_16_TO_INT(Trig_Sin(frame << 11) << 3)) - 16;
+        s32 sway = (FIXEDtoINT(Trig_Sin(frame << 11) << 3)) - 16;
         s32 which = frame == 108;
         DrawRectangle *draw = &blitters[which];
         u8 *cells = work->sheet + picture * 3 * 0x800;
@@ -476,7 +476,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
           s32 flickerFrame = (frame / 2) % 3;
           u8 *flickerPixels;
 
-          sway = Q_16_16_TO_INT(Trig_Sin((frame << 12) + TRIG_TURN / 2) << 3);
+          sway = FIXEDtoINT(Trig_Sin((frame << 12) + DEGtoANG(180)) << 3);
           flickerPixels = work->sheet + flickerFrame * 3 * 0x800;
           (*draw)(canvas, flickerPixels, sway, 0, 96, 64);
           (*draw)(canvas, flickerPixels, sway, 64, 96, 52);
@@ -490,11 +490,11 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
 
           rects[which](canvas, smoke, Q_16_16_UPPER_HALF(p->x) - 16,
                        Q_16_16_UPPER_HALF(p->y) - 32, 32, 64);
-          BattleEffectKernels_IntegrateVector2(p, 62, -px(1) / 4);
+          BattleEffectKernels_IntegrateVector2(p, 62, -toFIXED(1) / 4);
         }
         p->variant++;
         if (frame == 108) {
-          p->velocityX += px(2);
+          p->velocityX += toFIXED(2);
           p->velocityY /= 4;
         }
         if (frame <= 107) {
@@ -504,8 +504,8 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
             p->variant = v = 0;
           }
           if (v == 0) {
-            p->x = px((Random16() & 31) + 28);
-            p->y = px((Random16() % 48) + 56);
+            p->x = INTtoFIXED((Random16() & 31) + 28);
+            p->y = INTtoFIXED((Random16() % 48) + 56);
             p->velocityX = ((Random16() & 255) - 128) << 12;
             p->velocityY = (16 - (Random16() & 127)) << 10;
           }
@@ -546,11 +546,11 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
             gBattleEffect_SparkleSizes[k], gBattleEffect_SparkleSizes[k]);
         BattleEffectKernels_IntegrateVector2(p, 58, 0);
         if (i & 1) {
-          p->velocityX += -px(1) / 32;
-          p->velocityY += px(1) / 16;
+          p->velocityX += -toFIXED(1) / 32;
+          p->velocityY += toFIXED(1) / 16;
         } else {
-          p->velocityX += -px(1) / 16;
-          p->velocityY += px(1) / 32;
+          p->velocityX += -toFIXED(1) / 16;
+          p->velocityY += toFIXED(1) / 32;
         }
         p->variant++;
       }
@@ -583,7 +583,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
           placement[3] = 0;
           placement[1] = 0;
           placement[0] = column << 17;
-          placement[2] = px(fall);
+          placement[2] = INTtoFIXED(fall);
           Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
                                             &request.x, 0);
           if (t == 9) {
@@ -598,8 +598,8 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
               s32 angle = Random16() & 0x7fff;
               s32 speed = Random16() & 255;
 
-              spark->x = px(column);
-              spark->y = px(112);
+              spark->x = INTtoFIXED(column);
+              spark->y = toFIXED(112);
               spark->velocityY = (-Trig_Sin(angle) * speed) >> 5;
               spark->velocityX = (Trig_Cos(angle) * speed) >> 5;
               spark->variant = 0;
@@ -652,7 +652,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
               canvas, sprites + gBattleEffect_MotePictures[size - 1],
               Q_16_16_UPPER_HALF(p->x) - size / 2,
               Q_16_16_UPPER_HALF(p->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(p, 62, px(1) / 4);
+          BattleEffectKernels_IntegrateVector2(p, 62, toFIXED(1) / 4);
           p->variant++;
           if (p->velocityY > 0 && Q_16_16_UPPER_HALF(p->y) > 104) {
             p->variant = -1;
@@ -760,7 +760,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   // The beam's body: a 32-line gradient.
   row = work->sheet + VOID_BEAM_BODY;
   for (i = 0; i != VOID_BEAM_BODY_SIZE; i++) {
-    s32 shade = Q_16_16_TO_INT(Trig_Sin(i << 9) * CANVAS_LEVEL_BRIGHTEST);
+    s32 shade = FIXEDtoINT(Trig_Sin(i << 9) * CANVAS_LEVEL_BRIGHTEST);
     s32 j;
 
     for (j = 0; j != VOID_BEAM_BODY_SIZE; j++) {
@@ -800,17 +800,17 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
       REG_BLDALPHA = BLEND_ALPHA(16 - fade, BLEND_WEIGHT_MAX);
     }
     BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
     {
       struct MotionObject *caster;
       s32 traced;
 
       caster = BattleObject_GetFar(args->user)->object;
       if (caster->x > 0) {
-        point[0] = caster->x - px(8);
+        point[0] = caster->x - toFIXED(8);
       } else {
-        point[0] = caster->x + px(8);
+        point[0] = caster->x + toFIXED(8);
       }
 
       // The hexagon, one side every 36 frames.
@@ -819,8 +819,9 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
         for (i = 0; i != 6; i++) {
           s32 corner = (i + 4) % 6;
 
-          point[1] = px(gVoidBeam_Corners[corner * 2 + 1]) + px(30);
-          point[2] = px(gVoidBeam_Corners[corner * 2]) + caster->z;
+          point[1] =
+              INTtoFIXED(gVoidBeam_Corners[corner * 2 + 1]) + toFIXED(30);
+          point[2] = INTtoFIXED(gVoidBeam_Corners[corner * 2]) + caster->z;
           EffectPosition_ProjectPoint(point, &corners[i]);
           corners[i].x >>= 1;
         }
@@ -836,10 +837,10 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
           for (k = 0; k != motes; k++) {
             s32 x =
                 corners[i].x +
-                Iwram_MulQ16(k * (corners[(i + 1) % 6].x - corners[i].x), 1820);
+                Iwram_MulFX(k * (corners[(i + 1) % 6].x - corners[i].x), 1820);
             s32 y =
                 corners[i].y +
-                Iwram_MulQ16(k * (corners[(i + 1) % 6].y - corners[i].y), 1820);
+                Iwram_MulFX(k * (corners[(i + 1) % 6].y - corners[i].y), 1820);
 
             draw[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                     x - size / 2, y - size, size, size * 2);
@@ -855,7 +856,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
       for (i = 0; i != count; i++) {
         s32 angle = i << 10;
 
-        point[1] = caster->y - Trig_Cos(angle) * 40 + px(32);
+        point[1] = caster->y - Trig_Cos(angle) * 40 + toFIXED(32);
         point[2] = caster->z + Trig_Sin(angle) * 40;
         EffectPosition_ProjectPoint(point, &ring);
         ring.x >>= 1;
@@ -876,9 +877,9 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
         if (frame == 72) {
           work->particles[0].x = point[0];
           if (work->particles[0].x > 0) {
-            work->particles[0].velocityX = -px(32);
+            work->particles[0].velocityX = -toFIXED(32);
           } else {
-            work->particles[0].velocityX = px(32);
+            work->particles[0].velocityX = toFIXED(32);
           }
           REG_BG2CNT =
               BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -892,7 +893,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
         }
         for (i = 0; i != BEAM_SEGMENTS; i++) {
           point[0] = work->particles[0].x + work->particles[0].velocityX * i;
-          point[1] = px(30);
+          point[1] = toFIXED(30);
           point[2] = caster->z;
           EffectPosition_ProjectPoint(point, &segment);
           segment.x >>= 1;
@@ -919,7 +920,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
           fade = frame * 8 - 640;
         }
         for (i = 0; i != 32; i++) {
-          s32 shade = (Q_16_16_TO_INT(Trig_Sin(i << 9) * 63)) - fade;
+          s32 shade = (FIXEDtoINT(Trig_Sin(i << 9) * 63)) - fade;
           s32 j;
 
           if (shade < 0) {

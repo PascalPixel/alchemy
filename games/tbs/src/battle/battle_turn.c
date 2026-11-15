@@ -16,7 +16,7 @@ void Palette_UpdatePulseBrightness(void) {
     // from 0 to 2.0 (16.16), and a sixth of 1.0 is one step.
     u32 angle = (gFrameCount * 3U) << 10;
     u32 color = palette[PALETTE_COLORS];
-    s32 brightness = (Q16_ONE - Trig_Cos(angle)) / (Q16_ONE / 6);
+    s32 brightness = (FIXED_ONE - Trig_Cos(angle)) / (FIXED_ONE / 6);
     s32 blue = RGB_BLUE(color);
     s32 green = RGB_GREEN(color);
     s32 red = RGB_RED(color);
@@ -41,39 +41,39 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   struct BattleCamera *camera = slots[0];
   struct BattleBackgroundWork *view =
       HEAP_SLOT_FROM(slots, HEAP_SLOT_CAMERA, HEAP_SLOT_BATTLE_BACKGROUND);
-  struct FixedPointPosition eyeOffset;
+  struct Point eyeOffset;
   u32 result;
 
   // The focus 5 pixels up, a quarter turn of yaw, a slight downward pitch, 750
   // pixels away.
-  camera->focus[1] = px(5);
+  camera->focus[1] = toFIXED(5);
   camera->focus[0] = 0;
   camera->focus[2] = 0;
-  view->targetYaw = TRIG_TURN / 4;
-  camera->yaw = TRIG_TURN / 4;
+  view->targetYaw = DEGtoANG(90);
+  camera->yaw = DEGtoANG(90);
   camera->pitch = TRIG_TURN - TRIG_TURN * 3 / 64;
   camera->followPosition = 0;
-  camera->distance = px(750);
+  camera->distance = toFIXED(750);
   camera->followEye = 0;
 
-  Transform_Reset();
-  Transform_ApplyPosition(&camera->focus[0]);
-  Transform_ApplyYaw((s16)camera->yaw);
-  Transform_ApplyPitch((s16)camera->pitch);
+  Matrix_Initialize();
+  Matrix_TranslateVector(&camera->focus[0]);
+  Matrix_RotateY((s16)camera->yaw);
+  Matrix_RotateX((s16)camera->pitch);
 
   eyeOffset.x = 0;
   eyeOffset.y = 0;
   eyeOffset.z = camera->distance;
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
 
-  result = Iwram_RatioMulQ14(px(969), Q16_ONE * 3 / 4);
-  Projection_Set(0, result, px(1938));
+  result = Iwram_RatioMulQ14(toFIXED(969), FIXED_ONE * 3 / 4);
+  Projection_Set(0, result, toFIXED(1938));
 
   // While the view is busy, BattleCamera_SetRange leaves BG1's scroll alone.
   gProjection.centerY = verticalOffset + BATTLE_PROJECTION_CENTER_Y;
   view->busy = 1;
-  BattleCamera_SetRange(px(120), px(118 - verticalOffset), 0, 8 << 8,
-                        Q16_ONE * 2);
+  BattleCamera_SetRange(toFIXED(120), toFIXED(118 - verticalOffset), 0, 8 << 8,
+                        FIXED_ONE * 2);
   view->flag = 1;
   view->busy = 0;
 }

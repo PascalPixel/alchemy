@@ -137,11 +137,11 @@ void JupiterLighthouse_SetLayerCellsByLeader(void) {
 
   object = Actor_Get(gMainRoutineWork.leaderActorId);
   if (object->layer == 1) {
-    FieldMapGrid_SetCellBehavior(px(144), px(576), 2, 0xea);
-    FieldMapGrid_SetCellBehavior(px(256), px(560), 2, 0xea);
+    FieldMapGrid_SetCellBehavior(toFIXED(144), toFIXED(576), 2, 0xea);
+    FieldMapGrid_SetCellBehavior(toFIXED(256), toFIXED(560), 2, 0xea);
   } else {
-    FieldMapGrid_SetCellBehavior(px(144), px(576), 2, 0xeb);
-    FieldMapGrid_SetCellBehavior(px(256), px(560), 2, 0xeb);
+    FieldMapGrid_SetCellBehavior(toFIXED(144), toFIXED(576), 2, 0xeb);
+    FieldMapGrid_SetCellBehavior(toFIXED(256), toFIXED(560), 2, 0xeb);
   }
 }
 
@@ -164,13 +164,13 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
   FieldEvent_ResolvePendingActions(0);
   target = gJupiterLighthouse_GlowPosition;
   if (kind == 32) {
-    target[0] = px(136);
-    target[1] = px(144);
-    target[2] = px(592);
+    target[0] = toFIXED(136);
+    target[1] = toFIXED(144);
+    target[2] = toFIXED(592);
   } else {
-    target[0] = px(248);
-    target[1] = px(144);
-    target[2] = px(576);
+    target[0] = toFIXED(248);
+    target[1] = toFIXED(144);
+    target[2] = toFIXED(576);
   }
   {
     s32 priority = TASK_PASS_VBLANK;
@@ -179,21 +179,21 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
   }
   EventCamera_FollowActor(owner, 1);
   for (i = 35; i >= 0; i--) {
-    leader->y.fixed += -px(1);
+    leader->y.fixed += -toFIXED(1);
     System_Wait(1);
   }
-  leader->scaleX = Q16_ONE;
-  leader->scaleY = Q16_ONE;
+  leader->scaleX = FIXED_ONE;
+  leader->scaleY = FIXED_ONE;
   effect = Actor_Spawn(280, leader->x.fixed, leader->y.fixed, leader->z.fixed);
   Actor_SelectAnimation(effect, 2);
-  effect->scaleX = Q16_ONE * 3 / 2;
-  effect->scaleY = Q16_ONE;
+  effect->scaleX = FIXED_ONE * 3 / 2;
+  effect->scaleY = FIXED_ONE;
   ((struct FieldSprite *)effect->sprite)->priority = 1;
-  while (leader->y.fixed > px(32)) {
-    leader->y.fixed += -px(1);
+  while (leader->y.fixed > toFIXED(32)) {
+    leader->y.fixed += -toFIXED(1);
     leader->facing += 0x2000;
     effect->x.fixed = leader->x.fixed;
-    effect->y.fixed = leader->y.fixed + -px(6);
+    effect->y.fixed = leader->y.fixed + -toFIXED(6);
     effect->z.fixed = leader->z.fixed;
     System_Wait(1);
   }
@@ -227,13 +227,13 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
   FieldEvent_ResolvePendingActions(0);
   target = gJupiterLighthouse_GlowPosition;
   if (kind == 30) {
-    target[0] = px(136);
-    target[1] = px(144);
-    target[2] = px(592);
+    target[0] = toFIXED(136);
+    target[1] = toFIXED(144);
+    target[2] = toFIXED(592);
   } else {
-    target[0] = px(248);
-    target[1] = px(144);
-    target[2] = px(576);
+    target[0] = toFIXED(248);
+    target[1] = toFIXED(144);
+    target[2] = toFIXED(576);
   }
   {
     s32 priority = TASK_PASS_VBLANK;
@@ -241,44 +241,44 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
     Task_AddFrame(JupiterLighthouse_DrawGlow, priority);
   }
   EventCamera_FollowActor(owner, 1);
-  leader->scaleX = Q16_ONE;
-  leader->scaleY = Q16_ONE;
+  leader->scaleX = FIXED_ONE;
+  leader->scaleY = FIXED_ONE;
   effect = Actor_Spawn(280, leader->x.fixed, leader->y.fixed, leader->z.fixed);
   Actor_SelectAnimation(effect, 2);
-  effect->scaleX = Q16_ONE * 3 / 2;
-  effect->scaleY = Q16_ONE;
+  effect->scaleX = FIXED_ONE * 3 / 2;
+  effect->scaleY = FIXED_ONE;
   ((struct FieldSprite *)effect->sprite)->priority = 1;
-  while (leader->y.fixed < px(108)) {
-    leader->y.fixed += px(1);
+  while (leader->y.fixed < toFIXED(108)) {
+    leader->y.fixed += toFIXED(1);
     leader->facing += 0x2000;
     effect->x.fixed = leader->x.fixed;
-    effect->y.fixed = leader->y.fixed + -px(6);
+    effect->y.fixed = leader->y.fixed + -toFIXED(6);
     effect->z.fixed = leader->z.fixed;
     System_Wait(1);
   }
   leader->scaleX = 0;
   effect->scaleX = 0;
-  while (leader->y.fixed < px(144)) {
-    leader->y.fixed += px(1);
-    effect->y.fixed += px(1);
+  while (leader->y.fixed < toFIXED(144)) {
+    leader->y.fixed += toFIXED(1);
+    effect->y.fixed += toFIXED(1);
     System_Wait(1);
   }
-  effect->scaleX = Q16_ONE / 2;
-  effect->scaleY = Q16_ONE * 3 / 4;
+  effect->scaleX = FIXED_ONE / 2;
+  effect->scaleY = FIXED_ONE * 3 / 4;
   for (i = 31; i >= 0; i--) {
-    effect->scaleX += Q16_ONE / 32;
-    effect->scaleY += Q16_ONE / 128;
+    effect->scaleX += FIXED_ONE / 32;
+    effect->scaleY += FIXED_ONE / 128;
     System_Wait(1);
   }
-  effect->scaleX = Q16_ONE * 3 / 2;
-  effect->scaleY = Q16_ONE;
+  effect->scaleX = FIXED_ONE * 3 / 2;
+  effect->scaleY = FIXED_ONE;
   Actor_SelectAnimation(effect, 6);
-  leader->scaleX = Q16_ONE * 3 / 8;
-  leader->scaleY = Q16_ONE * 3 / 8;
+  leader->scaleX = FIXED_ONE * 3 / 8;
+  leader->scaleY = FIXED_ONE * 3 / 8;
   i = 19;
   do {
     leader->facing += 0x2000;
-    leader->scaleX += Q16_ONE / 32;
+    leader->scaleX += FIXED_ONE / 32;
     leader->scaleY = leader->scaleX;
     System_Wait(1);
     i--;
@@ -288,8 +288,8 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
   leader->facing = FACING_SOUTH;
   leader->layer = 1;
   leader->motionFlags = 3;
-  leader->y.fixed = px(144);
-  leader->groundHeight = px(144);
+  leader->y.fixed = toFIXED(144);
+  leader->groundHeight = toFIXED(144);
   FieldTask_Remove(JupiterLighthouse_DrawGlow);
   JupiterLighthouse_SetLayerCellsByLeader();
   Event_End();
@@ -327,14 +327,14 @@ void JupiterLighthouse_RideTheBeam(void) {
   s32 y;
 
   y = object->y.fixed;
-  if (y >= px(32)) {
+  if (y >= toFIXED(32)) {
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
     FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
     Actor_WalkTo(gMainRoutineWork.leaderActorId, 216, 680);
     Actor_SetAnimationSpeed(object, 64);
     object->motionFlags = 0;
     for (i = 109; i >= 0; i--) {
-      object->y.fixed += px(3);
+      object->y.fixed += toFIXED(3);
       angle = object->facing;
       angle += 0x1800;
       object->facing = angle;
@@ -391,7 +391,7 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
     FieldEvent_Wait(20);
     Event_PlaySound(SE_MAP_TRANSITION);
     MapGrid_CopyCellsLayered(93, 41, 1, 1, 85, 41);
-    FieldMapGrid_SetCellBehavior(px(336), px(656), 2, 236);
+    FieldMapGrid_SetCellBehavior(toFIXED(336), toFIXED(656), 2, 236);
   }
 }
 
@@ -409,7 +409,7 @@ void JupiterLighthouse_RaiseBridgeBlock(s32 unused, s32 id) {
       FIELD_CELL(object->x.fixed) == 18 && FIELD_CELL(object->z.fixed) == 6) {
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
-      object->y.fixed += px(2);
+      object->y.fixed += toFIXED(2);
       System_Wait(1);
     }
     Actor_RaiseFromCell(id);
@@ -421,7 +421,7 @@ void JupiterLighthouse_StartHover(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->movementMode == 10)
-    FieldMapGrid_SetCellBehavior(px(336), px(592), 0, 255);
+    FieldMapGrid_SetCellBehavior(toFIXED(336), toFIXED(592), 0, 255);
 }
 
 void JupiterLighthouse_EndHover(void) {
@@ -438,12 +438,12 @@ void JupiterLighthouse_CircleTheBeam(struct Actor *object) {
   s16 height = object->userValue;
 
   SET_ACTOR_POSITION(
-      object, Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + px(214),
-      (height * px(3)) + px(8), px(680));
+      object, Iwram_MulFX(Trig_Cos(angle), object->speedLimit) + toFIXED(214),
+      (height * toFIXED(3)) + toFIXED(8), toFIXED(680));
   // Read signed, as the phase is above; the field is declared unsigned.
   if ((s16)object->userValue == 0)
     Actor_SelectAnimation(object, 7);
-  if (object->y.fixed > px(340))
+  if (object->y.fixed > toFIXED(340))
     object->userValue = 0xffff;
   if (Math_Sin(angle) < 0)
     ((struct FieldSprite *)object->sprite)->priority = 1;
@@ -494,7 +494,7 @@ s32 Scene_Initialize(void) {
     MapGrid_CopyCellAttributes(28, 39, 1, 1, 20, 39);
     MapGrid_CopyCellsLayered(28, 39, 1, 1, 20, 39);
     MapGrid_CopyCellsLayered(92, 39, 2, 3, 84, 39);
-    FieldMapGrid_SetCellBehavior(px(336), px(656), 2, 236);
+    FieldMapGrid_SetCellBehavior(toFIXED(336), toFIXED(656), 2, 236);
   } else {
     LightSprites_InitB();
     LightSprites_Add(ACTOR_ENERGY_BLOCK, 0);
@@ -567,7 +567,7 @@ void Actor_RaiseFromCell(s32 id) {
   object->motionFlags = 4;
   height = object->groundHeight;
   object->bounce = 0;
-  object->y.fixed = height + px(32);
+  object->y.fixed = height + toFIXED(32);
   object->priorityFlags |= 128;
   height =
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);

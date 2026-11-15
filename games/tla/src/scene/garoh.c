@@ -509,14 +509,14 @@ void Garoh_WerewolfPeersFromCrevice(void) {
     FieldEvent_ResolvePendingActions(0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SANCTUARY_CREVICE), 0);
     facing = FACING_SOUTH;
-    Actor_SetPositionAndFacing(ACTOR_SANCTUARY_CREVICE, px(360), px(199),
-                               facing);
+    Actor_SetPositionAndFacing(ACTOR_SANCTUARY_CREVICE, toFIXED(360),
+                               toFIXED(199), facing);
     FieldCamera_MoveTo(359, CAMERA_KEEP, 220, 1);
     FieldCamera_WaitForArrival();
     Garoh_OpenCrevice(ACTOR_SANCTUARY_CREVICE);
     FieldEvent_Wait(30);
-    Actor_SetPositionAndFacing(ACTOR_MAHA_AT_THE_CREVICE, px(360), px(199),
-                               facing);
+    Actor_SetPositionAndFacing(ACTOR_MAHA_AT_THE_CREVICE, toFIXED(360),
+                               toFIXED(199), facing);
     Actor_WalkByAndWait(ACTOR_MAHA_AT_THE_CREVICE, 0, 16);
     Garoh_CloseCrevice(ACTOR_SANCTUARY_CREVICE);
     FieldEvent_SetMessageId((s32)MsgGarohWhatOutsidersHere);
@@ -620,7 +620,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_GAROH_HEARD_MAHA)) {
       s32 angle = FACING_SOUTH;
 
-      Actor_SetPositionAndFacing(ACTOR_MAHA, px(328), px(162), angle);
+      Actor_SetPositionAndFacing(ACTOR_MAHA, toFIXED(328), toFIXED(162), angle);
     }
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     FieldEffect_StartBlankOverlay(0);
@@ -749,7 +749,7 @@ void Garoh_RaisePillar(s32 id, struct Actor *object) {
   object->motionFlags = 0;
   saved = id;
   for (i = 16; i > 0; i--) {
-    object->y.fixed -= px(2);
+    object->y.fixed -= toFIXED(2);
     FieldEvent_Wait(1);
   }
   Event_PlaySound(SE_WHOOSH);
@@ -986,11 +986,11 @@ s32 timer;
 void Garoh_PuffFrom(s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  Garoh_SpawnPuff(object->x.fixed + px(8), object->y.fixed + px(28),
+  Garoh_SpawnPuff(object->x.fixed + toFIXED(8), object->y.fixed + toFIXED(28),
                   object->z.fixed, 0x1000, 20);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
-  Garoh_SpawnPuff(object->x.fixed - px(8), object->y.fixed + px(28),
+  Garoh_SpawnPuff(object->x.fixed - toFIXED(8), object->y.fixed + toFIXED(28),
                   object->z.fixed, 0xf000, 20);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
@@ -1021,8 +1021,8 @@ static inline void Scene_WalkTowardLeader(s32 actorId) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   if (leader != NULL) {
-    Actor_SetDestination(actorId, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(actorId, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   }
 }
 
@@ -1034,8 +1034,8 @@ static inline void Scene_WalkIntoLeader(s32 actorId) {
   Actor_SetAnimation(actorId, ANIM_WALK);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader != NULL) {
-    Actor_SetDestination(actorId, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(actorId, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   }
   FieldActor_WaitForMoveById(actorId);
   Actor_SetPosition(actorId, 0, 0);
@@ -1111,16 +1111,17 @@ void Garoh_WerewolfProwls(void) {
     s32 r;
     s32 wave;
 
-    wave = Math_Sin(i * (TRIG_TURN / 8));
+    wave = Math_Sin(i * (DEGtoANG(45)));
     pos = position;
-    pos[0] = Garoh_PathStep(px(104), px(88), i) - wave * 12;
-    wave = Math_Sin(i * (TRIG_TURN / 8));
-    position[2] = Garoh_PathStep(px(32), px(120), i) - wave * 7;
+    pos[0] = Garoh_PathStep(toFIXED(104), toFIXED(88), i) - wave * 12;
+    wave = Math_Sin(i * (DEGtoANG(45)));
+    position[2] = Garoh_PathStep(toFIXED(32), toFIXED(120), i) - wave * 7;
     position[1] = 0;
     r = (Random_Below(10)) + 4;
-    Actor_SetSpeedFixed(ACTOR_WEREWOLF, r * (px(1) / 10), r * (px(1) / 20));
-    Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / px(1),
-                        position[2] / px(1));
+    Actor_SetSpeedFX(ACTOR_WEREWOLF, r * (toFIXED(1) / 10),
+                     r * (toFIXED(1) / 20));
+    Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / toFIXED(1),
+                        position[2] / toFIXED(1));
     i++;
   } while (i <= 7);
   Actor_SetAnimation(ACTOR_WEREWOLF, 1);
@@ -1137,21 +1138,22 @@ void Garoh_WerewolfProwls(void) {
   Actor_SetAnimation(ACTOR_WEREWOLF, 2);
   x = werewolf->x.fixed;
   z = werewolf->z.fixed;
-  toX = px(128);
-  toZ = px(184);
+  toX = toFIXED(128);
+  toZ = toFIXED(184);
   i = 0;
   do {
     s32 r;
     s32 wave;
 
-    wave = Math_Sin(i * (TRIG_TURN / 8));
+    wave = Math_Sin(i * (DEGtoANG(45)));
     position[0] = Garoh_PathStep(x, toX, i) - wave * 4;
     position[2] = Garoh_PathStep(z, toZ, i);
     position[1] = 0;
     r = (Random_Below(10)) + 4;
-    Actor_SetSpeedFixed(ACTOR_WEREWOLF, r * (px(1) / 10), r * (px(1) / 20));
-    Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / px(1),
-                        position[2] / px(1));
+    Actor_SetSpeedFX(ACTOR_WEREWOLF, r * (toFIXED(1) / 10),
+                     r * (toFIXED(1) / 20));
+    Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / toFIXED(1),
+                        position[2] / toFIXED(1));
     i++;
   } while (i <= 7);
   Actor_SetAnimation(ACTOR_WEREWOLF, 1);
@@ -2519,7 +2521,7 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_Wait(5);
   ether = Actor_Get(ACTOR_ETHER);
   sprite = ether->sprite;
-  sprite->scale = Q16_ONE * 2 / 5;
+  sprite->scale = FIXED_ONE * 2 / 5;
   FieldActor_SetSpritePriority(ACTOR_ETHER, 1);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ETHER), 0);
   Actor_SetPosition(ACTOR_ETHER, 328, 160);
@@ -2527,11 +2529,11 @@ void Garoh_MahaTellsTheLegend(void) {
   total = 0;
   frames = 20;
   do {
-    sprite->scale = Math_Divide(total, 20) + Q16_ONE * 2 / 5;
+    sprite->scale = Math_Divide(total, 20) + FIXED_ONE * 2 / 5;
     ether->facing += FACING_STEP;
     System_Wait(1);
     frames--;
-    total += Q16_ONE * 3 / 5;
+    total += FIXED_ONE * 3 / 5;
   } while (frames >= 0);
   ether->facing = FACING_SOUTH;
   Actor_WalkByAndWait(ACTOR_ETHER, 0, 8);
@@ -2741,8 +2743,8 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 s32 gGaroh_ShrunkenSpriteScript[] = {
     SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Y, px(-4)),
-    SC_ADD(SW_X, px(6)),
+    SC_ADD(SW_Y, toFIXED(-4)),
+    SC_ADD(SW_X, toFIXED(6)),
     SC_SET(SW_SCALE_X, 0xcccc),
     SC_SET(SW_SCALE_Y, 0xcccc),
     SC_CALL(Garoh_ClearScriptedActorSpriteFlags),

@@ -94,8 +94,8 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
           u32 spread;
 
           spark->variant = -i / 4 + 2;
-          spark->x = px(centerX / 2);
-          spark->y = px((Random16() & 15) + y + 16);
+          spark->x = INTtoFIXED(centerX / 2);
+          spark->y = INTtoFIXED((Random16() & 15) + y + 16);
           random = Random16();
           spread = gRagingHeat_Styles[args->variant][1];
           spark->velocityX = ((random % spread) - (spread >> 1)) << 12;
@@ -105,9 +105,9 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
           s32 angle;
           s32 speed;
 
-          EMBERS[i].x = px(centerX / 2);
-          EMBERS[i].y = px((Random16() & 15) + y + 24);
-          angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
+          EMBERS[i].x = INTtoFIXED(centerX / 2);
+          EMBERS[i].y = INTtoFIXED((Random16() & 15) + y + 24);
+          angle = (Random16() & 0x7fff) + DEGtoANG(90);
           speed = (Random16() & 255) + 127;
           EMBERS[i].velocityX = (Trig_Sin(angle) * speed) >> 5;
           EMBERS[i].velocityY = (Trig_Cos(angle) * speed) >> 5;
@@ -139,7 +139,8 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
                       Q_16_16_UPPER_HALF(particle->y) - 32, FLASH_BURST_WIDTH,
                       FLASH_BURST_HEIGHT);
             }
-            BattleEffectKernels_IntegrateVector2(particle, 60, -px(1) / 16);
+            BattleEffectKernels_IntegrateVector2(particle, 60,
+                                                 -toFIXED(1) / 16);
           }
           particle->variant++;
         }
@@ -154,7 +155,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
             draw[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                     Q_16_16_UPPER_HALF(particle->x) - size / 2,
                     Q_16_16_UPPER_HALF(particle->y) - size, size, size * 2);
-            BattleEffectKernels_IntegrateVector2(particle, 60, px(1) / 16);
+            BattleEffectKernels_IntegrateVector2(particle, 60, toFIXED(1) / 16);
             particle->variant--;
           }
           i++;
@@ -184,18 +185,18 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
         s32 step = size << 5;
         s32 scale;
 
-        Transform_Reset();
-        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Matrix_Initialize();
+        Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
         if (i == 0) {
-          Transform_ApplyTranslation(px(centerX) - px(128), px(baseY) - px(64),
-                                     0);
+          Matrix_Translate(INTtoFIXED(centerX) - toFIXED(128),
+                           INTtoFIXED(baseY) - toFIXED(64), 0);
         } else {
-          Transform_ApplyTranslation(px(centerX) - px(128),
-                                     px(baseY + 8) - px(64), 0);
+          Matrix_Translate(INTtoFIXED(centerX) - toFIXED(128),
+                           INTtoFIXED(baseY + 8) - toFIXED(64), 0);
         }
-        Transform_ApplyPitch(2000);
+        Matrix_RotateX(2000);
         if (frame <= 47) {
-          Transform_ApplyPitch((48 - frame) << 9);
+          Matrix_RotateX((48 - frame) << 9);
         }
         if (i == 0) {
           scale = (frame - 16) * step;
@@ -206,19 +207,19 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
             scale = largest - step * (frame * 2 - 120);
           }
           texture.pixels = work->sheet;
-          Transform_ApplyYaw(-frame * 3 << 8);
+          Matrix_RotateY(-frame * 3 << 8);
         } else {
           scale = (frame * 4 - 224) * step;
           if (scale < 0) {
             continue;
           }
-          scale += Q16_ONE / 4;
+          scale += FIXED_ONE / 4;
           shade = 512 - frame * 8;
           model->shade = shade;
           texture.pixels = TEXTURE_PIXELS;
         }
         if (scale > 0 && shade > MODEL_SHADE_INVISIBLE) {
-          Transform_ApplyUniformScale(scale);
+          Matrix_ScaleUniform(scale);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                    4);
           Render_DrawModelList(model);
@@ -319,19 +320,19 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
     if (lift > gJuggle_Styles[args->variant][RING_LIFT_MAX])
       lift = gJuggle_Styles[args->variant][RING_LIFT_MAX];
     if (frame < RING_THROW_FRAME) {
-      ring->x = px(caster.x);
-      ring->y = px(caster.y - lift - 32);
+      ring->x = INTtoFIXED(caster.x);
+      ring->y = INTtoFIXED(caster.y - lift - 32);
     } else {
       // The throw: z and velocityZ hold the pull toward the midpoint, and
       // the ring keeps three quarters of its speed each frame.
       if (frame == RING_THROW_FRAME) {
         BattleEffect_GetTargetsMidpoint(&midpoint);
-        ring->x = px(caster.x);
-        ring->y = px(caster.y - lift - 32);
+        ring->x = INTtoFIXED(caster.x);
+        ring->y = INTtoFIXED(caster.y - lift - 32);
         ring->velocityX = 0;
         ring->velocityY = 0;
-        ring->z = (px(midpoint.x) - ring->x) / 64;
-        ring->velocityZ = (px(midpoint.y - 32) - ring->y) / 64;
+        ring->z = (INTtoFIXED(midpoint.x) - ring->x) / 64;
+        ring->velocityZ = (INTtoFIXED(midpoint.y - 32) - ring->y) / 64;
       }
       ring->x += ring->velocityX;
       ring->y += ring->velocityY;
@@ -349,18 +350,18 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
       s32 x;
       s32 y;
 
-      Transform_Reset();
-      Transform_ApplyTranslation(ring->x - px(128), ring->y - px(64), 0);
-      Transform_ApplyRoll(frame * 256);
-      Transform_ApplyPitch(frame * 256 + 500);
+      Matrix_Initialize();
+      Matrix_Translate(ring->x - toFIXED(128), ring->y - toFIXED(64), 0);
+      Matrix_RotateZ(frame * 256);
+      Matrix_RotateX(frame * 256 + 500);
       if (i > 7)
-        Transform_ApplyPitch(TRIG_TURN / 4);
-      Transform_ApplyYaw(
+        Matrix_RotateX(DEGtoANG(90));
+      Matrix_RotateY(
           (frame * 4 + i * gJuggle_Styles[args->variant][RING_SPACING]) << 8);
       place = vector;
       place[0] = 0;
       place[1] = 0;
-      place[2] = px(lift);
+      place[2] = INTtoFIXED(lift);
       TransformVector(place, place);
       x = place[0] >> 17;
       place[0] = x + 64;
@@ -384,8 +385,8 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
           s32 angle;
           s32 speed;
 
-          spark->x = px(target.x / 2);
-          spark->y = px(target.y);
+          spark->x = INTtoFIXED(target.x / 2);
+          spark->y = INTtoFIXED(target.y);
           angle = Random16();
           speed = (Random16() & 255) + 127;
           spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
@@ -407,7 +408,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
                         sparkCels + gBattleEffect_MotePictures[size - 1],
                         Q_16_16_UPPER_HALF(spark->x) - size / 2,
                         Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(spark, 60, -px(1) / 4);
+        BattleEffectKernels_IntegrateVector2(spark, 60, -toFIXED(1) / 4);
         spark->variant--;
       }
     }

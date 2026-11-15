@@ -106,7 +106,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
 
 /// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
 /// camera work, the projection, the per-scanline ground plane routine in RAM
-/// (Transform_UpdateVertices) and its first frame, and the per-frame view and
+/// (Matrix_UpdateVertices) and its first frame, and the per-frame view and
 /// HBlank updates.
 UNREAD_RESULT WorldMap_InitializePerspective(void) {
   struct WorldMapView *perspective;
@@ -127,10 +127,10 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   Dma_Fill32(0, perspective, sizeof(struct WorldMapView));
   perspective->view[0] = 0;
   perspective->view[1] = 0;
-  perspective->scaleX = Q16_ONE * 32;
-  perspective->scaleY = Q16_ONE * 64;
-  perspective->limitX = px(8160);
-  perspective->limitY = px(8160);
+  perspective->scaleX = FIXED_ONE * 32;
+  perspective->scaleY = FIXED_ONE * 64;
+  perspective->limitX = toFIXED(8160);
+  perspective->limitY = toFIXED(8160);
   perspective->script = NULL;
   perspective->tiles = Resource_GetTableEntry(RESOURCE_PERSPECTIVE_DATA_A);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DEFAULT_TILE_ANIMATION),
@@ -182,7 +182,7 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   perspective->farPlane = farPlane;
   distance = &perspective->distance;
   *distance = farPlane;
-  perspective->zoom = Q16_ONE;
+  perspective->zoom = FIXED_ONE;
   zoomTransitionFrames = &perspective->zoomTransitionFrames;
   camera->followEye = 0;
   camera->followPosition = 0;
@@ -194,23 +194,23 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   gProjection.centerY = 96;
   Projection_Set(farPlane, farPlane >> 1, farPlane << 1);
   SET_VECTOR(cameraPosition, 0, 0, 0);
-  Transform_Reset();
-  Transform_ApplyPosition(cameraPosition);
-  Transform_ApplyYaw(perspective->yaw);
-  Transform_ApplyPitch(perspective->pitch);
+  Matrix_Initialize();
+  Matrix_TranslateVector(cameraPosition);
+  Matrix_RotateY(perspective->yaw);
+  Matrix_RotateX(perspective->pitch);
   // eyeOffset in the block that uses it: at function scope it would take
   // Dma_Fill32's word's place at the top of the stack frame.
   {
-    struct FixedPointPosition eyeOffset;
+    struct Point eyeOffset;
 
     eyeOffset.x = 0;
     eyeOffset.y = 0;
     eyeOffset.z = farPlane;
     Iwram_TransformVector(&eyeOffset, (s32 *)camera);
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, cameraPosition);
-    RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, Transform_UpdateVertices,
-                     &Transform_UpdateVerticesSize);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, cameraPosition);
+    RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, Matrix_UpdateVertices,
+                     &Matrix_UpdateVerticesSize);
     WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(Trig_Cos(perspective->pitch),
                                                   Trig_Sin(perspective->pitch)),
                                 cameraPosition, affineWork->scanlines);
@@ -222,16 +222,16 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
     // Then the world map's own view: pitch TRIG_TURN * 7 / 8 (minus an eighth
     // of a turn) and yaw 0, with the eye one pixel beyond the distance.
     SET_VECTOR(cameraPosition, 0, 0, 0);
-    Transform_Reset();
+    Matrix_Initialize();
     Io_Write16Swapped(&perspective->pitch, TRIG_TURN * 7 / 8);
     perspective->yaw = 0;
-    Transform_Reset();
-    Transform_ApplyPosition(cameraPosition);
-    Transform_ApplyYaw(perspective->yaw);
-    Transform_ApplyPitch(perspective->pitch);
+    Matrix_Initialize();
+    Matrix_TranslateVector(cameraPosition);
+    Matrix_RotateY(perspective->yaw);
+    Matrix_RotateX(perspective->pitch);
     eyeOffset.x = 0;
     eyeOffset.y = 0;
-    eyeOffset.z = *distance + Q16_ONE;
+    eyeOffset.z = *distance + FIXED_ONE;
     Iwram_TransformVector(&eyeOffset, camera->eye);
   }
   REG_MOSAIC = 0;
@@ -309,8 +309,9 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   buffer = Heap_Alloc(512);
   perspective = gMapGridWork[0];
   // The 32-pixel cell under (x, z), 32 cells to a row.
-  if (WORLD_MAP_CELLS[((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)].kind ==
-      WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD)
+  if (WORLD_MAP_CELLS[((x / toFIXED(32)) & 31) +
+                      (((z / toFIXED(32)) & 31) << 5)]
+          .kind == WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD)
     graphicsSet = 1;
   resources = gWorldMap_GraphicsResources[graphicsSet];
   perspective->resources = resources;
@@ -494,7 +495,7 @@ void WorldMap_UpdateView(void) {
   struct WorldMapAffinePair(*affinePages)[DISPLAY_HEIGHT] = affineWork->pages;
   s32 distance = perspective->farPlane;
   s32 height = perspective->distance;
-  struct FixedPointPosition eyeOffset;
+  struct Point eyeOffset;
 
   WorldMap_PreloadCurrentTileBlock();
   if (followedPosition != NULL) {
@@ -511,9 +512,9 @@ void WorldMap_UpdateView(void) {
 
       shakeDifference -= Random16();
       shakeAmplitude = perspective->shakeX;
-      x += Iwram_MulQ16(shakeAmplitude, shakeDifference);
+      x += Iwram_MulFX(shakeAmplitude, shakeDifference);
       perspective->shakeX =
-          Iwram_MulQ16(shakeAmplitude, perspective->shakeDecay);
+          Iwram_MulFX(shakeAmplitude, perspective->shakeDecay);
     }
     if (perspective->shakeY != 0) {
       s32 shakeDifference = Random16();
@@ -521,14 +522,14 @@ void WorldMap_UpdateView(void) {
 
       shakeDifference -= Random16();
       shakeAmplitude = perspective->shakeY;
-      y += Iwram_MulQ16(shakeAmplitude, shakeDifference);
+      y += Iwram_MulFX(shakeAmplitude, shakeDifference);
       perspective->shakeY =
-          Iwram_MulQ16(shakeAmplitude, perspective->shakeDecay);
+          Iwram_MulFX(shakeAmplitude, perspective->shakeDecay);
     }
     // On crossing a 16-pixel line, draw the column 16 on that side, or the
     // row 12 on when y grows and 18 back when it falls.
-    tileColumn = x / px(16);
-    tileRow = y / px(16);
+    tileColumn = x / toFIXED(16);
+    tileRow = y / toFIXED(16);
     if ((perspective->view[0] ^ x) & (16 << 16)) {
       if (perspective->view[0] < x)
         WorldMap_RenderPaletteMappedColumn(tileColumn + 16);
@@ -554,16 +555,16 @@ void WorldMap_UpdateView(void) {
   gProjection.centerY = 96;
   Projection_Set(distance, height / 2, height * 2);
   SET_VECTOR(cameraPosition, *followedPosition++, 0, followedPosition[1]);
-  Transform_Reset();
-  Transform_ApplyPosition(cameraPosition);
-  Transform_ApplyYaw(perspective->yaw);
-  Transform_ApplyPitch(perspective->pitch);
+  Matrix_Initialize();
+  Matrix_TranslateVector(cameraPosition);
+  Matrix_RotateY(perspective->yaw);
+  Matrix_RotateX(perspective->pitch);
   eyeOffset.x = 0;
   eyeOffset.y = 0;
-  eyeOffset.z = height + Q16_ONE;
+  eyeOffset.z = height + FIXED_ONE;
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
-  Transform_Reset();
-  Transform_SetLookAt(camera->eye, cameraPosition);
+  Matrix_Initialize();
+  Matrix_SetLookAt(camera->eye, cameraPosition);
   // The scanline table depends only on the pitch, so it is rebuilt only when
   // the pitch has changed.
   if (gScanlinePitch != perspective->pitch) {
@@ -599,8 +600,8 @@ void WorldMap_UpdateCurrentTileBlock(void) {
   }
   // The top left of the 2x2 tiles (512 pixels each, >> 25) around the
   // point, 256 pixels left of it and 320 above.
-  firstQuarterX = (firstQuarterX - px(256)) >> 25;
-  firstQuarterY = (firstQuarterY - px(320)) >> 25;
+  firstQuarterX = (firstQuarterX - toFIXED(256)) >> 25;
+  firstQuarterY = (firstQuarterY - toFIXED(320)) >> 25;
   layer = 0;
   layerTileBase = 0;
   for (; layer < 2; layer++) {
@@ -635,8 +636,8 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     firstQuarterX = *followedPosition++;
     firstQuarterY = followedPosition[1];
   }
-  firstQuarterX = (firstQuarterX - px(256)) >> 25;
-  firstQuarterY = (firstQuarterY - px(320)) >> 25;
+  firstQuarterX = (firstQuarterX - toFIXED(256)) >> 25;
+  firstQuarterY = (firstQuarterY - toFIXED(320)) >> 25;
   for (layer = 0; layer < 2; layer++) {
     for (row = 0; row < 2; row++) {
       for (col = 0; col < 2; col++) {

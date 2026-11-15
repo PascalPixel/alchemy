@@ -87,7 +87,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
   }
 
   i = 0;
-  sparkOriginX = px(canvasCenterX);
+  sparkOriginX = INTtoFIXED(canvasCenterX);
   do {
     struct Particle *spark = &TITAN_BLADE_SWORD_SPARKS[i];
 
@@ -97,7 +97,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     mag = (Random16() & 0x1ff) + 32;
     ang = Random16() & TRIG_ANGLE_MASK;
     spark->x = sparkOriginX;
-    spark->y = px(88);
+    spark->y = toFIXED(88);
     spark->velocityX = (Trig_Sin(ang) * mag) >> 5;
     spark->velocityY = -(Trig_Cos(ang) * mag) >> 6;
     spark->variant = (Random16() & 7) + 32;
@@ -142,8 +142,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
         s32 life;
         s32 y;
 
-        y = WHOLE_PIXELS(flash->y);
-        x = WHOLE_PIXELS(flash->x) + canvasCenterX;
+        y = FIXEDtoINT(flash->y);
+        x = FIXEDtoINT(flash->x) + canvasCenterX;
         life = flash->variant;
         if (life >= 0 && life <= 17) {
           blitters[0](canvas,
@@ -170,7 +170,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           mag = Random16() & 63;
           ang = Random16() & TRIG_ANGLE_MASK;
           dust->x = ((Trig_Sin(ang) * mag) >> 3) + sparkOriginX;
-          dust->y = ((Trig_Cos(ang) * mag) >> 2) + px(96);
+          dust->y = ((Trig_Cos(ang) * mag) >> 2) + toFIXED(96);
           dust->velocityX = ((Random16() & 63) - 32) << 14;
           dust->velocityY = (-(Random16() & 63) - 8) << 13;
           dust->variant = 0;
@@ -193,7 +193,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           mag = Random16() & 63;
           ang = Random16() & TRIG_ANGLE_MASK;
           dust->x = ((Trig_Sin(ang) * mag) >> 3) + sparkOriginX;
-          dust->y = ((Trig_Cos(ang) * mag) >> 2) + px(96);
+          dust->y = ((Trig_Cos(ang) * mag) >> 2) + toFIXED(96);
           dust->velocityX = ((Random16() & 63) - 32) << 14;
           dust->velocityY = (-(Random16() & 63) - 8) << 13;
           dust->variant = 0;
@@ -229,8 +229,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
             size += 2;
           }
           EFFECT_SWELL_MOTE(size, frame);
-          EFFECT_DRAW_MOTE(blitters[0], canvas, sheet, WHOLE_PIXELS(dust->x),
-                           WHOLE_PIXELS(dust->y), size);
+          EFFECT_DRAW_MOTE(blitters[0], canvas, sheet, FIXEDtoINT(dust->x),
+                           FIXEDtoINT(dust->y), size);
 
           dust->x += dust->velocityX;
           dust->y += dust->velocityY;
@@ -239,7 +239,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           dust->velocityX = dust->velocityX * 62 / DAMPING_SCALE;
           dust->velocityY = dust->velocityY * 62 / DAMPING_SCALE;
           dust->variant++;
-          if (dust->velocityY > 0 && WHOLE_PIXELS(dust->y) > 108) {
+          if (dust->velocityY > 0 && FIXEDtoINT(dust->y) > 108) {
             dust->variant = -1;
           }
         }
@@ -283,20 +283,20 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           s32 size;
 
           Particle_AdvanceWithGravity2D(spark, PARTICLE_DAMPING_NONE,
-                                        px(1) / 8);
+                                        toFIXED(1) / 8);
           y = spark->y;
           spark->variant--;
-          if (y > px(108)) {
+          if (y > toFIXED(108)) {
             spark->velocityY = -spark->velocityY / 2;
           } else {
             x = spark->x;
-            if ((x >= 0 && x <= px(127) - 1) && y >= 0) {
+            if ((x >= 0 && x <= toFIXED(127) - 1) && y >= 0) {
               u8 *picture;
 
               size = spark->variant / 5 + 1;
               picture = sheet + gBattleEffect_MotePictures[size - 1];
-              x = WHOLE_PIXELS(x);
-              y = WHOLE_PIXELS(y);
+              x = FIXEDtoINT(x);
+              y = FIXEDtoINT(y);
               x -= size / 2;
               y -= size;
               blitters[0](canvas, picture, x, y, size, size * 2);

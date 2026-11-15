@@ -89,9 +89,9 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
         effect->scaleRateY = (options->targetScaleY - effect->scaleY) /        \
                              script[EFFECT_SCRIPT_REPEAT_COUNT];               \
       } else {                                                                 \
-        effect->scaleRateX = (options->targetScaleX - Q16_ONE) /               \
+        effect->scaleRateX = (options->targetScaleX - FIXED_ONE) /             \
                              script[EFFECT_SCRIPT_REPEAT_COUNT];               \
-        effect->scaleRateY = (options->targetScaleY - Q16_ONE) /               \
+        effect->scaleRateY = (options->targetScaleY - FIXED_ONE) /             \
                              script[EFFECT_SCRIPT_REPEAT_COUNT];               \
       }                                                                        \
     }                                                                          \

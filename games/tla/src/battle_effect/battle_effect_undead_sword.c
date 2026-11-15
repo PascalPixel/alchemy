@@ -70,8 +70,8 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   for (i = 0, spark = work->particles; i != SPARK_COUNT; i++) {
     speed = (Random16() & 0x1ff) + 128;
     angle = Random16() & TRIG_ANGLE_MASK;
-    spark->x = px(64);
-    spark->y = px(112);
+    spark->x = toFIXED(64);
+    spark->y = toFIXED(112);
     spark->velocityX = (Trig_Sin(angle) * speed) >> 8;
     spark->velocityY = (Trig_Cos(angle) * speed) >> 9;
     spark->variant = Random16() & 7;
@@ -136,7 +136,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
         size = gUndeadSword_SparkSizes[cell];
         draw[0](canvas, picture, px - size / 2, py - size / 2, size, size);
         particle->variant++;
-        BattleEffectKernels_IntegrateVector2(particle, 62, -px(1) / 8);
+        BattleEffectKernels_IntegrateVector2(particle, 62, -toFIXED(1) / 8);
       }
       particle++;
     }
@@ -216,11 +216,11 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
     if (frame == 0) {
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         s32 speed = (Random16() & 0x3ff) + 32;
-        s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
+        s32 angle = (Random16() & 0x7fff) - DEGtoANG(90);
 
         step = &work->particles[i];
-        step->x = px(position.x / 2);
-        step->y = px(position.y);
+        step->x = INTtoFIXED(position.x / 2);
+        step->y = INTtoFIXED(position.y);
         step->velocityX = (Trig_Sin(angle) * speed) >> 8;
         step->velocityY = -(Trig_Cos(angle) * speed * 2) >> 8;
         step->variant = -i;
@@ -241,8 +241,8 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
         s32 angle = Random16();
 
         step = &PARTICLES[256 + i];
-        step->x = px(position.x / 2);
-        step->y = px(position.y - 16);
+        step->x = INTtoFIXED(position.x / 2);
+        step->y = INTtoFIXED(position.y - 16);
         step->velocityX = (Trig_Sin(angle) * speed) >> 7;
         step->velocityY = -(Trig_Cos(angle) * speed * 2) >> 7;
         step->variant = (Random16() & 7) + 48;
@@ -259,11 +259,12 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
     // The target is pushed down 2 pixels a frame for the first 24 frames,
     // while the user closes in on it.
     if (frame >= 0 && frame < 24)
-      target->y += px(2);
+      target->y += toFIXED(2);
     if (frame == 18)
       BattleEffect_SetApproachMotion(args->user, args->targets[0], 8, 80);
     if (frame == 21)
-      BattleMotion_ApproachTargetFar(args->user, args->targets[0], 12, px(8));
+      BattleMotion_ApproachTargetFar(args->user, args->targets[0], 12,
+                                     toFIXED(8));
 
     // Sparks fall and shrink: a spark is drawn at its life / 6 pixels wide,
     // two pixels at the least.
@@ -275,7 +276,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
         if (size < 2)
           size = 2;
         step->variant--;
-        BattleEffectKernels_IntegrateVector2(step, 60, px(1) / 8);
+        BattleEffectKernels_IntegrateVector2(step, 60, toFIXED(1) / 8);
         draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 Q_16_16_UPPER_HALF(step->x) - size / 2,
                 Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
@@ -290,7 +291,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
       if (step->variant >= 0 && step->variant < 18) {
         s32 picture = step->variant / 3;
 
-        BattleEffectKernels_IntegrateVector2(step, 60, -px(1) / 8);
+        BattleEffectKernels_IntegrateVector2(step, 60, -toFIXED(1) / 8);
         draw[0](canvas,
                 work->sheet + PLUME_EDGE_FLASH_BURST_PICTURES +
                     picture * PICTURE_BYTES(FLASH_BURST),
@@ -539,7 +540,8 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     if (mode == WATER_SHEET_DREAMTIDE) {
       if (frame == 17) {
         EFFECT_SHOW_DAMAGE(SE_CLATTER);
-        BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, px(8), 100);
+        BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, toFIXED(8),
+                                      100);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 16);
         work->shakeFrames = 8;
@@ -557,7 +559,8 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
       if (frame == 46) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         for (i = 0; i != args->targetCount; i++) {
-          BattleEffect_StartActorMotion(args->targets[i], 1, 0, 0, px(8), 100);
+          BattleEffect_StartActorMotion(args->targets[i], 1, 0, 0, toFIXED(8),
+                                        100);
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 16);
         }
@@ -609,10 +612,10 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
       for (column = 0, vertex = (s8 *)gMapGridCellBuffer + offset + 1;
            column != WATER_COLUMNS; column++, vertex += 4) {
         s32 amplitude = (16 - column) * height / 32;
-        s32 y = (Q_16_16_TO_INT(
-                    Trig_Sin(angle + column * 5000 + Trig_Sin(row * 3553)) *
-                    amplitude)) -
-                amplitude;
+        s32 y =
+            (FIXEDtoINT(Trig_Sin(angle + column * 5000 + Trig_Sin(row * 3553)) *
+                        amplitude)) -
+            amplitude;
 
         /* FAKEMATCH(temporary): the height stored through the vertex it is part
          * of. */
@@ -623,24 +626,24 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     height /= 2;
     for (bubble = work->particles; i != 20; i++, bubble++) {
       if (bubble->variant == 0) {
-        bubble->y = ((Q_16_16_TO_INT(
-                         Trig_Sin(angle + Trig_Sin(3552 + i * 888)) * height)) -
-                     height + 64)
-                    << 16;
+        bubble->y =
+            ((FIXEDtoINT(Trig_Sin(angle + Trig_Sin(3552 + i * 888)) * height)) -
+             height + 64)
+            << 16;
       }
     }
 
     texture.logWidth = 6;
     texture.logHeight = 6;
     texture.pixels = work->sheet + WATER_SHEET_MIRRORED;
-    Transform_Reset();
+    Matrix_Initialize();
     if (mode != WATER_SHEET_DREAMTIDE) {
-      Transform_ApplyPitch(4000);
+      Matrix_RotateX(4000);
     }
     if (args->side == EFFECT_SIDE_ENEMIES) {
-      Transform_ApplyYaw((s16)camera->yaw);
+      Matrix_RotateY((s16)camera->yaw);
     } else {
-      Transform_ApplyYaw((s16)camera->yaw + TRIG_TURN / 2);
+      Matrix_RotateY((s16)camera->yaw + DEGtoANG(180));
     }
     {
       s32 shift = 128 - frame * 8;
@@ -648,7 +651,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
       if (shift < -64) {
         shift = -64;
       }
-      Transform_ApplyTranslation(px(shift), 0, 0);
+      Matrix_Translate(INTtoFIXED(shift), 0, 0);
     }
     model->kind = MODEL_SHADED_ADDITIVE;
     model->texture = &texture;
@@ -661,16 +664,16 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     Render_DrawModelList(model);
 
     if (frame == 0) {
-      s32 bubbleZ = -px(60);
+      s32 bubbleZ = -toFIXED(60);
 
       for (i = 0, bubble = work->particles; i != 20; i++, bubble++) {
         bubble->variant = Random16() % 6;
         bubble->z = bubbleZ;
-        bubble->x = -px(60);
+        bubble->x = -toFIXED(60);
         bubble->velocityX = 0;
         bubble->velocityY = 0;
         bubble->velocityZ = 0;
-        bubbleZ += px(6);
+        bubbleZ += toFIXED(6);
       }
     }
     if (mode == WATER_SHEET_WATERY_GRAVE) {
@@ -696,7 +699,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
                   work->sheet + WATER_SHEET_SMOKE_PUFFS +
                       picture * PICTURE_BYTES(SMOKE_PUFF),
                   x + 52, y + 40, SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
-          BattleEffectKernels_IntegrateVector3(step, 62, -px(1) / 8);
+          BattleEffectKernels_IntegrateVector3(step, 62, -toFIXED(1) / 8);
         }
         if (++step->variant == 6) {
           step->variant = 0;
@@ -725,13 +728,14 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
         if (shade <= MODEL_SHADE_INVISIBLE) {
           continue;
         }
-        Transform_Reset();
-        Transform_ApplyTranslation(px(target.x / 2 - 64), px(target.y - 64), 0);
-        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
-        Transform_ApplyPitch(TRIG_TURN / 16);
-        Transform_ApplyYaw(angle);
-        Transform_ApplyUniformScale(t * 0x3000);
+        Matrix_Initialize();
+        Matrix_Translate(INTtoFIXED(target.x / 2 - 64),
+                         INTtoFIXED(target.y - 64), 0);
+        Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+        Matrix_RotateZ(i * (DEGtoANG(90)) + DEGtoANG(45));
+        Matrix_RotateX(TRIG_TURN / 16);
+        Matrix_RotateY(angle);
+        Matrix_ScaleUniform(t * 0x3000);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                  4);
         Render_DrawModelList(model);
@@ -878,8 +882,8 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     if (frame <= 79) {
       s32 y;
 
-      x = (Q_16_16_TO_INT(Trig_Sin(frame << 11) << 3)) + screen.x / 2 - 10;
-      y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) << 2)) + screen.y - 24;
+      x = (FIXEDtoINT(Trig_Sin(frame << 11) << 3)) + screen.x / 2 - 10;
+      y = (FIXEDtoINT(Trig_Cos(frame << 11) << 2)) + screen.y - 24;
 
       if (frame > 7) {
         y = y - frame * 4 + 32;
@@ -910,10 +914,10 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     }
     if (mode == WIND_FUNNEL_WAFT) {
       angle = frame << 12;
-      height = 80 - (Q_16_16_TO_INT(Trig_Sin(frame * 820) * 80));
+      height = 80 - (FIXEDtoINT(Trig_Sin(frame * 820) * 80));
     } else {
       angle = yaw;
-      height = 30 - (Q_16_16_TO_INT(Trig_Sin(frame * 820) * 20));
+      height = 30 - (FIXEDtoINT(Trig_Sin(frame * 820) * 20));
     }
     k = 0;
     corner = (s8 *)funnel;
@@ -948,8 +952,8 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
     model = Render_AllocateModelList(1);
     vertices = Ram_MapCellBuffer + 0x108;
     shade = 0;
@@ -976,30 +980,30 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     model->vertices = vertices;
     model->shade = shade;
     for (k = 0; k != gWindFunnel_Counts[mode]; k++) {
-      Transform_Reset();
+      Matrix_Initialize();
       if (mode == WIND_FUNNEL_WAFT) {
         s32 scale;
 
-        Transform_ApplyTranslation(px(screen.x / 2 - 64), px(40), 0);
-        Transform_ApplyPitch(k << 11);
-        Transform_ApplyYaw(k * 21000 + yaw);
+        Matrix_Translate(INTtoFIXED(screen.x / 2 - 64), toFIXED(40), 0);
+        Matrix_RotateX(k << 11);
+        Matrix_RotateY(k * 21000 + yaw);
         scale = 85536 - Trig_Sin(frame * 964);
         if (frame > 27) {
           scale = scale + (frame << 11) - 0xe000;
         }
-        Transform_ApplyAxisScale(scale * 3 / 2, Q16_ONE, scale * 3 / 2);
+        Matrix_Scale(scale * 3 / 2, FIXED_ONE, scale * 3 / 2);
       } else {
         s32 scale;
 
-        Transform_ApplyTranslation(px(screen.x / 2 - 64), (k << 20) + 0x100000,
-                                   0);
-        Transform_ApplyPitch((k << 12) - TRIG_TURN / 32);
-        Transform_ApplyYaw(k * 21000 + yaw);
+        Matrix_Translate(INTtoFIXED(screen.x / 2 - 64), (k << 20) + 0x100000,
+                         0);
+        Matrix_RotateX((k << 12) - TRIG_TURN / 32);
+        Matrix_RotateY(k * 21000 + yaw);
         scale = TRIG_TURN - Trig_Sin(frame * 682) / 4;
         if (frame > 27) {
           scale = scale + (frame << 11) - 0xe000;
         }
-        Transform_ApplyAxisScale(scale * 2, Q16_ONE, scale * 2);
+        Matrix_Scale(scale * 2, FIXED_ONE, scale * 2);
       }
       Render_TransformVertices(funnel, Ram_MapCellBuffer + 0x108, 66);
       Render_DrawModelList(model);
@@ -1121,8 +1125,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
             struct Particle *shard;
 
             shard = &work->particles[((t - 7) / 8 * 8 + k + 32) & 63];
-            shard->y = px(96);
-            shard->x = px(centerX);
+            shard->y = toFIXED(96);
+            shard->x = INTtoFIXED(centerX);
             shard->velocityX = ((Random16() & 127) - 64) << 11;
             shard->velocityY = -((Random16() & 127) + 64) << 11;
             shard->z = 32;
@@ -1147,8 +1151,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_CRASH);
       for (k = 0, shard = work->particles; k != 32; k++, shard++) {
-        shard->y = px(96);
-        shard->x = px(centerX);
+        shard->y = toFIXED(96);
+        shard->x = INTtoFIXED(centerX);
         shard->velocityX = ((Random16() & 127) - 64) << 12;
         shard->velocityY = -((Random16() & 127) + 64) << 12;
         shard->z = 32;
@@ -1184,7 +1188,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
         y -= height >> 1;
         blit[0](canvas, pixels, x, y, width, height);
         BattleEffectKernels_IntegrateVector2(shard, PARTICLE_DAMPING_NONE,
-                                             px(1) / 4);
+                                             toFIXED(1) / 4);
         if (Q_16_16_UPPER_HALF(shard->y) > 104) {
           shard->velocityY = -shard->velocityY / 2;
         }
@@ -1229,12 +1233,12 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
           continue;
         }
         model->shade = shade;
-        Transform_Reset();
-        Transform_ApplyTranslation(px(centerX - 64),
-                                   px(gDiamondBerg_RingHeights[k]), 0);
-        Transform_ApplyAxisScale(scale, scale, scale);
+        Matrix_Initialize();
+        Matrix_Translate(INTtoFIXED(centerX - 64),
+                         INTtoFIXED(gDiamondBerg_RingHeights[k]), 0);
+        Matrix_Scale(scale, scale, scale);
         model->scrollU = ((frame + k * 5) & 7) << 4;
-        Transform_ApplyPitch(3000);
+        Matrix_RotateX(3000);
         Render_TransformVertices(gBattleEffect_CylinderCorners, vertices, 32);
         Render_DrawModelList(model);
       }
@@ -1254,7 +1258,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
         if (t < 0) {
           continue;
         }
-        scale = ((k << 11) + Q16_ONE / 8) * t + Q16_ONE / 2;
+        scale = ((k << 11) + FIXED_ONE / 8) * t + FIXED_ONE / 2;
         shade = 0;
         if (t > 3) {
           shade = (4 - t) * 16;
@@ -1263,13 +1267,14 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
         if (shade <= MODEL_SHADE_INVISIBLE) {
           continue;
         }
-        Transform_Reset();
-        Transform_ApplyTranslation(px(target.x / 2 - 64), px(target.y - 80), 0);
-        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        Transform_ApplyYaw((args->side << 15) + TRIG_TURN / 2);
-        Transform_ApplyRoll(gDiamondBerg_ShardRolls[k]);
-        Transform_ApplyPitch(gDiamondBerg_ShardPitches[k]);
-        Transform_ApplyUniformScale(scale);
+        Matrix_Initialize();
+        Matrix_Translate(INTtoFIXED(target.x / 2 - 64),
+                         INTtoFIXED(target.y - 80), 0);
+        Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+        Matrix_RotateY((args->side << 15) + DEGtoANG(180));
+        Matrix_RotateZ(gDiamondBerg_ShardRolls[k]);
+        Matrix_RotateX(gDiamondBerg_ShardPitches[k]);
+        Matrix_ScaleUniform(scale);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                  4);
         Render_DrawModelList(model);

@@ -482,7 +482,7 @@ static void BilibinCave_RestoreIceRoom(void) {
     Actor_SetPosition(ACTOR_ICE_ROOM_FIRE, 0, 0);
     Actor_SetAnimation(ACTOR_FIRST_PUDDLE, PUDDLE_ANIMATION_PILLAR);
     Actor_Get(ACTOR_FIRST_PUDDLE)->motionFlags = 0;
-    Actor_Get(ACTOR_FIRST_PUDDLE)->y.fixed = -px(4);
+    Actor_Get(ACTOR_FIRST_PUDDLE)->y.fixed = -toFIXED(4);
     Actor_Get(ACTOR_FIRST_PUDDLE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpritePriority(ACTOR_FIRST_PUDDLE, 2);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 18, 14);
@@ -528,21 +528,21 @@ static void BilibinCave_PushTorch(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   heading = FACING_INDEX(leader->facing);
 
-  nextCellX = (leader->x.part[0].pixel +
-               (WHOLE_PIXELS(gPushedActor_DirectionSteps[heading]))) >>
+  nextCellX = (leader->x.part[0].integer +
+               (FIXEDtoINT(gPushedActor_DirectionSteps[heading]))) >>
               4;
   nextCellZ =
-      (leader->z.part[0].pixel + (s16)gPushedActor_DirectionSteps[heading]) >>
+      (leader->z.part[0].integer + (s16)gPushedActor_DirectionSteps[heading]) >>
       4;
   target = Actor_FindAtCell(nextCellX, nextCellZ);
   if (target == NULL)
     return;
 
-  nextCellX = (target->x.part[0].pixel +
-               (WHOLE_PIXELS(gPushedActor_DirectionSteps[heading]))) >>
+  nextCellX = (target->x.part[0].integer +
+               (FIXEDtoINT(gPushedActor_DirectionSteps[heading]))) >>
               4;
   nextCellZ =
-      (target->z.part[0].pixel + (s16)gPushedActor_DirectionSteps[heading]) >>
+      (target->z.part[0].integer + (s16)gPushedActor_DirectionSteps[heading]) >>
       4;
   blocker = Actor_FindAtCell(nextCellX, nextCellZ);
   if (blocker != NULL)
@@ -559,15 +559,15 @@ static void BilibinCave_PushTorch(void) {
   wait(15);
   Sound_Play(SE_PUSH);
 
-  target->speedLimit = px(1) / 5;
-  target->acceleration = px(1) / 5;
-  FieldActor_SetMoveTargetFixed(target, destination.x, destination.y,
-                                destination.z);
+  target->speedLimit = toFIXED(1) / 5;
+  target->acceleration = toFIXED(1) / 5;
+  FieldActor_SetMoveTargetFX(target, destination.x, destination.y,
+                             destination.z);
 
-  leader->speedLimit = px(1) / 5;
-  leader->acceleration = px(1) / 5;
-  FieldActor_SetMoveTargetFixed(leader, destination.x, destination.y,
-                                destination.z);
+  leader->speedLimit = toFIXED(1) / 5;
+  leader->acceleration = toFIXED(1) / 5;
+  FieldActor_SetMoveTargetFX(leader, destination.x, destination.y,
+                             destination.z);
 
   Actor_WaitForMove(target);
 

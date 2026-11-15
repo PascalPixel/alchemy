@@ -181,30 +181,30 @@ void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   FieldCamera_SetSpeed(6);
   // As &cells[index], the sum takes its operands the other way round.
   cell = (struct TreasureIsleCell *)((index << 4) + (s32)cells);
-  FieldCamera_MoveToFixed(FIELD_CELL_CENTER(cell->x), -1,
-                          FIELD_CELL_CENTER(cell->z), 1);
+  FieldCamera_MoveToFX(FIELD_CELL_CENTER(cell->x), -1,
+                       FIELD_CELL_CENTER(cell->z), 1);
   FieldCamera_WaitForArrival();
   MapGrid_SetShake(0, 16, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SE_POUND);
-  options.startScaleX = Q16_ONE * 12 / 10;
-  options.startScaleY = Q16_ONE * 3 / 2;
+  options.startScaleX = FIXED_ONE * 12 / 10;
+  options.startScaleY = FIXED_ONE * 3 / 2;
   options.priority = 1;
   options.type = 0x115;
   options.script = gTreasureIsle_RockDust;
-  FieldEffect_Spawn(FIELD_CELL_CENTER(cell->x), 0, (cell->z << 20) + px(20), 0,
-                    0, 0,
+  FieldEffect_Spawn(FIELD_CELL_CENTER(cell->x), 0,
+                    (cell->z << 20) + toFIXED(20), 0, 0, 0,
                     EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                         EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
                     &options);
-  options.startScaleX = Q16_ONE * 6 / 10;
-  FieldEffect_Spawn((cell->x << 20) - px(2), 0, FIELD_CELL_CENTER(cell->z), 0,
-                    0, 0,
+  options.startScaleX = FIXED_ONE * 6 / 10;
+  FieldEffect_Spawn((cell->x << 20) - toFIXED(2), 0, FIELD_CELL_CENTER(cell->z),
+                    0, 0, 0,
                     EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                         EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
                     &options);
-  FieldEffect_Spawn((cell->x << 20) + px(18), 0, FIELD_CELL_CENTER(cell->z), 0,
-                    0, 0,
+  FieldEffect_Spawn((cell->x << 20) + toFIXED(18), 0,
+                    FIELD_CELL_CENTER(cell->z), 0, 0, 0,
                     EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                         EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
                     &options);
@@ -440,12 +440,12 @@ void TreasureIsle_MeetWaterGuardian(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldActor_StartRepeatedMotion(ACTOR_WATER_GUARDIAN, 2);
   FieldEvent_Wait(20);
-  PaletteFade_ApplySource(Q16_ONE, 0);
+  PaletteFade_ApplySource(FIXED_ONE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
   PaletteFade_Interpolate(60);
   FieldEvent_Wait(60);
   FieldMessage_ShowCentered((s32)MsgIAmTheGuardian, 0, 6);
-  PaletteFade_ApplyTarget(Q16_ONE, 0);
+  PaletteFade_ApplyTarget(FIXED_ONE, 0);
   PaletteFade_Interpolate(60);
   FieldEvent_Wait(60);
   t12 = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -715,11 +715,11 @@ u32 gTreasureIsle_PostStill[] = {
 };
 
 struct ActorPlacement gTreasureIsle_Placements[] = {                                             
-      {272, CONDITION_ALWAYS, 1, px(280), 0, px(440), FACING_SOUTH, 2,    
+      {272, CONDITION_ALWAYS, 1, toFIXED(280), 0, toFIXED(440), FACING_SOUTH, 2,    
        0},                                                                     
-      {272, CONDITION_ALWAYS, 1, px(344), 0, px(440), FACING_SOUTH, 2,    
+      {272, CONDITION_ALWAYS, 1, toFIXED(344), 0, toFIXED(440), FACING_SOUTH, 2,    
        0},                                                                    
-      {272, CONDITION_ALWAYS, 1, px(424), 0, px(344), FACING_SOUTH, 2,    
+      {272, CONDITION_ALWAYS, 1, toFIXED(424), 0, toFIXED(344), FACING_SOUTH, 2,    
        0},                                                                    
       {SCENE_TABLE_END},                                                       
   };

@@ -349,22 +349,22 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
 
   /* FAKEMATCH(temporary): the height read through HEIGHT_COPY, a u8 copy, at
    * both uses. */
-  if (scaleX > 0x10000 || scaleY > Q16_ONE) {
+  if (scaleX > 0x10000 || scaleY > FIXED_ONE) {
     affine = 3;
     halfWidth <<= 1;
     halfHeight <<= 1;
     marginX = 16;
     marginY = 8;
   }
-  x = FIELD_PIXEL(screenX) - halfWidth;
-  y = FIELD_PIXEL(screenY - height) - halfHeight -
+  x = FIXEDtoINT(screenX) - halfWidth;
+  y = FIXEDtoINT(screenY - height) - halfHeight -
       ((((HEIGHT_COPY(sprite) >> 1) - sprite->offsetY) * scaleY + 0xffff) >>
        16);
   sprite->image.affine = affine;
   sprite->image.x = x;
   sprite->image.y = y;
-  x = FIELD_PIXEL(screenX) - marginX;
-  y = FIELD_PIXEL(screenY - groundHeight) - marginY;
+  x = FIXEDtoINT(screenX) - marginX;
+  y = FIXEDtoINT(screenY - groundHeight) - marginY;
   shadow = &sprite->shadow;
   shadow->affine = affine;
   shadow->x = x;
@@ -423,20 +423,20 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
       effect.scaleX = -effect.scaleX;
     matrix = OamMatrix_AllocFromTransform(&effect);
   }
-  if (scaleX > Q16_ONE || scaleY > Q16_ONE) {
+  if (scaleX > FIXED_ONE || scaleY > FIXED_ONE) {
     affine = 3;
     halfWidth <<= 1;
     halfHeight <<= 1;
   }
 
   // The shadow: an 8 by 4 sprite on the ground below the object.
-  y = FIELD_PIXEL(pz - pw) - 4;
+  y = FIXEDtoINT(pz - pw) - 4;
   if ((object->flags & OBJECT_SHADOW) && y < 160) {
     part = &object->shadow;
     part->affine = 0;
-    part->x = FIELD_PIXEL(px) - 8;
+    part->x = FIXEDtoINT(px) - 8;
     part->y = y;
-    Oam_AddSpriteAtDepthClamped(part, FIELD_PIXEL(pz + pw) + 60);
+    Oam_AddSpriteAtDepthClamped(part, FIXEDtoINT(pz + pw) + 60);
   }
 
   if (scaleX == 0 || scaleY == 0)
@@ -452,18 +452,18 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
     s32 offsetX = object->offsetX * scaleX;
     s32 offsetY = ((object->height >> 1) - object->offsetY) * scaleY;
 
-    anchorX = Iwram_MulQ16(cos, offsetX) + Iwram_MulQ16(sin, offsetY);
-    anchorY = Iwram_MulQ16(cos, offsetY) - Iwram_MulQ16(sin, offsetX);
+    anchorX = Iwram_MulFX(cos, offsetX) + Iwram_MulFX(sin, offsetY);
+    anchorY = Iwram_MulFX(cos, offsetY) - Iwram_MulFX(sin, offsetX);
   }
-  x = FIELD_PIXEL(px) - halfWidth + FIELD_PIXEL(anchorX + 0xffff);
-  y = FIELD_PIXEL(pz - py) - halfHeight - FIELD_PIXEL(anchorY + 0xffff);
+  x = FIXEDtoINT(px) - halfWidth + FIXEDtoINT(anchorX + 0xffff);
+  y = FIXEDtoINT(pz - py) - halfHeight - FIXEDtoINT(anchorY + 0xffff);
   if (x < 240 && y < 160) {
     part = &object->image;
     part->x = x;
     part->y = y;
     part->affine = affine;
     part->affineIndex = matrix;
-    Oam_AddSpriteAtDepthClamped(part, FIELD_PIXEL(py + pz) + 62);
+    Oam_AddSpriteAtDepthClamped(part, FIXEDtoINT(py + pz) + 62);
   }
 }
 
@@ -522,7 +522,7 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
       effect.scaleX = -effect.scaleX;
     matrix = OamMatrix_AllocFromTransform(&effect);
   }
-  if (scaleX > 0x10000 || scaleY > Q16_ONE) {
+  if (scaleX > 0x10000 || scaleY > FIXED_ONE) {
     affine = 3;
     halfWidth <<= 1;
     halfHeight <<= 1;
@@ -530,11 +530,11 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
     extentY = 8;
   }
 
-  y = FIELD_PIXEL(pz - pw) - extentY;
+  y = FIXEDtoINT(pz - pw) - extentY;
   if ((object->flags & OBJECT_SHADOW) && y < 160) {
     part = &object->shadow;
     part->affine = 0;
-    part->x = FIELD_PIXEL(px) - extentX;
+    part->x = FIXEDtoINT(px) - extentX;
     part->y = y;
     Oam_AddSpriteAtDepth(part, depth);
   }
@@ -558,11 +558,11 @@ void Render_ApplyProjectedPlacementAtDepth(struct Sprite *object, s32 *pos,
       extentY = ((height >> 1) - object->offsetY) * scaleY;
     }
 
-    anchorX = Iwram_MulQ16(cos, extentX) + Iwram_MulQ16(sin, extentY);
-    anchorY = Iwram_MulQ16(cos, extentY) - Iwram_MulQ16(sin, extentX);
+    anchorX = Iwram_MulFX(cos, extentX) + Iwram_MulFX(sin, extentY);
+    anchorY = Iwram_MulFX(cos, extentY) - Iwram_MulFX(sin, extentX);
   }
-  x = FIELD_PIXEL(px) - halfWidth + FIELD_PIXEL(anchorX + 0xffff);
-  y = FIELD_PIXEL(pz - py) - halfHeight - FIELD_PIXEL(anchorY + 0xffff);
+  x = FIXEDtoINT(px) - halfWidth + FIXEDtoINT(anchorX + 0xffff);
+  y = FIXEDtoINT(pz - py) - halfHeight - FIXEDtoINT(anchorY + 0xffff);
   if (x < 240 && y < 160) {
     part = &object->image;
     part->x = x;
@@ -599,20 +599,20 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
         (u32)(screen[1] + 32) <= 240) {
       if (sprite->useOwnScale)
         z = 0x10000;
-      z = Iwram_MulQ16(z, sprite->scale);
+      z = Iwram_MulFX(z, sprite->scale);
       flip = Sprite_ComposePicture(sprite, facing);
       z >>= 10;
       rounded = ((z + 1) >> 1) << 11;
-      scaleX = Iwram_MulQ16(rounded, scale[0]);
-      scaleY = Iwram_MulQ16(rounded, scale[1]);
+      scaleX = Iwram_MulFX(rounded, scale[0]);
+      scaleY = Iwram_MulFX(rounded, scale[1]);
       if (scaleX > 0x1f800)
         scaleX = 0x1f800;
       if (scaleY > 0x1f800)
         scaleY = 0x1f800;
       halfHeight = sprite->height >> 1;
-      offsetY = Iwram_MulQ16(sprite->offsetY - halfHeight, scaleY);
+      offsetY = Iwram_MulFX(sprite->offsetY - halfHeight, scaleY);
       halfWidth = sprite->width >> 1;
-      if (scaleX > 0x10000 || scaleY > Q16_ONE) {
+      if (scaleX > 0x10000 || scaleY > FIXED_ONE) {
         affine = 3;
         halfWidth <<= 1;
         halfHeight <<= 1;
@@ -630,7 +630,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
         matrix <<= 3;
       }
       if (scaleX != 0 && scaleY != 0) {
-        offsetX = Iwram_MulQ16(sprite->offsetX, scaleX);
+        offsetX = Iwram_MulFX(sprite->offsetX, scaleX);
         ((u32 *)&sprite->image)[1] =
             (((u32 *)&sprite->image)[1] & 0xc000fc00) | (affine << 8) |
             (matrix << 25) |

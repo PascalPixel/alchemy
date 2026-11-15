@@ -337,8 +337,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object) {
     s32 base = map->origin->y;
 
     depth =
-        FIELD_PIXEL(object->y.fixed - base + object->z.fixed - base - bias) +
-        62;
+        FIXEDtoINT(object->y.fixed - base + object->z.fixed - base - bias) + 62;
   }
   return depth;
 }
@@ -378,9 +377,9 @@ void FieldPsynergy_StartSceneSprite(void) {
     sprite->oam.priority = 0;
     sprite->oam.fullColor = 0;
     sprite->oam.palette = 0;
-    sprite->scaleY = Q16_ONE * 2;
+    sprite->scaleY = FIXED_ONE * 2;
     position[0] = effectWork->x;
-    position[1] = mainActor->y.fixed + px(28);
+    position[1] = mainActor->y.fixed + toFIXED(28);
     position[2] = mainActor->z.fixed;
     Camera_WorldToScreen(position);
     sprite->x = position[0];

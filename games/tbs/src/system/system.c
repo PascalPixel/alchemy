@@ -18,8 +18,8 @@
 ///   Oam_BuildBuffer;
 ///                   system_vram_cache.c: VramCache_Load
 ///   Memory          system_heap.c: HeapSlot_Alloc, Heap_Alloc
-///   3D              system_transform.c: Transform_ApplyRotationTranslation,
-///                   Transform_ProjectPoint
+///   3D              system_matrix.c: Matrix_RotateTranslate,
+///                   Matrix_ProjectPoint
 ///   Saving          system_save.c: Save_WritePart,
 ///                   Save_ReadPart
 ///   Link cable      system_serial.c: Serial_Initialize,
@@ -38,7 +38,7 @@
 #include "system_math.c"
 #include "system_debug_text.c"
 #include "system_heap.c"
-#include "system_transform.c"
+#include "system_matrix.c"
 #include "system_decompress.c"
 #include "system_save.c"
 #include "system_serial.c"

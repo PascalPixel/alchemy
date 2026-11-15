@@ -49,6 +49,6 @@ const s8 gWorldMap_DirectionOffsets[8][2] = {
 /// Two 1.0s (Q16). No code in The Broken Seal names it; The Lost Age's
 /// battle effects read its copy as a unit scale.
 const u32 gWorldMap_UnitScale[2] = {
-    Q16_ONE,
-    Q16_ONE,
+    FIXED_ONE,
+    FIXED_ONE,
 };

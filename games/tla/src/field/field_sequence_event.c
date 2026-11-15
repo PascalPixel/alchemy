@@ -43,8 +43,8 @@ void Event_Wait(s32 frames) {
 /// or the climbing pose (12) while the leader is on a climbable wall.
 void Leader_StopMoving(void) {
   struct Actor *object = Actor_Lookup(Party_GetLeaderActor());
-  object->speedLimit = Q16_ONE;
-  object->acceleration = px(1) / 2;
+  object->speedLimit = FIXED_ONE;
+  object->acceleration = toFIXED(1) / 2;
   object->targetX = TARGET_UNSET;
   object->targetZ = TARGET_UNSET;
   object->velocityX = 0;
@@ -403,7 +403,7 @@ s32 Event_PickUpItem(s32 actor, s32 item, s32 flag) {
     FieldMessage_ShowFar((s32)&MsgFoundItem, FIELD_MESSAGE_ZOOM);
     // Four messages on: "But <protagonist>'s party can't carry any more".
     FieldMessage_ShowFar((s32)&MsgFoundItem + 4, FIELD_MESSAGE_ZOOM);
-    Actor_GetById(actor)->scaleX = Q16_ONE;
+    Actor_GetById(actor)->scaleX = FIXED_ONE;
     Actor_FaceActorById(gMainRoutineWork.leaderActorId, actor, 0);
     Event_Wait(20);
     return -1;

@@ -1096,7 +1096,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SOUTH_PUDDLE), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_GATE_PUDDLE), 0);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_NORTH_PUDDLE), 0);
-    Actor_Get(ACTOR_NORTH_PUDDLE)->scaleY = 19 * Q16_ONE / 20;
+    Actor_Get(ACTOR_NORTH_PUDDLE)->scaleY = 19 * FIXED_ONE / 20;
     if (GameFlag_Get(FLAG_WEST_LUNPA_CAVE_GATE_LOWERED) != 0) {
       WestLunpaCave_GateLower();
     }

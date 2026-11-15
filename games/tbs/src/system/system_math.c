@@ -20,16 +20,16 @@ u32 Random16(void) {
 void Vector_AddPolarOffset(s32 radius, s32 angle, void *position) {
   u8 *coordinate = position;
 
-  *(s32 *)coordinate += Iwram_MulQ16(radius, Trig_Sin(angle + TRIG_TURN / 4));
+  *(s32 *)coordinate += Iwram_MulFX(radius, Trig_Sin(angle + DEGtoANG(90)));
   coordinate += sizeof(s32);
   coordinate += sizeof(s32);
-  *(s32 *)coordinate += Iwram_MulQ16(radius, Trig_Sin(angle));
+  *(s32 *)coordinate += Iwram_MulFX(radius, Trig_Sin(angle));
 }
 
 /// Returns the angle of the vector (x, y), in 1/65536 turns from 0 to 65535,
 /// measured from the y axis: 0 along +y, a quarter turn along +x; (0, 0) gives
 /// 0. It binary-searches the tangent table to 1/256 of a quarter turn.
-s32 ArcTan2(s32 x, s32 y) {
+s32 Trig_Atan(s32 x, s32 y) {
   const u16 *table;
   s32 value;
   s32 ratio;
@@ -40,7 +40,7 @@ s32 ArcTan2(s32 x, s32 y) {
   if (x == 0) {
     result = 0;
   } else if (y == 0) {
-    result = TRIG_TURN / 4;
+    result = DEGtoANG(90);
   } else {
     // Search only the first quadrant, with |x| / |y| in 8.8 fixed point.
     ratio = y;
@@ -53,7 +53,7 @@ s32 ArcTan2(s32 x, s32 y) {
     ratio = (value << 8) / ratio;
     // Beyond entry 255's tangent, use the quarter-turn limit instead of
     // the largest angle the eight search bits can represent.
-    result = TRIG_TURN / 4;
+    result = DEGtoANG(90);
     if (ratio <= 64362) {
       // Eight comparisons choose angle bits 0x2000 down to 0x40.
       table = &gMath_TanTable[127];
@@ -109,7 +109,7 @@ s32 ArcTan2(s32 x, s32 y) {
 
   // Restore the signs after searching magnitudes alone.
   if (y < 0)
-    result = TRIG_TURN / 2 - result;
+    result = DEGtoANG(180) - result;
   if (x < 0)
     result = -result;
 
@@ -139,7 +139,7 @@ s32 Math_IntegerSqrt(s32 value) {
 
 /// Square root of a 16.16 fixed-point value, in 16.16. The square root of
 /// the raw value is the result in 8.8, so the low eight bits are always 0.
-s32 FixedSqrt(s32 value) { return Iwram_Sqrt(value) << 8; }
+s32 Math_SqrtFX(s32 value) { return Iwram_Sqrt(value) << 8; }
 
 /// Returns the basic sprite palettes (gBasicSpritePalettes).
 const u8 *Palette_GetBasicSpriteColors(void) { return gBasicSpritePalettes; }

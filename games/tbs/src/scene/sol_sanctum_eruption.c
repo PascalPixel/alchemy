@@ -335,8 +335,8 @@ static void SolSanctumEruption_PlayHostageEvent(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_ALEX, FACING_WEST, 0);
   actor = Actor_Get(ACTOR_JENNA);
-  FieldCamera_MoveToFixed(px(actor->x.part[0].pixel), CAMERA_KEEP,
-                          px(actor->z.part[0].pixel), 1);
+  FieldCamera_MoveToFX(toFIXED(actor->x.part[0].integer), CAMERA_KEEP,
+                       toFIXED(actor->z.part[0].integer), 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
@@ -572,8 +572,8 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   u8 frame;
 
   shadow = Actor_Get(ACTOR_PLATFORM_SHADOW);
-  shadow->scaleX = Q16_ONE;
-  shadow->scaleY = Q16_ONE;
+  shadow->scaleX = FIXED_ONE;
+  shadow->scaleY = FIXED_ONE;
   Actor_WalkToAndWait(actorId, 471, 290);
   Actor_FaceDirection(actorId, FACING_NORTH, 0);
   Event_Wait(10);
@@ -584,16 +584,16 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   actor->motionFlags = 0;
   Sound_Play(SE_ASCEND);
   for (frame = 0; frame != 60; frame++) {
-    actor->y.fixed += px(1) / 2;
+    actor->y.fixed += toFIXED(1) / 2;
     Event_Wait(1);
   }
   Sound_Play(SE_WARP);
   for (frame = 0; frame != 90; frame++) {
-    actor->y.fixed += px(1) / 10;
-    actor->scaleX -= Q16_ONE / 100;
-    actor->scaleY -= Q16_ONE / 100;
-    shadow->scaleX -= Q16_ONE / 100;
-    shadow->scaleY -= Q16_ONE / 100;
+    actor->y.fixed += toFIXED(1) / 10;
+    actor->scaleX -= FIXED_ONE / 100;
+    actor->scaleY -= FIXED_ONE / 100;
+    shadow->scaleX -= FIXED_ONE / 100;
+    shadow->scaleY -= FIXED_ONE / 100;
     Event_Wait(1);
   }
   Actor_SetPosition(actorId, 0, 0);
@@ -618,7 +618,7 @@ s32 Scene_Initialize(void) {
 
 /// Keeps a flying ember sprite rotated a quarter-turn from its facing.
 static s32 SolSanctumEruption_AlignEmberToHeading(struct Actor *actor) {
-  actor->sprite->rotation = actor->facing + TRIG_TURN / 4;
+  actor->sprite->rotation = actor->facing + DEGtoANG(90);
   return 1;
 }
 
@@ -640,32 +640,32 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
     Actor_SelectAnimation(actor, 2);
     actor->sprite->image.priority = 0;
     actor->motionFlags = 0;
-    actor->speedLimit = px(8);
-    actor->acceleration = px(3) / 4;
-    actor->scaleX = 9 * Q16_ONE / 5;
-    actor->scaleY = 9 * Q16_ONE / 5;
-    actor->x.fixed = px(232);
-    actor->y.fixed = px(20);
-    actor->z.fixed = px(132);
+    actor->speedLimit = toFIXED(8);
+    actor->acceleration = toFIXED(3) / 4;
+    actor->scaleX = 9 * FIXED_ONE / 5;
+    actor->scaleY = 9 * FIXED_ONE / 5;
+    actor->x.fixed = toFIXED(232);
+    actor->y.fixed = toFIXED(20);
+    actor->z.fixed = toFIXED(132);
   }
   Sound_Play(SE_CRASH);
   for (crystalIndex = 0; crystalIndex <= 15; crystalIndex++) {
     spun = Actor_Get(crystalIndex + 16);
     sprite = spun->sprite;
     angle = crystalIndex * FACING_STEP;
-    sprite->rotation = angle - TRIG_TURN / 4;
-    offsetX = Iwram_MulQ16(Trig_Cos(angle), px(256));
-    offsetZ = Iwram_MulQ16(Trig_Sin(angle), px(256));
-    FieldActor_SetMoveTargetFixed(spun, spun->x.fixed + offsetX, spun->y.fixed,
-                                  spun->z.fixed + offsetZ);
+    sprite->rotation = angle - DEGtoANG(90);
+    offsetX = Iwram_MulFX(Trig_Cos(angle), toFIXED(256));
+    offsetZ = Iwram_MulFX(Trig_Sin(angle), toFIXED(256));
+    FieldActor_SetMoveTargetFX(spun, spun->x.fixed + offsetX, spun->y.fixed,
+                               spun->z.fixed + offsetZ);
   }
   Event_Wait(20);
   Actor_WaitForMoveById(ACTOR_FIRST_CRYSTAL);
   for (crystalIndex = 16; crystalIndex <= 31; crystalIndex++) {
     actor = Actor_Get(crystalIndex);
     Actor_Stop(crystalIndex);
-    actor->scaleX = Q16_ONE;
-    actor->scaleY = Q16_ONE;
+    actor->scaleX = FIXED_ONE;
+    actor->scaleY = FIXED_ONE;
     actor->x.fixed = 0;
     actor->y.fixed = 0;
     actor->z.fixed = 0;
@@ -704,7 +704,7 @@ static void SolSanctumEruption_StepEmbers(void) {
   shakePixels = (u32)gEmberTimer / 10;
   if (shakePixels != 0) {
     sparkles->stopped = 0;
-    MapGrid_SetShakeFixed(px(shakePixels), px(shakePixels), Q16_ONE);
+    MapGrid_SetShakeFX(toFIXED(shakePixels), toFIXED(shakePixels), FIXED_ONE);
   } else {
     sparkles->stopped = 1;
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -748,22 +748,24 @@ static void SolSanctumEruption_StepEmbers(void) {
         Sound_Play(SE_GLITTER);
       gEmberState[emberIndex] = 1;
       ember->motionFlags = 0;
-      ember->speedLimit = px(8);
-      ember->acceleration = px(1);
+      ember->speedLimit = toFIXED(8);
+      ember->acceleration = toFIXED(1);
       Actor_SetSpriteFlags(ember, 0);
       ember->sprite->image.priority = 1;
       Actor_SelectAnimation(ember, 2);
       Actor_StartScript(ember, gEruption_EmberScript);
-      ember->x.fixed =
-          Iwram_MulQ16(Trig_Cos((u16)angle), px(Random_Below(256)) + px(256)) +
-          px(325);
+      ember->x.fixed = Iwram_MulFX(Trig_Cos((u16)angle),
+                                   toFIXED(Random_Below(256)) + toFIXED(256)) +
+                       toFIXED(325);
       ember->y.fixed = 0;
-      ember->z.fixed =
-          Iwram_MulQ16(Trig_Sin((u16)angle), px(Random_Below(256)) + px(256)) +
-          px(302);
-      x = Iwram_MulQ16(Trig_Cos((u16)angle), px(Random_Next() & 63) + px(8));
-      z = Iwram_MulQ16(Trig_Sin((u16)angle), px(Random_Next() & 63) + px(8));
-      FieldActor_SetMoveTargetFixed(ember, x + px(325), 0, z + px(286));
+      ember->z.fixed = Iwram_MulFX(Trig_Sin((u16)angle),
+                                   toFIXED(Random_Below(256)) + toFIXED(256)) +
+                       toFIXED(302);
+      x = Iwram_MulFX(Trig_Cos((u16)angle),
+                      toFIXED(Random_Next() & 63) + toFIXED(8));
+      z = Iwram_MulFX(Trig_Sin((u16)angle),
+                      toFIXED(Random_Next() & 63) + toFIXED(8));
+      FieldActor_SetMoveTargetFX(ember, x + toFIXED(325), 0, z + toFIXED(286));
       Actor_SetSpriteColor(ember, SPRITE_COLOR_NORMAL);
       gEmberTimer = 30;
       return;
@@ -853,8 +855,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   SolSanctumEruption_RestoreCornerCellAttributes();
   center = FieldCamera_GetActor();
   center->motionFlags = 0;
-  center->x.fixed = px(231);
-  center->z.fixed = px(144);
+  center->x.fixed = toFIXED(231);
+  center->z.fixed = toFIXED(144);
   center->targetX = ACTOR_NO_TARGET;
   center->targetY = ACTOR_NO_TARGET;
   center->targetZ = ACTOR_NO_TARGET;
@@ -877,8 +879,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   for (frame = 0; frame < 20; frame++) {
     leaderSprite->rotation += TRIG_TURN / 256;
     garetSprite->rotation -= TRIG_TURN / 256;
-    leader->x.fixed += px(3) / 8;
-    garet->x.fixed -= px(3) / 8;
+    leader->x.fixed += toFIXED(3) / 8;
+    garet->x.fixed -= toFIXED(3) / 8;
     wait(1);
   }
   Event_Wait(40);
@@ -1251,8 +1253,9 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   }
 
   starOrigin = Actor_Get(ACTOR_PARTY_LEADER);
-  star = FieldActor_Create(ACTOR_ELEMENTAL_STAR, starOrigin->x.fixed,
-                           starOrigin->y.fixed + px(36), starOrigin->z.fixed);
+  star =
+      FieldActor_Create(ACTOR_ELEMENTAL_STAR, starOrigin->x.fixed,
+                        starOrigin->y.fixed + toFIXED(36), starOrigin->z.fixed);
   if (star != NULL) {
     glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     starSprite = star->sprite;
@@ -1274,14 +1277,14 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     wait(1);
     SolSanctumEruption_FlashMaterializingActor(wiseOne);
     wait(1);
-    star->scaleX = 2 * Q16_ONE / 5;
-    star->scaleY = 2 * Q16_ONE / 5;
+    star->scaleX = 2 * FIXED_ONE / 5;
+    star->scaleY = 2 * FIXED_ONE / 5;
     SolSanctumEruption_FlashMaterializingActor(wiseOne);
     wait(1);
     SolSanctumEruption_FlashMaterializingActor(wiseOne);
     wait(1);
-    star->scaleX = Q16_ONE;
-    star->scaleY = Q16_ONE;
+    star->scaleX = FIXED_ONE;
+    star->scaleY = FIXED_ONE;
   }
   Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_NORMAL);
   SolSanctumEruption_SetMaterializationTint(0, 20, 0);
@@ -1579,20 +1582,20 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
     z = 0;
     switch (corner) {
     case CHAMBER_NORTHWEST:
-      x += px(232);
-      z = px(144);
+      x += toFIXED(232);
+      z = toFIXED(144);
       break;
     case CHAMBER_SOUTHWEST:
-      x += px(232);
-      z = px(464);
+      x += toFIXED(232);
+      z = toFIXED(464);
       break;
     case CHAMBER_NORTHEAST:
-      x += px(711);
-      z = px(144);
+      x += toFIXED(711);
+      z = toFIXED(144);
       break;
     case CHAMBER_SOUTHEAST:
-      x += px(711);
-      z = px(464);
+      x += toFIXED(711);
+      z = toFIXED(464);
       break;
     }
     gArcEffectTimers[arcIndex] = clear;
@@ -1661,12 +1664,12 @@ static void SolSanctumEruption_UpdateElementalArcs(void) {
       actor = gArcEffects[arcIndex];
       if (age <= 8) {
         actor->scaleX -= ELEMENTAL_ARC_SCALE_X_DECREASE;
-        actor->scaleY += Q16_ONE / 2;
-        actor->y.fixed += px(3) / 10;
-        actor->targetY += px(3) / 10;
+        actor->scaleY += FIXED_ONE / 2;
+        actor->y.fixed += toFIXED(3) / 10;
+        actor->targetY += toFIXED(3) / 10;
       } else {
-        actor->y.fixed += px(20);
-        actor->targetY += px(20);
+        actor->y.fixed += toFIXED(20);
+        actor->targetY += toFIXED(20);
       }
       age = gArcEffectTimers[arcIndex] + 1;
       gArcEffectTimers[arcIndex] = age;
@@ -1682,8 +1685,8 @@ static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z) {
   struct Actor *center;
 
   center = FieldCamera_GetActor();
-  z *= px(1);
-  x *= px(1);
+  z *= toFIXED(1);
+  x *= toFIXED(1);
   FieldCamera_MoveWithinMapBounds(x, CAMERA_KEEP, z, 1);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_StartInterpolation(20);
@@ -1811,29 +1814,29 @@ static void SolSanctumEruption_UpdateWiseOnePalette(void) {
 #include "shared/sol_sanctum_elemental_star_ring_setup.c"
 
 s32 gEruption_ArcOriginsHead[] = {
-    SC_SET(SW_VELOCITY_Y, px(6)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(6)),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, 2621),
     SC_ADD(SW_SCALE_Y, 2621),
     SC_WAIT(1),
     SC_LOOP(18, SC_TO(1)),
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
     SC_END,
 };
 
 // clang-format off
 s32 gEruption_ArcOrigins[] = {
-    -px(6), 0,
-    px(10), px(10),
-    px(8), px(25),
-    px(4), px(30),
-    -px(5), px(20),
-    px(2), px(5),
-    -px(6), px(35),
-    -px(8), px(15),
-    px(2), px(40),
-    -px(2), px(15),
+    -toFIXED(6), 0,
+    toFIXED(10), toFIXED(10),
+    toFIXED(8), toFIXED(25),
+    toFIXED(4), toFIXED(30),
+    -toFIXED(5), toFIXED(20),
+    toFIXED(2), toFIXED(5),
+    -toFIXED(6), toFIXED(35),
+    -toFIXED(8), toFIXED(15),
+    toFIXED(2), toFIXED(40),
+    -toFIXED(2), toFIXED(15),
 };
 
 struct SceneEntrance gSolSanctumEruption_Entrances[] = {

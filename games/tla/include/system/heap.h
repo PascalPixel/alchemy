@@ -67,7 +67,7 @@ struct HeapSlots {
   void *battleSheet;  ///< the running battle effect's tile sheet
   /// A routine run from RAM: the canvas drawing routine
   /// BattleEffect_BuildBlitter writes, or the world map's copy of
-  /// Transform_UpdateVertices.
+  /// Matrix_UpdateVertices.
   void *ramCode;
   void *fieldWork;     ///< a field scene's struct FieldWork
   void *paletteCycles; ///< the palette cycles
@@ -128,7 +128,7 @@ STATIC_ASSERT(offsetof(struct HeapSlots, menuWork) == 55 * 4);
 
 /// The heap slots shared across folders, by byte offset into gHeapSlots.
 enum HeapSlot {
-  HEAP_SLOT_TRANSFORM_STACK = offsetof(struct HeapSlots, transformStack),
+  HEAP_SLOT_MATRIX_STACK = offsetof(struct HeapSlots, transformStack),
   HEAP_SLOT_SPRITE_ANIMATIONS = offsetof(struct HeapSlots, spriteAnimations),
   HEAP_SLOT_SPRITES = offsetof(struct HeapSlots, sprites),
   HEAP_SLOT_ACTORS = offsetof(struct HeapSlots, actors),

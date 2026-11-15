@@ -42,7 +42,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   cells = (s32)gMapGridCellBuffer;
   Iwram_ClearWords((void *)cells, 0x8000);
   for (offset = 0, i = 0, size = 2; i != 16; size += 2, i++) {
-    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, Q16_ONE);
+    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, FIXED_ONE);
     discOffsets[i] = offset;
     offset += (i * 2 + 3) * size / 2;
   }
@@ -88,7 +88,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
 
           SET_POSITION(shard,
                        target->x.fixed + ((Trig_Sin(angle) * radius) >> 1),
-                       px(8), (Trig_Cos(angle) * radius) >> 1);
+                       toFIXED(8), (Trig_Cos(angle) * radius) >> 1);
           shard->velocityX = Random16();
           shard->velocityY = (Random16() & TRIG_ANGLE_MASK) + 0x40000;
           shard->velocityZ = (Random16() & 7) + 4;
@@ -98,14 +98,13 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
       if (frame > 95) {
         REG_BLDALPHA = BLEND_ALPHA(0xce - frame * 2, BLEND_WEIGHT_MAX);
       }
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
 
       // The pillar of light.
       if (frame <= 19) {
-        s32 x =
-            (Q_16_16_TO_INT(Trig_Sin(frame << 11) * 8)) + center[0] / 2 - 10;
-        s32 y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4)) + center[1] - 24;
+        s32 x = (FIXEDtoINT(Trig_Sin(frame << 11) * 8)) + center[0] / 2 - 10;
+        s32 y = (FIXEDtoINT(Trig_Cos(frame << 11) * 4)) + center[1] - 24;
 
         y += frame * 3;
 
@@ -128,8 +127,8 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
             EffectPosition_ProjectPoint(&shard->x, &screen);
             screen.x >>= 1;
             width = shard->velocityZ;
-            width += Q_16_16_TO_INT(Trig_Sin(shard->velocityX) * width / 2);
-            shard->velocityX += px(1) / 64;
+            width += FIXEDtoINT(Trig_Sin(shard->velocityX) * width / 2);
+            shard->velocityX += toFIXED(1) / 64;
             width *= 2;
             if ((u32)(width - 2) <= 61) {
               s32 cell = (width - 2) / 2;
@@ -157,7 +156,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
       }
 
       // The crystal, spinning and growing from frame 16.
-      Transform_Reset();
+      Matrix_Initialize();
       gProjection.centerY = 104;
       {
         void *vertices = Heap_AllocEwram(32);
@@ -171,16 +170,16 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
         texture.logHeight = 7;
         texture.pixels = Ram_MapCellBuffer + 0x4000;
         if (frame > 15) {
-          s32 scale = (frame << 12) - Q16_ONE;
+          s32 scale = (frame << 12) - FIXED_ONE;
 
           if (scale > 0x1bd50) {
             scale = 0x1bd50;
           }
           model->shade = 0;
-          Transform_ApplyPitch(-0xbb8);
-          Transform_ApplyTranslation(px(center[0] / 2 - 64), px(40), 0);
-          Transform_ApplyUniformScale(scale >> 1);
-          Transform_ApplyYaw(frame << 9);
+          Matrix_RotateX(-0xbb8);
+          Matrix_Translate(INTtoFIXED(center[0] / 2 - 64), toFIXED(40), 0);
+          Matrix_ScaleUniform(scale >> 1);
+          Matrix_RotateY(frame << 9);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                    4);
           Render_DrawModelList(model);

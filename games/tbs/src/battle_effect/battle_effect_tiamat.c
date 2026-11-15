@@ -107,8 +107,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       origin.x = 44;
   }
 
-  focus.x = px(212);
-  focus.y = -px(60);
+  focus.x = toFIXED(212);
+  focus.y = -toFIXED(60);
   EFFECT_FREE_PARTICLES(i, work->particles, 64);
   for (i = 0; i != DRAGON_FIRE_FIREBALLS; i++) {
     struct Particle *fireball =
@@ -175,8 +175,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         struct Particle *ember = &PARTICLES[i];
 
         if (ember->variant == -1) {
-          ember->x = px((Random16() & 255) - 32);
-          ember->y = px(112);
+          ember->x = INTtoFIXED((Random16() & 255) - 32);
+          ember->y = toFIXED(112);
           ember->velocityX = ((Random16() & 127) + gTiamat_EmberSpeeds[i & 3])
                              << 9;
           ember->velocityY = -((Random16() & 127) + gTiamat_EmberSpeeds[i & 3])
@@ -202,11 +202,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
             s32 angle = (Random16() & 0x1fff) + 20000;
 
             if (mode == DRAGON_FIRE_TIAMAT) {
-              spark->x = px((Random16() & 7) + 78);
-              spark->y = px(70);
+              spark->x = INTtoFIXED((Random16() & 7) + 78);
+              spark->y = toFIXED(70);
             } else {
-              spark->x = px((Random16() & 7) + origin.x - 8);
-              spark->y = px(origin.y);
+              spark->x = INTtoFIXED((Random16() & 7) + origin.x - 8);
+              spark->y = INTtoFIXED(origin.y);
             }
             spark->velocityX = speed * Trig_Sin(angle) >> 9;
             spark->velocityY = speed * Trig_Cos(angle) >> 9;
@@ -235,11 +235,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
           s32 angle = (Random16() & 0x1fff) - 20000;
 
           if (mode == DRAGON_FIRE_TIAMAT) {
-            puff->x = px(68);
-            puff->y = px(64);
+            puff->x = toFIXED(68);
+            puff->y = toFIXED(64);
           } else {
-            puff->x = px(origin.x);
-            puff->y = px(origin.y);
+            puff->x = INTtoFIXED(origin.x);
+            puff->y = INTtoFIXED(origin.y);
           }
           puff->velocityX = speed * Trig_Sin(angle) >> 6;
           puff->velocityY = speed * Trig_Cos(angle) >> 6;
@@ -257,8 +257,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
         if (puff->variant >= 0) {
           draw[0](canvas, work->sheet + ((puff->variant >> 2) << 11),
-                  WHOLE_PIXELS(puff->x) - FLASH_BURST_WIDTH / 2,
-                  WHOLE_PIXELS(puff->y) - FLASH_BURST_HEIGHT / 2,
+                  FIXEDtoINT(puff->x) - FLASH_BURST_WIDTH / 2,
+                  FIXEDtoINT(puff->y) - FLASH_BURST_HEIGHT / 2,
                   FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           puff->x += puff->velocityX * dir;
           puff->y += puff->velocityY;
@@ -275,11 +275,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       s32 size = 1;
 
       if (spark->variant >= 0) {
-        draw[1](canvas, gTiamat_SparkPixels, WHOLE_PIXELS(spark->x),
-                WHOLE_PIXELS(spark->y) - size, size, size * 2);
+        draw[1](canvas, gTiamat_SparkPixels, FIXEDtoINT(spark->x),
+                FIXEDtoINT(spark->y) - size, size, size * 2);
         spark->x += spark->velocityX * dir;
         spark->y += spark->velocityY;
-        spark->velocityY += -px(1) / 64;
+        spark->velocityY += -toFIXED(1) / 64;
         spark->variant++;
         if (spark->variant == 48)
           spark->variant = -1;
@@ -295,17 +295,17 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
           u8 size = gTiamat_EmberSizes[i & 3];
 
           draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                  WHOLE_PIXELS(ember->x) - size / 2,
-                  WHOLE_PIXELS(ember->y) - size, size, size * 2);
+                  FIXEDtoINT(ember->x) - size / 2, FIXEDtoINT(ember->y) - size,
+                  size, size * 2);
           ember->x += ember->velocityX * dir;
           ember->y += ember->velocityY;
           if (frame > DRAGON_FIRE_BREATH_FRAME) {
             if (i & 1)
-              ember->velocityX += -px(1) / 2;
+              ember->velocityX += -toFIXED(1) / 2;
             else
-              ember->velocityX += -px(1) / 8;
+              ember->velocityX += -toFIXED(1) / 8;
           } else {
-            ember->velocityY += -px(1) / 64;
+            ember->velocityY += -toFIXED(1) / 64;
           }
           ember->variant++;
           if (ember->variant == 256)
@@ -321,8 +321,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
     // Tiamat swoops down.
     if (frame >= 40 && frame <= 47) {
-      focus.x += -px(8);
-      focus.y += px(16);
+      focus.x += -toFIXED(8);
+      focus.y += toFIXED(16);
     }
     if (mode == DRAGON_FIRE_TIAMAT) {
       if (frame == DRAGON_FIRE_BREATH_FRAME) {

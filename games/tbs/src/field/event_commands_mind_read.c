@@ -108,20 +108,20 @@ void FieldPsynergy_UpdateMindReadWave(void) {
       from.x = caster->x.fixed;
       meta = Resource_GetMetadataRecordFar(
           (s16)Scene_FindActorPlacement(work->sourceId)->sprite);
-      from.y = caster->y.fixed + px(meta->boxX) - px(2);
+      from.y = caster->y.fixed + toFIXED(meta->boxX) - toFIXED(2);
       from.z = caster->z.fixed;
       to.x = target->x.fixed;
       meta = Resource_GetMetadataRecordFar(
           (s16)Scene_FindActorPlacement(work->targetId)->sprite);
-      to.y = target->y.fixed + px(meta->boxX) - px(2);
+      to.y = target->y.fixed + toFIXED(meta->boxX) - toFIXED(2);
       to.z = target->z.fixed;
       particle = Actor_CreateFar(SPRITE_CRESCENT, to.x, to.y, to.z);
       if (particle != 0) {
         sprite = (struct WaveEffectSprite *)particle->sprite;
         particle->motionFlags = 0;
-        particle->speedLimit = px(16) / 25; // 0.64 pixels a frame
-        particle->acceleration = px(16) / 25;
-        particle->facing = ArcTan2(from.z - to.z, from.x - to.x);
+        particle->speedLimit = toFIXED(16) / 25; // 0.64 pixels a frame
+        particle->acceleration = toFIXED(16) / 25;
+        particle->facing = Trig_Atan(from.z - to.z, from.x - to.x);
         particle->update = FieldEffect_ReleaseOnArrival;
         // No shadow or outline, sprite priority 1.
         sprite->flags = 0;
@@ -198,10 +198,10 @@ void FieldEffect_AdvanceHueCycle(void) {
 /// (16.16).
 void FieldEffect_CalculateHueChannels(s32 hue, s32 *r, s32 *g, s32 *b) {
   *r = FieldEffect_HueChannelRamp(hue + HUE_CIRCLE / 3, 0,
-                                  Q16_ONE * RGB_LEVEL_MAX);
-  *g = FieldEffect_HueChannelRamp(hue, 0, Q16_ONE * RGB_LEVEL_MAX);
+                                  FIXED_ONE * RGB_LEVEL_MAX);
+  *g = FieldEffect_HueChannelRamp(hue, 0, FIXED_ONE * RGB_LEVEL_MAX);
   *b = FieldEffect_HueChannelRamp(hue - HUE_CIRCLE / 3, 0,
-                                  Q16_ONE * RGB_LEVEL_MAX);
+                                  FIXED_ONE * RGB_LEVEL_MAX);
 }
 
 /// One colour channel's strength at a hue angle: rising from 0 to 60 degrees,
@@ -209,12 +209,12 @@ void FieldEffect_CalculateHueChannels(s32 hue, s32 *r, s32 *g, s32 *b) {
 s32 FieldEffect_HueChannelRamp(s32 angle, s32 low, s32 high) {
   angle = FixedPoint_Remainder(angle, HUE_CIRCLE);
   if (angle < HUE_CIRCLE / 6)
-    return Iwram_RatioMulQ14(HUE_CIRCLE / 6, Iwram_MulQ16(high, angle));
+    return Iwram_RatioMulQ14(HUE_CIRCLE / 6, Iwram_MulFX(high, angle));
   if (angle >= HUE_CIRCLE / 6 && angle < HUE_CIRCLE / 2)
     return high;
   if (angle >= HUE_CIRCLE / 2 && angle < HUE_CIRCLE * 2 / 3)
     return Iwram_RatioMulQ14(HUE_CIRCLE / 6,
-                             Iwram_MulQ16(high, HUE_CIRCLE * 2 / 3 - angle));
+                             Iwram_MulFX(high, HUE_CIRCLE * 2 / 3 - angle));
   return low;
 }
 
@@ -228,7 +228,7 @@ s32 FixedPoint_Remainder(s32 value, s32 divisor) {
     divisor = -divisor;
   quot = Iwram_RatioMulQ14(divisor, value);
   // Less the quotient's whole part times divisor.
-  return value - Iwram_MulQ16(quot & 0xffff0000, divisor);
+  return value - Iwram_MulFX(quot & 0xffff0000, divisor);
 }
 
 /// Per-frame update: once the actor has arrived (no destination left on any

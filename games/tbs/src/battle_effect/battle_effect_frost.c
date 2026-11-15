@@ -45,7 +45,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
     seed->x = Random16() & TRIG_ANGLE_MASK;
     seed->z = (Random16() & 63) + 56;
-    seed->y = px((Random16() & 31) - 64);
+    seed->y = INTtoFIXED((Random16() & 31) - 64);
   }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -59,13 +59,13 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
     s32 lowest;
     s32 highest;
 
-    lowest = px(120);
+    lowest = toFIXED(120);
     highest = 0;
     if (frame == gFrost_Timings[work->args->variant][FROST_FRAME] + 11)
       EFFECT_SHOW_DAMAGE(SE_WATER);
-    SET_VECTOR(point, 0, 0, px(512));
-    Transform_Reset();
-    Transform_ApplyPosition(point);
+    SET_VECTOR(point, 0, 0, toFIXED(512));
+    Matrix_Initialize();
+    Matrix_TranslateVector(point);
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
       Sound_PlayFar(SE_ICE);
     if (frame == 85)
@@ -87,7 +87,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           s32 picture = i % 8;
 
           mote = &work->particles[i];
-          if (mote->y < px(48 - i / 2) && mote->y > -px(48)) {
+          if (mote->y < INTtoFIXED(48 - i / 2) && mote->y > -toFIXED(48)) {
             u32 width;
             u32 height;
 
@@ -95,7 +95,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
                        mote->z * Trig_Cos(mote->x));
             Projection_Point(xyz, &screen);
             screen.x = (screen.x >> 17) + 64;
-            screen.y = WHOLE_PIXELS(screen.y) + 60;
+            screen.y = FIXEDtoINT(screen.y) + 60;
             // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
             width = gFrost_MoteWidths[picture];
@@ -114,13 +114,13 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
             if (frame > i + 16) {
               if (mote->z > 4)
                 mote->z -= 2;
-              if (mote->y < px(48))
-                mote->y += px(5);
+              if (mote->y < toFIXED(48))
+                mote->y += toFIXED(5);
               mote->x += TRIG_TURN / 128;
             }
           } else {
             mote->z += 8;
-            mote->y -= px(i % 5 + 2);
+            mote->y -= INTtoFIXED(i % 5 + 2);
             if (lowest > mote->y)
               lowest = mote->y;
             if (highest < mote->y)
@@ -129,8 +129,8 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
         }
       }
     }
-    lowest += px(64);
-    highest += px(64);
+    lowest += toFIXED(64);
+    highest += toFIXED(64);
 
     // Ice mounds spring up.
     if (frame < gFrost_Timings[work->args->variant][FROST_FRAME]) {
@@ -181,7 +181,8 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
       for (i = 0; i != 32; i++) {
         struct Particle *chip = &PARTICLES[i];
 
-        SET_POSITION(chip, px(Random16() & 127), px((Random16() & 15) + 80),
+        SET_POSITION(chip, INTtoFIXED(Random16() & 127),
+                     INTtoFIXED((Random16() & 15) + 80),
                      ((Random16() & 63) - 32) << 12);
 #ifdef BUGFIX
         chip->velocityX = 0;
@@ -198,7 +199,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           s32 picture = i % 8;
 
           pair[1](canvas, work->sheet + gFrost_ChipPictures[picture],
-                  WHOLE_PIXELS(chip->x), WHOLE_PIXELS(chip->y),
+                  FIXEDtoINT(chip->x), FIXEDtoINT(chip->y),
                   gFrost_ChipWidths[picture], gFrost_ChipHeights[picture]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
@@ -210,8 +211,8 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           highest = chip->y;
       }
     }
-    lowest = WHOLE_PIXELS(lowest);
-    highest = WHOLE_PIXELS(highest);
+    lowest = FIXEDtoINT(lowest);
+    highest = FIXEDtoINT(highest);
     if (highest <= lowest)
       highest = lowest + 1;
 
@@ -220,11 +221,12 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
       for (i = 0; i != 32; i++) {
         struct Particle *sparkle = &work->particles[i];
 
-        sparkle->velocityX = px(Random16() & 127);
+        sparkle->velocityX = INTtoFIXED(Random16() & 127);
         if (highest == lowest)
-          sparkle->velocityY = px(lowest);
+          sparkle->velocityY = INTtoFIXED(lowest);
         else
-          sparkle->velocityY = px(Random16() % (highest - lowest) + lowest);
+          sparkle->velocityY =
+              INTtoFIXED(Random16() % (highest - lowest) + lowest);
         sparkle->variant = (Random16() & 15) + 20;
       }
     }
@@ -241,14 +243,14 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 #ifdef UBFIX
           size = gBattleEffect_SparkleSizes[picture];
           pair[1](canvas, sparkleSheet + gBattleEffect_SparklePictures[picture],
-                  WHOLE_PIXELS(sparkle->velocityX) - (size >> 1),
-                  WHOLE_PIXELS(sparkle->velocityY) - (size >> 1) - rise, size,
+                  FIXEDtoINT(sparkle->velocityX) - (size >> 1),
+                  FIXEDtoINT(sparkle->velocityY) - (size >> 1) - rise, size,
                   size);
 #else
           pair[1](canvas, sparkleSheet + gBattleEffect_SparklePictures[picture],
-                  WHOLE_PIXELS(sparkle->velocityX) -
+                  FIXEDtoINT(sparkle->velocityX) -
                       ((size = gBattleEffect_SparkleSizes[picture]) >> 1),
-                  WHOLE_PIXELS(sparkle->velocityY) - (size >> 1) - rise, size,
+                  FIXEDtoINT(sparkle->velocityY) - (size >> 1) - rise, size,
                   size);
 #endif
         }
@@ -256,8 +258,9 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
         if ((sparkle->variant == -1 || sparkle->variant == 17) &&
             frame < gFrost_Timings[work->args->variant][FROST_FRAME] + 35) {
           sparkle->variant = 17;
-          sparkle->velocityX = px(Random16() & 127);
-          sparkle->velocityY = px(Random16() % (highest - lowest) + lowest);
+          sparkle->velocityX = INTtoFIXED(Random16() & 127);
+          sparkle->velocityY =
+              INTtoFIXED(Random16() % (highest - lowest) + lowest);
         }
       }
     }

@@ -69,7 +69,7 @@
 #include "scene/vault_range.h"
 #include "scene/walk_into_leader.h"
 #include "sound/sound.h"
-#include "system/fixed_point_position.h"
+#include "system/point.h"
 #include "system/iwram_call.h"
 #include "system/main_routine_work.h"
 #include "system/system.h"
@@ -94,7 +94,7 @@ extern u16 gVault_JailDoorCells[];
 extern s32 gVault_DriftScriptA[];
 extern s32 gVault_DriftScriptB[];
 
-enum { VAULT_DRIFT_RATE = px(1) / 10 };
+enum { VAULT_DRIFT_RATE = toFIXED(1) / 10 };
 
 /// The townspeople, named by what they say.
 enum {
@@ -202,7 +202,7 @@ static void Vault_IvanStaysBehind(void) {
   Event_Start();
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
   if (work->stepTrigger == CELL_BEHAVIOR_VAULT_SOUTH_GATE) {
@@ -708,7 +708,7 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
   struct Actor *actor = Actor_Get(actorId);
   int frames;
   Actor_SetSpeed(actorId, 3);
-  actor->gravity = px(1) / 2;
+  actor->gravity = toFIXED(1) / 2;
   actor->bounce = 0;
   actor->velocityY = verticalSpeed;
   Actor_SetSpriteFlags(actor, 0);
@@ -716,11 +716,11 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
   Actor_SetPosition(actorId, x, z);
   for (frames = 60; frames != 0; --frames) {
     wait(1);
-    if ((WHOLE_PIXELS(actor->velocityY)) == 0)
+    if ((FIXEDtoINT(actor->velocityY)) == 0)
       break;
   }
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  actor->gravity = px(1);
+  actor->gravity = toFIXED(1);
 }
 
 /// In Vault, Isaac rings the bell.
@@ -735,7 +735,7 @@ static void Vault_RingBell(void) {
     Event_Wait(12);
     Actor_Jump(ACTOR_SAP, 4, 0);
     Event_Wait(20);
-    Vault_JumpActorToAndWait(ACTOR_SAP, 392, 104, px(7));
+    Vault_JumpActorToAndWait(ACTOR_SAP, 392, 104, toFIXED(7));
     Event_Wait(20);
     Actor_WalkToAndWait(ACTOR_SAP, 408, 104);
     Actor_WalkToAndWait(ACTOR_SAP, 408, 120);
@@ -809,7 +809,7 @@ s32 Scene_Initialize(void) {
           Event_Start();
           actor = Actor_Get(ACTOR_PARTY_LEADER);
           if (actor != NULL) {
-            Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+            Actor_SetPositionFX(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
           }
           if (gMainRoutineWork.entrance == VAULT_FROM_WORLD_MAP_SOUTH) {
             Actor_SetPosition(ACTOR_IVAN, 400, 448);
@@ -897,7 +897,7 @@ static void Vault_UpdateDriftingEffect(struct Actor *effect) {
   } else {
     effect->z.fixed += effect->acceleration;
     effect->targetZ = effect->z.fixed;
-    effect->y.fixed += px(1) / 64;
+    effect->y.fixed += toFIXED(1) / 64;
     effect->targetY = effect->y.fixed;
   }
 
@@ -1042,7 +1042,7 @@ s32 gVault_WomanWantingTheRoofFixedRoute[] = {
     SC_SPEED(0.4),
     SC_ACCELERATION(0.2),
     SC_SET(SW_COLLISION, 129),
-    SC_SET(SW_RADIUS, px(40)),
+    SC_SET(SW_RADIUS, toFIXED(40)),
     SC_LABEL(1),
     SC_ANIMATION(ANIM_WALK),
     SC_WANDER_HOME(8, 16, 24),

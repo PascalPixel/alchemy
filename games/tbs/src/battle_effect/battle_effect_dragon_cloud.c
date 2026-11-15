@@ -85,9 +85,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     struct Particle *ember = &work->particles[DRAGON_CLOUD_FIRST_EMBER + j];
 
     if (work->args->side == EFFECT_SIDE_ENEMIES)
-      ember->x = -px(56);
+      ember->x = -toFIXED(56);
     else
-      ember->x = px(56);
+      ember->x = toFIXED(56);
     ember->y = 0;
     ember->z = 0;
     SET_VELOCITY(ember, ((Random16() & 63) - 32) << 14, (Random16() & 63) << 13,
@@ -98,24 +98,24 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     struct Particle *flash = &work->particles[DRAGON_CLOUD_FIRST_FLASH + j];
 
     if (work->args->side == EFFECT_SIDE_ENEMIES)
-      flash->x = -px(56);
+      flash->x = -toFIXED(56);
     else
-      flash->x = px(56);
-    flash->y = px(20);
+      flash->x = toFIXED(56);
+    flash->y = toFIXED(20);
     flash->z = 0;
     SET_VELOCITY(flash, ((Random16() & 63) - 32) << 14, (Random16() & 63) << 12,
                  ((Random16() & 63) - 32) << 14);
     flash->variant = 0;
   }
-  for (i = 0, j = -TRIG_TURN / 4; i != DRAGON_CLOUD_PUFFS;
+  for (i = 0, j = -DEGtoANG(90); i != DRAGON_CLOUD_PUFFS;
        i++, j += TRIG_TURN / 16) {
     struct Particle *puff = &work->particles[i];
 
     if (work->args->side == EFFECT_SIDE_PARTY)
-      puff->x = WHOLE_PIXELS(Trig_Sin(j) * 24) + 88;
+      puff->x = FIXEDtoINT(Trig_Sin(j) * 24) + 88;
     else
-      puff->x = WHOLE_PIXELS(-(Trig_Sin(j) * 24)) + 16;
-    puff->y = WHOLE_PIXELS(Trig_Cos(j) * 16) + 40;
+      puff->x = FIXEDtoINT(-(Trig_Sin(j) * 24)) + 16;
+    puff->y = FIXEDtoINT(Trig_Cos(j) * 16) + 40;
     puff->variant = -(i * 2);
   }
   path = Resource_GetTableEntry(RESOURCE_DUAL_STREAM_PATH);
@@ -246,7 +246,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           ember->x += ember->velocityX;
           ember->y += ember->velocityY;
           ember->z += ember->velocityZ;
-          ember->velocityY -= px(1) / 8;
+          ember->velocityY -= toFIXED(1) / 8;
         }
       }
     }

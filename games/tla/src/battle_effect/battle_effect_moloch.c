@@ -66,8 +66,8 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
     struct Point2D focus;
     s32 frame;
 
-    focus.x = px(128);
-    focus.y = px(64);
+    focus.x = toFIXED(128);
+    focus.y = toFIXED(64);
     BattleEffect_SelectLivingTargets(work->args);
     wait(1);
     BattleEffect_SpawnObjects(MOLOCH_SPRITES, SPRITE_MOLOCH, 2);
@@ -88,7 +88,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
           mote = &motes[i];
           Random16();
           mote->variant = i;
-          mote->x = px((Random16() & 255) - 64);
+          mote->x = INTtoFIXED((Random16() & 255) - 64);
           mote->y = 0;
           mote->velocityX = 0;
           mote->velocityY = 0;
@@ -97,10 +97,10 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
         // The flame columns rise from y = 72.
         for (i = 0; i != 16; i++) {
           flame = &work->particles[i];
-          flame->x = px(i * 3 + i + MOLOCH_FLAME_LEFT);
-          flame->y = px(72);
+          flame->x = INTtoFIXED(i * 3 + i + MOLOCH_FLAME_LEFT);
+          flame->y = toFIXED(72);
           flame->velocityX = 0;
-          flame->velocityY = px(-((Random16() & 3) + 2));
+          flame->velocityY = INTtoFIXED(-((Random16() & 3) + 2));
           flame->velocityZ = 0;
           flame->variant = -i - (Random16() & 15);
         }
@@ -108,10 +108,10 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
         // The embers of the closing glow start at (54, 56).
         for (i = 0; i != MOLOCH_EMBERS; i++) {
           flame = &work->particles[MOLOCH_FIRST_EMBER + i];
-          flame->x = px(54);
-          flame->y = px(56);
+          flame->x = toFIXED(54);
+          flame->y = toFIXED(56);
           flame->variant = i * -2;
-          flame->velocityX = -(px(Random16() & 3) + px(2));
+          flame->velocityX = -(INTtoFIXED(Random16() & 3) + toFIXED(2));
           flame->velocityY = -(Random16() & 3) << 15;
         }
       }
@@ -133,42 +133,42 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
                 Q_16_16_UPPER_HALF(mote->y) <= 113) {
               s32 dx;
 
-              mote->velocityX = px(Random16() & 63) + px(56);
+              mote->velocityX = INTtoFIXED(Random16() & 63) + toFIXED(56);
               dx = mote->velocityX - mote->x;
-              mote->velocityX = dx / ((px(114) - mote->y) / (size << 14));
+              mote->velocityX = dx / ((toFIXED(114) - mote->y) / (size << 14));
             }
 
             // Frames 142-161: they swirl about the centre line.
             if ((u32)(frame - 142) <= 19) {
-              s32 distance = mote->x - px(96);
+              s32 distance = mote->x - toFIXED(96);
               s32 pull;
 
               if (distance < 0)
                 distance = -distance;
-              pull =
-                  (mote->y / 2 - distance + (s32)px(Random16() & 31) + px(96)) /
-                  32;
-              if (mote->x < px(96) && pull > 0)
+              pull = (mote->y / 2 - distance +
+                      (s32)INTtoFIXED(Random16() & 31) + toFIXED(96)) /
+                     32;
+              if (mote->x < toFIXED(96) && pull > 0)
                 pull = -pull;
-              if (mote->x > px(96) && pull < 0)
+              if (mote->x > toFIXED(96) && pull < 0)
                 pull = -pull;
               mote->velocityX += pull / 8;
             }
 
             mote->x += mote->velocityX + Trig_Sin(mote->y >> 5) / 5;
             mote->y += mote->velocityY + (size << 14);
-            if (mote->y > px(114)) {
+            if (mote->y > toFIXED(114)) {
               if (frame > 215) {
                 // Late motes fly back in from the right.
                 mote->variant = 0;
-                mote->x = px(120);
-                mote->y = px((Random16() & 127) - 32);
-                mote->velocityX = px((Random16() & 3) - 8);
+                mote->x = toFIXED(120);
+                mote->y = INTtoFIXED((Random16() & 127) - 32);
+                mote->velocityX = INTtoFIXED((Random16() & 3) - 8);
                 mote->velocityY = 0;
               } else {
                 mote->variant = Random16() & 255;
-                mote->x = px((Random16() & 255) - 64);
-                mote->y = -px(8);
+                mote->x = INTtoFIXED((Random16() & 255) - 64);
+                mote->y = -toFIXED(8);
                 mote->velocityX = 0;
                 mote->velocityY = 0;
               }
@@ -179,8 +179,8 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
 
           // Frames 217-245: the wind turns.
           if ((u32)(frame - 217) <= 28) {
-            mote->velocityX -= px(1) / 8;
-            mote->velocityY += px(1) / 8;
+            mote->velocityX -= toFIXED(1) / 8;
+            mote->velocityY += toFIXED(1) / 8;
           }
         }
       }
@@ -201,10 +201,10 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
               flame->y += flame->velocityY;
             }
             if (++flame->variant == MOLOCH_FLAME_LIFE) {
-              flame->x = px(i * 3 + i + MOLOCH_FLAME_LEFT);
-              flame->y = px(72);
+              flame->x = INTtoFIXED(i * 3 + i + MOLOCH_FLAME_LEFT);
+              flame->y = toFIXED(72);
               flame->variant = 0;
-              flame->velocityY = px(-((Random16() & 3) + 2));
+              flame->velocityY = INTtoFIXED(-((Random16() & 3) + 2));
               flame->velocityZ = 0;
               if ((u32)(frame - 97) <= 42)
                 flame->velocityZ = 1;
@@ -212,10 +212,10 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
                 flame->velocityZ = 2;
             }
             if (frame == 136) {
-              if (flame->x < px(80))
-                flame->velocityX -= px(4);
+              if (flame->x < toFIXED(80))
+                flame->velocityX -= toFIXED(4);
               else
-                flame->velocityX += px(4);
+                flame->velocityX += toFIXED(4);
             }
           }
         }
@@ -237,9 +237,9 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
               flame->y += flame->velocityY;
             }
             if (++flame->variant == MOLOCH_FLAME_LIFE) {
-              flame->x = px(54);
-              flame->y = px(56);
-              flame->velocityX = -(px(Random16() & 3) + px(2));
+              flame->x = toFIXED(54);
+              flame->y = toFIXED(56);
+              flame->velocityX = -(INTtoFIXED(Random16() & 3) + toFIXED(2));
               flame->variant = 0;
             }
           }
@@ -267,17 +267,18 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
 
           if (frame <= start)
             continue;
-          scale = (frame - start) * gMoloch_RingGrowth[i] * 2000 + Q16_ONE / 2;
+          scale =
+              (frame - start) * gMoloch_RingGrowth[i] * 2000 + FIXED_ONE / 2;
           shade = (start - frame) * 8 + 56;
           if (shade > 0)
             shade = 0;
           if (shade <= MODEL_SHADE_INVISIBLE)
             continue;
           model->shade = shade;
-          Transform_Reset();
-          Transform_ApplyTranslation(px(16), px(gMoloch_RingHeights[i]), 0);
-          Transform_ApplyAxisScale(scale, scale, scale);
-          Transform_ApplyPitch(0xbb8);
+          Matrix_Initialize();
+          Matrix_Translate(toFIXED(16), INTtoFIXED(gMoloch_RingHeights[i]), 0);
+          Matrix_Scale(scale, scale, scale);
+          Matrix_RotateX(0xbb8);
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Render_TransformVertices(gBattleEffect_CylinderCorners, projected,
                                    32);
@@ -297,8 +298,8 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
           for (k = 0; k != work->args->targetCount; k++) {
             BattleEffect_TintBattler(work->args->targets[k], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, k, 8);
-            BattleEffect_StartActorMotion(args->targets[k], 1, px(1), px(4),
-                                          px(1), i * 16 + 100);
+            BattleEffect_StartActorMotion(args->targets[k], 1, toFIXED(1),
+                                          toFIXED(4), toFIXED(1), i * 16 + 100);
           }
         }
       }
@@ -365,7 +366,7 @@ void Iris_ChangeBackdrop(void) {
         BattleObject_GetFar(work->args->targets[i])->object;
 
     object->x = 0;
-    object->y = px(16 - (Random16() & 15));
+    object->y = INTtoFIXED(16 - (Random16() & 15));
     object->z /= 2;
     object->verticalMotionStrength = 0;
   }
@@ -520,9 +521,10 @@ void Iris_DrawPillar(s32 halfWidth, s32 x, s32 height) {
   vertices[5].y = height;
   vertices[4].y = height;
 
-  Transform_Reset();
-  SET_POSITION(&position, px(x) - px(63), px(63 - height), 0);
-  Transform_ApplyPosition(&position);
+  Matrix_Initialize();
+  SET_POSITION(&position, INTtoFIXED(x) - toFIXED(63), INTtoFIXED(63 - height),
+               0);
+  Matrix_TranslateVector(&position);
 
   model->kind = MODEL_TEXTURED_MAX;
   model->texture = &texture;
@@ -693,8 +695,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       s32 a;
       s32 py;
       a = point << 10;
-      px = (Q_16_16_TO_INT(r * Trig_Sin(a) / 2)) + x;
-      py = (Q_16_16_TO_INT(r * Trig_Cos(a))) + y;
+      px = (FIXEDtoINT(r * Trig_Sin(a) / 2)) + x;
+      py = (FIXEDtoINT(r * Trig_Cos(a))) + y;
       draw(canvas, sprites + cel8 + IRIS_DOTS, px, py - 2, IRIS_DOT_WIDTH,
            IRIS_DOT_HEIGHT);
     }
@@ -719,13 +721,13 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         s32 a;
         s32 py;
         a = (spoke << 13) + (t * 5 << 9);
-        px = (Q_16_16_TO_INT(r * Trig_Sin(a))) + x;
-        py = (Q_16_16_TO_INT(r * Trig_Cos(a) * 2)) + y;
+        px = (FIXEDtoINT(r * Trig_Sin(a))) + x;
+        py = (FIXEDtoINT(r * Trig_Cos(a) * 2)) + y;
         blit(canvas, ring, px - 3, py - 7, IRIS_LARGE_RING_WIDTH,
              IRIS_LARGE_RING_HEIGHT);
         a += a >> 1;
-        px = (Q_16_16_TO_INT(Iwram_MulQ16(0x28000, r * Trig_Sin(a) / 2))) + x;
-        py = (Q_16_16_TO_INT(Iwram_MulQ16(0x50000, r * Trig_Cos(a) / 2))) + y;
+        px = (FIXEDtoINT(Iwram_MulFX(0x28000, r * Trig_Sin(a) / 2))) + x;
+        py = (FIXEDtoINT(Iwram_MulFX(0x50000, r * Trig_Cos(a) / 2))) + y;
         blit(canvas, ring, px - 3, py - 7, IRIS_LARGE_RING_WIDTH,
              IRIS_LARGE_RING_HEIGHT);
       }
@@ -752,13 +754,13 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         s32 a;
         s32 py;
         a = (spoke << 13) + (t * 5 << 9);
-        px = (Q_16_16_TO_INT(r * Trig_Sin(a))) + x;
-        py = (Q_16_16_TO_INT(r * Trig_Cos(a) * 2)) + y;
+        px = (FIXEDtoINT(r * Trig_Sin(a))) + x;
+        py = (FIXEDtoINT(r * Trig_Cos(a) * 2)) + y;
         blit(canvas, ring, px - 2, py - 5, IRIS_SMALL_RING_WIDTH,
              IRIS_SMALL_RING_HEIGHT);
         a += a >> 1;
-        px = (Q_16_16_TO_INT(Iwram_MulQ16(0x28000, r * Trig_Sin(a) / 2))) + x;
-        py = (Q_16_16_TO_INT(Iwram_MulQ16(0x50000, r * Trig_Cos(a) / 2))) + y;
+        px = (FIXEDtoINT(Iwram_MulFX(0x28000, r * Trig_Sin(a) / 2))) + x;
+        py = (FIXEDtoINT(Iwram_MulFX(0x50000, r * Trig_Cos(a) / 2))) + y;
         blit(canvas, ring, px - 2, py - 5, IRIS_SMALL_RING_WIDTH,
              IRIS_SMALL_RING_HEIGHT);
       }
@@ -779,8 +781,8 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         s32 a;
         s32 py;
         a = point << 10;
-        px = (Q_16_16_TO_INT(r * Trig_Sin(a))) + x;
-        py = (Q_16_16_TO_INT(r * Trig_Cos(a) * 2)) + y;
+        px = (FIXEDtoINT(r * Trig_Sin(a))) + x;
+        py = (FIXEDtoINT(r * Trig_Cos(a) * 2)) + y;
         draw(canvas, sprites + ringCel, px - 1, py - 2, IRIS_DOT_WIDTH,
              IRIS_DOT_HEIGHT);
       }
@@ -789,9 +791,9 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
         s32 a;
         s32 py;
         a = point << 10;
-        px = (Q_16_16_TO_INT(r * Trig_Sin(a) * 2)) + x;
-        py = (Q_16_16_TO_INT(r * Trig_Cos(a))) + y +
-             gIris_SplashOffsetsY[small] * 2;
+        px = (FIXEDtoINT(r * Trig_Sin(a) * 2)) + x;
+        py =
+            (FIXEDtoINT(r * Trig_Cos(a))) + y + gIris_SplashOffsetsY[small] * 2;
         draw(canvas, sprites + ringCel, px - 1, py - 2, IRIS_DOT_WIDTH,
              IRIS_DOT_HEIGHT);
       }
@@ -871,14 +873,14 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (petals->life[i] != 0) {
         scale.x = scale.y = petals->life[i] * 2;
         place[3] = 0;
-        place[1] = px(255);
+        place[1] = toFIXED(255);
         place[0] = petals->x[i];
         place[2] = petals->y[i];
         Render_ApplyProjectedPlacementFar(objects[i], place, (s32 *)&scale, 0);
         petals->x[i] += petals->vx[i];
         petals->y[i] += petals->vy[i];
-        if (petals->x[i] < -px(16) || petals->x[i] > px(240) ||
-            petals->y[i] < 0 || petals->y[i] > px(160)) {
+        if (petals->x[i] < -toFIXED(16) || petals->x[i] > toFIXED(240) ||
+            petals->y[i] < 0 || petals->y[i] > toFIXED(160)) {
           petals->life[i] = 0;
           continue;
         }
@@ -918,12 +920,12 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     for (i = 0; i != IRIS_MOTES; i++) {
       if (work->particles[i].variant != 0) {
         s32 n = work->particles[i].variant & 15;
-        s32 px = Q_16_16_TO_INT(work->particles[i].x);
-        s32 py = Q_16_16_TO_INT(work->particles[i].y);
+        s32 px = FIXEDtoINT(work->particles[i].x);
+        s32 py = FIXEDtoINT(work->particles[i].y);
         s32 offset = 0;
 
-        if (work->particles[i].x < 0 || work->particles[i].x > px(127) ||
-            work->particles[i].y < 0 || work->particles[i].y > px(127)) {
+        if (work->particles[i].x < 0 || work->particles[i].x > toFIXED(127) ||
+            work->particles[i].y < 0 || work->particles[i].y > toFIXED(127)) {
           work->particles[i].variant = 0;
           continue;
         }
@@ -949,15 +951,15 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           texture.logWidth = 5;
           texture.logHeight = 6;
           texture.pixels = work->sheet + IRIS_TEXTURES + offset;
-          Transform_ResetMatrix();
-          place[0] = work->particles[i].x - px(64);
-          place[1] = work->particles[i].y - px(64);
+          Matrix_ResetUnit();
+          place[0] = work->particles[i].x - toFIXED(64);
+          place[1] = work->particles[i].y - toFIXED(64);
           place[2] = 0;
-          Transform_ApplyPosition(place);
+          Matrix_TranslateVector(place);
           place[1] = place[0] = work->particles[i].velocityZ;
           place[2] = 0;
-          Transform_ApplyScale(place);
-          work->particles[i].velocityZ += px(1) / 8;
+          Matrix_ScaleVector(place);
+          work->particles[i].velocityZ += toFIXED(1) / 8;
           model->kind = MODEL_TEXTURED_MAX;
           model->texture = &texture;
           model->mesh = gIris_ParticleMesh;
@@ -1045,7 +1047,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   savedYaw = camera[27];
   if (args->side == EFFECT_SIDE_ENEMIES) {
-    s32 yaw = TRIG_TURN / 4;
+    s32 yaw = DEGtoANG(90);
 
     camera[27] = yaw;
   } else {
@@ -1064,11 +1066,11 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   for (i = 0; i != MOTE_SET_BYTES; i++)
     sprites[i] >>= 1;
-  BattleEffect_DrawShadedCircles(work->sheet, 32, Q16_ONE);
+  BattleEffect_DrawShadedCircles(work->sheet, 32, FIXED_ONE);
   Graphics_LoadGreyRamp();
   frame = 0;
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-  Transform_Reset();
+  Matrix_Initialize();
 
   for (;;) {
     motesMask = 31;
@@ -1129,20 +1131,20 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
     // The opening: the circle and the streaks.
     if (frame == 0) {
-      scene->x = px(60);
-      scene->y = px(128);
-      scene->radius = px(12);
+      scene->x = toFIXED(60);
+      scene->y = toFIXED(128);
+      scene->radius = toFIXED(12);
       for (i = 0; i != IRIS_STREAKS; i++) {
         struct IrisPoint *s = streaks[i];
 
-        s->x = px(gIris_StreakX[i]);
-        s->y = px(gIris_StreakY[i]);
+        s->x = INTtoFIXED(gIris_StreakX[i]);
+        s->y = INTtoFIXED(gIris_StreakY[i]);
         s->angle = gIris_StreakAngles[i];
         s->speed = gIris_StreakSpeeds[i];
         s->unused = 0;
         for (j = 1; j != IRIS_STREAK_LENGTH; j++) {
-          STREAK(i, j).x = px(150);
-          STREAK(i, j).y = px(150);
+          STREAK(i, j).x = toFIXED(150);
+          STREAK(i, j).y = toFIXED(150);
         }
       }
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -1179,8 +1181,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         }
       }
       if (frame <= 71) {
-        scene->y -= px(1);
-        scene->radius -= px(1) / 16;
+        scene->y -= toFIXED(1);
+        scene->radius -= toFIXED(1) / 16;
         if (!(frame & 15)) {
           {
             u16 *fade = FADE_PLTT;
@@ -1197,7 +1199,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           }
         }
       } else {
-        scene->radius += px(1) / 8;
+        scene->radius += toFIXED(1) / 8;
         if (!(frame & 7)) {
           {
             u16 *fade = FADE_PLTT;
@@ -1227,7 +1229,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       {
         s32 size = scene->radiusPixels * 2;
 
-        BattleEffect_DrawShadedCircles(work->sheet, size, Q16_ONE);
+        BattleEffect_DrawShadedCircles(work->sheet, size, FIXED_ONE);
         Canvas_BlitAtFoot(work->sheet, scene->xPixels, scene->yPixels, size);
       }
       if (frame == 175) {
@@ -1291,27 +1293,27 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         objects[i]->image.tile = petals->tiles[petals->frames[i]];
       }
       for (i = 0; i != IRIS_PETALS / 2; i++) {
-        petals->x[i] = px(Random16() % 15) + px(57);
-        petals->y[i] = px(Random16() % 15) + px(79);
+        petals->x[i] = INTtoFIXED(Random16() % 15) + toFIXED(57);
+        petals->y[i] = INTtoFIXED(Random16() % 15) + toFIXED(79);
         petals->vx[i] = ((Random16() & 63) - 32) << 12;
         petals->vy[i] = ((Random16() & 63) - 32) << 12;
       }
       for (; i != IRIS_PETALS; i++) {
-        petals->x[i] = px(Random16() % 15) + px(169);
-        petals->y[i] = px(Random16() % 15) + px(79);
+        petals->x[i] = INTtoFIXED(Random16() % 15) + toFIXED(169);
+        petals->y[i] = INTtoFIXED(Random16() % 15) + toFIXED(79);
         petals->vx[i] = ((Random16() & 63) - 32) << 12;
         petals->vy[i] = ((Random16() & 63) - 32) << 12;
       }
       Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, work->sheet,
                                  0, 0);
       for (i = 0; i != 6; i++) {
-        work->particles[i].x = px(Random16() % 15) + px(33);
-        work->particles[i].y = px(Random16() % 15) + px(57);
+        work->particles[i].x = INTtoFIXED(Random16() % 15) + toFIXED(33);
+        work->particles[i].y = INTtoFIXED(Random16() % 15) + toFIXED(57);
         work->particles[i].velocityX = -(Random16() & motesMask) << 12;
       }
       for (; i != 12; i++) {
-        work->particles[i].x = px(Random16() % 15) + px(81);
-        work->particles[i].y = px(Random16() % 15) + px(57);
+        work->particles[i].x = INTtoFIXED(Random16() % 15) + toFIXED(81);
+        work->particles[i].y = INTtoFIXED(Random16() % 15) + toFIXED(57);
         work->particles[i].velocityX = (Random16() & motesMask) << 12;
       }
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 70);
@@ -1319,7 +1321,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     if ((u32)(frame - 177) <= 216) {
       scale = gIris_UnitScale;
       pos[3] = 0;
-      pos[1] = px(255);
+      pos[1] = toFIXED(255);
       lift = 0;
       if (frame > 350) {
         u16 *pal = (u16 *)OBJ_PLTT;
@@ -1352,8 +1354,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           lift = (Trig_Sin((frame << 6) - 0x2c00) << 6) - 0x147200;
         for (j = 0; j != IRIS_GODDESS_ROWS; j++) {
           for (column = 0; column != IRIS_GODDESS_COLUMNS; column++) {
-            pos[0] = px(72) + column * px(IRIS_GODDESS_TILE);
-            pos[2] = lift + px(56) + j * px(IRIS_GODDESS_TILE);
+            pos[0] = toFIXED(72) + column * toFIXED(IRIS_GODDESS_TILE);
+            pos[2] = lift + toFIXED(56) + j * toFIXED(IRIS_GODDESS_TILE);
             Render_ApplyProjectedPlacementFar(
                 work->sprites[j * IRIS_GODDESS_COLUMNS + column], pos,
                 (s32 *)&scale, 0);
@@ -1391,9 +1393,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 177) <= 46) {
       for (i = 0; i != IRIS_PETALS; i++) {
-        shrink.x = shrink.y = px(1) - ((frame - 177) >> 1 << 11);
+        shrink.x = shrink.y = toFIXED(1) - ((frame - 177) >> 1 << 11);
         pos[3] = 0;
-        pos[1] = px(255);
+        pos[1] = toFIXED(255);
         pos[0] = petals->x[i];
         pos[2] = petals->y[i];
         Render_ApplyProjectedPlacementFar(objects[i], pos, (s32 *)&shrink, 0);
@@ -1416,13 +1418,13 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
         ((DrawRectangle)draw[0])(
             canvas, work->sheet + gBattleEffect_MotePictures[3],
-            (Q_16_16_TO_INT(px)) + 58, (Q_16_16_TO_INT(py * 2)) + 48, 4, 8);
+            (FIXEDtoINT(px)) + 58, (FIXEDtoINT(py * 2)) + 48, 4, 8);
       }
       for (i = 0; i != 12; i++) {
-        ((DrawRectangle)draw[0])(
-            canvas, work->sheet + gBattleEffect_MotePictures[1],
-            (Q_16_16_TO_INT(work->particles[i].x)) - 2,
-            (Q_16_16_TO_INT(work->particles[i].y)) - 2, 2, 4);
+        ((DrawRectangle)draw[0])(canvas,
+                                 work->sheet + gBattleEffect_MotePictures[1],
+                                 (FIXEDtoINT(work->particles[i].x)) - 2,
+                                 (FIXEDtoINT(work->particles[i].y)) - 2, 2, 4);
         work->particles[i].x += work->particles[i].velocityX;
       }
     }
@@ -1459,11 +1461,11 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       for (i = 0; i != 8; i++) {
         BattleEffect_DrawShadedCirclesMirrored(
             work->sheet + IRIS_DROPS + i * PICTURE_BYTES(IRIS_DROP),
-            IRIS_DROP_WIDTH, Q16_ONE - i * (Q16_ONE / IRIS_DROP_PICTURES));
+            IRIS_DROP_WIDTH, FIXED_ONE - i * (FIXED_ONE / IRIS_DROP_PICTURES));
         BattleEffect_DrawShadedCirclesMirrored(
             work->sheet + IRIS_SMALL_DROPS + i * PICTURE_BYTES(IRIS_SMALL_DROP),
             IRIS_SMALL_DROP_WIDTH,
-            Q16_ONE - i * (Q16_ONE / IRIS_DROP_PICTURES));
+            FIXED_ONE - i * (FIXED_ONE / IRIS_DROP_PICTURES));
       }
       for (i = 0; i != IRIS_PETALS; i++)
         petals->life[i] = 0;
@@ -1522,7 +1524,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
               petals->life[s] = 0x7900;
               petals->x[s] = gIris_SplashX[j] << 17;
-              petals->y[s] = px(gIris_SplashY[j]) + px(32);
+              petals->y[s] = INTtoFIXED(gIris_SplashY[j]) + toFIXED(32);
               petals->vx[s] = ((Random16() & 31) - 16) << 12;
               petals->vy[s] = -(Random16() & 31) << 12;
             }
@@ -1543,7 +1545,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     // The pillars of light.
     if (frame == 370) {
       BattleEffect_DrawShadedCircles(work->sheet + IRIS_PILLAR_CIRCLE,
-                                     IRIS_PILLAR_TEXTURE_SIZE, Q16_ONE);
+                                     IRIS_PILLAR_TEXTURE_SIZE, FIXED_ONE);
       for (i = 0; i != 16; i++) {
         Dma_Set(work->sheet + IRIS_PILLAR_CIRCLE + (i << 3),
                 work->sheet + IRIS_PILLAR_TEXTURE + (i << 4),
@@ -1674,7 +1676,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     if (frame == 446) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      Transform_Reset();
+      Matrix_Initialize();
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                (s32)&ResourceId_StarfieldFlareBackdrop, 0);
       off = MOTE_SET_BYTES;
@@ -1697,16 +1699,16 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         s32 n = i + 14;
         s32 w = n * 2;
 
-        BattleEffect_DrawShadedCircles(work->sheet + off, n, Q16_ONE);
+        BattleEffect_DrawShadedCircles(work->sheet + off, n, FIXED_ONE);
         off += n * w;
       }
       Iwram_FillWords(work->sheet + IRIS_TEXTURES, 2 * IRIS_TEXTURE_BYTES, 0);
       BattleEffect_BuildSteepShadeRampWave(work->sheet + IRIS_TEXTURES +
                                                IRIS_TEXTURE_BYTES,
-                                           16, IRIS_TEXTURE_HEIGHT, Q16_ONE);
+                                           16, IRIS_TEXTURE_HEIGHT, FIXED_ONE);
       BattleEffect_BuildSteepShadeRampWave(work->sheet + IRIS_TEXTURES +
                                                2 * IRIS_TEXTURE_BYTES,
-                                           16, IRIS_TEXTURE_HEIGHT, Q16_ONE);
+                                           16, IRIS_TEXTURE_HEIGHT, FIXED_ONE);
       {
         u8 *ramp = work->sheet + IRIS_TEXTURES + IRIS_TEXTURE_BYTES;
 
@@ -1785,7 +1787,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
       texture.logWidth = 5;
       texture.logHeight = 6;
-      Transform_ResetMatrix();
+      Matrix_ResetUnit();
       model->kind = MODEL_TEXTURED_MAX;
       model->mesh = gIris_StripMesh;
       model->vertices = verts;
@@ -1810,7 +1812,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
             petals->x[s] = (leftSpans.p[(r + 1) >> 5].left +
                             Random16() % leftSpans.p[(r + 1) >> 5].width)
                            << 16;
-            petals->y[s] = px(r) + px(16);
+            petals->y[s] = INTtoFIXED(r) + toFIXED(16);
             petals->vx[s] = (Random16() & 15) * 3 << 11;
             petals->vy[s] = -0x8000 - ((Random16() & 31) * 3 << 11);
           }
@@ -1840,7 +1842,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
             petals->x[s] = (rightSpans.p[(r + 1) >> 5].left +
                             Random16() % rightSpans.p[(r + 1) >> 5].width)
                            << 16;
-            petals->y[s] = px(r) + px(16);
+            petals->y[s] = INTtoFIXED(r) + toFIXED(16);
             petals->vx[s] = (Random16() & 15) * 3 << 11;
             petals->vy[s] = -0x8000 - ((Random16() & 31) * 3 << 11);
           }
@@ -1849,15 +1851,15 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           s32 n = FindFreeParticle();
 
           if (n != -1) {
-            work->particles[n].x = px(32);
+            work->particles[n].x = toFIXED(32);
             if (frame <= 509)
-              work->particles[n].x += px(Random16() & 63);
+              work->particles[n].x += INTtoFIXED(Random16() & 63);
             else
-              work->particles[n].x += px(Random16() & motesMask);
-            work->particles[n].y = px(127);
+              work->particles[n].x += INTtoFIXED(Random16() & motesMask);
+            work->particles[n].y = toFIXED(127);
             work->particles[n].velocityX = (Random16() & 15) << 12;
             work->particles[n].velocityY =
-                -px(1) / 2 - ((Random16() & 31) * 7 << 11);
+                -toFIXED(1) / 2 - ((Random16() & 31) * 7 << 11);
             work->particles[n].variant = (Random16() & 3) + 1;
           }
         }
@@ -1883,19 +1885,17 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
         shade = CANVAS_LEVEL_BRIGHTEST;
       BattleEffect_DrawDiagonalCanvasLine(
-          0,
-          Q_16_16_TO_INT(Iwram_MulQ16((frame - 521) * 0x10000, 0x400) +
-                         0x7b0000),
+          0, FIXEDtoINT(Iwram_MulFX((frame - 521) * 0x10000, 0x400) + 0x7b0000),
           frame - 521, shade);
     }
     if ((u32)(frame - 531) <= 209) {
-      s32 x = px(4);
+      s32 x = toFIXED(4);
       s16 shade = 741 - frame;
 
       if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
         shade = CANVAS_LEVEL_BRIGHTEST;
-      x -= Iwram_MulQ16((frame - 530) * px(1), 0x400);
-      BattleEffect_DrawDiagonalCanvasLine(Q_16_16_TO_INT(x), 127, frame - 530,
+      x -= Iwram_MulFX((frame - 530) * toFIXED(1), 0x400);
+      BattleEffect_DrawDiagonalCanvasLine(FIXEDtoINT(x), 127, frame - 530,
                                           shade);
     }
     if ((u32)(frame - 535) <= 209) {
@@ -1904,19 +1904,17 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
         shade = CANVAS_LEVEL_BRIGHTEST;
       BattleEffect_DrawDiagonalCanvasLine(
-          0,
-          Q_16_16_TO_INT(Iwram_MulQ16((frame - 534) * 0x10000, 0x600) +
-                         0x780000),
+          0, FIXEDtoINT(Iwram_MulFX((frame - 534) * 0x10000, 0x600) + 0x780000),
           frame - 534, shade);
     }
     if ((u32)(frame - 554) <= 209) {
-      s32 x = px(6);
+      s32 x = toFIXED(6);
       s16 shade = 764 - frame;
 
       if (shade < 0 || shade > CANVAS_LEVEL_BRIGHTEST)
         shade = CANVAS_LEVEL_BRIGHTEST;
-      x -= Iwram_MulQ16((frame - 553) * px(1), 0x600);
-      BattleEffect_DrawDiagonalCanvasLine(Q_16_16_TO_INT(x), 127, frame - 553,
+      x -= Iwram_MulFX((frame - 553) * toFIXED(1), 0x600);
+      BattleEffect_DrawDiagonalCanvasLine(FIXEDtoINT(x), 127, frame - 553,
                                           shade);
     }
 
@@ -1935,12 +1933,12 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
             s32 a = i << 9;
             s32 sx = Trig_Sin(a) * (ry >> 1);
             s32 sy = Trig_Cos(a) * ry;
-            s32 px = Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy * 2, sinT);
-            s32 py = Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy * 2, cosT);
+            s32 px = Iwram_MulFX(sx, cosT) - Iwram_MulFX(sy * 2, sinT);
+            s32 py = Iwram_MulFX(sx, sinT) + Iwram_MulFX(sy * 2, cosT);
             s32 rowY;
 
-            px = (Q_16_16_TO_INT(px)) + (j >> 1) + 64;
-            rowY = (Q_16_16_TO_INT(py)) - (j >> 1) + 63;
+            px = (FIXEDtoINT(px)) + (j >> 1) + 64;
+            rowY = (FIXEDtoINT(py)) - (j >> 1) + 63;
             ((DrawRectangle)draw[0])(canvas, work->sheet + tile, px, rowY, 1,
                                      2);
           }
@@ -1954,10 +1952,10 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       s32 white;
       BattleEffect_BuildSteepShadeRampWave(work->sheet + IRIS_TEXTURES +
                                                8 * IRIS_TEXTURE_BYTES,
-                                           16, 32, Q16_ONE);
+                                           16, 32, FIXED_ONE);
       BattleEffect_DrawShadedCircles(work->sheet + IRIS_TEXTURES +
                                          IRIS_TEXTURE_BYTES / 2,
-                                     IRIS_TEXTURE_WIDTH, Q16_ONE);
+                                     IRIS_TEXTURE_WIDTH, FIXED_ONE);
       for (i = 0; i != 32; i++) {
         Dma_Set(work->sheet + (i << 4) + IRIS_TEXTURES + IRIS_TEXTURE_BYTES / 2,
                 work->sheet + (i << 5) + IRIS_TEXTURES, DMA_COPY_WORDS(8),
@@ -1999,10 +1997,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         s32 a = i * 384;
         s32 sx = Trig_Sin(a) * (t << 1);
         s32 sy = Trig_Cos(a) * t;
-        s32 px =
-            Q_16_16_TO_INT(Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT));
-        s32 py =
-            Q_16_16_TO_INT(Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT));
+        s32 px = FIXEDtoINT(Iwram_MulFX(sx, cosT) - Iwram_MulFX(sy, sinT));
+        s32 py = FIXEDtoINT(Iwram_MulFX(sx, sinT) + Iwram_MulFX(sy, cosT));
 
         ((DrawRectangle)draw[0])(canvas, work->sheet + tile, px + 101, py + 26,
                                  6, 12);
@@ -2018,10 +2014,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         s32 a = i * 384;
         s32 sx = Trig_Sin(a) * (t >> 1);
         s32 sy = Trig_Cos(a) * (t << 1);
-        s32 px =
-            Q_16_16_TO_INT(Iwram_MulQ16(sx, cosT) - Iwram_MulQ16(sy, sinT));
-        s32 py =
-            Q_16_16_TO_INT(Iwram_MulQ16(sx, sinT) + Iwram_MulQ16(sy, cosT));
+        s32 px = FIXEDtoINT(Iwram_MulFX(sx, cosT) - Iwram_MulFX(sy, sinT));
+        s32 py = FIXEDtoINT(Iwram_MulFX(sx, sinT) + Iwram_MulFX(sy, cosT));
 
         ((DrawRectangle)draw[0])(canvas, work->sheet + tile, px + 93, py + 32,
                                  6, 12);
@@ -2037,18 +2031,18 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       coneTexture.logWidth = 5;
       coneTexture.logHeight = 5;
       coneTexture.pixels = work->sheet + IRIS_TEXTURES + 8 * IRIS_TEXTURE_BYTES;
-      Transform_ResetMatrix();
-      place[0] = px(32);
-      place[1] = -px(24);
+      Matrix_ResetUnit();
+      place[0] = toFIXED(32);
+      place[1] = -toFIXED(24);
       place[2] = 0;
-      Transform_ApplyPosition(place);
-      Transform_ApplyRoll(TRIG_TURN * 19 / 32);
+      Matrix_TranslateVector(place);
+      Matrix_RotateZ(TRIG_TURN * 19 / 32);
       grow[0] = 0x10000;
       grow[1] = (frame - 758) << 10;
       if (grow[1] > 0x10000)
         grow[1] = 0x10000;
       grow[2] = 0;
-      Transform_ApplyScale(grow);
+      Matrix_ScaleVector(grow);
       model->kind = MODEL_TEXTURED_MAX;
       model->mesh = gIris_ConeMesh;
       model->texture = &coneTexture;
@@ -2060,8 +2054,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       s = FindFreePetal();
       if (s != -1) {
         petals->life[s] = (Random16() & 15) << 15;
-        petals->x[s] = px(239);
-        petals->y[s] = px(Random16() & 255);
+        petals->x[s] = toFIXED(239);
+        petals->y[s] = INTtoFIXED(Random16() & 255);
         petals->vx[s] = -(Random16() & 31) << 12;
         petals->vy[s] = ((Random16() & 31) - 16) << 12;
       }
@@ -2071,23 +2065,23 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         if (n != -1) {
           s32 spin = Random16() & 3;
 
-          work->particles[n].x = px(96);
-          work->particles[n].y = px(Random16() & 7) + px(36);
+          work->particles[n].x = toFIXED(96);
+          work->particles[n].y = INTtoFIXED(Random16() & 7) + toFIXED(36);
           work->particles[n].z = frame;
           work->particles[n].velocityX =
-              Iwram_MulQ16((spin + 2) << 15, Trig_Sin(TRIG_TURN * 19 / 32));
+              Iwram_MulFX((spin + 2) << 15, Trig_Sin(TRIG_TURN * 19 / 32));
           work->particles[n].velocityY =
-              -Iwram_MulQ16((spin + 2) << 15, Trig_Cos(TRIG_TURN * 19 / 32));
+              -Iwram_MulFX((spin + 2) << 15, Trig_Cos(TRIG_TURN * 19 / 32));
           work->particles[n].variant = (Random16() & 3) | 16;
         }
         n = FindFreeParticle();
         if (n != -1) {
-          work->particles[n].x = px(Random16() & 31) + px(96);
-          work->particles[n].y = px(Random16() & 31);
+          work->particles[n].x = INTtoFIXED(Random16() & 31) + toFIXED(96);
+          work->particles[n].y = INTtoFIXED(Random16() & 31);
           work->particles[n].z = frame;
           work->particles[n].velocityX = -((Random16() & 15) << 13);
           work->particles[n].velocityY = (Random16() & 15) << 14;
-          work->particles[n].velocityZ = px(1) / 2;
+          work->particles[n].velocityZ = toFIXED(1) / 2;
           work->particles[n].variant = ((Random16() & 3) + 1) | 0x110;
         }
       }
@@ -2164,8 +2158,8 @@ struct SolidFace {
 /// keeping the brighter of each pixel's colour and color.
 #define FILL_SPAN(row, xa, xb)                                                 \
   {                                                                            \
-    s32 left = Q_16_16_TO_INT(xa);                                             \
-    s32 right = Q_16_16_TO_INT(xb);                                            \
+    s32 left = FIXEDtoINT(xa);                                                 \
+    s32 right = FIXEDtoINT(xb);                                                \
     s32 rowOffset;                                                             \
     s32 x;                                                                     \
                                                                                \
@@ -2212,7 +2206,7 @@ void Render_FillMesh(s32 vertexCount, s32 faceCount) {
     ay = ax + 1;
     by = ax + 4;
     // A local holding the multiply routine's address (one value throughout).
-    mul = Iwram_MulQ16;
+    mul = Iwram_MulFX;
     Dma_Set(&vertices[faces[i].corner[0]], ax, DMA_COPY_WORDS(3), REG_DMA3);
     Dma_Set(&vertices[faces[i].corner[1]], bx, DMA_COPY_WORDS(3), REG_DMA3);
     Dma_Set(&vertices[faces[i].corner[2]], cx, DMA_COPY_WORDS(3), REG_DMA3);
@@ -2221,12 +2215,12 @@ void Render_FillMesh(s32 vertexCount, s32 faceCount) {
     facing = mul(*bx - *ax, *cy - *ay) - mul(*cx - *ax, *by - *ay);
     if (facing >= 0) {
       color = faces[i].color;
-      *ax += px(64);
-      *ay += px(64);
-      *bx += px(64);
-      *by += px(64);
-      *cx += px(64);
-      *cy += px(64);
+      *ax += toFIXED(64);
+      *ay += toFIXED(64);
+      *bx += toFIXED(64);
+      *by += toFIXED(64);
+      *cx += toFIXED(64);
+      *cy += toFIXED(64);
 
       if (*ay > *by) {
         XOR_SWAP(*ax, *bx);
@@ -2247,8 +2241,8 @@ void Render_FillMesh(s32 vertexCount, s32 faceCount) {
         }
       }
 
-      top = Q_16_16_TO_INT(ax[1]);
-      middle = Q_16_16_TO_INT(ax[4]);
+      top = FIXEDtoINT(ax[1]);
+      middle = FIXEDtoINT(ax[4]);
       bottom = Q_16_16_UPPER_HALF(ax[7]);
       if (top != middle)
         slopeA = Iwram_RatioMulQ14(ax[4] - ax[1], ax[3] - ax[0]);
@@ -2295,16 +2289,16 @@ struct MeshFace {
     s32 rowOffset;                                                             \
     s32 x;                                                                     \
                                                                                \
-    row += ((Q_16_16_TO_INT(vA)) << textureShift) + (Q_16_16_TO_INT(uA));      \
-    left = Q_16_16_TO_INT(xA);                                                 \
-    right = Q_16_16_TO_INT(xB);                                                \
+    row += ((FIXEDtoINT(vA)) << textureShift) + (FIXEDtoINT(uA));              \
+    left = FIXEDtoINT(xA);                                                     \
+    right = FIXEDtoINT(xB);                                                    \
     u = 0;                                                                     \
     v = 0;                                                                     \
     if (left > right)                                                          \
       XOR_SWAP(left, right);                                                   \
     rowOffset = (((y) & 7) << 3) + (((y) >> 3) << 10);                         \
     for (x = left; x != right; x++) {                                          \
-      s32 texel = (Q_16_16_TO_INT(u)) + ((Q_16_16_TO_INT(v)) << textureShift); \
+      s32 texel = (FIXEDtoINT(u)) + ((FIXEDtoINT(v)) << textureShift);         \
       s32 at = ((x >> 3) << 6) + (x & 7) + rowOffset;                          \
                                                                                \
       if (canvas[at] < row[texel])                                             \
@@ -2317,20 +2311,20 @@ struct MeshFace {
 /// The texture steps along a scanline, from the middle corner's row.
 #define STEP_RIGHTWARD()                                                       \
   {                                                                            \
-    width = DIFF_ABS(ax[3] - ax[0] - Iwram_MulQ16(dxB, ax[4] - ax[1]));        \
+    width = DIFF_ABS(ax[3] - ax[0] - Iwram_MulFX(dxB, ax[4] - ax[1]));         \
     dudx = Iwram_RatioMulQ14(width, uv[1][0] - uv[0][0] -                      \
-                                        Iwram_MulQ16(duB, ax[4] - ax[1]));     \
+                                        Iwram_MulFX(duB, ax[4] - ax[1]));      \
     dvdx = Iwram_RatioMulQ14(width, uv[1][1] - uv[0][1] -                      \
-                                        Iwram_MulQ16(dvB, ax[4] - ax[1]));     \
+                                        Iwram_MulFX(dvB, ax[4] - ax[1]));      \
     XOR_SWAP(duA, duB);                                                        \
     XOR_SWAP(dvA, dvB);                                                        \
   }
 #define STEP_LEFTWARD()                                                        \
   {                                                                            \
-    width = DIFF_ABS(Iwram_MulQ16(dxB, ax[4] - ax[1]) - (ax[3] - ax[0]));      \
-    dudx = Iwram_RatioMulQ14(width, Iwram_MulQ16(duB, ax[4] - ax[1]) -         \
+    width = DIFF_ABS(Iwram_MulFX(dxB, ax[4] - ax[1]) - (ax[3] - ax[0]));       \
+    dudx = Iwram_RatioMulQ14(width, Iwram_MulFX(duB, ax[4] - ax[1]) -          \
                                         (uv[1][0] - uv[0][0]));                \
-    dvdx = Iwram_RatioMulQ14(width, Iwram_MulQ16(dvB, ax[4] - ax[1]) -         \
+    dvdx = Iwram_RatioMulQ14(width, Iwram_MulFX(dvB, ax[4] - ax[1]) -          \
                                         (uv[1][1] - uv[0][1]));                \
   }
 
@@ -2371,25 +2365,24 @@ void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
     cy = &vertices[vertexCount + 7];
     ay = &vertices[vertexCount + 1];
     by = &vertices[vertexCount + 4];
-    Dma_Set(&vertices[faces[i].vertex[0]], ax, px(DMA_ENABLE | DMA_32BIT) | 3,
-            REG_DMA3);
-    Dma_Set(&vertices[faces[i].vertex[1]], bx, px(DMA_ENABLE | DMA_32BIT) | 3,
-            REG_DMA3);
-    Dma_Set(&vertices[faces[i].vertex[2]], cx, px(DMA_ENABLE | DMA_32BIT) | 3,
-            REG_DMA3);
+    Dma_Set(&vertices[faces[i].vertex[0]], ax,
+            toFIXED(DMA_ENABLE | DMA_32BIT) | 3, REG_DMA3);
+    Dma_Set(&vertices[faces[i].vertex[1]], bx,
+            toFIXED(DMA_ENABLE | DMA_32BIT) | 3, REG_DMA3);
+    Dma_Set(&vertices[faces[i].vertex[2]], cx,
+            toFIXED(DMA_ENABLE | DMA_32BIT) | 3, REG_DMA3);
 
     // Back faces are skipped.
-    if (Iwram_MulQ16(*bx - *ax, *cy - *ay) -
-            Iwram_MulQ16(*cx - *ax, *by - *ay) >=
+    if (Iwram_MulFX(*bx - *ax, *cy - *ay) - Iwram_MulFX(*cx - *ax, *by - *ay) >=
         0) {
       work = Ram_HeapSlots->battleEffect;
-      Dma_Set(uvs[i], uv, px(DMA_ENABLE | DMA_32BIT) | 6, REG_DMA3);
-      *ax += px(64);
-      *ay += px(64);
-      *bx += px(64);
-      *by += px(64);
-      *cx += px(64);
-      *cy += px(64);
+      Dma_Set(uvs[i], uv, toFIXED(DMA_ENABLE | DMA_32BIT) | 6, REG_DMA3);
+      *ax += toFIXED(64);
+      *ay += toFIXED(64);
+      *bx += toFIXED(64);
+      *by += toFIXED(64);
+      *cx += toFIXED(64);
+      *cy += toFIXED(64);
 
       // Sort the corners from top to bottom. bx[1] is *by and cx[1] is *cy.
       if (*ay > *by) {
@@ -2417,9 +2410,9 @@ void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
         }
       }
 
-      top = Q_16_16_TO_INT(ax[1]);
-      middle = Q_16_16_TO_INT(ax[4]);
-      bottom = Q_16_16_TO_INT(ax[7]);
+      top = FIXEDtoINT(ax[1]);
+      middle = FIXEDtoINT(ax[4]);
+      bottom = FIXEDtoINT(ax[7]);
       if (top != middle) {
         s32 height = ax[4] - ax[1];
 
@@ -2534,15 +2527,15 @@ void Render_DrawMeshWireframe(s32 vertexCount, s32 faceCount) {
 
     // The z of the edges' cross product: negative for a face turned away.
     facing =
-        Iwram_MulQ16(*x1 - *x0, *y2 - *y0) - Iwram_MulQ16(*x2 - *x0, *y1 - *y0);
+        Iwram_MulFX(*x1 - *x0, *y2 - *y0) - Iwram_MulFX(*x2 - *x0, *y1 - *y0);
     if (facing >= 0) {
       color = faces[i].color;
-      *x0 += px(64);
-      *y0 += px(64);
-      *x1 += px(64);
-      *y1 += px(64);
-      *x2 += px(64);
-      *y2 += px(64);
+      *x0 += toFIXED(64);
+      *y0 += toFIXED(64);
+      *x1 += toFIXED(64);
+      *y1 += toFIXED(64);
+      *x2 += toFIXED(64);
+      *y2 += toFIXED(64);
       BattleEffect_DrawClippedCanvasLine(
           Q_16_16_UPPER_HALF(*x0), Q_16_16_UPPER_HALF(*y0),
           Q_16_16_UPPER_HALF(*x1), Q_16_16_UPPER_HALF(*y1), color);
@@ -2947,7 +2940,8 @@ void Render_ProjectVertices(struct ModelVertex *vertices,
   s32 point[3];
 
   for (; count != 0; count--) {
-    SET_VECTOR(point, px(vertices->x), px(vertices->y), px(vertices->z));
+    SET_VECTOR(point, INTtoFIXED(vertices->x), INTtoFIXED(vertices->y),
+               INTtoFIXED(vertices->z));
     Render_ProjectPoint(point, point);
     screen->x = point[0];
     screen->y = point[1];

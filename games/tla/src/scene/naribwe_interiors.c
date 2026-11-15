@@ -905,8 +905,8 @@ s32 Scene_Initialize(void) {
 
   object = Actor_Get(ACTOR_FORTUNE_MARKER);
   object->motionFlags = 0;
-  object->y.fixed = -px(4);
-  object->groundHeight = -px(4);
+  object->y.fixed = -toFIXED(4);
+  object->groundHeight = -toFIXED(4);
   Actor_Get(ACTOR_FORTUNE_MARKER)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   FieldActor_SetSpritePriority(ACTOR_FORTUNE_MARKER, 1);
@@ -914,16 +914,16 @@ s32 Scene_Initialize(void) {
 
   object = Actor_Get(ACTOR_FORTUNE_FLAME);
   object->motionFlags = 0;
-  object->y.fixed = px(12);
-  object->groundHeight = px(12);
+  object->y.fixed = toFIXED(12);
+  object->groundHeight = toFIXED(12);
   Actor_Get(ACTOR_FORTUNE_FLAME)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   FieldActor_SetSpritePriority(ACTOR_FORTUNE_FLAME, 1);
   Actor_SetPosition(ACTOR_FORTUNE_FLAME, 0, 0);
 
   object = Actor_Get(ACTOR_FORTUNE_SMOKE);
   object->motionFlags = 0;
-  object->y.fixed = px(12);
-  object->groundHeight = px(12);
+  object->y.fixed = toFIXED(12);
+  object->groundHeight = toFIXED(12);
   Actor_Get(ACTOR_FORTUNE_SMOKE)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   FieldActor_SetSpritePriority(ACTOR_FORTUNE_SMOKE, 1);
   Actor_SetPosition(ACTOR_FORTUNE_SMOKE, 0, 0);

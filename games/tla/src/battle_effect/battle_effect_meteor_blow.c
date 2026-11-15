@@ -125,20 +125,20 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   x = 0;
   z = 0;
   size = 0;
-  scale = Q16_ONE;
+  scale = FIXED_ONE;
   Mesh_BuildGrid(triangles, 2, 16, 32, 2);
   for (offset = 0, frame = 0, arcAngle = 0; frame != 16;
        arcAngle += 1092, offset += 8, frame++) {
-    s32 y = Q_16_16_TO_INT(-Trig_Cos(arcAngle) * 48);
-    s32 r = Q_16_16_TO_INT(Trig_Sin(arcAngle) * 48);
+    s32 y = FIXEDtoINT(-Trig_Cos(arcAngle) * 48);
+    s32 r = FIXEDtoINT(Trig_Sin(arcAngle) * 48);
     struct ModelVertex *v;
 
     j = 0;
     v = (struct ModelVertex *)(meshA + offset);
     for (; j != 2; j++, v++) {
-      v->x = Q_16_16_TO_INT(Trig_Sin(j << 13) * r);
+      v->x = FIXEDtoINT(Trig_Sin(j << 13) * r);
       v->y = y;
-      v->z = Q_16_16_TO_INT(Trig_Cos(j << 13) * r);
+      v->z = FIXEDtoINT(Trig_Cos(j << 13) * r);
     }
   }
   mode = 3;
@@ -159,7 +159,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     s32 b;
 
     current->y = Trig_Sin(a) * r;
-    r = Q_16_16_TO_INT(Trig_Cos(a) * r);
+    r = FIXEDtoINT(Trig_Cos(a) * r);
     b = Random16() & 0x7fff;
     current->x = Trig_Sin(b) * r;
     current->z = Trig_Cos(b) * r;
@@ -178,8 +178,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     s32 speed;
 
     if (frame == 0) {
-      x = px(272);
-      z = px(88);
+      x = toFIXED(272);
+      z = toFIXED(88);
       size = 0x400;
       pitch = 0xd00;
       yaw = 0x2500;
@@ -210,7 +210,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].variant = -1;
       }
-      scale = Q16_ONE;
+      scale = FIXED_ONE;
     }
     // DEAD: frame never reaches 1600 here; the ROM keeps the compare and
     // branch.
@@ -278,19 +278,19 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           d = 1024;
         }
         scale += d;
-        Transform_ApplyAxisScale(scale, scale, scale);
+        Matrix_Scale(scale, scale, scale);
       }
       i = 0;
-      angle = -TRIG_TURN / 4;
+      angle = -DEGtoANG(90);
       scroll = frame * 2;
       for (; i != 5; i++) {
         model->scrollV = ~scroll & 127;
-        Transform_Reset();
-        Transform_ApplyTranslation(-px(2), -px(64), 0);
-        Transform_ApplyAxisScale(42000, 0x24650, Q16_ONE);
-        Transform_ApplyAxisScale(scale, scale, scale);
-        Transform_ApplyRoll(TRIG_TURN / 2);
-        Transform_ApplyYaw(angle);
+        Matrix_Initialize();
+        Matrix_Translate(-toFIXED(2), -toFIXED(64), 0);
+        Matrix_Scale(42000, 0x24650, FIXED_ONE);
+        Matrix_Scale(scale, scale, scale);
+        Matrix_RotateZ(DEGtoANG(180));
+        Matrix_RotateY(angle);
         Render_TransformVertices(meshA, projected, 32);
         Render_DrawModelList(model);
         angle += 0x1800;
@@ -301,22 +301,22 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       // DEAD: frame is at most 115 here, so the second arm never runs; the ROM
       // keeps both compares and the arm.
       if (frame <= 159) {
-        pitch = Q_16_16_TO_INT(px(pitch) + px(256));
+        pitch = FIXEDtoINT(INTtoFIXED(pitch) + toFIXED(256));
       } else if (frame <= 191) {
-        pitch = Q_16_16_TO_INT(((u16)pitch - frame * 8 + 1216) << 16);
+        pitch = FIXEDtoINT(((u16)pitch - frame * 8 + 1216) << 16);
       }
       if (frame <= 47) {
-        yaw = Q_16_16_TO_INT(px(yaw) + px(256));
+        yaw = FIXEDtoINT(INTtoFIXED(yaw) + toFIXED(256));
       } else if (frame <= 111) {
-        yaw = Q_16_16_TO_INT(((u16)yaw - frame * 4 + 448) << 16);
+        yaw = FIXEDtoINT(((u16)yaw - frame * 4 + 448) << 16);
       }
       position[0] = 120;
       position[1] = 64;
       position[2] = 0;
-      Transform_Reset();
-      Transform_ApplyPosition(position);
-      Transform_ApplyPitch((u16)pitch);
-      Transform_ApplyYaw((u16)yaw);
+      Matrix_Initialize();
+      Matrix_TranslateVector(position);
+      Matrix_RotateX((u16)pitch);
+      Matrix_RotateY((u16)yaw);
       if (frame <= 112) {
         struct MeteorStar *s = stars;
 
@@ -347,11 +347,11 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     req[1] = size;
     req[0] = size;
     place[3] = 0;
-    place[1] = px(255);
+    place[1] = toFIXED(255);
     place[0] = x;
     place[2] = z;
     Render_ApplyProjectedPlacementFar(work->sprites[0], place, req, 0);
-    speed = px(1) / 32;
+    speed = toFIXED(1) / 32;
     {
       s32 a = 0x6000;
 
@@ -374,7 +374,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     if (frame > 127) {
       speed = (frame << 13) - 0x100000;
       if (speed > 0x1ffff) {
-        speed = px(2);
+        speed = toFIXED(2);
       }
       z += speed;
       size += 512;
@@ -447,8 +447,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       summonScale = gMeteorBlow_DoubleScale;
       summonPlace[3] = 0;
       summonPlace[1] = 0xff0000;
-      summonPlace[0] = px(hx);
-      summonPlace[2] = px(hz);
+      summonPlace[0] = INTtoFIXED(hx);
+      summonPlace[2] = INTtoFIXED(hz);
       if (frame <= 15) {
         hx -= 1;
         hz += 9;
@@ -467,7 +467,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
 
       p = (struct Particle *)gMapGridCellBuffer;
       i = 0;
-      half = px(hx / 2);
+      half = INTtoFIXED(hx / 2);
       /* FAKEMATCH(dead): updates of hx that cancel out end the shard's halving
        * here. */
       hx++;
@@ -483,7 +483,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
         a = (Random16() & 0x7fff) + 0x4000;
 
         p->x = half;
-        p->y = px(114);
+        p->y = toFIXED(114);
         p->velocityX = (Trig_Sin(a) * r) >> 6;
         p->velocityY = (Trig_Cos(a) * r * 2) >> 6;
         p->variant = (Random16() & 7) + 24;
@@ -513,7 +513,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     i = 0;
     back = -step;
     angle = step;
-    for (; i != 4; i++, back += TRIG_TURN / 8, angle += TRIG_TURN / 8) {
+    for (; i != 4; i++, back += DEGtoANG(45), angle += DEGtoANG(45)) {
       s32 start = gMeteorBlow_WaveStarts[i] + 16;
 
       if (frame > start) {
@@ -526,14 +526,14 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           s32 s = (frame - start) * gMeteorBlow_WaveGrowth[i] * 2000 + 42768;
 
           model->shade = shade;
-          Transform_Reset();
-          Transform_ApplyTranslation(px(x0), px(40), 0);
-          Transform_ApplyAxisScale(s, s * gMeteorBlow_WaveStretch[i], s / 4);
-          Transform_ApplyPitch(1000);
+          Matrix_Initialize();
+          Matrix_Translate(INTtoFIXED(x0), toFIXED(40), 0);
+          Matrix_Scale(s, s * gMeteorBlow_WaveStretch[i], s / 4);
+          Matrix_RotateX(1000);
           if (i & 1) {
-            Transform_ApplyYaw(angle);
+            Matrix_RotateY(angle);
           } else {
-            Transform_ApplyYaw(back);
+            Matrix_RotateY(back);
           }
           Render_TransformVertices(gBattleEffect_RingCorners, verts, 32);
           Render_DrawModelList(model);
@@ -559,11 +559,11 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
 
           model->shade = shade;
           model->scrollU = ((frame + i * 5) & 7) << 4;
-          Transform_Reset();
-          Transform_ApplyTranslation(px(half), px(gMeteorBlow_RingHeights[i]),
-                                     0);
-          Transform_ApplyAxisScale(s, s * 2, s);
-          Transform_ApplyPitch(2000);
+          Matrix_Initialize();
+          Matrix_Translate(INTtoFIXED(half),
+                           INTtoFIXED(gMeteorBlow_RingHeights[i]), 0);
+          Matrix_Scale(s, s * 2, s);
+          Matrix_RotateX(2000);
           Render_TransformVertices(gBattleEffect_CylinderCorners, verts, 32);
           Render_DrawModelList(model);
         }
@@ -584,7 +584,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
                   Q_16_16_UPPER_HALF(p->x) - n / 2,
                   Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
           p->variant--;
-          BattleEffectKernels_IntegrateVector2(p, 56, px(1) / 8);
+          BattleEffectKernels_IntegrateVector2(p, 56, toFIXED(1) / 8);
         }
       }
     }

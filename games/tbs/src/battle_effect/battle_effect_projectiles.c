@@ -79,7 +79,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     s32 angle = Random16() & TRIG_ANGLE_MASK;
     s32 speed = (Random16() & 255) + 128;
 
-    SET_POSITION(spark, 0, px((Random16() & 31) + 20), 0);
+    SET_POSITION(spark, 0, INTtoFIXED((Random16() & 31) + 20), 0);
     SET_VELOCITY(spark, (Trig_Sin(angle) * speed) >> 5, 0,
                  (Trig_Cos(angle) * speed) >> 5);
     spark->variant = 0;
@@ -88,19 +88,19 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   SET_VECTOR(center, user->x.fixed, 0, user->z.fixed);
   switch (anchor) {
   case DJINNI_ANCHOR_OVER_TARGET:
-    SET_VECTOR(goal, target->x.fixed, px(60), target->z.fixed);
+    SET_VECTOR(goal, target->x.fixed, toFIXED(60), target->z.fixed);
     break;
   case DJINNI_ANCHOR_TARGET_X:
-    SET_VECTOR(goal, target->x.fixed, px(60), 0);
+    SET_VECTOR(goal, target->x.fixed, toFIXED(60), 0);
     break;
   case DJINNI_ANCHOR_OVER_USER:
-    SET_VECTOR(goal, user->x.fixed, px(60), user->z.fixed);
+    SET_VECTOR(goal, user->x.fixed, toFIXED(60), user->z.fixed);
     break;
   case DJINNI_ANCHOR_USER_X:
-    SET_VECTOR(goal, user->x.fixed, px(60), 0);
+    SET_VECTOR(goal, user->x.fixed, toFIXED(60), 0);
     break;
   case DJINNI_ANCHOR_CENTRE:
-    SET_VECTOR(goal, 0, px(60), 0);
+    SET_VECTOR(goal, 0, toFIXED(60), 0);
     break;
   }
   SET_VECTOR(step, (goal[0] - center[0]) / 40, (goal[1] - center[1]) / 40,
@@ -118,7 +118,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
       center[1] += step[1];
       center[2] += step[2];
     }
-    Transform_ApplyPosition(center);
+    Matrix_TranslateVector(center);
     if (frame == 0)
       BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
                                TINT_KEEP, 0);
@@ -131,25 +131,25 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
       if (frame >= i / 8 && spark->variant == 0) {
         s32 size;
 
-        Transform_Push();
+        Matrix_Push();
         switch (i & 3) {
         case SPIN_YAW:
-          Transform_ApplyYaw(frame * ((i + 8) * (TRIG_TURN / 2048)));
+          Matrix_RotateY(frame * ((i + 8) * (TRIG_TURN / 2048)));
           break;
         case SPIN_PITCH:
-          Transform_ApplyPitch(-frame * ((i + 8) * (TRIG_TURN / 2048)));
+          Matrix_RotateX(-frame * ((i + 8) * (TRIG_TURN / 2048)));
           break;
         case SPIN_ROLL:
-          Transform_ApplyRoll(-frame * ((i + 8) * (TRIG_TURN / 2048)));
+          Matrix_RotateZ(-frame * ((i + 8) * (TRIG_TURN / 2048)));
           break;
         case SPIN_PITCH_AND_ROLL:
-          Transform_ApplyPitch(-frame * ((i + 8) * (TRIG_TURN / 2048)));
-          Transform_ApplyRoll(-frame * ((i + 8) * (TRIG_TURN / 2048)));
+          Matrix_RotateX(-frame * ((i + 8) * (TRIG_TURN / 2048)));
+          Matrix_RotateZ(-frame * ((i + 8) * (TRIG_TURN / 2048)));
           break;
         }
         Projection_Point(&spark->x, &position);
         position.x >>= 1;
-        Transform_Pop();
+        Matrix_Pop();
         CLAMP(position.depth, 250, 634);
         size = 8 - (position.depth - 250) / 64;
         EFFECT_DRAW_MOTE(draw[1], canvas, sheet, position.x, position.y, size);
@@ -190,7 +190,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
         s32 speed = (Random16() & 255) + 128;
 
         mote->x = *outX << 15;
-        mote->y = px(*outY);
+        mote->y = INTtoFIXED(*outY);
         mote->velocityX = (Trig_Sin(angle) * speed) >> 6;
         mote->velocityY = (Trig_Cos(angle) * speed) >> 5;
         mote->variant = (Random16() & 15) + 8;
@@ -203,8 +203,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
         if (mote->variant >= 0) {
           s32 size = (mote->variant >> 3) + 2;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, WHOLE_PIXELS(mote->x),
-                           WHOLE_PIXELS(mote->y), size);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, FIXEDtoINT(mote->x),
+                           FIXEDtoINT(mote->y), size);
           Particle_AdvanceWithGravity2D(mote, 60, 0);
           mote->variant--;
         }
@@ -490,18 +490,21 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
         shot->x = user->x.fixed;
         if (mode == PROJECTILE_VOLLEY_SLEET)
-          shot->y = user->y.fixed + px(Random16() & 15) + px(58);
+          shot->y = user->y.fixed + INTtoFIXED(Random16() & 15) + toFIXED(58);
         else if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
           shot->y = user->y.fixed + height / 2;
         else if (mode == PROJECTILE_VOLLEY_HEAT_WAVE)
           shot->y = user->y.fixed + height / 2;
         else if (mode == PROJECTILE_VOLLEY_BLIZZARD)
-          shot->y = user->y.fixed + height / 2 + px(16 - (Random16() & 31));
+          shot->y =
+              user->y.fixed + height / 2 + INTtoFIXED(16 - (Random16() & 31));
         else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER ||
                  mode == PROJECTILE_VOLLEY_WING_BEAT)
-          shot->y = user->y.fixed + height / 2 + px(16 - (Random16() & 31));
+          shot->y =
+              user->y.fixed + height / 2 + INTtoFIXED(16 - (Random16() & 31));
         else if (mode == PROJECTILE_VOLLEY_WING_STROKE)
-          shot->y = user->y.fixed + height / 2 + px(32 - (Random16() & 63));
+          shot->y =
+              user->y.fixed + height / 2 + INTtoFIXED(32 - (Random16() & 63));
         else if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE)
           shot->y = user->y.fixed + height / 2;
         else
@@ -510,19 +513,22 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         shot->velocityX = (target->x.fixed - shot->x) / steps;
         if (mode == PROJECTILE_VOLLEY_SLEET)
           shot->velocityY =
-              (s32)(target->y.fixed + px(Random16() & 63) - shot->y - px(12)) /
+              (s32)(target->y.fixed + INTtoFIXED(Random16() & 63) - shot->y -
+                    toFIXED(12)) /
               steps;
         else if (mode == PROJECTILE_VOLLEY_IMPACT_COMETS)
-          shot->velocityY =
-              (s32)(target->y.fixed + px(Random16() & 7) - shot->y + px(22)) /
-              steps;
+          shot->velocityY = (s32)(target->y.fixed + INTtoFIXED(Random16() & 7) -
+                                  shot->y + toFIXED(22)) /
+                            steps;
         else if (mode == PROJECTILE_VOLLEY_BLIZZARD)
           shot->velocityY =
-              (s32)(target->y.fixed + px(64 - (Random16() & 63)) - shot->y) /
+              (s32)(target->y.fixed + INTtoFIXED(64 - (Random16() & 63)) -
+                    shot->y) /
               steps;
         else if (mode == PROJECTILE_VOLLEY_ICE_BLESSING)
           shot->velocityY =
-              (s32)(target->y.fixed + px(Random16() & 31) - shot->y + px(4)) /
+              (s32)(target->y.fixed + INTtoFIXED(Random16() & 31) - shot->y +
+                    toFIXED(4)) /
               steps;
         else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER ||
                  mode == PROJECTILE_VOLLEY_WING_BEAT ||
@@ -531,11 +537,11 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           shot->velocityY = 0;
         else if (mode == PROJECTILE_VOLLEY_HEAT_WAVE)
           shot->velocityY = (s32)(target->y.fixed + targetHeight / 2 +
-                                  px(Random16() & 15) - shot->y) /
+                                  INTtoFIXED(Random16() & 15) - shot->y) /
                             steps;
         else
           shot->velocityY = (s32)(target->y.fixed + targetHeight -
-                                  px(Random16() & 15) - shot->y) /
+                                  INTtoFIXED(Random16() & 15) - shot->y) /
                             steps;
         shot->velocityZ = (target->z.fixed - shot->z) / steps;
         shot->variant = 0;
@@ -568,10 +574,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
       // The prelude's small Djinni circles, then rises away.
       if (work->args->prelude == 1) {
-        s32 x = WHOLE_PIXELS(-Trig_Sin(frame * (TRIG_TURN / 32)) * 4) +
+        s32 x = FIXEDtoINT(-Trig_Sin(frame * (TRIG_TURN / 32)) * 4) +
                 screenX / 2 - 10;
         s32 y =
-            WHOLE_PIXELS(Trig_Cos(frame * (TRIG_TURN / 32)) * 2) + screenY - 24;
+            FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 32)) * 2) + screenY - 24;
 
         if (frame > 69)
           y = y - frame * 2 + 138;
@@ -614,8 +620,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                 struct Particle *particle = &PARTICLES[k];
 
                 if (particle->variant == 0) {
-                  particle->x = px(position.x);
-                  particle->y = px(position.y);
+                  particle->x = INTtoFIXED(position.x);
+                  particle->y = INTtoFIXED(position.y);
                   particle->velocityX = ((Random16() & 255) - 128) << 11;
                   particle->velocityY = ((Random16() & 255) - 128) << 11;
                   particle->variant = (Random16() & 7) + 32;
@@ -695,8 +701,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                   struct Particle *particle = &PARTICLES[k];
 
                   if (particle->variant == 0) {
-                    particle->x = px(position.x);
-                    particle->y = px(position.y);
+                    particle->x = INTtoFIXED(position.x);
+                    particle->y = INTtoFIXED(position.y);
                     particle->velocityX = ((Random16() & 255) - 128)
                                           << trailsOrShift;
                     particle->velocityY = ((Random16() & 255) - 128)
@@ -851,10 +857,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         if (particle->variant > 0) {
           s32 size = (particle->variant >> 3) + 1;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, WHOLE_PIXELS(particle->x),
-                           WHOLE_PIXELS(particle->y), size);
-          Particle_AdvanceWithGravity2D(particle, 60, px(1) / 16);
-          if (particle->y > px(112))
+          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, FIXEDtoINT(particle->x),
+                           FIXEDtoINT(particle->y), size);
+          Particle_AdvanceWithGravity2D(particle, 60, toFIXED(1) / 16);
+          if (particle->y > toFIXED(112))
             particle->velocityY = -particle->velocityY / 2;
           particle->variant--;
         }
@@ -868,9 +874,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         if (particle->variant > 0) {
           s32 size = (particle->variant >> 4) + 1;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, WHOLE_PIXELS(particle->x),
-                           WHOLE_PIXELS(particle->y), size);
-          Particle_AdvanceWithGravity2D(particle, 60, -px(1) / 4);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, FIXEDtoINT(particle->x),
+                           FIXEDtoINT(particle->y), size);
+          Particle_AdvanceWithGravity2D(particle, 60, -toFIXED(1) / 4);
           particle->variant--;
         }
       }
@@ -887,9 +893,9 @@ UNUSED void BattleEffect_InitializeRisingObject(s32 id) {
   struct BattleObject *slot = GetBattleObjectSlotFar(id);
   struct Actor *actor = slot->actor;
 
-  actor->acceleration = px(2);
-  actor->speedLimit = px(8);
-  actor->velocityY = px(4);
+  actor->acceleration = toFIXED(2);
+  actor->speedLimit = toFIXED(8);
+  actor->velocityY = toFIXED(4);
   actor->gravity = BATTLE_UNIT_GRAVITY;
   actor->bounce = 0;
   actor->steeringFlags = 0;

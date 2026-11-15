@@ -189,7 +189,7 @@ void Palette_StepFadeTransfer(void) {
 
     Graphics_ScaleRgb555ClampedFar(battle->palette,
                                    (void *)&BG_PLTT_COLOR(6, 0),
-                                   Q16_ONE - step * CANVAS_FADE_STEP, 128);
+                                   FIXED_ONE - step * CANVAS_FADE_STEP, 128);
     work->fadeFrames--;
   }
 }

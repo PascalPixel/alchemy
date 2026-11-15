@@ -824,7 +824,7 @@ void FileList_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
     state->partyMemberX[i] =
         (x + (s16)origin->x + i * FILE_LIST_SPRITE_SPACING) * 8 + 0x10;
     state->partyMemberY[i] = (y + (s16)origin->y) * 8 + 0x10;
-    state->partyMemberScale[i] = Q16_ONE;
+    state->partyMemberScale[i] = FIXED_ONE;
   }
 
   Task_Add(FileList_PlacePartySprites, TASK_PASS_VBLANK);
@@ -867,9 +867,9 @@ void FileList_PlacePartySprites(void) {
     if (handle != 0) {
       source[0] = state->partyMemberScale[index];
       source[1] = state->partyMemberScale[index];
-      request[0] = px(state->partyMemberX[index]);
-      request[1] = px(500);
-      request[2] = px(state->partyMemberY[index]) + px(500);
+      request[0] = toFIXED(state->partyMemberX[index]);
+      request[1] = toFIXED(500);
+      request[2] = toFIXED(state->partyMemberY[index]) + toFIXED(500);
       request[3] = 0;
       Render_ApplyProjectedPlacementFar((struct ScaledSprite *)handle, request,
                                         source, FACING_SOUTH);

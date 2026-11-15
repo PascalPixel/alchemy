@@ -87,7 +87,7 @@ void LineScroll_BuildPage(void) {
       amplitude = work->ampX;
       for (scanline = 0; scanline != 160; scanline++) {
         wave =
-            Iwram_MulQ16(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
+            Iwram_MulFX(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
             256;
         row[0] = a + wave;
         row[2] = b + wave;
@@ -112,7 +112,7 @@ void LineScroll_BuildPage(void) {
       amplitude = work->ampY;
       for (scanline = 0; scanline != 160; scanline++) {
         wave =
-            Iwram_MulQ16(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
+            Iwram_MulFX(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
             256;
         *row = a + wave;
         row += 2;
@@ -138,7 +138,7 @@ void LineScroll_BuildPage(void) {
       amplitude = work->ampX;
       for (scanline = 0; scanline != 160; scanline++) {
         wave =
-            Iwram_MulQ16(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
+            Iwram_MulFX(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
             256;
         row[0] = x1;
         row[2] = x2;
@@ -161,7 +161,7 @@ void LineScroll_BuildPage(void) {
       amplitude = work->ampY;
       for (scanline = 0; scanline != 160; scanline++) {
         wave =
-            Iwram_MulQ16(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
+            Iwram_MulFX(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
             256;
         row[0] = y1;
         row[2] = y2;

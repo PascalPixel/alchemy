@@ -63,11 +63,13 @@ enum ActorScriptCommand {
 #define SC_WAIT(n) SCRIPT_CMD_WAIT, (n) ///< Wait n frames.
 #define SC_SYNC SCRIPT_CMD_SYNC         ///< Wait for arrival.
 /// Set position.
-#define SC_POSITION(x, y, z) SCRIPT_CMD_POSITION, Q16(x), Q16(y), Q16(z)
+#define SC_POSITION(x, y, z)                                                   \
+  SCRIPT_CMD_POSITION, toFIXED(x), toFIXED(y), toFIXED(z)
 /// Move toward the target.
-#define SC_MOVE(x, y, z) SCRIPT_CMD_MOVE, Q16(x), Q16(y), Q16(z)
+#define SC_MOVE(x, y, z) SCRIPT_CMD_MOVE, toFIXED(x), toFIXED(y), toFIXED(z)
 /// Move by an offset.
-#define SC_MOVE_BY(x, y, z) SCRIPT_CMD_MOVE_BY, Q16(x), Q16(y), Q16(z)
+#define SC_MOVE_BY(x, y, z)                                                    \
+  SCRIPT_CMD_MOVE_BY, toFIXED(x), toFIXED(y), toFIXED(z)
 #define SC_FACE_WATCHED SCRIPT_CMD_FACE_WATCHED ///< Face the watched actor.
 /// Move to the watched actor.
 #define SC_MOVE_TO_WATCHED SCRIPT_CMD_MOVE_TO_WATCHED
@@ -77,9 +79,9 @@ enum ActorScriptCommand {
 // Wander to random points base to base + range pixels away, within limit
 // pixels of home; SC_WANDER_HOME heads home when outside it.
 #define SC_WANDER(base, range, limit)                                          \
-  SCRIPT_CMD_WANDER, Q16(base), Q16(range), Q16(limit)
+  SCRIPT_CMD_WANDER, toFIXED(base), toFIXED(range), toFIXED(limit)
 #define SC_WANDER_HOME(base, range, limit)                                     \
-  SCRIPT_CMD_WANDER_HOME, Q16(base), Q16(range), Q16(limit)
+  SCRIPT_CMD_WANDER_HOME, toFIXED(base), toFIXED(range), toFIXED(limit)
 /// Follow the watched actor to 16 pixels.
 #define SC_APPROACH_WATCHED SCRIPT_CMD_APPROACH_WATCHED
 #define SC_CAMERA SCRIPT_CMD_CAMERA ///< Follow the leader.
@@ -100,9 +102,10 @@ enum ActorScriptCommand {
 /// Test whether work value w equals v.
 #define SC_CMP(w, v) SCRIPT_CMD_CMP, (w), (v)
 /// Set the speed limit, in pixels a frame: SC_SPEED(0.8).
-#define SC_SPEED(speed) SC_SET(SW_SPEED, Q16(speed))
+#define SC_SPEED(speed) SC_SET(SW_SPEED, toFIXED(speed))
 /// Set the acceleration, in pixels a frame per frame.
-#define SC_ACCELERATION(acceleration) SC_SET(SW_ACCELERATION, Q16(acceleration))
+#define SC_ACCELERATION(acceleration)                                          \
+  SC_SET(SW_ACCELERATION, toFIXED(acceleration))
 #define SC_PLAYER SCRIPT_CMD_PLAYER ///< Player input control
 /// Move 8 pixels at a time by the direction pad
 #define SC_KEYS SCRIPT_CMD_KEYS

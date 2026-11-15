@@ -171,8 +171,8 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   for (frame = 0; frame != args->targetCount * 20 + 72; frame++) {
     if (frame == BIND_RUNE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
-    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
-                                    TRIG_TURN / 3, 0);
+    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - DEGtoANG(120),
+                                    DEGtoANG(120), 0);
 
     // The prelude: the Djinn circles where the effect was prepared, and
     // rises away after frame 32; its blitters live for this frame only.
@@ -180,8 +180,8 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
       s32 x;
       s32 y;
 
-      x = (Q_16_16_TO_INT(Trig_Sin(frame << 11) * 20)) + origin[0] + shift - 20;
-      y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) << 2)) + origin[1] - 24;
+      x = (FIXEDtoINT(Trig_Sin(frame << 11) * 20)) + origin[0] + shift - 20;
+      y = (FIXEDtoINT(Trig_Cos(frame << 11) << 2)) + origin[1] - 24;
       BattleEffect_FetchRectangleBlitters(args->side, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
@@ -205,8 +205,8 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
       motion = BattleObject_GetFar(args->targets[member])->object;
       memberFrame = frame - member * 8;
       if (memberFrame >= 0 && memberFrame < 96) {
-        Transform_Reset();
-        Transform_SetLookAt(camera->eye, camera->focus);
+        Matrix_Initialize();
+        Matrix_SetLookAt(camera->eye, camera->focus);
         vector[0] = motion->x;
         vector[1] = motion->y;
         vector[2] = motion->z;
@@ -219,16 +219,16 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
         if (memberFrame <= 67) {
           for (j = 0; j != CORNERS; j++) {
             point = &work->particles[member * BIND_SLOTS_PER_TARGET + j];
-            Transform_Reset();
+            Matrix_Initialize();
             if (memberFrame <= 63) {
               scale[0] = 0x2a000 - (memberFrame * 3 << 9);
               scale[1] = 0x2a000 - (memberFrame * 3 << 9);
               scale[2] = 0x2a000 - (memberFrame * 3 << 9);
-              Transform_ApplyScale(scale);
-              Transform_ApplyRoll((BIND_RUNE_FRAME - memberFrame) << 9);
-              Transform_ApplyYaw((BIND_RUNE_FRAME - memberFrame) << 9);
+              Matrix_ScaleVector(scale);
+              Matrix_RotateZ((BIND_RUNE_FRAME - memberFrame) << 9);
+              Matrix_RotateY((BIND_RUNE_FRAME - memberFrame) << 9);
             }
-            Transform_ApplyRoll(j * (TRIG_TURN / 3));
+            Matrix_RotateZ(j * (DEGtoANG(120)));
             EffectPosition_ProjectPoint(gBind_Vertex,
                                         (struct ScreenPoint *)vector);
             point->velocityX = vector[0] + screen.x;
@@ -327,8 +327,8 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(0);
     if (frame == 46)
       BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
-    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
-                                    TRIG_TURN / 3, 0);
+    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - DEGtoANG(120),
+                                    DEGtoANG(120), 0);
 
     // A fresh pair of max blitters each frame, the second flipped.
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -343,8 +343,8 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
       object = BattleObject_GetFar(args->targets[member])->object;
       memberFrame = frame - member * 8;
       if (memberFrame >= 0 && memberFrame < 96) {
-        Transform_Reset();
-        Transform_SetLookAt(camera->eye, camera->focus);
+        Matrix_Initialize();
+        Matrix_SetLookAt(camera->eye, camera->focus);
         vector[0] = object->x;
         vector[1] = object->y;
         vector[2] = object->z;
@@ -357,16 +357,16 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
         if (memberFrame <= 67) {
           for (j = 0; j != CORNERS; j++) {
             point = &work->particles[member * BIND_SLOTS_PER_TARGET + j];
-            Transform_Reset();
+            Matrix_Initialize();
             if (memberFrame <= 63) {
               scale[0] = 0x2a000 - (memberFrame * 3 << 9);
               scale[1] = 0x2a000 - (memberFrame * 3 << 9);
               scale[2] = 0x2a000 - (memberFrame * 3 << 9);
-              Transform_ApplyScale(scale);
-              Transform_ApplyRoll((BIND_RUNE_FRAME - memberFrame) << 9);
-              Transform_ApplyYaw((BIND_RUNE_FRAME - memberFrame) << 9);
+              Matrix_ScaleVector(scale);
+              Matrix_RotateZ((BIND_RUNE_FRAME - memberFrame) << 9);
+              Matrix_RotateY((BIND_RUNE_FRAME - memberFrame) << 9);
             }
-            Transform_ApplyRoll(j * (TRIG_TURN / 3));
+            Matrix_RotateZ(j * (DEGtoANG(120)));
             EffectPosition_ProjectPoint(gBind_TriangleStrikeVertex,
                                         (struct ScreenPoint *)vector);
             point->velocityX = vector[0] + screen.x;

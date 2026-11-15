@@ -1,14 +1,14 @@
 /// @file
 /// An ARM routine that builds the per-scanline affine table of a perspective
-/// ground plane, as The Broken Seal's Transform_UpdateVertices. Its caller
-/// copies 0x298 bytes from Transform_UpdateVerticesCode
+/// ground plane, as The Broken Seal's Matrix_UpdateVertices. Its caller
+/// copies 0x298 bytes from Matrix_UpdateVerticesCode
 /// (world_map_lines_entry.s) into a heap slot and enters it in Thumb from
-/// there, so its stub Transform_CallInThumb (world_map_lines_call_thumb.s)
+/// there, so its stub Matrix_CallInThumb (world_map_lines_call_thumb.s)
 /// travels with it.
 
 #include "types.h"
 #include "fixed_math.h"
-#include "system/mul_q16.h"
+#include "system/mul_fx.h"
 #include "system/frame.h"
 #include "system/vector3.h"
 
@@ -60,16 +60,15 @@ extern const struct FarCallRuntimeTrigView FarCall_RuntimeTable;
 extern s32 Data_030011ec;
 extern u32 gScanlineAngle;
 
-s32 Transform_CallInThumb(s32 x, s32 y);
+s32 Matrix_CallInThumb(s32 x, s32 y);
 
 /// Builds the world map's per-scanline affine table for one frame: the ground
 /// plane seen from eye towards target. line points at the 160 scanlines' ground
 /// terms, whose rotation terms stay cached while the yaw (gScanlineAngle) is
 /// unchanged; affine receives each line's parameters twice, for BG2 and then
 /// BG3, as the HBlank DMA writes both.
-void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
-                              struct ScanVertex *line,
-                              struct BgAffine *affine) {
+void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
+                           struct ScanVertex *line, struct BgAffine *affine) {
   u32 angle;
   s32 originX;
   s32 originZ;
@@ -92,16 +91,16 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
       /* FAKEMATCH(pin): x held in r0 from its shift. */
       register s32 x __asm__("r0") = targetDeltaX >> 4;
       s32 y = depth >> 4;
-      // Transform_CallInThumb jumps to the target it finds in ip; the asm
+      // Matrix_CallInThumb jumps to the target it finds in ip; the asm
       // keeps ip set for the call, which C cannot say.
       register void *entry __asm__("ip") = table->arcTan2.target;
 
       __asm__("" : : "r"(entry));
-      angle = (u16)Transform_CallInThumb(x, y);
+      angle = (u16)Matrix_CallInThumb(x, y);
     }
   }
-  originX = MulQ16(target->x, Q16_ONE / 2);
-  originZ = MulQ16(target->z, Q16_ONE / 2);
+  originX = MulFX(target->x, FIXED_ONE / 2);
+  originZ = MulFX(target->z, FIXED_ONE / 2);
   if (angle != gScanlineAngle) {
     gScanlineAngle = angle;
     sinYaw = table->sin.target(angle);
@@ -116,18 +115,18 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
       s32 affinePc;
 
       depth = line->z;
-      affinePa = -(MulQ16(widthScale, cosYaw) / 256);
+      affinePa = -(MulFX(widthScale, cosYaw) / 256);
       horizontalOffset = (s16)affinePa;
       line->u = affinePa;
       affine->pa = affinePa;
-      affinePc = MulQ16(widthScale, sinYaw) / 256;
+      affinePc = MulFX(widthScale, sinYaw) / 256;
       line->v = affinePc;
       affine->pc = affinePc;
       centerX = Data_030011ec;
       horizontalOffset = (horizontalOffset << 8) * centerX;
       depthOffset = ((s16)affinePc << 8) * -centerX;
-      line->dx = -(horizontalOffset + MulQ16(negativeSinYaw, depth));
-      line->dz = depthOffset + MulQ16(cosYaw, depth);
+      line->dx = -(horizontalOffset + MulFX(negativeSinYaw, depth));
+      line->dz = depthOffset + MulFX(cosYaw, depth);
       affine->x = (originX + line->dx) >> 8;
       affine->y = (originZ + line->dz) >> 8;
       affine[1] = affine[0];

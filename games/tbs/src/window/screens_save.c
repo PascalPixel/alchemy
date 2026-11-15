@@ -583,7 +583,7 @@ void FileList_ShowPartySprites(struct Window *window, s32 x, s32 y,
         (x + window->x + i * FILE_LIST_SPRITE_SPACING) * 8 + 16;
     menu->partyMemberY[i] = (y + window->y) * 8 + 16;
     // 1.0 in 16.16.
-    menu->partyMemberScale[i] = Q16_ONE;
+    menu->partyMemberScale[i] = FIXED_ONE;
   }
 
   Task_Add(FileList_PlacePartySprites, TASK_PASS_FRAME);
@@ -618,9 +618,9 @@ void FileList_PlacePartySprites(void) {
       // Offset height and y equally to keep the visible row fixed.
       scale.x = menu->partyMemberScale[index];
       scale.y = menu->partyMemberScale[index];
-      position.x = px(menu->partyMemberX[index]);
-      position.height = px(500);
-      position.y = px(menu->partyMemberY[index]) + px(500);
+      position.x = toFIXED(menu->partyMemberX[index]);
+      position.height = toFIXED(500);
+      position.y = toFIXED(menu->partyMemberY[index]) + toFIXED(500);
       position.groundHeight = 0;
       Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, FACING_SOUTH);
     }
@@ -684,14 +684,14 @@ void FileList_PlaceDjinnSprites(void) {
     struct Sprite *sprite = menu->figures[index];
 
     if (sprite != NULL) {
-      s32 one = Q16_ONE;
-      s32 height = px(500);
+      s32 one = FIXED_ONE;
+      s32 height = toFIXED(500);
 
       scale.x = one;
       scale.y = one;
-      position.x = px(menu->figureX[index]);
+      position.x = toFIXED(menu->figureX[index]);
       position.height = height;
-      position.y = px(menu->figureY[index]) + height;
+      position.y = toFIXED(menu->figureY[index]) + height;
       position.groundHeight = 0;
       Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, FACING_SOUTH);
     }

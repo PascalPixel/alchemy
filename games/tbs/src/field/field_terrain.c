@@ -302,8 +302,8 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   struct MapGridCell *cell;
   u8 *heightBytes;
 
-  x = WHOLE_PIXELS(x);
-  y = WHOLE_PIXELS(y);
+  x = FIXEDtoINT(x);
+  y = FIXEDtoINT(y);
   // Before the map work exists, the grid is read from its start.
   cell = (struct MapGridCell *)Ram_MapGridCellBuffer;
   if (work != NULL) {
@@ -338,8 +338,8 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
   s32 cellY;
   u32 heightAttributeIndex;
 
-  x = WHOLE_PIXELS(x);
-  y = WHOLE_PIXELS(y);
+  x = FIXEDtoINT(x);
+  y = FIXEDtoINT(y);
   cells = (struct MapGridCell *)gMapGridCellBuffer;
   if (gridState != 0) {
     cells = gridState->layers[layer & 3].cells;
@@ -412,8 +412,8 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
   s32 targetGround;
   s32 stepHeight;
 
-  pixelX = ((struct FieldCoordinate *)&position->x)->part[0].pixel;
-  pixelZ = ((struct FieldCoordinate *)&position->z)->part[0].pixel;
+  pixelX = ((struct FieldCoordinate *)&position->x)->part[0].integer;
+  pixelZ = ((struct FieldCoordinate *)&position->z)->part[0].integer;
   gridState = gMapGridWork[0];
   if (gridState == NULL)
     return COLLISION_NONE;
@@ -446,9 +446,9 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
 #endif
   // Up to 8 pixels up or 12 down is a step the actor can take.
   stepHeight = targetGround - actor->groundHeight;
-  if (stepHeight > px(8))
+  if (stepHeight > toFIXED(8))
     return COLLISION_TOO_HIGH;
-  if (stepHeight < -px(12))
+  if (stepHeight < -toFIXED(12))
     return COLLISION_TOO_LOW;
   return COLLISION_NONE;
 }
@@ -464,9 +464,9 @@ s32 MapGrid_IsWallAt(struct WorldPosition *position) {
   struct MapGridScrollWork *gridState;
   struct MapGridCell *cell;
 
-  pixelX = position->x / Q16_ONE;
+  pixelX = position->x / FIXED_ONE;
   // The point on the ground below the position.
-  pixelY = (position->y - position->height) / Q16_ONE;
+  pixelY = (position->y - position->height) / FIXED_ONE;
   gridState = gMapGridWork[0];
   if (gridState == NULL)
     return 0;

@@ -174,18 +174,18 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   for (i = 0; i != ATALANTA_SHAFTS; i++) {
     struct Particle *shaft = &work->particles[i];
 
-    shaft->x = px(Random16() % 96 + 12);
-    shaft->y = px((Random16() & 63) + 32);
+    shaft->x = INTtoFIXED(Random16() % 96 + 12);
+    shaft->y = INTtoFIXED((Random16() & 63) + 32);
     shaft->velocityX = 0;
     shaft->velocityY = 0;
     shaft->variant = 0;
     for (j = 0; j != ATALANTA_TRAIL_MOTES; j++) {
       TRAILS[i * ATALANTA_TRAIL_MOTES + j].x = (Random16() & 15) + 48;
-      Transform_Reset();
-      Transform_ApplyRoll(Random16() & TRIG_ANGLE_MASK);
-      Transform_ApplyPitch(Random16() & TRIG_ANGLE_MASK);
-      Transform_ApplyYaw(Random16() & TRIG_ANGLE_MASK);
-      Transform_Store(MATRICES + (i * ATALANTA_TRAIL_MOTES + j) * 48);
+      Matrix_Initialize();
+      Matrix_RotateZ(Random16() & TRIG_ANGLE_MASK);
+      Matrix_RotateX(Random16() & TRIG_ANGLE_MASK);
+      Matrix_RotateY(Random16() & TRIG_ANGLE_MASK);
+      Matrix_Get(MATRICES + (i * ATALANTA_TRAIL_MOTES + j) * 48);
     }
   }
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -204,12 +204,12 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
         path += 2;
       }
       position.groundHeight = 0;
-      position.height = px(255);
+      position.height = toFIXED(255);
       for (row = 0; row != 4; row++) {
         for (column = 0; column != 3; column++) {
           if (row != 3 || column != 2) {
             position.x = (pathX + 80 + column * 32) * 65536;
-            position.y = px(64 - pathY + row * 32);
+            position.y = INTtoFIXED(64 - pathY + row * 32);
             if (row == 3)
               position.x = (pathX + 80 + column * 32 + 32) * 65536;
             Render_ApplyProjectedPlacementFar(work->sprites[row * 3 + column],
@@ -241,8 +241,8 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
         if (frame >= i * 8 + 85) {
           shaft->x += shaft->velocityX;
           shaft->y += shaft->velocityY;
-          shaft->velocityX -= px(1);
-          shaft->velocityY += px(2);
+          shaft->velocityX -= toFIXED(1);
+          shaft->velocityY += toFIXED(2);
           EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, ATALANTA_SHAFT_TOP,
                               x + 4, y - 40);
           EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
@@ -287,7 +287,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
             struct Particle *trail = &TRAILS[i * ATALANTA_TRAIL_MOTES + j];
 
             if (trail->x > 0) {
-              Transform_Load(MATRICES + (i * ATALANTA_TRAIL_MOTES + j) * 48);
+              Matrix_Load(MATRICES + (i * ATALANTA_TRAIL_MOTES + j) * 48);
               point[0] = trail->x;
               EffectPosition_ProjectPoint(point, &screen);
               screen.x = (screen.x >> 1) + x;

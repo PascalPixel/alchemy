@@ -183,8 +183,8 @@ MercuryLighthouseEntrance_MiaWatchesLeader(struct Actor *actor) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   if ((leader->z.fixed >> 19) <= 22) {
-    actor->facing = ArcTan2(leader->z.fixed - actor->z.fixed,
-                            leader->x.fixed - actor->x.fixed);
+    actor->facing = Trig_Atan(leader->z.fixed - actor->z.fixed,
+                              leader->x.fixed - actor->x.fixed);
   } else if (actor->facing != FACING_NORTH) {
     Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
   }
@@ -288,8 +288,8 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   s32 velocityY;
   struct EffectOptions options;
 
-  leaderColumn = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / px(16);
-  leaderRow = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / px(16);
+  leaderColumn = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / toFIXED(16);
+  leaderRow = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / toFIXED(16);
   if (leaderColumn == 12 && leaderRow == 32) {
     Event_Start();
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -306,8 +306,10 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
       sparkX = 208 - (Random_Below(16));
       sparkZ = 560 - (Random_Below(16));
       speedRoll = (Random_Below(4));
-      velocityY = Math_Divide(px((speedRoll << 4) - speedRoll) + px(60), 100);
-      FieldEffect_Spawn(px(sparkX), 0, px(sparkZ), 0, velocityY, 0,
+      velocityY = Math_Divide(
+          INTtoFIXED((speedRoll << 4) - speedRoll) + toFIXED(60), 100);
+      FieldEffect_Spawn(INTtoFIXED(sparkX), 0, INTtoFIXED(sparkZ), 0, velocityY,
+                        0,
                         EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
                             EFFECT_USE_SCRIPT | EFFECT_SCRIPT_MEDIUM,
                         &options);
@@ -350,7 +352,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
   s32 leaderColumn;
 
   leaderX = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed;
-  leaderColumn = leaderX / px(16);
+  leaderColumn = leaderX / toFIXED(16);
   GameFlag_Set(FLAG_LIZARD_MAN_STEPPED_ASIDE);
   if (leaderColumn == 7) {
     Actor_SetScript(ACTOR_LIZARD_MAN,
@@ -419,9 +421,9 @@ s32 Scene_Initialize(void) {
     // Both doorway entrances mirror the east side's statues.
     // Fall through.
   case MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_FROM_GODDESS:
-    Actor_Get(ACTOR_FIRST_EAST_STATUE)->scaleX = -Q16_ONE;
-    Actor_Get(ACTOR_FIRST_EAST_STATUE + 1)->scaleX = -Q16_ONE;
-    Actor_Get(ACTOR_FIRST_EAST_STATUE + 2)->scaleX = -Q16_ONE;
+    Actor_Get(ACTOR_FIRST_EAST_STATUE)->scaleX = -FIXED_ONE;
+    Actor_Get(ACTOR_FIRST_EAST_STATUE + 1)->scaleX = -FIXED_ONE;
+    Actor_Get(ACTOR_FIRST_EAST_STATUE + 2)->scaleX = -FIXED_ONE;
     wait(1);
     break;
   case MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_FROM_WEST_WATERFALLS:
@@ -465,8 +467,8 @@ s32 Scene_Initialize(void) {
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     MapGrid_CenterOnFollowedPoint();
     wait(1);
-    Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = px(130);
-    Actor_Get(ACTOR_PARTY_LEADER)->gravity = px(1) / 2;
+    Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = toFIXED(130);
+    Actor_Get(ACTOR_PARTY_LEADER)->gravity = toFIXED(1) / 2;
     Actor_Get(ACTOR_PARTY_LEADER)->bounce = arrivalSeen;
     Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = arrivalSeen;
     Event_StartScreenTransition();
@@ -497,8 +499,8 @@ s32 Scene_Initialize(void) {
     MapGrid_WaitForShakeToSettle();
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-    Actor_Get(ACTOR_PARTY_LEADER)->gravity = px(1);
-    Actor_Get(ACTOR_PARTY_LEADER)->bounce = Q16_ONE / 4;
+    Actor_Get(ACTOR_PARTY_LEADER)->gravity = toFIXED(1);
+    Actor_Get(ACTOR_PARTY_LEADER)->bounce = FIXED_ONE / 4;
     if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
       PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
@@ -557,9 +559,9 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   struct Actor *actor;
 
   Event_Start();
-  Actor_Get(ACTOR_FIRST_EAST_STATUE)->scaleX = -Q16_ONE;
-  Actor_Get(ACTOR_FIRST_EAST_STATUE + 1)->scaleX = -Q16_ONE;
-  Actor_Get(ACTOR_FIRST_EAST_STATUE + 2)->scaleX = -Q16_ONE;
+  Actor_Get(ACTOR_FIRST_EAST_STATUE)->scaleX = -FIXED_ONE;
+  Actor_Get(ACTOR_FIRST_EAST_STATUE + 1)->scaleX = -FIXED_ONE;
+  Actor_Get(ACTOR_FIRST_EAST_STATUE + 2)->scaleX = -FIXED_ONE;
   Actor_SetPosition(ACTOR_MIA, 136, 184);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 136, 296);
   Actor_SetPosition(ACTOR_LIZARD_MAN, 136, 152);
@@ -633,9 +635,9 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
   if (Event_GetFlag(FLAG_MIA_GOES_IN_SEEN) == 0) {
     GameFlag_Set(FLAG_MIA_GOES_IN_SEEN);
     Event_Start();
-    Actor_Get(ACTOR_FIRST_EAST_STATUE)->scaleX = -Q16_ONE;
-    Actor_Get(ACTOR_FIRST_EAST_STATUE + 1)->scaleX = -Q16_ONE;
-    Actor_Get(ACTOR_FIRST_EAST_STATUE + 2)->scaleX = -Q16_ONE;
+    Actor_Get(ACTOR_FIRST_EAST_STATUE)->scaleX = -FIXED_ONE;
+    Actor_Get(ACTOR_FIRST_EAST_STATUE + 1)->scaleX = -FIXED_ONE;
+    Actor_Get(ACTOR_FIRST_EAST_STATUE + 2)->scaleX = -FIXED_ONE;
     Actor_SetPosition(ACTOR_MIA, 136, 144);
     Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 10);
     gFieldWork->transition =

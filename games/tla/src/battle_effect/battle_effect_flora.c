@@ -218,14 +218,14 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       REG_BG2X = 0;
       // The four petals (gFlora_PetalPictures), each a shaded circle half as
       // wide as it is tall, packed one after another.
-      BattleEffect_DrawShadedCircles(source, 8, Q16_ONE);
+      BattleEffect_DrawShadedCircles(source, 8, FIXED_ONE);
       BattleEffect_DrawShadedCircles(Ram_MapCellBuffer + 8 / 2 * 8, 16,
-                                     Q16_ONE * 3 / 4);
+                                     FIXED_ONE * 3 / 4);
       BattleEffect_DrawShadedCircles(
-          Ram_MapCellBuffer + 8 / 2 * 8 + 16 / 2 * 16, 32, Q16_ONE * 3 / 4);
+          Ram_MapCellBuffer + 8 / 2 * 8 + 16 / 2 * 16, 32, FIXED_ONE * 3 / 4);
       BattleEffect_DrawShadedCircles(Ram_MapCellBuffer + 8 / 2 * 8 +
                                          16 / 2 * 16 + 32 / 2 * 32,
-                                     48, Q16_ONE * 3 / 4);
+                                     48, FIXED_ONE * 3 / 4);
     }
     if ((u32)(frame - 223) <= 29) {
       s32 k = Random16() & 3;
@@ -269,7 +269,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     dy = 0;
     place[3] = 0;
     dx = 0;
-    place[1] = px(255);
+    place[1] = toFIXED(255);
     if (frame <= 119) {
       posX = Trig_Sin(TRIG_TURN * 205 / 256) * 24 + 0x980000;
       posY = Trig_Cos(TRIG_TURN * 205 / 256) * 20 + 0x2c0000;
@@ -279,8 +279,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       posX = Trig_Sin(a) * 24 + 0x980000;
       posY = Trig_Cos(a) * 20 + 0x2c0000;
     } else if (frame <= 221) {
-      posX += -px(9) / 8;
-      posY += px(1) / 2;
+      posX += -toFIXED(9) / 8;
+      posY += toFIXED(1) / 2;
     } else if (frame <= 251) {
       s32 m = frame % 6;
       s32 m4;
@@ -322,13 +322,13 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       }
     } else {
       gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-      posX += px(8);
-      posY += -px(6);
+      posX += toFIXED(8);
+      posY += -toFIXED(6);
     }
     if (frame > 111) {
       for (i = 0; i != 12; i++) {
-        place[0] = posX + px(i % 3 * 32 + dx);
-        place[2] = posY + px(i / 3 * 32 + dy);
+        place[0] = posX + INTtoFIXED(i % 3 * 32 + dx);
+        place[2] = posY + INTtoFIXED(i / 3 * 32 + dy);
         Render_ApplyProjectedPlacementFar(work->sprites[i], place, (s32 *)&req,
                                           0);
       }
@@ -338,29 +338,29 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
 
       if (i == 0) {
         if (frame == 0) {
-          w->x[i] = px(240);
-          w->y[i] = px(48);
+          w->x[i] = toFIXED(240);
+          w->y[i] = toFIXED(48);
         } else if (frame <= 47) {
-          w->x[i] += -px(3);
-          w->y[i] += px(3) / 2;
+          w->x[i] += -toFIXED(3);
+          w->y[i] += toFIXED(3) / 2;
         } else if (frame <= 79) {
-          w->x[i] += -px(1);
-          w->y[i] += -px(1);
+          w->x[i] += -toFIXED(1);
+          w->y[i] += -toFIXED(1);
         } else if (frame <= 111) {
-          w->x[i] += px(3);
+          w->x[i] += toFIXED(3);
           // DEAD: y moves by 0; the ROM keeps its load and store.
           w->y[i] += 0;
         }
         if (frame == 112) {
-          w->x[i] = px(256);
+          w->x[i] = toFIXED(256);
         }
       } else if (i == 1) {
         if (frame <= 27) {
-          w->x[i] = px(256);
-          w->y[i] = px(48);
+          w->x[i] = toFIXED(256);
+          w->y[i] = toFIXED(48);
         } else if (frame == 28) {
-          w->x[i] = px(16);
-          w->y[i] = px(32);
+          w->x[i] = toFIXED(16);
+          w->y[i] = toFIXED(32);
         } else if (frame <= 62) {
           w->x[i] += 0x1d6d8;
           w->y[i] += 0x1fde8;
@@ -368,116 +368,116 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           w->x[i] += 0x19c40;
           w->y[i] += 0x6710;
         } else if (frame <= 141) {
-          w->x[i] += px(3);
+          w->x[i] += toFIXED(3);
           // DEAD: y moves by 0; the ROM keeps its load and store.
           w->y[i] += 0;
         }
         if (frame == 112) {
-          w->x[i] = px(256);
+          w->x[i] = toFIXED(256);
         }
       } else if (i == 2) {
         if (frame <= 49) {
-          w->x[i] = px(256);
-          w->y[i] = px(48);
+          w->x[i] = toFIXED(256);
+          w->y[i] = toFIXED(48);
         } else if (frame == 50) {
           w->x[i] = 0;
-          w->y[i] = px(124);
+          w->y[i] = toFIXED(124);
         } else if (frame <= 62) {
-          w->x[i] += px(4);
-          w->y[i] += -px(5) / 4;
+          w->x[i] += toFIXED(4);
+          w->y[i] += -toFIXED(5) / 4;
         } else if (frame <= 93) {
-          w->x[i] += px(3);
-          w->y[i] += px(3) / 4;
+          w->x[i] += toFIXED(3);
+          w->y[i] += toFIXED(3) / 4;
         } else if (frame <= 125) {
-          w->x[i] += px(3);
-          w->y[i] += -px(1);
+          w->x[i] += toFIXED(3);
+          w->y[i] += -toFIXED(1);
         }
         if (frame == 112) {
-          w->x[i] = px(256);
+          w->x[i] = toFIXED(256);
         }
       } else if (i == 3) {
         if (frame <= 49) {
-          w->x[i] = px(256);
-          w->y[i] = px(48);
+          w->x[i] = toFIXED(256);
+          w->y[i] = toFIXED(48);
         } else if (frame == 50) {
           w->x[i] = 0;
-          w->y[i] = px(108);
+          w->y[i] = toFIXED(108);
         } else if (frame <= 103) {
-          w->x[i] += px(3);
-          w->y[i] += -px(5) / 4;
+          w->x[i] += toFIXED(3);
+          w->y[i] += -toFIXED(5) / 4;
         } else if (frame <= 135) {
-          w->x[i] += px(1);
-          w->y[i] += px(1);
+          w->x[i] += toFIXED(1);
+          w->y[i] += toFIXED(1);
         }
         if (frame == 112) {
-          w->x[i] = px(256);
+          w->x[i] = toFIXED(256);
         }
       } else if (i == 4) {
         if (frame <= 59) {
-          w->x[i] = px(256);
-          w->y[i] = px(48);
+          w->x[i] = toFIXED(256);
+          w->y[i] = toFIXED(48);
         } else if (frame == 60) {
-          w->x[i] = px(16);
-          w->y[i] = px(32);
+          w->x[i] = toFIXED(16);
+          w->y[i] = toFIXED(32);
         } else if (frame <= 82) {
-          w->x[i] += px(4);
-          w->y[i] += px(3);
+          w->x[i] += toFIXED(4);
+          w->y[i] += toFIXED(3);
         } else if (frame <= 135) {
-          w->x[i] += px(4);
+          w->x[i] += toFIXED(4);
         }
         if (frame == 112) {
-          w->x[i] = px(256);
+          w->x[i] = toFIXED(256);
         }
       } else if (i == 5) {
         if (frame <= 85) {
-          w->x[i] = px(256);
-          w->y[i] = px(48);
+          w->x[i] = toFIXED(256);
+          w->y[i] = toFIXED(48);
         } else if (frame == 86) {
-          w->x[i] = px(144);
-          w->y[i] = px(32);
+          w->x[i] = toFIXED(144);
+          w->y[i] = toFIXED(32);
         } else if (frame <= 135) {
-          w->x[i] += px(1);
-          w->y[i] += px(3);
+          w->x[i] += toFIXED(1);
+          w->y[i] += toFIXED(3);
         }
         if (frame == 112) {
-          w->x[i] = px(256);
+          w->x[i] = toFIXED(256);
         }
       } else if (i <= 15) {
         if (frame == 0) {
-          w->x[i] = px(248);
+          w->x[i] = toFIXED(248);
           w->y[i] = frame;
         } else if (frame == start) {
-          w->x[i] = px(Random16() & 7) + px(92);
-          w->y[i] = px(Random16() & 7) + px(104);
+          w->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
+          w->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
           w->vx[i] = (Random16() & TRIG_ANGLE_MASK) * 12 + -0xc0000;
           w->vy[i] = 0x40000;
         } else if (frame >= start) {
-          if (w->x[i] >= -px(16) && w->y[i] <= px(168)) {
+          if (w->x[i] >= -toFIXED(16) && w->y[i] <= toFIXED(168)) {
             w->x[i] += w->vx[i];
             w->y[i] += w->vy[i];
           } else if (frame <= 251) {
-            w->x[i] = px(Random16() & 7) + px(92);
-            w->y[i] = px(Random16() & 7) + px(104);
+            w->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
+            w->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
           }
         }
       } else if (i <= 31) {
         if (frame == 0) {
-          w->x[i] = px(248);
+          w->x[i] = toFIXED(248);
           w->y[i] = frame;
         } else if (frame == 112) {
           u32 a = Random16() & TRIG_ANGLE_MASK;
           s32 s = ((Random16() & 255) << 1) + 256;
 
-          w->x[i] = px(Random16() & 7) + px(168);
-          w->y[i] = px(Random16() & 7) + px(92);
+          w->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(168);
+          w->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
           w->vx[i] = Trig_Sin(a) * s / 256;
           w->vy[i] = Trig_Cos(a) * s / 256;
         } else if (frame == 252) {
           u32 a = Random16() & TRIG_ANGLE_MASK;
           s32 s = ((Random16() & 255) << 1) + 256;
 
-          w->x[i] = px(Random16() & 7) + px(92);
-          w->y[i] = px(Random16() & 7) + px(104);
+          w->x[i] = INTtoFIXED(Random16() & 7) + toFIXED(92);
+          w->y[i] = INTtoFIXED(Random16() & 7) + toFIXED(104);
           w->vx[i] = Trig_Sin(a) * s / 256;
           w->vy[i] = Trig_Cos(a) * s / 256;
         } else if (frame > 111) {
@@ -487,7 +487,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           w->vy[i] = w->vy[i] * 63 / DAMPING_SCALE;
           if ((u32)(w->vx[i] + 0xffff) <= 0x1fffe &&
               (u32)(w->vy[i] + 0xffff) <= 0x1fffe) {
-            w->x[i] = px(256);
+            w->x[i] = toFIXED(256);
             w->y[i] = 0;
           }
         }
@@ -501,8 +501,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           w->tiles[gFlora_PetalTiles[14 + i] >> 8];
     }
     for (i = 0; i != 32; i++) {
-      place[0] = w->x[i] - px(8);
-      place[2] = w->y[i] - px(8);
+      place[0] = w->x[i] - toFIXED(8);
+      place[2] = w->y[i] - toFIXED(8);
       Render_ApplyProjectedPlacementFar(work->sprites[12 + i], place,
                                         (s32 *)&req, 0);
     }
@@ -530,14 +530,14 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         }
         model->shade = sh;
         if (sh > -64) {
-          Transform_Reset();
-          Transform_ApplyTranslation(px(gFlora_BloomX[i]), px(gFlora_BloomY[i]),
-                                     0);
-          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          Transform_ApplyRoll(gFlora_BloomRolls[i]);
-          Transform_ApplyPitch(gFlora_BloomPitches[i]);
-          Transform_ApplyUniformScale(scale);
-          Transform_ApplyYaw(frame << 11);
+          Matrix_Initialize();
+          Matrix_Translate(INTtoFIXED(gFlora_BloomX[i]),
+                           INTtoFIXED(gFlora_BloomY[i]), 0);
+          Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+          Matrix_RotateZ(gFlora_BloomRolls[i]);
+          Matrix_RotateX(gFlora_BloomPitches[i]);
+          Matrix_ScaleUniform(scale);
+          Matrix_RotateY(frame << 11);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
@@ -545,14 +545,14 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     }
     Heap_Release(model);
     Heap_Release(verts);
-    Transform_Reset();
-    Transform_ApplyPitch(TRIG_TURN * 37 / 64);
-    Transform_ApplyYaw(TRIG_TURN * 13 / 32);
+    Matrix_Initialize();
+    Matrix_RotateX(TRIG_TURN * 37 / 64);
+    Matrix_RotateY(TRIG_TURN * 13 / 32);
     if (frame == 156) {
       spin = 512;
       angle = 0;
     }
-    Transform_ApplyRoll(angle);
+    Matrix_RotateZ(angle);
     if (frame == 156) {
       Sound_PlayFar(SE_SWIRL);
     }
@@ -601,8 +601,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
             }
           }
         }
-        pos.x = Q_16_16_TO_INT(Trig_Sin(a + b) * rr);
-        pos.y = Q_16_16_TO_INT(Trig_Cos(a + b) * rr);
+        pos.x = FIXEDtoINT(Trig_Sin(a + b) * rr);
+        pos.y = FIXEDtoINT(Trig_Cos(a + b) * rr);
         pos.depth = 0;
         EffectPosition_ProjectPoint(&pos, &out);
         out.x >>= 1;
@@ -638,9 +638,9 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       sy = 36 - c;
       dot[0] = c;
       dot[1] = c;
-      Transform_ApplyRoll(frame << 10);
+      Matrix_RotateZ(frame << 10);
       if (frame <= 221) {
-        Transform_ApplyPitch(sy << 10);
+        Matrix_RotateX(sy << 10);
       }
       if (sx < 0) {
         sx = 0;
@@ -652,8 +652,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       outerY = 92 - sy;
       innerY = 88 - sy;
       for (i = 0; i != 128; i++) {
-        ringPoint.x = Q_16_16_TO_INT(Trig_Sin(i << 9) * inner);
-        ringPoint.y = Q_16_16_TO_INT(Trig_Cos(i << 9) * inner);
+        ringPoint.x = FIXEDtoINT(Trig_Sin(i << 9) * inner);
+        ringPoint.y = FIXEDtoINT(Trig_Cos(i << 9) * inner);
         ringPoint.depth = 0;
         EffectPosition_ProjectPoint(&ringPoint, &ringScreen);
         ringScreen.x >>= 1;
@@ -679,8 +679,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         dot[0] = c;
         dot[1] = c;
         for (i = 0; i != 128; i++) {
-          fadeRingPoint.x = Q_16_16_TO_INT(Trig_Sin(i << 9) * inner);
-          fadeRingPoint.y = Q_16_16_TO_INT(Trig_Cos(i << 9) * inner);
+          fadeRingPoint.x = FIXEDtoINT(Trig_Sin(i << 9) * inner);
+          fadeRingPoint.y = FIXEDtoINT(Trig_Cos(i << 9) * inner);
           fadeRingPoint.depth = 0;
           EffectPosition_ProjectPoint(&fadeRingPoint, &fadeRingScreen);
           fadeRingScreen.x >>= 1;
@@ -770,8 +770,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     if (frame == 0) {
       p = (struct Particle *)source;
       for (i = 0; i != 128; i++, p++) {
-        p->x = px((Random16() & 63) + 96);
-        p->y = px(-(Random16() & 63));
+        p->x = INTtoFIXED((Random16() & 63) + 96);
+        p->y = INTtoFIXED(-(Random16() & 63));
         p->velocityX = -((Random16() & 255) + 128) << 7;
         p->velocityY = ((Random16() & 255) + 128) << 9;
         p->variant = Random16() & 31;
@@ -786,7 +786,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         draw[0](canvas, work->sheet + 0x1000 + (p->variant / 4 % 15 << 8),
                 Q_16_16_UPPER_HALF(p->x) - 4, Q_16_16_UPPER_HALF(p->y), 16, 16);
         BattleEffectKernels_IntegrateVector2(p, PARTICLE_DAMPING_NONE, 0);
-        p->velocityX += -px(1) / 16;
+        p->velocityX += -toFIXED(1) / 16;
         p->variant++;
       }
     }
@@ -828,15 +828,15 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
   enemy = Unit_Get(id)->enemyId;
   if (enemy != ENEMY_FUSION_DRAGON && enemy != ENEMY_DOOM_DRAGON_A &&
       enemy != ENEMY_DOOM_DRAGON_E && enemy != ENEMY_DOOM_DRAGON_H) {
-    object->acceleration = px(2);
-    object->speedLimit = px(8);
-    if (object->y < px(10))
-      object->velocityY += px(5) / 2;
+    object->acceleration = toFIXED(2);
+    object->speedLimit = toFIXED(8);
+    if (object->y < toFIXED(10))
+      object->velocityY += toFIXED(5) / 2;
     Actor_StartIdleFar(object);
     if (slot->anchorX > 0)
-      x = object->x + px(15);
+      x = object->x + toFIXED(15);
     else
-      x = object->x - px(15);
+      x = object->x - toFIXED(15);
     Actor_SetMoveTargetFar(object, x, 0, slot->anchorZ);
   }
   object->verticalMotionStrength = 0x9999;
@@ -889,19 +889,19 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
       s32 y;
       s32 zero;
 
-      for (i = 0, zero = 0, y = px(128), dagger = work->particles; i != 32;
+      for (i = 0, zero = 0, y = toFIXED(128), dagger = work->particles; i != 32;
            i++, dagger++) {
-        SET_POSITION(dagger, px((Random16() & 63) + 32), y, Random16());
+        SET_POSITION(dagger, INTtoFIXED((Random16() & 63) + 32), y, Random16());
         dagger->velocityX = zero;
         dagger->velocityY = -((Random16() & 31) + 32) << 10;
         dagger->velocityZ = (Random16() & 0x3ff) + 0x400;
         if (i & 1)
           dagger->velocityZ = -dagger->velocityZ;
         dagger->variant = zero;
-        y += px(8);
+        y += toFIXED(8);
       }
     }
-    Transform_Reset();
+    Matrix_Initialize();
     gProjection.centerY = 104;
 
     // The eight strikes.
@@ -911,7 +911,8 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
         Sound_PlayFar(SE_IMPACT);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 6);
-        BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, px(3), 100);
+        BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, toFIXED(3),
+                                      100);
       }
     }
     if (frame == DAGGER_LAST_HIT) {
@@ -919,7 +920,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 10);
-      BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, px(3), 100);
+      BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, toFIXED(3), 100);
     }
 
     // One textured quad, drawn once for each dagger.
@@ -940,26 +941,26 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
         s32 angle;
         s32 drift;
 
-        dagger->y = -px(48);
+        dagger->y = -toFIXED(48);
         angle = (i << 10) + (Random16() & 0x3ff) - 0x1200;
-        dagger->x = (angle << 10) + px(64);
+        dagger->x = (angle << 10) + toFIXED(64);
         dagger->z = angle;
         drift = -angle << 5;
-        dagger->velocityY = px(12);
+        dagger->velocityY = toFIXED(12);
         dagger->velocityX = drift;
         dagger->velocityZ = 0;
       }
-      Transform_Reset();
-      Transform_ApplyTranslation(dagger->x - px(64), dagger->y - px(64), 0);
-      Transform_ApplyUniformScale(Q16_ONE / 2);
-      Transform_ApplyRoll(dagger->z);
+      Matrix_Initialize();
+      Matrix_Translate(dagger->x - toFIXED(64), dagger->y - toFIXED(64), 0);
+      Matrix_ScaleUniform(FIXED_ONE / 2);
+      Matrix_RotateZ(dagger->z);
       Render_TransformVertices(gSabreDance_DaggerCorners, vertices, 4);
       Render_DrawModelList(quad);
       if (frame >= DAGGER_FALL_FRAME)
         BattleEffectKernels_IntegrateVector3(dagger, PARTICLE_DAMPING_NONE, 0);
       else
         BattleEffectKernels_IntegrateVector3(dagger, PARTICLE_DAMPING_NONE,
-                                             -px(1) / 16);
+                                             -toFIXED(1) / 16);
     }
     Heap_Release(quad);
     Heap_Release(vertices);
@@ -1052,8 +1053,8 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
 
         step = &work->particles[i];
         step->variant = 0;
-        step->x = px(caster.x / 2);
-        step->y = px(caster.y - 8);
+        step->x = INTtoFIXED(caster.x / 2);
+        step->y = INTtoFIXED(caster.y - 8);
         angle = Random16();
         speed = (Random16() & 255) + 127;
         step->velocityX = (Trig_Sin(angle) * speed) >> 5;
@@ -1075,7 +1076,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
                   Q_16_16_UPPER_HALF(puff->x) - 12,
                   Q_16_16_UPPER_HALF(puff->y) - 24, SMOKE_PUFF_WIDTH,
                   SMOKE_PUFF_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(puff, 48, -px(1) / 8);
+          BattleEffectKernels_IntegrateVector2(puff, 48, -toFIXED(1) / 8);
           puff->variant++;
         }
       }
@@ -1088,7 +1089,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
 
     if (frame == STAR_LEAP_FRAME) {
       BattleEffect_SetApproachMotion(args->user, args->targets[0], 16, 120);
-      casterObject->velocityY = px(7);
+      casterObject->velocityY = toFIXED(7);
     }
 
     // The strike: pink palette, the caster lands at 120 percent and the
@@ -1109,9 +1110,9 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
         s32 speed;
 
         step->variant = (Random16() & 15) + 16;
-        step->x = px(target.x / 2);
-        step->y = px(target.y - 8);
-        angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
+        step->x = INTtoFIXED(target.x / 2);
+        step->y = INTtoFIXED(target.y - 8);
+        angle = (Random16() & 0x7fff) + DEGtoANG(90);
         speed = (Random16() & 255) + 127;
         step->velocityX = (Trig_Sin(angle) * speed) >> 7;
         step->velocityY = (Trig_Cos(angle) * speed) >> 5;
@@ -1120,8 +1121,8 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
-      BattleEffect_StartActorMotion(args->targets[0], 1, px(8), px(20), px(6),
-                                    10);
+      BattleEffect_StartActorMotion(args->targets[0], 1, toFIXED(8),
+                                    toFIXED(20), toFIXED(6), 10);
     }
 
     // The stars twinkle through their six cels as they fly.

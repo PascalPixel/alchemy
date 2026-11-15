@@ -184,22 +184,22 @@ void DebugText_Clear(void);
 
 void VramCache_Reset(void);
 
-void Transform_ApplyYaw(s32 ang);
+void Matrix_RotateY(s32 ang);
 
-s32 ArcTan2(s32 x, s32 y);
+s32 Trig_Atan(s32 x, s32 y);
 
 void ScreenFade_ToBlack(s32 vblanks);
 void ScreenFade_Wait(void);
 
-void Transform_SetYaw(s32 angle);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyPosition(const s32 *position);
+void Matrix_SetRotateY(s32 angle);
+void Matrix_RotateX(s32 angle);
+void Matrix_TranslateVector(const s32 *position);
 void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth);
-void Transform_ApplyTranslation(s32 x, s32 y, s32 z);
-void Transform_ApplyUniformScale(s32 scale);
-void Transform_ApplyAxisScale(s32 x, s32 y, s32 z);
-void Transform_ApplyRoll(s32 ang);
-void Transform_Pop(void);
+void Matrix_Translate(s32 x, s32 y, s32 z);
+void Matrix_ScaleUniform(s32 scale);
+void Matrix_Scale(s32 x, s32 y, s32 z);
+void Matrix_RotateZ(s32 ang);
+void Matrix_Pop(void);
 
 void Palette_LoadBasicSpriteColors(void);
 

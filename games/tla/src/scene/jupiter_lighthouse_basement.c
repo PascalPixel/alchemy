@@ -161,10 +161,10 @@ void JupiterLighthouse_RestartSpark(struct Actor *object) {
     s32 radius;
     s32 angle;
 
-    SET_VECTOR(position, px(200), px(-32), px(164));
+    SET_VECTOR(position, toFIXED(200), toFIXED(-32), toFIXED(164));
     radius = Random16();
     angle = Random16();
-    FieldVector_AddPolarOffsetFixed((radius << 5) + px(8), angle, position);
+    FieldVector_AddPolarOffsetFX((radius << 5) + toFIXED(8), angle, position);
     SET_ACTOR_POSITION(object, position[0], position[1], position[2]);
   }
   object->userValue = object->timer;
@@ -220,8 +220,8 @@ void JupiterLighthouse_SpawnSparks(void) {
 
     object->motionFlags = 0;
     object->priorityFlags = 0;
-    object->speedLimit = (i << 12) + px(1) / 2;
-    object->acceleration = (i << 12) + px(1) / 2;
+    object->speedLimit = (i << 12) + toFIXED(1) / 2;
+    object->acceleration = (i << 12) + toFIXED(1) / 2;
     object->update = (void (*)(void))JupiterLighthouse_UpdateSpark;
     object->riseEnabled = i << 3;
     Actor_SetSpriteFlags(object, 0);
@@ -310,7 +310,7 @@ void Actor_RaiseFromCell(s32 id) {
   object->motionFlags = 4;
   height = object->groundHeight;
   object->bounce = 0;
-  object->y.fixed = height + px(32);
+  object->y.fixed = height + toFIXED(32);
   object->priorityFlags |= 128;
   height =
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
@@ -343,14 +343,14 @@ s32 JupiterLighthouse_RaiseSparkles(struct Actor *object) {
     s32 y;
 
     params.priority = 3;
-    params.startScaleX = Q16_ONE * 7 / 10;
-    params.startScaleY = Q16_ONE * 7 / 10;
+    params.startScaleX = FIXED_ONE * 7 / 10;
+    params.startScaleY = FIXED_ONE * 7 / 10;
     params.palette = 14;
-    x = object->x.fixed + px((Random_Below(9)) - 4);
-    y = object->y.fixed + px(32 - (Random_Below(20)));
+    x = object->x.fixed + toFIXED((Random_Below(9)) - 4);
+    y = object->y.fixed + toFIXED(32 - (Random_Below(20)));
     FieldEffect_Spawn(x, y, object->z.fixed, 0,
-                      (s32)(px(Random_Below(5)) + px(5)) / 10, 0, px(11),
-                      &params);
+                      (s32)(toFIXED(Random_Below(5)) + toFIXED(5)) / 10, 0,
+                      toFIXED(11), &params);
   }
   return 0;
 }
@@ -377,17 +377,17 @@ void LightSprites_Draw(void) {
       s32 frame;
       u32 *word;
       ox = actor->x.fixed - viewX;
-      y = actor->y.fixed - viewY + px(8);
+      y = actor->y.fixed - viewY + toFIXED(8);
       z = actor->z.fixed - viewZ - viewY;
       oy = z - y;
-      depth = FIELD_PIXEL(y + z) + 58;
+      depth = FIXEDtoINT(y + z) + 58;
       big = gLightSpriteLargeOam;
       big = gLightSpriteLargeOam;
       if (big == 0) {
         s32 x, sy;
         frame = actor->timer;
-        x = FIELD_PIXEL(ox);
-        sy = FIELD_PIXEL(oy);
+        x = FIXEDtoINT(ox);
+        sy = FIXEDtoINT(oy);
         ox = x - 8;
         oy = sy - 16;
         if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
@@ -407,8 +407,8 @@ void LightSprites_Draw(void) {
       } else {
         s32 x, sy;
         frame = actor->timer;
-        x = FIELD_PIXEL(ox);
-        sy = FIELD_PIXEL(oy);
+        x = FIXEDtoINT(ox);
+        sy = FIXEDtoINT(oy);
         ox = x - 8;
         oy = sy - 64;
         if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)

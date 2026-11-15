@@ -88,8 +88,8 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
       work->cameraDelta = 0;
     if (frame == gVortices_Counts[args->variant * 2 + 1] - 16)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
 
     for (i = 0; i != gVortices_Counts[args->variant * 2]; i++) {
       point = &work->particles[i];
@@ -231,11 +231,11 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
 
     for (i = 0; i != gVortices_Shapes[args->variant * 3]; i++) {
       // Each funnel circles its own phase, a quarter turn from the next.
-      x = (Q_16_16_TO_INT(gVortices_Shapes[args->variant * 3 + 1] *
-                              Trig_Sin((frame << 11) + i * (TRIG_TURN / 4)) +
-                          wave)) +
+      x = (FIXEDtoINT(gVortices_Shapes[args->variant * 3 + 1] *
+                          Trig_Sin((frame << 11) + i * (DEGtoANG(90))) +
+                      wave)) +
           40;
-      y = Q_16_16_TO_INT(Trig_Cos((frame << 11) + i * (TRIG_TURN / 4)) * 2);
+      y = FIXEDtoINT(Trig_Cos((frame << 11) + i * (DEGtoANG(90))) * 2);
       segment = (frame / 2) % 3;
       draw[0](canvas, work->sheet + segment * 0xa00 + 0xc56, x, y + 16,
               TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);

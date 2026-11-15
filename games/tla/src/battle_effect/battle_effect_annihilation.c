@@ -127,8 +127,8 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
 
     // The shards, projected from the battle camera.
-    Transform_Reset();
-    Transform_SetLookAt(view->eye, view->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(view->eye, view->focus);
     if (frame > 3) {
       BattleEffect_FetchRectangleBlitters(args->side, draw);
       for (i = 0; i != SHARD_COUNT; i++) {
@@ -144,7 +144,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
           draw[(i / 2) & 1](
               canvas, cells + gBattleEffect_MotePictures[size - 1],
               screen.x - size / 2, screen.y - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector3(shard, 60, -px(1) / 64);
+          BattleEffectKernels_IntegrateVector3(shard, 60, -toFIXED(1) / 64);
           shard->variant--;
         }
       }

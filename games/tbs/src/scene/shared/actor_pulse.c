@@ -6,20 +6,20 @@
 static s32 Scene_SquashAndStretch(struct Actor *state) {
   switch (state->timer) {
   case 6:
-    state->scaleX -= Q16_ONE / 4;
-    state->scaleY += Q16_ONE / 8;
+    state->scaleX -= FIXED_ONE / 4;
+    state->scaleY += FIXED_ONE / 8;
     break;
   case 4:
-    state->scaleX += Q16_ONE / 8;
-    state->scaleY -= Q16_ONE / 16;
+    state->scaleX += FIXED_ONE / 8;
+    state->scaleY -= FIXED_ONE / 16;
     break;
   case 2:
-    state->scaleX += Q16_ONE / 16;
-    state->scaleY -= Q16_ONE / 32;
+    state->scaleX += FIXED_ONE / 16;
+    state->scaleY -= FIXED_ONE / 32;
     break;
   case 0:
-    state->scaleX = Q16_ONE;
-    state->scaleY = Q16_ONE;
+    state->scaleX = FIXED_ONE;
+    state->scaleY = FIXED_ONE;
     state->timer = SQUASH_AND_STRETCH_PAUSE();
     break;
   }

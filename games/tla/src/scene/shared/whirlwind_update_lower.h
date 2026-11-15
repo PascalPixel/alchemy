@@ -45,14 +45,14 @@ void Whirlwind_Update(struct Actor *self) {
           self->riseEnabled = 1;
         }
       }
-      /* IwramMulQ16 reached from IwramIrqMain rather than at its fixed
+      /* IwramMulFX reached from IwramIrqMain rather than at its fixed
        * address: */
       /* the address is a linked word read after the cosine, as the native
        */
-      /* reads it after the speed (at Iwram_MulQ16 it is built before). */
-      self->x.fixed += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
+      /* reads it after the speed (at Iwram_MulFX it is built before). */
+      self->x.fixed += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulFXOffset))(
           Trig_Cos(self->facing), self->speedLimit);
-      self->z.fixed += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulQ16Offset))(
+      self->z.fixed += ((s32 (*)(s32, s32))(IwramIrqMain + Iwram_MulFXOffset))(
           Math_Sin(self->facing), self->speedLimit);
       return;
     }

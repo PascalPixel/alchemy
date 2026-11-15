@@ -177,9 +177,9 @@ u32 Random16(void);
 /// A random whole number from 0 to count - 1, from Random16.
 #define Random16_Below(count) ((Random16() * (count)) >> 16)
 void Vector_AddPolarOffset(s32 radius, s32 angle, void *position);
-s32 ArcTan2(s32 x, s32 y);
+s32 Trig_Atan(s32 x, s32 y);
 s32 Math_IntegerSqrt(s32 value);
-s32 FixedSqrt(s32 value);
+s32 Math_SqrtFX(s32 value);
 
 const u8 *Palette_GetBasicSpriteColors(void);
 void String_FormatHex(u32 value);
@@ -202,26 +202,26 @@ void *Heap_Alloc(s32 size);
 void *Heap_AllocEwram(s32 size);
 void Heap_ReservedNoOp(void);
 
-void Transform_Reset(void);
-void Transform_Push(void);
-void Transform_Store(void *dst);
-void Transform_Load(const void *src);
-void Transform_Pop(void);
-void Transform_ResetMatrix(void);
-void Transform_ApplyRotation(s32 *angles);
-void Transform_ApplyPitch(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void Transform_ApplyRoll(s32 angle);
-void Transform_ApplyPosition(const s32 *position);
-void Transform_ApplyScale(const s32 *scale);
-void Transform_ApplyRotationTranslation(s32 *angles, s32 *position);
-void Transform_ApplyScaledRotation(s32 *angles, s32 *position, s32 *scale);
-void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out);
-void Transform_SetLookAt(s32 *eye, s32 *target);
-void Transform_ApplyLookAt(s32 *eye, s32 *target);
+void Matrix_Initialize(void);
+void Matrix_Push(void);
+void Matrix_Get(void *dst);
+void Matrix_Load(const void *src);
+void Matrix_Pop(void);
+void Matrix_ResetUnit(void);
+void Matrix_Rotate(s32 *angles);
+void Matrix_RotateX(s32 angle);
+void Matrix_RotateY(s32 angle);
+void Matrix_RotateZ(s32 angle);
+void Matrix_TranslateVector(const s32 *position);
+void Matrix_ScaleVector(const s32 *scale);
+void Matrix_RotateTranslate(s32 *angles, s32 *position);
+void Matrix_RotateTranslateScale(s32 *angles, s32 *position, s32 *scale);
+void Matrix_BuildLookAt(s32 *eye, s32 *target, s32 *out);
+void Matrix_SetLookAt(s32 *eye, s32 *target);
+void Matrix_LookAt(s32 *eye, s32 *target);
 void Projection_SetFieldOfView(u32 fieldOfView, s32 nearDepth, s32 farDepth);
 void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth);
-s32 Transform_ProjectPoint(const void *point, s32 *screen);
+s32 Matrix_ProjectPoint(const void *point, s32 *screen);
 
 void Decompress_Halfwords(const void *source, void *destination);
 void PaletteFade_BackupAndBrighten(u8 *buffer, u32 amount, u8 *backup,

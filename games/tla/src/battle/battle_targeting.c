@@ -13,7 +13,7 @@
 #include "window/menu_list.h"
 #include "battle/battle.h"
 #include "battle/presentation.h"
-#include "system/mul_q16.h"
+#include "system/mul_fx.h"
 #include "graphics/resource.h"
 #include "game/game_flags.h"
 
@@ -1051,8 +1051,8 @@ power_end:
 
         battleObject = BattleObject_Get(newUnitId);
         BattleObject_Make((struct BattleObject *)battleObject, newUnitId,
-                          battleObject->anchorX / Q16_ONE,
-                          battleObject->anchorZ / Q16_ONE);
+                          battleObject->anchorX / FIXED_ONE,
+                          battleObject->anchorZ / FIXED_ONE);
       }
       BattleObject_Put();
       {

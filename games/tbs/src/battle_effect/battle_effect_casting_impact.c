@@ -165,7 +165,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   s32 pictureOffset;
   struct ScreenPoint casterPos;
   struct ScreenPoint targetPos;
-  struct FixedPointPosition djinnPos;
+  struct Point djinnPos;
   s32 phase;
   s32 i;
   s32 *scanline;
@@ -180,12 +180,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   s32 scrollPos;
   s32 scrollSpeed;
   s32 duration;
-  struct FixedPointPosition *position;
+  struct Point *position;
   struct Actor *casterActor;
   struct Particle *particle;
   s32 pairX;
   s32 stripX;
-  struct FixedPointPosition velocity;
+  struct Point velocity;
   struct ScreenPoint sparkScreen;
   BlitterPair blitters;
   struct ScreenPoint projected;
@@ -327,8 +327,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   // Stop the caster and place the Djinni overhead.
   Actor_SetAnimationSpeedFar(casterActor, 0);
   position = &djinnPos;
-  SET_POSITION(position, casterActor->x.fixed, casterActor->y.fixed + px(80),
-               casterActor->z.fixed);
+  SET_POSITION(position, casterActor->x.fixed,
+               casterActor->y.fixed + toFIXED(80), casterActor->z.fixed);
   {
     s32 savedVelocityX = casterActor->velocityX;
     s32 savedVelocityY = casterActor->velocityY;
@@ -352,10 +352,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           if (frame >= i / 4) {
             {
               s32 size = 5;
-              Transform_Reset();
-              Transform_ApplyRoll(step->velocityZ);
-              Transform_ApplyPitch(step->velocityX);
-              Transform_ApplyYaw(step->velocityY);
+              Matrix_Initialize();
+              Matrix_RotateZ(step->velocityZ);
+              Matrix_RotateX(step->velocityX);
+              Matrix_RotateY(step->velocityY);
               Projection_Point(step, &sparkScreen);
               sparkScreen.x = sparkScreen.x / 2 + casterPos.x;
               // Djinni kinds circle the caster's chest; the rest circle lower,
@@ -407,13 +407,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       if (mode == CASTING_IMPACT_IMPACT_ASURA) {
         REG_BG2PA = Q_8_8(1);
         if (work->args->side == EFFECT_SIDE_ENEMIES) {
-          scrollPos = -px(128);
-          scrollSpeed = px(12);
+          scrollPos = -toFIXED(128);
+          scrollSpeed = toFIXED(12);
         } else {
-          scrollPos = px(8);
-          scrollSpeed = -px(12);
+          scrollPos = toFIXED(8);
+          scrollSpeed = -toFIXED(12);
         }
-        REG_BG2X = WHOLE_PIXELS(scrollPos) << 8;
+        REG_BG2X = FIXEDtoINT(scrollPos) << 8;
       }
     }
     if (mode == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
@@ -475,7 +475,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         GetBattleObjectSlotFar(work->args->targets[0])->actor;
 
     SET_POSITION(&velocity, (targetActor->x.fixed - djinnPos.x) / 6,
-                 (targetActor->y.fixed - djinnPos.y + px(30)) / 6,
+                 (targetActor->y.fixed - djinnPos.y + toFIXED(30)) / 6,
                  (targetActor->z.fixed - djinnPos.z) / 6);
     for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
       particle = &work->particles[i];
@@ -522,7 +522,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         mode != CASTING_IMPACT_IMPACT_PSY_LEECH) {
       s32 height = 0;
       if (mode != CASTING_IMPACT_IMPACT_BAD_OMEN)
-        height = px(20);
+        height = toFIXED(20);
       for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT; i++) {
         particle = &CASTING_IMPACT_IMPACT_PARTICLES[i];
         SET_POSITION(particle, targetActor->x.fixed, height,
@@ -596,7 +596,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           s32 base;
           scanline = work->bg2xLines;
           i = 0;
-          base = px(4);
+          base = toFIXED(4);
           phase = frame * (TRIG_TURN / 16);
           for (; i != DISPLAY_HEIGHT; i++) {
             s32 offset = (base - ((Trig_Sin(phase) * 4))) >> 10;
@@ -705,7 +705,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
               projected.x /= 2;
               EFFECT_DRAW_MOTE(blitters[index & 1], canvas, sprites,
                                projected.x, projected.y, size);
-              Particle_AdvanceWithGravity3D(step, 60, -px(1) / 16);
+              Particle_AdvanceWithGravity3D(step, 60, -toFIXED(1) / 16);
               step->variant--;
             }
           }
@@ -729,7 +729,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         if (frame == 12) {
           for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT; i++) {
             particle = &CASTING_IMPACT_IMPACT_PARTICLES[i];
-            SET_POSITION(particle, targetActor->x.fixed, px(20),
+            SET_POSITION(particle, targetActor->x.fixed, toFIXED(20),
                          targetActor->z.fixed);
             SET_VELOCITY(particle, ((Random16() & 255) - 128) << 10,
                          ((Random16() & 255) - 128) << 10,
@@ -787,9 +787,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             s32 imageX;
             s32 imageY;
             s32 drawFlags;
-            imageX = WHOLE_PIXELS(Trig_Sin(angle) << 3) + targetPos.x / 2 -
+            imageX = FIXEDtoINT(Trig_Sin(angle) << 3) + targetPos.x / 2 -
                      gBattleEffect_GlintPictureWidths[image] / 2;
-            imageY = WHOLE_PIXELS(Trig_Cos(angle) << 5) -
+            imageY = FIXEDtoINT(Trig_Cos(angle) << 5) -
                      gBattleEffect_GlintPictureHeights[image] / 2;
             EFFECT_RELEASE_BLITTERS();
             drawFlags = Random16();
@@ -851,7 +851,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             struct Particle *step;
             for (i = 0; i != CASTING_IMPACT_SPARKS; i++) {
               if ((step = &work->particles[i])->variant == 0) {
-                SET_POSITION(step, targetActor->x.fixed, px(20),
+                SET_POSITION(step, targetActor->x.fixed, toFIXED(20),
                              targetActor->z.fixed);
                 SET_VELOCITY(step, ((Random16() & 255) - 127) << 12,
                              ((Random16() & 255) - 64) << 10,
@@ -925,7 +925,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                           projected.x - FLASH_BURST_WIDTH / 2,
                           projected.y - FLASH_BURST_HEIGHT / 2,
                           FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-              Particle_AdvanceWithGravity3D(step, 60, px(1) / 16);
+              Particle_AdvanceWithGravity3D(step, 60, toFIXED(1) / 16);
               step->variant++;
             }
           }
@@ -937,10 +937,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         s32 sway;
         // Condemn's reaper and crescent.
         Trig_Sin(frame * (TRIG_TURN / 128));
-        sway = WHOLE_PIXELS(Trig_Cos(frame * (TRIG_TURN / 128)) << 2);
+        sway = FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 128)) << 2);
         // targetPos.y is in whole pixels, so the shift leaves 0 for any
         // target on the screen: the pictures stand at a fixed height.
-        imageY = WHOLE_PIXELS(targetPos.y) + sway + 16;
+        imageY = FIXEDtoINT(targetPos.y) + sway + 16;
         if (frame <= 3) {
           blitters[0](canvas, work->sheet,
                       CASTING_IMPACT_PICTURE_X(work->args->side, 0),
@@ -998,7 +998,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         if (frame > 6) {
           scrollSpeed = (scrollSpeed * 48) / 64;
         }
-        REG_BG2X = WHOLE_PIXELS(scrollPos) << 8;
+        REG_BG2X = FIXEDtoINT(scrollPos) << 8;
         {
           s32 fade;
           fade = frame - 16;
@@ -1107,9 +1107,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             step = &CASTING_IMPACT_IMPACT_PARTICLES[i];
             if (step->x >= 0 && frame >= i / 2) {
               s32 image = i & 3;
-              Transform_Reset();
-              Transform_ApplyPitch(step->velocityX);
-              Transform_ApplyYaw(step->velocityY);
+              Matrix_Initialize();
+              Matrix_RotateX(step->velocityX);
+              Matrix_RotateY(step->velocityY);
               Projection_Point(step, &projected);
               projected.x = projected.x / 2 + targetPos.x / 2;
               projected.y += targetPos.y + 32;
@@ -1208,9 +1208,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                               projected.y - SMOKE_PUFF_HEIGHT / 2,
                               SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
               if (mode == CASTING_IMPACT_IMPACT_ACID_BATH)
-                Particle_AdvanceWithGravity3D(step, 60, px(1) / 64);
+                Particle_AdvanceWithGravity3D(step, 60, toFIXED(1) / 64);
               else
-                Particle_AdvanceWithGravity3D(step, 60, px(1) / 16);
+                Particle_AdvanceWithGravity3D(step, 60, toFIXED(1) / 16);
               step->variant++;
             }
           }

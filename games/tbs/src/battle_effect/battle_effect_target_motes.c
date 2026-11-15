@@ -191,9 +191,9 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     }
     row = work->bg2xLines;
     for (i = 0; i != DISPLAY_HEIGHT; i++)
-      *row++ =
-          (px(4) - ((Trig_Sin((frame << 12) + i * (TRIG_TURN / 32)) * 4))) >>
-          10;
+      *row++ = (toFIXED(4) -
+                ((Trig_Sin((frame << 12) + i * (TRIG_TURN / 32)) * 4))) >>
+               10;
 
     EFFECT_FOR_EACH_TARGET(member, work->args) {
       struct Actor *actor =
@@ -213,7 +213,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
           radius = (Random16() & 31) + 4;
           x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
               (gBattleEffect_GlintPictureWidths[frame & 3] >> 1);
-          y = base.y - WHOLE_PIXELS(Trig_Cos(angle) * radius) -
+          y = base.y - FIXEDtoINT(Trig_Cos(angle) * radius) -
               (gBattleEffect_GlintPictureHeights[frame & 3] >> 1);
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               EFFECT_CLIP_BOUNDS |
@@ -235,12 +235,12 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                           COMPOSITE_LIGHTEN);
       draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(point, actor->x.fixed, px(20), actor->z.fixed);
-      Transform_ApplyPosition(point);
+      SET_VECTOR(point, actor->x.fixed, toFIXED(20), actor->z.fixed);
+      Matrix_TranslateVector(point);
       if (frame > member * 8) {
-        Transform_ApplyYaw(frame << 9);
+        Matrix_RotateY(frame << 9);
         if (mode <= TARGET_MOTES_PINK_SMOKE || mode == TARGET_MOTES_HEARTRENDER)
-          Transform_ApplyPitch(frame << 9);
+          Matrix_RotateX(frame << 9);
         for (i = 0; i != count; i++) {
           struct Particle *mote = &PARTICLES[member * TARGET_MOTES_SLOTS + i];
           s32 distance;
@@ -278,7 +278,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                 mote->y -= mote->y / distance;
                 mote->z -= mote->z / distance;
               } else {
-                mote->y += px(1);
+                mote->y += toFIXED(1);
               }
               mote->variant++;
               if (mote->variant == TARGET_MOTES_CYCLE) {
@@ -355,8 +355,8 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
 
   for (particleIndex = 0; particleIndex != SLEEP_SEEDED; particleIndex++) {
     current = &sheep[particleIndex];
-    current->x = px((Random16() & 63) + 32);
-    current->y = -px(32);
+    current->x = INTtoFIXED((Random16() & 63) + 32);
+    current->y = -toFIXED(32);
     current->velocityY = Random16() & 0;
     current->z = Random16() & 3;
     current->variant = Random16() & 255;
@@ -375,8 +375,8 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
 
       target = GetBattleObjectSlotFar(work->args->targets[targetIndex])->actor;
       EFFECT_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(anchor, target->x.fixed, px(40), target->z.fixed);
-      Transform_ApplyPosition(anchor);
+      SET_VECTOR(anchor, target->x.fixed, toFIXED(40), target->z.fixed);
+      Matrix_TranslateVector(anchor);
       if (frame == targetIndex * 16 + 64)
         BattleEffect_TintBattler(work->args->targets[targetIndex],
                                  SPRITE_COLOR_NORMAL, POSE_DAMAGE, TINT_KEEP,
@@ -384,34 +384,34 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
     }
     for (particleIndex = 0; particleIndex != SLEEP_SHEEP; particleIndex++) {
       current = &sheep[particleIndex];
-      if (frame > particleIndex * 4 && current->y <= px(128) - 1) {
+      if (frame > particleIndex * 4 && current->y <= toFIXED(128) - 1) {
         s32 picture;
 
         picture = (current->variant / 16) & 7;
         if (picture < 4)
           drawUpright(canvas, work->sheet + (picture << 10),
-                      WHOLE_PIXELS(current->x) - SHEEP_WIDTH / 2,
-                      WHOLE_PIXELS(current->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
+                      FIXEDtoINT(current->x) - SHEEP_WIDTH / 2,
+                      FIXEDtoINT(current->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
                       SHEEP_HEIGHT);
         else
           drawFlipped(canvas, work->sheet + (picture << 10) - 4096,
-                      WHOLE_PIXELS(current->x) - SHEEP_WIDTH / 2,
-                      WHOLE_PIXELS(current->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
+                      FIXEDtoINT(current->x) - SHEEP_WIDTH / 2,
+                      FIXEDtoINT(current->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
                       SHEEP_HEIGHT);
         current->y += current->velocityY;
-        current->velocityY += px(1) / 8;
+        current->velocityY += toFIXED(1) / 8;
         current->variant += current->z;
         // BUG: meant to bounce a sheep off the ground (y 92), tumbling faster,
         // but it tests for a speed of exactly 0 just after gravity was added,
         // so the sheep almost always fall on through. BUGFIX bounces any sheep
         // that is falling.
 #ifdef BUGFIX
-        if (current->y > px(92) && current->velocityY > 0) {
+        if (current->y > toFIXED(92) && current->velocityY > 0) {
 #else
-        if (current->y > px(92) && current->velocityY == 0) {
+        if (current->y > toFIXED(92) && current->velocityY == 0) {
 #endif
           s32 speed = current->velocityY + 1;
-          current->y = px(92);
+          current->y = toFIXED(92);
           current->z += 4;
           current->velocityY = -speed / 2;
         }

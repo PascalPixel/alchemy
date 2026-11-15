@@ -175,20 +175,20 @@ void LemuriaPalace_CastMapSparks(s32 actorId) {
   Actor_SetAnimation(ACTOR_HYDROS, 5);
   FieldEvent_Wait(28);
   Event_PlaySound(SE_MENU_CONFIRM);
-  first = Actor_Spawn(SPRITE_GLINT, object->x.fixed + px(10),
-                      object->y.fixed + px(16), object->z.fixed);
-  first->speedLimit = px(2);
-  first->acceleration = px(2);
+  first = Actor_Spawn(SPRITE_GLINT, object->x.fixed + toFIXED(10),
+                      object->y.fixed + toFIXED(16), object->z.fixed);
+  first->speedLimit = toFIXED(2);
+  first->acceleration = toFIXED(2);
   first->motionFlags = 0;
-  FieldActor_SetMoveTargetFixed(first, first->x.fixed + px(6),
-                                first->y.fixed + px(8), first->z.fixed);
-  second = Actor_Spawn(SPRITE_GLINT, object->x.fixed + px(10),
-                       object->y.fixed + px(16), object->z.fixed);
-  second->speedLimit = px(2);
-  second->acceleration = px(2);
+  FieldActor_SetMoveTargetFX(first, first->x.fixed + toFIXED(6),
+                             first->y.fixed + toFIXED(8), first->z.fixed);
+  second = Actor_Spawn(SPRITE_GLINT, object->x.fixed + toFIXED(10),
+                       object->y.fixed + toFIXED(16), object->z.fixed);
+  second->speedLimit = toFIXED(2);
+  second->acceleration = toFIXED(2);
   second->motionFlags = 0;
-  FieldActor_SetMoveTargetFixed(second, first->x.fixed + px(8),
-                                first->y.fixed - px(4), first->z.fixed);
+  FieldActor_SetMoveTargetFX(second, first->x.fixed + toFIXED(8),
+                             first->y.fixed - toFIXED(4), first->z.fixed);
   FieldActor_WaitForMove(first);
   Actor_Release(first);
   FieldActor_WaitForMove(second);
@@ -232,9 +232,9 @@ void LemuriaPalace_DrawMaps(void) {
     }
     (*time)++;
   }
-  position.x = px(832);
+  position.x = toFIXED(832);
   position.y = 0;
-  position.z = px(448);
+  position.z = toFIXED(448);
   Camera_WorldToScreen(&position);
   if (gLemuriaPalace_FirstMapShown != 0) {
     gLemuriaPalace_FirstMapSprite.x = position.x;
@@ -992,11 +992,11 @@ answeredYes:
   Actor_Jump(ACTOR_LUNPA, 4, 20);
   i = 15;
   do {
-    Actor_GetById(FIELD_TREASURE_ACTOR)->scaleY += Q16_ONE / 16;
+    Actor_GetById(FIELD_TREASURE_ACTOR)->scaleY += FIXED_ONE / 16;
     i--;
     wait(1);
   } while (i >= 0);
-  Actor_GetById(FIELD_TREASURE_ACTOR)->scaleY = Q16_ONE;
+  Actor_GetById(FIELD_TREASURE_ACTOR)->scaleY = FIXED_ONE;
   Event_Wait(5);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -1122,8 +1122,8 @@ answeredYes:
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   target = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (target != 0) {
-    Actor_SetDestination(ACTOR_KRADEN, target->x.part[0].pixel,
-                         target->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_KRADEN, target->x.part[0].integer,
+                         target->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -1131,8 +1131,8 @@ answeredYes:
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   target = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (target != 0) {
-    Actor_SetDestination(ACTOR_JENNA, target->x.part[0].pixel,
-                         target->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_JENNA, target->x.part[0].integer,
+                         target->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
@@ -1140,8 +1140,8 @@ answeredYes:
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
   target = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (target != 0) {
-    Actor_SetDestination(ACTOR_SHEBA, target->x.part[0].pixel,
-                         target->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_SHEBA, target->x.part[0].integer,
+                         target->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
@@ -1159,8 +1159,8 @@ answeredYes:
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
   target = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (target != 0) {
-    Actor_SetDestination(ACTOR_PIERS, target->x.part[0].pixel,
-                         target->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_PIERS, target->x.part[0].integer,
+                         target->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);

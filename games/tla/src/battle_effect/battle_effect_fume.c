@@ -87,15 +87,15 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       EFFECT_SHOW_DAMAGE(SE_CLATTER);
       work->shakeFrames = 8;
-      BattleEffect_StartActorMotion(args->targets[0], 1, px(2), px(4), px(2),
-                                    120);
+      BattleEffect_StartActorMotion(args->targets[0], 1, toFIXED(2), toFIXED(4),
+                                    toFIXED(2), 120);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 20);
       for (i = 0; i != 32; i++) {
         spark = &work->particles[i];
         spark->variant = -i / 4 + 2;
-        spark->x = px(target.x / 2);
-        spark->y = px(target.y + (Random16() & 15) - 32);
+        spark->x = INTtoFIXED(target.x / 2);
+        spark->y = INTtoFIXED(target.y + (Random16() & 15) - 32);
         spark->velocityX =
             ((Random16() % gFume_Levels[args->variant][FUME_SPREAD]) -
              (gFume_Levels[args->variant][FUME_SPREAD] >> 1))
@@ -149,8 +149,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
            j != FUME_SEGMENTS; sweep += step, vertex += 2, j++) {
         s32 distance = caster.x / 8 - target.x / 8;
         s32 angle = sweep + arc.tail * 33;
-        s32 wobble =
-            (Q_16_16_TO_INT(Trig_Sin((frame + j) << 12) << 2)) * j / 32;
+        s32 wobble = (FIXEDtoINT(Trig_Sin((frame + j) << 12) << 2)) * j / 32;
         s32 height;
         s32 thickness;
         s32 radiusX;
@@ -166,7 +165,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
         if (thickness > 24) {
           thickness = 24;
         }
-        thickness = thickness * width / Q16_ONE;
+        thickness = thickness * width / FIXED_ONE;
         i = 0;
         half = thickness / -2;
         baseY = height + half;
@@ -174,16 +173,15 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
         radiusX = distance + half + wobble;
         for (; i != 2; i++) {
           corners[vertex + i].x =
-              (Q_16_16_TO_INT(Trig_Cos(angle) * radiusX)) - distance;
-          corners[vertex + i].y = -(Q_16_16_TO_INT(Trig_Sin(angle) * radiusY));
+              (FIXEDtoINT(Trig_Cos(angle) * radiusX)) - distance;
+          corners[vertex + i].y = -(FIXEDtoINT(Trig_Sin(angle) * radiusY));
           corners[vertex + i].z = 0;
           radiusY += thickness;
           radiusX += thickness;
         }
         if (j == 32) {
-          endX = (Q_16_16_TO_INT((distance + wobble) * Trig_Cos(angle))) -
-                 distance;
-          endY = -(Q_16_16_TO_INT((height + wobble) * Trig_Sin(angle)));
+          endX = (FIXEDtoINT((distance + wobble) * Trig_Cos(angle))) - distance;
+          endY = -(FIXEDtoINT((height + wobble) * Trig_Sin(angle)));
         }
       }
 
@@ -204,14 +202,14 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
           texture.pixels = work->sheet;
           model->mesh = strip;
           model->scrollU = 127 & ~(frame << 3);
-          Transform_Reset();
-          Transform_ApplyTranslation(px(caster.x / 2 - 64),
-                                     px(caster.y) + 0xffc00000, 0);
-          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+          Matrix_Initialize();
+          Matrix_Translate(INTtoFIXED(caster.x / 2 - 64),
+                           INTtoFIXED(caster.y) + 0xffc00000, 0);
+          Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
           if (args->side == EFFECT_SIDE_PARTY) {
-            Transform_ApplyYaw(TRIG_TURN / 2);
+            Matrix_RotateY(DEGtoANG(180));
           }
-          Transform_ApplyUniformScale(Q16_ONE * 4);
+          Matrix_ScaleUniform(FIXED_ONE * 4);
           Render_TransformVertices(corners, buffer, 66);
           Render_DrawModelList(model);
 
@@ -222,9 +220,9 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
             texture.logHeight = 6;
             model->scrollU = 0;
             texture.pixels = work->sheet + FUME_CLAW_SLASH_PICTURES;
-            Transform_ApplyTranslation(px(endX), px(endY), 0);
-            Transform_ApplyRoll(TRIG_TURN / 4 - arc.head * 32);
-            Transform_ApplyUniformScale(width * 28 / 32);
+            Matrix_Translate(INTtoFIXED(endX), INTtoFIXED(endY), 0);
+            Matrix_RotateZ(DEGtoANG(90) - arc.head * 32);
+            Matrix_ScaleUniform(width * 28 / 32);
             Render_TransformVertices(gBattleEffect_SquareCorners, buffer, 4);
             Render_DrawModelList(model);
           }

@@ -50,7 +50,7 @@ void ParticleBurst_Update(void) {
       position[0] = particle->x;
       position[1] = particle->y;
       position[2] = particle->z;
-      Vector_AddPolarOffset(px(48), particle->heading, position);
+      Vector_AddPolarOffset(toFIXED(48), particle->heading, position);
       Camera_WorldToScreen(position);
       sprite->x = position[0];
       sprite->y = position[2];
@@ -176,7 +176,7 @@ void FieldPsynergy_Cyclone(void) {
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct Actor *owner = effect->mainActor;
   s16 *points = &event->psynergyCells[0];
-  s32 spread = px(4);
+  s32 spread = toFIXED(4);
   s32 step = 0xe000;
   struct CanvasSpriteWork *canvas;
   struct Actor *ring;
@@ -208,22 +208,22 @@ void FieldPsynergy_Cyclone(void) {
   pos[1] = effect->mainActor->y.fixed;
   pos[2] = effect->mainActor->z.fixed;
   Camera_WorldToScreen(pos);
-  canvas->x = (s16)FIELD_PIXEL(pos[0]);
-  canvas->y = (s16)FIELD_PIXEL(pos[2]);
+  canvas->x = (s16)FIXEDtoINT(pos[0]);
+  canvas->y = (s16)FIXEDtoINT(pos[2]);
   canvas->priority = 1;
   canvas->depth = 240;
   canvas->mode = CANVAS_SPRITE_KEPT;
-  canvas->scaleX = Q16_ONE * 3 / 2;
-  canvas->scaleY = Q16_ONE * 3 / 2;
+  canvas->scaleX = FIXED_ONE * 3 / 2;
+  canvas->scaleY = FIXED_ONE * 3 / 2;
   EffectSprite_Init(&canvas->sprite, 32, 32, OBJ_SIZE_64X64, canvas->tile);
   canvas->sprite.oam.fullColor = 1;
   canvas->sprite.oam.palette = 0;
   offsets = Ram_HeapSlots->canvasMap;
   pixels = Ram_HeapSlots->battleCanvas;
-  ring = Actor_Spawn(SPRITE_WHIRLWIND, owner->x.fixed, owner->y.fixed - px(6),
-                     owner->z.fixed);
+  ring = Actor_Spawn(SPRITE_WHIRLWIND, owner->x.fixed,
+                     owner->y.fixed - toFIXED(6), owner->z.fixed);
   Actor_SelectAnimationFar(ring, 2);
-  ring->scaleX = Q16_ONE * 3 / 2;
+  ring->scaleX = FIXED_ONE * 3 / 2;
   ring->scaleY = 0;
   wait(1);
   Sound_PlayFar(SE_RUSH);
@@ -236,8 +236,8 @@ void FieldPsynergy_Cyclone(void) {
       Cyclone_PlotArc((s32)(spread + Random16() * 4 - (j << 16)) >> 16,
                       Random16(), offsets, pixels);
     spread += step;
-    if (spread > px(28))
-      spread = px(28);
+    if (spread > toFIXED(28))
+      spread = toFIXED(28);
     step = step * 123 / 128;
     canvas->angle += TRIG_TURN / 64;
     canvas->command = 3;
@@ -280,9 +280,9 @@ void FieldPsynergy_Cyclone(void) {
     owner->motionFlags = 0;
     frame = 0;
     wait(1);
-    work->to[0] = px(event->cycloneLiftX);
-    work->to[1] = owner->y.fixed + px(32);
-    work->to[2] = px(event->cycloneLiftZ);
+    work->to[0] = toFIXED(event->cycloneLiftX);
+    work->to[1] = owner->y.fixed + toFIXED(32);
+    work->to[2] = toFIXED(event->cycloneLiftZ);
     Task_Add(Cyclone_LiftLeader, TASK_PASS_VBLANK);
     while (work->state != FIELD_PSYNERGY_FINISHED) {
       if (frame == 30)
@@ -310,9 +310,9 @@ void FieldPsynergy_Cyclone(void) {
     Actor_SetSpriteFlagsFar(owner, 0);
     owner->motionFlags = 0;
     wait(1);
-    work->to[0] = px(event->cycloneCarryX);
+    work->to[0] = toFIXED(event->cycloneCarryX);
     work->to[1] = owner->y.fixed;
-    work->to[2] = px(event->cycloneCarryZ);
+    work->to[2] = toFIXED(event->cycloneCarryZ);
     Task_Add(Cyclone_CarryLeader, TASK_PASS_VBLANK);
     frame = 0;
     while (work->state != FIELD_PSYNERGY_FINISHED) {
@@ -394,8 +394,8 @@ void Actor_DepartInRing(s32 actor) {
   ring = Actor_Spawn(SPRITE_WHIRLWIND, object->x.fixed, object->y.fixed,
                      object->z.fixed);
   Actor_SelectAnimationFar(ring, 2);
-  ring->scaleX = Q16_ONE * 3 / 2;
-  ring->scaleY = Q16_ONE;
+  ring->scaleX = FIXED_ONE * 3 / 2;
+  ring->scaleY = FIXED_ONE;
   x = object->x.fixed;
   y = object->y.fixed;
   z = object->z.fixed;
@@ -410,7 +410,7 @@ void Actor_DepartInRing(s32 actor) {
     Vector_AddPolarOffset(Trig_Cos(i << 7) << 5, spin, position);
     SET_ACTOR_POSITION(object, position[0], position[1], position[2]);
     spin += TRIG_TURN / 64;
-    SET_ACTOR_POSITION(ring, object->x.fixed, object->y.fixed - px(6),
+    SET_ACTOR_POSITION(ring, object->x.fixed, object->y.fixed - toFIXED(6),
                        object->z.fixed);
     wait(1);
   }
@@ -448,18 +448,18 @@ void Actor_ArriveInRing(s32 actor) {
   ring = Actor_Spawn(SPRITE_WHIRLWIND, object->x.fixed, object->y.fixed,
                      object->z.fixed);
   Actor_SelectAnimationFar(ring, 2);
-  ring->scaleX = Q16_ONE / 2;
-  ring->scaleY = Q16_ONE * 3 / 4;
+  ring->scaleX = FIXED_ONE / 2;
+  ring->scaleY = FIXED_ONE * 3 / 4;
   for (i = 0; i < 32; i++) {
     ring->scaleX += 0x800;
     ring->scaleY += 0x200;
     wait(1);
   }
-  ring->scaleX = Q16_ONE * 3 / 2;
-  ring->scaleY = Q16_ONE;
+  ring->scaleX = FIXED_ONE * 3 / 2;
+  ring->scaleY = FIXED_ONE;
   Sound_PlayFar(SE_WHOOSH);
   Actor_SelectAnimationFar(ring, 6);
-  object->scaleY = object->scaleX = Q16_ONE / 2;
+  object->scaleY = object->scaleX = FIXED_ONE / 2;
   for (i = 0; i < 16; i++) {
     object->scaleY = object->scaleX = object->scaleX + 0x800;
     wait(1);
@@ -532,11 +532,11 @@ void Blaze_UpdateSpray(void) {
         if (work->mode == 3) {
           work->speed = 0x26666;
           work->lifetime = 33;
-          work->gravity = px(3) / 32;
+          work->gravity = toFIXED(3) / 32;
         } else {
           work->speed = 0x1cccc;
           work->lifetime = 25;
-          work->gravity = px(1) / 8;
+          work->gravity = toFIXED(1) / 8;
         }
         SET_POSITION(particle, work->origin[0], work->origin[1],
                      work->origin[2]);
@@ -556,10 +556,10 @@ void Blaze_UpdateSpray(void) {
     if (particle->timer == -1)
       continue;
     sprite = &work->drops[i];
-    sprite->scaleY = sprite->scaleX = particle->timer * 0xa3d + Q16_ONE / 2;
+    sprite->scaleY = sprite->scaleX = particle->timer * 0xa3d + FIXED_ONE / 2;
     sprite->oam.index =
         work->dropTile + (((particle->timer >> 1) + i) & 3) * 32;
-    if (work->angle > TRIG_TURN / 2)
+    if (work->angle > DEGtoANG(180))
       sprite->depth--;
     else
       sprite->depth++;
@@ -591,8 +591,8 @@ void Blaze_UpdateSpray(void) {
       pos[0] = particle->x;
       pos[1] = particle->y - (Random16() << 2);
       pos[2] = particle->z;
-      Vector_AddPolarOffset(px(10), work->angle + TRIG_TURN / 2, pos);
-      Vector_AddPolarOffset(px(12), Random16(), pos);
+      Vector_AddPolarOffset(toFIXED(10), work->angle + DEGtoANG(180), pos);
+      Vector_AddPolarOffset(toFIXED(12), Random16(), pos);
       puff = &work->puffMotion[i];
       SET_POSITION(puff, pos[0], pos[1], pos[2]);
       puff->timer = 0;
@@ -620,7 +620,7 @@ void Blaze_UpdateSpray(void) {
     }
   }
 
-  target = scene->angle8 - TRIG_TURN / 4;
+  target = scene->angle8 - DEGtoANG(90);
   turn = (s16)(work->targetAngle - work->angle);
   if ((u16)(work->targetAngle - target) - (u16)(work->angle - target) ==
       0x8000) {

@@ -265,7 +265,7 @@ s32 IsletCave_BobOnWater(struct Actor *object) {
   object->motionFlags = 3;
   if (step < 32) {
     if (step == 0)
-      object->velocityY = px(1);
+      object->velocityY = toFIXED(1);
     animation[9] = Trig_Cos(step << 12) / 128;
   }
   (*phase)++;
@@ -330,7 +330,7 @@ void IsletCave_FinishTeleport(void) {
     gMainRoutineWork.teleportState = 1;                                        \
     Event_Wait(40);                                                            \
     Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.leaderActorId,     \
-                                           px(n1), px(n2));                    \
+                                           toFIXED(n1), toFIXED(n2));          \
     IsletCave_FinishTeleport();                                                \
   }
 
@@ -569,16 +569,16 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   actor = Actor_GetById(actorId);
   Event_Start();
   Event_ResolvePendingActions(0);
-  x = ((leader->x.fixed + px(dx)) & FIELD_CELL_MASK) + px(8);
-  z = ((leader->z.fixed + px(dz)) & FIELD_CELL_MASK) + px(8);
-  leader->speedLimit = px(1);
-  leader->acceleration = px(1) / 2;
+  x = ((leader->x.fixed + toFIXED(dx)) & FIELD_CELL_MASK) + toFIXED(8);
+  z = ((leader->z.fixed + toFIXED(dz)) & FIELD_CELL_MASK) + toFIXED(8);
+  leader->speedLimit = toFIXED(1);
+  leader->acceleration = toFIXED(1) / 2;
   Actor_SetMoveTarget(leader, x, leader->y.fixed, z);
   Actor_SelectAnimation(leader, ANIM_LEADER_WALK_BACKWARDS);
-  x = ((actor->x.fixed + px(dx)) & FIELD_CELL_MASK) + px(8);
-  z = ((actor->z.fixed + px(dz)) & FIELD_CELL_MASK) + px(8);
-  actor->speedLimit = px(1);
-  actor->acceleration = px(1) / 2;
+  x = ((actor->x.fixed + toFIXED(dx)) & FIELD_CELL_MASK) + toFIXED(8);
+  z = ((actor->z.fixed + toFIXED(dz)) & FIELD_CELL_MASK) + toFIXED(8);
+  actor->speedLimit = toFIXED(1);
+  actor->acceleration = toFIXED(1) / 2;
   Actor_SetMoveTarget(actor, x, actor->y.fixed, z);
   if (dx < 0 || dz < 0) {
     Actor_SelectAnimation(actor, 4);
@@ -749,8 +749,8 @@ void IsletCave_SentinelAwaits(void) {
   Event_Wait(60);
   object = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object != 0) {
-    Actor_SetDestinationById(ACTOR_SENTINEL, object->x.part[0].pixel,
-                             object->z.part[0].pixel);
+    Actor_SetDestinationById(ACTOR_SENTINEL, object->x.part[0].integer,
+                             object->z.part[0].integer);
   }
   Event_Wait(20);
   FieldEvent_SetAfterBattleDestination(SCENE_ISLET_CAVE_SENTINEL, 2);
@@ -767,11 +767,11 @@ void IsletCave_TremorRevealsSerac(void) {
 
     Event_SetFlag(FLAG_SCENE_TEMP_30);
     Actor_SetPosition(ACTOR_SERAC, 296, 160);
-    object->speedLimit = px(3) / 2;
-    object->velocityY = px(15);
+    object->speedLimit = toFIXED(3) / 2;
+    object->velocityY = toFIXED(15);
     Actor_MoveToAndWait(ACTOR_SERAC, 344, ((owner->z.fixed >> 19) << 3) + 24);
     Actor_Stop(ACTOR_WINGED_STATUE);
-    object->speedLimit = px(1);
+    object->speedLimit = toFIXED(1);
     Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, 9, 0);
   }
 }
@@ -803,7 +803,7 @@ u32 gIsletCave_SentinelScript[] = {
 
 s32 gIsletCave_ShrunkenSpriteScript[] = {
     SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Y, px(-4)),
+    SC_ADD(SW_Y, toFIXED(-4)),
     SC_SET(SW_SCALE_X, 0xcccc),
     SC_SET(SW_SCALE_Y, 0xcccc),
     SC_CALL(IsletCave_ClearScriptedActorSpriteFlags),

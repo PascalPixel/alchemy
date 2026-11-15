@@ -13,10 +13,10 @@ void FieldEffect_UpdateOrbitingParticleFade(struct Actor *particle) {
   s32 scale;
 
   if (particle != NULL) {
-    scale = particle->scaleX - Q16_ONE / 16;
-    particle->scaleY -= Q16_ONE / 16;
+    scale = particle->scaleX - FIXED_ONE / 16;
+    particle->scaleY -= FIXED_ONE / 16;
     particle->scaleX = scale;
-    if (scale <= Q16_ONE / 16)
+    if (scale <= FIXED_ONE / 16)
       Actor_StartScriptFar(particle, gFieldEffect_SharedParticleScript);
   }
 }
@@ -102,7 +102,7 @@ void FieldPsynergy_Frost(void) {
       u32 scale;
       s32 radius;
 
-      scale = (Random16() >> 1) + Q16_ONE / 2;
+      scale = (Random16() >> 1) + FIXED_ONE / 2;
       particle->scaleY = scale;
       particle->scaleX = scale;
       if ((Random16() & 1) != 0)
@@ -116,7 +116,7 @@ void FieldPsynergy_Frost(void) {
       Actor_SetSpriteColorModeFar(particle, SPRITE_COLOR_BLUE_TINT);
 
       SET_POSITION(&pos, effectWork->x, effectWork->y, effectWork->z);
-      radius = (Random16() << 2) + px(2);
+      radius = (Random16() << 2) + toFIXED(2);
       Vector_AddPolarOffset(radius, Random16(), &pos);
       particle->targetX = pos.x;
       particle->targetY = pos.y;

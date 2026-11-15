@@ -380,7 +380,7 @@ s32 Scene_Initialize(void) {
     Actor_Get(ACTOR_GEM_OWNER)->groundHeight = 0;
   } else if (entrance == LOG_ROOMS_B_FROM_VAULT_REVISIT_SOUTHWEST ||
              entrance == LOG_ROOMS_B_INN_FROM_INN_UPSTAIRS) {
-    Vault_PlaceItemIcon(ITEM_BONE, px(568), px(16), px(672));
+    Vault_PlaceItemIcon(ITEM_BONE, toFIXED(568), toFIXED(16), toFIXED(672));
     Task_AddFrame(Vault_UpdateBoneProximityFlag, TASK_PASS_FRAME);
   }
 

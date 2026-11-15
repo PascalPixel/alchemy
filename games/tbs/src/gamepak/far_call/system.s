@@ -11,9 +11,9 @@ FarCall_RuntimeTable:
 	overlay_veneer Task_ResumeAll
 	overlay_veneer Task_RunPass
 	export Random16Far, Random16
-	export ArcTan2Far, ArcTan2
+	export Trig_AtanFar, Trig_Atan
 	overlay_veneer Math_IntegerSqrt
-	export FixedSqrtFar, FixedSqrt
+	export FixedSqrtFar, Math_SqrtFX
 	export Trig_SinFar, Trig_Sin
 	export Trig_CosFar, Trig_Cos
 	export Vector_AddPolarOffsetFar, Vector_AddPolarOffset
@@ -43,20 +43,20 @@ FarCall_RuntimeTable:
 	export Oam_AddSpriteAtDepthFar, Oam_AddSpriteAtDepth
 	export Window_LoadGraphicsFar, Window_LoadGraphics
 	overlay_veneer Palette_LoadBasicSpriteColors
-	overlay_veneer Transform_Reset
-	overlay_veneer Transform_ResetMatrix
-	overlay_veneer Transform_Push
-	overlay_veneer Transform_Pop
-	overlay_veneer Transform_ApplyRotation
-	overlay_veneer Transform_ApplyPitch
-	overlay_veneer Transform_ApplyYaw
-	overlay_veneer Transform_ApplyRoll
-	overlay_veneer Transform_ApplyPosition
-	overlay_veneer Transform_ApplyScale
-	overlay_veneer Transform_ApplyRotationTranslation
-	overlay_veneer Transform_ApplyScaledRotation
-	overlay_veneer Transform_SetLookAt
-	overlay_veneer Transform_ProjectPoint
+	overlay_veneer Matrix_Initialize
+	overlay_veneer Matrix_ResetUnit
+	overlay_veneer Matrix_Push
+	overlay_veneer Matrix_Pop
+	overlay_veneer Matrix_Rotate
+	overlay_veneer Matrix_RotateX
+	overlay_veneer Matrix_RotateY
+	overlay_veneer Matrix_RotateZ
+	overlay_veneer Matrix_TranslateVector
+	overlay_veneer Matrix_ScaleVector
+	overlay_veneer Matrix_RotateTranslate
+	overlay_veneer Matrix_RotateTranslateScale
+	overlay_veneer Matrix_SetLookAt
+	overlay_veneer Matrix_ProjectPoint
 	overlay_veneer Projection_SetFieldOfView
 	overlay_veneer Projection_Set
 	overlay_veneer System_CopyBuildStamp
@@ -87,7 +87,7 @@ FarCall_RuntimeTable:
 	overlay_veneer IoWriteQueue_ClearBits16
 	overlay_veneer IoWriteQueue_ClearBits32
 	overlay_veneer Input_ResetKeyRepeat
-	overlay_veneer Transform_ApplyLookAt
+	overlay_veneer Matrix_LookAt
 	overlay_veneer Serial_WaitForStatusMask
 	export Serial_RemoveIrqHandlersFar, Serial_RemoveIrqHandlers
 	export Sound_LoadReverbCodeFar, Sound_LoadReverbCode

@@ -61,7 +61,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   } else {
     ColorBuffer_Scale(palette, BATTLE_BG_PALETTE,
                       screen->brightness =
-                          Q16_ONE - level * BACKGROUND_LEVEL_STEP,
+                          FIXED_ONE - level * BACKGROUND_LEVEL_STEP,
                       BATTLE_BG_PALETTE_COLORS);
   }
   {
@@ -165,7 +165,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   if (level >= 0)
     ColorBuffer_Scale(palette, BATTLE_BG_PALETTE,
                       session->brightness =
-                          Q16_ONE - level * BACKGROUND_LEVEL_STEP,
+                          FIXED_ONE - level * BACKGROUND_LEVEL_STEP,
                       BATTLE_BG_PALETTE_COLORS);
   if (session->keepBackdropPalette == 0) {
     Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
@@ -211,7 +211,7 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   // times the yaw, so the picture turns with the camera.
   panX = 8 << 8;
   wrap = 0;
-  ratio = Q16_ONE;
+  ratio = FIXED_ONE;
   if (scale >= ratio) {
     wrap = BGCNT_WRAP;
     panX = (104 << 8) + -(s16)camera->yaw * 3;
@@ -232,8 +232,8 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   affine->pb = 0;
   affine->pc = 0;
   affine->pd = step;
-  x = Iwram_MulQ16(ratio, Iwram_MulQ16(centerX, scale - Q16_ONE));
-  y = Iwram_MulQ16(ratio, Iwram_MulQ16(centerY, scale - Q16_ONE));
+  x = Iwram_MulFX(ratio, Iwram_MulFX(centerX, scale - FIXED_ONE));
+  y = Iwram_MulFX(ratio, Iwram_MulFX(centerY, scale - FIXED_ONE));
   affine->x = ((x + 0x7fff) >> 8) + offsetX + panX;
   affine->y = ((y + 0x7fff) >> 8) + offsetY - (16 << 8);
   lowerHalfLine =
@@ -279,28 +279,28 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   pos[1] = depth;
   pos[2] = y;
   sourceBounds[0] = 0;
-  alpha = Q16_ONE * 3 / 4;
+  alpha = FIXED_ONE * 3 / 4;
   sourceBounds[1] = 0;
   sourceBounds[2] = 0;
 
   result = Iwram_RatioMulQ14(span, alpha);
   Projection_Set(span, result, span * 2);
-  Transform_Reset();
-  Transform_ApplyPosition(pos);
-  Transform_ApplyYaw((s16)scene->yaw);
-  Transform_ApplyPitch((s16)scene->pitch);
+  Matrix_Initialize();
+  Matrix_TranslateVector(pos);
+  Matrix_RotateY((s16)scene->yaw);
+  Matrix_RotateX((s16)scene->pitch);
   renderBounds[0] = 0;
   renderBounds[1] = 0;
   renderBounds[2] = scene->distance;
   Iwram_TransformVector(renderBounds, scene->eye);
   gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-  Transform_Reset();
-  Transform_SetLookAt(scene->eye, pos);
+  Matrix_Initialize();
+  Matrix_SetLookAt(scene->eye, pos);
   Render_ProjectPoint(sourceBounds, measuredBounds);
 
   BattleCamera_SetRange(
-      px(BATTLE_PROJECTION_CENTER_X), px(BATTLE_PROJECTION_CENTER_Y),
+      toFIXED(BATTLE_PROJECTION_CENTER_X), toFIXED(BATTLE_PROJECTION_CENTER_Y),
       (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
       (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
   half = scale * 0xff;
@@ -330,28 +330,28 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   pos[1] = depth;
   pos[2] = y;
   sourceBounds[0] = 0;
-  alpha = Q16_ONE * 3 / 4;
+  alpha = FIXED_ONE * 3 / 4;
   sourceBounds[1] = 0;
   sourceBounds[2] = 0;
 
   result = Iwram_RatioMulQ14(span, alpha);
   Projection_Set(span, result, span * 2);
-  Transform_Reset();
-  Transform_ApplyPosition(pos);
-  Transform_ApplyYaw((s16)scene->yaw);
-  Transform_ApplyPitch((s16)scene->pitch);
+  Matrix_Initialize();
+  Matrix_TranslateVector(pos);
+  Matrix_RotateY((s16)scene->yaw);
+  Matrix_RotateX((s16)scene->pitch);
   renderBounds[0] = 0;
   renderBounds[1] = 0;
   renderBounds[2] = span;
   Iwram_TransformVector(renderBounds, (s32 *)scene);
   gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-  Transform_Reset();
-  Transform_SetLookAt(scene->eye, pos);
+  Matrix_Initialize();
+  Matrix_SetLookAt(scene->eye, pos);
   Render_ProjectPoint(sourceBounds, measuredBounds);
 
   BattleCamera_SetRange(
-      px(BATTLE_PROJECTION_CENTER_X), px(BATTLE_PROJECTION_CENTER_Y),
+      toFIXED(BATTLE_PROJECTION_CENTER_X), toFIXED(BATTLE_PROJECTION_CENTER_Y),
       (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
       (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
   half = scale * 0xff;
@@ -414,7 +414,7 @@ UNUSED void Battle_BrightenAllLayers(void) {
 }
 
 /// Returns the 16.16 product of a and b.
-s32 Battle_MulQ16(s32 a, s32 b) { return Iwram_MulQ16(a, b); }
+s32 Battle_MulFX(s32 a, s32 b) { return Iwram_MulFX(a, b); }
 
 /// A transform as BattleTransition_InitializeEntries reads its first two words.
 struct BattleTransitionEntry {
@@ -430,7 +430,7 @@ void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
   u32 previous = entries[0].value;
 
   CAMELOT_ASM("the fixed-register identity store of transform.h")
-  Transform_SetIdentity(entries);
+  Matrix_SetUnit(entries);
   entries[0].sum = previous + entries[0].value;
 }
 
@@ -751,18 +751,18 @@ void ElementGlow_UpdateStarField(void) {
     spark = &work->sparks[i];
     life = spark->life;
     if (life != 0) {
-      dist = FixedSqrt((spark->pos[0] >> 8) * (spark->pos[0] >> 8) +
-                       (spark->pos[1] >> 8) * (spark->pos[1] >> 8) +
-                       (spark->pos[2] >> 8) * (spark->pos[2] >> 8));
+      dist = Math_SqrtFX((spark->pos[0] >> 8) * (spark->pos[0] >> 8) +
+                         (spark->pos[1] >> 8) * (spark->pos[1] >> 8) +
+                         (spark->pos[2] >> 8) * (spark->pos[2] >> 8));
       if (dist <= 0xfff) {
         spark->life = 0;
       } else {
-        scale = Iwram_RatioMulQ14(dist, Q16_ONE);
+        scale = Iwram_RatioMulQ14(dist, FIXED_ONE);
         spark->life--;
-        mul = Iwram_MulQ16;
+        mul = Iwram_MulFX;
         pos = spark->pos;
         for (k = 2; k >= 0; k--) {
-          step = mul(mul(-*pos >> 8, scale), Q16_ONE * 19 / 16);
+          step = mul(mul(-*pos >> 8, scale), FIXED_ONE * 19 / 16);
           pos[3] = pos[3] - (pos[3] >> 7) + step;
           *pos += pos[3];
           pos++;
@@ -772,10 +772,10 @@ void ElementGlow_UpdateStarField(void) {
     }
     if (life == 0 && work->frames < STAR_FIELD_SPAWN_FRAMES) {
       angle = Random16();
-      radius = Random16() + Q16_ONE;
+      radius = Random16() + FIXED_ONE;
       half = radius >> 1;
-      spark->pos[0] = Iwram_MulQ16(Trig_Cos(angle), half);
-      spark->pos[1] = Iwram_MulQ16(Trig_Sin(angle), half);
+      spark->pos[0] = Iwram_MulFX(Trig_Cos(angle), half);
+      spark->pos[1] = Iwram_MulFX(Trig_Sin(angle), half);
       if (spark->pos[0] & 1)
         spark->pos[0] = -spark->pos[0];
       if (spark->pos[1] & 1)
@@ -836,7 +836,7 @@ s32 ElementGlow_UploadStarField(void) {
     if (*active != 0) {
       *active = 0;
       return ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(1),
-                                            Q16_ONE / 4);
+                                            FIXED_ONE / 4);
     }
   }
   return (s32)source;
@@ -846,12 +846,12 @@ s32 BattleEffect_LoadBlitterFar(s32 slot, s32 modeAndFlags);
 
 /// Returns the x of the point at angle and radius from the origin.
 static __inline__ s32 PolarX(s32 angle, s32 radius) {
-  return Iwram_MulQ16(Trig_Cos(angle), radius);
+  return Iwram_MulFX(Trig_Cos(angle), radius);
 }
 
 /// Returns the y of the point at angle and radius from the origin.
 static __inline__ s32 PolarY(s32 angle, s32 radius) {
-  return Iwram_MulQ16(Trig_Sin(angle), radius);
+  return Iwram_MulFX(Trig_Sin(angle), radius);
 }
 
 /// Sets up the star field behind a summon: sixteen sparks on random rings
@@ -872,12 +872,12 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   for (i = 0; i < STAR_FIELD_SPARKS; i++) {
     s32 angle = Random16();
-    u32 radius = Random16() + Q16_ONE;
+    u32 radius = Random16() + FIXED_ONE;
     u32 half = radius >> 1;
 
     spark = &work->sparks[i];
-    spark->pos[0] = Iwram_MulQ16(Trig_Cos(angle), half);
-    spark->pos[1] = Iwram_MulQ16(Trig_Sin(angle), half);
+    spark->pos[0] = Iwram_MulFX(Trig_Cos(angle), half);
+    spark->pos[1] = Iwram_MulFX(Trig_Sin(angle), half);
     if (spark->pos[0] & 1)
       spark->pos[0] = -spark->pos[0];
     if (spark->pos[1] & 1)
@@ -893,7 +893,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     s32 angle;
 
     ring = &work->rings[i];
-    angle = i * (TRIG_TURN / 3);
+    angle = i * (DEGtoANG(120));
     ring->x = PolarX(angle, radius);
     ring->y = PolarY(angle, radius);
     ring->velX = PolarX(angle, 0x200);
@@ -1008,7 +1008,8 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
       work = (struct SparkWork *)Ram_HeapSlots->battleEffect;
       if (frame <= 24)
         ColorBuffer_Scale(session->palette, BATTLE_BG_PALETTE,
-                          *brightness = Q16_ONE - frame * BACKGROUND_LEVEL_STEP,
+                          *brightness =
+                              FIXED_ONE - frame * BACKGROUND_LEVEL_STEP,
                           BATTLE_BG_PALETTE_COLORS);
       BattleMotion_ProjectScaledPosition(unit, (s32 *)pos);
       work->originX = (STAR_FIELD_CENTER - pos->x) << 8;

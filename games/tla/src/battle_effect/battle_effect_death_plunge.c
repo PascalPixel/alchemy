@@ -77,8 +77,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   Actor_SelectAnimationFar(user, 2);
   user->snapToTarget = 1;
   user->steeringFlags = 1;
-  user->acceleration = px(2);
-  user->speedLimit = px(8);
+  user->acceleration = toFIXED(2);
+  user->speedLimit = toFIXED(8);
   wait(20);
 
   for (frame = 0; frame != DEATH_PLUNGE_FRAMES; frame++) {
@@ -86,9 +86,9 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
 
     // Frame 0: both leap. Frame 11: both turn upside down.
     if (frame == 0) {
-      target->velocityY = px(15);
+      target->velocityY = toFIXED(15);
       target->gravity = 0x91eb;
-      user->velocityY = px(15);
+      user->velocityY = toFIXED(15);
       user->gravity = 0x91eb;
     }
     if (frame == 11) {
@@ -103,12 +103,12 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     if (frame == 54) {
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 10);
-      target->velocityY = px(8);
+      target->velocityY = toFIXED(8);
       target->gravity = 0xab85;
-      user->velocityY = px(5);
+      user->velocityY = toFIXED(5);
       user->gravity = 0x7851;
-      user->acceleration = px(1);
-      user->speedLimit = px(2);
+      user->acceleration = toFIXED(1);
+      user->speedLimit = toFIXED(2);
       user->steeringFlags = 0;
       Actor_StartIdleFar(user);
       Actor_SetMoveTargetFar(user, 0, 0, user->z.fixed);
@@ -116,8 +116,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
 
     if (args->variant == EFFECT_VARIANT_BASIC) {
       // The flash, and the ring of flashes, at the user.
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
       point[0] = user->x.fixed;
       point[1] = user->y.fixed;
       point[2] = user->z.fixed;
@@ -129,10 +129,9 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       if (frame >= 56 && frame <= 67) {
         for (i = 0; i != 16; i++) {
           s32 angle = i << 12;
-          s32 rx =
-              screen.x + (Q_16_16_TO_INT(Trig_Sin(angle) * (frame - 46) * 2));
-          s32 ry = (Q_16_16_TO_INT(Trig_Cos(angle) * (frame - 46) * 2)) -
-                   frame + 100;
+          s32 rx = screen.x + (FIXEDtoINT(Trig_Sin(angle) * (frame - 46) * 2));
+          s32 ry =
+              (FIXEDtoINT(Trig_Cos(angle) * (frame - 46) * 2)) - frame + 100;
 
           draw[0](canvas,
                   work->sheet + (frame - 56) / 2 * PICTURE_BYTES(FLASH_BURST),
@@ -149,8 +148,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
           s32 angle;
           s32 force;
 
-          spark->x = px(targetScreen.x / 2);
-          spark->y = px(targetScreen.y - 16);
+          spark->x = INTtoFIXED(targetScreen.x / 2);
+          spark->y = INTtoFIXED(targetScreen.y - 16);
           angle = Random16();
           force = (Random16() & 255) + 64;
           spark->velocityX = (Trig_Sin(angle) * force) >> 6;
@@ -168,7 +167,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
                   Q_16_16_UPPER_HALF(spark->x) - 16,
                   Q_16_16_UPPER_HALF(spark->y) - 32, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(spark, 62, -px(1) / 8);
+          BattleEffectKernels_IntegrateVector2(spark, 62, -toFIXED(1) / 8);
         }
         spark->variant++;
       }
@@ -180,7 +179,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       vertices = Heap_AllocEwram(512);
       model = Render_AllocateModelList(1);
       if (frame > 55) {
-        s32 scale = ((frame - 56) << 13) + Q16_ONE / 4;
+        s32 scale = ((frame - 56) << 13) + FIXED_ONE / 4;
         s32 alpha = 0;
 
         if (frame > 63)
@@ -196,13 +195,14 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
           model->vertices = vertices;
           texture.pixels = pixels;
           model->shade = alpha;
-          for (i = 0, angle = TRIG_TURN / 8; i != 2;
-               angle += TRIG_TURN / 4, i++) {
-            Transform_Reset();
-            Transform_ApplyTranslation(px(targetScreen.x / 2 - 64), px(32), 0);
-            Transform_ApplyAxisScale(scale, scale, scale);
-            Transform_ApplyRoll(angle);
-            Transform_ApplyPitch(-TRIG_TURN / 16);
+          for (i = 0, angle = DEGtoANG(45); i != 2;
+               angle += DEGtoANG(90), i++) {
+            Matrix_Initialize();
+            Matrix_Translate(INTtoFIXED(targetScreen.x / 2 - 64), toFIXED(32),
+                             0);
+            Matrix_Scale(scale, scale, scale);
+            Matrix_RotateZ(angle);
+            Matrix_RotateX(-TRIG_TURN / 16);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners,
                                      vertices, 4);
             Render_DrawModelList(model);

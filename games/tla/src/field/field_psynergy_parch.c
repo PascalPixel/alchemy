@@ -93,7 +93,7 @@ void FieldPsynergy_Parch(void) {
   pos[0] = caster->x.fixed;
   pos[1] = caster->y.fixed;
   pos[2] = caster->z.fixed;
-  Vector_AddPolarOffset(px(32), scene->angle, pos);
+  Vector_AddPolarOffset(toFIXED(32), scene->angle, pos);
 
   i = 0;
   kind = 290;
@@ -166,11 +166,12 @@ loaded:
     for (i = spawn; i != 0; i--) {
       s32 slot = next & 63;
       sprite = &work->sprites[slot];
-      sprite->scaleX = Q16_ONE / 5;
-      sprite->scaleY = Q16_ONE / 5;
+      sprite->scaleX = FIXED_ONE / 5;
+      sprite->scaleY = FIXED_ONE / 5;
       particle = &work->particles[slot];
       SET_POSITION(particle, pos[0], pos[1], pos[2]);
-      Vector_AddPolarOffset(Random16() * 12 + px(9), Random16(), &particle->x);
+      Vector_AddPolarOffset(Random16() * 12 + toFIXED(9), Random16(),
+                            &particle->x);
       particle->sway = (Random16() << 5) >> 16;
       particle->swayRate = ((Random16() << 9) >> 16) + 256;
       particle->rise = Random16() + 0x3333;
@@ -373,8 +374,8 @@ void BattleEffect_PlotCanvasPixel(s32 x, s32 y, s32 color);
 /// upward.
 void Canvas_PlotPolarPixel(s32 unused, s32 radius, s32 angle, s32 color) {
   BattleEffect_PlotCanvasPixel(
-      63 - FIELD_PIXEL(Iwram_MulQ16(Trig_Cos(angle), radius)),
-      63 - FIELD_PIXEL(Iwram_MulQ16(Trig_Sin(angle), radius)), color);
+      63 - FIXEDtoINT(Iwram_MulFX(Trig_Cos(angle), radius)),
+      63 - FIXEDtoINT(Iwram_MulFX(Trig_Sin(angle), radius)), color);
 }
 
 extern const u16 gParch_PictureTiles[];

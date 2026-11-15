@@ -32,7 +32,7 @@
 #include "shop/shop.h"
 #include "sound/sound.h"
 #include "system/dma.h"
-#include "system/fixed_point_position.h"
+#include "system/point.h"
 #include "system/heap.h"
 #include "system/heap_release.h"
 #include "system/heap_slots.h"

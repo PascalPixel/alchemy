@@ -153,7 +153,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
       // UB: keep is left out, so the routine reads whatever r1 holds.
       ((void (*)())BattleObject_Reset)(BattleObject_Get(saved->unitId));
 #endif
-      BattleObject_Get(saved->unitId)->scale = Q16_ONE * 6 / 5;
+      BattleObject_Get(saved->unitId)->scale = FIXED_ONE * 6 / 5;
     }
   } else {
     saved->unitId = plan->unitId;
@@ -191,7 +191,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   Iwram_CopyWordsEntry(saved, BattleObject_Get(saved->unitId),
                        sizeof(struct BattleObject));
   BattleObject_Reset(BattleObject_Get(saved->unitId), single);
-  BattleObject_Get(saved->unitId)->scale = Q16_ONE * 6 / 5;
+  BattleObject_Get(saved->unitId)->scale = FIXED_ONE * 6 / 5;
   if (single)
     saved->buffer = Heap_AllocEwram(0x8000);
   else
@@ -212,8 +212,8 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   ids[0] = saved->unitId;
   ids[1] = BATTLE_UNIT_LIST_END;
   BattleObject_SpawnObjectsForList((s16 *)ids, 1, 0);
-  object->y = px(40);
-  object->angle = plan->targetIds[0] <= ALLY_MAX ? 0 : TRIG_TURN / 2;
+  object->y = toFIXED(40);
+  object->angle = plan->targetIds[0] <= ALLY_MAX ? 0 : DEGtoANG(180);
   BattleHighlight_SetSpriteMode(saved->unitId, 1);
   for (i = 0; i <= 29; i++) {
     object->y = (29 - i) * 3 << 16;
@@ -262,7 +262,7 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
     s32 fade;
 
     object->y = i << 18;
-    object->angle += TRIG_TURN / 8;
+    object->angle += DEGtoANG(45);
     fade = i * 2 - 16;
     if (fade < 0)
       fade = 0;
@@ -344,13 +344,13 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     battleObject->object->x = x;
     z = battleObject->anchorZ;
     battleObject->object->z = z;
-    angle = (u16)ArcTan2(x, z);
-    adjusted = angle - TRIG_TURN / 8;
+    angle = (u16)Trig_Atan(x, z);
+    adjusted = angle - DEGtoANG(45);
     if (actorId > ALLY_MAX)
       adjusted = angle + TRIG_TURN * 3 / 8;
   }
   adjusted &= 0x7fff;
-  facingAngle = (adjusted - TRIG_TURN / 8) / 2 + TRIG_TURN / 8;
+  facingAngle = (adjusted - DEGtoANG(45)) / 2 + DEGtoANG(45);
   if (view->targetYaw == facingAngle) {
     view->targetYaw = facingAngle;
     wait(1);
@@ -549,7 +549,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
 
       if (targetOrFadeIndex < 20) {
         u16 *palette = battle->palette;
-        s32 value = Q16_ONE - fade;
+        s32 value = FIXED_ONE - fade;
 
         battle->brightness = value;
         ColorBuffer_Scale(palette, (u32)BATTLE_BG_PALETTE, value,
@@ -557,7 +557,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
       }
       wait(1);
       targetOrFadeIndex++;
-      fade += Q16_ONE / 60;
+      fade += FIXED_ONE / 60;
     } while (targetOrFadeIndex < 20);
     if (plan->battleEffect & EFFECT_BY_ID_RANGE)
       BattleEffect_RunByIdRangeFar(&work);
@@ -665,7 +665,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     struct MotionObject *actor = BattleObject_Get(plan->unitId)->object;
     u32 target = plan->targetIds[0];
     u32 actorId = plan->unitId;
-    s32 angle = (u16)ArcTan2(actor->x, actor->z);
+    s32 angle = (u16)Trig_Atan(actor->x, actor->z);
     s32 targetYaw;
 
     if (actorId <= ALLY_MAX)

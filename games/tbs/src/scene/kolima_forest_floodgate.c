@@ -205,7 +205,7 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
       piece->priorityFlags =
           ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
       piece->motionFlags = 0;
-      piece->y.fixed = px(26);
+      piece->y.fixed = toFIXED(26);
 
       if (record->vertical != 0) {
         MapGrid_CopyCells(68, 40, 1, 4, record->x + 32, record->z);
@@ -447,8 +447,8 @@ s32 Scene_Initialize(void) {
   Actor_Get(ACTOR_FLOODGATE_SPRAY)->motionFlags = 0;
   actor = Actor_Get(ACTOR_SIGN);
   actor->radius = 8;
-  actor->scaleX = 3 * Q16_ONE / 4;
-  actor->scaleY = 3 * Q16_ONE / 4;
+  actor->scaleX = 3 * FIXED_ONE / 4;
+  actor->scaleY = 3 * FIXED_ONE / 4;
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0)
@@ -465,11 +465,11 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
 
   for (; entry->sprite != -1; entry++) {
     if (entry->vertical == 0) {
-      x = (entry->x << 20) + px(32);
+      x = (entry->x << 20) + toFIXED(32);
       z = FIELD_CELL_CENTER(entry->z);
     } else {
       x = FIELD_CELL_CENTER(entry->x);
-      z = (entry->z << 20) + px(32);
+      z = (entry->z << 20) + toFIXED(32);
     }
     actor = FieldActor_Create(entry->sprite, x, 0, z);
     if (actor == NULL)
@@ -479,8 +479,8 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
     Actor_SetSpriteFlags(actor, 0);
     actor->collisionFlags = 0;
     actor->radius = 32;
-    height = px(MapGrid_GetTerrainHeight(0, actor->x.part[0].pixel,
-                                         actor->z.part[0].pixel));
+    height = toFIXED(MapGrid_GetTerrainHeight(0, actor->x.part[0].integer,
+                                              actor->z.part[0].integer));
     actor->y.fixed += height;
     actor->groundHeight = height;
   }
@@ -571,46 +571,46 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   moved = 0;
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   facing = FACING_NEAREST_CARDINAL(actor->facing);
-  SET_VECTOR(point, (actor->x.fixed & FIELD_CELL_MASK) + px(8), actor->y.fixed,
-             (actor->z.fixed & FIELD_CELL_MASK) + px(8));
-  Vector_AddPolarOffset(px(16), facing, point);
-  run = KolimaForestFloodgate_FindLogAt(runs, point[0] / px(16),
-                                        point[2] / px(16));
+  SET_VECTOR(point, (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8),
+             actor->y.fixed, (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
+  Vector_AddPolarOffset(toFIXED(16), facing, point);
+  run = KolimaForestFloodgate_FindLogAt(runs, point[0] / toFIXED(16),
+                                        point[2] / toFIXED(16));
   if (run == NULL)
     return;
   for (i = 0; i <= 10; i++) {
     point[0] = run->x << 20;
     point[2] = run->z << 20;
-    Vector_AddPolarOffset(px(16), facing, point);
-    if (KolimaForestFloodgate_CheckLogFits(point[0] / px(16), point[2] / px(16),
-                                           run->vertical) != 0)
+    Vector_AddPolarOffset(toFIXED(16), facing, point);
+    if (KolimaForestFloodgate_CheckLogFits(
+            point[0] / toFIXED(16), point[2] / toFIXED(16), run->vertical) != 0)
       break;
     moved = 1;
     if (run->vertical == 0) {
-      x = point[0] + px(32);
-      z = point[2] + px(8);
+      x = point[0] + toFIXED(32);
+      z = point[2] + toFIXED(8);
     } else {
-      x = point[0] + px(8);
-      z = point[2] + px(32);
+      x = point[0] + toFIXED(8);
+      z = point[2] + toFIXED(32);
     }
-    run->x = point[0] / px(16);
-    run->z = point[2] / px(16);
+    run->x = point[0] / toFIXED(16);
+    run->z = point[2] / toFIXED(16);
   }
   if (moved == 0)
     return;
-  SET_VECTOR(point, (actor->x.fixed & FIELD_CELL_MASK) + px(8), actor->y.fixed,
-             (actor->z.fixed & FIELD_CELL_MASK) + px(8));
-  Vector_AddPolarOffset(px(8), facing, point);
+  SET_VECTOR(point, (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8),
+             actor->y.fixed, (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
+  Vector_AddPolarOffset(toFIXED(8), facing, point);
   actor = run->actor;
-  quarter = facing / (TRIG_TURN / 4);
+  quarter = facing / (DEGtoANG(90));
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(6);
-  actor->speedLimit = px(1) / 2;
-  actor->acceleration = px(1) / 5;
+  actor->speedLimit = toFIXED(1) / 2;
+  actor->acceleration = toFIXED(1) / 5;
   Sound_Play(SE_HEAVY_MOVE);
   Actor_SelectAnimation(actor, gKolimaForestFloodgate_PushAnimations[quarter]);
-  FieldActor_SetMoveTargetFixed(actor, x, 0, z);
+  FieldActor_SetMoveTargetFX(actor, x, 0, z);
   Event_Wait(6);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*work));

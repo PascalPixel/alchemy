@@ -26,7 +26,7 @@ enum DjinniLightState {
 
 /// Per-frame update: spins an actor 1/8 turn a frame.
 void FieldEffect_AdvanceSpinAngle(struct Actor *actor) {
-  actor->facing += TRIG_TURN / 8;
+  actor->facing += DEGtoANG(45);
 }
 
 // Objects: follow a watched object.
@@ -75,7 +75,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   djinni = Actor_GetById(djinniId);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  dir = (leader->facing + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
+  dir = (leader->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
   Event_Start();
   wait(10);
   Sound_PlayFar(SE_NOTE_LOW);
@@ -94,8 +94,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 #if TLA_PATCH_1
   Sound_PlayFar(SE_JUMP);
 #endif
-  djinni->gravity = px(1) / 4;
-  djinni->velocityY = px(9) / 2;
+  djinni->gravity = toFIXED(1) / 4;
+  djinni->velocityY = toFIXED(9) / 2;
   wait(33);
   ((struct Sprite *)djinni->sprite)->image.priority = 0;
 #if TLA_PATCH_1
@@ -148,13 +148,13 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   djinni->speedLimit = 0x4ccc;
   djinni->acceleration = 0x4ccc;
-  Actor_SetTargetPositionFromMagnitudeAngle(djinni, px(16),
-                                            dir + TRIG_TURN / 2);
+  Actor_SetTargetPositionFromMagnitudeAngle(djinni, toFIXED(16),
+                                            dir + DEGtoANG(180));
   Sound_PlayFar(LEAP_SOUND);
   Actor_Jump(djinniId, 6, 5);
   wait(24);
   for (i = 0; i < 120; i++) {
-    if (ABS(djinni->y.fixed - leader->y.fixed) < px(20))
+    if (ABS(djinni->y.fixed - leader->y.fixed) < toFIXED(20))
       break;
     wait(1);
   }
@@ -168,7 +168,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   Actor_SelectAnimationFar(djinni, 0);
   ((struct Sprite *)djinni->sprite)->image.priority = 2;
 #if TLA_PATCH_1
-  djinni->gravity = px(1);
+  djinni->gravity = toFIXED(1);
 #endif
   Event_End();
 }
@@ -263,7 +263,7 @@ void Djinn_RestoreActorAfterBattle(void) {
 
           Actor_SetPositionAndResetMotionFar(obj, selection->x.fixed,
                                              selection->y.fixed,
-                                             selection->z.fixed - px(32));
+                                             selection->z.fixed - toFIXED(32));
         }
         Actor_SelectAnimationFar(obj, ANIM_STAND);
       }
@@ -372,7 +372,7 @@ void FieldEffect_ReleaseSlots(void) {
 /// Per-frame update of a joining Venus or Jupiter Djinni: spins it an eighth of
 /// a turn, as FieldEffect_AdvanceSpinAngle does.
 void Djinn_AdvanceSpinAngle(struct Actor *djinni) {
-  djinni->facing += TRIG_TURN / 8;
+  djinni->facing += DEGtoANG(45);
 }
 
 /// Field effect sprite callback of a Jupiter Djinni's light particles: each
@@ -401,7 +401,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
     }
   } else if (particle->state == DJINNI_LIGHT_DRIFTING) {
     particle->orbitAngle += 1;
-    SET_POSITION(&position, owner->x.fixed, owner->y.fixed + 20 * Q16_ONE,
+    SET_POSITION(&position, owner->x.fixed, owner->y.fixed + 20 * FIXED_ONE,
                  owner->z.fixed);
     Camera_WorldToScreen(&position);
     particle->originX += (position.x - particle->originX) / 8;
@@ -422,8 +422,8 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   }
   position.x = particle->originX;
   position.z = particle->originZ;
-  Vector_AddPolarOffset(px(particle->orbitRadius), particle->orbitAngle << 11,
-                        &position);
+  Vector_AddPolarOffset(INTtoFIXED(particle->orbitRadius),
+                        particle->orbitAngle << 11, &position);
   particle->x = position.x;
   particle->z = position.z;
 }

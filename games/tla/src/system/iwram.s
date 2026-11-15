@@ -67,8 +67,8 @@ gResetRequested:
 	.global gDebugTextCursor
 gDebugTextCursor:
 	.space 0x00000008
-	.global gTransformStackDepth
-gTransformStackDepth:
+	.global gMatrixStackDepth
+gMatrixStackDepth:
 	.space 0x00000004
 	.global gSleepRequested
 gSleepRequested:
@@ -115,8 +115,8 @@ gIdleFrames:
 	.global gVBlankDone
 gVBlankDone:
 	.space 0x00000004
-	.global gTransformStackTop
-gTransformStackTop:
+	.global gMatrixStackTop
+gMatrixStackTop:
 	.space 0x00000008
 	.global gTasksInitialized
 gTasksInitialized:

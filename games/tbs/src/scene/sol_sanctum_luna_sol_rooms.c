@@ -379,7 +379,7 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     // Kraden hurries out of the leader to the symbol on the floor.
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFX(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetSpeed(ACTOR_KRADEN, 1.4);
     Actor_WalkToAndWait(ACTOR_KRADEN, 288, 206);
@@ -391,11 +391,11 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     // Garet and Jenna step out behind the leader.
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFX(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
     }
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFX(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetSpeed(ACTOR_GARET, 0.5);
     Actor_SetSpeed(ACTOR_JENNA, 0.5);
@@ -533,7 +533,7 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFX(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
   }
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 1);
   Actor_SetSpeed(ACTOR_KRADEN, 1);
@@ -617,18 +617,18 @@ static void SolSanctumLunaSolRooms_KradenStopsPartyLeaving(void) {
       GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFX(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
     }
     Event_Wait(4);
     Actor_SetSpeed(ACTOR_KRADEN, 1);
   } else if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
-             kraden->x.fixed > px(340)) {
+             kraden->x.fixed > toFIXED(340)) {
     Actor_SetPosition(ACTOR_KRADEN, 392, 168);
     Event_Wait(4);
     Actor_SetSpeed(ACTOR_KRADEN, 2);
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
-      kraden->x.fixed > px(340)) {
+      kraden->x.fixed > toFIXED(340)) {
     Actor_WalkToAndWait(ACTOR_KRADEN, 288, 232);
   } else {
     // The result is unused.
@@ -1145,14 +1145,14 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     frame = 0;
     sprite->flags = 0;
     do {
-      actor->y.fixed += px(1) / 5;
+      actor->y.fixed += toFIXED(1) / 5;
       wait(1);
       frame++;
     } while (frame != 120);
     Sound_Play(SE_WARP);
     for (frame = 0; frame != 60; frame++) {
-      actor->y.fixed += px(1) / 10;
-      sprite->scale -= Q16_ONE / 64;
+      actor->y.fixed += toFIXED(1) / 10;
+      sprite->scale -= FIXED_ONE / 64;
       wait(1);
     }
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -1178,14 +1178,14 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     sprite = actor->sprite;
     sprite->flags = 0;
     do {
-      actor->y.fixed += px(1) / 5;
+      actor->y.fixed += toFIXED(1) / 5;
       wait(1);
       frame++;
     } while (frame != 120);
     Sound_Play(SE_WARP);
     for (frame = 0; frame != 60; frame++) {
-      actor->y.fixed += px(1) / 10;
-      sprite->scale -= Q16_ONE / 64;
+      actor->y.fixed += toFIXED(1) / 10;
+      sprite->scale -= FIXED_ONE / 64;
       wait(1);
     }
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);

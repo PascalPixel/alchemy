@@ -207,8 +207,8 @@ static void BabiLighthouse_LandWithParticles(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = px(130);
-  Actor_Get(ACTOR_PARTY_LEADER)->gravity = px(1) / 2;
+  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = toFIXED(130);
+  Actor_Get(ACTOR_PARTY_LEADER)->gravity = toFIXED(1) / 2;
   Actor_Get(ACTOR_PARTY_LEADER)->bounce = 0;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Event_StartScreenTransition();
@@ -221,8 +221,8 @@ static void BabiLighthouse_LandWithParticles(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   options.palette = SPRITE_COLOR_WHITE;
   options.update = (void (*)(struct Actor *))FieldEffect_AdvanceMotion;
-  options.startScaleX = 4 * Q16_ONE / 5;
-  options.startScaleY = 4 * Q16_ONE / 5;
+  options.startScaleX = 4 * FIXED_ONE / 5;
+  options.startScaleY = 4 * FIXED_ONE / 5;
   for (particle = 0; particle < 17; particle++) {
     SET_VECTOR(velocity, Trig_Cos(particle * FACING_STEP), 0,
                Trig_Sin(particle * FACING_STEP));
@@ -242,8 +242,8 @@ static void BabiLighthouse_LandWithParticles(void) {
   MapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  Actor_Get(ACTOR_PARTY_LEADER)->gravity = px(1);
-  Actor_Get(ACTOR_PARTY_LEADER)->bounce = Q16_ONE / 4;
+  Actor_Get(ACTOR_PARTY_LEADER)->gravity = toFIXED(1);
+  Actor_Get(ACTOR_PARTY_LEADER)->bounce = FIXED_ONE / 4;
   Event_End();
 }
 
@@ -254,8 +254,8 @@ static void BabiLighthouse_FallToExit(s32 exit) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = px(130);
-  Actor_Get(ACTOR_PARTY_LEADER)->gravity = px(1) / 4;
+  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = toFIXED(130);
+  Actor_Get(ACTOR_PARTY_LEADER)->gravity = toFIXED(1) / 4;
   Actor_Get(ACTOR_PARTY_LEADER)->bounce = 0;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
@@ -265,7 +265,7 @@ static void BabiLighthouse_FallToExit(s32 exit) {
   Sound_Play(SE_DUST_PUFF);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = -px(5);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = -toFIXED(5);
   Actor_WaitUntilIdle(Actor_Get(ACTOR_PARTY_LEADER));
   Actor_SetSpriteColorById(ACTOR_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   Import_EventSetExitRequest(exit);
@@ -449,8 +449,8 @@ static inline void BabiLighthouse_WalkBackToLeader(s32 actorId) {
   Actor_SetAnimation(actorId, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(actorId, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(actorId, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   }
   Actor_WaitForMoveById(actorId);
   Actor_SetPosition(actorId, 0, 0);
@@ -1120,7 +1120,7 @@ static inline void BabiLighthouse_FindCellAhead(struct FieldPosition *ahead,
 
   // A step holds its x pixels in the high halfword and its z in the low.
   ahead->x = actor->x.fixed + (step & -0x10000);
-  ahead->z = actor->z.fixed + px(step);
+  ahead->z = actor->z.fixed + INTtoFIXED(step);
   ahead->y = MapGrid_GetTerrainHeight(actor->layer, ahead->x, ahead->z);
 }
 
@@ -1150,7 +1150,7 @@ static void BabiLighthouse_UpdateMovedPillar(void) {
 
     if (row == 12) {
       pillar->motionFlags = ACTOR_FALLS;
-      pillar->groundHeight = px(48);
+      pillar->groundHeight = toFIXED(48);
       pillar->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       {
         s32 targetColumn = column, targetRow = row;
@@ -1175,8 +1175,8 @@ static void BabiLighthouse_PushRoadPillar(void) {
   heightDifference = ahead->y.fixed - leader->y.fixed;
 
   // Either way up, 8 pixels or more apart is too far to push.
-  if (heightDifference >= 0 ? heightDifference >= px(8)
-                            : leader->y.fixed - ahead->y.fixed >= px(8))
+  if (heightDifference >= 0 ? heightDifference >= toFIXED(8)
+                            : leader->y.fixed - ahead->y.fixed >= toFIXED(8))
     return;
 
   PushedActor_AdvancePair();
@@ -1350,7 +1350,7 @@ s32 Scene_Initialize(void) {
     placedActor->wait = 30;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = 0;
-    placedActor->sprite->rotation = TRIG_TURN / 4;
+    placedActor->sprite->rotation = DEGtoANG(90);
     Actor_SetAnimation(ACTOR_FALLEN_STRONGMAN_ONLY_TWO, ANIM_STILL);
     placedActor = Actor_Get(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE);
     placedActor->collisionFlags = 0;
@@ -1358,7 +1358,7 @@ s32 Scene_Initialize(void) {
     placedActor->wait = 60;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = 0;
-    placedActor->sprite->rotation = TRIG_TURN / 2;
+    placedActor->sprite->rotation = DEGtoANG(180);
     Actor_SetAnimation(ACTOR_FALLEN_SOLDIER_KICKED_ASIDE, ANIM_STILL);
     placedActor = Actor_Get(ACTOR_FALLEN_MAN_SCORCHED_GROUND);
     placedActor->collisionFlags = 0;
@@ -1366,7 +1366,7 @@ s32 Scene_Initialize(void) {
     placedActor->wait = 90;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = 0;
-    placedActor->sprite->rotation = TRIG_TURN / 2;
+    placedActor->sprite->rotation = DEGtoANG(180);
     Actor_SetAnimation(ACTOR_FALLEN_MAN_SCORCHED_GROUND, ANIM_STILL);
   } else if (mapCopy == SCENE_BABI_LIGHTHOUSE_LUFF) {
     // Match the arrival effect and fall to the entrance used in this
@@ -1471,32 +1471,32 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gBabiLighthouse_TrembleScript[] = {
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(4),
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(120),
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TO(1)),

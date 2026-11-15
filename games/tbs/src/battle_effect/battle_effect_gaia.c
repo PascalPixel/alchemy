@@ -32,7 +32,7 @@ enum EarthWallSheetPicture {
 ///
 /// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche.
 void BattleEffect_RunGaia(struct BattleEffectParams *args) {
-  static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
+  static struct SpriteScale unitScale = {{{FIXED_ONE, FIXED_ONE}}};
   struct BattleEffectWork *work;
   void *canvas;
   BlitterPair draw;
@@ -158,8 +158,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   for (i = 0; i != GAIA_DUST; i++) {
     struct Particle *dust = &PARTICLES[i];
 
-    dust->x = px((Random16() & 63) + wallX + 32);
-    dust->y = px((Random16() & 7) + 96);
+    dust->x = INTtoFIXED((Random16() & 63) + wallX + 32);
+    dust->y = INTtoFIXED((Random16() & 7) + 96);
     dust->velocityY = ((Random16() & 63) + 32) << 13;
     dust->variant = Random16() & 31;
   }
@@ -244,11 +244,11 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
         if (dust->variant == 0) {
           s32 size = (i & 3) + 5;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sprites, WHOLE_PIXELS(dust->x),
-                           WHOLE_PIXELS(dust->y), size);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sprites, FIXEDtoINT(dust->x),
+                           FIXEDtoINT(dust->y), size);
           dust->y -= dust->velocityY;
           if (dust->y < 0 && frame < GAIA_WALL_SINK_FRAME)
-            dust->y = px(96);
+            dust->y = toFIXED(96);
         } else {
           dust->variant--;
         }
@@ -270,16 +270,16 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
           // the ROM keeps the copy.
           scale = unitScale;
           if (frame > 71) {
-            scale.x = (k << 12) + Q16_ONE / 2;
+            scale.x = (k << 12) + FIXED_ONE / 2;
             scale.x += work->args->variant << 14;
           } else {
-            scale.x = Q16_ONE / 2;
+            scale.x = FIXED_ONE / 2;
           }
           scale.y = scale.x;
           position.groundHeight = 0;
-          position.x = px(rock->x + rockX * 2);
-          position.height = px(512) - px(rock->y);
-          position.y = px(512);
+          position.x = INTtoFIXED(rock->x + rockX * 2);
+          position.height = toFIXED(512) - INTtoFIXED(rock->y);
+          position.y = toFIXED(512);
           slot = (frame / 2 + k) % 11;
           // DEAD: slot != -1 always holds, slot being a remainder of a
           // positive count; the ROM keeps the test.

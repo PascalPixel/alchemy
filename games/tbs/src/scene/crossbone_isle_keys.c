@@ -190,7 +190,7 @@ static inline void MapLocalState_StoreStep(s16 *field, s32 step) {
 static inline void LiftPillar(s32 column, u8 motionFlags) {
   MapGrid_CopyCellAttributes(61, 36, 1, 1, column, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->motionFlags = motionFlags;
-  Actor_Get(ACTOR_FIRST_PILLAR)->y.fixed = px(32);
+  Actor_Get(ACTOR_FIRST_PILLAR)->y.fixed = toFIXED(32);
 }
 
 #include "shared/staged_actor.c"
@@ -247,8 +247,8 @@ static UNREAD_RESULT
 CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *actor) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  actor->facing = ArcTan2(leader->z.fixed - actor->z.fixed,
-                          leader->x.fixed - actor->x.fixed);
+  actor->facing = Trig_Atan(leader->z.fixed - actor->z.fixed,
+                            leader->x.fixed - actor->x.fixed);
   RETURN_UNREAD(0);
 }
 
@@ -268,7 +268,7 @@ static void CrossboneIsleKeys_BaneFirstEscape(void) {
     Event_Wait(20);
     Actor_SetSpeed(ACTOR_BANE, 1);
     Sound_Play(SE_JUMP);
-    Actor_Get(ACTOR_BANE)->velocityY = px(8);
+    Actor_Get(ACTOR_BANE)->velocityY = toFIXED(8);
     Actor_WalkToAndWait(ACTOR_BANE, 584, 680);
     Actor_FaceDirection(ACTOR_BANE, FACING_SOUTH, 20);
     Event_End();
@@ -296,7 +296,7 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
       Event_Wait(20);
       Actor_SetSpeed(ACTOR_BANE, 1);
       Sound_Play(SE_JUMP);
-      Actor_Get(ACTOR_BANE)->velocityY = px(10);
+      Actor_Get(ACTOR_BANE)->velocityY = toFIXED(10);
       Actor_WalkToAndWait(ACTOR_BANE, 584, 664);
       Actor_FaceDirection(ACTOR_BANE, FACING_SOUTH, 20);
       Actor_SetAttachedEffect(ACTOR_BANE,
@@ -340,7 +340,7 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
     djinni->sprite->rotation = 0;
     Actor_SetAnimationSpeed(djinni, 16);
     Sound_Play(SE_JUMP);
-    Actor_Get(ACTOR_BANE)->velocityY = px(8);
+    Actor_Get(ACTOR_BANE)->velocityY = toFIXED(8);
     Actor_FaceDirection(ACTOR_BANE, FACING_WEST, 30);
     Actor_SetAttachedEffect(ACTOR_BANE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -348,7 +348,7 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
     Event_Wait(20);
     Actor_SetSpeed(ACTOR_BANE, 1);
     Sound_Play(SE_JUMP);
-    Actor_Get(ACTOR_BANE)->velocityY = px(4);
+    Actor_Get(ACTOR_BANE)->velocityY = toFIXED(4);
     Actor_WalkToAndWait(ACTOR_BANE, 880, 680);
     Event_Wait(10);
     Actor_SetAttachedEffect(ACTOR_BANE,
@@ -595,8 +595,8 @@ static void CrossboneIsleKeys_CatchRedKey(void) {
 /// Starts the first chase when an uncloaked leader enters its area.
 static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 column = leader->x.fixed / px(16);
-  s32 row = leader->z.fixed / px(16);
+  s32 column = leader->x.fixed / toFIXED(16);
+  s32 row = leader->z.fixed / toFIXED(16);
   struct FieldWork *work = gFieldWork;
 
   if (!Event_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) &&
@@ -619,8 +619,8 @@ static void CrossboneIsleKeys_DodgeFirstPursuer(void) {
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_FIRST_STATUE, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_FIRST_STATUE, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_FIRST_STATUE);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 24);
@@ -637,8 +637,8 @@ static void CrossboneIsleKeys_DodgeFirstPursuer(void) {
 /// Starts the second chase when the leader enters column ten.
 static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 column = leader->x.fixed / px(16);
-  s32 row = leader->z.fixed / px(16);
+  s32 column = leader->x.fixed / toFIXED(16);
+  s32 row = leader->z.fixed / toFIXED(16);
   struct FieldWork *work = gFieldWork;
 
   if (Event_GetFlag(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER) == 0 &&
@@ -661,8 +661,8 @@ static void CrossboneIsleKeys_DodgeSecondPursuer(void) {
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_SECOND_STATUE, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_SECOND_STATUE, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_SECOND_STATUE);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
@@ -679,8 +679,8 @@ static void CrossboneIsleKeys_DodgeSecondPursuer(void) {
 /// Moves a pursuer to the leader column and remembers its last column.
 static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 column = leader->x.fixed / px(16);
-  s32 row = leader->z.fixed / px(16);
+  s32 column = leader->x.fixed / toFIXED(16);
+  s32 row = leader->z.fixed / toFIXED(16);
   s32 pursuerId = pursuerIndex + ACTOR_THIRD_STATUE;
 
   if (gMainRoutineWork.haltedActor == pursuerId)
@@ -729,8 +729,8 @@ static void CrossboneIsleKeys_DodgeThirdPursuer(void) {
     Sound_Play(SE_THUMP);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetDestination(ACTOR_THIRD_STATUE, leader->x.part[0].pixel,
-                           leader->z.part[0].pixel);
+      Actor_SetDestination(ACTOR_THIRD_STATUE, leader->x.part[0].integer,
+                           leader->z.part[0].integer);
     }
     Actor_WaitForMoveById(ACTOR_THIRD_STATUE);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
@@ -755,19 +755,19 @@ static void CrossboneIsleKeys_DodgeFourthPursuer(void) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.7);
     Actor_SetSpeed(ACTOR_FOURTH_STATUE, 1.7);
     Sound_Play(SE_THUMP);
-    if (Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / px(16) >
-        Actor_Get(ACTOR_FOURTH_STATUE)->x.fixed / px(16)) {
+    if (Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / toFIXED(16) >
+        Actor_Get(ACTOR_FOURTH_STATUE)->x.fixed / toFIXED(16)) {
       Actor_SetDestinationOffset(ACTOR_FOURTH_STATUE, 8, 0);
     }
-    if (Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / px(16) <
-        Actor_Get(ACTOR_FOURTH_STATUE)->x.fixed / px(16)) {
+    if (Actor_Get(ACTOR_PARTY_LEADER)->x.fixed / toFIXED(16) <
+        Actor_Get(ACTOR_FOURTH_STATUE)->x.fixed / toFIXED(16)) {
       Actor_SetDestinationOffset(ACTOR_FOURTH_STATUE, -8, 0);
     }
     Actor_WaitForMoveById(ACTOR_FOURTH_STATUE);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetDestination(ACTOR_FOURTH_STATUE, leader->x.part[0].pixel,
-                           leader->z.part[0].pixel);
+      Actor_SetDestination(ACTOR_FOURTH_STATUE, leader->x.part[0].integer,
+                           leader->z.part[0].integer);
     }
     Actor_WaitForMoveById(ACTOR_FOURTH_STATUE);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
@@ -785,8 +785,8 @@ static void CrossboneIsleKeys_DodgeFourthPursuer(void) {
 /// Starts the fifth chase when the leader enters column nineteen.
 static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  s32 column = leader->x.fixed / px(16);
-  s32 row = leader->z.fixed / px(16);
+  s32 column = leader->x.fixed / toFIXED(16);
+  s32 row = leader->z.fixed / toFIXED(16);
   struct FieldWork *work = gFieldWork;
   struct MainRoutineWork *state = &gMainRoutineWork;
 
@@ -809,8 +809,8 @@ static void CrossboneIsleKeys_DodgeFifthPursuer(void) {
   Sound_Play(SE_THUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_FIFTH_STATUE, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_FIFTH_STATUE, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_FIFTH_STATUE);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, CROSSBONE_LEADER_STEP_Z);
@@ -944,7 +944,7 @@ static void CrossboneIsleKeys_MoveFirstPillar(void) {
   struct Actor *actor = Actor_Get(ACTOR_FIRST_PILLAR);
   s32 x = actor->x.fixed;
   s32 height = actor->y.fixed;
-  s32 column = x / px(16);
+  s32 column = x / toFIXED(16);
 
   if (height == 0) {
     Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -971,8 +971,8 @@ static void CrossboneIsleKeys_MoveFirstPillar(void) {
 static void CrossboneIsleKeys_PushFirstPillar(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *pillar = Actor_Get(ACTOR_FIRST_PILLAR);
-  s32 leaderColumn = leader->x.fixed / px(16);
-  s32 pillarColumn = pillar->x.fixed / px(16);
+  s32 leaderColumn = leader->x.fixed / toFIXED(16);
+  s32 pillarColumn = pillar->x.fixed / toFIXED(16);
 
   if (leaderColumn == 38 && pillarColumn != 38) {
     u16 facing = leader->facing;
@@ -1009,8 +1009,8 @@ static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
 /// at the ladder cell once the pillar reaches it.
 static void CrossboneIsleKeys_MoveSecondPillar(void) {
   struct Actor *pillar = Actor_Get(ACTOR_SECOND_PILLAR);
-  s32 column = pillar->x.fixed / px(16);
-  s32 row = pillar->z.fixed / px(16);
+  s32 column = pillar->x.fixed / toFIXED(16);
+  s32 row = pillar->z.fixed / toFIXED(16);
 
   if (column == 45 && row == 43) {
     CrossboneIsleKeys_ReleaseSecondPillarChest();
@@ -1045,9 +1045,9 @@ static void CrossboneIsleKeys_RestoreThirdPillarEastCell(void) {
 /// from its height and destination.
 static void CrossboneIsleKeys_MoveThirdPillar(void) {
   struct Actor *pillar = Actor_Get(ACTOR_THIRD_PILLAR);
-  s32 heightCells = pillar->y.fixed / px(16);
-  s32 column = pillar->x.fixed / px(16);
-  s32 row = pillar->z.fixed / px(16);
+  s32 heightCells = pillar->y.fixed / toFIXED(16);
+  s32 column = pillar->x.fixed / toFIXED(16);
+  s32 row = pillar->z.fixed / toFIXED(16);
 
   if (!Event_GetFlag(FLAG_CROSSBONE_ISLE_THIRD_PILLAR_LOWERED) &&
       heightCells <= 2) {
@@ -1101,10 +1101,10 @@ static void CrossboneIsleKeys_RepaintFourthAndFifthPillarCells(void) {
   CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain();
 
   pillar = Actor_Get(ACTOR_FOURTH_PILLAR);
-  column = pillar->x.fixed / px(16);
+  column = pillar->x.fixed / toFIXED(16);
   MapGrid_CopyCellAttributes(53, 55, 1, 1, column, 55);
   pillar = Actor_Get(ACTOR_FIFTH_PILLAR);
-  column = pillar->x.fixed / px(16);
+  column = pillar->x.fixed / toFIXED(16);
   MapGrid_CopyCellAttributes(53, 55, 1, 1, column, 55);
 }
 
@@ -1140,16 +1140,17 @@ static void CrossboneIsleKeys_FollowSecondPillar(void) {
   struct Actor *target = Actor_Get(ACTOR_SECOND_PILLAR_CHEST);
   struct Actor *source = Actor_Get(ACTOR_SECOND_PILLAR);
 
-  target->y.fixed = px(32);
+  target->y.fixed = toFIXED(32);
   target->x.fixed = source->x.fixed;
-  target->z.fixed = source->z.fixed + px(1);
+  target->z.fixed = source->z.fixed + toFIXED(1);
 }
 
 /// Puts the chest's examine trigger 107 where the second pillar stands.
 static void CrossboneIsleKeys_PositionSecondPillarMarker(void) {
   struct Actor *frame = Actor_Get(ACTOR_SECOND_PILLAR);
 
-  TreasureSpot_SetActorPosition(107, frame->x.fixed, frame->z.fixed + px(1));
+  TreasureSpot_SetActorPosition(107, frame->x.fixed,
+                                frame->z.fixed + toFIXED(1));
 }
 
 /// Chooses pillar drawing priorities from the leader height and row.
@@ -1157,7 +1158,7 @@ static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   u8 priority;
 
-  if (leader->y.fixed > px(16)) {
+  if (leader->y.fixed > toFIXED(16)) {
     priority = ACTOR_PRIORITY_UNDERFOOT;
     Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = priority;
     if (Actor_Get(ACTOR_THIRD_PILLAR)->y.fixed == 0)
@@ -1165,7 +1166,7 @@ static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
     Actor_Get(ACTOR_FOURTH_PILLAR)->priorityFlags = priority;
   } else {
     if (Actor_Get(ACTOR_THIRD_PILLAR)->y.fixed == 0 &&
-        Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / px(16) > 56) {
+        Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / toFIXED(16) > 56) {
       Actor_SetSpritePriority(ACTOR_THIRD_PILLAR, 3);
     } else {
       Actor_SetSpritePriority(ACTOR_THIRD_PILLAR, 1);
@@ -1286,11 +1287,11 @@ static void CrossboneIsleKeys_InitializeStatues(void) {
   Actor_Get(ACTOR_SECOND_STATUE)->collisionFlags = ACTOR_SOLID;
   Actor_Get(ACTOR_THIRD_STATUE)->collisionFlags = ACTOR_SOLID;
   Actor_Get(ACTOR_FOURTH_STATUE)->collisionFlags = ACTOR_SOLID;
-  Actor_Get(ACTOR_FIRST_STATUE)->scaleX = 7 * Q16_ONE / 10;
-  Actor_Get(ACTOR_SECOND_STATUE)->scaleX = 7 * Q16_ONE / 10;
-  Actor_Get(ACTOR_THIRD_STATUE)->scaleX = 7 * Q16_ONE / 10;
-  Actor_Get(ACTOR_FOURTH_STATUE)->scaleX = 7 * Q16_ONE / 10;
-  Actor_Get(ACTOR_FIFTH_STATUE)->scaleX = 7 * Q16_ONE / 10;
+  Actor_Get(ACTOR_FIRST_STATUE)->scaleX = 7 * FIXED_ONE / 10;
+  Actor_Get(ACTOR_SECOND_STATUE)->scaleX = 7 * FIXED_ONE / 10;
+  Actor_Get(ACTOR_THIRD_STATUE)->scaleX = 7 * FIXED_ONE / 10;
+  Actor_Get(ACTOR_FOURTH_STATUE)->scaleX = 7 * FIXED_ONE / 10;
+  Actor_Get(ACTOR_FIFTH_STATUE)->scaleX = 7 * FIXED_ONE / 10;
   Task_AddOrUpdateFrame(CrossboneIsleKeys_CheckFifthPursuerTrigger,
                         TASK_PASS_FRAME);
   Task_AddOrUpdateFrame(CrossboneIsleKeys_CheckSecondPursuerTrigger,
@@ -1350,29 +1351,29 @@ static void CrossboneIsleKeys_InitializeBane(void) {
 // clang-format off
 
 s32 gCrossboneIsleKeys_BaneSquashScript[] = {
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(4),
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(64),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

@@ -95,21 +95,21 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
     // The quads start above the screen (or at the target for mode 2), each
     // with its own heading, spin and size.
     if (frame == 0) {
-      height = -px(32);
+      height = -toFIXED(32);
       for (i = 0; i != 32; i++) {
         quad = &work->particles[i];
         quad->x = Random16() & TRIG_ANGLE_MASK;
         Random16();
-        quad->z = px(1);
+        quad->z = toFIXED(1);
         if (mode == TUMBLING_QUADS_PHOENIX)
-          quad->y = px(32);
+          quad->y = toFIXED(32);
         else
           quad->y = height;
         quad->velocityY = ((Random16() & TRIG_ANGLE_MASK) << 1) + 0x10000;
         quad->velocityX = Random16() & TRIG_ANGLE_MASK;
         quad->velocityZ = Random16() & TRIG_ANGLE_MASK;
         quad->variant = (Random16() & 0x3fff) + 0x2000;
-        height += -px(4);
+        height += -toFIXED(4);
       }
     }
 
@@ -126,8 +126,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
     // after frame 32, and a fan of light lines spreads from the canvas's
     // middle while the canvas fades.
     if (args->prelude == 1) {
-      x = (Q_16_16_TO_INT(-Trig_Sin(frame << 11) * 20)) + 44;
-      y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4)) + anchor[1] - 24;
+      x = (FIXEDtoINT(-Trig_Sin(frame << 11) * 20)) + 44;
+      y = (FIXEDtoINT(Trig_Cos(frame << 11) * 4)) + anchor[1] - 24;
       if (frame > 32)
         y = y - frame * 4 + 128;
       draws[0](canvas, work->sheet + SHEET_DJINN, x, y, DJINNI_WIDTH,
@@ -147,8 +147,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
         i = 0;
         angle = frame << 9;
         for (; i != 16; i++) {
-          lineX = (Q_16_16_TO_INT(Trig_Sin(angle) * frame)) + 64;
-          lineY = (Q_16_16_TO_INT((Trig_Cos(angle) * frame) / 8)) - 16;
+          lineX = (FIXEDtoINT(Trig_Sin(angle) * frame)) + 64;
+          lineY = (FIXEDtoINT((Trig_Cos(angle) * frame) / 8)) - 16;
           draws[0](canvas, work->sheet, lineX, lineY, 1, 128);
           angle += TRIG_TURN / 16;
         }
@@ -157,7 +157,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
 
     // The quads: each a render job of one textured face, placed by its own
     // translation, scale, pitch and roll.
-    Transform_Reset();
+    Matrix_Initialize();
     gProjection.centerY = 104;
     // DEAD: frame never passes 63 here; the ROM keeps the compare and branch.
     if (frame <= 63) {
@@ -187,25 +187,25 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
           s32 across;
           s32 deep;
 
-          Transform_Reset();
-          Transform_ApplyPitch(3000);
+          Matrix_Initialize();
+          Matrix_RotateX(3000);
           if (mode == TUMBLING_QUADS_PHOENIX)
             quad->y -= quad->velocityY;
           else
             quad->y += quad->velocityY;
-          if (quad->velocityY < -px(2))
-            quad->z += px(1);
+          if (quad->velocityY < -toFIXED(2))
+            quad->z += toFIXED(1);
           else
-            quad->z += px(3) / 4;
+            quad->z += toFIXED(3) / 4;
           across = Trig_Sin(quad->x) * ((s16 *)&quad->z)[1];
           deep = Trig_Cos(quad->x) * ((s16 *)&quad->z)[1];
           quad->x += 0x200;
-          Transform_ApplyTranslation(across, quad->y, deep);
-          Transform_ApplyAxisScale(scale, scale, scale);
-          Transform_ApplyPitch(quad->velocityX);
-          Transform_ApplyRoll(quad->velocityZ);
-          quad->velocityX += px(1) / 64;
-          quad->velocityZ += px(1) / 64;
+          Matrix_Translate(across, quad->y, deep);
+          Matrix_Scale(scale, scale, scale);
+          Matrix_RotateX(quad->velocityX);
+          Matrix_RotateZ(quad->velocityZ);
+          quad->velocityX += toFIXED(1) / 64;
+          quad->velocityZ += toFIXED(1) / 64;
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                    4);
           Render_DrawModelList(job);
@@ -357,9 +357,9 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     }
     if (frame == 0) {
       transition[4] = 1;
-      position.x = px(240);
-      position.y = px(64);
-      velocity.x = -px(20);
+      position.x = toFIXED(240);
+      position.y = toFIXED(64);
+      velocity.x = -toFIXED(20);
       velocity.y = 0;
       for (i = 0; i != ZAGAN_PARTS; i++) {
         Sprite_StartAnimationFar(work->sprites[i], i + 12);
@@ -417,18 +417,18 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       }
     }
     if ((u32)(frame - 64) <= 35) {
-      velocity.x += px(1) / 2;
-      velocity.y += -px(1) / 16;
+      velocity.x += toFIXED(1) / 2;
+      velocity.y += -toFIXED(1) / 16;
     }
     if (frame > 177) {
-      velocity.x += -px(2);
-      velocity.y += -px(1);
+      velocity.x += -toFIXED(2);
+      velocity.y += -toFIXED(1);
     } else if (frame > 139) {
       velocity.x += -40000;
-      velocity.y += px(1) / 8;
+      velocity.y += toFIXED(1) / 8;
     } else if (frame > 99) {
-      velocity.x += -px(1) / 8;
-      velocity.y += px(1) / 32;
+      velocity.x += -toFIXED(1) / 8;
+      velocity.y += toFIXED(1) / 32;
     }
     if (frame == 156) {
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
@@ -497,15 +497,18 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     if (!(frame & 1) || !skip) {
       if (frame > 156) {
         for (i = 0; i != ZAGAN_PARTS - 1; i++) {
-          placement[0] = px(gZagan_ChargePoints[i][0]) + position.x - px(32);
-          placement[2] = px(gZagan_ChargePoints[i][1]) + position.y + px(16);
+          placement[0] =
+              INTtoFIXED(gZagan_ChargePoints[i][0]) + position.x - toFIXED(32);
+          placement[2] =
+              INTtoFIXED(gZagan_ChargePoints[i][1]) + position.y + toFIXED(16);
           Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
                                             (s32 *)&request, 0);
         }
       } else {
         for (i = 0; i != ZAGAN_PARTS; i++) {
-          placement[0] = px(gZagan_GallopPoints[i][0]) + position.x;
-          placement[2] = px(gZagan_GallopPoints[i][1]) + position.y - px(16);
+          placement[0] = INTtoFIXED(gZagan_GallopPoints[i][0]) + position.x;
+          placement[2] =
+              INTtoFIXED(gZagan_GallopPoints[i][1]) + position.y - toFIXED(16);
           Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
                                             (s32 *)&request, 0);
         }
@@ -536,8 +539,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     }
     if ((!(frame & 1) || !skip) && frame <= 119) {
       blit[1](canvas, work->sheet + ((frame / 3) & 3) * 6000,
-              (Q_16_16_TO_INT(position.x / 2)) - 12,
-              (Q_16_16_TO_INT(position.y)) - 58, 60, 100);
+              (FIXEDtoINT(position.x / 2)) - 12, (FIXEDtoINT(position.y)) - 58,
+              60, 100);
     }
     if (frame == 157) {
       Resource_LoadAndDecompress((s32)&ResourceId_FlameBandTexture, ringPixels,
@@ -573,8 +576,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         if (frame <= start) {
           continue;
         }
-        scale =
-            (((frame - start) * gZagan_RingGrowth[k] * 125) << 4) + Q16_ONE / 2;
+        scale = (((frame - start) * gZagan_RingGrowth[k] * 125) << 4) +
+                FIXED_ONE / 2;
         shade = (start - frame) * 8 + 56;
         if (shade > 0) {
           shade = 0;
@@ -583,10 +586,10 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
           continue;
         }
         model->shade = shade;
-        Transform_Reset();
-        Transform_ApplyTranslation(-px(16), px(gZagan_RingHeights[k]), 0);
-        Transform_ApplyAxisScale(scale, scale * 4 / 3, scale);
-        Transform_ApplyPitch(3000);
+        Matrix_Initialize();
+        Matrix_Translate(-toFIXED(16), INTtoFIXED(gZagan_RingHeights[k]), 0);
+        Matrix_Scale(scale, scale * 4 / 3, scale);
+        Matrix_RotateX(3000);
         model->scrollU = ((frame + k * 5) & 7) * 16;
         Render_TransformVertices(gBattleEffect_CylinderCorners, vertices, 32);
         Render_DrawModelList(model);

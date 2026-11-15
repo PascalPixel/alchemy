@@ -43,7 +43,7 @@
 #include "sound/sound_driver.h"
 #include "string.h"
 #include "system/task.h"
-#include "system/transform.h"
+#include "system/matrix.h"
 #include "graphics/vram_tab.h"
 
 extern u8 gDebugTextEnabled;

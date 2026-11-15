@@ -78,9 +78,9 @@ const u16 gSpriteDissolve_PixelOrderTail = 0x01ff;
 /// The fixed camera's view matrix (Q16): identity with a -0.8 shear of y by x.
 /// ActorSystem_ProjectSprites applies it while battle commands are chosen.
 const s32 gCamera_FixedViewMatrix[12] = {
-    Q16_ONE, 0, 0,
-    -(Q16_ONE * 4 / 5), Q16_ONE, 0,
-    0, 0, Q16_ONE,
+    FIXED_ONE, 0, 0,
+    -(FIXED_ONE * 4 / 5), FIXED_ONE, 0,
+    0, 0, FIXED_ONE,
     0, 0, 0,
 };
 
@@ -104,12 +104,12 @@ const s16 gActorScript_EndScriptTail[8] = {
     4096, -8192, 12288, -16384, 24576, -32768, 16384, 0,
 };
 
-/// The heading for each state of the direction pad (bits 4-7 of the keys: Right, Left, Up, Down), in 1/65536 turns: Right is 0, Down TRIG_TURN / 4, Left TRIG_TURN / 2 and Up TRIG_TURN * 3 / 4; WORLD_MAP_KEY_HEADING_NONE means no direction is held, or only an opposite pair.
+/// The heading for each state of the direction pad (bits 4-7 of the keys: Right, Left, Up, Down), in 1/65536 turns: Right is 0, Down DEGtoANG(90), Left DEGtoANG(180) and Up TRIG_TURN * 3 / 4; WORLD_MAP_KEY_HEADING_NONE means no direction is held, or only an opposite pair.
 const u16 gWorldMap_KeyHeadings[16] = {
-    WORLD_MAP_KEY_HEADING_NONE, 0, TRIG_TURN / 2, WORLD_MAP_KEY_HEADING_NONE,
+    WORLD_MAP_KEY_HEADING_NONE, 0, DEGtoANG(180), WORLD_MAP_KEY_HEADING_NONE,
     TRIG_TURN * 3 / 4, TRIG_TURN * 7 / 8, TRIG_TURN * 5 / 8, TRIG_TURN * 3 / 4,
-    TRIG_TURN / 4, TRIG_TURN / 8, TRIG_TURN * 3 / 8, TRIG_TURN / 4,
-    WORLD_MAP_KEY_HEADING_NONE, 0, TRIG_TURN / 2, WORLD_MAP_KEY_HEADING_NONE,
+    DEGtoANG(90), DEGtoANG(45), TRIG_TURN * 3 / 8, DEGtoANG(90),
+    WORLD_MAP_KEY_HEADING_NONE, 0, DEGtoANG(180), WORLD_MAP_KEY_HEADING_NONE,
 };
 
 /// Two scripts for the world map's footprint and dust effects: wait 120 or 30

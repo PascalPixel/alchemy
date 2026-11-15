@@ -60,11 +60,11 @@ void Whirlwind_Update(struct Actor *self) {
         /* FAKEMATCH(dead): the routine address taken inside a once-only
          * block. */
         do {
-          multiply = Iwram_MulQ16;
+          multiply = Iwram_MulFX;
         } while (0);
         self->x.fixed += multiply(cosine, speed);
       }
-      self->z.fixed += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
+      self->z.fixed += Iwram_MulFX(Math_Sin(self->facing), self->speedLimit);
       return;
     }
   }

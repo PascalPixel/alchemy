@@ -91,7 +91,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 streakIndex;
   s32 streaks = STREAKS_MAX;
-  s32 lift = px(20); // 20 pixels, 16.16
+  s32 lift = toFIXED(20); // 20 pixels, 16.16
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
@@ -167,7 +167,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
       // A sine wave of BG2X offsets for the wave HBlank DMA, which nothing arms
       // here, so the canvas does not ripple.
       for (k = 0; k != DISPLAY_HEIGHT; k++)
-        *row++ = (px(8) - Trig_Sin((frame + k) << 12) * 2) >> 10;
+        *row++ = (toFIXED(8) - Trig_Sin((frame + k) << 12) * 2) >> 10;
       if (frame > totalFrames - 16)
         REG_BLDALPHA = EFFECT_BLEND_CANVAS(totalFrames - frame);
       EFFECT_VIEW_FROM_CAMERA(camera);
@@ -216,12 +216,12 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
             struct Actor *struck =
                 GetBattleObjectSlotFar(work->args->targets[k])->actor;
 
-            struck->x.fixed += px(
+            struck->x.fixed += INTtoFIXED(
                 gStreaks_Tremble[(frame - k * STREAKS_TARGET_DELAY - 30) % 8]);
             if (struck->x.fixed > 0)
-              struck->x.fixed += px(1) / 2;
+              struck->x.fixed += toFIXED(1) / 2;
             else
-              struck->x.fixed -= px(1) / 2;
+              struck->x.fixed -= toFIXED(1) / 2;
             BattleEffect_TintBattler(work->args->targets[k], TINT_KEEP,
                                      POSE_DAMAGE, TINT_KEEP, 0);
           }
@@ -328,7 +328,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
 
     speed = (Random16() & 0x3ff) + 32;
     angle = Random16() & TRIG_ANGLE_MASK;
-    SET_POSITION(mote, source->x.fixed, source->y.fixed + px(5),
+    SET_POSITION(mote, source->x.fixed, source->y.fixed + toFIXED(5),
                  source->z.fixed);
     SET_VELOCITY(mote, Trig_Sin(angle) * speed >> 8,
                  ((Random16() & 255) - 32) << 9,
@@ -359,13 +359,13 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
           position.depth = 634;
         size = 6 - (position.depth - 314) / 64;
         EFFECT_DRAW_MOTE(draw[0], canvas, sheet, position.x, position.y, size);
-        Particle_AdvanceWithGravity3D(mote, 62, px(1) / 64);
+        Particle_AdvanceWithGravity3D(mote, 62, toFIXED(1) / 64);
         // The drifting mode pushes the motes across the field.
         if (mode == MOTE_FOUNTAIN_DRIFTING) {
           if (source->x.fixed < 0)
-            mote->velocityX += px(1) / 8;
+            mote->velocityX += toFIXED(1) / 8;
           else
-            mote->velocityX -= px(1) / 8;
+            mote->velocityX -= toFIXED(1) / 8;
         }
         mote->variant--;
       }

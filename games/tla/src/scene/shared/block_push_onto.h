@@ -29,7 +29,7 @@ void MagmaRockInside_PushBlockOnto(void) {
     return;
 
   dst.x = next->x.fixed;
-  dst.y = next->y.fixed + px(16);
+  dst.y = next->y.fixed + toFIXED(16);
   dst.z = next->z.fixed;
   blocker = Actor_FindInCell(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & ACTOR_SOLID) != 0)
@@ -53,10 +53,10 @@ void MagmaRockInside_PushBlockOnto(void) {
   Event_PlaySound(SE_PUSH);
   next->moveRateX = rate;
   next->moveRateZ = rate;
-  FieldActor_SetMoveTargetFixed(next, dst.x, dst.y, dst.z);
+  FieldActor_SetMoveTargetFX(next, dst.x, dst.y, dst.z);
   lead->moveRateX = rate;
   lead->moveRateZ = rate;
-  FieldActor_SetMoveTargetFixed(lead, dst.x, dst.y, dst.z);
+  FieldActor_SetMoveTargetFX(lead, dst.x, dst.y, dst.z);
   FieldActor_WaitForMove(next);
   Event_NoOp();
   next->x.fixed = dst.x;
@@ -67,7 +67,7 @@ void MagmaRockInside_PushBlockOnto(void) {
   lead->targetZ = 0x80000000;
   lead->velocityX = 0;
   lead->velocityZ = 0;
-  lead->x.fixed = lead->x.part[0].pixel << 16;
-  lead->z.fixed = lead->z.part[0].pixel << 16;
+  lead->x.fixed = lead->x.part[0].integer << 16;
+  lead->z.fixed = lead->z.part[0].integer << 16;
   Actor_SelectAnimation(lead, 1);
 }

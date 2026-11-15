@@ -648,9 +648,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
 
       // The Djinni sways, and after frame 56 rises two pixels a frame.
       if (args->prelude == 1) {
-        s32 x =
-            (Q_16_16_TO_INT(-Trig_Sin(frame << 11) * 4)) + origin[0] / 2 - 10;
-        s32 y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * 2)) + origin[1] - 24;
+        s32 x = (FIXEDtoINT(-Trig_Sin(frame << 11) * 4)) + origin[0] / 2 - 10;
+        s32 y = (FIXEDtoINT(Trig_Cos(frame << 11) * 2)) + origin[1] - 24;
 
         if (frame > 56)
           y = y - frame * 2 + 112;
@@ -690,7 +689,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         else if (mode == BURST_SHOWER_MODE_FIRE_DANCE) {
           aim[1] = targets[target][1] + (Random16() & 255) - 192;
           aim[1] = targets[target][1] +
-                   (Q_16_16_TO_INT(Trig_Sin(frame << 12) << 8)) - 128;
+                   (FIXEDtoINT(Trig_Sin(frame << 12) << 8)) - 128;
         } else
           aim[1] = targets[target][1] + (Random16() & 63) - 16;
         limit = 16;
@@ -704,7 +703,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           s32 dy;
 
           shot->x = x;
-          y = px(user->y);
+          y = INTtoFIXED(user->y);
           shot->y = y;
           dx = aim[0] - user->x;
           shot->velocityX = dx << 11;
@@ -754,8 +753,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
             s32 y = shot->y + (Trig_Sin((i * 2 + frame) << 11) << 5);
 
             pair[1](canvas, work->sheet + cel * 1024,
-                    Q_16_16_UPPER_HALF(shot->x) - 16, (Q_16_16_TO_INT(y)) - 16,
-                    32, 32);
+                    Q_16_16_UPPER_HALF(shot->x) - 16, (FIXEDtoINT(y)) - 16, 32,
+                    32);
           }
         } else if (mode == BURST_SHOWER_MODE_GRAVEL_BLOW) {
           s32 cel = i % 5 * 3 + age % 3;
@@ -776,7 +775,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           s32 wobble = Trig_Sin((i * 2 + frame) << 11);
           s32 y;
           cel = age >> 2;
-          y = Q_16_16_TO_INT(shot->y + (wobble << 5));
+          y = FIXEDtoINT(shot->y + (wobble << 5));
 
           pair[1](canvas, work->sheet + cel * 1152,
                   Q_16_16_UPPER_HALF(shot->x) - 12, y - 24, 24, 48);
@@ -803,7 +802,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         shot->x += shot->velocityX;
         shot->y += shot->velocityY;
         if (mode == BURST_SHOWER_MODE_AGING_GAS)
-          shot->velocityY -= px(1) / 4;
+          shot->velocityY -= toFIXED(1) / 4;
         shot->variant++;
         if (mode == BURST_SHOWER_MODE_FUGUE ||
             mode == BURST_SHOWER_MODE_DJINNFEST) {
@@ -831,11 +830,11 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
               widths = NULL;
               heights = NULL;
               angle = Random16() & TRIG_ANGLE_MASK;
-              x = Q_16_16_TO_INT(Trig_Sin(angle) << 4);
+              x = FIXEDtoINT(Trig_Sin(angle) << 4);
               x += targets[i][0] / 2;
               widths = gBattleEffect_GlintPictureWidths;
               x -= widths[cel] >> 1;
-              y = Q_16_16_TO_INT(Trig_Cos(angle) << 4);
+              y = FIXEDtoINT(Trig_Cos(angle) << 4);
               y += targets[i][1];
               heights = gBattleEffect_GlintPictureHeights;
               y -= heights[cel] >> 1;
@@ -898,8 +897,9 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                                        POSE_DAMAGE, i, 3);
             if (mode != BURST_SHOWER_MODE_FIRE_DANCE &&
                 mode != BURST_SHOWER_MODE_DESERT_GASP)
-              BattleEffect_StartActorMotion(args->targets[i], 1, px(1), px(4),
-                                            px(2), frame + 100);
+              BattleEffect_StartActorMotion(args->targets[i], 1, toFIXED(1),
+                                            toFIXED(4), toFIXED(2),
+                                            frame + 100);
           }
         }
       }
@@ -914,8 +914,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         object = BattleObject_GetFar(args->user)->object;
         half = BattleUnit_GetEffectHeightFar(args->user) / 2;
         camera = Ram_HeapSlots->cameraWork;
-        Transform_Reset();
-        Transform_SetLookAt(camera->eye, camera->focus);
+        Matrix_Initialize();
+        Matrix_SetLookAt(camera->eye, camera->focus);
         for (i = 0; i != 24; i++) {
           struct Particle *mote = &MOTES[i];
           s32 height = 12;

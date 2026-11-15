@@ -1,6 +1,6 @@
 	.section .rodata
 @ Tangent scaled by 256: [i] = tan(i * 45 / 128 degrees), [128] = tan(45 degrees).
-@ Identical to TBS's gMath_TanTable; ArcTan2 binary-searches starting at [127].
+@ Identical to TBS's gMath_TanTable; Trig_Atan binary-searches starting at [127].
 	.global gMath_TanTable
 gMath_TanTable:
 	.2byte 0, 1, 3, 4, 6, 7, 9, 11

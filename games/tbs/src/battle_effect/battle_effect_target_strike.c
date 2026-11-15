@@ -186,7 +186,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       struct Particle *step = &work->particles[i];
 
       Projection_Unit(work->args->targets[k], &ground);
-      SET_POSITION(step, px(ground.x / 2), px(80), 0);
+      SET_POSITION(step, INTtoFIXED(ground.x / 2), toFIXED(80), 0);
       SET_VELOCITY(step, ((Random16() & 255) - 128) << 9,
                    ((Random16() & 255) - 128) << 9, 0);
       step->variant = -1;
@@ -195,7 +195,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       struct Particle *step =
           &PARTICLES[k * TARGET_STRIKE_MOTES_PER_TARGET + i];
 
-      SET_POSITION(step, target->x.fixed, px(20), target->z.fixed);
+      SET_POSITION(step, target->x.fixed, toFIXED(20), target->z.fixed);
       SET_VELOCITY(step, ((Random16() & 255) - 128) << 11,
                    ((Random16() & 255) - 128) << 11,
                    ((Random16() & 255) - 128) << 11);
@@ -203,7 +203,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     }
     for (i = 0; i != TARGET_STRIKE_SPARK_COUNT; i++) {
       TARGET_STRIKE_SPARKS[i].x = target->x.fixed;
-      TARGET_STRIKE_SPARKS[i].y = px(20);
+      TARGET_STRIKE_SPARKS[i].y = toFIXED(20);
       TARGET_STRIKE_SPARKS[i].z = target->z.fixed;
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_BITE) {
         TARGET_STRIKE_SPARKS[i].velocityX = ((Random16() & 255) - 128) << 11;
@@ -443,10 +443,10 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             draw[i & 1](canvas,
                         work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF) +
                             TARGET_STRIKE_SMOKE_PICTURES,
-                        WHOLE_PIXELS(step->x) - SMOKE_PUFF_WIDTH / 2,
-                        WHOLE_PIXELS(step->y) - SMOKE_PUFF_HEIGHT / 2,
+                        FIXEDtoINT(step->x) - SMOKE_PUFF_WIDTH / 2,
+                        FIXEDtoINT(step->y) - SMOKE_PUFF_HEIGHT / 2,
                         SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
-            Particle_AdvanceWithGravity2D(step, 62, -px(1) / 64);
+            Particle_AdvanceWithGravity2D(step, 62, -toFIXED(1) / 64);
             step->variant++;
           }
         }
@@ -475,7 +475,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             step->variant++;
             if (step->variant > 10) {
               s32 dx = (source->x.fixed - step->x) >> 8;
-              s32 dy = (source->y.fixed - step->y + px(20)) >> 8;
+              s32 dy = (source->y.fixed - step->y + toFIXED(20)) >> 8;
               s32 dz = (source->z.fixed - step->z) >> 8;
 
               step->velocityX += dx;

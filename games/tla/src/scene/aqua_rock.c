@@ -272,7 +272,7 @@ again:
     p->x = object->x.fixed;
     p->y = object->y.fixed;
     p->z = object->z.fixed;
-    distance = Iwram_MulQ16(Random16(), 0x80000) + 0x40000;
+    distance = Iwram_MulFX(Random16(), 0x80000) + 0x40000;
     a = Random16();
     b = Random16();
     Vector_AddPolarOffset(distance, object->facing + (a >> 2) - (b >> 2), p);
@@ -311,8 +311,8 @@ void AquaRock_TurnSprite(struct Actor *object) {
 
 s32 AquaRock_StartDrifter(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
-  object->speedLimit = px(1);
-  object->acceleration = px(1) / 20;
+  object->speedLimit = toFIXED(1);
+  object->acceleration = toFIXED(1) / 20;
   object->collisionFlags = 0;
   object->update = (void (*)(void))AquaRock_TurnSprite;
   return 0;
@@ -331,9 +331,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 void AquaRock_SinkOrFlow(struct Actor *object) {
   if (Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) >
       object->y.fixed)
-    object->y.fixed += px(2);
+    object->y.fixed += toFIXED(2);
   else
-    object->z.fixed -= px(2);
+    object->z.fixed -= toFIXED(2);
   if (FIELD_CELL(object->y.fixed) == 23)
     Actor_Release(object);
   if (FIELD_CELL(object->z.fixed) == 48)
@@ -347,7 +347,7 @@ void AquaRock_DripAtRandom(struct Actor *object) {
     s32 x = object->x.fixed;
 
     x += spread * 48;
-    child = Import_ActorCreate(SPRITE_GLINT, x - px(24), object->y.fixed,
+    child = Import_ActorCreate(SPRITE_GLINT, x - toFIXED(24), object->y.fixed,
                                object->z.fixed);
     if (child != 0) {
       Actor_SetSpriteFlags(child, 0);
@@ -609,7 +609,7 @@ void AquaRock_MovePillarBeforeMoai(s32 unused, s32 id) {
 
     if (FIELD_CELL(object->x.fixed) == 32) {
       wait(30);
-      object->z.fixed += px(1);
+      object->z.fixed += toFIXED(1);
       GameFlag_Set(FLAG_AQUA_ROCK_PILLAR_BEFORE_MOAI);
     }
   }
@@ -643,7 +643,7 @@ void AquaRock_RideStreamUp(void) {
       return;
     ahead.x = leader->x.fixed;
     ahead.y = leader->y.fixed;
-    ahead.z = leader->z.fixed + px(2);
+    ahead.z = leader->z.fixed + toFIXED(2);
     result = MapGrid_CheckCollision(leader, &ahead);
     if ((gFrameCount & 4) == 0)
       AquaRock_SpawnSplash(leader);
@@ -651,7 +651,7 @@ void AquaRock_RideStreamUp(void) {
       Actor_SetAttachedEffect(owner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetMoveTarget(leader, leader->x.fixed, leader->y.fixed,
-                          leader->z.fixed - px(8));
+                          leader->z.fixed - toFIXED(8));
       Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
       Actor_WaitForMove(leader);
       do
@@ -664,7 +664,7 @@ void AquaRock_RideStreamUp(void) {
     }
     ahead.x = leader->x.fixed;
     ahead.y = leader->y.fixed;
-    ahead.z = leader->z.fixed - px(8);
+    ahead.z = leader->z.fixed - toFIXED(8);
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0) {
       if (gMainRoutineWork.next != SCENE_AQUA_ROCK_MOAI)
@@ -677,7 +677,7 @@ void AquaRock_RideStreamUp(void) {
       AquaRock_SpawnSplash(leader);
       Event_Wait(5);
       for (i = 59; i >= 0; i--) {
-        leader->y.fixed += px(2);
+        leader->y.fixed += toFIXED(2);
         leader->facing += 0x1000;
         if (Random16() <= 0xfff)
           AquaRock_SpawnSplash(leader);
@@ -688,20 +688,20 @@ void AquaRock_RideStreamUp(void) {
       Import_EventSetExitRequest(6);
       return;
     }
-    ahead.x = leader->x.fixed + (px(57) / 10);
+    ahead.x = leader->x.fixed + (toFIXED(57) / 10);
     ahead.y = leader->y.fixed;
-    ahead.z = leader->z.fixed - (px(57) / 10);
+    ahead.z = leader->z.fixed - (toFIXED(57) / 10);
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0)
       return;
-    ahead.x = leader->x.fixed - (px(57) / 10);
+    ahead.x = leader->x.fixed - (toFIXED(57) / 10);
     ahead.y = leader->y.fixed;
-    ahead.z = leader->z.fixed - (px(57) / 10);
+    ahead.z = leader->z.fixed - (toFIXED(57) / 10);
     result = MapGrid_CheckCollision(leader, &ahead);
     if (result > 0)
       return;
-    carried->z.fixed -= px(2);
-    leader->z.fixed -= px(2);
+    carried->z.fixed -= toFIXED(2);
+    leader->z.fixed -= toFIXED(2);
   } else
     AquaRock_FlowWithStream();
 }
@@ -720,7 +720,7 @@ void AquaRock_StepIntoCurrent(void) {
 
   if (gMainRoutineWork.movementMode == 2) {
     col = FIELD_CELL(object->x.fixed);
-    row = FIELD_CELL(object->z.fixed - object->y.fixed - px(12));
+    row = FIELD_CELL(object->z.fixed - object->y.fixed - toFIXED(12));
     if (CellAttribute(map->layers[1].cells, row, col) != 0)
       work->raisedTrigger = 44;
   } else {
@@ -789,7 +789,7 @@ DEFINE_AQUA_ROCK_SET_MOVED(AquaRock_FreezeThirdPuddle, 44, 44, 46, 0x223)
                                                                                \
     if (column == 53) {                                                        \
       wait(30);                                                                \
-      object->z.fixed += px(1);                                                \
+      object->z.fixed += toFIXED(1);                                           \
       GameFlag_Set(n1);                                                        \
       Map_CopyCellAttributeRect(54, 58, 1, 1, column, n2);                     \
     }                                                                          \
@@ -893,10 +893,10 @@ void AquaRock_SpinOut(void) {
   Event_StartScreenTransition();
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->y.fixed = -px(16);
+  object->y.fixed = -toFIXED(16);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
   for (i = 15; i >= 0; i--) {
-    object->y.fixed += px(1);
+    object->y.fixed += toFIXED(1);
     angle = object->facing;
     angle += 0x2000;
     object->facing = angle;
@@ -904,7 +904,7 @@ void AquaRock_SpinOut(void) {
   }
   AquaRock_SpawnSplash(object);
   object->motionFlags = saved;
-  object->velocityY = px(8);
+  object->velocityY = toFIXED(8);
   Actor_SetSpriteFlags(object, 1);
   up = gInput.held & KEY_UP;
   state = &gMainRoutineWork;
@@ -926,10 +926,10 @@ void AquaRock_DropIn(void) {
   Event_StartScreenTransition();
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->y.fixed = -px(64);
+  object->y.fixed = -toFIXED(64);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
   for (i = 23; i >= 0; i--) {
-    object->y.fixed += px(2);
+    object->y.fixed += toFIXED(2);
     angle = object->facing;
     angle += 0x2000;
     object->facing = angle;
@@ -937,7 +937,7 @@ void AquaRock_DropIn(void) {
   }
   AquaRock_SpawnSplash(object);
   object->motionFlags = saved;
-  object->velocityY = px(12);
+  object->velocityY = toFIXED(12);
   Actor_SetSpriteFlags(object, 1);
   Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, 680, 912);
   Event_End();
@@ -952,7 +952,7 @@ void AquaRock_SwayMoai(struct Actor *object) {
   *amplitude += 32;
   if (*amplitude > 0x200)
     *amplitude = 0x200;
-  sprite->rotation = Iwram_MulQ16(Trig_Sin(object->timer), *amplitude);
+  sprite->rotation = Iwram_MulFX(Trig_Sin(object->timer), *amplitude);
 }
 
 void AquaRock_SwayMoaiBack(struct Actor *object) {
@@ -965,7 +965,7 @@ void AquaRock_SwayMoaiBack(struct Actor *object) {
   if (*amplitude < 0) {
     *amplitude = 0;
   }
-  sprite->rotation = Iwram_MulQ16(Trig_Sin(object->timer), *amplitude);
+  sprite->rotation = Iwram_MulFX(Trig_Sin(object->timer), *amplitude);
 }
 
 void AquaRock_RockMoai(struct Actor *object) {
@@ -994,8 +994,8 @@ scatter:
   {
     struct Actor *object = Actor_GetById(i);
 
-    object->speedLimit = px(1) / 4;
-    object->acceleration = px(1) / 64;
+    object->speedLimit = toFIXED(1) / 4;
+    object->acceleration = toFIXED(1) / 64;
     object->update = (void (*)(void))AquaRock_SwayMoai;
     object->timer = Random16();
     object->userValue = 0;
@@ -1079,7 +1079,7 @@ s32 Scene_Initialize(void) {
     z = GameFlag_GetByte(FLAG_AREA_TEMP_18);
     if (z != 0)
       Actor_SetHorizontalPositionWithTerrain(
-          ACTOR_FIRST_PILLAR, (x << 20) + px(8), (z << 20) + px(8));
+          ACTOR_FIRST_PILLAR, (x << 20) + toFIXED(8), (z << 20) + toFIXED(8));
     Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
     Task_Add(AquaRock_KeepLeaderPriority, TASK_PASS_VBLANK);
@@ -1183,8 +1183,9 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 void AquaRock_SpawnSplash(struct Actor *object) {
-  struct Actor *child = Import_ActorCreate(
-      14, object->x.fixed, object->y.fixed + px(4), object->z.fixed + px(4));
+  struct Actor *child =
+      Import_ActorCreate(14, object->x.fixed, object->y.fixed + toFIXED(4),
+                         object->z.fixed + toFIXED(4));
   struct FieldSprite *parentSprite = object->sprite;
 
   if (child != 0) {
@@ -1222,7 +1223,7 @@ void AquaRock_FlowWithStream(void) {
     return;
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
-  position[2] = leader->z.fixed + px(2);
+  position[2] = leader->z.fixed + toFIXED(2);
   result = MapGrid_CheckCollision(leader, position);
   if ((gFrameCount & 4) == 0)
     AquaRock_SpawnSplash(leader);
@@ -1230,7 +1231,7 @@ void AquaRock_FlowWithStream(void) {
     Actor_SetAttachedEffect(owner,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetMoveTarget(leader, leader->x.fixed, leader->y.fixed,
-                        leader->z.fixed + px(8));
+                        leader->z.fixed + toFIXED(8));
     Actor_SelectAnimation(leader, 49);
     Actor_WaitForMove(leader);
     do {
@@ -1243,24 +1244,24 @@ void AquaRock_FlowWithStream(void) {
   }
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
-  position[2] = leader->z.fixed + px(8);
+  position[2] = leader->z.fixed + toFIXED(8);
   result = MapGrid_CheckCollision(leader, position);
   if (result > 0)
     return;
-  position[0] = leader->x.fixed + (px(57) / 10);
+  position[0] = leader->x.fixed + (toFIXED(57) / 10);
   position[1] = leader->y.fixed;
-  position[2] = leader->z.fixed + (px(57) / 10);
+  position[2] = leader->z.fixed + (toFIXED(57) / 10);
   result = MapGrid_CheckCollision(leader, position);
   if (result > 0)
     return;
-  position[0] = leader->x.fixed - (px(57) / 10);
+  position[0] = leader->x.fixed - (toFIXED(57) / 10);
   position[1] = leader->y.fixed;
-  position[2] = leader->z.fixed + (px(57) / 10);
+  position[2] = leader->z.fixed + (toFIXED(57) / 10);
   result = MapGrid_CheckCollision(leader, position);
   if (result > 0)
     return;
-  anchor->z.fixed += px(2);
-  leader->z.fixed += px(2);
+  anchor->z.fixed += toFIXED(2);
+  leader->z.fixed += toFIXED(2);
   leader->facing = FACING_SOUTH;
 }
 
@@ -1293,7 +1294,7 @@ void AquaRock_SpinUpAndAway(s32 exit) {
   for (i = 0; i < 60; i++) {
     if (i == 30)
       Event_FinishScreenTransition();
-    object->y.fixed -= px(1) / 4;
+    object->y.fixed -= toFIXED(1) / 4;
     angle = object->facing;
     angle += 0x1000;
     object->facing = angle;
@@ -1319,7 +1320,7 @@ void AquaRock_EnterSparklingPassage(s32 entrance) {
   Sound_Play(SE_SPARKLING_PASSAGE);
   leader->update = (void (*)(void))Actor_EmitMist;
   leader->motionFlags = 0;
-  leader->speedLimit = px(1) / 5;
+  leader->speedLimit = toFIXED(1) / 5;
   Actor_SetAnimationById(*owner, 2);
   Actor_SetDestinationOffsetById(*owner, 0, -8);
   Actor_WaitForMoveById(*owner);
@@ -1343,9 +1344,9 @@ void AquaRock_ArriveFromPassage(void) {
     Event_ResolvePendingActions(0);
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     leader->motionFlags = flag;
-    Actor_SetHorizontalPositionWithTerrain(*owner, px(leader->x.part[0].pixel),
-                                           px(leader->z.part[0].pixel) -
-                                               px(16));
+    Actor_SetHorizontalPositionWithTerrain(
+        *owner, toFIXED(leader->x.part[0].integer),
+        toFIXED(leader->z.part[0].integer) - toFIXED(16));
     Actor_SetSpriteColor(Actor_GetById(*owner), 9);
     Actor_SetSpriteFlags(Actor_GetById(*owner), 0);
     Event_StartScreenTransition();
@@ -1389,7 +1390,7 @@ void AquaRock_DrawRisingCellMarkers(void) {
 
   if (Random16() < 0x1000 && (source = work->object) != 0) {
     entry = &work->bubbles[work->next];
-    entry->x = source->x.fixed + Random16() * 3 * 16 - px(24);
+    entry->x = source->x.fixed + Random16() * 3 * 16 - toFIXED(24);
     entry->y = source->y.fixed;
     entry->z = source->z.fixed;
     entry->age = 0;
@@ -1402,7 +1403,7 @@ void AquaRock_DrawRisingCellMarkers(void) {
       // screenX holds the ground's height here, before its own value.
       screenX = Map_GetTerrainHeight(0, entry->x, entry->z);
       if (screenX > entry->y)
-        entry->y += px(2);
+        entry->y += toFIXED(2);
       else
         entry->z -= 2 << 16;
       if (FIELD_CELL(entry->y) == 23)
@@ -1453,7 +1454,7 @@ void AquaRock_DrawFallingCellMarkers(void) {
 
   if (Random16() < 0x1000 && (source = work->object) != 0) {
     bubble = &work->bubbles[work->next];
-    bubble->x = source->x.fixed + Random16() * 3 * 8 - px(12);
+    bubble->x = source->x.fixed + Random16() * 3 * 8 - toFIXED(12);
     bubble->y = source->y.fixed;
     bubble->z = source->z.fixed;
     bubble->age = 0;
@@ -1464,9 +1465,9 @@ void AquaRock_DrawFallingCellMarkers(void) {
   for (i = 63; i >= 0; i--, bubble++) {
     if (bubble->x != 0) {
       if (Map_GetTerrainHeight(0, bubble->x, bubble->z) < bubble->y)
-        bubble->y -= px(2);
+        bubble->y -= toFIXED(2);
       else
-        bubble->z += px(2);
+        bubble->z += toFIXED(2);
       if (FIELD_CELL(bubble->y) == -4)
         bubble->x = 0;
       if (FIELD_CELL(bubble->z) == 50)
@@ -1566,7 +1567,7 @@ loop:
   *(u32 *)size = 0xb400;
   p->posX = 0;
   p->posZ = 0;
-  p->posY = px(Map_GetTerrainHeight(0, 0, 0));
+  p->posY = toFIXED(Map_GetTerrainHeight(0, 0, 0));
   p->timer = (i & 15) + 1;
   i++;
   p++;

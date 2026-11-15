@@ -15,7 +15,7 @@ void BattleCamera_Update(void) {
       HEAP_SLOT_FROM(slots, HEAP_SLOT_CAMERA, HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleWork *battle =
       HEAP_SLOT_FROM(slots, HEAP_SLOT_CAMERA, HEAP_SLOT_BATTLE);
-  struct FixedPointPosition eyeOffset;
+  struct Point eyeOffset;
   s32 *focus;
   s16 delta;
 
@@ -50,10 +50,10 @@ void BattleCamera_Update(void) {
     focus = camera->followPosition;
   }
 
-  Transform_Reset();
-  Transform_ApplyPosition(focus);
-  Transform_ApplyYaw((s16)camera->yaw);
-  Transform_ApplyPitch((s16)camera->pitch);
+  Matrix_Initialize();
+  Matrix_TranslateVector(focus);
+  Matrix_RotateY((s16)camera->yaw);
+  Matrix_RotateX((s16)camera->pitch);
 
   // The eye sits distance behind the focus, along the turned view.
   eyeOffset.x = 0;
@@ -63,7 +63,7 @@ void BattleCamera_Update(void) {
 
   // The view centred at (120, 120) in 16.16 pixels, at scale 1.
   if (view->flag == 0) {
-    BattleCamera_SetRange(px(120), px(120), 0, 0, Q16_ONE);
+    BattleCamera_SetRange(toFIXED(120), toFIXED(120), 0, 0, FIXED_ONE);
   }
 }
 

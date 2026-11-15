@@ -38,21 +38,21 @@ static void Colosso_UpdatePathOpponent(void) {
       rec->mode = PATH_RECORDER_FINISHED;
       Actor_SelectAnimation(actor, ANIM_STAND);
       if (work->gauge.finishX < actor->x.fixed) {
-        x = work->gauge.finishX + px(12);
+        x = work->gauge.finishX + toFIXED(12);
       } else {
-        x = work->gauge.finishX - px(12);
+        x = work->gauge.finishX - toFIXED(12);
       }
       if (GameFlag_Get(FLAG_SCENE_TEMP_11)) {
-        fz = work->gauge.finishZ + px(16);
+        fz = work->gauge.finishZ + toFIXED(16);
         itemActorId = &work->gauge.finishItemActorIdB;
       } else {
-        fz = work->gauge.finishZ - px(16);
+        fz = work->gauge.finishZ - toFIXED(16);
         itemActorId = &work->gauge.finishItemActorIdA;
       }
       actor->timer = *itemActorId;
-      actor->acceleration = px(1) / 4;
-      actor->speedLimit = px(1);
-      FieldActor_SetMoveTargetFixed(actor, x, 0, fz);
+      actor->acceleration = toFIXED(1) / 4;
+      actor->speedLimit = toFIXED(1);
+      FieldActor_SetMoveTargetFX(actor, x, 0, fz);
       GameFlag_Set(FLAG_SCENE_TEMP_11);
       Actor_StartScript(actor, gColosso_OpponentFinishScript);
       return;
@@ -64,7 +64,7 @@ static void Colosso_UpdatePathOpponent(void) {
     }
     if (actor->x.fixed != x || actor->z.fixed != z) {
       {
-        u16 angle = ArcTan2(z - actor->z.fixed, x - actor->x.fixed);
+        u16 angle = Trig_Atan(z - actor->z.fixed, x - actor->x.fixed);
         d = (s16)(angle - actor->facing);
       }
       if (d > FACING_STEP) {
@@ -86,8 +86,8 @@ static void Colosso_UpdatePathOpponent(void) {
       Actor_SelectAnimation(actor, 5);
     }
   } else if (rec->mode == PATH_RECORDER_RECORD) {
-    x = actor->x.part[0].pixel;
-    z = actor->z.part[0].pixel;
+    x = actor->x.part[0].integer;
+    z = actor->z.part[0].integer;
     work->path[(s16)rec->pathIndex++] = x;
     work->path[(s16)rec->pathIndex++] = z;
     if ((s16)rec->pathIndex == COLOSSO_PATH_HALFWORDS - 2) {
@@ -194,8 +194,9 @@ static void Colosso_DrawGauge(void) {
     shape = OBJ_SIZE_16X16;
     actor = Actor_Lookup(gauge->opponentActorId);
     if (actor != NULL) {
-      x = ((actor->x.fixed - gauge->finishX) / px(14)) + 112;
-      y = ((actor->z.fixed - gauge->finishZ) / px(14)) + gauge->level * 6 - 4;
+      x = ((actor->x.fixed - gauge->finishX) / toFIXED(14)) + 112;
+      y = ((actor->z.fixed - gauge->finishZ) / toFIXED(14)) + gauge->level * 6 -
+          4;
       y &= 255;
       *dst++ = 0;
       y |= x << 16;
@@ -206,8 +207,9 @@ static void Colosso_DrawGauge(void) {
     }
     actor = Actor_Lookup(gauge->playerActorId);
     if (actor != NULL) {
-      x = ((actor->x.fixed - gauge->finishX) / px(14)) + 112;
-      y = ((actor->z.fixed - gauge->finishZ) / px(14)) + gauge->level * 6 - 4;
+      x = ((actor->x.fixed - gauge->finishX) / toFIXED(14)) + 112;
+      y = ((actor->z.fixed - gauge->finishZ) / toFIXED(14)) + gauge->level * 6 -
+          4;
       y &= 255;
       *dst++ = 0;
       y |= x << 16;

@@ -59,15 +59,15 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   rocks = gSpire_RockCounts[args->variant];
   for (i = 0; i != rocks; i++) {
     rock = &work->particles[i];
-    rock->y = -px(64);
+    rock->y = -toFIXED(64);
     rock->velocityY = 0;
   }
   for (i = 0; i != rocks; i++) {
     for (j = 0; j != SHARDS_PER_ROCK; j++) {
       struct Particle *seed = &SHARDS[i * SHARDS_PER_ROCK + j];
 
-      seed->x = px(gSpire_ShardOffsets[j * 2] + gSpire_RockX[i]);
-      seed->y = px(gSpire_ShardOffsets[j * 2 + 1]);
+      seed->x = INTtoFIXED(gSpire_ShardOffsets[j * 2] + gSpire_RockX[i]);
+      seed->y = INTtoFIXED(gSpire_ShardOffsets[j * 2 + 1]);
       seed->velocityX = ((Random16() % 96) - 48) << 10;
       seed->velocityY = -((Random16() & 127) + 32) << 11;
       seed->z = 32;
@@ -102,7 +102,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
                    ((height = gSpire_ShardHeights[cel]) >> 1),
                width, height);
           BattleEffectKernels_IntegrateVector2(shard, PARTICLE_DAMPING_NONE,
-                                               px(1) / 4);
+                                               toFIXED(1) / 4);
           shard->variant += shard->z;
           if (shard->z > 1 && (frame & 1))
             shard->z--;
@@ -117,9 +117,9 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
                SPIRE_ROCK_HEIGHT);
         rock->y += rock->velocityY;
         if (frame > gSpire_DropFrames[i])
-          rock->velocityY += px(1);
-        if (rock->y > px(50))
-          rock->y = px(50);
+          rock->velocityY += toFIXED(1);
+        if (rock->y > toFIXED(50))
+          rock->y = toFIXED(50);
       }
       // Every target flashes for eight frames at each crash.
       if (frame == gSpire_DropFrames[i] + FALL_FRAMES) {

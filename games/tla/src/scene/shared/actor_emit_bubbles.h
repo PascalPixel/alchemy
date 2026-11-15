@@ -10,7 +10,7 @@ void Actor_EmitBubbles(struct Actor *object) {
     options.type = 0x2a1;
     options.priority = 1;
     position[0] = object->x.fixed + (((Random16() & 31) - 16) << 16);
-    position[1] = object->y.fixed + ((Random16() & 31) << 16) + px(8);
+    position[1] = object->y.fixed + ((Random16() & 31) << 16) + toFIXED(8);
     position[2] = object->z.fixed;
     FieldEffect_Spawn(
         position[0], position[1], position[2] + 0x40000, 0, 0x8000, phase,

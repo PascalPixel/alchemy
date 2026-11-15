@@ -5,7 +5,7 @@
 #include "field_internal.h"
 
 #define MAPGRID_SHAKE_SETTLE_FRAMES 300
-#define MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE (px(1) / 256 - 1)
+#define MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE (toFIXED(1) / 256 - 1)
 #define TILEMAP_TILE_BANK_BYTES (256 * (8 * 8))
 #define TILEMAP_MAP_BANK_BYTES (64 * 64)
 
@@ -96,12 +96,12 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
   Iwram_TransformVector(groundPoint, cameraPoint);
   cameraCoordinates = cameraPoint;
   horizon =
-      cameraCoordinates[1] - Iwram_MulQ16(cameraCoordinates[2], pitchSlope);
+      cameraCoordinates[1] - Iwram_MulFX(cameraCoordinates[2], pitchSlope);
   focus = -gProjection.focal;
-  for (line = 0; line < FIELD_VIEW_HEIGHT / Q16_ONE; line++) {
+  for (line = 0; line < FIELD_VIEW_HEIGHT / FIXED_ONE; line++) {
     // The line's ray slope: its offset from the projection's centre line over
     // the focal length.
-    distance = Iwram_RatioMulQ14(focus, px(gProjection.centerY - line));
+    distance = Iwram_RatioMulQ14(focus, toFIXED(gProjection.centerY - line));
     // A ray parallel to the ground would divide by zero.
     difference = distance - pitchSlope;
     if (difference == 0)
@@ -110,21 +110,21 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
     // A negative scale is a line below the horizon, whose ray meets the
     // ground; the lines above it are sky and get zeros.
     if (scale < 0) {
-      // MulQ16 by Q16_ONE / 2 halves: the width scale is half the line's scale
+      // MulFX by FIXED_ONE / 2 halves: the width scale is half the line's scale
       // over the focal length, and the distance below is stored halved.
-      diagonal = Iwram_MulQ16(-scale, Q16_ONE / 2);
+      diagonal = Iwram_MulFX(-scale, FIXED_ONE / 2);
       scanline->scale = Iwram_RatioMulQ14(gProjection.focal, diagonal);
-      diagonal = Iwram_MulQ16(scale, distance);
+      diagonal = Iwram_MulFX(scale, distance);
       // The distance is the root of the two squared terms.
       horizontal = (cameraCoordinates[2] - scale) >> 4;
       vertical = (diagonal - cameraCoordinates[1]) >> 4;
-      horizontalSquared = Iwram_MulQ16(horizontal, horizontal);
-      verticalSquared = Iwram_MulQ16(vertical, vertical);
+      horizontalSquared = Iwram_MulFX(horizontal, horizontal);
+      verticalSquared = Iwram_MulFX(vertical, vertical);
       verticalSquared = Iwram_Sqrt(horizontalSquared + verticalSquared) << 12;
       // The ground distance takes the sign of the vertical term.
       if (vertical < 0)
         verticalSquared = -verticalSquared;
-      scanline->depth = Iwram_MulQ16(verticalSquared, Q16_ONE / 2);
+      scanline->depth = Iwram_MulFX(verticalSquared, FIXED_ONE / 2);
     } else {
       scanline->scale = 0;
       scanline->depth = 0;

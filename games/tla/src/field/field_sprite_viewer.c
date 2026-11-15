@@ -359,13 +359,13 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   case 3:
     for (i = 0; i < 6; i++) {
       angle <<= 16;
-      positions->x = px(centerX);
+      positions->x = toFIXED(centerX);
       angle = (u32)angle >> 16;
       positions->height = 0;
-      positions->y = px(centerY);
-      Vector_AddPolarOffset(px(56), (u16)angle, &positions->x);
+      positions->y = toFIXED(centerY);
+      Vector_AddPolarOffset(toFIXED(56), (u16)angle, &positions->x);
       positions++;
-      angle = (s16)(angle + TRIG_TURN / 6);
+      angle = (s16)(angle + DEGtoANG(60));
     }
     for (; i < 10; i++)
       positions++;
@@ -376,13 +376,13 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   case 88:
     for (i = 0; i < 8; i++) {
       angle = (u32)angle << 16;
-      positions->x = px(centerX);
+      positions->x = toFIXED(centerX);
       angle = (u32)angle >> 16;
       positions->height = 0;
-      positions->y = px(centerY);
-      Vector_AddPolarOffset(px(56), (u16)angle, &positions->x);
+      positions->y = toFIXED(centerY);
+      Vector_AddPolarOffset(toFIXED(56), (u16)angle, &positions->x);
       positions++;
-      angle = (s16)(angle + TRIG_TURN / 8);
+      angle = (s16)(angle + DEGtoANG(45));
     }
     for (; i < 10; i++)
       positions++;
@@ -391,35 +391,35 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   case 6:
     for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
       angle <<= 16;
-      positions->x = px(centerX);
+      positions->x = toFIXED(centerX);
       angle = (u32)angle >> 16;
       positions->height = 0;
-      positions->y = px(centerY);
-      Vector_AddPolarOffset(px(56), (u16)angle, &positions->x);
+      positions->y = toFIXED(centerY);
+      Vector_AddPolarOffset(toFIXED(56), (u16)angle, &positions->x);
       positions++;
-      angle = (s16)(angle + TRIG_TURN / 10);
+      angle = (s16)(angle + DEGtoANG(36));
     }
     break;
   case 20:
     turn = angle;
-    angle = (s16)(turn + TRIG_TURN / 4);
+    angle = (s16)(turn + DEGtoANG(90));
     i = 0;
     pair = positions;
     while (i < 2) {
-      pair[i * 2].x = px(centerX);
+      pair[i * 2].x = toFIXED(centerX);
       pair[i * 2].height = 0;
-      pair[i * 2].y = px(centerY);
+      pair[i * 2].y = toFIXED(centerY);
       angle <<= 16;
       angle = (u32)angle >> 16;
-      Vector_AddPolarOffset(px(40), angle, &positions[0].x);
-      pair[i * 2 + 1].x = px(centerX);
+      Vector_AddPolarOffset(toFIXED(40), angle, &positions[0].x);
+      pair[i * 2 + 1].x = toFIXED(centerX);
       {
         s32 *point = SpritePlacement_Values(&positions[1]);
         pair[i * 2 + 1].height = 0;
-        pair[i * 2 + 1].y = px(centerY);
-        Vector_AddPolarOffset(px(40), (u16)angle, point);
+        pair[i * 2 + 1].y = toFIXED(centerY);
+        Vector_AddPolarOffset(toFIXED(40), (u16)angle, point);
       }
-      angle = ((u32)angle + TRIG_TURN / 2) << 16;
+      angle = ((u32)angle + DEGtoANG(180)) << 16;
       i++;
       positions += 2;
       angle >>= 16;
@@ -430,12 +430,12 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     for (i = 0; i < 4; i++) {
       angle = (u32)angle << 16;
       angle = (u32)angle >> 16;
-      positions->x = px(centerX);
+      positions->x = toFIXED(centerX);
       positions->height = 0;
-      positions->y = px(centerY);
-      Vector_AddPolarOffset(px(56), (u16)angle, &positions->x);
+      positions->y = toFIXED(centerY);
+      Vector_AddPolarOffset(toFIXED(56), (u16)angle, &positions->x);
       positions++;
-      angle = (s16)(angle + TRIG_TURN / 4);
+      angle = (s16)(angle + DEGtoANG(90));
     }
     for (i = 4; i < 10; i++)
       positions++;
@@ -552,7 +552,7 @@ void SpriteViewer_PlaceRing(void) {
   switch (kind) {
   case 3:
     angle = 0;
-    step = TRIG_TURN / 6;
+    step = DEGtoANG(60);
     cnt = 6;
     break;
   case 5:
@@ -560,13 +560,13 @@ void SpriteViewer_PlaceRing(void) {
   case 44:
   case 88:
     angle = 0;
-    step = TRIG_TURN / 8;
+    step = DEGtoANG(45);
     cnt = 8;
     break;
   case 4:
   case 6:
     angle = 0;
-    step = TRIG_TURN / 10;
+    step = DEGtoANG(36);
     cnt = 10;
     break;
   case 20:
@@ -576,8 +576,8 @@ void SpriteViewer_PlaceRing(void) {
     cnt = 4;
     break;
   default:
-    angle = TRIG_TURN / 8;
-    step = TRIG_TURN / 4;
+    angle = DEGtoANG(45);
+    step = DEGtoANG(90);
     cnt = 4;
     break;
   }

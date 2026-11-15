@@ -108,8 +108,8 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   s32 groundHeight;
 
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  offsetX *= px(16);
-  offsetZ *= px(16);
+  offsetX *= toFIXED(16);
+  offsetZ *= toFIXED(16);
 
   // Shift the selected actor before the separate camera actor.
   if (actor != NULL) {
@@ -263,8 +263,8 @@ static void TretTreeBranch_UpdateBg3ScrollSplit(void) {
            ->layers[MAPGRID_LAYER_GROUND];
   s32 horizontalOffset;
 
-  sSplitLine = 192 - (s16)(WHOLE_PIXELS(layer->y));
-  sHofsAtOrAfterSplit = horizontalOffset = (s16)(WHOLE_PIXELS(layer->x));
+  sSplitLine = 192 - (s16)(FIXEDtoINT(layer->y));
+  sHofsAtOrAfterSplit = horizontalOffset = (s16)(FIXEDtoINT(layer->x));
   sHofsBeforeSplit = horizontalOffset - (gFrameCount >> 2);
 }
 

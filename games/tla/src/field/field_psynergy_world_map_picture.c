@@ -52,11 +52,11 @@ void WorldPicture_StepToPlace(s32 *screenX, s32 *screenY, s32 step) {
   places = FlagEntries_GetTable();
   bestDistance = 0x4000000;
   best = -1;
-  cursorX = FIELD_PIXEL(work->x);
-  cursorY = FIELD_PIXEL(work->z);
+  cursorX = FIXEDtoINT(work->x);
+  cursorY = FIXEDtoINT(work->z);
   if (work->searchX != 0) {
-    cursorX = FIELD_PIXEL(work->searchX);
-    cursorY = FIELD_PIXEL(work->searchZ);
+    cursorX = FIXEDtoINT(work->searchX);
+    cursorY = FIXEDtoINT(work->searchZ);
   }
   for (count = 0; count < 128; count++) {
 
@@ -209,25 +209,25 @@ void WorldPicture_UpdateMarkers(void) {
   if (gWorldPicture_GlideTargetX != 0) {
     x = gWorldPicture_GlideTargetX;
     y = gWorldPicture_GlideTargetY;
-    dx = (x - work->x) / Q16_ONE;
-    dz = (y - work->z) / Q16_ONE;
-    distance = px(Iwram_Sqrt(dx * dx + dz * dz));
+    dx = (x - work->x) / FIXED_ONE;
+    dz = (y - work->z) / FIXED_ONE;
+    distance = toFIXED(Iwram_Sqrt(dx * dx + dz * dz));
     dx = x - work->x;
     dz = y - work->z;
-    if (distance < Q16_ONE * 64)
-      distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
+    if (distance < FIXED_ONE * 64)
+      distance = Math_SqrtFX(Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz));
     step = distance / 4;
-    if (step > Q16_ONE * 8)
-      step = Q16_ONE * 8;
-    if (distance < Q16_ONE / 2) {
+    if (step > FIXED_ONE * 8)
+      step = FIXED_ONE * 8;
+    if (distance < FIXED_ONE / 2) {
       work->x = x;
       work->z = y;
       gWorldPicture_GlideTargetX = 0;
       gWorldPicture_GlideTargetY = 0;
     } else {
       if (distance > step) {
-        dx = Iwram_MulQ16(Iwram_RatioMulQ14(distance, dx), step);
-        dz = Iwram_MulQ16(Iwram_RatioMulQ14(distance, dz), step);
+        dx = Iwram_MulFX(Iwram_RatioMulQ14(distance, dx), step);
+        dz = Iwram_MulFX(Iwram_RatioMulQ14(distance, dz), step);
       }
       work->x += dx;
       work->z += dz;
@@ -239,20 +239,20 @@ void WorldPicture_UpdateMarkers(void) {
       pos[1] = 0;
       pos[2] = work->z;
       Vector_AddPolarOffset(work->speed, angle, pos);
-      if (pos[0] < Q16_ONE * 16)
-        pos[0] = Q16_ONE * 16;
-      if (pos[0] > Q16_ONE * 511)
-        pos[0] = Q16_ONE * 511;
+      if (pos[0] < FIXED_ONE * 16)
+        pos[0] = FIXED_ONE * 16;
+      if (pos[0] > FIXED_ONE * 511)
+        pos[0] = FIXED_ONE * 511;
       if (pos[2] < 0)
         pos[2] = 0;
-      if (pos[2] > Q16_ONE * 365)
-        pos[2] = Q16_ONE * 365;
+      if (pos[2] > FIXED_ONE * 365)
+        pos[2] = FIXED_ONE * 365;
       work->x = pos[0];
       work->z = pos[2];
       Ram_WorldMapCursorStart[0] = pos[0];
       Ram_WorldMapCursorStart[1] = pos[2];
-      if (work->speed < Q16_ONE * 6)
-        work->speed += Q16_ONE / 8;
+      if (work->speed < FIXED_ONE * 6)
+        work->speed += FIXED_ONE / 8;
     }
   }
 
@@ -285,8 +285,8 @@ void WorldPicture_UpdateMarkers(void) {
         name = -2;
         tile = 2;
         always = 0;
-        placeX = FIELD_PIXEL(gMainRoutineWork.shipX) * 853 / 16384 - 269;
-        placeY = FIELD_PIXEL(gMainRoutineWork.shipZ) * 640 / 16384 - 112;
+        placeX = FIXEDtoINT(gMainRoutineWork.shipX) * 853 / 16384 - 269;
+        placeY = FIXEDtoINT(gMainRoutineWork.shipZ) * 640 / 16384 - 112;
       } else {
         if (!GameFlag_Get(flag))
           continue;
@@ -298,8 +298,8 @@ void WorldPicture_UpdateMarkers(void) {
     marker->objectMode = always;
     marker->tile = tileBase + tile;
     if (gWorldPicture_Zoomed == 0) {
-      x = placeX - FIELD_PIXEL(scrollX) - 1;
-      y = placeY - FIELD_PIXEL(scrollY) - 1;
+      x = placeX - FIXEDtoINT(scrollX) - 1;
+      y = placeY - FIXEDtoINT(scrollY) - 1;
       if ((u32)(x + 4) > 247)
         continue;
       if (y < -4)
@@ -329,11 +329,11 @@ void WorldPicture_UpdateMarkers(void) {
   if (gInput.held == 0) {
     if (nearest != -1) {
       if (nearestDistance <= 2) {
-        work->x = px(nearestX);
-        work->z = px(nearestY);
-        work->speed = Q16_ONE;
+        work->x = toFIXED(nearestX);
+        work->z = toFIXED(nearestY);
+        work->speed = FIXED_ONE;
       } else {
-        angle = ArcTan2(nearestY - cursorY, nearestX - cursorX);
+        angle = Trig_Atan(nearestY - cursorY, nearestX - cursorX);
         pos[0] = work->x;
         pos[1] = 0;
         pos[2] = work->z;
@@ -344,7 +344,7 @@ void WorldPicture_UpdateMarkers(void) {
       cursorX = WORLD_MAP_HIGH(work->x);
       cursorY = WORLD_MAP_HIGH(work->z);
     } else {
-      work->speed = Q16_ONE;
+      work->speed = FIXED_ONE;
     }
   }
 
@@ -352,8 +352,8 @@ void WorldPicture_UpdateMarkers(void) {
     marker->objectMode = 0;
     marker->tile = tileBase + 3;
     if (gWorldPicture_Zoomed == 0) {
-      marker->x = nearestX - FIELD_PIXEL(scrollX) - 2;
-      marker->y = nearestY - FIELD_PIXEL(scrollY) - 2;
+      marker->x = nearestX - FIXEDtoINT(scrollX) - 2;
+      marker->y = nearestY - FIXEDtoINT(scrollY) - 2;
     } else {
       marker->x = WORLD_MAP_SCALE(nearestX) - 2;
       marker->y = WORLD_MAP_SCALE(nearestY) - 2;
@@ -364,8 +364,8 @@ void WorldPicture_UpdateMarkers(void) {
   marker = &gWorldPicture_CursorMarker;
   if (gWorldPicture_Zoomed == 0) {
     marker->affineIndex = 0;
-    marker->x = cursorX - FIELD_PIXEL(scrollX) - 17;
-    marker->y = cursorY - FIELD_PIXEL(scrollY) + 1;
+    marker->x = cursorX - FIXEDtoINT(scrollX) - 17;
+    marker->y = cursorY - FIXEDtoINT(scrollY) + 1;
   } else {
     marker->x = WORLD_MAP_SCALE(cursorX) - 17;
     marker->y = WORLD_MAP_SCALE(cursorY) + 1;
@@ -400,8 +400,8 @@ void WorldPicture_UpdateMarkers(void) {
         if (gWorldPicture_Zoomed == 0) {
           cursorX = nearestX - WORLD_MAP_NAME_LEFT;
           cursorY = nearestY - 11;
-          cursorX -= FIELD_PIXEL(scrollX);
-          cursorY -= FIELD_PIXEL(scrollY);
+          cursorX -= FIXEDtoINT(scrollX);
+          cursorY -= FIXEDtoINT(scrollY);
         } else {
           cursorX = WORLD_MAP_SCALE(nearestX) - 1;
           cursorY = WORLD_MAP_SCALE(nearestY) - 11;
@@ -430,8 +430,8 @@ void WorldPicture_UpdateMarkers(void) {
     if (gWorldPicture_Zoomed == 0) {
       cursorX = nearestX - WORLD_MAP_NAME_LEFT;
       cursorY = nearestY - 11;
-      cursorX -= FIELD_PIXEL(scrollX);
-      cursorY -= FIELD_PIXEL(scrollY);
+      cursorX -= FIXEDtoINT(scrollX);
+      cursorY -= FIXEDtoINT(scrollY);
     } else {
       cursorX = WORLD_MAP_SCALE(nearestX) - 1;
       cursorY = WORLD_MAP_SCALE(nearestY) - 11;
@@ -474,8 +474,8 @@ void WorldMapPicture_Draw(void) {
   u8 *buffer;
   s32 resource = (s32)&ResourceId_WorldMapPictureLarge;
   s32 *cursor = work->cursor;
-  s32 x = *cursor++ - px(120);
-  s32 z = *cursor - px(80);
+  s32 x = *cursor++ - toFIXED(120);
+  s32 z = *cursor - toFIXED(80);
   u32 *graphics;
   u32 column;
   u32 firstRow;
@@ -497,8 +497,8 @@ void WorldMapPicture_Draw(void) {
           REG_DMA3);
   *(u16 *)BG_PLTT = 0;
   buffer = Ram_MapCellBuffer;
-  right = px(272);
-  bottom = px(224);
+  right = toFIXED(272);
+  bottom = toFIXED(224);
   if (x < 0)
     x = 0;
   if (x > right)
@@ -507,8 +507,8 @@ void WorldMapPicture_Draw(void) {
     z = 0;
   if (z > bottom)
     z = bottom;
-  gBgScroll[1].x = FIELD_PIXEL(x);
-  gBgScroll[1].y = FIELD_PIXEL(z);
+  gBgScroll[1].x = FIXEDtoINT(x);
+  gBgScroll[1].y = FIXEDtoINT(z);
   x = (u32)x >> 19;
   column = x;
   firstRow = (u32)z >> 19;
@@ -640,8 +640,8 @@ extern s32 *gWorldPicture_Cursor;
 /// values are 16.16 pixels.
 void WorldMapPicture_UpdateScroll(void) {
   s32 *cursor = gWorldPicture_Cursor;
-  s32 x = *cursor++ - px(120);
-  s32 y = *cursor - px(80);
+  s32 x = *cursor++ - toFIXED(120);
+  s32 y = *cursor - toFIXED(80);
   s32 dx;
   s32 dy;
   s32 distance;
@@ -661,21 +661,21 @@ void WorldMapPicture_UpdateScroll(void) {
   if (y > bottom)
     y = bottom;
   if (gWorldPicture_Zoomed == 0) {
-    dx = (x - SCROLL_X) / Q16_ONE;
-    dy = (y - SCROLL_Y) / Q16_ONE;
-    distance = px(Iwram_Sqrt(dx * dx + dy * dy));
+    dx = (x - SCROLL_X) / FIXED_ONE;
+    dy = (y - SCROLL_Y) / FIXED_ONE;
+    distance = toFIXED(Iwram_Sqrt(dx * dx + dy * dy));
     dx = x - SCROLL_X;
     dy = y - SCROLL_Y;
     // Near the target the whole-pixel distance is too coarse.
-    if (distance < px(64))
-      distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy));
+    if (distance < toFIXED(64))
+      distance = Math_SqrtFX(Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy));
     step = distance / 4;
-    if (step > px(8))
-      step = px(8);
+    if (step > toFIXED(8))
+      step = toFIXED(8);
     if (distance >= 0x4000) {
       if (distance > step) {
-        dx = Iwram_MulQ16(Iwram_RatioMulQ14(distance, dx), step);
-        dy = Iwram_MulQ16(Iwram_RatioMulQ14(distance, dy), step);
+        dx = Iwram_MulFX(Iwram_RatioMulQ14(distance, dx), step);
+        dy = Iwram_MulFX(Iwram_RatioMulQ14(distance, dy), step);
       }
       x = SCROLL_X + dx;
       y = SCROLL_Y + dy;
@@ -702,8 +702,8 @@ void WorldMapPicture_UpdateScroll(void) {
       else
         WorldMapPicture_DrawRow(column, row);
     }
-    gBgScroll[1].x = FIELD_PIXEL(x);
-    gBgScroll[1].y = FIELD_PIXEL(y);
+    gBgScroll[1].x = FIXEDtoINT(x);
+    gBgScroll[1].y = FIXEDtoINT(y);
   }
   SCROLL_X = x;
   SCROLL_Y = y;
@@ -848,11 +848,11 @@ s32 WorldPicture_Show(s32 mode) {
       wait(1);
       if ((input->repeat & KEY_START) && gliding == 0) {
         WorldPicture_GetLeaderPoint(&screenX, &screenY);
-        *cursorX = px(screenX);
+        *cursorX = toFIXED(screenX);
         // DEAD: input set again to the &gInput it already holds; the ROM keeps
         // the load.
         input = &gInput;
-        *cursorZ = px(screenY);
+        *cursorZ = toFIXED(screenY);
         gliding = 1;
       }
       if (!(keys->held & KEY_START) && gliding == 1) {
@@ -865,19 +865,19 @@ s32 WorldPicture_Show(s32 mode) {
       }
       if (keys->repeat & KEY_R) {
         WorldPicture_StepToPlace(&screenX, &screenY, 1);
-        *cursorX = px(screenX);
+        *cursorX = toFIXED(screenX);
         // wayZ only ever holds &gWorldPicture_CursorStartY, set where it is
         // used.
         wayZ = &gWorldPicture_CursorStartY;
-        *cursorZ = px(screenY);
+        *cursorZ = toFIXED(screenY);
         *wayX = *cursorX;
         *wayZ = *cursorZ;
       }
       if (input->repeat & KEY_L) {
         WorldPicture_StepToPlace(&screenX, &screenY, -1);
-        *cursorX = px(screenX);
+        *cursorX = toFIXED(screenX);
         wayZ = &gWorldPicture_CursorStartY;
-        *cursorZ = px(screenY);
+        *cursorZ = toFIXED(screenY);
         *wayX = *cursorX;
         *wayZ = *cursorZ;
       }
@@ -973,15 +973,15 @@ void WorldMap_ZoomOutWhileLHeld(void) {
 
   if (gFieldWork->mode == ACTOR_SYSTEM_WORLD_MAP) {
     Leader_StopMoving();
-    WorldMap_StartZoom(Q16_ONE * 8 / 13, 6);
+    WorldMap_StartZoom(FIXED_ONE * 8 / 13, 6);
     while (gInput.held & KEY_L)
       wait(1);
     party = &gMainRoutineWork;
 
     if (party->ownerOverride != 0)
-      WorldMap_StartZoom(Q16_ONE, 6);
+      WorldMap_StartZoom(FIXED_ONE, 6);
     else
-      WorldMap_StartZoom(Q16_ONE, 6);
+      WorldMap_StartZoom(FIXED_ONE, 6);
   }
 }
 

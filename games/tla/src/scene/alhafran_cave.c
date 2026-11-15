@@ -197,23 +197,23 @@ void AlhafranCave_FreezePuddle(void) {
 /// level.
 void AlhafranCave_OpenWayToJail(void) {
   Event_SetFlag(FLAG_WAY_TO_JAIL_OPEN);
-  FieldMapGrid_SetCellHeight(px(400), px(304), 0, 4);
-  FieldMapGrid_SetCellHeight(px(416), px(304), 0, 4);
-  MapGrid_SetCellHeight(px(432), px(304), 0, 4);
-  MapGrid_SetCellBehavior_(px(384), px(288), 0, 255);
-  FieldMapGrid_SetCellHeight(px(288), px(384), 0, 4);
-  MapGrid_SetCellHeight(px(336), px(384), 0, 4);
+  FieldMapGrid_SetCellHeight(toFIXED(400), toFIXED(304), 0, 4);
+  FieldMapGrid_SetCellHeight(toFIXED(416), toFIXED(304), 0, 4);
+  MapGrid_SetCellHeight(toFIXED(432), toFIXED(304), 0, 4);
+  MapGrid_SetCellBehavior_(toFIXED(384), toFIXED(288), 0, 255);
+  FieldMapGrid_SetCellHeight(toFIXED(288), toFIXED(384), 0, 4);
+  MapGrid_SetCellHeight(toFIXED(336), toFIXED(384), 0, 4);
 }
 
 /// Closes the way down to the jail as the leader steps off the ledge.
 void AlhafranCave_CloseWayToJail(void) {
   Event_ClearFlag(FLAG_WAY_TO_JAIL_OPEN);
-  FieldMapGrid_SetCellHeight(px(400), px(304), 0, 0);
-  FieldMapGrid_SetCellHeight(px(416), px(304), 0, 0);
-  MapGrid_SetCellHeight(px(432), px(304), 0, 0);
-  MapGrid_SetCellBehavior_(px(384), px(288), 0, 0);
-  FieldMapGrid_SetCellHeight(px(288), px(384), 0, 0);
-  MapGrid_SetCellHeight(px(336), px(384), 0, 0);
+  FieldMapGrid_SetCellHeight(toFIXED(400), toFIXED(304), 0, 0);
+  FieldMapGrid_SetCellHeight(toFIXED(416), toFIXED(304), 0, 0);
+  MapGrid_SetCellHeight(toFIXED(432), toFIXED(304), 0, 0);
+  MapGrid_SetCellBehavior_(toFIXED(384), toFIXED(288), 0, 0);
+  FieldMapGrid_SetCellHeight(toFIXED(288), toFIXED(384), 0, 0);
+  MapGrid_SetCellHeight(toFIXED(336), toFIXED(384), 0, 0);
 }
 
 /// Sand sinks the leader into the sand's layer.
@@ -238,7 +238,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 void AlhafranCave_TrackLeadersLevel(void) {
   s32 y = Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed;
 
-  if (y < px(8))
+  if (y < toFIXED(8))
     gMainRoutineWork.onUpperLevel = 0;
   else
     gMainRoutineWork.onUpperLevel = 1;
@@ -249,8 +249,8 @@ s32 AlhafranCave_DrawCrateSprite(void) {
   struct Actor *object = Actor_Get(ACTOR_CRATE);
 
   BattleEffect_DrawSpriteAtWorldPosition(
-      &gAlhafranCave_CrateSprite, object->x.fixed, object->y.fixed + px(28),
-      object->z.fixed);
+      &gAlhafranCave_CrateSprite, object->x.fixed,
+      object->y.fixed + toFIXED(28), object->z.fixed);
   return 0;
 }
 
@@ -298,22 +298,22 @@ void AlhafranCave_SetUpCave(void) {
     AlhafranCave_OpenWayToJail();
   object = Actor_Get(ACTOR_CAVE_FIRST_PILLAR);
   object->motionFlags = 0;
-  object->y.fixed = px(12);
+  object->y.fixed = toFIXED(12);
   object = Actor_Get(ACTOR_CAVE_SECOND_PILLAR);
   object->motionFlags = 0;
-  object->y.fixed = px(12);
+  object->y.fixed = toFIXED(12);
   object = Actor_Get(ACTOR_CAVE_THIRD_PILLAR);
   object->motionFlags = 0;
-  object->y.fixed = px(12);
+  object->y.fixed = toFIXED(12);
   Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_FIRST_PILLAR), 6);
   Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_SECOND_PILLAR), 6);
   Actor_SetSpriteColorMode(Actor_Get(ACTOR_CAVE_THIRD_PILLAR), 6);
   object = Actor_Get(ACTOR_CAVE_SECOND_PILLAR_PIECE);
   object->motionFlags = 0;
-  object->y.fixed = px(16);
+  object->y.fixed = toFIXED(16);
   object = Actor_Get(ACTOR_CAVE_FIRST_PILLAR_PIECE);
   object->motionFlags = 0;
-  object->y.fixed = px(16);
+  object->y.fixed = toFIXED(16);
   FieldActor_SetSpriteRotationById(ACTOR_CAVE_LEANING_PILLAR, TRIG_TURN / 16);
   Actor_SetAnimation(ACTOR_CAVE_FIRST_PILLAR_PIECE, 2);
   Actor_SetAnimation(ACTOR_CAVE_SECOND_PILLAR_PIECE, 3);
@@ -565,10 +565,10 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   effect = FieldEffect_SpawnMoveHand(eoleo);
   position[0] = key->x.fixed;
   effect->watchedActor = key;
-  position[1] = key->y.fixed + px(16);
+  position[1] = key->y.fixed + toFIXED(16);
   position[2] = key->z.fixed;
   FieldVector_AddPolarOffset(16, FACING_NORTH, position);
-  FieldActor_SetMoveTargetFixed(effect, position[0], position[1], position[2]);
+  FieldActor_SetMoveTargetFX(effect, position[0], position[1], position[2]);
   FieldEffect_SnapScaleToFull(effect);
   Actor_SelectAnimation(effect, 4);
   key->update = AlhafranCave_ShakeUnderEoleosPower;

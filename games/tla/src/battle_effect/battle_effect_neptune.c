@@ -115,10 +115,10 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   // The serpent starts low on the right, rising to the left.
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   openStep = 1;
-  serpentX = px(280);
-  serpentY = px(200);
-  serpentVX = -px(4);
-  serpentVY = -px(8);
+  serpentX = toFIXED(280);
+  serpentY = toFIXED(200);
+  serpentVX = -toFIXED(4);
+  serpentVY = -toFIXED(8);
   savedScrollX = gBgScroll[1].x;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -148,8 +148,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     s32 r = Random16() & 255;
     s32 a = Random16() & TRIG_ANGLE_MASK;
 
-    PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + px(128);
-    PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + px(96);
+    PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + toFIXED(128);
+    PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + toFIXED(96);
     PARTICLES[i].velocityX = (-(Random16() & 0x1fff) - 0x800) << 5;
     PARTICLES[i].velocityY = (-(Random16() & 0xfff) - 0x1800) << 5;
     PARTICLES[i].variant = 0;
@@ -193,22 +193,22 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         if (frame > 48)
           serpentVX = serpentVX * 60 / DAMPING_SCALE;
         serpentVY = serpentVY * 60 / DAMPING_SCALE;
-        if (serpentY > px(132))
-          serpentVY -= px(1) / 8;
+        if (serpentY > toFIXED(132))
+          serpentVY -= toFIXED(1) / 8;
         else
-          serpentVY += px(1) / 8;
+          serpentVY += toFIXED(1) / 8;
         serpentX += serpentVX;
         serpentY += serpentVY;
       } else if (frame <= 170) {
         if (frame <= 107)
-          serpentVX += px(1) / 8;
+          serpentVX += toFIXED(1) / 8;
         serpentVX = serpentVX * 60 / DAMPING_SCALE;
         serpentX += serpentVX;
         if (frame <= 117) {
-          if (serpentY > px(138))
-            serpentVY -= px(1) / 8;
+          if (serpentY > toFIXED(138))
+            serpentVY -= toFIXED(1) / 8;
           else
-            serpentVY += px(1) / 8;
+            serpentVY += toFIXED(1) / 8;
           serpentVY = serpentVY * 56 / DAMPING_SCALE;
           serpentY += serpentVY;
         }
@@ -216,8 +216,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       position[3] = 0;
       position[1] = 0;
       for (i = 0; i != 8; i++) {
-        position[0] = px((i & 3) * 48) + serpentX - px(32);
-        position[2] = px((i / 4) * 48) + serpentY - px(24);
+        position[0] = INTtoFIXED((i & 3) * 48) + serpentX - toFIXED(32);
+        position[2] = INTtoFIXED((i / 4) * 48) + serpentY - toFIXED(24);
         Render_ApplyProjectedPlacementFar(work->sprites[i], position, &scale.x,
                                           0);
       }
@@ -230,8 +230,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           s32 r = Random16() & 255;
           s32 a = Random16() & TRIG_ANGLE_MASK;
 
-          PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + px(64);
-          PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + px(96);
+          PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + toFIXED(64);
+          PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + toFIXED(96);
           PARTICLES[i].velocityX = (32 - (Random16() & 63)) << 12;
           PARTICLES[i].velocityY = (-(Random16() & 31) - 16) << 13;
           PARTICLES[i].variant = 0;
@@ -497,8 +497,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 
               r &= Random16();
               a = (Random16() & 0x7fff) - 0x4000;
-              PARTICLES[j].x = px(pillarX);
-              PARTICLES[j].y = px(ground);
+              PARTICLES[j].x = INTtoFIXED(pillarX);
+              PARTICLES[j].y = INTtoFIXED(ground);
               r += 32;
               PARTICLES[j].velocityX = (Trig_Sin(a) * r) >> 7;
               PARTICLES[j].velocityY = -(Trig_Cos(a) * r * 2) >> 7;
@@ -521,12 +521,12 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         s32 y;
 
         PARTICLES[i].variant--;
-        BattleEffectKernels_IntegrateVector2(&PARTICLES[i], 60, px(1) / 4);
-        y = Q_16_16_TO_INT(PARTICLES[i].y);
+        BattleEffectKernels_IntegrateVector2(&PARTICLES[i], 60, toFIXED(1) / 4);
+        y = FIXEDtoINT(PARTICLES[i].y);
         if (y > 120) {
           PARTICLES[i].velocityY = -PARTICLES[i].velocityY / 2;
         } else if (PARTICLES[i].x >= 0 &&
-                   (x = Q_16_16_TO_INT(PARTICLES[i].x)) <= 126 &&
+                   (x = FIXEDtoINT(PARTICLES[i].x)) <= 126 &&
                    PARTICLES[i].y >= 0) {
           s32 k = PARTICLES[i].variant / 8 + 3;
 

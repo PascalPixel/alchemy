@@ -157,8 +157,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   if (direction == PARTICLE_STREAMS_OUTER_SPACE) {
     struct Actor *actor = GetBattleObjectSlotFar(work->args->user)->actor;
 
-    actor->velocityY = px(10);
-    actor->gravity = px(57) / 100;
+    actor->velocityY = toFIXED(10);
+    actor->gravity = toFIXED(57) / 100;
     BattleEffect_TintBattler(work->args->user, -1, POSE_LEAP, -1, 0);
     Sound_PlayFar(SE_CRASH);
     direction = work->args->side == EFFECT_SIDE_PARTY ? 1 : -1;
@@ -356,23 +356,23 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       y = 96 - frame;
       // The falling sprite drifts with the stream and grows.
       position.groundHeight = 0;
-      position.height = px(255);
+      position.height = toFIXED(255);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
-        size = growth + Q16_ONE * 5 / 8;
+        size = growth + FIXED_ONE * 5 / 8;
         scale.x = size;
         scale.y = size;
-        position.x = px(x) + px(80);
-        position.y = px(64 - y);
+        position.x = INTtoFIXED(x) + toFIXED(80);
+        position.y = INTtoFIXED(64 - y);
         Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale,
                                          0);
         Actor_ApplyProjectedPlacementFar(work->sprites[1], &position, &scale,
                                          0);
       } else {
-        size = growth + Q16_ONE;
+        size = growth + FIXED_ONE;
         scale.x = size;
         scale.y = size;
-        position.x = px(x) + px(96);
-        position.y = px(96 - y);
+        position.x = INTtoFIXED(x) + toFIXED(96);
+        position.y = INTtoFIXED(96 - y);
         Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale,
                                          0);
       }
@@ -381,29 +381,30 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         struct Particle *flame = &work->particles[i];
 
         if (flame->variant == -1) {
-          s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
+          s32 angle = (Random16() & 0x7fff) + DEGtoANG(90);
 
           flame->variant = 0;
-          flame->x = px(x + 96) + Trig_Sin(angle) * 30 / Q16_ONE * size;
-          flame->y = px(y) - Trig_Cos(angle) * 30 / Q16_ONE * size;
+          flame->x =
+              INTtoFIXED(x + 96) + Trig_Sin(angle) * 30 / FIXED_ONE * size;
+          flame->y = INTtoFIXED(y) - Trig_Cos(angle) * 30 / FIXED_ONE * size;
           break;
         }
       }
       // Seven sparks orbit the falling sprite.
       screen.x = 0;
       screen.y = 0;
-      screen.depth = px(512);
-      Transform_Reset();
-      Transform_ApplyPosition(ScreenPoint_Coordinates(&screen));
-      Transform_ApplyRoll(TRIG_TURN / 32);
-      Transform_ApplyYaw(frame << 8);
+      screen.depth = toFIXED(512);
+      Matrix_Initialize();
+      Matrix_TranslateVector(ScreenPoint_Coordinates(&screen));
+      Matrix_RotateZ(TRIG_TURN / 32);
+      Matrix_RotateY(frame << 8);
       for (i = 0; i != 7; i++) {
-        SET_VECTOR(vector, px(gParticleStreams_OrbitPoints[i][0] / 2),
-                   px(gParticleStreams_OrbitPoints[i][1] + frame),
-                   px(gParticleStreams_OrbitPoints[i][2] / 2));
+        SET_VECTOR(vector, INTtoFIXED(gParticleStreams_OrbitPoints[i][0] / 2),
+                   INTtoFIXED(gParticleStreams_OrbitPoints[i][1] + frame),
+                   INTtoFIXED(gParticleStreams_OrbitPoints[i][2] / 2));
         Projection_Point(vector, &spot);
-        spot.x = WHOLE_PIXELS(spot.x) + 128;
-        spot.y = WHOLE_PIXELS(spot.y) + 60;
+        spot.x = FIXEDtoINT(spot.x) + 128;
+        spot.y = FIXEDtoINT(spot.y) + 60;
         draw(Ram_MapGridCellBuffer, work->sheet + PARTICLE_STREAMS_SMALL_GLOW,
              spot.x - PARTICLE_STREAMS_SMALL_GLOW_SIZE / 2,
              spot.y - PARTICLE_STREAMS_SMALL_GLOW_SIZE / 2,
@@ -428,7 +429,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                PARTICLE_STREAMS_LARGE_GLOW_SIZE);
         else if (fireballY <= 95)
           ParticleStreams_SpawnLanding(
-              px(gParticleStreams_FireballPoints[i][0] + x), px(fireballY), 1);
+              INTtoFIXED(gParticleStreams_FireballPoints[i][0] + x),
+              INTtoFIXED(fireballY), 1);
       }
       for (i = 0; i != 32; i++) {
         struct Particle *flame = &work->particles[i];
@@ -439,11 +441,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                work->sheet + PARTICLE_STREAMS_FLAMES +
                    flame->variant * (PARTICLE_STREAMS_FLAME_SIZE *
                                      PARTICLE_STREAMS_FLAME_SIZE),
-               WHOLE_PIXELS(flame->x) - PARTICLE_STREAMS_FLAME_SIZE / 2,
-               WHOLE_PIXELS(flame->y) - PARTICLE_STREAMS_FLAME_SIZE / 2,
+               FIXEDtoINT(flame->x) - PARTICLE_STREAMS_FLAME_SIZE / 2,
+               FIXEDtoINT(flame->y) - PARTICLE_STREAMS_FLAME_SIZE / 2,
                PARTICLE_STREAMS_FLAME_SIZE, PARTICLE_STREAMS_FLAME_SIZE);
-          flame->x -= direction * (px(5) / 4);
-          flame->y -= px(5);
+          flame->x -= direction * (toFIXED(5) / 4);
+          flame->y -= toFIXED(5);
           flame->variant++;
           if (flame->variant == 6)
             flame->variant = -1;
@@ -546,11 +548,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                   (i & 1) * MOTE_SET_BYTES) +
                  PARTICLE_STREAMS_MOTE_PICTURES,
              screen.x - size / 2, screen.y - size, size, size * 2);
-        Particle_AdvanceWithGravity3D(ember, PARTICLE_DAMPING_NONE, -px(1) / 8);
-        if (ember->y <= px(20)) {
+        Particle_AdvanceWithGravity3D(ember, PARTICLE_DAMPING_NONE,
+                                      -toFIXED(1) / 8);
+        if (ember->y <= toFIXED(20)) {
           ember->x = 0;
           ember->z = 0;
-          ember->y = px(20);
+          ember->y = toFIXED(20);
           SET_VELOCITY(ember, ((Random16() & 63) - 32) << 15,
                        (Random16() & 63) << 13, ((Random16() & 63) - 32) << 15);
         }
@@ -590,9 +593,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         }
         flash->variant++;
         if (flash->variant == 14) {
-          flash->y = px(20);
+          flash->y = toFIXED(20);
           flash->x = 0;
-          flash->z = px((Random16() & 255) - 127);
+          flash->z = INTtoFIXED((Random16() & 255) - 127);
           SET_VELOCITY(flash, 0, (Random16() & 255) << 11, 0);
           flash->variant = 0;
         } else {
@@ -605,21 +608,21 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     else
       x = 56 - frame / 2;
     y = 64 - frame * 2;
-    grow = (frame << 8) + px(2);
+    grow = (frame << 8) + toFIXED(2);
     position.groundHeight = 0;
-    position.height = px(255);
+    position.height = toFIXED(255);
     if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
       scale.x = size;
       scale.y = size;
-      position.x = px(x) + px(96);
-      position.y = px(96 - y);
+      position.x = INTtoFIXED(x) + toFIXED(96);
+      position.y = INTtoFIXED(96 - y);
       Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale, 0);
       Actor_ApplyProjectedPlacementFar(work->sprites[1], &position, &scale, 0);
     } else {
       scale.x = grow;
       scale.y = grow;
-      position.x = px(x) + px(96);
-      position.y = px(96 - y);
+      position.x = INTtoFIXED(x) + toFIXED(96);
+      position.y = INTtoFIXED(96 - y);
       Actor_ApplyProjectedPlacementFar(work->sprites[0], &position, &scale, 0);
     }
     work->shakeFrames = 1;

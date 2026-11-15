@@ -505,29 +505,30 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     {
       s32 *position = probePosition.coordinates;
 
-      Vector_AddPolarOffset(px(16), leader->facing, position);
+      Vector_AddPolarOffset(toFIXED(16), leader->facing, position);
     }
     if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
       s32 x, z;
 
       x = probePosition.vector.x;
       z = probePosition.vector.z;
-      cell = Ram_MapBlocks +
-             ((((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)) << 2);
+      cell =
+          Ram_MapBlocks +
+          ((((x / toFIXED(32)) & 31) + (((z / toFIXED(32)) & 31) << 5)) << 2);
     } else {
       s32 x, z;
 
       cell = *(u8 **)(mapBytes + 0x138);
       x = probePosition.vector.x;
       z = probePosition.vector.z;
-      cell += (((x / px(16)) + ((z / px(16)) << 7)) << 2);
+      cell += (((x / toFIXED(16)) + ((z / toFIXED(16)) << 7)) << 2);
     }
     collisionCode = cell[2];
     if (collisionCode >= 242 && collisionCode <= 247) {
       terrainHeight = MapGrid_GetTerrainHeightFar(
           leader->layer, probePosition.vector.x, probePosition.vector.z);
       if (terrainHeight >= leader->y.fixed &&
-          terrainHeight <= leader->y.fixed + px(16)) {
+          terrainHeight <= leader->y.fixed + toFIXED(16)) {
         result = collisionCode;
       }
     } else if (Scene_FindTrigger(3, collisionCode) != 0) {
@@ -569,25 +570,26 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
   }
 
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    SET_POSITION(&gMainRoutineWork, px(entry->x), px(entry->y), entry->z << 16);
+    SET_POSITION(&gMainRoutineWork, toFIXED(entry->x), toFIXED(entry->y),
+                 entry->z << 16);
     gMainRoutineWork.heading = entry->facing;
     gMainRoutineWork.layer = 0;
   }
 
   left = entry->cameraLeft;
   if (left != -1)
-    map->minX = px(left);
+    map->minX = toFIXED(left);
   if (entry->cameraTop != -1)
-    map->minZ = px(entry->cameraTop);
+    map->minZ = toFIXED(entry->cameraTop);
   if (entry->cameraRight != -1)
-    map->maxX = px(entry->cameraRight);
+    map->maxX = toFIXED(entry->cameraRight);
   if (entry->cameraBottom != -1)
-    map->maxZ = px(entry->cameraBottom);
+    map->maxZ = toFIXED(entry->cameraBottom);
 
-  if (map->minX + px(240) > map->maxX)
-    map->minX = map->maxX - px(240);
-  if (map->minZ + px(160) > map->maxZ)
-    map->minZ = map->maxZ - px(160);
+  if (map->minX + toFIXED(240) > map->maxX)
+    map->minX = map->maxX - toFIXED(240);
+  if (map->minZ + toFIXED(160) > map->maxZ)
+    map->minZ = map->maxZ - toFIXED(160);
   return 1;
 }
 
@@ -631,8 +633,8 @@ s32 Field_PlaceAtEntrance(void) {
       cursor++;
       x = Stream_ReadS16(&cursor);
       z = Stream_ReadS16(&cursor);
-      xFixed = px(x);
-      zFixed = px(z);
+      xFixed = toFIXED(x);
+      zFixed = toFIXED(z);
       height = MapGrid_GetTerrainHeightFar(0, xFixed, zFixed) >> 16;
       flags = *cursor;
       base = (s32)gMapScene;
@@ -642,7 +644,7 @@ s32 Field_PlaceAtEntrance(void) {
         *angle = (flags & 15) << 12;
         *layer = 0;
         if (flags & 16)
-          gMainRoutineWork.y = px(8);
+          gMainRoutineWork.y = toFIXED(8);
       }
       if (flags & 32)
         return 1;
@@ -669,10 +671,10 @@ s32 Field_PlaceAtEntrance(void) {
             map->minZ = FIELD_CELL_ORIGIN(top);
             map->maxX = FIELD_CELL_ORIGIN(right);
             map->maxZ = FIELD_CELL_ORIGIN(bottom);
-            if (map->minX + px(240) > map->maxX)
-              map->minX = map->maxX - px(240);
-            if (map->minZ + px(160) > map->maxZ)
-              map->minZ = map->maxZ - px(160);
+            if (map->minX + toFIXED(240) > map->maxX)
+              map->minX = map->maxX - toFIXED(240);
+            if (map->minZ + toFIXED(160) > map->maxZ)
+              map->minZ = map->maxZ - toFIXED(160);
             break;
           }
         }

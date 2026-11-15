@@ -141,8 +141,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           Sound_PlayFar(SE_CRASH);
         }
       }
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
 
       if (mode == DJINNI_CHARGE_CORE) {
         if ((u32)frame <= 15) {
@@ -214,7 +214,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
             if (p->variant != -1) {
               continue;
             }
-            SET_POSITION(p, target->x, target->y + px(5), target->z);
+            SET_POSITION(p, target->x, target->y + toFIXED(5), target->z);
             p->velocityX = ((Random16() & 511) + 256) << 10;
             if (args->side == EFFECT_SIDE_PARTY) {
               p->velocityX = -p->velocityX;
@@ -248,8 +248,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
             s32 speed;
 
             p = &work->particles[i];
-            SET_POSITION(p, target->x, target->y + px(10), target->z);
-            angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
+            SET_POSITION(p, target->x, target->y + toFIXED(10), target->z);
+            angle = (Random16() & 0x7fff) - DEGtoANG(90);
             // DEAD: both arms alike; the ROM keeps the test and both calls.
             if (i >= DJINNI_CHARGE_FIRST_BURST) {
               speed = (Random16() & 511) + 256;
@@ -338,7 +338,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
                       picture * PICTURE_BYTES(FLASH_BURST),
                   debris.x / 2 - 16, debris.y - 32, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
-          BattleEffectKernels_IntegrateVector3(p, 62, -px(1) / 64);
+          BattleEffectKernels_IntegrateVector3(p, 62, -toFIXED(1) / 64);
           p->variant--;
         }
       }
@@ -361,38 +361,37 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
 
           Mesh_BuildGrid(mesh, 8, 8, 8, 8);
           for (row = 0, angle = 0; row != 8; angle += 4681, row++) {
-            s32 y = Q_16_16_TO_INT(-Trig_Cos(angle) * 48);
-            s32 radius = Q_16_16_TO_INT(Trig_Sin(angle) * 48);
+            s32 y = FIXEDtoINT(-Trig_Cos(angle) * 48);
+            s32 radius = FIXEDtoINT(Trig_Sin(angle) * 48);
             struct ModelVertex *vertex = (struct ModelVertex *)cells;
             s32 k;
 
             for (k = 0; k != 8; k++) {
-              s32 x = Q_16_16_TO_INT(Trig_Sin(k << 13) * radius);
+              s32 x = FIXEDtoINT(Trig_Sin(k << 13) * radius);
 
               vertex[row * 8 + k].y = y;
               vertex[row * 8 + k].x = x;
-              vertex[row * 8 + k].z =
-                  Q_16_16_TO_INT(Trig_Cos(k << 13) * radius);
+              vertex[row * 8 + k].z = FIXEDtoINT(Trig_Cos(k << 13) * radius);
             }
           }
         }
         texture.logWidth = 5;
         texture.logHeight = 5;
         texture.pixels = work->sheet;
-        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
         gProjection.centerX = 60;
-        Transform_ApplyPosition(focus);
-        Transform_ApplyTranslation(0, px(16), 0);
+        Matrix_TranslateVector(focus);
+        Matrix_Translate(0, toFIXED(16), 0);
         if (args->side == EFFECT_SIDE_ENEMIES) {
-          Transform_ApplyRoll(20576);
+          Matrix_RotateZ(20576);
         } else {
-          Transform_ApplyRoll(44960);
+          Matrix_RotateZ(44960);
         }
         scale = 0xa000;
         if (frame > 31) {
-          scale = (frame << 10) + Q16_ONE / 8;
+          scale = (frame << 10) + FIXED_ONE / 8;
         }
-        Transform_ApplyUniformScale(scale);
+        Matrix_ScaleUniform(scale);
         if (frame > 3) {
           s32 shade = frame * 4 - 80;
 

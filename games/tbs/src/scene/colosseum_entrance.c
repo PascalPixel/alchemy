@@ -1005,8 +1005,8 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, ANIM_STILL);
   Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 4, ANIM_STILL);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_TRIAL_PILLAR), 0);
-  Actor_Get(ACTOR_FIRST_FLAG_BEARER)->scaleX = -Q16_ONE;
-  Actor_Get(ACTOR_FIRST_FLAG_BEARER + 1)->scaleX = -Q16_ONE;
+  Actor_Get(ACTOR_FIRST_FLAG_BEARER)->scaleX = -FIXED_ONE;
+  Actor_Get(ACTOR_FIRST_FLAG_BEARER + 1)->scaleX = -FIXED_ONE;
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   wait(1);
@@ -1064,8 +1064,8 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
     Actor_Stop(ACTOR_FAILING_WARRIOR);
     actor = Actor_Get(ACTOR_FAILING_WARRIOR);
     actor->facing = FACING_NORTH_NORTHEAST;
-    actor->scaleX = Q16_ONE;
-    actor->scaleY = Q16_ONE;
+    actor->scaleX = FIXED_ONE;
+    actor->scaleY = FIXED_ONE;
     Event_Wait(20);
     Actor_SetAnimation(ACTOR_FAILING_WARRIOR, ANIM_STILL);
     Event_Wait(40);
@@ -1147,8 +1147,8 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, ANIM_STILL);
   Actor_SetAnimation(ACTOR_FIRST_TRIAL_WARRIOR + 4, ANIM_STILL);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_TRIAL_PILLAR), 0);
-  Actor_Get(ACTOR_FIRST_FLAG_BEARER)->scaleX = -Q16_ONE;
-  Actor_Get(ACTOR_FIRST_FLAG_BEARER + 1)->scaleX = -Q16_ONE;
+  Actor_Get(ACTOR_FIRST_FLAG_BEARER)->scaleX = -FIXED_ONE;
+  Actor_Get(ACTOR_FIRST_FLAG_BEARER + 1)->scaleX = -FIXED_ONE;
   wait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   wait(1);
@@ -1205,9 +1205,9 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   trialEffect = Actor_Get(ACTOR_TRIAL_PILLAR);
   trialEffect->motionFlags = 0;
   for (counter = 0; counter < 20; counter++) {
-    trialEffect->y.fixed += px(3) / 5;
+    trialEffect->y.fixed += toFIXED(3) / 5;
     wait(4);
-    trialEffect->y.fixed -= px(3) / 10;
+    trialEffect->y.fixed -= toFIXED(3) / 10;
     wait(4);
   }
   Actor_SetAnimation(ACTOR_FIRST_FLAG_BEARER, FLAG_BEARER_ANIMATION_WHITE_FLAG);
@@ -1220,8 +1220,8 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, ANIM_STAND);
   Actor_Get(ACTOR_CLEARING_WARRIOR)->facing = FACING_NORTH_NORTHEAST;
   trialEffect->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  trialEffect->scaleX = Q16_ONE;
-  trialEffect->scaleY = Q16_ONE;
+  trialEffect->scaleX = FIXED_ONE;
+  trialEffect->scaleY = FIXED_ONE;
   Event_Wait(10);
   Sound_Play(SE_TREMOR);
   MapGrid_SetShake(1, 1, 1);
@@ -1894,20 +1894,20 @@ s32 gColosseumEntrance_EnterFinalsScript[] = {
 };
 
 s32 gColosseumEntrance_PulseScaleScript[] = {
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 8),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 32),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 32),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

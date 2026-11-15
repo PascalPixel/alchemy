@@ -288,7 +288,7 @@ void Islets_PushLogIntoWater(void) {
   if (PushTarget_FindSlide(&target)) {
     PushTarget_Push(target);
     System_Wait(5);
-    object->gravity = px(1) / 2;
+    object->gravity = toFIXED(1) / 2;
     Actor_SetAnimation(ACTOR_LOG, 3);
     Actor_SetDestinationOffset(ACTOR_LOG, 0, 8);
     FieldEvent_Wait(22);
@@ -297,8 +297,8 @@ void Islets_PushLogIntoWater(void) {
     object->priorityFlags |= 2;
     object->motionFlags = 0;
     object->velocityY = 0;
-    object->y.fixed = px(-8);
-    object->groundHeight = px(-8);
+    object->y.fixed = toFIXED(-8);
+    object->groundHeight = toFIXED(-8);
     MapGrid_CopyCellAttributes(9, 1, 4, 1, 9, 10);
     MapGrid_CopyCellAttributes(9, 8, 4, 1, 9, 9);
     MapGrid_CopyCellAttributes(9, 64, 4, 1, 9, 74);
@@ -513,12 +513,13 @@ void Islets_TradeWithBird(void) {
         object, (leader->x.fixed + object->x.fixed) / 2, leader->y.fixed,
         (leader->z.fixed + object->z.fixed) / 2);
     System_Wait(20);
-    FieldActor_SetPositionAndResetMotion(object, px(120), px(128), px(312));
+    FieldActor_SetPositionAndResetMotion(object, toFIXED(120), toFIXED(128),
+                                         toFIXED(312));
     Actor_SetAnimation(ACTOR_BIRD, 5);
     System_Wait(10);
     Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
-    spawned =
-        FieldActor_Create(0x1e9, leader->x.fixed, px(152), leader->z.fixed);
+    spawned = FieldActor_Create(0x1e9, leader->x.fixed, toFIXED(152),
+                                leader->z.fixed);
     if (spawned != 0) {
       Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
       FieldActor_SetItemIcon(spawned, ITEM_RED_CLOTH);
@@ -567,8 +568,8 @@ void Islets_TradeWithBird(void) {
     Event_Wait(20);                                                            \
     Actor_SetSpeed(ACTOR_COW, 1.6);                                            \
     STEP(ACTOR_COW, 108, 168);                                                 \
-    given = FieldActor_Create(489, leader->x.fixed, leader->y.fixed + px(24),  \
-                              leader->z.fixed);                                \
+    given = FieldActor_Create(489, leader->x.fixed,                            \
+                              leader->y.fixed + toFIXED(24), leader->z.fixed); \
     if (given != 0) {                                                          \
       Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 28);              \
       given->motionFlags = off;                                                \
@@ -621,7 +622,7 @@ void Islets_TradeWithCow(void) {
         Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
                                           FACING_NORTH);
         Actor_Jump(gMainRoutineWork.leaderActorId, 4, 10);
-        item = FieldActor_Create(489, px(104), px(24), px(160));
+        item = FieldActor_Create(489, toFIXED(104), toFIXED(24), toFIXED(160));
         // Default: the object handed back is set for real in HAND_BACK.
         given = 0;
         if (item != 0) {
@@ -657,7 +658,7 @@ void Islets_TradeWithCow(void) {
       Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
                                         FACING_EAST);
       STEP(gMainRoutineWork.leaderActorId, 132, 190);
-      item = FieldActor_Create(489, px(140), 0, px(190));
+      item = FieldActor_Create(489, toFIXED(140), 0, toFIXED(190));
       if (item != 0) {
         Actor_SetItemIcon(item, ITEM_RED_CLOTH);
         Actor_SetSpriteFlags(item, 0);
@@ -671,12 +672,13 @@ void Islets_TradeWithCow(void) {
       Event_ShowMessageAndWait(ACTOR_COW, 0);
       Actor_WatchAndSetScript(ACTOR_COW, gMainRoutineWork.leaderActorId);
       STEP(gMainRoutineWork.leaderActorId, 132, 190);
-      FieldActor_SetPositionAndResetMotion(item, px(195), 0, px(115));
+      FieldActor_SetPositionAndResetMotion(item, toFIXED(195), 0, toFIXED(115));
       STEP(gMainRoutineWork.leaderActorId, 120, 190);
       Event_Wait(20);
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 98, 168);
       Actor_Jump(gMainRoutineWork.leaderActorId, 4, 10);
-      Actor_SetPositionAndResetMotion(item, px(104), px(24), px(160));
+      Actor_SetPositionAndResetMotion(item, toFIXED(104), toFIXED(24),
+                                      toFIXED(160));
       Event_Wait(10);
       FieldPsynergy_RestoreMindReadPalette();
       Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
@@ -729,8 +731,8 @@ void Islets_TradeWithCow(void) {
 struct Actor *Islets_ShowItemAbove(struct Actor *object, s32 value) {
   struct Actor *spawned;
 
-  spawned = FieldActor_Create(489, object->x.fixed, object->y.fixed + px(24),
-                              object->z.fixed);
+  spawned = FieldActor_Create(489, object->x.fixed,
+                              object->y.fixed + toFIXED(24), object->z.fixed);
   if (spawned != 0) {
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
     spawned->motionFlags = 0;
@@ -811,7 +813,7 @@ void Islets_TradeWithDog(void) {
     if (item != 0) {
       void (*emitSmoke)(void);
       item->collisionFlags = 9;
-      FieldActor_SetPositionAndResetMotion(item, px(104), 0, px(840));
+      FieldActor_SetPositionAndResetMotion(item, toFIXED(104), 0, toFIXED(840));
       emitSmoke = Actor_EmitSmoke;
       if (right) {
         leader->update = emitSmoke;
@@ -820,7 +822,8 @@ void Islets_TradeWithDog(void) {
         Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
         leader->update = emitSmoke;
         STEP(gMainRoutineWork.leaderActorId, 288, 840);
-        FieldActor_SetPositionAndResetMotion(item, px(280), 0, px(840));
+        FieldActor_SetPositionAndResetMotion(item, toFIXED(280), 0,
+                                             toFIXED(840));
         STEP(gMainRoutineWork.leaderActorId, 296, 840);
         leader->update = 0;
         FieldActor_Stop(gMainRoutineWork.leaderActorId);
@@ -834,7 +837,8 @@ void Islets_TradeWithDog(void) {
         Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_EAST);
         leader->update = emitSmoke;
         STEP(gMainRoutineWork.leaderActorId, 272, 840);
-        FieldActor_SetPositionAndResetMotion(item, px(280), 0, px(840));
+        FieldActor_SetPositionAndResetMotion(item, toFIXED(280), 0,
+                                             toFIXED(840));
         STEP(gMainRoutineWork.leaderActorId, 264, 840);
         leader->update = 0;
         FieldActor_Stop(gMainRoutineWork.leaderActorId);
@@ -880,7 +884,7 @@ void Islets_RideOnLonesomeGeorge(struct Actor *object) {
   struct Actor *source = Actor_Get(ACTOR_LONESOME_GEORGE);
 
   FieldActor_SetPositionAndResetMotion(
-      object, source->x.fixed, source->y.fixed + px(16), source->z.fixed);
+      object, source->x.fixed, source->y.fixed + toFIXED(16), source->z.fixed);
   object->facing = source->facing;
 }
 
@@ -915,8 +919,8 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   Actor_WalkToAndWait(ACTOR_LONESOME_GEORGE, 296, 452);
   guide->update = 0;
   Actor_FaceDirection(ACTOR_LONESOME_GEORGE, FACING_SOUTH_SOUTHWEST, 0);
-  gift->speedLimit = px(8) / 5;
-  gift->acceleration = px(4) / 5;
+  gift->speedLimit = toFIXED(8) / 5;
+  gift->acceleration = toFIXED(4) / 5;
   gift->update = Actor_EmitSmoke;
   Actor_SelectAnimation(gift, 2);
   FieldActor_SetMoveTarget(gift, 278, 0, 452);
@@ -941,8 +945,8 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   // "And we're off!"
   Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
   Actor_SetSpeed(ACTOR_LONESOME_GEORGE, 0.8);
-  gift->speedLimit = px(4) / 5;
-  gift->acceleration = px(2) / 5;
+  gift->speedLimit = toFIXED(4) / 5;
+  gift->acceleration = toFIXED(2) / 5;
   guide->update = Actor_EmitSmoke;
   Actor_SetDestination(ACTOR_LONESOME_GEORGE, 288, 538);
   FieldEvent_Wait(20);
@@ -969,14 +973,14 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
 
 #define SPAWN(a, b, answer)                                                    \
   {                                                                            \
-    a = FieldActor_Create(163, px(296), 0, px(424));                           \
-    b = FieldActor_Create(14, px(296), 0, px(424));                            \
+    a = FieldActor_Create(163, toFIXED(296), 0, toFIXED(424));                 \
+    b = FieldActor_Create(14, toFIXED(296), 0, toFIXED(424));                  \
     if (a != 0) {                                                              \
       a->motionFlags = answer;                                                 \
       Actor_SetSpriteFlags(a, 0);                                              \
     }                                                                          \
     if (b != 0) {                                                              \
-      b->scaleY = Q16_ONE * 2;                                                 \
+      b->scaleY = FIXED_ONE * 2;                                               \
       Actor_SetSpriteFlags(b, 0);                                              \
       Actor_SelectAnimation(b, 1);                                             \
       Actor_StartScript(b, gSmokeScript);                                      \
@@ -1219,7 +1223,7 @@ void Islets_OpenFieldMenu(void) {
 }
 
 void Islets_SetLedgeBlocksByHeight(void) {
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed < px(40)) {
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed < toFIXED(40)) {
     Actor_Get(ACTOR_LEDGE_BLOCK_A)->collisionFlags |= 8;
     Actor_Get(ACTOR_LEDGE_BLOCK_B)->collisionFlags |= 8;
   } else {
@@ -1282,12 +1286,12 @@ void Islets_PengusGivesPrettyStone(void) {
   struct Actor *item;
   s32 z;
 
-  if (object->x.fixed < px(228) || object->x.fixed > px(236))
+  if (object->x.fixed < toFIXED(228) || object->x.fixed > toFIXED(236))
     return;
   z = object->z.fixed;
-  if (z < px(164))
+  if (z < toFIXED(164))
     return;
-  if (z > px(172))
+  if (z > toFIXED(172))
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1316,7 +1320,7 @@ void Islets_PengusGivesPrettyStone(void) {
   item->motionFlags = 0;
   FieldActor_SetItemIcon(item, ITEM_PRETTY_STONE);
   FieldActor_SetPositionAndResetMotion(
-      item, leader->x.fixed, leader->y.fixed + px(24), leader->z.fixed);
+      item, leader->x.fixed, leader->y.fixed + toFIXED(24), leader->z.fixed);
   FieldEvent_Wait(20);
   FieldPsynergy_RestoreMindReadPalette();
   Party_GiveItem(ITEM_PRETTY_STONE, 0);
@@ -1344,11 +1348,12 @@ void Islets_BirdReturnsToNest(void) {
   System_Wait(1);
   object->motionFlags = 0;
   Actor_SetSpeed(ACTOR_BIRD, 1.6);
-  FieldActor_SetPositionAndResetMotion(object, px(268), px(64), px(390));
+  FieldActor_SetPositionAndResetMotion(object, toFIXED(268), toFIXED(64),
+                                       toFIXED(390));
   System_Wait(1);
-  object->groundHeight = px(128);
+  object->groundHeight = toFIXED(128);
   System_Wait(1);
-  object->y.fixed = px(160);
+  object->y.fixed = toFIXED(160);
   System_Wait(1);
   FieldTask_AddFrame(Islets_PlayFootsteps, TASK_PASS_VBLANK);
   FieldActor_SetMoveTarget(object, 132, 128, 320);
@@ -1393,7 +1398,7 @@ void Islets_SetCellCollision(s32 x, s32 z, s32 layers, s32 value) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapCell *lowerCells = map->layers[0].cells;
   struct MapCell *upperCells = map->layers[2].cells;
-  s32 index = x / px(16) + (z / px(16)) * MAPGRID_SIZE;
+  s32 index = x / toFIXED(16) + (z / toFIXED(16)) * MAPGRID_SIZE;
 
   if (layers & 1) {
     lowerCells += index;
@@ -1627,8 +1632,8 @@ void Islets_OpenDoorAndEnter(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
   Actor_SetSpeed(party->leaderActorId, 0.5);
-  FieldActor_SetMoveTargetFixed(
-      object, px(8 - FIELD_PIXEL(object->x.fixed) % 16) + object->x.fixed,
+  FieldActor_SetMoveTargetFX(
+      object, toFIXED(8 - FIXEDtoINT(object->x.fixed) % 16) + object->x.fixed,
       object->y.fixed, object->z.fixed);
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
@@ -1670,8 +1675,8 @@ void Islets_EnterDoor(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
   Actor_SetSpeed(party->leaderActorId, 0.5);
-  FieldActor_SetMoveTargetFixed(
-      object, px(8 - FIELD_PIXEL(object->x.fixed) % 16) + object->x.fixed,
+  FieldActor_SetMoveTargetFX(
+      object, toFIXED(8 - FIXEDtoINT(object->x.fixed) % 16) + object->x.fixed,
       object->y.fixed, object->z.fixed);
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
@@ -1816,7 +1821,7 @@ s32 Scene_Initialize(void) {
 }
 
 void Islets_SetDockBlocksByHeight(void) {
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > px(8)) {
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > toFIXED(8)) {
     Actor_Get(ACTOR_SAILORS_SON)->collisionFlags &= ~8;
     Actor_Get(ACTOR_PACING_SAILOR)->collisionFlags &= ~8;
   } else {
@@ -1836,7 +1841,7 @@ void Islets_InitializeDog(void) {
   Actor_SetSpeed(ACTOR_PACING_SAILOR, 0.8);
   Actor_Get(ACTOR_PACING_SAILOR)->collisionFlags |= 0x80;
   if (Event_GetFlag(FLAG_DOG_TRADED)) {
-    spawned = FieldActor_Create(489, px(280), 0, px(840));
+    spawned = FieldActor_Create(489, toFIXED(280), 0, toFIXED(840));
     if (spawned != 0) {
       spawned->motionFlags = 0;
       FieldActor_SetItemIcon(spawned, ITEM_MILK);
@@ -1858,16 +1863,16 @@ void Islets_StartIceberg(s32 id) {
   object->retainSpriteCache = 3;
   object->motionFlags = 0;
   object->priorityFlags |= 0x80;
-  object->acceleration = px(3) / 20;
-  object->speedLimit = px(3) / 10;
+  object->acceleration = toFIXED(3) / 20;
+  object->speedLimit = toFIXED(3) / 10;
 }
 
 void Islets_MoveIceberg(s32 id, s32 column, s32 row) {
   struct Actor *object = Actor_Get(id);
-  s32 x = px(column * 32 + object->timer);
-  s32 z = px(row * 32 + (s16)object->userValue);
+  s32 x = toFIXED(column * 32 + object->timer);
+  s32 z = toFIXED(row * 32 + (s16)object->userValue);
 
-  FieldActor_SetMoveTargetFixed(object, x, object->y.fixed, z);
+  FieldActor_SetMoveTargetFX(object, x, object->y.fixed, z);
 }
 
 /// The Islets' marching guards (objects 11 to 18): while the event work is busy
@@ -1891,7 +1896,7 @@ void Islets_DriftIcebergs(void) {
   }
   for (i = 11; i <= 18; i++)
     Actor_GetById(i)->paused = 0;
-  if (Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed < -px(12)) {
+  if (Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed < -toFIXED(12)) {
     work = Ram_HeapSlots->fieldWork;
     for (i = 11; i <= 18; i++)
       Actor_GetById(i)->paused = 1;
@@ -1968,8 +1973,8 @@ void Islets_InitializePrettyStone(void) {
     Actor_SetAnimation(ACTOR_LOG, 4);
     object->priorityFlags |= 2;
     object->motionFlags = 0;
-    object->y.fixed = px(-8);
-    object->groundHeight = px(-8);
+    object->y.fixed = toFIXED(-8);
+    object->groundHeight = toFIXED(-8);
     MapGrid_CopyCellAttributes(9, 1, 4, 1, 9, 10);
     MapGrid_CopyCellAttributes(9, 64, 4, 1, 9, 74);
   } else {
@@ -1986,7 +1991,8 @@ void Islets_InitializePrettyStone(void) {
     {
       s32 facing = FACING_SOUTH_SOUTHEAST;
 
-      Actor_SetPositionAndFacing(ACTOR_PENGULINA, px(234), px(204), facing);
+      Actor_SetPositionAndFacing(ACTOR_PENGULINA, toFIXED(234), toFIXED(204),
+                                 facing);
     }
     Actor_Get(ACTOR_PENGULINA)->collisionFlags |= 0x80;
     Actor_SetSpeed(ACTOR_PENGUS, 2);
@@ -2005,7 +2011,7 @@ void Islets_InitializeCow(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_COW), 0);
   Actor_SetAnimation(ACTOR_COW, 4);
   if (Event_GetFlag(FLAG_COW_TRADED)) {
-    spawned = FieldActor_Create(489, px(104), px(24), px(160));
+    spawned = FieldActor_Create(489, toFIXED(104), toFIXED(24), toFIXED(160));
     if (spawned != 0) {
       spawned->motionFlags = 0;
       FieldActor_SetItemIcon(spawned, ITEM_RED_CLOTH);
@@ -2104,9 +2110,9 @@ void Islets_InitializeTurtle(void) {
     Actor_SetPosition(ACTOR_LIL_TURTLE, 280, 468);
     Actor_Get(ACTOR_LIL_TURTLE)->motionFlags = done;
     {
-      s32 a1 = px(296);
+      s32 a1 = toFIXED(296);
 
-      Actor_SetPositionFixed(ACTOR_LONESOME_GEORGE, a1, px(452));
+      Actor_SetPositionFX(ACTOR_LONESOME_GEORGE, a1, toFIXED(452));
     }
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_LONESOME_GEORGE), 0);
@@ -2119,7 +2125,8 @@ void Islets_InitializeTurtle(void) {
       {
         s32 a3 = 0x4000;
 
-        Actor_SetPositionAndFacing(ACTOR_LONESOME_GEORGE, px(152), px(768), a3);
+        Actor_SetPositionAndFacing(ACTOR_LONESOME_GEORGE, toFIXED(152),
+                                   toFIXED(768), a3);
       }
       Actor_SetPosition(ACTOR_LIL_TURTLE, 176, 777);
       System_Wait(1);
@@ -2173,7 +2180,7 @@ inner:
     s32 next = ((u16)j + 1) << 16;
 
     j = next >> 16;
-    if (next != px(16))
+    if (next != toFIXED(16))
       goto inner;
   }
   entry++;
@@ -2181,7 +2188,7 @@ inner:
     s32 next = (i << 16) + 0x10000;
 
     i = next >> 16;
-    if (next != px(4))
+    if (next != toFIXED(4))
       goto outer;
   }
   queue->count = 0;
@@ -2299,8 +2306,8 @@ s32 PushTarget_FillFootprint(s32 id) {
   width = (ABS(a) + ABS(gPushFootprints[fromX][2])) >> 4;
   b = gPushFootprints[fromX][1];
   height = (ABS(b) + ABS(gPushFootprints[fromX][3])) >> 4;
-  x = actor->x.fixed + px(a);
-  z = actor->z.fixed + px(b);
+  x = actor->x.fixed + toFIXED(a);
+  z = actor->z.fixed + toFIXED(b);
   b = FIELD_CELL(map->layers[1].offsetX);
   x >>= 20;
   z >>= 20;
@@ -2417,8 +2424,10 @@ void PushTarget_Push(struct PushTarget target) {
   acceleration = leader->acceleration;
   from[0] = object->x.fixed;
   from[2] = object->z.fixed;
-  cell[0] = FIELD_CELL(object->x.fixed + px(gPushFootprints[footprint][0]));
-  cell[2] = FIELD_CELL(object->z.fixed + px(gPushFootprints[footprint][1]));
+  cell[0] =
+      FIELD_CELL(object->x.fixed + toFIXED(gPushFootprints[footprint][0]));
+  cell[2] =
+      FIELD_CELL(object->z.fixed + toFIXED(gPushFootprints[footprint][1]));
   width = (ABS(gPushFootprints[footprint][0]) +
            ABS(gPushFootprints[footprint][2])) >>
           4;
@@ -2443,7 +2452,7 @@ void PushTarget_Push(struct PushTarget target) {
     Actor_SelectAnimation(object, 2);
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
-  FieldActor_SetMoveTargetFixed(object, target.x, target.y, target.z);
+  FieldActor_SetMoveTargetFX(object, target.x, target.y, target.z);
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
@@ -2463,8 +2472,8 @@ void PushTarget_Push(struct PushTarget target) {
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
                                        target.z);
   Actor_SelectAnimation(object, 1);
-  target.x = target.x + px(gPushFootprints[footprint][0]);
-  target.z = target.z + px(gPushFootprints[footprint][1]);
+  target.x = target.x + toFIXED(gPushFootprints[footprint][0]);
+  target.z = target.z + toFIXED(gPushFootprints[footprint][1]);
   target.x >>= 20;
   target.z >>= 20;
   originX = FIELD_CELL(map->layers[1].offsetX);
@@ -2475,8 +2484,8 @@ void PushTarget_Push(struct PushTarget target) {
                                          255);
   PushedActor_FillGridAttributeRectangle(2, target.x, target.z, width, height,
                                          255);
-  cell[0] = FIELD_CELL(from[0] + px(gPushFootprints[footprint][0]));
-  cell[2] = FIELD_CELL(from[2] + px(gPushFootprints[footprint][1]));
+  cell[0] = FIELD_CELL(from[0] + toFIXED(gPushFootprints[footprint][0]));
+  cell[2] = FIELD_CELL(from[2] + toFIXED(gPushFootprints[footprint][1]));
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);
@@ -2551,8 +2560,8 @@ struct ActionScript gIslets_SpinScript = {{
 s32 gIslets_EnterDoorScript[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
       SC_ADD(SW_Z, -0x8000),                                                   
-      SC_ADD(SW_SCALE_X, -Q16_ONE / 64),                                               
-      SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),                                               
+      SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),                                               
+      SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),                                               
       SC_WAIT(1),                                                              
       SC_LOOP(24, SC_TOP),                                                     
       SC_END,                                                                  
@@ -2596,7 +2605,7 @@ u32 gIslets_GullScript[] = {
     SC_ANIMATION(4),
     SC_SPEED(0.8),
     SC_ACCELERATION(0.2),
-    SC_SET(SW_Y, px(64)),
+    SC_SET(SW_Y, toFIXED(64)),
     SC_LABEL(1),
     SC_MOVE(352, 64, 336),
     SC_SYNC,
@@ -2637,23 +2646,23 @@ u32 gIslets_PenguinsHopScript[] = {
 s32 gIslets_BirdFliesBackScript[] = {
     SC_ANIMATION(3),
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(4)),
     SC_MOVE_BY(0, 0, -16),
     SC_SYNC,
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(4)),
     SC_MOVE_BY(-32, 0, 0),
     SC_SYNC,
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(4)),
     SC_MOVE_BY(0, 0, 32),
     SC_SYNC,
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(4)),
     SC_MOVE_BY(32, 0, 0),
     SC_SYNC,
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(4)),
     SC_MOVE(280, 0, 856),
     SC_SYNC,
     SC_ANIMATION(1),
@@ -2666,23 +2675,23 @@ s32 gIslets_BirdFliesBackScript[] = {
 s32 gIslets_BirdFliesOffScript[] = {
     SC_ANIMATION(3),
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(4)),
     SC_MOVE_BY(0, 0, 16),
     SC_SYNC,
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(4)),
     SC_MOVE_BY(32, 0, 0),
     SC_SYNC,
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(4)),
     SC_MOVE_BY(0, 0, -32),
     SC_SYNC,
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(4)),
     SC_MOVE_BY(-32, 0, 0),
     SC_SYNC,
     SC_SE(152),
-    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(4)),
     SC_MOVE(280, 0, 856),
     SC_SYNC,
     SC_ANIMATION(1),

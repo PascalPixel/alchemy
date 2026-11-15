@@ -461,16 +461,16 @@ void MadraInteriors_SetUpJail(void) {
       Actor_SetPosition(ACTOR_ACCUSING_INTERROGATOR, 0, 0);
     }
   } else if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED)) {
-    MadraInteriors_PlaceFacing(ACTOR_STERN_INTERROGATOR, px(515), px(841),
-                               FACING_NORTHEAST);
-    MadraInteriors_PlaceFacing(ACTOR_ACCUSING_INTERROGATOR, px(472), px(877),
-                               FACING_NORTH);
+    MadraInteriors_PlaceFacing(ACTOR_STERN_INTERROGATOR, toFIXED(515),
+                               toFIXED(841), FACING_NORTHEAST);
+    MadraInteriors_PlaceFacing(ACTOR_ACCUSING_INTERROGATOR, toFIXED(472),
+                               toFIXED(877), FACING_NORTH);
     Actor_SetPosition(ACTOR_JAIL_PUDDLE, 0, 0);
   } else {
-    MadraInteriors_PlaceFacing(ACTOR_STERN_INTERROGATOR, px(515), px(841),
-                               FACING_NORTHWEST);
-    MadraInteriors_PlaceFacing(ACTOR_ACCUSING_INTERROGATOR, px(472), px(877),
-                               FACING_NORTH);
+    MadraInteriors_PlaceFacing(ACTOR_STERN_INTERROGATOR, toFIXED(515),
+                               toFIXED(841), FACING_NORTHWEST);
+    MadraInteriors_PlaceFacing(ACTOR_ACCUSING_INTERROGATOR, toFIXED(472),
+                               toFIXED(877), FACING_NORTH);
     Actor_SetPosition(ACTOR_JAIL_PUDDLE, 0, 0);
   }
 }
@@ -672,8 +672,8 @@ void MadraInteriors_InterrogatePiers(void) {
   // "Oh! That was Psynergy!"
   FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
   FieldActor_Stop(ACTOR_STERN_INTERROGATOR);
-  Actor_Get(ACTOR_STERN_INTERROGATOR)->scaleX = Q16_ONE;
-  Actor_Get(ACTOR_STERN_INTERROGATOR)->scaleY = Q16_ONE;
+  Actor_Get(ACTOR_STERN_INTERROGATOR)->scaleX = FIXED_ONE;
+  Actor_Get(ACTOR_STERN_INTERROGATOR)->scaleY = FIXED_ONE;
   FieldEvent_Wait(4);
   Actor_Get(ACTOR_STERN_INTERROGATOR)->motionFlags = ACTOR_FALLS;
   Actor_Get(ACTOR_STERN_INTERROGATOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -785,8 +785,8 @@ answered:
   felix = Actor_Get(ACTOR_FELIX);
   if (felix == 0)
     goto piersLeft;
-  Actor_SetDestination(ACTOR_JAIL_KRADEN, felix->x.part[0].pixel,
-                       felix->z.part[0].pixel);
+  Actor_SetDestination(ACTOR_JAIL_KRADEN, felix->x.part[0].integer,
+                       felix->z.part[0].integer);
 piersLeft:
   FieldActor_WaitForMoveById(ACTOR_JAIL_KRADEN);
   Actor_SetPosition(ACTOR_JAIL_KRADEN, 0, 0);
@@ -871,8 +871,8 @@ void MadraInteriors_GiveHealingFungus(void) {
   Actor_SetSpeed(ACTOR_MUSHROOM_COOK, 0.4);
   Actor_WalkTo(ACTOR_MUSHROOM_COOK, 410, 109);
   object = Actor_Get(ACTOR_FELIX);
-  if (object->z.fixed > px(95))
-    Actor_WalkToAndWait(ACTOR_FELIX, object->x.fixed / Q16_ONE, 95);
+  if (object->z.fixed > toFIXED(95))
+    Actor_WalkToAndWait(ACTOR_FELIX, object->x.fixed / FIXED_ONE, 95);
   Actor_WalkToAndWait(ACTOR_FELIX, 362, 95);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
   FieldActor_WaitForMoveById(ACTOR_MUSHROOM_COOK);
@@ -968,8 +968,8 @@ void MadraInteriors_GiveLaughingFungus(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   felix = Actor_Get(ACTOR_FELIX);
-  if (felix->z.fixed > px(95))
-    Actor_WalkToAndWait(ACTOR_FELIX, felix->x.fixed / Q16_ONE, 95);
+  if (felix->z.fixed > toFIXED(95))
+    Actor_WalkToAndWait(ACTOR_FELIX, felix->x.fixed / FIXED_ONE, 95);
   Actor_WalkToAndWait(ACTOR_FELIX, 362, 95);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
   FieldEvent_SetMessageId((s32)MsgMadraInteriorsOhMy);
@@ -1016,8 +1016,8 @@ static inline void MadraInteriors_WalkIntoLeader(s32 actorId) {
   Actor_SetAnimation(actorId, 2);
   leader = Actor_Get(ACTOR_FELIX);
   if (leader != NULL)
-    Actor_SetDestination(actorId, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(actorId, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   FieldActor_WaitForMoveById(actorId);
   Actor_SetPosition(actorId, 0, 0);
 }
@@ -1814,47 +1814,47 @@ s32 gMadraInteriors_InterrogatorLifted[] = {
     SC_SET(SW_MOTION, 0),
     SC_WAIT(100),
     SC_WAIT(36),
-    SC_ADD(SW_Y, px(3)),
+    SC_ADD(SW_Y, toFIXED(3)),
     SC_WAIT(9),
-    SC_ADD(SW_Y, px(5)),
-    SC_ADD(SW_X, px(1)),
+    SC_ADD(SW_Y, toFIXED(5)),
+    SC_ADD(SW_X, toFIXED(1)),
     SC_WAIT(9),
-    SC_ADD(SW_Y, px(4)),
+    SC_ADD(SW_Y, toFIXED(4)),
     SC_WAIT(9),
     SC_SET(SW_FACING, FACING_WEST),
-    SC_ADD(SW_X, px(1)),
-    SC_ADD(SW_Y, px(5)),
+    SC_ADD(SW_X, toFIXED(1)),
+    SC_ADD(SW_Y, toFIXED(5)),
     SC_WAIT(9),
-    SC_ADD(SW_Y, px(4)),
+    SC_ADD(SW_Y, toFIXED(4)),
     SC_WAIT(9),
-    SC_ADD(SW_Y, px(4)),
-    SC_ADD(SW_X, px(1)),
+    SC_ADD(SW_Y, toFIXED(4)),
+    SC_ADD(SW_X, toFIXED(1)),
     SC_WAIT(9),
-    SC_ADD(SW_Y, px(4)),
+    SC_ADD(SW_Y, toFIXED(4)),
     SC_SET(SW_FACING, FACING_SOUTH),
-    SC_ADD(SW_X, px(1)),
+    SC_ADD(SW_X, toFIXED(1)),
     SC_LABEL(1),
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x10000),
-    SC_ADD(SW_Y, px(-1)),
+    SC_ADD(SW_Y, toFIXED(-1)),
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_Y, px(1)),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_Y, toFIXED(1)),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
-    SC_ADD(SW_Y, px(-1)),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
+    SC_ADD(SW_Y, toFIXED(-1)),
     SC_WAIT(4),
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_Y, px(1)),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_Y, toFIXED(1)),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(4),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,

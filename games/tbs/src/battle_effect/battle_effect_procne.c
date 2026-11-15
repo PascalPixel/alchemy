@@ -18,7 +18,7 @@
 ///
 /// Abilities: Procne.
 void BattleEffect_RunProcne(struct BattleEffectParams *args) {
-  static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
+  static struct SpriteScale unitScale = {{{FIXED_ONE, FIXED_ONE}}};
   void **slots;
   void *canvas;
   struct BattleCamera *camera;
@@ -81,8 +81,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  wave.x = px(128);
-  wave.y = px(40);
+  wave.x = toFIXED(128);
+  wave.y = toFIXED(40);
   drift.x = 0;
   drift.y = 0;
 
@@ -93,7 +93,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     home[index].x = actor->x.fixed;
     home[index].y = actor->z.fixed;
     baseAngle[index] = actor->facing;
-    heading[index] = (u16)ArcTan2(actor->x.fixed, actor->z.fixed);
+    heading[index] = (u16)Trig_Atan(actor->x.fixed, actor->z.fixed);
     radius[index] = Iwram_Sqrt((actor->x.fixed >> 8) * (actor->x.fixed >> 8) +
                                (actor->z.fixed >> 8) * (actor->z.fixed >> 8)) >>
                     7;
@@ -144,11 +144,11 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           if (frame > index * 16 + 16)
             spin[index] += 48;
           if (radius[index] <= 31)
-            actor->y.fixed += px(6);
+            actor->y.fixed += toFIXED(6);
           else
-            actor->y.fixed += px(1) / 2;
-          if (actor->y.fixed > px(124))
-            actor->y.fixed = px(124);
+            actor->y.fixed += toFIXED(1) / 2;
+          if (actor->y.fixed > toFIXED(124))
+            actor->y.fixed = toFIXED(124);
         }
 
         if (frame <= 490) {
@@ -210,7 +210,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           screen.x >>= 1;
           // DEAD: always true, as a mote restarts once past 48 pixels up and
           // climbs little more than 2 pixels a frame; the ROM keeps the test.
-          if (point[index].y < px(64)) {
+          if (point[index].y < toFIXED(64)) {
             draw[0](canvas, work->sheet + PROCNE_DUST, screen.x - 12,
                     screen.y - 12, 16, 16);
           }
@@ -224,7 +224,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             point[index].velocityX = 4096;
           point[index].velocityY += 2048;
           point[index].y += point[index].velocityY * 2;
-          if (point[index].y > px(48)) {
+          if (point[index].y > toFIXED(48)) {
             point[index].y = 0;
             point[index].z = 100;
             point[index].velocityY = 0;
@@ -259,7 +259,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       EFFECT_FOR_EACH_TARGET(index, work->args) {
         battleObject = GetBattleObjectSlotFar(work->args->targets[index]);
         actor = battleObject->actor;
-        actor->y.fixed = px((Random16() & 15) + 8);
+        actor->y.fixed = INTtoFIXED((Random16() & 15) + 8);
       }
 
       gProjection.centerX = 72;
@@ -269,7 +269,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         angle = (Random16() & 0x7fff) + 0x9fff;
         work->particles[index].x = Trig_Sin(angle) * speed;
         work->particles[index].y = Trig_Cos(angle) * speed;
-        work->particles[index].z = px(Random16() % 200 - 100);
+        work->particles[index].z = INTtoFIXED(Random16() % 200 - 100);
         work->particles[index].variant = 0;
       }
 
@@ -293,15 +293,15 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       drift.x /= 2;
       drift.y /= 2;
 
-      scale.x = Q16_ONE;
-      scale.y = Q16_ONE;
+      scale.x = FIXED_ONE;
+      scale.y = FIXED_ONE;
       place.groundHeight = 0;
       // Sprite i stands lower and higher by the same amount, which cancel on
       // the screen but give it a later draw slot.
       for (index = 0; index != 9; index++) {
-        place.x = px(gProcne_GridX[index]) + wave.x + px(40);
-        place.height = px(255) + index * px(64);
-        place.y = px(gProcne_GridY[index] + index * 64) + wave.y;
+        place.x = INTtoFIXED(gProcne_GridX[index]) + wave.x + toFIXED(40);
+        place.height = toFIXED(255) + index * toFIXED(64);
+        place.y = INTtoFIXED(gProcne_GridY[index] + index * 64) + wave.y;
         Actor_ApplyProjectedPlacementFar(work->sprites[index], &place, &scale,
                                          0);
       }
@@ -309,12 +309,12 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       if (frame > 255) {
         s32 threshold;
 
-        depthOffset.z = px(256);
+        depthOffset.z = toFIXED(256);
         alive = 0;
         depthOffset.x = 0;
         depthOffset.y = 0;
-        Transform_Reset();
-        Transform_ApplyPosition(Vector3_Coordinates(&depthOffset));
+        Matrix_Initialize();
+        Matrix_TranslateVector(Vector3_Coordinates(&depthOffset));
 
         if (frame <= 329) {
           for (index = 0; index != 32; index++) {
@@ -330,8 +330,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             if (dist != 0) {
               Projection_Point(&point->x, &screen);
               screen.x = (screen.x >> 17) + (wave.x >> 17) + 32;
-              screen.y = WHOLE_PIXELS(screen.y) + WHOLE_PIXELS(wave.y) - 4;
-              screen.depth = WHOLE_PIXELS(screen.depth);
+              screen.y = FIXEDtoINT(screen.y) + FIXEDtoINT(wave.y) - 4;
+              screen.depth = FIXEDtoINT(screen.depth);
               if (screen.depth <= 169)
                 screen.depth = 170;
               if (screen.depth > 350)
@@ -351,7 +351,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             span = alive / 10 + 1;
             draw[1](canvas, graphics + gBattleEffect_MotePictures[span - 1],
                     (wave.x >> 17) - span / 2 + 32,
-                    WHOLE_PIXELS(wave.y) - span - 4, span, span * 2);
+                    FIXEDtoINT(wave.y) - span - 4, span, span * 2);
           }
         }
 
@@ -379,8 +379,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               if (spark[index].variant > 0) {
                 Projection_Point(&spark[index].x, &screen);
                 screen.x = (screen.x >> 17) + 32;
-                screen.y = WHOLE_PIXELS(screen.y) + 56;
-                screen.depth = WHOLE_PIXELS(screen.depth);
+                screen.y = FIXEDtoINT(screen.y) + 56;
+                screen.depth = FIXEDtoINT(screen.depth);
                 if (screen.depth <= 169)
                   screen.depth = 170;
                 if (screen.depth > 350)
@@ -403,16 +403,16 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           threshold = index * 12 + 330;
           if (frame == threshold) {
             mark->x = (wave.x >> 17) + 32;
-            mark->y = WHOLE_PIXELS(wave.y) - 4;
+            mark->y = FIXEDtoINT(wave.y) - 4;
             mark->velocityX = (wave.x >> 17) + 32;
-            mark->velocityY = WHOLE_PIXELS(wave.y) - 4;
+            mark->velocityY = FIXEDtoINT(wave.y) - 4;
 
             for (slot = 0; slot != 28; slot++) {
               work->particles[slot + 32].variant = 4;
             }
 
-            drift.x = px(8);
-            drift.y = -px(2);
+            drift.x = toFIXED(8);
+            drift.y = -toFIXED(2);
             work->shakeFrames = 8;
           }
 
@@ -430,8 +430,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
             if (frame < threshold + 8) {
               // A ring of light grows where the comet left Procne.
-              Transform_ApplyRoll(-2048);
-              Transform_ApplyYaw(-4096);
+              Matrix_RotateZ(-2048);
+              Matrix_RotateY(-4096);
 
               spark = &work->particles[32];
               for (slot = 0; slot != 28; slot++) {
@@ -445,9 +445,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                 Projection_Point(&world.x, &screen);
                 screen.x =
                     (screen.x >> 17) + work->particles[index + 60].velocityX;
-                screen.y = WHOLE_PIXELS(screen.y) +
+                screen.y = FIXEDtoINT(screen.y) +
                            work->particles[index + 60].velocityY;
-                screen.depth = WHOLE_PIXELS(screen.depth);
+                screen.depth = FIXEDtoINT(screen.depth);
                 if (screen.depth <= 169)
                   screen.depth = 170;
                 if (screen.depth > 350)

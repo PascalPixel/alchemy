@@ -50,7 +50,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
     seed->x = Random16() & TRIG_ANGLE_MASK;
     seed->z = (Random16() & 63) + 56;
-    seed->y = px((Random16() & 31) - 64);
+    seed->y = INTtoFIXED((Random16() & 31) - 64);
   }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -58,15 +58,15 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
     REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
 
   for (frame = 0; frame != TIMING(RISE_FRAME) + 50; frame++) {
-    ymin = px(120);
+    ymin = toFIXED(120);
     ymax = 0;
     if (frame == TIMING(RISE_FRAME) + 11)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     point[0] = 0;
     point[1] = 0;
-    point[2] = px(512);
-    Transform_Reset();
-    Transform_ApplyPosition(point);
+    point[2] = toFIXED(512);
+    Matrix_Initialize();
+    Matrix_TranslateVector(point);
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
       Sound_PlayFar(SE_ICE);
     if (frame == 85)
@@ -90,7 +90,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           s32 cel = i % 8;
 
           mote = &work->particles[i];
-          if (mote->y < px(48 - i / 2) && mote->y > -px(48)) {
+          if (mote->y < INTtoFIXED(48 - i / 2) && mote->y > -toFIXED(48)) {
             struct ScreenPoint *pos;
             u32 width;
             u32 height;
@@ -110,13 +110,13 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
             if (frame > i + 16) {
               if (mote->z > 4)
                 mote->z -= 2;
-              if (mote->y < px(48))
-                mote->y += px(5);
+              if (mote->y < toFIXED(48))
+                mote->y += toFIXED(5);
               mote->x += 0x200;
             }
           } else {
             mote->z += 8;
-            mote->y -= px(i % 5 + 2);
+            mote->y -= INTtoFIXED(i % 5 + 2);
             if (ymin > mote->y)
               ymin = mote->y;
             if (ymax < mote->y)
@@ -125,8 +125,8 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
         }
       }
     }
-    ymin += px(64);
-    ymax += px(64);
+    ymin += toFIXED(64);
+    ymax += toFIXED(64);
 
     // The pillars, 32 pixels wide: one more every three frames from frame
     // 36, drawn MAX for the last seven frames before the burst.
@@ -158,7 +158,8 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
       for (i = 0; i != 32; i++) {
         struct Particle *chip = &CHIPS[i];
 
-        SET_POSITION(chip, px(Random16() & 127), px((Random16() & 15) + 80),
+        SET_POSITION(chip, INTtoFIXED(Random16() & 127),
+                     INTtoFIXED((Random16() & 15) + 80),
                      ((Random16() & 63) - 32) << 12);
         chip->velocityY = ((-Random16() & 15) - 16) << 13;
         chip->variant = (Random16() & 15) + 16;
@@ -195,11 +196,11 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
       for (i = 0; i != 32; i++) {
         struct Particle *puff = &work->particles[i];
 
-        puff->velocityX = px(Random16() & 127);
+        puff->velocityX = INTtoFIXED(Random16() & 127);
         if (ymax == ymin)
-          puff->velocityY = px(ymin);
+          puff->velocityY = INTtoFIXED(ymin);
         else
-          puff->velocityY = px(Random16() % (ymax - ymin) + ymin);
+          puff->velocityY = INTtoFIXED(Random16() % (ymax - ymin) + ymin);
         puff->variant = (Random16() & 15) + 20;
       }
     }
@@ -223,8 +224,8 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
         if ((puff->variant == -1 || puff->variant == 17) &&
             frame < TIMING(RISE_FRAME) + 35) {
           puff->variant = 17;
-          puff->velocityX = px(Random16() & 127);
-          puff->velocityY = px(Random16() % (ymax - ymin) + ymin);
+          puff->velocityX = INTtoFIXED(Random16() & 127);
+          puff->velocityY = INTtoFIXED(Random16() % (ymax - ymin) + ymin);
         }
       }
     }

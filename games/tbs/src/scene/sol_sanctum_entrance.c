@@ -571,10 +571,10 @@ static void SolSanctumEntrance_PushStatue(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   direction = FACING_INDEX(leader->facing);
   statue = Actor_FindAtCell(
-      (leader->x.part[0].pixel +
-       (WHOLE_PIXELS(gSolSanctumPushSteps[direction]))) >>
+      (leader->x.part[0].integer +
+       (FIXEDtoINT(gSolSanctumPushSteps[direction]))) >>
           4,
-      (leader->z.part[0].pixel + (s16)gSolSanctumPushSteps[direction]) >> 4);
+      (leader->z.part[0].integer + (s16)gSolSanctumPushSteps[direction]) >> 4);
   if (statue != NULL) {
     statue->layer = 2;
     Actor_StepFrom(&target, statue, gSolSanctumPushSteps[direction]);
@@ -583,12 +583,12 @@ static void SolSanctumEntrance_PushStatue(void) {
       Actor_SelectAnimation(leader, ANIM_PUSH);
       wait(15);
       Sound_Play(SE_PUSH);
-      statue->speedLimit = px(1) / 5;
-      statue->acceleration = px(1) / 5;
-      FieldActor_SetMoveTargetFixed(statue, target.x, target.y, target.z);
-      leader->speedLimit = px(1) / 5;
-      leader->acceleration = px(1) / 5;
-      FieldActor_SetMoveTargetFixed(leader, target.x, target.y, target.z);
+      statue->speedLimit = toFIXED(1) / 5;
+      statue->acceleration = toFIXED(1) / 5;
+      FieldActor_SetMoveTargetFX(statue, target.x, target.y, target.z);
+      leader->speedLimit = toFIXED(1) / 5;
+      leader->acceleration = toFIXED(1) / 5;
+      FieldActor_SetMoveTargetFX(leader, target.x, target.y, target.z);
       Actor_WaitForMove(statue);
       statue->x.fixed = target.x;
       statue->z.fixed = target.z;
@@ -818,13 +818,13 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_SetPositionFixed(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFX(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_SetPositionFixed(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFX(ACTOR_JENNA, leader->x.fixed, leader->z.fixed);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFX(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
 
   Actor_SetSpeed(ACTOR_KRADEN, 0.6);
   Actor_SetSpeed(ACTOR_JENNA, 0.6);
@@ -1006,18 +1006,18 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_SetDestination(ACTOR_GARET, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_GARET, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_SetDestination(ACTOR_JENNA, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_JENNA, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL)
-    Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
 
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_GARET, 0, 0);

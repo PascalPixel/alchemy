@@ -30,8 +30,8 @@
 #define Iwram_TransformVectorEntry                                             \
   FIXED_ADDRESS((s32 (*)(const void *vector, s32 *result)), 0x03000250,        \
                 IwramTransformVector)
-#define Iwram_TransformMatrixEntry                                             \
-  FIXED_ADDRESS((void (*)(const s32 *matrix)), 0x030002c0, IwramTransformMatrix)
+#define Iwram_MultiplyMatrixEntry                                              \
+  FIXED_ADDRESS((void (*)(const s32 *matrix)), 0x030002c0, IwramMultiplyMatrix)
 #define Iwram_SignedDivideEntry                                                \
   FIXED_ADDRESS((s32 (*)(s32 dividend, s32 divisor)), 0x03000380,              \
                 IwramSignedDivide)
@@ -45,7 +45,7 @@
   FIXED_ADDRESS((s32 (*)(void *destination, const void *source, s32 size)),    \
                 0x03001388, IwramCopyWords)
 
-/// value * Q16_ONE / divisor: the 16.16 ratio of two 16.16 numbers.
+/// value * FIXED_ONE / divisor: the 16.16 ratio of two 16.16 numbers.
 static inline s32 Iwram_RatioMulQ14(s32 divisor, s32 value) {
   return Iwram_RatioMulQ14Entry(divisor, value);
 }
@@ -70,9 +70,9 @@ static inline s32 Iwram_TransformVector(const void *vector, s32 *result) {
 }
 
 /// Multiplies matrix, a 3 by 3 matrix and a translation in 16.16 fixed point,
-/// into the current transform, gTransform.
-static inline void Iwram_TransformMatrix(const s32 *matrix) {
-  Iwram_TransformMatrixEntry(matrix);
+/// into the current transform, gCurrentMatrix.
+static inline void Iwram_MultiplyMatrix(const s32 *matrix) {
+  Iwram_MultiplyMatrixEntry(matrix);
 }
 
 /// The quotient, rounded toward zero.
@@ -131,12 +131,12 @@ static __inline__ s32 Iwram_CallReturnIp(s32 left, s32 right, void *routine) {
 }
 #endif
 
-extern u8 IwramMulQ16ReturnIp[];
+extern u8 IwramMulFXReturnIp[];
 
 /// (left * right) >> 16 with a 64-bit product: the 16.16 product of two 16.16
 /// numbers.
-#define Iwram_MulQ16(left, right)                                              \
-  Iwram_CallReturnIp((left), (right), IwramMulQ16ReturnIp)
+#define Iwram_MulFX(left, right)                                               \
+  Iwram_CallReturnIp((left), (right), IwramMulFXReturnIp)
 
 #define Iwram_CopyWordsOffset FIXED_OFFSET(0x1388, IwramCopyWords, IwramIrqMain)
 #define Iwram_RatioMulQ14Offset                                                \

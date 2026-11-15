@@ -238,10 +238,10 @@ s32 MapGrid_LoadMap(s32 index) {
   // place through this pointer (MapGridMarkers.markers).
   grid->markers = (u8 *)mapHeader + mapHeader->markers;
   // The header's bounds and origins are in 8-pixel tiles.
-  grid->minX = px(mapHeader->cameraBounds[0] * 8);
-  grid->minY = px(mapHeader->cameraBounds[1] * 8);
-  grid->maxX = px(mapHeader->cameraBounds[2] * 8);
-  grid->maxY = px(mapHeader->cameraBounds[3] * 8);
+  grid->minX = toFIXED(mapHeader->cameraBounds[0] * 8);
+  grid->minY = toFIXED(mapHeader->cameraBounds[1] * 8);
+  grid->maxX = toFIXED(mapHeader->cameraBounds[2] * 8);
+  grid->maxY = toFIXED(mapHeader->cameraBounds[3] * 8);
   viewX = &grid->view[0];
   *viewX = 0;
   viewY = &grid->view[1];
@@ -257,8 +257,8 @@ s32 MapGrid_LoadMap(s32 index) {
     s32 scaleX, scaleY;
     s32 offsetX, offsetY;
 
-    layer->offsetX = offsetX = px(x * 8);
-    layer->offsetY = offsetY = px(y * 8);
+    layer->offsetX = offsetX = toFIXED(x * 8);
+    layer->offsetY = offsetY = toFIXED(y * 8);
     // Parallax and drift are signed sixteenths; * 4096 makes them 16.16.
     scaleX = layerSource->scrollX * 4096;
     scaleY = layerSource->scrollY * 4096;
@@ -274,8 +274,8 @@ s32 MapGrid_LoadMap(s32 index) {
     // 2x2 tiles, 128 cells to a row).
     layer->cells = (struct MapGridCell *)Ram_MapGridCellBuffer +
                    (y / 2) * MAPGRID_SIZE + x / 2;
-    layer->x = Iwram_MulQ16(*viewX, scaleX) + offsetX;
-    layer->y = Iwram_MulQ16(*viewY, scaleY) + offsetY;
+    layer->x = Iwram_MulFX(*viewX, scaleX) + offsetX;
+    layer->y = Iwram_MulFX(*viewY, scaleY) + offsetY;
     layerSource++;
     layer++;
   }
@@ -458,21 +458,21 @@ void MapGrid_UpdateLayerScroll(void) {
     s32 shakeRollA = Random16();
     s32 shakeRollB = Random16();
     s32 shakeAmplitude = grid->shakeX;
-    baseX += Iwram_MulQ16(shakeAmplitude, shakeRollA - shakeRollB);
-    grid->shakeX = Iwram_MulQ16(shakeAmplitude, grid->shakeDecay);
+    baseX += Iwram_MulFX(shakeAmplitude, shakeRollA - shakeRollB);
+    grid->shakeX = Iwram_MulFX(shakeAmplitude, grid->shakeDecay);
   }
   if (grid->shakeY != 0) {
     s32 shakeRollA = Random16();
     s32 shakeRollB = Random16();
     s32 shakeAmplitude = grid->shakeY;
-    baseY += Iwram_MulQ16(shakeAmplitude, shakeRollA - shakeRollB);
-    grid->shakeY = Iwram_MulQ16(shakeAmplitude, grid->shakeDecay);
+    baseY += Iwram_MulFX(shakeAmplitude, shakeRollA - shakeRollB);
+    grid->shakeY = Iwram_MulFX(shakeAmplitude, grid->shakeDecay);
   }
   grid->view[0] = baseX;
   grid->view[1] = baseY;
   for (layerIndex = 0; layerIndex < 3; layerIndex++, layer++) {
-    baseX = Iwram_MulQ16(grid->view[0], layer->scaleX);
-    baseY = Iwram_MulQ16(grid->view[1], layer->scaleY);
+    baseX = Iwram_MulFX(grid->view[0], layer->scaleX);
+    baseY = Iwram_MulFX(grid->view[1], layer->scaleY);
     // A drifting layer wraps at its period: maskX and maskY are in 8-pixel
     // tiles, and the mask keeps the pixel and fraction bits below them.
     if (layer->speedX != 0) {
@@ -486,8 +486,8 @@ void MapGrid_UpdateLayerScroll(void) {
     baseX += layer->offsetX;
     baseY += layer->offsetY;
     // x and y are in 8-pixel tiles.
-    x = baseX / px(8);
-    y = baseY / px(8);
+    x = baseX / toFIXED(8);
+    y = baseY / toFIXED(8);
     if ((layer->x ^ baseX) & (8 << 16)) {
       if (layer->x < baseX)
         MapGrid_RenderCellPictureColumn(layerIndex, x + DISPLAY_WIDTH / 8, y);
@@ -501,8 +501,8 @@ void MapGrid_UpdateLayerScroll(void) {
         MapGrid_RenderCellPictureRow(layerIndex, x, y);
     }
     // MAPGRID_LAYER_GROUND scrolls BG3, MAPGRID_LAYER_OVERHEAD BG1.
-    gBgScroll[3 - layerIndex].x = WHOLE_PIXELS(baseX);
-    gBgScroll[3 - layerIndex].y = WHOLE_PIXELS(baseY);
+    gBgScroll[3 - layerIndex].x = FIXEDtoINT(baseX);
+    gBgScroll[3 - layerIndex].y = FIXEDtoINT(baseY);
     layer->x = baseX;
     layer->y = baseY;
   }
@@ -529,8 +529,8 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
       u32 sourceRow, sourceColumn, screenRowOffset, screenColumnOffset,
           cellPictureRow, cellPictureColumn;
 
-      x = Iwram_MulQ16(grid->view[0], layer->scaleX);
-      y = Iwram_MulQ16(grid->view[1], layer->scaleY);
+      x = Iwram_MulFX(grid->view[0], layer->scaleX);
+      y = Iwram_MulFX(grid->view[1], layer->scaleY);
       if (layer->speedX) {
         layer->phaseX += layer->speedX;
         x = (x + layer->phaseX) & ((layer->maskX << 19) | 0x7ffff);
@@ -546,8 +546,8 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
       y += layer->offsetY;
       layer++;
       // Divided by 8 pixels in 16.16, x and y become tiles.
-      x /= px(8);
-      y /= px(8);
+      x /= toFIXED(8);
+      y /= toFIXED(8);
       screenMap = BG_SCREEN_BLOCK(5) + layerIndex * MAPGRID_LAYER_SCREEN_BYTES;
       sourceRow = ((y / 2) & (MAPGRID_SIZE - 1)) * MAPGRID_SIZE;
       screenRowOffset = (y & 30) << 5;

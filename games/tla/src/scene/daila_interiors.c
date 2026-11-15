@@ -540,8 +540,8 @@ void DailaInteriors_TakeSeaGodsTear(void) {
       Actor_StartIdle(Actor_GetById(ACTOR_SEA_GODS_TEAR));
       Actor_SetSpritePriority(ACTOR_SEA_GODS_TEAR, 1);
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->motionFlags = ACTOR_FALLS;
-      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleY = Q16_ONE * 6 / 5;
-      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleX = Q16_ONE * 6 / 5;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleY = FIXED_ONE * 6 / 5;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleX = FIXED_ONE * 6 / 5;
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->collisionFlags |= ACTOR_NEAR_TALK;
       Actor_SetPosition(ACTOR_SEA_GODS_TEAR, 232, 196);
     }
@@ -680,8 +680,8 @@ s32 Scene_Initialize(void) {
       Actor_SetItemIcon(Actor_GetById(ACTOR_SEA_GODS_TEAR), ITEM_SEA_GODS_TEAR);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_SEA_GODS_TEAR), 0);
       Actor_SetSpritePriority(ACTOR_SEA_GODS_TEAR, 1);
-      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleY = Q16_ONE * 6 / 5;
-      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleX = Q16_ONE * 6 / 5;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleY = FIXED_ONE * 6 / 5;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleX = FIXED_ONE * 6 / 5;
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->collisionFlags |= ACTOR_NEAR_TALK;
       Actor_GetById(ACTOR_TEAR_SPOT)->collisionFlags |= ACTOR_NEAR_TALK;
     } else {

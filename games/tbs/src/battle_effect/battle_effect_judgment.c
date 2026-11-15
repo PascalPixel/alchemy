@@ -93,7 +93,7 @@ struct JudgmentWork {
 ///
 /// Abilities: Judgment.
 void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
-  static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
+  static struct SpriteScale unitScale = {{{FIXED_ONE, FIXED_ONE}}};
   s32 anchor[3];
   struct ScreenPoint projectedPosition;
   struct SpritePlacement place;
@@ -159,8 +159,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   gBgScroll[1].x = 0;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
-  depth = -px(64);
-  zoom = px(8);
+  depth = -toFIXED(64);
+  zoom = toFIXED(8);
   minimumDepth = 0xffff;
   maximumDepth = 0;
   Resource_LoadAndDecompress(RESOURCE_PINK_BURST_SHEET, work->sheet, 1, 1);
@@ -195,7 +195,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     s32 speed = 0;
     JUDGMENT_SPARKS[i].x = (Trig_Sin(angle) * amp) >> 2;
     JUDGMENT_SPARKS[i].z = (Trig_Cos(angle) * amp) >> 2;
-    JUDGMENT_SPARKS[i].y = px((Random16() & 63) + 32);
+    JUDGMENT_SPARKS[i].y = INTtoFIXED((Random16() & 63) + 32);
     JUDGMENT_SPARKS[i].velocityX = speed;
     JUDGMENT_SPARKS[i].velocityY = speed;
     JUDGMENT_SPARKS[i].variant = angle;
@@ -226,7 +226,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         s32 z;
         s32 size;
 
-        Particle_AdvanceWithGravity3D(&JUDGMENT_SPARKS[i], 60, -px(1) / 64);
+        Particle_AdvanceWithGravity3D(&JUDGMENT_SPARKS[i], 60,
+                                      -toFIXED(1) / 64);
         Projection_Point(&JUDGMENT_SPARKS[i], &projectedPosition);
         projectedPosition.x >>= 1;
         projectedPosition.y -= 120;
@@ -267,10 +268,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       if (frame > i / 4 + 80 && PARTICLES[i].x > 0) {
         s32 size;
 
-        Transform_Reset();
-        Transform_ApplyRoll(PARTICLES[i].velocityY);
-        Transform_ApplyPitch(PARTICLES[i].velocityX);
-        Transform_ApplyYaw(PARTICLES[i].velocityY + frame * (TRIG_TURN / 128));
+        Matrix_Initialize();
+        Matrix_RotateZ(PARTICLES[i].velocityY);
+        Matrix_RotateX(PARTICLES[i].velocityX);
+        Matrix_RotateY(PARTICLES[i].velocityY + frame * (TRIG_TURN / 128));
         anchor[0] = PARTICLES[i].x;
         PARTICLES[i].x -= 2;
         if (PARTICLES[i].x < 0) {
@@ -297,23 +298,23 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     place.groundHeight = 0;
     place.height = 0;
     for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-      place.x = px(i % 4 * 32) + px(76);
-      place.y = px(i / 4 * 32) + depth;
+      place.x = INTtoFIXED(i % 4 * 32) + toFIXED(76);
+      place.y = INTtoFIXED(i / 4 * 32) + depth;
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &place, &pair, 0);
     }
 
     depth += zoom;
     if (frame <= 47) {
-      zoom -= Q16_ONE / 4;
+      zoom -= FIXED_ONE / 4;
     }
     if (frame > 32) {
       zoom = zoom * 60 / DAMPING_SCALE;
     }
     if (frame == JUDGMENT_BEAM_FRAME) {
-      zoom = -px(8);
+      zoom = -toFIXED(8);
     }
     if (frame == 146) {
-      zoom = Q16_ONE;
+      zoom = FIXED_ONE;
     }
 
     if (frame == 72) {
@@ -366,10 +367,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       for (i = 0; i != 6; i++) {
         s32 k = i & 3;
         s32 angle = Random16() & TRIG_ANGLE_MASK;
-        s32 x =
-            WHOLE_PIXELS(Trig_Sin(angle) * 16) - gJudgment_ShardWidths[k] / 2;
+        s32 x = FIXEDtoINT(Trig_Sin(angle) * 16) - gJudgment_ShardWidths[k] / 2;
         s32 y =
-            WHOLE_PIXELS(Trig_Cos(angle) * 16) - gJudgment_ShardHeights[k] / 2;
+            FIXEDtoINT(Trig_Cos(angle) * 16) - gJudgment_ShardHeights[k] / 2;
         draw[0](canvas, work->sheet + gJudgment_ShardPictures[k], x + 60,
                 y + 80, gJudgment_ShardWidths[k], gJudgment_ShardHeights[k]);
       }
@@ -405,7 +405,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         blit = blitters[HEAP_SLOT_RAM_CODE_PAIRED];
         for (i = 0; i != JUDGMENT_RING_MOTES; i++) {
           s32 angle = i * (TRIG_TURN / JUDGMENT_RING_MOTES);
-          s32 x = WHOLE_PIXELS(r * Trig_Sin(angle)) - high / 2;
+          s32 x = FIXEDtoINT(r * Trig_Sin(angle)) - high / 2;
           s32 y = (r * Trig_Cos(angle)) >> 17;
           blit(canvas, work->sheet + picture, x + 60, y + 72, high, high * 2);
         }
@@ -562,10 +562,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                                RESOURCE_FOREST_BACKDROP, 0);
       for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
         particle = &work->particles[i];
-        particle->x = px((Random16() & 63) + 32);
-        particle->y = px((Random16() & 31) + 96);
+        particle->x = INTtoFIXED((Random16() & 63) + 32);
+        particle->y = INTtoFIXED((Random16() & 31) + 96);
         particle->velocityY = ((Random16() & 15) + 16) << 15;
-        particle->z = px(1) / 2 - (particle->x >> 7);
+        particle->z = toFIXED(1) / 2 - (particle->x >> 7);
         particle->variant = 1;
       }
     }
@@ -579,8 +579,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
         particle = &work->particles[i];
-        particle->x = px((Random16() & 63) + 256);
-        particle->y = px((Random16() & 31) + 96);
+        particle->x = INTtoFIXED((Random16() & 63) + 256);
+        particle->y = INTtoFIXED((Random16() & 31) + 96);
         particle->velocityY = ((Random16() & 15) + 16) << 15;
         particle->z = 0;
       }
@@ -701,7 +701,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       s32 size = 10;
       for (i = 0; i != JUDGMENT_FLASH_RING_MOTES; i++) {
         s32 angle = i * (TRIG_TURN / JUDGMENT_FLASH_RING_MOTES);
-        s32 x = WHOLE_PIXELS(Trig_Sin(angle) * radius) - (size >> 1);
+        s32 x = FIXEDtoINT(Trig_Sin(angle) * radius) - (size >> 1);
         s32 y = (Trig_Cos(angle) * radius) >> 17;
         draw[0](canvas, ramp + gBattleEffect_MotePictures[size - 1], x + 60,
                 y + 50, size, size * 2);
@@ -790,10 +790,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
 
     if (frame >= 86 && frame < JUDGMENT_SWEEP_BEACH) {
-      s32 angle = -TRIG_TURN / 4;
+      s32 angle = -DEGtoANG(90);
       for (i = 0; i != 9; i++, angle += TRIG_TURN / 16) {
-        s32 x = WHOLE_PIXELS((frame - 86) * Trig_Sin(angle));
-        s32 y = WHOLE_PIXELS((frame - 70) * Trig_Cos(angle));
+        s32 x = FIXEDtoINT((frame - 86) * Trig_Sin(angle));
+        s32 y = FIXEDtoINT((frame - 70) * Trig_Cos(angle));
         draw[0](canvas,
                 work->sheet +
                     ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_PICTURE_BYTES +
@@ -845,28 +845,28 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         particle = &work->particles[i];
         if (particle->variant != 0) {
           scale.x = particle->z + (particle->y >> 7);
-          if (scale.x < Q16_ONE / 32) {
-            scale.x = Q16_ONE / 32;
+          if (scale.x < FIXED_ONE / 32) {
+            scale.x = FIXED_ONE / 32;
           }
           scale.y = scale.x;
           debrisPlace.x = particle->x;
-          debrisPlace.height = px(255);
-          debrisPlace.y = particle->y + px(255);
+          debrisPlace.height = toFIXED(255);
+          debrisPlace.y = particle->y + toFIXED(255);
           Actor_ApplyProjectedPlacementFar(work->sprites[i], &debrisPlace,
                                            &scale, 0);
           particle->y -= particle->velocityY;
-          if (particle->y < px(16)) {
+          if (particle->y < toFIXED(16)) {
             if (frame < JUDGMENT_SWEEP_RETURN) {
-              particle->x = px((Random16() & 63) + shift + 32);
+              particle->x = INTtoFIXED((Random16() & 63) + shift + 32);
             } else {
-              particle->x = px((Random16() & 63) + shift - 32);
+              particle->x = INTtoFIXED((Random16() & 63) + shift - 32);
             }
             if (frame > 301) {
               particle->variant = 0;
             } else if (frame > 245) {
-              particle->y = px(96);
+              particle->y = toFIXED(96);
             } else {
-              particle->y = px(192) - particle->x;
+              particle->y = toFIXED(192) - particle->x;
             }
           }
         }

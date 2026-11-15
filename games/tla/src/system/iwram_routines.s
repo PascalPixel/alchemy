@@ -24,10 +24,10 @@
 @ copy-and-test never has.
 @ Why the unnamed routine after IwramSqrt is assembly:
 @ bcc and bcs consume the carry set by lsls r3 in the bit-run loop.
-@ Why IwramTransformVector to IwramTransformMatrix are assembly:
+@ Why IwramTransformVector to IwramMultiplyMatrix are assembly:
 @ fp is a product high half rather than a frame pointer; stmia writes
 @ arithmetic-transformed vectors, not compiler block-copy data.
-@ IwramTransformMatrix also copies and tests without a shift (movs r1, r1).
+@ IwramMultiplyMatrix also copies and tests without a shift (movs r1, r1).
 @ Each Thumb entry's bx pc switches to the ARM code that follows, a mode
 @ switch inside a function; the halfword after bx pc is never run.
 @ Why IwramSignedRemainder to IwramUnsignedDivide are assembly:
@@ -50,8 +50,8 @@
 	.balign 4
 .syntax unified
 	.thumb
-	.global IwramMulQ16
-IwramMulQ16:
+	.global IwramMulFX
+IwramMulFX:
 	bx	pc
 AlchemyUncredited_080007d6:
 	.2byte	0x0200
@@ -228,8 +228,8 @@ AlchemyUncreditedEnd_0800090e:
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
 	.thumb
-	.global IwramTransformMatrix
-IwramTransformMatrix:
+	.global IwramMultiplyMatrix
+IwramMultiplyMatrix:
 	bx	pc
 AlchemyUncredited_08000982:
 	.2byte	0x0200
@@ -285,8 +285,8 @@ AlchemyUncreditedEnd_08000982:
 .syntax unified
 	.section .data,"aw",%progbits
 	.arm
-	.global gTransform
-gTransform:
+	.global gCurrentMatrix
+gCurrentMatrix:
 	.4byte	0x00010000
 	.4byte	0x00000000
 	.4byte	0x00000000
@@ -296,8 +296,8 @@ gTransform:
 	.4byte	0
 	.4byte	0
 	.4byte	0x00010000
-	.global gTransformTranslation
-gTransformTranslation:
+	.global gCurrentMatrixTranslation
+gCurrentMatrixTranslation:
 	.4byte	0x00000000
 	.4byte	0x00000000
 	.4byte	0x00000000

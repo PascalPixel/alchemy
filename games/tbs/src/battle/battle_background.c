@@ -54,7 +54,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   } else {
     Graphics_ScaleRgb555Clamped(palette, BATTLE_BG_PALETTE,
                                 battle->brightness =
-                                    Q16_ONE - level * BACKGROUND_LEVEL_STEP,
+                                    FIXED_ONE - level * BACKGROUND_LEVEL_STEP,
                                 BATTLE_BG_PALETTE_COLORS);
   }
   Io_Write16(*savedInterruptEnable, &REG_IME);
@@ -155,7 +155,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
   if (level >= 0)
     Graphics_ScaleRgb555Clamped(palette, BATTLE_BG_PALETTE,
                                 battle->brightness =
-                                    Q16_ONE - level * BACKGROUND_LEVEL_STEP,
+                                    FIXED_ONE - level * BACKGROUND_LEVEL_STEP,
                                 BATTLE_BG_PALETTE_COLORS);
   Dma_Set(OBJ_PLTT, &BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
@@ -198,7 +198,7 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   // times the yaw, so the picture turns with the camera.
   panX = 8 << 8;
   wrap = 0;
-  if (scale >= Q16_ONE) {
+  if (scale >= FIXED_ONE) {
     wrap = BGCNT_WRAP;
     panX = (104 << 8) + -(s16)camera->yaw * 3;
   }
@@ -214,15 +214,15 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   // The affine parameters: a plain zoom, the reference point moved so the
   // centre stays put, 16 pixels up.
   line = scanlines->lines[scanlines->page ^ 1];
-  ratio = Iwram_RatioMulQ14(scale, Q16_ONE);
+  ratio = Iwram_RatioMulQ14(scale, FIXED_ONE);
   step = ratio >> 8;
   affine = &scanlines->affine;
   affine->pa = step;
   affine->pb = 0;
   affine->pc = 0;
   affine->pd = step;
-  x = Iwram_MulQ16(ratio, Iwram_MulQ16(centerX, scale - Q16_ONE));
-  y = Iwram_MulQ16(ratio, Iwram_MulQ16(centerY, scale - Q16_ONE));
+  x = Iwram_MulFX(ratio, Iwram_MulFX(centerX, scale - FIXED_ONE));
+  y = Iwram_MulFX(ratio, Iwram_MulFX(centerY, scale - FIXED_ONE));
   affine->x = ((x + 0x7fff) >> 8) + offsetX + panX;
   y = ((y + 0x7fff) >> 8) + offsetY - (16 << 8);
   affine->y = y;
@@ -271,28 +271,28 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 
   SET_VECTOR(focus, x, depth, y);
   sourceBounds[0] = 0;
-  alpha = Q16_ONE * 3 / 4;
+  alpha = FIXED_ONE * 3 / 4;
   sourceBounds[1] = 0;
   sourceBounds[2] = 0;
 
   result = Iwram_RatioMulQ14(span, alpha);
   Projection_Set(span, result, span * 2);
-  Transform_Reset();
-  Transform_ApplyPosition(focus);
-  Transform_ApplyYaw((s16)camera->yaw);
-  Transform_ApplyPitch((s16)camera->pitch);
+  Matrix_Initialize();
+  Matrix_TranslateVector(focus);
+  Matrix_RotateY((s16)camera->yaw);
+  Matrix_RotateX((s16)camera->pitch);
   renderBounds[0] = 0;
   renderBounds[1] = 0;
   renderBounds[2] = camera->distance;
   Iwram_TransformVector(renderBounds, (s32 *)camera);
   gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-  Transform_Reset();
-  Transform_SetLookAt(camera->eye, focus);
-  Transform_ProjectPoint(sourceBounds, measuredBounds);
+  Matrix_Initialize();
+  Matrix_SetLookAt(camera->eye, focus);
+  Matrix_ProjectPoint(sourceBounds, measuredBounds);
 
   BattleCamera_SetRange(
-      px(BATTLE_PROJECTION_CENTER_X), px(BATTLE_PROJECTION_CENTER_Y),
+      toFIXED(BATTLE_PROJECTION_CENTER_X), toFIXED(BATTLE_PROJECTION_CENTER_Y),
       (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
       (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
   half = scale * 255;
@@ -318,17 +318,17 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
 
   SET_VECTOR(focus, x, depth, y);
   sourceBounds[0] = 0;
-  alpha = Q16_ONE * 3 / 4;
+  alpha = FIXED_ONE * 3 / 4;
   sourceBounds[1] = 0;
   sourceBounds[2] = 0;
 
   // The eye 510 pixels back from the focus.
   result = Iwram_RatioMulQ14(span, alpha);
   Projection_Set(span, result, span * 2);
-  Transform_Reset();
-  Transform_ApplyPosition(focus);
-  Transform_ApplyYaw((s16)camera->yaw);
-  Transform_ApplyPitch((s16)camera->pitch);
+  Matrix_Initialize();
+  Matrix_TranslateVector(focus);
+  Matrix_RotateY((s16)camera->yaw);
+  Matrix_RotateX((s16)camera->pitch);
   renderBounds[0] = 0;
   renderBounds[1] = 0;
   renderBounds[2] = span;
@@ -336,12 +336,12 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   // Where the battlefield's origin falls on the screen moves the plane as much.
   gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-  Transform_Reset();
-  Transform_SetLookAt(camera->eye, focus);
-  Transform_ProjectPoint(sourceBounds, measuredBounds);
+  Matrix_Initialize();
+  Matrix_SetLookAt(camera->eye, focus);
+  Matrix_ProjectPoint(sourceBounds, measuredBounds);
 
   BattleCamera_SetRange(
-      px(BATTLE_PROJECTION_CENTER_X), px(BATTLE_PROJECTION_CENTER_Y),
+      toFIXED(BATTLE_PROJECTION_CENTER_X), toFIXED(BATTLE_PROJECTION_CENTER_Y),
       (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
       (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
   // The zoom scales the focal length and the far depth.
@@ -390,7 +390,7 @@ void BattleBackground_FadeAlphaIn(void) {
 }
 
 /// What BattleTransition_InitializeEntries treats as an array of
-/// these; Transform_SetIdentity writes over it as a matrix.
+/// these; Matrix_SetUnit writes over it as a matrix.
 struct BattleTransitionEntry {
   u32 value;   ///< the first word, read before and after the identity is set
   u32 sum;     ///< set to the first word's old value plus its new one
@@ -409,7 +409,7 @@ void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
   u32 previous = entries[0].value;
 
   CAMELOT_ASM("the fixed-register identity store of transform.h")
-  Transform_SetIdentity(entries);
+  Matrix_SetUnit(entries);
   entries[0].sum = previous + entries[0].value;
 }
 

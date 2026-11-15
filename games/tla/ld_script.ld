@@ -69,7 +69,7 @@ Credits_DecodeBackgroundCodeSize = EndingPicture_DotProduct - Credits_DecodeBack
 EndingPicture_DecodeCodeSize = EndingPicture_DecodeEnd - EndingPicture_DecodeCode;
 Model_DecodeCodeSize = Model_DecodeEnd - Model_DecodeCode;
 Grid_DrawOutlineCodeSize = Resource_GetMetadataRecordFar - Grid_DrawOutlineCode;
-Transform_UpdateVerticesCodeSize = Render_ConvertMapCode - Transform_UpdateVerticesCode;
+Matrix_UpdateVerticesCodeSize = Render_ConvertMapCode - Matrix_UpdateVerticesCode;
 
 MEMORY
 {

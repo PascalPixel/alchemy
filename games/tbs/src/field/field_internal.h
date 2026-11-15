@@ -31,7 +31,7 @@
 #include "graphics/palette_snapshots.h"
 #include "menu/menu.h"
 #include "system/affine.h"
-#include "system/fixed_point_position.h"
+#include "system/point.h"
 #include "system/io_write.h"
 #include "system/iwram_call.h"
 #include "system/projection.h"
@@ -39,7 +39,7 @@
 #include "system/ram_code.h"
 #include "system/sprite_metadata.h"
 #include "system/system.h"
-#include "system/transform.h"
+#include "system/matrix.h"
 #include "system/vram_cache.h"
 
 /// Animation script commands.
@@ -67,10 +67,10 @@ enum {
 /// Layered-map viewport distances in 16.16 pixels. The followed point is below
 /// the vertical centre; scroll bounds and camera following share this origin.
 enum {
-  FIELD_VIEW_FOCUS_X = px(120), ///< followed point from the left edge
-  FIELD_VIEW_FOCUS_Y = px(96),  ///< followed point from the top edge
-  FIELD_VIEW_WIDTH = px(240),   ///< the screen's width
-  FIELD_VIEW_HEIGHT = px(160)   ///< the screen's height
+  FIELD_VIEW_FOCUS_X = toFIXED(120), ///< followed point from the left edge
+  FIELD_VIEW_FOCUS_Y = toFIXED(96),  ///< followed point from the top edge
+  FIELD_VIEW_WIDTH = toFIXED(240),   ///< the screen's width
+  FIELD_VIEW_HEIGHT = toFIXED(160)   ///< the screen's height
 };
 
 /// Sprite ids the field's own code creates actors of.

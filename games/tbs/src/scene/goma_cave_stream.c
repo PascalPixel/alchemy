@@ -104,7 +104,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Move on the stump in Goma Cave (SceneId_GomaCaveStream), until it has leapt
 /// (FLAG_GOMA_CAVE_STREAM_STUMP_MOVED).
 static void GomaCaveStream_MoveStump(void) {
-  if (Actor_Get(ACTOR_STUMP)->x.fixed / px(16) == 24) {
+  if (Actor_Get(ACTOR_STUMP)->x.fixed / toFIXED(16) == 24) {
     GomaCaveStream_LeapStump(ACTOR_STUMP);
     Actor_Get(ACTOR_STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(19, 74, 9, 3, 19, 17);
@@ -171,7 +171,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
   stump->update = GomaCaveStream_SpinStump;
   Actor_SetSpeed(stumpId, 3);
   Actor_SetDestination(stumpId, 376, 288);
-  stump->gravity = px(4) / 5;
+  stump->gravity = toFIXED(4) / 5;
   stump->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   stump->layer = 0;
   Actor_WaitForMoveById(stumpId);
@@ -190,17 +190,17 @@ static void GomaCaveStream_LeapStump(s32 stumpId) {
     FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, dir.x,
                       dir.y, dir.z, 0, NULL);
   }
-  stump->velocityY = px(5);
+  stump->velocityY = toFIXED(5);
   Actor_SetDestination(stumpId, 346, 292);
   Actor_WaitForMoveById(stumpId);
   Actor_WaitBelowHeight(stump, 0);
   stump->update = NULL;
   stump->sprite->rotation = TRIG_TURN / 16;
   options.type = SPRITE_SPLASH;
-  options.startScaleX = Q16_ONE / 2;
-  options.startScaleY = 4 * Q16_ONE / 5;
-  options.targetScaleX = 3 * Q16_ONE / 2;
-  options.targetScaleY = 6 * Q16_ONE / 5;
+  options.startScaleX = FIXED_ONE / 2;
+  options.startScaleY = 4 * FIXED_ONE / 5;
+  options.targetScaleX = 3 * FIXED_ONE / 2;
+  options.targetScaleY = 6 * FIXED_ONE / 5;
   FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, 0, 0, 0,
                     EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                         EFFECT_SCALE_TO_TARGET,

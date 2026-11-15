@@ -107,7 +107,7 @@ void HoverGlow_Update(void) {
       level = GLOW_FULL;
     if (level < 0)
       level = 0;
-    work->scale = (level << 15) / GLOW_FULL + Q16_ONE / 2;
+    work->scale = (level << 15) / GLOW_FULL + FIXED_ONE / 2;
     if (level == 0)
       event->psynergy = GLOW_SPENT_CUE;
   }
@@ -244,13 +244,13 @@ void FieldPsynergy_Hover(void) {
     for (i = 0; i < 32; i++) {
       if (i == 10)
         Sound_PlayFar(SE_GLITTER);
-      player->y.fixed += px(1);
+      player->y.fixed += toFIXED(1);
       work->scale = i << 11;
       wait(1);
     }
     player->motionFlags = 4;
     player->y.fixed = player->groundHeight + 0x248000;
-    player->gravity = px(3);
+    player->gravity = toFIXED(3);
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_HOVER;
     work->fading = 1;
     event->glowHeld = 1;
@@ -292,7 +292,7 @@ void FieldPsynergy_EndHover(void) {
   object->bounce = 0;
   object->velocityY = 0;
   object->y.fixed = object->groundHeight;
-  object->gravity = px(1);
+  object->gravity = toFIXED(1);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }

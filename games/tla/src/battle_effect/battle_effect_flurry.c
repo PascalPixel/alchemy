@@ -208,7 +208,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
 
   // The user closes in; Claw Attack lunges further and waits.
   if (mode == FLURRY_CLAW_ATTACK) {
-    BattleMotion_ApproachTargetFar(args->user, args->targets[0], 8, px(6));
+    BattleMotion_ApproachTargetFar(args->user, args->targets[0], 8, toFIXED(6));
     wait(7);
   } else {
     BattleMotion_ApproachTargetFar(args->user, args->targets[0], 4, 0);
@@ -227,7 +227,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   for (i = 0; i != FLURRY_MOTE_COUNT; i++) {
     struct Particle *mote = &MOTES[i];
 
-    SET_POSITION(mote, target->x, target->y + px(25), target->z);
+    SET_POSITION(mote, target->x, target->y + toFIXED(25), target->z);
     mote->velocityX = (Random16() & 255) << 12;
     mote->velocityY = ((Random16() & 255) - 127) << 12;
     mote->velocityZ = ((Random16() & 255) - 127) << 12;
@@ -239,7 +239,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     struct Particle *puff = &work->particles[i];
 
-    SET_POSITION(puff, px(targetPos.x / 2), px(88), 0);
+    SET_POSITION(puff, INTtoFIXED(targetPos.x / 2), toFIXED(88), 0);
     puff->velocityX = ((Random16() & 255) - 128) << 9;
     puff->velocityY = ((Random16() & 255) - 128) << 9;
     puff->variant = -i;
@@ -336,8 +336,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     EFFECT_RELEASE_BLITTERS();
 
     // The motes, until their life runs out, bouncing off the ground.
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
@@ -359,8 +359,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
         size++;
         draw[(i / 2) & 1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                           pos.x - size / 2, pos.y - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector3(mote, 60, -px(1) / 64);
-        if (mote->y < px(8))
+        BattleEffectKernels_IntegrateVector3(mote, 60, -toFIXED(1) / 64);
+        if (mote->y < toFIXED(8))
           mote->velocityY = -mote->velocityY / 2;
         mote->variant--;
       }
@@ -413,7 +413,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                     Q_16_16_UPPER_HALF(puff->x) - 12,
                     Q_16_16_UPPER_HALF(puff->y) - 24, SMOKE_PUFF_WIDTH,
                     SMOKE_PUFF_HEIGHT);
-            BattleEffectKernels_IntegrateVector2(puff, 62, -px(1) / 16);
+            BattleEffectKernels_IntegrateVector2(puff, 62, -toFIXED(1) / 16);
           }
           puff->variant++;
         }

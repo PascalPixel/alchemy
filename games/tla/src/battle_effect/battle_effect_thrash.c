@@ -134,11 +134,12 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   // The user closes on the target in 16 frames (variant 3 jumps in place,
   // variant 4 strikes a pose instead and waits 8).
   if (variant == 1 || variant == 5)
-    BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, px(8));
+    BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16,
+                                   toFIXED(8));
   else if (variant == 3)
     // The target is a whole word: the user, passed twice, is loaded once and
     // copied, where an s16 parameter would load it again halved.
-    BattleMotion_ApproachTargetFar(args->user, args->user, 16, px(10));
+    BattleMotion_ApproachTargetFar(args->user, args->user, 16, toFIXED(10));
   else if (variant == 4) {
     struct MotionObject *user = BattleObject_GetFar(args->user)->object;
 

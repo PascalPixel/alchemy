@@ -161,7 +161,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   for (i = 0; i != FLURRY_WAITING_MOTES; i++) {
     struct Particle *mote = &PARTICLES[i];
 
-    SET_POSITION(mote, target->x.fixed, target->y.fixed + px(25),
+    SET_POSITION(mote, target->x.fixed, target->y.fixed + toFIXED(25),
                  target->z.fixed);
     SET_VELOCITY(mote, (Random16() & 255) << 12,
                  ((Random16() & 255) - 127) << 12,
@@ -276,8 +276,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
         size++;
         EFFECT_DRAW_MOTE(draw[(i / 2) & 1], canvas, sprites, screen.x, screen.y,
                          size);
-        Particle_AdvanceWithGravity3D(mote, 60, -px(1) / 64);
-        if (mote->y < px(8))
+        Particle_AdvanceWithGravity3D(mote, 60, -toFIXED(1) / 64);
+        if (mote->y < toFIXED(8))
           mote->velocityY = -mote->velocityY / 2;
         mote->variant--;
       }

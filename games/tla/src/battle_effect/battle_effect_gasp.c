@@ -24,10 +24,10 @@ struct StripQuad;
 /// position, half as wide (the canvas holds every other column), turned by z.
 #define PLACE_PARTICLE(p)                                                      \
   do {                                                                         \
-    Transform_Reset();                                                         \
-    Transform_ApplyTranslation((p)->x - px(64), (p)->y - px(64), 0);           \
-    Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);                   \
-    Transform_ApplyRoll((p)->z);                                               \
+    Matrix_Initialize();                                                       \
+    Matrix_Translate((p)->x - toFIXED(64), (p)->y - toFIXED(64), 0);           \
+    Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);                         \
+    Matrix_RotateZ((p)->z);                                                    \
   } while (0)
 // DEAD: each test reads the count twice and drops the first read; the ROM
 // keeps both loads.
@@ -354,8 +354,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             struct Particle *p = &work->particles[i];
             s32 s;
 
-            p->x = px(to.x);
-            p->y = px(to.y);
+            p->x = INTtoFIXED(to.x);
+            p->y = INTtoFIXED(to.y);
             a = Random16();
             s = (Random16() & 511) + 256;
             p->velocityX = Trig_Sin(a) * s >> 8;
@@ -377,7 +377,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                     Q_16_16_UPPER_HALF(p->x) - n / 2,
                     Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
-            BattleEffectKernels_IntegrateVector2(p, 60, px(1) / 64);
+            BattleEffectKernels_IntegrateVector2(p, 60, toFIXED(1) / 64);
             p->variant--;
           }
         }
@@ -387,16 +387,16 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       s32 x;
       s32 y;
 
-      x = (Q_16_16_TO_INT(Trig_Sin(b) * 20)) + screen[0] / 2 - 10;
-      y = (Q_16_16_TO_INT(Trig_Cos(b) * 4)) + screen[1] - 24;
+      x = (FIXEDtoINT(Trig_Sin(b) * 20)) + screen[0] / 2 - 10;
+      y = (FIXEDtoINT(Trig_Cos(b) * 4)) + screen[1] - 24;
       if (frame > 44) {
         twice = frame * 2;
         y = y - twice + 88;
       }
       draw[0](canvas, FIGURE(work), x, y, SMALL_DJINNI_WIDTH,
               SMALL_DJINNI_HEIGHT);
-      BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
-                                      TRIG_TURN / 3, 0);
+      BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - DEGtoANG(120),
+                                      DEGtoANG(120), 0);
     } else if (mode == GASP_MODE_REFLUX || mode == GASP_MODE_COUNTER_RUSH) {
       struct ScreenPoint target;
 
@@ -408,8 +408,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         if (r > 12)
           r = 12;
         a = frame << 9;
-        x -= Q_16_16_TO_INT(Trig_Sin(a) * r * 2);
-        y -= (Q_16_16_TO_INT(Trig_Cos(a) * r)) - r;
+        x -= FIXEDtoINT(Trig_Sin(a) * r * 2);
+        y -= (FIXEDtoINT(Trig_Cos(a) * r)) - r;
         if (frame <= 61)
           draw[0](canvas, FIGURE(work), x, y, SMALL_DJINNI_WIDTH,
                   SMALL_DJINNI_HEIGHT);
@@ -434,9 +434,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
         if ((u32)p->variant <= 31) {
           s32 n = p->variant / 8 + 2;
-          s32 x = (Q_16_16_TO_INT(Trig_Sin(p->z) * p->velocityZ / 2)) +
-                  target.x / 2;
-          s32 y = (Q_16_16_TO_INT(Trig_Cos(p->z) * p->velocityZ)) + target.y;
+          s32 x =
+              (FIXEDtoINT(Trig_Sin(p->z) * p->velocityZ / 2)) + target.x / 2;
+          s32 y = (FIXEDtoINT(Trig_Cos(p->z) * p->velocityZ)) + target.y;
 
           p->z += 512;
           p->velocityZ -= 4;
@@ -481,8 +481,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         fall->y += fall->velocityY;
         fall->z += fall->velocityZ;
       }
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
       EffectPosition_ProjectPoint(&ball->velocityX, &pos);
       x = pos.x >> 1;
       pos.x = x;
@@ -510,8 +510,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       s32 x;
       s32 y;
 
-      x = (Q_16_16_TO_INT(Trig_Sin(b) * 20)) + screen[0] / 2 - 10;
-      y = (Q_16_16_TO_INT(Trig_Cos(b) * 4)) + screen[1] - 24;
+      x = (FIXEDtoINT(Trig_Sin(b) * 20)) + screen[0] / 2 - 10;
+      y = (FIXEDtoINT(Trig_Cos(b) * 4)) + screen[1] - 24;
       if (frame > 48) {
         twice = frame * 2;
         y = y - twice + 96;
@@ -522,7 +522,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     }
 
     // The model layer.
-    Transform_Reset();
+    Matrix_Initialize();
     gProjection.centerY = 104;
     verts = Heap_AllocEwram(0x400);
     model = Render_AllocateModelList(1);
@@ -534,7 +534,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           struct Particle *p = &work->particles[i];
 
           p->x = i << 15;
-          p->y = px(56);
+          p->y = toFIXED(56);
           p->velocityX = (Random16() & 511) + 512;
           p->velocityY = -((Random16() & 127) + 612) << 7;
           p->variant = -i * 8;
@@ -564,13 +564,13 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           }
           model->shade = shade;
           texture.pixels = work->sheet + (i % 2 << 10);
-          Transform_Reset();
+          Matrix_Initialize();
           p->y += p->velocityY;
           p->x += p->velocityX;
-          Transform_ApplyTranslation(
-              (Trig_Sin(p->x) << 4) + px(screen[0] / 2 - 64), p->y, 0);
-          Transform_ApplyAxisScale(size >> 1, size, size >> 1);
-          Transform_ApplyPitch(-TRIG_TURN / 4);
+          Matrix_Translate(
+              (Trig_Sin(p->x) << 4) + INTtoFIXED(screen[0] / 2 - 64), p->y, 0);
+          Matrix_Scale(size >> 1, size, size >> 1);
+          Matrix_RotateX(-DEGtoANG(90));
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
@@ -588,7 +588,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       for (k = 0; k != 1; k++) {
         if (frame >= k * 32) {
           s32 t = frame - k * 32;
-          s32 scale = (t << 10) + Q16_ONE / 16;
+          s32 scale = (t << 10) + FIXED_ONE / 16;
           s32 shade = 0;
 
           if (t > 63) {
@@ -597,19 +597,19 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
               continue;
           }
           model->shade = shade;
-          Transform_Reset();
-          Transform_ApplyAxisScale(scale >> 1, scale, scale);
-          Transform_ApplyRoll((frame << 8) + TRIG_TURN * 3 / 4);
-          Transform_ApplyPitch((frame << 6) - 0x4770);
+          Matrix_Initialize();
+          Matrix_Scale(scale >> 1, scale, scale);
+          Matrix_RotateZ((frame << 8) + TRIG_TURN * 3 / 4);
+          Matrix_RotateX((frame << 6) - 0x4770);
           for (i = 0; i != 12; i++) {
             texture.pixels = work->sheet + (i % 3 << 10);
-            Transform_Push();
-            Transform_ApplyRoll(frame * 356 + i * 5461);
-            Transform_ApplyTranslation(0, px(116), 0);
-            Transform_ApplyAxisScale(scale >> 1, scale >> 1, scale >> 1);
+            Matrix_Push();
+            Matrix_RotateZ(frame * 356 + i * 5461);
+            Matrix_Translate(0, toFIXED(116), 0);
+            Matrix_Scale(scale >> 1, scale >> 1, scale >> 1);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
                                      4);
-            Transform_Pop();
+            Matrix_Pop();
             Render_DrawModelList(model);
           }
         }
@@ -625,12 +625,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         struct ScreenPoint pos;
 
         EffectPosition_ProjectScaledBattler(args->targets[i], &pos);
-        Transform_Reset();
-        Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 48), 0);
-        Transform_ApplyPitch(TRIG_TURN / 4);
-        Transform_ApplyYaw((frame << 9) - TRIG_TURN / 16);
-        Transform_ApplyAxisScale(frame * 2596 >> 1, frame * 2596 >> 1,
-                                 frame * 2596 >> 1);
+        Matrix_Initialize();
+        Matrix_Translate(INTtoFIXED(pos.x / 2 - 64), INTtoFIXED(pos.y - 48), 0);
+        Matrix_RotateX(DEGtoANG(90));
+        Matrix_RotateY((frame << 9) - TRIG_TURN / 16);
+        Matrix_Scale(frame * 2596 >> 1, frame * 2596 >> 1, frame * 2596 >> 1);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
@@ -666,14 +665,13 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           p->x += p->y * 2;
           model->scrollV = (twist + i * 7) & 31;
           if ((u32)p->variant <= 31) {
-            Transform_Reset();
-            Transform_ApplyTranslation(px(ball->x) - px(64),
-                                       px(ball->y) - px(64), 0);
-            Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
-            Transform_ApplyRoll(p->x);
-            Transform_ApplyAxisScale(Trig_Sin(p->variant * 682) * 3 +
-                                         TRIG_TURN * 3 / 4,
-                                     0x20000, 0x10000);
+            Matrix_Initialize();
+            Matrix_Translate(INTtoFIXED(ball->x) - toFIXED(64),
+                             INTtoFIXED(ball->y) - toFIXED(64), 0);
+            Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
+            Matrix_RotateZ(p->x);
+            Matrix_Scale(Trig_Sin(p->variant * 682) * 3 + TRIG_TURN * 3 / 4,
+                         0x20000, 0x10000);
             Render_TransformVertices(gBattleEffect_TaperedBeamCorners, verts,
                                      4);
             Render_DrawModelList(model);
@@ -695,19 +693,20 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           s32 t = frame - i * 4 - 55;
 
           if (t >= 0) {
-            s32 scale = (t * 3 << 12) + Q16_ONE / 4;
+            s32 scale = (t * 3 << 12) + FIXED_ONE / 4;
             s32 shade = 0;
 
             if (t > 7)
               shade = (8 - t) * 8;
             model->shade = shade;
             if (shade > MODEL_SHADE_INVISIBLE) {
-              Transform_Reset();
-              Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 64), 0);
-              Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-              Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
-              Transform_ApplyPitch(-TRIG_TURN / 16);
-              Transform_ApplyUniformScale(scale);
+              Matrix_Initialize();
+              Matrix_Translate(INTtoFIXED(pos.x / 2 - 64),
+                               INTtoFIXED(pos.y - 64), 0);
+              Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+              Matrix_RotateZ(i * (DEGtoANG(90)) + DEGtoANG(45));
+              Matrix_RotateX(-TRIG_TURN / 16);
+              Matrix_ScaleUniform(scale);
               Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
                                        4);
               Render_DrawModelList(model);
@@ -731,18 +730,19 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         model->kind = MODEL_SHADED_ADDITIVE;
         texture.pixels = work->sheet;
         EffectPosition_ProjectScaledBattler(args->targets[0], &pos);
-        for (i = 0, scale = t * -4592 + Q16_ONE; i != 2;
-             scale += Q16_ONE / 4, i++) {
+        for (i = 0, scale = t * -4592 + FIXED_ONE; i != 2;
+             scale += FIXED_ONE / 4, i++) {
           if (scale > 0) {
             s32 shade = -(i << 4);
 
             if (shade > 0)
               shade = 0;
             model->shade = shade;
-            Transform_Reset();
-            Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 48), 0);
-            Transform_ApplyPitch(TRIG_TURN * 3 / 4);
-            Transform_ApplyAxisScale(scale, scale, scale);
+            Matrix_Initialize();
+            Matrix_Translate(INTtoFIXED(pos.x / 2 - 64), INTtoFIXED(pos.y - 48),
+                             0);
+            Matrix_RotateX(TRIG_TURN * 3 / 4);
+            Matrix_Scale(scale, scale, scale);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
                                      4);
             Render_DrawModelList(model);
@@ -786,8 +786,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             q->velocityX /= 2;
             q->velocityY /= 2;
           }
-          q->x = px(to.x / 2);
-          q->y = px(to.y + 16);
+          q->x = INTtoFIXED(to.x / 2);
+          q->y = INTtoFIXED(to.y + 16);
           q->variant = (Random16() & 15) + 8;
         }
       }
@@ -799,8 +799,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         twice = frame * 2;
         // Index first, as a plain integer sum: the add takes the offset first.
         p = (void *)((twice * 28) + (s32)work->particles);
-        p->x = px(from.x / 2);
-        p->y = px(from.y + 8);
+        p->x = INTtoFIXED(from.x / 2);
+        p->y = INTtoFIXED(from.y + 8);
         v = ((Random16() & mask) + 256) << 8;
         p->velocityX = v;
         if (args->side == EFFECT_SIDE_PARTY)
@@ -816,7 +816,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
                   work->sheet + p->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
                   Q_16_16_UPPER_HALF(p->x) - 12, Q_16_16_UPPER_HALF(p->y) - 24,
                   SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(p, 60, -px(1) / 16);
+          BattleEffectKernels_IntegrateVector2(p, 60, -toFIXED(1) / 16);
           p->variant++;
         }
       }
@@ -837,7 +837,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       }
       if (frame > 9) {
         struct Particle *ball = &work->particles[63];
-        s32 scale = ((frame - 10) << 15) + Q16_ONE / 4;
+        s32 scale = ((frame - 10) << 15) + FIXED_ONE / 4;
         s32 shade = 0;
 
         if (args->variant == EFFECT_VARIANT_BASIC)
@@ -853,9 +853,10 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           model->mesh = gBattleEffect_LargeSquareMesh;
           model->kind = MODEL_SHADED_ADDITIVE;
           texture.pixels = work->sheet + GASP_FIRE_RING;
-          Transform_Reset();
-          Transform_ApplyTranslation(px(ball->x / 2 - 64), px(ball->y - 48), 0);
-          Transform_ApplyAxisScale(scale / 4, scale, scale / 2);
+          Matrix_Initialize();
+          Matrix_Translate(INTtoFIXED(ball->x / 2 - 64),
+                           INTtoFIXED(ball->y - 48), 0);
+          Matrix_Scale(scale / 4, scale, scale / 2);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
@@ -883,9 +884,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           s += 128;
           p->velocityX = Trig_Sin(a) * s >> 7;
           p->velocityY = Trig_Cos(a) * s >> 6;
-          p->velocityZ = px(1) / 64;
-          SET_POSITION(p, px(pos.x / 2), px(pos.y - (Random16() & 31) + 16),
-                       Random16());
+          p->velocityZ = toFIXED(1) / 64;
+          SET_POSITION(p, INTtoFIXED(pos.x / 2),
+                       INTtoFIXED(pos.y - (Random16() & 31) + 16), Random16());
         }
         Sound_PlayFar(SE_POWER_UP);
         work->shakeFrames = 16;
@@ -913,7 +914,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           model->shade = shade;
           texture.pixels = work->sheet + (i % 3 << 10);
           PLACE_PARTICLE(p);
-          Transform_ApplyUniformScale(Q16_ONE / 2);
+          Matrix_ScaleUniform(FIXED_ONE / 2);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
           BattleEffectKernels_IntegrateVector3(p, 60, 0);
@@ -935,9 +936,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           s += 128;
           p->velocityX = Trig_Sin(a) * s >> 6;
           p->velocityY = Trig_Cos(a) * s >> 6;
-          p->velocityZ = px(1) / 64;
-          SET_POSITION(p, px(pos.x / 2), px(pos.y - (Random16() & 31) - 16),
-                       Random16());
+          p->velocityZ = toFIXED(1) / 64;
+          SET_POSITION(p, INTtoFIXED(pos.x / 2),
+                       INTtoFIXED(pos.y - (Random16() & 31) - 16), Random16());
         }
         Sound_PlayFar(SE_619);
       }
@@ -962,7 +963,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           model->shade = shade;
           texture.pixels = work->sheet + (i % 3 << 10);
           PLACE_PARTICLE(p);
-          Transform_ApplyUniformScale(Q16_ONE / 2);
+          Matrix_ScaleUniform(FIXED_ONE / 2);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
           BattleEffectKernels_IntegrateVector3(p, 60, 0);
@@ -1006,8 +1007,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             s += 32;
             q->velocityX = Trig_Sin(a) * s >> 7;
             q->velocityY = Trig_Cos(a) * s >> 6;
-            q->x = px(pos.x / 2) + q->velocityX * 2;
-            q->y = px(pos.y + 16) + q->velocityY * 2;
+            q->x = INTtoFIXED(pos.x / 2) + q->velocityX * 2;
+            q->y = INTtoFIXED(pos.y + 16) + q->velocityY * 2;
             q->variant = (Random16() & 15) + 16;
           }
         }
@@ -1021,9 +1022,9 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
               draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                       Q_16_16_UPPER_HALF(p->x) - n / 2,
                       Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
-              BattleEffectKernels_IntegrateVector2(p, 63, px(1) / 32);
-              if (p->y > px(104)) {
-                p->y = px(104);
+              BattleEffectKernels_IntegrateVector2(p, 63, toFIXED(1) / 32);
+              if (p->y > toFIXED(104)) {
+                p->y = toFIXED(104);
                 p->velocityY = -p->velocityY / 2;
               }
             }
@@ -1038,16 +1039,16 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       model->texture = &texture;
       model->mesh = gBattleEffect_ColumnMesh;
       model->vertices = verts;
-      Transform_Reset();
-      Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
+      Matrix_Initialize();
+      Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
       if (args->side == EFFECT_SIDE_ENEMIES)
-        Transform_ApplyTranslation(px(pos.x - 136), px(pos.y - 48), 0);
+        Matrix_Translate(INTtoFIXED(pos.x - 136), INTtoFIXED(pos.y - 48), 0);
       else
-        Transform_ApplyTranslation(px(pos.x - 108), px(pos.y - 56), 0);
+        Matrix_Translate(INTtoFIXED(pos.x - 108), INTtoFIXED(pos.y - 56), 0);
       for (i = 0; i != 4; i++) {
         s32 scale;
 
-        Transform_Push();
+        Matrix_Push();
         texture.pixels = work->sheet + ((Random16() & 3) << 12);
         texture.logWidth = 5;
         texture.logHeight = 7;
@@ -1060,32 +1061,31 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           if (d > 80)
             d = 80;
           if (args->side == EFFECT_SIDE_ENEMIES)
-            Transform_ApplyTranslation(d * 3 << 13, d * 7 << 11, 0);
+            Matrix_Translate(d * 3 << 13, d * 7 << 11, 0);
           else
-            Transform_ApplyTranslation(-(d * 3 << 13), d * 7 << 11, 0);
+            Matrix_Translate(-(d * 3 << 13), d * 7 << 11, 0);
           angle = d * 48152 / 80 + TRIG_TURN * 3 / 8;
           if (args->side == EFFECT_SIDE_ENEMIES)
             angle = -angle;
-          Transform_ApplyRoll(angle);
+          Matrix_RotateZ(angle);
         } else {
           if (i != 0)
             continue;
-          Transform_ApplyRoll(args->side == EFFECT_SIDE_ENEMIES
-                                  ? -TRIG_TURN * 3 / 8
-                                  : TRIG_TURN * 3 / 8);
+          Matrix_RotateZ(args->side == EFFECT_SIDE_ENEMIES ? -TRIG_TURN * 3 / 8
+                                                           : TRIG_TURN * 3 / 8);
         }
         model->shade = -i << 3;
         if (frame <= 23)
           scale = frame * 2730;
         else if (frame > 31)
-          scale = Q16_ONE * 4 - (frame * 3 << 11);
+          scale = FIXED_ONE * 4 - (frame * 3 << 11);
         else
-          scale = Q16_ONE;
+          scale = FIXED_ONE;
         if (scale > 0) {
-          Transform_ApplyAxisScale(scale * 6, scale * 2, Q16_ONE);
+          Matrix_Scale(scale * 6, scale * 2, FIXED_ONE);
           Render_TransformVertices(gBattleEffect_LongBeamCorners, verts, 4);
           Render_DrawModelList(model);
-          Transform_Pop();
+          Matrix_Pop();
         }
       }
       BattleCamera_Shake(8, 8);
@@ -1106,11 +1106,11 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
           if (scale > 0) {
             model->shade = 0;
-            Transform_Reset();
-            Transform_ApplyTranslation(px(pos.x / 2 + i * 16 - 72),
-                                       px(pos.y - 64), 0);
-            Transform_ApplyAxisScale(scale / 2, scale, scale / 2);
-            Transform_ApplyRoll(TRIG_TURN / 8);
+            Matrix_Initialize();
+            Matrix_Translate(INTtoFIXED(pos.x / 2 + i * 16 - 72),
+                             INTtoFIXED(pos.y - 64), 0);
+            Matrix_Scale(scale / 2, scale, scale / 2);
+            Matrix_RotateZ(DEGtoANG(45));
             Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
             Render_DrawModelList(model);
           }
@@ -1149,20 +1149,20 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
       for (i = 0; i != 8; i++) {
-        s32 scale = Q16_ONE * 2;
+        s32 scale = FIXED_ONE * 2;
         s32 start = i * 2 + 16;
 
         if (frame >= start)
-          scale = Q16_ONE * 2 - ((frame - start) << 13);
-        if (scale > Q16_ONE / 2) {
+          scale = FIXED_ONE * 2 - ((frame - start) << 13);
+        if (scale > FIXED_ONE / 2) {
           model->scrollU = ((frame + i * 5) & 7) << 4;
-          Transform_Reset();
-          Transform_ApplyTranslation(px(pos.x / 2 - 60), px(8), 0);
-          Transform_ApplyAxisScale(scale >> 1, scale, Q16_ONE);
-          Transform_ApplyPitch((i << 13) + 4000);
-          Transform_ApplyYaw(frame << 9);
-          Transform_ApplyRoll((frame + i * 16) << 9);
-          Transform_ApplyAxisScale(Q16_ONE, Q16_ONE / 2, Q16_ONE);
+          Matrix_Initialize();
+          Matrix_Translate(INTtoFIXED(pos.x / 2 - 60), toFIXED(8), 0);
+          Matrix_Scale(scale >> 1, scale, FIXED_ONE);
+          Matrix_RotateX((i << 13) + 4000);
+          Matrix_RotateY(frame << 9);
+          Matrix_RotateZ((frame + i * 16) << 9);
+          Matrix_Scale(FIXED_ONE, FIXED_ONE / 2, FIXED_ONE);
           Render_TransformVertices(gBattleEffect_CylinderCorners, verts, 32);
           Render_DrawModelList(model);
         }
@@ -1177,24 +1177,24 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->kind = MODEL_SHADED_MAX;
       EffectPosition_ProjectScaledBattler(args->user, &pos);
-      Transform_Reset();
-      Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 48), 0);
+      Matrix_Initialize();
+      Matrix_Translate(INTtoFIXED(pos.x / 2 - 64), INTtoFIXED(pos.y - 48), 0);
       if (frame <= 15) {
-        s32 scale = Q16_ONE * 3 - (frame * 3 << 12);
+        s32 scale = FIXED_ONE * 3 - (frame * 3 << 12);
 
         model->shade = 0;
-        Transform_ApplyAxisScale(scale >> 1, scale, scale >> 1);
+        Matrix_Scale(scale >> 1, scale, scale >> 1);
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
-      Transform_Reset();
-      Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 48), 0);
+      Matrix_Initialize();
+      Matrix_Translate(INTtoFIXED(pos.x / 2 - 64), INTtoFIXED(pos.y - 48), 0);
       if ((u32)(frame - 12) <= 31) {
         s32 scale = Trig_Sin((frame << 10) - TRIG_TURN * 3 / 16) * 3;
 
         texture.pixels = work->sheet;
-        Transform_ApplyAxisScale(scale / 2, scale, scale / 2);
-        Transform_ApplyRoll((frame << 9) + TRIG_TURN / 8);
+        Matrix_Scale(scale / 2, scale, scale / 2);
+        Matrix_RotateZ((frame << 9) + DEGtoANG(45));
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
@@ -1255,30 +1255,30 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != 2; i++) {
         s32 t = frame - i * 8;
 
-        Transform_Reset();
-        Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 48), 0);
+        Matrix_Initialize();
+        Matrix_Translate(INTtoFIXED(pos.x / 2 - 64), INTtoFIXED(pos.y - 48), 0);
         if ((u32)t <= 15) {
-          s32 scale = Q16_ONE * 4 - (t << 14);
+          s32 scale = FIXED_ONE * 4 - (t << 14);
           s32 shade = 0;
 
           if (t <= 7)
             shade = t * 8 - 64;
           model->shade = shade;
-          Transform_ApplyAxisScale(scale / 2, scale, scale / 2);
-          Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
-          Transform_ApplyPitch(-TRIG_TURN / 16);
+          Matrix_Scale(scale / 2, scale, scale / 2);
+          Matrix_RotateZ(i * (DEGtoANG(90)) + DEGtoANG(45));
+          Matrix_RotateX(-TRIG_TURN / 16);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
       }
-      Transform_Reset();
-      Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 48), 0);
+      Matrix_Initialize();
+      Matrix_Translate(INTtoFIXED(pos.x / 2 - 64), INTtoFIXED(pos.y - 48), 0);
       if ((u32)(frame - 12) <= 31) {
         s32 scale = Trig_Sin((frame << 10) - TRIG_TURN * 3 / 16) * 2;
 
         texture.pixels = work->sheet;
-        Transform_ApplyAxisScale(scale / 2, scale, scale / 2);
-        Transform_ApplyRoll((frame << 9) + TRIG_TURN / 8);
+        Matrix_Scale(scale / 2, scale, scale / 2);
+        Matrix_RotateZ((frame << 9) + DEGtoANG(45));
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
       }
@@ -1322,14 +1322,14 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           EffectPosition_ProjectScaledBattler(args->targets[0], &pos);
         else
           EffectPosition_ProjectScaledBattler(args->user, &pos);
-        Transform_Reset();
-        Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 48), 0);
-        Transform_ApplyPitch(TRIG_TURN / 4);
-        Transform_ApplyAxisScale(scale / 3, scale, scale);
+        Matrix_Initialize();
+        Matrix_Translate(INTtoFIXED(pos.x / 2 - 64), INTtoFIXED(pos.y - 48), 0);
+        Matrix_RotateX(DEGtoANG(90));
+        Matrix_Scale(scale / 3, scale, scale);
         if (mode == GASP_MODE_REFLUX)
-          Transform_ApplyYaw(-frame << 10);
+          Matrix_RotateY(-frame << 10);
         else
-          Transform_ApplyYaw(frame << 10);
+          Matrix_RotateY(frame << 10);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
         Render_DrawModelList(model);
       }

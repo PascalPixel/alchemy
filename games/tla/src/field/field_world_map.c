@@ -9,7 +9,7 @@
 #include "field/resource_slot.h"
 #include "system/system.h"
 #include "resource_ids.h"
-#include "system/transform.h"
+#include "system/matrix.h"
 #include "macros.h"
 #include "field/map.h"
 #include "field/object.h"
@@ -20,7 +20,7 @@
 
 /// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
 /// camera work, the projection, the per-scanline ground plane routine in RAM
-/// (Transform_UpdateVertices) and its first frame, and the per-frame view and
+/// (Matrix_UpdateVertices) and its first frame, and the per-frame view and
 /// HBlank updates.
 UNREAD_RESULT WorldMap_InitializePerspective(void) {
   struct WorldMapView *perspective;
@@ -39,10 +39,10 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   Dma_Fill32Cell(fill, 0, perspective, sizeof(struct WorldMapView));
   perspective->viewX = 0;
   perspective->viewY = 0;
-  perspective->scaleX = Q16_ONE * 32;
-  perspective->scaleY = Q16_ONE * 64;
-  perspective->limitX = px(16352);
-  perspective->limitY = px(16352);
+  perspective->scaleX = FIXED_ONE * 32;
+  perspective->scaleY = FIXED_ONE * 64;
+  perspective->limitX = toFIXED(16352);
+  perspective->limitY = toFIXED(16352);
   perspective->script = NULL;
   perspective->tiles =
       Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
@@ -83,10 +83,10 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   affineWork = HeapSlot_Alloc(HEAP_SLOT_WORLD_MAP_AFFINE,
                               sizeof(struct WorldMapAffineWork));
   affinePages = affineWork->pages;
-  farPlane = px(510);
+  farPlane = toFIXED(510);
   perspective->farPlane = farPlane;
   perspective->distance = farPlane;
-  perspective->zoom = Q16_ONE;
+  perspective->zoom = FIXED_ONE;
   cameraPosition = camera->focus;
   perspective->zoomTransitionFrames = 0;
   camera->followEye = 0;
@@ -98,20 +98,20 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   gProjection.centerY = 96;
   Projection_Set(farPlane, farPlane >> 1, farPlane << 1);
   SET_VECTOR(cameraPosition, 0, 0, 0);
-  Transform_Reset();
-  Transform_ApplyPosition(cameraPosition);
-  Transform_ApplyYaw(perspective->yaw);
-  Transform_ApplyPitch(perspective->pitch);
+  Matrix_Initialize();
+  Matrix_TranslateVector(cameraPosition);
+  Matrix_RotateY(perspective->yaw);
+  Matrix_RotateX(perspective->pitch);
   // eyeOffset in the block that uses it, as The Broken Seal declares it.
   {
-    struct FixedPointPosition eyeOffset;
+    struct Point eyeOffset;
 
     SET_POSITION(&eyeOffset, 0, 0, farPlane);
     Iwram_TransformVector(&eyeOffset, camera->eye);
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, cameraPosition);
-    RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, Transform_UpdateVerticesCode,
-                     Transform_UpdateVerticesCodeSize);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, cameraPosition);
+    RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, Matrix_UpdateVerticesCode,
+                     Matrix_UpdateVerticesCodeSize);
     WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(Trig_Cos(perspective->pitch),
                                                   Trig_Sin(perspective->pitch)),
                                 cameraPosition, affineWork->scanlines);
@@ -123,15 +123,15 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
     // Then the world map's own view: pitch TRIG_TURN * 7 / 8 (minus an eighth
     // of a turn) and yaw 0, with the eye one pixel beyond the distance.
     SET_VECTOR(cameraPosition, 0, 0, 0);
-    Transform_Reset();
+    Matrix_Initialize();
     perspective->pitch = TRIG_TURN * 7 / 8;
     perspective->yaw = 0;
-    Transform_Reset();
-    Transform_ApplyPosition(cameraPosition);
-    Transform_ApplyYaw(perspective->yaw);
-    Transform_ApplyPitch(perspective->pitch);
+    Matrix_Initialize();
+    Matrix_TranslateVector(cameraPosition);
+    Matrix_RotateY(perspective->yaw);
+    Matrix_RotateX(perspective->pitch);
     if (perspective->fixedEye == 0) {
-      SET_POSITION(&eyeOffset, 0, 0, perspective->distance + Q16_ONE);
+      SET_POSITION(&eyeOffset, 0, 0, perspective->distance + FIXED_ONE);
       Iwram_TransformVector(&eyeOffset, camera->eye);
     }
   }
@@ -230,8 +230,8 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   buffer = Heap_Alloc(512);
   perspective = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   block =
-      &((struct WorldMapCell *)
-            Ram_MapBlocks)[((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)];
+      &((struct WorldMapCell *)Ram_MapBlocks)[((x / toFIXED(32)) & 31) +
+                                              (((z / toFIXED(32)) & 31) << 5)];
   WorldMap_UpdateRegionTint(block->region, 0);
   // Reused: the region, then its group of ten.
   region = block->region;
@@ -427,7 +427,7 @@ void WorldMap_UpdateView(void) {
   s32 tileRow;
   s32 shakeOffsetX;
   s32 shakeOffsetY;
-  struct FixedPointPosition eyeOffset;
+  struct Point eyeOffset;
 
   shakeOffsetX = 0;
   shakeOffsetY = 0;
@@ -446,22 +446,22 @@ void WorldMap_UpdateView(void) {
       s32 shakeDifference = Random16();
 
       shakeDifference -= Random16();
-      shakeOffsetX = Iwram_MulQ16(perspective->shakeX, shakeDifference);
+      shakeOffsetX = Iwram_MulFX(perspective->shakeX, shakeDifference);
       x += shakeOffsetX;
       perspective->shakeX =
-          Iwram_MulQ16(perspective->shakeX, perspective->shakeDecay);
+          Iwram_MulFX(perspective->shakeX, perspective->shakeDecay);
     }
     if (perspective->shakeY != 0) {
       s32 shakeDifference = Random16();
 
       shakeDifference -= Random16();
-      shakeOffsetY = Iwram_MulQ16(perspective->shakeY, shakeDifference);
+      shakeOffsetY = Iwram_MulFX(perspective->shakeY, shakeDifference);
       y += shakeOffsetY;
       perspective->shakeY =
-          Iwram_MulQ16(perspective->shakeY, perspective->shakeDecay);
+          Iwram_MulFX(perspective->shakeY, perspective->shakeDecay);
     }
-    tileColumn = x / px(16);
-    tileRow = y / px(16);
+    tileColumn = x / toFIXED(16);
+    tileRow = y / toFIXED(16);
     if ((perspective->viewX ^ x) & 0x100000) {
       if (perspective->viewX < x)
         WorldMap_RenderPaletteMappedColumn(tileColumn + 16);
@@ -481,23 +481,23 @@ void WorldMap_UpdateView(void) {
   cameraPosition[1] = 0;
   cameraPosition[2] = perspective->viewY;
   if (perspective->stillPictureShown != 0) {
-    gBgScroll[1].x = shakeOffsetX / Q16_ONE;
-    gBgScroll[1].y = shakeOffsetY / Q16_ONE;
+    gBgScroll[1].x = shakeOffsetX / FIXED_ONE;
+    gBgScroll[1].y = shakeOffsetY / FIXED_ONE;
     return;
   }
   gProjection.centerX = 120;
   gProjection.centerY = 96;
   Projection_Set(distance, height / 2, height * 2);
-  Transform_Reset();
-  Transform_ApplyPosition(cameraPosition);
-  Transform_ApplyYaw(perspective->yaw);
-  Transform_ApplyPitch(perspective->pitch);
+  Matrix_Initialize();
+  Matrix_TranslateVector(cameraPosition);
+  Matrix_RotateY(perspective->yaw);
+  Matrix_RotateX(perspective->pitch);
   if (perspective->fixedEye == 0) {
     SET_POSITION(&eyeOffset, 0, 0, height + 0x10000);
     Iwram_TransformVector(&eyeOffset, (s32 *)camera);
   }
-  Transform_Reset();
-  Transform_SetLookAt((s32 *)camera, cameraPosition);
+  Matrix_Initialize();
+  Matrix_SetLookAt((s32 *)camera, cameraPosition);
   if (gScanlinePitch != perspective->pitch) {
     s32 cosine = Trig_Cos(perspective->pitch);
     s32 sine = Trig_Sin(perspective->pitch);

@@ -418,8 +418,8 @@ s32 Prox_ChaseTarget(struct Actor *object, struct Actor *target, s32 range,
   objectPos = &object->x.fixed;
   if (SceneActor_CalculateFixedPointDistance(targetPos, objectPos) < range ||
       force != 0) {
-    u32 angle = (u16)ArcTan2(target->z.fixed - object->z.fixed,
-                             *targetPos - *objectPos);
+    u32 angle = (u16)Trig_Atan(target->z.fixed - object->z.fixed,
+                               *targetPos - *objectPos);
     u32 left = (angle - 0x1000) & 0xf000;
     u32 right = (angle + 0x1000) & 0xf000;
     u32 ahead = angle & 0xf000;
@@ -743,8 +743,8 @@ void Prox_SearchForParents(void) {
     FieldEvent_Wait(10);
     {
       s32 y = 0xc0;
-      Actor_SetPositionAndFacing(ACTOR_WARRIOR_SENT_FOR_PARENTS, px(520),
-                                 px(360), y << 6);
+      Actor_SetPositionAndFacing(ACTOR_WARRIOR_SENT_FOR_PARENTS, toFIXED(520),
+                                 toFIXED(360), y << 6);
     }
     FieldCamera_GetActor()->motionFlags = t0;
     FieldCamera_SetSpeed(1.6);
@@ -1188,7 +1188,7 @@ void Prox_MoldHidesInSnow(void) {
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Event_PlaySound(SE_RATTLE);
   object = (struct Actor *)((s32)FieldCamera_GetActor());
-  object->y.fixed += px(2);
+  object->y.fixed += toFIXED(2);
   object = Actor_Get(ACTOR_MOLD);
   object->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MOLD, 408, 200);
@@ -1228,7 +1228,8 @@ void Prox_ScoopUpMold(void) {
     FieldEvent_ResolvePendingActions(1);
     {
       s32 y = 0x80;
-      Actor_SetPositionAndFacing(ACTOR_MOLD, px(408), px(145), y << 7);
+      Actor_SetPositionAndFacing(ACTOR_MOLD, toFIXED(408), toFIXED(145),
+                                 y << 7);
     }
     System_Wait(1);
     FieldActor_Jump(ACTOR_MOLD, 4, 20);
@@ -1262,9 +1263,9 @@ void Actor_Release(struct RisingObject *object);
 
 void Prox_RisePuff(struct RisingObject *object) {
   object->x += object->drift << 8;
-  object->y += px(1) / 2;
-  object->scaleX += Q16_ONE / 50;
-  object->scaleY += Q16_ONE / 50;
+  object->y += toFIXED(1) / 2;
+  object->scaleX += FIXED_ONE / 50;
+  object->scaleY += FIXED_ONE / 50;
   object->drift += 2;
   if (--object->life == 0)
     Actor_Release(object);
@@ -1298,18 +1299,18 @@ void Prox_PuffFromRoofs(void) {
 
   if (scene == SCENE_PROX) {
     if ((gFrameCount & 63) == 0)
-      Prox_AddPuff(px(536), px(40), px(232));
+      Prox_AddPuff(toFIXED(536), toFIXED(40), toFIXED(232));
     if (((gFrameCount + 60) & 63) == 0)
-      Prox_AddPuff(px(168), px(40), px(296));
+      Prox_AddPuff(toFIXED(168), toFIXED(40), toFIXED(296));
     if (((gFrameCount + 20) & 63) == 0) {
-      Prox_AddPuff(px(280), px(42), px(184));
-      Prox_AddPuff(px(152), px(48), px(424));
+      Prox_AddPuff(toFIXED(280), toFIXED(42), toFIXED(184));
+      Prox_AddPuff(toFIXED(152), toFIXED(48), toFIXED(424));
     }
     if (((gFrameCount + 40) & 63) == 0)
-      Prox_AddPuff(px(336), px(42), px(362));
+      Prox_AddPuff(toFIXED(336), toFIXED(42), toFIXED(362));
   } else if (scene == SCENE_PROX_MOLD) {
     if ((gFrameCount & 63) == 0)
-      Prox_AddPuff(px(568), px(104), px(296));
+      Prox_AddPuff(toFIXED(568), toFIXED(104), toFIXED(296));
   }
 }
 
@@ -1332,10 +1333,10 @@ void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   if (width == 1) {
     object = Actor_Get(gMainRoutineWork.leaderActorId);
-    cell = FIELD_PIXEL(object->x.fixed);
-    FieldActor_SetMoveTargetFixed(object,
-                                  ((8 - cell % 16) << 16) + object->x.fixed,
-                                  object->y.fixed, object->z.fixed);
+    cell = FIXEDtoINT(object->x.fixed);
+    FieldActor_SetMoveTargetFX(object,
+                               ((8 - cell % 16) << 16) + object->x.fixed,
+                               object->y.fixed, object->z.fixed);
     FieldActor_WaitForMove(object);
     object->facing = FACING_NORTH;
   }
@@ -1371,10 +1372,9 @@ void Prox_ClimbStairs(void) {
   s32 id;
 
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  cell = FIELD_PIXEL(object->x.fixed);
-  FieldActor_SetMoveTargetFixed(object,
-                                ((8 - cell % 16) << 16) + object->x.fixed,
-                                object->y.fixed, object->z.fixed - px(4));
+  cell = FIXEDtoINT(object->x.fixed);
+  FieldActor_SetMoveTargetFX(object, ((8 - cell % 16) << 16) + object->x.fixed,
+                             object->y.fixed, object->z.fixed - toFIXED(4));
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
   Event_PlaySound(SE_STAIRS_UP);
@@ -1405,7 +1405,7 @@ void Prox_ComeDownStairs(s32 a0) {
     Event_StartScreenTransition();
     Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, 0x17);
   } else {
-    FieldActor_SetPositionAndResetMotion(object, (object->x.fixed + px(1)),
+    FieldActor_SetPositionAndResetMotion(object, (object->x.fixed + toFIXED(1)),
                                          object->y.fixed,
                                          (object->z.fixed + -393216));
     System_Wait(1);
@@ -1451,13 +1451,15 @@ void Prox_GiveThanksForBeacon(void) {
    * later turns cannot share them. */
   angleC000 = FACING_NORTH;
   angleB000 = FACING_NORTH_NORTHWEST;
-  Actor_SetPositionAndFacing(ACTOR_ISAAC, px(168), px(484), angleC000);
-  Actor_SetPositionAndFacing(ACTOR_HOUSES_KRADEN, px(200), px(484), angleB000);
-  facing = FACING_SOUTH_SOUTHEAST;
-  Actor_SetPositionAndFacing(ACTOR_CHILD_SENT_OUTSIDE, px(138), px(412),
-                             facing);
-  Actor_SetPositionAndFacing(ACTOR_VILLAGER_ON_THE_RESCUED, px(220), px(600),
+  Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(168), toFIXED(484),
+                             angleC000);
+  Actor_SetPositionAndFacing(ACTOR_HOUSES_KRADEN, toFIXED(200), toFIXED(484),
                              angleB000);
+  facing = FACING_SOUTH_SOUTHEAST;
+  Actor_SetPositionAndFacing(ACTOR_CHILD_SENT_OUTSIDE, toFIXED(138),
+                             toFIXED(412), facing);
+  Actor_SetPositionAndFacing(ACTOR_VILLAGER_ON_THE_RESCUED, toFIXED(220),
+                             toFIXED(600), angleB000);
   Actor_SetPosition(ACTOR_JENNA, 184, 684);
   System_Wait(1);
   EVENT_WORK->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -2507,8 +2509,8 @@ u32 gFieldEffect_LongScript[] = {
 s32 gProx_EnterDoorScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Z, -0x8000),
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
     SC_WAIT(1),
     SC_LOOP(24, SC_TOP),
     SC_END,

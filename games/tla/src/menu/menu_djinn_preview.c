@@ -370,7 +370,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       s32 rise;
       s32 slide;
 
-      rise = -Iwram_MulQ16(16, Trig_Sin(step % 30 * 0x444));
+      rise = -Iwram_MulFX(16, Trig_Sin(step % 30 * 0x444));
       if (rise < -6)
         rise = -6;
       if (rise > 12)

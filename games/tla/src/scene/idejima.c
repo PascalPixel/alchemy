@@ -159,11 +159,11 @@ void Idejima_GetUp(s32 id) {
 
   Actor_SetAnimation(id, 1);
   Actor_SetSpriteFlags(Actor_Get(id), 1);
-  object->x.fixed -= px(12);
+  object->x.fixed -= toFIXED(12);
   ((struct ActorSprite *)object->sprite)->rotation = 0;
   System_Wait(1);
   Actor_SetSpriteFlags(Actor_Get(id), 1);
-  object->velocityY = px(4);
+  object->velocityY = toFIXED(4);
   object->motionFlags = 3;
   System_Wait(40);
 }
@@ -191,7 +191,7 @@ void Idejima_WakeKraden(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_KRADEN), 1);
   System_Wait(1);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_KRADEN), 1);
-  actor->velocityY = px(4);
+  actor->velocityY = toFIXED(4);
   actor->motionFlags = 3;
   System_Wait(40);
   // "Ouch..."
@@ -227,8 +227,8 @@ void Idejima_WakeKraden(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Message_ShowCentered(message + 8, 1);
@@ -260,7 +260,7 @@ void Idejima_WakeJenna(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 1);
   System_Wait(1);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 1);
-  actor->velocityY = px(4);
+  actor->velocityY = toFIXED(4);
   actor->motionFlags = 3;
   System_Wait(40);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
@@ -297,8 +297,8 @@ void Idejima_WakeJenna(void) {
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(ACTOR_JENNA, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_JENNA, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   FieldActor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Event_PrepareActorAndApplyValue(ACTOR_JENNA, 1);
@@ -357,8 +357,8 @@ void Idejima_WakeSheba(void) {
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_SHEBA, leader->x.part[0].pixel,
-                             leader->z.part[0].pixel);
+    Actor_SetDestinationById(ACTOR_SHEBA, leader->x.part[0].integer,
+                             leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Event_AddPartyMember(ACTOR_SHEBA, 1);
@@ -440,8 +440,8 @@ void Idejima_CatchUpWithFelix(void) {
     Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (leader != 0)
-      Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].pixel,
-                               leader->z.part[0].pixel);
+      Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].integer,
+                               leader->z.part[0].integer);
     FieldActor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     // "Kraden has joined your party."
@@ -827,11 +827,11 @@ void Idejima_ComputeWaves(void) {
 
   for (i = 0; i != 160; i++) {
     s32 wave =
-        Math_Sin(((u8)gIdejima_WavePhase - i - FIELD_PIXEL(layer->y) + 160)
+        Math_Sin(((u8)gIdejima_WavePhase - i - FIXEDtoINT(layer->y) + 160)
                  << 9) +
         0x10000;
 
-    line[i] = FIELD_PIXEL(layer->y) + (wave >> 15);
+    line[i] = FIXEDtoINT(layer->y) + (wave >> 15);
   }
   gIdejima_WaveBuffer ^= 1;
   gIdejima_WavePhase++;
@@ -878,7 +878,7 @@ void Idejima_BreakAwayFromGondowan(void) {
   MapGrid_CenterOnFollowedPoint();
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
   south = FACING_SOUTH;
-  Actor_SetPositionAndFacing(ACTOR_JENNA, px(184), px(168), south);
+  Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(184), toFIXED(168), south);
   {
     struct Actor *ship = Actor_Get(ACTOR_KRADEN);
 
@@ -995,9 +995,9 @@ void Idejima_BreakAwayFromGondowan(void) {
   // "The thingie... that makes it go."
   Event_ShowMessage(
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0);
-  DriftScene_SpawnObject(px(238), px(48), px(172), 0xe000);
+  DriftScene_SpawnObject(toFIXED(238), toFIXED(48), toFIXED(172), 0xe000);
   FieldEvent_Wait(10);
-  DriftScene_SpawnObject(px(246), px(48), px(172), 0x2000);
+  DriftScene_SpawnObject(toFIXED(246), toFIXED(48), toFIXED(172), 0x2000);
   FieldEvent_Wait(30);
   // "What do you mean? What's so important about this...thingie?"
   Event_ShowMessage(ACTOR_JENNA, 0);
@@ -1122,7 +1122,7 @@ void Idejima_FindFelixAndSheba(void) {
   Actor_SetAnimation(ACTOR_SHEBA, 19);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 432, 234);
-  Actor_Get(gMainRoutineWork.leaderActorId)->scaleX = -Q16_ONE;
+  Actor_Get(gMainRoutineWork.leaderActorId)->scaleX = -FIXED_ONE;
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 41);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   Actor_SetPosition(ACTOR_ALEX, 392, 172);
@@ -1245,17 +1245,18 @@ void Idejima_RideTheTidalWave(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   DriftScene_Prepare();
   a3000 = FACING_SOUTH_SOUTHEAST;
-  Actor_SetPositionAndFacing(ACTOR_KRADEN, px(314), px(200), a3000);
+  Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(314), toFIXED(200), a3000);
   aD000 = FACING_NORTH_NORTHEAST;
-  Actor_SetPositionAndFacing(ACTOR_ALEX, px(328), px(240), aD000);
+  Actor_SetPositionAndFacing(ACTOR_ALEX, toFIXED(328), toFIXED(240), aD000);
   a4000 = FACING_SOUTH;
-  Actor_SetPositionAndFacing(ACTOR_JENNA, px(340), px(200), a4000);
-  Actor_SetPositionAndFacing(ACTOR_SHEBA, px(342), px(230), FACING_EAST);
+  Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(340), toFIXED(200), a4000);
+  Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(342), toFIXED(230),
+                             FACING_EAST);
   Actor_SetAnimation(ACTOR_SHEBA, 19);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
   a8000 = FACING_WEST;
-  Actor_SetPositionAndFacing(gMainRoutineWork.leaderActorId, px(312), px(230),
-                             a8000);
+  Actor_SetPositionAndFacing(gMainRoutineWork.leaderActorId, toFIXED(312),
+                             toFIXED(230), a8000);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 41);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   System_Wait(1);
@@ -1403,7 +1404,7 @@ void Idejima_RideTheTidalWave(void) {
   FieldActor_Jump(gMainRoutineWork.leaderActorId, 4, 0);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 1);
-  leader->scaleX = Q16_ONE;
+  leader->scaleX = FIXED_ONE;
   FieldEvent_Wait(20);
   Actor_SetAttachedEffect(ACTOR_JENNA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1646,8 +1647,8 @@ UNUSED void Idejima_LieDown(s32 id) {
   Actor_SetSpriteFlags(Actor_Get(id), 0);
   object->facing = FACING_SOUTH;
   object->motionFlags = 0;
-  object->x.fixed += px(12);
-  object->y.fixed = px(16);
+  object->x.fixed += toFIXED(12);
+  object->y.fixed = toFIXED(16);
   object->collisionFlags = 0;
   ((struct ActorSprite *)object->sprite)->rotation = 0xc000;
 }
@@ -1666,7 +1667,7 @@ void Idejima_PlaceTheSleepers(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_KRADEN), 0);
     actor->facing = FACING_SOUTH;
     actor->motionFlags = 0;
-    actor->y.fixed = px(12);
+    actor->y.fixed = toFIXED(12);
     actor->collisionFlags = 0;
     Actor_SetAnimation(ACTOR_KRADEN, 5);
   }
@@ -1679,7 +1680,7 @@ void Idejima_PlaceTheSleepers(void) {
     Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 0);
     actor->facing = FACING_SOUTH;
     actor->motionFlags = 0;
-    actor->y.fixed = px(12);
+    actor->y.fixed = toFIXED(12);
     actor->collisionFlags = 0;
     Actor_SetAnimation(ACTOR_JENNA, 18);
   }
@@ -1693,7 +1694,7 @@ void Idejima_PlaceTheSleepers(void) {
     Actor_SetAnimation(ACTOR_SHEBA, 19);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
     actor->motionFlags = 0;
-    actor->y.fixed = px(12);
+    actor->y.fixed = toFIXED(12);
   }
   MapGrid_CopyCellsTo(72, 42, 75, 40, 1, 1);
   System_Wait(1);

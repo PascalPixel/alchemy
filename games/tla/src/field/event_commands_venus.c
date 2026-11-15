@@ -44,7 +44,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   Sound_PlayFar(SE_HIGH_JUMP);
   Actor_Jump(djinniId, 8, 22);
   Sound_PlayFar(SE_SPIN);
-  MapGrid_SetScreenShakeFar(px(13) / 10, px(13) / 10, Q16_ONE);
+  MapGrid_SetScreenShakeFar(toFIXED(13) / 10, toFIXED(13) / 10, FIXED_ONE);
   djinni->update = (void (*)(void))FieldEffect_ShrinkActorAndDestroyFast;
   Actor_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (FACING_SOUTH).
@@ -54,7 +54,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId),
                            ANIM_LEADER_ARMS_RAISED);
   wait(30);
-  MapGrid_SetScreenShakeFar(px(8) / 5, px(8) / 5, Q16_ONE);
+  MapGrid_SetScreenShakeFar(toFIXED(8) / 5, toFIXED(8) / 5, FIXED_ONE);
 
   position.x = djinni->x.fixed;
   position.y = djinni->y.fixed;
@@ -69,8 +69,8 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialSpread);
     FieldParticle_SetActorMode(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->object, SPRITE_COLOR_GREEN_TINT);
-    effect->scaleX = Q16_ONE / 2;
-    effect->scaleY = Random16() + Q16_ONE * 3 / 2;
+    effect->scaleX = FIXED_ONE / 2;
+    effect->scaleY = Random16() + FIXED_ONE * 3 / 2;
     remaining--;
     wait(1);
     effect++;
@@ -89,11 +89,11 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   // 24 motes, evenly spread round a circle, 120 pixels above the leader.
   for (remaining = 0; remaining <= 23; remaining++) {
     position.x = leader->x.fixed;
-    position.y = leader->y.fixed + px(120);
+    position.y = leader->y.fixed + toFIXED(120);
     position.z = leader->z.fixed;
     djinni = Actor_Spawn(SPRITE_PARTICLE, position.x, position.y, position.z);
     if (djinni != NULL) {
-      scale = Random16() / 3 + Q16_ONE;
+      scale = Random16() / 3 + FIXED_ONE;
       djinni->scaleY = scale;
       djinni->scaleX = scale;
       djinni->orbitFrames = 100;
@@ -110,7 +110,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   wait(1);
   Sound_PlayFar(SE_LIGHT_APPEAR);
   position.x = leader->x.fixed;
-  position.y = leader->y.fixed + px(18);
+  position.y = leader->y.fixed + toFIXED(18);
   position.z = leader->z.fixed;
   // 8 sparks from 18 pixels above the leader, each thrown 32 pixels in a
   // random direction at 1.4 to 2.4 pixels a frame and 5 up (gravity is
@@ -120,13 +120,13 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
     djinni = Actor_Spawn(SPRITE_PARTICLE, position.x, position.y, position.z);
     if (djinni == NULL)
       break;
-    djinni->scaleY = Q16_ONE * 3 / 5;
-    djinni->scaleX = Q16_ONE * 3 / 5;
+    djinni->scaleY = FIXED_ONE * 3 / 5;
+    djinni->scaleX = FIXED_ONE * 3 / 5;
     djinni->motionFlags = ACTOR_FALLS;
-    djinni->velocityY = px(5);
+    djinni->velocityY = toFIXED(5);
     djinni->groundHeight = djinni->y.fixed;
-    djinni->speedLimit = Random16() + px(7) / 5;
-    Actor_SetTargetPositionFromMagnitudeAngle(djinni, px(32), Random16());
+    djinni->speedLimit = Random16() + toFIXED(7) / 5;
+    Actor_SetTargetPositionFromMagnitudeAngle(djinni, toFIXED(32), Random16());
     Actor_SetSpriteColorModeFar(djinni, SPRITE_COLOR_GREEN_TINT);
     djinni->wait = 8;
     Actor_StartScriptFar(djinni, gBattleEffect_SharedParticleScript);
@@ -155,19 +155,19 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
 
   if (state == MERCURY_DROPLET_AIM) {
     position.x = source->x.fixed;
-    position.y = source->y.fixed + Random16() * 5 + px(15);
+    position.y = source->y.fixed + Random16() * 5 + toFIXED(15);
     position.z = source->z.fixed;
     Camera_WorldToScreen(&position);
-    Vector_AddPolarOffset(Random16() * 6 + px(2), Random16(), &position);
+    Vector_AddPolarOffset(Random16() * 6 + toFIXED(2), Random16(), &position);
 
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->x = position.x;
-    effect->z = position.z - px(100);
-    effect->acceleration = px(3);
-    effect->maxSpeed = Random16() * 3 + px(3);
-    effect->scaleX = Q16_ONE;
-    effect->scaleY = Q16_ONE;
+    effect->z = position.z - toFIXED(100);
+    effect->acceleration = toFIXED(3);
+    effect->maxSpeed = Random16() * 3 + toFIXED(3);
+    effect->scaleX = FIXED_ONE;
+    effect->scaleY = FIXED_ONE;
     effect->limitTurnStep = state;
     effect->stopAtTarget = 1;
     effect->state++;
@@ -176,15 +176,15 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
     if (FieldParticle_HasPendingTarget(effect) == 0) {
       position.x = effect->x;
       position.z = effect->z;
-      Vector_AddPolarOffset(px(12), Random16(), &position);
+      Vector_AddPolarOffset(toFIXED(12), Random16(), &position);
       effect->targetX = position.x;
       effect->targetZ = position.z;
       effect->stopAtTarget = 0;
-      effect->speed = Q16_ONE;
+      effect->speed = FIXED_ONE;
       effect->acceleration = 0;
-      effect->maxSpeed = Random16() + px(11) / 5;
-      effect->scaleX = Q16_ONE / 2;
-      effect->scaleY = Q16_ONE / 2;
+      effect->maxSpeed = Random16() + toFIXED(11) / 5;
+      effect->scaleX = FIXED_ONE / 2;
+      effect->scaleY = FIXED_ONE / 2;
       Sound_PlayFar(SE_CRACK);
 
       if (effect->state == MERCURY_DROPLET_FALLING)

@@ -425,12 +425,14 @@ void Madra_WorkerBlocksHole(void) {
   } else if (!Event_GetFlag(FLAG_MADRA_WORKER_SEEN_AT_HOLE)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Madra_PlaceFacing(ACTOR_HOLE_WORKER, px(744), px(257), FACING_SOUTH);
-    Actor_GetById(ACTOR_FELIX)->velocityY = px(5);
+    Madra_PlaceFacing(ACTOR_HOLE_WORKER, toFIXED(744), toFIXED(257),
+                      FACING_SOUTH);
+    Actor_GetById(ACTOR_FELIX)->velocityY = toFIXED(5);
     Actor_SetSpeed(ACTOR_FELIX, 2);
     Actor_WalkToAndWait(ACTOR_FELIX, 720, 244);
     Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTHEAST);
-    Madra_PlaceFacing(ACTOR_FELIX, px(720), px(244), FACING_SOUTHEAST);
+    Madra_PlaceFacing(ACTOR_FELIX, toFIXED(720), toFIXED(244),
+                      FACING_SOUTHEAST);
     Event_SetFlag(FLAG_MADRA_WORKER_SEEN_AT_HOLE);
     Madra_AskComingThroughHole();
     Event_End();
@@ -442,12 +444,14 @@ void Madra_WorkerBlocksSealedHole(void) {
   if (!Event_GetFlag(FLAG_MADRA_WORKER_SEEN_AT_HOLE)) {
     Event_Start();
     Event_ResolvePendingActions(0);
-    Madra_PlaceFacing(ACTOR_HOLE_WORKER, px(744), px(256), FACING_SOUTH);
-    Actor_GetById(ACTOR_FELIX)->velocityY = px(5);
+    Madra_PlaceFacing(ACTOR_HOLE_WORKER, toFIXED(744), toFIXED(256),
+                      FACING_SOUTH);
+    Actor_GetById(ACTOR_FELIX)->velocityY = toFIXED(5);
     Actor_SetSpeed(ACTOR_FELIX, 2);
     Actor_WalkToAndWait(ACTOR_FELIX, 720, 244);
     Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTHEAST);
-    Madra_PlaceFacing(ACTOR_FELIX, px(720), px(244), FACING_SOUTHEAST);
+    Madra_PlaceFacing(ACTOR_FELIX, toFIXED(720), toFIXED(244),
+                      FACING_SOUTHEAST);
     Event_SetFlag(FLAG_MADRA_WORKER_SEEN_AT_HOLE);
     Madra_AskComingThroughSealedHole();
     Event_End();
@@ -825,8 +829,8 @@ void Madra_InspectPartyAtGate(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   object = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object != NULL)
-    Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].pixel,
-                         object->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].integer,
+                         object->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Event_SetFlag(FLAG_MADRA_GATE_INSPECTED);
@@ -1173,8 +1177,8 @@ void Madra_StopPartyAfterRaid(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   object = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object != NULL)
-    Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].pixel,
-                         object->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].integer,
+                         object->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
@@ -1197,10 +1201,10 @@ void Madra_StopPartyAfterRaid(void) {
 /// and Karst comes in at the gate looking for Menardi.
 void Madra_MeetKarst(void) {
   struct Actor *object;
-  s32 x = px(153);
+  s32 x = toFIXED(153);
   s32 z;
 
-  z = px(259);
+  z = toFIXED(259);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
@@ -1693,32 +1697,32 @@ void Madra_MeetKarst(void) {
   SET_MODE(ACTOR_KRADEN, ANIM_WALK);
   object = Actor_GetById(ACTOR_FELIX);
   if (object != NULL)
-    Actor_SetDestinationById(ACTOR_KRADEN, object->x.part[0].pixel,
-                             object->z.part[0].pixel);
+    Actor_SetDestinationById(ACTOR_KRADEN, object->x.part[0].integer,
+                             object->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   SET_MODE(ACTOR_JENNA, ANIM_WALK);
   object = Actor_GetById(ACTOR_FELIX);
   if (object != NULL)
-    Actor_SetDestinationById(ACTOR_JENNA, object->x.part[0].pixel,
-                             object->z.part[0].pixel);
+    Actor_SetDestinationById(ACTOR_JENNA, object->x.part[0].integer,
+                             object->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   SET_MODE(ACTOR_SHEBA, ANIM_WALK);
   object = Actor_GetById(ACTOR_FELIX);
   if (object != NULL)
-    Actor_SetDestinationById(ACTOR_SHEBA, object->x.part[0].pixel,
-                             object->z.part[0].pixel);
+    Actor_SetDestinationById(ACTOR_SHEBA, object->x.part[0].integer,
+                             object->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
   SET_MODE(ACTOR_PIERS, ANIM_WALK);
   object = Actor_GetById(ACTOR_FELIX);
   if (object != NULL)
-    Actor_SetDestinationById(ACTOR_PIERS, object->x.part[0].pixel,
-                             object->z.part[0].pixel);
+    Actor_SetDestinationById(ACTOR_PIERS, object->x.part[0].integer,
+                             object->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   GameFlag_Set(0x980);

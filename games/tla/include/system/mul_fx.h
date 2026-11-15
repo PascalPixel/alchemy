@@ -1,13 +1,13 @@
-#ifndef ALCHEMY_MUL_Q16_H
-#define ALCHEMY_MUL_Q16_H
+#ifndef ALCHEMY_MUL_FX_H
+#define ALCHEMY_MUL_FX_H
 
 /// @file
-/// MulQ16, the 16.16 fixed-point multiply.
+/// MulFX, the 16.16 fixed-point multiply.
 
 #include "types.h"
 
 /// Multiplies 16.16 fixed-point values, returning the middle 32 product bits.
-/// Emits IwramMulQ16's three instructions (smull, lsl, orr) at the call site.
+/// Emits IwramMulFX's three instructions (smull, lsl, orr) at the call site.
 CAMELOT_ASM("smull with RdLo and RdHi in any two registers, even over its "
             "inputs, where mulsidi3 "
             "pairs them (RdHi = RdLo + 1) apart from the inputs and "
@@ -15,7 +15,7 @@ CAMELOT_ASM("smull with RdLo and RdHi in any two registers, even over its "
             "RdLo; its orr takes a fresh output reload register beside two "
             "dying inputs and "
             "nothing is scheduled across it, as only asm statements do")
-static __inline__ s32 MulQ16(s32 left, s32 right) {
+static __inline__ s32 MulFX(s32 left, s32 right) {
   u32 low;
   s32 high;
   s32 result;
@@ -29,5 +29,7 @@ static __inline__ s32 MulQ16(s32 left, s32 right) {
                    : "r"(high), "r"(low));
   return result;
 }
+
+u32 Math_UnsignedMulHigh(u32 a, u32 b);
 
 #endif

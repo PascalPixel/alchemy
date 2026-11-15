@@ -7,7 +7,7 @@
 #include "static_assert.h"
 #include "types.h"
 #include "system/frame.h"
-#include "system/mul_q16.h"
+#include "system/mul_fx.h"
 #include "system/projection.h"
 #include "system/vector3.h"
 
@@ -77,9 +77,8 @@ struct BgAffine {
 /// terms, whose rotation terms stay cached while the yaw (gScanlineAngle) is
 /// unchanged; affine receives each line's parameters twice, for BG2 and then
 /// BG3, as the HBlank DMA writes both.
-void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
-                              struct ScanVertex *line,
-                              struct BgAffine *affine) {
+void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
+                           struct ScanVertex *line, struct BgAffine *affine) {
   u32 angle;
   s32 originX;
   s32 originZ;
@@ -101,8 +100,8 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
         (u16)FarCall_RuntimeTable.arcTan2.target(targetDeltaX >> 4, depth >> 4);
   }
   // The texture origin: the target at half scale.
-  originX = MulQ16(target->x, Q16_ONE / 2);
-  originZ = MulQ16(target->z, Q16_ONE / 2);
+  originX = MulFX(target->x, FIXED_ONE / 2);
+  originZ = MulFX(target->z, FIXED_ONE / 2);
   if (angle != gScanlineAngle) {
     // The camera turned: recompute every scanline's rotation terms.
     gScanlineAngle = angle;
@@ -120,11 +119,11 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
       depth = line->z;
       // The BG affine parameters are 8.8 fixed point: / 256 takes the 16.16
       // products there.
-      affinePa = -(MulQ16(widthScale, cosYaw) / 256);
+      affinePa = -(MulFX(widthScale, cosYaw) / 256);
       horizontalOffset = (s16)affinePa;
       line->u = affinePa;
       affine->pa = affinePa;
-      affinePc = MulQ16(widthScale, sinYaw) / 256;
+      affinePc = MulFX(widthScale, sinYaw) / 256;
       line->v = affinePc;
       affine->pc = affinePc;
       centerX = *&gProjection.centerX;
@@ -139,8 +138,8 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
 #endif
       // The line's start: back from its centre by centerX pixels of the line's
       // step, then along the view by its depth.
-      line->dx = -(horizontalOffset + MulQ16(negativeSinYaw, depth));
-      line->dz = depthOffset + MulQ16(cosYaw, depth);
+      line->dx = -(horizontalOffset + MulFX(negativeSinYaw, depth));
+      line->dz = depthOffset + MulFX(cosYaw, depth);
       affine->x = (originX + line->dx) >> 8;
       affine->y = (originZ + line->dz) >> 8;
       affine[1] = affine[0];

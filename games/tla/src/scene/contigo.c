@@ -485,8 +485,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (target - effect->scaleX) / frames;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (target - Q16_ONE) / frames;
-      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
+      effect->scaleRateX = (target - FIXED_ONE) / frames;
+      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -533,7 +533,7 @@ s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
   to = &other->x.fixed;
   from = &self->x.fixed;
   if (Lemuria_Distance(to, from) < range) {
-    u32 angle = (u16)ArcTan2(other->z.fixed - self->z.fixed, *to - *from);
+    u32 angle = (u16)Trig_Atan(other->z.fixed - self->z.fixed, *to - *from);
     u32 left = (angle - 0x1000) & 0xf000;
     u32 right = (angle + 0x1000) & 0xf000;
     u32 ahead = angle & 0xf000;
@@ -714,10 +714,10 @@ void Contigo_CircleGlow(struct OrbitEffect *effect) {
   s32 dx;
   s32 dz;
 
-  radius = Random16() + px(2);
+  radius = Random16() + toFIXED(2);
   angle = effect->angle;
-  dx = Iwram_MulQ16(radius, Trig_Cos(angle));
-  dz = Iwram_MulQ16(radius, Trig_Sin(angle));
+  dx = Iwram_MulFX(radius, Trig_Cos(angle));
+  dz = Iwram_MulFX(radius, Trig_Sin(angle));
   effect->x += dx;
   effect->z += dz;
   effect->angle += 0xfff0;
@@ -733,7 +733,7 @@ void Contigo_CircleGlow(struct OrbitEffect *effect) {
 
 void Contigo_RaiseMotes(void) {
   if ((gFrameCount & 7) == 0) {
-    struct Actor *object = Actor_Spawn(308, px(706), 52428, px(116));
+    struct Actor *object = Actor_Spawn(308, toFIXED(706), 52428, toFIXED(116));
 
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
@@ -741,8 +741,8 @@ void Contigo_RaiseMotes(void) {
       object->motionFlags = 0;
       object->timer = -(s32)(Random_Below(16)) * 2 + 20;
       object->userValue = 0;
-      object->gravity = px(1) / 10;
-      object->velocityY = px(3);
+      object->gravity = toFIXED(1) / 10;
+      object->velocityY = toFIXED(3);
       object->facing = Random16();
     }
   }
@@ -762,8 +762,8 @@ struct ContigoGlow {
 /// on.
 void Contigo_BabyThinks(void) {
   struct ContigoGlow *effect;
-  s32 x = px(706);
-  s32 z = px(116);
+  s32 x = toFIXED(706);
+  s32 z = toFIXED(116);
   u32 i;
 
   Event_Start();
@@ -787,12 +787,12 @@ void Contigo_BabyThinks(void) {
     Actor_SetSpriteFlags(effect, 0);
     Actor_SelectAnimation(effect, 2);
     effect->motionFlags = 0;
-    effect->scaleX = Q16_ONE / 10;
-    effect->scaleY = Q16_ONE / 10;
+    effect->scaleX = FIXED_ONE / 10;
+    effect->scaleY = FIXED_ONE / 10;
     i = 0;
   grow:
-    effect->scaleX += Q16_ONE / 40;
-    effect->scaleY += Q16_ONE / 40;
+    effect->scaleX += FIXED_ONE / 40;
+    effect->scaleY += FIXED_ONE / 40;
     wait(1);
     i++;
     if (i < 28)
@@ -1147,7 +1147,7 @@ void Contigo_ClearBushesBySalt(void) {
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -16);
-      leader->velocityY = px(6);
+      leader->velocityY = toFIXED(6);
       Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Event_End();
     }
@@ -1252,13 +1252,13 @@ void Contigo_ForceFreesDjinni(void) {
     velocity[2] = Trig_Sin(angle);
     velocity[0] += velocity[0] / 3;
     FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed,
-                      velocity[0], velocity[1] + (px(1) / 10), velocity[2],
-                      px(2), &options);
+                      velocity[0], velocity[1] + (toFIXED(1) / 10), velocity[2],
+                      toFIXED(2), &options);
   }
   Actor_SetSpriteColor(Actor_GetById(ACTOR_SHINE), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SHINE), 1);
   Actor_SetSpeed(ACTOR_SHINE, 3);
-  object->velocityY = px(12);
+  object->velocityY = toFIXED(12);
   Actor_MoveToAndWait(ACTOR_SHINE, 40, 680);
   Event_Wait(10);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -1294,7 +1294,7 @@ void Contigo_PlaceWingPart(s32 id) {
   object->collisionFlags = ACTOR_NOT_TARGETED;
   object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   object->motionFlags = 0;
-  object->y.fixed = px(64);
+  object->y.fixed = toFIXED(64);
 }
 
 /// Lays out the wings' parts by the geoglyph: each frame and feather shows
@@ -1513,8 +1513,8 @@ void Contigo_SendToSuperLuckyDice(void) {
 void Contigo_ShrinkActor(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
-  object->scaleX = Q16_ONE * 7 / 10;
-  object->scaleY = Q16_ONE * 7 / 10;
+  object->scaleX = FIXED_ONE * 7 / 10;
+  object->scaleY = FIXED_ONE * 7 / 10;
   object->radius = 8;
 }
 
@@ -1815,8 +1815,8 @@ void Contigo_TheReunion(void) {
   Sound_Play(MUS_SILENCE);
   Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_HAMA)), 15);
   angle = FACING_NORTH_NORTHWEST;
-  Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_HAMA, px(160), px(466),
-                                                 angle);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_HAMA, toFIXED(160),
+                                                 toFIXED(466), angle);
   wait(1);
   Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, ACTOR_HAMA);
@@ -2648,7 +2648,7 @@ void Contigo_RaiseSparkle(struct Actor *object) {
     if (work->heights[i] >= 0) {
       if (work->heights[i] <= 31) {
         position.x = object->x.fixed;
-        position.y = object->y.fixed + px(work->heights[i]);
+        position.y = object->y.fixed + toFIXED(work->heights[i]);
         position.z = object->z.fixed;
         Camera_WorldToScreen(&position);
         x = position.x;
@@ -2663,7 +2663,7 @@ void Contigo_RaiseSparkle(struct Actor *object) {
             sprite->depth = BattleEffect_GetObjectDepth(object) - 1;
           } else {
             sprite->depth = BattleEffect_GetObjectDepth(object) + 1;
-            sprite->y -= px(1);
+            sprite->y -= toFIXED(1);
             sprite->scaleY = -sprite->scaleY;
           }
           EffectSprite_Draw(sprite);
@@ -2895,17 +2895,17 @@ u32 gContigo_IsaacLeavesScript[] = {
 s32 gContigo_ShopsWatcherScript[] = {
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x10000),
-    SC_ADD(SW_SCALE_X, -Q16_ONE * 5 / 32),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE * 5 / 32),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE * 5 / 64),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
-    SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 2560),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 128),
+    SC_ADD(SW_SCALE_X, FIXED_ONE * 5 / 64),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 2560),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 128),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 128),
+    SC_WAIT(2),
+    SC_ADD(SW_SCALE_X, 2560),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 128),
     SC_WAIT(2),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

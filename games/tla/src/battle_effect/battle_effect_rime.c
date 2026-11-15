@@ -96,8 +96,9 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != 32; i++) {
         struct Particle *star = &work->particles[i];
 
-        SET_POSITION(star, px((Random16() & 31) - 16),
-                     px((Random16() & 63) - 16), (Random16() & 127) + 128);
+        SET_POSITION(star, INTtoFIXED((Random16() & 31) - 16),
+                     INTtoFIXED((Random16() & 63) - 16),
+                     (Random16() & 127) + 128);
         star->velocityY = Random16();
         star->variant = -i * 2;
       }
@@ -122,11 +123,11 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
       if (height > 39)
         height = 40;
       blit[0](canvas, work->sheet + DJINNI_OFFSET,
-              (Q_16_16_TO_INT(Trig_Sin(frame << 10) << 5)) + 44, center[1] - 20,
-              40, height);
+              (FIXEDtoINT(Trig_Sin(frame << 10) << 5)) + 44, center[1] - 20, 40,
+              height);
     }
 
-    Transform_Reset();
+    Matrix_Initialize();
     gProjection.centerY = 104;
     vertices = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
@@ -149,21 +150,21 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
       model->shade = brightness;
       texture.pixels = work->sheet + CRYSTAL_OFFSET;
       for (i = 0; i != 2; i++) {
-        s32 scale = Q16_ONE * 2 - frame * 0x800;
+        s32 scale = FIXED_ONE * 2 - frame * 0x800;
 
         if (frame > 31 && i == 1)
           continue;
-        if (scale < Q16_ONE)
-          scale = Q16_ONE;
-        Transform_Reset();
-        Transform_ApplyPitch(-TRIG_TURN / 4);
+        if (scale < FIXED_ONE)
+          scale = FIXED_ONE;
+        Matrix_Initialize();
+        Matrix_RotateX(-DEGtoANG(90));
         if (frame <= 31) {
           if (i == 0)
-            Transform_ApplyYaw((32 - frame) << 9);
+            Matrix_RotateY((32 - frame) << 9);
           else
-            Transform_ApplyYaw((frame << 9) - TRIG_TURN / 4);
+            Matrix_RotateY((frame << 9) - DEGtoANG(90));
         }
-        Transform_ApplyAxisScale(scale >> 1, scale >> 1, scale >> 1);
+        Matrix_Scale(scale >> 1, scale >> 1, scale >> 1);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                  4);
         Render_DrawModelList(model);
@@ -182,13 +183,13 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
           s32 swell = Trig_Sin(star->variant << 11) * star->z;
           s32 size;
 
-          Transform_Reset();
-          Transform_ApplyTranslation(star->x, star->y, 0);
+          Matrix_Initialize();
+          Matrix_Translate(star->x, star->y, 0);
           size = swell >> 8;
-          Transform_ApplyPitch(TRIG_TURN / 4);
-          Transform_ApplyYaw(frame << 9);
+          Matrix_RotateX(DEGtoANG(90));
+          Matrix_RotateY(frame << 9);
           size /= 2;
-          Transform_ApplyAxisScale(size, size, size);
+          Matrix_Scale(size, size, size);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                    4);
           Render_DrawModelList(model);

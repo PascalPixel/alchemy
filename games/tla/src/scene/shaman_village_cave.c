@@ -228,7 +228,7 @@ void ShamanVillageCave_EddyFlees(void) {
   Actor_SetDestinationOffset(ACTOR_EDDY, dx << 4, 0);
   FieldActor_WaitForMoveById(ACTOR_EDDY);
   Actor_SetDestinationOffset(ACTOR_EDDY, dx * 48, 0);
-  object->velocityY = px(8);
+  object->velocityY = toFIXED(8);
   dz = -dz;
   FieldActor_WaitForMoveById(ACTOR_EDDY);
   Actor_SetDestinationOffset(ACTOR_EDDY, 0, dz);
@@ -298,9 +298,9 @@ void ShamanVillageCave_PlaceGladiators(void) {
   s32 angle;
 
   angle = FACING_SOUTH_SOUTHWEST;
-  Actor_SetPositionAndFacing(ACTOR_SATRAGE, px(231), px(199), angle);
-  Actor_SetPositionAndFacing(ACTOR_AZART, px(220), px(191), angle);
-  Actor_SetPositionAndFacing(ACTOR_NAVAMPA, px(204), px(191), angle);
+  Actor_SetPositionAndFacing(ACTOR_SATRAGE, toFIXED(231), toFIXED(199), angle);
+  Actor_SetPositionAndFacing(ACTOR_AZART, toFIXED(220), toFIXED(191), angle);
+  Actor_SetPositionAndFacing(ACTOR_NAVAMPA, toFIXED(204), toFIXED(191), angle);
   return;
 }
 
@@ -311,7 +311,8 @@ void ShamanVillageCave_PlaceGoldenShirt(void) {
 
   FieldActor_ShowItemIconById(ACTOR_GOLDEN_SHIRT, ITEM_GOLDEN_SHIRT);
   angle = FACING_NORTH;
-  Actor_SetPositionAndFacing(ACTOR_GOLDEN_SHIRT, px(212), px(199), angle);
+  Actor_SetPositionAndFacing(ACTOR_GOLDEN_SHIRT, toFIXED(212), toFIXED(199),
+                             angle);
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_GOLDEN_SHIRT_LEFT);
   return;
 }
@@ -352,13 +353,13 @@ void ShamanVillageCave_MeetColossoFans(void) {
   FieldCamera_MoveTo(199, CAMERA_KEEP, 177, 1);
   FieldCamera_WaitForArrival();
   angle = FACING_SOUTH;
-  Actor_SetPositionAndFacing(ACTOR_SATRAGE, px(199), px(130), angle);
+  Actor_SetPositionAndFacing(ACTOR_SATRAGE, toFIXED(199), toFIXED(130), angle);
   Actor_WalkTo(ACTOR_SATRAGE, 231, 199);
   FieldEvent_Wait(20);
-  Actor_SetPositionAndFacing(ACTOR_AZART, px(199), px(130), angle);
+  Actor_SetPositionAndFacing(ACTOR_AZART, toFIXED(199), toFIXED(130), angle);
   Actor_WalkTo(ACTOR_AZART, 220, 191);
   FieldEvent_Wait(20);
-  Actor_SetPositionAndFacing(ACTOR_NAVAMPA, px(199), px(130), angle);
+  Actor_SetPositionAndFacing(ACTOR_NAVAMPA, toFIXED(199), toFIXED(130), angle);
   Actor_WalkTo(ACTOR_NAVAMPA, 204, 191);
   FieldCamera_MoveTo(199, CAMERA_KEEP, 225, 1);
   FieldCamera_WaitForArrival();
@@ -468,12 +469,12 @@ void ShamanVillageCave_LoseToColossoFans(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(199, CAMERA_KEEP, 273, 0);
   FieldEvent_SetMessageId((s32)MsgHeyTheseGuys);
-  Actor_SetPositionAndFacing(ACTOR_FELIX, px(184), px(229), angle);
-  Actor_SetPositionAndFacing(ACTOR_ISAAC, px(200), px(221), angle);
+  Actor_SetPositionAndFacing(ACTOR_FELIX, toFIXED(184), toFIXED(229), angle);
+  Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(200), toFIXED(221), angle);
   {
     s32 turn = 0xc000;
 
-    Actor_SetPositionAndFacing(ACTOR_KRADEN, px(218), px(320), turn);
+    Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(218), toFIXED(320), turn);
   }
   Actor_SetAnimation(ACTOR_FELIX, ANIM_COLLAPSE);
   Actor_SetAnimation(ACTOR_ISAAC, 39);
@@ -525,9 +526,9 @@ void ShamanVillageCave_BeatColossoFans(void) {
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(199, CAMERA_KEEP, 273, 0);
   FieldEvent_SetMessageId((s32)MsgTheseGuysWere);
-  Actor_SetPositionAndFacing(ACTOR_FELIX, px(184), px(229), angle);
-  Actor_SetPositionAndFacing(ACTOR_ISAAC, px(200), px(221), angle);
-  Actor_SetPositionAndFacing(ACTOR_KRADEN, px(208), px(237), angle);
+  Actor_SetPositionAndFacing(ACTOR_FELIX, toFIXED(184), toFIXED(229), angle);
+  Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(200), toFIXED(221), angle);
+  Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(208), toFIXED(237), angle);
   Actor_SetAnimation(ACTOR_AZART, 8);
   Actor_SetAnimation(ACTOR_SATRAGE, 8);
   Actor_SetAnimation(ACTOR_NAVAMPA, 8);
@@ -664,7 +665,7 @@ s32 Scene_Initialize(void) {
     object = Actor_Get(ACTOR_PILLAR);
     object->motionFlags = 0;
     object->priorityFlags = 0;
-    object->x.fixed = px(616);
+    object->x.fixed = toFIXED(616);
     object->y.fixed = 0;
     Actor_SetSpriteFlags(object, 0);
     MapGrid_CopyCellAttributes(40, 19, 1, 1, 38, 19);

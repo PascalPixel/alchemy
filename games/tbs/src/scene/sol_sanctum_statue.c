@@ -624,7 +624,7 @@ static void SolSanctumStatue_UnusedPutOutSeals(void) {
   grid = gMapGridWork[0];
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   // Temporarily follow a local point, panning from the leader toward the seal.
-  if (leader->z.fixed < px(179)) {
+  if (leader->z.fixed < toFIXED(179)) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 575, 132);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Event_Wait(30);
@@ -633,7 +633,7 @@ static void SolSanctumStatue_UnusedPutOutSeals(void) {
                leader->z.fixed);
     grid->origin = cameraPosition;
     for (frame = 0; frame != 30; frame++) {
-      cameraPosition[2] += px(1);
+      cameraPosition[2] += toFIXED(1);
       Event_Wait(1);
     }
     Event_Wait(40);
@@ -647,7 +647,7 @@ static void SolSanctumStatue_UnusedPutOutSeals(void) {
     savedOrigin = grid->origin;
     grid->origin = cameraPosition;
     for (frame = 0; frame != 30; frame++) {
-      cameraPosition[2] -= px(1);
+      cameraPosition[2] -= toFIXED(1);
       Event_Wait(1);
     }
     Event_Wait(40);
@@ -677,12 +677,12 @@ static void SolSanctumStatue_UnusedPutOutSeals(void) {
   // Reverse the pan before restoring the caller's camera target.
   if (approachSide == 1) {
     for (frame = 0; frame != 30; frame++) {
-      cameraPosition[2] -= px(1);
+      cameraPosition[2] -= toFIXED(1);
       Event_Wait(1);
     }
   } else if (approachSide == 2) {
     for (frame = 0; frame != 30; frame++) {
-      cameraPosition[2] += px(1);
+      cameraPosition[2] += toFIXED(1);
       Event_Wait(1);
     }
   }
@@ -694,8 +694,8 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   struct AnimationSpritePart *sprite = sScrollingSprites.parts;
   s32 *view = grid->view;
-  s32 cameraX = view[0] / px(1);
-  s32 screenY = 80 - view[1] / px(1);
+  s32 cameraX = view[0] / toFIXED(1);
+  s32 screenY = 80 - view[1] / toFIXED(1);
   s32 scrollX;
   u32 column;
 
@@ -1098,7 +1098,8 @@ static void SolSanctumStatue_PushCenterStatueNorth(void) {
       Actor_Get(ACTOR_CENTER_STATUE)->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
       Actor_SetDestination(ACTOR_PARTY_LEADER,
-                           Actor_Get(ACTOR_PARTY_LEADER)->x.part[0].pixel, 136);
+                           Actor_Get(ACTOR_PARTY_LEADER)->x.part[0].integer,
+                           136);
       Actor_SetDestination(ACTOR_CENTER_STATUE, 288, 120);
       Actor_WaitForMoveById(ACTOR_CENTER_STATUE);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);

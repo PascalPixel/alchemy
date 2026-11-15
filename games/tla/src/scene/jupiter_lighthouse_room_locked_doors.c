@@ -113,7 +113,7 @@ void JupiterLighthouse_RevealThePassage(void) {
   Actor_SetPosition(ACTOR_HIDDEN_BLOCK, 504, 168);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     Actor_RaiseFromCell(ACTOR_HIDDEN_BLOCK);
-    ((u8)FieldMapGrid_SetCellBehavior(px(496), px(160), 0, 254));
+    ((u8)FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(160), 0, 254));
   }
 }
 
@@ -136,7 +136,7 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   if (FIELD_CELL(object->x.fixed) == 10 && FIELD_CELL(object->z.fixed) == 32) {
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
-      object->y.fixed += px(2);
+      object->y.fixed += toFIXED(2);
       System_Wait(1);
     }
     Actor_RaiseFromCell(id);
@@ -193,8 +193,8 @@ void JupiterLighthouse_CircleTheMote(struct Actor *object) {
   s16 height = object->userValue;
 
   SET_ACTOR_POSITION(
-      object, Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + px(232),
-      (height * px(3)) - px(120), px(520));
+      object, Iwram_MulFX(Trig_Cos(angle), object->speedLimit) + toFIXED(232),
+      (height * toFIXED(3)) - toFIXED(120), toFIXED(520));
   if ((s16)object->userValue == 1)
     Actor_SelectAnimation(object, 7);
   if ((s16)object->userValue == 38)
@@ -253,22 +253,22 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
     Actor_SetAnimationSpeed(leader, 64);
     leader->motionFlags = flag;
-    leader->y.fixed = leader->groundHeight = -px(120);
+    leader->y.fixed = leader->groundHeight = -toFIXED(120);
     Event_StartScreenTransition();
     FieldEvent_Wait(10);
     for (i = 0; i <= 89 && leader->y.fixed < 0; i++) {
-      leader->groundHeight = leader->y.fixed = leader->y.fixed + px(3);
+      leader->groundHeight = leader->y.fixed = leader->y.fixed + toFIXED(3);
       leader->facing += 0x1800;
       System_Wait(2);
     }
     leader->groundHeight = leader->y.fixed = 0;
     leader->facing = FACING_SOUTH;
     leader->motionFlags = 3;
-    leader->velocityY = px(3);
-    leader->gravity = px(1) / 2;
+    leader->velocityY = toFIXED(3);
+    leader->gravity = toFIXED(1) / 2;
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
     FieldEvent_Wait(40);
-    leader->gravity = px(1);
+    leader->gravity = toFIXED(1);
     leader->priorityFlags |= 64;
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_AUTOMATIC;
@@ -297,7 +297,7 @@ s32 Scene_PrepareMap(void) {
     Actor_RaiseFromCell(ACTOR_LAST_BLOCKS + 1);
     Actor_RaiseFromCell(ACTOR_LAST_BLOCKS + 2);
     Actor_RaiseFromCell(ACTOR_UNSEEN);
-    Actor_Get(ACTOR_UNSEEN)->gravity = px(3);
+    Actor_Get(ACTOR_UNSEEN)->gravity = toFIXED(3);
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_UNSEEN), 0);
   if (Event_GetFlag(FLAG_BRIDGE_BLOCK_RAISED)) {
@@ -356,12 +356,12 @@ UNUSED s32 Actor_EmitRisingSparks(struct Actor *object) {
 
   if ((gFrameCount & 7) == 0) {
     options.priority = 3;
-    options.startScaleX = Q16_ONE * 7 / 10;
-    options.startScaleY = Q16_ONE * 7 / 10;
+    options.startScaleX = FIXED_ONE * 7 / 10;
+    options.startScaleY = FIXED_ONE * 7 / 10;
     options.palette = 14;
-    x = object->x.fixed + px((Random_Below(9)) - 4);
-    y = object->y.fixed + px(32 - (Random_Below(20)));
-    velocityY = (s32)((px(Random_Below(5)) + 0x50000)) / 10;
+    x = object->x.fixed + toFIXED((Random_Below(9)) - 4);
+    y = object->y.fixed + toFIXED(32 - (Random_Below(20)));
+    velocityY = (s32)((toFIXED(Random_Below(5)) + 0x50000)) / 10;
     FieldEffect_Spawn(x, y, object->z.fixed, 0, velocityY, 0,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_START_SCALE,
@@ -458,16 +458,16 @@ void LightSprites_Draw(void) {
       s32 frame;
       u32 *word;
       ox = actor->x.fixed - viewX;
-      y = actor->y.fixed - viewY + px(8);
+      y = actor->y.fixed - viewY + toFIXED(8);
       z = actor->z.fixed - viewZ - viewY;
       oy = z - y;
-      depth = FIELD_PIXEL(y + z) + 58;
+      depth = FIXEDtoINT(y + z) + 58;
       big = gLightSpritesLarge;
       if (big == 0) {
         s32 x, sy;
         frame = actor->timer;
-        x = FIELD_PIXEL(ox);
-        sy = FIELD_PIXEL(oy);
+        x = FIXEDtoINT(ox);
+        sy = FIXEDtoINT(oy);
         ox = x - 8;
         oy = sy - 16;
         if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
@@ -487,8 +487,8 @@ void LightSprites_Draw(void) {
       } else {
         s32 x, sy;
         frame = actor->timer;
-        x = FIELD_PIXEL(ox);
-        sy = FIELD_PIXEL(oy);
+        x = FIXEDtoINT(ox);
+        sy = FIXEDtoINT(oy);
         ox = x - 8;
         oy = sy - 64;
         if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)

@@ -64,11 +64,12 @@ void Leader_StepAwayFromNearbyActor(void) {
     other = Actor_Lookup(i + 64);
     dx = leader->x.fixed - other->x.fixed;
     dz = leader->z.fixed - other->z.fixed;
-    if (dx > -px(16) && dx < px(16))
-      if (dz > -px(16) && dz < px(16)) {
+    if (dx > -toFIXED(16) && dx < toFIXED(16))
+      if (dz > -toFIXED(16) && dz < toFIXED(16)) {
         leader->x.fixed = other->x.fixed;
         leader->z.fixed = other->z.fixed;
-        Vector_AddPolarOffset(px(20), (u16)ArcTan2(dz, dx), &leader->x.fixed);
+        Vector_AddPolarOffset(toFIXED(20), (u16)Trig_Atan(dz, dx),
+                              &leader->x.fixed);
         leader->targetX = TARGET_UNSET;
         leader->targetY = TARGET_UNSET;
         leader->targetZ = TARGET_UNSET;
@@ -148,9 +149,9 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actor, s32 item) {
   position[1] = picture->y.fixed;
   position[2] = picture->z.fixed;
   if (actor == Party_GetLeaderActor()) {
-    Vector_AddPolarOffset(px(16), picture->facing, position);
-    position[0] = (position[0] & FIELD_CELL_MASK) + px(8);
-    position[2] = (position[2] & FIELD_CELL_MASK) + px(8);
+    Vector_AddPolarOffset(toFIXED(16), picture->facing, position);
+    position[0] = (position[0] & FIELD_CELL_MASK) + toFIXED(8);
+    position[2] = (position[2] & FIELD_CELL_MASK) + toFIXED(8);
   }
   if (work->revealActive != 0) {
     object = Ram_HeapSlots->actors;
@@ -168,7 +169,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actor, s32 item) {
   }
   wait(3);
   picture =
-      Actor_CreateFar(489, position[0], position[1] + px(16), position[2]);
+      Actor_CreateFar(489, position[0], position[1] + toFIXED(16), position[2]);
   if (picture == NULL)
     return NULL;
   Actor_StartScriptFar(picture, gFieldEffect_ParticleEmitterScript);
@@ -180,8 +181,8 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actor, s32 item) {
   sprite->image.priority = 1;
   picture->motionFlags = 2;
   picture->groundHeight = position[1];
-  picture->velocityY = px(2);
-  picture->gravity = px(1) / 4;
+  picture->velocityY = toFIXED(2);
+  picture->gravity = toFIXED(1) / 4;
   buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Icon_DrawItemFar(item);
   tile = VramCache_Load(sprite->slot, 4 * TILE_SIZE_4BPP, buffer + 1024);
@@ -225,12 +226,12 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
 
   {
     struct Actor *found = Actor_Lookup(Party_GetLeaderActor());
-    actor->acceleration = px(1);
-    actor->speedLimit = px(2);
+    actor->acceleration = toFIXED(1);
+    actor->speedLimit = toFIXED(2);
     actor->motionFlags = 0;
     owner = found;
   }
-  Actor_SetMoveTargetFar(actor, owner->x.fixed, owner->y.fixed + px(36),
+  Actor_SetMoveTargetFar(actor, owner->x.fixed, owner->y.fixed + toFIXED(36),
                          owner->z.fixed);
   Actor_SetSpritePriorityDirectFar(actor, 1);
   wait(3);
@@ -250,8 +251,8 @@ void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
     if (flags & 1) {
       Actor_SetSpriteFlagsFar(object, 0);
       Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
-      ((struct Actor *)object)->velocityY = px(2);
-      ((struct Actor *)object)->gravity = px(1) / 4;
+      ((struct Actor *)object)->velocityY = toFIXED(2);
+      ((struct Actor *)object)->gravity = toFIXED(1) / 4;
       ((struct Actor *)object)->update = ItemDisplay_EmitSparkles;
     }
     if (flags == 3)
@@ -270,7 +271,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *owner = Actor_Lookup(Party_GetLeaderActor());
   u8 *buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   struct Actor *object = Actor_CreateFar(
-      489, owner->x.fixed, owner->y.fixed + px(36), owner->z.fixed);
+      489, owner->x.fixed, owner->y.fixed + toFIXED(36), owner->z.fixed);
 
   if (object != 0) {
     struct Sprite *sprite = object->sprite;
@@ -363,8 +364,8 @@ void FieldEffect_SpawnRevealMarkers(void) {
       continue;
     // A tile event's object holds its map cell, marked by this value.
     if (object->riseBaseY == 0x31415927) {
-      x = px(object->timer);
-      z = px((s16)object->userValue);
+      x = toFIXED(object->timer);
+      z = toFIXED((s16)object->userValue);
       y = MapGrid_GetTerrainHeightFar(0, x, z);
     } else {
       if ((u16)(type - 128) <= 1)

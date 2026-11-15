@@ -67,7 +67,7 @@ struct BattleActor {
 /// in 16.16: BattleMotion_ReturnToSpot sets it whenever a unit goes back to its
 /// spot, and effects that change a unit's gravity for a leap or a lift give it
 /// this one back.
-#define BATTLE_UNIT_GRAVITY (px(67) / 100)
+#define BATTLE_UNIT_GRAVITY (toFIXED(67) / 100)
 
 STATIC_ASSERT(sizeof(struct BattleActor) == 0x70);
 STATIC_ASSERT(offsetof(struct BattleActor, scaleX) == 0x18);

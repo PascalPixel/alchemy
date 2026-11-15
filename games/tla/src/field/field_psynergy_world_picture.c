@@ -57,18 +57,18 @@ void WorldPicture_Initialize(void) {
   }
   Heap_Release(markerTiles);
   if (GameFlag_Get(FLAG_WORLD_MAP_LEFT)) {
-    work->x = px(264);
-    work->z = px(16);
+    work->x = toFIXED(264);
+    work->z = toFIXED(16);
   } else {
     WorldPicture_GetLeaderPoint(&screenX, &screenY);
-    work->x = px(screenX);
-    work->z = px(screenY);
+    work->x = toFIXED(screenX);
+    work->z = toFIXED(screenY);
   }
-  screenX = work->x - px(120);
-  screenY = work->z - px(80);
+  screenX = work->x - toFIXED(120);
+  screenY = work->z - toFIXED(80);
   left = 0;
-  right = px(272);
-  bottom = px(224);
+  right = toFIXED(272);
+  bottom = toFIXED(224);
   if (screenX < left)
     screenX = left;
   if (screenX > right)
@@ -83,7 +83,7 @@ void WorldPicture_Initialize(void) {
   tile = gVramCacheEntries[work->windowSlot].offset;
   work->window = Window_CreateFar(0, 0, 0, 0, 2);
   work->shown = -1;
-  work->speed = px(1);
+  work->speed = toFIXED(1);
   cursorAttributes = OBJ_SIZE_16X16;
   *oam++ = 0;
   *oam++ = cursorAttributes;
@@ -115,8 +115,8 @@ void WorldPicture_PlaceLeaderAt(s32 x, s32 z) {
     x >>= 16;
     x = ((x << 14) + 0x434000) / 853;
     z >>= 16;
-    object->x.fixed = px(x);
-    object->z.fixed = px(((z << 14) + px(28)) / 640);
+    object->x.fixed = toFIXED(x);
+    object->z.fixed = toFIXED(((z << 14) + toFIXED(28)) / 640);
     camera[0] = object->x.fixed;
     camera[2] = object->z.fixed;
   }

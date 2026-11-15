@@ -215,7 +215,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
           /* FAKEMATCH(barrier): an empty asm through w hides that it holds the
            * width table's address. */
           __asm__("" : "=r"(w) : "0"(w));
-          y = base.y - (Q_16_16_TO_INT(Trig_Cos(angle) * radius)) -
+          y = base.y - (FIXEDtoINT(Trig_Cos(angle) * radius)) -
               (({
                  h = gBattleEffect_GlintPictureHeights;
                  h;
@@ -244,18 +244,18 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_MAX);
       draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
       point[0] = object->x;
-      point[1] = px(20);
+      point[1] = toFIXED(20);
       point[2] = object->z;
-      Transform_ApplyPosition(point);
+      Matrix_TranslateVector(point);
 
       // From its turn on, the target's motes turn around it.
       if (frame > member * 8) {
-        Transform_ApplyYaw(frame << 9);
+        Matrix_RotateY(frame << 9);
         if (mode <= TARGET_MOTES_PINK_SMOKE || mode == TARGET_MOTES_HEARTRENDER)
-          Transform_ApplyPitch(frame << 9);
+          Matrix_RotateX(frame << 9);
         for (i = 0; i != count; i++) {
           struct Particle *mote = &PARTICLES[member * TARGET_MOTES_SLOTS + i];
           s32 distance;
@@ -295,7 +295,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                 mote->y -= mote->y / distance;
                 mote->z -= mote->z / distance;
               } else {
-                mote->y += px(1);
+                mote->y += toFIXED(1);
               }
               mote->variant++;
               if (mote->variant == TARGET_MOTES_CYCLE) {
@@ -339,7 +339,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
 #define SHEEP_COUNT 12
 #define SHEEP_FRAMES 98
-#define GROUND_Y px(92)
+#define GROUND_Y toFIXED(92)
 
 #define SLEEP_SEEDED 32 ///< particles cleared at the start
 
@@ -384,8 +384,8 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   // The sheep wait above the screen with a random spin and starting cel.
   for (i = 0; i != SLEEP_SEEDED; i++) {
     one = &sheep[i];
-    one->x = px((Random16() & 63) + 32);
-    one->y = -px(32);
+    one->x = INTtoFIXED((Random16() & 63) + 32);
+    one->y = -toFIXED(32);
     one->velocityY = Random16() & 0;
     one->z = Random16() & 3;
     one->variant = Random16() & 255;
@@ -418,12 +418,12 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
       struct MotionObject *object;
 
       object = BattleObject_GetFar(args->targets[member])->object;
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
       record[0] = object->x;
-      record[1] = px(40);
+      record[1] = toFIXED(40);
       record[2] = object->z;
-      Transform_ApplyPosition(record);
+      Matrix_TranslateVector(record);
       if (frame == member * 16 + 64)
         BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_NORMAL,
                                  POSE_DAMAGE, TINT_KEEP, 0);
@@ -439,14 +439,14 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
         cel = (one->variant / 16) & 7;
         if (cel < 4)
           drawA(canvas, work->sheet + (cel << 10) + 0x800,
-                scroll + (Q_16_16_TO_INT(one->x)) - 16,
-                (Q_16_16_TO_INT(one->y)) - 16, SHEEP_WIDTH, SHEEP_HEIGHT);
+                scroll + (FIXEDtoINT(one->x)) - 16, (FIXEDtoINT(one->y)) - 16,
+                SHEEP_WIDTH, SHEEP_HEIGHT);
         else
           drawB(canvas, work->sheet + (cel << 10) - 0x800,
-                scroll + (Q_16_16_TO_INT(one->x)) - 16,
-                (Q_16_16_TO_INT(one->y)) - 16, SHEEP_WIDTH, SHEEP_HEIGHT);
+                scroll + (FIXEDtoINT(one->x)) - 16, (FIXEDtoINT(one->y)) - 16,
+                SHEEP_WIDTH, SHEEP_HEIGHT);
         one->y += one->velocityY;
-        one->velocityY += px(1) / 8;
+        one->velocityY += toFIXED(1) / 8;
         one->variant += one->z;
         if (one->y > GROUND_Y && one->velocityY == 0) {
           s32 speed = one->velocityY + 1;
@@ -601,7 +601,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     s32 heading = Random16() & TRIG_ANGLE_MASK;
     s32 speed = (Random16() & 0xff) + 128;
 
-    SET_POSITION(spark, 0, px((Random16() & 31) + 20), 0);
+    SET_POSITION(spark, 0, INTtoFIXED((Random16() & 31) + 20), 0);
     spark->velocityX = (Trig_Sin(heading) * speed) >> 5;
     spark->velocityY = 0;
     spark->velocityZ = (Trig_Cos(heading) * speed) >> 5;
@@ -615,7 +615,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
   position[1] = 0;
   position[2] = actor->z;
   target[0] = goal->x;
-  target[1] = px(90);
+  target[1] = toFIXED(90);
   target[2] = 0;
   delta[0] = (target[0] - position[0]) / 40;
   delta[1] = (target[1] - position[1]) / 40;
@@ -628,14 +628,14 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 80)
       Sound_PlayFar(SE_SWIRL);
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
     if (frame >= 30 && frame < 70) {
       position[0] += delta[0];
       position[1] += delta[1];
       position[2] += delta[2];
     }
-    Transform_ApplyPosition(position);
+    Matrix_TranslateVector(position);
 
     // The caster flashes for the first 24 frames.
     if (frame == 0)
@@ -653,25 +653,25 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       if (frame > i && spark->variant == 0) {
         s32 size;
 
-        Transform_Push();
+        Matrix_Push();
         switch (i & 3) {
         case 0:
-          Transform_ApplyYaw(frame * (i * 32 + 256));
+          Matrix_RotateY(frame * (i * 32 + 256));
           break;
         case 1:
-          Transform_ApplyPitch(-frame * (i * 32 + 256));
+          Matrix_RotateX(-frame * (i * 32 + 256));
           break;
         case 2:
-          Transform_ApplyRoll(-frame * (i * 32 + 256));
+          Matrix_RotateZ(-frame * (i * 32 + 256));
           break;
         case 3:
-          Transform_ApplyPitch(-frame * (i * 32 + 256));
-          Transform_ApplyRoll(-frame * (i * 32 + 256));
+          Matrix_RotateX(-frame * (i * 32 + 256));
+          Matrix_RotateZ(-frame * (i * 32 + 256));
           break;
         }
         EffectPosition_ProjectPoint((s32 *)spark, &screen);
         screen.x >>= 1;
-        Transform_Pop();
+        Matrix_Pop();
         if (screen.depth < 250)
           screen.depth = 250;
         if (screen.depth > 634)
@@ -721,10 +721,10 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 
     // The Djinn sways over the targets, then rises away for the last 32
     // frames.
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
     if (frame >= args->targetCount * 8 + 40)
-      target[1] += px(4);
+      target[1] += toFIXED(4);
     point[0] = target[0];
     point[1] = target[1];
     point[2] = target[2] + Trig_Sin(frame << 11) * 40;
@@ -740,12 +740,12 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
           BattleObject_GetFar(args->targets[member])->object;
       s32 start = member * 8;
 
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
       position[0] = object->x;
-      position[1] = px(40);
+      position[1] = toFIXED(40);
       position[2] = object->z;
-      Transform_ApplyPosition(position);
+      Matrix_TranslateVector(position);
       if (frame == start + 30)
         Sound_PlayFar(SE_RECOVERY);
       if (frame == start + 40)
@@ -755,7 +755,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
         BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_NORMAL,
                                  TINT_KEEP, TINT_KEEP, 0);
       if (frame > start) {
-        Transform_ApplyYaw((frame - start) << 9);
+        Matrix_RotateY((frame - start) << 9);
         for (i = 0; i != DJINN_HEAL_SPARKS_PER_TARGET; i++) {
           struct Particle *spark =
               &PARTICLES[member * DJINN_HEAL_SPARKS_PER_TARGET + i];

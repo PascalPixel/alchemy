@@ -131,7 +131,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   // Each target's shell starts at the user.
   EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
   source = GetBattleObjectSlotFar(work->args->user)->actor;
-  height = px(4);
+  height = toFIXED(4);
   EFFECT_FOR_EACH_TARGET(k, work->args) {
     struct Actor *target =
         GetBattleObjectSlotFar(work->args->targets[k])->actor;
@@ -140,7 +140,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
       struct Particle *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];
 
       SET_POSITION(shot, source->x.fixed, height, source->z.fixed);
-      SET_VELOCITY(shot, (target->x.fixed - source->x.fixed) >> 4, px(4),
+      SET_VELOCITY(shot, (target->x.fixed - source->x.fixed) >> 4, toFIXED(4),
                    (target->z.fixed - source->z.fixed) >> 4);
       shot->variant = 0;
     }
@@ -221,7 +221,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
                       position.y - LOBBED_SHELL_HEIGHT / 2, LOBBED_SHELL_WIDTH,
                       LOBBED_SHELL_HEIGHT);
             if (shot->variant == 0)
-              Particle_AdvanceWithGravity3D(shot, 63, -px(1) / 2);
+              Particle_AdvanceWithGravity3D(shot, 63, -toFIXED(1) / 2);
             // On the ground the shell stops and bursts.
             if (shot->y < 0) {
               s32 count;
@@ -288,9 +288,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
         }
         // Smoke rises; shards fall.
         if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER)
-          Particle_AdvanceWithGravity3D(burst, 62, px(1) / 32);
+          Particle_AdvanceWithGravity3D(burst, 62, toFIXED(1) / 32);
         else
-          Particle_AdvanceWithGravity3D(burst, 62, -px(1) / 2);
+          Particle_AdvanceWithGravity3D(burst, 62, -toFIXED(1) / 2);
         burst->variant++;
       }
     }

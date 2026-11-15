@@ -192,8 +192,8 @@ static UNREAD_RESULT Sanctum_FaceActorNamedByTimer(struct Actor *actor) {
   struct Actor *target;
 
   target = Actor_Get((s16)actor->timer);
-  actor->facing = ArcTan2(target->z.fixed - actor->z.fixed,
-                          target->x.fixed - actor->x.fixed);
+  actor->facing = Trig_Atan(target->z.fixed - actor->z.fixed,
+                            target->x.fixed - actor->x.fixed);
   RETURN_UNREAD(0);
 }
 
@@ -1226,8 +1226,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   for (sparkIndex = 0; sparkIndex < 32; sparkIndex++) {
     Sanctum_SpawnActorSpark(ACTOR_WISE_ONE);
     Event_Wait(4);
-    Actor_Get(ACTOR_WISE_ONE)->scaleX -= Q16_ONE / 100;
-    Actor_Get(ACTOR_WISE_ONE)->scaleY -= Q16_ONE / 100;
+    Actor_Get(ACTOR_WISE_ONE)->scaleX -= FIXED_ONE / 100;
+    Actor_Get(ACTOR_WISE_ONE)->scaleY -= FIXED_ONE / 100;
   }
   Sound_Play(SE_STOP_ACTION_SE);
   Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_NORMAL);
@@ -1500,8 +1500,8 @@ static void Sanctum_ShowHealerAfterimage(void) {
 
   actor = Actor_Get(ACTOR_HEALER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_HEALER_AFTERIMAGE, actor->x.fixed,
-                           actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_HEALER_AFTERIMAGE, actor->x.fixed,
+                        actor->z.fixed);
   }
   Actor_SetAnimation(ACTOR_HEALER_AFTERIMAGE, ANIM_STILL);
   afterimage = Actor_Get(ACTOR_HEALER_AFTERIMAGE);
@@ -1536,16 +1536,16 @@ static void Sanctum_UpdateHealerAfterimage(struct Actor *actor) {
   healer = Actor_Get(ACTOR_HEALER);
   actor->targetX = actor->x.fixed = healer->x.fixed;
   actor->targetY = actor->y.fixed = healer->y.fixed;
-  actor->targetZ = actor->z.fixed = healer->z.fixed - px(2);
+  actor->targetZ = actor->z.fixed = healer->z.fixed - toFIXED(2);
   switch (gFrameCount & 3) {
   case 0:
-    actor->targetX = actor->x.fixed = healer->x.fixed - px(7) / 2;
+    actor->targetX = actor->x.fixed = healer->x.fixed - toFIXED(7) / 2;
     break;
   case 1:
-    actor->targetX = actor->x.fixed = healer->x.fixed + px(3);
+    actor->targetX = actor->x.fixed = healer->x.fixed + toFIXED(3);
     break;
   case 2:
-    actor->targetY = actor->y.fixed = healer->y.fixed + px(2);
+    actor->targetY = actor->y.fixed = healer->y.fixed + toFIXED(2);
     break;
   case 3:
     actor->targetZ = actor->z.fixed = healer->z.fixed;
@@ -1583,7 +1583,7 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
   center = Actor_Get(actorId);
   if (center != NULL) {
     effect = FieldActor_Create(SPRITE_SPARKLE, center->x.fixed,
-                               center->y.fixed + px(45), center->z.fixed);
+                               center->y.fixed + toFIXED(45), center->z.fixed);
     if (effect != NULL) {
       sprite = effect->sprite;
       Actor_StartScript(effect, gSanctum_OwnerEffectScript);
@@ -1718,7 +1718,8 @@ static void Sanctum_ReenactSolSanctum(void) {
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(10);
   // Illustrate the account with the floating item icon.
-  Sanctum_RaiseItemIcon(ITEM_MARS_STAR, px(184), px(27), px(168));
+  Sanctum_RaiseItemIcon(ITEM_MARS_STAR, toFIXED(184), toFIXED(27),
+                        toFIXED(168));
   Actor_FaceActor(ACTOR_GARET, ACTOR_PARTY_LEADER, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
@@ -1901,8 +1902,8 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
       sprite->count = cleared;
       sprite->image.fullColor = 0;
       sprite->image.palette = 0;
-      icon->velocityY = px(2);
-      icon->gravity = px(1) / 4;
+      icon->velocityY = toFIXED(2);
+      icon->gravity = toFIXED(1) / 4;
       glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
       Icon_DrawItem(item);
       VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
@@ -1928,14 +1929,14 @@ static void Sanctum_UpdateRisingSpark(struct Actor *spark) {
   scale = 0;
   switch (((s16)spark->userValue >> 2) & 3) {
   case 0:
-    scale = Q16_ONE;
+    scale = FIXED_ONE;
     break;
   case 1:
   case 3:
-    scale = 4 * Q16_ONE / 5;
+    scale = 4 * FIXED_ONE / 5;
     break;
   case 2:
-    scale = 3 * Q16_ONE / 5;
+    scale = 3 * FIXED_ONE / 5;
     break;
   }
   spark->scaleX = scale;
@@ -1958,10 +1959,11 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   if (actor == NULL)
     return;
   randomOffset = Math_RemainderUnsigned(Random_Next(), 20);
-  x = actor->x.fixed + px(randomOffset);
-  x -= px(10);
+  x = actor->x.fixed + INTtoFIXED(randomOffset);
+  x -= toFIXED(10);
   spark = FieldActor_Create(SPRITE_GLINT, x,
-                            actor->y.fixed + px(Random_Next() & 15) - px(8),
+                            actor->y.fixed + INTtoFIXED(Random_Next() & 15) -
+                                toFIXED(8),
                             actor->z.fixed);
   if (spark == NULL)
     return;
@@ -2345,8 +2347,8 @@ s32 gSanctum_CursorBob[] = {
 };
 
 s32 gSanctum_OwnerEffectScript[] = {
-    SC_ADD(SW_Y, -px(1) / 2),
-    SC_ADD(SW_TARGET_Y, -px(1) / 2),
+    SC_ADD(SW_Y, -toFIXED(1) / 2),
+    SC_ADD(SW_TARGET_Y, -toFIXED(1) / 2),
     SC_WAIT(1),
     SC_LOOP(96, SC_TOP),
     SC_RELEASE,

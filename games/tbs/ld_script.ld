@@ -106,7 +106,7 @@ Tile_ExpandOpaqueCodeSize = WindowSprite_AcquireFree - Tile_ExpandOpaque;
 Credits_DecodeBackgroundCodeSize = Credits_ClearBuffer - Credits_DecodeBackground;
 Actor_UpdateAllCodeSize = Decompress_Lz - Actor_UpdateAll;
 Tile_BuildCellPicturesCodeSize = Tile_Decompress4bpp - Tile_BuildCellPictures;
-Transform_UpdateVerticesSize = Tile_ConvertMapGrid - Transform_UpdateVertices;
+Matrix_UpdateVerticesSize = Tile_ConvertMapGrid - Matrix_UpdateVertices;
 Glyph_DrawCodeSize = Tile_BuildCellPictures - Glyph_DrawArm;
 BitDecoder_Size = DebugParameterSet_Load - BitDecoder_DecodeImage;
 

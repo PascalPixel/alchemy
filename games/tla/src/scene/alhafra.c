@@ -504,7 +504,7 @@ void Alhafra_FatherLetsPartyToCave(s32 actor) {
 }
 
 void Alhafra_RevealTreasureSpot(void) {
-  TreasureSpot_SetPosition(ACTOR_PSY_CRYSTAL_CHEST, px(184), px(552));
+  TreasureSpot_SetPosition(ACTOR_PSY_CRYSTAL_CHEST, toFIXED(184), toFIXED(552));
 }
 
 void Alhafra_HideTreasureSpot(void) {

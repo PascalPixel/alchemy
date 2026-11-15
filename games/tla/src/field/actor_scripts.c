@@ -201,8 +201,8 @@ const s32 gMovementType_WanderCloseScript[] = {
 /// Squash and stretch, twice in each round, for ever.
 const s32 gMovementType_SquashScript[] = {
     SC_LABEL(1),
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
     SC_ADD(SW_SCALE_X, -0x4000),
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),

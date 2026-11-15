@@ -107,7 +107,7 @@ void Actor_SetDestinationById(u32 actorId, s32 x, s32 z) {
   if (actor != NULL) {
     actor->paused = 0;
     Actor_StartIdleFar(actor);
-    Actor_SetMoveTargetFar(actor, px(x), actor->y.fixed, px(z));
+    Actor_SetMoveTargetFar(actor, toFIXED(x), actor->y.fixed, toFIXED(z));
   }
 }
 
@@ -119,7 +119,7 @@ void Actor_MoveToAndWaitById(u32 actorId, s32 x, s32 z) {
   if (actor != NULL) {
     actor->paused = 0;
     Actor_StartIdleFar(actor);
-    Actor_SetMoveTargetFar(actor, px(x), actor->y.fixed, px(z));
+    Actor_SetMoveTargetFar(actor, toFIXED(x), actor->y.fixed, toFIXED(z));
     Actor_WaitForMoveFar(actor);
   }
 }
@@ -132,7 +132,7 @@ void Actor_WalkToById(s32 actorId, s32 x, s32 z) {
     actor->paused = 0;
     Actor_StartIdleFar(actor);
     Actor_SelectAnimationFar(actor, ANIM_WALK);
-    Actor_SetMoveTargetFar(actor, px(x), actor->y.fixed, px(z));
+    Actor_SetMoveTargetFar(actor, toFIXED(x), actor->y.fixed, toFIXED(z));
   }
 }
 
@@ -145,7 +145,7 @@ void Actor_WalkToAndWaitById(s32 actorId, s32 x, s32 z) {
     actor->paused = 0;
     Actor_StartIdleFar(actor);
     Actor_SelectAnimationFar(actor, ANIM_WALK);
-    Actor_SetMoveTargetFar(actor, px(x), actor->y.fixed, px(z));
+    Actor_SetMoveTargetFar(actor, toFIXED(x), actor->y.fixed, toFIXED(z));
     Actor_WaitForMoveFar(actor);
     Actor_SelectAnimationFar(actor, ANIM_STAND);
   }
@@ -165,7 +165,7 @@ void Actor_CenterOnColumn(u32 actorId, s32 priority, s32 zOffset) {
     // The column's left edge, from a division by 16 that rounds toward zero
     // (left of x = 0 it finds the edge to the right); its middle is 8 pixels
     // in.
-    pixelX = actor->x.part[0].pixel;
+    pixelX = actor->x.part[0].integer;
     columnX = pixelX;
     if (pixelX < 0) {
       columnX += 15;
@@ -176,12 +176,12 @@ void Actor_CenterOnColumn(u32 actorId, s32 priority, s32 zOffset) {
     actor->paused = 0;
     Actor_StartIdleFar(actor);
     Actor_SelectAnimationFar(actor, ANIM_WALK);
-    Actor_SetMoveTargetFar(actor, actor->x.fixed + px(8 - offsetInColumn),
+    Actor_SetMoveTargetFar(actor, actor->x.fixed + toFIXED(8 - offsetInColumn),
                            actor->y.fixed, actor->z.fixed);
     Actor_WaitForMoveFar(actor);
     Actor_SetSpritePriority(actorId, priority);
     Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
-                           actor->z.fixed + px(zOffset));
+                           actor->z.fixed + toFIXED(zOffset));
   }
 }
 
@@ -193,8 +193,8 @@ void Actor_SetDestinationOffsetById(s32 actorId, s32 xOffset, s32 zOffset) {
   if (actor != NULL) {
     actor->paused = 0;
     Actor_StartIdleFar(actor);
-    Actor_SetMoveTargetFar(actor, actor->x.fixed + px(xOffset), actor->y.fixed,
-                           actor->z.fixed + px(zOffset));
+    Actor_SetMoveTargetFar(actor, actor->x.fixed + toFIXED(xOffset),
+                           actor->y.fixed, actor->z.fixed + toFIXED(zOffset));
   }
 }
 
@@ -207,8 +207,8 @@ void Actor_WalkByById(u32 actorId, s32 xOffset, s32 zOffset) {
     actor->paused = 0;
     Actor_StartScriptFar(actor, (u32)gActor_OffsetScript);
     Actor_SelectAnimationFar(actor, ANIM_WALK);
-    Actor_SetMoveTargetFar(actor, actor->x.fixed + px(xOffset), actor->y.fixed,
-                           actor->z.fixed + px(zOffset));
+    Actor_SetMoveTargetFar(actor, actor->x.fixed + toFIXED(xOffset),
+                           actor->y.fixed, actor->z.fixed + toFIXED(zOffset));
   }
 }
 
@@ -231,10 +231,10 @@ void Actor_LaunchFromLeader(s32 actorId, s32 xOffset, s32 zOffset, s32 action) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
-    Actor_SetSpeedParameters(actorId, px(4) / 5, px(2) / 5);
+    Actor_SetSpeedParameters(actorId, toFIXED(4) / 5, toFIXED(2) / 5);
     Actor_MoveToObject(actorId, gMainRoutineWork.leaderActorId);
     Actor_SetPositionAndResetMotionFar(actor, actor->x.fixed, actor->y.fixed,
-                                       actor->z.fixed - px(1));
+                                       actor->z.fixed - toFIXED(1));
     actor->paused = 0;
     Actor_SelectAnimationFar(actor, ANIM_WALK);
     Actor_SetDestinationOffsetById(actorId, xOffset, zOffset);
@@ -396,7 +396,7 @@ void Actor_Jump(s32 actorId, s32 speed, s32 frames) {
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
     actor->motionFlags |= 2;
-    actor->velocityY = px(speed);
+    actor->velocityY = toFIXED(speed);
     if (speed > 5) {
       Sound_PlayFar(SE_HIGH_JUMP);
     } else {
@@ -438,7 +438,7 @@ void FieldEffect_UpdateDustPuff(struct Actor *particle) {
 
   particle->x.fixed += velocityX;
   particle->z.fixed += velocityZ;
-  particle->y.fixed += px(1) / 64;
+  particle->y.fixed += toFIXED(1) / 64;
   particle->speedLimit = velocityX - velocityX / 18;
   particle->acceleration = velocityZ - velocityZ / 16;
 }
@@ -450,7 +450,7 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
   struct Actor *actor;
   struct Sprite *child;
   s32 speed;
-  s32 backStep = -(px(1) / 10); // 0.1 pixel a frame toward the back
+  s32 backStep = -(toFIXED(1) / 10); // 0.1 pixel a frame toward the back
 
   actor =
       Actor_CreateFar(285, source->x.fixed, source->y.fixed, source->z.fixed);
@@ -471,14 +471,14 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
       Actor_SetSpriteColor(actor, param);
 
     // speed and acceleration hold the puff's x and z velocity, in steps of
-    // px(1) / 10 (0.1 pixel): z is -0.5 to -1.4, x -1.4 to 1.4 in steps of
+    // toFIXED(1) / 10 (0.1 pixel): z is -0.5 to -1.4, x -1.4 to 1.4 in steps of
     // 0.2.
     actor->motionFlags = 0;
     speed = Random16() % 10 + 5;
     actor->acceleration = backStep * speed;
     speed = Random16() % 15 - 7;
     speed <<= 1;
-    actor->speedLimit = px(1) / 10 * speed;
+    actor->speedLimit = toFIXED(1) / 10 * speed;
     actor->timer = 0;
     actor->priorityFlags |= 2;
     actor->frozen = 1;
@@ -497,7 +497,7 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
 void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   struct Actor *actor = Actor_GetById(actorId);
   s32 startZ = actor->z.fixed;
-  s32 x = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
+  s32 x = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   s32 spriteFlags;
   u32 i;
 
@@ -511,8 +511,8 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   Actor_SelectAnimationFar(actor, ANIM_STAND);
   Actor_SetSpriteFlagsFar(actor, 0);
   actor->motionFlags |= 2;
-  actor->velocityY = px(4);
-  Actor_SetMoveTargetFar(actor, x, actor->y.fixed, startZ + px(12));
+  actor->velocityY = toFIXED(4);
+  Actor_SetMoveTargetFar(actor, x, actor->y.fixed, startZ + toFIXED(12));
   wait(6);
 
   // Turn and sink 2 pixels a frame for 14 frames, raising dust, in free
@@ -521,7 +521,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   Actor_FaceDirectionById(actorId, FACING_SOUTH_SOUTHWEST, 0);
   actor->motionFlags = 0;
   for (i = 0; i < 14; i++) {
-    actor->y.fixed -= px(2);
+    actor->y.fixed -= toFIXED(2);
     actor->targetY = actor->y.fixed;
     wait(1);
     if (param != -1 && (i & 1))
@@ -530,8 +530,8 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
 
   // Jump 16 pixels forward, following the ground and falling again.
   actor->motionFlags = 3;
-  actor->velocityY = px(3);
-  Actor_SetMoveTargetFar(actor, x, actor->y.fixed, startZ + px(16));
+  actor->velocityY = toFIXED(3);
+  Actor_SetMoveTargetFar(actor, x, actor->y.fixed, startZ + toFIXED(16));
   Actor_WaitForMoveFar(actor);
   if (param & 0x1000) {
     wait(4);
@@ -559,8 +559,8 @@ void Actor_FaceActorById(s32 firstId, s32 secondId, s32 frames) {
   first = Actor_Lookup(firstId);
   second = Actor_Lookup(secondId);
   if (first != 0 && second != 0) {
-    first->facing = ArcTan2(second->z.fixed - first->z.fixed,
-                            second->x.fixed - first->x.fixed);
+    first->facing = Trig_Atan(second->z.fixed - first->z.fixed,
+                              second->x.fixed - first->x.fixed);
     Event_Wait(frames);
   }
 }
@@ -588,10 +588,10 @@ void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second) {
 
   if (first == NULL || second == NULL)
     return;
-  firstTargetAngle = (u16)ArcTan2(second->z.fixed - first->z.fixed,
-                                  second->x.fixed - first->x.fixed);
+  firstTargetAngle = (u16)Trig_Atan(second->z.fixed - first->z.fixed,
+                                    second->x.fixed - first->x.fixed);
   // The second actor faces the opposite way, half a turn round.
-  secondTargetAngle = firstTargetAngle + TRIG_TURN / 2;
+  secondTargetAngle = firstTargetAngle + DEGtoANG(180);
   for (frame = 0; frame < 60; frame++) {
     // Each actor that already faces its way takes one off the count;
     // both facing ends the turn early.

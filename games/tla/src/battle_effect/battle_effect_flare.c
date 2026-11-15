@@ -44,13 +44,13 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
     org = 64;
     sign = -1;
   }
-  angle = -TRIG_TURN / 4;
+  angle = -DEGtoANG(90);
   i = 0;
   stagger = 0;
   puff = work->particles;
   do {
-    puff->x = ((sign * (Q_16_16_TO_INT(Trig_Sin(angle) << 5))) + org) + 20;
-    puff->y = (Q_16_16_TO_INT(Trig_Cos(angle) << 4)) + 40;
+    puff->x = ((sign * (FIXEDtoINT(Trig_Sin(angle) << 5))) + org) + 20;
+    puff->y = (FIXEDtoINT(Trig_Cos(angle) << 4)) + 40;
     puff->variant = stagger;
     angle += TRIG_TURN / 16;
     stagger -= 4;

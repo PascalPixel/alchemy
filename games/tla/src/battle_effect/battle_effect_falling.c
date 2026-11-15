@@ -367,8 +367,8 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
           for (k = 0; k != SPLASH_COUNT(args->variant); k++) {
             splash =
                 &gDropSplashes->splashes[i * SPLASH_COUNT(args->variant) + k];
-            splash->x = px(x + 12);
-            splash->y = px(y);
+            splash->x = INTtoFIXED(x + 12);
+            splash->y = INTtoFIXED(y);
             splash->velocityX = ((Random16() & 255) - 128) << 9;
             if (args->variant == EFFECT_VARIANT_STRONGEST)
               splash->velocityY = ((Random16() & 0x1ff) - 0x180) << 10;
@@ -406,7 +406,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
         draw[1](canvas, work->sheet + gBattleEffect_FlarePictures[size - 1],
                 ((s16 *)&splash->x)[1] - size, ((s16 *)&splash->y)[1] - size,
                 size * 2, size * 2);
-        BattleEffectKernels_IntegrateVector2(splash, 60, px(1) / 8);
+        BattleEffectKernels_IntegrateVector2(splash, 60, toFIXED(1) / 8);
         splash->variant--;
       }
     }

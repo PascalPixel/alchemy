@@ -511,8 +511,8 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     // Iodem walks into the leader and is hidden: he travels in the party.
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetDestination(ACTOR_IODEM, leader->x.part[0].pixel,
-                           leader->z.part[0].pixel);
+      Actor_SetDestination(ACTOR_IODEM, leader->x.part[0].integer,
+                           leader->z.part[0].integer);
     }
     Actor_WaitForMoveById(ACTOR_IODEM);
     Actor_SetPosition(ACTOR_IODEM, 0, 0);
@@ -546,11 +546,11 @@ s32 Scene_Initialize(void) {
   // Each soldier lies a quarter turn over, with no shadow.
   actor = Actor_Get(ACTOR_SOLDIER_SOUTH);
   actor->sprite->flags = 0;
-  actor->sprite->rotation = TRIG_TURN / 4;
+  actor->sprite->rotation = DEGtoANG(90);
   actor->sprite->image.priority = 1;
   actor = Actor_Get(ACTOR_SOLDIER_NORTH);
   actor->sprite->flags = 0;
-  actor->sprite->rotation = TRIG_TURN / 4;
+  actor->sprite->rotation = DEGtoANG(90);
   actor->motionFlags = ACTOR_FALLS;
   actor->y.fixed = 0;
   return 0;

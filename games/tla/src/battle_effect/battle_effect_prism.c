@@ -10,7 +10,7 @@
 #undef GROUND_Y
 
 #define SHARDS_PER_CRYSTAL 16
-#define GROUND_Y px(56)
+#define GROUND_Y toFIXED(56)
 #define SHATTERED 1 ///< a crystal's z once it has hit the ground
 
 /// Crystals drop out of the sky onto the targets' side and shatter on the
@@ -48,12 +48,12 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   for (k = 0; k != gPrism_Counts[args->variant * 3]; k++) {
     seed = &work->particles[k];
     x = Random16() & 31;
-    seed->y = -px(64);
+    seed->y = -toFIXED(64);
     if (args->side == EFFECT_SIDE_PARTY) {
-      x = px((Random16() & 31) + 80);
+      x = INTtoFIXED((Random16() & 31) + 80);
       seed->velocityX = (Random16() & 63) << 12;
     } else {
-      x = px((Random16() & 31) + 8);
+      x = INTtoFIXED((Random16() & 31) + 8);
       seed->velocityX = -(Random16() & 63) << 12;
     }
     seed->x = x - seed->velocityX * 18;
@@ -100,7 +100,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
                 Q_16_16_UPPER_HALF(shard->y) - gPrism_ShardHeights[cell] / 2,
                 gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
             BattleEffectKernels_IntegrateVector2(shard, PARTICLE_DAMPING_NONE,
-                                                 px(1) / 8);
+                                                 toFIXED(1) / 8);
             shard->variant += shard->z;
             if (shard->z > 1 && (frame & 1))
               shard->z--;
@@ -111,14 +111,14 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
                       Q_16_16_UPPER_HALF(cry->y), CRYSTAL_WIDTH,
                       CRYSTAL_HEIGHT);
           BattleEffectKernels_IntegrateVector2(cry, PARTICLE_DAMPING_NONE,
-                                               px(1));
+                                               toFIXED(1));
           if (cry->y > GROUND_Y) {
             cry->z = SHATTERED;
             cry->y = GROUND_Y;
             for (j = 0; j != SHARDS_PER_CRYSTAL; j++) {
               shard = &shards[i * SHARDS_PER_CRYSTAL + j];
-              shard->x = px(gPrism_ShardStarts[j * 2] - 40) + cry->x;
-              shard->y = px(gPrism_ShardStarts[j * 2 + 1]);
+              shard->x = INTtoFIXED(gPrism_ShardStarts[j * 2] - 40) + cry->x;
+              shard->y = INTtoFIXED(gPrism_ShardStarts[j * 2 + 1]);
               shard->velocityX = ((Random16() & 127) - 64) << 11;
               shard->velocityY = -(Random16() & 127) << 11;
               if (i & 1) {

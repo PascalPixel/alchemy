@@ -23,8 +23,8 @@ void WAVE_SCROLL(void) {
   for (i = 0; i != 160; i++, line++) {
     s32 range = (160 - i) >> 2;
 
-    *line = (Iwram_MulQ16(Trig_Sin((i + *(u8 *)&gFrameCount) << 8),
-                          (144 - i) << 10) >>
+    *line = (Iwram_MulFX(Trig_Sin((i + *(u8 *)&gFrameCount) << 8), (144 - i)
+                                                                       << 10) >>
              11) -
             4;
     *line += Random16() % (range * 2) - range;

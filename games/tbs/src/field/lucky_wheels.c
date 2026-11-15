@@ -44,8 +44,8 @@ s32 LuckyWheels_Start(void) {
   return 0;
 }
 
-/// Writes count RGB555 colours from src to dst scaled by scale (16.16, Q16_ONE
-/// keeps them). Returns 0.
+/// Writes count RGB555 colours from src to dst scaled by scale (16.16,
+/// FIXED_ONE keeps them). Returns 0.
 s32 LuckyWheels_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count) {
   s32 remaining;
   u32 color;
@@ -886,25 +886,25 @@ void LuckyWheels_Update(void) {
 #if LANGUAGE == LANGUAGE_SPANISH
       if (i == 0)
         work->oam[sprite].attr01 =
-            ((((s16)WHOLE_PIXELS(p->x) + 0x1f0) & 0x1ff) << 16) | objMode |
-            (((s16)WHOLE_PIXELS(p->y) + 0x108) & 255) | OBJ_SIZE_32X32 |
+            ((((s16)FIXEDtoINT(p->x) + 0x1f0) & 0x1ff) << 16) | objMode |
+            (((s16)FIXEDtoINT(p->y) + 0x108) & 255) | OBJ_SIZE_32X32 |
             OBJ_HFLIP | OBJ_VFLIP;
       else
 #endif
-        work->oam[sprite].attr01 = ((s16)WHOLE_PIXELS(p->x) << 16) | objMode |
-                                   (((s16)WHOLE_PIXELS(p->y) + 256) & 255) |
+        work->oam[sprite].attr01 = ((s16)FIXEDtoINT(p->x) << 16) | objMode |
+                                   (((s16)FIXEDtoINT(p->y) + 256) & 255) |
                                    OBJ_SIZE_32X32;
       work->oam[sprite].attr2 =
           ((gLuckyWheels_TitleLetterTiles[i] << 4) + LUCKY_WHEELS_TITLE_TILES) |
           OBJ_PALETTE(15);
       p->y += p->velocityY;
-      p->velocityY += px(1) / 4;
+      p->velocityY += toFIXED(1) / 4;
       if (work->timer % 256 == i * 4 + 200) {
-        p->velocityY = px(6);
+        p->velocityY = toFIXED(6);
         p->variant = 0;
       }
-      if (p->y > px(64)) {
-        p->y = px(64);
+      if (p->y > toFIXED(64)) {
+        p->y = toFIXED(64);
         if (p->variant <= 1)
           p->velocityY = -p->velocityY / 2;
         p->variant++;
@@ -986,7 +986,7 @@ void LuckyWheels_Update(void) {
   if (work->state == LUCKY_WHEELS_SPINNING) {
     if (work->timer < LUCKY_WHEELS_LEVER_PULL_FRAMES)
       lever = ((Trig_Sin(work->timer *
-                         (TRIG_TURN / 2 / LUCKY_WHEELS_LEVER_PULL_FRAMES))
+                         (DEGtoANG(180) / LUCKY_WHEELS_LEVER_PULL_FRAMES))
                 << 6) >>
                16) +
               LUCKY_WHEELS_LEVER_Y;
@@ -1053,17 +1053,17 @@ void LuckyWheels_InitializeTitle(void) {
     LUCKY_WHEELS_SPARKS[i].variant = 0;
 
   letter = work->particles;
-  y = -px(32);
+  y = -toFIXED(32);
   width = gLuckyWheels_TitleLetterWidths;
   for (i = 0; i != LUCKY_WHEELS_TITLE_LETTERS; i++) {
-    letter[i].x = px(left + LUCKY_WHEELS_TITLE_X);
+    letter[i].x = INTtoFIXED(left + LUCKY_WHEELS_TITLE_X);
     step = *width;
     width++;
     left += step;
     letter[i].y = y;
     letter[i].velocityY = 0;
     letter[i].variant = 0;
-    y += -px(8);
+    y += -toFIXED(8);
   }
 
   for (i = 0; i != DISPLAY_HEIGHT; i++)
@@ -1291,10 +1291,10 @@ void LuckyWheels_Run(void) {
     for (frame = 0; state->state != LUCKY_WHEELS_DONE; frame++) {
       if (frame <= LUCKY_WHEELS_FADE_FRAMES) {
         LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT,
-                                frame * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES),
+                                frame * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
                                 BG_PLTT_COLORS);
         LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT,
-                                frame * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES),
+                                frame * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
                                 BG_PLTT_COLORS);
       }
       if (state->state == LUCKY_WHEELS_SHOWING_WIN) {
@@ -1325,8 +1325,8 @@ void LuckyWheels_Run(void) {
 
             speed = (Random16() & 255) + 64;
             angle = Random16() & 0xffff;
-            spark->x = px(x);
-            spark->y = px(y);
+            spark->x = INTtoFIXED(x);
+            spark->y = INTtoFIXED(y);
             spark->velocityX = Trig_Sin(angle) * speed >> 6;
             spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
             spark->variant = (Random16() & 15) + 16;
@@ -1346,8 +1346,8 @@ void LuckyWheels_Run(void) {
 
               if (y <= 0x7fffff) {
                 if (y >= 0) {
-                  s32 drawX = WHOLE_PIXELS(x);
-                  s32 drawY = WHOLE_PIXELS(y);
+                  s32 drawX = FIXEDtoINT(x);
+                  s32 drawY = FIXEDtoINT(y);
                   s32 size = spark->variant / 12 + 1;
 
                   draw[j & 1](canvas,
@@ -1410,12 +1410,14 @@ void LuckyWheels_Run(void) {
     }
 
     for (j = 0; j != LUCKY_WHEELS_FADE_FRAMES + 1; j++) {
-      LuckyWheels_ScaleRgb555(
-          shade, (u16 *)OBJ_PLTT,
-          Q16_ONE - j * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES), BG_PLTT_COLORS);
-      LuckyWheels_ScaleRgb555(
-          (u16 *)work, (u16 *)BG_PLTT,
-          Q16_ONE - j * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES), BG_PLTT_COLORS);
+      LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT,
+                              FIXED_ONE -
+                                  j * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
+                              BG_PLTT_COLORS);
+      LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT,
+                              FIXED_ONE -
+                                  j * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
+                              BG_PLTT_COLORS);
       wait(1);
     }
     HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);

@@ -145,16 +145,16 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
     if (frame == BIND_RUNE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
     // The colours cycle through the hues.
-    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
-                                    TRIG_TURN / 3, 0);
+    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - DEGtoANG(120),
+                                    DEGtoANG(120), 0);
 
     // The Djinni sways, then rises away.
     if (work->args->prelude == 1) {
       s32 x;
       s32 y;
 
-      x = WHOLE_PIXELS(Trig_Sin(frame << 11) * 20) + originX + shift - 20;
-      y = WHOLE_PIXELS(Trig_Cos(frame << 11) * 4) + originY - 24;
+      x = FIXEDtoINT(Trig_Sin(frame << 11) * 20) + originX + shift - 20;
+      y = FIXEDtoINT(Trig_Cos(frame << 11) * 4) + originY - 24;
       BattleEffect_FetchRectangleBlitters(work->args->side, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
@@ -189,16 +189,16 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
         if (memberFrame <= 67) {
           for (j = 0; j != 3; j++) {
             point = &work->particles[member * BIND_SLOTS_PER_TARGET + j];
-            Transform_Reset();
+            Matrix_Initialize();
             if (memberFrame < BIND_RUNE_FRAME) {
-              scale.x = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
-              scale.y = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
-              scale.z = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
-              Transform_ApplyScale(Vector3_Coordinates(&scale));
-              Transform_ApplyRoll((BIND_RUNE_FRAME - memberFrame) << 9);
-              Transform_ApplyYaw((BIND_RUNE_FRAME - memberFrame) << 9);
+              scale.x = FIXED_ONE * 21 / 8 - (memberFrame * 3 << 9);
+              scale.y = FIXED_ONE * 21 / 8 - (memberFrame * 3 << 9);
+              scale.z = FIXED_ONE * 21 / 8 - (memberFrame * 3 << 9);
+              Matrix_ScaleVector(Vector3_Coordinates(&scale));
+              Matrix_RotateZ((BIND_RUNE_FRAME - memberFrame) << 9);
+              Matrix_RotateY((BIND_RUNE_FRAME - memberFrame) << 9);
             }
-            Transform_ApplyRoll(j * (TRIG_TURN / 3));
+            Matrix_RotateZ(j * (DEGtoANG(120)));
             Projection_Point(gBind_Vertex, &corner);
             point->velocityX = corner.x + screen.x;
             point->velocityY = corner.y + screen.y + 16;
@@ -295,8 +295,8 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
     if (frame == 46)
       BattleMotion_ApproachTargetFar(work->args->user, work->args->targets[0],
                                      16, 0);
-    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
-                                    TRIG_TURN / 3, 0);
+    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - DEGtoANG(120),
+                                    DEGtoANG(120), 0);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
     draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -320,16 +320,16 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
         if (memberFrame <= 67) {
           for (j = 0; j != 3; j++) {
             point = &work->particles[member * BIND_SLOTS_PER_TARGET + j];
-            Transform_Reset();
+            Matrix_Initialize();
             if (memberFrame < BIND_RUNE_FRAME) {
-              scale.x = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
-              scale.y = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
-              scale.z = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
-              Transform_ApplyScale(Vector3_Coordinates(&scale));
-              Transform_ApplyRoll((BIND_RUNE_FRAME - memberFrame) << 9);
-              Transform_ApplyYaw((BIND_RUNE_FRAME - memberFrame) << 9);
+              scale.x = FIXED_ONE * 21 / 8 - (memberFrame * 3 << 9);
+              scale.y = FIXED_ONE * 21 / 8 - (memberFrame * 3 << 9);
+              scale.z = FIXED_ONE * 21 / 8 - (memberFrame * 3 << 9);
+              Matrix_ScaleVector(Vector3_Coordinates(&scale));
+              Matrix_RotateZ((BIND_RUNE_FRAME - memberFrame) << 9);
+              Matrix_RotateY((BIND_RUNE_FRAME - memberFrame) << 9);
             }
-            Transform_ApplyRoll(j * (TRIG_TURN / 3));
+            Matrix_RotateZ(j * (DEGtoANG(120)));
             Projection_Point(gBind_TriangleStrikeVertex, &corner);
             point->velocityX = corner.x + screen.x;
             point->velocityY = corner.y + screen.y + 16;

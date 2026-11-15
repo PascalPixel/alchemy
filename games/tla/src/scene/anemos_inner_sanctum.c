@@ -392,8 +392,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (targetX - effect->scaleX) / count;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (targetX - Q16_ONE) / count;
-      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
+      effect->scaleRateX = (targetX - FIXED_ONE) / count;
+      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -417,10 +417,10 @@ s32 AnemosInnerSanctum_CircleOrb(struct Actor *object) {
   s32 radius;
 
   object->timer += object->userValue;
-  SET_ACTOR_POSITION(object, object->bounce, object->gravity, px(152));
-  FieldVector_AddPolarOffsetFixed(object->riseBaseY, object->timer,
-                                  &object->x.fixed);
-  radius = object->riseBaseY - px(1);
+  SET_ACTOR_POSITION(object, object->bounce, object->gravity, toFIXED(152));
+  FieldVector_AddPolarOffsetFX(object->riseBaseY, object->timer,
+                               &object->x.fixed);
+  radius = object->riseBaseY - toFIXED(1);
   object->riseBaseY = radius;
   if (radius)
     return 1;
@@ -449,15 +449,14 @@ s32 AnemosInnerSanctum_SpiralMover(struct Mover *mover) {
   mover->x = mover->originX;
   mover->y = mover->height;
   mover->z = mover->originZ;
-  FieldVector_AddPolarOffsetFixed(mover->radius, *(s16 *)&mover->angle,
-                                  &mover->x);
+  FieldVector_AddPolarOffsetFX(mover->radius, *(s16 *)&mover->angle, &mover->x);
   AnemosInnerSanctum_SpawnMote(mover);
   mover->radius -= mover->step >> 1;
   mover->angle += mover->spin >> 1;
   mover->x = mover->originX;
   mover->y = mover->height;
   mover->z = mover->originZ;
-  FieldVector_AddPolarOffsetFixed(mover->radius, mover->angle, &mover->x);
+  FieldVector_AddPolarOffsetFX(mover->radius, mover->angle, &mover->x);
   AnemosInnerSanctum_SpawnMote(mover);
   mover->radius -= mover->step >> 1;
   mover->height -= mover->fall;
@@ -471,8 +470,8 @@ s32 AnemosInnerSanctum_SpawnOrbitSparks(struct Actor *object) {
 
   params.kind = 2;
   params.part = object->riseCounter;
-  FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0, px(1),
-                    0, 0x30000, &params);
+  FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0,
+                    toFIXED(1), 0, 0x30000, &params);
   x = FIELD_CELL(object->bounce) + 64;
   y = FIELD_CELL(object->gravity);
   MapGrid_CopyCellsTo(x, y + 26, x, y, 1, 1);
@@ -522,13 +521,13 @@ s16 part;
                                              from->z));
   x = (from->x - to->x) >> 16;
   z = (from->z - to->z) >> 16;
-  actor->angle = ArcTan2(from->z - to->z, from->x - to->x);
+  actor->angle = Trig_Atan(from->z - to->z, from->x - to->x);
   actor->spin = (((Random16() & 2) - 1) * (Random16() & 15)) << 8;
   actor->part = part;
   actor->motionFlags = 0;
   actor->originX = to->x;
   actor->originZ = to->z;
-  distance = px(Iwram_Sqrt(x * x + z * z));
+  distance = INTtoFIXED(Iwram_Sqrt(x * x + z * z));
   actor->radius = distance;
   actor->step = distance / 16;
   actor->height = from->y;
@@ -538,7 +537,7 @@ s16 part;
   Scene_SetActorSpritePriority(actor, 2);
   Actor_SelectAnimation(actor, 7);
   Actor_SetSpriteFlags(actor, 0);
-  FieldVector_AddPolarOffsetFixed(actor->radius, actor->angle, &actor->x);
+  FieldVector_AddPolarOffsetFX(actor->radius, actor->angle, &actor->x);
   Actor_StartScript(actor, gAnemosInnerSanctum_SparkScript);
   AnemosInnerSanctum_SpiralMover(actor);
 }
@@ -551,7 +550,8 @@ s16 a3;
   s32 i;
 
   for (i = 0; i != 16;) {
-    struct Actor *object = (FieldActor_Create(SPRITE_PARTICLE, x, y, px(152)));
+    struct Actor *object =
+        (FieldActor_Create(SPRITE_PARTICLE, x, y, toFIXED(152)));
     s32 angle = i << 12;
 
     FieldVector_AddPolarOffset(32, angle, &object->x.fixed);
@@ -579,7 +579,8 @@ s16 part;
 {
   struct Actor *object;
 
-  object = FieldActor_Create(SPRITE_PARTICLE, px(x), px(z + 3), px(152));
+  object = FieldActor_Create(SPRITE_PARTICLE, INTtoFIXED(x), INTtoFIXED(z + 3),
+                             toFIXED(152));
   object->motionFlags = ACTOR_FLOATS;
   FieldActor_SetSpriteColor(object, (u16)part);
   Scene_SetActorSpritePriority(object, 2);
@@ -676,15 +677,15 @@ void AnemosInnerSanctum_LightThePillar(void) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   FieldCamera_SetSpeed(0.8);
   Actor_WalkTo(gMainRoutineWork.leaderActorId, x, z);
-  FieldCamera_MoveToFixed(px(x), -1, px(z), 1);
+  FieldCamera_MoveToFX(INTtoFIXED(x), -1, INTtoFIXED(z), 1);
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
   actor = (FieldActor_Create((u16)type, leader->x.fixed,
-                             leader->y.fixed + px(8), leader->z.fixed));
+                             leader->y.fixed + toFIXED(8), leader->z.fixed));
   actor->motionFlags = 0;
-  actor->scaleY = Q16_ONE / 10;
-  actor->scaleX = Q16_ONE / 10;
+  actor->scaleY = FIXED_ONE / 10;
+  actor->scaleX = FIXED_ONE / 10;
   Actor_SetSpriteFlags((s32)actor, 0);
   Actor_StartScript(actor, gAnemosInnerSanctum_PillarRisesScript);
   Actor_SetBlendMode(actor, 1);
@@ -724,13 +725,15 @@ void AnemosInnerSanctum_LightThePillar(void) {
   for (i = 0; i != count;) {
     s32 slot;
 
-    from.x = leader->x.fixed + px(Random16() & 31) - px(16);
-    from.y = leader->y.fixed + px(Random16() & 15) + px(8);
-    from.z = leader->z.fixed + px(Random16() & 15) - px(8);
+    from.x = leader->x.fixed + INTtoFIXED(Random16() & 31) - toFIXED(16);
+    from.y = leader->y.fixed + INTtoFIXED(Random16() & 15) + toFIXED(8);
+    from.z = leader->z.fixed + INTtoFIXED(Random16() & 15) - toFIXED(8);
     slot = order[i];
-    to.x = leader->x.fixed + px(gAnemosInnerSanctum_SparkOffsets[slot][0]);
+    to.x =
+        leader->x.fixed + INTtoFIXED(gAnemosInnerSanctum_SparkOffsets[slot][0]);
     to.y = leader->y.fixed;
-    to.z = leader->z.fixed + px(gAnemosInnerSanctum_SparkOffsets[slot][1]);
+    to.z =
+        leader->z.fixed + INTtoFIXED(gAnemosInnerSanctum_SparkOffsets[slot][1]);
     AnemosInnerSanctum_SendSpark(&from, &to, part);
     if (i & 1)
       Event_PlaySound(SE_SPARKS);
@@ -756,10 +759,12 @@ void AnemosInnerSanctum_LightThePillar(void) {
       i++;
       MapGrid_CopyCellsTo(
           64, 0,
-          ((leader->x.fixed + px(gAnemosInnerSanctum_SparkOffsets[slot][0])) >>
+          ((leader->x.fixed +
+            INTtoFIXED(gAnemosInnerSanctum_SparkOffsets[slot][0])) >>
            20) +
               64,
-          (leader->z.fixed + px(gAnemosInnerSanctum_SparkOffsets[slot][1])) >>
+          (leader->z.fixed +
+           INTtoFIXED(gAnemosInnerSanctum_SparkOffsets[slot][1])) >>
               20,
           1, 1);
     }
@@ -776,8 +781,8 @@ void AnemosInnerSanctum_LightThePillar(void) {
     FieldCamera_WaitForArrival();
     Event_PlaySound(SE_SHIMMER);
     {
-      s32 a = px(targetX);
-      s32 b = px(targetZ);
+      s32 a = INTtoFIXED(targetX);
+      s32 b = INTtoFIXED(targetZ);
 
       AnemosInnerSanctum_SparkRing(a, b, part, 0x800);
       FieldEvent_Wait(10);
@@ -900,11 +905,11 @@ void AnemosInnerSanctum_FinishMovingBlock(void) {
     if (x == 91 && z == 59) {
       if (!Event_GetFlag(FLAG_ANEMOS_SWITCHES_THIRD_PILLAR_PLACED)) {
         s32 fromX =
-            px(FIELD_PIXEL(Actor_Get(ACTOR_SWITCHES_PILLAR_B)->x.fixed));
+            INTtoFIXED(FIXEDtoINT(Actor_Get(ACTOR_SWITCHES_PILLAR_B)->x.fixed));
 
-        Actor_SetPositionFixed(
+        Actor_SetPositionFX(
             ACTOR_SWITCHES_THIRD_PILLAR, fromX,
-            FIELD_PIXEL(Actor_Get(ACTOR_SWITCHES_PILLAR_B)->z.fixed) << 16);
+            FIXEDtoINT(Actor_Get(ACTOR_SWITCHES_PILLAR_B)->z.fixed) << 16);
         Actor_SetPosition(ACTOR_SWITCHES_PILLAR_B, 728, 472);
       }
       GameFlag_Set(FLAG_ANEMOS_SWITCHES_PILLAR_B_PLACED);
@@ -936,13 +941,14 @@ void AnemosInnerSanctum_StepOnTile(void) {
     MapGrid_CopyCellsTo(54, 87, FIELD_CELL(leader->x.fixed),
                         FIELD_CELL(leader->z.fixed) + 64, 1, 1);
   Event_PlaySound(SE_DRIP);
-  object = FieldActor_Create(0x15d, (FIELD_CELL(leader->x.fixed) << 20) + px(8),
-                             0, (FIELD_CELL(leader->z.fixed) << 20) + px(8));
+  object =
+      FieldActor_Create(0x15d, (FIELD_CELL(leader->x.fixed) << 20) + toFIXED(8),
+                        0, (FIELD_CELL(leader->z.fixed) << 20) + toFIXED(8));
   object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   object->motionFlags = 0;
   FieldActor_SetSpriteColor(object, 4);
-  object->scaleY = Q16_ONE * 11 / 8;
-  object->scaleX = Q16_ONE * 11 / 8;
+  object->scaleY = FIXED_ONE * 11 / 8;
+  object->scaleX = FIXED_ONE * 11 / 8;
   Scene_SetActorSpritePriority(object, 2);
   Actor_SelectAnimation(object, 3);
   Actor_SetSpriteFlags(object, 0);
@@ -997,16 +1003,16 @@ void AnemosInnerSanctum_RaisePlatform(void) {
   FieldEvent_Wait(30);
   object->motionFlags = 0;
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  object->speedLimit = px(2);
-  object->acceleration = px(1) / 32;
+  object->speedLimit = toFIXED(2);
+  object->acceleration = toFIXED(1) / 32;
   Event_PlaySound(SE_KOLIMA_BRIDGE_POST);
-  FieldActor_SetMoveTargetFixed(object, object->x.fixed,
-                                object->y.fixed + px(4), object->z.fixed);
+  FieldActor_SetMoveTargetFX(object, object->x.fixed,
+                             object->y.fixed + toFIXED(4), object->z.fixed);
   FieldActor_WaitForMove(object);
   Scene_SetActorSpritePriority(leader, 1);
   Scene_SetActorSpritePriority(object, 1);
-  FieldActor_SetMoveTargetFixed(object, object->x.fixed,
-                                object->y.fixed + px(128), object->z.fixed);
+  FieldActor_SetMoveTargetFX(object, object->x.fixed,
+                             object->y.fixed + toFIXED(128), object->z.fixed);
   FieldEvent_Wait(80);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1053,8 +1059,8 @@ void AnemosInnerSanctum_PressSecondSwitch(void) {
   object = Actor_Get(ACTOR_SWITCHES_FIRST_SWITCH);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  object->x.fixed = px(536);
-  object->z.fixed = px(360);
+  object->x.fixed = toFIXED(536);
+  object->z.fixed = toFIXED(360);
   object->groundHeight = -917504;
   object->y.fixed = -917504;
   MapGrid_CopyCellsTo(51, 22, 33, 22, 1, 1);
@@ -1101,11 +1107,11 @@ void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
   struct Actor *dust;
   s32 kind;
 
-  if (FIELD_PIXEL(Actor_Get(gMainRoutineWork.leaderActorId)->z.fixed) > 248) {
+  if (FIXEDtoINT(Actor_Get(gMainRoutineWork.leaderActorId)->z.fixed) > 248) {
     self->update = 0;
     Event_ClearFlag(FLAG_SCENE_TEMP_00);
-    self->x.fixed = (self->x.fixed & FIELD_CELL_MASK) + px(8);
-    self->z.fixed = (self->z.fixed & FIELD_CELL_MASK) + px(8);
+    self->x.fixed = (self->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+    self->z.fixed = (self->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
     return;
   }
   ahead[0] = next[0] = self->x.fixed - (leader->x.fixed - self->riseBaseY);
@@ -1115,8 +1121,8 @@ void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
       self->acceleration != leader->z.fixed) {
     dust = (FieldActor_Create(SPRITE_PARTICLE, self->x.fixed, self->y.fixed,
                               self->z.fixed));
-    dust->x.fixed += px((Random16() & 15) - 8);
-    dust->y.fixed += px((Random16() & 31) - 4);
+    dust->x.fixed += INTtoFIXED((Random16() & 15) - 8);
+    dust->y.fixed += INTtoFIXED((Random16() & 31) - 4);
     dust->motionFlags = 0;
     FieldActor_SetSpriteColor(dust, self->riseCounter);
     Scene_SetActorSpritePriority(dust, 2);
@@ -1164,7 +1170,7 @@ void AnemosInnerSanctum_StartFollower(void) {
     object = Actor_Get(ACTOR_MIMIC_STONE_B);
   else
     object = Actor_Get(ACTOR_MIMIC_STONE_C);
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->z.part[0].pixel <= 247) {
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->z.part[0].integer <= 247) {
     object->motionFlags = 0;
     object->update = AnemosInnerSanctum_FollowLeader;
     object->riseBaseY = Actor_Get(gMainRoutineWork.leaderActorId)->x.fixed;
@@ -1195,17 +1201,17 @@ void AnemosInnerSanctum_RaiseDust(void) {
     object = Actor_Get(ACTOR_MIMIC_STONE_B);
   else
     object = Actor_Get(ACTOR_MIMIC_STONE_C);
-  position[0] = (object->x.fixed & FIELD_CELL_MASK) + px(8);
-  position[2] = (object->z.fixed & FIELD_CELL_MASK) + px(8);
-  object->acceleration = px(1);
-  object->speedLimit = px(1);
+  position[0] = (object->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  position[2] = (object->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  object->acceleration = toFIXED(1);
+  object->speedLimit = toFIXED(1);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetMoveTargetFixed(object, position[0], 0, position[2]);
-  effect = OverlayObject_PrepareObject(object->x.fixed, 0, position[2] + px(59),
-                                       286);
-  effect->scaleX = Q16_ONE * 3 / 2;
-  effect->scaleY = Q16_ONE * 3 / 2;
+  FieldActor_SetMoveTargetFX(object, position[0], 0, position[2]);
+  effect = OverlayObject_PrepareObject(object->x.fixed, 0,
+                                       position[2] + toFIXED(59), 286);
+  effect->scaleX = FIXED_ONE * 3 / 2;
+  effect->scaleY = FIXED_ONE * 3 / 2;
   sprite = effect->sprite;
   ((struct SpriteView *)sprite)->mode = 2;
   REG_WINOUT = WINOUT_WIN01_ALL | WINOUT_WINOBJ_BG0 | WINOUT_WINOBJ_BG1 |
@@ -1244,13 +1250,13 @@ void AnemosInnerSanctum_MarkEntrance(void) {
   }
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  target[0] = (object->x.fixed & FIELD_CELL_MASK) + px(8);
-  target[2] = (object->z.fixed & FIELD_CELL_MASK) + px(8);
-  object->acceleration = px(1);
-  object->speedLimit = px(1);
+  target[0] = (object->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  target[2] = (object->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  object->acceleration = toFIXED(1);
+  object->speedLimit = toFIXED(1);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_SetMoveTargetFixed(object, target[0], 0, target[2]);
+  FieldActor_SetMoveTargetFX(object, target[0], 0, target[2]);
   FieldActor_WaitForMove(object);
   Event_PlaySound(SE_THUMP);
   MapGrid_CopyCellsTo(18, 4, column, 4, 1, 2);
@@ -1359,15 +1365,15 @@ void AnemosInnerSanctum_RaiseFirstStatue(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(ACTOR_ELEVATOR_STATUE, 2);
-  object->y.fixed = -px(64);
+  object->y.fixed = -toFIXED(64);
   Actor_SetPosition(ACTOR_ELEVATOR_STATUE, 728, 120);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 728, 120);
-  Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed = -px(48);
+  Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed = -toFIXED(48);
   Event_StartScreenTransition();
-  object->acceleration = px(1);
-  object->speedLimit = px(1);
-  FieldActor_SetMoveTargetFixed(object, object->x.fixed,
-                                object->y.fixed + px(48), object->z.fixed);
+  object->acceleration = toFIXED(1);
+  object->speedLimit = toFIXED(1);
+  FieldActor_SetMoveTargetFX(object, object->x.fixed,
+                             object->y.fixed + toFIXED(48), object->z.fixed);
   FieldActor_WaitForMove(object);
   Event_SetFlag(FLAG_AREA_TEMP_00);
   Event_End();
@@ -1379,13 +1385,13 @@ void AnemosInnerSanctum_RaiseSecondStatue(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->motionFlags = 0;
-  object->y.fixed = -px(64);
-  Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed = -px(48);
+  object->y.fixed = -toFIXED(64);
+  Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed = -toFIXED(48);
   Event_StartScreenTransition();
-  object->acceleration = px(1);
-  object->speedLimit = px(1);
-  FieldActor_SetMoveTargetFixed(object, object->x.fixed,
-                                object->y.fixed + px(48), object->z.fixed);
+  object->acceleration = toFIXED(1);
+  object->speedLimit = toFIXED(1);
+  FieldActor_SetMoveTargetFX(object, object->x.fixed,
+                             object->y.fixed + toFIXED(48), object->z.fixed);
   FieldActor_WaitForMove(object);
   Event_SetFlag(FLAG_AREA_TEMP_04);
   Event_End();
@@ -1474,8 +1480,8 @@ s32 Scene_Initialize(void) {
     struct Actor *lift = Actor_Get(ACTOR_SWITCHES_FIRST_SWITCH);
 
     lift->motionFlags = ACTOR_FALLS;
-    lift->groundHeight = -px(14);
-    lift->y.fixed = -px(14);
+    lift->groundHeight = -toFIXED(14);
+    lift->y.fixed = -toFIXED(14);
     lift->priorityFlags |= 128;
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
     Actor_Get(ACTOR_SWITCHES_BOULDER)->riseCounter = 1;
@@ -1491,10 +1497,10 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_ANEMOS_SWITCHES_PILLAR_B_PLACED)) {
       if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
           !Event_GetFlag(FLAG_ANEMOS_SWITCHES_THIRD_PILLAR_PLACED))
-        Actor_SetPositionFixed(
+        Actor_SetPositionFX(
             ACTOR_SWITCHES_THIRD_PILLAR,
-            px(Actor_Get(ACTOR_SWITCHES_PILLAR_B)->x.part[0].pixel),
-            px(Actor_Get(ACTOR_SWITCHES_PILLAR_B)->z.part[0].pixel));
+            INTtoFIXED(Actor_Get(ACTOR_SWITCHES_PILLAR_B)->x.part[0].integer),
+            INTtoFIXED(Actor_Get(ACTOR_SWITCHES_PILLAR_B)->z.part[0].integer));
       Actor_SetPosition(ACTOR_SWITCHES_PILLAR_B, 728, 472);
     }
     Call1((void (*)())Actor_PlaceBlocks,
@@ -1565,7 +1571,7 @@ s32 Scene_Initialize(void) {
           gMainRoutineWork.entrance == 12)
         AnemosInnerSanctum_RaiseSecondStatue();
       else
-        Actor_Get(ACTOR_GUARDIAN_ROOM_STATUE)->y.fixed = -px(16);
+        Actor_Get(ACTOR_GUARDIAN_ROOM_STATUE)->y.fixed = -toFIXED(16);
       break;
     case 1:
     case 2:
@@ -1574,7 +1580,7 @@ s32 Scene_Initialize(void) {
         Event_SetFlag(FLAG_SCENE_TEMP_00);
       } else {
         MapGrid_CopyCellsTo(18, 1, 11, 4, 1, 2);
-        MapGrid_SetCellHeight(px(184), px(88), 0, 2);
+        MapGrid_SetCellHeight(toFIXED(184), toFIXED(88), 0, 2);
       }
       break;
     case 3:
@@ -1584,7 +1590,7 @@ s32 Scene_Initialize(void) {
         Event_SetFlag(FLAG_SCENE_TEMP_00);
       } else {
         MapGrid_CopyCellsTo(18, 1, 26, 4, 1, 2);
-        MapGrid_SetCellHeight(px(424), px(88), 0, 2);
+        MapGrid_SetCellHeight(toFIXED(424), toFIXED(88), 0, 2);
       }
       break;
     case 5:
@@ -1594,10 +1600,10 @@ s32 Scene_Initialize(void) {
         Event_SetFlag(FLAG_SCENE_TEMP_00);
       } else {
         MapGrid_CopyCellsTo(18, 1, 53, 4, 1, 2);
-        MapGrid_SetCellHeight(px(856), px(88), 0, 2);
+        MapGrid_SetCellHeight(toFIXED(856), toFIXED(88), 0, 2);
       }
-      map->minX += px(8);
-      map->maxX += px(8);
+      map->minX += toFIXED(8);
+      map->maxX += toFIXED(8);
       break;
     }
   }
@@ -1684,8 +1690,8 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (targetX - effect->scaleX) / count;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (targetX - Q16_ONE) / count;
-      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
+      effect->scaleRateX = (targetX - FIXED_ONE) / count;
+      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -1731,8 +1737,8 @@ void CrackedTile_DropIn(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
-  actor->y.fixed = px(130);
-  actor->gravity = px(1) / 2;
+  actor->y.fixed = toFIXED(130);
+  actor->gravity = toFIXED(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1743,8 +1749,8 @@ void CrackedTile_DropIn(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = Q16_ONE * 16 / 25;
-  options.startScaleY = Q16_ONE * 16 / 25;
+  options.startScaleX = FIXED_ONE * 16 / 25;
+  options.startScaleY = FIXED_ONE * 16 / 25;
   for (i = 0; i <= 16; i++) {
     s32 angle;
     s32 velocity[3];
@@ -1756,8 +1762,8 @@ void CrackedTile_DropIn(void) {
     velocity[1] = 0;
     velocity[2] = Math_Sin(angle);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += (Random16() * (px(3) / 4) >> 16) - (px(3) / 8);
-    velocity[2] += (Random16() * (px(3) / 8) >> 16) - (px(3) / 16);
+    velocity[0] += (Random16() * (toFIXED(3) / 4) >> 16) - (toFIXED(3) / 8);
+    velocity[2] += (Random16() * (toFIXED(3) / 8) >> 16) - (toFIXED(3) / 16);
     FieldEffect_SpawnLocal(actor->x.fixed, actor->y.fixed, actor->z.fixed,
                            velocity[0], velocity[1], velocity[2], 0x1090001,
                            &options);
@@ -1771,8 +1777,8 @@ void CrackedTile_DropIn(void) {
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  actor->gravity = px(1);
-  actor->bounce = Q16_ONE / 4;
+  actor->gravity = toFIXED(1);
+  actor->bounce = FIXED_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   Event_End();
@@ -1845,7 +1851,7 @@ u32 gAnemosInnerSanctum_PillarRisesScript[] = {
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, 6553),
     SC_ADD(SW_SCALE_Y, 6553),
-    SC_ADD(SW_Y, px(3)),
+    SC_ADD(SW_Y, toFIXED(3)),
     SC_WAIT(2),
     SC_LOOP(10, SC_TO(1)),
     SC_SET(SW_MOTION, 4),
@@ -1858,7 +1864,7 @@ s32 gAnemosInnerSanctum_PillarSparkScript[] = {
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, -6553),
     SC_ADD(SW_SCALE_Y, -6553),
-    SC_ADD(SW_Y, -px(3)),
+    SC_ADD(SW_Y, -toFIXED(3)),
     SC_WAIT(2),
     SC_LOOP(10, SC_TO(1)),
     SC_END,

@@ -7,9 +7,9 @@
 /// Whether object a rests on object b: within 12 pixels of it in x and 8 in z,
 /// and above it by less than 16 pixels.
 s32 VENT_TOUCHING(struct Actor *a, struct Actor *b) {
-  if (DIFF(a->x.fixed, b->x.fixed) < px(12)) {
-    if ((u32)(a->y.fixed - b->y.fixed - 1) <= px(16) - 2) {
-      if (DIFF(a->z.fixed, b->z.fixed) < px(8))
+  if (DIFF(a->x.fixed, b->x.fixed) < toFIXED(12)) {
+    if ((u32)(a->y.fixed - b->y.fixed - 1) <= toFIXED(16) - 2) {
+      if (DIFF(a->z.fixed, b->z.fixed) < toFIXED(8))
         return 1;
     }
   }

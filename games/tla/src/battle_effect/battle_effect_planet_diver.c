@@ -85,14 +85,14 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
           BattleObject_GetFar(args->targets[k])->object;
 
       // Each target's skulls turn about a point 20 pixels above it.
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
       point[0] = target->x;
-      point[1] = px(20);
+      point[1] = toFIXED(20);
       point[2] = target->z;
-      Transform_ApplyPosition(point);
+      Matrix_TranslateVector(point);
       if (frame > k * 32) {
-        Transform_ApplyPitch(frame << 9);
+        Matrix_RotateX(frame << 9);
         if (frame == k * 32 + 32)
           BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, k, 32);
@@ -202,8 +202,8 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
       }
     }
 
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
     member = 0;
     if (args->targetCount != 0) {
       while (member != args->targetCount) {
@@ -219,7 +219,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
             BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_NORMAL,
                                      POSE_DAMAGE, TINT_KEEP, 0);
           point[0] = target->x;
-          point[1] = px(40);
+          point[1] = toFIXED(40);
           point[2] = target->z;
           EffectPosition_ProjectPoint(point, &screen);
 
@@ -231,8 +231,8 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
             s32 half;
 
             spin = (frame + i * 32) << 9;
-            x = (screen.x + (Q_16_16_TO_INT(Trig_Sin(spin) << 4))) + offsetX;
-            y = screen.y + (Q_16_16_TO_INT(Trig_Cos(spin) << 4));
+            x = (screen.x + (FIXEDtoINT(Trig_Sin(spin) << 4))) + offsetX;
+            y = screen.y + (FIXEDtoINT(Trig_Cos(spin) << 4));
             half = frame / 16;
             draw[half & 1](canvas,
                            work->sheet + (((frame / 4) - (half * 4)) << 10),
@@ -363,19 +363,19 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
       else
         EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
 
     // BG1 sways line by line, by up to 16 pixels at the effect's midpoint.
     // A negative scroll wraps into the halfword one short of 0x10000.
     row = work->bg2xLines;
-    sway = Q_16_16_TO_INT(
+    sway = FIXEDtoINT(
         Trig_Sin((frame << 15) / (gGatheringLights_Counts[mode * 2 + 1] +
                                   args->targetCount * 20)) *
         16);
     scrollX = gBgScroll[1].x;
     for (i = 0; i != DISPLAY_HEIGHT; i++) {
-      s32 x = (Q_16_16_TO_INT(Trig_Sin((frame + i) << 10) * sway)) + scrollX;
+      s32 x = (FIXEDtoINT(Trig_Sin((frame + i) << 10) * sway)) + scrollX;
 
       if (x < 0)
         x += 0xffff;
@@ -437,8 +437,9 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
                    (x >= 0 && (crossed = target->x >= 0)))) {
                 mote->variant = -1;
                 if (mode == GATHERING_LIGHTS_THORNY_GRAVE) {
-                  BattleEffect_StartActorMotion(args->targets[k], 1, px(2),
-                                                px(2), px(2), i * 8 + 100);
+                  BattleEffect_StartActorMotion(args->targets[k], 1, toFIXED(2),
+                                                toFIXED(2), toFIXED(2),
+                                                i * 8 + 100);
                   if ((i & 1) && frame != 80)
                     Sound_PlayFar(SE_HEAVY_IMPACT);
                 }

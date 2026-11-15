@@ -84,7 +84,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   offset = 0;
   size = 2;
   for (i = 0; i != 32; i++) {
-    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, Q16_ONE);
+    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, FIXED_ONE);
     circles[i] = offset;
     offset += (i * 2 + 3) * size / 2;
     size += 2;
@@ -119,14 +119,14 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
 
         fall->x = Trig_Sin(angle) * radius;
         fall->z = Trig_Cos(angle) * radius;
-        fall->y = px(110);
+        fall->y = toFIXED(110);
         radius = (Random16() & 31) + 4;
         fall->velocityX = target->x.fixed + Trig_Sin(angle) * radius;
         z = target->z.fixed + Trig_Cos(angle) * radius;
         fall->velocityZ = z;
-        fall->velocityY = -px(8);
+        fall->velocityY = -toFIXED(8);
         fall->velocityX = (fall->velocityX - fall->x) / 6;
-        fall->velocityY = (-px(8) - fall->y) / 6;
+        fall->velocityY = (-toFIXED(8) - fall->y) / 6;
         fall->velocityZ = (z - fall->z) / 6;
         fall->variant = -i * 4;
       }
@@ -145,8 +145,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
         camera->yaw -= turn;
       }
     }
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
 
     // The rings: four quarter circles each, upper halves for the first 16.
     for (i = 0, ring = work->particles; i != 28; ring++, i++) {
@@ -160,8 +160,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       if ((u32)ring->variant > 15) {
         continue;
       }
-      size =
-          (Q_16_16_TO_INT(Trig_Sin(ring->variant << 11) * ring->velocityX)) * 2;
+      size = (FIXEDtoINT(Trig_Sin(ring->variant << 11) * ring->velocityX)) * 2;
       index = size - 2;
       ring->variant++;
       if ((u32)index > 61) {
@@ -279,7 +278,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       model->mesh = gBattleEffect_SmallSquareMeshReversed;
       for (i = 0; i != 4; i++) {
         s32 sway = Trig_Sin((frame << 8) + TRIG_TURN / 16);
-        s32 x = px(center.x / 2 - 64) -
+        s32 x = INTtoFIXED(center.x / 2 - 64) -
                 (gLightSurge_PillarOffsets[i] * sway / (TRIG_TURN)) *
                     Trig_Sin((s16)camera->yaw);
         s32 z = -((gLightSurge_PillarOffsets[i] * sway / (TRIG_TURN)) *
@@ -291,7 +290,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
         if (i == 300)
           growth = 0;
         if (frame <= 47) {
-          growth = Trig_Sin((frame << 9) - TRIG_TURN / 8);
+          growth = Trig_Sin((frame << 9) - DEGtoANG(45));
         } else {
           growth = 0x10000;
         }
@@ -304,9 +303,9 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
           shade = gLightSurge_PillarShades[i];
         }
         model->shade = shade;
-        Transform_Reset();
-        Transform_ApplyTranslation(x, z, 0);
-        Transform_ApplyAxisScale(scale, scale * 2, scale);
+        Matrix_Initialize();
+        Matrix_Translate(x, z, 0);
+        Matrix_Scale(scale, scale * 2, scale);
         Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
         Render_DrawModelList(model);
       }

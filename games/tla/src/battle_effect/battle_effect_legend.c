@@ -81,7 +81,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
       for (i = 0; i != 3; i++) {
         step = &work->particles[i];
         step->x = start.x << 15;
-        step->y = px(start.y);
+        step->y = INTtoFIXED(start.y);
         step->velocityX = (target.x - start.x) << 11;
         step->velocityY = (target.y - start.y) << 12;
         step->variant = 0;
@@ -113,8 +113,8 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
           s32 force;
 
           spark->x = target.x << 15;
-          spark->y = px(96);
-          angle = Random16() % (TRIG_TURN * 3 / 4) + TRIG_TURN / 8;
+          spark->y = toFIXED(96);
+          angle = Random16() % (TRIG_TURN * 3 / 4) + DEGtoANG(45);
           force = Random16() & 127;
           spark->velocityX = (Trig_Sin(angle) * force) >> 4;
           spark->velocityY = (Trig_Cos(angle) * force) >> 3;
@@ -151,11 +151,11 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                 Q_16_16_UPPER_HALF(step->x) - size / 2,
                 Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
-        if (step->y > px(104)) {
-          step->y = px(104);
+        if (step->y > toFIXED(104)) {
+          step->y = toFIXED(104);
           step->velocityY = -step->velocityY / 2;
         }
-        BattleEffectKernels_IntegrateVector2(step, 62, px(1) / 4);
+        BattleEffectKernels_IntegrateVector2(step, 62, toFIXED(1) / 4);
         step->variant--;
       }
     }
@@ -182,27 +182,27 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         s32 height = frame * 2 - 96;
         s32 alpha = 0;
 
-        scale = (frame << 13) - Q16_ONE * 2;
+        scale = (frame << 13) - FIXED_ONE * 2;
         if (height > -48)
           height = -48;
         if (frame >= args->variant * 16 + 60)
           // Spelled with + -240 so that the negation is not folded into 240 -
           // x.
           alpha = -((frame - args->variant * 16) * 4 + -240);
-        if (scale > Q16_ONE * 2)
-          scale = Q16_ONE * 2;
+        if (scale > FIXED_ONE * 2)
+          scale = FIXED_ONE * 2;
         model->shade = alpha;
-        Transform_Reset();
-        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        Transform_ApplyTranslation(px(start.x - 128), px(height), 0);
-        Transform_ApplyPitch(TRIG_TURN * 89 / 256);
+        Matrix_Initialize();
+        Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+        Matrix_Translate(INTtoFIXED(start.x - 128), INTtoFIXED(height), 0);
+        Matrix_RotateX(TRIG_TURN * 89 / 256);
         if (args->side == EFFECT_SIDE_ENEMIES)
-          Transform_ApplyYaw(TRIG_TURN * 25 / 256);
+          Matrix_RotateY(TRIG_TURN * 25 / 256);
         else
-          Transform_ApplyYaw(-TRIG_TURN * 25 / 256);
-        Transform_ApplyRoll(frame << 9);
-        Transform_ApplyUniformScale(scale);
-        Transform_ApplyAxisScale(Q16_ONE, Q16_ONE, Q16_ONE);
+          Matrix_RotateY(-TRIG_TURN * 25 / 256);
+        Matrix_RotateZ(frame << 9);
+        Matrix_ScaleUniform(scale);
+        Matrix_Scale(FIXED_ONE, FIXED_ONE, FIXED_ONE);
         Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
         Render_DrawModelList(model);
       }
@@ -217,18 +217,18 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
           if (alpha > 0)
             alpha = 0;
           if (alpha > -64) {
-            scale = age * 12384 + Q16_ONE / 2;
+            scale = age * 12384 + FIXED_ONE / 2;
             model->shade = alpha;
-            Transform_Reset();
-            Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-            Transform_ApplyTranslation(px(start.x - 128), -px(48), 0);
-            Transform_ApplyPitch(TRIG_TURN * 89 / 256);
+            Matrix_Initialize();
+            Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+            Matrix_Translate(INTtoFIXED(start.x - 128), -toFIXED(48), 0);
+            Matrix_RotateX(TRIG_TURN * 89 / 256);
             if (args->side == EFFECT_SIDE_ENEMIES)
-              Transform_ApplyYaw(TRIG_TURN * 25 / 256);
+              Matrix_RotateY(TRIG_TURN * 25 / 256);
             else
-              Transform_ApplyYaw(-TRIG_TURN * 25 / 256);
-            Transform_ApplyRoll(frame << 9);
-            Transform_ApplyUniformScale(scale);
+              Matrix_RotateY(-TRIG_TURN * 25 / 256);
+            Matrix_RotateZ(frame << 9);
+            Matrix_ScaleUniform(scale);
             Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
             Render_DrawModelList(model);
           }
@@ -243,19 +243,18 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         model->mesh = gBattleEffect_TallMesh;
         for (i = 0; i != 8; i++) {
           model->shade = 0;
-          Transform_Reset();
-          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          Transform_ApplyTranslation(px(start.x - 128), -px(80), 0);
-          Transform_ApplyPitch(0x47d0);
-          Transform_ApplyRoll((frame + i * 16) << 9);
-          scale = (frame << 12) - Q16_ONE / 4;
-          if (scale > Q16_ONE)
-            scale = Q16_ONE;
+          Matrix_Initialize();
+          Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+          Matrix_Translate(INTtoFIXED(start.x - 128), -toFIXED(80), 0);
+          Matrix_RotateX(0x47d0);
+          Matrix_RotateZ((frame + i * 16) << 9);
+          scale = (frame << 12) - FIXED_ONE / 4;
+          if (scale > FIXED_ONE)
+            scale = FIXED_ONE;
           if (frame > 31)
-            scale = Q16_ONE * 3 - (frame << 12);
-          Transform_ApplyAxisScale(
-              0x8000, 0x10000,
-              (Trig_Sin((frame + i * 8) << 9) / 8 + scale) * 2);
+            scale = FIXED_ONE * 3 - (frame << 12);
+          Matrix_Scale(0x8000, 0x10000,
+                       (Trig_Sin((frame + i * 8) << 9) / 8 + scale) * 2);
           Render_TransformVertices(gLegend_WingCorners, vertices, 4);
           Render_DrawModelList(model);
         }
@@ -369,7 +368,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
         EffectPosition_ProjectScaledBattler(args->targets[i], &targets[i]);
       REG_BLDCNT = 0;
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-      scale = Q16_ONE / 4;
+      scale = FIXED_ONE / 4;
     }
 
     // The card rises and grows for 48 frames, and from frame 96 rises
@@ -377,8 +376,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
     if (frame <= 47) {
       card.y--;
       scale += 0x200;
-      if (scale > Q16_ONE / 2)
-        scale = Q16_ONE / 2;
+      if (scale > FIXED_ONE / 2)
+        scale = FIXED_ONE / 2;
     }
     if (frame > 95) {
       scale += -0x200;
@@ -426,7 +425,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           struct Particle *step = &work->particles[frame % 56];
 
           step->x = card.x << 15;
-          step->y = px(card.y);
+          step->y = INTtoFIXED(card.y);
           step->velocityX = (aim.x - card.x) << 11;
           step->velocityY = (aim.y - card.y) << 11;
           step->z = 32;
@@ -448,7 +447,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
                     gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
             BattleEffectKernels_IntegrateVector2(step, PARTICLE_DAMPING_NONE,
                                                  0);
-            if (step->y > px(96))
+            if (step->y > toFIXED(96))
               step->velocityY = -step->velocityY / 2;
             step->variant += step->z;
             if (step->z > 1 && (frame & 1))
@@ -470,8 +469,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
                       SMOKE_PUFF_HEIGHT);
             step->x += step->velocityX;
             step->y += step->velocityY;
-            if (step->y > px(96)) {
-              step->y = px(96);
+            if (step->y > toFIXED(96)) {
+              step->y = toFIXED(96);
               step->velocityY = 0;
             }
             step->variant++;
@@ -514,8 +513,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
             Sound_PlayFar(SE_IMPACT);
           if (i == 0)
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-          BattleEffect_StartActorMotion(args->targets[i], 1, px(2), px(8),
-                                        px(1), 100 + speed);
+          BattleEffect_StartActorMotion(args->targets[i], 1, toFIXED(2),
+                                        toFIXED(8), toFIXED(1), 100 + speed);
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    TINT_KEEP, i, 8);
           burst = 0;
@@ -528,8 +527,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
               s32 force;
 
               spark->x = aim.x << 15;
-              spark->y = px(aim.y + 8);
-              angle = Random16() % (TRIG_TURN * 3 / 4) + TRIG_TURN / 8;
+              spark->y = INTtoFIXED(aim.y + 8);
+              angle = Random16() % (TRIG_TURN * 3 / 4) + DEGtoANG(45);
               force = Random16() & 127;
               spark->velocityX = (Trig_Sin(angle) * force) >> 5;
               spark->velocityY = (Trig_Cos(angle) * force) >> 4;
@@ -558,24 +557,25 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
     model->vertices = vertices;
     if (frame >= 0) {
       // The card: it swings from side to side as it rises, tilted back.
-      Transform_Reset();
-      Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-      Transform_ApplyTranslation(px(card.x) - px(128), px(card.y) - px(64), 0);
+      Matrix_Initialize();
+      Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+      Matrix_Translate(INTtoFIXED(card.x) - toFIXED(128),
+                       INTtoFIXED(card.y) - toFIXED(64), 0);
       if (frame <= 47) {
-        Transform_ApplyPitch((48 - frame) << 10);
+        Matrix_RotateX((48 - frame) << 10);
         if (args->side == EFFECT_SIDE_ENEMIES)
-          Transform_ApplyTranslation(-Trig_Sin(frame * 682) << 7, 0, 0);
+          Matrix_Translate(-Trig_Sin(frame * 682) << 7, 0, 0);
         else
-          Transform_ApplyTranslation(Trig_Sin(frame * 682) << 7, 0, 0);
+          Matrix_Translate(Trig_Sin(frame * 682) << 7, 0, 0);
       }
-      Transform_ApplyYaw(0x1770);
-      Transform_ApplyRoll(frame << 10);
-      Transform_ApplyUniformScale(scale);
-      Transform_ApplyAxisScale(Q16_ONE, Q16_ONE * 2, Q16_ONE);
+      Matrix_RotateY(0x1770);
+      Matrix_RotateZ(frame << 10);
+      Matrix_ScaleUniform(scale);
+      Matrix_Scale(FIXED_ONE, FIXED_ONE * 2, FIXED_ONE);
       Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       Render_DrawModelList(model);
       if (mode == CARD_BRAMBLE || mode == CARD_THUNDER) {
-        Transform_ApplyUniformScale(Q16_ONE / 4);
+        Matrix_ScaleUniform(FIXED_ONE / 4);
         Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       }
     }
@@ -635,12 +635,12 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
         struct Particle *step = &work->particles[i];
 
         texture.pixels = work->sheet + step->z;
-        Transform_Reset();
-        Transform_ApplyTranslation(px(step->x - 60), px(step->y - 64), 0);
-        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Matrix_Initialize();
+        Matrix_Translate(INTtoFIXED(step->x - 60), INTtoFIXED(step->y - 64), 0);
+        Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
         if (args->side == EFFECT_SIDE_PARTY)
-          Transform_ApplyYaw(TRIG_TURN / 2);
-        Transform_ApplyRoll(step->velocityZ);
+          Matrix_RotateY(DEGtoANG(180));
+        Matrix_RotateZ(step->velocityZ);
         if (mode == CARD_BRAMBLE) {
           s32 length = (frame << 13) - 0x60000;
 
@@ -648,9 +648,9 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
             length = 0x20000;
           if (frame > 95)
             length = length - (frame << 13) + 0xc0000;
-          Transform_ApplyAxisScale(Q16_ONE * 4, length, Q16_ONE);
+          Matrix_Scale(FIXED_ONE * 4, length, FIXED_ONE);
         } else {
-          Transform_ApplyAxisScale(Q16_ONE * 2, Q16_ONE * 2, Q16_ONE);
+          Matrix_Scale(FIXED_ONE * 2, FIXED_ONE * 2, FIXED_ONE);
         }
         Render_TransformVertices(gBattleEffect_BeamCorners, vertices, 4);
         Render_DrawModelList(model);
@@ -675,8 +675,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                   Q_16_16_UPPER_HALF(step->x) - size / 2,
                   Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
-          if (step->y > px(104)) {
-            step->y = px(104);
+          if (step->y > toFIXED(104)) {
+            step->y = toFIXED(104);
             step->velocityY = -step->velocityY / 2;
           }
           BattleEffectKernels_IntegrateVector2(

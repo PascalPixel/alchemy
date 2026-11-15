@@ -57,7 +57,7 @@ DJINN_FIGURES_DEFINE_RELEASE(DjinnFigures_ReleaseTopRow,
 
 /// Full size, 1.0 in 16.16, and the height the figures are placed from: 482
 /// pixels, in 16.16.
-#define FOUR_OBJECT_MOTION_FULL_SCALE ((u32)Q16_ONE)
+#define FOUR_OBJECT_MOTION_FULL_SCALE ((u32)FIXED_ONE)
 #define FOUR_OBJECT_MOTION_ORIGIN_Y (482u << 16)
 
 /// Projects the four sprites at full scale from their saved row positions.
@@ -73,13 +73,14 @@ void DjinnFigures_UpdateAllPositions(void) {
     struct Sprite *animation = state->figures[index];
 
     if (animation != 0) {
-      u32 vertical = FOUR_OBJECT_MOTION_ORIGIN_Y - px(state->memberY[index]);
+      u32 vertical =
+          FOUR_OBJECT_MOTION_ORIGIN_Y - toFIXED(state->memberY[index]);
       animation->image.priority = 0;
       scale.x = FOUR_OBJECT_MOTION_FULL_SCALE;
       scale.y = FOUR_OBJECT_MOTION_FULL_SCALE;
-      placement.x = px((s32)state->figureX[index]);
+      placement.x = toFIXED((s32)state->figureX[index]);
       placement.height = vertical;
-      placement.y = px((s32)state->figureY[index]) + vertical;
+      placement.y = toFIXED((s32)state->figureY[index]) + vertical;
       placement.groundHeight = 0;
       Actor_ApplyProjectedPlacementFar(animation, &placement, &scale,
                                        FACING_SOUTH);
@@ -102,26 +103,27 @@ void DjinnFigures_UpdateBottomRow(void) {
     struct Sprite *animation = menu->figures[figure];
 
     if (animation != 0) {
-      u32 projectedY = FOUR_OBJECT_MOTION_ORIGIN_Y - px(menu->memberY[figure]);
+      u32 projectedY =
+          FOUR_OBJECT_MOTION_ORIGIN_Y - toFIXED(menu->memberY[figure]);
       s32 phase;
       s32 limit;
       s32 rowY;
 
       animation->image.priority = 0;
       // A negative phase is a fixed scale of -phase; otherwise the scale
-      // closes a third of its gap to full size (Q16_ONE) each frame.
+      // closes a third of its gap to full size (FIXED_ONE) each frame.
       phase = menu->figureScales[figure];
       if (phase < 0) {
         scale.x = -phase;
         scale.y = -phase;
       } else {
-        scale.x = phase + (s32)(Q16_ONE - phase) / 3;
+        scale.x = phase + (s32)(FIXED_ONE - phase) / 3;
         scale.y = scale.x;
         menu->figureScales[figure] = scale.x;
       }
-      placement.x = px(menu->figureX[figure]);
+      placement.x = toFIXED(menu->figureX[figure]);
       placement.height = projectedY;
-      placement.y = px(menu->figureY[figure]) + projectedY;
+      placement.y = toFIXED(menu->figureY[figure]) + projectedY;
       placement.groundHeight = 0;
       rowY = menu->figureY[figure];
       /* FAKEMATCH(dead): the scale's x assigned to itself while rowY is live.
@@ -156,7 +158,7 @@ void DjinnFigures_InitializeBottomRow(s32 window, s32 unused) {
     if (animation != NULL)
       Sprite_StartAnimationFar(animation, ANIM_WALK);
     state->figures[index] = animation;
-    state->figureScales[index] = Q16_ONE;
+    state->figureScales[index] = FIXED_ONE;
     state->figureX[index] = 16;
     state->figureY[index] = 200;
   }

@@ -61,7 +61,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   s32 amplitude;
 
   shifts = 0;
-  radius = px(14);
+  radius = toFIXED(14);
   animating = 0;
   spraying = 0;
   next = 0;
@@ -77,9 +77,9 @@ void FieldPsynergy_GrindOnTarget(void) {
     }
   } else {
     scene->x = caster->x.fixed;
-    scene->z = caster->z.fixed + px(8);
+    scene->z = caster->z.fixed + toFIXED(8);
     scene->y = caster->y.fixed;
-    Vector_AddPolarOffset(px(32), scene->angle, &scene->x);
+    Vector_AddPolarOffset(toFIXED(32), scene->angle, &scene->x);
   }
   isWaterObject = 0;
   if (Actor_GetSpriteIdFar(child) == 424) {
@@ -89,9 +89,9 @@ void FieldPsynergy_GrindOnTarget(void) {
   if (child == NULL)
     mode = 2;
   if (mode == 1)
-    radius = px(14);
+    radius = toFIXED(14);
   if (mode == 2)
-    radius = px(21);
+    radius = toFIXED(21);
 
   FieldPsynergy_FadeToCastColor();
   source = Resource_GetTableEntry((s32)&ResourceId_WaterSplash);
@@ -119,15 +119,15 @@ void FieldPsynergy_GrindOnTarget(void) {
   wait(1);
   Sound_PlayFar(SE_PUSH_STEP);
   counter = 0;
-  amplitude = px(2);
+  amplitude = toFIXED(2);
   phase = 0;
   timer = 0;
   do {
     if (spraying) {
       if (mode == 1) {
-        if (radius > px(5))
+        if (radius > toFIXED(5))
           radius += -0xa3d;
-      } else if (radius > px(5)) {
+      } else if (radius > toFIXED(5)) {
         radius += -0x147a;
       }
     }
@@ -145,8 +145,8 @@ void FieldPsynergy_GrindOnTarget(void) {
           sprite->depth = BattleEffect_GetObjectDepth(child) - 15;
       }
       particle->timer = 0;
-      SET_POSITION(particle, scene->x, scene->y + px(5), scene->z);
-      if (radius > px(5))
+      SET_POSITION(particle, scene->x, scene->y + toFIXED(5), scene->z);
+      if (radius > toFIXED(5))
         Vector_AddPolarOffset(radius + Random16() * 5, angle, &particle->x);
       else
         Vector_AddPolarOffset(radius - (Random16() << 2), angle, &particle->x);
@@ -212,7 +212,7 @@ void FieldPsynergy_GrindOnTarget(void) {
       if (timer == 5 && mode != 0)
         spraying = 0;
       amplitude += -0x2666;
-      if (amplitude <= px(2)) {
+      if (amplitude <= toFIXED(2)) {
         phase++;
         timer = -1;
       }
@@ -240,7 +240,7 @@ end:
 
 /// The sway's amplitude (16.16 pixels) and how it ramps.
 #define SWAY_START 0x20000
-#define SWAY_PEAK px(6)
+#define SWAY_PEAK toFIXED(6)
 #define SWAY_RAMP 0x2666 ///< 0.15 pixels a frame
 #define SWAY_HOLD_FRAMES 10
 

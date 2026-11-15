@@ -13,13 +13,13 @@
 /// words.
 struct FieldCoordinate {
   struct {
-    u16 fraction; ///< 1/65536 pixels
-    s16 pixel;
+    u16 decimal; ///< 1/65536 pixels
+    s16 integer;
   } part[0];
   s32 fixed; ///< 16.16 fixed-point pixels
 };
 
 STATIC_ASSERT(sizeof(struct FieldCoordinate) == 4);
-STATIC_ASSERT(offsetof(struct FieldCoordinate, part[0].pixel) == 2);
+STATIC_ASSERT(offsetof(struct FieldCoordinate, part[0].integer) == 2);
 
 #endif

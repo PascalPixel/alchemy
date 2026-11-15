@@ -12,8 +12,8 @@ void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY);
   struct MapGridScrollWork *grid = gMapGridWork[0];
   s32 *view = grid->view;
-  s32 cameraX = (s16)WHOLE_PIXELS(view[0]);
-  s32 cameraZ = (s16)WHOLE_PIXELS(view[1]);
+  s32 cameraX = (s16)FIXEDtoINT(view[0]);
+  s32 cameraZ = (s16)FIXEDtoINT(view[1]);
   struct AnimationSpritePart *mark = work->marks;
   struct Actor *actor = work->actor;
   s32 x;
@@ -32,18 +32,18 @@ void FadeOverlay_DrawMarks(void) {
     return;
   x = actor->x.fixed;
   z = actor->z.fixed;
-  terrainFloor = WHOLE_PIXELS(actor->groundHeight);
+  terrainFloor = FIXEDtoINT(actor->groundHeight);
   terrainLayer = actor->layer;
   // The first tile of the solid block FieldEffect_StartFadeOverlay loaded (VRAM
   // cache entry VRAM_CACHE_ENTRY_FADE_OVERLAY; tiles are 32 bytes).
   tile = gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset >> 5;
   // The left cell, 8 pixels left of the actor.
-  x -= px(8);
+  x -= toFIXED(8);
   height =
-      WHOLE_PIXELS(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + px(16)));
-  secondHeight =
-      WHOLE_PIXELS(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + px(32))) -
-      16;
+      FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + toFIXED(16)));
+  secondHeight = FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x,
+                                                        z + toFIXED(32))) -
+                 16;
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {
@@ -57,19 +57,19 @@ void FadeOverlay_DrawMarks(void) {
     mark->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
     // Snapped to the cell's 16-pixel grid, then moved up by the ground's
     // height.
-    mark->x = ((u32)WHOLE_PIXELS(x) & 0xfff0) - cameraX;
-    screenRow = WHOLE_PIXELS(z) & 0xf0;
+    mark->x = ((u32)FIXEDtoINT(x) & 0xfff0) - cameraX;
+    screenRow = FIXEDtoINT(z) & 0xf0;
     mark->y = screenRow - cameraZ - height + 16;
     Oam_AddSpriteAtDepth(mark, 0);
   }
   // The right cell, 8 pixels right of the actor, read the same way.
-  x += px(16);
+  x += toFIXED(16);
   height =
-      WHOLE_PIXELS(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + px(16)));
+      FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + toFIXED(16)));
   mark = &work->marks[1];
-  secondHeight =
-      WHOLE_PIXELS(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + px(32))) -
-      16;
+  secondHeight = FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x,
+                                                        z + toFIXED(32))) -
+                 16;
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {
@@ -78,8 +78,8 @@ void FadeOverlay_DrawMarks(void) {
     mark->priority = 0;
     mark->tile = tile;
     mark->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
-    mark->x = ((u32)WHOLE_PIXELS(x) & 0xfff0) - cameraX;
-    screenRow = WHOLE_PIXELS(z) & 0xf0;
+    mark->x = ((u32)FIXEDtoINT(x) & 0xfff0) - cameraX;
+    screenRow = FIXEDtoINT(z) & 0xf0;
     mark->y = screenRow - cameraZ - height + 16;
     Oam_AddSpriteAtDepth(mark, 0);
   }

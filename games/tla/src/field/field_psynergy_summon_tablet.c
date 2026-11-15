@@ -69,10 +69,10 @@ struct Chase {
 void Motion_StepTowardTarget(struct Chase *chase, s32 speed) {
   s32 dx = chase->targetX - chase->x;
   s32 dz = chase->targetZ - chase->z;
-  u16 angle = ArcTan2(dz, dx);
+  u16 angle = Trig_Atan(dz, dx);
 
-  chase->x += Iwram_MulQ16(Trig_Cos(angle), speed);
-  chase->z += Iwram_MulQ16(Trig_Sin(angle), speed);
+  chase->x += Iwram_MulFX(Trig_Cos(angle), speed);
+  chase->z += Iwram_MulFX(Trig_Sin(angle), speed);
   {
     s32 nextDx = chase->targetX - chase->x;
     s32 nextDz = chase->targetZ - chase->z;
@@ -153,20 +153,20 @@ void SummonTablet_UpdateMotes(void) {
   for (i = 47; i >= 0; i--, sprite++, mote++) {
     if (work->state == 0) {
       if (mote->timer >= 0) {
-        Motion_StepTowardTarget(mote, px(4));
+        Motion_StepTowardTarget(mote, toFIXED(4));
         sprite->x = mote->x;
         sprite->y = mote->z;
         EffectSprite_Draw(sprite);
       }
       mote->timer++;
     } else if (work->state == 2) {
-      Motion_StepTowardTarget(mote, px(6));
+      Motion_StepTowardTarget(mote, toFIXED(6));
       sprite->x = mote->x;
       sprite->y = mote->z;
       EffectSprite_Draw(sprite);
     } else if (work->state == 3) {
       if (mote->x != work->targetX || mote->z != work->targetZ) {
-        Motion_StepTowardTarget(mote, px(6));
+        Motion_StepTowardTarget(mote, toFIXED(6));
         sprite->x = mote->x;
         sprite->y = mote->z;
         EffectSprite_Draw(sprite);
@@ -219,12 +219,12 @@ void SummonTablet_PlayRunes(s32 targetId) {
   s32 delay;
   s32 angle;
   s32 i;
-  s32 startX = 130 * Q16_ONE;
-  s32 startZ = 30 * Q16_ONE;
+  s32 startX = 130 * FIXED_ONE;
+  s32 startZ = 30 * FIXED_ONE;
 
   Field_StartColorTransition(8, gFieldEffect_TargetColors[gFrameCount & 7]);
   pos[0] = owner->x.fixed;
-  pos[1] = owner->y.fixed + 24 * Q16_ONE;
+  pos[1] = owner->y.fixed + 24 * FIXED_ONE;
   pos[2] = owner->z.fixed;
   Camera_WorldToScreen(pos);
   ownerX = pos[0];
@@ -252,8 +252,8 @@ void SummonTablet_PlayRunes(s32 targetId) {
     sprite->depth = 240;
     mote->x = targetX;
     mote->z = targetZ;
-    mote->targetX = ((i % 16) * 3 << 18) + 30 * Q16_ONE;
-    mote->targetZ = ((i / 16) * 3 << 19) + 30 * Q16_ONE;
+    mote->targetX = ((i % 16) * 3 << 18) + 30 * FIXED_ONE;
+    mote->targetZ = ((i / 16) * 3 << 19) + 30 * FIXED_ONE;
     mote->timer = -i;
     sprite++;
     mote++;
@@ -364,12 +364,12 @@ void SummonTablet_PlayRunes(s32 targetId) {
           delay -= 3;
           mote++;
         }
-        work->radius = 60 * Q16_ONE;
+        work->radius = 60 * FIXED_ONE;
         work->angle = TRIG_TURN * 3 / 4;
         work->originX = startX;
         work->originZ = startZ;
         work->moving = 1;
-        work->spacing = 4 * Q16_ONE;
+        work->spacing = 4 * FIXED_ONE;
         work->state = 2;
       }
       if (timer == 0)
@@ -394,7 +394,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
     case 6:
       if (timer == 0)
         work->spacing = 0;
-      work->radius += -2 * Q16_ONE;
+      work->radius += -2 * FIXED_ONE;
       if (work->radius < 0) {
         work->radius = 0;
         state++;
@@ -416,13 +416,13 @@ void SummonTablet_PlayRunes(s32 targetId) {
       mote = &work->sparks[nextSpark];
       mote->timer = 0;
       mote->x = target->x.fixed;
-      mote->z = target->y.fixed + 12 * Q16_ONE;
+      mote->z = target->y.fixed + 12 * FIXED_ONE;
       mote->unk08 = target->z.fixed;
-      Vector_AddPolarOffset(Random16() * 4 + 2 * Q16_ONE, angle, &mote->x);
+      Vector_AddPolarOffset(Random16() * 4 + 2 * FIXED_ONE, angle, &mote->x);
       mote->targetX = 0;
-      mote->targetZ = Q16_ONE * 9 / 2;
+      mote->targetZ = FIXED_ONE * 9 / 2;
       mote->unk14 = 0;
-      Vector_AddPolarOffset(Random16() * 2 + 2 * Q16_ONE, angle,
+      Vector_AddPolarOffset(Random16() * 2 + 2 * FIXED_ONE, angle,
                             &work->sparks[nextSpark].targetX);
       nextSpark = (nextSpark + 1) & 31;
     }
@@ -431,8 +431,8 @@ void SummonTablet_PlayRunes(s32 targetId) {
     timer++;
   } while (state != FIELD_PSYNERGY_FINISHED);
   Actor_StartIdleFar(owner);
-  owner->scaleX = Q16_ONE;
-  owner->scaleY = Q16_ONE;
+  owner->scaleX = FIXED_ONE;
+  owner->scaleY = FIXED_ONE;
   Event_Wait(10);
   Task_Remove(SummonTablet_UpdateMotes);
   FieldPsynergy_FadeFromCastColor();

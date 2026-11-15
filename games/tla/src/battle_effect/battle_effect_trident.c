@@ -102,7 +102,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   offset = 0x2400;
   // Twelve shaded droplets, 2 to 24 wide.
   for (i = 0; i != 12; i++) {
-    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, Q16_ONE);
+    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, FIXED_ONE);
     circles[i] = offset;
     offset += (i * 2 + 3) * size / 2;
     size += 2;
@@ -156,8 +156,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
       work->shakeFrames = 16;
       EFFECT_SHOW_DAMAGE(SE_CLATTER);
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_StartActorMotion(args->targets[i], 1, px(2), px(8), px(8),
-                                      120);
+        BattleEffect_StartActorMotion(args->targets[i], 1, toFIXED(2),
+                                      toFIXED(8), toFIXED(8), 120);
       }
     }
     if (frame == 0) {
@@ -190,10 +190,10 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
       if (visible > 0) {
         source = gTrident_UnitScale;
         placement[3] = 0;
-        placement[1] = px(255);
+        placement[1] = toFIXED(255);
         for (i = 0; i != 4; i++) {
-          placement[0] = px(left * 2) + px(16);
-          placement[2] = px(rise + 40 + i * 32);
+          placement[0] = INTtoFIXED(left * 2) + toFIXED(16);
+          placement[2] = INTtoFIXED(rise + 40 + i * 32);
           Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
                                             (s32 *)&source, 0);
         }
@@ -214,21 +214,21 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           if (frame > 39) {
             u8 *pool = work->sheet + 0x4c86;
 
-            BattleEffect_DrawShadedCircles(pool, grow, Q16_ONE);
+            BattleEffect_DrawShadedCircles(pool, grow, FIXED_ONE);
             Canvas_BlitAtFoot(pool, centerX, 100, grow);
           }
           continue;
         }
         if (p->variant == 0) {
           s32 angle = Random16() & 0x7fff;
-          s32 heading = angle + TRIG_TURN / 4;
+          s32 heading = angle + DEGtoANG(90);
           s32 speed = (Random16() & 511) + 512;
           s32 sine;
 
           sine = Trig_Sin(heading) * speed;
-          x = px(centerX);
+          x = INTtoFIXED(centerX);
           p->x = (sine >> 4) + x;
-          p->y = ((Trig_Cos(heading) * speed) >> 3) + px(104);
+          p->y = ((Trig_Cos(heading) * speed) >> 3) + toFIXED(104);
           angle += TRIG_TURN * 3 / 4;
           p->velocityX = (Trig_Sin(angle) * speed) >> 9;
           p->velocityY = (Trig_Cos(angle) * speed) >> 8;
@@ -236,7 +236,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         }
         if ((u32)p->variant <= 31) {
           s32 drop =
-              (Q_16_16_TO_INT(Trig_Sin(p->variant << 10) * p->velocityZ)) * 2;
+              (FIXEDtoINT(Trig_Sin(p->variant << 10) * p->velocityZ)) * 2;
           s32 index = drop - 2;
 
           if ((u32)index <= 61) {
@@ -285,12 +285,12 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           continue;
         }
         model->shade = shade;
-        Transform_Reset();
-        Transform_ApplyTranslation(px(centerX - 64),
-                                   px(gTrident_RingHeights[i]), 0);
-        Transform_ApplyAxisScale(scale, scale * 2, scale);
+        Matrix_Initialize();
+        Matrix_Translate(INTtoFIXED(centerX - 64),
+                         INTtoFIXED(gTrident_RingHeights[i]), 0);
+        Matrix_Scale(scale, scale * 2, scale);
         model->scrollU = ((frame + i * 5) & 7) << 4;
-        Transform_ApplyPitch(3000);
+        Matrix_RotateX(3000);
         Render_TransformVertices(gBattleEffect_CylinderCorners, vertices, 32);
         Render_DrawModelList(model);
       }
@@ -332,14 +332,14 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
             model->shade = -16;
           }
           texture.pixels = work->sheet + (x << 12) + TRIDENT_JAGGED_STREAKS;
-          Transform_Reset();
-          Transform_ApplyTranslation(px(centerX - 64), px(32), 0);
-          Transform_ApplyRoll(spinner->z);
+          Matrix_Initialize();
+          Matrix_Translate(INTtoFIXED(centerX - 64), toFIXED(32), 0);
+          Matrix_RotateZ(spinner->z);
           if (i & 1) {
-            Transform_ApplyYaw(TRIG_TURN / 2);
+            Matrix_RotateY(DEGtoANG(180));
           }
           spinner->z += spinner->velocityZ;
-          Transform_ApplyAxisScale(Q16_ONE * 2, 0x12710, Q16_ONE);
+          Matrix_Scale(FIXED_ONE * 2, 0x12710, FIXED_ONE);
           Render_TransformVertices(gTrident_ProngCorners + x * 4, vertices, 4);
           Render_DrawModelList(model);
         }
@@ -354,7 +354,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
       const u8 *cellTable;
 
       if (frame == 64) {
-        for (i = 0, p = work->particles, x = px(centerX); i != 32; i++, p++) {
+        for (i = 0, p = work->particles, x = INTtoFIXED(centerX); i != 32;
+             i++, p++) {
           s32 angle = Random16();
           s32 speed = (Random16() & 511) + 512;
           s32 velocityY;
@@ -364,20 +365,20 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           p->velocityY = velocityY;
           if (i > 15) {
             p->x = (p->velocityX << 2) + x;
-            p->y = (velocityY << 2) + px(100);
+            p->y = (velocityY << 2) + toFIXED(100);
             p->variant = (16 - i) / 4;
           } else {
             p->x = x;
-            p->y = px(Random16() % 104);
+            p->y = INTtoFIXED(Random16() % 104);
             p->variant = -i / 4;
           }
         }
         for (i = 0, p = TRIDENT_SPARKS; i != TRIDENT_SPARK_COUNT; i++, p++) {
-          s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
+          s32 angle = (Random16() & 0x7fff) + DEGtoANG(90);
           s32 speed = (Random16() & 511) + 512;
 
           p->x = x;
-          p->y = px(100);
+          p->y = toFIXED(100);
           p->velocityX = (Trig_Sin(angle) * speed) >> 6;
           p->velocityY = (Trig_Cos(angle) * speed) >> 5;
           p->variant = (Random16() & 15) + 16;
@@ -391,7 +392,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
                   Q_16_16_UPPER_HALF(drawn->x) - 16,
                   Q_16_16_UPPER_HALF(drawn->y) - 32, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(drawn, 62, -px(1) / 4);
+          BattleEffectKernels_IntegrateVector2(drawn, 62, -toFIXED(1) / 4);
         }
         drawn->variant++;
       }
@@ -410,7 +411,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
                 Q_16_16_UPPER_HALF(drawn->x) - spark / 2,
                 Q_16_16_UPPER_HALF(drawn->y) - spark, spark, spark * 2);
         drawn->variant--;
-        BattleEffectKernels_IntegrateVector2(drawn, 56, px(1) / 8);
+        BattleEffectKernels_IntegrateVector2(drawn, 56, toFIXED(1) / 8);
       }
     }
 
@@ -419,9 +420,9 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
       for (i = 0; i != 4; i++) {
         s32 k = i & 3;
         s32 angle = Random16();
-        s32 x = centerX + (Q_16_16_TO_INT(Trig_Sin(angle) << 3)) -
+        s32 x = centerX + (FIXEDtoINT(Trig_Sin(angle) << 3)) -
                 (gBattleEffect_GlintPictureWidths[k] >> 1);
-        s32 y = (i << 5) + (Q_16_16_TO_INT(Trig_Cos(angle) << 4)) -
+        s32 y = (i << 5) + (FIXEDtoINT(Trig_Cos(angle) << 4)) -
                 (gBattleEffect_GlintPictureHeights[k] >> 1);
 
         {
@@ -561,8 +562,8 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
               FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
     if ((u32)(frame - 4) <= 11) {
       for (i = 0; i != 16; i++) {
-        s32 x = pos.x + (Q_16_16_TO_INT(frame * Trig_Sin(i << 12)));
-        s32 y = pos.y + (Q_16_16_TO_INT(frame * Trig_Cos(i << 12))) - frame;
+        s32 x = pos.x + (FIXEDtoINT(frame * Trig_Sin(i << 12)));
+        s32 y = pos.y + (FIXEDtoINT(frame * Trig_Cos(i << 12))) - frame;
 
         draw[0](canvas, work->sheet + ((frame - 4) / 2 << 11), x - 16,
                 y - FLASH_BURST_HEIGHT, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
@@ -573,11 +574,11 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
     if (frame == 4) {
       caster->autoFaceMotion = 0;
       caster->verticalMotionStrength = 0x9999;
-      caster->velocityY = px(15);
+      caster->velocityY = toFIXED(15);
       if (caster->x < 0)
-        caster->velocityX = -px(8);
+        caster->velocityX = -toFIXED(8);
       else
-        caster->velocityX = px(8);
+        caster->velocityX = toFIXED(8);
       if (mode == LEAPING_STRIKE_PLANETARY)
         caster->velocityX = -caster->velocityX;
       Actor_SelectAnimationFar(caster, 2);
@@ -625,8 +626,8 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
             angle = Random16() & TRIG_ANGLE_MASK;
 
             speed += 32;
-            spark->x = px(pos.x);
-            spark->y = px(pos.y - 24);
+            spark->x = INTtoFIXED(pos.x);
+            spark->y = INTtoFIXED(pos.y - 24);
             spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
             spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 6;
             spark->variant = (Random16() & 7) + 32;
@@ -679,16 +680,16 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
         model->vertices = projected;
         model->shade = shade;
         if (frame <= 45) {
-          Transform_Reset();
-          Transform_ApplyTranslation(px(pos.x - 60), px(pos.y - 80), 0);
-          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+          Matrix_Initialize();
+          Matrix_Translate(INTtoFIXED(pos.x - 60), INTtoFIXED(pos.y - 80), 0);
+          Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
           if (args->side == EFFECT_SIDE_ENEMIES) {
-            Transform_ApplyRoll(-0x3388);
+            Matrix_RotateZ(-0x3388);
           } else {
-            Transform_ApplyYaw(TRIG_TURN / 2);
-            Transform_ApplyRoll(-0x3388);
+            Matrix_RotateY(DEGtoANG(180));
+            Matrix_RotateZ(-0x3388);
           }
-          Transform_ApplyUniformScale(0x286a0);
+          Matrix_ScaleUniform(0x286a0);
           Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
           Render_DrawModelList(model);
         }
@@ -711,19 +712,20 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
               s32 scale;
 
               start = frame - start;
-              scale = start * gLeapingStrike_WaveGrowth[i] * 2000 + Q16_ONE / 2;
+              scale =
+                  start * gLeapingStrike_WaveGrowth[i] * 2000 + FIXED_ONE / 2;
 
               model->shade = shade;
-              Transform_Reset();
+              Matrix_Initialize();
               model->scrollV = (frame * 8 + i * 16) & 63;
-              Transform_ApplyTranslation(px(pos.x - 60),
-                                         px(gLeapingStrike_WaveHeights[i]), 0);
-              Transform_ApplyAxisScale(scale >> 1, scale << 2, scale / 4);
-              Transform_ApplyPitch(1000);
+              Matrix_Translate(INTtoFIXED(pos.x - 60),
+                               INTtoFIXED(gLeapingStrike_WaveHeights[i]), 0);
+              Matrix_Scale(scale >> 1, scale << 2, scale / 4);
+              Matrix_RotateX(1000);
               if (i & 1)
-                Transform_ApplyYaw((i * 4 + frame) << 11);
+                Matrix_RotateY((i * 4 + frame) << 11);
               else
-                Transform_ApplyYaw((i * 4 - frame) << 11);
+                Matrix_RotateY((i * 4 - frame) << 11);
               Render_TransformVertices(gBattleEffect_RingCorners, projected,
                                        32);
               Render_DrawModelList(model);
@@ -762,11 +764,11 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
               scroll = 7;
               scroll &= frame + i * 5;
               model->scrollU = scroll << 4;
-              Transform_Reset();
-              Transform_ApplyTranslation(px(base->x - 60),
-                                         px(gLeapingStrike_RingHeights[i]), 0);
-              Transform_ApplyAxisScale(scale, scale * 2, scale);
-              Transform_ApplyPitch(2000);
+              Matrix_Initialize();
+              Matrix_Translate(INTtoFIXED(base->x - 60),
+                               INTtoFIXED(gLeapingStrike_RingHeights[i]), 0);
+              Matrix_Scale(scale, scale * 2, scale);
+              Matrix_RotateX(2000);
               Render_TransformVertices(gBattleEffect_CylinderCorners, projected,
                                        32);
               Render_DrawModelList(model);
@@ -781,8 +783,8 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
     if (mode == LEAPING_STRIKE_PLANETARY && frame == 50) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       for (i = 0; i != args->targetCount; i++)
-        BattleEffect_StartActorMotion(args->targets[i], 1, px(4), px(16), px(1),
-                                      250);
+        BattleEffect_StartActorMotion(args->targets[i], 1, toFIXED(4),
+                                      toFIXED(16), toFIXED(1), 250);
     }
 
     // The sparks fall, bounce off the ground at 112 and shrink.
@@ -790,15 +792,15 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
     for (i = 0; i != 256; i++) {
       if (spark->variant > 0) {
         spark->variant--;
-        BattleEffectKernels_IntegrateVector2(spark, 56, px(1) / 8);
-        if (spark->y > px(112)) {
+        BattleEffectKernels_IntegrateVector2(spark, 56, toFIXED(1) / 8);
+        if (spark->y > toFIXED(112)) {
           spark->velocityY = -spark->velocityY / 2;
-        } else if ((u32)spark->x < px(127) && spark->y >= 0) {
+        } else if ((u32)spark->x < toFIXED(127) && spark->y >= 0) {
           s32 size = spark->variant / 8 + 1;
 
           draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                  (Q_16_16_TO_INT(spark->x)) - size / 2,
-                  (Q_16_16_TO_INT(spark->y)) - size, size, size * 2);
+                  (FIXEDtoINT(spark->x)) - size / 2,
+                  (FIXEDtoINT(spark->y)) - size, size, size * 2);
         }
       }
       spark++;

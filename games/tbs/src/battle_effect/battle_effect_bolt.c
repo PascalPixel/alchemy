@@ -95,10 +95,10 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
                j++) {
             struct Particle *spark = &PARTICLES[i * 128 + j];
             s32 speed = (Random16() & 0x1ff) + 64;
-            s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
+            s32 angle = (Random16() & 0x7fff) - DEGtoANG(90);
 
-            spark->x = px(screen.x);
-            spark->y = px(104);
+            spark->x = INTtoFIXED(screen.x);
+            spark->y = toFIXED(104);
             spark->velocityX = (Trig_Sin(angle) * speed) >> 5;
             spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
             spark->variant = (Random16() & 7) + 32;
@@ -142,13 +142,14 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
 
       if (spark->variant > 0) {
         spark->variant--;
-        Particle_AdvanceWithGravity2D(spark, 60, px(1) / 16);
-        if (spark->y > px(104)) {
+        Particle_AdvanceWithGravity2D(spark, 60, toFIXED(1) / 16);
+        if (spark->y > toFIXED(104)) {
           spark->velocityY = -spark->velocityY / 2;
-        } else if ((spark->x >= 0 && spark->x < px(127)) && spark->y >= 0) {
+        } else if ((spark->x >= 0 && spark->x < toFIXED(127)) &&
+                   spark->y >= 0) {
           s32 size = spark->variant / 16 + 1;
-          s32 x = WHOLE_PIXELS(spark->x);
-          s32 y = WHOLE_PIXELS(spark->y);
+          s32 x = FIXEDtoINT(spark->x);
+          s32 y = FIXEDtoINT(spark->y);
 
           EFFECT_DRAW_MOTE(draw[0], canvas, sprites, x, y, size);
         }

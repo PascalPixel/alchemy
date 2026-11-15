@@ -242,7 +242,7 @@ void Menu_UpdateEntryObjectTransforms(void) {
         transform[2] = (menu->memberY[i] << 16) + top;
         transform[3] = 0;
         Render_ApplyProjectedPlacementAtDepthFar(
-            menu->memberSprites[i], transform, scale, Q16_ONE / 4, 250);
+            menu->memberSprites[i], transform, scale, FIXED_ONE / 4, 250);
       }
     }
   }
@@ -328,7 +328,7 @@ void Menu_PlaceOwnerEntryObjects(struct RenderInput *window, s32 originX,
     if (menu->memberSprites[i] != NULL) {
       menu->memberX[i] = (i * 3 + ((s16)window->x + originX)) * 8;
       menu->memberY[i] = ((s16)window->y + originY) * 8 + 16;
-      menu->memberScale[i] = Q16_ONE;
+      menu->memberScale[i] = FIXED_ONE;
     }
   }
   menu->memberSpritesShown = ICON_SHOWN;
@@ -423,7 +423,7 @@ void DjinnFigures_InitializeTopRow(void) {
     menu->figures[i] = object;
     menu->figureX[i] = 16;
     menu->figureY[i] = 200;
-    menu->figureScales[i] = Q16_ONE;
+    menu->figureScales[i] = FIXED_ONE;
     menu->figureDepths[i] = 0x4000;
   }
   menu->figuresShown = 1;

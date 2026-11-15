@@ -12,17 +12,17 @@
 /// The World Map's size in field pixels each way, which the picture shows at
 /// 240 by 160.
 #define WORLD_MAP_WORLD_SIZE 4096
-#define WORLD_MAP_X_ORIGIN px(4096) ///< field x of the picture's left edge
+#define WORLD_MAP_X_ORIGIN toFIXED(4096) ///< field x of the picture's left edge
 /// The first ordinary area actor, the first slot with a row of
 /// gWorldPicture_AreaMarkers whatever the leader is.
 #define WORLD_MAP_FIRST_AREA_ACTOR 11
 #define WORLD_MAP_MARKER_CAPACITY 66 ///< one marker per actor slot
 /// The cursor's sprite entry, after the markers'.
 #define WORLD_MAP_CURSOR_PART WORLD_MAP_MARKER_CAPACITY
-#define WORLD_MAP_CURSOR_MIN_SPEED px(1) ///< screen pixels a frame
-#define WORLD_MAP_CURSOR_MAX_SPEED px(6) ///< screen pixels a frame
+#define WORLD_MAP_CURSOR_MIN_SPEED toFIXED(1) ///< screen pixels a frame
+#define WORLD_MAP_CURSOR_MAX_SPEED toFIXED(6) ///< screen pixels a frame
 /// Added to the cursor's speed each frame the d-pad is held.
-#define WORLD_MAP_CURSOR_ACCELERATION (px(1) / 8)
+#define WORLD_MAP_CURSOR_ACCELERATION (toFIXED(1) / 8)
 #define WORLD_MAP_MARKER_BLEND_STEPS 32 ///< gWorldMap_MarkerBlendCycle's rows
 /// The cursor's limits, in screen pixels; y goes from 0.
 ///@{
@@ -119,14 +119,15 @@ void WorldPicture_Initialize(void) {
   }
   Heap_Release(markerTiles);
   if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT)) {
-    work->cursorX.fixed = px(WORLD_MAP_SCREEN_WIDTH) / 2;
-    work->cursorY.fixed = px(WORLD_MAP_SCREEN_HEIGHT) / 2;
+    work->cursorX.fixed = toFIXED(WORLD_MAP_SCREEN_WIDTH) / 2;
+    work->cursorY.fixed = toFIXED(WORLD_MAP_SCREEN_HEIGHT) / 2;
   } else {
-    work->cursorX.fixed = px(WHOLE_PIXELS(actor->x.fixed - WORLD_MAP_X_ORIGIN) *
-                             WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE);
+    work->cursorX.fixed =
+        toFIXED(FIXEDtoINT(actor->x.fixed - WORLD_MAP_X_ORIGIN) *
+                WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE);
     work->cursorY.fixed =
-        px((actor->z.part[0].pixel * WORLD_MAP_SCREEN_HEIGHT) /
-           WORLD_MAP_WORLD_SIZE);
+        toFIXED((actor->z.part[0].integer * WORLD_MAP_SCREEN_HEIGHT) /
+                WORLD_MAP_WORLD_SIZE);
   }
   work->cursorVramBlock = Resource_LoadFixedBlockBIntoFreeSlotFar();
   tile = gVramCacheEntries[work->cursorVramBlock].offset;
@@ -223,9 +224,9 @@ void WorldPicture_UpdateMarkers(void) {
       return;
 #endif
     if (areaActor != NULL) {
-      cursorX = WHOLE_PIXELS(areaActor->x.fixed - WORLD_MAP_X_ORIGIN) *
+      cursorX = FIXEDtoINT(areaActor->x.fixed - WORLD_MAP_X_ORIGIN) *
                 WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
-      cursorY = areaActor->z.part[0].pixel * WORLD_MAP_SCREEN_HEIGHT /
+      cursorY = areaActor->z.part[0].integer * WORLD_MAP_SCREEN_HEIGHT /
                 WORLD_MAP_WORLD_SIZE;
     }
   } else {
@@ -236,14 +237,14 @@ void WorldPicture_UpdateMarkers(void) {
       position.y = 0;
       position.z = work->cursorY.fixed;
       Vector_AddPolarOffset(work->cursorSpeed, angle, &position);
-      if (position.x < px(WORLD_MAP_CURSOR_MIN_X))
-        position.x = px(WORLD_MAP_CURSOR_MIN_X);
-      if (position.x > px(WORLD_MAP_CURSOR_MAX_X))
-        position.x = px(WORLD_MAP_CURSOR_MAX_X);
+      if (position.x < toFIXED(WORLD_MAP_CURSOR_MIN_X))
+        position.x = toFIXED(WORLD_MAP_CURSOR_MIN_X);
+      if (position.x > toFIXED(WORLD_MAP_CURSOR_MAX_X))
+        position.x = toFIXED(WORLD_MAP_CURSOR_MAX_X);
       if (position.z < 0)
         position.z = 0;
-      if (position.z > px(WORLD_MAP_CURSOR_MAX_Y))
-        position.z = px(WORLD_MAP_CURSOR_MAX_Y);
+      if (position.z > toFIXED(WORLD_MAP_CURSOR_MAX_Y))
+        position.z = toFIXED(WORLD_MAP_CURSOR_MAX_Y);
       work->cursorX.fixed = position.x;
       work->cursorY.fixed = position.z;
       if (work->cursorSpeed < WORLD_MAP_CURSOR_MAX_SPEED)
@@ -251,8 +252,8 @@ void WorldPicture_UpdateMarkers(void) {
     } else {
       work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
     }
-    cursorX = work->cursorX.part[0].pixel;
-    cursorY = work->cursorY.part[0].pixel;
+    cursorX = work->cursorX.part[0].integer;
+    cursorY = work->cursorY.part[0].integer;
   }
 
   // Actor id 0 consumes no marker row.
@@ -290,9 +291,9 @@ void WorldPicture_UpdateMarkers(void) {
       continue;
 
     // Field x starts at 4096; the picture covers 4096 square world pixels.
-    x = WHOLE_PIXELS(areaActor->x.fixed - WORLD_MAP_X_ORIGIN) *
+    x = FIXEDtoINT(areaActor->x.fixed - WORLD_MAP_X_ORIGIN) *
         WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
-    y = areaActor->z.part[0].pixel * WORLD_MAP_SCREEN_HEIGHT /
+    y = areaActor->z.part[0].integer * WORLD_MAP_SCREEN_HEIGHT /
         WORLD_MAP_WORLD_SIZE;
     marker->objectMode = mode;
     marker->tile = tileBase + tile;
@@ -321,13 +322,13 @@ void WorldPicture_UpdateMarkers(void) {
   if (gKeysHeld == 0) {
     if (nearestMarker != -1) {
       if (nearestDistanceSquared <= 1) {
-        work->cursorX.fixed = px(nearestX);
-        work->cursorY.fixed = px(nearestY);
+        work->cursorX.fixed = toFIXED(nearestX);
+        work->cursorY.fixed = toFIXED(nearestY);
         work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
       } else {
-        if (work->cursorSpeed < px(2))
-          work->cursorSpeed = px(2);
-        angle = ArcTan2(nearestY - cursorY, nearestX - cursorX);
+        if (work->cursorSpeed < toFIXED(2))
+          work->cursorSpeed = toFIXED(2);
+        angle = Trig_Atan(nearestY - cursorY, nearestX - cursorX);
         position.x = work->cursorX.fixed;
         position.y = 0;
         position.z = work->cursorY.fixed;
@@ -337,8 +338,8 @@ void WorldPicture_UpdateMarkers(void) {
         if (work->cursorSpeed < WORLD_MAP_CURSOR_MAX_SPEED)
           work->cursorSpeed += WORLD_MAP_CURSOR_ACCELERATION;
       }
-      cursorX = work->cursorX.part[0].pixel;
-      cursorY = work->cursorY.part[0].pixel;
+      cursorX = work->cursorX.part[0].integer;
+      cursorY = work->cursorY.part[0].integer;
     } else {
       work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
     }
@@ -482,11 +483,11 @@ void Field_UpdateActorVisibilityBounds(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId);
   actor = gFieldWork->camera;
   x = actor->x.fixed;
-  left = x - px(320);
-  right = x + px(320);
+  left = x - toFIXED(320);
+  right = x + toFIXED(320);
   y = actor->z.fixed;
-  top = y - px(600);
-  bottom = y + px(400);
+  top = y - toFIXED(600);
+  bottom = y + toFIXED(400);
 
   id = ACTOR_FIRST_PLACED;
   do {
@@ -506,7 +507,7 @@ void Field_UpdateActorVisibilityBounds(void) {
   } while (id < WORLD_MAP_MARKER_CAPACITY);
 }
 
-/// On the World Map, zooms the view out to Q16_ONE * 8 / 13 while L is held,
+/// On the World Map, zooms the view out to FIXED_ONE * 8 / 13 while L is held,
 /// then back.
 void WorldMap_ZoomOutWhileLHeld(void) {
   struct FieldWork *work =
@@ -516,11 +517,11 @@ void WorldMap_ZoomOutWhileLHeld(void) {
     Task_SuspendOverlayTasks();
     Field_UpdateActorVisibilityBounds();
     Leader_StopMoving();
-    WorldMap_StartZoom(Q16_ONE * 8 / 13, 6);
+    WorldMap_StartZoom(FIXED_ONE * 8 / 13, 6);
     while (gKeysHeld & KEY_L) {
       wait(1);
     }
-    WorldMap_StartZoom(Q16_ONE, 6);
+    WorldMap_StartZoom(FIXED_ONE, 6);
     Task_ResumeOverlayTasks();
   }
 }

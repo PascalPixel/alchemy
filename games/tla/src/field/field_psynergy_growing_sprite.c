@@ -16,10 +16,10 @@ void BattleEffect_UpdateGrowingParticleSprite(
   s32 scale;
 
   sprite->oam.index = tiles + ((particle->timer >> 2) & 7) * 8;
-  scale = sprite->scaleX + Q16_ONE / 10;
+  scale = sprite->scaleX + FIXED_ONE / 10;
   sprite->scaleX = scale;
-  if (scale > Q16_ONE)
-    scale = Q16_ONE;
+  if (scale > FIXED_ONE)
+    scale = FIXED_ONE;
   sprite->scaleX = scale;
   sprite->scaleY = scale;
   SET_VECTOR(position, particle->x, particle->y, particle->z);

@@ -206,8 +206,8 @@ static UNREAD_RESULT AlpineCrossing_LeaderFaceFeizhi(struct Actor *leader) {
   struct Actor *feizhi;
 
   feizhi = Actor_Get(ACTOR_FEIZHI);
-  leader->facing = ArcTan2(feizhi->z.fixed - leader->z.fixed,
-                           feizhi->x.fixed - leader->x.fixed);
+  leader->facing = Trig_Atan(feizhi->z.fixed - leader->z.fixed,
+                             feizhi->x.fixed - leader->x.fixed);
 #ifndef UBFIX
   return 0;
 #endif
@@ -987,12 +987,12 @@ s32 Scene_Initialize(void) {
       Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST, 0);
       Actor_FaceDirection(ACTOR_FEIZHI, FACING_NORTH_NORTHWEST, 0);
       Actor_SetScript(ACTOR_HSU, gAlpineCrossing_HsuStruggle);
-      Actor_Get(ACTOR_HSU)->scaleX = -Q16_ONE;
+      Actor_Get(ACTOR_HSU)->scaleX = -FIXED_ONE;
     }
     if (!Event_GetFlag(FLAG_HSU_RESCUED)) {
       Actor_SetPosition(ACTOR_HSU, 164, 280);
       Actor_SetScript(ACTOR_HSU, gAlpineCrossing_HsuStruggle);
-      Actor_Get(ACTOR_HSU)->scaleX = -Q16_ONE;
+      Actor_Get(ACTOR_HSU)->scaleX = -FIXED_ONE;
     }
     if (gMainRoutineWork.entrance ==
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST &&

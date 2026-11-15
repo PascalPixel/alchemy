@@ -396,9 +396,9 @@ void Sanctum_HighlightMembers(struct RenderInput *window, s32 selected) {
           Sprite_StartAnimationFar(shop->partyMemberIcons[i], 30);
         else
           Sprite_StartAnimationFar(shop->partyMemberIcons[i], 1);
-        shop->partyMemberScale[i] = Q16_ONE;
+        shop->partyMemberScale[i] = FIXED_ONE;
         if (!Sanctum_NeedsService(unitId, serviceKind))
-          shop->partyMemberScale[i] = Q16_ONE * 7 / 10;
+          shop->partyMemberScale[i] = FIXED_ONE * 7 / 10;
       }
     }
   }
@@ -427,7 +427,7 @@ void Sanctum_DrawFee(struct RenderInput *window, s32 unitId) {
 }
 
 /// A position in 16.16 fixed-point pixels, as Vector_AddPolarOffset moves it.
-struct FixedPointPosition {
+struct Point {
   s32 x;
   s32 y;
   s32 z;
@@ -438,7 +438,7 @@ struct FixedPointPosition {
 /// until the burst ends and it is freed on arrival.
 void Sanctum_UpdateBurstSparkle(struct FieldParticle *sparkle) {
   struct FieldParticle *particle = (struct FieldParticle *)sparkle;
-  struct FixedPointPosition position;
+  struct Point position;
   s8 *statePointer;
   s32 state;
   s32 result;
@@ -448,15 +448,15 @@ void Sanctum_UpdateBurstSparkle(struct FieldParticle *sparkle) {
   if (state == SANCTUM_SPARKLE_START) {
     position.x = particle->originX;
     position.z = particle->originZ;
-    Vector_AddPolarOffset(px(40), Random16(), &position.x);
+    Vector_AddPolarOffset(toFIXED(40), Random16(), &position.x);
     FieldParticle_SetPositionFar(sparkle, position.x, position.z);
     position.x = particle->originX;
     position.z = particle->originZ;
-    Vector_AddPolarOffset(px(4), Random16(), &position.x);
+    Vector_AddPolarOffset(toFIXED(4), Random16(), &position.x);
     particle->targetX = position.x;
     particle->targetZ = position.z;
-    particle->maxSpeed = px(2);
-    particle->acceleration = px(2) / 5;
+    particle->maxSpeed = toFIXED(2);
+    particle->acceleration = toFIXED(2) / 5;
     particle->limitTurnStep = state;
     *statePointer = (u8)*statePointer + 1;
   } else if (state == SANCTUM_SPARKLE_FLYING) {
@@ -493,7 +493,7 @@ void Sprite_SetAnimationSpeedFar(void *object, s32 arg);
 void Sanctum_RunMemberIconBurst(s32 member) {
   struct ShopWork *shop;
   s8 savedCursorMode;
-  struct FixedPointPosition position;
+  struct Point position;
   struct FieldParticle *effect;
   s32 taskPriority;
   s32 effectIndex;
@@ -510,7 +510,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   Task_Add(Sanctum_UpdateBurst, taskPriority);
 
   position.x = shop->partyMemberX[member] << 16;
-  position.z = (shop->partyMemberY[member] << 16) - px(12);
+  position.z = (shop->partyMemberY[member] << 16) - toFIXED(12);
 
   effectIndex = 0;
   effect = shop->effects;
@@ -521,8 +521,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
                                  Sanctum_UpdateBurstSparkle);
     FieldParticle_SetActorModeFar((struct FieldParticle *)effect, 7);
     Sprite_SetAnimationColorModesFar(effect->object, (Random16() * 7) >> 16);
-    effect->scaleY = Q16_ONE * 7 / 10;
-    effect->scaleX = Q16_ONE * 7 / 10;
+    effect->scaleY = FIXED_ONE * 7 / 10;
+    effect->scaleX = FIXED_ONE * 7 / 10;
     wait(3);
     if (effectIndex == 5) {
       shop->burstMember = member;

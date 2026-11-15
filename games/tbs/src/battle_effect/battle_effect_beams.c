@@ -220,13 +220,13 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
         s32 size = spark->variant;
 
         if (size > 0) {
-          Transform_ProjectPoint(&spark->x, ScreenPoint_Coordinates(&screen));
+          Matrix_ProjectPoint(&spark->x, ScreenPoint_Coordinates(&screen));
           screen.x += scrollX;
           size >>= 3;
           size += 2;
           EFFECT_DRAW_FLARE(draw[pair & 1], canvas, sheet, screen.x, screen.y,
                             size);
-          Particle_AdvanceWithGravity3D(spark, 60, -px(1) / 64);
+          Particle_AdvanceWithGravity3D(spark, 60, -toFIXED(1) / 64);
           spark->variant--;
         }
       }
@@ -361,10 +361,10 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
         if (mote->x >= 0 && frame >= i / 4) {
           s32 size = (i & 1) + 5;
 
-          Transform_Reset();
-          Transform_ApplyRoll(mote->velocityZ);
-          Transform_ApplyPitch(mote->velocityX);
-          Transform_ApplyYaw(mote->velocityY);
+          Matrix_Initialize();
+          Matrix_RotateZ(mote->velocityZ);
+          Matrix_RotateX(mote->velocityX);
+          Matrix_RotateY(mote->velocityY);
           Projection_Point(&mote->x, &screen);
           screen.x += 64;
           screen.y = screen.y + screenPosition.y + 24;
@@ -455,7 +455,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
           spot.y += 16;
           EFFECT_DRAW_FLARE(draw[pair & 1], canvas, sheet, spot.x, spot.y,
                             size);
-          Particle_AdvanceWithGravity3D(spark, 60, -px(1) / 64);
+          Particle_AdvanceWithGravity3D(spark, 60, -toFIXED(1) / 64);
           spark->variant--;
         }
       }

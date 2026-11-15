@@ -184,31 +184,30 @@ static inline struct Actor *Actor_Get(s32 actorId) {
 
 /// Places an actor at a point at once, without walking it there; `x` and `z`
 /// are 16.16 fixed-point pixels, as a stored position holds them.
-static inline void Actor_SetPositionFixed(s32 actorId, s32 x, s32 z) {
+static inline void Actor_SetPositionFX(s32 actorId, s32 x, s32 z) {
   Actor_SetHorizontalPositionWithTerrain(actorId, x, z);
 }
 
 /// Places an actor at a point in whole pixels at once, without walking it
 /// there: `Actor_SetPosition(8, 880, 502)`.
 #define Actor_SetPosition(actorId, x, z)                                       \
-  Actor_SetPositionFixed(actorId, Q16(x), Q16(z))
+  Actor_SetPositionFX(actorId, toFIXED(x), toFIXED(z))
 
 /// Sets how fast an actor moves, and how quickly it gets up to speed, for the
 /// event's next moves; both are 16.16 fixed point, as stored values hold them.
-static inline void Actor_SetSpeedFixed(s32 actorId, s32 speed,
-                                       s32 acceleration) {
+static inline void Actor_SetSpeedFX(s32 actorId, s32 speed, s32 acceleration) {
   Actor_SetSpeedParameters(actorId, speed, acceleration);
 }
 
 /// Sets an actor's top speed for the event's next moves, in pixels a frame,
 /// and an acceleration of half that: `Actor_SetSpeed(8, 0.5)`.
 #define Actor_SetSpeed(actorId, speed)                                         \
-  Actor_SetSpeedFixed(actorId, Q16(speed), Q16(speed) / 2)
+  Actor_SetSpeedFX(actorId, toFIXED(speed), toFIXED(speed) / 2)
 
 /// Sets an actor's top speed, in pixels a frame, and its acceleration, in
 /// pixels a frame per frame, where the acceleration isn't half the speed.
 #define Actor_SetSpeedAndAcceleration(actorId, speed, acceleration)            \
-  Actor_SetSpeedFixed(actorId, Q16(speed), Q16(acceleration))
+  Actor_SetSpeedFX(actorId, toFIXED(speed), toFIXED(acceleration))
 
 /// Moves an actor to a point in the pose it has, without walking; the
 /// event carries on meanwhile.
@@ -263,7 +262,7 @@ static inline void Actor_SetAttachedEffect(s32 actorId, s32 effect) {
 
 /// Sets how fast the camera pans for the event's next camera moves, and how
 /// quickly it gets up to speed, both in 16.16 fixed point.
-static inline void FieldCamera_SetSpeedFixed(s32 speed, s32 acceleration) {
+static inline void FieldCamera_SetSpeedFX(s32 speed, s32 acceleration) {
   Camera_SetSpeedParameters(speed, acceleration);
 }
 
@@ -271,33 +270,33 @@ static inline void FieldCamera_SetSpeedFixed(s32 speed, s32 acceleration) {
 /// pixels a frame, and an acceleration of an eighth of that:
 /// `FieldCamera_SetSpeed(0.8)`.
 #define FieldCamera_SetSpeed(speed)                                            \
-  FieldCamera_SetSpeedFixed(Q16(speed), Q16(speed) / 8)
+  FieldCamera_SetSpeedFX(toFIXED(speed), toFIXED(speed) / 8)
 
 /// Sets the camera's top panning speed, in pixels a frame, and its
 /// acceleration, in pixels a frame per frame, where the acceleration isn't an
 /// eighth of the speed.
 #define FieldCamera_SetSpeedAndAcceleration(speed, acceleration)               \
-  FieldCamera_SetSpeedFixed(Q16(speed), Q16(acceleration))
+  FieldCamera_SetSpeedFX(toFIXED(speed), toFIXED(acceleration))
 
 /// Keeps a camera axis where it is (FieldCamera_MoveTo).
 #define CAMERA_KEEP (-1)
 
 /// Pans the camera to a point in the room, or cuts there when pan is 0; the
 /// axes are 16.16 fixed-point pixels, or CAMERA_KEEP.
-static inline void FieldCamera_MoveToFixed(s32 x, s32 y, s32 z, s32 pan) {
+static inline void FieldCamera_MoveToFX(s32 x, s32 y, s32 z, s32 pan) {
   FieldCamera_MoveWithinMapBounds(x, y, z, pan);
 }
 
 /// A camera axis in whole pixels as 16.16 fixed point, CAMERA_KEEP kept; it
 /// reads its argument twice, so the macros below take only constants.
 #define EVENT_CAMERA_FIXED(axis)                                               \
-  ((axis) == CAMERA_KEEP ? CAMERA_KEEP : Q16(axis))
+  ((axis) == CAMERA_KEEP ? CAMERA_KEEP : toFIXED(axis))
 
 /// Pans the camera to a point in whole pixels, or cuts there when pan is 0;
 /// CAMERA_KEEP keeps an axis: `FieldCamera_MoveTo(168, CAMERA_KEEP, 158, 1)`.
 #define FieldCamera_MoveTo(x, y, z, pan)                                       \
-  FieldCamera_MoveToFixed(EVENT_CAMERA_FIXED(x), EVENT_CAMERA_FIXED(y),        \
-                          EVENT_CAMERA_FIXED(z), pan)
+  FieldCamera_MoveToFX(EVENT_CAMERA_FIXED(x), EVENT_CAMERA_FIXED(y),           \
+                       EVENT_CAMERA_FIXED(z), pan)
 
 /// Changes part of the room in place, copying whole cells, picture and
 /// cell behavior alike, from another part of the map.
@@ -322,9 +321,8 @@ static inline void MapGrid_CopyCellAttributes(s32 sourceX, s32 sourceY,
 #define SHAKE_KEEP (-1)
 
 /// Sets shake amplitudes in 16.16 fixed-point pixels and the per-frame decay
-/// factor in 16.16; SHAKE_KEEP keeps that component, Q16_ONE keeps the shake.
-static inline void MapGrid_SetShakeFixed(s32 horizontal, s32 vertical,
-                                         s32 decay) {
+/// factor in 16.16; SHAKE_KEEP keeps that component, FIXED_ONE keeps the shake.
+static inline void MapGrid_SetShakeFX(s32 horizontal, s32 vertical, s32 decay) {
   MapGrid_SetScreenShake(horizontal, vertical, decay);
 }
 
@@ -332,14 +330,14 @@ static inline void MapGrid_SetShakeFixed(s32 horizontal, s32 vertical,
 /// fixed point, SHAKE_KEEP kept; it reads its argument twice, so the macro
 /// below takes only constants.
 #define EVENT_SHAKE_FIXED(value)                                               \
-  ((value) == SHAKE_KEEP ? SHAKE_KEEP : Q16(value))
+  ((value) == SHAKE_KEEP ? SHAKE_KEEP : toFIXED(value))
 
 /// Shakes the screen by amplitudes in pixels, shrunk each frame by a decay
 /// factor (1 keeps the shake going); SHAKE_KEEP keeps a component:
 /// `MapGrid_SetShake(2, 2, 1)`.
 #define MapGrid_SetShake(horizontal, vertical, decay)                          \
-  MapGrid_SetShakeFixed(EVENT_SHAKE_FIXED(horizontal),                         \
-                        EVENT_SHAKE_FIXED(vertical), EVENT_SHAKE_FIXED(decay))
+  MapGrid_SetShakeFX(EVENT_SHAKE_FIXED(horizontal),                            \
+                     EVENT_SHAKE_FIXED(vertical), EVENT_SHAKE_FIXED(decay))
 
 /// GameFlag_Get, from an event: 1 when the flag is set.
 static inline s32 Event_GetFlag(s32 flag) { return GameFlag_Get(flag); }
@@ -361,14 +359,14 @@ static inline s32 Math_Divide(s32 dividend, s32 divisor) {
 
 /// Sends an actor toward a point in 16.16 fixed-point pixels, where it coasts
 /// to a stop.
-static inline void FieldActor_SetMoveTargetFixed(struct Actor *actor, s32 x,
-                                                 s32 y, s32 z) {
+static inline void FieldActor_SetMoveTargetFX(struct Actor *actor, s32 x, s32 y,
+                                              s32 z) {
   Actor_SetMoveTarget(actor, x, y, z);
 }
 
 /// Sends an actor toward a point in whole pixels, where it coasts to a stop.
 #define FieldActor_SetMoveTarget(actor, x, y, z)                               \
-  FieldActor_SetMoveTargetFixed(actor, Q16(x), Q16(y), Q16(z))
+  FieldActor_SetMoveTargetFX(actor, toFIXED(x), toFIXED(y), toFIXED(z))
 
 /// Creates an actor in an empty slot of gActors, outside the actor ids, or
 /// returns NULL when every slot is taken.

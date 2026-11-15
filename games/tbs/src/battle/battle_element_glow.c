@@ -75,19 +75,19 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
     life = spark->life;
     // A spark ends near the centre; until then it is pulled towards it.
     if (life != 0) {
-      distance = FixedSqrt((spark->motion[0] >> 8) * (spark->motion[0] >> 8) +
-                           (spark->motion[1] >> 8) * (spark->motion[1] >> 8) +
-                           (spark->motion[2] >> 8) * (spark->motion[2] >> 8));
+      distance = Math_SqrtFX((spark->motion[0] >> 8) * (spark->motion[0] >> 8) +
+                             (spark->motion[1] >> 8) * (spark->motion[1] >> 8) +
+                             (spark->motion[2] >> 8) * (spark->motion[2] >> 8));
       if (distance <= 0xfff) {
         spark->life = 0;
       } else {
-        scale = Iwram_RatioMulQ14(distance, Q16_ONE);
+        scale = Iwram_RatioMulQ14(distance, FIXED_ONE);
         spark->life--;
         axisPosition = spark->motion;
         for (axis = 2; axis >= 0; axis--) {
           coordinate = *axisPosition;
-          acceleration = Iwram_MulQ16(Iwram_MulQ16(-coordinate >> 8, scale),
-                                      Q16_ONE * 19 / 16);
+          acceleration = Iwram_MulFX(Iwram_MulFX(-coordinate >> 8, scale),
+                                     FIXED_ONE * 19 / 16);
           axisPosition[3] =
               axisPosition[3] - (axisPosition[3] >> 7) + acceleration;
           *axisPosition = coordinate + axisPosition[3];
@@ -100,10 +100,10 @@ UNREAD_RESULT ElementGlow_UpdateStarField(void) {
     // them, while the field is young.
     if (life == 0 && work->frames < STAR_FIELD_SPAWN_FRAMES) {
       angle = Random16();
-      radius = Random16() + Q16_ONE;
+      radius = Random16() + FIXED_ONE;
       halfRadius = radius >> 1;
-      spark->motion[0] = Iwram_MulQ16(Trig_Cos(angle), halfRadius);
-      spark->motion[1] = Iwram_MulQ16(Trig_Sin(angle), halfRadius);
+      spark->motion[0] = Iwram_MulFX(Trig_Cos(angle), halfRadius);
+      spark->motion[1] = Iwram_MulFX(Trig_Sin(angle), halfRadius);
       if (spark->motion[0] & 1)
         spark->motion[0] = -spark->motion[0];
       if (spark->motion[1] & 1)
@@ -202,12 +202,12 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   // the longer it lives.
   for (effectIndex = 0; effectIndex < STAR_FIELD_SPARKS; effectIndex++) {
     s32 angle = Random16();
-    u32 radius = Random16() + Q16_ONE;
+    u32 radius = Random16() + FIXED_ONE;
     u32 halfRadius = radius >> 1;
 
     spark = &work->sparks[effectIndex];
-    spark->motion[0] = Iwram_MulQ16(Trig_Cos(angle), halfRadius);
-    spark->motion[1] = Iwram_MulQ16(Trig_Sin(angle), halfRadius);
+    spark->motion[0] = Iwram_MulFX(Trig_Cos(angle), halfRadius);
+    spark->motion[1] = Iwram_MulFX(Trig_Sin(angle), halfRadius);
     if (spark->motion[0] & 1)
       spark->motion[0] = -spark->motion[0];
     if (spark->motion[1] & 1)
@@ -223,11 +223,11 @@ s32 ElementGlow_InitializeStarField(s32 element) {
     s32 angle;
 
     ring = &work->rings[effectIndex];
-    angle = effectIndex * (TRIG_TURN / 3);
-    ring->x = Iwram_MulQ16(Trig_Cos(angle), radius);
-    ring->y = Iwram_MulQ16(Trig_Sin(angle), radius);
-    ring->velocityX = Iwram_MulQ16(Trig_Cos(angle), 512);
-    ring->velocityY = Iwram_MulQ16(Trig_Sin(angle), 512);
+    angle = effectIndex * (DEGtoANG(120));
+    ring->x = Iwram_MulFX(Trig_Cos(angle), radius);
+    ring->y = Iwram_MulFX(Trig_Sin(angle), radius);
+    ring->velocityX = Iwram_MulFX(Trig_Cos(angle), 512);
+    ring->velocityY = Iwram_MulFX(Trig_Sin(angle), 512);
     ring->age = 0;
   }
   work->frames = 0;
@@ -287,8 +287,8 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
   s32 i;
 
-  if (scale > Q16_ONE)
-    scale = Q16_ONE;
+  if (scale > FIXED_ONE)
+    scale = FIXED_ONE;
   // Each channel scaled in place: a 16.16 scale of at most 1 keeps it inside
   // its own five bits.
   for (i = 0; i < count; i++) {
@@ -358,8 +358,8 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
       work = gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
       if (frame <= 24)
         Graphics_ScaleRgb555Clamped(battle->palette, BATTLE_BG_PALETTE,
-                                    *brightness =
-                                        Q16_ONE - frame * BACKGROUND_LEVEL_STEP,
+                                    *brightness = FIXED_ONE -
+                                                  frame * BACKGROUND_LEVEL_STEP,
                                     BATTLE_BG_PALETTE_COLORS);
       BattleMotion_ProjectScaledPosition(
           unitId, ScreenPoint_Coordinates(&starFieldPosition));

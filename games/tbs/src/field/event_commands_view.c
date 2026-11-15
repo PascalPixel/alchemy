@@ -38,7 +38,7 @@ UNREAD_RESULT WorldMap_StepZoom(void) {
   perspective->zoomTransitionStep++;
   zoom = *from + delta * perspective->zoomTransitionStep /
                      perspective->zoomTransitionFrames;
-  perspective->distance = Iwram_MulQ16(perspective->farPlane, zoom);
+  perspective->distance = Iwram_MulFX(perspective->farPlane, zoom);
   gScanlinePitch = perspective->pitch + 1;
   if (perspective->zoomTransitionStep == perspective->zoomTransitionFrames) {
     perspective->zoomTransitionFrames = 0;
@@ -56,7 +56,7 @@ void WorldMap_StartZoom(s32 zoom, s32 frames) {
           ->mode != ACTOR_SYSTEM_WORLD_MAP)
     return;
   {
-    inverse = Iwram_RatioMulQ14(zoom, Q16_ONE); // 1 / zoom
+    inverse = Iwram_RatioMulQ14(zoom, FIXED_ONE); // 1 / zoom
   }
   perspective->previousZoom = perspective->zoom;
   perspective->zoom = inverse;
@@ -96,10 +96,11 @@ UNREAD_RESULT FieldEffect_CopyWatchedActorPosition(struct Actor *actor) {
     actor->x.fixed = host->x.fixed;
     actor->y.fixed =
         host->y.fixed +
-        px((s8)Resource_GetMetadataRecordFar(
-               (s16)Scene_FindActorPlacement((s16)actor->userValue)->sprite)
-               ->boxX) +
-        px(8);
+        toFIXED(
+            (s8)Resource_GetMetadataRecordFar(
+                (s16)Scene_FindActorPlacement((s16)actor->userValue)->sprite)
+                ->boxX) +
+        toFIXED(8);
     actor->groundHeight = host->groundHeight;
     actor->z.fixed = host->z.fixed;
   }

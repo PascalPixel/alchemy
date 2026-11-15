@@ -122,7 +122,7 @@ s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
   to = &other->x.fixed;
   from = &self->x.fixed;
   if (Position_Distance(to, from) < range) {
-    u32 angle = (u16)ArcTan2(other->z.fixed - self->z.fixed, *to - *from);
+    u32 angle = (u16)Trig_Atan(other->z.fixed - self->z.fixed, *to - *from);
     u32 left = (angle - FACING_STEP) & 0xf000;
     u32 right = (angle + FACING_STEP) & 0xf000;
     u32 ahead = angle & 0xf000;
@@ -353,7 +353,7 @@ void Lemuria_DigFifthSpot(void) {
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 16, 0);
-      leader->velocityY = px(6);
+      leader->velocityY = toFIXED(6);
       FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Event_End();
     }
@@ -378,11 +378,11 @@ void Lemuria_GrowVine(void) {
   s32 value;
 
   Event_SetFlag(FLAG_LEMURIA_VINE_GROWN);
-  x = px(856);
-  z = px(1016);
+  x = toFIXED(856);
+  z = toFIXED(1016);
   value = MapGrid_GetAttributeBAt(x, z, 0);
   MapGrid_SetAttributeBAt(x, z, 0, value | 64);
-  z = px(1032);
+  z = toFIXED(1032);
   MapGrid_SetAttributeBAt(x, z, 0, MapGrid_GetAttributeBAt(x, z, 0) | 64);
 }
 
@@ -428,7 +428,7 @@ void Rope_Coil();
 void Lemuria_KnockAtBrokenDoor(void) {
   struct Actor *object;
 
-  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > px(96) ||
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > toFIXED(96) ||
       Event_GetFlag(FLAG_TOLD_OF_PIERS_MOTHER)) {
     gFieldWork->fieldMenu = 1;
     return;
@@ -517,7 +517,7 @@ void Party_RestoreHpPp(s32 value);
 void Lemuria_DrinkFromSpring(void) {
   s32 y = Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed;
 
-  if (y < px(90)) {
+  if (y < toFIXED(90)) {
     // "Felix and the others drank of the spring. Their HP and PP were..."
     Message_ShowCentered((s32)MsgAndTheOthers, 1);
     Event_PlaySound(SE_RECOVERY);
@@ -722,8 +722,8 @@ s32 Scene_Initialize(void) {
   }
   actor = Actor_Get(ACTOR_SPRING);
   actor->motionFlags = 0;
-  actor->groundHeight = px(64);
-  actor->y.fixed = px(64);
+  actor->groundHeight = toFIXED(64);
+  actor->y.fixed = toFIXED(64);
   return 0;
 }
 
@@ -794,8 +794,8 @@ void Lemuria_AdmirePalace(s32 id) {
   Actor_SetAnimation(ACTOR_KRADEN_STAND_IN, 2);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(ACTOR_KRADEN_STAND_IN, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_KRADEN_STAND_IN, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   FieldActor_WaitForMoveById(ACTOR_KRADEN_STAND_IN);
   Actor_SetPosition(ACTOR_KRADEN_STAND_IN, 0, 0);
   FieldEvent_Wait(10);
@@ -826,8 +826,8 @@ void Lemuria_KeepLookingAround(void) {
   Actor_SetAnimation(ACTOR_KRADEN_STAND_IN, 2);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(ACTOR_KRADEN_STAND_IN, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_KRADEN_STAND_IN, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   FieldActor_WaitForMoveById(ACTOR_KRADEN_STAND_IN);
   Actor_SetPosition(ACTOR_KRADEN_STAND_IN, 0, 0);
   FieldEvent_Wait(10);
@@ -1126,16 +1126,16 @@ void Lemuria_MarvelAtCity(void) {
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(ACTOR_PIERS, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_PIERS, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   FieldActor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN_STAND_IN, 1.2);
   Actor_SetAnimation(ACTOR_KRADEN_STAND_IN, 2);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(ACTOR_KRADEN_STAND_IN, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_KRADEN_STAND_IN, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   FieldActor_WaitForMoveById(ACTOR_KRADEN_STAND_IN);
   Actor_SetPosition(ACTOR_KRADEN_STAND_IN, 0, 0);
   Lemuria_RestoreGirl();

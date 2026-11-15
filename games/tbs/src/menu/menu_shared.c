@@ -501,7 +501,7 @@ void Menu_CreatePartyFigures(void *source, s32 originX, s32 originY,
       tileX = originX + windowX;
       menu->tabX[i] = tileX * 8 + offsetX;
       menu->rowPositions[i] = (originY + window->y) * 8 + 16;
-      menu->memberScale[i] = Q16_ONE;
+      menu->memberScale[i] = FIXED_ONE;
       figure->image.priority = 0;
       figure->flags = 0;
       Sprite_StartAnimationFar(figure, ANIM_STAND);
@@ -552,15 +552,15 @@ void Menu_PlacePartyFigures(void) {
   for (i = 0; i < count; i++) {
     struct Sprite *figure = menu->tabSprites[i];
     // 482 less the row's screen y, in 16.16.
-    s32 placeY = px(482) - px(menu->rowPositions[i]);
+    s32 placeY = toFIXED(482) - toFIXED(menu->rowPositions[i]);
 
     if (figure != 0) {
       figure->image.priority = 0;
       scale.x = menu->memberScale[i];
       scale.y = menu->memberScale[i];
-      position.x = px(menu->tabX[i]);
+      position.x = toFIXED(menu->tabX[i]);
       position.height = placeY;
-      position.y = px(menu->rowPositions[i]) + placeY; // always 482
+      position.y = toFIXED(menu->rowPositions[i]) + placeY; // always 482
       position.groundHeight = 0;
       Actor_ApplyProjectedPlacementFar(figure, &position, &scale, FACING_SOUTH);
     }

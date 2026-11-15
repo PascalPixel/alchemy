@@ -396,32 +396,58 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    {209, CONDITION_ALWAYS, 1, PIXELS(392), 0, PIXELS(280), FACING_SOUTH, 0, 0},
-    {202, CONDITION_ALWAYS, 1, PIXELS(440), 0, PIXELS(280), FACING_SOUTH, 0, 0},
-    {205, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(280), FACING_SOUTH, 0, 0},
-    {206, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(280), FACING_SOUTH, 0, 0},
-    {198, CONDITION_ALWAYS, 1, PIXELS(584), 0, PIXELS(280), FACING_SOUTH, 0, 0},
-    {70, CONDITION_ALWAYS, 1, PIXELS(632), 0, PIXELS(280), FACING_SOUTH, 0, 0},
-    {215, CONDITION_ALWAYS, 1, PIXELS(680), 0, PIXELS(280), FACING_SOUTH, 0, 0},
-    {200, CONDITION_ALWAYS, 1, PIXELS(728), 0, PIXELS(280), FACING_SOUTH, 0, 0},
-    {488, CONDITION_ALWAYS, 1, PIXELS(440), 0, PIXELS(248), FACING_SOUTH, 0, 0},
-    {488, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(248), FACING_SOUTH, 0, 0},
-    {488, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(248), FACING_SOUTH, 0, 0},
-    {488, CONDITION_ALWAYS, 1, PIXELS(584), 0, PIXELS(248), FACING_SOUTH, 0, 0},
-    {450, CONDITION_ALWAYS, 1, PIXELS(728), 0, PIXELS(360), FACING_SOUTH, 0, 0},
-    {450, CONDITION_ALWAYS, 1, PIXELS(712), 0, PIXELS(136), FACING_SOUTH, 0, 0},
-    {450, CONDITION_ALWAYS, 1, PIXELS(712), 0, PIXELS(200), FACING_SOUTH, 0, 0},
-    {321, CONDITION_ALWAYS, 1, PIXELS(640), 0, PIXELS(96), FACING_SOUTH, 0, 0},
-    {375, CONDITION_ALWAYS, 1, PIXELS(672), 0, PIXELS(96), FACING_SOUTH, 0, 0},
-    {296, CONDITION_ALWAYS, 1, PIXELS(328), 0, PIXELS(360), FACING_SOUTH, 0, 0},
-    {238, CONDITION_ALWAYS, 1, PIXELS(424), 0, PIXELS(360), FACING_SOUTH, 0, 0},
-    {487, CONDITION_ALWAYS, 1, PIXELS(456), 0, PIXELS(360), FACING_SOUTH, 0, 0},
-    {243, CONDITION_ALWAYS, 1, PIXELS(488), 0, PIXELS(360), FACING_SOUTH, 0, 0},
-    {25, CONDITION_ALWAYS, 1, PIXELS(520), 0, PIXELS(360), FACING_SOUTH, 0, 0},
-    {488, CONDITION_ALWAYS, 1, PIXELS(360), 0, PIXELS(280), FACING_SOUTH, 0, 0},
-    {488, CONDITION_ALWAYS, 1, PIXELS(536), 0, PIXELS(200), FACING_SOUTH, 0, 0},
-    {488, CONDITION_ALWAYS, 1, PIXELS(680), 0, PIXELS(360), FACING_SOUTH, 0, 0},
-    {488, CONDITION_ALWAYS, 1, PIXELS(712), 0, PIXELS(160), FACING_SOUTH, 0, 0},
+    {209, CONDITION_ALWAYS, 1, toFIXED(392), 0, toFIXED(280), FACING_SOUTH, 0,
+     0},
+    {202, CONDITION_ALWAYS, 1, toFIXED(440), 0, toFIXED(280), FACING_SOUTH, 0,
+     0},
+    {205, CONDITION_ALWAYS, 1, toFIXED(488), 0, toFIXED(280), FACING_SOUTH, 0,
+     0},
+    {206, CONDITION_ALWAYS, 1, toFIXED(536), 0, toFIXED(280), FACING_SOUTH, 0,
+     0},
+    {198, CONDITION_ALWAYS, 1, toFIXED(584), 0, toFIXED(280), FACING_SOUTH, 0,
+     0},
+    {70, CONDITION_ALWAYS, 1, toFIXED(632), 0, toFIXED(280), FACING_SOUTH, 0,
+     0},
+    {215, CONDITION_ALWAYS, 1, toFIXED(680), 0, toFIXED(280), FACING_SOUTH, 0,
+     0},
+    {200, CONDITION_ALWAYS, 1, toFIXED(728), 0, toFIXED(280), FACING_SOUTH, 0,
+     0},
+    {488, CONDITION_ALWAYS, 1, toFIXED(440), 0, toFIXED(248), FACING_SOUTH, 0,
+     0},
+    {488, CONDITION_ALWAYS, 1, toFIXED(488), 0, toFIXED(248), FACING_SOUTH, 0,
+     0},
+    {488, CONDITION_ALWAYS, 1, toFIXED(536), 0, toFIXED(248), FACING_SOUTH, 0,
+     0},
+    {488, CONDITION_ALWAYS, 1, toFIXED(584), 0, toFIXED(248), FACING_SOUTH, 0,
+     0},
+    {450, CONDITION_ALWAYS, 1, toFIXED(728), 0, toFIXED(360), FACING_SOUTH, 0,
+     0},
+    {450, CONDITION_ALWAYS, 1, toFIXED(712), 0, toFIXED(136), FACING_SOUTH, 0,
+     0},
+    {450, CONDITION_ALWAYS, 1, toFIXED(712), 0, toFIXED(200), FACING_SOUTH, 0,
+     0},
+    {321, CONDITION_ALWAYS, 1, toFIXED(640), 0, toFIXED(96), FACING_SOUTH, 0,
+     0},
+    {375, CONDITION_ALWAYS, 1, toFIXED(672), 0, toFIXED(96), FACING_SOUTH, 0,
+     0},
+    {296, CONDITION_ALWAYS, 1, toFIXED(328), 0, toFIXED(360), FACING_SOUTH, 0,
+     0},
+    {238, CONDITION_ALWAYS, 1, toFIXED(424), 0, toFIXED(360), FACING_SOUTH, 0,
+     0},
+    {487, CONDITION_ALWAYS, 1, toFIXED(456), 0, toFIXED(360), FACING_SOUTH, 0,
+     0},
+    {243, CONDITION_ALWAYS, 1, toFIXED(488), 0, toFIXED(360), FACING_SOUTH, 0,
+     0},
+    {25, CONDITION_ALWAYS, 1, toFIXED(520), 0, toFIXED(360), FACING_SOUTH, 0,
+     0},
+    {488, CONDITION_ALWAYS, 1, toFIXED(360), 0, toFIXED(280), FACING_SOUTH, 0,
+     0},
+    {488, CONDITION_ALWAYS, 1, toFIXED(536), 0, toFIXED(200), FACING_SOUTH, 0,
+     0},
+    {488, CONDITION_ALWAYS, 1, toFIXED(680), 0, toFIXED(360), FACING_SOUTH, 0,
+     0},
+    {488, CONDITION_ALWAYS, 1, toFIXED(712), 0, toFIXED(160), FACING_SOUTH, 0,
+     0},
     {SCENE_TABLE_END},
 };
 
@@ -808,15 +834,15 @@ UNUSED void ShopTest_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
     object->scaleY = 0;
   }
   if (mode == 2) {
-    while (object->scaleX < Q16_ONE) {
+    while (object->scaleX < FIXED_ONE) {
       wait(1);
       scale = object->scaleX;
       scale += 0x51e;
       object->scaleX = scale;
       object->scaleY = scale;
     }
-    object->scaleX = Q16_ONE;
-    object->scaleY = Q16_ONE;
+    object->scaleX = FIXED_ONE;
+    object->scaleY = FIXED_ONE;
   }
 }
 
@@ -827,7 +853,7 @@ UNUSED void ShopTest_DropActor(s32 mode, s32 id, s32 x, s32 z) {
   object = Actor_GetById(id);
   if (mode == 2) {
     Actor_SetPosition(id, x, z);
-    object->y.fixed = px(32);
+    object->y.fixed = toFIXED(32);
     object->motionFlags = 3;
     object->gravity = 0x170a;
     wait(50);
@@ -845,33 +871,33 @@ UNUSED void ShopTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 scene,
   struct Actor *object;
 
   if (mode == 1) {
-    object = FieldActor_Create(SPRITE_BROWN_BOULDER, px(x), 0, px(z));
+    object = FieldActor_Create(SPRITE_BROWN_BOULDER, toFIXED(x), 0, toFIXED(z));
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
       object->priorityFlags = 2;
     }
   }
   if (mode == 2) {
-    object = ((struct Actor *)Import_ActorCreate(SPRITE_WINGED_STATUE, px(x), 0,
-                                                 px(z)));
+    object = ((struct Actor *)Import_ActorCreate(SPRITE_WINGED_STATUE,
+                                                 toFIXED(x), 0, toFIXED(z)));
     if (object != NULL) {
       s32 scale;
 
       Actor_SetSpriteFlags(object, 0);
-      object->velocityY = px(6);
-      object->scaleX = Q16_ONE * 2 / 5;
-      object->scaleY = Q16_ONE * 2 / 5;
-      while (object->scaleX < Q16_ONE) {
+      object->velocityY = toFIXED(6);
+      object->scaleX = FIXED_ONE * 2 / 5;
+      object->scaleY = FIXED_ONE * 2 / 5;
+      while (object->scaleX < FIXED_ONE) {
         wait(1);
         scale = object->scaleX + 0x51e;
         object->facing += FACING_STEP;
         object->scaleX = scale;
         object->scaleY = scale;
       }
-      object->scaleX = Q16_ONE;
-      object->scaleY = Q16_ONE;
+      object->scaleX = FIXED_ONE;
+      object->scaleY = FIXED_ONE;
       object->facing =
-          Actor_GetById(gMainRoutineWork.leaderActorId)->facing + TRIG_TURN / 2;
+          Actor_GetById(gMainRoutineWork.leaderActorId)->facing + DEGtoANG(180);
       Field_RequestBattleFromEncounterTable(scene, entrance);
     }
   }

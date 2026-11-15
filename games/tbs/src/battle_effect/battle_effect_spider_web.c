@@ -96,9 +96,9 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
     // Spinning Beat throws the target into the air.
     if (mode == SWIRL_SWIPE_SPINNING_BEAT) {
       if (frame == 13) {
-        actor->velocityY = px(12);
-        actor->gravity = px(47) / 100;
-        actor->bounce = Q16_ONE / 4;
+        actor->velocityY = toFIXED(12);
+        actor->gravity = toFIXED(47) / 100;
+        actor->bounce = FIXED_ONE / 4;
       }
       if (frame == 65) {
         work->shakeFrames = 4;

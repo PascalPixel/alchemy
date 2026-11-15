@@ -13,6 +13,6 @@
 
 extern const u16 gMath_ArcTanTable[];
 extern const u8 gSystem_BasicColorPalette[];
-s32 FixedSqrt(s32 value);
+s32 Math_SqrtFX(s32 value);
 
 #endif

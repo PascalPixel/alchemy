@@ -61,9 +61,9 @@ extern struct Trigger gIncreaseItemAndLevel_Triggers[];
 // ACTOR_LEVEL_EDITOR's scale in 16.16, which the international editions
 // changed (Scene_Initialize).
 #if TBS_PATCH_1
-#define LEVEL_EDITOR_SCALE (Q16_ONE * 8 / 5)
+#define LEVEL_EDITOR_SCALE (FIXED_ONE * 8 / 5)
 #else
-#define LEVEL_EDITOR_SCALE (Q16_ONE * 17 / 10)
+#define LEVEL_EDITOR_SCALE (FIXED_ONE * 17 / 10)
 #endif
 
 /// The scene's actors, numbering the rows of

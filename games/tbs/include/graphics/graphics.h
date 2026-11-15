@@ -39,7 +39,7 @@ extern volatile u8 gScreenFadeTargetLevel; ///< the brightness the fade ends at
 /// The two page arrow tiles, 4bpp, that Link_DrawPageArrows slides
 /// outward over the border's top edge.
 extern u8 gPageArrowTiles[];
-/// Transform_BuildLookAt's ARM dot product, seven words it copies onto its
+/// Matrix_BuildLookAt's ARM dot product, seven words it copies onto its
 /// stack to run.
 extern const u32 RelocatedQ16DotProduct[];
 /// Decompress_MoveToFrontLzCommands through its command loop, which

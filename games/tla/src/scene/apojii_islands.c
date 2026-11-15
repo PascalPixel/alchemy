@@ -509,7 +509,7 @@ void ApojiiIslands_ClearFirstBush(void) {
                                 ATTACHED_EFFECT_IN_FRONT |                     \
                                     ATTACHED_EFFECT_ONCE);                     \
         Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 16, 0);     \
-        leader->velocityY = px(6);                                             \
+        leader->velocityY = toFIXED(6);                                        \
         FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);            \
         Event_End();                                                           \
       }                                                                        \
@@ -671,11 +671,11 @@ void Scroll_HBlank(void) {
 
 void Layer_TrackScroll(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
-  s16 y = FIELD_PIXEL(layer->y);
+  s16 y = FIXEDtoINT(layer->y);
 
   gApojiiIslands_SplitLine = 1448 - y;
-  gApojiiIslands_UpperScrollX = FIELD_PIXEL(layer->x);
-  gApojiiIslands_LowerScrollX = (s16)FIELD_PIXEL(layer->x) - (gFrameCount >> 2);
+  gApojiiIslands_UpperScrollX = FIXEDtoINT(layer->x);
+  gApojiiIslands_LowerScrollX = (s16)FIXEDtoINT(layer->x) - (gFrameCount >> 2);
 }
 
 #include "shared/scroll_start_hblank.h"
@@ -734,8 +734,8 @@ void ApojiiIslands_SpawnSplash(struct Actor *object) {
   struct FieldSprite *parent;
   struct FieldSprite *sprite;
 
-  child = (FieldActor_Create(14, object->x.fixed, object->y.fixed + px(4),
-                             object->z.fixed + px(4)));
+  child = (FieldActor_Create(14, object->x.fixed, object->y.fixed + toFIXED(4),
+                             object->z.fixed + toFIXED(4)));
   parent = object->sprite;
   if (child != NULL) {
     sprite = child->sprite;
@@ -765,15 +765,15 @@ void ApojiiIslands_FlowWithStream(void) {
       leader->groundHeight != 0) {
     position[0] = leader->x.fixed;
     position[1] = leader->y.fixed;
-    position[2] = leader->z.fixed + px(2);
+    position[2] = leader->z.fixed + toFIXED(2);
     result = MapGrid_CheckCollision(leader, position);
     if ((gFrameCount & 4) == 0)
       ApojiiIslands_SpawnSplash(leader);
     if (result < 0) {
       Actor_SetAttachedEffect(owner,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-      FieldActor_SetMoveTargetFixed(leader, leader->x.fixed, leader->y.fixed,
-                                    leader->z.fixed + px(8));
+      FieldActor_SetMoveTargetFX(leader, leader->x.fixed, leader->y.fixed,
+                                 leader->z.fixed + toFIXED(8));
       Actor_SelectAnimation(leader, 49);
       FieldActor_WaitForMove(leader);
       do {
@@ -785,21 +785,21 @@ void ApojiiIslands_FlowWithStream(void) {
     } else {
       position[0] = leader->x.fixed;
       position[1] = leader->y.fixed;
-      position[2] = leader->z.fixed + px(8);
+      position[2] = leader->z.fixed + toFIXED(8);
       result = MapGrid_CheckCollision(leader, position);
       if (result <= 0) {
-        position[0] = leader->x.fixed + (px(57) / 10);
+        position[0] = leader->x.fixed + (toFIXED(57) / 10);
         position[1] = leader->y.fixed;
-        position[2] = leader->z.fixed + (px(57) / 10);
+        position[2] = leader->z.fixed + (toFIXED(57) / 10);
         result = MapGrid_CheckCollision(leader, position);
         if (result <= 0) {
-          position[0] = leader->x.fixed - (px(57) / 10);
+          position[0] = leader->x.fixed - (toFIXED(57) / 10);
           position[1] = leader->y.fixed;
-          position[2] = leader->z.fixed + (px(57) / 10);
+          position[2] = leader->z.fixed + (toFIXED(57) / 10);
           result = MapGrid_CheckCollision(leader, position);
           if (result <= 0) {
-            anchor->z.fixed += px(2);
-            leader->z.fixed += px(2);
+            anchor->z.fixed += toFIXED(2);
+            leader->z.fixed += toFIXED(2);
             leader->facing = FACING_SOUTH;
           }
         }
@@ -828,7 +828,7 @@ void Leader_SpinAway(s32 entrance) {
 
     if (i == 30)
       Event_FinishScreenTransition();
-    leader->y.fixed -= px(1) / 4;
+    leader->y.fixed -= toFIXED(1) / 4;
     angle = leader->facing;
     leader->facing = angle + 0x1000;
     if ((i & 7) == 0)
@@ -955,8 +955,8 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b) {
     inner:
       value = cell->collisionCode;
       if (value != 0 && value >= base && value < base + 4) {
-        entry->x = ((u16)x << 20) + left + px(8);
-        entry->z = ((u16)z << 20) + top + px(8);
+        entry->x = ((u16)x << 20) + left + toFIXED(8);
+        entry->z = ((u16)z << 20) + top + toFIXED(8);
         entry->rest = b << 19;
         entry->y = a << 19;
         entry->kind = value - base;
@@ -971,12 +971,12 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b) {
           terrain[(u16)x + ((u16)z << 7)] = 120;
         }
       }
-      x = (px(x) + px(1)) >> 16;
+      x = (toFIXED(x) + toFIXED(1)) >> 16;
       cell++;
       if ((u16)x < width)
         goto inner;
     }
-    z = (px(z) + px(1)) >> 16;
+    z = (toFIXED(z) + toFIXED(1)) >> 16;
     if ((u16)z < height)
       goto outer;
   }
@@ -1020,7 +1020,7 @@ loop:
   *(u32 *)size = 0xb400;
   p->posX = 0;
   p->posZ = 0;
-  p->posY = px(Map_GetTerrainHeight(0, 0, 0));
+  p->posY = toFIXED(Map_GetTerrainHeight(0, 0, 0));
   p->timer = (i & 15) + 1;
   i++;
   p++;

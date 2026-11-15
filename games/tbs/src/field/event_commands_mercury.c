@@ -86,7 +86,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   Sound_PlayFar(SE_HIGH_JUMP);
   djinni->motionFlags = 0;
   for (i = 0; i < 15; i++) {
-    djinni->y.fixed += px(8);
+    djinni->y.fixed += toFIXED(8);
     wait(1);
   }
   Actor_ReleaseFar(djinni);

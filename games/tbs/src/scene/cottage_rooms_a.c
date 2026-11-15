@@ -167,8 +167,8 @@ static void CottageRoomsA_SpawnSleepZ(void);
 static s32 CottageRoomsA_AdvanceSleepZ(struct Actor *actor) {
   actor->x.fixed += (s16)actor->timer * 256;
   actor->y.fixed += (s16)actor->userValue * 256;
-  actor->scaleX += Q16_ONE / 40;
-  actor->scaleY += Q16_ONE / 40;
+  actor->scaleX += FIXED_ONE / 40;
+  actor->scaleY += FIXED_ONE / 40;
   actor->timer += 5;
   actor->userValue = (s16)actor->userValue - 1;
   return 0;
@@ -527,15 +527,15 @@ static void CottageRoomsA_GaretComesHome(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   Actor_WalkTo(ACTOR_GARET, 792, 512);
   Actor_WalkTo(ACTOR_IVAN, 824, 504);
@@ -847,13 +847,13 @@ static void CottageRoomsA_SpawnSleepZ(void) {
   }
   origin = Actor_Get(ACTOR_GARETS_GRANDFATHER);
   if (origin != NULL) {
-    Actor_SetPositionFixed(actorId, origin->x.fixed, origin->z.fixed);
+    Actor_SetPositionFX(actorId, origin->x.fixed, origin->z.fixed);
   }
   // Restart this sprite above the origin with a small scale and 8.8 motion.
-  actor->scaleX = 2 * Q16_ONE / 5;
-  actor->scaleY = 2 * Q16_ONE / 5;
+  actor->scaleX = 2 * FIXED_ONE / 5;
+  actor->scaleY = 2 * FIXED_ONE / 5;
   {
-    s32 height = actor->y.fixed + px(24);
+    s32 height = actor->y.fixed + toFIXED(24);
 
     actor->y.fixed = height;
     actor->targetY = height;

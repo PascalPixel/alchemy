@@ -240,9 +240,9 @@ Kolima_InitializeCursedVillagers(struct ActorPlacement *placements) {
 static s32 Kolima_UpdateFallingDebris(struct Actor *debris) {
   debris->x.fixed += debris->velocityX;
   debris->z.fixed += debris->velocityZ;
-  debris->velocityZ -= px(1) / 25;
-  debris->scaleX += 3 * Q16_ONE / 128;
-  debris->scaleY += 3 * Q16_ONE / 128;
+  debris->velocityZ -= toFIXED(1) / 25;
+  debris->scaleX += 3 * FIXED_ONE / 128;
+  debris->scaleY += 3 * FIXED_ONE / 128;
   {
     s32 framesLeft = (u16)debris->timer - 1;
     debris->timer = framesLeft;
@@ -434,17 +434,18 @@ static void Kolima_LowerBridge(void) {
   // Ten puffs of dust where it lands, thrown alternately left and right.
   for (debrisIndex = 0; debrisIndex < 10; debrisIndex++) {
     struct Actor *debris = FieldActor_Create(
-        SPRITE_DUST_PUFF, px(148 + debrisIndex * 4), 0, px(258));
+        SPRITE_DUST_PUFF, toFIXED(148 + debrisIndex * 4), 0, toFIXED(258));
 
     if (debris != NULL) {
       debris->motionFlags = 0;
       Actor_SetSpriteFlags(debris, 0);
       debris->sprite->image.priority = 0;
       debris->timer = (Random_Below(40)) + 40;
-      debris->velocityX = (s32)((px(debrisIndex & 3) + px(1))) >> 1;
-      debris->velocityZ = px(1);
+      debris->velocityX = (s32)((toFIXED(debrisIndex & 3) + toFIXED(1))) >> 1;
+      debris->velocityZ = toFIXED(1);
       if (debrisIndex & 1) {
-        debris->velocityX = -((s32)(px(debrisIndex & 3) + px(1)) >> 1);
+        debris->velocityX =
+            -((s32)(toFIXED(debrisIndex & 3) + toFIXED(1)) >> 1);
       }
       Actor_SelectAnimation(debris, 1);
       Actor_StartScript(debris, gKolima_DebrisScript);
@@ -541,7 +542,7 @@ static inline void Kolima_SetProtectiveFieldHeight(s32 actorId,
     if (visibleOnOddFrames ? (gFrameCount & 1) : !(gFrameCount & 1)) {
       actor->y.fixed = 0;
     } else {
-      actor->y.fixed = px(500);
+      actor->y.fixed = toFIXED(500);
     }
   }
 }
@@ -597,11 +598,11 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetSpeed(ACTOR_IVAN, 0.6);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetScript(ACTOR_GARET, gKolima_GaretWalksIn);
   Actor_SetScript(ACTOR_IVAN, gKolima_IvanWalksIn);
@@ -609,7 +610,7 @@ static void Kolima_WitnessForestCurse(void) {
     Actor_SetSpeed(ACTOR_MIA, 0.6);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-      Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
+      Actor_SetPositionFX(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
     }
     Actor_SetScript(ACTOR_MIA, gKolima_MiaWalksIn);
   }
@@ -789,7 +790,7 @@ static void Kolima_WitnessForestCurse(void) {
     stagingValue = 128;
     Actor_Get(ACTOR_MIA)->velocityY = (stagingValue << 10);
     Event_Wait(10);
-    Actor_SetSpeedFixed(ACTOR_MIA, (stagingValue << 10), (stagingValue << 10));
+    Actor_SetSpeedFX(ACTOR_MIA, (stagingValue << 10), (stagingValue << 10));
     Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
     Actor_SetScript(ACTOR_MIA, gKolima_PartyRestoreScaleActions);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_MIA), 0);
@@ -799,8 +800,8 @@ static void Kolima_WitnessForestCurse(void) {
   stagingValue = 128;
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = (stagingValue << 10);
   Event_Wait(10);
-  Actor_SetSpeedFixed(ACTOR_PARTY_LEADER, (stagingValue << 10),
-                      (stagingValue << 10));
+  Actor_SetSpeedFX(ACTOR_PARTY_LEADER, (stagingValue << 10),
+                   (stagingValue << 10));
   restoreScaleActions = gKolima_PartyRestoreScaleActions;
   Actor_SetScript(ACTOR_PARTY_LEADER, restoreScaleActions);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
@@ -808,7 +809,7 @@ static void Kolima_WitnessForestCurse(void) {
   Event_Wait(20);
   Actor_Get(ACTOR_GARET)->velocityY = (stagingValue << 10);
   Event_Wait(10);
-  Actor_SetSpeedFixed(ACTOR_GARET, (stagingValue << 10), (stagingValue << 10));
+  Actor_SetSpeedFX(ACTOR_GARET, (stagingValue << 10), (stagingValue << 10));
   Actor_SetScript(ACTOR_GARET, restoreScaleActions);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_COLLAPSE);
@@ -826,7 +827,7 @@ static void Kolima_WitnessForestCurse(void) {
   PaletteFade_StartInterpolation(60);
   wait(60);
   gFallingEffectWidth = 0;
-  gFallingEffectOffset = px(128);
+  gFallingEffectOffset = toFIXED(128);
   gFallingEffectState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(180);
@@ -1123,7 +1124,7 @@ static void Kolima_WitnessForestCurse(void) {
   PaletteFade_StartInterpolation(60);
   wait(60);
   gFallingEffectWidth = 0;
-  gFallingEffectOffset = px(128);
+  gFallingEffectOffset = toFIXED(128);
   gFallingEffectState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(80);
@@ -1430,16 +1431,16 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
-                         actor->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].pixel,
-                         actor->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
@@ -1449,8 +1450,8 @@ static void Kolima_WitnessForestCurse(void) {
     Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-      Actor_SetDestination(ACTOR_MIA, actor->x.part[0].pixel,
-                           actor->z.part[0].pixel);
+      Actor_SetDestination(ACTOR_MIA, actor->x.part[0].integer,
+                           actor->z.part[0].integer);
     }
     Actor_WaitForMoveById(ACTOR_MIA);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
@@ -1488,7 +1489,8 @@ static void Kolima_SpawnCurseSparkle(void) {
   if (gKolima_EffectActive != 0) {
     Sound_Play(SE_SPARKLE_FALL);
   }
-  sparkle = FieldActor_Create(SPRITE_GOLDEN_RINGS, px(98), 0, px(105));
+  sparkle =
+      FieldActor_Create(SPRITE_GOLDEN_RINGS, toFIXED(98), 0, toFIXED(105));
   if (sparkle == NULL) {
     return;
   }
@@ -1496,12 +1498,12 @@ static void Kolima_SpawnCurseSparkle(void) {
   sprite->flags = framePhase;
   sparkle->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 1;
-  sparkle->scaleX = Q16_ONE / 10;
-  sparkle->speedLimit = px(8);
-  sparkle->acceleration = px(8);
+  sparkle->scaleX = FIXED_ONE / 10;
+  sparkle->speedLimit = toFIXED(8);
+  sparkle->acceleration = toFIXED(8);
   sparkle->motionFlags = framePhase;
   Actor_SelectAnimation(sparkle, 2);
-  FieldActor_SetMoveTargetFixed(sparkle, px(98), 0, px(269));
+  FieldActor_SetMoveTargetFX(sparkle, toFIXED(98), 0, toFIXED(269));
   Actor_StartScript(sparkle, gKolima_GoldenRingsScript);
 }
 
@@ -1510,21 +1512,21 @@ static void Kolima_SpawnCurseSparkle(void) {
 /// Triggers a temporary pose when an effect enters the party's occupied area.
 static s32 Kolima_TriggerRegionScript(struct Actor *actor) {
   if (gKolima_MiaInParty != 0) {
-    if ((actor->x.fixed > px(59) && actor->x.fixed < px(141) &&
-         actor->z.fixed > px(211) && actor->z.fixed < px(257)) ||
-        (actor->x.fixed > px(69) && actor->x.fixed < px(122) &&
-         actor->z.fixed > px(194) && actor->z.fixed < px(277))) {
+    if ((actor->x.fixed > toFIXED(59) && actor->x.fixed < toFIXED(141) &&
+         actor->z.fixed > toFIXED(211) && actor->z.fixed < toFIXED(257)) ||
+        (actor->x.fixed > toFIXED(69) && actor->x.fixed < toFIXED(122) &&
+         actor->z.fixed > toFIXED(194) && actor->z.fixed < toFIXED(277))) {
       Sound_Play(SE_DRIP);
       Actor_StartScript(actor, gKolima_RegionScript);
       gKolima_PendingPose = 1;
     }
   } else {
-    if ((actor->x.fixed > px(59) && actor->x.fixed < px(111) &&
-         actor->z.fixed > px(194) && actor->z.fixed < px(230)) ||
-        (actor->x.fixed > px(111) && actor->x.fixed < px(141) &&
-         actor->z.fixed > px(216) && actor->z.fixed < px(250)) ||
-        (actor->x.fixed > px(78) && actor->x.fixed < px(122) &&
-         actor->z.fixed > px(241) && actor->z.fixed < px(277))) {
+    if ((actor->x.fixed > toFIXED(59) && actor->x.fixed < toFIXED(111) &&
+         actor->z.fixed > toFIXED(194) && actor->z.fixed < toFIXED(230)) ||
+        (actor->x.fixed > toFIXED(111) && actor->x.fixed < toFIXED(141) &&
+         actor->z.fixed > toFIXED(216) && actor->z.fixed < toFIXED(250)) ||
+        (actor->x.fixed > toFIXED(78) && actor->x.fixed < toFIXED(122) &&
+         actor->z.fixed > toFIXED(241) && actor->z.fixed < toFIXED(277))) {
       Sound_Play(SE_DRIP);
       Actor_StartScript(actor, gKolima_RegionScript);
       gKolima_PendingPose = 1;
@@ -1579,12 +1581,12 @@ s32 gKolima_MiaWalksIn[] = {
 #include "shared/kolima_squash.c"
 
 s32 gKolima_ProtectiveFieldGrowActions[] = {
-    SC_SET(SW_SCALE_X, Q16_ONE / 10),
-    SC_SET(SW_SCALE_Y, Q16_ONE / 10),
+    SC_SET(SW_SCALE_X, FIXED_ONE / 10),
+    SC_SET(SW_SCALE_Y, FIXED_ONE / 10),
     SC_WAIT(1),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 50),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 50),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 50),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 50),
     SC_WAIT(1),
     SC_LOOP(70, SC_TO(1)),
     SC_CALL(Kolima_ApplyPendingPose),
@@ -1593,9 +1595,9 @@ s32 gKolima_ProtectiveFieldGrowActions[] = {
 
 s32 gKolima_ProtectiveFieldShrinkActions[] = {
     SC_ANIMATION(1),
-    SC_ADD(SW_Z, -px(1) / 10),
-    SC_ADD(SW_SCALE_X, -3 * Q16_ONE / 200),
-    SC_ADD(SW_SCALE_Y, -3 * Q16_ONE / 200),
+    SC_ADD(SW_Z, -toFIXED(1) / 10),
+    SC_ADD(SW_SCALE_X, -3 * FIXED_ONE / 200),
+    SC_ADD(SW_SCALE_Y, -3 * FIXED_ONE / 200),
     SC_WAIT(1),
     SC_LOOP(90, SC_TOP),
     SC_POSITION(0, 0, 0),
@@ -1606,8 +1608,8 @@ s32 gKolima_ProtectiveFieldShrinkActions[] = {
 /// The sparkles on Kolima's ground: three quarters of their size, passed
 /// through, twinkling at random (Kolima_UpdateTimedAppearance).
 s32 gKolima_EntryActions[] = {
-    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 4),
-    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 4),
+    SC_SET(SW_SCALE_X, 3 * FIXED_ONE / 4),
+    SC_SET(SW_SCALE_Y, 3 * FIXED_ONE / 4),
     SC_SET(SW_COLLISION, 0),
     SC_SET(SW_TIMER, 0),
     SC_LABEL(1),
@@ -1854,22 +1856,22 @@ s32 gKolima_GoldenRingsScript[] = {
 };
 
 s32 gKolima_RegionScript[] = {
-    SC_SET(SW_SCALE_X, 2 * Q16_ONE),
-    SC_SET(SW_SCALE_Y, 2 * Q16_ONE),
+    SC_SET(SW_SCALE_X, 2 * FIXED_ONE),
+    SC_SET(SW_SCALE_Y, 2 * FIXED_ONE),
     SC_WAIT(10),
     SC_RELEASE,
 };
 
 s32 gFallingEffectScript[] = {
-    SC_ADD(SW_Y, -px(2)),
+    SC_ADD(SW_Y, -toFIXED(2)),
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
-    SC_ADD(SW_Y, -px(2)),
+    SC_ADD(SW_Y, -toFIXED(2)),
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
     SC_LABEL(1),
-    SC_ADD(SW_Y, -px(1)),
+    SC_ADD(SW_Y, -toFIXED(1)),
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_LOOP(40, SC_TO(1)),

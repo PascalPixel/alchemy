@@ -84,21 +84,21 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   position[0] = object->x.fixed;
   position[1] = object->y.fixed;
   position[2] = object->z.fixed;
-  Vector_AddPolarOffset(px(16), object->facing, position);
+  Vector_AddPolarOffset(toFIXED(16), object->facing, position);
   if (block->mode == 3) {
     s32 x, z;
 
     x = position[0];
     z = position[2];
     cell = Ram_MapBlocks +
-           ((((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)) << 2);
+           ((((x / toFIXED(32)) & 31) + (((z / toFIXED(32)) & 31) << 5)) << 2);
   } else {
     s32 x, z;
 
     x = position[0];
     cell = (u8 *)map->layers[0].cells;
     z = position[2];
-    cell += (x / px(16) + z / px(16) * MAPGRID_SIZE << 2);
+    cell += (x / toFIXED(16) + z / toFIXED(16) * MAPGRID_SIZE << 2);
   }
   return cell[2];
 }
@@ -119,10 +119,11 @@ s32 Field_GetCollisionUnderLeader(void) {
     // The block table at its fixed address: as the linked gCellPictures it
     // loads
     cell = (struct MapCell *)Ram_MapBlocks +
-           (((position.x / px(32)) & 31) + ((position.z / px(32)) & 31) * 32);
+           (((position.x / toFIXED(32)) & 31) +
+            ((position.z / toFIXED(32)) & 31) * 32);
   } else {
     cell = map->layers[0].cells;
-    cell += position.x / px(16) + position.z / px(16) * 128;
+    cell += position.x / toFIXED(16) + position.z / toFIXED(16) * 128;
   }
   return cell->collisionCode;
 }
@@ -216,9 +217,8 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
     previousHp[i] = Unit_Get(gMainRoutineWork.party[i])->hp;
 
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    tile =
-        &((struct MapCell *)
-              Ram_MapBlocks)[((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)];
+    tile = &((struct MapCell *)Ram_MapBlocks)[((x / toFIXED(32)) & 31) +
+                                              (((z / toFIXED(32)) & 31) << 5)];
     event = tile->collisionCode;
     attributes = 0;
   } else {
@@ -226,7 +226,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
       tile = map->layers[layer].cells;
     else
       tile = (struct MapCell *)Ram_MapCellBuffer;
-    tile = &tile[(x / px(16)) + ((z / px(16)) << 7)];
+    tile = &tile[(x / toFIXED(16)) + ((z / toFIXED(16)) << 7)];
     event = tile->collisionCode;
     attributes = tile->attributeB;
   }
@@ -255,13 +255,13 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
       work->encounter = Encounter_RollTerrain(zone, speed);
     }
 
-    step = Iwram_MulQ16(work->walkingDistanceScale, leader->speedLimit);
+    step = Iwram_MulFX(work->walkingDistanceScale, leader->speedLimit);
     if (!zone)
       step /= 2;
     distance = work->walkingDistance + step;
     work->walkingDistance = distance;
     if (distance > 0xffff) {
-      amount = distance / Q16_ONE;
+      amount = distance / FIXED_ONE;
       work->walkingDistance = distance & 0xffff;
       Party_AddPp(amount, 0);
       if (DjinnRecovery_CountDownFar())
@@ -272,7 +272,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
 
     if (gMainRoutineWork.hazardMode == 0 && (attributes & 8)) {
       if (work->previousCell->attributeB & 8)
-        gMainRoutineWork.hazardSteps += leader->speedLimit / Q16_ONE;
+        gMainRoutineWork.hazardSteps += leader->speedLimit / FIXED_ONE;
       else
         gMainRoutineWork.hazardSteps = gMainRoutineWork.hazardLimit / 2;
     }

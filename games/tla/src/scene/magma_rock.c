@@ -361,7 +361,7 @@ void MagmaRock_UnblockMovedPillar(void) {
       MapGrid_CopyCellAttributes(79, 46, 2, 1, 79, 36);
       Actor_LiftTargetBlock(gMagmaRock_SalamanderTailUpperPillars);
     } else {
-      if (work->target->z.part[0].pixel == 600)
+      if (work->target->z.part[0].integer == 600)
         MapGrid_CopyCellAttributes(104, 38, 1, 1, 103, 38);
       else
         MapGrid_CopyCellAttributes(94, 44, 5, 1, 99, 38);
@@ -466,7 +466,7 @@ void MagmaRock_ThrowEmbers(struct Actor *object) {
       dy = Random16() & 31;
       FieldEffect_Spawn(
           object->x.fixed + ((dx - 8) << 16),
-          object->y.fixed + (dy << 16) - px(8), object->z.fixed, 0, phase,
+          object->y.fixed + (dy << 16) - toFIXED(8), object->z.fixed, 0, phase,
           phase, EFFECT_USE_SCRIPT | EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | 1,
           &params);
     }
@@ -539,12 +539,12 @@ void MagmaRock_RollMagmaRock(struct Actor *object) {
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   object->x.fixed += step * 2;
   MagmaRock_TrailEmbers(object);
-  if (leader->x.fixed - px(8) < object->x.fixed + px(6) &&
-      object->x.fixed - px(6) < leader->x.fixed + px(8) &&
-      leader->z.fixed - px(8) < object->z.fixed + px(6) &&
-      object->z.fixed - px(6) < leader->z.fixed + px(8) &&
-      leader->y.fixed < object->y.fixed + px(8) &&
-      object->y.fixed - px(8) < leader->y.fixed + px(15)) {
+  if (leader->x.fixed - toFIXED(8) < object->x.fixed + toFIXED(6) &&
+      object->x.fixed - toFIXED(6) < leader->x.fixed + toFIXED(8) &&
+      leader->z.fixed - toFIXED(8) < object->z.fixed + toFIXED(6) &&
+      object->z.fixed - toFIXED(6) < leader->z.fixed + toFIXED(8) &&
+      leader->y.fixed < object->y.fixed + toFIXED(8) &&
+      object->y.fixed - toFIXED(8) < leader->y.fixed + toFIXED(15)) {
     gFieldWork->raisedTrigger = 200;
     object->update = NULL;
     object->x.fixed = 0;
@@ -789,12 +789,12 @@ s32 MagmaRock_FireFromStatue(struct Actor *source) {
   }
 
 stop:
-  object->acceleration = px(2);
-  object->speedLimit = px(2);
+  object->acceleration = toFIXED(2);
+  object->speedLimit = toFIXED(2);
   object->update = MagmaRock_TrailEmbers;
-  FieldActor_SetMoveTargetFixed(object, position[0], position[1], position[2]);
+  FieldActor_SetMoveTargetFX(object, position[0], position[1], position[2]);
   FieldCamera_SetSpeed(2);
-  FieldCamera_MoveToFixed(position[0], position[1], position[2], 1);
+  FieldCamera_MoveToFX(position[0], position[1], position[2], 1);
   FieldActor_WaitForMove(object);
   object->update = NULL;
   Actor_Release(object);
@@ -826,12 +826,12 @@ stop:
   return MagmaRock_EndEvent();
 
 hit:
-  object->acceleration = px(2);
-  object->speedLimit = px(2);
+  object->acceleration = toFIXED(2);
+  object->speedLimit = toFIXED(2);
   object->update = MagmaRock_TrailEmbers;
-  FieldActor_SetMoveTargetFixed(object, position[0], position[1], position[2]);
+  FieldActor_SetMoveTargetFX(object, position[0], position[1], position[2]);
   FieldCamera_SetSpeed(2);
-  FieldCamera_MoveToFixed(position[0], position[1], position[2], 1);
+  FieldCamera_MoveToFX(position[0], position[1], position[2], 1);
   FieldActor_WaitForMove(object);
   object->update = NULL;
   Actor_Release(object);
@@ -881,14 +881,14 @@ void MagmaRock_BurstStatue(s32 mode, s32 cue) {
   if (mode == 2) {
     struct Actor *object = work->target;
 
-    MagmaRock_DropRocks(object->x.fixed, object->y.fixed + px(15),
+    MagmaRock_DropRocks(object->x.fixed, object->y.fixed + toFIXED(15),
                         object->z.fixed, 1);
   }
   if (mode == 3) {
     struct Actor *object = work->target;
     struct Actor *target;
 
-    MagmaRock_DropRocks(object->x.fixed, object->y.fixed + px(15),
+    MagmaRock_DropRocks(object->x.fixed, object->y.fixed + toFIXED(15),
                         object->z.fixed, 8);
     target = work->target;
     SET_ACTOR_POSITION(target, 0, 0, 0);
@@ -912,13 +912,13 @@ void MagmaRock_RaiseFlamePart(struct Actor *part) {
   struct Actor *owner = part->watchedActor;
 
   if (owner->timer > 35 && owner->timer < BYTE_AT(part, 98) * 2 + 36) {
-    part->y.fixed = owner->y.fixed + px(32);
-    part->y.fixed += (owner->timer << 19) + (px(-280));
+    part->y.fixed = owner->y.fixed + toFIXED(32);
+    part->y.fixed += (owner->timer << 19) + (toFIXED(-280));
   } else if (BYTE_AT(part, 98) * 2 + 36 < owner->timer && owner->timer < 332) {
-    part->y.fixed = owner->y.fixed + (BYTE_AT(part, 98) << 20) + px(32);
+    part->y.fixed = owner->y.fixed + (BYTE_AT(part, 98) << 20) + toFIXED(32);
   } else if (owner->timer > 332 && owner->timer < BYTE_AT(part, 98) * 2 + 333) {
-    part->y.fixed = owner->y.fixed + (BYTE_AT(part, 98) << 20) + px(32);
-    part->y.fixed -= (owner->timer << 19) - (px(2656));
+    part->y.fixed = owner->y.fixed + (BYTE_AT(part, 98) << 20) + toFIXED(32);
+    part->y.fixed -= (owner->timer << 19) - (toFIXED(2656));
   } else if (BYTE_AT(part, 98) * 2 + 333 < owner->timer) {
     Actor_Release(part);
   }
@@ -936,17 +936,18 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
   s32 mask;
 
   if (watched->timer >= 35 && watched->timer <= 42) {
-    object->effect.y = watched->y.fixed + px(24);
-    object->effect.y = object->effect.y + (watched->timer << 19) + (px(-272));
+    object->effect.y = watched->y.fixed + toFIXED(24);
+    object->effect.y =
+        object->effect.y + (watched->timer << 19) + (toFIXED(-272));
   } else {
     if (watched->timer >= 9 && watched->timer <= 331) {
       object->effect.y =
-          watched->y.fixed + (object->effect.riseCounter << 20) + px(24);
+          watched->y.fixed + (object->effect.riseCounter << 20) + toFIXED(24);
     } else if (watched->timer > 332 &&
                watched->timer < (object->effect.riseCounter << 1) + 333) {
       object->effect.y =
-          watched->y.fixed + (object->effect.riseCounter << 20) + px(24);
-      object->effect.y -= (watched->timer << 19) - (px(2656));
+          watched->y.fixed + (object->effect.riseCounter << 20) + toFIXED(24);
+      object->effect.y -= (watched->timer << 19) - (toFIXED(2656));
     } else if ((object->effect.riseCounter << 1) + 333 < watched->timer) {
       object->effect.y = object->actor.groundHeight;
       object->effect.update = 0;
@@ -961,9 +962,9 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
     config.priority = 2;
     config.update = (void (*)(union FieldObject *))MagmaRock_DriftAndSlow;
     config.script = gMagmaRock_EmberScript;
-    FieldEffect_Spawn(object->effect.x + px(1), object->effect.y - px(4),
-                      object->effect.z, ((Random16() & mask) - 3) << 14,
-                      -0x20000, step,
+    FieldEffect_Spawn(object->effect.x + toFIXED(1),
+                      object->effect.y - toFIXED(4), object->effect.z,
+                      ((Random16() & mask) - 3) << 14, -0x20000, step,
                       EFFECT_USE_UPDATE | EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                           EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                       &config);
@@ -1022,12 +1023,12 @@ void MagmaRock_BurnStatue(struct Actor *object) {
       config.script = gMagmaRock_EmberScript;
       dx = Random16() & 15;
       dz = Random16() & 15;
-      FieldEffect_Spawn(object->x.fixed + px(1), object->y.fixed + px(24),
-                        object->z.fixed, (dx - 8) << 14, 0, (dz - 8) << 14,
-                        EFFECT_USE_UPDATE | EFFECT_USE_SCRIPT |
-                            EFFECT_USE_TYPE | EFFECT_USE_PRIORITY |
-                            EFFECT_USE_PALETTE,
-                        &config);
+      FieldEffect_Spawn(
+          object->x.fixed + toFIXED(1), object->y.fixed + toFIXED(24),
+          object->z.fixed, (dx - 8) << 14, 0, (dz - 8) << 14,
+          EFFECT_USE_UPDATE | EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
+              EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+          &config);
     }
   } else if (object->timer == 33) {
     struct Actor *parts[4];
@@ -1036,8 +1037,9 @@ void MagmaRock_BurnStatue(struct Actor *object) {
     s32 i;
 
     Actor_PlaySoundInView(object, SE_CLATTER);
-    parts[0] = (FieldActor_Create(type, object->x.fixed + px(1),
-                                  object->y.fixed + px(32), object->z.fixed));
+    parts[0] =
+        (FieldActor_Create(type, object->x.fixed + toFIXED(1),
+                           object->y.fixed + toFIXED(32), object->z.fixed));
     for (i = 1; i != 4; i++) {
       struct ResourceSprite *first = parts[0]->sprite;
       struct Actor *part = (FieldActor_Create(type, 0, 0, 0));
@@ -1226,19 +1228,19 @@ void MagmaRock_AmplifyBurst(void) {
   opt = &options;
   opt->priority = 1;
   opt->palette = 14;
-  opt->startScaleX = Q16_ONE * 4 / 5;
-  opt->startScaleY = Q16_ONE * 4 / 5;
+  opt->startScaleX = FIXED_ONE * 4 / 5;
+  opt->startScaleY = FIXED_ONE * 4 / 5;
   i = 0;
 first:
   {
     s32 r = Random16();
 
     offset = position;
-    offset[0] = ((r & 15) << 16) - px(8);
+    offset[0] = ((r & 15) << 16) - toFIXED(8);
   }
   offset[1] = (Random16() & 15) << 16;
   FieldEffect_Spawn(leader->x.fixed + offset[0], leader->y.fixed + offset[1],
-                    leader->z.fixed, 0, 0x13333, 0, px(11), opt);
+                    leader->z.fixed, 0, 0x13333, 0, toFIXED(11), opt);
   wait(5);
   i++;
   if (i != 8)
@@ -1246,7 +1248,7 @@ first:
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  leader->gravity = px(4) / 5;
+  leader->gravity = toFIXED(4) / 5;
   leader->bounce = 0;
   Event_Wait(1);
   leader->facing = FACING_NORTH;
@@ -1254,10 +1256,10 @@ first:
 second:
   phase = gFrameCount & 1;
   if (phase == 0) {
-    offset[0] = ((Random16() & 15) << 16) - px(8);
+    offset[0] = ((Random16() & 15) << 16) - toFIXED(8);
     offset[1] = (Random16() & 15) << 16;
     FieldEffect_Spawn(leader->x.fixed + offset[0], leader->y.fixed + offset[1],
-                      leader->z.fixed, 0, 0x13333, phase, px(11), opt);
+                      leader->z.fixed, 0, 0x13333, phase, toFIXED(11), opt);
   }
   wait(1);
   if (leader->velocityY != 0) {
@@ -1277,8 +1279,8 @@ second:
   FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
   Event_ClearFlag(FLAG_SCENE_TEMP_60);
-  leader->gravity = px(1);
-  leader->bounce = Q16_ONE / 4;
+  leader->gravity = toFIXED(1);
+  leader->bounce = FIXED_ONE / 4;
   MagmaRock_EndEvent();
 }
 
@@ -1295,7 +1297,7 @@ void MagmaRock_PushPillarEast(void) {
   s32 z;
   s32 height;
 
-  cell[0] = leader->x.fixed + px(16);
+  cell[0] = leader->x.fixed + toFIXED(16);
   cell[1] = leader->y.fixed;
   cell[2] = leader->z.fixed;
   object = Actor_FindInCell(cell, leader);
@@ -1328,7 +1330,7 @@ void MagmaRock_PushPillarWest(void) {
   s32 z;
   s32 height;
 
-  position[0] = leader->x.fixed - px(16);
+  position[0] = leader->x.fixed - toFIXED(16);
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
   object = Actor_FindInCell(position, leader);
@@ -1373,17 +1375,17 @@ void MagmaRock_ScatterEmbers(s32 x, s32 z) {
   s32 i;
   s32 kind;
 
-  config.startScaleX = Q16_ONE * 2;
-  config.startScaleY = Q16_ONE * 2;
+  config.startScaleX = FIXED_ONE * 2;
+  config.startScaleY = FIXED_ONE * 2;
   config.type = 403;
   kind = 1; // Holds one constant: the native loads 1 before the data address.
   config.script = gMagmaRock_EmberScript;
   config.priority = kind;
   i = 0;
 loop:
-  position[0] = x + ((Random16() & 63) << 16) - Q16_ONE * 32;
+  position[0] = x + ((Random16() & 63) << 16) - FIXED_ONE * 32;
   position[1] = (Random16() & 15) << 12;
-  position[2] = z + ((Random16() & 63) << 16) - Q16_ONE * 32;
+  position[2] = z + ((Random16() & 63) << 16) - FIXED_ONE * 32;
   FieldEffect_Spawn(position[0], 0, position[2], 0, position[1], 0,
                     EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                         EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | 1,
@@ -1420,7 +1422,8 @@ void MagmaRock_BlastOpenWall(s32 mode, s32 cue) {
   }
   if (mode == 2) {
     MagmaRock_ScatterEmbers(work->target->x.fixed, work->target->z.fixed);
-    MagmaRock_DropRocks(work->target->x.fixed, work->target->y.fixed + px(15),
+    MagmaRock_DropRocks(work->target->x.fixed,
+                        work->target->y.fixed + toFIXED(15),
                         work->target->z.fixed, 1);
   }
   if (mode == 3) {
@@ -1430,8 +1433,9 @@ void MagmaRock_BlastOpenWall(s32 mode, s32 cue) {
     MagmaRock_ScatterEmbers(work->target->x.fixed, work->target->z.fixed);
     MagmaRock_ScatterEmbers(work->target->x.fixed, work->target->z.fixed);
     MagmaRock_ScatterEmbers(work->target->x.fixed,
-                            work->target->z.fixed - px(32));
-    MagmaRock_DropRocks(work->target->x.fixed, work->target->y.fixed + px(15),
+                            work->target->z.fixed - toFIXED(32));
+    MagmaRock_DropRocks(work->target->x.fixed,
+                        work->target->y.fixed + toFIXED(15),
                         work->target->z.fixed, 16);
     target = work->target;
     SET_ACTOR_POSITION(target, 0, 0, 0);
@@ -1499,8 +1503,8 @@ void MagmaRock_LaunchLeader(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
-  leader->y.fixed += px(130);
-  leader->gravity = px(1) / 2;
+  leader->y.fixed += toFIXED(130);
+  leader->gravity = toFIXED(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1511,8 +1515,8 @@ void MagmaRock_LaunchLeader(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = Q16_ONE * 4 / 5;
-  options.startScaleY = Q16_ONE * 4 / 5;
+  options.startScaleX = FIXED_ONE * 4 / 5;
+  options.startScaleY = FIXED_ONE * 4 / 5;
   i = 0;
 loop:
   angle = i << 12;
@@ -1539,8 +1543,8 @@ loop:
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  leader->gravity = px(1);
-  leader->bounce = Q16_ONE / 4;
+  leader->gravity = toFIXED(1);
+  leader->bounce = FIXED_ONE / 4;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   MagmaRock_EndEvent();
 }
@@ -1561,7 +1565,7 @@ void MagmaRock_LandLeader(void) {
     object->velocityY = 0;
     object->groundHeight = height;
     object->y.fixed = height;
-    object->targetY = px(-32768);
+    object->targetY = toFIXED(-32768);
     EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
   }
 }
@@ -1605,9 +1609,9 @@ static inline void BuildParts(struct Actor *anchor) {
   struct LayeredSprite *sprite;
   u32 i;
 
-  parts[0] = ((struct Actor *)Import_ActorCreate(0x15f, anchor->x.fixed + px(1),
-                                                 anchor->y.fixed + px(32),
-                                                 anchor->z.fixed));
+  parts[0] = ((struct Actor *)Import_ActorCreate(
+      0x15f, anchor->x.fixed + toFIXED(1), anchor->y.fixed + toFIXED(32),
+      anchor->z.fixed));
   i = 1;
 next:
   first = parts[0]->sprite;
@@ -1680,17 +1684,17 @@ s32 Scene_Initialize(void) {
     Blocks_MarkCells(other);
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
       actor = Actor_GetById(ACTOR_SLIDE_STATUE_FLAME);
-      actor->x.fixed += px(1);
+      actor->x.fixed += toFIXED(1);
       actor->motionFlags = 0;
       actor->collisionFlags = 0;
-      actor->groundHeight = actor->y.fixed += px(24);
+      actor->groundHeight = actor->y.fixed += toFIXED(24);
       Actor_SetSpriteFlags(actor, 0);
     }
     MagmaRock_RebuildFlameParts(ACTOR_SLIDE_STATUE_FLAME);
     switch (work->entrance) {
     case 3:
     case 4:
-      offset = px(16);
+      offset = toFIXED(16);
       goto move;
     }
     goto settle;
@@ -1713,13 +1717,13 @@ s32 Scene_Initialize(void) {
       if (id == 1) {
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(*owner);
-          actor->z.fixed += px(16);
+          actor->z.fixed += toFIXED(16);
         }
         Leader_Lift(-0x100000);
       } else if (id == 2) {
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(*owner);
-          actor->z.fixed += px(16);
+          actor->z.fixed += toFIXED(16);
         }
         Leader_Lift(-0x600000);
       }
@@ -1781,11 +1785,11 @@ s32 Scene_Initialize(void) {
         } else if (id == 7) {
           if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
             actor = Actor_GetById(*owner);
-            actor->z.fixed += px(16);
+            actor->z.fixed += toFIXED(16);
           }
           Leader_Lift(-0x300000);
         } else if (id == 8) {
-          offset = px(104);
+          offset = toFIXED(104);
           goto move;
         }
       } else if (*entrance <= 12) {
@@ -1817,17 +1821,17 @@ s32 Scene_Initialize(void) {
         MagmaRock_RebuildFlameParts(ACTOR_UPPER_FLAME_A);
         MagmaRock_RebuildFlameParts(ACTOR_UPPER_FLAME_B);
         if (*entrance == 9 || *entrance == 10) {
-          offset = px(48);
+          offset = toFIXED(48);
           goto move;
         }
       } else {
         MagmaRockInside_RaiseActorCells(gMagmaRock_SalamanderTailTopStatues);
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(ACTOR_TOP_FLAME);
-          actor->x.fixed += px(1);
+          actor->x.fixed += toFIXED(1);
           actor->motionFlags = 0;
           actor->collisionFlags = 0;
-          actor->groundHeight = actor->y.fixed += px(24);
+          actor->groundHeight = actor->y.fixed += toFIXED(24);
           Actor_SetSpriteFlags(actor, 0);
         }
         MagmaRock_RebuildFlameParts(ACTOR_TOP_FLAME);
@@ -1847,9 +1851,9 @@ s32 Scene_Initialize(void) {
         } else if (*entrance == 16 || *entrance == 17) {
           if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
             actor = Actor_GetById(work->leaderActorId);
-            actor->z.fixed += px(16);
+            actor->z.fixed += toFIXED(16);
           }
-          offset = -px(32);
+          offset = -toFIXED(32);
         move:
           Leader_Lift(offset);
         }
@@ -1874,7 +1878,7 @@ s32 Scene_Initialize(void) {
     if (work->entrance <= 2) {
       if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
         actor = Actor_GetById(*leader);
-        actor->z.fixed += px(16);
+        actor->z.fixed += toFIXED(16);
       }
       Leader_Lift(-0x200000);
     }
@@ -2178,7 +2182,8 @@ void MagmaRock_SpawnRubble(s32 spread) {
   do {
     y = leader->y.fixed - ((Random_Below(14)) << 16);
     effect = (struct FieldEffect *)FieldActor_Create(
-        285, (i << 17) + leader->x.fixed - px(8), y - px(2), leader->z.fixed);
+        285, (i << 17) + leader->x.fixed - toFIXED(8), y - toFIXED(2),
+        leader->z.fixed);
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;
@@ -2186,10 +2191,10 @@ void MagmaRock_SpawnRubble(s32 spread) {
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
       Actor_StartScript(effect, gMagmaRock_RubbleScript);
-      effect->scaleY = effect->scaleX = Q16_ONE * 7 / 10;
+      effect->scaleY = effect->scaleX = FIXED_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {
-        effect->velocity.x = Iwram_MulQ16(Trig_Cos(i << 13), 0x13333);
+        effect->velocity.x = Iwram_MulFX(Trig_Cos(i << 13), 0x13333);
         effect->velocity.z = Math_Sin(i << 13);
       } else {
         effect->velocity.x = spread;
@@ -2197,7 +2202,7 @@ void MagmaRock_SpawnRubble(s32 spread) {
       }
       effect->velocity.y = -(((Random16() << 14) >> 16) + 0x6000);
       effect->spin = ((Random16() << 9) >> 16) - 0x100;
-      effect->scaleRateX = -Q16_ONE / 32;
+      effect->scaleRateX = -FIXED_ONE / 32;
       effect->scaleRateY = -0x600;
       effect->update = Effect_AdvanceMotionAtLeaderPriority;
     }
@@ -2260,7 +2265,7 @@ void MagmaRock_SetActorCellShape(s32 heightOffset, s32 layer, s32 id) {
   height =
       Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed) >> 19;
   height += heightOffset;
-  shapes += actor->x.fixed / px(16) + (actor->z.fixed / px(16) << 7);
+  shapes += actor->x.fixed / toFIXED(16) + (actor->z.fixed / toFIXED(16) << 7);
   *shapes = MapCollision_FindOrAddTag(actor->layer, value, height);
 }
 
@@ -2298,13 +2303,13 @@ void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count) {
       rock->position[0] = x;
       rock->position[1] = y;
       rock->position[2] = z;
-      FieldVector_AddPolarOffsetFixed(Random16() * 8 + px(8), angle,
-                                      rock->position);
+      FieldVector_AddPolarOffsetFX(Random16() * 8 + toFIXED(8), angle,
+                                   rock->position);
       rock->velocity[0] = 0;
-      rock->velocity[1] = px(5);
+      rock->velocity[1] = toFIXED(5);
       rock->velocity[2] = 0;
-      FieldVector_AddPolarOffsetFixed(Random16() * 2 + px(2), angle,
-                                      rock->velocity);
+      FieldVector_AddPolarOffsetFX(Random16() * 2 + toFIXED(2), angle,
+                                   rock->velocity);
       {
         s32 mask = 63;
 

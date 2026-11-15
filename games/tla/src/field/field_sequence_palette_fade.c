@@ -364,12 +364,12 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
       color =
           Iwram_SignedDivide((red + RGB_GREEN(color) + RGB_BLUE(color)) << 4,
                              tintRed + tintGreen + tintBlue);
-      blendedRed = Iwram_MulQ16(((color * tintRed) >> 4) << 16,
-                                (s32)(tintRed << 16) >> 4);
-      blendedGreen = Iwram_MulQ16(((color * tintGreen) >> 4) << 16,
-                                  (s32)(tintGreen << 16) >> 4);
-      blendedBlue = Iwram_MulQ16(((color * tintBlue) >> 4) << 16,
-                                 (s32)(tintBlue << 16) >> 4);
+      blendedRed = Iwram_MulFX(((color * tintRed) >> 4) << 16,
+                               (s32)(tintRed << 16) >> 4);
+      blendedGreen = Iwram_MulFX(((color * tintGreen) >> 4) << 16,
+                                 (s32)(tintGreen << 16) >> 4);
+      blendedBlue = Iwram_MulFX(((color * tintBlue) >> 4) << 16,
+                                (s32)(tintBlue << 16) >> 4);
       clampedRed = PaletteFade_ClampComponent((u32)blendedRed >> 16);
       clampedGreen = PaletteFade_ClampComponent((u32)blendedGreen >> 16);
       clampedBlue = PaletteFade_ClampComponent((u32)blendedBlue >> 16);

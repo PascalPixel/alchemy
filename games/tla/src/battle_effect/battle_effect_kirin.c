@@ -78,8 +78,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
     struct Particle *fire = &work->particles[i];
 
     fire->x = (Random16() & 31) + 16;
-    fire->y = px((Random16() & 31) + 48);
-    fire->velocityY = px((Random16() & 31) - 16);
+    fire->y = INTtoFIXED((Random16() & 31) + 48);
+    fire->velocityY = INTtoFIXED((Random16() & 31) - 16);
     fire->variant = Random16() % 48 + 2;
   }
 
@@ -131,18 +131,18 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         amp = 96;
         if (frame <= 104)
           amp = 32;
-        ang = (frame * 1024 - TRIG_TURN / 8) & TRIG_ANGLE_MASK;
-        if (ang > TRIG_TURN / 2)
-          ang -= TRIG_TURN / 2;
-        wave = Q_16_16_TO_INT(Trig_Sin(ang) * amp);
+        ang = (frame * 1024 - DEGtoANG(45)) & TRIG_ANGLE_MASK;
+        if (ang > DEGtoANG(180))
+          ang -= DEGtoANG(180);
+        wave = FIXEDtoINT(Trig_Sin(ang) * amp);
         if ((frame & 31) == 8)
           work->shakeFrames = 4;
       }
       place.groundHeight = 0;
-      place.height = px(255);
+      place.height = toFIXED(255);
       for (i = 0; i != 9; i++) {
-        place.x = px(baseX + gKirin_Columns[i] - lift) + px(224);
-        place.y = px(gKirin_Rows[i] - wave) + px(72);
+        place.x = INTtoFIXED(baseX + gKirin_Columns[i] - lift) + toFIXED(224);
+        place.y = INTtoFIXED(gKirin_Rows[i] - wave) + toFIXED(72);
         Render_ApplyProjectedPlacementFar(work->sprites[i], &place.x, &pair.x,
                                           0);
       }
@@ -159,8 +159,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         count = 64;
       for (i = 0; i != count; i++) {
         s32 ang = i << 10;
-        s32 x = (Q_16_16_TO_INT(Trig_Sin(ang) * (grow * 2 + 8))) + grow + 96;
-        s32 y = (Q_16_16_TO_INT(Trig_Cos(ang) * (grow * 12 + 48))) + 64;
+        s32 x = (FIXEDtoINT(Trig_Sin(ang) * (grow * 2 + 8))) + grow + 96;
+        s32 y = (FIXEDtoINT(Trig_Cos(ang) * (grow * 12 + 48))) + 64;
 
         EFFECT_DRAW_MOTE(blit, canvas, sheet, x, y, size);
       }
@@ -190,7 +190,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         }
         if (fire->x > 128 || fire->variant == 1) {
           fire->x = (Random16() & 31) + baseX + 172;
-          fire->y = px((Random16() & 31) - wave + 56);
+          fire->y = INTtoFIXED((Random16() & 31) - wave + 56);
           fire->velocityY = ((Random16() & 31) - 16) << 15;
         }
       }
@@ -254,21 +254,21 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
 
         rowX -= 16;
         if (frame <= 8) {
-          ang = frame * 2048 + TRIG_TURN / 4;
-          if (ang > TRIG_TURN / 2)
-            ang -= TRIG_TURN / 2;
-          rise = Q_16_16_TO_INT(Trig_Sin(ang) * 64);
+          ang = frame * 2048 + DEGtoANG(90);
+          if (ang > DEGtoANG(180))
+            ang -= DEGtoANG(180);
+          rise = FIXEDtoINT(Trig_Sin(ang) * 64);
         } else {
-          ang = frame * 2048 + TRIG_TURN / 4;
-          if (ang > TRIG_TURN / 2)
-            ang -= TRIG_TURN / 2;
-          rise = Q_16_16_TO_INT(Trig_Sin(ang) * 32);
+          ang = frame * 2048 + DEGtoANG(90);
+          if (ang > DEGtoANG(180))
+            ang -= DEGtoANG(180);
+          rise = FIXEDtoINT(Trig_Sin(ang) * 32);
         }
         chargePlace.groundHeight = 0;
-        chargePlace.height = px(255);
+        chargePlace.height = toFIXED(255);
         for (i = 0; i != 9; i++) {
-          chargePlace.x = px(rowX + gKirin_Columns[i]);
-          chargePlace.y = px(gKirin_Rows[i] - rise) + px(72);
+          chargePlace.x = INTtoFIXED(rowX + gKirin_Columns[i]);
+          chargePlace.y = INTtoFIXED(gKirin_Rows[i] - rise) + toFIXED(72);
           Render_ApplyProjectedPlacementFar(work->sprites[i], &chargePlace.x,
                                             &chargeScale.x, 0);
         }
@@ -296,7 +296,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
               s32 up;
 
               burst->x = unit.x << 15;
-              burst->y = px(unit.y - 16);
+              burst->y = INTtoFIXED(unit.y - 16);
               burst->velocityX = ((Random16() & 255) - 128) << 10;
               up = (Random16() & 255) - 192;
               burst->velocityY = up << 11;

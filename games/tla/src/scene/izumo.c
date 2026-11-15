@@ -197,8 +197,8 @@ void Izumo_CycloneSecondPatch(void) {
 
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(3999)) {
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 64, px(456),
-          px(584));
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 64, toFIXED(456),
+          toFIXED(584));
     if (FIELD_CELL(object->x.fixed) == 28 &&
         FIELD_CELL(object->z.fixed) == 36) {
       Event_Start();
@@ -206,7 +206,7 @@ void Izumo_CycloneSecondPatch(void) {
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, -16, 0);
-      object->velocityY = px(6);
+      object->velocityY = toFIXED(6);
       Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Event_End();
     }
@@ -218,8 +218,8 @@ void Izumo_CycloneThirdPatch(void) {
 
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(4000)) {
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 65, px(472),
-          px(552));
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 65, toFIXED(472),
+          toFIXED(552));
     if (FIELD_CELL(object->x.fixed) == 29 &&
         FIELD_CELL(object->z.fixed) == 34) {
       Event_Start();
@@ -228,7 +228,7 @@ void Izumo_CycloneThirdPatch(void) {
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Call3((void (*)())Actor_SetDestinationOffsetById,
             gMainRoutineWork.leaderActorId, 0, -16);
-      object->velocityY = px(6);
+      object->velocityY = toFIXED(6);
       Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Event_End();
     }
@@ -252,8 +252,8 @@ void Izumo_CycloneSeventhPatch(void) {
 
   FieldTileCopies_CopyTouchedCells(42, 0, 6, 2, 9, 18, 0);
   if (!GameFlag_Get(4001)) {
-    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 66, px(168),
-          px(328));
+    Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 66, toFIXED(168),
+          toFIXED(328));
     if (FIELD_CELL(object->x.fixed) == 10 &&
         FIELD_CELL(object->z.fixed) == 20) {
       Event_Start();
@@ -261,7 +261,7 @@ void Izumo_CycloneSeventhPatch(void) {
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
-      object->velocityY = px(6);
+      object->velocityY = toFIXED(6);
       Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Event_End();
     }
@@ -281,7 +281,8 @@ void Izumo_EnterDoor(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, px(1) / 2, 0x4000);
+  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, toFIXED(1) / 2,
+                           0x4000);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
   Sound_Play(SE_MAP_EXIT);
@@ -417,8 +418,8 @@ void Izumo_StopThePartyToThankThem(void) {
   FieldEvent_Wait(15);
   Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, ACTOR_SUSA, px(200),
-        px(216));
+  Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, ACTOR_SUSA,
+        toFIXED(200), toFIXED(216));
   Actor_WalkToById(ACTOR_SUSA, 200, 248);
   Actor_WaitForMoveById(ACTOR_SUSA);
   FieldEvent_Wait(30);
@@ -552,7 +553,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_STOPPED_TO_THANK_THE_PARTY) &&
         !GameFlag_Get(FLAG_TOKEN_OFFERED)) {
       Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, ACTOR_SUSA,
-            px(200), px(216));
+            toFIXED(200), toFIXED(216));
       Actor_SetSpritePriority(ACTOR_SUSA, 3);
       Actor_GetById(ACTOR_SUSA)->motionFlags |= 2;
       GameFlag_Set(FLAG_THANKFUL_ONE_WAITS);
@@ -576,7 +577,7 @@ void Izumo_RevealTheStoneCircle(void) {
     Call6((void (*)())Map_CopyCellAttributeRect, 36, 12, 3, 3, 22, 8);
     if (x == 23 && z == 9)
       Actor_SetHorizontalPositionWithTerrain(gMainRoutineWork.leaderActorId,
-                                             px(376), px(136));
+                                             toFIXED(376), toFIXED(136));
   } else {
     MapGrid_CopyCellPictureIndicesRect(36, 8, 22, 8, 3, 3);
     Call6((void (*)())Map_CopyCellAttributeRect, 36, 8, 3, 3, 22, 8);

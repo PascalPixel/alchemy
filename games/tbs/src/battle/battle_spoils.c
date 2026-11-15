@@ -151,8 +151,8 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
     dropShift -= 2;
   if (dropShift < 0)
     dropShift = 0;
-  // Twice Q16_ONE >> n against a 16-bit random number: 1 in 2^(n - 1).
-  if ((Q16_ONE * 2 >> dropShift) > (Battle_RandomFar() & 0xffff)) {
+  // Twice FIXED_ONE >> n against a 16-bit random number: 1 in 2^(n - 1).
+  if ((FIXED_ONE * 2 >> dropShift) > (Battle_RandomFar() & 0xffff)) {
     lowestSlot = -1;
     lowestItemPriority = 0x40000000;
     for (i = 0; i <= 3; i++) {

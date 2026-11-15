@@ -51,8 +51,8 @@ void FieldPsynergy_WatchSandGround(void) {
 
     if (MapGrid_IsClimbableCell(object->x.fixed, object->z.fixed, 2) == 0)
       reason = 3;
-    x = (object->x.fixed & FIELD_CELL_MASK) + px(8);
-    z = (object->z.fixed & FIELD_CELL_MASK) - px(8);
+    x = (object->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+    z = (object->z.fixed & FIELD_CELL_MASK) - toFIXED(8);
     if (MapGrid_IsClimbableCell(x, z, 2) == 0)
       reason = 4;
   }
@@ -142,7 +142,7 @@ void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase) {
 
     for (row = 0; row < height; row++) {
       s32 base = phase * 0x14ccc;
-      s32 rowOffset = row * px(4) - px(124);
+      s32 rowOffset = row * toFIXED(4) - toFIXED(124);
       s32 shift = base + rowOffset - wave;
 
       shift >>= 16;
@@ -169,8 +169,8 @@ void Sand_InitLeaderSprite(struct EffectSprite *sprite, s32 tiles) {
   sprite->oam.fullColor = 1;
   sprite->oam.palette = 0;
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    sprite->scaleX = Q16_ONE * 3 / 4;
-    sprite->scaleY = Q16_ONE * 3 / 4;
+    sprite->scaleX = FIXED_ONE * 3 / 4;
+    sprite->scaleY = FIXED_ONE * 3 / 4;
   } else {
     sprite->scaleX = scene->mainActor->scaleX;
     sprite->scaleY = scene->mainActor->scaleY;
@@ -201,10 +201,10 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
   position[1] = y = mainActor->y.fixed;
   position[2] = mainActor->z.fixed;
   if (high) {
-    position[1] = y + px(2);
-    Vector_AddPolarOffset(px(2), Random16(), position);
+    position[1] = y + toFIXED(2);
+    Vector_AddPolarOffset(toFIXED(2), Random16(), position);
   } else {
-    Vector_AddPolarOffset(px(4), Random16(), position);
+    Vector_AddPolarOffset(toFIXED(4), Random16(), position);
   }
   SET_POSITION(particle, position[0], position[1], position[2]);
   position[2] = 0;
@@ -217,8 +217,8 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
   particle->velocityY = 0;
   particle->velocityZ = position[2];
   EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tiles);
-  sprite->scaleX = Q16_ONE / 5;
-  sprite->scaleY = Q16_ONE / 5;
+  sprite->scaleX = FIXED_ONE / 5;
+  sprite->scaleY = FIXED_ONE / 5;
   sprite->oam.priority = BattleEffect_GetObjectPriority(mainActor);
   sprite->depth = BattleEffect_GetObjectDepth(mainActor) + 2;
   sprite->oam.fullColor = 1;
@@ -243,8 +243,8 @@ void GrowingParticle_Update(struct EffectSprite *sprite,
     sprite->oam.index = tiles + picture * 8;
     scale = sprite->scaleX + 0x1999;
     sprite->scaleX = scale;
-    if (scale > Q16_ONE)
-      scale = Q16_ONE;
+    if (scale > FIXED_ONE)
+      scale = FIXED_ONE;
     sprite->scaleX = scale;
     sprite->scaleY = scale;
     position[0] = particle->x;
@@ -314,8 +314,8 @@ void FieldPsynergy_EndSand(void) {
   *motionFlags = 0;
   // Set before the move: 63 is held in a saved register across both calls.
   mask = 63;
-  Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed,
-                                     owner->y.fixed + px(10), owner->z.fixed);
+  Actor_SetPositionAndResetMotionFar(
+      owner, owner->x.fixed, owner->y.fixed + toFIXED(10), owner->z.fixed);
   party = &gMainRoutineWork;
   Actor_SetFirstSpriteAnimationFar(owner, party->leaderActorId);
   ((u8 *)owner->sprite)[5] &= mask;
@@ -324,7 +324,7 @@ void FieldPsynergy_EndSand(void) {
   ((u8 *)owner->sprite)[7] = mask;
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     *(s32 *)((u8 *)owner->sprite + 12) = 0xc000;
-  owner->facing = TRIG_TURN / 4;
+  owner->facing = DEGtoANG(90);
   Actor_SelectAnimationFar(owner, 0);
   Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
   wait(1);
@@ -455,10 +455,10 @@ void FieldPsynergy_Sand(void) {
       owner->y.fixed += 0x3999;
     if (frame & 31)
       Sound_PlayFar(SE_SPIRAL);
-    owner->facing += TRIG_TURN / 8;
+    owner->facing += DEGtoANG(45);
     wait(1);
   }
-  owner->facing = TRIG_TURN / 4;
+  owner->facing = DEGtoANG(90);
   wait(1);
   FieldPsynergy_DecodePicture(*(void **)((u8 *)owner->sprite + 40),
                               work->picture, 0x400);

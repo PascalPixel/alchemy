@@ -67,7 +67,7 @@ void CrackedTiles_Update(void) {
   x &= 0x1ff;
   sy &= 0xff;
   table->oam[0] = 0;
-  table->oam[1] = sy | px(x) | 0x80008800;
+  table->oam[1] = sy | INTtoFIXED(x) | 0x80008800;
   table->oam[2] = tile | 0x400;
   CELL_PUSH_SLOT_ENTRY(table->oam, depth);
 }

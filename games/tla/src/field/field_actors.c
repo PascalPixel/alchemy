@@ -15,7 +15,7 @@
 #include "field/actor_view.h"
 #include "system/ram_code.h"
 #include "battle/battle_system.h"
-#include "system/transform.h"
+#include "system/matrix.h"
 #include "macros.h"
 #include "system/main_routine_work.h"
 #include "field/field_sprite.h"
@@ -158,7 +158,8 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
   y = actor->z.fixed - viewZ;
   // Across, from 32 pixels left of the screen to 32 past its 240; down,
   // below the view's top and above 224.
-  if ((x >= -(px(32) - 1) && x <= px(272) - 1) && y > 0 && y < px(224)) {
+  if ((x >= -(toFIXED(32) - 1) && x <= toFIXED(272) - 1) && y > 0 &&
+      y < toFIXED(224)) {
     *screenPosition++ = x >> 16;
     *screenPosition = y >> 16;
     return 0;
@@ -294,20 +295,20 @@ struct Actor *Actor_Create(s32 id, s32 x, s32 y, s32 z) {
   if (object != NULL) {
     Actor_SetPositionAndResetMotion(object, x, y, z);
     object->script = (s32 *)gActorScript_EndScript;
-    object->speedLimit = px(2);
+    object->speedLimit = toFIXED(2);
     object->scriptCursor = 0;
-    object->scaleX = Q16_ONE;
-    object->scaleY = Q16_ONE;
-    object->acceleration = px(1);
+    object->scaleX = FIXED_ONE;
+    object->scaleY = FIXED_ONE;
+    object->acceleration = toFIXED(1);
     object->motionFlags = 3;
-    object->gravity = px(1);
+    object->gravity = toFIXED(1);
     object->bounce = 0x4000;
     object->collisionFlags = 0;
     object->steeringFlags = 1;
-    object->facing = TRIG_TURN / 4;
+    object->facing = DEGtoANG(90);
     object->riseBaseY = 0;
-    object->homeX = x / px(1);
-    object->homeZ = z / px(1);
+    object->homeX = x / toFIXED(1);
+    object->homeZ = z / toFIXED(1);
     object->carrier = NULL;
     object->stepX = 0;
     object->stepY = 0;
@@ -511,8 +512,8 @@ void Actor_StartIdle(struct Actor *object) {
 void Actor_StartCamera(struct Actor *actor, s32 watchedActorHandle) {
   Actor_StartScript(actor, gActor_CameraScript);
   if (watchedActorHandle != 0) {
-    actor->acceleration = px(1) / 2;
-    actor->speedLimit = px(4);
+    actor->acceleration = toFIXED(1) / 2;
+    actor->speedLimit = toFIXED(4);
     actor->watchedActor = (struct Actor *)watchedActorHandle;
     actor->timer = 0;
   }
@@ -604,7 +605,7 @@ void Actor_SetItemIcon(struct Actor *owner, s32 id) {
   sprite->height = 16;
   sprite->offsetX = 0;
   sprite->offsetY = 4;
-  sprite->scale = Q16_ONE;
+  sprite->scale = FIXED_ONE;
   sprite->image.tile = tile;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
@@ -633,7 +634,7 @@ void ActorSystem_SuspendProjectionAndShowSprites(void) {
 
   Task_SuspendAll(ActorSystem_PlaceSprites);
   Task_SuspendAll(ActorSystem_ProjectSprites);
-  PaletteFade_SetTargetFar(Q16_ONE, 1);
+  PaletteFade_SetTargetFar(FIXED_ONE, 1);
   PaletteFade_StartInterpolationFar(1);
   wait(1);
   dispcnt = REG_DISPCNT;
@@ -731,17 +732,17 @@ void ActorSystem_PlaceSprites(void) {
       dx = object->x.fixed - viewX;
       dz = object->z.fixed - viewZ;
       screenTop = dz - object->y.fixed;
-      if (dx > -px(32) && dx < px(272) && screenTop > -px(32) &&
-          screenTop < px(224) &&
+      if (dx > -toFIXED(32) && dx < toFIXED(272) && screenTop > -toFIXED(32) &&
+          screenTop < toFIXED(224) &&
           (priorityFlags = &object->priorityFlags,
            !(*priorityFlags & ACTOR_PRIORITY_NOT_DRAWN))) {
         terrainId = &object->layer;
         layer = *terrainId & 3;
         cells = (u32 *)map->layers[layer].cells;
         if (*priorityFlags & ACTOR_PRIORITY_AUTOMATIC) {
-          probeX = object->x.fixed - px(7);
-          feetZ = object->z.fixed + px(2);
-          objectHeight = FIELD_PIXEL(object->groundHeight);
+          probeX = object->x.fixed - toFIXED(7);
+          feetZ = object->z.fixed + toFIXED(2);
+          objectHeight = FIXEDtoINT(object->groundHeight);
           priority = 0;
           leftPriority = 0;
           middlePriority = 0;
@@ -753,9 +754,11 @@ void ActorSystem_PlaceSprites(void) {
             if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==
                 object->groundHeight) {
               leftPriority = CELL_PRIORITY(cells, probeX, feetZ);
-              height =
-                  MapGrid_GetTerrainHeight(layer, probeX, feetZ + px(16)) >> 16;
-              rise = (MapGrid_GetTerrainHeight(layer, probeX, feetZ + px(32)) >>
+              height = MapGrid_GetTerrainHeight(layer, probeX,
+                                                feetZ + toFIXED(16)) >>
+                       16;
+              rise = (MapGrid_GetTerrainHeight(layer, probeX,
+                                               feetZ + toFIXED(32)) >>
                       16) -
                      16;
               if (rise > height)
@@ -763,13 +766,15 @@ void ActorSystem_PlaceSprites(void) {
               if (height > objectHeight)
                 priority = BASE_PRIORITY(map) + 1;
             }
-            probeX += px(13);
+            probeX += toFIXED(13);
             if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==
                 object->groundHeight) {
               middlePriority = CELL_PRIORITY(cells, probeX, feetZ);
-              height =
-                  MapGrid_GetTerrainHeight(layer, probeX, feetZ + px(16)) >> 16;
-              rise = (MapGrid_GetTerrainHeight(layer, probeX, feetZ + px(32)) >>
+              height = MapGrid_GetTerrainHeight(layer, probeX,
+                                                feetZ + toFIXED(16)) >>
+                       16;
+              rise = (MapGrid_GetTerrainHeight(layer, probeX,
+                                               feetZ + toFIXED(32)) >>
                       16) -
                      16;
               if (rise > height)
@@ -777,13 +782,15 @@ void ActorSystem_PlaceSprites(void) {
               if (height > objectHeight)
                 priority = BASE_PRIORITY(map) + 1;
             }
-            probeX -= px(6);
+            probeX -= toFIXED(6);
             rightPriority = CELL_PRIORITY(cells, probeX, feetZ);
             height =
-                MapGrid_GetTerrainHeight(layer, probeX, feetZ + px(16)) >> 16;
-            rise = (MapGrid_GetTerrainHeight(layer, probeX, feetZ + px(32)) >>
-                    16) -
-                   16;
+                MapGrid_GetTerrainHeight(layer, probeX, feetZ + toFIXED(16)) >>
+                16;
+            rise =
+                (MapGrid_GetTerrainHeight(layer, probeX, feetZ + toFIXED(32)) >>
+                 16) -
+                16;
             if (rise > height)
               height = rise;
             if (height > objectHeight)
@@ -792,11 +799,11 @@ void ActorSystem_PlaceSprites(void) {
             if (object->groundHeight ==
                 MapGrid_GetTerrainHeight(layer, probeX, feetZ))
               leftPriority = CELL_PRIORITY(cells, probeX, feetZ);
-            probeX += px(13);
+            probeX += toFIXED(13);
             if (object->groundHeight ==
                 MapGrid_GetTerrainHeight(layer, probeX, feetZ))
               middlePriority = CELL_PRIORITY(cells, probeX, feetZ);
-            probeX -= px(6);
+            probeX -= toFIXED(6);
             rightPriority = CELL_PRIORITY(cells, probeX, feetZ);
           }
           // An odd priority is preferred, left first.
@@ -821,8 +828,8 @@ void ActorSystem_PlaceSprites(void) {
         layerPlusOne = CELL_LAYER(cells, object->x.fixed, object->z.fixed);
         if (layerPlusOne != 0)
           *terrainId = layerPlusOne - 1;
-        scale.x = Iwram_MulQ16(object->scaleX, sprite->scale);
-        scale.y = Iwram_MulQ16(object->scaleY, sprite->scale);
+        scale.x = Iwram_MulFX(object->scaleX, sprite->scale);
+        scale.y = Iwram_MulFX(object->scaleY, sprite->scale);
         point.x = dx;
         point.height = object->y.fixed - originY;
         point.y = dz - originY;
@@ -833,9 +840,9 @@ void ActorSystem_PlaceSprites(void) {
           point.groundHeight += 0xfec00000;
         }
         if (*priorityFlags & ACTOR_PRIORITY_OVERHEAD) {
-          point.height += px(320);
-          point.y += px(320);
-          point.groundHeight += px(320);
+          point.height += toFIXED(320);
+          point.y += toFIXED(320);
+          point.groundHeight += toFIXED(320);
         }
         if (*priorityFlags & ACTOR_PRIORITY_OWN_DEPTH)
           Render_ApplyProjectedPlacementAtDepth(sprite, &point, scale.values,
@@ -931,17 +938,17 @@ void ActorSystem_ProjectSprites(void) {
     eye = camera->followEye;
   if (camera->followPosition != NULL)
     target = camera->followPosition;
-  angle = (s16)ArcTan2(FIELD_PIXEL(eye->x - target->x),
-                       FIELD_PIXEL(eye->z - target->z));
+  angle = (s16)Trig_Atan(FIXEDtoINT(eye->x - target->x),
+                         FIXEDtoINT(eye->z - target->z));
   system->used = 0;
   if (GameFlag_Get(FLAG_CHOOSING_COMMANDS)) {
-    Transform_Reset();
-    angle -= TRIG_TURN / 8;
-    Iwram_TransformMatrixEntry(gCamera_FixedViewMatrix);
-    Transform_ApplyLookAt((s32 *)eye, (s32 *)target);
+    Matrix_Initialize();
+    angle -= DEGtoANG(45);
+    Iwram_MultiplyMatrixEntry(gCamera_FixedViewMatrix);
+    Matrix_LookAt((s32 *)eye, (s32 *)target);
   } else {
-    Transform_RewindStack();
-    Transform_SetLookAt((s32 *)eye, (s32 *)target);
+    Matrix_RewindStack();
+    Matrix_SetLookAt((s32 *)eye, (s32 *)target);
   }
   actor = Ram_HeapSlots->actors;
   actor += 63;

@@ -43,7 +43,7 @@
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/dma.h"
-#include "system/fixed_point_position.h"
+#include "system/point.h"
 #include "system/heap.h"
 #include "system/heap_release.h"
 #include "system/heap_slots.h"
@@ -56,7 +56,7 @@
 #include "system/ram_buffer.h"
 #include "system/system.h"
 #include "system/task.h"
-#include "system/transform.h"
+#include "system/matrix.h"
 #include "window/menu_list.h"
 
 /// The canvas added to the battle under it: both blend weights whole.
@@ -102,7 +102,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 
 /// Starts a frame's 3D projection from the battle camera.
 #define EFFECT_VIEW_FROM_CAMERA(camera)                                        \
-  (Transform_Reset(), Transform_SetLookAt((camera)->eye, (camera)->focus))
+  (Matrix_Initialize(), Matrix_SetLookAt((camera)->eye, (camera)->focus))
 
 /// Strikes target `i`: it flashes white in its damage pose and is knocked back
 /// by `motion`.
@@ -240,7 +240,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// A falling mote's vertical speed: it falls under `gravity`, then from frame
 /// 80 rises.
 #define EFFECT_FALL_MOTE(velocityY, gravity, frame)                            \
-  ((frame) > 80 ? ((velocityY) -= px(1) / 2) : ((velocityY) += (gravity)))
+  ((frame) > 80 ? ((velocityY) -= toFIXED(1) / 2) : ((velocityY) += (gravity)))
 
 /// Shows the canvas stretched to twice its width, `top` sixteenths of its
 /// colour added over what lies under it.

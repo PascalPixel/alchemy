@@ -371,8 +371,8 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
     if (actor->riseCounter != 0) {                                             \
       switch (actor->riseCounter) {                                            \
       case 1:                                                                  \
-        actor->speedLimit = px(4);                                             \
-        actor->acceleration = px(2);                                           \
+        actor->speedLimit = toFIXED(4);                                        \
+        actor->acceleration = toFIXED(2);                                      \
         FieldActor_SetMoveTarget(actor, diveX, 20, diveZ);                     \
         actor->riseCounter++;                                                  \
         break;                                                                 \
@@ -390,10 +390,10 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
           else                                                                 \
             Actor_FaceDirection(warrior, FACING_NORTH_NORTHWEST, 0);           \
           if (Random_Below(4) != 0) {                                          \
-            Actor_Get(warrior)->velocityY = px(2);                             \
+            Actor_Get(warrior)->velocityY = toFIXED(2);                        \
           } else {                                                             \
             Actor_ShowEmote(warrior, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);    \
-            Actor_Get(warrior)->velocityY = px(6);                             \
+            Actor_Get(warrior)->velocityY = toFIXED(6);                        \
           }                                                                    \
         }                                                                      \
         break;                                                                 \
@@ -414,8 +414,8 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
         if (actor->targetX == ACTOR_NO_TARGET &&                               \
             actor->targetY == actor->targetX &&                                \
             actor->targetZ == actor->targetY) {                                \
-          actor->speedLimit = px(2);                                           \
-          actor->acceleration = px(1);                                         \
+          actor->speedLimit = toFIXED(2);                                      \
+          actor->acceleration = toFIXED(1);                                    \
           actor->timer = 0;                                                    \
           actor->userValue = 0;                                                \
           actor->riseCounter++;                                                \
@@ -429,22 +429,24 @@ static s32 TolbiShipDeck_ShowSprite(struct Actor *a) {
     } else {                                                                   \
       if (actor->timer != 0) {                                                 \
         actor->riseBaseY -= Random_Below(4096);                                \
-        if (actor->riseBaseY < -px(1) / 4)                                     \
+        if (actor->riseBaseY < -toFIXED(1) / 4)                                \
           actor->timer = 0;                                                    \
       } else {                                                                 \
         actor->riseBaseY += Random_Below(4096);                                \
-        if (actor->riseBaseY > px(1) / 4)                                      \
+        if (actor->riseBaseY > toFIXED(1) / 4)                                 \
           actor->timer = 1;                                                    \
       }                                                                        \
-      if (actor->x.fixed > px(minX) && actor->x.fixed < px(maxX))              \
+      if (actor->x.fixed > toFIXED(minX) && actor->x.fixed < toFIXED(maxX))    \
         actor->x.fixed += actor->riseBaseY;                                    \
       if ((s16)actor->userValue != 0) {                                        \
-        actor->y.fixed = actor->y.fixed - (Random_Below(32768)) - px(1) / 2;   \
+        actor->y.fixed =                                                       \
+            actor->y.fixed - (Random_Below(32768)) - toFIXED(1) / 2;           \
         if (actor->y.fixed < 0)                                                \
           actor->userValue = 0;                                                \
       } else {                                                                 \
-        actor->y.fixed = actor->y.fixed + (Random_Below(32768)) + px(1) / 2;   \
-        if (actor->y.fixed > px(8))                                            \
+        actor->y.fixed =                                                       \
+            actor->y.fixed + (Random_Below(32768)) + toFIXED(1) / 2;           \
+        if (actor->y.fixed > toFIXED(8))                                       \
           actor->userValue = 1;                                                \
       }                                                                        \
     }                                                                          \
@@ -485,13 +487,13 @@ static s32 sOarDepth[8];
 /// each frame.
 static s32 TolbiShipDeck_Bob(struct Actor *actor) {
   if ((s16)actor->userValue != 0) {
-    actor->y.fixed -= (Random_Below(32768)) + px(1) / 2;
-    if (actor->y.fixed < px(4)) {
+    actor->y.fixed -= (Random_Below(32768)) + toFIXED(1) / 2;
+    if (actor->y.fixed < toFIXED(4)) {
       actor->userValue = 0;
     }
   } else {
-    actor->y.fixed += (Random_Below(32768)) + px(1) / 2;
-    if (actor->y.fixed > px(12)) {
+    actor->y.fixed += (Random_Below(32768)) + toFIXED(1) / 2;
+    if (actor->y.fixed > toFIXED(12)) {
       actor->userValue = 1;
     }
   }
@@ -533,9 +535,9 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
       actor->timer++;                                                          \
       break;                                                                   \
     case 2:                                                                    \
-      actor->velocityY = px(4);                                                \
-      actor->speedLimit = px(4);                                               \
-      actor->acceleration = px(2);                                             \
+      actor->velocityY = toFIXED(4);                                           \
+      actor->speedLimit = toFIXED(4);                                          \
+      actor->acceleration = toFIXED(2);                                        \
       FieldActor_SetMoveTarget(actor, atX, 0, atZ);                            \
       actor->timer++;                                                          \
       break;                                                                   \
@@ -554,10 +556,10 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
           Actor_FaceDirection(warrior, clearFacing, 0);                        \
         }                                                                      \
         if (Random_Below(4) != 0) {                                            \
-          Actor_Get(warrior)->velocityY = px(2);                               \
+          Actor_Get(warrior)->velocityY = toFIXED(2);                          \
         } else {                                                               \
           Actor_ShowEmote(warrior, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);      \
-          Actor_Get(warrior)->velocityY = px(6);                               \
+          Actor_Get(warrior)->velocityY = toFIXED(6);                          \
         }                                                                      \
       }                                                                        \
       break;                                                                   \
@@ -566,9 +568,9 @@ static s32 TolbiShipDeck_LookAround(struct Actor *actor) {
       break;                                                                   \
     case 6:                                                                    \
       actor->timer++;                                                          \
-      actor->velocityY = px(4);                                                \
-      actor->speedLimit = px(2);                                               \
-      actor->acceleration = px(1);                                             \
+      actor->velocityY = toFIXED(4);                                           \
+      actor->speedLimit = toFIXED(2);                                          \
+      actor->acceleration = toFIXED(1);                                        \
       if (actor->riseEnabled != 0) {                                           \
         FieldActor_SetMoveTarget(actor, setX, 0, setZ);                        \
       } else {                                                                 \
@@ -603,16 +605,16 @@ TOLBI_SHIP_DECK_LEAP_AT(TolbiShipDeck_LeapAtSean, ACTOR_SEA_SEAN, 176, 696,
 /// Returns 1.
 static s32 TolbiShipDeck_RandomlyStartActorHop(struct Actor *actor) {
   if ((Random_Below(40)) == 0)
-    actor->velocityY = px(4);
+    actor->velocityY = toFIXED(4);
   return 1;
 }
 
 /// The update that shrinks an enlarged actor by 1/32 a frame until it is
 /// back to normal size.
 static void TolbiShipDeck_ShrinkToNormalSize(struct Actor *actor) {
-  if (actor->scaleX > Q16_ONE) {
-    actor->scaleX -= Q16_ONE / 32;
-    actor->scaleY -= Q16_ONE / 32;
+  if (actor->scaleX > FIXED_ONE) {
+    actor->scaleX -= FIXED_ONE / 32;
+    actor->scaleY -= FIXED_ONE / 32;
   }
 }
 
@@ -936,8 +938,8 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     TolbiShipDeck_OpenSecondDoor();
     Actor_WalkToAndWait(ACTOR_KALAY_CREWMAN, 216, 798);
     Actor_SetPosition(ACTOR_KALAY_CREWMAN, 0, 0);
-    Actor_Get(ACTOR_KALAY_CREWMAN)->scaleX = Q16_ONE;
-    Actor_Get(ACTOR_KALAY_CREWMAN)->scaleY = Q16_ONE;
+    Actor_Get(ACTOR_KALAY_CREWMAN)->scaleX = FIXED_ONE;
+    Actor_Get(ACTOR_KALAY_CREWMAN)->scaleY = FIXED_ONE;
     GameFlag_Set(FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY);
     Event_End();
   }
@@ -1076,8 +1078,8 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     TolbiShipDeck_CopyUnderwayCells();
     TolbiShipDeck_SetUpOars();
     Task_AddFrame(TolbiShipDeck_RowOars, TASK_PASS_FRAME);
-    sSeaScroll[1] = px(32);
-    sSeaSpeed[1] = px(6) / 5;
+    sSeaScroll[1] = toFIXED(32);
+    sSeaSpeed[1] = toFIXED(6) / 5;
     Task_AddFrame(TolbiShipDeck_RockDeck, TASK_PASS_FRAME);
   } else if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
     TolbiShipDeck_CopyUnderwayCells();
@@ -1134,7 +1136,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     return;
   }
   if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
-    ((struct MapGridScrollWork *)gMapGridWork[0])->minX = px(65);
+    ((struct MapGridScrollWork *)gMapGridWork[0])->minX = toFIXED(65);
   } else if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
     TolbiShipDeck_SetUpAtAnchor();
   } else if (GameFlag_Get(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
@@ -1215,7 +1217,7 @@ static void TolbiShipDeck_SetUpUnderSail(void) {
   Actor_SetPosition(ACTOR_SEA_KAJA, 0, 0);
   Actor_SetPosition(ACTOR_SEA_CREW_MEMBER, 238, 626);
   Actor_SetPosition(ACTOR_SEA_SEAN, 204, 521);
-  Actor_Get(ACTOR_SEA_SEAN)->y.fixed = px(16);
+  Actor_Get(ACTOR_SEA_SEAN)->y.fixed = toFIXED(16);
   Actor_Get(ACTOR_SEA_SEAN)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
   Actor_SetSpeed(ACTOR_SEA_SEAN, 0.6);
   Actor_SetScript(ACTOR_SEA_SEAN, gTolbiShipDeck_SeanPacesActions);
@@ -1251,7 +1253,7 @@ static void TolbiShipDeck_SetUpAfterKraken(void) {
 /// At anchor off the island, the crew stand where they were left, by whether
 /// the party has agreed to scout the island.
 static void TolbiShipDeck_SetUpAtAnchor(void) {
-  ((struct MapGridScrollWork *)gMapGridWork[0])->minX = px(65);
+  ((struct MapGridScrollWork *)gMapGridWork[0])->minX = toFIXED(65);
   Event_Start();
   Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_KrakenActorPlacements);
@@ -1524,7 +1526,7 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Event_Wait(10);
   Actor_SetPosition(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2, 134, 584);
   Actor_SetSpeed(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2, 4);
-  Actor_Get(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2)->velocityY = px(8);
+  Actor_Get(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2)->velocityY = toFIXED(8);
   Actor_MoveToAndWait(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2, 186, 612);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_SECOND_ATTACK_MONSTER + 2),
                        SPRITE_FLAG_SHADOW);
@@ -1618,24 +1620,24 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   // The shadow grows where the monster will land, then it drops from 80
   // pixels up.
   monster = Actor_Get(ACTOR_SEA_FALLING_MONSTER_SHADOW);
-  monster->scaleX = Q16_ONE / 10;
-  monster->scaleY = Q16_ONE / 10;
-  monster->x.fixed = px(194);
-  monster->z.fixed = px(642);
+  monster->scaleX = FIXED_ONE / 10;
+  monster->scaleY = FIXED_ONE / 10;
+  monster->x.fixed = toFIXED(194);
+  monster->z.fixed = toFIXED(642);
   for (frame = 0; frame < 16; frame++) {
-    monster->scaleX += 3 * Q16_ONE / 50;
-    monster->scaleY += 3 * Q16_ONE / 50;
+    monster->scaleX += 3 * FIXED_ONE / 50;
+    monster->scaleY += 3 * FIXED_ONE / 50;
     wait(1);
   }
   monster = Actor_Get(ACTOR_SEA_THIRD_ATTACK_MONSTER + 2);
-  monster->scaleX = 11 * Q16_ONE / 10;
-  monster->scaleY = 11 * Q16_ONE / 10;
-  monster->x.fixed = px(194);
-  monster->y.fixed = px(80);
-  monster->z.fixed = px(642);
+  monster->scaleX = 11 * FIXED_ONE / 10;
+  monster->scaleY = 11 * FIXED_ONE / 10;
+  monster->x.fixed = toFIXED(194);
+  monster->y.fixed = toFIXED(80);
+  monster->z.fixed = toFIXED(642);
   monster->facing = FACING_SOUTH_SOUTHWEST;
-  monster->bounce = 2 * Q16_ONE / 5;
-  monster->gravity = px(2);
+  monster->bounce = 2 * FIXED_ONE / 5;
+  monster->gravity = toFIXED(2);
   Event_Wait(80);
   Sound_Play(SE_BEAST_CRY);
   Actor_SetPosition(ACTOR_SEA_FALLING_MONSTER_SHADOW, 0, 0);
@@ -1721,12 +1723,12 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_SetSpritePriority(ACTOR_SEA_SEAN, 2);
   Actor_SetAnimation(ACTOR_SEA_SEAN, ANIM_LYING_FLAT);
   actor = Actor_Get(ACTOR_SEA_SEAN);
-  actor->velocityY = px(8);
-  actor->gravity = px(7) / 10;
-  actor->scaleX = 13 * Q16_ONE / 8;
-  actor->scaleY = 13 * Q16_ONE / 8;
+  actor->velocityY = toFIXED(8);
+  actor->gravity = toFIXED(7) / 10;
+  actor->scaleX = 13 * FIXED_ONE / 8;
+  actor->scaleY = 13 * FIXED_ONE / 8;
   actor->update = TolbiShipDeck_ShrinkToNormalSize;
-  actor->bounce = Q16_ONE / 2;
+  actor->bounce = FIXED_ONE / 2;
   Actor_SetSpeed(ACTOR_SEA_SEAN, 6);
   Actor_MoveToAndWait(ACTOR_SEA_SEAN, 182, 618);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SEA_SEAN), 0);
@@ -1738,15 +1740,15 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 248, 598);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_IVAN, 1);
@@ -1952,8 +1954,8 @@ static void TolbiShipDeck_RowersDisembark(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_INVISIBLE_ARRIVED_CAMERA_TARGET,
-                           actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_INVISIBLE_ARRIVED_CAMERA_TARGET, actor->x.fixed,
+                        actor->z.fixed);
   }
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -2083,7 +2085,7 @@ static s32 TolbiShipDeck_GetRowerAtSeat(u32 seat) {
   return 0;
 }
 
-#define TOLBI_SHIP_DECK_SEA_WRAP px(32)
+#define TOLBI_SHIP_DECK_SEA_WRAP toFIXED(32)
 
 /// The task that rocks the deck while under sail.
 static void TolbiShipDeck_RockDeck(void) {
@@ -2138,10 +2140,10 @@ static void TolbiShipDeck_SetUpOars(void) {
   TolbiShipDeck_ShowOar(ACTOR_FIRST_OAR + 5);
   TolbiShipDeck_ShowOar(ACTOR_FIRST_OAR + 6);
   TolbiShipDeck_ShowOar(ACTOR_FIRST_OAR + 7);
-  Actor_Get(ACTOR_FIRST_OAR + 4)->scaleX = -Q16_ONE;
-  Actor_Get(ACTOR_FIRST_OAR + 5)->scaleX = -Q16_ONE;
-  Actor_Get(ACTOR_FIRST_OAR + 6)->scaleX = -Q16_ONE;
-  Actor_Get(ACTOR_FIRST_OAR + 7)->scaleX = -Q16_ONE;
+  Actor_Get(ACTOR_FIRST_OAR + 4)->scaleX = -FIXED_ONE;
+  Actor_Get(ACTOR_FIRST_OAR + 5)->scaleX = -FIXED_ONE;
+  Actor_Get(ACTOR_FIRST_OAR + 6)->scaleX = -FIXED_ONE;
+  Actor_Get(ACTOR_FIRST_OAR + 7)->scaleX = -FIXED_ONE;
   sOarDepth[4] = Actor_Get(ACTOR_FIRST_OAR + 4)->z.fixed;
   sOarDepth[5] = Actor_Get(ACTOR_FIRST_OAR + 5)->z.fixed;
   sOarDepth[6] = Actor_Get(ACTOR_FIRST_OAR + 6)->z.fixed;
@@ -2294,10 +2296,10 @@ static void TolbiShipDeck_SwingOar(s32 id, s32 slot, s32 flags) {
   }
   if (flags & 1) {
     sine = Trig_Sin(sOarAngle[slot]);
-    sprite->rotation = Trig_Sin(sOarAngle[slot] + TRIG_TURN / 2) >> 5;
+    sprite->rotation = Trig_Sin(sOarAngle[slot] + DEGtoANG(180)) >> 5;
     actor->z.fixed = sOarDepth[slot] - (sine << 2) - (sine << 1);
   } else {
-    sine = Trig_Sin(sOarAngle[slot] + TRIG_TURN / 2);
+    sine = Trig_Sin(sOarAngle[slot] + DEGtoANG(180));
     sprite->rotation = Trig_Sin(sOarAngle[slot]) >> 5;
     actor->z.fixed = sOarDepth[slot] + (sine << 2) + (sine << 1);
   }
@@ -2331,10 +2333,10 @@ static void TolbiShipDeck_RestOars(void) {
   TolbiShipDeck_ShowOar(ACTOR_FIRST_OAR + 5);
   TolbiShipDeck_ShowOar(ACTOR_FIRST_OAR + 6);
   TolbiShipDeck_ShowOar(ACTOR_FIRST_OAR + 7);
-  Actor_Get(ACTOR_FIRST_OAR + 4)->scaleX = -Q16_ONE;
-  Actor_Get(ACTOR_FIRST_OAR + 5)->scaleX = -Q16_ONE;
-  Actor_Get(ACTOR_FIRST_OAR + 6)->scaleX = -Q16_ONE;
-  Actor_Get(ACTOR_FIRST_OAR + 7)->scaleX = -Q16_ONE;
+  Actor_Get(ACTOR_FIRST_OAR + 4)->scaleX = -FIXED_ONE;
+  Actor_Get(ACTOR_FIRST_OAR + 5)->scaleX = -FIXED_ONE;
+  Actor_Get(ACTOR_FIRST_OAR + 6)->scaleX = -FIXED_ONE;
+  Actor_Get(ACTOR_FIRST_OAR + 7)->scaleX = -FIXED_ONE;
   sOarStroke[4] = 0;
   sOarStroke[5] = 0;
   sOarStroke[6] = 0;
@@ -2345,8 +2347,7 @@ static void TolbiShipDeck_RestOars(void) {
   sOarDepth[7] = Actor_Get(ACTOR_FIRST_OAR + 7)->z.fixed;
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL)
-    Actor_SetPositionFixed(ACTOR_FIRST_STROKE_OAR, actor->x.fixed,
-                           actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_FIRST_STROKE_OAR, actor->x.fixed, actor->z.fixed);
   wait(1);
   Actor_CopyGraphics(ACTOR_FIRST_OAR + 1, ACTOR_FIRST_STROKE_OAR);
   Actor_CopyGraphics(ACTOR_FIRST_OAR + 2, ACTOR_FIRST_STROKE_OAR);
@@ -2407,8 +2408,8 @@ static void TolbiShipDeck_Turn(s32 actorId, s32 facing) {
 /// is off course.
 static void TolbiShipDeck_SightIsland(void) {
   Event_Start();
-  sSeaScroll[0] = px(4);
-  sSeaSpeed[0] = -px(1) / 2;
+  sSeaScroll[0] = toFIXED(4);
+  sSeaSpeed[0] = -toFIXED(1) / 2;
   Event_AppendActorPlacements(
       (struct ActorPlacement *)gTolbiShipDeck_CrewActorPlacements);
   wait(1);
@@ -2490,15 +2491,15 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFX(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFX(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFX(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, 1.2);
   Actor_SetSpeed(ACTOR_IVAN, 1);
@@ -2692,11 +2693,11 @@ const s32 gTolbiShipDeck_MonsterLeapsAboardActions[] = {
     SC_MOVE(140, 0, 586),
     SC_SYNC,
     SC_SE(SE_HIGH_JUMP),
-    SC_SET(SW_VELOCITY_Y, px(8)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(8)),
     SC_MOVE(184, 0, 598),
     SC_SYNC,
     SC_SET(SW_TIMER, 1),
-    SC_SET(SW_VELOCITY_Y, px(4)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(4)),
     SC_CALL(TolbiShipDeck_ShowSprite),
     SC_MOVE(216, 0, 596),
     SC_SYNC,
@@ -2804,12 +2805,12 @@ const s32 gTolbiShipDeck_LookAroundActions[] = {
 /// hidden.
 const s32 gTolbiShipDeck_SwellActions[] = {
     SC_ANIMATION(ANIM_STAND),
-    SC_SET(SW_SCALE_X, 7 * Q16_ONE / 10),
-    SC_SET(SW_SCALE_Y, 7 * Q16_ONE / 10),
+    SC_SET(SW_SCALE_X, 7 * FIXED_ONE / 10),
+    SC_SET(SW_SCALE_Y, 7 * FIXED_ONE / 10),
     SC_WAIT(1),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, 3932),
-    SC_ADD(SW_SCALE_Y, 2 * Q16_ONE / 25),
+    SC_ADD(SW_SCALE_Y, 2 * FIXED_ONE / 25),
     SC_WAIT(1),
     SC_LOOP(24, SC_TO(1)),
     SC_POSITION(0, 0, 0),

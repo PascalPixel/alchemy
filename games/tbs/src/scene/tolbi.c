@@ -220,8 +220,8 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
 
   if (Actor_Distance(target, kid) < range || force != 0) {
     // The heading to the target, and the eight-way directions around it.
-    u32 heading = (u16)ArcTan2(target->z.fixed - kid->z.fixed,
-                               target->x.fixed - kid->x.fixed);
+    u32 heading = (u16)Trig_Atan(target->z.fixed - kid->z.fixed,
+                                 target->x.fixed - kid->x.fixed);
     u32 farLeft = FACING_SIXTEENTH(heading - 2 * FACING_STEP);
     u32 farRight = FACING_SIXTEENTH(heading + 2 * FACING_STEP);
     u32 left = FACING_SIXTEENTH(heading - FACING_STEP);
@@ -308,7 +308,8 @@ static void Tolbi_GrowSprout(void) {
 /// Reveal uncovers the hidden chest.
 static void Tolbi_RevealHiddenChest(void) {
   MapGrid_CopyCellAttributes(3, 32, 1, 1, 3, 26);
-  TreasureSpot_SetPosition(CELL_BEHAVIOR_TOLBI_HIDDEN_CHEST, px(56), px(424));
+  TreasureSpot_SetPosition(CELL_BEHAVIOR_TOLBI_HIDDEN_CHEST, toFIXED(56),
+                           toFIXED(424));
 }
 
 /// When Reveal wears off, the chest's cell is covered again and the chest
@@ -775,7 +776,7 @@ static void Tolbi_FreezePuddle(void) {
 /// The actor script of a mirrored actor, which flips its sprite and passes 7
 /// on.
 s32 gTolbiMirroredActor[] = {
-    SC_SET(SW_SCALE_X, -Q16_ONE),
+    SC_SET(SW_SCALE_X, -FIXED_ONE),
     SC_ANIMATION(7),
     SC_END,
 };

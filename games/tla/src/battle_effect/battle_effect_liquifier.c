@@ -69,8 +69,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
 
       // The shards start about the target, each with its own roll.
       for (i = 0, shard = &work->particles[32]; i != 16; i++, shard++) {
-        SET_POSITION(shard, px(to.x + (Random16() & 127) - 64), px(to.y),
-                     (Random16() & 0x1fff) + 0x7000);
+        SET_POSITION(shard, INTtoFIXED(to.x + (Random16() & 127) - 64),
+                     INTtoFIXED(to.y), (Random16() & 0x1fff) + 0x7000);
       }
     }
     if (frame == 0) {
@@ -98,8 +98,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
 
           step->velocityX = (Trig_Sin(angle) * speed) >> 8;
           step->velocityY = (Trig_Cos(angle) * speed) >> 7;
-          step->x = px(from.x / 2);
-          step->y = px(from.y - (Random16() & 15) - 8);
+          step->x = INTtoFIXED(from.x / 2);
+          step->y = INTtoFIXED(from.y - (Random16() & 15) - 8);
           step->variant = 0;
           step++;
         }
@@ -143,16 +143,16 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
         struct Particle *step = work->particles;
 
         for (i = 0; i != 32; i++) {
-          s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
+          s32 angle = (Random16() & 0x7fff) - DEGtoANG(90);
           s32 speed = (Random16() & 0x1ff) + 0x200;
           s32 y;
 
           step->velocityX = (Trig_Sin(angle) * speed) >> 10;
           step->velocityY = (Trig_Cos(angle) * speed) >> 9;
-          step->x = px(from.x / 2);
+          step->x = INTtoFIXED(from.x / 2);
           y = from.y - (Random16() & 15) - 8;
           step->x -= step->velocityX << 6;
-          step->y = px(y) - (step->velocityY << 6);
+          step->y = INTtoFIXED(y) - (step->velocityY << 6);
           step->variant = 0;
           step++;
         }
@@ -210,14 +210,15 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
 
           model->shade = 0;
           age = frame - start;
-          Transform_Reset();
-          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          Transform_ApplyTranslation(px(from.x - 128), px(from.y - 74), 0);
-          Transform_ApplyRoll((i << 12) - 0x3800);
-          Transform_ApplyAxisScale(0x5555,
-                                   Trig_Sin(age << 11) *
-                                       gLiquifier_SplashHeights[i] / 64 * 2,
-                                   TRIG_TURN / 2);
+          Matrix_Initialize();
+          Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+          Matrix_Translate(INTtoFIXED(from.x - 128), INTtoFIXED(from.y - 74),
+                           0);
+          Matrix_RotateZ((i << 12) - 0x3800);
+          Matrix_Scale(0x5555,
+                       Trig_Sin(age << 11) * gLiquifier_SplashHeights[i] / 64 *
+                           2,
+                       DEGtoANG(180));
           Render_TransformVertices(gLiquifier_SplashCorners, projected, 4);
           Render_DrawModelList(model);
         }
@@ -237,13 +238,13 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
         if (frame >= start && frame < i * 2 + 70) {
           s32 scale;
 
-          scale = Q16_ONE * 2 - ((frame - start) << 13);
+          scale = FIXED_ONE * 2 - ((frame - start) << 13);
           model->shade = zero;
-          Transform_Reset();
-          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          Transform_ApplyTranslation(step->x - px(128), step->y - px(64), 0);
-          Transform_ApplyRoll(step->z);
-          Transform_ApplyAxisScale(scale, Q16_ONE, Q16_ONE / 2);
+          Matrix_Initialize();
+          Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+          Matrix_Translate(step->x - toFIXED(128), step->y - toFIXED(64), 0);
+          Matrix_RotateZ(step->z);
+          Matrix_Scale(scale, FIXED_ONE, FIXED_ONE / 2);
           Render_TransformVertices(gBattleEffect_BeamCorners, projected, 4);
           Render_DrawModelList(model);
         }
@@ -269,11 +270,11 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
             shade += 64;
           }
           model->shade = shade;
-          Transform_Reset();
-          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          Transform_ApplyTranslation(step->x - px(128), step->y - px(64), 0);
-          Transform_ApplyPitch(TRIG_TURN * 15 / 64);
-          Transform_ApplyAxisScale(scale, scale, scale);
+          Matrix_Initialize();
+          Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+          Matrix_Translate(step->x - toFIXED(128), step->y - toFIXED(64), 0);
+          Matrix_RotateX(TRIG_TURN * 15 / 64);
+          Matrix_Scale(scale, scale, scale);
           Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
           Render_DrawModelList(model);
         }
@@ -284,17 +285,18 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
         if (frame >= i * 4 && frame < i * 4 + 12) {
           s32 age = frame - i * 4;
           s32 shade = age * 8 - 64;
-          s32 scale = Q16_ONE * 3 / 2 - (age << 13);
+          s32 scale = FIXED_ONE * 3 / 2 - (age << 13);
 
           if (shade > 0)
             shade = 0;
           model->shade = shade;
-          Transform_Reset();
-          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          Transform_ApplyTranslation(px(from.x - 128), px(from.y - 80), 0);
-          Transform_ApplyAxisScale(scale * 2, scale * 2, scale);
-          Transform_ApplyRoll(TRIG_TURN * 3 / 8 - (i << 14));
-          Transform_ApplyPitch(-TRIG_TURN / 16);
+          Matrix_Initialize();
+          Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+          Matrix_Translate(INTtoFIXED(from.x - 128), INTtoFIXED(from.y - 80),
+                           0);
+          Matrix_Scale(scale * 2, scale * 2, scale);
+          Matrix_RotateZ(TRIG_TURN * 3 / 8 - (i << 14));
+          Matrix_RotateX(-TRIG_TURN / 16);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, projected,
                                    4);
           Render_DrawModelList(model);
@@ -485,8 +487,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
       } else {
         // The ball leaves the caster's chest, aimed to arrive in 128
         // frames' worth of steps, already seven steps along.
-        ball->x = px(from.x / 2);
-        ball->y = px(from.y - 36);
+        ball->x = INTtoFIXED(from.x / 2);
+        ball->y = INTtoFIXED(from.y - 36);
         ball->velocityX = (to.x - from.x) << 10;
         ball->velocityY = (to.y - from.y) << 10;
         ball->x += ball->velocityX * 7;
@@ -521,8 +523,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
         size = 40;
       }
       index = (size - 2) >> 1;
-      x = Q_16_16_TO_INT(ball->x);
-      y = Q_16_16_TO_INT(ball->y);
+      x = FIXEDtoINT(ball->x);
+      y = FIXEDtoINT(ball->y);
       ball->x += ball->velocityX;
       ball->y += ball->velocityY;
       DrawDisc(canvas, discs, cells, x, y, size, index);
@@ -541,10 +543,10 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
 
             if (radius >= 0) {
               s32 width = 4;
-              s32 x = to.x / 2 + (Q_16_16_TO_INT(Trig_Sin(step->z) * radius));
+              s32 x = to.x / 2 + (FIXEDtoINT(Trig_Sin(step->z) * radius));
               s32 height = size * 2;
               s32 half = size >> 1;
-              s32 y = to.y + (Q_16_16_TO_INT(Trig_Cos(step->z) * radius));
+              s32 y = to.y + (FIXEDtoINT(Trig_Cos(step->z) * radius));
 
               draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                       x - half, y - 32 - size, width, height);
@@ -590,8 +592,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
 
           newFlame = &work->particles[i];
           speed = i * 4 + 4;
-          newFlame->x = px(to.x / 2);
-          newFlame->y = px(to.y - 32);
+          newFlame->x = INTtoFIXED(to.x / 2);
+          newFlame->y = INTtoFIXED(to.y - 32);
           newFlame->velocityX = (speed * Trig_Sin(angle)) >> 3;
           newFlame->velocityY = -(speed * Trig_Cos(angle)) >> 3;
           newFlame->variant = i / 3 + 17;
@@ -604,8 +606,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
 
           newSpark = &work->particles[16 + i];
 
-          newSpark->x = px(to.x / 2);
-          newSpark->y = px(to.y - 32);
+          newSpark->x = INTtoFIXED(to.x / 2);
+          newSpark->y = INTtoFIXED(to.y - 32);
           newSpark->velocityX = (Trig_Sin(angle) * speed) >> 6;
           newSpark->velocityY = -(Trig_Cos(angle) * speed) >> 5;
           if (mode == 1) {

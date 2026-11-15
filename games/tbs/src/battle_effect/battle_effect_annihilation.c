@@ -133,7 +133,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
           size = (life >> 3) + 2;
           EFFECT_DRAW_MOTE(blitters[(i / 2) & 1], canvas, particleSheet, out.x,
                            out.y, size);
-          Particle_AdvanceWithGravity3D(shard, 60, -px(1) / 64);
+          Particle_AdvanceWithGravity3D(shard, 60, -toFIXED(1) / 64);
           shard->variant--;
         }
       }

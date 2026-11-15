@@ -491,7 +491,7 @@ test: tools format-check device-check
 	$(MAKE) -f tools/Makefile test
 
 # ☀️ takes no register pins or signature devices (S2, in alchemy-devtools'
-# AGENTS.md): only the proven CAMELOT_ASM helpers, Dma_Set and MulQ16, fix a
+# AGENTS.md): only the proven CAMELOT_ASM helpers, Dma_Set and MulFX, fix a
 # variable to a register.
 .PHONY: device-check
 device-check:

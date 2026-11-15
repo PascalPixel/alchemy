@@ -63,7 +63,7 @@ struct ItemMenuWork {
   struct Sprite *memberSprites[8]; ///< the party members' figures
   s16 memberX[8];                  ///< screen pixels
   s16 memberY[8];                  ///< screen pixels
-  s32 memberScale[8];              ///< 16.16 fixed point, Q16_ONE full size
+  s32 memberScale[8];              ///< 16.16 fixed point, FIXED_ONE full size
   u16 selectedSlots[2];            ///< each side's inventory slot chosen
   u16 selectedItems[2];            ///< each side's inventory entry chosen
   struct WindowSprite *cursor;
@@ -79,8 +79,8 @@ struct ItemMenuWork {
   s16 completionFlag; ///< set to 1 as item commands end; not read by name
   /// The row of four figures the Djinn and status screens show
   /// (menu_djinn_figures.c): each one's sprite and place in screen pixels, and
-  /// its scale in 16.16, which closes a third of its gap to Q16_ONE each frame,
-  /// or holds -scale while negative.
+  /// its scale in 16.16, which closes a third of its gap to FIXED_ONE each
+  /// frame, or holds -scale while negative.
   ///@{
   struct Sprite *figures[4];
   s16 figureX[4];

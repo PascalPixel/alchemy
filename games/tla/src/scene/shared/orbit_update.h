@@ -3,8 +3,8 @@ s32 Orbit_Update(struct Orbit *object) {
   s32 z;
 
   object->angle += object->speed;
-  object->x = IwramMulQ16(Trig_Cos(object->angle), object->radius);
-  z = IwramMulQ16(Math_Sin(object->angle), object->radius);
+  object->x = IwramMulFX(Trig_Cos(object->angle), object->radius);
+  z = IwramMulFX(Math_Sin(object->angle), object->radius);
   object->x += object->centreX;
   object->z = (z >> 1) + object->centreZ;
   if (object->growth != 141 && (gFrameCount & 1)) {

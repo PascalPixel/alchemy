@@ -109,11 +109,11 @@ void Actor_FallOverById(u32 id, u32 angle) {
 
   if (object != NULL && sprite != NULL) {
     Actor_SelectAnimationFar(object, ANIM_STILL);
-    angle = (angle + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
+    angle = (angle + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
     position[0] = object->x.fixed;
     position[2] = object->z.fixed;
     MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
-    Vector_AddPolarOffset(px(16), angle, position);
+    Vector_AddPolarOffset(toFIXED(16), angle, position);
     MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
     switch (angle) {
     case FACING_EAST:
@@ -134,7 +134,7 @@ void Actor_FallOverById(u32 id, u32 angle) {
     object->collisionFlags = 0;
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     sprite->flags = 0;
-    sprite->rotation = angle + TRIG_TURN / 4;
+    sprite->rotation = angle + DEGtoANG(90);
   }
 }
 
@@ -150,21 +150,21 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
   if (mode != -1)
     Actor_SelectAnimationFar(object, mode);
   position[0] = object->x.fixed;
-  angle = (angle + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
+  angle = (angle + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
   position[2] = object->z.fixed;
   MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
-  Vector_AddPolarOffset(px(16), angle, position);
+  Vector_AddPolarOffset(toFIXED(16), angle, position);
   MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
   switch (angle) {
   case 0:
-    object->x.fixed += px(8);
-    object->z.fixed += px(1);
+    object->x.fixed += toFIXED(8);
+    object->z.fixed += toFIXED(1);
     sprite->offsetX -= 4;
     sprite->offsetY += 15;
     break;
   case 0x8000:
-    object->x.fixed -= px(8);
-    object->z.fixed += px(1);
+    object->x.fixed -= toFIXED(8);
+    object->z.fixed += toFIXED(1);
     sprite->offsetX += 3;
     sprite->offsetY += 16;
     break;
@@ -172,14 +172,14 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
     sprite->offsetY += 1;
     break;
   case 0x4000:
-    object->z.fixed += px(8);
+    object->z.fixed += toFIXED(8);
     sprite->offsetY += 13;
     break;
   }
   object->collisionFlags = 0;
   object->priorityFlags |= 2;
   sprite->flags = 0;
-  sprite->rotation = angle + TRIG_TURN / 4;
+  sprite->rotation = angle + DEGtoANG(90);
 }
 
 /// Gives an actor's sprite a still picture: resource, drawn by Icon_DrawItemFar

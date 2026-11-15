@@ -209,7 +209,7 @@ static UNREAD_RESULT ValeCave_FaceActorTowardLeader(struct Actor *actor) {
   s32 distanceZ = leader->z.fixed - actor->z.fixed;
   s32 distanceX = leader->x.fixed - actor->x.fixed;
 
-  actor->facing = ArcTan2(distanceZ, distanceX);
+  actor->facing = Trig_Atan(distanceZ, distanceX);
   RETURN_UNREAD(0);
 }
 
@@ -276,13 +276,13 @@ ValeCave_SinkActorWithParticles(s32 actorId, s32 baseX, s32 baseZ,
   u32 frame;
 
   for (frame = 0; frame < 68; frame++) {
-    s32 particleX = px(Random_Below(17)) + baseX;
-    s32 particleZ = px(Random_Below(14)) + baseZ;
+    s32 particleX = INTtoFIXED(Random_Below(17)) + baseX;
+    s32 particleZ = INTtoFIXED(Random_Below(14)) + baseZ;
 
     FieldEffect_Spawn(particleX, 0, particleZ, 0, 0, 0,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
                       particleOptions);
-    Actor_Get(actorId)->y.fixed -= px(1) / 2;
+    Actor_Get(actorId)->y.fixed -= toFIXED(1) / 2;
     Event_Wait(1);
   }
 }
@@ -298,25 +298,25 @@ static void ValeCave_MoveWestCratesIntoWater(void) {
   if (FIELD_CELL(Actor_Get(ACTOR_WEST_CRATES)->x.fixed) == 23) {
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 360, 664);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
-    Actor_Get(ACTOR_WEST_CRATES)->x.fixed += px(2);
-    leftEffect = Actor_PrepareFixed(
+    Actor_Get(ACTOR_WEST_CRATES)->x.fixed += toFIXED(2);
+    leftEffect = Actor_PrepareFX(
         Actor_Get(ACTOR_WEST_CRATES)->x.fixed, 0,
-        Actor_Get(ACTOR_WEST_CRATES)->z.fixed + px(52), SPRITE_CRATES);
-    rightEffect = Actor_PrepareFixed(
-        Actor_Get(ACTOR_WEST_CRATES)->x.fixed + px(16), 0,
-        Actor_Get(ACTOR_WEST_CRATES)->z.fixed + px(52), SPRITE_CRATES);
+        Actor_Get(ACTOR_WEST_CRATES)->z.fixed + toFIXED(52), SPRITE_CRATES);
+    rightEffect = Actor_PrepareFX(
+        Actor_Get(ACTOR_WEST_CRATES)->x.fixed + toFIXED(16), 0,
+        Actor_Get(ACTOR_WEST_CRATES)->z.fixed + toFIXED(52), SPRITE_CRATES);
     Actor_Get(ACTOR_WEST_CRATES)->motionFlags = 0;
     // Surround the sinking crates with one particle per frame.
-    options.startScaleX = 3 * Q16_ONE / 5;
-    options.startScaleY = 3 * Q16_ONE / 5;
+    options.startScaleX = 3 * FIXED_ONE / 5;
+    options.startScaleY = 3 * FIXED_ONE / 5;
     options.palette = SPRITE_COLOR_WHITE;
     Sound_Play(SE_BURST);
-    ValeCave_SinkActorWithParticles(ACTOR_WEST_CRATES, px(368), px(624),
-                                    &options);
+    ValeCave_SinkActorWithParticles(ACTOR_WEST_CRATES, toFIXED(368),
+                                    toFIXED(624), &options);
     MapGrid_CopyCellAttributes(23, 41, 1, 1, 23, 39);
     Actor_Get(ACTOR_WEST_CRATES)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     GameFlag_Set(FLAG_VALE_CAVE_WEST_CRATES_SUNK);
-    Actor_Get(ACTOR_WEST_CRATES)->y.fixed = -px(8);
+    Actor_Get(ACTOR_WEST_CRATES)->y.fixed = -toFIXED(8);
     Actor_SetAnimation(ACTOR_WEST_CRATES, 2);
     Actor_Release(leftEffect);
     Actor_Release(rightEffect);
@@ -334,28 +334,28 @@ static void ValeCave_MoveEastCratesIntoWater(void) {
 
   Event_Start();
   if (FIELD_CELL(Actor_Get(ACTOR_EAST_CRATES)->x.fixed) == 27) {
-    leftEffect = Actor_PrepareFixed(
-        Actor_Get(ACTOR_EAST_CRATES)->x.fixed - px(8), 0,
-        Actor_Get(ACTOR_EAST_CRATES)->z.fixed + px(52), SPRITE_CRATES);
-    rightEffect = Actor_PrepareFixed(
-        Actor_Get(ACTOR_EAST_CRATES)->x.fixed + px(8), 0,
-        Actor_Get(ACTOR_EAST_CRATES)->z.fixed + px(52), SPRITE_CRATES);
+    leftEffect = Actor_PrepareFX(
+        Actor_Get(ACTOR_EAST_CRATES)->x.fixed - toFIXED(8), 0,
+        Actor_Get(ACTOR_EAST_CRATES)->z.fixed + toFIXED(52), SPRITE_CRATES);
+    rightEffect = Actor_PrepareFX(
+        Actor_Get(ACTOR_EAST_CRATES)->x.fixed + toFIXED(8), 0,
+        Actor_Get(ACTOR_EAST_CRATES)->z.fixed + toFIXED(52), SPRITE_CRATES);
     // This clears the western crates' motion flags, not these crates', where
     // ValeCave_MoveWestCratesIntoWater clears its own. These sink all the
     // same, since the sinking writes their height directly and nothing pulls
     // them back up, as the recording of this event shows.
     Actor_Get(ACTOR_WEST_CRATES)->motionFlags = 0;
     // Surround the sinking crates with one particle per frame.
-    options.startScaleX = 3 * Q16_ONE / 5;
-    options.startScaleY = 3 * Q16_ONE / 5;
+    options.startScaleX = 3 * FIXED_ONE / 5;
+    options.startScaleY = 3 * FIXED_ONE / 5;
     options.palette = SPRITE_COLOR_WHITE;
     Sound_Play(SE_BURST);
-    ValeCave_SinkActorWithParticles(ACTOR_EAST_CRATES, px(432), px(656),
-                                    &options);
+    ValeCave_SinkActorWithParticles(ACTOR_EAST_CRATES, toFIXED(432),
+                                    toFIXED(656), &options);
     MapGrid_CopyCellAttributes(31, 39, 2, 1, 27, 41);
     Actor_Get(ACTOR_EAST_CRATES)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     GameFlag_Set(FLAG_VALE_CAVE_EAST_CRATES_SUNK);
-    Actor_Get(ACTOR_EAST_CRATES)->y.fixed = -px(8);
+    Actor_Get(ACTOR_EAST_CRATES)->y.fixed = -toFIXED(8);
     Actor_SetAnimation(ACTOR_EAST_CRATES, 2);
     Actor_Release(leftEffect);
     Actor_Release(rightEffect);
@@ -383,13 +383,13 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   savedMotionFlags = leader->motionFlags;
 #if TBS_PATCH_1
-  landingPosition[0].fixed = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
+  landingPosition[0].fixed = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   landingPosition[1].fixed = leader->y.fixed;
-  landingPosition[2].fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(40);
+  landingPosition[2].fixed = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(40);
 #else
   landingPosition[0].fixed = leader->x.fixed;
   landingPosition[1].fixed = leader->y.fixed;
-  landingPosition[2].fixed = leader->z.fixed + px(32);
+  landingPosition[2].fixed = leader->z.fixed + toFIXED(32);
 #endif
   if (FieldActor_CheckMovementCollision(
           leader, (struct FieldPosition *)landingPosition) == 0) {
@@ -398,13 +398,13 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
     wait(6);
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
-    leader->speedLimit = px(3);
-    leader->acceleration = px(2);
-    leader->velocityY = px(4);
+    leader->speedLimit = toFIXED(3);
+    leader->acceleration = toFIXED(2);
+    leader->velocityY = toFIXED(4);
     leader->motionFlags &= 126;
     Actor_SetSpriteFlags(leader, 0);
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landingPosition[0].part[0].pixel,
-                        landingPosition[2].part[0].pixel);
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, landingPosition[0].part[0].integer,
+                        landingPosition[2].part[0].integer);
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     leader->motionFlags = savedMotionFlags;
@@ -432,7 +432,7 @@ static void ValeCave_KiteRunsOff(void) {
     Actor_SetSpeed(ACTOR_KITE, 1);
     Actor_WalkToAndWait(ACTOR_KITE, 792, 248);
     Sound_Play(SE_JUMP);
-    Actor_Get(ACTOR_KITE)->velocityY = px(8);
+    Actor_Get(ACTOR_KITE)->velocityY = toFIXED(8);
     Actor_WalkToAndWait(ACTOR_KITE, 792, 280);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_KITE, FACING_NORTH, 20);

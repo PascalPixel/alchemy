@@ -333,8 +333,8 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
                          [i * gFalling_Counts[work->args->variant]
                                              [FALLING_BOLT_SPARKS_PER_BOLT] +
                           k];
-            spark->x = px(x + 12);
-            spark->y = px(y);
+            spark->x = INTtoFIXED(x + 12);
+            spark->y = INTtoFIXED(y);
             spark->velocityX = ((Random16() & 255) - 128) << 9;
             if (work->args->variant == EFFECT_VARIANT_STRONGEST)
               spark->velocityY = ((Random16() & 0x1ff) - 384) << 10;
@@ -368,9 +368,9 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 
         if (size > 6)
           size = 6;
-        EFFECT_DRAW_FLARE(drawSpark, canvas, work->sheet,
-                          WHOLE_PIXELS(spark->x), WHOLE_PIXELS(spark->y), size);
-        Particle_AdvanceWithGravity2D(spark, 60, px(1) / 8);
+        EFFECT_DRAW_FLARE(drawSpark, canvas, work->sheet, FIXEDtoINT(spark->x),
+                          FIXEDtoINT(spark->y), size);
+        Particle_AdvanceWithGravity2D(spark, 60, toFIXED(1) / 8);
         spark->variant--;
       }
     }

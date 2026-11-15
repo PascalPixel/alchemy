@@ -11,9 +11,9 @@ FarCall_RuntimeTable:
 	export Task_ResumeAllFar, Task_ResumeAll
 	export Task_RunPassFar, Task_RunPass
 	export Random16Far, Random16
-	export ArcTan2Far, ArcTan2
+	export Trig_AtanFar, Trig_Atan
 	export Math_IntegerSqrtFar, Math_IntegerSqrt
-	export FixedSqrtFar, FixedSqrt
+	export FixedSqrtFar, Math_SqrtFX
 	export Trig_SinFar, Trig_Sin
 	export Trig_CosFar, Trig_Cos
 	export Vector_AddPolarOffsetFar, Vector_AddPolarOffset
@@ -43,19 +43,19 @@ FarCall_RuntimeTable:
 	export Oam_AddSpriteAtDepthClampedFar, Oam_AddSpriteAtDepthClamped
 	export Window_LoadGraphicsFar, Window_LoadGraphics
 	export Palette_LoadBasicSpriteColorsFar, Palette_LoadBasicSpriteColors
-	export Transform_ResetFar, Transform_Reset
-	export Transform_ResetMatrixFar, Transform_ResetMatrix
-	export Transform_PushFar, Transform_Push
-	export Transform_PopFar, Transform_Pop
-	export Transform_ApplyRotationFar, Transform_ApplyRotation
-	export Transform_ApplyPitchFar, Transform_ApplyPitch
-	export Transform_ApplyYawFar, Transform_ApplyYaw
-	export Transform_ApplyRollFar, Transform_ApplyRoll
-	export Transform_ApplyPositionFar, Transform_ApplyPosition
-	export Transform_ApplyScaleFar, Transform_ApplyScale
-	export Transform_ApplyRotationTranslationFar, Transform_ApplyRotationTranslation
-	export Transform_ApplyScaledRotationFar, Transform_ApplyScaledRotation
-	export Transform_SetLookAtFar, Transform_SetLookAt
+	export Matrix_InitializeFar, Matrix_Initialize
+	export Matrix_ResetUnitFar, Matrix_ResetUnit
+	export Matrix_PushFar, Matrix_Push
+	export Matrix_PopFar, Matrix_Pop
+	export Matrix_RotateFar, Matrix_Rotate
+	export Matrix_RotateXFar, Matrix_RotateX
+	export Matrix_RotateYFar, Matrix_RotateY
+	export Matrix_RotateZFar, Matrix_RotateZ
+	export Matrix_TranslateVectorFar, Matrix_TranslateVector
+	export Matrix_ScaleVectorFar, Matrix_ScaleVector
+	export Matrix_RotateTranslateFar, Matrix_RotateTranslate
+	export Matrix_RotateTranslateScaleFar, Matrix_RotateTranslateScale
+	export Matrix_SetLookAtFar, Matrix_SetLookAt
 	export Render_ProjectPointFar, Render_ProjectPoint
 	export Projection_SetFieldOfViewFar, Projection_SetFieldOfView
 	export Projection_SetFar, Projection_Set
@@ -87,7 +87,7 @@ FarCall_RuntimeTable:
 	export IoWriteQueue_ClearBits16Far, IoWriteQueue_ClearBits16
 	export IoWriteQueue_ClearBits32Far, IoWriteQueue_ClearBits32
 	export Input_ResetKeyRepeatFar, Input_ResetKeyRepeat
-	export Transform_ApplyLookAtFar, Transform_ApplyLookAt
+	export Matrix_LookAtFar, Matrix_LookAt
 	export Serial_WaitForStatusMaskFar, Serial_WaitForStatusMask
 	export Serial_RemoveIrqHandlersFar, Serial_RemoveIrqHandlers
 	export Sound_LoadReverbCodeFar, Sound_LoadReverbCode

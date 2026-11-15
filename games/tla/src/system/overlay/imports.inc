@@ -20,7 +20,7 @@
 	export Task_SuspendAll, Task_SuspendAllFar
 	export Task_ResumeAll, Task_ResumeAllFar
 	export Random16, Random16Far
-	export ArcTan2, ArcTan2Far
+	export Trig_Atan, Trig_AtanFar
 	export Trig_Sin, Trig_SinFar
 	export Trig_Cos, Trig_CosFar
 	export Vector_AddPolarOffset, Vector_AddPolarOffsetFar

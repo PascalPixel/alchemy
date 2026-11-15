@@ -30,14 +30,16 @@ s32 Field_TryJumpForward(void) {
   position = &positionStorage;
 again:
   // The middle of the cell in front, then of the cell beyond.
-  SET_POSITION(position, (leader->x.fixed & FIELD_CELL_MASK) + px(8),
-               leader->y.fixed, (leader->z.fixed & FIELD_CELL_MASK) + px(8));
-  Vector_AddPolarOffset(px(16), angle, position);
+  SET_POSITION(position, (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8),
+               leader->y.fixed,
+               (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
+  Vector_AddPolarOffset(toFIXED(16), angle, position);
   if (MapGrid_CheckCollisionFar(leader, position) == COLLISION_TOO_HIGH)
     return -1;
-  SET_POSITION(position, (leader->x.fixed & FIELD_CELL_MASK) + px(8),
-               leader->y.fixed, (leader->z.fixed & FIELD_CELL_MASK) + px(8));
-  Vector_AddPolarOffset(px(32), angle, position);
+  SET_POSITION(position, (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8),
+               leader->y.fixed,
+               (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
+  Vector_AddPolarOffset(toFIXED(32), angle, position);
   if (MapGrid_CheckCollisionFar(leader, position) == COLLISION_NONE) {
     // Suspend ground following and the shadow (sprite flag bit 0) while
     // airborne: 4 pixels a frame up, 3 a frame across.
@@ -48,15 +50,15 @@ again:
     wait(6);
     Sound_PlayFar(SE_JUMP);
     Actor_SelectAnimationFar(leader, ANIM_LEADER_LEAP);
-    leader->speedLimit = px(3);
-    leader->acceleration = px(2);
-    leader->velocityY = px(4);
+    leader->speedLimit = toFIXED(3);
+    leader->acceleration = toFIXED(2);
+    leader->velocityY = toFIXED(4);
     leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlagsFar(leader, spriteFlags & 0xfe);
     Actor_MoveToAndWaitById(
         gMainRoutineWork.leaderActorId,
-        ((struct FieldCoordinate *)&position->x)->part[0].pixel,
-        ((struct FieldCoordinate *)&position->z)->part[0].pixel);
+        ((struct FieldCoordinate *)&position->x)->part[0].integer,
+        ((struct FieldCoordinate *)&position->z)->part[0].integer);
     Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
 
@@ -66,24 +68,25 @@ again:
         (platform = Actor_FindNearestFacingTarget(
              leader, SPRITE_LOG_NORTH_SOUTH)) != NULL) {
       Actor_SelectAnimationFar(platform, 7);
-      leader->y.fixed -= Q16_ONE;
-      leader->groundHeight -= Q16_ONE;
+      leader->y.fixed -= FIXED_ONE;
+      leader->groundHeight -= FIXED_ONE;
       wait(2);
-      leader->y.fixed -= Q16_ONE;
-      leader->groundHeight -= Q16_ONE;
+      leader->y.fixed -= FIXED_ONE;
+      leader->groundHeight -= FIXED_ONE;
       wait(10);
-      leader->y.fixed += Q16_ONE;
-      leader->groundHeight += Q16_ONE;
+      leader->y.fixed += FIXED_ONE;
+      leader->groundHeight += FIXED_ONE;
       wait(4);
-      leader->y.fixed += Q16_ONE;
-      leader->groundHeight += Q16_ONE;
+      leader->y.fixed += FIXED_ONE;
+      leader->groundHeight += FIXED_ONE;
     } else {
       wait(6);
     }
     leader->motionFlags = saved;
     Event_End();
     if (work != NULL)
-      work->walkingDistance += Iwram_MulQ16(work->walkingDistanceScale, px(32));
+      work->walkingDistance +=
+          Iwram_MulFX(work->walkingDistanceScale, toFIXED(32));
     // Landed on another jump spot: stand, then jump again.
     if (MapGrid_GetCellBehaviorAtFar(leader->layer, position->x, position->z) ==
         CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED) {
@@ -99,8 +102,8 @@ again:
 /// Climbing down (the player presses down at a climbable wall).
 s32 Field_ClimbDown(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 gridX = 8 + ((actor->x.part[0].pixel) & 0xfff0);
-  s32 gridZ = 8 + ((actor->z.part[0].pixel) & 0xfff0);
+  s32 gridX = 8 + ((actor->x.part[0].integer) & 0xfff0);
+  s32 gridZ = 8 + ((actor->z.part[0].integer) & 0xfff0);
   s32 result;
 
   Event_Start();
@@ -118,7 +121,7 @@ s32 Field_ClimbDown(void) {
 
       // The ground under the point 16 pixels lower may not be a wall cell
       // of the overhead layer: the check returns nonzero for a wall.
-      SET_POSITION(position, actor->x.fixed, actor->y.fixed - px(16),
+      SET_POSITION(position, actor->x.fixed, actor->y.fixed - toFIXED(16),
                    actor->z.fixed);
       result = MapGrid_IsWallAtFar((struct WorldPosition *)position);
       if (result != 0)
@@ -127,15 +130,16 @@ s32 Field_ClimbDown(void) {
       // Step to the middle of the cell, face north and climb down a cell at
       // 1 pixel a frame, in free flight (no motion flags) with no shadow.
       Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, gridX, gridZ);
-      actor->speedLimit = Q16_ONE;
+      actor->speedLimit = FIXED_ONE;
       Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
       Actor_WaitForScriptEndById(gMainRoutineWork.leaderActorId);
       actor->steeringFlags = ACTOR_FACES_MOTION;
       actor->motionFlags = 0;
       Actor_SetSpriteFlagsFar(actor, 0);
       Actor_SelectAnimationFar(actor, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
-      Actor_SetMoveTargetFar(actor, px(gridX), actor->y.fixed - px(16),
-                             px(gridZ) + px(16));
+      Actor_SetMoveTargetFar(actor, toFIXED(gridX),
+                             actor->y.fixed - toFIXED(16),
+                             toFIXED(gridZ) + toFIXED(16));
       Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       gMainRoutineWork.movementMode = LEADER_MOVEMENT_CLIMB;
     } else {
@@ -147,7 +151,7 @@ s32 Field_ClimbDown(void) {
     // where the leader is until the ground is read, and the shadow back.
     Actor_SelectAnimationFar(actor, ANIM_LEADER_CLIMB);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    actor->velocityY = px(4);
+    actor->velocityY = toFIXED(4);
     actor->groundHeight = actor->y.fixed;
     Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_SHADOW);
     Event_Wait(6);
@@ -168,8 +172,8 @@ failure:
 s32 Field_ClimbUp(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   s16 spriteFlags = 1;
-  s32 gridX = 8 + ((actor->x.part[0].pixel) & 0xfff0);
-  s32 gridZ = 8 + ((actor->z.part[0].pixel) & 0xfff0);
+  s32 gridX = 8 + ((actor->x.part[0].integer) & 0xfff0);
+  s32 gridZ = 8 + ((actor->z.part[0].integer) & 0xfff0);
   s32 result;
 
   Event_Start();
@@ -200,12 +204,12 @@ s32 Field_ClimbUp(void) {
       Actor_SelectAnimationFar(actor, ANIM_LEADER_SPRING);
       wait(4);
       Actor_SelectAnimationFar(actor, ANIM_LEADER_LEAP);
-      actor->velocityY = px(4);
+      actor->velocityY = toFIXED(4);
       wait(4);
       actor->motionFlags = 0;
       spriteFlags &= 0xfe;
       Actor_SetSpriteFlagsFar(actor, spriteFlags);
-      actor->speedLimit = Q16_ONE;
+      actor->speedLimit = FIXED_ONE;
       actor->velocityY = 0;
       Actor_SelectAnimationFar(actor, ANIM_LEADER_CLING);
       wait(4);
@@ -219,8 +223,8 @@ s32 Field_ClimbUp(void) {
     // Climb over the top: up 8 pixels and a cell north.
     actor->motionFlags = 0;
     Actor_SelectAnimationFar(actor, ANIM_LEADER_CLIMB_OVER_TOP);
-    Actor_SetMoveTargetFar(actor, px(gridX), actor->y.fixed + px(8),
-                           px(gridZ) - px(16));
+    Actor_SetMoveTargetFar(actor, toFIXED(gridX), actor->y.fixed + toFIXED(8),
+                           toFIXED(gridZ) - toFIXED(16));
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     spriteFlags |= 1;

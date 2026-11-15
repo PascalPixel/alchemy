@@ -60,10 +60,10 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
 
     // Nereid rides in from the right.
     rise = 0;
-    focus.x = px(256);
-    focus.y = px(88);
-    velocity.x = -px(16);
-    velocity.y = -px(4);
+    focus.x = toFIXED(256);
+    focus.y = toFIXED(88);
+    velocity.x = -toFIXED(16);
+    velocity.y = -toFIXED(4);
     // Particles 24 to 39 are given a place and a delay that nothing reads
     // again.
     EFFECT_FREE_PARTICLES(k, work->particles, 64);
@@ -93,8 +93,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
         focus.y += velocity.y;
         velocity.x = velocity.x * 58 / DAMPING_SCALE;
         velocity.y = velocity.y * 56 / DAMPING_SCALE;
-        if (focus.x < px(120))
-          velocity.x += px(1) / 2;
+        if (focus.x < toFIXED(120))
+          velocity.x += toFIXED(1) / 2;
       }
       BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_NEREID, focus.x,
                                          focus.y);
@@ -107,8 +107,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
             s32 radius = Random16() & 63;
             s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-            drop->x = ((Trig_Sin(angle) * radius) >> 3) + px(32);
-            drop->y = ((Trig_Cos(angle) * radius) >> 2) + px(96);
+            drop->x = ((Trig_Sin(angle) * radius) >> 3) + toFIXED(32);
+            drop->y = ((Trig_Cos(angle) * radius) >> 2) + toFIXED(96);
             drop->velocityX = ((Random16() & 63) - 32) << 14;
             drop->velocityY = (-(Random16() & 63) - 8) << 13;
             drop->variant = 0;
@@ -124,8 +124,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
             s32 radius = Random16() & 63;
             s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-            drop->x = ((Trig_Sin(angle) * radius) >> 3) + px(32);
-            drop->y = ((Trig_Cos(angle) * radius) >> 2) + px(96);
+            drop->x = ((Trig_Sin(angle) * radius) >> 3) + toFIXED(32);
+            drop->y = ((Trig_Cos(angle) * radius) >> 2) + toFIXED(96);
             drop->velocityX = ((Random16() & 63) - 32) << 14;
             drop->velocityY = (-(Random16() & 63) - 8) << 13;
             drop->variant = 0;
@@ -176,14 +176,14 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
             size += 2;
           EFFECT_SWELL_MOTE(size, frame);
           EFFECT_DRAW_MOTE(draw[drop->velocityY > 0], canvas, graphics,
-                           WHOLE_PIXELS(drop->x), WHOLE_PIXELS(drop->y), size);
+                           FIXEDtoINT(drop->x), FIXEDtoINT(drop->y), size);
           drop->x += drop->velocityX;
           drop->y += drop->velocityY;
           EFFECT_FALL_MOTE(drop->velocityY, gNereid_Gravity[k & 3], frame);
           drop->velocityX = drop->velocityX * 62 / DAMPING_SCALE;
           drop->velocityY = drop->velocityY * 62 / DAMPING_SCALE;
           drop->variant++;
-          if (drop->velocityY > 0 && WHOLE_PIXELS(drop->y) > 104)
+          if (drop->velocityY > 0 && FIXEDtoINT(drop->y) > 104)
             drop->variant = -1;
         }
       }
@@ -201,7 +201,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
               BattleEffect_TintBattler(work->args->targets[k],
                                        SPRITE_COLOR_WHITE, POSE_DAMAGE,
                                        TINT_KEEP, 0);
-              actor->velocityY = px(9) / 2;
+              actor->velocityY = toFIXED(9) / 2;
               actor->gravity = BATTLE_UNIT_GRAVITY;
             }
             if (phase == 6)

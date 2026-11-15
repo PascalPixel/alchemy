@@ -184,7 +184,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
       if (i == 20)
         Actor_ShowEmote(ACTOR_CHAMBER_AKAFUBU,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-      gGabombaStatueChamber_ShownItem->y.fixed += px(1) / 2;
+      gGabombaStatueChamber_ShownItem->y.fixed += toFIXED(1) / 2;
       wait(1);
     } while (++i <= 79);
     gGabombaStatueChamber_ShownItem->motionFlags = 4;
@@ -376,8 +376,8 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
     leader = OBJECT(gMainRoutineWork.leaderActorId);
     object = gGabombaStatueChamber_ShownItem;
     object->motionFlags = 0;
-    Actor_SetMoveTarget((s32)object, leader->x.fixed, leader->y.fixed + px(36),
-                        leader->z.fixed);
+    Actor_SetMoveTarget((s32)object, leader->x.fixed,
+                        leader->y.fixed + toFIXED(36), leader->z.fixed);
     Actor_WaitForMove((s32)gGabombaStatueChamber_ShownItem);
   }
   PartyInventory_GiveItem(ITEM_BLACK_CRYSTAL, 0);
@@ -632,7 +632,7 @@ void GabombaStatueChamber_KeepItemWithStatue(struct Actor *object) {
     u8 clear = 0;                                                              \
                                                                                \
     gGabombaStatueChamber_ShownItem = actor =                                  \
-        Import_ActorCreate(489, x, px(18), z);                                 \
+        Import_ActorCreate(489, x, toFIXED(18), z);                            \
     if (actor != NULL) {                                                       \
       sprite = actor->sprite;                                                  \
       sprite->image.fullColor = 0;                                             \
@@ -690,17 +690,17 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), px(392), 0,
-                                       px(268));
+  FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), toFIXED(392),
+                                       0, toFIXED(268));
   wait(1);
   leader = gMainRoutineWork.leaderActorId;
-  Actor_SetPositionAndFacing(leader, px(360), px(184),
+  Actor_SetPositionAndFacing(leader, toFIXED(360), toFIXED(184),
                              turnA = FACING_NORTHEAST);
-  Actor_SetPositionAndFacing(ACTOR_PIERS, px(376), px(184), turnA);
-  Actor_SetPositionAndFacing(ACTOR_KRADEN, px(360), px(168), turnA);
-  Actor_SetPositionAndFacing(ACTOR_SHEBA, px(423), px(168),
+  Actor_SetPositionAndFacing(ACTOR_PIERS, toFIXED(376), toFIXED(184), turnA);
+  Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(360), toFIXED(168), turnA);
+  Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(423), toFIXED(168),
                              turnB = FACING_NORTHWEST);
-  Actor_SetPositionAndFacing(ACTOR_JENNA, px(408), px(184), turnB);
+  Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(408), toFIXED(184), turnB);
   if (statue != 0) {
     sprite = statue->sprite;
     sprite->nextFrame = 0;
@@ -732,8 +732,8 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Actor_ShowEmoteById(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "It came in through there and rolled along this groove in the floor..."
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
-  FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), px(392), 0,
-                                       px(340));
+  FieldActor_SetPositionAndResetMotion(((s32)Actor_GetById(13)), toFIXED(392),
+                                       0, toFIXED(340));
   Sound_Play(SOUND_FADE_OUT_BGM);
   PaletteFade_SetTarget(PALETTE_TINT_SEPIA, 0);
   PaletteFade_StartInterpolation(40);
@@ -752,8 +752,8 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Actor_MoveToAndWait(13, 392, 246);
   Actor_SetAnimationById(ACTOR_DRUM_A, 1);
   Actor_SetAnimationById(ACTOR_DRUM_B, 1);
-  statue->velocityY = px(3);
-  statue->gravity = px(1) / 2;
+  statue->velocityY = toFIXED(3);
+  statue->gravity = toFIXED(1) / 2;
   Actor_SetSpeed(13, 1.6);
   Actor_MoveToAndWait(13, 392, 234);
   Event_Wait(10);
@@ -803,8 +803,8 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Sound_Play(MUS_SILENCE);
   {
     s32 turn = 0xd000;
-    Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_AKAFUBU, px(400),
-                                                   px(320), turn);
+    Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_AKAFUBU, toFIXED(400),
+                                                   toFIXED(320), turn);
   }
   wait(1);
   // "Who... Who are you!?"
@@ -902,19 +902,20 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   {
     s32 angleA = FACING_NORTHEAST;
 
-    Actor_SetPositionAndFacing(*owner, px(360), px(216), angleA);
-    Actor_SetPositionAndFacing(ACTOR_PIERS, px(376), px(216), angleA);
+    Actor_SetPositionAndFacing(*owner, toFIXED(360), toFIXED(216), angleA);
+    Actor_SetPositionAndFacing(ACTOR_PIERS, toFIXED(376), toFIXED(216), angleA);
   }
   facing = FACING_NORTHWEST;
   zero = 0;
-  Actor_SetPositionAndFacing(ACTOR_KRADEN, px(360), px(200), zero);
-  Actor_SetPositionAndFacing(ACTOR_JENNA, px(408), px(216), facing);
+  Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(360), toFIXED(200), zero);
+  Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(408), toFIXED(216), facing);
   angleC = FACING_WEST;
-  Actor_SetPositionAndFacing(ACTOR_SHEBA, px(424), px(200), angleC);
+  Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(424), toFIXED(200), angleC);
   {
     s32 angleB = FACING_NORTH_NORTHWEST;
 
-    Actor_SetPositionAndFacing(ACTOR_AKAFUBU, px(392), px(200), angleB);
+    Actor_SetPositionAndFacing(ACTOR_AKAFUBU, toFIXED(392), toFIXED(200),
+                               angleB);
   }
   heap = Ram_HeapSlots;
   System_Wait(1);
@@ -1088,8 +1089,8 @@ void GabombaStatueChamber_InitializeLift(void) {
           REG_BLDALPHA = alpha;
           blend++;
         }
-        front->y += px(1);
-        back->y += px(1);
+        front->y += toFIXED(1);
+        back->y += toFIXED(1);
         i++;
       } while (i < 352);
       MapGrid_CenterOnFollowedPoint();
@@ -1169,7 +1170,7 @@ s32 gGabombaStatueChamber_AkafubuStepsUpScript[] = {
     SC_POSITION(392, 64, 124),
     SC_WAIT(1),
     SC_LABEL(1),
-    SC_ADD(SW_Y, px(-1)),
+    SC_ADD(SW_Y, toFIXED(-1)),
     SC_WAIT(1),
     SC_LOOP(64, SC_TO(1)),
     SC_WAIT(1),
@@ -1177,7 +1178,7 @@ s32 gGabombaStatueChamber_AkafubuStepsUpScript[] = {
 };
 
 u32 gGabombaStatueChamber_AkafubuLeavesScript[] = {
-    SC_ADD(SW_Y, px(2)),
+    SC_ADD(SW_Y, toFIXED(2)),
     SC_WAIT(1),
     SC_LOOP(80, SC_TOP),
     SC_POSITION_ORIGIN,

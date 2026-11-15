@@ -166,8 +166,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 static void Lalivero_TalkToVillagerTheyTookSheba(s32 actorId) {
   void Actor_FaceDirection();
 
-  Actor_Get(actorId)->scaleX = Q16_ONE;
-  Actor_Get(actorId)->scaleY = Q16_ONE;
+  Actor_Get(actorId)->scaleX = FIXED_ONE;
+  Actor_Get(actorId)->scaleY = FIXED_ONE;
   Event_SetMessageId(MsgLaliveroOhhTheyTookShebaHeaded);
   // "Ohh... They took Sheba and headed for the ruins."
   Event_ShowMessage(actorId, 0);
@@ -446,8 +446,8 @@ static void Lalivero_WatchWoundedSoldiers(void) {
   Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_IODEM, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_IODEM, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_IODEM);
   Actor_SetPosition(ACTOR_IODEM, 0, 0);
@@ -760,24 +760,24 @@ static void Lalivero_IodemGivesBlackOrb(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_GARET, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_MIA, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_MIA, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_IVAN, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
@@ -891,7 +891,7 @@ s32 Scene_Initialize(void) {
   actor->retainSpriteCache = 1;
   actor->motionFlags = 0;
   sprite = actor->sprite;
-  actor->y.fixed = px(10);
+  actor->y.fixed = toFIXED(10);
   sprite->count = 0;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
@@ -954,30 +954,30 @@ s32 Scene_Initialize(void) {
 /// The sobbing of ACTOR_VILLAGER_THEY_TOOK_SHEBA: the sprite squashes and
 /// stretches twice, then rests 80 frames.
 s32 gLalivero_CryingScript[] = {
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(4),
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(80),
     SC_LOOP(SC_FOREVER, SC_TOP),

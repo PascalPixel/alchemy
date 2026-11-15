@@ -24,9 +24,9 @@ void CrackedTile_Fall(struct CellTargetHead *table,
   do {
     if (x == 5)
       Event_PlaySound(SE_DUST_PUFF);
-    leader->scaleX += -(Q16_ONE / 64);
-    leader->scaleY += -(Q16_ONE * 3 / 256);
-    leader->y.fixed += -(px(3) / 5);
+    leader->scaleX += -(FIXED_ONE / 64);
+    leader->scaleY += -(FIXED_ONE * 3 / 256);
+    leader->y.fixed += -(toFIXED(3) / 5);
     System_Wait(1);
     x++;
   } while (x <= 39);

@@ -67,8 +67,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
     actor->acceleration = distance;
     actor->speedLimit = distance;
     actor->snapToTarget = 1;
-    actor->velocityY = px(7);
-    actor->gravity = px(87) / 100;
+    actor->velocityY = toFIXED(7);
+    actor->gravity = toFIXED(87) / 100;
     actor->bounce = 0;
     actor->steeringFlags = 1;
     Actor_StartIdleFar(actor);
@@ -112,8 +112,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
         s32 angle = Random16() & TRIG_ANGLE_MASK;
 
         spark = &sparks[i];
-        spark->x = px(64);
-        spark->y = px(80);
+        spark->x = toFIXED(64);
+        spark->y = toFIXED(80);
         spark->velocityX = (Trig_Sin(angle) * force) >> 7;
         spark->velocityY = -(Trig_Cos(angle) * force) >> 6;
         spark->variant = (Random16() & 15) + 16;
@@ -124,12 +124,12 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
       if (spark->variant > 0) {
         spark->variant--;
         Particle_AdvanceWithGravity2D(spark, 60, 0);
-        if (spark->y > px(104)) {
+        if (spark->y > toFIXED(104)) {
           spark->velocityY = -spark->velocityY / 2;
-        } else if ((spark->x >= 0 && spark->x <= px(127) - 1) &&
+        } else if ((spark->x >= 0 && spark->x <= toFIXED(127) - 1) &&
                    spark->y >= 0) {
-          s32 sx = WHOLE_PIXELS(spark->x);
-          s32 sy = WHOLE_PIXELS(spark->y);
+          s32 sx = FIXEDtoINT(spark->x);
+          s32 sy = FIXEDtoINT(spark->y);
 
           draw[0](canvas,
                   work->sheet + HELM_SPLITTER_STAR_PICTURES +
@@ -150,8 +150,9 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 /// Arranges work->effects in a formation; x and z are its origin in 16.16
 /// pixels.
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
-  static struct SpriteScale normalScale = {{{Q16_ONE, Q16_ONE}}};
-  static struct SpriteScale largeScale = {{{Q16_ONE * 5 / 4, Q16_ONE * 5 / 4}}};
+  static struct SpriteScale normalScale = {{{FIXED_ONE, FIXED_ONE}}};
+  static struct SpriteScale largeScale = {
+      {{FIXED_ONE * 5 / 4, FIXED_ONE * 5 / 4}}};
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   struct SpriteScale normal = normalScale;
   struct SpriteScale big = largeScale;
@@ -159,35 +160,35 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   s32 i;
 
   pos.groundHeight = 0;
-  pos.height = px(255);
+  pos.height = toFIXED(255);
   // Render_ApplyProjectedPlacement draws each picture 255 pixels above its y,
   // while its draw slot and shadow follow y itself.
   switch (formation) {
   case SUMMON_FORMATION_THOR:
     for (i = 0; i != 9; i++) {
-      pos.x = px(i % 3 * 32) + x;
-      pos.y = px(i / 3 * 32) + z;
+      pos.x = INTtoFIXED(i % 3 * 32) + x;
+      pos.y = INTtoFIXED(i / 3 * 32) + z;
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_NEREID:
     for (i = 0; i != 12; i++) {
-      pos.x = px(gHelmSplitter_TwelveX[i]) + x - px(16);
-      pos.y = px(gHelmSplitter_TwelveZ[i]) + z - px(32);
+      pos.x = INTtoFIXED(gHelmSplitter_TwelveX[i]) + x - toFIXED(16);
+      pos.y = INTtoFIXED(gHelmSplitter_TwelveZ[i]) + z - toFIXED(32);
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_CYBELE:
     for (i = 0; i != 8; i++) {
-      pos.x = px(gHelmSplitter_RightEightX[i]) + x + px(16);
-      pos.y = px(gHelmSplitter_RightEightZ[i]) + z;
+      pos.x = INTtoFIXED(gHelmSplitter_RightEightX[i]) + x + toFIXED(16);
+      pos.y = INTtoFIXED(gHelmSplitter_RightEightZ[i]) + z;
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &normal, 0);
     }
     break;
   case SUMMON_FORMATION_TIAMAT:
     for (i = 0; i != 8; i++) {
-      pos.x = px(gHelmSplitter_SmallEightX[i]) + x;
-      pos.y = px(gHelmSplitter_SmallEightZ[i]) + z;
+      pos.x = INTtoFIXED(gHelmSplitter_SmallEightX[i]) + x;
+      pos.y = INTtoFIXED(gHelmSplitter_SmallEightZ[i]) + z;
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &big, 0);
     }
     break;
@@ -230,7 +231,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   sheet =
       HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_BATTLE_SHEET);
   orgX = x;
-  x += px(40);
+  x += toFIXED(40);
   x /= 2;
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
@@ -265,9 +266,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].x = x;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].y = y;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityX =
-        (Trig_Sin(i * (TRIG_TURN / 3)) * 32) >> 6;
+        (Trig_Sin(i * (DEGtoANG(120))) * 32) >> 6;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityY =
-        -((Trig_Cos(i * (TRIG_TURN / 3)) * 32) >> 5);
+        -((Trig_Cos(i * (DEGtoANG(120))) * 32) >> 5);
   }
 
   // Small sparks fly.
@@ -300,14 +301,14 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
       width = gHelmSplitter_ImpactBurstPictureWidths[picture];
       height = gHelmSplitter_ImpactBurstPictureHeights[picture];
       maxBlend(canvas, work->sheet + gHelmSplitter_ImpactBurstPictures[picture],
-               WHOLE_PIXELS(x) - (width >> 1), WHOLE_PIXELS(y) - (height >> 1),
+               FIXEDtoINT(x) - (width >> 1), FIXEDtoINT(y) - (height >> 1),
                width, height);
 #else
       maxBlend(
           canvas, work->sheet + gHelmSplitter_ImpactBurstPictures[picture],
-          WHOLE_PIXELS(x) -
+          FIXEDtoINT(x) -
               ((width = gHelmSplitter_ImpactBurstPictureWidths[picture]) >> 1),
-          WHOLE_PIXELS(y) -
+          FIXEDtoINT(y) -
               ((height = gHelmSplitter_ImpactBurstPictureHeights[picture]) >>
                1),
           width, height);

@@ -70,7 +70,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
 
   for (i = 0; i != DJINN_BEAMS_MOTES; i++) {
     PARTICLES[i].x = 0;
-    PARTICLES[i].y = px(80);
+    PARTICLES[i].y = toFIXED(80);
     PARTICLES[i].z = (Random16() | -32) << 14;
     PARTICLES[i].variant = Random16() & 255;
   }
@@ -100,8 +100,8 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
     k = work->args->prelude;
     if (k == 1) {
       s32 angle = frame << 11;
-      s32 x = WHOLE_PIXELS(-Trig_Sin(angle) * 20) + djinnX + offsetX - 20;
-      s32 y = WHOLE_PIXELS(Trig_Cos(angle) * 4) + djinnY - 24;
+      s32 x = FIXEDtoINT(-Trig_Sin(angle) * 20) + djinnX + offsetX - 20;
+      s32 y = FIXEDtoINT(Trig_Cos(angle) * 4) + djinnY - 24;
 
       BattleEffect_FetchRectangleBlitters(work->args->side ^ k, draw);
       if (frame > 32)
@@ -129,17 +129,17 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
 
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, target->x.fixed, 0, target->z.fixed);
-      Transform_ApplyPosition(point);
+      Matrix_TranslateVector(point);
       if (frame > start) {
         for (i = 0; i != 8; i++) {
           struct Particle *mote = &PARTICLES[k * 64 + i];
 
-          if (frame > i * 8 + start && mote->y > px(8)) {
+          if (frame > i * 8 + start && mote->y > toFIXED(8)) {
             s32 sway;
 
             Projection_Point(mote, &screenPosition);
             screenPosition.x += offsetX;
-            sway = WHOLE_PIXELS(Trig_Sin(mote->variant << 10) * 16);
+            sway = FIXEDtoINT(Trig_Sin(mote->variant << 10) * 16);
             if (i & 1)
               screenPosition.x -= sway;
             else
@@ -152,7 +152,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
                         screenPosition.x - DJINN_BEAMS_MOTE_WIDTH / 2,
                         screenPosition.y - DJINN_BEAMS_MOTE_HEIGHT / 2,
                         DJINN_BEAMS_MOTE_WIDTH, DJINN_BEAMS_MOTE_HEIGHT);
-            mote->y -= px(1);
+            mote->y -= toFIXED(1);
             mote->variant++;
           }
         }

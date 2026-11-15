@@ -261,7 +261,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
       Iwram_ClearWordsEntry(records, 16);
       record = (struct Sprite *)Sprite_CreateFar(spriteId);
       if (record != 0) {
-        record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
+        record->scale = Iwram_MulFX(record->scale, battleObject->scale);
         boxY = Resource_GetMetadataRecordFarFar(spriteId)->boxY;
         object->height = boxY >> 1;
         *records = record;
@@ -270,7 +270,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
       record->flags = 0;
       record = (struct Sprite *)Sprite_CreateFar(spriteId + SPRITE_SECOND_PART);
       if (record != 0) {
-        record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
+        record->scale = Iwram_MulFX(record->scale, battleObject->scale);
         *records = record;
       }
       record->flags = 0;
@@ -279,7 +279,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
       if (record != 0) {
         object->recordStorageKind = ACTOR_SPRITE_ONE;
         object->records = record;
-        record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
+        record->scale = Iwram_MulFX(record->scale, battleObject->scale);
         entry = record->entries[0];
         entry->colorMode = battleObject->palette;
         entry->priority = 1;
@@ -557,7 +557,7 @@ void BattleMotion_DestroyAllSlotObjects(void) {
 }
 
 /// Writes a battle object's anchor to out, at height 0.
-s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out) {
+s32 Battle_GetWorkEntryPair(s32 no, struct Point *out) {
   struct BattleWork *state = Ram_HeapSlots->battleWork;
   s32 result;
 
@@ -573,12 +573,12 @@ s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out) {
 UNREAD_RESULT BattleCamera_ApplyTransform(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
 
-  Transform_Reset();
+  Matrix_Initialize();
   if (GameFlag_Get(FLAG_CHOOSING_COMMANDS) != 0) {
-    Iwram_TransformMatrix(gBattleCamera_CommandMatrix);
-    Transform_ApplyLookAt(state->eye, state->focus);
+    Iwram_MultiplyMatrix(gBattleCamera_CommandMatrix);
+    Matrix_LookAt(state->eye, state->focus);
   } else {
-    Transform_SetLookAt(state->eye, state->focus);
+    Matrix_SetLookAt(state->eye, state->focus);
   }
 }
 
@@ -600,7 +600,7 @@ s32 BattleMotion_ProjectPosition(s32 id, s32 *projected) {
     pos[2] = object->z;
     scaled = Render_ProjectPoint(pos, out);
   }
-  (void)Iwram_MulQ16(scaled, record->scale);
+  (void)Iwram_MulFX(scaled, record->scale);
   return 0;
 }
 
@@ -625,7 +625,7 @@ void *GetMotionRecord(struct MotionObject *object, s32 recordIndex) {
 /// Puts the battle camera at its default view of the battlefield's centre.
 void BattleCamera_SetDefaultView(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
-  struct FixedPointPosition transfer;
+  struct Point transfer;
 
   // A pitch of -1/128 of a turn, 510 pixels away.
   state->yaw = TRIG_TURN * 3 / 16;
@@ -635,10 +635,10 @@ void BattleCamera_SetDefaultView(void) {
   state->followPosition = 0;
   state->followEye = 0;
 
-  Transform_Reset();
-  Transform_ApplyPosition(&state->focus[0]);
-  Transform_ApplyYaw((s16)state->yaw);
-  Transform_ApplyPitch((s16)state->pitch);
+  Matrix_Initialize();
+  Matrix_TranslateVector(&state->focus[0]);
+  Matrix_RotateY((s16)state->yaw);
+  Matrix_RotateX((s16)state->pitch);
 
   SET_POSITION(&transfer, 0, 0, state->distance);
   Iwram_TransformVector(&transfer, (s32 *)state);

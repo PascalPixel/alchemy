@@ -119,8 +119,8 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (targetX - effect->scaleX) / count;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (targetX - Q16_ONE) / count;
-      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
+      effect->scaleRateX = (targetX - FIXED_ONE) / count;
+      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {

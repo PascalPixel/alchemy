@@ -231,7 +231,7 @@ void GaiaRock_RevealIdol(void) {
   if (done == 0) {
     Actor_SetPosition(FIELD_TREASURE_ACTOR, 657, 246);
     object->motionFlags = done;
-    object->y.fixed = px(80);
+    object->y.fixed = toFIXED(80);
   }
 }
 
@@ -331,8 +331,8 @@ void GaiaRock_CircleLeaf(struct OrbitEffect *effect) {
 
   radius = Random16() + 0x20000;
   angle = effect->facing;
-  dx = Iwram_MulQ16(radius, Trig_Cos(angle));
-  dz = Iwram_MulQ16(radius, Math_Sin(angle));
+  dx = Iwram_MulFX(radius, Trig_Cos(angle));
+  dz = Iwram_MulFX(radius, Math_Sin(angle));
   effect->x += dx;
   effect->z += dz;
   effect->facing += 0xfff0;
@@ -359,10 +359,11 @@ s32 GaiaRock_SpawnCirclingLeaves(struct OrbitEffect *source) {
       s32 position[3];
 
       position[0] = source->x;
-      position[1] = source->y + i * 0xcccc + px(4);
+      position[1] = source->y + i * 0xcccc + toFIXED(4);
       position[2] = source->z;
       radius = Random16();
-      FieldVector_AddPolarOffsetFixed(radius * 5 + px(3), Random16(), position);
+      FieldVector_AddPolarOffsetFX(radius * 5 + toFIXED(3), Random16(),
+                                   position);
       effect = (struct OrbitEffect *)Value4(
           (s32 (*)())Actor_Spawn, 308, position[0], position[1], position[2]);
       if (effect != NULL) {
@@ -370,7 +371,7 @@ s32 GaiaRock_SpawnCirclingLeaves(struct OrbitEffect *source) {
         effect->timer = timer;
         effect->pause = 0;
         effect->gravity = 0x1999;
-        effect->velocityY = px(3);
+        effect->velocityY = toFIXED(3);
         effect->facing = Random16();
         effect->priorityFlags = 0;
         Actor_SetSpritePriorityDirect((struct Actor *)effect, 2);
@@ -424,14 +425,14 @@ void GaiaRock_StatueBlowsWind(void) {
     object =
         Actor_Spawn(0x118, object->x.fixed, object->y.fixed, object->z.fixed);
     if (object != NULL) {
-      object->acceleration = px(2);
-      object->speedLimit = px(2);
-      object->scaleX = Q16_ONE / 2;
-      object->scaleY = Q16_ONE / 10;
+      object->acceleration = toFIXED(2);
+      object->speedLimit = toFIXED(2);
+      object->scaleX = FIXED_ONE / 2;
+      object->scaleY = FIXED_ONE / 10;
       object->priorityFlags = phase;
       Actor_SelectAnimation(object, 2);
-      FieldActor_SetMoveTargetFixed(object, object->x.fixed - px(32),
-                                    object->y.fixed, object->z.fixed);
+      FieldActor_SetMoveTargetFX(object, object->x.fixed - toFIXED(32),
+                                 object->y.fixed, object->z.fixed);
       Actor_StartScript(object, gGaiaRock_WindScript);
       Actor_SetSpritePriorityDirect(object, 2);
     }
@@ -468,8 +469,8 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_FIRST_PILLAR_DROPPED)) {
       actor = Actor_GetById(16);
       actor->motionFlags = 0;
-      actor->x.fixed = px(88);
-      actor->y.fixed = px(128);
+      actor->x.fixed = toFIXED(88);
+      actor->y.fixed = toFIXED(128);
       Actor_SetSpriteFlags(actor, 0);
       MapGrid_CopyCellAttributes(6, 27, 1, 1, 5, 27);
     }
@@ -477,8 +478,8 @@ s32 Scene_Initialize(void) {
     actor->priorityFlags = 0;
     if (GameFlag_Get(FLAG_SECOND_PILLAR_DROPPED)) {
       actor->motionFlags = 0;
-      actor->x.fixed = px(648);
-      actor->y.fixed = px(64);
+      actor->x.fixed = toFIXED(648);
+      actor->y.fixed = toFIXED(64);
       Actor_SetSpriteFlags(actor, 0);
       MapGrid_CopyCellAttributes(33, 102, 1, 2, 37, 102);
       MapGrid_CopyCellAttributes(27, 44, 1, 1, 40, 46);
@@ -524,13 +525,13 @@ s32 Scene_Initialize(void) {
       GaiaRock_StartWallTriggers();
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_00)) {
-      GaiaRock_PlaceStatue(17, px(764), -px(391), px(424));
+      GaiaRock_PlaceStatue(17, toFIXED(764), -toFIXED(391), toFIXED(424));
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_01)) {
-      GaiaRock_PlaceStatue(18, px(789), -px(248), px(424));
+      GaiaRock_PlaceStatue(18, toFIXED(789), -toFIXED(248), toFIXED(424));
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_02)) {
-      GaiaRock_PlaceStatue(19, px(778), -px(119), px(424));
+      GaiaRock_PlaceStatue(19, toFIXED(778), -toFIXED(119), toFIXED(424));
     }
   } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_DANCING_IDOL) {
     actor = Actor_GetById(FIELD_TREASURE_ACTOR);
@@ -552,7 +553,7 @@ s32 Scene_PrepareMap(void) {
       (u16)(gMainRoutineWork.entrance - 3) <= 1) {
     s32 *layer = (s32 *)&Ram_HeapSlots->mapGrid->layers[1];
 
-    layer[2] = -px(128);
+    layer[2] = -toFIXED(128);
     layer[3] = 0x4480000;
   }
   return 0;
@@ -563,8 +564,8 @@ void GaiaRock_TriggerWallCell(void) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     struct MapWork *map = Ram_HeapSlots->mapGrid;
     struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-    s32 x = object->x.fixed / px(16);
-    s32 z = (object->z.fixed - object->y.fixed + 0x7fff) / px(16);
+    s32 x = object->x.fixed / toFIXED(16);
+    s32 z = (object->z.fixed - object->y.fixed + 0x7fff) / toFIXED(16);
     struct MapCell *cells = map->layers[2].cells;
     struct MapCell *cell = &cells[x + (z << 7)];
     s32 code = cell->collisionCode;
@@ -577,13 +578,13 @@ void GaiaRock_TriggerWallCell(void) {
 void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *object = Actor_Get(id);
   struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[2].cells;
-  s32 cellX = x / px(16);
-  s32 cellZ = (z - y + 0x7fff) / px(16);
+  s32 cellX = x / toFIXED(16);
+  s32 cellZ = (z - y + 0x7fff) / toFIXED(16);
 
   cell += cellX + (cellZ << 7);
   cell->collisionCode = 255;
-  object->x.fixed = (x & FIELD_CELL_MASK) + px(8);
-  object->z.fixed = (z & FIELD_CELL_MASK) + px(8);
+  object->x.fixed = (x & FIELD_CELL_MASK) + toFIXED(8);
+  object->z.fixed = (z & FIELD_CELL_MASK) + toFIXED(8);
   object->y.fixed = object->z.fixed - (cellZ << 20);
   object->motionFlags = 0;
   object->priorityFlags |= 2;
@@ -606,7 +607,7 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   do {
     struct Actor *dust =
         FieldActor_Create(SPRITE_ROCK, leader->x.fixed,
-                          leader->y.fixed + px(16), leader->z.fixed);
+                          leader->y.fixed + toFIXED(16), leader->z.fixed);
 
     if (dust != 0) {
       s32 angle;
@@ -619,13 +620,13 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
       speed = Random16();
       size = Random16();
       scale = (size >> 1) + 0x2000;
-      dust->velocityY = Iwram_MulQ16(speed * 8, Trig_Cos(angle));
-      dust->velocityX = Iwram_MulQ16(speed * 8, Math_Sin(angle));
+      dust->velocityY = Iwram_MulFX(speed * 8, Trig_Cos(angle));
+      dust->velocityX = Iwram_MulFX(speed * 8, Math_Sin(angle));
       dust->acceleration = 0;
       dust->scaleX = scale;
       dust->scaleY = scale;
-      dust->gravity = px(33) / 100;
-      dust->bounce = Q16_ONE / 2;
+      dust->gravity = toFIXED(33) / 100;
+      dust->bounce = FIXED_ONE / 2;
     }
   } while (--i >= 0);
   Event_PlaySound(SE_STATUE_RISE);
@@ -637,7 +638,7 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   FieldEvent_Wait(40);
   Event_PlaySound(SE_DUST_PUFF);
   leader->motionFlags = 3;
-  leader->gravity = px(33) / 100;
+  leader->gravity = toFIXED(33) / 100;
   for (id = 0; id < 180; id++) {
     System_Wait(1);
     if (leader->y.fixed <= leader->groundHeight)
@@ -652,12 +653,12 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   System_Wait(10);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   System_Wait(20);
-  FieldCamera_MoveToFixed(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
+  FieldCamera_MoveToFX(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_SetSpriteFlags(leader, 1);
   Actor_SelectAnimation(leader, ANIM_STAND);
-  leader->velocityY = px(4);
+  leader->velocityY = toFIXED(4);
   System_Wait(20);
   gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
   Event_End();

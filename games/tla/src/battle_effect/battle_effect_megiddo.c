@@ -73,7 +73,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   transformed = Ram_MapCellBuffer + 0x1000;
   strip = Ram_MapCellBuffer + 0x2000;
   fireRing = Ram_MapCellBuffer + MEGIDDO_FIRE_RING;
-  BattleMotion_ApproachTargetFar(args->user, args->user, 150, px(5));
+  BattleMotion_ApproachTargetFar(args->user, args->user, 150, toFIXED(5));
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
@@ -85,20 +85,20 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   caster = BattleObject_GetFar(args->user)->object;
   x = 0;
   z = 0;
-  scale = Q16_ONE;
+  scale = FIXED_ONE;
   Render_BuildQuadStrip(strip, 8, 16, 32);
   Render_BuildQuadStrip(meshB, 2, 32, 15);
   for (j = 0; j != 16; j++) {
     s32 c = -Trig_Cos(j * 1092) * 3;
     s32 s = Trig_Sin(j * 1092);
-    s32 y = Q_16_16_TO_INT(c * 16);
-    s32 r = Q_16_16_TO_INT(s * 48);
+    s32 y = FIXEDtoINT(c * 16);
+    s32 r = FIXEDtoINT(s * 48);
 
     for (m = 0; m != 2; m++) {
       struct ModelVertex *v = (struct ModelVertex *)(meshA + j * 8 + m * 4);
 
-      SET_POSITION(v, Q_16_16_TO_INT(Trig_Sin(m << 13) * r), y + 24,
-                   Q_16_16_TO_INT(Trig_Cos(m << 13) * r));
+      SET_POSITION(v, FIXEDtoINT(Trig_Sin(m << 13) * r), y + 24,
+                   FIXEDtoINT(Trig_Cos(m << 13) * r));
     }
   }
   casterValue = caster[18];
@@ -145,11 +145,11 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       Graphics_LoadGreyRamp();
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       if (!args->side) {
-        x = px(160);
+        x = toFIXED(160);
       } else {
-        x = px(80);
+        x = toFIXED(80);
       }
-      z = -px(96);
+      z = -toFIXED(96);
       {
         volatile u16 *ime;
         struct IoWriteQueue *q;
@@ -201,10 +201,10 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         s32 r = 80;
 
         if (i != 1) {
-          r = (Q_16_16_TO_INT(Trig_Sin((frame + k * 4) << 12) * 2)) + 120;
+          r = (FIXEDtoINT(Trig_Sin((frame + k * 4) << 12) * 2)) + 120;
         }
-        SET_POSITION(v, Q_16_16_TO_INT(Trig_Sin(k << 11) * r),
-                     Q_16_16_TO_INT(Trig_Cos(k << 11) * r), zero);
+        SET_POSITION(v, FIXEDtoINT(Trig_Sin(k << 11) * r),
+                     FIXEDtoINT(Trig_Cos(k << 11) * r), zero);
       }
     }
 
@@ -213,7 +213,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       s32 d;
 
       if (y > 104) {
-        y -= px(1);
+        y -= toFIXED(1);
       }
       if (frame <= 63) {
         d = -16;
@@ -248,24 +248,24 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       gBgScroll[1].y = y;
     }
     if ((u32)(frame - 42) <= 37) {
-      z += px(2);
+      z += toFIXED(2);
       BattleEffect_StepPaletteToResource((s32)&ResourceId_OrangePaletteB);
     }
     if ((u32)(frame - 84) <= 58) {
       if (!args->side) {
-        x -= px(2);
+        x -= toFIXED(2);
       } else {
-        x += px(2);
+        x += toFIXED(2);
       }
-      z += px(4);
+      z += toFIXED(4);
     }
     if (frame == 143) {
       struct MotionObject *target;
 
       Palette_BrightenBattleBg(-12, -2, -2);
       camera[27] = savedYaw;
-      x = px(120);
-      z = px(48);
+      x = toFIXED(120);
+      z = toFIXED(48);
       targetList[0] = args->targets[0];
       targetList[1] = 255;
       BattleActor_SpawnObjectsForListFar(targetList, 0);
@@ -338,9 +338,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       if (frame > 142) {
         s32 n = frame - 143;
 
-        scale = n * 1236 + Q16_ONE / 4;
-        if (scale > Q16_ONE * 3 / 4) {
-          scale = Q16_ONE * 3 / 4;
+        scale = n * 1236 + FIXED_ONE / 4;
+        if (scale > FIXED_ONE * 3 / 4) {
+          scale = FIXED_ONE * 3 / 4;
         }
       }
       pair = (s32 *)req;
@@ -350,13 +350,13 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       pair[1] = v;
       *(s32 *)req = v;
       place[3] = zero;
-      place[1] = px(255);
+      place[1] = toFIXED(255);
       place[0] = x;
       place[2] = z;
       obj = work->sprites[0];
       obj[23] = 32;
       obj[22] = zero;
-      if ((u32)(place[2] + px(52)) <= 0xfbffff) {
+      if ((u32)(place[2] + toFIXED(52)) <= 0xfbffff) {
         Render_ApplyProjectedPlacementFar(obj, place, pair, 0);
       }
     }
@@ -392,12 +392,12 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
 
         /* FAKEMATCH(barrier): an empty asm on half. */
         asm("" : "+r"(half));
-        Transform_Reset();
-        Transform_ApplyAxisScale(half, Q16_ONE, half);
+        Matrix_Initialize();
+        Matrix_Scale(half, FIXED_ONE, half);
       }
-      Transform_ApplyTranslation(x - px(126), z - px(76), 0);
-      Transform_ApplyUniformScale(46536);
-      Transform_ApplyUniformScale(scale);
+      Matrix_Translate(x - toFIXED(126), z - toFIXED(76), 0);
+      Matrix_ScaleUniform(46536);
+      Matrix_ScaleUniform(scale);
       Render_TransformVertices(ring, transformed, 66);
       Render_DrawModelList(model);
 
@@ -424,19 +424,19 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         i = 0;
         /* FAKEMATCH(temporary): twice, frame * 2 kept apart. */
         twice = frame * 2;
-        angle = -TRIG_TURN / 4;
+        angle = -DEGtoANG(90);
         tilt = n * 384;
         scroll = twice + frame;
         for (; i != 10; i++) {
           model->scrollU = ~scroll & 127;
-          Transform_Reset();
-          Transform_ApplyTranslation(-px(2), -px(32), 0);
-          Transform_ApplyAxisScale(82000, 0x35208, Q16_ONE);
-          Transform_ApplyUniformScale(scale);
-          Transform_ApplyRoll(TRIG_TURN / 2);
+          Matrix_Initialize();
+          Matrix_Translate(-toFIXED(2), -toFIXED(32), 0);
+          Matrix_Scale(82000, 0x35208, FIXED_ONE);
+          Matrix_ScaleUniform(scale);
+          Matrix_RotateZ(DEGtoANG(180));
           scroll += 20;
-          Transform_ApplyPitch(tilt - TRIG_TURN * 3 / 16);
-          Transform_ApplyYaw(angle);
+          Matrix_RotateX(tilt - TRIG_TURN * 3 / 16);
+          Matrix_RotateY(angle);
           Render_TransformVertices(meshA, transformed, 32);
           Render_DrawModelList(model);
           angle += 0x1800;
@@ -488,8 +488,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
                        Random16() & 127);
         }
       }
-      Transform_Reset();
-      Transform_ApplyPitch(n * 384 - TRIG_TURN * 3 / 16);
+      Matrix_Initialize();
+      Matrix_RotateX(n * 384 - TRIG_TURN * 3 / 16);
       p = work->particles;
       for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
         s32 size = 1;
@@ -524,15 +524,16 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         if (shade > MODEL_SHADE_INVISIBLE) {
           s = (t << 14) + 0x4000;
           model->shade = shade;
-          Transform_Reset();
+          Matrix_Initialize();
           if (i <= 1) {
-            Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y - 48), 0);
+            Matrix_Translate(INTtoFIXED(pos.x / 2 - 64), INTtoFIXED(pos.y - 48),
+                             0);
           } else {
-            Transform_ApplyTranslation(0, px(16), 0);
+            Matrix_Translate(0, toFIXED(16), 0);
           }
-          Transform_ApplyAxisScale(s, s * 2, s);
-          Transform_ApplyPitch(gMegiddo_FlashPitches[i]);
-          Transform_ApplyYaw(gMegiddo_FlashYaws[i]);
+          Matrix_Scale(s, s * 2, s);
+          Matrix_RotateX(gMegiddo_FlashPitches[i]);
+          Matrix_RotateY(gMegiddo_FlashYaws[i]);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
@@ -561,23 +562,23 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
           s = s - (t << 12) + 0x30000;
         }
         model->shade = shade;
-        Transform_Reset();
+        Matrix_Initialize();
         if (!args->side) {
-          Transform_ApplyTranslation(px(pos.x / 2 + gMegiddo_RayX[i] - 64),
-                                     px(gMegiddo_RayY[i] + pos.y - 54), 0);
+          Matrix_Translate(INTtoFIXED(pos.x / 2 + gMegiddo_RayX[i] - 64),
+                           INTtoFIXED(gMegiddo_RayY[i] + pos.y - 54), 0);
         } else {
-          Transform_ApplyTranslation(px(pos.x / 2 - gMegiddo_RayX[i] - 62),
-                                     px(gMegiddo_RayY[i] + pos.y - 54), 0);
+          Matrix_Translate(INTtoFIXED(pos.x / 2 - gMegiddo_RayX[i] - 62),
+                           INTtoFIXED(gMegiddo_RayY[i] + pos.y - 54), 0);
         }
-        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+        Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
         if (!args->side) {
-          Transform_ApplyRoll(gMegiddo_RayRolls[i]);
+          Matrix_RotateZ(gMegiddo_RayRolls[i]);
         } else {
-          Transform_ApplyRoll(-gMegiddo_RayRolls[i]);
+          Matrix_RotateZ(-gMegiddo_RayRolls[i]);
         }
-        Transform_ApplyPitch(gMegiddo_RayPitches[i]);
-        Transform_ApplyYaw(gMegiddo_RayYaws[i]);
-        Transform_ApplyAxisScale(s / 4, s * 4, s / 2);
+        Matrix_RotateX(gMegiddo_RayPitches[i]);
+        Matrix_RotateY(gMegiddo_RayYaws[i]);
+        Matrix_Scale(s / 4, s * 4, s / 2);
         Render_TransformVertices(gBattleEffect_StandingSquareCorners, verts, 4);
         Render_DrawModelList(model);
       }

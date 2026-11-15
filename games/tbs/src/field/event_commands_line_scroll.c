@@ -70,12 +70,11 @@ void LineScroll_BuildPage(void) {
     u16 c = x1;
 
     // The sine is 4096 at its peak, so the wave reaches
-    // 4096 * ampX / Q16_ONE / 256 pixels: 16 for an ampX of Q16_ONE.
+    // 4096 * ampX / FIXED_ONE / 256 pixels: 16 for an ampX of FIXED_ONE.
     amplitude = work->ampX;
     for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-      wave =
-          Iwram_MulQ16(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
-          256;
+      wave = Iwram_MulFX(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
+             256;
       *row = a + wave;
       row += 2;
       *row = b + wave;
@@ -101,9 +100,8 @@ void LineScroll_BuildPage(void) {
 
     amplitude = work->ampY;
     for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-      wave =
-          Iwram_MulQ16(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
-          256;
+      wave = Iwram_MulFX(gLineScroll_WaveSine[(phase >> 16) & 255], amplitude) /
+             256;
       *row = a + wave;
       row += 2;
       *row = b + wave;

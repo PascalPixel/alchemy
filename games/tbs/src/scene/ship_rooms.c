@@ -424,13 +424,12 @@ static void ShipRooms_InstallRowingDeckActors(u32 action);
 static void ShipRooms_Say(s32 speaker);
 static void ShipRooms_Turn(s32 actorId, u16 facing);
 static void ShipRooms_PlaceActor(s32 actorId, s32 x, s32 z, s32 facing);
-static void ShipRooms_MoveCameraAndWaitFixed(s32 x, s32 y, s32 z, u32 flags);
+static void ShipRooms_MoveCameraAndWaitFX(s32 x, s32 y, s32 z, u32 flags);
 /// Moves the camera to a point in whole pixels, CAMERA_KEEP keeping an axis,
-/// then waits as its flags say (ShipRooms_MoveCameraAndWaitFixed).
+/// then waits as its flags say (ShipRooms_MoveCameraAndWaitFX).
 #define ShipRooms_MoveCameraAndWait(x, y, z, flags)                            \
-  ShipRooms_MoveCameraAndWaitFixed(EVENT_CAMERA_FIXED(x),                      \
-                                   EVENT_CAMERA_FIXED(y),                      \
-                                   EVENT_CAMERA_FIXED(z), flags)
+  ShipRooms_MoveCameraAndWaitFX(EVENT_CAMERA_FIXED(x), EVENT_CAMERA_FIXED(y),  \
+                                EVENT_CAMERA_FIXED(z), flags)
 static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt);
 static s32 ShipRooms_FindFirstSetFlag(u32 seat, s32 alternate);
 static void ShipRooms_HideSelectedPassengers(void);
@@ -470,13 +469,13 @@ static s32 ShipRooms_ResetActor(struct Actor *actor) {
 /// Returns 1.
 static s32 ShipRooms_Bob(struct Actor *actor) {
   if ((s16)actor->userValue != 0) {
-    actor->y.fixed -= (Random_Below(32768)) + px(1) / 2;
+    actor->y.fixed -= (Random_Below(32768)) + toFIXED(1) / 2;
     if (actor->y.fixed < 0) {
       actor->userValue = 0;
     }
   } else {
-    actor->y.fixed += (Random_Below(32768)) + px(1) / 2;
-    if (actor->y.fixed > px(8)) {
+    actor->y.fixed += (Random_Below(32768)) + toFIXED(1) / 2;
+    if (actor->y.fixed > toFIXED(8)) {
       actor->userValue = 1;
     }
   }
@@ -1092,8 +1091,8 @@ static struct Actor *ShipRooms_FindActorNear(s32 x, s32 z) {
   actor = &work->actors[ACTOR_FIRST_PLACED];
   while (i <= ACTOR_LAST_ID) {
     current = *actor++;
-    actorX = current->x.part[0].pixel;
-    actorZ = current->z.part[0].pixel;
+    actorX = current->x.part[0].integer;
+    actorZ = current->z.part[0].integer;
     if (left < actorX && right > actorX && top < actorZ && bottom > actorZ)
       return current;
     i++;
@@ -1118,24 +1117,24 @@ static void ShipRooms_StepBesideLeader(s32 passengerId) {
   passenger->priorityFlags =
       ACTOR_PRIORITY_AUTOMATIC | passenger->priorityFlags;
   // Try the leader's right, then left, then the space behind.
-  direction = FACING_SIXTEENTH(leader->facing + TRIG_TURN / 4) >> 12;
+  direction = FACING_SIXTEENTH(leader->facing + DEGtoANG(90)) >> 12;
   if (ShipRooms_IsSpotFree(direction) != 0) {
     blocked = 0;
   }
   if (blocked != 0) {
-    direction = FACING_SIXTEENTH(leader->facing - TRIG_TURN / 4) >> 12;
+    direction = FACING_SIXTEENTH(leader->facing - DEGtoANG(90)) >> 12;
     if (ShipRooms_IsSpotFree(direction) != 0) {
       blocked = 0;
     }
     if (blocked != 0) {
-      direction = FACING_SIXTEENTH(leader->facing + TRIG_TURN / 2) >> 12;
+      direction = FACING_SIXTEENTH(leader->facing + DEGtoANG(180)) >> 12;
     }
   }
   {
     struct Actor *start = Actor_Get(ACTOR_PARTY_LEADER);
 
     if (start != NULL) {
-      Actor_SetPositionFixed(passengerId, start->x.fixed, start->z.fixed);
+      Actor_SetPositionFX(passengerId, start->x.fixed, start->z.fixed);
     }
   }
   Actor_SetSpeed(passengerId, 1.6);
@@ -1160,8 +1159,8 @@ enum {
 static s32 ShipRooms_IsSpotFree(s32 bucket) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   u32 offset = gShipRooms_TurnSteps[bucket];
-  s32 x = actor->x.part[0].pixel + ((s32)offset >> 16);
-  s32 z = actor->z.part[0].pixel + (s16)offset;
+  s32 x = actor->x.part[0].integer + ((s32)offset >> 16);
+  s32 z = actor->z.part[0].integer + (s16)offset;
 
   if (ShipRooms_FindActorNear(x, z) != 0) {
     return 0;
@@ -1169,9 +1168,9 @@ static s32 ShipRooms_IsSpotFree(s32 bucket) {
 
   {
     struct FieldPosition point;
-    point.x = px(x);
+    point.x = toFIXED(x);
     point.y = actor->y.fixed;
-    point.z = px(z);
+    point.z = toFIXED(z);
 
     if (FieldActor_CheckMovementCollision(actor, &point) != 0) {
       return 0;
@@ -1979,21 +1978,21 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_WalkToAndWait(ACTOR_GARET, 486, 624);
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   actor = Actor_Get(ACTOR_GARET);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_IVAN, 1);
   Actor_WalkToAndWait(ACTOR_IVAN, 486, 640);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 0);
   actor = Actor_Get(ACTOR_IVAN);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_MIA, 1);
   Actor_WalkToAndWait(ACTOR_MIA, 486, 656);
@@ -2105,16 +2104,16 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   actor = Actor_Get(ACTOR_IVAN);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_MIA, actor->x.part[0].pixel,
-                         actor->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_MIA, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   actor = Actor_Get(ACTOR_GARET);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].pixel,
-                         actor->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
@@ -2514,21 +2513,21 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   ShipRooms_Turn(ACTOR_ROWING_KAJA, FACING_NORTH_NORTHEAST);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_WalkToAndWait(ACTOR_GARET, 440, 148);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   actor = Actor_Get(ACTOR_GARET);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_WalkToAndWait(ACTOR_IVAN, 456, 148);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTH, 0);
   actor = Actor_Get(ACTOR_IVAN);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_MIA, 0.8);
   Actor_WalkToAndWait(ACTOR_MIA, 472, 148);
@@ -2830,7 +2829,7 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
 
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 0, 0);
-  halfStep = px(1) / 2;
+  halfStep = toFIXED(1) / 2;
   ShipRooms_PlaceActor(ACTOR_PARTY_LEADER, 432, 134, FACING_WEST);
   ShipRooms_PlaceFoundActors(1);
   wait(1);
@@ -2851,14 +2850,14 @@ static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
     ShipRooms_Say(KAJA_ROWING_SPEAKER);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     leftSeat = 0;
-    Actor_SetSpeedFixed(ACTOR_PARTY_LEADER, px(1), halfStep);
+    Actor_SetSpeedFX(ACTOR_PARTY_LEADER, toFIXED(1), halfStep);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 432, 168);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-      Actor_SetPositionFixed(rowerId, actor->x.fixed, actor->z.fixed);
+      Actor_SetPositionFX(rowerId, actor->x.fixed, actor->z.fixed);
     }
-    Actor_SetSpeedFixed(rowerId, px(1), halfStep);
+    Actor_SetSpeedFX(rowerId, toFIXED(1), halfStep);
     Actor_WalkToAndWait(rowerId, 448, 168);
     Actor_FaceDirection(rowerId, FACING_NORTH_NORTHWEST, 20);
     Actor_FaceDirection(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHEAST, 20);
@@ -2942,7 +2941,8 @@ static struct Actor *ShipRooms_PlaceAnchorCharm(void) {
   if (set != 0) {
     return gShipRooms_AnchorObject;
   }
-  actor = FieldActor_Create(SPRITE_BLANK, px(455), px(4), px(544));
+  actor =
+      FieldActor_Create(SPRITE_BLANK, toFIXED(455), toFIXED(4), toFIXED(544));
   actor->motionFlags = set;
   actor->retainSpriteCache = 1;
   sprite = actor->sprite;
@@ -2973,7 +2973,7 @@ static void ShipRooms_InstallRowingDeckActors(u32 action) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF) != 0) {
     s32 rowerId = ShipRooms_FindFirstSetFlag(1, 0);
     Actor_SetPosition(rowerId, 470, 172);
-    Actor_Get(rowerId)->scaleX = -Q16_ONE;
+    Actor_Get(rowerId)->scaleX = -FIXED_ONE;
     ShipRooms_RunEventCommand(SHIP_SET_SELECTED_ROWER_POSE, rowerId, action);
     Actor_SetPosition(ACTOR_ROWING_FIRST_OARSMAN + 1, 0, 0);
   } else {
@@ -2994,7 +2994,7 @@ static void ShipRooms_InstallRowingDeckActors(u32 action) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
     s32 rowerId = ShipRooms_FindFirstSetFlag(3, 0);
     Actor_SetPosition(rowerId, 470, 204);
-    Actor_Get(rowerId)->scaleX = -Q16_ONE;
+    Actor_Get(rowerId)->scaleX = -FIXED_ONE;
     ShipRooms_RunEventCommand(SHIP_SET_SELECTED_ROWER_POSE, rowerId, action);
     Actor_SetPosition(ACTOR_ROWING_FIRST_OARSMAN + 3, 0, 0);
   } else {
@@ -3057,12 +3057,12 @@ static void ShipRooms_Turn(s32 actorId, u16 facing) {
 
 /// Places an actor at pixel coordinates and sets its initial heading.
 static void ShipRooms_PlaceActor(s32 actorId, s32 x, s32 z, s32 facing) {
-  Import_ActorSetPosition(actorId, px(x), px(z), facing);
+  Import_ActorSetPosition(actorId, toFIXED(x), toFIXED(z), facing);
   Actor_Get(actorId)->facing = facing;
 }
 
 /// Moves the camera, optionally waits or redraws, then honors the packed delay.
-static void ShipRooms_MoveCameraAndWaitFixed(s32 x, s32 y, s32 z, u32 flags) {
+static void ShipRooms_MoveCameraAndWaitFX(s32 x, s32 y, s32 z, u32 flags) {
   u32 selected;
 
   FieldCamera_MoveWithinMapBounds(x, y, z, ~flags & SHIP_CAMERA_JUMP);
@@ -3144,7 +3144,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
 
     actor = Actor_Get(arg);
     actor->facing = FACING_SOUTH_SOUTHWEST;
-    actor->scaleX = -Q16_ONE;
+    actor->scaleX = -FIXED_ONE;
   }
     Actor_SetAnimation(arg, ANIM_ROW);
     Actor_SetAnimationSpeedById(arg, opt);
@@ -3194,7 +3194,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
       Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 3)->facing =
           FACING_SOUTH_SOUTHEAST;
       actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 3);
-      actor->scaleX = Q16_ONE;
+      actor->scaleX = FIXED_ONE;
     }
     {
       struct Actor *actor;
@@ -3205,7 +3205,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
       Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 5, ANIM_STAND);
       Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 5)->facing =
           FACING_SOUTH_SOUTHEAST;
-      Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 5)->scaleX = Q16_ONE;
+      Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 5)->scaleX = FIXED_ONE;
       Actor_SetAnimation(ACTOR_ROWING_FIRST_OARSMAN + 6, ANIM_STAND);
       Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 6)->facing =
           FACING_SOUTH_SOUTHWEST;
@@ -3213,7 +3213,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
       Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 7)->facing =
           FACING_SOUTH_SOUTHEAST;
       actor = Actor_Get(ACTOR_ROWING_FIRST_OARSMAN + 7);
-      actor->scaleX = Q16_ONE;
+      actor->scaleX = FIXED_ONE;
     }
     Actor_SetPosition(ACTOR_ROWING_FIRST_OAR, 410, 174);
     Actor_SetPosition(ACTOR_ROWING_FIRST_OAR + 1, 470, 174);
@@ -3246,7 +3246,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     } else {
       actor->facing = FACING_SOUTH_SOUTHWEST;
     }
-    actor->scaleX = Q16_ONE;
+    actor->scaleX = FIXED_ONE;
   } break;
   case SHIP_HIDE_QUARTERS_CREW:
     Actor_SetPosition(ACTOR_QUARTERS_KAJA, 0, 0);
@@ -3474,15 +3474,15 @@ static void ShipRooms_ReportMonstersBelowdecks(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_GARET);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   wait(1);
   Actor_SetSpeed(ACTOR_IVAN, 1.6);
@@ -4104,17 +4104,17 @@ s32 gShipRooms_LeaveCaptainsQuarters[] = {
 
 /// The Anchor Charm swells and shrinks twice as the captain raises it.
 s32 gShipRooms_AnchorCharmPulse[] = {
-    SC_SET(SW_SCALE_X, 11 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_Y, 11 * Q16_ONE / 8),
+    SC_SET(SW_SCALE_X, 11 * FIXED_ONE / 8),
+    SC_SET(SW_SCALE_Y, 11 * FIXED_ONE / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 2),
-    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 2),
+    SC_SET(SW_SCALE_X, 3 * FIXED_ONE / 2),
+    SC_SET(SW_SCALE_Y, 3 * FIXED_ONE / 2),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, 9 * Q16_ONE / 8),
-    SC_SET(SW_SCALE_Y, 9 * Q16_ONE / 8),
+    SC_SET(SW_SCALE_X, 9 * FIXED_ONE / 8),
+    SC_SET(SW_SCALE_Y, 9 * FIXED_ONE / 8),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
     SC_WAIT(2),
     SC_LOOP(2, SC_TOP),
     SC_END,
@@ -4149,18 +4149,18 @@ s32 gShipRooms_FollowersRejoinBySeats[] = {
 
 /// Squashes and stretches the actor over and over, as a shiver.
 s32 gShipRooms_Shiver[] = {
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_ADD(SW_SCALE_X, -5 * Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 16),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
+    SC_ADD(SW_SCALE_X, -5 * FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 32),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 64),
+    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
     SC_ADD(SW_SCALE_Y, -1024),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 64),
+    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
     SC_ADD(SW_SCALE_Y, -1024),
     SC_WAIT(2),
     SC_LOOP(SC_FOREVER, SC_TOP),

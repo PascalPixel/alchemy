@@ -126,15 +126,15 @@ s32 Actor_MoveTowardTarget(struct Actor *actor) {
 
   target = actor->watchedActor;
   if (target != 0) {
-    // Whole pixels, rounded toward zero as a division by Q16_ONE would.
+    // Whole pixels, rounded toward zero as a division by FIXED_ONE would.
     deltaX = target->x.fixed - actor->x.fixed;
     if (deltaX < 0)
-      deltaX += Q16_ONE - 1;
-    pixelsX = FIELD_PIXEL(deltaX);
+      deltaX += FIXED_ONE - 1;
+    pixelsX = FIXEDtoINT(deltaX);
     deltaZ = target->z.fixed - actor->z.fixed;
     if (deltaZ < 0)
-      deltaZ += Q16_ONE - 1;
-    pixelsZ = FIELD_PIXEL(deltaZ);
+      deltaZ += FIXED_ONE - 1;
+    pixelsZ = FIXEDtoINT(deltaZ);
     distance = Iwram_Sqrt(pixelsX * pixelsX + pixelsZ * pixelsZ);
     step = actor->timer;
     if (distance >= step) {
@@ -164,8 +164,8 @@ s32 Actor_TurnTowardWatchedActor(struct Actor *actor) {
   if (target != NULL) {
     // Clear ACTOR_FACES_MOTION, so moving does not turn it away again.
     actor->steeringFlags &= ~ACTOR_FACES_MOTION;
-    targetAngle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
-                               target->x.fixed - actor->x.fixed);
+    targetAngle = (u16)Trig_Atan(target->z.fixed - actor->z.fixed,
+                                 target->x.fixed - actor->x.fixed);
     currentAngle = actor->facing;
     turnStep = targetAngle - currentAngle;
     if (turnStep != 0) {
@@ -286,13 +286,13 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
       if (self->y.fixed - entry->y.fixed > 0x2fffff)
         continue;
     }
-    dx = (entry->x.fixed - self->x.fixed) / Q16_ONE;
-    dz = (entry->z.fixed - self->z.fixed) / Q16_ONE;
+    dx = (entry->x.fixed - self->x.fixed) / FIXED_ONE;
+    dz = (entry->z.fixed - self->z.fixed) / FIXED_ONE;
     dist = Iwram_Sqrt(dx * dx + dz * dz);
     if (dist >= best)
       continue;
-    angle = (u16)ArcTan2(entry->z.fixed - self->z.fixed,
-                         entry->x.fixed - self->x.fixed);
+    angle = (u16)Trig_Atan(entry->z.fixed - self->z.fixed,
+                           entry->x.fixed - self->x.fixed);
     if (dist > 23) {
       turn = (s16)(angle - self->facing);
       if (turn < -0x2fff)
@@ -350,22 +350,22 @@ s32 Field_TryJumpForward(void) {
     return result;
   if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_ROPE)
     return result;
-  if ((angle + FACING_STEP) & TRIG_TURN / 8) // not facing a quarter turn
+  if ((angle + FACING_STEP) & DEGtoANG(45)) // not facing a quarter turn
     return result;
-  angle = (angle + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
+  angle = (angle + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
   positionWords = position;
 again:
   // The middle of the tile in front, then of the tile beyond.
-  position[0] = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
+  position[0] = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   position[1] = leader->y.fixed;
-  position[2] = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
-  Vector_AddPolarOffset(px(16), angle, position);
+  position[2] = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  Vector_AddPolarOffset(toFIXED(16), angle, position);
   if (MapGrid_CheckCollisionFar(leader, position) == 1)
     return -1;
-  position[0] = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
+  position[0] = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   position[1] = leader->y.fixed;
-  position[2] = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
-  Vector_AddPolarOffset(px(32), angle, position);
+  position[2] = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  Vector_AddPolarOffset(toFIXED(32), angle, position);
   canJump = 0;
   if (MapGrid_BlocksJump(leader, position) == 0 &&
       MapGrid_CheckCollisionFar(leader, position) == 0)
@@ -387,17 +387,17 @@ again:
         continue;
       if (entry == leader)
         continue;
-      if (FIELD_CELL(position[0] - entry->x.fixed + px(8)) != 0)
+      if (FIELD_CELL(position[0] - entry->x.fixed + toFIXED(8)) != 0)
         continue;
-      if (FIELD_CELL(position[2] - entry->z.fixed + px(8)) != 0)
+      if (FIELD_CELL(position[2] - entry->z.fixed + toFIXED(8)) != 0)
         continue;
       delta = position[1] - entry->y.fixed;
-      dy = delta - px(16);
+      dy = delta - toFIXED(16);
       if (dy >= 0) {
         if (dy <= bound)
           goto hit;
       } else {
-        dy = px(16) - delta;
+        dy = toFIXED(16) - delta;
         if (dy <= bound) {
         hit:
           canJump = 1;
@@ -413,8 +413,8 @@ again:
     if (entry->script != NULL &&
         !(entry->priorityFlags & ACTOR_PRIORITY_PLATFORM) && entry != leader &&
         entry->collisionFlags != 0 &&
-        FIELD_CELL(position[0] - entry->x.fixed + px(8)) == 0 &&
-        FIELD_CELL(position[2] - entry->z.fixed + px(8)) == 0) {
+        FIELD_CELL(position[0] - entry->x.fixed + toFIXED(8)) == 0 &&
+        FIELD_CELL(position[2] - entry->z.fixed + toFIXED(8)) == 0) {
       s32 d = position[1] - entry->y.fixed;
       if (d >= 0) {
         if (d <= 0x7ffff)
@@ -439,9 +439,9 @@ again:
     wait(6);
     Sound_PlayFar(SE_JUMP);
     Actor_SelectAnimationFar(leader, ANIM_LEADER_LEAP);
-    leader->speedLimit = px(3);
-    leader->acceleration = px(2);
-    leader->velocityY = px(4);
+    leader->speedLimit = toFIXED(3);
+    leader->acceleration = toFIXED(2);
+    leader->velocityY = toFIXED(4);
     *flags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlagsFar(leader, spriteFlags & (u8)~SPRITE_FLAG_SHADOW);
     Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId,
@@ -473,24 +473,25 @@ again:
               leader, SPRITE_LOG_NORTH_SOUTH)) != NULL) &&
         (platform->priorityFlags & ACTOR_PRIORITY_UNDERFOOT)) {
       Actor_SelectAnimationFar(platform, 7);
-      leader->y.fixed -= px(1);
-      leader->groundHeight -= px(1);
+      leader->y.fixed -= toFIXED(1);
+      leader->groundHeight -= toFIXED(1);
       wait(2);
-      leader->y.fixed -= px(1);
-      leader->groundHeight -= px(1);
+      leader->y.fixed -= toFIXED(1);
+      leader->groundHeight -= toFIXED(1);
       wait(10);
-      leader->y.fixed += px(1);
-      leader->groundHeight += px(1);
+      leader->y.fixed += toFIXED(1);
+      leader->groundHeight += toFIXED(1);
       wait(4);
-      leader->y.fixed += px(1);
-      leader->groundHeight += px(1);
+      leader->y.fixed += toFIXED(1);
+      leader->groundHeight += toFIXED(1);
     } else {
       wait(6);
     }
     *flags = saved;
     Event_End();
     if (work != NULL)
-      work->walkingDistance += Iwram_MulQ16(work->walkingDistanceScale, px(32));
+      work->walkingDistance +=
+          Iwram_MulFX(work->walkingDistanceScale, toFIXED(32));
     if (MapGrid_GetCellBehaviorAtFar(leader->layer, position[0], position[2]) ==
         254) {
       Actor_SelectAnimationFar(leader, ANIM_STAND);
@@ -519,9 +520,9 @@ s32 Field_ClimbDown(void) {
   s32 position[3];
 
   spriteFlags = 1;
-  gridX = 8 + (FIELD_PIXEL(leader->x.fixed) & 0xfff0);
-  gridY = 8 + (FIELD_PIXEL(leader->y.fixed) & 0xfff0);
-  gridZ = 8 + (FIELD_PIXEL(leader->z.fixed) & 0xfff0);
+  gridX = 8 + (FIXEDtoINT(leader->x.fixed) & 0xfff0);
+  gridY = 8 + (FIXEDtoINT(leader->y.fixed) & 0xfff0);
+  gridZ = 8 + (FIXEDtoINT(leader->z.fixed) & 0xfff0);
   Event_Start();
   if (leader->spriteStorageKind == 1)
     spriteFlags = ((struct Sprite *)leader->sprite)->flags;
@@ -544,18 +545,20 @@ s32 Field_ClimbDown(void) {
     south = cell + 128;
     if (south->collisionCode == CELL_BEHAVIOR_WALL)
       goto failure;
-    if (MapGrid_GetTerrainHeightFar(leader->layer, px(gridX), px(gridZ)) <=
-        MapGrid_GetTerrainHeightFar(leader->layer, px(gridX), px(gridZ + 16)))
+    if (MapGrid_GetTerrainHeightFar(leader->layer, INTtoFIXED(gridX),
+                                    INTtoFIXED(gridZ)) <=
+        MapGrid_GetTerrainHeightFar(leader->layer, INTtoFIXED(gridX),
+                                    INTtoFIXED(gridZ + 16)))
       goto failure;
     position[0] = leader->x.fixed;
-    position[1] = leader->y.fixed - px(16);
+    position[1] = leader->y.fixed - toFIXED(16);
     position[2] = leader->z.fixed;
     if (MapGrid_IsWallAtFar(position) != 0)
       goto failure;
     radius = leader->radius - 2;
     position[0] = leader->x.fixed;
-    position[1] = leader->y.fixed - px(32);
-    position[2] = leader->z.fixed + px(16);
+    position[1] = leader->y.fixed - toFIXED(32);
+    position[2] = leader->z.fixed + toFIXED(16);
     entry = Ram_HeapSlots->actors;
     for (i = 0; i < 64; i++, entry++) {
       if (entry->script != NULL && (entry->collisionFlags & 1) &&
@@ -567,7 +570,7 @@ s32 Field_ClimbDown(void) {
 
     // Step to the middle of the tile, face north and climb down a tile.
     Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, gridX, gridZ);
-    leader->speedLimit = px(1);
+    leader->speedLimit = toFIXED(1);
     Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
     Actor_WaitForScriptEndById(gMainRoutineWork.leaderActorId);
     leader->steeringFlags = 1;
@@ -575,16 +578,17 @@ s32 Field_ClimbDown(void) {
     spriteFlags &= (u8)~SPRITE_FLAG_SHADOW;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Actor_SelectAnimationFar(leader, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
-    Actor_SetMoveTargetFar(leader, px(gridX), leader->y.fixed - px(16),
-                           px(gridZ) + px(16));
+    Actor_SetMoveTargetFar(leader, INTtoFIXED(gridX),
+                           leader->y.fixed - toFIXED(16),
+                           INTtoFIXED(gridZ) + toFIXED(16));
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
-    leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
+    leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
   } else {
     // Let go of the wall and fall.
     Actor_SelectAnimationFar(leader, ANIM_LEADER_CLIMB);
     leader->motionFlags = 3;
-    leader->velocityY = px(4);
+    leader->velocityY = toFIXED(4);
     leader->groundHeight = leader->y.fixed;
     spriteFlags |= SPRITE_FLAG_SHADOW;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
@@ -610,9 +614,9 @@ s32 Field_ClimbUp(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s16 spriteFlags = 1;
   struct MapCell *ground;
-  s32 gridX = 8 + (FIELD_PIXEL(leader->x.fixed) & 0xfff0);
-  s32 gridY = 8 + (FIELD_PIXEL(leader->y.fixed) & ~15);
-  s32 gridZ = 8 + (FIELD_PIXEL(leader->z.fixed) & 0xfff0);
+  s32 gridX = 8 + (FIXEDtoINT(leader->x.fixed) & 0xfff0);
+  s32 gridY = 8 + (FIXEDtoINT(leader->y.fixed) & ~15);
+  s32 gridZ = 8 + (FIXEDtoINT(leader->z.fixed) & 0xfff0);
   s32 position[3];
   s32 result;
 
@@ -635,8 +639,10 @@ s32 Field_ClimbUp(void) {
     north = cell - 128;
     if (north->collisionCode == CELL_BEHAVIOR_WALL)
       goto failure;
-    if (MapGrid_GetTerrainHeightFar(leader->layer, px(gridX), px(gridZ)) >=
-        MapGrid_GetTerrainHeightFar(leader->layer, px(gridX), px(gridZ - 16)))
+    if (MapGrid_GetTerrainHeightFar(leader->layer, INTtoFIXED(gridX),
+                                    INTtoFIXED(gridZ)) >=
+        MapGrid_GetTerrainHeightFar(leader->layer, INTtoFIXED(gridX),
+                                    INTtoFIXED(gridZ - 16)))
       goto failure;
     position[0] = leader->x.fixed;
     position[1] = leader->y.fixed;
@@ -651,27 +657,27 @@ s32 Field_ClimbUp(void) {
     Actor_SelectAnimationFar(leader, 6);
     wait(4);
     Actor_SelectAnimationFar(leader, 7);
-    leader->velocityY = px(4);
+    leader->velocityY = toFIXED(4);
     wait(4);
     leader->motionFlags = result;
     spriteFlags &= (u8)~SPRITE_FLAG_SHADOW;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
-    leader->speedLimit = px(1);
+    leader->speedLimit = toFIXED(1);
     leader->velocityY = result;
     Actor_SelectAnimationFar(leader, ANIM_LEADER_CLING);
     wait(4);
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
     leader->steeringFlags = 1;
     wait(8);
-    leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
+    leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
   } else {
     struct Actor *entry;
     s32 radius = leader->radius - 2;
     s32 i;
 
     position[0] = leader->x.fixed;
-    position[1] = leader->y.fixed + px(16);
-    position[2] = leader->z.fixed - px(16);
+    position[1] = leader->y.fixed + toFIXED(16);
+    position[2] = leader->z.fixed - toFIXED(16);
     i = 0;
     entry = Ram_HeapSlots->actors;
     for (; i < 64; i++, entry++) {
@@ -685,8 +691,9 @@ s32 Field_ClimbUp(void) {
     // Climb over the top: up 8 pixels and a tile north.
     leader->motionFlags = 0;
     Actor_SelectAnimationFar(leader, ANIM_LEADER_CLIMB_OVER_TOP);
-    Actor_SetMoveTargetFar(leader, px(gridX), leader->y.fixed + px(8),
-                           px(gridZ) - px(16));
+    Actor_SetMoveTargetFar(leader, INTtoFIXED(gridX),
+                           leader->y.fixed + toFIXED(8),
+                           INTtoFIXED(gridZ) - toFIXED(16));
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     leader->motionFlags = 3;
     leader->groundHeight = leader->y.fixed;
@@ -728,7 +735,7 @@ struct RopeNode *Rope_FindNodeNear(s32 *position) {
       s32 dy = (position[1] - node->y) >> 8;
       s32 dz = (position[2] - node->z) >> 8;
       s32 distance =
-          Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) + Iwram_MulQ16(dz, dz);
+          Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
 
       if (distance <= 0x400 && best > distance) {
         best = distance;
@@ -751,9 +758,9 @@ s32 Leader_StepOntoRope(void) {
   if (node == NULL)
     return 0;
   Sound_PlayFar(SE_JUMP);
-  leader->acceleration = px(1);
-  leader->speedLimit = px(2);
-  leader->velocityY = px(4);
+  leader->acceleration = toFIXED(1);
+  leader->speedLimit = toFIXED(2);
+  leader->velocityY = toFIXED(4);
   leader->watchedActor = (struct Actor *)node;
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, node->x, node->y, node->z);
@@ -781,13 +788,13 @@ s32 Leader_StepOffRope(void) {
   angle = gRope_KeyHeadings[DPAD_INDEX(gInput.held)];
   if (angle == 0xffff)
     return 0;
-  leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
-  leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
+  leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
-  Vector_AddPolarOffset(px(16), angle, position);
-  leader->groundHeight = leader->y.fixed - px(8);
+  Vector_AddPolarOffset(toFIXED(16), angle, position);
+  leader->groundHeight = leader->y.fixed - toFIXED(8);
   if (MapGrid_GetCellAttributeLowNibbleFar(leader->layer, position[0],
                                            position[2]) ||
       MapGrid_CheckCollisionFar(leader, position))
@@ -795,13 +802,13 @@ s32 Leader_StepOffRope(void) {
   leader->facing = angle;
   leader->priorityFlags |= 1;
   leader->motionFlags = leader->timer;
-  leader->scaleX = Q16_ONE;
+  leader->scaleX = FIXED_ONE;
   sprite->flags = leader->userValue;
   sprite->rotation = 0;
   Sound_PlayFar(SE_JUMP);
-  leader->speedLimit = px(2);
-  leader->velocityY = px(4);
-  leader->acceleration = px(1);
+  leader->speedLimit = toFIXED(2);
+  leader->velocityY = toFIXED(4);
+  leader->acceleration = toFIXED(1);
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);
@@ -832,7 +839,7 @@ struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
       s32 dy = (position[1] - node->y) >> 8;
       s32 dz = (position[2] - node->z) >> 8;
       s32 distance =
-          Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) + Iwram_MulQ16(dz, dz);
+          Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
 
       if (distance <= 0x400 && best > distance) {
         best = distance;
@@ -856,9 +863,9 @@ s32 Leader_StepOntoTightrope(void) {
   if (node == NULL)
     return 0;
   Sound_PlayFar(SE_JUMP);
-  leader->acceleration = px(1);
-  leader->speedLimit = px(2);
-  leader->velocityY = px(4);
+  leader->acceleration = toFIXED(1);
+  leader->speedLimit = toFIXED(2);
+  leader->velocityY = toFIXED(4);
   leader->watchedActor = (struct Actor *)node;
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, node->x, node->y, node->z);
@@ -886,13 +893,13 @@ s32 Leader_StepOffTightrope(void) {
   angle = gRope_KeyHeadings[DPAD_INDEX(gInput.held)];
   if (angle == 0xffff)
     return 0;
-  leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
-  leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
+  leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
-  Vector_AddPolarOffset(px(16), angle, position);
-  leader->groundHeight = leader->y.fixed - px(8);
+  Vector_AddPolarOffset(toFIXED(16), angle, position);
+  leader->groundHeight = leader->y.fixed - toFIXED(8);
   if (MapGrid_GetCellAttributeLowNibbleFar(leader->layer, position[0],
                                            position[2]) ||
       MapGrid_CheckCollisionFar(leader, position))
@@ -903,9 +910,9 @@ s32 Leader_StepOffTightrope(void) {
   sprite->flags = leader->userValue;
   sprite->rotation = 0;
   Sound_PlayFar(SE_JUMP);
-  leader->acceleration = px(1);
-  leader->speedLimit = px(2);
-  leader->velocityY = px(4);
+  leader->acceleration = toFIXED(1);
+  leader->speedLimit = toFIXED(2);
+  leader->velocityY = toFIXED(4);
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);

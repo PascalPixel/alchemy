@@ -23,8 +23,8 @@ void FieldEffect_UpdateScaledArcActorA(struct Actor *arc) {
   arc->scaleX = scale;
   arc->scaleY = scale;
   arc->x.fixed = anchor->x.fixed;
-  arc->y.fixed += Q16_ONE;
-  arc->z.fixed = anchor->z.fixed + (Q16_ONE - scale) * 5 + px(9);
+  arc->y.fixed += FIXED_ONE;
+  arc->z.fixed = anchor->z.fixed + (FIXED_ONE - scale) * 5 + toFIXED(9);
 }
 
 /// Per-frame update of arc B: arc A upside down, 16 pixels in front of the
@@ -44,8 +44,8 @@ void FieldEffect_UpdateScaledArcActorB(struct Actor *arc) {
   arc->scaleX = scale;
   arc->scaleY = -scale;
   arc->x.fixed = anchor->x.fixed;
-  arc->y.fixed += Q16_ONE;
-  arc->z.fixed = anchor->z.fixed - (Q16_ONE - scale) * 5 + px(16);
+  arc->y.fixed += FIXED_ONE;
+  arc->z.fixed = anchor->z.fixed - (FIXED_ONE - scale) * 5 + toFIXED(16);
 }
 
 /// A sprite (struct Sprite) as the arcs set it up: its image's three
@@ -109,7 +109,7 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
     arc->motionFlags = 0;
     arc->timer = 0;
     arc->watchedActor = watched;
-    arc->scaleX = arc->scaleY = Q16_ONE / 10;
+    arc->scaleX = arc->scaleY = FIXED_ONE / 10;
     if (sprite == 0)
       continue;
     // A wide 16-colour sprite drawn from the Psynergy's tiles.

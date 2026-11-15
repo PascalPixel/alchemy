@@ -16,5 +16,5 @@ void Actor_GrowUp(struct Actor *object) {
   rise = 0x10000;
   object->x.fixed = parent->x.fixed;
   object->y.fixed += rise;
-  object->z.fixed = parent->z.fixed + (rise - scale) * 5 + px(8);
+  object->z.fixed = parent->z.fixed + (rise - scale) * 5 + toFIXED(8);
 }

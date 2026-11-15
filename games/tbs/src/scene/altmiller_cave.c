@@ -525,7 +525,7 @@ static void AltmillerCave_HopSelectedActor(void) {
   {
     s32 angle = FACING_SIXTEENTH(actor->facing);
 
-    Vector_AddPolarOffset(px(32), angle, destination.coordinates);
+    Vector_AddPolarOffset(toFIXED(32), angle, destination.coordinates);
   }
   if (FieldActor_CheckMovementCollision(actor, &destination.position) == 0) {
     Event_Start();
@@ -533,13 +533,13 @@ static void AltmillerCave_HopSelectedActor(void) {
     wait(6);
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
-    actor->speedLimit = px(3);
-    actor->acceleration = px(2);
-    actor->velocityY = px(4);
+    actor->speedLimit = toFIXED(3);
+    actor->acceleration = toFIXED(2);
+    actor->velocityY = toFIXED(4);
     actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, components[0].part[0].pixel,
-                        components[2].part[0].pixel);
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, components[0].part[0].integer,
+                        components[2].part[0].integer);
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     actor->motionFlags = motionFlags;
@@ -572,9 +572,9 @@ static void AltmillerCave_PulseLight(struct Actor *light) {
 /// Puts a light on the ring, radius pixels from its center above the rocks, at
 /// the given angle.
 static void AltmillerCave_PlaceLight(s32 actorId, s32 radius, s32 angle) {
-  s32 centreX = px(504);
-  s32 centreHeight = px(24);
-  s32 depth = px(144);
+  s32 centreX = toFIXED(504);
+  s32 centreHeight = toFIXED(24);
+  s32 depth = toFIXED(144);
   struct Actor *light = Actor_Get(actorId);
   s32 coordinates[3];
   s32 *position = coordinates;
@@ -593,8 +593,8 @@ static void AltmillerCave_PlaceLights(s32 angle) {
   s32 i = 0;
 
   do {
-    AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, px(24), angle);
-    angle -= TRIG_TURN / 5;
+    AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, toFIXED(24), angle);
+    angle -= DEGtoANG(72);
     i++;
   } while (i < LIGHT_COUNT);
 }
@@ -622,11 +622,11 @@ static void AltmillerCave_SpinLights(void) {
     }
   } else if (phase == WHEEL_STOPPING) {
     s32 chosenLight = CAVE_SIGNED_STATE(CAVE_CHOSEN_LIGHT);
-    s32 chosenAngle = Math_Divide(chosenLight * Q16_ONE, 5);
+    s32 chosenAngle = Math_Divide(chosenLight * FIXED_ONE, 5);
 
     if ((u32)(((wheel->angle - chosenAngle) << 16) +
-              ((767 - TRIG_TURN / 4) << 16)) <= (2 * 767) << 16) {
-      wheel->angle = chosenAngle + TRIG_TURN / 4;
+              ((767 - DEGtoANG(90)) << 16)) <= (2 * 767) << 16) {
+      wheel->angle = chosenAngle + DEGtoANG(90);
       wheel->phase = WHEEL_STOPPED;
       wheel->speed = 0;
       Actor_Get(ACTOR_FIRST_LIGHT + chosenLight)->update =
@@ -671,14 +671,14 @@ static void AltmillerCave_TurnRock(s32 rock) {
   for (i = 0; i < LIGHT_COUNT; i++) {
     actor = Actor_Get(ACTOR_FIRST_LIGHT + i);
     actor->update = NULL;
-    actor->scaleX = Q16_ONE;
-    actor->scaleY = Q16_ONE;
+    actor->scaleX = FIXED_ONE;
+    actor->scaleY = FIXED_ONE;
   }
   state = ROCK_PUZZLE->state;
   previousLight = ROCK_PUZZLE->chosenLight;
   wheel = gAltmillerCave_LightWheel;
   chosenLight = ROCK_PUZZLE->chosenLight;
-  wheel->angle = (chosenLight * Q16_ONE) / 5 + TRIG_TURN / 4;
+  wheel->angle = (chosenLight * FIXED_ONE) / 5 + DEGtoANG(90);
   // The leftmost rock, then the rightmost, before the rounds of lights.
   if (state == PUZZLE_START) {
     if (rock == ACTOR_BLUE_ROCK) {
@@ -698,18 +698,18 @@ static void AltmillerCave_TurnRock(s32 rock) {
       wait(30);
       angle = gAltmillerCave_LightWheel->angle;
       for (i = 0; i < LIGHT_COUNT; i++) {
-        AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, px(24), angle);
+        AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, toFIXED(24), angle);
         Sound_Play(SE_LIGHT_APPEAR);
         actor = Actor_Get(ACTOR_FIRST_LIGHT + i);
         actor->scaleX = 0;
-        scale = 2 * Q16_ONE / 5;
+        scale = 2 * FIXED_ONE / 5;
         do {
           actor->scaleY = scale;
           actor->scaleX = scale;
           wait(1);
-          scale += 3 * Q16_ONE / 64;
-        } while (actor->scaleX < Q16_ONE);
-        angle -= TRIG_TURN / 5;
+          scale += 3 * FIXED_ONE / 64;
+        } while (actor->scaleX < FIXED_ONE);
+        angle -= DEGtoANG(72);
       }
       wait(30);
       correctRock = 1;
@@ -726,8 +726,8 @@ static void AltmillerCave_TurnRock(s32 rock) {
       for (i = 0; i < LIGHT_COUNT; i++) {
         actor = Actor_Get(ACTOR_FIRST_LIGHT + i);
         Sound_Play(SE_LIGHT_APPEAR);
-        for (scale = actor->scaleX; actor->scaleX > 2 * Q16_ONE / 5;
-             scale -= 3 * Q16_ONE / 64) {
+        for (scale = actor->scaleX; actor->scaleX > 2 * FIXED_ONE / 5;
+             scale -= 3 * FIXED_ONE / 64) {
           actor->scaleY = scale;
           actor->scaleX = scale;
           wait(1);
@@ -774,7 +774,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
       MapGrid_SetShake(4, 4, 1);
       gAltmillerCave_LightWheel->phase = WHEEL_STOPPED;
       Sound_Play(SE_WARP);
-      radius = px(24);
+      radius = toFIXED(24);
       angle = gAltmillerCave_LightWheel->angle;
       do {
         for (i = 0; i < LIGHT_COUNT; i++) {
@@ -782,9 +782,9 @@ static void AltmillerCave_TurnRock(s32 rock) {
           actor->scaleX -= 16;
           actor->scaleY -= 16;
           AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, radius, angle);
-          angle -= TRIG_TURN / 5;
+          angle -= DEGtoANG(72);
         }
-        radius -= px(1) / 5;
+        radius -= toFIXED(1) / 5;
         angle += TRIG_TURN * 3 / 64;
         wait(1);
       } while (radius > 0);
@@ -868,8 +868,8 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     s32 x;
     s32 z;
 
-    x = Actor_Get(ACTOR_INVISIBLE_BABI)->x.part[0].pixel;
-    z = Actor_Get(ACTOR_INVISIBLE_BABI)->z.part[0].pixel;
+    x = Actor_Get(ACTOR_INVISIBLE_BABI)->x.part[0].integer;
+    z = Actor_Get(ACTOR_INVISIBLE_BABI)->z.part[0].integer;
     Actor_SetPosition(ACTOR_INVISIBLE_BABI, 0, 0);
     Actor_SetPosition(ACTOR_BABI, x, z);
   }
@@ -1861,24 +1861,24 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_GARET, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_GARET, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_IVAN, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_IVAN, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
   Actor_SetPosition(ACTOR_IVAN, 0, 0);
   Actor_SetAnimation(ACTOR_MIA, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_MIA, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_MIA, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_MIA);
   Actor_SetPosition(ACTOR_MIA, 0, 0);
@@ -2024,7 +2024,7 @@ s32 Scene_Initialize(void) {
       actor = Actor_Get(ACTOR_INVISIBLE_BABI);
       actor->sprite->image.priority = 1;
       actor->sprite->flags = 2;
-      actor->sprite->rotation = TRIG_TURN / 4;
+      actor->sprite->rotation = DEGtoANG(90);
     }
   }
   if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_SQUALL) {
@@ -2077,14 +2077,15 @@ s32 Scene_Initialize(void) {
     }
     if (CAVE_SIGNED_STATE(CAVE_PUZZLE) == PUZZLE_LIGHTS_SHOWN) {
       AltmillerCave_PlaceLights(
-          (CAVE_SIGNED_STATE(CAVE_CHOSEN_LIGHT) * Q16_ONE) / 5 + TRIG_TURN / 4);
+          (CAVE_SIGNED_STATE(CAVE_CHOSEN_LIGHT) * FIXED_ONE) / 5 +
+          DEGtoANG(90));
     }
     for (i = 0; i < LIGHT_COUNT; i++) {
       actor = Actor_Get(ACTOR_FIRST_LIGHT + i);
       actor->motionFlags = 0;
       actor->collisionFlags = 0;
-      actor->scaleX = Q16_ONE;
-      actor->scaleY = Q16_ONE;
+      actor->scaleX = FIXED_ONE;
+      actor->scaleY = FIXED_ONE;
       Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_LIGHT + i), 0);
       Actor_SetAnimation(ACTOR_FIRST_LIGHT + i, i + 1);
     }
@@ -2126,11 +2127,11 @@ static void AltmillerCave_UpdateWallFragment(struct FieldParticle *fragment) {
     position[2] = startZ;
     fragment->x = startX;
     position[0] = startX;
-    Vector_AddPolarOffset(px(120), Random_Next(), position);
+    Vector_AddPolarOffset(toFIXED(120), Random_Next(), position);
     fragment->targetX = position[0];
     fragment->targetZ = position[2];
-    fragment->acceleration = px(5);
-    fragment->speedMax = px(5);
+    fragment->acceleration = toFIXED(5);
+    fragment->speedMax = toFIXED(5);
     fragment->turnStepLimited = 0;
     fragment->state++;
     if ((gVBlankCount & 3) == 0)
@@ -2157,9 +2158,9 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   FieldEffect_InitializeSlots();
   effectWork = (struct FieldEffectWork *)gFieldEffectWork;
   Shop_SaveAndTintFieldPalette(PALETTE_TINT_CUSTOM | RGB(8, 8, 8));
-  position.x = px(504);
-  position.y = px(24);
-  position.z = px(144);
+  position.x = toFIXED(504);
+  position.y = toFIXED(24);
+  position.z = toFIXED(144);
   Camera_WorldToScreen(&position);
   fragment = effectWork->particles;
   for (fragmentIndex = 23; fragmentIndex >= 0; fragmentIndex--) {
@@ -2169,7 +2170,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
     FieldParticle_SetCallback(fragment, AltmillerCave_UpdateWallFragment);
     FieldParticle_SetActorMode(fragment, 7);
     Sprite_SetAnimationColorModes(fragment->actor, Random_Below(7));
-    scale = Math_DivideUnsigned(Random_Next(), 3) + 3 * Q16_ONE / 2;
+    scale = Math_DivideUnsigned(Random_Next(), 3) + 3 * FIXED_ONE / 2;
     fragment->scaleY = scale;
     fragment->scaleX = scale;
     wait(1);
@@ -2369,10 +2370,10 @@ struct ActorPlacement gAltmillerCave_DraughtActorPlacements[] = {
 
 /// The sizes the light at the top pulses through.
 u32 gAltmillerCave_PulseScales[] = {
-    Q16_ONE,
-    11 * Q16_ONE / 10,
-    6 * Q16_ONE / 5,
-    11 * Q16_ONE / 10,
+    FIXED_ONE,
+    11 * FIXED_ONE / 10,
+    6 * FIXED_ONE / 5,
+    11 * FIXED_ONE / 10,
 };
 
 /// The two men from Tolbi walk in to Babi.

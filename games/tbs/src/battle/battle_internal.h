@@ -56,7 +56,7 @@
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/dma.h"
-#include "system/fixed_point_position.h"
+#include "system/point.h"
 #include "system/frame.h"
 #include "system/heap.h"
 #include "system/heap_release.h"
@@ -76,7 +76,7 @@
 #include "system/sprite_metadata.h"
 #include "system/system.h"
 #include "system/task.h"
-#include "system/transform.h"
+#include "system/matrix.h"
 #include "system/vram_cache.h"
 #include "window/battle_status.h"
 #include "window/menu_list.h"
@@ -208,8 +208,8 @@ enum BattleCastKind {
 /// The camera's yaw while a party member acts, and while an enemy does, in
 /// 1/65536 turns: an eighth of a turn either side of 0. The camera task
 /// eases toward it (BattleCamera_Update).
-#define YAW_PARTY_ACTION (TRIG_TURN / 8)
-#define YAW_ENEMY_ACTION (-(TRIG_TURN / 8))
+#define YAW_PARTY_ACTION (DEGtoANG(45))
+#define YAW_ENEMY_ACTION (-(DEGtoANG(45)))
 
 /// The camera's yaw from behind the enemies, which an enemy's staged effect
 /// and cast take in place of YAW_ENEMY_ACTION.

@@ -11,7 +11,7 @@
 static inline void Actor_StepFrom(struct FieldPosition *position,
                                   struct Actor *actor, s32 step) {
   SET_POSITION(position, actor->x.fixed + (step & -0x10000), actor->y.fixed,
-               actor->z.fixed + px(step));
+               actor->z.fixed + toFIXED(step));
 }
 
 #endif

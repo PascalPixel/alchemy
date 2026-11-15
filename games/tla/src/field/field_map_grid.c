@@ -181,10 +181,10 @@ s32 MapGrid_LoadMap(s32 index) {
   }
   encodedData = (u8 *)sceneHeader + sceneHeader->script;
   Decompress_TaggedLz(encodedData, Ram_MapCollision + 0x2000);
-  work->minX = px(sceneHeader->cameraBounds[0] * 8);
-  work->minZ = px(sceneHeader->cameraBounds[1] * 8);
-  work->maxX = px(sceneHeader->cameraBounds[2] * 8);
-  work->maxZ = px(sceneHeader->cameraBounds[3] * 8);
+  work->minX = toFIXED(sceneHeader->cameraBounds[0] * 8);
+  work->minZ = toFIXED(sceneHeader->cameraBounds[1] * 8);
+  work->maxX = toFIXED(sceneHeader->cameraBounds[2] * 8);
+  work->maxZ = toFIXED(sceneHeader->cameraBounds[3] * 8);
   viewX = &work->viewX;
   *viewX = 0;
   viewY = &work->viewZ;
@@ -194,9 +194,9 @@ s32 MapGrid_LoadMap(s32 index) {
   work->enabled[2] = sceneHeader->priority[2];
   work->basePriority = 2;
   if (work->maxX == 0)
-    work->maxX = px(MAPGRID_SIZE * MAPGRID_CELL_PIXELS);
+    work->maxX = toFIXED(MAPGRID_SIZE * MAPGRID_CELL_PIXELS);
   if (work->maxZ == 0)
-    work->maxZ = px(MAPGRID_SIZE * MAPGRID_CELL_PIXELS);
+    work->maxZ = toFIXED(MAPGRID_SIZE * MAPGRID_CELL_PIXELS);
   mapLayer = work->layers;
   layerSource = sceneHeader->layers;
   for (layerIndex = 0; layerIndex < 3; layerIndex++) {
@@ -207,8 +207,8 @@ s32 MapGrid_LoadMap(s32 index) {
     u8 *shapeGrid;
     u32 maskY;
 
-    mapLayer->offsetX = px(x * 8);
-    mapLayer->offsetY = px(y * 8);
+    mapLayer->offsetX = toFIXED(x * 8);
+    mapLayer->offsetY = toFIXED(y * 8);
     mapLayer->scaleY = layerSource->scrollY * 4096;
     mapLayer->speedX = layerSource->speedX * 4096;
     mapLayer->speedY = layerSource->speedY * 4096;
@@ -228,8 +228,8 @@ s32 MapGrid_LoadMap(s32 index) {
     mapLayer->scaleX = scaleX;
     mapLayer->originX = x;
     mapLayer->terrainIds = shapeGrid + cell;
-    mapLayer->x = Iwram_MulQ16(*viewX, scaleX) + mapLayer->offsetX;
-    mapLayer->y = Iwram_MulQ16(*viewY, mapLayer->scaleY) + mapLayer->offsetY;
+    mapLayer->x = Iwram_MulFX(*viewX, scaleX) + mapLayer->offsetX;
+    mapLayer->y = Iwram_MulFX(*viewY, mapLayer->scaleY) + mapLayer->offsetY;
     layerSource++;
     mapLayer++;
   }
@@ -306,10 +306,10 @@ void MapGrid_CenterOnFollowedPoint(void) {
     rectList = work->cameraBoxes;
     if (rectList != NULL) {
       for (rect = rectList; rect[0] != -1; rect += 4) {
-        s32 left = px(rect[0]) - px(120);
-        s32 top = px(rect[1]) + height - px(64);
-        s32 right = px(rect[2]) + px(120);
-        s32 bottom = px(rect[3]) + height + px(96);
+        s32 left = toFIXED(rect[0]) - toFIXED(120);
+        s32 top = toFIXED(rect[1]) + height - toFIXED(64);
+        s32 right = toFIXED(rect[2]) + toFIXED(120);
+        s32 bottom = toFIXED(rect[3]) + height + toFIXED(96);
 
         if (x >= left && z >= top && x <= right && z <= bottom) {
           s32 nearX = left;
@@ -497,31 +497,31 @@ void MapGrid_UpdateLayerScroll(void) {
     s32 shakeRoll = Random16();
 
     shakeRoll -= Random16();
-    baseX += Iwram_MulQ16(work->shakeX, shakeRoll);
-    work->shakeX = Iwram_MulQ16(work->shakeX, work->shakeDecay);
+    baseX += Iwram_MulFX(work->shakeX, shakeRoll);
+    work->shakeX = Iwram_MulFX(work->shakeX, work->shakeDecay);
   }
   if (work->shakeY != 0) {
     s32 shakeRoll = Random16();
 
     shakeRoll -= Random16();
-    baseY += Iwram_MulQ16(work->shakeY, shakeRoll);
-    work->shakeY = Iwram_MulQ16(work->shakeY, work->shakeDecay);
+    baseY += Iwram_MulFX(work->shakeY, shakeRoll);
+    work->shakeY = Iwram_MulFX(work->shakeY, work->shakeDecay);
   }
   {
     s32 step = work->viewZ - baseY;
 
-    if (step > px(16)) {
-      baseY = work->viewZ - px(16);
+    if (step > toFIXED(16)) {
+      baseY = work->viewZ - toFIXED(16);
       step = work->viewZ - baseY;
     }
-    if (step < -px(16))
-      baseY = work->viewZ + px(16);
+    if (step < -toFIXED(16))
+      baseY = work->viewZ + toFIXED(16);
   }
   work->viewX = baseX;
   work->viewZ = baseY;
   for (layerIndex = 0; layerIndex <= 2; layerIndex++, layer++) {
-    baseX = Iwram_MulQ16(work->viewX, layer->scaleX);
-    baseY = Iwram_MulQ16(work->viewZ, layer->scaleY);
+    baseX = Iwram_MulFX(work->viewX, layer->scaleX);
+    baseY = Iwram_MulFX(work->viewZ, layer->scaleY);
     if (layer->speedX != 0) {
       layer->phaseX += layer->speedX;
       baseX += layer->phaseX;
@@ -534,13 +534,13 @@ void MapGrid_UpdateLayerScroll(void) {
     baseY += layer->offsetY;
     x = (u32)baseX >> 19;
     y = (u32)baseY >> 19;
-    if ((layer->x ^ baseX) & px(8)) {
+    if ((layer->x ^ baseX) & toFIXED(8)) {
       if (layer->x < baseX)
         MapGrid_RenderCellPictureColumn(layerIndex, x + DISPLAY_WIDTH / 8, y);
       else
         MapGrid_RenderCellPictureColumn(layerIndex, x, y);
     }
-    if ((layer->y ^ baseY) & px(16)) {
+    if ((layer->y ^ baseY) & toFIXED(16)) {
       if (layer->y < baseY)
         MapGrid_RenderCellPictureRow(layerIndex, x, y + DISPLAY_HEIGHT / 8);
       else
@@ -548,8 +548,8 @@ void MapGrid_UpdateLayerScroll(void) {
     }
     layer->x = baseX;
     layer->y = baseY;
-    gBgScroll[3 - layerIndex].x = FIELD_PIXEL(baseX);
-    gBgScroll[3 - layerIndex].y = FIELD_PIXEL(baseY);
+    gBgScroll[3 - layerIndex].x = FIXEDtoINT(baseX);
+    gBgScroll[3 - layerIndex].y = FIXEDtoINT(baseY);
   }
 }
 
@@ -599,8 +599,8 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
       u32 sourceRow, sourceColumn, screenRowOffset, screenColumnOffset,
           cellPictureRow, cellPictureColumn;
 
-      x = Iwram_MulQ16(work->viewX, layer->scaleX);
-      y = Iwram_MulQ16(work->viewZ, layer->scaleY);
+      x = Iwram_MulFX(work->viewX, layer->scaleX);
+      y = Iwram_MulFX(work->viewZ, layer->scaleY);
       if (layer->speedX) {
         layer->phaseX += layer->speedX;
         x += layer->phaseX;
@@ -611,8 +611,8 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
       }
       x += layer->offsetX;
       y += layer->offsetY;
-      x /= px(8);
-      y /= px(8);
+      x /= toFIXED(8);
+      y /= toFIXED(8);
       screenMap =
           (u8 *)BG_SCREEN_BLOCK(5) + layerIndex * MAPGRID_LAYER_SCREEN_BYTES;
       maskY = layer->maskY;

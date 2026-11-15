@@ -21,7 +21,7 @@ void BattleObject_Reset(struct BattleObject *actor, s32 keep) {
   else
     object = actor->object;
   zero = 0;
-  actor->scale = Q16_ONE * 9 / 10;
+  actor->scale = FIXED_ONE * 9 / 10;
   actor->object = object;
   if (keep == 0) {
     actor->anchorZ = zero;
@@ -40,7 +40,7 @@ void BattleObject_Reset(struct BattleObject *actor, s32 keep) {
   actor->active = 0;
   actor->selectedCondition = 0;
   actor->fading = 0;
-  facingAngle = ArcTan2(0, 0) + TRIG_TURN / 2;
+  facingAngle = Trig_Atan(0, 0) + DEGtoANG(180);
   object->angle = facingAngle;
   object->collisionFlags = 3;
   object->motionFlags = 2;
@@ -61,8 +61,8 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   s32 facingAngle;
   s32 weaponSprite;
 
-  fixedX = px(x);
-  fixedZ = px(y);
+  fixedX = toFIXED(x);
+  fixedZ = toFIXED(y);
   object = Actor_CreateFar(0xf000, fixedX, 0, fixedZ);
   unit = Unit_Get(unitId);
   palette = 0;
@@ -109,171 +109,171 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   }
 
   // The units drawn larger or smaller than their sprites, in 16.16.
-  actor->scale = Q16_ONE;
+  actor->scale = FIXED_ONE;
   actor->shadow = SPRITE_BATTLE_SHADOW;
 
   switch (unit->enemyId) {
   case ISAAC:
-    actor->scale = Q16_ONE;
+    actor->scale = FIXED_ONE;
     break;
   case GARET:
-    actor->scale = Q16_ONE;
+    actor->scale = FIXED_ONE;
     break;
   case MIA:
-    actor->scale = Q16_ONE;
+    actor->scale = FIXED_ONE;
     break;
   case IVAN:
-    actor->scale = Q16_ONE;
+    actor->scale = FIXED_ONE;
     break;
   case PIERS:
-    actor->scale = Q16_ONE * 21 / 20;
+    actor->scale = FIXED_ONE * 21 / 20;
     break;
   case JENNA:
-    actor->scale = Q16_ONE * 19 / 20;
+    actor->scale = FIXED_ONE * 19 / 20;
     break;
   case FELIX:
-    actor->scale = Q16_ONE;
+    actor->scale = FIXED_ONE;
     break;
   case SHEBA:
-    actor->scale = Q16_ONE * 9 / 10;
+    actor->scale = FIXED_ONE * 9 / 10;
     break;
   case ENEMY_SLIME_SOL_SANCTUM:
-    actor->scale = Q16_ONE * 9 / 10;
+    actor->scale = FIXED_ONE * 9 / 10;
     break;
   case ENEMY_SLIME_WORLD_MAP:
-    actor->scale = Q16_ONE * 9 / 10;
+    actor->scale = FIXED_ONE * 9 / 10;
     break;
   case ENEMY_OOZE:
-    actor->scale = Q16_ONE * 9 / 10;
+    actor->scale = FIXED_ONE * 9 / 10;
     break;
   case ENEMY_SLIME_BEAST:
-    actor->scale = Q16_ONE * 9 / 10;
+    actor->scale = FIXED_ONE * 9 / 10;
     break;
   case ENEMY_KILLER_APE:
-    actor->scale = Q16_ONE * 8 / 5;
+    actor->scale = FIXED_ONE * 8 / 5;
     break;
   case ENEMY_MANTICORE:
-    actor->scale = Q16_ONE * 31 / 20;
+    actor->scale = FIXED_ONE * 31 / 20;
     break;
   case ENEMY_LIVING_STATUE:
-    actor->scale = Q16_ONE * 6 / 5;
+    actor->scale = FIXED_ONE * 6 / 5;
     break;
   case ENEMY_HYDROS_STATUE:
-    actor->scale = Q16_ONE * 8 / 5;
+    actor->scale = FIXED_ONE * 8 / 5;
     break;
   case ENEMY_ANT_LION:
-    actor->scale = Q16_ONE * 3 / 2;
+    actor->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_TRET:
-    actor->scale = Q16_ONE * 9 / 5;
+    actor->scale = FIXED_ONE * 9 / 5;
     break;
   case ENEMY_DEADBEARD:
-    actor->scale = Q16_ONE * 9 / 5;
+    actor->scale = FIXED_ONE * 9 / 5;
     break;
   case ENEMY_BANDIT:
-    actor->scale = Q16_ONE;
+    actor->scale = FIXED_ONE;
     break;
   case ENEMY_THIEF:
-    actor->scale = Q16_ONE * 9 / 10;
+    actor->scale = FIXED_ONE * 9 / 10;
     break;
   case ENEMY_BANDIT_WORLD_MAP:
-    actor->scale = Q16_ONE;
+    actor->scale = FIXED_ONE;
     break;
   case ENEMY_THIEF_WORLD_MAP:
-    actor->scale = Q16_ONE * 9 / 10;
+    actor->scale = FIXED_ONE * 9 / 10;
     break;
   case ENEMY_KRAKEN:
-    actor->scale = Q16_ONE * 17 / 10;
+    actor->scale = FIXED_ONE * 17 / 10;
     break;
   case ENEMY_FUSION_DRAGON:
-    actor->scale = Q16_ONE * 3 / 2;
+    actor->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_KANDOREAN_TEMPLE:
-    actor->scale = Q16_ONE * 3 / 2;
+    actor->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_AIRS_ROCK:
-    actor->scale = Q16_ONE * 3 / 2;
+    actor->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_GABOMBA_STATUE:
-    actor->scale = Q16_ONE * 3 / 2;
+    actor->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_AQUA_ROCK:
-    actor->scale = Q16_ONE * 3 / 2;
+    actor->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_GAIA_ROCK:
-    actor->scale = Q16_ONE * 3 / 2;
+    actor->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_TREASURE_ISLE:
-    actor->scale = Q16_ONE * 3 / 2;
+    actor->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_JUPITER_LIGHTHOUSE:
-    actor->scale = Q16_ONE * 3 / 2;
+    actor->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_MAGMA_ROCK:
-    actor->scale = Q16_ONE * 3 / 2;
+    actor->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_MIMIC_MARS_LIGHTHOUSE:
-    actor->scale = Q16_ONE * 3 / 2;
+    actor->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_TROLL:
-    actor->scale = Q16_ONE * 6 / 5;
+    actor->scale = FIXED_ONE * 6 / 5;
     break;
   case ENEMY_CAVE_TROLL:
-    actor->scale = Q16_ONE * 6 / 5;
+    actor->scale = FIXED_ONE * 6 / 5;
     break;
   case ENEMY_ORC_CAPTAIN:
-    actor->scale = Q16_ONE;
+    actor->scale = FIXED_ONE;
     break;
   case ENEMY_ORC_LORD:
-    actor->scale = Q16_ONE * 5 / 4;
+    actor->scale = FIXED_ONE * 5 / 4;
     break;
   case ENEMY_UNUSED_KOBOLD:
-    actor->scale = Q16_ONE * 9 / 10;
+    actor->scale = FIXED_ONE * 9 / 10;
     break;
   case ENEMY_HOBGOBLIN:
-    actor->scale = Q16_ONE * 3 / 2;
+    actor->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_GRYPHON:
-    actor->scale = Q16_ONE * 13 / 10;
+    actor->scale = FIXED_ONE * 13 / 10;
     break;
   case ENEMY_CHIMERA:
-    actor->scale = Q16_ONE * 6 / 5;
+    actor->scale = FIXED_ONE * 6 / 5;
     break;
   case ENEMY_AZART_IRON_SHIELD:
-    actor->scale = Q16_ONE * 21 / 20;
+    actor->scale = FIXED_ONE * 21 / 20;
     break;
   case ENEMY_AZART_PADDED_GLOVES:
-    actor->scale = Q16_ONE * 21 / 20;
+    actor->scale = FIXED_ONE * 21 / 20;
     break;
   case ENEMY_SATRAGE_CHAIN_MAIL:
-    actor->scale = Q16_ONE * 11 / 10;
+    actor->scale = FIXED_ONE * 11 / 10;
     break;
   case ENEMY_SATRAGE_COTTON_SHIRT:
-    actor->scale = Q16_ONE * 11 / 10;
+    actor->scale = FIXED_ONE * 11 / 10;
     break;
   case ENEMY_NAVAMPA_CLAYMORE:
-    actor->scale = Q16_ONE * 6 / 5;
+    actor->scale = FIXED_ONE * 6 / 5;
     break;
   case ENEMY_NAVAMPA_HUNTERS_SWORD:
-    actor->scale = Q16_ONE * 6 / 5;
+    actor->scale = FIXED_ONE * 6 / 5;
     break;
   case ENEMY_TOADONPA:
-    actor->scale = Q16_ONE * 3 / 2;
+    actor->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_TORNADO_LIZARD:
-    actor->scale = Q16_ONE * 6 / 5;
+    actor->scale = FIXED_ONE * 6 / 5;
     break;
   case ENEMY_STORM_LIZARD:
-    actor->scale = Q16_ONE * 3 / 2;
+    actor->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_TEMPEST_LIZARD:
-    actor->scale = Q16_ONE * 31 / 20;
+    actor->scale = FIXED_ONE * 31 / 20;
     break;
   case ENEMY_RECLUSE:
-    actor->scale = Q16_ONE * 5 / 4;
+    actor->scale = FIXED_ONE * 5 / 4;
     break;
   case ENEMY_CERBERUS:
-    actor->scale = Q16_ONE * 5 / 4;
+    actor->scale = FIXED_ONE * 5 / 4;
     break;
   case ENEMY_SIREN:
   case ENEMY_SUCCUBUS:
@@ -283,12 +283,12 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_SATUROS_VENUS_LIGHTHOUSE:
   case ENEMY_MYSTERY_WOMAN:
   case ENEMY_MENARDI:
-    actor->scale = Q16_ONE * 9 / 10;
+    actor->scale = FIXED_ONE * 9 / 10;
     break;
   case ENEMY_RUFFIAN:
   case ENEMY_UNUSED_RUFFIAN_A:
   case ENEMY_UNUSED_RUFFIAN_B:
-    actor->scale = Q16_ONE * 19 / 20;
+    actor->scale = FIXED_ONE * 19 / 20;
     break;
   case ENEMY_DULLAHAN:
   case ENEMY_DULLAHAN_B:
@@ -296,12 +296,12 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_SENTINEL:
   case ENEMY_UNUSED_SENTINEL_A:
   case ENEMY_UNUSED_SENTINEL_B:
-    actor->scale = Q16_ONE * 13 / 10;
+    actor->scale = FIXED_ONE * 13 / 10;
     break;
   case ENEMY_VALUKAR:
   case ENEMY_UNUSED_VALUKAR_A:
   case ENEMY_UNUSED_VALUKAR_B:
-    actor->scale = Q16_ONE * 29 / 20;
+    actor->scale = FIXED_ONE * 29 / 20;
     break;
   case ENEMY_SERPENT:
   case ENEMY_SERPENT_ONE_BEAM:
@@ -310,40 +310,40 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_SERPENT_FOUR_BEAMS:
   case ENEMY_UNUSED_SERPENT_A:
   case ENEMY_UNUSED_SERPENT_B:
-    actor->scale = Q16_ONE * 11 / 10;
+    actor->scale = FIXED_ONE * 11 / 10;
     break;
   case ENEMY_POSEIDON:
   case ENEMY_POSEIDON_SECOND_ACTION:
   case ENEMY_UNUSED_POSEIDON:
-    actor->scale = Q16_ONE * 3 / 2;
+    actor->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_AQUA_HYDRA:
-    actor->scale = Q16_ONE * 3 / 2;
+    actor->scale = FIXED_ONE * 3 / 2;
     break;
   case ENEMY_HYDRA:
   case ENEMY_PYRODRA:
-    actor->scale = Q16_ONE * 11 / 10;
+    actor->scale = FIXED_ONE * 11 / 10;
     break;
   case ENEMY_WILD_WOLF:
   case ENEMY_DINO:
-    actor->scale = Q16_ONE * 23 / 20;
+    actor->scale = FIXED_ONE * 23 / 20;
     break;
   case ENEMY_DIRE_WOLF:
   case ENEMY_DINOX:
-    actor->scale = Q16_ONE * 6 / 5;
+    actor->scale = FIXED_ONE * 6 / 5;
     break;
   case ENEMY_WHITE_WOLF:
   case ENEMY_DINOSAURUS:
-    actor->scale = Q16_ONE * 5 / 4;
+    actor->scale = FIXED_ONE * 5 / 4;
     break;
   case ENEMY_SEA_DRAGON:
   case ENEMY_TURTLE_DRAGON:
   case ENEMY_OCEAN_DRAGON:
-    actor->scale = Q16_ONE * 5 / 4;
+    actor->scale = FIXED_ONE * 5 / 4;
     break;
   case ENEMY_DEVIL_SCORPION:
   case ENEMY_SAND_SCORPION:
-    actor->scale = Q16_ONE * 3 / 4;
+    actor->scale = FIXED_ONE * 3 / 4;
     break;
   case ENEMY_MOAPA:
   case ENEMY_MOAPA_B:
@@ -351,15 +351,15 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
     // XXX: which shadow Moapa takes; the sprite table's row 685 rendered would
     // say.
     actor->shadow = 685;
-    actor->scale = Q16_ONE * 23 / 20;
+    actor->scale = FIXED_ONE * 23 / 20;
     break;
   case ENEMY_KNIGHT:
   case ENEMY_KNIGHT_B:
   case ENEMY_UNUSED_KNIGHT:
-    actor->scale = Q16_ONE * 101 / 100;
+    actor->scale = FIXED_ONE * 101 / 100;
     break;
   case ENEMY_BRIGGS:
-    actor->scale = Q16_ONE * 5 / 4;
+    actor->scale = FIXED_ONE * 5 / 4;
     break;
   case ENEMY_SEA_FIGHTER:
   case ENEMY_UNUSED_CHAMPA_A:
@@ -370,24 +370,24 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_AKA_MANAH:
   case ENEMY_DRUJ:
   case ENEMY_AESHMA:
-    actor->scale = Q16_ONE * 11 / 10;
+    actor->scale = FIXED_ONE * 11 / 10;
     break;
   case ENEMY_FLAME_DRAGON_AGATIO:
-    actor->scale = Q16_ONE * 5 / 4;
+    actor->scale = FIXED_ONE * 5 / 4;
     break;
   case ENEMY_FLAME_DRAGON_KARST:
-    actor->scale = Q16_ONE;
+    actor->scale = FIXED_ONE;
     break;
   case ENEMY_PIXIE:
   case ENEMY_FAERY:
   case ENEMY_WEIRD_NYPMH:
-    actor->scale = Q16_ONE * 4 / 5;
+    actor->scale = FIXED_ONE * 4 / 5;
     break;
   case ENEMY_REFRESH_BALL:
   case ENEMY_THUNDER_BALL:
   case ENEMY_ANGER_BALL:
   case ENEMY_GUARDIAN_BALL:
-    actor->scale = Q16_ONE * 4 / 5;
+    actor->scale = FIXED_ONE * 4 / 5;
     break;
   case ENEMY_CHESTBEATER:
   case ENEMY_WILD_GORILLA:
@@ -399,7 +399,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_DOOM_DRAGON_A:
   case ENEMY_DOOM_DRAGON_E:
   case ENEMY_DOOM_DRAGON_H:
-    actor->scale = Q16_ONE * 7 / 5;
+    actor->scale = FIXED_ONE * 7 / 5;
     break;
   }
 
@@ -432,16 +432,16 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
 
   // Face the centre of the battlefield; enemies are drawn at 1.3 times their
   // size.
-  facingAngle = ArcTan2(y / 8, x) + TRIG_TURN / 2;
+  facingAngle = Trig_Atan(y / 8, x) + DEGtoANG(180);
   object->angle = facingAngle;
   object->collisionFlags = 3;
   object->motionFlags = ACTOR_FALLS;
   if (unit->classId == CLASS_NONE) {
-    object->scaleX = Q16_ONE * 13 / 10;
-    object->scaleY = Q16_ONE * 13 / 10;
+    object->scaleX = FIXED_ONE * 13 / 10;
+    object->scaleY = FIXED_ONE * 13 / 10;
   } else {
-    object->scaleX = Q16_ONE;
-    object->scaleY = Q16_ONE;
+    object->scaleX = FIXED_ONE;
+    object->scaleY = FIXED_ONE;
   }
   Actor_StartScriptFar((struct Actor *)object, gBattleObject_EmptyScript);
 }
@@ -564,8 +564,8 @@ void Enemy_Update(void) {
     if (id != BATTLE_UNIT_REMOVED) {
       struct BattleObject *object = BattleObject_Get(id);
 
-      object->anchorX = px(x[i]);
-      object->anchorZ = px(z[i]);
+      object->anchorX = toFIXED(x[i]);
+      object->anchorZ = toFIXED(z[i]);
     }
   }
 }

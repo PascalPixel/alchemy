@@ -338,15 +338,15 @@ static s32 LogRoomsA_TryJumpTo(struct FieldPosition *position) {
     wait(6);
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
-    leader->speedLimit = px(3);
-    leader->acceleration = px(2);
-    leader->velocityY = px(4);
+    leader->speedLimit = toFIXED(3);
+    leader->acceleration = toFIXED(2);
+    leader->velocityY = toFIXED(4);
     leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(leader, 0);
     Actor_MoveToAndWait(
         ACTOR_PARTY_LEADER,
-        ((struct FieldCoordinate *)&position->x)->part[0].pixel,
-        ((struct FieldCoordinate *)&position->z)->part[0].pixel);
+        ((struct FieldCoordinate *)&position->x)->part[0].integer,
+        ((struct FieldCoordinate *)&position->z)->part[0].integer);
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     wait(6);
@@ -375,7 +375,7 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
 #else
     SET_POSITION(&target, Actor_Get(ACTOR_PARTY_LEADER)->x.fixed,
                  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed,
-                 Actor_Get(ACTOR_PARTY_LEADER)->z.fixed - px(30));
+                 Actor_Get(ACTOR_PARTY_LEADER)->z.fixed - toFIXED(30));
     LogRoomsA_TryJumpTo(&target);
 #endif
     x = 42;
@@ -388,7 +388,7 @@ static void LogRoomsA_JumpAcrossRoofGap(void) {
 #else
     SET_POSITION(&target, Actor_Get(ACTOR_PARTY_LEADER)->x.fixed,
                  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed,
-                 Actor_Get(ACTOR_PARTY_LEADER)->z.fixed + px(30));
+                 Actor_Get(ACTOR_PARTY_LEADER)->z.fixed + toFIXED(30));
     LogRoomsA_TryJumpTo(&target);
 #endif
     x = 42;
@@ -976,8 +976,8 @@ static void LogRoomsA_MeetIvan(void) {
     Actor_SetAnimation(ACTOR_IVAN, ANIM_WALK);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-      Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].pixel,
-                           actor->z.part[0].pixel);
+      Actor_SetDestination(ACTOR_IVAN, actor->x.part[0].integer,
+                           actor->z.part[0].integer);
     }
     Actor_WaitForMoveById(ACTOR_IVAN);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
@@ -988,8 +988,8 @@ static void LogRoomsA_MeetIvan(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
-                         actor->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
@@ -1731,7 +1731,7 @@ static void LogRoomsA_DiscussMindReading(void) {
 
     leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | leader->priorityFlags;
   }
-  Field_SetCameraBounds(px(32), px(576), px(400), px(936));
+  Field_SetCameraBounds(toFIXED(32), toFIXED(576), toFIXED(400), toFIXED(936));
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.8);
   Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
@@ -1953,7 +1953,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_GIRL_AT_THE_INN, 568, 648);
       Actor_SetMovementTypeById(ACTOR_GIRL_AT_THE_INN, MOVEMENT_TYPE_STAND);
       Actor_FaceDirection(ACTOR_GIRL_AT_THE_INN, FACING_SOUTH, 0);
-      Vault_PlaceItemIcon(ITEM_BONE, px(568), px(16), px(672));
+      Vault_PlaceItemIcon(ITEM_BONE, toFIXED(568), toFIXED(16), toFIXED(672));
       Task_AddFrame(Vault_UpdateBoneProximityFlag, TASK_PASS_FRAME);
     } else if (GameFlag_Get(FLAG_VAULT_SUSPECTS_MIND_READ) != 0) {
       Actor_SetPosition(ACTOR_GIRL_AT_THE_INN, 0, 0);
@@ -2068,10 +2068,10 @@ static void LogRoomsA_FaceSuspectsTowardLeader(void) {
   struct Actor *first = Actor_Get(ACTOR_SUSPECTED_LEADER);
   struct Actor *second = Actor_Get(ACTOR_SUSPECTED_THIEF);
 
-  first->facing = ArcTan2(origin->z.fixed - first->z.fixed,
-                          origin->x.fixed - first->x.fixed);
-  second->facing = ArcTan2(origin->z.fixed - second->z.fixed,
-                           origin->x.fixed - second->x.fixed);
+  first->facing = Trig_Atan(origin->z.fixed - first->z.fixed,
+                            origin->x.fixed - first->x.fixed);
+  second->facing = Trig_Atan(origin->z.fixed - second->z.fixed,
+                             origin->x.fixed - second->x.fixed);
 }
 
 /// Shows the thieves' reaction after the party loses their battle.
@@ -2872,8 +2872,8 @@ static void LogRoomsA_ReturnStolenGoods(void) {
   Actor_SetAnimation(ACTOR_GARET, ANIM_WALK);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
-                         actor->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
@@ -2932,8 +2932,8 @@ static void LogRoomsA_PlayAnimationAndWait(s32 actorId, s32 animation,
 /// Finds the route node containing the actor's position on the
 /// eight-pixel grid.
 static struct LogRoomsAStop *LogRoomsA_FindStopAtPosition(s32 *position) {
-  s32 gridX = (position[0] - px(64)) >> 19;
-  s32 gridZ = (position[2] - px(624)) >> 19;
+  s32 gridX = (position[0] - toFIXED(64)) >> 19;
+  s32 gridZ = (position[2] - toFIXED(624)) >> 19;
   struct LogRoomsAStop *stop = gLogRoomsA_Stops;
   struct LogRoomsAStop *result = NULL;
   u32 i;
@@ -2967,7 +2967,7 @@ LogRoomsA_SnapToNearestStop(struct LogRoomsAStop *node, s16 *requestedFacing) {
   stopIndex = -1;
   chosenFacing = *requestedFacing;
   connection = node->connections;
-  nearestDifference = TRIG_TURN / 2;
+  nearestDifference = DEGtoANG(180);
   for (connectionIndex = 0; connectionIndex <= 2;
        connectionIndex++, connection++) {
     connectionFacing = connection->facing << 8;
@@ -3003,8 +3003,8 @@ static s32 LogRoomsA_IsWithinHalfCellOfStop(s32 x, s32 z, s32 id) {
     targetZ = actor->z.fixed;
   }
 
-  targetX = WHOLE_PIXELS(targetX - x);
-  targetZ = WHOLE_PIXELS(targetZ - z);
+  targetX = FIXEDtoINT(targetX - x);
+  targetZ = FIXEDtoINT(targetZ - z);
   if (targetX * targetX + targetZ * targetZ <= 64)
     return 1;
   return 0;
@@ -3023,8 +3023,8 @@ static s32 LogRoomsA_IsWithinCellOfStop(s32 x, s32 z, s32 id) {
   az = actor->targetZ;
   if (az == ACTOR_NO_TARGET)
     az = actor->z.fixed;
-  ax = WHOLE_PIXELS(ax - x);
-  az = WHOLE_PIXELS(az - z);
+  ax = FIXEDtoINT(ax - x);
+  az = FIXEDtoINT(az - z);
   if (ax * ax + az * az <= 16 * 16)
     return 1;
   return 0;
@@ -3039,8 +3039,8 @@ static s32 LogRoomsA_CheckStopOccupancy(struct LogRoomsAStop *stop) {
   if (stop == NULL) {
     return 1;
   }
-  x = (stop->gridX << 19) + px(72);
-  z = (stop->gridZ << 19) + px(632);
+  x = (stop->gridX << 19) + toFIXED(72);
+  z = (stop->gridZ << 19) + toFIXED(632);
   if (LogRoomsA_IsWithinCellOfStop(x, z, ACTOR_PARTY_LEADER) != 0 ||
       LogRoomsA_IsWithinHalfCellOfStop(x, z, ACTOR_IVAN) != 0 ||
       LogRoomsA_IsWithinHalfCellOfStop(x, z, ACTOR_SUSPECTED_LEADER) != 0 ||
@@ -3053,8 +3053,8 @@ static s32 LogRoomsA_CheckStopOccupancy(struct LogRoomsAStop *stop) {
 /// Sets the actor's destination to the route stop's cell center.
 static void LogRoomsA_MoveActorToStop(struct Actor *actor,
                                       struct LogRoomsAStop *stop) {
-  FieldActor_SetMoveTargetFixed(actor, (stop->gridX << 19) + px(72), 0,
-                                (stop->gridZ << 19) + px(632));
+  FieldActor_SetMoveTargetFX(actor, (stop->gridX << 19) + toFIXED(72), 0,
+                             (stop->gridZ << 19) + toFIXED(632));
 }
 
 /// Steers Ivan and both suspects through the graph and detects a sustained
@@ -3084,7 +3084,7 @@ static void LogRoomsA_UpdateActorStops(void) {
     dx = actor->x.fixed - leader->x.fixed;
     dz = actor->z.fixed - leader->z.fixed;
     facing = leader->facing;
-    angle = ArcTan2(dz, dx);
+    angle = Trig_Atan(dz, dx);
     dx >>= 16;
     dz >>= 16;
     if (work->blockedSteps > 0 && dx * dx + dz * dz <= 400 &&
@@ -3124,7 +3124,7 @@ static void LogRoomsA_UpdateActorStops(void) {
     facing = ((turn - (TRIG_TURN * 3 / 16 << 16)) >> 16) + currentFacing;
     destination = LogRoomsA_SnapToNearestStop(entry, &facing);
     if (LogRoomsA_CheckStopOccupancy(destination) != 0) {
-      facing = actor->facing + TRIG_TURN / 2;
+      facing = actor->facing + DEGtoANG(180);
       destination = LogRoomsA_SnapToNearestStop(entry, &facing);
       if (LogRoomsA_CheckStopOccupancy(destination) == 0) {
         Actor_SetAttachedEffect(ACTOR_SUSPECTED_LEADER, ATTACHED_EFFECT_ONCE);
@@ -3149,7 +3149,7 @@ static void LogRoomsA_UpdateActorStops(void) {
     facing = ((turn - (TRIG_TURN * 3 / 16 << 16)) >> 16) + currentFacing;
     destination = LogRoomsA_SnapToNearestStop(entry, &facing);
     if (LogRoomsA_CheckStopOccupancy(destination) != 0) {
-      facing = actor->facing + TRIG_TURN / 2;
+      facing = actor->facing + DEGtoANG(180);
       destination = LogRoomsA_SnapToNearestStop(entry, &facing);
       if (LogRoomsA_CheckStopOccupancy(destination) == 0) {
         Actor_SetAttachedEffect(ACTOR_SUSPECTED_THIEF, ATTACHED_EFFECT_ONCE);
@@ -3192,7 +3192,7 @@ static void LogRoomsA_StartActorStops(void) {
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetAnimation(ACTOR_GARET, ANIM_GARET_ARMS_SPREAD);
   LogRoomsA_ResetSuspectRoutes();
-  Field_SetCameraBounds(px(48), px(576), px(288), px(736));
+  Field_SetCameraBounds(toFIXED(48), toFIXED(576), toFIXED(288), toFIXED(736));
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_IVAN, 0.75);
   Actor_SetSpeedAndAcceleration(ACTOR_SUSPECTED_LEADER, 1, 1.2);
@@ -3292,23 +3292,23 @@ struct LogRoomsAStop gLogRoomsA_Stops[] = {
 #undef NO_CONNECTION
 
 s32 gLogRoomsA_ActionTable[] = {
-    SC_ADD(SW_SCALE_Y, (-Q16_ONE / 16)),
-    SC_ADD(SW_SCALE_X, (-Q16_ONE / 256)),
+    SC_ADD(SW_SCALE_Y, (-FIXED_ONE / 16)),
+    SC_ADD(SW_SCALE_X, (-FIXED_ONE / 256)),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, (-Q16_ONE / 16)),
-    SC_ADD(SW_SCALE_X, (Q16_ONE / 256)),
+    SC_ADD(SW_SCALE_Y, (-FIXED_ONE / 16)),
+    SC_ADD(SW_SCALE_X, (FIXED_ONE / 256)),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
     SC_WAIT(4),
-    SC_ADD(SW_SCALE_Y, (-Q16_ONE / 16)),
-    SC_ADD(SW_SCALE_X, (-Q16_ONE / 256)),
+    SC_ADD(SW_SCALE_Y, (-FIXED_ONE / 16)),
+    SC_ADD(SW_SCALE_X, (-FIXED_ONE / 256)),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, (-Q16_ONE / 16)),
-    SC_ADD(SW_SCALE_X, (Q16_ONE / 256)),
+    SC_ADD(SW_SCALE_Y, (-FIXED_ONE / 16)),
+    SC_ADD(SW_SCALE_X, (FIXED_ONE / 256)),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
     SC_WAIT(180),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

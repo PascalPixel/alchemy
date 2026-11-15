@@ -61,7 +61,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     FieldParticle_SetCallback(effect, FieldEffect_UpdateMarsSpark);
     FieldParticle_SetActorMode(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_RED_TINT);
-    scale = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
+    scale = Random16() / 3 + FIXED_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
     effect->scaleX = scale;
     remaining--;
@@ -94,8 +94,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   // effect, done with the sparks, carries the NULL.
   effect = NULL;
   leader->update = (void *)effect;
-  leader->scaleX = Q16_ONE;
-  leader->scaleY = Q16_ONE;
+  leader->scaleX = FIXED_ONE;
+  leader->scaleY = FIXED_ONE;
   // Fade the palette back from the tint and free the field effect sprites.
   wait(30);
   Shop_RestoreFieldPaletteFar();
@@ -122,13 +122,13 @@ void FieldEffect_UpdateDescendingOrbitActor(struct Actor *mote) {
   frames = mote->orbitFrames;
   position.x = leader->x.fixed;
   position.z = leader->z.fixed;
-  Vector_AddPolarOffset(frames * (px(2) / 5), (frames << 11) + mote->orbitAngle,
-                        &position);
+  Vector_AddPolarOffset(frames * (toFIXED(2) / 5),
+                        (frames << 11) + mote->orbitAngle, &position);
   mote->x.fixed = position.x;
   mote->z.fixed = position.z;
-  y = mote->y.fixed - px(1);
+  y = mote->y.fixed - toFIXED(1);
   mote->y.fixed = y;
-  if (y < leader->y.fixed + px(20))
+  if (y < leader->y.fixed + toFIXED(20))
     Actor_ReleaseFar(mote);
 }
 
@@ -150,7 +150,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     position.y = source->y.fixed;
     position.z = source->z.fixed;
 
-    random = Random16() * 10 + px(10);
+    random = Random16() * 10 + toFIXED(10);
     Vector_AddPolarOffset(random, Random16(), &position);
     Camera_WorldToScreen(&position);
 
@@ -161,11 +161,11 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     position.x = effect->x;
     position.z = effect->z;
 
-    Vector_AddPolarOffset(px(120), FACING_NORTH, &position);
+    Vector_AddPolarOffset(toFIXED(120), FACING_NORTH, &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
-    effect->acceleration = Q16_ONE;
-    effect->speedMax = px(5);
+    effect->acceleration = FIXED_ONE;
+    effect->speedMax = toFIXED(5);
     effect->turnStepLimited = state;
     effect->state++;
 

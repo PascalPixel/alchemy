@@ -8,7 +8,7 @@ void Actor_LaunchAhead(struct Actor *self) {
   volatile s32 position[3];
 
   position[0] = self->x.fixed;
-  position[1] = self->y.fixed - px(12);
+  position[1] = self->y.fixed - toFIXED(12);
   position[2] = self->z.fixed;
   FieldVector_AddPolarOffset(32, angle, (struct Vector3 *)position);
   actor->facing = angle;
@@ -17,8 +17,8 @@ void Actor_LaunchAhead(struct Actor *self) {
                                        position[2]);
   actor->update = (void (*)(void))Actor_RollAndCrumble;
   actor->steeringFlags = 0;
-  actor->speedLimit = px(8);
-  actor->acceleration = px(1) / 8;
+  actor->speedLimit = toFIXED(8);
+  actor->acceleration = toFIXED(1) / 8;
   sprite->rotation = angle - 0x4000;
   actor->scaleX = 0;
   /* A once-only block: its end holds the order around it (as the plain */

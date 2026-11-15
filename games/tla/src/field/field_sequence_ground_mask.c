@@ -30,12 +30,12 @@ void FadeOverlay_DrawMarks(void) {
   terrainFloor = actor->floor;
   terrainLayer = actor->terrainId;
   tile = gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset >> 5;
-  x -= px(8);
+  x -= toFIXED(8);
   height =
-      FIELD_PIXEL(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + px(16)));
-  secondHeight =
-      FIELD_PIXEL(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + px(32))) -
-      16;
+      FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + toFIXED(16)));
+  secondHeight = FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x,
+                                                        z + toFIXED(32))) -
+                 16;
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {
@@ -44,18 +44,18 @@ void FadeOverlay_DrawMarks(void) {
     mark->priority = 0;
     mark->tile = tile;
     mark->objectMode = 1;
-    mark->x = ((u32)FIELD_PIXEL(x) & 0xfff0) - cameraX;
-    screenRow = FIELD_PIXEL(z) & 0xf0;
+    mark->x = ((u32)FIXEDtoINT(x) & 0xfff0) - cameraX;
+    screenRow = FIXEDtoINT(z) & 0xf0;
     mark->y = screenRow - cameraZ - height + 16;
     Oam_AddSpriteAtDepthClamped(mark, 0);
   }
-  x += px(16);
+  x += toFIXED(16);
   height =
-      FIELD_PIXEL(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + px(16)));
+      FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + toFIXED(16)));
   mark = &work->marks[1];
-  secondHeight =
-      FIELD_PIXEL(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + px(32))) -
-      16;
+  secondHeight = FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x,
+                                                        z + toFIXED(32))) -
+                 16;
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {
@@ -64,8 +64,8 @@ void FadeOverlay_DrawMarks(void) {
     mark->priority = 0;
     mark->tile = tile;
     mark->objectMode = 1;
-    mark->x = ((u32)FIELD_PIXEL(x) & 0xfff0) - cameraX;
-    screenRow = FIELD_PIXEL(z) & 0xf0;
+    mark->x = ((u32)FIXEDtoINT(x) & 0xfff0) - cameraX;
+    screenRow = FIXEDtoINT(z) & 0xf0;
     mark->y = screenRow - cameraZ - height + 16;
     Oam_AddSpriteAtDepthClamped(mark, 0);
   }
@@ -124,7 +124,7 @@ void BlankOverlay_DrawMarks(void) {
   if (actor == 0)
     return;
   x = ((s16 *)&actor->x)[1];
-  row = FIELD_PIXEL(actor->z - actor->y);
+  row = FIXEDtoINT(actor->z - actor->y);
   tile = gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset >> 5;
   cells = map->layers[2].cells;
   a = cells + (x + 8) / 16 + (row / 16 - 2) * 128;

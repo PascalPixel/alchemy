@@ -69,9 +69,9 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     struct Particle *puff = &work->particles[i];
 
     if (args->side == EFFECT_SIDE_PARTY)
-      puff->x = px(50);
+      puff->x = toFIXED(50);
     else
-      puff->x = -px(50);
+      puff->x = -toFIXED(50);
     puff->y = 0;
     puff->z = 0;
     puff->velocityX = ((Random16() & 63) - 32) << 13;
@@ -83,9 +83,9 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     struct Particle *mote = &MOTES[i];
 
     if (args->side == EFFECT_SIDE_PARTY)
-      mote->x = px(50);
+      mote->x = toFIXED(50);
     else
-      mote->x = -px(50);
+      mote->x = -toFIXED(50);
     mote->y = 0;
     mote->z = 0;
     mote->velocityX = ((Random16() & 63) - 32) << 13;
@@ -102,8 +102,8 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     struct BattleCamera *camera;
 
     camera = Ram_HeapSlots->cameraWork;
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
     if (frame == 2)
       Sound_PlayFar(SE_CLATTER);
     if (frame == gEruption_Counts[variant][FIELD_FRAMES] - 48)
@@ -131,7 +131,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
                     MOTE_SHEET,
                 screen.x - size / 2, screen.y - size, size, size * 2);
         BattleEffectKernels_IntegrateVector3(mote, PARTICLE_DAMPING_NONE,
-                                             -px(1) / 8);
+                                             -toFIXED(1) / 8);
       }
     }
 
@@ -155,7 +155,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
           if (puff->variant <= 20)
             puff->variant++;
           BattleEffectKernels_IntegrateVector3(puff, PARTICLE_DAMPING_NONE,
-                                               -px(1) / 8);
+                                               -toFIXED(1) / 8);
         }
       }
     }

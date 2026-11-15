@@ -126,7 +126,7 @@ static void VaultCave_UseUnderfootFrostPriorities(void);
 static void VaultCave_UseAutomaticFrostPriorities(void);
 static void VaultCave_SpawnPuffs(struct Actor *source);
 
-#define TILE(position) ((position) / px(16))
+#define TILE(position) ((position) / toFIXED(16))
 
 /// The cell behaviors of the cells the events answer.
 enum VaultCaveCellBehavior {
@@ -296,11 +296,12 @@ static void VaultCave_PushPillarAhead(void) {
   s32 column;
   s32 row;
 
-  column = (leader->x.part[0].pixel +
-            (WHOLE_PIXELS(gVaultCave_DirectionSteps[direction]))) >>
+  column = (leader->x.part[0].integer +
+            (FIXEDtoINT(gVaultCave_DirectionSteps[direction]))) >>
            4;
-  row = (leader->z.part[0].pixel + (s16)gVaultCave_DirectionSteps[direction]) >>
-        4;
+  row =
+      (leader->z.part[0].integer + (s16)gVaultCave_DirectionSteps[direction]) >>
+      4;
   pillar = VaultCave_FindCollidableActorAtCell(column, row);
   // UB: the pillar's collisionFlags is read before the test for no pillar.
 #ifdef UBFIX
@@ -317,11 +318,12 @@ static void VaultCave_PushPillarAhead(void) {
       return;
     }
   }
-  column = (pillar->x.part[0].pixel +
-            (WHOLE_PIXELS(gVaultCave_DirectionSteps[direction]))) >>
+  column = (pillar->x.part[0].integer +
+            (FIXEDtoINT(gVaultCave_DirectionSteps[direction]))) >>
            4;
-  row = (pillar->z.part[0].pixel + (s16)gVaultCave_DirectionSteps[direction]) >>
-        4;
+  row =
+      (pillar->z.part[0].integer + (s16)gVaultCave_DirectionSteps[direction]) >>
+      4;
   beyond = VaultCave_FindCollidableActorAtCell(column, row);
   if (beyond != NULL && (beyond->collisionFlags & 1)) {
     return;
@@ -334,14 +336,14 @@ static void VaultCave_PushPillarAhead(void) {
   Actor_SelectAnimation(leader, ANIM_PUSH);
   wait(15);
   Sound_Play(SE_PUSH_STEP);
-  pillar->speedLimit = px(1) / 5;
-  pillar->acceleration = px(1) / 5;
-  FieldActor_SetMoveTargetFixed(pillar, destination.x, destination.y,
-                                destination.z);
-  leader->speedLimit = px(1) / 5;
-  leader->acceleration = px(1) / 5;
-  FieldActor_SetMoveTargetFixed(leader, destination.x, destination.y,
-                                destination.z);
+  pillar->speedLimit = toFIXED(1) / 5;
+  pillar->acceleration = toFIXED(1) / 5;
+  FieldActor_SetMoveTargetFX(pillar, destination.x, destination.y,
+                             destination.z);
+  leader->speedLimit = toFIXED(1) / 5;
+  leader->acceleration = toFIXED(1) / 5;
+  FieldActor_SetMoveTargetFX(leader, destination.x, destination.y,
+                             destination.z);
   Actor_WaitForMove(pillar);
   Sound_Play(SE_STOP_ACTION_SE);
   pillar->x.fixed = destination.x;
@@ -386,8 +388,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Whether the southern pillar stands on its switch.
 static s32 VaultCave_IsSouthernPillarOnSwitch(void) {
   struct Actor *pillar = Actor_Get(ACTOR_SOUTHERN_PILLAR);
-  s32 row = pillar->z.fixed / px(16);
-  s32 column = pillar->x.fixed / px(16);
+  s32 row = pillar->z.fixed / toFIXED(16);
+  s32 column = pillar->x.fixed / toFIXED(16);
 
   if (column == 15 && row == 54) {
     return 1;
@@ -439,8 +441,8 @@ static void VaultCave_ApplyNorthernSwitchCells(void) {
 /// Whether the northern pillar stands on its switch.
 static s32 VaultCave_IsNorthernPillarOnSwitch(void) {
   struct Actor *pillar = Actor_Get(ACTOR_NORTHERN_PILLAR);
-  s32 row = pillar->z.fixed / px(16);
-  s32 column = pillar->x.fixed / px(16);
+  s32 row = pillar->z.fixed / toFIXED(16);
+  s32 column = pillar->x.fixed / toFIXED(16);
 
   if (column == 16 && row == 12) {
     return 1;
@@ -573,7 +575,7 @@ static void VaultCave_FreezeFarEastPuddle(void) {
 static void VaultCave_UpdatePuddlePriorities(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if (leader->y.fixed >= px(16)) {
+  if (leader->y.fixed >= toFIXED(16)) {
     VaultCave_UseUnderfootFrostPriorities();
   } else {
     VaultCave_UseAutomaticFrostPriorities();
@@ -685,7 +687,7 @@ static s32 VaultCave_ResetFallingActorAtActorCell(s32 subjectActorId) {
     struct Actor *fallingActor =
         Actor_Get(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP);
 
-    if (fallingActor->y.fixed > 0 && fallingActor->y.fixed < px(16)) {
+    if (fallingActor->y.fixed > 0 && fallingActor->y.fixed < toFIXED(16)) {
       s32 fallingRow = TILE(fallingActor->z.fixed);
       s32 fallingColumn = TILE(fallingActor->x.fixed);
       s32 subjectRow = TILE(subject->z.fixed);
@@ -694,7 +696,7 @@ static s32 VaultCave_ResetFallingActorAtActorCell(s32 subjectActorId) {
       s32 xDelta = subjectColumn - fallingColumn;
 
       if (xDelta == 0 && zDelta == 0) {
-        fallingActor->y.fixed = px(255);
+        fallingActor->y.fixed = toFIXED(255);
         fallingActor->gravity = 0;
         fallingActor->velocityY = 0;
         return 1;
@@ -722,7 +724,7 @@ static void VaultCave_UpdateTimedFallingActors(void) {
     scheduleIndex = gVaultCave_ScheduleIndex;
     if (gVaultCave_ScheduleFrames[scheduleIndex] == gVaultCave_ScheduleTimer) {
       fallingActor = Actor_Get((scheduleIndex + ACTOR_FIRST_TIMED_WATER_DROP));
-      fallingActor->gravity = px(1) / 25;
+      fallingActor->gravity = toFIXED(1) / 25;
       if (++gVaultCave_ScheduleIndex > 3) {
         gVaultCave_ScheduleIndex = 0;
       }
@@ -730,9 +732,9 @@ static void VaultCave_UpdateTimedFallingActors(void) {
     for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
       fallingActor = Actor_Get((fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP));
       if (fallingActor->velocityY >= 0) {
-        if (fallingActor->y.fixed < px(1)) {
+        if (fallingActor->y.fixed < toFIXED(1)) {
           VaultCave_SpawnPuffs(fallingActor);
-          fallingActor->y.fixed = px(255);
+          fallingActor->y.fixed = toFIXED(255);
           fallingActor->gravity = 0;
           fallingActor->velocityY = 0;
           fallingActor->paused = 0;
@@ -770,7 +772,7 @@ static void VaultCave_UpdateFrostControlledFallingActors(void) {
       gVaultCave_SelectedDrop = Math_RemainderUnsigned(Random_Next(), 6);
       fallingActor =
           Actor_Get(gVaultCave_SelectedDrop + ACTOR_FIRST_WATER_DROP);
-      fallingActor->gravity = px(1) / 25;
+      fallingActor->gravity = toFIXED(1) / 25;
     }
     // Each actor's paired Frost flag selects its reset height.
     for (fallingIndex = 0; fallingIndex <= 5; fallingIndex++) {
@@ -779,23 +781,23 @@ static void VaultCave_UpdateFrostControlledFallingActors(void) {
           (fallingIndex + FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN));
       if (stateValue != 0) {
         if (fallingActor->velocityY <= 0) {
-          if (fallingActor->y.fixed >= px(33)) {
+          if (fallingActor->y.fixed >= toFIXED(33)) {
             continue;
           }
         }
-        fallingActor->y.fixed = px(255);
+        fallingActor->y.fixed = toFIXED(255);
         fallingActor->gravity = 0;
         fallingActor->velocityY = 0;
         Sound_Play(SE_DRIP);
       } else {
         if (fallingActor->velocityY <= 0) {
-          if (fallingActor->y.fixed >= px(1)) {
+          if (fallingActor->y.fixed >= toFIXED(1)) {
             continue;
           }
         }
         fallingActor->gravity = stateValue;
         fallingActor->velocityY = stateValue;
-        fallingActor->y.fixed = px(255);
+        fallingActor->y.fixed = toFIXED(255);
         Sound_Play(SE_DRIP);
       }
     }
@@ -812,8 +814,8 @@ static void VaultCave_OffsetActorRadially(struct Actor *actor, s32 radius,
   }
   SET_VECTOR(destination, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   Vector_AddPolarOffset(radius, angle, destination);
-  FieldActor_SetMoveTargetFixed(actor, destination[0], destination[1],
-                                destination[2]);
+  FieldActor_SetMoveTargetFX(actor, destination[0], destination[1],
+                             destination[2]);
 }
 
 /// Spawns up to four short-lived puffs around a landing actor.
@@ -826,13 +828,13 @@ static void VaultCave_SpawnPuffs(struct Actor *source) {
                              source->z.fixed);
     if (puff == NULL)
       break;
-    puff->scaleY = 11 * Q16_ONE / 20;
-    puff->scaleX = 11 * Q16_ONE / 20;
+    puff->scaleY = 11 * FIXED_ONE / 20;
+    puff->scaleX = 11 * FIXED_ONE / 20;
     puff->motionFlags = ACTOR_FALLS;
-    puff->velocityY = -px(1);
-    puff->speedLimit = Random_Next() + px(4) / 5;
+    puff->velocityY = -toFIXED(1);
+    puff->speedLimit = Random_Next() + toFIXED(4) / 5;
     puff->collisionFlags = ACTOR_SOLID;
-    VaultCave_OffsetActorRadially(puff, px(32), Random_Next());
+    VaultCave_OffsetActorRadially(puff, toFIXED(32), Random_Next());
     puff->wait = 8;
     Actor_StartScript(puff, gVaultCave_PuffScript);
   }
@@ -848,10 +850,10 @@ static void VaultCave_StartFrostControlledFalls(void) {
 
     Actor_SetSpriteFlags(Actor_Get(actorSlot), 0);
     fallingActor = Actor_Get(actorSlot);
-    fallingActor->bounce = Q16_ONE / 10;
+    fallingActor->bounce = FIXED_ONE / 10;
     fallingActor->gravity = 0;
     remaining--;
-    fallingActor->y.fixed = px(255);
+    fallingActor->y.fixed = toFIXED(255);
     actorSlot++;
   } while (remaining >= 0);
 
@@ -868,9 +870,9 @@ static void VaultCave_StartTimedFalls(void) {
 
     Actor_SetSpriteFlags(Actor_Get(actorSlot), 0);
     fallingActor = Actor_Get(actorSlot);
-    fallingActor->bounce = Q16_ONE / 10;
+    fallingActor->bounce = FIXED_ONE / 10;
     fallingActor->gravity = 0;
-    fallingActor->y.fixed = px(255);
+    fallingActor->y.fixed = toFIXED(255);
     Actor_SetSpritePriority(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP, 1);
     fallingIndex++;
     actorSlot++;
@@ -910,7 +912,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.next == SCENE_VAULT_CAVE_VAMBRACE) {
     if (GameFlag_Get(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY) == 0) {
-      Actor_Get(ACTOR_IVY)->scaleY = 3 * Q16_ONE / 2;
+      Actor_Get(ACTOR_IVY)->scaleY = 3 * FIXED_ONE / 2;
     }
     switch (gMainRoutineWork.entrance) {
     case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH:

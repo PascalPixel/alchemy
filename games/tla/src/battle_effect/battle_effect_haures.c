@@ -22,7 +22,7 @@ extern const u16 gHaures_BodyPiecePoints[][2];
 #define STAMP_CANVAS(work) ((u8 *)(work) + 0x6780)
 
 static __inline__ void PLACE(s32 x, s32 y) {
-  Transform_ApplyTranslation(px(x), px(y), 0);
+  Matrix_Translate(INTtoFIXED(x), INTtoFIXED(y), 0);
 }
 #define HAURES_FRAMES 92
 /// Haures's sprites: the demon's eleven pieces (SPRITE_HAURES), four violet
@@ -224,8 +224,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
 
       if (frame == 0) {
         work->transferValue = frame;
-        position.x = px(108);
-        position.y = px(120);
+        position.x = toFIXED(108);
+        position.y = toFIXED(120);
         velocity.x = 0;
         velocity.y = 0;
         Iwram_CopyWordsEntry((void *)&BG_PLTT_COLOR(6, 0), battle->palette,
@@ -243,8 +243,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           struct Particle *p = work->particles;
 
           for (i = 0; i != 4; i++, p++, particleX++) {
-            p->x = px(*particleX);
-            p->y = px(16);
+            p->x = INTtoFIXED(*particleX);
+            p->y = toFIXED(16);
             p->velocityX = 0;
             p->velocityY = 0;
             p->variant = 0;
@@ -263,19 +263,19 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         {
           struct Particle *p = &work->particles[63];
 
-          p->x = px(60);
-          p->y = px(112);
+          p->x = toFIXED(60);
+          p->y = toFIXED(112);
           p->variant = 0;
         }
         for (i = 0; i != HAURES_WING_POINTS; i++) {
           gHaures_WingCorners[i].upper.x =
-              Q_16_16_TO_INT(-(Trig_Cos(i * 992) << 6));
+              FIXEDtoINT(-(Trig_Cos(i * 992) << 6));
           gHaures_WingCorners[i].upper.y =
-              Q_16_16_TO_INT(-(Trig_Sin(i * 992) * 18));
+              FIXEDtoINT(-(Trig_Sin(i * 992) * 18));
           gHaures_WingCorners[i].lower.x = i * 4 - 64;
           gHaures_WingCorners[i].upper.z = 0;
           gHaures_WingCorners[i].lower.x =
-              Q_16_16_TO_INT(-(Trig_Cos(i * 992) << 6));
+              FIXEDtoINT(-(Trig_Cos(i * 992) << 6));
           gHaures_WingCorners[i].lower.y = (u32)(Trig_Sin(i * 992) * 9) >> 15;
           gHaures_WingCorners[i].lower.z = 0;
         }
@@ -325,7 +325,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                   Render_ApplyProjectedPlacementFar(
                       work->sprites[HAURES_DOTS + (i & 1)], wingPlace,
                       gHaures_UnitScale, 0);
-                  BattleEffectKernels_IntegrateVector2(p, 63, px(1) / 8);
+                  BattleEffectKernels_IntegrateVector2(p, 63, toFIXED(1) / 8);
                   if (Q_16_16_UPPER_HALF(p->y) > 119) {
                     p->variant = 1;
                   }
@@ -367,15 +367,15 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           model->texture = &texture;
           model->mesh = gBattleEffect_SquareMesh;
           model->vertices = verts;
-          Transform_Reset();
-          Transform_ApplyTranslation(0, px(36), 0);
-          Transform_ApplyPitch(4000);
-          Transform_ApplyYaw(-t << 8);
+          Matrix_Initialize();
+          Matrix_Translate(0, toFIXED(36), 0);
+          Matrix_RotateX(4000);
+          Matrix_RotateY(-t << 8);
           s = t << 10;
           if (s > 60000) {
             s = 60000;
           }
-          Transform_ApplyUniformScale(s);
+          Matrix_ScaleUniform(s);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
           texture.logWidth = 5;
@@ -386,13 +386,13 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           model->mesh = gBattleEffect_SmallSquareMeshReversed;
           model->vertices = verts;
           model->shade = sh;
-          Transform_Reset();
-          Transform_ApplyTranslation(0, px(36), 0);
+          Matrix_Initialize();
+          Matrix_Translate(0, toFIXED(36), 0);
           s = (t * 3 << 8) + 1024;
           if (s > 38768) {
             s = 38768;
           }
-          Transform_ApplyUniformScale(s);
+          Matrix_ScaleUniform(s);
           if (frame > 73) {
             s32 a;
             s32 b;
@@ -450,22 +450,22 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           position.x += velocity.x;
           position.y += velocity.y;
           if (frame <= 159) {
-            velocity.y += -px(1) / 4;
+            velocity.y += -toFIXED(1) / 4;
           } else if ((u32)(frame - 210) <= 13) {
-            velocity.x += -px(1) / 32;
-            velocity.y += -px(1) / 16;
+            velocity.x += -toFIXED(1) / 32;
+            velocity.y += -toFIXED(1) / 16;
           } else if ((u32)(frame - 236) <= 3) {
-            velocity.x += px(1) / 8;
-            velocity.y += -px(1) / 4;
+            velocity.x += toFIXED(1) / 8;
+            velocity.y += -toFIXED(1) / 4;
           }
           velocity.x = velocity.x * 60 / DAMPING_SCALE;
           velocity.y = velocity.y * 60 / DAMPING_SCALE;
-          req.x = px(1);
-          req.y = px(1);
+          req.x = toFIXED(1);
+          req.y = toFIXED(1);
           for (i = 0; i != 2; i++) {
             bodyPlace[0] = position.x;
-            bodyPlace[1] = px(272) - (position.y + i * px(32));
-            bodyPlace[2] = px(256);
+            bodyPlace[1] = toFIXED(272) - (position.y + i * toFIXED(32));
+            bodyPlace[2] = toFIXED(256);
             Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                               (s32 *)&req, 0);
           }
@@ -492,16 +492,16 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
           }
           req.x = frame * 1128 - 103664;
-          if (req.x > px(4)) {
-            req.x = px(4);
+          if (req.x > toFIXED(4)) {
+            req.x = toFIXED(4);
           }
           req.y = frame * 564 - 19064;
-          if (req.y > px(2)) {
-            req.y = px(2);
+          if (req.y > toFIXED(2)) {
+            req.y = toFIXED(2);
           }
           bodyPlace[0] = position.x;
-          bodyPlace[1] = px(120) - position.y;
-          bodyPlace[2] = px(128);
+          bodyPlace[1] = toFIXED(120) - position.y;
+          bodyPlace[2] = toFIXED(128);
           Render_ApplyProjectedPlacementFar(work->sprites[HAURES_STAMP],
                                             bodyPlace, (s32 *)&req, 0);
         }
@@ -549,13 +549,13 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         model->texture = &burstTexture;
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = verts;
-        Transform_Reset();
-        Transform_ApplyTranslation(0, -px(4), 0);
+        Matrix_Initialize();
+        Matrix_Translate(0, -toFIXED(4), 0);
         s = 0x1d8f0;
         if (frame > 268) {
           s = (frame << 12) - 0xef710;
         }
-        Transform_ApplyAxisScale(s >> 1, s, s >> 1);
+        Matrix_Scale(s >> 1, s, s >> 1);
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
         Render_DrawModelList(model);
         if ((u32)cut <= 5) {
@@ -574,9 +574,9 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             burstTexture.logHeight = 7;
             burstTexture.pixels = buffer;
             model->mesh = gHaures_BurstMesh;
-            Transform_Reset();
-            Transform_ApplyTranslation(0, -px(4), 0);
-            Transform_ApplyAxisScale(0x1b1e0, 0x29c40, Q16_ONE * 2);
+            Matrix_Initialize();
+            Matrix_Translate(0, -toFIXED(4), 0);
+            Matrix_Scale(0x1b1e0, 0x29c40, FIXED_ONE * 2);
             Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
             Render_DrawModelList(model);
           }
@@ -613,8 +613,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               s32 x = q[0] >> 1;
               s32 y = q[1];
 
-              p->x = px(x);
-              p->y = px(y);
+              p->x = INTtoFIXED(x);
+              p->y = INTtoFIXED(y);
               {
                 s32 velocityY = (60 - y) << 10;
 
@@ -635,8 +635,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         gBgScroll[1].x += 0xfff4;
         orbitScale = gHaures_OrbitScale;
         bodyPlace[3] = 0;
-        position.x = (Trig_Sin(frame << 9) << 3) + px(108);
-        position.y = px(56) - (Trig_Cos(frame << 9) << 3);
+        position.x = (Trig_Sin(frame << 9) << 3) + toFIXED(108);
+        position.y = toFIXED(56) - (Trig_Cos(frame << 9) << 3);
         if (frame > 396) {
           velocity.x -= (frame - 397) << 14;
           position.x += velocity.x;
@@ -649,10 +649,11 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
 #endif
         }
         for (i = 0; i != HAURES_BODY_PIECES; i++) {
-          bodyPlace[0] = px(gHaures_BodyPiecePoints[i][0]) + position.x;
+          bodyPlace[0] = INTtoFIXED(gHaures_BodyPiecePoints[i][0]) + position.x;
           bodyPlace[1] =
-              px(272) - (px(gHaures_BodyPiecePoints[i][1]) + position.y);
-          bodyPlace[2] = px(256);
+              toFIXED(272) -
+              (INTtoFIXED(gHaures_BodyPiecePoints[i][1]) + position.y);
+          bodyPlace[2] = toFIXED(256);
           Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                             (s32 *)&orbitScale, 0);
         }
@@ -708,34 +709,33 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             struct Particle *p = &work->particles[i];
             model->mesh = mesh + i * 12;
             if ((u32)(Q_16_16_UPPER_HALF(p->x) + 16) <= 152 &&
-                (Q_16_16_TO_INT(p->y)) >= -16 &&
-                (Q_16_16_TO_INT(p->y)) <= 136) {
-              Transform_Reset();
-              Transform_ApplyTranslation(p->x - px(64), p->y - px(64), 0);
-              Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+                (FIXEDtoINT(p->y)) >= -16 && (FIXEDtoINT(p->y)) <= 136) {
+              Matrix_Initialize();
+              Matrix_Translate(p->x - toFIXED(64), p->y - toFIXED(64), 0);
+              Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
               switch (i & 3) {
               case 0:
-                Transform_ApplyPitch(p->z);
-                Transform_ApplyRoll(p->z);
+                Matrix_RotateX(p->z);
+                Matrix_RotateZ(p->z);
                 break;
               case 1:
-                Transform_ApplyPitch(p->z);
-                Transform_ApplyRoll(-p->z);
+                Matrix_RotateX(p->z);
+                Matrix_RotateZ(-p->z);
                 break;
               case 2:
-                Transform_ApplyPitch(p->z);
-                Transform_ApplyYaw(p->z);
+                Matrix_RotateX(p->z);
+                Matrix_RotateY(p->z);
                 break;
               case 3:
-                Transform_ApplyRoll(p->z);
-                Transform_ApplyYaw(-p->z);
+                Matrix_RotateZ(p->z);
+                Matrix_RotateY(-p->z);
                 break;
               }
               Render_TransformVertices(cells + i * 16, verts, 4);
               Render_DrawModelList(model);
             }
             BattleEffectKernels_IntegrateVector3(p, 62, 0);
-            p->x += px(4);
+            p->x += toFIXED(4);
           }
         }
         Heap_Release(model);
@@ -801,10 +801,10 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     void *verts;
 
     if (frame == 0) {
-      position.x = px(270);
-      position.y = -px(22);
-      velocity.x = -px(12);
-      velocity.y = px(6);
+      position.x = toFIXED(270);
+      position.y = -toFIXED(22);
+      velocity.x = -toFIXED(12);
+      velocity.y = toFIXED(6);
       {
         s32 *variant = &SPARKS->variant;
 
@@ -814,15 +814,15 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       }
     }
     if (frame == 20) {
-      position.x = -px(10);
-      position.y = -px(22);
-      velocity.x = px(12);
-      velocity.y = px(6);
+      position.x = -toFIXED(10);
+      position.y = -toFIXED(22);
+      velocity.x = toFIXED(12);
+      velocity.y = toFIXED(6);
     }
     if (frame == 40) {
-      position.x = px(260);
-      position.y = px(64);
-      velocity.x = -px(8);
+      position.x = toFIXED(260);
+      position.y = toFIXED(64);
+      velocity.x = -toFIXED(8);
       velocity.y = 0;
     }
     {
@@ -834,7 +834,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           draw[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
                   Q_16_16_UPPER_HALF(p->x) - n / 2,
                   Q_16_16_UPPER_HALF(p->y) - n, n, n * 2);
-          BattleEffectKernels_IntegrateVector2(p, 63, -px(1) / 2);
+          BattleEffectKernels_IntegrateVector2(p, 63, -toFIXED(1) / 2);
           p->variant--;
         }
       }
@@ -849,8 +849,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         s32 angle;
         s32 speed;
 
-        p->x = px((Random16() & 63) - 16) + position.x / 2;
-        p->y = px(Random16() & 31) + position.y;
+        p->x = INTtoFIXED((Random16() & 63) - 16) + position.x / 2;
+        p->y = INTtoFIXED(Random16() & 31) + position.y;
         angle = Random16();
         speed = (Random16() & 127) + 128;
         p->velocityX = Trig_Sin(angle) * speed >> 7;
@@ -867,19 +867,21 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       if ((u32)t <= 19) {
         openingScale.x = -0x10001;
         for (i = 0; i != HAURES_BODY_PIECES; i++) {
-          bodyPlace[0] = position.x - px(gHaures_BodyPiecePoints[i][0]);
+          bodyPlace[0] = position.x - INTtoFIXED(gHaures_BodyPiecePoints[i][0]);
           bodyPlace[1] =
-              px(272) - (px(gHaures_BodyPiecePoints[i][1]) + position.y);
-          bodyPlace[2] = px(256);
+              toFIXED(272) -
+              (INTtoFIXED(gHaures_BodyPiecePoints[i][1]) + position.y);
+          bodyPlace[2] = toFIXED(256);
           Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                             (s32 *)&openingScale, 0);
         }
       } else {
         for (i = 0; i != HAURES_BODY_PIECES; i++) {
-          bodyPlace[0] = px(gHaures_BodyPiecePoints[i][0]) + position.x;
+          bodyPlace[0] = INTtoFIXED(gHaures_BodyPiecePoints[i][0]) + position.x;
           bodyPlace[1] =
-              px(272) - (px(gHaures_BodyPiecePoints[i][1]) + position.y);
-          bodyPlace[2] = px(256);
+              toFIXED(272) -
+              (INTtoFIXED(gHaures_BodyPiecePoints[i][1]) + position.y);
+          bodyPlace[2] = toFIXED(256);
           Render_ApplyProjectedPlacementFar(work->sprites[i], bodyPlace,
                                             (s32 *)&openingScale, 0);
         }
@@ -887,13 +889,13 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       position.x += velocity.x;
       position.y += velocity.y;
       if ((u32)frame <= 19) {
-        velocity.x += -px(1) / 2;
-        velocity.y += px(1) / 2;
+        velocity.x += -toFIXED(1) / 2;
+        velocity.y += toFIXED(1) / 2;
       } else if ((u32)t <= 19) {
-        velocity.x += px(1) / 2;
-        velocity.y += px(1) / 4;
+        velocity.x += toFIXED(1) / 2;
+        velocity.y += toFIXED(1) / 4;
       } else if ((u32)(frame - 40) <= 19) {
-        velocity.x += -px(1) / 2;
+        velocity.x += -toFIXED(1) / 2;
       }
     }
     if (frame == 10) {
@@ -902,8 +904,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     if (frame == 14) {
       Sound_PlayFar(SE_CLATTER);
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_StartActorMotion(args->targets[i], 1, px(4), px(8), px(4),
-                                      150);
+        BattleEffect_StartActorMotion(args->targets[i], 1, toFIXED(4),
+                                      toFIXED(8), toFIXED(4), 150);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
         work->shakeFrames = 8;
@@ -915,8 +917,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     if (frame == 34) {
       Sound_PlayFar(SE_CLATTER);
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_StartActorMotion(args->targets[i], 1, px(4), px(8), px(4),
-                                      50);
+        BattleEffect_StartActorMotion(args->targets[i], 1, toFIXED(4),
+                                      toFIXED(8), toFIXED(4), 50);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
         work->shakeFrames = 8;
@@ -925,8 +927,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     if (frame == 58) {
       Sound_PlayFar(SE_CRASH);
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_StartActorMotion(args->targets[i], 1, px(4), px(8), px(4),
-                                      200);
+        BattleEffect_StartActorMotion(args->targets[i], 1, toFIXED(4),
+                                      toFIXED(8), toFIXED(4), 200);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 16);
         work->shakeFrames = 8;
@@ -954,15 +956,15 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         for (m = 0; m != 3; m++) {
           s32 y = -4;
           x = m * 20 - 16;
-          Transform_Reset();
+          Matrix_Initialize();
           if (i == 0) {
-            Transform_ApplyTranslation(px(x), px(y), 0);
-            Transform_ApplyRoll(-TRIG_TURN / 8);
+            Matrix_Translate(INTtoFIXED(x), INTtoFIXED(y), 0);
+            Matrix_RotateZ(-DEGtoANG(45));
           } else {
-            Transform_ApplyTranslation(px(x - 16), px(y), 0);
-            Transform_ApplyRoll(0x27d0);
+            Matrix_Translate(INTtoFIXED(x - 16), INTtoFIXED(y), 0);
+            Matrix_RotateZ(0x27d0);
           }
-          Transform_ApplyAxisScale(Q16_ONE * 3, amp, Q16_ONE * 2);
+          Matrix_Scale(FIXED_ONE * 3, amp, FIXED_ONE * 2);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
@@ -986,9 +988,9 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       model->scrollU = (frame * 8) & 127;
       bandTexture.pixels = work->sheet;
       if (frame <= 71) {
-        v = Q_16_16_TO_INT(Trig_Sin((frame << 10) + -0xe000) * 80);
+        v = FIXEDtoINT(Trig_Sin((frame << 10) + -0xe000) * 80);
       } else if (frame > 79) {
-        v = Q_16_16_TO_INT(Trig_Sin((frame << 10) + -TRIG_TURN) * 80);
+        v = FIXEDtoINT(Trig_Sin((frame << 10) + -TRIG_TURN) * 80);
       } else {
         v = 80;
       }

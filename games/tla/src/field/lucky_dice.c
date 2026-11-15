@@ -17,7 +17,7 @@
 #include "system/io_reg.h"
 #include "system/ram_buffer.h"
 #include "system/iwram_call.h"
-#include "system/fixed_point_position.h"
+#include "system/point.h"
 #include "battle/battle_camera.h"
 #include "macros.h"
 #include "system/scene.h"
@@ -38,7 +38,7 @@
 #include "resource_ids.h"
 #include "system/task.h"
 #include "text/msg_ids.h"
-#include "system/transform.h"
+#include "system/matrix.h"
 
 // The Lucky Dice minigame's tables, after LuckyDice_Run in both games.
 
@@ -95,16 +95,16 @@ void Camera_ResetViewDefaults(void) {
   camera->followEye = 0;
 
   // The eye sits `distance` behind the target along the camera's view.
-  Transform_Reset();
-  Transform_ApplyPosition(&camera->focus[0]);
-  Transform_ApplyYaw((s16)camera->yaw);
-  Transform_ApplyPitch((s16)camera->pitch);
+  Matrix_Initialize();
+  Matrix_TranslateVector(&camera->focus[0]);
+  Matrix_RotateY((s16)camera->yaw);
+  Matrix_RotateX((s16)camera->pitch);
 
   SET_VECTOR(offset, 0, 0, camera->distance);
   Iwram_TransformVector(offset, camera->eye);
 
-  nearPlane = Iwram_RatioMulQ14(px(250), 192 << 8);
-  Projection_Set(px(250), nearPlane, 0x7fff0000);
+  nearPlane = Iwram_RatioMulQ14(toFIXED(250), 192 << 8);
+  Projection_Set(toFIXED(250), nearPlane, 0x7fff0000);
 }
 
 /// Unused: multiplies two 8.8 fixed-point values, rounding toward zero.
@@ -132,10 +132,10 @@ UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
 }
 
 /// Unused: the reciprocal of an 8.8 fixed-point value.
-UNUSED s16 FixedPoint_Reciprocal(s16 value) { return Q16_ONE / value; }
+UNUSED s16 FixedPoint_Reciprocal(s16 value) { return FIXED_ONE / value; }
 
 /// Copies count RGB555 colours from source to destination with each channel
-/// multiplied by scale (16.16: 0 is black, Q16_ONE unchanged), for fades.
+/// multiplied by scale (16.16: 0 is black, FIXED_ONE unchanged), for fades.
 s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
   s32 remaining;
@@ -480,12 +480,12 @@ void LuckyDice_Run(void) {
   do {
     luckyNumbers[1] = Random16() % DICE_FACE_COUNT;
   } while (luckyNumbers[0] == luckyNumbers[1]);
-  diceWork->particles[0].x = px(40);
-  diceWork->particles[0].y = px(96);
-  diceWork->particles[0].z = -px(160);
-  diceWork->particles[1].x = -px(40);
-  diceWork->particles[1].y = px(96);
-  diceWork->particles[1].z = -px(160);
+  diceWork->particles[0].x = toFIXED(40);
+  diceWork->particles[0].y = toFIXED(96);
+  diceWork->particles[0].z = -toFIXED(160);
+  diceWork->particles[1].x = -toFIXED(40);
+  diceWork->particles[1].y = toFIXED(96);
+  diceWork->particles[1].z = -toFIXED(160);
 
   WindowSystem_InitFieldFar();
   window =
@@ -508,12 +508,12 @@ void LuckyDice_Run(void) {
     resetDice = 0;
     if (frame <= DICE_FADE_FRAMES) {
       LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT,
-                                  frame * (Q16_ONE / DICE_FADE_FRAMES), 256);
+                                  frame * (FIXED_ONE / DICE_FADE_FRAMES), 256);
       LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT,
-                                  frame * (Q16_ONE / DICE_FADE_FRAMES), 256);
+                                  frame * (FIXED_ONE / DICE_FADE_FRAMES), 256);
     }
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
 
     spriteCount = 0;
     sprites->oam[spriteCount].attr01 = OBJ_SIZE_64X32 | OBJ_256_COLORS;
@@ -637,24 +637,24 @@ void LuckyDice_Run(void) {
       (void)gInput.repeat;
       (void)gInput.repeat;
       if (gInput.held & KEY_UP) {
-        diceWork->particles[0].y += px(4);
-        diceWork->particles[1].y += px(4);
+        diceWork->particles[0].y += toFIXED(4);
+        diceWork->particles[1].y += toFIXED(4);
       }
       if (gInput.held & KEY_DOWN) {
-        diceWork->particles[0].y += -px(4);
-        diceWork->particles[1].y += -px(4);
+        diceWork->particles[0].y += -toFIXED(4);
+        diceWork->particles[1].y += -toFIXED(4);
       }
-      if (diceWork->particles[0].y < px(32)) {
-        diceWork->particles[0].y = px(32);
+      if (diceWork->particles[0].y < toFIXED(32)) {
+        diceWork->particles[0].y = toFIXED(32);
       }
-      if (diceWork->particles[0].y > px(160)) {
-        diceWork->particles[0].y = px(160);
+      if (diceWork->particles[0].y > toFIXED(160)) {
+        diceWork->particles[0].y = toFIXED(160);
       }
-      if (diceWork->particles[1].y < px(32)) {
-        diceWork->particles[1].y = px(32);
+      if (diceWork->particles[1].y < toFIXED(32)) {
+        diceWork->particles[1].y = toFIXED(32);
       }
-      if (diceWork->particles[1].y > px(160)) {
-        diceWork->particles[1].y = px(160);
+      if (diceWork->particles[1].y > toFIXED(160)) {
+        diceWork->particles[1].y = toFIXED(160);
       }
       if (gMainRoutineWork.coins <
           (u32)(Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL)) {
@@ -680,8 +680,8 @@ void LuckyDice_Run(void) {
         for (index = 0; index != DICE_COUNT; index++) {
           rollingDie = &diceWork->particles[index];
           if (index > 1) {
-            rollingDie->z = -px(180);
-            rollingDie->y = px(96);
+            rollingDie->z = -toFIXED(180);
+            rollingDie->y = toFIXED(96);
           }
           rollingDie->velocityX = ((Random16() & 127) - 64) << 12;
           rollingDie->velocityY = ((Random16() & 15) + 48) << 13;
@@ -694,12 +694,12 @@ void LuckyDice_Run(void) {
     }
 
     if (resetDice == 1) {
-      diceWork->particles[0].x = px(40);
-      diceWork->particles[0].y = px(96);
-      diceWork->particles[0].z = -px(160);
-      diceWork->particles[1].x = -px(40);
-      diceWork->particles[1].y = px(96);
-      diceWork->particles[1].z = -px(160);
+      diceWork->particles[0].x = toFIXED(40);
+      diceWork->particles[0].y = toFIXED(96);
+      diceWork->particles[0].z = -toFIXED(160);
+      diceWork->particles[1].x = -toFIXED(40);
+      diceWork->particles[1].y = toFIXED(96);
+      diceWork->particles[1].z = -toFIXED(160);
       luckyNumbers[0] = Random16() % DICE_FACE_COUNT;
       do {
         luckyNumbers[1] = Random16() % DICE_FACE_COUNT;
@@ -784,7 +784,7 @@ void LuckyDice_Run(void) {
         depth = screen[2];
       }
       spriteDepth[2 + index] = depth - DICE_NEAREST_DEPTH;
-      spriteDepth[2 + index] += FIELD_PIXEL(diceWork->particles[index].y);
+      spriteDepth[2 + index] += FIXEDtoINT(diceWork->particles[index].y);
       shadowX = screen[0];
       shadowY = screen[1];
       if (shadowY + 88 > -16) {
@@ -809,9 +809,9 @@ void LuckyDice_Run(void) {
         for (otherIndex = 0; otherIndex != DICE_COUNT; otherIndex++) {
           otherDie = &diceWork->particles[otherIndex];
           if (index != otherIndex) {
-            separationX = FIELD_PIXEL(rollingDie->x - otherDie->x);
-            separationY = FIELD_PIXEL(rollingDie->y - otherDie->y);
-            separationZ = FIELD_PIXEL(rollingDie->z - otherDie->z);
+            separationX = FIXEDtoINT(rollingDie->x - otherDie->x);
+            separationY = FIXEDtoINT(rollingDie->y - otherDie->y);
+            separationZ = FIXEDtoINT(rollingDie->z - otherDie->z);
             if (separationX * separationX + separationY * separationY +
                     separationZ * separationZ <=
                 DICE_TOUCH_DISTANCE * DICE_TOUCH_DISTANCE - 1) {
@@ -824,11 +824,11 @@ void LuckyDice_Run(void) {
 #ifdef UBFIX
               if (separation != 0) {
                 rollingDie->velocityX +=
-                    separationX * (Q16_ONE / 2) / separation;
+                    separationX * (FIXED_ONE / 2) / separation;
                 rollingDie->velocityY +=
-                    separationY * (Q16_ONE / 2) / separation;
+                    separationY * (FIXED_ONE / 2) / separation;
                 rollingDie->velocityZ +=
-                    separationZ * (Q16_ONE / 2) / separation;
+                    separationZ * (FIXED_ONE / 2) / separation;
               }
 #else
               rollingDie->velocityX += (separationX << 15) / separation;
@@ -838,26 +838,26 @@ void LuckyDice_Run(void) {
             }
           }
         }
-        if (rollingDie->x < -px(200)) {
-          rollingDie->x = -px(200);
+        if (rollingDie->x < -toFIXED(200)) {
+          rollingDie->x = -toFIXED(200);
           rollingDie->velocityX = -rollingDie->velocityX * 48 / 64;
         }
-        if (rollingDie->x > px(200)) {
-          rollingDie->x = px(200);
+        if (rollingDie->x > toFIXED(200)) {
+          rollingDie->x = toFIXED(200);
           rollingDie->velocityX = -rollingDie->velocityX * 48 / 64;
         }
-        if (rollingDie->z < -px(150)) {
-          rollingDie->z = -px(150);
+        if (rollingDie->z < -toFIXED(150)) {
+          rollingDie->z = -toFIXED(150);
           rollingDie->velocityZ = -rollingDie->velocityZ * 48 / 64;
         }
-        if (rollingDie->z > rollingDie->y + px(180)) {
-          rollingDie->z = rollingDie->y + px(180);
+        if (rollingDie->z > rollingDie->y + toFIXED(180)) {
+          rollingDie->z = rollingDie->y + toFIXED(180);
           if (rollingDie->velocityZ > 0) {
             rollingDie->velocityY += rollingDie->velocityZ / 2;
             rollingDie->velocityZ = -rollingDie->velocityZ * 48 / 64;
           }
         }
-        rollingDie->velocityY += -(px(1) / 2);
+        rollingDie->velocityY += -(toFIXED(1) / 2);
         if (rollingDie->y <= 0) {
           rollingDie->y = 0;
           rollingDie->velocityY = -rollingDie->velocityY * 48 / 64;
@@ -880,7 +880,7 @@ void LuckyDice_Run(void) {
           if (spinRate[index] >= DICE_BOUNCE_SPIN_LOSS) {
             spinRate[index] -= DICE_BOUNCE_SPIN_LOSS;
           }
-          if (rollingDie->velocityY < px(3)) {
+          if (rollingDie->velocityY < toFIXED(3)) {
             rollingDie->velocityX = 0;
             rollingDie->velocityY = 0;
             rollingDie->velocityZ = 0;
@@ -910,7 +910,7 @@ void LuckyDice_Run(void) {
           for (otherIndex = 0; otherIndex != DICE_FACE_COUNT; otherIndex++) {
             s32 rowDepth;
 
-            rowDepth = px(gLuckyDice_FaceHeights[otherIndex]);
+            rowDepth = toFIXED(gLuckyDice_FaceHeights[otherIndex]);
             if (rollingDie->z > rowDepth) {
               numbers[index + 2] = otherIndex;
               break;
@@ -981,7 +981,7 @@ void LuckyDice_Run(void) {
 
     for (; spriteCount != OAM_SIZE / sizeof(struct OamWords); spriteCount++) {
       sprites->oam[spriteCount].attr01 =
-          px(DISPLAY_WIDTH) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+          toFIXED(DISPLAY_WIDTH) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
       sprites->oam[spriteCount].attr2 = 0;
     }
 
@@ -1003,7 +1003,7 @@ void LuckyDice_Run(void) {
   }
 
   for (index = 0; index != DICE_FADE_FRAMES + 1; index++) {
-    scale = Q16_ONE - index * (Q16_ONE / DICE_FADE_FRAMES);
+    scale = FIXED_ONE - index * (FIXED_ONE / DICE_FADE_FRAMES);
     LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, scale, 256);
     LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale, 256);
     wait(1);

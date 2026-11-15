@@ -350,8 +350,8 @@ nextSpark:
   VramCache_FreeEntry(entry);
   Heap_Release(table);
   FieldCamera_MoveTo(488, CAMERA_KEEP, 390, 1);
-  Actor_SetPositionAndFacing(ACTOR_MINER_AT_HIS_SPOT, px(248), px(480),
-                             FACING_EAST);
+  Actor_SetPositionAndFacing(ACTOR_MINER_AT_HIS_SPOT, toFIXED(248),
+                             toFIXED(480), FACING_EAST);
   Loho_DrawBrokenWall();
   MapGrid_SetShake(0, 0, 1);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -842,16 +842,16 @@ s32 Scene_Initialize(void) {
   }
   if (Event_GetFlag(0xa5f)) {
     Actor_SetPosition(ACTOR_CANNON, 0, 0);
-    Actor_SetPositionAndFacing(ACTOR_MINER_AT_HIS_SPOT, px(248), px(480),
-                               FACING_EAST);
+    Actor_SetPositionAndFacing(ACTOR_MINER_AT_HIS_SPOT, toFIXED(248),
+                               toFIXED(480), FACING_EAST);
     if (!Event_GetFlag(FLAG_SHIP_CARRIES_CANNON)) {
       Actor_SetPosition(ACTOR_MAN_KEEPING_THE_CANNON, 0, 0);
       Actor_SetPosition(ACTOR_MINER_BY_THE_CANNON, 0, 0);
       Actor_SetPosition(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0, 0);
     } else {
-      Loho_PlaceFacing(16, px(459), px(254), FACING_NORTHEAST);
-      Loho_PlaceFacing(18, px(442), px(203), FACING_WEST);
-      Loho_PlaceFacing(17, px(490), px(188), FACING_SOUTHEAST);
+      Loho_PlaceFacing(16, toFIXED(459), toFIXED(254), FACING_NORTHEAST);
+      Loho_PlaceFacing(18, toFIXED(442), toFIXED(203), FACING_WEST);
+      Loho_PlaceFacing(17, toFIXED(490), toFIXED(188), FACING_SOUTHEAST);
       Actor_GetById(ACTOR_MAN_KEEPING_THE_CANNON)->timer =
           Actor_GetById(ACTOR_MAN_KEEPING_THE_CANNON)->x.fixed >> 16;
       Actor_GetById(ACTOR_MAN_KEEPING_THE_CANNON)->userValue =

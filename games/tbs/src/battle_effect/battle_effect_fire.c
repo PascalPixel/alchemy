@@ -53,7 +53,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
     angle = Random16();
     speed = (Random16() & 127) + 127;
     SET_VELOCITY(ember, (Trig_Sin(angle) * speed) >> 6,
-                 (s32)px((Random16() & 127) - 16) >> 6,
+                 (s32)INTtoFIXED((Random16() & 127) - 16) >> 6,
                  (Trig_Cos(angle) * speed) >> 6);
     SET_POSITION(ember, user->x.fixed, bodyTop, user->z.fixed);
     ember->variant = -1;

@@ -305,7 +305,7 @@ UNUSED void Naribwe_SetRopeWork(void) {
 /// Reveal shows the stone that hides the Unicorn Ring.
 void Naribwe_RevealStone(void) {
   Actor_SetPosition(ACTOR_STONE, 0, 0);
-  TreasureSpot_SetPosition(65, px(104), px(104));
+  TreasureSpot_SetPosition(65, toFIXED(104), toFIXED(104));
 }
 
 void Naribwe_HideStone(void) {
@@ -318,9 +318,9 @@ s32 Scene_Initialize(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_WEST_BRAZIER), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_EAST_BRAZIER), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_IVY), 0);
-  Actor_GetById(ACTOR_IVY)->scaleY = Q16_ONE * 8 / 5;
-  Actor_GetById(ACTOR_STONE)->scaleX = Q16_ONE / 2;
-  Actor_GetById(ACTOR_STONE)->scaleY = Q16_ONE / 2;
+  Actor_GetById(ACTOR_IVY)->scaleY = FIXED_ONE * 8 / 5;
+  Actor_GetById(ACTOR_STONE)->scaleX = FIXED_ONE / 2;
+  Actor_GetById(ACTOR_STONE)->scaleY = FIXED_ONE / 2;
   Naribwe_HideStone();
   if (Event_GetFlag(FLAG_SCENE_TEMP_01))
     Actor_SetPosition(ACTOR_IVY, 0, 0);
@@ -362,14 +362,14 @@ void Naribwe_HideStone(void);
       ACTOR_PLACEMENT(SPRITE_SMALL_FLAME, CONDITION_ALWAYS,                    \
                       MOVEMENT_TYPE_STAND, 232, 0, 246, FACING_SOUTH,          \
                       TALK_FACING_PARTY, 0),                                   \
-      {SPRITE_BRAZIER, CONDITION_ALWAYS, gNaribwe_BrazierBurns, px(316), 0,    \
-       px(132), FACING_SOUTH, 0, 0},                                           \
-      {SPRITE_BRAZIER, CONDITION_ALWAYS, gNaribwe_BrazierBurns, px(372), 0,    \
-       px(132), FACING_SOUTH, 0, 0},                                           \
-      {410, CONDITION_ALWAYS, gNaribwe_FlameRises, px(316), 0, px(132),        \
-       FACING_SOUTH, 0, 0},                                                    \
-      {410, CONDITION_ALWAYS, gNaribwe_FlameRises, px(372), 0, px(132),        \
-       FACING_SOUTH, 0, 0},                                                    \
+      {SPRITE_BRAZIER, CONDITION_ALWAYS, gNaribwe_BrazierBurns, toFIXED(316),  \
+       0, toFIXED(132), FACING_SOUTH, 0, 0},                                   \
+      {SPRITE_BRAZIER, CONDITION_ALWAYS, gNaribwe_BrazierBurns, toFIXED(372),  \
+       0, toFIXED(132), FACING_SOUTH, 0, 0},                                   \
+      {410, CONDITION_ALWAYS, gNaribwe_FlameRises, toFIXED(316), 0,            \
+       toFIXED(132), FACING_SOUTH, 0, 0},                                      \
+      {410, CONDITION_ALWAYS, gNaribwe_FlameRises, toFIXED(372), 0,            \
+       toFIXED(132), FACING_SOUTH, 0, 0},                                      \
       ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,                \
                       MOVEMENT_TYPE_STAND, 248, 0, 344, FACING_SOUTH,          \
                       TALK_FACING_PARTY_AND_BACK, 0),                          \
@@ -393,8 +393,8 @@ void Naribwe_HideStone(void);
       ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_TEAL_HEADBAND, CONDITION_ALWAYS,       \
                       MOVEMENT_TYPE_STAND, 168, 0, 360, FACING_EAST,           \
                       TALK_FACING_PARTY_AND_BACK, 0),                          \
-      {SPRITE_IVY, CONDITION_ALWAYS, gNaribwe_IvyAnimation, px(40), 0,         \
-       px(168), FACING_SOUTH, 2, 0},                                           \
+      {SPRITE_IVY, CONDITION_ALWAYS, gNaribwe_IvyAnimation, toFIXED(40), 0,    \
+       toFIXED(168), FACING_SOUTH, 2, 0},                                      \
       ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS,                 \
                       MOVEMENT_TYPE_STAND, 360, 0, 376, FACING_SOUTH,          \
                       TALK_FACING_KEEP, 0),                                    \
@@ -424,7 +424,7 @@ s32 gNaribwe_BrazierBurns[] = {
 s32 gNaribwe_FlameRises[] = {
     SC_ANIMATION(0),
     SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Y, px(24)),
+    SC_ADD(SW_Y, toFIXED(24)),
     SC_END,
 };
 

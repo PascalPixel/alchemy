@@ -42,7 +42,7 @@ struct StatusScreenWork {
   struct Sprite *memberSprites[8];
   s16 memberX[8];     ///< screen pixels
   s16 memberY[8];     ///< screen pixels
-  s32 memberScale[8]; ///< 16.16 fixed point, Q16_ONE full size
+  s32 memberScale[8]; ///< 16.16 fixed point, FIXED_ONE full size
   u16 selectedSlots[2];
   u16 selectedActions[2];
   struct WindowSprite *statusCursor;

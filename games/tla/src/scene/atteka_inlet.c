@@ -176,8 +176,8 @@ void AttekaInlet_AskPiersToSetSail(void) {
     Actor_SetAnimationById(ACTOR_KRADEN, 2);
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (object != NULL)
-      Actor_SetDestinationById(ACTOR_KRADEN, object->x.part[0].pixel,
-                               object->z.part[0].pixel);
+      Actor_SetDestinationById(ACTOR_KRADEN, object->x.part[0].integer,
+                               object->z.part[0].integer);
     Actor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     GameFlag_Set(FLAG_SCENE_TEMP_01);
@@ -196,7 +196,8 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
     {
       s32 angle = 208;
 
-      Actor_SetPositionAndFacing(ACTOR_SHIPWRIGHT, px(60), px(362), angle << 8);
+      Actor_SetPositionAndFacing(ACTOR_SHIPWRIGHT, toFIXED(60), toFIXED(362),
+                                 angle << 8);
     }
     wait(1);
     Actor_SetSpeed(ACTOR_SHIPWRIGHT, 2);
@@ -207,8 +208,8 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
     {
       s32 angle = 160;
 
-      Actor_SetPositionAndFacing(ACTOR_SECOND_SHIPWRIGHT, px(94), px(272),
-                                 angle << 7);
+      Actor_SetPositionAndFacing(ACTOR_SECOND_SHIPWRIGHT, toFIXED(94),
+                                 toFIXED(272), angle << 7);
     }
     wait(1);
     Actor_SetSpeed(ACTOR_SECOND_SHIPWRIGHT, 2);
@@ -216,7 +217,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
     Actor_MoveToAndWait(ACTOR_SECOND_SHIPWRIGHT, 90, 288);
     Actor_WalkToAndWaitById(ACTOR_SECOND_SHIPWRIGHT, 80, 316);
     Actor_FaceDirectionAndRefreshById(ACTOR_SECOND_SHIPWRIGHT, FACING_EAST);
-    Actor_GetById(ACTOR_SHIPWRIGHT)->velocityY = px(4);
+    Actor_GetById(ACTOR_SHIPWRIGHT)->velocityY = toFIXED(4);
     Event_Wait(10);
     Event_SetMessageId((s32)MsgWhereDoYouThink);
     // "Where do you think you're going?"
@@ -364,8 +365,8 @@ void AttekaInlet_PiersAsksToSetSail(void) {
     Actor_SetAnimationById(ACTOR_KRADEN, 2);
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (object != NULL)
-      Actor_SetDestinationById(ACTOR_KRADEN, object->x.part[0].pixel,
-                               object->z.part[0].pixel);
+      Actor_SetDestinationById(ACTOR_KRADEN, object->x.part[0].integer,
+                               object->z.part[0].integer);
     Actor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
@@ -450,8 +451,8 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   angle = FACING_NORTH_NORTHEAST;
-  Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_HAMMETS_MESSENGER,
-                                                 px(504), px(460), angle);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(
+      ACTOR_HAMMETS_MESSENGER, toFIXED(504), toFIXED(460), angle);
   wait(1);
   Event_SetMessageId((s32)MsgHeyWait2);
   // "Hey, wait!"
@@ -630,7 +631,8 @@ void AttekaInlet_SetUpTheHarbour(void) {
     if (GameFlag_Get(FLAG_HAMMA_SHOWED_THE_WINGS)) {
       s32 speed = 0xc0;
 
-      Actor_SetPositionAndFacing(ACTOR_HAMA, px(504), px(360), speed << 6);
+      Actor_SetPositionAndFacing(ACTOR_HAMA, toFIXED(504), toFIXED(360),
+                                 speed << 6);
     }
     Actor_WatchAndSetScript(ACTOR_SCHOLAR_A, party->leaderActorId);
     Actor_WatchAndSetScript(ACTOR_SCHOLAR_B, party->leaderActorId);
@@ -647,9 +649,10 @@ void AttekaInlet_SetUpTheShore(void) {
     Actor_SetPosition(ACTOR_SECOND_SHIPWRIGHT, 0, 0);
     Actor_SetPosition(ACTOR_SHORE_SCHOLAR, 0, 0);
   } else if (GameFlag_Get(FLAG_SHIPWRIGHTS_STOPPED_PARTY)) {
-    Actor_SetPositionAndFacing(ACTOR_SHIPWRIGHT, px(70), px(308), FACING_EAST);
-    Actor_SetPositionAndFacing(ACTOR_SECOND_SHIPWRIGHT, px(80), px(316),
+    Actor_SetPositionAndFacing(ACTOR_SHIPWRIGHT, toFIXED(70), toFIXED(308),
                                FACING_EAST);
+    Actor_SetPositionAndFacing(ACTOR_SECOND_SHIPWRIGHT, toFIXED(80),
+                               toFIXED(316), FACING_EAST);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 3, 19);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 19);
     Map_CopyCellAttributeRect(1, 16, 1, 1, 4, 20);

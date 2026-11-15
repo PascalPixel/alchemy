@@ -30,7 +30,8 @@ void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 ///
 /// Abilities: Neptune.
 void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
-  static struct SpriteScale unitScale = {{{Q16_ONE * 3 / 2, Q16_ONE * 3 / 2}}};
+  static struct SpriteScale unitScale = {
+      {{FIXED_ONE * 3 / 2, FIXED_ONE * 3 / 2}}};
   struct SpritePlacement pos;
   struct ScreenPoint targetPosition;
   void *canvas;
@@ -92,10 +93,10 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
                              work->sheet + NEPTUNE_FLARE_SHEET, 0, 0);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   windowEdgeStep = 1;
-  neptuneX = px(280);
-  neptuneZ = px(200);
-  neptuneVelocityX = -px(4);
-  neptuneVelocityZ = -px(8);
+  neptuneX = toFIXED(280);
+  neptuneZ = toFIXED(200);
+  neptuneVelocityX = -toFIXED(4);
+  neptuneVelocityZ = -toFIXED(8);
   savedBg1ScrollX = gBgScroll[1].x;
   view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -113,7 +114,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     PARTICLES[i].variant = -1;
   }
   for (i = 0; i != 32; i++) {
-    s32 a = (Random16() & 0x3fff) + TRIG_TURN / 2;
+    s32 a = (Random16() & 0x3fff) + DEGtoANG(180);
     s32 r = (Random16() & 127) + 255;
 
     flareSeed = &work->particles[i];
@@ -127,8 +128,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   for (i = 0; i != 712; i++) {
     s32 r = Random16() & 255;
     s32 a = Random16() & TRIG_ANGLE_MASK;
-    PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + px(128);
-    PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + px(96);
+    PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + toFIXED(128);
+    PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + toFIXED(96);
     PARTICLES[i].velocityX = (-(Random16() & 0x1fff) - 0x800) << 5;
     PARTICLES[i].velocityY = (-(Random16() & 0xfff) - 0x1800) << 5;
     PARTICLES[i].variant = 0;
@@ -178,24 +179,24 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           neptuneVelocityX = neptuneVelocityX * 60 / DAMPING_SCALE;
         }
         neptuneVelocityZ = neptuneVelocityZ * 60 / DAMPING_SCALE;
-        if (neptuneZ > px(132)) {
-          neptuneVelocityZ -= px(1) / 8;
+        if (neptuneZ > toFIXED(132)) {
+          neptuneVelocityZ -= toFIXED(1) / 8;
         } else {
-          neptuneVelocityZ += px(1) / 8;
+          neptuneVelocityZ += toFIXED(1) / 8;
         }
         neptuneX += neptuneVelocityX;
         neptuneZ += neptuneVelocityZ;
       } else if (frame <= 170) {
         if (frame <= 107) {
-          neptuneVelocityX += px(1) / 8;
+          neptuneVelocityX += toFIXED(1) / 8;
         }
         neptuneVelocityX = neptuneVelocityX * 60 / DAMPING_SCALE;
         neptuneX += neptuneVelocityX;
         if (frame <= 117) {
-          if (neptuneZ > px(138)) {
-            neptuneVelocityZ -= px(1) / 8;
+          if (neptuneZ > toFIXED(138)) {
+            neptuneVelocityZ -= toFIXED(1) / 8;
           } else {
-            neptuneVelocityZ += px(1) / 8;
+            neptuneVelocityZ += toFIXED(1) / 8;
           }
           neptuneVelocityZ = neptuneVelocityZ * 56 / DAMPING_SCALE;
           neptuneZ += neptuneVelocityZ;
@@ -204,8 +205,10 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       pos.groundHeight = 0;
       pos.height = 0;
       for (i = 0; i != 8; i++) {
-        pos.x = px((gNeptune_ObjectX[i] * 3) >> 1) + neptuneX - px(32);
-        pos.y = px((gNeptune_ObjectY[i] * 3) >> 1) + neptuneZ - px(24);
+        pos.x =
+            INTtoFIXED((gNeptune_ObjectX[i] * 3) >> 1) + neptuneX - toFIXED(32);
+        pos.y =
+            INTtoFIXED((gNeptune_ObjectY[i] * 3) >> 1) + neptuneZ - toFIXED(24);
         Actor_ApplyProjectedPlacementFar(work->sprites[i], &pos, &scale, 0);
       }
     }
@@ -216,8 +219,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         if (PARTICLES[i].variant == -1) {
           s32 r = Random16() & 255;
           s32 a = Random16() & TRIG_ANGLE_MASK;
-          PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + px(64);
-          PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + px(96);
+          PARTICLES[i].x = ((Trig_Sin(a) * r) >> 3) + toFIXED(64);
+          PARTICLES[i].y = ((Trig_Cos(a) * r) >> 4) + toFIXED(96);
           PARTICLES[i].velocityX = (32 - (Random16() & 63)) << 12;
           PARTICLES[i].velocityY = (-(Random16() & 31) - 16) << 13;
           PARTICLES[i].variant = 0;
@@ -237,8 +240,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         flare = &work->particles[i];
         if (frame >= i / 4 + NEPTUNE_FLARES_FRAME &&
             frame < i / 4 + NEPTUNE_FLARES_FRAME + 32) {
-          s32 fx = WHOLE_PIXELS(flare->x) + 112;
-          s32 fy = WHOLE_PIXELS(flare->y) + 62;
+          s32 fx = FIXEDtoINT(flare->x) + 112;
+          s32 fy = FIXEDtoINT(flare->y) + 62;
           s32 r = (i & 3) + 5;
           s = r * 2;
           blit[0](canvas,
@@ -393,13 +396,12 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         if (PARTICLES[i].variant >= 0) {
           s32 k = i % 3 + 2;
           EFFECT_DRAW_MOTE(draw, canvas, particleSheet,
-                           WHOLE_PIXELS(PARTICLES[i].x),
-                           WHOLE_PIXELS(PARTICLES[i].y), k);
+                           FIXEDtoINT(PARTICLES[i].x),
+                           FIXEDtoINT(PARTICLES[i].y), k);
           Particle_AdvanceWithGravity2D(&PARTICLES[i], 62,
                                         gNeptune_Gravity[i & 3]);
           PARTICLES[i].variant++;
-          if (PARTICLES[i].velocityY > 0 &&
-              WHOLE_PIXELS(PARTICLES[i].y) > 104) {
+          if (PARTICLES[i].velocityY > 0 && FIXEDtoINT(PARTICLES[i].y) > 104) {
             PARTICLES[i].variant = -1;
           }
         }
@@ -475,9 +477,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
               s32 r = (Random16() & 0x3ff) + 32;
               s32 a;
 
-              a = (Random16() & 0x7fff) - TRIG_TURN / 4;
-              PARTICLES[j].x = px(dropOriginX);
-              PARTICLES[j].y = px(ground);
+              a = (Random16() & 0x7fff) - DEGtoANG(90);
+              PARTICLES[j].x = INTtoFIXED(dropOriginX);
+              PARTICLES[j].y = INTtoFIXED(ground);
               PARTICLES[j].velocityX = (Trig_Sin(a) * r) >> 7;
               PARTICLES[j].velocityY = -(Trig_Cos(a) * r * 2) >> 7;
               PARTICLES[j].variant = (Random16() & 7) + 32;
@@ -502,12 +504,12 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         s32 y;
         // Drops fall and bounce.
         PARTICLES[i].variant--;
-        Particle_AdvanceWithGravity2D(&PARTICLES[i], 60, px(1) / 4);
-        y = WHOLE_PIXELS(PARTICLES[i].y);
+        Particle_AdvanceWithGravity2D(&PARTICLES[i], 60, toFIXED(1) / 4);
+        y = FIXEDtoINT(PARTICLES[i].y);
         if (y > 120) {
           PARTICLES[i].velocityY = -PARTICLES[i].velocityY / 2;
         } else if (PARTICLES[i].x >= 0 &&
-                   (x = WHOLE_PIXELS(PARTICLES[i].x)) <= 126 &&
+                   (x = FIXEDtoINT(PARTICLES[i].x)) <= 126 &&
                    PARTICLES[i].y >= 0) {
           s32 k = PARTICLES[i].variant / 8 + 3;
           EFFECT_DRAW_MOTE(blit[i & 1], canvas, particleSheet, x, y, k);

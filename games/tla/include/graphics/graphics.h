@@ -29,7 +29,7 @@ extern u8 gScreenFadeStartLevel;
 // handler runs, so it is no device.
 extern volatile u8 gScreenFadeTargetLevel; ///< the brightness the fade ends at
 extern u8 gRomShiftedTilePair[];
-/// Transform_BuildLookAt's ARM dot product, seven words it copies onto its
+/// Matrix_BuildLookAt's ARM dot product, seven words it copies onto its
 /// stack to run.
 extern const u32 RelocatedQ16DotProduct[];
 extern u8 Decompress_MoveToFrontLzCommandsCodeSize[];
@@ -67,7 +67,7 @@ void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
 s32 PartyStatus_HighlightMembers(u16 *ids);
 #endif
 void FileList_UpdatePulse(void);
-void Transform_Reset(void);
+void Matrix_Initialize(void);
 s32 Text_ClearCanvas(void);
 s32 BattleUnit_ListIdsFar(s32 side, s32 group);
 /// Reloads the portrait picture for the key into a portrait slot with that

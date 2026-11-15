@@ -200,7 +200,7 @@ s32 MarsLighthouseRoomM_ShowFlame(s32 id, s32 value) {
   struct Actor *object = Actor_Get(id);
 
   object->motionFlags = 0;
-  object->y.fixed = px(14);
+  object->y.fixed = toFIXED(14);
   Actor_SetSpriteFlags(object, 0);
   Actor_SelectAnimation(object, value);
 #ifdef UBFIX
@@ -707,8 +707,8 @@ s32 Scene_Initialize(void) {
         FieldEvent_Wait(40);
         actor = Actor_Get(ACTOR_STATUE_MOUTH);
         actor->motionFlags = unset;
-        actor->y.fixed = px(16);
-        actor->groundHeight = px(16);
+        actor->y.fixed = toFIXED(16);
+        actor->groundHeight = toFIXED(16);
         ((u8 *)actor)[98] = ACTOR_FIREBALL;
         actor->userValue = 0x4000;
         actor->watchedActor = (struct Actor *)unset;
@@ -791,7 +791,7 @@ s32 Scene_PrepareMap(void) {
     }
     object = Actor_Get(ACTOR_LEDGE_BLAZE_TARGET);
     object->motionFlags = 0;
-    object->z.fixed = px(104);
+    object->z.fixed = toFIXED(104);
     FieldTask_AddFrame(MarsLighthouseRoomM_CycleLedgeFlame, TASK_PASS_VBLANK);
   } else if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS) {
     if (entrance == 1 || entrance == 2 || entrance == 8 || entrance == 10 ||
@@ -920,7 +920,7 @@ void MarsLighthouseRoomM_ReadWindInscription(void) {
 void MarsLighthouseRoomM_SpawnRubble(s32 x, s32 z, s32 kind) {
   struct Actor *object;
 
-  object = FieldActor_Create(403, px(x), 0, px(z));
+  object = FieldActor_Create(403, toFIXED(x), 0, toFIXED(z));
   if (object != 0) {
     Actor_SetSpriteFlags(object, 0);
     Actor_SelectAnimation(object, 3);
@@ -930,7 +930,7 @@ void MarsLighthouseRoomM_SpawnRubble(s32 x, s32 z, s32 kind) {
     } else {
       ((struct MarsLighthouseRoomMAnimation *)object->sprite)->layer = 1;
       object->velocityX = ((Random_Below(8)) - 4) << 16;
-      object->velocityY = px(4);
+      object->velocityY = toFIXED(4);
       Actor_StartScript(object, gMarsLighthouseRoomM_RubbleFallScript);
     }
   }
@@ -1263,11 +1263,11 @@ s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
   s32 height;
 
   if ((a->x.fixed - b->x.fixed >= 0 ? a->x.fixed - b->x.fixed
-                                    : b->x.fixed - a->x.fixed) < px(12)) {
+                                    : b->x.fixed - a->x.fixed) < toFIXED(12)) {
     height = a->y.fixed - b->y.fixed;
-    if (height > 0 && height < px(16)) {
+    if (height > 0 && height < toFIXED(16)) {
       if ((a->z.fixed - b->z.fixed >= 0 ? a->z.fixed - b->z.fixed
-                                        : b->z.fixed - a->z.fixed) < px(8))
+                                        : b->z.fixed - a->z.fixed) < toFIXED(8))
         return 1;
     }
   }
@@ -1305,8 +1305,8 @@ void Ride_UpdateDrift(struct Actor *object) {
 
 void Ride_SpawnSpark(struct MarsLighthouseRoomMVector *position, s32 value,
                      s32 mode) {
-  struct Actor *object = FieldActor_Create(SPRITE_DUST_CLOUD, position->x,
-                                           position->y, position->z - px(2));
+  struct Actor *object = FieldActor_Create(
+      SPRITE_DUST_CLOUD, position->x, position->y, position->z - toFIXED(2));
   s32 spin;
 
   if (object != 0) {
@@ -1576,9 +1576,9 @@ s32 Fireball_CarryLeader(void) {
       leader->z.fixed += ride->car->stepZ;
     } else {
       if (ride->car->stepX != 0)
-        leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
+        leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
       if (ride->car->stepZ != 0)
-        leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
+        leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
     }
     ride->active = 0;
     System_Wait(1);
@@ -1661,7 +1661,7 @@ void MarsLighthouseRoomM_ScatterCrumbs(struct Actor *actor) {
     d = Random16();
     e = Random16();
     z = actor->z.fixed + d * 16 - e * 16;
-    y = c * 8 + actor->y.fixed + Q16_ONE * 4;
+    y = c * 8 + actor->y.fixed + FIXED_ONE * 4;
     object = (struct Actor *)Import_ActorCreate(489, x, y, z);
     if (object != NULL) {
       s32 angle, radius;
@@ -1675,20 +1675,20 @@ void MarsLighthouseRoomM_ScatterCrumbs(struct Actor *actor) {
       radius = Random16();
       sum = Random16();
       sum += Random16();
-      scale = (sum >> 2) + Q16_ONE / 2;
+      scale = (sum >> 2) + FIXED_ONE / 2;
       Actor_StartScript(object, gMarsLighthouseRoomM_CrumbScript);
       Actor_SetSpriteFlags(object, 0);
-      object->velocityY = angle * 4 + Q16_ONE * 2;
+      object->velocityY = angle * 4 + FIXED_ONE * 2;
       radius <<= 3;
-      object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));
-      velocity = Iwram_MulQ16(radius, Trig_Sin(angle));
-      object->gravity = px(33) / 100;
+      object->velocityZ = Iwram_MulFX(radius, Trig_Cos(angle));
+      velocity = Iwram_MulFX(radius, Trig_Sin(angle));
+      object->gravity = toFIXED(33) / 100;
       object->scaleX = scale;
       object->scaleY = scale;
       sprite = object->sprite;
       object->velocityX = velocity;
       object->acceleration = 0;
-      object->bounce = Q16_ONE / 2;
+      object->bounce = FIXED_ONE / 2;
       source = work->flame->sprite;
       VramCache_FreeEntry(sprite->vramBlock);
       sprite->unk11_0 = 1;
@@ -1771,7 +1771,7 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       actor->targetZ = TARGET_UNSET;
       actor->targetY = TARGET_UNSET;
       actor->targetX = TARGET_UNSET;
-      actor->acceleration = px(1) / 4;
+      actor->acceleration = toFIXED(1) / 4;
       actor->timer = 1;
       Event_PlaySound(SE_CRASH);
       MapGrid_SetShake(5, 5, 1);
@@ -1818,18 +1818,18 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       }
     }
 
-    if (actor->scaleX < Q16_ONE) {
-      actor->scaleX += Q16_ONE / 16;
-      actor->scaleY += Q16_ONE / 16;
+    if (actor->scaleX < FIXED_ONE) {
+      actor->scaleX += FIXED_ONE / 16;
+      actor->scaleY += FIXED_ONE / 16;
     }
-    FieldActor_SetMoveTargetFixed(actor, position.x, position.y, position.z);
+    FieldActor_SetMoveTargetFX(actor, position.x, position.y, position.z);
 
     fieldWork = Ram_HeapSlots->fieldWork;
     other = (struct RideHitView *)RIDE_WORK;
     target = Actor_Get(gMainRoutineWork.leaderActorId);
-    if (ABS(actor->x.fixed - target->x.fixed) < px(20) &&
+    if (ABS(actor->x.fixed - target->x.fixed) < toFIXED(20) &&
         (u32)(actor->y.fixed - target->y.fixed + 0x7ffff) <= 0x1ffffe &&
-        ABS(actor->z.fixed - target->z.fixed) < px(20)) {
+        ABS(actor->z.fixed - target->z.fixed) < toFIXED(20)) {
       other->active = 2;
       other->car = actor;
       fieldWork->stepTrigger = other->hitTrigger + 2;
@@ -1837,8 +1837,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
   } else if (state == 1) {
     actor->paused = 0;
     if (actor->scaleX > 0) {
-      actor->scaleX -= Q16_ONE / 16;
-      actor->scaleY -= Q16_ONE / 16;
+      actor->scaleX -= FIXED_ONE / 16;
+      actor->scaleY -= FIXED_ONE / 16;
       MarsLighthouseRoomM_ScatterCrumbs(actor);
     } else {
       actor->z.fixed = 0;
@@ -2057,8 +2057,8 @@ s32 gMarsLighthouseRoomM_RubbleBounceScript[] = {
     SC_WAIT(1),
     SC_LOOP(8, SC_TOP),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, -Q16_ONE * 3 / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE * 3 / 16),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE * 3 / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE * 3 / 16),
     SC_ADD(SW_Y, 0x1800),
     SC_WAIT(1),
     SC_LOOP(12, SC_TO(1)),

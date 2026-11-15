@@ -73,8 +73,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 
       speed = (Random16() & 0x1ff) + 32;
       angle = Random16() & TRIG_ANGLE_MASK;
-      spark->x = px(gRagnarok_StrikeColumns[work->args->side][col]);
-      spark->y = px(88);
+      spark->x = INTtoFIXED(gRagnarok_StrikeColumns[work->args->side][col]);
+      spark->y = toFIXED(88);
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 6;
       spark->variant = (Random16() & 7) + 32;
@@ -160,8 +160,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
           s32 life;
           s32 y;
 
-          y = WHOLE_PIXELS(flash->y);
-          x = WHOLE_PIXELS(flash->x) +
+          y = FIXEDtoINT(flash->y);
+          x = FIXEDtoINT(flash->x) +
               gRagnarok_StrikeColumns[work->args->side][col];
           life = flash->variant;
           if (life >= 0 && life <= 17) {
@@ -189,18 +189,18 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
             s32 size;
 
             Particle_AdvanceWithGravity2D(spark, PARTICLE_DAMPING_NONE,
-                                          px(1) / 16);
+                                          toFIXED(1) / 16);
             spark->variant--;
             y = spark->y;
-            if (y > px(108)) {
+            if (y > toFIXED(108)) {
               spark->velocityY = -spark->velocityY / 2;
             } else {
               x = spark->x;
-              if ((x >= 0 && x < px(127)) && y >= 0) {
+              if ((x >= 0 && x < toFIXED(127)) && y >= 0) {
                 u8 *picture;
                 s32 lane;
-                s32 drawY = WHOLE_PIXELS(y);
-                s32 drawX = WHOLE_PIXELS(x);
+                s32 drawY = FIXEDtoINT(y);
+                s32 drawX = FIXEDtoINT(x);
 
                 size = spark->variant / 5 + 1;
                 lane = i & 1;

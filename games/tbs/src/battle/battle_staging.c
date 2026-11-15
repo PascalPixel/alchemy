@@ -37,12 +37,12 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   view->frames = 60;
   battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   view->flag = 0;
-  battle->brightness = Q16_ONE;
+  battle->brightness = FIXED_ONE;
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  Transform_Reset();
-  Transform_SetLookAt(camera->eye, camera->focus);
+  Matrix_Initialize();
+  Matrix_SetLookAt(camera->eye, camera->focus);
   Projection_Set(BATTLE_CAMERA_DISTANCE,
-                 Iwram_RatioMulQ14(BATTLE_CAMERA_DISTANCE, Q16_ONE * 3 / 4),
+                 Iwram_RatioMulQ14(BATTLE_CAMERA_DISTANCE, FIXED_ONE * 3 / 4),
                  0x7fff0000);
   if (delay != 0) {
     view->targetYaw = YAW_PARTY_ACTION;
@@ -417,8 +417,8 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
   actor = BattleObject_Get(plan->unitId)->actor;
   z = actor->z.fixed;
   x = actor->x.fixed;
-  angle = (u16)ArcTan2(x, z);
-  adjusted = angle - TRIG_TURN / 8;
+  angle = (u16)Trig_Atan(x, z);
+  adjusted = angle - DEGtoANG(45);
   if (plan->unitId > ALLY_MAX)
     adjusted = angle + TRIG_TURN * 3 / 8;
   adjusted &= 0x7fff;
@@ -449,7 +449,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
   frames = SpriteAnimation_SumCommandLengthsFar(
       animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(work.effect.user, work.effect.targets[0], frames,
-                              px(BattleSprite_GetAttackHop(unit->id)));
+                              toFIXED(BattleSprite_GetAttackHop(unit->id)));
   Actor_SetAnimationSpeedFar(BattleObject_Get(work.effect.user)->actor,
                              ANIMATION_STEP_NORMAL);
   BattleObject_Get(work.effect.targets[0]);
@@ -558,8 +558,8 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input,
   actor = BattleObject_Get(savedInput->unitId)->actor;
   z = actor->z.fixed;
   x = actor->x.fixed;
-  angle = (u16)ArcTan2(x, z);
-  adjusted = angle - TRIG_TURN / 8;
+  angle = (u16)Trig_Atan(x, z);
+  adjusted = angle - DEGtoANG(45);
   if (savedInput->unitId > ALLY_MAX)
     adjusted = angle + TRIG_TURN * 3 / 8;
   adjusted &= 0x7fff;
@@ -666,7 +666,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
 
       if (targetOrFadeIndex < 20) {
         u16 *palette = battle->palette;
-        s32 value = Q16_ONE - fade;
+        s32 value = FIXED_ONE - fade;
 
         battle->brightness = value;
         Graphics_ScaleRgb555Clamped(palette, (u16 *)(BG_PLTT + 6 * 16), value,
@@ -674,7 +674,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
       }
       wait(1);
       targetOrFadeIndex++;
-      fade += Q16_ONE / 60;
+      fade += FIXED_ONE / 60;
     } while (targetOrFadeIndex < 20);
     if (plan->battleEffect & EFFECT_BY_ID_RANGE)
       BattleEffect_RunByIdRangeFar(&work.effect);
@@ -774,7 +774,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
     view->frames = 60;
   } else {
     struct Actor *actor = BattleObject_Get(plan->unitId)->actor;
-    s32 angle = (u16)ArcTan2(actor->x.fixed, actor->z.fixed);
+    s32 angle = (u16)Trig_Atan(actor->x.fixed, actor->z.fixed);
     s32 targetYaw;
 
     if (plan->unitId <= ALLY_MAX)

@@ -79,8 +79,8 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != gQuake_Timings[args->variant][TIMING_FRAMES];
        frame++) {
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
     // The results begin 16 frames before the end.
     if (frame == gQuake_Timings[args->variant][TIMING_FRAMES] - 16)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
@@ -97,8 +97,8 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
         s32 top;
 
         // Up and down along a sine, 1/64 of a turn a frame.
-        height = Q_16_16_TO_INT(heights.column[column] *
-                                Trig_Sin((frame - start) << 10));
+        height = FIXEDtoINT(heights.column[column] *
+                            Trig_Sin((frame - start) << 10));
         if (height < 0)
           height = -height;
         top = 112 - height;
@@ -119,7 +119,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
           screen.x += xOffset;
           if (screen.x >= column * PILLAR_W + 8 &&
               screen.x <= column * PILLAR_W + 8 + PILLAR_W && screen.y >= top) {
-            object->velocityY = px(12); // 12 pixels a frame upward
+            object->velocityY = toFIXED(12); // 12 pixels a frame upward
             object->verticalMotionStrength = 0xab85;
           }
           if (object->y < 0)

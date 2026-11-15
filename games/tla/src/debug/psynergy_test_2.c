@@ -219,12 +219,13 @@ void PsynergyTest2_SpawnRocks(s32 x, s32 y, s32 z, s32 count) {
     rock->x = x;
     rock->y = y;
     rock->z = z;
-    FieldVector_AddPolarOffsetFixed((Random16() << 3) + px(8), angle, &rock->x);
+    FieldVector_AddPolarOffsetFX((Random16() << 3) + toFIXED(8), angle,
+                                 &rock->x);
     rock->velocityX = 0;
-    rock->velocityY = px(5);
+    rock->velocityY = toFIXED(5);
     rock->velocityZ = 0;
-    FieldVector_AddPolarOffsetFixed((Random16() << 1) + px(2), angle,
-                                    &rock->velocityX);
+    FieldVector_AddPolarOffsetFX((Random16() << 1) + toFIXED(2), angle,
+                                 &rock->velocityX);
     work->next++;
     work->next &= 63;
     i--;
@@ -295,15 +296,15 @@ UNUSED void PsynergyTest2_GrowActor(s32 mode, s32 id, s32 x, s32 z) {
     object->scaleY = 0;
   }
   if (mode == 2) {
-    while (object->scaleX < Q16_ONE) {
+    while (object->scaleX < FIXED_ONE) {
       System_Wait(1);
       scale = object->scaleX;
       scale += 0x51e;
       object->scaleX = scale;
       object->scaleY = scale;
     }
-    object->scaleX = Q16_ONE;
-    object->scaleY = Q16_ONE;
+    object->scaleX = FIXED_ONE;
+    object->scaleY = FIXED_ONE;
   }
 }
 
@@ -314,7 +315,7 @@ UNUSED void PsynergyTest2_DropActor(s32 mode, s32 id, s32 x, s32 z) {
   object = Actor_Get(id);
   if (mode == 2) {
     Actor_SetPosition(id, x, z);
-    object->y.fixed = px(32);
+    object->y.fixed = toFIXED(32);
     object->motionFlags = 3;
     object->gravity = 0x170a;
     System_Wait(50);
@@ -328,32 +329,33 @@ UNUSED void PsynergyTest2_RaiseMonster(s32 mode, s32 x, s32 z, s32 row,
   struct Actor *object;
 
   if (mode == 1) {
-    object = FieldActor_Create(354, px(x), 0, px(z));
+    object = FieldActor_Create(354, toFIXED(x), 0, toFIXED(z));
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
       object->priorityFlags = 2;
     }
   }
   if (mode == 2) {
-    object = (FieldActor_Create(SPRITE_WINGED_STATUE, px(x), 0, px(z)));
+    object =
+        (FieldActor_Create(SPRITE_WINGED_STATUE, toFIXED(x), 0, toFIXED(z)));
     if (object != NULL) {
       s32 scale;
 
       Actor_SetSpriteFlags(object, 0);
-      object->velocityY = px(6);
-      object->scaleX = Q16_ONE * 2 / 5;
-      object->scaleY = Q16_ONE * 2 / 5;
-      while (object->scaleX < Q16_ONE) {
+      object->velocityY = toFIXED(6);
+      object->scaleX = FIXED_ONE * 2 / 5;
+      object->scaleY = FIXED_ONE * 2 / 5;
+      while (object->scaleX < FIXED_ONE) {
         System_Wait(1);
         scale = object->scaleX + 0x51e;
         object->facing += FACING_STEP;
         object->scaleX = scale;
         object->scaleY = scale;
       }
-      object->scaleX = Q16_ONE;
-      object->scaleY = Q16_ONE;
+      object->scaleX = FIXED_ONE;
+      object->scaleY = FIXED_ONE;
       object->facing =
-          Actor_Get(gMainRoutineWork.leaderActorId)->facing + TRIG_TURN / 2;
+          Actor_Get(gMainRoutineWork.leaderActorId)->facing + DEGtoANG(180);
       Field_RequestBattleFromEncounterTable(row, column);
     }
   }

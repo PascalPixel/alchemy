@@ -137,13 +137,13 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
       actor->collisionFlags = ACTOR_SOLID;
       Actor_SetMovementType(actor, entry->movement);
       Actor_SelectAnimationFar(actor, ANIM_STAND);
-      (actor)->homeX = actor->x.fixed / Q16_ONE;
-      (actor)->homeZ = actor->z.fixed / Q16_ONE;
+      (actor)->homeX = actor->x.fixed / FIXED_ONE;
+      (actor)->homeZ = actor->z.fixed / FIXED_ONE;
       // An actor placement with a height is lifted half a pixel more and takes
       // motion flags 4, floating: it neither follows the ground nor falls.
       if (actor->y.fixed != 0) {
         actor->motionFlags = ACTOR_FLOATS;
-        actor->y.fixed += px(1) / 2;
+        actor->y.fixed += toFIXED(1) / 2;
       }
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
         // World Map actor placements use single sprites and do not follow the
@@ -155,7 +155,7 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
           if (actor->spriteStorageKind == ACTOR_SPRITE_ONE &&
               (sprite = actor->sprite) != NULL)
 #endif
-            sprite->scale = Iwram_MulQ16(sprite->scale, 3 * Q16_ONE / 4);
+            sprite->scale = Iwram_MulFX(sprite->scale, 3 * FIXED_ONE / 4);
         }
       } else {
         actor->groundHeight =
@@ -228,16 +228,16 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
   // gMainRoutineWork.layer keeps the leader's map grid layer (FieldSequence_Run
   // saves its layer there).
   actor->layer = gMainRoutineWork.layer;
-  pos = actor->x.fixed / px(MAPGRID_CELL_PIXELS) +
-        (actor->z.fixed / px(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE;
+  pos = actor->x.fixed / toFIXED(MAPGRID_CELL_PIXELS) +
+        (actor->z.fixed / toFIXED(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE;
   cell = &MAPGRID_CELLS[pos];
   above = &MAPGRID_CELLS[pos - MAPGRID_SIZE];
   if (gMainRoutineWork.y != 0 && cell->behavior == CELL_BEHAVIOR_CLIMB &&
       above->behavior == CELL_BEHAVIOR_CLIMB) {
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_CLIMB;
     height = MapGrid_GetTerrainHeightFar(0, actor->x.fixed,
-                                         actor->z.fixed - px(16)) -
-             px(32);
+                                         actor->z.fixed - toFIXED(16)) -
+             toFIXED(32);
     actor->y.fixed += height;
     actor->groundHeight = actor->y.fixed;
     actor->motionFlags = 0;
@@ -346,11 +346,11 @@ void Actor_ClearOutOfBounds(void) {
 
   camera = work->camera;
   centerX = camera->x.fixed;
-  left = centerX - px(160);
-  right = centerX + px(160);
+  left = centerX - toFIXED(160);
+  right = centerX + toFIXED(160);
   centerZ = camera->z.fixed;
-  top = centerZ - px(200);
-  bottom = centerZ + px(100);
+  top = centerZ - toFIXED(200);
+  bottom = centerZ + toFIXED(100);
   actorSlot = &work->actors[ACTOR_FIRST_PLACED];
   releaseCacheMask = ~1;
 

@@ -309,8 +309,8 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   Event_Wait(30);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   actor->motionFlags = ACTOR_FALLS;
-  actor->groundHeight = -px(160);
-  actor->gravity = px(1) / 2;
+  actor->groundHeight = -toFIXED(160);
+  actor->gravity = toFIXED(1) / 2;
   Sound_Play(SE_DUST_PUFF);
   Event_Wait(3);
   actor->layer = 2;
@@ -674,10 +674,10 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   sSparkFrame = 0;
   {
     struct FieldPosition *origin = &sSparkOrigin;
-    origin->x = px(168);
-    origin->y = px(32);
+    origin->x = toFIXED(168);
+    origin->y = toFIXED(32);
     sparkTask = TreeRooms_SpawnSwirlSparks;
-    origin->z = px(52);
+    origin->z = toFIXED(52);
   }
   Task_AddFrame(sparkTask, TASK_PASS_FRAME);
   Event_Wait(220);
@@ -765,11 +765,11 @@ s32 Scene_Initialize(void) {
   sLastCocoon = (s16 *)gSceneLocalState;
   TretPalette_SaveMapColors();
   tret->motionFlags = 0;
-  tret->y.fixed = -px(10);
+  tret->y.fixed = -toFIXED(10);
   secondTret = Actor_Get(ACTOR_SECOND_TRET);
 
   secondTret->motionFlags = 0;
-  secondTret->y.fixed = -px(10);
+  secondTret->y.fixed = -toFIXED(10);
   Actor_SetSpriteColorById(ACTOR_SECOND_TRET, SPRITE_COLOR_HIDDEN);
   TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   if (gMainRoutineWork.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
@@ -783,10 +783,10 @@ s32 Scene_Initialize(void) {
   grid = gMapGridWork[0];
   // Match the first layer's parallax offset and scale to the room bounds.
   layer = &grid->layers[0];
-  layer->offsetX += Iwram_MulQ16(grid->minX + px(160), Q16_ONE / 10);
-  layer->offsetY += Iwram_MulQ16(grid->minY + px(136), Q16_ONE / 10);
-  layer->scaleX = 9 * Q16_ONE / 10;
-  layer->scaleY = 9 * Q16_ONE / 10;
+  layer->offsetX += Iwram_MulFX(grid->minX + toFIXED(160), FIXED_ONE / 10);
+  layer->offsetY += Iwram_MulFX(grid->minY + toFIXED(136), FIXED_ONE / 10);
+  layer->scaleX = 9 * FIXED_ONE / 10;
+  layer->scaleY = 9 * FIXED_ONE / 10;
   // The layout draws four cocoons already torn: the first step on them breaks
   // through.
   GameFlag_Set(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_B_TORN);
@@ -815,9 +815,9 @@ s32 Scene_Initialize(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     actor->motionFlags = ACTOR_FALLS;
-    actor->y.fixed = px(100);
-    actor->groundHeight = -px(160);
-    actor->gravity = px(1) / 2;
+    actor->y.fixed = toFIXED(100);
+    actor->groundHeight = -toFIXED(160);
+    actor->gravity = toFIXED(1) / 2;
     Sound_Play(SE_DUST_PUFF);
     Event_SetDestination(SCENE_TREE_ROOMS, entrance - 10);
     Event_Wait(20);
@@ -997,15 +997,15 @@ static void TreeRooms_UpdateSwirlSpark(struct Actor *spark) {
     {
       s32 initialAngle = (s16)spark->userValue;
 
-      Vector_AddPolarOffset(px(frame), ((frame * 3) << 8) + initialAngle,
+      Vector_AddPolarOffset(toFIXED(frame), ((frame * 3) << 8) + initialAngle,
                             &position);
     }
     spark->x.fixed = position.x;
     spark->y.fixed = position.y;
     spark->z.fixed = position.z;
     if (spark->timer <= SWIRL_SPARK_SHRINK_LAST_FRAME) {
-      spark->scaleX -= Q16_ONE / 50;
-      spark->scaleY -= Q16_ONE / 50;
+      spark->scaleX -= FIXED_ONE / 50;
+      spark->scaleY -= FIXED_ONE / 50;
     }
     spark->timer++;
   } else {
@@ -1049,7 +1049,7 @@ static void TreeRooms_SpawnSwirlSparks(void) {
         spark->targetX = sSparkOrigin.x;
         spark->targetY = sSparkOrigin.y;
         spark->targetZ = sSparkOrigin.z;
-        spark->speedLimit = px(8) / 5;
+        spark->speedLimit = toFIXED(8) / 5;
         spark->update = TreeRooms_UpdateSwirlSpark;
       }
     }
@@ -1101,8 +1101,8 @@ static void TreeRooms_RunLandingDustEvent(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = px(130);
-  Actor_Get(ACTOR_PARTY_LEADER)->gravity = px(1) / 2;
+  Actor_Get(ACTOR_PARTY_LEADER)->y.fixed = toFIXED(130);
+  Actor_Get(ACTOR_PARTY_LEADER)->gravity = toFIXED(1) / 2;
   Actor_Get(ACTOR_PARTY_LEADER)->bounce = 0;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Event_StartScreenTransition();
@@ -1114,8 +1114,8 @@ static void TreeRooms_RunLandingDustEvent(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   options.palette = SPRITE_COLOR_WHITE;
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = 4 * Q16_ONE / 5;
-  options.startScaleY = 4 * Q16_ONE / 5;
+  options.startScaleX = 4 * FIXED_ONE / 5;
+  options.startScaleY = 4 * FIXED_ONE / 5;
   for (particleIndex = 0; particleIndex <= 16; particleIndex++) {
     velocity.x = Trig_Cos(particleIndex * FACING_STEP);
     velocity.y = 0;
@@ -1139,8 +1139,8 @@ static void TreeRooms_RunLandingDustEvent(void) {
   MapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  Actor_Get(ACTOR_PARTY_LEADER)->gravity = px(1);
-  Actor_Get(ACTOR_PARTY_LEADER)->bounce = Q16_ONE / 4;
+  Actor_Get(ACTOR_PARTY_LEADER)->gravity = toFIXED(1);
+  Actor_Get(ACTOR_PARTY_LEADER)->bounce = FIXED_ONE / 4;
   Event_End();
 }
 
@@ -1220,11 +1220,11 @@ s32 gTreeRooms_MiaGathersActions[] = {
 /// Then it is put away.
 s32 gTreeRooms_FaceSinksActions[] = {
     SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Y, px(80)),
+    SC_ADD(SW_Y, toFIXED(80)),
     SC_WAIT(4),
-    SC_ADD(SW_Y, -px(78)),
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_ADD(SW_Y, -toFIXED(78)),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(4),
     SC_LOOP(8, SC_TOP),
     SC_POSITION(0, 0, 0),

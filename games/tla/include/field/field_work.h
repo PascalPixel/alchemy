@@ -120,11 +120,11 @@ struct FieldWork {
   s8 areaGraphicsPending;
   u8 encounterZones[8];   ///< encounter zone for each kind of ground
   s32 encounterBias;      ///< randomized distance adjustment between battles
-  s32 encounterThreshold; ///< encounter steps before a battle; 16 * Q16_ONE
+  s32 encounterThreshold; ///< encounter steps before a battle; 16 * FIXED_ONE
   /// Scales the leader's speed into walkingDistance, in 16.16 fixed point:
   /// 409 on entry, 0 in a town.
   s32 walkingDistanceScale;
-  /// Distance walked toward the next Q16_ONE, at which the party regains PP,
+  /// Distance walked toward the next FIXED_ONE, at which the party regains PP,
   /// Djinn recover and poison hurts (Field_UpdateWalking).
   s32 walkingDistance;
   struct MapCell *currentCell;  ///< the cell the leader last stepped onto

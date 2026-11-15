@@ -30,24 +30,22 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
     s32 y =
         FieldGameFlag_GetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(GARET));
 
-    Actor_SetPositionFixed(ACTOR_GARET, FIELD_CELL_CENTER(x),
-                           FIELD_CELL_CENTER(y));
+    Actor_SetPositionFX(ACTOR_GARET, FIELD_CELL_CENTER(x),
+                        FIELD_CELL_CENTER(y));
   }
   {
     s32 x =
         FieldGameFlag_GetByte(COLOSSO_CHEER_COLUMN + COLOSSO_CHEER_SLOT(IVAN));
     s32 y = FieldGameFlag_GetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(IVAN));
 
-    Actor_SetPositionFixed(ACTOR_IVAN, FIELD_CELL_CENTER(x),
-                           FIELD_CELL_CENTER(y));
+    Actor_SetPositionFX(ACTOR_IVAN, FIELD_CELL_CENTER(x), FIELD_CELL_CENTER(y));
   }
   {
     s32 x =
         FieldGameFlag_GetByte(COLOSSO_CHEER_COLUMN + COLOSSO_CHEER_SLOT(MIA));
     s32 y = FieldGameFlag_GetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(MIA));
 
-    Actor_SetPositionFixed(ACTOR_MIA, FIELD_CELL_CENTER(x),
-                           FIELD_CELL_CENTER(y));
+    Actor_SetPositionFX(ACTOR_MIA, FIELD_CELL_CENTER(x), FIELD_CELL_CENTER(y));
   }
 }
 
@@ -119,7 +117,7 @@ void Colosso_RaiseTakePlaceOnPsynergy(void) {
 static void Colosso_TakePlaceForMatch(void) {
   struct FieldWork *work = gFieldWork;
   s32 speakerId = 8;
-  s32 nearestDistance = px(16);
+  s32 nearestDistance = toFIXED(16);
   s32 supporterId = gMainRoutineWork.leaderActorId;
   struct Actor *supporter = Actor_GetById(supporterId);
   s32 actorId;
@@ -140,8 +138,8 @@ static void Colosso_TakePlaceForMatch(void) {
     if (actor != NULL && actor->spriteStorageKind == 1 &&
         actor->sprite->entries[0]->animationId ==
             SPRITE_YOUNG_MAN_WITH_FAIR_HAIR) {
-      s32 distanceX = (supporter->x.fixed - actor->x.fixed) / px(1);
-      s32 distanceZ = (supporter->z.fixed - actor->z.fixed) / px(1);
+      s32 distanceX = (supporter->x.fixed - actor->x.fixed) / toFIXED(1);
+      s32 distanceZ = (supporter->z.fixed - actor->z.fixed) / toFIXED(1);
 
       if (distanceZ <= 0) {
         s32 horizontalDistance = distanceX;
@@ -246,8 +244,8 @@ static void Colosso_AskReadyToRace(s32 actorId) {
   s32 z;
 
   actor = Actor_GetById(actorId);
-  x = actor->x.part[0].pixel;
-  z = actor->z.part[0].pixel;
+  x = actor->x.part[0].integer;
+  z = actor->z.part[0].integer;
   Event_Start();
 
   if (Party_CountMembers() <= 1) {
@@ -360,8 +358,8 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
   u8 members[8];
 
   actor = Actor_GetById(guide);
-  guideX = actor->x.part[0].pixel;
-  guideZ = actor->z.part[0].pixel;
+  guideX = actor->x.part[0].integer;
+  guideZ = actor->z.part[0].integer;
   if (mode != COLOSSO_GUIDE_NOTHING) {
     memberCount = Party_CountMembers();
     for (i = 0; i < memberCount; i++) {
@@ -420,7 +418,7 @@ L_main:
   Actor_SetSpeed(guide, 1);
   leader = Actor_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPositionFixed(friendId, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFX(friendId, leader->x.fixed, leader->z.fixed);
   }
   frontZ = guideZ + 16;
   Actor_WalkToAndWait(friendId, guideX, frontZ);

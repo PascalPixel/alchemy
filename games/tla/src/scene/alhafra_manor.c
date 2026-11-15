@@ -283,7 +283,7 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
   s32 cameraY = -1;
-  s32 cameraZ = px(320);
+  s32 cameraZ = toFIXED(320);
   s16 *entrance;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -312,13 +312,13 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_MADRAS_ELDER, 0, 0);
   }
   if (gMainRoutineWork.entrance == 99) {
-    FieldCamera_MoveWithinMapBounds(px(304), cameraY, cameraZ, 0);
+    FieldCamera_MoveWithinMapBounds(toFIXED(304), cameraY, cameraZ, 0);
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_Wait(10);
     FieldCamera_SetSpeed(2);
-    FieldCamera_MoveWithinMapBounds(px(144), cameraY, cameraZ, 1);
+    FieldCamera_MoveWithinMapBounds(toFIXED(144), cameraY, cameraZ, 1);
     while (gInput.held == 0)
       wait(1);
     Event_SetDestination(SCENE_ALHAFRA_MANOR, 80);
@@ -338,8 +338,8 @@ void AlhafraManor_CountAnswer(void);
     Actor_SetAnimationById((id), 2);                                           \
     leader_ = Actor_GetById(gMainRoutineWork.leaderActorId);                   \
     if (leader_ != 0)                                                          \
-      Actor_SetDestinationById((id), leader_->x.part[0].pixel,                 \
-                               leader_->z.part[0].pixel);                      \
+      Actor_SetDestinationById((id), leader_->x.part[0].integer,               \
+                               leader_->z.part[0].integer);                    \
     Actor_WaitForMoveById((id));                                               \
     Actor_SetPosition((id), 0, 0);                                             \
   }

@@ -21,7 +21,8 @@ enum FlashingStrikeMode {
 ///
 /// Abilities: Thrash.
 void BattleEffect_RunThrash(struct BattleEffectParams *args) {
-  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, px(61) / 5);
+  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24,
+                                 toFIXED(61) / 5);
   wait(29);
   args->variant = SPARK_GROUPS_THRASH;
   BattleEffect_RunSparkGroups(args, SPARK_GROUPS_RISING);
@@ -31,7 +32,8 @@ void BattleEffect_RunThrash(struct BattleEffectParams *args) {
 /// at the first target, then sparks would burst beneath it and the canvas
 /// flash; it is Severe Blow's effect in The Lost Age.
 void BattleEffect_RunUnusedSevereBlowLeap(struct BattleEffectParams *args) {
-  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24, px(36) / 5);
+  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 24,
+                                 toFIXED(36) / 5);
   wait(12);
   args->variant = SPARK_GROUPS_SEVERE_BLOW;
   BattleEffect_RunSparkGroups(args, SPARK_GROUPS_RISING);
@@ -85,7 +87,8 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
   if (mode == FLASHING_STRIKE_QUICK_STRIKE)
-    BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, px(8));
+    BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16,
+                                   toFIXED(8));
   else
     BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
   wait(16);

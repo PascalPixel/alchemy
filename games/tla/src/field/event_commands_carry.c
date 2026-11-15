@@ -33,29 +33,30 @@ void FieldPsynergy_Carry(void) {
 
   work = Ram_HeapSlots->fieldEffectWork;
   FieldPsynergy_FadeToCastColor();
-  SET_POSITION(&pos, work->x, work->y + px(16), work->z);
-  pair[0] = FieldEffect_SpawnCarryHand(pos.x + px(32), pos.y, pos.z, 0x8000);
-  pair[1] = FieldEffect_SpawnCarryHand(pos.x - px(32), pos.y, pos.z, 0);
+  SET_POSITION(&pos, work->x, work->y + toFIXED(16), work->z);
+  pair[0] =
+      FieldEffect_SpawnCarryHand(pos.x + toFIXED(32), pos.y, pos.z, 0x8000);
+  pair[1] = FieldEffect_SpawnCarryHand(pos.x - toFIXED(32), pos.y, pos.z, 0);
 
   wait(15);
   walk = pair;
   for (n = 0; n < 2; n++) {
     obj = *walk++;
     if (obj != 0)
-      Actor_SetTargetPositionFromMagnitudeAngle(obj, px(24), obj->facing);
+      Actor_SetTargetPositionFromMagnitudeAngle(obj, toFIXED(24), obj->facing);
   }
 
   Actor_WaitForMoveFar(pair[0]);
   Sound_PlayFar(SE_HEAVY_IMPACT);
   for (n = 0; n < 24; n++) {
-    SET_POSITION(&pos, work->x, work->y + px(16), work->z);
+    SET_POSITION(&pos, work->x, work->y + toFIXED(16), work->z);
     obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (obj != 0) {
       Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);
-      obj->speedLimit = Random16() + px(2);
-      obj->acceleration = px(2);
+      obj->speedLimit = Random16() + toFIXED(2);
+      obj->acceleration = toFIXED(2);
       obj->motionFlags = 0;
-      dist = Random16() * 24 + px(8);
+      dist = Random16() * 24 + toFIXED(8);
       Actor_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());
     }
   }
@@ -74,22 +75,22 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
   Sound_PlayFar(SE_ITEM_BREAK);
   object = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
   if (object != NULL) {
-    object->scaleY = Q16_ONE / 4;
-    object->scaleX = Q16_ONE / 4;
-    object->speedLimit = px(3);
-    object->acceleration = px(3);
+    object->scaleY = FIXED_ONE / 4;
+    object->scaleX = FIXED_ONE / 4;
+    object->speedLimit = toFIXED(3);
+    object->acceleration = toFIXED(3);
     object->steeringFlags = 0;
     Actor_SelectAnimationFar(object, 1);
     scale = object->scaleX;
-    if (scale < Q16_ONE) {
+    if (scale < FIXED_ONE) {
       do {
-        scale += Q16_ONE / 32;
+        scale += FIXED_ONE / 32;
         object->scaleY = scale;
         object->scaleX = scale;
-        object->facing += TRIG_TURN / 8;
+        object->facing += DEGtoANG(45);
         wait(1);
         scale = object->scaleX;
-      } while (scale < Q16_ONE);
+      } while (scale < FIXED_ONE);
     }
     object->facing = angle;
   }

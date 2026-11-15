@@ -71,9 +71,9 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     struct Particle *puff = &work->particles[i];
 
     if (work->args->side == EFFECT_SIDE_PARTY)
-      puff->x = px(50);
+      puff->x = toFIXED(50);
     else
-      puff->x = -px(50);
+      puff->x = -toFIXED(50);
     puff->y = 0;
     puff->z = 0;
     SET_VELOCITY(puff, ((Random16() & 63) - 32) << 13,
@@ -85,9 +85,9 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     struct Particle *mote = &PARTICLES[i];
 
     if (work->args->side == EFFECT_SIDE_PARTY)
-      mote->x = px(50);
+      mote->x = toFIXED(50);
     else
-      mote->x = -px(50);
+      mote->x = -toFIXED(50);
     mote->y = 0;
     mote->z = 0;
     SET_VELOCITY(mote, ((Random16() & 63) - 32) << 13,
@@ -128,7 +128,8 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
                      (i & 1) * MOTE_SET_BYTES) +
                     ERUPTION_FIELD_MOTE_PICTURES,
                 screen.x - size / 2, screen.y - size, size, size * 2);
-        Particle_AdvanceWithGravity3D(mote, PARTICLE_DAMPING_NONE, -px(1) / 8);
+        Particle_AdvanceWithGravity3D(mote, PARTICLE_DAMPING_NONE,
+                                      -toFIXED(1) / 8);
       }
     }
 
@@ -160,7 +161,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
           if (puff->variant <= 20)
             puff->variant++;
           Particle_AdvanceWithGravity3D(puff, PARTICLE_DAMPING_NONE,
-                                        -px(1) / 8);
+                                        -toFIXED(1) / 8);
         }
       }
     }

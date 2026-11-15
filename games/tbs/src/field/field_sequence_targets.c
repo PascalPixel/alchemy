@@ -65,16 +65,16 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
       // y is height: an actor more than 48 pixels above or below is out
       // of reach.
       if (candidate->y.fixed - source->y.fixed >= 0) {
-        if (candidate->y.fixed - source->y.fixed >= px(48))
+        if (candidate->y.fixed - source->y.fixed >= toFIXED(48))
           continue;
-      } else if (source->y.fixed - candidate->y.fixed >= px(48)) {
+      } else if (source->y.fixed - candidate->y.fixed >= toFIXED(48)) {
         continue;
       }
 
       // The distance in pixels.
-      dx = (candidate->x.fixed - source->x.fixed) / Q16_ONE;
-      dy = (candidate->y.fixed - source->y.fixed) / Q16_ONE;
-      dz = (candidate->z.fixed - source->z.fixed) / Q16_ONE;
+      dx = (candidate->x.fixed - source->x.fixed) / FIXED_ONE;
+      dy = (candidate->y.fixed - source->y.fixed) / FIXED_ONE;
+      dz = (candidate->z.fixed - source->z.fixed) / FIXED_ONE;
 
       squaredX = dx * dx;
       squaredY = dy * dy;
@@ -88,8 +88,8 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
 
       // Close actors count from any side; further ones must be within
       // 0x2fff (about 67 degrees) of where the actor faces.
-      angle = (u16)ArcTan2(candidate->z.fixed - source->z.fixed,
-                           candidate->x.fixed - source->x.fixed);
+      angle = (u16)Trig_Atan(candidate->z.fixed - source->z.fixed,
+                             candidate->x.fixed - source->x.fixed);
       if (distance > 11) {
         s32 angleDifference = (s16)(angle - source->facing);
 
@@ -148,13 +148,13 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 
     // The height allowed: 8 pixels, or 48 for Catch, 64 for Douse, 16 for
     // Mind Read.
-    heightLimit = px(8);
+    heightLimit = toFIXED(8);
     if (kind == FIELD_PSYNERGY_CATCH)
-      heightLimit = px(48);
+      heightLimit = toFIXED(48);
     if (kind == FIELD_PSYNERGY_DOUSE)
-      heightLimit = px(64);
+      heightLimit = toFIXED(64);
     if (kind == FIELD_PSYNERGY_MIND_READ)
-      heightLimit = px(16);
+      heightLimit = toFIXED(16);
 
     {
       s32 dy = candidate->y.fixed - source->y.fixed;
@@ -169,13 +169,13 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
     // The distance in whole pixels, rounded toward 0.
     dx = candidate->x.fixed - source->x.fixed;
     if (dx < 0)
-      dx += Q16_ONE - 1;
-    dx = WHOLE_PIXELS(dx);
+      dx += FIXED_ONE - 1;
+    dx = FIXEDtoINT(dx);
 
     dz = candidate->z.fixed - source->z.fixed;
     if (dz < 0)
-      dz += Q16_ONE - 1;
-    pixelZ = WHOLE_PIXELS(dz);
+      dz += FIXED_ONE - 1;
+    pixelZ = FIXEDtoINT(dz);
 
     distance = Iwram_Sqrt(dx * dx + pixelZ * pixelZ);
     if ((candidate->collisionFlags & ACTOR_NEAR_PSYNERGY) != 0)
@@ -184,15 +184,15 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
       continue;
 
     // The cone: TRIG_TURN * 3 / 32 (about 34 degrees) either side up to 19
-    // pixels, TRIG_TURN / 16 (22.5 degrees) beyond; TRIG_TURN / 8 (45 degrees)
+    // pixels, TRIG_TURN / 16 (22.5 degrees) beyond; DEGtoANG(45) (45 degrees)
     // for Mind Read.
-    angle = (u16)ArcTan2(candidate->z.fixed - source->z.fixed,
-                         candidate->x.fixed - source->x.fixed);
+    angle = (u16)Trig_Atan(candidate->z.fixed - source->z.fixed,
+                           candidate->x.fixed - source->x.fixed);
     coneHalfAngle = TRIG_TURN * 3 / 32;
     if (distance > 19)
       coneHalfAngle = TRIG_TURN / 16;
     if (kind == FIELD_PSYNERGY_MIND_READ)
-      coneHalfAngle = TRIG_TURN / 8;
+      coneHalfAngle = DEGtoANG(45);
 
     if (distance > 11) {
       s32 angleDifference = (s16)(angle - facingQuadrant);

@@ -35,15 +35,15 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *particle) {
   sprite = particle->actor;
   offset = 0;
   if (particle->flags & 4)
-    offset = px(508) - particle->z;
-  scale.x = Iwram_MulQ16(particle->scaleX, sprite->scale);
-  scale.y = Iwram_MulQ16(particle->scaleY, sprite->scale);
+    offset = toFIXED(508) - particle->z;
+  scale.x = Iwram_MulFX(particle->scaleX, sprite->scale);
+  scale.y = Iwram_MulFX(particle->scaleY, sprite->scale);
   position.x = particle->x;
   position.height = offset;
   position.y = particle->z + offset;
   position.groundHeight = 0;
-  if (particle->x > -px(32) && particle->x < px(272) && particle->z > -px(32) &&
-      particle->z < px(224))
+  if (particle->x > -toFIXED(32) && particle->x < toFIXED(272) &&
+      particle->z > -toFIXED(32) && particle->z < toFIXED(224))
     Actor_ApplyProjectedPlacementFar(sprite, &position, &scale, 0);
 }
 
@@ -69,18 +69,18 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
   // The distance in whole pixels first; under 128 pixels, the exact 16.16
   // one decides whether it is within 8 pixels.
   if (effect->stopAtTarget != 0) {
-    pixelX = deltaX / Q16_ONE;
-    pixelZ = deltaZ / Q16_ONE;
-    distance = px(Iwram_Sqrt(pixelX * pixelX + pixelZ * pixelZ));
-    if (distance < px(128))
-      distance = FixedSqrt(Iwram_MulQ16(deltaX, deltaX) +
-                           Iwram_MulQ16(deltaZ, deltaZ));
-    if (distance <= px(8)) {
+    pixelX = deltaX / FIXED_ONE;
+    pixelZ = deltaZ / FIXED_ONE;
+    distance = toFIXED(Iwram_Sqrt(pixelX * pixelX + pixelZ * pixelZ));
+    if (distance < toFIXED(128))
+      distance = Math_SqrtFX(Iwram_MulFX(deltaX, deltaX) +
+                             Iwram_MulFX(deltaZ, deltaZ));
+    if (distance <= toFIXED(8)) {
       FieldParticle_SetPosition(effect, effect->targetX, effect->targetZ);
       return;
     }
   }
-  angle = ArcTan2(deltaZ, deltaX);
+  angle = Trig_Atan(deltaZ, deltaX);
   if (effect->turnStepLimited != 0) {
     heading = effect->heading;
     turn = angle - heading;
@@ -101,8 +101,8 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
     speed = effect->speedMax;
   angle = facing;
   effect->speed = speed;
-  effect->x += Iwram_MulQ16(Trig_Cos(angle), speed);
-  effect->z += Iwram_MulQ16(Trig_Sin(angle), speed);
+  effect->x += Iwram_MulFX(Trig_Cos(angle), speed);
+  effect->z += Iwram_MulFX(Trig_Sin(angle), speed);
 }
 
 /// Returns 1 while a field effect sprite that stops at its target still has one
@@ -153,10 +153,10 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   if (animation != NULL)
     animation->image.priority = 0;
   FieldParticle_SetPosition(effect, x, z);
-  effect->scaleX = Q16_ONE;
-  effect->speedMax = px(2);
-  effect->scaleY = Q16_ONE;
-  effect->acceleration = Q16_ONE;
+  effect->scaleX = FIXED_ONE;
+  effect->speedMax = toFIXED(2);
+  effect->scaleY = FIXED_ONE;
+  effect->acceleration = FIXED_ONE;
   effect->originX = x;
   effect->originZ = z;
   // BUG: Sprite_CreateFar can return NULL, but this and the animation

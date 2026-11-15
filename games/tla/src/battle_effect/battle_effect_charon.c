@@ -296,12 +296,12 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     if (frame >= 132 && frame < 240) {
       struct Scale swarmScale = gCharon_SwarmScale;
 
-      swarmScale.y = Q16_ONE * 5 / 4;
-      swarmScale.x = Q16_ONE * 5 / 4;
+      swarmScale.y = FIXED_ONE * 5 / 4;
+      swarmScale.x = FIXED_ONE * 5 / 4;
       if (frame == 132) {
         for (i = 0; i != 128; i++) {
-          CHARON_PARTICLES[i].x = px(Random16() % 160 + 40);
-          CHARON_PARTICLES[i].y = px((Random16() & 63) + 32);
+          CHARON_PARTICLES[i].x = INTtoFIXED(Random16() % 160 + 40);
+          CHARON_PARTICLES[i].y = INTtoFIXED((Random16() & 63) + 32);
           CHARON_PARTICLES[i].variant = Random16() & 255;
           CHARON_PARTICLES[i].velocityX = ((Random16() & 255) - 127) << 9;
           CHARON_PARTICLES[i].velocityY = (-(Random16() & 255) - 128) << 8;
@@ -309,22 +309,22 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
       for (i = 0; i != CHARON_ARROWS; i++) {
         if (i == 10) {
-          swarmScale.y = Q16_ONE;
-          swarmScale.x = Q16_ONE;
+          swarmScale.y = FIXED_ONE;
+          swarmScale.x = FIXED_ONE;
         }
         swarmPlace[3] = 0;
-        swarmPlace[1] = px(255);
+        swarmPlace[1] = toFIXED(255);
         swarmPlace[0] = CHARON_PARTICLES[64 + i].x;
-        swarmPlace[2] = CHARON_PARTICLES[64 + i].y + px(32);
+        swarmPlace[2] = CHARON_PARTICLES[64 + i].y + toFIXED(32);
         Render_ApplyProjectedPlacementFar(SPRITES[i], swarmPlace, &swarmScale.x,
                                           0);
         SPRITES[i]->image.tile =
             tiles[CHARON_PARTICLES[64 + i].variant / CHARON_ARROW_FRAMES];
       }
       for (i = 0; i != 128; i++) {
-        if (CHARON_PARTICLES[i].y > -px(16) &&
-            CHARON_PARTICLES[i].x > -px(16) &&
-            CHARON_PARTICLES[i].x < px(256)) {
+        if (CHARON_PARTICLES[i].y > -toFIXED(16) &&
+            CHARON_PARTICLES[i].x > -toFIXED(16) &&
+            CHARON_PARTICLES[i].x < toFIXED(256)) {
           CHARON_PARTICLES[i].x += CHARON_PARTICLES[i].velocityX;
           CHARON_PARTICLES[i].y += CHARON_PARTICLES[i].velocityY;
         }
@@ -338,11 +338,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     if (t56 >= 0 && t56 < 76) {
       struct Scale pulseScale = gCharon_PulseScale;
 
-      pulseScale.x = pulseScale.y = Trig_Sin(t56 << 7) * 2 + TRIG_TURN / 4;
+      pulseScale.x = pulseScale.y = Trig_Sin(t56 << 7) * 2 + DEGtoANG(90);
       pulsePlace[3] = 0;
-      pulsePlace[1] = px(255);
-      pulsePlace[0] = px(114);
-      pulsePlace[2] = px(t56 >= 0 ? 78 : 100);
+      pulsePlace[1] = toFIXED(255);
+      pulsePlace[0] = toFIXED(114);
+      pulsePlace[2] = INTtoFIXED(t56 >= 0 ? 78 : 100);
       Render_ApplyProjectedPlacementFar(OBJECTS[0], pulsePlace, &pulseScale.x,
                                         0);
     }
@@ -563,8 +563,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             glyphs, work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES, 0x302);
         Resource_LoadAndDecompress((s32)&ResourceId_CurseSealSheet,
                                    work->sheet + CHARON_ACT_PICTURES, 1, 1);
-        posX = px(72);
-        posZ = px(56);
+        posX = toFIXED(72);
+        posZ = toFIXED(56);
       }
       if (frame == 243) {
         source =
@@ -611,28 +611,28 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         s32 objectScale[2];
 
         objectPlace[3] = 0;
-        objectPlace[1] = px(255);
+        objectPlace[1] = toFIXED(255);
         if (frame < 160) {
-          posX += px(1) / 8;
-          posZ -= px(1) / 4;
+          posX += toFIXED(1) / 8;
+          posZ -= toFIXED(1) / 4;
         } else if (frame < 332) {
-          posX += px(1) / 8;
-          posZ += px(1) / 16;
+          posX += toFIXED(1) / 8;
+          posZ += toFIXED(1) / 16;
         } else {
-          posX += px(1) / 8;
+          posX += toFIXED(1) / 8;
         }
-        objectScale[1] = Q16_ONE * 5 / 4;
-        objectScale[0] = Q16_ONE * 5 / 4;
-        objectScale[0] = objectScale[1] = posZ / 48 + Q16_ONE / 4;
-        objectPlace[0] = posX + px(64);
-        objectPlace[2] = px(144);
+        objectScale[1] = FIXED_ONE * 5 / 4;
+        objectScale[0] = FIXED_ONE * 5 / 4;
+        objectScale[0] = objectScale[1] = posZ / 48 + FIXED_ONE / 4;
+        objectPlace[0] = posX + toFIXED(64);
+        objectPlace[2] = toFIXED(144);
         Render_ApplyProjectedPlacementFar(OBJECTS[CHARON_WISP], objectPlace,
                                           objectScale, 0);
-        objectScale[1] = Q16_ONE;
-        objectScale[0] = Q16_ONE;
+        objectScale[1] = FIXED_ONE;
+        objectScale[0] = FIXED_ONE;
         for (i = 0; i != CHARON_BEAST_SPRITES; i++) {
-          objectPlace[0] = px((i % CHARON_BEAST_COLUMNS) * 32) + posX;
-          objectPlace[2] = px((i / CHARON_BEAST_COLUMNS) * 32) + posZ;
+          objectPlace[0] = INTtoFIXED((i % CHARON_BEAST_COLUMNS) * 32) + posX;
+          objectPlace[2] = INTtoFIXED((i / CHARON_BEAST_COLUMNS) * 32) + posZ;
           Render_ApplyProjectedPlacementFar(OBJECTS[i], objectPlace,
                                             objectScale, 0);
         }
@@ -670,12 +670,12 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->vertices = texture;
         if (frame <= 282) {
-          Transform_Reset();
-          Transform_ApplyAxisScale(scale * 2, scale * 2, scale * 2);
-          Transform_ApplyTranslation(-px(16), -px(8), 0);
-          Transform_ApplyPitch(TRIG_TURN * 7 / 8);
-          Transform_ApplyRoll(TRIG_TURN / 4 - t * 256);
-          Transform_ApplyYaw(-t << 10);
+          Matrix_Initialize();
+          Matrix_Scale(scale * 2, scale * 2, scale * 2);
+          Matrix_Translate(-toFIXED(16), -toFIXED(8), 0);
+          Matrix_RotateX(TRIG_TURN * 7 / 8);
+          Matrix_RotateZ(DEGtoANG(90) - t * 256);
+          Matrix_RotateY(-t << 10);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture,
                                    4);
           Render_DrawModelList(model);
@@ -698,11 +698,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           model->mesh = gBattleEffect_SquareMesh;
           model->kind = MODEL_SHADED_ADDITIVE;
           model->vertices = texture;
-          Transform_Reset();
-          Transform_ApplyTranslation(-px(8), -px(8), 0);
-          Transform_ApplyAxisScale(scale, scale, scale);
-          Transform_ApplyPitch(TRIG_TURN * 3 / 4);
-          Transform_ApplyYaw(-t << 10);
+          Matrix_Initialize();
+          Matrix_Translate(-toFIXED(8), -toFIXED(8), 0);
+          Matrix_Scale(scale, scale, scale);
+          Matrix_RotateX(TRIG_TURN * 3 / 4);
+          Matrix_RotateY(-t << 10);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture,
                                    4);
           Render_DrawModelList(model);
@@ -745,9 +745,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
         revealScale.y = revealScale.x = (155 << 12) - (frame << 11);
         revealPlace[3] = 0;
-        revealPlace[1] = px(255);
-        revealPlace[0] = px(92);
-        revealPlace[2] = px(72);
+        revealPlace[1] = toFIXED(255);
+        revealPlace[0] = toFIXED(92);
+        revealPlace[2] = toFIXED(72);
         Render_ApplyProjectedPlacementFar(OBJECTS[CHARON_REVEAL], revealPlace,
                                           &revealScale.x, 0);
         {
@@ -853,17 +853,17 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
                 stripShade = 0;
               }
               model->shade = stripShade;
-              Transform_Reset();
-              Transform_ApplyTranslation(-px(8), -px(8), 0);
-              Transform_ApplyAxisScale(size / 2, size, size / 2);
+              Matrix_Initialize();
+              Matrix_Translate(-toFIXED(8), -toFIXED(8), 0);
+              Matrix_Scale(size / 2, size, size / 2);
               if (k == 0) {
-                Transform_ApplyRoll(TRIG_TURN * 15 / 16);
+                Matrix_RotateZ(TRIG_TURN * 15 / 16);
               } else if (k == 1) {
-                Transform_ApplyRoll(TRIG_TURN / 8);
+                Matrix_RotateZ(DEGtoANG(45));
               } else {
-                Transform_ApplyRoll(TRIG_TURN * 7 / 8);
+                Matrix_RotateZ(TRIG_TURN * 7 / 8);
               }
-              Transform_ApplyPitch(TRIG_TURN / 32);
+              Matrix_RotateX(TRIG_TURN / 32);
               Render_TransformVertices(gBattleEffect_GroundSquareCorners,
                                        texture, 4);
               Render_DrawModelList(model);
@@ -888,9 +888,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
         finaleScale.x = finaleScale.y = (frame << 11) - 0xa5000;
         finalePlace[3] = 0;
-        finalePlace[1] = px(255);
-        finalePlace[0] = px(dx) + px(92);
-        finalePlace[2] = px(dz) + px(72);
+        finalePlace[1] = toFIXED(255);
+        finalePlace[0] = INTtoFIXED(dx) + toFIXED(92);
+        finalePlace[2] = INTtoFIXED(dz) + toFIXED(72);
         Render_ApplyProjectedPlacementFar(OBJECTS[CHARON_REVEAL], finalePlace,
                                           &finaleScale.x, 0);
       }
@@ -918,15 +918,14 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         s32 height = 54;
 
         if (frame > 349) {
-          height =
-              (Q_16_16_TO_INT(-(Trig_Sin((frame << 10) - 0x57800) * 54))) + 54;
+          height = (FIXEDtoINT(-(Trig_Sin((frame << 10) - 0x57800) * 54))) + 54;
         }
         if (frame == 360) {
           work->transferMode = CANVAS_COPY;
         }
         if (frame <= 371) {
           BattleEffect_DrawShadedCircles(work->sheet + CHARON_ACT_PICTURES, t,
-                                         Q16_ONE);
+                                         FIXED_ONE);
         } else {
           t = 104;
         }
@@ -1002,9 +1001,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
       w = 4;
       for (i = 0, h = 8; i != 256; i++) {
-        x = Q_16_16_TO_INT(Trig_Sin(i << 8) * radius * 2);
+        x = FIXEDtoINT(Trig_Sin(i << 8) * radius * 2);
         cosine = Trig_Cos(i << 8);
-        y = (Q_16_16_TO_INT(cosine * radius)) + 68;
+        y = (FIXEDtoINT(cosine * radius)) + 68;
         x += 66;
         routine[0](canvas, glyphs + row * 32, x - w / 2, y, w, h);
       }
@@ -1074,7 +1073,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         u16 *entry = (u16 *)&BG_PLTT_COLOR(14, 0);
 
         for (i = 0; i != 16; i++, color++, entry++) {
-          s32 add = (Q_16_16_TO_INT(Trig_Cos(t56 << 9) * 12)) + 16;
+          s32 add = (FIXEDtoINT(Trig_Cos(t56 << 9) * 12)) + 16;
           s32 r = RGB_RED(*color) + add;
           s32 g = RGB_GREEN(*color) + add;
           s32 b = RGB_BLUE(*color) + add;
@@ -1134,14 +1133,14 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       model->vertices = texture;
       if (depth > -48) {
         model->shade = depth;
-        Transform_Reset();
-        Transform_ApplyTranslation(px(4), 0, 0);
-        Transform_ApplyAxisScale(risingScale, risingScale, risingScale);
-        Transform_ApplyPitch(TRIG_TURN / 8);
+        Matrix_Initialize();
+        Matrix_Translate(toFIXED(4), 0, 0);
+        Matrix_Scale(risingScale, risingScale, risingScale);
+        Matrix_RotateX(DEGtoANG(45));
         if (frame > 55) {
-          Transform_ApplyYaw(frame << 10);
+          Matrix_RotateY(frame << 10);
         } else {
-          Transform_ApplyYaw(-frame << 10);
+          Matrix_RotateY(-frame << 10);
         }
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture, 4);
         Render_DrawModelList(model);
@@ -1151,11 +1150,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         model->shade = depth;
       }
       if (depth > -48) {
-        Transform_Reset();
-        Transform_ApplyTranslation(px(4), -px(16), 0);
-        Transform_ApplyUniformScale(-0xa710);
-        Transform_ApplyPitch(TRIG_TURN / 8);
-        Transform_ApplyYaw(-frame << 9);
+        Matrix_Initialize();
+        Matrix_Translate(toFIXED(4), -toFIXED(16), 0);
+        Matrix_ScaleUniform(-0xa710);
+        Matrix_RotateX(DEGtoANG(45));
+        Matrix_RotateY(-frame << 9);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture, 4);
         Render_DrawModelList(model);
       }
@@ -1167,11 +1166,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           last = -32;
         }
         model->shade = last;
-        Transform_Reset();
-        Transform_ApplyTranslation(px(2), -px(32), 0);
-        Transform_ApplyUniformScale(0x58f0);
-        Transform_ApplyPitch(TRIG_TURN / 8);
-        Transform_ApplyYaw(frame << 10);
+        Matrix_Initialize();
+        Matrix_Translate(toFIXED(2), -toFIXED(32), 0);
+        Matrix_ScaleUniform(0x58f0);
+        Matrix_RotateX(DEGtoANG(45));
+        Matrix_RotateY(frame << 10);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture, 4);
         Render_DrawModelList(model);
         /* FAKEMATCH(dead): twice raised to frame though nothing reads it again.
@@ -1180,11 +1179,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           twice = frame;
         }
         if (frame > -48) {
-          Transform_Reset();
-          Transform_ApplyTranslation(px(2), -px(48), 0);
-          Transform_ApplyUniformScale(-0x31e0);
-          Transform_ApplyPitch(TRIG_TURN / 8);
-          Transform_ApplyYaw(-frame << 10);
+          Matrix_Initialize();
+          Matrix_Translate(toFIXED(2), -toFIXED(48), 0);
+          Matrix_ScaleUniform(-0x31e0);
+          Matrix_RotateX(DEGtoANG(45));
+          Matrix_RotateY(-frame << 10);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture,
                                    4);
           Render_DrawModelList(model);
@@ -1251,9 +1250,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   }
   arg->targets[arg->targetCount] = 0xff;
   BattleActor_SpawnObjectsForListFar(arg->targets, 0);
-  BattleEffect_DrawShadedCircles(work->sheet, 56, Q16_ONE);
+  BattleEffect_DrawShadedCircles(work->sheet, 56, FIXED_ONE);
   BattleEffect_DrawShadedCircles(work->sheet + CHARON_ACT_PICTURES, 16,
-                                 Q16_ONE);
+                                 FIXED_ONE);
   Iwram_FillWords(work->sheet + CHARON_BRIGHT_BLOCK, 0x1000,
                   CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
   Resource_LoadAndDecompress((s32)&ResourceId_GlowRingTexture,
@@ -1309,9 +1308,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 
         BattleEffect_TintBattler(arg->targets[i], SPRITE_COLOR_NORMAL,
                                  POSE_DAMAGE, TINT_KEEP, -1);
-        actor->x.fixed = -(i + 4) * px(128);
+        actor->x.fixed = -(i + 4) * toFIXED(128);
         actor->z.fixed = 0;
-        actor->y.fixed = px(20);
+        actor->y.fixed = toFIXED(20);
         actor->gravity = 0;
       }
     }
@@ -1322,7 +1321,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       for (i = 0; i != arg->targetCount; i++) {
         struct Actor *actor = BattleObject_GetFar(arg->targets[i])->object;
 
-        SET_ACTOR_POSITION(actor, 0, px(124), 0);
+        SET_ACTOR_POSITION(actor, 0, toFIXED(124), 0);
         actor->gravity = 0;
       }
     }
@@ -1335,8 +1334,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           s32 speed = (Random16() & 511) + 32;
           s32 angle = Random16();
 
-          CHARON_PARTICLES[96 + i].x = px(60);
-          CHARON_PARTICLES[96 + i].y = px(60);
+          CHARON_PARTICLES[96 + i].x = toFIXED(60);
+          CHARON_PARTICLES[96 + i].y = toFIXED(60);
           CHARON_PARTICLES[96 + i].velocityX = (Trig_Sin(angle) * speed) >> 5;
           CHARON_PARTICLES[96 + i].velocityY = (Trig_Cos(angle) * speed) >> 5;
           CHARON_PARTICLES[96 + i].variant = 0;
@@ -1345,8 +1344,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           s32 speed = (Random16() & 255) + 32;
           s32 angle = Random16();
 
-          CHARON_PARTICLES[128 + i].x = px(60);
-          CHARON_PARTICLES[128 + i].y = px(60);
+          CHARON_PARTICLES[128 + i].x = toFIXED(60);
+          CHARON_PARTICLES[128 + i].y = toFIXED(60);
           CHARON_PARTICLES[128 + i].velocityX = (Trig_Sin(angle) * speed) >> 6;
           CHARON_PARTICLES[128 + i].velocityY = (Trig_Cos(angle) * speed) >> 6;
           CHARON_PARTICLES[128 + i].variant = (Random16() & 15) + 16;
@@ -1362,15 +1361,15 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         for (i = 0; i != arg->targetCount; i++) {
           struct Actor *actor = BattleObject_GetFar(arg->targets[i])->object;
 
-          SET_ACTOR_POSITION(actor, 0, px(32), HOMES[i].z);
+          SET_ACTOR_POSITION(actor, 0, toFIXED(32), HOMES[i].z);
         }
         for (i = 0; i != arg->targetCount; i++) {
           s32 spin = Random16();
           s32 delay = (Random16() & 31) + 120;
           s32 speed = spin * 2 + 0x20000;
 
-          BattleEffect_StartActorMotion(arg->targets[i], 1, px(4), px(8), speed,
-                                        delay);
+          BattleEffect_StartActorMotion(arg->targets[i], 1, toFIXED(4),
+                                        toFIXED(8), speed, delay);
           BattleEffect_TintBattler(arg->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 32);
         }
@@ -1385,13 +1384,13 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         if (p->variant >= 0 && p->variant < 24) {
           s32 row = (p->variant / 4) * 2048;
           u8 *buffer = SPRITE_BUFFER;
-          s32 x = (Q_16_16_TO_INT(p->x)) - 16;
+          s32 x = (FIXEDtoINT(p->x)) - 16;
 
           row += (s32)buffer;
           buffer = (u8 *)row;
-          routine[0](canvas, buffer, x, (Q_16_16_TO_INT(p->y)) - 32,
+          routine[0](canvas, buffer, x, (FIXEDtoINT(p->y)) - 32,
                      FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(p, 60, -px(1) / 8);
+          BattleEffectKernels_IntegrateVector2(p, 60, -toFIXED(1) / 8);
         }
         p->variant++;
       }
@@ -1404,10 +1403,10 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 
           for (k = 0; k != 4; k++) {
             routine[0](canvas, glyphs + gBattleEffect_MotePictures[size - 1],
-                       (Q_16_16_TO_INT(p->x)) - size / 2,
-                       (Q_16_16_TO_INT(p->y)) - size, size, size * 2);
+                       (FIXEDtoINT(p->x)) - size / 2, (FIXEDtoINT(p->y)) - size,
+                       size, size * 2);
             BattleEffectKernels_IntegrateVector2(p, 63, 0);
-            if (p->y > px(112)) {
+            if (p->y > toFIXED(112)) {
               p->velocityY = -p->velocityY;
             }
           }
@@ -1470,7 +1469,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 
         WAVE_SIZE = wave - step;
         if (wave > 0) {
-          BattleEffect_DrawShadedCircles(work->sheet, wave, Q16_ONE);
+          BattleEffect_DrawShadedCircles(work->sheet, wave, FIXED_ONE);
           Canvas_BlitAtFoot(work->sheet, 60, 60, wave);
         }
       }
@@ -1489,14 +1488,14 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         struct Particle *member = &MEMBERS[i];
         s32 landed = 0;
 
-        if (actor->y.fixed < px(100)) {
+        if (actor->y.fixed < toFIXED(100)) {
           if (member->variant == -1) {
-            actor->x.fixed += px(10);
+            actor->x.fixed += toFIXED(10);
           } else {
-            actor->x.fixed += px(2);
+            actor->x.fixed += toFIXED(2);
           }
           if (member->variant == -1) {
-            if (actor->x.fixed > px(48)) {
+            if (actor->x.fixed > toFIXED(48)) {
               landed = 1;
             }
             if (landed == 1) {
@@ -1511,7 +1510,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
                 speed = (Random16() & 255) + 256;
 
                 p->x = member->x << 15;
-                p->y = px(member->y);
+                p->y = INTtoFIXED(member->y);
                 p->velocityX = -(Trig_Sin(angle) * speed) >> 7;
                 p->velocityY = (Trig_Cos(angle) * speed) >> 6;
                 p->variant = (Random16() & 15) + 16;
@@ -1532,7 +1531,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
                                    TINT_KEEP, i, 32);
         }
         if (member->variant == 8) {
-          SET_ACTOR_POSITION(actor, 0, px(148), 0);
+          SET_ACTOR_POSITION(actor, 0, toFIXED(148), 0);
         }
       }
       if (frame >= 0) {
@@ -1548,7 +1547,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
               column = COLUMNS, halfCell = width / 2;
                i != 4;
                y2 += 30, y += 30, x += 8, phase += 0x2000, column++, i++) {
-            column->x = x + (Q_16_16_TO_INT(Trig_Sin(phase) * 4));
+            column->x = x + (FIXEDtoINT(Trig_Sin(phase) * 4));
             column->y = y;
             if (i == 3) {
               column->x -= 8;
@@ -1570,15 +1569,14 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             drop->variant = 0;
           }
           if (drop->variant == 0) {
-            drop->x = px(Random16() % 24 + shake - i * 2);
-            drop->y = px(80) + i * (192 << 10);
+            drop->x = INTtoFIXED(Random16() % 24 + shake - i * 2);
+            drop->y = toFIXED(80) + i * (192 << 10);
             drop->velocityX = -(Random16() & TRIG_ANGLE_MASK) - 0x4000;
-            drop->velocityY = -px(1);
+            drop->velocityY = -toFIXED(1);
           }
           if (drop->variant >= 0) {
             Canvas_BlitAtFoot(work->sheet + CHARON_ACT_PICTURES,
-                              Q_16_16_TO_INT(drop->x), Q_16_16_TO_INT(drop->y),
-                              16);
+                              FIXEDtoINT(drop->x), FIXEDtoINT(drop->y), 16);
             drop->x += drop->velocityX;
             drop->y += drop->velocityY;
           }
@@ -1606,8 +1604,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             s32 size = (p->variant >> 3) + 2;
 
             routine[0](canvas, glyphs + gBattleEffect_MotePictures[size - 1],
-                       (Q_16_16_TO_INT(p->x)) - size / 2,
-                       (Q_16_16_TO_INT(p->y)) - size, size, size * 2);
+                       (FIXEDtoINT(p->x)) - size / 2, (FIXEDtoINT(p->y)) - size,
+                       size, size * 2);
             BattleEffectKernels_IntegrateVector2(p, 60, 0);
             p->variant--;
           }
@@ -1636,11 +1634,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 
             member->variant = timer + 1;
             model->shade = depth;
-            Transform_Reset();
-            Transform_ApplyTranslation(px(member->x / 2 - 56),
-                                       px(member->y - 56), 0);
-            Transform_ApplyAxisScale(size / 3, size, size);
-            Transform_ApplyPitch(TRIG_TURN * 3 / 4);
+            Matrix_Initialize();
+            Matrix_Translate(INTtoFIXED(member->x / 2 - 56),
+                             INTtoFIXED(member->y - 56), 0);
+            Matrix_Scale(size / 3, size, size);
+            Matrix_RotateX(TRIG_TURN * 3 / 4);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, texture,
                                      4);
             Render_DrawModelList(model);

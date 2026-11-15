@@ -70,7 +70,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
   sparks = work->particles;
 
   // The caster dashes at the target.
-  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, px(7));
+  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, toFIXED(7));
 
   for (frame = 0; frame != HELM_SPLITTER_FRAMES; frame++) {
     // Frames 8-23: the swirl grows, one cell every second frame.
@@ -137,10 +137,10 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 
         spark = &sparks[i];
         if (args->variant == EFFECT_VARIANT_BASIC)
-          spark->x = px(64);
+          spark->x = toFIXED(64);
         else
-          spark->x = px(position.x / 2);
-        spark->y = px(80);
+          spark->x = INTtoFIXED(position.x / 2);
+        spark->y = toFIXED(80);
         spark->velocityX = (Trig_Sin(angle) * force) >> 7;
         spark->velocityY = -(Trig_Cos(angle) * force) >> 6;
         spark->variant = (Random16() & 15) + 16;
@@ -153,11 +153,11 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
       if (spark->variant > 0) {
         spark->variant--;
         BattleEffectKernels_IntegrateVector2(spark, 60, 0);
-        if (spark->y > px(104)) {
+        if (spark->y > toFIXED(104)) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x <= 0x7effff) && spark->y >= 0) {
-          s32 sx = Q_16_16_TO_INT(spark->x);
-          s32 sy = Q_16_16_TO_INT(spark->y);
+          s32 sx = FIXEDtoINT(spark->x);
+          s32 sy = FIXEDtoINT(spark->y);
 
           if (args->variant == EFFECT_VARIANT_BASIC)
             draw[0](canvas,

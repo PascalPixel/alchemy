@@ -75,8 +75,8 @@ void BattleCamera_Create(void) {
       HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
   s32 *focus = camera->focus;
 
-  SET_VECTOR(focus, 0, px(64), 0);
-  SET_VECTOR(camera->eye, 0, px(180), px(64));
+  SET_VECTOR(focus, 0, toFIXED(64), 0);
+  SET_VECTOR(camera->eye, 0, toFIXED(180), toFIXED(64));
   camera->yaw = TRIG_TURN * 5 / 32;
   camera->pitch = TRIG_TURN * 5 / 16;
   camera->distance = 256 << 16;
@@ -103,7 +103,7 @@ void Battle_ChangeEnemyForm(s32 id) {
   Enemy_Update();
   object = (s32 *)BattleObject_Get(FIRST_ENEMY_UNIT);
   BattleObject_Make((struct BattleObject *)object, FIRST_ENEMY_UNIT,
-                    object[3] / Q16_ONE, object[4] / Q16_ONE);
+                    object[3] / FIXED_ONE, object[4] / FIXED_ONE);
   BattleObject_Put();
 }
 
@@ -175,7 +175,7 @@ s32 Battle_Run(s32 enemyGroup) {
   REG_DISPCNT = DISPCNT_MODE_1;
   GameFlag_Set(FLAG_IN_BATTLE);
   GameFlag_Set(0x169);
-  Transform_Reset();
+  Matrix_Initialize();
 
   IWRAM_FILL_WORDS(camera, sizeof(struct BattleCamera), 0);
   Iwram_FillWordsEntry(battle, sizeof(struct BattleWork), 0);
@@ -250,7 +250,7 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleObject_Put();
   BattleBackground_Init();
   BattleBackground_Load(BATTLE_BACKGROUND_FIXED, battle->background, 0);
-  BattleCamera_SetRange(px(160), px(80), 0, 0, Q16_ONE * 2);
+  BattleCamera_SetRange(toFIXED(160), toFIXED(80), 0, 0, FIXED_ONE * 2);
   BattleCamera_SetView(0, 0, 0, 190);
   Party_ReservedNoOp5B14(1);
   REG_BLDCNT = 0;

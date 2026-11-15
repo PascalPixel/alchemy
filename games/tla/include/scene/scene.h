@@ -294,8 +294,8 @@ struct GustObject {
 union ViewCoordinate {
   s32 fixed;
   struct {
-    u16 fraction;
-    s16 pixel;
+    u16 decimal;
+    s16 integer;
   } part[1];
 };
 

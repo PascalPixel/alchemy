@@ -144,9 +144,9 @@ void Actor_UpdateAllThumb(void) {
       // capped at the speed limit, or brake when there is none.
       if (actor->motionFlags == 0) {
         if (actor->targetX != TARGET_UNSET) {
-          dx = (actor->targetX - x) / Q16_ONE;
-          dy = (actor->targetY - y) / Q16_ONE;
-          dz = (actor->targetZ - z) / Q16_ONE;
+          dx = (actor->targetX - x) / FIXED_ONE;
+          dy = (actor->targetY - y) / FIXED_ONE;
+          dz = (actor->targetZ - z) / FIXED_ONE;
           distance = Iwram_Sqrt(Actor_Square(dx) + Actor_Square(dy) +
                                 Actor_Square(dz));
           if (distance == 0) {
@@ -157,22 +157,22 @@ void Actor_UpdateAllThumb(void) {
             // ratio is acceleration / distance in 16.16, and dx, dy and dz
             // are whole pixels, so each axis gains its share of the
             // acceleration toward the target.
-            ratio = Iwram_RatioMulQ14(px(distance), actor->acceleration);
+            ratio = Iwram_RatioMulQ14(toFIXED(distance), actor->acceleration);
             actor->velocityX += dx * ratio;
             actor->velocityY += dy * ratio;
             actor->velocityZ += dz * ratio;
             velocityX = actor->velocityX;
             velocityY = actor->velocityY;
             velocityZ = actor->velocityZ;
-            speed = FixedSqrt(Iwram_MulQ16(velocityX, velocityX) +
-                              Iwram_MulQ16(velocityY, velocityY) +
-                              Iwram_MulQ16(velocityZ, velocityZ));
+            speed = Math_SqrtFX(Iwram_MulFX(velocityX, velocityX) +
+                                Iwram_MulFX(velocityY, velocityY) +
+                                Iwram_MulFX(velocityZ, velocityZ));
             // Too fast: scale the velocity by speedLimit / speed.
             if (speed > actor->speedLimit) {
               ratio = Iwram_RatioMulQ14(speed, actor->speedLimit);
-              SET_VELOCITY(actor, Iwram_MulQ16(velocityX, ratio),
-                           Iwram_MulQ16(velocityY, ratio),
-                           Iwram_MulQ16(velocityZ, ratio));
+              SET_VELOCITY(actor, Iwram_MulFX(velocityX, ratio),
+                           Iwram_MulFX(velocityY, ratio),
+                           Iwram_MulFX(velocityZ, ratio));
             }
           }
         } else {
@@ -181,15 +181,15 @@ void Actor_UpdateAllThumb(void) {
           dx = actor->velocityX;
           dy = actor->velocityY;
           dz = actor->velocityZ;
-          speed = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
-                            Iwram_MulQ16(dz, dz));
+          speed = Math_SqrtFX(Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) +
+                              Iwram_MulFX(dz, dz));
           if (speed != 0) {
             reducedSpeed = speed - actor->acceleration;
             if (reducedSpeed < 0)
               reducedSpeed = 0;
             ratio = Iwram_RatioMulQ14(speed, reducedSpeed);
-            SET_VELOCITY(actor, Iwram_MulQ16(dx, ratio),
-                         Iwram_MulQ16(dy, ratio), Iwram_MulQ16(dz, ratio));
+            SET_VELOCITY(actor, Iwram_MulFX(dx, ratio), Iwram_MulFX(dy, ratio),
+                         Iwram_MulFX(dz, ratio));
           } else {
             SET_VELOCITY(actor, 0, 0, 0);
           }
@@ -197,44 +197,44 @@ void Actor_UpdateAllThumb(void) {
       } else {
         // On the ground: steer in the XZ plane the same way.
         if (actor->targetX != TARGET_UNSET) {
-          dx = (actor->targetX - x) / Q16_ONE;
-          dz = (actor->targetZ - z) / Q16_ONE;
-          distance = px(Iwram_Sqrt(Actor_Square(dx) + Actor_Square(dz)));
+          dx = (actor->targetX - x) / FIXED_ONE;
+          dz = (actor->targetZ - z) / FIXED_ONE;
+          distance = toFIXED(Iwram_Sqrt(Actor_Square(dx) + Actor_Square(dz)));
           // Under 256 pixels, measure again in 16.16 for sub-pixel accuracy;
           // further away the squares would overflow.
-          if (distance <= px(256) - 1) {
+          if (distance <= toFIXED(256) - 1) {
             dx = actor->targetX - x;
             dz = actor->targetZ - z;
-            distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
+            distance = Math_SqrtFX(Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz));
           }
           if (distance == 0) {
             x = actor->targetX;
             z = actor->targetZ;
           } else {
             ratio = Iwram_RatioMulQ14(distance, actor->acceleration);
-            actor->velocityX += Iwram_MulQ16(dx, ratio);
-            actor->velocityZ += Iwram_MulQ16(dz, ratio);
+            actor->velocityX += Iwram_MulFX(dx, ratio);
+            actor->velocityZ += Iwram_MulFX(dz, ratio);
             velocityX = actor->velocityX;
             velocityZ = actor->velocityZ;
-            speed = FixedSqrt(Iwram_MulQ16(velocityX, velocityX) +
-                              Iwram_MulQ16(velocityZ, velocityZ));
+            speed = Math_SqrtFX(Iwram_MulFX(velocityX, velocityX) +
+                                Iwram_MulFX(velocityZ, velocityZ));
             if (speed > actor->speedLimit) {
               ratio = Iwram_RatioMulQ14(speed, actor->speedLimit);
-              actor->velocityX = Iwram_MulQ16(velocityX, ratio);
-              actor->velocityZ = Iwram_MulQ16(velocityZ, ratio);
+              actor->velocityX = Iwram_MulFX(velocityX, ratio);
+              actor->velocityZ = Iwram_MulFX(velocityZ, ratio);
             }
           }
         } else {
           dx = actor->velocityX;
           dz = actor->velocityZ;
-          speed = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
+          speed = Math_SqrtFX(Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz));
           if (speed != 0) {
             reducedSpeed = speed - actor->acceleration;
             if (reducedSpeed < 0)
               reducedSpeed = 0;
             ratio = Iwram_RatioMulQ14(speed, reducedSpeed);
-            actor->velocityX = Iwram_MulQ16(dx, ratio);
-            actor->velocityZ = Iwram_MulQ16(dz, ratio);
+            actor->velocityX = Iwram_MulFX(dx, ratio);
+            actor->velocityZ = Iwram_MulFX(dz, ratio);
           } else {
             actor->velocityX = 0;
             actor->velocityZ = 0;
@@ -249,7 +249,7 @@ void Actor_UpdateAllThumb(void) {
           velocityZ = z + actor->velocityZ;
           ground = MapGrid_GetTerrainHeight(actor->layer, velocityX, velocityZ);
           velocityY = ground - actor->groundHeight;
-          if (ground - y > -px(4))
+          if (ground - y > -toFIXED(4))
             y += velocityY;
           if (velocityY < 0)
             velocityY = -velocityY;
@@ -262,15 +262,15 @@ void Actor_UpdateAllThumb(void) {
             dx = actor->velocityX;
             dy = actor->velocityY;
             dz = actor->velocityZ;
-            speed = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
-                              Iwram_MulQ16(dz, dz));
+            speed = Math_SqrtFX(Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) +
+                                Iwram_MulFX(dz, dz));
             if (speed != 0) {
               reducedSpeed = speed - velocityY;
               if (reducedSpeed < 0)
                 reducedSpeed = 0;
               ratio = Iwram_RatioMulQ14(speed, reducedSpeed);
-              SET_VELOCITY(actor, Iwram_MulQ16(dx, ratio),
-                           Iwram_MulQ16(dy, ratio), Iwram_MulQ16(dz, ratio));
+              SET_VELOCITY(actor, Iwram_MulFX(dx, ratio),
+                           Iwram_MulFX(dy, ratio), Iwram_MulFX(dz, ratio));
             }
           }
           actor->groundHeight = ground;
@@ -283,7 +283,7 @@ void Actor_UpdateAllThumb(void) {
             actor->velocityY -= actor->gravity;
           } else if (actor->velocityY < 0) {
             y = ground;
-            actor->velocityY = -Iwram_MulQ16(actor->velocityY, actor->bounce);
+            actor->velocityY = -Iwram_MulFX(actor->velocityY, actor->bounce);
             // A rebound no faster than one frame of gravity ends the bouncing.
             if ((actor->velocityY < 0 ? -actor->velocityY : actor->velocityY) <=
                 actor->gravity)
@@ -370,7 +370,7 @@ void Actor_UpdateAllThumb(void) {
         s32 maximumFacingStep;
 
         // As a signed halfword the difference is the shorter way round.
-        facingStep = (s16)(ArcTan2(z, x) - actor->facing);
+        facingStep = (s16)(Trig_Atan(z, x) - actor->facing);
         maximumFacingStep = FACING_STEP;
         if (facingStep > maximumFacingStep)
           facingStep = maximumFacingStep;
@@ -403,21 +403,21 @@ void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z) {
   s32 dz;
   s32 squaredZ;
 
-  dx = (x - actor->x.fixed) / Q16_ONE;
-  distance = (y - actor->y.fixed) / Q16_ONE;
-  dz = (z - actor->z.fixed) / Q16_ONE;
+  dx = (x - actor->x.fixed) / FIXED_ONE;
+  distance = (y - actor->y.fixed) / FIXED_ONE;
+  dz = (z - actor->z.fixed) / FIXED_ONE;
   squaredZ = dz * dz;
-  distance = px(Iwram_Sqrt(dx * dx + distance * distance + squaredZ));
+  distance = toFIXED(Iwram_Sqrt(dx * dx + distance * distance + squaredZ));
   // Under 16 whole pixels, measure again in 16.16 for sub-pixel accuracy.
-  if (distance < px(16)) {
+  if (distance < toFIXED(16)) {
     dx = x - actor->x.fixed;
     distance = y - actor->y.fixed;
     dz = z - actor->z.fixed;
     distance =
-        FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(distance, distance) +
-                  Iwram_MulQ16(dz, dz));
+        Math_SqrtFX(Iwram_MulFX(dx, dx) + Iwram_MulFX(distance, distance) +
+                    Iwram_MulFX(dz, dz));
   }
-  if (distance < Q16_ONE) {
+  if (distance < FIXED_ONE) {
     SET_ACTOR_POSITION(actor, x, y, z);
     actor->targetX = TARGET_UNSET;
     actor->targetY = TARGET_UNSET;
@@ -430,9 +430,8 @@ void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z) {
     // speedLimit squared over acceleration, in 16.16 pixels: twice the
     // distance an actor at its limit coasts while it brakes to a stop, so
     // the shortened target leaves it room to coast onto the point asked for.
-    brakingDistance =
-        Iwram_RatioMulQ14(actor->acceleration,
-                          Iwram_MulQ16(actor->speedLimit, actor->speedLimit));
+    brakingDistance = Iwram_RatioMulQ14(
+        actor->acceleration, Iwram_MulFX(actor->speedLimit, actor->speedLimit));
     if (distance > brakingDistance)
       brakingDistance = distance - brakingDistance / 2;
     else
@@ -440,9 +439,9 @@ void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z) {
     // Scale the offset to the target by the shortened distance's share of
     // the whole.
     distance = Iwram_RatioMulQ14(distance, brakingDistance);
-    x = actor->x.fixed + Iwram_MulQ16(x - actor->x.fixed, distance);
-    y = actor->y.fixed + Iwram_MulQ16(y - actor->y.fixed, distance);
-    z = actor->z.fixed + Iwram_MulQ16(z - actor->z.fixed, distance);
+    x = actor->x.fixed + Iwram_MulFX(x - actor->x.fixed, distance);
+    y = actor->y.fixed + Iwram_MulFX(y - actor->y.fixed, distance);
+    z = actor->z.fixed + Iwram_MulFX(z - actor->z.fixed, distance);
   }
   actor->targetX = x;
   actor->targetY = y;
@@ -514,41 +513,39 @@ void Actor_UpdateAllMotion(void) {
       // Steer in the XZ plane as Actor_UpdateAllThumb does on the ground,
       // or brake; this loop has no free flight, ground following or floating.
       if (actor->targetX != TARGET_UNSET) {
-        dx = (actor->targetX - x) / Q16_ONE;
-        dz = (actor->targetZ - z) / Q16_ONE;
-        distance = px(Iwram_Sqrt(dx * dx + dz * dz));
+        dx = (actor->targetX - x) / FIXED_ONE;
+        dz = (actor->targetZ - z) / FIXED_ONE;
+        distance = toFIXED(Iwram_Sqrt(dx * dx + dz * dz));
         // Under 256 pixels, measure again in 16.16: the root of a 16.16
         // square is 8.8, and << 8 makes it 16.16 again.
-        if (distance <= px(256) - 1) {
+        if (distance <= toFIXED(256) - 1) {
           dx = actor->targetX - x;
           dz = actor->targetZ - z;
-          distance = Iwram_Sqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz))
-                     << 8;
+          distance = Iwram_Sqrt(Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz)) << 8;
         }
         if (distance == 0) {
           x = actor->targetX;
           z = actor->targetZ;
         } else {
           ratio = Iwram_RatioMulQ14(distance, actor->acceleration);
-          velocityX = actor->velocityX + Iwram_MulQ16(dx, ratio);
+          velocityX = actor->velocityX + Iwram_MulFX(dx, ratio);
           actor->velocityX = velocityX;
-          dx = actor->velocityZ + Iwram_MulQ16(dz, ratio);
+          dx = actor->velocityZ + Iwram_MulFX(dz, ratio);
           actor->velocityZ = dx;
-          distance = Iwram_Sqrt(Iwram_MulQ16(velocityX, velocityX) +
-                                Iwram_MulQ16(dx, dx))
+          distance = Iwram_Sqrt(Iwram_MulFX(velocityX, velocityX) +
+                                Iwram_MulFX(dx, dx))
                      << 8;
           if (distance > actor->speedLimit) {
             ratio = Iwram_RatioMulQ14(distance, actor->speedLimit);
-            actor->velocityX = Iwram_MulQ16(velocityX, ratio);
-            actor->velocityZ = Iwram_MulQ16(dx, ratio);
+            actor->velocityX = Iwram_MulFX(velocityX, ratio);
+            actor->velocityZ = Iwram_MulFX(dx, ratio);
           }
         }
       } else {
         dx = actor->velocityX;
         dz = actor->velocityZ;
         if ((dx | dz) != 0) {
-          distance = Iwram_Sqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz))
-                     << 8;
+          distance = Iwram_Sqrt(Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz)) << 8;
           if (distance != 0) {
             if (distance - actor->acceleration < 0) {
               actor->velocityX = 0;
@@ -556,8 +553,8 @@ void Actor_UpdateAllMotion(void) {
             } else {
               ratio =
                   Iwram_RatioMulQ14(distance, distance - actor->acceleration);
-              actor->velocityX = Iwram_MulQ16(dx, ratio);
-              actor->velocityZ = Iwram_MulQ16(dz, ratio);
+              actor->velocityX = Iwram_MulFX(dx, ratio);
+              actor->velocityZ = Iwram_MulFX(dz, ratio);
             }
           } else {
             actor->velocityX = 0;
@@ -571,7 +568,7 @@ void Actor_UpdateAllMotion(void) {
           actor->velocityY -= actor->gravity;
         } else if (actor->velocityY < 0) {
           y = actor->groundHeight;
-          actor->velocityY = -Iwram_MulQ16(actor->velocityY, actor->bounce);
+          actor->velocityY = -Iwram_MulFX(actor->velocityY, actor->bounce);
           if ((actor->velocityY < 0 ? -actor->velocityY : actor->velocityY) <=
               actor->gravity)
             actor->velocityY = 0;
@@ -623,7 +620,7 @@ void Actor_UpdateAllMotion(void) {
       x = actor->velocityX;
       z = actor->velocityZ;
       if (x != 0 || z != 0) {
-        facingStep = (s16)(ArcTan2(z, x) - actor->facing);
+        facingStep = (s16)(Trig_Atan(z, x) - actor->facing);
         if (facingStep > TRIG_TURN / 16)
           facingStep = FACING_STEP;
         if (facingStep < -TRIG_TURN / 16)

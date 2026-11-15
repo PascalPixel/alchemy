@@ -298,7 +298,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
         id = index;
       battleObject = BattleObject_Get(id);
       if (Unit_GetFar(id)->id != ENEMY_FUSION_DRAGON)
-        battleObject->scale = Q16_ONE * 7 / 10;
+        battleObject->scale = FIXED_ONE * 7 / 10;
     }
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                         DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_WIN0_ON |

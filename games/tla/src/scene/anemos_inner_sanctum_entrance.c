@@ -146,8 +146,8 @@ void AnemosInnerSanctumEntrance_GlowRises(void) {
   struct Actor *object = Actor_GetById(ACTOR_BLUE_ORB);
 
   object->motionFlags = 0;
-  object->scaleX = Q16_ONE / 4;
-  object->scaleY = Q16_ONE / 4;
+  object->scaleX = FIXED_ONE / 4;
+  object->scaleY = FIXED_ONE / 4;
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_LIGHT_APPEAR);
@@ -182,8 +182,8 @@ void AnemosInnerSanctumEntrance_PlaceStatues(void) {
 }
 
 void AnemosInnerSanctumEntrance_ShowByHeight(struct Actor *object) {
-  if ((object->groundHeight = Map_GetTerrainHeight(0, object->x.fixed,
-                                                   object->z.fixed)) >= -px(32))
+  if ((object->groundHeight = Map_GetTerrainHeight(
+           0, object->x.fixed, object->z.fixed)) >= -toFIXED(32))
     Actor_SetSpriteFlags(object, 1);
   else
     Actor_SetSpriteFlags(object, 0);
@@ -228,7 +228,7 @@ void AnemosInnerSanctumEntrance_StepWhilePushing(s32 a) {
       AnemosInnerSanctumEntrance_MoveStatue(0, a);
     }
   } else {
-    if (Actor_GetById(party->leaderActorId)->y.fixed > -px(28))
+    if (Actor_GetById(party->leaderActorId)->y.fixed > -toFIXED(28))
       Field_TryJumpForward();
   }
 }
@@ -248,9 +248,9 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
     return;
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
 #if TLA_PATCH_1
-  FieldActor_SetMoveTargetFixed(
-      object, (object->x.fixed & FIELD_CELL_MASK) + px(8), object->y.fixed,
-      (object->z.fixed & FIELD_CELL_MASK) + px(8));
+  FieldActor_SetMoveTargetFX(
+      object, (object->x.fixed & FIELD_CELL_MASK) + toFIXED(8), object->y.fixed,
+      (object->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
 #endif
   {
     s32 id = gMainRoutineWork.leaderActorId;
@@ -266,11 +266,11 @@ next:
   {
     object = Actor_GetById(gAnemosInnerSanctumEntrance_StatueOrder[i]);
     object->motionFlags = 0;
-    object->y.fixed += px(1) / 2;
-    object->acceleration = px(1) / 16;
-    object->speedLimit = px(2);
+    object->y.fixed += toFIXED(1) / 2;
+    object->acceleration = toFIXED(1) / 16;
+    object->speedLimit = toFIXED(2);
     Actor_SetSpriteFlags(object, 1);
-    Actor_SetMoveTarget(object, object->x.fixed, -px(8), object->z.fixed);
+    Actor_SetMoveTarget(object, object->x.fixed, -toFIXED(8), object->z.fixed);
     object->update = AnemosInnerSanctumEntrance_ShowByHeight;
     Sound_Play(SE_JUMP);
     wait((Random_Below(4)) + 3);
@@ -286,7 +286,7 @@ lower:
     {
       s32 z = object->z.fixed - shift;
 
-      Actor_SetMoveTarget(object, object->x.fixed, -px(8), z);
+      Actor_SetMoveTarget(object, object->x.fixed, -toFIXED(8), z);
     }
   }
   if (++i <= 14)
@@ -297,7 +297,7 @@ lower:
 land:
   {
     object = Actor_GetById(i);
-    object->z.fixed = (object->z.fixed & FIELD_CELL_MASK) + px(8);
+    object->z.fixed = (object->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
     object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     object->update = 0;
   }
@@ -386,7 +386,7 @@ void LightSprites_Draw(void) {
 
     if (actor != 0 && actor->x.fixed != 0) {
       s32 ox = actor->x.fixed - viewX;
-      s32 y = actor->y.fixed - viewY + px(8);
+      s32 y = actor->y.fixed - viewY + toFIXED(8);
       s32 z = actor->z.fixed - viewZ - viewY;
       s32 oy = z - y;
       s32 depth = ((y + z) >> 16) + 58;
@@ -519,8 +519,8 @@ u32 gFieldEffect_LongScript[] = {
 };
 
 s32 gAnemosInnerSanctumEntrance_GlowGrowsScript[] = {
-    SC_ADD(SW_SCALE_X, Q16_ONE / 64),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 64),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 64),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 64),
     SC_ADD(SW_Y, -0x4000),
     SC_WAIT(1),
     SC_LOOP(40, SC_TOP),
@@ -528,8 +528,8 @@ s32 gAnemosInnerSanctumEntrance_GlowGrowsScript[] = {
 };
 
 s32 gAnemosInnerSanctumEntrance_GlowShrinksScript[] = {
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 32),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_ADD(SW_Y, 0x4000),
     SC_WAIT(1),
     SC_LOOP(24, SC_TOP),
@@ -539,8 +539,8 @@ s32 gAnemosInnerSanctumEntrance_GlowShrinksScript[] = {
 };
 
 s32 gAnemosInnerSanctumEntrance_ShadowScript[] = {
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
     SC_WAIT(1),
     SC_LOOP(40, SC_TOP),
     SC_POSITION_ORIGIN,

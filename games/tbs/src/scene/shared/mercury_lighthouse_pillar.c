@@ -22,7 +22,7 @@ static s32 MercuryLighthouse_AdvanceAnchoredRiseFrame(struct Actor *effect) {
   effect->scaleX = scale;
   effect->scaleY = scale;
   effect->x.fixed = anchor->x.fixed;
-  effect->y.fixed += px(1);
+  effect->y.fixed += toFIXED(1);
   effect->z.fixed = anchor->z.fixed;
   return 1;
 }
@@ -48,8 +48,8 @@ static s32 Actor_AdvanceScaleCounter(struct Actor *actor) {
   if (frame > 16) {
     return 0;
   }
-  actor->scaleX = (frame << 11) + Q16_ONE;
-  actor->scaleY = (frame << 11) + Q16_ONE;
+  actor->scaleX = (frame << 11) + FIXED_ONE;
+  actor->scaleY = (frame << 11) + FIXED_ONE;
   return 1;
 }
 
@@ -64,9 +64,9 @@ static s32 MercuryLighthouse_FollowLeader(struct Actor *actor) {
   s32 distance;
   s32 moveDistance;
 
-  actor->speedLimit = px(2);
+  actor->speedLimit = toFIXED(2);
   leader = actor->watchedActor;
-  actor->acceleration = px(1);
+  actor->acceleration = toFIXED(1);
   targetX = leader->x.fixed;
   targetZ = leader->z.fixed;
   actor->targetX = ACTOR_NO_TARGET;
@@ -74,26 +74,26 @@ static s32 MercuryLighthouse_FollowLeader(struct Actor *actor) {
   actor->targetZ = ACTOR_NO_TARGET;
 
   // Measure in whole pixels first; use fixed-point precision near the leader.
-  deltaX = (targetX - actor->x.fixed) / px(1);
-  deltaZ = (targetZ - actor->z.fixed) / px(1);
+  deltaX = (targetX - actor->x.fixed) / toFIXED(1);
+  deltaZ = (targetZ - actor->z.fixed) / toFIXED(1);
   distance = (u16)Iwram_Sqrt(deltaX * deltaX + deltaZ * deltaZ);
   deltaX = targetX - actor->x.fixed;
   deltaZ = targetZ - actor->z.fixed;
   distance <<= 16;
-  if (distance < px(64))
+  if (distance < toFIXED(64))
     distance =
-        FixedSqrt(Iwram_MulQ16(deltaX, deltaX) + Iwram_MulQ16(deltaZ, deltaZ));
+        Math_SqrtFX(Iwram_MulFX(deltaX, deltaX) + Iwram_MulFX(deltaZ, deltaZ));
   moveDistance = distance / 8;
   if (moveDistance > actor->speedLimit)
     moveDistance = actor->speedLimit;
 
-  if (distance < px(1) / 4) {
+  if (distance < toFIXED(1) / 4) {
     actor->x.fixed = targetX;
     actor->z.fixed = targetZ;
   } else {
     if (distance > moveDistance) {
-      deltaX = Iwram_MulQ16(Iwram_RatioMulQ14(distance, deltaX), moveDistance);
-      deltaZ = Iwram_MulQ16(Iwram_RatioMulQ14(distance, deltaZ), moveDistance);
+      deltaX = Iwram_MulFX(Iwram_RatioMulQ14(distance, deltaX), moveDistance);
+      deltaZ = Iwram_MulFX(Iwram_RatioMulQ14(distance, deltaZ), moveDistance);
     }
     actor->x.fixed += deltaX;
     actor->z.fixed += deltaZ;
@@ -171,7 +171,7 @@ void MercuryLighthouse_ChargeLights(void) {
   pillar = state->pillar;
   if (pillar == NULL) {
     actor = FieldActor_Create(SPRITE_GOLDEN_RINGS, leader->x.fixed,
-                              leader->y.fixed + px(24), leader->z.fixed);
+                              leader->y.fixed + toFIXED(24), leader->z.fixed);
     if (actor != NULL) {
       struct Sprite *sprite = actor->sprite;
 
@@ -179,7 +179,7 @@ void MercuryLighthouse_ChargeLights(void) {
       Actor_StartScript(actor, gMercuryLighthouse_PillarScript);
       actor->watchedActor = leader;
       actor->motionFlags = ACTOR_FLOATS;
-      actor->y.fixed -= px(1) / 2;
+      actor->y.fixed -= toFIXED(1) / 2;
       if (sprite != NULL) {
         sprite->flags = 0;
         sprite->image.priority = 1;
@@ -198,8 +198,8 @@ void MercuryLighthouse_ChargeLights(void) {
     Actor_SelectAnimation(pillar, 5 - step);
   }
   state->levels = 3;
-  state->targetX = (pillar->x.fixed & FIELD_CELL_MASK) + px(8);
-  state->targetZ = (pillar->z.fixed & FIELD_CELL_MASK) + px(8);
+  state->targetX = (pillar->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  state->targetZ = (pillar->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
   GameFlag_Set(FLAG_NO_ENCOUNTERS_IN_AREA);
   Event_End();
 }
@@ -266,12 +266,14 @@ void MercuryLighthouse_HopAcrossPool(void) {
   angle = gMercuryLighthouse_MoveAngles[DPAD_INDEX(keys)];
   if ((s16)gMercuryLighthouse_MoveAngles[DPAD_INDEX(keys)] == -1)
     return;
-  pos[0].fixed = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
+  pos[0].fixed = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   pos[1].fixed = actor->groundHeight;
-  pos[2].fixed = (actor->z.fixed & FIELD_CELL_MASK) + px(8);
-  from = &MAPGRID_CELLS[(pos[2].fixed / px(16) << 7) + pos[0].fixed / px(16)];
-  Vector_AddPolarOffset(px(32), angle, &pos[0].fixed);
-  to = &MAPGRID_CELLS[(pos[2].fixed / px(16) << 7) + pos[0].fixed / px(16)];
+  pos[2].fixed = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  from = &MAPGRID_CELLS[(pos[2].fixed / toFIXED(16) << 7) +
+                        pos[0].fixed / toFIXED(16)];
+  Vector_AddPolarOffset(toFIXED(32), angle, &pos[0].fixed);
+  to = &MAPGRID_CELLS[(pos[2].fixed / toFIXED(16) << 7) +
+                      pos[0].fixed / toFIXED(16)];
   if (from->behavior != state->poolBehavior &&
       to->behavior == state->poolBehavior && state->levels == 0)
     return;
@@ -298,10 +300,9 @@ void MercuryLighthouse_HopAcrossPool(void) {
       obj->motionFlags = 0;
       obj->timer = 0;
       obj->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      obj->speedLimit = px(4);
-      obj->acceleration = px(2);
-      FieldActor_SetMoveTargetFixed(obj, pos[0].fixed, pos[1].fixed,
-                                    pos[2].fixed);
+      obj->speedLimit = toFIXED(4);
+      obj->acceleration = toFIXED(2);
+      FieldActor_SetMoveTargetFX(obj, pos[0].fixed, pos[1].fixed, pos[2].fixed);
       if (sprite != NULL) {
         Sprite_StartAnimation(sprite, 6);
         sprite->flags = 0;
@@ -322,13 +323,13 @@ void MercuryLighthouse_HopAcrossPool(void) {
   wait(3);
   Sound_Play(SE_JUMP);
   Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
-  actor->speedLimit = px(3);
-  actor->acceleration = px(2);
-  actor->velocityY = px(4);
+  actor->speedLimit = toFIXED(3);
+  actor->acceleration = toFIXED(2);
+  actor->velocityY = toFIXED(4);
   *flags &= ACTOR_JUMP_KEEPS_MOTION;
   Actor_SetSpriteFlags(actor, 0);
-  Actor_MoveToAndWaitById(ACTOR_PARTY_LEADER, pos[0].part[0].pixel,
-                          pos[2].part[0].pixel);
+  Actor_MoveToAndWaitById(ACTOR_PARTY_LEADER, pos[0].part[0].integer,
+                          pos[2].part[0].integer);
   Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
   wait(2);
   if (to->behavior != state->poolBehavior)
@@ -355,7 +356,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   }
   state->rippleTimer = 0;
   Event_End();
-  work->walkingDistance += Iwram_MulQ16(work->walkingDistanceScale, px(32));
+  work->walkingDistance += Iwram_MulFX(work->walkingDistanceScale, toFIXED(32));
 }
 
 /// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER: while the leader stands there,

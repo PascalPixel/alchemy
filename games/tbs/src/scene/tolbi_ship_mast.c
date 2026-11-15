@@ -216,7 +216,7 @@ static s32 TolbiShipMast_RandomizeLookoutFacing(struct Actor *actor) {
 
 /// Grows both axes by the same amount until the actor reaches full scale.
 static void TolbiShipMast_GrowActorScale(struct Actor *actor) {
-  if (actor->scaleX < Q16_ONE) {
+  if (actor->scaleX < FIXED_ONE) {
     actor->scaleX += 160;
     actor->scaleY += 160;
   }
@@ -237,16 +237,16 @@ static s32 TolbiShipMast_SwayActor(struct Actor *actor) {
     actor->riseBaseY = 0;
   } else if (actor->timer != SWAY_INCREASING) {
     actor->riseBaseY -= Random_Below(2048);
-    if (actor->riseBaseY < -px(3) / 4) {
+    if (actor->riseBaseY < -toFIXED(3) / 4) {
       actor->timer = SWAY_INCREASING;
     }
   } else {
     actor->riseBaseY += Random_Below(2048);
-    if (actor->riseBaseY > px(3) / 4) {
+    if (actor->riseBaseY > toFIXED(3) / 4) {
       actor->timer = SWAY_DECREASING;
     }
   }
-  if (actor->x.fixed > px(40) && actor->x.fixed < px(320)) {
+  if (actor->x.fixed > toFIXED(40) && actor->x.fixed < toFIXED(320)) {
     actor->x.fixed += actor->riseBaseY;
   }
 
@@ -254,13 +254,13 @@ static s32 TolbiShipMast_SwayActor(struct Actor *actor) {
   if ((s16)actor->userValue == SWAY_HELD) {
     actor->y.fixed = 0;
   } else if ((s16)actor->userValue != SWAY_INCREASING) {
-    actor->y.fixed -= Random_Below(px(3) / 4);
+    actor->y.fixed -= Random_Below(toFIXED(3) / 4);
     if (actor->y.fixed < 0) {
       actor->userValue = SWAY_INCREASING;
     }
   } else {
-    actor->y.fixed += Random_Below(px(3) / 4);
-    if (actor->y.fixed > px(16)) {
+    actor->y.fixed += Random_Below(toFIXED(3) / 4);
+    if (actor->y.fixed > toFIXED(16)) {
       actor->userValue = SWAY_DECREASING;
     }
   }
@@ -272,11 +272,11 @@ static s32 TolbiShipMast_ShrinkAndStopActor(struct Actor *actor) {
   struct Sprite *sprite = actor->sprite;
 
   sprite->image.priority = 3;
-  actor->speedLimit = px(2);
-  actor->acceleration = px(1);
-  if (actor->scaleX > Q16_ONE / 16) {
-    actor->scaleX -= Q16_ONE / 64;
-    actor->scaleY -= Q16_ONE / 64;
+  actor->speedLimit = toFIXED(2);
+  actor->acceleration = toFIXED(1);
+  if (actor->scaleX > FIXED_ONE / 16) {
+    actor->scaleX -= FIXED_ONE / 64;
+    actor->scaleY -= FIXED_ONE / 64;
   } else {
     actor->x.fixed = 0;
     actor->y.fixed = 0;
@@ -356,7 +356,7 @@ s32 Scene_Initialize(void) {
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       Event_Start();
       Field_ClimbUp();
-      leader->y.fixed = px(56);
+      leader->y.fixed = toFIXED(56);
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       wait(1);
       FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
@@ -468,7 +468,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   gTolbiShipMast_CameraOrigin[0] = *cameraOrigin++;
   gTolbiShipMast_CameraOrigin[1] = *cameraOrigin;
   Actor_SetPosition(ACTOR_SPARKLE, 80, 210);
-  sparkleX = px(80);
+  sparkleX = toFIXED(80);
   Actor_Get(ACTOR_SPARKLE)->motionFlags = 0;
   gTolbiShipMast_CameraCenter[0] = sparkleX;
   gTolbiShipMast_CameraCenter[1] = sparkleY;
@@ -484,9 +484,9 @@ static void TolbiShipMast_RunAvastEvent(void) {
   // "Avast!"
   Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
   // The three monsters appear where the sparkle turned.
-  Actor_SetPositionFixed(ACTOR_FIRST_SIGHTED_MONSTER, sparkleX, px(210));
-  Actor_SetPositionFixed(ACTOR_FIRST_SIGHTED_MONSTER + 1, sparkleX, px(210));
-  Actor_SetPositionFixed(ACTOR_FIRST_SIGHTED_MONSTER + 2, sparkleX, px(210));
+  Actor_SetPositionFX(ACTOR_FIRST_SIGHTED_MONSTER, sparkleX, toFIXED(210));
+  Actor_SetPositionFX(ACTOR_FIRST_SIGHTED_MONSTER + 1, sparkleX, toFIXED(210));
+  Actor_SetPositionFX(ACTOR_FIRST_SIGHTED_MONSTER + 2, sparkleX, toFIXED(210));
   Actor_SetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER, 3);
   Actor_SetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER + 1, 3);
   Actor_SetSpritePriority(ACTOR_FIRST_SIGHTED_MONSTER + 2, 3);
@@ -494,16 +494,16 @@ static void TolbiShipMast_RunAvastEvent(void) {
   Actor_SetSpriteColorById(ACTOR_FIRST_SIGHTED_MONSTER + 1, SPRITE_COLOR_BGR);
   Actor_SetSpriteColorById(ACTOR_FIRST_SIGHTED_MONSTER + 2, SPRITE_COLOR_BGR);
   actor = Actor_Get(ACTOR_FIRST_SIGHTED_MONSTER);
-  actor->scaleY = Q16_ONE / 2;
-  actor->scaleX = Q16_ONE / 2;
+  actor->scaleY = FIXED_ONE / 2;
+  actor->scaleX = FIXED_ONE / 2;
   actor->update = TolbiShipMast_GrowActorScale;
   actor = Actor_Get(ACTOR_FIRST_SIGHTED_MONSTER + 1);
-  actor->scaleY = Q16_ONE / 2;
-  actor->scaleX = Q16_ONE / 2;
+  actor->scaleY = FIXED_ONE / 2;
+  actor->scaleX = FIXED_ONE / 2;
   actor->update = TolbiShipMast_GrowActorScale;
   actor = Actor_Get(ACTOR_FIRST_SIGHTED_MONSTER + 2);
-  actor->scaleY = Q16_ONE / 2;
-  actor->scaleX = Q16_ONE / 2;
+  actor->scaleY = FIXED_ONE / 2;
+  actor->scaleX = FIXED_ONE / 2;
   actor->update = TolbiShipMast_GrowActorScale;
   wait(1);
   Actor_SetSpeed(ACTOR_FIRST_SIGHTED_MONSTER, 0.52);
@@ -656,10 +656,10 @@ static void TolbiShipMast_InitializeDriftingActor(s32 actorId) {
   actor->motionFlags = 0;
   actor->timer = Random_Below(2);
   actor->userValue = Random_Below(2);
-  actor->y.fixed = px(Random_Below(4)) + px(6);
-  actor->riseBaseY = Random_Below(px(3) / 8) - px(3) / 16;
-  actor->scaleX = 5 * Q16_ONE / 4;
-  actor->scaleY = 5 * Q16_ONE / 4;
+  actor->y.fixed = toFIXED(Random_Below(4)) + toFIXED(6);
+  actor->riseBaseY = Random_Below(toFIXED(3) / 8) - toFIXED(3) / 16;
+  actor->scaleX = 5 * FIXED_ONE / 4;
+  actor->scaleY = 5 * FIXED_ONE / 4;
   Actor_SetScript(actorId, gTolbiShipMast_DriftActions);
 }
 
@@ -710,8 +710,8 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   // ACTOR_LANDING_MONSTER_SHADOW grows where the monster will land, then
   // ACTOR_LANDING_MONSTER drops onto it.
   actor = Actor_Get(ACTOR_LANDING_MONSTER_SHADOW);
-  actor->scaleX = Q16_ONE / 10;
-  actor->scaleY = Q16_ONE / 10;
+  actor->scaleX = FIXED_ONE / 10;
+  actor->scaleY = FIXED_ONE / 10;
   Actor_SetPosition(ACTOR_LANDING_MONSTER_SHADOW, 172, 340);
   Actor_Stop(ACTOR_LOOKOUT);
   wait(1);
@@ -722,8 +722,8 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   // ACTOR_LANDING_MONSTER_SHADOW grows for 32 frames before
   // ACTOR_LANDING_MONSTER is placed above it.
   for (frame = 0; frame < 32; frame++) {
-    actor->scaleX += Q16_ONE / 20;
-    actor->scaleY += Q16_ONE / 20;
+    actor->scaleX += FIXED_ONE / 20;
+    actor->scaleY += FIXED_ONE / 20;
     wait(1);
   }
   Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
@@ -732,14 +732,14 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   Actor_WalkToAndWait(ACTOR_LOOKOUT, 200, 340);
   Actor_FaceDirection(ACTOR_LOOKOUT, FACING_WEST, 0);
   actor = Actor_Get(ACTOR_LANDING_MONSTER);
-  actor->scaleX = 23 * Q16_ONE / 20;
-  actor->scaleY = 23 * Q16_ONE / 20;
-  actor->x.fixed = px(172);
-  actor->y.fixed = px(160);
-  actor->z.fixed = px(340);
+  actor->scaleX = 23 * FIXED_ONE / 20;
+  actor->scaleY = 23 * FIXED_ONE / 20;
+  actor->x.fixed = toFIXED(172);
+  actor->y.fixed = toFIXED(160);
+  actor->z.fixed = toFIXED(340);
   actor->facing = FACING_EAST;
-  actor->bounce = 2 * Q16_ONE / 5;
-  actor->gravity = px(3);
+  actor->bounce = 2 * FIXED_ONE / 5;
+  actor->gravity = toFIXED(3);
   Event_Wait(20);
   Actor_Jump(ACTOR_LOOKOUT, 6, 20);
   Sound_Play(SE_BEAST_CRY);
@@ -748,17 +748,17 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   Event_Wait(80);
   Actor_SetSpritePriority(ACTOR_LANDING_MONSTER, 1);
   Actor_SetSpeed(ACTOR_LANDING_MONSTER, 1);
-  actor->bounce = Q16_ONE / 10;
-  actor->gravity = px(7) / 10;
+  actor->bounce = FIXED_ONE / 10;
+  actor->gravity = toFIXED(7) / 10;
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = px(8);
+  actor->velocityY = toFIXED(8);
   Actor_SetDestination(ACTOR_LANDING_MONSTER, 132, 360);
   Actor_SetDestination(ACTOR_LANDING_MONSTER_SHADOW, 132, 360);
   Event_Wait(40);
   Actor_SetPosition(ACTOR_LANDING_MONSTER, 0, 0);
   actor = Actor_Get(ACTOR_LOOKOUT);
-  actor->scaleX = Q16_ONE;
-  actor->scaleY = Q16_ONE;
+  actor->scaleX = FIXED_ONE;
+  actor->scaleY = FIXED_ONE;
   actor->facing = FACING_SOUTH_SOUTHWEST;
   Event_Wait(40);
   gFieldWork->transition =
@@ -881,14 +881,14 @@ static s32 TolbiShipMast_GetSeatRowValue(u32 seat) {
 }
 
 s32 gTolbiShipMast_FollowCameraActions[] = {
-    SC_ADD(SW_SCALE_X, Q16_ONE / 32),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 32),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 32),
     SC_CALL(TolbiShipMast_FollowCameraAndRotate),
     SC_WAIT(1),
     SC_LOOP(10, SC_TOP),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 32),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_CALL(TolbiShipMast_FollowCameraAndRotate),
     SC_WAIT(1),
     SC_LOOP(24, SC_TO(1)),
@@ -906,19 +906,19 @@ s32 gTolbiShipMast_DriftActions[] = {
 };
 
 s32 gTolbiShipMast_WaveActions[] = {
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_ADD(SW_SCALE_X, -5 * Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 16),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
+    SC_ADD(SW_SCALE_X, -5 * FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 16),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 32),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
+    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
+    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

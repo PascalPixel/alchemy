@@ -91,7 +91,7 @@ void BattleCamera_AdjustByShoulderKeys(void) {
     cam->yaw -= TRIG_TURN / 128;
   }
   if (trans->flag == 0) {
-    BattleCamera_SetRange(px(120), px(120), 0, 0, Q16_ONE);
+    BattleCamera_SetRange(toFIXED(120), toFIXED(120), 0, 0, FIXED_ONE);
   }
 }
 
@@ -367,9 +367,9 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   s32 i;
 
   if (action->unitId > 4)
-    facing = -TRIG_TURN / 8;
+    facing = -DEGtoANG(45);
   else
-    facing = TRIG_TURN / 8;
+    facing = DEGtoANG(45);
   if (transition->targetYaw == facing) {
     transition->frames = 40;
     wait(40);

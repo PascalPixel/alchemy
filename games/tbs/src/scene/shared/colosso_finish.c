@@ -73,8 +73,8 @@ static void Colosso_SparkleAroundPrize(struct Actor *prize) {
 static s32 Colosso_RaisePrize(struct Actor *warrior) {
   struct Actor *prize = Actor_Get(warrior->timer);
 
-  FieldActor_SetMoveTargetFixed(prize, warrior->x.fixed,
-                                warrior->y.fixed + px(36), warrior->z.fixed);
+  FieldActor_SetMoveTargetFX(prize, warrior->x.fixed,
+                             warrior->y.fixed + toFIXED(36), warrior->z.fixed);
   prize->motionFlags = 0;
   Actor_StartScript(prize, gColosso_PrizeScript);
   Sound_Play(MUS_TREASURE_FOUND);
@@ -98,22 +98,22 @@ static s32 Colosso_TakePrize(s32 firstItem, s32 secondItem) {
   opponentFirst = GameFlag_Get(FLAG_ARENA_REACHED);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (gauge->finishX < leader->x.fixed) {
-    x = gauge->finishX + px(12);
+    x = gauge->finishX + toFIXED(12);
   } else {
-    x = gauge->finishX - px(12);
+    x = gauge->finishX - toFIXED(12);
   }
   if (opponentFirst != 0) {
-    z = gauge->finishZ + px(16);
+    z = gauge->finishZ + toFIXED(16);
     prizeActorId = &gauge->finishItemActorIdB;
   } else {
-    z = gauge->finishZ - px(16);
+    z = gauge->finishZ - toFIXED(16);
     prizeActorId = &gauge->finishItemActorIdA;
   }
   raisedPrizeActorId = &leader->timer;
   *raisedPrizeActorId = *prizeActorId;
-  leader->acceleration = px(1) / 4;
-  leader->speedLimit = px(1);
-  FieldActor_SetMoveTargetFixed(leader, x, 0, z);
+  leader->acceleration = toFIXED(1) / 4;
+  leader->speedLimit = toFIXED(1);
+  FieldActor_SetMoveTargetFX(leader, x, 0, z);
   GameFlag_Set(FLAG_ARENA_REACHED);
   Actor_StartScript(leader, gColosso_LeaderFinishScript);
   while (*raisedPrizeActorId != 0) {

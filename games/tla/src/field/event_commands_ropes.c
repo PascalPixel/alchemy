@@ -75,15 +75,15 @@ void Rope_Draw(void) {
       s32 x = node->x;
       s32 z = node->z;
 
-      y -= px(4);
+      y -= toFIXED(4);
 
       if (started) {
         s32 screenX;
         s32 depth;
         s32 screenY;
 
-        angle = ((u16)ArcTan2(prevX - x, (z - prevZ) + (prevY - y)) +
-                 TRIG_TURN / 4) &
+        angle = ((u16)Trig_Atan(prevX - x, (z - prevZ) + (prevY - y)) +
+                 DEGtoANG(90)) &
                 0xffff;
         screenX = (prevX + x) / 2 - viewX;
         // prevY is reused for the midpoint's height, then its depth key; a
@@ -93,11 +93,11 @@ void Rope_Draw(void) {
         screenY = depth - prevY;
         if ((u32)(screenX + 0x1fffff) <= 0x12ffffe && screenY > -0x200000 &&
             screenY <= 0xdfffff) {
-          s32 spriteX = (FIELD_PIXEL(screenX) - 4) & 0x1ff;
-          s32 spriteY = (FIELD_PIXEL(screenY) - 4) & 0xff;
+          s32 spriteX = (FIXEDtoINT(screenX) - 4) & 0x1ff;
+          s32 spriteY = (FIXEDtoINT(screenY) - 4) & 0xff;
           struct AnimationSpritePart *sprite;
 
-          prevY = FIELD_PIXEL(prevY + depth) + 58;
+          prevY = FIXEDtoINT(prevY + depth) + 58;
           sprite = &node->sprite;
 
           ((u32 *)sprite)[0] = 0;
@@ -159,11 +159,11 @@ void Rope_Update(void) {
   slot = work->slots;
   for (i = 0; i < 8; i++, slot++) {
     if (slot->swinging != 0) {
-      s32 swing = Iwram_MulQ16(Trig_Sin(slot->phase), slot->amplitude);
+      s32 swing = Iwram_MulFX(Trig_Sin(slot->phase), slot->amplitude);
 
       slot->phase += TRIG_TURN / 16;
-      slot->amplitude = Iwram_MulQ16(slot->amplitude, Q16_ONE * 19 / 20);
-      if (slot->amplitude < Q16_ONE / 10) {
+      slot->amplitude = Iwram_MulFX(slot->amplitude, FIXED_ONE * 19 / 20);
+      if (slot->amplitude < FIXED_ONE / 10) {
         slot->amplitude = 0;
         slot->swinging = 0;
       }
@@ -233,13 +233,13 @@ s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
   s32 cos;
   s32 i;
 
-  count = Iwram_Sqrt(Iwram_MulQ16(sx, sx) + Iwram_MulQ16(sy, sy) +
-                     Iwram_MulQ16(sz, sz)) /
+  count = Iwram_Sqrt(Iwram_MulFX(sx, sx) + Iwram_MulFX(sy, sy) +
+                     Iwram_MulFX(sz, sz)) /
               6 +
           1;
   slot = &work->slots[index];
   link = &slot->head;
-  angle = ArcTan2(sx, sy);
+  angle = Trig_Atan(sx, sy);
   sin = Trig_Sin(angle);
   cos = Trig_Cos(angle);
   slot->segments = count;
@@ -251,9 +251,9 @@ s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
       result = -1;
       break;
     }
-    bow = Iwram_MulQ16(Trig_Sin((i << 16) / count), TRIG_TURN);
-    SET_POSITION(node, x1 + i * dx / count + Iwram_MulQ16(bow, cos),
-                 y1 + i * dy / count + Iwram_MulQ16(bow, sin),
+    bow = Iwram_MulFX(Trig_Sin((i << 16) / count), TRIG_TURN);
+    SET_POSITION(node, x1 + i * dx / count + Iwram_MulFX(bow, cos),
+                 y1 + i * dy / count + Iwram_MulFX(bow, sin),
                  z1 + i * dz / count);
     node->slot = index + 1;
     if (i == count)
@@ -266,8 +266,8 @@ s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
   *link = NULL;
   slot->state = 1;
   slot->swinging = 1;
-  slot->amplitude = Q16_ONE;
-  slot->phase = TRIG_TURN / 4;
+  slot->amplitude = FIXED_ONE;
+  slot->phase = DEGtoANG(90);
   if (slot->flag != 0)
     GameFlag_Set(slot->flag);
   return result;
@@ -279,15 +279,15 @@ void Rope_SwingBetween(s32 index, s32 from, s32 to, s32 mode) {
   struct Actor *b = Actor_Lookup(to);
 
   if (a != NULL && b != NULL)
-    Rope_LayBowed(index, a->x.fixed, a->y.fixed + px(8), a->z.fixed, b->x.fixed,
-                  b->y.fixed + px(8), b->z.fixed, mode);
+    Rope_LayBowed(index, a->x.fixed, a->y.fixed + toFIXED(8), a->z.fixed,
+                  b->x.fixed, b->y.fixed + toFIXED(8), b->z.fixed, mode);
 }
 
-/* VIEW(f0d8ff8): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); f0d8740 has s32
- * ArcTan2(s32 y, s32 x); tried as the definition's s32 ArcTan2(s32 x, s32 y),
- * which the object already declares, Rope_LayBowed moves: 1 of 120 instructions
- * in tla-ja. */
-extern s16 ArcTan2__f0d8ff8(s32 y, s32 x) __asm__("ArcTan2");
+/* VIEW(f0d8ff8): routine Trig_Atan as s16 Trig_Atan(s32 y, s32 x); f0d8740 has
+ * s32 Trig_Atan(s32 y, s32 x); tried as the definition's s32 Trig_Atan(s32 x,
+ * s32 y), which the object already declares, Rope_LayBowed moves: 1 of 120
+ * instructions in tla-ja. */
+extern s16 Trig_Atan__f0d8ff8(s32 y, s32 x) __asm__("Trig_Atan");
 
 /// Lays a slot's chain of nodes along the line between two points, bowed
 /// sideways by a half sine of the given height.
@@ -299,7 +299,7 @@ s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
   s32 dy = toY - y;
   struct RopeSlot *slot = &work->slots[index];
   struct RopeNode *node = slot->head;
-  u16 angle = ArcTan2__f0d8ff8(ax, dy >> 8);
+  u16 angle = Trig_Atan__f0d8ff8(ax, dy >> 8);
   s32 sin = Trig_Sin(angle);
   s32 cos = Trig_Cos(angle);
   s32 segments = slot->segments;
@@ -307,10 +307,10 @@ s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
   s32 kind = 1; // One constant for its whole life.
   {
     for (i = 0; i <= segments; i++) {
-      s32 bow = Iwram_MulQ16(Trig_Sin((i << 15) / segments), height);
+      s32 bow = Iwram_MulFX(Trig_Sin((i << 15) / segments), height);
 
-      SET_POSITION(node, x + i * dx / segments + Iwram_MulQ16(bow, cos),
-                   y + i * dy / segments + Iwram_MulQ16(bow, sin),
+      SET_POSITION(node, x + i * dx / segments + Iwram_MulFX(bow, cos),
+                   y + i * dy / segments + Iwram_MulFX(bow, sin),
                    z + i * (toZ - z) / segments);
       node->kind = kind;
       node = node->next;
@@ -352,13 +352,13 @@ s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 dx = (toX - x) >> 8;
   s32 dy = (toY - y) >> 8;
   s32 dz = (toZ - z) >> 8;
-  s32 length = Iwram_SqrtEntry(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
-                               Iwram_MulQ16(dz, dz));
+  s32 length = Iwram_SqrtEntry(Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) +
+                               Iwram_MulFX(dz, dz));
   s32 segments = length / 6 + 1;
   struct RopeSlot *slot = &work->slots[index];
   struct RopeNode **link = &slot->head;
   s32 angle = 0;
-  s32 radius = px(4);
+  s32 radius = toFIXED(4);
   s32 i;
   s32 kind = 2; // One constant for its whole life.
 
@@ -371,11 +371,11 @@ s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
       result = -1;
       break;
     }
-    SET_POSITION(node, x + Iwram_MulQ16(Trig_Cos(angle), radius), y,
-                 z + Iwram_MulQ16(Trig_Sin(angle), radius));
+    SET_POSITION(node, x + Iwram_MulFX(Trig_Cos(angle), radius), y,
+                 z + Iwram_MulFX(Trig_Sin(angle), radius));
     node->kind = kind;
     *link = node;
-    step = ArcTan2(px(6), radius);
+    step = Trig_Atan(toFIXED(6), radius);
     angle += step;
     link = &node->next;
     radius += step * 4;
@@ -425,7 +425,7 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
     x = (toX - from->x.fixed) >> 8;
     y = (toY - from->y.fixed) >> 8;
     z = (toZ - from->z.fixed) >> 8;
-    mul = Iwram_MulQ16;
+    mul = Iwram_MulFX;
     xx = mul(x, x);
     yy = mul(y, y);
     length = xx + yy + mul(z, z);
@@ -437,16 +437,18 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
       y = toY;
       z = from->z.fixed + (toZ - from->z.fixed) * count / segments;
 
-      Rope_Throw(index, from->x.fixed, from->y.fixed + px(8), from->z.fixed, x,
-                 y + px(8), z, Trig_Sin(gRope_LashPhase) << 2);
+      Rope_Throw(index, from->x.fixed, from->y.fixed + toFIXED(8),
+                 from->z.fixed, x, y + toFIXED(8), z,
+                 Trig_Sin(gRope_LashPhase) << 2);
       slot->swinging = 0;
       wait(1);
-      Rope_Recoil(index, from->x.fixed, from->y.fixed + px(8), from->z.fixed, x,
-                  y + px(8), z, Trig_Sin(gRope_LashPhase) << 2);
+      Rope_Recoil(index, from->x.fixed, from->y.fixed + toFIXED(8),
+                  from->z.fixed, x, y + toFIXED(8), z,
+                  Trig_Sin(gRope_LashPhase) << 2);
     } else {
-      Rope_Throw(index, from->x.fixed, from->y.fixed + px(8), from->z.fixed,
-                 to->x.fixed, to->y.fixed + px(8), to->z.fixed,
-                 Trig_Sin(gRope_LashPhase) << 2);
+      Rope_Throw(index, from->x.fixed, from->y.fixed + toFIXED(8),
+                 from->z.fixed, to->x.fixed, to->y.fixed + toFIXED(8),
+                 to->z.fixed, Trig_Sin(gRope_LashPhase) << 2);
       gRope_LashPhase += TRIG_TURN / 16;
       wait(6);
       Actor_SelectAnimationFar(from, 2);
@@ -489,7 +491,7 @@ s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
     *cursor++ = node;
     node = node->next;
   }
-  angle = ArcTan2(ex, ey);
+  angle = Trig_Atan(ex, ey);
   sine = Trig_Sin(angle);
   cosine = Trig_Cos(angle);
   for (frame = 1; frame <= segments * 2; frame++) {
@@ -497,11 +499,11 @@ s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
       node = nodes[i];
       node->slot = index + 1;
       if (i == segments) {
-        ex = Iwram_MulQ16(Trig_Sin((frame << 14) / i), px(8));
+        ex = Iwram_MulFX(Trig_Sin((frame << 14) / i), toFIXED(8));
 
-        node->x = x + dx * frame / 2 / i + Iwram_MulQ16(ex, cosine);
+        node->x = x + dx * frame / 2 / i + Iwram_MulFX(ex, cosine);
         lastX = node->x;
-        node->y = y + dy * frame / 2 / i + Iwram_MulQ16(ex, sine);
+        node->y = y + dy * frame / 2 / i + Iwram_MulFX(ex, sine);
         lastY = node->y;
         node->z = z + dz * frame / 2 / i;
         lastZ = node->z;
@@ -511,8 +513,8 @@ s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
         ex = (lastX - node->x) >> 8;
         ey = (lastY - node->y) >> 8;
         ez = (lastZ - node->z) >> 8;
-        ex = Iwram_SqrtEntry(Iwram_MulQ16(ex, ex) + Iwram_MulQ16(ey, ey) +
-                             Iwram_MulQ16(ez, ez));
+        ex = Iwram_SqrtEntry(Iwram_MulFX(ex, ex) + Iwram_MulFX(ey, ey) +
+                             Iwram_MulFX(ez, ez));
 
         if (ex > 6) {
           node->x = lastX + (node->x - lastX) * 6 / ex;
@@ -529,8 +531,8 @@ s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   }
   slot = &work->slots[index];
   slot->swinging = 1;
-  slot->amplitude = px(4);
-  slot->phase = TRIG_TURN / 4;
+  slot->amplitude = toFIXED(4);
+  slot->phase = DEGtoANG(90);
   if (slot->flag != 0)
     GameFlag_Set(slot->flag);
   Heap_Release(nodes);
@@ -552,8 +554,8 @@ void Rope_Untie(s32 index, s32 fromId, s32 toId) {
   if (from != NULL && to != NULL) {
     work->recoilFrom = from;
     work->recoilTo = to;
-    Rope_Recoil(index, from->x.fixed, from->y.fixed + px(8), from->z.fixed,
-                to->x.fixed, to->y.fixed + px(8), to->z.fixed,
+    Rope_Recoil(index, from->x.fixed, from->y.fixed + toFIXED(8), from->z.fixed,
+                to->x.fixed, to->y.fixed + toFIXED(8), to->z.fixed,
                 Trig_Sin(gRope_UntiePhase) * 4);
     gRope_UntiePhase += TRIG_TURN / 16;
   }
@@ -601,21 +603,21 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
   wait(4);
   for (frame = 0; frame <= segments; frame++) {
     angle = frame << 12;
-    radius = px(4);
+    radius = toFIXED(4);
     for (i = 0; i <= segments; i++) {
       node = nodes[i];
       node->slot = 0;
       if (i <= frame) {
         u16 step;
 
-        node->x = x + Iwram_MulQ16(Trig_Cos(angle), radius);
+        node->x = x + Iwram_MulFX(Trig_Cos(angle), radius);
         lastX = node->x;
         node->y = y;
         lastY = node->y;
-        node->z = z + Iwram_MulQ16(Trig_Sin(angle), radius);
+        node->z = z + Iwram_MulFX(Trig_Sin(angle), radius);
         lastZ = node->z;
         node->kind = 2;
-        step = ArcTan2(px(6), radius);
+        step = Trig_Atan(toFIXED(6), radius);
         angle += step;
         radius += step * 4;
       } else {
@@ -623,8 +625,8 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
         s32 dy = (lastY - node->y) >> 8;
         s32 dz = (lastZ - node->z) >> 8;
 
-        radius = Iwram_SqrtEntry(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
-                                 Iwram_MulQ16(dz, dz));
+        radius = Iwram_SqrtEntry(Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) +
+                                 Iwram_MulFX(dz, dz));
 
         if (radius <= 6)
           break;
@@ -799,7 +801,7 @@ void Tightrope_Draw(void) {
       s32 x = node->x;
       s32 z = node->z;
 
-      y -= px(4);
+      y -= toFIXED(4);
 
       if (started) {
         s32 screenX = (prevX + x) / 2 - viewX;
@@ -811,9 +813,9 @@ void Tightrope_Draw(void) {
 
         if ((u32)(screenX + 0x1fffff) <= 0x12ffffe && screenY > -0x200000 &&
             screenY <= 0xdfffff) {
-          s32 left = (FIELD_PIXEL(screenX) - 4) & 0x1ff;
-          s32 top = (FIELD_PIXEL(screenY) - 4) & 0xff;
-          s32 key = FIELD_PIXEL(prevY + prevZ) + 58;
+          s32 left = (FIXEDtoINT(screenX) - 4) & 0x1ff;
+          s32 top = (FIXEDtoINT(screenY) - 4) & 0xff;
+          s32 key = FIXEDtoINT(prevY + prevZ) + 58;
 
           ((u32 *)&node->sprite)[0] = 0;
           ((u32 *)&node->sprite)[1] = top | OBJ_X(left) | OBJ_256_COLORS;
@@ -872,11 +874,11 @@ void Tightrope_Update(void) {
   slot = work->slots;
   for (i = 0; i < 8; i++, slot++) {
     if (slot->wobbling != 0) {
-      s32 wobble = Iwram_MulQ16(Trig_Sin(slot->phase), slot->amplitude);
+      s32 wobble = Iwram_MulFX(Trig_Sin(slot->phase), slot->amplitude);
 
       slot->phase += TRIG_TURN / 16;
-      slot->amplitude = Iwram_MulQ16(slot->amplitude, Q16_ONE * 19 / 20);
-      if (slot->amplitude < Q16_ONE / 10) {
+      slot->amplitude = Iwram_MulFX(slot->amplitude, FIXED_ONE * 19 / 20);
+      if (slot->amplitude < FIXED_ONE / 10) {
         slot->amplitude = 0;
         slot->wobbling = 0;
       }
@@ -911,8 +913,8 @@ void Tightrope_Place(s32 slotNo, s32 firstId, s32 secondId) {
 
     slot->first = firstId;
     slot->second = secondId;
-    Tightrope_Lay(slotNo, first->x.fixed, first->y.fixed + px(8),
-                  first->z.fixed, second->x.fixed, second->y.fixed + px(8),
+    Tightrope_Lay(slotNo, first->x.fixed, first->y.fixed + toFIXED(8),
+                  first->z.fixed, second->x.fixed, second->y.fixed + toFIXED(8),
                   second->z.fixed);
     Actor_SelectAnimationFar(first, 4);
     Actor_SelectAnimationFar(second, 4);
@@ -930,14 +932,14 @@ s32 Tightrope_Lay(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 sy = dy >> 8;
   s32 dz = toZ - z;
   s32 sz = dz >> 8;
-  s32 segments = Iwram_SqrtEntry(Iwram_MulQ16(sx, sx) + Iwram_MulQ16(sy, sy) +
-                                 Iwram_MulQ16(sz, sz)) /
+  s32 segments = Iwram_SqrtEntry(Iwram_MulFX(sx, sx) + Iwram_MulFX(sy, sy) +
+                                 Iwram_MulFX(sz, sz)) /
                      6 +
                  1;
   struct TightropeNode **link = &work->slots[index].head;
   s32 i;
 
-  work->slots[index].direction = (u16)ArcTan2(sz, sx);
+  work->slots[index].direction = (u16)Trig_Atan(sz, sx);
   for (i = 0; i <= segments; i++) {
     struct TightropeNode *node = Tightrope_AllocNode();
 
@@ -966,11 +968,11 @@ void Tightrope_WobbleBetween(s32 index, s32 from, s32 to, s32 mode) {
   struct Actor *b = Actor_Lookup(to);
 
   if (a != NULL && b != NULL)
-    Tightrope_LayBowed(index, a->x.fixed, a->y.fixed + px(8), a->z.fixed,
-                       b->x.fixed, b->y.fixed + px(8), b->z.fixed, mode);
+    Tightrope_LayBowed(index, a->x.fixed, a->y.fixed + toFIXED(8), a->z.fixed,
+                       b->x.fixed, b->y.fixed + toFIXED(8), b->z.fixed, mode);
 }
 
-s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
+s32 IwramMulFX(s32 a, s32 b) __attribute__((long_call));
 
 s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
                        s32 toZ, s32 height) {
@@ -981,8 +983,8 @@ s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
   s32 sy = dy >> 8;
   s32 dz = toZ - z;
   s32 sz = dz >> 8;
-  s32 segments = Iwram_SqrtEntry(IwramMulQ16(sx, sx) + IwramMulQ16(sy, sy) +
-                                 IwramMulQ16(sz, sz)) /
+  s32 segments = Iwram_SqrtEntry(IwramMulFX(sx, sx) + IwramMulFX(sy, sy) +
+                                 IwramMulFX(sz, sz)) /
                      6 +
                  1;
   struct TightropeNode *node = work->slots[index].head;
@@ -990,7 +992,7 @@ s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
   s32 one = 1;
 
   for (i = 0; i <= segments; i += one) {
-    s32 bow = IwramMulQ16(Trig_Sin((i << 15) / segments), height);
+    s32 bow = IwramMulFX(Trig_Sin((i << 15) / segments), height);
 
     SET_POSITION(node, x + i * dx / segments, y + i * dy / segments + bow,
                  z + i * dz / segments);
@@ -1011,8 +1013,8 @@ void Tightrope_Coil(s32 index, s32 from, s32 to) {
 
     slot->first = from;
     slot->second = to;
-    Tightrope_LayCoil(index, a->x.fixed, a->y.fixed + px(8), a->z.fixed,
-                      b->x.fixed, b->y.fixed + px(8), b->z.fixed);
+    Tightrope_LayCoil(index, a->x.fixed, a->y.fixed + toFIXED(8), a->z.fixed,
+                      b->x.fixed, b->y.fixed + toFIXED(8), b->z.fixed);
   }
 }
 
@@ -1026,12 +1028,12 @@ s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
   s32 dx = (toX - x) >> 8;
   s32 dy = (toY - y) >> 8;
   s32 dz = (toZ - z) >> 8;
-  s32 length = Iwram_SqrtEntry(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
-                               Iwram_MulQ16(dz, dz));
+  s32 length = Iwram_SqrtEntry(Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) +
+                               Iwram_MulFX(dz, dz));
   s32 segments = length / 6 + 1;
   struct TightropeNode **link = &work->slots[index].head;
   s32 angle = 0;
-  s32 radius = px(4);
+  s32 radius = toFIXED(4);
   s32 i;
   s32 kind = 2; // One constant for its whole life.
 
@@ -1043,11 +1045,11 @@ s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
       result = -1;
       break;
     }
-    SET_POSITION(node, x + Iwram_MulQ16(Trig_Cos(angle), radius), y,
-                 z + Iwram_MulQ16(Trig_Sin(angle), radius));
+    SET_POSITION(node, x + Iwram_MulFX(Trig_Cos(angle), radius), y,
+                 z + Iwram_MulFX(Trig_Sin(angle), radius));
     node->kind = kind;
     *link = node;
-    step = ArcTan2(px(6), radius);
+    step = Trig_Atan(toFIXED(6), radius);
     angle += step;
     link = &node->next;
     radius += step * 4;
@@ -1065,8 +1067,9 @@ void Tightrope_Lash(s32 arg, s32 firstId, s32 secondId) {
   struct Actor *second = Actor_Lookup(secondId);
 
   if (first != NULL && second != NULL) {
-    Tightrope_Throw(arg, first->x.fixed, first->y.fixed + px(8), first->z.fixed,
-                    second->x.fixed, second->y.fixed + px(8), second->z.fixed,
+    Tightrope_Throw(arg, first->x.fixed, first->y.fixed + toFIXED(8),
+                    first->z.fixed, second->x.fixed,
+                    second->y.fixed + toFIXED(8), second->z.fixed,
                     Trig_Sin(gTightrope_LashPhase) << 2);
     gTightrope_LashPhase += TRIG_TURN / 16;
     wait(6);
@@ -1084,8 +1087,8 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 ey = dy >> 8;
   s32 dz = toZ - z;
   s32 ez = dz >> 8;
-  s32 segments = Iwram_SqrtEntry(Iwram_MulQ16(ex, ex) + Iwram_MulQ16(ey, ey) +
-                                 Iwram_MulQ16(ez, ez)) /
+  s32 segments = Iwram_SqrtEntry(Iwram_MulFX(ex, ex) + Iwram_MulFX(ey, ey) +
+                                 Iwram_MulFX(ez, ez)) /
                      6 +
                  1;
   s32 frame;
@@ -1112,7 +1115,7 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
       node = node->next;
     } while (i != 0);
   }
-  angle = ArcTan2(ex, ey);
+  angle = Trig_Atan(ex, ey);
   sine = Trig_Sin(angle);
   cosine = Trig_Cos(angle);
   for (frame = 1; frame <= segments * 2; frame++) {
@@ -1123,18 +1126,18 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
         s32 offsetX;
         s32 offsetY;
 
-        height = Iwram_MulQ16(Trig_Sin((frame << 14) / i), px(8));
-        offsetX = Iwram_MulQ16(height, cosine);
+        height = Iwram_MulFX(Trig_Sin((frame << 14) / i), toFIXED(8));
+        offsetX = Iwram_MulFX(height, cosine);
         lastX = node->x = x + dx * frame / 2 / i + offsetX;
-        offsetY = Iwram_MulQ16(height, sine);
+        offsetY = Iwram_MulFX(height, sine);
         lastY = node->y = y + dy * frame / 2 / i + offsetY;
         lastZ = node->z = z + dz * frame / 2 / i;
       } else {
         ex = (lastX - node->x) >> 8;
         ey = (lastY - node->y) >> 8;
         ez = (lastZ - node->z) >> 8;
-        height = Iwram_SqrtEntry(Iwram_MulQ16(ex, ex) + Iwram_MulQ16(ey, ey) +
-                                 Iwram_MulQ16(ez, ez));
+        height = Iwram_SqrtEntry(Iwram_MulFX(ex, ex) + Iwram_MulFX(ey, ey) +
+                                 Iwram_MulFX(ez, ez));
 
         if (height <= 6)
           break;
@@ -1148,8 +1151,8 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   }
   slot = &work->slots[index];
   slot->wobbling = 1;
-  slot->amplitude = px(4);
-  slot->phase = TRIG_TURN / 4;
+  slot->amplitude = toFIXED(4);
+  slot->phase = DEGtoANG(90);
   Heap_Release(nodes);
   return 0;
 }
@@ -1169,9 +1172,10 @@ void Tightrope_Untie(s32 arg, s32 firstId, s32 secondId) {
   if (first != NULL && second != NULL) {
     work->recoilFrom = first;
     work->recoilTo = second;
-    Tightrope_Recoil(arg, first->x.fixed, first->y.fixed + px(8),
-                     first->z.fixed, second->x.fixed, second->y.fixed + px(8),
-                     second->z.fixed, Trig_Sin(gTightrope_UntiePhase) << 2);
+    Tightrope_Recoil(arg, first->x.fixed, first->y.fixed + toFIXED(8),
+                     first->z.fixed, second->x.fixed,
+                     second->y.fixed + toFIXED(8), second->z.fixed,
+                     Trig_Sin(gTightrope_UntiePhase) << 2);
     gTightrope_UntiePhase += TRIG_TURN / 16;
   }
 }
@@ -1195,7 +1199,7 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
   dx = (x2 - x1) >> 8;
   dy = (y2 - y1) >> 8;
   dz = (z2 - z1) >> 8;
-  dist = Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) + Iwram_MulQ16(dz, dz);
+  dist = Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
   count = Iwram_Sqrt(dist) / 6 + 1;
   node = work->slots[slot].head;
   entry = nodes = Heap_Alloc(0x200);
@@ -1216,17 +1220,17 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
   wait(4);
   for (frame = 0; frame <= count; frame++) {
     angle = frame << 12;
-    dist = px(4);
+    dist = toFIXED(4);
     for (i = 0; i <= count; i++) {
       node = nodes[i];
       node->slot = 0;
       if (i <= frame) {
-        x = node->x = x1 + Iwram_MulQ16(Trig_Cos(angle), dist);
+        x = node->x = x1 + Iwram_MulFX(Trig_Cos(angle), dist);
         y = node->y = y1;
-        z = node->z = z1 + Iwram_MulQ16(Trig_Sin(angle), dist);
+        z = node->z = z1 + Iwram_MulFX(Trig_Sin(angle), dist);
         node->kind = 2;
         {
-          u16 step = ArcTan2(px(6), dist);
+          u16 step = Trig_Atan(toFIXED(6), dist);
 
           angle += step;
           dist += step * 4;
@@ -1235,8 +1239,7 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
         dx = (x - node->x) >> 8;
         dy = (y - node->y) >> 8;
         dz = (z - node->z) >> 8;
-        dist =
-            Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) + Iwram_MulQ16(dz, dz);
+        dist = Iwram_MulFX(dx, dx) + Iwram_MulFX(dy, dy) + Iwram_MulFX(dz, dz);
         dist = Iwram_Sqrt(dist);
         if (dist <= 6)
           break;
@@ -1377,9 +1380,9 @@ void HangingVine_Draw(void) {
         u32 tile;
 
         if (dy >= 0 ? absZ < dy : absZ < y - prevY)
-          angle = (u16)ArcTan2(prevX - x, dy);
+          angle = (u16)Trig_Atan(prevX - x, dy);
         else
-          angle = (u16)ArcTan2(prevX - x, dz);
+          angle = (u16)Trig_Atan(prevX - x, dz);
         tile = tiles + link->kind * 8 - 16;
         screenX = (prevX + x) / 2 - viewX;
         prevY = (prevY + y) / 2 - height;
@@ -1387,9 +1390,9 @@ void HangingVine_Draw(void) {
         screenY = prevZ - prevY;
         if ((u32)(screenX + 0x1fffff) <= 0x12ffffe && screenY > -0x200000 &&
             screenY <= 0xdfffff) {
-          s32 sx = (FIELD_PIXEL(screenX) - 8) & 0x1ff;
-          s32 sy = (FIELD_PIXEL(screenY) - 8) & 0xff;
-          s32 priority = FIELD_PIXEL(prevY + prevZ) + 34;
+          s32 sx = (FIXEDtoINT(screenX) - 8) & 0x1ff;
+          s32 sy = (FIXEDtoINT(screenY) - 8) & 0xff;
+          s32 priority = FIXEDtoINT(prevY + prevZ) + 34;
           struct AnimationSpritePart *sprite = &link->sprite;
 
           ((u32 *)sprite)[0] = 0;
@@ -1457,7 +1460,7 @@ void HangingVine_Update(void) {
     if ((x - leader->x.fixed >= 0 ? x - leader->x.fixed <= 0x7ffff
                                   : leader->x.fixed - x <= 0x7ffff) &&
         (u32)(z - leader->z.fixed + 0xfffff) <= 0xffffe &&
-        y + px(8) > leader->y.fixed && y - px(80) < leader->y.fixed)
+        y + toFIXED(8) > leader->y.fixed && y - toFIXED(80) < leader->y.fixed)
       target = 32;
 
     // Hang the five links below the anchor.
@@ -1466,19 +1469,19 @@ void HangingVine_Update(void) {
     link = link->next;
     for (i = 1, sway = swing; i <= 5; i++) {
       radius = i * slot->spacing;
-      angle = Iwram_MulQ16(Trig_Sin(slot->phase - i * 800), swing + sway / 2);
-      link->x = x - Iwram_MulQ16(Trig_Sin(angle), radius);
+      angle = Iwram_MulFX(Trig_Sin(slot->phase - i * 800), swing + sway / 2);
+      link->x = x - Iwram_MulFX(Trig_Sin(angle), radius);
       sway += swing;
-      link->y = y - Iwram_MulQ16(Trig_Cos(angle), radius);
+      link->y = y - Iwram_MulFX(Trig_Cos(angle), radius);
       link->z = z;
       link = link->next;
     }
 
     // Ease the swing towards the target.
     if (slot->swing > target)
-      slot->swing = Iwram_MulQ16(slot->swing, Q16_ONE * 99 / 100);
+      slot->swing = Iwram_MulFX(slot->swing, FIXED_ONE * 99 / 100);
     else
-      slot->swing = Iwram_MulQ16(slot->swing, Q16_ONE * 111 / 100);
+      slot->swing = Iwram_MulFX(slot->swing, FIXED_ONE * 111 / 100);
   }
 }
 
@@ -1577,22 +1580,22 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
     cell->collisionCode = 0;
   }
 
-  x = (object->x.fixed & CELL_MASK) + px(8);
+  x = (object->x.fixed & CELL_MASK) + toFIXED(8);
   y = object->y.fixed & CELL_MASK;
-  top = y + px(8);
-  z = (object->z.fixed & CELL_MASK) + px(16);
+  top = y + toFIXED(8);
+  z = (object->z.fixed & CELL_MASK) + toFIXED(16);
   Actor_SelectAnimationFar((struct Actor *)object, 0);
   object->motionFlags = 0;
   object->collisionFlags = 0;
-  object->z.fixed += px(16);
-  object->y.fixed -= px(64);
+  object->z.fixed += toFIXED(16);
+  object->y.fixed -= toFIXED(64);
   Actor_SetSpriteFlagsFar(object, 0);
 
   // Hang the links.
   last = 6;
   tail = &slot->root;
   for (i = 0; i <= last && (link = HangingVine_AllocLink()) != 0; i++) {
-    SET_POSITION(link, x, y + px(15) - i * px(14), z);
+    SET_POSITION(link, x, y + toFIXED(15) - i * toFIXED(14), z);
     if (i == 0)
       link->kind = 1;
     else if (i == 1)
@@ -1629,12 +1632,12 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   slot->phase = 0;
   slot->swing = 0x100;
   slot->id = objectId;
-  slot->spacing = px(14);
+  slot->spacing = toFIXED(14);
 }
 
 // The half turn on the leader's side of the anchor: 0 on its right, 1 on its
 // left.
-#define SIDE_TURN(side) ((side) * (TRIG_TURN / 2))
+#define SIDE_TURN(side) ((side) * (DEGtoANG(180)))
 
 /// Swings the leader across on the vine hanging from object id.
 void HangingVine_Swing(s32 id) {
@@ -1670,7 +1673,7 @@ void HangingVine_Swing(s32 id) {
     return;
 
   start = slot->s.swing;
-  if ((slot->s.phase ^ SIDE_TURN(side)) & (TRIG_TURN / 2)) {
+  if ((slot->s.phase ^ SIDE_TURN(side)) & (DEGtoANG(180))) {
     for (swing = start; swing >= 0; swing -= 64) {
       slot->s.swing = swing;
       wait(1);
@@ -1679,10 +1682,10 @@ void HangingVine_Swing(s32 id) {
   }
   for (swing = start; swing <= 1536; swing += 64) {
     slot->s.swing = swing;
-    slot->s.phase = SIDE_TURN(side) + TRIG_TURN / 4;
+    slot->s.phase = SIDE_TURN(side) + DEGtoANG(90);
     wait(1);
   }
-  while ((slot->s.phase & 0xff00) != SIDE_TURN(side ^ 1) + TRIG_TURN / 4) {
+  while ((slot->s.phase & 0xff00) != SIDE_TURN(side ^ 1) + DEGtoANG(90)) {
     slot->s.swing = 1536;
     wait(1);
   }
@@ -1697,12 +1700,12 @@ void HangingVine_Swing(s32 id) {
   slot->s.active = 1;
   Actor_SelectAnimationFar(leader, 32);
   while (1) {
-    slot->s.phase = SIDE_TURN(side ^ 1) + TRIG_TURN / 4;
+    slot->s.phase = SIDE_TURN(side ^ 1) + DEGtoANG(90);
     switch (gFrameCount & 63) {
     case 0:
     case 16:
       slot->s.swing = 1568;
-      slot->s.spacing = Q16_ONE * 29 / 2;
+      slot->s.spacing = FIXED_ONE * 29 / 2;
       sprite->rotation = dir << 10;
       break;
     case 1:
@@ -1710,7 +1713,7 @@ void HangingVine_Swing(s32 id) {
     case 17:
     case 18:
       slot->s.swing += 16;
-      slot->s.spacing += Q16_ONE / 4;
+      slot->s.spacing += FIXED_ONE / 4;
       sprite->rotation += dir << 9;
       break;
     default:
@@ -1718,8 +1721,8 @@ void HangingVine_Swing(s32 id) {
         slot->s.swing -= 32;
       else
         slot->s.swing = 1536;
-      if (slot->s.spacing > Q16_ONE * 14)
-        slot->s.spacing -= Q16_ONE / 32;
+      if (slot->s.spacing > FIXED_ONE * 14)
+        slot->s.spacing -= FIXED_ONE / 32;
       if (sprite->rotation != 0)
         sprite->rotation -= dir << 7;
       break;
@@ -1740,9 +1743,9 @@ void HangingVine_Swing(s32 id) {
   wait(6);
   Sound_PlayFar(SE_JUMP);
   Actor_SelectAnimationFar(leader, 7);
-  leader->speedLimit = Q16_ONE * 3;
-  leader->acceleration = Q16_ONE * 2;
-  leader->velocityY = Q16_ONE * 4;
+  leader->speedLimit = FIXED_ONE * 3;
+  leader->acceleration = FIXED_ONE * 2;
+  leader->velocityY = FIXED_ONE * 4;
   leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
   Actor_SetSpriteFlagsFar(leader, 0);
   wait(5);
@@ -1750,23 +1753,23 @@ void HangingVine_Swing(s32 id) {
   leader->motionFlags = 0;
   rootX = slot->s.root->next->x;
   rootY = slot->s.root->next->y;
-  radius = Q16_ONE * 65;
+  radius = FIXED_ONE * 65;
   steps = 8;
   while ((slot->s.phase & 0xff00) != SIDE_TURN(side) + TRIG_TURN * 7 / 32) {
     if (steps != 0) {
-      radius += Q16_ONE * 5 / 16;
-      slot->s.spacing += Q16_ONE / 16;
+      radius += FIXED_ONE * 5 / 16;
+      slot->s.spacing += FIXED_ONE / 16;
       steps--;
     }
     slot->s.swing = 2048;
     slot->s.active = 1;
-    // A once-only block: the sine is taken before Iwram_MulQ16 is loaded.
+    // A once-only block: the sine is taken before Iwram_MulFX is loaded.
     do {
       sine = Trig_Sin(slot->s.phase - 4000);
     } while (0);
-    angle = Iwram_MulQ16(sine, slot->s.swing + slot->s.swing * 5 / 2);
-    leader->x.fixed = rootX - Iwram_MulQ16(Trig_Sin(angle), radius);
-    leader->y.fixed = rootY - Iwram_MulQ16(Trig_Cos(angle), radius);
+    angle = Iwram_MulFX(sine, slot->s.swing + slot->s.swing * 5 / 2);
+    leader->x.fixed = rootX - Iwram_MulFX(Trig_Sin(angle), radius);
+    leader->y.fixed = rootY - Iwram_MulFX(Trig_Cos(angle), radius);
     leader->targetX = leader->x.fixed;
     leader->targetY = leader->y.fixed;
     heldSprite->rotation = angle;
@@ -1775,12 +1778,12 @@ void HangingVine_Swing(s32 id) {
   slot->s.active = 1;
   Actor_SelectAnimationFar(leader, 7);
   leader->motionFlags = motionFlags & ~1;
-  leader->velocityY = Q16_ONE * 4;
+  leader->velocityY = FIXED_ONE * 4;
   for (i = 7; i >= 0; i--) {
-    slot->s.spacing -= Q16_ONE / 16;
+    slot->s.spacing -= FIXED_ONE / 16;
     wait(1);
   }
-  slot->s.spacing = Q16_ONE * 14;
+  slot->s.spacing = FIXED_ONE * 14;
   heldSprite->rotation = 0;
   Actor_SelectAnimationFar(leader, 6);
   Actor_SetSpriteFlagsFar(leader, 1);
@@ -1800,9 +1803,9 @@ void HangingVine_Place(s32 id, s32 force) {
   if (object != NULL) {
     if (object->motionFlags == 0) {
       zero = 0;
-      object->z.fixed += -px(16);
+      object->z.fixed += -toFIXED(16);
       y = object->y.fixed;
-      object->y.fixed = y + px(64);
+      object->y.fixed = y + toFIXED(64);
       HangingVine_Hang(id, zero);
     } else if (force) {
       HangingVine_Hang(id, 0);

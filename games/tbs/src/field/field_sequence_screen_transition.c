@@ -283,8 +283,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     }
     // Centred on the leader's place on screen, 16 pixels above its feet.
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
-    centerX = (actor->x.fixed - ax) / Q16_ONE;
-    centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / Q16_ONE - 16;
+    centerX = (actor->x.fixed - ax) / FIXED_ONE;
+    centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE - 16;
     // DEAD: the frame counter is read here, where WINDOW_TRANSITION_RIPPLE
     // forms its index, and the value is not used; the ROM keeps the load.
     gFrameCount;
@@ -338,8 +338,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // Centred on state->centreX and centreY; each line's edges move out by
     // gScreenTransition_EdgeOffsets, indexed two entries a line and one a
     // frame, so the outline ripples.
-    centerX = (state->centreX - cameraX) / Q16_ONE;
-    centerY = (state->centreY - cameraY8) / Q16_ONE - 16;
+    centerX = (state->centreX - cameraX) / FIXED_ONE;
+    centerY = (state->centreY - cameraY8) / FIXED_ONE - 16;
     k = -centerY * 2 + gFrameCount;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
@@ -395,8 +395,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
       cameraY = view[1] & FIELD_PIXEL_MASK;
     }
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
-    centerX = (actor->x.fixed - ax) / Q16_ONE;
-    centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / Q16_ONE - 16;
+    centerX = (actor->x.fixed - ax) / FIXED_ONE;
+    centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE - 16;
     // DEAD: as in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read
     // and not used; the ROM keeps the load.
     gFrameCount;
@@ -443,10 +443,10 @@ void ScreenTransition_UpdateScanlineTable(void) {
       cameraY = view[1] & FIELD_PIXEL_MASK;
     }
     actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
-    centerX = (actor->x.fixed - ax) / Q16_ONE;
+    centerX = (actor->x.fixed - ax) / FIXED_ONE;
     // Centred 8 pixels above the leader's feet, not 16 as in
     // WINDOW_TRANSITION_LEADER.
-    centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / Q16_ONE - 8;
+    centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE - 8;
     // DEAD: as in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read
     // and not used; the ROM keeps the load.
     gFrameCount;

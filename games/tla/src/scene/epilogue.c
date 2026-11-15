@@ -67,8 +67,8 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// Each frame while a name is shown, keeps the green panel under it.
 void Epilogue_PlaceNamePanel(void) {
   if (gEpilogueNameShown != 0) {
-    gEpilogueNamePanel.x = px(gEpilogueNameX);
-    gEpilogueNamePanel.y = px(gEpilogueNameY);
+    gEpilogueNamePanel.x = toFIXED(gEpilogueNameX);
+    gEpilogueNamePanel.y = toFIXED(gEpilogueNameY);
     EffectSprite_Draw(&gEpilogueNamePanel);
   }
 }

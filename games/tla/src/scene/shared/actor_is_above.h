@@ -2,9 +2,9 @@
 s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
   s32 dy;
 
-  if (ABS(a->x.fixed - b->x.fixed) < px(12)) {
+  if (ABS(a->x.fixed - b->x.fixed) < toFIXED(12)) {
     dy = a->y.fixed - b->y.fixed;
-    if (dy > 0 && dy < px(16) && ABS(a->z.fixed - b->z.fixed) < px(8))
+    if (dy > 0 && dy < toFIXED(16) && ABS(a->z.fixed - b->z.fixed) < toFIXED(8))
       return 1;
   }
   return 0;

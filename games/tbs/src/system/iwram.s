@@ -92,8 +92,8 @@ gDebugTextCursor:
 	.global gCamera_UnreadWordA
 gCamera_UnreadWordA:
 	.space 4
-	.global gTransformStackDepth
-gTransformStackDepth:
+	.global gMatrixStackDepth
+gMatrixStackDepth:
 	.space 4
 	.global gSleepRequested
 gSleepRequested:
@@ -150,8 +150,8 @@ gIdleFrames:
 	.global gVBlankDone
 gVBlankDone:
 	.space 4
-	.global gTransformStackTop
-gTransformStackTop:
+	.global gMatrixStackTop
+gMatrixStackTop:
 	.space 8
 	.global gTasksInitialized
 gTasksInitialized:

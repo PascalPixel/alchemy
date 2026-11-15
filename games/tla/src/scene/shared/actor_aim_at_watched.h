@@ -6,7 +6,7 @@ s32 Actor_AimAtWatched(struct Actor *object) {
 
   object->bounce = (target->x.fixed - object->x.fixed) / (steps = 10);
   from = object->y.fixed;
-  object->riseBaseY = (target->y.fixed - from + px(16)) / steps;
+  object->riseBaseY = (target->y.fixed - from + toFIXED(16)) / steps;
   object->gravity = (target->z.fixed - object->z.fixed) / steps;
   object->riseCounter = steps;
   return 0;

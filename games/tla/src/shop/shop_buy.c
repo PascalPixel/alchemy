@@ -478,9 +478,9 @@ void Shop_DrawParty(struct RenderInput *window, s32 selected, s32 itemId) {
           Sprite_StartAnimationFar(figure, 30);
         else
           Sprite_StartAnimationFar(figure, 1);
-        shop->partyMemberScale[i] = Q16_ONE;
+        shop->partyMemberScale[i] = FIXED_ONE;
         if (!Item_IsCompatibleWithUnitFar(unitId, itemId))
-          shop->partyMemberScale[i] = Q16_ONE * 4 / 5;
+          shop->partyMemberScale[i] = FIXED_ONE * 4 / 5;
       }
     }
   }

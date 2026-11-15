@@ -5,11 +5,11 @@ s32 Actor_Bob(struct Actor *object) {
 
   object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (step == 0)
-    object->velocityY = px(3);
+    object->velocityY = toFIXED(3);
   if (step == 16)
-    object->velocityY = px(2);
+    object->velocityY = toFIXED(2);
   if (step == 24)
-    object->velocityY = px(3);
+    object->velocityY = toFIXED(3);
   sprite->rotation = Trig_Cos(step << 12) / 64;
   object->riseCounter++;
   return -1;

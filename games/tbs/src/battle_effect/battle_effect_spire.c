@@ -50,15 +50,16 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
   rockCount = gSpire_RockCounts[work->args->variant];
   for (i = 0; i != rockCount; i++) {
     rock = &work->particles[i];
-    rock->y = -px(64);
+    rock->y = -toFIXED(64);
     rock->velocityY = 0;
   }
   for (i = 0; i != rockCount; i++) {
     for (j = 0; j != SPIRE_SHARDS; j++) {
       struct Particle *shard = &PARTICLES[i * SPIRE_SHARDS + j];
 
-      shard->x = px(gSpire_ShardOffsets[j][SPIRE_SHARD_X] + gSpire_RockX[i]);
-      shard->y = px(gSpire_ShardOffsets[j][SPIRE_SHARD_Y]);
+      shard->x =
+          INTtoFIXED(gSpire_ShardOffsets[j][SPIRE_SHARD_X] + gSpire_RockX[i]);
+      shard->y = INTtoFIXED(gSpire_ShardOffsets[j][SPIRE_SHARD_Y]);
       shard->velocityX = ((Random16() % 96) - 48) << 10;
       shard->velocityY = -((Random16() & 127) + 32) << 11;
       shard->z = 32;
@@ -85,20 +86,20 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
           blit(canvas,
                work->sheet + gSpire_ShardPictures[picture] +
                    SPIRE_SHARD_PICTURES,
-               WHOLE_PIXELS(shard->x) - (width >> 1),
-               WHOLE_PIXELS(shard->y) - (height >> 1), width, height);
+               FIXEDtoINT(shard->x) - (width >> 1),
+               FIXEDtoINT(shard->y) - (height >> 1), width, height);
 #else
           blit(canvas,
                work->sheet + gSpire_ShardPictures[picture] +
                    SPIRE_SHARD_PICTURES,
-               WHOLE_PIXELS(shard->x) -
+               FIXEDtoINT(shard->x) -
                    ((width = gSpire_ShardWidths[picture]) >> 1),
-               WHOLE_PIXELS(shard->y) -
+               FIXEDtoINT(shard->y) -
                    ((height = gSpire_ShardHeights[picture]) >> 1),
                width, height);
 #endif
           Particle_AdvanceWithGravity2D(shard, PARTICLE_DAMPING_NONE,
-                                        px(1) / 4);
+                                        toFIXED(1) / 4);
           shard->variant += shard->z;
           if (shard->z > 1 && (frame & 1))
             shard->z--;
@@ -108,12 +109,12 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
       if (frame < gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         if (frame >= gSpire_DropFrames[i])
           blit(canvas, work->sheet, gSpire_RockX[i] + 64 - SPIRE_ROCK_WIDTH / 2,
-               WHOLE_PIXELS(rock->y), SPIRE_ROCK_WIDTH, SPIRE_ROCK_HEIGHT);
+               FIXEDtoINT(rock->y), SPIRE_ROCK_WIDTH, SPIRE_ROCK_HEIGHT);
         rock->y += rock->velocityY;
         if (frame > gSpire_DropFrames[i])
-          rock->velocityY += px(1);
-        if (rock->y > px(50))
-          rock->y = px(50);
+          rock->velocityY += toFIXED(1);
+        if (rock->y > toFIXED(50))
+          rock->y = toFIXED(50);
       }
       if (frame == gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         EFFECT_FOR_EACH_TARGET(j, work->args)

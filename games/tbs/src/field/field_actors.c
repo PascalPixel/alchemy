@@ -115,9 +115,10 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
   y = actor->z.fixed - viewZ;
   // Across, from 32 pixels left of the screen to 32 past its 240; down,
   // below the view's top and above 224.
-  if ((x >= -(px(32) - 1) && x <= px(272) - 1) && y > 0 && y < px(224)) {
-    *screenPosition++ = WHOLE_PIXELS(x);
-    *screenPosition = WHOLE_PIXELS(y);
+  if ((x >= -(toFIXED(32) - 1) && x <= toFIXED(272) - 1) && y > 0 &&
+      y < toFIXED(224)) {
+    *screenPosition++ = FIXEDtoINT(x);
+    *screenPosition = FIXEDtoINT(y);
     return 0;
   }
   *screenPosition++ = 0;
@@ -253,21 +254,21 @@ struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
     // speed when it bounces; facing down the screen (FACING_SOUTH, the
     // heading gWorldMap_KeyHeadings gives Down).
     actor->script = (s32 *)gActor_DefaultScript;
-    actor->speedLimit = px(2);
+    actor->speedLimit = toFIXED(2);
     actor->scriptCursor = 0;
-    actor->scaleX = Q16_ONE;
-    actor->scaleY = Q16_ONE;
-    actor->acceleration = Q16_ONE;
+    actor->scaleX = FIXED_ONE;
+    actor->scaleY = FIXED_ONE;
+    actor->acceleration = FIXED_ONE;
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    actor->gravity = Q16_ONE;
-    actor->bounce = Q16_ONE / 4;
+    actor->gravity = FIXED_ONE;
+    actor->bounce = FIXED_ONE / 4;
     actor->collisionFlags = 0;
     actor->steeringFlags = ACTOR_FACES_MOTION;
     actor->riseBaseY = 0;
     actor->facing = FACING_SOUTH;
     // Its home position, in pixels.
-    actor->homeX = x / px(1);
-    actor->homeZ = z / px(1);
+    actor->homeX = x / toFIXED(1);
+    actor->homeZ = z / toFIXED(1);
   }
   return actor;
 }
@@ -420,8 +421,8 @@ void Actor_StartIdle(struct Actor *actor) {
 void Actor_StartCamera(struct Actor *actor, s32 watchedActorHandle) {
   Actor_StartScript(actor, gActor_CameraScript);
   if (watchedActorHandle != 0) {
-    actor->acceleration = px(1) / 2;
-    actor->speedLimit = px(4);
+    actor->acceleration = toFIXED(1) / 2;
+    actor->speedLimit = toFIXED(4);
     actor->watchedActor = (struct Actor *)watchedActorHandle;
     actor->timer = 0;
   }

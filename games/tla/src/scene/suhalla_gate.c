@@ -326,8 +326,8 @@ void SuhallaGate_FightPunchAnt(void) {
   Actor_Jump(ACTOR_PUNCH_ANT, 4, 0);
   owner = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (owner != NULL)
-    Actor_SetDestination(ACTOR_PUNCH_ANT, owner->x.part[0].pixel,
-                         owner->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_PUNCH_ANT, owner->x.part[0].integer,
+                         owner->z.part[0].integer);
   Event_Wait(20);
   Event_SetAfterBattleDestination(SCENE_SUHALLA_GATE_PSYNERGY_STONE,
                                   ENTRANCE_AFTER_BATTLE);
@@ -422,8 +422,8 @@ void SuhallaGate_AfterPunchAntBattle(void) {
   Actor_SetAnimation(ACTOR_CAVE_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader)
-    Actor_SetDestination(ACTOR_CAVE_KRADEN, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_CAVE_KRADEN, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_CAVE_KRADEN);
   Actor_SetPosition(ACTOR_CAVE_KRADEN, 0, 0);
   Event_Wait(10);
@@ -446,8 +446,8 @@ void SuhallaGate_PointToMeetingSpot(void) {
   Actor_SetAnimation(ACTOR_CLIFFS_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader)
-    Actor_SetDestination(ACTOR_CLIFFS_KRADEN, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_CLIFFS_KRADEN, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_CLIFFS_KRADEN);
   Actor_SetPosition(ACTOR_CLIFFS_KRADEN, 0, 0);
   Event_Wait(10);

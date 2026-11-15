@@ -11,8 +11,8 @@ void Leader_CenterInCell(void) {
   Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, (x << 4) + 8,
                           (z << 4) + 8);
   System_Wait(1);
-  FieldActor_SetPositionAndResetMotion(object, (x << 20) + px(8),
-                                       object->y.fixed, (z << 20) + px(8));
+  FieldActor_SetPositionAndResetMotion(object, (x << 20) + toFIXED(8),
+                                       object->y.fixed, (z << 20) + toFIXED(8));
   FieldEvent_Wait(4);
-  EventCamera_GetActor()->y.fixed -= px(8);
+  EventCamera_GetActor()->y.fixed -= toFIXED(8);
 }

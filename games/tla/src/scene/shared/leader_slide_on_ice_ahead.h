@@ -21,16 +21,16 @@ void Leader_SlideOnIceAhead(void) {
 
 top:
   Leader_StopIfPending();
-  actor->speedLimit = px(1);
-  actor->acceleration = px(1) / 2;
+  actor->speedLimit = toFIXED(1);
+  actor->acceleration = toFIXED(1) / 2;
   actor->targetX = 0x80000000;
   actor->targetZ = 0x80000000;
   actor->velocityX = 0;
   actor->velocityZ = 0;
   position = &probe;
-  position->x = startX = (actor->x.fixed & 0xfff00000) + px(8);
+  position->x = startX = (actor->x.fixed & 0xfff00000) + toFIXED(8);
   position->y = actor->y.fixed;
-  position->z = startZ = (actor->z.fixed & 0xfff00000) + px(8);
+  position->z = startZ = (actor->z.fixed & 0xfff00000) + toFIXED(8);
   x = startX;
   z = startZ;
   layer = &actor->layer;
@@ -40,7 +40,7 @@ top:
       FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
   if (nextBehavior == 255 ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y.fixed >
-          px(8)) {
+          toFIXED(8)) {
     actor->facing = heading;
     actor->velocityX = 0;
     actor->velocityZ = 0;
@@ -50,15 +50,16 @@ top:
   }
   position->x = x;
   position->z = z;
-  actor->speedLimit = px(2);
-  actor->acceleration = px(1) / 10;
+  actor->speedLimit = toFIXED(2);
+  actor->acceleration = toFIXED(1) / 10;
   actor->timer = 0;
   Actor_SelectAnimation(actor, 2);
   Actor_SetAnimationSpeed(actor, 48);
   actor->update = Actor_SteerByPad;
   goto test;
 body:
-  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y.fixed > px(8)) {
+  if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y.fixed >
+      toFIXED(8)) {
     goto stop;
   }
   {
@@ -83,9 +84,9 @@ body:
   }
   x = next->x;
   z = next->z;
-  actor->speedLimit = px(2);
-  actor->acceleration = px(1) / 10;
-  FieldActor_SetMoveTargetFixed(actor, next->x, next->y, next->z);
+  actor->speedLimit = toFIXED(2);
+  actor->acceleration = toFIXED(1) / 10;
+  FieldActor_SetMoveTargetFX(actor, next->x, next->y, next->z);
   FieldActor_WaitForMove(actor);
   if (nextBehavior != startBehavior) {
     goto blocked;
@@ -98,9 +99,9 @@ test:
     goto body;
   }
 stop:
-  actor->speedLimit = px(2);
-  actor->acceleration = px(1);
-  FieldActor_SetMoveTargetFixed(actor, x, actor->y.fixed, z);
+  actor->speedLimit = toFIXED(2);
+  actor->acceleration = toFIXED(1);
+  FieldActor_SetMoveTargetFX(actor, x, actor->y.fixed, z);
   FieldActor_WaitForMove(actor);
   System_Wait(2);
   goto top;
@@ -110,6 +111,6 @@ blocked:
 done:
   actor->update = NULL;
   actor->steeringFlags |= ACTOR_FACES_MOTION;
-  actor->acceleration = px(1) / 4;
+  actor->acceleration = toFIXED(1) / 4;
   Actor_SelectAnimation(actor, 1);
 }

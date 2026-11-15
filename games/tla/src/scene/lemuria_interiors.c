@@ -479,8 +479,8 @@ answered:
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader == 0)
     goto noLeader;
-  Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].pixel,
-                       leader->z.part[0].pixel);
+  Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].integer,
+                       leader->z.part[0].integer);
 noLeader:
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -654,12 +654,12 @@ visited:
   start[1] = actor->y.fixed;
   start[2] = actor->z.fixed;
   target = targetBuf;
-  target[0] = px(116);
+  target[0] = toFIXED(116);
   target[1] = 0;
-  target[2] = px(110);
+  target[2] = toFIXED(110);
   angle = FACING_NORTH_NORTHWEST;
   for (i = 0; i < BIRD_FLIGHT_FRAMES; i++) {
-    phase = i * (TRIG_TURN / 2) / BIRD_FLIGHT_FRAMES;
+    phase = i * (DEGtoANG(180)) / BIRD_FLIGHT_FRAMES;
     radius = Trig_Sin(phase) * 32;
     angle += TRIG_TURN / 128;
     pos = posBuf;
@@ -672,7 +672,7 @@ visited:
     actor->x.fixed = pos[0];
     actor->y.fixed = pos[1];
     actor->z.fixed = pos[2];
-    actor->facing = angle + TRIG_TURN / 4;
+    actor->facing = angle + DEGtoANG(90);
     if (i == 128) {
       Actor_FaceDirection(ACTOR_PIERS_UNCLE, FACING_SOUTH_SOUTHEAST, 0);
     }
@@ -717,15 +717,15 @@ visited:
   start[0] = actor->x.fixed;
   start[1] = actor->y.fixed;
   start[2] = actor->z.fixed;
-  target[0] = px(132);
-  target[1] = px(32);
-  target[2] = px(100);
+  target[0] = toFIXED(132);
+  target[1] = toFIXED(32);
+  target[2] = toFIXED(100);
   angle = FACING_SOUTH + TRIG_TURN / 128;
   for (i = 0; i < BIRD_FLIGHT_FRAMES; i++) {
-    radius = Trig_Sin(i * (TRIG_TURN / 4) / BIRD_FLIGHT_FRAMES) * 40;
+    radius = Trig_Sin(i * (DEGtoANG(90)) / BIRD_FLIGHT_FRAMES) * 40;
     angle += TRIG_TURN * 3 / 256;
     pos[0] = start[0] + (target[0] - start[0]) * i / BIRD_FLIGHT_FRAMES;
-    sine = Trig_Sin(i * (TRIG_TURN / 2) / BIRD_FLIGHT_FRAMES);
+    sine = Trig_Sin(i * (DEGtoANG(180)) / BIRD_FLIGHT_FRAMES);
     pos[1] = start[1] + (target[1] - start[1]) * i / BIRD_FLIGHT_FRAMES +
              (sine <<= 5);
     pos[2] = start[2] + (target[2] - start[2]) * i / BIRD_FLIGHT_FRAMES;
@@ -733,7 +733,7 @@ visited:
     actor->x.fixed = pos[0];
     actor->y.fixed = pos[1];
     actor->z.fixed = pos[2];
-    actor->facing = angle + TRIG_TURN / 4;
+    actor->facing = angle + DEGtoANG(90);
     if (i == 153) {
       Actor_FaceDirection(ACTOR_PIERS_UNCLE, FACING_WEST_SOUTHWEST, 0);
     }
@@ -744,9 +744,9 @@ visited:
   start[0] = actor->x.fixed;
   start[1] = actor->y.fixed;
   start[2] = actor->z.fixed;
-  target[0] = px(90);
-  target[1] = px(4);
-  target[2] = px(64);
+  target[0] = toFIXED(90);
+  target[1] = toFIXED(4);
+  target[2] = toFIXED(64);
   for (i = 0; i < 16; i++) {
     actor->x.fixed = start[0] + (target[0] - start[0]) * i / 16;
     actor->y.fixed = start[1] + (target[1] - start[1]) * i / 16;
@@ -796,20 +796,24 @@ void LemuriaInteriors_EmitNote();
 void Actor_EmitNotes(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
-  LemuriaInteriors_EmitNote(object->x.fixed + px(8), object->y.fixed + px(28),
-                            object->z.fixed, TRIG_TURN / 16, 15);
+  LemuriaInteriors_EmitNote(object->x.fixed + toFIXED(8),
+                            object->y.fixed + toFIXED(28), object->z.fixed,
+                            TRIG_TURN / 16, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  LemuriaInteriors_EmitNote(object->x.fixed - px(8), object->y.fixed + px(28),
-                            object->z.fixed, TRIG_TURN * 15 / 16, 15);
+  LemuriaInteriors_EmitNote(object->x.fixed - toFIXED(8),
+                            object->y.fixed + toFIXED(28), object->z.fixed,
+                            TRIG_TURN * 15 / 16, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  LemuriaInteriors_EmitNote(object->x.fixed + px(8), object->y.fixed + px(28),
-                            object->z.fixed, TRIG_TURN / 16, 15);
+  LemuriaInteriors_EmitNote(object->x.fixed + toFIXED(8),
+                            object->y.fixed + toFIXED(28), object->z.fixed,
+                            TRIG_TURN / 16, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  LemuriaInteriors_EmitNote(object->x.fixed - px(8), object->y.fixed + px(28),
-                            object->z.fixed, TRIG_TURN * 15 / 16, 15);
+  LemuriaInteriors_EmitNote(object->x.fixed - toFIXED(8),
+                            object->y.fixed + toFIXED(28), object->z.fixed,
+                            TRIG_TURN * 15 / 16, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
 }
@@ -1397,24 +1401,24 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_KRADEN, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(ACTOR_JENNA, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_JENNA, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestination(ACTOR_SHEBA, leader->x.part[0].pixel,
-                         leader->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_SHEBA, leader->x.part[0].integer,
+                         leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Event_End();

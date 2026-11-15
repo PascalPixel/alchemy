@@ -60,9 +60,9 @@ s32 Scene_PrepareMap(void) { return 0; }
 // clang-format off
 u32 gApojiiIslandsCave_FoliageScript[] = {
     SC_SET(SW_MOTION, 0),
-    SC_SET(SW_GROUND, px(4)),
-    SC_SET(SW_Y, px(3)),
-    SC_SET(SW_SCALE_Y, Q16_ONE * 3 / 2),
+    SC_SET(SW_GROUND, toFIXED(4)),
+    SC_SET(SW_Y, toFIXED(3)),
+    SC_SET(SW_SCALE_Y, FIXED_ONE * 3 / 2),
     SC_END,
 };
 // clang-format on

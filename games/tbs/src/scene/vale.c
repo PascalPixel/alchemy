@@ -734,7 +734,7 @@ static void Vale_WatchThePuppies(void) {
     savedOrigin = grid->origin;
     grid->origin = cameraPosition;
     for (frame = 0; frame != 40; frame++) {
-      cameraPosition[2] += px(2);
+      cameraPosition[2] += toFIXED(2);
       Event_Wait(1);
       MapGrid_CenterOnFollowedPoint();
     }
@@ -743,7 +743,7 @@ static void Vale_WatchThePuppies(void) {
     frame = 0;
     Event_Wait(6);
     do {
-      cameraPosition[2] -= px(2);
+      cameraPosition[2] -= toFIXED(2);
       Event_Wait(1);
       frame++;
       MapGrid_CenterOnFollowedPoint();
@@ -881,11 +881,11 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
   Actor_WaitForScriptEndById(ACTOR_PARTY_LEADER);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_MAN_GUARDING_MT_ALEPH, 2);
-  guard->scaleX = Q16_ONE;
-  guard->scaleY = Q16_ONE;
+  guard->scaleX = FIXED_ONE;
+  guard->scaleY = FIXED_ONE;
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  actor->scaleX = Q16_ONE;
-  actor->scaleY = Q16_ONE;
+  actor->scaleX = FIXED_ONE;
+  actor->scaleY = FIXED_ONE;
   Event_SetMessageId(MsgValeNotSneakingUpMtAleph);
   // "You're not planning on sneaking up to Mt. Aleph, are you?"
   // Yes: "Mt. Aleph is a sacred peak. No one can climb it without..."
@@ -971,8 +971,8 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_SetScript(ACTOR_GARET, gVale_GaretWalksToTheHouse);
 
   Actor_SetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
-  leader->scaleX = Q16_ONE;
-  leader->scaleY = Q16_ONE;
+  leader->scaleX = FIXED_ONE;
+  leader->scaleY = FIXED_ONE;
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHWEST, 40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(10);
@@ -1002,8 +1002,8 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   MapGrid_CopyCellsTo(7, 102, 84, 41, 2, 1);
 
   Actor_SetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
-  leader->scaleX = Q16_ONE;
-  leader->scaleY = Q16_ONE;
+  leader->scaleX = FIXED_ONE;
+  leader->scaleY = FIXED_ONE;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1029,8 +1029,8 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   MapGrid_CopyCellsTo(6, 102, 83, 41, 1, 1);
 
   Actor_SetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
-  leader->scaleX = Q16_ONE;
-  leader->scaleY = Q16_ONE;
+  leader->scaleX = FIXED_ONE;
+  leader->scaleY = FIXED_ONE;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1055,8 +1055,8 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_Wait(200);
   MapGrid_CopyCellsTo(5, 103, 82, 42, 1, 1);
   Actor_SetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
-  leader->scaleX = Q16_ONE;
-  leader->scaleY = Q16_ONE;
+  leader->scaleX = FIXED_ONE;
+  leader->scaleY = FIXED_ONE;
 
   Event_SetMessageId(MsgValeGoodJob);
   Actor_Jump(ACTOR_DORA, 2, 20);
@@ -1290,8 +1290,8 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_WalkToAndWait(ACTOR_DORA, 364, 815);
   Event_Wait(4);
   for (i = 0; i != 4; i++) {
-    actor->z.fixed += px(3) / 2;
-    actor->scaleY -= Q16_ONE / 10;
+    actor->z.fixed += toFIXED(3) / 2;
+    actor->scaleY -= FIXED_ONE / 10;
     Event_Wait(1);
   }
   Actor_SetPosition(ACTOR_DORA, 0, 0);
@@ -1314,10 +1314,10 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   MapGrid_WaitForShakeToSettle();
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_SetAnimation(ACTOR_DORA, DORA_ANIMATION_PEEK);
-  actor->scaleY = Q16_ONE / 2;
+  actor->scaleY = FIXED_ONE / 2;
   Actor_SetPosition(ACTOR_DORA, 364, 811);
   for (i = 0; i != 5; i++) {
-    actor->scaleY += Q16_ONE / 10;
+    actor->scaleY += FIXED_ONE / 10;
     Event_Wait(1);
   }
   Event_Wait(60);
@@ -1457,21 +1457,21 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_JENNA, 1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-  Actor_WalkTo(ACTOR_JENNA, actor->x.part[0].pixel + 16,
-               actor->z.part[0].pixel);
-  Actor_WalkToAndWait(ACTOR_GARET, actor->x.part[0].pixel + 16,
-                      actor->z.part[0].pixel - 16);
+  Actor_WalkTo(ACTOR_JENNA, actor->x.part[0].integer + 16,
+               actor->z.part[0].integer);
+  Actor_WalkToAndWait(ACTOR_GARET, actor->x.part[0].integer + 16,
+                      actor->z.part[0].integer - 16);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 30);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(40);
-  Actor_WalkToAndWait(ACTOR_JENNA, actor->x.part[0].pixel,
-                      actor->z.part[0].pixel);
+  Actor_WalkToAndWait(ACTOR_JENNA, actor->x.part[0].integer,
+                      actor->z.part[0].integer);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
-  Actor_WalkToAndWait(ACTOR_GARET, actor->x.part[0].pixel,
-                      actor->z.part[0].pixel);
+  Actor_WalkToAndWait(ACTOR_GARET, actor->x.part[0].integer,
+                      actor->z.part[0].integer);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Event_AddPartyMemberPair(GARET, JENNA);
   FieldCamera_MoveTo(377, 160, 887, 1);
@@ -1526,8 +1526,8 @@ s32 Scene_Initialize(void) {
     } else {
       actor->x.fixed = 189 << 17;
     }
-    actor->z.fixed = px(584);
-    actor->y.fixed = px(192);
+    actor->z.fixed = toFIXED(584);
+    actor->y.fixed = toFIXED(192);
     Vale_MovePillarBelowCliff();
     actor->layer = 3;
     actor->motionFlags = 0;
@@ -1551,8 +1551,8 @@ s32 Scene_Initialize(void) {
       if (Event_GetFlag(FLAG_VALE_PARTY_LEFT)) {
         actor = Actor_Get(ACTOR_DORA);
         Actor_SetSpriteFlags(Actor_Get(ACTOR_DORA), 0);
-        actor->scaleX = Q16_ONE / 100;
-        actor->scaleY = Q16_ONE / 100;
+        actor->scaleX = FIXED_ONE / 100;
+        actor->scaleY = FIXED_ONE / 100;
       }
       if (GameFlag_Get(FLAG_MET_SATUROS_AND_MENARDI)) {
         Actor_SetPosition(ACTOR_FIRST_PUPPY, 0, 0);
@@ -1649,7 +1649,7 @@ static void Vale_GaretMeetsHisSister(void) {
                       0);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 402, 608);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
@@ -1727,7 +1727,7 @@ static void Vale_GaretAsksToProtectFamily(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   Actor_WalkToAndWait(ACTOR_GARET, 346, 745);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH_NORTHEAST, 20);
@@ -1905,7 +1905,7 @@ static void Vale_ClimbDownRoofLadder(s32 actorId, s32 approachAnimationId,
   Actor_SetSpeed(actorId, 0.3);
   Actor_SetAnimation(actorId, departureAnimationId);
   Actor_MoveToAndWait(actorId, 392, 890);
-  actor->velocityY = px(2);
+  actor->velocityY = toFIXED(2);
   sprite->flags = SPRITE_FLAG_SHADOW;
   if (resumeMotion != 0) {
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -1925,9 +1925,9 @@ static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode) {
 
       actor->motionFlags = 0;
       Actor_SetSpriteFlags(actor, 0);
-      actor->x.fixed = px(390);
-      actor->y.fixed = px(160);
-      actor->z.fixed = px(842);
+      actor->x.fixed = toFIXED(390);
+      actor->y.fixed = toFIXED(160);
+      actor->z.fixed = toFIXED(842);
       actorId++;
     }
     return;
@@ -1963,21 +1963,21 @@ static void Vale_MendingTheRoof(void) {
   MapGrid_CopyCellsTo(0, 103, 82, 42, 1, 1);
   repairActor = Actor_GetById(ACTOR_OPENING_FIRST_BOARD);
   repairActor->motionFlags = 0;
-  repairActor->x.fixed = px(388);
-  repairActor->y.fixed = px(160);
-  repairActor->z.fixed = px(840);
+  repairActor->x.fixed = toFIXED(388);
+  repairActor->y.fixed = toFIXED(160);
+  repairActor->z.fixed = toFIXED(840);
   Actor_SetSpriteFlags(repairActor, 0);
   repairActor = Actor_GetById(ACTOR_OPENING_SECOND_BOARD);
   repairActor->motionFlags = 0;
-  repairActor->y.fixed = px(160);
-  repairActor->z.fixed = px(844);
-  repairActor->x.fixed = px(388);
+  repairActor->y.fixed = toFIXED(160);
+  repairActor->z.fixed = toFIXED(844);
+  repairActor->x.fixed = toFIXED(388);
   Actor_SetSpriteFlags(repairActor, 0);
   repairActor = Actor_GetById(ACTOR_OPENING_THIRD_BOARD);
   repairActor->motionFlags = 0;
-  repairActor->z.fixed = px(848);
-  repairActor->y.fixed = px(160);
-  repairActor->x.fixed = px(388);
+  repairActor->z.fixed = toFIXED(848);
+  repairActor->y.fixed = toFIXED(160);
+  repairActor->x.fixed = toFIXED(388);
   Actor_SetSpriteFlags(repairActor, 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_OPENING_FIRST_BOARD), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_OPENING_SECOND_BOARD), 0);
@@ -2034,8 +2034,8 @@ static void Vale_MendingTheRoof(void) {
   // "Isaac! Haven't you finished mending the roof yet?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_OPENING_DORA, 0,
                                  10);
-  leader->scaleX = Q16_ONE;
-  leader->scaleY = Q16_ONE;
+  leader->scaleX = FIXED_ONE;
+  leader->scaleY = FIXED_ONE;
   Actor_SetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
   Actor_FaceEachOther(ACTOR_OPENING_DORA, ACTOR_PARTY_LEADER, 40);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
@@ -2094,9 +2094,9 @@ static void Vale_MendingTheRoof(void) {
   Task_AddFrame(Vale_CycleOpeningPillarPalette, TASK_PASS_FRAME);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_OPENING_MOVE_HAND), 0);
   moveHand->motionFlags = 0;
-  moveHand->x.fixed = px(428);
-  moveHand->y.fixed = px(208);
-  moveHand->z.fixed = px(584);
+  moveHand->x.fixed = toFIXED(428);
+  moveHand->y.fixed = toFIXED(208);
+  moveHand->z.fixed = toFIXED(584);
   moveHand->facing = FACING_WEST;
   moveHand->update = Vale_TrailSparkles;
   Event_Wait(4);
@@ -2291,21 +2291,21 @@ static void Vale_RoofMended(void) {
   Actor_SetScript(ACTOR_PARTY_LEADER, gVale_LeaderHammers);
   actor = Actor_Get(ACTOR_FIRST_BOARD);
   actor->motionFlags = 0;
-  actor->x.fixed = px(388);
-  actor->y.fixed = px(160);
-  actor->z.fixed = px(840);
+  actor->x.fixed = toFIXED(388);
+  actor->y.fixed = toFIXED(160);
+  actor->z.fixed = toFIXED(840);
   Actor_SetSpriteFlags(actor, 0);
   actor = Actor_Get(ACTOR_SECOND_BOARD);
   actor->motionFlags = 0;
-  actor->x.fixed = px(388);
-  actor->y.fixed = px(160);
-  actor->z.fixed = px(844);
+  actor->x.fixed = toFIXED(388);
+  actor->y.fixed = toFIXED(160);
+  actor->z.fixed = toFIXED(844);
   Actor_SetSpriteFlags(actor, 0);
   actor = Actor_Get(ACTOR_THIRD_BOARD);
   actor->motionFlags = 0;
-  actor->x.fixed = px(388);
-  actor->y.fixed = px(160);
-  actor->z.fixed = px(848);
+  actor->x.fixed = toFIXED(388);
+  actor->y.fixed = toFIXED(160);
+  actor->z.fixed = toFIXED(848);
   Actor_SetSpriteFlags(actor, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   wait(1);
@@ -2314,14 +2314,14 @@ static void Vale_RoofMended(void) {
   wait(1);
   gFieldWork->transitionFrames = 32;
   Event_StartScreenTransition();
-  Actor_SetSpeedFixed(ACTOR_JENNA, px(1) / 2, FACING_SOUTH);
-  Actor_SetSpeedFixed(ACTOR_GARET, px(1) / 2, FACING_SOUTH);
+  Actor_SetSpeedFX(ACTOR_JENNA, toFIXED(1) / 2, FACING_SOUTH);
+  Actor_SetSpeedFX(ACTOR_GARET, toFIXED(1) / 2, FACING_SOUTH);
   Actor_SetScript(ACTOR_JENNA, gVale_JennaWalksToTheHouse);
   Actor_SetScript(ACTOR_GARET, gVale_GaretWalksToTheHouse);
   Event_Wait(40);
   Actor_SetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
-  leader->scaleX = Q16_ONE;
-  leader->scaleY = Q16_ONE;
+  leader->scaleX = FIXED_ONE;
+  leader->scaleY = FIXED_ONE;
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHWEST, 40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(10);
@@ -2363,8 +2363,8 @@ static void Vale_RoofMended(void) {
   Event_Wait(120);
   MapGrid_CopyCellsTo(7, 102, 84, 41, 2, 1);
   Actor_SetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
-  leader->scaleX = Q16_ONE;
-  leader->scaleY = Q16_ONE;
+  leader->scaleX = FIXED_ONE;
+  leader->scaleY = FIXED_ONE;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -2400,8 +2400,8 @@ static void Vale_RoofMended(void) {
   Event_Wait(120);
   MapGrid_CopyCellsTo(6, 102, 83, 41, 1, 1);
   Actor_SetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
-  leader->scaleX = Q16_ONE;
-  leader->scaleY = Q16_ONE;
+  leader->scaleX = FIXED_ONE;
+  leader->scaleY = FIXED_ONE;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -2439,8 +2439,8 @@ static void Vale_RoofMended(void) {
   Scene_EndEventPsynergy();
   MapGrid_CopyCellsTo(5, 103, 82, 42, 1, 1);
   Actor_SetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
-  leader->scaleX = Q16_ONE;
-  leader->scaleY = Q16_ONE;
+  leader->scaleX = FIXED_ONE;
+  leader->scaleY = FIXED_ONE;
   Actor_Jump(ACTOR_DORA, 2, 20);
   Event_SetMessageId(MsgValeGoodJob);
   // "Good job, Isaac."
@@ -2654,8 +2654,8 @@ static void Vale_RoofMended(void) {
   Actor_WalkToAndWait(ACTOR_DORA, 364, 815);
   Event_Wait(4);
   for (i = 0; i != 4; i++) {
-    actor->z.fixed += px(3) / 2;
-    actor->scaleY -= Q16_ONE / 10;
+    actor->z.fixed += toFIXED(3) / 2;
+    actor->scaleY -= FIXED_ONE / 10;
     Event_Wait(1);
   }
   Actor_SetPosition(ACTOR_DORA, 0, 0);
@@ -2682,10 +2682,10 @@ static void Vale_RoofMended(void) {
   MapGrid_WaitForShakeToSettle();
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Actor_SetAnimation(ACTOR_DORA, DORA_ANIMATION_PEEK);
-  actor->scaleY = Q16_ONE / 2;
+  actor->scaleY = FIXED_ONE / 2;
   Actor_SetPosition(ACTOR_DORA, 364, 811);
   for (i = 0; i != 5; i++) {
-    actor->scaleY += Q16_ONE / 10;
+    actor->scaleY += FIXED_ONE / 10;
     Event_Wait(1);
   }
   Event_Wait(60);
@@ -2822,21 +2822,21 @@ static void Vale_RoofMended(void) {
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_JENNA, 1);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-  Actor_WalkTo(ACTOR_JENNA, actor->x.part[0].pixel + 16,
-               actor->z.part[0].pixel);
-  Actor_WalkToAndWait(ACTOR_GARET, actor->x.part[0].pixel + 16,
-                      actor->z.part[0].pixel - 16);
+  Actor_WalkTo(ACTOR_JENNA, actor->x.part[0].integer + 16,
+               actor->z.part[0].integer);
+  Actor_WalkToAndWait(ACTOR_GARET, actor->x.part[0].integer + 16,
+                      actor->z.part[0].integer - 16);
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH_SOUTHWEST, 30);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(40);
-  Actor_WalkToAndWait(ACTOR_JENNA, actor->x.part[0].pixel,
-                      actor->z.part[0].pixel);
+  Actor_WalkToAndWait(ACTOR_JENNA, actor->x.part[0].integer,
+                      actor->z.part[0].integer);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
-  Actor_WalkToAndWait(ACTOR_GARET, actor->x.part[0].pixel,
-                      actor->z.part[0].pixel);
+  Actor_WalkToAndWait(ACTOR_GARET, actor->x.part[0].integer,
+                      actor->z.part[0].integer);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Event_AddPartyMemberPair(GARET, JENNA);
   FieldCamera_MoveTo(377, 160, 887, 1);
@@ -2861,7 +2861,7 @@ static void Vale_RoofMended(void) {
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 #if TBS_PATCH_1
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  leader->y.fixed = px(160);
+  leader->y.fixed = toFIXED(160);
   leader->targetY = ACTOR_NO_TARGET;
   leader->velocityY = 0;
 #else
@@ -2907,9 +2907,9 @@ static void Vale_CycleThirdBoardPalette(void) {
 /// The distance in whole pixels between two positions of 16.16 fixed-point x,
 /// y and z.
 static s32 Vale_DistanceInPixels(s32 *first, s32 *second) {
-  s32 dx = WHOLE_PIXELS(*first++ - *second++);
-  s32 dy = WHOLE_PIXELS(*first++ - *second++);
-  s32 dz = WHOLE_PIXELS(*first - *second);
+  s32 dx = FIXEDtoINT(*first++ - *second++);
+  s32 dy = FIXEDtoINT(*first++ - *second++);
+  s32 dz = FIXEDtoINT(*first - *second);
 
   return Iwram_Sqrt(dx * dx + dy * dy + dz * dz);
 }
@@ -2937,8 +2937,8 @@ static s32 Vale_TestFacing(struct Actor *actor, struct Actor *target, s32 range,
   }
   if (Vale_DistanceInPixels(&target->x.fixed, &actor->x.fixed) < range ||
       force != 0) {
-    angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
-                         target->x.fixed - actor->x.fixed);
+    angle = (u16)Trig_Atan(target->z.fixed - actor->z.fixed,
+                           target->x.fixed - actor->x.fixed);
     left = FACING_SIXTEENTH(angle - FACING_STEP);
     right = FACING_SIXTEENTH(angle + FACING_STEP);
     angle = FACING_SIXTEENTH(angle);
@@ -2978,14 +2978,15 @@ static void Vale_TrailSparkles(struct Actor *source) {
   s32 randomDistance;
   struct Actor *particle;
   SET_VECTOR(spawnPosition, source->x.fixed,
-             source->y.fixed - (Random_Next() << 4) - px(8), source->z.fixed);
+             source->y.fixed - (Random_Next() << 4) - toFIXED(8),
+             source->z.fixed);
   randomDistance = Random_Next();
   Vector_AddPolarOffset(randomDistance * 48, Random_Next(), spawnPosition);
   particle = FieldActor_Create(SPRITE_SPARKLE, spawnPosition[0],
                                spawnPosition[1], spawnPosition[2]);
   if (particle != NULL) {
     particle->motionFlags = ACTOR_FALLS;
-    particle->gravity = px(1) / 10;
+    particle->gravity = toFIXED(1) / 10;
     particle->wait = 12;
     Actor_SetSpriteFlags(particle, 0);
     Actor_SelectAnimation(particle, 0);
@@ -3003,10 +3004,10 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
   Sound_Play(SE_CAST);
 
   for (frame = 0; frame < 31; frame++) {
-    emitter->y.fixed += px(1);
-    emitter->facing = (u16)(emitter->facing + TRIG_TURN / 8);
-    emitter->scaleX -= Q16_ONE / 32;
-    emitter->scaleY -= Q16_ONE / 32;
+    emitter->y.fixed += toFIXED(1);
+    emitter->facing = (u16)(emitter->facing + DEGtoANG(45));
+    emitter->scaleX -= FIXED_ONE / 32;
+    emitter->scaleY -= FIXED_ONE / 32;
     wait(1);
   }
 
@@ -3020,16 +3021,16 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
       Actor_SetSpriteFlags(particle, 0);
       Actor_StartScript(particle, (const void *)&gVale_SparkleScript[1]);
 
-      verticalSpeed = Random_Next() + px(1);
-      particle->acceleration = Q16_ONE;
+      verticalSpeed = Random_Next() + toFIXED(1);
+      particle->acceleration = FIXED_ONE;
       particle->speedLimit = verticalSpeed;
       particle->motionFlags = ACTOR_FALLS;
-      particle->gravity = px(1) / 25;
+      particle->gravity = toFIXED(1) / 25;
 
       particle->velocityY = Random_Next() - Random_Next();
 
       Actor_SetTargetPositionFromMagnitudeAngle(
-          particle, ((Random_Next() * 3) << 3) + px(8), Random_Next());
+          particle, ((Random_Next() * 3) << 3) + toFIXED(8), Random_Next());
     }
   }
 
@@ -3045,7 +3046,7 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
 }
 
 DEFINE_SET_TARGET_POSITION_FROM_MAGNITUDE_ANGLE(static,
-                                                FieldActor_SetMoveTargetFixed)
+                                                FieldActor_SetMoveTargetFX)
 
 /// Pushing the pillar in Vale (cell behaviors 30 and 31) moves it a cell.
 static void Vale_PushPillar(void) {
@@ -3130,7 +3131,7 @@ static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
   else
     pillar = Actor_Get(ACTOR_PILLAR);
   if (pillar != NULL) {
-    if (leader->y.fixed > px(200))
+    if (leader->y.fixed > toFIXED(200))
       pillar->priorityFlags =
           ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
     else
@@ -3271,7 +3272,7 @@ s32 gVale_LeaderHammers[] = {
     SC_LABEL(1),
     SC_ADD(SW_SCALE_Y, 1966),
     SC_WAIT(12),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
     SC_WAIT(12),
     SC_LOOP(SC_FOREVER, SC_TOP),
     SC_END,
@@ -3306,12 +3307,12 @@ s32 gVale_JennaWalksToTheHouse[] = {
 s32 gVale_UnusedWaterGrows[] = {
     SC_ANIMATION(ANIM_STAND),
     SC_POSITION(266, 0, 1230),
-    SC_SET(SW_SCALE_X, Q16_ONE / 10),
-    SC_SET(SW_SCALE_Y, Q16_ONE / 10),
+    SC_SET(SW_SCALE_X, FIXED_ONE / 10),
+    SC_SET(SW_SCALE_Y, FIXED_ONE / 10),
     SC_WAIT(1),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, 3932),
-    SC_ADD(SW_SCALE_Y, 2 * Q16_ONE / 25),
+    SC_ADD(SW_SCALE_Y, 2 * FIXED_ONE / 25),
     SC_WAIT(1),
     SC_LOOP(24, SC_TO(1)),
     SC_POSITION(0, 0, 0),

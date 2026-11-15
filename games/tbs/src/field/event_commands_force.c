@@ -46,8 +46,8 @@ void FieldPsynergy_Force(void) {
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialBurst);
     FieldParticle_SetActorMode(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->actor, SPRITE_COLOR_BLUE_TINT);
-    effect->scaleY = Q16_ONE * 7 / 10;
-    effect->scaleX = Q16_ONE * 7 / 10;
+    effect->scaleY = FIXED_ONE * 7 / 10;
+    effect->scaleX = FIXED_ONE * 7 / 10;
     wait(2);
     effect++;
   }
@@ -58,29 +58,29 @@ void FieldPsynergy_Force(void) {
   pos.x = caster->x.fixed;
   pos.y = caster->y.fixed + ABOVE;
   pos.z = caster->z.fixed;
-  Vector_AddPolarOffset(px(8), effectWork->angle, &pos);
+  Vector_AddPolarOffset(toFIXED(8), effectWork->angle, &pos);
   projectile = Actor_Spawn(SPRITE_MOVE_HAND, pos.x, pos.y, pos.z);
   if (projectile == NULL) {
     FieldPsynergy_FadeFromCastColor();
     return;
   }
-  projectile->scaleY = Q16_ONE / 4;
-  projectile->scaleX = Q16_ONE / 4;
+  projectile->scaleY = FIXED_ONE / 4;
+  projectile->scaleX = FIXED_ONE / 4;
   projectile->facing = effectWork->angle;
-  projectile->speedLimit = px(4);
-  projectile->acceleration = px(4);
+  projectile->speedLimit = toFIXED(4);
+  projectile->acceleration = toFIXED(4);
   projectile->motionFlags = 0;
   Actor_SelectAnimationFar(projectile, MOVE_HAND_ANIMATION_FIST);
   Actor_SetSpriteColorModeFar(projectile, SPRITE_COLOR_BGR);
   scale = projectile->scaleX;
-  if (scale < Q16_ONE) {
+  if (scale < FIXED_ONE) {
     do {
-      scale += Q16_ONE * 5 / 256;
+      scale += FIXED_ONE * 5 / 256;
       projectile->scaleY = scale;
       projectile->scaleX = scale;
       wait(1);
       scale = projectile->scaleX;
-    } while (scale < Q16_ONE);
+    } while (scale < FIXED_ONE);
   }
   wait(3);
 
@@ -93,8 +93,8 @@ void FieldPsynergy_Force(void) {
       copy->scaleY = AFTERIMAGE_SCALE;
       copy->scaleX = AFTERIMAGE_SCALE;
       copy->facing = effectWork->angle;
-      copy->speedLimit = px(4);
-      copy->acceleration = px(4);
+      copy->speedLimit = toFIXED(4);
+      copy->acceleration = toFIXED(4);
       copy->motionFlags = 0;
       Actor_SelectAnimationFar(copy, MOVE_HAND_ANIMATION_FIST);
       Actor_SetSpriteColorModeFar(copy, SPRITE_COLOR_RBG);
@@ -111,7 +111,7 @@ void FieldPsynergy_Force(void) {
     pos.x = caster->x.fixed;
     pos.y = caster->y.fixed + ABOVE;
     pos.z = caster->z.fixed;
-    Vector_AddPolarOffset(px(56), effectWork->angle, &pos);
+    Vector_AddPolarOffset(toFIXED(56), effectWork->angle, &pos);
   } else {
     pos.x = effectWork->x;
     pos.y = effectWork->y + ABOVE;
@@ -137,16 +137,16 @@ void FieldPsynergy_Force(void) {
   // of actors.
   if (target != NULL && effectWork->childMode == 0) {
     if (effectWork->childOption != 0)
-      target->velocityY = px(8);
+      target->velocityY = toFIXED(8);
     pos.x = target->x.fixed;
     pos.y = target->y.fixed;
     pos.z = target->z.fixed;
-    Vector_AddPolarOffset(px(16), effectWork->angle, &pos);
+    Vector_AddPolarOffset(toFIXED(16), effectWork->angle, &pos);
     if (MapGrid_CheckCollisionFar(target, (struct FieldPosition *)&pos) ==
             COLLISION_NONE &&
         ActorScript_CheckOverlapFar(target, (s32 *)&pos) == 0) {
-      target->acceleration = px(1);
-      target->speedLimit = px(1);
+      target->acceleration = toFIXED(1);
+      target->speedLimit = toFIXED(1);
       Actor_SetMoveTargetFar(target, pos.x, pos.y, pos.z);
     }
   }

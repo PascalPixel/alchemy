@@ -4,11 +4,11 @@ s32 Actor_PopUpSlow(struct Actor *object) {
 
   if (frame == 0) {
     object->y.fixed =
-        Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) + px(16);
+        Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) + toFIXED(16);
     object->scaleX = frame;
     object->scaleY = frame;
-    object->speedLimit = px(1);
-    object->acceleration = px(1);
+    object->speedLimit = toFIXED(1);
+    object->acceleration = toFIXED(1);
     Actor_SetSpritePriorityDirect(object, 1);
   } else if (frame <= 30) {
     if (frame == 30) {
@@ -16,8 +16,8 @@ s32 Actor_PopUpSlow(struct Actor *object) {
       Actor_SelectAnimation(object->watchedActor, 2);
     }
   } else if (frame <= 60) {
-    object->scaleX = Q16_ONE;
-    object->scaleY = Q16_ONE;
+    object->scaleX = FIXED_ONE;
+    object->scaleY = FIXED_ONE;
     {
       s32 half = (object->timer / 2) & 1;
 

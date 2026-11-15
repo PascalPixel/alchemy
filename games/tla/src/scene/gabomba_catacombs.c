@@ -148,7 +148,7 @@ void GabombaCatacombs_ClearBushesByTheStatue(void) {
         FIELD_CELL(leader->z.fixed) == 21) {
       LEADER_HOP();
       Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
-      leader->velocityY = px(6);
+      leader->velocityY = toFIXED(6);
       Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Event_End();
     }
@@ -182,7 +182,7 @@ void GabombaCatacombs_TakeThirdTeleporter(void) {
         FIELD_CELL(leader->z.fixed) == n9) {                                   \
       LEADER_HOP();                                                            \
       Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);   \
-      leader->velocityY = px(6);                                               \
+      leader->velocityY = toFIXED(6);                                          \
       Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);                   \
       Event_End();                                                             \
     }                                                                          \
@@ -207,7 +207,7 @@ void GabombaCatacombs_UncoverThirdPuddle(void) {
     FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, -16, 0);
-    leader->velocityY = px(6);
+    leader->velocityY = toFIXED(6);
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     Event_End();
   }
@@ -240,7 +240,7 @@ void GabombaCatacombs_UncoverStreamPuddle(void) {
     FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -16);
-    leader->velocityY = px(6);
+    leader->velocityY = toFIXED(6);
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     Event_End();
   }
@@ -318,7 +318,7 @@ void GabombaCatacombs_DriftWithStream(struct Actor *object, s32 dz) {
   MapGrid_CheckCollision(object, &position);
   position.x = object->x.fixed;
   position.y = object->y.fixed;
-  position.z = object->z.fixed + px(8);
+  position.z = object->z.fixed + toFIXED(8);
   if (MapGrid_CheckCollision(object, &position) <= 0) {
     position.x = object->x.fixed + 0x5b333;
     position.y = object->y.fixed;
@@ -343,7 +343,7 @@ void GabombaCatacombs_WadeStream(void) {
 
   if ((gFrameCount & 7) == 0) {
     steam = ((struct Actor *)Import_ActorCreate(
-        14, leader->x.fixed, leader->y.fixed + px(6), leader->z.fixed));
+        14, leader->x.fixed, leader->y.fixed + toFIXED(6), leader->z.fixed));
     if (steam) {
       Actor_SetSpriteFlags(steam, 0);
       Actor_SelectAnimation(steam, 1);
@@ -391,14 +391,14 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   TALK();
   Actor_SetPosition(FIELD_TREASURE_ACTOR, 168, 152);
   statue->motionFlags = 6;
-  statue->groundHeight += px(16);
+  statue->groundHeight += toFIXED(16);
   Sound_Play(SE_SHIMMER);
   glow = ((struct Actor *)Import_ActorCreate(SPRITE_FIREBALL, 0, 0, 0));
   Actor_StartScript(glow, gFieldEffect_MediumScript);
   Actor_SetSpriteColorMode(glow, 1);
   glow->motionFlags = 0;
   glow->x.fixed = statue->x.fixed;
-  glow->y.fixed = statue->y.fixed + px(8);
+  glow->y.fixed = statue->y.fixed + toFIXED(8);
   glow->z.fixed = statue->z.fixed;
   glow->groundHeight = statue->groundHeight;
   glow->update = GabombaCatacombs_ShrinkSpray;
@@ -464,8 +464,8 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].pixel,
-                             leader->z.part[0].pixel);
+    Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].integer,
+                             leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Actor_WaitForMoveById(ACTOR_KRADEN);
@@ -583,7 +583,7 @@ s32 Scene_Initialize(void) {
     statue = Actor_GetById(FIELD_TREASURE_ACTOR);
     Actor_SetPosition(FIELD_TREASURE_ACTOR, 168, 152);
     statue->motionFlags = 6;
-    statue->groundHeight += px(16);
+    statue->groundHeight += toFIXED(16);
   }
   return 0;
 }

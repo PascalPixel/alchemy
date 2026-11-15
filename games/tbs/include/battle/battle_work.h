@@ -136,8 +136,8 @@ struct BattleWork {
   /// what Battle_Run returns after a win or a broken link.
   struct BattleSpoils spoils;
   u16 palette[128]; ///< the battle background's colours, before scaling
-  s32 brightness;   ///< the battle background's brightness, 16.16, Q16_ONE full
-  u16 background;   ///< the battle background's id
+  s32 brightness; ///< the battle background's brightness, 16.16, FIXED_ONE full
+  u16 background; ///< the battle background's id
   u8 unusedAfterBackground[4]; ///< no code names it
   u16 highlightStep;           ///< index into gBattleHighlight_BlendRamp
   u16 highlightMode;           ///< nonzero while the units are highlighted

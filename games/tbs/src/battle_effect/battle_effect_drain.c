@@ -61,8 +61,8 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 
       radius = Random16() & 0xff;
       angle = Random16() & TRIG_ANGLE_MASK;
-      shard->x = ((Trig_Sin(angle) * radius) >> 7) + px(screen.x);
-      shard->y = ((Trig_Cos(angle) * radius) >> 3) + px(screen.y);
+      shard->x = ((Trig_Sin(angle) * radius) >> 7) + INTtoFIXED(screen.x);
+      shard->y = ((Trig_Cos(angle) * radius) >> 3) + INTtoFIXED(screen.y);
       shard->velocityX = (128 - (Random16() & 0xff)) << 9;
       lift = Random16() & 0xff;
       shard->variant = 0;
@@ -96,11 +96,11 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
             s32 size;
 
             size = i % 3 + 1;
-            EFFECT_DRAW_MOTE(draw, canvas, sheet, WHOLE_PIXELS(shard->x),
-                             WHOLE_PIXELS(shard->y), size);
+            EFFECT_DRAW_MOTE(draw, canvas, sheet, FIXEDtoINT(shard->x),
+                             FIXEDtoINT(shard->y), size);
             Particle_AdvanceWithGravity2D(shard, 62, gDrain_Gravities[i & 3]);
             shard->variant++;
-            if (shard->velocityY > 0 && WHOLE_PIXELS(shard->y) > 112)
+            if (shard->velocityY > 0 && FIXEDtoINT(shard->y) > 112)
               shard->variant = -1;
           }
           shard++;

@@ -211,7 +211,7 @@ struct BattleTransitionEntry;
 struct AbilityDefinition;
 struct BattleObject;
 struct BattleActionRun;
-struct FixedPointPosition;
+struct Point;
 struct Actor;
 
 s32 DebugParameterSet_Load(s32 set);
@@ -261,7 +261,7 @@ s32 BattleUnit_CountDownSleep(s32 unitId);
       cam->yaw -= 512;                                                         \
     }                                                                          \
     if (view->flag == 0) {                                                     \
-      BattleCamera_SetRange(px(120), px(120), 0, 0, Q16_ONE);                  \
+      BattleCamera_SetRange(toFIXED(120), toFIXED(120), 0, 0, FIXED_ONE);      \
     }                                                                          \
   }
 
@@ -301,7 +301,7 @@ void BattleObject_DestroyAll(void);
 #else
 void *BattleObject_DestroyAll(void);
 #endif
-s32 Battle_GetWorkEntryPair(s32 place, struct FixedPointPosition *position);
+s32 Battle_GetWorkEntryPair(s32 place, struct Point *position);
 UNREAD_RESULT BattleCamera_ApplyTransform(void);
 s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected);
 void *GetMotionRecord(struct Actor *actor, s32 recordIndex);

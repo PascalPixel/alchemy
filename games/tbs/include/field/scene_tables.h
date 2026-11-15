@@ -14,17 +14,17 @@
 #include "game/character_ids.h"
 
 /// The sixteen compass headings in 1/65536 turns, from east through south: a
-/// quarter turn is TRIG_TURN / 4, and the screen's y axis points south.
+/// quarter turn is DEGtoANG(90), and the screen's y axis points south.
 enum Facing {
   FACING_EAST = 0,
   FACING_EAST_SOUTHEAST = TRIG_TURN / 16,
-  FACING_SOUTHEAST = TRIG_TURN / 8,
+  FACING_SOUTHEAST = DEGtoANG(45),
   FACING_SOUTH_SOUTHEAST = TRIG_TURN * 3 / 16,
-  FACING_SOUTH = TRIG_TURN / 4,
+  FACING_SOUTH = DEGtoANG(90),
   FACING_SOUTH_SOUTHWEST = TRIG_TURN * 5 / 16,
   FACING_SOUTHWEST = TRIG_TURN * 3 / 8,
   FACING_WEST_SOUTHWEST = TRIG_TURN * 7 / 16,
-  FACING_WEST = TRIG_TURN / 2,
+  FACING_WEST = DEGtoANG(180),
   FACING_WEST_NORTHWEST = TRIG_TURN * 9 / 16,
   FACING_NORTHWEST = TRIG_TURN * 5 / 8,
   FACING_NORTH_NORTHWEST = TRIG_TURN * 11 / 16,
@@ -43,7 +43,7 @@ enum { FACING_STEP = TRIG_TURN / 16 };
    FACING_NORTHEAST - FACING_NORTHWEST - 2)
 
 /// A facing rounded to the nearest of east, south, west and north.
-#define FACING_NEAREST_CARDINAL(facing) (((facing) + TRIG_TURN / 8) & 0xc000)
+#define FACING_NEAREST_CARDINAL(facing) (((facing) + DEGtoANG(45)) & 0xc000)
 /// A facing rounded to the nearest eighth of a turn.
 #define FACING_NEAREST_EIGHTH(facing) (((facing) + TRIG_TURN / 16) & 0xe000)
 /// The sixteenth of a turn a facing lies in, what is past it dropped.
@@ -154,8 +154,8 @@ struct ActorPlacement {
 /// One row of a scene's actor placements, its spot in plain pixels.
 #define ACTOR_PLACEMENT(sprite, condition, movement, x, y, z, facing,          \
                         talkFacing, flags)                                     \
-  {sprite, condition, movement,   Q16(x), Q16(y),                              \
-   Q16(z), facing,    talkFacing, flags}
+  {sprite,     condition, movement,   toFIXED(x), toFIXED(y),                  \
+   toFIXED(z), facing,    talkFacing, flags}
 
 STATIC_ASSERT(sizeof(struct ActorPlacement) == 24);
 STATIC_ASSERT(offsetof(struct ActorPlacement, talkFacing) == 22);

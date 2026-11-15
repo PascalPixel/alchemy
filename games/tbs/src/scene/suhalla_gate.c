@@ -232,7 +232,7 @@ s32 Scene_Initialize(void) {
     // as the scene loads from each of its entrances); the store goes to
     // the BIOS, which ignores it.
 #ifndef UBFIX
-    Actor_Get(15)->scaleY = 8 * Q16_ONE / 5;
+    Actor_Get(15)->scaleY = 8 * FIXED_ONE / 5;
 #endif
     MapGrid_CopyCellAttributes(108, 38, 1, 1, 102, 56);
   }
@@ -299,7 +299,7 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFX(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
   }
   wait(1);
   Actor_SetSpeed(ACTOR_IODEM, 1.6);
@@ -501,7 +501,7 @@ s32 gSuhallaGateWoundedFlippedNoCollision[] = {
 #endif
 
 s32 gSuhallaGateWoundedFlipped[] = {
-    SC_SET(SW_SCALE_X, -Q16_ONE),
+    SC_SET(SW_SCALE_X, -FIXED_ONE),
     SC_ANIMATION(5),
     SC_END,
 };

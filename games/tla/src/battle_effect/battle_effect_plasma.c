@@ -114,10 +114,10 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
               s32 angle;
 
               speed = (Random16() & 0x3ff) + 32;
-              angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
+              angle = (Random16() & 0x7fff) - DEGtoANG(90);
 
-              spark->x = px(gPlasma_Columns[i + args->side * 7]);
-              spark->y = px(PILLAR_BASE_Y);
+              spark->x = INTtoFIXED(gPlasma_Columns[i + args->side * 7]);
+              spark->y = toFIXED(PILLAR_BASE_Y);
               spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
               spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
               spark->variant = (Random16() & 7) + 32;
@@ -146,16 +146,16 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
       spark = &sparks[k];
       if (spark->variant > 0) {
         spark->variant--;
-        BattleEffectKernels_IntegrateVector2(spark, 60, px(1) / 16);
-        if (spark->y > px(PILLAR_BASE_Y)) {
+        BattleEffectKernels_IntegrateVector2(spark, 60, toFIXED(1) / 16);
+        if (spark->y > toFIXED(PILLAR_BASE_Y)) {
           spark->velocityY = -spark->velocityY / 2;
         } else {
-          s32 x = Q_16_16_TO_INT(spark->x);
+          s32 x = FIXEDtoINT(spark->x);
           s32 y;
           s32 size;
 
           if (spark->x >= 0 && x <= 119 && spark->y >= 0) {
-            y = Q_16_16_TO_INT(spark->y);
+            y = FIXEDtoINT(spark->y);
             size = spark->variant / 8 + 1;
             draw[k & 1](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                         x - size / 2, y - size, size, size * 2);
@@ -186,7 +186,7 @@ void BattleEffect_RunDynamite(struct BattleEffectParams *args) {
 #define FLASH_POINTS 16 ///< flash points kept for each group
 #define FLASH_DRAWN 12  ///< of which the first 12 are drawn
 #define FLASH_FRAMES 18 ///< six cels of three frames
-#define GROUND_Y px(108)
+#define GROUND_Y toFIXED(108)
 
 #define SHAPE(n) gPlasma_Shapes[args->variant][n]
 #define SPARK_COUNT SHAPE(0)
@@ -284,10 +284,10 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
       speed = (Random16() & 0x3ff) + 32;
       angle = Random16() & TRIG_ANGLE_MASK;
       if (args->side == EFFECT_SIDE_PARTY)
-        spark->x = px(originX - GROUP_X(i) + 28);
+        spark->x = INTtoFIXED(originX - GROUP_X(i) + 28);
       else
-        spark->x = px(originX + GROUP_X(i) - 28);
-      spark->y = px(originY);
+        spark->x = INTtoFIXED(originX + GROUP_X(i) - 28);
+      spark->y = INTtoFIXED(originY);
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 6;
       spark->variant = (Random16() & 7) + 32;
@@ -368,9 +368,9 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
         s32 gravity;
 
         if (kind == SPARK_GROUPS_RISING)
-          gravity = -px(1) / 16;
+          gravity = -toFIXED(1) / 16;
         else
-          gravity = px(1) / 16;
+          gravity = toFIXED(1) / 16;
         for (j = 0; j != SPARK_COUNT; j++) {
           struct Particle *spark = sparks + i * SPARK_COUNT + j;
           if (spark->variant > 0) {
@@ -378,9 +378,10 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
             spark->variant--;
             if (spark->y > GROUND_Y) {
               spark->velocityY = -spark->velocityY / 2;
-            } else if (spark->x >= 0 && spark->x < px(127) && spark->y >= 0) {
-              s16 y = Q_16_16_TO_INT(spark->y);
-              s16 x = Q_16_16_TO_INT(spark->x);
+            } else if (spark->x >= 0 && spark->x < toFIXED(127) &&
+                       spark->y >= 0) {
+              s16 y = FIXEDtoINT(spark->y);
+              s16 x = FIXEDtoINT(spark->x);
               s32 size = spark->variant / 5 + 1;
 
               draw[j & 1](canvas,

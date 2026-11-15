@@ -340,9 +340,9 @@ void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
       else
         Sprite_StartAnimationFar(shop->partyMemberIcons[memberIndex],
                                  ANIM_STAND);
-      shop->partyMemberScale[memberIndex] = Q16_ONE;
+      shop->partyMemberScale[memberIndex] = FIXED_ONE;
       if (!Sanctum_NeedsService(shop->partyMemberIds[memberIndex], serviceKind))
-        shop->partyMemberScale[memberIndex] = Q16_ONE * 7 / 10;
+        shop->partyMemberScale[memberIndex] = FIXED_ONE * 7 / 10;
     }
   }
 }
@@ -371,7 +371,7 @@ void Sanctum_DrawFee(struct Window *target, s32 unitId) {
 /// Steps one sparkle of the sanctum's burst, which flies in from a ring around
 /// the icon, again and again until the burst ends.
 void Sanctum_UpdateBurstSparkle(struct FieldParticle *effect) {
-  struct FixedPointPosition position;
+  struct Point position;
   s8 *statePointer;
   s32 state;
   s32 targetPending;
@@ -381,16 +381,16 @@ void Sanctum_UpdateBurstSparkle(struct FieldParticle *effect) {
   if (state == SANCTUM_SPARKLE_START) {
     position.x = effect->originX;
     position.z = effect->originZ;
-    Vector_AddPolarOffset(px(40), Random16(), &position);
+    Vector_AddPolarOffset(toFIXED(40), Random16(), &position);
     FieldParticle_SetPositionFar(effect, position.x, position.z);
     position.x = effect->originX;
     position.z = effect->originZ;
-    Vector_AddPolarOffset(px(4), Random16(), &position);
+    Vector_AddPolarOffset(toFIXED(4), Random16(), &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     // 16.16 pixels: at most 2 a frame, gaining 0.4 a frame
-    effect->speedMax = px(2);
-    effect->acceleration = px(2) / 5;
+    effect->speedMax = toFIXED(2);
+    effect->acceleration = toFIXED(2) / 5;
     effect->turnStepLimited = state;
     *statePointer = *statePointer + 1;
   } else if (state == SANCTUM_SPARKLE_FLYING) {
@@ -436,7 +436,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
 
   struct ShopWork *shop;
   s8 savedCursorMode;
-  struct FixedPointPosition position;
+  struct Point position;
   struct FieldParticle *effect;
   s32 effectIndex;
 
@@ -451,8 +451,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   Task_Add(Sanctum_UpdateBurst, TASK_PASS_FRAME);
 
   // The burst's centre, in 16.16 pixels: 12 above the party member's icon
-  position.x = px(shop->partyMemberX[member]);
-  position.z = px(shop->partyMemberY[member]) - px(12);
+  position.x = toFIXED(shop->partyMemberX[member]);
+  position.z = toFIXED(shop->partyMemberY[member]) - toFIXED(12);
 
   // Spawn eighteen particles while the task continues updating all twenty-four.
   for (effectIndex = 0; effectIndex <= 17; effectIndex++) {
@@ -462,8 +462,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     FieldParticle_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
     FieldParticle_SetActorModeFar(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->actor, Random16_Below(7));
-    effect->scaleY = Q16_ONE * 7 / 10;
-    effect->scaleX = Q16_ONE * 7 / 10;
+    effect->scaleY = FIXED_ONE * 7 / 10;
+    effect->scaleX = FIXED_ONE * 7 / 10;
     wait(3);
     if (effectIndex == 5) {
       shop->burstMember = member;

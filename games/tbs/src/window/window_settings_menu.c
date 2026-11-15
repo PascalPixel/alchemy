@@ -87,20 +87,20 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
 /// Writes window colours 4 to 10 of WINDOW_PALETTE, each a fixed scale of the
 /// window tint.
 UNUSED void WindowColor_WritePalette(struct OptionMenuWork *work) {
-  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 4) =
-      WindowColor_ScaleTint(work, Q16_ONE * 14 / 15, Q16_ONE * 4 / 5, 0x11110);
+  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 4) = WindowColor_ScaleTint(
+      work, FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 5, 0x11110);
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 5) = WindowColor_ScaleTint(
-      work, Q16_ONE * 5 / 6, Q16_ONE * 11 / 15, Q16_ONE * 14 / 15);
+      work, FIXED_ONE * 5 / 6, FIXED_ONE * 11 / 15, FIXED_ONE * 14 / 15);
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 6) = WindowColor_ScaleTint(
-      work, Q16_ONE * 11 / 15, Q16_ONE * 2 / 3, Q16_ONE * 4 / 5);
+      work, FIXED_ONE * 11 / 15, FIXED_ONE * 2 / 3, FIXED_ONE * 4 / 5);
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 7) =
-      WindowColor_ScaleTint(work, 0xA221, Q16_ONE * 3 / 5, Q16_ONE * 2 / 3);
+      WindowColor_ScaleTint(work, 0xA221, FIXED_ONE * 3 / 5, FIXED_ONE * 2 / 3);
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 8) = WindowColor_ScaleTint(
-      work, Q16_ONE * 31 / 30, Q16_ONE * 13 / 15, Q16_ONE * 6 / 5);
-  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 9) =
-      WindowColor_ScaleTint(work, 0x12221, Q16_ONE * 14 / 15, Q16_ONE * 4 / 3);
+      work, FIXED_ONE * 31 / 30, FIXED_ONE * 13 / 15, FIXED_ONE * 6 / 5);
+  *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 9) = WindowColor_ScaleTint(
+      work, 0x12221, FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 3);
   *(s16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, 10) = WindowColor_ScaleTint(
-      work, Q16_ONE * 37 / 30, Q16_ONE, Q16_ONE * 22 / 15);
+      work, FIXED_ONE * 37 / 30, FIXED_ONE, FIXED_ONE * 22 / 15);
 }
 
 /// Returns the window tint with each channel scaled (16.16 fixed point) and
@@ -111,9 +111,9 @@ u16 WindowColor_ScaleTint(struct OptionMenuWork *work, s32 redScale,
   s32 green;
   s32 blue;
 
-  red = Iwram_MulQ16(work->tint[0] << 16, redScale) >> 16;
-  green = Iwram_MulQ16(work->tint[1] << 16, greenScale) >> 16;
-  blue = Iwram_MulQ16(work->tint[2] << 16, blueScale) >> 16;
+  red = Iwram_MulFX(work->tint[0] << 16, redScale) >> 16;
+  green = Iwram_MulFX(work->tint[1] << 16, greenScale) >> 16;
+  blue = Iwram_MulFX(work->tint[2] << 16, blueScale) >> 16;
   if (red < 0)
     red = 0;
   if (green < 0)
@@ -138,9 +138,9 @@ u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
   s32 green;
   s32 blue;
 
-  red = Iwram_MulQ16(rgb[0] << 16, redScale) >> 16;
-  green = Iwram_MulQ16(rgb[1] << 16, greenScale) >> 16;
-  blue = Iwram_MulQ16(rgb[2] << 16, blueScale) >> 16;
+  red = Iwram_MulFX(rgb[0] << 16, redScale) >> 16;
+  green = Iwram_MulFX(rgb[1] << 16, greenScale) >> 16;
+  blue = Iwram_MulFX(rgb[2] << 16, blueScale) >> 16;
   CLAMP(red, 0, RGB_LEVEL_MAX);
   CLAMP(green, 0, RGB_LEVEL_MAX);
   CLAMP(blue, 0, RGB_LEVEL_MAX);
@@ -173,23 +173,23 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   rgb[0] = red;
   rgb[1] = green;
   rgb[2] = blue;
-  // Each colour scales the tint by channel, in 16.16 (Q16_ONE is 1): colours 4
-  // to 7 grow darker, from about 0.93, 0.8 and 1.07 to 0.63, 0.6 and 0.67, and
-  // 8 to 10 lighter, up to about 1.23, 1 and 1.47.
-  BG_PLTT_COLOR(WINDOW_PALETTE, 4) =
-      Color_ScaleComponents(rgb, Q16_ONE * 14 / 15, Q16_ONE * 4 / 5, 0x11110);
+  // Each colour scales the tint by channel, in 16.16 (FIXED_ONE is 1): colours
+  // 4 to 7 grow darker, from about 0.93, 0.8 and 1.07 to 0.63, 0.6 and 0.67,
+  // and 8 to 10 lighter, up to about 1.23, 1 and 1.47.
+  BG_PLTT_COLOR(WINDOW_PALETTE, 4) = Color_ScaleComponents(
+      rgb, FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 5, 0x11110);
   BG_PLTT_COLOR(WINDOW_PALETTE, 5) = Color_ScaleComponents(
-      rgb, Q16_ONE * 5 / 6, Q16_ONE * 11 / 15, Q16_ONE * 14 / 15);
+      rgb, FIXED_ONE * 5 / 6, FIXED_ONE * 11 / 15, FIXED_ONE * 14 / 15);
   BG_PLTT_COLOR(WINDOW_PALETTE, 6) = Color_ScaleComponents(
-      rgb, Q16_ONE * 11 / 15, Q16_ONE * 2 / 3, Q16_ONE * 4 / 5);
+      rgb, FIXED_ONE * 11 / 15, FIXED_ONE * 2 / 3, FIXED_ONE * 4 / 5);
   BG_PLTT_COLOR(WINDOW_PALETTE, 7) =
-      Color_ScaleComponents(rgb, 0xa221, Q16_ONE * 3 / 5, Q16_ONE * 2 / 3);
+      Color_ScaleComponents(rgb, 0xa221, FIXED_ONE * 3 / 5, FIXED_ONE * 2 / 3);
   BG_PLTT_COLOR(WINDOW_PALETTE, 8) = Color_ScaleComponents(
-      rgb, Q16_ONE * 31 / 30, Q16_ONE * 13 / 15, Q16_ONE * 6 / 5);
-  BG_PLTT_COLOR(WINDOW_PALETTE, 9) =
-      Color_ScaleComponents(rgb, 0x12221, Q16_ONE * 14 / 15, Q16_ONE * 4 / 3);
-  BG_PLTT_COLOR(WINDOW_PALETTE, 10) =
-      Color_ScaleComponents(rgb, Q16_ONE * 37 / 30, Q16_ONE, Q16_ONE * 22 / 15);
+      rgb, FIXED_ONE * 31 / 30, FIXED_ONE * 13 / 15, FIXED_ONE * 6 / 5);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 9) = Color_ScaleComponents(
+      rgb, 0x12221, FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 3);
+  BG_PLTT_COLOR(WINDOW_PALETTE, 10) = Color_ScaleComponents(
+      rgb, FIXED_ONE * 37 / 30, FIXED_ONE, FIXED_ONE * 22 / 15);
 }
 
 /// The rows of the unused three-row settings cursor (OptionMenuWork.page).

@@ -576,13 +576,13 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   ActorSystem_ResumeProjectionAndHideLayers();
   Event_Wait(40);
   // Widen the camera bounds and reveal the lightning outside.
-  grid->minX = px(328);
-  grid->minY = px(600);
-  grid->maxX = px(624);
-  grid->maxY = px(816);
-  viewCenter->x.fixed = px(564);
+  grid->minX = toFIXED(328);
+  grid->minY = toFIXED(600);
+  grid->maxX = toFIXED(624);
+  grid->maxY = toFIXED(816);
+  viewCenter->x.fixed = toFIXED(564);
   viewCenter->y.fixed = 0;
-  viewCenter->z.fixed = px(691);
+  viewCenter->z.fixed = toFIXED(691);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   gFieldWork->transition =
@@ -1064,10 +1064,11 @@ static void CottageRoomsB_ShowMythrilBag(void) {
   Actor_SetPosition(ACTOR_KRADEN, 480, 202);
   wait(1);
   FieldCamera_FollowActor(ACTOR_KRADEN, 1);
-  actor = FieldActor_Create(SPRITE_BLANK, px(328), px(2), px(195));
+  actor =
+      FieldActor_Create(SPRITE_BLANK, toFIXED(328), toFIXED(2), toFIXED(195));
   actor->motionFlags = clear;
   sprite = actor->sprite;
-  actor->y.fixed = px(5);
+  actor->y.fixed = toFIXED(5);
   sprite->count = clear;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
@@ -1242,39 +1243,39 @@ s32 gCottageRoomsB_RunToPlazaScript[] = {
 };
 
 s32 gCottageRoomsB_FlameShakesScript[] = {
-    SC_SET(SW_SCALE_X, 9 * Q16_ONE / 10),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
+    SC_SET(SW_SCALE_X, 9 * FIXED_ONE / 10),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
     SC_WAIT(4),
-    SC_SET(SW_SCALE_X, 4 * Q16_ONE / 5),
-    SC_SET(SW_SCALE_Y, 4 * Q16_ONE / 5),
+    SC_SET(SW_SCALE_X, 4 * FIXED_ONE / 5),
+    SC_SET(SW_SCALE_Y, 4 * FIXED_ONE / 5),
     SC_WAIT(4),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
 s32 gCottageRoomsB_FlameRisesScript[] = {
     SC_ANIMATION(2),
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, 6 * Q16_ONE / 5),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, 6 * FIXED_ONE / 5),
     SC_WAIT(3),
-    SC_SET(SW_SCALE_X, 4 * Q16_ONE / 5),
-    SC_SET(SW_SCALE_Y, 4 * Q16_ONE / 5),
+    SC_SET(SW_SCALE_X, 4 * FIXED_ONE / 5),
+    SC_SET(SW_SCALE_Y, 4 * FIXED_ONE / 5),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, 1310),
     SC_ADD(SW_SCALE_Y, 1310),
     SC_WAIT(1),
     SC_LOOP(8, SC_TO(1)),
     SC_LABEL(2),
-    SC_ADD(SW_Y, -px(1) / 10),
-    SC_ADD(SW_TARGET_Y, -px(1) / 10),
+    SC_ADD(SW_Y, -toFIXED(1) / 10),
+    SC_ADD(SW_TARGET_Y, -toFIXED(1) / 10),
     SC_ADD(SW_SCALE_X, -655),
     SC_ADD(SW_SCALE_Y, 2621),
     SC_WAIT(1),
     SC_LOOP(14, SC_TO(2)),
-    SC_SET(SW_Y, px(8)),
-    SC_SET(SW_TARGET_Y, px(8)),
+    SC_SET(SW_Y, toFIXED(8)),
+    SC_SET(SW_TARGET_Y, toFIXED(8)),
     SC_LABEL(3),
-    SC_ADD(SW_Y, px(9) / 20),
-    SC_ADD(SW_TARGET_Y, px(9) / 20),
+    SC_ADD(SW_Y, toFIXED(9) / 20),
+    SC_ADD(SW_TARGET_Y, toFIXED(9) / 20),
     SC_ADD(SW_SCALE_X, 65),
     SC_ADD(SW_SCALE_Y, -1310),
     SC_WAIT(1),
@@ -1295,35 +1296,35 @@ s32 gCottageRoomsB_DoraFacesIsaacScript[] = {
 };
 
 s32 gCottageRoomsB_MythrilBagRisesScript[] = {
-    SC_ADD(SW_Y, px(1) / 2),
+    SC_ADD(SW_Y, toFIXED(1) / 2),
     SC_WAIT(1),
     SC_LOOP(16, SC_TOP),
 };
 
 s32 gCottageRoomsB_MythrilBagWobblesScript[] = {
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(4),
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(4),
     SC_END,
 };

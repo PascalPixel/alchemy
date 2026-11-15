@@ -156,7 +156,7 @@ static void Xian_MistJoins(void) {
 /// it.
 static void Xian_UpdateFrozenPuddleLayer(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader->y.part[0].pixel > 31) {
+  if (leader->y.part[0].integer > 31) {
     Actor_Get(ACTOR_SPILLED_WATER)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   } else {
     Actor_Get(ACTOR_SPILLED_WATER)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
@@ -182,7 +182,8 @@ static void Xian_SpawnTrainingParticles(void) {
     options.type = SPRITE_GIRL_IN_PINK;
     options.script = gXian_TrainingParticleScript;
     FieldEffect_Spawn(student->x.fixed, student->y.fixed,
-                      student->z.fixed - px(1), 0, -px(1), -px(1),
+                      student->z.fixed - toFIXED(1), 0, -toFIXED(1),
+                      -toFIXED(1),
                       EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE |
                           EFFECT_USE_TYPE | EFFECT_USE_SCRIPT,
                       &options);
@@ -213,8 +214,8 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
   }
 
   if (Actor_Distance(target, actor) < distanceLimit || forceTracking != 0) {
-    u16 angle = ArcTan2(target->z.fixed - actor->z.fixed,
-                        target->x.fixed - actor->x.fixed);
+    u16 angle = Trig_Atan(target->z.fixed - actor->z.fixed,
+                          target->x.fixed - actor->x.fixed);
     s32 previousHeading = FACING_SIXTEENTH(angle - FACING_STEP);
     s32 nextHeading = FACING_SIXTEENTH(angle + FACING_STEP);
     s32 targetHeading = FACING_SIXTEENTH(angle);
@@ -370,13 +371,13 @@ static void Xian_TalkToWaterCarrier(void) {
   Actor_RunRepeatedMotion(ACTOR_WOMAN_CARRYING_WATER, 2);
   Event_Wait(10);
   Sound_Play(SE_SPARKLING_PASSAGE);
-  puddle->scaleX = 3 * Q16_ONE / 10;
-  puddle->scaleY = 3 * Q16_ONE / 10;
+  puddle->scaleX = 3 * FIXED_ONE / 10;
+  puddle->scaleY = 3 * FIXED_ONE / 10;
   carrierX = Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed;
   carrierCellZ = FIELD_CELL(Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->z.fixed);
-  Actor_SetPositionFixed(ACTOR_SPILLED_WATER,
-                         FIELD_CELL_CENTER(FIELD_CELL(carrierX)),
-                         FIELD_CELL_CENTER(carrierCellZ));
+  Actor_SetPositionFX(ACTOR_SPILLED_WATER,
+                      FIELD_CELL_CENTER(FIELD_CELL(carrierX)),
+                      FIELD_CELL_CENTER(carrierCellZ));
   carrierColumnX = Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed;
   carrier = Actor_Get(ACTOR_WOMAN_CARRYING_WATER);
   MapGrid_CopyCellAttributes(16, 16, 1, 1, FIELD_CELL(carrierColumnX),
@@ -387,8 +388,8 @@ static void Xian_TalkToWaterCarrier(void) {
     wait(3);
     scaleY = puddle->scaleY;
     scaleX = puddle->scaleX;
-    puddle->scaleY = scaleY + Q16_ONE / 10;
-    scaleX += Q16_ONE / 10;
+    puddle->scaleY = scaleY + FIXED_ONE / 10;
+    scaleX += FIXED_ONE / 10;
     puddle->scaleX = scaleX;
   } while (scaleX <= 0xffff);
   Actor_ShowEmote(ACTOR_WOMAN_CARRYING_WATER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
@@ -418,9 +419,9 @@ static void Xian_TalkToWaterCarrier(void) {
   }
   Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 0.8);
   if (FIELD_CELL(Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->z.fixed) != 14) {
-    Actor_WalkToAndWait(ACTOR_WOMAN_CARRYING_WATER,
-                        Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.part[0].pixel,
-                        232);
+    Actor_WalkToAndWait(
+        ACTOR_WOMAN_CARRYING_WATER,
+        Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.part[0].integer, 232);
   }
   Actor_WalkToAndWait(ACTOR_WOMAN_CARRYING_WATER, 280, 232);
   GameFlag_Set(FLAG_XIAN_WATER_SPILLED);
@@ -483,21 +484,24 @@ static void Xian_TalkToKungFuStudent(void) {
     FieldVector_AddPolarOffset(-8, Actor_Get(ACTOR_PARTY_LEADER)->facing,
                                (struct FieldPosition *)stepBackOffset);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, stepBackOffset[0] / px(1),
-                               stepBackOffset[2] / px(1));
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER,
+                               stepBackOffset[0] / toFIXED(1),
+                               stepBackOffset[2] / toFIXED(1));
     Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
     Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
     effectParams.priority = 1;
-    FieldEffect_Spawn(px(192), 0, px(312), px(1) / 10, px(1) / 5, 0,
+    FieldEffect_Spawn(toFIXED(192), 0, toFIXED(312), toFIXED(1) / 10,
+                      toFIXED(1) / 5, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    FieldEffect_Spawn(px(192), 0, px(312), px(1) / 5, px(1) / 10, 0,
+    FieldEffect_Spawn(toFIXED(192), 0, toFIXED(312), toFIXED(1) / 5,
+                      toFIXED(1) / 10, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     Sound_Play(SE_WATER);
     Task_AddFrame(Xian_SpawnTrainingParticles, TASK_PASS_FRAME);
-    Actor_Get(ACTOR_KUNG_FU_STUDENT)->velocityY = px(6);
-    Actor_Get(ACTOR_KUNG_FU_STUDENT)->gravity = px(1);
+    Actor_Get(ACTOR_KUNG_FU_STUDENT)->velocityY = toFIXED(6);
+    Actor_Get(ACTOR_KUNG_FU_STUDENT)->gravity = toFIXED(1);
     Actor_Get(ACTOR_KUNG_FU_STUDENT)->bounce = 0;
     Actor_SetSpeed(ACTOR_KUNG_FU_STUDENT, 3);
     Actor_SetDestination(ACTOR_KUNG_FU_STUDENT, 168, 312);
@@ -507,33 +511,34 @@ static void Xian_TalkToKungFuStudent(void) {
     Task_AddFrame(Xian_RotateTrainingTree, TASK_PASS_FRAME);
     effectParams.type = SPRITE_STAR_BURST;
     effectParams.script = gXian_TreeImpactScript;
-    effectParams.rotation = TRIG_TURN / 4;
-    FieldEffect_Spawn(px(168), 0, px(332), 0, 0, 0,
+    effectParams.rotation = DEGtoANG(90);
+    FieldEffect_Spawn(toFIXED(168), 0, toFIXED(332), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
                           EFFECT_USE_SCRIPT | EFFECT_USE_ROTATION,
                       &effectParams);
     Actor_SetDestination(ACTOR_KUNG_FU_STUDENT, 146, 312);
     Actor_WaitForMoveById(ACTOR_KUNG_FU_STUDENT);
     Task_Remove(Xian_SpawnTrainingParticles);
-    FieldEffect_Spawn(px(144), 0, px(312), 0, 0, 0,
+    FieldEffect_Spawn(toFIXED(144), 0, toFIXED(312), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    FieldEffect_Spawn(px(144), 0, px(312), -px(1) / 5, px(1) / 10, 0,
+    FieldEffect_Spawn(toFIXED(144), 0, toFIXED(312), -toFIXED(1) / 5,
+                      toFIXED(1) / 10, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    reboundVelocity = -px(1) / 2;
-    FieldEffect_Spawn(px(144), 0, px(312), reboundVelocity, 0, 0,
+    reboundVelocity = -toFIXED(1) / 2;
+    FieldEffect_Spawn(toFIXED(144), 0, toFIXED(312), reboundVelocity, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     Actor_WaitForScriptEndById(ACTOR_TRAINING_TREE);
     Sound_Play(SE_CHEST_OPEN);
-    FieldEffect_Spawn(px(168), px(8), px(312), 0, 0, 0,
+    FieldEffect_Spawn(toFIXED(168), toFIXED(8), toFIXED(312), 0, 0, 0,
                       EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    FieldEffect_Spawn(px(168), px(8), px(312), px(1) / 5, 0, 0,
-                      EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-    FieldEffect_Spawn(px(168), px(8), px(312), -px(1) / 5, 0, 0,
-                      EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
+    FieldEffect_Spawn(toFIXED(168), toFIXED(8), toFIXED(312), toFIXED(1) / 5, 0,
+                      0, EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
+    FieldEffect_Spawn(toFIXED(168), toFIXED(8), toFIXED(312), -toFIXED(1) / 5,
+                      0, 0, EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     Task_Remove(Xian_RotateTrainingTree);
     Actor_Get(ACTOR_TRAINING_TREE)->sprite->rotation = reboundVelocity;
-    Actor_Get(ACTOR_KUNG_FU_STUDENT)->bounce = Q16_ONE / 4;
-    Actor_Get(ACTOR_KUNG_FU_STUDENT)->gravity = px(1);
+    Actor_Get(ACTOR_KUNG_FU_STUDENT)->bounce = FIXED_ONE / 4;
+    Actor_Get(ACTOR_KUNG_FU_STUDENT)->gravity = toFIXED(1);
     Event_Wait(30);
     Actor_FaceDirection(ACTOR_KUNG_FU_STUDENT, FACING_EAST, 20);
     Actor_RunRepeatedMotion(ACTOR_KUNG_FU_STUDENT, 2);
@@ -567,9 +572,9 @@ static void Xian_JumpOverSpilledWater(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   savedMotionFlags = leader->motionFlags;
   if (GameFlag_Get(FLAG_XIAN_WATER_SPILLED) != 0) {
-    landingPosition.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
+    landingPosition.x = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
     landingPosition.y = leader->y.fixed;
-    landingPosition.z = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
+    landingPosition.z = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
     FieldVector_AddPolarOffset(32, FACING_NEAREST_CARDINAL(leader->facing),
                                &landingPosition);
     if (FieldActor_CheckMovementCollision(leader, &landingPosition) == 0) {
@@ -578,13 +583,13 @@ static void Xian_JumpOverSpilledWater(void) {
       wait(6);
       Sound_Play(SE_JUMP);
       Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
-      leader->speedLimit = px(3);
-      leader->acceleration = px(2);
-      leader->velocityY = px(4);
+      leader->speedLimit = toFIXED(3);
+      leader->acceleration = toFIXED(2);
+      leader->velocityY = toFIXED(4);
       leader->motionFlags &= 126;
       Actor_SetSpriteFlags(leader, 0);
-      Actor_MoveToAndWait(ACTOR_PARTY_LEADER, WHOLE_PIXELS(landingPosition.x),
-                          WHOLE_PIXELS(landingPosition.z));
+      Actor_MoveToAndWait(ACTOR_PARTY_LEADER, FIXEDtoINT(landingPosition.x),
+                          FIXEDtoINT(landingPosition.z));
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
       leader->motionFlags = savedMotionFlags;
@@ -662,14 +667,14 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   Task_AddFrame(rotate, TASK_PASS_FRAME);
   Actor_WaitForScriptEndById(ACTOR_TRAINING_TREE);
   Sound_Play(SE_CHEST_OPEN);
-  FieldEffect_Spawn(px(168), px(8), px(312), 0, 0, 0,
+  FieldEffect_Spawn(toFIXED(168), toFIXED(8), toFIXED(312), 0, 0, 0,
                     EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-  FieldEffect_Spawn(px(168), px(8), px(312), px(1) / 5, 0, 0,
-                    EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
-  FieldEffect_Spawn(px(168), px(8), px(312), -px(1) / 5, 0, 0,
-                    EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
+  FieldEffect_Spawn(toFIXED(168), toFIXED(8), toFIXED(312), toFIXED(1) / 5, 0,
+                    0, EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
+  FieldEffect_Spawn(toFIXED(168), toFIXED(8), toFIXED(312), -toFIXED(1) / 5, 0,
+                    0, EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
   Task_Remove(rotate);
-  Actor_Get(ACTOR_TRAINING_TREE)->sprite->rotation = TRIG_TURN / 2;
+  Actor_Get(ACTOR_TRAINING_TREE)->sprite->rotation = DEGtoANG(180);
   Actor_SetPosition(ACTOR_FORCE_TARGET, 168, 312);
   Event_Wait(20);
   Actor_FaceActor(ACTOR_KUNG_FU_STUDENT, ACTOR_TRAINING_TREE, 0);
@@ -776,11 +781,11 @@ s32 Scene_Initialize(void) {
   Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->update = XIAN_WATER_CARRIER_UPDATE;
   actor = Actor_Get(ACTOR_TRAINING_TREE);
   actor->motionFlags = 0;
-  actor->y.fixed = px(16);
-  actor->targetY = px(16);
-  actor->scaleX = 11 * Q16_ONE / 20;
-  actor->scaleY = 2 * Q16_ONE / 5;
-  actor->sprite->rotation = TRIG_TURN / 2;
+  actor->y.fixed = toFIXED(16);
+  actor->targetY = toFIXED(16);
+  actor->scaleX = 11 * FIXED_ONE / 20;
+  actor->scaleY = 2 * FIXED_ONE / 5;
+  actor->sprite->rotation = DEGtoANG(180);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_FORCE_TARGET), 0);
   Actor_Get(ACTOR_FORCE_TARGET)->motionFlags = 0;
   Actor_Get(ACTOR_FORCE_TARGET)->y.fixed = 0;

@@ -168,7 +168,7 @@ void JupiterLighthouse_PlacePushedBlock(s32 unused, s32 id) {
       return;
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
-      object->y.fixed += px(2);
+      object->y.fixed += toFIXED(2);
       System_Wait(1);
     }
     Actor_RaiseFromCell(id);
@@ -229,7 +229,7 @@ void Orbs_SpawnRising(void) {
     random = Random16();
     effect = (struct OrbitEffect *)FieldActor_Create(
         0x2a0, center->x.fixed,
-        (s32)((u32)(random << 8) >> 16 << 16) + center->y.fixed - px(28),
+        (s32)((u32)(random << 8) >> 16 << 16) + center->y.fixed - toFIXED(28),
         center->z.fixed);
   } else {
     u32 random;
@@ -237,7 +237,7 @@ void Orbs_SpawnRising(void) {
     random = Random16();
     effect = (struct OrbitEffect *)FieldActor_Create(
         0x2a0, center->x.fixed,
-        (s32)((u32)(random << 6) >> 16 << 16) + center->y.fixed - px(28),
+        (s32)((u32)(random << 6) >> 16 << 16) + center->y.fixed - toFIXED(28),
         center->z.fixed);
   }
   if (effect != 0) {
@@ -279,8 +279,8 @@ static __inline__ void Bring(s32 id) {
   object = Actor_GetById(id);
   object->motionFlags = 0;
   object->priorityFlags |= 2;
-  object->scaleY = -Q16_ONE;
-  object->scaleX = Q16_ONE / 10;
+  object->scaleY = -FIXED_ONE;
+  object->scaleX = FIXED_ONE / 10;
   Actor_SetMovementTypeById(id, gJupiterLighthouse_BringInScript);
 }
 
@@ -315,11 +315,11 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   leader->update = Actor_CyclePictures;
   FieldEvent_Wait(30);
   from[0] = leader->x.fixed;
-  from[1] = leader->y.fixed + px(20);
+  from[1] = leader->y.fixed + toFIXED(20);
   from[2] = leader->z.fixed;
-  to[0] = px(680);
+  to[0] = toFIXED(680);
   to[1] = 0;
-  to[2] = px(574);
+  to[2] = toFIXED(574);
   JupiterLighthouse_StartSparkRing(from, to);
   gJupiterLighthouse_PulseStep = 0;
   gJupiterLighthouse_PulseOn = 1;
@@ -387,10 +387,10 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   c->motionFlags = 0;
   d->motionFlags = 0;
   for (i = 0; i < 16; i++) {
-    a->y.fixed += px(2);
-    b->y.fixed += px(2);
-    c->y.fixed += px(2);
-    d->y.fixed += px(2);
+    a->y.fixed += toFIXED(2);
+    b->y.fixed += toFIXED(2);
+    c->y.fixed += toFIXED(2);
+    d->y.fixed += toFIXED(2);
     System_Wait(1);
   }
   Actor_RaiseFromCell(ACTOR_FIRST_ROW_BLOCK);
@@ -449,7 +449,7 @@ void JupiterLighthouse_AlexAppears(void) {
   p->kind = 5;
   p->tile = 0x2a0;
   p->spread = 0x6666;
-  p->rise = px(3);
+  p->rise = toFIXED(3);
   for (i = 0; i <= 31; i++) {
     FieldEvent_Wait(1);
     if (!(i & 1)) {
@@ -460,11 +460,11 @@ void JupiterLighthouse_AlexAppears(void) {
       scaled += random;
       x = actor->x;
       x += (((scaled << 3) >> 16) << 16);
-      x += -px(12);
+      x += -toFIXED(12);
       randomY = Random16();
       y = actor->y;
-      FieldEffect_Spawn(x, y + (((randomY << 5) >> 16) << 16) + px(32),
-                        actor->z, 0, -px(4), 0, px(27), p);
+      FieldEffect_Spawn(x, y + (((randomY << 5) >> 16) << 16) + toFIXED(32),
+                        actor->z, 0, -toFIXED(4), 0, toFIXED(27), p);
     }
     if (i == 20)
       Actor_SetSpriteColorById(ACTOR_ALEX, 0x100);
@@ -532,7 +532,7 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
   Actor_SetSpriteFlags(((void *)Actor_Get(ACTOR_ALEX)), 0);
   FieldActor_SetSpriteColor(((void *)Actor_Get(ACTOR_ALEX)), 15);
   angle = FACING_SOUTH;
-  Actor_SetPositionAndFacing(ACTOR_ALEX, px(64), px(225), angle);
+  Actor_SetPositionAndFacing(ACTOR_ALEX, toFIXED(64), toFIXED(225), angle);
   JupiterLighthouse_AlexAppears();
   FieldEvent_Wait(40);
   FieldCamera_MoveTo(68, CAMERA_KEEP, 240, 1);
@@ -594,19 +594,19 @@ s32 Scene_Initialize(void) {
     Event_ClearFlag(FLAG_ALEX_WAITING);
   if (Event_GetFlag(FLAG_ALEX_WAITING)) {
     angle = FACING_SOUTH;
-    Actor_SetPositionAndFacing(ACTOR_ALEX, px(64), px(225), angle);
+    Actor_SetPositionAndFacing(ACTOR_ALEX, toFIXED(64), toFIXED(225), angle);
   }
   Actor_PlaceBlocks(gJupiterLighthouse_Room5Blocks);
   Actor_SetMovementType(Actor_Get(FIELD_TREASURE_ACTOR), 9);
   object = Actor_Get(ACTOR_LOWER_BEAM);
   object->scaleX = 0;
   object->motionFlags = 0;
-  SET_ACTOR_POSITION(object, px(680), px(32), px(580));
+  SET_ACTOR_POSITION(object, toFIXED(680), toFIXED(32), toFIXED(580));
   Actor_SetSpriteFlags(Actor_Get(ACTOR_LOWER_BEAM), 0);
   object = Actor_Get(ACTOR_UPPER_BEAM);
   object->scaleX = 0;
   object->motionFlags = 0;
-  SET_ACTOR_POSITION(object, px(680), px(64), px(580));
+  SET_ACTOR_POSITION(object, toFIXED(680), toFIXED(64), toFIXED(580));
   Actor_SetSpriteFlags(Actor_Get(ACTOR_UPPER_BEAM), 0);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     MapGrid_CopyCellsLayered(58, 99, 3, 3, 41, 99);
@@ -676,8 +676,8 @@ struct GustObject *JupiterLighthouse_SpawnGust(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(SE_WHIRLWIND);
-  position.x = source->x + Math_MulQ16(px(8), Trig_Cos(source->angle));
-  position.z = source->z + Math_MulQ16(px(8), Math_Sin(source->angle));
+  position.x = source->x + Math_MulFX(toFIXED(8), Trig_Cos(source->angle));
+  position.z = source->z + Math_MulFX(toFIXED(8), Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
                                                    source->y, position.z));
   Import_ActorSelectAnimation(object, 2);
@@ -689,11 +689,11 @@ struct GustObject *JupiterLighthouse_SpawnGust(struct GustObject *source) {
   object->unk62 = 0;
   object->unk63 = 0;
   object->update = Whirlwind_Update;
-  object->speedLimit = px(3) / 2;
+  object->speedLimit = toFIXED(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, px(3),
-                    &options);
+  FieldEffect_Spawn(position.x, source->y, position.z - toFIXED(6), 0, 0, 0,
+                    toFIXED(3), &options);
   return object;
 }
 
@@ -705,12 +705,12 @@ s32 JupiterLighthouse_UpdateGust(struct Actor *object) {
   if (phase != 0)
     goto done;
   options.priority = 3;
-  options.startScaleX = Q16_ONE * 7 / 10;
-  options.startScaleY = Q16_ONE * 7 / 10;
+  options.startScaleX = FIXED_ONE * 7 / 10;
+  options.startScaleY = FIXED_ONE * 7 / 10;
   options.palette = 14;
-  x = object->x.fixed + px((s32)(Random_Below(9)) - 4);
-  y = object->y.fixed + px(32 - (s32)(Random_Below(20)));
-  speed = (px((s32)(Random_Below(5))) + 0x50000) / 10;
+  x = object->x.fixed + INTtoFIXED((s32)(Random_Below(9)) - 4);
+  y = object->y.fixed + INTtoFIXED(32 - (s32)(Random_Below(20)));
+  speed = (INTtoFIXED((s32)(Random_Below(5))) + 0x50000) / 10;
   FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, phase,
                     EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                         EFFECT_USE_START_SCALE,
@@ -792,10 +792,10 @@ void JupiterLighthouse_AddSparks(s32 count) {
     do {
       spark = &work->sparks[work->next];
       angle = ((Random16() * 3) >> 2) + 0x6000;
-      radius = px(64);
+      radius = toFIXED(64);
       speed = ((Random16() << 4) >> 16) + 16;
-      spark->dx = Iwram_MulQ16(Trig_Cos(angle), radius) >> 16;
-      spark->dy = -Iwram_MulQ16(Math_Sin(angle), radius) >> 16;
+      spark->dx = Iwram_MulFX(Trig_Cos(angle), radius) >> 16;
+      spark->dy = -Iwram_MulFX(Math_Sin(angle), radius) >> 16;
       spark->duration = speed;
       spark->age = 0;
       work->next++;
@@ -1077,7 +1077,7 @@ u32 gOrbScript[] = {
       SC_SET(SW_SCALE_Y, 0xcccc),                                              
       SC_ANIMATION(1),                                                               
       SC_LABEL(1),                                                             
-      SC_ADD(SW_Y, px(1)),                                                 
+      SC_ADD(SW_Y, toFIXED(1)),                                                 
       SC_WAIT(1),                                                              
       SC_LOOP(16, SC_TO(1)),                                                   
       SC_POSITION(0, 0, 0),                                                    

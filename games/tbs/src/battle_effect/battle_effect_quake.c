@@ -110,8 +110,8 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
 
         // A pillar rises and sinks along a sine, once, twice or three times by
         // variant.
-        height = WHOLE_PIXELS(heights.column[column] *
-                              Trig_Sin((frame - riseFrame) << 10));
+        height = FIXEDtoINT(heights.column[column] *
+                            Trig_Sin((frame - riseFrame) << 10));
         if (height < 0)
           height = -height;
         top = 112 - height;
@@ -132,7 +132,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
               screen.x <=
                   column * QUAKE_PILLAR_WIDTH + 8 + QUAKE_PILLAR_WIDTH &&
               screen.y >= top) {
-            actor->velocityY = px(12);
+            actor->velocityY = toFIXED(12);
             actor->gravity = BATTLE_UNIT_GRAVITY;
           }
           if (actor->y.fixed < 0)

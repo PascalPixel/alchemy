@@ -14,7 +14,7 @@
 #include "field/resource_slot.h"
 
 #define MAPGRID_SHAKE_SETTLE_FRAMES 300
-#define MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE (px(1) / 256 - 1)
+#define MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE (toFIXED(1) / 256 - 1)
 
 /// Returns the world map's battle environment at position from
 /// gWorldMap_TerrainBehaviorTable, by its collision value and its block's
@@ -123,31 +123,31 @@ void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
   vector[1] = zero;
   vector[2] = position[2];
   Iwram_TransformVector(vector, result);
-  height = result[1] - Iwram_MulQ16(result[2], pitchSlope);
+  height = result[1] - Iwram_MulFX(result[2], pitchSlope);
   nearZ = -gProjection.focal;
   for (i = 0; i < 160; i++) {
     s32 distance;
 
-    z = Iwram_RatioMulQ14(nearZ, (gProjection.centerY - i) * Q16_ONE);
+    z = Iwram_RatioMulQ14(nearZ, (gProjection.centerY - i) * FIXED_ONE);
     distance = z - pitchSlope;
     if (distance == 0)
       distance = 1;
     ratio = Iwram_RatioMulQ14(distance, height);
     if (ratio < 0) {
       row->scale = Iwram_RatioMulQ14(gProjection.focal,
-                                     Iwram_MulQ16(-ratio, Q16_ONE / 2));
-      z = Iwram_MulQ16(ratio, z);
+                                     Iwram_MulFX(-ratio, FIXED_ONE / 2));
+      z = Iwram_MulFX(ratio, z);
       dx = (result[2] - ratio) >> 4;
       z -= result[1];
-      sum = Iwram_MulQ16(dx, dx);
+      sum = Iwram_MulFX(dx, dx);
       z >>= 4;
-      sum += Iwram_MulQ16(z, z);
+      sum += Iwram_MulFX(z, z);
       {
         s32 length = Iwram_Sqrt(sum) << 12;
 
         if (z < 0)
           length = -length;
-        row->depth = Iwram_MulQ16(length, Q16_ONE / 2);
+        row->depth = Iwram_MulFX(length, FIXED_ONE / 2);
       }
     } else {
       row->scale = 0;

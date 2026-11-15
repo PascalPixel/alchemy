@@ -24,8 +24,8 @@ static void FieldEffect_AnimateVerticalPositive(struct Actor *actor) {
   actor->scaleX = amplitude;
   actor->scaleY = amplitude;
   actor->x.fixed = anchor->x.fixed;
-  actor->y.fixed += px(1);
-  actor->z.fixed = anchor->z.fixed + (Q16_ONE - amplitude) * 5 + px(8);
+  actor->y.fixed += toFIXED(1);
+  actor->z.fixed = anchor->z.fixed + (FIXED_ONE - amplitude) * 5 + toFIXED(8);
 }
 
 /// Mirrors the rising particle vertically and passes behind the watched
@@ -48,6 +48,6 @@ static void FieldEffect_AnimateVerticalNegative(struct Actor *actor) {
   actor->scaleX = amplitude;
   actor->scaleY = -amplitude;
   actor->x.fixed = anchor->x.fixed;
-  actor->y.fixed += px(1);
-  actor->z.fixed = anchor->z.fixed - (Q16_ONE - amplitude) * 5 + px(16);
+  actor->y.fixed += toFIXED(1);
+  actor->z.fixed = anchor->z.fixed - (FIXED_ONE - amplitude) * 5 + toFIXED(16);
 }

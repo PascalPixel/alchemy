@@ -63,9 +63,9 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
   actor = GetBattleObjectSlotFar(work->args->user)->actor;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   if (actor->x.fixed > 0)
-    dx = -px(15);
+    dx = -toFIXED(15);
   else
-    dx = px(15);
+    dx = toFIXED(15);
 
   for (frame = 0; frame != PLANET_DIVER_FRAMES; frame++) {
     struct BattleCamera *camera = gBattleCamera;
@@ -83,9 +83,9 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
               FLASH_BURST_HEIGHT);
     if (frame >= 4 && frame <= 15) {
       for (i = 0; i != 16; i++) {
-        s32 x = screenPosition.x + WHOLE_PIXELS(frame * Trig_Sin(i << 12));
+        s32 x = screenPosition.x + FIXEDtoINT(frame * Trig_Sin(i << 12));
         s32 y =
-            screenPosition.y + WHOLE_PIXELS(frame * Trig_Cos(i << 12)) - frame;
+            screenPosition.y + FIXEDtoINT(frame * Trig_Cos(i << 12)) - frame;
 
         draw[0](canvas,
                 work->sheet + (frame - 4) / 2 * PICTURE_BYTES(FLASH_BURST),
@@ -95,9 +95,9 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
     }
     // The user leaps, heading out past its own position.
     if (frame == 4) {
-      actor->velocityY = px(20);
-      actor->acceleration = px(1);
-      actor->speedLimit = px(3);
+      actor->velocityY = toFIXED(20);
+      actor->acceleration = toFIXED(1);
+      actor->speedLimit = toFIXED(3);
       actor->gravity = BATTLE_UNIT_GRAVITY;
       actor->steeringFlags = 0;
       actor->snapToTarget = 0;
@@ -120,7 +120,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
     if (frame > 17) {
       if (actor->y.fixed > 0) {
         actor->x.fixed += dx;
-        actor->y.fixed -= px(8);
+        actor->y.fixed -= toFIXED(8);
         // The nudge after drawing lasts only to this frame's landing test,
         // where the chips start; the next frame projects the user afresh.
         // On EFFECT_SIDE_PARTY the nudge moves y, so the chips start 8 pixels
@@ -147,8 +147,8 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
 
           speed = (Random16() & 0x3ff) + 32;
           angle = Random16() & TRIG_ANGLE_MASK;
-          chip->x = px(screenPosition.x);
-          chip->y = px(screenPosition.y - 24);
+          chip->x = INTtoFIXED(screenPosition.x);
+          chip->y = INTtoFIXED(screenPosition.y - 24);
           chip->velocityX = Trig_Sin(angle) * speed >> 6;
           chip->velocityY = -(Trig_Cos(angle) * speed << 1) >> 6;
           chip->life = (Random16() & 7) + 32;
@@ -172,14 +172,14 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
         chip->life--;
         chip->y = y;
         chip->velocityX = chip->velocityX * 56 / DAMPING_SCALE;
-        chip->velocityY = chip->velocityY * 56 / DAMPING_SCALE + px(1) / 8;
-        if (chip->y > px(112)) {
+        chip->velocityY = chip->velocityY * 56 / DAMPING_SCALE + toFIXED(1) / 8;
+        if (chip->y > toFIXED(112)) {
           chip->velocityY = -chip->velocityY / 2;
-        } else if ((chip->x >= 0 && chip->x < px(127)) && chip->y >= 0) {
+        } else if ((chip->x >= 0 && chip->x < toFIXED(127)) && chip->y >= 0) {
           s32 size = chip->life / 8 + 1;
 
-          EFFECT_DRAW_MOTE(draw[i & 1], canvas, sprites, WHOLE_PIXELS(chip->x),
-                           WHOLE_PIXELS(chip->y), size);
+          EFFECT_DRAW_MOTE(draw[i & 1], canvas, sprites, FIXEDtoINT(chip->x),
+                           FIXEDtoINT(chip->y), size);
         }
       }
     }
@@ -244,7 +244,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
     row = work->bg2xLines;
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ = (px(6) - Trig_Sin((frame + i) << 11) * 6) >> 10;
+        *row++ = (toFIXED(6) - Trig_Sin((frame + i) << 11) * 6) >> 10;
     } else {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
         *row++ = Trig_Sin((frame + i) << 11) * 6 >> 10;
@@ -256,10 +256,10 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 
       // Spin the skulls about a point above the target.
       EFFECT_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(point, target->x.fixed, px(20), target->z.fixed);
-      Transform_ApplyPosition(point);
+      SET_VECTOR(point, target->x.fixed, toFIXED(20), target->z.fixed);
+      Matrix_TranslateVector(point);
       if (frame > k * 32) {
-        Transform_ApplyPitch(frame << 9);
+        Matrix_RotateX(frame << 9);
         if (frame == k * 32 + 32)
           BattleEffect_TintBattler(work->args->targets[k], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, k, 32);
@@ -350,7 +350,8 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
     row = work->bg2xLines;
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ = (px(8) - Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8) >> 10;
+        *row++ =
+            (toFIXED(8) - Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8) >> 10;
     } else {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
         *row++ = (Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8 >> 10) -
@@ -370,7 +371,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
                                    SPRITE_COLOR_NORMAL, POSE_DAMAGE, TINT_KEEP,
                                    0);
         }
-        SET_VECTOR(point, actor->x.fixed, px(40), actor->z.fixed);
+        SET_VECTOR(point, actor->x.fixed, toFIXED(40), actor->z.fixed);
         Projection_Point(point, &screen);
 
         // The spirals, a quarter turn apart.
@@ -380,8 +381,8 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
           s32 half;
 
           spin = (frame << 9) + (i << 14);
-          x = (screen.x + WHOLE_PIXELS(Trig_Sin(spin) * 16)) + offsetX;
-          y = screen.y + WHOLE_PIXELS(Trig_Cos(spin) * 16);
+          x = (screen.x + FIXEDtoINT(Trig_Sin(spin) * 16)) + offsetX;
+          y = screen.y + FIXEDtoINT(Trig_Cos(spin) * 16);
           half = frame / 16;
           draw[half & 1](canvas,
                          work->sheet +

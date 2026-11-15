@@ -159,7 +159,7 @@ s32 LinkLobby_PollPeerReady(void) {
   result = 1;
   z = Actor_GetById(ACTOR_FELIX)->z.fixed;
 
-  if (z > px(224))
+  if (z > toFIXED(224))
     Event_ClearFlag(FLAG_AREA_TEMP_04);
   if (work->raisedTrigger != 2) {
     LinkLobby_PeerSlotMatches(0);

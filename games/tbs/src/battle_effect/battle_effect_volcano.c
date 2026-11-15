@@ -62,10 +62,10 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
     struct Particle *base = &work->particles[i];
     s32 x;
 
-    x = px((Random16() & 15) + 72);
+    x = INTtoFIXED((Random16() & 15) + 72);
     base->y = 0;
     base->x = x;
-    base->z = px(gVolcano_Depths[work->args->variant][i]);
+    base->z = INTtoFIXED(gVolcano_Depths[work->args->variant][i]);
     if (actor->x.fixed < 0)
       base->x = -x;
   }
@@ -133,7 +133,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
               s32 angle;
 
               speed = (Random16() & 0x3ff) + 32;
-              angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
+              angle = (Random16() & 0x7fff) - DEGtoANG(90);
               SET_POSITION(spark, screen.x << 8, (screen.y << 8) + (16 << 8),
                            (Trig_Sin(angle) * speed) >> 15);
               spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 15;

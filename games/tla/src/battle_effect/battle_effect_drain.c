@@ -45,8 +45,8 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   for (i = 0; i != 8 * SHARDS_PER_MEMBER; i++)
     SHARDS[i].variant = -1;
 
-  Transform_Reset();
-  Transform_SetLookAt(camera->eye, camera->focus);
+  Matrix_Initialize();
+  Matrix_SetLookAt(camera->eye, camera->focus);
 
   // Scatter each target's shards around the middle of its body.
   for (member = 0; member != args->targetCount; member++) {
@@ -74,8 +74,8 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 
       radius = Random16() & 0xff;
       angle = Random16() & TRIG_ANGLE_MASK;
-      shard->x = ((Trig_Sin(angle) * radius) >> 7) + px(screen.x);
-      shard->y = ((Trig_Cos(angle) * radius) >> 3) + px(screen.y);
+      shard->x = ((Trig_Sin(angle) * radius) >> 7) + INTtoFIXED(screen.x);
+      shard->y = ((Trig_Cos(angle) * radius) >> 3) + INTtoFIXED(screen.y);
       shard->velocityX = (128 - (Random16() & 0xff)) << 9;
       lift = Random16() & 0xff;
       shard->variant = 0;
@@ -180,7 +180,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
   camera = Ram_HeapSlots->cameraWork;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (mode == 2)
-    BattleEffect_DrawShadedCirclesMirrored(sheet, 10, Q16_ONE);
+    BattleEffect_DrawShadedCirclesMirrored(sheet, 10, FIXED_ONE);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (mode == 0)
@@ -248,8 +248,8 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
     half = BattleUnit_GetEffectHeightFar(args->user) / 2;
     if (frame == 64)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
     if (frame == 40)
       BattleEffect_TintBattler(args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
                                TINT_KEEP, 0);

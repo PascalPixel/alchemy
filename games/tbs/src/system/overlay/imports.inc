@@ -26,8 +26,8 @@
 	export Task_Add, Task_AddFar
 	export Task_Remove, Task_RemoveFar
 	export Import_RandomNext, Random16Far
-	export ArcTan2, ArcTan2Far
-	export FixedSqrt, FixedSqrtFar
+	export Trig_Atan, Trig_AtanFar
+	export Math_SqrtFX, FixedSqrtFar
 	export Trig_Sin, Trig_SinFar
 	export Trig_Cos, Trig_CosFar
 	export Vector_AddPolarOffset, Vector_AddPolarOffsetFar

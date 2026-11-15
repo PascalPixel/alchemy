@@ -80,10 +80,10 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
     s32 angle;
 
     speed = (Random16() & 0x3ff) + 256;
-    angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
-    SET_POSITION(spark, px(1) / 4, px(7) / 16,
-                 Q_16_16_TO_INT(Trig_Sin(angle) * speed));
-    spark->velocityZ = Q_16_16_TO_INT(-(Trig_Cos(angle) * speed * 2));
+    angle = (Random16() & 0x7fff) - DEGtoANG(90);
+    SET_POSITION(spark, toFIXED(1) / 4, toFIXED(7) / 16,
+                 FIXEDtoINT(Trig_Sin(angle) * speed));
+    spark->velocityZ = FIXEDtoINT(-(Trig_Cos(angle) * speed * 2));
     spark->variant = 0;
   }
 
@@ -104,9 +104,9 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
         // The radius across shrinks from 32 a pixel a frame.
         count = 0;
-        angle = ((frame << 11) + TRIG_TURN / 4) * bolt;
-        x = (Q_16_16_TO_INT((32 - frame) * Trig_Sin(angle))) + 64;
-        y = -(Q_16_16_TO_INT(Trig_Cos(angle) << 3)) - 8;
+        angle = ((frame << 11) + DEGtoANG(90)) * bolt;
+        x = (FIXEDtoINT((32 - frame) * Trig_Sin(angle))) + 64;
+        y = -(FIXEDtoINT(Trig_Cos(angle) << 3)) - 8;
         if (args->variant == EFFECT_VARIANT_BASIC)
           draw[0](canvas,
                   work->sheet + (Random16() & 3) * BOLT_SIZE + BOLT_SHEET,
@@ -128,8 +128,8 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
             speed = (Random16() & 0x1ff) + 128;
             spread = (Random16() & 0x7fff) - 0x4000;
-            spark->x = px(x);
-            spark->y = px(y + 112);
+            spark->x = INTtoFIXED(x);
+            spark->y = INTtoFIXED(y + 112);
             spark->velocityX = (Trig_Sin(spread) * speed) >> 9;
             spark->velocityY = -(Trig_Cos(spread) * speed * 2) >> 7;
             spark->variant = (Random16() & 7) + 32;
@@ -148,12 +148,12 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 
       if (spark->variant > 0) {
         spark->variant--;
-        BattleEffectKernels_IntegrateVector2(spark, 60, -px(1) / 32);
-        if (spark->y > px(120)) {
+        BattleEffectKernels_IntegrateVector2(spark, 60, -toFIXED(1) / 32);
+        if (spark->y > toFIXED(120)) {
           spark->velocityY = -spark->velocityY / 2;
-        } else if (spark->x >= 0 && spark->x < px(127) && spark->y >= 0) {
-          s32 x = Q_16_16_TO_INT(spark->x);
-          s32 y = Q_16_16_TO_INT(spark->y);
+        } else if (spark->x >= 0 && spark->x < toFIXED(127) && spark->y >= 0) {
+          s32 x = FIXEDtoINT(spark->x);
+          s32 y = FIXEDtoINT(spark->y);
           s32 size = spark->variant / 8 + 1;
 
           draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],

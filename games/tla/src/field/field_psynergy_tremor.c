@@ -16,7 +16,7 @@
 
 // The sway's amplitude (16.16 pixels) and how it ramps.
 #define SWAY_START 0x20000
-#define SWAY_PEAK px(12)
+#define SWAY_PEAK toFIXED(12)
 #define SWAY_RAMP 0x1999   // 0.1 pixels a frame
 #define SWAY_SHAKE 0x40000 // sprites shake only past this
 #define SWAY_HOLD_FRAMES 40
@@ -128,8 +128,8 @@ void FieldPsynergy_TremorOnTarget(void) {
 
         if (amplitude > SWAY_SHAKE)
           sprite->offsetX =
-              offset + Iwram_MulQ16(Trig_Sin(phase * 3 << 11),
-                                    (amplitude - SWAY_SHAKE) / 128);
+              offset + Iwram_MulFX(Trig_Sin(phase * 3 << 11),
+                                   (amplitude - SWAY_SHAKE) / 128);
         else
           sprite->offsetX = offset;
       }
@@ -200,7 +200,7 @@ release:
 #define VIEW_MOVE_WORK_SIZE 0x2154
 
 // The sway's amplitude (16.16 pixels) and how it ramps.
-#define SWAY_PEAK px(6)
+#define SWAY_PEAK toFIXED(6)
 #define SWAY_RAMP 0x2666 // 0.15 pixels a frame
 #define SWAY_HOLD_FRAMES 10
 #define SWAY_SHAKE_FRAMES 50 // the hold while objects shake
@@ -245,7 +245,7 @@ void FieldPsynergy_Tremor(void) {
 
         if (amplitude > 0)
           sprite->offsetX =
-              offset + Iwram_MulQ16(Trig_Sin(phase * 3 << 11), amplitude / 384);
+              offset + Iwram_MulFX(Trig_Sin(phase * 3 << 11), amplitude / 384);
         else
           sprite->offsetX = offset;
       }

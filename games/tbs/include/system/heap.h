@@ -44,7 +44,7 @@ STATIC_ASSERT(offsetof(union HeapState, heap.blocks) == 8);
 
 /// The heap slots shared across folders, by index into gHeapSlots.
 enum HeapSlot {
-  HEAP_SLOT_TRANSFORM_STACK = 2, ///< The 3D transform's one saved level.
+  HEAP_SLOT_MATRIX_STACK = 2, ///< The 3D transform's one saved level.
   /// The sprite animations (struct SpriteAnimation) of the actor
   /// system's sprites (gSpriteAnimations).
   HEAP_SLOT_SPRITE_ANIMATIONS = 3,
@@ -138,7 +138,7 @@ enum HeapSlot {
   HEAP_SLOT_LUCKY_DICE_SPRITES = 45,
   /// A routine run from RAM: the canvas drawing routine
   /// BattleEffect_BuildBlitter writes, called as a DrawRectangle and released
-  /// before its canvas, or the world map's copy of Transform_UpdateVertices.
+  /// before its canvas, or the world map's copy of Matrix_UpdateVertices.
   HEAP_SLOT_RAM_CODE = 46,
   /// A second routine as HEAP_SLOT_RAM_CODE, released before it: always a
   /// BattleEffect_BuildBlitter routine, the second of a pair whose first is in

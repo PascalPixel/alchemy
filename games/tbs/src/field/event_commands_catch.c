@@ -15,28 +15,28 @@ void FieldPsynergy_Catch(void) {
   struct Actor *actor = effectWork->mainActor;
   struct Actor *child = effectWork->child;
   struct Actor *object;
-  struct FixedPointPosition spawn;
-  struct FixedPointPosition origin;
-  struct FixedPointPosition target;
+  struct Point spawn;
+  struct Point origin;
+  struct Point target;
   s32 step;
   s32 i;
   s32 steps = 11;
 
   origin.x = actor->x.fixed;
-  origin.y = actor->y.fixed + px(16);
+  origin.y = actor->y.fixed + toFIXED(16);
   origin.z = actor->z.fixed;
   if (effectWork->enabled) {
     target.x = actor->x.fixed;
-    target.y = actor->y.fixed + px(32);
+    target.y = actor->y.fixed + toFIXED(32);
     target.z = actor->z.fixed;
-    Vector_AddPolarOffset(px(32), effectWork->angle, &target.x);
+    Vector_AddPolarOffset(toFIXED(32), effectWork->angle, &target.x);
   } else {
     target.x = effectWork->x;
-    target.y = effectWork->y + px(32);
+    target.y = effectWork->y + toFIXED(32);
     target.z = effectWork->z;
   }
   spawn.x = effectWork->x;
-  spawn.y = effectWork->y + px(32);
+  spawn.y = effectWork->y + toFIXED(32);
   spawn.z = effectWork->z;
   object = Actor_Spawn(SPRITE_MOVE_HAND, spawn.x, spawn.y, spawn.z);
   if (object == 0)
@@ -44,7 +44,7 @@ void FieldPsynergy_Catch(void) {
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
   object->facing = actor->facing;
-  object->speedLimit = px(13) / 10;
+  object->speedLimit = toFIXED(13) / 10;
   object->motionFlags = 0;
   Actor_SelectAnimationFar(object, MOVE_HAND_ANIMATION_FIST);
   Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_GRB);
@@ -58,7 +58,7 @@ void FieldPsynergy_Catch(void) {
     SET_ACTOR_POSITION(object, origin.x + (target.x - origin.x) * step / 10,
                        origin.y + (target.y - origin.y) * step / 10,
                        origin.z + (target.z - origin.z) * step / 10);
-    scale = FieldEffect_Interpolate(Q16_ONE, Q16_ONE / 4, step);
+    scale = FieldEffect_Interpolate(FIXED_ONE, FIXED_ONE / 4, step);
     object->scaleX = scale;
     object->scaleY = scale;
     wait(1);
@@ -70,7 +70,7 @@ void FieldPsynergy_Catch(void) {
 
   // Press down 2 pixels a frame for 10 frames.
   for (i = 0; i < 10; i++) {
-    object->y.fixed -= px(2);
+    object->y.fixed -= toFIXED(2);
     wait(1);
   }
   Actor_SelectAnimationFar(object, MOVE_HAND_ANIMATION_FIST);
@@ -78,12 +78,13 @@ void FieldPsynergy_Catch(void) {
   // As the hand presses down, the caught actor vanishes: (-9, -9) pixels is
   // just off the map's corner, where no view reaches.
   if (child != 0)
-    Actor_SetPositionAndResetMotionFar(child, -px(9), child->y.fixed, -px(9));
+    Actor_SetPositionAndResetMotionFar(child, -toFIXED(9), child->y.fixed,
+                                       -toFIXED(9));
   wait(20);
 
   // Rise 1.5 pixels a frame for 13 frames.
   for (i = 0; i < 13; i++) {
-    object->y.fixed += px(3) / 2;
+    object->y.fixed += toFIXED(3) / 2;
     wait(1);
   }
   wait(10);
@@ -97,7 +98,7 @@ void FieldPsynergy_Catch(void) {
     SET_ACTOR_POSITION(object, target.x + (origin.x - target.x) * step / 10,
                        target.y + (origin.y - target.y) * step / 10,
                        target.z + (origin.z - target.z) * step / 10);
-    scale = FieldEffect_Interpolate(Q16_ONE / 4, Q16_ONE, step);
+    scale = FieldEffect_Interpolate(FIXED_ONE / 4, FIXED_ONE, step);
     object->scaleX = scale;
     object->scaleY = scale;
     wait(1);

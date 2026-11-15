@@ -26,15 +26,15 @@ s32 Actor_MoveTowardTarget(struct Actor *actor) {
 
   target = actor->watchedActor;
   if (target != 0) {
-    // Whole pixels, rounded toward zero as a division by Q16_ONE would.
+    // Whole pixels, rounded toward zero as a division by FIXED_ONE would.
     deltaX = target->x.fixed - actor->x.fixed;
     if (deltaX < 0)
-      deltaX += Q16_ONE - 1;
-    pixelsX = WHOLE_PIXELS(deltaX);
+      deltaX += FIXED_ONE - 1;
+    pixelsX = FIXEDtoINT(deltaX);
     deltaZ = target->z.fixed - actor->z.fixed;
     if (deltaZ < 0)
-      deltaZ += Q16_ONE - 1;
-    pixelsZ = WHOLE_PIXELS(deltaZ);
+      deltaZ += FIXED_ONE - 1;
+    pixelsZ = FIXEDtoINT(deltaZ);
     distance = Iwram_Sqrt(pixelsX * pixelsX + pixelsZ * pixelsZ);
     step = actor->timer;
     if (distance >= step) {
@@ -62,8 +62,8 @@ s32 Actor_TurnTowardWatchedActor(struct Actor *actor) {
   if (target != NULL) {
     // Clear ACTOR_FACES_MOTION, so moving does not turn it away again.
     actor->steeringFlags &= ~ACTOR_FACES_MOTION;
-    targetAngle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
-                               target->x.fixed - actor->x.fixed);
+    targetAngle = (u16)Trig_Atan(target->z.fixed - actor->z.fixed,
+                                 target->x.fixed - actor->x.fixed);
     currentAngle = actor->facing;
     turnStep = targetAngle - currentAngle;
     if (turnStep != 0) {
@@ -143,13 +143,13 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 sprite) {
       if (self->y.fixed - entry->y.fixed > 0x2fffff)
         continue;
     }
-    pixelX = (entry->x.fixed - self->x.fixed) / Q16_ONE;
-    pixelZ = (entry->z.fixed - self->z.fixed) / Q16_ONE;
+    pixelX = (entry->x.fixed - self->x.fixed) / FIXED_ONE;
+    pixelZ = (entry->z.fixed - self->z.fixed) / FIXED_ONE;
     distance = Iwram_Sqrt(pixelX * pixelX + pixelZ * pixelZ);
     if (distance >= nearestDistance)
       continue;
-    angle = (u16)ArcTan2(entry->z.fixed - self->z.fixed,
-                         entry->x.fixed - self->x.fixed);
+    angle = (u16)Trig_Atan(entry->z.fixed - self->z.fixed,
+                           entry->x.fixed - self->x.fixed);
     if (distance > 23) {
       angleDifference = (s16)(angle - self->facing);
       if (angleDifference < -0x2fff)

@@ -17,7 +17,7 @@
 ///
 /// Abilities: Ramses.
 void BattleEffect_RunRamses(struct BattleEffectParams *args) {
-  static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
+  static struct SpriteScale unitScale = {{{FIXED_ONE, FIXED_ONE}}};
   struct SpritePlacement position;
   DrawRectangle draw[2];
   struct SpriteScale scale;
@@ -72,15 +72,15 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, work->sheet, 1, 1);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  base.x = px(188);
-  base.y = px(92);
-  fist.x = px(160);
-  fist.y = px(92);
+  base.x = toFIXED(188);
+  base.y = toFIXED(92);
+  fist.x = toFIXED(160);
+  fist.y = toFIXED(92);
   for (i = 0; i != RAMSES_ROCKS; i++) {
     struct Particle *rock = &work->particles[i];
 
-    rock->x = px(Random16() & 127);
-    rock->y = i * -px(16);
+    rock->x = INTtoFIXED(Random16() & 127);
+    rock->y = i * -toFIXED(16);
     rock->velocityX = 0;
     rock->velocityY = 0;
     rock->variant = 0;
@@ -109,14 +109,14 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     position.groundHeight = 0;
     position.height = 0;
     for (i = 0; i != 7; i++) {
-      position.x = px(gRamses_StatueColumns[i]) + base.x - px(32);
-      position.y = px(gRamses_StatueRows[i]) + base.y - px(32);
+      position.x = INTtoFIXED(gRamses_StatueColumns[i]) + base.x - toFIXED(32);
+      position.y = INTtoFIXED(gRamses_StatueRows[i]) + base.y - toFIXED(32);
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &position, &scale, 0);
     }
     // The fist circles.
     if (frame <= 90) {
-      fist.x = Trig_Sin(frame << 9) * 16 + px(156);
-      fist.y = Trig_Cos(frame << 9) * 16 + px(92);
+      fist.x = Trig_Sin(frame << 9) * 16 + toFIXED(156);
+      fist.y = Trig_Cos(frame << 9) * 16 + toFIXED(92);
     }
     // Then it slams down three times, throwing up dust.
     if (frame <= 196) {
@@ -124,36 +124,36 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
 
       for (i = 0, start = 91; i != 3; start += 40, i++) {
         if (frame >= start && frame < start + 4)
-          fist.y += px(8);
+          fist.y += toFIXED(8);
         if (frame == start + 3) {
           for (k = 0; k != 4; k++) {
             struct Particle *puff =
                 &work->particles[RAMSES_FIRST_PUFF + i * 8 + k];
 
-            puff->x = px(64);
-            puff->y = px(96);
+            puff->x = toFIXED(64);
+            puff->y = toFIXED(96);
             puff->velocityX = ((Random16() & 255) - 127) << 10;
             puff->velocityY = ((Random16() & 255) - 127) << 10;
             puff->variant = Random16() & 15;
           }
         }
         if (frame >= start + 20 && frame < start + 36)
-          fist.y -= px(2);
+          fist.y -= toFIXED(2);
       }
     }
     // Then it flies off to the left at the targets.
     if (frame >= 244 && frame <= 251)
-      fist.x -= px(1);
+      fist.x -= toFIXED(1);
     if (frame >= 252 && frame <= 275)
-      fist.x -= px(frame - 250);
+      fist.x -= INTtoFIXED(frame - 250);
     // The fist's two sprites stand deep below the ground and as far up, which
     // cancel on the screen but put them in front.
     if (frame <= 259) {
       position.x = fist.x;
-      position.height = -px(256);
-      position.y = fist.y - px(256);
+      position.height = -toFIXED(256);
+      position.y = fist.y - toFIXED(256);
       Actor_ApplyProjectedPlacementFar(work->sprites[7], &position, &scale, 0);
-      position.x = fist.x + px(32);
+      position.x = fist.x + toFIXED(32);
       Actor_ApplyProjectedPlacementFar(work->sprites[8], &position, &scale, 0);
     }
     position.height = 0;
@@ -169,8 +169,8 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
         rock->x += rock->velocityX;
         rock->y += rock->velocityY;
         if (frame > 96)
-          rock->velocityY += px(1) / 4;
-        if (rock->y > px(120)) {
+          rock->velocityY += toFIXED(1) / 4;
+        if (rock->y > toFIXED(120)) {
           rock->variant++;
           if (rock->variant == 1) {
             rock->velocityY = -rock->velocityY / 2;
@@ -179,7 +179,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
                   &work->particles[RAMSES_FIRST_ROCK_PUFF + i * 2 + k];
 
               puff->x = rock->x / 2;
-              puff->y = rock->y - px(32);
+              puff->y = rock->y - toFIXED(32);
               puff->velocityX = ((Random16() & 255) - 127) << 10;
               puff->velocityY = ((Random16() & 255) - 127) << 10;
               puff->variant = Random16() & 15;
@@ -201,11 +201,11 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
           s32 picture = puff->variant / 6 + 3;
 
           draw[0](canvas, work->sheet + gRamses_PuffPictures[picture],
-                  WHOLE_PIXELS(puff->x) - gRamses_PuffSizes[picture] / 2,
-                  WHOLE_PIXELS(puff->y) - gRamses_PuffSizes[picture] / 2,
+                  FIXEDtoINT(puff->x) - gRamses_PuffSizes[picture] / 2,
+                  FIXEDtoINT(puff->y) - gRamses_PuffSizes[picture] / 2,
                   gRamses_PuffSizes[picture], gRamses_PuffSizes[picture]);
         }
-        Particle_AdvanceWithGravity2D(puff, 60, -px(1) / 4);
+        Particle_AdvanceWithGravity2D(puff, 60, -toFIXED(1) / 4);
         puff->variant++;
       }
     }
@@ -229,8 +229,8 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
 
         speed = (Random16() & 0x3ff) + 32;
         angle = Random16() & TRIG_ANGLE_MASK;
-        spark->x = px(32);
-        spark->y = px(92);
+        spark->x = toFIXED(32);
+        spark->y = toFIXED(92);
         spark->velocityX = Trig_Sin(angle) * speed >> 7;
         spark->velocityY = -(Trig_Cos(angle) * speed << 1) >> 7;
         spark->variant = (Random16() & 15) + 32;
@@ -243,9 +243,9 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       if (spark->variant >= 0) {
         s32 size = (spark->variant >> 3) + 1;
 
-        EFFECT_DRAW_MOTE(draw[i & 1], canvas, sheet, WHOLE_PIXELS(spark->x),
-                         WHOLE_PIXELS(spark->y), size);
-        Particle_AdvanceWithGravity2D(spark, 62, px(1) / 16);
+        EFFECT_DRAW_MOTE(draw[i & 1], canvas, sheet, FIXEDtoINT(spark->x),
+                         FIXEDtoINT(spark->y), size);
+        Particle_AdvanceWithGravity2D(spark, 62, toFIXED(1) / 16);
         spark->variant--;
       }
     }

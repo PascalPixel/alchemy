@@ -118,14 +118,14 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   }
 
   // The eight puffs, on an arc over the user, each two frames after the last.
-  for (i = 0, angle = -TRIG_TURN / 4; i != DRAGON_CLOUD_PUFFS;
+  for (i = 0, angle = -DEGtoANG(90); i != DRAGON_CLOUD_PUFFS;
        angle += TRIG_TURN / 16, i++) {
     step = &work->particles[i];
     if (args->side == EFFECT_SIDE_PARTY)
-      step->x = (Q_16_16_TO_INT(Trig_Sin(angle) * 24)) + 88;
+      step->x = (FIXEDtoINT(Trig_Sin(angle) * 24)) + 88;
     else
-      step->x = (Q_16_16_TO_INT(-(Trig_Sin(angle) * 24))) + 16;
-    Io_Write32((Q_16_16_TO_INT(Trig_Cos(angle) * 16)) + 40, &step->y);
+      step->x = (FIXEDtoINT(-(Trig_Sin(angle) * 24))) + 16;
+    Io_Write32((FIXEDtoINT(Trig_Cos(angle) * 16)) + 40, &step->y);
     step->variant = -(i * 2);
   }
   path = Resource_GetTableEntry((s32)&ResourceId_DualStreamPath);
@@ -185,9 +185,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           s32 force;
 
           step = &SPARKS[128 + i];
-          step->x = px(60);
-          step->y = px(108);
-          angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
+          step->x = toFIXED(60);
+          step->y = toFIXED(108);
+          angle = (Random16() & 0x7fff) + DEGtoANG(90);
           force = (Random16() & 255) + 127;
           step->velocityX = (Trig_Sin(angle) * force) >> 7;
           step->velocityY = (Trig_Cos(angle) * force) >> 5;
@@ -202,8 +202,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                       Q_16_16_UPPER_HALF(step->x) - size / 2,
                       Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(step, 62, px(1) / 4);
-          if (step->y > px((i & 3) + 108))
+          BattleEffectKernels_IntegrateVector2(step, 62, toFIXED(1) / 4);
+          if (step->y > INTtoFIXED((i & 3) + 108))
             step->velocityY = -step->velocityY / 2;
           step->variant--;
         }
@@ -251,8 +251,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
                   DRAGON_CLOUD_TRAIL_HEIGHT);
       }
     }
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
 
     // Frames 18-83: the head, tilted by how fast it climbs or falls.
     if (frame >= 18 && frame <= DRAGON_CLOUD_STRIKE_FRAME) {
@@ -290,8 +290,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
         index = ((frame * 4 + i) & 127) + 256;
         step = &SPARKS[index];
-        step->x = px(position.x);
-        step->y = px(position.y);
+        step->x = INTtoFIXED(position.x);
+        step->y = INTtoFIXED(position.y);
         angle = Random16();
         force = (Random16() & 255) + 127;
         step->velocityX = (Trig_Sin(angle) * force) >> 7;
@@ -327,13 +327,13 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
                                   position.x - 16, position.y - 40,
                                   FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
               step->variant++;
-              BattleEffectKernels_IntegrateVector3(step, 62, px(1) / 8);
+              BattleEffectKernels_IntegrateVector3(step, 62, toFIXED(1) / 8);
             }
           } else {
             draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                     position.x - size / 2, position.y - size, size, size * 2);
             BattleEffectKernels_IntegrateVector3(step, PARTICLE_DAMPING_NONE,
-                                                 -px(1) / 8);
+                                                 -toFIXED(1) / 8);
           }
         }
       }
@@ -353,7 +353,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
             draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                         position.x - size / 2, position.y - size, size,
                         size * 2);
-            BattleEffectKernels_IntegrateVector3(step, 62, px(1) / 8);
+            BattleEffectKernels_IntegrateVector3(step, 62, toFIXED(1) / 8);
             step->variant--;
           }
         }
@@ -371,7 +371,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           draw[i & 1](canvas, graphics + gBattleEffect_MotePictures[size - 1],
                       Q_16_16_UPPER_HALF(spark->x) - size / 2,
                       Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(spark, 60, -px(1) / 4);
+          BattleEffectKernels_IntegrateVector2(spark, 60, -toFIXED(1) / 4);
           spark->variant--;
         }
       }

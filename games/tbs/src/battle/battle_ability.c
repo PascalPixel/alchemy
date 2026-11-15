@@ -186,7 +186,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
     chance = elementPower - target->element[plan->element].resistance;
     chance += 30;
     // Percent to a fraction of the 16-bit random range.
-    chance *= Q16_ONE / 100;
+    chance *= FIXED_ONE / 100;
     if (chance > (Battle_RandomFar() & 0xffff))
       BattlePlayback_Push(PLAYBACK_DJINN_BONUS, 5);
   }
@@ -249,8 +249,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
 
         battleObject = BattleObject_Get(newUnitId);
         BattleObject_Make(battleObject, newUnitId,
-                          battleObject->anchorX / Q16_ONE,
-                          battleObject->anchorZ / Q16_ONE);
+                          battleObject->anchorX / FIXED_ONE,
+                          battleObject->anchorZ / FIXED_ONE);
       }
       BattleObject_Put();
       {

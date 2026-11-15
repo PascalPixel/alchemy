@@ -867,15 +867,15 @@ static void HammetPalace_HammetsHomecoming(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 864, 498);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFX(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFX(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
   }
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
+    Actor_SetPositionFX(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
   }
   Actor_WalkTo(ACTOR_PARTY_LEADER, 856, 486);
   Actor_WalkTo(ACTOR_GARET, 848, 502);

@@ -300,8 +300,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (target - effect->scaleX) / frames;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (target - Q16_ONE) / frames;
-      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
+      effect->scaleRateX = (target - FIXED_ONE) / frames;
+      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -414,8 +414,8 @@ void ShamanVillage_WaveWhirlwindLines(void) {
   for (i = 0; i != 160; i++, line++) {
     s32 range = (160 - i) >> 2;
 
-    *line = (Iwram_MulQ16(Trig_Sin((i + *(u8 *)&gFrameCount) << 8),
-                          (144 - i) << 10) >>
+    *line = (Iwram_MulFX(Trig_Sin((i + *(u8 *)&gFrameCount) << 8), (144 - i)
+                                                                       << 10) >>
              11) -
             4;
     *line += Random16() % (range * 2) - range;
@@ -438,12 +438,12 @@ void ShamanVillage_WaveWhirlwindLines(void) {
 void ShamanVillage_ScrollSandLayer(void) {
   s32 *view = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 376);
 
-  view[2] -= px(2);
+  view[2] -= toFIXED(2);
 
-  view[3] += px(2);
-  if (view[3] > px(1040)) {
+  view[3] += toFIXED(2);
+  if (view[3] > toFIXED(1040)) {
     view[2] = 0;
-    view[3] = px(1024);
+    view[3] = toFIXED(1024);
   }
 }
 
@@ -463,12 +463,12 @@ void Effect_CircleAndBlink(struct Actor *object) {
   s32 step = WORD_AT(object, 48);
 
   radius >>= 2;
-  radius += px(12);
+  radius += toFIXED(12);
   object->x.fixed = WORD_AT(object, 68) +
-                    Iwram_MulQ16(Trig_Cos((step & 255) << 11), radius) * 2;
+                    Iwram_MulFX(Trig_Cos((step & 255) << 11), radius) * 2;
   object->z.fixed =
       WORD_AT(object, 76) +
-      Iwram_MulQ16(Trig_Sin((WORD_AT(object, 48) & 255) << 11), radius);
+      Iwram_MulFX(Trig_Sin((WORD_AT(object, 48) & 255) << 11), radius);
   object->y.fixed += WORD_AT(object, 72);
   WORD_AT(object, 48)++;
   FieldActor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
@@ -482,12 +482,12 @@ void ShamanVillage_SwirlSandGrain(struct Actor *object) {
   object->x.fixed += object->bounce;
   object->y.fixed += object->gravity;
   object->z.fixed += *(s32 *)((u8 *)object + 76);
-  if (FIELD_PIXEL(object->x.fixed) < 168) {
-    object->bounce += Q16_ONE * 3 / 2;
-    object->scaleY = object->scaleX += Q16_ONE * 5 / 100;
+  if (FIXEDtoINT(object->x.fixed) < 168) {
+    object->bounce += FIXED_ONE * 3 / 2;
+    object->scaleY = object->scaleX += FIXED_ONE * 5 / 100;
   } else {
-    object->bounce -= Q16_ONE * 3 / 2;
-    object->scaleY = object->scaleX -= Q16_ONE * 2 / 100;
+    object->bounce -= FIXED_ONE * 3 / 2;
+    object->scaleY = object->scaleX -= FIXED_ONE * 2 / 100;
   }
   if (object->bounce > 0)
     Scene_SetActorSpritePriority(object, 1);
@@ -564,7 +564,7 @@ row:
       spark->priorityFlags |= 1;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
-      spark->gravity = px(3) / 2;
+      spark->gravity = toFIXED(3) / 2;
       spark->riseBaseY = spark->z.fixed;
       spark->speedLimit = Random16() & 0xffff;
       Import_ActorSetMode((struct Actor *)spark, 7);
@@ -635,7 +635,7 @@ frame:
     options.priority = 1;
     options.update = ShamanVillage_SwirlSandGrain;
     v[0] = 0;
-    v[2] = -px(2);
+    v[2] = -toFIXED(2);
     v[1] = 0;
     {
       s32 x = ((Random16() & 127) << 16) + (208 << 15);
@@ -1472,8 +1472,8 @@ void ShamanVillage_MeetMoapa(void) {
 
 /// The Shaman's Rod (item 65) drawn as an actor over the leader.
 struct Actor *ShamanVillage_CreateRodIcon(void) {
-  struct Actor *object =
-      ((struct Actor *)Import_ActorCreate(489, px(120), px(64), px(264)));
+  struct Actor *object = ((struct Actor *)Import_ActorCreate(
+      489, toFIXED(120), toFIXED(64), toFIXED(264)));
   u8 *buffer = NULL;
 
   if (object == NULL)
@@ -1634,12 +1634,12 @@ void ShamanVillage_ShowShamansRod(void) {
   // "You know, Trial Road? Only Yegelos could walk that path."
   Event_ShowMessage(ACTOR_EAST_GUARD, 0);
   {
-    s32 y = px(80);
-    s32 z = px(242);
+    s32 y = toFIXED(80);
+    s32 z = toFIXED(242);
 
-    DriftScene_SpawnObject(px(116), y, z, 0xe000);
+    DriftScene_SpawnObject(toFIXED(116), y, z, 0xe000);
     Event_Wait(10);
-    DriftScene_SpawnObject(px(124), y, z, 0x2000);
+    DriftScene_SpawnObject(toFIXED(124), y, z, 0x2000);
     Event_Wait(30);
     FieldActor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB,
                          20);
@@ -1656,7 +1656,7 @@ void ShamanVillage_ShowShamansRod(void) {
     Actor_SetAnimation(ACTOR_MOAPA, 3);
     Event_ShowMessage(ACTOR_MOAPA, 0);
     FieldCamera_SetSpeed(0.4);
-    FieldCamera_MoveToFixed(px(180), 0x200000, z, 1);
+    FieldCamera_MoveToFX(toFIXED(180), 0x200000, z, 1);
   }
   object = ((struct Actor *)Actor_GetById(ACTOR_WEST_GUARD));
   object->riseEnabled = 0;
@@ -2437,9 +2437,11 @@ void ShamanVillage_ShebaClearsSand(void) {
   FieldCamera_MoveTo(168, CAMERA_KEEP, 540, 1);
   Event_Wait(20);
   angle = FACING_SOUTH;
-  Actor_SetPositionAndFacing(ACTOR_MOAPA, px(224), px(280), angle);
-  Actor_SetPositionAndFacing(ACTOR_WEST_GUARD, px(208), px(264), angle);
-  Actor_SetPositionAndFacing(ACTOR_EAST_GUARD, px(240), px(264), angle);
+  Actor_SetPositionAndFacing(ACTOR_MOAPA, toFIXED(224), toFIXED(280), angle);
+  Actor_SetPositionAndFacing(ACTOR_WEST_GUARD, toFIXED(208), toFIXED(264),
+                             angle);
+  Actor_SetPositionAndFacing(ACTOR_EAST_GUARD, toFIXED(240), toFIXED(264),
+                             angle);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
@@ -2502,8 +2504,8 @@ void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   if (mode == 1) {
     object = ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
-    cell = FIELD_PIXEL(object->x.fixed);
-    Actor_SetMoveTarget(object, px(8 - cell % 16) + object->x.fixed,
+    cell = FIXEDtoINT(object->x.fixed);
+    Actor_SetMoveTarget(object, toFIXED(8 - cell % 16) + object->x.fixed,
                         object->y.fixed, object->z.fixed);
     FieldActor_WaitForMove(object);
     object->facing = FACING_NORTH;
@@ -2567,8 +2569,10 @@ void ShamanVillage_RestartTrial(void) {
   angle = FACING_SOUTH;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_SetPositionAndFacing(ACTOR_WEST_GUARD, px(184), px(128), angle);
-  Actor_SetPositionAndFacing(ACTOR_EAST_GUARD, px(264), px(128), angle);
+  Actor_SetPositionAndFacing(ACTOR_WEST_GUARD, toFIXED(184), toFIXED(128),
+                             angle);
+  Actor_SetPositionAndFacing(ACTOR_EAST_GUARD, toFIXED(264), toFIXED(128),
+                             angle);
   Actor_SetSpeed(ACTOR_WEST_GUARD, 1.6);
   Actor_SetSpeed(ACTOR_EAST_GUARD, 1.6);
   FieldCamera_SetSpeed(0.8);
@@ -2675,9 +2679,11 @@ void ShamanVillage_SetUpTrialGrounds(void) {
   } else if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 angle = FACING_SOUTH;
 
-    Actor_SetPositionAndFacing(ACTOR_MOAPA, px(168), px(568), angle);
-    Actor_SetPositionAndFacing(ACTOR_EAST_GUARD, px(216), px(536), angle);
-    Actor_SetPositionAndFacing(ACTOR_WEST_GUARD, px(120), px(536), angle);
+    Actor_SetPositionAndFacing(ACTOR_MOAPA, toFIXED(168), toFIXED(568), angle);
+    Actor_SetPositionAndFacing(ACTOR_EAST_GUARD, toFIXED(216), toFIXED(536),
+                               angle);
+    Actor_SetPositionAndFacing(ACTOR_WEST_GUARD, toFIXED(120), toFIXED(536),
+                               angle);
     wait(1);
   }
   Actor_SetAnimation(ACTOR_FIRST_TORCH, 2);
@@ -2716,8 +2722,8 @@ void ShamanVillage_SetUpAromaRoom(void) {
   ((struct Actor *)Actor_GetById(ACTOR_AROMA_ROOM_PILLAR))->motionFlags = 0;
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_PILLAR_BRIDGE_DROPPED)) {
     Actor_SetPositionAndResetMotion(
-        ((struct Actor *)Actor_GetById(ACTOR_AROMA_ROOM_PILLAR)), px(520),
-        px(32), px(184));
+        ((struct Actor *)Actor_GetById(ACTOR_AROMA_ROOM_PILLAR)), toFIXED(520),
+        toFIXED(32), toFIXED(184));
     wait(1);
     MapGrid_CopyCellAttributes(30, 11, 1, 1, 32, 11);
     wait(10);
@@ -2732,8 +2738,8 @@ void ShamanVillage_SetUpAromaRoom(void) {
     Actor_SetPosition(ACTOR_FORTUNE_TELLER, 0, 0);
   object = ((struct Actor *)Actor_GetById(ACTOR_FORTUNE_TELLERS_FLAME));
   object->collisionFlags = ACTOR_NOT_TARGETED;
-  object->scaleX = Q16_ONE * 8 / 10;
-  object->scaleY = Q16_ONE * 8 / 10;
+  object->scaleX = FIXED_ONE * 8 / 10;
+  object->scaleY = FIXED_ONE * 8 / 10;
   Actor_SetSpriteFlags(
       ((struct Actor *)Actor_GetById(ACTOR_FORTUNE_TELLERS_FLAME)), 0);
 }
@@ -2743,7 +2749,7 @@ void ShamanVillage_DriftSmoke(struct Actor *object) {
 
   object->x.fixed += object->timer << 8;
 
-  object->y.fixed += px(1) / 2;
+  object->y.fixed += toFIXED(1) / 2;
 
   step = 0x51e;
   object->scaleX += step;
@@ -2766,8 +2772,8 @@ void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
     ((struct FieldSprite *)object->sprite)->priority = 1;
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpriteFlags(object, 0);
-    object->scaleX = Q16_ONE / 2;
-    object->scaleY = Q16_ONE / 2;
+    object->scaleX = FIXED_ONE / 2;
+    object->scaleY = FIXED_ONE / 2;
     *(s32 *)&object->watchedActor = 60;
     object->update = ShamanVillage_DriftSmoke;
     Import_ActorSetMode(object, 5);
@@ -2839,7 +2845,8 @@ void ShamanVillage_SetUpInn(void) {
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
     s32 angle = FACING_SOUTH_SOUTHEAST;
 
-    Actor_SetPositionAndFacing(ACTOR_MOAPAS_MAN_A, px(88), px(92), angle);
+    Actor_SetPositionAndFacing(ACTOR_MOAPAS_MAN_A, toFIXED(88), toFIXED(92),
+                               angle);
     Actor_SetPosition(ACTOR_MOAPA_AT_HOME, 156, 72);
   } else {
     Actor_SetPosition(ACTOR_PICNIC_SHAMAN_A, 0, 0);
@@ -2994,8 +3001,8 @@ u8 gShamanVillage_LetteringPalettes[] = {
 s32 gShamanVillage_EnterDoorScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Z, -0x8000),
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
     SC_WAIT(1),
     SC_LOOP(24, SC_TOP),
     SC_END,
@@ -3193,13 +3200,13 @@ u32 gShamanVillage_RejoinLeaderAtSandScript[] = {
 };
 
 s32 gShamanVillage_HopFortuneTellerScript[] = {
-    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
     SC_ADD(SW_SCALE_Y, 0x4000),
     SC_WAIT(1),
     SC_LOOP(4, SC_TOP),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 8),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 8),
     SC_WAIT(1),
     SC_LOOP(8, SC_TO(1)),
     SC_END,

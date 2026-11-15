@@ -142,9 +142,9 @@ extern u32 gPushedActor_FootprintKinds[];
 extern const u8 TileMap_DrawRows[];
 /// The size of TileMap_DrawRows (picture_decode.s).
 extern u8 TileMap_DrawRowsCodeSize[];
-/// The size of Transform_UpdateVertices, copied to heap slot 46; an address
+/// The size of Matrix_UpdateVertices, copied to heap slot 46; an address
 /// equal to the size (ld_script.ld).
-extern u8 Transform_UpdateVerticesSize;
+extern u8 Matrix_UpdateVerticesSize;
 extern const s32 gWorldMap_FootprintActions[6];
 extern const s16 gWorldMap_KeyHeadings[16];
 s32 FarCall_LuckyWheelsTable(s32 entrance);

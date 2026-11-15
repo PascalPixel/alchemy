@@ -336,6 +336,20 @@ the tune keeps its speed while the picture falls behind it
 
 Evidence: tradition: 処理落ち.
 
+### Fixed-point number
+
+The console has no decimals, so a position, a speed or a scale is a whole
+number counted in 65,536ths: its upper 16 bits are the integer part and its
+lower 16 bits the decimal part. `toFIXED(0.8)` writes one, `FIXED_ONE` is
+1.0, and `FIXEDtoINT()` gives back the integer part, the pixel a position is
+on. A routine that takes such numbers where its plain form takes whole
+pixels ends in `FX` (`Actor_SetPositionFX`), and angles are counted the
+same way, 65,536 to the turn, written `DEGtoANG(90)`. The words are those
+of the reference for SGL, Sega’s library for the Saturn, whose fixed-point,
+angle and matrix design this code matches; the current matrix and its
+`Matrix_Push`, `Matrix_RotateX` and `Matrix_Translate` are named the
+same way.
+
 ### Work
 
 A work is the block of memory where one part of the game keeps what it is

@@ -55,14 +55,14 @@ void FieldPsynergy_UpdateRing(void) {
   s32 red;
 
   pos[0] = actor->x.fixed;
-  pos[1] = actor->y.fixed + px(16);
+  pos[1] = actor->y.fixed + toFIXED(16);
   pos[2] = actor->z.fixed;
   if (work->orbiting != 0)
-    Vector_AddPolarOffset(px(2), -(event->ringFrames << 11), pos);
+    Vector_AddPolarOffset(toFIXED(2), -(event->ringFrames << 11), pos);
   Camera_WorldToScreen(pos);
-  x = FIELD_PIXEL(pos[0]);
+  x = FIXEDtoINT(pos[0]);
   gBgScroll[0].x = 64 - x;
-  y = FIELD_PIXEL(pos[2]);
+  y = FIXEDtoINT(pos[2]);
   gBgScroll[0].y = 64 - y;
   BgMap_DrawClipped16x16(x - 64, y - 64);
 
@@ -101,8 +101,8 @@ void FieldPsynergy_UpdateRing(void) {
         pos[2] = timer;
         pos[1] = timer;
         pos[0] = timer;
-        Vector_AddPolarOffset(px(54), sprite->angle + TRIG_TURN / 8, pos);
-        SET_POSITION(entry, pos[0], pos[1] + px(16), pos[2]);
+        Vector_AddPolarOffset(toFIXED(54), sprite->angle + DEGtoANG(45), pos);
+        SET_POSITION(entry, pos[0], pos[1] + toFIXED(16), pos[2]);
         timer = entry->timer;
       }
       if (timer >= 0) {
@@ -167,7 +167,7 @@ void FieldPsynergy_Ring(void) {
     canvas->mode = angle;
     pos = position;
     pos[0] = scene->mainActor->x.fixed;
-    pos[1] = scene->mainActor->y.fixed + px(16);
+    pos[1] = scene->mainActor->y.fixed + toFIXED(16);
     pos[2] = scene->mainActor->z.fixed;
     Camera_WorldToScreen(pos);
     {
@@ -217,10 +217,10 @@ void FieldPsynergy_Ring(void) {
       if (drawing) {
         radius = spin;
         for (i = 0; i < 8; i++) {
-          Canvas_PlotPolarPixel(picture, px(52), radius, 243);
-          Canvas_PlotPolarPixel(picture, px(53), radius, 247);
-          Canvas_PlotPolarPixel(picture, px(54), radius, 251);
-          Canvas_PlotPolarPixel(picture, px(55), radius, 255);
+          Canvas_PlotPolarPixel(picture, toFIXED(52), radius, 243);
+          Canvas_PlotPolarPixel(picture, toFIXED(53), radius, 247);
+          Canvas_PlotPolarPixel(picture, toFIXED(54), radius, 251);
+          Canvas_PlotPolarPixel(picture, toFIXED(55), radius, 255);
           radius += 128;
         }
         canvas->command = CANVAS_UPLOAD_TO_BG;
@@ -230,15 +230,15 @@ void FieldPsynergy_Ring(void) {
         if (mote->timer == 0) {
           s32 heading = angle + ((i & 1) << 15);
 
-          SET_POSITION(mote, caster->x.fixed, caster->y.fixed + px(16),
+          SET_POSITION(mote, caster->x.fixed, caster->y.fixed + toFIXED(16),
                        caster->z.fixed);
-          Vector_AddPolarOffset(px(55), heading, &mote->x);
+          Vector_AddPolarOffset(toFIXED(55), heading, &mote->x);
           Vector_AddPolarOffset(Random16() * 6, Random16(), &mote->x);
         }
         if ((u32)mote->timer <= 15) {
           sprite->oam.index = tile + (mote->timer & 3) * 2;
           EffectSprite_DrawAtWorldPosition(sprite, mote);
-          mote->y += -px(1);
+          mote->y += -toFIXED(1);
         }
         mote->timer++;
         if (repeat && mote->timer == 16)
@@ -298,13 +298,13 @@ void FieldPsynergy_Ring(void) {
         sprite->oam.priority = 0;
         sprite->oam.fullColor = 0;
         sprite->oam.palette = 15;
-        sprite->angle = heading + TRIG_TURN / 4;
+        sprite->angle = heading + DEGtoANG(90);
         place = position;
         place[0] = scene->mainActor->x.fixed;
-        place[1] = scene->mainActor->y.fixed + px(16);
+        place[1] = scene->mainActor->y.fixed + toFIXED(16);
         place[2] = scene->mainActor->z.fixed;
         Camera_WorldToScreen(place);
-        Vector_AddPolarOffset(px(64), heading, place);
+        Vector_AddPolarOffset(toFIXED(64), heading, place);
         mote->x = place[0];
         mote->y = place[2];
         mote->timer = -i;
@@ -386,12 +386,13 @@ void FieldPsynergy_EndRing(void) {
   sprite = work->sprites;
   for (; i < 64; i++, sprite++, mote++) {
     angle = Random16();
-    SET_POSITION(mote, actor->x.fixed, actor->y.fixed + px(16), actor->z.fixed);
-    Vector_AddPolarOffset(Random16() * 4 + px(52), angle, &mote->x);
+    SET_POSITION(mote, actor->x.fixed, actor->y.fixed + toFIXED(16),
+                 actor->z.fixed);
+    Vector_AddPolarOffset(Random16() * 4 + toFIXED(52), angle, &mote->x);
     mote->vx = 0;
     mote->vy = -0x40000;
     mote->vz = 0;
-    Vector_AddPolarOffset(Random16() * 3 + px(2), angle, &mote->vx);
+    Vector_AddPolarOffset(Random16() * 3 + toFIXED(2), angle, &mote->vx);
     mote->timer = -i / 4;
     EffectSprite_Init(sprite, 4, 4, 0, tile);
     sprite->oam.fullColor = 1;
@@ -447,8 +448,8 @@ void ViewMove_Start(s32 direction) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *center = event->camera;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  s32 viewX = FIELD_PIXEL(map->viewX);
-  s32 viewZ = FIELD_PIXEL(map->viewZ);
+  s32 viewX = FIXEDtoINT(map->viewX);
+  s32 viewZ = FIXEDtoINT(map->viewZ);
   struct ViewMoveWork *work = Ram_HeapSlots->battleEffect;
   struct MapBounds bounds;
   s32 minX;
@@ -464,22 +465,22 @@ void ViewMove_Start(s32 direction) {
 #if TLA_PATCH_1
   if (map->cameraBoxes != NULL) {
     if (direction & VIEW_MOVE_X) {
-      MapGrid_SetScreenShakeFar(px(3), 0, Q16_ONE);
+      MapGrid_SetScreenShakeFar(toFIXED(3), 0, FIXED_ONE);
       return;
     }
     if (direction & VIEW_MOVE_Z) {
-      MapGrid_SetScreenShakeFar(0, px(3), Q16_ONE);
+      MapGrid_SetScreenShakeFar(0, toFIXED(3), FIXED_ONE);
       return;
     }
   }
 #endif
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (direction & VIEW_MOVE_X) {
-      MapGrid_SetScreenShakeFar(px(3), 0, Q16_ONE);
+      MapGrid_SetScreenShakeFar(toFIXED(3), 0, FIXED_ONE);
       return;
     }
     if (direction & VIEW_MOVE_Z) {
-      MapGrid_SetScreenShakeFar(0, px(3), Q16_ONE);
+      MapGrid_SetScreenShakeFar(0, toFIXED(3), FIXED_ONE);
       return;
     }
   }
@@ -516,10 +517,10 @@ void ViewMove_Start(s32 direction) {
   work->savedMaxX = map->maxX;
   work->savedMinZ = map->minZ;
   work->savedMaxZ = map->maxZ;
-  map->minX = px(minX * 8);
-  map->maxX = px(maxX * 8);
-  map->minZ = px(minZ * 8);
-  map->maxZ = px(maxZ * 8);
+  map->minX = toFIXED(minX * 8);
+  map->maxX = toFIXED(maxX * 8);
+  map->minZ = toFIXED(minZ * 8);
+  map->maxZ = toFIXED(maxZ * 8);
   Actor_StartIdleFar(center);
 }
 
@@ -550,11 +551,11 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
   if (direction & VIEW_MOVE_X) {
     edge = work->edgeX;
     if (edge == -1)
-      x = work->x + Iwram_MulQ16(SWING_SINE(phase << 12), amplitude);
+      x = work->x + Iwram_MulFX(SWING_SINE(phase << 12), amplitude);
     else if (edge == 1)
-      x = work->x + Iwram_MulQ16(-SWING_SINE(phase << 12), amplitude);
+      x = work->x + Iwram_MulFX(-SWING_SINE(phase << 12), amplitude);
     else
-      x = work->x + Iwram_MulQ16(SWING_SINE(phase << 12), amplitude);
+      x = work->x + Iwram_MulFX(SWING_SINE(phase << 12), amplitude);
   } else {
     x = work->x;
   }
@@ -562,11 +563,11 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
   if (direction & VIEW_MOVE_Z) {
     edge = work->edgeZ;
     if (edge == -1)
-      z = work->z + Iwram_MulQ16(SWING_SINE(phase << 12), amplitude);
+      z = work->z + Iwram_MulFX(SWING_SINE(phase << 12), amplitude);
     else if (edge == 1)
-      z = work->z + Iwram_MulQ16(-SWING_SINE(phase << 12), amplitude);
+      z = work->z + Iwram_MulFX(-SWING_SINE(phase << 12), amplitude);
     else
-      z = work->z + Iwram_MulQ16(SWING_SINE(phase << 12), amplitude);
+      z = work->z + Iwram_MulFX(SWING_SINE(phase << 12), amplitude);
   } else {
     z = work->z;
   }

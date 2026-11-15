@@ -73,8 +73,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   Render_BuildQuadStrip(buffer, 4, 32, 32);
 
   for (frame = 0; frame != FIRE_PUPPET_FRAMES; frame++) {
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
     if (frame == 0) {
       BattleEffect_TintBattler(args->user, SPRITE_COLOR_GREY, POSE_PARTY_HELD,
                                0, -1);
@@ -93,8 +93,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_POWER_UP);
       work->shakeFrames = 8;
       for (i = 0; i != args->targetCount; i++) {
-        BattleEffect_StartActorMotion(args->targets[i], 1, px(2), px(4), px(4),
-                                      150);
+        BattleEffect_StartActorMotion(args->targets[i], 1, toFIXED(2),
+                                      toFIXED(4), toFIXED(4), 150);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 8);
       }
@@ -117,28 +117,27 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
 
       // The arm's vertices, thicker at its root.
       for (j = 0; j != PUPPET_SEGMENTS; j++) {
-        s32 width = 50 - (Q_16_16_TO_INT(Trig_Sin(j * 862 + 4310) * 44));
-        s32 wobble =
-            (Q_16_16_TO_INT(Trig_Sin((frame + j) << 11) << 4)) * j / 32;
+        s32 width = 50 - (FIXEDtoINT(Trig_Sin(j * 862 + 4310) * 44));
+        s32 wobble = (FIXEDtoINT(Trig_Sin((frame + j) << 11) << 4)) * j / 32;
         s32 outer;
 
         i = 0;
         outer = width + wobble;
         do {
-          cells[j][i].x = (Q_16_16_TO_INT(Trig_Cos(j * length) *
-                                          (i * width + wobble + 16))) -
-                          outer / 2 - 16;
-          cells[j][i].y = -(Q_16_16_TO_INT(Trig_Sin(j * length) *
-                                           (i * width + j + wobble + 32)));
+          cells[j][i].x =
+              (FIXEDtoINT(Trig_Cos(j * length) * (i * width + wobble + 16))) -
+              outer / 2 - 16;
+          cells[j][i].y = -(
+              FIXEDtoINT(Trig_Sin(j * length) * (i * width + j + wobble + 32)));
           cells[j][i].z = 0;
           i++;
         } while (i != 2);
         if (j == 32) {
-          endX = (Q_16_16_TO_INT(Trig_Cos(length << 5) *
-                                 (width / 2 + wobble + 16))) -
-                 (width + wobble) / 2 - 16;
-          endY = -(Q_16_16_TO_INT(Trig_Sin(length << 5) *
-                                  (width / 2 + j + wobble + 32)));
+          endX =
+              (FIXEDtoINT(Trig_Cos(length << 5) * (width / 2 + wobble + 16))) -
+              (width + wobble) / 2 - 16;
+          endY = -(FIXEDtoINT(Trig_Sin(length << 5) *
+                              (width / 2 + j + wobble + 32)));
         }
       }
 
@@ -155,15 +154,16 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       EffectPosition_ProjectScaledBattler(args->user, &pos);
       model->scrollV = 0;
       model->scrollU = 127 & ~(frame << 2);
-      Transform_Reset();
-      Transform_ApplyTranslation(px(pos.x / 2 - 64), px(pos.y) + 0xffd60000, 0);
-      Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+      Matrix_Initialize();
+      Matrix_Translate(INTtoFIXED(pos.x / 2 - 64),
+                       INTtoFIXED(pos.y) + 0xffd60000, 0);
+      Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
       if (args->side == EFFECT_SIDE_PARTY) {
-        Transform_ApplyYaw(TRIG_TURN / 2);
+        Matrix_RotateY(DEGtoANG(180));
       }
-      Transform_ApplyRoll(TRIG_TURN / 4);
+      Matrix_RotateZ(DEGtoANG(90));
       if (frame > 73) {
-        Transform_ApplyUniformScale((212 << 10) - (frame << 11));
+        Matrix_ScaleUniform((212 << 10) - (frame << 11));
       }
       Render_TransformVertices(Ram_MapCellBuffer, Ram_MapCellBuffer + 0x1000,
                                66);
@@ -178,9 +178,9 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       model->scrollV = 0;
       texture.pixels = work->sheet + FIRE_PUPPET_GHOST_SKULL;
       model->shade = 0;
-      Transform_ApplyTranslation(px(endX), px(endY), 0);
-      Transform_ApplyRoll(22384 - (length << 5));
-      Transform_ApplyUniformScale(length * 23 + Q16_ONE / 2);
+      Matrix_Translate(INTtoFIXED(endX), INTtoFIXED(endY), 0);
+      Matrix_RotateZ(22384 - (length << 5));
+      Matrix_ScaleUniform(length * 23 + FIXED_ONE / 2);
       Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
       Render_DrawModelList(model);
       Heap_Release(model);
@@ -320,16 +320,16 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
 
         spark = &((struct Particle *)Ram_MapCellBuffer)[i];
         if (args->side == EFFECT_SIDE_ENEMIES)
-          spark->x = px(caster.x / 2 - 48);
+          spark->x = INTtoFIXED(caster.x / 2 - 48);
         else
-          spark->x = px(caster.x / 2 + 48);
-        spark->y = px(caster.y - (Random16() & 7));
-        angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
+          spark->x = INTtoFIXED(caster.x / 2 + 48);
+        spark->y = INTtoFIXED(caster.y - (Random16() & 7));
+        angle = (Random16() & 0x7fff) + DEGtoANG(90);
         speed = Random16() & 255;
         if (args->side == EFFECT_SIDE_ENEMIES)
-          spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) - px(8);
+          spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) - toFIXED(8);
         else
-          spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) + px(8);
+          spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) + toFIXED(8);
         spark->velocityY = (Trig_Cos(angle) * (speed + 64)) >> 5;
         spark->variant = (Random16() & 15) + 16;
       }
@@ -344,9 +344,9 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
                   Q_16_16_UPPER_HALF(spark->x) - size / 2,
                   Q_16_16_UPPER_HALF(spark->y) - size, size, size * 2);
           if (i & 1)
-            BattleEffectKernels_IntegrateVector2(spark, 60, -px(1) / 8);
+            BattleEffectKernels_IntegrateVector2(spark, 60, -toFIXED(1) / 8);
           else
-            BattleEffectKernels_IntegrateVector2(spark, 60, px(1) / 16);
+            BattleEffectKernels_IntegrateVector2(spark, 60, toFIXED(1) / 16);
           spark->variant--;
         }
       }

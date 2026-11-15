@@ -1,7 +1,7 @@
-@ Why IwramMulQ16ReturnIp is assembly:
+@ Why IwramMulFXReturnIp is assembly:
 @ Unpaired live smull halves r2/r0; add ip,#1 and bx ip return through a
 @ non-procedure-standard register.
-@ Why IwramMulQ16 is assembly:
+@ Why IwramMulFX is assembly:
 @ smull r2, r0, r1, r0 puts the low half in r2 and the high half in r0.
 @ mulsidi3 writes a DI register pair, RdHi = RdLo + 1, earlyclobbered and so
 @ apart from both inputs; here RdHi is r0, not r3, and is also an input. So
@@ -27,7 +27,7 @@
 @ copy-and-test never has.
 @ Why IwramExpandBitRuns is assembly:
 @ bcc and bcs consume the carry set by lsls r3 in the bit-run loop.
-@ Why IwramTransformVector to IwramTransformMatrix are assembly:
+@ Why IwramTransformVector to IwramMultiplyMatrix are assembly:
 @ fp is a product high half rather than a frame pointer; stmia writes
 @ arithmetic-transformed vectors, not compiler block-copy data.
 @ Why IwramSignedDivide to IwramUnsignedDivide are assembly:
@@ -39,8 +39,8 @@
 .syntax unified
 	.arm
 
-	.global IwramMulQ16ReturnIp
-IwramMulQ16ReturnIp:
+	.global IwramMulFXReturnIp
+IwramMulFXReturnIp:
 	smull	r2, r0, r1, r0
 	lsl	r0, r0, #16
 	orr	r0, r0, r2, lsr #16
@@ -49,8 +49,8 @@ IwramMulQ16ReturnIp:
 .syntax unified
 	.arm
 
-	.global IwramMulQ16
-IwramMulQ16:
+	.global IwramMulFX
+IwramMulFX:
 	smull	r2, r0, r1, r0
 	lsl	r0, r0, #16
 	orr	r0, r0, r2, lsr #16
@@ -193,8 +193,8 @@ IwramTransformVector:
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
 
-	.global IwramTransformMatrix
-IwramTransformMatrix:
+	.global IwramMultiplyMatrix
+IwramMultiplyMatrix:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	sub	sp, sp, #36
 	mov	r4, sp
@@ -236,8 +236,8 @@ IwramTransformMatrix:
 	.section .data,"aw",%progbits
 	.arm
 
-	.global gTransform
-gTransform:
+	.global gCurrentMatrix
+gCurrentMatrix:
 	.4byte 1 << 16, 0, 0, 0
 	.4byte 1 << 16, 0, 0, 0
 	.4byte 1 << 16, 0, 0, 0

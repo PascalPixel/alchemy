@@ -136,7 +136,7 @@ void LemuriaSpring_RiseAndFadeIn(void) {
   Event_PlaySound(SE_BURST);
   layer = &map->layers[2];
   for (i = 0; i < 16; i++) {
-    layer->offsetY -= px(1);
+    layer->offsetY -= toFIXED(1);
     wait(4);
   }
   for (i = 0; i < 8; i++) {
@@ -516,7 +516,7 @@ void LemuriaSpring_GivePrize(s32 a0) {
     Actor_MoveToObject(ACTOR_LEMURIA_SPRING_PRIZE,
                        gMainRoutineWork.leaderActorId);
     prize->motionFlags = 0;
-    prize->y.fixed = px(32);
+    prize->y.fixed = toFIXED(32);
     FieldActor_SetAnimation(gMainRoutineWork.leaderActorId, 0x1c);
     SummonTablet_PlayRunes(0x1d);
     Summon_ShowLearnedMessage(0x16);
@@ -664,8 +664,8 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         s32 deltaZ;
         s32 distance;
 
-        deltaX = px(120) - toss->trail[0].x;
-        deltaZ = px(71) - toss->trail[0].z;
+        deltaX = toFIXED(120) - toss->trail[0].x;
+        deltaZ = toFIXED(71) - toss->trail[0].z;
         deltaX >>= 8;
         deltaZ >>= 8;
         distance = Iwram_Sqrt(deltaX * deltaX + deltaZ * deltaZ);
@@ -699,8 +699,8 @@ void LemuriaSpring_UpdateTossSimulation(void) {
             LemuriaSpring_SetSpriteStorageKind(LEMURIA_SPRING_COIN_TRAIL(3), 0);
           }
           {
-            s32 deltaX = (px(120) - toss->trail[0].x) >> 16;
-            s32 deltaZ = (px(71) - toss->trail[0].z) >> 16;
+            s32 deltaX = (toFIXED(120) - toss->trail[0].x) >> 16;
+            s32 deltaZ = (toFIXED(71) - toss->trail[0].z) >> 16;
             s32 distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
 
             gLemuriaSpring_TossDone = 1;
@@ -719,52 +719,52 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         }
       }
 
-      minX = px(48);
-      maxX = px(192);
-      minZ = px(24);
-      maxZ = px(120);
-      if (toss->trail[0].z < px(42)) {
-        edgeInset = (px(42) - toss->trail[0].z) * 42 / 18;
+      minX = toFIXED(48);
+      maxX = toFIXED(192);
+      minZ = toFIXED(24);
+      maxZ = toFIXED(120);
+      if (toss->trail[0].z < toFIXED(42)) {
+        edgeInset = (toFIXED(42) - toss->trail[0].z) * 42 / 18;
         minX += edgeInset;
-        if (minX > px(90)) {
-          minX = px(90);
+        if (minX > toFIXED(90)) {
+          minX = toFIXED(90);
         }
         maxX -= edgeInset;
-        if (maxX < px(150)) {
-          maxX = px(150);
+        if (maxX < toFIXED(150)) {
+          maxX = toFIXED(150);
         }
       }
-      if (toss->trail[0].z > px(102)) {
-        edgeInset = (toss->trail[0].z * 42 - px(102) * 42) / 18;
-        minX = px(48) + edgeInset;
-        if (minX > px(90)) {
-          minX = px(90);
+      if (toss->trail[0].z > toFIXED(102)) {
+        edgeInset = (toss->trail[0].z * 42 - toFIXED(102) * 42) / 18;
+        minX = toFIXED(48) + edgeInset;
+        if (minX > toFIXED(90)) {
+          minX = toFIXED(90);
         }
-        maxX = px(192) - edgeInset;
-        if (maxX < px(150)) {
-          maxX = px(150);
-        }
-      }
-      if (toss->trail[0].x < px(90)) {
-        edgeInset = (px(90) - toss->trail[0].x) * 18 / 42;
-        minZ = px(24) + edgeInset;
-        if (minZ > px(42)) {
-          minZ = px(42);
-        }
-        maxZ = px(120) - edgeInset;
-        if (maxZ < px(102)) {
-          maxZ = px(102);
+        maxX = toFIXED(192) - edgeInset;
+        if (maxX < toFIXED(150)) {
+          maxX = toFIXED(150);
         }
       }
-      if (toss->trail[0].x > px(150)) {
-        edgeInset = (toss->trail[0].x * 18 - px(150) * 18) / 42;
-        minZ = px(24) + edgeInset;
-        if (minZ > px(42)) {
-          minZ = px(42);
+      if (toss->trail[0].x < toFIXED(90)) {
+        edgeInset = (toFIXED(90) - toss->trail[0].x) * 18 / 42;
+        minZ = toFIXED(24) + edgeInset;
+        if (minZ > toFIXED(42)) {
+          minZ = toFIXED(42);
         }
-        maxZ = px(120) - edgeInset;
-        if (maxZ < px(102)) {
-          maxZ = px(102);
+        maxZ = toFIXED(120) - edgeInset;
+        if (maxZ < toFIXED(102)) {
+          maxZ = toFIXED(102);
+        }
+      }
+      if (toss->trail[0].x > toFIXED(150)) {
+        edgeInset = (toss->trail[0].x * 18 - toFIXED(150) * 18) / 42;
+        minZ = toFIXED(24) + edgeInset;
+        if (minZ > toFIXED(42)) {
+          minZ = toFIXED(42);
+        }
+        maxZ = toFIXED(120) - edgeInset;
+        if (maxZ < toFIXED(102)) {
+          maxZ = toFIXED(102);
         }
       }
 
@@ -793,7 +793,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         }
       }
     } else {
-      toss->velocity.y -= px(1) / 4;
+      toss->velocity.y -= toFIXED(1) / 4;
     }
   }
 
@@ -837,7 +837,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
           } else {
             obstacle->position.x = pos - motionStep;
           }
-          if (obstacle->position.x <= px(64)) {
+          if (obstacle->position.x <= toFIXED(64)) {
             obstacle->heading = 0;
             if (index == 1) {
               obstacle->pauseOrPhase = 30;
@@ -866,8 +866,8 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_A), 3);
       } else {
         Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_A), 2);
-        obstacle->position.x = Trig_Sin(obstacle->heading) * 48 + px(112);
-        obstacle->position.z = Trig_Cos(obstacle->heading) * 40 + px(72);
+        obstacle->position.x = Trig_Sin(obstacle->heading) * 48 + toFIXED(112);
+        obstacle->position.z = Trig_Cos(obstacle->heading) * 40 + toFIXED(72);
         cycleFrame = (u16)obstacle->heading + motionStep;
         obstacle->heading = cycleFrame;
         obstacle->pauseOrPhase = obstacle->pauseOrPhase + 1;
@@ -885,8 +885,8 @@ void LemuriaSpring_UpdateTossSimulation(void) {
       if (obstacle->reactionFrames > 0) {
         Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_B), 3);
       } else if (cycleFrame <= 383) {
-        obstacle->position.x = Trig_Sin(obstacle->heading) * 52 + px(112);
-        obstacle->position.z = Trig_Cos(obstacle->heading) * 24 + px(72);
+        obstacle->position.x = Trig_Sin(obstacle->heading) * 52 + toFIXED(112);
+        obstacle->position.z = Trig_Cos(obstacle->heading) * 24 + toFIXED(72);
         obstacle->heading = obstacle->heading + motionStep;
         Actor_SelectAnimation(Actor_GetById(ACTOR_LEMURIA_SPRING_TURTLE_B), 2);
       } else {
@@ -907,7 +907,7 @@ void LemuriaSpring_UpdateTossSimulation(void) {
         s32 nextMode;
         s32 speed;
 
-        speed = px(3);
+        speed = toFIXED(3);
         if (index <= 1) {
 
           if (obstacle->heading == 0) {
@@ -1047,9 +1047,9 @@ void LemuriaSpring_InitializeTossSimulation(void) {
     rec++;
   } while (i != 4);
 
-  ride->trail[0].x = -px(30);
+  ride->trail[0].x = -toFIXED(30);
   ride->trail[0].y = 0;
-  ride->trail[0].z = px(100);
+  ride->trail[0].z = toFIXED(100);
   ride->velocity.x = 0;
   ride->velocity.y = 0;
   ride->velocity.z = 0;
@@ -1080,12 +1080,12 @@ s32 LemuriaSpring_RunToss(s32 side) {
     if (gLemuriaSpring_TossFrame == 16) {
       Actor_SetAnimation(gMainRoutineWork.leaderActorId, 39);
       ride->hold = 0;
-      ride->velocity.x = px(13) / 10;
-      ride->velocity.y = px(4);
-      ride->velocity.z = -px(2);
-      ride->trail[0].x = px(120);
-      ride->trail[0].y = px(16);
-      ride->trail[0].z = px(152);
+      ride->velocity.x = toFIXED(13) / 10;
+      ride->velocity.y = toFIXED(4);
+      ride->velocity.z = -toFIXED(2);
+      ride->trail[0].x = toFIXED(120);
+      ride->trail[0].y = toFIXED(16);
+      ride->trail[0].z = toFIXED(152);
       ride->frames = 300;
       if (gLemuriaSpring_TossChoice == 1) {
         Actor_SelectAnimation(Actor_Get(ACTOR_LEMURIA_SPRING_MEDAL_SHADOW), 3);

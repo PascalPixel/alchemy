@@ -282,7 +282,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
       struct Particle *step = &work->particles[i];
 
-      SET_POSITION(step, px(ground.x / 2), px(80), 0);
+      SET_POSITION(step, INTtoFIXED(ground.x / 2), toFIXED(80), 0);
       step->velocityX = ((Random16() & 255) - 128) << 9;
       step->velocityY = ((Random16() & 255) - 128) << 9;
       step->velocityZ = 0;
@@ -293,7 +293,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     for (i = 0; i != TARGET_STRIKE_MOTES_PER_TARGET; i++) {
       struct Particle *step = &gMotes[k * TARGET_STRIKE_MOTES_PER_TARGET + i];
 
-      SET_POSITION(step, target->x, px(20), target->z);
+      SET_POSITION(step, target->x, toFIXED(20), target->z);
       step->velocityX = ((Random16() & 255) - 128) << 11;
       step->velocityY = ((Random16() & 255) - 128) << 11;
       step->velocityZ = ((Random16() & 255) - 128) << 11;
@@ -303,7 +303,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     // The sparks fly away from the hit: heavy hits throw them in a fan
     // away from the user, the others towards the middle of the field.
     for (i = 0; i != 256; i++) {
-      SET_POSITION(&gSparks[i], target->x, px(20), target->z);
+      SET_POSITION(&gSparks[i], target->x, toFIXED(20), target->z);
       if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_HEAVY) {
         s32 angle = Random16();
         s32 speed = Random16() & 255;
@@ -582,8 +582,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = gBlitter;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
@@ -606,7 +606,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                         Q_16_16_UPPER_HALF(step->x) - 12,
                         Q_16_16_UPPER_HALF(step->y) - 24, SMOKE_PUFF_WIDTH,
                         SMOKE_PUFF_HEIGHT);
-            BattleEffectKernels_IntegrateVector2(step, 62, -px(1) / 64);
+            BattleEffectKernels_IntegrateVector2(step, 62, -toFIXED(1) / 64);
             step->variant++;
           }
         }
@@ -622,8 +622,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                     Q_16_16_UPPER_HALF(step->x) - 16,
                     Q_16_16_UPPER_HALF(step->y) - 32, FLASH_BURST_WIDTH,
                     FLASH_BURST_HEIGHT);
-            BattleEffectKernels_IntegrateVector2(step, 62, -px(1) / 32);
-            BattleEffectKernels_IntegrateVector2(step, 62, -px(1) / 32);
+            BattleEffectKernels_IntegrateVector2(step, 62, -toFIXED(1) / 32);
+            BattleEffectKernels_IntegrateVector2(step, 62, -toFIXED(1) / 32);
             step->variant++;
           }
         }
@@ -654,7 +654,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             step->variant++;
             if (step->variant > 10) {
               s32 dx = (source->x - step->x) >> 8;
-              s32 dy = (source->y - step->y + px(20)) >> 8;
+              s32 dy = (source->y - step->y + toFIXED(20)) >> 8;
               s32 dz = (source->z - step->z) >> 8;
 
               step->velocityX += dx;
@@ -710,12 +710,12 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         s32 scale =
             Trig_Sin(((frame - 8) << 11) + TRIG_TURN * 3 / 16) * 612 >> 8;
 
-        Transform_Reset();
-        Transform_ApplyTranslation(px(targetPosition.x / 2 - 64),
-                                   px(targetPosition.y - 64), 0);
-        Transform_ApplyPitch(TRIG_TURN / 4);
-        Transform_ApplyYaw(TRIG_TURN / 8);
-        Transform_ApplyAxisScale(scale, scale / 2, scale / 2);
+        Matrix_Initialize();
+        Matrix_Translate(INTtoFIXED(targetPosition.x / 2 - 64),
+                         INTtoFIXED(targetPosition.y - 64), 0);
+        Matrix_RotateX(DEGtoANG(90));
+        Matrix_RotateY(DEGtoANG(45));
+        Matrix_Scale(scale, scale / 2, scale / 2);
         Render_TransformVertices(gBattleEffect_GroundSquareCorners, corners, 4);
         Render_DrawModelList(model);
       }
@@ -780,7 +780,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
     dagger = &work->particles[i];
     column = Random16() % 96 + 16;
     dagger->x = column;
-    dagger->y = px(24 - i / 4);
+    dagger->y = INTtoFIXED(24 - i / 4);
     if (column <= 43)
       dagger->velocityX = 3;
     else if (column <= 51)
@@ -796,7 +796,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
     else
       dagger->velocityX = -3;
     dagger->velocityX <<= 17;
-    dagger->velocityY = px(8);
+    dagger->velocityY = toFIXED(8);
     dagger->x <<= 16;
   }
   Sound_PlayFar(SE_POWER_UP);
@@ -828,16 +828,16 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
       cell = speed >> 17;
       if (frame < i * 4 + 25) {
         blit[(u32)drift >> 31](canvas, work->sheet + (cell << 10),
-                               (Q_16_16_TO_INT(dagger->x)) - 16,
-                               (Q_16_16_TO_INT(dagger->y)) - 16, 32, 32);
+                               (FIXEDtoINT(dagger->x)) - 16,
+                               (FIXEDtoINT(dagger->y)) - 16, 32, 32);
         if (frame >= i * 4 + 16) {
           dagger->x += dagger->velocityX;
           dagger->y += dagger->velocityY;
         }
       } else {
         blit[(u32)drift >> 31](canvas, work->sheet + (cell << 10),
-                               (Q_16_16_TO_INT(dagger->x)) - 16,
-                               (Q_16_16_TO_INT(dagger->y)) - 16, 32, 32);
+                               (FIXEDtoINT(dagger->x)) - 16,
+                               (FIXEDtoINT(dagger->y)) - 16, 32, 32);
       }
     }
 
@@ -981,8 +981,8 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
               ELEMENT_PILLAR_GLOW_WIDTH, ELEMENT_PILLAR_GLOW_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
 
     // The first 32 flecks turn 0x400, rise 5 pixels and widen 4 pixels a
     // frame.
@@ -995,8 +995,8 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
         point[0] = fleck->z * Trig_Sin(fleck->x) >> 4;
         point[2] = -(fleck->z * Trig_Cos(fleck->x) >> 4);
         point[1] = fleck->y;
-        fleck->x += px(1) / 64;
-        fleck->y += px(5);
+        fleck->x += toFIXED(1) / 64;
+        fleck->y += toFIXED(5);
         fleck->z += 64;
         EffectPosition_ProjectPoint(point, &pos);
         pos.x /= 2;

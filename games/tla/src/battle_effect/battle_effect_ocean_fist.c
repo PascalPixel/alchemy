@@ -72,7 +72,8 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
       if (frame == 32) {
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
-        BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, px(15), 100);
+        BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, toFIXED(15),
+                                      100);
       }
       if (frame == 38) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -133,11 +134,11 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
                       Q_16_16_UPPER_HALF(spray->x) - FLASH_BURST_WIDTH / 2,
                       Q_16_16_UPPER_HALF(spray->y) - FLASH_BURST_HEIGHT / 2,
                       FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-          BattleEffectKernels_IntegrateVector2(spray, 62, -px(1) / 8);
+          BattleEffectKernels_IntegrateVector2(spray, 62, -toFIXED(1) / 8);
         }
         if (++spray->variant == 0) {
-          spray->x = px((Random16() & 31) + target.x / 2 - 16);
-          spray->y = px((Random16() & 7) + 88);
+          spray->x = INTtoFIXED((Random16() & 31) + target.x / 2 - 16);
+          spray->y = INTtoFIXED((Random16() & 7) + 88);
           spray->velocityX = ((Random16() & 255) - 128) << 11;
           spray->velocityY = 0;
         }
@@ -152,8 +153,8 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
             s32 radius = Random16() & 63;
             s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-            fountain->x = ((Trig_Sin(angle) * radius) >> 3) + px(32);
-            fountain->y = ((Trig_Cos(angle) * radius) >> 2) + px(96);
+            fountain->x = ((Trig_Sin(angle) * radius) >> 3) + toFIXED(32);
+            fountain->y = ((Trig_Cos(angle) * radius) >> 2) + toFIXED(96);
             fountain->velocityX = ((Random16() & 63) - 32) << 14;
             fountain->velocityY = (-(Random16() & 63) - 8) << 13;
             fountain->variant = 0;
@@ -165,8 +166,8 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
 
         for (i = 0, drop = drops; i != OCEAN_DROPS; i++, drop++) {
           if (drop->variant == -1) {
-            drop->x = px((Random16() & 31) + target.x / 2 - 16);
-            drop->y = px(108);
+            drop->x = INTtoFIXED((Random16() & 31) + target.x / 2 - 16);
+            drop->y = toFIXED(108);
             drop->velocityX = ((Random16() & 63) - 32) << 14;
             drop->velocityY = (-(Random16() & 63) - 8) << 13;
             drop->variant = 0;
@@ -185,13 +186,13 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
                           Q_16_16_UPPER_HALF(drop->x) - size / 2,
                           Q_16_16_UPPER_HALF(drop->y) - size, size, size * 2);
           if (frame > 31) {
-            BattleEffectKernels_IntegrateVector2(drop, 62, px(1) / 4);
+            BattleEffectKernels_IntegrateVector2(drop, 62, toFIXED(1) / 4);
           } else {
             BattleEffectKernels_IntegrateVector2(drop, 62,
                                                  gOceanFist_DropGravity[i & 3]);
           }
           drop->variant++;
-          if (drop->velocityY > 0 && (Q_16_16_TO_INT(drop->y)) > 104) {
+          if (drop->velocityY > 0 && (FIXEDtoINT(drop->y)) > 104) {
             drop->variant = -1;
           }
           if (drop->y < -size) {

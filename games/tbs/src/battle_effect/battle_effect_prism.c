@@ -4,7 +4,7 @@
 
 #include "battle_effect_internal.h"
 
-#define PRISM_GROUND_Y px(56) ///< y 56, where the crystals shatter
+#define PRISM_GROUND_Y toFIXED(56) ///< y 56, where the crystals shatter
 #define PRISM_SHARD_PICTURES                                                   \
   PICTURE_BYTES(CRYSTAL) ///< the shards, after the crystal
 
@@ -42,12 +42,12 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
     // DEAD: x keeps a first random number, drawn and never read; the ROM
     // keeps the mask and the store.
     x = Random16() & 31;
-    seed->y = -px(64);
+    seed->y = -toFIXED(64);
     if (work->args->side == EFFECT_SIDE_PARTY) {
-      x = px((Random16() & 31) + 80);
+      x = INTtoFIXED((Random16() & 31) + 80);
       seed->velocityX = (Random16() & 63) << 12;
     } else {
-      x = px((Random16() & 31) + 8);
+      x = INTtoFIXED((Random16() & 31) + 8);
       seed->velocityX = -(Random16() & 63) << 12;
     }
     seed->x = x - seed->velocityX * 18;
@@ -93,11 +93,11 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
                 canvas,
                 work->sheet + gPrism_ShardPictures[picture] +
                     PRISM_SHARD_PICTURES,
-                WHOLE_PIXELS(shard->x) - gPrism_ShardWidths[picture] / 2,
-                WHOLE_PIXELS(shard->y) - gPrism_ShardHeights[picture] / 2,
+                FIXEDtoINT(shard->x) - gPrism_ShardWidths[picture] / 2,
+                FIXEDtoINT(shard->y) - gPrism_ShardHeights[picture] / 2,
                 gPrism_ShardWidths[picture], gPrism_ShardHeights[picture]);
             Particle_AdvanceWithGravity2D(shard, PARTICLE_DAMPING_NONE,
-                                          px(1) / 8);
+                                          toFIXED(1) / 8);
             shard->variant += shard->z;
             if (shard->z > 1 && (frame & 1))
               shard->z--;
@@ -105,19 +105,20 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
         } else if (frame >= crystal->variant) {
           // A falling crystal.
           draw[i & 1](canvas, work->sheet,
-                      WHOLE_PIXELS(crystal->x) - CRYSTAL_WIDTH / 2,
-                      WHOLE_PIXELS(crystal->y), CRYSTAL_WIDTH, CRYSTAL_HEIGHT);
+                      FIXEDtoINT(crystal->x) - CRYSTAL_WIDTH / 2,
+                      FIXEDtoINT(crystal->y), CRYSTAL_WIDTH, CRYSTAL_HEIGHT);
           Particle_AdvanceWithGravity2D(crystal, PARTICLE_DAMPING_NONE,
-                                        Q16_ONE);
+                                        FIXED_ONE);
           if (crystal->y > PRISM_GROUND_Y) {
             // Shatter it on reaching the ground (y 56).
             crystal->z = 1;
             crystal->y = PRISM_GROUND_Y;
             for (j = 0; j != 16; j++) {
               shard = &shards[i * 16 + j];
-              shard->x = px(gPrism_ShardStarts[j][PRISM_SHARD_START_X] - 40) +
-                         crystal->x;
-              shard->y = px(gPrism_ShardStarts[j][PRISM_SHARD_START_Y]);
+              shard->x =
+                  INTtoFIXED(gPrism_ShardStarts[j][PRISM_SHARD_START_X] - 40) +
+                  crystal->x;
+              shard->y = INTtoFIXED(gPrism_ShardStarts[j][PRISM_SHARD_START_Y]);
               shard->velocityX = ((Random16() & 127) - 64) << 11;
               shard->velocityY = -(Random16() & 127) << 11;
               if (i & 1) {

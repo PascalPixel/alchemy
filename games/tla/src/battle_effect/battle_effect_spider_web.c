@@ -25,7 +25,7 @@ void *EffectSprite_Acquire(s32 width, s32 height, u32 shape, s32 mode) {
   sprite->entries[0] = AnimationObject_AllocateEmpty();
   sprite->width = width;
   sprite->height = height;
-  sprite->scale = Q16_ONE;
+  sprite->scale = FIXED_ONE;
   sprite->retainCacheEntry = 0;
   sprite->offsetY = 0;
   sprite->offsetX = 0;
@@ -66,9 +66,9 @@ void BattleEffect_DrawShadedCircles(u8 *map, s32 size, s32 scale) {
     s32 shade;
     s32 col;
 
-    shade = Q_16_16_TO_INT(Trig_Cos((radius << 14) / last) *
-                           CANVAS_LEVEL_BRIGHTEST);
-    shade = shade * scale / (Q16_ONE);
+    shade =
+        FIXEDtoINT(Trig_Cos((radius << 14) / last) * CANVAS_LEVEL_BRIGHTEST);
+    shade = shade * scale / (FIXED_ONE);
 
     if (shade > CANVAS_LEVEL_BRIGHTEST)
       shade = CANVAS_LEVEL_BRIGHTEST;
@@ -101,9 +101,9 @@ void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale) {
     s32 col;
     s32 row;
 
-    shade = Q_16_16_TO_INT(Trig_Cos((radius << 14) / last) *
-                           CANVAS_LEVEL_BRIGHTEST);
-    shade = shade * scale / (Q16_ONE);
+    shade =
+        FIXEDtoINT(Trig_Cos((radius << 14) / last) * CANVAS_LEVEL_BRIGHTEST);
+    shade = shade * scale / (FIXED_ONE);
     if (shade > CANVAS_LEVEL_BRIGHTEST)
       shade = CANVAS_LEVEL_BRIGHTEST;
     while (x >= y) {
@@ -168,11 +168,11 @@ void Ulysses_MoveLastParticle(void) {
   ULYSSES_LAST_PARTICLE.x += ULYSSES_LAST_PARTICLE.velocityX;
   ULYSSES_LAST_PARTICLE.y += ULYSSES_LAST_PARTICLE.velocityY;
   if (work->frame <= 19)
-    ULYSSES_LAST_PARTICLE.velocityY += px(1) / 16;
+    ULYSSES_LAST_PARTICLE.velocityY += toFIXED(1) / 16;
   else
-    ULYSSES_LAST_PARTICLE.velocityY -= px(1) / 16;
+    ULYSSES_LAST_PARTICLE.velocityY -= toFIXED(1) / 16;
   if (work->frame > 11)
-    ULYSSES_LAST_PARTICLE.velocityX += px(1) / 16;
+    ULYSSES_LAST_PARTICLE.velocityX += toFIXED(1) / 16;
   Sprite_StartAnimationFar(work->sprites[7], work->frame / 7 % 8 + 7);
   work->frame++;
 }
@@ -313,8 +313,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sprites, 0, 0);
   loaded = 0;
-  ship.x = px(200);
-  ship.z = px(84);
+  ship.x = toFIXED(200);
+  ship.z = toFIXED(84);
   transition[4] = 1;
   Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
@@ -361,7 +361,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
     }
     if (frame <= 75) {
       s32 k = (frame / 4) % 18;
-      s32 x = 60 - (Q_16_16_TO_INT(Trig_Sin(frame * 860) << 3));
+      s32 x = 60 - (FIXEDtoINT(Trig_Sin(frame * 860) << 3));
       s32 y = frame - 8;
       u8 *source = work->sheet + ULYSSES_PICTURES + gUlysses_Pictures[k];
       u8 w = gUlysses_PictureWidths[k];
@@ -400,7 +400,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       s32 level = -1;
 
       if (z <= 0x107ff) {
-        z = px(33) / 32;
+        z = toFIXED(33) / 32;
       }
       q16 = 0x1000000 / z;
       // DEAD: each scale is read before it is stored and the value dropped;
@@ -491,12 +491,12 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       q = (struct Particle *)(work->sheet + 0x4b98);
       for (i = 0; i != 6; i++, src += 5) {
         p = &work->particles[i];
-        p->x = px(src[0]);
+        p->x = INTtoFIXED(src[0]);
         p->variant = -8 * i;
         /* FAKEMATCH(barrier): an empty asm parts the particle's first stores
          * from the rest. */
         __asm__("");
-        p->y = px(src[1]);
+        p->y = INTtoFIXED(src[1]);
         p->z = src[2] << 6;
         p->velocityX = src[3] << 15;
         p->velocityY = src[4] << 15;
@@ -560,19 +560,19 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           u8 *source = work->sheet + gBattleEffect_PuffArcPictures[k];
           u8 w = gBattleEffect_PuffArcPictureWidths[k];
 
-          blits[0](canvas, source, Q_16_16_TO_INT(step->x) - (w >> 1),
-                   Q_16_16_TO_INT(step->y) +
-                       gBattleEffect_PuffArcPictureBiasY[k] - 36,
+          blits[0](canvas, source, FIXEDtoINT(step->x) - (w >> 1),
+                   FIXEDtoINT(step->y) + gBattleEffect_PuffArcPictureBiasY[k] -
+                       36,
                    w, gBattleEffect_PuffArcPictureHeights[k]);
           t = step->variant;
         }
         if ((u32)(t - 12) <= 31) {
           s32 k = ((t - 12) / 4) % 18;
           u8 *source = work->sheet + ULYSSES_PICTURES + gUlysses_Pictures[k];
-          s32 x = Q_16_16_TO_INT(step->x);
+          s32 x = FIXEDtoINT(step->x);
           u8 w = gUlysses_PictureWidths[k];
           s32 left = x - (w >> 1);
-          s32 y = Q_16_16_TO_INT(step->y);
+          s32 y = FIXEDtoINT(step->y);
           u8 h = gUlysses_PictureHeights[k];
 
           blit[1](canvas, source, left, y - (h >> 1), w, h);
@@ -582,8 +582,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           s32 s = (Trig_Sin((t - 44) << 10) * 48) / 64;
           s32 vx;
           s32 x = step->x;
-          s32 mx = x - px(64);
-          s32 my = step->y - px(64);
+          s32 mx = x - toFIXED(64);
+          s32 my = step->y - toFIXED(64);
           s32 u = t - 59;
 
           if (u < 0) {
@@ -597,23 +597,23 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
             step->velocityX = vx + 0x8000;
           }
           if (step->y <= 0x3bffff) {
-            step->velocityY += px(1) / 2;
+            step->velocityY += toFIXED(1) / 2;
           } else {
-            step->velocityY -= px(1) / 2;
+            step->velocityY -= toFIXED(1) / 2;
           }
           if (step->z >= 0) {
-            step->z += Q_16_16_TO_INT(Trig_Sin(step->velocityZ) * 3 << 8);
+            step->z += FIXEDtoINT(Trig_Sin(step->velocityZ) * 3 << 8);
           } else {
-            step->z -= Q_16_16_TO_INT(Trig_Sin(step->velocityZ) * 3 << 8);
+            step->z -= FIXEDtoINT(Trig_Sin(step->velocityZ) * 3 << 8);
           }
           step->velocityZ += 1024;
           if (draw) {
             texture.pixels = (u8 *)((u << 12) + (s32)portraits);
-            Transform_Reset();
-            Transform_ApplyTranslation(mx, my, 0);
-            Transform_ApplyPitch(TRIG_TURN * 3 / 4);
-            Transform_ApplyYaw(step->z);
-            Transform_ApplyUniformScale(s);
+            Matrix_Initialize();
+            Matrix_Translate(mx, my, 0);
+            Matrix_RotateX(TRIG_TURN * 3 / 4);
+            Matrix_RotateY(step->z);
+            Matrix_ScaleUniform(s);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
                                      4);
             Render_DrawModelList(model);
@@ -621,8 +621,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           t = step->variant;
         }
         if (t == 64) {
-          anchor->x = Q_16_16_TO_INT(step->x);
-          anchor->y = Q_16_16_TO_INT(step->y);
+          anchor->x = FIXEDtoINT(step->x);
+          anchor->y = FIXEDtoINT(step->y);
           j = 0;
           {
             s32 first = i * 16;
@@ -642,7 +642,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           for (j = 0; j != args->targetCount; j++) {
             s32 m = (Random16() << 2) + 0x10000;
 
-            BattleEffect_StartActorMotion(args->targets[j], 1, px(2), px(8), m,
+            BattleEffect_StartActorMotion(args->targets[j], 1, toFIXED(2),
+                                          toFIXED(8), m,
                                           delay + (Random16() & 31) + 52);
             BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,
                                      TINT_KEEP, j, 4);
@@ -665,10 +666,9 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
 
           if (draw) {
             blit[1](canvas, sprites + gBattleEffect_FlarePictures[n - 1],
-                    Q_16_16_TO_INT(q->x) - n, Q_16_16_TO_INT(q->y) - n, n * 2,
-                    n * 2);
+                    FIXEDtoINT(q->x) - n, FIXEDtoINT(q->y) - n, n * 2, n * 2);
           }
-          BattleEffectKernels_IntegrateVector2(q, 60, px(1) / 8);
+          BattleEffectKernels_IntegrateVector2(q, 60, toFIXED(1) / 8);
           q->variant--;
         }
       }
@@ -704,9 +704,9 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           // register of its own.
           s32 sc;
 
-          Transform_Reset();
-          Transform_ApplyTranslation(px(8), 0, 0);
-          Transform_ApplyPitch(TRIG_TURN / 4);
+          Matrix_Initialize();
+          Matrix_Translate(toFIXED(8), 0, 0);
+          Matrix_RotateX(DEGtoANG(90));
           if (j == 0) {
             sc = t * 3072 - 0x12000;
             if (t <= 39) {
@@ -715,17 +715,17 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
                 sc = 0xc000;
               }
             }
-            Transform_ApplyUniformScale(sc);
-            Transform_ApplyYaw(-t * 512);
+            Matrix_ScaleUniform(sc);
+            Matrix_RotateY(-t * 512);
           } else {
             if (t > 23) {
               sc = 0x1c000 - (t << 11);
-              Transform_ApplyUniformScale(sc);
+              Matrix_ScaleUniform(sc);
             } else {
-              Transform_ApplyPitch(0x3ff0 - t * 682);
-              Transform_ApplyRoll(t * 169 + 0xf028);
+              Matrix_RotateX(0x3ff0 - t * 682);
+              Matrix_RotateZ(t * 169 + 0xf028);
             }
-            Transform_ApplyYaw(t << 9);
+            Matrix_RotateY(t << 9);
           }
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
@@ -740,14 +740,14 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       if (frame > 131) {
         s32 u = frame - 132;
 
-        ship.x = (Trig_Sin(u << 11) << 1) + px(200);
-        ship.z = (Trig_Sin(u << 10) << 1) + px(84);
+        ship.x = (Trig_Sin(u << 11) << 1) + toFIXED(200);
+        ship.z = (Trig_Sin(u << 10) << 1) + toFIXED(84);
       }
       if (draw) {
         place[1] = place[3] = 0;
         for (i = 0; i != 7; i++) {
-          place[0] = px(gUlysses_ObjectX[i]) + ship.x - px(32);
-          place[2] = px(gUlysses_ObjectZ[i]) + ship.z - px(32);
+          place[0] = INTtoFIXED(gUlysses_ObjectX[i]) + ship.x - toFIXED(32);
+          place[2] = INTtoFIXED(gUlysses_ObjectZ[i]) + ship.z - toFIXED(32);
           Render_ApplyProjectedPlacementFar(work->sprites[i], place,
                                             (s32 *)&req, 0);
         }
@@ -781,8 +781,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
     }
     if (frame == 288) {
       Task_Add(Ulysses_MoveLastParticle, TASK_PASS_VBLANK);
-      ULYSSES_LAST_PARTICLE.x = px(188);
-      ULYSSES_LAST_PARTICLE.y = px(96);
+      ULYSSES_LAST_PARTICLE.x = toFIXED(188);
+      ULYSSES_LAST_PARTICLE.y = toFIXED(96);
       ULYSSES_LAST_PARTICLE.velocityX = 0;
       ULYSSES_LAST_PARTICLE.velocityY = 0;
       work->frame = 0;
@@ -975,7 +975,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
     // Mode 1 throws the target up at frame 13; it lands at frame 65.
     if (mode == 1) {
       if (frame == 13) {
-        object->velocityY = px(12);
+        object->velocityY = toFIXED(12);
         object->verticalMotionStrength = 0x7851;
         object->verticalMotionPhase = 0x4000;
       }

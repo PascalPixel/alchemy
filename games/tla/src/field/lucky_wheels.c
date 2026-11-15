@@ -179,8 +179,8 @@ s32 LuckyWheels_Start(void) {
   return 0;
 }
 
-/// Writes count RGB555 colours from src to dst scaled by scale (16.16, Q16_ONE
-/// keeps them). Returns 0.
+/// Writes count RGB555 colours from src to dst scaled by scale (16.16,
+/// FIXED_ONE keeps them). Returns 0.
 s32 LuckyWheels_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count) {
   s32 remaining;
   u32 color;
@@ -962,13 +962,13 @@ void LuckyWheels_Update(void) {
 #if TLA_PATCH_1
       // The Japanese release draws the letters without moving them.
       p->y += p->velocityY;
-      p->velocityY += px(1) / 4;
+      p->velocityY += toFIXED(1) / 4;
       if (work->timer % 256 == i * 4 + 200) {
-        p->velocityY = px(6);
+        p->velocityY = toFIXED(6);
         p->variant = 0;
       }
-      if (p->y > px(64)) {
-        p->y = px(64);
+      if (p->y > toFIXED(64)) {
+        p->y = toFIXED(64);
         if (p->variant <= 1)
           p->velocityY = -p->velocityY / 2;
         p->variant++;
@@ -1057,7 +1057,7 @@ void LuckyWheels_Update(void) {
   if (work->state == LUCKY_WHEELS_SPINNING) {
     if (work->timer < LUCKY_WHEELS_LEVER_PULL_FRAMES)
       lever = ((Trig_Sin(work->timer *
-                         (TRIG_TURN / 2 / LUCKY_WHEELS_LEVER_PULL_FRAMES))
+                         (DEGtoANG(180) / LUCKY_WHEELS_LEVER_PULL_FRAMES))
                 << 6) >>
                16) +
               LUCKY_WHEELS_LEVER_Y;
@@ -1120,13 +1120,13 @@ void LuckyWheels_FinishFrame(void) {
       struct Particle *p = &fx->particles[i];
 
       p->y += p->velocityY;
-      p->velocityY += px(1) / 4;
+      p->velocityY += toFIXED(1) / 4;
       if (work->timer % 256 == i * 4 + 200) {
-        p->velocityY = px(6);
+        p->velocityY = toFIXED(6);
         p->variant = 0;
       }
-      if (p->y > px(64)) {
-        p->y = px(64);
+      if (p->y > toFIXED(64)) {
+        p->y = toFIXED(64);
         if (p->variant <= 1)
           p->velocityY = -p->velocityY / 2;
         p->variant++;
@@ -1175,9 +1175,9 @@ void LuckyWheels_InitializeTitle(void) {
 
   letter = work->particles;
   for (i = 0; i != LUCKY_WHEELS_TITLE_LETTERS; i++) {
-    letter[i].x = px(left + LUCKY_WHEELS_TITLE_X);
+    letter[i].x = INTtoFIXED(left + LUCKY_WHEELS_TITLE_X);
     left += gLuckyWheels_TitleLetterWidths[i];
-    letter[i].y = px(-32 - i * 8);
+    letter[i].y = INTtoFIXED(-32 - i * 8);
     letter[i].velocityY = 0;
     letter[i].variant = 0;
   }
@@ -1434,10 +1434,10 @@ void LuckyWheels_Run(void) {
     for (frame = 0; state->state != LUCKY_WHEELS_DONE; frame++) {
       if (frame <= LUCKY_WHEELS_FADE_FRAMES) {
         LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT,
-                                frame * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES),
+                                frame * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
                                 BG_PLTT_COLORS);
         LuckyWheels_ScaleRgb555(bgShade, (u16 *)BG_PLTT,
-                                frame * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES),
+                                frame * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
                                 BG_PLTT_COLORS);
       }
       if (state->state == LUCKY_WHEELS_SHOWING_WIN) {
@@ -1468,8 +1468,8 @@ void LuckyWheels_Run(void) {
             speed = 255;
             speed &= Random16();
             angle = Random16() & 0xffff;
-            spark->x = px(x);
-            spark->y = px(y);
+            spark->x = INTtoFIXED(x);
+            spark->y = INTtoFIXED(y);
             spark->velocityX = Trig_Sin(angle) * (speed + 64) >> 6;
             spark->velocityY = -(Trig_Cos(angle) * (speed + 64)) >> 6;
             spark->variant = (Random16() & 15) + 16;
@@ -1489,8 +1489,8 @@ void LuckyWheels_Run(void) {
 
               if (y <= 0x7fffff) {
                 if (y >= 0) {
-                  s32 px = FIELD_PIXEL(x);
-                  s32 py = FIELD_PIXEL(y);
+                  s32 px = FIXEDtoINT(x);
+                  s32 py = FIXEDtoINT(y);
                   s32 size = spark->variant / 12 + 1;
 
                   draw[j & 1](canvas,
@@ -1552,12 +1552,14 @@ void LuckyWheels_Run(void) {
     }
 
     for (j = 0; j != LUCKY_WHEELS_FADE_FRAMES + 1; j++) {
-      LuckyWheels_ScaleRgb555(
-          shade, (u16 *)OBJ_PLTT,
-          Q16_ONE - j * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES), BG_PLTT_COLORS);
-      LuckyWheels_ScaleRgb555(
-          bgShade, (u16 *)BG_PLTT,
-          Q16_ONE - j * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES), BG_PLTT_COLORS);
+      LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT,
+                              FIXED_ONE -
+                                  j * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
+                              BG_PLTT_COLORS);
+      LuckyWheels_ScaleRgb555(bgShade, (u16 *)BG_PLTT,
+                              FIXED_ONE -
+                                  j * (FIXED_ONE / LUCKY_WHEELS_FADE_FRAMES),
+                              BG_PLTT_COLORS);
       wait(1);
     }
     HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);

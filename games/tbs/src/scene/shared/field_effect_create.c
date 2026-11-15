@@ -11,7 +11,7 @@ UNUSED static void SetEffectRecordMode(struct Actor *work, s32 mode) {
 
 /// A still, translucent effect in palette 14, at sprite priority 0, at a 16.16
 /// position.
-UNUSED static void *Actor_PrepareFixed(s32 x, s32 y, s32 z, s32 type) {
+UNUSED static void *Actor_PrepareFX(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *actor = FieldActor_Create(type, x, y, z);
 
   if (actor != NULL) {
@@ -26,14 +26,14 @@ UNUSED static void *Actor_PrepareFixed(s32 x, s32 y, s32 z, s32 type) {
   return 0;
 }
 
-/// Actor_PrepareFixed at a point in whole pixels:
+/// Actor_PrepareFX at a point in whole pixels:
 /// `Actor_Prepare(464, 0, 290, PIT_MASK)`.
 #define Actor_Prepare(x, y, z, type)                                           \
-  Actor_PrepareFixed(Q16(x), Q16(y), Q16(z), type)
+  Actor_PrepareFX(toFIXED(x), toFIXED(y), toFIXED(z), type)
 
 /// A still effect in palette 15, at sprite priority 1, drawn under the
 /// actors, at a 16.16 position.
-UNUSED static void *Actor_CreateConfiguredFixed(s32 x, s32 y, s32 z, s32 type) {
+UNUSED static void *Actor_CreateConfiguredFX(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *actor = FieldActor_Create(type, x, y, z);
 
   if (actor != NULL) {
@@ -49,7 +49,7 @@ UNUSED static void *Actor_CreateConfiguredFixed(s32 x, s32 y, s32 z, s32 type) {
   return 0;
 }
 
-/// Actor_CreateConfiguredFixed at a point in whole pixels:
+/// Actor_CreateConfiguredFX at a point in whole pixels:
 /// `Actor_CreateConfigured(128, 0, 420, SPRITE_CRATE)`.
 #define Actor_CreateConfigured(x, y, z, type)                                  \
-  Actor_CreateConfiguredFixed(Q16(x), Q16(y), Q16(z), type)
+  Actor_CreateConfiguredFX(toFIXED(x), toFIXED(y), toFIXED(z), type)

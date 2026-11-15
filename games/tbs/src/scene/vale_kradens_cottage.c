@@ -251,8 +251,8 @@ static void ValeKradensCottage_KradenPlansSanctumVisit(void) {
     Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     // Garet and Jenna step out of Isaac and stand either side of him.
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    x = leader->x.part[0].pixel;
-    z = leader->z.part[0].pixel;
+    x = leader->x.part[0].integer;
+    z = leader->z.part[0].integer;
     Actor_SetPosition(ACTOR_JENNA, x, z);
     Actor_SetPosition(ACTOR_GARET, x, z);
     Actor_SetSpeed(ACTOR_JENNA, 0.5);
@@ -606,8 +606,8 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
 
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  x = actor->x.part[0].pixel;
-  z = actor->z.part[0].pixel;
+  x = actor->x.part[0].integer;
+  z = actor->z.part[0].integer;
   Actor_SetPosition(ACTOR_JENNA, x, z);
   Actor_SetPosition(ACTOR_GARET, x, z);
 
@@ -824,8 +824,8 @@ static void ValeKradensCottage_OverhearKraden(void) {
     Event_ShowMessage(ACTOR_KRADEN, 0);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     {
-      s32 x = leader->x.part[0].pixel;
-      s32 z = leader->z.part[0].pixel;
+      s32 x = leader->x.part[0].integer;
+      s32 z = leader->z.part[0].integer;
 
       Actor_SetPosition(ACTOR_JENNA, x, z);
       Actor_SetPosition(ACTOR_GARET, x, z);
@@ -991,7 +991,7 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       if (leader != NULL) {
-        Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+        Actor_SetPositionFX(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
       }
       Actor_WalkToAndWait(ACTOR_GARET, 110, 279);
       Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 40);
@@ -1117,20 +1117,20 @@ s32 gValeKradensCottage_RockslideSurvivorEscapeActions[] = {
 /// The survivor squashes flat and recovers every 68 frames as he lies by the
 /// fence.
 s32 gValeKradensCottage_RockslideSurvivorSquashes[] = {
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 32),
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 64),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 32),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 64),
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 128),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 64),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 128),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 64),
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 128),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 64),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 128),
     SC_WAIT(2),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
     SC_WAIT(60),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

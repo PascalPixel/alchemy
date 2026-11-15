@@ -84,7 +84,7 @@ void FieldPsynergy_Avoid(void) {
   // distance is 2,400 pixels in 16.16.
   effectWork->arcTileSlot = slot;
   VramCache_Load((s16)slot, 256, gFieldEffect_ArcSparkTiles);
-  gMainRoutineWork.avoidDistance = px(2400);
+  gMainRoutineWork.avoidDistance = toFIXED(2400);
   gMainRoutineWork.avoidByItem = GameFlag_GetFar(FLAG_ITEM_USE);
   Actor_SetSpriteColorModeFar(actor, 0);
   actor->update = FieldEffect_UpdateAvoidCaster;

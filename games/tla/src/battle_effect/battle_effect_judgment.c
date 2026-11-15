@@ -121,8 +121,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   gBgScroll[1].x = 0;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
-  depth = -px(64);
-  zoom = Q16_ONE * 8;
+  depth = -toFIXED(64);
+  zoom = FIXED_ONE * 8;
   Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
@@ -158,8 +158,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                              Ram_MapCellBuffer + i * OBJ_32X32_8BPP_BYTES,
                              OBJ_32X32_8BPP_BYTES);
       }
-      depth = -px(64);
-      zoom = Q16_ONE * 8;
+      depth = -toFIXED(64);
+      zoom = FIXED_ONE * 8;
     }
     if (frame == 143) {
       IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(42));
@@ -182,10 +182,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         s32 size;
 
         if (frame > i / 4 + 80 && p->x > 0) {
-          Transform_Reset();
-          Transform_ApplyRoll(p->velocityY);
-          Transform_ApplyPitch(p->velocityX);
-          Transform_ApplyYaw(p->velocityY + (frame << 9));
+          Matrix_Initialize();
+          Matrix_RotateZ(p->velocityY);
+          Matrix_RotateX(p->velocityX);
+          Matrix_RotateY(p->velocityY + (frame << 9));
           anchor[0] = p->x;
           p->x -= 2;
           if (p->x < 0) {
@@ -215,8 +215,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       if (frame > 75 && (i == 8 || i == 12 || i == 15)) {
         continue;
       }
-      place[0] = px((i % 4) * 32) + px(76);
-      place[2] = px((i / 4) * 32) + depth;
+      place[0] = INTtoFIXED((i % 4) * 32) + toFIXED(76);
+      place[2] = INTtoFIXED((i / 4) * 32) + depth;
       Render_ApplyProjectedPlacementFar(work->sprites[i], place, (s32 *)&req,
                                         0);
     }
@@ -228,10 +228,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       zoom = zoom * 60 / DAMPING_SCALE;
     }
     if (frame == JUDGMENT_BEAM_FRAME) {
-      zoom = -Q16_ONE * 8;
+      zoom = -FIXED_ONE * 8;
     }
     if (frame == 146) {
-      zoom = Q16_ONE;
+      zoom = FIXED_ONE;
     }
 
     if (frame == 72) {
@@ -267,7 +267,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       if (n > 80) {
         n = 80;
       } else {
-        BattleEffect_DrawShadedCircles(work->sheet + 0x1256, n, Q16_ONE);
+        BattleEffect_DrawShadedCircles(work->sheet + 0x1256, n, FIXED_ONE);
       }
       Canvas_BlitAtFoot(work->sheet + 0x1256, 60, 80, n);
     }
@@ -280,10 +280,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       for (i = 0; i != 6; i++) {
         s32 k = i & 3;
         s32 a = Random16() & TRIG_ANGLE_MASK;
-        s32 x = (Q_16_16_TO_INT(size * Trig_Sin(a))) -
-                (gJudgment_ShardWidths[k] >> 1);
-        s32 y = (Q_16_16_TO_INT(size * Trig_Cos(a))) -
-                (gJudgment_ShardHeights[k] / 2);
+        s32 x =
+            (FIXEDtoINT(size * Trig_Sin(a))) - (gJudgment_ShardWidths[k] >> 1);
+        s32 y =
+            (FIXEDtoINT(size * Trig_Cos(a))) - (gJudgment_ShardHeights[k] / 2);
 
         draw[0](canvas, work->sheet + gJudgment_ShardPictures[k], x + 60,
                 y + 80, gJudgment_ShardWidths[k], gJudgment_ShardHeights[k]);
@@ -368,10 +368,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         shade = (frame * -8) + 1216;
       }
       model->shade = shade;
-      Transform_Reset();
-      Transform_ApplyTranslation(-px(4), px(24), 0);
-      Transform_ApplyUniformScale(s);
-      Transform_ApplyPitch(3000);
+      Matrix_Initialize();
+      Matrix_Translate(-toFIXED(4), toFIXED(24), 0);
+      Matrix_ScaleUniform(s);
+      Matrix_RotateX(3000);
       Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
       Render_DrawModelList(model);
       Heap_Release(model);
@@ -527,10 +527,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         struct Particle *p = work->particles;
 
         for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++, p++) {
-          p->x = px((Random16() & 63) + 32);
-          p->y = px((Random16() & 31) + 96);
+          p->x = INTtoFIXED((Random16() & 63) + 32);
+          p->y = INTtoFIXED((Random16() & 31) + 96);
           p->velocityY = ((Random16() & 15) + 16) << 15;
-          p->z = px(1) / 2 - (p->x >> 7);
+          p->z = toFIXED(1) / 2 - (p->x >> 7);
           p->variant = 1;
         }
       }
@@ -545,8 +545,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         struct Particle *p = work->particles;
 
         for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++, p++) {
-          p->x = px((Random16() & 63) + 256);
-          p->y = px((Random16() & 31) + 96);
+          p->x = INTtoFIXED((Random16() & 63) + 256);
+          p->y = INTtoFIXED((Random16() & 31) + 96);
           p->velocityY = ((Random16() & 15) + 16) << 15;
           p->z = 0;
         }
@@ -663,10 +663,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         shade = (frame * -8) + 640;
       }
       model->shade = shade;
-      Transform_Reset();
-      Transform_ApplyTranslation(-px(4), px(8), 0);
-      Transform_ApplyUniformScale(s);
-      Transform_ApplyPitch(5000);
+      Matrix_Initialize();
+      Matrix_Translate(-toFIXED(4), toFIXED(8), 0);
+      Matrix_ScaleUniform(s);
+      Matrix_RotateX(5000);
       Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
       Render_DrawModelList(model);
       Heap_Release(model);
@@ -784,11 +784,11 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
 
     if ((u32)(frame - 86) <= 63) {
-      s32 angle = -TRIG_TURN / 4;
+      s32 angle = -DEGtoANG(90);
 
       for (i = 0; i != 9; i++, angle += TRIG_TURN / 16) {
-        s32 x = Q_16_16_TO_INT((frame - 86) * Trig_Sin(angle));
-        s32 y = Q_16_16_TO_INT((frame - 70) * Trig_Cos(angle));
+        s32 x = FIXEDtoINT((frame - 86) * Trig_Sin(angle));
+        s32 y = FIXEDtoINT((frame - 70) * Trig_Cos(angle));
 
         draw[0](canvas,
                 work->sheet +
@@ -835,21 +835,21 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           scale[1] = scale[0];
           drift[0] = p->x;
           drift[1] = 0xff0000;
-          drift[2] = p->y + px(255);
+          drift[2] = p->y + toFIXED(255);
           Render_ApplyProjectedPlacementFar(work->sprites[i], drift, scale, 0);
           p->y -= p->velocityY;
           if (p->y <= 0xfffff) {
             if (frame <= 279) {
-              p->x = px((Random16() & 63) + shift + 32);
+              p->x = INTtoFIXED((Random16() & 63) + shift + 32);
             } else {
-              p->x = px((Random16() & 63) + shift - 32);
+              p->x = INTtoFIXED((Random16() & 63) + shift - 32);
             }
             if (frame > 301) {
               p->variant = 0;
             } else if (frame > 245) {
-              p->y = px(96);
+              p->y = toFIXED(96);
             } else {
-              p->y = px(192) - p->x;
+              p->y = toFIXED(192) - p->x;
             }
           }
         }

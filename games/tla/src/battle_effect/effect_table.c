@@ -1346,7 +1346,7 @@ const u8 gAzul_PartPoints[][2] = {
     {169, 106}, {185, 93},  {175, 119}, {137, 104}, {137, 104}};
 
 /// The serpent's sprites' scale, one to one.
-const struct Scale gAzul_UnitScale = {Q16_ONE, Q16_ONE};
+const struct Scale gAzul_UnitScale = {FIXED_ONE, FIXED_ONE};
 
 /// Each sprite's x, in pixels.
 const u8 gAzul_ObjectX[] = {35, 45, 14, 1, 1, 40, 9, 40, 9, 25, 39, 8};
@@ -1355,7 +1355,7 @@ const u8 gAzul_ObjectX[] = {35, 45, 14, 1, 1, 40, 9, 40, 9, 25, 39, 8};
 const u8 gAzul_ObjectZ[] = {0, 32, 32, 64, 96, 51, 51, 83, 83, 106, 129, 129};
 
 /// The late sprites' scale, one to one.
-const struct Scale gAzul_LateUnitScale = {Q16_ONE, Q16_ONE};
+const struct Scale gAzul_LateUnitScale = {FIXED_ONE, FIXED_ONE};
 
 /// Each late sprite's x, in pixels.
 const s8 gAzul_LateObjectX[] = {0, 32, 32, 64, 96, 50, 51, 82};

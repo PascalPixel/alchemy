@@ -32,8 +32,9 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(args->side ^ 1, draw);
   for (i = 0; i != 256; i++) {
     star = &STARS[i];
-    SET_POSITION(star, px((Random16() & 0xff) - 127),
-                 px((Random16() & 0xff) - 127), px((Random16() & 0xff) - 127));
+    SET_POSITION(star, INTtoFIXED((Random16() & 0xff) - 127),
+                 INTtoFIXED((Random16() & 0xff) - 127),
+                 INTtoFIXED((Random16() & 0xff) - 127));
     star->velocityX = 0;
     star->velocityY = 0;
     star->velocityZ = 0;
@@ -41,40 +42,40 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   record[0] = 0;
-  record[1] = px(80);
+  record[1] = toFIXED(80);
   record[2] = 0;
   for (frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
     struct BattleCamera *camera;
 
     // The stars turn about a point 80 pixels in front of the camera.
     camera = Ram_HeapSlots->cameraWork;
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
-    Transform_ApplyPosition(record);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
+    Matrix_TranslateVector(record);
     star = STARS;
     for (i = 0; i != SWIRLING_STARS_COUNT; i++, star++) {
       if (frame > i / 4 && star->variant == 0) {
         s32 size;
 
-        Transform_Push();
+        Matrix_Push();
         switch (i & 3) {
         case 0:
-          Transform_ApplyYaw(frame * (i + 32) * 8);
+          Matrix_RotateY(frame * (i + 32) * 8);
           break;
         case 1:
-          Transform_ApplyPitch(-frame * (i + 32) * 8);
+          Matrix_RotateX(-frame * (i + 32) * 8);
           break;
         case 2:
-          Transform_ApplyRoll(-frame * (i + 32) * 8);
+          Matrix_RotateZ(-frame * (i + 32) * 8);
           break;
         case 3:
-          Transform_ApplyPitch(-frame * (i + 32) * 8);
-          Transform_ApplyRoll(-frame * (i + 32) * 8);
+          Matrix_RotateX(-frame * (i + 32) * 8);
+          Matrix_RotateZ(-frame * (i + 32) * 8);
           break;
         }
         EffectPosition_ProjectPoint((s32 *)star, &pos);
         pos.x >>= 1;
-        Transform_Pop();
+        Matrix_Pop();
 
         // Depth 250-634 gives sizes 9 down to 3.
         if (pos.depth < 250)
@@ -168,12 +169,12 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 
       // The puffs rise from 40 pixels above the target.
       memberObject = BattleObject_GetFar(args->targets[member])->object;
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
       record[0] = memberObject->x;
-      record[1] = px(20);
+      record[1] = toFIXED(20);
       record[2] = memberObject->z;
-      Transform_ApplyPosition(record);
+      Matrix_TranslateVector(record);
       if (frame >= member * 8 && frame < member * 8 + 40) {
         struct Particle *p;
 
@@ -188,7 +189,7 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
           EffectPosition_ProjectPoint((s32 *)p, &screen);
           screen.x >>= 1;
           if (i == 5) {
-            BattleEffectKernels_IntegrateVector3(p, 62, px(1) / 32);
+            BattleEffectKernels_IntegrateVector3(p, 62, toFIXED(1) / 32);
             rectangleA(canvas, work->sheet + cel * 0x480 + BURST_IMAGE,
                        screen.x - 12, screen.y - 36, SMOKE_PUFF_WIDTH,
                        SMOKE_PUFF_HEIGHT);

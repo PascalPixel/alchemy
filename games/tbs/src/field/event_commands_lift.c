@@ -32,13 +32,13 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
 
   x = effectWork->x;
   pos[0] = x;
-  y = effectWork->y + px(16); // 16 pixels up
+  y = effectWork->y + toFIXED(16); // 16 pixels up
   pos[1] = y;
   z = effectWork->z;
   pos[2] = z;
-  pair[0] = FieldEffect_SpawnLiftHand(x + px(32), y, z, FACING_WEST);
-  pair[1] =
-      FieldEffect_SpawnLiftHand(pos[0] - px(32), pos[1], pos[2], FACING_EAST);
+  pair[0] = FieldEffect_SpawnLiftHand(x + toFIXED(32), y, z, FACING_WEST);
+  pair[1] = FieldEffect_SpawnLiftHand(pos[0] - toFIXED(32), pos[1], pos[2],
+                                      FACING_EAST);
 
   // Each hand faces the target (FACING_WEST on the right, FACING_EAST on the
   // left) and moves 14 pixels that way.
@@ -46,7 +46,8 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
   for (handIndex = 0; handIndex < 2; handIndex++) {
     struct Actor *hand = pair[handIndex];
     if (hand != NULL)
-      Actor_SetTargetPositionFromMagnitudeAngle(hand, px(14), hand->facing);
+      Actor_SetTargetPositionFromMagnitudeAngle(hand, toFIXED(14),
+                                                hand->facing);
   }
 
   Actor_WaitForMoveFar(pair[0]);
@@ -56,13 +57,13 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
 
   // Lift 32 pixels, a quarter pixel at a time.
   startY = target->y.fixed;
-  if (pair[0] != NULL && pair[1] != NULL && startY <= startY + px(32)) {
+  if (pair[0] != NULL && pair[1] != NULL && startY <= startY + toFIXED(32)) {
     do {
-      ((struct Actor *)pair[0])->y.fixed += px(1) / 4;
-      ((struct Actor *)pair[1])->y.fixed += px(1) / 4;
-      target->y.fixed += px(1) / 4;
+      ((struct Actor *)pair[0])->y.fixed += toFIXED(1) / 4;
+      ((struct Actor *)pair[1])->y.fixed += toFIXED(1) / 4;
+      target->y.fixed += toFIXED(1) / 4;
       wait(1);
-    } while (target->y.fixed <= startY + px(32));
+    } while (target->y.fixed <= startY + toFIXED(32));
   }
 
   // The hands burst into particles; the target stays up.
@@ -84,20 +85,21 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
   Sound_PlayFar(SE_ITEM_BREAK);
   fragment = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
   if (fragment != NULL) {
-    fragment->scaleX = fragment->scaleY = Q16_ONE / 4;
-    fragment->acceleration = fragment->speedLimit = px(3); // 3 pixels a frame
+    fragment->scaleX = fragment->scaleY = FIXED_ONE / 4;
+    fragment->acceleration = fragment->speedLimit =
+        toFIXED(3); // 3 pixels a frame
     ((struct Sprite *)fragment->sprite)->image.priority = 0;
     Actor_SelectAnimationFar(fragment, MOVE_HAND_ANIMATION_GRIP);
     scale = fragment->scaleX;
-    if (scale < Q16_ONE) {
+    if (scale < FIXED_ONE) {
       do {
-        scale += Q16_ONE / 32;
+        scale += FIXED_ONE / 32;
         fragment->scaleY = scale;
         fragment->scaleX = scale;
-        fragment->facing += TRIG_TURN / 8;
+        fragment->facing += DEGtoANG(45);
         wait(1);
         scale = fragment->scaleX;
-      } while (scale < Q16_ONE);
+      } while (scale < FIXED_ONE);
     }
     fragment->facing = angle;
   }
@@ -120,11 +122,11 @@ again:
     // 25 pixels from the origin, in a random direction.
     pos.x = effect->originX;
     pos.z = effect->originZ;
-    Vector_AddPolarOffset(px(25), (u16)Random16(), &pos);
+    Vector_AddPolarOffset(toFIXED(25), (u16)Random16(), &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
-    effect->acceleration = px(3);
-    effect->speedMax = px(3);
+    effect->acceleration = toFIXED(3);
+    effect->speedMax = toFIXED(3);
     effect->turnStepLimited = 0;
     effect->state++;
     return;
@@ -145,11 +147,11 @@ again:
     struct Actor *caster = effectWork->mainActor;
 
     pos.x = caster->x.fixed;
-    pos.y = caster->y.fixed + px(16);
+    pos.y = caster->y.fixed + toFIXED(16);
     pos.z = caster->z.fixed;
-    Vector_AddPolarOffset(px(8), effectWork->angle, &pos);
+    Vector_AddPolarOffset(toFIXED(8), effectWork->angle, &pos);
     Camera_WorldToScreen(&pos);
-    Vector_AddPolarOffset(px(4), Random16(), &pos);
+    Vector_AddPolarOffset(toFIXED(4), Random16(), &pos);
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
     effect->turnStepMax = TRIG_TURN / 32;
@@ -175,7 +177,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *source) {
   pos.x = source->x.fixed;
   pos.y = source->y.fixed;
   pos.z = source->z.fixed;
-  impact = Actor_Spawn(SPRITE_STAR_BURST, pos.x, pos.y - px(32), pos.z);
+  impact = Actor_Spawn(SPRITE_STAR_BURST, pos.x, pos.y - toFIXED(32), pos.z);
   if (impact != NULL) {
     impact->motionFlags = 0;
     impact->wait = 20;
@@ -187,11 +189,11 @@ s32 SpawnHeavyImpactEffect(struct Actor *source) {
     fragment = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (fragment != NULL) {
       Actor_StartScriptFar(fragment, gFieldEffect_FragmentScript);
-      fragment->speedLimit = Random16() + px(1);
-      fragment->acceleration = px(1);
+      fragment->speedLimit = Random16() + toFIXED(1);
+      fragment->acceleration = toFIXED(1);
       fragment->motionFlags = 0;
       Actor_SetTargetPositionFromMagnitudeAngle(
-          fragment, Random16() * 24 + px(8), Random16());
+          fragment, Random16() * 24 + toFIXED(8), Random16());
     }
   }
   return 0;

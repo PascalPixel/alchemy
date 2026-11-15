@@ -10,7 +10,7 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
   Event_Start();
   Sound_Play(SE_SPARKLING_PASSAGE);
   v->update = (void (*)(struct Actor *))MercuryLighthouse_TrailSparks;
-  v->speedLimit = px(1) / 5;
+  v->speedLimit = toFIXED(1) / 5;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER, 0, -6);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
@@ -38,6 +38,6 @@ static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
   Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER, 0, -8);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Event_Wait(8);
-  Actor_SetPositionFixed(ACTOR_PARTY_LEADER, ((column << 19) + px(8)), 0);
+  Actor_SetPositionFX(ACTOR_PARTY_LEADER, ((column << 19) + toFIXED(8)), 0);
   Event_Wait(30);
 }

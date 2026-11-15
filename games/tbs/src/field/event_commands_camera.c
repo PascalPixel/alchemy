@@ -71,11 +71,11 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
   // either side, 96 from the top and 64 from the bottom (it sits 96 pixels
   // down the 160-pixel screen), the z limits moved down the map by its
   // height, since it shows at z less its height.
-  minimumX = grid->minX + px(120);
+  minimumX = grid->minX + toFIXED(120);
   cameraY = camera->y.fixed;
-  minimumZ = grid->minY + cameraY + px(96);
-  maximumX = grid->maxX - px(120);
-  maximumZ = grid->maxY + cameraY - px(64);
+  minimumZ = grid->minY + cameraY + toFIXED(96);
+  maximumX = grid->maxX - toFIXED(120);
+  maximumZ = grid->maxY + cameraY - toFIXED(64);
   grid->origin = &camera->x.fixed;
   Actor_StartIdleFar(camera);
   if (positionX == CAMERA_KEEP) {

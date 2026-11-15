@@ -70,11 +70,11 @@ void FieldPsynergy_UpdatePound(void) {
   }
   switch (work->state) {
   case 0:
-    work->object->y.fixed -= px(7) / 2;
+    work->object->y.fixed -= toFIXED(7) / 2;
     if (work->timer == 8) {
-      canvas->scaleX = Q16_ONE / 8;
-      canvas->scaleY = Q16_ONE / 8;
-      MapGrid_SetScreenShakeFar(px(13) / 10, px(13) / 10, Q16_ONE);
+      canvas->scaleX = FIXED_ONE / 8;
+      canvas->scaleY = FIXED_ONE / 8;
+      MapGrid_SetScreenShakeFar(toFIXED(13) / 10, toFIXED(13) / 10, FIXED_ONE);
       Sound_PlayFar(SE_POUND);
       work->sparkles = 1;
       work->fading = 1;
@@ -85,11 +85,11 @@ void FieldPsynergy_UpdatePound(void) {
     }
     break;
   case 1:
-    canvas->scaleX += Q16_ONE / 16;
+    canvas->scaleX += FIXED_ONE / 16;
     canvas->scaleY = canvas->scaleX;
-    if (canvas->scaleX > px(4) / 5 - 1) {
-      canvas->scaleX = px(4) / 5;
-      canvas->scaleY = px(4) / 5;
+    if (canvas->scaleX > toFIXED(4) / 5 - 1) {
+      canvas->scaleX = toFIXED(4) / 5;
+      canvas->scaleY = toFIXED(4) / 5;
       work->state++;
       work->timer = -1;
     }
@@ -110,7 +110,7 @@ void FieldPsynergy_UpdatePound(void) {
     }
     break;
   case 4:
-    work->object->y.fixed += px(3) / 2;
+    work->object->y.fixed += toFIXED(3) / 2;
     if (work->timer == 13)
       work->state = FIELD_PSYNERGY_FINISHED;
     break;
@@ -126,7 +126,7 @@ void BattleEffect_SinkAndShrinkObject(void) {
   if (work->state == 0) {
     struct Actor *object = work->object;
 
-    object->y.fixed += -(px(5) / 2);
+    object->y.fixed += -(toFIXED(5) / 2);
     object->scaleX += -0x400;
     object->scaleY += -0x400;
     if (work->timer == 8)
@@ -182,7 +182,7 @@ void FieldPsynergy_Pound(void) {
     if (child->groundHeight == 300)
       lift = 0;
     scene->y = child->groundHeight;
-    lift = child->y.fixed - child->groundHeight + px(32);
+    lift = child->y.fixed - child->groundHeight + toFIXED(32);
   }
   if (scene->enabled != 0) {
     // As x != -1 this splits the -1 and loses the mvns.
@@ -238,8 +238,8 @@ void FieldPsynergy_Pound(void) {
   pos[1] = scene->y;
   pos[2] = scene->z;
   Camera_WorldToScreen(pos);
-  canvas->x = (s16)FIELD_PIXEL(pos[0]);
-  canvas->y = (s16)FIELD_PIXEL(pos[2]);
+  canvas->x = (s16)FIXEDtoINT(pos[0]);
+  canvas->y = (s16)FIXEDtoINT(pos[2]);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GlowDisc),
                       Ram_HeapSlots->battleCanvas);
   canvas->command = CANVAS_UPLOAD;
@@ -253,7 +253,7 @@ void FieldPsynergy_Pound(void) {
   glow->oam.fullColor = 0;
   glow->oam.palette = 0;
   glow->depth = 0;
-  glow->scaleY = glow->scaleX = Q16_ONE * 4 / 5;
+  glow->scaleY = glow->scaleX = FIXED_ONE * 4 / 5;
   pos[0] = scene->x;
   pos[1] = scene->y;
   pos[2] = scene->z;
@@ -268,23 +268,23 @@ void FieldPsynergy_Pound(void) {
     sprite = &work->sprites[j];
     speed = Random16() * 18 / 10;
     speed += 0x28000;
-    angle = j * (TRIG_TURN / 12) + (Random16() >> 5);
+    angle = j * (DEGtoANG(30)) + (Random16() >> 5);
     pos[0] = scene->x;
     pos[1] = scene->y;
     pos[2] = scene->z;
-    Vector_AddPolarOffset(px(4), angle, pos);
+    Vector_AddPolarOffset(toFIXED(4), angle, pos);
     Camera_WorldToScreen(pos);
     particle->x = pos[0];
     particle->y = pos[2];
-    particle->velocityX = Iwram_MulQ16(Trig_Cos(angle), speed);
-    particle->velocityY = Iwram_MulQ16(Trig_Sin(angle), speed);
+    particle->velocityX = Iwram_MulFX(Trig_Cos(angle), speed);
+    particle->velocityY = Iwram_MulFX(Trig_Sin(angle), speed);
     particle->timer = -j;
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, starTile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = 240;
-    sprite->scaleY = sprite->scaleX = Q16_ONE * 4 / 5;
+    sprite->scaleY = sprite->scaleX = FIXED_ONE * 4 / 5;
   }
   wait(1);
   FieldPsynergy_GrowFromCaster(shine, scene->x, scene->y + lift, scene->z);
@@ -292,7 +292,7 @@ void FieldPsynergy_Pound(void) {
   wait(15);
   rise = 24;
   do {
-    shine->y.fixed += px(1) / 2;
+    shine->y.fixed += toFIXED(1) / 2;
     rise--;
     wait(1);
   } while (rise >= 0);
@@ -357,10 +357,10 @@ void Picture_ShiftColumnsByWave(u8 *source, u8 *destination, s32 phase) {
   // Set after the clear, which keeps it out of the call's registers.
   height = 32;
   for (column = 0; column < width; column++) {
-    s32 wave = (Trig_Sin(column << 13) << 3) + Q16_ONE * 8;
+    s32 wave = (Trig_Sin(column << 13) << 3) + FIXED_ONE * 8;
 
     for (row = 0; row < height; row++) {
-      s32 position = phase * 0x19999 - Q16_ONE * 124 + row * (Q16_ONE * 4);
+      s32 position = phase * 0x19999 - FIXED_ONE * 124 + row * (FIXED_ONE * 4);
       // In two steps: the wave subtracted, then the shift.
       s32 shift = position - wave;
       shift >>= 16;

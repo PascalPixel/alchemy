@@ -4,7 +4,7 @@
 
 #include "game_internal.h"
 #include "game/game.h"
-#include "system/mul_q16.h"
+#include "system/mul_fx.h"
 
 /// Writes ten times each element level: an enemy's from its preset, a
 /// character's from the Djinn set on it plus its own bonus. `source` points at

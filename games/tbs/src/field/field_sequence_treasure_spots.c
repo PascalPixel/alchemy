@@ -95,15 +95,15 @@ void Field_PlaceTreasureSpots(void) {
             Actor_SelectAnimationFar(markerActor, TREASURE_SPOT_CHEST_OPEN);
           }
           Actor_StartIdleFar(markerActor);
-          markerActor->homeX = markerActor->x.fixed / Q16_ONE;
-          markerActor->homeZ = markerActor->z.fixed / Q16_ONE;
+          markerActor->homeX = markerActor->x.fixed / FIXED_ONE;
+          markerActor->homeZ = markerActor->z.fixed / FIXED_ONE;
           markerActor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
           markerActor->collisionFlags = ACTOR_SOLID;
           marker->id = trigger->subject;
           marker->actor = markerActor;
           // Plain words: through .fixed, the union moves the store above.
-          marker->column = markerActor->x.fixed / px(16);
-          marker->row = markerActor->z.fixed / px(16);
+          marker->column = markerActor->x.fixed / toFIXED(16);
+          marker->row = markerActor->z.fixed / toFIXED(16);
           marker++;
           markerCount++;
           if (markerCount >= TREASURE_SPOT_MAX)
@@ -123,15 +123,15 @@ void Field_PlaceTreasureSpots(void) {
           Actor_SetSpriteFlagsFar(markerActor, 0);
           Actor_StartIdleFar(markerActor);
           Actor_SelectAnimationFar(markerActor, 1);
-          markerActor->homeX = markerActor->x.fixed / Q16_ONE;
-          markerActor->homeZ = markerActor->z.fixed / Q16_ONE;
+          markerActor->homeX = markerActor->x.fixed / FIXED_ONE;
+          markerActor->homeZ = markerActor->z.fixed / FIXED_ONE;
           markerActor->collisionFlags = ACTOR_SOLID;
           markerActor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
           marker->actor = markerActor;
           marker->id = trigger->subject;
           // Plain words: through .fixed, the union moves the store above.
-          marker->column = markerActor->x.fixed / px(16);
-          marker->row = markerActor->z.fixed / px(16);
+          marker->column = markerActor->x.fixed / toFIXED(16);
+          marker->row = markerActor->z.fixed / toFIXED(16);
           marker++;
           markerCount++;
           if (markerCount >= TREASURE_SPOT_MAX)
@@ -211,7 +211,7 @@ void TreasureSpot_LaunchMimic(s32 id) {
       Actor_SelectAnimationFar(actor, TREASURE_SPOT_CHEST_MIMIC);
     Sound_PlayFar(SE_ENEMY_CRY);
     if (actor != NULL) {
-      actor->velocityY = px(8);
+      actor->velocityY = toFIXED(8);
       Actor_SetSpriteFlagsFar(actor, 1);
     }
   }

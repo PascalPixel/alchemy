@@ -426,14 +426,14 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   case ANIM_FACING_THREE_PICTURES:
     for (facingIndex = 0; facingIndex < 6; facingIndex++) {
       angle = (u32)angle << 16;
-      positions->x = px(centerX);
+      positions->x = toFIXED(centerX);
       angle = (u32)angle >> 16;
       positions->height = 0;
-      positions->y = px(centerY);
-      Vector_AddPolarOffset(px(56), (u16)angle,
+      positions->y = toFIXED(centerY);
+      Vector_AddPolarOffset(toFIXED(56), (u16)angle,
                             SpritePlacement_Values(positions));
       positions++;
-      angle = (s16)(angle + TRIG_TURN / 6);
+      angle = (s16)(angle + DEGtoANG(60));
     }
     for (; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT; facingIndex++)
       positions++;
@@ -444,14 +444,14 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
     for (facingIndex = 0; facingIndex < 8; facingIndex++) {
       angle = (u32)angle << 16;
-      positions->x = px(centerX);
+      positions->x = toFIXED(centerX);
       angle = (u32)angle >> 16;
       positions->height = 0;
-      positions->y = px(centerY);
-      Vector_AddPolarOffset(px(56), (u16)angle,
+      positions->y = toFIXED(centerY);
+      Vector_AddPolarOffset(toFIXED(56), (u16)angle,
                             SpritePlacement_Values(positions));
       positions++;
-      angle = (s16)(angle + TRIG_TURN / 8);
+      angle = (s16)(angle + DEGtoANG(45));
     }
     for (; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT; facingIndex++)
       positions++;
@@ -461,39 +461,39 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     for (facingIndex = 0; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT;
          facingIndex++) {
       angle = (u32)angle << 16;
-      positions->x = px(centerX);
+      positions->x = toFIXED(centerX);
       angle = (u32)angle >> 16;
       positions->height = 0;
-      positions->y = px(centerY);
-      Vector_AddPolarOffset(px(56), (u16)angle,
+      positions->y = toFIXED(centerY);
+      Vector_AddPolarOffset(toFIXED(56), (u16)angle,
                             SpritePlacement_Values(positions));
       positions++;
-      angle = (s16)(angle + TRIG_TURN / 10);
+      angle = (s16)(angle + DEGtoANG(36));
     }
     break;
   // Two places 40 pixels out, a quarter turn round and then
   // opposite it, each holding both of the sprite's parts.
   case ANIM_FACING_TWO_PART:
     initialHeading = angle;
-    angle = (s16)(initialHeading + TRIG_TURN / 4);
+    angle = (s16)(initialHeading + DEGtoANG(90));
     facingIndex = 0;
     pairedPositions = positions;
     while (facingIndex < 2) {
-      pairedPositions[facingIndex * 2].x = px(centerX);
+      pairedPositions[facingIndex * 2].x = toFIXED(centerX);
       pairedPositions[facingIndex * 2].height = 0;
-      pairedPositions[facingIndex * 2].y = px(centerY);
+      pairedPositions[facingIndex * 2].y = toFIXED(centerY);
       angle = (u32)angle << 16;
       angle = (u32)angle >> 16;
-      Vector_AddPolarOffset(px(40), angle,
+      Vector_AddPolarOffset(toFIXED(40), angle,
                             SpritePlacement_Values(&positions[0]));
-      pairedPositions[facingIndex * 2 + 1].x = px(centerX);
+      pairedPositions[facingIndex * 2 + 1].x = toFIXED(centerX);
       {
         s32 *point = SpritePlacement_Values(&positions[1]);
         pairedPositions[facingIndex * 2 + 1].height = 0;
-        pairedPositions[facingIndex * 2 + 1].y = px(centerY);
-        Vector_AddPolarOffset(px(40), (u16)angle, point);
+        pairedPositions[facingIndex * 2 + 1].y = toFIXED(centerY);
+        Vector_AddPolarOffset(toFIXED(40), (u16)angle, point);
       }
-      angle = ((u32)angle + TRIG_TURN / 2) << 16;
+      angle = ((u32)angle + DEGtoANG(180)) << 16;
       facingIndex++;
       positions += 2;
       angle >>= 16;
@@ -505,13 +505,13 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     for (facingIndex = 0; facingIndex < 4; facingIndex++) {
       angle = (u32)angle << 16;
       angle = (u32)angle >> 16;
-      positions->x = px(centerX);
+      positions->x = toFIXED(centerX);
       positions->height = 0;
-      positions->y = px(centerY);
-      Vector_AddPolarOffset(px(56), (u16)angle,
+      positions->y = toFIXED(centerY);
+      Vector_AddPolarOffset(toFIXED(56), (u16)angle,
                             SpritePlacement_Values(positions));
       positions++;
-      angle = (s16)(angle + TRIG_TURN / 4);
+      angle = (s16)(angle + DEGtoANG(90));
     }
     for (facingIndex = 4; facingIndex < UI_SPRITE_VIEWER_COPY_COUNT;
          facingIndex++)
@@ -615,7 +615,7 @@ void SpriteViewer_PlaceRing(void) {
   switch (facingKind) {
   case ANIM_FACING_THREE_PICTURES:
     angle = 0;
-    step = TRIG_TURN / 6;
+    step = DEGtoANG(60);
     count = 6;
     break;
   case ANIM_FACING_FIVE_PICTURES:
@@ -623,13 +623,13 @@ void SpriteViewer_PlaceRing(void) {
   case ANIM_FACING_EIGHT_NO_TABLE:
   case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
     angle = 0;
-    step = TRIG_TURN / 8;
+    step = DEGtoANG(45);
     count = 8;
     break;
   case ANIM_FACING_FOUR_PICTURES:
   case ANIM_FACING_SIX_PICTURES:
     angle = 0;
-    step = TRIG_TURN / 10;
+    step = DEGtoANG(36);
     count = 10;
     break;
   // The two parts at each place face the same way; the second place faces
@@ -637,13 +637,13 @@ void SpriteViewer_PlaceRing(void) {
   case ANIM_FACING_TWO_PART:
     angle = 0;
     step = 0;
-    pairedFacingStep = TRIG_TURN / 2;
+    pairedFacingStep = DEGtoANG(180);
     count = 4;
     break;
   // The eighth-turn start matches SpriteViewer_BuildProbeRing's default ring.
   default:
-    angle = TRIG_TURN / 8;
-    step = TRIG_TURN / 4;
+    angle = DEGtoANG(45);
+    step = DEGtoANG(90);
     count = 4;
     break;
   }

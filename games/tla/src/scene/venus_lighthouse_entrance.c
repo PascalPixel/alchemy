@@ -264,16 +264,18 @@ void VenusLighthouseEntrance_BirdsLand(void) {
   Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_LANDED);
   westBird = Actor_Get(ACTOR_WEST_BIRD);
   westBird->motionFlags = 0;
-  westBird->gravity = px(1) / 100;
-  westBird->speedLimit = px(3) / 2;
-  westBird->acceleration = px(1) / 2;
-  FieldActor_SetPositionAndResetMotion(westBird, px(216), px(96), px(176));
+  westBird->gravity = toFIXED(1) / 100;
+  westBird->speedLimit = toFIXED(3) / 2;
+  westBird->acceleration = toFIXED(1) / 2;
+  FieldActor_SetPositionAndResetMotion(westBird, toFIXED(216), toFIXED(96),
+                                       toFIXED(176));
   eastBird = Actor_Get(ACTOR_EAST_BIRD);
   eastBird->motionFlags = 0;
-  eastBird->gravity = px(3) / 100;
-  eastBird->speedLimit = px(3) / 2;
-  eastBird->acceleration = px(1) / 2;
-  FieldActor_SetPositionAndResetMotion(eastBird, px(616), px(96), px(152));
+  eastBird->gravity = toFIXED(3) / 100;
+  eastBird->speedLimit = toFIXED(3) / 2;
+  eastBird->acceleration = toFIXED(1) / 2;
+  FieldActor_SetPositionAndResetMotion(eastBird, toFIXED(616), toFIXED(96),
+                                       toFIXED(152));
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(376, CAMERA_KEEP, 248, 0);
   Event_StartScreenTransition();
@@ -312,15 +314,15 @@ void VenusLighthouseEntrance_BirdsFlyOff(void) {
   FieldEvent_Wait(21);
   westBird = Actor_Get(ACTOR_WEST_BIRD);
   westBird->motionFlags = 0;
-  westBird->speedLimit = px(2);
-  westBird->acceleration = px(1) / 2;
+  westBird->speedLimit = toFIXED(2);
+  westBird->acceleration = toFIXED(1) / 2;
   Actor_SetAnimation(ACTOR_WEST_BIRD, 4);
   FieldActor_SetMoveTarget(westBird, 616, 96, 176);
   Actor_StartScript(westBird, (s32)gVenusLighthouseEntrance_BirdFlies);
   eastBird = Actor_Get(ACTOR_EAST_BIRD);
   eastBird->motionFlags = 0;
-  eastBird->speedLimit = px(2);
-  eastBird->acceleration = px(1) / 2;
+  eastBird->speedLimit = toFIXED(2);
+  eastBird->acceleration = toFIXED(1) / 2;
   Actor_SetAnimation(ACTOR_EAST_BIRD, 4);
   FieldActor_SetMoveTarget(eastBird, 120, 96, 176);
   Call2(Actor_StartScript, (s32)eastBird,
@@ -811,9 +813,9 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   FieldActor_WaitForMoveById(ACTOR_SCOLDING_WORKMAN);
   Actor_SetAnimation(ACTOR_SCOLDING_WORKMAN, ANIM_STAND);
   Event_PlaySound(SE_IMPACT);
-  workman->x.fixed += px(8);
+  workman->x.fixed += toFIXED(8);
   workman->update = zero;
-  workman->z.fixed += -px(8);
+  workman->z.fixed += -toFIXED(8);
   {
     s32 shown = FACING_NORTH;
 
@@ -826,8 +828,8 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
     sprite->rotation = shown;
   }
   FieldEvent_Wait(55);
-  workman->x.fixed += -px(4);
-  workman->z.fixed += px(4);
+  workman->x.fixed += -toFIXED(4);
+  workman->z.fixed += toFIXED(4);
   {
     s32 shown = FACING_SOUTH;
     struct FieldSprite *sprite = workman->sprite;
@@ -1060,8 +1062,8 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   actor = Actor_Get(ACTOR_JENNA);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_KRADEN, actor->x.part[0].pixel,
-                         actor->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_KRADEN, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
   }
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -1136,8 +1138,8 @@ void VenusLighthouseEntrance_PointToMeetingSpot(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   object = Actor_Get(ACTOR_JENNA);
   if (object != 0) {
-    Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].pixel,
-                         object->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].integer,
+                         object->z.part[0].integer);
   }
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -1160,7 +1162,7 @@ void VenusLighthouseEntrance_WakeUp(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH, 0);
   FieldActor_SetSpritePriority(ACTOR_KRADEN, 2);
-  Actor_SetSpriteRotationById(ACTOR_JENNA, TRIG_TURN / 4);
+  Actor_SetSpriteRotationById(ACTOR_JENNA, DEGtoANG(90));
   Actor_SetSpriteFlags(Actor_Get(ACTOR_JENNA), 0);
   FieldCamera_MoveToActorById(ACTOR_JENNA, 0);
   gFieldWork->transitionFrames = 60;
@@ -1258,8 +1260,8 @@ void VenusLighthouseEntrance_WakeUp(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_WALK);
   object = Actor_Get(ACTOR_JENNA);
   if (object != 0) {
-    Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].pixel,
-                         object->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_KRADEN, object->x.part[0].integer,
+                         object->z.part[0].integer);
   }
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -1324,7 +1326,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
   case 3:
     if (work->timer == 0) {
       object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-      object->velocityY = px(24);
+      object->velocityY = toFIXED(24);
       work->follow = 0;
       Sound_Play(SE_HEAVY_IMPACT);
     }
@@ -1359,7 +1361,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
 
     scale = effect->scaleX;
     if (scale > 0) {
-      scale -= Q16_ONE * 2 / 100;
+      scale -= FIXED_ONE * 2 / 100;
       effect->scaleX = scale;
       effect->scaleY = scale;
     } else {
@@ -1397,7 +1399,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     for (i = 0, y = 0; i < 16 && y < work->height - 8; i++, y += 16) {
       state = &work->states[i];
       state->x = work->x;
-      state->y = work->y + px(y) + px(8);
+      state->y = work->y + toFIXED(y) + toFIXED(8);
       state->z = work->z;
       sprite = &work->sprites[i];
       state->frame++;
@@ -1409,11 +1411,11 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     if (i <= 15) {
       state = &work->states[i];
       state->x = work->x;
-      state->y = work->y + px(work->height);
+      state->y = work->y + toFIXED(work->height);
       state->z = work->z;
       state->frame++;
       state->y +=
-          Math_MulQ16(0xfffe0000, Math_Sin(state->frame << 12)) + 0xfffe0000;
+          Math_MulFX(0xfffe0000, Math_Sin(state->frame << 12)) + 0xfffe0000;
       sprite = &work->sprites[i];
       sprite->oam.index = work->tile + ((state->frame >> 2) & 3) * 8;
       EffectSprite_DrawAtWorldPosition(sprite, &state->x);
@@ -1443,7 +1445,7 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   work->object = actor;
   work->x = actor->x.fixed;
   work->y = actor->y.fixed;
-  work->z = actor->z.fixed + px(2);
+  work->z = actor->z.fixed + toFIXED(2);
   Decompress_TaggedLz(gField_GeyserTiles, work);
   resource = VramCache_FindFreeEntry();
   tile = Vram_Load(resource, 0x800, work);
@@ -1470,7 +1472,7 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   effect->priorityFlags = 2;
   Actor_SetSpriteFlags(actor, 0);
   ((struct Sprite *)actor->sprite)->rotation = 0x4000;
-  actor->x.fixed += -px(12);
+  actor->x.fixed += -toFIXED(12);
   actor->motionFlags = 0;
   work->stage = 0;
   work->timer = 0;
@@ -1525,11 +1527,11 @@ void VenusLighthouseEntrance_EmitDust(struct Actor *source, s32 x, s32 y,
   state->x = x;
   state->y = y;
   state->z = z;
-  FieldVector_AddPolarOffsetFixed(Random16() * 2 + 0x20000, angle, &state->x);
+  FieldVector_AddPolarOffsetFX(Random16() * 2 + 0x20000, angle, &state->x);
   state->velocityX = 0;
   state->velocityY = (Random16() >> 1) + 0xc000;
   state->velocityZ = 0;
-  FieldVector_AddPolarOffsetFixed(Random16() >> 2, angle, &state->velocityX);
+  FieldVector_AddPolarOffsetFX(Random16() >> 2, angle, &state->velocityX);
   *next = *next + 1;
   *next = *next % 96;
 }

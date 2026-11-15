@@ -85,7 +85,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   effectWork->x = user->x.fixed;
   effectWork->z = user->z.fixed;
   effectWork->y = user->y.fixed;
-  Vector_AddPolarOffset(px(16), dir, &effectWork->x);
+  Vector_AddPolarOffset(toFIXED(16), dir, &effectWork->x);
 }
 
 /// Stops the caster's update routine and restores its colours (sprite param
@@ -282,9 +282,9 @@ void Camera_WorldToScreen(struct Vector3 *position) {
 #endif
     s32 result[3];
 
-    Transform_ProjectPoint(position, result);
-    position->x = px(result[0]);
-    position->z = px(result[1]);
+    Matrix_ProjectPoint(position, result);
+    position->x = toFIXED(result[0]);
+    position->z = toFIXED(result[1]);
     position->y = 0;
   } else {
 #ifdef UBFIX

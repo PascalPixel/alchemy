@@ -61,9 +61,9 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   for (i = 0; i != 30; i++) {
     point = &work->particles[i];
     SET_POSITION(point, source->x.fixed, y, source->z.fixed);
-    SET_VELOCITY(point, px((s32)((Random16() & 255) - 127)) >> 5,
-                 px((s32)((Random16() & 127) - 16)) >> 6,
-                 px((s32)((Random16() & 255) - 127)) >> 5);
+    SET_VELOCITY(point, INTtoFIXED((s32)((Random16() & 255) - 127)) >> 5,
+                 INTtoFIXED((s32)((Random16() & 127) - 16)) >> 6,
+                 INTtoFIXED((s32)((Random16() & 255) - 127)) >> 5);
     point->variant = -1;
     flags[i] = 0;
   }
@@ -212,20 +212,20 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     }
     // The sweep sways from side to side.
     if (work->args->side == EFFECT_SIDE_PARTY)
-      wave += px(32);
+      wave += toFIXED(32);
     else
-      wave -= px(32);
+      wave -= toFIXED(32);
     if (frame <= 16)
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(frame);
     if (frame > 63)
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(79 - frame);
     for (i = 0; i != gVortices_Shapes[work->args->variant][WHIRLWIND_TORNADOES];
          i++) {
-      x = WHOLE_PIXELS(gVortices_Shapes[work->args->variant][WHIRLWIND_SWAY] *
-                           Trig_Sin((frame << 11) + i * (TRIG_TURN / 4)) +
-                       wave) +
+      x = FIXEDtoINT(gVortices_Shapes[work->args->variant][WHIRLWIND_SWAY] *
+                         Trig_Sin((frame << 11) + i * (DEGtoANG(90))) +
+                     wave) +
           40;
-      y = WHOLE_PIXELS(Trig_Cos((frame << 11) + i * (TRIG_TURN / 4)) * 2);
+      y = FIXEDtoINT(Trig_Cos((frame << 11) + i * (DEGtoANG(90))) * 2);
       segment = (frame / 2) % 3;
       draw[0](canvas,
               work->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +

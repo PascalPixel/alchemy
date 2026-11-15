@@ -65,9 +65,9 @@ s32 FieldSequence_Run(s32 entrance) {
   work->transitionFrames = MAP_TRANSITION_FRAMES;
   work->transitionActive = 0;
   // Field_UpdateWalking scales the leader's speed by this (16.16) into the
-  // distance counted towards PP, Djinn recovery and poison: Q16_ONE / 160
+  // distance counted towards PP, Djinn recovery and poison: FIXED_ONE / 160
   // counts each of them on by one about every 160 pixels walked.
-  work->walkingDistanceScale = Q16_ONE / 160;
+  work->walkingDistanceScale = FIXED_ONE / 160;
   work->walkingDistance = 0;
   if (gMainRoutineWork.sceneType == SCENE_TYPE_TOWN) {
     work->walkingDistanceScale = 0;
@@ -392,29 +392,30 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     probePosition.vector.x = leader->x.fixed;
     probePosition.vector.y = leader->y.fixed;
     probePosition.vector.z = leader->z.fixed;
-    Vector_AddPolarOffset(px(16), leader->facing, probePosition.coordinates);
+    Vector_AddPolarOffset(toFIXED(16), leader->facing,
+                          probePosition.coordinates);
     // World Map cell pictures are 32 pixels square, 32 to a row; map cells 16
     // pixels square, 128 to a row, four bytes each.
     if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-      cell =
-          Ram_CellPictures + ((((probePosition.vector.x / px(32)) & 31) +
-                               (((probePosition.vector.z / px(32)) & 31) << 5))
-                              << 2);
+      cell = Ram_CellPictures +
+             ((((probePosition.vector.x / toFIXED(32)) & 31) +
+               (((probePosition.vector.z / toFIXED(32)) & 31) << 5))
+              << 2);
     } else {
       u8 *cells = (u8 *)grid->layers[MAPGRID_LAYER_GROUND].cells;
 
       cell =
-          cells +
-          (((probePosition.vector.x / px(MAPGRID_CELL_PIXELS)) +
-            ((probePosition.vector.z / px(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE))
-           << 2);
+          cells + (((probePosition.vector.x / toFIXED(MAPGRID_CELL_PIXELS)) +
+                    ((probePosition.vector.z / toFIXED(MAPGRID_CELL_PIXELS)) *
+                     MAPGRID_SIZE))
+                   << 2);
     }
     behavior = cell[2];
     if (behavior >= CELL_BEHAVIOR_JAR && behavior <= CELL_BEHAVIOR_WELL) {
       groundHeight = MapGrid_GetTerrainHeightFar(
           leader->layer, probePosition.vector.x, probePosition.vector.z);
       if (groundHeight >= leader->y.fixed &&
-          groundHeight <= leader->y.fixed + px(64)) {
+          groundHeight <= leader->y.fixed + toFIXED(64)) {
         result = behavior;
       }
     } else if (Scene_FindTrigger(TRIGGER_EXAMINE, behavior) != 0) {
@@ -463,8 +464,8 @@ void Scene_ApplyEntrance(void) {
   if (entranceEntry->cameraBottom != -1)
     grid->maxY = REGION_FIXED(entranceEntry->cameraBottom);
 
-  if (grid->minX + px(DISPLAY_WIDTH) > grid->maxX)
-    grid->minX = grid->maxX - px(DISPLAY_WIDTH);
-  if (grid->minY + px(DISPLAY_HEIGHT) > grid->maxY)
-    grid->minY = grid->maxY - px(DISPLAY_HEIGHT);
+  if (grid->minX + toFIXED(DISPLAY_WIDTH) > grid->maxX)
+    grid->minX = grid->maxX - toFIXED(DISPLAY_WIDTH);
+  if (grid->minY + toFIXED(DISPLAY_HEIGHT) > grid->maxY)
+    grid->minY = grid->maxY - toFIXED(DISPLAY_HEIGHT);
 }

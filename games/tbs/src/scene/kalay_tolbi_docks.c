@@ -459,7 +459,8 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
       Inventory_Discard(ticketHolder, ticketSlot);
       GameFlag_Set(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER,
-                          Actor_Get(ACTOR_PARTY_LEADER)->x.part[0].pixel, 1304);
+                          Actor_Get(ACTOR_PARTY_LEADER)->x.part[0].integer,
+                          1304);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 72, 1304);
       Actor_WalkToAndWait(ACTOR_CHECKING_TICKETS, 88, 1304);
       Actor_FaceDirection(ACTOR_CHECKING_TICKETS, FACING_EAST, 0);
@@ -851,8 +852,8 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   // Garet rejoins the leader and the man wanders again from where he stands.
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].pixel,
-                         actor->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_GARET, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_GARET);
   Actor_SetPosition(ACTOR_GARET, 0, 0);
@@ -860,8 +861,8 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Actor_Get(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI)->paused = 0;
   Actor_SetMovementTypeById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 2);
   actor = Actor_Get(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI);
-  actor->timer = actor->x.fixed / px(1);
-  actor->userValue = actor->z.fixed / px(1);
+  actor->timer = actor->x.fixed / toFIXED(1);
+  actor->userValue = actor->z.fixed / toFIXED(1);
   Event_End();
 }
 
@@ -1092,7 +1093,7 @@ u16 gKalayTolbiDocks_TolbiDoorCells[] = {
 };
 
 s32 gKalayTolbiDocks_BodyguardSpinScript[] = {
-    SC_ADD(SW_FACING, -(TRIG_TURN / 8)),
+    SC_ADD(SW_FACING, -(DEGtoANG(45))),
     SC_WAIT(2),
     SC_LOOP(8, SC_TOP),
     SC_END,

@@ -55,7 +55,7 @@ void Encounter_SelectMapZones(s32 useRules) {
   work->encounterBias = 0;
   // 16 in 16.16: Encounter_CountStepsAndSelectFormation starts a battle once
   // gMainRoutineWork.encounterSteps reaches it.
-  work->encounterThreshold = 16 * Q16_ONE;
+  work->encounterThreshold = 16 * FIXED_ONE;
   BattleBackground_SelectForMap();
 }
 
@@ -143,7 +143,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
     // The rate and the bias divide the step, so a higher rate (a party above
     // the zone's level) means smaller steps and fewer battles.
     step = Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 1 << 20);
-    total = gMainRoutineWork.encounterSteps += Iwram_MulQ16(step, steps);
+    total = gMainRoutineWork.encounterSteps += Iwram_MulFX(step, steps);
     if (total < work->encounterThreshold)
       return 0;
   }

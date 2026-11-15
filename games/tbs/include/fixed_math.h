@@ -8,22 +8,24 @@
 #include "types.h"
 
 /// One in the game's signed 16.16 fixed-point format.
-#define Q16_ONE (1 << 16)
+#define FIXED_ONE (1 << 16)
 
 /// Whole pixels as 16.16, for arithmetic on a stored position or speed.
-#define px(value) ((value) << 16)
-/// The whole pixels of a 16.16 value, px() undone: an arithmetic shift, so a
-/// negative value rounds down.
-#define WHOLE_PIXELS(value) ((value) >> 16)
+#define INTtoFIXED(value) ((value) << 16)
+/// The whole pixels of a 16.16 value, toFIXED() undone: an arithmetic shift, so
+/// a negative value rounds down.
+#define FIXEDtoINT(value) ((value) >> 16)
 
 /// A whole or decimal number as 16.16, for the macros that take plain pixels
-/// and decimal speeds: Q16(0.8) is 52428. It multiplies where px() shifts, so
-/// Q16(-64) is defined C.
-#define Q16(value) ((s32)((value) * Q16_ONE))
+/// and decimal speeds: toFIXED(0.8) is 52428. It multiplies where toFIXED()
+/// shifts, so toFIXED(-64) is defined C.
+#define toFIXED(value) ((s32)((value) * FIXED_ONE))
 
 /// A whole turn in the angles that Trig_Sin, Trig_Cos and the transform's
-/// turns take: TRIG_TURN / 4 is a quarter turn.
+/// turns take: DEGtoANG(90) is a quarter turn.
 #define TRIG_TURN (1 << 16)
+/// An angle given in degrees, as SGL writes it: DEGtoANG(90) is a quarter turn.
+#define DEGtoANG(degrees) ((degrees) * TRIG_TURN / 360)
 /// Keeps an angle within one turn: Random16() & TRIG_ANGLE_MASK is a random
 /// angle.
 #define TRIG_ANGLE_MASK (TRIG_TURN - 1)

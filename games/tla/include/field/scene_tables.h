@@ -34,13 +34,13 @@ extern const struct Scene gScenes[];
 enum Facing {
   FACING_EAST = 0,
   FACING_EAST_SOUTHEAST = TRIG_TURN / 16,
-  FACING_SOUTHEAST = TRIG_TURN / 8,
+  FACING_SOUTHEAST = DEGtoANG(45),
   FACING_SOUTH_SOUTHEAST = TRIG_TURN * 3 / 16,
-  FACING_SOUTH = TRIG_TURN / 4,
+  FACING_SOUTH = DEGtoANG(90),
   FACING_SOUTH_SOUTHWEST = TRIG_TURN * 5 / 16,
   FACING_SOUTHWEST = TRIG_TURN * 3 / 8,
   FACING_WEST_SOUTHWEST = TRIG_TURN * 7 / 16,
-  FACING_WEST = TRIG_TURN / 2,
+  FACING_WEST = DEGtoANG(180),
   FACING_WEST_NORTHWEST = TRIG_TURN * 9 / 16,
   FACING_NORTHWEST = TRIG_TURN * 5 / 8,
   FACING_NORTH_NORTHWEST = TRIG_TURN * 11 / 16,
@@ -56,7 +56,7 @@ enum { FACING_STEP = TRIG_TURN / 16 };
 /// The cardinal heading nearest to facing, as The Broken Seal's macro: the
 /// shop counters turn a customer this way.
 #define FACING_NEAREST_CARDINAL(facing)                                        \
-  ((u16)(((facing) + TRIG_TURN / 8) & ~0x3fff))
+  ((u16)(((facing) + DEGtoANG(45)) & ~0x3fff))
 
 enum { SCENE_TABLE_END = -1, CONDITION_ALWAYS = -1 };
 
@@ -132,8 +132,8 @@ struct ActorPlacement {
 /// One row of a scene's actor placements, its spot in plain pixels.
 #define ACTOR_PLACEMENT(sprite, condition, movement, x, y, z, facing,          \
                         talkFacing, flags)                                     \
-  {sprite, condition, movement,   Q16(x), Q16(y),                              \
-   Q16(z), facing,    talkFacing, flags}
+  {sprite,     condition, movement,   toFIXED(x), toFIXED(y),                  \
+   toFIXED(z), facing,    talkFacing, flags}
 
 /// The movement types an actor placement's behavior can name, which
 /// Actor_SetMovementType turns into scripts: The Broken Seal's first six,
@@ -168,8 +168,6 @@ enum ActorTalkFacing {
   /// over (gActor_FaceWatchedScript).
   TALK_FACING_PARTY_THEN_WATCH = 3
 };
-
-#define PIXELS(value) ((value) << 16)
 
 /// A row of a scene's trigger table.
 struct Trigger {

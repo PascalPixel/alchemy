@@ -15,7 +15,7 @@
 #include "system/input.h"
 #include "system/heap_slots.h"
 #include "system/main_routine_work.h"
-#include "system/fixed_point_position.h"
+#include "system/point.h"
 #include "system/iwram_call.h"
 #include "battle/battle_camera.h"
 #include "battle/battle_work.h"
@@ -80,7 +80,7 @@
 #include "system/bg_scroll.h"
 #include "system/irq.h"
 #include "system/ram_code.h"
-#include "system/transform.h"
+#include "system/matrix.h"
 #include "field/particle.h"
 #include "battle/formations.h"
 #include "enemy_ids.h"
@@ -218,8 +218,8 @@ struct BattleLinkedActionState {
 
 /// The camera's yaw while a party member acts, and while an enemy does, in
 /// 1/65536 turns: an eighth of a turn either side of 0.
-#define YAW_PARTY_ACTION (TRIG_TURN / 8)
-#define YAW_ENEMY_ACTION (-(TRIG_TURN / 8))
+#define YAW_PARTY_ACTION (DEGtoANG(45))
+#define YAW_ENEMY_ACTION (-(DEGtoANG(45)))
 
 /// The camera's yaw from behind the enemies, which an enemy's staged effect
 /// and cast take in place of YAW_ENEMY_ACTION.
@@ -233,12 +233,12 @@ struct BattleLinkedActionState {
 #define KEY_ADVANCE (KEY_A | KEY_B | KEYS_SHOULDERS)
 
 /// The battle camera's distance from its focus in the default view.
-#define BATTLE_CAMERA_DISTANCE px(510)
+#define BATTLE_CAMERA_DISTANCE toFIXED(510)
 
 /// The gravity a battle unit falls under, about 0.67 pixels a frame per frame
 /// in 16.16: BattleMotion_ReturnToSpot sets it whenever a unit goes back to its
 /// spot.
-#define BATTLE_UNIT_GRAVITY (px(67) / 100)
+#define BATTLE_UNIT_GRAVITY (toFIXED(67) / 100)
 
 /// Inventory_GetEquippedItemFar's slot for the weapon.
 #define EQUIP_WEAPON 1

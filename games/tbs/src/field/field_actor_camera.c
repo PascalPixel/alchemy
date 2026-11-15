@@ -95,8 +95,8 @@ void ActorSystem_PlaceSprites(void) {
       sprite = actor->sprite;
       // From 32 pixels left of the screen to 32 past its 240, and from 32
       // pixels above it to 224.
-      if (dx > -px(32) && dx < px(272) && screenTop > -px(32) &&
-          screenTop < px(224)) {
+      if (dx > -toFIXED(32) && dx < toFIXED(272) && screenTop > -toFIXED(32) &&
+          screenTop < toFIXED(224)) {
         // The cell under the actor: x and z >> 20 are 16-pixel cells, and a
         // row holds 128 of them.
         tile = &((struct ActorCameraTile *)grid->layers[actor->layer]
@@ -112,8 +112,8 @@ void ActorSystem_PlaceSprites(void) {
         layerPlusOne = tile->layer;
         if (layerPlusOne != 0)
           actor->layer = layerPlusOne - 1;
-        scale.x = Iwram_MulQ16(actor->scaleX, sprite->scale);
-        scale.y = Iwram_MulQ16(actor->scaleY, sprite->scale);
+        scale.x = Iwram_MulFX(actor->scaleX, sprite->scale);
+        scale.y = Iwram_MulFX(actor->scaleY, sprite->scale);
         drawPosition.x = dx;
         drawPosition.height = actor->y.fixed;
         drawPosition.y = dz;
@@ -124,14 +124,14 @@ void ActorSystem_PlaceSprites(void) {
         // which Render_ApplyProjectedPlacement takes from the point's y before
         // its height is taken off.
         if (actor->priorityFlags & ACTOR_PRIORITY_UNDERFOOT) {
-          drawPosition.height += -px(320);
-          drawPosition.y += -px(320);
-          drawPosition.groundHeight += -px(320);
+          drawPosition.height += -toFIXED(320);
+          drawPosition.y += -toFIXED(320);
+          drawPosition.groundHeight += -toFIXED(320);
         }
         if (actor->priorityFlags & 4) {
-          drawPosition.height += px(320);
-          drawPosition.y += px(320);
-          drawPosition.groundHeight += px(320);
+          drawPosition.height += toFIXED(320);
+          drawPosition.y += toFIXED(320);
+          drawPosition.groundHeight += toFIXED(320);
         }
         Render_ApplyProjectedPlacement(sprite, &drawPosition, &scale,
                                        actor->facing);
@@ -196,24 +196,24 @@ void ActorSystem_ProjectSprites(void) {
   // The camera's heading over the ground, from the eye's offset from the
   // target in whole pixels; each sprite's facing is drawn relative to it, so
   // a sprite keeps its world heading as the camera turns.
-  angle = (s16)ArcTan2(WHOLE_PIXELS(eye->x - target->x),
-                       WHOLE_PIXELS(eye->z - target->z));
+  angle = (s16)Trig_Atan(FIXEDtoINT(eye->x - target->x),
+                         FIXEDtoINT(eye->z - target->z));
   system->used = 0;
-  Transform_Reset();
+  Matrix_Initialize();
   // Under the fixed view matrix every sprite also faces an eighth of a turn
   // further back.
   if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS)) {
-    angle += -(TRIG_TURN / 8);
-    Iwram_TransformMatrix(gCamera_FixedViewMatrix);
-    Transform_ApplyLookAt((s32 *)eye, (s32 *)target);
+    angle += -(DEGtoANG(45));
+    Iwram_MultiplyMatrix(gCamera_FixedViewMatrix);
+    Matrix_LookAt((s32 *)eye, (s32 *)target);
   } else {
-    Transform_SetLookAt((s32 *)eye, (s32 *)target);
+    Matrix_SetLookAt((s32 *)eye, (s32 *)target);
   }
   // The actors are placed from the last down.
   actor = gActors;
   actor += ACTOR_COUNT - 1;
   {
-    s32 fixedScale = Q16_ONE;
+    s32 fixedScale = FIXED_ONE;
 
     for (i = ACTOR_COUNT - 1; i >= 0; i--, actor--) {
       if (actor->script == 0)

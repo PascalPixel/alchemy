@@ -88,16 +88,16 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
           s32 angle;
           s32 force;
 
-          spark->x = px(position.x / 2);
-          spark->y = px(position.y - 24);
+          spark->x = INTtoFIXED(position.x / 2);
+          spark->y = INTtoFIXED(position.y - 24);
           angle = Random16();
           force = (Random16() & 255) + 32;
           spark->velocityX = (Trig_Sin(angle) * force) >> 8;
           spark->velocityY = (Trig_Cos(angle) * force) >> 6;
           if (args->side == EFFECT_SIDE_ENEMIES)
-            spark->velocityX += -px(1) / 2;
+            spark->velocityX += -toFIXED(1) / 2;
           else
-            spark->velocityX += px(1) / 2;
+            spark->velocityX += toFIXED(1) / 2;
           BITE_ANCHOR(i)->x = position.x;
           BITE_ANCHOR(i)->y = position.y - 24;
           spark->variant = (Random16() & 7) + 16;
@@ -106,8 +106,8 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
           EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         else
           Sound_PlayFar(SE_HEAVY_IMPACT);
-        BattleEffect_StartActorMotion(args->targets[0], 1, px(2), px(8), 0,
-                                      i * 20 + 120);
+        BattleEffect_StartActorMotion(args->targets[0], 1, toFIXED(2),
+                                      toFIXED(8), 0, i * 20 + 120);
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
         work->shakeFrames = 8;
@@ -118,19 +118,19 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
           frame < gTripleChomp_BiteFrames[i] + 16) {
         s32 age = frame - gTripleChomp_BiteFrames[i];
         s32 alpha = 64 - age * 8;
-        s32 scale = age * 10192 + Q16_ONE / 4;
+        s32 scale = age * 10192 + FIXED_ONE / 4;
 
         if (alpha > 0)
           alpha = 0;
         if (alpha > -64) {
           model->shade = alpha;
-          Transform_Reset();
-          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          Transform_ApplyTranslation(px(BITE_ANCHOR(i)->x - 128),
-                                     px(BITE_ANCHOR(i)->y - 64), 0);
-          Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
-          Transform_ApplyPitch(-TRIG_TURN / 16);
-          Transform_ApplyUniformScale(scale);
+          Matrix_Initialize();
+          Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+          Matrix_Translate(INTtoFIXED(BITE_ANCHOR(i)->x - 128),
+                           INTtoFIXED(BITE_ANCHOR(i)->y - 64), 0);
+          Matrix_RotateZ(i * (DEGtoANG(90)) + DEGtoANG(45));
+          Matrix_RotateX(-TRIG_TURN / 16);
+          Matrix_ScaleUniform(scale);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                    4);
           Render_DrawModelList(model);

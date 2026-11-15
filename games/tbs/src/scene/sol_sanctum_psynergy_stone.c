@@ -55,8 +55,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Opens the map with the window transition and blocks Retreat.
 s32 Scene_Initialize(void) {
-  s32 shakeX = px(1);
-  s32 shakeY = px(1);
+  s32 shakeX = toFIXED(1);
+  s32 shakeY = toFIXED(1);
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -64,7 +64,7 @@ s32 Scene_Initialize(void) {
   Import_GameFlagSet(FLAG_RETREAT_BLOCKED);
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     Scene_QueueMusic(SE_RUMBLE);
-    MapGrid_SetScreenShake(shakeX, shakeY, Q16_ONE);
+    MapGrid_SetScreenShake(shakeX, shakeY, FIXED_ONE);
     FieldEffect_InitializeSparkles();
   }
   return 0;

@@ -57,7 +57,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
     angle = Random16();
     speed = (Random16() & 127) + 127;
     ember->velocityX = (Trig_Sin(angle) * speed) >> 6;
-    ember->velocityY = (s32)px((Random16() & 127) - 16) >> 6;
+    ember->velocityY = (s32)INTtoFIXED((Random16() & 127) - 16) >> 6;
     ember->velocityZ = (Trig_Cos(angle) * speed) >> 6;
     SET_POSITION(ember, user->x, top, user->z);
     ember->variant = IN_FLIGHT;
@@ -79,8 +79,8 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
     if (frame == (gFire_Counts[args->variant] >> 1) + 108)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
 
     // The embers in flight, two more each frame.
     for (i = 0; i != gFire_Counts[args->variant]; i++) {

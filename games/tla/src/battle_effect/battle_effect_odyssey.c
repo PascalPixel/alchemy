@@ -161,9 +161,9 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         s32 angle = Random16() & 0x7fff;
 
         if (args->side == EFFECT_SIDE_PARTY)
-          angle += TRIG_TURN / 2;
-        shard->x = px(to.x / 2);
-        shard->y = px(to.y);
+          angle += DEGtoANG(180);
+        shard->x = INTtoFIXED(to.x / 2);
+        shard->y = INTtoFIXED(to.y);
         shard->velocityX = (Trig_Sin(angle) * speed) >> 6;
         shard->velocityY = -(Trig_Cos(angle) * speed) >> 5;
         shard->z = Random16();
@@ -229,15 +229,15 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
           if (args->side == EFFECT_SIDE_ENEMIES) {
             if (i != 0)
-              angle += TRIG_TURN / 4;
+              angle += DEGtoANG(90);
           } else if (i == 0) {
-            angle -= TRIG_TURN / 4;
+            angle -= DEGtoANG(90);
           } else {
-            angle += TRIG_TURN / 2;
+            angle += DEGtoANG(180);
           }
           spark = &work->particles[i * 32 + k];
-          spark->x = px(to.x / 2);
-          spark->y = px(to.y);
+          spark->x = INTtoFIXED(to.x / 2);
+          spark->y = INTtoFIXED(to.y);
           spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
           spark->velocityY = -(Trig_Cos(angle) * speed) >> 5;
           spark->variant = (Random16() & 7) + 17;
@@ -310,14 +310,14 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         if (shade > 0)
           shade = 0;
         if (shade > MODEL_SHADE_INVISIBLE) {
-          s32 scale = (age << 14) + Q16_ONE / 4;
+          s32 scale = (age << 14) + FIXED_ONE / 4;
 
           model->shade = shade;
-          Transform_Reset();
-          Transform_ApplyTranslation(px(from.x / 2 - 64), 0, 0);
-          Transform_ApplyAxisScale(scale, scale * 2, scale);
-          Transform_ApplyPitch(gOdyssey_FlashPitches[i]);
-          Transform_ApplyYaw(gOdyssey_FlashYaws[i]);
+          Matrix_Initialize();
+          Matrix_Translate(INTtoFIXED(from.x / 2 - 64), 0, 0);
+          Matrix_Scale(scale, scale * 2, scale);
+          Matrix_RotateX(gOdyssey_FlashPitches[i]);
+          Matrix_RotateY(gOdyssey_FlashYaws[i]);
           Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
           Render_DrawModelList(model);
         }
@@ -336,14 +336,14 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         BattleEffect_TintBattler(args->user, SPRITE_COLOR_NORMAL, TINT_KEEP, 0,
                                  0);
       if (frame >= start && frame < start + 11) {
-        s32 scale = Q16_ONE * 3 - ((frame - start) << 14);
+        s32 scale = FIXED_ONE * 3 - ((frame - start) << 14);
 
         model->shade = 0;
-        Transform_Reset();
-        Transform_ApplyTranslation(px(from.x / 2 - 64), 0, 0);
-        Transform_ApplyAxisScale(scale, scale * 2, scale);
-        Transform_ApplyPitch(gOdyssey_FlashPitches[i]);
-        Transform_ApplyYaw(gOdyssey_FlashYaws[i]);
+        Matrix_Initialize();
+        Matrix_Translate(INTtoFIXED(from.x / 2 - 64), 0, 0);
+        Matrix_Scale(scale, scale * 2, scale);
+        Matrix_RotateX(gOdyssey_FlashPitches[i]);
+        Matrix_RotateY(gOdyssey_FlashYaws[i]);
         Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
         Render_DrawModelList(model);
       }
@@ -357,14 +357,14 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         if (shade > 0)
           shade = 0;
         if (shade > MODEL_SHADE_INVISIBLE) {
-          s32 scale = (age << 14) + Q16_ONE / 4;
+          s32 scale = (age << 14) + FIXED_ONE / 4;
 
           model->shade = shade;
-          Transform_Reset();
-          Transform_ApplyTranslation(px(to.x / 2 - 64), 0, 0);
-          Transform_ApplyAxisScale(scale, scale * 2, scale);
-          Transform_ApplyPitch(gOdyssey_FlashPitches[i]);
-          Transform_ApplyYaw(gOdyssey_FlashYaws[i]);
+          Matrix_Initialize();
+          Matrix_Translate(INTtoFIXED(to.x / 2 - 64), 0, 0);
+          Matrix_Scale(scale, scale * 2, scale);
+          Matrix_RotateX(gOdyssey_FlashPitches[i]);
+          Matrix_RotateY(gOdyssey_FlashYaws[i]);
           Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
           Render_DrawModelList(model);
         }
@@ -390,15 +390,14 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       for (i = 0, step = Ram_MapCellBuffer + 0x6000; i != 128; i++) {
         color[0] = (i & 7) + 32;
         model->shade = (long)color;
-        Transform_Reset();
+        Matrix_Initialize();
         x = step->x;
         y = step->y;
-        center = -px(64);
-        Transform_ApplyTranslation(x + center, y + center, 0);
-        Transform_ApplyAxisScale(step->variant * 3, step->variant * 6,
-                                 step->variant);
-        Transform_ApplyPitch(step->z);
-        Transform_ApplyYaw(step->z);
+        center = -toFIXED(64);
+        Matrix_Translate(x + center, y + center, 0);
+        Matrix_Scale(step->variant * 3, step->variant * 6, step->variant);
+        Matrix_RotateX(step->z);
+        Matrix_RotateY(step->z);
         Render_TransformVertices(gBattleEffect_TriangleCorners, projected, 3);
         Render_DrawModelList(model);
         BattleEffectKernels_IntegrateVector3(step, 62, 0);
@@ -534,13 +533,13 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PC, -sine, IO_WRITE_HALFWORD);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PD, cosine, IO_WRITE_HALFWORD);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X,
-                        (Iwram_MulQ16(-120 << 24, cosine) +
-                         Iwram_MulQ16(-72 << 24, sine) + 0x400000) >>
+                        (Iwram_MulFX(-120 << 24, cosine) +
+                         Iwram_MulFX(-72 << 24, sine) + 0x400000) >>
                             8,
                         IO_WRITE_WORD);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG2Y,
-                        (Iwram_MulQ16(-120 << 24, -sine) +
-                         Iwram_MulQ16(-72 << 24, cosine) + 0x400000) >>
+                        (Iwram_MulFX(-120 << 24, -sine) +
+                         Iwram_MulFX(-72 << 24, cosine) + 0x400000) >>
                             8,
                         IO_WRITE_WORD);
     wait(1);
@@ -652,7 +651,7 @@ void BattleEffect_BuildShadeRamp(u8 *table, u32 count, s32 scale) {
     s32 value;
 
     total += step;
-    value = Q_16_16_TO_INT(scale * total);
+    value = FIXEDtoINT(scale * total);
     if (value > 63)
       value = 63;
     table[i] = value;
@@ -681,7 +680,7 @@ void BattleEffect_BuildShadeRampWave(u8 *table, u32 count, u32 repeats,
     s32 value;
 
     total += step;
-    value = Q_16_16_TO_INT(scale * total);
+    value = FIXEDtoINT(scale * total);
     if (value > 63)
       value = 63;
     table[i] = value;
@@ -712,7 +711,7 @@ void BattleEffect_BuildSteepShadeRampWave(u8 *table, u32 count, u32 repeats,
     s32 value;
 
     total += step;
-    value = Q_16_16_TO_INT(scale * total);
+    value = FIXEDtoINT(scale * total);
     if (value > 63)
       value = 63;
     table[i] = value;
@@ -740,7 +739,7 @@ void Iris_RestoreBattle(void) {
     struct MotionObject *object =
         BattleObject_GetFar(work->args->targets[i])->object;
 
-    SET_POSITION(object, 0, px(120), 0);
+    SET_POSITION(object, 0, toFIXED(120), 0);
     object->verticalMotionStrength = 0xab85;
     BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HOP);
   }

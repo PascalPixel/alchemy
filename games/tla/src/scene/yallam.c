@@ -158,8 +158,8 @@ s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
   objectPos = &object->x.fixed;
   if (SceneActor_CalculateFixedPointDistance(targetPos, objectPos) < range ||
       force != 0) {
-    u32 angle = (u16)ArcTan2(target->z.fixed - object->z.fixed,
-                             *targetPos - *objectPos);
+    u32 angle = (u16)Trig_Atan(target->z.fixed - object->z.fixed,
+                               *targetPos - *objectPos);
     u32 left = (angle - 0x1000) & 0xf000;
     u32 right = (angle + 0x1000) & 0xf000;
     u32 ahead = angle & 0xf000;
@@ -326,7 +326,7 @@ void Yallam_DigThirdHole(void) {
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 16, 0);
-      leader->velocityY = px(6);
+      leader->velocityY = toFIXED(6);
       FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Event_End();
     }
@@ -348,7 +348,7 @@ void Yallam_DigFifthHole(void) {
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -16);
-      leader->velocityY = px(6);
+      leader->velocityY = toFIXED(6);
       FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Event_End();
     }
@@ -1713,7 +1713,7 @@ waitFourthVerse:
   FieldActor_Jump(ACTOR_SONG_LEADER, 6, 0);
   Actor_MoveToAndWait(ACTOR_SONG_LEADER, 200, 670);
   FieldActor_Jump(ACTOR_SONG_LEADER, 4, 0);
-  FieldActor_SetMoveTargetFixed(v6, v7, 0, v8);
+  FieldActor_SetMoveTargetFX(v6, v7, 0, v8);
   FieldEvent_Wait(5);
   Actor_FaceDirectionAndWait(ACTOR_GAME_CHILD, FACING_SOUTH_SOUTHWEST);
   t33 = ((s32)Actor_Get(ACTOR_GAME_CHILD));
@@ -1726,7 +1726,7 @@ waitFourthVerse:
   FieldActor_Jump(ACTOR_GAME_CHILD, 6, 0);
   Actor_MoveToAndWait(ACTOR_GAME_CHILD, 200, 670);
   FieldActor_Jump(ACTOR_GAME_CHILD, 4, 0);
-  FieldActor_SetMoveTargetFixed(v6, v7, 0, v8);
+  FieldActor_SetMoveTargetFX(v6, v7, 0, v8);
   FieldEvent_Wait(5);
   Actor_FaceDirectionAndWait(ACTOR_CIRCLES_CHILD, FACING_WEST);
   t42 = ((s32)Actor_Get(ACTOR_CIRCLES_CHILD));
@@ -1739,7 +1739,7 @@ waitFourthVerse:
   FieldActor_Jump(ACTOR_CIRCLES_CHILD, 6, 0);
   Actor_MoveToAndWait(ACTOR_CIRCLES_CHILD, 200, 670);
   FieldActor_Jump(ACTOR_CIRCLES_CHILD, 4, 0);
-  FieldActor_SetMoveTargetFixed(v6, v7, 0, v8);
+  FieldActor_SetMoveTargetFX(v6, v7, 0, v8);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(ACTOR_STORY_CHILD, FACING_NORTH_NORTHWEST);
   t51 = ((s32)Actor_Get(ACTOR_STORY_CHILD));
@@ -1753,7 +1753,7 @@ waitFourthVerse:
   FieldActor_Jump(ACTOR_STORY_CHILD, 6, 0);
   Actor_MoveToAndWait(ACTOR_STORY_CHILD, 200, 670);
   FieldActor_Jump(ACTOR_STORY_CHILD, 4, 0);
-  FieldActor_SetMoveTargetFixed(v6, v7, 0, v8);
+  FieldActor_SetMoveTargetFX(v6, v7, 0, v8);
   FieldActor_WaitForMoveById(ACTOR_STORY_CHILD);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 184, 686);
@@ -1783,7 +1783,8 @@ waitFourthVerse:
 /// Once Force has pushed it (FLAG_AREA_TEMP_00), the log lies where it fell.
 void Yallam_PlaceFallenPillar(void) {
   if (Event_GetFlag(FLAG_AREA_TEMP_00)) {
-    SET_ACTOR_POSITION(Actor_Get(ACTOR_FALLING_LOG), px(168), 0, px(192));
+    SET_ACTOR_POSITION(Actor_Get(ACTOR_FALLING_LOG), toFIXED(168), 0,
+                       toFIXED(192));
   }
 }
 
@@ -1814,8 +1815,8 @@ void Yallam_ForcePillarDown(void) {
   struct TileSprite *sprite = object->sprite;
 
   Event_SetFlag(FLAG_AREA_TEMP_00);
-  object->acceleration = px(3) / 2;
-  object->speedLimit = px(8);
+  object->acceleration = toFIXED(3) / 2;
+  object->speedLimit = toFIXED(8);
   Event_PlaySound(SE_TOPPLE);
   FieldActor_SetMoveTarget(object, 176, 40, 184);
   step = 0;
@@ -1836,8 +1837,8 @@ void Yallam_ForcePillarDown(void) {
   Event_PlaySound(SE_LOG_FALL);
   i = 0;
   sprite->tile = i;
-  object->x.fixed = px(168);
-  object->z.fixed = px(192);
+  object->x.fixed = toFIXED(168);
+  object->z.fixed = toFIXED(192);
   object->y.fixed = i;
   object->velocityY = i;
   object->velocityX = i;
@@ -1875,14 +1876,14 @@ extern s32 gYallam_PillarShadowSunk[];
 s32 gYallam_PillarRaised[] = {
     SC_ANIMATION(3),
     SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Y, px(2)),
+    SC_ADD(SW_Y, toFIXED(2)),
     SC_CALL((s32)Yallam_HideSprite),
     SC_END,
 };
 
 s32 gYallam_PillarSunk[] = {
     SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Y, -px(16)),
+    SC_ADD(SW_Y, -toFIXED(16)),
     SC_CALL((s32)Yallam_HideSprite),
     SC_END,
 };
@@ -1891,7 +1892,7 @@ s32 gYallam_PillarShadowSunk[] = {
     SC_SET(SW_SCALE_X, 0x9999),
     SC_SET(SW_SCALE_Y, 0x9999),
     SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Y, -px(16)),
+    SC_ADD(SW_Y, -toFIXED(16)),
     SC_CALL((s32)Yallam_HideSprite),
     SC_END,
 };

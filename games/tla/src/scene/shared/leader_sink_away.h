@@ -8,7 +8,7 @@ void Leader_SinkAway(s32 entrance) {
   Event_PlaySound(SE_SPARKLING_PASSAGE);
   leader->update = (void (*)(void))Actor_EmitMist;
   leader->motionFlags = 0;
-  leader->speedLimit = px(1) / 5;
+  leader->speedLimit = toFIXED(1) / 5;
   Actor_SetAnimation(*owner, 2);
   Actor_SetDestinationOffset(*owner, 0, -8);
   FieldActor_WaitForMoveById(*owner);

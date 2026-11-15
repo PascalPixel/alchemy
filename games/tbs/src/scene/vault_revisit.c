@@ -371,7 +371,7 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
   struct Actor *jumpingActor = Actor_Get(actorId);
   int frames;
   Actor_SetSpeed(actorId, 3);
-  jumpingActor->gravity = px(1) / 2;
+  jumpingActor->gravity = toFIXED(1) / 2;
   jumpingActor->bounce = 0;
   jumpingActor->velocityY = velocityY;
   Actor_SetSpriteFlags(jumpingActor, 0);
@@ -379,11 +379,11 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
   Actor_SetPosition(actorId, x, z);
   for (frames = 60; frames != 0; --frames) {
     wait(1);
-    if ((WHOLE_PIXELS(jumpingActor->velocityY)) == 0)
+    if ((FIXEDtoINT(jumpingActor->velocityY)) == 0)
       break;
   }
   Actor_SetSpriteFlags(jumpingActor, SPRITE_FLAG_SHADOW);
-  jumpingActor->gravity = px(1);
+  jumpingActor->gravity = toFIXED(1);
 }
 
 /// Searching the bell rings it (SE_BELL).
@@ -398,7 +398,7 @@ static void VaultRevisit_RingBell(void) {
     Event_Wait(12);
     Actor_Jump(ACTOR_SAP, 4, 0);
     Event_Wait(20);
-    VaultRevisit_JumpActorToAndWait(ACTOR_SAP, 392, 104, px(7));
+    VaultRevisit_JumpActorToAndWait(ACTOR_SAP, 392, 104, toFIXED(7));
     Event_Wait(20);
     Actor_WalkToAndWait(ACTOR_SAP, 408, 104);
     Actor_WalkToAndWait(ACTOR_SAP, 408, 120);

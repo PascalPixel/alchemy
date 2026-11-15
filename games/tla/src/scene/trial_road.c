@@ -202,13 +202,13 @@ extern s32 gTrialRoad_StagesPlacements[];
 
 s32 TrialRoad_SettleOnGround(struct Actor *object) {
   s32 height =
-      Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) + px(2);
+      Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) + toFIXED(2);
 
   object->groundHeight = height;
   object->y.fixed = height;
   object->motionFlags = 0;
   object->collisionFlags = 0;
-  object->scaleY = Q16_ONE * 3 / 2;
+  object->scaleY = FIXED_ONE * 3 / 2;
   return 0;
 }
 
@@ -730,7 +730,7 @@ s32 TrialRoad_FollowPillar(struct Actor *object) {
   struct Actor *owner = object->watchedActor;
 
   SET_ACTOR_POSITION(object, owner->x.fixed,
-                     owner->y.fixed + px(PILLAR_TOP_HEIGHT(object)),
+                     owner->y.fixed + toFIXED(PILLAR_TOP_HEIGHT(object)),
                      owner->z.fixed);
   object->groundHeight = owner->groundHeight;
   return 1;
@@ -805,7 +805,7 @@ void TrialRoad_OpenSpoutCell(s32 id) {
 void TrialRoad_TrackLeaderOnPillars(void) {
   s32 y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
 
-  if (y == px(32))
+  if (y == toFIXED(32))
     Event_SetFlag(FLAG_SCENE_TEMP_08);
   else
     Event_ClearFlag(FLAG_SCENE_TEMP_08);
@@ -947,9 +947,9 @@ void TrialRoad_PoundPillar(s32 id, s32 mode, s32 frame) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   if (frame <= 10)
-    object->scaleY = Q16_ONE - (frame << 12);
+    object->scaleY = FIXED_ONE - (frame << 12);
   else
-    object->scaleY = Q16_ONE;
+    object->scaleY = FIXED_ONE;
   if (mode == 1) {
     TrialRoad_LowerPillar(id);
     TrialRoad_RaisePillar(other);
@@ -969,19 +969,19 @@ void TrialRoad_PoundPillar(s32 id, s32 mode, s32 frame) {
     }
     if (FIELD_CELL(partner->x.fixed) == FIELD_CELL(leader->x.fixed) &&
         FIELD_CELL(partner->z.fixed) == FIELD_CELL(leader->z.fixed)) {
-      leader->velocityY = px(8);
-      leader->x.fixed = (leader->x.fixed & -px(16)) + px(8);
-      leader->z.fixed = (leader->z.fixed & -px(16)) + px(8);
+      leader->velocityY = toFIXED(8);
+      leader->x.fixed = (leader->x.fixed & -toFIXED(16)) + toFIXED(8);
+      leader->z.fixed = (leader->z.fixed & -toFIXED(16)) + toFIXED(8);
     }
   }
   if (frame == 9)
-    partner->scaleY = Q16_ONE * 12 / 10;
+    partner->scaleY = FIXED_ONE * 12 / 10;
   else if (frame == 11)
-    partner->scaleY = Q16_ONE * 11 / 10;
+    partner->scaleY = FIXED_ONE * 11 / 10;
   else if (frame == 13)
-    partner->scaleY = Q16_ONE * 105 / 100;
+    partner->scaleY = FIXED_ONE * 105 / 100;
   else
-    partner->scaleY = Q16_ONE;
+    partner->scaleY = FIXED_ONE;
 }
 
 void TrialRoad_PoundWestPillar(s32 a, s32 b) {
@@ -1009,19 +1009,19 @@ void TrialRoad_StepOnSeesawPillar(s32 id, s32 other, s32 flag, s32 side) {
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
-  partner->scaleY = Q16_ONE / 8;
+  partner->scaleY = FIXED_ONE / 8;
   wait(1);
   TrialRoad_RaisePillar(other);
-  t = Q16_ONE / 8;
+  t = FIXED_ONE / 8;
 grow:
-  TrialRoad_SetPillarTopLift(id, (Q16_ONE / 2 - t) / (Q16_ONE / 32));
-  object->scaleY = Q16_ONE - t;
+  TrialRoad_SetPillarTopLift(id, (FIXED_ONE / 2 - t) / (FIXED_ONE / 32));
+  object->scaleY = FIXED_ONE - t;
   partner->scaleY = t;
   wait(1);
-  t += Q16_ONE / 8;
-  if (t <= Q16_ONE)
+  t += FIXED_ONE / 8;
+  if (t <= FIXED_ONE)
     goto grow;
-  object->scaleY = Q16_ONE;
+  object->scaleY = FIXED_ONE;
   TrialRoad_LowerPillar(id);
   Event_PlaySound(SE_ITEM_BREAK);
   if (side != 0)
@@ -1054,7 +1054,7 @@ void TrialRoad_StepOnEastPillar(void) {
 void TrialRoad_LandOnPillar(void) {
   s32 y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
 
-  if (y >= px(16)) {
+  if (y >= toFIXED(16)) {
     Field_TryJumpForward();
   } else if (Leader_CanPushObjectAhead()) {
     Leader_PushObjectAhead();
@@ -1188,8 +1188,8 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   Event_ResolvePendingActions(0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 8);
   Event_Wait(6);
-  object->speedLimit = px(1) / 2;
-  object->acceleration = px(1) / 5;
+  object->speedLimit = toFIXED(1) / 2;
+  object->acceleration = toFIXED(1) / 5;
   Sound_Play(SE_HEAVY_MOVE);
   if (dx < 0 || dz < 0)
     mode = 3;
@@ -1210,7 +1210,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
     Sound_Play(SE_HEAVY_STOP);
   } else {
     Actor_SelectAnimation(object, 3);
-    Actor_SetMoveTarget(object, px(312), 0, z);
+    Actor_SetMoveTarget(object, toFIXED(312), 0, z);
     Event_Wait(30);
     Actor_SelectAnimation(object, 8);
     Actor_WaitForMove(object);
@@ -1268,8 +1268,8 @@ void TrialRoad_UncoverSpout(s32 id, s32 a, s32 frame) {
     struct Actor *object = Actor_GetById(id);
     s32 height;
 
-    object->x.fixed = px(object->timer);
-    object->z.fixed = px((s16)object->userValue);
+    object->x.fixed = toFIXED(object->timer);
+    object->z.fixed = toFIXED((s16)object->userValue);
     height = Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed);
     object->groundHeight = height;
     object->y.fixed = height;
@@ -1298,8 +1298,8 @@ void TrialRoad_StandOnBlock(void) {
       FIELD_CELL(block->z.fixed) == FIELD_CELL(leader->z.fixed)) {
     s32 y = leader->y.fixed;
 
-    if (y < px(32))
-      leader->y.fixed = px(32);
+    if (y < toFIXED(32))
+      leader->y.fixed = toFIXED(32);
   }
 }
 
@@ -1382,8 +1382,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (target - effect->scaleX) / frames;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (target - Q16_ONE) / frames;
-      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
+      effect->scaleRateX = (target - FIXED_ONE) / frames;
+      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -1407,16 +1407,16 @@ void TrialRoad_DriftWithStream(void) {
 
   if (gMainRoutineWork.movementMode == 4)
     return;
-  leader->z.fixed += px(1);
+  leader->z.fixed += toFIXED(1);
   if ((gFrameCount & 7) != 0)
     return;
   if (leader->velocityZ == 0 && leader->velocityX == 0)
     return;
   options.update = Effect_AdvanceMotionAtLeaderPriority;
-  options.startScaleX = Q16_ONE * 8 / 10;
-  options.startScaleY = Q16_ONE * 8 / 10;
+  options.startScaleX = FIXED_ONE * 8 / 10;
+  options.startScaleY = FIXED_ONE * 8 / 10;
   velocity[1] = 0;
-  velocity[2] = Q16_ONE;
+  velocity[2] = FIXED_ONE;
   velocity[0] = 0;
   velocity[0] += ((Random16() << 17) >> 16) - 0x10000;
   velocity[2] += ((Random16() << 16) >> 16) - 0x8000;
@@ -1506,7 +1506,7 @@ void TrialRoad_SetSummitPillar(s32 a, s32 id) {
   if (FIELD_CELL(object->x.fixed) == 8) {
     Event_SetFlag(FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED);
     object->motionFlags = 0;
-    object->y.fixed -= px(1);
+    object->y.fixed -= toFIXED(1);
   }
 }
 
@@ -1759,27 +1759,28 @@ void TrialRoad_GaspFlees(void) {
 
   if (Event_GetFlag(FLAG_SCENE_TEMP_88))
     return;
-  dx = FIELD_PIXEL(leader->x.fixed - partner->x.fixed);
-  dz = FIELD_PIXEL(leader->z.fixed - partner->z.fixed);
+  dx = FIXEDtoINT(leader->x.fixed - partner->x.fixed);
+  dz = FIXEDtoINT(leader->z.fixed - partner->z.fixed);
   near = dx * dx + dz * dz;
-  dx = (FIELD_PIXEL(leader->x.fixed)) - 296;
-  dz = (FIELD_PIXEL(leader->z.fixed)) - 248;
+  dx = (FIXEDtoINT(leader->x.fixed)) - 296;
+  dz = (FIXEDtoINT(leader->z.fixed)) - 248;
   far = dx * dx + dz * dz;
   if (far <= 6400 || near <= 2304)
-    Actor_SetMoveTarget(partner, px(296 - dx), partner->y.fixed, px(248 - dz));
+    Actor_SetMoveTarget(partner, toFIXED(296 - dx), partner->y.fixed,
+                        toFIXED(248 - dz));
   if (far > 15)
     return;
   Event_PlaySound(SE_ENEMY_CRY);
   Event_PlaySound(SE_DJINNI_FLEES);
-  partner->speedLimit = px(2);
-  partner->acceleration = px(2);
+  partner->speedLimit = toFIXED(2);
+  partner->acceleration = toFIXED(2);
   partner->motionFlags = ACTOR_FALLS;
   partner->groundHeight = 0;
   partner->collisionFlags = 1;
-  partner->velocityY = px(10);
+  partner->velocityY = toFIXED(10);
   Actor_SetScript(ACTOR_GASP, gTrialRoad_GaspHopScript);
   y = partner->y.fixed;
-  Actor_SetMoveTarget(partner, px(344), y, px(264));
+  Actor_SetMoveTarget(partner, toFIXED(344), y, toFIXED(264));
   Event_SetFlag(FLAG_SCENE_TEMP_88);
 }
 
@@ -1797,7 +1798,7 @@ void TrialRoad_SetUpPoolRoom(void) {
 
     if (!started) {
       *flags = 5;
-      object->y.fixed += px(17) / 2;
+      object->y.fixed += toFIXED(17) / 2;
     } else {
       *flags = 3;
       object->y.fixed = 0;
@@ -2058,8 +2059,8 @@ void TrialRoad_StartRival(s32 mirrored);
   x = (column);                                                                \
   layer->cells = (struct MapCell *)Ram_MapCellBuffer + x;                      \
   layer->terrainIds = gMapShapeGrid + x;                                       \
-  words[0] = Iwram_MulQ16(*viewX, words[4]) + words[2];                        \
-  words[1] = Iwram_MulQ16(*viewZ, words[5]) + words[3]
+  words[0] = Iwram_MulFX(*viewX, words[4]) + words[2];                         \
+  words[1] = Iwram_MulFX(*viewZ, words[5]) + words[3]
 
 s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.next;
@@ -2355,7 +2356,7 @@ s32 TrialRoad_MirrorAngle(s32 angle) {
 /// Places an actor at a pixel position and facing, mirrored when the leader
 /// took the right path.
 void TrialRoad_PlaceActor(s32 id, s32 x, s32 z, s32 angle) {
-  Actor_SetPositionAndFacing(id, px(TrialRoad_MirrorX(x)), px(z),
+  Actor_SetPositionAndFacing(id, toFIXED(TrialRoad_MirrorX(x)), toFIXED(z),
                              (u16)TrialRoad_MirrorAngle(angle));
 }
 
@@ -2401,35 +2402,35 @@ void TrialRoad_ReachPeakFirst(void) {
   wait(20);
   TrialRoad_PlaceActor(ACTOR_MOAPA, 344, 296, FACING_NORTH);
   object = Actor_GetById(ACTOR_MOAPA);
-  object->speedLimit = px(1);
-  object->acceleration = px(1) / 2;
+  object->speedLimit = toFIXED(1);
+  object->acceleration = toFIXED(1) / 2;
   object->motionFlags = 0;
-  Actor_SetMoveTarget(object, object->x.fixed, object->y.fixed + px(88),
+  Actor_SetMoveTarget(object, object->x.fixed, object->y.fixed + toFIXED(88),
                       object->z.fixed);
   Actor_SelectAnimation(object, 2);
   FieldActor_WaitForMove(object);
   Actor_SelectAnimation(object, 1);
   object->motionFlags = ACTOR_FALLS;
-  object->groundHeight = px(128);
-  object->velocityY = px(4);
-  object->speedLimit = px(3);
-  object->acceleration = px(2);
+  object->groundHeight = toFIXED(128);
+  object->velocityY = toFIXED(4);
+  object->speedLimit = toFIXED(3);
+  object->acceleration = toFIXED(2);
   Actor_SetMoveTarget(object, object->x.fixed, object->y.fixed,
-                      object->z.fixed - px(16));
+                      object->z.fixed - toFIXED(16));
   FieldActor_WaitForMove(object);
   wait(12);
-  object->speedLimit = px(1);
-  object->acceleration = px(1) / 2;
-  FieldActor_SetMoveTargetFixed(object, px(TrialRoad_MirrorCellX(41)),
-                                object->y.fixed, px(264));
+  object->speedLimit = toFIXED(1);
+  object->acceleration = toFIXED(1) / 2;
+  FieldActor_SetMoveTargetFX(object, toFIXED(TrialRoad_MirrorCellX(41)),
+                             object->y.fixed, toFIXED(264));
   FieldActor_WaitForMove(object);
   wait(6);
   Event_PlaySound(SE_JUMP);
-  object->velocityY = px(6);
-  object->speedLimit = px(3);
-  object->acceleration = px(2);
-  Actor_SetMoveTarget(object, px(TrialRoad_MirrorCellX(37)), object->y.fixed,
-                      px(264));
+  object->velocityY = toFIXED(6);
+  object->speedLimit = toFIXED(3);
+  object->acceleration = toFIXED(2);
+  Actor_SetMoveTarget(object, toFIXED(TrialRoad_MirrorCellX(37)),
+                      object->y.fixed, toFIXED(264));
   FieldActor_WaitForMove(object);
   wait(6);
   Actor_MoveToObject(ACTOR_WEST_GUARD, 8);
@@ -2686,7 +2687,7 @@ void TrialRoad_ShowTraps(void) {
     struct Actor *object = Actor_GetById(i);
 
     if (object->x.fixed != 0)
-      object->x.fixed -= px(144);
+      object->x.fixed -= toFIXED(144);
   }
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetMovementTypeById(ACTOR_WEST_GUARD,
@@ -2730,7 +2731,7 @@ void TrialRoad_ShowTraps(void) {
   Actor_WaitForMoveById(ACTOR_WEST_GUARD);
   Sound_Play(SE_CURSE);
   MapGrid_SetShake(2, 4, 1);
-  Actor_GetById(ACTOR_WEST_GUARD)->velocityY = px(4);
+  Actor_GetById(ACTOR_WEST_GUARD)->velocityY = toFIXED(4);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWaitById(ACTOR_WEST_GUARD, 0, 16);
@@ -2875,7 +2876,7 @@ void TrialRoad_UpdateFountains(void) {
     }
     cell = (FIELD_CELL(actor->x.fixed)) + ((FIELD_CELL(actor->z.fixed)) << 7);
     shapes[cell] = (u8)work->shape + i;
-    *collision = ((actor->y.part[0].pixel + mover->height) / 8) << 8;
+    *collision = ((actor->y.part[0].integer + mover->height) / 8) << 8;
     attributes = cells + cell * 4;
     if (mover->speed != 0)
       attributes[3] = 0;
@@ -2893,12 +2894,12 @@ void TrialRoad_UpdateFountains(void) {
     marker = mover->spout;
     if (marker != 0) {
       if (mover->height == 0) {
-        marker->y.fixed = actor->y.fixed - px(16);
+        marker->y.fixed = actor->y.fixed - toFIXED(16);
       } else {
         s32 wave;
         mover->bob += TRIG_TURN / 16;
-        wave = Iwram_MulQ16(px(2), Trig_Sin(mover->bob)) - px(14);
-        marker->y.fixed = actor->y.fixed + px(mover->height) + wave;
+        wave = Iwram_MulFX(toFIXED(2), Trig_Sin(mover->bob)) - toFIXED(14);
+        marker->y.fixed = actor->y.fixed + toFIXED(mover->height) + wave;
       }
       marker->x.fixed = actor->x.fixed;
       marker->z.fixed = actor->z.fixed;
@@ -2941,7 +2942,7 @@ void TrialRoad_DrawFountains(void) {
   tile = gVramCacheEntries[base->vramEntry].offset >> 5;
   entry = base->sprites;
   count = 0;
-  rise = -px(2);
+  rise = -toFIXED(2);
   map = Ram_HeapSlots->mapGrid;
   view = &map->viewX;
   viewX = view[0] & FIELD_PIXEL_MASK;
@@ -2959,9 +2960,9 @@ void TrialRoad_DrawFountains(void) {
       if (count > 79)
         goto skip;
       x = object->x.fixed - viewX;
-      height = object->y.fixed + px(lift) - viewY;
+      height = object->y.fixed + toFIXED(lift) - viewY;
       z = object->z.fixed - viewZ - viewY;
-      x = FIELD_PIXEL(x) - 8;
+      x = FIXEDtoINT(x) - 8;
       sy = z - height;
       sy = (sy >> 16) - 16;
       depth = ((height + z) >> 16) + 58;
@@ -2984,11 +2985,11 @@ void TrialRoad_DrawFountains(void) {
     if (count > 79)
       continue;
     x = object->x.fixed - viewX;
-    height = object->y.fixed + px(mover->height) - viewY;
+    height = object->y.fixed + toFIXED(mover->height) - viewY;
     z = object->z.fixed - viewZ - viewY;
-    x = FIELD_PIXEL(x) - 8;
+    x = FIXEDtoINT(x) - 8;
     sy = z - height;
-    bob = Iwram_MulQ16(rise, Trig_Sin(mover->bob));
+    bob = Iwram_MulFX(rise, Trig_Sin(mover->bob));
     sy = ((sy + bob + rise) >> 16) - 4;
     depth = ((height + z) >> 16) + 58;
     if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
@@ -3271,7 +3272,8 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
       s32 y = leader->y.fixed - ((Random_Below(14)) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
-          285, (i << 17) + leader->x.fixed - px(8), y - px(2), leader->z.fixed);
+          285, (i << 17) + leader->x.fixed - toFIXED(8), y - toFIXED(2),
+          leader->z.fixed);
     }
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
@@ -3280,10 +3282,10 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
       Actor_StartScript((struct Actor *)effect, gTrialRoad_RubbleScript);
-      effect->scaleY = effect->scaleX = Q16_ONE * 7 / 10;
+      effect->scaleY = effect->scaleX = FIXED_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {
-        effect->velocity.x = Iwram_MulQ16(Trig_Cos(i << 13), 0x13333);
+        effect->velocity.x = Iwram_MulFX(Trig_Cos(i << 13), 0x13333);
         effect->velocity.z = Trig_Sin(i << 13);
       } else {
         effect->velocity.x = spread;
@@ -3417,16 +3419,16 @@ void TrialRoad_MoveRival(void) {
   if (state->mode == RIVAL_MIRROR) {
     x = leader->x.fixed;
     z = leader->z.fixed;
-    if ((u32)(z - px(256)) > px(304))
-      x = px(528) - (x & FIELD_PIXEL_MASK);
+    if ((u32)(z - toFIXED(256)) > toFIXED(304))
+      x = toFIXED(528) - (x & FIELD_PIXEL_MASK);
     if (gMainRoutineWork.entrance & 1)
-      x += px(304);
+      x += toFIXED(304);
     else
-      x -= px(304);
+      x -= toFIXED(304);
     if (rival->x.fixed != x || rival->z.fixed != z) {
       dx = x - rival->x.fixed;
       dz = z - rival->z.fixed;
-      heading = ArcTan2(dz, dx);
+      heading = Trig_Atan(dz, dx);
       turn = (s16)(heading - rival->facing);
       if (turn > 0x1000)
         turn = 0x1000;
@@ -3460,18 +3462,18 @@ void TrialRoad_MoveRival(void) {
       state->mode = RIVAL_WAITING;
       Actor_SelectAnimation(rival, 1);
       if (work->originX < rival->x.fixed)
-        x = work->originX + px(12);
+        x = work->originX + toFIXED(12);
       else
-        x = work->originX - px(12);
+        x = work->originX - toFIXED(12);
       if (!GameFlag_Get(FLAG_SCENE_TEMP_12)) {
-        z = work->originZ + px(16);
+        z = work->originZ + toFIXED(16);
         rival->timer = work->rivalTimers[1];
       } else {
-        z = work->originZ - px(16);
+        z = work->originZ - toFIXED(16);
         rival->timer = work->rivalTimers[0];
       }
-      rival->acceleration = px(1) / 4;
-      rival->speedLimit = px(1);
+      rival->acceleration = toFIXED(1) / 4;
+      rival->speedLimit = toFIXED(1);
       Actor_SetMoveTarget(rival, x, 0, z);
       Actor_StartIdle(rival);
     } else {
@@ -3492,9 +3494,9 @@ void TrialRoad_MoveRival(void) {
     rival = Actor_GetById(partner);
     if (rival == 0)
       return;
-    rival->x.fixed = px(x);
+    rival->x.fixed = toFIXED(x);
     rival->facing = angle;
-    rival->z.fixed = px(z);
+    rival->z.fixed = toFIXED(z);
     Actor_SelectAnimation(rival, ok);
   } else if (state->mode == RIVAL_REPLAY) {
     if (state->resource != work->resource) {
@@ -3511,16 +3513,16 @@ void TrialRoad_MoveRival(void) {
     }
     x <<= 16;
     z <<= 16;
-    if (state->mirrored != 0 && (u32)(z - px(256)) > px(304))
-      x = px(528) - x;
+    if (state->mirrored != 0 && (u32)(z - toFIXED(256)) > toFIXED(304))
+      x = toFIXED(528) - x;
     if (gMainRoutineWork.entrance & 1)
-      x += px(304);
+      x += toFIXED(304);
     else
-      x -= px(304);
+      x -= toFIXED(304);
     if (rival->x.fixed != x || rival->z.fixed != z) {
       dx = x - rival->x.fixed;
       dz = z - rival->z.fixed;
-      heading = ArcTan2(dz, dx);
+      heading = Trig_Atan(dz, dx);
       turn = (s16)(heading - rival->facing);
       if (turn > 0x1000)
         turn = 0x1000;
@@ -3538,8 +3540,8 @@ void TrialRoad_MoveRival(void) {
     else
       Actor_SelectAnimation(rival, 5);
   } else if (state->mode == RIVAL_RECORD) {
-    x = FIELD_PIXEL(rival->x.fixed);
-    z = FIELD_PIXEL(rival->z.fixed);
+    x = FIXEDtoINT(rival->x.fixed);
+    z = FIXEDtoINT(rival->z.fixed);
     work->path[state->point] = x;
     work->path[state->point + 1] = z;
     if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS))
@@ -3576,15 +3578,16 @@ static inline void *TrialRoadLink_AllocPicture(void) {
     register s32 arg asm("r0");                                                \
     s32 side = gMainRoutineWork.entrance & 1;                                  \
     if (side) {                                                                \
-      x = (actor->x.fixed - work->originX) / px(16) left;                      \
+      x = (actor->x.fixed - work->originX) / toFIXED(16) left;                 \
       arg = which;                                                             \
     } else {                                                                   \
-      x = (actor->x.fixed - work->originX) / px(16) right;                     \
+      x = (actor->x.fixed - work->originX) / toFIXED(16) right;                \
       arg = which;                                                             \
     }                                                                          \
     originZ = &work->originZ;                                                  \
     lift = TrialRoad_GetStage(arg);                                            \
-    y = (actor->z.fixed - *originZ) / px(16) + work->scrollY - lift * 36 + 4;  \
+    y = (actor->z.fixed - *originZ) / toFIXED(16) + work->scrollY -            \
+        lift * 36 + 4;                                                         \
     /* Once-only: ends the block, so y + 4 is scheduled before x & 511. */     \
     do {                                                                       \
     } while (0);                                                               \
@@ -3707,11 +3710,11 @@ void TrialRoad_ShowProgress(s32 leaderId, s32 rivalId) {
   holdFade = &link->holdFade;
   vramEntry = &link->vramEntry;
   if (leaderId == owner) {
-    *originX = px(160);
-    *originZ = px(-1632);
+    *originX = toFIXED(160);
+    *originZ = toFIXED(-1632);
   } else {
-    *originX = px(112);
-    *originZ = px(-1632);
+    *originX = toFIXED(112);
+    *originZ = toFIXED(-1632);
   }
   Actor_GetById(leaderId);
   Actor_GetById(rivalId);
@@ -3846,8 +3849,8 @@ s8 gTrialRoad_KeyStages[] = {
 u32 gTrialRoad_RightKnightEntersScript[] = {
     SC_SPEED(1.5),
     SC_ACCELERATION(1),
-    SC_SET(SW_X, px(312)),
-    SC_SET(SW_Z, px(680)),
+    SC_SET(SW_X, toFIXED(312)),
+    SC_SET(SW_Z, toFIXED(680)),
     SC_ANIMATION(5),
     SC_MOVE(312, 0, 632),
     SC_SYNC,
@@ -3865,8 +3868,8 @@ u32 gTrialRoad_RightKnightEntersScript[] = {
 u32 gTrialRoad_LeftKnightEntersScript[] = {
     SC_SPEED(1.5),
     SC_ACCELERATION(1),
-    SC_SET(SW_X, px(232)),
-    SC_SET(SW_Z, px(680)),
+    SC_SET(SW_X, toFIXED(232)),
+    SC_SET(SW_Z, toFIXED(680)),
     SC_ANIMATION(5),
     SC_MOVE(232, 0, 632),
     SC_SYNC,
@@ -3884,8 +3887,8 @@ u32 gTrialRoad_LeftKnightEntersScript[] = {
 u32 gTrialRoad_LeftKnightToChestScript[] = {
     SC_SPEED(1.5),
     SC_ACCELERATION(1),
-    SC_SET(SW_X, px(120)),
-    SC_SET(SW_Z, px(296)),
+    SC_SET(SW_X, toFIXED(120)),
+    SC_SET(SW_Z, toFIXED(296)),
     SC_ANIMATION(5),
     SC_MOVE(120, 0, 216),
     SC_SYNC,
@@ -3918,8 +3921,8 @@ u32 gTrialRoad_LeftKnightLeavesScript[] = {
 u32 gTrialRoad_RightKnightToChestsScript[] = {
     SC_SPEED(1),
     SC_ACCELERATION(0.5),
-    SC_SET(SW_X, px(344)),
-    SC_SET(SW_Z, px(184)),
+    SC_SET(SW_X, toFIXED(344)),
+    SC_SET(SW_Z, toFIXED(184)),
     SC_ANIMATION(2),
     SC_MOVE(312, 0, 168),
     SC_SYNC,

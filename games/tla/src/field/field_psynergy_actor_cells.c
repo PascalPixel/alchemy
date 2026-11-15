@@ -158,14 +158,14 @@ struct Actor *Leader_FindActorAhead(void) {
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
-  Vector_AddPolarOffset(px(16), angle << 12, position);
+  Vector_AddPolarOffset(toFIXED(16), angle << 12, position);
   found = Actor_FindAtCell(position, 1);
   if (found != NULL)
     return found;
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
-  Vector_AddPolarOffset(px(32), angle << 12, position);
+  Vector_AddPolarOffset(toFIXED(32), angle << 12, position);
   found = Actor_FindAtCell(position, 1);
   if (found != NULL)
     return found;
@@ -183,7 +183,7 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 checkY) {
 
     if (checkY) {
       if (FIELD_CELL(position[0]) == FIELD_CELL(object->x.fixed) &&
-          position[1] / Q16_ONE == object->y.fixed / Q16_ONE &&
+          position[1] / FIXED_ONE == object->y.fixed / FIXED_ONE &&
           FIELD_CELL(position[2]) == FIELD_CELL(object->z.fixed))
         return object;
     } else {
@@ -209,8 +209,8 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
   if (sprite == NULL)
     return;
   Iwram_FillWordsEntry(sprite, sizeof(*sprite), 0);
-  sprite->scaleX = Q16_ONE;
-  sprite->scaleY = Q16_ONE;
+  sprite->scaleX = FIXED_ONE;
+  sprite->scaleY = FIXED_ONE;
   sprite->depth = 255;
   sprite->pivotX = pivotX;
   sprite->pivotY = pivotY;
@@ -227,7 +227,7 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
 
 #include <system/affine.h>
 
-#define Q16_ONE 0x10000
+#define FIXED_ONE 0x10000
 
 /// Draws a field effect's sprite. An unscaled, unrotated sprite needs no
 /// affine matrix; any other takes one, and one scaled past 1 is drawn in a
@@ -254,7 +254,7 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
     return;
 
   // The affine matrix, unless the sprite is drawn as it is.
-  if (scaleX == Q16_ONE && scaleY == scaleX && sprite->angle == 0) {
+  if (scaleX == FIXED_ONE && scaleY == scaleX && sprite->angle == 0) {
     matrix = 0;
     affineMode = 0;
   } else {
@@ -269,8 +269,8 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
   magnitude = scaleX;
   if (magnitude < 0)
     magnitude = -magnitude;
-  if (magnitude > Q16_ONE ||
-      (magnitude = scaleY < 0 ? -scaleY : scaleY, magnitude > Q16_ONE)) {
+  if (magnitude > FIXED_ONE ||
+      (magnitude = scaleY < 0 ? -scaleY : scaleY, magnitude > FIXED_ONE)) {
     affineMode = 3;
     width *= 2;
     height *= 2;
@@ -278,7 +278,7 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
 
   // Where the pivot sits in the drawn box, from the box's top left.
   if (sprite->angle == 0) {
-    if (scaleX == Q16_ONE && scaleY == scaleX) {
+    if (scaleX == FIXED_ONE && scaleY == scaleX) {
       left = sprite->pivotX - (sprite->width >> 1) + width / 2;
       top = sprite->pivotY - (sprite->height >> 1) + height / 2;
     } else {
@@ -294,20 +294,20 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
     s32 cos = Trig_Cos(sprite->angle);
     s32 halfWidth = sprite->width * scaleX / 2;
     s32 halfHeight = sprite->height * scaleY / 2;
-    s32 cornerX = Iwram_MulQ16(cos, halfWidth) - Iwram_MulQ16(sin, halfWidth);
-    s32 cornerY = Iwram_MulQ16(cos, halfHeight) + Iwram_MulQ16(sin, halfHeight);
+    s32 cornerX = Iwram_MulFX(cos, halfWidth) - Iwram_MulFX(sin, halfWidth);
+    s32 cornerY = Iwram_MulFX(cos, halfHeight) + Iwram_MulFX(sin, halfHeight);
     s32 pivotX = scaleX * sprite->pivotX;
     s32 pivotY = sprite->pivotY * scaleY;
-    s32 turnedX = Iwram_MulQ16(cos, pivotX) - Iwram_MulQ16(sin, pivotY);
-    s32 turnedY = Iwram_MulQ16(cos, pivotY) + Iwram_MulQ16(sin, pivotX);
+    s32 turnedX = Iwram_MulFX(cos, pivotX) - Iwram_MulFX(sin, pivotY);
+    s32 turnedY = Iwram_MulFX(cos, pivotY) + Iwram_MulFX(sin, pivotX);
 
-    left = width / 2 + FIELD_PIXEL(turnedX - cornerX);
-    top = height / 2 + FIELD_PIXEL(turnedY - cornerY);
+    left = width / 2 + FIXEDtoINT(turnedX - cornerX);
+    top = height / 2 + FIXEDtoINT(turnedY - cornerY);
   }
 
   // The box on screen; skip it when none of it shows.
-  screenX = FIELD_PIXEL(x) - left;
-  screenY = FIELD_PIXEL(y) - top;
+  screenX = FIXEDtoINT(x) - left;
+  screenY = FIXEDtoINT(y) - top;
   if (screenX + width < 0 || screenX > 239 || screenY + height <= 0 ||
       screenY > 159)
     return;

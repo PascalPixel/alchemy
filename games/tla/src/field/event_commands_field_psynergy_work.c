@@ -55,8 +55,8 @@ void Camera_WorldToScreen(struct Vector3 *position) {
     s32 result[3];
 
     Render_ProjectPoint(position, result);
-    position->x = px(result[0]);
-    position->z = px(result[1]);
+    position->x = INTtoFIXED(result[0]);
+    position->z = INTtoFIXED(result[1]);
     position->y = 0;
   } else {
     u8 *state = (u8 *)slots->mapGrid;
@@ -160,7 +160,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   scene->secondActorId = targetId;
   scene->mainActor = user;
   target = Actor_Lookup((s16)targetId);
-  scene->angle = (user->facing + TRIG_TURN / 8) &
+  scene->angle = (user->facing + DEGtoANG(45)) &
                  TRIG_TURN * 3 / 4; // Round to four directions.
   scene->angle8 = (user->facing + FACING_STEP) & 0xe000;
   scene->child = target;
@@ -186,7 +186,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
     scene->x = user->x.fixed;
     scene->z = user->z.fixed;
     scene->y = user->y.fixed;
-    Vector_AddPolarOffset(px(16), scene->angle, &scene->x);
+    Vector_AddPolarOffset(toFIXED(16), scene->angle, &scene->x);
   }
 }
 

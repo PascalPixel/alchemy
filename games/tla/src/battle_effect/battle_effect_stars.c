@@ -68,13 +68,13 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   source = ACTOR(args->user);
   target = ACTOR(args->targets[0]);
   for (i = 0, point = work->particles; i != BOLT_COUNT; i++) {
-    SET_POSITION(point, source->x.fixed, source->y.fixed + px(40),
+    SET_POSITION(point, source->x.fixed, source->y.fixed + toFIXED(40),
                  source->z.fixed);
     if (i == 0)
       point->velocityX = (target->x.fixed - point->x) / 12;
     else
       point->velocityX = (target->x.fixed * 2 - point->x) / 12;
-    point->velocityY = (target->y.fixed - point->y + px(40)) / 12;
+    point->velocityY = (target->y.fixed - point->y + toFIXED(40)) / 12;
     point->velocityZ = (target->z.fixed - point->z) / 12;
     point->variant = 0;
     point++;
@@ -106,23 +106,23 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
         size = (frame - start) / 4 + 2;
         if (size > 10)
           size = 10;
-        Transform_Reset();
-        Transform_SetLookAt(camera, camera + 3);
-        Transform_ApplyPosition(bolt);
+        Matrix_Initialize();
+        Matrix_SetLookAt(camera, camera + 3);
+        Matrix_TranslateVector(bolt);
         nearest = 0;
         for (j = 0; j != RING_POINTS; j++) {
           s32 depth;
 
-          Transform_Push();
-          Transform_ApplyRoll((frame - start) << 10);
-          Transform_ApplyYaw(TRIG_TURN / 4);
-          scale[0] = ((frame - start) << 12) + Q16_ONE / 16;
-          if (scale[0] > Q16_ONE)
-            scale[0] = Q16_ONE;
+          Matrix_Push();
+          Matrix_RotateZ((frame - start) << 10);
+          Matrix_RotateY(DEGtoANG(90));
+          scale[0] = ((frame - start) << 12) + FIXED_ONE / 16;
+          if (scale[0] > FIXED_ONE)
+            scale[0] = FIXED_ONE;
           scale[1] = scale[0];
           scale[2] = scale[0];
-          Transform_ApplyScale(scale);
-          Transform_ApplyRoll(j * 0x199a);
+          Matrix_ScaleVector(scale);
+          Matrix_RotateZ(j * 0x199a);
           depth = EffectPosition_ProjectPoint(&gStar_Points[(j & 1) * 3], &pos);
           if (nearest < depth)
             nearest = depth;
@@ -133,7 +133,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
           ring[i * 10 + j].velocityY = pos.y + base.y;
           ring[i * 10 + j].velocityX = pos.x;
           ring[i * 10 + j].velocityY = pos.y;
-          Transform_Pop();
+          Matrix_Pop();
         }
         if (nearest <= FAR_DEPTH) {
           for (j = 0; j != RING_POINTS; j++) {
@@ -161,17 +161,17 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
         // target is thrown back 40 pixels and up, and flashes; the third ring
         // begins the results instead.
         if (frame == start + i + 10) {
-          target->acceleration = px(2);
-          target->speedLimit = px(8);
-          target->velocityY = px(5);
+          target->acceleration = toFIXED(2);
+          target->speedLimit = toFIXED(8);
+          target->velocityY = toFIXED(5);
           target->gravity = 0xab85;
           target->steeringFlags = 0;
           Actor_StartIdleFar(target);
           if (target->x.fixed < 0)
-            Actor_SetMoveTargetFar(target, target->x.fixed - px(40), 0,
+            Actor_SetMoveTargetFar(target, target->x.fixed - toFIXED(40), 0,
                                    target->z.fixed);
           else
-            Actor_SetMoveTargetFar(target, target->x.fixed + px(40), 0,
+            Actor_SetMoveTargetFar(target, target->x.fixed + toFIXED(40), 0,
                                    target->z.fixed);
           if (i == 2) {
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -247,10 +247,10 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   for (i = 0, point = work->particles; i != STAR_COUNT; i++) {
     s32 delay = i * 8;
 
-    SET_POSITION(point, source->x / 2, source->y + px(120), source->z);
+    SET_POSITION(point, source->x / 2, source->y + toFIXED(120), source->z);
     point->velocityX =
         (target->x + ((s32)((Random16() & 0x7f) - 64) << 16) - point->x) / 12;
-    point->velocityY = (target->y - point->y + px(20)) / 12;
+    point->velocityY = (target->y - point->y + toFIXED(20)) / 12;
     point->velocityZ = (target->z - point->z) / 12;
     point->variant = (Random16() & 15) + delay;
     point++;
@@ -259,8 +259,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   size = DOT_SIZE;
   ring = (struct Particle *)gMapGridCellBuffer;
   for (frame = 0; frame != SHINING_STAR_FRAMES; frame++) {
-    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
-                                    TRIG_TURN / 3, 0);
+    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - DEGtoANG(120),
+                                    DEGtoANG(120), 0);
     if (frame == 96)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     for (i = 0; i != STAR_COUNT; i++) {
@@ -269,8 +269,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
         // Project the star and, while it is on screen, lay out its ring of
         // ten points (the velocity fields of the map buffer's steps), then
         // join each point to the next with a row of dots.
-        Transform_Reset();
-        Transform_SetLookAt(camera, camera + 3);
+        Matrix_Initialize();
+        Matrix_SetLookAt(camera, camera + 3);
         EffectPosition_ProjectPoint((s32 *)star, &pos);
         pos.x >>= 1;
         if (pos.x >= -8 && pos.x <= 127) {
@@ -279,13 +279,13 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
               for (j = 0; j != RING_POINTS; j++) {
                 ring[i * 10 + j].velocityX =
                     pos.x +
-                    (Q_16_16_TO_INT((Trig_Sin(j * 0x199a -
-                                              ((frame - star->variant) << 11)) *
-                                     gStar_Radii[j & 1]) /
-                                    2));
+                    (FIXEDtoINT((Trig_Sin(j * 0x199a -
+                                          ((frame - star->variant) << 11)) *
+                                 gStar_Radii[j & 1]) /
+                                2));
                 ring[i * 10 + j].velocityY =
                     pos.y -
-                    (Q_16_16_TO_INT(
+                    (FIXEDtoINT(
                         Trig_Cos(j * 0x199a - ((frame - star->variant) << 11)) *
                         gStar_Radii[j & 1]));
               }

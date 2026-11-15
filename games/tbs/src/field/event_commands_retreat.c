@@ -19,7 +19,7 @@ void FieldEffect_UpdateSpinAngle(struct Actor *actor) {
 }
 
 /// Per-frame update: spins 1/8 turn a frame as it shrinks by 640, rising a
-/// pixel a frame; once its scale falls below Q16_ONE * 3 / 16 (84 frames from
+/// pixel a frame; once its scale falls below FIXED_ONE * 3 / 16 (84 frames from
 /// full size) its sprites are hidden (spriteStorageKind 0), but it is not
 /// released. Retreat gives it to the caster.
 void FieldEffect_UpdateRetreatCaster(struct Actor *actor) {
@@ -27,10 +27,10 @@ void FieldEffect_UpdateRetreatCaster(struct Actor *actor) {
 
   actor->scaleY -= 640;
   scale = actor->scaleX - 640;
-  actor->facing += TRIG_TURN / 8;
-  actor->y.fixed += px(1);
+  actor->facing += DEGtoANG(45);
+  actor->y.fixed += toFIXED(1);
   actor->scaleX = scale;
-  if ((s32)scale < Q16_ONE * 3 / 16)
+  if ((s32)scale < FIXED_ONE * 3 / 16)
     actor->spriteStorageKind = ACTOR_SPRITE_NONE;
 }
 
@@ -62,22 +62,22 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
     Camera_WorldToScreen(&pos);
 
     effect->x = pos.x;
-    effect->z = pos.z + px(8);
+    effect->z = pos.z + toFIXED(8);
     effect->originZ = effect->z;
     effect->originX = effect->x;
     pos.z = effect->originZ;
     pos.x = effect->originX;
 
     spread = Random16();
-    Vector_AddPolarOffset(px(120),
+    Vector_AddPolarOffset(toFIXED(120),
                           ((spread << 13) >> 16) - ((Random16() << 13) >> 16) +
                               FACING_NORTH,
                           &pos);
 
     effect->targetX = pos.x;
     effect->targetZ = pos.z;
-    effect->acceleration = px(5);
-    effect->speedMax = px(5);
+    effect->acceleration = toFIXED(5);
+    effect->speedMax = toFIXED(5);
     effect->turnStepLimited = state;
     effect->state++;
 
@@ -136,7 +136,7 @@ void FieldPsynergy_Retreat(void) {
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
     FieldParticle_SetActorMode(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->actor, (Random16() * 7) >> 16);
-    scale = (Random16() >> 1) + Q16_ONE * 6 / 5; // 1.2 to 1.7
+    scale = (Random16() >> 1) + FIXED_ONE * 6 / 5; // 1.2 to 1.7
     effect->scaleY = scale;
     effect->scaleX = scale;
     i++;
@@ -167,10 +167,10 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
   s32 limit;
   s32 scale;
 
-  limit = particle->groundHeight + px(10);
+  limit = particle->groundHeight + toFIXED(10);
   source = particle->watchedActor;
   if (gMainRoutineWork.mapId == MAP_INDEX_WORLD)
-    limit = particle->groundHeight + px(4);
+    limit = particle->groundHeight + toFIXED(4);
 
   y = particle->y.fixed;
   if (y <= limit) {
@@ -178,14 +178,14 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
     return;
   }
 
-  scale = particle->scaleX + Q16_ONE * 3 / 64;
-  if (scale > Q16_ONE)
-    scale = Q16_ONE;
+  scale = particle->scaleX + FIXED_ONE * 3 / 64;
+  if (scale > FIXED_ONE)
+    scale = FIXED_ONE;
   particle->scaleX = scale;
   particle->scaleY = scale;
   particle->x.fixed = source->x.fixed;
-  particle->y.fixed = y - px(2);
-  particle->z.fixed = source->z.fixed + ((Q16_ONE - scale) * 5) + px(9);
+  particle->y.fixed = y - toFIXED(2);
+  particle->z.fixed = source->z.fixed + ((FIXED_ONE - scale) * 5) + toFIXED(9);
 }
 
 /// As FieldEffect_UpdateDescendingParticlePositiveArc for the arc drawn upside
@@ -196,10 +196,10 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
   s32 limit;
   s32 scale;
 
-  limit = particle->groundHeight + px(10);
+  limit = particle->groundHeight + toFIXED(10);
   source = particle->watchedActor;
   if (gMainRoutineWork.mapId == MAP_INDEX_WORLD)
-    limit = particle->groundHeight + px(4);
+    limit = particle->groundHeight + toFIXED(4);
 
   y = particle->y.fixed;
   if (y <= limit) {
@@ -207,14 +207,14 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
     return;
   }
 
-  scale = particle->scaleX + Q16_ONE * 3 / 64;
-  if (scale > Q16_ONE)
-    scale = Q16_ONE;
+  scale = particle->scaleX + FIXED_ONE * 3 / 64;
+  if (scale > FIXED_ONE)
+    scale = FIXED_ONE;
   particle->scaleX = scale;
   particle->scaleY = -scale;
   particle->x.fixed = source->x.fixed;
-  particle->y.fixed = y - px(2);
-  particle->z.fixed = source->z.fixed - ((Q16_ONE - scale) * 5) + px(16);
+  particle->y.fixed = y - toFIXED(2);
+  particle->z.fixed = source->z.fixed - ((FIXED_ONE - scale) * 5) + toFIXED(16);
 }
 
 /// A falling arc's sprite (struct Sprite), seen as the image attributes, VRAM
@@ -275,7 +275,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
     actor = Actor_CreateFar(SPRITE_GOLDEN_RINGS, source->x.fixed,
-                            source->y.fixed + px(64), source->z.fixed);
+                            source->y.fixed + toFIXED(64), source->z.fixed);
     actors[arcIndex] = actor;
     if (actor == NULL)
       continue;
@@ -284,8 +284,8 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
     actor->motionFlags = 0;
     actor->timer = 0;
     actor->watchedActor = source;
-    actor->scaleY = Q16_ONE * 2 / 5;
-    actor->scaleX = Q16_ONE * 2 / 5;
+    actor->scaleY = FIXED_ONE * 2 / 5;
+    actor->scaleX = FIXED_ONE * 2 / 5;
     if (sprite == NULL)
       continue;
     Sprite_StartAnimationFar((struct Sprite *)sprite, 0);

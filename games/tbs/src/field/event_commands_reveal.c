@@ -48,8 +48,9 @@ void FieldPsynergy_WatchLeaderDistance(void) {
   // 0.82) for the comparison, so the edge is an ellipse 60 pixels up and
   // down from the centre and about 73 to either side.
   distanceX =
-      Iwram_MulQ16(work->revealCenterX - actor->x.fixed / Q16_ONE, 0xd105);
-  distanceZ = work->revealCenterY - (actor->z.fixed - actor->y.fixed) / Q16_ONE;
+      Iwram_MulFX(work->revealCenterX - actor->x.fixed / FIXED_ONE, 0xd105);
+  distanceZ =
+      work->revealCenterY - (actor->z.fixed - actor->y.fixed) / FIXED_ONE;
   if (distanceX * distanceX + distanceZ * distanceZ >= 3600 ||
       work->revealFrames == 0) {
     // Raise Reveal as a Psynergy request that pays no PP (ACT_PACKED
@@ -97,8 +98,8 @@ void FieldPsynergy_Reveal(void) {
   // Record the centre (in pixels) and the time in the field work, and put
   // markers nearby.
   work->revealActive = 1;
-  work->revealCenterX = state->centreX / Q16_ONE;
-  work->revealCenterY = state->centreY / Q16_ONE;
+  work->revealCenterX = state->centreX / FIXED_ONE;
+  work->revealCenterY = state->centreY / FIXED_ONE;
   work->revealFrames = 600;
   work->effectTimerRunning = 1;
   FieldEffect_SpawnRevealMarkers();

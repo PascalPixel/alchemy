@@ -52,7 +52,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
     // Find the speaker on screen, in 8-pixel tiles.
     if (actor != 0) {
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-        Transform_ProjectPoint(&actor->x.fixed, pos);
+        Matrix_ProjectPoint(&actor->x.fixed, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;
@@ -69,7 +69,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
       sprite = actorId;
       actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-        Transform_ProjectPoint(&actor->x.fixed, pos);
+        Matrix_ProjectPoint(&actor->x.fixed, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;
@@ -330,8 +330,8 @@ void Event_ShowSpeakerMessage(s32 speaker) {
     if (actor != NULL) {
       if (state->mode == ACTOR_SYSTEM_WORLD_MAP)
         positionFound =
-            Transform_ProjectPoint(
-                (const u8 *)actor + offsetof(struct Actor, x), pos) != 0;
+            Matrix_ProjectPoint((const u8 *)actor + offsetof(struct Actor, x),
+                                pos) != 0;
       else
         positionFound = Actor_GetScreenPosition(speaker, pos) != -1;
     }

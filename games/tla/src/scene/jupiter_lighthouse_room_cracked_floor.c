@@ -210,7 +210,7 @@ UNUSED void JupiterLighthouse_FloatAboveGround(s32 id) {
   object->motionFlags = 4;
   height = object->groundHeight;
   object->bounce = 0;
-  object->y.fixed = height + px(32);
+  object->y.fixed = height + toFIXED(32);
   object->priorityFlags |= 128;
   height =
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
@@ -239,8 +239,8 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(SE_WHIRLWIND);
-  position.x = source->x + Math_MulQ16(px(8), Trig_Cos(source->angle));
-  position.z = source->z + Math_MulQ16(px(8), Math_Sin(source->angle));
+  position.x = source->x + Math_MulFX(toFIXED(8), Trig_Cos(source->angle));
+  position.z = source->z + Math_MulFX(toFIXED(8), Math_Sin(source->angle));
   object = ((struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
                                                    source->y, position.z));
   Import_ActorSelectAnimation(object, 2);
@@ -252,11 +252,11 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   object->unk62 = 0;
   object->unk63 = 0;
   object->update = Whirlwind_Update;
-  object->speedLimit = px(3) / 2;
+  object->speedLimit = toFIXED(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, px(3),
-                    &options);
+  FieldEffect_Spawn(position.x, source->y, position.z - toFIXED(6), 0, 0, 0,
+                    toFIXED(3), &options);
   return object;
 }
 

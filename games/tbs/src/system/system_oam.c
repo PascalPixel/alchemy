@@ -44,10 +44,10 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
   if ((xScale == yScale || -xScale == yScale) && angle == 0) {
     // Unrotated and evenly scaled (or mirrored): only the diagonal is set.
     s32 reciprocal;
-    // Q16_ONE / scale is the 8.8 inverse of an 8.8 scale.
+    // FIXED_ONE / scale is the 8.8 inverse of an 8.8 scale.
     s32 xReciprocal;
 
-    reciprocal = Iwram_SignedDivide(Q16_ONE, yScale);
+    reciprocal = Iwram_SignedDivide(FIXED_ONE, yScale);
     xReciprocal = reciprocal;
     if (-xScale == yScale)
       xReciprocal = -reciprocal;

@@ -11,7 +11,7 @@
 #include "system/heap.h"
 #include "system/irq.h"
 #include "system/iwram_call.h"
-#include "system/mul_q16.h"
+#include "system/mul_fx.h"
 
 #define ACTOR_SLOTS 8 ///< script-driven actors updated each frame
 #define TARGET_UNSET ((s32)0x80000000) ///< no movement target
@@ -25,7 +25,7 @@
   IWRAM_ENTRY(s32 (*)(s32 divisor, s32 value), Iwram_RatioMulQ14Offset)
 
 // Far-call stubs copied to RAM together with this code (actor_update_far.s).
-s32 ArcTan2FarArm(s32 z, s32 x);
+s32 Trig_AtanFarArm(s32 z, s32 x);
 s32 Iwram_SqrtFarArm(s32 value);
 s32 Iwram_RatioMulQ14FarArm(s32 divisor, s32 value);
 
@@ -98,11 +98,11 @@ void Actor_UpdateAll(void) {
         // Accelerate towards the target.
         deltaX = (actor->targetX - x) / 65536;
         deltaZ = (actor->targetZ - z) / 65536;
-        distance = px(IwramSqrt(deltaX * deltaX + deltaZ * deltaZ));
-        if (distance <= px(256) - 1) {
+        distance = toFIXED(IwramSqrt(deltaX * deltaX + deltaZ * deltaZ));
+        if (distance <= toFIXED(256) - 1) {
           deltaX = actor->targetX - x;
           deltaZ = actor->targetZ - z;
-          distance = IwramSqrt(MulQ16(deltaX, deltaX) + MulQ16(deltaZ, deltaZ))
+          distance = IwramSqrt(MulFX(deltaX, deltaX) + MulFX(deltaZ, deltaZ))
                      << 8;
         }
         if (distance == 0) {
@@ -111,20 +111,20 @@ void Actor_UpdateAll(void) {
         } else {
           // speedRatio is acceleration / distance in 16.16.
           speedRatio = IwramRatioMulQ14(distance, actor->acceleration);
-          velocityX = actor->velocityX + MulQ16(deltaX, speedRatio);
+          velocityX = actor->velocityX + MulFX(deltaX, speedRatio);
           actor->velocityX = velocityX;
           // Limit the combined horizontal velocity after accelerating both
           // axes.
-          velocityZ = actor->velocityZ + MulQ16(deltaZ, speedRatio);
+          velocityZ = actor->velocityZ + MulFX(deltaZ, speedRatio);
           actor->velocityZ = velocityZ;
-          distance = IwramSqrt(MulQ16(velocityX, velocityX) +
-                               MulQ16(velocityZ, velocityZ))
+          distance = IwramSqrt(MulFX(velocityX, velocityX) +
+                               MulFX(velocityZ, velocityZ))
                      << 8;
           if (distance > actor->speedLimit) {
             // Too fast: scale the velocity back to the speed limit.
             speedRatio = IwramRatioMulQ14(distance, actor->speedLimit);
-            actor->velocityX = MulQ16(velocityX, speedRatio);
-            actor->velocityZ = MulQ16(velocityZ, speedRatio);
+            actor->velocityX = MulFX(velocityX, speedRatio);
+            actor->velocityZ = MulFX(velocityZ, speedRatio);
           }
         }
       } else {
@@ -132,7 +132,7 @@ void Actor_UpdateAll(void) {
         deltaX = actor->velocityX;
         deltaZ = actor->velocityZ;
         distance =
-            Iwram_SqrtFarArm(MulQ16(deltaX, deltaX) + MulQ16(deltaZ, deltaZ))
+            Iwram_SqrtFarArm(MulFX(deltaX, deltaX) + MulFX(deltaZ, deltaZ))
             << 8;
         if (distance != 0) {
           if (distance - actor->acceleration < 0) {
@@ -141,8 +141,8 @@ void Actor_UpdateAll(void) {
           } else {
             speedRatio = Iwram_RatioMulQ14FarArm(
                 distance, distance - actor->acceleration);
-            actor->velocityX = MulQ16(deltaX, speedRatio);
-            actor->velocityZ = MulQ16(deltaZ, speedRatio);
+            actor->velocityX = MulFX(deltaX, speedRatio);
+            actor->velocityZ = MulFX(deltaZ, speedRatio);
           }
         } else {
           actor->velocityX = 0;
@@ -157,7 +157,7 @@ void Actor_UpdateAll(void) {
           actor->velocityY -= actor->gravity;
         if (y <= groundY && actor->velocityY < 0) {
           y = groundY;
-          actor->velocityY = -MulQ16(actor->velocityY, actor->vertical.bounce);
+          actor->velocityY = -MulFX(actor->velocityY, actor->vertical.bounce);
           if ((actor->velocityY < 0 ? -actor->velocityY : actor->velocityY) <=
               actor->gravity)
             actor->velocityY = 0;
@@ -214,7 +214,7 @@ void Actor_UpdateAll(void) {
       x = actor->velocityX;
       z = actor->velocityZ;
       if (x != 0 || z != 0) {
-        travelAngle = ArcTan2FarArm(z, x);
+        travelAngle = Trig_AtanFarArm(z, x);
         // As a signed halfword the difference is the shorter way round.
         turnDelta = (s16)(travelAngle - actor->facing);
         if (turnDelta > TURN_MAX)

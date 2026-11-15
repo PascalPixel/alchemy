@@ -296,15 +296,15 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     Actor_SetAnimation(leaderId, ANIM_LEADER_LOOK_AROUND);
     storm = Actor_Get(stormId);
     if (storm != NULL) {
-      Actor_SetDestination(leaderId, storm->x.part[0].pixel,
-                           storm->z.part[0].pixel);
+      Actor_SetDestination(leaderId, storm->x.part[0].integer,
+                           storm->z.part[0].integer);
     }
     Actor_WaitForMoveById(leaderId);
     Sound_Play(SE_SANDSTORM);
     Task_AddFrame(SuhallaDesert_UpdateCaptureTimer, TASK_PASS_FRAME);
     leader->motionFlags = 0;
-    FieldActor_SetMoveTargetFixed(leader, leader->x.fixed,
-                                  leader->y.fixed + px(32), leader->z.fixed);
+    FieldActor_SetMoveTargetFX(leader, leader->x.fixed,
+                               leader->y.fixed + toFIXED(32), leader->z.fixed);
     Actor_WaitForMoveById(leaderId);
     leader->velocityY = 0;
     leader->motionFlags = ACTOR_FLOATS;
@@ -366,13 +366,13 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   storm = Actor_Get(stormId);
   hazeShown = GameFlag_Get(FLAG_SUHALLA_DESERT_SANDSTORMS_RISEN);
-  leaderX = leader->x.part[0].pixel;
-  leaderZ = leader->z.part[0].pixel;
+  leaderX = leader->x.part[0].integer;
+  leaderZ = leader->z.part[0].integer;
   Event_Start();
   Sound_Play(SE_SANDSTORM);
   for (frame = 0; frame < 16; frame++) {
-    storm->scaleX = (frame << 11) + Q16_ONE / 32;
-    storm->scaleY = (frame << 12) + Q16_ONE / 16;
+    storm->scaleX = (frame << 11) + FIXED_ONE / 32;
+    storm->scaleY = (frame << 12) + FIXED_ONE / 16;
     if (hazeShown == 0) {
       weight = frame + 1;
       IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(weight, 16 - weight),
@@ -390,8 +390,8 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
     partyLeader = Actor_Get(ACTOR_PARTY_LEADER);
     if (partyLeader != NULL) {
-      Actor_SetPositionFixed(ACTOR_IODEM, partyLeader->x.fixed,
-                             partyLeader->z.fixed);
+      Actor_SetPositionFX(ACTOR_IODEM, partyLeader->x.fixed,
+                          partyLeader->z.fixed);
     }
 #ifdef BUGFIX
     Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
@@ -479,7 +479,7 @@ static void SuhallaDesert_IodemAsksWhetherToPressOn(void) {
     Event_SetMessageId(MsgSuhallaNowhereFound);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFX(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
     }
 #ifdef BUGFIX
     Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
@@ -535,8 +535,8 @@ static s32 SuhallaDesert_ChaseLeader(struct Actor *actor) {
   s32 sparkFrame;
 
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  actor->acceleration = px(1) / 4;
-  actor->speedLimit = px(3) / 2;
+  actor->acceleration = toFIXED(1) / 4;
+  actor->speedLimit = toFIXED(3) / 2;
   actor->motionFlags = 0;
   Actor_SetSpriteFlags(actor, 0);
   actor->spriteStorageKind ^= 1;
@@ -550,7 +550,7 @@ static s32 SuhallaDesert_ChaseLeader(struct Actor *actor) {
     actor->targetZ = leader->z.fixed;
     if (GAP(actor->x.fixed, leader->x.fixed) +
             GAP(actor->z.fixed, leader->z.fixed) <
-        px(8)) {
+        toFIXED(8)) {
       struct FieldWork *work = gFieldWork;
 
       if (leader->motionFlags != 0) {
@@ -565,8 +565,8 @@ static s32 SuhallaDesert_ChaseLeader(struct Actor *actor) {
   // Sand every eight frames, with a random spin.
   sparkFrame = gFrameCount & 7;
   if (sparkFrame == 0) {
-    options.startScaleX = 4 * Q16_ONE / 5;
-    options.startScaleY = 4 * Q16_ONE / 5;
+    options.startScaleX = 4 * FIXED_ONE / 5;
+    options.startScaleY = 4 * FIXED_ONE / 5;
     options.spin = FIELD_EFFECT_RANDOM_SPIN();
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0,
                       sparkFrame, sparkFrame,
@@ -659,8 +659,8 @@ static void SuhallaDesert_StormCarriesPartyAway(void) {
   storm->frozen = 1;
   // Both rise faster and faster for a second.
   for (frame = 0; frame < 60; frame++) {
-    leader->velocityY += px(1) / 5;
-    storm->velocityY += px(1) / 5;
+    leader->velocityY += toFIXED(1) / 5;
+    storm->velocityY += toFIXED(1) / 5;
     wait(1);
   }
   Event_FinishScreenTransition();
@@ -801,8 +801,8 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
     actor = Actor_Get(stormId);
     if (actor != NULL) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        actor->scaleX = Q16_ONE / 32;
-        actor->scaleY = Q16_ONE / 32;
+        actor->scaleX = FIXED_ONE / 32;
+        actor->scaleY = FIXED_ONE / 32;
       }
       actor->sprite->flags = 0;
     }
@@ -839,8 +839,8 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
     actor = Actor_Get(stormId);
     if (actor != NULL) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-        actor->scaleX = Q16_ONE / 32;
-        actor->scaleY = Q16_ONE / 32;
+        actor->scaleX = FIXED_ONE / 32;
+        actor->scaleY = FIXED_ONE / 32;
       }
       sprite = actor->sprite;
       sprite->flags = 0;

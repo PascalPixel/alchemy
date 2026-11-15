@@ -255,20 +255,20 @@ ready:
   Actor_WalkBy(ACTOR_SHIP, 0, 16);
   Event_PlaySound(SE_CLATTER);
   FieldEvent_Wait(4);
-  blast->scaleX = Q16_ONE * 3 / 2;
-  blast->scaleY = Q16_ONE * 3 / 2;
+  blast->scaleX = FIXED_ONE * 3 / 2;
+  blast->scaleY = FIXED_ONE * 3 / 2;
   Actor_SetSpriteColorMode(Actor_Get(ACTOR_BLAST), 6);
   Actor_SetPosition(ACTOR_BLAST, 464, 200);
   Actor_SetAnimation(ACTOR_BLAST, 1);
-  ball->scaleX = Q16_ONE / 2;
-  ball->scaleY = Q16_ONE / 2;
+  ball->scaleX = FIXED_ONE / 2;
+  ball->scaleY = FIXED_ONE / 2;
   Actor_SetSpeed(ACTOR_MAGMA_BALL_SHOT, 2);
   Actor_SetPosition(ACTOR_MAGMA_BALL_SHOT, 464, 216);
   Actor_WalkTo(ACTOR_MAGMA_BALL_SHOT, 464, 144);
   count = 15;
 growBall:
-  ball->scaleX += Q16_ONE / 32;
-  ball->scaleY += Q16_ONE / 32;
+  ball->scaleX += FIXED_ONE / 32;
+  ball->scaleY += FIXED_ONE / 32;
   System_Wait(1);
   count--;
   if (count >= 0)
@@ -277,12 +277,12 @@ growBall:
   FieldCamera_WaitForArrival();
   FieldActor_WaitForMoveById(ACTOR_MAGMA_BALL_SHOT);
   Event_PlaySound(SE_CRASH);
-  from[0] = ((ball->x.fixed) - px(2));
+  from[0] = ((ball->x.fixed) - toFIXED(2));
   from[1] = (ball->y.fixed);
-  from[2] = ((ball->z.fixed) - px(8));
-  to[0] = px(400);
+  from[2] = ((ball->z.fixed) - toFIXED(8));
+  to[0] = toFIXED(400);
   to[1] = 0;
-  to[2] = px(80);
+  to[2] = toFIXED(80);
   NorthernReaches_ShatterIceWall((s32)from, to, NorthernReaches_ClearIceWall);
   FieldEvent_Wait(20);
   Actor_SetPosition(ACTOR_BLAST, 0, 0);
@@ -303,26 +303,26 @@ growBall:
   EventCamera_FollowActor(ACTOR_SHIP, 1);
   Actor_MoveToAndWait(ACTOR_SHIP, 464, 152);
   Actor_SetSpeed(ACTOR_SHIP, 0.6);
-  Actor_ShrinkBy(ship, Q16_ONE / 16);
+  Actor_ShrinkBy(ship, FIXED_ONE / 16);
   Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
   FieldActor_WaitForMoveById(ACTOR_SHIP);
-  Actor_ShrinkBy(ship, Q16_ONE / 16);
+  Actor_ShrinkBy(ship, FIXED_ONE / 16);
   Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
   FieldActor_WaitForMoveById(ACTOR_SHIP);
-  Actor_ShrinkBy(ship, Q16_ONE / 16);
+  Actor_ShrinkBy(ship, FIXED_ONE / 16);
   Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
   FieldActor_WaitForMoveById(ACTOR_SHIP);
-  Actor_ShrinkBy(ship, Q16_ONE / 16);
+  Actor_ShrinkBy(ship, FIXED_ONE / 16);
   Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
   FieldActor_WaitForMoveById(ACTOR_SHIP);
-  Actor_ShrinkBy(ship, Q16_ONE / 16);
+  Actor_ShrinkBy(ship, FIXED_ONE / 16);
   Actor_SetDestinationOffset(ACTOR_SHIP, 0, -16);
   FieldActor_WaitForMoveById(ACTOR_SHIP);
   Actor_SetSpeed(ACTOR_SHIP, 0.2);
   Actor_SetDestinationOffset(ACTOR_SHIP, 0, -12);
   count = 19;
 settle:
-  Actor_ShrinkBy(ship, Q16_ONE * 9 / 256);
+  Actor_ShrinkBy(ship, FIXED_ONE * 9 / 256);
   System_Wait(7);
   count--;
   if (count >= 0)
@@ -409,7 +409,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
     sprite++;
     particle->z = position[2];
     particle->velocityX = (Random16() * 3 >> 1) * column;
-    particle->velocityY = (Random16() << 2) + px(2);
+    particle->velocityY = (Random16() << 2) + toFIXED(2);
     particle->velocityZ = zero;
     particle->age = zero;
     particle++;

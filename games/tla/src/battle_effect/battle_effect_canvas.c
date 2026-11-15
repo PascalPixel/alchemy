@@ -147,10 +147,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
     for (frame = 0; frame != 220 && !(gInput.repeat & (KEY_A | KEY_B));
          frame++) {
       if (frame == 0) {
-        baseX = -px(48);
-        baseY = px(212);
-        velX = px(4);
-        velY = -px(10);
+        baseX = -toFIXED(48);
+        baseY = toFIXED(212);
+        velX = toFIXED(4);
+        velY = -toFIXED(10);
         work->fadeFrames = 1;
         work->fadeStep = frame;
         work->particles[16].variant = frame;
@@ -185,7 +185,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       }
       req = gEclipse_Scales;
       place[3] = 0;
-      place[1] = px(255);
+      place[1] = toFIXED(255);
       baseX += velX;
       baseY += velY;
       if (frame > 171) {
@@ -199,25 +199,25 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         }
       } else {
         if (velY < 0) {
-          velY += px(1) / 4;
+          velY += toFIXED(1) / 4;
         }
         if (velX > 0) {
-          velX += -px(1) / 8;
+          velX += -toFIXED(1) / 8;
         }
         if (frame > 31) {
           baseY += Trig_Sin((frame - 32) << 9) << 2 >> 4;
           if (frame <= 159) {
-            baseX += px(1) / 4;
+            baseX += toFIXED(1) / 4;
           }
         }
       }
       for (i = 0; i != 32; i++) {
         if (i == 25 && frame > 135) {
-          place[0] = baseX + px(32);
-          place[2] = baseY + px(64);
+          place[0] = baseX + toFIXED(32);
+          place[2] = baseY + toFIXED(64);
         } else {
-          place[0] = baseX + px(gEclipse_ObjectX[i]);
-          place[2] = baseY + px(gEclipse_ObjectZ[i]);
+          place[0] = baseX + INTtoFIXED(gEclipse_ObjectX[i]);
+          place[2] = baseY + INTtoFIXED(gEclipse_ObjectZ[i]);
         }
         if (place[2] <= 0xc7ffff) {
           Render_ApplyProjectedPlacementFar(work->sprites[i], place,
@@ -228,8 +228,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
         work->fadeStep = 0;
       }
-      cx = baseX / 2 - (work->particles[16].variant << 13) + px(28);
-      cy = baseY + (work->particles[16].variant << 14) + px(56);
+      cx = baseX / 2 - (work->particles[16].variant << 13) + toFIXED(28);
+      cy = baseY + (work->particles[16].variant << 14) + toFIXED(56);
       u = frame - 136;
       if (u <= 84) {
         if (frame == 136) {
@@ -242,9 +242,9 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         if (frame > 171) {
           if (frame == 172) {
             work->particles[16].variant = 64;
-            BattleEffect_DrawShadedCircles(work->sheet, 128, Q16_ONE);
-            velX = px(3);
-            velY = -px(3);
+            BattleEffect_DrawShadedCircles(work->sheet, 128, FIXED_ONE);
+            velX = toFIXED(3);
+            velY = -toFIXED(3);
           }
           if (frame > 203 && work->particles[16].variant > 1) {
             work->particles[16].variant -= 4;
@@ -255,8 +255,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
                 work->sheet, work->particles[16].variant * 2, 0x10000);
           }
         } else if (frame > 135) {
-          velX += -px(1) / 32;
-          velY += px(1) / 32;
+          velX += -toFIXED(1) / 32;
+          velY += toFIXED(1) / 32;
           if (++work->particles[16].variant <= 32) {
             BattleEffect_DrawShadedCircles(
                 work->sheet, work->particles[16].variant * 2, 0x10000);
@@ -267,7 +267,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         {
           s32 size = work->particles[16].variant;
 
-          Canvas_BlitAtFoot(work->sheet, Q_16_16_TO_INT(cx), Q_16_16_TO_INT(cy),
+          Canvas_BlitAtFoot(work->sheet, FIXEDtoINT(cx), FIXEDtoINT(cy),
                             size * 2);
         }
       }
@@ -307,18 +307,17 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           work->particles[i].x += work->particles[i].y;
           if (work->particles[i].variant >= 0 &&
               work->particles[i].variant <= 47) {
-            Transform_Reset();
+            Matrix_Initialize();
             {
-              s32 x = px((i & 3) * 2) + px(2);
+              s32 x = INTtoFIXED((i & 3) * 2) + toFIXED(2);
               s32 o = -0x400000;
-              Transform_ApplyTranslation(cx + x + o, cy - px((i & 3) + 2) + o,
-                                         0);
+              Matrix_Translate(cx + x + o, cy - INTtoFIXED((i & 3) + 2) + o, 0);
             }
-            Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
-            Transform_ApplyRoll(work->particles[i].x);
-            Transform_ApplyAxisScale(
-                Trig_Sin(work->particles[i].variant * 682) + TRIG_TURN / 4,
-                0x20000, 0x10000);
+            Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
+            Matrix_RotateZ(work->particles[i].x);
+            Matrix_Scale(Trig_Sin(work->particles[i].variant * 682) +
+                             DEGtoANG(90),
+                         0x20000, 0x10000);
             Render_TransformVertices(gBattleEffect_TaperedBeamCorners, verts,
                                      4);
             Render_DrawModelList(model);
@@ -339,25 +338,25 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           model->texture = &texture;
           model->mesh = gBattleEffect_SquareMesh;
           model->vertices = verts;
-          Transform_Reset();
-          Transform_ApplyTranslation(cx - px(62), cy - px(66), 0);
-          Transform_ApplyAxisScale(s >> 1, s, s);
-          Transform_ApplyPitch(TRIG_TURN / 8);
-          Transform_ApplyRoll(TRIG_TURN * 5 / 32);
-          Transform_ApplyYaw(-frame << 10);
+          Matrix_Initialize();
+          Matrix_Translate(cx - toFIXED(62), cy - toFIXED(66), 0);
+          Matrix_Scale(s >> 1, s, s);
+          Matrix_RotateX(DEGtoANG(45));
+          Matrix_RotateZ(TRIG_TURN * 5 / 32);
+          Matrix_RotateY(-frame << 10);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
           Render_DrawModelList(model);
         }
         if (frame >= 172 && frame <= 220) {
-          Transform_Reset();
-          Transform_ApplyTranslation(cx - px(62), cy - px(66), 0);
-          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
-          Transform_ApplyRoll(TRIG_TURN * 5 / 32);
+          Matrix_Initialize();
+          Matrix_Translate(cx - toFIXED(62), cy - toFIXED(66), 0);
+          Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
+          Matrix_RotateZ(TRIG_TURN * 5 / 32);
           if (frame > 203) {
-            Transform_ApplyAxisScale(Q16_ONE * 8 - ((frame - 204) << 15),
-                                     Q16_ONE * 2, 0x10000);
+            Matrix_Scale(FIXED_ONE * 8 - ((frame - 204) << 15), FIXED_ONE * 2,
+                         0x10000);
           } else {
-            Transform_ApplyAxisScale(Q16_ONE * 8, Q16_ONE * 2, Q16_ONE);
+            Matrix_Scale(FIXED_ONE * 8, FIXED_ONE * 2, FIXED_ONE);
           }
           Render_TransformVertices(gBattleEffect_BeamCorners, verts, 4);
           Render_DrawModelList(model);
@@ -375,18 +374,18 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           if (frame <= 171) {
             s32 size = work->particles[16].variant * 2;
 
-            x = Random16() % size + (Q_16_16_TO_INT(cx)) - (size >> 1) -
+            x = Random16() % size + (FIXEDtoINT(cx)) - (size >> 1) -
                 (gBattleEffect_GlintPictureWidths[t] >> 1);
-            y = Random16() % size + (Q_16_16_TO_INT(cy)) - (size >> 1) -
+            y = Random16() % size + (FIXEDtoINT(cy)) - (size >> 1) -
                 (gBattleEffect_GlintPictureHeights[t] >> 1);
           } else {
             u32 a = Random16() & 63;
             s32 r = work->particles[16].variant;
 
-            x = (Q_16_16_TO_INT(cx)) - (a >> 1) -
+            x = (FIXEDtoINT(cx)) - (a >> 1) -
                 (gBattleEffect_GlintPictureWidths[t] >> 1) + Random16() % r -
                 r / 2 - 8;
-            y = a + (Q_16_16_TO_INT(cy)) -
+            y = a + (FIXEDtoINT(cy)) -
                 (gBattleEffect_GlintPictureHeights[t] >> 1);
           }
           BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
@@ -488,24 +487,23 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         struct Particle *q = &work->particles[63];
 
         if (frame == 16) {
-          q->x = px(128);
-          q->y = -px(40);
+          q->x = toFIXED(128);
+          q->y = -toFIXED(40);
         }
         if (frame <= 19) {
-          q->x += -px(32);
-          q->y += px(64);
+          q->x += -toFIXED(32);
+          q->y += toFIXED(64);
         }
         if (frame <= 27) {
           cells = work->sheet + 0x38c0;
-          BattleEffect_DrawShadedCircles(cells, 96, Q16_ONE);
-          Canvas_BlitAtFoot(cells, Q_16_16_TO_INT(q->x), Q_16_16_TO_INT(q->y),
-                            96);
+          BattleEffect_DrawShadedCircles(cells, 96, FIXED_ONE);
+          Canvas_BlitAtFoot(cells, FIXEDtoINT(q->x), FIXEDtoINT(q->y), 96);
         }
-        Transform_Reset();
-        Transform_ApplyTranslation(q->x - px(63), q->y - px(64), 0);
-        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        Transform_ApplyRoll(TRIG_TURN * 19 / 32);
-        Transform_ApplyAxisScale(0xdc500, 0x29c40, Q16_ONE / 2);
+        Matrix_Initialize();
+        Matrix_Translate(q->x - toFIXED(63), q->y - toFIXED(64), 0);
+        Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+        Matrix_RotateZ(TRIG_TURN * 19 / 32);
+        Matrix_Scale(0xdc500, 0x29c40, FIXED_ONE / 2);
         Render_TransformVertices(gBattleEffect_BeamCorners, verts, 4);
         Render_DrawModelList(model);
       }
@@ -593,8 +591,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
 
         a = Random16();
         r = (Random16() & 15) + frame * 2;
-        q->x = Trig_Sin(a) * r + px(60);
-        q->y = Trig_Cos(a) * r + px(60);
+        q->x = Trig_Sin(a) * r + toFIXED(60);
+        q->y = Trig_Cos(a) * r + toFIXED(60);
         q->velocityX = 0;
         q->velocityY = 0;
         q->variant = (Random16() & 15) + 16;
@@ -611,11 +609,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
              */
             s32 off = n * 2 - 2;
 
-            blit[0](canvas,
-                    sprites + *(const u16 *)((const u8 *)sizeOffsets + off),
-                    (Q_16_16_TO_INT(p->x)) - n / 2, (Q_16_16_TO_INT(p->y)) - n,
-                    n, n * 2);
-            BattleEffectKernels_IntegrateVector2(p, 60, -px(1) / 4);
+            blit[0](
+                canvas, sprites + *(const u16 *)((const u8 *)sizeOffsets + off),
+                (FIXEDtoINT(p->x)) - n / 2, (FIXEDtoINT(p->y)) - n, n, n * 2);
+            BattleEffectKernels_IntegrateVector2(p, 60, -toFIXED(1) / 4);
             p->variant--;
           }
         }
@@ -636,11 +633,11 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         model->vertices = gMapGridCellBuffer;
         model->kind = MODEL_SHADED_MAX;
         model->texture = &landingTexture;
-        Transform_Reset();
-        Transform_ApplyTranslation(-px(2), px(16), 0);
-        Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        Transform_ApplyRoll(TRIG_TURN * 19 / 32);
-        Transform_ApplyAxisScale(s, Q16_ONE * 2, Q16_ONE / 2);
+        Matrix_Initialize();
+        Matrix_Translate(-toFIXED(2), toFIXED(16), 0);
+        Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+        Matrix_RotateZ(TRIG_TURN * 19 / 32);
+        Matrix_Scale(s, FIXED_ONE * 2, FIXED_ONE / 2);
         Render_TransformVertices(gBattleEffect_BeamCorners, gMapGridCellBuffer,
                                  4);
         Render_DrawModelList(model);
@@ -652,16 +649,16 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           s32 ringAngle = 0;
           for (ring = 0, offset = 0; ring != 8;
                ringAngle += 0x888, offset += 64, ring++) {
-            s32 y = Q_16_16_TO_INT(-Trig_Cos(ringAngle) * 96);
-            s32 rr = Q_16_16_TO_INT(Trig_Sin(ringAngle) * 48);
+            s32 y = FIXEDtoINT(-Trig_Cos(ringAngle) * 96);
+            s32 rr = FIXEDtoINT(Trig_Sin(ringAngle) * 48);
             struct ModelVertex *v =
                 (struct ModelVertex *)(Ram_MapCellBuffer + 0x800);
 
             k = 0;
             v = (struct ModelVertex *)((u8 *)v + offset);
             for (; k != 16; k++) {
-              SET_POSITION(v, Q_16_16_TO_INT(Trig_Sin(k << 12) * rr), y,
-                           Q_16_16_TO_INT(Trig_Cos(k << 12) * rr));
+              SET_POSITION(v, FIXEDtoINT(Trig_Sin(k << 12) * rr), y,
+                           FIXEDtoINT(Trig_Cos(k << 12) * rr));
               v++;
             }
           }
@@ -686,11 +683,11 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         if (s > 0x10000) {
           s = 0x10000;
         }
-        Transform_Reset();
-        Transform_ApplyTranslation(-px(2), px(12), 0);
-        Transform_ApplyPitch(TRIG_TURN / 8);
-        Transform_ApplyYaw(-frame << 10);
-        Transform_ApplyUniformScale(s);
+        Matrix_Initialize();
+        Matrix_Translate(-toFIXED(2), toFIXED(12), 0);
+        Matrix_RotateX(DEGtoANG(45));
+        Matrix_RotateY(-frame << 10);
+        Matrix_ScaleUniform(s);
         Render_TransformVertices(Ram_MapCellBuffer + 0x800, vertices, 128);
         Render_DrawModelList(model);
       }
@@ -719,13 +716,13 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
               shade = (40 - t) * 4;
             }
             model->shade = shade;
-            Transform_Reset();
-            Transform_ApplyTranslation(-px(2), px(32), 0);
-            Transform_ApplyAxisScale(s / 4, s / 4, s / 4);
-            Transform_ApplyPitch(10000);
-            Transform_ApplyYaw((frame + i * 8) << 10);
-            Transform_ApplyAxisScale(Q16_ONE, Q16_ONE * 6, Q16_ONE);
-            Transform_ApplyTranslation(0, px(gEclipse_RingHeights[i]), 0);
+            Matrix_Initialize();
+            Matrix_Translate(-toFIXED(2), toFIXED(32), 0);
+            Matrix_Scale(s / 4, s / 4, s / 4);
+            Matrix_RotateX(10000);
+            Matrix_RotateY((frame + i * 8) << 10);
+            Matrix_Scale(FIXED_ONE, FIXED_ONE * 6, FIXED_ONE);
+            Matrix_Translate(0, INTtoFIXED(gEclipse_RingHeights[i]), 0);
             Render_TransformVertices(Ram_MapCellBuffer + 0x2000, vertices, 64);
             Render_DrawModelList(model);
           }
@@ -877,8 +874,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
       }
       flashes = FLASHES;
       if (frame >= 48 && frame <= 55) {
-        s32 x = px((Random16() & 63) + center.x / 2 - 32);
-        s32 y = px((Random16() & 31) + center.y);
+        s32 x = INTtoFIXED((Random16() & 63) + center.x / 2 - 32);
+        s32 y = INTtoFIXED((Random16() & 31) + center.y);
         s32 k = 0;
         s32 spread = 15;
         struct Particle *burst = &flashes[index];
@@ -891,8 +888,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
           speed &= Random16();
           angle = Random16();
 
-          flash->x = x + px((Random16() & spread) - 8);
-          flash->y = y + px((Random16() & spread) - 8);
+          flash->x = x + INTtoFIXED((Random16() & spread) - 8);
+          flash->y = y + INTtoFIXED((Random16() & spread) - 8);
           flash->velocityX = Trig_Sin(angle) * (speed + 32) >> 3;
           flash->velocityY = Trig_Cos(angle) * (speed + 32) >> 3;
           flash->variant = 0;
@@ -907,7 +904,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
                     Q_16_16_UPPER_HALF(flash->x) - 16,
                     Q_16_16_UPPER_HALF(flash->y) - 48, FLASH_BURST_WIDTH,
                     FLASH_BURST_HEIGHT);
-            BattleEffectKernels_IntegrateVector2(flash, 62, -px(1) / 32);
+            BattleEffectKernels_IntegrateVector2(flash, 62, -toFIXED(1) / 32);
             flash->variant++;
           }
         }
@@ -915,8 +912,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
     }
 
     if (frame >= 0) {
-      s32 cx = px(center.x / 2);
-      s32 cy = px(center.y);
+      s32 cx = INTtoFIXED(center.x / 2);
+      s32 cy = INTtoFIXED(center.y);
       struct RenderModel *model;
       void *corners;
       s32 bias;
@@ -928,10 +925,10 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
 
         if (width <= 64) {
           size = width * 2;
-          BattleEffect_DrawShadedCircles(Ram_MapCellBuffer, size, Q16_ONE);
+          BattleEffect_DrawShadedCircles(Ram_MapCellBuffer, size, FIXED_ONE);
         }
-        Canvas_BlitAtFoot(Ram_MapCellBuffer, Q_16_16_TO_INT(cx),
-                          Q_16_16_TO_INT(cy), size);
+        Canvas_BlitAtFoot(Ram_MapCellBuffer, FIXEDtoINT(cx), FIXEDtoINT(cy),
+                          size);
       }
 
       // Each ring has an angle (x), a spin (y) and an age (variant), the
@@ -967,17 +964,17 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
         ring->variant += 2;
         ring->x += ring->y * 2;
         if (ring->variant >= 0 && ring->variant <= 47) {
-          Transform_Reset();
+          Matrix_Initialize();
           {
             s32 column = i & 3;
 
-            Transform_ApplyTranslation(cx + px(column * 2 + 2) - px(64),
-                                       cy - px(column + 2) - px(64), 0);
+            Matrix_Translate(cx + INTtoFIXED(column * 2 + 2) - toFIXED(64),
+                             cy - INTtoFIXED(column + 2) - toFIXED(64), 0);
           }
-          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
-          Transform_ApplyRoll(ring->x);
-          Transform_ApplyAxisScale(Trig_Sin(ring->variant * 682) + TRIG_TURN,
-                                   0x20000, 0x10000);
+          Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
+          Matrix_RotateZ(ring->x);
+          Matrix_Scale(Trig_Sin(ring->variant * 682) + TRIG_TURN, 0x20000,
+                       0x10000);
           Render_TransformVertices(gBattleEffect_TaperedBeamCorners, corners,
                                    4);
           Render_DrawModelList(model);
@@ -1005,16 +1002,16 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
                 (frame - start) * gFormChange_WaveGrowth[i] * 2000 + 0x4000;
 
             model->shade = bias;
-            Transform_Reset();
-            Transform_ApplyTranslation(px(center.x / 2 - 60), px(32), 0);
-            Transform_ApplyAxisScale(
-                growth * 2, gFormChange_WaveStretch[i] * growth + 0x40000,
-                growth / 4);
-            Transform_ApplyPitch(1000);
+            Matrix_Initialize();
+            Matrix_Translate(INTtoFIXED(center.x / 2 - 60), toFIXED(32), 0);
+            Matrix_Scale(growth * 2,
+                         gFormChange_WaveStretch[i] * growth + 0x40000,
+                         growth / 4);
+            Matrix_RotateX(1000);
             if (i & 1)
-              Transform_ApplyYaw((i * 8 + frame) << 10);
+              Matrix_RotateY((i * 8 + frame) << 10);
             else
-              Transform_ApplyYaw((i * 8 - frame) << 10);
+              Matrix_RotateY((i * 8 - frame) << 10);
             Render_TransformVertices(gBattleEffect_RingCorners, corners, 32);
             Render_DrawModelList(model);
           }
@@ -1069,7 +1066,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
         ColorBuffer_Halve(source, (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       else
         ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(1),
-                                       Q16_ONE / 4);
+                                       FIXED_ONE / 4);
       break;
     case 3:
       ColorBuffer_Darken(source, work->transferValue, (void *)BG_CHAR_BLOCK(1),
@@ -1267,7 +1264,7 @@ void Palette_StepFadeTransfer(void) {
 
     (*step)++;
     ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
-                         Q16_ONE - *step * CANVAS_FADE_STEP,
+                         FIXED_ONE - *step * CANVAS_FADE_STEP,
                          BATTLE_BACKGROUND_COLORS);
     (*framesLeft)--;
   }

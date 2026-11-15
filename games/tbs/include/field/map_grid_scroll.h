@@ -12,12 +12,12 @@
 /// One background layer of the field map: its scroll position, origin,
 /// parallax against the view, drift and wrap, and its first map cell.
 struct MapGridLayerScroll {
-  s32 x, y;                  ///< 16.16 fixed-point pixels
-  s32 offsetX, offsetY;      ///< 16.16 fixed-point pixels
-  s32 scaleX, scaleY;        ///< 16.16 fixed point, Q16_ONE moves with the view
-  s32 speedX, speedY;        ///< 16.16 fixed-point pixels per frame
-  s32 phaseX, phaseY;        ///< 16.16 fixed-point pixels
-  u16 maskX, maskY;          ///< a drifting layer's wrap mask, in 8-pixel tiles
+  s32 x, y;             ///< 16.16 fixed-point pixels
+  s32 offsetX, offsetY; ///< 16.16 fixed-point pixels
+  s32 scaleX, scaleY;   ///< 16.16 fixed point, FIXED_ONE moves with the view
+  s32 speedX, speedY;   ///< 16.16 fixed-point pixels per frame
+  s32 phaseX, phaseY;   ///< 16.16 fixed-point pixels
+  u16 maskX, maskY;     ///< a drifting layer's wrap mask, in 8-pixel tiles
   struct MapGridCell *cells; ///< the layer's first cell in the map cell buffer
 };
 

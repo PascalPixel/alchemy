@@ -257,7 +257,7 @@ s32 AffineMatrix_Build(s32 angle, s32 x_scale, s32 y_scale) {
     s32 reciprocal;
     s32 x_reciprocal;
 
-    reciprocal = Iwram_SignedDivide(Q16_ONE, y_scale);
+    reciprocal = Iwram_SignedDivide(FIXED_ONE, y_scale);
     x_reciprocal = reciprocal;
     if (x_scale == -y_scale)
       x_reciprocal = -reciprocal;

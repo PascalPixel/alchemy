@@ -17,7 +17,7 @@ s32 Actor_EmitMist(struct Actor *object) {
     x = object->x.fixed;
     y = object->y.fixed;
     FieldEffect_Spawn(x + ((8 - (gFrameCount & 15)) << 16), y + 0x1a0000,
-                      object->z.fixed, 0, -drift, 0, px(11), params);
+                      object->z.fixed, 0, -drift, 0, toFIXED(11), params);
   }
   return 0;
 }

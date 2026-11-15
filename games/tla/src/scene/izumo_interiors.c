@@ -57,11 +57,11 @@ extern s32 gIzumoInteriors_RockingScript[];
   s32 name(void) {                                                             \
     struct Actor *object = Actor_GetById(n1);                                  \
                                                                                \
-    if ((u32)(object->x.fixed - n2) <= px(8)) {                                \
+    if ((u32)(object->x.fixed - n2) <= toFIXED(8)) {                           \
       s32 z = object->z.fixed;                                                 \
                                                                                \
-      if (z >= px(620)) {                                                      \
-        if (z <= px(628))                                                      \
+      if (z >= toFIXED(620)) {                                                 \
+        if (z <= toFIXED(628))                                                 \
           return 0;                                                            \
       }                                                                        \
     }                                                                          \
@@ -1148,29 +1148,29 @@ void IzumoInteriors_RecognizeTheHeroes(s32 mode) {
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_WALK);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_JENNA, leader->x.part[0].pixel,
-                             leader->z.part[0].pixel);
+    Actor_SetDestinationById(ACTOR_JENNA, leader->x.part[0].integer,
+                             leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_WALK);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_SHEBA, leader->x.part[0].pixel,
-                             leader->z.part[0].pixel);
+    Actor_SetDestinationById(ACTOR_SHEBA, leader->x.part[0].integer,
+                             leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_WALK);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_PIERS, leader->x.part[0].pixel,
-                             leader->z.part[0].pixel);
+    Actor_SetDestinationById(ACTOR_PIERS, leader->x.part[0].integer,
+                             leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_GetById(*(s32 *)owner);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].pixel,
-                             leader->z.part[0].pixel);
+    Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].integer,
+                             leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   GameFlag_Set(FLAG_IZUMO_RECOGNIZED_THE_HEROES);
@@ -1599,37 +1599,37 @@ s32 gIzumoInteriors_BounceScript[] = {
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(60),
     SC_ADD(SW_SCALE_X, -0x4000),
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(10),
     SC_ADD(SW_SCALE_X, -0x4000),
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x2000),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x1000),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(90),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
@@ -1639,7 +1639,7 @@ s32 gIzumoInteriors_BounceScript[] = {
     SC_SPEED(0.4),
     SC_ANIMATION(0),
     SC_LABEL(1),
-    SC_SET(SW_Y, px(4)),
+    SC_SET(SW_Y, toFIXED(4)),
     SC_WAIT(30),
     SC_END,
 };

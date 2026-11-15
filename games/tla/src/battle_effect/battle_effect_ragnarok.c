@@ -95,8 +95,9 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 
       speed = (Random16() & 0x1ff) + 32;
       angle = Random16() & TRIG_ANGLE_MASK;
-      spark->x = px(gRagnarok_StrikeColumns[col + args->side * 3] + baseX);
-      spark->y = px(88);
+      spark->x =
+          INTtoFIXED(gRagnarok_StrikeColumns[col + args->side * 3] + baseX);
+      spark->y = toFIXED(88);
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 6;
       spark->variant = (Random16() & 7) + 32;
@@ -204,18 +205,18 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
             s32 size;
 
             BattleEffectKernels_IntegrateVector2(spark, PARTICLE_DAMPING_NONE,
-                                                 px(1) / 16);
+                                                 toFIXED(1) / 16);
             spark->variant--;
             y = spark->y;
-            if (y > px(108)) {
+            if (y > toFIXED(108)) {
               spark->velocityY = -spark->velocityY / 2;
             } else {
               x = spark->x;
               if ((x >= 0 && x <= 0x7effff) && y >= 0) {
                 u8 *picture;
                 s32 lane;
-                s32 py = Q_16_16_TO_INT(y);
-                s32 px = Q_16_16_TO_INT(x);
+                s32 py = FIXEDtoINT(y);
+                s32 px = FIXEDtoINT(x);
 
                 size = spark->variant / 5 + 1;
                 lane = i & 1;
@@ -357,7 +358,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
   // The sparks wait at the target's feet.
   i = 0;
-  origin = px(centerX);
+  origin = INTtoFIXED(centerX);
   do {
     struct Particle *spark = &SPARK[i];
     s32 speed;
@@ -367,7 +368,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     speed &= Random16();
     angle = Random16() & TRIG_ANGLE_MASK;
     spark->x = origin;
-    spark->y = px(88);
+    spark->y = toFIXED(88);
     spark->velocityX = (Trig_Sin(angle) * (speed + 32)) >> 5;
     spark->velocityY = -(Trig_Cos(angle) * (speed + 32)) >> 6;
     spark->variant = (Random16() & 7) + 32;
@@ -443,7 +444,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           speed = Random16() & 63;
           angle = Random16() & TRIG_ANGLE_MASK;
           dust->x = ((Trig_Sin(angle) * speed) >> 3) + origin;
-          dust->y = ((Trig_Cos(angle) * speed) >> 2) + px(96);
+          dust->y = ((Trig_Cos(angle) * speed) >> 2) + toFIXED(96);
           dust->velocityX = ((Random16() & 63) - 32) << 14;
           dust->velocityY = (-(Random16() & 63) - 8) << 13;
           dust->variant = 0;
@@ -468,7 +469,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           speed = Random16() & 63;
           angle = Random16() & TRIG_ANGLE_MASK;
           dust->x = ((Trig_Sin(angle) * speed) >> 3) + origin;
-          dust->y = ((Trig_Cos(angle) * speed) >> 2) + px(96);
+          dust->y = ((Trig_Cos(angle) * speed) >> 2) + toFIXED(96);
           dust->velocityX = ((Random16() & 63) - 32) << 14;
           dust->velocityY = (-(Random16() & 63) - 8) << 13;
           dust->variant = 0;
@@ -572,7 +573,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
                                                128 << 6);
           y = spark->y;
           spark->variant--;
-          if (y > px(108)) {
+          if (y > toFIXED(108)) {
             spark->velocityY = -spark->velocityY / 2;
           } else {
             x = spark->x;

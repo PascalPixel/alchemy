@@ -174,7 +174,7 @@ static __inline__ s32 GetHeight(s32 x, s32 z) {
 
 /// The whole pixels of an actor's z coordinate.
 static __inline__ s32 Actor_GetPixelZ(struct Actor *actor) {
-  return actor->z.part[0].pixel;
+  return actor->z.part[0].integer;
 }
 
 #define SET_CELL_HEIGHT(x, z)                                                  \
@@ -188,26 +188,27 @@ void Caverns_ShiftAngaraCellHeights(s32 offset) {
   s32 height;
 
   offset <<= 3;
-  if (block->y.part[0].pixel > 31 || Event_GetFlag(FLAG_ANGARA_CELLS_RAISED)) {
-    SET_CELL_HEIGHT(px(568), px(536));
-    SET_CELL_HEIGHT(px(584), px(552));
+  if (block->y.part[0].integer > 31 ||
+      Event_GetFlag(FLAG_ANGARA_CELLS_RAISED)) {
+    SET_CELL_HEIGHT(toFIXED(568), toFIXED(536));
+    SET_CELL_HEIGHT(toFIXED(584), toFIXED(552));
     if (offset == 8)
       Event_SetFlag(FLAG_ANGARA_CELLS_RAISED);
     else
       Event_ClearFlag(FLAG_ANGARA_CELLS_RAISED);
   } else if (Actor_GetPixelZ(block) == 536 ||
              Event_GetFlag(FLAG_ANGARA_CELLS_RAISED)) {
-    SET_CELL_HEIGHT(px(536), px(552));
-    SET_CELL_HEIGHT(px(552), px(552));
-    SET_CELL_HEIGHT(px(568), px(552));
+    SET_CELL_HEIGHT(toFIXED(536), toFIXED(552));
+    SET_CELL_HEIGHT(toFIXED(552), toFIXED(552));
+    SET_CELL_HEIGHT(toFIXED(568), toFIXED(552));
     if (offset == 6)
       Event_SetFlag(FLAG_ANGARA_CELLS_RAISED);
     else
       Event_ClearFlag(FLAG_ANGARA_CELLS_RAISED);
   } else {
-    SET_CELL_HEIGHT(px(536), px(536));
-    SET_CELL_HEIGHT(px(552), px(536));
-    SET_CELL_HEIGHT(px(568), px(536));
+    SET_CELL_HEIGHT(toFIXED(536), toFIXED(536));
+    SET_CELL_HEIGHT(toFIXED(552), toFIXED(536));
+    SET_CELL_HEIGHT(toFIXED(568), toFIXED(536));
   }
 }
 
@@ -234,13 +235,13 @@ void Caverns_StartMovingAngaraBlock(void) {
     position[0] = leader->x.fixed;
     position[1] = leader->y.fixed;
     position[2] = leader->z.fixed;
-    Vector_AddPolarOffset(px(16), angle, position);
+    Vector_AddPolarOffset(toFIXED(16), angle, position);
     if (*ids == 0xffff)
       goto search_done;
   search:
     object = Actor_GetById(*ids);
     if (FIELD_CELL(position[0]) == FIELD_CELL(object->x.fixed) &&
-        position[1] / px(1) == object->y.fixed / px(1) &&
+        position[1] / toFIXED(1) == object->y.fixed / toFIXED(1) &&
         position[2] >> 20 == FIELD_CELL(object->z.fixed))
       goto search_done;
     ids++;
@@ -348,8 +349,8 @@ void Caverns_FinishMovingAngaraBlock(void) {
       options.palette = 7;
       options.priority = 2;
       options.update = (void (*)(union FieldObject *))Caverns_DriftDust;
-      options.startScaleX = Q16_ONE * 4 / 5;
-      options.startScaleY = Q16_ONE * 4 / 5;
+      options.startScaleX = FIXED_ONE * 4 / 5;
+      options.startScaleY = FIXED_ONE * 4 / 5;
       i = 0;
     loop:
       {
@@ -358,8 +359,8 @@ void Caverns_FinishMovingAngaraBlock(void) {
         velocity[1] = 0;
         velocity[2] = Trig_Sin(angle) * 2;
         velocity[0] += velocity[0] >> 1;
-        velocity[0] += ((u32)(Random16() * 3 << 14) >> 16) - (px(3) / 8);
-        velocity[2] += ((u32)(Random16() * 3 << 13) >> 16) - (px(3) / 16);
+        velocity[0] += ((u32)(Random16() * 3 << 14) >> 16) - (toFIXED(3) / 8);
+        velocity[2] += ((u32)(Random16() * 3 << 13) >> 16) - (toFIXED(3) / 16);
         /* FAKEMATCH(dead): sum, never read again, assigned the flags inside the
          * call's arguments. */
         FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed,
@@ -375,7 +376,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
     // The velocity array is reused for the position under the object.
     {
       velocity[0] = object->x.fixed;
-      velocity[1] = object->y.fixed - px(16);
+      velocity[1] = object->y.fixed - toFIXED(16);
       velocity[2] = object->z.fixed;
       other = Actor_FindAtCell(velocity, 1);
       if (other != NULL) {
@@ -473,9 +474,9 @@ s32 Caverns_JumpAcross(struct Actor *object, s16 *position) {
     wait(6);
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(object, 7);
-    object->speedLimit = px(3);
-    object->acceleration = px(2);
-    object->velocityY = px(4);
+    object->speedLimit = toFIXED(3);
+    object->acceleration = toFIXED(2);
+    object->velocityY = toFIXED(4);
     *flags &= 0x7e;
     Actor_SetSpriteFlags(object, 0);
     {
@@ -501,7 +502,7 @@ void Caverns_JumpEastAcrossGap(void) {
   s32 x;
 
   x = leader->x.fixed;
-  x += px(32);
+  x += toFIXED(32);
   SET_VECTOR(position, x, leader->y.fixed, leader->z.fixed);
   Caverns_JumpAcross(leader, (s16 *)position);
 }

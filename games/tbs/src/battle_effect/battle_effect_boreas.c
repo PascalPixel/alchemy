@@ -63,7 +63,7 @@ enum IceBlockSheetPicture {
 ///
 /// Abilities: Boreas.
 void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
-  static struct SpriteScale unitScale = {{{Q16_ONE, Q16_ONE}}};
+  static struct SpriteScale unitScale = {{{FIXED_ONE, FIXED_ONE}}};
   UNUSED s32 crystalPoints[32][2];
   struct SpritePlacement position;
   void *canvas;
@@ -211,14 +211,14 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
 
     // DEAD: stores of the 1.0 the copy of unitScale already holds; the ROM
     // keeps the stores.
-    scale.x = Q16_ONE;
-    scale.y = Q16_ONE;
+    scale.x = FIXED_ONE;
+    scale.y = FIXED_ONE;
     position.groundHeight = 0;
-    position.height = px(255);
+    position.height = toFIXED(255);
     for (row = 0; row != 3; row++) {
       for (j = 0; j != 3; j++) {
-        position.x = px(j * 32 + 144 - shakeX);
-        position.y = px(row * 32 + 76 - shakeY);
+        position.x = INTtoFIXED(j * 32 + 144 - shakeX);
+        position.y = INTtoFIXED(row * 32 + 76 - shakeY);
         Actor_ApplyProjectedPlacementFar(work->sprites[row * 3 + j], &position,
                                          &scale, 0);
       }
@@ -255,13 +255,13 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     if (frame == 226) {
       Sound_PlayFar(SE_CRASH);
     }
-    Transform_Reset();
+    Matrix_Initialize();
 
     // Each time crystals crumble, shards fly up.
     if (frame == BOREAS_CRUMBLE_A_FRAME) {
       for (i = 0; i != BOREAS_SHARDS / 2; i++) {
-        PARTICLES[i].x = px((Random16() & 31) + 68);
-        PARTICLES[i].y = px((Random16() & 31) + 8);
+        PARTICLES[i].x = INTtoFIXED((Random16() & 31) + 68);
+        PARTICLES[i].y = INTtoFIXED((Random16() & 31) + 8);
         PARTICLES[i].velocityX = ((Random16() & 127) - 63) << 11;
         PARTICLES[i].velocityY = ((-Random16() & 127) - 64) << 11;
         PARTICLES[i].variant = (Random16() & 15) + 32;
@@ -269,8 +269,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     }
     if (frame == BOREAS_CRUMBLE_B_FRAME) {
       for (i = 0; i != BOREAS_SHARDS / 2; i++) {
-        PARTICLES[i + BOREAS_SHARDS / 2].x = px(Random16() % 48 + 60);
-        PARTICLES[i + BOREAS_SHARDS / 2].y = px((Random16() & 31) + 52);
+        PARTICLES[i + BOREAS_SHARDS / 2].x = INTtoFIXED(Random16() % 48 + 60);
+        PARTICLES[i + BOREAS_SHARDS / 2].y = INTtoFIXED((Random16() & 31) + 52);
         PARTICLES[i + BOREAS_SHARDS / 2].velocityX = ((Random16() & 127) - 63)
                                                      << 12;
         PARTICLES[i + BOREAS_SHARDS / 2].velocityY = ((-Random16() & 31) - 32)
@@ -280,8 +280,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     }
     if (frame == BOREAS_CRUMBLE_C_FRAME) {
       for (i = 0; i != BOREAS_SHARDS / 2; i++) {
-        PARTICLES[i].x = px((Random16() & 63) + 52);
-        PARTICLES[i].y = px((Random16() & 31) + 72);
+        PARTICLES[i].x = INTtoFIXED((Random16() & 63) + 52);
+        PARTICLES[i].y = INTtoFIXED((Random16() & 31) + 72);
         PARTICLES[i].velocityX = ((Random16() & 127) - 63) << 11;
         PARTICLES[i].velocityY = ((-Random16() & 31) - 32) << 13;
         PARTICLES[i].variant = (Random16() & 15) + 32;
@@ -298,12 +298,12 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
             picture = i & 3;
           }
           drawAlt(canvas, work->sheet + gBoreas_DebrisPictures[picture],
-                  WHOLE_PIXELS(PARTICLES[i].x), WHOLE_PIXELS(PARTICLES[i].y),
+                  FIXEDtoINT(PARTICLES[i].x), FIXEDtoINT(PARTICLES[i].y),
                   gBoreas_DebrisWidths[picture],
                   gBoreas_DebrisHeights[picture]);
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
-          PARTICLES[i].velocityY += px(1) / 8;
+          PARTICLES[i].velocityY += toFIXED(1) / 8;
         }
       }
     }
@@ -312,8 +312,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     if (frame >= BOREAS_SPRAY_FRAME) {
       if (frame == BOREAS_SPRAY_FRAME) {
         for (i = 0; i != BOREAS_SPRAY; i++) {
-          PARTICLES[i].x = px(72);
-          PARTICLES[i].y = px(56);
+          PARTICLES[i].x = toFIXED(72);
+          PARTICLES[i].y = toFIXED(56);
           PARTICLES[i].velocityX = (-(Random16() & 127) - 64) << 11;
           PARTICLES[i].velocityY = ((Random16() & 127) + 16) << 11;
           PARTICLES[i].variant = Random16();
@@ -324,15 +324,15 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
           s32 picture = i % 3;
           if ((i & 1) == 0) {
             draw(canvas, work->sheet + gBoreas_SprayPictures[picture],
-                 WHOLE_PIXELS(PARTICLES[i].x), WHOLE_PIXELS(PARTICLES[i].y),
+                 FIXEDtoINT(PARTICLES[i].x), FIXEDtoINT(PARTICLES[i].y),
                  gBoreas_SprayWidths[picture], gBoreas_SprayHeights[picture]);
           }
           PARTICLES[i].x += PARTICLES[i].velocityX;
           PARTICLES[i].y += PARTICLES[i].velocityY;
-          if (WHOLE_PIXELS(PARTICLES[i].x) < -16 ||
-              WHOLE_PIXELS(PARTICLES[i].y) > 120) {
-            PARTICLES[i].x = px(72);
-            PARTICLES[i].y = px(56);
+          if (FIXEDtoINT(PARTICLES[i].x) < -16 ||
+              FIXEDtoINT(PARTICLES[i].y) > 120) {
+            PARTICLES[i].x = toFIXED(72);
+            PARTICLES[i].y = toFIXED(56);
           }
           // DEAD: a fleck's variant, random from frame 224, is never read
           // (the second half sets 0 to 63 anew); the ROM keeps the count.
@@ -354,8 +354,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
           s32 picture = trail->variant / 2 % 9;
           s32 size = gBattleEffect_SparkleSizes[picture];
           draw(canvas, sparkleSheet + gBattleEffect_SparklePictures[picture],
-               WHOLE_PIXELS(trail->x) - size / 2,
-               WHOLE_PIXELS(trail->y) - size / 2, size, size);
+               FIXEDtoINT(trail->x) - size / 2, FIXEDtoINT(trail->y) - size / 2,
+               size, size);
           if (++trail->variant == 18) {
             trail->x = spray->x;
             trail->y = spray->y;
@@ -378,9 +378,9 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
 
   for (i = 0; i != BOREAS_TORRENT_CRYSTALS; i++) {
-    work->particles[i].x = px((Random16() & 127) + 64);
-    work->particles[i].z = -px(16);
-    work->particles[i].y = px(-(Random16() & 127) - 64);
+    work->particles[i].x = INTtoFIXED((Random16() & 127) + 64);
+    work->particles[i].z = -toFIXED(16);
+    work->particles[i].y = INTtoFIXED(-(Random16() & 127) - 64);
     work->particles[i].velocityX = (-(Random16() & 63) - 127) << 12;
     work->particles[i].velocityY = ((Random16() & 63) + 127) << 12;
     work->particles[i].variant = 0;
@@ -429,8 +429,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     }
     if (frame == BOREAS_TORRENT_CRASH_FRAME) {
       for (i = 0; i != BOREAS_TORRENT_CRYSTALS; i++) {
-        work->particles[i].x = px(BOREAS_POINT_X(i & 15) - 56);
-        work->particles[i].y = px(BOREAS_POINT_Y(i & 15));
+        work->particles[i].x = INTtoFIXED(BOREAS_POINT_X(i & 15) - 56);
+        work->particles[i].y = INTtoFIXED(BOREAS_POINT_Y(i & 15));
         work->particles[i].velocityX = ((Random16() & 127) - 63) << 13;
         work->particles[i].velocityY = (-(Random16() & 31) - 16) << 14;
       }
@@ -447,16 +447,17 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       }
       for (i = 0; i != count; i++) {
         struct Particle *crystal = &work->particles[i];
-        y = WHOLE_PIXELS(crystal->y);
+        y = FIXEDtoINT(crystal->y);
         if (y <= 135) {
           s32 picture = i % 3;
           draw(canvas, work->sheet + gBoreas_FallPictures[picture],
-               WHOLE_PIXELS(crystal->x), y - gBoreas_FallHeights[picture],
+               FIXEDtoINT(crystal->x), y - gBoreas_FallHeights[picture],
                gBoreas_FallWidths[picture], gBoreas_FallHeights[picture]);
-          Particle_AdvanceWithGravity2D(crystal, PARTICLE_DAMPING_NONE, px(1));
-          if (WHOLE_PIXELS(crystal->y) > 120 && crystal->velocityY > px(8)) {
+          Particle_AdvanceWithGravity2D(crystal, PARTICLE_DAMPING_NONE,
+                                        toFIXED(1));
+          if (FIXEDtoINT(crystal->y) > 120 && crystal->velocityY > toFIXED(8)) {
             crystal->velocityY = -crystal->velocityY / 4;
-            crystal->y = px(120);
+            crystal->y = toFIXED(120);
             work->shakeFrames = 1;
           }
         }
@@ -466,14 +467,14 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     if (frame < BOREAS_TORRENT_CRASH_FRAME) {
       for (i = 0; i != BOREAS_TORRENT_CRYSTALS; i++) {
         draw(canvas, work->sheet,
-             WHOLE_PIXELS(work->particles[i].x) - BOREAS_CRYSTAL_WIDTH / 2,
-             WHOLE_PIXELS(work->particles[i].y) - BOREAS_CRYSTAL_HEIGHT / 2,
+             FIXEDtoINT(work->particles[i].x) - BOREAS_CRYSTAL_WIDTH / 2,
+             FIXEDtoINT(work->particles[i].y) - BOREAS_CRYSTAL_HEIGHT / 2,
              BOREAS_CRYSTAL_WIDTH, BOREAS_CRYSTAL_HEIGHT);
         work->particles[i].x += work->particles[i].velocityX;
         work->particles[i].y += work->particles[i].velocityY;
-        if (WHOLE_PIXELS(work->particles[i].y) > 120 && frame <= 47) {
-          work->particles[i].x = px((Random16() & 127) + 64);
-          work->particles[i].y = -px(16);
+        if (FIXEDtoINT(work->particles[i].y) > 120 && frame <= 47) {
+          work->particles[i].x = INTtoFIXED((Random16() & 127) + 64);
+          work->particles[i].y = -toFIXED(16);
         }
       }
     }

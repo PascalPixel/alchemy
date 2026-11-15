@@ -70,10 +70,10 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         s32 k;
 
         if (args->variant == EFFECT_VARIANT_BASIC)
-          shade = (Q_16_16_TO_INT(Trig_Sin(j << 10) << 7)) - i * 4 - 64;
+          shade = (FIXEDtoINT(Trig_Sin(j << 10) << 7)) - i * 4 - 64;
         else
-          shade = (Q_16_16_TO_INT(Trig_Sin(j << 10) * CANVAS_LEVEL_BRIGHTEST)) -
-                  i * 4;
+          shade =
+              (FIXEDtoINT(Trig_Sin(j << 10) * CANVAS_LEVEL_BRIGHTEST)) - i * 4;
         if (shade > CANVAS_LEVEL_BRIGHTEST)
           shade = CANVAS_LEVEL_BRIGHTEST;
         if (shade < 0)
@@ -127,8 +127,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         step->y = (Random16() & 31) + 32;
       }
       step = &work->particles[0];
-      step->x = px(user.x / 2);
-      step->y = px(user.y - 32);
+      step->x = INTtoFIXED(user.x / 2);
+      step->y = INTtoFIXED(user.y - 32);
       step->velocityX = 0;
       step->velocityY = 0;
       step->z = (target.x / 2 - user.x / 2) << 10;
@@ -182,8 +182,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         if (frame == gBreaths_BurstFrames[mode]) {
           for (i = 0; i != 32; i++) {
             step = &work->particles[32 + i];
-            step->x = px(mouthX);
-            step->y = px(mouthY);
+            step->x = INTtoFIXED(mouthX);
+            step->y = INTtoFIXED(mouthY);
             step->velocityY = ((Random16() & 63) - 32) << 14;
             if (args->side == EFFECT_SIDE_ENEMIES)
               step->velocityX = -(Random16() & 63) << 13;
@@ -213,8 +213,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         for (i = 0; i != 32; i++) {
           step = &work->particles[32 + i];
           if (++step->variant >= 0) {
-            s32 x = mouthX + (Q_16_16_TO_INT(Trig_Sin(step->x) * step->y));
-            s32 y = mouthY + (Q_16_16_TO_INT(Trig_Cos(step->x) * step->y));
+            s32 x = mouthX + (FIXEDtoINT(Trig_Sin(step->x) * step->y));
+            s32 y = mouthY + (FIXEDtoINT(Trig_Cos(step->x) * step->y));
             s32 size = (i & 3) + 3;
 
             if (step->y > 1) {
@@ -281,7 +281,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         if (mode != BREATH_ROLLING_FLAME) {
           s32 growth = 10192;
           s32 age = frame - gBreaths_BurstFrames[mode];
-          s32 scale = age * growth + Q16_ONE / 2;
+          s32 scale = age * growth + FIXED_ONE / 2;
           s32 alpha = 128 - age * 8;
 
           if (args->variant == EFFECT_VARIANT_BASIC)
@@ -295,25 +295,26 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
 
             model->shade = alpha;
             for (i = 0; i != count; i++) {
-              Transform_Reset();
+              Matrix_Initialize();
               if (mode == BREATH_BLAST) {
-                Transform_ApplyTranslation(px(mouthX - 64), px(mouthY - 64), 0);
-                Transform_ApplyAxisScale(Q16_ONE, Q16_ONE * 2, Q16_ONE);
-                Transform_ApplyRoll(i * (TRIG_TURN / 4) + TRIG_TURN / 8);
-                Transform_ApplyPitch(-TRIG_TURN / 16);
+                Matrix_Translate(INTtoFIXED(mouthX - 64),
+                                 INTtoFIXED(mouthY - 64), 0);
+                Matrix_Scale(FIXED_ONE, FIXED_ONE * 2, FIXED_ONE);
+                Matrix_RotateZ(i * (DEGtoANG(90)) + DEGtoANG(45));
+                Matrix_RotateX(-TRIG_TURN / 16);
               } else {
                 if (args->side == EFFECT_SIDE_ENEMIES)
-                  Transform_ApplyTranslation(px(mouthX - 72), px(mouthY - 64),
-                                             0);
+                  Matrix_Translate(INTtoFIXED(mouthX - 72),
+                                   INTtoFIXED(mouthY - 64), 0);
                 else
-                  Transform_ApplyTranslation(px(mouthX - 56), px(mouthY - 64),
-                                             0);
-                Transform_ApplyYaw(0x32c8);
-                Transform_ApplyPitch(TRIG_TURN / 4);
+                  Matrix_Translate(INTtoFIXED(mouthX - 56),
+                                   INTtoFIXED(mouthY - 64), 0);
+                Matrix_RotateY(0x32c8);
+                Matrix_RotateX(DEGtoANG(90));
               }
               if (mode == BREATH_PIKE)
                 scale /= 2;
-              Transform_ApplyAxisScale(scale / 2, scale, scale / 2);
+              Matrix_Scale(scale / 2, scale, scale / 2);
               Render_TransformVertices(gBattleEffect_GroundSquareCorners,
                                        vertices, 4);
               Render_DrawModelList(model);
@@ -339,31 +340,31 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                 alpha = 0;
               if (alpha > -64) {
                 model->shade = alpha;
-                Transform_Reset();
+                Matrix_Initialize();
                 if (mode == BREATH_PIKE) {
                   scale /= 2;
                   if (args->side == EFFECT_SIDE_ENEMIES)
-                    Transform_ApplyTranslation(
-                        px(mouthX + gBreaths_RingX[mode * 4 + i] - 48),
-                        px(mouthY - 64), 0);
+                    Matrix_Translate(
+                        INTtoFIXED(mouthX + gBreaths_RingX[mode * 4 + i] - 48),
+                        INTtoFIXED(mouthY - 64), 0);
                   else
-                    Transform_ApplyTranslation(
-                        px(mouthX - gBreaths_RingX[mode * 4 + i] - 80),
-                        px(mouthY - 64), 0);
+                    Matrix_Translate(
+                        INTtoFIXED(mouthX - gBreaths_RingX[mode * 4 + i] - 80),
+                        INTtoFIXED(mouthY - 64), 0);
                 } else {
                   if (args->side == EFFECT_SIDE_ENEMIES)
-                    Transform_ApplyTranslation(
-                        px(mouthX + gBreaths_RingX[mode * 4 + i] - 64),
-                        px(mouthY - 64), 0);
+                    Matrix_Translate(
+                        INTtoFIXED(mouthX + gBreaths_RingX[mode * 4 + i] - 64),
+                        INTtoFIXED(mouthY - 64), 0);
                   else
-                    Transform_ApplyTranslation(
-                        px(mouthX - gBreaths_RingX[mode * 4 + i] - 64),
-                        px(mouthY - 64), 0);
+                    Matrix_Translate(
+                        INTtoFIXED(mouthX - gBreaths_RingX[mode * 4 + i] - 64),
+                        INTtoFIXED(mouthY - 64), 0);
                 }
-                Transform_ApplyAxisScale(scale, scale, scale);
-                Transform_ApplyYaw(0x36b0);
-                Transform_ApplyPitch(TRIG_TURN / 4);
-                Transform_ApplyYaw(frame << 10);
+                Matrix_Scale(scale, scale, scale);
+                Matrix_RotateY(0x36b0);
+                Matrix_RotateX(DEGtoANG(90));
+                Matrix_RotateY(frame << 10);
                 Render_TransformVertices(gBattleEffect_CylinderCorners,
                                          vertices, 32);
                 Render_DrawModelList(model);
@@ -386,15 +387,15 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           model->kind = MODEL_SHADED_ADDITIVE;
           model->mesh = gBattleEffect_SmallSquareMesh;
           texture.pixels = work->sheet;
-          Transform_Reset();
-          Transform_ApplyTranslation(px(mouthX - 64), px(mouthY - 64), 0);
-          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);
+          Matrix_Initialize();
+          Matrix_Translate(INTtoFIXED(mouthX - 64), INTtoFIXED(mouthY - 64), 0);
+          Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
           if (frame > 7)
             angle = (frame << 7) + 0x2c60;
           if (args->side == EFFECT_SIDE_PARTY)
             angle = -angle;
-          Transform_ApplyRoll(angle);
-          Transform_ApplyAxisScale(Q16_ONE * 4, Q16_ONE * 2, Q16_ONE);
+          Matrix_RotateZ(angle);
+          Matrix_Scale(FIXED_ONE * 4, FIXED_ONE * 2, FIXED_ONE);
           Render_TransformVertices(gBattleEffect_BeamCorners, vertices, 4);
           Render_DrawModelList(model);
         }
@@ -432,8 +433,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
             else
               BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, i, 3);
-            BattleEffect_StartActorMotion(args->targets[i], 1, px(1), px(4),
-                                          px(2), frame + 100);
+            BattleEffect_StartActorMotion(args->targets[i], 1, toFIXED(1),
+                                          toFIXED(4), toFIXED(2), frame + 100);
           }
         }
       } else if (frame == gBreaths_FlashFrames[mode]) {
@@ -537,7 +538,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
 
   // The caster closes in on the target.
-  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 8, px(4));
+  BattleMotion_ApproachTargetFar(args->user, args->targets[0], 8, toFIXED(4));
 
   for (frame = 0; frame != CRESCENT_SLASH_FRAMES; frame++) {
     if (frame == 0)
@@ -552,8 +553,8 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
         EFFECT_SHOW_DAMAGE(SE_CLATTER);
       else
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      BattleEffect_StartActorMotion(args->targets[0], 1, px(4), px(16), px(4),
-                                    250);
+      BattleEffect_StartActorMotion(args->targets[0], 1, toFIXED(4),
+                                    toFIXED(16), toFIXED(4), 250);
       work->shakeFrames = 4;
     }
 

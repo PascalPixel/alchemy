@@ -153,7 +153,7 @@ void JupiterLighthouse_PushLogOffTheLedge(void) {
     System_Wait(5);
     Event_PlaySound(SE_HEAVY_IMPACT);
     object->motionFlags = 2;
-    for (i = 0, x = px(176); i <= 3; i++, x += px(16)) {
+    for (i = 0, x = toFIXED(176); i <= 3; i++, x += toFIXED(16)) {
       Lift_(0x1000000, x, 0, 0);
       MapGrid_SetCellBehavior(0x1000000, x, 0, 0);
       if (i <= 1)
@@ -219,16 +219,16 @@ s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(FLAG_LEFT_PILLAR_IN_GAP)) {
     object = Actor_Get(ACTOR_LEFT_PILLAR);
     object->motionFlags = 0;
-    object->groundHeight = px(-32);
-    object->y.fixed = px(-32);
+    object->groundHeight = toFIXED(-32);
+    object->y.fixed = toFIXED(-32);
     Actor_SetPosition(ACTOR_LEFT_PILLAR, 328, 584);
     MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
   }
   if (Event_GetFlag(FLAG_RIGHT_PILLAR_IN_GAP)) {
     object = Actor_Get(ACTOR_RIGHT_PILLAR);
     object->motionFlags = 0;
-    object->groundHeight = px(-32);
-    object->y.fixed = px(-32);
+    object->groundHeight = toFIXED(-32);
+    object->y.fixed = toFIXED(-32);
     Actor_SetPosition(ACTOR_RIGHT_PILLAR, 520, 584);
     MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 0);
   }
@@ -250,7 +250,7 @@ s32 Scene_PrepareMap(void) {
   PushTarget_FillFootprint(ACTOR_LEDGE_LOG);
   PushTarget_FillFootprint(ACTOR_FOURTH_LOG);
   if (Event_GetFlag(FLAG_LOG_OFF_LEDGE)) {
-    for (i = 0, x = px(176); i <= 3; i++, x += px(16)) {
+    for (i = 0, x = toFIXED(176); i <= 3; i++, x += toFIXED(16)) {
       Lift_(0x1000000, x, 0, 0);
       MapGrid_SetCellBehavior(0x1000000, x, 0, 0);
       if (i <= 1)
@@ -291,8 +291,8 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
 #include "shared/whirlwind_carry_leader_lower.h"
 
 s32 Position_FlatDistance(s32 *a, s32 *b) {
-  s32 dx = FIELD_PIXEL(a[0] - b[0]);
-  s32 dz = FIELD_PIXEL(a[2] - b[2]);
+  s32 dx = FIXEDtoINT(a[0] - b[0]);
+  s32 dz = FIXEDtoINT(a[2] - b[2]);
   s32 dxsq = dx * dx;
   s32 dzsq = dz * dz;
 
@@ -357,8 +357,8 @@ s32 PushTarget_FillFootprint(s32 id) {
     return 0;
   width = (ABS(gPushFootprints[j][0]) + ABS(gPushFootprints[j][2])) >> 4;
   height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
-  x = FIELD_CELL(actor->x.fixed + px(gPushFootprints[j][0]));
-  z = FIELD_CELL(actor->z.fixed + px(gPushFootprints[j][1]));
+  x = FIELD_CELL(actor->x.fixed + toFIXED(gPushFootprints[j][0]));
+  z = FIELD_CELL(actor->z.fixed + toFIXED(gPushFootprints[j][1]));
   mapX = FIELD_CELL(map->layers[1].offsetX);
   i = mapX; // i is reused to hold mapX.
   mapZ = FIELD_CELL(map->layers[1].offsetY);
@@ -422,8 +422,10 @@ void PushTarget_PushFill(struct PushTarget target) {
   acceleration = leader->acceleration;
   from[0] = object->x.fixed;
   from[2] = object->z.fixed;
-  cell[0] = FIELD_CELL(object->x.fixed + px(gPushFootprints[footprint][0]));
-  cell[2] = FIELD_CELL(object->z.fixed + px(gPushFootprints[footprint][1]));
+  cell[0] =
+      FIELD_CELL(object->x.fixed + toFIXED(gPushFootprints[footprint][0]));
+  cell[2] =
+      FIELD_CELL(object->z.fixed + toFIXED(gPushFootprints[footprint][1]));
   width = (ABS(gPushFootprints[footprint][0]) +
            ABS(gPushFootprints[footprint][2])) >>
           4;
@@ -448,7 +450,7 @@ void PushTarget_PushFill(struct PushTarget target) {
     Actor_SelectAnimation(object, 2);
   Event_PlaySound(SE_HEAVY_MOVE);
   Actor_SetSpeedAndAcceleration(target.id, 0.5, 0.1);
-  FieldActor_SetMoveTargetFixed(object, target.x, target.y, target.z);
+  FieldActor_SetMoveTargetFX(object, target.x, target.y, target.z);
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
@@ -468,8 +470,8 @@ void PushTarget_PushFill(struct PushTarget target) {
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
                                        target.z);
   Actor_SelectAnimation(object, 1);
-  target.x = target.x + px(gPushFootprints[footprint][0]);
-  target.z = target.z + px(gPushFootprints[footprint][1]);
+  target.x = target.x + toFIXED(gPushFootprints[footprint][0]);
+  target.z = target.z + toFIXED(gPushFootprints[footprint][1]);
   target.x >>= 20;
   target.z >>= 20;
   originX = FIELD_CELL(map->layers[1].offsetX);
@@ -480,8 +482,8 @@ void PushTarget_PushFill(struct PushTarget target) {
                                          255);
   PushedActor_FillGridAttributeRectangle(2, target.x, target.z, width, height,
                                          255);
-  cell[0] = FIELD_CELL(from[0] + px(gPushFootprints[footprint][0]));
-  cell[2] = FIELD_CELL(from[2] + px(gPushFootprints[footprint][1]));
+  cell[0] = FIELD_CELL(from[0] + toFIXED(gPushFootprints[footprint][0]));
+  cell[2] = FIELD_CELL(from[2] + toFIXED(gPushFootprints[footprint][1]));
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);

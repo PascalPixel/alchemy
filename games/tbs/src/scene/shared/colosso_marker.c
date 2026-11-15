@@ -29,7 +29,7 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   Actor_SetSpriteFlags(actor, 3);
   Actor_SelectAnimation(actor, ANIM_STILL);
   Actor_SelectAnimation(actor, ANIM_STAND);
-  Actor_SetPositionFixed(id, px(x), px(z));
+  Actor_SetPositionFX(id, toFIXED(x), toFIXED(z));
   // BUG: FACING_SOUTH is passed where an actor id belongs; no actor has
   // it, so the leader does not turn.
   Actor_FaceActorById(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -41,19 +41,19 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   sprite->shadow.objectMode = 1;
   Sound_Play(SE_COLOSSO_WARRIOR_APPEAR);
   for (i = 0; i <= 15; i += 2) {
-    actor->scaleX = (i << 12) + Q16_ONE / 16;
-    actor->scaleY = 31 * Q16_ONE / 16 - (i << 12);
+    actor->scaleX = (i << 12) + FIXED_ONE / 16;
+    actor->scaleY = 31 * FIXED_ONE / 16 - (i << 12);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((15 - i) << 8) | (i + 1),
                         IO_WRITE_HALFWORD);
     wait(1);
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 0),
                       IO_WRITE_HALFWORD);
-  actor->scaleX = 17 * Q16_ONE / 16;
-  actor->scaleY = 15 * Q16_ONE / 16;
+  actor->scaleX = 17 * FIXED_ONE / 16;
+  actor->scaleY = 15 * FIXED_ONE / 16;
   Event_Wait(1);
-  actor->scaleX = Q16_ONE;
-  actor->scaleY = Q16_ONE;
+  actor->scaleX = FIXED_ONE;
+  actor->scaleY = FIXED_ONE;
   Event_Wait(13);
   sprite->image.objectMode = 0;
   sprite->shadow.objectMode = 0;
@@ -212,7 +212,7 @@ void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
-    s32 speed = px(2);
+    s32 speed = toFIXED(2);
     s32 unpaused = 0;
 
     actor->speedLimit = speed;
@@ -220,7 +220,7 @@ void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
     actor->paused = unpaused;
     Actor_StartIdle(actor);
     Actor_SelectAnimation(actor, 5);
-    Actor_SetMoveTarget(actor, px(x), actor->y.fixed, px(z));
+    Actor_SetMoveTarget(actor, toFIXED(x), actor->y.fixed, toFIXED(z));
   }
 }
 
@@ -230,7 +230,7 @@ void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
-    s32 speed = px(5) / 4;
+    s32 speed = toFIXED(5) / 4;
     s32 unpaused = 0;
 
     actor->speedLimit = speed;
@@ -238,7 +238,7 @@ void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
     actor->paused = unpaused;
     Actor_StartIdle(actor);
     Actor_SelectAnimation(actor, 5);
-    Actor_SetMoveTarget(actor, px(x), actor->y.fixed, px(z));
+    Actor_SetMoveTarget(actor, toFIXED(x), actor->y.fixed, toFIXED(z));
     Actor_WaitForMove(actor);
     Actor_SelectAnimation(actor, ANIM_STAND);
   }

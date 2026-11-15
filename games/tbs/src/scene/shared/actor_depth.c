@@ -15,7 +15,7 @@ static UNREAD_RESULT Actor_SetFlagBitByRelativeDepth(struct Actor *actor) {
   if (ref->z.fixed < actor->z.fixed) {
     s32 lim = actor->z.fixed - ref->z.fixed;
     s32 ay;
-    lim += px(4);
+    lim += toFIXED(4);
     ay = actor->y.fixed + lim;
     if (ref->y.fixed <= ay) {
       flag &= ~ACTOR_PRIORITY_UNDERFOOT;

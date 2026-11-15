@@ -49,8 +49,8 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
 
     if (frame == 64)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-    Transform_Reset();
-    Transform_SetLookAt(view->eye, view->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(view->eye, view->focus);
     if (frame == 72)
       BattleEffect_TintBattler(args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
                                TINT_KEEP, 0);
@@ -67,20 +67,20 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
         s32 point[3];
         struct ScreenPoint out;
 
-        Transform_Push();
-        Transform_ApplyTranslation(orb->x, orb->y, orb->z);
+        Matrix_Push();
+        Matrix_Translate(orb->x, orb->y, orb->z);
         if (i <= 11)
-          Transform_ApplyPitch(frame << 9);
+          Matrix_RotateX(frame << 9);
         else
-          Transform_ApplyPitch((frame << 9) + TRIG_TURN / 4);
-        Transform_ApplyRoll(i * 5461 + (frame << 10));
-        Transform_ApplyTranslation(0, Trig_Sin(frame * 409) << 6, 0);
+          Matrix_RotateX((frame << 9) + DEGtoANG(90));
+        Matrix_RotateZ(i * 5461 + (frame << 10));
+        Matrix_Translate(0, Trig_Sin(frame * 409) << 6, 0);
         point[0] = 0;
         point[1] = 0;
         point[2] = 0;
         EffectPosition_ProjectPoint(point, &out);
         out.x >>= 1;
-        Transform_Pop();
+        Matrix_Pop();
         blit(canvas, sheet + gBattleEffect_MotePictures[size - 1],
              out.x - size / 2, out.y - size, size, size * 2);
       }
@@ -178,11 +178,11 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
       for (i = 0; i != ROCKS; i++) {
         rock = &work->particles[i];
         if (args->side == EFFECT_SIDE_ENEMIES)
-          rock->x = px(Random16() % 40 + 8);
+          rock->x = INTtoFIXED(Random16() % 40 + 8);
         else
-          rock->x = px(120 - Random16() % 40);
+          rock->x = INTtoFIXED(120 - Random16() % 40);
         Random16();
-        rock->y = px(i * 2 + 96);
+        rock->y = INTtoFIXED(i * 2 + 96);
         rock->velocityX = 0;
         rock->velocityY = -((Random16() & 127) + 32) << 11;
         rock->z = (Random16() & 15) + 8;
@@ -202,7 +202,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
       scrollSpeed += 0x8000;
       scrollSpeed = scrollSpeed * 60 / DAMPING_SCALE;
     }
-    scrollX = Q_16_16_TO_INT(scroll);
+    scrollX = FIXEDtoINT(scroll);
     REG_BG2X = (64 - (userPosition.x - scrollX)) << 8;
 
     // Each boulder spins through three pictures of its shard (z is its
@@ -240,9 +240,9 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
       rock->velocityZ += rock->z;
       if (frame > i / 2 + 64) {
         if (args->side == EFFECT_SIDE_ENEMIES)
-          rock->velocityX -= px(1) / 2;
+          rock->velocityX -= toFIXED(1) / 2;
         else
-          rock->velocityX += px(1) / 2;
+          rock->velocityX += toFIXED(1) / 2;
         if (rock->z > 1)
           rock->z--;
       }
@@ -257,8 +257,8 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
         cueTimer = 8;
         Sound_PlayFar(SE_HEAVY_IMPACT);
       }
-      BattleEffect_StartActorMotion(args->targets[0], 1, px(2), px(4), px(2),
-                                    150);
+      BattleEffect_StartActorMotion(args->targets[0], 1, toFIXED(2), toFIXED(4),
+                                    toFIXED(2), 150);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 4);
       work->shakeFrames = 2;
@@ -332,10 +332,10 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
 
         for (i = 0, spark = work->particles; i != SPARKS; i++, spark++) {
           s32 speed = (Random16() & 0xff) + 256;
-          s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
+          s32 angle = (Random16() & 0x7fff) + DEGtoANG(90);
 
-          spark->x = px(position.x);
-          spark->y = px(96 - (Random16() & 31));
+          spark->x = INTtoFIXED(position.x);
+          spark->y = INTtoFIXED(96 - (Random16() & 31));
           spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
           spark->velocityY = (Trig_Cos(angle) * speed) >> 9;
           spark->variant = Random16() & 7;
@@ -349,7 +349,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
           s32 speed = (Random16() & 127) + 128;
           s32 angle = Random16() & 0x7fff;
 
-          SET_POSITION(mote, target->x, px(52), target->z);
+          SET_POSITION(mote, target->x, toFIXED(52), target->z);
           mote->velocityY = ((Random16() & 0xff) - 128) << 9;
           mote->velocityX = (Trig_Sin(angle) * speed) >> 7;
           mote->velocityZ = (Trig_Cos(angle) * speed) >> 7;
@@ -368,7 +368,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 80);
       target->verticalMotionStrength = 0;
-      target->y = px(32);
+      target->y = toFIXED(32);
     }
     if (frame == 80)
       target->verticalMotionStrength = 0xab85;
@@ -440,7 +440,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
               y - gSoulShatter_SparkSizes[cell] / 2,
               gSoulShatter_SparkSizes[cell], gSoulShatter_SparkSizes[cell]);
           spark->variant++;
-          BattleEffectKernels_IntegrateVector2(spark, 62, -px(1) / 8);
+          BattleEffectKernels_IntegrateVector2(spark, 62, -toFIXED(1) / 8);
         }
       }
     }
@@ -455,8 +455,8 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
       user = BattleObject_GetFar(args->user)->object;
       userHalfHeight = BattleUnit_GetEffectHeightFar(args->user) / 2;
       camera = Ram_HeapSlots->cameraWork;
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
       for (i = 0; i != MOTES; i++) {
         struct Particle *mote = &work->particles[SPARKS * 2 + i];
         if (mote->variant >= 0) {
@@ -618,11 +618,9 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
               radius = gSerac_RowRadii[row] + (Random16() & 3);
             }
             angle = (column << 13) + TRIG_TURN / 16;
-            VERTICES[row * 8 + column].x =
-                Q_16_16_TO_INT(Trig_Sin(angle) * radius);
+            VERTICES[row * 8 + column].x = FIXEDtoINT(Trig_Sin(angle) * radius);
             VERTICES[row * 8 + column].y = -height;
-            VERTICES[row * 8 + column].z =
-                Q_16_16_TO_INT(Trig_Cos(angle) * radius);
+            VERTICES[row * 8 + column].z = FIXEDtoINT(Trig_Cos(angle) * radius);
             if (row <= 6) {
               u8 *quad = MESH_BUFFER + (row * 8 + column) * 24;
               u8 *gridQuad;
@@ -689,8 +687,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
       savedScrollX = gProjection.centerX;
       savedScrollY = gProjection.centerY;
       gProjection.centerY = savedScrollY - 16;
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
       world[0] = target->x;
       world[1] = 0;
       world[2] = target->z;
@@ -730,7 +728,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           }
           picture = p->variant / 6;
           Render_ProjectPoint(p, &point);
-          BattleEffectKernels_IntegrateVector3(p, 60, px(1) / 8);
+          BattleEffectKernels_IntegrateVector3(p, 60, toFIXED(1) / 8);
           x = point.x - CLOUD_PUFF_WIDTH / 2;
           y = point.y - CLOUD_PUFF_HEIGHT / 2;
           blitters[0](canvas,
@@ -742,7 +740,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
       // The Djinni falls.
       if (frame <= 29) {
         point.x = target->x;
-        point.y = px(60) - (frame << 17);
+        point.y = toFIXED(60) - (frame << 17);
         point.depth = target->z + (Trig_Sin(frame << 9) << 5);
         Render_ProjectPoint(&point, &dropScreen);
         blitters[1](canvas, work->sheet + SERAC_MERCURY_DJINN_PICTURES,
@@ -800,7 +798,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
         caster->acceleration = speed;
         caster->speedLimit = speed;
         caster->snapToTarget = 1;
-        caster->velocityY = px(6);
+        caster->velocityY = toFIXED(6);
         caster->gravity = 0x13333;
         caster->bounce = 0;
         caster->steeringFlags = 1;
@@ -846,15 +844,15 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             color[0] = p->variant;
             p->variant -= 2;
             model->shade = color;
-            BattleEffectKernels_IntegrateVector3(p, 62, px(1) / 64);
-            Transform_Push();
-            Transform_ApplyTranslation(p->x, p->y, p->z);
-            Transform_ApplyPitch(angle);
-            Transform_ApplyRoll(angle);
-            Transform_ApplyUniformScale(Q16_ONE);
+            BattleEffectKernels_IntegrateVector3(p, 62, toFIXED(1) / 64);
+            Matrix_Push();
+            Matrix_Translate(p->x, p->y, p->z);
+            Matrix_RotateX(angle);
+            Matrix_RotateZ(angle);
+            Matrix_ScaleUniform(FIXED_ONE);
             Render_ProjectVertices(gBattleEffect_TriangleCorners, vertices, 3);
             Render_DrawModelList(model);
-            Transform_Pop();
+            Matrix_Pop();
           }
         }
       }
@@ -878,7 +876,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           model->texture = &texture;
           model->mesh = mesh;
           model->scrollV = -((frame / 2) & 31);
-          Transform_Push();
+          Matrix_Push();
           spireShade = 0;
           if (frame <= 31) {
             scale = frame * 10000 - 260000;
@@ -886,8 +884,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             scale = 60000;
           }
           model->shade = (const void *)spireShade;
-          Transform_ApplyTranslation(target->x, -px(4), target->z);
-          Transform_ApplyAxisScale(scale, scale, scale);
+          Matrix_Translate(target->x, -toFIXED(4), target->z);
+          Matrix_Scale(scale, scale, scale);
           Render_ProjectVertices((const u8 *)gMapGridCellBuffer, vertices, 64);
           Render_DrawModelList(model);
           spireShade = -32;
@@ -897,7 +895,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           model->scrollV = (frame / 2) & 31;
           model->flags = 2;
           Render_DrawModelList(model);
-          Transform_Pop();
+          Matrix_Pop();
 
           // Four rings of mist spread from its foot.
           texture.logWidth = 7;
@@ -926,15 +924,15 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             if (shade <= MODEL_SHADE_INVISIBLE) {
               continue;
             }
-            Transform_Push();
+            Matrix_Push();
             model->shade = (const void *)shade;
-            Transform_ApplyTranslation(target->x, px(gSerac_RingHeights[i]),
-                                       target->z);
-            Transform_ApplyAxisScale(size, size, size);
+            Matrix_Translate(target->x, INTtoFIXED(gSerac_RingHeights[i]),
+                             target->z);
+            Matrix_Scale(size, size, size);
             model->scrollU = ((frame + i * 5) & 7) << 4;
             Render_ProjectVertices(gBattleEffect_CylinderCorners, vertices, 32);
             Render_DrawModelList(model);
-            Transform_Pop();
+            Matrix_Pop();
           }
         }
       }

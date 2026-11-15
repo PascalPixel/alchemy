@@ -97,10 +97,10 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != SPARK_COUNT; i++, spark++) {
         spark->x = targetObject->x;
         if (spark->x < 0)
-          spark->x += -px(8);
+          spark->x += -toFIXED(8);
         else
-          spark->x += px(8);
-        spark->y = targetObject->y + px(14);
+          spark->x += toFIXED(8);
+        spark->y = targetObject->y + toFIXED(14);
         spark->z = targetObject->z;
         spark->velocityX = (Random16() & 511) << 11;
         spark->velocityY = ((Random16() & 255) - 64) << 11;
@@ -113,10 +113,10 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
         struct Particle *burst = &work->particles[i];
         burst->x = targetObject->x;
         if (burst->x < 0)
-          burst->x += -px(8);
+          burst->x += -toFIXED(8);
         else
-          burst->x += px(8);
-        burst->y = targetObject->y + px(14);
+          burst->x += toFIXED(8);
+        burst->y = targetObject->y + toFIXED(14);
         burst->z = targetObject->z;
         burst->velocityX = ((Random16() & 511) - 256) << 10;
         burst->velocityY = ((Random16() & 255) - 64) << 10;
@@ -141,14 +141,15 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     quad->vertices = vertices;
     quad->shade = brightness;
     if (frame < LUNGE_STREAK_FRAMES) {
-      Transform_Reset();
-      Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-      Transform_ApplyTranslation(px(caster.x - 128), px(caster.y - 88), 0);
-      Transform_ApplyAxisScale(gRushingStrike_Scales[mode] << 1,
-                               gRushingStrike_Scales[mode] << 1,
-                               gRushingStrike_Scales[mode]);
+      Matrix_Initialize();
+      Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
+      Matrix_Translate(INTtoFIXED(caster.x - 128), INTtoFIXED(caster.y - 88),
+                       0);
+      Matrix_Scale(gRushingStrike_Scales[mode] << 1,
+                   gRushingStrike_Scales[mode] << 1,
+                   gRushingStrike_Scales[mode]);
       if (args->side == EFFECT_SIDE_PARTY)
-        Transform_ApplyYaw(TRIG_TURN / 2);
+        Matrix_RotateY(DEGtoANG(180));
       Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       Render_DrawModelList(quad);
     }
@@ -159,7 +160,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     if (frame >= LUNGE_HIT_FRAME &&
         frame < LUNGE_HIT_FRAME + LUNGE_FLASH_FRAMES) {
       if (mode == RUSHING_STRIKE_STUN_MUSCLE)
-        scale = (flashFrame << 12) + Q16_ONE / 16;
+        scale = (flashFrame << 12) + FIXED_ONE / 16;
       else
         scale = flashFrame * 3048 + 3048;
       brightness = 32 - flashFrame * 8;
@@ -171,13 +172,15 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       texture.pixels = flashPixels;
       quad->kind = MODEL_SHADED_ADDITIVE;
       quad->mesh = gBattleEffect_LargeSquareMesh;
-      Transform_Reset();
-      Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+      Matrix_Initialize();
+      Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
       if (args->side == EFFECT_SIDE_ENEMIES)
-        Transform_ApplyTranslation(px(target.x - 144), px(target.y - 84), 0);
+        Matrix_Translate(INTtoFIXED(target.x - 144), INTtoFIXED(target.y - 84),
+                         0);
       else
-        Transform_ApplyTranslation(px(target.x - 112), px(target.y - 84), 0);
-      Transform_ApplyAxisScale(scale, scale << 2, scale);
+        Matrix_Translate(INTtoFIXED(target.x - 112), INTtoFIXED(target.y - 84),
+                         0);
+      Matrix_Scale(scale, scale << 2, scale);
       Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       Render_DrawModelList(quad);
     }
@@ -199,8 +202,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     if (frame >= LUNGE_HIT_FRAME && frame < 64) {
       struct Particle *spark;
 
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
       spark = Ram_MapCellBuffer + 0x4000;
       for (i = 0; i != SPARK_COUNT; i++, spark++) {
         s32 life = spark->variant;
@@ -235,7 +238,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
                         (cel << 11),
                     screen.x - 16, screen.y - 32, FLASH_BURST_WIDTH,
                     FLASH_BURST_HEIGHT);
-            BattleEffectKernels_IntegrateVector3(burst, 60, px(1) / 8);
+            BattleEffectKernels_IntegrateVector3(burst, 60, toFIXED(1) / 8);
             burst->variant++;
           }
         }

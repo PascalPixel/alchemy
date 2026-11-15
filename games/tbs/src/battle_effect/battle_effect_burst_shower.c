@@ -242,7 +242,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
         // The canvas is half the screen's width but the burst's speed is not
         // halved, so it covers only three quarters of its height to the target.
         work->particles[frame].x = origin.x << 15;
-        work->particles[frame].y = px(origin.y);
+        work->particles[frame].y = INTtoFIXED(origin.y);
         work->particles[frame].velocityX = (aim[0] - origin.x) << 11;
         work->particles[frame].velocityY = (aim[1] - origin.y) << 11;
         work->particles[frame].variant = 0;
@@ -255,19 +255,19 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
       if (spark->variant >= 0) {
         if (mode == BURST_SHOWER_MODE_FACES) {
           if (spark->variant > 5) {
-            draw[work->args->side](
-                canvas, (work->sheet + BURST_SHOWER_PICTURES),
-                WHOLE_PIXELS(spark->x) - DEMON_FACE_WIDTH / 2,
-                WHOLE_PIXELS(spark->y) - DEMON_FACE_HEIGHT / 2,
-                DEMON_FACE_WIDTH, DEMON_FACE_HEIGHT);
+            draw[work->args->side](canvas,
+                                   (work->sheet + BURST_SHOWER_PICTURES),
+                                   FIXEDtoINT(spark->x) - DEMON_FACE_WIDTH / 2,
+                                   FIXEDtoINT(spark->y) - DEMON_FACE_HEIGHT / 2,
+                                   DEMON_FACE_WIDTH, DEMON_FACE_HEIGHT);
           }
         } else if (mode == BURST_SHOWER_MODE_DJINNI) {
           if (spark->variant > 5) {
             draw[0](canvas,
                     (work->sheet + BURST_SHOWER_PICTURES) +
                         ((spark->variant / 4) << 11),
-                    WHOLE_PIXELS(spark->x) - FLASH_BURST_WIDTH / 2,
-                    WHOLE_PIXELS(spark->y) - FLASH_BURST_HEIGHT / 2,
+                    FIXEDtoINT(spark->x) - FLASH_BURST_WIDTH / 2,
+                    FIXEDtoINT(spark->y) - FLASH_BURST_HEIGHT / 2,
                     FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           }
         } else if (mode != BURST_SHOWER_MODE_LIGHTNING) {
@@ -275,8 +275,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
             draw[0](canvas,
                     (work->sheet + BURST_SHOWER_PICTURES) +
                         ((spark->variant / 4) << 11),
-                    WHOLE_PIXELS(spark->x) - FLASH_BURST_WIDTH / 2,
-                    WHOLE_PIXELS(spark->y) - FLASH_BURST_HEIGHT / 2,
+                    FIXEDtoINT(spark->x) - FLASH_BURST_WIDTH / 2,
+                    FIXEDtoINT(spark->y) - FLASH_BURST_HEIGHT / 2,
                     FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           }
         }

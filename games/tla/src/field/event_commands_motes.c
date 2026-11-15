@@ -167,9 +167,9 @@ void FieldEffect_UpdateSparkles(void) {
       frame = (const u16 *)&gFieldEffect_SparklePictures[sparkle->timer >> 1];
       a = Random16();
       b = Random16();
-      x = FIELD_PIXEL(sparkle->posX - cameraX) + (((a & 1) + (b & 1)) >> 1);
+      x = FIXEDtoINT(sparkle->posX - cameraX) + (((a & 1) + (b & 1)) >> 1);
       sx = x - 1;
-      sy = (sparkle->posZ - sparkle->posY - cameraZ) / Q16_ONE +
+      sy = (sparkle->posZ - sparkle->posY - cameraZ) / FIXED_ONE +
            *(const s16 *)frame;
       frame++;
       if ((u32)(x + 15) <= 255 && sy >= -32 && sy <= 159) {

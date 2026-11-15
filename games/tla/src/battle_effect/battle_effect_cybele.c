@@ -142,15 +142,15 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   for (i = 0; i != CYBELE_THORNS; i++) {
     struct Particle *thorn = &work->particles[CYBELE_FIRST_THORN + i];
 
-    thorn->x = px(128);
-    thorn->y = px(64);
+    thorn->x = toFIXED(128);
+    thorn->y = toFIXED(64);
     thorn->velocityX = -((Random16() & 255) + 200) << 9;
     thorn->velocityY = 0;
     thorn->variant = 0;
   }
   BattleEffect_SelectLivingTargets(work->args);
 
-  height = -px(64);
+  height = -toFIXED(64);
   speed = 0;
   for (frame = 0; frame != CYBELE_FRAMES; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
@@ -162,8 +162,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     }
     if (frame == 224)
       work->transferMode = CANVAS_COPY;
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
     if (frame == 31) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_GATE_MOVE);
@@ -176,11 +176,11 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_SWITCH_MECHANISM);
 
     // Drop the formation's objects to 64 pixels up.
-    speed += px(1) / 4;
+    speed += toFIXED(1) / 4;
     height += speed;
-    if (height > px(64))
-      height = px(64);
-    BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_CYBELE, px(128),
+    if (height > toFIXED(64))
+      height = toFIXED(64);
+    BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_CYBELE, toFIXED(128),
                                        height);
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
@@ -195,10 +195,10 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       for (i = 0; i != CYBELE_THORNS; i++) {
         struct Particle *thorn = &work->particles[CYBELE_FIRST_THORN + i];
 
-        if (frame >= i + 72 && thorn->y < px(104)) {
+        if (frame >= i + 72 && thorn->y < toFIXED(104)) {
           s32 cel = (frame + i) / 4 % 5;
           s32 x = Q_16_16_UPPER_HALF(thorn->x);
-          s32 y = Q_16_16_TO_INT(thorn->y);
+          s32 y = FIXEDtoINT(thorn->y);
           u8 *cell = work->sheet + gCybele_ThornPictures[cel];
           u32 width = gCybele_ThornWidths[cel];
           u32 tall;
@@ -208,7 +208,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           y -= tall >> 1;
           draw[0](canvas, cell, x, y, width, tall);
           BattleEffectKernels_IntegrateVector2(thorn, PARTICLE_DAMPING_NONE,
-                                               px(1) / 16);
+                                               toFIXED(1) / 16);
         }
       }
     }
@@ -217,8 +217,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       for (i = 0; i != CYBELE_CHIPS; i++) {
         struct Particle *chip = &work->particles[CYBELE_FIRST_CHIP + i];
 
-        chip->x = px(Random16() % 96);
-        chip->y = px((Random16() & 7) + 88);
+        chip->x = INTtoFIXED(Random16() % 96);
+        chip->y = INTtoFIXED((Random16() & 7) + 88);
         chip->velocityX = ((Random16() & 255) - 128) << 11;
         chip->velocityY = -(Random16() & 255) << 11;
         chip->variant = -(Random16() & 15) - 16;
@@ -299,10 +299,10 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
                   gCybele_ChipWidths[cel], gCybele_ChipHeights[cel]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
-          chip->velocityY += px(1) / 4;
-          if ((chip->y < 0 || chip->y > px(120)) && frame <= 159) {
-            chip->x = px(Random16() % 96);
-            chip->y = px((Random16() & 7) + 88);
+          chip->velocityY += toFIXED(1) / 4;
+          if ((chip->y < 0 || chip->y > toFIXED(120)) && frame <= 159) {
+            chip->x = INTtoFIXED(Random16() % 96);
+            chip->y = INTtoFIXED((Random16() & 7) + 88);
             chip->velocityX = ((Random16() & 255) - 128) << 11;
             chip->velocityY = -(Random16() & 255) << 11;
           }
@@ -408,9 +408,9 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           void *record;
           s32 n;
 
-          object->y += px(8);
-          if (object->y > px(128))
-            object->y = px(128);
+          object->y += toFIXED(8);
+          if (object->y > toFIXED(128))
+            object->y = toFIXED(128);
           object->verticalMotionStrength = 0;
           for (n = 0; (record = GetMotionRecordFar(slot->object, n)) != 0; n++)
             Sprite_StartAnimationFar(record, 5);
@@ -424,7 +424,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         struct MotionObject *object =
             BattleObject_GetFar(args->targets[i])->object;
 
-        object->y = px(96);
+        object->y = toFIXED(96);
         object->verticalMotionStrength = 0xab85;
       }
       if (frame == i * 5 + CYBELE_LANDING_FRAME) {
@@ -462,9 +462,9 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         for (j = 0; j != 10; j++) {
           struct Particle *ember = &work->particles[i * 10 + j];
 
-          SET_POSITION(ember, object->x, px(20), object->z);
+          SET_POSITION(ember, object->x, toFIXED(20), object->z);
           ember->velocityX = Trig_Sin(j * 0x3334) << 2;
-          ember->velocityY = (Random16() & 0x7fff) + px(1);
+          ember->velocityY = (Random16() & 0x7fff) + toFIXED(1);
           ember->velocityZ = Trig_Cos(j * 0x3334) << 2;
           ember->variant = 0;
         }
@@ -508,7 +508,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
               draw[0](canvas, source, screen.x - (size >> 1),
                       screen.y - (size >> 1), size, size);
             }
-            BattleEffectKernels_IntegrateVector2(ember, 60, px(1) / 16);
+            BattleEffectKernels_IntegrateVector2(ember, 60, toFIXED(1) / 16);
             ember->variant++;
           }
         }
@@ -529,7 +529,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   // Tear down.
   /* FAKEMATCH(wrapper): the burst through BurstAt_. */
-  BurstAt_(2, px(128), height);
+  BurstAt_(2, toFIXED(128), height);
   for (i = 0; i != 8; i++)
     Sprite_DestroyFar(work->sprites[i]);
   BattleEffect_EndCanvasLayer();

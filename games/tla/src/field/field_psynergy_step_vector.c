@@ -240,8 +240,8 @@ void BattleEffect_UploadCanvas(void) {
 /// nothing is not drawn.
 void BattleEffect_DrawCanvasSprite(void) {
   struct CanvasSpriteWork *work = Ram_HeapSlots->canvasSprite;
-  s32 x = px(work->x);
-  s32 y = px(work->y);
+  s32 x = toFIXED(work->x);
+  s32 y = toFIXED(work->y);
   s32 scaleX = work->scaleX;
   s32 scaleY = work->scaleY;
 
@@ -309,8 +309,8 @@ void BattleEffect_StartCanvasSprite(void) {
   work->command = 0;
   work->x = 16;
   work->y = 0;
-  work->scaleX = Q16_ONE;
-  work->scaleY = Q16_ONE;
+  work->scaleX = FIXED_ONE;
+  work->scaleY = FIXED_ONE;
   work->priority = 1;
   work->depth = 250;
   Iwram_FillWordsEntry(canvas, CANVAS_SIZE, 0);
@@ -393,7 +393,7 @@ void Actor_VanishInSparks(s32 objectId) {
     spark->age = -1;
   }
   object->scaleX = 0;
-  object->scaleY = Q16_ONE;
+  object->scaleY = FIXED_ONE;
   Actor_SetSpriteFlagsFar(object, 0);
   spawning = 1;
   phase = 0;
@@ -403,13 +403,13 @@ void Actor_VanishInSparks(s32 objectId) {
     if (spawning != 0) {
       for (i = spawning; i != 0; i--) {
         s32 sparkAngle = Random16();
-        s32 radius = Random16() * 6 + px(12);
+        s32 radius = Random16() * 6 + toFIXED(12);
 
         spark = &work->sparks[next];
 
         spark->age = 0;
         spark->x = object->x.fixed;
-        spark->y = object->y.fixed + px(20);
+        spark->y = object->y.fixed + toFIXED(20);
         spark->z = object->z.fixed;
         Vector_AddPolarOffset(Random16(), sparkAngle, &spark->x);
         next++;
@@ -464,8 +464,8 @@ void Actor_VanishInSparks(s32 objectId) {
       if (frame < 64) {
         object->facing -= FACING_STEP;
         object->scaleX = frame << 10;
-        if (object->scaleX > Q16_ONE)
-          object->scaleX = Q16_ONE;
+        if (object->scaleX > FIXED_ONE)
+          object->scaleX = FIXED_ONE;
       }
       if (frame == 64) {
         object->facing = angle;
@@ -515,12 +515,12 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
   offset = 0;
   if (object->flags & 4)
     offset = 0x1fc0000 - object->z;
-  scale[0] = Iwram_MulQ16(object->scaleX, sprite->scale);
-  scale[1] = Iwram_MulQ16(object->scaleY, sprite->scale);
+  scale[0] = Iwram_MulFX(object->scaleX, sprite->scale);
+  scale[1] = Iwram_MulFX(object->scaleY, sprite->scale);
   SET_VECTOR(position, object->x, offset, object->z + offset);
   position[3] = 0;
-  if (object->x > -px(32) && object->x < 0x1100000 && object->z > -px(32) &&
-      object->z < 0xe00000)
+  if (object->x > -toFIXED(32) && object->x < 0x1100000 &&
+      object->z > -toFIXED(32) && object->z < 0xe00000)
     Render_ApplyProjectedPlacementFar(sprite, position, scale, 0);
 }
 
@@ -544,17 +544,17 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
   dx = effect->targetX - effect->x;
   dz = effect->targetZ - effect->z;
   if (effect->stopAtTarget != 0) {
-    ix = dx / Q16_ONE;
-    iz = dz / Q16_ONE;
-    distance = px(Iwram_Sqrt(ix * ix + iz * iz));
+    ix = dx / FIXED_ONE;
+    iz = dz / FIXED_ONE;
+    distance = toFIXED(Iwram_Sqrt(ix * ix + iz * iz));
     if (distance < 0x800000)
-      distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
-    if (distance <= px(8)) {
+      distance = Math_SqrtFX(Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz));
+    if (distance <= toFIXED(8)) {
       FieldParticle_SetPosition(effect, effect->targetX, effect->targetZ);
       return;
     }
   }
-  angle = ArcTan2(dz, dx);
+  angle = Trig_Atan(dz, dx);
   if (effect->limitTurnStep != 0) {
     heading = effect->heading;
     turn = angle - heading;
@@ -575,8 +575,8 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
     speed = effect->maxSpeed;
   angle = (s16)facing;
   effect->speed = speed;
-  effect->x += Iwram_MulQ16(Trig_Cos(angle), speed);
-  effect->z += Iwram_MulQ16(Trig_Sin(angle), speed);
+  effect->x += Iwram_MulFX(Trig_Cos(angle), speed);
+  effect->z += Iwram_MulFX(Trig_Sin(angle), speed);
 }
 
 /// Reports an unfinished target only for effects that stop on arrival.
@@ -628,10 +628,10 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   if (animation != NULL)
     animation->image.priority = 0;
   FieldParticle_SetPosition(effect, x, z);
-  effect->scaleX = Q16_ONE;
-  effect->maxSpeed = px(2);
-  effect->scaleY = Q16_ONE;
-  effect->acceleration = Q16_ONE;
+  effect->scaleX = FIXED_ONE;
+  effect->maxSpeed = toFIXED(2);
+  effect->scaleY = FIXED_ONE;
+  effect->acceleration = FIXED_ONE;
   effect->originX = x;
   effect->originZ = z;
   // BUG: Sprite_CreateFar can return NULL, but this and the animation

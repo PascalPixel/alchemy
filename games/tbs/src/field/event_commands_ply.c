@@ -8,7 +8,7 @@
 /// frames.
 void FieldEffect_SwayParticle(struct Actor *actor) {
   actor->x.fixed =
-      actor->targetX + Iwram_MulQ16(px(4), Trig_Sin(actor->timer << 9));
+      actor->targetX + Iwram_MulFX(toFIXED(4), Trig_Sin(actor->timer << 9));
   actor->timer++;
   actor->timer = (actor->timer + 128) % 128;
 }
@@ -29,9 +29,9 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *particle) {
     if (remainingFrames != 0) {
       // The angle turns 1/32 of a circle (TRIG_TURN / 32) each frame left.
       pos.x = effectWork->x;
-      pos.y = effectWork->y + px(10);
+      pos.y = effectWork->y + toFIXED(10);
       pos.z = effectWork->z;
-      Vector_AddPolarOffset(px(remainingFrames),
+      Vector_AddPolarOffset(toFIXED(remainingFrames),
                             (s16)particle->userValue + (remainingFrames << 11),
                             &pos);
       particle->x.fixed = pos.x;
@@ -53,16 +53,16 @@ void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
 
   effectWork = gFieldEffectWork;
   if (emitter->timer != -1) {
-    SET_ACTOR_POSITION(emitter,
-                       effectWork->x +
-                           Iwram_MulQ16(px(6), Trig_Sin(emitter->timer << 10)),
-                       effectWork->y + ABOVE, effectWork->z);
+    SET_ACTOR_POSITION(
+        emitter,
+        effectWork->x + Iwram_MulFX(toFIXED(6), Trig_Sin(emitter->timer << 10)),
+        effectWork->y + ABOVE, effectWork->z);
     emitter->timer++;
     emitter->timer = (emitter->timer + 64) % 64;
   }
   if (gFrameCount % 3 == 0) {
     // From 2 pixels up, 0 to 6 pixels in a random direction.
-    SET_VECTOR(pos, emitter->x.fixed, emitter->y.fixed + px(2),
+    SET_VECTOR(pos, emitter->x.fixed, emitter->y.fixed + toFIXED(2),
                emitter->z.fixed);
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
     spark = Actor_Spawn(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
@@ -70,7 +70,7 @@ void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
     // and is released after 72 frames, its script's wait (lifetime).
     if (spark != 0) {
       spark->update = FieldEffect_SwayParticle;
-      spark->scaleX = spark->scaleY = Q16_ONE * 3 / 5;
+      spark->scaleX = spark->scaleY = FIXED_ONE * 3 / 5;
       spark->motionFlags = ACTOR_FALLS;
       spark->gravity = 458;
       spark->timer = Random16() >> 9;
@@ -104,10 +104,10 @@ void FieldPsynergy_Ply(void) {
   last = 0;
   for (i = 0; i < 8; i++) {
     actor = Actor_Spawn(SPRITE_WINGED_FIGURE, target->x.fixed,
-                        target->y.fixed + px(32), target->z.fixed);
+                        target->y.fixed + toFIXED(32), target->z.fixed);
     if (actor != 0) {
-      actor->scaleY = Q16_ONE * 7 / 10;
-      actor->scaleX = Q16_ONE * 7 / 10;
+      actor->scaleY = FIXED_ONE * 7 / 10;
+      actor->scaleX = FIXED_ONE * 7 / 10;
       actor->update = FieldEffect_UpdateShrinkingOrbitActor;
       actor->timer = 120;
       actor->userValue = i << 13;
@@ -129,10 +129,10 @@ void FieldPsynergy_Ply(void) {
   target = Actor_Spawn(SPRITE_WINGED_FIGURE, 0, 0, 0);
   actor = target;
   if (target != 0) {
-    target->scaleY = Q16_ONE * 7 / 10;
-    target->scaleX = Q16_ONE * 7 / 10;
+    target->scaleY = FIXED_ONE * 7 / 10;
+    target->scaleX = FIXED_ONE * 7 / 10;
     target->x.fixed = effectWork->x;
-    target->y.fixed = effectWork->y + px(16);
+    target->y.fixed = effectWork->y + toFIXED(16);
     target->z.fixed = effectWork->z;
     target->motionFlags = ACTOR_FLOATS;
     Actor_SetSpriteColorModeFar(target, SPRITE_COLOR_WHITE);
@@ -171,10 +171,10 @@ void FieldPsynergy_Ply(void) {
   // arrives.
   if (target != 0) {
     target->timer = -1;
-    target->speedLimit = px(5);
-    target->acceleration = px(2) / 5;
+    target->speedLimit = toFIXED(5);
+    target->acceleration = toFIXED(2) / 5;
     target->steeringFlags = 0;
-    Actor_SetTargetPositionFromMagnitudeAngle(target, px(192),
+    Actor_SetTargetPositionFromMagnitudeAngle(target, toFIXED(192),
                                               TRIG_TURN * 29 / 32);
     Actor_WaitForMoveFar(target);
     Actor_ReleaseFar(target);

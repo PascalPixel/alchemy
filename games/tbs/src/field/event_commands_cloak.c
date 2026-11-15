@@ -50,13 +50,13 @@ void FieldPsynergy_CheckCloakTile(void) {
 
     x = leader->x.fixed;
     if (x < 0)
-      x += px(MAPGRID_CELL_PIXELS) - 1;
+      x += toFIXED(MAPGRID_CELL_PIXELS) - 1;
     {
       u32 tx = FIELD_CELL(x);
 
       y = leader->z.fixed;
       if (y < 0)
-        y += px(MAPGRID_CELL_PIXELS) - 1;
+        y += toFIXED(MAPGRID_CELL_PIXELS) - 1;
 
       tile = (u8 *)(tile + ((tx + FIELD_CELL(y) * MAPGRID_SIZE) << 2));
     }

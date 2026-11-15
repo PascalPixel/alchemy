@@ -66,8 +66,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   Actor_SelectAnimationFar(user, POSE_LEAP);
   user->snapToTarget = 1;
   user->steeringFlags = 1;
-  user->acceleration = px(2);
-  user->speedLimit = px(8);
+  user->acceleration = toFIXED(2);
+  user->speedLimit = toFIXED(8);
   wait(20);
   for (frame = 0; frame != DEATH_PLUNGE_FRAMES; frame++) {
     struct BattleCamera *camera = gBattleCamera;
@@ -76,10 +76,10 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
 
     // Both leap at 15 pixels a frame.
     if (frame == 0) {
-      target->velocityY = px(15);
-      target->gravity = px(57) / 100;
-      user->velocityY = px(15);
-      user->gravity = px(57) / 100;
+      target->velocityY = toFIXED(15);
+      target->gravity = toFIXED(57) / 100;
+      user->velocityY = toFIXED(15);
+      user->gravity = toFIXED(57) / 100;
     }
     if (frame == 11) {
       target->scaleY = -target->scaleY;
@@ -93,12 +93,12 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     if (frame == DEATH_PLUNGE_STRIKE_FRAME) {
       BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 10);
-      target->velocityY = px(8);
+      target->velocityY = toFIXED(8);
       target->gravity = BATTLE_UNIT_GRAVITY;
-      user->velocityY = px(5);
-      user->gravity = px(47) / 100;
-      user->acceleration = px(1);
-      user->speedLimit = px(2);
+      user->velocityY = toFIXED(5);
+      user->gravity = toFIXED(47) / 100;
+      user->acceleration = toFIXED(1);
+      user->speedLimit = toFIXED(2);
       user->steeringFlags = 0;
       Actor_StartIdleFar(user);
       Actor_SetMoveTargetFar(user, 0, 0, user->z.fixed);
@@ -122,8 +122,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
         s32 ry;
 
         angle = i << 12; // 22.5 degrees apart
-        rx = screen.x + WHOLE_PIXELS(Trig_Sin(angle) * (frame - 46));
-        ry = WHOLE_PIXELS(Trig_Cos(angle) * (frame - 46)) - frame + 100;
+        rx = screen.x + FIXEDtoINT(Trig_Sin(angle) * (frame - 46));
+        ry = FIXEDtoINT(Trig_Cos(angle) * (frame - 46)) - frame + 100;
         draw[0](canvas,
                 work->sheet + (frame - 56) / 2 * PICTURE_BYTES(FLASH_BURST),
                 rx - FLASH_BURST_WIDTH / 2, ry, FLASH_BURST_WIDTH,
@@ -198,7 +198,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
     blade = &work->particles[i];
     column = Random16() % 96 + 16;
     blade->x = column;
-    blade->y = px(24 - i / 4);
+    blade->y = INTtoFIXED(24 - i / 4);
     if (column <= 43)
       blade->velocityX = 3;
     else if (column <= 51)
@@ -214,7 +214,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
     else
       blade->velocityX = -3;
     blade->velocityX <<= 17;
-    blade->velocityY = px(8);
+    blade->velocityY = toFIXED(8);
     blade->x <<= 16;
   }
   Sound_PlayFar(SE_POWER_UP);
@@ -253,14 +253,14 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
         height = gDeathPlunge_SwordHeights[picture];
         blit[drift < 0](canvas,
                         work->sheet + gDeathPlunge_SwordPictures[picture],
-                        WHOLE_PIXELS(blade->x) - (width >> 1),
-                        WHOLE_PIXELS(blade->y) - (height >> 1), width, height);
+                        FIXEDtoINT(blade->x) - (width >> 1),
+                        FIXEDtoINT(blade->y) - (height >> 1), width, height);
 #else
         blit[(u32)drift >> 31](
             canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
-            WHOLE_PIXELS(blade->x) -
+            FIXEDtoINT(blade->x) -
                 ((width = gDeathPlunge_SwordWidths[picture]) >> 1),
-            WHOLE_PIXELS(blade->y) -
+            FIXEDtoINT(blade->y) -
                 ((height = gDeathPlunge_SwordHeights[picture]) >> 1),
             width, height);
 #endif
@@ -277,14 +277,14 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
         height = gDeathPlunge_SwordHeights[picture];
         blit[drift < 0](
             canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
-            WHOLE_PIXELS(blade->x) - (width >> 1),
-            WHOLE_PIXELS(blade->y) - (height >> 1), width, height - 4);
+            FIXEDtoINT(blade->x) - (width >> 1),
+            FIXEDtoINT(blade->y) - (height >> 1), width, height - 4);
 #else
         blit[(u32)drift >> 31](
             canvas, work->sheet + gDeathPlunge_SwordPictures[picture],
-            WHOLE_PIXELS(blade->x) -
+            FIXEDtoINT(blade->x) -
                 ((width = gDeathPlunge_SwordWidths[picture]) >> 1),
-            WHOLE_PIXELS(blade->y) -
+            FIXEDtoINT(blade->y) -
                 ((height = gDeathPlunge_SwordHeights[picture]) >> 1),
             width, height - 4);
 #endif
@@ -427,7 +427,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
         point[2] = -(fleck->z * Trig_Cos(fleck->x) >> 4);
         point[1] = fleck->y;
         fleck->x += TRIG_TURN / turnSteps;
-        fleck->y += px(5);
+        fleck->y += toFIXED(5);
         fleck->z += 64;
         Projection_Point(point, &screenPosition);
         screenPosition.x /= 2;
@@ -553,12 +553,12 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   for (i = 0; i != SHATTERING_OPENING_PIECES; i++) {
     s32 x, y, vx, vy;
 
-    x = px(*startX++);
-    y = px(*startY++);
+    x = INTtoFIXED(*startX++);
+    y = INTtoFIXED(*startY++);
     piece->x = x;
     piece->y = y;
-    vx = (x - px(32)) >> 2;
-    vy = (y - px(60)) >> 2;
+    vx = (x - toFIXED(32)) >> 2;
+    vy = (y - toFIXED(60)) >> 2;
     piece->velocityX = vx;
     piece->velocityY = vy;
     piece++;
@@ -707,11 +707,11 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       for (i = 0; i != SHATTERING_OPENING_PIECES; i++) {
         piece = &work->particles[i];
         draw[0](canvas, work->imageStorage + gDeathPlunge_PiecePictures[i],
-                WHOLE_PIXELS(piece->x), WHOLE_PIXELS(piece->y),
+                FIXEDtoINT(piece->x), FIXEDtoINT(piece->y),
                 gDeathPlunge_PieceWidths[i], gDeathPlunge_PieceHeights[i]);
         if (frame > 3)
           Particle_AdvanceWithGravity2D(piece, PARTICLE_DAMPING_NONE,
-                                        px(1) / 4);
+                                        toFIXED(1) / 4);
       }
     }
 
@@ -738,8 +738,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
       for (i = 0; i != SHATTERING_OPENING_FLASHES; i++) {
         piece = &work->particles[i];
-        piece->x = px((Random16() & 31) + 32);
-        piece->y = px((Random16() & 31) + 80);
+        piece->x = INTtoFIXED((Random16() & 31) + 32);
+        piece->y = INTtoFIXED((Random16() & 31) + 80);
         piece->velocityX = ((Random16() & 0x1ff) - 256) << 12;
         piece->velocityY = 0;
         piece->variant = 0;
@@ -759,10 +759,10 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
           if (picture > 5)
             picture = 5;
           draw[1](canvas, work->sheet + picture * PICTURE_BYTES(FLASH_BURST),
-                  WHOLE_PIXELS(piece->x) - FLASH_BURST_WIDTH / 2,
-                  WHOLE_PIXELS(piece->y) - FLASH_BURST_HEIGHT / 2,
+                  FIXEDtoINT(piece->x) - FLASH_BURST_WIDTH / 2,
+                  FIXEDtoINT(piece->y) - FLASH_BURST_HEIGHT / 2,
                   FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-          Particle_AdvanceWithGravity2D(piece, 60, -px(1) / 16);
+          Particle_AdvanceWithGravity2D(piece, 60, -toFIXED(1) / 16);
           piece->variant++;
         }
       }
@@ -848,7 +848,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
 
   for (i = 0; i != 128; i++) {
-    PARTICLES[i].y = px(128);
+    PARTICLES[i].y = toFIXED(128);
     PARTICLES[i].x = Random16() & TRIG_ANGLE_MASK;
     PARTICLES[i].z = (Random16() & 0x1ff) + 1024;
     PARTICLES[i].variant = -i;
@@ -904,8 +904,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
 
         if (mote->variant >= 0 && mote->y > 0) {
           s32 size = (mote->variant >> 3) + 1;
-          s32 x = WHOLE_PIXELS(mote->y * Trig_Sin(mote->x)) + 64;
-          s32 y = WHOLE_PIXELS(mote->y * Trig_Cos(mote->x)) + ground.y;
+          s32 x = FIXEDtoINT(mote->y * Trig_Sin(mote->x)) + 64;
+          s32 y = FIXEDtoINT(mote->y * Trig_Cos(mote->x)) + ground.y;
 
           // DEAD: never true, as the variant is not negative here; the ROM
           // keeps the test and the store.
@@ -960,10 +960,10 @@ void BattleEffect_DrawStreaks(void) {
     if (frame > i / 4 && streak->head > 0) {
       s32 fade;
 
-      Transform_Reset();
-      Transform_ApplyRoll(streak->roll);
-      Transform_ApplyPitch(streak->pitch);
-      Transform_ApplyYaw(streak->yaw);
+      Matrix_Initialize();
+      Matrix_RotateZ(streak->roll);
+      Matrix_RotateX(streak->pitch);
+      Matrix_RotateY(streak->yaw);
       point.x = streak->head;
       Projection_Point(&point, &head);
       head.x += 64;

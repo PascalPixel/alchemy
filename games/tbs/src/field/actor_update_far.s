@@ -4,9 +4,9 @@
 @ (24 instruction bytes and 12 literal bytes).
 .syntax unified
 	.arm
-	.global ArcTan2FarArm
-ArcTan2FarArm:
-	ldr	r4, .L_ArcTan2
+	.global Trig_AtanFarArm
+Trig_AtanFarArm:
+	ldr	r4, .L_Trig_Atan
 	bx	r4
 	.global Iwram_SqrtFarArm
 Iwram_SqrtFarArm:
@@ -16,8 +16,8 @@ Iwram_SqrtFarArm:
 Iwram_RatioMulQ14FarArm:
 	ldr	r4, .L_IwramRatioMulQ14
 	bx	r4
-.L_ArcTan2:
-	.4byte	ArcTan2
+.L_Trig_Atan:
+	.4byte	Trig_Atan
 .L_IwramSqrt:
 	.4byte	IwramSqrt
 .L_IwramRatioMulQ14:

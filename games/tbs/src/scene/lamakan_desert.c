@@ -79,7 +79,7 @@
 #include "scene/import.h"
 #include "sound/sound.h"
 #include "system/dma.h"
-#include "system/fixed_point_position.h"
+#include "system/point.h"
 #include "system/io_write.h"
 #include "system/io_write_queue.h"
 #include "system/iwram_call.h"
@@ -237,8 +237,8 @@ static UNREAD_RESULT LamakanDesert_LeaderSpraySand(struct Actor *actor) {
   if (phase != 0) {
     RETURN_UNREAD(0);
   }
-  params.startScaleX = 4 * Q16_ONE / 5;
-  params.startScaleY = 4 * Q16_ONE / 5;
+  params.startScaleX = 4 * FIXED_ONE / 5;
+  params.startScaleY = 4 * FIXED_ONE / 5;
   params.spin = FIELD_EFFECT_RANDOM_SPIN();
   FieldEffect_Spawn(
       actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, phase, phase,
@@ -370,8 +370,8 @@ static UNREAD_RESULT Reveal_HideSecrets(void) {
     TreasureSpot_SetActorPosition(markerId, 0, 0);
   }
   if (gMainRoutineWork.next != SCENE_LAMAKAN_DESERT_CAVE) {
-    LineScroll_StartWave(0, Q16_ONE * 4, Q16_ONE, Q16_ONE / 8, Q16_ONE,
-                         Q16_ONE / 2, Q16_ONE / 4);
+    LineScroll_StartWave(0, FIXED_ONE * 4, FIXED_ONE, FIXED_ONE / 8, FIXED_ONE,
+                         FIXED_ONE / 2, FIXED_ONE / 4);
   }
 }
 
@@ -523,8 +523,8 @@ static void HeatGauge_RaiseQuarterTriggers(void) {
 /// The distance in whole pixels from a position (x, height, z) to an oasis
 /// (x, z), walking both a coordinate at a time.
 static s32 LamakanDesert_PixelsToOasis(const s32 *position, const s32 *oasis) {
-  s32 dx = WHOLE_PIXELS(*oasis++ - *position++);
-  s32 dz = WHOLE_PIXELS(*oasis - position[1]);
+  s32 dx = FIXEDtoINT(*oasis++ - *position++);
+  s32 dz = FIXEDtoINT(*oasis - position[1]);
   s32 squaredDeltaZ = dz * dz;
   s32 squaredDeltaX = dx * dx;
 
@@ -555,7 +555,7 @@ static void LamakanDesert_BatheInOasis(void) {
 
   work = gFieldWork;
   frames = 60;
-  best = px(240);
+  best = toFIXED(240);
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
   HeatGauge_SetHeld(1);
   if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_EAST) {
@@ -600,9 +600,9 @@ static void LamakanDesert_BatheInOasis(void) {
 
   // Hop the leader into the middle of the oasis before draining the heat gauge.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
-  FieldActor_SetMoveTargetFixed(Actor_Get(ACTOR_PARTY_LEADER), oases[nearest],
-                                0, oases[nearest + 1]);
-  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = px(6);
+  FieldActor_SetMoveTargetFX(Actor_Get(ACTOR_PARTY_LEADER), oases[nearest], 0,
+                             oases[nearest + 1]);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = toFIXED(6);
   Sound_Play(SE_JUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Actor_WaitBelowHeight(leader, Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
@@ -611,10 +611,10 @@ static void LamakanDesert_BatheInOasis(void) {
     struct Actor *bather = Actor_Get(ACTOR_PARTY_LEADER);
 
     splashIn.type = SPRITE_SPLASH;
-    splashIn.startScaleX = Q16_ONE / 2;
-    splashIn.startScaleY = 4 * Q16_ONE / 5;
-    splashIn.targetScaleX = Q16_ONE;
-    splashIn.targetScaleY = 6 * Q16_ONE / 5;
+    splashIn.startScaleX = FIXED_ONE / 2;
+    splashIn.startScaleY = 4 * FIXED_ONE / 5;
+    splashIn.targetScaleX = FIXED_ONE;
+    splashIn.targetScaleY = 6 * FIXED_ONE / 5;
     FieldEffect_Spawn(
         bather->x.fixed, bather->y.fixed, bather->z.fixed, 0, 0, 0,
         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
@@ -651,10 +651,10 @@ static void LamakanDesert_BatheInOasis(void) {
     struct Actor *bather = Actor_Get(ACTOR_PARTY_LEADER);
 
     splashOut.type = SPRITE_SPLASH;
-    splashOut.startScaleX = Q16_ONE / 2;
-    splashOut.startScaleY = 4 * Q16_ONE / 5;
-    splashOut.targetScaleX = Q16_ONE / 2;
-    splashOut.targetScaleY = 6 * Q16_ONE / 5;
+    splashOut.startScaleX = FIXED_ONE / 2;
+    splashOut.startScaleY = 4 * FIXED_ONE / 5;
+    splashOut.targetScaleX = FIXED_ONE / 2;
+    splashOut.targetScaleY = 6 * FIXED_ONE / 5;
     FieldEffect_Spawn(
         bather->x.fixed, bather->y.fixed, bather->z.fixed, 0, frames, frames,
         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
@@ -662,7 +662,7 @@ static void LamakanDesert_BatheInOasis(void) {
   }
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_JUMP);
-  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = px(6);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = toFIXED(6);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(10);
   work->revealFrames = frames;
@@ -687,17 +687,17 @@ static void HeatGauge_CountStep(void) {
   if (work->stepTrigger == CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE) {
     return;
   }
-  if (actor->speedLimit <= px(1)) {
+  if (actor->speedLimit <= toFIXED(1)) {
     if ((gFrameCount & 15) != 0) {
       return;
     }
-    params.startScaleX = Q16_ONE / 2;
-    params.startScaleY = Q16_ONE / 2;
+    params.startScaleX = FIXED_ONE / 2;
+    params.startScaleY = FIXED_ONE / 2;
     dx = 0;
     params.spin = FIELD_EFFECT_RANDOM_SPIN();
     if (actor->facing != FACING_EAST && actor->facing != FACING_WEST) {
       z = actor->z.fixed;
-      dx = px(2) - px((FIELD_CELL(z) & 1) * 5);
+      dx = toFIXED(2) - toFIXED((FIELD_CELL(z) & 1) * 5);
     } else {
       z = actor->z.fixed;
     }
@@ -712,14 +712,14 @@ static void HeatGauge_CountStep(void) {
     }
     // Reads the frame counter again and drops the value.
     gFrameCount;
-    params.startScaleX = 4 * Q16_ONE / 5;
-    params.startScaleY = 4 * Q16_ONE / 5;
+    params.startScaleX = 4 * FIXED_ONE / 5;
+    params.startScaleY = 4 * FIXED_ONE / 5;
     params.spin = FIELD_EFFECT_RANDOM_SPIN();
-    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed + px(2), actor->z.fixed, 0,
-                      (Random_Below(5)) * (px(1) / 10), phase,
-                      EFFECT_USE_SPIN | EFFECT_USE_START_SCALE |
-                          EFFECT_SCRIPT_MEDIUM,
-                      &params);
+    FieldEffect_Spawn(
+        actor->x.fixed, actor->y.fixed + toFIXED(2), actor->z.fixed, 0,
+        (Random_Below(5)) * (toFIXED(1) / 10), phase,
+        EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | EFFECT_SCRIPT_MEDIUM,
+        &params);
   }
 }
 
@@ -744,8 +744,8 @@ static void LamakanDesert_FallIntoPit(void) {
   for (id = ACTOR_FIRST_PIT; id <= ACTOR_LAST_PIT; id++) {
     pit = Actor_Get(id);
     if (pit != NULL) {
-      dx = (leader->x.fixed - pit->x.fixed) / px(1);
-      dz = (leader->z.fixed - pit->z.fixed) / px(1);
+      dx = (leader->x.fixed - pit->x.fixed) / toFIXED(1);
+      dz = (leader->z.fixed - pit->z.fixed) / toFIXED(1);
       distance = dx;
       if (distance < 0) {
         distance = -distance;
@@ -771,7 +771,7 @@ static void LamakanDesert_FallIntoPit(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   // The leader turns his back on the pit.
   Actor_Get(ACTOR_PARTY_LEADER)->facing =
-      FACING_SIXTEENTH(Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 2);
+      FACING_SIXTEENTH(Actor_Get(ACTOR_PARTY_LEADER)->facing + DEGtoANG(180));
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_RUN);
   Actor_SetAnimationSpeedById(ACTOR_PARTY_LEADER, 24);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.1);
@@ -779,8 +779,8 @@ static void LamakanDesert_FallIntoPit(void) {
       (void (*)(struct Actor *))LamakanDesert_LeaderSpraySand;
   pit = Actor_Get(best);
   if (pit != NULL) {
-    Actor_SetDestination(ACTOR_PARTY_LEADER, pit->x.part[0].pixel,
-                         pit->z.part[0].pixel);
+    Actor_SetDestination(ACTOR_PARTY_LEADER, pit->x.part[0].integer,
+                         pit->z.part[0].integer);
   }
   Event_Wait(60);
   Actor_ShowEmote(best, EMOTE_IN_FRONT | EMOTE_HEART, 0);
@@ -816,21 +816,22 @@ static void LamakanDesert_SlideDownDune(void) {
   // First check for a ledge immediately below the sliding actor.
   probePosition.x = actor->x.fixed;
   probePosition.y = actor->y.fixed;
-  probePosition.z = actor->z.fixed + px(3) / 2;
+  probePosition.z = actor->z.fixed + toFIXED(3) / 2;
   hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   phase = gFrameCount & 4;
   if (phase == 0) {
     params.spin = FIELD_EFFECT_RANDOM_SPIN();
-    x = actor->x.fixed + px(Random_Below(12)) - px(6);
+    x = actor->x.fixed + toFIXED(Random_Below(12)) - toFIXED(6);
     FieldEffect_Spawn(x, actor->y.fixed, actor->z.fixed, 0, phase,
-                      (Random_Below(5)) * (px(1) / 10) + 5 * (px(1) / 10),
+                      (Random_Below(5)) * (toFIXED(1) / 10) +
+                          5 * (toFIXED(1) / 10),
                       EFFECT_USE_SPIN, &params);
   }
   if (hit < 0) {
     Actor_SetAttachedEffect(id,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    FieldActor_SetMoveTargetFixed(actor, actor->x.fixed, actor->y.fixed,
-                                  actor->z.fixed + px(8));
+    FieldActor_SetMoveTargetFX(actor, actor->x.fixed, actor->y.fixed,
+                               actor->z.fixed + toFIXED(8));
     Actor_SelectAnimation(actor, ANIM_LEADER_LEAP);
     Actor_WaitForMove(actor);
     do {
@@ -843,27 +844,27 @@ static void LamakanDesert_SlideDownDune(void) {
   // Probe ahead and on both diagonals before advancing actor and camera.
   probePosition.x = actor->x.fixed;
   probePosition.y = actor->y.fixed;
-  probePosition.z = actor->z.fixed + px(8);
+  probePosition.z = actor->z.fixed + toFIXED(8);
   hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
-  probePosition.x = actor->x.fixed + px(57) / 10;
+  probePosition.x = actor->x.fixed + toFIXED(57) / 10;
   probePosition.y = actor->y.fixed;
-  probePosition.z = actor->z.fixed + px(57) / 10;
+  probePosition.z = actor->z.fixed + toFIXED(57) / 10;
   hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
-  probePosition.x = actor->x.fixed - px(57) / 10;
+  probePosition.x = actor->x.fixed - toFIXED(57) / 10;
   probePosition.y = actor->y.fixed;
-  probePosition.z = actor->z.fixed + px(57) / 10;
+  probePosition.z = actor->z.fixed + toFIXED(57) / 10;
   hit = FieldActor_CheckMovementCollision(actor, &probePosition);
   if (hit > 0) {
     return;
   }
-  center->z.fixed += px(3) / 2;
-  actor->z.fixed += px(3) / 2;
+  center->z.fixed += toFIXED(3) / 2;
+  actor->z.fixed += toFIXED(3) / 2;
 }
 
 /// In Lamakan Desert, at step trigger 40 in LamakanDesertManticore, the leader
@@ -905,8 +906,8 @@ static void LamakanDesert_MeetManticore(void) {
                              &backward);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, backward.x / px(1),
-                             backward.z / px(1));
+  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, backward.x / toFIXED(1),
+                             backward.z / toFIXED(1));
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Event_Wait(2);
   Actor_Get(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
@@ -1152,22 +1153,22 @@ static void HeatGauge_SetHeld(u16 value) { gHeatGauge_Held = value; }
 // clang-format off
 /// Each map's oases, the middle of each as x, z pairs.
 const s32 gLamakanDesertEast_Oases[] = {
-    px(384), px(128),
-    px(288), px(688),
-    px(608), px(720),
+    toFIXED(384), toFIXED(128),
+    toFIXED(288), toFIXED(688),
+    toFIXED(608), toFIXED(720),
 };
 
 const s32 gLamakanDesertSmog_Oases[] = {
-    px(704), px(96),
-    px(448), px(464),
-    px(832), px(592),
-    px(128), px(752),
-    px(464), px(896),
+    toFIXED(704), toFIXED(96),
+    toFIXED(448), toFIXED(464),
+    toFIXED(832), toFIXED(592),
+    toFIXED(128), toFIXED(752),
+    toFIXED(464), toFIXED(896),
 };
 
 const s32 gLamakanDesertOasesOther[] = {
-    px(192), px(224),
-    px(192), px(352),
+    toFIXED(192), toFIXED(224),
+    toFIXED(192), toFIXED(352),
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {

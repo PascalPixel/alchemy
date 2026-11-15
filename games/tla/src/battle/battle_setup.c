@@ -7,10 +7,10 @@
 #include "gamepak/far_call/game.h"
 #include "battle/battle.h"
 #include "system/system.h"
-#include "system/transform.h"
+#include "system/matrix.h"
 #include "macros.h"
 
-void Transform_SetPosition(s32 *position);
+void Matrix_SetTranslation(s32 *position);
 
 /// Runs each frame of a battle: pauses a link battle whose connection is lost,
 /// turns the camera a sixteenth of the way toward its target yaw, places it,
@@ -18,7 +18,7 @@ void Transform_SetPosition(s32 *position);
 void BattleCamera_Update(void) {
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
   struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
-  struct FixedPointPosition eyeOffset;
+  struct Point eyeOffset;
   s32 *focus;
   s16 delta;
   u32 linkId;
@@ -50,16 +50,16 @@ void BattleCamera_Update(void) {
     focus = camera->followPosition;
   }
 
-  Transform_RewindStack();
-  Transform_SetYaw((s16)camera->yaw);
-  Transform_ApplyPitch((s16)camera->pitch);
-  Transform_SetPosition(focus);
+  Matrix_RewindStack();
+  Matrix_SetRotateY((s16)camera->yaw);
+  Matrix_RotateX((s16)camera->pitch);
+  Matrix_SetTranslation(focus);
 
   SET_POSITION(&eyeOffset, 0, 0, camera->distance);
   Iwram_TransformVector(&eyeOffset.x, (s32 *)camera);
 
   if (transition->flag == 0) {
-    BattleCamera_SetRange(px(120), px(120), 0, 0, Q16_ONE);
+    BattleCamera_SetRange(toFIXED(120), toFIXED(120), 0, 0, FIXED_ONE);
   }
 }
 

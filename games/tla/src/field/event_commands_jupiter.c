@@ -60,7 +60,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
     FieldParticle_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
     FieldParticle_SetActorMode(effect, 7);
     Sprite_SetAnimationColorModesFar(effect->object, (Random16() * 7) >> 16);
-    scale = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
+    scale = Random16() / 3 + FIXED_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
     effect->scaleX = scale;
     remainingParticles--;
@@ -96,7 +96,7 @@ void FieldEffect_PulseActorScale(u8 *object) {
 }
 
 /// Per-frame update: spins an actor ever faster, from 1/16 turn a frame up to
-/// just over 1/8 (TRIG_TURN / 8 + 64), 80 more each frame for 52 frames.
+/// just over 1/8 (DEGtoANG(45) + 64), 80 more each frame for 52 frames.
 void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor) {
   u32 step;
 
@@ -120,7 +120,7 @@ void FieldEffect_ShrinkActorAndDestroySlow(void *obj) {
   ((struct MotionObject *)obj)->scaleY = scaleY;
   angle = ((struct MotionObject *)obj)->angle;
   scale += step;
-  ((struct MotionObject *)obj)->angle = angle + TRIG_TURN / 8;
+  ((struct MotionObject *)obj)->angle = angle + DEGtoANG(45);
   ((struct MotionObject *)obj)->scaleX = scale;
   if (scale < 0x3000)
     Actor_ReleaseFar(obj);
@@ -152,14 +152,14 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->z = effect->originZ;
     position.x = effect->x;
     position.z = effect->z;
-    Vector_AddPolarOffset(px(120),
+    Vector_AddPolarOffset(toFIXED(120),
                           ((Random16() * 3 << 11) >> 16) -
                               ((Random16() * 3 << 11) >> 16) + FACING_NORTH,
                           &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
-    effect->acceleration = px(5);
-    effect->maxSpeed = px(5);
+    effect->acceleration = toFIXED(5);
+    effect->maxSpeed = toFIXED(5);
     effect->limitTurnStep = state;
     effect->state++;
 
@@ -190,10 +190,10 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->render = 1;
     effect->x = effect->originX;
     effect->z = effect->originZ;
-    SET_POSITION(&position, owner->position.x, owner->position.y + px(20),
+    SET_POSITION(&position, owner->position.x, owner->position.y + toFIXED(20),
                  owner->position.z);
     Camera_WorldToScreen(&position);
-    Vector_AddPolarOffset(px(4), Random16(), &position);
+    Vector_AddPolarOffset(toFIXED(4), Random16(), &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->state++;

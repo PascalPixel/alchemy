@@ -11,8 +11,8 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
 
     GameFlag_SetByte(gCrackedTiles.flagByte, 0);
     GameFlag_SetByte(gCrackedTiles.flagByte + 8, 0);
-    leader->x.fixed = ((dx + x) << 20) + px(8);
-    leader->z.fixed = ((dz + z) << 20) + px(8);
+    leader->x.fixed = ((dx + x) << 20) + toFIXED(8);
+    leader->z.fixed = ((dz + z) << 20) + toFIXED(8);
     marker = work->camera;
     marker->x.fixed = leader->x.fixed;
     marker->z.fixed = leader->z.fixed;

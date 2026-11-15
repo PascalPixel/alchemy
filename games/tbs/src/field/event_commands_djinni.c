@@ -37,7 +37,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlayFar(SE_NOTE_HIGH);
   Actor_RunRepeatedMotion(djinniId, 1);
-  back = dir + TRIG_TURN / 2;
+  back = dir + DEGtoANG(180);
   wait(20);
   Actor_FaceDirectionById(djinniId, back, 0);
   wait(10);
@@ -48,7 +48,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni->motionFlags = ACTOR_FALLS;
 
   // Hop 16 pixels away from the leader, three times.
-  dist = px(16);
+  dist = toFIXED(16);
   Actor_SetTargetPositionFromMagnitudeAngle(djinni, dist, dir);
   Sound_PlayFar(SE_JUMP);
   Actor_Jump(djinniId, 4, 0);
@@ -101,8 +101,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   // Leap 64 pixels at the leader, 12 pixels a frame upward, and after 24
   // frames freeze wherever it is, landed or not.
-  Actor_SetTargetPositionFromMagnitudeAngle(djinni, px(64),
-                                            dir + TRIG_TURN / 2);
+  Actor_SetTargetPositionFromMagnitudeAngle(djinni, toFIXED(64),
+                                            dir + DEGtoANG(180));
   Sound_PlayFar(SE_WHOOSH);
   Actor_Jump(djinniId, 12, 0);
   wait(24);
@@ -204,7 +204,7 @@ void Djinn_RestoreActorAfterBattle(void) {
 
           Actor_SetPositionAndResetMotionFar(actor, leader->x.fixed,
                                              leader->y.fixed,
-                                             leader->z.fixed - px(32));
+                                             leader->z.fixed - toFIXED(32));
         }
         Actor_SelectAnimationFar(actor, ANIM_STAND);
       }
@@ -298,7 +298,7 @@ void FieldEffect_ReleaseSlots(void) {
 
 /// Per-frame update: spins an actor 1/8 turn a frame.
 void FieldEffect_AdvanceSpinAngle(struct Actor *actor) {
-  actor->facing += TRIG_TURN / 8;
+  actor->facing += DEGtoANG(45);
 }
 
 /// The states of a Jupiter Djinni's light particle, in order.
@@ -334,7 +334,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   } else if (particle->state == DJINNI_LIGHT_DRIFTING) {
     particle->orbitAngle += 1;
     position.x = target->x.fixed;
-    position.y = target->y.fixed + px(20);
+    position.y = target->y.fixed + toFIXED(20);
     position.z = target->z.fixed;
     // The centre moves 1/8 of the way to the leader's screen point a frame.
     Camera_WorldToScreen(&position);
@@ -357,8 +357,8 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   // orbitAngle is in 1/32 turns: << 11 makes it 1/65536 turns.
   position.x = particle->originX;
   position.z = particle->originZ;
-  Vector_AddPolarOffset(px(particle->orbitRadius), particle->orbitAngle << 11,
-                        &position);
+  Vector_AddPolarOffset(toFIXED(particle->orbitRadius),
+                        particle->orbitAngle << 11, &position);
   particle->x = position.x;
   particle->z = position.z;
 }

@@ -165,8 +165,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       break;
     }
     // The colours cycle through the hues.
-    BattleEffect_UpdatePhasePalette(frame * 2, TRIG_TURN - TRIG_TURN / 3,
-                                    TRIG_TURN / 3, 0);
+    BattleEffect_UpdatePhasePalette(frame * 2, TRIG_TURN - DEGtoANG(120),
+                                    DEGtoANG(120), 0);
     if (frame == 150) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(26));
     } else {
@@ -174,46 +174,47 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                           CANVAS_FADE_THREE_QUARTERS);
     }
     Projection_Set(BATTLE_CAMERA_DISTANCE,
-                   Iwram_RatioMulQ14(BATTLE_CAMERA_DISTANCE, Q16_ONE * 3 / 4),
+                   Iwram_RatioMulQ14(BATTLE_CAMERA_DISTANCE, FIXED_ONE * 3 / 4),
                    0x7fff0000);
-    Transform_Reset();
+    Matrix_Initialize();
     if (frame > 128) {
       s32 sinkFrame = frame - 128;
       if (sinkFrame > 22) {
         sinkFrame = 20;
       }
-      SET_VECTOR(position, 0, -sinkFrame << 17, px(512));
+      SET_VECTOR(position, 0, -sinkFrame << 17, toFIXED(512));
       size = (sinkFrame >> 2) + 2;
       if (size > 8) {
         size = 8;
       }
-      Transform_ApplyPosition(position);
-      Transform_ApplyPitch(-TRIG_TURN / 16);
-      Transform_ApplyRoll(TRIG_TURN / 2);
-      Transform_ApplyPitch(TRIG_TURN / 2);
-      Transform_ApplyYaw(sinkFrame << 12);
+      Matrix_TranslateVector(position);
+      Matrix_RotateX(-TRIG_TURN / 16);
+      Matrix_RotateZ(DEGtoANG(180));
+      Matrix_RotateX(DEGtoANG(180));
+      Matrix_RotateY(sinkFrame << 12);
       if (frame > 150) {
         SET_VECTOR(scale, frame * 6144 - 889856, scale[0], scale[0]);
         size = 5;
       } else {
-        SET_VECTOR(scale, Q16_ONE - sinkFrame * 3 * (Q16_ONE / 64), scale[0],
-                   scale[0]);
+        SET_VECTOR(scale, FIXED_ONE - sinkFrame * 3 * (FIXED_ONE / 64),
+                   scale[0], scale[0]);
       }
-      Transform_ApplyScale(scale);
+      Matrix_ScaleVector(scale);
     } else {
-      SET_VECTOR(position, 0, 0, px(256));
-      Transform_ApplyPosition(position);
-      Transform_ApplyPitch(-TRIG_TURN / 16);
-      Transform_ApplyRoll(frame << 8);
-      Transform_ApplyPitch(frame << 8);
+      SET_VECTOR(position, 0, 0, toFIXED(256));
+      Matrix_TranslateVector(position);
+      Matrix_RotateX(-TRIG_TURN / 16);
+      Matrix_RotateZ(frame << 8);
+      Matrix_RotateX(frame << 8);
     }
 
     if (frame <= 149) {
       for (i = 0; i != 6; i++) {
-        SET_VECTOR(point, px(points[i][0] - 96), 0, px(points[i][1] - 96));
+        SET_VECTOR(point, INTtoFIXED(points[i][0] - 96), 0,
+                   INTtoFIXED(points[i][1] - 96));
         Projection_Point(point, &screen[i]);
         screen[i].x = (screen[i].x >> 17) + 64;
-        screen[i].y = WHOLE_PIXELS(screen[i].y) + 60;
+        screen[i].y = FIXEDtoINT(screen[i].y) + 60;
       }
       for (i = 0; i != 3; i++) {
         dotCount = count * 2 - i * 48 - 256;
@@ -223,11 +224,11 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         if (dotCount >= 0) {
           for (j = 0; j != dotCount; j++) {
             s32 x = screen[i * 2].x +
-                    Iwram_MulQ16(j * (screen[i * 2 + 1].x - screen[i * 2].x),
-                                 Q16_ONE / 48);
+                    Iwram_MulFX(j * (screen[i * 2 + 1].x - screen[i * 2].x),
+                                FIXED_ONE / 48);
             s32 y = screen[i * 2].y +
-                    Iwram_MulQ16(j * (screen[i * 2 + 1].y - screen[i * 2].y),
-                                 Q16_ONE / 48);
+                    Iwram_MulFX(j * (screen[i * 2 + 1].y - screen[i * 2].y),
+                                FIXED_ONE / 48);
             EFFECT_DRAW_MOTE(blit[0], canvas, sprites, x, y, size);
           }
         }
@@ -265,7 +266,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         point[2] = -(Trig_Cos(i << 9) * 96);
         Projection_Point(point, &screen[0]);
         screen[0].x = (screen[0].x >> 17) + 64;
-        screen[0].y = WHOLE_PIXELS(screen[0].y) + 60;
+        screen[0].y = FIXEDtoINT(screen[0].y) + 60;
         drawAlt(canvas,
                 work->sheet +
                     (level * MOTE_SET_BYTES +
@@ -341,8 +342,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     s32 pillarX = 60;
     s32 pillarY = LIGHTNING_PILLAR_HEIGHT;
 
-    thorX = px(80);
-    thorY = px(64);
+    thorX = toFIXED(80);
+    thorY = toFIXED(64);
     i = 0;
     thorSpeedX = 0;
     thorSpeedY = 0;
@@ -388,8 +389,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                     0, LIGHTNING_PILLAR_WIDTH, LIGHTNING_PILLAR_HEIGHT);
           }
           if (frame == start + 2) {
-            THOR_LAUNCH_SPARKS(spark, i, px(pillarX), px(pillarY),
-                               (Random16() & 0x7fff) - TRIG_TURN / 4, 512);
+            THOR_LAUNCH_SPARKS(spark, i, INTtoFIXED(pillarX),
+                               INTtoFIXED(pillarY),
+                               (Random16() & 0x7fff) - DEGtoANG(90), 512);
             work->shakeFrames = 8;
           }
         }
@@ -424,7 +426,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             }
             if (frame == i * 2 + THOR_BOLTS_FRAME) {
-              THOR_LAUNCH_SPARKS(spark, j, px(16), px(80),
+              THOR_LAUNCH_SPARKS(spark, j, toFIXED(16), toFIXED(80),
                                  Random16() & TRIG_ANGLE_MASK, 16);
               work->shakeFrames = 8;
               EFFECT_FOR_EACH_TARGET(j, work->args) {
@@ -440,9 +442,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         {
           s32 radius = (Random16() & 7) + 8;
           s32 angle = Random16() & TRIG_ANGLE_MASK;
-          moteX = WHOLE_PIXELS(Trig_Sin(angle) * radius);
+          moteX = FIXEDtoINT(Trig_Sin(angle) * radius);
           mirrorX = moteX + 72;
-          moteY = 32 - WHOLE_PIXELS(Trig_Cos(angle) * radius);
+          moteY = 32 - FIXEDtoINT(Trig_Cos(angle) * radius);
         }
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_LIGHTEN);
@@ -477,8 +479,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           if (spark->variant == 0) {
             s32 speed = (Random16() & 63) + 64;
             s32 angle = Random16() & TRIG_ANGLE_MASK;
-            spark->x = px(mirrorX);
-            spark->y = px(moteY);
+            spark->x = INTtoFIXED(mirrorX);
+            spark->y = INTtoFIXED(moteY);
             spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
             spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
             spark->variant = (Random16() & 7) + 16;
@@ -502,11 +504,12 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           if (spark->variant > 0) {
             spark->variant--;
             Particle_AdvanceWithGravity2D(spark, 60, 0);
-            if (spark->y > px(120)) {
+            if (spark->y > toFIXED(120)) {
               spark->velocityY = -spark->velocityY / 2;
-            } else if (spark->x >= 0 && spark->x < px(127) && spark->y >= 0) {
-              s32 x = WHOLE_PIXELS(spark->x);
-              s32 y = WHOLE_PIXELS(spark->y);
+            } else if (spark->x >= 0 && spark->x < toFIXED(127) &&
+                       spark->y >= 0) {
+              s32 x = FIXEDtoINT(spark->x);
+              s32 y = FIXEDtoINT(spark->y);
               s32 dotSize = spark->variant / 16 + 1;
               EFFECT_DRAW_MOTE(draw, canvas, sprites, x, y, dotSize);
             }
@@ -518,8 +521,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       // Thor stands over the targets, then is pushed back.
       if (frame > 15) {
         if (frame == 32) {
-          thorSpeedX = px(4);
-          thorSpeedY = -px(1) / 4;
+          thorSpeedX = toFIXED(4);
+          thorSpeedY = -toFIXED(1) / 4;
         }
         if (frame > 31) {
           thorX += thorSpeedX;
@@ -534,9 +537,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         for (i = 0, thorScreenX = thorX >> 17; i != 3; i++) {
           s32 glint = i & 3;
           s32 angle = Random16() & TRIG_ANGLE_MASK;
-          s32 x = WHOLE_PIXELS(Trig_Sin(angle) * 8) + thorScreenX -
+          s32 x = FIXEDtoINT(Trig_Sin(angle) * 8) + thorScreenX -
                   (gBattleEffect_GlintPictureWidths[glint] >> 1);
-          s32 y = WHOLE_PIXELS(Trig_Cos(angle) * 40) -
+          s32 y = FIXEDtoINT(Trig_Cos(angle) * 40) -
                   (gBattleEffect_GlintPictureHeights[glint] >> 1);
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               EFFECT_CLIP_BOUNDS |

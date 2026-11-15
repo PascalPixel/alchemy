@@ -166,7 +166,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     SET_POSITION(rock, (Random16() & 15) + 88, 128, (Random16() & 15) + 2);
     rock->velocityX = i;
     rock->velocityY = 1;
-    rock->velocityZ = px(1) / 2;
+    rock->velocityZ = toFIXED(1) / 2;
     rock->variant = 44 - i * 4;
   }
   for (i = 0; i != 6; i++)
@@ -176,8 +176,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
   for (i = 0; i != GAIA_DUST; i++) {
     struct Particle *dust = &DUST[i];
 
-    dust->x = px((Random16() & 63) + wallX + 32);
-    dust->y = px((Random16() & 7) + 96);
+    dust->x = INTtoFIXED((Random16() & 63) + wallX + 32);
+    dust->y = INTtoFIXED((Random16() & 7) + 96);
     dust->velocityY = ((Random16() & 63) + 32) << 13;
     dust->variant = Random16() & 31;
   }
@@ -275,7 +275,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
                   Q_16_16_UPPER_HALF(dust->y) - size, size, size * 2);
           dust->y -= dust->velocityY;
           if (dust->y < 0 && frame <= 159)
-            dust->y = px(96);
+            dust->y = toFIXED(96);
         } else {
           dust->variant--;
         }
@@ -295,16 +295,16 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
         if (rock->variant == 0) {
           scale = gGaia_UnitScale;
           if (frame > 71) {
-            scale.x = (k << 12) + Q16_ONE / 2;
+            scale.x = (k << 12) + FIXED_ONE / 2;
             scale.x += args->variant << 14;
           } else {
-            scale.x = Q16_ONE / 2;
+            scale.x = FIXED_ONE / 2;
           }
           scale.y = scale.x;
           position[3] = 0;
-          position[0] = px(rock->x + rockX * 2);
-          position[1] = px(512) - px(rock->y);
-          position[2] = px(512);
+          position[0] = INTtoFIXED(rock->x + rockX * 2);
+          position[1] = toFIXED(512) - INTtoFIXED(rock->y);
+          position[2] = toFIXED(512);
           slot = (frame / 2 + k) % GAIA_ROCKS;
           if (slot != -1)
             Render_ApplyProjectedPlacementFar(work->sprites[slot], position,
@@ -475,7 +475,7 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
   found->shadowTile = (((u16 *)entries)[187] >> 5) | 0x800;
   sprite->entry = AnimationObject_AllocateEmpty();
   sprite->width = width;
-  sprite->scale = Q16_ONE;
+  sprite->scale = FIXED_ONE;
   sprite->height = height;
   sprite->offsetY = 0;
   sprite->offsetX = 0;

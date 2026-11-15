@@ -150,7 +150,7 @@ void StaffCredit_DrawGlowRings(u8 *grid, s32 count, s32 scale) {
     s32 error = i;
 
     level = (Trig_Cos((i << 14) / last) * GLOW_LEVEL_MAX) >> 16;
-    level = level * scale / Q16_ONE;
+    level = level * scale / FIXED_ONE;
     if (level > GLOW_LEVEL_MAX)
       level = GLOW_LEVEL_MAX;
     if (level <= 0)
@@ -193,7 +193,7 @@ extern u16 gStaffCredit_GlowFadeIn[];
 extern s8 gStaffCredit_GlowScrolls[][2];
 
 static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
-  FieldCamera_MoveToFixed(x, -1, z, mode);
+  FieldCamera_MoveToFX(x, -1, z, mode);
 }
 
 /// The lighthouses whose beacons the credits fly to, in the order they are
@@ -233,8 +233,8 @@ void StaffCredit_ShowBeacon(s32 stage) {
     palette = 0;
   gBgScroll[0].y = 0;
   gBgScroll[0].x = 0;
-  Camera_MoveWithinMapBounds_(px(gStaffCredit_FlightStarts[stage][0]),
-                              px(gStaffCredit_FlightStarts[stage][1]), 0);
+  Camera_MoveWithinMapBounds_(toFIXED(gStaffCredit_FlightStarts[stage][0]),
+                              toFIXED(gStaffCredit_FlightStarts[stage][1]), 0);
   WorldMap_UpdateCurrentTileBlock();
   FieldEffect_ScheduleRatioTransition(gStaffCredit_StartZooms[stage], 1);
   map->yaw = TRIG_TURN / 16;
@@ -245,8 +245,8 @@ void StaffCredit_ShowBeacon(s32 stage) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   gFieldWork->transitionFrames = 64;
   Event_StartScreenTransition();
-  Camera_MoveWithinMapBounds_(px(gStaffCredit_FlightEnds[stage][0]),
-                              px(gStaffCredit_FlightEnds[stage][1]), 1);
+  Camera_MoveWithinMapBounds_(toFIXED(gStaffCredit_FlightEnds[stage][0]),
+                              toFIXED(gStaffCredit_FlightEnds[stage][1]), 1);
   for (frame = 0; frame != gStaffCredit_FlightFrames[stage]; frame++) {
     {
       s32 length = gStaffCredit_FlightFrames[stage];
@@ -350,10 +350,10 @@ void StaffCredit_ShowBeacon(s32 stage) {
         zero = 0;
         top = camera[8];
         left = camera[9];
-        z = px(-30);
-        x0 = px(-50);
+        z = toFIXED(-30);
+        x0 = toFIXED(-50);
 
-        Actor_SetPositionFixed(ACTOR_BEACON, px(top) + x0, px(left) + z);
+        Actor_SetPositionFX(ACTOR_BEACON, toFIXED(top) + x0, toFIXED(left) + z);
       }
       Actor_SetBlendMode(Actor_GetById(ACTOR_BEACON), 1);
       Actor_SetAnimation(ACTOR_BEACON, 0);
@@ -362,8 +362,8 @@ void StaffCredit_ShowBeacon(s32 stage) {
       if (frame > 22) {
         s32 scale = (frame << 10) - (21 << 10);
 
-        if (scale > Q16_ONE)
-          scale = Q16_ONE;
+        if (scale > FIXED_ONE)
+          scale = FIXED_ONE;
         Actor_GetById(ACTOR_BEACON)->scaleX = scale;
         Actor_GetById(ACTOR_BEACON)->scaleY = scale;
       }
@@ -432,7 +432,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
         u8 *out;
         u8 *fill;
 
-        StaffCredit_DrawGlowRings(grid, frame + 8, Q16_ONE);
+        StaffCredit_DrawGlowRings(grid, frame + 8, FIXED_ONE);
         by = 0;
         rowBase = 0;
         goto blockRowTest;
@@ -510,9 +510,10 @@ void StaffCredit_ShowBeacon(s32 stage) {
   if (stage != BEACON_BEAMS_MEET) {
     FieldCamera_SetSpeed(6);
     WorldMap_ReloadPendingAreaGraphics();
-    Camera_MoveWithinMapBounds_(px(gStaffCredit_FlightReturns[stage][0]),
-                                px(gStaffCredit_FlightReturns[stage][1]), 1);
-    FieldEffect_ScheduleRatioTransition(Q16_ONE * 7 / 10, 60);
+    Camera_MoveWithinMapBounds_(toFIXED(gStaffCredit_FlightReturns[stage][0]),
+                                toFIXED(gStaffCredit_FlightReturns[stage][1]),
+                                1);
+    FieldEffect_ScheduleRatioTransition(FIXED_ONE * 7 / 10, 60);
     for (frame = 0; frame != 124;) {
       map->yaw -= 32;
       if (frame == 60) {
@@ -671,7 +672,7 @@ void StaffCredit_BlendPicture(void) {
 }
 
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
-  FieldCamera_MoveToFixed(x, y, z, mode);
+  FieldCamera_MoveToFX(x, y, z, mode);
 }
 
 /// Shakes the camera diagonally by one pixel every three frames.
@@ -877,7 +878,7 @@ extern s16 gGauge_Shown;
 extern u8 gGauge_Tiles[][32];
 
 void Gauge_Draw(s32 progress) {
-  s32 level = ((progress * GAUGE_LEVELS + Q16_ONE / 2) >> 16) + 1;
+  s32 level = ((progress * GAUGE_LEVELS + FIXED_ONE / 2) >> 16) + 1;
   s32 kind = GAUGE_EMPTY;
   s32 count, base, i;
 
@@ -969,7 +970,7 @@ void Gauge_Update(void) {
   u32 attributes;
 
   if ((gInput & (KEY_A | KEY_B)) != 0 && Event_GetFlag(FLAG_MENU_OPEN) == 0 &&
-      leader->y.fixed > px(4)) {
+      leader->y.fixed > toFIXED(4)) {
     if (--gGauge_Countdown <= 0) {
       Party_DrainPp(1);
       gGauge_Countdown = 10;

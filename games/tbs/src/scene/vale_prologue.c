@@ -495,8 +495,8 @@ s32 Scene_Initialize(void) {
     struct Actor *actor;
 
     actor = Actor_Get(ACTOR_BOULDER);
-    actor->scaleX = 2 * Q16_ONE;
-    actor->scaleY = 2 * Q16_ONE;
+    actor->scaleX = 2 * FIXED_ONE;
+    actor->scaleY = 2 * FIXED_ONE;
   }
   // The Boulder lies where it fell, or waits on the mountainside.
   if (GameFlag_Get(FLAG_VALE_BOULDER_FELL) != 0) {
@@ -625,7 +625,7 @@ s32 Scene_Initialize(void) {
 
     actor = Actor_Get(ACTOR_GARETS_CHEST);
     actor->motionFlags = 0;
-    actor->y.fixed = px(192);
+    actor->y.fixed = toFIXED(192);
     actor->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(actor, 0);
   }
@@ -802,12 +802,12 @@ static void ValePrologue_FirstRockFalls(void) {
       rock->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       rockSprite->image.priority = 1;
       Actor_SetPosition(ACTOR_FIRST_ROCK, 473, 932);
-      rock->speedLimit = px(3) / 2;
-      rock->acceleration = px(3) / 2;
-      targetHeight = (rock->y.fixed + px(240));
-      rock->y.fixed += px(240);
+      rock->speedLimit = toFIXED(3) / 2;
+      rock->acceleration = toFIXED(3) / 2;
+      targetHeight = (rock->y.fixed + toFIXED(240));
+      rock->y.fixed += toFIXED(240);
       rock->targetY = targetHeight;
-      rock->bounce = Q16_ONE * 2 / 5;
+      rock->bounce = FIXED_ONE * 2 / 5;
       Actor_WalkToAndWait(ACTOR_FIRST_ROCK, 344, 932);
       rockSprite->image.priority = 3;
       rock->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
@@ -827,7 +827,7 @@ static void ValePrologue_FirstRockFalls(void) {
         if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
-          if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > px(128)) {
+          if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > toFIXED(128)) {
             ValePrologue_GaretCommentsOnBlockedPath(326, 918);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 291, 918);
           } else {
@@ -866,12 +866,12 @@ static void ValePrologue_SecondRockFalls(void) {
       wait(40);
       Sound_Play(SE_CRASH);
       Actor_SetPosition(ACTOR_FIRST_ROCK + 1, 381, 808);
-      rock->speedLimit = px(3) / 2;
-      rock->acceleration = px(3) / 2;
-      targetHeight = (rock->y.fixed + px(256));
-      rock->y.fixed += px(256);
+      rock->speedLimit = toFIXED(3) / 2;
+      rock->acceleration = toFIXED(3) / 2;
+      targetHeight = (rock->y.fixed + toFIXED(256));
+      rock->y.fixed += toFIXED(256);
       rock->targetY = targetHeight;
-      rock->bounce = Q16_ONE / 2;
+      rock->bounce = FIXED_ONE / 2;
       Actor_WalkToAndWait(ACTOR_FIRST_ROCK + 1, 290, 833);
       Actor_SetSpritePriority(ACTOR_FIRST_ROCK + 1, 1);
       Actor_WalkToAndWait(ACTOR_FIRST_ROCK + 1, 258, 852);
@@ -892,7 +892,7 @@ static void ValePrologue_SecondRockFalls(void) {
         if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
-          if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > px(128)) {
+          if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > toFIXED(128)) {
             ValePrologue_GaretCommentsOnBlockedPath(219, 843);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 179, 829);
           } else {
@@ -940,11 +940,11 @@ static void ValePrologue_ThirdRockFalls(void) {
       Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 3);
       Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       Actor_SetPosition(ACTOR_FIRST_ROCK + 2, 0, 703);
-      actor->speedLimit = px(3) / 2;
-      actor->acceleration = px(3) / 2;
-      actor->y.fixed += px(80);
+      actor->speedLimit = toFIXED(3) / 2;
+      actor->acceleration = toFIXED(3) / 2;
+      actor->y.fixed += toFIXED(80);
       actor->targetY = actor->y.fixed;
-      actor->bounce = Q16_ONE / 2;
+      actor->bounce = FIXED_ONE / 2;
       Actor_WalkToAndWait(ACTOR_FIRST_ROCK + 2, 64, 703);
       Event_Wait(40);
       // It lands: the rumble fades, and Isaac is drawn as before.
@@ -964,7 +964,7 @@ static void ValePrologue_ThirdRockFalls(void) {
         if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
-          if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed < px(693)) {
+          if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed < toFIXED(693)) {
             ValePrologue_GaretCommentsOnBlockedPath(62, 669);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 27, 627);
           } else {
@@ -1004,12 +1004,12 @@ static void ValePrologue_FourthRockFalls(void) {
       wait(40);
       Sound_Play(SE_CRASH);
       Actor_SetPosition(ACTOR_FIRST_ROCK + 3, 474, 1147);
-      rock->speedLimit = px(1);
-      rock->acceleration = px(1);
-      targetHeight = (rock->y.fixed + px(72));
-      rock->y.fixed += px(72);
+      rock->speedLimit = toFIXED(1);
+      rock->acceleration = toFIXED(1);
+      targetHeight = (rock->y.fixed + toFIXED(72));
+      rock->y.fixed += toFIXED(72);
       rock->targetY = targetHeight;
-      rock->bounce = Q16_ONE / 2;
+      rock->bounce = FIXED_ONE / 2;
       Actor_WalkToAndWait(ACTOR_FIRST_ROCK + 3, 432, 1147);
       Event_Wait(40);
       // It lands: the rumble on player 3 fades and the shaking dies down.
@@ -1026,7 +1026,7 @@ static void ValePrologue_FourthRockFalls(void) {
         if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
-          if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed < px(1146)) {
+          if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed < toFIXED(1146)) {
             ValePrologue_GaretCommentsOnBlockedPath(412, 1120);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 414, 1068);
           } else {
@@ -1206,7 +1206,7 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
     Actor_SetScript(ACTOR_GARET_CHILD, gValePrologue_UnusedGaretPantingScript);
     // "*Hah* *Hah*"
     Event_ShowMessage(ACTOR_GARET_CHILD, 0);
-    Actor_Get(ACTOR_GARET_CHILD)->scaleY = Q16_ONE;
+    Actor_Get(ACTOR_GARET_CHILD)->scaleY = FIXED_ONE;
     Actor_RunRepeatedMotion(ACTOR_GARET_CHILD, 1);
     Event_Wait(20);
     // "Are you trapped, too?"
@@ -1239,8 +1239,8 @@ static void ValePrologue_WarnAboutMtAleph(void) {
   Event_Start();
   initialLeader = Actor_Get(ACTOR_PARTY_LEADER);
   if (initialLeader != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET_CHILD, initialLeader->x.fixed,
-                           initialLeader->z.fixed);
+    Actor_SetPositionFX(ACTOR_GARET_CHILD, initialLeader->x.fixed,
+                        initialLeader->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET_CHILD, 1);
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, 281, 507);
@@ -1266,14 +1266,14 @@ static void ValePrologue_WarnAboutMtAleph(void) {
 /// Called by the four rock events. x and y are the pixels where Garet stands.
 static void ValePrologue_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   struct Actor *leaderAtStart;
-  s32 acceleration = (px(1) / 2);
+  s32 acceleration = (toFIXED(1) / 2);
 
   leaderAtStart = Actor_Get(ACTOR_PARTY_LEADER);
   if (leaderAtStart != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET_CHILD, leaderAtStart->x.fixed,
-                           leaderAtStart->z.fixed);
+    Actor_SetPositionFX(ACTOR_GARET_CHILD, leaderAtStart->x.fixed,
+                        leaderAtStart->z.fixed);
   }
-  Actor_SetSpeedFixed(ACTOR_GARET_CHILD, px(1), acceleration);
+  Actor_SetSpeedFX(ACTOR_GARET_CHILD, toFIXED(1), acceleration);
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, x, y);
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GARET_CHILD, 0);
   Event_Wait(20);
@@ -1312,7 +1312,7 @@ static void ValePrologue_WatchBoulderFall(void) {
     Event_Wait(30);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
-      Actor_SetPositionFixed(ACTOR_GARET_CHILD, actor->x.fixed, actor->z.fixed);
+      Actor_SetPositionFX(ACTOR_GARET_CHILD, actor->x.fixed, actor->z.fixed);
     }
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 2);
     Actor_SetSpeed(ACTOR_GARET_CHILD, 2);
@@ -1339,7 +1339,7 @@ static void ValePrologue_WatchBoulderFall(void) {
                        YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_HOLD_BACK);
     Actor_SetAnimation(ACTOR_ELDER_FAR_WEST,
                        YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_HOLD_BACK);
-    Actor_Get(ACTOR_ELDER_FAR_EAST)->scaleX = -Q16_ONE;
+    Actor_Get(ACTOR_ELDER_FAR_EAST)->scaleX = -FIXED_ONE;
     Actor_SetSpritePriority(ACTOR_ELDER_EAST, 2);
     Actor_SetSpritePriority(ACTOR_ELDER_WEST, 2);
     Actor_SetSpritePriority(ACTOR_ELDER_FAR_EAST, 3);
@@ -1370,7 +1370,7 @@ static void ValePrologue_WatchBoulderFall(void) {
     Event_Wait(30);
     Actor_SetPosition(ACTOR_BOULDER, 114, 290);
     movingActor = Actor_Get(ACTOR_BOULDER);
-    boulderHeight = movingActor->y.fixed + px(64);
+    boulderHeight = movingActor->y.fixed + toFIXED(64);
     movingActor->y.fixed = boulderHeight;
     movingActor->targetY = boulderHeight;
     Actor_SetSpeed(ACTOR_BOULDER, 0.8);
@@ -1568,8 +1568,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     struct Actor *leader;
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_GARET_CHILD, leader->x.fixed,
-                             leader->z.fixed);
+      Actor_SetPositionFX(ACTOR_GARET_CHILD, leader->x.fixed, leader->z.fixed);
     }
   }
   Actor_WalkToAndWait(ACTOR_GARET_CHILD, 132, 1094);
@@ -1603,22 +1602,22 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   {
     struct Actor *actor;
     actor = Actor_Get(ACTOR_KYLE);
-    actor->scaleX = Q16_ONE;
-    actor->scaleY = Q16_ONE;
+    actor->scaleX = FIXED_ONE;
+    actor->scaleY = FIXED_ONE;
   }
   Actor_SetAnimation(ACTOR_JENNAS_FATHER, ANIM_STAND);
   {
     struct Actor *actor;
     actor = Actor_Get(ACTOR_JENNAS_FATHER);
-    actor->scaleX = Q16_ONE;
-    actor->scaleY = Q16_ONE;
+    actor->scaleX = FIXED_ONE;
+    actor->scaleY = FIXED_ONE;
   }
   Actor_SetAnimation(ACTOR_JENNAS_MOTHER, ANIM_STAND);
   {
     struct Actor *actor;
     actor = Actor_Get(ACTOR_JENNAS_MOTHER);
-    actor->scaleX = Q16_ONE;
-    actor->scaleY = Q16_ONE;
+    actor->scaleX = FIXED_ONE;
+    actor->scaleY = FIXED_ONE;
   }
   Actor_StartRepeatedMotion(ACTOR_KYLE, 2);
   Actor_StartRepeatedMotion(ACTOR_DORA, 2);
@@ -1649,7 +1648,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
   {
     struct Actor *actor;
     actor = Actor_Get(ACTOR_FELIX_CHILD);
-    actor->velocityY = px(2);
+    actor->velocityY = toFIXED(2);
   }
   Event_Wait(6);
   Actor_SetAnimation(ACTOR_FELIX_CHILD, ANIM_FELIX_CLING);
@@ -1942,15 +1941,13 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 217, 1367);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != NULL) {
-        Actor_SetPositionFixed(ACTOR_GARET_CHILD, actor->x.fixed,
-                               actor->z.fixed);
+        Actor_SetPositionFX(ACTOR_GARET_CHILD, actor->x.fixed, actor->z.fixed);
       }
       Actor_WalkToAndWait(ACTOR_GARET_CHILD, 235, 1367);
       Actor_FaceDirection(ACTOR_GARET_CHILD, FACING_NORTH_NORTHWEST, 0);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != NULL) {
-        Actor_SetPositionFixed(ACTOR_JENNA_CHILD, actor->x.fixed,
-                               actor->z.fixed);
+        Actor_SetPositionFX(ACTOR_JENNA_CHILD, actor->x.fixed, actor->z.fixed);
       }
       Actor_WalkToAndWait(ACTOR_JENNA_CHILD, 199, 1367);
       Actor_FaceDirection(ACTOR_JENNA_CHILD, FACING_NORTH_NORTHEAST, 0);
@@ -1966,8 +1963,8 @@ static void ValePrologue_BoulderSweepsThemAway(void) {
       sprite->image.priority = 2;
       actor = Actor_Get(ACTOR_PARTY_LEADER);
       if (actor != NULL) {
-        Actor_SetPositionFixed(ACTOR_EXHAUSTED_STRONGMAN, actor->x.fixed,
-                               actor->z.fixed);
+        Actor_SetPositionFX(ACTOR_EXHAUSTED_STRONGMAN, actor->x.fixed,
+                            actor->z.fixed);
       }
       Actor_WalkToAndWait(ACTOR_EXHAUSTED_STRONGMAN, 221, 1385);
       Actor_FaceDirection(ACTOR_EXHAUSTED_STRONGMAN, FACING_NORTH_NORTHWEST,
@@ -2061,7 +2058,8 @@ static inline void ValePrologue_PlaceActor(struct Actor *actor,
 /// One crash of the Boulder coming down, made of a shake of shakeAmplitude
 /// pixels, SE_CRASH and a wait.
 static inline void ValePrologue_PlayImpactBeat(s32 shakeAmplitude, s32 frames) {
-  MapGrid_SetShakeFixed(px(shakeAmplitude), px(shakeAmplitude), Q16_ONE);
+  MapGrid_SetShakeFX(toFIXED(shakeAmplitude), toFIXED(shakeAmplitude),
+                     FIXED_ONE);
   Sound_Play(SE_CRASH);
   Event_Wait(frames);
 }
@@ -2166,11 +2164,11 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetSpriteColorById(ACTOR_BOULDER, SPRITE_COLOR_NORMAL);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BOULDER), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BOULDER_SHADOW), 0);
-  boulderShadow->scaleX = 4 * Q16_ONE / 5;
-  boulderShadow->scaleY = 4 * Q16_ONE / 5;
+  boulderShadow->scaleX = 4 * FIXED_ONE / 5;
+  boulderShadow->scaleY = 4 * FIXED_ONE / 5;
   boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   boulderShadowSprite->image.priority = 1;
-  ValePrologue_PlaceActor(actor, px(200), px(898));
+  ValePrologue_PlaceActor(actor, toFIXED(200), toFIXED(898));
   actor->motionFlags = 0;
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actorVisual->image.priority = 0;
@@ -2209,12 +2207,12 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_Stop(ACTOR_BOULDER);
   wait(1);
   Actor_SetAnimation(ACTOR_BOULDER, ANIM_STILL);
-  boulderShadow->scaleX = 5 * Q16_ONE / 4;
-  boulderShadow->scaleY = 5 * Q16_ONE / 4;
+  boulderShadow->scaleX = 5 * FIXED_ONE / 4;
+  boulderShadow->scaleY = 5 * FIXED_ONE / 4;
   boulderShadowSprite->offsetY = 2;
-  boulderShadowSprite->scale = 5 * Q16_ONE / 4;
-  actor->scaleX = 2 * Q16_ONE;
-  actor->scaleY = 2 * Q16_ONE;
+  boulderShadowSprite->scale = 5 * FIXED_ONE / 4;
+  actor->scaleX = 2 * FIXED_ONE;
+  actor->scaleY = 2 * FIXED_ONE;
   actor->x.fixed = 0;
   actor->z.fixed = 0;
   actor->targetX = 0;
@@ -2246,8 +2244,8 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetPosition(ACTOR_BOULDER_SHADOW, 218, 1176);
   FieldCamera_MoveTo(210, 0, 1196, 0);
   MapGrid_CenterOnFollowedPoint();
-  boulderShadow->scaleX = 2 * Q16_ONE;
-  boulderShadow->scaleY = 2 * Q16_ONE;
+  boulderShadow->scaleX = 2 * FIXED_ONE;
+  boulderShadow->scaleY = 2 * FIXED_ONE;
   Task_AddFrame(ValePrologue_FlickerBoulderShadow, TASK_PASS_FRAME);
   Actor_Stop(ACTOR_KYLE);
   Actor_Stop(ACTOR_JENNAS_FATHER);
@@ -2256,33 +2254,33 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   boulderShadow = Actor_Get(ACTOR_KYLE);
   boulderShadowSprite = boulderShadow->sprite;
   boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  boulderShadow->scaleX = Q16_ONE;
-  boulderShadow->scaleY = Q16_ONE;
+  boulderShadow->scaleX = FIXED_ONE;
+  boulderShadow->scaleY = FIXED_ONE;
   boulderShadow->facing = FACING_NORTH_NORTHEAST;
   boulderShadowSprite->image.priority = 0;
   Actor_SetAnimation(ACTOR_KYLE, ANIM_STILL);
   boulderShadow = Actor_Get(ACTOR_JENNAS_FATHER);
   boulderShadowSprite = boulderShadow->sprite;
   boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  boulderShadow->scaleX = Q16_ONE;
-  boulderShadow->scaleY = Q16_ONE;
+  boulderShadow->scaleX = FIXED_ONE;
+  boulderShadow->scaleY = FIXED_ONE;
   boulderShadow->facing = FACING_NORTH_NORTHWEST;
   boulderShadowSprite->image.priority = 0;
   Actor_SetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_RECOIL);
   boulderShadow = Actor_Get(ACTOR_JENNAS_MOTHER);
   boulderShadowSprite = boulderShadow->sprite;
   boulderShadow->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  boulderShadow->scaleX = Q16_ONE;
-  boulderShadow->scaleY = Q16_ONE;
+  boulderShadow->scaleX = FIXED_ONE;
+  boulderShadow->scaleY = FIXED_ONE;
   boulderShadow->facing = FACING_NORTH_NORTHWEST;
   boulderShadowSprite->image.priority = 0;
   Actor_SetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_RECOIL);
   boulderShadow = Actor_Get(ACTOR_BOULDER_SHADOW);
   boulderShadowSprite = boulderShadow->sprite;
   ValePrologue_FlashLightning();
-  actor->y.fixed = px(48);
-  actor->x.fixed = px(214);
-  actor->z.fixed = px(1216);
+  actor->y.fixed = toFIXED(48);
+  actor->x.fixed = toFIXED(214);
+  actor->z.fixed = toFIXED(1216);
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetY = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
@@ -2434,12 +2432,12 @@ static void ValePrologue_UpdateBoulderShadow(void) {
     switch ((s16)source->userValue) {
     case 1:
     case 5:
-      shadow->scaleX += Q16_ONE / 25;
-      shadow->scaleY += Q16_ONE / 25;
+      shadow->scaleX += FIXED_ONE / 25;
+      shadow->scaleY += FIXED_ONE / 25;
       break;
     case 4:
-      shadow->scaleX += Q16_ONE / 50;
-      shadow->scaleY += Q16_ONE / 50;
+      shadow->scaleX += FIXED_ONE / 50;
+      shadow->scaleY += FIXED_ONE / 50;
       break;
     case 2:
     case 3:
@@ -2447,8 +2445,8 @@ static void ValePrologue_UpdateBoulderShadow(void) {
     case 7:
     case 8:
     case 9:
-      shadow->scaleX -= 3 * Q16_ONE / 100;
-      shadow->scaleY -= 3 * Q16_ONE / 100;
+      shadow->scaleX -= 3 * FIXED_ONE / 100;
+      shadow->scaleY -= 3 * FIXED_ONE / 100;
       break;
     }
     sprite->scale = shadow->scaleX;
@@ -2501,8 +2499,8 @@ static void ValePrologue_StrongmanTriesToGoForHelp(void) {
     Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, STRONGMAN_ANIMATION_SPRAWLED);
   } else {
     Actor_Stop(ACTOR_EXHAUSTED_STRONGMAN);
-    villager->scaleX = Q16_ONE;
-    villager->scaleY = Q16_ONE;
+    villager->scaleX = FIXED_ONE;
+    villager->scaleY = FIXED_ONE;
     Actor_FaceDirection(ACTOR_EXHAUSTED_STRONGMAN, FACING_EAST_SOUTHEAST, 0);
     if ((s16)leader->facing >= 0) {
       Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN,
@@ -3009,8 +3007,8 @@ s32 gValePrologue_BoulderRollsDownriver[] = {
     SC_ACCELERATION(1),
     SC_SET(SW_TIMER, 0),
     SC_SET(SW_USER_VALUE, 1),
-    SC_SET(SW_SCALE_X, 2 * Q16_ONE),
-    SC_SET(SW_SCALE_Y, 2 * Q16_ONE),
+    SC_SET(SW_SCALE_X, 2 * FIXED_ONE),
+    SC_SET(SW_SCALE_Y, 2 * FIXED_ONE),
     SC_MOVE(256, 128, 931),
     SC_SYNC,
     SC_SE(SE_CRASH),

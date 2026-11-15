@@ -332,7 +332,7 @@ void DehkanPlateau_SetTightropesStandingPillarCells(void) {
 void DehkanPlateau_StepOnTightropesPillars(void) {
   CrumblingPillars_Step(gDehkanPlateau_TightropesCrumblingPillars);
   DehkanPlateau_SetTightropesStandingPillarCells();
-  if (Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed < -px(24)) {
+  if (Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed < -toFIXED(24)) {
     Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_AUTOMATIC;
@@ -671,7 +671,7 @@ void DehkanPlateau_StepOnCrack(void) {
   Actor_SetPositionAndResetMotion(leader, cellX << 19, leader->y.fixed,
                                   cellZ << 19);
   Event_Wait(4);
-  FieldCamera_GetActor()->y.fixed -= px(8);
+  FieldCamera_GetActor()->y.fixed -= toFIXED(8);
   next = record + 1;
   if (GameFlag_Get(flag)) {
     s32 x, y, index, toX, toZ;
@@ -769,9 +769,9 @@ void DehkanPlateau_StepOnCrack(void) {
     for (cellX = 0; (u32)cellX <= 39; cellX++) {
       if (cellX == 5)
         Sound_Play(SE_DUST_PUFF);
-      leader->scaleX += -(Q16_ONE / 64);
-      leader->scaleY += -(Q16_ONE * 3 / 256);
-      leader->y.fixed += -(px(3) / 5);
+      leader->scaleX += -(FIXED_ONE / 64);
+      leader->scaleY += -(FIXED_ONE * 3 / 256);
+      leader->y.fixed += -(toFIXED(3) / 5);
       wait(1);
     }
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -980,10 +980,10 @@ void DehkanPlateau_JoltCamera(void) {
   struct Actor *object = FieldCamera_GetActor();
   u32 i;
 
-  object->y.fixed -= px(8);
+  object->y.fixed -= toFIXED(8);
   wait(1);
   for (i = 0; i <= 7; i++) {
-    object->y.fixed += px(1);
+    object->y.fixed += toFIXED(1);
     wait(1);
   }
 }
@@ -1027,7 +1027,7 @@ void DehkanPlateau_CannonFleesOverCracks(void) {
   DehkanPlateau_JoltCamera();
   Event_Wait(10);
   Actor_Jump(ACTOR_THEMIS_AXE_CHEST_CANNON, 6, 16);
-  Actor_PlaceFacing(ACTOR_THEMIS_AXE_CHEST_CANNON, px(888), px(168),
+  Actor_PlaceFacing(ACTOR_THEMIS_AXE_CHEST_CANNON, toFIXED(888), toFIXED(168),
                     FACING_SOUTH);
   Event_Wait(20);
   GameFlag_Set(FLAG_CANNON_FLED_OVER_CRACKS);
@@ -1070,12 +1070,13 @@ void DehkanPlateau_CannonLeapsAway(void) {
   Actor_WalkToAndWaitById(ACTOR_TIGHTROPES_CANNON, 168, 104);
   Event_Wait(10);
   Sound_Play(SE_HIGH_JUMP);
-  Actor_GetById(ACTOR_TIGHTROPES_CANNON)->velocityY = px(8);
+  Actor_GetById(ACTOR_TIGHTROPES_CANNON)->velocityY = toFIXED(8);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TIGHTROPES_CANNON), 0);
   Actor_WalkToAndWaitById(ACTOR_TIGHTROPES_CANNON, 200, 104);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TIGHTROPES_CANNON), 1);
   Actor_WalkToAndWait(ACTOR_TIGHTROPES_CANNON, 294, 104);
-  Actor_PlaceFacing(ACTOR_TIGHTROPES_CANNON, px(424), px(104), FACING_SOUTH);
+  Actor_PlaceFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(424), toFIXED(104),
+                    FACING_SOUTH);
   GameFlag_Set(FLAG_CANNON_LEAPT_AWAY);
   Event_End();
 }
@@ -1087,7 +1088,7 @@ void DehkanPlateau_CannonPoundsPillar(void) {
   Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId,
                           ACTOR_TIGHTROPES_CANNON);
   FieldCamera_GetActor()->motionFlags = 0;
-  FieldCamera_MoveToFixed(212 << 17, -1, 208 << 15, 1);
+  FieldCamera_MoveToFX(212 << 17, -1, 208 << 15, 1);
   FieldCamera_WaitForArrival();
   Actor_FaceActorById(ACTOR_TIGHTROPES_CANNON, gMainRoutineWork.leaderActorId,
                       0);
@@ -1107,7 +1108,8 @@ void DehkanPlateau_CannonPoundsPillar(void) {
   DehkanPlateau_JoltCamera();
   Actor_WalkToAndWait(ACTOR_TIGHTROPES_CANNON, 456, 216);
   Actor_WalkToAndWait(ACTOR_TIGHTROPES_CANNON, 584, 216);
-  Actor_PlaceFacing(ACTOR_TIGHTROPES_CANNON, px(616), px(280), FACING_SOUTH);
+  Actor_PlaceFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(616), toFIXED(280),
+                    FACING_SOUTH);
   GameFlag_Set(FLAG_CANNON_POUNDED_PILLAR);
   Event_End();
 }
@@ -1119,13 +1121,13 @@ void DehkanPlateau_SinkPoundedPillar(void) {
   struct Actor *object = Actor_GetById(ACTOR_TIGHTROPES_POUND_PILLAR);
 
   if (work->frame != -1 && work->frame <= 7)
-    object->scaleY += -(Q16_ONE * 31 / 256);
+    object->scaleY += -(FIXED_ONE * 31 / 256);
   if (work->stage != 0) {
     MapGrid_CopyCellAttributes(27, 8, 1, 1, 27, 9);
     Actor_SetAnimationById(ACTOR_TIGHTROPES_POUND_PILLAR, 4);
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     object->collisionFlags &= ~ACTOR_SOLID;
-    object->scaleY = Q16_ONE;
+    object->scaleY = FIXED_ONE;
     GameFlag_Set(FLAG_TIGHTROPES_PILLAR_POUNDED);
   }
 }
@@ -1177,9 +1179,9 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
     struct Actor *object;
     struct FieldEffect *effect;
 
-    y = leader->y.fixed - px(((Random16() * 7) << 1) >> 16);
+    y = leader->y.fixed - toFIXED(((Random16() * 7) << 1) >> 16);
     object = ((struct Actor *)Import_ActorCreate(
-        285, (i << 17) + leader->x.fixed - Q16_ONE * 8, y - Q16_ONE * 2,
+        285, (i << 17) + leader->x.fixed - FIXED_ONE * 8, y - FIXED_ONE * 2,
         leader->z.fixed));
     if (object != NULL) {
       effect = (struct FieldEffect *)object;
@@ -1189,15 +1191,16 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
       Actor_SetSpriteFlags(object, 0);
       Actor_SelectAnimation(object, 2);
       Actor_StartScript(object, gDehkanPlateau_DustScript);
-      object->scaleX = Q16_ONE * 7 / 10;
-      object->scaleY = Q16_ONE * 7 / 10;
+      object->scaleX = FIXED_ONE * 7 / 10;
+      object->scaleY = FIXED_ONE * 7 / 10;
       effect->sprite->priority = 1;
       effect->velocity.x = 0;
       effect->velocity.z = 0;
-      effect->velocity.y = -((((u32)Random16() << 14) >> 16) + Q16_ONE * 3 / 8);
+      effect->velocity.y =
+          -((((u32)Random16() << 14) >> 16) + FIXED_ONE * 3 / 8);
       effect->spin = (((u32)Random16() << 9) >> 16) - 256;
-      effect->scaleRateX = -(Q16_ONE / 32);
-      effect->scaleRateY = -(Q16_ONE * 3 / 128);
+      effect->scaleRateX = -(FIXED_ONE / 32);
+      effect->scaleRateY = -(FIXED_ONE * 3 / 128);
       effect->update = FieldEffect_AdvanceMotion;
     }
   }
@@ -1228,14 +1231,14 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   Actor_WalkToAndWait(ACTOR_TIGHTROPES_CANNON, 632, 280);
   Actor_SetSpeed(ACTOR_TIGHTROPES_CANNON, 2);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = px(8);
+  actor->velocityY = toFIXED(8);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TIGHTROPES_CANNON), 0);
   Actor_WalkToAndWait(ACTOR_TIGHTROPES_CANNON, 664, 280);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TIGHTROPES_CANNON), 1);
   DehkanPlateau_CrumblePillar(ACTOR_TIGHTROPES_FIRST_CRUMBLING_PILLAR,
                               ACTOR_TIGHTROPES_CANNON, FLAG_SCENE_TEMP_10);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = px(8);
+  actor->velocityY = toFIXED(8);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TIGHTROPES_CANNON), 0);
   Actor_WalkToAndWait(ACTOR_TIGHTROPES_CANNON, 696, 280);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TIGHTROPES_CANNON), 1);
@@ -1252,7 +1255,7 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
   Actor_FaceDirectionAndRefreshById(ACTOR_TIGHTROPES_CANNON, FACING_EAST);
   Actor_SetSpeed(ACTOR_TIGHTROPES_CANNON, 2);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = px(8);
+  actor->velocityY = toFIXED(8);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TIGHTROPES_CANNON), 0);
   Actor_WalkToAndWait(ACTOR_TIGHTROPES_CANNON, 744, 168);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TIGHTROPES_CANNON), 1);
@@ -1260,7 +1263,7 @@ void DehkanPlateau_CannonCrumblesPillars(void) {
                               ACTOR_TIGHTROPES_CANNON, FLAG_SCENE_TEMP_16);
   Actor_FaceDirectionAndRefreshById(ACTOR_TIGHTROPES_CANNON, FACING_NORTH);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = px(8);
+  actor->velocityY = toFIXED(8);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TIGHTROPES_CANNON), 0);
   Actor_WalkToAndWait(ACTOR_TIGHTROPES_CANNON, 744, 136);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TIGHTROPES_CANNON), 1);
@@ -1289,7 +1292,7 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
     s32 facing = FACING_NORTH;
 
     Actor_SetHorizontalPositionAndAngleWithTerrain(
-        gMainRoutineWork.leaderActorId, px(248), px(136), facing);
+        gMainRoutineWork.leaderActorId, toFIXED(248), toFIXED(136), facing);
   }
   MapGrid_CopyCellPictureIndicesRect(65, 64, 15, 8, 1, 1);
   GameFlag_Set(FLAG_SCENE_TEMP_45);
@@ -1310,9 +1313,9 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
   for (i = 0; i < 40; i++) {
     if (i == 5)
       Sound_Play(SE_DUST_PUFF);
-    leader->scaleX -= Q16_ONE / 64;
-    leader->scaleY -= Q16_ONE * 3 / 256;
-    leader->y.fixed -= px(3) / 5;
+    leader->scaleX -= FIXED_ONE / 64;
+    leader->scaleY -= FIXED_ONE * 3 / 256;
+    leader->y.fixed -= toFIXED(3) / 5;
     wait(1);
   }
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -1371,8 +1374,8 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  leader->y.fixed = px(130);
-  leader->gravity = px(1) / 2;
+  leader->y.fixed = toFIXED(130);
+  leader->gravity = toFIXED(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1384,17 +1387,17 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
   Sound_Play(SE_KOLIMA_BRIDGE_HOP);
   DehkanPlateau_JoltCamera();
   if (gDehkanPlateau_PoundCube != NULL) {
-    FieldActor_SetPositionAndResetMotion(gDehkanPlateau_PoundCube, px(248), 0,
-                                         px(120));
+    FieldActor_SetPositionAndResetMotion(gDehkanPlateau_PoundCube, toFIXED(248),
+                                         0, toFIXED(120));
     wait(1);
-    gDehkanPlateau_PoundCube->speedLimit = px(8) / 5;
-    gDehkanPlateau_PoundCube->acceleration = px(8) / 5;
-    gDehkanPlateau_PoundCube->velocityY = px(8);
+    gDehkanPlateau_PoundCube->speedLimit = toFIXED(8) / 5;
+    gDehkanPlateau_PoundCube->acceleration = toFIXED(8) / 5;
+    gDehkanPlateau_PoundCube->velocityY = toFIXED(8);
   }
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
   Actor_SetSpeed(ACTOR_POUND_CUBE_CANNON, 1.6);
-  leader->velocityY = px(6);
-  helper->velocityY = px(6);
+  leader->velocityY = toFIXED(6);
+  helper->velocityY = toFIXED(6);
   FieldActor_SetMoveTarget(leader, 216, 0, 120);
   FieldActor_SetMoveTarget(helper, 280, 0, 120);
   if (gDehkanPlateau_PoundCube != NULL)
@@ -1436,20 +1439,20 @@ void DehkanPlateau_CannonCrumblesLastPillar(void) {
   Actor_ShowEmote(ACTOR_CANNON, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetSpeed(ACTOR_CANNON, 2);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = px(8);
+  actor->velocityY = toFIXED(8);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 0);
   Actor_WalkToAndWaitById(ACTOR_CANNON, 760, 200);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 1);
   Event_Wait(20);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = px(8);
+  actor->velocityY = toFIXED(8);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 0);
   Actor_WalkToAndWaitById(ACTOR_CANNON, 792, 200);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 1);
   DehkanPlateau_CrumblePillar(ACTOR_CANNON_ROOM_CRUMBLING_PILLAR, ACTOR_CANNON,
                               FLAG_SCENE_TEMP_10);
   Sound_Play(SE_HIGH_JUMP);
-  actor->velocityY = px(8);
+  actor->velocityY = toFIXED(8);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 0);
   Actor_WalkToAndWaitById(ACTOR_CANNON, 824, 200);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 1);
@@ -1556,8 +1559,8 @@ void DehkanPlateau_InitializeFullMetalVestChest(void) {
   if (GameFlag_Get(FLAG_AREA_TEMP_01) != 0) {
     MapGrid_CopyCellAttributes(54, 32, 2, 1, 56, 64);
     Actor_SetPositionAndResetMotion(
-        Actor_GetById(ACTOR_FULL_METAL_VEST_CHEST_PILLAR), px(904), px(64),
-        px(520));
+        Actor_GetById(ACTOR_FULL_METAL_VEST_CHEST_PILLAR), toFIXED(904),
+        toFIXED(64), toFIXED(520));
     wait(10);
   }
   DehkanPlateau_RestoreFullMetalVestChestCracks();
@@ -1591,7 +1594,8 @@ void DehkanPlateau_InitializeThemisAxeChest(void) {
     Actor_DisableById(ACTOR_THEMIS_AXE_CHEST_PILLAR);
     MapGrid_CopyCellAttributes(50, 7, 1, 1, 52, 7);
     FieldActor_SetPositionAndResetMotion(
-        Actor_GetById(ACTOR_THEMIS_AXE_CHEST_PILLAR), px(840), 0, px(120));
+        Actor_GetById(ACTOR_THEMIS_AXE_CHEST_PILLAR), toFIXED(840), 0,
+        toFIXED(120));
   } else {
     Actor_PlaceBlocks(gDehkanPlateau_ThemisAxeChestMovablePillars);
   }
@@ -1599,7 +1603,8 @@ void DehkanPlateau_InitializeThemisAxeChest(void) {
   if (GameFlag_Get(FLAG_CANNON_FLED_OVER_CRACKS) != 0) {
     s32 angle = FACING_SOUTH;
 
-    Actor_PlaceFacing(ACTOR_THEMIS_AXE_CHEST_CANNON, px(888), px(168), angle);
+    Actor_PlaceFacing(ACTOR_THEMIS_AXE_CHEST_CANNON, toFIXED(888), toFIXED(168),
+                      angle);
     MapGrid_CopyCellPictureIndicesRect(68, 33, 105, 6, 1, 1);
     MapGrid_CopyCellPictureIndicesRect(69, 33, 105, 4, 1, 1);
     GameFlag_Set(FLAG_SCENE_TEMP_47);
@@ -1648,7 +1653,7 @@ void DehkanPlateau_InitializeTightropes(void) {
   Rope_Place(0, 520, ACTOR_TIGHTROPES_ROPE_LOW_POST,
              ACTOR_TIGHTROPES_ROPE_HIGH_POST);
   Actor_PlaceBlocks(gDehkanPlateau_TightropesMovablePillars);
-  if (Actor_GetById(ACTOR_TIGHTROPES_PILLAR)->y.fixed > (s32)-px(8))
+  if (Actor_GetById(ACTOR_TIGHTROPES_PILLAR)->y.fixed > (s32)-toFIXED(8))
     Actor_SetSpritePriority(ACTOR_TIGHTROPES_PILLAR, 1);
   else
     Actor_SetSpritePriority(ACTOR_TIGHTROPES_PILLAR, 2);
@@ -1688,8 +1693,8 @@ void DehkanPlateau_InitializeTightropes(void) {
   if (GameFlag_Get(FLAG_CANNON_LEAPT_AWAY) != 0) {
     s32 angle = FACING_SOUTH;
 
-    Actor_SetPositionAndFacing(ACTOR_TIGHTROPES_CANNON, px(424), px(104),
-                               angle);
+    Actor_SetPositionAndFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(424),
+                               toFIXED(104), angle);
   }
   Actor_SetAnimationById(ACTOR_TIGHTROPES_POUND_PILLAR, 3);
   if (GameFlag_Get(FLAG_CANNON_POUNDED_PILLAR) != 0) {
@@ -1704,8 +1709,8 @@ void DehkanPlateau_InitializeTightropes(void) {
     {
       s32 angle = FACING_SOUTH;
 
-      Actor_SetPositionAndFacing(ACTOR_TIGHTROPES_CANNON, px(616), px(280),
-                                 angle);
+      Actor_SetPositionAndFacing(ACTOR_TIGHTROPES_CANNON, toFIXED(616),
+                                 toFIXED(280), angle);
     }
   }
   if (GameFlag_Get(FLAG_CANNON_CRUMBLED_PILLARS) != 0) {
@@ -1819,8 +1824,8 @@ void DehkanPlateau_LandFromFall(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  leader->y.fixed = px(130);
-  leader->gravity = px(1) / 2;
+  leader->y.fixed = toFIXED(130);
+  leader->gravity = toFIXED(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1832,8 +1837,8 @@ void DehkanPlateau_LandFromFall(void) {
   opts = &options;
   opts->palette = 7;
   opts->update = FieldEffect_AdvanceMotion;
-  opts->startScaleX = Q16_ONE * 16 / 25;
-  opts->startScaleY = Q16_ONE * 16 / 25;
+  opts->startScaleX = FIXED_ONE * 16 / 25;
+  opts->startScaleY = FIXED_ONE * 16 / 25;
   opts = &options;
   spawn = 1;
   i = 0;
@@ -1851,8 +1856,8 @@ loop:
       velocity[2] = Trig_Sin(angle);
       velocity[0] += velocity[0] >> 1;
       velocity[0] += ((Random16() * 3) << 14) >> 16;
-      velocity[0] += -(px(3) / 8);
-      velocity[2] += (((Random16() * 3) << 13) >> 16) + -(px(3) / 16);
+      velocity[0] += -(toFIXED(3) / 8);
+      velocity[2] += (((Random16() * 3) << 13) >> 16) + -(toFIXED(3) / 16);
       FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                         velocity[0], velocity[1], velocity[2], 0x01090001,
                         opts);
@@ -1870,8 +1875,8 @@ loop:
   MapGrid_WaitForShakeToSettle();
   FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  leader->gravity = px(1);
-  leader->bounce = Q16_ONE / 4;
+  leader->gravity = toFIXED(1);
+  leader->bounce = FIXED_ONE / 4;
   Event_Wait(10);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -1891,8 +1896,8 @@ void DehkanPlateau_InitializePoundCube(void) {
     if (GameFlag_Get(FLAG_CANNON_DROPPED_POUND_CUBE) != 0) {
       MapGrid_CopyCellAttributes(0, 0, 1, 1, 15, 5);
       if (gDehkanPlateau_PoundCube != NULL) {
-        FieldActor_SetPositionAndResetMotion(gDehkanPlateau_PoundCube, px(248),
-                                             0, px(88));
+        FieldActor_SetPositionAndResetMotion(gDehkanPlateau_PoundCube,
+                                             toFIXED(248), 0, toFIXED(88));
         wait(1);
       }
     }

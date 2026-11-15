@@ -10,8 +10,8 @@ s32 Vault_StopIfFacingNear(struct Actor *actor, struct Actor *target, s32 range,
                            s32 force) {
   s32 result = 0;
   if (Actor_Distance(target, actor) < range || force != 0) {
-    u32 angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
-                             target->x.fixed - actor->x.fixed);
+    u32 angle = (u16)Trig_Atan(target->z.fixed - actor->z.fixed,
+                               target->x.fixed - actor->x.fixed);
     u32 left = FACING_SIXTEENTH(angle - FACING_STEP);
     u32 right = FACING_SIXTEENTH(angle + FACING_STEP);
     u32 forward = FACING_SIXTEENTH(angle);

@@ -201,7 +201,7 @@ void MarsLighthouseAerie_Throb(struct Actor *object) {
 
   if (scale > 0x10000) {
     object->scaleX = scale - 0x800;
-    object->scaleY -= Q16_ONE / 64;
+    object->scaleY -= FIXED_ONE / 64;
   }
   timer = &object->riseCounter;
   if (*timer != 0) {
@@ -210,8 +210,8 @@ void MarsLighthouseAerie_Throb(struct Actor *object) {
     u32 r = Random16();
 
     *timer = *timer + ((((r << 2) + r) * 16) >> 16) + 40;
-    object->scaleX = Q16_ONE * 9 / 8;
-    object->scaleY = Q16_ONE * 17 / 16;
+    object->scaleX = FIXED_ONE * 9 / 8;
+    object->scaleY = FIXED_ONE * 17 / 16;
   }
 }
 
@@ -302,16 +302,16 @@ void MarsLighthouseAerie_SetUpBeacon(void) {
   FieldActor_SetSpritePriority(ACTOR_BEACON_FIRE, 1);
   object = Actor_Get(ACTOR_BEACON_FIRE);
   object->motionFlags = ACTOR_FLOATS;
-  object->y.fixed = px(112);
+  object->y.fixed = toFIXED(112);
   Actor_SetSpriteColorMode(object, 5);
   Actor_SetSpriteFlags(object, 0);
   object->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   FieldActor_SetSpritePriority(ACTOR_BEACON_GLOW, 2);
   object = Actor_Get(ACTOR_BEACON_GLOW);
   object->motionFlags = ACTOR_FLOATS;
-  object->y.fixed = px(112);
-  object->scaleX = Q16_ONE * 13 / 10;
-  object->scaleY = Q16_ONE * 13 / 10;
+  object->y.fixed = toFIXED(112);
+  object->scaleX = FIXED_ONE * 13 / 10;
+  object->scaleY = FIXED_ONE * 13 / 10;
   Actor_SetSpriteColorMode(object, 5);
   Actor_SetSpriteFlags(object, 0);
   object->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
@@ -388,10 +388,10 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
 
   if (anchor != NULL &&
       (phase = gMarsLighthouseAerie_BeaconFlameFrame & 15) == 0) {
-    object =
-        FieldActor_Create(SPRITE_PARTICLE, anchor->x.fixed + px(8),
-                          anchor->y.fixed + offset + px(8), anchor->z.fixed);
-    offset = (offset / px(6)) << 16;
+    object = FieldActor_Create(SPRITE_PARTICLE, anchor->x.fixed + toFIXED(8),
+                               anchor->y.fixed + offset + toFIXED(8),
+                               anchor->z.fixed);
+    offset = (offset / toFIXED(6)) << 16;
     if (object != NULL) {
 
       sprite = object->sprite;
@@ -420,10 +420,10 @@ void MarsLighthouseAerie_SwingBeaconFlame(struct Actor *object) {
 
   object->x.fixed =
       parent->x.fixed + Trig_Cos(angle) * (object->speedLimit + 28);
-  object->z.fixed = (Math_Sin(angle) << 4) + px(264);
+  object->z.fixed = (Math_Sin(angle) << 4) + toFIXED(264);
   object->targetX = object->x.fixed;
   object->targetZ = object->z.fixed;
-  if (object->z.fixed < px(264))
+  if (object->z.fixed < toFIXED(264))
     ((struct FieldSprite *)object->sprite)->priority = 2;
   else
     ((struct FieldSprite *)object->sprite)->priority = 1;
@@ -653,8 +653,8 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_WISE_ONE), 0);
   actor = Actor_Get(ACTOR_WISE_ONE);
   actor->motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(Actor_Get(ACTOR_WISE_ONE), px(512),
-                                       px(120), px(208));
+  FieldActor_SetPositionAndResetMotion(Actor_Get(ACTOR_WISE_ONE), toFIXED(512),
+                                       toFIXED(120), toFIXED(208));
   FieldEvent_Wait(20);
   FieldCamera_SetSpeed(4.8);
   FieldCamera_MoveTo(512, CAMERA_KEEP, 216, 1);
@@ -1065,13 +1065,14 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   System_Wait(1);
   actor = Actor_Get(ACTOR_DOOM_DRAGON);
-  actor->scaleX = Q16_ONE / 16;
-  actor->scaleY = Q16_ONE / 16;
+  actor->scaleX = FIXED_ONE / 16;
+  actor->scaleY = FIXED_ONE / 16;
   Actor_SetPosition(ACTOR_DOOM_DRAGON, 512, 280);
   System_Wait(1);
   motionFlags = &actor->motionFlags;
   *motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(actor, px(512), px(48), px(280));
+  FieldActor_SetPositionAndResetMotion(actor, toFIXED(512), toFIXED(48),
+                                       toFIXED(280));
   System_Wait(1);
   *motionFlags = 0;
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
@@ -1148,7 +1149,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_Interpolate(40);
   System_Wait(40);
-  actor->gravity = px(1) / 4;
+  actor->gravity = toFIXED(1) / 4;
   *motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldEvent_Wait(30);
   Event_PlaySound(SE_BANE_ESCAPE);
@@ -1246,8 +1247,8 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(ACTOR_DOOM_DRAGON, 2);
   actor->motionFlags = 0;
-  actor->x.fixed -= px(4);
-  actor->z.fixed += px(16);
+  actor->x.fixed -= toFIXED(4);
+  actor->z.fixed += toFIXED(16);
   Actor_SetAnimation(ACTOR_DRAGON_HEAD_B, 2);
   Actor_SetAnimation(ACTOR_DRAGON_HEAD_C, 3);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -1259,7 +1260,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   leader += offsetof(struct MainRoutineWork, leaderActorId);
   leaderId = *(s32 *)leader;
   facing = FACING_NORTH;
-  Actor_SetPositionAndFacing(leaderId, px(504), px(320), facing);
+  Actor_SetPositionAndFacing(leaderId, toFIXED(504), toFIXED(320), facing);
   System_Wait(1);
   PaletteFade_ApplySource(RGB(0, 0, 0), PALETTES_ALL);
   PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
@@ -1452,8 +1453,8 @@ L_0200a47a:
   actor = Actor_Get(ACTOR_FREED_KYLE);
   actor->update = NULL;
   System_Wait(1);
-  actor->scaleX = Q16_ONE;
-  actor->scaleY = Q16_ONE;
+  actor->scaleX = FIXED_ONE;
+  actor->scaleY = FIXED_ONE;
   Actor_RunRepeatedMotion(ACTOR_FREED_KYLE, 2);
   Event_ShowMessage(ACTOR_FREED_KYLE, 0);
   Actor_ShowEmote(ACTOR_ISAAC_STAND_IN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1479,13 +1480,13 @@ L_0200a47a:
   actor = Actor_Get(ACTOR_FREED_JENNAS_MOTHER);
   actor->update = NULL;
   System_Wait(1);
-  actor->scaleX = Q16_ONE;
-  actor->scaleY = Q16_ONE;
+  actor->scaleX = FIXED_ONE;
+  actor->scaleY = FIXED_ONE;
   actor = Actor_Get(ACTOR_FREED_JENNAS_FATHER);
   actor->update = NULL;
   System_Wait(1);
-  actor->scaleX = Q16_ONE;
-  actor->scaleY = Q16_ONE;
+  actor->scaleX = FIXED_ONE;
+  actor->scaleY = FIXED_ONE;
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FREED_JENNAS_FATHER, 1);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_FREED_JENNAS_FATHER, 0);
@@ -1790,13 +1791,13 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_SetPosition(ACTOR_HAMA, 568, 274);
   Actor_Get(ACTOR_JENNAS_MOTHER_TALK_SPOT)->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(Actor_Get(ACTOR_JENNAS_MOTHER_TALK_SPOT),
-                                       px(492), px(96), px(284));
+                                       toFIXED(492), toFIXED(96), toFIXED(284));
   Actor_Get(ACTOR_JENNAS_FATHER_TALK_SPOT)->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(Actor_Get(ACTOR_JENNAS_FATHER_TALK_SPOT),
-                                       px(510), px(96), px(295));
+                                       toFIXED(510), toFIXED(96), toFIXED(295));
   Actor_Get(ACTOR_KYLE_TALK_SPOT)->motionFlags = 0;
-  FieldActor_SetPositionAndResetMotion(Actor_Get(ACTOR_KYLE_TALK_SPOT), px(540),
-                                       px(96), px(300));
+  FieldActor_SetPositionAndResetMotion(Actor_Get(ACTOR_KYLE_TALK_SPOT),
+                                       toFIXED(540), toFIXED(96), toFIXED(300));
   System_Wait(1);
   Event_SetFlag(FLAG_CANNOT_SAVE_HERE);
   Event_SetFlag(FLAG_RETREAT_BLOCKED);
@@ -1839,7 +1840,7 @@ void Orbs_SpawnRising(void) {
     random = Random16();
     effect = (struct OrbitEffect *)FieldActor_Create(
         SPRITE_PARTICLE, center->x.fixed,
-        (s32)((u32)(random << 8) >> 16 << 16) + center->y.fixed - px(28),
+        (s32)((u32)(random << 8) >> 16 << 16) + center->y.fixed - toFIXED(28),
         center->z.fixed);
   } else {
     u32 random;
@@ -1847,7 +1848,7 @@ void Orbs_SpawnRising(void) {
     random = Random16();
     effect = (struct OrbitEffect *)FieldActor_Create(
         SPRITE_PARTICLE, center->x.fixed,
-        (s32)((u32)(random << 6) >> 16 << 16) + center->y.fixed - px(28),
+        (s32)((u32)(random << 6) >> 16 << 16) + center->y.fixed - toFIXED(28),
         center->z.fixed);
   }
   if (effect != 0) {
@@ -1900,11 +1901,11 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
     MapGrid_SetShake(1, 1, 1);
     break;
   case 24:
-    anchor->x.fixed = px(512);
-    anchor->y.fixed = -px(360);
-    anchor->z.fixed = px(204);
-    anchor->scaleX = Q16_ONE;
-    anchor->scaleY = Q16_ONE;
+    anchor->x.fixed = toFIXED(512);
+    anchor->y.fixed = -toFIXED(360);
+    anchor->z.fixed = toFIXED(204);
+    anchor->scaleX = FIXED_ONE;
+    anchor->scaleY = FIXED_ONE;
     SceneActor_ParkRecord(anchor);
     Actor_SetScript(ACTOR_BEACON_FIRE, gMarsLighthouseAerie_BeaconFireScript);
     break;
@@ -1919,18 +1920,18 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
       if ((gFrameCount & 7) == 0)
         Event_PlaySound(SE_GLITTER);
       spawn = 1;
-      anchor->y.fixed += px(9) / 4;
+      anchor->y.fixed += toFIXED(9) / 4;
     }
     break;
   case 26:
     gMarsLighthouseAerie_BeaconFireFrame--;
-    if (anchor->y.fixed > px(20)) {
+    if (anchor->y.fixed > toFIXED(20)) {
       gMarsLighthouseAerie_BeaconFireFrame = 999;
       FieldTask_Remove(MarsLighthouseAerie_RaiseBeaconFire);
     } else {
       if ((gFrameCount & 7) == 0)
         Event_PlaySound(SE_GLITTER);
-      anchor->y.fixed += px(9) / 4;
+      anchor->y.fixed += toFIXED(9) / 4;
       spawn = 1;
     }
     break;
@@ -1970,9 +1971,9 @@ void MarsLighthouseAerie_StepBackLeft(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   FieldActor_SetSpritePriority(id, 1);
-  FieldActor_SetPositionAndResetMotion(object, object->x.fixed - px(16),
+  FieldActor_SetPositionAndResetMotion(object, object->x.fixed - toFIXED(16),
                                        object->y.fixed,
-                                       object->z.fixed + px(32));
+                                       object->z.fixed + toFIXED(32));
 }
 
 /// The actor steps back from the beam, to the right.
@@ -1980,9 +1981,9 @@ void MarsLighthouseAerie_StepBackRight(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   FieldActor_SetSpritePriority(id, 1);
-  FieldActor_SetPositionAndResetMotion(object, object->x.fixed + px(16),
+  FieldActor_SetPositionAndResetMotion(object, object->x.fixed + toFIXED(16),
                                        object->y.fixed,
-                                       object->z.fixed + px(32));
+                                       object->z.fixed + toFIXED(32));
 }
 
 /// The actor keeps to the ground as the beacon's beam rises.
@@ -2039,7 +2040,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   anchor = Actor_Get(ACTOR_FELIX);
   y = anchor->y.fixed;
   x = anchor->x.fixed;
-  y += px(8);
+  y += toFIXED(8);
   z = anchor->z.fixed;
   spawned = FieldActor_Create(0x1e9, x, y, z);
   created = spawned;
@@ -2055,9 +2056,9 @@ void MarsLighthouseAerie_LightBeacon(void) {
     object->retainSpriteCache = 1;
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpriteFlags(created, 0);
-    object->speedLimit = px(2) / 5;
-    object->acceleration = px(1) / 20;
-    object->gravity = px(1) / 2;
+    object->speedLimit = toFIXED(2) / 5;
+    object->acceleration = toFIXED(1) / 20;
+    object->gravity = toFIXED(1) / 2;
     block = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Item_LoadIcon(ITEM_MARS_STAR);
     tiles = (block + 0x400);
@@ -2087,16 +2088,18 @@ void MarsLighthouseAerie_LightBeacon(void) {
   MapGrid_SetShake(1, 1, 1);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_BOTTOM), 7);
   bottomBeam = Actor_Get(ACTOR_BEAM_BOTTOM);
-  bottomBeam->scaleX = Q16_ONE / 10;
-  bottomBeam->scaleY = -Q16_ONE;
+  bottomBeam->scaleX = FIXED_ONE / 10;
+  bottomBeam->scaleY = -FIXED_ONE;
   bottomBeam->motionFlags = zero;
-  FieldActor_SetPositionAndResetMotion(bottomBeam, px(512), px(64), px(204));
+  FieldActor_SetPositionAndResetMotion(bottomBeam, toFIXED(512), toFIXED(64),
+                                       toFIXED(204));
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_LOWER), 7);
   lowerBeam = Actor_Get(ACTOR_BEAM_LOWER);
-  lowerBeam->scaleX = Q16_ONE / 10;
-  lowerBeam->scaleY = -Q16_ONE;
+  lowerBeam->scaleX = FIXED_ONE / 10;
+  lowerBeam->scaleY = -FIXED_ONE;
   lowerBeam->motionFlags = zero;
-  FieldActor_SetPositionAndResetMotion(lowerBeam, px(512), px(96), px(204));
+  FieldActor_SetPositionAndResetMotion(lowerBeam, toFIXED(512), toFIXED(96),
+                                       toFIXED(204));
   Task_AddFrame(Orbs_SpawnRising, TASK_PASS_VBLANK);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
@@ -2118,26 +2121,29 @@ void MarsLighthouseAerie_LightBeacon(void) {
   System_Wait(60);
   Event_PlaySound(SE_RUMBLE);
   Event_SetFlag(FLAG_BEACON_BROKE_THROUGH);
-  Actor_Get(ACTOR_BEAM_BOTTOM)->y.fixed = -px(56);
-  Actor_Get(ACTOR_BEAM_LOWER)->y.fixed = -px(24);
+  Actor_Get(ACTOR_BEAM_BOTTOM)->y.fixed = -toFIXED(56);
+  Actor_Get(ACTOR_BEAM_LOWER)->y.fixed = -toFIXED(24);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_MIDDLE), 7);
   middleBeam = Actor_Get(ACTOR_BEAM_MIDDLE);
-  middleBeam->scaleY = -Q16_ONE;
+  middleBeam->scaleY = -FIXED_ONE;
   middleBeam->scaleX = (Actor_Get(ACTOR_BEAM_BOTTOM)->scaleX);
   middleBeam->motionFlags = zero;
-  FieldActor_SetPositionAndResetMotion(middleBeam, px(512), px(8), px(204));
+  FieldActor_SetPositionAndResetMotion(middleBeam, toFIXED(512), toFIXED(8),
+                                       toFIXED(204));
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_UPPER), 7);
   upperBeam = Actor_Get(ACTOR_BEAM_UPPER);
-  upperBeam->scaleY = -Q16_ONE;
+  upperBeam->scaleY = -FIXED_ONE;
   upperBeam->scaleX = (Actor_Get(ACTOR_BEAM_BOTTOM)->scaleX);
   upperBeam->motionFlags = zero;
-  FieldActor_SetPositionAndResetMotion(upperBeam, px(512), px(40), px(204));
+  FieldActor_SetPositionAndResetMotion(upperBeam, toFIXED(512), toFIXED(40),
+                                       toFIXED(204));
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_TOP), 7);
   topBeam = Actor_Get(ACTOR_BEAM_TOP);
-  topBeam->scaleY = -Q16_ONE;
+  topBeam->scaleY = -FIXED_ONE;
   topBeam->scaleX = (Actor_Get(ACTOR_BEAM_BOTTOM)->scaleX);
   topBeam->motionFlags = zero;
-  FieldActor_SetPositionAndResetMotion(topBeam, px(512), px(72), px(204));
+  FieldActor_SetPositionAndResetMotion(topBeam, toFIXED(512), toFIXED(72),
+                                       toFIXED(204));
   MapGrid_CopyCellsTo(106, 36, 87, 7, 17, firstBeam);
   MapGrid_CopyCellsTo(42, 98, 23, 69, 17, firstBeam);
   MapGrid_CopyCellAttributes(0, 40, 18, 20, firstBeam, 10);
@@ -2156,7 +2162,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   owner = gMainRoutineWork.leaderActorId;
   {
     s32 facing = FACING_NORTHEAST;
-    Actor_SetPositionAndFacing(owner, px(484), px(312), facing);
+    Actor_SetPositionAndFacing(owner, toFIXED(484), toFIXED(312), facing);
   }
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   System_Wait(1);
@@ -2179,7 +2185,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   System_Wait(120);
   MapGrid_SetShake(1, 1, 1);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  Actor_Get(ACTOR_BEAM_BOTTOM)->scaleY = Q16_ONE / 50;
+  Actor_Get(ACTOR_BEAM_BOTTOM)->scaleY = FIXED_ONE / 50;
   Actor_SetScript(ACTOR_BEAM_LOWER, gMarsLighthouseAerie_BeamShootUpScript);
   Actor_SetScript(ACTOR_BEAM_MIDDLE, gMarsLighthouseAerie_BeamShootUpScript);
   Actor_SetScript(ACTOR_BEAM_UPPER, gMarsLighthouseAerie_BeamShootUpScript);
@@ -2513,11 +2519,12 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   FieldActor_SetSpritePriority(ACTOR_BEAM_BOTTOM, 2);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_BOTTOM), 7);
   actor = Actor_Get(ACTOR_BEAM_BOTTOM);
-  ((struct Actor *)actor)->scaleY = -Q16_ONE;
-  ((struct Actor *)actor)->scaleX = Q16_ONE / 10;
+  ((struct Actor *)actor)->scaleY = -FIXED_ONE;
+  ((struct Actor *)actor)->scaleX = FIXED_ONE / 10;
   ((struct Actor *)actor)->motionFlags = 0;
   ((struct Actor *)actor)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  FieldActor_SetPositionAndResetMotion(actor, px(512), px(64), px(204));
+  FieldActor_SetPositionAndResetMotion(actor, toFIXED(512), toFIXED(64),
+                                       toFIXED(204));
   i = 0;
 L_0200c66c:
   if (i == 20) {
@@ -3043,7 +3050,7 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object) {
             sprite->depth = BattleEffect_GetObjectDepth(object) - 1;
           } else {
             sprite->depth = BattleEffect_GetObjectDepth(object) + 1;
-            sprite->y -= px(1);
+            sprite->y -= toFIXED(1);
             sprite->scaleY = -sprite->scaleY;
           }
           EffectSprite_Draw(sprite);
@@ -3198,8 +3205,8 @@ u32 gMarsLighthouseAerie_KradenApproachScript[] =
   };
 
 s32 gMarsLighthouseAerie_VoiceFadeScript[] = {
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 64),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
     SC_WAIT(1),
     SC_LOOP(64, SC_TOP),
     SC_POSITION_ORIGIN,
@@ -3208,8 +3215,8 @@ s32 gMarsLighthouseAerie_VoiceFadeScript[] = {
 };
 
 s32 gMarsLighthouseAerie_DoomDragonRiseScript[] = {
-    SC_ADD(SW_SCALE_X, Q16_ONE / 128),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 128),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 128),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 128),
     SC_ADD(SW_Y, 0x2000),
     SC_WAIT(1),
     SC_LOOP(128, SC_TOP),
@@ -3344,7 +3351,7 @@ s32 gMarsLighthouseAerie_BeamNarrowScript[] = {
   };
 
 u32 gMarsLighthouseAerie_BeamShootUpScript[] = {
-    SC_ADD(SW_Y, px(4)),
+    SC_ADD(SW_Y, toFIXED(4)),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
     SC_POSITION_ORIGIN,
@@ -3353,7 +3360,7 @@ u32 gMarsLighthouseAerie_BeamShootUpScript[] = {
 };
 
 u32 gMarsLighthouseAerie_BeamRiseScript[] = {
-    SC_ADD(SW_Y, px(2)),
+    SC_ADD(SW_Y, toFIXED(2)),
     SC_WAIT(1),
     SC_LOOP(160, SC_TOP),
     SC_POSITION_ORIGIN,
@@ -3366,7 +3373,7 @@ s32 gMarsLighthouseAerie_BeaconSparkScript[] = {
     SC_SET(SW_SCALE_Y, 0xcccc),
     SC_ANIMATION(1),
     SC_LABEL(1),
-    SC_ADD(SW_Y, -px(1)),
+    SC_ADD(SW_Y, -toFIXED(1)),
     SC_WAIT(1),
     SC_LOOP(16, SC_TO(1)),
     SC_POSITION_ORIGIN,
@@ -3379,7 +3386,7 @@ s32 gMarsLighthouseAerie_WatchGoldenSunRiseScript[] = {
     SC_WAIT(1),
     SC_LOOP(8, SC_TOP),
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 16),
     SC_WAIT(1),
     SC_LOOP(8, SC_TO(1)),
     SC_LOOP(SC_FOREVER, SC_TOP),
@@ -3524,7 +3531,7 @@ u32 gOrbs_RisingScript[] = {
       SC_SET(SW_SCALE_Y, 0xcccc),                                              
       SC_ANIMATION(1),                                                               
       SC_LABEL(1),                                                             
-      SC_ADD(SW_Y, px(1)),                                                 
+      SC_ADD(SW_Y, toFIXED(1)),                                                 
       SC_WAIT(1),                                                              
       SC_LOOP(16, SC_TO(1)),                                                   
       SC_POSITION(0, 0, 0),                                                    

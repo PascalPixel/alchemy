@@ -52,10 +52,10 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     s32 angle;
     s32 speed;
 
-    angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
+    angle = (Random16() & 0x7fff) + DEGtoANG(90);
     speed = (Random16() & 0x1ff) + 0x80;
-    CHIPS[i].x = px((spawn[0] / 2 + (Random16() & 0xf)) - 8);
-    CHIPS[i].y = px(spawn[1] + 8);
+    CHIPS[i].x = INTtoFIXED((spawn[0] / 2 + (Random16() & 0xf)) - 8);
+    CHIPS[i].y = INTtoFIXED(spawn[1] + 8);
     CHIPS[i].velocityX = (Trig_Sin(angle) * speed) >> 9;
     CHIPS[i].velocityY = (Trig_Cos(angle) * speed) >> 6;
     CHIPS[i].z = Random16() & 0x7f;
@@ -82,8 +82,8 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       s32 y;
 
       orbit = frame << 11;
-      x = (Q_16_16_TO_INT(-Trig_Sin(orbit) << 2)) + screen[0] / 2 - 10;
-      y = (Q_16_16_TO_INT(Trig_Cos(orbit) << 1)) + screen[1] - 22;
+      x = (FIXEDtoINT(-Trig_Sin(orbit) << 2)) + screen[0] / 2 - 10;
+      y = (FIXEDtoINT(Trig_Cos(orbit) << 1)) + screen[1] - 22;
       // Never true in 64 frames.
       if (frame > 69)
         y = (y - frame * 2) + 138;
@@ -109,7 +109,7 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
                     Q_16_16_UPPER_HALF(chip->y) -
                         (height = gHail_PictureHeights[cel]) / 2,
                     width, height);
-        BattleEffectKernels_IntegrateVector3(chip, 63, px(1) / 16);
+        BattleEffectKernels_IntegrateVector3(chip, 63, toFIXED(1) / 16);
       }
     }
 
@@ -227,10 +227,10 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
     for (i = 0; i != 8; i++) {
       struct Particle *rock = &work->particles[i];
 
-      SET_POSITION(rock, actor->x, px(66), actor->z);
+      SET_POSITION(rock, actor->x, toFIXED(66), actor->z);
       rock->velocityX = (i * 0x500000) >> 5;
-      rock->velocityY = (s32)px((Random16() & 127) - 64) >> 6;
-      rock->velocityZ = (s32)px((Random16() & 255) - 127) >> 5;
+      rock->velocityY = (s32)INTtoFIXED((Random16() & 127) - 64) >> 6;
+      rock->velocityZ = (s32)INTtoFIXED((Random16() & 255) - 127) >> 5;
       if (rock->x > 0)
         rock->velocityX = -rock->velocityX;
       rock->variant = 1;
@@ -245,8 +245,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
       // off from frame 17; the first four frames add a bright copy.
       if (args->prelude == 1) {
         s32 angle = frame << 11;
-        s32 x = (Q_16_16_TO_INT(-Trig_Sin(angle) << 2)) + screen[0] / 2 - 10;
-        s32 y = (Q_16_16_TO_INT(Trig_Cos(angle) << 1)) + screen[1] - 22;
+        s32 x = (FIXEDtoINT(-Trig_Sin(angle) << 2)) + screen[0] / 2 - 10;
+        s32 y = (FIXEDtoINT(Trig_Cos(angle) << 1)) + screen[1] - 22;
 
         if (frame > 16)
           y = y - frame * 2 + 32;
@@ -276,8 +276,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
         }
       }
 
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
       for (i = 0; i != ROCK_COUNT; i++) {
         struct Particle *rock = &work->particles[i];
 
@@ -342,14 +342,14 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
           // and slowed until frame 2i + 85; below y 20 it hits.
           if (frame > i * 2 + 16) {
             rock->velocityX += (target->x - rock->x) >> 8;
-            rock->velocityY += (px(20) - rock->y) >> 8;
+            rock->velocityY += (toFIXED(20) - rock->y) >> 8;
             rock->velocityZ += (target->z - rock->z) >> 8;
             if (frame < i * 2 + 85) {
               rock->velocityX = rock->velocityX * 60 / DAMPING_SCALE;
               rock->velocityY = rock->velocityY * 60 / DAMPING_SCALE;
               rock->velocityZ = rock->velocityZ * 60 / DAMPING_SCALE;
             }
-            if (rock->y < px(20)) {
+            if (rock->y < toFIXED(20)) {
               work->shakeFrames = 8;
               rock->variant = 0;
               Sound_PlayFar(SE_HEAVY_IMPACT);

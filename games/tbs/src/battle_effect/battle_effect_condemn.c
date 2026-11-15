@@ -71,11 +71,11 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   }
   drawReaper = 1;
   if (work->args->side == EFFECT_SIDE_PARTY) {
-    swayCenter[0] = -px(80);
+    swayCenter[0] = -toFIXED(80);
   } else {
-    swayCenter[0] = px(112);
+    swayCenter[0] = toFIXED(112);
   }
-  swayCenter[1] = -px(32);
+  swayCenter[1] = -toFIXED(32);
   for (frame = 0; frame != CONDEMN_FRAMES; frame++) {
     s32 spin;
     s32 screenX;
@@ -87,21 +87,19 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     s32 *scanline;
 
     spin = frame * (TRIG_TURN / 128);
-    screenX =
-        WHOLE_PIXELS(swayCenter[0]) + WHOLE_PIXELS(Trig_Sin(spin) * 16) + 48;
-    screenY =
-        WHOLE_PIXELS(swayCenter[1]) + WHOLE_PIXELS(Trig_Cos(spin) * 4) + 16;
+    screenX = FIXEDtoINT(swayCenter[0]) + FIXEDtoINT(Trig_Sin(spin) * 16) + 48;
+    screenY = FIXEDtoINT(swayCenter[1]) + FIXEDtoINT(Trig_Cos(spin) * 4) + 16;
     if (frame == CONDEMN_SWING_FRAME) {
       Sound_PlayFar(SE_HEAVY_IMPACT);
     }
     // The second pass, lower and further across.
     if (frame == 32) {
       if (work->args->side == EFFECT_SIDE_PARTY) {
-        swayCenter[0] = -px(32);
+        swayCenter[0] = -toFIXED(32);
       } else {
-        swayCenter[0] = px(72);
+        swayCenter[0] = toFIXED(72);
       }
-      swayCenter[1] = px(24);
+      swayCenter[1] = toFIXED(24);
       drawReaper = 0;
     }
     if (frame == 33) {
@@ -112,9 +110,9 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     if (frame == 64) {
       Projection_ScaledUnit(work->args->targets[0], position);
       if (work->args->side == EFFECT_SIDE_PARTY) {
-        swayCenter[0] = px(position[0].x - 128);
+        swayCenter[0] = INTtoFIXED(position[0].x - 128);
       } else {
-        swayCenter[0] = px(position[0].x - 64);
+        swayCenter[0] = INTtoFIXED(position[0].x - 64);
       }
       swayCenter[1] = 0;
       drawReaper = 0;
@@ -214,9 +212,9 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     // Knock the target back.
     if (frame == CONDEMN_SWING_FRAME) {
       target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-      target->velocityY = px(1);
-      target->acceleration = px(2);
-      target->speedLimit = px(2);
+      target->velocityY = toFIXED(1);
+      target->acceleration = toFIXED(2);
+      target->speedLimit = toFIXED(2);
       target->gravity = 0;
       target->steeringFlags = 0;
       target->snapToTarget = 0;

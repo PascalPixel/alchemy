@@ -251,20 +251,20 @@ static void Imil_RunIceSlide(void);
 static s32 Imil_UpdateShiver(struct Actor *actor) {
   switch (actor->timer) {
   case 6:
-    actor->scaleX -= Q16_ONE / 4;
-    actor->scaleY += Q16_ONE / 8;
+    actor->scaleX -= FIXED_ONE / 4;
+    actor->scaleY += FIXED_ONE / 8;
     break;
   case 4:
-    actor->scaleX += Q16_ONE / 8;
-    actor->scaleY -= Q16_ONE / 16;
+    actor->scaleX += FIXED_ONE / 8;
+    actor->scaleY -= FIXED_ONE / 16;
     break;
   case 2:
-    actor->scaleX += Q16_ONE / 16;
-    actor->scaleY -= Q16_ONE / 32;
+    actor->scaleX += FIXED_ONE / 16;
+    actor->scaleY -= FIXED_ONE / 32;
     break;
   case 0:
-    actor->scaleX += Q16_ONE / 16;
-    actor->scaleY -= Q16_ONE / 32;
+    actor->scaleX += FIXED_ONE / 16;
+    actor->scaleY -= FIXED_ONE / 32;
     if ((s16)actor->userValue != 0) {
       actor->timer = (u32)Random_Next() % 40 + 40;
     } else {
@@ -298,9 +298,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
       gImil_RoomActorPlacements[ACTOR_RESTAURANT_OWNER - ACTOR_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY;
       gImil_RoomActorPlacements[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED].x =
-          px(182);
+          toFIXED(182);
       gImil_RoomActorPlacements[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED].z =
-          px(564);
+          toFIXED(564);
       gImil_RoomActorPlacements[ACTOR_SICK_OLD_MAN - ACTOR_FIRST_PLACED]
           .movement = MOVEMENT_TYPE_WANDER;
     }
@@ -839,7 +839,7 @@ s32 Scene_Initialize(void) {
         Actor_Get(ACTOR_ARMOR_MERCHANT)->collisionFlags |= ACTOR_NEAR_TALK;
         MapGrid_CopyCellsTo(9, 125, 28, 88, 3, 3);
       } else {
-        Actor_Get(ACTOR_WEAPON_MERCHANT)->scaleX = -Q16_ONE;
+        Actor_Get(ACTOR_WEAPON_MERCHANT)->scaleX = -FIXED_ONE;
         Actor_SetSpriteFlags(Actor_Get(ACTOR_WEAPON_MERCHANT), 0);
         Actor_SetAnimation(ACTOR_WEAPON_MERCHANT,
                            OLD_MAN_WITH_CANE_ANIMATION_LIE_IN_BED);
@@ -861,7 +861,7 @@ s32 Scene_Initialize(void) {
         Actor_SetSpritePriority(ACTOR_ITEM_MERCHANTS_DAUGHTER, 2);
         Actor_Get(ACTOR_ITEM_MERCHANTS_DAUGHTER)->collisionFlags |=
             ACTOR_NEAR_TALK;
-        Actor_Get(ACTOR_ITEM_MERCHANT)->scaleX = -Q16_ONE;
+        Actor_Get(ACTOR_ITEM_MERCHANT)->scaleX = -FIXED_ONE;
         Actor_SetSpriteFlags(Actor_Get(ACTOR_ITEM_MERCHANT), 0);
         Actor_SetAnimation(ACTOR_ITEM_MERCHANT, IMIL_ANIMATION_LIE_IN_BED);
       }
@@ -1066,9 +1066,9 @@ UNUSED static void Imil_UpdateCountdownArc(struct Actor *actor) {
     if (t != 0) {
       b = buf;
       b[0] = gImil_ArcOrigin[0];
-      b[1] = gImil_ArcOrigin[1] + px(8);
+      b[1] = gImil_ArcOrigin[1] + toFIXED(8);
       b[2] = gImil_ArcOrigin[2];
-      Vector_AddPolarOffset(px(t), (t << 11) + (s16)actor->userValue, b);
+      Vector_AddPolarOffset(toFIXED(t), (t << 11) + (s16)actor->userValue, b);
       actor->x.fixed = b[0];
       actor->y.fixed = b[1];
       actor->z.fixed = b[2];
@@ -1085,12 +1085,13 @@ UNUSED static void Imil_SwayAndSpark(struct Actor *actor) {
   struct Actor *spark;
   s32 radius;
 
-  actor->x.fixed =
-      gImil_ArcOrigin[0] + Iwram_MulQ16(px(6), Trig_Sin(actor->timer << 10));
+  actor->x.fixed = gImil_ArcOrigin[0] +
+                   Iwram_MulFX(toFIXED(6), Trig_Sin(actor->timer << 10));
   actor->timer++;
   actor->timer = (actor->timer + 64) % 64;
   if (gFrameCount % 3 == 0) {
-    SET_VECTOR(pos, actor->x.fixed, actor->y.fixed + px(2), actor->z.fixed);
+    SET_VECTOR(pos, actor->x.fixed, actor->y.fixed + toFIXED(2),
+               actor->z.fixed);
     radius = Random_Next();
     Vector_AddPolarOffset(radius * 6, Random_Next(), pos);
     spark = FieldActor_Create(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
@@ -1098,8 +1099,8 @@ UNUSED static void Imil_SwayAndSpark(struct Actor *actor) {
       spark->sprite->image.priority = 0;
       Actor_SetSpriteFlags(spark, 0);
       Actor_SelectAnimation(spark, 1);
-      spark->scaleX = 3 * Q16_ONE / 5;
-      spark->scaleY = 3 * Q16_ONE / 5;
+      spark->scaleX = 3 * FIXED_ONE / 5;
+      spark->scaleY = 3 * FIXED_ONE / 5;
       spark->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       spark->motionFlags = 0;
       Actor_SetSpriteColor(spark, SPRITE_COLOR_BLUE_TINT);
@@ -1141,8 +1142,8 @@ static void Imil_InitializeRisingEffect(struct Actor *work) {
   Actor_SetSpriteColor(work, SPRITE_COLOR_BLUE_TINT);
   Actor_SetSpriteFlags(work, 0);
 
-  work->scaleX = Q16_ONE / 2;
-  work->scaleY = Q16_ONE / 2;
+  work->scaleX = FIXED_ONE / 2;
+  work->scaleY = FIXED_ONE / 2;
 }
 
 /// Moves and enlarges an ambient effect, then releases it when its timer
@@ -1151,9 +1152,9 @@ static void Imil_UpdateRisingEffect(struct Actor *actor) {
   struct FieldEffect *effect = (struct FieldEffect *)actor;
 
   effect->x += (s16)effect->spin << 8;
-  effect->y += px(1) / 2;
-  effect->scaleX += 3 * Q16_ONE / 100;
-  effect->scaleY += 3 * Q16_ONE / 100;
+  effect->y += toFIXED(1) / 2;
+  effect->scaleX += 3 * FIXED_ONE / 100;
+  effect->scaleY += 3 * FIXED_ONE / 100;
   effect->spin += 2;
   if (--effect->countdown == 0) {
     Actor_Release(actor);
@@ -1176,28 +1177,28 @@ static void Imil_SpawnChimneySmoke(void) {
   struct Actor *actor;
 
   if (gFrameCount % 60 == 0) {
-    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(463), 0,
-                                              px(292));
+    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, toFIXED(463), 0,
+                                              toFIXED(292));
     Imil_StartRisingEffect(actor);
   }
   if ((gFrameCount + 30) % 60 == 0) {
-    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(320), px(32),
-                                              px(356));
+    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, toFIXED(320),
+                                              toFIXED(32), toFIXED(356));
     Imil_StartRisingEffect(actor);
   }
   if ((gFrameCount + 10) % 60 == 0) {
-    actor =
-        (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(118), 0, px(70));
+    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, toFIXED(118), 0,
+                                              toFIXED(70));
     Imil_StartRisingEffect(actor);
   }
   if ((gFrameCount + 50) % 60 == 0) {
-    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(342), 0,
-                                              px(124));
+    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, toFIXED(342), 0,
+                                              toFIXED(124));
     Imil_StartRisingEffect(actor);
   }
   if ((gFrameCount + 80) % 60 == 0) {
-    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(431), 0,
-                                              px(171));
+    actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, toFIXED(431), 0,
+                                              toFIXED(171));
     Imil_StartRisingEffect(actor);
   }
 }
@@ -1228,7 +1229,8 @@ static void Imil_UpdateFootprints(void) {
     GameFlag_Clear(otherZoneFlag);
     return;
   }
-  if (x > px(232) && actor->y.fixed > px(30) && actor->z.fixed > px(212)) {
+  if (x > toFIXED(232) && actor->y.fixed > toFIXED(30) &&
+      actor->z.fixed > toFIXED(212)) {
     grid = gMapGridWork[0];
     grid->footprints = 0;
     Import_GameFlagSet(zoneFlag);
@@ -1485,29 +1487,29 @@ static void Imil_RunIceSlide(void) {
 
     Event_Start();
 
-    probe.x = (subject->x.fixed & FIELD_CELL_MASK) + px(8);
+    probe.x = (subject->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
     probe.y = subject->y.fixed;
-    probe.z = (subject->z.fixed & FIELD_CELL_MASK) + px(8);
+    probe.z = (subject->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
     z = probe.z;
     x = probe.x;
     startBehavior = MapGrid_GetCellBehaviorAt(subject->layer, x, z);
-    Vector_AddPolarOffset(px(16), heading, &probe);
+    Vector_AddPolarOffset(toFIXED(16), heading, &probe);
 
     nextBehavior = MapGrid_GetCellBehaviorAt(subject->layer, probe.x, probe.z);
     if (nextBehavior == CELL_BEHAVIOR_WALL ||
         MapGrid_GetTerrainHeight(subject->layer, probe.x, probe.z) -
                 subject->y.fixed >
-            px(8)) {
+            toFIXED(8)) {
       subject->facing = heading;
       goto tail;
     }
 
     probe.x = x;
     probe.z = z;
-    subject->speedLimit = px(2);
-    subject->acceleration = px(1) / 10;
+    subject->speedLimit = toFIXED(2);
+    subject->acceleration = toFIXED(1) / 10;
     subject->timer = 0;
-    FieldActor_SetMoveTargetFixed(subject, x, subject->y.fixed, z);
+    FieldActor_SetMoveTargetFX(subject, x, subject->y.fixed, z);
     Actor_SelectAnimation(subject, ANIM_WALK);
     Actor_SetAnimationSpeed(subject, 48);
     Actor_WaitForMove(subject);
@@ -1521,23 +1523,23 @@ static void Imil_RunIceSlide(void) {
       }
       if (MapGrid_GetTerrainHeight(subject->layer, probe.x, probe.z) -
               subject->y.fixed >
-          px(8)) {
+          toFIXED(8)) {
         break;
       }
       x = probe.x;
       z = probe.z;
-      subject->speedLimit = px(2);
-      subject->acceleration = px(1) / 10;
-      FieldActor_SetMoveTargetFixed(subject, probe.x, probe.y, probe.z);
+      subject->speedLimit = toFIXED(2);
+      subject->acceleration = toFIXED(1) / 10;
+      FieldActor_SetMoveTargetFX(subject, probe.x, probe.y, probe.z);
       Actor_WaitForMove(subject);
       if (nextBehavior != startBehavior) {
         goto blocked;
       }
     }
 
-    subject->speedLimit = px(2);
-    subject->acceleration = px(1);
-    FieldActor_SetMoveTargetFixed(subject, x, subject->y.fixed, z);
+    subject->speedLimit = toFIXED(2);
+    subject->acceleration = toFIXED(1);
+    FieldActor_SetMoveTargetFX(subject, x, subject->y.fixed, z);
     Actor_WaitForMove(subject);
     wait(2);
   }
@@ -1546,7 +1548,7 @@ blocked:
   subject->update = NULL;
   subject->steeringFlags |= 1;
 
-  subject->acceleration = px(1) / 4;
+  subject->acceleration = toFIXED(1) / 4;
 
 tail:
   wait(10);
@@ -1567,18 +1569,18 @@ s16 gImil_SwayHeadings[] = {
 };
 
 s32 gImil_FreezingYoungManScript[] = {
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_ADD(SW_SCALE_X, -5 * Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 16),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
+    SC_ADD(SW_SCALE_X, -5 * FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 16),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 32),
     SC_ADD(SW_SCALE_Y, -2048),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 64),
+    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
     SC_ADD(SW_SCALE_Y, -1024),
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, 5 * Q16_ONE / 64),
+    SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
     SC_ADD(SW_SCALE_Y, -1024),
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
@@ -1609,32 +1611,32 @@ s32 gImil_LeaderStepAsideScript[] = {
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
-    SC_ADD(SW_SCALE_Y, 3 * Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, 3 * FIXED_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, -3 * Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -3 * FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, -3 * Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -3 * FIXED_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, -3 * Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -3 * FIXED_ONE / 32),
     SC_WAIT(4),
     SC_END,
 };
 
 s32 gImil_BobScript[] = {
-    SC_ADD(SW_SCALE_Y, 3 * Q16_ONE / 8),
+    SC_ADD(SW_SCALE_Y, 3 * FIXED_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, -3 * Q16_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -3 * FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, -3 * Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -3 * FIXED_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_Y, -3 * Q16_ONE / 32),
+    SC_ADD(SW_SCALE_Y, -3 * FIXED_ONE / 32),
     SC_WAIT(4),
     SC_LOOP(2, SC_TOP),
     SC_END,
 };
 
 s32 gImil_SparkScript[] = {
-    SC_ADD(SW_Y, -px(2) / 5),
+    SC_ADD(SW_Y, -toFIXED(2) / 5),
     SC_WAIT(1),
     SC_LOOP(72, SC_TOP),
     SC_RELEASE,

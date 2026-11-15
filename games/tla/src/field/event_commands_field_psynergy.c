@@ -30,15 +30,14 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
   struct MapCell *cells;
 
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    cells =
-        &((struct MapCell *)
-              Ram_MapBlocks)[((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)];
+    cells = &((struct MapCell *)Ram_MapBlocks)[((x / toFIXED(32)) & 31) +
+                                               (((z / toFIXED(32)) & 31) << 5)];
   } else {
     if (layer <= 2)
       cells = map->layers[layer].cells;
     else
       cells = (struct MapCell *)Ram_MapCellBuffer;
-    cells = &cells[x / px(16) + (z / px(16)) * 128];
+    cells = &cells[x / toFIXED(16) + (z / toFIXED(16)) * 128];
   }
   return cells;
 }
@@ -187,9 +186,9 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
   s32 dz = (*a - *b) >> 16;
   s32 radius = radius_a + radius_b;
 
-  if (dx > px(64) || dz > px(64))
+  if (dx > toFIXED(64) || dz > toFIXED(64))
     return -1;
-  if (dy > px(radius))
+  if (dy > INTtoFIXED(radius))
     return -1;
   if (dx * dx + dz * dz < radius * radius)
     return 1;
@@ -207,13 +206,14 @@ void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z) {
   if (scene->angle != TRIG_TURN * 3 / 4)
     Actor_SetSpritePriorityDirectFar(object, 0);
   start[0] = mainActor->x.fixed;
-  start[1] = mainActor->y.fixed + px(16);
+  start[1] = mainActor->y.fixed + toFIXED(16);
   start[2] = mainActor->z.fixed;
   do {
     SET_ACTOR_POSITION(object, start[0] + (x - start[0]) * i / 10,
                        start[1] + (y - start[1]) * i / 10,
                        start[2] + (z - start[2]) * i / 10);
-    object->scaleY = object->scaleX = i * (Q16_ONE * 3 / 4) / 10 + Q16_ONE / 4;
+    object->scaleY = object->scaleX =
+        i * (FIXED_ONE * 3 / 4) / 10 + FIXED_ONE / 4;
     wait(1);
     i++;
   } while (i <= 10);
@@ -231,13 +231,13 @@ void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z) {
 
   i = 0;
   start[0] = mainActor->x.fixed;
-  start[1] = mainActor->y.fixed + PIXELS(16);
+  start[1] = mainActor->y.fixed + toFIXED(16);
   start[2] = mainActor->z.fixed;
   do {
     SET_ACTOR_POSITION(object, x + (start[0] - x) * i / 10,
                        y + (start[1] - y) * i / 10,
                        z + (start[2] - z) * i / 10);
-    object->scaleY = object->scaleX = i * -(Q16_ONE * 3 / 4) / 10 + Q16_ONE;
+    object->scaleY = object->scaleX = i * -(FIXED_ONE * 3 / 4) / 10 + FIXED_ONE;
     wait(1);
     i++;
   } while (i <= 10);
@@ -251,15 +251,15 @@ struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
 
   if (object != NULL) {
     Actor_StartScriptFar(object, gFieldEffect_FragmentScript);
-    object->speedLimit = Random16() + Q16_ONE;
-    object->acceleration = Q16_ONE;
+    object->speedLimit = Random16() + FIXED_ONE;
+    object->acceleration = FIXED_ONE;
     object->motionFlags = 2;
-    object->gravity = px(1) / 25;
+    object->gravity = toFIXED(1) / 25;
     magnitude = Random16();
     magnitude -= Random16();
     object->velocityY = magnitude;
-    Actor_SetTargetPositionFromMagnitudeAngle(object, Random16() * 24 + px(8),
-                                              Random16());
+    Actor_SetTargetPositionFromMagnitudeAngle(
+        object, Random16() * 24 + toFIXED(8), Random16());
   }
   return object;
 }

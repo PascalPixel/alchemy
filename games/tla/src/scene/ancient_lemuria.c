@@ -73,7 +73,7 @@ void AncientLemuria_ShakeTheStatue(struct Actor *object) {
   struct FieldSprite *sprite = object->sprite;
   s16 time = object->timer++;
 
-  sprite->rotation = Iwram_MulQ16(Trig_Sin(time << 12), 0x100);
+  sprite->rotation = Iwram_MulFX(Trig_Sin(time << 12), 0x100);
   if ((time & 15) == 0)
     Sound_Play(SE_SWITCH);
 }
@@ -98,11 +98,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 void AncientLemuria_KeepCameraSouth(void) {
-  Ram_HeapSlots->mapGrid->minZ = px(750);
+  Ram_HeapSlots->mapGrid->minZ = toFIXED(750);
 }
 
 void AncientLemuria_LetCameraNorth(void) {
-  Ram_HeapSlots->mapGrid->minZ = px(352);
+  Ram_HeapSlots->mapGrid->minZ = toFIXED(352);
 }
 
 void AncientLemuria_StartMovingStatue(void) {}
@@ -141,18 +141,18 @@ void AncientLemuria_CycloneRevealsRime(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_RIME), 0);
   Actor_SetPosition(ACTOR_RIME, 88, 216);
   Actor_Jump(ACTOR_RIME, 9, 0);
-  object->scaleY = Q16_ONE / 2;
-  object->scaleX = Q16_ONE / 2;
+  object->scaleY = FIXED_ONE / 2;
+  object->scaleX = FIXED_ONE / 2;
   for (i = 29; i >= 0; i--) {
     object->facing += 0x1000;
     if (object->scaleX <= 0xffff)
-      object->scaleX += Q16_ONE * 5 / 128;
+      object->scaleX += FIXED_ONE * 5 / 128;
     object->scaleY = object->scaleX;
     wait(1);
   }
   object->facing = FACING_SOUTH_SOUTHEAST;
-  object->scaleY = Q16_ONE;
-  object->scaleX = Q16_ONE;
+  object->scaleY = FIXED_ONE;
+  object->scaleX = FIXED_ONE;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_RIME), 1);
   Actor_SetSpritePriority(ACTOR_RIME, 1);
   Event_Wait(8);
@@ -221,22 +221,22 @@ void AncientLemuria_TremorShakesOutRime(void) {
   GameFlag_Clear(FLAG_RIME_IN_THE_STATUE);
   AncientLemuria_StillTheStatue(13);
   Actor_SetPosition(ACTOR_RIME, 270, 184);
-  object->y.fixed = px(22);
+  object->y.fixed = toFIXED(22);
   Actor_Jump(ACTOR_RIME, 11, 0);
-  object->scaleY = Q16_ONE / 2;
-  object->scaleX = Q16_ONE / 2;
+  object->scaleY = FIXED_ONE / 2;
+  object->scaleX = FIXED_ONE / 2;
   Actor_SetSpeed(ACTOR_RIME, 2.2);
   Actor_WalkTo(ACTOR_RIME, 312, 184);
   for (i = 23; i >= 0; i--) {
     object->facing += 0x2000;
     if (object->scaleX <= 0xffff)
-      object->scaleX += Q16_ONE * 5 / 128;
+      object->scaleX += FIXED_ONE * 5 / 128;
     object->scaleY = object->scaleX;
     wait(1);
   }
   object->facing = FACING_SOUTH_SOUTHEAST;
-  object->scaleY = Q16_ONE;
-  object->scaleX = Q16_ONE;
+  object->scaleY = FIXED_ONE;
+  object->scaleX = FIXED_ONE;
   Actor_WaitForMoveById(ACTOR_RIME);
 }
 
@@ -267,8 +267,8 @@ void AncientLemuria_HeadForTheDock(void) {
     Actor_SetAnimationById(ACTOR_KRADEN, 2);
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (object != NULL)
-      Actor_SetDestinationById(ACTOR_KRADEN, object->x.part[0].pixel,
-                               object->z.part[0].pixel);
+      Actor_SetDestinationById(ACTOR_KRADEN, object->x.part[0].integer,
+                               object->z.part[0].integer);
     Actor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     Actor_WalkToAndWait(ACTOR_FELIX, 168, 832);
@@ -469,7 +469,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_FaceDirection(ACTOR_LEMURIAN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_LEMURIAN, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(25);
-  Actor_GetById(ACTOR_PIERS)->scaleX = Q16_ONE;
+  Actor_GetById(ACTOR_PIERS)->scaleX = FIXED_ONE;
   FieldActor_LaunchFromLeader(ACTOR_PIERS, 0, -16, FACING_NORTH);
   Actor_WaitForMoveById(ACTOR_PIERS);
   Event_Wait(20);
@@ -821,16 +821,16 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_PIERS, leader->x.part[0].pixel,
-                             leader->z.part[0].pixel);
+    Actor_SetDestinationById(ACTOR_PIERS, leader->x.part[0].integer,
+                             leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimationById(ACTOR_KRADEN, 2);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
-    Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].pixel,
-                             leader->z.part[0].pixel);
+    Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].integer,
+                             leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Event_End();
@@ -857,10 +857,11 @@ struct ActorPlacement gActorPlacements[] = {
                     0x3000, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(157, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 504,
                     0x5000, TALK_FACING_PARTY, 0),
-    {56, CONDITION_ALWAYS, 1, -px(56), 0, -px(56), FACING_NORTH, 2, 0},
-    {7, CONDITION_ALWAYS, 1, -px(56), 0, -px(56), FACING_NORTH, 2, 0},
-    {SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_RIME), 1, -px(56), 0, -px(56),
-     FACING_SOUTH, 0, 0},
+    {56, CONDITION_ALWAYS, 1, -toFIXED(56), 0, -toFIXED(56), FACING_NORTH, 2,
+     0},
+    {7, CONDITION_ALWAYS, 1, -toFIXED(56), 0, -toFIXED(56), FACING_NORTH, 2, 0},
+    {SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_RIME), 1, -toFIXED(56), 0,
+     -toFIXED(56), FACING_SOUTH, 0, 0},
     ACTOR_PLACEMENT(SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
                     264, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},

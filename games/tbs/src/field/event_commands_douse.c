@@ -28,12 +28,12 @@ void FieldEffect_UpdateDouseDrop(struct Actor *actor) {
       if (p == NULL) {
         break;
       }
-      p->scaleY = Q16_ONE / 2;
-      p->scaleX = Q16_ONE / 2;
+      p->scaleY = FIXED_ONE / 2;
+      p->scaleX = FIXED_ONE / 2;
       p->motionFlags = 2;
-      p->velocityY = px(1);
-      p->speedLimit = Random16() + px(6) / 5;
-      Actor_SetTargetPositionFromMagnitudeAngle(p, px(32), Random16());
+      p->velocityY = toFIXED(1);
+      p->speedLimit = Random16() + toFIXED(6) / 5;
+      Actor_SetTargetPositionFromMagnitudeAngle(p, toFIXED(32), Random16());
       pp = &p->wait;
       {
         s32 splashWait = 6;
@@ -50,7 +50,7 @@ void FieldEffect_UpdateDouseDrop(struct Actor *actor) {
 void FieldEffect_UpdateDriftingFallActor(struct Actor *particle) {
   s32 drift;
 
-  particle->y.fixed -= px(3) / 10;
+  particle->y.fixed -= toFIXED(3) / 10;
   drift = Random16();
   particle->x.fixed += drift - Random16();
   if (particle->y.fixed <= particle->groundHeight) {
@@ -86,17 +86,17 @@ void FieldPsynergy_Douse(void) {
   if (work->child == 0) {
     work->x = caster->x.fixed;
     work->z = caster->z.fixed;
-    Vector_AddPolarOffset(px(16), work->angle, (struct Vector3 *)&work->x);
+    Vector_AddPolarOffset(toFIXED(16), work->angle, (struct Vector3 *)&work->x);
     work->y = MapGrid_GetTerrainHeightFar(0, work->x, work->z);
   }
-  SET_POSITION(&start, caster->x.fixed, caster->y.fixed + px(16),
+  SET_POSITION(&start, caster->x.fixed, caster->y.fixed + toFIXED(16),
                caster->z.fixed);
   end.x = work->x;
   y = work->y;
-  end.y = y + px(32);
+  end.y = y + toFIXED(32);
   end.z = work->z;
   if (work->childOption != 0)
-    end.y = y + px(80);
+    end.y = y + toFIXED(80);
 
   // Grow from a quarter to full size on the way.
   for (; step < steps; step++) {
@@ -105,7 +105,7 @@ void FieldPsynergy_Douse(void) {
     SET_ACTOR_POSITION(cloud, start.x + (end.x - start.x) * step / 10,
                        start.y + (end.y - start.y) * step / 10,
                        start.z + (end.z - start.z) * step / 10);
-    scale = FieldEffect_Interpolate(Q16_ONE, Q16_ONE / 4, step);
+    scale = FieldEffect_Interpolate(FIXED_ONE, FIXED_ONE / 4, step);
     cloud->scaleX = scale;
     cloud->scaleY = scale;
     wait(1);
@@ -122,7 +122,7 @@ void FieldPsynergy_Douse(void) {
       pos.x = cloud->x.fixed;
       pos.y = cloud->y.fixed;
       pos.z = cloud->z.fixed;
-      Vector_AddPolarOffset(Random16() * 5 + px(3), Random16(), &pos);
+      Vector_AddPolarOffset(Random16() * 5 + toFIXED(3), Random16(), &pos);
       if (step == count - 1) {
         wait(25);
         pos.x = cloud->x.fixed;
@@ -131,7 +131,7 @@ void FieldPsynergy_Douse(void) {
       }
       particle = Actor_Spawn(SPRITE_DROPLET, pos.x, pos.y, pos.z);
       if (particle != 0) {
-        particle->groundHeight = pos.y - px(32);
+        particle->groundHeight = pos.y - toFIXED(32);
         particle->update = FieldEffect_UpdateDouseDrop;
         particle->motionFlags = 2;
       }
@@ -150,7 +150,7 @@ void FieldPsynergy_Douse(void) {
       pos.x = cloud->x.fixed;
       pos.y = cloud->y.fixed;
       pos.z = cloud->z.fixed;
-      Vector_AddPolarOffset(Random16() * 5 + px(3), Random16(), &pos);
+      Vector_AddPolarOffset(Random16() * 5 + toFIXED(3), Random16(), &pos);
       particle = Actor_Spawn(SPRITE_PARTICLE, pos.x, pos.y, pos.z);
       if (particle != 0) {
         particle->update = FieldEffect_UpdateDriftingFallActor;
@@ -172,7 +172,7 @@ void FieldPsynergy_Douse(void) {
     SET_ACTOR_POSITION(cloud, end.x + (start.x - end.x) * step / 10,
                        end.y + (start.y - end.y) * step / 10,
                        end.z + (start.z - end.z) * step / 10);
-    scale = FieldEffect_Interpolate(Q16_ONE / 4, Q16_ONE, step);
+    scale = FieldEffect_Interpolate(FIXED_ONE / 4, FIXED_ONE, step);
     cloud->scaleX = scale;
     cloud->scaleY = scale;
     wait(1);

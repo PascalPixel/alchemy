@@ -32,8 +32,8 @@ void GroundParticles_Update(void) {
     if (GameFlag_Get(FLAG_WEATHER_HELD))
       particle->timer++;
     frame = &gFieldEffect_GroundParticleFrames[particle->timer * 5];
-    x = (particle->posX - originX) / Q16_ONE + *frame++;
-    y = (particle->posZ - particle->posY - originZ) / Q16_ONE + *frame++;
+    x = (particle->posX - originX) / FIXED_ONE + *frame++;
+    y = (particle->posZ - particle->posY - originZ) / FIXED_ONE + *frame++;
     if ((u32)(x + 16) < 256 && y >= -32 && y < 160) {
       particle->priority = 1;
       particle->x = x;
@@ -83,8 +83,8 @@ void Weather_UpdateRain(void) {
     if (GameFlag_Get(FLAG_WEATHER_HELD))
       particle->timer++;
     frame = &gGroundParticle_Offsets[2 * particle->timer];
-    x = (particle->posX - originX) / Q16_ONE + *frame++;
-    y = (particle->posZ - particle->posY - originZ) / Q16_ONE + *frame++;
+    x = (particle->posX - originX) / FIXED_ONE + *frame++;
+    y = (particle->posZ - particle->posY - originZ) / FIXED_ONE + *frame++;
     if ((x >= -16 && x <= 239) && y >= -32 && y <= 159) {
       particle->priority = 1;
       particle->x = x;
@@ -97,7 +97,7 @@ void Weather_UpdateRain(void) {
     if (particle->timer == 0) {
       s32 *focus = *(s32 **)map;
 
-      x = focus[0] + (Random16() << 8) - px(64);
+      x = focus[0] + (Random16() << 8) - toFIXED(64);
       y = focus[2] + (Random16() << 8) - 0x800000;
       particle->posX = x;
       particle->posZ = y;

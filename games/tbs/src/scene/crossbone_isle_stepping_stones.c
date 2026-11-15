@@ -269,10 +269,10 @@ static s32 CrossboneIsleSteppingStones_QueryFootprint(
   *width = (coordinate + farExtent) >> 4;
   // Move from the actor's center to the footprint's top-left cell.
   probe->position.x +=
-      px(gPushedActor_FootprintBounds[probe->footprintIndex * 4]);
+      INTtoFIXED(gPushedActor_FootprintBounds[probe->footprintIndex * 4]);
   {
     s32 offsetZ =
-        px(gPushedActor_FootprintBounds[probe->footprintIndex * 4 + 1]);
+        INTtoFIXED(gPushedActor_FootprintBounds[probe->footprintIndex * 4 + 1]);
 
     coordinate = probe->position.z;
     coordinate += offsetZ;
@@ -417,7 +417,7 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
   temporaryActor = NULL;
   Actor_SetSpriteFlags(actor, 0);
   height = MapGrid_GetTerrainHeight(2, actor->x.fixed, actor->z.fixed);
-  level = height / px(16);
+  level = height / toFIXED(16);
   rows = level;
   if (level < 0) {
     rows = -level;
@@ -426,21 +426,21 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
   for (row = 0; row <= rows; row++) {
     top = MapGrid_GetTerrainHeight(actor->layer, actor->x.fixed,
                                    (row << 20) + actor->z.fixed);
-    top /= px(16);
+    top /= toFIXED(16);
     if (level < top) {
       x = FIELD_CELL_CENTER(FIELD_CELL(actor->x.fixed));
       if (far == 0) {
         row += 2;
-        z = ((row + FIELD_CELL(actor->z.fixed)) << 20) + px(2);
+        z = ((row + FIELD_CELL(actor->z.fixed)) << 20) + toFIXED(2);
         y = top << 20;
         kind = 223;
       } else {
         row += 3;
-        z = ((row + FIELD_CELL(actor->z.fixed)) << 20) - px(2);
+        z = ((row + FIELD_CELL(actor->z.fixed)) << 20) - toFIXED(2);
         y = top << 20;
         kind = 253;
       }
-      temporaryActor = Actor_PrepareFixed(x, y, z, kind);
+      temporaryActor = Actor_PrepareFX(x, y, z, kind);
       height = actor->z.fixed - z + y;
       /* FAKEMATCH(dead): an empty once-only loop. */
       do {
@@ -471,11 +471,11 @@ static void CrossboneIsleSteppingStones_ShrinkPillar(s32 index) {
     if (elapsedFrames > 31)
       return;
     wait(1);
-    actor->scaleY -= Q16_ONE / 10;
-    actor->y.fixed -= px(4) / 5;
+    actor->scaleY -= FIXED_ONE / 10;
+    actor->y.fixed -= toFIXED(4) / 5;
     elapsedFrames++;
-    if (actor->scaleY <= Q16_ONE / 10 - 1) {
-      actor->scaleY = Q16_ONE / 10;
+    if (actor->scaleY <= FIXED_ONE / 10 - 1) {
+      actor->scaleY = FIXED_ONE / 10;
       return;
     }
   }
@@ -495,11 +495,11 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
   cycleFrame = gFrameCount & 3;
   if (cycleFrame == 0) {
     options.palette = SPRITE_COLOR_RED_TINT;
-    options.startScaleX = 7 * Q16_ONE / 10;
-    options.startScaleY = 7 * Q16_ONE / 10;
-    x = leader->x.fixed + px(Random_Below(17) - 8);
-    z = leader->z.fixed + px(Random_Below(17) - 8);
-    velocityY = Math_Divide(px(Random_Below(5)) + px(3), 10);
+    options.startScaleX = 7 * FIXED_ONE / 10;
+    options.startScaleY = 7 * FIXED_ONE / 10;
+    x = leader->x.fixed + INTtoFIXED(Random_Below(17) - 8);
+    z = leader->z.fixed + INTtoFIXED(Random_Below(17) - 8);
+    velocityY = Math_Divide(INTtoFIXED(Random_Below(5)) + toFIXED(3), 10);
     FieldEffect_Spawn(x, leader->y.fixed, z, 0, velocityY, cycleFrame,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
                           EFFECT_SCRIPT_MEDIUM,
@@ -527,10 +527,10 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
     return 0;
   }
 #if TBS_PATCH_1
-  destination.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
+  destination.x = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   destination.y = leader->y.fixed;
-  destination.z = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
-  Vector_AddPolarOffset(px(16), jumpDirection, &destination);
+  destination.z = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+  Vector_AddPolarOffset(toFIXED(16), jumpDirection, &destination);
 #else
   jumpDirection = FACING_INDEX(leader->facing);
   Actor_StepFrom(&destination, leader,
@@ -539,10 +539,10 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
   if (FieldActor_CheckMovementCollision(leader, &destination) != 1 &&
       PushedActor_FindAtTile(&destination, leader) == 0) {
 #if TBS_PATCH_1
-    destination.x = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
+    destination.x = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
     destination.y = leader->y.fixed;
-    destination.z = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
-    Vector_AddPolarOffset(px(32), jumpDirection, &destination);
+    destination.z = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
+    Vector_AddPolarOffset(toFIXED(32), jumpDirection, &destination);
 #else
     step = gPushedActor_DirectionSteps[jumpDirection];
     destination.x = leader->x.fixed + ((step & 0xffff0000) * 2);
@@ -557,13 +557,13 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
       wait(6);
       Sound_Play(SE_JUMP);
       Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
-      leader->speedLimit = px(3);
-      leader->acceleration = px(2);
-      leader->velocityY = px(4);
+      leader->speedLimit = toFIXED(3);
+      leader->acceleration = toFIXED(2);
+      leader->velocityY = toFIXED(4);
       leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
       Actor_SetSpriteFlags(leader, 0);
-      Actor_MoveToAndWait(ACTOR_PARTY_LEADER, WHOLE_PIXELS(destination.x),
-                          WHOLE_PIXELS(destination.z));
+      Actor_MoveToAndWait(ACTOR_PARTY_LEADER, FIXEDtoINT(destination.x),
+                          FIXEDtoINT(destination.z));
       Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
       Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
       leader->motionFlags = savedMotionFlags;
@@ -789,7 +789,7 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
     Sound_Play(SE_LOG_FALL);
     Actor_SetSpritePriority(ACTOR_WATER, 1);
     Actor_Get(ACTOR_WATER)->motionFlags = waterRaised;
-    Actor_Get(ACTOR_WATER)->y.fixed = -px(32);
+    Actor_Get(ACTOR_WATER)->y.fixed = -toFIXED(32);
     Actor_SetPosition(ACTOR_WATER, 272, 416);
     Actor_SetAnimation(ACTOR_WATER, SPLASH_ANIMATION_BURST);
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_FloodgateCloseSteps, 80,
@@ -807,7 +807,7 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
     Event_Wait(30);
     Sound_Play(SE_WATER_DRAIN);
     Actor_Get(ACTOR_WATER)->motionFlags = 0;
-    Actor_Get(ACTOR_WATER)->y.fixed = -px(32);
+    Actor_Get(ACTOR_WATER)->y.fixed = -toFIXED(32);
     Actor_SetPosition(ACTOR_WATER, 272, 436);
     Actor_SetAnimation(ACTOR_WATER, SPLASH_ANIMATION_CHURN);
     MapGrid_CopyCellsTo(65, 45, 16, 27, 2, 4);
@@ -838,11 +838,11 @@ CrossboneIsleSteppingStones_SyncPriorityIfBehind(struct Actor *actor,
       front->z.fixed == actor->z.fixed) {
     return result;
   }
-  if (front->x.fixed - px(16) < actor->x.fixed &&
-      actor->x.fixed < front->x.fixed + px(16) &&
-      front->y.fixed / px(1) == actor->y.fixed / px(1) &&
+  if (front->x.fixed - toFIXED(16) < actor->x.fixed &&
+      actor->x.fixed < front->x.fixed + toFIXED(16) &&
+      front->y.fixed / toFIXED(1) == actor->y.fixed / toFIXED(1) &&
       front->z.fixed > actor->z.fixed &&
-      front->z.fixed - px(32) < actor->z.fixed) {
+      front->z.fixed - toFIXED(32) < actor->z.fixed) {
     if (actor->sprite->image.priority < front->sprite->image.priority) {
       actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       actor->sprite->image.priority = front->sprite->image.priority;
@@ -864,11 +864,11 @@ CrossboneIsleSteppingStones_SyncPriorityIfAhead(struct Actor *front,
       actor->z.fixed == front->z.fixed) {
     return result;
   }
-  if (front->x.fixed - px(16) < actor->x.fixed &&
-      actor->x.fixed < front->x.fixed + px(16) &&
-      actor->y.fixed / px(1) == front->y.fixed / px(1) &&
+  if (front->x.fixed - toFIXED(16) < actor->x.fixed &&
+      actor->x.fixed < front->x.fixed + toFIXED(16) &&
+      actor->y.fixed / toFIXED(1) == front->y.fixed / toFIXED(1) &&
       front->z.fixed > actor->z.fixed &&
-      front->z.fixed - px(32) < actor->z.fixed) {
+      front->z.fixed - toFIXED(32) < actor->z.fixed) {
     if (front->sprite->image.priority > actor->sprite->image.priority) {
       actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       actor->sprite->image.priority = front->sprite->image.priority;
@@ -1093,7 +1093,7 @@ static void CrossboneIsleSteppingStones_PushOrClimbDown(void) {
 
   position.x = leader->x.fixed;
   position.y = leader->y.fixed;
-  position.z = leader->z.fixed + px(16);
+  position.z = leader->z.fixed + toFIXED(16);
   if (PushedActor_FindAtTile(&position, leader) != NULL) {
     CrossboneIsleSteppingStones_JumpOrPushStackedPillar();
   } else if (CrossboneIsleSteppingStones_TryJumpAcrossPillar() == 0) {
@@ -1190,14 +1190,14 @@ static void CrossboneIsleSteppingStones_FrostRaisesPillar(void) {
   struct Actor *pillar;
 
   pillar = Actor_Get(ACTOR_RISING_PILLAR);
-  Actor_Get(ACTOR_THIRD_PUDDLE)->scaleX = Q16_ONE;
-  Actor_Get(ACTOR_THIRD_PUDDLE)->scaleY = Q16_ONE;
+  Actor_Get(ACTOR_THIRD_PUDDLE)->scaleX = FIXED_ONE;
+  Actor_Get(ACTOR_THIRD_PUDDLE)->scaleY = FIXED_ONE;
   (Actor_Get(ACTOR_THIRD_PUDDLE)->sprite)->image.priority = 2;
   pillar->sprite->image.priority = 2;
-  pillar->acceleration = px(2) / 5;
-  pillar->speedLimit = px(4) / 5;
-  FieldActor_SetMoveTargetFixed(pillar, pillar->x.fixed, px(32),
-                                pillar->z.fixed);
+  pillar->acceleration = toFIXED(2) / 5;
+  pillar->speedLimit = toFIXED(4) / 5;
+  FieldActor_SetMoveTargetFX(pillar, pillar->x.fixed, toFIXED(32),
+                             pillar->z.fixed);
   Actor_WaitForMoveById(ACTOR_RISING_PILLAR);
   MapGrid_CopyCellAttributes(20, 14, 1, 1, 22, 16);
 }
@@ -1216,24 +1216,24 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
     Sound_Play(SE_WHOOSH);
 
   options.palette = SPRITE_COLOR_RED_TINT;
-  options.startScaleX = Q16_ONE / 2;
-  options.startScaleY = Q16_ONE / 2;
-  options.targetScaleX = 8 * Q16_ONE / 5;
-  options.targetScaleY = 8 * Q16_ONE / 5;
+  options.startScaleX = FIXED_ONE / 2;
+  options.startScaleY = FIXED_ONE / 2;
+  options.targetScaleX = 8 * FIXED_ONE / 5;
+  options.targetScaleY = 8 * FIXED_ONE / 5;
   draw = Random_Next();
   mask = 0x0ffff000 & draw;
   options.rotation = mask;
   options.update = CrossboneIsleSteppingStones_UpdateDampedParticle;
 
-  velocityX = -(px(Random_Below(5)) + px(6));
+  velocityX = -(INTtoFIXED(Random_Below(5)) + toFIXED(6));
   velocityX /= 2;
-  velocityY = -(px(Random_Below(5)) + px(5));
+  velocityY = -(INTtoFIXED(Random_Below(5)) + toFIXED(5));
 
-  FieldEffect_Spawn(px(324), px(48), px(228), velocityX, velocityY, 0,
-                    EFFECT_USE_UPDATE | EFFECT_USE_ROTATION |
-                        EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET |
-                        EFFECT_USE_PALETTE,
-                    &options);
+  FieldEffect_Spawn(
+      toFIXED(324), toFIXED(48), toFIXED(228), velocityX, velocityY, 0,
+      EFFECT_USE_UPDATE | EFFECT_USE_ROTATION | EFFECT_USE_START_SCALE |
+          EFFECT_SCALE_TO_TARGET | EFFECT_USE_PALETTE,
+      &options);
 }
 
 /// Emits a randomized particle from the thawing puddle every eight frames.
@@ -1250,13 +1250,13 @@ CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *actor) {
     RETURN_UNREAD(0);
 
   options.palette = SPRITE_COLOR_WHITE;
-  options.startScaleX = 7 * Q16_ONE / 10;
-  options.startScaleY = 7 * Q16_ONE / 10;
+  options.startScaleX = 7 * FIXED_ONE / 10;
+  options.startScaleY = 7 * FIXED_ONE / 10;
 
-  x = actor->x.fixed + px(Random_Below(17) - 8);
-  y = actor->y.fixed + px(Random_Below(17));
-  z = actor->z.fixed + px(Random_Below(17) - 8);
-  scale = Math_Divide(px(Random_Below(5)) + px(3), 10);
+  x = actor->x.fixed + INTtoFIXED(Random_Below(17) - 8);
+  y = actor->y.fixed + INTtoFIXED(Random_Below(17));
+  z = actor->z.fixed + INTtoFIXED(Random_Below(17) - 8);
+  scale = Math_Divide(INTtoFIXED(Random_Below(5)) + toFIXED(3), 10);
 
   FieldEffect_Spawn(x, y, z, 0, scale, phase,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
@@ -1345,8 +1345,8 @@ static void CrossboneIsleSteppingStones_MoveSinkingPillar(void) {
       Event_Wait(10);
       Sound_Play(SE_DOOR_CLOSE);
       pillar->motionFlags = alreadyLowered;
-      pillar->groundHeight = -px(2);
-      pillar->y.fixed = -px(2);
+      pillar->groundHeight = -toFIXED(2);
+      pillar->y.fixed = -toFIXED(2);
       GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK);
     }
   }
@@ -1442,11 +1442,11 @@ static void CrossboneIsleSteppingStones_UpdateLeaderPriority(void) {
   for (selector = ACTOR_FIRST_PILLAR; selector <= ACTOR_FIRST_PILLAR + 3;
        selector++) {
     actor = Actor_Get(selector);
-    if (hero->y.fixed / px(1) == actor->y.fixed / px(1) &&
-        hero->z.fixed <= actor->z.fixed - px(8) &&
-        hero->z.fixed > actor->z.fixed - px(24)) {
-      if (hero->x.fixed - px(16) <= actor->x.fixed &&
-          actor->x.fixed < hero->x.fixed + px(16)) {
+    if (hero->y.fixed / toFIXED(1) == actor->y.fixed / toFIXED(1) &&
+        hero->z.fixed <= actor->z.fixed - toFIXED(8) &&
+        hero->z.fixed > actor->z.fixed - toFIXED(24)) {
+      if (hero->x.fixed - toFIXED(16) <= actor->x.fixed &&
+          actor->x.fixed < hero->x.fixed + toFIXED(16)) {
         Actor_SetSpritePriority(ACTOR_PARTY_LEADER,
                                 actor->sprite->image.priority);
         return;
@@ -1552,8 +1552,8 @@ s32 Scene_Initialize(void) {
     Actor_Get(ACTOR_RISING_PILLAR)->collisionFlags |= ACTOR_NOT_TARGETED;
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN +
                      2) == 0) {
-      Actor_Get(ACTOR_THIRD_PUDDLE)->scaleX = 3 * Q16_ONE / 2;
-      Actor_Get(ACTOR_THIRD_PUDDLE)->scaleY = 3 * Q16_ONE / 2;
+      Actor_Get(ACTOR_THIRD_PUDDLE)->scaleX = 3 * FIXED_ONE / 2;
+      Actor_Get(ACTOR_THIRD_PUDDLE)->scaleY = 3 * FIXED_ONE / 2;
       Actor_Get(ACTOR_THIRD_PUDDLE)->sprite->image.priority = 3;
       Actor_Get(ACTOR_RISING_PILLAR)->sprite->image.priority = 3;
       MapGrid_CopyCellAttributes(26, 12, 1, 1, 22, 16);

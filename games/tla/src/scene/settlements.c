@@ -493,7 +493,7 @@ void Settlements_DriftSmoke(struct Actor *object) {
 
   object->x.fixed += object->timer << 8;
 
-  object->y.fixed += px(1) / 2;
+  object->y.fixed += toFIXED(1) / 2;
 
   step = 0x51e;
   object->scaleX += step;
@@ -517,8 +517,8 @@ void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
     animation = object->sprite;
     animation[9] = (animation[9] & -13) | 4;
     Actor_SetSpriteFlags(object, 0);
-    object->scaleX = Q16_ONE / 2;
-    object->scaleY = Q16_ONE / 2;
+    object->scaleX = FIXED_ONE / 2;
+    object->scaleY = FIXED_ONE / 2;
     *(s32 *)&object->watchedActor = 60;
     object->update = (void (*)(void))Settlements_DriftSmoke;
     Actor_SelectAnimation(object, 5);
@@ -594,7 +594,7 @@ void Settlements_SetUpKaltIsland(void) {
   actor->active = 0;
   actor->mode = 0;
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
-    actor->y += px(16);
+    actor->y += toFIXED(16);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->visible = 1;
   transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
@@ -828,14 +828,14 @@ void Settlements_SinkPillar(void) {
   if (!Event_GetFlag(FLAG_SCENE_TEMP_04) && column == 11 && row == 12) {
     object->motionFlags = 0;
     for (i = 10; i > 0; i--) {
-      object->y.fixed -= px(2);
+      object->y.fixed -= toFIXED(2);
       Event_Wait(1);
     }
     Settlements_SplashCrate(9);
     Actor_SetPosition(ACTOR_PILLAR, 0, 0);
     Actor_SetPosition(ACTOR_RIVER_STONE_K, 184, 184);
     Actor_GetById(ACTOR_RIVER_STONE_K)->motionFlags = 0;
-    Actor_GetById(ACTOR_RIVER_STONE_K)->y.fixed -= px(64);
+    Actor_GetById(ACTOR_RIVER_STONE_K)->y.fixed -= toFIXED(64);
     MapGrid_CopyCellAttributes(9, 11, 1, 1, 11, 12);
     Event_SetFlag(FLAG_SCENE_TEMP_04);
   }
@@ -853,7 +853,7 @@ void Settlements_SlideCrateDownFalls(void) {
     i = 8;
   sink:
     FieldEvent_Wait(1);
-    object->y.fixed -= px(2);
+    object->y.fixed -= toFIXED(2);
     i--;
     if (i > 0)
       goto sink;
@@ -974,7 +974,7 @@ extern s32 gSettlements_CrateDropScript[];
   i = (frames);                                                                \
   do {                                                                         \
     FieldEvent_Wait(1);                                                        \
-    object->y.fixed -= px(2);                                                  \
+    object->y.fixed -= toFIXED(2);                                             \
     i--;                                                                       \
   } while (i > 0)
 
@@ -1046,10 +1046,10 @@ void Settlements_SplashCrate(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   spawn.type = SPRITE_WATER_SPRAY;
-  spawn.startScaleX = Q16_ONE * 4 / 5;
-  spawn.startScaleY = Q16_ONE * 4 / 5;
-  spawn.targetScaleX = Q16_ONE;
-  spawn.targetScaleY = Q16_ONE;
+  spawn.startScaleX = FIXED_ONE * 4 / 5;
+  spawn.startScaleY = FIXED_ONE * 4 / 5;
+  spawn.targetScaleX = FIXED_ONE;
+  spawn.targetScaleY = FIXED_ONE;
   spawn.script = gSettlements_SmokeScript;
   Event_PlaySound(SE_CAST);
   FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0, 0, 0,
@@ -1193,7 +1193,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 s32 gSettlements_BobScript[] = {
     SC_ANIMATION(3),
     SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Y, -px(16)),
+    SC_ADD(SW_Y, -toFIXED(16)),
     SC_CALL((s32)Settlements_ClearSpriteFlags),
     SC_END,
 };

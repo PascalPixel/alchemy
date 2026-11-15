@@ -1,6 +1,6 @@
 #include "field/map_grid_scroll.h"
 #include "scene/actor_step.h"
-#include "system/fixed_point_position.h"
+#include "system/point.h"
 #include "system/iwram_call.h"
 #include "system/system_call.h"
 
@@ -43,7 +43,7 @@ PushedActor_FindAtTile(const struct FieldPosition *position,
       continue;
 #endif
     if (FIELD_CELL(position->x) == FIELD_CELL(actor->x.fixed) &&
-        (position->y / px(1)) == (actor->y.fixed / px(1)) &&
+        (position->y / toFIXED(1)) == (actor->y.fixed / toFIXED(1)) &&
         FIELD_CELL(position->z) == FIELD_CELL(actor->z.fixed)) {
       return actor;
     }
@@ -76,7 +76,7 @@ UNUSED static void PushedActor_AdvancePair(void) {
     return;
 
   dst.x = next->x.fixed;
-  dst.y = next->y.fixed + px(16);
+  dst.y = next->y.fixed + toFIXED(16);
   dst.z = next->z.fixed;
   blocker = PushedActor_FindAtTile(&dst, next);
   if (blocker != NULL && (blocker->collisionFlags & 1) != 0)
@@ -91,15 +91,15 @@ UNUSED static void PushedActor_AdvancePair(void) {
     return;
 
   Actor_SelectAnimation(lead, ANIM_PUSH);
-  rate = px(1) / 5;
+  rate = toFIXED(1) / 5;
   wait(15);
   Sound_Play(SE_PUSH);
   next->speedLimit = rate;
   next->acceleration = rate;
-  FieldActor_SetMoveTargetFixed(next, dst.x, dst.y, dst.z);
+  FieldActor_SetMoveTargetFX(next, dst.x, dst.y, dst.z);
   lead->speedLimit = rate;
   lead->acceleration = rate;
-  FieldActor_SetMoveTargetFixed(lead, dst.x, dst.y, dst.z);
+  FieldActor_SetMoveTargetFX(lead, dst.x, dst.y, dst.z);
   Actor_WaitForMove(next);
   Scene_PlayQueuedMusic();
   next->x.fixed = dst.x;
@@ -110,8 +110,8 @@ UNUSED static void PushedActor_AdvancePair(void) {
   lead->targetZ = ACTOR_NO_TARGET;
   lead->velocityX = 0;
   lead->velocityZ = 0;
-  lead->x.fixed = px(lead->x.part[0].pixel);
-  lead->z.fixed = px(lead->z.part[0].pixel);
+  lead->x.fixed = INTtoFIXED(lead->x.part[0].integer);
+  lead->z.fixed = INTtoFIXED(lead->z.part[0].integer);
   Actor_SelectAnimation(lead, ANIM_STAND);
 }
 
@@ -181,22 +181,22 @@ static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
       if (kind == gPushedActor_FootprintKinds[j]) {
         s32 x, z, left, top, right, bottom;
         *footprint = j;
-        x = ((WHOLE_PIXELS(player->x.fixed)) +
-             (WHOLE_PIXELS(gPushedActor_DirectionSteps[*direction]))) >>
+        x = ((FIXEDtoINT(player->x.fixed)) +
+             (FIXEDtoINT(gPushedActor_DirectionSteps[*direction]))) >>
             4;
-        z = ((WHOLE_PIXELS(player->z.fixed)) +
+        z = ((FIXEDtoINT(player->z.fixed)) +
              (s16)gPushedActor_DirectionSteps[*direction]) >>
             4;
-        left = (actor->x.part[0].pixel +
+        left = (actor->x.part[0].integer +
                 gPushedActor_FootprintBounds[j * 4 + 0]) >>
                4;
-        top = (actor->z.part[0].pixel +
+        top = (actor->z.part[0].integer +
                gPushedActor_FootprintBounds[j * 4 + 1]) >>
               4;
-        right = (actor->x.part[0].pixel +
+        right = (actor->x.part[0].integer +
                  gPushedActor_FootprintBounds[j * 4 + 2]) >>
                 4;
-        bottom = (actor->z.part[0].pixel +
+        bottom = (actor->z.part[0].integer +
                   gPushedActor_FootprintBounds[j * 4 + 3]) >>
                  4;
         if (left <= x && x < right && top <= z && z < bottom) {
@@ -271,28 +271,29 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
     s32 y = actor->y.fixed;
 
     position.y = y;
-    position.z = actor->z.fixed + px(gPushedActor_DirectionSteps[direction]);
+    position.z =
+        actor->z.fixed + INTtoFIXED(gPushedActor_DirectionSteps[direction]);
     probe->position.y = y;
   }
   for (;;) {
     probe->position.z =
         position.z +
-        px(gPushedActor_FootprintBounds[probe->footprintIndex * 4 + 1]);
+        INTtoFIXED(gPushedActor_FootprintBounds[probe->footprintIndex * 4 + 1]);
     for (row = 0; row < height; row++) {
       probe->position.x =
           position.x +
-          px(gPushedActor_FootprintBounds[probe->footprintIndex * 4]);
+          INTtoFIXED(gPushedActor_FootprintBounds[probe->footprintIndex * 4]);
       for (column = 0; column < width; column++) {
         if (FieldActor_CheckMovementCollision(actor, &probe->position) == 2) {
           goto found;
         }
-        probe->position.x += px(16);
+        probe->position.x += toFIXED(16);
       }
-      probe->position.z += px(16);
+      probe->position.z += toFIXED(16);
     }
     steps++;
     position.x += gPushedActor_DirectionSteps[direction] & 0xffff0000;
-    position.z += px(gPushedActor_DirectionSteps[direction]);
+    position.z += INTtoFIXED(gPushedActor_DirectionSteps[direction]);
   }
 found:
   *mode = 0;
@@ -304,7 +305,8 @@ found:
       (gPushedActor_DirectionSteps[direction] & 0xffff0000) * steps;
   probe->position.y = actor->y.fixed;
   probe->position.z =
-      actor->z.fixed + px(gPushedActor_DirectionSteps[direction]) * steps;
+      actor->z.fixed +
+      INTtoFIXED(gPushedActor_DirectionSteps[direction]) * steps;
   return 1;
 }
 
@@ -350,15 +352,16 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
     horizontalExtent = (extentA + extentB) >> 4;
   }
 
-  actor->speedLimit = px(1) / 2;
-  actor->acceleration = px(1) / 10;
+  actor->speedLimit = toFIXED(1) / 2;
+  actor->acceleration = toFIXED(1) / 10;
   originalPosition.x = actor->x.fixed;
   originalPosition.z = actor->z.fixed;
-  tilePosition.x = actor->x.fixed +
-                   px(gPushedActor_FootprintBounds[probe.footprintIndex * 4]);
+  tilePosition.x =
+      actor->x.fixed +
+      INTtoFIXED(gPushedActor_FootprintBounds[probe.footprintIndex * 4]);
   tilePosition.z =
       actor->z.fixed +
-      px(gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1]);
+      INTtoFIXED(gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1]);
   tilePosition.x = FIELD_CELL(tilePosition.x);
   tilePosition.z = FIELD_CELL(tilePosition.z);
 
@@ -372,12 +375,12 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   {
     s32 horizontalDelta = probe.position.x - originalPosition.x;
     if (horizontalDelta < 0)
-      horizontalDelta += px(2) - 1;
+      horizontalDelta += toFIXED(2) - 1;
     horizontalDelta >>= 17;
     {
       s32 verticalDelta = probe.position.z - originalPosition.z;
       if (verticalDelta < 0)
-        verticalDelta += px(2) - 1;
+        verticalDelta += toFIXED(2) - 1;
       verticalDelta >>= 17;
       Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER, horizontalDelta,
                                      verticalDelta);
@@ -393,8 +396,8 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
     Actor_SelectAnimation(actor, 2);
 
   Sound_Play(SE_HEAVY_MOVE);
-  FieldActor_SetMoveTargetFixed(actor, probe.position.x, probe.position.y,
-                                probe.position.z);
+  FieldActor_SetMoveTargetFX(actor, probe.position.x, probe.position.y,
+                             probe.position.z);
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.3, 0.1);
@@ -426,9 +429,9 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
 
     {
       probe.position.x +=
-          px(gPushedActor_FootprintBounds[probe.footprintIndex * 4]);
-      probe.position.z +=
-          px(gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1]);
+          INTtoFIXED(gPushedActor_FootprintBounds[probe.footprintIndex * 4]);
+      probe.position.z += INTtoFIXED(
+          gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1]);
       probe.position.x = FIELD_CELL(probe.position.x);
       probe.position.z = FIELD_CELL(probe.position.z);
     }
@@ -447,9 +450,9 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
 
     {
       originalPosition.x +=
-          px(gPushedActor_FootprintBounds[probe.footprintIndex * 4]);
-      originalPosition.z +=
-          px(gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1]);
+          INTtoFIXED(gPushedActor_FootprintBounds[probe.footprintIndex * 4]);
+      originalPosition.z += INTtoFIXED(
+          gPushedActor_FootprintBounds[probe.footprintIndex * 4 + 1]);
       originalPosition.x = FIELD_CELL(originalPosition.x);
       originalPosition.z = FIELD_CELL(originalPosition.z);
     }
@@ -512,8 +515,8 @@ UNUSED static s32 Scene_RedrawActorFootprint(s32 id) {
   if (x1 < 0)
     x1 = -x1;
   width = (x0 + x1) >> 4;
-  probe.position.x += px(gPushedActor_FootprintBounds[offset]);
-  probe.position.z += px(gPushedActor_FootprintBounds[offset + 1]);
+  probe.position.x += INTtoFIXED(gPushedActor_FootprintBounds[offset]);
+  probe.position.z += INTtoFIXED(gPushedActor_FootprintBounds[offset + 1]);
   probe.position.x = FIELD_CELL(probe.position.x);
   probe.position.z = FIELD_CELL(probe.position.z);
   idx = FIELD_CELL(grid->layers[1].offsetX);

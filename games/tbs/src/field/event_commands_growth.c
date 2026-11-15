@@ -80,7 +80,7 @@ void FieldPsynergy_Growth(void) {
 
     pos.values[0] = effectWork->x;
     pos.values[2] = effectWork->z;
-    radius = (Random16() * 6) + px(4);
+    radius = (Random16() * 6) + toFIXED(4);
     Vector_AddPolarOffset(radius, Random16(), &pos);
     pos.values[1] = effectWork->y;
     particle =
@@ -115,15 +115,15 @@ void FieldEffect_SpawnBurstParticleField(void) {
     s32 radius;
 
     if (effectWork->angle == FACING_SOUTH) {
-      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + px(10),
+      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + toFIXED(10),
                  caster->z.fixed);
     } else if (effectWork->angle == FACING_NORTH) {
-      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + px(24),
+      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + toFIXED(24),
                  caster->z.fixed);
     } else {
-      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + px(10),
+      SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + toFIXED(10),
                  caster->z.fixed);
-      Vector_AddPolarOffset(px(10), effectWork->angle, pos);
+      Vector_AddPolarOffset(toFIXED(10), effectWork->angle, pos);
     }
 
     // The shadow part takes the image's colour mode, shape, size, tile and
@@ -140,10 +140,10 @@ void FieldEffect_SpawnBurstParticleField(void) {
     child->attributes.bytes.palette = visual->attributes.bytes.palette;
 
     if (particle != 0) {
-      particle->scaleY = Q16_ONE * 7 / 10;
-      particle->scaleX = Q16_ONE * 7 / 10;
-      particle->acceleration = px(3) / 2;
-      particle->speedLimit = px(3) / 2;
+      particle->scaleY = FIXED_ONE * 7 / 10;
+      particle->scaleX = FIXED_ONE * 7 / 10;
+      particle->acceleration = toFIXED(3) / 2;
+      particle->speedLimit = toFIXED(3) / 2;
       particle->motionFlags = 0;
       Actor_SetSpriteColorModeFar(particle, SPRITE_COLOR_GREEN_TINT);
       Actor_SelectAnimationFar(particle, 7);
@@ -153,8 +153,8 @@ void FieldEffect_SpawnBurstParticleField(void) {
       // Destination: 4 to 10 pixels from the Psynergy's position.
       SET_VECTOR(pos, effectWork->x, effectWork->y, effectWork->z);
       if (effectWork->angle == FACING_NORTH)
-        Vector_AddPolarOffset(px(14), effectWork->angle, pos);
-      radius = Random16() * 6 + px(4);
+        Vector_AddPolarOffset(toFIXED(14), effectWork->angle, pos);
+      radius = Random16() * 6 + toFIXED(4);
       Vector_AddPolarOffset(radius, Random16(), pos);
       Actor_SetMoveTargetFar(particle, pos[0], pos[1], pos[2]);
     }

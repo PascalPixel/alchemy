@@ -10,8 +10,8 @@ void CrackedTile_DropIn(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
-  actor->y.fixed = px(130);
-  actor->gravity = px(1) / 2;
+  actor->y.fixed = toFIXED(130);
+  actor->gravity = toFIXED(1) / 2;
   actor->bounce = 0;
   actor->motionFlags = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -22,8 +22,8 @@ void CrackedTile_DropIn(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = Q16_ONE * 16 / 25;
-  options.startScaleY = Q16_ONE * 16 / 25;
+  options.startScaleX = FIXED_ONE * 16 / 25;
+  options.startScaleY = FIXED_ONE * 16 / 25;
   i = 0;
   do {
     s32 angle;
@@ -34,8 +34,8 @@ void CrackedTile_DropIn(void) {
     velocity[1] = 0;
     velocity[2] = Math_Sin(angle);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += (Random16() * (px(3) / 4) >> 16) - (px(3) / 8);
-    velocity[2] += (Random16() * (px(3) / 8) >> 16) - (px(3) / 16);
+    velocity[0] += (Random16() * (toFIXED(3) / 4) >> 16) - (toFIXED(3) / 8);
+    velocity[2] += (Random16() * (toFIXED(3) / 8) >> 16) - (toFIXED(3) / 16);
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
                       velocity[0], velocity[1], velocity[2], 0x1090001,
                       &options);
@@ -50,8 +50,8 @@ void CrackedTile_DropIn(void) {
   FieldMapGrid_WaitForShakeToSettle();
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  actor->gravity = px(1);
-  actor->bounce = Q16_ONE / 4;
+  actor->gravity = toFIXED(1);
+  actor->bounce = FIXED_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 1);
   Event_End();

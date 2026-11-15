@@ -9,7 +9,7 @@ void waitFar(s32 frames);
 s32 Task_AddFar(TaskFunc func, s32 order);
 s32 Task_RemoveFar(TaskFunc func);
 u32 Random16Far(void);
-s32 ArcTan2Far(s32 x, s32 y);
+s32 Trig_AtanFar(s32 x, s32 y);
 s32 FixedSqrtFar(s32 value);
 void Vector_AddPolarOffsetFar(s32 radius, s32 angle, void *position);
 void Irq_SetHandlerFar(u32 irq, s32 vcount, InterruptHandler handler);

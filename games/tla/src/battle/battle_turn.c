@@ -15,35 +15,36 @@
 void BattleCamera_SetCommandView(s32 pos) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
   struct BattleBackgroundWork *secondary = Ram_HeapSlots->battleBackground;
-  struct FixedPointPosition local;
+  struct Point local;
   u32 result;
   s32 one;
 
-  state->focus[1] = px(5);
+  state->focus[1] = toFIXED(5);
   state->focus[0] = 0;
   state->focus[2] = 0;
-  secondary->targetYaw = TRIG_TURN / 4;
-  state->yaw = TRIG_TURN / 4;
+  secondary->targetYaw = DEGtoANG(90);
+  state->yaw = DEGtoANG(90);
   state->pitch = TRIG_TURN - TRIG_TURN * 3 / 64;
   state->followPosition = 0;
-  state->distance = px(750);
+  state->distance = toFIXED(750);
   state->followEye = 0;
 
-  Transform_Reset();
-  Transform_ApplyPosition(&state->focus[0]);
-  Transform_ApplyYaw((s16)state->yaw);
-  Transform_ApplyPitch((s16)state->pitch);
+  Matrix_Initialize();
+  Matrix_TranslateVector(&state->focus[0]);
+  Matrix_RotateY((s16)state->yaw);
+  Matrix_RotateX((s16)state->pitch);
 
   SET_POSITION(&local, 0, 0, state->distance);
   Iwram_TransformVector(&local, (s32 *)state);
   one = 1;
 
-  result = Iwram_RatioMulQ14(px(969), Q16_ONE * 3 / 4);
-  Projection_Set(0, result, px(1938));
+  result = Iwram_RatioMulQ14(toFIXED(969), FIXED_ONE * 3 / 4);
+  Projection_Set(0, result, toFIXED(1938));
 
   gProjection.centerY = pos + BATTLE_PROJECTION_CENTER_Y;
   secondary->active = one;
-  BattleCamera_SetRange(px(120), px(118 - pos), 0, 8 << 8, Q16_ONE * 2);
+  BattleCamera_SetRange(toFIXED(120), toFIXED(118 - pos), 0, 8 << 8,
+                        FIXED_ONE * 2);
   secondary->flag = one;
   secondary->active = 0;
 }

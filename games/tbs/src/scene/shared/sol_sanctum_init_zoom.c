@@ -8,9 +8,9 @@
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
-  s32 shakeX = px(1);
-  s32 shakeY = px(1);
-  s32 shakeDecay = Q16_ONE;
+  s32 shakeX = toFIXED(1);
+  s32 shakeY = toFIXED(1);
+  s32 shakeDecay = FIXED_ONE;
 
   work = gFieldWork;
   work->transition =

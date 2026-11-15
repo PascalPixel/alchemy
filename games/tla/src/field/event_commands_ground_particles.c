@@ -69,8 +69,8 @@ void RisingParticles_Update(void) {
 
   for (i = 0; i < 64; i++, particle++) {
     if (particle->timer == 0) {
-      x = Random16() * 200 + Q16_ONE * 288;
-      y = Q16_ONE * 80 - Random16() * 20;
+      x = Random16() * 200 + FIXED_ONE * 288;
+      y = FIXED_ONE * 80 - Random16() * 20;
       particle->posX = x;
       particle->posZ = y;
       particle->posY = MapGrid_GetTerrainHeightFar(0, x, y);
@@ -81,9 +81,9 @@ void RisingParticles_Update(void) {
     screen[1].fixed = particle->posY;
     screen[2].fixed = particle->posZ;
     Camera_WorldToScreen(screen);
-    x = screen[0].part[0].pixel;
-    y = screen[2].part[0].pixel - particle->timer - 8;
-    particle->drift += Random16() + Q16_ONE / 2;
+    x = screen[0].part[0].integer;
+    y = screen[2].part[0].integer - particle->timer - 8;
+    particle->drift += Random16() + FIXED_ONE / 2;
     if ((u32)(x + 16) < 256 && y >= -32 && y < 160) {
       if (particle->timer < 60)
         particle->sprite.attributes.tile = work->tile + 16;
@@ -138,7 +138,7 @@ void RisingParticles_Start(void) {
     *sprite++ = OBJ_SIZE_16X16 | OBJ_MODE(1);
     *sprite = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
     x = Random16() * 200 + 0x1200000;
-    z = px(80) - Random16() * 20;
+    z = toFIXED(80) - Random16() * 20;
     particle->posX = x;
     particle->posZ = z;
     particle->posY = MapGrid_GetTerrainHeightFar(0, x, z);
@@ -176,9 +176,9 @@ void FieldMotes_Update(void) {
       }
       firstJitterDraw = Random16();
       secondJitterDraw = Random16();
-      x = FIELD_PIXEL(mote->posX - cameraX) +
+      x = FIXEDtoINT(mote->posX - cameraX) +
           (((firstJitterDraw & 1) + (secondJitterDraw & 1)) >> 1) - 1;
-      y = FIELD_PIXEL(mote->posZ - mote->posY - cameraZ) - (u16)age;
+      y = FIXEDtoINT(mote->posZ - mote->posY - cameraZ) - (u16)age;
       if ((u32)(x + 16) <= 255 && y >= -32 && y <= 159) {
         if (mote->timer < 60) {
           mote->tile = work->tileBase + 16;

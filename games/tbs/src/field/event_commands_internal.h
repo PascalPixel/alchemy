@@ -24,7 +24,7 @@
 #include "game/game.h"
 #include "graphics/display_transition.h"
 #include "system/dma.h"
-#include "system/fixed_point_position.h"
+#include "system/point.h"
 #include "system/io_write.h"
 #include "system/io_write_queue.h"
 #include "system/iwram_call.h"
@@ -55,7 +55,7 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
 
 /// The trailing copies of a moving Djinni or Force's hand are drawn a little
 /// smaller than what they follow.
-#define AFTERIMAGE_SCALE (Q16_ONE * 15 / 16)
+#define AFTERIMAGE_SCALE (FIXED_ONE * 15 / 16)
 
 /// Per-frame update of an afterimage: closes half the distance to the actor
 /// it watches, on all three axes.
@@ -83,8 +83,8 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
 
 /// Defines a per-frame update that spins an actor 1/8 turn a frame while its
 /// scale changes by step, releasing the actor once the scale falls below
-/// Q16_ONE * 3 / 16. step is negative: from full size the actor
-/// lasts (Q16_ONE * 13 / 16) / -step frames, rounded down, plus one.
+/// FIXED_ONE * 3 / 16. step is negative: from full size the actor
+/// lasts (FIXED_ONE * 13 / 16) / -step frames, rounded down, plus one.
 #define DEFINE_SHRINK_AND_DESTROY(name, step)                                  \
   void name(struct Actor *actor) {                                             \
     void *obj = actor;                                                         \
@@ -93,9 +93,9 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
     scale = ((struct Actor *)obj)->scaleX + step;                              \
     ((struct Actor *)obj)->scaleY = ((struct Actor *)obj)->scaleY + step;      \
     ((struct Actor *)obj)->facing =                                            \
-        ((struct Actor *)obj)->facing + TRIG_TURN / 8;                         \
+        ((struct Actor *)obj)->facing + DEGtoANG(45);                          \
     ((struct Actor *)obj)->scaleX = scale;                                     \
-    if (scale < Q16_ONE * 3 / 16) {                                            \
+    if (scale < FIXED_ONE * 3 / 16) {                                          \
       Actor_ReleaseFar(obj);                                                   \
     }                                                                          \
   }
@@ -121,7 +121,7 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
   // The caller spawns the fragment and places it.
   if (fragment != NULL) {
     fragment->motionFlags = ACTOR_FALLS;
-    fragment->gravity = px(1) / 10;
+    fragment->gravity = toFIXED(1) / 10;
     Actor_SelectAnimationFar(fragment, 0);
     fragment->wait = 12;
     Actor_StartScriptFar(fragment, gFieldEffect_SharedParticleScript);
@@ -147,32 +147,33 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
     effectWork = gFieldEffectWork;                                             \
     FieldPsynergy_FadeToCastColor();                                           \
     pos.x = effectWork->x;                                                     \
-    pos.y = effectWork->y + px(16);                                            \
+    pos.y = effectWork->y + toFIXED(16);                                       \
     pos.z = effectWork->z;                                                     \
-    pair[0] = spawn(pos.x + px(32), pos.y, pos.z, FACING_WEST);                \
-    pair[1] = spawn(pos.x - px(32), pos.y, pos.z, FACING_EAST);                \
+    pair[0] = spawn(pos.x + toFIXED(32), pos.y, pos.z, FACING_WEST);           \
+    pair[1] = spawn(pos.x - toFIXED(32), pos.y, pos.z, FACING_EAST);           \
                                                                                \
     wait(15);                                                                  \
     walk = pair;                                                               \
     for (n = 0; n < 2; n++) {                                                  \
       obj = *walk++;                                                           \
       if (obj != 0)                                                            \
-        Actor_SetTargetPositionFromMagnitudeAngle(obj, px(24), obj->facing);   \
+        Actor_SetTargetPositionFromMagnitudeAngle(obj, toFIXED(24),            \
+                                                  obj->facing);                \
     }                                                                          \
                                                                                \
     Actor_WaitForMoveFar(pair[0]);                                             \
     Sound_PlayFar(SE_HEAVY_IMPACT);                                            \
     for (n = 0; n < ITEM_BREAK_SHARD_MAX; n++) {                               \
       pos.x = effectWork->x;                                                   \
-      pos.y = effectWork->y + px(16);                                          \
+      pos.y = effectWork->y + toFIXED(16);                                     \
       pos.z = effectWork->z;                                                   \
       obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);                  \
       if (obj != 0) {                                                          \
         Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);                \
-        obj->speedLimit = Random16() + px(2);                                  \
-        obj->acceleration = px(2);                                             \
+        obj->speedLimit = Random16() + toFIXED(2);                             \
+        obj->acceleration = toFIXED(2);                                        \
         obj->motionFlags = 0;                                                  \
-        dist = Random16() * 24 + px(8);                                        \
+        dist = Random16() * 24 + toFIXED(8);                                   \
         Actor_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());      \
       }                                                                        \
     }                                                                          \
@@ -182,7 +183,7 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
     FieldPsynergy_FadeFromCastColor();                                         \
   }
 
-#define ABOVE px(16) ///< 16 pixels up
+#define ABOVE toFIXED(16) ///< 16 pixels up
 
 /// The states of a particle that flies out and back: Halt's, Force's and Move's
 /// (FieldEffect_UpdateHaltParticle, FieldEffect_UpdateRadialBurst,

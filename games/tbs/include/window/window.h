@@ -557,7 +557,7 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
 /// The bob of a prompt or cursor: up and down by up to 2 pixels, a sine every
 /// 16 frames.
 #define CURSOR_BOB_Y()                                                         \
-  (Trig_Sin(gFrameCount * (TRIG_TURN / 16)) / (Q16_ONE / 2))
+  (Trig_Sin(gFrameCount * (TRIG_TURN / 16)) / (FIXED_ONE / 2))
 
 /// Message_OpenWindow's packed argument: the speaker's voice in bits 16 to 27,
 /// above the window options.

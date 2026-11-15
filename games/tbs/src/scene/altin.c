@@ -220,7 +220,7 @@ enum {
 
 #define WATER_BEAST_HOP_PERIOD 60
 #define WATER_SPRAY_LIFETIME 20
-#define WATER_SPRAY_START_SCALE (3 * Q16_ONE / 10)
+#define WATER_SPRAY_START_SCALE (3 * FIXED_ONE / 10)
 
 // UB: the facing test overflows a signed left shift for many headings.
 #ifdef UBFIX
@@ -358,8 +358,7 @@ static void Altin_TalkToThirstyOldWoman(void) {
 
       FieldCamera_GetActor()->motionFlags = 0;
       FieldCamera_SetSpeed(1);
-      FieldCamera_MoveToFixed(beast->x.fixed, beast->y.fixed, beast->z.fixed,
-                              1);
+      FieldCamera_MoveToFX(beast->x.fixed, beast->y.fixed, beast->z.fixed, 1);
       // BUG: FACING_SOUTH's value is passed as an actor id. No actor has
       // it, so the leader does not turn south toward the beast.
 #ifdef BUGFIX
@@ -371,8 +370,8 @@ static void Altin_TalkToThirstyOldWoman(void) {
       FieldCamera_WaitForArrival();
       Event_Wait(120);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
-      FieldCamera_MoveToFixed(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-                              1);
+      FieldCamera_MoveToFX(leader->x.fixed, leader->y.fixed, leader->z.fixed,
+                           1);
       FieldCamera_WaitForArrival();
     }
     Actor_SetAnimationAndWait(ACTOR_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
@@ -648,7 +647,7 @@ static void Altin_BeastHop(struct Actor *actor) {
   }
   if (beast->velocityY == 0) {
     Actor_SelectAnimation(beast, 1);
-    beast->y.fixed -= px(3) / 2;
+    beast->y.fixed -= toFIXED(3) / 2;
     if (beast->y.fixed < beast->groundHeight) {
       if (((struct FieldEffect *)actor)->countdown != 0) {
         Sound_Play(SE_SPLASH);
@@ -666,7 +665,7 @@ static void Altin_BeastHop(struct Actor *actor) {
     Sound_Play(SE_JUMP);
     ((struct FieldEffect *)actor)->countdown = 1;
     Actor_SelectAnimation(beast, 2);
-    beast->velocityY = px(3);
+    beast->velocityY = toFIXED(3);
   }
   if (++beast->timer == WATER_BEAST_HOP_PERIOD)
     beast->timer = 0;
@@ -679,7 +678,7 @@ static void Altin_BeastHopAway(void) {
   beast = Actor_Get(ACTOR_WATER_BEAST);
   beast->timer = 0;
   beast->userValue = 0;
-  beast->gravity = px(2) / 5;
+  beast->gravity = toFIXED(2) / 5;
   beast->update = Altin_BeastHop;
   Actor_SetSpeed(ACTOR_WATER_BEAST, 1.2);
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 28, 460);
@@ -792,7 +791,7 @@ static void Altin_ApplyWaterLevel(void) {
   Actor_SetSpritePriority(ACTOR_THIRD_CRATE, 1);
   wait(1);
   Event_Start();
-  FieldCamera_MoveToFixed(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
+  FieldCamera_MoveToFX(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
   MapGrid_CenterOnFollowedPoint();
   Event_End();
   wait(1);
@@ -844,13 +843,13 @@ static void Altin_SprayDrift(struct Actor *spray) {
   spray->x.fixed +=
       WATER_SPRAY_LATERAL_STEP(spray->timer, (s16)((s32)(Random_Below(2)) - 1));
   if (spray->timer <= 3) {
-    spray->z.fixed -= Random_Below(px(1) / 2) + px(1);
-    spray->scaleX += 3 * Q16_ONE / 20;
-    spray->scaleY -= Q16_ONE / 25;
+    spray->z.fixed -= Random_Below(toFIXED(1) / 2) + toFIXED(1);
+    spray->scaleX += 3 * FIXED_ONE / 20;
+    spray->scaleY -= FIXED_ONE / 25;
   } else {
-    spray->z.fixed += px(2);
-    spray->scaleX += 3 * Q16_ONE / 100;
-    spray->scaleY += 3 * Q16_ONE / 100;
+    spray->z.fixed += toFIXED(2);
+    spray->scaleX += 3 * FIXED_ONE / 100;
+    spray->scaleY += 3 * FIXED_ONE / 100;
   }
   if (Random_Below(spray->timer) == 0)
     Actor_SetSpriteColor(spray, SPRITE_COLOR_WHITE);
@@ -869,8 +868,8 @@ static void Altin_SprayDrift(struct Actor *spray) {
 static void Altin_BeastSpawnSpray(void) {
   struct Actor *spray;
   if ((gFrameCount & 3) == 0) {
-    spray = ((struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, px(64), 0,
-                                               px(400)));
+    spray = ((struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, toFIXED(64), 0,
+                                               toFIXED(400)));
     if (spray != NULL) {
       spray->timer = WATER_SPRAY_LIFETIME;
       spray->userValue = 0;

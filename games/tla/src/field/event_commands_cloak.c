@@ -94,7 +94,7 @@ void BattleEffect_LandFallingObject(struct FallingObject *object) {
 void FieldEffect_UpdateDriftingFallActor(struct Actor *particle) {
   s32 drift;
 
-  particle->y.fixed -= px(3) / 10;
+  particle->y.fixed -= toFIXED(3) / 10;
   drift = Random16();
   particle->x.fixed += drift - Random16();
   if (particle->y.fixed <= particle->groundHeight) {
@@ -138,20 +138,20 @@ void FieldPsynergy_Douse(void) {
   if (work->child == 0) {
     work->x = target->x.fixed;
     work->z = target->z.fixed;
-    Vector_AddPolarOffset(px(16), work->angle, (struct Vector3 *)&work->x);
+    Vector_AddPolarOffset(toFIXED(16), work->angle, (struct Vector3 *)&work->x);
   }
   from = &start;
-  SET_POSITION(from, target->x.fixed, target->y.fixed + px(16),
+  SET_POSITION(from, target->x.fixed, target->y.fixed + toFIXED(16),
                target->z.fixed);
   to = &end;
   to->x = work->x;
   y = work->y;
-  to->y = y + px(32);
+  to->y = y + toFIXED(32);
   to->z = work->z;
   if ((s8)work->childOption != 0)
-    to->y = y + px(80);
+    to->y = y + toFIXED(80);
   if (Actor_GetSpriteIdFar(anchor) == 380) {
-    to->y += px(32);
+    to->y += toFIXED(32);
     raised = 1;
   }
 
@@ -176,7 +176,7 @@ void FieldPsynergy_Douse(void) {
       t += (e - t) * i / 10;
       orb->z.fixed = t;
     }
-    scale = InterpolateTenths(Q16_ONE / 4, Q16_ONE, i);
+    scale = InterpolateTenths(FIXED_ONE / 4, FIXED_ONE, i);
     orb->scaleX = scale;
     orb->scaleY = scale;
     wait(1);
@@ -189,7 +189,7 @@ void FieldPsynergy_Douse(void) {
       count = 24;
     for (n = 0; n < count; n++) {
       SET_POSITION(&pos, orb->x.fixed, orb->y.fixed, orb->z.fixed);
-      Vector_AddPolarOffset(Random16() * 5 + px(3), Random16(), &pos);
+      Vector_AddPolarOffset(Random16() * 5 + toFIXED(3), Random16(), &pos);
       if (n == count - 1) {
         wait(20);
         SET_POSITION(&pos, orb->x.fixed, orb->y.fixed, orb->z.fixed);
@@ -201,9 +201,9 @@ void FieldPsynergy_Douse(void) {
         if (ground != 0) {
           mote->groundHeight = ground->y.fixed;
           if (raised == 1)
-            mote->groundHeight = ground->y.fixed + px(32);
+            mote->groundHeight = ground->y.fixed + toFIXED(32);
         } else {
-          mote->groundHeight = pos.y - px(32);
+          mote->groundHeight = pos.y - toFIXED(32);
         }
         mote->update = (void (*)(void))BattleEffect_LandFallingObject;
         mote->motionFlags = 2;
@@ -226,7 +226,7 @@ void FieldPsynergy_Douse(void) {
       count = 30;
     for (n = 0; n < count; n++) {
       SET_POSITION(&pos, orb->x.fixed, orb->y.fixed, orb->z.fixed);
-      Vector_AddPolarOffset(Random16() * 5 + px(3), Random16(), &pos);
+      Vector_AddPolarOffset(Random16() * 5 + toFIXED(3), Random16(), &pos);
       mote = Actor_Spawn(SPRITE_PARTICLE, pos.x, pos.y, pos.z);
       if (mote != 0) {
         mote->update = (void (*)(void))FieldEffect_UpdateDriftingFallActor;
@@ -262,7 +262,7 @@ void FieldPsynergy_Douse(void) {
       t += (e - t) * i / 10;
       orb->z.fixed = t;
     }
-    scale = InterpolateTenths(Q16_ONE, Q16_ONE / 4, i);
+    scale = InterpolateTenths(FIXED_ONE, FIXED_ONE / 4, i);
     orb->scaleX = scale;
     orb->scaleY = scale;
     wait(1);
@@ -284,7 +284,7 @@ void FieldEffect_SpawnFallingParticles(void) {
   liftedActor =
       ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->child;
   position.x = liftedActor->x.fixed;
-  position.y = liftedActor->y.fixed - Random16() * 16 + px(24);
+  position.y = liftedActor->y.fixed - Random16() * 16 + toFIXED(24);
   position.z = liftedActor->z.fixed;
 
   radius = Random16() * 3;
@@ -301,9 +301,9 @@ static __inline__ s32 Actor_ProbeRaised(struct Actor *object,
                                         struct FxPosition *position) {
   s32 hit;
 
-  object->groundHeight += px(16);
+  object->groundHeight += toFIXED(16);
   hit = MapGrid_CheckCollisionFar(object, position);
-  object->groundHeight -= px(16);
+  object->groundHeight -= toFIXED(16);
   return hit;
 }
 
@@ -335,24 +335,25 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   /* FAKEMATCH(temporary): p holds &position everywhere but the steering loop's
    * first part. */
   p = &position;
-  SET_POSITION(p, work->x, work->y + px(16), work->z);
-  object = FieldEffect_SpawnCarryHand(p->x + px(32), p->y, p->z, 0x8000);
+  SET_POSITION(p, work->x, work->y + toFIXED(16), work->z);
+  object = FieldEffect_SpawnCarryHand(p->x + toFIXED(32), p->y, p->z, 0x8000);
   anchors[0] = object;
-  right = FieldEffect_SpawnCarryHand(p->x - px(32), p->y, p->z, 0);
+  right = FieldEffect_SpawnCarryHand(p->x - toFIXED(32), p->y, p->z, 0);
   anchors[1] = right;
   if (anchors[0] == NULL || right == NULL) {
     FieldPsynergy_FadeFromCastColor();
     return;
   }
   wait(15);
-  SET_POSITION(p, target->x.fixed, target->y.fixed + px(16), target->z.fixed);
-  Actor_SetMoveTargetFar(object, p->x + px(16), p->y, p->z);
-  Actor_SetMoveTargetFar(right, p->x - px(16), p->y, p->z);
+  SET_POSITION(p, target->x.fixed, target->y.fixed + toFIXED(16),
+               target->z.fixed);
+  Actor_SetMoveTargetFar(object, p->x + toFIXED(16), p->y, p->z);
+  Actor_SetMoveTargetFar(right, p->x - toFIXED(16), p->y, p->z);
   Actor_WaitForMoveFar(object);
   Actor_WaitForMoveFar(right);
-  object->x.fixed = p->x + px(16);
+  object->x.fixed = p->x + toFIXED(16);
   object->velocityX = 0;
-  right->x.fixed = p->x - px(16);
+  right->x.fixed = p->x - toFIXED(16);
   right->velocityX = 0;
   target->update = Actor_CycleSpriteColors;
   Task_Add((s32)FieldEffect_SpawnFallingParticles, TASK_PASS_VBLANK);
@@ -360,19 +361,19 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   target->motionFlags = 4;
   Actor_SetSpriteFlagsFar(target, 0);
   if (anchors[0] != NULL && anchors[1] != NULL) {
-    while (target->y.fixed - target->groundHeight <= px(24)) {
-      object->y.fixed += px(3) / 8;
-      right->y.fixed += px(3) / 8;
-      target->y.fixed += px(3) / 8;
+    while (target->y.fixed - target->groundHeight <= toFIXED(24)) {
+      object->y.fixed += toFIXED(3) / 8;
+      right->y.fixed += toFIXED(3) / 8;
+      target->y.fixed += toFIXED(3) / 8;
       wait(1);
     }
   }
-  anchors[0]->speedLimit = px(4);
-  anchors[0]->acceleration = px(1) / 2;
-  anchors[1]->speedLimit = px(4);
-  anchors[1]->acceleration = px(1) / 2;
-  target->speedLimit = px(2) / 5;
-  target->acceleration = px(1) / 5;
+  anchors[0]->speedLimit = toFIXED(4);
+  anchors[0]->acceleration = toFIXED(1) / 2;
+  anchors[1]->speedLimit = toFIXED(4);
+  anchors[1]->acceleration = toFIXED(1) / 2;
+  target->speedLimit = toFIXED(2) / 5;
+  target->acceleration = toFIXED(1) / 5;
   target->steeringFlags = 0;
   target->layer = 2;
   for (;;) {
@@ -381,28 +382,28 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       break;
     angle = (u16)Input_GetDpadAngle(gInput.held);
     if (angle == 0xffff) {
-      SET_POSITION(&position, target->x.fixed, target->y.fixed + px(16),
+      SET_POSITION(&position, target->x.fixed, target->y.fixed + toFIXED(16),
                    target->z.fixed);
-      Actor_SetMoveTargetFar(anchors[0], position.x + px(16), position.y,
+      Actor_SetMoveTargetFar(anchors[0], position.x + toFIXED(16), position.y,
                              position.z);
-      Actor_SetMoveTargetFar(anchors[1], position.x - px(16), position.y,
+      Actor_SetMoveTargetFar(anchors[1], position.x - toFIXED(16), position.y,
                              position.z);
       Actor_SelectAnimationFar(anchors[0], 1);
       Actor_SelectAnimationFar(anchors[1], 1);
       continue;
     }
-    SET_POSITION(&position, target->x.fixed, target->y.fixed + px(16),
+    SET_POSITION(&position, target->x.fixed, target->y.fixed + toFIXED(16),
                  target->z.fixed);
-    Vector_AddPolarOffset(px(2), angle, &position);
-    Actor_SetMoveTargetFar(anchors[0], position.x + px(16), position.y,
+    Vector_AddPolarOffset(toFIXED(2), angle, &position);
+    Actor_SetMoveTargetFar(anchors[0], position.x + toFIXED(16), position.y,
                            position.z);
-    Actor_SetMoveTargetFar(anchors[1], position.x - px(16), position.y,
+    Actor_SetMoveTargetFar(anchors[1], position.x - toFIXED(16), position.y,
                            position.z);
     Actor_WaitForMoveFar(anchors[0]);
     Actor_WaitForMoveFar(anchors[1]);
     SET_POSITION(&position, target->x.fixed, target->groundHeight,
                  target->z.fixed);
-    Vector_AddPolarOffset(px(16), angle, &position);
+    Vector_AddPolarOffset(toFIXED(16), angle, &position);
     i = ActorScript_CheckOverlapFar(target, &position);
     // Both tests jump into the blocked path, which keeps it ahead of the drop
     if (i != 0)
@@ -427,16 +428,16 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       Actor_SelectAnimationFar(anchors[1], 4);
       wait(15);
       target->paused = i;
-      target->speedLimit = px(1) / 5;
-      target->acceleration = px(1) / 5;
+      target->speedLimit = toFIXED(1) / 5;
+      target->acceleration = toFIXED(1) / 5;
       Actor_SetMoveTargetFar(target, p->x, p->y, p->z);
-      anchors[0]->speedLimit = px(1) / 5;
-      anchors[0]->acceleration = px(1) / 5;
+      anchors[0]->speedLimit = toFIXED(1) / 5;
+      anchors[0]->acceleration = toFIXED(1) / 5;
       second = anchors[1];
-      second->speedLimit = px(1) / 5;
-      second->acceleration = px(1) / 5;
-      Actor_SetMoveTargetFar(anchors[0], p->x + px(16), p->y, p->z);
-      Actor_SetMoveTargetFar(second, p->x - px(16), p->y, p->z);
+      second->speedLimit = toFIXED(1) / 5;
+      second->acceleration = toFIXED(1) / 5;
+      Actor_SetMoveTargetFar(anchors[0], p->x + toFIXED(16), p->y, p->z);
+      Actor_SetMoveTargetFar(second, p->x - toFIXED(16), p->y, p->z);
       Actor_WaitForMoveFar(target);
       target->x.fixed = x;
       target->z.fixed = z;
@@ -453,7 +454,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   wait(15);
   Sound_PlayFar(SE_CLICK);
   wait(15);
-  SET_POSITION(p, target->x.fixed, target->y.fixed + px(16), target->z.fixed);
+  SET_POSITION(p, target->x.fixed, target->y.fixed + toFIXED(16),
+               target->z.fixed);
   {
     struct Actor **walk = shards;
 
@@ -462,8 +464,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       *walk++ = object;
       if (object != NULL) {
         Actor_StartScriptFar(object, (u32)gFieldEffect_FragmentScript);
-        object->speedLimit = Random16() + px(2);
-        object->acceleration = px(2);
+        object->speedLimit = Random16() + toFIXED(2);
+        object->acceleration = toFIXED(2);
         object->motionFlags = 0;
         magnitude = Random16() * 24 + 0x80000;
         Actor_SetTargetPositionFromMagnitudeAngle(object, magnitude,
@@ -478,8 +480,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   Actor_StartScriptFar(target, (u32)(work->savedScript));
   target->update = work->savedCallback;
   target->motionFlags = 3;
-  target->velocityY = px(10);
-  target->bounce = px(1) / 5;
+  target->velocityY = toFIXED(10);
+  target->bounce = toFIXED(1) / 5;
   target->layer = 0;
   source->update = NULL;
   Actor_SetSpriteColorModeFar(source, SPRITE_COLOR_NORMAL);

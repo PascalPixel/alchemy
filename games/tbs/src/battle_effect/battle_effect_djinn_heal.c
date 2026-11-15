@@ -49,7 +49,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       s32 heading = Random16() & TRIG_ANGLE_MASK;
       s32 speed = (Random16() & 0xff) + 128;
 
-      SET_POSITION(spark, 0, px((Random16() & 31) + 20), 0);
+      SET_POSITION(spark, 0, INTtoFIXED((Random16() & 31) + 20), 0);
       SET_VELOCITY(spark, (Trig_Sin(heading) * speed) >> 5, 0,
                    (Trig_Cos(heading) * speed) >> 5);
       spark->variant = 0;
@@ -59,7 +59,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 
     // The swirl.
     SET_VECTOR(position, actor->x.fixed, 0, actor->z.fixed);
-    SET_VECTOR(target, goal->x.fixed, px(90), 0);
+    SET_VECTOR(target, goal->x.fixed, toFIXED(90), 0);
   }
   SET_VECTOR(delta, (target[0] - position[0]) / 40,
              (target[1] - position[1]) / 40, (target[2] - position[2]) / 40);
@@ -75,7 +75,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       position[1] += delta[1];
       position[2] += delta[2];
     }
-    Transform_ApplyPosition(position);
+    Matrix_TranslateVector(position);
     if (frame == 0)
       BattleEffect_TintBattler(work->args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
                                TINT_KEEP, 0);
@@ -86,25 +86,25 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
       struct Particle *spark = &PARTICLES[i];
       if (frame > i && spark->variant == 0) {
         s32 size;
-        Transform_Push();
+        Matrix_Push();
         switch (i & 3) {
         case SPIN_YAW:
-          Transform_ApplyYaw(frame * DJINN_HEAL_MOTE_SPIN(i));
+          Matrix_RotateY(frame * DJINN_HEAL_MOTE_SPIN(i));
           break;
         case SPIN_PITCH:
-          Transform_ApplyPitch(-frame * DJINN_HEAL_MOTE_SPIN(i));
+          Matrix_RotateX(-frame * DJINN_HEAL_MOTE_SPIN(i));
           break;
         case SPIN_ROLL:
-          Transform_ApplyRoll(-frame * DJINN_HEAL_MOTE_SPIN(i));
+          Matrix_RotateZ(-frame * DJINN_HEAL_MOTE_SPIN(i));
           break;
         case SPIN_PITCH_AND_ROLL:
-          Transform_ApplyPitch(-frame * DJINN_HEAL_MOTE_SPIN(i));
-          Transform_ApplyRoll(-frame * DJINN_HEAL_MOTE_SPIN(i));
+          Matrix_RotateX(-frame * DJINN_HEAL_MOTE_SPIN(i));
+          Matrix_RotateZ(-frame * DJINN_HEAL_MOTE_SPIN(i));
           break;
         }
         Projection_Point(spark, &screen);
         screen.x >>= 1;
-        Transform_Pop();
+        Matrix_Pop();
         CLAMP(screen.depth, 250, 634);
         size = 9 - (screen.depth - 250) / 64;
         EFFECT_DRAW_MOTE(callbacks[0], canvas, sheet, screen.x, screen.y, size);
@@ -145,7 +145,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     EFFECT_VIEW_FROM_CAMERA(camera);
     // The Djinni sways, then flies off.
     if (frame >= work->args->targetCount * 8 + 40)
-      target[1] += px(4);
+      target[1] += toFIXED(4);
     SET_VECTOR(point, target[0], target[1],
                target[2] + Trig_Sin(frame << 11) * 40);
     Projection_Point(point, &view);
@@ -158,8 +158,8 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
           GetBattleObjectSlotFar(work->args->targets[member])->actor;
       s32 start = member * 8;
       EFFECT_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(position, object->x.fixed, px(40), object->z.fixed);
-      Transform_ApplyPosition(position);
+      SET_VECTOR(position, object->x.fixed, toFIXED(40), object->z.fixed);
+      Matrix_TranslateVector(position);
       // Each target glows with the recovery sound.
       if (frame == start + 30)
         Sound_PlayFar(SE_RECOVERY);
@@ -170,7 +170,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
         BattleEffect_TintBattler(work->args->targets[member],
                                  SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
       if (frame > start) {
-        Transform_ApplyYaw((frame - start) << 9);
+        Matrix_RotateY((frame - start) << 9);
         for (i = 0; i != DJINN_HEAL_SPARKS_PER_TARGET; i++) {
           struct Particle *spark =
               &PARTICLES[member * DJINN_HEAL_SPARKS_PER_TARGET + i];

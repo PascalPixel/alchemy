@@ -71,7 +71,7 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   GLOW_COLOR_SET(7, Color_ScaleComponents(rgb, 0xa221, 0x9999, 0xaaaa));
   GLOW_COLOR_SET(8, Color_ScaleComponents(rgb, 0x10888, 0xdddd, 0x13333));
   GLOW_COLOR_SET(9, Color_ScaleComponents(rgb, 0x12221, 0xeeee, 0x15555));
-  GLOW_COLOR_SET(10, Color_ScaleComponents(rgb, 0x13bbb, Q16_ONE, 0x17777));
+  GLOW_COLOR_SET(10, Color_ScaleComponents(rgb, 0x13bbb, FIXED_ONE, 0x17777));
 }
 
 /// The settings menu's per-frame task: moves the cursor and the two slider

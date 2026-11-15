@@ -76,16 +76,16 @@ void FieldPsynergy_UpdateBurst(void) {
   pos[1] = scene->y;
   pos[2] = scene->z;
   Camera_WorldToScreen(pos);
-  canvas->x = (s16)FIELD_PIXEL(pos[0]);
-  canvas->y = (s16)FIELD_PIXEL(pos[2]);
+  canvas->x = (s16)FIXEDtoINT(pos[0]);
+  canvas->y = (s16)FIXEDtoINT(pos[2]);
 
   if (scene->enabled == 0) {
     particle = work->sparks;
     for (i = 0; i < 32; i++) {
       if ((u32)particle->timer <= 29) {
         sprite = &work->sparkSprites[i];
-        sprite->x = particle->x + px(canvas->x);
-        sprite->y = particle->y + px(canvas->y);
+        sprite->x = particle->x + toFIXED(canvas->x);
+        sprite->y = particle->y + toFIXED(canvas->y);
         EffectSprite_Draw(sprite);
         BattleEffect_IntegrateVector2(&particle->x, 60, 0);
       }
@@ -96,7 +96,8 @@ void FieldPsynergy_UpdateBurst(void) {
       particle = &work->bursts[work->nextBurst];
       particle->timer = 0;
       SET_POSITION(particle, scene->x, scene->y, scene->z);
-      Vector_AddPolarOffset(Random16() * 12 + px(4), Random16(), &particle->x);
+      Vector_AddPolarOffset(Random16() * 12 + toFIXED(4), Random16(),
+                            &particle->x);
       work->nextBurst = ++work->nextBurst % 32;
     }
     work->newBursts = 0;
@@ -142,7 +143,7 @@ void FieldPsynergy_UpdateBurst(void) {
     case 1:
       canvas->scaleX += 0x300;
       canvas->scaleY = canvas->scaleX;
-      if (canvas->scaleX >= Q16_ONE / 2) {
+      if (canvas->scaleX >= FIXED_ONE / 2) {
         work->phase++;
         work->timer = 0;
       }
@@ -157,7 +158,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 0)
         Sound_PlayFar(SE_CLATTER);
       if ((work->timer & 7) == 0) {
-        MapGrid_SetScreenShakeFar(px(3), px(3), 0xe666);
+        MapGrid_SetScreenShakeFar(toFIXED(3), toFIXED(3), 0xe666);
         work->newBursts = 1;
         work->shake = 2;
       }
@@ -169,7 +170,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if ((work->timer & 15) == 0)
         Sound_PlayFar(SE_CLATTER);
       if ((work->timer & 7) == 0) {
-        MapGrid_SetScreenShakeFar(px(3), px(3), 0xe666);
+        MapGrid_SetScreenShakeFar(toFIXED(3), toFIXED(3), 0xe666);
         work->newBursts = 1;
         work->shake = 2;
       }
@@ -186,7 +187,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 4)
         work->newBursts = 10;
       if (work->timer == 0) {
-        MapGrid_SetScreenShakeFar(px(12), px(12), 0xe666);
+        MapGrid_SetScreenShakeFar(toFIXED(12), toFIXED(12), 0xe666);
         Sound_PlayFar(SE_CRASH);
         if (work->timer == 0)
           work->shake = 3;
@@ -204,8 +205,8 @@ void FieldPsynergy_UpdateBurst(void) {
     for (i = 0; i < 12; i++) {
       if ((u32)particle->timer <= 29) {
         sprite = &work->sparkSprites[i];
-        sprite->x = particle->x + px(canvas->x);
-        sprite->y = particle->y + px(canvas->y);
+        sprite->x = particle->x + toFIXED(canvas->x);
+        sprite->y = particle->y + toFIXED(canvas->y);
         EffectSprite_Draw(sprite);
         BattleEffect_IntegrateVector2(&particle->x, 60, 0);
       }
@@ -274,7 +275,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 0) {
         work->paletteMode = 2;
         if (work->timer == 0) {
-          MapGrid_SetScreenShakeFar(px(3), px(3), 0xe666);
+          MapGrid_SetScreenShakeFar(toFIXED(3), toFIXED(3), 0xe666);
           work->newBursts = 1;
           Sound_PlayFar(SE_CLATTER);
         }
@@ -330,7 +331,7 @@ void FieldPsynergy_Burst(void) {
   struct EffectSprite *burstSprite;
   s32 i;
 
-  scene->y += px(10);
+  scene->y += toFIXED(10);
   FieldPsynergy_FadeToCastColor();
   BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->canvasSprite;
@@ -338,8 +339,8 @@ void FieldPsynergy_Burst(void) {
   pos[1] = scene->y;
   pos[2] = scene->z;
   Camera_WorldToScreen(pos);
-  canvas->x = (s16)FIELD_PIXEL(pos[0]);
-  canvas->y = (s16)FIELD_PIXEL(pos[2]);
+  canvas->x = (s16)FIXEDtoINT(pos[0]);
+  canvas->y = (s16)FIXEDtoINT(pos[2]);
   canvas->priority =
       FieldPsynergy_GetCanvasPriority(scene->mainActor, scene->angle);
   canvas->depth = BattleEffect_GetObjectDepth(scene->mainActor) + 2;
@@ -351,7 +352,7 @@ void FieldPsynergy_Burst(void) {
 
   sparkEntry = VramCache_FindFreeEntry();
   sparkTile = VramCache_Load(sparkEntry, 64, gBurst_GlowTiles);
-  for (i = 0, particle = work->sparks, mul = Iwram_MulQ16,
+  for (i = 0, particle = work->sparks, mul = Iwram_MulFX,
       sprite = work->sparkSprites;
        i < 32;) {
     EffectSprite_Init(sprite, 4, 4, 0, sparkTile);
@@ -359,13 +360,13 @@ void FieldPsynergy_Burst(void) {
     sprite->oam.palette = 0;
     sprite->oam.priority = canvas->priority;
     sprite->depth = canvas->depth + 1;
-    sprite->scaleY = sprite->scaleX = Q16_ONE;
-    radius = Random16() * 20 + px(20);
+    sprite->scaleY = sprite->scaleX = FIXED_ONE;
+    radius = Random16() * 20 + toFIXED(20);
     angle = Random16();
     particle->x = mul(Trig_Cos(angle), radius);
     particle->y = mul(Trig_Sin(angle), radius);
     radius /= 12;
-    angle += TRIG_TURN / 2;
+    angle += DEGtoANG(180);
     particle->velocityX = mul(Trig_Cos(angle), radius);
     particle->velocityY = mul(Trig_Sin(angle), radius);
     particle->timer = -i * 2;

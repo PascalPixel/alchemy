@@ -359,11 +359,11 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
       a = list[0];
       flag = list[1];
       if (count < 8)
-        object->scaleY -= Q16_ONE * 31 / 256;
+        object->scaleY -= FIXED_ONE * 31 / 256;
       if (mode == 1) {
         GameFlag_Set(flag);
         Actor_SetCellOpen(id, a, flag, object->layer);
-        object->scaleY = Q16_ONE;
+        object->scaleY = FIXED_ONE;
       }
       break;
     }
@@ -405,9 +405,9 @@ void AirsRockInside_ScatterMote(struct Actor *object) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   if (Random16() & 0xff) {
-    object->x.fixed = px(Random16() & 0xff) + px(176);
-    object->y.fixed = leader->y.fixed + px(Random16() & 31);
-    object->z.fixed = leader->z.fixed + px(Random16() & 127);
+    object->x.fixed = INTtoFIXED(Random16() & 0xff) + toFIXED(176);
+    object->y.fixed = leader->y.fixed + INTtoFIXED(Random16() & 31);
+    object->z.fixed = leader->z.fixed + INTtoFIXED(Random16() & 127);
   }
   object->userValue = object->timer;
   if (object->timer == 212)
@@ -514,7 +514,7 @@ void AirsRockInside_PoundCone(s32 mode, s32 step) {
     firstSprite = first->sprite;
     secondSprite = second->sprite;
     second->motionFlags = 0;
-    second->y.fixed -= px(28);
+    second->y.fixed -= toFIXED(28);
     wait(1);
     entry = &gVramCacheEntries[secondSprite->vramBlock];
     second->watchedActor = (void *)(entry->offset + OBJ_VRAM0);
@@ -526,16 +526,16 @@ void AirsRockInside_PoundCone(s32 mode, s32 step) {
     first->watchedActor = (void *)((u8 *)first->watchedActor + 0x300);
     second->watchedActor = (void *)((u8 *)second->watchedActor + 0x300);
   } else if (step <= 5) {
-    second->y.fixed += px(26) / 5;
+    second->y.fixed += toFIXED(26) / 5;
     Dma_Set(first->watchedActor, second->watchedActor, DMA_COPY_WORDS(48),
             REG_DMA3);
     first->watchedActor = (void *)((u8 *)first->watchedActor + 0x100);
     second->watchedActor = (void *)((u8 *)second->watchedActor + 0x100);
   }
   if (step <= 7)
-    first->scaleY += -(Q16_ONE * 31 / 256);
+    first->scaleY += -(FIXED_ONE * 31 / 256);
   if (mode == 1) {
-    first->scaleY = Q16_ONE;
+    first->scaleY = FIXED_ONE;
     second->y.fixed = second->groundHeight;
     GameFlag_Set(first->timer);
     GameFlag_Clear(second->timer);
@@ -635,18 +635,18 @@ void AirsRockInside_RideWhirlwind(void) {
     moved = 0;
     if (gInput.held & KEY_UP) {
       dx = 0;
-      dz = -px(16);
+      dz = -toFIXED(16);
       leader->facing = FACING_NORTH;
       moved = 1;
     }
     if (gInput.held & KEY_RIGHT) {
-      dx = px(16);
+      dx = toFIXED(16);
       dz = 0;
       leader->facing = 0;
       moved = 1;
     }
     if (gInput.held & KEY_LEFT) {
-      dx = -px(16);
+      dx = -toFIXED(16);
       leader->facing = FACING_WEST;
       dz = 0;
       moved = 1;
@@ -662,7 +662,7 @@ void AirsRockInside_RideWhirlwind(void) {
     if (i != 60)
       goto waiting;
     dx = 0;
-    dz = -px(16);
+    dz = -toFIXED(16);
     leader->facing = FACING_NORTH;
     if ((u32)(MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed),
                                     (ride->z.fixed - ride->y.fixed + dz) >> 20)
@@ -670,7 +670,7 @@ void AirsRockInside_RideWhirlwind(void) {
             16 !=
         255)
       goto found;
-    dx = px(16);
+    dx = toFIXED(16);
     dz = 0;
     leader->facing = 0;
     if ((u32)(MapCell_GetAttributes(2, FIELD_CELL(ride->x.fixed + dx),
@@ -679,7 +679,7 @@ void AirsRockInside_RideWhirlwind(void) {
             16 !=
         255)
       goto found;
-    dx = -px(16);
+    dx = -toFIXED(16);
     leader->facing = FACING_WEST;
   found:
     height = Map_GetTerrainHeight(rider->riseCounter, ride->x.fixed + dx,
@@ -690,9 +690,9 @@ void AirsRockInside_RideWhirlwind(void) {
     wait(6);
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
-    leader->speedLimit = px(2);
-    leader->acceleration = px(1) / 2;
-    leader->velocityY = px(4);
+    leader->speedLimit = toFIXED(2);
+    leader->acceleration = toFIXED(1) / 2;
+    leader->velocityY = toFIXED(4);
     *motion = 2;
     *priority = 1;
     leader->layer = rider->riseCounter;
@@ -709,13 +709,13 @@ void AirsRockInside_RideWhirlwind(void) {
     leader->z.fixed = (((ride->z.fixed >> 19) & ~1) - (angle & 2) + 1) << 19;
     noFlags = 0;
     Actor_SetSpriteFlags(leader, 1);
-    leader->velocityY = px(6);
+    leader->velocityY = toFIXED(6);
     *priority = 33;
     *motion = 3;
-    FieldCamera_MoveToFixed(-1, -1, -1, 0);
+    FieldCamera_MoveToFX(-1, -1, -1, 0);
     dust = FieldCamera_GetActor();
-    dust->speedLimit = px(8);
-    dust->acceleration = px(1);
+    dust->speedLimit = toFIXED(8);
+    dust->acceleration = toFIXED(1);
     dust->motionFlags = noFlags;
     Actor_SetMoveTarget(
         dust, leader->x.fixed,
@@ -762,7 +762,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
   s32 near;
   s32 *leaderPosition;
   s32 *shotPosition;
-  s32 speed = px(3) / 2;
+  s32 speed = toFIXED(3) / 2;
 
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
       work->item != 0 || gMainRoutineWork.movementMode == 5) {
@@ -809,11 +809,11 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
     }
   }
   if (shot->facing == FACING_NORTH) {
-    shot->x.fixed += Iwram_MulQ16(Trig_Cos(shot->facing), speed);
-    shot->y.fixed -= Iwram_MulQ16(Trig_Sin(shot->facing), speed);
+    shot->x.fixed += Iwram_MulFX(Trig_Cos(shot->facing), speed);
+    shot->y.fixed -= Iwram_MulFX(Trig_Sin(shot->facing), speed);
   } else {
-    shot->x.fixed += Iwram_MulQ16(Trig_Cos(shot->facing), speed);
-    shot->z.fixed += Iwram_MulQ16(Trig_Sin(shot->facing), speed);
+    shot->x.fixed += Iwram_MulFX(Trig_Cos(shot->facing), speed);
+    shot->z.fixed += Iwram_MulFX(Trig_Sin(shot->facing), speed);
   }
 }
 
@@ -838,9 +838,9 @@ void AirsRockInside_StatueBreathesWhirlwind(struct Actor *object) {
       position.z = object->z.fixed;
     } else {
       position.x =
-          object->x.fixed + Math_MulQ16(px(8), Trig_Cos(object->facing));
+          object->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(object->facing));
       position.z =
-          object->z.fixed + Math_MulQ16(px(8), Trig_Sin(object->facing));
+          object->z.fixed + Math_MulFX(toFIXED(8), Trig_Sin(object->facing));
     }
     shot = (struct Actor *)Import_ActorCreate(SPRITE_WHIRLWIND, position.x,
                                               object->y.fixed, position.z);
@@ -856,8 +856,8 @@ void AirsRockInside_StatueBreathesWhirlwind(struct Actor *object) {
     object->timer = 0;
     options.priority = 1;
     options.palette = 7;
-    FieldEffect_Spawn(position.x, object->y.fixed, position.z - px(6), 0, 0, 0,
-                      EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
+    FieldEffect_Spawn(position.x, object->y.fixed, position.z - toFIXED(6), 0,
+                      0, 0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
   }
   object->timer++;
 }
@@ -880,7 +880,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
   s32 near;
   s32 *leaderPosition;
   s32 *shotPosition;
-  s32 speed = px(3) / 2;
+  s32 speed = toFIXED(3) / 2;
 
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
       work->item != 0 || work->transitionActive == 0) {
@@ -932,11 +932,11 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
     }
   }
   if (shot->facing == FACING_NORTH) {
-    shot->x.fixed += Iwram_MulQ16(Trig_Cos(shot->facing), speed);
-    shot->y.fixed -= Iwram_MulQ16(Trig_Sin(shot->facing), speed);
+    shot->x.fixed += Iwram_MulFX(Trig_Cos(shot->facing), speed);
+    shot->y.fixed -= Iwram_MulFX(Trig_Sin(shot->facing), speed);
   } else {
-    shot->x.fixed += Iwram_MulQ16(Trig_Cos(shot->facing), speed);
-    shot->z.fixed += Iwram_MulQ16(Trig_Sin(shot->facing), speed);
+    shot->x.fixed += Iwram_MulFX(Trig_Cos(shot->facing), speed);
+    shot->z.fixed += Iwram_MulFX(Trig_Sin(shot->facing), speed);
   }
 }
 
@@ -967,9 +967,9 @@ void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *object) {
       position.z = object->z.fixed;
     } else {
       position.x =
-          object->x.fixed + Math_MulQ16(px(8), Trig_Cos(object->facing));
+          object->x.fixed + Math_MulFX(toFIXED(8), Trig_Cos(object->facing));
       position.z =
-          object->z.fixed + Math_MulQ16(px(8), Trig_Sin(object->facing));
+          object->z.fixed + Math_MulFX(toFIXED(8), Trig_Sin(object->facing));
     }
     for (i = 0; i != 3; i++) {
       shot = Actor_GetById(13 + i);
@@ -992,8 +992,8 @@ void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *object) {
     object->timer = 0;
     options.priority = 1;
     options.palette = 7;
-    FieldEffect_Spawn(position.x, object->y.fixed, position.z - px(6), 0, 0, 0,
-                      EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
+    FieldEffect_Spawn(position.x, object->y.fixed, position.z - toFIXED(6), 0,
+                      0, 0, EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);
   }
   object->timer++;
 }
@@ -1036,18 +1036,18 @@ void AirsRockInside_UpdateVentPuff(struct Actor *object) {
     return;
   }
   if (Position_FlatDistance(&leader->x.fixed, pos = &object->x.fixed) <= 8 &&
-      leader->y.part[0].pixel == object->y.part[0].pixel) {
+      leader->y.part[0].integer == object->y.part[0].integer) {
     work->raisedTrigger = 201;
     object->riseBaseY = 0;
     object->speedLimit = -object->speedLimit >> 1;
-    object->z.fixed = leader->z.fixed - px(8);
+    object->z.fixed = leader->z.fixed - toFIXED(8);
   }
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST) {
     other = Actor_GetById(ACTOR_CLARITY_CIRCLET_CHEST_FIRST_PILLAR);
     if (Position_FlatDistance(&other->x.fixed, pos) <= 8) {
       object->speedLimit = -object->speedLimit >> 1;
       object->riseBaseY = 0;
-      object->z.fixed = other->z.fixed - px(8);
+      object->z.fixed = other->z.fixed - toFIXED(8);
     }
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
     for (i = 0; i != 3; i++) {
@@ -1056,7 +1056,7 @@ void AirsRockInside_UpdateVentPuff(struct Actor *object) {
       if (Position_FlatDistance(&other->x.fixed, pos) <= 8) {
         object->speedLimit = -object->speedLimit >> 1;
         object->riseBaseY = 0;
-        object->z.fixed = other->z.fixed - px(8);
+        object->z.fixed = other->z.fixed - toFIXED(8);
       }
     }
 #undef other
@@ -1065,8 +1065,8 @@ void AirsRockInside_UpdateVentPuff(struct Actor *object) {
   object->z.fixed += object->speedLimit;
   object->x.fixed += object->acceleration;
   object->speedLimit -= object->riseBaseY;
-  object->scaleX += Q16_ONE / 20;
-  object->scaleY += Q16_ONE / 20;
+  object->scaleX += FIXED_ONE / 20;
+  object->scaleY += FIXED_ONE / 20;
 }
 
 /// A puff of air rising from a vent.
@@ -1080,10 +1080,10 @@ void AirsRockInside_PuffVent(s32 x, s32 y, s32 z) {
   object->timer = 27;
   object->motionFlags = 0;
   object->steeringFlags = 0;
-  object->scaleX = Q16_ONE / 2;
-  object->speedLimit = px(4);
+  object->scaleX = FIXED_ONE / 2;
+  object->speedLimit = toFIXED(4);
   object->acceleration = ((Random16() & 0x7fff) << 1) + 0xffff8001;
-  object->riseBaseY = px(7) / 32;
+  object->riseBaseY = toFIXED(7) / 32;
   object->update = (s32)AirsRockInside_UpdateVentPuff;
 }
 
@@ -1110,37 +1110,37 @@ void AirsRockInside_PuffVents(void) {
 
     if ((frame & 1) &&
         !GameFlag_Get(FLAG_AIRS_ROCK_CLARITY_CIRCLET_CHEST_FIRST_PILLAR_PLACED))
-      x = px(376);
+      x = toFIXED(376);
     else
-      x = px(280);
-    AirsRockInside_PuffVent(x, 0, px(616));
+      x = toFIXED(280);
+    AirsRockInside_PuffVent(x, 0, toFIXED(616));
   } else if (scene == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
     if (frame & 1) {
       if (Actor_GetById(gMainRoutineWork.leaderActorId)->z.fixed >> 19 > 41) {
         if (Actor_GetById(gMainRoutineWork.leaderActorId)->x.fixed >> 19 <= 44)
         puffWestVent:
-          AirsRockInside_PuffVent(px(168), 0, px(603));
+          AirsRockInside_PuffVent(toFIXED(168), 0, toFIXED(603));
         else if (!GameFlag_Get(FLAG_SCENE_TEMP_01))
-          AirsRockInside_PuffVent(px(504), 0, px(456));
+          AirsRockInside_PuffVent(toFIXED(504), 0, toFIXED(456));
         else
           goto puffEastVent;
       } else {
       puffNorthVent:
-        AirsRockInside_PuffVent(px(616), -px(32), px(136));
+        AirsRockInside_PuffVent(toFIXED(616), -toFIXED(32), toFIXED(136));
       }
     } else {
       if (Actor_GetById(gMainRoutineWork.leaderActorId)->z.fixed >> 19 > 41) {
         if (Actor_GetById(gMainRoutineWork.leaderActorId)->x.fixed >> 19 > 49)
         puffEastVent:
-          AirsRockInside_PuffVent(px(552), 0, px(456));
+          AirsRockInside_PuffVent(toFIXED(552), 0, toFIXED(456));
         else if (GameFlag_Get(FLAG_SCENE_TEMP_00))
           goto puffWestVent;
         else
-          AirsRockInside_PuffVent(px(264), 0, px(600));
+          AirsRockInside_PuffVent(toFIXED(264), 0, toFIXED(600));
       } else if (GameFlag_Get(FLAG_SCENE_TEMP_02)) {
         goto puffNorthVent;
       } else {
-        AirsRockInside_PuffVent(px(648), -px(32), px(136));
+        AirsRockInside_PuffVent(toFIXED(648), -toFIXED(32), toFIXED(136));
       }
     }
   }
@@ -1197,8 +1197,8 @@ void AirsRockInside_BlowGust(void) {
                                             leader->y.fixed, leader->z.fixed);
   Actor_SelectAnimation(gust, 2);
   Actor_SetSpriteFlags(gust, 0);
-  gust->scaleX = Q16_ONE * 17 / 10;
-  gust->scaleY = Q16_ONE / 5;
+  gust->scaleX = FIXED_ONE * 17 / 10;
+  gust->scaleY = FIXED_ONE / 5;
   gust->motionFlags = 0;
   /* FAKEMATCH(signature): the target's word read as long, an alias set outside
    * struct Actor's. */
@@ -1206,14 +1206,14 @@ void AirsRockInside_BlowGust(void) {
       ((struct FieldSprite *)((struct Actor *)*(long *)&effect->child)->sprite)
           ->priority;
   Actor_SetMoveTarget(gust, TARGET(effect)->x.fixed, TARGET(effect)->y.fixed,
-                      TARGET(effect)->z.fixed - px(1));
+                      TARGET(effect)->z.fixed - toFIXED(1));
   gust->groundHeight = Map_GetTerrainHeight(0, gust->x.fixed, gust->z.fixed);
   while (gust->scaleY <= 0x14ccb) {
-    gust->scaleY += Q16_ONE / 10;
+    gust->scaleY += FIXED_ONE / 10;
     FieldEvent_Wait(1);
   }
   Actor_WaitForMove(gust);
-  gust->z.fixed = TARGET(effect)->z.fixed - px(1);
+  gust->z.fixed = TARGET(effect)->z.fixed - toFIXED(1);
   while (gust->scaleY <= 0x1cccb) {
     if ((gFrameCount & 3) == 0) {
       spark = (struct Actor *)Import_ActorCreate(
@@ -1224,7 +1224,7 @@ void AirsRockInside_BlowGust(void) {
       spark->groundHeight =
           Map_GetTerrainHeight(0, spark->x.fixed, spark->z.fixed);
       spark->bounce = spark->x.fixed;
-      spark->gravity = px(4) / 5;
+      spark->gravity = toFIXED(4) / 5;
       spark->riseBaseY = spark->z.fixed;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
@@ -1275,16 +1275,17 @@ void AirsRockInside_BlowGust(void) {
     s32 z;
 
     steps -= 2;
-    x = FIELD_PIXEL(TARGET(effect)->x.fixed) + ((steps * dir.x) << 3);
-    z = FIELD_PIXEL(TARGET(effect)->z.fixed) + ((steps * dir.z) << 3);
+    x = FIXEDtoINT(TARGET(effect)->x.fixed) + ((steps * dir.x) << 3);
+    z = FIXEDtoINT(TARGET(effect)->z.fixed) + ((steps * dir.z) << 3);
     ((struct FieldSprite *)gust->sprite)->priority = 1;
     cell.x = x;
     cell.z = z;
-    gust->speedLimit = px(4);
-    gust->acceleration = px(4);
-    Actor_SetMoveTarget(gust, px(cell.x), gust->y.fixed, px(cell.z));
+    gust->speedLimit = toFIXED(4);
+    gust->acceleration = toFIXED(4);
+    Actor_SetMoveTarget(gust, INTtoFIXED(cell.x), gust->y.fixed,
+                        INTtoFIXED(cell.z));
     FieldCamera_SetSpeedAndAcceleration(5, 5);
-    FieldCamera_MoveToFixed(px(x), -1, px(z), 1);
+    FieldCamera_MoveToFX(INTtoFIXED(x), -1, INTtoFIXED(z), 1);
   }
   carried = 0;
   while (Actor_HasArrived(gust) == 0) {
@@ -1310,7 +1311,7 @@ void AirsRockInside_BlowGust(void) {
       leaves.type = 674;
       leaves.palette = 2;
       velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
-      velocity.y = gust->y.fixed + px(Random16() & 31);
+      velocity.y = gust->y.fixed + INTtoFIXED(Random16() & 31);
       velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
       FieldEffect_Spawn(
           gust->x.fixed, velocity.y, gust->z.fixed, velocity.x, 0, velocity.z,
@@ -1322,7 +1323,7 @@ void AirsRockInside_BlowGust(void) {
     object = gust->watchedActor;
     object->x.fixed = (carried >> 16) << 19;
     object->z.fixed = carried << 19;
-    object->velocityY = px(8);
+    object->velocityY = toFIXED(8);
     object->update = 0;
     object->motionFlags = ACTOR_FALLS;
     object->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
@@ -1331,7 +1332,7 @@ void AirsRockInside_BlowGust(void) {
     Actor_SetSpriteFlags(object, 1);
     Scene_SetActorSpritePriority(object, 2);
     if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
-      object->groundHeight = -px(32);
+      object->groundHeight = -toFIXED(32);
       MapGrid_CopyCellAttributes(19, 16, 1, 1, 19, 18);
       GameFlag_Set(FLAG_AIRS_ROCK_ELIXIR_CHEST_PILLAR_MOVED);
     } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
@@ -1359,11 +1360,12 @@ void AirsRockInside_BlowGust(void) {
   if (hit == 255) {
     Sound_Play(SE_WHOOSH);
   } else {
-    cell.x = FIELD_PIXEL(gust->x.fixed) + dir.x * 48;
-    cell.z = FIELD_PIXEL(gust->z.fixed) + dir.z * 48;
-    gust->speedLimit = px(1) / 2;
-    gust->acceleration = px(1) / 2;
-    FieldActor_SetMoveTargetFixed(gust, px(cell.x), gust->y.fixed, px(cell.z));
+    cell.x = FIXEDtoINT(gust->x.fixed) + dir.x * 48;
+    cell.z = FIXEDtoINT(gust->z.fixed) + dir.z * 48;
+    gust->speedLimit = toFIXED(1) / 2;
+    gust->acceleration = toFIXED(1) / 2;
+    FieldActor_SetMoveTargetFX(gust, INTtoFIXED(cell.x), gust->y.fixed,
+                               INTtoFIXED(cell.z));
     hit -= 30;
     i = 0;
     while (Actor_HasArrived(gust) == 0) {
@@ -1376,10 +1378,11 @@ void AirsRockInside_BlowGust(void) {
       if ((gFrameCount & 1) == 0) {
         dust.priority = 1;
         {
-          dust.startScaleX = dust.startScaleY = (Random16() & 0xffff) + Q16_ONE;
+          dust.startScaleX = dust.startScaleY =
+              (Random16() & 0xffff) + FIXED_ONE;
         }
         velocity.x = Trig_Cos((gFrameCount & 0x1ff) << 12) << 1;
-        velocity.y = px(1);
+        velocity.y = toFIXED(1);
         velocity.z = Trig_Sin((gFrameCount & 0x1ff) << 12);
         FieldEffect_Spawn(gust->x.fixed, gust->y.fixed, gust->z.fixed,
                           velocity.x, velocity.y, velocity.z,
@@ -1430,9 +1433,9 @@ shrink:
   gust->targetY = 0;
   gust->targetX = 0;
   for (i = 0; i != 8; i++) {
-    gust->scaleX -= Q16_ONE * 3 / 20;
-    gust->scaleY -= Q16_ONE / 4;
-    gust->y.fixed += px(7) / 2;
+    gust->scaleX -= FIXED_ONE * 3 / 20;
+    gust->scaleY -= FIXED_ONE / 4;
+    gust->y.fixed += toFIXED(7) / 2;
     FieldEvent_Wait(1);
   }
   Actor_Release(gust);
@@ -1463,15 +1466,18 @@ shrink:
       SHAKE();
       MapGrid_CopyCellsTo(79, 0x40, 0x20, 79, 5, 7);
       if (Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed >> 19 == 65) {
-        velocity.x = Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed - px(8);
+        velocity.x =
+            Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed - toFIXED(8);
         velocity.y = Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->y.fixed;
-        velocity.z = Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->z.fixed + px(8);
+        velocity.z =
+            Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->z.fixed + toFIXED(8);
         Actor_SetSpritePriority(ACTOR_ELIXIR_CHEST_PILLAR, 2);
         for (i = 0; i != 8; i++) {
           dust.priority = 1;
-          FieldEffect_Spawn(velocity.x + px(Random16() & 15),
-                            velocity.y + px(Random16() & 31), velocity.z, 0, 0,
-                            -0x8000, EFFECT_USE_PRIORITY, &dust);
+          FieldEffect_Spawn(velocity.x + INTtoFIXED(Random16() & 15),
+                            velocity.y + INTtoFIXED(Random16() & 31),
+                            velocity.z, 0, 0, -0x8000, EFFECT_USE_PRIORITY,
+                            &dust);
         }
         wait(30);
         SHAKE();
@@ -1490,14 +1496,16 @@ shrink:
     } else if (hit == 6) {
       SHAKE();
       if (Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed >> 19 == 65) {
-        velocity.x = Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed - px(8);
+        velocity.x =
+            Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->x.fixed - toFIXED(8);
         velocity.y = Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->y.fixed;
         velocity.z = Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->z.fixed;
         for (i = 0; i != 8; i++) {
           dust.priority = 1;
-          FieldEffect_Spawn(velocity.x + px(Random16() & 15), velocity.y,
-                            velocity.z - px(Random16() & 31), 0, 0,
-                            -(px(1) / 2), EFFECT_USE_PRIORITY, &dust);
+          FieldEffect_Spawn(velocity.x + INTtoFIXED(Random16() & 15),
+                            velocity.y,
+                            velocity.z - INTtoFIXED(Random16() & 31), 0, 0,
+                            -(toFIXED(1) / 2), EFFECT_USE_PRIORITY, &dust);
         }
         wait(20);
       } else {
@@ -1698,15 +1706,15 @@ void AirsRockInside_BurstDust(s32 x, s32 z) {
   s32 i;
 
   options.priority = 1;
-  options.startScaleX = Q16_ONE * 2;
-  options.startScaleY = Q16_ONE * 2;
-  options.targetScaleX = Q16_ONE / 2;
-  options.targetScaleY = Q16_ONE / 2;
+  options.startScaleX = FIXED_ONE * 2;
+  options.startScaleY = FIXED_ONE * 2;
+  options.targetScaleX = FIXED_ONE / 2;
+  options.targetScaleY = FIXED_ONE / 2;
   i = 0;
 burst:
-  spawn.x = x + px(Random16() & 63) - px(32);
+  spawn.x = x + INTtoFIXED(Random16() & 63) - toFIXED(32);
   spawn.y = (Random16() & 15) << 12;
-  spawn.z = z + px(Random16() & 7) - px(16);
+  spawn.z = z + INTtoFIXED(Random16() & 7) - toFIXED(16);
   FieldEffect_Spawn(spawn.x, 0, spawn.z, 0, spawn.y, 0,
                     EFFECT_SCALE_TO_TARGET | EFFECT_USE_START_SCALE |
                         EFFECT_USE_PRIORITY | 1,
@@ -1725,14 +1733,14 @@ void AirsRockInside_ScatterSparks(s32 x, s32 z) {
 
   spawn.kind = 0x2a0;
   spawn.mode = 1;
-  spawn.scaleX = Q16_ONE * 4 / 5;
-  spawn.scaleY = Q16_ONE * 3;
+  spawn.scaleX = FIXED_ONE * 4 / 5;
+  spawn.scaleY = FIXED_ONE * 3;
   i = 0;
 next:
-  position.x = x + px(Random16() & 31) - px(16);
-  position.y = px(4);
+  position.x = x + INTtoFIXED(Random16() & 31) - toFIXED(16);
+  position.y = toFIXED(4);
   position.z = z;
-  FieldEffect_Spawn(position.x, 0, position.z, 0, position.y, 0, px(26),
+  FieldEffect_Spawn(position.x, 0, position.z, 0, position.y, 0, toFIXED(26),
                     &spawn);
   FieldEvent_Wait(5);
   i++;
@@ -1741,14 +1749,14 @@ next:
 }
 
 void AirsRockInside_SpiralGust(struct Actor *object) {
-  s32 radius = ((object->y.fixed - object->groundHeight) >> 1) + px(16);
+  s32 radius = ((object->y.fixed - object->groundHeight) >> 1) + toFIXED(16);
 
   object->x.fixed =
       object->bounce +
-      Iwram_MulQ16(Trig_Cos((object->speedLimit & 255) << 11), radius);
+      Iwram_MulFX(Trig_Cos((object->speedLimit & 255) << 11), radius);
   object->z.fixed =
       object->riseBaseY +
-      Iwram_MulQ16(Trig_Sin((object->speedLimit & 255) << 11), radius) / 3;
+      Iwram_MulFX(Trig_Sin((object->speedLimit & 255) << 11), radius) / 3;
   object->y.fixed += object->gravity;
   object->speedLimit++;
 }
@@ -1762,12 +1770,12 @@ void AirsRockInside_SpiralSpark(struct Actor *object) {
   s32 radius;
 
   phase = object->speedLimit;
-  radius = px(12) + (y >> 2);
+  radius = toFIXED(12) + (y >> 2);
   object->x.fixed =
-      object->bounce + Iwram_MulQ16(Trig_Cos((phase & 255) << 11), radius) * 2;
+      object->bounce + Iwram_MulFX(Trig_Cos((phase & 255) << 11), radius) * 2;
   object->z.fixed =
       object->riseBaseY +
-      Iwram_MulQ16(Trig_Sin((object->speedLimit & 255) << 11), radius);
+      Iwram_MulFX(Trig_Sin((object->speedLimit & 255) << 11), radius);
   object->y.fixed += object->gravity;
   object->speedLimit++;
   Actor_SetSpriteColor(object, ((gFrameCount & 2) >> 1) * 9);
@@ -1834,7 +1842,7 @@ row:
       spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
-      spark->gravity = px(3) / 2;
+      spark->gravity = toFIXED(3) / 2;
       spark->riseBaseY = spark->z.fixed;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
@@ -1850,8 +1858,8 @@ row:
   PaletteFade_StartInterpolation(60);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_SetSpeedFixed(px(1), px(1) / 8);
-  FieldCamera_MoveToFixed(px(312), -1, px(680), 1);
+  FieldCamera_SetSpeedFX(toFIXED(1), toFIXED(1) / 8);
+  FieldCamera_MoveToFX(toFIXED(312), -1, toFIXED(680), 1);
   FieldCamera_WaitForArrival();
   Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->update = 0;
   Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_TWISTER_ROCK), 6);
@@ -1886,7 +1894,7 @@ fade:
   Sound_Play(SE_BOSS_ROAR);
   AirsRockInside_BurstDust(0x1380000, 0x2d00000);
   MapGrid_CopyCellsTo(64, 78, 18, 105, 3, 5);
-  Camera_SetSpeedParameters(px(3) / 2, px(3) / 16);
+  Camera_SetSpeedParameters(toFIXED(3) / 2, toFIXED(3) / 16);
   FieldCamera_MoveToActorById(10, 1);
   FieldCamera_WaitForArrival();
   Sound_Play(SE_ENEMY_CRY);
@@ -1942,7 +1950,8 @@ void AirsRockInside_StepOntoLedge(void) {
   FieldEvent_Wait(15);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
   Actor_GetById(gMainRoutineWork.leaderActorId)->speedLimit =
-      Actor_GetById(gMainRoutineWork.leaderActorId)->acceleration = px(1) / 2;
+      Actor_GetById(gMainRoutineWork.leaderActorId)->acceleration =
+          toFIXED(1) / 2;
   Sound_Play(SE_MAP_EXIT);
   Actor_WalkToById(gMainRoutineWork.leaderActorId, 312, 792);
   FieldEvent_Wait(5);
@@ -2023,8 +2032,8 @@ void AirsRockInside_FinishPushingPillar(void) {
     if (x == 81 && z == 37)
       GameFlag_Set(FLAG_AIRS_ROCK_TIGHTROPES_PILLAR_PLACED);
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
-    FieldMapGrid_SetCellHeight(px(608), px(336), 2, -4);
-    FieldMapGrid_SetCellHeight(px(624), px(336), 2, -4);
+    FieldMapGrid_SetCellHeight(toFIXED(608), toFIXED(336), 2, -4);
+    FieldMapGrid_SetCellHeight(toFIXED(624), toFIXED(336), 2, -4);
     if (x == 43 && z == 87)
       GameFlag_Set(FLAG_AIRS_ROCK_PAIRED_STATUES_PILLAR_PLACED);
     if ((Actor_GetById(ACTOR_PAIRED_STATUES_PILLAR_A)->x.fixed >> 19 == 73 &&
@@ -2136,7 +2145,7 @@ row:
       spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
-      spark->gravity = px(3) / 2;
+      spark->gravity = toFIXED(3) / 2;
       spark->riseBaseY = spark->z.fixed;
       spark->speedLimit = Random16() & 0xffff;
       Actor_SelectAnimation(spark, 7);
@@ -2152,8 +2161,8 @@ row:
   PaletteFade_StartInterpolation(60);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
-  FieldCamera_SetSpeedFixed(px(1), px(1) / 8);
-  FieldCamera_MoveToFixed(px(216), -1, px(224), 1);
+  FieldCamera_SetSpeedFX(toFIXED(1), toFIXED(1) / 8);
+  FieldCamera_MoveToFX(toFIXED(216), -1, toFIXED(224), 1);
   FieldCamera_WaitForArrival();
   Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->update = 0;
   Actor_SetSpriteColor(Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK), 6);
@@ -2188,14 +2197,14 @@ fade:
   Sound_Play(SE_BOSS_ROAR);
   AirsRockInside_BurstDust(0xd80000, 0x12d0000);
   MapGrid_CopyCellsTo(68, 84, 12, 77, 3, 6);
-  Camera_SetSpeedParameters(px(3) / 2, px(3) / 16);
+  Camera_SetSpeedParameters(toFIXED(3) / 2, toFIXED(3) / 16);
   FieldCamera_MoveToActorById(8, 1);
   FieldCamera_WaitForArrival();
   Sound_Play(SE_ENEMY_CRY);
   Actor_SetSpriteColorById(ACTOR_VIAL_CHEST_STATUE, 0x100);
   AirsRockInside_ScatterSparks(Actor_GetById(ACTOR_VIAL_CHEST_STATUE)->x.fixed,
                                Actor_GetById(ACTOR_VIAL_CHEST_STATUE)->z.fixed +
-                                   px(32));
+                                   toFIXED(32));
   Actor_ConfigureSpriteColor(ACTOR_VIAL_CHEST_STATUE, 0);
   Actor_SetSpriteColor(Actor_GetById(ACTOR_VIAL_CHEST_STATUE), 7);
   wait(3);
@@ -2231,14 +2240,15 @@ void AirsRockInside_StepOffRide(void) {
   u8 *flags;
   u8 bit = 1;
 
-  if (Actor_GetById(gMainRoutineWork.leaderActorId)->z.part[0].pixel > 653)
+  if (Actor_GetById(gMainRoutineWork.leaderActorId)->z.part[0].integer > 653)
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
   Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &=
       ~ACTOR_FACES_MOTION;
-  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, px(4), px(2));
+  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, toFIXED(4),
+                           toFIXED(2));
   Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, 376, 668);
   flags = &Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags;
   *flags = bit | *flags;
@@ -2251,7 +2261,8 @@ void AirsRockInside_VanishStone(s32 x, s32 y) {
   struct FieldSprite *sprite;
   s32 i, cellX, cellY;
 
-  marker = Import_ActorCreate(SPRITE_STACKED_CRATES, px(x), 0, px(y));
+  marker = Import_ActorCreate(SPRITE_STACKED_CRATES, INTtoFIXED(x), 0,
+                              INTtoFIXED(y));
   REG_BLDALPHA = BLEND_ALPHA(16, 0);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Scene_SetActorSpritePriority(marker, 0);
@@ -2357,8 +2368,8 @@ void AirsRockInside_SpawnOrbitSpark(struct Actor *source) {
   struct Actor *object = FieldActor_Create(SPRITE_PARTICLE, source->x.fixed,
                                            source->y.fixed, source->z.fixed);
 
-  object->scaleY = Q16_ONE * 2 / 5;
-  object->scaleX = Q16_ONE * 2 / 5;
+  object->scaleY = FIXED_ONE * 2 / 5;
+  object->scaleX = FIXED_ONE * 2 / 5;
   object->motionFlags = 0;
   Actor_SetSpriteColor(object, 2);
   Scene_SetActorSpritePriority(object, 1);
@@ -2373,23 +2384,23 @@ s32 AirsRockInside_OrbitAnchor(struct Orbiter *orbiter) {
 
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
   orbiter->x = anchor->x.fixed;
-  orbiter->y = anchor->y.fixed + px(8);
+  orbiter->y = anchor->y.fixed + toFIXED(8);
   orbiter->z = anchor->z.fixed;
-  FieldVector_AddPolarOffsetFixed(orbiter->radius, orbiter->angle,
-                                  (s32)&orbiter->x);
+  FieldVector_AddPolarOffsetFX(orbiter->radius, orbiter->angle,
+                               (s32)&orbiter->x);
   if (--orbiter->countdown == 0)
     return 0;
-  if (orbiter->radius == px(2))
+  if (orbiter->radius == toFIXED(2))
     return 1;
   AirsRockInside_SpawnOrbitSpark(orbiter);
-  orbiter->radius -= px(4);
+  orbiter->radius -= toFIXED(4);
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
   orbiter->x = anchor->x.fixed;
-  orbiter->y = anchor->y.fixed + px(8);
+  orbiter->y = anchor->y.fixed + toFIXED(8);
   orbiter->z = anchor->z.fixed;
   Vector_AddPolarOffset(orbiter->radius, orbiter->angle, &orbiter->x);
   AirsRockInside_SpawnOrbitSpark(orbiter);
-  orbiter->radius -= px(4);
+  orbiter->radius -= toFIXED(4);
   return 1;
 }
 
@@ -2398,8 +2409,8 @@ s32 Orbit_Update(struct Orbit *object) {
   s32 z;
 
   object->angle += object->speed;
-  object->x = IwramMulQ16(Trig_Cos(object->angle), object->radius);
-  z = IwramMulQ16(Trig_Sin(object->angle), object->radius);
+  object->x = IwramMulFX(Trig_Cos(object->angle), object->radius);
+  z = IwramMulFX(Trig_Sin(object->angle), object->radius);
   object->x += object->centreX;
   object->z = (z >> 1) + object->centreZ;
   if (object->growth != 141 && (gFrameCount & 1)) {
@@ -2438,18 +2449,18 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
 
   Sound_Play(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(30);
-  Camera_SetSpeedParameters(px(1) / 2, px(1) / 16);
-  FieldCamera_MoveWithinMapBounds(px(a->x.part[0].pixel),
-                                  a->y.part[0].pixel << 16,
-                                  a->z.part[0].pixel << 16, 1);
+  Camera_SetSpeedParameters(toFIXED(1) / 2, toFIXED(1) / 16);
+  FieldCamera_MoveWithinMapBounds(INTtoFIXED(a->x.part[0].integer),
+                                  a->y.part[0].integer << 16,
+                                  a->z.part[0].integer << 16, 1);
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(2, 2, 1);
   PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_SetTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   a->motionFlags = 0;
-  a->acceleration = px(1) / 5;
-  a->speedLimit = px(1) / 5;
+  a->acceleration = toFIXED(1) / 5;
+  a->speedLimit = toFIXED(1) / 5;
   Actor_SetMovementTypeById(idA, gAirsRockInside_TabletRiseScript);
   Sound_Play(SE_TABLET_RISE);
   FieldEvent_Wait(45);
@@ -2460,10 +2471,10 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
     struct Actor *spark =
         Import_ActorCreate(SPRITE_PARTICLE, a->x.fixed, a->y.fixed, a->z.fixed);
     Sound_Play(SE_GLITTER);
-    spark->x.fixed += px((Random16() & 31) - 16);
-    spark->y.fixed += px((Random16() & 15) - 8);
-    spark->speedLimit = px(8);
-    spark->acceleration = px(1) / 5;
+    spark->x.fixed += INTtoFIXED((Random16() & 31) - 16);
+    spark->y.fixed += INTtoFIXED((Random16() & 15) - 8);
+    spark->speedLimit = toFIXED(8);
+    spark->acceleration = toFIXED(1) / 5;
     spark->motionFlags = 0;
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
@@ -2498,14 +2509,14 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
-    FieldVector_AddPolarOffsetFixed(spark->riseBaseY, *angle,
-                                    (s32)&spark->x.fixed);
+    FieldVector_AddPolarOffsetFX(spark->riseBaseY, *angle,
+                                 (s32)&spark->x.fixed);
     Actor_StartScript(spark, gAirsRockInside_OrbitingSparkScript);
     if (i == 3) {
       Actor_SetSpriteColorById(idB, 0x100);
       b->motionFlags = 0;
-      b->acceleration = px(1) / 5;
-      b->speedLimit = px(1) / 5;
+      b->acceleration = toFIXED(1) / 5;
+      b->speedLimit = toFIXED(1) / 5;
       Actor_SetMovementTypeById(idB, gAirsRockInside_ShebaRiseScript);
     }
     wait(8);
@@ -2515,7 +2526,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
   for (i = 2; i != 32; i += 2) {
     struct Actor *spark =
         FieldActor_Create(SPRITE_PARTICLE, b->x.fixed,
-                          b->y.fixed + i * 65536 - px(8), b->z.fixed);
+                          b->y.fixed + i * 65536 - toFIXED(8), b->z.fixed);
     spark->timer = Random16();
     spark->userValue = 0x800;
     spark->riseCounter = i;
@@ -2572,8 +2583,9 @@ void AirsRockInside_ReadRevealTablet(void) {
   } else {
     Event_SetMessageId((s32)MsgCheckedTheTablet);
     EVENT_WORK->message++;
-    Actor_SetSpeedFixed(gMainRoutineWork.leaderActorId, px(7) / 10, px(7) / 20);
-    Actor_SetSpeedFixed(ACTOR_SHEBA, px(7) / 10, px(7) / 20);
+    Actor_SetSpeedFX(gMainRoutineWork.leaderActorId, toFIXED(7) / 10,
+                     toFIXED(7) / 20);
+    Actor_SetSpeedFX(ACTOR_SHEBA, toFIXED(7) / 10, toFIXED(7) / 20);
     Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
     FieldEvent_Wait(1);
     Actor_WalkTo(gMainRoutineWork.leaderActorId, 256, 136);
@@ -2611,12 +2623,12 @@ void AirsRockInside_ReadRevealTablet(void) {
     Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
     Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
     FieldEvent_Wait(20);
-    Actor_SetSpeedFixed(ACTOR_SHEBA, px(6) / 5, px(3) / 5);
+    Actor_SetSpeedFX(ACTOR_SHEBA, toFIXED(6) / 5, toFIXED(3) / 5);
     Actor_SetAnimationById(ACTOR_SHEBA, ANIM_WALK);
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (object != 0)
-      Actor_SetDestinationById(ACTOR_SHEBA, object->x.part[0].pixel,
-                               object->z.part[0].pixel);
+      Actor_SetDestinationById(ACTOR_SHEBA, object->x.part[0].integer,
+                               object->z.part[0].integer);
     Actor_WaitForMoveById(ACTOR_SHEBA);
     Actor_SetHorizontalPositionWithTerrain(ACTOR_SHEBA, 0, 0);
     Actor_SetMovementType(Actor_GetById(ACTOR_REVEAL_TABLET),
@@ -2714,7 +2726,7 @@ found:
   firstSprite = first->sprite;
   secondSprite = second->sprite;
   second->motionFlags = busy;
-  second->y.fixed -= px(28);
+  second->y.fixed -= toFIXED(28);
   wait(1);
   entry = &gVramCacheEntries[secondSprite->vramBlock];
   second->watchedActor = (void *)(entry->offset + 0x6010000);
@@ -2729,21 +2741,21 @@ found:
   i = 0;
 step:
   if (i <= 4) {
-    second->y.fixed += px(26) / 5;
+    second->y.fixed += toFIXED(26) / 5;
     Dma_Set(first->watchedActor, second->watchedActor, DMA_COPY_WORDS(48),
             REG_DMA3);
     first->watchedActor = (void *)((u8 *)first->watchedActor + 0x100);
     second->watchedActor = (void *)((u8 *)second->watchedActor + 0x100);
   }
-  leader->y.fixed += -(px(7) / 2);
+  leader->y.fixed += -(toFIXED(7) / 2);
   leader->groundHeight = leader->y.fixed;
-  first->scaleY += -(Q16_ONE * 31 / 256);
+  first->scaleY += -(FIXED_ONE * 31 / 256);
   wait(1);
   i++;
   if (i != 8)
     goto step;
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  first->scaleY = Q16_ONE;
+  first->scaleY = FIXED_ONE;
   second->y.fixed = second->groundHeight;
   GameFlag_Set(first->timer);
   GameFlag_Clear(second->timer);
@@ -2773,7 +2785,8 @@ void AirsRockInside_RideFaceWarp(void) {
   Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
   Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &=
       ~ACTOR_FACES_MOTION;
-  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, px(4), px(2));
+  Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, toFIXED(4),
+                           toFIXED(2));
   switch (*warp) {
   case 50:
     // XXX: the leader is looked up twice and neither result is used; likely
@@ -2870,18 +2883,18 @@ void AirsRockInside_RiseOnLift(void) {
   prepared = OverlayObject_PrepareObject(0xd80000, -0x200000, 0x2200000, 286);
   leader->motionFlags = 0;
   Actor_SetSpriteFlags(leader, 0);
-  leader->speedLimit = px(3) / 2;
-  leader->acceleration = px(3) / 2;
+  leader->speedLimit = toFIXED(3) / 2;
+  leader->acceleration = toFIXED(3) / 2;
   lift = Import_ActorCreate(SPRITE_WHIRLWIND, leader->x.fixed,
-                            leader->y.fixed - px(8), leader->z.fixed);
+                            leader->y.fixed - toFIXED(8), leader->z.fixed);
   Actor_SelectAnimation(lift, 2);
   Actor_SetSpriteFlags(lift, 0);
   lift->motionFlags = 0;
-  lift->speedLimit = px(7) / 5;
-  lift->acceleration = px(7) / 5;
-  Actor_SetMoveTarget(leader, leader->x.fixed, leader->y.fixed + px(80),
+  lift->speedLimit = toFIXED(7) / 5;
+  lift->acceleration = toFIXED(7) / 5;
+  Actor_SetMoveTarget(leader, leader->x.fixed, leader->y.fixed + toFIXED(80),
                       leader->z.fixed);
-  Actor_SetMoveTarget(lift, lift->x.fixed, lift->y.fixed + px(72),
+  Actor_SetMoveTarget(lift, lift->x.fixed, lift->y.fixed + toFIXED(72),
                       lift->z.fixed);
   Sound_Play(SE_KIRIN);
   Event_StartScreenTransition();
@@ -2893,20 +2906,20 @@ void AirsRockInside_RiseOnLift(void) {
   Sound_Play(SE_STOP_ACTION_SE);
   FieldEvent_Wait(10);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
-  height = Map_GetTerrainHeight(0, lift->x.fixed, lift->z.fixed - px(16));
+  height = Map_GetTerrainHeight(0, lift->x.fixed, lift->z.fixed - toFIXED(16));
   leader->y.fixed = height;
   leader->groundHeight = height;
   Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
   wait(6);
   Sound_Play(SE_JUMP);
   Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
-  leader->speedLimit = px(2);
-  leader->acceleration = px(1) / 2;
-  leader->velocityY = px(4);
+  leader->speedLimit = toFIXED(2);
+  leader->acceleration = toFIXED(1) / 2;
+  leader->velocityY = toFIXED(4);
   leader->motionFlags = ACTOR_FALLS;
   leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetMoveTarget(leader, leader->x.fixed, leader->y.fixed,
-                      leader->z.fixed - px(16));
+                      leader->z.fixed - toFIXED(16));
   OverlayObject_WaitUntilIdle(leader);
   Actor_WaitForMove(leader);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
@@ -2941,7 +2954,7 @@ void AirsRockInside_SpawnMotes(void) {
       object->motionFlags = zero;
       object->priorityFlags = zero;
     }
-    object->acceleration = object->speedLimit = (i << 12) + (px(1) / 2);
+    object->acceleration = object->speedLimit = (i << 12) + (toFIXED(1) / 2);
     object->update = AirsRockInside_DriftMote;
     Actor_SetSpriteFlags(object, 0);
     Actor_SetSpriteColor(object, 2);
@@ -2965,9 +2978,9 @@ void AirsRockInside_SetLedgeCellsByLevel(void) {
   s32 level;
 
   actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  if (actor->y.fixed + px(32) >= px(312))
+  if (actor->y.fixed + toFIXED(32) >= toFIXED(312))
     level = 2;
-  else if (actor->y.fixed + px(32) >= px(216))
+  else if (actor->y.fixed + toFIXED(32) >= toFIXED(216))
     level = 1;
   else
     level = 0;
@@ -3021,11 +3034,11 @@ void AirsRockInside_LandInHall(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldCamera_MoveToFixed(-1, -1, -1, 0);
+  FieldCamera_MoveToFX(-1, -1, -1, 0);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
-  leader->y.fixed = px(130);
-  leader->gravity = px(1) / 2;
+  leader->y.fixed = toFIXED(130);
+  leader->gravity = toFIXED(1) / 2;
   leader->bounce = 0;
   leader->motionFlags = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -3036,8 +3049,8 @@ void AirsRockInside_LandInHall(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = Q16_ONE * 4 / 5;
-  options.startScaleY = Q16_ONE * 4 / 5;
+  options.startScaleX = FIXED_ONE * 4 / 5;
+  options.startScaleY = FIXED_ONE * 4 / 5;
   for (i = 0; i <= 16; i++) {
     s32 angle;
     s32 velocity[3];
@@ -3048,8 +3061,8 @@ void AirsRockInside_LandInHall(void) {
     velocity[2] = Trig_Sin(angle);
     velocity[0] += velocity[0] >> 1;
     velocity[0] += ((Random16() * 3) << 14) >> 16;
-    velocity[0] += -(px(3) / 8);
-    velocity[2] += (((Random16() * 3) << 13) >> 16) + -(px(3) / 16);
+    velocity[0] += -(toFIXED(3) / 8);
+    velocity[2] += (((Random16() * 3) << 13) >> 16) + -(toFIXED(3) / 16);
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
@@ -3065,8 +3078,8 @@ void AirsRockInside_LandInHall(void) {
   MapGrid_WaitForShakeToSettle();
   FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
-  leader->gravity = px(1);
-  leader->bounce = Q16_ONE / 4;
+  leader->gravity = toFIXED(1);
+  leader->bounce = FIXED_ONE / 4;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Event_End();
 }
@@ -3101,7 +3114,7 @@ s32 Scene_Initialize(void) {
     }
     if (gMainRoutineWork.entrance > 13) {
       if (GameFlag_Get(FLAG_AIRS_ROCK_HALL_PILLAR_PLACED))
-        Actor_SetPositionFixed(ACTOR_HALL_POOL_STATUE, px(824), px(328));
+        Actor_SetPositionFX(ACTOR_HALL_POOL_STATUE, toFIXED(824), toFIXED(328));
       Actor_PlaceBlocks(gAirsRockInside_HallPillars);
     }
     Actor_GetById(ACTOR_HALL_TWISTER_STATUE)->motionFlags = 0;
@@ -3137,9 +3150,11 @@ s32 Scene_Initialize(void) {
     REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     AirsRockInside_StartRestoringCells();
     if (GameFlag_Get(FLAG_AIRS_ROCK_VIAL_CHEST_EAST_PILLAR_PLACED))
-      Actor_SetPositionFixed(ACTOR_VIAL_CHEST_EAST_PILLAR, px(328), px(392));
+      Actor_SetPositionFX(ACTOR_VIAL_CHEST_EAST_PILLAR, toFIXED(328),
+                          toFIXED(392));
     if (GameFlag_Get(FLAG_AIRS_ROCK_VIAL_CHEST_WEST_PILLAR_PLACED))
-      Actor_SetPositionFixed(ACTOR_VIAL_CHEST_WEST_PILLAR, px(104), px(392));
+      Actor_SetPositionFX(ACTOR_VIAL_CHEST_WEST_PILLAR, toFIXED(104),
+                          toFIXED(392));
     Actor_PlaceBlocks(gAirsRockInside_VialChestPillars);
     if (!GameFlag_Get(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN)) {
       Actor_SetSpriteColor(Actor_GetById(ACTOR_VIAL_CHEST_STATUE), 6);
@@ -3160,14 +3175,14 @@ s32 Scene_Initialize(void) {
     REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     Task_Add(AirsRockInside_PuffVents, TASK_PASS_VBLANK);
     if (GameFlag_Get(FLAG_AIRS_ROCK_CLARITY_CIRCLET_CHEST_FIRST_PILLAR_PLACED))
-      Actor_SetPositionFixed(ACTOR_CLARITY_CIRCLET_CHEST_FIRST_PILLAR, px(264),
-                             px(632));
+      Actor_SetPositionFX(ACTOR_CLARITY_CIRCLET_CHEST_FIRST_PILLAR,
+                          toFIXED(264), toFIXED(632));
     if (GameFlag_Get(FLAG_AIRS_ROCK_CLARITY_CIRCLET_CHEST_SECOND_PILLAR_PLACED))
-      Actor_SetPositionFixed(ACTOR_CLARITY_CIRCLET_CHEST_SECOND_PILLAR, px(616),
-                             px(568));
+      Actor_SetPositionFX(ACTOR_CLARITY_CIRCLET_CHEST_SECOND_PILLAR,
+                          toFIXED(616), toFIXED(568));
     if (GameFlag_Get(FLAG_AIRS_ROCK_CLARITY_CIRCLET_CHEST_THIRD_PILLAR_PLACED))
-      Actor_SetPositionFixed(ACTOR_CLARITY_CIRCLET_CHEST_THIRD_PILLAR, px(472),
-                             px(520));
+      Actor_SetPositionFX(ACTOR_CLARITY_CIRCLET_CHEST_THIRD_PILLAR,
+                          toFIXED(472), toFIXED(520));
     Actor_PlaceBlocks(gAirsRockInside_ClarityCircletChestPillars);
     if (!GameFlag_Get(FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN)) {
       Actor_SetSpriteColor(Actor_GetById(ACTOR_CLARITY_CIRCLET_CHEST_STATUE_A),
@@ -3219,7 +3234,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(18, 33, 2, 1, 23, 25);
     }
     if (GameFlag_Get(FLAG_AIRS_ROCK_TIGHTROPES_PILLAR_PLACED))
-      Actor_SetPositionFixed(ACTOR_TIGHTROPES_PILLAR, px(648), px(296));
+      Actor_SetPositionFX(ACTOR_TIGHTROPES_PILLAR, toFIXED(648), toFIXED(296));
     Actor_PlaceBlocks(gAirsRockInside_TightropesPillars);
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -3235,8 +3250,8 @@ s32 Scene_Initialize(void) {
     } while (i != 6);
     Actor_GetById(ACTOR_REVEAL_TABLET)->motionFlags = 0;
     object = Actor_GetById(ACTOR_REVEAL_TABLET);
-    Actor_GetById(ACTOR_REVEAL_TABLET)->groundHeight = px(16);
-    object->y.fixed = px(16);
+    Actor_GetById(ACTOR_REVEAL_TABLET)->groundHeight = toFIXED(16);
+    object->y.fixed = toFIXED(16);
     Actor_SetMovementType(Actor_GetById(ACTOR_REVEAL_TABLET),
                           MOVEMENT_TYPE_TAKE_LEADER_LAYER);
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
@@ -3257,12 +3272,14 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(50, 82, 1, 1, 34, 82);
     }
     if (GameFlag_Get(FLAG_AREA_TEMP_03))
-      Actor_SetPositionFixed(ACTOR_ELIXIR_CHEST_PILLAR, px(520), px(296));
+      Actor_SetPositionFX(ACTOR_ELIXIR_CHEST_PILLAR, toFIXED(520),
+                          toFIXED(296));
     if (GameFlag_Get(FLAG_AIRS_ROCK_ELIXIR_CHEST_PILLAR_MOVED)) {
-      Actor_SetPositionFixed(ACTOR_ELIXIR_CHEST_PILLAR, px(312), px(296));
+      Actor_SetPositionFX(ACTOR_ELIXIR_CHEST_PILLAR, toFIXED(312),
+                          toFIXED(296));
       Actor_SetSpritePriority(ACTOR_ELIXIR_CHEST_PILLAR, 2);
       Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->motionFlags = ACTOR_FALLS;
-      Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->groundHeight = -px(32);
+      Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->groundHeight = -toFIXED(32);
       MapGrid_CopyCellAttributes(19, 16, 1, 1, 19, 18);
     }
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
@@ -3278,7 +3295,8 @@ s32 Scene_Initialize(void) {
     }
     AirsRockInside_PlaceCones(gAirsRockInside_PairedStatuesCones);
     if (GameFlag_Get(FLAG_AIRS_ROCK_PAIRED_STATUES_PILLAR_PLACED))
-      Actor_SetPositionFixed(ACTOR_PAIRED_STATUES_PILLAR, px(344), px(696));
+      Actor_SetPositionFX(ACTOR_PAIRED_STATUES_PILLAR, toFIXED(344),
+                          toFIXED(696));
     Actor_PlaceBlocks(gAirsRockInside_PairedStatuesPillars);
     if (GameFlag_Get(FLAG_AREA_TEMP_04)) {
       MapGrid_CopyCellsTo(39, 82, 38, 82, one, 3);
@@ -3296,11 +3314,14 @@ s32 Scene_Initialize(void) {
     REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     Task_Add(AirsRockInside_PuffVents, TASK_PASS_VBLANK);
     if (GameFlag_Get(FLAG_AIRS_ROCK_FACE_WARP_FIRST_PILLAR_PLACED))
-      Actor_SetPositionFixed(ACTOR_FACE_WARP_FIRST_PILLAR, px(280), px(472));
+      Actor_SetPositionFX(ACTOR_FACE_WARP_FIRST_PILLAR, toFIXED(280),
+                          toFIXED(472));
     if (GameFlag_Get(FLAG_AIRS_ROCK_FACE_WARP_SECOND_PILLAR_PLACED))
-      Actor_SetPositionFixed(ACTOR_FACE_WARP_SECOND_PILLAR, px(360), px(840));
+      Actor_SetPositionFX(ACTOR_FACE_WARP_SECOND_PILLAR, toFIXED(360),
+                          toFIXED(840));
     if (GameFlag_Get(FLAG_AIRS_ROCK_FACE_WARP_THIRD_PILLAR_PLACED)) {
-      Actor_SetPositionFixed(ACTOR_FACE_WARP_THIRD_PILLAR, px(184), px(616));
+      Actor_SetPositionFX(ACTOR_FACE_WARP_THIRD_PILLAR, toFIXED(184),
+                          toFIXED(616));
       GameFlag_Set(FLAG_SCENE_TEMP_00);
     }
     Actor_SetSpritePriority(ACTOR_FACE_WARP_SECOND_PILLAR, 2);
@@ -3319,7 +3340,7 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
     AirsRockInside_StartRestoringCells();
     if (GameFlag_Get(FLAG_AIRS_ROCK_COINS_CHEST_PILLAR_PLACED))
-      Actor_SetPositionFixed(ACTOR_COINS_CHEST_PILLAR, px(360), px(264));
+      Actor_SetPositionFX(ACTOR_COINS_CHEST_PILLAR, toFIXED(360), toFIXED(264));
     Actor_PlaceBlocks(gAirsRockInside_CoinsChestPillars);
     MapCell_SetAttributes(
         2, FIELD_CELL(Actor_GetById(ACTOR_COINS_CHEST_STATUE)->x.fixed),
@@ -3505,7 +3526,7 @@ u16 gAirsRockInside_PairedStatuesCones[] = {
 };
 
 struct ActorPlacement gAirsRockInside_Entrances[] = {
-    {0, CONDITION_ALWAYS, 320, 0x40000140, px(-1), -0x1, 0xffff, 0, 0},
+    {0, CONDITION_ALWAYS, 320, 0x40000140, toFIXED(-1), -0x1, 0xffff, 0, 0},
     {SCENE_TABLE_END},
 };
 

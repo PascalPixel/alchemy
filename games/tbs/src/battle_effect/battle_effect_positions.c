@@ -34,7 +34,7 @@ void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
 /// Projects a point in the current transform onto the screen, 16 pixels
 /// higher, and returns the projection's scale.
 s32 Projection_Point(const void *point, struct ScreenPoint *position) {
-  s32 result = Transform_ProjectPoint(point, ScreenPoint_Coordinates(position));
+  s32 result = Matrix_ProjectPoint(point, ScreenPoint_Coordinates(position));
   position->y -= 16;
   return result;
 }
@@ -73,9 +73,9 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   actor = GetBattleObjectSlotFar(unit)->actor;
   info = GetMotionRecordFar(actor, 0);
   EFFECT_VIEW_FROM_CAMERA(camera);
-  scale = Iwram_MulQ16(Transform_ProjectPoint(&actor->x.fixed, screen),
-                       info->scale);
-  screen[1] -= Iwram_MulQ16(scale, BattleUnit_GetEffectHeightFar(unit) >> 17);
+  scale =
+      Iwram_MulFX(Matrix_ProjectPoint(&actor->x.fixed, screen), info->scale);
+  screen[1] -= Iwram_MulFX(scale, BattleUnit_GetEffectHeightFar(unit) >> 17);
   return 0;
 }
 

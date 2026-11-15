@@ -52,7 +52,7 @@
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/dma.h"
-#include "system/fixed_point_position.h"
+#include "system/point.h"
 #include "system/heap_slots.h"
 #include "system/io_write.h"
 #include "system/iwram_call.h"
@@ -105,7 +105,7 @@ enum {
 
 /// The deck height of a party member who has not yet boarded.
 /// The swell (Ship_UpdateSwell) moves only those who have.
-#define SHIP_NOT_ON_DECK (-px(1))
+#define SHIP_NOT_ON_DECK (-toFIXED(1))
 
 /// The sprite priority of an actor's picture and of its shadow.
 #define SET_IMAGE_PRIORITY(actor, level)                                       \
@@ -140,8 +140,8 @@ static void Ripple_StopForReveal(void) { Ripple_Stop(); }
 /// Starts the two-axis ripple with its original frequencies and amplitudes.
 /// Called by Scene_Initialize, and reached by Reveal as the spell ends.
 static void Ripple_Start(void) {
-  LineScroll_InitWave(0, Q16_ONE * 4, Q16_ONE, Q16_ONE / 8, Q16_ONE,
-                      Q16_ONE / 2, Q16_ONE / 4);
+  LineScroll_InitWave(0, FIXED_ONE * 4, FIXED_ONE, FIXED_ONE / 8, FIXED_ONE,
+                      FIXED_ONE / 2, FIXED_ONE / 4);
 }
 
 /// The exit, Reveal and the Black Orb at the water's edge (cell behavior
@@ -173,7 +173,7 @@ static void LemurianShip_SprayUpdate(struct Actor *drop) {
     drop->timer--;
     drift = Random_Next() - Random_Next();
     drop->x.fixed += drift;
-    drop->y.fixed += px(4) / 5;
+    drop->y.fixed += toFIXED(4) / 5;
   } else if ((s16)drop->userValue != 0) {
     drop->userValue = 0;
     Actor_SelectAnimation(drop, ANIM_DROP_BURST);
@@ -199,7 +199,7 @@ static void OrbGlow_Fade(void) {
 static void Ship_UpdateSwell(void) {
   /* FAKEMATCH(volatile): the blend passes through a halfword on the stack. */
   volatile u16 blend;
-  struct FixedPointPosition sprayPosition;
+  struct Point sprayPosition;
   struct MapGridScrollWork *grid;
   struct Actor *actor;
   s32 swell;
@@ -207,13 +207,13 @@ static void Ship_UpdateSwell(void) {
 
   grid = gMapGridWork[0];
   if (gOrbGlowActive != 0) {
-    swell = Iwram_MulQ16(Trig_Sin(gOrbGlowPhase << 9), 3);
+    swell = Iwram_MulFX(Trig_Sin(gOrbGlowPhase << 9), 3);
     blend = gOrbGlowStrength + ((swell + 8) << 8);
     Io_Write16(blend, &REG_BLDALPHA);
     gOrbGlowPhase++;
   }
   if (gSwellActive != 0) {
-    swell = px(Iwram_MulQ16(Trig_Sin(gSwellPhase << 9), 2));
+    swell = toFIXED(Iwram_MulFX(Trig_Sin(gSwellPhase << 9), 2));
     grid->layers[MAPGRID_LAYER_MIDDLE].offsetY = gShipHullY + swell;
     grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY = gShipDeckY + swell;
     if (gLeaderDeckY != SHIP_NOT_ON_DECK) {
@@ -249,7 +249,7 @@ static void Ship_UpdateSwell(void) {
     sprayPosition.x = x;
     sprayPosition.y = 0;
     z += Random_Next() * DISPLAY_HEIGHT;
-    z += px(30);
+    z += toFIXED(30);
     sprayPosition.z = z;
     actor = FieldActor_Create(SPRITE_WATER_DROP, sprayPosition.x,
                               sprayPosition.y, sprayPosition.z);
@@ -529,10 +529,10 @@ static void LemurianShip_SetSail(void) {
   grid = gMapGridWork[0];
   ship = Actor_Get(ACTOR_GANGWAY_NORTH);
   ship->acceleration = 131;
-  ship->speedLimit = px(2);
-  grid->layers[MAPGRID_LAYER_GROUND].speedX = -px(3) / 16;
+  ship->speedLimit = toFIXED(2);
+  grid->layers[MAPGRID_LAYER_GROUND].speedX = -toFIXED(3) / 16;
   Actor_WalkByAndWait(ACTOR_GANGWAY_NORTH, 60, 0);
-  grid->layers[MAPGRID_LAYER_GROUND].speedX = -px(3) / 8;
+  grid->layers[MAPGRID_LAYER_GROUND].speedX = -toFIXED(3) / 8;
   Actor_WalkByAndWait(ACTOR_GANGWAY_NORTH, 60, 0);
   Event_Wait(80);
   Event_Wait(100);
@@ -569,7 +569,7 @@ struct RippleScrollWork {
 
 /// One line's ripple offset.
 static inline s32 LemurianShip_WaveOffset(s32 angle, s32 amplitude, u16 base) {
-  return (u16)(Iwram_MulQ16(gRippleSine[(angle >> 16) & 0xff], amplitude) /
+  return (u16)(Iwram_MulFX(gRippleSine[(angle >> 16) & 0xff], amplitude) /
                256) +
          base;
 }
@@ -631,11 +631,11 @@ static void LemurianShip_RaiseTheShip(void) {
   // The ship rises 90 pixels, 0.2 pixels a frame.
   risen = 0;
   do {
-    grid->layers[MAPGRID_LAYER_MIDDLE].offsetY += px(1) / 5;
-    grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY += px(1) / 5;
-    risen += px(1) / 5;
+    grid->layers[MAPGRID_LAYER_MIDDLE].offsetY += toFIXED(1) / 5;
+    grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY += toFIXED(1) / 5;
+    risen += toFIXED(1) / 5;
     wait(1);
-  } while (risen < px(90));
+  } while (risen < toFIXED(90));
   Task_Remove(OrbGlow_Fade);
   gSprayActive = 0;
   REG_BG3CNT = cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
@@ -728,9 +728,9 @@ s32 Scene_Initialize(void) {
   {
     struct MapGridLayerScroll *layer = grid->layers + 1;
 
-    layer->offsetY -= px(90);
+    layer->offsetY -= toFIXED(90);
     layer = grid->layers + 2;
-    layer->offsetY -= px(90);
+    layer->offsetY -= toFIXED(90);
   }
   MapGrid_CenterOnFollowedPoint();
   Ripple_Start();
@@ -1009,7 +1009,7 @@ s32 gLeaderBoardsShip[] = {
     SC_SYNC,
     SC_MOVE_BY(0, 0, -16),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, px(8)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(8)),
     SC_SE(SE_HIGH_JUMP),
     SC_MOVE_BY(0, 0, -24),
     SC_SYNC,
@@ -1031,7 +1031,7 @@ s32 gGaretBoardsShip[] = {
     SC_ANIMATION(2),
     SC_MOVE_BY(0, 0, -32),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, px(8)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(8)),
     SC_SE(SE_HIGH_JUMP),
     SC_MOVE_BY(0, 0, -24),
     SC_SYNC,
@@ -1055,7 +1055,7 @@ s32 gIvanBoardsShip[] = {
     SC_SYNC,
     SC_MOVE_BY(0, 0, -32),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, px(8)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(8)),
     SC_SE(SE_HIGH_JUMP),
     SC_MOVE_BY(0, 0, -24),
     SC_SYNC,
@@ -1079,7 +1079,7 @@ s32 gMiaBoardsShip[] = {
     SC_SYNC,
     SC_MOVE_BY(0, 0, -8),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, px(8)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(8)),
     SC_SE(SE_HIGH_JUMP),
     SC_MOVE_BY(0, 0, -24),
     SC_SYNC,

@@ -55,7 +55,7 @@ const s32 gMath_QuadrantSin[4] = {
 
 /// Tangents scaled by 256: index i is tan(i * 45 / 128 degrees),
 /// so index 128 is tan(45 degrees).
-/// ArcTan2 starts its binary search at index 127.
+/// Trig_Atan starts its binary search at index 127.
 const u16 gMath_TanTable[258] = {
     0, 1, 3, 4, 6, 7, 9, 11,
     12, 14, 15, 17, 18, 20, 22, 23,

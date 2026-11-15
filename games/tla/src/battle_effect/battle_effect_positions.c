@@ -17,11 +17,11 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   camera = Ram_HeapSlots->cameraWork;
   object = BattleObject_GetFar(unit)->object;
   info = GetMotionRecordFar(object, 0);
-  Transform_Reset();
-  Transform_SetLookAt(camera->eye, camera->focus);
-  scale = Iwram_MulQ16(Render_ProjectPoint(object + 2, screen),
-                       *(s32 *)(info + 12));
-  screen[1] -= Iwram_MulQ16(scale, BattleUnit_GetEffectHeightFar(unit) >> 17);
+  Matrix_Initialize();
+  Matrix_SetLookAt(camera->eye, camera->focus);
+  scale =
+      Iwram_MulFX(Render_ProjectPoint(object + 2, screen), *(s32 *)(info + 12));
+  screen[1] -= Iwram_MulFX(scale, BattleUnit_GetEffectHeightFar(unit) >> 17);
   return 0;
 }
 
@@ -218,8 +218,8 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
       else if (kind == 5 || kind == 6)
         BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HOP);
       else if (kind == 8)
-        BattleEffect_StartActorMotion(args->targets[0], 1, px(1), px(4), px(3),
-                                      150);
+        BattleEffect_StartActorMotion(args->targets[0], 1, toFIXED(1),
+                                      toFIXED(4), toFIXED(3), 150);
       else
         BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
     }
@@ -276,8 +276,8 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
               Ram_MapCellBuffer + (frame - 4) / 2 * PICTURE_BYTES(YELLOW_ORB),
               anchor.x - 16, anchor.y - 24, YELLOW_ORB_WIDTH,
               YELLOW_ORB_HEIGHT);
-    Transform_Reset();
-    Transform_SetLookAt(camera, camera + 3);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera, camera + 3);
     // From frame 4 the sparks fly, two to each particle, through the two
     // blitters in turn.
     if (frame >= 4 && frame <= 31) {
@@ -293,7 +293,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
           size += 2;
           draw[pair & 1](canvas, sheet + gBattleEffect_FlarePictures[size - 1],
                          point.x - size, point.y - size, size * 2, size * 2);
-          BattleEffectKernels_IntegrateVector3(spark, 60, -px(1) / 64);
+          BattleEffectKernels_IntegrateVector3(spark, 60, -toFIXED(1) / 64);
           spark->variant--;
         }
       }
@@ -427,10 +427,10 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
         if (mote->x >= 0 && frame >= i / 4) {
           s32 size = (i & 1) + 5;
 
-          Transform_Reset();
-          Transform_ApplyRoll(mote->velocityZ);
-          Transform_ApplyPitch(mote->velocityX);
-          Transform_ApplyYaw(mote->velocityY);
+          Matrix_Initialize();
+          Matrix_RotateZ(mote->velocityZ);
+          Matrix_RotateX(mote->velocityX);
+          Matrix_RotateY(mote->velocityY);
           EffectPosition_ProjectPoint(&mote->x, &point);
           point.x += 64;
           point.y = point.y + pos.y + 24;
@@ -508,8 +508,8 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     else if (frame <= 7)
       draw[0](canvas, work->sheet + 0x3840, 0, 0, SLASH_PICTURE_SIZE,
               SLASH_PICTURE_SIZE);
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
     // From frame 4 the sparks fly, two to each particle, through the two
     // blitters in turn.
     if (frame >= 4 && frame <= 31) {
@@ -526,7 +526,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
           spot.y += 16;
           draw[pair & 1](canvas, sheet + gBattleEffect_FlarePictures[size - 1],
                          spot.x - size, spot.y - size, size * 2, size * 2);
-          BattleEffectKernels_IntegrateVector3(spark, 60, -px(1) / 64);
+          BattleEffectKernels_IntegrateVector3(spark, 60, -toFIXED(1) / 64);
           spark->variant--;
         }
       }

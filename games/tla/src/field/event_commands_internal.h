@@ -65,7 +65,7 @@ FieldEffect_InitializeFallingFragment(struct Actor *fragment) {
   // The caller spawns the fragment and places it.
   if (fragment != NULL) {
     fragment->motionFlags = ACTOR_FALLS;
-    fragment->gravity = px(1) / 10;
+    fragment->gravity = toFIXED(1) / 10;
     Actor_SelectAnimationFar(fragment, 0);
     fragment->wait = 12;
     Actor_StartScriptFar(fragment, gBattleEffect_SharedParticleScript);
@@ -108,7 +108,7 @@ enum MarsSparkState {
 
 /// The trailing copies of a moving Djinni or of Force's hand are drawn a little
 /// smaller than what they follow.
-#define AFTERIMAGE_SCALE (Q16_ONE * 15 / 16)
+#define AFTERIMAGE_SCALE (FIXED_ONE * 15 / 16)
 
 /// gMainRoutineWork.pendingDjinni's parts, as Djinn_ResolvePending reads them,
 /// as The Broken Seal's. bits: 15..12 kind | 11..0 event or flag.

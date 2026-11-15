@@ -350,15 +350,15 @@ void EffectSprite_InitWithFadeOverlay(struct EffectSprite *sprite, s32 pivotX,
 s32 AlhafraInteriors_DrawFirstGuestSprite(struct Actor *guest) {
   BattleEffect_DrawSpriteAtWorldPosition(
       &gAlhafraInteriors_FirstGuestSprite, guest->x.fixed,
-      guest->y.fixed + px(12), guest->z.fixed);
+      guest->y.fixed + toFIXED(12), guest->z.fixed);
   return 0;
 }
 
 /// The second guest's update: draws its extra sprite 8 pixels above it.
 s32 AlhafraInteriors_DrawSecondGuestSprite(struct Actor *guest) {
-  BattleEffect_DrawSpriteAtWorldPosition(&gAlhafraInteriors_SecondGuestSprite,
-                                         guest->x.fixed, guest->y.fixed + px(8),
-                                         guest->z.fixed);
+  BattleEffect_DrawSpriteAtWorldPosition(
+      &gAlhafraInteriors_SecondGuestSprite, guest->x.fixed,
+      guest->y.fixed + toFIXED(8), guest->z.fixed);
   return 0;
 }
 
@@ -382,13 +382,13 @@ s32 Scene_Initialize(void) {
         (s32)&gAlhafraInteriors_FirstGuestSprite, 8, 15, OBJ_SIZE_16X16);
   Call4((void (*)())EffectSprite_InitWithFadeOverlay,
         (s32)&gAlhafraInteriors_SecondGuestSprite, 8, 15, OBJ_SIZE_16X16);
-  gAlhafraInteriors_SecondGuestSprite.scaleY = Q16_ONE * 3 / 2;
+  gAlhafraInteriors_SecondGuestSprite.scaleY = FIXED_ONE * 3 / 2;
   Actor_Get(ACTOR_DEMANDING_GUEST)->update =
       AlhafraInteriors_DrawFirstGuestSprite;
   Actor_Get(ACTOR_DEMANDING_GUESTS_WIFE)->update =
       AlhafraInteriors_DrawSecondGuestSprite;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
-    if (Actor_Get(gMainRoutineWork.leaderActorId)->x.fixed >= px(512))
+    if (Actor_Get(gMainRoutineWork.leaderActorId)->x.fixed >= toFIXED(512))
       Event_SetFlag(FLAG_SCENE_TEMP_00);
     else
       Event_ClearFlag(FLAG_SCENE_TEMP_00);
@@ -429,7 +429,7 @@ s32 Scene_Initialize(void) {
         (s32)&gAlhafraInteriors_FirstGuestSprite, 8, 15, OBJ_SIZE_16X16);
   Call4((void (*)())EffectSprite_InitWithFadeOverlay,
         (s32)&gAlhafraInteriors_SecondGuestSprite, 8, 15, OBJ_SIZE_16X16);
-  gAlhafraInteriors_SecondGuestSprite.scaleY = Q16_ONE * 3 / 2;
+  gAlhafraInteriors_SecondGuestSprite.scaleY = FIXED_ONE * 3 / 2;
   Actor_Get(ACTOR_DEMANDING_GUEST)->update =
       AlhafraInteriors_DrawFirstGuestSprite;
   Actor_Get(ACTOR_DEMANDING_GUESTS_WIFE)->update =

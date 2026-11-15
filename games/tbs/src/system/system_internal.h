@@ -28,7 +28,7 @@
 #include "system/save.h"
 #include "system/savedata.h"
 #include "system/serial.h"
-#include "system/transform.h"
+#include "system/matrix.h"
 #include "system/vram_cache.h"
 
 /// The compiler library's call through r3, which system_oam.c uses to run code

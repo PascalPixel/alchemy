@@ -74,7 +74,7 @@ void FieldPsynergy_Blaze(void) {
   work->mode = 0;
   if (scene->enabled != 0) {
     work->origin[0] = scene->x;
-    work->origin[1] = scene->y + px(16);
+    work->origin[1] = scene->y + toFIXED(16);
     work->origin[2] = scene->z;
     best = 9999;
     for (i = 0; i < FIELD_ACTOR_COUNT; i++) {
@@ -85,9 +85,9 @@ void FieldPsynergy_Blaze(void) {
         distance = Field_MeasurePsynergyReach(scene->fieldPsynergy,
                                               scene->firstActorId, i);
         if (distance != -1 && best > distance) {
-          height = px((s8)Resource_GetMetadataRecordFarFar(
-                          ACTOR_FIRST_LAYER(cursor.object)->animationId)
-                          ->boxX);
+          height = toFIXED((s8)Resource_GetMetadataRecordFarFar(
+                               ACTOR_FIRST_LAYER(cursor.object)->animationId)
+                               ->boxX);
           work->mode = 1;
           work->origin[0] = cursor.object->x.fixed;
           work->origin[1] = cursor.object->y.fixed + height;
@@ -104,11 +104,11 @@ void FieldPsynergy_Blaze(void) {
     else
       work->mode = 3;
     if (scene->child != NULL)
-      height = px((s8)Resource_GetMetadataRecordFarFar(
-                      ACTOR_FIRST_LAYER(scene->child)->animationId)
-                      ->boxX);
+      height = toFIXED((s8)Resource_GetMetadataRecordFarFar(
+                           ACTOR_FIRST_LAYER(scene->child)->animationId)
+                           ->boxX);
     else
-      height = px(20);
+      height = toFIXED(20);
     work->origin[0] = scene->x;
     work->origin[1] = scene->y + height;
     work->origin[2] = scene->z;
@@ -123,8 +123,8 @@ void FieldPsynergy_Blaze(void) {
     if (object == NULL)
       goto end;
     object->motionFlags = 0;
-    object->scaleX = Q16_ONE * 5 / 4;
-    object->scaleY = Q16_ONE * 5 / 4;
+    object->scaleX = FIXED_ONE * 5 / 4;
+    object->scaleY = FIXED_ONE * 5 / 4;
     Actor_SelectAnimationFar(object, 2);
     Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
     wait(50);
@@ -194,7 +194,7 @@ void FieldPsynergy_Blaze(void) {
     sprite = &work->puffs[j];
 
     EffectSprite_Init(sprite, 8, 15, OBJ_SIZE_16X16, tile);
-    sprite->scaleY = sprite->scaleX = Q16_ONE * 3 / 4;
+    sprite->scaleY = sprite->scaleX = FIXED_ONE * 3 / 4;
     sprite->depth = 250;
     sprite->oam.priority = 0;
     sprite->oam.fullColor = 1;

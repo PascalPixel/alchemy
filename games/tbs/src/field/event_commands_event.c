@@ -63,8 +63,8 @@ void Leader_StopMoving(void) {
   struct Actor *actor;
 
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  actor->speedLimit = Q16_ONE;
-  actor->acceleration = px(1) / 2;
+  actor->speedLimit = FIXED_ONE;
+  actor->acceleration = toFIXED(1) / 2;
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetZ = ACTOR_NO_TARGET;
   actor->velocityX = 0;

@@ -34,26 +34,26 @@ void Whirlwind_CarryLeader(void) {
   actor->x.fixed = (((linked->x.fixed >> 19) & ~1) + (angle >> 13) - 1) << 19;
   actor->z.fixed = (((linked->z.fixed >> 19) & ~1) - ((angle >> 13) & 2) + 1)
                    << 19;
-  actor->velocityY = px(6);
+  actor->velocityY = toFIXED(6);
   actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpriteFlags(actor, 1);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   shadow = EventCamera_GetActor();
-  shadow->speedLimit = px(8);
-  shadow->acceleration = px(1);
+  shadow->speedLimit = toFIXED(8);
+  shadow->acceleration = toFIXED(1);
   shadow->motionFlags = 0;
-  FieldActor_SetMoveTargetFixed(
+  FieldActor_SetMoveTargetFX(
       shadow, actor->x.fixed,
       Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed), actor->z.fixed);
   i = 0;
-  if (actor->y.fixed > actor->groundHeight + px(16)) {
+  if (actor->y.fixed > actor->groundHeight + toFIXED(16)) {
     do {
       System_Wait(1);
       i++;
       if (i > 59)
         break;
-    } while (actor->y.fixed > actor->groundHeight + px(16));
+    } while (actor->y.fixed > actor->groundHeight + toFIXED(16));
   }
   Event_PlaySound(SE_LANDING_THUD);
   i = 0;

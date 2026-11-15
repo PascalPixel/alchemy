@@ -274,8 +274,8 @@ struct Vector3 gBind_TriangleStrikeVertex[] = {{.x = 0, .y = 24, .z = 0}};
 // and whirlwind comet paths.
 
 /// The two star points, 48 and 28 pixels up (16.16).
-struct Vector3 gStar_Points[] = {{.x = 0, .y = px(48), .z = 0},
-                                 {.x = 0, .y = px(28), .z = 0}};
+struct Vector3 gStar_Points[] = {{.x = 0, .y = toFIXED(48), .z = 0},
+                                 {.x = 0, .y = toFIXED(28), .z = 0}};
 u8 gStar_Radii[] = {32, 16};
 u8 gProcne_GridX[] = {0, 32, 64, 0, 32, 64, 0, 32, 64};
 u8 gProcne_GridY[] = {0, 0, 0, 32, 32, 32, 64, 64, 64};
@@ -311,7 +311,8 @@ u8 gNereid_Columns[][2] = {
 };
 /// Ember gravity while falling, by ember index & 3, in 16.16 pixels a frame
 /// each frame: 1/2, 1/4, 1/4 and 1/8.
-s32 gNereid_Gravity[] = {px(1) / 2, px(1) / 4, px(1) / 4, px(1) / 8};
+s32 gNereid_Gravity[] = {toFIXED(1) / 2, toFIXED(1) / 4, toFIXED(1) / 4,
+                         toFIXED(1) / 8};
 
 // battle_effect_vortices.c: Vortex mote counts and tornado shapes.
 
@@ -821,7 +822,8 @@ u8 gBoreas_FallHeights[] = {48, 38, 26};
 u16 gBoreas_FallPictures[] = {0, 1152, 2064};
 /// Ice shards: shard i falls with gravity i & 3, in 16.16 pixels a frame
 /// each frame: 1/4, 1/8, 1/4 and 1/2.
-s32 gDrain_Gravities[] = {px(1) / 4, px(1) / 8, px(1) / 4, px(1) / 2};
+s32 gDrain_Gravities[] = {toFIXED(1) / 4, toFIXED(1) / 8, toFIXED(1) / 4,
+                          toFIXED(1) / 2};
 
 // battle_effect_stat_change.c: Stat-reduction shard geometry.
 
@@ -899,7 +901,7 @@ u8 gUnused_SheetHeights[] = {6, 8, 10, 12, 14, 16, 18, 20, 20, 20};
 
 /// Staged particle scale: Atalanta's formation sprites keep this
 /// scale, one to one, throughout.
-struct SpriteScale gAtalanta_UnitScale = {{{Q16_ONE, Q16_ONE}}};
+struct SpriteScale gAtalanta_UnitScale = {{{FIXED_ONE, FIXED_ONE}}};
 
 // growth.c: Growing vine and pillar geometry.
 
@@ -1159,7 +1161,8 @@ u8 gRagnarok_FlashPictures[] = FLASH_FADE_PICTURES;
 /// The flash picture for each three frames at the end of a flash's life.
 u8 gTitanBlade_FlashPictures[] = FLASH_FADE_PICTURES;
 /// Dust gravity, by particle index & 3, in gNereid_Gravity's steps.
-s32 gTitanBlade_DustGravity[] = {px(1) / 2, px(1) / 4, px(1) / 4, px(1) / 8};
+s32 gTitanBlade_DustGravity[] = {toFIXED(1) / 2, toFIXED(1) / 4, toFIXED(1) / 4,
+                                 toFIXED(1) / 8};
 // Judgment's burst: seven quarter pictures, each half as wide as it is
 // tall, from JUDGMENT_SHEET_BURST.
 u8 gJudgment_BurstHeights[] = {2, 3, 4, 6, 10, 11, 12};
@@ -1181,7 +1184,8 @@ u8 gKirin_Rows[] = {0, 0, 0, 24, 32, 32, 32, 56, 64};
 u8 gNeptune_ObjectX[] = {0, 32, 64, 0, 32, 64, 96, 96};
 u8 gNeptune_ObjectY[] = {0, 0, 0, 32, 32, 32, 0, 32};
 /// Spray gravity, by particle index & 3, in gNereid_Gravity's steps.
-s32 gNeptune_Gravity[] = {px(1) / 2, px(1) / 4, px(1) / 4, px(1) / 8};
+s32 gNeptune_Gravity[] = {toFIXED(1) / 2, toFIXED(1) / 4, toFIXED(1) / 4,
+                          toFIXED(1) / 8};
 
 // battle_effect_undead_sword.c: Rising burst spark pictures.
 

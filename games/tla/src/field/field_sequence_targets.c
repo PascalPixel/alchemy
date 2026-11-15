@@ -43,15 +43,15 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
         continue;
 
       if (obj->y.fixed - src->y.fixed >= 0) {
-        if (obj->y.fixed - src->y.fixed >= px(48))
+        if (obj->y.fixed - src->y.fixed >= toFIXED(48))
           continue;
-      } else if (src->y.fixed - obj->y.fixed >= px(48)) {
+      } else if (src->y.fixed - obj->y.fixed >= toFIXED(48)) {
         continue;
       }
 
-      dx = (obj->x.fixed - src->x.fixed) / Q16_ONE;
-      dy = (obj->y.fixed - src->y.fixed) / Q16_ONE;
-      dz = (obj->z.fixed - src->z.fixed) / Q16_ONE;
+      dx = (obj->x.fixed - src->x.fixed) / FIXED_ONE;
+      dy = (obj->y.fixed - src->y.fixed) / FIXED_ONE;
+      dz = (obj->z.fixed - src->z.fixed) / FIXED_ONE;
 
       xx = dx * dx;
       yy = dy * dy;
@@ -65,8 +65,8 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
       if (dist >= bestDist)
         continue;
 
-      angle = (u16)ArcTan2(obj->z.fixed - src->z.fixed,
-                           obj->x.fixed - src->x.fixed);
+      angle = (u16)Trig_Atan(obj->z.fixed - src->z.fixed,
+                             obj->x.fixed - src->x.fixed);
       if (dist > 11) {
         s32 diff = (s16)(angle - src->facing);
 
@@ -102,7 +102,7 @@ s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *actor, s32 *position) {
   s32 height = MapGrid_GetTerrainHeightAboveFar(
       position[0], position[2], actor->layer, actor->groundHeight);
 
-  if (ABS(height) <= px(entry->height))
+  if (ABS(height) <= toFIXED(entry->height))
     return ABS(height);
   return -1;
 }
@@ -134,7 +134,7 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
 
   // Height: within the rule's pixels above or below.
   rule = Field_GetPsynergyReach(animation);
-  height = px(rule->height);
+  height = toFIXED(rule->height);
   if (animation == ANIMATION_MEASURES_FOOTING) {
     if (ABS(other->groundHeight - self->groundHeight) > height)
       return -1;
@@ -148,8 +148,8 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
   range = rule->range + 1;
   if ((other->collisionFlags & 0x10) != 0)
     range = range * 3 / 2;
-  dx = (other->x.fixed - self->x.fixed) / Q16_ONE;
-  dz = (other->z.fixed - self->z.fixed) / Q16_ONE;
+  dx = (other->x.fixed - self->x.fixed) / FIXED_ONE;
+  dz = (other->z.fixed - self->z.fixed) / FIXED_ONE;
   distance = Iwram_Sqrt(dx * dx + dz * dz);
   if (distance > range)
     return -1;
@@ -161,9 +161,9 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
     width = rule->width;
     if (distance > 19)
       width = width * 2 / 3;
-    facing = (self->facing + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
-    angle = (u16)ArcTan2(other->z.fixed - self->z.fixed,
-                         other->x.fixed - self->x.fixed);
+    facing = (self->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
+    angle = (u16)Trig_Atan(other->z.fixed - self->z.fixed,
+                           other->x.fixed - self->x.fixed);
     diff = (s16)(angle - facing);
     if (diff < 0)
       diff = -diff;
@@ -236,7 +236,7 @@ s32 Leader_CanPushObjectAhead(void) {
   half = 128;
   position[1] = (owner->y.fixed + (half << 11)) & 0xfff80000;
   position[2] = owner->z.fixed;
-  Vector_AddPolarOffset(px(16), angle, position);
+  Vector_AddPolarOffset(toFIXED(16), angle, position);
   target = Actor_FindAtCell(position, 1);
   if (target == 0)
     return 0;
@@ -250,12 +250,12 @@ s32 Leader_CanPushObjectAhead(void) {
   position[0] = target->x.fixed;
   position[1] = target->y.fixed;
   position[2] = target->z.fixed;
-  Vector_AddPolarOffset(px(16), angle, position);
+  Vector_AddPolarOffset(toFIXED(16), angle, position);
   hit = Actor_FindAtCell(position, 1);
   if (hit != 0 && (hit->collisionFlags & 1))
     return 0;
   above[0] = target->x.fixed;
-  above[1] = target->y.fixed + px(16);
+  above[1] = target->y.fixed + toFIXED(16);
   above[2] = target->z.fixed;
   hit = Actor_FindAtCell(above, 1);
   if (hit != 0 && (hit->collisionFlags & 1))
@@ -287,12 +287,12 @@ void Leader_PushObjectAhead(void) {
   position[0] = owner->x.fixed;
   position[1] = (owner->y.fixed + 0x40000) & 0xfff80000;
   position[2] = owner->z.fixed;
-  Vector_AddPolarOffset(px(16), angle, position);
+  Vector_AddPolarOffset(toFIXED(16), angle, position);
   target = Actor_FindAtCell(position, 1);
   position[0] = target->x.fixed;
   position[1] = target->y.fixed;
   position[2] = target->z.fixed;
-  Vector_AddPolarOffset(px(16), angle, position);
+  Vector_AddPolarOffset(toFIXED(16), angle, position);
   terrain = target->layer;
   target->layer = 2;
   result = MapGrid_CheckCollisionFar(target, position);
@@ -301,14 +301,14 @@ void Leader_PushObjectAhead(void) {
     Actor_SelectAnimationFar(owner, 8);
     wait(15);
     Sound_PlayFar(SE_PUSH);
-    target->speedLimit = px(1) / 5;
-    target->acceleration = px(1) / 5;
+    target->speedLimit = toFIXED(1) / 5;
+    target->acceleration = toFIXED(1) / 5;
     Actor_SetMoveTargetFar(target, position[0], position[1], position[2]);
     wait(2);
     acceleration = owner->acceleration;
-    owner->acceleration = px(1) / 5;
+    owner->acceleration = toFIXED(1) / 5;
     speed = owner->speedLimit;
-    owner->speedLimit = px(1) / 5;
+    owner->speedLimit = toFIXED(1) / 5;
     Actor_SetMoveTargetFar(owner, position[0], position[1], position[2]);
     Actor_WaitForMoveFar(target);
     wait(1);

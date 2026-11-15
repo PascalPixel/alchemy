@@ -310,25 +310,25 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
   struct AnimationSpritePart *shadow;
 
   // The margins are the 16x8 shadow's half width and height.
-  if (scaleX > Q16_ONE || scaleY > Q16_ONE) {
+  if (scaleX > FIXED_ONE || scaleY > FIXED_ONE) {
     affine = 3;
     marginX = 16;
     marginY = 8;
     halfWidth <<= 1;
     halfHeight <<= 1;
   }
-  x = WHOLE_PIXELS(screenX) - halfWidth;
+  x = FIXEDtoINT(screenX) - halfWidth;
   // The point is offsetY pixels above the image's bottom edge: the box is
   // raised by half the height less offsetY, scaled and rounded up to a whole
   // pixel.
-  y = WHOLE_PIXELS(screenY - height) - halfHeight -
+  y = FIXEDtoINT(screenY - height) - halfHeight -
       ((((sprite->height >> 1) - sprite->offsetY) * scaleY + 0xffff) >> 16);
   sprite->image.affine = affine;
   sprite->image.x = x;
   sprite->image.y = y;
   // Place the shadow at ground height independently of the raised image.
-  x = WHOLE_PIXELS(screenX) - marginX;
-  y = WHOLE_PIXELS(screenY - groundHeight) - marginY;
+  x = FIXEDtoINT(screenX) - marginX;
+  y = FIXEDtoINT(screenY - groundHeight) - marginY;
   shadow = &sprite->shadow;
   shadow->affine = affine;
   shadow->x = x;
@@ -368,7 +368,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
 
   // Reuse an untransformed sprite when mirroring, scale and rotation allow it.
   flip = Sprite_ComposePicture(sprite, facing);
-  if (flip == 0 && scaleX == Q16_ONE && scaleY == scaleX &&
+  if (flip == 0 && scaleX == FIXED_ONE && scaleY == scaleX &&
       sprite->rotation == 0) {
     affine = 0;
     matrix = 0;
@@ -381,7 +381,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
       effect.scaleX = -effect.scaleX;
     matrix = OamMatrix_AllocFromTransform(&effect);
   }
-  if (scaleX > Q16_ONE || scaleY > Q16_ONE) {
+  if (scaleX > FIXED_ONE || scaleY > FIXED_ONE) {
     affine = 3;
     halfWidth <<= 1;
     halfHeight <<= 1;
@@ -389,7 +389,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
     shadowHalfHeight = 8;
   }
   // Draw slot by screen row, one slot per two rows from slot 10.
-  if (height <= -px(100)) {
+  if (height <= -toFIXED(100)) {
     slot = 1;
     depth = 0;
   } else {
@@ -397,20 +397,20 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
     depth = 2;
   }
   // Queue the shadow at ground height before the raised image.
-  y = WHOLE_PIXELS(screenY - groundHeight) - shadowHalfHeight;
+  y = FIXEDtoINT(screenY - groundHeight) - shadowHalfHeight;
   if (sprite->flags & SPRITE_FLAG_SHADOW) {
     if (y < DISPLAY_HEIGHT) {
       part = &sprite->shadow;
       part->affine = affine;
       part->affineIndex = matrix;
-      part->x = WHOLE_PIXELS(screenX) - shadowHalfWidth;
+      part->x = FIXEDtoINT(screenX) - shadowHalfWidth;
       part->y = y;
       Oam_AddSpriteAtDepth(part, depth);
     }
   }
-  x = WHOLE_PIXELS(screenX) - halfWidth +
-      WHOLE_PIXELS(sprite->offsetX * scaleX + 0xffff);
-  y = WHOLE_PIXELS(screenY - height) - halfHeight -
+  x = FIXEDtoINT(screenX) - halfWidth +
+      FIXEDtoINT(sprite->offsetX * scaleX + 0xffff);
+  y = FIXEDtoINT(screenY - height) - halfHeight -
       ((scaleY * ((sprite->height >> 1) - sprite->offsetY) + 0xffff) >> 16);
   // Only the right and bottom edges are tested; OAM wraps a negative
   // position.
@@ -449,13 +449,13 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
   // Project first, then discard sprites beyond the padded screen bounds.
   affine = 1;
   if (gActorSystemWork->suspended == 0) {
-    z = Transform_ProjectPoint(point, screen);
+    z = Matrix_ProjectPoint(point, screen);
     if (screen[2] != 0 && screen[0] >= -32 && screen[0] <= 272 &&
         screen[1] >= -32 && screen[1] <= 208) {
       if (sprite->useOwnScale)
         z = sprite->scale;
       else
-        z = Iwram_MulQ16(z, sprite->scale);
+        z = Iwram_MulFX(z, sprite->scale);
       halfWidth = sprite->width >> 1;
       halfHeight = sprite->height >> 1;
       size = 8;
@@ -463,23 +463,23 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
       // Round the perspective scale to the nearest 1/32 (0x800) before
       // combining it with the sprite's own scale.
       roundedScale = (z + 0x400) & -0x800;
-      scaleX = Iwram_MulQ16(roundedScale, *scale++);
-      scaleY = Iwram_MulQ16(roundedScale, *scale);
-      // Hold each scale below 2 (Q16_ONE * 63 / 32, 2 less 1/32): a scaled
+      scaleX = Iwram_MulFX(roundedScale, *scale++);
+      scaleY = Iwram_MulFX(roundedScale, *scale);
+      // Hold each scale below 2 (FIXED_ONE * 63 / 32, 2 less 1/32): a scaled
       // sprite is drawn in a double-size box, which the picture exactly fills
       // at 2 and would overflow, cut off at its edges, beyond it.
       if (scaleX > 0x1f7ff)
-        scaleX = Q16_ONE * 63 / 32;
+        scaleX = FIXED_ONE * 63 / 32;
       if (scaleY > 0x1f7ff)
-        scaleY = Q16_ONE * 63 / 32;
-      offsetX = Iwram_MulQ16(sprite->offsetX, scaleX);
-      offsetY = -Iwram_MulQ16((sprite->height >> 1) - sprite->offsetY, scaleY);
-      if (scaleX > Q16_ONE || scaleY > Q16_ONE) {
+        scaleY = FIXED_ONE * 63 / 32;
+      offsetX = Iwram_MulFX(sprite->offsetX, scaleX);
+      offsetY = -Iwram_MulFX((sprite->height >> 1) - sprite->offsetY, scaleY);
+      if (scaleX > FIXED_ONE || scaleY > FIXED_ONE) {
         affine = 3;
         halfWidth <<= 1;
         halfHeight <<= 1;
         size = 16;
-      } else if (scaleX == Q16_ONE && sprite->rotation == 0 &&
+      } else if (scaleX == FIXED_ONE && sprite->rotation == 0 &&
                  scaleY == scaleX) {
         affine = 0;
       }
@@ -525,7 +525,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
         struct AnimationSpritePart *shadow;
 
         SET_VECTOR(ground, point[0], 0, point[2]);
-        Transform_ProjectPoint(ground, screen);
+        Matrix_ProjectPoint(ground, screen);
         shadow = &sprite->shadow;
         shadow->x = screen[0] - size;
         shadow->y = screen[1] - (size >> 1) + 2;

@@ -65,13 +65,13 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   source = GetBattleObjectSlotFar(work->args->user)->actor;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   for (i = 0, point = work->particles; i != 3; i++) {
-    SET_POSITION(point, source->x.fixed, source->y.fixed + px(40),
+    SET_POSITION(point, source->x.fixed, source->y.fixed + toFIXED(40),
                  source->z.fixed);
     if (i == 0)
       point->velocityX = (target->x.fixed - point->x) / 12;
     else
       point->velocityX = (target->x.fixed * 2 - point->x) / 12;
-    point->velocityY = (target->y.fixed - point->y + px(40)) / 12;
+    point->velocityY = (target->y.fixed - point->y + toFIXED(40)) / 12;
     point->velocityZ = (target->z.fixed - point->z) / 12;
     point->variant = 0;
     point++;
@@ -100,21 +100,21 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
         if (size > 10)
           size = 10;
         EFFECT_VIEW_FROM_CAMERA(camera);
-        Transform_ApplyPosition(Particle_Coordinates(step));
+        Matrix_TranslateVector(Particle_Coordinates(step));
         peak = 0;
         for (j = 0; j != 10; j++) {
           s32 depth;
 
-          Transform_Push();
-          Transform_ApplyRoll((frame - start) << 10);
-          Transform_ApplyYaw(TRIG_TURN / 4);
-          scale.x = ((frame - start) << 12) + Q16_ONE / 16;
-          if (scale.x > Q16_ONE)
-            scale.x = Q16_ONE;
+          Matrix_Push();
+          Matrix_RotateZ((frame - start) << 10);
+          Matrix_RotateY(DEGtoANG(90));
+          scale.x = ((frame - start) << 12) + FIXED_ONE / 16;
+          if (scale.x > FIXED_ONE)
+            scale.x = FIXED_ONE;
           scale.y = scale.x;
           scale.z = scale.x;
-          Transform_ApplyScale(Vector3_Coordinates(&scale));
-          Transform_ApplyRoll(j * 0x199a);
+          Matrix_ScaleVector(Vector3_Coordinates(&scale));
+          Matrix_RotateZ(j * 0x199a);
           depth = Projection_Point(&gStar_Points[j & 1], &screenPosition);
           if (peak < depth)
             peak = depth;
@@ -127,7 +127,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
 #endif
           trails[i * 10 + j].velocityX = screenPosition.x;
           trails[i * 10 + j].velocityY = screenPosition.y;
-          Transform_Pop();
+          Matrix_Pop();
         }
         if (peak <= 399999) {
           for (j = 0; j != 10; j++) {
@@ -150,17 +150,17 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
         step->z += step->velocityZ;
         // Each star knocks the target back and shakes the screen.
         if (frame == start + i + 10) {
-          target->acceleration = px(2);
-          target->speedLimit = px(8);
-          target->velocityY = px(5);
+          target->acceleration = toFIXED(2);
+          target->speedLimit = toFIXED(8);
+          target->velocityY = toFIXED(5);
           target->gravity = BATTLE_UNIT_GRAVITY;
           target->steeringFlags = 0;
           Actor_StartIdleFar(target);
           if (target->x.fixed < 0)
-            Actor_SetMoveTargetFar(target, target->x.fixed - px(40), 0,
+            Actor_SetMoveTargetFar(target, target->x.fixed - toFIXED(40), 0,
                                    target->z.fixed);
           else
-            Actor_SetMoveTargetFar(target, target->x.fixed + px(40), 0,
+            Actor_SetMoveTargetFar(target, target->x.fixed + toFIXED(40), 0,
                                    target->z.fixed);
           if (i == 2) {
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -225,11 +225,13 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   for (i = 0, point = work->particles; i != 8; i++) {
     s32 delay = i * 8;
 
-    SET_POSITION(point, source->x.fixed / 2, source->y.fixed + px(120),
+    SET_POSITION(point, source->x.fixed / 2, source->y.fixed + toFIXED(120),
                  source->z.fixed);
     point->velocityX =
-        (target->x.fixed + px((s32)((Random16() & 0x7f) - 64)) - point->x) / 12;
-    point->velocityY = (target->y.fixed - point->y + px(20)) / 12;
+        (target->x.fixed + INTtoFIXED((s32)((Random16() & 0x7f) - 64)) -
+         point->x) /
+        12;
+    point->velocityY = (target->y.fixed - point->y + toFIXED(20)) / 12;
     point->velocityZ = (target->z.fixed - point->z) / 12;
     point->variant = (Random16() & 15) + delay;
     point++;
@@ -240,8 +242,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   trails = PARTICLES;
   for (frame = 0; frame != SHINING_STAR_FRAMES; frame++) {
     // The stars run through the colours of the rainbow.
-    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
-                                    TRIG_TURN / 3, 0);
+    BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - DEGtoANG(120),
+                                    DEGtoANG(120), 0);
     if (frame == 96)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     for (i = 0; i != 8; i++) {
@@ -255,13 +257,13 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
           for (j = 0; j != 10; j++) {
             trails[i * 10 + j].velocityX =
                 screenPosition.x +
-                WHOLE_PIXELS(
+                FIXEDtoINT(
                     (Trig_Sin(j * 0x199a - ((frame - step->variant) << 11)) *
                      gStar_Radii[j & 1]) /
                     2);
             trails[i * 10 + j].velocityY =
                 screenPosition.y -
-                WHOLE_PIXELS(
+                FIXEDtoINT(
                     Trig_Cos(j * 0x199a - ((frame - step->variant) << 11)) *
                     gStar_Radii[j & 1]);
           }
@@ -279,7 +281,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
             }
           }
         }
-        if (step->y <= px(30) - 1) {
+        if (step->y <= toFIXED(30) - 1) {
           step->velocityY = -step->velocityY;
           step->velocityX /= 2;
           step->velocityZ /= 2;

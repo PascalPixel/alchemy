@@ -135,7 +135,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
     newSpark = &work->particles[i];
     newSpark->x = target->x.fixed;
-    newSpark->y = target->y.fixed + px(10); // 10 pixels up
+    newSpark->y = target->y.fixed + toFIXED(10); // 10 pixels up
     newSpark->z = target->z.fixed;
     SET_VELOCITY(newSpark, (Random16() & 0x1ff) << 11,
                  ((Random16() & 255) - 64) << 11,
@@ -181,7 +181,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
           sparkScreen.x >>= 1;
           EFFECT_DRAW_MOTE(draw[0], canvas, sheet, sparkScreen.x, sparkScreen.y,
                            size);
-          Particle_AdvanceWithGravity3D(spark, 60, -px(1) / 128);
+          Particle_AdvanceWithGravity3D(spark, 60, -toFIXED(1) / 128);
           spark->variant--;
         }
       }

@@ -366,7 +366,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
       Iwram_ClearWords(records, 16);
       record = Sprite_CreateFar(spriteId);
       if (record != 0) {
-        record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
+        record->scale = Iwram_MulFX(record->scale, battleObject->scale);
         actor->radius = Resource_GetMetadataRecordFar(spriteId)->boxY >> 1;
         *records = record;
         records++;
@@ -374,7 +374,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
       record->flags = 0;
       record = Sprite_CreateFar(spriteId + SPRITE_SECOND_PART);
       if (record != 0) {
-        record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
+        record->scale = Iwram_MulFX(record->scale, battleObject->scale);
         *records = record;
       }
       record->flags = 0;
@@ -384,7 +384,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
       if (record != 0) {
         actor->spriteStorageKind = ACTOR_SPRITE_ONE;
         actor->sprite = record;
-        record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
+        record->scale = Iwram_MulFX(record->scale, battleObject->scale);
         entry = record->entries[0];
         entry->priority = 1;
         entry->colorMode = battleObject->palette;
@@ -520,7 +520,7 @@ void *BattleObject_DestroyAll(void) {
 
 /// Writes the battlefield spot of place (its anchor, on the ground) to
 /// position, and returns 0. Nothing in the source calls it.
-s32 Battle_GetWorkEntryPair(s32 place, struct FixedPointPosition *position) {
+s32 Battle_GetWorkEntryPair(s32 place, struct Point *position) {
   struct BattleWork *battle = gBattleWork;
 
   SET_POSITION(position, battle->objects[place].anchorX, 0,
@@ -532,17 +532,17 @@ s32 Battle_GetWorkEntryPair(s32 place, struct FixedPointPosition *position) {
 /// commands are chosen.
 UNREAD_RESULT BattleCamera_ApplyTransform(void) {
   struct BattleCamera *camera = gBattleCamera;
-  Transform_Reset();
+  Matrix_Initialize();
   if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS) != 0) {
-    Iwram_TransformMatrix(gBattleCamera_CommandMatrix);
-    Transform_ApplyLookAt(camera->eye, camera->focus);
+    Iwram_MultiplyMatrix(gBattleCamera_CommandMatrix);
+    Matrix_LookAt(camera->eye, camera->focus);
   } else {
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_SetLookAt(camera->eye, camera->focus);
   }
 }
 
 /// Projects unit id's position onto the screen, into projected (its pixel x and
-/// y, then its depth; Transform_ProjectPoint). Returns 0.
+/// y, then its depth; Matrix_ProjectPoint). Returns 0.
 s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected) {
   struct Actor *actor = BattleObject_Get(unitId)->actor;
   struct Sprite *record = GetMotionRecord(actor, 0);
@@ -551,10 +551,10 @@ s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected) {
 
   BattleCamera_ApplyTransform();
   SET_VECTOR(position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-  projectionScale = Transform_ProjectPoint(position, projected);
+  projectionScale = Matrix_ProjectPoint(position, projected);
   // The sprite's projected scale is worked out and thrown away; compare
   // BattleMotion_ProjectScaledPosition, which keeps it.
-  (void)Iwram_MulQ16(projectionScale, record->scale);
+  (void)Iwram_MulFX(projectionScale, record->scale);
   return 0;
 }
 
@@ -575,7 +575,7 @@ void *GetMotionRecord(struct Actor *actor, s32 recordIndex) {
 /// Puts the battle camera at its default view of the battlefield's centre.
 void BattleCamera_SetDefaultView(void) {
   struct BattleCamera *camera = gBattleCamera;
-  struct FixedPointPosition eyeOffset;
+  struct Point eyeOffset;
 
   // A pitch of -1/128 of a turn, 510 pixels away, the distance
   // BattleCamera_SetView uses.
@@ -586,10 +586,10 @@ void BattleCamera_SetDefaultView(void) {
   camera->followPosition = 0;
   camera->followEye = 0;
 
-  Transform_Reset();
-  Transform_ApplyPosition(&camera->focus[0]);
-  Transform_ApplyYaw((s16)camera->yaw);
-  Transform_ApplyPitch((s16)camera->pitch);
+  Matrix_Initialize();
+  Matrix_TranslateVector(&camera->focus[0]);
+  Matrix_RotateY((s16)camera->yaw);
+  Matrix_RotateX((s16)camera->pitch);
 
   eyeOffset.x = 0;
   eyeOffset.y = 0;

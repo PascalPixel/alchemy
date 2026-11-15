@@ -25,7 +25,7 @@
 #include "system/iwram_call.h"
 #include "fixed_math.h"
 #include "graphics/graphics.h"
-#include "system/transform.h"
+#include "system/matrix.h"
 #include "graphics/resource.h"
 #include "system/heap_release.h"
 #include "system/input.h"
@@ -144,9 +144,6 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define EFFECT_DISPCNT                                                         \
   (DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |     \
    DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON)
-
-/// The whole pixels of a 16.16 value.
-#define Q_16_16_TO_INT(v) ((s32)(v) >> 16)
 
 /// The whole pixels of a stored 16.16 value, read as its upper halfword.
 // UB: the s32 is read through an s16.
@@ -320,7 +317,7 @@ enum ModelKind {
 
 /// Starts a frame's 3D projection from the battle camera.
 #define EFFECT_VIEW_FROM_CAMERA(camera)                                        \
-  (Transform_Reset(), Transform_SetLookAt((camera)->eye, (camera)->focus))
+  (Matrix_Initialize(), Matrix_SetLookAt((camera)->eye, (camera)->focus))
 
 // The sheets' pictures, as The Broken Seal names them: this game draws the same
 // sheets at the same sizes.
@@ -1047,22 +1044,22 @@ void Palette_LoadBasicSpriteColors(void);
 u32 Random16(void);
 void ReleaseBattleObjectRecordsFar(s32 actor);
 s32 Render_ProjectPoint(const void *point, s32 *screen);
-void Transform_ApplyPosition(const s32 *pos);
-void Transform_ApplyTranslation(s32 x, s32 y, s32 z);
-void Transform_ApplyScale(s32 *scale);
-void Transform_ApplyAxisScale(s32 x, s32 y, s32 z);
-void Transform_ApplyUniformScale(s32 scale);
+void Matrix_TranslateVector(const s32 *pos);
+void Matrix_Translate(s32 x, s32 y, s32 z);
+void Matrix_ScaleVector(s32 *scale);
+void Matrix_Scale(s32 x, s32 y, s32 z);
+void Matrix_ScaleUniform(s32 scale);
 void Shop_InitializeWork(void);
 void Shop_ReleaseWork(void);
 void Sprite_RemoveAnimationFar(void *record, s32 entry);
-void Transform_ApplyPitch(s32 angle);
+void Matrix_RotateX(s32 angle);
 // The roll step of the scene transform.
-void Transform_ApplyRoll(s32 angle);
-void Transform_ApplyYaw(s32 angle);
-void Transform_Pop(void);
-void Transform_Push(void);
-void Transform_ResetMatrix(void);
-void Transform_SetLookAt(s32 *eye, s32 *target);
+void Matrix_RotateZ(s32 angle);
+void Matrix_RotateY(s32 angle);
+void Matrix_Pop(void);
+void Matrix_Push(void);
+void Matrix_ResetUnit(void);
+void Matrix_SetLookAt(s32 *eye, s32 *target);
 s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
 void ActorShadow_LoadTilesFar(void);

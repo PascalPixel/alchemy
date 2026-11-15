@@ -72,8 +72,8 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
     struct Particle *base = &work->particles[i];
     s32 x;
 
-    x = px((Random16() & 15) + 72);
-    SET_POSITION(base, x, 0, px(gVolcano_Depths[args->variant][i]));
+    x = INTtoFIXED((Random16() & 15) + 72);
+    SET_POSITION(base, x, 0, INTtoFIXED(gVolcano_Depths[args->variant][i]));
     if (object->x < 0)
       base->x = -x;
   }
@@ -91,8 +91,8 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
     }
     if (frame == 16)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
 
     if (frame < 64) {
       for (pillar = 0; pillar != gVolcano_Counts[args->variant]; pillar++) {
@@ -142,7 +142,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
               s32 angle;
 
               speed = (Random16() & 0x3ff) + 32;
-              angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
+              angle = (Random16() & 0x7fff) - DEGtoANG(90);
               SET_POSITION(spark, screen.x << 8, (screen.y << 8) + 0x1000,
                            (Trig_Sin(angle) * speed) >> 15);
               spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 15;

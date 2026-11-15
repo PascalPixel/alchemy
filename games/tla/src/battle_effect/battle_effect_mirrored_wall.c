@@ -153,8 +153,8 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
     prelude = args->prelude;
     if (prelude == 1) {
       s32 angle = frame << 11;
-      s32 x = (Q_16_16_TO_INT(-Trig_Sin(angle) * 20)) + djinn[0] + offsetX - 20;
-      s32 y = (Q_16_16_TO_INT(Trig_Cos(angle) * 4)) + djinn[1] - 24;
+      s32 x = (FIXEDtoINT(-Trig_Sin(angle) * 20)) + djinn[0] + offsetX - 20;
+      s32 y = (FIXEDtoINT(Trig_Cos(angle) * 4)) + djinn[1] - 24;
 
       BattleEffect_FetchRectangleBlitters(args->side ^ prelude, draw);
       if (frame > 32)
@@ -179,22 +179,22 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
           BattleObject_GetFar(args->targets[k])->object;
       s32 start = k * 16;
 
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
       point[0] = target->x;
       point[1] = 0;
       point[2] = target->z;
-      Transform_ApplyPosition(point);
+      Matrix_TranslateVector(point);
       if (frame > start) {
         for (i = 0; i != MOTES; i++) {
           struct Particle *mote = &PARTICLES[k * 64 + i];
 
-          if (frame > i * 8 + start && mote->y > px(8)) {
+          if (frame > i * 8 + start && mote->y > toFIXED(8)) {
             s32 sway;
 
             EffectPosition_ProjectPoint((s32 *)mote, &pos);
             pos.x += offsetX;
-            sway = Q_16_16_TO_INT(Trig_Sin(mote->variant << 10) * 16);
+            sway = FIXEDtoINT(Trig_Sin(mote->variant << 10) * 16);
             if (i & 1)
               pos.x -= sway;
             else
@@ -206,7 +206,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
                             PIC_MOTE,
                         pos.x - 12, pos.y - 12, DJINN_BEAMS_MOTE_WIDTH,
                         DJINN_BEAMS_MOTE_HEIGHT);
-            mote->y -= px(1);
+            mote->y -= toFIXED(1);
             mote->variant++;
           }
         }
@@ -223,8 +223,8 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
         struct MotionObject *target =
             BattleObject_GetFar(args->targets[i])->object;
 
-        Transform_Reset();
-        Transform_SetLookAt(camera->eye, camera->focus);
+        Matrix_Initialize();
+        Matrix_SetLookAt(camera->eye, camera->focus);
         if (frame == start + 72)
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_GRB,
                                    TINT_KEEP, TINT_KEEP, 0);
@@ -407,11 +407,11 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     PARTICLES[i].variant = -1;
   source = BattleObject_GetFar(args->user)->object;
   if (mode == LOBBED_SHELLS_MUD)
-    height = px(40);
+    height = toFIXED(40);
   else if (mode == LOBBED_SHELLS_RISING_VENOM)
-    height = px(20);
+    height = toFIXED(20);
   else
-    height = px(4);
+    height = toFIXED(4);
   for (k = 0; k != args->targetCount; k++) {
     struct MotionObject *target =
         BattleObject_GetFar(args->targets[k % args->targetCount])->object;
@@ -421,9 +421,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
       s32 aimZ;
 
       SET_POSITION(shot, source->x, height, source->z);
-      aimZ = target->z + px(((Random16() & 31) - 16) * 2);
+      aimZ = target->z + INTtoFIXED(((Random16() & 31) - 16) * 2);
       shot->velocityX = (target->x - source->x) >> 4;
-      shot->velocityY = px(4);
+      shot->velocityY = toFIXED(4);
       shot->velocityZ = (aimZ - source->z) >> 4;
       shot->variant = 0;
     }
@@ -449,8 +449,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     struct Particle *burst;
     struct Particle *piece;
 
-    Transform_Reset();
-    Transform_SetLookAt(camera, camera + 3);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera, camera + 3);
 
     // The shots: each starts four frames after the last, flies under
     // gravity and turns through ten pictures; at the ground it bursts.
@@ -483,7 +483,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
                   canvas, work->sheet + step * 768, position.x - 12,
                   position.y - 16, LOBBED_SHELL_WIDTH, LOBBED_SHELL_HEIGHT);
             if (shot->variant == 0)
-              BattleEffectKernels_IntegrateVector3(shot, 63, -px(1) / 2);
+              BattleEffectKernels_IntegrateVector3(shot, 63, -toFIXED(1) / 2);
             if (shot->y < 0) {
               s32 count;
               s32 n;
@@ -542,9 +542,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
               gLobbedShells_ShardHeights[picture]);
         }
         if (gLobbedShells_Styles[mode * 4 + RECORD_SHARDS] == 0)
-          BattleEffectKernels_IntegrateVector3(burst, 62, px(1) / 32);
+          BattleEffectKernels_IntegrateVector3(burst, 62, toFIXED(1) / 32);
         else
-          BattleEffectKernels_IntegrateVector3(burst, 62, -px(1) / 2);
+          BattleEffectKernels_IntegrateVector3(burst, 62, -toFIXED(1) / 2);
         burst->variant++;
       }
     }

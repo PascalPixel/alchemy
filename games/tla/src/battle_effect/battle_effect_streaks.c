@@ -77,7 +77,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 j;
   s32 streaks = STREAK_MAX;
-  s32 lift = px(20);
+  s32 lift = toFIXED(20);
 
   heap = Ram_HeapSlots;
   /* FAKEMATCH(barrier): an empty asm through heap hides that it holds the heap
@@ -162,8 +162,8 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
       if (frame > total - 16)
         REG_BLDALPHA = BLEND_ALPHA(total - frame, BLEND_WEIGHT_MAX);
 
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
       for (k = 0; k != args->targetCount; k++) {
         // Each target's streaks set out with the mode's cry.
         if (frame == k * STREAKS_TARGET_DELAY) {
@@ -223,12 +223,12 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
             struct MotionObject *struck =
                 BattleObject_GetFar(args->targets[k])->object;
 
-            struck->x += px(
+            struck->x += INTtoFIXED(
                 gStreaks_Tremble[(frame - k * STREAKS_TARGET_DELAY - 30) % 8]);
             if (struck->x > 0)
-              struck->x += px(1) / 2;
+              struck->x += toFIXED(1) / 2;
             else
-              struck->x -= px(1) / 2;
+              struck->x -= toFIXED(1) / 2;
             BattleEffect_TintBattler(args->targets[k], TINT_KEEP, POSE_DAMAGE,
                                      TINT_KEEP, 0);
           }
@@ -346,15 +346,15 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     mote = &EFFECT_STEPS[i];
     if (mode == MOTE_FOUNTAIN_SLAVER) {
       if (args->side == EFFECT_SIDE_ENEMIES)
-        angle = (Random16() & 0x7fff) + TRIG_TURN / 2;
+        angle = (Random16() & 0x7fff) + DEGtoANG(180);
       else
         angle = Random16() & 0x7fff;
       speed = (Random16() & 0x3ff) + 0x800;
-      mote->y = source->y + (Random16() << 4) + px(5);
+      mote->y = source->y + (Random16() << 4) + toFIXED(5);
     } else {
       angle = Random16();
       speed = (Random16() & 0x3ff) + 32;
-      mote->y = source->y + px(5);
+      mote->y = source->y + toFIXED(5);
     }
     mote->x = source->x;
     mote->z = source->z;
@@ -377,8 +377,8 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   if (mode != MOTE_FOUNTAIN_SLAVER)
     frames = 128;
   for (frame = 0; frame != frames; frame++) {
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
     if (mode == MOTE_FOUNTAIN_SLAVER && frame == 0)
       Sound_PlayFar(SE_CURSE);
 
@@ -405,17 +405,17 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
         // Slaver's drops fall and bounce off the ground; the others rise
         // slowly. Sleep Star's drift away from the user's side.
         if (mode == MOTE_FOUNTAIN_SLAVER) {
-          BattleEffectKernels_IntegrateVector3(mote, 62, -px(1) / 8);
+          BattleEffectKernels_IntegrateVector3(mote, 62, -toFIXED(1) / 8);
           if (mote->y <= 0x4ffff)
             mote->velocityY = -mote->velocityY;
         } else {
-          BattleEffectKernels_IntegrateVector3(mote, 62, px(1) / 64);
+          BattleEffectKernels_IntegrateVector3(mote, 62, toFIXED(1) / 64);
         }
         if (mode == MOTE_FOUNTAIN_DRIFTING) {
           if (source->x < 0)
-            mote->velocityX += px(1) / 8;
+            mote->velocityX += toFIXED(1) / 8;
           else
-            mote->velocityX -= px(1) / 8;
+            mote->velocityX -= toFIXED(1) / 8;
         }
         mote->variant--;
       }

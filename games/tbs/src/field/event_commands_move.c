@@ -28,7 +28,7 @@ void FieldEffect_UpdateMoveHand(struct Actor *source) {
     s32 dz = target->z.fixed - source->z.fixed;
 
     if (dx != 0 || dz != 0) {
-      turn = (s16)(ArcTan2(dz, dx) - source->facing);
+      turn = (s16)(Trig_Atan(dz, dx) - source->facing);
       if (turn > FACING_STEP)
         turn = FACING_STEP;
       if (turn < -FACING_STEP)
@@ -42,7 +42,7 @@ void FieldEffect_UpdateMoveHand(struct Actor *source) {
   // The particle starts 8 to 24 pixels lower and up to 48 pixels away in a
   // random direction.
   position.x = source->x.fixed;
-  position.y = source->y.fixed - (Random16() << 4) - px(8);
+  position.y = source->y.fixed - (Random16() << 4) - toFIXED(8);
   position.z = source->z.fixed;
   radius = Random16() * 3;
   radius <<= 4;
@@ -77,7 +77,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   target = effectWork->child;
   // work->angle is the way the caster faces; the hand's side of the target
   // is the opposite way, toward the caster.
-  angle = effectWork->angle + TRIG_TURN / 2;
+  angle = effectWork->angle + DEGtoANG(180);
   moved = 0;
   if (target == NULL)
     return;
@@ -92,18 +92,18 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
 
   // The hand goes 16 pixels above the target and 16 pixels toward angle.
   pusher->watchedActor = target;
-  SET_POSITION(&position, target->x.fixed, target->y.fixed + px(16),
+  SET_POSITION(&position, target->x.fixed, target->y.fixed + toFIXED(16),
                target->z.fixed);
-  Vector_AddPolarOffset(px(16), angle, &position);
+  Vector_AddPolarOffset(toFIXED(16), angle, &position);
   Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
   FieldEffect_SnapScaleToFull(pusher);
   // The hand floats (motion flag bit 2) at up to 4 pixels a frame.
-  pusher->speedLimit = px(4);
-  pusher->acceleration = px(1) / 2;
+  pusher->speedLimit = toFIXED(4);
+  pusher->acceleration = toFIXED(1) / 2;
   pusher->motionFlags = ACTOR_FLOATS;
   target->update = Actor_CycleSpriteColors;
-  target->speedLimit = px(2) / 5;
-  target->acceleration = px(1) / 5;
+  target->speedLimit = toFIXED(2) / 5;
+  target->acceleration = toFIXED(1) / 5;
   target->steeringFlags = moved;
   target->layer = 2;
   for (;;) {
@@ -116,9 +116,9 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
     direction = (u16)Input_GetDpadAngle(gKeysHeld);
     if (direction == DPAD_ANGLE_NONE) {
       position.x = target->x.fixed;
-      position.y = target->y.fixed + px(16);
+      position.y = target->y.fixed + toFIXED(16);
       position.z = target->z.fixed;
-      Vector_AddPolarOffset(px(16), angle, &position);
+      Vector_AddPolarOffset(toFIXED(16), angle, &position);
       Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
       Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_OPEN);
       SET_VELOCITY(pusher, 0, 0, 0);
@@ -128,20 +128,20 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
     // The hand leans 2 pixels the way it pushes; check the cells 16 and 32
     // pixels beyond the target.
     position.x = target->x.fixed;
-    position.y = target->y.fixed + px(16);
+    position.y = target->y.fixed + toFIXED(16);
     position.z = target->z.fixed;
-    Vector_AddPolarOffset(px(16), angle, &position);
-    Vector_AddPolarOffset(px(2), direction, &position);
+    Vector_AddPolarOffset(toFIXED(16), angle, &position);
+    Vector_AddPolarOffset(toFIXED(2), direction, &position);
     Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
     Actor_WaitForMoveFar(pusher);
     position.x = target->x.fixed;
     position.y = target->y.fixed;
     position.z = target->z.fixed;
-    Vector_AddPolarOffset(px(16), direction, &position);
+    Vector_AddPolarOffset(toFIXED(16), direction, &position);
     beyond.x = target->x.fixed;
     beyond.y = target->y.fixed;
     beyond.z = target->z.fixed;
-    Vector_AddPolarOffset(px(32), direction, &beyond);
+    Vector_AddPolarOffset(toFIXED(32), direction, &beyond);
     // A wall (2) or ground more than 8 pixels higher (1) stops the push;
     // level ground or a drop does not.
     if (MapGrid_CheckCollisionFar(target, (struct FieldPosition *)&position) >
@@ -196,19 +196,20 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
         pusher, gFieldEffect_QuadrantModes[(u16)(angle - direction) >> 14]);
     wait(15);
     target->paused = 0;
-    target->speedLimit = px(1) / 5;
-    target->acceleration = px(1) / 5;
+    target->speedLimit = toFIXED(1) / 5;
+    target->acceleration = toFIXED(1) / 5;
     Actor_SetMoveTargetFar(target, position.x, position.y, position.z);
     pusher->motionFlags = 0;
-    pusher->speedLimit = px(1) / 5;
-    pusher->acceleration = px(1) / 5;
-    Vector_AddPolarOffset(px(16), direction, &position);
-    Actor_SetMoveTargetFar(pusher, position.x, position.y + px(16), position.z);
+    pusher->speedLimit = toFIXED(1) / 5;
+    pusher->acceleration = toFIXED(1) / 5;
+    Vector_AddPolarOffset(toFIXED(16), direction, &position);
+    Actor_SetMoveTargetFar(pusher, position.x, position.y + toFIXED(16),
+                           position.z);
     if (moved == 1) {
       Actor_GetById(effectWork->firstActorId)->steeringFlags &=
           ~ACTOR_FACES_MOTION;
-      user->speedLimit = px(1) / 5;
-      user->acceleration = px(1) / 5;
+      user->speedLimit = toFIXED(1) / 5;
+      user->acceleration = toFIXED(1) / 5;
       Actor_SetMoveTargetFar(user, beyond.x, beyond.y, beyond.z);
     }
     // Land exactly on the cell, whatever the braking left.
@@ -245,11 +246,11 @@ next_state:
     position.x = effect->originX;
     position.z = effect->originZ;
     angle = Random16();
-    Vector_AddPolarOffset(px(30), (u16)angle, &position);
+    Vector_AddPolarOffset(toFIXED(30), (u16)angle, &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
-    effect->acceleration = px(4);
-    effect->speedMax = px(4);
+    effect->acceleration = toFIXED(4);
+    effect->speedMax = toFIXED(4);
     effect->turnStepLimited = state;
     effect->state++;
     return;
@@ -319,33 +320,33 @@ struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster) {
 
   angle = FACING_NEAREST_CARDINAL(caster->facing);
   parent = Actor_Spawn(SPRITE_MOVE_HAND, caster->x.fixed,
-                       caster->y.fixed + px(16), caster->z.fixed);
+                       caster->y.fixed + toFIXED(16), caster->z.fixed);
   if (parent == 0)
     return 0;
-  parent->scaleY = Q16_ONE / 4;
-  parent->scaleX = Q16_ONE / 4;
+  parent->scaleY = FIXED_ONE / 4;
+  parent->scaleX = FIXED_ONE / 4;
   parent->update = FieldEffect_UpdateMoveHand;
-  parent->speedLimit = px(2);
-  parent->acceleration = px(2);
+  parent->speedLimit = toFIXED(2);
+  parent->acceleration = toFIXED(2);
   parent->motionFlags = 0;
   Actor_SelectAnimationFar(parent, MOVE_HAND_ANIMATION_GRIP);
-  Actor_SetTargetPositionFromMagnitudeAngle(parent, px(16), angle);
+  Actor_SetTargetPositionFromMagnitudeAngle(parent, toFIXED(16), angle);
 
   // Particles: 8 to 32 pixels within 1/8 turn of the way it faces, at 1 to 2
   // pixels a frame.
   for (fragmentIndex = 0; fragmentIndex < 8; fragmentIndex++) {
     child = Actor_Spawn(SPRITE_SPARKLE, caster->x.fixed,
-                        caster->y.fixed + px(16), caster->z.fixed);
+                        caster->y.fixed + toFIXED(16), caster->z.fixed);
     if (child != 0) {
       Actor_StartScriptFar(child, gFieldEffect_FragmentScript);
-      speed = Random16() + Q16_ONE;
-      child->acceleration = px(1);
+      speed = Random16() + FIXED_ONE;
+      child->acceleration = toFIXED(1);
       child->speedLimit = speed;
       child->motionFlags = ACTOR_FALLS;
-      child->gravity = px(1) / 50;
+      child->gravity = toFIXED(1) / 50;
       spread = Random16();
       child->velocityY = spread - Random16();
-      radius = Random16() * 24 + px(8);
+      radius = Random16() * 24 + toFIXED(8);
       jitter = Random16();
       Actor_SetTargetPositionFromMagnitudeAngle(
           child, radius, ((jitter - Random16()) >> 3) + caster->facing);
@@ -356,19 +357,19 @@ struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster) {
 }
 
 /// Sets an actor's scale at once to full size (its first step of 1/16 past
-/// Q16_ONE - 1: exactly Q16_ONE from a multiple of 1/16) when it is smaller,
-/// then waits, at most 600 frames, for it to arrive at its target.
+/// FIXED_ONE - 1: exactly FIXED_ONE from a multiple of 1/16) when it is
+/// smaller, then waits, at most 600 frames, for it to arrive at its target.
 void FieldEffect_SnapScaleToFull(struct Actor *actor) {
   s32 next;
   s32 scale;
 
   if (actor != NULL) {
     scale = actor->scaleX;
-    if (scale < Q16_ONE) {
+    if (scale < FIXED_ONE) {
       do {
-        next = scale + Q16_ONE / 16;
+        next = scale + FIXED_ONE / 16;
         scale = next;
-      } while (next < Q16_ONE);
+      } while (next < FIXED_ONE);
       actor->scaleX = next;
       actor->scaleY = next;
     }
@@ -386,10 +387,10 @@ void UpdateRisingParticleBurst(struct Actor *hand) {
 
   Sound_PlayFar(SE_CAST);
   for (i = 0; i < 31; i++) {
-    hand->y.fixed += px(1);
-    hand->facing += TRIG_TURN / 8;
-    hand->scaleX += -Q16_ONE / 32;
-    hand->scaleY += -Q16_ONE / 32;
+    hand->y.fixed += toFIXED(1);
+    hand->facing += DEGtoANG(45);
+    hand->scaleX += -FIXED_ONE / 32;
+    hand->scaleY += -FIXED_ONE / 32;
     wait(1);
   }
   for (i = 0; i < 8; i++) {
@@ -397,13 +398,13 @@ void UpdateRisingParticleBurst(struct Actor *hand) {
                         hand->z.fixed);
     if (child != 0) {
       Actor_StartScriptFar(child, gFieldEffect_FragmentScript);
-      child->speedLimit = Random16() + Q16_ONE;
-      child->acceleration = Q16_ONE;
+      child->speedLimit = Random16() + FIXED_ONE;
+      child->acceleration = FIXED_ONE;
       child->motionFlags = ACTOR_FALLS;
-      child->gravity = px(1) / 25;
+      child->gravity = toFIXED(1) / 25;
       spread = Random16();
       child->velocityY = spread - Random16();
-      dist = Random16() * 24 + px(8);
+      dist = Random16() * 24 + toFIXED(8);
       Actor_SetTargetPositionFromMagnitudeAngle(child, dist, Random16());
     }
   }

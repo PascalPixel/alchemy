@@ -167,7 +167,10 @@ enum LunpaActorId {
 enum GateActorId { ACTOR_LEFT_GUARD = ACTOR_FIRST_PLACED, ACTOR_RIGHT_GUARD };
 
 /// How the switch's sparkle is stretched while Reveal shows it.
-enum { SPARKLE_SCALE_X = 6 * Q16_ONE / 5, SPARKLE_SCALE_Y = 3 * Q16_ONE / 2 };
+enum {
+  SPARKLE_SCALE_X = 6 * FIXED_ONE / 5,
+  SPARKLE_SCALE_Y = 3 * FIXED_ONE / 2
+};
 
 /// Where Retreat at the gates sends the party
 /// (MainRoutineWork.retreatEntrance).
@@ -184,7 +187,7 @@ enum RecognitionMessage { RECOGNITION_SEEN_THAT_MAN, RECOGNITION_IMPOSSIBLE };
 
 enum { ANIM_SPRAWLED = 19 };
 
-enum { PILLAR_TOP_HEIGHT = px(16), CELL_SIZE = px(16) };
+enum { PILLAR_TOP_HEIGHT = toFIXED(16), CELL_SIZE = toFIXED(16) };
 
 enum { TREASURE_SPOT_PSYNERGY_STONE = 102 };
 
@@ -344,7 +347,7 @@ static void Lunpa_RevealSecrets(void) {
     actor = Actor_Get(ACTOR_SWITCH_SPARKLE);
     if (actor != NULL) {
       actor->motionFlags = ACTOR_FLOATS_HIGH;
-      actor->y.fixed = px(16);
+      actor->y.fixed = toFIXED(16);
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       actor->scaleX = SPARKLE_SCALE_X;
       actor->scaleY = SPARKLE_SCALE_Y;
@@ -805,8 +808,8 @@ static void Lunpa_GuardsCatchParty(void) {
   Event_Wait(25);
   Event_SetMessageId(warningMessageBase + CATCH_RIGHT_GUARD_SENDS_PARTY_OFF);
   Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
-  Actor_WalkTo(ACTOR_LEFT_GUARD, leader->x.part[0].pixel - 1,
-               leader->z.part[0].pixel);
+  Actor_WalkTo(ACTOR_LEFT_GUARD, leader->x.part[0].integer - 1,
+               leader->z.part[0].integer);
   Actor_WaitForMoveById(ACTOR_LEFT_GUARD);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 160, 216);
   Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 200);
@@ -843,8 +846,8 @@ static void Lunpa_CloakFades(void) {
   GameFlag_Clear(FLAG_LUNPA_FORTRESS_GATES_CLOAK_CAST);
   GameFlag_Clear(FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (leader->x.fixed > px(104) && leader->x.fixed < px(240) &&
-      leader->z.fixed > px(160) && leader->z.fixed < px(248)) {
+  if (leader->x.fixed > toFIXED(104) && leader->x.fixed < toFIXED(240) &&
+      leader->z.fixed > toFIXED(160) && leader->z.fixed < toFIXED(248)) {
     Task_Remove(Lunpa_WatchForUncloakedParty);
 #if TBS_PATCH_1
     work->raisedTrigger = RAISED_PARTY_SPOTTED;
@@ -865,8 +868,8 @@ static void Lunpa_WatchForUncloakedParty(void) {
   work = gFieldWork;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (gMainRoutineWork.cloaked == 0 &&
-      (leader->x.fixed >= px(144) && leader->x.fixed <= px(176)) &&
-      leader->z.fixed >= px(168) && leader->z.fixed < px(176)) {
+      (leader->x.fixed >= toFIXED(144) && leader->x.fixed <= toFIXED(176)) &&
+      leader->z.fixed >= toFIXED(168) && leader->z.fixed < toFIXED(176)) {
     Task_Remove(Lunpa_WatchForUncloakedParty);
     work->raisedTrigger = RAISED_PARTY_SPOTTED;
   }
@@ -934,8 +937,8 @@ static void Lunpa_GuardsThrowIsaacOut(void) {
   Task_Remove(Lunpa_KickUpLeaderDust);
   // Throw the leader down the steps, then wait for the first landing.
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags |= ACTOR_FALLS;
-  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = px(6);
-  Actor_Get(ACTOR_PARTY_LEADER)->velocityZ = px(6);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = toFIXED(6);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityZ = toFIXED(6);
   Event_Wait(1);
   while (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed != 0) {
     Event_Wait(1);
@@ -948,7 +951,7 @@ static void Lunpa_GuardsThrowIsaacOut(void) {
   Task_AddFrame(Lunpa_KickUpLeaderDust, TASK_PASS_FRAME);
   Event_Wait(2);
   // A smaller second bounce ends with the guards' final warning.
-  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = px(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = toFIXED(3);
   Event_Wait(1);
   while (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed != 0) {
     Event_Wait(1);

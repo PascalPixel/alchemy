@@ -274,8 +274,8 @@ void MtAlephSummit_ScatterDustRing(s32 radius, u32 count) {
 
   object = Actor_Get(ACTOR_ALEX);
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = Q16_ONE * 4 / 5;
-  options.startScaleY = Q16_ONE * 4 / 5;
+  options.startScaleX = FIXED_ONE * 4 / 5;
+  options.startScaleY = FIXED_ONE * 4 / 5;
   options.priority = ((struct FieldSprite *)object->sprite)->priority;
   i = 0;
 next:
@@ -343,7 +343,7 @@ s32 Scene_Initialize(void) {
       FieldCamera_SetSpeed(0.1);
       FieldCamera_MoveTo(316, CAMERA_KEEP, 300, 1);
     }
-    Actor_Get(ACTOR_ALEX)->z.fixed -= px(1);
+    Actor_Get(ACTOR_ALEX)->z.fixed -= toFIXED(1);
     System_Wait(30);
     i++;
     if (i != 10)
@@ -399,7 +399,7 @@ s32 Scene_Initialize(void) {
     }
     if (i == 19)
       Event_FinishScreenTransition();
-    Actor_Get(ACTOR_ALEX)->z.fixed -= px(2);
+    Actor_Get(ACTOR_ALEX)->z.fixed -= toFIXED(2);
     System_Wait(8);
     i++;
     if (i != 20)
@@ -416,8 +416,8 @@ s32 Scene_Initialize(void) {
     object = Actor_Get(ACTOR_ALEX);
     scale = 0;
     object->facing = scale;
-    Actor_Get(ACTOR_ALEX)->x.fixed = px(248);
-    Actor_Get(ACTOR_ALEX)->z.fixed = px(152);
+    Actor_Get(ACTOR_ALEX)->x.fixed = toFIXED(248);
+    Actor_Get(ACTOR_ALEX)->z.fixed = toFIXED(152);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                         BLDCNT_TGT1_ALL | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1,
                         IO_WRITE_HALFWORD);
@@ -657,7 +657,7 @@ s32 Scene_Initialize(void) {
     do {
       if (i == 16)
         Actor_SetAnimation(ACTOR_ALEX, 18);
-      Actor_Get(ACTOR_ALEX)->y.fixed += px(3) / 20;
+      Actor_Get(ACTOR_ALEX)->y.fixed += toFIXED(3) / 20;
       FieldEvent_Wait(1);
       i++;
     } while (i != 64);
@@ -667,14 +667,14 @@ s32 Scene_Initialize(void) {
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 5);
     i = 0;
     do {
-      Actor_Get(ACTOR_ALEX)->y.fixed += px(1);
+      Actor_Get(ACTOR_ALEX)->y.fixed += toFIXED(1);
       FieldEvent_Wait(1);
       i++;
     } while (i != 32);
     Actor_Get(ACTOR_ALEX)->motionFlags = ACTOR_FOLLOWS_TERRAIN;
     i = 0;
     do {
-      Actor_Get(ACTOR_ALEX)->y.fixed -= px(832) / 100;
+      Actor_Get(ACTOR_ALEX)->y.fixed -= toFIXED(832) / 100;
       FieldEvent_Wait(1);
       i++;
     } while (i != 5);
@@ -708,7 +708,8 @@ s32 Scene_Initialize(void) {
     Event_PlaySound(SE_TREMOR);
     i = 0;
   L14:
-    MapGrid_SetShakeFixed(px(i) + px(1), px(i) + px(1), px(1));
+    MapGrid_SetShakeFX(toFIXED(i) + toFIXED(1), toFIXED(i) + toFIXED(1),
+                       toFIXED(1));
     FieldEvent_Wait(8);
     i++;
     if (i != 2)
@@ -724,8 +725,8 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(ACTOR_WISE_ONE, 8);
     // "Mt. Aleph will soon be drawn into the heart of the earth! You must..."
     FieldEvent_ShowMessageThenWait(ACTOR_WISE_ONE, 0, 5);
-    for (i = 0, j = px(2); i != 4; i++, j += px(1)) {
-      MapGrid_SetShakeFixed(j, j, px(1));
+    for (i = 0, j = toFIXED(2); i != 4; i++, j += toFIXED(1)) {
+      MapGrid_SetShakeFX(j, j, toFIXED(1));
       FieldEvent_Wait(8);
     }
     Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
@@ -744,14 +745,14 @@ s32 Scene_Initialize(void) {
     slots = (struct HeapSlots *)Ram_HeapSlots->mapGrid;
     MapGrid_SetShake(16, 16, 1);
     j = 0;
-    scale = -Q16_ONE * 15 / 8;
+    scale = -FIXED_ONE * 15 / 8;
   L16:
     if (j == 20)
       Actor_SetAnimation(ACTOR_WISE_ONE, 7);
     if (j >= 30 && j <= 46) {
-      Actor_Get(ACTOR_WISE_ONE)->scaleX = Q16_ONE - scale;
-      Actor_Get(ACTOR_WISE_ONE)->scaleY = scale + Q16_ONE;
-      Actor_Get(ACTOR_WISE_ONE)->z.fixed -= px(2);
+      Actor_Get(ACTOR_WISE_ONE)->scaleX = FIXED_ONE - scale;
+      Actor_Get(ACTOR_WISE_ONE)->scaleY = scale + FIXED_ONE;
+      Actor_Get(ACTOR_WISE_ONE)->z.fixed -= toFIXED(2);
     }
     if (j == 47)
       Actor_SetPosition(ACTOR_WISE_ONE, 0, 0);
@@ -759,11 +760,11 @@ s32 Scene_Initialize(void) {
       PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
       PaletteFade_Interpolate(64);
     }
-    ((struct MapWork *)slots)->layers[1].offsetY -= px(1);
-    Actor_Get(ACTOR_ALEX)->z.fixed += px(1);
+    ((struct MapWork *)slots)->layers[1].offsetY -= toFIXED(1);
+    Actor_Get(ACTOR_ALEX)->z.fixed += toFIXED(1);
     System_Wait(1);
     j++;
-    scale += Q16_ONE / 16;
+    scale += FIXED_ONE / 16;
     if (j != 128)
       goto L16;
     Event_PlaySound(SOUND_FADE_OUT_BGM);

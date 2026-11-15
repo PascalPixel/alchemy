@@ -227,7 +227,7 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
     Actor_SetSpeed(ACTOR_IODEM, 1);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFX(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
     }
     Actor_SetDestinationOffset(ACTOR_IODEM, -8, 16);
     Actor_WaitForMoveById(ACTOR_IODEM);
@@ -257,8 +257,8 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
       Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       if (leader != NULL) {
-        Actor_SetDestination(ACTOR_IODEM, leader->x.part[0].pixel,
-                             leader->z.part[0].pixel);
+        Actor_SetDestination(ACTOR_IODEM, leader->x.part[0].integer,
+                             leader->z.part[0].integer);
       }
       Actor_WaitForMoveById(ACTOR_IODEM);
       Actor_SetPosition(ACTOR_IODEM, 0, 0);
@@ -288,8 +288,8 @@ static void GondowanCave_IodemRejoins(void) {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
     if (leader != NULL)
-      Actor_SetDestination(ACTOR_IODEM, leader->x.part[0].pixel,
-                           leader->z.part[0].pixel);
+      Actor_SetDestination(ACTOR_IODEM, leader->x.part[0].integer,
+                           leader->z.part[0].integer);
   }
   Actor_WaitForMoveById(ACTOR_IODEM);
   Actor_SetPosition(ACTOR_IODEM, 0, 0);
@@ -452,11 +452,11 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   Sound_Play(SE_WHOOSH);
   Actor_SetSpeed(actorId, 2);
   Actor_SetDestination(actorId, 472, 288);
-  actor->gravity = px(4) / 5;
+  actor->gravity = toFIXED(4) / 5;
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   actor->layer = 0;
   Actor_WaitForMoveById(actorId);
-  GondowanCave_WaitForDescent(actor, px(32));
+  GondowanCave_WaitForDescent(actor, toFIXED(32));
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   for (stepIndex = 0; stepIndex < 17; stepIndex++) {
@@ -472,7 +472,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   }
   Actor_SetDestination(actorId, 440, 308);
   Actor_WaitForMoveById(actorId);
-  GondowanCave_WaitForDescent(actor, px(32));
+  GondowanCave_WaitForDescent(actor, toFIXED(32));
   actor->update = 0;
   actor->sprite->rotation = TRIG_TURN / 16;
   Sound_Play(SE_CAST);

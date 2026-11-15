@@ -27,7 +27,7 @@ void KNOCK_BACK(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     actor->update = KNOCK_BACK_BLINK;
-    actor->facing = TRIG_TURN / 4;
+    actor->facing = DEGtoANG(90);
     KNOCK_BACK_SET_ANIMATION(actor, 49);
     for (;;) {
       if (KNOCK_BACK_CELL_ATTRIBUTE(actor->layer, actor->x.fixed,
@@ -41,7 +41,7 @@ void KNOCK_BACK(void) {
          } *)&actor->velocityX)
             ->value = work->unk68 << 17;
         actor->velocityZ = work->unk6a << 17;
-        actor->acceleration = Q16_ONE / 16;
+        actor->acceleration = FIXED_ONE / 16;
         for (i = 0; i <= 9; i++) {
           position.x = actor->x.fixed + (work->unk68 << 19);
           position.y = actor->y.fixed;
@@ -90,7 +90,7 @@ void KNOCK_BACK(void) {
         if (result > 0)
           break;
         if (result < 0) {
-          actor->facing = TRIG_TURN / 4;
+          actor->facing = DEGtoANG(90);
           Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, -1);
           break;
         }
@@ -124,14 +124,14 @@ void KNOCK_BACK(void) {
 #endif
         actor->z.fixed = z;
         off = (x & 0xfffff) + 0xfff80000;
-        if (off > Q16_ONE)
-          off = Q16_ONE;
+        if (off > FIXED_ONE)
+          off = FIXED_ONE;
         if (off < (s32)0xffff0000)
           off = 0xffff0000;
         actor->x.fixed = x - off;
         off = (z & 0xfffff) + 0xfff80000;
-        if (off > Q16_ONE)
-          off = Q16_ONE;
+        if (off > FIXED_ONE)
+          off = FIXED_ONE;
         if (off < (s32)0xffff0000)
           off = 0xffff0000;
         actor->z.fixed = z - off;

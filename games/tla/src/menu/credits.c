@@ -936,7 +936,7 @@ void EndingPicture_Scroll(void) {
       gEndingPicture_MapScroll += d;
     }
   }
-  if ((gEndingPicture_Scroll ^ old) & px(8)) {
+  if ((gEndingPicture_Scroll ^ old) & toFIXED(8)) {
     source = gEndingPicture_Map;
     destination = (u8 *)BG_CHAR_BLOCK(0);
     start = ENDING_PICTURE_ROW_OFFSET(gEndingPicture_MapScroll);

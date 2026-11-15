@@ -3,7 +3,7 @@
 // Part of system.c.
 
 #include "system_internal.h"
-#include "system/mul_q16.h"
+#include "system/mul_fx.h"
 #include "system/ram_buffer.h"
 #include "resource_ids.h"
 #include "window/window.h"

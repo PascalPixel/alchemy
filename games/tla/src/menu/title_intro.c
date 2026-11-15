@@ -1475,12 +1475,12 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
       blue = RGB_BLUE(colorWork);
       colorWork = Iwram_SignedDivide((red + green + blue) << 4,
                                      tintRed + tintGreen + tintBlue);
-      tintedRed = Iwram_MulQ16(((colorWork * tintRed) >> 4) << 16,
-                               (s32)(tintRed << 16) >> 4);
-      scaledGreen = Iwram_MulQ16(((colorWork * tintGreen) >> 4) << 16,
-                                 (s32)(tintGreen << 16) >> 4);
-      scaledBlue = Iwram_MulQ16(((colorWork * tintBlue) >> 4) << 16,
-                                (s32)(tintBlue << 16) >> 4);
+      tintedRed = Iwram_MulFX(((colorWork * tintRed) >> 4) << 16,
+                              (s32)(tintRed << 16) >> 4);
+      scaledGreen = Iwram_MulFX(((colorWork * tintGreen) >> 4) << 16,
+                                (s32)(tintGreen << 16) >> 4);
+      scaledBlue = Iwram_MulFX(((colorWork * tintBlue) >> 4) << 16,
+                               (s32)(tintBlue << 16) >> 4);
       tintedRed = (u32)tintedRed >> 16;
       clampedRed = TitlePaletteFade_ClampComponent(tintedRed);
       scaledGreen = (u32)scaledGreen >> 16;

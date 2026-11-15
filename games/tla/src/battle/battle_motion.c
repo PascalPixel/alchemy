@@ -26,8 +26,8 @@ void BattleMotion_ReturnToSpot(s32 slotId) {
   slot = BattleObject_Get(slotId);
   object = slot->object;
   zero = 0;
-  object->acceleration = px(2);
-  object->speedLimit = px(8);
+  object->acceleration = toFIXED(2);
+  object->speedLimit = toFIXED(8);
   object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
   object->velocityY = zero;
   object->verticalMotionPhase = zero;
@@ -38,7 +38,7 @@ void BattleMotion_ReturnToSpot(s32 slotId) {
   z = slot->anchorZ;
   if (z < 0)
     z += 7;
-  object->angle = (s16)(ArcTan2(z >> 3, slot->anchorX) - TRIG_TURN / 2);
+  object->angle = (s16)(Trig_Atan(z >> 3, slot->anchorX) - DEGtoANG(180));
 }
 
 /// Sends unitId running off its side of the battlefield, three times as far
@@ -49,10 +49,10 @@ void BattleMotion_SetupEscapeObject(s32 objectId) {
 
   slot = BattleObject_Get(objectId);
   object = slot->object;
-  object->acceleration = px(2);
-  object->speedLimit = px(8);
-  object->velocityY = px(5);
-  object->verticalMotionStrength = px(47) / 100;
+  object->acceleration = toFIXED(2);
+  object->speedLimit = toFIXED(8);
+  object->velocityY = toFIXED(5);
+  object->verticalMotionStrength = toFIXED(47) / 100;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_StartIdleFar(object);
@@ -73,9 +73,9 @@ void BattleMotion_LeapToward(struct Actor **startSlot, struct Actor **endSlot,
   x = start->x.fixed + (end->x.fixed - start->x.fixed) * progress / 100;
   z = start->z.fixed + (end->z.fixed - start->z.fixed) * progress / 100;
   REG_BLDCNT = 0;
-  start->acceleration = px(2);
-  start->speedLimit = px(8);
-  start->velocityY = px(4);
+  start->acceleration = toFIXED(2);
+  start->speedLimit = toFIXED(8);
+  start->velocityY = toFIXED(4);
   start->gravity = BATTLE_UNIT_GRAVITY;
   start->bounce = 0;
   start->steeringFlags = 1;
@@ -87,8 +87,8 @@ void BattleMotion_LeapToward(struct Actor **startSlot, struct Actor **endSlot,
 void BattleMotion_ReturnObjectToSpot(struct BattleObject *slot) {
   struct MotionObject *object = slot->object;
 
-  object->acceleration = px(2);
-  object->speedLimit = px(8);
+  object->acceleration = toFIXED(2);
+  object->speedLimit = toFIXED(8);
   object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
@@ -104,10 +104,10 @@ void BattleMotion_HopBack(s32 objectId) {
 
   slot = BattleObject_Get(objectId);
   object = slot->object;
-  object->acceleration = Q16_ONE;
-  object->speedLimit = px(4);
-  object->velocityY = px(3);
-  object->verticalMotionStrength = px(3) / 5;
+  object->acceleration = FIXED_ONE;
+  object->speedLimit = toFIXED(4);
+  object->velocityY = toFIXED(3);
+  object->verticalMotionStrength = toFIXED(3) / 5;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_StartIdleFar(object);
@@ -124,10 +124,10 @@ void BattleMotion_LeapBack(s32 objectId) {
 
   slot = BattleObject_Get(objectId);
   object = slot->object;
-  object->acceleration = Q16_ONE;
-  object->speedLimit = px(4);
-  object->velocityY = px(4);
-  object->verticalMotionStrength = px(3) / 5;
+  object->acceleration = FIXED_ONE;
+  object->speedLimit = toFIXED(4);
+  object->velocityY = toFIXED(4);
+  object->verticalMotionStrength = toFIXED(3) / 5;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_StartIdleFar(object);
@@ -135,8 +135,8 @@ void BattleMotion_LeapBack(s32 objectId) {
     s32 (*mul)(s32 a, s32 b);
     s32 anchor = slot->anchorX;
 
-    mul = Iwram_MulQ16;
-    Actor_SetMoveTargetFar(object, mul(anchor, Q16_ONE * 13 / 10), 0,
+    mul = Iwram_MulFX;
+    Actor_SetMoveTargetFar(object, mul(anchor, FIXED_ONE * 13 / 10), 0,
                            slot->anchorZ);
   }
   Actor_SelectAnimationFar(object, POSE_DAMAGE);
@@ -172,7 +172,7 @@ void BattleMotion_ApplyKnockback(s32 id, s32 variant) {
     x = (scale * gBattleKnockback_DistancePercent[variant]) / 100;
     Actor_SetMoveTargetFar(object, x, 0, slot->anchorZ);
   }
-  object->verticalMotionStrength = px(3) / 5;
+  object->verticalMotionStrength = toFIXED(3) / 5;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_SelectAnimationFar(object, POSE_DAMAGE);
@@ -312,8 +312,8 @@ s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen) {
   UNUSED s32 unused[3];
 
   BattleCamera_ApplyTransform();
-  scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->scale);
-  screen[1] -= Iwram_MulQ16(scale, BattleUnit_GetEffectHeight(slot) >> 16);
+  scale = Iwram_MulFX(Render_ProjectPoint(&object->x, screen), record->scale);
+  screen[1] -= Iwram_MulFX(scale, BattleUnit_GetEffectHeight(slot) >> 16);
   return 0;
 }
 
@@ -327,24 +327,25 @@ s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
   s32 scale;
 
   BattleCamera_ApplyTransform();
-  scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->scale);
+  scale = Iwram_MulFX(Render_ProjectPoint(&object->x, screen), record->scale);
   if (BattleSprite_IsSmall(*(u16 *)((u8 *)Unit_Get(slot) + 0x14a)) != 0)
-    screen[1] -= Iwram_MulQ16(scale, 24);
+    screen[1] -= Iwram_MulFX(scale, 24);
   else
-    screen[1] -= Iwram_MulQ16(scale, 48);
+    screen[1] -= Iwram_MulFX(scale, 48);
   return 0;
 }
 
 /// Returns the height above a unit where its battle effects play: its class's
 /// own, else 24 pixels for a small enemy and 48 for others.
 s32 BattleUnit_GetEffectHeight(s32 unitId) {
-  s32 value = px((u8)BattleSprite_GetEffectHeight(Unit_Get(unitId)->enemyId));
+  s32 value =
+      toFIXED((u8)BattleSprite_GetEffectHeight(Unit_Get(unitId)->enemyId));
 
   if (value == 0) {
     if (BattleSprite_IsSmall(Unit_Get(unitId)->enemyId) != 0)
-      value = px(24);
+      value = toFIXED(24);
     else
-      value = px(48);
+      value = toFIXED(48);
   }
   return value;
 }

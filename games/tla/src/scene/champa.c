@@ -54,7 +54,8 @@ static inline void Actor_HeadToward(s32 id, s32 target) {
   struct Actor *actor = Actor_Get(target);
 
   if (actor != NULL)
-    Actor_SetDestination(id, actor->x.part[0].pixel, actor->z.part[0].pixel);
+    Actor_SetDestination(id, actor->x.part[0].integer,
+                         actor->z.part[0].integer);
 }
 
 /// The town's own story, which no other scene reads.
@@ -187,9 +188,9 @@ void Champa_EnterDoor(s32 door) {
 
 void Champa_RevealTreasureSpot(void) {
 
-  TreasureSpot_SetPosition(ACTOR_VIKING_HELM_CHEST, px(392), px(568));
+  TreasureSpot_SetPosition(ACTOR_VIKING_HELM_CHEST, toFIXED(392), toFIXED(568));
   Actor_Get(ACTOR_VIKING_HELM_CHEST)->motionFlags = 0;
-  Actor_Get(ACTOR_VIKING_HELM_CHEST)->y.fixed = px(32);
+  Actor_Get(ACTOR_VIKING_HELM_CHEST)->y.fixed = toFIXED(32);
 }
 
 void Champa_HideTreasureSpot(void) {
@@ -278,8 +279,8 @@ void Champa_SailorsSpotFelix(void) {
 void Champa_TalkToPracticingBoy(s32 actor) {
   struct Actor *object = Actor_Get(actor);
 
-  object->scaleY = Q16_ONE;
-  object->scaleX = Q16_ONE;
+  object->scaleY = FIXED_ONE;
+  object->scaleX = FIXED_ONE;
   FieldEvent_SetMessageId((s32)MsgChampaEoleoBriggssSonHasA);
   // "Eoleo, Briggs's son, has a really strange ability... I'll bet if I..."
   Event_ShowMessage(actor, 0);
@@ -376,7 +377,8 @@ void Champa_FeizhiHoldsHerGift(void) {
   {
     s32 facing = FACING_NORTH;
 
-    Actor_SetPositionAndFacing(ACTOR_FEIZHIS_GIFT, px(312), px(593), facing);
+    Actor_SetPositionAndFacing(ACTOR_FEIZHIS_GIFT, toFIXED(312), toFIXED(593),
+                               facing);
   }
   Event_SetFlag(FLAG_FEIZHIS_GIFT_WAITING);
 }
@@ -401,7 +403,8 @@ void Champa_FeizhiArrives(void) {
       {
         s32 angle = FACING_NORTH;
 
-        Actor_SetPositionAndFacing(ACTOR_FEIZHI, px(314), px(679), angle);
+        Actor_SetPositionAndFacing(ACTOR_FEIZHI, toFIXED(314), toFIXED(679),
+                                   angle);
       }
       // "Isaac!"
       FieldEvent_ShowMessageThenWait(ACTOR_FEIZHI, 0, 5);
@@ -575,8 +578,8 @@ s32 Scene_Initialize(void) {
   Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_FLAG), 0);
   Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_SECOND_FLAG), 0);
   FieldActor_SetSpritePriority(ACTOR_WOMAN_WAITING_FOR_FOOD, 3);
-  Actor_Get(ACTOR_ROCK)->scaleX = Q16_ONE / 2;
-  Actor_Get(ACTOR_ROCK)->scaleY = Q16_ONE / 2;
+  Actor_Get(ACTOR_ROCK)->scaleX = FIXED_ONE / 2;
+  Actor_Get(ACTOR_ROCK)->scaleY = FIXED_ONE / 2;
   Tightrope_Initialize();
   Tightrope_Place(0, ACTOR_TIGHTROPE_START, ACTOR_TIGHTROPE_END);
   TilesetAnim_Pause(3);
@@ -641,13 +644,13 @@ void Champa_JennaAndShebaGlare(s32 firstId, s32 secondId) {
   s32 y;
 
   y = first->y.fixed;
-  Champa_SpawnGlareSpark(first->x.fixed, y + rise, first->z.fixed, px(1) / 16,
-                         15);
+  Champa_SpawnGlareSpark(first->x.fixed, y + rise, first->z.fixed,
+                         toFIXED(1) / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   y = second->y.fixed;
   Champa_SpawnGlareSpark(second->x.fixed, y + rise, second->z.fixed,
-                         px(15) / 16, 15);
+                         toFIXED(15) / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   Champa_SpawnGlareSpark(first->x.fixed, first->y.fixed + rise, first->z.fixed,
@@ -655,7 +658,7 @@ void Champa_JennaAndShebaGlare(s32 firstId, s32 secondId) {
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   Champa_SpawnGlareSpark(second->x.fixed, second->y.fixed + rise,
-                         second->z.fixed, px(15) / 16, 15);
+                         second->z.fixed, toFIXED(15) / 16, 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
 }

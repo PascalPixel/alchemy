@@ -153,7 +153,7 @@ void WorldMap_UpdatePlacedActors(void) {
           object->facing = placement->angle;
           Import_ActorSelectAnimation(object, 1);
           sprite = object->sprite;
-          sprite->scale = Iwram_MulQ16(sprite->scale, Q16_ONE * 3 / 4);
+          sprite->scale = Iwram_MulFX(sprite->scale, FIXED_ONE * 3 / 4);
           *slot = object;
         }
         if (gMainRoutineWork.ownerOverride == 0) {
@@ -222,11 +222,11 @@ s32 WorldMap_RiseFromAnchor(struct Actor *object) {
 
   if (step > 31)
     return 0;
-  scale = Iwram_MulQ16(Math_Sin(step << 10), Q16_ONE * 5 / 4);
+  scale = Iwram_MulFX(Math_Sin(step << 10), FIXED_ONE * 5 / 4);
   object->scaleX = scale;
   object->scaleY = scale;
   object->x.fixed = parent->x.fixed;
-  object->y.fixed += px(1);
+  object->y.fixed += toFIXED(1);
   object->z.fixed = parent->z.fixed;
   return 1;
 }
@@ -243,7 +243,7 @@ void WorldMap_SpawnSparkPair(struct Actor *object) {
   struct FieldSprite *sprite;
 
   // DEAD: a scale multiplied and dropped; the ROM keeps the call.
-  Math_MulQ16(object->scaleX, Q16_ONE * 3 / 2);
+  Math_MulFX(object->scaleX, FIXED_ONE * 3 / 2);
   spark = FieldActor_Create(SPRITE_GOLDEN_RINGS, object->x.fixed,
                             object->y.fixed, object->z.fixed);
   if (spark != NULL) {
@@ -283,11 +283,11 @@ void WorldMap_SpawnParticle(struct Actor *object) {
   struct Actor *particle;
   struct FieldSprite *sprite;
 
-  Iwram_MulQ16(object->scaleX, Q16_ONE * 3 / 2);
-  SET_VECTOR(position, object->x.fixed, object->y.fixed + px(2),
+  Iwram_MulFX(object->scaleX, FIXED_ONE * 3 / 2);
+  SET_VECTOR(position, object->x.fixed, object->y.fixed + toFIXED(2),
              object->z.fixed);
   angle = Random16();
-  FieldVector_AddPolarOffsetFixed(angle * 20, Random16(), position);
+  FieldVector_AddPolarOffsetFX(angle * 20, Random16(), position);
   particle =
       (FieldActor_Create(SPRITE_GLINT, position[0], position[1], position[2]));
   if (particle != NULL) {
@@ -295,9 +295,9 @@ void WorldMap_SpawnParticle(struct Actor *object) {
     sprite = particle->sprite;
     Actor_StartScript(particle, gWorldMap_ParticleScript);
     Sprite_StartAnimation(sprite, 2);
-    particle->gravity = px(1) / 128;
-    particle->scaleX = Q16_ONE * 4 / 5;
-    particle->scaleY = Q16_ONE * 4 / 5;
+    particle->gravity = toFIXED(1) / 128;
+    particle->scaleX = FIXED_ONE * 4 / 5;
+    particle->scaleY = FIXED_ONE * 4 / 5;
     if (sprite != NULL)
       sprite->nextFrame = 0;
   }

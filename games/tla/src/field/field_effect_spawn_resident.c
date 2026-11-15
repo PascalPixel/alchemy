@@ -79,8 +79,8 @@ void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
       effect->scaleRateX = (options->targetScaleX - effect->scaleX) / script[3];
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (options->targetScaleX - Q16_ONE) / script[3];
-      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
+      effect->scaleRateX = (options->targetScaleX - FIXED_ONE) / script[3];
+      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {

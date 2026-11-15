@@ -55,7 +55,7 @@ void Scoop_Update(void) {
     switch (work->phase) {
     case 0:
       if (work->timer == 1)
-        work->other->scaleX = Q16_ONE;
+        work->other->scaleX = FIXED_ONE;
       if (work->timer == 4)
         NEXT_PHASE(work);
       break;
@@ -98,7 +98,7 @@ void Scoop_Update(void) {
     switch (work->phase) {
     case 0:
       if (work->timer == 1)
-        work->other->scaleX = Q16_ONE;
+        work->other->scaleX = FIXED_ONE;
       if (work->timer == 4)
         NEXT_PHASE(work);
       break;
@@ -123,7 +123,7 @@ void Scoop_Update(void) {
           sprite = &work->sprites[i];
           EffectSprite_DrawAtWorldPosition(sprite, particle);
           if (particle->timer < 42) {
-            particle->y -= Q16_ONE;
+            particle->y -= FIXED_ONE;
             jitter = Random16();
             particle->x += jitter - (s32)Random16();
           }
@@ -213,9 +213,10 @@ void FieldPsynergy_Scoop(void) {
   s32 i;
 
   if (event->mode != ACTOR_SYSTEM_WORLD_MAP) {
-    SET_POSITION(scene, (caster->x.fixed & FIELD_CELL_MASK) + px(8),
-                 caster->y.fixed, (caster->z.fixed & FIELD_CELL_MASK) + px(8));
-    Vector_AddPolarOffset(px(16), scene->angle, &scene->x);
+    SET_POSITION(scene, (caster->x.fixed & FIELD_CELL_MASK) + toFIXED(8),
+                 caster->y.fixed,
+                 (caster->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
+    Vector_AddPolarOffset(toFIXED(16), scene->angle, &scene->x);
   }
   FieldPsynergy_FadeToCastColor();
   object = Actor_Spawn(SPRITE_SCOOP_HAND, 0, 0, 0);
@@ -243,19 +244,20 @@ void FieldPsynergy_Scoop(void) {
   work->other = other;
   if (other == NULL)
     goto end;
-  other->z.fixed += px(3);
+  other->z.fixed += toFIXED(3);
   other->motionFlags = 0;
   other->priorityFlags = 1;
   other->scaleX = 0;
   if (!(event->psynergyDrawFlags & 1))
     FieldPsynergy_StartSceneSprite();
   Sound_PlayFar(SE_ITEM_BREAK);
-  FieldPsynergy_GrowFromCaster(object, scene->x, scene->y + px(32), scene->z);
+  FieldPsynergy_GrowFromCaster(object, scene->x, scene->y + toFIXED(32),
+                               scene->z);
   wait(10);
   Actor_SelectAnimationFar(object, 1);
   wait(15);
   for (i = 9; i >= 0; i--) {
-    object->y.fixed += -(px(5) / 2);
+    object->y.fixed += -(toFIXED(5) / 2);
     wait(1);
   }
   Actor_SelectAnimationFar(object, 2);
@@ -319,9 +321,9 @@ void FieldPsynergy_Scoop(void) {
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(other);
       sprite->depth = BattleEffect_GetObjectDepth(other) + 1;
-      sprite->scaleY = sprite->scaleX = Q16_ONE / 5;
+      sprite->scaleY = sprite->scaleX = FIXED_ONE / 5;
       SET_POSITION(particle, scene->x, scene->y, scene->z);
-      Vector_AddPolarOffset(px(2), Random16(), &particle->x);
+      Vector_AddPolarOffset(toFIXED(2), Random16(), &particle->x);
       particle->velocityX = 0;
       particle->velocityY = 0;
       particle->velocityZ = 0;
@@ -347,11 +349,11 @@ void FieldPsynergy_Scoop(void) {
       sprite->oam.priority = BattleEffect_GetObjectPriority(other);
       sprite->depth = BattleEffect_GetObjectDepth(other) + 1;
       SET_POSITION(particle, scene->x, scene->y, scene->z);
-      Vector_AddPolarOffset(px(2), Random16(), &particle->x);
+      Vector_AddPolarOffset(toFIXED(2), Random16(), &particle->x);
       particle->velocityX = 0;
       particle->velocityY = 0;
       particle->velocityZ = 0;
-      Vector_AddPolarOffset(px(1), Random16(), &particle->velocityX);
+      Vector_AddPolarOffset(toFIXED(1), Random16(), &particle->velocityX);
       particle->timer = -i;
     }
   } else if (work->mode == 3) {
@@ -369,8 +371,9 @@ void FieldPsynergy_Scoop(void) {
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(object);
       sprite->depth = BattleEffect_GetObjectDepth(object) - 1;
-      SET_POSITION(particle, scene->x, scene->y + px(40), scene->z);
-      Vector_AddPolarOffset(Random16() * 4 + px(3), Random16(), &particle->x);
+      SET_POSITION(particle, scene->x, scene->y + toFIXED(40), scene->z);
+      Vector_AddPolarOffset(Random16() * 4 + toFIXED(3), Random16(),
+                            &particle->x);
       particle->timer = -i * 3 / 4;
       sprite++;
       particle++;
@@ -390,7 +393,7 @@ void FieldPsynergy_Scoop(void) {
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     pos[0] = object->x.fixed;
-    pos[1] = object->y.fixed + px(32);
+    pos[1] = object->y.fixed + toFIXED(32);
     pos[2] = object->z.fixed;
     Camera_WorldToScreen(pos);
     sprite->x = pos[0];
@@ -398,7 +401,7 @@ void FieldPsynergy_Scoop(void) {
   }
   if (work->mode == 0 || work->mode == 3) {
     wait(6);
-    work->other->scaleX = Q16_ONE;
+    work->other->scaleX = FIXED_ONE;
     wait(4);
   } else {
     wait(10);

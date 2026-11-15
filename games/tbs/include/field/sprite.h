@@ -128,7 +128,7 @@ struct Sprite {
   struct AnimationSpritePart image;
   /// Its shadow, shown while flags bit 0 is set.
   struct AnimationSpritePart shadow;
-  s32 scale; ///< 16.16 fixed point, Q16_ONE full size
+  s32 scale; ///< 16.16 fixed point, FIXED_ONE full size
   u8 slot;   ///< VRAM cache entry holding its tiles
   /// Keeps the VRAM cache entry when it is released or off screen.
   u8 retainCacheEntry : 1;

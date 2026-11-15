@@ -30,9 +30,9 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
       enemy != ENEMY_DOOM_DRAGON_E && enemy != ENEMY_DOOM_DRAGON_H) {
     s32 percent = (Random16() & 63) + 130;
 
-    object->acceleration = px(8);
-    object->speedLimit = px(10);
-    object->velocityY = px(3) / 2;
+    object->acceleration = toFIXED(8);
+    object->speedLimit = toFIXED(10);
+    object->velocityY = toFIXED(3) / 2;
     Actor_StartIdleFar(object);
     Actor_SetMoveTargetFar(object, slot->anchorX * percent / 100, 0,
                            slot->anchorZ);
@@ -114,10 +114,10 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
 
     // The formation starts off the right edge, gliding left.
     rise = 0;
-    focus.x = px(256);
-    focus.y = px(88);
-    velocity.x = -px(16);
-    velocity.y = -px(4);
+    focus.x = toFIXED(256);
+    focus.y = toFIXED(88);
+    velocity.x = -toFIXED(16);
+    velocity.y = -toFIXED(4);
     EFFECT_FREE_PARTICLES(k, work->particles, 64);
     for (k = 0; k != 16; k++) {
       point = &work->particles[24 + k];
@@ -151,8 +151,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
         focus.y += velocity.y;
         velocity.x = velocity.x * 58 / DAMPING_SCALE;
         velocity.y = velocity.y * 56 / DAMPING_SCALE;
-        if (focus.x < px(120))
-          velocity.x += px(1) / 2;
+        if (focus.x < toFIXED(120))
+          velocity.x += toFIXED(1) / 2;
       }
       BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_NEREID, focus.x,
                                          focus.y);
@@ -166,8 +166,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
             s32 radius = Random16() & 63;
             s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-            ember->x = ((Trig_Sin(angle) * radius) >> 3) + px(32);
-            ember->y = ((Trig_Cos(angle) * radius) >> 2) + px(96);
+            ember->x = ((Trig_Sin(angle) * radius) >> 3) + toFIXED(32);
+            ember->y = ((Trig_Cos(angle) * radius) >> 2) + toFIXED(96);
             ember->velocityX = ((Random16() & 63) - 32) << 14;
             ember->velocityY = (-(Random16() & 63) - 8) << 13;
             ember->variant = 0;
@@ -183,8 +183,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
             s32 radius = Random16() & 63;
             s32 angle = Random16() & TRIG_ANGLE_MASK;
 
-            ember->x = ((Trig_Sin(angle) * radius) >> 3) + px(32);
-            ember->y = ((Trig_Cos(angle) * radius) >> 2) + px(96);
+            ember->x = ((Trig_Sin(angle) * radius) >> 3) + toFIXED(32);
+            ember->y = ((Trig_Cos(angle) * radius) >> 2) + toFIXED(96);
             ember->velocityX = ((Random16() & 63) - 32) << 14;
             ember->velocityY = (-(Random16() & 63) - 8) << 13;
             ember->variant = 0;
@@ -251,7 +251,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
           ember->x += ember->velocityX;
           ember->y += ember->velocityY;
           if (frame > SPOUT_END_FRAME)
-            ember->velocityY += -px(1) / 2;
+            ember->velocityY += -toFIXED(1) / 2;
           else
             ember->velocityY += gNereidCopy_Gravity[k & 3];
           ember->velocityX = ember->velocityX * 62 / DAMPING_SCALE;
@@ -274,7 +274,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
 
               BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, TINT_KEEP, 0);
-              target->velocityY = px(9) / 2;
+              target->velocityY = toFIXED(9) / 2;
               target->verticalMotionStrength = 0xab85;
             }
             if (phase == 6)
@@ -310,55 +310,55 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   void **objects;
 
   pos[3] = 0;
-  pos[1] = px(255);
+  pos[1] = toFIXED(255);
   switch (formation) {
   case 0:
     objects = work->sprites;
     for (i = 0; i != 9; i++) {
-      pos[0] = px((i % 3) * 32) + x;
-      pos[2] = px((i / 3) * 32) + z;
+      pos[0] = INTtoFIXED((i % 3) * 32) + x;
+      pos[2] = INTtoFIXED((i / 3) * 32) + z;
       Render_ApplyProjectedPlacementFar(*objects++, pos, &normal.x, 0);
     }
     break;
   case 5:
     for (i = 0; i != 12; i++) {
-      pos[0] = px((i % 4) * 32) + x;
-      pos[2] = px((i / 4) * 32) + z;
+      pos[0] = INTtoFIXED((i % 4) * 32) + x;
+      pos[2] = INTtoFIXED((i / 4) * 32) + z;
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
     }
     break;
   case 1:
     for (i = 0; i != 12; i++) {
-      pos[0] = px(gHelmSplitter_TwelveX[i]) + x - px(16);
-      pos[2] = px(gHelmSplitter_TwelveZ[i]) + z - px(32);
+      pos[0] = INTtoFIXED(gHelmSplitter_TwelveX[i]) + x - toFIXED(16);
+      pos[2] = INTtoFIXED(gHelmSplitter_TwelveZ[i]) + z - toFIXED(32);
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
     }
     break;
   case 2:
     for (i = 0; i != 8; i++) {
-      pos[0] = px(gHelmSplitter_RightEightX[i]) + x + px(16);
-      pos[2] = px(gHelmSplitter_RightEightZ[i]) + z;
+      pos[0] = INTtoFIXED(gHelmSplitter_RightEightX[i]) + x + toFIXED(16);
+      pos[2] = INTtoFIXED(gHelmSplitter_RightEightZ[i]) + z;
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
     }
     break;
   case 6:
     for (i = 0; i != 8; i++) {
-      pos[0] = px(gFormationObjects_X[i]) + x;
-      pos[2] = px(gFormationObjects_Z[i]) + z;
+      pos[0] = INTtoFIXED(gFormationObjects_X[i]) + x;
+      pos[2] = INTtoFIXED(gFormationObjects_Z[i]) + z;
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
     }
     break;
   case 3:
     for (i = 0; i != 8; i++) {
-      pos[0] = px(gHelmSplitter_SmallEightX[i]) + x;
-      pos[2] = px(gHelmSplitter_SmallEightZ[i]) + z;
+      pos[0] = INTtoFIXED(gHelmSplitter_SmallEightX[i]) + x;
+      pos[2] = INTtoFIXED(gHelmSplitter_SmallEightZ[i]) + z;
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &big.x, 0);
     }
     break;
   case 4:
     for (i = 0; i != 11; i++) {
-      pos[0] = px(gFormationObjects_WideX[i]) + x;
-      pos[2] = px(gFormationObjects_WideZ[i]) + z;
+      pos[0] = INTtoFIXED(gFormationObjects_WideX[i]) + x;
+      pos[2] = INTtoFIXED(gFormationObjects_WideZ[i]) + z;
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
     }
     break;
@@ -397,7 +397,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   orgX = x;
-  x += px(40);
+  x += toFIXED(40);
   x /= 2;
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
@@ -429,9 +429,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].x = x;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].y = y;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityX =
-        (Trig_Sin(i * (TRIG_TURN / 3)) * 32) >> 6;
+        (Trig_Sin(i * (DEGtoANG(120))) * 32) >> 6;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].velocityY =
-        -((Trig_Cos(i * (TRIG_TURN / 3)) * 32) >> 5);
+        -((Trig_Cos(i * (DEGtoANG(120))) * 32) >> 5);
   }
 
   for (i = 0; i != IMPACT_BURST_SMALL_SPARKS; i++) {
@@ -461,9 +461,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
         cell = 0;
       maxBlend(
           canvas, work->sheet + gHelmSplitter_ImpactBurstPictures[cell],
-          (Q_16_16_TO_INT(x)) -
+          (FIXEDtoINT(x)) -
               ((width = gHelmSplitter_ImpactBurstPictureWidths[cell]) >> 1),
-          (Q_16_16_TO_INT(y)) -
+          (FIXEDtoINT(y)) -
               ((height = gHelmSplitter_ImpactBurstPictureHeights[cell]) >> 1),
           width, height);
     }
@@ -742,7 +742,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   if (direction == 1) {
     struct MotionObject *user = BattleObject_GetFar(args->user)->object;
 
-    user->velocityY = px(10);
+    user->velocityY = toFIXED(10);
     user->verticalMotionStrength = 0x91eb;
     BattleEffect_TintBattler(args->user, TINT_KEEP, 2, TINT_KEEP, 0);
     Sound_PlayFar(SE_CRASH);
@@ -958,13 +958,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         x = 64 - frame / 4;
       y = 96 - frame;
       position[3] = 0;
-      position[1] = px(255);
+      position[1] = toFIXED(255);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         size = angle + 0xa000;
         scale.x = size;
         scale.y = size;
-        position[0] = px(x) + px(80);
-        position[2] = px(64 - y);
+        position[0] = INTtoFIXED(x) + toFIXED(80);
+        position[2] = INTtoFIXED(64 - y);
         Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale,
                                           0);
         Render_ApplyProjectedPlacementFar(work->sprites[1], position, &scale,
@@ -973,8 +973,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         size = angle + TRIG_TURN;
         scale.x = size;
         scale.y = size;
-        position[0] = px(x) + px(96);
-        position[2] = px(96 - y);
+        position[0] = INTtoFIXED(x) + toFIXED(96);
+        position[2] = INTtoFIXED(96 - y);
         Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale,
                                           0);
       }
@@ -984,11 +984,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         struct Particle *mote = &work->particles[i];
 
         if (mote->variant == -1) {
-          s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
+          s32 angle = (Random16() & 0x7fff) + DEGtoANG(90);
 
           mote->variant = 0;
-          mote->x = px(x + 96) + Trig_Sin(angle) * 30 / Q16_ONE * size;
-          mote->y = px(y) - Trig_Cos(angle) * 30 / Q16_ONE * size;
+          mote->x =
+              INTtoFIXED(x + 96) + Trig_Sin(angle) * 30 / FIXED_ONE * size;
+          mote->y = INTtoFIXED(y) - Trig_Cos(angle) * 30 / FIXED_ONE * size;
           break;
         }
       }
@@ -997,14 +998,14 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       point.x = 0;
       point.y = 0;
       point.depth = 0x2000000;
-      Transform_Reset();
-      Transform_ApplyPosition(&point.x);
-      Transform_ApplyRoll(TRIG_TURN / 32);
-      Transform_ApplyYaw(frame << 8);
+      Matrix_Initialize();
+      Matrix_TranslateVector(&point.x);
+      Matrix_RotateZ(TRIG_TURN / 32);
+      Matrix_RotateY(frame << 8);
       for (i = 0; i != 7; i++) {
-        vector[0] = px(gParticleStreams_OrbitPoints[i][0] / 2);
-        vector[1] = px(gParticleStreams_OrbitPoints[i][1] + frame);
-        vector[2] = px(gParticleStreams_OrbitPoints[i][2] / 2);
+        vector[0] = INTtoFIXED(gParticleStreams_OrbitPoints[i][0] / 2);
+        vector[1] = INTtoFIXED(gParticleStreams_OrbitPoints[i][1] + frame);
+        vector[2] = INTtoFIXED(gParticleStreams_OrbitPoints[i][2] / 2);
         EffectPosition_ProjectPoint(vector, pos = &spot);
         pos->x = Q_16_16_UPPER_HALF(pos->x) + 128;
         pos->y = Q_16_16_UPPER_HALF(pos->y) + 60;
@@ -1026,7 +1027,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                gParticleStreams_FireballPoints[i][0] + x - 12, drop - 12, 24,
                PARTICLE_STREAMS_LARGE_GLOW_SIZE);
         else if (drop <= 95)
-          AddFlame(px(gParticleStreams_FireballPoints[i][0] + x), px(drop), 1);
+          AddFlame(INTtoFIXED(gParticleStreams_FireballPoints[i][0] + x),
+                   INTtoFIXED(drop), 1);
       }
 
       // The motes drift up and away, six pictures each.
@@ -1039,7 +1041,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                Q_16_16_UPPER_HALF(mote->y) - 16, WATER_WAVE_WIDTH,
                WATER_WAVE_HEIGHT);
           mote->x -= direction * 0x14000;
-          mote->y -= px(5);
+          mote->y -= toFIXED(5);
           mote->variant++;
           if (mote->variant == 6)
             mote->variant = -1;
@@ -1121,8 +1123,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     }
 
     // The embers fountain up from the ground in front of the camera.
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
     for (i = 0; i != 64; i++) {
       struct Particle *ember = &EMBERS[i];
 
@@ -1143,11 +1145,11 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                  PARTICLE_STREAMS_MOTE_PICTURES,
              point.x - size / 2, point.y - size, size, size * 2);
         BattleEffectKernels_IntegrateVector3(ember, PARTICLE_DAMPING_NONE,
-                                             -px(1) / 8);
-        if (ember->y <= px(20)) {
+                                             -toFIXED(1) / 8);
+        if (ember->y <= toFIXED(20)) {
           ember->x = 0;
           ember->z = 0;
-          ember->y = px(20);
+          ember->y = toFIXED(20);
           ember->velocityX = ((Random16() & 63) - 32) << 15;
           ember->velocityY = (Random16() & 63) << 13;
           ember->velocityZ = ((Random16() & 63) - 32) << 15;
@@ -1190,9 +1192,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         }
         flash->variant++;
         if (flash->variant == 14) {
-          flash->y = px(20);
+          flash->y = toFIXED(20);
           flash->x = 0;
-          flash->z = px((Random16() & 255) - 127);
+          flash->z = INTtoFIXED((Random16() & 255) - 127);
           flash->velocityX = 0;
           flash->velocityY = (Random16() & 255) << 11;
           flash->velocityZ = 0;
@@ -1211,19 +1213,19 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     y = 64 - frame * 2;
     grow = (frame << 8) + 0x20000;
     position[3] = 0;
-    position[1] = px(255);
+    position[1] = toFIXED(255);
     if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
       scale.x = size;
       scale.y = size;
-      position[0] = px(x) + px(96);
-      position[2] = px(96 - y);
+      position[0] = INTtoFIXED(x) + toFIXED(96);
+      position[2] = INTtoFIXED(96 - y);
       Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale, 0);
       Render_ApplyProjectedPlacementFar(work->sprites[1], position, &scale, 0);
     } else {
       scale.x = grow;
       scale.y = grow;
-      position[0] = px(x) + px(96);
-      position[2] = px(96 - y);
+      position[0] = INTtoFIXED(x) + toFIXED(96);
+      position[2] = INTtoFIXED(96 - y);
       Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale, 0);
     }
     work->shakeFrames = 1;

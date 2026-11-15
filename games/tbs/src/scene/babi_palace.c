@@ -452,8 +452,8 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   // "I can't fight because of a little indigestion? That's pathetic!"
   Event_ShowMessage(actorId, 0);
   Actor_Stop(actorId);
-  actor->scaleY = Q16_ONE;
-  actor->scaleX = Q16_ONE;
+  actor->scaleY = FIXED_ONE;
+  actor->scaleX = FIXED_ONE;
   Event_Wait(30);
   Actor_RunRepeatedMotion(actorId, 2);
   Event_Wait(30);
@@ -474,8 +474,8 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   Event_ShowMessage(actorId, 0);
   Actor_FaceDirection(actorId, FACING_NORTHEAST, 0);
   Event_Wait(10);
-  actor->scaleY = Q16_ONE;
-  actor->scaleX = Q16_ONE;
+  actor->scaleY = FIXED_ONE;
+  actor->scaleX = FIXED_ONE;
   Actor_SetScript(actorId, indigestionScript);
   Event_End();
 }
@@ -590,8 +590,8 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   // "Are you okay? You were having nightmares for quite a while..."
   Event_ShowMessage(ACTOR_MIA, 0);
   Event_Wait(10);
-  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed -= px(3);
-  Actor_Get(ACTOR_PARTY_LEADER)->targetZ -= px(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed -= toFIXED(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->targetZ -= toFIXED(3);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_SITTING_UP);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
@@ -1210,8 +1210,8 @@ static void BabiPalace_WakeAfterFinals(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
   Event_Wait(10);
   Event_ShowMessage(ACTOR_MIA, 0);
-  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed -= px(3);
-  Actor_Get(ACTOR_PARTY_LEADER)->targetZ -= px(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed -= toFIXED(3);
+  Actor_Get(ACTOR_PARTY_LEADER)->targetZ -= toFIXED(3);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_IN_BED_SITTING_UP);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_IN_BED_SHAKE_HEAD);
@@ -2622,7 +2622,7 @@ s32 Scene_Initialize(void) {
         actor->retainSpriteCache = 1;
         actor->motionFlags = set;
         sprite = actor->sprite;
-        actor->y.fixed = px(4);
+        actor->y.fixed = toFIXED(4);
         sprite->count = set;
         sprite->image.fullColor = 0;
         sprite->image.palette = 0;
@@ -2680,19 +2680,19 @@ u16 gBabiPalace_DoorCells[] = {
 };
 
 s32 gBabiPalace_IndigestionScript[] = {
-    SC_SET(SW_SCALE_X, Q16_ONE),
-    SC_SET(SW_SCALE_Y, Q16_ONE),
-    SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
-    SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
+    SC_SET(SW_SCALE_X, FIXED_ONE),
+    SC_SET(SW_SCALE_Y, FIXED_ONE),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
+    SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 8),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 8),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 16),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, Q16_ONE / 16),
-    SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),
+    SC_ADD(SW_SCALE_X, FIXED_ONE / 16),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(4),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

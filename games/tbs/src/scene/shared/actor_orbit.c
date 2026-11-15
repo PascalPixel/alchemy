@@ -14,7 +14,7 @@ static s32 Scene_UpdateFloatingNut(OrbitingMapActor *nut) {
     dip = -dip;
   nut->x = nut->orbitCenterX + Trig_Cos(nut->orbitAngle) * 2;
   nut->y = nut->orbitCenterY + dip;
-  sprite->rotation = Trig_Cos(nut->orbitAngle + TRIG_TURN / 2) / 8;
+  sprite->rotation = Trig_Cos(nut->orbitAngle + DEGtoANG(180)) / 8;
   // The pace: a sixty-fourth of a turn and two random steps under 1/128 each.
   nut->orbitAngle += Random_Below(512) + Random_Below(512) + TRIG_TURN / 64;
   return 0;
@@ -39,7 +39,7 @@ void Scene_FloatNut(s32 id) {
   actor->mode = 0;
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
-    actor->y += px(32);
+    actor->y += toFIXED(32);
 
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->visible = 1;

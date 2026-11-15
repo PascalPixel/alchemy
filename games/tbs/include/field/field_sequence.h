@@ -147,7 +147,7 @@ void FieldPsynergy_Carry(void);
 /// A 16.16 coordinate's whole pixels, its fraction cleared.
 #define FIELD_PIXEL_MASK 0xffff0000
 /// The 16.16 coordinate of the middle of a map grid cell.
-#define FIELD_CELL_CENTER(cell) (((cell) << 20) + px(8))
+#define FIELD_CELL_CENTER(cell) (((cell) << 20) + toFIXED(8))
 
 //--------------------------------------------------------------------------
 // The map's treasure spots (chests and Psynergy Stones)

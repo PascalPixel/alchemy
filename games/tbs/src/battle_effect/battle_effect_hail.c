@@ -48,10 +48,10 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     s32 angle;
     s32 speed;
 
-    angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
+    angle = (Random16() & 0x7fff) + DEGtoANG(90);
     speed = (Random16() & 0x1ff) + 128;
-    PARTICLES[i].x = px((origin.x / 2 + (Random16() & 0xf)) - 8);
-    PARTICLES[i].y = px(origin.y + 8);
+    PARTICLES[i].x = INTtoFIXED((origin.x / 2 + (Random16() & 0xf)) - 8);
+    PARTICLES[i].y = INTtoFIXED(origin.y + 8);
     PARTICLES[i].velocityX = (Trig_Sin(angle) * speed) >> 9;
     PARTICLES[i].velocityY = (Trig_Cos(angle) * speed) >> 6;
     PARTICLES[i].z = Random16() & 0x7f;
@@ -78,8 +78,8 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       s32 y;
 
       orbit = frame << 11;
-      x = WHOLE_PIXELS(-Trig_Sin(orbit) * 4) + screenX / 2 - 10;
-      y = WHOLE_PIXELS(Trig_Cos(orbit) * 2) + screenY - 22;
+      x = FIXEDtoINT(-Trig_Sin(orbit) * 4) + screenX / 2 - 10;
+      y = FIXEDtoINT(Trig_Cos(orbit) * 2) + screenY - 22;
       // Never true: the loop ends at frame 63.
       if (frame > 69)
         y = (y - frame * 2) + 138;
@@ -105,17 +105,16 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
         height = gHail_PictureHeights[picture];
         draw[i & 1](canvas,
                     work->sheet + HAIL_CHIP_PICTURES + gHail_Pictures[picture],
-                    WHOLE_PIXELS(chip->x) - width / 2,
-                    WHOLE_PIXELS(chip->y) - height / 2, width, height);
+                    FIXEDtoINT(chip->x) - width / 2,
+                    FIXEDtoINT(chip->y) - height / 2, width, height);
 #else
         draw[i & 1](
             canvas, work->sheet + HAIL_CHIP_PICTURES + gHail_Pictures[picture],
-            WHOLE_PIXELS(chip->x) - (width = gHail_PictureWidths[picture]) / 2,
-            WHOLE_PIXELS(chip->y) -
-                (height = gHail_PictureHeights[picture]) / 2,
+            FIXEDtoINT(chip->x) - (width = gHail_PictureWidths[picture]) / 2,
+            FIXEDtoINT(chip->y) - (height = gHail_PictureHeights[picture]) / 2,
             width, height);
 #endif
-        Particle_AdvanceWithGravity3D(chip, 63, px(1) / 16);
+        Particle_AdvanceWithGravity3D(chip, 63, toFIXED(1) / 16);
       }
     }
 
@@ -196,10 +195,10 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   for (i = 0; i != 8; i++) {
     struct Particle *portal = &work->particles[i];
 
-    SET_POSITION(portal, user->x.fixed, px(66), user->z.fixed);
-    SET_VELOCITY(portal, (i * px(80)) >> 5,
-                 (s32)px((Random16() & 127) - 64) >> 6,
-                 (s32)px((Random16() & 255) - 127) >> 5);
+    SET_POSITION(portal, user->x.fixed, toFIXED(66), user->z.fixed);
+    SET_VELOCITY(portal, (i * toFIXED(80)) >> 5,
+                 (s32)INTtoFIXED((Random16() & 127) - 64) >> 6,
+                 (s32)INTtoFIXED((Random16() & 255) - 127) >> 5);
     if (portal->x > 0)
       portal->velocityX = -portal->velocityX;
     portal->variant = 1;
@@ -210,8 +209,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
     // The Djinni circles above the user, then rises away.
     if (work->args->prelude == 1) {
       s32 angle = frame << 11;
-      s32 x = WHOLE_PIXELS(-Trig_Sin(angle) * 4) + screenX / 2 - 10;
-      s32 y = WHOLE_PIXELS(Trig_Cos(angle) * 2) + screenY - 22;
+      s32 x = FIXEDtoINT(-Trig_Sin(angle) * 4) + screenX / 2 - 10;
+      s32 y = FIXEDtoINT(Trig_Cos(angle) * 2) + screenY - 22;
 
       if (frame > 16)
         y = y - frame * 2 + 32;
@@ -292,14 +291,14 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
         // The portal homes in on the target and strikes it.
         if (frame > i * 2 + 16) {
           portal->velocityX += (target->x.fixed - portal->x) >> 8;
-          portal->velocityY += (px(20) - portal->y) >> 8;
+          portal->velocityY += (toFIXED(20) - portal->y) >> 8;
           portal->velocityZ += (target->z.fixed - portal->z) >> 8;
           if (frame < i * 2 + 85) {
             SET_VELOCITY(portal, portal->velocityX * 60 / DAMPING_SCALE,
                          portal->velocityY * 60 / DAMPING_SCALE,
                          portal->velocityZ * 60 / DAMPING_SCALE);
           }
-          if (portal->y < px(20)) {
+          if (portal->y < toFIXED(20)) {
             work->shakeFrames = 8;
             portal->variant = 0;
             Sound_PlayFar(SE_HEAVY_IMPACT);

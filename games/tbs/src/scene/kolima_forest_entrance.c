@@ -262,14 +262,14 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
     if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFX(ACTOR_GARET, leader->x.fixed, leader->z.fixed);
     }
   }
   {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
     if (leader != NULL) {
-      Actor_SetPositionFixed(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
+      Actor_SetPositionFX(ACTOR_IVAN, leader->x.fixed, leader->z.fixed);
     }
   }
   Actor_SetScript(ACTOR_GARET, gKolimaForestEntrance_GaretAction);
@@ -280,7 +280,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
       struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
       if (leader != NULL) {
-        Actor_SetPositionFixed(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
+        Actor_SetPositionFX(ACTOR_MIA, leader->x.fixed, leader->z.fixed);
       }
     }
     Actor_SetScript(ACTOR_MIA, gKolimaForestEntrance_MiaAction);
@@ -357,7 +357,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   }
   Event_Wait(20);
   if (gKolimaForestEntrance_MiaInParty != 0) {
-    Actor_Get(ACTOR_MIA)->velocityY = px(2);
+    Actor_Get(ACTOR_MIA)->velocityY = toFIXED(2);
     Event_Wait(10);
     Actor_SetSpeedAndAcceleration(ACTOR_MIA, 2, 2);
     Actor_SetDestinationOffset(ACTOR_MIA, -2, 0);
@@ -366,7 +366,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     Actor_SetAnimation(ACTOR_MIA, ANIM_COLLAPSE);
     Event_Wait(10);
   }
-  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = px(2);
+  Actor_Get(ACTOR_PARTY_LEADER)->velocityY = toFIXED(2);
   Event_Wait(10);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 2, 2);
   restoreScaleAction = gKolima_PartyRestoreScaleActions;
@@ -374,14 +374,14 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_COLLAPSE);
   Event_Wait(20);
-  Actor_Get(ACTOR_GARET)->velocityY = px(2);
+  Actor_Get(ACTOR_GARET)->velocityY = toFIXED(2);
   Event_Wait(10);
   Actor_SetSpeedAndAcceleration(ACTOR_GARET, 2, 2);
   Actor_SetScript(ACTOR_GARET, restoreScaleAction);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_GARET), 0);
   Actor_SetAnimation(ACTOR_GARET, ANIM_COLLAPSE);
   Event_Wait(40);
-  Actor_Get(ACTOR_IVAN)->velocityY = px(2);
+  Actor_Get(ACTOR_IVAN)->velocityY = toFIXED(2);
   Event_Wait(10);
   Actor_SetScript(ACTOR_IVAN, restoreScaleAction);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_IVAN), 0);
@@ -394,7 +394,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   PaletteFade_StartInterpolation(60);
   wait(60);
   gFallingEffectWidth = 0;
-  gFallingEffectOffset = px(128);
+  gFallingEffectOffset = toFIXED(128);
   gFallingEffectState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(180);
@@ -688,7 +688,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   PaletteFade_StartInterpolation(60);
   wait(60);
   gFallingEffectWidth = 0;
-  gFallingEffectOffset = px(128);
+  gFallingEffectOffset = toFIXED(128);
   gFallingEffectState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(80);
@@ -994,8 +994,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
     if (leader != NULL) {
-      Actor_SetDestination(ACTOR_GARET, leader->x.part[0].pixel,
-                           leader->z.part[0].pixel);
+      Actor_SetDestination(ACTOR_GARET, leader->x.part[0].integer,
+                           leader->z.part[0].integer);
     }
   }
   Actor_WaitForMoveById(ACTOR_GARET);
@@ -1005,8 +1005,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
     struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
     if (leader != NULL) {
-      Actor_SetDestination(ACTOR_IVAN, leader->x.part[0].pixel,
-                           leader->z.part[0].pixel);
+      Actor_SetDestination(ACTOR_IVAN, leader->x.part[0].integer,
+                           leader->z.part[0].integer);
     }
   }
   Actor_WaitForMoveById(ACTOR_IVAN);
@@ -1017,8 +1017,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
       struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
       if (leader != NULL) {
-        Actor_SetDestination(ACTOR_MIA, leader->x.part[0].pixel,
-                             leader->z.part[0].pixel);
+        Actor_SetDestination(ACTOR_MIA, leader->x.part[0].integer,
+                             leader->z.part[0].integer);
       }
     }
     Actor_WaitForMoveById(ACTOR_MIA);
@@ -1057,19 +1057,20 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
     return;
   if (gKolimaForestEntrance_SparkleSoundOn != 0)
     Sound_Play(SE_SPARKLE_FALL);
-  sparkle = FieldActor_Create(SPRITE_GOLDEN_RINGS, px(231), 0, px(460));
+  sparkle =
+      FieldActor_Create(SPRITE_GOLDEN_RINGS, toFIXED(231), 0, toFIXED(460));
   if (sparkle == NULL)
     return;
   sprite = sparkle->sprite;
   sprite->flags = framePhase;
   sparkle->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 1;
-  sparkle->scaleX = Q16_ONE / 10;
-  sparkle->speedLimit = px(8);
-  sparkle->acceleration = px(8);
+  sparkle->scaleX = FIXED_ONE / 10;
+  sparkle->speedLimit = toFIXED(8);
+  sparkle->acceleration = toFIXED(8);
   sparkle->motionFlags = framePhase;
   Actor_SelectAnimation(sparkle, 2);
-  FieldActor_SetMoveTargetFixed(sparkle, px(231), 0, px(624));
+  FieldActor_SetMoveTargetFX(sparkle, toFIXED(231), 0, toFIXED(624));
   Actor_StartScript(sparkle, gKolimaForestEntrance_SparkleScript);
 }
 
@@ -1083,17 +1084,22 @@ static s32 KolimaForestEntrance_BurstOnPsynergyField(struct Actor *sparkle) {
 
   if (!(gKolimaForestEntrance_MiaInParty != 0
             ? (x = sparkle->x.fixed,
-               (x > px(192) && x < px(274) && sparkle->z.fixed > px(566) &&
-                sparkle->z.fixed < px(612)) ||
-                   (x > px(202) && x < px(255) && sparkle->z.fixed > px(549) &&
-                    sparkle->z.fixed < px(632)))
+               (x > toFIXED(192) && x < toFIXED(274) &&
+                sparkle->z.fixed > toFIXED(566) &&
+                sparkle->z.fixed < toFIXED(612)) ||
+                   (x > toFIXED(202) && x < toFIXED(255) &&
+                    sparkle->z.fixed > toFIXED(549) &&
+                    sparkle->z.fixed < toFIXED(632)))
             : (x = sparkle->x.fixed,
-               (x > px(192) && x < px(244) && sparkle->z.fixed > px(549) &&
-                sparkle->z.fixed < px(585)) ||
-                   (x > px(244) && x < px(274) && sparkle->z.fixed > px(571) &&
-                    sparkle->z.fixed < px(605)) ||
-                   (x > px(211) && x < px(255) && sparkle->z.fixed > px(596) &&
-                    sparkle->z.fixed < px(632))))) {
+               (x > toFIXED(192) && x < toFIXED(244) &&
+                sparkle->z.fixed > toFIXED(549) &&
+                sparkle->z.fixed < toFIXED(585)) ||
+                   (x > toFIXED(244) && x < toFIXED(274) &&
+                    sparkle->z.fixed > toFIXED(571) &&
+                    sparkle->z.fixed < toFIXED(605)) ||
+                   (x > toFIXED(211) && x < toFIXED(255) &&
+                    sparkle->z.fixed > toFIXED(596) &&
+                    sparkle->z.fixed < toFIXED(632))))) {
     return 0;
   }
   Sound_Play(SE_DRIP);
@@ -1124,7 +1130,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
     if ((gFrameCount & 1) == 0) {
       p->y.fixed = 0;
     } else {
-      p->y.fixed = px(500);
+      p->y.fixed = toFIXED(500);
     }
   }
   p = Actor_Get(ACTOR_IVAN_PSYNERGY_FIELD);
@@ -1133,7 +1139,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
     if ((gFrameCount & 1) != 0) {
       p->y.fixed = 0;
     } else {
-      p->y.fixed = px(500);
+      p->y.fixed = toFIXED(500);
     }
   }
   p = Actor_Get(ACTOR_MIA_PSYNERGY_FIELD);
@@ -1142,7 +1148,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
     if ((gFrameCount & 1) == 0) {
       p->y.fixed = 0;
     } else {
-      p->y.fixed = px(500);
+      p->y.fixed = toFIXED(500);
     }
   }
   p = Actor_Get(ACTOR_GARET_PSYNERGY_FIELD);
@@ -1151,7 +1157,7 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void) {
     if ((gFrameCount & 1) != 0) {
       p->y.fixed = 0;
     } else {
-      p->y.fixed = px(500);
+      p->y.fixed = toFIXED(500);
     }
   }
 }
@@ -1183,8 +1189,8 @@ s32 gKolimaForestEntrance_MiaAction[] = {
 
 /// A field grows from a tenth of its size over 70 frames.
 s32 gKolimaForestEntrance_PsynergyFieldGrowAction[] = {
-    SC_SET(SW_SCALE_X, Q16_ONE / 10),
-    SC_SET(SW_SCALE_Y, Q16_ONE / 10),
+    SC_SET(SW_SCALE_X, FIXED_ONE / 10),
+    SC_SET(SW_SCALE_Y, FIXED_ONE / 10),
     SC_WAIT(1),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, 1310),
@@ -1198,7 +1204,7 @@ s32 gKolimaForestEntrance_PsynergyFieldGrowAction[] = {
 /// A field sinks and shrinks away over 90 frames.
 s32 gKolimaForestEntrance_PsynergyFieldShrinkAction[] = {
     SC_ANIMATION(1),
-    SC_ADD(SW_Z, -px(1) / 10),
+    SC_ADD(SW_Z, -toFIXED(1) / 10),
     SC_ADD(SW_SCALE_X, -983),
     SC_ADD(SW_SCALE_Y, -983),
     SC_WAIT(1),
@@ -1209,8 +1215,8 @@ s32 gKolimaForestEntrance_PsynergyFieldShrinkAction[] = {
 };
 
 s32 gKolimaForestEntrance_GroundSparkleAction[] = {
-    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 4),
-    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 4),
+    SC_SET(SW_SCALE_X, 3 * FIXED_ONE / 4),
+    SC_SET(SW_SCALE_Y, 3 * FIXED_ONE / 4),
     SC_SET(SW_COLLISION, 0),
     SC_SET(SW_TIMER, 0),
     SC_LABEL(1),
@@ -1301,22 +1307,22 @@ s32 gKolimaForestEntrance_SparkleScript[] = {
 
 /// A sparkle bursts on a field: it doubles in size and is gone.
 s32 gKolimaForestEntrance_SparkleBurstScript[] = {
-    SC_SET(SW_SCALE_X, 2 * Q16_ONE),
-    SC_SET(SW_SCALE_Y, 2 * Q16_ONE),
+    SC_SET(SW_SCALE_X, 2 * FIXED_ONE),
+    SC_SET(SW_SCALE_Y, 2 * FIXED_ONE),
     SC_WAIT(10),
     SC_RELEASE,
 };
 
 s32 gFallingEffectScript[] = {
-    SC_ADD(SW_Y, -px(2)),
+    SC_ADD(SW_Y, -toFIXED(2)),
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
-    SC_ADD(SW_Y, -px(2)),
+    SC_ADD(SW_Y, -toFIXED(2)),
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
     SC_LABEL(1),
-    SC_ADD(SW_Y, -px(1)),
+    SC_ADD(SW_Y, -toFIXED(1)),
     SC_CALL(Kolima_FlickerCurseDust),
     SC_WAIT(1),
     SC_LOOP(40, SC_TO(1)),

@@ -162,7 +162,7 @@ struct FileListWork {
   u8 unk108[0x10];
   s16 partyMemberX[8];     ///< pixels
   s16 partyMemberY[8];     ///< pixels
-  s32 partyMemberScale[4]; ///< 16.16 fixed point, Q16_ONE full size
+  s32 partyMemberScale[4]; ///< 16.16 fixed point, FIXED_ONE full size
 };
 
 extern const u8 gDjinnMenu_BlinkTile[32];

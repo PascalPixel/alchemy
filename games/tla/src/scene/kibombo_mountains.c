@@ -246,10 +246,10 @@ void KibomboMountains_DropCrate(s32 unused, s32 id) {
       cell = FIELD_CELL(dog->z.fixed);
       if (cell == 27) {
         Sound_Play(SE_VOICE_ANIMAL_B);
-        dog->z.fixed = px(440);
+        dog->z.fixed = toFIXED(440);
       } else if (cell == 28 || cell == 29) {
         Sound_Play(SE_VOICE_ANIMAL_C);
-        dog->z.fixed = px(472);
+        dog->z.fixed = toFIXED(472);
       }
       if (pillar->z.fixed < dog->z.fixed)
         Event_SetFlag(FLAG_DOG_SHUT_SOUTH);
@@ -271,11 +271,12 @@ void KibomboMountains_DropCrate(s32 unused, s32 id) {
       Actor_SetSpritePriority(ACTOR_GUARD_CRATE, 2);
       guard = Actor_GetById(ACTOR_LOWER_GUARD);
       dx = crate->x.fixed - guard->x.fixed;
-      if (dx >= 0 ? dx < px(8) : guard->x.fixed - crate->x.fixed < px(8)) {
+      if (dx >= 0 ? dx < toFIXED(8)
+                  : guard->x.fixed - crate->x.fixed < toFIXED(8)) {
         guard->motionFlags = 0;
-        guard->speedLimit = px(1);
-        FieldActor_SetMoveTargetFixed(guard, crate->x.fixed, crate->y.fixed,
-                                      crate->z.fixed);
+        guard->speedLimit = toFIXED(1);
+        FieldActor_SetMoveTargetFX(guard, crate->x.fixed, crate->y.fixed,
+                                   crate->z.fixed);
         FieldActor_WaitForMove(guard);
         Actor_StartScript(crate, gKibomboMountains_BobScript);
         Actor_StartIdle(guard);
@@ -307,7 +308,7 @@ void KibomboMountains_TremorDropsBone(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetDestination(ACTOR_BONE, 764, 384);
   Actor_MoveToAndWait(ACTOR_BONE_CRATE, 746, 380);
-  Actor_Get(ACTOR_BONE)->velocityY = px(4);
+  Actor_Get(ACTOR_BONE)->velocityY = toFIXED(4);
   FieldActor_WaitForMoveById(ACTOR_BONE);
   Actor_Get(ACTOR_BONE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   if (!Event_GetFlag(FLAG_KIBOMBO_LETS_PARTY_PASS) &&
@@ -468,8 +469,8 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_BONE_CRATE)->priorityFlags |= 0x80;
       lift = Actor_GetById(ACTOR_BONE);
       lift->priorityFlags |= 0x40;
-      lift->y.fixed = px(224);
-      lift->groundHeight = px(224);
+      lift->y.fixed = toFIXED(224);
+      lift->groundHeight = toFIXED(224);
       lift->collisionFlags = flag;
     } else {
       Actor_SetAttachedEffect(ACTOR_GUARD_DOG, ATTACHED_EFFECT_IN_FRONT |
@@ -479,7 +480,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_KIBOMBO_OVERGROWTH_CLEARED))
       Actor_SetPosition(ACTOR_OVERGROWTH, 0, 0);
     else
-      Actor_GetById(ACTOR_OVERGROWTH)->scaleY = Q16_ONE * 5 / 4;
+      Actor_GetById(ACTOR_OVERGROWTH)->scaleY = FIXED_ONE * 5 / 4;
   } else if (scene == SCENE_KIBOMBO_MOUNTAINS_DISK_AXE_CHEST) {
     Actor_SetSpritePriority(ACTOR_ROPE_WEST_POST, 1);
     Actor_SetSpritePriority(ACTOR_ROPE_EAST_POST, 1);
@@ -583,8 +584,8 @@ void KibomboMountains_WalkSlowly(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   Actor_SelectAnimation(object, 1);
-  object->acceleration = px(1) / 4;
-  object->speedLimit = px(1) / 2;
+  object->acceleration = toFIXED(1) / 4;
+  object->speedLimit = toFIXED(1) / 2;
 }
 
 /// Caught: "Here! The intruder is here!" The warriors march the party back down
@@ -733,7 +734,7 @@ void KibomboMountains_StepWestOfCrate(void) {
 
   if ((crate->z.fixed - leader->z.fixed >= 0
            ? crate->z.fixed - leader->z.fixed
-           : leader->z.fixed - crate->z.fixed) < px(16) &&
+           : leader->z.fixed - crate->z.fixed) < toFIXED(16) &&
       crate->x.fixed > leader->x.fixed)
     return;
   KibomboMountains_GuardSpotsParty(ACTOR_FIRST_LOOKOUT);
@@ -745,7 +746,7 @@ void KibomboMountains_StepEastOfCrate(void) {
 
   if ((crate->z.fixed - leader->z.fixed >= 0
            ? crate->z.fixed - leader->z.fixed
-           : leader->z.fixed - crate->z.fixed) < px(16) &&
+           : leader->z.fixed - crate->z.fixed) < toFIXED(16) &&
       crate->x.fixed < leader->x.fixed)
     return;
   KibomboMountains_GuardSpotsParty(ACTOR_FIRST_LOOKOUT);
@@ -814,7 +815,7 @@ s32 gKibomboMountains_RaisedPillarScript[] = {
     SC_END,
     SC_ANIMATION(0),
     SC_SET(SW_MOTION, 0),
-    SC_ADD(SW_Y, px(24)),
+    SC_ADD(SW_Y, toFIXED(24)),
     SC_END,
 };
 
@@ -905,42 +906,42 @@ s32 gKibomboMountains_DogPatrolScript[] = {
     SC_ACCELERATION(0.25),
     SC_SET(SW_COLLISION, 129),
     SC_ANIMATION(3),
-    SC_SET(SW_VELOCITY_Y, px(3)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(3)),
     SC_MOVE(760, 0, 488),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(2)),
     SC_MOVE(764, 0, 472),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(2)),
     SC_MOVE(760, 0, 456),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(2)),
     SC_MOVE(764, 0, 440),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(2)),
     SC_MOVE(760, 0, 424),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(2)),
     SC_MOVE(764, 0, 408),
     SC_SYNC,
     SC_MOVE(760, 0, 392),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, px(3)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(3)),
     SC_MOVE(764, 0, 408),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(2)),
     SC_MOVE(760, 0, 424),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(2)),
     SC_MOVE(764, 0, 440),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(2)),
     SC_MOVE(760, 0, 456),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(2)),
     SC_MOVE(764, 0, 472),
     SC_SYNC,
-    SC_SET(SW_VELOCITY_Y, px(2)),
+    SC_SET(SW_VELOCITY_Y, toFIXED(2)),
     SC_MOVE(760, 0, 488),
     SC_SYNC,
     SC_MOVE(764, 0, 504),

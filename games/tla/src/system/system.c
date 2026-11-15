@@ -18,7 +18,7 @@
 ///   Oam_AddSpriteAtDepth;
 ///                   vram_cache.c: VramCache_Load
 ///   Memory          heap.c: HeapSlot_Alloc, Heap_Alloc
-///   3D              transform.c: Transform_ApplyRotationTranslation,
+///   3D              transform.c: Matrix_RotateTranslate,
 ///                   Render_ProjectPoint
 ///   Saving          save.c: Save_ReadPart, Save_InvalidateSector
 ///   Link cable      serial.c: Serial_Initialize
@@ -37,7 +37,7 @@
 #include "system_math.c"
 #include "system_debug_text.c"
 #include "system_heap.c"
-#include "system_transform.c"
+#include "system_matrix.c"
 #include "system_decompress.c"
 #include "system_save.c"
 #include "system_serial.c"

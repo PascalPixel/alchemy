@@ -139,8 +139,8 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
             dot = &DOTS[i * DOTS_PER_FLAME + j];
             direction = Random16() & TRIG_ANGLE_MASK;
             speed = (Random16() & 0x1ff) + 256;
-            dot->x = px(flame->x);
-            dot->y = px(flame->y);
+            dot->x = INTtoFIXED(flame->x);
+            dot->y = INTtoFIXED(flame->y);
             dot->velocityX = (Trig_Sin(direction) * speed) >> 8;
             dot->velocityY = (Trig_Cos(direction) * speed) >> 7;
             // Each dot lives 32 to 47 frames.
@@ -153,7 +153,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
     // The Djinn circles on a radius that shrinks through the middle.
     if (frame <= 95) {
       s32 x = ((Trig_Sin(frame << 11) * (64 - frame * 2)) >> 17) + 96;
-      s32 y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * (64 - frame * 2))) + 60;
+      s32 y = (FIXEDtoINT(Trig_Cos(frame << 11) * (64 - frame * 2))) + 60;
 
       draw[1](canvas, work->sheet, x - 10, y - 17, SMALL_DJINNI_WIDTH, 34);
       for (i = 0; i != FLAME_COUNT; i++) {
@@ -187,7 +187,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 Q_16_16_UPPER_HALF(dot->x) - size / 2,
                 Q_16_16_UPPER_HALF(dot->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(dot, 62, px(1) / 8);
+        BattleEffectKernels_IntegrateVector2(dot, 62, toFIXED(1) / 8);
         dot->variant--;
       }
     }
@@ -259,7 +259,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
 
   Sound_PlayFar(SE_THUNDER);
   frame = 0;
-  angle = TRIG_TURN / 2;
+  angle = DEGtoANG(180);
   do {
     // The battle resumes and resolves the targets, hit cue 133.
     if (frame == DJINN_ATTACK_DAMAGE_FRAME)
@@ -268,7 +268,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
     // The Djinn circles on a radius that shrinks through the middle.
     if (frame <= 95) {
       s32 x = (Trig_Sin(angle) * (64 - frame * 2)) >> 17;
-      s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * (64 - frame * 2));
+      s32 y = FIXEDtoINT(Trig_Cos(angle) * (64 - frame * 2));
 
       blit[0](canvas, work->sheet, x + 86, y + 28, SMALL_DJINNI_WIDTH,
               SMALL_DJINNI_HEIGHT);
@@ -290,8 +290,8 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
             dot = &DOTS[i * DOTS_PER_BALL + j];
             direction = Random16() & TRIG_ANGLE_MASK;
             speed = (Random16() & 0x1ff) + 256;
-            dot->x = px(ball->x);
-            dot->y = px(ball->y);
+            dot->x = INTtoFIXED(ball->x);
+            dot->y = INTtoFIXED(ball->y);
             dot->velocityX = (Trig_Sin(direction) * speed) >> 7;
             dot->velocityY = (Trig_Cos(direction) * speed) >> 6;
             // Each dot lives 32 to 47 frames.
@@ -316,7 +316,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 Q_16_16_UPPER_HALF(dot->x) - size / 2,
                 Q_16_16_UPPER_HALF(dot->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(dot, 62, px(1) / 8);
+        BattleEffectKernels_IntegrateVector2(dot, 62, toFIXED(1) / 8);
         dot->variant--;
       }
     }
@@ -406,12 +406,12 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
 
   Sound_PlayFar(SE_RUMBLE);
   frame = 0;
-  angle = TRIG_TURN / 2;
+  angle = DEGtoANG(180);
   do {
     // The Djinn swings on an arc that narrows by two pixels a frame.
     if (frame <= 79) {
-      s32 x = Q_16_16_TO_INT(Trig_Sin(angle) * 24);
-      s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * (64 - frame * 2));
+      s32 x = FIXEDtoINT(Trig_Sin(angle) * 24);
+      s32 y = FIXEDtoINT(Trig_Cos(angle) * (64 - frame * 2));
 
       draw[1](canvas, work->sheet, x + 22, y + 29, 20, 38);
     }
@@ -434,8 +434,8 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
             dot = &DOTS[i * DOTS_PER_COLUMN + j];
             direction = (Random16() & 0x7fff) + 0x4000;
             speed = (Random16() & 0x1ff) + 256;
-            dot->x = px(column->x);
-            dot->y = px(column->y + 16);
+            dot->x = INTtoFIXED(column->x);
+            dot->y = INTtoFIXED(column->y + 16);
             dot->velocityX = (Trig_Sin(direction) * speed) >> 7;
             dot->velocityY = (Trig_Cos(direction) * speed) >> 6;
             dot->variant = (Random16() & 15) + 32;
@@ -461,7 +461,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 Q_16_16_UPPER_HALF(dot->x) - size / 2,
                 Q_16_16_UPPER_HALF(dot->y) - size, size, size * 2);
-        BattleEffectKernels_IntegrateVector2(dot, 62, px(1) / 8);
+        BattleEffectKernels_IntegrateVector2(dot, 62, toFIXED(1) / 8);
         dot->variant--;
       }
     }
@@ -523,8 +523,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   do {
     s32 angle = member << 11;
 
-    puff->x = Q_16_16_TO_INT(Trig_Sin(angle) * 24);
-    puff->y = (Q_16_16_TO_INT(Trig_Cos(angle) * 4)) + 52;
+    puff->x = FIXEDtoINT(Trig_Sin(angle) * 24);
+    puff->y = (FIXEDtoINT(Trig_Cos(angle) * 4)) + 52;
     if (member & 1)
       puff->x = 32 - puff->x;
     else
@@ -532,8 +532,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
     puff->variant = -(member * 2);
     for (i = 0; i != SPARKS_PER_PUFF; i++) {
       spark = &SPARKS[member * SPARKS_PER_PUFF + i];
-      spark->x = px(((Random16() & 15) + puff->x) - 8);
-      spark->y = px((Random16() & 7) + 96);
+      spark->x = INTtoFIXED(((Random16() & 15) + puff->x) - 8);
+      spark->y = INTtoFIXED((Random16() & 7) + 96);
       spark->velocityX = ((Random16() & 127) - 64) << 11;
       spark->velocityY = ((Random16() & 127) - 64) << 10;
       spark->z = Random16() & TRIG_ANGLE_MASK;
@@ -610,13 +610,12 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
         s32 wobble;
 
         size = (member & 1) + 3;
-        x = Q_16_16_UPPER_HALF(spark->x) +
-            (Q_16_16_TO_INT(Trig_Sin(spark->z) * 4));
+        x = Q_16_16_UPPER_HALF(spark->x) + (FIXEDtoINT(Trig_Sin(spark->z) * 4));
         draw[1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
                 x - ((u32)size >> 1), Q_16_16_UPPER_HALF(spark->y) - size, size,
                 size * 2);
         BattleEffectKernels_IntegrateVector2(spark, PARTICLE_DAMPING_NONE,
-                                             -px(1) / 8);
+                                             -toFIXED(1) / 8);
         wobble = spark->z;
         spark->z = wobble + 0x800;
         if (spark->z > 0xffff)

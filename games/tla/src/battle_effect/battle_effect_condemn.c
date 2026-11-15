@@ -57,10 +57,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   // The reaper starts off to the side, above the field.
   visible = 1;
   if (args->side == EFFECT_SIDE_PARTY)
-    curve[0] = -px(80);
+    curve[0] = -toFIXED(80);
   else
-    curve[0] = px(112);
-  curve[1] = -px(32);
+    curve[0] = toFIXED(112);
+  curve[1] = -toFIXED(32);
 
   for (frame = 0; frame != CONDEMN_FRAMES; frame++) {
     s32 spin;
@@ -73,19 +73,17 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     s32 *scanline;
 
     spin = frame << 9;
-    screenX =
-        (Q_16_16_TO_INT(curve[0])) + (Q_16_16_TO_INT(Trig_Sin(spin) << 4)) + 48;
-    screenY =
-        (Q_16_16_TO_INT(curve[1])) + (Q_16_16_TO_INT(Trig_Cos(spin) << 2)) + 16;
+    screenX = (FIXEDtoINT(curve[0])) + (FIXEDtoINT(Trig_Sin(spin) << 4)) + 48;
+    screenY = (FIXEDtoINT(curve[1])) + (FIXEDtoINT(Trig_Cos(spin) << 2)) + 16;
 
     // It jumps closer at frame 24 and onto the target at frame 48, hidden
     // for the frame of each jump.
     if (frame == 24) {
       if (args->side == EFFECT_SIDE_PARTY)
-        curve[0] = -px(32);
+        curve[0] = -toFIXED(32);
       else
-        curve[0] = px(72);
-      curve[1] = px(24);
+        curve[0] = toFIXED(72);
+      curve[1] = toFIXED(24);
       visible = 0;
     }
     if (frame == 25) {
@@ -95,9 +93,9 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     if (frame == 48) {
       EffectPosition_ProjectScaledBattler(args->targets[0], pos);
       if (args->side == EFFECT_SIDE_PARTY)
-        curve[0] = px(pos[0].x - 128);
+        curve[0] = INTtoFIXED(pos[0].x - 128);
       else
-        curve[0] = px(pos[0].x - 64);
+        curve[0] = INTtoFIXED(pos[0].x - 64);
       curve[1] = 0;
       visible = 0;
     }

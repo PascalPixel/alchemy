@@ -230,7 +230,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 mode, s32 id) {
     actor->update = GondowanCliffs_RollPillar;
     Actor_SetSpeed(id, 3);
     Actor_SetDestination(id, 1193, 530);
-    actor->gravity = px(4) / 5;
+    actor->gravity = toFIXED(4) / 5;
     actor->motionFlags = 3;
     actor->layer = 0;
     FieldActor_WaitForMoveById(id);
@@ -244,10 +244,10 @@ void GondowanCliffs_PushPillarIntoWater(s32 mode, s32 id) {
     // effect options.
     *(u32 *)&actor->update = 0;
     options.type = 276;
-    options.startScaleX = Q16_ONE / 2;
-    options.targetScaleX = Q16_ONE * 3 / 2;
-    options.targetScaleY = Q16_ONE * 6 / 5;
-    options.startScaleY = Q16_ONE * 4 / 5;
+    options.startScaleX = FIXED_ONE / 2;
+    options.targetScaleX = FIXED_ONE * 3 / 2;
+    options.targetScaleY = FIXED_ONE * 6 / 5;
+    options.startScaleY = FIXED_ONE * 4 / 5;
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
                       EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                           EFFECT_SCALE_TO_TARGET,
@@ -276,8 +276,8 @@ void GondowanCliffs_FreezeSecondPuddle(void) {
 
   object->priorityFlags = 0;
   object->motionFlags = 0;
-  object->groundHeight = px(32);
-  object->y.fixed = px(32);
+  object->groundHeight = toFIXED(32);
+  object->y.fixed = toFIXED(32);
   MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
   Event_SetFlag(FLAG_SECOND_PUDDLE_FROZEN);
 }
@@ -466,7 +466,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN))
     Actor_SetPosition(ACTOR_IVY, 0, 0);
   else
-    Actor_GetById(ACTOR_IVY)->scaleY = Q16_ONE * 5 / 4;
+    Actor_GetById(ACTOR_IVY)->scaleY = FIXED_ONE * 5 / 4;
   if (GameFlag_Get(FLAG_FIRST_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
   if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
@@ -575,13 +575,13 @@ void Geysers_Update(void) {
     if (rider == NULL)
       continue;
     if (entry->height == 0) {
-      rider->y.fixed = object->y.fixed + -px(16);
+      rider->y.fixed = object->y.fixed + -toFIXED(16);
     } else {
       s32 wave;
 
       entry->phase += 0x1000;
-      wave = Iwram_MulQ16(px(2), Trig_Sin(entry->phase)) + -px(14);
-      rider->y.fixed = object->y.fixed + px(entry->height) + wave;
+      wave = Iwram_MulFX(toFIXED(2), Trig_Sin(entry->phase)) + -toFIXED(14);
+      rider->y.fixed = object->y.fixed + toFIXED(entry->height) + wave;
     }
     rider->x.fixed = object->x.fixed;
     rider->z.fixed = object->z.fixed;
@@ -624,12 +624,12 @@ void Geysers_Draw(void) {
     if (count > 79)
       goto next;
     x = actor->x.fixed - scrollX;
-    y = actor->y.fixed + px(h) - lift;
+    y = actor->y.fixed + toFIXED(h) - lift;
     z = actor->z.fixed - scrollZ - lift;
-    x = FIELD_PIXEL(x) - 8;
+    x = FIXEDtoINT(x) - 8;
     screenY = z - y;
-    screenY = FIELD_PIXEL(screenY) - 16;
-    depth = FIELD_PIXEL(y + z) + 58;
+    screenY = FIXEDtoINT(screenY) - 16;
+    depth = FIXEDtoINT(y + z) + 58;
     if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
       goto next;
     x &= 511;
@@ -649,15 +649,15 @@ void Geysers_Draw(void) {
     if (count > 79)
       continue;
     x = actor->x.fixed - scrollX;
-    y = actor->y.fixed + px(swing->height) - lift;
+    y = actor->y.fixed + toFIXED(swing->height) - lift;
     z = actor->z.fixed - scrollZ - lift;
     screenY = z - y;
-    x = FIELD_PIXEL(x) - 8;
-    screenY =
-        ((screenY + Math_MulQ16(-px(2), Trig_Sin(swing->phase)) + -px(2)) >>
-         16) -
-        4;
-    depth = FIELD_PIXEL(y + z) + 58;
+    x = FIXEDtoINT(x) - 8;
+    screenY = ((screenY + Math_MulFX(-toFIXED(2), Trig_Sin(swing->phase)) +
+                -toFIXED(2)) >>
+               16) -
+              4;
+    depth = FIXEDtoINT(y + z) + 58;
     if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
       continue;
     x &= 511;
@@ -775,7 +775,7 @@ LATE_DATA s16 gGondowanCliffs_Entrances[] = {
 };
 
 LATE_DATA struct ActorPlacement gGondowanCliffs_PassEntrances[] = {
-    {0, CONDITION_ALWAYS, 168, 0x40000118, px(-1), -0x1, 0xffff, 0, 0},
+    {0, CONDITION_ALWAYS, 168, 0x40000118, toFIXED(-1), -0x1, 0xffff, 0, 0},
     {SCENE_TABLE_END},
 };
 

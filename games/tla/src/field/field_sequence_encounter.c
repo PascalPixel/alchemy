@@ -160,7 +160,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
     }
     step =
         Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
-    total = ENCOUNTER_STEPS += Iwram_MulQ16(step, steps);
+    total = ENCOUNTER_STEPS += Iwram_MulFX(step, steps);
     if (total < work->encounterThreshold)
       return 0;
   }
@@ -327,8 +327,8 @@ void WorldMap_SetReturnForScene(s32 scene, s32 entrance) {
   while (rule[0] != -1) {
     if (rule[0] == scene &&
         (rule[1] == -1 || entrance == -1 || rule[1] == entrance)) {
-      gMainRoutineWork.shipX = px(rule[4]);
-      gMainRoutineWork.shipZ = px(rule[5]);
+      gMainRoutineWork.shipX = toFIXED(rule[4]);
+      gMainRoutineWork.shipZ = toFIXED(rule[5]);
       gMainRoutineWork.shipFacing = rule[6];
       return;
     }
@@ -348,8 +348,8 @@ void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance) {
   while (rule[0] != -1) {
     if (rule[2] == scene &&
         (rule[3] == -1 || entrance == -1 || rule[3] == entrance)) {
-      gMainRoutineWork.shipX = px(rule[4]);
-      gMainRoutineWork.shipZ = px(rule[5]);
+      gMainRoutineWork.shipX = toFIXED(rule[4]);
+      gMainRoutineWork.shipZ = toFIXED(rule[5]);
       gMainRoutineWork.shipFacing = rule[6];
       return;
     }

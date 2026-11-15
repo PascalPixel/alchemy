@@ -69,7 +69,7 @@
 #include "menu/menu.h"
 #include "scene/import.h"
 #include "sound/sound.h"
-#include "system/fixed_point_position.h"
+#include "system/point.h"
 #include "system/heap_slots.h"
 #include "system/system.h"
 #include "text/msg_ids.h"
@@ -240,7 +240,7 @@ static void GomaCavePillar_MoveWestPillar(void) {
 
   x = Actor_Get(ACTOR_WEST_PILLAR)->x.fixed;
   if (x < 0)
-    x += px(16) - 1;
+    x += toFIXED(16) - 1;
   x = FIELD_CELL(x);
   Event_Start();
   if (x == 20) {
@@ -272,10 +272,10 @@ static void GomaCavePillar_SpawnStumpDust(void) {
     firstXSource = Actor_Get(ACTOR_STUMP);
     firstRandomX = Random_Next();
     fixedX = firstXSource->x.fixed;
-    fixedX += px((u32)firstRandomX * 12 >> 16);
+    fixedX += INTtoFIXED((u32)firstRandomX * 12 >> 16);
     heightSource = Actor_GetById(ACTOR_STUMP);
     fixedZ = Actor_Get(ACTOR_STUMP)->z.fixed;
-    fixedZ += px(6);
+    fixedZ += toFIXED(6);
     firstSpeedBand = Random_Below(5);
     // These shifts produce speedBand * 6553: a tenth-pixel falling step.
     firstBandScaled =
@@ -292,10 +292,10 @@ static void GomaCavePillar_SpawnStumpDust(void) {
       secondXSource = Actor_Get(ACTOR_STUMP);
       secondRandomX = Random_Next();
       fixedX = secondXSource->x.fixed;
-      fixedX += px((u32)secondRandomX * 12 >> 16);
+      fixedX += INTtoFIXED((u32)secondRandomX * 12 >> 16);
       heightSource = Actor_GetById(ACTOR_STUMP);
       fixedZ = Actor_Get(ACTOR_STUMP)->z.fixed;
-      fixedZ += px(6);
+      fixedZ += toFIXED(6);
       secondSpeedBand = Random_Below(5);
       secondBandScaled =
           (((secondSpeedBand << 1) + secondSpeedBand) << 2) + secondSpeedBand;
@@ -322,7 +322,7 @@ static void GomaCavePillar_PushStumpOver(void) {
   s32 style, speedBand, bandScaled, fallingSpeed;
 
   stump = Actor_Get(ACTOR_STUMP);
-  column = stump->x.fixed / px(16);
+  column = stump->x.fixed / toFIXED(16);
   Event_Start();
   if (column == 25) {
     Actor_Get(ACTOR_MASK_FOR_STUMP)->layer = 1;
@@ -343,7 +343,7 @@ static void GomaCavePillar_PushStumpOver(void) {
     Actor_SetDestinationOffset(ACTOR_STUMP, 2, 0);
     Actor_WaitForMoveById(ACTOR_STUMP);
     Actor_Get(ACTOR_STUMP)->bounce = 0;
-    Actor_Get(ACTOR_STUMP)->gravity = px(3) / 5;
+    Actor_Get(ACTOR_STUMP)->gravity = toFIXED(3) / 5;
     Event_Wait(3);
     // It tips over the edge.
     Actor_SetSpeedAndAcceleration(ACTOR_STUMP, 2.5, 0.25);
@@ -353,9 +353,9 @@ static void GomaCavePillar_PushStumpOver(void) {
     Task_Remove(GomaCavePillar_SpawnStumpDust);
     Event_Wait(12);
     Sound_Play(SE_STONE_GRIND);
-    fixedX = Actor_Get(ACTOR_STUMP)->x.fixed + px(Random_Below(12));
+    fixedX = Actor_Get(ACTOR_STUMP)->x.fixed + INTtoFIXED(Random_Below(12));
     heightSource = Actor_Get(ACTOR_STUMP);
-    fixedZ = Actor_Get(ACTOR_STUMP)->z.fixed + px(6);
+    fixedZ = Actor_Get(ACTOR_STUMP)->z.fixed + toFIXED(6);
     speedBand = Random_Below(5);
     // A last piece of dust, with the same tenth-pixel speed bands.
     bandScaled = (((speedBand << 1) + speedBand) << 2) + speedBand;
@@ -386,37 +386,37 @@ static void GomaCavePillar_SettleEastPillar(void) {
   s32 x;
   s32 z;
 
-  x = Actor_Get(ACTOR_EAST_PILLAR)->x.fixed / px(16);
-  z = Actor_Get(ACTOR_EAST_PILLAR)->z.fixed / px(16);
+  x = Actor_Get(ACTOR_EAST_PILLAR)->x.fixed / toFIXED(16);
+  z = Actor_Get(ACTOR_EAST_PILLAR)->z.fixed / toFIXED(16);
   if (x == 38 && z == 14) {
-    Actor_Get(ACTOR_EAST_PILLAR)->y.fixed = -px(2);
+    Actor_Get(ACTOR_EAST_PILLAR)->y.fixed = -toFIXED(2);
     Actor_Get(ACTOR_EAST_PILLAR)->targetY =
         Actor_Get(ACTOR_EAST_PILLAR)->y.fixed;
     Sound_Play(SE_THUMP);
     GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
-                                 px(1) / 2, 0, 0, PLANE_XZ);
+                                 toFIXED(1) / 2, 0, 0, PLANE_XZ);
     GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
-                                 px(2) / 5, px(2) / 5, 0, PLANE_XZ);
+                                 toFIXED(2) / 5, toFIXED(2) / 5, 0, PLANE_XZ);
     GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
-                                 -px(2) / 5, px(2) / 5, 0, PLANE_XZ);
+                                 -toFIXED(2) / 5, toFIXED(2) / 5, 0, PLANE_XZ);
     GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
-                                 -px(1) / 2, 0, 0, PLANE_XZ);
+                                 -toFIXED(1) / 2, 0, 0, PLANE_XZ);
     GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
-                                 px(2) / 5, -px(2) / 5, 0, PLANE_XZ);
+                                 toFIXED(2) / 5, -toFIXED(2) / 5, 0, PLANE_XZ);
     GomaCavePillar_SpawnFragment(Actor_Get(ACTOR_EAST_PILLAR)->x.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->y.fixed,
                                  Actor_Get(ACTOR_EAST_PILLAR)->z.fixed,
-                                 -px(2) / 5, -px(2) / 5, 0, PLANE_XZ);
+                                 -toFIXED(2) / 5, -toFIXED(2) / 5, 0, PLANE_XZ);
     GameFlag_Set(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE);
   }
 }
@@ -453,7 +453,7 @@ static void GomaCavePillar_JumpGapWest(void) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   motionFlags = &leader->motionFlags;
   savedMotionFlags = *motionFlags;
-  target.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed - px(32);
+  target.x = Actor_Get(ACTOR_PARTY_LEADER)->x.fixed - toFIXED(32);
   /* LEFTOVER(template): destination holds &target, the landing reached through
    * a pointer. */
   destination = &target;
@@ -465,14 +465,14 @@ static void GomaCavePillar_JumpGapWest(void) {
     wait(6);
     Sound_Play(SE_JUMP);
     Actor_SelectAnimation(leader, ANIM_LEADER_LEAP);
-    leader->speedLimit = px(3);
-    leader->acceleration = px(2);
-    leader->velocityY = px(4);
+    leader->speedLimit = toFIXED(3);
+    leader->acceleration = toFIXED(2);
+    leader->velocityY = toFIXED(4);
     *motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(leader, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER,
-                        (s16)(WHOLE_PIXELS((u32)destination->x)),
-                        (s16)(WHOLE_PIXELS((u32)destination->z)));
+                        (s16)(FIXEDtoINT((u32)destination->x)),
+                        (s16)(FIXEDtoINT((u32)destination->z)));
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     *motionFlags = savedMotionFlags;

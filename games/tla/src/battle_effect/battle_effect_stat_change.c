@@ -307,9 +307,8 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     // the first four frames it is drawn ADDITIVE as well.
     prelude = args->prelude;
     if (prelude == 1) {
-      s32 x =
-          (Q_16_16_TO_INT(Trig_Sin(frame << 11) * 20)) + origin[0] + shift - 20;
-      s32 y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4)) + origin[1] - 24;
+      s32 x = (FIXEDtoINT(Trig_Sin(frame << 11) * 20)) + origin[0] + shift - 20;
+      s32 y = (FIXEDtoINT(Trig_Cos(frame << 11) * 4)) + origin[1] - 24;
 
       // The mode is the prelude, 1 here: BLITTER_MAX.
       LOAD_BLITTER(draw[0], flags ^ flipX, prelude);
@@ -335,13 +334,13 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
       if (frame == member * 8 + STAT_BOOST_PICTURE_FRAME)
         Sound_PlayFar(SE_POWER_UP);
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
       // The lights turn about two thirds of the target's height.
       point[0] = object->x;
       point[1] = height;
       point[2] = object->z;
-      Transform_ApplyPosition(point);
+      Matrix_TranslateVector(point);
       if (start != 0) {
         if (frame == member * 8 + 53)
           BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
@@ -367,13 +366,13 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
             draw[1] = (DrawRectangle)*slot;
           }
           if (mode == STAT_BOOST_IMPACT) {
-            Transform_ApplyPitch(-frame << 10);
+            Matrix_RotateX(-frame << 10);
           } else if (mode == STAT_BOOST_GUARD) {
           } else if (mode == STAT_BOOST_WARD) {
-            Transform_ApplyYaw(frame << 10);
+            Matrix_RotateY(frame << 10);
           } else {
-            Transform_ApplyYaw(frame << 10);
-            Transform_ApplyRoll(frame << 10);
+            Matrix_RotateY(frame << 10);
+            Matrix_RotateZ(frame << 10);
           }
           for (i = 0; i != 32; i++) {
             struct Particle *flare = &FLARES[member * FLARES_PER_MEMBER + i];
@@ -615,17 +614,17 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     angle = Random16() & TRIG_ANGLE_MASK;
     shard->x = 0;
     if (mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL) {
-      shard->y = px((i & 31) / 4 * 6 - 10);
-      shard->z = px(i % 4 * 2 - 2);
+      shard->y = INTtoFIXED((i & 31) / 4 * 6 - 10);
+      shard->z = INTtoFIXED(i % 4 * 2 - 2);
     } else {
-      shard->y = px((i & 31) / 4 * 6 - 10);
-      shard->z = px(i % 4 * 8 - 16);
+      shard->y = INTtoFIXED((i & 31) / 4 * 6 - 10);
+      shard->z = INTtoFIXED(i % 4 * 8 - 16);
     }
     if (args->side == EFFECT_SIDE_PARTY)
-      shard->velocityX = Q16_ONE * 2;
+      shard->velocityX = FIXED_ONE * 2;
     else
-      shard->velocityX = -Q16_ONE * 2;
-    shard->velocityY = ((Trig_Cos(angle) * radius) >> 6) + Q16_ONE;
+      shard->velocityX = -FIXED_ONE * 2;
+    shard->velocityY = ((Trig_Cos(angle) * radius) >> 6) + FIXED_ONE;
     shard->velocityZ = (Trig_Sin(angle) * radius) >> 6;
     shard->variant = Random16() & 0xff;
   }
@@ -647,14 +646,14 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
       object = BattleObject_GetFar(args->targets[j])->object;
       if (time > 0) {
         // The picture stands 40 pixels above the target.
-        Transform_Reset();
-        Transform_SetLookAt(camera->eye, camera->focus);
+        Matrix_Initialize();
+        Matrix_SetLookAt(camera->eye, camera->focus);
         point[0] = object->x;
-        point[1] = px(20);
+        point[1] = toFIXED(20);
         point[2] = object->z;
-        Transform_Reset();
-        Transform_SetLookAt(camera->eye, camera->focus);
-        Transform_ApplyPosition(point);
+        Matrix_Initialize();
+        Matrix_SetLookAt(camera->eye, camera->focus);
+        Matrix_TranslateVector(point);
         origin[0] = 0;
         origin[1] = 0;
         origin[2] = 0;

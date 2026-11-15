@@ -116,7 +116,7 @@ void Field_PlaceTreasureSpots(void) {
             s32 z;
 
             *motionFlags = 2;
-            object->groundHeight -= px(16);
+            object->groundHeight -= toFIXED(16);
             object->y.fixed = object->groundHeight;
             map = Ram_HeapSlots->mapGrid;
             x = FIELD_CELL(object->x.fixed);
@@ -134,8 +134,8 @@ void Field_PlaceTreasureSpots(void) {
         if (GameFlag_Get(flag))
           Actor_SelectAnimationFar(object, 2);
         Actor_StartIdleFar(object);
-        object->homeX = object->x.fixed / Q16_ONE;
-        object->homeZ = object->z.fixed / Q16_ONE;
+        object->homeX = object->x.fixed / FIXED_ONE;
+        object->homeZ = object->z.fixed / FIXED_ONE;
         object->priorityFlags = 1;
         object->collisionFlags = 1;
         work->actors[FIELD_TREASURE_ACTOR + i] = object;
@@ -223,8 +223,8 @@ void Actor_ReturnHome(s32 mode, u32 objectId, s32 flag) {
     GameFlag_Set(flag);
     if (object->x.fixed != 0)
       Actor_SetSquareSprite(objectId);
-    object->x.fixed = px(object->homeX);
-    object->z.fixed = px(object->homeZ);
+    object->x.fixed = toFIXED(object->homeX);
+    object->z.fixed = toFIXED(object->homeZ);
     BattleEffect_DropObjectAtAnchor(objectId);
   }
 }
@@ -272,7 +272,7 @@ void TreasureSpot_LaunchMimic(u32 objectId) {
   Actor_SelectAnimationFar(object, 7);
   Sound_PlayFar(SE_ENEMY_CRY);
   if (object != 0) {
-    object->velocityY = px(8);
+    object->velocityY = toFIXED(8);
     Actor_SetSpriteFlagsFar(object, 1);
   }
 }
@@ -313,9 +313,9 @@ void TreasureSpot_SetActorPosition(u32 objectId, s32 x, s32 z) {
   if (object == 0)
     return;
   if (x == -1)
-    x = px(object->homeX);
+    x = toFIXED(object->homeX);
   if (z == -1)
-    z = px(object->homeZ);
+    z = toFIXED(object->homeZ);
   object->x.fixed = x;
   object->z.fixed = z;
   object->y.fixed = object->groundHeight = MapGrid_GetTerrainHeightFar(0, x, z);

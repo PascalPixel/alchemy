@@ -18,7 +18,7 @@
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "system/iwram_call.h"
-#include "system/fixed_point_position.h"
+#include "system/point.h"
 #include "battle/battle_camera.h"
 #include "macros.h"
 #include "fixed_math.h"
@@ -34,7 +34,7 @@
 #include "system/heap_release.h"
 #include "graphics/resource.h"
 #include "system/task.h"
-#include "system/transform.h"
+#include "system/matrix.h"
 
 // Where SuperLuckyDice_Run puts each picture in OBJ VRAM, as 16-colour tiles
 // (the dice, 256-colour, fill the first DICE_SHADOW_TILE + 8).
@@ -100,7 +100,7 @@ s32 SuperLuckyDice_Start(void) {
 /// Resets the scene camera and its projection, with the camera tilted to 147.
 void SuperLuckyDice_ResetViewDefaults(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
-  struct FixedPointPosition local;
+  struct Point local;
   s32 *result;
   u32 ratio;
   u32 param;
@@ -115,10 +115,10 @@ void SuperLuckyDice_ResetViewDefaults(void) {
   gProjection.centerY = 0;
   state->followEye = 0;
 
-  Transform_Reset();
-  Transform_ApplyPosition(&state->focus[0]);
-  Transform_ApplyYaw((s16)state->yaw);
-  Transform_ApplyPitch((s16)state->pitch);
+  Matrix_Initialize();
+  Matrix_TranslateVector(&state->focus[0]);
+  Matrix_RotateY((s16)state->yaw);
+  Matrix_RotateX((s16)state->pitch);
 
   local.x = 0;
   local.y = 0;
@@ -466,8 +466,8 @@ enum SuperLuckyDiceState {
     for (index = 0; index != 4; index++) {                                     \
       die = &(dice)->particles[index];                                         \
       die->z = 0;                                                              \
-      die->y = px(96);                                                         \
-      die->x = px(index * 24 - 108);                                           \
+      die->y = toFIXED(96);                                                    \
+      die->x = toFIXED(index * 24 - 108);                                      \
       die->velocityX = ((Random16() & 127) - 64) << 12;                        \
       die->velocityY = ((Random16() & 15) + 48) << 13;                         \
       die->velocityZ = ((Random16() & 127) + 64) << 13;                        \
@@ -705,13 +705,14 @@ void SuperLuckyDice_Run(void) {
     spriteCount = 0;
     if (frame <= DICE_FADE_FRAMES) {
       SuperLuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT,
-                                       frame * (Q16_ONE / DICE_FADE_FRAMES),
+                                       frame * (FIXED_ONE / DICE_FADE_FRAMES),
                                        256);
-      SuperLuckyDice_ScaleRgb555Buffer(
-          bgPalette, (u16 *)BG_PLTT, frame * (Q16_ONE / DICE_FADE_FRAMES), 256);
+      SuperLuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT,
+                                       frame * (FIXED_ONE / DICE_FADE_FRAMES),
+                                       256);
     }
-    Transform_Reset();
-    Transform_SetLookAt(camera->eye, camera->focus);
+    Matrix_Initialize();
+    Matrix_SetLookAt(camera->eye, camera->focus);
 
     if (state == SUPER_LUCKY_DICE_THROW) {
       if (frame > 17) {
@@ -824,7 +825,7 @@ void SuperLuckyDice_Run(void) {
             timer * (TRIG_TURN / 16));
         SuperLuckyDice_ScaleRgb555Buffer(
             spritePalette + DICE_PALETTE_RELOADED_B * PALETTE_COLORS,
-            (u16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_B, 0), Q16_ONE / 2,
+            (u16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_B, 0), FIXED_ONE / 2,
             16);
         SuperLuckyDice_BrightenColors(
             spritePalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
@@ -832,7 +833,7 @@ void SuperLuckyDice_Run(void) {
             timer * (TRIG_TURN / 16));
         SuperLuckyDice_ScaleRgb555Buffer(
             spritePalette + DICE_PALETTE_RELOADED_D * PALETTE_COLORS,
-            (u16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_D, 0), Q16_ONE / 2,
+            (u16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_D, 0), FIXED_ONE / 2,
             16);
       } else {
         SuperLuckyDice_BrightenColors(
@@ -841,7 +842,7 @@ void SuperLuckyDice_Run(void) {
             timer * (TRIG_TURN / 16));
         SuperLuckyDice_ScaleRgb555Buffer(
             spritePalette + DICE_PALETTE_RELOADED_A * PALETTE_COLORS,
-            (u16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_A, 0), Q16_ONE / 2,
+            (u16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_A, 0), FIXED_ONE / 2,
             16);
         SuperLuckyDice_BrightenColors(
             spritePalette + DICE_PALETTE_RELOADED_D * PALETTE_COLORS,
@@ -849,7 +850,7 @@ void SuperLuckyDice_Run(void) {
             timer * (TRIG_TURN / 16));
         SuperLuckyDice_ScaleRgb555Buffer(
             spritePalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
-            (u16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_C, 0), Q16_ONE / 2,
+            (u16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_C, 0), FIXED_ONE / 2,
             16);
       }
     } else if (state == SUPER_LUCKY_DICE_ROLL) {
@@ -870,9 +871,9 @@ void SuperLuckyDice_Run(void) {
           if (index != otherIndex) {
             s32 separationX, separationY, separationZ, separation;
 
-            separationX = FIELD_PIXEL(die->x - other->x);
-            separationY = FIELD_PIXEL(die->y - other->y);
-            separationZ = FIELD_PIXEL(die->z - other->z);
+            separationX = FIXEDtoINT(die->x - other->x);
+            separationY = FIXEDtoINT(die->y - other->y);
+            separationZ = FIXEDtoINT(die->z - other->z);
             if (separationX * separationX + separationY * separationY +
                     separationZ * separationZ <=
                 DICE_TOUCH_DISTANCE * DICE_TOUCH_DISTANCE - 1) {
@@ -883,9 +884,9 @@ void SuperLuckyDice_Run(void) {
 // zero, as in Lucky Dice.
 #ifdef UBFIX
               if (separation != 0) {
-                die->velocityX += separationX * (Q16_ONE / 2) / separation;
-                die->velocityY += separationY * (Q16_ONE / 2) / separation;
-                die->velocityZ += separationZ * (Q16_ONE / 2) / separation;
+                die->velocityX += separationX * (FIXED_ONE / 2) / separation;
+                die->velocityY += separationY * (FIXED_ONE / 2) / separation;
+                die->velocityZ += separationZ * (FIXED_ONE / 2) / separation;
               }
 #else
               die->velocityX += (separationX << 15) / separation;
@@ -895,8 +896,8 @@ void SuperLuckyDice_Run(void) {
             }
           }
         }
-        wallX = FIELD_PIXEL(die->x);
-        wallZ = FIELD_PIXEL(die->z);
+        wallX = FIXEDtoINT(die->x);
+        wallZ = FIXEDtoINT(die->z);
         if (Iwram_Sqrt(wallX * wallX + wallZ * wallZ) > DICE_DOME_RADIUS - 1) {
           if (die->x > 0)
             die->velocityX = -ABS(die->velocityX);
@@ -907,7 +908,7 @@ void SuperLuckyDice_Run(void) {
           else
             die->velocityZ = ABS(die->velocityZ);
         }
-        die->velocityY += -(px(1) / 2);
+        die->velocityY += -(toFIXED(1) / 2);
         if (die->y <= 0) {
           die->y = 0;
           die->velocityY = -die->velocityY * 48 / 64;
@@ -927,7 +928,7 @@ void SuperLuckyDice_Run(void) {
           }
           if (spinRate[index] >= DICE_BOUNCE_SPIN_LOSS)
             spinRate[index] -= DICE_BOUNCE_SPIN_LOSS;
-          if (die->velocityY < px(3)) {
+          if (die->velocityY < toFIXED(3)) {
             s32 spin;
             s32 facing;
 
@@ -1168,7 +1169,7 @@ void SuperLuckyDice_Run(void) {
             timer * (TRIG_TURN / 16));
         SuperLuckyDice_ScaleRgb555Buffer(
             spritePalette + DICE_PALETTE_RELOADED_D * PALETTE_COLORS,
-            (u16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_D, 0), Q16_ONE / 2,
+            (u16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_D, 0), FIXED_ONE / 2,
             16);
       } else {
         SuperLuckyDice_BrightenColors(
@@ -1177,7 +1178,7 @@ void SuperLuckyDice_Run(void) {
             timer * (TRIG_TURN / 16));
         SuperLuckyDice_ScaleRgb555Buffer(
             spritePalette + DICE_PALETTE_RELOADED_C * PALETTE_COLORS,
-            (u16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_C, 0), Q16_ONE / 2,
+            (u16 *)&OBJ_PLTT_COLOR(DICE_PALETTE_RELOADED_C, 0), FIXED_ONE / 2,
             16);
       }
     }
@@ -1483,21 +1484,21 @@ void SuperLuckyDice_Run(void) {
       if (state == SUPER_LUCKY_DICE_DOUBLE_UP) {
         angle = slide * (TRIG_TURN / 16);
         angle += TRIG_TURN / 16;
-        x = FIELD_PIXEL(Trig_Cos(angle) * 40) - (timer << 4) + 56;
-        y = 48 - FIELD_PIXEL(Trig_Sin(angle) * 48);
+        x = FIXEDtoINT(Trig_Cos(angle) * 40) - (timer << 4) + 56;
+        y = 48 - FIXEDtoINT(Trig_Sin(angle) * 48);
       } else if (resultKind != DICE_RESULT_LOSE) {
         if (timer > 67) {
           s32 elapsed = timer - 68;
 
           angle = elapsed * 1489;
-          x = FIELD_PIXEL(Trig_Cos(angle) * 48) + 52;
-          y = 48 - FIELD_PIXEL(Trig_Sin(angle) * 48);
+          x = FIXEDtoINT(Trig_Cos(angle) * 48) + 52;
+          y = 48 - FIXEDtoINT(Trig_Sin(angle) * 48);
         }
       } else if (timer > 67) {
         doubled = timer * 2;
         wave = doubled - 128;
-        x = FIELD_PIXEL(Trig_Sin(timer * (TRIG_TURN / 16) - TRIG_TURN * 4) *
-                        wave) +
+        x = FIXEDtoINT(Trig_Sin(timer * (TRIG_TURN / 16) - TRIG_TURN * 4) *
+                       wave) +
             100;
         doubled += timer;
         doubled *= 2;
@@ -1519,9 +1520,9 @@ void SuperLuckyDice_Run(void) {
         } else if (timer > 67) {
           doubled = timer * 2;
           wave = doubled - 136;
-          bannerX = FIELD_PIXEL(Trig_Sin(timer * (TRIG_TURN / 16) -
-                                         TRIG_TURN * 17 / 4) *
-                                wave) +
+          bannerX = FIXEDtoINT(Trig_Sin(timer * (TRIG_TURN / 16) -
+                                        TRIG_TURN * 17 / 4) *
+                               wave) +
                     60;
           doubled += timer;
           doubled *= 2;
@@ -1599,7 +1600,7 @@ void SuperLuckyDice_Run(void) {
         if (screen[2] > DICE_FARTHEST_DEPTH)
           screen[2] = DICE_FARTHEST_DEPTH;
         spriteDepth[4 + index] = screen[2] - DICE_NEAREST_DEPTH;
-        spriteDepth[4 + index] += (s16)FIELD_PIXEL(die->y);
+        spriteDepth[4 + index] += (s16)FIXEDtoINT(die->y);
         half = spriteDepth[4 + index] / 2 + 128;
         x = screen[0] - 0x1800 / half;
         y = screen[1] - 0xc00 / half;

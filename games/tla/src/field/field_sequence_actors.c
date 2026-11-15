@@ -145,18 +145,18 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       actor->facing = entry->facing;
       actor->collisionFlags = 1;
       Actor_SetMovementType(actor, entry->behavior);
-      ((struct SpawnActor *)actor)->homeX = actor->x.fixed / Q16_ONE;
-      ((struct SpawnActor *)actor)->homeZ = actor->z.fixed / Q16_ONE;
+      ((struct SpawnActor *)actor)->homeX = actor->x.fixed / FIXED_ONE;
+      ((struct SpawnActor *)actor)->homeZ = actor->z.fixed / FIXED_ONE;
       // An actor placement with a height is lifted half a pixel more and
       // floats: it neither follows the ground nor falls.
       if (actor->y.fixed != 0) {
         actor->motionFlags = 4;
-        actor->y.fixed += px(1) / 2;
+        actor->y.fixed += toFIXED(1) / 2;
       }
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
         actor->motionFlags &= 0xfe;
         if (!GameFlag_Get(0x21))
-          sprite->scale = Iwram_MulQ16(sprite->scale, Q16_ONE * 3 / 4);
+          sprite->scale = Iwram_MulFX(sprite->scale, FIXED_ONE * 3 / 4);
       } else {
         actor->groundHeight =
             MapGrid_GetTerrainHeightFar(0, actor->x.fixed, actor->z.fixed);
@@ -178,8 +178,8 @@ s32 ScenePoint_GetPosition(s32 id, s32 *position) {
   key = *cursor++;
   while (key != -1) {
     if (key == id) {
-      position[0] = px(Stream_ReadU16(&cursor));
-      position[2] = px(Stream_ReadU16(&cursor));
+      position[0] = toFIXED(Stream_ReadU16(&cursor));
+      position[2] = toFIXED(Stream_ReadU16(&cursor));
       return 0;
     }
     cursor += 4;
@@ -257,13 +257,14 @@ void Actor_ResetForLeader(s32 table) {
     /* FAKEMATCH(barrier): an empty asm after the store. */
     asm("");
     cell = Ram_HeapSlots->mapGrid->layers[object->layer].cells +
-           ((object->x.fixed / px(16)) + ((object->z.fixed / px(16)) << 7));
+           ((object->x.fixed / toFIXED(16)) +
+            ((object->z.fixed / toFIXED(16)) << 7));
     above = cell - 128;
     if (gMainRoutineWork.y != 0 && (cell->attributeB & 0x40) &&
         (above->attributeB & 0x40)) {
       gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
       height = MapGrid_GetTerrainHeightFar(0, object->x.fixed,
-                                           object->z.fixed - px(16)) -
+                                           object->z.fixed - toFIXED(16)) -
                0x200000;
       object->y.fixed += height;
       object->groundHeight = object->y.fixed;

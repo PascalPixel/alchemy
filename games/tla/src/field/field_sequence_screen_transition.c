@@ -228,8 +228,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     ax = view[0] & FIELD_PIXEL_MASK;
     cameraY = view[1] & FIELD_PIXEL_MASK;
     actor = Actor_Lookup(Party_GetLeaderActor());
-    centerX = (actor->x.fixed - ax) / Q16_ONE;
-    centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / Q16_ONE - 16;
+    centerX = (actor->x.fixed - ax) / FIXED_ONE;
+    centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE - 16;
     *scanlineData++ = state->active;
     *scanlineData++ = state->mask;
     value = state->value;
@@ -267,8 +267,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     cameraX = view[0] & FIELD_PIXEL_MASK;
     cameraY8 = view[1] & FIELD_PIXEL_MASK;
   }
-    centerX = (state->centreX - cameraX) / Q16_ONE;
-    centerY = (state->centreY - cameraY8) / Q16_ONE - 16;
+    centerX = (state->centreX - cameraX) / FIXED_ONE;
+    centerY = (state->centreY - cameraY8) / FIXED_ONE - 16;
     k = -centerY * 2 + gFrameCount;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
@@ -322,8 +322,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     ax = view[0] & FIELD_PIXEL_MASK;
     cameraY = view[1] & FIELD_PIXEL_MASK;
     actor = Actor_Lookup(Party_GetLeaderActor());
-    centerX = (actor->x.fixed - ax) / Q16_ONE;
-    centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / Q16_ONE - 16;
+    centerX = (actor->x.fixed - ax) / FIXED_ONE;
+    centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE - 16;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
     value = state->value;
@@ -361,8 +361,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
     ax = view[0] & FIELD_PIXEL_MASK;
     cameraY = view[1] & FIELD_PIXEL_MASK;
     actor = Actor_Lookup(Party_GetLeaderActor());
-    centerX = (actor->x.fixed - ax) / Q16_ONE;
-    centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / Q16_ONE - 8;
+    centerX = (actor->x.fixed - ax) / FIXED_ONE;
+    centerY = ((actor->z.fixed - actor->y.fixed) - cameraY) / FIXED_ONE - 8;
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
     value = state->value;

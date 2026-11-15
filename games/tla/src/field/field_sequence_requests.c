@@ -128,10 +128,10 @@ void Actor_PlaySoundInView(struct Actor *actor, s32 sound) {
 
   if (actor == 0 || focus == 0)
     return;
-  if (ABS(focus->x.fixed - actor->x.fixed) > px(152))
+  if (ABS(focus->x.fixed - actor->x.fixed) > toFIXED(152))
     return;
   if (ABS((focus->z.fixed - focus->y.fixed) -
-          (actor->z.fixed - actor->y.fixed)) > px(112))
+          (actor->z.fixed - actor->y.fixed)) > toFIXED(112))
     return;
   Sound_PlayFar(sound);
 }

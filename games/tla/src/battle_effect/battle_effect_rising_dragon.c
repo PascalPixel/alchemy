@@ -91,8 +91,8 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
     Render_BuildQuadStrip(gMapGridCellBuffer + 0x2000, 4, 32, 32);
 
     for (frame = 0; frame != args->variant * 10 + 60; frame++) {
-      Transform_Reset();
-      Transform_SetLookAt(camera->eye, camera->focus);
+      Matrix_Initialize();
+      Matrix_SetLookAt(camera->eye, camera->focus);
       if (frame == 0) {
         arcs[0] = 0;
         arcs[1] = 0;
@@ -115,8 +115,8 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
 
           spark = &work->particles[i * 32 + j];
 
-          spark->x = px(hit.x / 2);
-          spark->y = px(hit.y - 16);
+          spark->x = INTtoFIXED(hit.x / 2);
+          spark->y = INTtoFIXED(hit.y - 16);
           angle = Random16();
           speed &= Random16();
           spark->velocityX = (Trig_Sin(angle) * (speed += 127)) >> 6;
@@ -132,12 +132,13 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           } else {
             Sound_PlayFar(SE_CLATTER);
           }
-          BattleEffect_StartActorMotion(args->targets[0], 1, px(2), px(4),
-                                        px(4), 150);
+          BattleEffect_StartActorMotion(args->targets[0], 1, toFIXED(2),
+                                        toFIXED(4), toFIXED(4), 150);
         } else {
           EFFECT_SHOW_DAMAGE(SE_CLATTER);
-          BattleEffect_StartActorMotion(args->targets[0], 1, px(2), px(4),
-                                        px(7), TARGET_ANCHOR_PERCENT);
+          BattleEffect_StartActorMotion(args->targets[0], 1, toFIXED(2),
+                                        toFIXED(4), toFIXED(7),
+                                        TARGET_ANCHOR_PERCENT);
         }
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
@@ -150,7 +151,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                   Q_16_16_UPPER_HALF(mote->x) - size / 2,
                   Q_16_16_UPPER_HALF(mote->y) - size, size, size * 2);
-          BattleEffectKernels_IntegrateVector2(mote, 60, px(1) / 16);
+          BattleEffectKernels_IntegrateVector2(mote, 60, toFIXED(1) / 16);
           mote->variant--;
         }
       }
@@ -200,21 +201,21 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           if (width > 32) {
             width = 32;
           }
-          width = width * scale / (Q16_ONE);
+          width = width * scale / (FIXED_ONE);
           start = -(width / 2);
           for (i = 0; i != 2; i++) {
             struct StripVertex *corner = stripA + (j * 2 + i);
 
-            corner->x = (Q_16_16_TO_INT(Trig_Cos(angle) *
-                                        (distance + start + i * width))) -
-                        distance;
-            corner->y = -(
-                Q_16_16_TO_INT(Trig_Sin(angle) * (height + start + i * width)));
+            corner->x =
+                (FIXEDtoINT(Trig_Cos(angle) * (distance + start + i * width))) -
+                distance;
+            corner->y =
+                -(FIXEDtoINT(Trig_Sin(angle) * (height + start + i * width)));
             corner->z = 0;
           }
           if (j == 32) {
-            endX[0] = (Q_16_16_TO_INT(Trig_Cos(angle) * distance)) - distance;
-            endY[0] = -(Q_16_16_TO_INT(Trig_Sin(angle) * height));
+            endX[0] = (FIXEDtoINT(Trig_Cos(angle) * distance)) - distance;
+            endY[0] = -(FIXEDtoINT(Trig_Sin(angle) * height));
           }
         }
         for (j = 0; j != DRAGON_SEGMENTS; j++) {
@@ -232,23 +233,23 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           if (width > 24) {
             width = 24;
           }
-          width = width * scale / (Q16_ONE);
+          width = width * scale / (FIXED_ONE);
           start = -(width / 2);
           for (i = 0; i != 2; i++) {
             struct StripVertex *stripB =
                 (struct StripVertex *)Ram_MapCellBuffer + 66;
             struct StripVertex *corner = stripB + (j * 2 + i);
 
-            corner->x = (Q_16_16_TO_INT(Trig_Cos(angle) *
-                                        (distance + start + i * width))) -
-                        distance;
+            corner->x =
+                (FIXEDtoINT(Trig_Cos(angle) * (distance + start + i * width))) -
+                distance;
             corner->y =
-                Q_16_16_TO_INT(Trig_Sin(angle) * (height + start + i * width));
+                FIXEDtoINT(Trig_Sin(angle) * (height + start + i * width));
             corner->z = 0;
           }
           if (j == 32) {
-            endX[1] = (Q_16_16_TO_INT(Trig_Cos(angle) * distance)) - distance;
-            endY[1] = Q_16_16_TO_INT(Trig_Sin(angle) * height);
+            endX[1] = (FIXEDtoINT(Trig_Cos(angle) * distance)) - distance;
+            endY[1] = FIXEDtoINT(Trig_Sin(angle) * height);
           }
         }
 
@@ -268,20 +269,20 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           texture.pixels = work->sheet;
           model->mesh = stripMesh;
           model->scrollU = 127 & ~(frame << 3);
-          Transform_Reset();
+          Matrix_Initialize();
           if (args->side == EFFECT_SIDE_ENEMIES) {
-            Transform_ApplyTranslation(px(source.x / 2 - 68),
-                                       px(source.y) - px(96), 0);
+            Matrix_Translate(INTtoFIXED(source.x / 2 - 68),
+                             INTtoFIXED(source.y) - toFIXED(96), 0);
           } else {
-            Transform_ApplyTranslation(px(source.x / 2 - 52),
-                                       px(source.y) - px(96), 0);
+            Matrix_Translate(INTtoFIXED(source.x / 2 - 52),
+                             INTtoFIXED(source.y) - toFIXED(96), 0);
           }
-          Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
+          Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
           if (args->side == EFFECT_SIDE_PARTY) {
-            Transform_ApplyYaw(TRIG_TURN / 2);
+            Matrix_RotateY(DEGtoANG(180));
           }
-          Transform_ApplyRoll(i * 14192 - TRIG_TURN / 16);
-          Transform_ApplyUniformScale(Q16_ONE * 4);
+          Matrix_RotateZ(i * 14192 - TRIG_TURN / 16);
+          Matrix_ScaleUniform(FIXED_ONE * 4);
           Render_TransformVertices(stripA + i * 66, vertices, 66);
           Render_DrawModelList(model);
           if (frame < i * 16 + 40) {
@@ -290,9 +291,9 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
             model->scrollU = 0;
             model->mesh = gBattleEffect_SquareMesh;
             texture.pixels = work->sheet + RISING_DRAGON_CLAW_SLASH_PICTURES;
-            Transform_ApplyTranslation(px(endX[i]), px(endY[i]), 0);
-            Transform_ApplyRoll(0x3060 - (arcs[i * 2] << 5));
-            Transform_ApplyUniformScale(20768);
+            Matrix_Translate(INTtoFIXED(endX[i]), INTtoFIXED(endY[i]), 0);
+            Matrix_RotateZ(0x3060 - (arcs[i * 2] << 5));
+            Matrix_ScaleUniform(20768);
             Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
             Render_DrawModelList(model);
           }
@@ -366,15 +367,15 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
     // and comes down at it for 32 frames.
     if (frame == 0) {
       if (args->side == EFFECT_SIDE_ENEMIES)
-        work->particles[0].x = px(target.x + 40);
+        work->particles[0].x = INTtoFIXED(target.x + 40);
       else
-        work->particles[0].x = px(target.x - 168);
-      work->particles[0].y = -px(100);
+        work->particles[0].x = INTtoFIXED(target.x - 168);
+      work->particles[0].y = -toFIXED(100);
       if (args->side == EFFECT_SIDE_ENEMIES)
-        work->particles[0].velocityX = -px(6);
+        work->particles[0].velocityX = -toFIXED(6);
       else
-        work->particles[0].velocityX = px(6);
-      work->particles[0].velocityY = px(8);
+        work->particles[0].velocityX = toFIXED(6);
+      work->particles[0].velocityY = toFIXED(8);
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
     }
     if (frame < 32)
@@ -390,14 +391,15 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
       s32 level = FIGURE_FRAMES - frame;
 
       REG_BLDALPHA = ((16 - level / 2) << 8) | level;
-      BattleEffectKernels_IntegrateVector2(&work->particles[0], 60, -px(1) / 2);
+      BattleEffectKernels_IntegrateVector2(&work->particles[0], 60,
+                                           -toFIXED(1) / 2);
     }
 
     // The sway, and the canvas moved with the figure.
     x = Q_16_16_UPPER_HALF(work->particles[0].x) +
-        (Q_16_16_TO_INT(Trig_Sin(frame << 8) << 3));
+        (FIXEDtoINT(Trig_Sin(frame << 8) << 3));
     y = Q_16_16_UPPER_HALF(work->particles[0].y) +
-        (Q_16_16_TO_INT(Trig_Cos(frame << 8) << 3));
+        (FIXEDtoINT(Trig_Cos(frame << 8) << 3));
     REG_BG2X = -x << 8;
 
     // The body, and the arm raised until frame 48.

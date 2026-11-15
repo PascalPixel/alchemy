@@ -84,7 +84,7 @@ static inline s32 Task_AddOrUpdateFrame(TaskFunc func, s32 priority) {
 /// `Field_SetCellBehaviorAt(0, 544, 288, CELL_BEHAVIOR_CLIMB)`.
 static inline void Field_SetCellBehaviorAt(s32 layer, s32 x, s32 y,
                                            s32 behavior) {
-  MapGrid_SetCellBehaviorAt(layer, px(x), px(y), behavior);
+  MapGrid_SetCellBehaviorAt(layer, toFIXED(x), toFIXED(y), behavior);
 }
 
 /// Changes one 512-pixel tile of the World Map, drawn at once when it's next to
@@ -110,15 +110,14 @@ static inline void FieldActor_WatchAndStartScript(s32 object, s32 target,
 
 /// Moves a point radius, in 16.16 fixed point, along a heading on the ground
 /// plane (Vector_AddPolarOffset).
-static inline void
-FieldVector_AddPolarOffsetFixed(s32 radius, s32 heading,
-                                struct FieldPosition *probe) {
+static inline void FieldVector_AddPolarOffsetFX(s32 radius, s32 heading,
+                                                struct FieldPosition *probe) {
   Vector_AddPolarOffset(radius, heading, probe);
 }
 
 /// Moves a point a radius in whole pixels along a heading:
 /// `FieldVector_AddPolarOffset(16, heading, &probe)`.
 #define FieldVector_AddPolarOffset(radius, heading, probe)                     \
-  FieldVector_AddPolarOffsetFixed(Q16(radius), heading, probe)
+  FieldVector_AddPolarOffsetFX(toFIXED(radius), heading, probe)
 
 #endif

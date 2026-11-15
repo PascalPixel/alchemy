@@ -407,14 +407,14 @@ s32 Scene_Initialize(void) {
       Actor_SetMovementTypeById(ACTOR_STUBBORN_TRAVELER, 3);
     } else {
       turn = FACING_SOUTHEAST;
-      Actor_SetPositionAndFacing(ACTOR_DISAPPOINTED_TRAVELER, px(306), px(335),
-                                 turn);
+      Actor_SetPositionAndFacing(ACTOR_DISAPPOINTED_TRAVELER, toFIXED(306),
+                                 toFIXED(335), turn);
       {
         s32 angle = FACING_SOUTHWEST;
-        s32 z = px(336);
+        s32 z = toFIXED(336);
 
         Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_STUBBORN_TRAVELER,
-                                                       px(345), z, angle);
+                                                       toFIXED(345), z, angle);
       }
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_DISAPPOINTED_TRAVELERS_BED), 0);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_STUBBORN_TRAVELERS_BED), 0);

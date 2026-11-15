@@ -1188,7 +1188,7 @@ static void Kalay_PrepareTown(void) {
     sprite->state = 0;
     nut->active = 1;
     nut->mode = 0;
-    nut->y = px(10);
+    nut->y = toFIXED(10);
     nut->visible = 1;
     glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(ITEM_NUT);
@@ -1508,7 +1508,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Event_Wait(60);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_WalkToAndWait(ACTOR_IVAN, 212, 268);
@@ -1737,15 +1737,15 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_GARET, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_IVAN, actor->x.fixed, actor->z.fixed);
   }
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
-    Actor_SetPositionFixed(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
+    Actor_SetPositionFX(ACTOR_MIA, actor->x.fixed, actor->z.fixed);
   }
   Actor_SetSpeed(ACTOR_GARET, 0.8);
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
@@ -1981,10 +1981,10 @@ static void Kalay_PushTunnelStatue(void) {
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   direction = FACING_INDEX(leader->facing);
-  leaderX = leader->x.part[0].pixel;
+  leaderX = leader->x.part[0].integer;
   probeStep = gKalay_TileStepByFacing[direction];
-  statue = Actor_FindAtCell((leaderX + (WHOLE_PIXELS(probeStep))) >> 4,
-                            (leader->z.part[0].pixel + (s16)probeStep) >> 4);
+  statue = Actor_FindAtCell((leaderX + (FIXEDtoINT(probeStep))) >> 4,
+                            (leader->z.part[0].integer + (s16)probeStep) >> 4);
   if (statue != NULL) {
     statue->layer = 2;
     Actor_StepFrom(&destination, statue, gKalay_TileStepByFacing[direction]);
@@ -1992,14 +1992,14 @@ static void Kalay_PushTunnelStatue(void) {
       Actor_SelectAnimation(leader, ANIM_PUSH);
       wait(15);
       Sound_Play(SE_PUSH);
-      statue->speedLimit = px(1) / 5;
-      statue->acceleration = px(1) / 5;
-      FieldActor_SetMoveTargetFixed(statue, destination.x, destination.y,
-                                    destination.z);
-      leader->speedLimit = px(1) / 5;
-      leader->acceleration = px(1) / 5;
-      FieldActor_SetMoveTargetFixed(leader, destination.x, destination.y,
-                                    destination.z);
+      statue->speedLimit = toFIXED(1) / 5;
+      statue->acceleration = toFIXED(1) / 5;
+      FieldActor_SetMoveTargetFX(statue, destination.x, destination.y,
+                                 destination.z);
+      leader->speedLimit = toFIXED(1) / 5;
+      leader->acceleration = toFIXED(1) / 5;
+      FieldActor_SetMoveTargetFX(leader, destination.x, destination.y,
+                                 destination.z);
       Actor_WaitForMove(statue);
       Scene_PlayQueuedMusic();
       statue->x.fixed = destination.x;
@@ -2045,8 +2045,8 @@ static void Kalay_UpdateTunnelPassages(void) {
     span = 2;
     MapGrid_CopyCellsTo(16, 109, 13, 109, 3, span);
     Event_Wait(40);
-    frostEffect->scaleX = Q16_ONE / 10;
-    frostEffect->scaleY = Q16_ONE / 10;
+    frostEffect->scaleX = FIXED_ONE / 10;
+    frostEffect->scaleY = FIXED_ONE / 10;
     Actor_SetPosition(ACTOR_PUDDLE, 150, 728);
     Actor_SetScript(ACTOR_PUDDLE, gKalay_FrostGrowScript);
     height = 1;
@@ -2150,8 +2150,8 @@ static void Kalay_UpdateTunnelParticle(struct Actor *particle) {
     particle->x.fixed = 0;
     particle->y.fixed = 0;
   } else {
-    particle->scaleX += Q16_ONE / 32;
-    particle->scaleY += Q16_ONE / 32;
+    particle->scaleX += FIXED_ONE / 32;
+    particle->scaleY += FIXED_ONE / 32;
   }
   particle->x.fixed += particle->velocityX;
   particle->y.fixed += particle->velocityY;
@@ -2173,12 +2173,12 @@ static void Kalay_UpdateTunnelEmitters(void) {
 
   firstEmitter = Actor_Get(ACTOR_FIRST_STATUE);
   secondEmitter = Actor_Get(ACTOR_SECOND_STATUE);
-  if ((u32)(firstEmitter->x.part[0].pixel - 381) <= 12 &&
-      firstEmitter->z.part[0].pixel > 777) {
+  if ((u32)(firstEmitter->x.part[0].integer - 381) <= 12 &&
+      firstEmitter->z.part[0].integer > 777) {
     firstEmitter->sprite->image.priority =
         Actor_Get(ACTOR_PARTY_LEADER)->sprite->image.priority;
   } else if (!GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) &&
-             firstEmitter->x.part[0].pixel <= 245 && (gFrameCount & 1) == 0) {
+             firstEmitter->x.part[0].integer <= 245 && (gFrameCount & 1) == 0) {
     if (!Event_GetFlag(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED)) {
       Scene_QueueMusic(-1);
       Sound_Play(SE_WATER_DRAIN);
@@ -2188,7 +2188,7 @@ static void Kalay_UpdateTunnelEmitters(void) {
                               firstEmitter->z.fixed);
   }
   if (!GameFlag_Get(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) &&
-      secondEmitter->x.part[0].pixel <= 709 && (gFrameCount & 1) == 0) {
+      secondEmitter->x.part[0].integer <= 709 && (gFrameCount & 1) == 0) {
     if (!Event_GetFlag(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED)) {
       Scene_QueueMusic(-1);
       Sound_Play(SE_WATER_DRAIN);
@@ -2205,16 +2205,17 @@ static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
   struct Actor *particle;
 
   // It starts up to 7 pixels above 16 over the height.
-  particle = FieldActor_Create(SPRITE_DUST_PUFF, x - px(8),
-                               px(Random_Below(8)) + height + px(16), z);
+  particle =
+      FieldActor_Create(SPRITE_DUST_PUFF, x - toFIXED(8),
+                        toFIXED(Random_Below(8)) + height + toFIXED(16), z);
   if (particle != NULL) {
     particle->motionFlags = 0;
     particle->sprite->image.priority = 2;
     Actor_SetSpriteColor(particle, SPRITE_COLOR_BLUE_TINT);
     Actor_SetSpriteFlags(particle, 0);
     // It drifts up to a pixel left and up to three up or down each frame.
-    particle->velocityX = px((Random_Below(2)) - 1);
-    particle->velocityY = px((Random_Below(6)) - 3);
+    particle->velocityX = toFIXED((Random_Below(2)) - 1);
+    particle->velocityY = toFIXED((Random_Below(6)) - 3);
     particle->timer = 20;
     particle->frozen = 1;
     Actor_SelectAnimation(particle, 1);
@@ -2233,7 +2234,7 @@ static void Kalay_UpdateNutOrbit(void) {
   }
   effect->x = effect->orbitCenterX + Trig_Cos(effect->orbitAngle) * 2;
   effect->y = effect->orbitCenterY + offset;
-  sprite->rotation = Trig_Cos(effect->orbitAngle + TRIG_TURN / 2) >> 3;
+  sprite->rotation = Trig_Cos(effect->orbitAngle + DEGtoANG(180)) >> 3;
   effect->orbitAngle += Random_Below(512) + Random_Below(512) + TRIG_TURN / 64;
 }
 
@@ -2245,7 +2246,7 @@ static void Kalay_FreezePuddle(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 9, 45);
   if (effect != NULL) {
     Actor_SetSpriteFlags(effect, 0);
-    effect->y.fixed -= px(32);
+    effect->y.fixed -= toFIXED(32);
     effect->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
   GameFlag_Set(FLAG_TUNNEL_PUDDLE_FROZEN);

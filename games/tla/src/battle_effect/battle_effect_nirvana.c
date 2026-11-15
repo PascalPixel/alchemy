@@ -406,12 +406,11 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
         }
         for (i = 0, x = centre - 14; i != 2; i++, x += 14) {
           if (i == 0)
-            BattleEffect_BuildBlitter(
-                104, 7, 7, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
+            EFFECT_LOAD_BLITTER(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y, mode);
           else
-            BattleEffect_BuildBlitter(
-                104, 7, 7,
-                COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X, mode);
+            EFFECT_LOAD_BLITTER(
+                104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+                mode);
           draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
           draw[0](canvas, work->sheet, x, 104 - height, 14, height);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);

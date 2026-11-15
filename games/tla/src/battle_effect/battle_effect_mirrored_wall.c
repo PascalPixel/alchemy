@@ -27,9 +27,6 @@ enum LobbedShellsMode {
 /// slot 26), out[1] adds the colours (slot 47). BattleEffect_LoadBlitter takes
 /// each slot's heap offset and the blitter flags.
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
-  // Unused: gives the stack frame its 4 bytes.
-  UNUSED u8 unused[4];
-
   if (flip == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
     out[0] = Ram_HeapSlots->ramCode;

@@ -119,14 +119,10 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
           x -= spread / 2;
           x -= gBattleEffect_GlintPictureWidths[kind] >> 1;
           flip = Random16();
-
-          /* FAKEMATCH(dead): an empty once-only loop. */
-          do {
-          } while (0);
-          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
-                                    gBolt_GlintFlips[flip & 3] |
-                                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                                    gBolt_GlintModes[args->variant]);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                              gBolt_GlintFlips[flip & 3] | COMPOSITE_CLIP_X |
+                                  COMPOSITE_CLIP_Y,
+                              gBolt_GlintModes[args->variant]);
           DRAW_GLINT(canvas, work->sheet + gBattleEffect_GlintPictures[kind], x,
                      y, gBattleEffect_GlintPictureWidths[kind],
                      gBattleEffect_GlintPictureHeights[kind]);

@@ -572,9 +572,15 @@ enum TargetStrikeStyle {
        ->draw)
 
 /// Builds a blitter for the canvas in heap slot `slot`, for one clip, mirror
-/// and blend mode (BLITTER_ADDITIVE to BLITTER_COPY).
+/// and blend mode (BLITTER_ADDITIVE to BLITTER_COPY): where both are constants
+/// they go packed into one word to BattleEffect_LoadBlitter, the shorter call,
+/// and otherwise to BattleEffect_BuildBlitter as they are. The name is ours:
+/// every glint draw and mirrored pair that picks its flags or its mode at run
+/// time is written so.
 #define EFFECT_LOAD_BLITTER(slot, flags, mode)                                 \
-  BattleEffect_LoadBlitter(slot, (mode) << 4 | (flags))
+  (__builtin_constant_p((flags) | (mode) << 4)                                 \
+       ? BattleEffect_LoadBlitter(slot, (flags) | (mode) << 4)                 \
+       : BattleEffect_BuildBlitter(slot, 7, 7, flags, mode))
 
 /// How the canvas transfer task treats the canvas after each copy
 /// (work->transferMode); work->transferValue is its argument.

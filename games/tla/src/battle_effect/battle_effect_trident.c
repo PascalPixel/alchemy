@@ -424,16 +424,10 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
                 (gBattleEffect_GlintPictureWidths[k] >> 1);
         s32 y = (i << 5) + (FIXEDtoINT(Trig_Cos(angle) << 4)) -
                 (gBattleEffect_GlintPictureHeights[k] >> 1);
+        u32 flip = Random16();
 
-        {
-          s32 c = gTrident_GlintFlips[Random16() & 3] | 3;
-
-          /* FAKEMATCH(dead): an empty once-only block before the blitter call.
-           */
-          do {
-          } while (0);
-          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, c, 1);
-        }
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                            gTrident_GlintFlips[flip & 3] | 3, 1);
         ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
             canvas, work->sheet + gBattleEffect_GlintPictures[k], x, y,
             gBattleEffect_GlintPictureWidths[k],

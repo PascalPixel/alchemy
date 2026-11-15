@@ -569,10 +569,6 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   scrollX = (side & 1) * 192 - 64;
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
-  /* FAKEMATCH(dead): a never-taken five-argument call reserves the stack
-   * frame's outgoing argument word at sp+0. */
-  if (0)
-    BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY, 75);
   REG_BG2PA = 0x48;

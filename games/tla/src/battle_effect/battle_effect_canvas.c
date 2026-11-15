@@ -388,8 +388,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
             y = a + (FIXEDtoINT(cy)) -
                 (gBattleEffect_GlintPictureHeights[t] >> 1);
           }
-          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
-                                    gEclipse_GlintFlips[Random16() & 3] | 3, 1);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                              gEclipse_GlintFlips[Random16() & 3] | 3, 1);
           ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
               canvas,
               work->sheet + ECLIPSE_TORNADO_PICTURES +

@@ -1240,14 +1240,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             s32 glintY = FIXED_INTEGER_PART(p->y) -
                          ((Trig_Cos(angle) * radius) >> 17) -
                          (gBattleEffect_GlintPictureHeights[glint] >> 1);
+            u32 flip = Random16();
 
-            BattleEffect_BuildBlitter(
-                188, 7, 7, gProjectileVolley_GlintFlips[Random16() & 3] | CLIP,
-                0);
-            do {
-              /* FAKEMATCH(dead): an empty once-only block before the glints;
-               * without it, 1895 of 2278 instructions differ in tla-en. */
-            } while (0);
+            EFFECT_LOAD_BLITTER(
+                188, gProjectileVolley_GlintFlips[flip & 3] | CLIP, 0);
             DRAW_ALTERNATE(
                 canvas, work->sheet + 0x22 + gBattleEffect_GlintPictures[glint],
                 glintX, glintY, gBattleEffect_GlintPictureWidths[glint],

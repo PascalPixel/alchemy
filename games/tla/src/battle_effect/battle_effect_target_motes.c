@@ -224,10 +224,10 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
           /* FAKEMATCH(barrier): an empty asm through h, the same for the height
            * table. */
           __asm__("" : "=r"(h) : "0"(h));
-          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
-                                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                        gTargetMotes_GlintFlips[Random16() & 3],
-                                    BLITTER_MAX);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                              COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                                  gTargetMotes_GlintFlips[Random16() & 3],
+                              BLITTER_MAX);
           ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
               canvas,
               work->sheet + gBattleEffect_GlintPictures[frame & 3] +

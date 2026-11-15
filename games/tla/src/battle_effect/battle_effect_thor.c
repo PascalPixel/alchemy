@@ -532,21 +532,16 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           s32 angle;
           s32 x;
           s32 y;
-          s32 never = 0;
-          s32 neverToo = 0;
+          u32 flip;
           cell = i & 3;
           angle = Random16() & TRIG_ANGLE_MASK;
           x = (FIXEDtoINT(Trig_Sin(angle) * 8)) + formationScreenX -
               (gBattleEffect_GlintPictureWidths[cell] >> 1);
           y = (FIXEDtoINT(Trig_Cos(angle) * 40)) -
               (gBattleEffect_GlintPictureHeights[cell] >> 1);
-          /* FAKEMATCH(dead): a never-true test of never and neverToo, both 0,
-           * that clears y. */
-          if (never || neverToo) {
-            y = 0;
-          }
-          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
-                                    3 | gThor_CrackleFlips[Random16() & 3], 1);
+          flip = Random16();
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                              3 | gThor_CrackleFlips[flip & 3], 1);
           BLITTER_ALTERNATE(
               canvas, Ram_MapCellBuffer + gBattleEffect_GlintPictures[cell], x,
               y + 56, gBattleEffect_GlintPictureWidths[cell],

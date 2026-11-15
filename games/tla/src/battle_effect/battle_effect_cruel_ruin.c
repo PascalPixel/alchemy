@@ -486,8 +486,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
       s32 mode;
 
       for (i = 0, mode = BLITTER_MAX; i != 4; i++) {
-        BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
-                                  gElementBurst_GlintFlips[i] | CLIP, mode);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                            gElementBurst_GlintFlips[i] | CLIP, mode);
         draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
         draw[1](canvas,
                 work->sheet + picture * PICTURE_BYTES(ELEMENT_BURST_SPARK),

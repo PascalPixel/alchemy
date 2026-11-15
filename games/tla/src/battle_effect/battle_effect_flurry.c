@@ -382,14 +382,10 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
           s32 y = spot.y - ((Trig_Cos(angle) * radius) >> 17) -
                   gBattleEffect_GlintPictureHeights[cel] / 2;
           u32 flip = Random16();
-
-          /* FAKEMATCH(dead): an empty once-only loop. */
-          do {
-          } while (0);
-          BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
-                                    gFlurry_GlintFlips[flip & 3] |
-                                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
-                                    BLITTER_ADDITIVE);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                              gFlurry_GlintFlips[flip & 3] | COMPOSITE_CLIP_X |
+                                  COMPOSITE_CLIP_Y,
+                              BLITTER_ADDITIVE);
           ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
               canvas, work->sheet + gBattleEffect_GlintPictures[cel], x, y,
               gBattleEffect_GlintPictureWidths[cel],

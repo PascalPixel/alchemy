@@ -173,11 +173,6 @@ void BattleEffect_RunMadZephyr(struct BattleEffectParams *args) {
 #define gMotes ((struct Particle *)Ram_MapCellBuffer)
 #define gSparks ((struct Particle *)(Ram_MapCellBuffer + 0x3800))
 
-#define BUILD_BLITTER(slot, width, height, flags, mode)                        \
-  do {                                                                         \
-    BattleEffect_BuildBlitter(slot, width, height, flags, mode);               \
-  } while (0)
-
 /// The motes in PARTICLES, 128 for each target, then the strike sparks.
 #define TARGET_STRIKE_MOTES_PER_TARGET 128
 /// The smoke pictures in the sheet: six 24x48 puffs.
@@ -481,18 +476,14 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       } else {
         stage = 3;
       }
-      BUILD_BLITTER(HEAP_SLOT_RAM_CODE, 7, 7, CLIP,
-                    RECORD(mode, TARGET_STRIKE_COMPOSITE));
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, CLIP,
+                          RECORD(mode, TARGET_STRIKE_COMPOSITE));
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80,
                targetPosition.x / 2 - TARGET_STRIKE_BITE_WIDTH, 56, 18,
                TARGET_STRIKE_BITE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-      BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 7, 7,
-                                CLIP | COMPOSITE_FLIP_X,
-                                RECORD(mode, TARGET_STRIKE_COMPOSITE));
-      do {
-        /* FAKEMATCH(dead): an empty once-only block. */
-      } while (0);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, CLIP | COMPOSITE_FLIP_X,
+                          RECORD(mode, TARGET_STRIKE_COMPOSITE));
       gBlitter(canvas, work->sheet + stage * 864 + 0xc80, targetPosition.x / 2,
                56, TARGET_STRIKE_BITE_WIDTH, TARGET_STRIKE_BITE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -562,18 +553,16 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         s32 radius = Random16() & range;
         s32 x;
         s32 y;
+        u32 flip;
 
         x = center.x / 2 + (Trig_Sin(angle) * (radius + 4) >> 17) -
             (gBattleEffect_GlintPictureWidths[image] / 2);
         y = center.y - (Trig_Cos(angle) * (radius + 4) >> 17) -
             (gBattleEffect_GlintPictureHeights[image] / 2);
-        BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
-                                  gTargetStrike_GlintDrawFlags[Random16() & 3] |
-                                      CLIP,
-                                  BLITTER_ADDITIVE);
-        do {
-          /* FAKEMATCH(dead): an empty once-only block. */
-        } while (0);
+        flip = Random16();
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                            gTargetStrike_GlintDrawFlags[flip & 3] | CLIP,
+                            BLITTER_ADDITIVE);
         gBlitterAlternate(canvas,
                           work->sheet + gBattleEffect_GlintPictures[image], x,
                           y, gBattleEffect_GlintPictureWidths[image],
@@ -1142,5 +1131,4 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
 #undef STRIKE_STAR
 #undef gMotes
 #undef gSparks
-#undef BUILD_BLITTER
 #undef gFlecks

@@ -245,8 +245,6 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
   s32 target;
   s32 i;
   s32 j;
-  u8 *widths;
-  u8 *heights;
   s32 limit;
   s32 row;
   s32 column;
@@ -817,37 +815,31 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       if (mode == BURST_SHOWER_MODE_CHAR) {
         for (i = 0; i != args->targetCount; i++) {
           if (frame >= i * 4 + 16 && frame < shots - 8) {
-            // Default: set for real below.
-            widths = NULL;
-            heights = NULL;
             for (k = 0; k != 3; k++) {
               s32 cel = i & 3;
               s32 angle;
               s32 x;
               s32 y;
+              u32 flip;
 
-              // Default: set for real below.
-              widths = NULL;
-              heights = NULL;
               angle = Random16() & TRIG_ANGLE_MASK;
               x = FIXEDtoINT(Trig_Sin(angle) << 4);
               x += targets[i][0] / 2;
-              widths = gBattleEffect_GlintPictureWidths;
-              x -= widths[cel] >> 1;
+              x -= gBattleEffect_GlintPictureWidths[cel] >> 1;
               y = FIXEDtoINT(Trig_Cos(angle) << 4);
               y += targets[i][1];
-              heights = gBattleEffect_GlintPictureHeights;
-              y -= heights[cel] >> 1;
+              y -= gBattleEffect_GlintPictureHeights[cel] >> 1;
 
               EFFECT_RELEASE_BLITTERS();
-              BattleEffect_BuildBlitter(
-                  188, 7, 7,
-                  gProjectileVolleyB_GlintFlips[Random16() & 3] |
-                      EFFECT_CLIP_BOUNDS,
-                  BLITTER_ADDITIVE);
+              flip = Random16();
+              EFFECT_LOAD_BLITTER(188,
+                                  gProjectileVolleyB_GlintFlips[flip & 3] |
+                                      EFFECT_CLIP_BOUNDS,
+                                  BLITTER_ADDITIVE);
               ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
                   canvas, work->sheet + gBattleEffect_GlintPictures[cel], x, y,
-                  widths[cel], heights[cel]);
+                  gBattleEffect_GlintPictureWidths[cel],
+                  gBattleEffect_GlintPictureHeights[cel]);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
               BattleEffect_FetchRectangleBlitters(args->side, pair);
             }

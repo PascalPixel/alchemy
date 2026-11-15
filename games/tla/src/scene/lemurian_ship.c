@@ -870,9 +870,11 @@ void LemurianShip_ParchHold(void) {
   Field_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
   Actor_SetPositionFixed(gMainRoutineWork.leaderActorId, leader->x.fixed,
                          leader->z.fixed + 0xfed00000);
-  object = ((struct Actor *)Actor_GetById(64));
-  Actor_SetPositionFixed(64, object->x.fixed, object->z.fixed + 0xfed00000);
-  FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(64)), 0);
+  object = ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR));
+  Actor_SetPositionFixed(FIELD_TREASURE_ACTOR, object->x.fixed,
+                         object->z.fixed + 0xfed00000);
+  FieldActor_SetSpriteColor(
+      ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR)), 0);
   wait(10);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
   wait(1);
@@ -1584,13 +1586,15 @@ void LemurianShip_SetUpHold(void) {
       ->priorityFlags |= 32;
   LEMURIAN_SHIP_TASK_ADD(LemurianShip_RippleAroundLeader, 0x480);
   if (Event_GetFlag(FLAG_AQUA_HYDRA_BEATEN)) {
-    object = ((struct Actor *)Actor_GetById(64));
+    object = ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR));
     object->motionFlags = 0;
-    Actor_SetPositionAndResetMotion(((struct Actor *)Actor_GetById(64)),
-                                    px(136), px(-32), px(392));
+    Actor_SetPositionAndResetMotion(
+        ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR)), px(136), px(-32),
+        px(392));
     object->groundHeight = 0xfff00000;
-    Actor_SetSpritePriority(64, 3);
-    FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(64)), 1);
+    Actor_SetSpritePriority(FIELD_TREASURE_ACTOR, 3);
+    FieldActor_SetSpriteColor(
+        ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR)), 1);
     Actor_SetPosition(ACTOR_HOLD_JELLY_A, 0, 0);
     Actor_SetPosition(ACTOR_HOLD_JELLY_B, 0, 0);
     Actor_SetPosition(ACTOR_HOLD_JELLY_C, 0, 0);
@@ -1600,10 +1604,13 @@ void LemurianShip_SetUpHold(void) {
     wait(1);
   }
   if (Event_GetFlag(FLAG_HOLD_PARCHED)) {
-    struct Actor *marker = ((struct Actor *)Actor_GetById(64));
+    struct Actor *marker =
+        ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR));
 
-    Actor_SetPositionFixed(64, marker->x.fixed, marker->z.fixed + 0xfed00000);
-    FieldActor_SetSpriteColor(((struct Actor *)Actor_GetById(64)), 0);
+    Actor_SetPositionFixed(FIELD_TREASURE_ACTOR, marker->x.fixed,
+                           marker->z.fixed + 0xfed00000);
+    FieldActor_SetSpriteColor(
+        ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR)), 0);
     MapGrid_CopyCellAttributes(6, 0, 1, 2, 6, 4);
     MapGrid_SetCameraBounds(0x80000, 0x100000, 0xf80000, 0x1000000);
     FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);

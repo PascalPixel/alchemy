@@ -349,7 +349,7 @@ void Lemuria_DigFifthSpot(void) {
 
   TileCopies_CopyTouchedCells_(59, 64, 4, 3, 49, 71, 2);
   if (Event_GetFlag(0xfbb) == 0) {
-    Actor_SetPosition(69, 808, 1176);
+    Actor_SetPosition(FIELD_TREASURE_ACTOR + 5, 808, 1176);
     if (leader->x.fixed >> 20 == 50 && leader->z.fixed >> 20 == 73) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
@@ -398,35 +398,35 @@ void Lemuria_GrowVine(void) {
 
 /// The Scoop spots: each digs up its treasure actor and sets its flag.
 void Lemuria_ScoopFirstTreasure(s32 a) {
-  Event_DigUpTreasure(a, 64, FLAG_AREA_TEMP_00);
+  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR, FLAG_AREA_TEMP_00);
 }
 
 void Lemuria_ScoopSecondTreasure(s32 a) {
-  Event_DigUpTreasure(a, 65, FLAG_AREA_TEMP_01);
+  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR + 1, FLAG_AREA_TEMP_01);
 }
 
 void Lemuria_ScoopThirdTreasure(s32 a) {
-  Event_DigUpTreasure(a, 66, FLAG_AREA_TEMP_02);
+  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR + 2, FLAG_AREA_TEMP_02);
 }
 
 void Lemuria_ScoopFourthTreasure(s32 a) {
-  Event_DigUpTreasure(a, 67, FLAG_AREA_TEMP_03);
+  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR + 3, FLAG_AREA_TEMP_03);
 }
 
 void Lemuria_ScoopFifthTreasure(s32 a) {
-  Event_DigUpTreasure(a, 68, FLAG_AREA_TEMP_04);
+  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR + 4, FLAG_AREA_TEMP_04);
 }
 
 void Lemuria_ScoopSixthTreasure(s32 a) {
-  Event_DigUpTreasure(a, 70, FLAG_AREA_TEMP_06);
+  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR + 6, FLAG_AREA_TEMP_06);
 }
 
 void Lemuria_ScoopSeventhTreasure(s32 a) {
-  Event_DigUpTreasure(a, 71, FLAG_AREA_TEMP_07);
+  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR + 7, FLAG_AREA_TEMP_07);
 }
 
 void Lemuria_ScoopEighthTreasure(s32 a) {
-  Event_DigUpTreasure(a, 72, FLAG_AREA_TEMP_08);
+  Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR + 8, FLAG_AREA_TEMP_08);
 }
 
 #define FIELD_AT(base, type, off)                                              \
@@ -727,16 +727,16 @@ s32 Scene_Initialize(void) {
     Lemuria_GrowVine();
   }
   if (!Event_GetFlag(FLAG_AREA_TEMP_03)) {
-    Actor_SetWideSprite(67, 0);
+    Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 3, 0);
   }
   if (!Event_GetFlag(FLAG_AREA_TEMP_04)) {
-    Actor_SetWideSprite(68, 0);
+    Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 4, 0);
   }
   if (!Event_GetFlag(FLAG_AREA_TEMP_06)) {
-    Actor_SetWideSprite(70, 0);
+    Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 6, 0);
   }
   if (!Event_GetFlag(FLAG_AREA_TEMP_07)) {
-    Actor_SetWideSprite(71, 0);
+    Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 7, 0);
   }
   if (Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE)) {
     MapGrid_CopyCellsLayered(3, 1, 1, 1, 54, 45);

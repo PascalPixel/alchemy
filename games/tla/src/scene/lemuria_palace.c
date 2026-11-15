@@ -414,7 +414,7 @@ answeredNo:
   Event_SetFlag(0x96a);
   Event_SetFlag(0x96b);
   Party_AddMember(7);
-  Actor_GetById(64)->scaleY = 0;
+  Actor_GetById(FIELD_TREASURE_ACTOR)->scaleY = 0;
   Actor_FaceDirection(ACTOR_LUNPA, FACING_EAST, 0);
   Actor_SetSpeed(ACTOR_HYDROS, 0.7);
   Actor_SetSpeed(ACTOR_LUNPA, 0.7);
@@ -940,11 +940,11 @@ answeredNo:
   Actor_Jump(ACTOR_LUNPA, 4, 20);
   i = 15;
   do {
-    Actor_GetById(64)->scaleY += 4096;
+    Actor_GetById(FIELD_TREASURE_ACTOR)->scaleY += 4096;
     i--;
     wait(1);
   } while (i >= 0);
-  Actor_GetById(64)->scaleY = Q16_ONE;
+  Actor_GetById(FIELD_TREASURE_ACTOR)->scaleY = Q16_ONE;
   Event_Wait(5);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);

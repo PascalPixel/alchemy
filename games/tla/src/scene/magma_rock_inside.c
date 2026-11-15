@@ -2424,7 +2424,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_AREA_TEMP_02)) {
       MagmaRockInside_SwapCells(0, 22, 26, 0);
       MagmaRockInside_SwapCells(0, 25, 26, 0);
-      Actor_SetSpritePriority(64, 3);
+      Actor_SetSpritePriority(FIELD_TREASURE_ACTOR, 3);
     } else {
       CLOSED_BLEND();
     }

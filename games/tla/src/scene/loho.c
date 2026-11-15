@@ -616,7 +616,9 @@ void Loho_MindReadMiner(void) {
 }
 
 /// The Scoop spots: each digs up its treasure actor and sets its flag.
-void Loho_ScoopFirstTreasure(s32 id) { Event_DigUpTreasure(id, 64, 0x300); }
+void Loho_ScoopFirstTreasure(s32 id) {
+  Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR, 0x300);
+}
 
 #define DEFINE_SCOOP_TREASURE(name, n1, n2)                                    \
   void name(s32 id) { Event_DigUpTreasure(id, n1, 0x300 + n2); }
@@ -631,7 +633,7 @@ void Loho_LiftRock(void) {
   Event_SetFlag(FLAG_SCENE_TEMP_01);
   Actor_GetById(ACTOR_BOULDER)->collisionFlags &= ~ACTOR_SOLID;
   if (Event_GetFlag(0xff7) == 0)
-    Actor_SetPosition(66, 520, 136);
+    Actor_SetPosition(FIELD_TREASURE_ACTOR + 2, 520, 136);
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -835,11 +837,11 @@ static __inline__ void Loho_PlaceFacing(s32 id, s32 x, s32 z, u16 facing) {
 s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_LOHO_1) {
     if (!Event_GetFlag(FLAG_AREA_TEMP_00))
-      Actor_SetWideSprite(64, 0);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 0);
     if (!Event_GetFlag(FLAG_AREA_TEMP_01))
-      Actor_SetWideSprite(65, 1);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 1, 1);
     if (!Event_GetFlag(FLAG_AREA_TEMP_02))
-      Actor_SetWideSprite(66, 1);
+      Actor_SetWideSprite(FIELD_TREASURE_ACTOR + 2, 1);
     Loho_SetUpTown();
   } else {
     Loho_SetUpInteriors();

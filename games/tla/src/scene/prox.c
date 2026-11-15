@@ -1797,7 +1797,7 @@ s32 Scene_Initialize(void) {
     scene = gMainRoutineWork.next;
     if (scene == SCENE_PROX) {
       if (!Event_GetFlag(FLAG_DIG_SPOT_SCOOPED))
-        Actor_SetWideSprite(64, 1);
+        Actor_SetWideSprite(FIELD_TREASURE_ACTOR, 1);
       Prox_InitializeTown();
     } else if (scene == SCENE_PROX_MOLD) {
       Prox_InitializeMold();

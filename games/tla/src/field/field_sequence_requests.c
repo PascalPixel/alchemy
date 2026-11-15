@@ -130,17 +130,6 @@ void Event_ShowMessageAndOfferScoop(s32 message) {
     gFieldWork->fieldMenu = 1;
 }
 
-/* VIEW(event_commands): tag struct EventWork1cc as struct
- * EventWork1cc__event_commands; scene/shared.h has another definition; tried
- * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/field_sequence_requests.c:133: redefinition of
- * `struct EventWork1cc'. */
-#define EventWork1cc EventWork1cc__event_commands
-struct EventWork1cc {
-  u8 unused[0x1cc]; ///< no code names it
-  struct CueObject *focus;
-};
-
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 
 /// Plays sound when the actor is in view: within 152 pixels across and 112 up

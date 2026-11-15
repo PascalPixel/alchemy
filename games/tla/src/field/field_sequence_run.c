@@ -494,19 +494,6 @@ done:
   return result;
 }
 
-/* VIEW(field_sequence): tag struct Object as struct Object__field_sequence;
- * scene/shared.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence_run.c:517: structure has no member named
- * `pos'. */
-struct Object__field_sequence {
-  u8 unused[6]; ///< no code names them
-  u16 angle;
-  struct EffectVector pos;
-  u8 unusedAfterPos[14]; ///< no code names them
-  u8 kind;
-};
-
 /// Returns the cell behavior of the map cell 16 pixels ahead of the party
 /// leader when there is something to search there: a fixed search spot whose
 /// ground is level with the leader or up to 64 pixels above it, or a behavior
@@ -514,7 +501,7 @@ struct Object__field_sequence {
 s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   struct FieldWork *work;
   u8 *mapBytes;
-  struct Object__field_sequence *leader;
+  struct Actor *leader;
   union PolarOffsetPosition probePosition;
   u8 *cell;
   s32 collisionCode;
@@ -526,13 +513,13 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   work = gFieldWork;
   mapBytes = (u8 *)Ram_HeapSlots->mapGrid;
   if (leader != 0) {
-    probePosition.vector.x = leader->pos.x;
-    probePosition.vector.y = leader->pos.y;
-    probePosition.vector.z = leader->pos.z;
+    probePosition.vector.x = leader->x.fixed;
+    probePosition.vector.y = leader->y.fixed;
+    probePosition.vector.z = leader->z.fixed;
     {
       s32 *position = probePosition.coordinates;
 
-      Vector_AddPolarOffset(px(16), leader->angle, position);
+      Vector_AddPolarOffset(px(16), leader->facing, position);
     }
     if (work->mode == 3) {
       s32 x, z;
@@ -552,9 +539,9 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     collisionCode = cell[2];
     if (collisionCode >= 242 && collisionCode <= 247) {
       terrainHeight = MapGrid_GetTerrainHeightFar(
-          leader->kind, probePosition.vector.x, probePosition.vector.z);
-      if (terrainHeight >= leader->pos.y &&
-          terrainHeight <= leader->pos.y + px(16)) {
+          leader->layer, probePosition.vector.x, probePosition.vector.z);
+      if (terrainHeight >= leader->y.fixed &&
+          terrainHeight <= leader->y.fixed + px(16)) {
         result = collisionCode;
       }
     } else if (Scene_FindTrigger(3, collisionCode) != 0) {

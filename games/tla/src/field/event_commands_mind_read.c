@@ -284,16 +284,6 @@ struct Vec3 {
 
 struct PendingEvent;
 
-/* VIEW(mind_read): routine Actor_ApplyRandomChildValues as void
- * Actor_ApplyRandomChildValues(void); field/event_commands has void
- * Actor_ApplyRandomChildValues(struct Actor *owner) {; tried as the
- * definition's void Actor_ApplyRandomChildValues(struct Actor *owner), it does
- * not compile in tla-ja: games/tla/src/field/event_commands_mind_read.c:965:
- * conflicting types for `Actor_ApplyRandomChildValues'. */
-void Actor_ApplyRandomChildValues__mind_read(void) __asm__(
-    "Actor_ApplyRandomChildValues");
-#define Actor_ApplyRandomChildValues Actor_ApplyRandomChildValues__mind_read
-
 #define MOVE_CELL_MASK 0xfff00000 ///< a 16-pixel cell
 
 /// When Move is cast on a target, the pushing hand appears beside it and pushes
@@ -355,7 +345,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
   pusher->speedLimit = px(4);
   pusher->acceleration = Q16_ONE / 2;
   pusher->motionFlags = 4;
-  target->update = Actor_ApplyRandomChildValues;
+  target->update = (void (*)(void))Actor_ApplyRandomChildValues;
   target->speedLimit = 0x6666;
   target->acceleration = 0x3333;
   target->steeringFlags = moved;
@@ -970,8 +960,6 @@ void FieldEffect_SpawnBurstParticleField(void) {
   wait(8);
 }
 
-void Actor_ApplyRandomChildValues(void);
-
 /// A hand appears 32 pixels to either side, each moves 14 pixels in, and they
 /// lift the target 32 pixels with them.
 void FieldPsynergy_LiftOnTarget(void) {
@@ -1013,7 +1001,8 @@ void FieldPsynergy_LiftOnTarget(void) {
   }
 
   Actor_WaitForMoveFar(anchors[0]);
-  ((struct EffectChild *)child)->callback = Actor_ApplyRandomChildValues;
+  ((struct EffectChild *)child)->callback =
+      (void (*)(void))Actor_ApplyRandomChildValues;
   Sound_PlayFar(SE_PSYNERGY_START);
   ((struct EffectChild *)child)->flag = 4;
 
@@ -1107,18 +1096,6 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
   return object;
 }
 
-/* VIEW(mind_read): tag struct ScreenPoint as struct ScreenPoint__mind_read;
- * field/particle.h has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands_mind_read.c:1112: redefinition of `struct
- * ScreenPoint'. */
-#define ScreenPoint ScreenPoint__mind_read
-struct ScreenPoint {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 struct EffectWork {
   u16 angle;
   u8 unusedAfterAngle[14]; ///< no code names it
@@ -1131,17 +1108,17 @@ struct EffectWork {
 /// event_commands_force.c.
 void FieldEffect_UpdateRadialBurst(struct RadialBurstEffect *effect) {
   struct EffectWork *work = Ram_HeapSlots->fieldEffectWork;
-  struct ScreenPoint value;
+  struct Vector3 pos;
   s32 state;
 
 again:
   state = effect->state;
   if (state == 0) {
-    value.x = effect->sourceX;
-    value.z = effect->sourceZ;
-    Vector_AddPolarOffset(px(25), (u16)Random16(), &value);
-    effect->x = value.x;
-    effect->z = value.z;
+    pos.x = effect->sourceX;
+    pos.z = effect->sourceZ;
+    Vector_AddPolarOffset(px(25), (u16)Random16(), &pos);
+    effect->x = pos.x;
+    effect->z = pos.z;
     effect->velocityZ = px(3);
     effect->velocityX = px(3);
     effect->enabled = 0;
@@ -1160,12 +1137,12 @@ again:
   if (state == 2) {
     struct EffectTarget *target = work->target;
 
-    SET_POSITION(&value, target->x, target->y + px(16), target->z);
-    Vector_AddPolarOffset(px(8), work->angle, &value);
-    Camera_WorldToScreen(&value);
-    Vector_AddPolarOffset(px(4), Random16(), &value);
-    effect->x = value.x;
-    effect->z = value.z;
+    SET_POSITION(&pos, target->x, target->y + px(16), target->z);
+    Vector_AddPolarOffset(px(8), work->angle, &pos);
+    Camera_WorldToScreen(&pos);
+    Vector_AddPolarOffset(px(4), Random16(), &pos);
+    effect->x = pos.x;
+    effect->z = pos.z;
     effect->scale = 0x800;
     effect->enabled = 1;
     effect->state++;
@@ -1680,14 +1657,6 @@ void FieldPsynergy_Ply(void) {
     scene->finishCallback();
   FieldPsynergy_FadeFromCastColor();
 }
-
-/* VIEW(f0de21c): tag struct FieldWork as struct EventWork__f0de21c;
- * event_work.h has another definition; not tried: struct FieldWork__f0de21c was
- * not found. */
-struct EventWork__f0de21c {
-  u8 unused[0x166]; ///< no code names it
-  u16 state;
-};
 
 /// A task of Cloak: when the controlled character does not
 /// stand on a tile Cloak can hide on, requests CLOAK_END (0x2092).

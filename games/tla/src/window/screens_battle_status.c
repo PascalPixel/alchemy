@@ -723,7 +723,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             s32 range;
             s32 tileFlags;
 
-            Window_SetTilemapEntry(statusWindow, 0xf01f, 11, j * 2 + 8, 0);
+            Window_SetTilemapEntry(statusWindow, WINDOW_TILE_PP_LABEL, 11, j * 2 + 8, 0);
             Window_SetTilemapEntry(statusWindow, SUMMARY_PP_LABEL_SECOND_TILE,
                                    12, j * 2 + 8, 0);
             iconSprites[j].oam.f.tile =

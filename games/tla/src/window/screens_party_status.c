@@ -105,11 +105,11 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
         for (row = 0; row != rows; row++) {
           dest = canvas->tilemap[(s16)window->y + row] + ((s16)window->x + col);
           if (row == 0)
-            *dest = 0xf018;
+            *dest = WINDOW_TILE_BORDER_TOP_TEE;
           else if (row == rows - 1)
-            *dest = 0xf019;
+            *dest = WINDOW_TILE_BORDER_BOTTOM_TEE;
           else
-            *dest = 0xf00f;
+            *dest = WINDOW_TILE_DIVIDER_VERTICAL;
         }
       }
       i++;
@@ -126,12 +126,12 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
       dest =
           canvas->tilemap[(s16)window->y + window->height - 1] + (s16)window->x;
       col = 1;
-      *dest++ = 0xf080;
+      *dest++ = WINDOW_TILE_BATTLE_BORDER_BOTTOM_LEFT;
       while (col < max) {
         col++;
-        *dest++ = 0xf081;
+        *dest++ = WINDOW_TILE_BATTLE_BORDER_BOTTOM;
       }
-      *dest = 0xf082;
+      *dest = WINDOW_TILE_BATTLE_BORDER_BOTTOM_RIGHT;
     }
   }
   canvas->dirty = 1;

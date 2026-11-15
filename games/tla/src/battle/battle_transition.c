@@ -10,7 +10,7 @@
 #include "system/system.h"
 
 /// The curtain's map entries: tile 128 + n, WINDOW_PALETTE.
-#define TRANSITION_CURTAIN_ENTRY(n) (0xf080 + (n))
+#define TRANSITION_CURTAIN_ENTRY(n) (WINDOW_TILE(128) + (n))
 /// The screen block of the curtain's map, and its middle row, from which it
 /// opens a row up and a row down every eight frames for TRANSITION_OPEN_FRAMES.
 #define TRANSITION_CURTAIN_SCREEN 12

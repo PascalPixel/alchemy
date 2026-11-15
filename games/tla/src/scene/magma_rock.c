@@ -301,7 +301,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 void Actor_LiftTargetBlock(s16 *table);
 
 void MagmaRock_UnblockMovedPillar(void) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MagmaRockWork *work = Ram_HeapSlots->fieldEffectWork;
 
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SLIDE) {
@@ -324,7 +324,7 @@ void MagmaRock_UnblockMovedPillar(void) {
       Actor_LiftTargetBlock(gMagmaRock_Room2TopPillars);
     }
   }
-  MagmaRockInside_ClearBlockCells(*(struct Actor **)(event + 0xcbc));
+  MagmaRockInside_ClearBlockCells(event->movedBlock);
 }
 
 void Event_Start();

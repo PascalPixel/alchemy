@@ -1226,10 +1226,13 @@ void Prox_MoldHidesInSnow(void) {
   Prox_EndEvent();
 }
 
+/// The raised trigger Prox_ScoopUpMold leaves for Prox_MoldJoins.
+enum ProxRaisedTrigger { RAISED_MOLD_JOINS = 200 };
+
 void Prox_ScoopUpMold(void) {
   if (Event_GetFlag(FLAG_MARS_BEACON_LIT) == 0 &&
       Event_GetFlag(FLAG_DJINNI(DJINNI_MOLD)) == 0) {
-    u8 *work = Ram_HeapSlots->fieldWork;
+    struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
     Event_Start();
     FieldEvent_ResolvePendingActions(1);
@@ -1240,7 +1243,7 @@ void Prox_ScoopUpMold(void) {
     System_Wait(1);
     FieldActor_Jump(ACTOR_MOLD, 4, 20);
     Actor_FaceActor(ACTOR_MOLD, gMainRoutineWork.leaderActorId, 0);
-    FIELD_AT(work, u16, 362) = 200;
+    work->raisedTrigger = RAISED_MOLD_JOINS;
     Prox_EndEvent();
   }
 }
@@ -2852,7 +2855,7 @@ struct Trigger gProx_MoldTriggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_BEFORE_CAST), 255, CONDITION_ALWAYS, EVENT(Prox_BeginScoop)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_AFTER_CAST), 255, CONDITION_ALWAYS, EVENT(Prox_EndScoop)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 8, CONDITION_ALWAYS, EVENT(Prox_ScoopUpMold)},
-    {TRIGGER_RAISED, 200, 0xa3d, EVENT(Prox_MoldJoins)},
+    {TRIGGER_RAISED, RAISED_MOLD_JOINS, 0xa3d, EVENT(Prox_MoldJoins)},
     {TRIGGER_STEP, ACTOR_ELDER, FLAG_HEARD_OF_PARENTS, EVENT(Prox_SearchForParents)},
     {TRIGGER_STEP, ACTOR_CLANSMAN_GUARDING_THE_ROAD, FLAG_CLAN_SPOKE_OF_LIGHTHOUSE, EVENT(Prox_DecideToGoToLighthouse)},
     {TRIGGER_STEP, ACTOR_CLANSMAN_WISHING_FOR_BETTER_ADEPTS, FLAG_MET_PUELLE, EVENT(Prox_MeetPuelle)},

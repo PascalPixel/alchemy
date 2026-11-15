@@ -2727,7 +2727,7 @@ end:
 /// Unused here: places the leader below the tile he fell through.
 UNUSED void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct WarpWork *work = &gCrackedTiles;
   s32 x = FieldGameFlag_GetByte(work->positionFlag);
   s32 z = FieldGameFlag_GetByte(work->positionFlag + 8);
@@ -2739,7 +2739,7 @@ UNUSED void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
     GameFlag_SetByte(work->positionFlag + 8, 0);
     object->x.fixed = FIELD_CELL_CENTER(x + dx);
     object->z.fixed = FIELD_CELL_CENTER(z + dz);
-    other = *(struct Actor **)(event + 460);
+    other = event->camera;
     other->x.fixed = object->x.fixed;
     other->z.fixed = object->z.fixed;
     MapGrid_CenterOnFollowedPoint();

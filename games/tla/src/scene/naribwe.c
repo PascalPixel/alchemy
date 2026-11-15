@@ -102,10 +102,10 @@ const u8 *Scene_GetActorPlacements(void) {
 /// Before Blaze is cast on the central fire, the event work notes whether the
 /// party came in by entrance 10.
 void Naribwe_PrepareBlaze(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
-  u8 *flag;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  s8 *flag;
 
-  flag = work + 0xd38;
+  flag = &work->unkd38;
   *flag = 1;
   if (gMainRoutineWork.entrance != 10)
     *flag = 0;
@@ -252,24 +252,25 @@ void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
 /// The party leader walks into one of Naribwe's doors, which opens with its
 /// cell animation, and leaves by the exit of the door's number.
 void Naribwe_EnterDoor(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  s16 *trigger;
   s32 index;
   u32 id;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  for (id = 8; id <= 63; id++) {
-    u8 *actor = (u8 *)Actor_GetById(id);
+  for (id = ACTOR_FIRST_PLACED; id < FIELD_TREASURE_ACTOR; id++) {
+    struct Actor *actor = Actor_GetById(id);
 
     if (actor != NULL) {
-      u8 *flags = &actor[85];
+      u8 *flags = &actor->motionFlags;
       s32 zero = 0;
 
       *flags = zero;
     }
   }
-  work += 0x154;
-  index = *(s16 *)work;
+  trigger = &work->stepTrigger;
+  index = *trigger;
   Event_PlaySound(SE_DOOR_OPEN);
   index -= 4;
   MapGrid_AnimateCells(gNaribwe_Doors[index].script, gNaribwe_Doors[index].x,
@@ -277,7 +278,7 @@ void Naribwe_EnterDoor(void) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  Import_EventSetExitRequest(*(s16 *)work);
+  Import_EventSetExitRequest(*trigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();

@@ -720,7 +720,8 @@ static __inline__ void Loho_AnimateCells(const void *data, s32 a, s32 b) {
 }
 
 void Loho_OpenDoorAndEnter(void) {
-  u8 *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  s16 *trigger;
   s32 i;
 
   Event_Start();
@@ -736,7 +737,7 @@ loop:
   i++;
   if ((u32)i < FIELD_TREASURE_ACTOR)
     goto loop;
-  work = (u8 *)&((struct FieldWork *)work)->stepTrigger;
+  trigger = &work->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
   Loho_AnimateCells(gLoho_HouseDoor.data, gLoho_HouseDoor.a, gLoho_HouseDoor.b);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
@@ -744,7 +745,7 @@ loop:
   Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -4);
   Event_PlaySound(SE_MAP_EXIT);
   Event_Wait(6);
-  Import_EventSetExitRequest(*(s16 *)work);
+  Import_EventSetExitRequest(*trigger);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();

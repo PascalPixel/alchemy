@@ -88,6 +88,8 @@ struct TouchCopies {
   s8 count;
 };
 
+/// A particle of the particle burst (ParticleBurst_Start): its place, heading,
+/// speed, spin and the frames before it starts.
 struct BurstParticle {
   s32 x;
   s32 y;
@@ -98,6 +100,8 @@ struct BurstParticle {
   s32 delay;
 };
 
+/// The particle burst's work (ParticleBurst_Start): its tiles, 96 sprites and
+/// particles, its VRAM cache entry, a flash on frame 30 and its frame count.
 struct ParticleBurstWork {
   u8 tiles[384];
   struct EffectSprite sprites[96];
@@ -109,6 +113,7 @@ struct ParticleBurstWork {
   s16 active;
 };
 
+/// A cell the particle burst covers, in cells.
 struct BurstCell {
   s16 x;
   s16 z;

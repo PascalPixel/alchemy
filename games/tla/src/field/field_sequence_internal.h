@@ -147,14 +147,6 @@ struct SceneRegionEntry {
   u8 unk14[4];
 };
 
-struct MapViewBounds {
-  u8 unk000[0xec];
-  s32 minX;
-  s32 minY;
-  s32 maxX;
-  s32 maxY;
-};
-
 struct SceneMusicEntry {
   s16 scene;
   s16 entrance; // -1 any
@@ -268,20 +260,6 @@ struct MapRegion {
   s16 maxZ;
   s16 condition;
   s16 value;
-};
-
-struct MapFocusObject {
-  u8 padding00[6];
-  u16 kind;
-  s32 x;
-  s32 unk0c;
-  s32 y;
-};
-
-struct MapFocusPosition {
-  s32 x;
-  s32 unk04;
-  s32 y;
 };
 
 // A unit as this function reads it.

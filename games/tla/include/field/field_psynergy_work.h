@@ -23,6 +23,19 @@ struct ArcEffectObject {
   void (*callback)(union FieldObject *object); ///< run each frame
 };
 
+/// A particle of a field Psynergy's effect: its place and velocity, in 16.16
+/// pixels on the field or on the screen, and the frames since it began
+/// (negative before it starts, or while it is free).
+struct FieldPsynergyParticle {
+  s32 x;
+  s32 y;
+  s32 z;
+  s32 velocityX;
+  s32 velocityY;
+  s32 velocityZ;
+  s32 timer;
+};
+
 /// The work of a field Psynergy (heap slot HEAP_SLOT_FIELD_EFFECT): its caster
 /// and target, where it takes place, the map state it restores, its 24 field
 /// effect sprites and the sprite and stage a lasting Psynergy keeps.

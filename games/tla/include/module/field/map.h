@@ -49,11 +49,6 @@ struct SpriteViewerLayer {
   s8 colorMode;
 };
 
-struct ViewerMetadata {
-  u8 unk00[4];
-  u8 drawKind; ///< 20 for a sprite drawn in two parts
-};
-
 struct ViewerSprite {
   u8 unk00[0x1a];
   u8 flags;

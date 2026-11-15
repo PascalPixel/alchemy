@@ -584,7 +584,7 @@ void FieldPsynergy_UpdateLash(void) {
   struct Actor *object = work->object;
   struct Vector3 position;
   struct EffectSprite *sprite;
-  struct ScatterParticle *particle;
+  struct FieldPsynergyParticle *particle;
   s32 i;
 
   work->flash = 0;
@@ -712,7 +712,7 @@ void FieldPsynergy_Lash(void) {
   struct Actor *caster = scene->mainActor;
   struct Actor *object;
   struct EffectSprite *sprite;
-  struct ScatterParticle *particle;
+  struct FieldPsynergyParticle *particle;
   s32 slotA;
   s32 slotB;
   s32 tileA;

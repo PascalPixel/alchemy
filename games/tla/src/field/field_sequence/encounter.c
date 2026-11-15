@@ -178,7 +178,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
     if (pick < 0)
       break;
   }
-  sum = (u16)entry->enemies[i];
+  sum = (u16)entry->formations[i];
   BattleEffect_SelectBattleCue(zone, i);
   return sum;
 }

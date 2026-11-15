@@ -8,6 +8,7 @@
 #include "types.h"
 #include "effect_sprite.h"
 #include "field/field_particle.h"
+#include "field/field_psynergy_work.h"
 
 struct Actor;
 struct AnimationEntry;
@@ -33,20 +34,12 @@ struct ArcScene {
   s16 arcTileSlot;
 };
 
-struct ScatterParticle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 timer;
-};
-
+/// The scatter's work (heap slot HEAP_SLOT_BATTLE_EFFECT): its tiles, 64
+/// sprites and particles, the actor it scatters from, and its stage.
 struct ScatterWork {
   u8 tiles[0x1000];
   struct EffectSprite sprites[64];
-  struct ScatterParticle particles[64];
+  struct FieldPsynergyParticle particles[64];
   struct Actor *object;
   s16 phase;
   s16 timer;

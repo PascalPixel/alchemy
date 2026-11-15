@@ -303,7 +303,7 @@ s32 Actor_FindLastActiveId(void) {
 /// Gives each actor placement with condition 0 a condition saying whether
 /// it lies within the map's view bounds, so that only those inside appear.
 void Scene_AssignViewFlags(struct SceneRegionEntry *entry) {
-  struct MapViewBounds *view = (struct MapViewBounds *)Ram_HeapSlots->mapGrid;
+  struct MapWork *view = Ram_HeapSlots->mapGrid;
 
   GameFlag_Clear(0x164);
   GameFlag_Set(0x165);
@@ -318,8 +318,8 @@ void Scene_AssignViewFlags(struct SceneRegionEntry *entry) {
     }
     x = entry->x;
     z = entry->z;
-    if (view->minX <= x && x <= view->maxX && view->minY <= z &&
-        z <= view->maxY)
+    if (view->minX <= x && x <= view->maxX && view->minZ <= z &&
+        z <= view->maxZ)
       entry->flag = 0x164;
     else
       entry->flag = 0x165;

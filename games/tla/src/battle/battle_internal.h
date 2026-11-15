@@ -153,33 +153,48 @@ struct SnapshotVitals {
   u16 pp;
 };
 
-/// What ScriptedBattle_SaveUnits keeps of the five units of the scripted
-/// battles between them: whether each was listed, the first three's summon
-/// boosts, and the last two's HP and PP. The statuses between them are
-/// SnapshotCopy's.
-struct Snapshot {
-  u8 listed[8];
-  u8 tags[3][4];
-  u8 unk14[0x80];
-  struct SnapshotVitals vitals[5];
-};
-
-/// A unit as the scripted battles' snapshot reads it: its HP and PP, its summon
-/// boosts, and the 25 status bytes from its curse to its challenge.
-struct SnapshotUnit {
-  u8 unk00[0x38];
-  s16 hp;
-  u16 unk3a;
-  u8 unk3c[0xf0];
-  u8 tags[4];
-  u8 snapshot[25];
-};
-
 /// A unit's 25 status bytes, from its curse to its challenge, kept between the
 /// scripted battles.
 struct SnapshotCopy {
-  u8 bytes[25];
+  s8 curse;
+  s8 poison;
+  u8 attackTurns;
+  s8 attackStage;
+  u8 defenseTurns;
+  s8 defenseStage;
+  u8 resistanceTurns;
+  s8 resistanceStage;
+  u8 delusion;
+  s8 confusion;
+  u8 charm;
+  u8 stun;
+  u8 sleep;
+  u8 psySeal;
+  u8 regenerate;
+  s8 reflect;
+  u8 haunt;
+  u8 grimReaper;
+  u8 equipBonus[2];
+  u8 ready;
+  u8 immobile;
+  u8 agilityTurns;
+  s8 agilityStage;
+  s8 challenge;
 };
+
+/// What ScriptedBattle_SaveUnits keeps of the five units of the scripted
+/// battles between them: whether each was listed, the first three's summon
+/// boosts, each one's statuses and the last two's HP and PP.
+struct Snapshot {
+  u8 listed[8];
+  s8 summonBoosts[3][4];
+  /// The units' SnapshotCopy rows, read as Data_0200ff6c, each padded to 28
+  /// bytes; the last overruns into vitals' unused first rows.
+  u8 statuses[0x80];
+  struct SnapshotVitals vitals[5]; ///< also read as Data_0200ffec
+};
+
+STATIC_ASSERT(offsetof(struct Snapshot, vitals) == 0x94);
 
 /// A row of the debug parameter sets: a party member, its level, its Djinn of
 /// each element, its equipped items and two Psynergy it learns.

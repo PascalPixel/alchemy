@@ -7,23 +7,23 @@ Data_02006be8:
 	.global gWorldMap_PlacedActors
 gWorldMap_PlacedActors:
 	.space 0x00000200
-	.global gData_02006e08
-gData_02006e08:
+	.global gWorldMapBlend
+gWorldMapBlend:
 	.space 0x00000004
-	.global gData_02006e0c
-gData_02006e0c:
+	.global gGauge_Shown
+gGauge_Shown:
 	.space 0x00000002
-	.global gData_02006e0e
-gData_02006e0e:
+	.global gGauge_Vram
+gGauge_Vram:
 	.space 0x00000002
-	.global gData_02006e10
-gData_02006e10:
+	.global gGauge_Countdown
+gGauge_Countdown:
 	.space 0x00000004
-	.global Data_02006e14
-Data_02006e14:
+	.global gGauge_Sprite
+gGauge_Sprite:
 	.space 0x0000000c
-	.global Data_02006e20
-Data_02006e20:
+	.global gGauge_Tiles
+gGauge_Tiles:
 	.space 0x00000004
 	.global Data_02006e24
 Data_02006e24:
@@ -37,8 +37,8 @@ Data_02006e60:
 	.global Data_02006e80
 Data_02006e80:
 	.space 0x000000a0
-	.global gData_02006f20
-gData_02006f20:
+	.global gGauge_SourceTiles
+gGauge_SourceTiles:
 	.space 0x00000004
 	.global Data_02006f24
 Data_02006f24:

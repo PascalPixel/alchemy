@@ -61,7 +61,7 @@ struct WorldMapOam {
   u16 size : 2;
 };
 
-void Func_020048f4(void);
+void Gauge_Update(void);
 
 void WorldMap_SetCountdownByZ(s32 a, s32 b, s32 c);
 
@@ -89,7 +89,7 @@ void WorldMap_TakeTheTiller(void);
 void Func_0200310c(void);
 void Func_02003490(void);
 
-void Func_02003d44(s32 mode);
+void WorldMap_PlayLighthouseTransition(s32 mode);
 
 void Func_0200009c(void);
 
@@ -122,7 +122,7 @@ extern u32 gData_02004fc8[];
 
 s32 WorldMap_GetBlockPlace(s32 *position);
 
-extern u16 gData_02006e08;
+extern u16 gWorldMapBlend;
 
 extern u8 gWorldMapPackedTilesB[];
 extern u8 gWorldMapPackedPicturesB[];
@@ -132,9 +132,9 @@ void Func_02004634(struct Actor *object);
 
 void Actor_Release(struct Actor *object);
 
-extern u8 Data_02006e20[][32];
-extern s16 gData_02006e10;
-extern u32 Data_02006e14[3];
+extern u8 gGauge_Tiles[][32];
+extern s16 gGauge_Countdown;
+extern u32 gGauge_Sprite[3];
 
 void Party_DrainPp(s32 value);
 s32 Party_GetPpRatio(void);
@@ -806,7 +806,7 @@ s32 Scene_Initialize(void) {
     Func_0200310c();
     break;
   case 72:
-    Func_02003d44(2);
+    WorldMap_PlayLighthouseTransition(2);
     FieldActor_SetSpriteColor(Actor_GetById(ACTOR_PIERS), 15);
     Actor_SetPosition(ACTOR_PIERS, 7277, 7300);
     wait(1);
@@ -1610,7 +1610,7 @@ void Func_02002640(s32 a, s32 b, s32 dx, s32 dz) {
 }
 
 void WorldMap_WatchVenusLighthouseCollapse(void) {
-  Func_02003d44(1);
+  WorldMap_PlayLighthouseTransition(1);
   FieldEvent_SetMessageId((s32)MsgTheyVeDone);
   // "They've done it, Jenna! They've lit the beacon!"
   Event_ShowMessage(8, 0);
@@ -2260,16 +2260,16 @@ static inline void QueueBlend(u32 address, u32 value) {
   IoWriteQueue_Store16(address, value);
 }
 
-/// Every other two frames the world map's blend alternates between two
-/// strengths.
-void Func_02003c50(void) {
+/// Run each frame of the lighthouse transition: every other two frames the
+/// blend alternates between two strengths.
+void WorldMap_UpdateTransitionBlend(void) {
 
   IoWriteQueue_Store16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   if (gFrameCount & 2)
-    QueueBlend((u32)&REG_BLDALPHA, gData_02006e08 | 12);
+    QueueBlend((u32)&REG_BLDALPHA, gWorldMapBlend | 12);
   else
-    QueueBlend((u32)&REG_BLDALPHA, gData_02006e08 | 16);
+    QueueBlend((u32)&REG_BLDALPHA, gWorldMapBlend | 16);
 }
 
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
@@ -2282,7 +2282,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 #define PUSH_PICTURE(offset)                                                   \
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)
 
-void Func_02003d44(s32 mode) {
+void WorldMap_PlayLighthouseTransition(s32 mode) {
   u8 *buffer;
   u32 blend;
 
@@ -2304,29 +2304,29 @@ void Func_02003d44(s32 mode) {
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0),
                       (u32)(gWorldMapPalettes + mode * 32), 0x80000010);
   IO_WRITE_QUEUE_PUSH(0x06001000, (u32)buffer, 0x84000400);
-  Task_AddFrame(Func_02003c50, TASK_PASS_VBLANK);
+  Task_AddFrame(WorldMap_UpdateTransitionBlend, TASK_PASS_VBLANK);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_GLITTER);
-  gData_02006e08 = 0xe00;
+  gWorldMapBlend = 0xe00;
   PUSH_PICTURE(0x3480);
   FieldEvent_Wait(2);
-  gData_02006e08 = 0xd00;
+  gWorldMapBlend = 0xd00;
   PUSH_PICTURE(0x2e80);
   FieldEvent_Wait(2);
-  gData_02006e08 = 0xc00;
+  gWorldMapBlend = 0xc00;
   PUSH_PICTURE(0x2880);
   FieldEvent_Wait(2);
-  gData_02006e08 = 0xb00;
+  gWorldMapBlend = 0xb00;
   PUSH_PICTURE(0x2280);
   FieldEvent_Wait(2);
-  gData_02006e08 = 0xa00;
+  gWorldMapBlend = 0xa00;
   PUSH_PICTURE(0x1c80);
   FieldEvent_Wait(2);
-  gData_02006e08 = 0x900;
+  gWorldMapBlend = 0x900;
   PUSH_PICTURE(0x1680);
   FieldEvent_Wait(2);
-  gData_02006e08 = 0x800;
+  gWorldMapBlend = 0x800;
   PUSH_PICTURE(0x1080);
   FieldEvent_Wait(140);
   PUSH_PICTURE(0x1680);
@@ -2335,47 +2335,47 @@ void Func_02003d44(s32 mode) {
   FieldEvent_Wait(4);
   PUSH_PICTURE(0x2280);
   FieldEvent_Wait(4);
-  gData_02006e08 = 0x900;
+  gWorldMapBlend = 0x900;
   PUSH_PICTURE(0x2880);
   FieldEvent_Wait(4);
-  gData_02006e08 = 0xa00;
+  gWorldMapBlend = 0xa00;
   PUSH_PICTURE(0x2e80);
   FieldEvent_Wait(4);
-  gData_02006e08 = 0xb00;
+  gWorldMapBlend = 0xb00;
   PUSH_PICTURE(0x3480);
   FieldEvent_Wait(4);
-  gData_02006e08 = 0xc00;
+  gWorldMapBlend = 0xc00;
   PUSH_PICTURE(0x3a80);
   if (mode == 1) {
     MapGrid_SetShake(2, 2, 1);
     Event_PlaySound(SE_RUMBLE);
-    gData_02006e08 = 0xd00;
+    gWorldMapBlend = 0xd00;
     FieldEvent_Wait(4);
-    gData_02006e08 = 0xe00;
+    gWorldMapBlend = 0xe00;
     FieldEvent_Wait(4);
-    gData_02006e08 = 0xf00;
+    gWorldMapBlend = 0xf00;
     FieldEvent_Wait(4);
-    gData_02006e08 = 0x1000;
+    gWorldMapBlend = 0x1000;
     FieldEvent_Wait(45);
-    FieldTask_Remove(Func_02003c50);
+    FieldTask_Remove(WorldMap_UpdateTransitionBlend);
     DebugText_Clear();
     /* FAKEMATCH(temporary): the blend read into blend before each of the two
      * IoWriteQueue_Store16 calls. */
-    blend = gData_02006e08;
+    blend = gWorldMapBlend;
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, blend);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   } else {
-    gData_02006e08 = 0xd00;
+    gWorldMapBlend = 0xd00;
     FieldEvent_Wait(4);
-    gData_02006e08 = 0xe00;
+    gWorldMapBlend = 0xe00;
     FieldEvent_Wait(4);
-    gData_02006e08 = 0xf00;
+    gWorldMapBlend = 0xf00;
     FieldEvent_Wait(4);
-    gData_02006e08 = 0x1000;
+    gWorldMapBlend = 0x1000;
     FieldEvent_Wait(45);
-    FieldTask_Remove(Func_02003c50);
+    FieldTask_Remove(WorldMap_UpdateTransitionBlend);
     DebugText_Clear();
-    blend = gData_02006e08;
+    blend = gWorldMapBlend;
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, blend);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   }
@@ -2517,9 +2517,9 @@ void Func_02004634(struct Actor *parent) {
   }
 }
 
-extern s16 gData_02006e0c;
-extern s16 gData_02006e0e;
-extern u8 gData_02006f20[][32];
+extern s16 gGauge_Shown;
+extern s16 gGauge_Vram;
+extern u8 gGauge_SourceTiles[][32];
 
 /// Redraws the gauge for `progress`.
 void Gauge_Draw(s32 progress) {
@@ -2533,43 +2533,43 @@ void Gauge_Draw(s32 progress) {
     kind = 200;
   if (level <= 7 && (gFrameCount & 7) <= 1)
     kind = 200;
-  if (kind + level == gData_02006e0c)
+  if (kind + level == gGauge_Shown)
     return;
-  gData_02006e0c = kind + level;
-  Call2((void (*)())Iwram_ClearWordsEntry, (s32)(Data_02006e20), (s32)(0x100));
+  gGauge_Shown = kind + level;
+  Call2((void (*)())Iwram_ClearWordsEntry, (s32)(gGauge_Tiles), (s32)(0x100));
   {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     if (kind == 0) {
-      copy(Data_02006e20, gData_02006f20[8], 0x80);
+      copy(gGauge_Tiles, gGauge_SourceTiles[8], 0x80);
       goto done;
     }
     if (kind == 100)
-      copy(Data_02006e20, gData_02006f20[4], 0x80);
+      copy(gGauge_Tiles, gGauge_SourceTiles[4], 0x80);
     else
-      copy(Data_02006e20, gData_02006f20[8], 0x80);
+      copy(gGauge_Tiles, gGauge_SourceTiles[8], 0x80);
   }
   base = 0;
   count = level;
   if (count > 7) {
-    Iwram_CopyWordsEntry(Data_02006e20, gData_02006f20, 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles, gGauge_SourceTiles, 32);
     base = 8;
     count -= 8;
   }
   if (level > 15) {
-    Iwram_CopyWordsEntry(Data_02006e20[1], gData_02006f20[1], 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles[1], gGauge_SourceTiles[1], 32);
     count = level;
     base = 16;
     count -= 16;
   }
   if (level > 23) {
-    Iwram_CopyWordsEntry(Data_02006e20[2], gData_02006f20[2], 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles[2], gGauge_SourceTiles[2], 32);
     count = level;
     base = 24;
     count -= 24;
   }
   if (level > 30) {
-    Iwram_CopyWordsEntry(Data_02006e20[3], gData_02006f20[3], 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles[3], gGauge_SourceTiles[3], 32);
     base = 0;
     count = 0;
   }
@@ -2580,8 +2580,8 @@ void Gauge_Draw(s32 progress) {
   loop:
     {
       s32 j;
-      u8 *source = &gData_02006f20[base / 8][4] + i / 2;
-      u8 *dest = &Data_02006e20[base / 8][4] + i / 2;
+      u8 *source = &gGauge_SourceTiles[base / 8][4] + i / 2;
+      u8 *dest = &gGauge_Tiles[base / 8][4] + i / 2;
       /* FAKEMATCH(barrier): the empty asm on dest changes its allocation
        * rank. */
       asm("" : "=r"(dest) : "0"(dest));
@@ -2613,23 +2613,24 @@ void Gauge_Draw(s32 progress) {
       goto loop;
   }
 done:
-  Vram_Load(gData_02006e0e, 0x100, Data_02006e20);
+  Vram_Load(gGauge_Vram, 0x100, gGauge_Tiles);
 }
 
-/// The world map cursor: counts down while A or B is held, redraws the gauge
-/// and queues its sprite over the leader.
-void Func_020048f4(void) {
-  u32 *oam = Data_02006e14;
-  s32 tile = gVramCacheEntries[gData_02006e0e].offset >> 5;
+/// The Psynergy gauge over the leader as the ship flies: while A or B is held
+/// aloft it drains a PP every ten frames, then redraws the gauge and queues its
+/// sprite.
+void Gauge_Update(void) {
+  u32 *oam = gGauge_Sprite;
+  s32 tile = gVramCacheEntries[gGauge_Vram].offset >> 5;
   struct Actor *leader = Actor_Get(FieldParty_GetLeaderActor());
   s32 screen[3];
   u32 attributes;
 
   if ((gInput.held & (KEY_A | KEY_B)) != 0 &&
       Event_GetFlag(FLAG_MENU_OPEN) == 0 && leader->y.fixed > px(4)) {
-    if (--gData_02006e10 <= 0) {
+    if (--gGauge_Countdown <= 0) {
       Party_DrainPp(1);
-      gData_02006e10 = 10;
+      gGauge_Countdown = 10;
     }
   }
   Gauge_Draw(Party_GetPpRatio());
@@ -2644,25 +2645,25 @@ void Func_020048f4(void) {
     *oam++ = (y | (x << 16)) | attributes;
   }
   *oam = tile | 0x400;
-  Oam_AddSpriteAtDepthClamped(Data_02006e14, 255);
+  Oam_AddSpriteAtDepthClamped(gGauge_Sprite, 255);
 }
 
 /// Sets up the gauge.
 void Gauge_Init(void) {
-  Decompress_TaggedLz(gWorldMapPackedTilesC, gData_02006f20);
-  gData_02006e0e = VramCache_FindFreeEntry();
-  Vram_Load(gData_02006e0e, 0x100, 0);
-  gData_02006e0c = -1;
-  gData_02006e10 = 10;
-  Task_AddFrame(Func_020048f4, TASK_PASS_VBLANK - 10);
+  Decompress_TaggedLz(gWorldMapPackedTilesC, gGauge_SourceTiles);
+  gGauge_Vram = VramCache_FindFreeEntry();
+  Vram_Load(gGauge_Vram, 0x100, 0);
+  gGauge_Shown = -1;
+  gGauge_Countdown = 10;
+  Task_AddFrame(Gauge_Update, TASK_PASS_VBLANK - 10);
 }
 
 /// Takes the gauge down.
 void Gauge_End(void) {
-  Decompress_TaggedLz(gWorldMapPackedTilesC, gData_02006f20);
-  VramCache_FreeEntry(gData_02006e0e);
-  gData_02006e0c = -1;
-  FieldTask_Remove(Func_020048f4);
+  Decompress_TaggedLz(gWorldMapPackedTilesC, gGauge_SourceTiles);
+  VramCache_FreeEntry(gGauge_Vram);
+  gGauge_Shown = -1;
+  FieldTask_Remove(Gauge_Update);
 }
 
 // clang-format off

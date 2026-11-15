@@ -842,7 +842,8 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectParams *args,
               EFFECT_RELEASE_BLITTERS();
               BattleEffect_BuildBlitter(
                   188, 7, 7,
-                  gProjectileVolleyB_GlintFlips[Random16() & 3] | CLIP,
+                  gProjectileVolleyB_GlintFlips[Random16() & 3] |
+                      EFFECT_CLIP_BOUNDS,
                   BLITTER_ADDITIVE);
               ((DrawRectangle)Ram_HeapSlots->ramCode2)(
                   canvas, work->sheet + gBattleEffect_GlintPictures[cel], x, y,
@@ -974,3 +975,5 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectParams *args,
     }
   }
 }
+#undef MOTES
+#undef Actor_SetAnimationSpeedFar

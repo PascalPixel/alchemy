@@ -168,3 +168,4 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }
+#undef EMBERS

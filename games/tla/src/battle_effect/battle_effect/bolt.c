@@ -7,6 +7,7 @@
 #define BOLT_INTERVAL 8
 
 #define SPARKS_PER_TARGET 128
+#define SPARK_COUNT 1024 ///< the sparks the map cell buffer holds
 #define GROUND_Y 104
 #define CUE_THUNDER 138
 
@@ -158,3 +159,5 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   // Tear down: stop the transfer, free the blitter, close the layer.
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
+#undef SPARK_COUNT
+#undef SPARKS

@@ -323,3 +323,5 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
 
   EFFECT_FINISH_CANVAS();
 }
+#undef BOLT_COUNT
+#undef STAR_COUNT

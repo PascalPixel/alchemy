@@ -188,10 +188,10 @@ void BattleEffect_RunDynamite(struct BattleEffectParams *args) {
 #define GROUP_COUNT SHAPE(1)
 #define GROUP_X(i) SHAPE((i) + 2)
 
-// One to three groups of sparks burst one after another, eight frames
-// apart: each opens with a big flash, a ring of small flashes and a spray
-// of sparks that fall (or, from the caster, rise) and bounce; six frames
-// after each burst the targets flash and recoil.
+/// One to three groups of sparks burst one after another, eight frames apart:
+/// each opens with a big flash, a ring of small flashes and a spray of sparks
+/// that fall (or, from the caster, rise) and bounce; six frames after each
+/// burst the targets flash and recoil.
 void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
   struct ScreenPoint pos;
   DrawRectangle draw[2];
@@ -398,3 +398,4 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
   // Tear down.
   EFFECT_FINISH_CANVAS();
 }
+#undef SPARK_COUNT

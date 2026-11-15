@@ -792,3 +792,4 @@ void BattleEffect_RunPhoenix(struct BattleEffectParams *args) {
 #undef MARKER_FRAMES
 #undef MARKER_STAGGER
 #undef MARKER_CELS
+#undef PARTICLES

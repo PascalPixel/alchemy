@@ -680,3 +680,4 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
 
   EFFECT_FINISH_CANVAS();
 }
+#undef SHARDS

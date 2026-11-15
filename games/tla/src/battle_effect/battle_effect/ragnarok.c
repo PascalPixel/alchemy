@@ -271,18 +271,15 @@ void BattleEffect_RunAcheronsGrief(struct BattleEffectParams *args) {
 #define SPARK                                                                  \
   ((struct Particle *)(Ram_MapCellBuffer + 684 * sizeof(struct Particle)))
 
-// A great sword falls from the sky onto the target, a pillar of fire and dust
-// spouting under it, and drives into the ground in a burst of flashes and
-// sparks.
-//
-// Setup: open the canvas on BG1, load the pillar, flash, sword and spark
-// pictures (mode 1 turns the BG colours first), place 32 flash rings and 340
-// sparks under the target, and empty the dust. Each frame (102): the sword
-// comes down 16 pixels a frame for 10 frames, holds, sinks slowly from 33 and
-// plunges after 60; a fountain of dust at frame 28 and 16 more a frame from 32
-// to 63, while the pillar rises; the flashes from 56 and the sparks from 60,
-// bouncing on the ground; the canvas floods at frames 9 and 60; every target
-// is struck at frame 68.
+/// A great sword falls from the sky onto the target, a pillar of fire and dust
+/// spouting under it, and drives into the ground in a burst of flashes and
+/// sparks.
+///
+/// The sword comes down 16 pixels a frame for 10 frames, holds, sinks slowly
+/// from 33 and plunges after 60; a fountain of dust at frame 28 and 16 more a
+/// frame from 32 to 63, while the pillar rises; the flashes from 56 and the
+/// sparks from 60, bouncing on the ground; the canvas floods at frames 9 and
+/// 60; every target is struck at frame 68.
 void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;

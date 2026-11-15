@@ -67,14 +67,6 @@ void BattleEffect_RunByIdRange(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_SHEET);
 }
 
-/// The second blitter slot read as what it holds, a drawing routine.
-#define ALTERNATE_BLITTER_SLOT                                                 \
-  (((struct {                                                                  \
-     u8 before[188];                                                           \
-     DrawRectangle draw;                                                       \
-   } *)Ram_HeapSlots)                                                          \
-       ->draw)
-
 #define SPARK_COUNT 64
 
 /// A plain attack: a slash or streak sweeps from the user over its first

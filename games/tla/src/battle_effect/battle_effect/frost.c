@@ -231,3 +231,4 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
+#undef CHIPS

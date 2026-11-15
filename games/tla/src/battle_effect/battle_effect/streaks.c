@@ -432,3 +432,4 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_EndCanvasLayer();
   }
 }
+#undef EFFECT_STEPS

@@ -330,3 +330,4 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   }
   EFFECT_FINISH_CANVAS();
 }
+#undef OBJ_VRAM

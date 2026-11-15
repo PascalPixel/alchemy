@@ -200,14 +200,6 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 
 #undef TRAILS
 
-/// The second blitter slot read as what it holds, a drawing routine.
-#define ALTERNATE_BLITTER_SLOT                                                 \
-  (((struct {                                                                  \
-     u8 before[188];                                                           \
-     DrawRectangle draw;                                                       \
-   } *)Ram_HeapSlots)                                                          \
-       ->draw)
-
 /// A sprite object as EffectSprite_CreateWithTiles returns it.
 struct SpriteObject {
   u8 unk00[9];
@@ -217,3 +209,4 @@ struct SpriteObject {
   u8 unk0a[6];
   u8 slot; // its row of gVramCacheEntries
 };
+#undef STARS

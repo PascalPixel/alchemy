@@ -36,24 +36,6 @@
 #include "battle_effect/dispatch.c"
 #include "battle_effect/battler_tint.c"
 
-#undef SHARD_COUNT
-#undef DROP_COUNT
-#undef EFFECT_STEPS
-#undef PARTICLES
-#undef MOTES
-#undef BOLT_COUNT
-#undef STAR_COUNT
-#undef FORMATION_SIZE
-#undef COLUMN_WIDTH
-#undef COLUMN_HEIGHT
-#undef MOTE_COUNT
-#undef PILLAR_FRAMES
-
-#undef OBJ_TILES
-#undef CLIP
-#undef RECORD_FRAMES
-#undef SPARK_COUNT
-
 // The effects from the Cybele summon to Bolt.
 #include "battle_effect/cybele.c"
 #include "battle_effect/boreas.c"
@@ -71,24 +53,6 @@
 #include "battle_effect/atalanta.c"
 #include "battle_effect/growth.c"
 #include "battle_effect/bolt.c"
-
-#undef PARTICLES
-#undef SHARDS
-#undef MOTES
-#undef SPARKS
-#undef FLAME_COUNT
-#undef EMBERS
-#undef CHIPS
-#undef CLIP
-#undef SPARK_COUNT
-#undef Actor_SetAnimationSpeedFar
-#undef STARS
-#undef ALTERNATE_BLITTER_SLOT
-#undef OBJ_VRAM
-#undef COLUMN_COUNT
-
-#undef FxGroup
-#undef PUFF_COUNT
 
 // The effects of abilities and summons from the opening every Djinn effect
 // shares to Meteor Blow.
@@ -159,8 +123,6 @@
 #undef SpriteAttributes
 
 #include "battle_effect/liquifier.c"
-
-#undef Actor_SetAnimationSpeedFar
 
 // The Megiddo, Moloch and Iris summons, Odyssey, and the model renderers the
 // effects draw with.

@@ -269,12 +269,11 @@ void BattleEffect_RunThornyGrave(struct BattleEffectParams *args) {
 #define MOTES_PER_TARGET 128
 #define MOTE_CELL (20 * 32)
 
-// Member burst (kinds through four wrappers; mode picks the colours): from
-// the caster's body, 128 motes per target scatter every way, and from 30
-// frames on each is pulled toward the middle of its target's body, vanishing
-// once it has crossed it. The background sways sideways, swelling and dying
-// away over the effect. In mode 3 every mote that arrives also pushes its
-// target back.
+/// From the caster's body 128 motes a target scatter every way, and from frame
+/// 30 each is pulled toward the middle of its target's body, vanishing once it
+/// has crossed it, in the mode's colours. The background sways sideways,
+/// swelling and dying away over the effect. In Thorny Grave every mote that
+/// arrives also pushes its target back.
 void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
                                      s32 mode) {
   struct ScreenPoint pos;

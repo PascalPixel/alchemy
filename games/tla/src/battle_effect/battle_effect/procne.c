@@ -549,12 +549,11 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 #define STREAK_SHEET 0x3000 ///< the ember streaks, after the flashes
 #define FORMATION_RESOURCE 647
 
-// Tiamat (mode 0) and Dragon Driver (mode 1, the same scene cast from the
-// caster's side, without the formation): streaks rain down and splash, sparks
-// and grains rise from where the formation stands, a burst of flashes at frame
-// 128, then the screen whitens and the canvas fades away. In mode 0 a formation
-// of eight drops in at frame 40 and bursts at the end. A or B skips frames
-// 49 to 159.
+/// Streaks rain down and splash, sparks and grains rise from where the
+/// formation stands, flashes burst at frame 128, then the screen whitens and
+/// the canvas fades away. For Tiamat a formation of eight drops in at frame 40
+/// and bursts at the end; Dragon Driver is the same scene cast from the
+/// caster's side, without the formation. A or B skips frames 49 to 159.
 void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint origin;
   DrawRectangle draw[2];

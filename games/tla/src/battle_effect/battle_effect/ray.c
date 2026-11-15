@@ -5,8 +5,6 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-#define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
-
 #define SPARK_COUNT 1024
 
 #define BOLT_SHEET 0x60e ///< the bolt pictures in the sheet

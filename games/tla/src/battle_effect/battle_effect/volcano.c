@@ -202,3 +202,4 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
+#undef PILLAR_FRAMES

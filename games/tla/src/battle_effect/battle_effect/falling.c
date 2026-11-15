@@ -397,3 +397,5 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
   BattleEffect_ConfigureEffectDisplay();
 }
+#undef SHARD_COUNT
+#undef DROP_COUNT

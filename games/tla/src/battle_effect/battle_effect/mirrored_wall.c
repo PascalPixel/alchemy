@@ -80,11 +80,10 @@ void BattleEffect_RunSpark(struct BattleEffectParams *args) {
 #define PIC_DJINN 0x65c0 ///< the Djinn, 40 x 40
 #define MOTES 8          ///< per target
 
-// Member beam (kinds through three wrappers; the mode picks the Djinn:
-// 0 Venus, 1 Mercury, 2 Mars): with a prelude, the Djinn appears, sways and
-// rises away; for each target in turn, sixteen frames apart, eight motes
-// drift down swaying; from frame 72 a beam of light falls on each target,
-// flashing it, and narrows from frame 88.
+/// With a prelude the Djinni of the mode's element appears, sways and rises
+/// away; then for each target in turn, sixteen frames apart, eight motes drift
+/// down swaying, and from frame 72 a beam of light falls on each target,
+/// flashing it, and narrows from frame 88.
 void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
   s32 djinn[3];
   s32 djinnSize[3];
@@ -337,12 +336,11 @@ void BattleEffect_RunFormicAcid(struct BattleEffectParams *args) {
 #define SMOKE_SHEET 0x3e80 ///< the smoke, after the gold shells
 #define SHARD_SHEET 0x1e00 ///< the shards, among the gold shells
 
-// Shell shot (the body of ten kinds; the mode picks the colours and the
-// record above the rest): shots arc from the caster to each target, one or
-// four per target eight frames apart, turning as they fly; each bursts where
-// it lands into smoke or shards, flashing the target. Mode 7 prepares a
-// canvas for its prelude first; modes 3 and 5 hand the canvas to a summon
-// canvas effect at the end.
+/// Shots arc from the caster to each target, one or four per target eight
+/// frames apart, turning as they fly; each bursts where it lands into smoke or
+/// shards, flashing the target. The mode picks the colours and its row of
+/// gLobbedShells_Styles. Mud prepares a canvas for its prelude first; Rotten
+/// Blood and Decompose hand the canvas to a summon canvas effect at the end.
 void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint position;
   s32 preludeSize[3];
@@ -566,3 +564,5 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_EndCanvasLayer();
   }
 }
+#undef MOTES
+#undef RECORD_FRAMES

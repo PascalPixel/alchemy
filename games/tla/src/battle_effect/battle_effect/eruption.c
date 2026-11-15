@@ -27,14 +27,13 @@ void BattleEffect_RunBlast(struct BattleEffectParams *args) {
 // A blast of motes and smoke puffs bursts from the near or far edge of the
 // field toward the targets.
 
-// Setup: mode 1 builds a grey ramp in the first 64 background colors and
-// always plays variant 1; mode 0 copies the fire palette and plays the
-// effect's variant. The puffs and motes all start at the side's edge with
-// random velocities. Frame loop: the motes fly and fall under gravity,
-// sized by depth; the puffs set out one a frame from frame 3 and grow
-// through seven pictures. The targets are hit from frame 6, a frame apart;
-// in mode 0 they also recoil. The variant chooses the number of motes and
-// puffs and the length.
+/// Puffs and motes burst from the side's edge: the motes fly and fall under
+/// gravity, sized by depth, and the puffs set out one a frame from frame 3 and
+/// grow through seven pictures. The targets are hit from frame 6, a frame
+/// apart. Smoke Bomb builds a grey ramp in the first 64 background colours and
+/// always plays the second variant; Blast copies the fire palette, plays the
+/// effect's variant (the number of motes and puffs and the length) and the
+/// targets recoil.
 void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;

@@ -137,3 +137,4 @@ s32 BattleEffect_BuildCenteredIndexList(BattleEffectIndexWindow *window,
   }
   return entryCount;
 }
+#undef FLAME_COUNT

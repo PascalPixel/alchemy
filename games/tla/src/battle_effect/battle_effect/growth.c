@@ -548,3 +548,5 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   // Tear down: stop the transfer, free both blitters, close the layer.
   EFFECT_FINISH_CANVAS();
 }
+#undef COLUMN_COUNT
+#undef PUFF_COUNT

@@ -467,3 +467,4 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
 #undef BOREAS_SPRAY_SPARKLES
 #undef BOREAS_POINT_X
 #undef BOREAS_POINT_Y
+#undef PARTICLES

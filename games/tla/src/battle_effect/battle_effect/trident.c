@@ -441,13 +441,12 @@ void BattleEffect_RunPlanetary(struct BattleEffectParams *args) {
 #define LEAP_FRAMES 88
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x6000))
 
-// The leaping strike family (BattleEffect_RunPlanetDiver is mode 0,
-// BattleEffect_RunPlanetary mode 1; effect kinds 60 and 128). The caster
-// flashes and sixteen flames ring it (frames 2-15), leaps up at frame 4 and
-// comes down on the target at frame 16, sliding to it over the frames after; on
-// landing 256 sparks burst from it. In mode 0 the caster then shows a fireball
-// and one target is struck; in mode 1 a claw slashes in 3D, three rings and two
-// pillars spread, every target is struck and at frame 50 all are thrown back.
+/// The caster flashes and sixteen flames ring it (frames 2-15), leaps up at
+/// frame 4 and comes down on the target at frame 16, sliding to it over the
+/// frames after; on landing 256 sparks burst from it. For Planet Diver the
+/// caster then shows a fireball and one target is struck; for Planetary a claw
+/// slashes in 3D, three rings and two pillars spread, every target is struck
+/// and at frame 50 all are thrown back.
 void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint pos;
   struct ModelTexture texture;

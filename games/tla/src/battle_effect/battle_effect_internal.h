@@ -283,6 +283,14 @@ enum TargetStrikeStyle {
 
 #define EFFECT_CLIP_BOUNDS (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
+/// The second blitter slot read as what it holds, a drawing routine.
+#define ALTERNATE_BLITTER_SLOT                                                 \
+  (((struct {                                                                  \
+     u8 before[188];                                                           \
+     DrawRectangle draw;                                                       \
+   } *)Ram_HeapSlots)                                                          \
+       ->draw)
+
 /// Builds a blitter for the canvas in heap slot `slot`, for one clip, mirror
 /// and blend mode (BLITTER_ADDITIVE to BLITTER_COPY).
 #define EFFECT_LOAD_BLITTER(slot, flags, mode)                                 \

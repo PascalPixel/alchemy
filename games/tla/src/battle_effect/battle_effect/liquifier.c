@@ -673,3 +673,4 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
     wait(1);
   }
 }
+#undef Actor_SetAnimationSpeedFar

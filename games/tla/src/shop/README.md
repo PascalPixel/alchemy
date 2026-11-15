@@ -1,5 +1,7 @@
 # Shops
 
+![Felix talks to the keeper of Daila's stall across the counter, buys one Herb (How many? 1) for himself, and `Your Coins` drops from 500 to 490](https://alchemy.pascalpixel.com/tla/guides/shop/shop.gif)
+
 This folder is the counters of a town: shops, sanctums and inns, and
 Sunshine's forge in Yallam. All of them are code a conversation calls and
 waits for, like a menu.
@@ -37,6 +39,8 @@ tally passes the next threshold. It looks like luck and is not.
 
 ## Sanctums
 
+![At Daila's sanctum the healer welcomes the party and Revive is chosen: the hand starts on Jenna, who is down, moves to Sheba and Felix (`This ally needs no healing.`) and back, and Jenna is revived, the room grey with sparkles](https://alchemy.pascalpixel.com/tla/guides/shop/sanctum.gif)
+
 A priest offers four services, Revive, Cure Poison, Repel Evil and Remove
 Curse, to one party member at a time. All four share one light show, and
 differ only in what they check, what they clear and what they cost
@@ -49,6 +53,8 @@ Each town's inn has its own price for one. A member who is down is not
 charged and not healed (`Inn_CheckIn`).
 
 ## The forge
+
+![Felix, a Tear Stone in his bag, talks to Sunshine in Yallam: Yes to his offer, the two walk to the anvil, the forge's screen asks which item needs his attention, the Tear Stone, `It's OK if I work with your Tear Stone?`, Yes, and Sunshine goes to work](https://alchemy.pascalpixel.com/tla/guides/shop/forge.gif)
 
 Sunshine, Yallam's blacksmith, turns materials into equipment. Talk to him
 with a material in the pack and he offers to make something; his counter

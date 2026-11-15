@@ -10,6 +10,8 @@ and how each kind is put together.
 
 ## How the console draws a picture
 
+![The intro after `Camelot presents`: every colour of the clouds brightens from dark red towards its own](https://alchemy.pascalpixel.com/tla/guides/graphics/title-fade.gif)
+
 The console never stores a colour per pixel. A picture is a grid of
 numbers, and a separate list, the palette, says which colour each number
 stands for. That is why a fade or a recolour never touches a picture: it
@@ -65,6 +67,8 @@ own beside it.
 
 ## Monsters
 
+![A battle opens on one Wild Wolf: its picture changes as the camera swings round to the party, and again as it attacks with Fatal Fang](https://alchemy.pascalpixel.com/tla/guides/graphics/monster.gif)
+
 A monster is a sprite like any other, with its pictures kept in
 `monster/`. `monster/skeleton.png` is a strip of twelve pictures, 64 by 64
 each. They are six poses, each drawn twice: once from the front and once
@@ -85,6 +89,8 @@ Three things worth knowing if you want to make one:
   rows drawn from them.
 
 ## Tilesets
+
+![The intro's valley below the tower, a bird crossing it, taken apart: the valley's background and the bird's sprite spread one behind the other](https://alchemy.pascalpixel.com/tla/guides/graphics/title-intro-layers-3d.gif)
 
 A town is not painted as one picture. It is built from a
 [tileset](../../glossary.md#tileset): a palette of 14 short lists of 16

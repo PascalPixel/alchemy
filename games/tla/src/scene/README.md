@@ -9,6 +9,8 @@ events.
 
 ## The entry table
 
+![As above](https://alchemy.pascalpixel.com/tla/guides/front/sanctum-door.gif)
+
 The field knows nothing about any one place. When a scene is loaded it asks
 the overlay the same seven questions, through seven functions that sit at
 the very start of every overlay in the same order. That is the
@@ -117,6 +119,8 @@ whose cell takes the party out by that exit.
 
 ## How a trigger is chosen
 
+![Daila's healer talked to twice from across the counter: the first time she asks whether the party has time and nowhere to go, Yes, and she sends them to Master Poi; the second time she welcomes them to the sanctum](https://alchemy.pascalpixel.com/tla/guides/map/talk-twice.gif)
+
 The field reads the trigger table from the top and takes the first row
 that fits. Order is therefore meaning. The east guard on the Madra
 Drawbridge has a question that counts until Madra has given the party
@@ -134,6 +138,8 @@ for a permit. After, he only tells it "Head to Southeast Osenia, and
 you'll hit Mikasalla."
 
 ## State that cleans itself up
+
+![Frost cast on the puddle by Daila's first house raises a pillar of ice; Felix walks into the house and out again, and the puddle is a puddle once more](https://alchemy.pascalpixel.com/tla/guides/scene/log-state.gif)
 
 Most flags are for ever. Two groups of 256 are wiped automatically, and a
 scene uses those for anything that should reset:

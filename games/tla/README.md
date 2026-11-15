@@ -1,5 +1,7 @@
 # The Lost Age
 
+![The title after the prologue: the Golden Sun The Lost Age logo fades in from white over the valley and its lighthouse and is held](https://alchemy.pascalpixel.com/tla/story/title.gif)
+
 Welcome to The Lost Age!
 
 This is the second Golden Sun, from Venus Lighthouse, where The Broken Seal

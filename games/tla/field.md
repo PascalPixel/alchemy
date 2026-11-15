@@ -141,6 +141,8 @@ Running gets you there sooner, after exactly the same distance.
 
 ## The World Map
 
+![Walking south-west down the road on the World Map outside Daila, then running west, then north](https://alchemy.pascalpixel.com/tla/guides/field/world-map-walk.gif)
+
 The World Map is one of the 325 scenes, with exits into towns and its own
 random battles. Most of it is sea, and the party crosses it on the
 Lemurian Ship, which sails it with its own random battles and, once it has

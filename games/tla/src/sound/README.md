@@ -5,6 +5,8 @@ number and says nothing else, and the number decides the rest.
 
 ## What a sound number means
 
+![Felix scoops at the spot under a puddle in Daila and digs up a Psy Crystal, with the treasure jingle: `Felix got a Psy Crystal.`](https://alchemy.pascalpixel.com/tla/guides/field/scoop.gif)
+
 There are three kinds of [sound](../../glossary.md#sound), and a number's
 range says which one it is:
 
@@ -62,6 +64,8 @@ among the four in front, another when Isaac is and Felix is not, and a
 third when Jenna is there without either.
 
 ## How the music comes back after a jingle
+
+![Felix stays at Daila's inn: the price, Yes, the screen closes to black for the night while the inn's tune plays, and the morning's line](https://alchemy.pascalpixel.com/tla/guides/sound/inn-fanfare.gif)
 
 An inn asks for one sound, its jingle, and never asks for the town's music
 again. The music comes back by itself.

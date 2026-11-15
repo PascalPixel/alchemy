@@ -1,5 +1,7 @@
 # Windows
 
+![A close look at a guest's window in Daila's inn, slowed while it zooms: it grows from its centre, `I hear the seafood in Madra is wonderful!` and a second page are typed, and it shrinks back into its centre](https://alchemy.pascalpixel.com/tla/guides/window/window-zoom.gif)
+
 This folder is every bordered box in the game and the text typed into it.
 [Interface](../../interface.md) gives the idea: one task draws them all.
 This page follows a line of text from the cartridge to the screen.
@@ -28,6 +30,8 @@ does all three only while a switch in the battle's work is on, and
 otherwise only types.
 
 ## Decoding a message
+
+![Felix asks Daila's innkeeper for a room: the night's price filled into the line, Yes and No, `Your Coins: 500`, and No](https://alchemy.pascalpixel.com/tla/guides/window/message-blanks.gif)
 
 A [message](../../glossary.md#message) is one piece of text, known by its
 name. The text itself is in
@@ -62,6 +66,8 @@ Decoded text waits in a ring of 512 places, each a letter or a control
 code, until it has been typed.
 
 ## Typing
+
+![As above](https://alchemy.pascalpixel.com/tla/guides/window/talk.gif)
 
 Each frame the task reads the next few places for each open message. A
 letter is drawn at the pen, which then moves on by that letter's width. A
@@ -100,6 +106,8 @@ Some places won't let you save. Two game flags make the menu answer
 choices.
 
 ### Saving
+
+![The Pause menu in Daila, Save your quest, the file list, the first file, and `Your game was saved.`](https://alchemy.pascalpixel.com/tla/guides/window/save.gif)
 
 The Save command and the File Screen's list are in `screens_save.c`. Each
 file carries a short summary, so the list is drawn without reading any file

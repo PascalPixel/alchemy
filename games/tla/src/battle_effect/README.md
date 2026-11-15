@@ -9,6 +9,8 @@ Each effect is one function, its handler, and they are all in this folder.
 
 ## How an ability picks its effect
 
+![Felix casts Quake Sphere at Jenna, Sheba and Piers: rock pillars rise under them, throwing them up](https://alchemy.pascalpixel.com/tla/abilities/quake-sphere.gif)
+
 A table gives every ability two numbers: which effect to play, and a
 variant saying how strongly. Quake, Earthquake and Quake Sphere all name
 the Quake effect, at variants 0, 1 and 2. The handler reads its variant and
@@ -26,6 +28,8 @@ number.
 
 ## The canvas
 
+![Jenna casts Heat Wave at Piers: a blaze crosses the screen and bursts into sparks around him](https://alchemy.pascalpixel.com/tla/abilities/heat-wave.gif)
+
 Nearly every effect draws on the canvas, a picture of 128 by 128 kept to
 one side and laid over the battle on a background layer.
 
@@ -40,6 +44,8 @@ can choose otherwise: Quake shows it at its own width and opaque, so a
 pillar hides what is behind it.
 
 ## The transfer
+
+![Jenna casts Fire at Felix, Piers and Sheba: fireballs rise, hang and stream into the three](https://alchemy.pascalpixel.com/tla/abilities/fire.gif)
 
 A handler never draws on the screen. It draws on its own copy of the
 canvas, marks it ready, and waits a frame. A task, the transfer, copies it
@@ -92,6 +98,8 @@ Each of them replaces the canvas, keeps the brighter, or adds
 models; Coatlicue's coils and Iris's pillars are strips of them.
 
 ## A handler's frame loop
+
+![Sheba casts Bolt at Felix: sparks gather, a bolt strikes him, and the damage is told while sparks are in the air](https://alchemy.pascalpixel.com/tla/abilities/bolt.gif)
 
 A handler reads the way its effect plays: set up, then one frame's work
 after another with a wait of one frame between, then tidy up. Anything that

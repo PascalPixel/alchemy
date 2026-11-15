@@ -6,6 +6,8 @@ fight in order and says which routine does each part.
 
 ## Starting a battle
 
+![A battle opens in the Kandorean Temple: the camera swings in as a Punch Ant, a Giant Bat and a Wild Wolf are each announced, and the command menu comes up on Fight](https://alchemy.pascalpixel.com/tla/guides/battle/opening.gif)
+
 A battle is handed one number, a [formation](../../glossary.md#formation),
 and `Battle_Run` plays the whole fight from it.
 
@@ -26,6 +28,8 @@ whose enemies are near the party's average level, and moves the enemies'
 levels by the difference.
 
 ## Turns
+
+![One round against the Wild Wolf, Punch Ant and Giant Bat: Sheba and Felix attack and fell the Giant Bat, Jenna defends, the Wild Wolf uses Fatal Fang on Felix, the Punch Ant attacks Jenna, and the next menu opens](https://alchemy.pascalpixel.com/tla/guides/battle/turn-order.gif)
 
 A turn is written down before it is played. Each action is brief: who
 acts, the command, where it is aimed, and a priority to sort by. Then the
@@ -87,6 +91,8 @@ too.
 
 ## Staging an action
 
+![Felix attacks a copy of Sheba and his Gaia Blade lets out a howl: Titan Blade, a burst of light and a blade from the sky](https://alchemy.pascalpixel.com/tla/guides/battle/unleash.gif)
+
 Staging is the part the player watches, in `BattleStaging_DispatchAction`:
 the attacker's run and leap, the caster's raised hand and glow, a summon
 taking the whole screen while the rest of its side fades out. It starts the
@@ -94,6 +100,8 @@ ability's battle effect at the right moment, so that a leap and its blow
 meet.
 
 ## How outcomes reach the screen
+
+![Sheba casts Plasma at Jenna, Felix and Piers: lightning over them, then each target's damage line in turn](https://alchemy.pascalpixel.com/tla/abilities/plasma.gif)
 
 Working out what an ability does to a target takes no time. Its HP drops
 in a single frame. What takes time is the showing: the flinch, the number,
@@ -137,6 +145,8 @@ lasting effects are counted down (`Battle_ProcessTurnEnd`).
 
 ## The end of the battle
 
+![A random battle in the Kandorean Temple's caves ends: the last enemy falls, the experience and coins are handed out, and the cave comes back with the party where it stood](https://alchemy.pascalpixel.com/tla/guides/battle/won.gif)
+
 A win gives experience to every party member still standing, in full to
 the ones in front and half to the ones behind, then coins, then items,
 each level gained shown as it happens (`Battle_AwardSpoils`). Then the
@@ -144,6 +154,8 @@ battle writes its result, and the main routine decides where the party
 goes.
 
 ## The zoomed battlefield
+
+![A random battle in the Kandorean Temple's caves with its backgrounds and sprites pulled apart and spread one behind another](https://alchemy.pascalpixel.com/tla/guides/battle/layers-3d.gif)
 
 The battlefield is one flat picture on the layer the console can zoom, and
 the camera is that layer's zoom and slide. The picture is larger than the

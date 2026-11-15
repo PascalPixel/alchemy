@@ -6,6 +6,8 @@ the title intro and the credits.
 
 ## A screen is code that waits
 
+![Felix opens the field menu in Daila: the party's HP and PP window and the four icons, the selection steps along them to Status, the Status screen opens, and B closes it back to the icons](https://alchemy.pascalpixel.com/tla/guides/menu/menus.gif)
+
 The field does not switch into a menu state. It calls the menu, as one
 function calls another, and stands on that line until the menu returns.
 The menu calls a screen the same way, and a screen calls each of its
@@ -23,6 +25,8 @@ on a pillar: then the screen leaves a request, the whole menu closes, and
 the field finds the request when it gets its line back.
 
 ### Closing a screen with Start
+
+![Two choices deep in the Psynergy screen, Start closes every window at once](https://alchemy.pascalpixel.com/tla/guides/menu/menu-start.gif)
 
 Start closes a screen however deep the player is, and no question knows
 how deep that is. A small task watches for Start and raises one flag.
@@ -50,6 +54,8 @@ The questions of all four draw on the same helpers, kept in one shared
 part, `menu_shared.c`.
 
 ### The preview is the real thing
+
+![As above](https://alchemy.pascalpixel.com/tla/guides/menu/djinn-standby.gif)
 
 Moving a Djinni can change a party member's class, stats and Psynergy, so
 the Djinn screen shows the result first and asks `Is this OK?`.

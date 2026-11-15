@@ -665,7 +665,7 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   sprite->fullColor = 0;
   sprite->palette = 0;
   sprite->priority = 1;
-  object->motionFlags = 3;
+  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   object->retainSpriteCache = 1;
   object->update = MarsLighthouseStarRoom_KeepStarAtLeaderPriority;
   size = 0x608;
@@ -916,7 +916,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   FieldEvent_Wait(40);
   object = *slot;
   if (object != 0) {
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     object->velocityY = px(2);
     object->speedLimit = px(2);
     object->acceleration = px(1);
@@ -932,17 +932,21 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= 0xfe;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 670, 170);
   FieldEvent_Wait(1);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |=
+      ACTOR_FACES_MOTION;
   object = *slot;
   if (object != 0)
     Actor_Release(object);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= 0xfe;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 680, 186);
   FieldEvent_Wait(1);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |=
+      ACTOR_FACES_MOTION;
   Scene_PlayMusic();
   Event_SetFlag(FLAG_MARS_LIGHTHOUSE_THAWED);
   gMainRoutineWork.battleBackground = SCENE_NARIBWE;
@@ -998,7 +1002,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
                     EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     object = *slot;
     if (object != 0) {
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       object->velocityY = px(2);
       object->speedLimit = px(2);
       object->acceleration = px(1);
@@ -1014,10 +1018,12 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     }
     FieldEvent_Wait(20);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-    Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= 0xfe;
+    Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &=
+        ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 670, 170);
     FieldEvent_Wait(1);
-    Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
+    Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |=
+        ACTOR_FACES_MOTION;
     object = *slot;
     if (object != 0)
       Actor_Release(object);
@@ -1098,7 +1104,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   FieldEvent_Wait(40);
   object2 = *slot2;
   if (object2 != 0) {
-    object2->motionFlags = 3;
+    object2->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     object2->velocityY = px(2);
     object2->speedLimit = px(2);
     object2->acceleration = px(1);
@@ -1114,10 +1120,12 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= 0xfe;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 670, 170);
   FieldEvent_Wait(1);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |=
+      ACTOR_FACES_MOTION;
   object2 = *slot2;
   if (object2 != 0)
     Actor_Release(object2);

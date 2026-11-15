@@ -1746,7 +1746,7 @@ void Madra_ClimbDownLadder(void) {
     next = 15;
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
-  Actor_GetById(ACTOR_FELIX)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, 4);
   Actor_WaitForMoveById(ACTOR_FELIX);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_FELIX), 0);

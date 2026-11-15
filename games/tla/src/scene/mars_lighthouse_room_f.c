@@ -491,7 +491,7 @@ void MarsLighthouseRoomF_MoveVenusStatueIntoFlames(s32 unused, s32 id) {
 
   if (object->x.fixed >> 20 == 50) {
     Event_SetFlag(FLAG_VENUS_STATUE_BLOCKS_FLAMES);
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   }
 }
 
@@ -502,7 +502,7 @@ void MarsLighthouseRoomF_PushVenusStatueIntoFlames(void) {
   Leader_PushObjectAhead();
   if (object->x.fixed >> 20 == 50) {
     Event_SetFlag(FLAG_VENUS_STATUE_BLOCKS_FLAMES);
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   }
 }
 
@@ -518,7 +518,8 @@ void MarsLighthouseRoomF_StopMovingStone(s32 unused, s32 id) {
   if (id == ACTOR_PUSHED_STATUE) {
     MarsLighthouseRoomF_MoveVenusStatueIntoFlames(unused, 16);
   } else if (id == ACTOR_FIRST_STONE) {
-    Actor_Get(ACTOR_FIRST_STONE)->motionFlags = 3;
+    Actor_Get(ACTOR_FIRST_STONE)->motionFlags =
+        ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 #if TLA_PATCH_1 /* From patch 1. */
     MarsLighthouseRoomF_FillGapsWithStones();
 #endif
@@ -774,7 +775,7 @@ void MarsLighthouseRoomF_DropBlock(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (object->x.fixed >> 20 == 13) {
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     if (object->groundHeight != Map_GetTerrainHeight(BYTE_AT(object, 34),
                                                      object->x.fixed,
                                                      object->z.fixed)) {
@@ -1610,9 +1611,9 @@ UNUSED void JupiterLighthouse_PlaceRaisedActors(void) {
 
       actor23->y.fixed += step;
     }
-    actor9->motionFlags = 4;
-    actor10->motionFlags = 4;
-    actor23->motionFlags = 4;
+    actor9->motionFlags = ACTOR_FLOATS;
+    actor10->motionFlags = ACTOR_FLOATS;
+    actor23->motionFlags = ACTOR_FLOATS;
   }
 }
 

@@ -689,7 +689,7 @@ s32 Scene_Initialize(void) {
     i++;
     if (i != 32)
       goto L12;
-    ACTOR(8)->motionFlags = 1;
+    ACTOR(8)->motionFlags = ACTOR_FOLLOWS_TERRAIN;
     i = 0;
   L13:
     ACTOR(8)->y.fixed -= 0x851eb;

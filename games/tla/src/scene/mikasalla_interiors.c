@@ -276,11 +276,11 @@ s32 Scene_Initialize(void) {
     s32 entrance = gMainRoutineWork.entrance;
 
     if (entrance == 1) {
-      Actor_Get(ACTOR_MIKASALLA_HEALER)->collisionFlags |= 4;
+      Actor_Get(ACTOR_MIKASALLA_HEALER)->collisionFlags |= ACTOR_NEAR_TALK;
       FieldActor_SetSpritePriority(ACTOR_MIKASALLA_HEALER, 2);
     } else if (entrance == 5) {
       Event_ClearFlag(FLAG_SHOW_AREA_NAME);
-      Actor_Get(ACTOR_APOJII_HEALER)->collisionFlags |= 4;
+      Actor_Get(ACTOR_APOJII_HEALER)->collisionFlags |= ACTOR_NEAR_TALK;
       FieldActor_SetSpritePriority(ACTOR_APOJII_HEALER, 2);
     } else if (entrance == 4) {
       Event_ClearFlag(FLAG_SHOW_AREA_NAME);

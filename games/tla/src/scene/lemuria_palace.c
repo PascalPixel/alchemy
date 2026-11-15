@@ -74,7 +74,7 @@ void LemuriaPalace_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(step->script, step->x, step->z);
-  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 2;
+  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
@@ -519,7 +519,7 @@ answeredNo:
   Actor_WalkByAndWait(17, 0, -8);
   Event_Wait(1);
   v7 = Actor_GetById(17);
-  v7->steeringFlags |= 1;
+  v7->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(10);
   Actor_SetAnimationAndWait(17, 3);
   Event_Wait(10);
@@ -605,7 +605,7 @@ answeredNo:
   Actor_WalkByAndWait(17, 0, -16);
   Event_Wait(1);
   v13 = Actor_GetById(17);
-  v13->steeringFlags |= 1;
+  v13->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(25);
   Actor_StartRepeatedMotion(17, 3);
   Actor_SetAttachedEffect(17, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);

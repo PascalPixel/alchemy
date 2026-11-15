@@ -558,20 +558,6 @@ UNUSED s32 MadraInteriors_StraightenSprite(struct Actor *object) {
 /// "Admit it! You're one of the Champa, aren't you, Piers?"
 void MadraInteriors_InterrogatePiers(void) {
   s32 i;
-  struct Actor *object0;
-  struct Actor *object1;
-  struct Actor *object2;
-  struct Actor *object3;
-  struct Actor *object4;
-  struct Actor *object5;
-  struct Actor *object6;
-  struct Actor *object7;
-  struct Actor *object8;
-  struct Actor *object9;
-  struct Actor *object10;
-  struct Actor *object11;
-  struct Actor *object12;
-  s32 result13;
   struct Actor *object14;
 
   Event_Start();
@@ -617,15 +603,13 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   FieldActor_ShowEmote(ACTOR_STERN_INTERROGATOR,
                        EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  object0 = Actor_Get(ACTOR_STERN_INTERROGATOR);
-  object0->steeringFlags &= 254;
+  Actor_Get(ACTOR_STERN_INTERROGATOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
   for (i = 2; i >= 0; i--) {
     Actor_WalkByAndWait(ACTOR_STERN_INTERROGATOR, 0, -8);
     Event_PlaySound(SE_HEAVY_IMPACT);
     Actor_WalkByAndWait(ACTOR_STERN_INTERROGATOR, 0, 8);
   }
-  object1 = Actor_Get(ACTOR_STERN_INTERROGATOR);
-  object1->steeringFlags |= 1;
+  Actor_Get(ACTOR_STERN_INTERROGATOR)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldEvent_Wait(30);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "Look at me when I'm talking to you! Are you trying to mock me!?"
@@ -681,8 +665,7 @@ void MadraInteriors_InterrogatePiers(void) {
                   30);
   Actor_FaceActor(ACTOR_STERN_INTERROGATOR, ACTOR_PIERS, 0);
   Actor_FaceActor(ACTOR_ACCUSING_INTERROGATOR, ACTOR_PIERS, 0);
-  object2 = Actor_Get(ACTOR_STERN_INTERROGATOR);
-  Actor_SetSpriteFlags(object2, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_STERN_INTERROGATOR), 0);
   Actor_SetScript(ACTOR_STERN_INTERROGATOR, gMadraInteriors_InterrogatorLifted);
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
@@ -690,28 +673,22 @@ void MadraInteriors_InterrogatePiers(void) {
   // "Oh! That was Psynergy!"
   FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
   FieldActor_Stop(ACTOR_STERN_INTERROGATOR);
-  object3 = Actor_Get(ACTOR_STERN_INTERROGATOR);
-  object3->scaleX = Q16_ONE;
-  object4 = Actor_Get(ACTOR_STERN_INTERROGATOR);
-  object4->scaleY = Q16_ONE;
+  Actor_Get(ACTOR_STERN_INTERROGATOR)->scaleX = Q16_ONE;
+  Actor_Get(ACTOR_STERN_INTERROGATOR)->scaleY = Q16_ONE;
   FieldEvent_Wait(4);
-  object5 = Actor_Get(ACTOR_STERN_INTERROGATOR);
-  object5->motionFlags = 2;
-  object6 = Actor_Get(ACTOR_STERN_INTERROGATOR);
-  object6->steeringFlags &= 254;
+  Actor_Get(ACTOR_STERN_INTERROGATOR)->motionFlags = ACTOR_FALLS;
+  Actor_Get(ACTOR_STERN_INTERROGATOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestinationOffset(ACTOR_STERN_INTERROGATOR, -8, 0);
   Actor_SetScript(ACTOR_STERN_INTERROGATOR,
                   gMadraInteriors_InterrogatorTopples);
   FieldActor_WaitForScriptEndById(ACTOR_STERN_INTERROGATOR);
   Event_PlaySound(SE_LANDING_THUD);
   FieldEvent_Wait(60);
-  object7 = Actor_Get(ACTOR_STERN_INTERROGATOR);
-  object7->steeringFlags = (object7->steeringFlags | 1);
+  Actor_Get(ACTOR_STERN_INTERROGATOR)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldActor_Jump(ACTOR_STERN_INTERROGATOR, 6, 0);
   FieldEvent_Wait(3);
   Actor_SetSpriteRotationById(ACTOR_STERN_INTERROGATOR, 0);
-  object8 = Actor_Get(ACTOR_STERN_INTERROGATOR);
-  Actor_SetSpriteFlags(object8, 1);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_STERN_INTERROGATOR), 1);
   Actor_FaceDirection(ACTOR_STERN_INTERROGATOR, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_ACCUSING_INTERROGATOR, FACING_EAST, 0);
@@ -727,10 +704,8 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_Wait(20);
   Actor_FaceActor(ACTOR_STERN_INTERROGATOR, ACTOR_PIERS, 0);
   FieldEvent_Wait(20);
-  object9 = Actor_Get(ACTOR_ACCUSING_INTERROGATOR);
-  object9->steeringFlags &= 254;
-  object10 = Actor_Get(ACTOR_STERN_INTERROGATOR);
-  object10->steeringFlags &= 254;
+  Actor_Get(ACTOR_ACCUSING_INTERROGATOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_STERN_INTERROGATOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_STERN_INTERROGATOR, -16, 16);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   FieldEvent_Wait(20);
@@ -739,8 +714,7 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_Wait(10);
   FieldActor_Jump(ACTOR_STERN_INTERROGATOR, 6, 20);
   FieldEvent_Wait(20);
-  object11 = Actor_Get(ACTOR_STERN_INTERROGATOR);
-  object11->steeringFlags = (object11->steeringFlags | 1);
+  Actor_Get(ACTOR_STERN_INTERROGATOR)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetScript(ACTOR_STERN_INTERROGATOR, gMadraInteriors_InterrogatorsLeave);
   FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_STERN_INTERROGATOR);
   FieldActor_WatchAndSetScript(ACTOR_JAIL_KRADEN, ACTOR_STERN_INTERROGATOR);
@@ -771,8 +745,7 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_Wait(20);
   // "Help!!!"
   FieldEvent_ShowMessageThenWait(ACTOR_ACCUSING_INTERROGATOR, 0, 10);
-  object12 = Actor_Get(ACTOR_ACCUSING_INTERROGATOR);
-  object12->steeringFlags |= 1;
+  Actor_Get(ACTOR_ACCUSING_INTERROGATOR)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetScript(ACTOR_ACCUSING_INTERROGATOR,
                   gMadraInteriors_InterrogatorsLeave);
   FieldEvent_Wait(40);
@@ -792,8 +765,7 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_Wait(20);
   // "This man... He must be an Adept!"
   Event_OpenMessage(ACTOR_JAIL_KRADEN, 0);
-  result13 = FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
-  if (result13 != 0)
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) != 0)
     goto answeredNo;
   Actor_RunRepeatedMotion(ACTOR_JAIL_KRADEN, 2);
   FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
@@ -1056,8 +1028,6 @@ static inline void MadraInteriors_WalkIntoLeader(s32 actorId) {
 /// On the return with Piers, the elder's household welcomes him home.
 /// "Felix! You're back!"
 void MadraInteriors_WelcomePiersHome(void) {
-  s32 result0;
-  s32 result1;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1116,8 +1086,7 @@ void MadraInteriors_WelcomePiersHome(void) {
   Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "And your jewel..."
   Event_OpenMessage(ACTOR_MAYOR, 0);
-  result0 = FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
-  if (result0 != 0)
+  if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) != 0)
     goto answeredNo;
   Actor_ShowEmote(ACTOR_ELDER, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_ELDER, 0, 10);
@@ -1153,8 +1122,7 @@ answered:
   Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
-  result1 = Event_GetFlag(0x981);
-  if (result1 == 0)
+  if (Event_GetFlag(0x981) == 0)
     goto firstGoodbye;
   MadraInteriors_SayGoodbyeAgain();
   goto saidGoodbye;

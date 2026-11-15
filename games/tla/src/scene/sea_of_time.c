@@ -91,7 +91,7 @@ struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
   if (object != NULL) {
     Scene_SetActorSpritePriority(object, 1);
     object->motionFlags = 0;
-    object->collisionFlags = 8;
+    object->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(object, 0);
     Actor_SetSpriteColor(object, 15);
     object->priorityFlags |= 34;
@@ -1085,7 +1085,7 @@ void SeaOfTime_AnimateSea(void) {
 }
 
 void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor) {
-  Actor_GetById(actor)->collisionFlags |= 16;
+  Actor_GetById(actor)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   Actor_SetPositionFixed(actor, (x << 19) + px(8), (z << 19) + px(8));
   x >>= 1;
   z >>= 1;

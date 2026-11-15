@@ -167,7 +167,7 @@ void Lemuria_OpenDoorAndEnter(const struct WarpTarget *warp, s32 door,
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_AnimateCells(warp->scene, warp->x, warp->z);
-  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 2;
+  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   id = gMainRoutineWork.leaderActorId;
@@ -397,7 +397,6 @@ void Rope_Coil();
 /// in another way.
 /// "The door doesn't want to open."
 void Lemuria_KnockAtBrokenDoor(void) {
-  s32 v5;
   struct Actor *object;
 
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > px(96) ||
@@ -439,8 +438,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
   FieldEvent_ShowMessageThenWait(12, 0, 10);
   FieldCamera_MoveTo(872, CAMERA_KEEP, 928, 1);
   FieldCamera_WaitForArrival();
-  v5 = Party_FindOwnerWithAction(133);
-  if (v5 != -1 || Event_GetFlag(0x962))
+  if (Party_FindOwnerWithAction(133) != -1 || Event_GetFlag(0x962))
     goto done;
   FieldEvent_SetMessageId((s32)&MsgWhatSThe);
   FieldEvent_Wait(20);
@@ -448,20 +446,20 @@ void Lemuria_KnockAtBrokenDoor(void) {
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  FieldCamera_MoveToFixed(px(872), v5, px(792), 1);
+  FieldCamera_MoveTo(872, CAMERA_KEEP, 792, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
   Actor_ShowEmote(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "What's the matter? Can't you climb up? ...Fine. Just a moment."
   FieldEvent_ShowMessageThenWait(12, 0, 10);
-  FieldCamera_MoveToFixed(px(872), v5, px(856), 1);
+  FieldCamera_MoveTo(872, CAMERA_KEEP, 856, 1);
   FieldActor_Jump(12, 4, 0);
   Actor_WalkToAndWait(12, 872, 912);
   FieldEvent_Wait(20);
   Actor_SetSpeed(12, 1);
   Actor_WalkByAndWait(12, -32, 0);
   Actor_FaceDirectionAndWait(12, FACING_SOUTH_SOUTHEAST);
-  FieldCamera_MoveToFixed(px(848), v5, px(904), 1);
+  FieldCamera_MoveTo(848, CAMERA_KEEP, 904, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(15);
   // "You came all this way and then got stuck here? You can't be very bright."

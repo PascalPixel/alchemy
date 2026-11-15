@@ -823,9 +823,9 @@ s32 Scene_Initialize(void) {
   Actor_DisableById(17);
   Actor_DisableById(18);
   FieldActor_SetSpritePriority(10, 2);
-  Actor_Get(12)->collisionFlags |= 4;
+  Actor_Get(12)->collisionFlags |= ACTOR_NEAR_TALK;
   FieldActor_SetSpritePriority(16, 2);
-  Actor_Get(16)->collisionFlags |= 4;
+  Actor_Get(16)->collisionFlags |= ACTOR_NEAR_TALK;
 
   object = Actor_Get(18);
   object->motionFlags = 0;

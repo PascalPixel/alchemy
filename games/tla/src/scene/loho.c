@@ -510,7 +510,7 @@ crewLeaves:
   FieldCamera_MoveTo(460, CAMERA_KEEP, 350, 1);
   Event_Wait(30);
   t233 = Actor_GetById(16);
-  t233->steeringFlags &= 254;
+  t233->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkBy(18, -40, -20);
   Actor_WalkBy(17, -40, -20);
   Actor_WalkBy(16, -40, -20);
@@ -561,7 +561,7 @@ DEFINE_SCOOP_TREASURE(Loho_ScoopThirdTreasure, 66, 2)
 /// it is dug up (flag 0xff7).
 void Loho_LiftRock(void) {
   Event_SetFlag(FLAG_SCENE_TEMP_01);
-  Actor_GetById(22)->collisionFlags &= 0xfe;
+  Actor_GetById(22)->collisionFlags &= ~ACTOR_SOLID;
   if (Event_GetFlag(0xff7) == 0)
     Actor_SetPosition(66, 520, 136);
 }
@@ -705,7 +705,7 @@ void Loho_ClimbDownLadder(void) {
     Actor_SetPosition(8, 224, 224);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
-  Actor_GetById(ACTOR_FELIX)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, 4);
   Actor_WaitForMoveById(ACTOR_FELIX);

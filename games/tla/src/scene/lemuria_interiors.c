@@ -59,13 +59,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Lunpa's tower.
 /// "Are you the travelers that came here with Piers?"
 void LemuriaInteriors_TalkToPiersUncle(s32 arg0) {
-  s32 result0;
-  s32 result1;
-  s32 result2;
-  s32 result3;
 
-  result0 = Event_GetFlag(0x966);
-  if (result0 == 0)
+  if (Event_GetFlag(0x966) == 0)
     goto notMourning;
   Event_SetMessageId((s32)MsgLemuriaInteriorsGoToLunpasTowerHe);
   // "Go to Lunpa's tower. He will see you."
@@ -73,8 +68,7 @@ void LemuriaInteriors_TalkToPiersUncle(s32 arg0) {
   Actor_WatchAndSetScript(10, 4);
   goto done;
 notMourning:
-  result1 = Event_GetFlag(0x965);
-  if (result1 == 0)
+  if (Event_GetFlag(0x965) == 0)
     goto notVisited;
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -88,9 +82,8 @@ notVisited:
   Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouTravelersThatCame);
   // "Are you the travelers that came here with Piers?"
   Event_OpenMessage(arg0, 0);
-  result2 = FieldParty_GetLeaderActor();
-  result3 = FieldEvent_AskYesNoWithActorAnimation(result2, 0);
-  if (result3 != 0)
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) !=
+      0)
     goto declined;
   LemuriaInteriors_PiersVisitsUncle();
   goto done;
@@ -120,15 +113,12 @@ void LemuriaInteriors_MindReadPiersUncle(s32 unused, s32 id) {
 
 /// "Are you the warriors from beyond the Sea of Time who returned with Piers?"
 void LemuriaInteriors_AskFromBeyondSeaOfTime(s32 arg0) {
-  s32 result0;
-  s32 result1;
 
   Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouWarriorsFromBeyond);
   // "Are you the warriors from beyond the Sea of Time who returned with..."
   Event_OpenMessage(arg0, 0);
-  result0 = FieldParty_GetLeaderActor();
-  result1 = FieldEvent_AskYesNoWithActorAnimation(result0, 0);
-  if (result1 != 0)
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) !=
+      0)
     goto answeredNo;
   Event_Wait(10);
   Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouWarriorsFromBeyond + 1);
@@ -144,15 +134,12 @@ answered:
 /// "Do you seek to know more about the draughts that provide us with such
 /// longevity?"
 void LemuriaInteriors_AskAboutDraughts(s32 arg0) {
-  s32 result0;
-  s32 result1;
 
   Event_SetMessageId((s32)MsgLemuriaInteriorsDoYouSeekToKnow);
   // "Do you seek to know more about the draughts that provide us with..."
   Event_OpenMessage(arg0, 0);
-  result0 = FieldParty_GetLeaderActor();
-  result1 = FieldEvent_AskYesNoWithActorAnimation(result0, 0);
-  if (result1 != 0)
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) !=
+      0)
     goto answeredNo;
   Event_Wait(10);
   Event_SetMessageId((s32)MsgLemuriaInteriorsDoYouSeekToKnow + 1);
@@ -167,13 +154,9 @@ answered:
 
 /// "Was that some form of Psynergy?"
 void LemuriaInteriors_ScoffAtMindRead(s32 arg0, s32 arg1) {
-  struct Actor *object0;
   s32 value1;
-  s32 result2;
-  s32 result3;
 
-  object0 = Actor_GetById(arg1);
-  value1 = object0->facing;
+  value1 = Actor_GetById(arg1)->facing;
   Event_SetFlag(0x967);
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -182,9 +165,8 @@ void LemuriaInteriors_ScoffAtMindRead(s32 arg0, s32 arg1) {
   Event_SetMessageId((s32)MsgLemuriaInteriorsWasThatSomeForm);
   // "Was that some form of Psynergy?"
   Event_OpenMessage(arg1, 0);
-  result2 = FieldParty_GetLeaderActor();
-  result3 = FieldEvent_AskYesNoWithActorAnimation(result2, 0);
-  if (result3 != 0)
+  if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) !=
+      0)
     goto answeredNo;
   Event_Wait(10);
   Event_SetMessageId((s32)MsgLemuriaInteriorsWasThatSomeForm + 1);
@@ -236,9 +218,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// Piers comes home to his uncle, who is relieved to find him alive.
 /// "I am sorry it has taken me so long to visit, Uncle."
 void LemuriaInteriors_PiersVisitsUncle(void) {
-  struct Actor *object0;
-  struct Actor *object1;
-  s32 result2;
   struct Actor *object3;
 
   Event_SetFlag(0x965);
@@ -419,12 +398,10 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Actor_SetAnimation(ACTOR_PIERS, ANIM_STAND);
   Event_Wait(30);
   Actor_SetSpeed(ACTOR_PIERS, 0.3);
-  object0 = Actor_GetById(ACTOR_PIERS);
-  object0->steeringFlags &= 254;
+  Actor_GetById(ACTOR_PIERS)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_PIERS, 12, 0);
   Event_Wait(1);
-  object1 = Actor_GetById(ACTOR_PIERS);
-  object1->steeringFlags |= 1;
+  Actor_GetById(ACTOR_PIERS)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(10);
   Actor_StartRepeatedMotion(ACTOR_PIERS, 3);
   Actor_SetAttachedEffect(ACTOR_PIERS,
@@ -446,8 +423,7 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Event_Wait(20);
   // "What should we do, Felix? Should we follow Piers?"
   Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 12, 0);
-  result2 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (result2 != 0)
+  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) != 0)
     goto answeredNo;
   Event_Wait(20);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 12, 0, 10);
@@ -665,13 +641,13 @@ visited:
   FieldEvent_Wait(20);
   {
     struct Actor *other = (struct Actor *)((s32)Actor_GetById(10));
-    other->steeringFlags &= 254;
+    other->steeringFlags &= ~ACTOR_FACES_MOTION;
   }
   Actor_WalkByAndWait(10, -8, 0);
   FieldEvent_Wait(1);
   {
     struct Actor *other = (struct Actor *)((s32)Actor_GetById(10));
-    other->steeringFlags |= 1;
+    other->steeringFlags |= ACTOR_FACES_MOTION;
   }
   FieldEvent_Wait(10);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
@@ -1234,19 +1210,19 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_SetSpeed(18, 1.9);
   Event_PlaySound(SE_IMPACT);
   Actor_Jump(18, 2, 0);
-  Actor_GetById(18)->steeringFlags &= 0xfe;
+  Actor_GetById(18)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(18, 0, -12);
   Event_Wait(1);
-  Actor_GetById(18)->steeringFlags |= 1;
+  Actor_GetById(18)->steeringFlags |= ACTOR_FACES_MOTION;
   MapGrid_SetShake(0, 0, 0);
   Event_Wait(10);
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
   Actor_SetSpeed(18, 0.6);
-  Actor_GetById(18)->steeringFlags &= 0xfe;
+  Actor_GetById(18)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(18, 0, -24);
   Event_Wait(1);
-  Actor_GetById(18)->steeringFlags |= 1;
+  Actor_GetById(18)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(20);
   Actor_SetAnimationAndWait(18, 3);
   Event_Wait(20);
@@ -1261,10 +1237,10 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   target = Actor_GetById(18);
   Event_PlaySound(SE_HEAVY_IMPACT);
   MapGrid_SetShake(4, 4, 1);
-  Actor_GetById(18)->steeringFlags &= 0xfe;
+  Actor_GetById(18)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(18, 0, -16);
   Event_Wait(1);
-  Actor_GetById(18)->steeringFlags |= 1;
+  Actor_GetById(18)->steeringFlags |= ACTOR_FACES_MOTION;
   target->timer = 3;
   wait(1);
   target->update = 0;

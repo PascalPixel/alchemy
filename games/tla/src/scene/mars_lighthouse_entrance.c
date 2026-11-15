@@ -265,7 +265,7 @@ loop:
   Actor_SetSpriteFlags(object, 0);
   Actor_SelectAnimation(object, (u16)animation + Event_GetFlag((u16)flag));
   object->motionFlags = 0;
-  object->collisionFlags &= 0xfe;
+  object->collisionFlags &= ~ACTOR_SOLID;
   object->timer = flag;
   MarsLighthouseEntrance_SetIceConeCells(object);
   row += 3;
@@ -2266,7 +2266,7 @@ void MarsLighthouseEntrance_LandFromCrack(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;

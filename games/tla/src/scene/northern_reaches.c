@@ -100,18 +100,14 @@ void NorthernReaches_ClearIceWall(void) {
 /// Kraden to see it.
 /// "Kraden, come look at this... There's a huge ice wall blocking our path..."
 void NorthernReaches_SightIceWall(void) {
-  s32 result0;
-  struct Actor *object1;
 
-  result0 = Event_GetFlag(FLAG_SCENE_TEMP_00);
-  if (result0 != 0)
+  if (Event_GetFlag(FLAG_SCENE_TEMP_00) != 0)
     goto done;
   Event_SetFlag(FLAG_SCENE_TEMP_00);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipIceWallFirstApproach);
-  object1 = Actor_Get(8);
-  FieldActor_WaitForMove((s32)object1);
+  FieldActor_WaitForMove((s32)Actor_Get(8));
   Actor_FaceDirectionAndWait(8, FACING_NORTH);
   FieldEvent_Wait(5);
   // "Kraden, come look at this... There's a huge ice wall blocking our..."
@@ -125,18 +121,14 @@ done:
 
 /// The crew gathers at the bow to talk the ice wall over, once (flag 0x90c).
 void NorthernReaches_DiscussIceWall(void) {
-  s32 result0;
-  struct Actor *object1;
 
-  result0 = Event_GetFlag(0x90c);
-  if (result0 != 0)
+  if (Event_GetFlag(0x90c) != 0)
     goto done;
   Event_SetFlag(0x90c);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipIceWallCrewReposition);
-  object1 = Actor_Get(8);
-  FieldActor_WaitForMove((s32)object1);
+  FieldActor_WaitForMove((s32)Actor_Get(8));
   FieldEvent_Wait(5);
   // "Kraden, come look at this... There's a huge ice wall blocking our..."
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 5);
@@ -257,7 +249,7 @@ ready:
   FieldEvent_ShowMessageThenWait(11, 0, 5);
   Actor_SetSpeed(8, 3);
   t40 = Actor_Get(8);
-  t40->steeringFlags &= 254;
+  t40->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkBy(8, 0, 16);
   Event_PlaySound(SE_CLATTER);
   FieldEvent_Wait(4);

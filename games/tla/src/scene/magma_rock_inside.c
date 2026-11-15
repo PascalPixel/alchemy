@@ -91,7 +91,7 @@ struct Actor *MagmaRockInside_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
   if (object != NULL) {
     Scene_SetActorSpritePriority(object, 1);
     object->motionFlags = 0;
-    object->collisionFlags = 8;
+    object->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(object, 0);
     FieldActor_SetSpriteColor(object, 15);
     object->priorityFlags |= 0x22;
@@ -494,7 +494,7 @@ void MagmaRockInside_BlockMovedPillar(void) {
     if (Map_GetTerrainHeight(2, object->x.fixed, object->z.fixed) !=
         object->y.fixed) {
       object->layer = 2;
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       System_Wait(1);
       if (Event_GetFlag(FLAG_AREA_TEMP_02)) {
         object->gravity = px(1) / 16;
@@ -522,7 +522,7 @@ void MagmaRockInside_BlockMovedPillar(void) {
     if (Map_GetTerrainHeight(2, object->x.fixed, object->z.fixed) !=
         object->y.fixed) {
       object->layer = 2;
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       System_Wait(1);
       object->gravity = px(1) / 16;
       object->priorityFlags |= 2;
@@ -907,7 +907,7 @@ void MagmaRockInside_PushPillarIntoLava(void) {
   leader->speedLimit = px(3);
   leader->acceleration = px(2);
   leader->velocityY = 0x4cccc;
-  leader->motionFlags &= 0x7e;
+  leader->motionFlags &= ~(ACTOR_FOLLOWS_TERRAIN | ACTOR_MOTION_SPARE);
   Actor_SetSpriteFlags(leader, 0);
   stepX = (position[0] - leader->x.fixed) / 12;
   stepZ = (position[2] - leader->z.fixed) / 12;
@@ -925,7 +925,7 @@ void MagmaRockInside_PushPillarIntoLava(void) {
   leader->z.fixed = target->z.fixed;
   Actor_SelectAnimation(leader, 6);
   Actor_SetSpriteFlags(leader, 1);
-  leader->motionFlags |= 3;
+  leader->motionFlags |= ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_End();
 }
 
@@ -1284,7 +1284,7 @@ void MagmaRockInside_FloodWithLava(void) {
   FieldVector_AddPolarOffset(16, (s32)facing ^ 0x8000, p);
   leader->facing = facing;
   Actor_WalkToAndWait(*(s32 *)j, ((s16 *)p)[1], ((s16 *)p)[5]);
-  Actor_Get(*(s32 *)j)->steeringFlags |= 1;
+  Actor_Get(*(s32 *)j)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_End();
 }
 
@@ -2292,7 +2292,7 @@ s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value);
 static __inline__ void Raise(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
-  object->motionFlags = 2;
+  object->motionFlags = ACTOR_FALLS;
   object->y.fixed = object->groundHeight = 20 << 16;
   object->priorityFlags |= 128;
 }
@@ -2665,7 +2665,7 @@ next:
         wait(4);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
-        leader->motionFlags = 3;
+        leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
         wait(5);
         Actor_SetPositionAndResetMotion(partner, 0, 0, 0);
         wait(2);

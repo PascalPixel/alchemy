@@ -259,14 +259,14 @@ void MarsLighthouseAerie_SetUpBeacon(void) {
   System_Wait(1);
   FieldActor_SetSpritePriority(ACTOR_BEACON_FIRE, 1);
   object = Actor_Get(ACTOR_BEACON_FIRE);
-  object->motionFlags = 4;
+  object->motionFlags = ACTOR_FLOATS;
   object->y.fixed = px(112);
   Actor_SetSpriteColorMode(object, 5);
   Actor_SetSpriteFlags(object, 0);
   object->priorityFlags |= 0x20;
   FieldActor_SetSpritePriority(9, 2);
   object = Actor_Get(9);
-  object->motionFlags = 4;
+  object->motionFlags = ACTOR_FLOATS;
   object->y.fixed = px(112);
   object->scaleX = 0x14ccc;
   object->scaleY = 0x14ccc;
@@ -1711,10 +1711,10 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_EAST, 40);
   Actor_SetSpeed(ACTOR_GARET, 0.8);
-  Actor_Get(ACTOR_GARET)->steeringFlags &= 0xfe;
+  Actor_Get(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_GARET, 542, 328);
   FieldEvent_Wait(1);
-  Actor_Get(ACTOR_GARET)->steeringFlags |= 1;
+  Actor_Get(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldCamera_SetSpeed(0.8);
   EventCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(540, 76, 340, 1);
@@ -1840,8 +1840,8 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Party_RemoveMemberRestored(3);
   Party_RemoveMemberRestored(2);
   Party_RemoveMemberRestored(1);
-  Actor_Get(20)->collisionFlags |= 8;
-  Actor_Get(21)->collisionFlags |= 8;
+  Actor_Get(20)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_Get(21)->collisionFlags |= ACTOR_NOT_TARGETED;
   FieldActor_SetSpriteColor(Actor_Get(28), 0xf);
   Actor_SetPosition(28, 568, 274);
   Actor_Get(17)->motionFlags = 0;
@@ -2058,7 +2058,7 @@ void MarsLighthouseAerie_StepBackRight(s32 id) {
 
 /// The actor keeps to the ground as the beacon's beam rises.
 void MarsLighthouseAerie_HoldStill(s32 id) {
-  Actor_GetById(id)->motionFlags = 3;
+  Actor_GetById(id)->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
 }
 
 void MarsLighthouseAerie_StartLookingAround(s32 id);
@@ -2138,7 +2138,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
     A(object)->motionFlags = zero;
     FieldActor_SetMoveTarget(object, 512, 128, 280);
     FieldActor_WaitForMove(object);
-    A(object)->motionFlags = 4;
+    A(object)->motionFlags = ACTOR_FLOATS;
     FieldEvent_Wait(60);
     A(object)->motionFlags = zero;
     FieldActor_SetMoveTarget(object, 512, 128, 264);

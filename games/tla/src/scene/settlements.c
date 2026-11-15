@@ -347,7 +347,7 @@ void Settlements_EnterDoor(void) {
 
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(10);
-  Actor_Get(ACTOR_FELIX)->steeringFlags &= 0xfe;
+  Actor_Get(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, 4);
   FieldActor_WaitForMoveById(ACTOR_FELIX);

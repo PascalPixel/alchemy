@@ -848,7 +848,7 @@ gBattleEffect_Handlers:
 	.4byte BattleEffect_RunDelude              @ 429
 	.4byte BattleEffect_RunRisingVenom         @ 430
 	.4byte BattleEffect_RunSack                @ 431
-	.4byte BattleEffect_RunVolleyBMode19       @ 432
+	.4byte BattleEffect_RunFireDanceUnleash       @ 432
 	.4byte BattleEffect_RunStunMuscle          @ 433
 	.4byte BattleEffect_RunRollingFlame        @ 434
 	.4byte BattleEffect_RunCage                @ 435
@@ -887,7 +887,7 @@ gBattleEffect_Handlers:
 	.4byte BattleEffect_RunPsyBoost            @ 468
 	.4byte BattleEffect_RunStrongHit           @ 469
 	.4byte BattleEffect_RunChillBreath @ 470
-	.4byte BattleEffect_RunVolleyBMode23       @ 471
+	.4byte BattleEffect_RunStormBreathStrong       @ 471
 	.global gCybele_ObjectPoses
 gCybele_ObjectPoses:
 	.byte 8, 10, 9, 11, 3, 4

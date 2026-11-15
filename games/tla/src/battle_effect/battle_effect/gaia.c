@@ -404,23 +404,23 @@ struct EffectSprite {
       u32 rest : 22;
     } bits;
   } oam;
-  s32 unk0c;
-  u8 vramEntry;
-  u8 unk11_0 : 1;
-  u8 unk11_1 : 7;
-  u16 unk12;
+  s32 scale;
+  u8 slot;
+  u8 retainCacheEntry : 1;
+  u8 otherFlags : 7;
+  u16 rotation;
   u8 width;
   u8 height;
-  u8 unk16;
-  u8 unk17;
-  u8 unk18[2];
-  u8 unk1a;
-  u8 unk1b;
+  u8 offsetX;
+  u8 offsetY;
+  u8 lastNoAndDirty[2];
+  u8 flags;
+  u8 count;
   s32 unk1c;
   s32 unk20;
   s32 unk24;
   struct AnimationEntry *entry;
-  u8 unk2c[0x0c];
+  u8 moreEntries[0x0c];
 };
 
 /// Makes an effect sprite with tiles of its own in object VRAM: a free VRAM
@@ -447,10 +447,10 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
     sprite++;
   }
   tile = VramCache_Load(vramEntry, 0, 0);
-  found->vramEntry = vramEntry;
-  found->unk12 = 0;
-  found->unk1a = 0;
-  found->unk11_0 = 0;
+  found->slot = vramEntry;
+  found->rotation = 0;
+  found->flags = 0;
+  found->retainCacheEntry = 0;
   {
     u32 *words = (u32 *)found;
 
@@ -468,21 +468,21 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
   found->unk24 = (((u16 *)entries)[187] >> 5) | 0x800;
   sprite->entry = AnimationObject_AllocateEmpty();
   sprite->width = width;
-  sprite->unk0c = 0x10000;
+  sprite->scale = 0x10000;
   sprite->height = height;
-  sprite->unk17 = 0;
-  sprite->unk16 = 0;
-  sprite->unk1b = 1;
-  sprite->unk1a = 0;
+  sprite->offsetY = 0;
+  sprite->offsetX = 0;
+  sprite->count = 1;
+  sprite->flags = 0;
   Animation_ApplyChildArgumentFar(sprite, 0);
 
   objects = Ram_HeapSlots->actorSystem;
   size = sprite->width * sprite->height;
   if (!(attributes & 0x2000))
     size = (u32)size >> 1;
-  VramCache_Load(sprite->vramEntry, size, 0);
+  VramCache_Load(sprite->slot, size, 0);
   objects->used += size;
-  sprite->oam.bits.tile = entries[sprite->vramEntry].offset >> 5;
+  sprite->oam.bits.tile = entries[sprite->slot].offset >> 5;
   return found;
 }
 #undef Actor_SetAnimationSpeedFar

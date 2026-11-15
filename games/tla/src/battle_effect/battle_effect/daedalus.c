@@ -171,12 +171,12 @@ typedef struct Sprite {
   u16 palette : 4;
   u8 unk0a[2];
   s32 scale;
-  u8 vram;
-  u8 unk11;
+  u8 slot;
+  u8 cacheFlags;
   u16 rotation;
-  u8 unk14[2];
-  u8 unk16;
-  u8 unk17;
+  u8 size[2];
+  u8 offsetX;
+  u8 offsetY;
 } Sprite;
 
 /* VIEW(ability_effects): tag struct SpriteAttributes as struct
@@ -390,7 +390,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           work->sprites[j * 9 + i] = obj;
           obj->priority = 1;
           Iwram_CopyWords(
-              (void *)(gVramCacheEntries[obj->vram].offset + 0x06010000),
+              (void *)(gVramCacheEntries[obj->slot].offset + 0x06010000),
               &work->frames[(j << 12) + i * 0x200], 0x200);
         }
         obj = EffectSprite_Acquire(32, 32, 0x80000000, 0xf000);
@@ -409,7 +409,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         obj->priority = 3;
         work->sprites[i + 18] = obj;
         Iwram_CopyWords(
-            (void *)(gVramCacheEntries[obj->vram].offset + 0x06010000),
+            (void *)(gVramCacheEntries[obj->slot].offset + 0x06010000),
             DECODE_BUFFER + i * 0x400, 0x400);
       }
       obj = EffectSprite_CreateWithTiles(32, 64, 0xc000a000, 0);
@@ -422,7 +422,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
        * source. */
       __asm__("" : "=r"(i) : "0"(i));
       Iwram_CopyWords(
-          (void *)(gVramCacheEntries[obj->vram].offset + 0x06010000),
+          (void *)(gVramCacheEntries[obj->slot].offset + 0x06010000),
           DECODE_BUFFER + i * 0x400, 0x800);
       src = (const u8 *)Resource_GetTableEntry((s32)&ResourceId_MissileTiles);
       Iwram_CopyWords((void *)(OBJ_PLTT + 14 * 16), src, 32);
@@ -432,7 +432,7 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
       obj->priority = 1;
       work->sprites[41] = obj;
       Iwram_CopyWords(
-          (void *)(gVramCacheEntries[obj->vram].offset + 0x06010000),
+          (void *)(gVramCacheEntries[obj->slot].offset + 0x06010000),
           DECODE_BUFFER, 0x100);
       /* FAKEMATCH(barrier): an empty asm. */
       __asm__("");
@@ -963,8 +963,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
         Render_ApplyProjectedPlacementFar(work->sprites[39], &shipPlace,
                                           &shipScale, 0);
       }
-      work->sprites[39]->unk16 = 0;
-      work->sprites[39]->unk17 = 32;
+      work->sprites[39]->offsetX = 0;
+      work->sprites[39]->offsetY = 32;
       if (frame >= 568) {
         s32 *beam;
         void *buffer;
@@ -1237,8 +1237,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
     for (i = 0; i != 15; i++) {
       work->sprites[1 + i] = EffectSprite_Acquire(32, 16, 0x80006000, 0);
       IWRAM_COPY_WORDS_LINKED(work->sprites[1 + i], work->sprites[0], 24);
-      work->sprites[1 + i]->unk16 = 32;
-      work->sprites[1 + i]->unk17 = 8;
+      work->sprites[1 + i]->offsetX = 32;
+      work->sprites[1 + i]->offsetY = 8;
     }
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->frames,
                                1, 0);
@@ -1274,8 +1274,8 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
           p->x = ((Random16() % 80 + 80) << 16) - p->velocityX * 24;
           p->y = (((Random16() & 7) + 96) << 16) - p->velocityY * 24;
           work->sprites[i]->rotation = p->z;
-          work->sprites[i]->unk16 = radius;
-          work->sprites[i]->unk17 = 8;
+          work->sprites[i]->offsetX = radius;
+          work->sprites[i]->offsetY = 8;
         }
         for (i = 0; i != 512; i++)
           PARTICLES[i].variant = -1;
@@ -1400,10 +1400,10 @@ extern const struct PlacementSource__f17e698
 /// The summoned object's display fields that the scene sets.
 struct SummonObject {
   u8 unk00[18];
-  u16 unk12;
-  u8 unk14[2];
-  u8 unk16;
-  u8 unk17;
+  u16 rotation;
+  u8 size[2];
+  u8 offsetX;
+  u8 offsetY;
 };
 
 /// The summoned object glides in from the right and down over 92 frames
@@ -1540,10 +1540,10 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
 
       source = gDaedalusAlt_SummonScale;
       object = work->sprites[0];
-      object->unk17 = 32;
-      object->unk16 = 0;
+      object->offsetY = 32;
+      object->offsetX = 0;
       request[3] = 0;
-      object->unk12 = 0x8800;
+      object->rotation = 0x8800;
       request[1] = 0xff0000;
       if (frame <= 63) {
         request[0] = (152 - frame / 4) << 16;

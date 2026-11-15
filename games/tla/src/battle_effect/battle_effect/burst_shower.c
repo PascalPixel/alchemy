@@ -64,7 +64,10 @@ DEFINE_EFFECT_KIND(BattleEffect_RunAcidBreath,
 DEFINE_EFFECT_KIND(BattleEffect_RunStormBreath,
                    BattleEffect_RunProjectileVolleyB, 5)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode23,
+/// Storm Breath as its second, stronger row (power 220 against 190) casts it.
+///
+/// Abilities: Storm Breath.
+DEFINE_EFFECT_KIND(BattleEffect_RunStormBreathStrong,
                    BattleEffect_RunProjectileVolleyB, 23)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunEvilBlessing,
@@ -102,7 +105,10 @@ DEFINE_EFFECT_KIND(BattleEffect_RunDjinnfest, BattleEffect_RunProjectileVolleyB,
 DEFINE_EFFECT_KIND(BattleEffect_RunHeatKiss, BattleEffect_RunProjectileVolleyB,
                    18)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunVolleyBMode19,
+/// Fire Dance as the Staff unleashes it.
+///
+/// Abilities: Fire Dance.
+DEFINE_EFFECT_KIND(BattleEffect_RunFireDanceUnleash,
                    BattleEffect_RunProjectileVolleyB, 19)
 
 DEFINE_EFFECT_KIND(BattleEffect_RunGravelBlow,

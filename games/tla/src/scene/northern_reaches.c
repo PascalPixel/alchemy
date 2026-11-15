@@ -178,12 +178,6 @@ done:
   return;
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 s32 Actor_SetSpriteColorMode();
 
 /// At a safe distance the crew asks Felix to fire the Magma Ball at the ice

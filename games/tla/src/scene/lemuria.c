@@ -432,13 +432,6 @@ void Lemuria_ScoopEighthTreasure(s32 a) {
   Event_DigUpTreasure(a, FIELD_TREASURE_ACTOR + 8, FLAG_AREA_TEMP_08);
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
-
 s32 Party_FindOwnerWithAction();
 void Rope_Coil();
 

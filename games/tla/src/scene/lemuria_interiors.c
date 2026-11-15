@@ -493,12 +493,8 @@ noLeader:
   return;
 }
 
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
+/// Frames of each of the bird's two loops round the room.
+#define BIRD_FLIGHT_FRAMES 192
 
 /// "Wait... I ask that you leave Piers to his mourning for now..."
 void LemuriaInteriors_LeavePiersToMourn(s32 a0, s32 a1, s32 a2) {
@@ -508,7 +504,7 @@ void LemuriaInteriors_LeavePiersToMourn(s32 a0, s32 a1, s32 a2) {
   s32 radius, angle;
   s32 result, i, phase, sine, answer;
 
-  actor = (struct Actor *)((s32)Actor_GetById(ACTOR_BIRD));
+  actor = Actor_GetById(ACTOR_BIRD);
   result = Event_GetFlag(FLAG_PIERS_VISITED_UNCLE);
   if (result != 0)
     goto visited;
@@ -516,8 +512,7 @@ void LemuriaInteriors_LeavePiersToMourn(s32 a0, s32 a1, s32 a2) {
 visited:
   Event_SetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE);
   {
-    struct Actor *other =
-        (struct Actor *)((s32)Actor_GetById(ACTOR_PIERS_UNCLE));
+    struct Actor *other = Actor_GetById(ACTOR_PIERS_UNCLE);
     other->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   }
   Event_Start();
@@ -668,20 +663,21 @@ visited:
   target[1] = 0;
   target[2] = px(110);
   angle = FACING_NORTH_NORTHWEST;
-  for (i = 0; i <= 191; i++) {
-    phase = i * 32768 / 192;
+  for (i = 0; i < BIRD_FLIGHT_FRAMES; i++) {
+    phase = i * (TRIG_TURN / 2) / BIRD_FLIGHT_FRAMES;
     radius = Trig_Sin(phase) * 32;
-    angle += 512;
+    angle += TRIG_TURN / 128;
     pos = posBuf;
-    pos[0] = start[0] + (target[0] - start[0]) * i / 192;
+    pos[0] = start[0] + (target[0] - start[0]) * i / BIRD_FLIGHT_FRAMES;
     sine = Trig_Sin(phase);
-    pos[1] = start[1] + (target[1] - start[1]) * i / 192 + sine * 56;
-    pos[2] = start[2] + (target[2] - start[2]) * i / 192;
+    pos[1] =
+        start[1] + (target[1] - start[1]) * i / BIRD_FLIGHT_FRAMES + sine * 56;
+    pos[2] = start[2] + (target[2] - start[2]) * i / BIRD_FLIGHT_FRAMES;
     Vector_AddPolarOffset(radius, angle, pos);
     actor->x.fixed = pos[0];
     actor->y.fixed = pos[1];
     actor->z.fixed = pos[2];
-    actor->facing = angle + 16384;
+    actor->facing = angle + TRIG_TURN / 4;
     if (i == 128) {
       Actor_FaceDirection(ACTOR_PIERS_UNCLE, FACING_SOUTH_SOUTHEAST, 0);
     }
@@ -703,15 +699,13 @@ visited:
   Actor_SetAnimation(ACTOR_BIRD, 1);
   FieldEvent_Wait(20);
   {
-    struct Actor *other =
-        (struct Actor *)((s32)Actor_GetById(ACTOR_PIERS_UNCLE));
+    struct Actor *other = Actor_GetById(ACTOR_PIERS_UNCLE);
     other->steeringFlags &= ~ACTOR_FACES_MOTION;
   }
   Actor_WalkByAndWait(ACTOR_PIERS_UNCLE, -8, 0);
   FieldEvent_Wait(1);
   {
-    struct Actor *other =
-        (struct Actor *)((s32)Actor_GetById(ACTOR_PIERS_UNCLE));
+    struct Actor *other = Actor_GetById(ACTOR_PIERS_UNCLE);
     other->steeringFlags |= ACTOR_FACES_MOTION;
   }
   FieldEvent_Wait(10);
@@ -731,19 +725,20 @@ visited:
   target[0] = px(132);
   target[1] = px(32);
   target[2] = px(100);
-  angle = 0x4200;
-  for (i = 0; i <= 191; i++) {
-    radius = Trig_Sin(i * 16384 / 192) * 40;
-    angle += 768;
-    pos[0] = start[0] + (target[0] - start[0]) * i / 192;
-    sine = Trig_Sin(i * 32768 / 192);
-    pos[1] = start[1] + (target[1] - start[1]) * i / 192 + (sine <<= 5);
-    pos[2] = start[2] + (target[2] - start[2]) * i / 192;
+  angle = FACING_SOUTH + TRIG_TURN / 128;
+  for (i = 0; i < BIRD_FLIGHT_FRAMES; i++) {
+    radius = Trig_Sin(i * (TRIG_TURN / 4) / BIRD_FLIGHT_FRAMES) * 40;
+    angle += TRIG_TURN * 3 / 256;
+    pos[0] = start[0] + (target[0] - start[0]) * i / BIRD_FLIGHT_FRAMES;
+    sine = Trig_Sin(i * (TRIG_TURN / 2) / BIRD_FLIGHT_FRAMES);
+    pos[1] = start[1] + (target[1] - start[1]) * i / BIRD_FLIGHT_FRAMES +
+             (sine <<= 5);
+    pos[2] = start[2] + (target[2] - start[2]) * i / BIRD_FLIGHT_FRAMES;
     Vector_AddPolarOffset(radius, angle, pos);
     actor->x.fixed = pos[0];
     actor->y.fixed = pos[1];
     actor->z.fixed = pos[2];
-    actor->facing = angle + 16384;
+    actor->facing = angle + TRIG_TURN / 4;
     if (i == 153) {
       Actor_FaceDirection(ACTOR_PIERS_UNCLE, FACING_WEST_SOUTHWEST, 0);
     }
@@ -757,7 +752,7 @@ visited:
   target[0] = px(90);
   target[1] = px(4);
   target[2] = px(64);
-  for (i = 0; i <= 15; i++) {
+  for (i = 0; i < 16; i++) {
     actor->x.fixed = start[0] + (target[0] - start[0]) * i / 16;
     actor->y.fixed = start[1] + (target[1] - start[1]) * i / 16;
     actor->z.fixed = start[2] + (target[2] - start[2]) * i / 16;
@@ -1105,12 +1100,12 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   }
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-  Actor_FaceDirection(ACTOR_FELIX, 0x7fff, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_WEST - 1, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
-  Actor_FaceDirection(ACTOR_JENNA, 0x7fff, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST - 1, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Event_Wait(40);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1125,7 +1120,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
-  Actor_FaceDirection(ACTOR_JENNA, 0x7fff, 0);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST - 1, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Event_Wait(40);
   Actor_StartRepeatedMotion(ACTOR_JENNA, 3);
@@ -1180,7 +1175,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(50);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-  Actor_FaceDirection(ACTOR_KRADEN, 0x8001, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST + 1, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
@@ -1286,7 +1281,8 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_LEFT | ACTOR_MAN_ASKING_FOR_PIERS, 0, 10);
-  Actor_FaceDirection(ACTOR_MAN_ASKING_FOR_PIERS, 0xd00a, 0);
+  Actor_FaceDirection(ACTOR_MAN_ASKING_FOR_PIERS, FACING_NORTH_NORTHEAST + 10,
+                      0);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_LEFT | ACTOR_MAN_ASKING_FOR_PIERS, 0, 10);

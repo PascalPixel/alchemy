@@ -1954,7 +1954,6 @@ s32 MagmaRockInside_OrbitParent(struct SparkOrbiter *object) {
 // Moves around in a circle.
 #include "shared/orbit_update.h"
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
 #include "shared/actor_aim_at_watched.h"
 
@@ -2387,7 +2386,6 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
     Scene_SetActorSpritePriority(object, 3);
   }
 }
-#undef BYTE_AT
 
 #undef DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR
 
@@ -3802,5 +3800,4 @@ struct Trigger gMagmaRockInside_BlazeTabletTriggers[] = {
 #undef EFFECT_SPRITE_PRIORITY
 #undef DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR
 #undef DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH
-#undef BYTE_AT
 #undef DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM

@@ -1018,7 +1018,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
   // Setup: the canvas on BG2, blending, the layer on the targets' middle.
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
-  EFFECT_START_NARROW_CANVAS(2);
+  EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(2));
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
   BattleEffect_GetTargetsMidpoint(&middle);
   REG_BG2X = (64 - middle.x) << 8;

@@ -80,6 +80,8 @@ void BattleEffect_RunSpark(struct BattleEffectParams *args) {
 #define PIC_DJINN 0x65c0 ///< the Djinn, 40 x 40
 #define MOTES 8          ///< per target
 
+#define DJINN_BEAMS_MOTES 512 ///< motes in PARTICLES
+
 /// With a prelude the Djinni of the mode's element appears, sways and rises
 /// away; then for each target in turn, sixteen frames apart, eight motes drift
 /// down swaying, and from frame 72 a beam of light falls on each target,
@@ -129,7 +131,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
                                work->sheet + PIC_DJINN, 1, 1);
 
   // The motes start 80 pixels up, each at its own phase of the sway.
-  for (i = 0; i != 512; i++) {
+  for (i = 0; i != DJINN_BEAMS_MOTES; i++) {
     SET_POSITION(&PARTICLES[i], 0, 80 << 16, (Random16() | -32) << 14);
     PARTICLES[i].variant = Random16() & 255;
   }
@@ -141,7 +143,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
     offsetX = 64 - one.x;
   } else {
     if (args->side == EFFECT_SIDE_PARTY)
-      offsetX = -112;
+      offsetX = -NARROW_CANVAS_PARTY_X;
     else
       offsetX = 0;
   }

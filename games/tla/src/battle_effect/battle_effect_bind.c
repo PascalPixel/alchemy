@@ -100,6 +100,12 @@ void BattleEffect_ConvertBackgroundToBlueRamp(void) {
 #define CORNERS 3
 #define EDGE_STEPS 24 ///< flares drawn along each edge
 
+/// The particles each target's triangle keeps, and the flares along each edge.
+#define BIND_SLOTS_PER_TARGET 32
+/// The frames the triangle of flares shrinks and turns before the rune shows,
+/// with the damage.
+#define BIND_RUNE_FRAME 64
+
 /// A triangle of light spins and shrinks onto the first target, changing colour
 /// and leaving a fading trail, then a rune stands on the target.
 ///
@@ -159,7 +165,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != args->targetCount * 20 + 72; frame++) {
-    if (frame == 64)
+    if (frame == BIND_RUNE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
     BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
 
@@ -207,15 +213,15 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
         // 64, then hold; flares are drawn along the edges between them.
         if (memberFrame <= 67) {
           for (j = 0; j != CORNERS; j++) {
-            point = &work->particles[member * 32 + j];
+            point = &work->particles[member * BIND_SLOTS_PER_TARGET + j];
             Transform_Reset();
             if (memberFrame <= 63) {
               scale[0] = 0x2a000 - (memberFrame * 3 << 9);
               scale[1] = 0x2a000 - (memberFrame * 3 << 9);
               scale[2] = 0x2a000 - (memberFrame * 3 << 9);
               Transform_ApplyScale(scale);
-              Transform_ApplyRoll((64 - memberFrame) << 9);
-              Transform_ApplyYaw((64 - memberFrame) << 9);
+              Transform_ApplyRoll((BIND_RUNE_FRAME - memberFrame) << 9);
+              Transform_ApplyYaw((BIND_RUNE_FRAME - memberFrame) << 9);
             }
             Transform_ApplyRoll(j * 0x5555);
             EffectPosition_ProjectPoint(gBind_Vertex,
@@ -308,7 +314,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != args->targetCount * 20 + 72; frame++) {
-    if (frame == 64)
+    if (frame == BIND_RUNE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
     if (frame == 46)
       BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
@@ -340,15 +346,15 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
         // 64, then hold; flares are drawn along the edges between them.
         if (memberFrame <= 67) {
           for (j = 0; j != CORNERS; j++) {
-            point = &work->particles[member * 32 + j];
+            point = &work->particles[member * BIND_SLOTS_PER_TARGET + j];
             Transform_Reset();
             if (memberFrame <= 63) {
               scale[0] = 0x2a000 - (memberFrame * 3 << 9);
               scale[1] = 0x2a000 - (memberFrame * 3 << 9);
               scale[2] = 0x2a000 - (memberFrame * 3 << 9);
               Transform_ApplyScale(scale);
-              Transform_ApplyRoll((64 - memberFrame) << 9);
-              Transform_ApplyYaw((64 - memberFrame) << 9);
+              Transform_ApplyRoll((BIND_RUNE_FRAME - memberFrame) << 9);
+              Transform_ApplyYaw((BIND_RUNE_FRAME - memberFrame) << 9);
             }
             Transform_ApplyRoll(j * 0x5555);
             EffectPosition_ProjectPoint(gBind_TriangleStrikeVertex,

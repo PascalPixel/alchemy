@@ -72,7 +72,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
     s32 endX[2] = {0, 0};
     s32 endY[2] = {0, 0};
     caster = BattleObject_GetFar(args->user)->object;
-    Actor_SetAnimationSpeedFar(caster, 48);
+    Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 3);
     Actor_SelectAnimationFar(caster, 2);
     EffectPosition_ProjectBattler(args->user, &source);
     EffectPosition_ProjectBattler(args->targets[0], &target);
@@ -301,7 +301,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
       BattleCamera_Shake(2, 2);
       EFFECT_PRESENT_CANVAS(work);
     }
-    Actor_SetAnimationSpeedFar(caster, 16);
+    Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   }

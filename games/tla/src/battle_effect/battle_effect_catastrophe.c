@@ -77,7 +77,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   battle = Ram_HeapSlots->battleWork;
   VramCache_FreeEntry(battle->arrowTiles);
   VramBlock_Reset93Far();
-  EFFECT_START_NARROW_CANVAS(0x2000);
+  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   BattleEffect_ConfigureEffectDisplay();
   *(volatile u16 *)BG_PLTT = 0;
   *(volatile u16 *)(BG_PLTT + 1) = 0;
@@ -133,7 +133,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     Decompress_TaggedLz(e, cellBuffer);
     cells = Ram_MapCellBuffer;
     for (i = 0; i != 24; cells += 1024, i++) {
-      obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
+      obj = EffectSprite_CreateWithTiles(32, 32,
+                                         OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
       obj->image.priority = 2;
       work->sprites[i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 1024);
@@ -142,7 +143,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       u8 *cells = Data_02016000;
 
       for (i = 0; i != 4; i++) {
-        obj = EffectSprite_Acquire(32, 32, 0x80002000, 0);
+        obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
         work->sprites[24 + i] = obj;
         Iwram_CopyWords(obj, work->sprites[i], 24);
         Iwram_CopyWords((void *)OBJ_TILES(work->sprites[24 + i]),
@@ -152,7 +153,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     Iwram_CopyWords(cellBuffer + 0x1000, Data_02016000, 0x1000);
   }
   for (i = 0; i != 6; i++) {
-    obj = EffectSprite_Acquire(32, 32, 0x80002000, 0);
+    obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
     work->sprites[28 + i] = obj;
     Iwram_CopyWords(obj, work->sprites[i], 24);
   }
@@ -165,7 +166,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
     for (i = 0; i != 5; cells += 512, i++) {
-      obj = EffectSprite_CreateWithTiles(32, 32, 0x80000000, 0xc000);
+      obj =
+          EffectSprite_CreateWithTiles(32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(12));
       obj->image.priority = 1;
       work->sprites[34 + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
@@ -180,7 +182,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
     for (i = 0; i != 5; cells += 512, i++) {
-      obj = EffectSprite_CreateWithTiles(32, 32, 0x80000000, 0xd000);
+      obj =
+          EffectSprite_CreateWithTiles(32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(13));
       obj->image.priority = 1;
       work->sprites[39 + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);
@@ -195,7 +198,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     Decompress_TaggedLz(e, work->sheet);
     cells = work->sheet;
     for (i = 0; i != 6; cells += 512, i++) {
-      obj = EffectSprite_CreateWithTiles(32, 32, 0x80000000, 0xe000);
+      obj =
+          EffectSprite_CreateWithTiles(32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(14));
       obj->image.priority = 1;
       work->sprites[44 + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 512);

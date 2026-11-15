@@ -146,7 +146,7 @@ void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride) {
   do {
     s32 x;
 
-    for (x = 0; x != 40; x++) {
+    for (x = 0; x != YELLOW_ORB_WIDTH; x++) {
       dst[offset / 2 + x / 2] = src[offset + x];
     }
     offset += stride;
@@ -360,14 +360,15 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       Decompress_TaggedLz(src, work->frames);
       for (j = 0; j != 2; j++) {
         for (i = 0; i != 8; i++) {
-          obj = EffectSprite_CreateWithTiles(32, 32, 0x80000000, 0xf000);
+          obj = EffectSprite_CreateWithTiles(32, 32, OBJ_SIZE_32X32,
+                                             OBJ_PALETTE(15));
           work->sprites[j * 9 + i] = obj;
           obj->priority = 1;
           Iwram_CopyWords(
               (void *)(gVramCacheEntries[obj->slot].offset + 0x06010000),
               &work->frames[(j << 12) + i * 0x200], 0x200);
         }
-        obj = EffectSprite_Acquire(32, 32, 0x80000000, 0xf000);
+        obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(15));
         work->sprites[j * 9 + 8] = obj;
         Iwram_CopyWords(obj, work->sprites[j * 9], 24);
         for (i = 0; i != 8; i++)
@@ -379,14 +380,16 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       src += 0x1c0;
       Decompress_TaggedLz(src, DECODE_BUFFER);
       for (i = 0; i != 21; i++) {
-        obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
+        obj = EffectSprite_CreateWithTiles(32, 32,
+                                           OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
         obj->priority = 3;
         work->sprites[i + 18] = obj;
         Iwram_CopyWords(
             (void *)(gVramCacheEntries[obj->slot].offset + 0x06010000),
             DECODE_BUFFER + i * 0x400, 0x400);
       }
-      obj = EffectSprite_CreateWithTiles(32, 64, 0xc000a000, 0);
+      obj = EffectSprite_CreateWithTiles(32, 64,
+                                         OBJ_SIZE_32X64 | OBJ_256_COLORS, 0);
       // Once-only: the store alone in its block.
       do {
         work->sprites[i + 18] = obj;
@@ -402,7 +405,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       Iwram_CopyWords((void *)(OBJ_PLTT + 14 * 16), src, 32);
       src += 32;
       Decompress_TaggedLz(src, DECODE_BUFFER);
-      obj = EffectSprite_CreateWithTiles(16, 8, 0x4000, 0xe000);
+      obj = EffectSprite_CreateWithTiles(16, 8, OBJ_SIZE_16X8, OBJ_PALETTE(14));
       obj->priority = 1;
       work->sprites[41] = obj;
       Iwram_CopyWords(
@@ -411,7 +414,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       /* FAKEMATCH(barrier): an empty asm. */
       __asm__("");
       for (i = 0; i != 15; i++) {
-        work->sprites[42 + i] = EffectSprite_Acquire(16, 8, 0x4000, 0xf000);
+        work->sprites[42 + i] =
+            EffectSprite_Acquire(16, 8, OBJ_SIZE_16X8, OBJ_PALETTE(15));
         Iwram_CopyWords(work->sprites[42 + i], work->sprites[41], 24);
         work->sprites[42 + i]->tile = work->sprites[41]->tile;
         if (i > 6)
@@ -1207,7 +1211,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     BattleActor_SpawnObjectsForListFar(args->targets, 0);
     BattleEffect_SpawnObjects(1, 663, 1);
     for (i = 0; i != 15; i++) {
-      work->sprites[1 + i] = EffectSprite_Acquire(32, 16, 0x80006000, 0);
+      work->sprites[1 + i] =
+          EffectSprite_Acquire(32, 16, OBJ_SIZE_32X16 | OBJ_256_COLORS, 0);
       IWRAM_COPY_WORDS_LINKED(work->sprites[1 + i], work->sprites[0], 24);
       work->sprites[1 + i]->offsetX = 32;
       work->sprites[1 + i]->offsetY = 8;

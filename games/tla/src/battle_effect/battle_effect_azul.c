@@ -124,7 +124,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   wait(1);
   BattleEffect_SpawnObjects(12, 0x28c, 1);
   for (i = 0; i != 16; i++) {
-    obj = EffectSprite_Acquire(32, 32, 0x80002000, 0);
+    obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
     work->sprites[i + 12] = obj;
     Iwram_CopyWordsEntry(obj, work->sprites[5 + (i & 3)], 24);
     ((struct AzulObject *)work->sprites[i])->priority = 1;

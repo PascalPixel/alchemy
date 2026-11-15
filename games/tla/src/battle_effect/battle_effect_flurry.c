@@ -170,9 +170,9 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                              0);
   cels = FLURRY_WAVE_PICTURES;
   for (row = 0; row != 288; row++) {
-    for (col = 0; col != 40; col++) {
+    for (col = 0; col != YELLOW_ORB_WIDTH; col++) {
       s32 dst = row * 20 + col / 2;
-      s32 src = row * 40 + col;
+      s32 src = row * YELLOW_ORB_WIDTH + col;
 
       (cels + dst)[0x2e88] = work->sheet[src];
     }

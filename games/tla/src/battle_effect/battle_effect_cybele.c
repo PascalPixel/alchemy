@@ -36,6 +36,21 @@ static __inline__ void BurstAt_(s32 formation, s32 x, s32 y) {
 
 #define CYBELE_FRAMES 366
 
+/// The first target lands on its spreading ring, sixteen frames after it is
+/// dropped; the others follow.
+#define CYBELE_LANDING_FRAME 302
+#define CYBELE_CHIPS 48       ///< chips, from CYBELE_FIRST_CHIP
+#define CYBELE_FIRST_THORN 32 ///< the first thorn in work->particles
+#define CYBELE_FIRST_CHIP 16  ///< the first chip in work->particles
+#define CYBELE_DUST_PICTURE 6 ///< the dust cloud in gCybele_BlastPictures
+/// The vine pictures in the thorn vine sheet, below a tip at 0; the flowers,
+/// thorns and sparks follow.
+#define CYBELE_VINE_WIDTH 24
+#define CYBELE_VINE_STEM_HEIGHT 64
+/// YellowRingSheet's ring, drawn as two mirrored halves.
+#define CYBELE_RING_HALF_WIDTH 20
+#define CYBELE_RING_HALF_HEIGHT 24
+
 /// Cybele drops in at the right and thorns fly from her mouth; flowering
 /// vines grow out of the ground, lifting the targets while sparks flash around
 /// them; then the picture greys and dissolves pixel by pixel, and the targets
@@ -120,7 +135,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   }
   // The thorns (32-47) fly in from the upper right.
   for (i = 0; i != 16; i++) {
-    struct Particle *thorn = &work->particles[32 + i];
+    struct Particle *thorn = &work->particles[CYBELE_FIRST_THORN + i];
 
     thorn->x = px(128);
     thorn->y = px(64);
@@ -179,7 +194,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     // The thorns fly in, one a frame.
     if (frame >= 72 && frame <= 127) {
       for (i = 0; i != 16; i++) {
-        struct Particle *thorn = &work->particles[32 + i];
+        struct Particle *thorn = &work->particles[CYBELE_FIRST_THORN + i];
 
         if (frame >= i + 72 && thorn->y < px(104)) {
           s32 cel = (frame + i) / 4 % 5;
@@ -199,7 +214,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     }
     // Debris (16-63) bursts up from the ground.
     if (frame == 128) {
-      for (i = 0; i != 48; i++) {
+      for (i = 0; i != CYBELE_CHIPS; i++) {
         struct Particle *chip = &work->particles[16 + i];
 
         chip->x = px(Random16() % 96);
@@ -240,12 +255,12 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           for (k = 0; k != 3; k++) {
             s32 y = vine->y - wrap + k * 64;
             s32 skip = 0;
-            s32 rows = 64;
+            s32 rows = CYBELE_VINE_STEM_HEIGHT;
 
             if (y >= -64) {
               if (y < 0) {
-                skip = -y * 24;
-                rows = y + 64;
+                skip = -y * CYBELE_VINE_WIDTH;
+                rows = y + CYBELE_VINE_STEM_HEIGHT;
                 y = 0;
               }
               if (y + rows > vine->y)
@@ -272,7 +287,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     // 159.
     if (phase >= 0 && phase <= 95) {
       for (i = 0; i != 32; i++) {
-        struct Particle *chip = &work->particles[32 + i];
+        struct Particle *chip = &work->particles[CYBELE_FIRST_THORN + i];
 
         if (chip->variant >= 0) {
           s32 cel = i % 5;
@@ -409,7 +424,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
         object->y = px(96);
         object->verticalMotionStrength = 0xab85;
       }
-      if (frame == i * 5 + 302) {
+      if (frame == i * 5 + CYBELE_LANDING_FRAME) {
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, i, 8);
         Sound_PlayFar(SE_HEAVY_IMPACT);
@@ -419,7 +434,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
     // Switch to the explosion: the blast sheet, max blitters, and ten
     // embers 72 degrees apart around each target.
-    if (frame == 302) {
+    if (frame == CYBELE_LANDING_FRAME) {
       EFFECT_RELEASE_BLITTERS();
       Resource_LoadAndDecompress((s32)&ResourceId_YellowRingSheet, work->sheet,
                                  1, 0);
@@ -456,7 +471,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     // embers after them.
     if (frame > 301) {
       for (i = 0; i != args->targetCount; i++) {
-        s32 start = i * 4 + 302;
+        s32 start = i * 4 + CYBELE_LANDING_FRAME;
 
         if (frame >= start && frame < i * 4 + 314) {
           s32 cel = (frame - start) / 2;
@@ -469,9 +484,9 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           EffectPosition_ProjectPoint(point, &screen);
           screen.x >>= 1;
           draw[0](canvas, work->sheet + cel * 480, screen.x - 20, screen.y - 24,
-                  20, 24);
+                  CYBELE_RING_HALF_WIDTH, CYBELE_RING_HALF_HEIGHT);
           draw[1](canvas, work->sheet + cel * 480, screen.x, screen.y - 24, 20,
-                  24);
+                  CYBELE_RING_HALF_HEIGHT);
         }
         if (frame >= start + 6) {
           for (j = 0; j != 5; j++) {
@@ -480,7 +495,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
             EffectPosition_ProjectPoint(&ember->x, &screen);
             screen.x >>= 1;
             if (ember->variant >= 0 && ember->variant <= 26) {
-              s32 cel = 6;
+              s32 cel = CYBELE_DUST_PICTURE;
               u8 *source = work->sheet + gCybele_BlastPictures[cel];
               u32 size = gCybele_BlastSizes[cel];
 

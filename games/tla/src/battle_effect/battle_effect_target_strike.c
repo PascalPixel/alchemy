@@ -178,6 +178,14 @@ void BattleEffect_RunMadZephyr(struct BattleEffectParams *args) {
     BattleEffect_BuildBlitter(slot, width, height, flags, mode);               \
   } while (0)
 
+/// The motes in PARTICLES, 128 for each target, then the strike sparks.
+#define TARGET_STRIKE_MOTES_PER_TARGET 128
+/// The smoke pictures in the sheet: six 24x48 puffs.
+#define TARGET_STRIKE_SMOKE_PICTURES 12800
+/// The bite's stages after the tornado sheet: BeamImage for a slash,
+/// TwelveModeImage otherwise.
+#define TARGET_STRIKE_BITE_PICTURES 3200
+
 /// Strikes the first target with slashes or a bite of closing fangs, with the
 /// extras its flags choose. Each hit flashes and shakes the target and the
 /// battle moves on at the first; the style (enum TargetStrikeStyle) adds smoke,
@@ -224,7 +232,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                                0, 0);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage,
-                               work->sheet + 0xc80, 0, 0);
+                               work->sheet + TARGET_STRIKE_BITE_PICTURES, 0, 0);
   switch (RECORD(mode, TARGET_STRIKE_COLOR)) {
   case STRIKE_COLOR_BLUE:
     resource = (s32)&ResourceId_BlueBeamSheet;
@@ -253,13 +261,16 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                        SHEET_PALETTE_BYTES);
   if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_FLASH)
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                               work->sheet + 0x3200, 1, 0);
+                               work->sheet + TARGET_STRIKE_SMOKE_PICTURES, 1,
+                               0);
   else if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_STAR)
     Resource_LoadAndDecompress((s32)&ResourceId_StarCrossSheet,
-                               work->sheet + 0x3200, 1, 0);
+                               work->sheet + TARGET_STRIKE_SMOKE_PICTURES, 1,
+                               0);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
-                               work->sheet + 0x3200, 1, 0);
+                               work->sheet + TARGET_STRIKE_SMOKE_PICTURES, 1,
+                               0);
 
   for (k = 0; k != 1; k++) {
     // The wisps start at the target's feet, waiting (-1) until a hit.
@@ -276,7 +287,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     }
 
     // The motes burst from 20 pixels above the target.
-    for (i = 0; i != 128; i++) {
+    for (i = 0; i != TARGET_STRIKE_MOTES_PER_TARGET; i++) {
       struct Particle *step = &gMotes[k * 128 + i];
 
       SET_POSITION(step, target->x, px(20), target->z);
@@ -587,7 +598,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 
             draw[i & 1](canvas,
                         work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF) +
-                            0x3200,
+                            TARGET_STRIKE_SMOKE_PICTURES,
                         Q_16_16_UPPER_HALF(step->x) - 12,
                         Q_16_16_UPPER_HALF(step->y) - 24, SMOKE_PUFF_WIDTH,
                         SMOKE_PUFF_HEIGHT);
@@ -734,7 +745,7 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  EFFECT_START_NARROW_CANVAS(1);
+  EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
 
   // [0] as drawn, [1] mirrored left to right; both skip clear pixels.
@@ -852,6 +863,8 @@ void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 
 #define ELEMENT_PILLAR_FRAMES 56
 
+#define ELEMENT_PILLAR_GLOW_HEIGHT 43
+
 /// A pillar of light in an element's colours stands at a unit's feet while
 /// motes spiral up around it.
 void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
@@ -942,7 +955,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
         n = frame / 4 % 3; // a glow picture every 4 frames
       } while (0);
       draw[1](canvas, work->sheet + n * 1032 + 0x1100, 40, ground.y - 36, 24,
-              43);
+              ELEMENT_PILLAR_GLOW_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
@@ -951,7 +964,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
       draw[1](canvas, work->sheet + n * 1088, 64, ground.y - 64, 17, 64);
       n = frame / 4 % 3;
       draw[1](canvas, work->sheet + n * 1032 + 0x1100, 64, ground.y - 36, 24,
-              43);
+              ELEMENT_PILLAR_GLOW_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
     Transform_Reset();

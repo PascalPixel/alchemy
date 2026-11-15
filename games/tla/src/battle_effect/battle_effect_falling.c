@@ -17,6 +17,13 @@
 // Window 0 is narrowed line by line through an HBlank DMA table into a
 // slanting band, so the shards appear only over the targets.
 
+/// A falling shard or bolt keeps falling while its y, in eighths of a pixel, is
+/// at most this.
+#define FALLING_LAND_Y (80 * 8 - 1)
+/// IceShardSheet: the shard, then its shatter, each picture 32x32.
+#define ICE_SHARD_WIDTH 32
+#define ICE_SHARD_HEIGHT 32
+
 /// Ice shards rain down diagonally onto the targets' side of the field and
 /// shatter into puffs of sparkle, flashing and shaking each target as they
 /// land.
@@ -39,7 +46,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   graphics = Ram_HeapSlots->battleSheet;
 
   // Set up the canvas, the shard pictures in the sheet and the puffs.
-  EFFECT_START_NARROW_CANVAS(0x2001);
+  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, graphics, 0, 0);
   BattleEffect_ConfigureEffectDisplay();
@@ -132,8 +139,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
         ((DrawRectangle)
              draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0])(
-            canvas, work->sheet, x, y, 32, 32);
-        if (shard->y <= 0x27f) {
+            canvas, work->sheet, x, y, ICE_SHARD_WIDTH, ICE_SHARD_HEIGHT);
+        if (shard->y <= FALLING_LAND_Y) {
           if (args->side == EFFECT_SIDE_ENEMIES)
             shard->x -= 64;
           else
@@ -252,7 +259,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   canvas = heapCache[24];
 
   // Set up the canvas, the drop pictures and the droplets.
-  EFFECT_START_NARROW_CANVAS(0x2001);
+  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
                              work->sheet + DOUSE_BLUE_BEAM_PICTURES, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0,
@@ -339,7 +346,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
       if (drop->variant == -1) {
         // Falling: draw the drop and move it on, or land it.
         draw[0](canvas, work->sheet + DOUSE_BLUE_BEAM_PICTURES, x, y, 24, 24);
-        if (drop->y <= 0x27f) {
+        if (drop->y <= FALLING_LAND_Y) {
           if (args->side == EFFECT_SIDE_ENEMIES)
             drop->x -= 32;
           else

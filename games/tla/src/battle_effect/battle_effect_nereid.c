@@ -20,6 +20,10 @@
 #define NEREID_COLUMN_WIDTH 34
 #define NEREID_COLUMN_HEIGHT 104
 
+/// The columns of water rise among the targets, from the crash to the clatter.
+#define NEREID_COLUMNS_FRAME 32
+#define NEREID_COLUMNS_END_FRAME 80
+
 /// Nereid rides in on her turtle over rising waves, columns of water and spray
 /// rise over the targets, and she bursts away. At frame 28, and every frame
 /// from 32 to 79, spray bursts up beside her and falls back, and every twelve
@@ -121,7 +125,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
           }
         }
       }
-      if (frame >= 32 && frame < 80) {
+      if (frame >= NEREID_COLUMNS_FRAME && frame < NEREID_COLUMNS_END_FRAME) {
         s32 spawned = 0;
 
         for (k = 0; k != NEREID_DROPS; k++) {
@@ -143,13 +147,13 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       }
       if (frame == 0)
         Sound_PlayFar(SE_SCATTER);
-      if (frame == 32)
+      if (frame == NEREID_COLUMNS_FRAME)
         Sound_PlayFar(SE_CRASH);
-      if (frame == 80)
+      if (frame == NEREID_COLUMNS_END_FRAME)
         Sound_PlayFar(SE_CLATTER);
 
       // The columns of water scroll up.
-      if (frame >= 32 && frame < 80) {
+      if (frame >= NEREID_COLUMNS_FRAME && frame < NEREID_COLUMNS_END_FRAME) {
         for (k = 0; k != NEREID_COLUMNS; k++) {
           s32 span = (frame * 16 - 256 + k * 25) % NEREID_COLUMN_HEIGHT;
 

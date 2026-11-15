@@ -1186,8 +1186,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       Decompress_TaggedLz(colors, tileBuffer);
       tiles = Data_02010578;
       for (i = 0; i != 16; i++) {
-        struct IrisSprite *obj =
-            EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
+        struct IrisSprite *obj = EffectSprite_CreateWithTiles(
+            32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
 
         work->sprites[i] = obj;
         ((struct IrisSpriteFlags *)obj)->priority = 1;
@@ -1200,8 +1200,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       DECOMPRESS_IN_BLOCK(colors, work->sheet);
       table = gVramCacheEntries;
       for (i = 0; i != 15; i++) {
-        struct IrisSprite *obj =
-            EffectSprite_CreateWithTiles(16, 16, 0x40000000, 0xf000);
+        struct IrisSprite *obj = EffectSprite_CreateWithTiles(
+            16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(15));
 
         objects[i] = obj;
         ((struct IrisSpriteFlags *)obj)->priority = 1;
@@ -1213,7 +1213,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
       for (; i != 36; i++) {
         struct IrisSprite *obj =
-            EffectSprite_Acquire(16, 16, 0x40000000, 0xf000);
+            EffectSprite_Acquire(16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(15));
 
         objects[i] = obj;
         Dma_Set(objects[0], obj, DMA_COPY_WORDS(6), REG_DMA3);

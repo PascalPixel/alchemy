@@ -21,6 +21,14 @@
 /// Where ParticleSpritesC is decoded in the effect's pictures.
 #define THOR_PARTICLE_SPRITES_C_PICTURES 0x1800
 
+/// The opening's beam of light, and the storm's bolts.
+#define THOR_BEAM_FRAME 151
+#define THOR_BOLTS_FRAME 80
+/// The second part's sheet: the pillar of lightning in two pictures, then
+/// the bolts.
+#define THOR_BOLT_WIDTH 72
+#define THOR_BOLT_HEIGHT 72
+
 /// Thor. In the dusk part (STORM_DUSK_FRAMES, which A or B cuts
 /// short) a circle of 128 dots and three lines across it form over scrolling
 /// dusk clouds, turn, sink into the sky and send down a beam of light; in the
@@ -52,7 +60,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
-  EFFECT_START_NARROW_CANVAS(0x2000);
+  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesC,
                              work->sheet + THOR_PARTICLE_SPRITES_C_PICTURES, 0,
@@ -107,11 +115,11 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   for (i = 0; i != 16; i++) {
     ramp[i] = i * 8 + 3;
     ramp[31 - i] = i * 8 + 3;
-    if (ramp[i] > 63) {
-      ramp[i] = 63;
+    if (ramp[i] > CANVAS_LEVEL_BRIGHTEST) {
+      ramp[i] = CANVAS_LEVEL_BRIGHTEST;
     }
-    if (ramp[31 - i] > 63) {
-      ramp[31 - i] = 63;
+    if (ramp[31 - i] > CANVAS_LEVEL_BRIGHTEST) {
+      ramp[31 - i] = CANVAS_LEVEL_BRIGHTEST;
     }
   }
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -128,7 +136,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     if (frame == 132) {
       Sound_PlayFar(SE_PSYNERGY_SPARKLE);
     }
-    if (frame == 151) {
+    if (frame == THOR_BEAM_FRAME) {
       Sound_PlayFar(SE_CRASH);
     }
     if (gInput.repeat & (KEY_A | KEY_B)) {
@@ -263,7 +271,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       s32 never = 0;
       s32 neverToo = 0;
       beamHeight = (frame - 151) * 20 + 44;
-      if (frame > 151) {
+      if (frame > THOR_BEAM_FRAME) {
         inset = frame - 152;
       }
       if (inset > 15) {
@@ -338,7 +346,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetB,
                                    work->sheet, 1, 0);
       }
-      stormFrame = frame - 80;
+      stormFrame = frame - THOR_BOLTS_FRAME;
       if ((u32)stormFrame <= 59 && !(frame & 7)) {
         Sound_PlayFar(SE_HEAVY_IMPACT);
       }
@@ -392,22 +400,22 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         s32 moteY;
         s32 mirrorX;
         for (i = 0; i != 6; i++) {
-          if (frame == i * 8 + 80) {
+          if (frame == i * 8 + THOR_BOLTS_FRAME) {
             Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
           }
         }
         for (i = 0; i != STORM_BOLTS; i++) {
-          if (frame >= i * 2 + 80) {
+          if (frame >= i * 2 + THOR_BOLTS_FRAME) {
             if (frame < i * 2 + 82) {
               s32 boltX = (Random16() & 3) - 3;
               s32 boltY = (Random16() & 3) + 32;
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                                   BLITTER_MAX);
               BLITTER_ALTERNATE(canvas, work->sheet + i % 3 * 0x1440, boltX,
-                                boltY, 72, 72);
+                                boltY, THOR_BOLT_WIDTH, THOR_BOLT_HEIGHT);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             }
-            if (frame == i * 2 + 80) {
+            if (frame == i * 2 + THOR_BOLTS_FRAME) {
               spawned = 0;
               for (j = 0, spark = STORM_PARTICLES; j != STORM_PARTICLE_COUNT;
                    j++, spark++) {

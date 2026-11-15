@@ -389,7 +389,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
       BattleCamera_Shake(8, 8);
       EFFECT_END_FRAME(work);
     }
-    Actor_SetAnimationSpeedFar(caster, 16);
+    Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   }

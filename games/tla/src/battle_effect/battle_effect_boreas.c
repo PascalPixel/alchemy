@@ -23,6 +23,27 @@ enum IceBlockSheetPicture {
 #define BOREAS_POINT_X(crystal) gBoreas_Points[crystal][0]
 #define BOREAS_POINT_Y(crystal) gBoreas_Points[crystal][1]
 
+#define BOREAS_OPENING_FRAMES 288 ///< frames of the crystals, block and spray
+#define BOREAS_TORRENT_FRAMES 146 ///< frames of the torrent
+/// The opening: the crystals crumble three times, the big ice block drops,
+/// lands on Boreas's head and sinks, and the spray streams out.
+#define BOREAS_CRUMBLE_A_FRAME 32
+#define BOREAS_CRUMBLE_B_FRAME 64
+#define BOREAS_CRUMBLE_C_FRAME 104
+#define BOREAS_BLOCK_DROP_FRAME 160
+#define BOREAS_BLOCK_LAND_FRAME 176
+#define BOREAS_BLOCK_SINK_FRAME 208
+#define BOREAS_SPRAY_FRAME 224
+/// The torrent: crystals rise among the targets, then crash down as the
+/// streak of ice falls.
+#define BOREAS_TORRENT_RISE_FRAME 16
+#define BOREAS_TORRENT_CRASH_FRAME 72
+/// The second part: the crystals of the torrent in work->particles and the
+/// sparkles among them in PARTICLES.
+#define BOREAS_TORRENT_CRYSTALS 64
+#define BOREAS_STREAK_WIDTH 40
+#define BOREAS_STREAK_HEIGHT 80
+
 /// The screen opens on Boreas standing in a mass of ice crystals over the
 /// violet sky; the crystals break away, a big ice block drops onto its head
 /// and a spray of ice streams out to the left. Then a torrent of ice crystals
@@ -77,7 +98,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   wait(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
   BattleEffect_SpawnObjects(9, FORMATION_ICE_BLOCKS, 1);
-  EFFECT_SHOW_WIDE_CANVAS(16);
+  EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (i = 0; i != 64; i++) {
@@ -102,7 +123,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
   Sound_PlayFar(SE_RUMBLE);
 
   // First half: the crystals, the big ice block and the spray.
-  for (frame = 0; frame != 288; frame++) {
+  for (frame = 0; frame != BOREAS_OPENING_FRAMES; frame++) {
     count = 16;
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 16)
       break;
@@ -145,8 +166,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
     }
     if (frame >= 176 && frame < 180) {
-      shakeX = -gBoreas_ShakeOffsets[frame - 176];
-      shakeY = gBoreas_ShakeOffsets[frame - 176];
+      shakeX = -gBoreas_ShakeOffsets[frame - BOREAS_BLOCK_LAND_FRAME];
+      shakeY = gBoreas_ShakeOffsets[frame - BOREAS_BLOCK_LAND_FRAME];
       gBgScroll[1].x = shakeX;
       gBgScroll[1].y = shakeY + BATTLE_BACKGROUND_SCROLL_Y;
     }
@@ -185,16 +206,16 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     }
 
     // The big ice block falls onto Boreas's head and slowly sinks.
-    dropFrame = frame - 160;
+    dropFrame = frame - BOREAS_BLOCK_DROP_FRAME;
     if (dropFrame >= 0 && dropFrame < 158) {
-      s32 sinkFrame = frame - 208;
+      s32 sinkFrame = frame - BOREAS_BLOCK_SINK_FRAME;
       s32 blockX = 80;
       s32 blockY = 8;
 
       if (frame <= 175) {
         blockX = 96 - dropFrame;
         blockY = dropFrame * 4 - 56;
-      } else if (frame > 208) {
+      } else if (frame > BOREAS_BLOCK_SINK_FRAME) {
         blockY = sinkFrame / 4 + 8;
       }
       drawAlt(canvas, work->sheet + BOREAS_BIG_BLOCK, blockX, blockY, 24, 48);
@@ -213,7 +234,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     Transform_Reset();
 
     // Each time crystals crumble, shards fly up.
-    if (frame == 32) {
+    if (frame == BOREAS_CRUMBLE_A_FRAME) {
       for (i = 0; i != 32; i++) {
         PARTICLES[i].x = px((Random16() & 31) + 68);
         PARTICLES[i].y = px((Random16() & 31) + 8);
@@ -222,7 +243,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
         PARTICLES[i].variant = (Random16() & 15) + 32;
       }
     }
-    if (frame == 64) {
+    if (frame == BOREAS_CRUMBLE_B_FRAME) {
       for (i = 0; i != 32; i++) {
         PARTICLES[i + 32].x = px(Random16() % 48 + 60);
         PARTICLES[i + 32].y = px((Random16() & 31) + 52);
@@ -231,7 +252,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
         PARTICLES[i + 32].variant = (Random16() & 15) + 32;
       }
     }
-    if (frame == 104) {
+    if (frame == BOREAS_CRUMBLE_C_FRAME) {
       for (i = 0; i != 32; i++) {
         PARTICLES[i].x = px((Random16() & 63) + 52);
         PARTICLES[i].y = px((Random16() & 31) + 72);
@@ -241,7 +262,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
       }
     }
 
-    if (frame >= 32 && frame < 208) {
+    if (frame >= BOREAS_CRUMBLE_A_FRAME && frame < BOREAS_BLOCK_SINK_FRAME) {
       for (i = 0; i != 64; i++) {
         if (PARTICLES[i].variant >= 0) {
           s32 picture;
@@ -264,7 +285,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
 
     // The spray streams out to the bottom left, leaving sparkles.
     if (frame > 223) {
-      if (frame == 224) {
+      if (frame == BOREAS_SPRAY_FRAME) {
         for (i = 0; i != 128; i++) {
           PARTICLES[i].x = px(72);
           PARTICLES[i].y = px(56);
@@ -347,15 +368,15 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     PARTICLES[i].variant = -i / 2;
   }
 
-  for (frame = 0; frame != 146; frame++) {
+  for (frame = 0; frame != BOREAS_TORRENT_FRAMES; frame++) {
     count = 0;
     if (frame == 96)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 16)
       work->shakeFrames = 32;
     // Crystals rise among the targets.
-    if (frame > 16) {
-      count = (frame - 16) / 2;
+    if (frame > BOREAS_TORRENT_RISE_FRAME) {
+      count = (frame - BOREAS_TORRENT_RISE_FRAME) / 2;
       if (count > 16)
         count = 16;
     }
@@ -366,7 +387,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     // A streak of ice falls from the top right.
     if (frame > 64)
       draw(canvas, work->sheet + BOREAS_STREAK, (64 - frame) * 7 + 88,
-           frame * 14 - 992, 40, 80);
+           frame * 14 - 992, BOREAS_STREAK_WIDTH, BOREAS_STREAK_HEIGHT);
     if (frame <= 71) {
       for (i = 0; i != count; i++) {
         s32 picture = i % 3;
@@ -378,7 +399,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
              gBoreas_RisingCrystalHeights[picture]);
       }
     }
-    if (frame == 72) {
+    if (frame == BOREAS_TORRENT_CRASH_FRAME) {
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         work->particles[i].x = px(BOREAS_POINT_X(i & 15) - 56);
         work->particles[i].y = px(BOREAS_POINT_Y(i & 15));
@@ -393,7 +414,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
     if (frame > 71) {
       count = 32;
       if (frame != 72)
-        count = 64;
+        count = BOREAS_TORRENT_CRYSTALS;
       for (i = 0; i != count; i++) {
         struct Particle *crystal = &work->particles[i];
 
@@ -435,7 +456,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
                                  POSE_DAMAGE, TINT_KEEP, 0);
     }
 
-    if (frame > 72) {
+    if (frame > BOREAS_TORRENT_CRASH_FRAME) {
       for (i = 0; i != 64; i++) {
         if (PARTICLES[i].variant >= 0 && PARTICLES[i].variant < 18) {
           s32 picture = PARTICLES[i].variant / 2 % 9;

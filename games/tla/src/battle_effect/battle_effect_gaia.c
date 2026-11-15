@@ -15,6 +15,12 @@
 
 #define GAIA_FRAMES 192
 
+#define GAIA_WALL_SINK_FRAME 160
+#define GAIA_DUST 256 ///< dust in PARTICLES
+/// The pictures Gaia rebuilds from the earth wall sheet: the rising wall's
+/// rows, the standing wall's top and foot, then the flames.
+#define GAIA_ROW_HEIGHT 32
+
 /// Flames flicker at the targets' feet under a narrow shaft of orange light,
 /// which widens into a glowing wall and stands while rocks tumble up through it
 /// and the targets are battered, then narrows away again.
@@ -155,7 +161,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     work->particles[16 + i].x = gGaia_LateRockColumns[i];
 
   // The dust rises from the foot of the wall after a random wait.
-  for (i = 0; i != 256; i++) {
+  for (i = 0; i != GAIA_DUST; i++) {
     struct Particle *dust = &DUST[i];
 
     dust->x = px((Random16() & 63) + wallX + 32);
@@ -203,8 +209,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
         row = 7;
       for (i = 0; i != 4; i++) {
         draw[0](canvas, work->sheet + gGaia_RowPictures[row],
-                wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
-                gGaia_RowWidths[row], 32);
+                wallX - gGaia_RowWidths[row] + 64, i * GAIA_ROW_HEIGHT - 12,
+                gGaia_RowWidths[row], GAIA_ROW_HEIGHT);
         draw[1](canvas, work->sheet + gGaia_RowPictures[row], wallX + 64,
                 i * 32 - 12, gGaia_RowWidths[row], 32);
       }
@@ -212,7 +218,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
     // It sinks back the same way (frames 160-183).
     if (frame >= 160 && frame <= 183) {
-      s32 row = 7 - (frame - 160) / 3;
+      s32 row = 7 - (frame - GAIA_WALL_SINK_FRAME) / 3;
 
       if (row < 0)
         row = 0;
@@ -220,8 +226,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
         row = 7;
       for (i = 0; i != 4; i++) {
         draw[0](canvas, work->sheet + gGaia_RowPictures[row],
-                wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
-                gGaia_RowWidths[row], 32);
+                wallX - gGaia_RowWidths[row] + 64, i * GAIA_ROW_HEIGHT - 12,
+                gGaia_RowWidths[row], GAIA_ROW_HEIGHT);
         draw[1](canvas, work->sheet + gGaia_RowPictures[row], wallX + 64,
                 i * 32 - 12, gGaia_RowWidths[row], 32);
       }
@@ -434,7 +440,7 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
 
     *words++ = 0;
     *words++ = attributes;
-    *words = flags | tile | 0x800;
+    *words = flags | tile | OBJ_PRIORITY(2);
   }
   {
     s32 *p = &found->unk1c;
@@ -456,7 +462,7 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
 
   objects = Ram_HeapSlots->actorSystem;
   size = sprite->width * sprite->height;
-  if (!(attributes & 0x2000))
+  if (!(attributes & OBJ_256_COLORS))
     size = (u32)size >> 1;
   VramCache_Load(sprite->slot, size, 0);
   objects->used += size;

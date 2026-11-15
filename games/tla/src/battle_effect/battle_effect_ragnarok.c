@@ -56,7 +56,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(args->side, draw);
   Actor_SelectAnimationFar(user, 2);
-  Actor_SetAnimationSpeedFar(user, 48);
+  Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL * 3);
   EffectPosition_ProjectBattler(args->targets[0], &target);
   if (args->side == EFFECT_SIDE_ENEMIES)
     baseX = target.x / 2 - 24;
@@ -246,7 +246,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     frame++;
   } while (frame != BLADE_FRAMES);
 
-  Actor_SetAnimationSpeedFar(user, 16);
+  Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL);
   EFFECT_FINISH_CANVAS();
 }
 
@@ -270,6 +270,9 @@ void BattleEffect_RunAcheronsGrief(struct BattleEffectParams *args) {
 #define DUST ((struct Particle *)Ram_MapCellBuffer)
 #define SPARK                                                                  \
   ((struct Particle *)(Ram_MapCellBuffer + 684 * sizeof(struct Particle)))
+
+/// The sword strikes: the crash, the damage and the canvas filled bright.
+#define TITAN_BLADE_STRIKE_FRAME 60
 
 /// A great sword falls from the sky onto the target, a pillar of fire and dust
 /// spouting under it, and drives into the ground in a burst of flashes and
@@ -338,7 +341,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   do {
     struct Particle *flash = &work->particles[i];
     s32 scale = i * 2;
-    s32 angle = Random16() & 0xFFFF;
+    s32 angle = Random16() & TRIG_ANGLE_MASK;
 
     flash->x = Trig_Sin(angle) * scale;
     flash->y = -(Trig_Cos(angle) * scale);
@@ -362,7 +365,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
     speed = 0x1FF;
     speed &= Random16();
-    angle = Random16() & 0xFFFF;
+    angle = Random16() & TRIG_ANGLE_MASK;
     spark->x = origin;
     spark->y = 176 << 15;
     spark->velocityX = (Trig_Sin(angle) * (speed + 32)) >> 5;
@@ -396,7 +399,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 32)
       Sound_PlayFar(SE_SCATTER);
-    if (frame == 60) {
+    if (frame == TITAN_BLADE_STRIKE_FRAME) {
       if (mode == FALLING_SWORD_ACHERONS_GRIEF)
         EFFECT_SHOW_DAMAGE(SE_CLATTER);
       else
@@ -437,7 +440,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           s32 angle;
 
           speed = Random16() & 63;
-          angle = Random16() & 0xFFFF;
+          angle = Random16() & TRIG_ANGLE_MASK;
           dust->x = ((Trig_Sin(angle) * speed) >> 3) + origin;
           dust->y = ((Trig_Cos(angle) * speed) >> 2) + (192 << 15);
           dust->velocityX = ((Random16() & 63) - 32) << 14;
@@ -462,7 +465,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           s32 angle;
 
           speed = Random16() & 63;
-          angle = Random16() & 0xFFFF;
+          angle = Random16() & TRIG_ANGLE_MASK;
           dust->x = ((Trig_Sin(angle) * speed) >> 3) + origin;
           dust->y = ((Trig_Cos(angle) * speed) >> 2) + (192 << 15);
           dust->velocityX = ((Random16() & 63) - 32) << 14;
@@ -627,13 +630,9 @@ struct JudgmentObject {
 
 extern const struct Scale gJudgment_UnitScale;
 
-/* VIEW(actor_move_random): static FILL as FILL__actor_move_random; fxdisp has
- * static __inline__ void FILL(void *dst, s32 size, s32 value) {
- * Iwram_FillWords(dst, size, value); }; tried with the definition the rest of
- * the object has, BattleEffect_RunJudgment moves: 684 of 2634 instructions in
- * tla-ja. */
-/// Fills words through the IWRAM fill, in a once-only block.
-static inline void FILL__actor_move_random(void *dst, s32 size, s32 value) {
+/// Fills words through the IWRAM fill as one statement, the way Judgment clears
+/// and floods its canvas.
+static inline void BattleEffect_FillWords(void *dst, s32 size, s32 value) {
   do {
     Iwram_FillWordsEntry(dst, size, value);
   } while (0);

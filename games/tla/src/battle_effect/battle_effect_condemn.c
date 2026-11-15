@@ -135,7 +135,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     i = 0;
     rowBase = (6 - screenX) << 8;
     angle = frame << 11;
-    for (; i != 160; i++) {
+    for (; i != DISPLAY_HEIGHT; i++) {
       *scanline++ = rowBase - ((Trig_Sin(angle) * amp) >> 10);
       angle += TRIG_TURN / 32;
     }

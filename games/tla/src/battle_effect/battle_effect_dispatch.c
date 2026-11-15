@@ -158,10 +158,10 @@ void BattleEffect_BuildWindowEdgeTable(void) {
   edge = (u16 *)gMapGridCellBuffer;
   line = (u16 *)(Ram_MapCellBuffer + 0x82);
   inset = Ram_MapCellBuffer + 2;
-  for (i = 0; i != 160; i++) {
+  for (i = 0; i != DISPLAY_HEIGHT; i++) {
     if ((u32)(i - 8) <= 127) {
       right = *edge - inset[i - 8];
-      CLAMP(right, 0, 240);
+      CLAMP(right, 0, DISPLAY_WIDTH);
       line[i] = right;
     } else {
       line[i] = 0xfff1;

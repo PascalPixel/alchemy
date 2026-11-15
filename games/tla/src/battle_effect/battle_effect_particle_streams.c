@@ -201,7 +201,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
       // The pillars stream upward, each a 104-pixel picture drawn twice to
       // wrap.
       if (frame >= SPOUT_FRAME && frame < SPOUT_END_FRAME) {
-        for (k = 0; k != 3; k++) {
+        for (k = 0; k != NEREID_COLUMNS; k++) {
           s32 span = (frame * 16 - 256 + k * 25) % 104;
 
           draw[0](canvas, work->sheet + PILLAR_SHEET,
@@ -365,6 +365,12 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 
 #define IMPACT_BURST_FRAMES 72
 
+#define IMPACT_BURST_FRAGMENT_WIDTH 12 ///< each fragment picture's width
+#define IMPACT_BURST_FRAGMENT_HEIGHT 24
+#define IMPACT_BURST_FRAGMENTS 3 ///< fragments, work->particles 61 to 63
+/// the first fragment in work->particles
+#define IMPACT_BURST_FIRST_FRAGMENT 61
+
 /// Opens an impact flash and scatters sparks and fragments, keeping the
 /// effect's sprites in formation for the first 36 frames.
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
@@ -410,9 +416,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
     work->particles[i].variant = (Random16() & 15) + 16;
   }
 
-  for (i = 0; i != 3; i++) {
-    work->particles[61 + i].x = x;
-    work->particles[61 + i].y = y;
+  for (i = 0; i != IMPACT_BURST_FRAGMENTS; i++) {
+    work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].x = x;
+    work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].y = y;
     work->particles[61 + i].velocityX = (Trig_Sin(i * 0x5555) * 32) >> 6;
     work->particles[61 + i].velocityY = -((Trig_Cos(i * 0x5555) * 32) >> 5);
   }
@@ -483,7 +489,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
       }
     }
 
-    for (i = 0; i != 3; i++) {
+    for (i = 0; i != IMPACT_BURST_FRAGMENTS; i++) {
       struct Particle *shard = &work->particles[61 + i];
 
       if (frame >= 36 && frame <= 63) {
@@ -496,7 +502,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
         px = Q_16_16_UPPER_HALF(shard->x);
         py = Q_16_16_UPPER_HALF(shard->y);
         maxBlend(canvas, work->sheet + cell * 0x120 + SHARD_E, px - 6, py - 12,
-                 12, 24);
+                 IMPACT_BURST_FRAGMENT_WIDTH, IMPACT_BURST_FRAGMENT_HEIGHT);
       }
     }
 
@@ -524,12 +530,12 @@ void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta) {
     blue += blue_delta;
     green += green_delta;
     red += red_delta;
-    if (blue > 31)
-      blue = 31;
-    if (green > 31)
-      green = 31;
-    if (red > 31)
-      red = 31;
+    if (blue > RGB_LEVEL_MAX)
+      blue = RGB_LEVEL_MAX;
+    if (green > RGB_LEVEL_MAX)
+      green = RGB_LEVEL_MAX;
+    if (red > RGB_LEVEL_MAX)
+      red = RGB_LEVEL_MAX;
     if (blue < 0)
       blue = 0;
     if (green < 0)
@@ -554,12 +560,12 @@ void Palette_BrightenBattleBg(s32 red_delta, s32 green_delta, s32 blue_delta) {
     red += red_delta;
     green += green_delta;
     blue += blue_delta;
-    if (red > 31)
-      red = 31;
-    if (green > 31)
-      green = 31;
-    if (blue > 31)
-      blue = 31;
+    if (red > RGB_LEVEL_MAX)
+      red = RGB_LEVEL_MAX;
+    if (green > RGB_LEVEL_MAX)
+      green = RGB_LEVEL_MAX;
+    if (blue > RGB_LEVEL_MAX)
+      blue = RGB_LEVEL_MAX;
     if (red < 0)
       red = 0;
     if (green < 0)
@@ -586,12 +592,12 @@ void Palette_BrightenSavedBattleBg(s32 redDelta, s32 greenDelta,
     red += redDelta;
     green += greenDelta;
     blue += blueDelta;
-    if (red > 31)
-      red = 31;
-    if (green > 31)
-      green = 31;
-    if (blue > 31)
-      blue = 31;
+    if (red > RGB_LEVEL_MAX)
+      red = RGB_LEVEL_MAX;
+    if (green > RGB_LEVEL_MAX)
+      green = RGB_LEVEL_MAX;
+    if (blue > RGB_LEVEL_MAX)
+      blue = RGB_LEVEL_MAX;
     if (red < 0)
       red = 0;
     if (green < 0)
@@ -660,6 +666,15 @@ struct FxAnimObject {
   u8 flags;
 };
 
+#define PARTICLE_STREAMS_LARGE_GLOW_SIZE 24
+#define PARTICLE_STREAMS_SMALL_GLOW_SIZE 8
+/// The burst's flashes in PARTICLES, then its embers.
+#define PARTICLE_STREAMS_FLASHES 128
+#define PARTICLE_STREAMS_EMBER_COUNT 512
+/// The mote pictures in the blast sheet, after its seven blast pictures
+/// (BLAST_PICTURE_SIZES): two sets, MOTE_SET_BYTES apart.
+#define PARTICLE_STREAMS_MOTE_PICTURES (16 * 16 + 32 * 32 + 5 * 48 * 48)
+
 /// Meteor's scene: the ground dissolves, a sun climbs over a ring of orbs while
 /// burning drops rain, then embers fountain up and the sun swells over the
 /// enemies.
@@ -716,7 +731,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
-  EFFECT_START_NARROW_CANVAS(0x2000);
+  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
 
   // Mode 1: the user leaps and flashes; the streams lean the user's way.
   /* FAKEMATCH(temporary): mode tested through its copy in direction. */
@@ -935,7 +950,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
           green = 31;
         *line++ = (red << 10) | (green << 5) | (green >> 1);
       }
-      for (; i != 160; i++)
+      for (; i != DISPLAY_HEIGHT; i++)
         *line++ = 0;
 
       // The sun (or the flames) climbs, growing.
@@ -996,7 +1011,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         pos->x = Q_16_16_UPPER_HALF(pos->x) + 128;
         pos->y = Q_16_16_UPPER_HALF(pos->y) + 60;
         draw(Ram_MapCellBuffer, work->sheet + 0x1f40, pos->x - 4, pos->y - 4, 8,
-             8);
+             PARTICLE_STREAMS_SMALL_GLOW_SIZE);
       }
 
       // The drops fall, and each becomes a flame where it lands.
@@ -1011,7 +1026,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         if (drop <= 93)
           draw(Ram_MapCellBuffer, work->sheet + 0x1c80,
                gParticleStreams_FireballPoints[i][0] + x - 12, drop - 12, 24,
-               24);
+               PARTICLE_STREAMS_LARGE_GLOW_SIZE);
         else if (drop <= 95)
           AddFlame(px(gParticleStreams_FireballPoints[i][0] + x), px(drop), 1);
       }
@@ -1063,7 +1078,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     mote->x = Random16() & 127;
     mote->y = (Random16() & 127) + 127;
   }
-  for (i = 0; i != 128; i++) {
+  for (i = 0; i != PARTICLE_STREAMS_FLASHES; i++) {
     struct Particle *flash = &FLASHES[i];
 
     SET_POSITION(flash, 0, 0, 0);
@@ -1072,7 +1087,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     flash->velocityZ = ((Random16() & 255) - 127) << 12;
     flash->variant = 0;
   }
-  for (i = 0; i != 512; i++) {
+  for (i = 0; i != PARTICLE_STREAMS_EMBER_COUNT; i++) {
     struct Particle *ember = &EMBERS[i];
 
     SET_POSITION(ember, 0, 0, 0);
@@ -1126,7 +1141,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         draw(canvas,
              work->sheet +
                  (gBattleEffect_MotePictures[size - 1] + (i & 1) * 770) +
-                 0x3200,
+                 PARTICLE_STREAMS_MOTE_PICTURES,
              point.x - size / 2, point.y - size, size, size * 2);
         BattleEffectKernels_IntegrateVector3(ember, 64, -px(1) / 8);
         if (ember->y <= px(20)) {

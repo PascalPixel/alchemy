@@ -140,7 +140,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     }
   }
   {
-    struct Sprite *object = EffectSprite_CreateWithTiles(64, 64, 0xc0002000, 0);
+    struct Sprite *object = EffectSprite_CreateWithTiles(
+        64, 64, OBJ_SIZE_64X64 | OBJ_256_COLORS, 0);
 
     OBJECTS[0] = object;
     object->image.priority = 3;
@@ -481,8 +482,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         Decompress_TaggedLz(source,
                             work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES);
         for (i = 0, objectSlots = gVramCacheEntries; i != 12; i++) {
-          struct Sprite *object =
-              EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
+          struct Sprite *object = EffectSprite_CreateWithTiles(
+              32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
 
           object->image.priority = 3;
           OBJECTS[i] = object;
@@ -498,8 +499,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         Decompress_TaggedLz(source,
                             work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES);
         {
-          struct Sprite *object =
-              EffectSprite_CreateWithTiles(64, 64, 0xc0000000, 0xe000);
+          struct Sprite *object = EffectSprite_CreateWithTiles(
+              64, 64, OBJ_SIZE_64X64, OBJ_PALETTE(14));
           struct VramCacheEntry *tileSlots;
 
           OBJECTS[12] = object;
@@ -513,7 +514,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             Iwram_CopyWords(
                 vram, work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES, 0x800);
           }
-          object = EffectSprite_CreateWithTiles(64, 64, 0xc0002000, 0);
+          object = EffectSprite_CreateWithTiles(
+              64, 64, OBJ_SIZE_64X64 | OBJ_256_COLORS, 0);
           OBJECTS[13] = object;
           object->image.priority = 2;
           object->offsetY = 32;

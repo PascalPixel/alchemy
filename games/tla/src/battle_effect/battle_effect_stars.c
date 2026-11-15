@@ -57,7 +57,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
                        SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Actor_SelectAnimationFar(caster, 2);
-  Actor_SetAnimationSpeedFar(caster, 48);
+  Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 3);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;

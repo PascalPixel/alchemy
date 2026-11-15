@@ -10,6 +10,10 @@
 #define SPARK_MAX 1024
 #define PILLAR_BASE_Y 104
 
+#define PLASMA_SPACING 8 ///< frames between pillars
+/// The second picture in the sheet, after the first 48x112 one.
+#define PLASMA_SECOND_PICTURE PICTURE_BYTES(LIGHTNING_PILLAR)
+
 /// Pillars of lightning strike one after another, each with a white flash,
 /// throwing sparks up from the ground and knocking the targets back.
 ///
@@ -84,7 +88,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
     // Pillar i strikes at frame 8i: a flash, then its first cel for one
     // frame and its second for two.
     for (i = 0; i != count; i++) {
-      start = i * 8;
+      start = i * PLASMA_SPACING;
       if (frame == start) {
         Sound_PlayFar(SE_HEAVY_IMPACT);
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
@@ -94,7 +98,7 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
           draw[0](canvas, work->sheet, gPlasma_Columns[i + args->side * 7] - 24,
                   0, LIGHTNING_PILLAR_WIDTH, LIGHTNING_PILLAR_HEIGHT);
         if (frame >= start + 2 && frame < start + 4)
-          draw[0](canvas, work->sheet + 0x1500,
+          draw[0](canvas, work->sheet + PLASMA_SECOND_PICTURE,
                   gPlasma_Columns[i + args->side * 7] - 24, 0,
                   LIGHTNING_PILLAR_WIDTH, LIGHTNING_PILLAR_HEIGHT);
 
@@ -188,6 +192,8 @@ void BattleEffect_RunDynamite(struct BattleEffectParams *args) {
 #define SPARK_COUNT SHAPE(0)
 #define GROUP_COUNT SHAPE(1)
 #define GROUP_X(i) SHAPE((i) + 2)
+
+#define SPARK_GROUPS_SPACING 8 ///< frames between bursts
 
 /// One to three groups of sparks burst one after another, eight frames apart:
 /// each opens with a big flash, a ring of small flashes and a spray of sparks
@@ -316,7 +322,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
     }
 
     for (i = 0; i != GROUP_COUNT; i++) {
-      start = i * 8;
+      start = i * SPARK_GROUPS_SPACING;
       if (frame == start)
         work->shakeFrames = 12;
 

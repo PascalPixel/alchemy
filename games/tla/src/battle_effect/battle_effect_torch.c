@@ -51,7 +51,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   canvas = Ram_HeapSlots->battleCanvas;
 
   // Open the canvas on BG2 over the target's side.
-  BattleEffect_StartCanvasLayer(0x2000);
+  BattleEffect_StartCanvasLayer(BGCNT_WRAP);
   BattleEffect_RunDjinniEntrance(
       args,
       DJINNI_ENTRANCE(ELEMENT_MARS + DJINNI_ENTRANCE_LONG, args->side,
@@ -141,7 +141,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
 
     // One BG2 X offset per scanline, a sine wave running down the screen.
     line = work->bg2xLines;
-    for (i = 0, angle = -(wave << 9); i != 160; i++) {
+    for (i = 0, angle = -(wave << 9); i != DISPLAY_HEIGHT; i++) {
       *line++ = ((i << 18) - (Trig_Sin(angle) << 7) + 0x40000) >> 10;
       angle += 0x200;
     }

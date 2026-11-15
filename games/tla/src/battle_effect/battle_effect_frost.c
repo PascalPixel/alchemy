@@ -12,6 +12,10 @@
 // Motes swirl up around the targets while ice pillars rise one by one;
 // then everything bursts.
 
+/// The ice mounds' pictures in IceChipSheet are all as wide; their heights are
+/// gFrost_MoundHeights.
+#define FROST_MOUND_WIDTH 32
+
 /// Motes of ice spiral down and in while mounds of ice spring up; at the burst
 /// the motes spread and rise, chips fly up and sparkles rise.
 ///
@@ -35,7 +39,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   dots = Ram_HeapSlots->battleSheet;
-  EFFECT_START_NARROW_CANVAS(1);
+  EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, dots, 0, 0);
   BattleEffect_FetchRectangleBlitters(0, draw = pair);
@@ -137,13 +141,13 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
                     gFrost_MoundSpots[i * 2],
                     gFrost_MoundSpots[i * 2 + 1] -
                         (height = gFrost_MoundHeights[cel]),
-                    32, height);
+                    FROST_MOUND_WIDTH, height);
           } else {
             pair[0](canvas, work->sheet + gFrost_MoundPictures[cel],
                     gFrost_MoundSpots[i * 2],
                     gFrost_MoundSpots[i * 2 + 1] -
                         (height = gFrost_MoundHeights[cel]),
-                    32, height);
+                    FROST_MOUND_WIDTH, height);
           }
         }
       }

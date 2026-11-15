@@ -9,6 +9,9 @@
 
 #define PILLAR_FRAMES 96
 
+#define VOLCANO_ERUPTION 200 ///< sparks thrown as a pillar starts
+#define VOLCANO_TRICKLE 4    ///< and each frame after
+
 /// One, two or four columns of fire rise among the targets, each erupting in a
 /// fountain of sparks and knocking the targets back.
 ///
@@ -99,7 +102,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
         // Four frames after it starts the pillar burns: its flames scroll
         // up through two copies, and its base flickers between two cels.
         if (frame >= gVolcano_StartFrames[pillar] + 4) {
-          s32 scroll = (frame * 16 + pillar * 25) % 104;
+          s32 scroll = (frame * 16 + pillar * 25) % FIRE_PILLAR_HEIGHT;
 
           draw[pillar & 1](canvas, work->sheet, screen.x - 17,
                            screen.y - scroll - 104, FIRE_PILLAR_WIDTH,
@@ -140,11 +143,11 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
               spawned++;
               if (frame == gVolcano_StartFrames[pillar]) {
                 spark->variant = (Random16() & 7) + 48;
-                if (spawned == 200)
+                if (spawned == VOLCANO_ERUPTION)
                   break;
               } else {
                 spark->variant = (Random16() & 7) + 24;
-                if (spawned == 4)
+                if (spawned == VOLCANO_TRICKLE)
                   break;
               }
             }

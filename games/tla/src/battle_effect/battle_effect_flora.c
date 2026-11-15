@@ -109,15 +109,16 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 15; i++) {
-        struct Sprite *obj =
-            EffectSprite_CreateWithTiles(16, 16, 0x40000000, 0xf000);
+        struct Sprite *obj = EffectSprite_CreateWithTiles(
+            16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(15));
         work->sprites[12 + i] = obj;
         obj->image.priority = 2;
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 128, 128);
         w->tiles[i] = ((struct Sprite *)work->sprites[12 + i])->image.tile;
       }
       for (i = 0; i != 17; i++) {
-        struct Sprite *obj = EffectSprite_Acquire(16, 16, 0x40000000, 0xf000);
+        struct Sprite *obj =
+            EffectSprite_Acquire(16, 16, OBJ_SIZE_16X16, OBJ_PALETTE(15));
         work->sprites[27 + i] = obj;
         Iwram_CopyWordsEntry(obj, work->sprites[12], 24);
       }
@@ -133,8 +134,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 12; i++) {
-        struct Sprite *obj =
-            EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
+        struct Sprite *obj = EffectSprite_CreateWithTiles(
+            32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
         obj->image.priority = 2;
         work->sprites[i] = obj;
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);

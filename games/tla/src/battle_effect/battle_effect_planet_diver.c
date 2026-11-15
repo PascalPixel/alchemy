@@ -24,6 +24,9 @@ enum GatheringLightsMode {
 #define SKULL_SIZE 24
 #define SKULL_CELL (24 * 24)
 
+#define HAUNT_SCATTERED 512
+#define HAUNT_SLOTS 64 ///< particles reserved for each target
+
 /// Skulls close in on each target in turn.
 ///
 /// Abilities: Haunt.
@@ -54,7 +57,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
   // Scatter every skull up to 64 pixels from its centre.
-  for (i = 0; i != 512; i++) {
+  for (i = 0; i != HAUNT_SCATTERED; i++) {
     SET_POSITION(&PARTICLES[i], ((Random16() & 255) - 127) << 15,
                  ((Random16() & 255) - 127) << 15,
                  ((Random16() & 255) - 127) << 15);
@@ -71,10 +74,10 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
     // The background waves sideways, one sine step per line.
     row = work->bg2xLines;
     if (args->side == EFFECT_SIDE_ENEMIES) {
-      for (i = 0; i != 160; i++)
+      for (i = 0; i != DISPLAY_HEIGHT; i++)
         *row++ = (0x60000 - Trig_Sin((frame + i) << 11) * 6) >> 10;
     } else {
-      for (i = 0; i != 160; i++)
+      for (i = 0; i != DISPLAY_HEIGHT; i++)
         *row++ = Trig_Sin((frame + i) << 11) * 6 >> 10;
     }
 
@@ -98,7 +101,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
         // A skull moves one part in its distance toward the centre each
         // frame, and is gone once it arrives.
         for (i = 0; i != SKULLS; i++) {
-          struct Particle *skull = &PARTICLES[k * 64 + i];
+          struct Particle *skull = &PARTICLES[k * HAUNT_SLOTS + i];
 
           if (frame > (k * 8 + i) * 4) {
             s32 x = (skull->x >> 8) * (skull->x >> 8);
@@ -167,7 +170,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   // On the far side the background and the spirals move 112 pixels left.
   if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -0x6800;
-    offsetX = -112;
+    offsetX = -NARROW_CANVAS_PARTY_X;
   } else {
     offsetX = 0;
   }
@@ -266,8 +269,11 @@ void BattleEffect_RunThornyGrave(struct BattleEffectParams *args) {
   BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_THORNY_GRAVE);
 }
 
-#define MOTES_PER_TARGET 128
 #define MOTE_CELL (20 * 32)
+
+#define GATHERING_LIGHTS_SLOTS 128 ///< particles reserved for each target
+/// The targets' turns, this many frames apart.
+#define GATHERING_LIGHTS_TARGET_FRAMES 20
 
 /// From the caster's body 128 motes a target scatter every way, and from frame
 /// 30 each is pulled toward the middle of its target's body, vanishing once it
@@ -319,8 +325,8 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     struct MotionObject *source = BattleObject_GetFar(args->user)->object;
     s32 height = BattleUnit_GetEffectHeightFar(args->user);
 
-    for (i = 0; i != MOTES_PER_TARGET; i++) {
-      struct Particle *mote = &PARTICLES[k * 128 + i];
+    for (i = 0; i != GATHERING_LIGHTS_SLOTS; i++) {
+      struct Particle *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
 
       SET_POSITION(mote, source->x, height, source->z);
       mote->velocityX = ((Random16() & 255) - 128) << 10;
@@ -382,9 +388,9 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
       if (frame == k * 20 + 70)
         BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, k, 26);
-      if (frame > k * 20) {
+      if (frame > k * GATHERING_LIGHTS_TARGET_FRAMES) {
         for (i = 0; i != gGatheringLights_Counts[mode * 2]; i++) {
-          struct Particle *mote = &PARTICLES[k * 128 + i];
+          struct Particle *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
 
           if (frame > (k * 10 + i) * 2 && mote->variant >= 0) {
             EffectPosition_ProjectPoint((s32 *)mote, &pos);
@@ -395,7 +401,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
 
             // Thirty frames on, the mote is pulled toward the middle of its
             // target's body.
-            if (frame > k * 20 + i + 30) {
+            if (frame > k * GATHERING_LIGHTS_TARGET_FRAMES + i + 30) {
               s32 x = mote->x;
               s32 dx = (target->x - x) >> 8;
               s32 dy = (target->y + half - mote->y) >> 9;

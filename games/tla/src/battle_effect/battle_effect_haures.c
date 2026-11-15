@@ -113,7 +113,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       }
     }
   }
-  sprite = EffectSprite_CreateWithTiles(64, 64, 0xc0002000, 0);
+  sprite =
+      EffectSprite_CreateWithTiles(64, 64, OBJ_SIZE_64X64 | OBJ_256_COLORS, 0);
   ((struct FieldSprite **)work->sprites)[18] = sprite;
   sprite->blendMode = 1;
   STAMP_TILES(work) = gVramCacheEntries[sprite->vramBlock].offset + 0x06010000;

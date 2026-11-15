@@ -51,6 +51,9 @@ void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
 // Sonic Wave (mode 0), Shriek (1), Banshee Howl (2), Wicked Howl (3) and War
 // Cry (4): effect kinds 300 to 305.
 
+#define STREAK_HEIGHT 40
+#define STREAKS_TARGET_DELAY 32 ///< frames between targets
+
 /// Fires the streaks at each target in turn from above the user; each leaves a
 /// fading trail.
 void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
@@ -148,7 +151,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
 
       // Wobble BG2's 160 lines on a sine wave, and fade the last 16
       // frames out.
-      for (k = 0; k != 160; k++)
+      for (k = 0; k != DISPLAY_HEIGHT; k++)
         *row++ = (0x80000 - Trig_Sin((frame + k) << 12) * 2) >> 10;
       if (frame > total - 16)
         REG_BLDALPHA = BLEND_ALPHA(total - frame, BLEND_WEIGHT_MAX);
@@ -167,7 +170,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
           if (mode == 4)
             Sound_PlayFar(SE_ITEM_BREAK);
         }
-        if (frame >= k * 32) {
+        if (frame >= k * STREAKS_TARGET_DELAY) {
           for (j = 0; j != streaks; j++) {
             // lift is reused for the streak's start frame; a local of its own
             // differs.
@@ -186,13 +189,13 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
                 u8 *cell = &work->sheet[step * 800 + frame / 2 % 3 * 4800];
 
                 drawUpper(canvas, cell, position.x - 10, position.y - 40, 20,
-                          40);
+                          STREAK_HEIGHT);
                 drawLower(canvas, cell, position.x - 10, position.y, 20, 40);
               } else {
                 u8 *cell = &work->sheet[step * 800 + 2 * 4800];
 
                 drawUpper(canvas, cell, position.x - 10, position.y - 40, 20,
-                          40);
+                          STREAK_HEIGHT);
                 drawLower(canvas, cell, position.x - 10, position.y, 20, 40);
               }
               BattleEffectKernels_IntegrateVector3(streak, 64, 0);
@@ -203,7 +206,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
           // From 6 frames after the hit, tremble the target sideways for
           // 32 frames.
           if (RECORD(mode, RECORD_SHAKE) && frame >= k * 32 + 30 &&
-              frame < k * 32 + 62) {
+              frame < k * STREAKS_TARGET_DELAY + 62) {
             struct MotionObject *struck =
                 BattleObject_GetFar(args->targets[k])->object;
 
@@ -219,14 +222,14 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
           // The hit: a sound and two flashes, 16 frames apart. The first
           // hit lets the battle show its results.
           if (RECORD(mode, RECORD_HIT)) {
-            if (frame == k * 32 + 24) {
+            if (frame == k * STREAKS_TARGET_DELAY + 24) {
               Sound_PlayFar(SE_IMPACT);
               if (k == 0)
                 EFFECT_SHOW_DAMAGE(-1);
               BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, k, 8);
             }
-            if (frame == k * 32 + 40)
+            if (frame == k * STREAKS_TARGET_DELAY + 40)
               BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                        POSE_DAMAGE, k, 8);
           }
@@ -269,6 +272,8 @@ void BattleEffect_RunSlaver(struct BattleEffectParams *args) {
 
 /// The motes live in the map cell buffer.
 #define EFFECT_STEPS ((struct Particle *)Ram_MapCellBuffer)
+
+#define MOTE_FOUNTAIN_FOUNTAIN_FRAMES 128
 
 /// Motes burst out of the user and float upwards, wobbling, and each target
 /// reacts in turn.
@@ -362,7 +367,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     if (mode == MOTE_FOUNTAIN_SLAVER && frame == 0)
       Sound_PlayFar(SE_CURSE);
 
-    for (i = 0; i != 128; i++) {
+    for (i = 0; i != MOTE_FOUNTAIN_FOUNTAIN_FRAMES; i++) {
       mote = &EFFECT_STEPS[i];
       if (frame >= i / group * 8 && mote->variant >= 0) {
         s32 size;

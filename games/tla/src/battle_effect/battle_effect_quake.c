@@ -40,8 +40,8 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  EFFECT_START_NARROW_CANVAS(1); // no horizontal stretch
-  REG_BLDCNT = 0;                // no blending
+  EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1)); // no horizontal stretch
+  REG_BLDCNT = 0;                                // no blending
   Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet,
                              work->sheet + ROCK_OFFSET, 1, 1);
 
@@ -59,8 +59,8 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   // On the far side the canvas moves 112 pixels right, and the targets'
   // screen positions with it.
   if (args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -(112 << 8);
-    xOffset = -112;
+    REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
+    xOffset = -NARROW_CANVAS_PARTY_X;
   } else {
     xOffset = 0;
   }

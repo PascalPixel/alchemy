@@ -10,6 +10,9 @@
 #define SHARDS_PER_MEMBER 128
 #define SHARDS ((struct Particle *)Ram_MapCellBuffer)
 
+/// Break and Drain take the targets in turn, this many frames apart.
+#define DRAIN_TARGET_FRAMES 20
+
 /// Ice shards burst up from each target in turn, 20 frames apart.
 /// Setup: 128 shards per target are scattered around the middle of its body
 /// and thrown sideways and up. Frame loop: from its cue a target flashes, and
@@ -91,13 +94,13 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 
       offset = member * SHARDS_PER_MEMBER * sizeof(struct Particle);
       // The target's cue: a chime and a flash.
-      if (frame == member * 20) {
+      if (frame == member * DRAIN_TARGET_FRAMES) {
         Sound_PlayFar(SE_CRACK);
         BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, member, 20);
       }
       // Its shards fly, and go out once they fall past y = 112.
-      if (frame > member * 20) {
+      if (frame > member * DRAIN_TARGET_FRAMES) {
         struct Particle *shard;
 
         for (i = 0, shard = (struct Particle *)(Ram_MapCellBuffer + offset);

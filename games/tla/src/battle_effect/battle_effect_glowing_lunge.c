@@ -81,7 +81,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
 
   // The caster lunges at the target.
   BattleEffect_SetApproachMotion(args->user, args->targets[0], 10, 80);
-  Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->user)->object, 48);
+  Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->user)->object,
+                             ANIMATION_STEP_NORMAL * 3);
   targetObject = BattleObject_GetFar(args->targets[0])->object;
   EffectPosition_ProjectBattler(args->targets[0], &target);
 

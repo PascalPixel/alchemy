@@ -143,7 +143,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
     struct MotionObject *user = BattleObject_GetFar(args->user)->object;
 
     Actor_SelectAnimationFar(user, 2);
-    Actor_SetAnimationSpeedFar(user, 48);
+    Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL * 3);
   } else
     BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
   if (variant == 4)
@@ -237,7 +237,8 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
     BattleEffect_RunWeaken(args);
   } else {
     if (variant == 4)
-      Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->user)->object, 16);
+      Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->user)->object,
+                                 ANIMATION_STEP_NORMAL);
     BattleEffect_EndCanvasLayer();
   }
 }

@@ -121,6 +121,8 @@ void BattleEffect_RunReverseStar(struct BattleEffectParams *args) {
 // turning as they close in on its middle; a healing chime sounds as they
 // gather and the target glows.
 
+#define HEALING_SPARKS 512 ///< sparks in PARTICLES
+
 /// Motes of light scattered around each target swirl in towards it, one target
 /// after another.
 void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
@@ -244,7 +246,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       mode == HEALING_MODE_SPRING || mode == HEALING_MODE_BREATH ||
       mode == HEALING_MODE_ETHER) {
     // Across and deep 64 pixels each way, 32-95 pixels up.
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &SPARKS[i];
 
       SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -260,7 +262,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       total = args->targetCount * 8 + 58;
   } else if (mode == HEALING_MODE_SALT) {
     // From the feet, 48 pixels up, thrown out and up.
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &SPARKS[i];
 
       spark->y = px(48);
@@ -273,7 +275,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     }
     total = args->targetCount * 8 + 58;
   } else if (mode == HEALING_MODE_EDDY) {
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &SPARKS[i];
 
       SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -284,7 +286,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     total = args->targetCount * 8 + 58;
   } else if (mode == HEALING_MODE_WISH || mode == HEALING_MODE_REVERSE_STAR) {
     // 64 pixels each way.
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &SPARKS[i];
 
       SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -295,7 +297,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     total = args->targetCount * 8 + 58;
   } else if (mode == HEALING_MODE_AURA) {
     // A wide cloud, 100 pixels each way.
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &SPARKS[i];
 
       SET_POSITION(spark, (Random16() % 200 - 100) << 15,
@@ -306,7 +308,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     total = args->targetCount * 8 + 46;
   } else if (mode == HEALING_MODE_CURE) {
     // A ring 32-95 pixels across, 50 pixels down, rising.
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &SPARKS[i];
       s32 heading = Random16() & TRIG_ANGLE_MASK;
       s32 radius = (Random16() & 63) + 32;
@@ -319,7 +321,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     total = args->targetCount * 8 + 58;
   } else if (mode == HEALING_MODE_CURE_POISON) {
     // 64 pixels across and deep, 32 up and down.
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &SPARKS[i];
 
       SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -330,7 +332,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     total = args->targetCount * 8 + 58;
   } else {
     // 64 pixels each way.
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &SPARKS[i];
 
       SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,

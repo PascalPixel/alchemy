@@ -7,6 +7,12 @@
 /// Where ParticleSpritesD is decoded in the effect's pictures.
 #define NEPTUNE_PARTICLE_SPRITES_D_PICTURES 0x4e20
 
+/// The first stage's flares converging on Neptune's head, and the burst at
+/// its end.
+#define NEPTUNE_FLARES_FRAME 152
+#define NEPTUNE_BURST_FRAME 222
+#define NEPTUNE_FLARE_SHEET 20000 ///< the flare pictures, after the spray
+
 /// Under storm clouds Neptune leaps out of the sea in a burst of spray, light
 /// gathers at its head and a beam of light joins its head to the sky, with a
 /// splash there; then columns of water crash down on the targets, throwing up
@@ -77,8 +83,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     sheet += 0x200;
     Decompress_TaggedLz(sheet, tiles);
     for (i = 0; i != 8; i++) {
-      struct Sprite *object =
-          EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
+      struct Sprite *object = EffectSprite_CreateWithTiles(
+          32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
 
       object->image.priority = 1;
       work->sprites[i] = object;
@@ -212,7 +218,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 
     // The second fountain fills the free spray.
     if (frame == 76) {
-      for (i = 0; i != 1024; i++) {
+      for (i = 0; i != PARTICLE_POOL_COUNT; i++) {
         if (PARTICLES[i].variant == -1) {
           s32 r = Random16() & 255;
           s32 a = Random16() & TRIG_ANGLE_MASK;
@@ -225,14 +231,14 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         }
       }
     }
-    if (frame == 152) {
+    if (frame == NEPTUNE_FLARES_FRAME) {
       Irq_SetHandler(2, 96, BattleEffect_SetBg2AffineScaleHalf);
       work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
       work->fadeStep = 0;
     }
 
     // The glints converge on the mouth.
-    beamFrame = frame - 152;
+    beamFrame = frame - NEPTUNE_FLARES_FRAME;
     if (beamFrame >= 0 && beamFrame < 88) {
       for (i = 0, glint = work->particles; i != 32; i++, glint++) {
         if (frame >= i / 4 + 152 && frame < i / 4 + 152 + 32) {
@@ -251,7 +257,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     }
 
     // The breath: a ring of sparks streams from the mouth.
-    if (frame == 222) {
+    if (frame == NEPTUNE_BURST_FRAME) {
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         spark = &work->particles[i];
         spark->x = (Random16() & 15) - 8;
@@ -277,8 +283,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         u16 *sparkCells = gBattleEffect_FlarePictures;
         s32 r = 1;
 
-        if (frame >= i / 2 + 222) {
-          draw[0](canvas, work->sheet + sparkCells[r - 1] + 0x4e20,
+        if (frame >= i / 2 + NEPTUNE_BURST_FRAME) {
+          draw[0](canvas, work->sheet + sparkCells[r - 1] + NEPTUNE_FLARE_SHEET,
                   work->particles[i].x - r, work->particles[i].y - r, r * 2,
                   r * 2);
           work->particles[i].x += work->particles[i].velocityX;
@@ -366,7 +372,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     if (frame > 221) {
       s32 z;
 
-      z = (frame - 222) / 2 % 4 + 3;
+      z = (frame - NEPTUNE_BURST_FRAME) / 2 % 4 + 3;
       draw[0](canvas, work->sheet + z * 9 * 256 + 0x400, 72, 30,
               WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
       if (z == 5)
@@ -378,7 +384,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     if (frame > 27) {
       DrawRectangle drawSpray = draw[1];
 
-      for (i = 0; i != 1024; i++) {
+      for (i = 0; i != PARTICLE_POOL_COUNT; i++) {
         s32 m = 3;
 
         if (PARTICLES[i].variant >= 0) {
@@ -445,12 +451,12 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       if (frame == i * 16 + 7)
         Sound_PlayFar(SE_CAST);
       if (frame >= i * 16 && pillar->variant <= 31) {
-        s32 wobble = frame * 16 % 104;
+        s32 wobble = frame * 16 % BLUE_FLAME_COLUMN_HEIGHT;
 
         draw[1](canvas, work->sheet, pillar->x - 8, pillar->y + wobble - 216,
                 BLUE_FLAME_COLUMN_WIDTH, BLUE_FLAME_COLUMN_HEIGHT);
         draw[1](canvas, work->sheet, pillar->x - 8, pillar->y + wobble - 112,
-                17, 104 - wobble);
+                BLUE_FLAME_COLUMN_WIDTH, BLUE_FLAME_COLUMN_HEIGHT - wobble);
         draw[1](canvas, work->sheet + 0x6e8, pillar->x - 17, pillar->y - 65,
                 BLUE_FLAME_SPLASH_WIDTH, BLUE_FLAME_SPLASH_HEIGHT);
         if (pillar->y <= 111)
@@ -464,7 +470,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           pillarX = pillar->x;
           if (pillar->variant <= 7)
             work->shakeFrames = 4;
-          for (j = 0; j != 1024; j++) {
+          for (j = 0; j != PARTICLE_POOL_COUNT; j++) {
             if (PARTICLES[j].variant == 0) {
               s32 r = 0x3ff;
               s32 a;
@@ -489,7 +495,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         EFFECT_STRIKE_TARGET(args, i, 8, KNOCKBACK_LEAP);
       }
     }
-    for (i = 0; i != 1024; i++) {
+    for (i = 0; i != PARTICLE_POOL_COUNT; i++) {
       if (PARTICLES[i].variant > 0) {
         s32 x;
         s32 y;

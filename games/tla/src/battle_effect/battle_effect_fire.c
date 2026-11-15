@@ -8,6 +8,9 @@
 #define EMBERS ((struct Particle *)Ram_MapCellBuffer)
 #define IN_FLIGHT -1 ///< an ember's variant; 0 and up count its flare's frames
 
+/// The embers set up in PARTICLES: no row of gFire_Counts may ask for more.
+#define FIRE_EMBERS 64
+
 /// Embers burst from the top of the user and home in on the targets, and each
 /// that lands shows an impact flare as its target flinches.
 ///
@@ -46,7 +49,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   // speed across, -16 to 111 sixty-fourths of a pixel up.
   user = BattleObject_GetFar(args->user)->object;
   top = user->y + BattleUnit_GetEffectHeightFar(args->user);
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != FIRE_EMBERS; i++) {
     struct Particle *ember = &EMBERS[i];
     s32 angle;
     s32 speed;

@@ -78,7 +78,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
     puff->velocityZ = ((Random16() & 63) - 32) << 13;
     puff->variant = 0;
   }
-  for (i = 0; i != 1024; i++) {
+  for (i = 0; i != PARTICLE_POOL_COUNT; i++) {
     struct Particle *mote = &MOTES[i];
 
     if (args->side == EFFECT_SIDE_PARTY)

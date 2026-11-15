@@ -195,9 +195,9 @@ void BattleEffect_RunAgingGas(struct BattleEffectParams *args) {
 
   object = (struct Actor *)BattleObject_GetFar(args->user)->object;
   Actor_SelectAnimationFar(object, 2);
-  Actor_SetAnimationSpeedFar(object, 0x30);
+  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL * 3);
   BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_AGING_GAS);
-  Actor_SetAnimationSpeedFar(object, 0x10);
+  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
 }
 
 /// From the user's action pose, the second projectile volley's shots fly at
@@ -209,9 +209,9 @@ void BattleEffect_RunFireDance(struct BattleEffectParams *args) {
 
   object = (struct Actor *)BattleObject_GetFar(args->user)->object;
   Actor_SelectAnimationFar(object, 2);
-  Actor_SetAnimationSpeedFar(object, 0x30);
+  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL * 3);
   BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_FIRE_DANCE);
-  Actor_SetAnimationSpeedFar(object, 0x10);
+  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
 }
 
 // BattleEffect_RunBurstShower, the body behind the 22 wrappers

@@ -124,8 +124,8 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     // The water rises 4 pixels a frame to 32 and drifts away from the
     // caster's side.
     rise = frame * 4;
-    if (rise > 32)
-      rise = 32;
+    if (rise > WATER_WAVE_HEIGHT)
+      rise = WATER_WAVE_HEIGHT;
     if (args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != 5; i++)
         blit[0](canvas, work->sheet, (i << 5) - (frame / 4 & 31), 120 - rise,
@@ -174,6 +174,10 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 #define GROUND_VENUS_DJINN_SMALL_PICTURES 0x65c0
 
 #define GROUND_FRAMES 96
+
+/// PortalSheet's portal.
+#define PORTAL_WIDTH 24
+#define PORTAL_HEIGHT 48
 
 /// After a Venus Djinni enters, six glowing portals leave the user, swirl and
 /// close in on the first target, each striking it as it arrives.
@@ -287,7 +291,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
             position.x >>= 1;
             x = position.x - 12;
             y = position.y - 24;
-            draw[0](canvas, work->sheet, x, y, 24, 48);
+            draw[0](canvas, work->sheet, x, y, PORTAL_WIDTH, PORTAL_HEIGHT);
             if ((frame & 3) <= 1)
               draw[0](canvas, work->sheet + gHail_PortalPictures[1],
                       x + gHail_PortalX[1], y + gHail_PortalY[1],

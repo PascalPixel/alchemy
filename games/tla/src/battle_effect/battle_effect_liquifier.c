@@ -347,7 +347,7 @@ void BattleEffect_RunMineBall(struct BattleEffectParams *args) {
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x1c);
   BattleEffect_RunCanvasBurst(args, 3);
-  Actor_SetAnimationSpeedFar(object, 0x10);
+  Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
 }
 
 #define ball (&work->particles[63])

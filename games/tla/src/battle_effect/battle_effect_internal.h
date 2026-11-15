@@ -214,6 +214,21 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// The canvas at `level` sixteenths over the whole battle under it.
 #define EFFECT_BLEND_CANVAS(level) BLEND_ALPHA(level, BLEND_WEIGHT_MAX)
 
+/// The brightest colour, every channel at its highest level, as The Broken
+/// Seal's io_reg.h has it.
+#define RGB_WHITE RGB(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX)
+
+/// SpriteAnimation.step at normal speed, as Actor_SetAnimationSpeed sets it: a
+/// timed command's frames run as written (The Broken Seal's sprite.h).
+#define ANIMATION_STEP_NORMAL 16
+
+/// Attribute 2's 16-colour palette, as The Broken Seal's io_reg.h has it.
+#define OBJ_PALETTE(n) ((n) << 12)
+
+/// The particles the map cell buffer holds when an effect lays its particles
+/// over it from the start.
+#define PARTICLE_POOL_COUNT 1024
+
 /// The canvas: 128x128 pixels, one byte each, in its heap slot and in VRAM at
 /// BG_CHAR_BLOCK(1) (CANVAS_BYTES).
 #define CANVAS_SIZE 128
@@ -1220,6 +1235,9 @@ extern u8 gGrowth_PuffHeights[];
 extern u16 gGrowth_PuffPictures[];
 extern const s8 gGrowth_ColumnOffsets[];
 extern u8 gGrowth_Kinds[];
+// A thorn's kind in gGrowth_Kinds.
+#define THORN_MIRRORED 1 ///< drawn mirrored across
+#define THORN_SMALL 2    ///< 32 pixels wide, not 48
 extern s8 gGrowth_X[];
 extern u8 gGrowth_Counts[];
 extern s8 gGrowth_ThornPuffWidths[];

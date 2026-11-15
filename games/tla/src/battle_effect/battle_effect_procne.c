@@ -28,6 +28,10 @@ enum DragonFireMode {
 #define COMETS 9
 #define FORMATION_RESOURCE 646
 
+/// Procne appears in the violet sky, and the targets it lifted drop.
+#define PROCNE_ARRIVAL_FRAME 160
+#define PROCNE_DROP_FRAME 395
+
 /// A whirlwind lifts the targets, then Procne, a great bird in a violet sky,
 /// strikes them with comets: the whirlwind spins them while dust swirls up
 /// through it (frames 0 to 159; A or B skips to 160), a cloud of sparks
@@ -119,9 +123,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     do {
       if ((gInput.repeat & (KEY_A | KEY_B)) != 0) {
         if (frame <= 159)
-          frame = 160;
+          frame = PROCNE_ARRIVAL_FRAME;
         else if (frame <= 394)
-          frame = 395;
+          frame = PROCNE_DROP_FRAME;
       }
 
       Transform_Reset();
@@ -167,7 +171,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             object->angle += spin[index] / 4;
           }
 
-          if (frame == 395)
+          if (frame == PROCNE_DROP_FRAME)
             object->verticalMotionStrength = 0xab85;
 
           slot = 0;
@@ -252,7 +256,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
       // Frame 160: the violet sky, the formation of comets, sparks scattered
       // round its centre, and the enemies dropped back at random heights.
-      if (frame == 160) {
+      if (frame == PROCNE_ARRIVAL_FRAME) {
         s32 speed;
         s32 angle;
 
@@ -298,10 +302,10 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         // The formation sways on a slow wave, pushed back by each strike.
         scale = gProcne_UnitScale;
         size = 16;
-        if (frame - 160 <= 64)
+        if (frame - PROCNE_ARRIVAL_FRAME <= 64)
           size = 32;
-        wave.x -= (Trig_Sin((frame - 160) << 7) * 32) >> 6;
-        wave.y += (Trig_Sin((frame - 160) << 9) * size) >> 6;
+        wave.x -= (Trig_Sin((frame - PROCNE_ARRIVAL_FRAME) << 7) * 32) >> 6;
+        wave.y += (Trig_Sin((frame - PROCNE_ARRIVAL_FRAME) << 9) * size) >> 6;
         wave.x += drift.x;
         wave.y += drift.y;
         drift.x /= 2;
@@ -552,6 +556,14 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
 
 #define DRAGON_FIRE_FRAMES 208
 
+/// The breath of fire, then the flash that ends it.
+#define DRAGON_FIRE_BREATH_FRAME 128
+#define DRAGON_FIRE_FLASH_FRAME 160
+#define DRAGON_FIRE_FLASH_END_FRAME 176
+#define DRAGON_FIRE_FIREBALLS 16   ///< falling fireballs
+#define DRAGON_FIRE_FIRST_SPARK 40 ///< the first spark in work->particles
+#define DRAGON_FIRE_EMBERS 512     ///< embers in PARTICLES
+
 /// Streaks rain down and splash, sparks and grains rise from where the
 /// formation stands, flashes burst at frame 128, then the screen whitens and
 /// the canvas fades away. For Tiamat a formation of eight drops in at frame 40
@@ -633,7 +645,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       focus.y = -px(60);
     }
     EFFECT_FREE_PARTICLES(i, work->particles, 64);
-    for (i = 0; i != 16; i++) {
+    for (i = 0; i != DRAGON_FIRE_FIREBALLS; i++) {
       struct Particle *streak = &work->particles[24 + i];
 
       if (dir == 1)
@@ -664,7 +676,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                                    POSE_DAMAGE, TINT_KEEP, 0);
           BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         }
-        frame = 160;
+        frame = DRAGON_FIRE_FLASH_FRAME;
       }
       Transform_Reset();
       Transform_SetLookAt(camera, camera + 3);
@@ -673,9 +685,9 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
       // From frame 128 the trails halve; from 160 to 175 the canvas is filled
       // and the palette brightens; from 176 the canvas fades by 2 a frame.
-      if (frame == 128)
+      if (frame == DRAGON_FIRE_BREATH_FRAME)
         work->transferValue = 50;
-      if (frame == 176) {
+      if (frame == DRAGON_FIRE_FLASH_END_FRAME) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
         Iwram_CopyWordsEntry(
             (void *)BG_PLTT,
@@ -683,7 +695,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       } else if (frame >= 160 && frame <= 175) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
         if (frame > 173)
-          work->transferValue = CANVAS_FILL_WORD(63);
+          work->transferValue = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
         Palette_BrightenBgEntries(2, 2, 2);
       }
 
@@ -694,7 +706,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
         if (frame > 103)
           limit = 8;
-        for (i = 0; i != 512; i++) {
+        for (i = 0; i != DRAGON_FIRE_EMBERS; i++) {
           struct Particle *grain = &PARTICLES[i];
 
           if (grain->variant == -1) {
@@ -718,7 +730,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
         if (frame & 1) {
           for (i = 0; i != 24; i++) {
-            struct Particle *spark = &work->particles[40 + i];
+            struct Particle *spark =
+                &work->particles[DRAGON_FIRE_FIRST_SPARK + i];
 
             if (spark->variant == -1) {
               s32 speed = (Random16() & 255) + 128;
@@ -748,7 +761,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       }
       if (frame == 48)
         Sound_PlayFar(SE_RUMBLE);
-      if (frame == 128)
+      if (frame == DRAGON_FIRE_BREATH_FRAME)
         Sound_PlayFar(SE_CRASH);
 
       // Flashes fly out sideways, one a frame from 129.
@@ -805,7 +818,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
       // A spark is two pixels, speeding upward, and lives 48 frames.
       for (i = 0; i != 24; i++) {
-        struct Particle *spark = &work->particles[40 + i];
+        struct Particle *spark = &work->particles[DRAGON_FIRE_FIRST_SPARK + i];
         s32 size = 1;
 
         if (spark->variant >= 0) {
@@ -823,7 +836,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       // Grains speed upward until frame 128, then bend away sideways (the odd
       // ones harder); each lives 256 frames.
       if (frame <= 175) {
-        for (i = 0; i != 512; i++) {
+        for (i = 0; i != DRAGON_FIRE_EMBERS; i++) {
           struct Particle *grain = &PARTICLES[i];
 
           if (grain->variant >= 0) {
@@ -835,7 +848,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                     Q_16_16_UPPER_HALF(grain->y) - size, size, height);
             grain->x += grain->velocityX * dir;
             grain->y += grain->velocityY;
-            if (frame > 128) {
+            if (frame > DRAGON_FIRE_BREATH_FRAME) {
               if (i & 1)
                 grain->velocityX += -(px(1) / 2);
               else
@@ -852,7 +865,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
       // The shakes, and the formation: it drops in over frames 40 to 47 and
       // turns to face the targets from 128 to 175.
-      if (frame == 128)
+      if (frame == DRAGON_FIRE_BREATH_FRAME)
         work->shakeFrames = 48;
       if (mode == DRAGON_FIRE_TIAMAT && frame == 48)
         work->shakeFrames = 8;
@@ -861,13 +874,13 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         focus.y += px(16);
       }
       if (mode == DRAGON_FIRE_TIAMAT) {
-        if (frame == 128) {
+        if (frame == DRAGON_FIRE_BREATH_FRAME) {
           Sprite_StartAnimationFar(work->sprites[0], 8);
           Sprite_StartAnimationFar(work->sprites[1], 9);
           Sprite_StartAnimationFar(work->sprites[3], 10);
           Sprite_StartAnimationFar(work->sprites[4], 11);
         }
-        if (frame == 176) {
+        if (frame == DRAGON_FIRE_FLASH_END_FRAME) {
           Sprite_StartAnimationFar(work->sprites[0], 0);
           Sprite_StartAnimationFar(work->sprites[1], 1);
           Sprite_StartAnimationFar(work->sprites[3], 3);
@@ -891,7 +904,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       // A streak falls six pixels a frame after its wait, then below y = 55
       // splashes through six pictures, two frames each, over and over.
       if (frame <= 175) {
-        for (i = 0; i != 16; i++) {
+        for (i = 0; i != DRAGON_FIRE_FIREBALLS; i++) {
           struct Particle *streak = &work->particles[24 + i];
 
           if (streak->y > 55) {

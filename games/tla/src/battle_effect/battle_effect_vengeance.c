@@ -1287,7 +1287,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       i = 0;
       cells = gMapGridCellBuffer;
       for (; i != 12; cells += 1024, i++) {
-        obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
+        obj = EffectSprite_CreateWithTiles(32, 32,
+                                           OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
         obj->priority = 2;
         work->sprites[i] = obj;
         Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 1024);

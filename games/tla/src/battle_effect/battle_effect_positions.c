@@ -305,6 +305,8 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
 
+#define BEAM_FRAMES 32 ///< the slash's and the critical hit's length
+
 /// A critical hit: motes of light close in on the attacker as it hangs in its
 /// leap, then a crescent slash sweeps across the first target and sparks fly
 /// from it.
@@ -412,7 +414,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     work->fadeStep = 0;
     Task_Add(Palette_StepFadeTransfer, TASK_PASS_VBLANK);
     Sound_PlayFar(SE_POWER_UP);
-    for (frame = 0; frame != 32; frame++) {
+    for (frame = 0; frame != BEAM_FRAMES; frame++) {
       BattleCamera_SetViewAtPairMidpointFar(args->user, args->firstTarget, 130);
       // Spark i starts at frame i / 4, 16 to 79 pixels out, and moves in
       // 4 pixels a frame until it reaches the caster.
@@ -442,7 +444,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
       EFFECT_PRESENT_CANVAS(work);
     }
     Task_Remove(Palette_StepFadeTransfer);
-    Actor_SetAnimationSpeedFar(object, 16);
+    Actor_SetAnimationSpeedFar(object, ANIMATION_STEP_NORMAL);
     object->velocityX = velocityX;
     object->velocityY = velocityY;
     object->velocityZ = velocityZ;
@@ -485,7 +487,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     spark->variant = i + 16;
   }
 
-  for (frame = 0; frame != 32; frame++) {
+  for (frame = 0; frame != BEAM_FRAMES; frame++) {
     // The battle resumes, hit cue 134; the target recoils a frame before.
     if (frame == 5)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);

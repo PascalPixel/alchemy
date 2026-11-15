@@ -12,6 +12,24 @@
 
 #define JUDGMENT_FRAMES 336
 
+/// The gathering's crash: the canvas fills, then the beams fall from the next
+/// frame.
+#define JUDGMENT_BEAM_FRAME 144
+/// The explosion's four pictures, loaded over the flares on the sweep's
+/// frame 64.
+#define JUDGMENT_SHEET_EXPLOSION 16384
+#define JUDGMENT_SHEET_FLARE_A 16384
+#define JUDGMENT_EXPLOSION_WIDTH 32
+#define JUDGMENT_EXPLOSION_HEIGHT 54
+/// The sweep's scenes, by the frame each opens on: the flare lands on the
+/// aerial view and it explodes, the wave crosses the beach, the debris rises
+/// in the forest, and the battle returns. A or B skips to the next scene from
+/// five frames into one.
+#define JUDGMENT_SWEEP_EXPLOSION 64
+#define JUDGMENT_SWEEP_BEACH 150
+#define JUDGMENT_SWEEP_FOREST 214
+#define JUDGMENT_SWEEP_RETURN 280
+
 /// The battle wipes away to a violet sky where Judgment flies forward while
 /// motes gather into it; it bursts in a flash, and the blast falls on the land
 /// below and spreads in rings of light.
@@ -45,7 +63,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   transition = Ram_HeapSlots->battleBackground;
   sprites = Ram_HeapSlots->battleSheet;
   cells = Ram_MapCellBuffer;
-  EFFECT_START_NARROW_CANVAS(0x2000);
+  EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   BattleEffect_ConfigureEffectDisplay();
   ((volatile u16 *)BG_PLTT)[0] = 0;
   ((volatile u16 *)BG_PLTT)[1] = 0;
@@ -62,8 +80,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   pal += 512;
   Decompress_TaggedLz(pal, cells);
   for (i = 0; i != 16; i++) {
-    struct JudgmentObject *obj =
-        EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
+    struct JudgmentObject *obj = EffectSprite_CreateWithTiles(
+        32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
 
     obj->priority = 2;
     work->sprites[i] = obj;
@@ -74,7 +92,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   transition[4] = 1;
   gBgScroll[1].x = 0;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
-  EFFECT_SHOW_WIDE_CANVAS(16);
+  EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   depth = -0x400000;
   zoom = 0x80000;
   Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work->sheet, 1,
@@ -114,7 +132,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       zoom = 0x80000;
     }
     if (frame == 143) {
-      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(42));
+      BattleEffect_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(42));
       Sound_PlayFar(SE_CRASH);
     }
     if (frame == 80) {
@@ -179,11 +197,11 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (frame > 32) {
       zoom = zoom * 60 / DAMPING_SCALE;
     }
-    if (frame == 144) {
+    if (frame == JUDGMENT_BEAM_FRAME) {
       zoom = -0x80000;
     }
     if (frame == 146) {
-      zoom = 0x10000;
+      zoom = Q16_ONE;
     }
 
     if (frame == 72) {
@@ -269,11 +287,11 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           s32 b = RGB_BLUE(*src) + addB;
 
           if (r > 31)
-            r = 31;
+            r = RGB_LEVEL_MAX;
           if (g > 31)
-            g = 31;
+            g = RGB_LEVEL_MAX;
           if (b > 31)
-            b = 31;
+            b = RGB_LEVEL_MAX;
           if (r < 0)
             r = 0;
           if (g < 0)
@@ -353,7 +371,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_BlueCrescentSheet,
-                             work->sheet + 0x4000, 1, 1);
+                             work->sheet + JUDGMENT_SHEET_FLARE_A, 1, 1);
   {
     u8 *c = sprites;
 
@@ -371,7 +389,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
   REG_BG2X = -0x3c00;
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-  FILL__actor_move_random(canvas, CANVAS_BYTES, 0);
+  BattleEffect_FillWords(canvas, CANVAS_BYTES, 0);
   cx = 60;
   cy = 44;
   squash = 6;
@@ -396,7 +414,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (frame == 217) {
       Sound_PlayFar(SE_SWITCH_MECHANISM);
     }
-    if (frame == 280) {
+    if (frame == JUDGMENT_SWEEP_RETURN) {
       Sound_PlayFar(SE_GATE_MOVE);
     }
     if (frame == 300) {
@@ -407,30 +425,31 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
     if (gInput.repeat & (KEY_A | KEY_B)) {
       if ((u32)(frame - 5) <= 144) {
-        frame = 150;
+        frame = JUDGMENT_SWEEP_BEACH;
         IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_16);
         IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_32);
         Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
-                                   work->sheet + 0x4000, 1, 0);
+                                   work->sheet + JUDGMENT_SHEET_EXPLOSION, 1,
+                                   0);
       } else if ((u32)(frame - 155) <= 58) {
-        frame = 214;
+        frame = JUDGMENT_SWEEP_FOREST;
       } else if ((u32)(frame - 219) <= 60) {
-        frame = 280;
+        frame = JUDGMENT_SWEEP_RETURN;
       }
     }
     if (frame == 318) {
-      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      BattleEffect_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame == 319) {
       Graphics_LoadGreyRamp();
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
     }
-    if (frame == 64) {
+    if (frame == JUDGMENT_SWEEP_EXPLOSION) {
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, 128, IO_WRITE_16);
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, 0, IO_WRITE_32);
-      FILL__actor_move_random(canvas, CANVAS_BYTES, 0);
+      BattleEffect_FillWords(canvas, CANVAS_BYTES, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
-                                 work->sheet + 0x4000, 1, 0);
+                                 work->sheet + JUDGMENT_SHEET_EXPLOSION, 1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageA,
                                  work->sheet + JUDGMENT_OVERLAY_A_PICTURES, 0,
                                  0);
@@ -439,28 +458,28 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       volatile u16 *c = &BG_PLTT_COLOR(6, 0);
 
       for (i = 0; i != 128; i++, c++) {
-        *c ^= 0x7fff;
+        *c ^= RGB_WHITE;
       }
     }
     if (frame == 69) {
-      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      BattleEffect_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if (frame == 70) {
       BattleBackground_SetModeFar(1, (s32)&ResourceId_AerialViewBackdrop, 7);
     }
-    if (frame == 150) {
+    if (frame == JUDGMENT_SWEEP_BEACH) {
       cx = 112;
       cy = 32;
       ring = 0;
       rings = 4;
       squash = 8;
-      FILL__actor_move_random(work->sheet, 0x3840, 0);
-      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      BattleEffect_FillWords(work->sheet, 0x3840, 0);
+      BattleEffect_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       BattleBackground_LoadFar(1, (s32)&ResourceId_BeachBackdrop, 0);
     }
-    if (frame == 214) {
-      FILL__actor_move_random(work->sheet, 0x3840, 0);
-      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+    if (frame == JUDGMENT_SWEEP_FOREST) {
+      BattleEffect_FillWords(work->sheet, 0x3840, 0);
+      BattleEffect_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
       {
         struct Particle *p = work->particles;
@@ -474,10 +493,10 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         }
       }
     }
-    if (frame == 280) {
+    if (frame == JUDGMENT_SWEEP_RETURN) {
       BattleEffect_SetupBlendedDisplay();
-      FILL__actor_move_random(work->sheet, 0x3840, 0);
-      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(1));
+      BattleEffect_FillWords(work->sheet, 0x3840, 0);
+      BattleEffect_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(1));
       transition[4] = 0;
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       {
@@ -507,16 +526,16 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         r++;
 
         if (b > 31)
-          b = 31;
+          b = RGB_LEVEL_MAX;
         if (g > 31)
-          g = 31;
+          g = RGB_LEVEL_MAX;
         if (r > 31)
-          r = 31;
+          r = RGB_LEVEL_MAX;
         *c = RGB(r, g, b);
       }
     }
     if (frame == 182) {
-      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      BattleEffect_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
 
     if (frame <= 63) {
@@ -525,7 +544,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       DrawRectangle *slot;
 
       if ((frame & 7) < 4) {
-        sheet = work->sheet + 0x4000;
+        sheet = work->sheet + JUDGMENT_SHEET_FLARE_A;
       } else {
         sheet = work->sheet + 0x4240;
       }
@@ -717,7 +736,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       shift -= 8;
     }
     if (frame == 238) {
-      FILL__actor_move_random(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      BattleEffect_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
     }
     if ((u32)(frame - 214) <= 65) {
       gBgScroll[1].x += 8;
@@ -768,7 +787,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           s32 y = (i / 2) * 32 - (Random16() & 15);
 
           draw[1](canvas, work->sheet + ((frame / 2 + i) % 4) * 1728 + 0x4000,
-                  x, y, 32, 54);
+                  x, y, JUDGMENT_EXPLOSION_WIDTH, JUDGMENT_EXPLOSION_HEIGHT);
         }
       } else {
         for (i = 0; i != 8; i++) {
@@ -777,7 +796,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           s32 y = (i / 2) * 32 - (Random16() & 15);
 
           draw[1](canvas, work->sheet + ((frame / 2 + i) % 4) * 1728 + 0x4000,
-                  x, y, 32, 54);
+                  x, y, JUDGMENT_EXPLOSION_WIDTH, JUDGMENT_EXPLOSION_HEIGHT);
         }
       }
     }

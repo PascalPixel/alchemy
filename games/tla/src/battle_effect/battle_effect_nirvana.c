@@ -151,7 +151,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  EFFECT_START_NARROW_CANVAS(1);
+  EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -162,7 +162,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
   scrollSpeed = 0;
   cueTimer = 0;
   user = BattleObject_GetFar(args->user)->object;
-  Actor_SetAnimationSpeedFar(user, 48);
+  Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL * 3);
 
   for (frame = 0; frame != STONE_JUSTICE_FRAMES; frame++) {
     EffectPosition_ProjectScaledBattler(args->user, &userPosition);
@@ -268,7 +268,7 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(work);
   }
 
-  Actor_SetAnimationSpeedFar(user, 16);
+  Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 

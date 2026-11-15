@@ -13,6 +13,9 @@
 extern struct SpriteScale gKirin_SweepScale;
 extern struct SpriteScale gKirin_ChargeScale;
 
+#define KIRIN_CHARGE_FRAMES 96 ///< frames of the charge and the wall of fire
+#define KIRIN_SWEEP_FRAMES 120 ///< frames of Kirin's bound through the hoop
+
 /// Over a scrolling forest Kirin bounds in through a hoop of light, trailing
 /// fire; then, unseen behind the battle background, it charges across the
 /// targets, each bursting into motes as it passes, and a wall of fire sweeps
@@ -86,7 +89,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
                BGCNT_SCREEN_BASE(7);
 
   // The sweep: Kirin bounds in over the forest (A or B ends it).
-  for (frame = 0; frame != 120; frame++) {
+  for (frame = 0; frame != KIRIN_SWEEP_FRAMES; frame++) {
     wave = 0;
     if (frame == 0)
       Sound_PlayFar(SE_WHOOSH);
@@ -243,7 +246,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
     REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
     REG_BLDALPHA = EFFECT_BLEND_ADD;
 
-    for (frame = 0; frame != 96; frame++) {
+    for (frame = 0; frame != KIRIN_CHARGE_FRAMES; frame++) {
       if (frame <= 23) {
         struct SpriteScale chargeScale = gKirin_ChargeScale;
         s32 ang;

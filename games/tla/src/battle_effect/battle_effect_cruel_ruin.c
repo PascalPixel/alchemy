@@ -39,6 +39,9 @@ union BattleBackgroundId__f13eb70 {
 
 #define SHATTERING_OPENING_FRAMES 128
 
+#define SHATTERING_OPENING_FLASHES 32 ///< flashes thrown as the picture breaks
+#define SHATTERING_OPENING_PIECES 33  ///< pieces the picture breaks into
+
 /// The screen turns white and the picture breaks into 33 pieces that fly apart
 /// and fall, while a grey disc grows over it and the battle background's
 /// colours return.
@@ -126,7 +129,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   // The pieces fly out from (32, 60) at a quarter of their distance a
   // frame.
   r = 0;
-  for (i = 0; i != 33; i++) {
+  for (i = 0; i != SHATTERING_OPENING_PIECES; i++) {
     s32 x, y, vx, vy;
 
     piece = &work->particles[i];
@@ -175,7 +178,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       u16 *pal;
 
       pal = (u16 *)(BG_PLTT + 6 * 16);
-      for (i = 0; i != 128; i++) {
+      for (i = 0; i != SHATTERING_OPENING_FRAMES; i++) {
         s32 red = RGB_RED(*pal);
         s32 green = RGB_GREEN(*pal);
         s32 blue = RGB_BLUE(*pal);
@@ -289,7 +292,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 
     // Up to frame 50, draw the pieces; from frame 4 they fall.
     if (frame <= 50) {
-      for (i = 0; i != 33; i++) {
+      for (i = 0; i != SHATTERING_OPENING_PIECES; i++) {
         piece = &work->particles[i];
         draw[0](canvas, work->sheet + gDeathPlunge_PiecePictures[i],
                 Q_16_16_UPPER_HALF(piece->x), Q_16_16_UPPER_HALF(piece->y),
@@ -304,8 +307,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
       s32 v;
 
       v = frame - 8;
-      if (v > 31)
-        v = 31;
+      if (v > RGB_LEVEL_MAX)
+        v = RGB_LEVEL_MAX;
       BG_PLTT[1] = RGB(v, v, v);
     }
 
@@ -323,7 +326,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
         BG_PLTT[i] = (v << 10) | ((v / 2) << 5) | v;
       }
       REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-      for (i = 0; i != 32; i++) {
+      for (i = 0; i != SHATTERING_OPENING_FLASHES; i++) {
         piece = &work->particles[i];
         piece->x = px((Random16() & 31) + 32);
         piece->y = px((Random16() & 31) + 80);
@@ -338,7 +341,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 
     // The flashes start i/4 frames late and rise, a picture every 4 frames.
     if (frame > 52) {
-      for (i = 0; i != 32; i++) {
+      for (i = 0; i != SHATTERING_OPENING_FLASHES; i++) {
         piece = &work->particles[i];
         if (frame >= i / 4 + 52 && piece->variant <= 39) {
           s32 cell;
@@ -668,7 +671,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
 
   i = 0;
-  for (k = 0; k != 16; k++) {
+  for (k = 0; k != CANVAS_TILES; k++) {
     for (j = 0; j != 8; j++, i += 2) {
       s32 entry;
 
@@ -1222,7 +1225,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         i = 0;
         src = work->sheet + q * 0x1000;
         for (; i != 8; i++) {
-          obj = EffectSprite_CreateWithTiles(32, 32, 0x80000000, 0xf000);
+          obj = EffectSprite_CreateWithTiles(32, 32, OBJ_SIZE_32X32,
+                                             OBJ_PALETTE(15));
           work->sprites[q * 9 + i] = obj;
           {
             s32 b = ((u8 *)obj)[9];
@@ -1233,7 +1237,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           Iwram_CopyWords((void *)OBJ_TILES(obj), src, 512);
           src += 512;
         }
-        obj = EffectSprite_Acquire(32, 32, 0x80000000, 0xf000);
+        obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(15));
         work->sprites[q * 9 + 8] = obj;
         Iwram_CopyWords(obj, work->sprites[q * 9], 24);
         for (i = 0; i != 8; i++) {

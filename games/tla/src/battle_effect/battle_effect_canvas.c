@@ -95,7 +95,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       Decompress_TaggedLz(cells, gMapGridCellBuffer);
       tiles = gMapGridCellBuffer;
       for (i = 0; i != 31; i++) {
-        obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
+        obj = EffectSprite_CreateWithTiles(32, 32,
+                                           OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
         obj->priority = 2;
         work->sprites[i] = obj;
         Iwram_CopyWords((void *)OBJ_TILES(obj), tiles, 0x400);
@@ -105,7 +106,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       Iwram_CopyWords((void *)OBJ_PLTT, cells, 480);
       cells += 480;
       Decompress_TaggedLz(cells, gMapGridCellBuffer);
-      obj = EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
+      obj = EffectSprite_CreateWithTiles(32, 32,
+                                         OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
       work->sprites[31] = obj;
       obj->priority = 2;
       Iwram_CopyWords((void *)OBJ_TILES(obj), gMapGridCellBuffer, 0x400);
@@ -117,7 +119,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   Iwram_FillWords(canvas, CANVAS_VIEW_BYTES, 0);
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  EFFECT_SHOW_WIDE_CANVAS(16);
+  EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   REG_BG2X = 0;
   baseX = 0;
   baseY = 0;
@@ -1044,7 +1046,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
       break;
     case 1:
       Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), source, 0x4000);
-      Iwram_FillWords(source, 0x4000, work->transferValue);
+      Iwram_FillWords(source, CANVAS_BYTES, work->transferValue);
       break;
     case 2:
       if (work->transferValue == 50)
@@ -1055,11 +1057,11 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
       break;
     case 3:
       ColorBuffer_Darken(source, work->transferValue, (void *)BG_CHAR_BLOCK(1),
-                         0x4000);
+                         CANVAS_BYTES);
       break;
     case 4:
       ColorBuffer_Brighten(source, work->transferValue,
-                           (void *)BG_CHAR_BLOCK(1), 0x4000);
+                           (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       break;
     }
     // DEAD: nothing uses the counter read here; its load is in the ROM.
@@ -1107,18 +1109,18 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
       break;
     case 1:
       Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), source, 0x7800);
-      Iwram_FillWords(source, 0x7800, work->transferValue);
+      Iwram_FillWords(source, BATTLE_BACKGROUND_BYTES, work->transferValue);
       break;
     case 2:
       if (work->transferValue == 50)
         ColorBuffer_Halve(source, (void *)BG_CHAR_BLOCK(2), 0x7800);
       else
         ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(2),
-                                       0x7800);
+                                       BATTLE_BACKGROUND_BYTES);
       break;
     case 3:
       ColorBuffer_Darken(source, work->transferValue, (void *)BG_CHAR_BLOCK(2),
-                         0x7800);
+                         BATTLE_BACKGROUND_BYTES);
       break;
     }
     // DEAD: nothing uses the counter read here; its load is in the ROM.
@@ -1369,7 +1371,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
                       IO_WRITE_16);
 
   offset = 0;
-  for (row = 0; row != 16; row++) {
+  for (row = 0; row != CANVAS_TILES; row++) {
     for (col = 0; col != 8; col++, offset += 2) {
       s32 chr;
       s16 pair;
@@ -1444,7 +1446,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
 
   // The canvas map: 16 rows of 8 character pairs.
   offset = 0;
-  for (row = 0; row != 16; row++) {
+  for (row = 0; row != CANVAS_TILES; row++) {
     for (col = 0; col != 8; col++, offset += 2) {
       s32 chr;
       s16 pair;
@@ -1472,7 +1474,7 @@ void BattleEffect_StartTiledCanvas(s32 bg_control) {
   REG_BG2CNT = bg_control | BGCNT_SIZE(1) | BGCNT_SCREEN_BASE(7) |
                BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
   offset = 0;
-  for (row = 0; row != 16; row++) {
+  for (row = 0; row != CANVAS_TILES; row++) {
     for (col = 0; col != 8; col++, offset += 2) {
       s32 tile;
       s16 pair;
@@ -1498,7 +1500,7 @@ void BattleEffect_StartTiledCanvasFilled(s32 bg_control) {
   REG_BG2CNT = bg_control | BGCNT_SIZE(1) | BGCNT_SCREEN_BASE(7) |
                BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
   offset = 0;
-  for (row = 0; row != 16; row++) {
+  for (row = 0; row != CANVAS_TILES; row++) {
     for (col = 0; col != 8; col++, offset += 2) {
       s32 tile;
       s16 pair;
@@ -1592,7 +1594,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
   Iwram_ClearWords((void *)0x06003fc0, 64);
   Iwram_FillWords((void *)0x0600f900, 0x200, -1);
   off = 0;
-  for (row = 0; row != 16; row++) {
+  for (row = 0; row != CANVAS_TILES; row++) {
     for (col = 0; col != 32; col++, off += 2) {
       if (col > 15)
         *(volatile u16 *)(0x0600fb00 + off) = 0xff;

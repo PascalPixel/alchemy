@@ -94,13 +94,12 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   }
   state->targetViewOffset = 0;
   state->viewOffset = 0;
+  state->timerWindow = NULL;
   state->timer = -1;
   state->commandSelection[0] = 0;
   state->commandSelection[1] = 0;
   state->linkTimer = 0;
   state->timerHidden = 0;
-  /* FAKEMATCH(type): cleared as a word, among the other words. */
-  *(s32 *)&state->timerWindow = 0;
   // Both peers announce the command-entry phase before accepting commands: this
   // side writes "VSST" into halfwords 4 to 7 of its signature, then waits for
   // the partner's "VSST" (or "EDVS", already done) while its first four read

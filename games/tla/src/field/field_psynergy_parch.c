@@ -31,7 +31,7 @@ struct ParchPuff {
 struct ParchWork {
   u8 tiles[0x1000];
   struct EffectSprite disc;
-  u8 unk1028[0x28];
+  u8 unusedAfterDisc[0x28]; ///< no code names it
   s32 discX;
   s32 discY;
   s32 discScaleX;
@@ -116,7 +116,7 @@ void FieldPsynergy_Parch(void) {
     pending = NULL;
   } else if (MapGrid_IsWaterCell(pos[0], pos[2], caster->layer) != 0) {
     pending = Scene_FindPsynergyTrigger(
-        0x50000005, scene->fieldPsynergy,
+        PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy,
         MapGrid_GetCellBehavior(pos[0], pos[2], caster->layer));
     result = 2;
     if (pending == NULL)
@@ -130,7 +130,7 @@ loaded:
     dst = (u8 *)0x06011000 + vramWork->glyphTiles * 32;
     Decompress_TaggedLz(source, work);
   }
-  Dma_Set(work, dst, (DMA_ENABLE | DMA_32BIT) << 16 | 0x400, REG_DMA3);
+  Dma_Set(work, dst, DMA_COPY_WORDS(1024), REG_DMA3);
   screen[0] = pos[0];
   screen[1] = pos[1];
   screen[2] = pos[2];
@@ -145,7 +145,7 @@ loaded:
   particle = work->particles;
   for (i = 0; i < 64; i++) {
     fresh = &work->sprites[i];
-    EffectSprite_Init(fresh, 8, 15, 0x40000000, tile);
+    EffectSprite_Init(fresh, 8, 15, OBJ_SIZE_16X16, tile);
     fresh->depth = 250;
     fresh->oam.priority = 0;
     fresh->oam.palette256 = 1;
@@ -168,8 +168,7 @@ loaded:
       sprite->scaleY = 0x3333;
       particle = &work->particles[slot];
       SET_POSITION(particle, pos[0], pos[1], pos[2]);
-      Vector_AddPolarOffset(Random16() * 12 + 0x90000, Random16(),
-                            &particle->x);
+      Vector_AddPolarOffset(Random16() * 12 + px(9), Random16(), &particle->x);
       particle->sway = (Random16() << 5) >> 16;
       particle->swayRate = ((Random16() << 9) >> 16) + 256;
       particle->rise = Random16() + 0x3333;
@@ -218,14 +217,14 @@ loaded:
       blue = Trig_Sin(((frame / 4 + i) << 11) + 0x4800);
       blue = (blue * 10 >> 16) + 12;
       red = add + 28;
-      if (red > 31)
-        red = 31;
+      if (red > RGB_LEVEL_MAX)
+        red = RGB_LEVEL_MAX;
       green += add;
-      if (green > 31)
-        green = 31;
+      if (green > RGB_LEVEL_MAX)
+        green = RGB_LEVEL_MAX;
       blue += add;
-      if (blue > 31)
-        blue = 31;
+      if (blue > RGB_LEVEL_MAX)
+        blue = RGB_LEVEL_MAX;
       do { // once-only block: the listing schedules the store with it
         packed = (blue << 10) | (green << 5) | red;
         ((u16 *)OBJ_PLTT)[255 - i] = packed;
@@ -240,7 +239,7 @@ loaded:
     scaleY = work->discScaleY;
     packed = vramWork->glyphTiles + 128;
     sprite = &work->disc;
-    EffectSprite_Init(sprite, 31, 31, 0xc0000000, packed);
+    EffectSprite_Init(sprite, 31, 31, OBJ_SIZE_64X64, packed);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority =
@@ -275,7 +274,7 @@ loaded:
         work->discScaleX += -0x300;
         work->discScaleY = work->discScaleX;
         if (work->discScaleX <= 0)
-          phase = 999;
+          phase = FIELD_PSYNERGY_FINISHED;
         break;
       }
     }
@@ -310,7 +309,7 @@ loaded:
         work->discScaleX += -0x400;
         work->discScaleY = work->discScaleX;
         if (work->discScaleX <= 0)
-          phase = 999;
+          phase = FIELD_PSYNERGY_FINISHED;
         break;
       }
     }
@@ -341,14 +340,14 @@ loaded:
       case 2:
         spawn = 1;
         if (timer == 80)
-          phase = 999;
+          phase = FIELD_PSYNERGY_FINISHED;
         break;
       }
     }
     wait(1);
     timer++;
     frame++;
-  } while (phase != 999);
+  } while (phase != FIELD_PSYNERGY_FINISHED);
 
   if (found != -1) {
     struct Actor *marked = Actor_GetById(found);
@@ -371,13 +370,9 @@ void BattleEffect_PlotCanvasPixel(s32 x, s32 y, s32 color);
 /// (63, 63): a radius (16.16) and an angle, the cosine leftward and the sine
 /// upward.
 void Canvas_PlotPolarPixel(s32 unused, s32 radius, s32 angle, s32 color) {
-  /* FAKEMATCH(pin): the angle pinned to r8. */
-  register s32 turn asm("r8") = angle;
-  s32 center = 63;
-  s32 x = Iwram_MulQ16(Trig_Cos(turn), radius);
-  s32 y = Iwram_MulQ16(Trig_Sin(turn), radius);
-
-  BattleEffect_PlotCanvasPixel(center - (x >> 16), center - (y >> 16), color);
+  BattleEffect_PlotCanvasPixel(
+      63 - FIELD_PIXEL(Iwram_MulQ16(Trig_Cos(angle), radius)),
+      63 - FIELD_PIXEL(Iwram_MulQ16(Trig_Sin(angle), radius)), color);
 }
 
 extern const u16 gData_080f39c4[];
@@ -390,17 +385,10 @@ void BgMap_DrawClipped16x16(s32 x, s32 y) {
   s32 column;
   s32 sx;
   s32 sy;
-  s32 (*fill)(void *, s32, u32);
 
-  /* FAKEMATCH(dead): the opening in a once-only block. */
-  do {
-    x /= 8;
-    y /= 8;
-    fill = Iwram_FillWordsEntry;
-    /* FAKEMATCH(barrier): an empty asm taking the fill routine's entry. */
-    asm volatile("" : : "l"(fill));
-    fill((void *)BG_SCREEN_BLOCK(4), 0x400, 0);
-  } while (0);
+  x /= 8;
+  y /= 8;
+  IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 0x400, 0);
   for (row = 0, sy = y; row < 16; row++, sy++) {
     if (sy < 0)
       continue;

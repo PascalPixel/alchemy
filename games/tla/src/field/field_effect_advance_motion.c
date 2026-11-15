@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "system/field_effect.h"
+#include "field/sprite.h"
 
 /// An effect's update routine: move by its velocity, which loses an eighteenth
 /// of its x and a sixteenth of its z each frame, and grow and spin at its
@@ -12,7 +13,7 @@ void FieldEffect_AdvanceMotion(union FieldObject *object) {
   s32 velocityX;
   s32 velocityZ;
   s32 scaleRateX;
-  struct FieldSprite *sprite;
+  struct Sprite *sprite;
 
   velocityX = effect->velocity.x;
   effect->x += velocityX;

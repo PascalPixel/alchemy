@@ -212,9 +212,11 @@ those few routines into the console's fast memory and runs them there.
   screen, the tile animation (with the ground heights and collision still
   in the same part), the view and the debug sprite viewer.
 - [`field_sequence.c`](field_sequence.c) is the sequence itself, its parts
-  `field_sequence_*.c`: set-up, the walk, requests, the screen
-  transitions, the event commands, triggers, encounters and the treasure
-  spots.
+  `field_sequence_*.c`: set-up, the walk, requests, triggers, encounters,
+  the treasure spots, a found item's picture and Reveal's sparkles
+  (`field_sequence_item_display.c`), the screen transitions, the palette
+  fade, the ground mask, the speakers, the heading picture and the event
+  commands.
 - [`event_commands.c`](event_commands.c) is the actors' stock behaviours
   and field Psynergy, its parts `event_commands_*.c`, beside the event
   commands' tables: the ropes, tightropes and hanging vines

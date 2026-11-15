@@ -15,12 +15,12 @@ struct SpriteAnimation;
 struct ArcEffectObject__launch;
 
 struct ArcEntry {
-  u8 unk00[5];
+  u8 unused[5]; ///< no code names it
   u8 param;
 };
 
 struct ArcGroup {
-  u8 unk00[25];
+  u8 unused[25]; ///< no code names it
   u8 dirty;
   u8 flags;
   u8 unk1b[13];
@@ -28,7 +28,7 @@ struct ArcGroup {
 };
 
 struct ArcScene {
-  u8 unk00[0x10];
+  u8 unused[0x10]; ///< no code names it
   struct ArcEffectObject__launch *mainActor;
   u8 unk14[0x6fc];
   s16 arcTileSlot;
@@ -58,20 +58,20 @@ struct LaunchVector {
 };
 
 struct LaunchObject {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
   s32 y;
   s32 z;
 };
 
 struct LaunchScene {
-  u8 unk00[0x10];
+  u8 unused[0x10]; ///< no code names it
   struct LaunchObject *mainActor;
 };
 
 /// A composite sprite, as far as this reads it.
 struct OrbTargetSprite {
-  u8 unk00[0x28];
+  u8 unused[0x28]; ///< no code names it
   struct SpriteAnimation *entries[4];
 };
 
@@ -116,17 +116,19 @@ struct BowWork {
   s8 arrowMoving;
 };
 
+/// FieldWork as FieldPsynergy_GatherNearbyCells writes it: the cells a Psynergy
+/// touches and the Cyclone's two spots, here unsigned.
 struct PointWork {
-  u8 unk_0[0xcc0];
+  u8 unused[0xcc0]; ///< no code names it
   s16 points[62];
-  u16 unk_d3c;
-  u16 unk_d3e;
-  u16 unk_d40;
-  u16 unk_d42;
+  u16 cycloneCarryX;
+  u16 cycloneCarryZ;
+  u16 cycloneLiftX;
+  u16 cycloneLiftZ;
 };
 
 struct TouchOwner {
-  u8 unk00[34];
+  u8 unused[34]; ///< no code names it
   u8 layer;
 };
 
@@ -139,15 +141,15 @@ struct ArcWork {
 };
 
 struct TimedObject {
-  u8 unk00[0x64];
+  u8 unused[0x64]; ///< no code names it
   s16 age;
-  u8 unk66[6];
+  u8 unusedAfterAge[6]; ///< no code names it
   void *update;
 };
 
 /// The effect work, its slots 8 bytes earlier than FieldEffectWork has them.
 struct FallbackScene {
-  u8 unk00[0x50];
+  u8 unused[0x50]; ///< no code names it
   struct FieldParticle slots[16];
 };
 
@@ -158,19 +160,19 @@ struct FxPosition13 {
 };
 
 struct SpinObject {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
   s32 y;
   s32 z;
   s32 floor;
   s32 fall;
-  u8 unk1c[0x1c];
+  u8 unusedAfterFall[0x1c]; ///< no code names it
   s32 targetX;
-  u8 unk3c[0x19];
+  u8 unusedAfterTargetX[0x19]; ///< no code names it
   u8 motionFlags;
-  u8 unk56[0xe];
+  u8 unusedAfterMotionFlags[0xe]; ///< no code names it
   s16 timer;
-  u8 unk66[6];
+  u8 unusedAfterTimer[6]; ///< no code names it
   void (*update)(struct SpinObject *);
 };
 
@@ -181,16 +183,16 @@ struct SpinVector {
 };
 
 struct ArcPicture {
-  u8 padding00[22];
+  u8 unused[22]; ///< no code names them
   u8 visible;
 };
 
 struct ArcSprite {
-  u8 padding00[5];
+  u8 unused[5]; ///< no code names them
   u8 flags05_0 : 5;
   u8 flags05_5 : 1;
   u8 layer : 2;
-  u8 padding06;
+  u8 unusedAfterLayer; ///< no code names it
   u8 flags07_0 : 6;
   u8 size : 2;
   union {
@@ -205,31 +207,31 @@ struct ArcSprite {
       u8 flags09_4 : 4;
     } byte;
   } attr;
-  u8 padding0c[4];
+  u8 unusedAfterAttr[4]; ///< no code names them
   u8 resource;
   u8 active : 1;
   u8 flags11_1 : 7;
-  u8 padding12[8];
+  u8 unusedB[8]; ///< no code names them
   u8 animation;
-  u8 padding1b[13];
+  u8 unusedAfterAnimation[13]; ///< no code names them
   struct ArcPicture *picture;
 };
 
 struct ArcObject {
-  u8 padding00[8];
+  u8 unused[8]; ///< no code names them
   s32 x;
   s32 y;
   s32 z;
   s32 unk14;
   s32 scaleX;
   s32 scaleY;
-  u8 padding20[0x30];
+  u8 unusedAfterScaleY[0x30]; ///< no code names them
   struct ArcSprite *sprite;
-  u8 padding54;
+  u8 unusedAfterSprite; ///< no code names it
   u8 unk55;
-  u8 padding56[0x0e];
+  u8 unusedB[0x0e]; ///< no code names them
   u16 unk64;
-  u8 padding66[2];
+  u8 unusedC[2]; ///< no code names them
   struct ArcObject *source;
   void *callback;
 };

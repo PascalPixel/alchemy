@@ -70,7 +70,7 @@ void Teleport_PlayWhirl(void) {
   frame = 0;
   do {
     if (count != 0) {
-      radius = 0x500000;
+      radius = px(80);
       i = count;
       do {
         angle = Random16();
@@ -103,7 +103,7 @@ void Teleport_PlayWhirl(void) {
           sprite->y = position[2];
           EffectSprite_Draw(sprite);
           spark->angle += TRIG_TURN / 32;
-          spark->radius += -0x40000;
+          spark->radius += -px(4);
         }
         if (++spark->age == 20)
           spark->age = -1;
@@ -142,12 +142,12 @@ void Teleport_PlayWhirl(void) {
       if (frame == 20)
         count = 0;
       if (frame == 40)
-        state = 999;
+        state = FIELD_PSYNERGY_FINISHED;
       break;
     }
     wait(1);
     frame++;
-  } while (state != 999);
+  } while (state != FIELD_PSYNERGY_FINISHED);
   VramCache_FreeEntry(entry);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
   FieldPsynergy_MarkWorldMapTilesUsed();
@@ -209,7 +209,7 @@ void Teleport_PlaySparks(void) {
   Sound_PlayFar(SE_SHIMMER);
   Actor_SelectAnimationFar(object, 3);
   for (spin = 0, frame = 49; frame >= 0; frame--, spin += 60) {
-    object->facing += spin + TRIG_TURN / 16;
+    object->facing += spin + FACING_STEP;
     wait(1);
   }
 
@@ -227,15 +227,15 @@ void Teleport_PlaySparks(void) {
       Vector_AddPolarOffset(Random16() << 3, angle, &particle->x);
       if (next & 1) {
         particle->velocityX = zero;
-        particle->velocityY = -(px(4));
+        particle->velocityY = -px(4);
         particle->velocityZ = zero;
-        Vector_AddPolarOffset((Random16() << 2) + 0x40000, angle,
+        Vector_AddPolarOffset((Random16() << 2) + px(4), angle,
                               &work->particles[next].velocityX);
       } else {
         particle->velocityX = 0;
         particle->velocityY = px(5);
         particle->velocityZ = 0;
-        Vector_AddPolarOffset((Random16() << 2) + 0x40000, angle,
+        Vector_AddPolarOffset((Random16() << 2) + px(4), angle,
                               &work->particles[next].velocityX);
       }
       next++;
@@ -293,12 +293,12 @@ void Teleport_PlaySparks(void) {
     case 2:
       count = 0;
       if (frame == 20)
-        state = 999;
+        state = FIELD_PSYNERGY_FINISHED;
       break;
     }
     wait(1);
     frame++;
-  } while (state != 999);
+  } while (state != FIELD_PSYNERGY_FINISHED);
   VramCache_FreeEntry(entry);
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }

@@ -37,20 +37,20 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
   blue = wave[(phase + 64) % 96] + bias;
   if (red < 0)
     red = 0;
-  if (red > 31)
-    red = 31;
+  if (red > RGB_LEVEL_MAX)
+    red = RGB_LEVEL_MAX;
   if (green < 0)
     green = 0;
-  if (green > 31)
-    green = 31;
+  if (green > RGB_LEVEL_MAX)
+    green = RGB_LEVEL_MAX;
   if (blue < 0)
     blue = 0;
-  if (blue > 31)
-    blue = 31;
+  if (blue > RGB_LEVEL_MAX)
+    blue = RGB_LEVEL_MAX;
   return (blue << 10) | (green << 5) | red;
 }
 
-#define OBJ_PALETTE_14 ((u16 *)(OBJ_PLTT + 14 * 16))
+#define OBJ_PALETTE_14 ((u16 *)&OBJ_PLTT_COLOR(14, 0))
 
 // The glow's strength, in frames: full at 112, and it fades out a frame at a
 // time once the player leaves the place that feeds it.
@@ -60,7 +60,7 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
 /// Hover's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the glowing ring under the
 /// hovering leader, its scale, tile and stage.
 struct HoverWork {
-  u8 unk0000[0x1000];
+  u8 unused[0x1000]; ///< no code names it
   struct EffectSprite sprite;
   s32 scale;
   s16 resource;
@@ -114,11 +114,9 @@ void HoverGlow_Update(void) {
   // Cycle the glow's colours; the last takes the 15th's level.
   palette = OBJ_PALETTE_14;
   for (i = 0; i < 16; i++) {
-    /* FAKEMATCH(dead): the colour's store in a once-only block. */
-    do {
-      *palette++ = HoverGlow_GetColor((((s16)work->phase >> 2) + i / 2) % 24,
-                                      i == 15 ? 14 : i);
-    } while (0);
+    Io_Write16(HoverGlow_GetColor((((s16)work->phase >> 2) + i / 2) % 24,
+                                  i == 15 ? 14 : i),
+               palette++);
   }
   work->phase++;
 
@@ -172,7 +170,7 @@ void FieldPsynergy_Hover(void) {
   s32 n;
 
   pending = Scene_FindPsynergyTrigger(
-      0x50000005, scene->fieldPsynergy,
+      PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy,
       Scene_SelectPsynergyTarget(scene->fieldPsynergy));
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_RingOrb), work);
   slot = VramCache_FindFreeEntry();
@@ -181,7 +179,7 @@ void FieldPsynergy_Hover(void) {
   work->tile = tile;
   work->scale = 0;
   sprite = &work->sprite;
-  EffectSprite_Init(sprite, 15, 15, 0x80000000, (s16)work->tile);
+  EffectSprite_Init(sprite, 15, 15, OBJ_SIZE_32X32, (s16)work->tile);
   sprite->oam.palette256 = 1;
   sprite->oam.palette = 0;
   Actor_SetPositionAndResetMotionFar(player, player->x.fixed, player->y.fixed,

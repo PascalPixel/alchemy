@@ -26,7 +26,7 @@ struct EffectSpriteBits__advance_motion_priority {
  * pointer to incomplete type. */
 /// A sprite's attribute 2, as the byte bits view reaches it.
 struct EffectSpriteAttributes__advance_motion_priority {
-  u8 unk00[9];
+  u8 unused[9]; ///< no code names it
   struct EffectSpriteBits__advance_motion_priority bits;
 };
 
@@ -37,7 +37,7 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
   s32 velocityX = effect->velocity.x;
   s32 velocityZ;
   struct MainRoutineWork *party;
-  struct FieldSprite *sprite;
+  struct Sprite *sprite;
   struct Actor *leader;
   struct EffectSpriteAttributes__advance_motion_priority *to;
   struct EffectSpriteAttributes__advance_motion_priority *from;

@@ -33,9 +33,9 @@ void FieldPsynergy_Carry(void) {
 
   work = Ram_HeapSlots->fieldEffectWork;
   FieldPsynergy_FadeToCastColor();
-  SET_POSITION(&pos, work->x, work->y + 0x100000, work->z);
-  pair[0] = FieldEffect_SpawnCarryHand(pos.x + 0x200000, pos.y, pos.z, 0x8000);
-  pair[1] = FieldEffect_SpawnCarryHand(pos.x - 0x200000, pos.y, pos.z, 0);
+  SET_POSITION(&pos, work->x, work->y + px(16), work->z);
+  pair[0] = FieldEffect_SpawnCarryHand(pos.x + px(32), pos.y, pos.z, 0x8000);
+  pair[1] = FieldEffect_SpawnCarryHand(pos.x - px(32), pos.y, pos.z, 0);
 
   wait(15);
   walk = pair;
@@ -48,14 +48,14 @@ void FieldPsynergy_Carry(void) {
   Actor_WaitForMoveFar(pair[0]);
   Sound_PlayFar(SE_HEAVY_IMPACT);
   for (n = 0; n < 24; n++) {
-    SET_POSITION(&pos, work->x, work->y + 0x100000, work->z);
-    obj = Actor_Spawn(673, pos.x, pos.y, pos.z);
+    SET_POSITION(&pos, work->x, work->y + px(16), work->z);
+    obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (obj != 0) {
       Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);
-      obj->speedLimit = Random16() + 0x20000;
+      obj->speedLimit = Random16() + px(2);
       obj->acceleration = px(2);
       obj->motionFlags = 0;
-      dist = Random16() * 24 + 0x80000;
+      dist = Random16() * 24 + px(8);
       Actor_SetTargetPositionFromMagnitudeAngle(obj, dist, Random16());
     }
   }
@@ -72,7 +72,7 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
   s32 scale;
 
   Sound_PlayFar(SE_ITEM_BREAK);
-  object = Actor_Spawn(278, x, y, z);
+  object = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
   if (object != NULL) {
     object->scaleY = Q16_ONE / 4;
     object->scaleX = Q16_ONE / 4;
@@ -83,13 +83,13 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
     scale = object->scaleX;
     if (scale < Q16_ONE) {
       do {
-        scale += 0x800;
+        scale += Q16_ONE / 32;
         object->scaleY = scale;
         object->scaleX = scale;
         object->facing += TRIG_TURN / 8;
         wait(1);
         scale = object->scaleX;
-      } while (scale <= 0xffff);
+      } while (scale < Q16_ONE);
     }
     object->facing = angle;
   }

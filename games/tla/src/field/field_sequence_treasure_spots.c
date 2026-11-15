@@ -9,12 +9,12 @@
 
 /// Sets an actor's y and groundHeight to the map's height at its x and z.
 void Actor_SnapToTerrain(void *object) {
-  struct Actor *state = object;
-  s32 height;
+  struct Actor *actor = object;
+  s32 groundHeight;
 
-  height = MapGrid_GetTerrainHeightFar(0, state->x.fixed, state->z.fixed);
-  state->y.fixed = height;
-  state->groundHeight = height;
+  groundHeight = MapGrid_GetTerrainHeightFar(0, actor->x.fixed, actor->z.fixed);
+  actor->y.fixed = groundHeight;
+  actor->groundHeight = groundHeight;
 }
 
 /// The current scene's rows of the scene item table (Data_080f2204): those
@@ -117,12 +117,12 @@ void Field_PlaceTreasureSpots(void) {
             object->groundHeight -= px(16);
             object->y.fixed = object->groundHeight;
             map = Ram_HeapSlots->mapGrid;
-            x = object->x.fixed >> 20;
-            z = object->z.fixed >> 20;
+            x = FIELD_CELL(object->x.fixed);
+            z = FIELD_CELL(object->z.fixed);
             cells = (struct MapCell *)gMapGridCellBuffer;
             if (map != NULL)
               cells = map->layers[0].cells;
-            cells += x + (z << 7);
+            cells += x + z * MAPGRID_SIZE;
             if ((u32)(cells->collisionCode - 242) <= 5)
               cells->collisionCode = 0;
           }
@@ -132,8 +132,8 @@ void Field_PlaceTreasureSpots(void) {
         if (GameFlag_Get(flag))
           Actor_SelectAnimationFar(object, 2);
         Actor_StartIdleFar(object);
-        object->timer = object->x.fixed / Q16_ONE;
-        object->userValue = object->z.fixed / Q16_ONE;
+        object->homeX = object->x.fixed / Q16_ONE;
+        object->homeZ = object->z.fixed / Q16_ONE;
         object->priorityFlags = 1;
         object->collisionFlags = 1;
         work->actors[FIELD_TREASURE_ACTOR + i] = object;
@@ -152,25 +152,11 @@ void Field_PlaceTreasureSpots(void) {
   } while (!(type & 0x4000));
 }
 
-/* VIEW(field_sequence): tag struct ObjectSprite as struct
- * ObjectSprite__field_sequence; field/field.h has another definition;
- * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/field_sequence_treasure_spots.c:167: structure
- * has no member named `yOffset'. */
-struct ObjectSprite__field_sequence {
-  u8 unk00[5];
-  u8 attr0High;
-  u8 unk06;
-  u8 attr1High;
-  u8 unk08[0xf];
-  u8 yOffset;
-};
-
 /// Mode 0 moves the actor to x and z 0 and marks it with riseBaseY 0x31415927;
 /// any other mode draws its sprite wide (shape 1), 4 pixels lower.
 void Actor_SetWideSprite(u32 objectId, s32 mode) {
   struct Actor *object;
-  struct ObjectSprite__field_sequence *sprite;
+  struct Sprite *sprite;
 
   object = Actor_Lookup(objectId);
   if (object == 0)
@@ -184,15 +170,15 @@ void Actor_SetWideSprite(u32 objectId, s32 mode) {
   sprite = object->sprite;
   if (sprite == 0)
     return;
-  sprite->yOffset += 4;
-  sprite->attr0High = (sprite->attr0High & 0x3f) | 0x40;
-  sprite->attr1High &= 0x3f;
+  sprite->offsetY += 4;
+  sprite->image.shape = 1;
+  sprite->image.size = 0;
 }
 
 /// Draws the actor's sprite square (shape 0, size 1), 8 pixels down.
 void Actor_SetSquareSprite(u32 objectId) {
   struct Actor *object;
-  struct ObjectSprite__field_sequence *sprite;
+  struct Sprite *sprite;
 
   object = Actor_Lookup(objectId);
   if (object == 0)
@@ -200,23 +186,23 @@ void Actor_SetSquareSprite(u32 objectId) {
   sprite = object->sprite;
   if (sprite == 0)
     return;
-  sprite->yOffset = 8;
-  sprite->attr0High &= 0x3f;
-  sprite->attr1High = (sprite->attr1High & 0x3f) | 0x40;
+  sprite->offsetY = 8;
+  sprite->image.shape = 0;
+  sprite->image.size = 1;
 }
 
 /// Returns the OAM shape of the actor's sprite (0 square, 1 wide, 2 tall), or
 /// 0 without one.
 s32 Actor_GetSpriteShape(u32 objectId) {
   struct Actor *object;
-  struct ObjectSprite__field_sequence *sprite;
+  struct Sprite *sprite;
   s32 shape = 0;
 
   object = Actor_Lookup(objectId);
   if (object != 0) {
     sprite = object->sprite;
     if (sprite != 0)
-      shape = sprite->attr0High >> 6;
+      shape = sprite->image.shape;
   }
   return shape;
 }
@@ -224,19 +210,19 @@ s32 Actor_GetSpriteShape(u32 objectId) {
 /// Mode 1 moves the actor to z 0; mode 2 sets flag, draws a moved actor square
 /// again and drops it back home (homeX, homeZ) at Scoop's anchor.
 void Actor_ReturnHome(s32 mode, u32 objectId, s32 flag) {
-  struct ActorScriptView *object;
+  struct Actor *object;
 
-  object = (struct ActorScriptView *)Actor_Lookup(objectId);
+  object = Actor_Lookup(objectId);
   if (object == 0)
     return;
   if (mode == 1)
-    object->z = 0;
+    object->z.fixed = 0;
   if (mode == 2) {
     GameFlag_Set(flag);
-    if (object->x != 0)
+    if (object->x.fixed != 0)
       Actor_SetSquareSprite(objectId);
-    object->x = object->homeX << 16;
-    object->z = object->homeZ << 16;
+    object->x.fixed = px(object->homeX);
+    object->z.fixed = px(object->homeZ);
     BattleEffect_DropObjectAtAnchor(objectId);
   }
 }
@@ -319,16 +305,16 @@ void ObjectEvent_Remove(u32 objectId) { Actor_ReleaseAtIndex(objectId); }
 /// Moves the actor to (x, z) on the ground, 16.16 pixels; -1 keeps its home
 /// (homeX, homeZ) on that axis.
 void TreasureSpot_SetActorPosition(u32 objectId, s32 x, s32 z) {
-  struct ActorScriptView *object;
+  struct Actor *object;
 
-  object = (struct ActorScriptView *)Actor_Lookup(objectId);
+  object = Actor_Lookup(objectId);
   if (object == 0)
     return;
   if (x == -1)
-    x = object->homeX << 16;
+    x = px(object->homeX);
   if (z == -1)
-    z = object->homeZ << 16;
-  object->x = x;
-  object->z = z;
-  object->y = object->groundHeight = MapGrid_GetTerrainHeightFar(0, x, z);
+    z = px(object->homeZ);
+  object->x.fixed = x;
+  object->z.fixed = z;
+  object->y.fixed = object->groundHeight = MapGrid_GetTerrainHeightFar(0, x, z);
 }

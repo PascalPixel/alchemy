@@ -30,14 +30,15 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
   struct MapCell *cells;
 
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    cells = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) +
-                                               (((z / 0x200000) & 31) << 5)];
+    cells =
+        &((struct MapCell *)
+              Ram_MapBlocks)[((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)];
   } else {
     if (layer <= 2)
       cells = map->layers[layer].cells;
     else
       cells = (struct MapCell *)Ram_MapCellBuffer;
-    cells = &cells[x / 0x100000 + (z / 0x100000) * 128];
+    cells = &cells[x / px(16) + (z / px(16)) * 128];
   }
   return cells;
 }
@@ -186,9 +187,9 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
   s32 dz = (*a - *b) >> 16;
   s32 radius = radius_a + radius_b;
 
-  if (dx > 0x400000 || dz > 0x400000)
+  if (dx > px(64) || dz > px(64))
     return -1;
-  if (dy > radius << 16)
+  if (dy > px(radius))
     return -1;
   if (dx * dx + dz * dz < radius * radius)
     return 1;
@@ -203,10 +204,10 @@ void FieldPsynergy_GrowFromCaster(struct Actor *object, s32 x, s32 y, s32 z) {
   s32 start[3];
   s32 i = 0;
 
-  if (scene->angle != 0xc000)
+  if (scene->angle != TRIG_TURN * 3 / 4)
     Actor_SetSpritePriorityDirectFar(object, 0);
   start[0] = mainActor->x.fixed;
-  start[1] = mainActor->y.fixed + 0x100000;
+  start[1] = mainActor->y.fixed + px(16);
   start[2] = mainActor->z.fixed;
   do {
     SET_ACTOR_POSITION(object, start[0] + (x - start[0]) * i / 10,
@@ -245,7 +246,7 @@ void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z) {
 /// Spawns a particle (kind 0x2a1) at x, y, z that hops off in a random
 /// direction 8 to 32 pixels away at 1 to 2 pixels a frame.
 struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
-  struct Actor *object = Actor_Spawn(0x2a1, x, y, z);
+  struct Actor *object = Actor_Spawn(SPRITE_SPARKLE, x, y, z);
   s32 magnitude;
 
   if (object != NULL) {
@@ -257,14 +258,14 @@ struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
     magnitude = Random16();
     magnitude -= Random16();
     object->velocityY = magnitude;
-    Actor_SetTargetPositionFromMagnitudeAngle(object, Random16() * 24 + 0x80000,
+    Actor_SetTargetPositionFromMagnitudeAngle(object, Random16() * 24 + px(8),
                                               Random16());
   }
   return object;
 }
 
 struct ResourceSprite {
-  u8 unk00[0x10];
+  u8 unused[0x10]; ///< no code names it
   u8 vramBlock;
   u8 flags;
 };
@@ -402,34 +403,30 @@ void FieldPsynergy_FadeToCastColor(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   s32 tint;
   s32 animation;
-  s32 raw;
 
   tint = gFrameCount & 7;
-  raw = *(u16 *)&scene->fieldPsynergy;
-  /* FAKEMATCH(barrier): raw passed through an empty asm. */
-  asm("" : "+r"(raw));
   animation = scene->fieldPsynergy;
-  if (animation == 18)
+  if (animation == FIELD_PSYNERGY_POUND)
     tint = 0;
-  if (animation == 26)
+  if (animation == FIELD_PSYNERGY_BLAZE)
     tint = 2;
-  if (animation == 23)
+  if (animation == FIELD_PSYNERGY_SAND)
     tint = 7;
-  if (animation == 25)
+  if (animation == FIELD_PSYNERGY_CYCLONE)
     tint = 0;
-  if (animation == 20)
+  if (animation == FIELD_PSYNERGY_SCOOP)
     tint = 5;
-  if (animation == 29)
+  if (animation == FIELD_PSYNERGY_UNNAMED_29)
     tint = 0;
-  if (animation == 22)
+  if (animation == FIELD_PSYNERGY_PARCH)
     tint = 7;
-  if (animation == 19)
+  if (animation == FIELD_PSYNERGY_TREMOR)
     tint = 6;
-  if (animation == 27)
+  if (animation == FIELD_PSYNERGY_GRIND)
     tint = 0;
-  if (animation == 21)
+  if (animation == FIELD_PSYNERGY_BURST)
     tint = 7;
-  if ((s16)raw == 30)
+  if (scene->fieldPsynergy == FIELD_PSYNERGY_TELEPORT)
     tint = 6;
 
   if (GameFlag_Get(FLAG_TINT_FIRST + 0))

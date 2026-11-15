@@ -97,8 +97,8 @@ struct FieldWork {
   /// The keys held: a ledge (KEY_DOWN) and a climb (KEY_UP or KEY_DOWN) read
   /// them, and they are kept when a rope or tightrope was raised.
   u16 heldKeys;
-  u8 unk188[2];
-  s8 mode; ///< an enum ActorSystemMode
+  u8 unusedAfterHeldKeys[2]; ///< no code names it
+  s8 mode;                   ///< an enum ActorSystemMode
   /// The area's graphics are to be reloaded on the World Map
   /// (WorldMap_Freeze, WorldMap_ReloadPendingAreaGraphics).
   s8 areaGraphicsPending;
@@ -145,7 +145,7 @@ struct FieldWork {
   s16 revealFrames;      ///< the frames Reveal has left
   s16 revealCenterX;     ///< where Reveal was cast, in pixels
   s16 revealCenterY;
-  /// Field Psynergy 28's ring is shown (FieldPsynergy_Unnamed28); A, Select,
+  /// Field Psynergy 28's ring is shown (FieldPsynergy_Ring); A, Select,
   /// Start or a shortcut ends it.
   s8 ringActive;
   s8 ringTimerRunning; ///< off while another field Psynergy is cast
@@ -158,9 +158,9 @@ struct FieldWork {
   s8 psynergyActing;   ///< set while Psynergy takes effect
   s8 castStarted;      ///< set once a cast has been announced
   s16 queuedSound;     ///< a sound Scene_PlayQueuedMusic plays; -1 for none
-  u8 unkcba[2];
-  struct Actor *movedBlock; ///< the block Actor_LiftTargetBlock lifted, for
-                            ///< Actor_PlaceMovedBlock
+  u8 unusedAfterQueuedSound[2]; ///< no code names it
+  struct Actor *movedBlock;     ///< the block Actor_LiftTargetBlock lifted, for
+                                ///< Actor_PlaceMovedBlock
   /// The cells a Psynergy touches, as cell coordinates, ended by -1.
   s16 psynergyCells[56];
   s8 unkd30;
@@ -176,16 +176,20 @@ struct FieldWork {
   s8 hoverReady; ///< a party member knows Hover and the ship flies
   s8 terrainKind;
   s8 climbing;
-  s16 unkd3c;
-  s16 unkd3e;
-  s16 unkd40;
-  s16 unkd42;
+  /// The centre of the Cyclone teleporter cell (kind 2) beside the caster,
+  /// in pixels, that the Cyclone carries the leader to; -1 for none.
+  s16 cycloneCarryX;
+  s16 cycloneCarryZ;
+  /// The centre of the Cyclone lift cell (kind 3) beside the caster, in
+  /// pixels, that the Cyclone lifts the leader onto; -1 for none.
+  s16 cycloneLiftX;
+  s16 cycloneLiftZ;
   s16 glow;
   s16 glowHeld;
   s16 standing;
   u16 unkd4a;
   u16 unkd4c;
-  u8 unkd4e[2];
+  u8 padding[2];
 };
 
 STATIC_ASSERT(sizeof(struct FieldWork) == 0xd50);

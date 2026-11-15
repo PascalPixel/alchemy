@@ -12,11 +12,11 @@
 /// differently (Tundaria Tower's and the Mars Lighthouse entrance's
 /// placement tables).
 struct FieldActor {
-  u8 unk00[0x55];
+  u8 unused[0x55]; ///< no code names it
   u8 motionFlags;
-  u8 unk56[3];
+  u8 unusedAfterMotionFlags[3]; ///< no code names it
   u8 collisionFlags;
-  u8 unk5a[0x0a];
+  u8 unusedAfterCollisionFlags[0x0a]; ///< no code names it
   u16 timer;
 };
 

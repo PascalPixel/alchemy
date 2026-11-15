@@ -12,8 +12,6 @@
 #include "battle/object_effect_scripts.h"
 #include "macros.h"
 
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-
 /// Ends a heavy impact: object id spins, leaps and vanishes in 24 sparks that
 /// circle and then close on the current owner, which turns and takes mode 28.
 void Djinn_RunJupiterJoinEffect(s32 id) {
@@ -57,7 +55,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
     FieldParticle_SetCallback(slot, FieldEffect_RunAngledApproachPhases);
     FieldParticle_SetActorMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(slot->object, (Random16() * 7) >> 16);
-    scale = Random16() / 3 + Q16_ONE;
+    scale = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
     slot->scaleY = scale;
     slot->scaleX = scale;
     count--;
@@ -67,7 +65,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
 
   // The current owner turns to 0x4000 and takes mode 28.
   wait(60);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, 0x4000, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
   Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId), 28);
   wait(40);
@@ -94,15 +92,13 @@ void FieldEffect_PulseActorScale(u8 *object) {
 
 /// Per-frame update: spins an actor ever faster, from 1/16 turn a frame up to
 /// just over 1/8 (TRIG_TURN / 8 + 64), 80 more each frame for 52 frames.
-void FieldEffect_AdvanceAngleWithRamp(void *obj) {
+void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor) {
   u32 step;
 
-  step = FIELD_AT_OFFSET(obj, s16 *, 0x64) * 0x50;
-  FIELD_AT_OFFSET(obj, u16 *, 6) =
-      (u16)(FIELD_AT_OFFSET(obj, u16 *, 6) + step + 0x1000);
-  if (step < 0x1000U) {
-    FIELD_AT_OFFSET(obj, s16 *, 0x64) =
-        (s16)((u16)FIELD_AT_OFFSET(obj, s16 *, 0x64) + 1);
+  step = actor->spinRampFrames * 80;
+  actor->facing = actor->facing + step + FACING_STEP;
+  if (step < FACING_STEP) {
+    actor->spinRampFrames = actor->spinRampFrames + 1;
   }
 }
 
@@ -138,10 +134,10 @@ struct FieldEffectWork;
 /// leader, until it is freed once it arrives.
 void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
   struct EffectOwner *owner;
-  struct EffectVector position;
+  struct Vector3 position;
   s32 state;
 
-  owner = (struct EffectOwner *)Actor_GetById(gMainRoutineWork.leaderActorId);
+  owner = Actor_GetById(gMainRoutineWork.leaderActorId);
   state = effect->state;
 
   if (state == 0) {
@@ -151,12 +147,12 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     position.z = effect->z;
     Vector_AddPolarOffset(px(120),
                           ((Random16() * 3 << 11) >> 16) -
-                              ((Random16() * 3 << 11) >> 16) + 0xc000,
+                              ((Random16() * 3 << 11) >> 16) + FACING_NORTH,
                           &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = px(5);
-    effect->maxSpeed = 0x50000;
+    effect->maxSpeed = px(5);
     effect->limitTurnStep = state;
     effect->state++;
 
@@ -187,7 +183,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->render = 1;
     effect->x = effect->originX;
     effect->z = effect->originZ;
-    SET_POSITION(&position, owner->position.x, owner->position.y + 0x140000,
+    SET_POSITION(&position, owner->position.x, owner->position.y + px(20),
                  owner->position.z);
     Camera_WorldToScreen(&position);
     Vector_AddPolarOffset(px(4), Random16(), &position);

@@ -416,7 +416,7 @@ s32 Event_PickUpItem(s32 actor, s32 item, s32 flag) {
  * Unit_LearnPsynergyFar(void); gamepak/far_call/game.h has void
  * Unit_LearnPsynergyFar(s32 owner, s32 action); tried as the rest of the object
  * declares it, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence_event.c:380: too few arguments to function
+ * games/tla/src/field/field_sequence_event.c:421: too few arguments to function
  * `Unit_LearnPsynergyFar'. */
 extern void
 Unit_LearnPsynergyFar__event_commands(void) __asm__("Unit_LearnPsynergyFar");
@@ -465,7 +465,7 @@ void Event_SetDestination(s32 scene, s32 entrance) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party;
 
-  event->exit = 999;
+  event->exit = EXIT_KEEP_DESTINATION;
   party = &gMainRoutineWork;
   party->next = scene;
   party->entrance = entrance;
@@ -476,7 +476,7 @@ void Event_SetRestartPoint(s32 scene, s32 entrance) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party;
 
-  event->exit = 999;
+  event->exit = EXIT_KEEP_DESTINATION;
   party = &gMainRoutineWork;
   party->restartScene = scene;
   party->restartEntrance = entrance;

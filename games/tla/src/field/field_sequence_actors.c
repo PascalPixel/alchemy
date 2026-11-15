@@ -15,6 +15,8 @@
 #include "scene/shared.h"
 #include "macros.h"
 
+#define MAPGRID_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)
+
 /// Picks the sprite a scene placement's character id shows: character 8
 /// becomes 9 on the world map and 11 elsewhere, one more once flag 0x8df is
 /// set.
@@ -188,7 +190,7 @@ s32 ScenePoint_GetPosition(s32 id, s32 *position) {
 /// Releases the actor in slot actorIndex of the event work's table, if there
 /// is one, and empties the slot.
 void Actor_ReleaseAtIndex(u32 actorIndex) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = gFieldWork;
   struct Actor *actor = Actor_Lookup(actorIndex);
 
   if (actor != NULL) {
@@ -214,7 +216,7 @@ void Actor_ResetForLeader(s32 table) {
   s32 i;
   s32 height;
 
-  work = Ram_HeapSlots->fieldWork;
+  work = gFieldWork;
   leader = gMainRoutineWork.leaderActorId;
   entry = work->leaderPlacements;
   entry[0] = gField_DefaultPlacements[0];
@@ -254,13 +256,13 @@ void Actor_ResetForLeader(s32 table) {
     /* FAKEMATCH(barrier): an empty asm after the store. */
     asm("");
     cell = Ram_HeapSlots->mapGrid->layers[object->layer].cells +
-           ((object->x.fixed / 0x100000) + ((object->z.fixed / 0x100000) << 7));
+           ((object->x.fixed / px(16)) + ((object->z.fixed / px(16)) << 7));
     above = cell - 128;
     if (gMainRoutineWork.y != 0 && (cell->attributeB & 0x40) &&
         (above->attributeB & 0x40)) {
       gMainRoutineWork.movementMode = 2;
       height = MapGrid_GetTerrainHeightFar(0, object->x.fixed,
-                                           object->z.fixed - 0x100000) -
+                                           object->z.fixed - px(16)) -
                0x200000;
       object->y.fixed += height;
       object->groundHeight = object->y.fixed;
@@ -368,7 +370,7 @@ void ObjectTable_Snapshot(void) {
   u8 *priorities = frames + 64;
   u32 count = 0;
   struct Actor *object;
-  struct FieldSprite *sprite;
+  struct Sprite *sprite;
   s32 i;
   u32 frame;
   u32 next;
@@ -383,9 +385,9 @@ void ObjectTable_Snapshot(void) {
     Dma_Set(object, copy, DMA_COPY_WORDS(sizeof(struct Actor) / 4), REG_DMA3);
     if (object->spriteStorageKind == 1) {
       sprite = object->sprite;
-      frame = sprite->frame;
-      next = sprite->nextFrame;
-      priority = sprite->priority;
+      frame = sprite->lastNo;
+      next = sprite->flags;
+      priority = sprite->image.priority;
     } else {
       frame = 0;
       next = 0;
@@ -413,7 +415,7 @@ void Actor_Restore(void) {
   u8 *priorities = frames + 64;
   s32 count;
   struct Actor *object;
-  struct FieldSprite *sprite;
+  struct Sprite *sprite;
   s32 *view;
   struct Actor *camera;
   s32 index;
@@ -431,8 +433,8 @@ void Actor_Restore(void) {
       Actor_SelectAnimationFar(object, *frames);
       Actor_SetSpriteFlagsFar(object, *nextFrames);
       priority = *priorities;
-      sprite->priority = priority;
-      sprite->partPriority = priority;
+      sprite->image.priority = priority;
+      sprite->shadow.priority = priority;
       if (index == Party_GetLeaderActor()) {
         camera = gFieldWork->camera;
         view = Ram_HeapSlots->mapGrid->origin;

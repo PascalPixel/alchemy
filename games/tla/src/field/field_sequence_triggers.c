@@ -56,7 +56,7 @@ s32 GameFlag_IsConditionActive(s32 condition) {
   if (condition == -1) {
     return 1;
   }
-  if (0x1000 & condition) {
+  if (CONDITION_FLAG_SET & condition) {
     return GameFlag_Get(condition);
   }
   flag_state = GameFlag_Get(condition);
@@ -129,7 +129,7 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
 }
 
 struct FxGroup {
-  u8 unk00[32];
+  u8 unused[32]; ///< no code names it
   struct Actor *objects[8];
   u16 values[8];
   s32 count;
@@ -493,7 +493,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 
   event = Scene_FindTrigger(2, value);
   handled = -1;
-  work = Ram_HeapSlots->fieldWork;
+  work = gFieldWork;
   if (event != NULL && event->result != 0) {
     if (event->flags & 0x200)
       work->blockedSteps = 0;
@@ -511,11 +511,11 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
       case 0:
         Sound_PlayFar(SE_MAP_EXIT);
         break;
-      case 32:
+      case EXIT_STYLE_STAIRS_UP:
         Sound_PlayFar(SE_STAIRS_UP);
         Exit_StartStairsUp();
         break;
-      case 48:
+      case EXIT_STYLE_STAIRS_DOWN:
         Sound_PlayFar(SE_STAIRS_DOWN);
         Exit_StartStairsDown();
         break;

@@ -11,26 +11,26 @@
 struct Actor;
 
 struct ReflectionSprite {
-  u8 unk00[2];
+  u8 unused[2]; ///< no code names it
   u16 unk02;
-  u8 unk04[12];
+  u8 unusedB[12]; ///< no code names it
   s32 unk10;
   u8 unk14;
 };
 
 struct ReflectionAnimation {
-  u8 unk00[0x28];
+  u8 unused[0x28]; ///< no code names it
   struct ReflectionSprite *sprite;
 };
 
 struct WorldMapBlock {
-  u8 unk0[2];
+  u8 unused[2]; ///< no code names it
   u8 unk2;
-  u8 unk3;
+  u8 unusedB; ///< no code names it
 };
 
 struct WorldMover {
-  u8 unk00[12];
+  u8 unused[12]; ///< no code names it
   s32 height;
 };
 
@@ -51,18 +51,18 @@ struct SpriteViewerLayer {
 };
 
 struct ViewerSprite {
-  u8 unk00[0x1a];
+  u8 unused[0x1a]; ///< no code names it
   u8 flags;
   u8 unk1b[0x1d];
 };
 
 struct ProbeShape {
-  u8 unk00[4];
+  u8 unused[4]; ///< no code names it
   u8 kind;
 };
 
 struct ProbeObjects {
-  u8 unk00[40];
+  u8 unused[40]; ///< no code names it
   struct ProbeShape *shape;
 };
 
@@ -70,7 +70,7 @@ struct UiGridEntry {
   s16 no;
   u16 x;
   u8 value04;
-  u8 unk05[7];
+  u8 unused[7]; ///< no code names it
   s32 *table0c;
   s32 value10;
   u8 value14;

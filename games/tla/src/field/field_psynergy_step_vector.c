@@ -210,16 +210,7 @@ void BattleEffect_UploadCanvas(void) {
     break;
   case CANVAS_UPLOAD_AND_CLEAR:
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
-    {
-      s32 size = 128;
-      /* FAKEMATCH(pin): the canvas pinned to the r0 it is passed in. */
-      register u8 *buffer asm("r0");
-      s32 (*fill)(void *, s32, u32);
-
-      fill = Iwram_FillWordsEntry;
-      buffer = canvas;
-      fill(buffer, size << 5, 0);
-    }
+    Iwram_FillWords(canvas, CANVAS_SIZE, 0);
     break;
   case CANVAS_UPLOAD_AND_FADE1:
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
@@ -248,8 +239,8 @@ void BattleEffect_UploadCanvas(void) {
 /// nothing is not drawn.
 void BattleEffect_DrawCanvasSprite(void) {
   struct CanvasSpriteWork *work = Ram_HeapSlots->canvasSprite;
-  s32 x = work->x << 16;
-  s32 y = work->y << 16;
+  s32 x = px(work->x);
+  s32 y = px(work->y);
   s32 scaleX = work->scaleX;
   s32 scaleY = work->scaleY;
 
@@ -323,7 +314,7 @@ void BattleEffect_StartCanvasSprite(void) {
   work->depth = 250;
   Iwram_FillWordsEntry(canvas, CANVAS_SIZE, 0);
   Dma_Set(canvas, OBJ_TILES + work->tile * TILE_SIZE,
-          0x84000000 | CANVAS_SIZE / 4, REG_DMA3);
+          DMA_COPY_WORDS(CANVAS_SIZE / 4), REG_DMA3);
 
   // Where each pixel of the canvas sits in its 8x8 tiles.
   map = HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP,
@@ -411,13 +402,13 @@ void Actor_VanishInSparks(s32 objectId) {
     if (spawning != 0) {
       for (i = spawning; i != 0; i--) {
         s32 sparkAngle = Random16();
-        s32 radius = Random16() * 6 + 0xc0000;
+        s32 radius = Random16() * 6 + px(12);
 
         spark = &work->sparks[next];
 
         spark->age = 0;
         spark->x = object->x.fixed;
-        spark->y = object->y.fixed + 0x140000;
+        spark->y = object->y.fixed + px(20);
         spark->z = object->z.fixed;
         Vector_AddPolarOffset(Random16(), sparkAngle, &spark->x);
         next++;
@@ -470,7 +461,7 @@ void Actor_VanishInSparks(s32 objectId) {
       break;
     case 1:
       if (frame < 64) {
-        object->facing -= TRIG_TURN / 16;
+        object->facing -= FACING_STEP;
         object->scaleX = frame << 10;
         if (object->scaleX > Q16_ONE)
           object->scaleX = Q16_ONE;
@@ -527,7 +518,7 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
   scale[1] = Iwram_MulQ16(object->scaleY, sprite->scale);
   SET_VECTOR(position, object->x, offset, object->z + offset);
   position[3] = 0;
-  if (object->x > -0x200000 && object->x < 0x1100000 && object->z > -0x200000 &&
+  if (object->x > -px(32) && object->x < 0x1100000 && object->z > -px(32) &&
       object->z < 0xe00000)
     Render_ApplyProjectedPlacementFar(sprite, position, scale, 0);
 }
@@ -557,7 +548,7 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
     distance = Iwram_Sqrt(ix * ix + iz * iz) << 16;
     if (distance < 0x800000)
       distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
-    if (distance <= 0x80000) {
+    if (distance <= px(8)) {
       FieldParticle_SetPosition(effect, effect->targetX, effect->targetZ);
       return;
     }
@@ -629,22 +620,22 @@ void FieldParticle_SetCallback(struct FieldParticle *effect,
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               s32 z) {
   s32 unit;
-  struct FieldSprite *object;
+  struct Sprite *object;
   volatile u32 zero;
 
   Dma_Fill32Cell(zero, 0, effect, sizeof *effect);
-  object = (struct FieldSprite *)Sprite_CreateFar(kind);
+  object = (struct Sprite *)Sprite_CreateFar(kind);
   effect->object = object;
   if (object != NULL)
-    object->priority = 0;
+    object->image.priority = 0;
   FieldParticle_SetPosition(effect, x, z);
   unit = 0x10000;
-  effect->maxSpeed = 0x20000;
+  effect->maxSpeed = px(2);
   effect->acceleration = effect->scaleY = effect->scaleX = unit;
   effect->originX = x;
   effect->originZ = z;
   // The sprite flags (nextFrame), through a byte pointer: as a field of
-  // struct FieldSprite the origin stores move after it.
+  // struct Sprite the origin stores move after it.
   ((s8 *)effect->object)[26] = 0;
   effect->stopAtTarget = 1;
   effect->limitTurnStep = 1;

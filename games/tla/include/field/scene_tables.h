@@ -74,12 +74,12 @@ struct SceneEntrance {
   s16 y;            ///< pixels
   s16 z;            ///< pixels
   u16 facing;       ///< 1/65536 turns (enum Facing)
-  s16 unused1;
-  s16 cameraLeft;   ///< pixels, -1 for none
-  s16 cameraTop;    ///< pixels, -1 for none
-  s16 cameraRight;  ///< pixels, -1 for none
-  s16 cameraBottom; ///< pixels, -1 for none
-  s16 unused2;
+  s16 unusedAfterFacing;       ///< no code names it
+  s16 cameraLeft;              ///< pixels, -1 for none
+  s16 cameraTop;               ///< pixels, -1 for none
+  s16 cameraRight;             ///< pixels, -1 for none
+  s16 cameraBottom;            ///< pixels, -1 for none
+  s16 unusedAfterCameraBottom; ///< no code names it
 };
 
 /// An exit table's header word: the scene whose exits follow, named by its
@@ -192,10 +192,10 @@ struct Trigger {
 /// A trigger as the field reads it while the scene runs: the target is one
 /// byte.
 struct TriggerView {
-  s32 flags; ///< the low 4 bits are the kind (TRIGGER_KIND_MASK)
-  u8 value;  ///< the target (an actor id or a cell behavior)
-  u8 unused05;
-  s16 condition; ///< as for GameFlag_IsConditionActive
+  s32 flags;           ///< the low 4 bits are the kind (TRIGGER_KIND_MASK)
+  u8 value;            ///< the target (an actor id or a cell behavior)
+  u8 unusedAfterValue; ///< no code names it
+  s16 condition;       ///< as for GameFlag_IsConditionActive
   s32 result;
 };
 
@@ -327,8 +327,15 @@ enum PsynergyPhase {
   PSYNERGY_PHASE_HITS = 6, ///< as Blaze's fire reaches what it is aimed at
   /// Before every other phase, as soon as the Psynergy is chosen and Retreat
   /// has asked its question.
-  PSYNERGY_PHASE_FIRST = 8
+  PSYNERGY_PHASE_FIRST = 8,
+  PSYNERGY_PHASE_ANY = 15 ///< Scene_FindPsynergyTrigger matches every phase
 };
+
+/// The control word of a Psynergy trigger (TRIGGER_PSYNERGY) in the given
+/// phase, as Scene_FindPsynergyTrigger compares it (bits 31..28 phase
+/// | 3..0 kind).
+#define PSYNERGY_TRIGGER(phase) ((u32)(phase) << 28 | TRIGGER_PSYNERGY)
+#define PSYNERGY_TRIGGER_ANY PSYNERGY_TRIGGER(PSYNERGY_PHASE_ANY)
 
 /// A Psynergy trigger on the actor the leader faces.
 #define TRIGGER_PSYNERGY_ON_ACTOR 0x10

@@ -49,7 +49,6 @@
 #include "battle/battle_system.h"
 #include "text/msg_ids.h"
 #include "edition.h"
-#include "field/actor_script_view.h"
 #include "field/objdisp.h"
 #include "system/heap_release.h"
 #include "field/flag_call.h"
@@ -89,7 +88,7 @@ typedef void (*ItemTriggerCallback)(s32 item, s32 actor, s32 slot);
 
 /// The object fields this function sets as an actor's home cell.
 struct SpawnActor {
-  u8 unk00[100];
+  u8 unused[100]; ///< no code names it
   s16 homeX;
   s16 homeZ;
 };
@@ -99,9 +98,9 @@ struct SpawnActor {
 struct SceneRegionEntry {
   s16 id;
   s16 flag;
-  u8 unk04[4];
+  u8 unusedAfterFlag[4]; ///< no code names it
   s32 x;
-  u8 unk0c[4];
+  u8 unusedAfterX[4]; ///< no code names it
   s32 z;
   u8 unk14[4];
 };

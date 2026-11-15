@@ -68,8 +68,6 @@ void MapGrid_SetScreenShake(s32 value0, s32 value1, s32 value2) {
   }
 }
 
-#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-
 /// Waits until both shake amplitudes are below 1/256 pixel, with a 300-frame
 /// limit for a shake whose decay never settles.
 void MapGrid_WaitForShakeToSettle(void) {

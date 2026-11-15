@@ -11,19 +11,12 @@ struct AnimationMetadata *Resource_GetMetadataRecordFar(u32 id) {
   return &gResource_Data012[id];
 }
 
-/// Decompress source into destination and return destination.
-/// source[0-1]: offset to commands; 0 means uncompressed, returning source + 2.
-/// source + 2 contains literal bytes. In the command stream,
-/// read each control byte from its least significant bit:
-/// 1: copy one literal byte.
-/// 0: read two bytes, high then low; zero terminates.
-/// Low 12 bits give distance; high 4 bits + 2 give length, or the next byte +
-/// 18 if those 4 bits are zero. Copy from that distance behind source + 2.
+/// Decompresses an LZ stream from source into destination and returns
+/// destination.
 u8 *Decompress_Lz(const u8 *source, u8 *destination) {
   s32 token;
   u32 length;
   u32 control;
-  u8 byte;
   u8 *start;
   const u8 *base;
   const u8 *command;
@@ -37,10 +30,10 @@ u8 *Decompress_Lz(const u8 *source, u8 *destination) {
     return (u8 *)literal;
   command = source + token;
   control = *command;
-  // A marker bit, shifted down as the flags are read.
   base = literal;
   start = destination;
   command++;
+  // A marker bit, shifted down as the flags are read.
   control |= 0x100;
   // Consume literals or copy runs until the zero token ends the stream.
   for (;;) {
@@ -49,8 +42,7 @@ u8 *Decompress_Lz(const u8 *source, u8 *destination) {
       if (control != 1)
         *destination++ = *literal++;
     } else {
-      byte = *command++;
-      token = byte << 8;
+      token = *command++ << 8;
       token |= *command++;
       if (token == 0)
         break;
@@ -60,7 +52,10 @@ u8 *Decompress_Lz(const u8 *source, u8 *destination) {
         command++;
       }
       length += 2;
-      // A run copies from before the literals' start, not from the output.
+      // A run copies from before the literals' start, not from the output:
+      // a sprite's codec 3 pictures are stored one after another, and each is
+      // packed against the pictures stored before it, as IwramDecompress also
+      // reads them. 441 sprites, Felix's among them, use codec 3.
       copy = base - (token & 0x0fff);
       while (length != 0) {
         *destination++ = *copy++;

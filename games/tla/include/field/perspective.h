@@ -21,13 +21,13 @@ struct WorldMapView {
   u8 fadeStep; ///< MapWork's wideTiles, 0x80 at load
   /// As MapWork: footprints, tileset animations and blend script.
   u8 animationsAndBlend[0xe4 - 0x17];
-  s32 viewX;  ///< the view's left, 16.16 fixed-point pixels
-  s32 viewY;  ///< the view's top, 16.16 fixed-point pixels
-  s32 scaleX; ///< 32 in 16.16 at load
-  s32 scaleY; ///< 64 in 16.16 at load
-  s32 limitX; ///< 16352 in 16.16 at load
-  s32 limitY; ///< 16352 in 16.16 at load
-  u8 unk0fc[4];
+  s32 viewX;               ///< the view's left, 16.16 fixed-point pixels
+  s32 viewY;               ///< the view's top, 16.16 fixed-point pixels
+  s32 scaleX;              ///< 32 in 16.16 at load
+  s32 scaleY;              ///< 64 in 16.16 at load
+  s32 limitX;              ///< 16352 in 16.16 at load
+  s32 limitY;              ///< 16352 in 16.16 at load
+  u8 unusedAfterLimitY[4]; ///< no code names it
   /// Set by WorldMap_StartStillPicture while BG1 shows the drawn map; the
   /// tileset animations are then neither suspended nor resumed.
   s8 animationActive;

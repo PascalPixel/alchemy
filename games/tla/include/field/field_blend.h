@@ -21,8 +21,8 @@ struct FieldBlendWork {
   /// Nonzero arms the next flash a random 51 to 549 frames after each, with
   /// a thunderclap.
   s16 enabled;
-  s16 loud;      ///< nonzero plays the louder thunderclap
-  u8 unk1f86[2]; ///< not named by TLA code
+  s16 loud;              ///< nonzero plays the louder thunderclap
+  u8 unusedAfterLoud[2]; ///< not named by TLA code
 };
 
 STATIC_ASSERT(sizeof(struct FieldBlendWork) == 0x1f88);

@@ -32,7 +32,6 @@ void FieldPsynergy_UpdatePound(void) {
   struct EffectSprite *sprite;
   s32 i;
   s32 base, blue;
-  s32 color;
   s32 red, green;
   s32 *frames;
 
@@ -44,17 +43,13 @@ void FieldPsynergy_UpdatePound(void) {
     frames = &canvas->drawnFrames;
     base = 9;
     base <<= 16;
-    blue = 0x7c00;
+    blue = RGB(0, 0, 31);
   palette:
     red = Trig_Sin((((((u32)*frames >> 1) + i) << 16) + base) >> 5) * 12;
     green = Trig_Sin((((((u32)*frames >> 1) + i) << 16) + base) >> 5) * 12;
     red = (red >> 16) + 16;
     green = (green >> 16) + 16;
-    /* FAKEMATCH(dead): the colour in a once-only block. */
-    do {
-      color = (green << 5) | blue | red;
-      *(u16 *)(0x050003c0 + i * 2) = color;
-    } while (0);
+    Io_Write16((green << 5) | blue | red, &OBJ_PLTT_COLOR(14, i));
     if (++i < 32)
       goto palette;
   }
@@ -115,7 +110,7 @@ void FieldPsynergy_UpdatePound(void) {
   case 4:
     work->object->y.fixed += px(3) / 2;
     if (work->timer == 13)
-      work->state = 999;
+      work->state = FIELD_PSYNERGY_FINISHED;
     break;
   }
   work->timer++;
@@ -135,7 +130,7 @@ void BattleEffect_SinkAndShrinkObject(void) {
     object->scaleX += -0x400;
     object->scaleY += -0x400;
     if (work->timer == 8)
-      work->state = 999;
+      work->state = FIELD_PSYNERGY_FINISHED;
   }
   work->timer++;
 }
@@ -188,7 +183,7 @@ void FieldPsynergy_Pound(void) {
     if (child->groundHeight == 300)
       lift = 0;
     scene->y = child->groundHeight;
-    lift = child->y.fixed - child->groundHeight + 0x200000;
+    lift = child->y.fixed - child->groundHeight + px(32);
   }
   if (scene->enabled != 0) {
     // As x != -1 this splits the -1 and loses the mvns.
@@ -244,8 +239,8 @@ void FieldPsynergy_Pound(void) {
   pos[1] = scene->y;
   pos[2] = scene->z;
   Camera_WorldToScreen(pos);
-  canvas->x = (s16)(pos[0] >> 16);
-  canvas->y = (s16)(pos[2] >> 16);
+  canvas->x = (s16)FIELD_PIXEL(pos[0]);
+  canvas->y = (s16)FIELD_PIXEL(pos[2]);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_GlowDisc),
                       Ram_HeapSlots->battleCanvas);
   canvas->command = CANVAS_UPLOAD;
@@ -254,7 +249,7 @@ void FieldPsynergy_Pound(void) {
   glowEntry = VramCache_FindFreeEntry();
   glowTile = VramCache_Load(glowEntry, size, work);
   glow = &work->glow;
-  EffectSprite_Init(glow, 32, 32, 0xc0000000, glowTile);
+  EffectSprite_Init(glow, 32, 32, OBJ_SIZE_64X64, glowTile);
   glow->oam.priority = 0;
   glow->oam.palette256 = 0;
   glow->oam.palette = 0;
@@ -274,7 +269,7 @@ void FieldPsynergy_Pound(void) {
     sprite = &work->sprites[j];
     speed = Random16() * 18 / 10;
     speed += 0x28000;
-    angle = j * 0x1555 + (Random16() >> 5);
+    angle = j * (TRIG_TURN / 12) + (Random16() >> 5);
     pos[0] = scene->x;
     pos[1] = scene->y;
     pos[2] = scene->z;
@@ -285,7 +280,7 @@ void FieldPsynergy_Pound(void) {
     particle->velocityX = Iwram_MulQ16(Trig_Cos(angle), speed);
     particle->velocityY = Iwram_MulQ16(Trig_Sin(angle), speed);
     particle->timer = -j;
-    EffectSprite_Init(sprite, 8, 8, 0x40000000, starTile);
+    EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, starTile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -307,8 +302,8 @@ void FieldPsynergy_Pound(void) {
   work->timer = 0;
   work->sparkles = 0;
   if (!inReach) {
-    Task_Add(BattleEffect_SinkAndShrinkObject, 0x480);
-    while (work->state != 999)
+    Task_Add(BattleEffect_SinkAndShrinkObject, TASK_PASS_VBLANK);
+    while (work->state != FIELD_PSYNERGY_FINISHED)
       wait(1);
     Task_Remove(BattleEffect_SinkAndShrinkObject);
     for (j = 15; j >= 0; j--)
@@ -318,11 +313,11 @@ void FieldPsynergy_Pound(void) {
     wait(1);
   } else {
     pending = Scene_FindPsynergyTrigger(
-        0x50000005, scene->fieldPsynergy,
+        PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy,
         Scene_SelectPsynergyTarget(scene->fieldPsynergy));
-    Task_Add(FieldPsynergy_UpdatePound, 0x480);
+    Task_Add(FieldPsynergy_UpdatePound, TASK_PASS_VBLANK);
     frame = 0;
-    while (work->state != 999) {
+    while (work->state != FIELD_PSYNERGY_FINISHED) {
       wait(1);
       scene->stage = work->fading;
       scene->frame = frame;

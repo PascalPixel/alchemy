@@ -38,7 +38,7 @@ void WAVE_SCROLL(void) {
   *scroll = *line;
   dma = REG_DMA0;
   dma[5] &= 0xc5ff; // stop the start timing and the repeat
-  dma[5] &= 0x7fff; // stop the channel
+  dma[5] &= ~DMA_ENABLE;
   source = line + 1;
   (void)dma[5];
   Dma_Set(source, (void *)scroll, DMA_HBLANK_HALFWORD_PER_LINE,

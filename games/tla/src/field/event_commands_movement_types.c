@@ -29,8 +29,9 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
     return;
 
   if ((flags & 3) != 0) {
-    if ((flags & 3) == 2 || Actor_IsOutsideAnimation108(object->resource)) {
-      child = Actor_CreateFar(264, object->x, object->y, object->z);
+    if ((flags & 3) == 2 || Actor_IsNotAttachedEffect(object->resource)) {
+      child = Actor_CreateFar(SPRITE_ATTACHED_EFFECT, object->x, object->y,
+                              object->z);
     }
   } else {
     child = object->resource;
@@ -90,9 +91,9 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
 
 /// The SC_CALL routine of movement type 7: clears an actor's sprite flags and
 /// its collision flags, so nothing collides with it.
-s32 Actor_ClearChildAndCollisionFlags(struct Actor *obj) {
-  Actor_SetSpriteFlagsFar((struct Actor *)obj, 0);
-  obj->collisionFlags = 0;
+s32 Actor_ClearChildAndCollisionFlags(void *obj) {
+  Actor_SetSpriteFlagsFar(obj, 0);
+  ((struct Actor *)obj)->collisionFlags = 0;
   return 0;
 }
 
@@ -102,42 +103,46 @@ s32 Actor_ClearChildFlags(struct Actor *obj) {
   return 0;
 }
 
-/// Actor script hook: sets priorityFlags bit 5.
-s32 Actor_SetPriorityBit5(struct ObjectFlags23 *obj) {
-  obj->flags23 |= 0x20;
+/// Actor script hook: the actor takes its cells' priority even where the
+/// ground in front rises.
+s32 Actor_IgnoreRises(struct Actor *actor) {
+  actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   return 0;
 }
 
 /// The SC_CALL routine of movement type 5: follows the watched actor.
-s32 Actor_MoveTowardTarget(struct Actor *object) {
+s32 Actor_MoveTowardTarget(struct Actor *actor) {
+  s32 step;
   struct Actor *target;
   s32 deltaX;
-  s32 deltaY;
-  s32 cellX;
-  s32 cellY;
+  s32 deltaZ;
+  s32 pixelsX;
+  s32 pixelsZ;
   s32 newX;
+  s32 newZ;
   s32 distance;
-  s32 step;
 
-  target = object->watchedActor;
+  target = actor->watchedActor;
   if (target != 0) {
-    deltaX = target->x.fixed - object->x.fixed;
+    // Whole pixels, rounded toward zero as a division by Q16_ONE would.
+    deltaX = target->x.fixed - actor->x.fixed;
     if (deltaX < 0)
-      deltaX += 0xffff;
-    cellX = deltaX >> 16;
-    deltaY = target->z.fixed - object->z.fixed;
-    if (deltaY < 0)
-      deltaY += 0xffff;
-    cellY = deltaY >> 16;
-    distance = Iwram_Sqrt(cellX * cellX + cellY * cellY);
-    step = object->timer;
+      deltaX += Q16_ONE - 1;
+    pixelsX = FIELD_PIXEL(deltaX);
+    deltaZ = target->z.fixed - actor->z.fixed;
+    if (deltaZ < 0)
+      deltaZ += Q16_ONE - 1;
+    pixelsZ = FIELD_PIXEL(deltaZ);
+    distance = Iwram_Sqrt(pixelsX * pixelsX + pixelsZ * pixelsZ);
+    step = actor->timer;
     if (distance >= step) {
-      newX = object->x.fixed + __divsi3(cellX << 20, step);
-      Actor_SetMoveTargetFar(object, newX, object->y.fixed,
-                             object->z.fixed + __divsi3(cellY << 20, step));
-      Actor_SelectAnimationFar(object, 2);
+      // << 20 is 16 pixels in 16.16 per pixel of distance.
+      newX = actor->x.fixed + (s32)((u32)pixelsX << 20) / step;
+      newZ = actor->z.fixed + (s32)((u32)pixelsZ << 20) / step;
+      Actor_SetMoveTargetFar(actor, newX, actor->y.fixed, newZ);
+      Actor_SelectAnimationFar(actor, ANIM_WALK);
     } else {
-      Actor_SelectAnimationFar(object, 1);
+      Actor_SelectAnimationFar(actor, ANIM_STAND);
     }
   }
   return 1;
@@ -145,27 +150,28 @@ s32 Actor_MoveTowardTarget(struct Actor *object) {
 
 // Objects: turn toward the linked target.
 
-/// Per-frame update that turns an actor toward its watched actor, if it has
-/// one, at most 1/16 turn a frame, and stops it facing where it moves.
+/// The SC_CALL routine of movement type 6: turns the actor toward its watched
+/// actor, at most 1/16 turn a frame.
 s32 Actor_TurnTowardWatchedActor(struct Actor *actor) {
-  s32 turn;
-  u16 old;
-  s32 angle;
+  s16 turnStep;
+  u16 currentAngle;
+  s32 targetAngle;
   struct Actor *target;
 
   target = actor->watchedActor;
   if (target != NULL) {
-    actor->steeringFlags = 0xfe & actor->steeringFlags;
-    angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
-                         target->x.fixed - actor->x.fixed);
-    old = actor->facing;
-    turn = (s16)(angle - old);
-    if (turn != 0) {
-      if (turn > TRIG_TURN / 16)
-        turn = TRIG_TURN / 16;
-      if (turn < -(TRIG_TURN / 16))
-        turn = -(TRIG_TURN / 16);
-      actor->facing = old + turn;
+    // Clear ACTOR_FACES_MOTION, so moving does not turn it away again.
+    actor->steeringFlags &= ~ACTOR_FACES_MOTION;
+    targetAngle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
+                               target->x.fixed - actor->x.fixed);
+    currentAngle = actor->facing;
+    turnStep = targetAngle - currentAngle;
+    if (turnStep != 0) {
+      if (turnStep > FACING_STEP)
+        turnStep = FACING_STEP;
+      if (turnStep < -FACING_STEP)
+        turnStep = -FACING_STEP;
+      actor->facing = (currentAngle + turnStep);
     }
   }
   return 1;
@@ -208,22 +214,22 @@ extern const u8 gMovementType_ClearChildScript[];
 /// the actor script to run itself.
 void Actor_SetMovementType(struct Actor *object, s32 kind) {
   switch (kind) {
-  case 1:
+  case MOVEMENT_TYPE_STAND:
     kind = (s32)gMovementType_StandScript;
     break;
-  case 2:
+  case MOVEMENT_TYPE_WANDER:
     kind = (s32)gMovementType_WanderScript;
     break;
-  case 3:
+  case MOVEMENT_TYPE_WANDER_NEAR:
     kind = (s32)gMovementType_WanderNearScript;
     break;
-  case 4:
+  case MOVEMENT_TYPE_WANDER_CLOSE:
     kind = (s32)gMovementType_WanderCloseScript;
     break;
-  case 5:
+  case MOVEMENT_TYPE_FOLLOW_WATCHED:
     kind = (s32)gMovementType_FollowWatchedScript;
     break;
-  case 6:
+  case MOVEMENT_TYPE_FACE_LEADER:
     object->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
     kind = (s32)gMovementType_FaceLeaderScript;
     break;
@@ -268,7 +274,7 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
       continue;
     if (entry == self)
       continue;
-    if (entry->spriteStorageKind != 1)
+    if (entry->spriteStorageKind != ACTOR_SPRITE_ONE)
       continue;
     dy = entry->y.fixed - self->y.fixed;
     if (dy >= 0) {
@@ -342,21 +348,21 @@ s32 Field_TryJumpForward(void) {
     return result;
   if (gMainRoutineWork.movementMode == 3)
     return result;
-  if ((angle + TRIG_TURN / 16) & TRIG_TURN / 8) // not facing a quarter turn
+  if ((angle + FACING_STEP) & TRIG_TURN / 8) // not facing a quarter turn
     return result;
   angle = (angle + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
   positionWords = position;
 again:
   // The middle of the tile in front, then of the tile beyond.
-  position[0] = (leader->x.fixed & 0xfff00000) + 0x80000;
+  position[0] = (leader->x.fixed & FIELD_CELL_MASK) + 0x80000;
   position[1] = leader->y.fixed;
-  position[2] = (leader->z.fixed & 0xfff00000) + 0x80000;
+  position[2] = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
   Vector_AddPolarOffset(px(16), angle, position);
   if (MapGrid_CheckCollisionFar(leader, position) == 1)
     return -1;
-  position[0] = (leader->x.fixed & 0xfff00000) + 0x80000;
+  position[0] = (leader->x.fixed & FIELD_CELL_MASK) + 0x80000;
   position[1] = leader->y.fixed;
-  position[2] = (leader->z.fixed & 0xfff00000) + 0x80000;
+  position[2] = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
   Vector_AddPolarOffset(px(32), angle, position);
   canJump = 0;
   if (MapGrid_BlocksJump(leader, position) == 0 &&
@@ -379,17 +385,17 @@ again:
         continue;
       if (entry == leader)
         continue;
-      if ((position[0] - entry->x.fixed + 0x80000) >> 20 != 0)
+      if (FIELD_CELL(position[0] - entry->x.fixed + px(8)) != 0)
         continue;
-      if ((position[2] - entry->z.fixed + 0x80000) >> 20 != 0)
+      if (FIELD_CELL(position[2] - entry->z.fixed + px(8)) != 0)
         continue;
       delta = position[1] - entry->y.fixed;
-      dy = delta - 0x100000;
+      dy = delta - px(16);
       if (dy >= 0) {
         if (dy <= bound)
           goto hit;
       } else {
-        dy = 0x100000 - delta;
+        dy = px(16) - delta;
         if (dy <= bound) {
         hit:
           canJump = 1;
@@ -404,8 +410,8 @@ again:
   for (i = 0; i < 64; i++, entry++) {
     if (entry->script != NULL && !(entry->priorityFlags & 0x80) &&
         entry != leader && entry->collisionFlags != 0 &&
-        (position[0] - entry->x.fixed + 0x80000) >> 20 == 0 &&
-        (position[2] - entry->z.fixed + 0x80000) >> 20 == 0) {
+        FIELD_CELL(position[0] - entry->x.fixed + px(8)) == 0 &&
+        FIELD_CELL(position[2] - entry->z.fixed + px(8)) == 0) {
       s32 d = position[1] - entry->y.fixed;
       if (d >= 0) {
         if (d <= 0x7ffff)
@@ -444,15 +450,15 @@ again:
     map = Ram_HeapSlots->mapGrid;
     attr = map->groundEffects;
     if (attr & 12) {
-      s32 cellX = leader->x.fixed >> 20;
-      s32 cellZ = leader->z.fixed >> 20;
+      s32 cellX = FIELD_CELL(leader->x.fixed);
+      s32 cellZ = FIELD_CELL(leader->z.fixed);
       struct MapCell *cells;
 
       if (map == NULL)
         cells = gMapGridCellBuffer;
       else
         cells = map->layers[leader->layer & 3].cells;
-      cells += cellX + (cellZ << 7);
+      cells += cellX + cellZ * MAPGRID_SIZE;
       if (cells->attributeB & 16)
         Actor_SpawnWaterSplashFar(leader, (u32)(attr << 28) >> 30);
     }
@@ -509,9 +515,9 @@ s32 Field_ClimbDown(void) {
   s32 position[3];
 
   spriteFlags = 1;
-  gridX = 8 + ((leader->x.fixed >> 16) & 0xfff0);
-  gridY = 8 + ((leader->y.fixed >> 16) & 0xfff0);
-  gridZ = 8 + ((leader->z.fixed >> 16) & 0xfff0);
+  gridX = 8 + (FIELD_PIXEL(leader->x.fixed) & 0xfff0);
+  gridY = 8 + (FIELD_PIXEL(leader->y.fixed) & 0xfff0);
+  gridZ = 8 + (FIELD_PIXEL(leader->z.fixed) & 0xfff0);
   Event_Start();
   if (leader->spriteStorageKind == 1)
     spriteFlags = ((struct ClimbSprite *)leader->sprite)->flags;
@@ -534,19 +540,19 @@ s32 Field_ClimbDown(void) {
     south = cell + 128;
     if (south->collisionCode == 255)
       goto failure;
-    if (MapGrid_GetTerrainHeightFar(leader->layer, gridX << 16, gridZ << 16) <=
-        MapGrid_GetTerrainHeightFar(leader->layer, gridX << 16,
+    if (MapGrid_GetTerrainHeightFar(leader->layer, px(gridX), px(gridZ)) <=
+        MapGrid_GetTerrainHeightFar(leader->layer, px(gridX),
                                     (gridZ + 16) << 16))
       goto failure;
     position[0] = leader->x.fixed;
-    position[1] = leader->y.fixed - 0x100000;
+    position[1] = leader->y.fixed - px(16);
     position[2] = leader->z.fixed;
     if (MapGrid_IsWallAtFar(position) != 0)
       goto failure;
     radius = leader->radius - 2;
     position[0] = leader->x.fixed;
-    position[1] = leader->y.fixed - 0x200000;
-    position[2] = leader->z.fixed + 0x100000;
+    position[1] = leader->y.fixed - px(32);
+    position[2] = leader->z.fixed + px(16);
     entry = Ram_HeapSlots->actors;
     for (i = 0; i < 64; i++, entry++) {
       if (entry->script != NULL && (entry->collisionFlags & 1) &&
@@ -566,11 +572,11 @@ s32 Field_ClimbDown(void) {
     spriteFlags &= 0xfe;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Actor_SelectAnimationFar(leader, 13);
-    Actor_SetMoveTargetFar(leader, gridX << 16, leader->y.fixed - 0x100000,
-                           (gridZ << 16) + 0x100000);
+    Actor_SetMoveTargetFar(leader, px(gridX), leader->y.fixed - px(16),
+                           px(gridZ) + 0x100000);
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     gMainRoutineWork.movementMode = 2;
-    leader->z.fixed = (leader->z.fixed & 0xfff00000) + 0x80000;
+    leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
   } else {
     // Let go of the wall and fall.
     Actor_SelectAnimationFar(leader, 10);
@@ -601,9 +607,9 @@ s32 Field_ClimbUp(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s16 spriteFlags = 1;
   struct MapCell *ground;
-  s32 gridX = 8 + ((leader->x.fixed >> 16) & 0xfff0);
-  s32 gridY = 8 + ((leader->y.fixed >> 16) & ~15);
-  s32 gridZ = 8 + ((leader->z.fixed >> 16) & 0xfff0);
+  s32 gridX = 8 + (FIELD_PIXEL(leader->x.fixed) & 0xfff0);
+  s32 gridY = 8 + (FIELD_PIXEL(leader->y.fixed) & ~15);
+  s32 gridZ = 8 + (FIELD_PIXEL(leader->z.fixed) & 0xfff0);
   s32 position[3];
   s32 result;
 
@@ -626,8 +632,8 @@ s32 Field_ClimbUp(void) {
     north = cell - 128;
     if (north->collisionCode == 255)
       goto failure;
-    if (MapGrid_GetTerrainHeightFar(leader->layer, gridX << 16, gridZ << 16) >=
-        MapGrid_GetTerrainHeightFar(leader->layer, gridX << 16,
+    if (MapGrid_GetTerrainHeightFar(leader->layer, px(gridX), px(gridZ)) >=
+        MapGrid_GetTerrainHeightFar(leader->layer, px(gridX),
                                     (gridZ - 16) << 16))
       goto failure;
     position[0] = leader->x.fixed;
@@ -655,15 +661,15 @@ s32 Field_ClimbUp(void) {
     gMainRoutineWork.movementMode = 2;
     leader->steeringFlags = 1;
     wait(8);
-    leader->z.fixed = (leader->z.fixed & 0xfff00000) + 0x80000;
+    leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
   } else {
     struct Actor *entry;
     s32 radius = leader->radius - 2;
     s32 i;
 
     position[0] = leader->x.fixed;
-    position[1] = leader->y.fixed + 0x100000;
-    position[2] = leader->z.fixed - 0x100000;
+    position[1] = leader->y.fixed + px(16);
+    position[2] = leader->z.fixed - px(16);
     i = 0;
     entry = Ram_HeapSlots->actors;
     for (; i < 64; i++, entry++) {
@@ -677,8 +683,8 @@ s32 Field_ClimbUp(void) {
     // Climb over the top: up 8 pixels and a tile north.
     leader->motionFlags = 0;
     Actor_SelectAnimationFar(leader, 11);
-    Actor_SetMoveTargetFar(leader, gridX << 16, leader->y.fixed + 0x80000,
-                           (gridZ << 16) - 0x100000);
+    Actor_SetMoveTargetFar(leader, px(gridX), leader->y.fixed + px(8),
+                           px(gridZ) - 0x100000);
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     leader->motionFlags = 3;
     leader->groundHeight = leader->y.fixed;
@@ -735,7 +741,7 @@ struct RopeNode *Rope_FindNodeNear(s32 *position) {
 /// mode 3); returns 0 when none is in reach.
 s32 Leader_StepOntoRope(void) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  struct FieldSprite *sprite = leader->sprite;
+  struct Sprite *sprite = leader->sprite;
   struct RopeNode *node = Rope_FindNodeNear(&leader->x.fixed);
   u8 *flags;
 
@@ -752,11 +758,11 @@ s32 Leader_StepOntoRope(void) {
   Actor_WaitForMoveFar(leader);
   leader->timer = leader->motionFlags;
   flags = &leader->priorityFlags;
-  leader->userValue = sprite->nextFrame;
-  ((struct GrabSave *)leader)->priority = sprite->priority;
+  leader->userValue = sprite->flags;
+  ((struct GrabSave *)leader)->priority = sprite->image.priority;
   leader->priorityFlags = *flags & ~1;
-  sprite->nextFrame = 0;
-  sprite->priority = 1;
+  sprite->flags = 0;
+  sprite->image.priority = 1;
   gMainRoutineWork.movementMode = 3;
   return 1;
 }
@@ -765,7 +771,7 @@ s32 Leader_StepOntoRope(void) {
 /// when that cell is open; returns 0 otherwise.
 s32 Leader_StepOffRope(void) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  struct FieldSprite *sprite = leader->sprite;
+  struct Sprite *sprite = leader->sprite;
   s32 position[3];
   u32 angle;
 
@@ -773,13 +779,13 @@ s32 Leader_StepOffRope(void) {
   angle = gRope_KeyHeadings[(gInput.held >> 4) & 15];
   if (angle == 0xffff)
     return 0;
-  leader->x.fixed = (leader->x.fixed & 0xfff00000) + 0x80000;
-  leader->z.fixed = (leader->z.fixed & 0xfff00000) + 0x80000;
+  leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + 0x80000;
+  leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
   Vector_AddPolarOffset(px(16), angle, position);
-  leader->groundHeight = leader->y.fixed - 0x80000;
+  leader->groundHeight = leader->y.fixed - px(8);
   if (MapGrid_GetCellAttributeLowNibbleFar(leader->layer, position[0],
                                            position[2]) ||
       MapGrid_CheckCollisionFar(leader, position))
@@ -788,7 +794,7 @@ s32 Leader_StepOffRope(void) {
   leader->priorityFlags |= 1;
   leader->motionFlags = leader->timer;
   leader->scaleX = Q16_ONE;
-  sprite->nextFrame = leader->userValue;
+  sprite->flags = leader->userValue;
   sprite->rotation = 0;
   Sound_PlayFar(SE_JUMP);
   leader->speedLimit = px(2);
@@ -797,7 +803,7 @@ s32 Leader_StepOffRope(void) {
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);
-  sprite->priority = ((u8 *)leader)[98];
+  sprite->image.priority = ((u8 *)leader)[98];
   gMainRoutineWork.movementMode = 0;
   return 1;
 }
@@ -840,7 +846,7 @@ struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
 s32 Leader_StepOntoTightrope(void) {
   struct MainRoutineWork *work = &gMainRoutineWork;
   struct Actor *leader = Actor_Lookup(work->leaderActorId);
-  struct FieldSprite *sprite = leader->sprite;
+  struct Sprite *sprite = leader->sprite;
   struct TightropeNode *node = Tightrope_FindNodeNear(&leader->x.fixed);
   u8 *flags;
 
@@ -856,12 +862,12 @@ s32 Leader_StepOntoTightrope(void) {
   Actor_SetMoveTargetFar(leader, node->x, node->y, node->z);
   Actor_WaitForMoveFar(leader);
   leader->timer = leader->motionFlags;
-  leader->userValue = sprite->nextFrame;
-  ((struct GrabSave *)leader)->priority = sprite->priority;
+  leader->userValue = sprite->flags;
+  ((struct GrabSave *)leader)->priority = sprite->image.priority;
   flags = &leader->priorityFlags;
   leader->priorityFlags = *flags & ~1;
-  sprite->nextFrame = 0;
-  sprite->priority = 1;
+  sprite->flags = 0;
+  sprite->image.priority = 1;
   work->movementMode = 4;
   return 1;
 }
@@ -870,7 +876,7 @@ s32 Leader_StepOntoTightrope(void) {
 /// that cell is open; returns 0 otherwise.
 s32 Leader_StepOffTightrope(void) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  struct FieldSprite *sprite = leader->sprite;
+  struct Sprite *sprite = leader->sprite;
   s32 position[3];
   u32 angle;
 
@@ -878,13 +884,13 @@ s32 Leader_StepOffTightrope(void) {
   angle = gRope_KeyHeadings[(gInput.held >> 4) & 15];
   if (angle == 0xffff)
     return 0;
-  leader->x.fixed = (leader->x.fixed & 0xfff00000) + 0x80000;
-  leader->z.fixed = (leader->z.fixed & 0xfff00000) + 0x80000;
+  leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + 0x80000;
+  leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
   Vector_AddPolarOffset(px(16), angle, position);
-  leader->groundHeight = leader->y.fixed - 0x80000;
+  leader->groundHeight = leader->y.fixed - px(8);
   if (MapGrid_GetCellAttributeLowNibbleFar(leader->layer, position[0],
                                            position[2]) ||
       MapGrid_CheckCollisionFar(leader, position))
@@ -892,7 +898,7 @@ s32 Leader_StepOffTightrope(void) {
   leader->facing = angle;
   leader->priorityFlags |= 1;
   leader->motionFlags = leader->timer;
-  sprite->nextFrame = leader->userValue;
+  sprite->flags = leader->userValue;
   sprite->rotation = 0;
   Sound_PlayFar(SE_JUMP);
   leader->acceleration = px(1);
@@ -901,7 +907,7 @@ s32 Leader_StepOffTightrope(void) {
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);
-  sprite->priority = ((u8 *)leader)[98];
+  sprite->image.priority = ((u8 *)leader)[98];
   gMainRoutineWork.movementMode = 0;
   return 1;
 }

@@ -1,7 +1,7 @@
 /// @file
-/// Field Psynergy kind 28, of the two abilities whose names are question marks:
-/// its task, its burst of sparkles, and moving the view (opening the whole map
-/// to it, swinging it and giving the bounds back).
+/// The Ring, the field Psynergy of the unused ability "Ma????" (named here for
+/// the ring of light it draws): its task, its burst of sparkles, and moving the
+/// view (opening the whole map to it, swinging it and giving the bounds back).
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
@@ -13,11 +13,12 @@
 #include "battle/battle_unit.h"
 #include "window/window.h"
 #include "system/bg_scroll.h"
+#include "system/io_write.h"
 #include "field/map_grid.h"
 #include "field/view_move.h"
 #include "version.h"
 
-/// The work of field Psynergy 28 (heap slot battleEffect): the sparkle
+/// The Ring's work (heap slot battleEffect): the sparkle
 /// picture, the 64 sparkles that rise round the caster as the ring is drawn,
 /// the motes that circle it after, and what the per-frame task shows.
 struct RingWork {
@@ -36,9 +37,8 @@ struct RingWork {
   u16 phase; ///< the colour cycle's step
 };
 
-/// Task of field Psynergy 28 (its name is question marks): its motes and
-/// colours each frame.
-void FieldPsynergy_UpdateUnnamed28(void) {
+/// Task of the Ring: its motes and colours each frame.
+void FieldPsynergy_UpdateRing(void) {
   struct RingWork *work = Ram_HeapSlots->battleEffect;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -55,14 +55,14 @@ void FieldPsynergy_UpdateUnnamed28(void) {
   s32 red;
 
   pos[0] = actor->x.fixed;
-  pos[1] = actor->y.fixed + 0x100000;
+  pos[1] = actor->y.fixed + px(16);
   pos[2] = actor->z.fixed;
   if (work->orbiting != 0)
     Vector_AddPolarOffset(px(2), -(event->ringFrames << 11), pos);
   Camera_WorldToScreen(pos);
-  x = pos[0] >> 16;
+  x = FIELD_PIXEL(pos[0]);
   gBgScroll[0].x = 64 - x;
-  y = pos[2] >> 16;
+  y = FIELD_PIXEL(pos[2]);
   gBgScroll[0].y = 64 - y;
   BgMap_DrawClipped16x16(x - 64, y - 64);
 
@@ -86,8 +86,8 @@ void FieldPsynergy_UpdateUnnamed28(void) {
       } while (0);
       color = blue | green | red;
 
-      ((u16 *)(BG_PLTT + 15 * 16))[i] = color;
-      ((u16 *)(OBJ_PLTT + 15 * 16))[i] = color;
+      ((u16 *)&BG_PLTT_COLOR(15, 0))[i] = color;
+      ((u16 *)&OBJ_PLTT_COLOR(15, 0))[i] = color;
     }
     if (++i < 16)
       goto cycle;
@@ -106,7 +106,7 @@ void FieldPsynergy_UpdateUnnamed28(void) {
         pos[1] = timer;
         pos[0] = timer;
         Vector_AddPolarOffset(px(54), sprite->angle + TRIG_TURN / 8, pos);
-        SET_POSITION(entry, pos[0], pos[1] + 0x100000, pos[2]);
+        SET_POSITION(entry, pos[0], pos[1] + px(16), pos[2]);
         timer = entry->timer;
       }
       if (timer >= 0) {
@@ -133,11 +133,11 @@ void FieldPsynergy_UpdateUnnamed28(void) {
 
 void Camera_WorldToScreen(s32 *position);
 
-/// Field Psynergy 28: a ring of light is drawn round the caster among rising
-/// sparkles, and motes gather to circle it; FieldPsynergy_UpdateUnnamed28 keeps
-/// it for 600 frames, then cue 0x209b ends it (FieldPsynergy_EndUnnamed28).
+/// The Ring: a ring of light is drawn round the caster among rising
+/// sparkles, and motes gather to circle it; FieldPsynergy_UpdateRing keeps
+/// it for 600 frames, then cue 0x209b ends it (FieldPsynergy_EndRing).
 /// Cast again while it lasts, it only starts the 600 frames again.
-void FieldPsynergy_Unnamed28(void) {
+void FieldPsynergy_Ring(void) {
   struct RingWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct RingWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
@@ -173,7 +173,7 @@ void FieldPsynergy_Unnamed28(void) {
     canvas->mode = angle;
     pos = position;
     pos[0] = scene->mainActor->x.fixed;
-    pos[1] = scene->mainActor->y.fixed + 0x100000;
+    pos[1] = scene->mainActor->y.fixed + px(16);
     pos[2] = scene->mainActor->z.fixed;
     Camera_WorldToScreen(pos);
     {
@@ -184,36 +184,15 @@ void FieldPsynergy_Unnamed28(void) {
       y = *((s16 *)pos + 5);
       gBgScroll[0].y = 64 - y;
     }
-    {
-      s32 (*fill)(void *, s32, u32);
+    IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 0x800, 0);
 
-      /* FAKEMATCH(dead): an empty once-only loop. */
-      do {
-      } while (0);
-      fill = Iwram_FillWordsEntry;
-      fill((void *)BG_SCREEN_BLOCK(4), 0x800, 0);
-    }
-
-    /* FAKEMATCH(dead): the picture's release and allocation in a once-only
-     * block. */
-    do {
-      HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
-      picture = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_CANVAS, 0x2000);
-    } while (0);
-    Iwram_FillWordsEntry(picture, 0x2000, 0);
+    HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
+    picture = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_CANVAS, 0x2000);
+    IWRAM_FILL_WORDS(picture, 0x2000, 0);
 
     wait(1);
-    Dma_Set(picture, (void *)BG_CHAR_BLOCK(0),
-            (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
-    {
-      s32 control;
-
-      control = 0x480;
-      /* FAKEMATCH(dead): an empty once-only loop. */
-      do {
-      } while (0);
-      REG_BG0CNT = control;
-    }
+    Dma_Set(picture, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
+    Io_Write16(0x480, &REG_BG0CNT);
     Decompress_TaggedLz(
         Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade), work);
     entry = VramCache_FindFreeEntry();
@@ -235,7 +214,7 @@ void FieldPsynergy_Unnamed28(void) {
     event->ringTimerRunning = 1;
     event->ringFrames = 999;
     off = 0;
-    Task_Add(FieldPsynergy_UpdateUnnamed28, 0x480);
+    Task_Add(FieldPsynergy_UpdateRing, TASK_PASS_VBLANK);
     wait(1);
     work->cycling = off;
     phase = 0;
@@ -244,10 +223,10 @@ void FieldPsynergy_Unnamed28(void) {
       if (drawing) {
         radius = spin;
         for (i = 0; i < 8; i++) {
-          Canvas_PlotPolarPixel(picture, 0x340000, radius, 243);
-          Canvas_PlotPolarPixel(picture, 0x350000, radius, 247);
-          Canvas_PlotPolarPixel(picture, 0x360000, radius, 251);
-          Canvas_PlotPolarPixel(picture, 0x370000, radius, 255);
+          Canvas_PlotPolarPixel(picture, px(52), radius, 243);
+          Canvas_PlotPolarPixel(picture, px(53), radius, 247);
+          Canvas_PlotPolarPixel(picture, px(54), radius, 251);
+          Canvas_PlotPolarPixel(picture, px(55), radius, 255);
           radius += 128;
         }
         canvas->command = CANVAS_UPLOAD_TO_BG;
@@ -257,7 +236,7 @@ void FieldPsynergy_Unnamed28(void) {
         if (mote->timer == 0) {
           s32 heading = angle + ((i & 1) << 15);
 
-          SET_POSITION(mote, caster->x.fixed, caster->y.fixed + 0x100000,
+          SET_POSITION(mote, caster->x.fixed, caster->y.fixed + px(16),
                        caster->z.fixed);
           Vector_AddPolarOffset(px(55), heading, &mote->x);
           Vector_AddPolarOffset(Random16() * 6, Random16(), &mote->x);
@@ -295,17 +274,16 @@ void FieldPsynergy_Unnamed28(void) {
       case 2:
         repeat = 0;
         if (timer == 16)
-          phase = 999;
+          phase = FIELD_PSYNERGY_FINISHED;
         break;
       }
       wait(1);
       timer++;
-    } while (phase != 999);
+    } while (phase != FIELD_PSYNERGY_FINISHED);
 
     Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_RingArcs),
                         picture);
-    Dma_Set(picture, (void *)BG_CHAR_BLOCK(0),
-            (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
+    Dma_Set(picture, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
     Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Data1ED), work);
     {
       s32 heading;
@@ -320,7 +298,7 @@ void FieldPsynergy_Unnamed28(void) {
       for (i = 0, mote = work->motes; i < 32; i++) {
         heading = Random16();
         sprite = &work->sprites[i];
-        EffectSprite_Init(sprite, 8, 8, 0x40000000, moteTile);
+        EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, moteTile);
         sprite->depth = 240;
         sprite->oam.priority = 0;
         sprite->oam.palette256 = 0;
@@ -328,7 +306,7 @@ void FieldPsynergy_Unnamed28(void) {
         sprite->angle = heading + TRIG_TURN / 4;
         place = position;
         place[0] = scene->mainActor->x.fixed;
-        place[1] = scene->mainActor->y.fixed + 0x100000;
+        place[1] = scene->mainActor->y.fixed + px(16);
         place[2] = scene->mainActor->z.fixed;
         Camera_WorldToScreen(place);
         Vector_AddPolarOffset(px(64), heading, place);
@@ -345,7 +323,7 @@ void FieldPsynergy_Unnamed28(void) {
   event->ringActive = 1;
   event->ringTimerRunning = 1;
   event->ringFrames = 600;
-  Task_Add(FieldPsynergy_UpdateUnnamed28, 0x480);
+  Task_Add(FieldPsynergy_UpdateRing, TASK_PASS_VBLANK);
 }
 
 /// One mote: a position and a velocity (BattleEffect_IntegrateVector3's vector)
@@ -360,23 +338,23 @@ struct BurstMote {
   s32 timer;
 };
 
-/// The work of the sparkle burst field Psynergy 28 ends with (heap slot
+/// The work of the sparkle burst the Ring ends with (heap slot
 /// battleEffect): the sparkle picture, 64 sparkles and their motes.
 struct SparkleBurstWork {
-  u8 unk0000[0x1000];
+  u8 unused[0x1000]; ///< no code names it
   struct EffectSprite sprites[64];
   struct BurstMote motes[64];
-  u8 unk2100[0x880];
+  u8 unusedAfterMotes[0x880]; ///< no code names it
   s16 resource;
 };
 
-/// The burst of 64 sparkles that FieldPsynergy_UpdateUnnamed28's effect ends
+/// The burst of 64 sparkles that FieldPsynergy_UpdateRing's effect ends
 /// with: once the event work asks for it, it plays sound 167, fills the tiles
 /// at 0x06002000, reloads the window graphics, loads the sparkle picture
 /// (FieldEffect_SparkleFade) and scatters the sparkles around the current
 /// owner, starting a quarter of them a frame later than the last, then moves
 /// and animates them for 40 frames before releasing the effect.
-void FieldPsynergy_EndUnnamed28(void) {
+void FieldPsynergy_EndRing(void) {
   struct SparkleBurstWork *work = Ram_HeapSlots->battleEffect;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -393,28 +371,12 @@ void FieldPsynergy_EndUnnamed28(void) {
   event->ringActive = 0;
   event->ringTimerRunning = 0;
   event->ringFrames = 0;
-  Task_Remove(FieldPsynergy_UpdateUnnamed28);
+  Task_Remove(FieldPsynergy_UpdateRing);
   wait(1);
-  /* FAKEMATCH(dead): a once-only block. */
-  do {
-    Sound_PlayFar(SE_MAP_TRANSITION);
-    {
-      s32 (*fill)(void *, s32, u32);
-      // A once-only block: the fill's entry loads ahead of the size (as a
-      // direct Iwram_FillWords call, 2 of 226 differ).
-      do {
-      } while (0);
-      fill = Iwram_FillWordsEntry;
-      fill((void *)BG_SCREEN_BLOCK(4), 0x500, 0xf000f000);
-    }
-    Window_LoadGraphics();
-  } while (0);
-  {
-    /* FAKEMATCH(temporary): the control word in a local of its own. */
-    s32 control = 0x400;
-
-    REG_BG0CNT = control;
-  }
+  Sound_PlayFar(SE_MAP_TRANSITION);
+  IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 0x500, 0xf000f000);
+  Window_LoadGraphics();
+  Io_Write16(0x400, &REG_BG0CNT);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
   gCpuLoadDisplayEnabled = 1;
@@ -429,13 +391,12 @@ void FieldPsynergy_EndUnnamed28(void) {
   sprite = work->sprites;
   for (; i < 64; i++, sprite++, mote++) {
     angle = Random16();
-    SET_POSITION(mote, actor->x.fixed, actor->y.fixed + 0x100000,
-                 actor->z.fixed);
-    Vector_AddPolarOffset(Random16() * 4 + 0x340000, angle, &mote->x);
+    SET_POSITION(mote, actor->x.fixed, actor->y.fixed + px(16), actor->z.fixed);
+    Vector_AddPolarOffset(Random16() * 4 + px(52), angle, &mote->x);
     mote->vx = 0;
     mote->vy = -0x40000;
     mote->vz = 0;
-    Vector_AddPolarOffset(Random16() * 3 + 0x20000, angle, &mote->vx);
+    Vector_AddPolarOffset(Random16() * 3 + px(2), angle, &mote->vx);
     mote->timer = -i / 4;
     EffectSprite_Init(sprite, 4, 4, 0, tile);
     sprite->oam.palette256 = 1;
@@ -489,8 +450,8 @@ void ViewMove_Start(s32 direction) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *center = event->camera;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  s32 viewX = map->viewX >> 16;
-  s32 viewZ = map->viewZ >> 16;
+  s32 viewX = FIELD_PIXEL(map->viewX);
+  s32 viewZ = FIELD_PIXEL(map->viewZ);
   struct ViewMoveWork *work = Ram_HeapSlots->battleEffect;
   struct MapBounds bounds;
   s32 minX;
@@ -565,10 +526,9 @@ void ViewMove_Start(s32 direction) {
   Actor_StartIdleFar(center);
 }
 
-/* VIEW(f0e82cc): macro ABS as ABS__f0e82cc; another part or header has another
- * definition; tried with the definition the rest of the object has,
- * ViewMove_Swing moves: 8 of 117 instructions in tla-ja. */
-#define ABS__f0e82cc(x) ((x) >= 0 ? (x) : -(x))
+/// The swing's size at an angle: its sine without the sign.
+#define SWING_SINE(angle)                                                      \
+  (Trig_Sin(angle) >= 0 ? Trig_Sin(angle) : -Trig_Sin(angle))
 
 /// Swings the view centre away from where ViewMove_Start found it, along the
 /// asked directions, by amplitude times the sine of the phase. The swing goes
@@ -593,14 +553,11 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
   if (direction & VIEW_MOVE_X) {
     edge = work->edgeX;
     if (edge == -1)
-      x = work->x +
-          Iwram_MulQ16(ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      x = work->x + Iwram_MulQ16(SWING_SINE(phase << 12), amplitude);
     else if (edge == 1)
-      x = work->x +
-          Iwram_MulQ16(-ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      x = work->x + Iwram_MulQ16(-SWING_SINE(phase << 12), amplitude);
     else
-      x = work->x +
-          Iwram_MulQ16(ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      x = work->x + Iwram_MulQ16(SWING_SINE(phase << 12), amplitude);
   } else {
     x = work->x;
   }
@@ -608,14 +565,11 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
   if (direction & VIEW_MOVE_Z) {
     edge = work->edgeZ;
     if (edge == -1)
-      z = work->z +
-          Iwram_MulQ16(ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      z = work->z + Iwram_MulQ16(SWING_SINE(phase << 12), amplitude);
     else if (edge == 1)
-      z = work->z +
-          Iwram_MulQ16(-ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      z = work->z + Iwram_MulQ16(-SWING_SINE(phase << 12), amplitude);
     else
-      z = work->z +
-          Iwram_MulQ16(ABS__f0e82cc(Trig_Sin(phase << 12)), amplitude);
+      z = work->z + Iwram_MulQ16(SWING_SINE(phase << 12), amplitude);
   } else {
     z = work->z;
   }
@@ -650,7 +604,7 @@ void ViewMove_End(void) {
 /// The actors near the caster whose sprite value a view move saves and gives
 /// back (heap slot battleEffect): up to eight, with each one's value.
 struct FxGroup {
-  u8 unk00[32];
+  u8 unused[32]; ///< no code names it
   struct Actor *objects[8];
   u16 values[8];
   s32 count;
@@ -697,4 +651,4 @@ void ViewMove_RestoreNearbySprites(void) {
     ((union FxSprite *)group->objects[i]->sprite)->halves[9] = group->values[i];
 }
 #undef VIEW_EDGE_MARGIN
-#undef ABS__f0e82cc
+#undef SWING_SINE

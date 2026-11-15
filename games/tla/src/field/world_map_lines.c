@@ -10,6 +10,7 @@
 #include "fixed_math.h"
 #include "system/mul_q16.h"
 #include "system/frame.h"
+#include "system/vector3.h"
 
 struct FarCallVeneer {
   u32 stub;
@@ -32,14 +33,6 @@ struct FarCallRuntimeTrigView {
   struct FarCallVeneer squareRoots[2];
   struct FarCallTrigVeneer sin;
   struct FarCallTrigVeneer cos;
-};
-
-/* VIEW(world_map_lines): tag struct Vector3 as struct Vector3__world_map_lines;
- * vector3.h has another definition. */
-struct Vector3__world_map_lines {
-  s32 x;
-  s32 y;
-  s32 z;
 };
 
 /// One end of a World Map line as it is scanned: its position, its step and
@@ -74,8 +67,7 @@ s32 Transform_CallInThumb(s32 x, s32 y);
 /// terms, whose rotation terms stay cached while the yaw (gScanlineAngle) is
 /// unchanged; affine receives each line's parameters twice, for BG2 and then
 /// BG3, as the HBlank DMA writes both.
-void Transform_UpdateVertices(struct Vector3__world_map_lines *eye,
-                              struct Vector3__world_map_lines *target,
+void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
                               struct ScanVertex *line,
                               struct BgAffine *affine) {
   u32 angle;
@@ -100,12 +92,11 @@ void Transform_UpdateVertices(struct Vector3__world_map_lines *eye,
       /* FAKEMATCH(pin): x held in r0 from its shift. */
       register s32 x __asm__("r0") = targetDeltaX >> 4;
       s32 y = depth >> 4;
-      /* FAKEMATCH(pin): the target held in ip, where the stub
-       * Transform_CallInThumb reads it. */
+      // Transform_CallInThumb jumps to the target it finds in ip; the asm
+      // keeps ip set for the call, which C cannot say.
       register void *entry __asm__("ip") = table->atan2.target;
-      /* FAKEMATCH(barrier): an empty asm reading the arguments and the target.
-       */
-      __asm__("" : : "r"(x), "r"(y), "r"(entry));
+
+      __asm__("" : : "r"(entry));
       angle = (u16)Transform_CallInThumb(x, y);
     }
   }

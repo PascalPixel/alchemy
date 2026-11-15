@@ -69,7 +69,7 @@ void Scoop_Update(void) {
       if (work->timer == 25)
         work->other->scaleX = 0;
       if (work->timer == 50)
-        work->phase = 999;
+        work->phase = FIELD_PSYNERGY_FINISHED;
       break;
     }
     phase = &work->phase;
@@ -112,7 +112,7 @@ void Scoop_Update(void) {
       if (work->timer == 70)
         work->other->scaleX = 0;
       if (work->timer == 90)
-        work->phase = 999;
+        work->phase = FIELD_PSYNERGY_FINISHED;
       break;
     }
     if (work->phase == 2) {
@@ -144,7 +144,7 @@ void Scoop_Update(void) {
       break;
     case 2:
       if (work->timer == 20)
-        work->phase = 999;
+        work->phase = FIELD_PSYNERGY_FINISHED;
       break;
     }
   } else {
@@ -162,7 +162,7 @@ void Scoop_Update(void) {
       break;
     case 2:
       if (work->timer == 30)
-        work->phase = 999;
+        work->phase = FIELD_PSYNERGY_FINISHED;
       break;
     }
     particle = work->particles;
@@ -212,8 +212,9 @@ void FieldPsynergy_Scoop(void) {
   s32 i;
 
   if (event->mode != ACTOR_SYSTEM_WORLD_MAP) {
-    SET_POSITION(scene, (caster->x.fixed & 0xfff00000) + 0x80000,
-                 caster->y.fixed, (caster->z.fixed & 0xfff00000) + 0x80000);
+    SET_POSITION(scene, (caster->x.fixed & FIELD_CELL_MASK) + 0x80000,
+                 caster->y.fixed,
+                 (caster->z.fixed & FIELD_CELL_MASK) + 0x80000);
     Vector_AddPolarOffset(px(16), scene->angle, &scene->x);
   }
   FieldPsynergy_FadeToCastColor();
@@ -249,7 +250,7 @@ void FieldPsynergy_Scoop(void) {
   if (!(event->unkd4c & 1))
     Func_080dba5c();
   Sound_PlayFar(SE_ITEM_BREAK);
-  FieldPsynergy_GrowFromCaster(object, scene->x, scene->y + 0x200000, scene->z);
+  FieldPsynergy_GrowFromCaster(object, scene->x, scene->y + px(32), scene->z);
   wait(10);
   Actor_SelectAnimationFar(object, 1);
   wait(15);
@@ -310,7 +311,7 @@ void FieldPsynergy_Scoop(void) {
     particle = work->particles;
     for (; i < 64; i++, particle++) {
       sprite = &work->sprites[i];
-      EffectSprite_Init(sprite, 8, 8, 0x40000000, particleTile);
+      EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, particleTile);
       sprite->oam.palette256 = 1;
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(other);
@@ -337,7 +338,7 @@ void FieldPsynergy_Scoop(void) {
     particle = work->particles;
     for (; i < 64; i++, particle++) {
       sprite = &work->sprites[i];
-      EffectSprite_Init(sprite, 8, 8, 0x40000000, particleTile);
+      EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, particleTile);
       sprite->oam.palette256 = 1;
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(other);
@@ -365,8 +366,8 @@ void FieldPsynergy_Scoop(void) {
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(object);
       sprite->depth = BattleEffect_GetObjectDepth(object) - 1;
-      SET_POSITION(particle, scene->x, scene->y + 0x280000, scene->z);
-      Vector_AddPolarOffset(Random16() * 4 + 0x30000, Random16(), &particle->x);
+      SET_POSITION(particle, scene->x, scene->y + px(40), scene->z);
+      Vector_AddPolarOffset(Random16() * 4 + px(3), Random16(), &particle->x);
       particle->timer = -i * 3 / 4;
       sprite++;
       particle++;
@@ -379,13 +380,13 @@ void FieldPsynergy_Scoop(void) {
     pictureTile = VramCache_Load(pictureEntry, 0x400, NULL);
     work->pictureTile = pictureTile;
     sprite = &work->pictureSprite;
-    EffectSprite_Init(sprite, 16, 0, 0x80000000, pictureTile);
+    EffectSprite_Init(sprite, 16, 0, OBJ_SIZE_32X32, pictureTile);
     sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor);
     sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     pos[0] = object->x.fixed;
-    pos[1] = object->y.fixed + 0x200000;
+    pos[1] = object->y.fixed + px(32);
     pos[2] = object->z.fixed;
     Camera_WorldToScreen(pos);
     sprite->x = pos[0];
@@ -408,7 +409,7 @@ void FieldPsynergy_Scoop(void) {
   }
   if (work->mode == 1) {
     frame = 0;
-    while (work->phase != 999) {
+    while (work->phase != FIELD_PSYNERGY_FINISHED) {
       if (frame == 24)
         Scoop_DigUpItem();
       wait(1);
@@ -416,25 +417,19 @@ void FieldPsynergy_Scoop(void) {
     }
   } else {
     pending = Scene_FindPsynergyTrigger(
-        0x50000005, scene->fieldPsynergy,
+        PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy,
         Scene_SelectPsynergyTarget(scene->fieldPsynergy));
     frame = 0;
-    while (work->phase != 999) {
+    while (work->phase != FIELD_PSYNERGY_FINISHED) {
       stage = 0;
       wait(1);
       if (frame == 30)
         stage = 1;
       if (frame == 50)
         stage = 2;
-      {
-        /* FAKEMATCH(barrier): frame copied through an empty asm. */
-        s32 frameCopy;
-
-        asm("" : "=r"(frameCopy) : "0"(frame));
-        scene->stage = stage;
-        scene->frame = frame;
-        Field_RunPsynergyEvent(pending, stage, frameCopy);
-      }
+      scene->stage = stage;
+      scene->frame = frame;
+      Field_RunPsynergyEvent(pending, stage, frame);
       frame++;
     }
     Field_RunPsynergyEvent(pending, 999, frame);

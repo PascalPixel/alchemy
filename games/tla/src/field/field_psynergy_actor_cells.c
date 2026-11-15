@@ -6,17 +6,6 @@
 #include "field_psynergy_internal.h"
 #include "stddef.h"
 
-/* VIEW(f0eabd0): tag struct SwitchCell as struct SwitchCell__f0eabd0; field.h
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy_actor_cells.c:48: structure has no member
- * named `flags'. */
-struct SwitchCell__f0eabd0 {
-  u8 unk00[2];
-  u8 block;
-  u8 flags;
-};
-
 /// Makes each listed actor (ids, ended by 0xffff) a block in the map: its
 /// cell's shape is tagged 32 pixels above the ground, so the party can stand
 /// on it, its cell is marked raised (the old mark kept in the actor) and layer
@@ -24,7 +13,7 @@ struct SwitchCell__f0eabd0 {
 /// as they start, for the blocks Move pushes.
 void Actor_PlaceBlocks(u16 *actors) {
   struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapGrid;
-  struct SwitchCell__f0eabd0 *blocks = map->layers[2].cells;
+  struct MapCell *blocks = map->layers[2].cells;
   u8 *grid = gMapShapeGrid;
   struct Actor *leader;
   s32 height;
@@ -37,12 +26,12 @@ void Actor_PlaceBlocks(u16 *actors) {
                                             object->z.fixed) >>
                 19;
     s32 slot = Actor_GetCellIndex(object);
-    struct SwitchCell__f0eabd0 *cells = map->layers[object->layer].cells;
+    struct MapCell *cells = map->layers[object->layer].cells;
     // The row's address as an integer sum, index first: &grid[row] adds the
     // grid first.
     u8 *shapes =
         (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
-    struct SwitchCell__f0eabd0 *cell;
+    struct MapCell *cell;
     s32 tag;
     u8 flags;
 
@@ -52,13 +41,13 @@ void Actor_PlaceBlocks(u16 *actors) {
     shapes += slot;
     tag = MapCollision_FindOrAddTag(object->layer, key, level + 4);
     cell = &cells[slot];
-    flags = cell->flags;
+    flags = cell->attributeB;
     object->riseBaseY = flags;
-    cell->flags = flags | 0x80;
+    cell->attributeB = flags | 0x80;
     *shapes = tag;
     // Reused for the block in layer 2's table.
     cell = &blocks[slot];
-    cell->block = 0xff;
+    cell->collisionCode = 0xff;
   }
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   height = MapGrid_GetTerrainHeightFar(leader->layer, leader->x.fixed,
@@ -94,8 +83,8 @@ void Actor_LiftTargetBlock(u16 *actors) {
       struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapGrid;
       s32 zero = 0;
       u8 *grid = gMapShapeGrid;
-      struct SwitchCell__f0eabd0 *cells = map->layers[target->layer].cells;
-      struct SwitchCell__f0eabd0 *blocks = map->layers[2].cells;
+      struct MapCell *cells = map->layers[target->layer].cells;
+      struct MapCell *blocks = map->layers[2].cells;
       u8 *shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
       u32 key = MapGrid_GetTerrainKindFar(target->layer, target->x.fixed,
                                           target->z.fixed);
@@ -109,16 +98,12 @@ void Actor_LiftTargetBlock(u16 *actors) {
       cells += slot;
       blocks += slot;
       ((struct ShapeCell *)shapes)->shape = tag;
-      cells->flags = target->riseBaseY;
-      blocks->block = zero;
+      cells->attributeB = target->riseBaseY;
+      blocks->collisionCode = zero;
       *(struct Actor **)(event + 0xcbc) = target;
     }
   }
 }
-
-// Only for the compiler: see the FAKEMATCH tag in Actor_PlaceMovedBlock.
-/// The actor's x.
-static inline s32 ActorX(struct Actor *actor) { return actor->x.fixed; }
 
 /// Puts the block Actor_LiftTargetBlock remembered back into the map at the
 /// cell it has moved to, as Actor_PlaceBlocks places each.
@@ -131,9 +116,8 @@ void Actor_PlaceMovedBlock(void) {
      * the read. */
     s32 offset = offsetof(struct RestoreMap, layers[target->layer].cells);
     u8 *grid = gMapShapeGrid;
-    struct SwitchCell__f0eabd0 *cells =
-        *(struct SwitchCell__f0eabd0 **)((u8 *)map + offset);
-    struct SwitchCell__f0eabd0 *blocks = map->layers[2].cells;
+    struct MapCell *cells = *(struct MapCell **)((u8 *)map + offset);
+    struct MapCell *blocks = map->layers[2].cells;
     s32 index = ((s32)cells - (s32)Ram_MapCellBuffer) >> 2;
     u8 *shapes;
     u32 key;
@@ -148,19 +132,21 @@ void Actor_PlaceMovedBlock(void) {
     shapes = &grid[index];
     key = MapGrid_GetTerrainKindFar(target->layer, target->x.fixed,
                                     target->z.fixed);
-    /* FAKEMATCH(wrapper): x read through ActorX for the height call. */
-    level = MapGrid_GetTerrainHeightFar(target->layer, ActorX(target),
-                                        target->z.fixed);
+    {
+      s32 x = target->x.fixed;
+
+      level = MapGrid_GetTerrainHeightFar(target->layer, x, target->z.fixed);
+    }
     slot = Actor_GetCellIndex(target);
     shapes += slot;
     tag = MapCollision_FindOrAddTag(target->layer, key, (level >> 19) + 4);
     ((struct ShapeCell *)shapes)->shape = tag;
     cells += slot;
-    flags = cells->flags;
+    flags = cells->attributeB;
     target->riseBaseY = flags;
-    cells->flags = flags | 0x80;
+    cells->attributeB = flags | 0x80;
     blocks += slot;
-    blocks->block = 0xff;
+    blocks->collisionCode = 0xff;
   }
 }
 
@@ -201,13 +187,13 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 checkY) {
     struct Actor *object = event->actors[i];
 
     if (checkY) {
-      if (position[0] >> 20 == object->x.fixed >> 20 &&
+      if (FIELD_CELL(position[0]) == FIELD_CELL(object->x.fixed) &&
           position[1] / Q16_ONE == object->y.fixed / Q16_ONE &&
-          position[2] >> 20 == object->z.fixed >> 20)
+          FIELD_CELL(position[2]) == FIELD_CELL(object->z.fixed))
         return object;
     } else {
-      if (position[0] >> 20 == object->x.fixed >> 20 &&
-          position[2] >> 20 == object->z.fixed >> 20)
+      if (FIELD_CELL(position[0]) == FIELD_CELL(object->x.fixed) &&
+          FIELD_CELL(position[2]) == FIELD_CELL(object->z.fixed))
         return object;
     }
   }
@@ -320,13 +306,13 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
     s32 turnedX = Iwram_MulQ16(cos, pivotX) - Iwram_MulQ16(sin, pivotY);
     s32 turnedY = Iwram_MulQ16(cos, pivotY) + Iwram_MulQ16(sin, pivotX);
 
-    left = width / 2 + ((turnedX - cornerX) >> 16);
-    top = height / 2 + ((turnedY - cornerY) >> 16);
+    left = width / 2 + FIELD_PIXEL(turnedX - cornerX);
+    top = height / 2 + FIELD_PIXEL(turnedY - cornerY);
   }
 
   // The box on screen; skip it when none of it shows.
-  screenX = (x >> 16) - left;
-  screenY = (y >> 16) - top;
+  screenX = FIELD_PIXEL(x) - left;
+  screenY = FIELD_PIXEL(y) - top;
   if (screenX + width < 0 || screenX > 239 || screenY + height <= 0 ||
       screenY > 159)
     return;
@@ -339,7 +325,7 @@ void EffectSprite_Draw(struct EffectSprite *sprite) {
 }
 
 struct ScreenSprite {
-  u8 unk00[0xc];
+  u8 unused[0xc]; ///< no code names it
   s32 x;
   s32 y;
   u8 unk14[0x14];

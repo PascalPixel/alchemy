@@ -57,4 +57,8 @@
 #include "field/field_psynergy_work.h"
 #include "field/scene_tables.h"
 
+/// The trailing copies of a moving Djinni or of Force's hand are drawn a little
+/// smaller than what they follow.
+#define AFTERIMAGE_SCALE (Q16_ONE * 15 / 16)
+
 #endif // ALCHEMY_EVENT_COMMANDS_INTERNAL_H

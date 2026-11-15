@@ -28,11 +28,11 @@
 #include "system/frame.h"
 
 /* VIEW(psynergy): routine Camera_WorldToScreen as void Camera_WorldToScreen(s32
- * *position); field/event_commands.h has void
- * Camera_WorldToScreen(struct EffectVector *position); tried as the
- * definition's void Camera_WorldToScreen(struct EffectVector *position), which
- * the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy_sand.c: conflicting types for
+ * *position); field/event_commands.h has void Camera_WorldToScreen(struct
+ * EffectVector *position); tried as the definition's void
+ * Camera_WorldToScreen(struct EffectVector *position), which the object already
+ * declares, it does not compile in tla-ja:
+ * games/tla/src/field/field_psynergy_sand.c:136: conflicting types for
  * `Camera_WorldToScreen'. */
 void Camera_WorldToScreen__psynergy(s32 *position) __asm__(
     "Camera_WorldToScreen");
@@ -95,7 +95,7 @@ void BattleEffect_EndX(void) {
 struct CycloneWork {
   u8 particleBurst[0x1b08];
   s16 count;
-  u8 unk1b0a[2];
+  u8 unusedAfterCount[2]; ///< no code names it
   struct Actor *follower; ///< the actor carried with the leader
   s16 state;              ///< the stage of the ride; 999 once it ends
   s16 timer;              ///< frames into the ride
@@ -132,7 +132,7 @@ void Cyclone_CarryLeader(void) {
     }
     break;
   case 1:
-    work->state = 999;
+    work->state = FIELD_PSYNERGY_FINISHED;
     break;
   }
   work->timer++;
@@ -168,7 +168,7 @@ void Cyclone_LiftLeader(void) {
     owner->y.fixed -= 0x6666;
     if (effect->childOption == 1) {
       if (timer == 40)
-        work->state = 999;
+        work->state = FIELD_PSYNERGY_FINISHED;
     } else if (timer == 40) {
       work->state++;
       work->timer = -1;
@@ -177,7 +177,7 @@ void Cyclone_LiftLeader(void) {
   case 2:
     owner->y.fixed += 0x3cccc;
     if (timer == 40)
-      work->state = 999;
+      work->state = FIELD_PSYNERGY_FINISHED;
     break;
   }
   work->timer++;
@@ -203,7 +203,7 @@ void FieldPsynergy_Cyclone(void) {
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct Actor *owner = effect->mainActor;
   s16 *points = &event->psynergyCells[0];
-  s32 spread = 0x40000;
+  s32 spread = px(4);
   s32 step = 0xe000;
   struct CanvasSpriteWork *canvas;
   struct Actor *ring;
@@ -222,14 +222,11 @@ void FieldPsynergy_Cyclone(void) {
   BattleEffect_SetObjectUpdateMode(effect->mainActor, 0);
   owner->update = BattleEffect_SpinObject;
   owner->timer = owner->facing;
-  palette = (u16 *)(OBJ_PLTT + 14 * 16);
-  blue = 31 << 10;
+  palette = (u16 *)&OBJ_PLTT_COLOR(14, 0);
+  blue = RGB_LEVEL_MAX << 10;
   for (j = 0; j < 16; j++) {
     c = j + 16;
-    /* FAKEMATCH(dead): an empty once-only loop. */
-    do {
-    } while (0);
-    *palette++ = (c << 5) | blue | c;
+    Io_Write16((c << 5) | blue | c, palette++);
     /* FAKEMATCH(barrier): an empty asm. */
     asm("");
   }
@@ -239,19 +236,19 @@ void FieldPsynergy_Cyclone(void) {
   pos[1] = effect->mainActor->y.fixed;
   pos[2] = effect->mainActor->z.fixed;
   Camera_WorldToScreen(pos);
-  canvas->x = (s16)(pos[0] >> 16);
-  canvas->y = (s16)(pos[2] >> 16);
+  canvas->x = (s16)FIELD_PIXEL(pos[0]);
+  canvas->y = (s16)FIELD_PIXEL(pos[2]);
   canvas->priority = 1;
   canvas->depth = 240;
   canvas->mode = CANVAS_SPRITE_KEPT;
   canvas->scaleX = Q16_ONE * 3 / 2;
   canvas->scaleY = Q16_ONE * 3 / 2;
-  EffectSprite_Init(&canvas->sprite, 32, 32, 0xc0000000, canvas->tile);
+  EffectSprite_Init(&canvas->sprite, 32, 32, OBJ_SIZE_64X64, canvas->tile);
   canvas->sprite.oam.palette256 = 1;
   canvas->sprite.oam.palette = 0;
   offsets = Ram_HeapSlots->canvasMap;
   pixels = Ram_HeapSlots->battleCanvas;
-  ring = Actor_Spawn(280, owner->x.fixed, owner->y.fixed - 0x60000,
+  ring = Actor_Spawn(SPRITE_WHIRLWIND, owner->x.fixed, owner->y.fixed - px(6),
                      owner->z.fixed);
   Actor_SelectAnimationFar(ring, 2);
   ring->scaleX = Q16_ONE * 3 / 2;
@@ -267,10 +264,10 @@ void FieldPsynergy_Cyclone(void) {
       Cyclone_PlotArc((s32)(spread + Random16() * 4 - (j << 16)) >> 16,
                       Random16(), offsets, pixels);
     spread += step;
-    if (spread > 0x1c0000)
-      spread = 0x1c0000;
+    if (spread > px(28))
+      spread = px(28);
     step = step * 123 / 128;
-    canvas->angle += 0x400;
+    canvas->angle += TRIG_TURN / 64;
     canvas->command = 3;
     wait(1);
   }
@@ -286,9 +283,9 @@ void FieldPsynergy_Cyclone(void) {
   work->state = 0;
   work->timer = 0;
   work->state = 0;
-  if (event->unkd40 != -1)
+  if (event->cycloneLiftX != -1)
     mode = 3;
-  else if (event->unkd3c != -1)
+  else if (event->cycloneCarryX != -1)
     mode = 2;
   else {
     point = points[0];
@@ -299,7 +296,7 @@ void FieldPsynergy_Cyclone(void) {
     if (work->kind)
       ParticleBurst_Start();
     for (i = 0; i < 16; i++) {
-      canvas->angle += 0x400;
+      canvas->angle += TRIG_TURN / 64;
       canvas->command = 3;
       wait(1);
     }
@@ -311,17 +308,15 @@ void FieldPsynergy_Cyclone(void) {
     owner->motionFlags = 0;
     frame = 0;
     wait(1);
-    work->to[0] = event->unkd40 << 16;
-    work->to[1] = owner->y.fixed + 0x200000;
-    work->to[2] = event->unkd42 << 16;
-    Task_Add(Cyclone_LiftLeader, 0x480);
-    while (work->state != 999) {
-      /* FAKEMATCH(barrier): an empty asm that opens the wait loop. */
-      asm("");
+    work->to[0] = event->cycloneLiftX << 16;
+    work->to[1] = owner->y.fixed + px(32);
+    work->to[2] = event->cycloneLiftZ << 16;
+    Task_Add(Cyclone_LiftLeader, TASK_PASS_VBLANK);
+    while (work->state != FIELD_PSYNERGY_FINISHED) {
       if (frame == 30)
         FieldPsynergy_RunTouchedEvents();
-      wait(1);
       frame++;
+      wait(1);
     }
     Task_Remove(Cyclone_LiftLeader);
     if (effect->childOption == 0)
@@ -333,7 +328,7 @@ void FieldPsynergy_Cyclone(void) {
     if (work->kind)
       ParticleBurst_Start();
     for (i = 0; i < 16; i++) {
-      canvas->angle += 0x400;
+      canvas->angle += TRIG_TURN / 64;
       canvas->command = 3;
       wait(1);
     }
@@ -343,18 +338,16 @@ void FieldPsynergy_Cyclone(void) {
     Actor_SetSpriteFlagsFar(owner, 0);
     owner->motionFlags = 0;
     wait(1);
-    work->to[0] = event->unkd3c << 16;
+    work->to[0] = event->cycloneCarryX << 16;
     work->to[1] = owner->y.fixed;
-    work->to[2] = event->unkd3e << 16;
-    Task_Add(Cyclone_CarryLeader, 0x480);
+    work->to[2] = event->cycloneCarryZ << 16;
+    Task_Add(Cyclone_CarryLeader, TASK_PASS_VBLANK);
     frame = 0;
-    while (work->state != 999) {
-      /* FAKEMATCH(barrier): an empty asm that opens the wait loop. */
-      asm("");
+    while (work->state != FIELD_PSYNERGY_FINISHED) {
       if (frame == 30)
         FieldPsynergy_RunTouchedEvents();
-      wait(1);
       frame++;
+      wait(1);
     }
     Task_Remove(Cyclone_CarryLeader);
     for (i = 0; i < 16; i++) {
@@ -377,7 +370,7 @@ void FieldPsynergy_Cyclone(void) {
     if (work->kind)
       ParticleBurst_Start();
     for (i = 0; i < 16; i++) {
-      canvas->angle += 0x400;
+      canvas->angle += TRIG_TURN / 64;
       canvas->command = 3;
       wait(1);
     }
@@ -396,8 +389,8 @@ void FieldPsynergy_Cyclone(void) {
     Sound_PlayFar(SE_WHOOSH);
     Actor_SelectAnimationFar(ring, 6);
     for (i = 0; i < 16; i++) {
-      owner->facing += TRIG_TURN / 16;
-      canvas->angle += 0x400;
+      owner->facing += FACING_STEP;
+      canvas->angle += TRIG_TURN / 64;
       canvas->command = 3;
       wait(1);
     }
@@ -426,7 +419,8 @@ void Actor_DepartInRing(s32 actor) {
   FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
   object->motionFlags = 0;
   object->update = BattleEffect_SpinObject;
-  ring = Actor_Spawn(280, object->x.fixed, object->y.fixed, object->z.fixed);
+  ring = Actor_Spawn(SPRITE_WHIRLWIND, object->x.fixed, object->y.fixed,
+                     object->z.fixed);
   Actor_SelectAnimationFar(ring, 2);
   ring->scaleX = Q16_ONE * 3 / 2;
   ring->scaleY = Q16_ONE;
@@ -443,8 +437,8 @@ void Actor_DepartInRing(s32 actor) {
     position[2] = z;
     Vector_AddPolarOffset(Trig_Cos(i << 7) << 5, spin, position);
     SET_ACTOR_POSITION(object, position[0], position[1], position[2]);
-    spin += 0x400;
-    SET_ACTOR_POSITION(ring, object->x.fixed, object->y.fixed - 0x60000,
+    spin += TRIG_TURN / 64;
+    SET_ACTOR_POSITION(ring, object->x.fixed, object->y.fixed - px(6),
                        object->z.fixed);
     wait(1);
   }
@@ -479,7 +473,8 @@ void Actor_ArriveInRing(s32 actor) {
   Actor_SetSpriteFlagsFar(Actor_GetById(actor), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  ring = Actor_Spawn(280, object->x.fixed, object->y.fixed, object->z.fixed);
+  ring = Actor_Spawn(SPRITE_WHIRLWIND, object->x.fixed, object->y.fixed,
+                     object->z.fixed);
   Actor_SelectAnimationFar(ring, 2);
   ring->scaleX = Q16_ONE / 2;
   ring->scaleY = Q16_ONE * 3 / 4;
@@ -510,7 +505,7 @@ void Actor_ArriveInRing(s32 actor) {
 /// and 16 smoke puffs with their motion, where the jet starts and where it
 /// points, and the actor it has reached.
 struct BlazeWork {
-  u8 unk0000[0x1000];
+  u8 unused[0x1000]; ///< no code names it
   struct EffectSprite drops[16];
   struct FieldPsynergyParticle dropMotion[16];
   struct EffectSprite puffs[16];
@@ -612,8 +607,8 @@ void Blaze_UpdateSpray(void) {
         break;
       }
     }
-    if ((particle->x >> 20) != (work->origin[0] >> 20) ||
-        (particle->z >> 20) != (work->origin[2] >> 20)) {
+    if (FIELD_CELL(particle->x) != FIELD_CELL(work->origin[0]) ||
+        FIELD_CELL(particle->z) != FIELD_CELL(work->origin[2])) {
       pos[0] = particle->x;
       pos[1] = particle->y;
       pos[2] = particle->z;
@@ -657,12 +652,12 @@ void Blaze_UpdateSpray(void) {
   turn = (s16)(work->targetAngle - work->angle);
   if ((u16)(work->targetAngle - target) - (u16)(work->angle - target) ==
       0x8000) {
-    work->angle = work->angle + 0x400;
+    work->angle = work->angle + TRIG_TURN / 64;
   } else {
-    if (turn > 0x400)
-      turn = 0x400;
-    if (turn < -0x400)
-      turn = -0x400;
+    if (turn > TRIG_TURN / 64)
+      turn = TRIG_TURN / 64;
+    if (turn < -(TRIG_TURN / 64))
+      turn = -(TRIG_TURN / 64);
     work->angle = work->angle + turn;
   }
 }

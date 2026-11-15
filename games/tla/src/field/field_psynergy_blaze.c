@@ -13,7 +13,7 @@
 #include "system/heap_release.h"
 
 struct ObjectMetadata {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s8 height;
 };
 
@@ -86,7 +86,7 @@ void FieldPsynergy_Blaze(void) {
   work->mode = 0;
   if (scene->enabled != 0) {
     work->origin[0] = scene->x;
-    work->origin[1] = scene->y + 0x100000;
+    work->origin[1] = scene->y + px(16);
     work->origin[2] = scene->z;
     best = 9999;
     for (i = 0; i < 80; i++) {
@@ -122,7 +122,7 @@ void FieldPsynergy_Blaze(void) {
               ->height
           << 16;
     else
-      height = 0x140000;
+      height = px(20);
     work->origin[0] = scene->x;
     work->origin[1] = scene->y + height;
     work->origin[2] = scene->z;
@@ -191,7 +191,7 @@ void FieldPsynergy_Blaze(void) {
   for (j = 0; j < 16; j++) {
     sprite = &work->drops[j];
 
-    EffectSprite_Init(sprite, 15, 24, 0x80000000, tile);
+    EffectSprite_Init(sprite, 15, 24, OBJ_SIZE_32X32, tile);
     sprite->depth = BattleEffect_GetObjectDepth(caster) + 10;
     sprite->oam.priority = BattleEffect_GetObjectPriority(caster);
     sprite->oam.palette256 = 1;
@@ -207,7 +207,7 @@ void FieldPsynergy_Blaze(void) {
   for (j = 0; j < 16; j++) {
     sprite = &work->puffs[j];
 
-    EffectSprite_Init(sprite, 8, 15, 0x40000000, tile);
+    EffectSprite_Init(sprite, 8, 15, OBJ_SIZE_16X16, tile);
     sprite->scaleY = sprite->scaleX = Q16_ONE * 3 / 4;
     sprite->depth = 250;
     sprite->oam.priority = 0;
@@ -218,15 +218,17 @@ void FieldPsynergy_Blaze(void) {
   }
   wait(1);
   work->emitting = 1;
-  Task_Add(Blaze_UpdateSpray, 0x480);
+  Task_Add(Blaze_UpdateSpray, TASK_PASS_VBLANK);
   for (k = 0; k < 80; k++) {
     wait(1);
     if (work->hit != 0) {
-      pending = Scene_FindPsynergyTrigger(0x60000005, scene->fieldPsynergy,
+      pending = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_HITS),
+                                          scene->fieldPsynergy,
                                           (s16)(work->hitObject | 0x100));
       if (pending != NULL)
         Field_RunPsynergyEvent(pending, scene->firstActorId, work->hitObject);
-      if (Scene_FindPsynergyTrigger(0x20000005, scene->fieldPsynergy,
+      if (Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END),
+                                    scene->fieldPsynergy,
                                     (s16)(work->hitObject | 0x100)) != NULL) {
         event->unkd30 = work->hitObject;
         break;

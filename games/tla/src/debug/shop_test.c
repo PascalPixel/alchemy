@@ -692,10 +692,10 @@ void ShopTest_SelectItem(void) {
   redraw = 1;
   window = Window_Create(0, 0, 30, 7, 2);
   details = Window_Create(0, 8, 13, 10, 2);
-  Dma_Set((const void *)OBJ_PLTT, (void *)(BG_PLTT + 14 * 16), 0x80000010,
-          REG_DMA3);
-  Dma_Set((const void *)(BG_PLTT + 244), (void *)(BG_PLTT + 238), 0x80000001,
-          REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
+  Dma_Set((const void *)(BG_PLTT + 244), (void *)(BG_PLTT + 238),
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
   Sound_Play(SE_MENU_CONFIRM);
   wait(1);
   while (1) {
@@ -842,14 +842,14 @@ UNUSED void ShopTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 scene,
   struct Actor *object;
 
   if (mode == 1) {
-    object = FieldActor_Create(354, x << 16, 0, z << 16);
+    object = FieldActor_Create(354, px(x), 0, px(z));
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
       object->priorityFlags = 2;
     }
   }
   if (mode == 2) {
-    object = ((struct Actor *)Import_ActorCreate(252, x << 16, 0, z << 16));
+    object = ((struct Actor *)Import_ActorCreate(252, px(x), 0, px(z)));
     if (object != NULL) {
       s32 scale;
 
@@ -860,12 +860,7 @@ UNUSED void ShopTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 scene,
       while (object->scaleX < Q16_ONE) {
         wait(1);
         scale = object->scaleX + 0x51e;
-        {
-          /* FAKEMATCH(temporary): the turn is added as a word. */
-          s32 angle = object->facing + TRIG_TURN / 16;
-
-          object->facing = angle;
-        }
+        object->facing += FACING_STEP;
         object->scaleX = scale;
         object->scaleY = scale;
       }

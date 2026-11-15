@@ -17,6 +17,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "sprite_ids.h"
 #include "field/scene_tables.h"
 #include "system/input.h"
 #include "system/io_reg.h"
@@ -593,14 +594,14 @@ void PsynergyTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 row, s32 column) {
   struct Actor *object;
 
   if (mode == 1) {
-    object = FieldActor_Create(354, x << 16, 0, z << 16);
+    object = FieldActor_Create(354, px(x), 0, px(z));
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
       object->priorityFlags = 2;
     }
   }
   if (mode == 2) {
-    object = (FieldActor_Create(252, x << 16, 0, z << 16));
+    object = (FieldActor_Create(SPRITE_WINGED_STATUE, px(x), 0, px(z)));
     if (object != NULL) {
       s32 scale;
 
@@ -611,12 +612,7 @@ void PsynergyTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 row, s32 column) {
       while (object->scaleX < Q16_ONE) {
         System_Wait(1);
         scale = object->scaleX + 0x51e;
-        {
-          /* FAKEMATCH(temporary): the turn is added as a word. */
-          s32 angle = object->facing + TRIG_TURN / 16;
-
-          object->facing = angle;
-        }
+        object->facing += FACING_STEP;
         object->scaleX = scale;
         object->scaleY = scale;
       }
@@ -937,7 +933,7 @@ void PsynergyTest_StartRings(struct Actor *object, struct SparkleWork *work) {
     offset = (row * 2) * sizeof(struct SparkleSprite);
     sprite = (struct SparkleSprite *)(offset + (s32)work);
     for (; col >= 0; col--) {
-      EffectSprite_Init(sprite, 16, 16, 0x80004000, tile);
+      EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tile);
       sprite->fullColor = 0;
       sprite->palette = 0;
       sprite->priority = BattleEffect_GetObjectPriority(object) & 3;

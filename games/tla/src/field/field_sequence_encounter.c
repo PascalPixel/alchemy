@@ -115,7 +115,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
 /// battle starts once it reaches encounterThreshold.
 s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   struct FieldWork *work;
-  const struct EncounterZone *entry;
+  struct EncounterZone *entry;
   s32 rate;
   s32 level;
   s32 bias;
@@ -192,10 +192,11 @@ s32 Encounter_RollTerrain(u32 index, s32 steps) {
   return Encounter_CountStepsAndSelectFormation(table[index], steps);
 }
 
-/// Chooses a world-map encounter from the terrain zone and step weight.
-s32 Encounter_RollWorldMap(s32 position, s32 steps) {
+/// Rolls a random battle on the World Map, taking the zone from the cell at
+/// pos. Returns the formation to fight, or 0 for no battle.
+s32 Encounter_RollWorldMap(s32 pos, s32 steps) {
   return Encounter_CountStepsAndSelectFormation(
-      Encounter_ResolveWorldMapZoneAndBackdrop((void *)position), steps);
+      Encounter_ResolveWorldMapZoneAndBackdrop((void *)pos), steps);
 }
 
 /// Returns the selected group from a fourteen-halfword encounter row.
@@ -216,7 +217,7 @@ u16 Encounter_GetDjinnFormation(s32 djinni) {
   u16 *zoneAndSlot = (u16 *)(gEncounter_AreaEntryTable + djinni * 4);
 
 #ifdef UBFIX
-  return Encounter_GetFormationAtSlot(zoneAndSlot[0], zoneAndSlot[1]);
+  return Encounter_GetFormationAtSlot(battle->zone, battle->slot);
 #else
   // UB: no return statement; the native leaves the called getter's result in
   // r0.

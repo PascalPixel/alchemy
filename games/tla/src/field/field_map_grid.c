@@ -8,6 +8,7 @@
 #include "sounds.h"
 #include "field/field_bank.h"
 #include "field/map.h"
+#include "field/map_grid.h"
 #include "field/object.h"
 #include "field/resource_slot.h"
 #include "system/ram_buffer.h"
@@ -20,23 +21,16 @@
 #include "field/mapcopy.h"
 #include "game/game_flags.h"
 
+/// The map's 128 by 128 cell words.
+#define MAPGRID_CELLS ((u32 *)Ram_MapGridCellBuffer)
+
 /// Remaps byteCount bytes in place through gSpriteColorRemapTables.
-void SpriteColor_RemapPixels(u8 *buf, s32 cnt) {
-  s32 n;
-  u8 *p;
-  u8 *table;
+void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount) {
+  u8 *remapTable = (u8 *)gSpriteColorRemapTables;
 
-  p = buf;
-  table = gSpriteColorRemapTables;
-  n = cnt - 1;
-  if (n != -1) {
-    do {
-      u32 index = *p;
-
-      n -= 1;
-      *p = table[index];
-      p += 1;
-    } while (n != -1);
+  while (byteCount-- != 0) {
+    *bytes = remapTable[*bytes];
+    bytes++;
   }
 }
 
@@ -279,7 +273,7 @@ s32 MapGrid_LoadMap(s32 index) {
   do {
     REG_DISPCNT = displayFlags;
   } while (0);
-  Task_Add(MapGrid_UpdateLayerScroll, 0x485);
+  Task_Add(MapGrid_UpdateLayerScroll, TASK_PASS_VBLANK + 5);
   return 2;
 }
 
@@ -305,9 +299,9 @@ void MapGrid_CenterOnFollowedPoint(void) {
     if (rectList != NULL) {
       for (rect = rectList; rect[0] != -1; rect += 4) {
         s32 left = (rect[0] << 16) - 0x780000;
-        s32 top = (rect[1] << 16) + height - 0x400000;
+        s32 top = (rect[1] << 16) + height - px(64);
         s32 right = (rect[2] << 16) + 0x780000;
-        s32 bottom = (rect[3] << 16) + height + 0x600000;
+        s32 bottom = (rect[3] << 16) + height + px(96);
 
         if (x >= left && z >= top && x <= right && z <= bottom) {
           s32 nearX = left;
@@ -467,13 +461,13 @@ void MapGrid_UpdateLayerScroll(void) {
   work = Ram_HeapSlots->mapGrid;
   origin = work->origin;
   layer = (struct MapLayerScroll *)work->layers;
-  if (origin == NULL)
+  if (origin == 0)
     return;
-  baseX = *origin++ - 0x780000;
+  baseX = *origin++ - px(120);
   {
     s32 height = *origin++;
 
-    baseY = *origin - height - 0x600000;
+    baseY = *origin - height - px(96);
   }
   minX = work->minX + work->shakeX;
   maxX = work->maxX - work->shakeX - 0xf00000;
@@ -508,11 +502,11 @@ void MapGrid_UpdateLayerScroll(void) {
   {
     s32 step = work->viewZ - baseY;
 
-    if (step > 0x100000) {
+    if (step > px(16)) {
       baseY = work->viewZ - 0x100000;
       step = work->viewZ - baseY;
     }
-    if (step < -0x100000)
+    if (step < -px(16))
       baseY = work->viewZ + 0x100000;
   }
   work->viewX = baseX;
@@ -534,20 +528,20 @@ void MapGrid_UpdateLayerScroll(void) {
     y = (u32)baseY >> 19;
     if ((layer->x ^ baseX) & 0x80000) {
       if (layer->x < baseX)
-        MapGrid_RenderCellPictureColumn(layerIndex, x + 30, y);
+        MapGrid_RenderCellPictureColumn(layerIndex, x + DISPLAY_WIDTH / 8, y);
       else
         MapGrid_RenderCellPictureColumn(layerIndex, x, y);
     }
-    if ((layer->y ^ baseY) & 0x100000) {
+    if ((layer->y ^ baseY) & (16 << 16)) {
       if (layer->y < baseY)
-        MapGrid_RenderCellPictureRow(layerIndex, x, y + 20);
+        MapGrid_RenderCellPictureRow(layerIndex, x, y + DISPLAY_HEIGHT / 8);
       else
         MapGrid_RenderCellPictureRow(layerIndex, x, y);
     }
     layer->x = baseX;
     layer->y = baseY;
-    gBgScroll[3 - layerIndex].x = baseX >> 16;
-    gBgScroll[3 - layerIndex].y = baseY >> 16;
+    gBgScroll[3 - layerIndex].x = FIELD_PIXEL(baseX);
+    gBgScroll[3 - layerIndex].y = FIELD_PIXEL(baseY);
   }
 }
 
@@ -579,8 +573,8 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
   struct MapLayerWindow *layer = (struct MapLayerWindow *)work->layers;
   u32 originX;
 
-  x -= 0x780000;
-  y -= 0x600000;
+  x -= px(120);
+  y -= px(96);
   if (x < work->minX)
     x = work->minX;
   if (x > work->maxX - 0xf00000)
@@ -599,18 +593,18 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
 
       x = Iwram_MulQ16(work->viewX, layer->scaleX);
       y = Iwram_MulQ16(work->viewZ, layer->scaleY);
-      if (layer->speedX != 0) {
+      if (layer->speedX) {
         layer->phaseX += layer->speedX;
         x += layer->phaseX;
       }
-      if (layer->speedY != 0) {
+      if (layer->speedY) {
         layer->phaseY += layer->speedY;
         y += layer->phaseY;
       }
       x += layer->offsetX;
       y += layer->offsetY;
-      x /= 0x80000;
-      y /= 0x80000;
+      x /= px(8);
+      y /= px(8);
       screenMap = (u8 *)BG_SCREEN_BLOCK(5) + (layerIndex << 11);
       maskY = layer->maskY;
       maskX = layer->maskX;
@@ -661,8 +655,8 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
 
   // The three layers' visible areas: their scroll positions in cells.
   for (i = 2; i >= 0; i--) {
-    pos->x = layer->x >> 20;
-    pos->y = layer->y >> 20;
+    pos->x = FIELD_CELL(layer->x);
+    pos->y = FIELD_CELL(layer->y);
     pos++;
     layer++;
   }
@@ -729,52 +723,46 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
 /// picture numbers to (destinationX, destinationY) and waits its delay in
 /// frames.
 void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
-  struct MapGridCellAnimationStep *copyCommand =
+  struct MapGridCellAnimationStep *step =
       (struct MapGridCellAnimationStep *)steps;
-  u32 sourceX = copyCommand->source;
-  u32 endMarker;
-  u32 firstSourceCopy = sourceX;
+  u32 source = step->source;
+  /* FAKEMATCH(temporary): the end test reads a copy of source, and the updates
+   * that cancel out end CSE's knowledge of it. */
+  u32 test = source;
 
-  // endMarker set after the copy, which puts the ip copy among its
-  endMarker = 0xffff;
-  /* FAKEMATCH(dead): the updates that cancel out emit nothing but end CSE
-   * before the comparison. */
-  if (copyCommand) {
-    sourceX ^= firstSourceCopy;
-    sourceX ^= firstSourceCopy;
+  if (step) {
+    source ^= test;
+    source ^= test;
   }
-  if (firstSourceCopy != endMarker) {
-    u32 endMarkerCopy = endMarker;
-    s16 *rectangleArgs = (s16 *)(steps + 1);
+  if (test != MAPGRID_ANIMATION_STEPS_END) {
+    u32 end = MAPGRID_ANIMATION_STEPS_END;
+    // Each step's rectangle and delay, read a step at a time beside it.
+    s16 *rectangle = (s16 *)(steps + 1);
 
     while (1) {
-      s32 sourceY = rectangleArgs[0];
-      s32 width = rectangleArgs[1];
-      s32 height = rectangleArgs[2];
-      s32 delay = rectangleArgs[3];
-      rectangleArgs += 5;
+      s32 sourceY = rectangle[0];
+      s32 width = rectangle[1];
+      s32 height = rectangle[2];
+      s32 delay = rectangle[3];
 
-      MapGrid_CopyCellPictureIndicesRect(sourceX, (u16)sourceY, destinationX,
+      rectangle += 5;
+      MapGrid_CopyCellPictureIndicesRect(source, (u16)sourceY, destinationX,
                                          destinationY, (u16)width, (u16)height);
-      copyCommand++;
+      step++;
       wait((u16)delay);
-      sourceX = copyCommand->source;
-      /* FAKEMATCH(dead): updates that cancel out between the load and its copy.
-       */
-      if (copyCommand) {
-        sourceX++;
-        sourceX--;
+      source = step->source;
+      if (step) {
+        source++;
+        source--;
       }
       {
-        u32 nextSourceCopy = sourceX;
+        u32 next = source;
 
-        /* FAKEMATCH(dead): updates that cancel out after the copy end CSE's
-         * knowledge of source. */
-        if (copyCommand) {
-          sourceX++;
-          sourceX--;
+        if (step) {
+          source++;
+          source--;
         }
-        if (nextSourceCopy == endMarkerCopy)
+        if (next == end)
           break;
       }
     }
@@ -842,8 +830,8 @@ void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
   s32 x;
 
   for (i = 2; i >= 0; i--) {
-    view->x = layer->x >> 20;
-    view->y = layer->y >> 20;
+    view->x = FIELD_CELL(layer->x);
+    view->y = FIELD_CELL(layer->y);
     view++;
     layer++;
   }
@@ -1104,7 +1092,7 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   sourceTiles = decodedTile;
   quarterCells = Ram_MapBlocks + (((layer * 2 + y) * 32 + x) << 6);
   for (rowIndex = 0; rowIndex < 16; rowIndex++) {
-    Dma_Set(sourceTiles, quarterCells, 0x84000010, REG_DMA3);
+    Dma_Set(sourceTiles, quarterCells, DMA_COPY_WORDS(16), REG_DMA3);
     sourceTiles += 32;
     quarterCells += 128;
   }

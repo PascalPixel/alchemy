@@ -17,7 +17,7 @@ struct Effect04Vector;
 struct EffectVector;
 
 struct ItemHead {
-  u8 unk00[3];
+  u8 unused[3]; ///< no code names it
   u8 flags;
 };
 
@@ -43,17 +43,17 @@ struct ScatterPosition {
 
 /// A composite sprite, as field.h's CompositeAnimation.
 struct CloakSprite {
-  u8 unk00[0x19];
-  u8 dirty; // redraw the parts
-  u8 blend; // 2 draws the caster half transparent, 1 shows it plainly
+  u8 unused[0x19]; ///< no code names it
+  u8 dirty;        // redraw the parts
+  u8 blend;        // 2 draws the caster half transparent, 1 shows it plainly
   u8 unk1b[0x0d];
   struct SpriteAnimation *entries[4];
 };
 
 struct CloakCaster {
-  u8 unk00[0x50];
+  u8 unused[0x50]; ///< no code names it
   struct CloakSprite *sprite;
-  u8 unk54[0x18];
+  u8 unusedAfterSprite[0x18]; ///< no code names it
   void (*hook)(void);
 };
 
@@ -63,14 +63,14 @@ struct TouchCell {
 };
 
 struct TouchLayer {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
   s32 z;
-  u8 unk10[40];
+  u8 unusedAfterZ[40]; ///< no code names it
 };
 
 struct TouchMap {
-  u8 unk000[264];
+  u8 unused[264]; ///< no code names it
   struct TouchLayer layers[1];
 };
 
@@ -81,7 +81,7 @@ struct TouchCopy {
   u8 fromZ;
   u8 cellX;
   u8 cellZ;
-  u8 unk06[2];
+  u8 unusedAfterCellZ[2]; ///< no code names it
 };
 
 struct TouchCopies {
@@ -122,7 +122,7 @@ struct BurstCell {
 };
 
 struct ScaledSprite {
-  u8 unk00[0xc];
+  u8 unused[0xc]; ///< no code names it
   s32 scale;
 };
 
@@ -207,7 +207,7 @@ void Camera_WorldToScreen(struct EffectVector *position);
 void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
                                   s32 height);
 
-void FieldPsynergy_Unnamed29(void);
+void FieldPsynergy_Arrow(void);
 
 void FieldPsynergy_Halt(void);
 
@@ -276,7 +276,7 @@ void FieldPsynergy_Grind(void);
 
 void FieldPsynergy_Teleport(void);
 
-void FieldPsynergy_Unnamed28(void);
+void FieldPsynergy_Ring(void);
 
 s32 FieldPsynergy_FilterHaltTarget(s32 id);
 void FieldPsynergy_HaltActor(s32 id);
@@ -293,7 +293,7 @@ void FieldPsynergy_ShowAvoidWoreOff(void);
 
 void FieldPsynergy_EndHover(void);
 
-void FieldPsynergy_EndUnnamed28(void);
+void FieldPsynergy_EndRing(void);
 
 void FieldPsynergy_StopMindReadWave(void);
 
@@ -318,18 +318,18 @@ void Party_RemoveMemberRestored(s32 owner);
 struct Actor;
 
 struct FallingObject {
-  u8 unk00[0xc];
+  u8 unused[0xc]; ///< no code names it
   s32 y;
-  u8 unk10[4];
+  u8 unusedAfterY[4]; ///< no code names it
   s32 floor;
-  u8 unk18[0x46];
+  u8 unusedAfterFloor[0x46]; ///< no code names it
   s16 dispatchState;
-  u8 unk60[0xc];
+  u8 unusedAfterDispatchState[0xc]; ///< no code names it
   void *update;
 };
 
 struct Effect05Sprite {
-  u32 unk00[2];
+  u32 unused[2]; ///< no code names it
   u8 unk08;
   u32 unk09_0 : 2;
   u32 mode : 2;
@@ -355,10 +355,10 @@ struct WorldMapPlace {
   s16 unk02;
   s16 x;
   s16 z;
-  u8 unk08[4];
-  s16 name;         ///< the place name's message
-  s16 nameEntrance; ///< the name's message for the entrance
-  u8 unk10[4];
+  u8 unusedAfterZ[4];            ///< no code names it
+  s16 name;                      ///< the place name's message
+  s16 nameEntrance;              ///< the name's message for the entrance
+  u8 unusedAfterNameEntrance[4]; ///< no code names it
 };
 
 // A halfword typed beside a word, for the FAKEMATCH that reads the name box's
@@ -398,12 +398,12 @@ struct Actor;
 struct Vec3;
 
 struct WaveFxSprite {
-  u32 unk00[2];
+  u32 unused[2]; ///< no code names it
   u8 unk08;
   u32 unk09_0 : 2;
   u32 mode : 2;
   u32 unk09_4 : 4;
-  u8 unk0a[8];
+  u8 unusedB[8]; ///< no code names it
   u16 orientation;
   u8 unk14[6];
   u8 palette;
@@ -420,12 +420,12 @@ struct WaveFxDescriptor {
 };
 
 struct WaveFxMetadata {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s8 boxX;
 };
 
 struct ResourceEntry {
-  u8 unk00[0x10];
+  u8 unused[0x10]; ///< no code names it
   u8 vramBlock;
 };
 
@@ -442,7 +442,7 @@ struct OrbitingParticleVector {
 };
 
 struct OrbitingParticleChild {
-  u8 reserved00[35];
+  u8 unused[35]; ///< no code names them
   u8 flags;
 };
 
@@ -451,11 +451,11 @@ struct BurstParticleVector {
 };
 
 struct BurstParticleVisual {
-  u8 reserved00[5];
+  u8 unused[5]; ///< no code names them
   u8 flagsALow : 5;
   u8 flip : 1;
   u8 flagsAHigh : 2;
-  u8 reserved06;
+  u8 unusedAfterFlagsAHigh; ///< no code names it
   u8 flagsBLow : 6;
   u8 flagsBHigh : 2;
   union {
@@ -474,12 +474,12 @@ struct BurstParticleVisual {
 /// A sprite whose second part is 28 bytes in.
 struct BurstParticleVisualGroup {
   struct BurstParticleVisual primary;
-  u8 reserved0c[16];
+  u8 unusedAfterPrimary[16]; ///< no code names them
   struct BurstParticleVisual child;
 };
 
 struct BattleEffectScene {
-  u8 reserved00[4];
+  u8 unused[4]; ///< no code names them
   s32 x;
   s32 y;
   s32 z;
@@ -488,35 +488,35 @@ struct BattleEffectScene {
 };
 
 struct EffectChild {
-  u8 reserved00[12];
+  u8 unused[12]; ///< no code names them
   s32 y;
-  u8 reserved10[0x55 - 0x10];
+  u8 unusedAfterY[0x55 - 0x10]; ///< no code names them
   u8 flag;
-  u8 reserved56[0x6c - 0x56];
+  u8 unusedAfterFlag[0x6c - 0x56]; ///< no code names them
   void (*callback)(void);
 };
 
 struct EffectTarget {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
   s32 y;
   s32 z;
 };
 
 struct RadialBurstEffect {
-  u8 unk00[12];
+  u8 unused[12]; ///< no code names it
   s32 x;
   s32 z;
   s32 sourceX;
   s32 sourceZ;
-  u8 unk1c[4];
+  u8 unusedAfterSourceZ[4]; ///< no code names it
   s32 velocityX;
   s32 velocityZ;
-  u8 unk28[10];
+  u8 unusedAfterVelocityZ[10]; ///< no code names it
   u16 scale;
-  u8 unk34[12];
+  u8 unusedAfterScale[12]; ///< no code names it
   s8 state;
-  u8 unk41;
+  u8 unusedAfterState; ///< no code names it
   u8 enabled;
 };
 
@@ -528,9 +528,9 @@ struct ImpactVector {
 
 struct WaveFxScroll {
   u16 lines[2][162];
-  u8 unk288[2];
+  u8 unused[2]; ///< no code names it
   u8 page;
-  u8 unk28b[9];
+  u8 unusedAfterPage[9]; ///< no code names it
   u8 delay;
 };
 
@@ -541,23 +541,23 @@ struct ItemBreakFragmentPosition {
 };
 
 struct ItemBreakFragmentSource {
-  u8 reserved00[6];
-  u16 angle; ///< Facing angle (0x10000 is one turn).
+  u8 unused[6]; ///< no code names them
+  u16 angle;    ///< Facing angle (0x10000 is one turn).
   s32 x;
   s32 y;
   s32 z;
-  u8 reserved14[70];
+  u8 unusedAfterZ[70]; ///< no code names them
   u8 flag5a;
-  u8 reserved5b[13];
+  u8 unusedB[13];                         ///< no code names them
   struct ItemBreakFragmentSource *target; ///< Facing target.
 };
 
 struct ItemBreakFragmentObject {
-  u8 reserved00[72];
-  s32 field48; ///< Gravity (same offset as gravity).
-  u8 reserved4c[9];
-  u8 mode55; ///< Same offset as motionFlags.
-  u8 reserved56[8];
+  u8 unused[72]; ///< no code names them
+  s32 field48;   ///< Gravity (same offset as gravity).
+  u8 unusedB[9]; ///< no code names them
+  u8 mode55;     ///< Same offset as motionFlags.
+  u8 unusedC[8]; ///< no code names them
   u16 field5e;
 };
 
@@ -568,11 +568,11 @@ struct Output_08097f80 {
 };
 
 struct SwayObject {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 y;
-  u8 unk0c[44];
+  u8 unusedAfterY[44]; ///< no code names it
   s32 baseY;
-  u8 unk3c[40];
+  u8 unusedAfterBaseY[40]; ///< no code names it
   s16 phase;
 };
 
@@ -583,31 +583,31 @@ struct OrbitVector {
 };
 
 struct SparkObject {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
   s32 y;
   s32 z;
   u8 unk14[4];
   s32 scaleX;
   s32 scaleY;
-  u8 unk20[24];
+  u8 unusedAfterScaleY[24]; ///< no code names it
   s32 anchorX;
-  u8 unk3c[12];
+  u8 unusedAfterAnchorX[12]; ///< no code names it
   s32 gravity;
-  u8 unk4c[9];
+  u8 unusedAfterGravity[9]; ///< no code names it
   u8 motionFlags;
-  u8 unk56[8];
+  u8 unusedAfterMotionFlags[8]; ///< no code names it
   u16 unk5e;
-  u8 unk60[4];
+  u8 unusedB[4]; ///< no code names it
   s16 phase;
-  u8 unk66[6];
+  u8 unusedAfterPhase[6]; ///< no code names it
   void (*update)(struct SparkObject *);
 };
 
 struct OwnerObject {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
-  u8 unk0c[4];
+  u8 unusedAfterX[4]; ///< no code names it
   s32 z;
   u8 unk14[14];
   u8 layer;

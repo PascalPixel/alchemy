@@ -6,7 +6,7 @@
 /// An animated sprite on the field: its image's sprite attributes, VRAM
 /// cache entry, rotation, its shadow's attribute 2 and its first layer.
 struct FieldSprite {
-  u8 unk00[4]; ///< not named by TLA code
+  u8 unused[4]; ///< not named by TLA code
   /// The image's OAM attributes 0 to 2.
   ///@{
   u16 y : 8; ///< screen pixels
@@ -23,7 +23,7 @@ struct FieldSprite {
   u16 priority : 2;
   u16 palette : 4;
   ///@}
-  u8 unk0a[2];
+  u8 unusedAfterPalette[2]; ///< no code names it
   s32 scale;    ///< 16.16, in the projection draft's layout (LayeredSprite)
   u8 vramBlock; ///< VRAM cache entry holding its tiles
   /// The keep-cache-entry and own-scale bits in the projection draft's layout.
@@ -47,8 +47,8 @@ struct FieldSprite {
   u16 partPriority : 2;
   u16 secondPalette : 4;
   ///@}
-  u8 unk26[2];  ///< not named by TLA code
-  void *record; ///< released by SpriteAnimation_ClearFar
+  u8 unusedAfterSecondPalette[2]; ///< not named by TLA code
+  void *record;                   ///< released by SpriteAnimation_ClearFar
 };
 
 #endif

@@ -11,31 +11,33 @@
 /// gWorldMapWork, the world map screen's state while it is open: its
 /// resources, the cursor and the marker sprites.
 struct WorldMapWork {
-  u16 vramBlock;  ///< owns the marker tiles
-  u16 windowSlot; ///< the resource slot of the name window's tiles
-  s32 x;          ///< the cursor's screen column, 16.16 pixels
-  s32 z;          ///< the cursor's screen row, 16.16 pixels
-  u8 padding0c[6];
-  s16 shown; ///< the FlagEntry whose name is drawn; -1 for none
-  u8 padding14[4];
-  s32 speed;    ///< the cursor's speed, 16.16 pixels per frame
-  void *window; ///< the name window
+  u16 vramBlock;          ///< owns the marker tiles
+  u16 windowSlot;         ///< the resource slot of the name window's tiles
+  s32 x;                  ///< the cursor's screen column, 16.16 pixels
+  s32 z;                  ///< the cursor's screen row, 16.16 pixels
+  u8 unusedAfterZ[6];     ///< no code names them
+  s16 shown;              ///< the FlagEntry whose name is drawn; -1 for none
+  u8 unusedAfterShown[4]; ///< no code names them
+  s32 speed;              ///< the cursor's speed, 16.16 pixels per frame
+  void *window;           ///< the name window
   struct WorldMapMarker markers[129]; ///< the marker sprites
   s32 *cursor;                        ///< the cursor the picture scrolls to
   s32 scrollX;                        ///< the picture's scroll, 16.16 pixels
   s32 scrollZ;
-  u8 padding638[8];
-  s16 centered; ///< nonzero draws resource 35 at the origin
-                ///< (WorldMapPicture_Draw)
-  u16 mode;     ///< 0 to look, nonzero to choose a destination
-  s32 unk644;
-  s32 unk648;
+  u8 unusedAfterScrollZ[8]; ///< no code names them
+  s16 centered;             ///< nonzero draws resource 35 at the origin
+                            ///< (WorldMapPicture_Draw)
+  u16 mode;                 ///< 0 to look, nonzero to choose a destination
+  /// Where the nearest-place search looks from in place of the cursor, 16.16
+  /// pixels, when nonzero; the field code only ever clears it.
+  s32 searchX;
+  s32 searchZ;
 };
 
 STATIC_ASSERT(offsetof(struct WorldMapWork, window) == 0x1c);
 STATIC_ASSERT(offsetof(struct WorldMapWork, cursor) == 0x62c);
 STATIC_ASSERT(offsetof(struct WorldMapWork, mode) == 0x642);
-STATIC_ASSERT(offsetof(struct WorldMapWork, unk648) == 0x648);
+STATIC_ASSERT(offsetof(struct WorldMapWork, searchZ) == 0x648);
 
 /// A world map destination, keyed by its flag (WorldMap_MarkPlaceVisited sets
 /// game flag 0x180 + flag); FlagEntries_GetTable returns them, ended by a zero

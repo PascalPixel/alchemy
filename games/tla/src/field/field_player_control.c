@@ -30,6 +30,28 @@ enum FieldShortcutKind {
 /// A shortcut assignment's request, bits 13..0.
 #define FIELD_SHORTCUT_ID_MASK 0x3fff
 
+#define FIELD_SHORTCUT_KEYS gKeysHeld
+#define WORLD_MAP_PROBE_RADIUS px(8)
+/// What stopped the leader's step this frame (Actor_UpdatePlayerControl,
+/// Actor_MoveOnWorldMap).
+enum PlayerStepBlock {
+  PLAYER_STEP_BLOCKED_BY_MAP = 1, ///< every heading tried runs into the map
+  /// A solid actor ahead, or one with no room to be pushed.
+  PLAYER_STEP_BLOCKED_BY_ACTOR = 2,
+  PLAYER_STEP_BLOCKED = 3, ///< either of the two
+  /// No step, and none counted as blocked: the pad is not held, or a climb
+  /// meets a wall.
+  PLAYER_STEP_STOPPED = 4
+};
+
+/// The footprints the leader leaves in snow and sand, and the leader's
+/// userValue that asks for the pair next.
+enum FootprintAnimation {
+  FOOTPRINT_ONE_FOOT = 1, ///< one print, fading
+  /// Two prints side by side, fading: laid first after a stop.
+  FOOTPRINT_BOTH_FEET = 2
+};
+
 /// Script command 0x24 (control mode 11): the player control at one pace,
 /// a pixel a frame whatever the keys. Unused: no code sets control mode 11.
 s32 Actor_UpdateWalkingControl(struct Actor *object) {
@@ -85,9 +107,9 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
       if (other == object)
         continue;
       delta = object->y.fixed - other->y.fixed;
-      dy = delta - 0x100000;
+      dy = delta - px(16);
       if (dy < 0)
-        dy = 0x100000 - delta;
+        dy = px(16) - delta;
       if (dy > withinHalfCell)
         continue;
       if (SAME_CELL(object->x.fixed, other->x.fixed) &&
@@ -114,11 +136,11 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
   if (!MapGrid_CheckCollision(object, &position)) {
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), angle + TRIG_TURN / 16, &testPosition);
+    Vector_AddPolarOffset(px(8), angle + FIELD_PROBE_ANGLE, &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition)) {
       SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                    object->z.fixed);
-      Vector_AddPolarOffset(px(8), angle - TRIG_TURN / 16, &testPosition);
+      Vector_AddPolarOffset(px(8), angle - FIELD_PROBE_ANGLE, &testPosition);
       if (!MapGrid_CheckCollision(object, &testPosition)) {
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
@@ -138,12 +160,12 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
   {
     s32 headingCount = 0;
 
-    angleOffsets[headingCount++] = angle + TRIG_TURN / 16;
-    angleOffsets[headingCount++] = angle - TRIG_TURN / 16;
+    angleOffsets[headingCount++] = angle + FIELD_PROBE_ANGLE;
+    angleOffsets[headingCount++] = angle - FIELD_PROBE_ANGLE;
     angleOffsets[headingCount++] = angle + TRIG_TURN / 8;
     angleOffsets[headingCount++] = angle - TRIG_TURN / 8;
-    angleOffsets[headingCount++] = angle + TRIG_TURN * 3 / 16;
-    angleOffsets[headingCount++] = angle - TRIG_TURN * 3 / 16;
+    angleOffsets[headingCount++] = angle + FIELD_PROBE_ANGLE * 3;
+    angleOffsets[headingCount++] = angle - FIELD_PROBE_ANGLE * 3;
     /* FAKEMATCH(dead): a test of headingCount that is never true. */
     if (headingCount == 0)
       goto clear;
@@ -156,13 +178,13 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
         continue;
       SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                    object->z.fixed);
-      Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 16,
+      Vector_AddPolarOffset(px(8), (u16)heading + FIELD_PROBE_ANGLE,
                             &testPosition);
       if (MapGrid_CheckCollision(object, &testPosition))
         continue;
       SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                    object->z.fixed);
-      Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 16,
+      Vector_AddPolarOffset(px(8), (u16)heading - FIELD_PROBE_ANGLE,
                             &testPosition);
       if (MapGrid_CheckCollision(object, &testPosition))
         continue;
@@ -187,7 +209,7 @@ clear:
 
 blocked:
   SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
-  collision |= 1;
+  collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
 push_objects:
   SET_POSITION(&contact, object->x.fixed, object->y.fixed, object->z.fixed);
@@ -221,13 +243,15 @@ push_objects:
         if (!MapGrid_CheckCollision(other, &testPosition)) {
           SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
                        other->z.fixed);
-          Vector_AddPolarOffset(px(10), direction + 0x1000, &testPosition);
+          Vector_AddPolarOffset(px(10), direction + FIELD_PROBE_ANGLE,
+                                &testPosition);
           // The same probe is tested twice.
           if (!MapGrid_CheckCollision(other, &testPosition) &&
               !MapGrid_CheckCollision(other, &testPosition)) {
             SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
                          other->z.fixed);
-            Vector_AddPolarOffset(px(10), direction - 0x1000, &testPosition);
+            Vector_AddPolarOffset(px(10), direction - FIELD_PROBE_ANGLE,
+                                  &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
               Vector_AddPolarOffset(px(1) / 4, direction,
                                     (struct FieldPosition *)&other->x.fixed);
@@ -241,7 +265,7 @@ push_objects:
         }
       }
     }
-    collision |= 2;
+    collision |= PLAYER_STEP_BLOCKED_BY_ACTOR;
   }
   if (collision == 0 && pushed != 0) {
     object->speedLimit = px(1) / 4;
@@ -251,7 +275,7 @@ push_objects:
 counted:
   work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
-    if (collision & 3)
+    if (collision & PLAYER_STEP_BLOCKED)
       work->blockedSteps++;
     else
       work->blockedSteps = 0;
@@ -273,14 +297,14 @@ counted:
     object->targetX = TARGET_UNSET;
     object->targetY = TARGET_UNSET;
     object->targetZ = TARGET_UNSET;
-    if (collision & 3) {
+    if (collision & PLAYER_STEP_BLOCKED) {
       s32 difference;
 
       difference = (s16)(angle - object->facing);
-      if (difference > 0x1000)
-        difference = 0x1000;
-      if (difference < -0x1000)
-        difference = -0x1000;
+      if (difference > FIELD_BLOCKED_TURN_MAX)
+        difference = FIELD_BLOCKED_TURN_MAX;
+      if (difference < -FIELD_BLOCKED_TURN_MAX)
+        difference = -FIELD_BLOCKED_TURN_MAX;
       object->facing += difference;
     }
     object->timer = 0;
@@ -307,7 +331,7 @@ s32 Field_RequestShortcut(u32 assignment) {
 
   if (GameFlag_Get(FLAG_MENUS_RAISE_TRIGGER) != 0) {
     work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
-  } else if (work->mode == 3) {
+  } else if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (gInput.held & KEY_R)
       work->raisedTrigger = FIELD_RAISED_TRIGGER_WORLD_PICTURE;
     else if (gInput.held & KEY_L)
@@ -330,7 +354,7 @@ s32 Field_RequestShortcut(u32 assignment) {
 /// assignment (Field_RequestShortcut). While a second event is pending, any of
 /// the five requests command 0x209b instead. Returns 0 when none is pressed.
 s32 Field_CheckConfiguredKeys(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = gFieldWork;
   s32 result = 0;
 
   if (work == NULL)
@@ -372,7 +396,7 @@ s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
   s32 dz = (*a - *b) >> 16;
   s32 radius = radius_a + radius_b;
 
-  if (!(dx > 0x400000) && !(dz > 0x400000) &&
+  if (!(dx > px(64)) && !(dz > px(64)) &&
       dx * dx + dy * dy + dz * dz < radius * radius)
     return 0;
   return -1;
@@ -385,7 +409,7 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
   struct Actor *created;
   struct Child *sprite;
 
-  created = Actor_Create(14, object->x.fixed, object->y.fixed + 0x40000,
+  created = Actor_Create(14, object->x.fixed, object->y.fixed + px(4),
                          object->z.fixed);
   sprite = object->sprite;
   if (!(object->userValue & 1))
@@ -397,12 +421,12 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
     Actor_StartScript(created, gActor_SplashScript);
     created->motionFlags = 0;
     if (child != NULL) {
-      Sprite_StartAnimation((struct ActorSpriteView *)child, 1);
+      Sprite_StartAnimation((struct Sprite *)child, 1);
       child->value1a = 0;
       child->layer = sprite->layer;
       if (mode == 2) {
-        Animation_ApplyChildValuesToRecord((struct ActorSpriteView *)child, 13);
-        Sprite_SetAnimationSpeed((struct ActorSpriteView *)child, 8);
+        Animation_ApplyChildValuesToRecord((struct Sprite *)child, 13);
+        Sprite_SetAnimationSpeed((struct Sprite *)child, 8);
       }
     }
   }
@@ -486,7 +510,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
       if (other == object)
         continue;
       dy = object->y.fixed - other->y.fixed;
-      if ((dy - 0x100000 < 0 ? -(dy - 0x100000) : dy - 0x100000) > 0x7ffff)
+      if ((dy - px(16) < 0 ? -(dy - px(16)) : dy - px(16)) > 0x7ffff)
         continue;
       if (SAME_CELL(object->x.fixed, other->x.fixed) &&
           SAME_CELL(object->z.fixed, other->z.fixed))
@@ -516,11 +540,12 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
   if (!MapGrid_CheckCollision(object, &position)) {
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), (u16)angle + TRIG_TURN / 16, &testPosition);
+    Vector_AddPolarOffset(px(8), (u16)angle + FIELD_PROBE_ANGLE, &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition)) {
       SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                    object->z.fixed);
-      Vector_AddPolarOffset(px(8), (u16)angle - TRIG_TURN / 16, &testPosition);
+      Vector_AddPolarOffset(px(8), (u16)angle - FIELD_PROBE_ANGLE,
+                            &testPosition);
       if (!MapGrid_CheckCollision(object, &testPosition)) {
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
@@ -540,12 +565,12 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
   }
   direction = angle;
   headingCount = 0;
-  angleOffsets[headingCount++] = direction + TRIG_TURN / 16;
-  angleOffsets[headingCount++] = direction - TRIG_TURN / 16;
+  angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE;
+  angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE;
   angleOffsets[headingCount++] = direction + TRIG_TURN / 8;
   angleOffsets[headingCount++] = direction - TRIG_TURN / 8;
-  angleOffsets[headingCount++] = direction + TRIG_TURN * 3 / 16;
-  angleOffsets[headingCount++] = direction - TRIG_TURN * 3 / 16;
+  angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE * 3;
+  angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE * 3;
   for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
     heading = angleOffsets[angleIndex];
     SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
@@ -554,12 +579,14 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), (u16)heading + TRIG_TURN / 16, &testPosition);
+    Vector_AddPolarOffset(px(8), (u16)heading + FIELD_PROBE_ANGLE,
+                          &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), (u16)heading - TRIG_TURN / 16, &testPosition);
+    Vector_AddPolarOffset(px(8), (u16)heading - FIELD_PROBE_ANGLE,
+                          &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
@@ -574,7 +601,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *object) {
       goto push_objects;
   }
   SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
-  collision |= 1;
+  collision |= PLAYER_STEP_BLOCKED_BY_MAP;
   goto push_objects;
 
 clear:
@@ -614,13 +641,15 @@ push_objects:
         if (!MapGrid_CheckCollision(other, &testPosition)) {
           SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
                        other->z.fixed);
-          Vector_AddPolarOffset(px(10), direction + 0x1000, &testPosition);
+          Vector_AddPolarOffset(px(10), direction + FIELD_PROBE_ANGLE,
+                                &testPosition);
           // The same probe is tested twice.
           if (!MapGrid_CheckCollision(other, &testPosition) &&
               !MapGrid_CheckCollision(other, &testPosition)) {
             SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
                          other->z.fixed);
-            Vector_AddPolarOffset(px(10), direction - 0x1000, &testPosition);
+            Vector_AddPolarOffset(px(10), direction - FIELD_PROBE_ANGLE,
+                                  &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
               Vector_AddPolarOffset(px(1) / 4, direction,
                                     (struct FieldPosition *)&other->x.fixed);
@@ -634,7 +663,7 @@ push_objects:
         }
       }
     }
-    collision |= 2;
+    collision |= PLAYER_STEP_BLOCKED_BY_ACTOR;
   }
   if (collision == 0 && pushed != 0) {
     object->speedLimit = px(1) / 4;
@@ -643,7 +672,7 @@ push_objects:
 
 counted:
   if (work != NULL) {
-    if (collision & 3)
+    if (collision & PLAYER_STEP_BLOCKED)
       work->blockedSteps++;
     else
       work->blockedSteps = 0;
@@ -668,14 +697,14 @@ counted:
     object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityZ = 0;
-    if (collision & 3) {
+    if (collision & PLAYER_STEP_BLOCKED) {
       s32 difference;
 
       difference = (s16)((u16)angle - object->facing);
-      if (difference > 0x1000)
-        difference = 0x1000;
-      if (difference < -0x1000)
-        difference = -0x1000;
+      if (difference > FIELD_BLOCKED_TURN_MAX)
+        difference = FIELD_BLOCKED_TURN_MAX;
+      if (difference < -FIELD_BLOCKED_TURN_MAX)
+        difference = -FIELD_BLOCKED_TURN_MAX;
       object->facing += difference;
     }
     object->timer = 0;
@@ -703,9 +732,7 @@ counted:
       cells = ((struct MapWork *)map)->layers[object->layer].cells;
     else
       cells = gMapGridCellBuffer;
-    cells += object->x.fixed / 0x100000 + (object->z.fixed / 0x100000) * 128;
-    /* FAKEMATCH(temporary): the cell attribute read into a local before the
-     * flags. */
+    cells += object->x.fixed / px(16) + (object->z.fixed / px(16)) * 128;
     attribute = cells->attributeB;
     oldFlags = sprite->flags;
     if (attribute & 16) {
@@ -735,7 +762,7 @@ counted:
 
     effect =
         Actor_Create(0x10e, object->x.fixed, object->y.fixed, object->z.fixed);
-    if (effect != NULL) {
+    if (effect != 0) {
       struct PlayerSprite *effectSprite;
 
       effect->groundHeight = object->groundHeight;

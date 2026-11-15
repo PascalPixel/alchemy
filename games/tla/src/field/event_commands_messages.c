@@ -28,12 +28,12 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   s32 extra;
   s32 portraitTop;
   s32 margin;
-  u32 height;
-  u32 width;
+  s32 height;
+  s32 width;
   s32 top;
   s32 left;
   s32 pos[3];
-  s32 handle;
+  struct Window *handle;
   s32 portrait;
   s32 flags;
   s32 message;
@@ -44,7 +44,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   s32 column;
 
   win = Ram_HeapSlots->windowWork;
-  work = Ram_HeapSlots->fieldWork;
+  work = gFieldWork;
   handle = 0;
   portrait = 0;
   sprite = Actor_GetSpriteById(localId);
@@ -52,7 +52,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   portraitTop = 0;
   margin = 4;
   flags = localId & 0xf000;
-  message = (s16)work->message;
+  message = work->message;
   localId &= 0xfff;
   x = 0;
   object = Actor_Lookup(localId);
@@ -78,7 +78,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
     } else if (localId <= 7) {
       sprite = localId;
       object = Actor_Lookup(Party_GetLeaderActor());
-      if (work->mode == 3) {
+      if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
         Render_ProjectPoint((u8 *)object + 8, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
@@ -179,11 +179,11 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
     if (win[4] != 0)
       portrait = Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
     else
-      portrait = Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
+      portrait = (s32)Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
     while (!Message_AllTypedFar())
       wait(1);
   }
-  work->messageWindow = handle;
+  work->messageWindow = (s32)handle;
   *(s32 *)((u8 *)work + 0x1e8) = portrait;
   work->message++;
   return handle;
@@ -300,28 +300,27 @@ void Event_ShowCounter(s32 a, s32 b, s32 c, s32 d) {
 /// Unused: reached only through a bare veneer in field_sequence.s. It would
 /// open the event's message at (x, y), wait for it and advance the message
 /// index; its units are as unknown as Event_ShowSpeakerMessage's.
-void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
-  s32 x0 = x;
-  struct FieldWork *state = Ram_HeapSlots->fieldWork;
-  s32 py = y;
-  s32 px = x0;
+void Event_ShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x, s32 y) {
+  struct FieldWork *state = gFieldWork;
+  s32 windowY = y;
+  s32 windowX = x;
   s32 minX = 8;
   s32 minY = 20;
-  s32 ret;
+  s32 window;
 
-  if (py > 119)
-    py += 32;
+  if (windowY > 119)
+    windowY += 32;
   else
-    py -= 32;
+    windowY -= 32;
 
-  if (x0 < minX)
-    px = minX;
-  if (px > 312)
-    px = 312;
-  CLAMP(py, minY, 220);
+  if (x < minX)
+    windowX = minX;
+  if (windowX > 312)
+    windowX = 312;
+  CLAMP(windowY, minY, 220);
 
-  ret = Message_OpenWindowFar((s16)state->message, px, py, 1);
-  while (Window_IsClosedFar(ret) == 0)
+  window = (s32)Message_OpenWindowFar(state->message, windowX, windowY, 1);
+  while (Window_IsClosedFar((struct Window *)window) == 0)
     wait(1);
   state->message++;
 }
@@ -331,15 +330,13 @@ void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
 // waiting for it to arrive), copying a watched object's position, spawning an
 // effect object that follows another, and a test of an actor's animation 108.
 
-/// If the actor has graphics, ends the window of the speaker its graphics ID
-/// names.
-/// id: actor ID.
-void Actor_ClosePortrait(s32 id) {
-  s32 no;
+/// Closes the portrait of an actor's sprite, if it has one.
+void Actor_ClosePortrait(s32 actorId) {
+  s32 sprite;
 
-  no = Actor_GetSpriteById(id);
-  if (no != -1)
-    Portrait_CloseWindowFar(no);
+  sprite = Actor_GetSpriteById(actorId);
+  if (sprite != -1)
+    Portrait_CloseWindowFar(sprite);
 }
 
 /// The event command "show two messages and wait": two actors speak at once,
@@ -370,11 +367,11 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
                                        Speaker_GetVoice(secondSprite) << 16);
   Portrait_OpenWindowFar(secondSprite, 0, secondPortraitX, secondPortraitY);
 
-  while (!Message_AllTypedFar())
+  while (Message_AllTypedFar() == 0)
     wait(1);
 
   wait(1);
-  while (!(gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)))
+  while ((gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0)
     wait(1);
 
   wait(1);
@@ -383,9 +380,9 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
   Message_CloseFinishedWindowsFar();
   wait(1);
 
-  while (!Window_IsClosedFar(firstWindow))
+  while (Window_IsClosedFar((struct Window *)firstWindow) == 0)
     wait(1);
-  while (!Window_IsClosedFar(secondWindow))
+  while (Window_IsClosedFar((struct Window *)secondWindow) == 0)
     wait(1);
 
   wait(1);

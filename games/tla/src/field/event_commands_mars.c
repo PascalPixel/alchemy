@@ -26,7 +26,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   s32 remaining;
   struct DjinniObject *djinni;
   void *effectSlots;
-  struct DjinniObject *leader;
+  struct Actor *leader;
   void *slot;
   s8 *slotState;
 
@@ -85,7 +85,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   } while (remaining >= 0);
 
   wait(60);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, 0x4000, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
   Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId), 28);
 
@@ -187,7 +187,7 @@ void FieldEffect_UpdateDescendingOrbitActor(
   actor->z = local.z;
   y = actor->y + 0xFFFF0000;
   actor->y = y;
-  if (y < other->y + 0x140000)
+  if (y < other->y + px(20))
     Actor_ReleaseFar(actor);
 }
 
@@ -195,7 +195,7 @@ void FieldEffect_UpdateDescendingOrbitActor(
 /// along angle 0xc000. Each time FieldParticle_HasPendingTarget returns 0,
 /// state 1 starts it over and state 2 clears its slot.
 void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
-  struct EffectVector position;
+  struct Vector3 position;
   struct Actor *source;
   s32 state;
   u32 random;
@@ -209,7 +209,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
   if (state == 0) {
     SET_POSITION(&position, source->x.fixed, source->y.fixed, source->z.fixed);
 
-    random = Random16() * 10 + 0xa0000;
+    random = Random16() * 10 + px(10);
     Vector_AddPolarOffset(random, Random16(), &position);
     Camera_WorldToScreen(&position);
 
@@ -223,11 +223,11 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
     position.x = effect->x;
     position.z = effect->z;
 
-    Vector_AddPolarOffset(magnitude << 15, angle << 8, &position);
+    Vector_AddPolarOffset(px(120), FACING_NORTH, &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->acceleration = Q16_ONE;
-    effect->maxSpeed = 0x50000;
+    effect->maxSpeed = px(5);
     effect->limitTurnStep = state;
     effect->state++;
 

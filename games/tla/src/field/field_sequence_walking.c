@@ -17,6 +17,7 @@
 /// Unused: returns 0.
 UNUSED s32 FieldSequence_ReturnZero(void) { return 0; }
 
+// The fields of struct Unit that Field_UpdateWalking reads (see its tag).
 /// Clears the field's twelve pending requests (see struct FieldWork).
 void Field_ClearRequests(void) {
   struct FieldWork *work = gFieldWork;
@@ -47,7 +48,7 @@ s32 Field_CountRequests(void) {
   // another request breaks the tie. BUGFIX tests each request instead.
 #ifdef BUGFIX
   return work->stepTrigger | work->pushCell | work->exit | work->fieldMenu |
-         work->aButton | work->pauseMenu | work->talk | work->examineCell |
+         work->aButton | work->pauseMenu | (s16)work->talk | work->examineCell |
          work->encounter | work->psynergy | work->item | work->raisedTrigger;
 #else
   return work->stepTrigger + work->pushCell + work->exit + work->fieldMenu +
@@ -90,14 +91,14 @@ s32 Field_GetCollisionAheadOfLeader(void) {
     x = position[0];
     z = position[2];
     cell = Ram_MapBlocks +
-           ((((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)) << 2);
+           ((((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)) << 2);
   } else {
     s32 x, z;
 
     x = position[0];
     cell = (u8 *)map->layers[0].cells;
     z = position[2];
-    cell += (((x / 0x100000) + ((z / 0x100000) << 7)) << 2);
+    cell += (x / px(16) + z / px(16) * MAPGRID_SIZE << 2);
   }
   return cell[2];
 }
@@ -117,12 +118,11 @@ s32 Field_GetCollisionUnderLeader(void) {
   if (block->mode == 3) {
     // The block table at its fixed address: as the linked gCellPictures it
     // loads
-    cell =
-        (struct MapCell *)Ram_MapBlocks +
-        (((position.x / 0x200000) & 31) + ((position.z / 0x200000) & 31) * 32);
+    cell = (struct MapCell *)Ram_MapBlocks +
+           (((position.x / px(32)) & 31) + ((position.z / px(32)) & 31) * 32);
   } else {
     cell = map->layers[0].cells;
-    cell += position.x / 0x100000 + position.z / 0x100000 * 128;
+    cell += position.x / px(16) + position.z / px(16) * 128;
   }
   return cell->collisionCode;
 }
@@ -189,7 +189,7 @@ void FieldEffect_SetAttached(s32 owner, s32 mode);
 /// while walking advances the encounter counter, regenerates PP, hurts the
 /// party with poison and hazardous ground, and wears Avoid off.
 void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = gFieldWork;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 leaderId = Party_GetLeaderActor();
   struct Actor *leader = WorldMap_Unfreeze();
@@ -216,8 +216,9 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
     previousHp[i] = Unit_Get(gMainRoutineWork.party[i])->hp;
 
   if (*((s8 *)work + 0x18a) == 3) {
-    tile = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) +
-                                              (((z / 0x200000) & 31) << 5)];
+    tile =
+        &((struct MapCell *)
+              Ram_MapBlocks)[((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)];
     event = tile->collisionCode;
     attributes = 0;
   } else {
@@ -225,7 +226,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
       tile = map->layers[layer].cells;
     else
       tile = (struct MapCell *)Ram_MapCellBuffer;
-    tile = &tile[(x / 0x100000) + ((z / 0x100000) << 7)];
+    tile = &tile[(x / px(16)) + ((z / px(16)) << 7)];
     event = tile->collisionCode;
     attributes = tile->attributeB;
   }
@@ -277,7 +278,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
     }
 
     if (gMainRoutineWork.avoidDistance != 0 &&
-        gMainRoutineWork.sceneType != 2) {
+        gMainRoutineWork.sceneType != SCENE_TYPE_TOWN) {
       gMainRoutineWork.avoidDistance -= leader->speedLimit;
       if (gMainRoutineWork.avoidDistance <= 0) {
         gMainRoutineWork.avoidDistance = 1;
@@ -321,11 +322,11 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
 /// Gives each character in the party amount PP (PP regenerates as the party
 /// walks).
 void Party_AddPp(s32 amount, s32 unused) {
-  s32 targetCount = Party_CountMembersFar();
-  s32 i;
+  s32 partyCount = Party_CountMembersFar();
+  s32 partyIndex;
 
-  for (i = 0; i < targetCount; i++)
-    Unit_AddPpFar(gMainRoutineWork.party[i], amount);
+  for (partyIndex = 0; partyIndex < partyCount; partyIndex++)
+    Unit_AddPpFar(gMainRoutineWork.party[partyIndex], amount);
 }
 
 /// Changes each party member's HP by amount, or by that percentage of maximum
@@ -336,7 +337,7 @@ void Party_AddHp(s32 amount, s32 scaled) {
   s32 value;
   struct Unit *unit;
   if (amount < 0) {
-    PaletteFade_SetSource(0x1ff, 0);
+    PaletteFade_SetSource(RGB(31, 15, 0), 0);
     PaletteFade_StartInterpolation(4);
     if (amount < -10)
       Sound_PlayFar(SE_HEAVY_IMPACT);
@@ -409,7 +410,7 @@ s32 Party_ApplyPoisonDamage(void) {
   }
 
   if (result != 0) {
-    PaletteFade_SetSource(0x1ff, 0);
+    PaletteFade_SetSource(RGB(31, 15, 0), 0);
     PaletteFade_StartInterpolation(4);
     Sound_PlayFar(SE_IMPACT);
   }

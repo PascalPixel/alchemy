@@ -5,6 +5,7 @@
 
 #include "event_commands_internal.h"
 #include "sounds.h"
+#include "sprite_ids.h"
 #include "field/field_bank.h"
 #include "fixed_math.h"
 #include "flags.h"
@@ -42,7 +43,7 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   *position = z / Q16_ONE;
   if ((object->spriteStorageKind & 15) == 1)
     *position -= (s8)Resource_GetMetadataRecordFarFar(
-                     *((struct ObjectAnimationState *)object->sprite)->value28)
+                     ((struct Sprite *)object->sprite)->entries[0]->animationId)
                      ->boxX;
   return 0;
 }
@@ -90,31 +91,32 @@ void *Sprite_AddAnimationFar(void *, s32);
 /// animation 25 (side 1) or 26 over 18 frames, its sprite gaining the doorway
 /// part (metadata 267).
 void Exit_PrepareActorAnimation(s32 id, s32 side) {
-  u32 zero;
-  u8 kind;
-  struct Actor *object;
-  struct ContextAnimation *context;
-  struct ContextEffect *effect;
-  s32 mode;
+  struct Actor *actor;
+  struct Sprite *sprite;
+  struct SpriteAnimation *doorway;
+  s32 animation;
 
-  object = Actor_Lookup(id);
-  context = object->sprite;
-  mode = (side != 1);
-  mode = 26 - mode;
-  effect = Sprite_AddAnimationFar(context, 267);
-  zero = 0;
-  // Through a byte pointer: as context->flags the kind is set first.
-  *&context->flags = zero;
-  kind = 15;
-  effect->param = kind;
-  object->x.fixed = (object->x.fixed & 0xfff00000) + px(8);
-  object->z.fixed = (object->z.fixed & 0xfff00000) + px(16);
-  object->velocityX = zero;
-  object->velocityZ = zero;
-  object->targetX = TARGET_UNSET;
-  object->targetZ = TARGET_UNSET;
-  Actor_SelectAnimationFar(object, mode);
-  wait(18);
+  actor = Actor_Lookup(id);
+  sprite = actor->sprite;
+  animation = (side != 1);
+  animation = 26 - animation;
+  doorway =
+      (struct SpriteAnimation *)Sprite_AddAnimationFar(sprite, SPRITE_DOORWAY);
+  {
+    u32 cleared = 0;
+    u8 hidden = SPRITE_COLOR_HIDDEN;
+
+    sprite->flags = cleared;
+    doorway->colorMode = hidden;
+    actor->x.fixed = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
+    actor->z.fixed = (actor->z.fixed & FIELD_CELL_MASK) + px(16);
+    actor->velocityX = cleared;
+    actor->velocityZ = cleared;
+    actor->targetX = TARGET_UNSET;
+    actor->targetZ = TARGET_UNSET;
+    Actor_SelectAnimationFar(actor, animation);
+    wait(18);
+  }
 }
 
 /// Starts the leader's animation for leaving through an exit: centres it on
@@ -122,34 +124,32 @@ void Exit_PrepareActorAnimation(s32 id, s32 side) {
 /// mode, then waits 18 frames. The leader's sprite gains a second part
 /// (metadata 267) for it.
 void Exit_PrepareAnimation(s32 animation) {
-  u32 zero;
-  u8 param;
-  struct Actor *object;
-  struct ContextAnimation *context;
-  struct ContextEffect *effect;
-  struct MainRoutineWork *party;
-  s32 mode;
+  struct Actor *actor;
+  struct Sprite *sprite;
+  struct SpriteAnimation *doorway;
 
-  party = &gMainRoutineWork;
-  mode = animation;
-  object = Actor_Lookup(party->leaderActorId);
-  context = object->sprite;
-  effect = Sprite_AddAnimationFar(context, 267);
-  zero = 0;
-  context->flags = zero;
-  /* FAKEMATCH(dead): an empty once-only loop. */
-  do {
-  } while (0);
-  param = 15;
-  effect->param = param;
-  object->x.fixed = (object->x.fixed & 0xFFF00000) + 0x80000;
-  object->z.fixed = (object->z.fixed & 0xFFF00000) + 0x100000;
-  object->velocityX = zero;
-  object->velocityZ = zero;
-  object->targetX = TARGET_UNSET;
-  object->targetZ = TARGET_UNSET;
-  Actor_SelectAnimationFar(object, mode);
-  wait(18);
+  actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  sprite = actor->sprite;
+  doorway =
+      (struct SpriteAnimation *)Sprite_AddAnimationFar(sprite, SPRITE_DOORWAY);
+  {
+    u32 cleared = 0;
+    u8 hidden = SPRITE_COLOR_HIDDEN;
+
+    // No shadow as the leader leaves.
+    sprite->flags = cleared;
+    doorway->colorMode = hidden;
+    // Keep the cell and put the leader at its middle in x and its south edge in
+    // z.
+    actor->x.fixed = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
+    actor->z.fixed = (actor->z.fixed & FIELD_CELL_MASK) + px(16);
+    actor->velocityX = cleared;
+    actor->velocityZ = cleared;
+    actor->targetX = TARGET_UNSET;
+    actor->targetZ = TARGET_UNSET;
+    Actor_SelectAnimationFar(actor, animation);
+    wait(18);
+  }
 }
 
 /// Leaves through a stairs-up exit (ANIM_LEADER_LEAVE); FLAG_ARRIVAL_STAIRS_UP
@@ -169,32 +169,29 @@ void Exit_StartStairsDown(void) {
 /// Plays the leader's arrival animation through an exit: centred on its cell at
 /// the cell's north edge, the leader plays animation for 30 frames, loses the
 /// extra sprite animation (sprite 267) and walks 8 pixels south.
-void Entrance_EndArrivalAnimation(s32 mode) {
-  s32 zero;
-  struct Actor *obj = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  struct ContextSprite *ctx = obj->sprite;
-  struct ContextEffectEntry *eff = Sprite_AddAnimationFar(ctx, 0x10b);
-
-  zero = 0;
-  ctx->flags = zero;
-  eff->param = 15;
-  obj->x.fixed = (obj->x.fixed & 0xfff00000) + px(8);
-  obj->z.fixed &= 0xfff00000;
-  Actor_SelectAnimationFar(obj, mode);
+void Entrance_EndArrivalAnimation(s32 animation) {
+  struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
+  struct Sprite *spriteAnimation = leader->sprite;
+  struct SpriteAnimation *eff =
+      (struct SpriteAnimation *)Sprite_AddAnimationFar(spriteAnimation,
+                                                       SPRITE_DOORWAY);
+  spriteAnimation->flags = 0;
+  eff->colorMode = SPRITE_COLOR_HIDDEN;
+  leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
+  leader->z.fixed &= FIELD_CELL_MASK;
+  Actor_SelectAnimationFar(leader, animation);
   wait(30);
-  ctx->count = 1;
-  SpriteAnimation_ClearFar(ctx->entries[1]);
-  {
-    /* FAKEMATCH(pin): the sprite copied into r1 for its two stores. */
-    register struct ContextSprite *pinnedCtx asm("r1") = ctx;
-
-    pinnedCtx->flags = 1;
-    pinnedCtx->entries[1] = (void *)zero;
-  }
-  obj->acceleration = px(1);
-  obj->speedLimit = px(1);
-  Actor_SetMoveTargetFar(obj, obj->x.fixed, obj->y.fixed, obj->z.fixed + px(8));
-  Actor_WaitForMoveFar(obj);
+  // Back to one sprite part, with its shadow, walking 8 pixels south at 1
+  // pixel a frame.
+  spriteAnimation->count = 1;
+  SpriteAnimation_ClearFar(spriteAnimation->entries[1]);
+  spriteAnimation->entries[1] = NULL;
+  spriteAnimation->flags = SPRITE_FLAG_SHADOW;
+  leader->acceleration = Q16_ONE;
+  leader->speedLimit = Q16_ONE;
+  Actor_SetMoveTargetFar(leader, leader->x.fixed, leader->y.fixed,
+                         leader->z.fixed + px(8));
+  Actor_WaitForMoveFar(leader);
 }
 
 /// Plays the leader's arrival for the way the last scene was left: through a

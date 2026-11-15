@@ -27,7 +27,7 @@
 #include "field_psynergy_scoop.c"
 #include "field_psynergy_teleport.c"
 #include "field_psynergy_parch.c"
-#include "field_psynergy_unnamed_28.c"
+#include "field_psynergy_ring.c"
 #include "field_psynergy_tremor.c"
 #include "field_psynergy_grind.c"
 #include "field_psynergy_hover.c"

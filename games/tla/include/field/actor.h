@@ -17,7 +17,7 @@
 /// A view of an actor's sprite record: the word at 0x28 points at its sprite
 /// id, which Actor_GetSpriteById and the event commands read.
 struct ObjectAnimationState {
-  u8 unk00[0x28];
+  u8 unused[0x28]; ///< no code names it
   s16 *value28;
 };
 
@@ -28,7 +28,14 @@ enum ActorPriorityFlag {
   /// The depth sort treats it as 320 pixels higher on the screen.
   ACTOR_PRIORITY_UNDERFOOT = 0x02,
   /// The depth sort treats it as 320 pixels lower on the screen.
-  ACTOR_PRIORITY_OVERHEAD = 0x04
+  ACTOR_PRIORITY_OVERHEAD = 0x04,
+  /// Drawn at the depth its riseCounter byte holds, not its own place
+  /// (Render_ApplyProjectedPlacementAtDepth).
+  ACTOR_PRIORITY_OWN_DEPTH = 0x08,
+  ACTOR_PRIORITY_NOT_DRAWN = 0x10, ///< placed nowhere, as if off screen
+  /// With ACTOR_PRIORITY_AUTOMATIC, takes the priority of the cells under it
+  /// even where the ground in front rises, which would put it behind.
+  ACTOR_PRIORITY_IGNORES_RISES = 0x20
 };
 
 /// Actor.motionFlags bits.
@@ -145,10 +152,32 @@ struct Actor {
       u8 blockMarked;
     };
   };
-  /// The parameter its action script reads (a follow distance or an angle to
-  /// face).
-  s16 timer;
-  s16 userValue; ///< the side of the player's next footprint, or scene scratch
+  /// Two halfwords whose meaning depends on what runs the actor.
+  union {
+    struct {
+      /// The parameter its action script reads (a follow distance or an
+      /// angle to face).
+      s16 timer;
+      /// The side of the player's next footprint, or scene scratch.
+      s16 userValue;
+    };
+    /// Where SC_WANDER_HOME wanders around, in pixels: where it was created
+    /// or placed.
+    struct {
+      s16 homeX;
+      s16 homeZ;
+    };
+    /// A Venus Djinni's falling motes
+    /// (FieldEffect_UpdateDescendingOrbitActor).
+    struct {
+      u16 orbitFrames; ///< frames left of the spiral, 100 at the start
+      s16 orbitAngle;  ///< its start on the circle, 1/65536 turns
+    };
+    /// A spin that speeds up (FieldEffect_AdvanceAngleWithRamp).
+    struct {
+      s16 spinRampFrames; ///< frames the spin has been speeding up for
+    };
+  };
   /// The object its action script follows or faces.
   struct Actor *watchedActor;
   void (*update)(void); ///< the object's per-frame hook

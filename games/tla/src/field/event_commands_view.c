@@ -41,7 +41,7 @@ void WorldMap_StepZoom(void) {
   gScanlinePitch = *(u16 *)((u8 *)map + 0x11c) + 1;
   if (*step == *duration) {
     *duration = 0;
-    Task_Remove(WorldMap_StepZoom);
+    Task_Remove((TaskFunc)WorldMap_StepZoom);
   }
 }
 
@@ -176,16 +176,17 @@ struct BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags,
   return object;
 }
 
-/// Returns 0 while the actor's first layer runs animation 0x108, else 1.
-s32 Actor_IsOutsideAnimation108(struct Actor *object) {
-  struct ObjectAnimationState *state;
+/// Returns 0 while the actor's sprite is an attached effect
+/// (SPRITE_ATTACHED_EFFECT), else 1.
+s32 Actor_IsNotAttachedEffect(struct Actor *object) {
+  struct Sprite *sprite;
   s32 value;
 
-  if (object == 0 || object->spriteStorageKind != 1 ||
-      (state = object->sprite) == 0 || state->value28 == 0)
+  if (object == 0 || object->spriteStorageKind != ACTOR_SPRITE_ONE ||
+      (sprite = object->sprite) == 0 || sprite->entries[0] == 0)
     return 1;
-  value = *state->value28;
-  value ^= 0x108;
+  value = sprite->entries[0]->animationId;
+  value ^= SPRITE_ATTACHED_EFFECT;
   if (value != 0)
     return 1;
   return 0;

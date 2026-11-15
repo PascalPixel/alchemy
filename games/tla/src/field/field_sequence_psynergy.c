@@ -80,12 +80,13 @@ s32 Field_UsePsynergy(u32 code) {
       entrance = (u16)state->retreatEntrance;
       state->entrance = entrance;
     }
-    event->exit = 999;
+    event->exit = EXIT_KEEP_DESTINATION;
     retreat = 1;
   }
 
   selector = Scene_SelectPsynergyTarget(group);
-  pending = Scene_FindPsynergyTrigger(0x80000005, group, selector);
+  pending = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_FIRST),
+                                      group, selector);
   if (pending != NULL) {
     target = -1;
     if (selector != -1 && (selector & 0x100))
@@ -96,9 +97,11 @@ s32 Field_UsePsynergy(u32 code) {
     return Field_RunPsynergyEndEvents(code);
 
   selector = Scene_SelectPsynergyTarget(group);
-  before = Scene_FindPsynergyTrigger(0x10000005, group, selector);
+  before = Scene_FindPsynergyTrigger(
+      PSYNERGY_TRIGGER(PSYNERGY_PHASE_BEFORE_CAST), group, selector);
   after = Scene_FindPsynergyTrigger(5, group, selector);
-  during = Scene_FindPsynergyTrigger(0x50000005, group, selector);
+  during = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
+                                     group, selector);
   if (abilityId == 156 && gMainRoutineWork.next != SCENE_WORLD_MAP &&
       before == NULL && after == NULL && during == NULL) {
     FIELD_PSYNERGY_MESSAGE(userId, 156, MsgKey0dbd);
@@ -173,7 +176,8 @@ s32 Field_UsePsynergy(u32 code) {
   hit = event->unkd30;
   if (hit != -1) {
     selector = hit | 0x100;
-    pending = Scene_FindPsynergyTrigger(0x20000005, group, selector);
+    pending = Scene_FindPsynergyTrigger(
+        PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END), group, selector);
     if (pending != NULL)
       Field_RunPsynergyEvent(pending, userId, event->unkd30);
   }
@@ -215,7 +219,7 @@ s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target) {
 /// it would act on (Scene_SelectPsynergyTarget), at any stage.
 s32 Scene_HasPsynergyTrigger(s32 fieldPsynergy) {
   u16 kind = fieldPsynergy;
-  s32 result = (s32)Scene_FindPsynergyTrigger(0xf0000005, kind,
+  s32 result = (s32)Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER_ANY, kind,
                                               Scene_SelectPsynergyTarget(kind));
 
   return (u32)((-result) | result) >> 31;

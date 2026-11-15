@@ -31,7 +31,7 @@ s32 Field_GetSceneAttributes(s32 scene);
  * PartyInventory_GiveItem(s32 item, s32 flags); tried as the definition's s32
  * PartyInventory_GiveItem(s32 item, s32 unused), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence_run.c:210: `PartyInventory_GiveItem'
+ * games/tla/src/field/field_sequence_run.c:214: `PartyInventory_GiveItem'
  * undeclared (first use in this function). */
 s32 PartyInventory_GiveItem__field_sequence(s32 item) __asm__(
     "PartyInventory_GiveItem");
@@ -58,7 +58,7 @@ s32 FieldSequence_Run(void) {
   s32 *leaderId;
   s32 *steps;
   s16 *entrance;
-  u16 *turn;
+  u16 *layer;
   s8 *pending;
   s32 code;
   s32 mode;
@@ -81,11 +81,11 @@ s32 FieldSequence_Run(void) {
   if (gMainRoutineWork.mapId == SCENE_CLEAR) {
     WorldMap_InitializePerspectiveFar();
     gMainRoutineWork.perspectiveMap = 1;
-    mode = 3;
+    mode = ACTOR_SYSTEM_WORLD_MAP;
     Encounter_SelectMapZones(0);
   } else {
     MapGrid_LoadMapFar(gMainRoutineWork.mapId);
-    mode = 2;
+    mode = ACTOR_SYSTEM_MAP;
     Encounter_SelectMapZones(1);
   }
   work->mode = mode;
@@ -121,7 +121,7 @@ s32 FieldSequence_Run(void) {
   work->transitionActive = 0;
   work->walkingDistanceScale = 409;
   work->walkingDistance = 0;
-  if (gMainRoutineWork.sceneType == 2) {
+  if (gMainRoutineWork.sceneType == SCENE_TYPE_TOWN) {
     work->walkingDistanceScale = 0;
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
   }
@@ -234,14 +234,14 @@ s32 FieldSequence_Run(void) {
   leaderId = &gMainRoutineWork.leaderActorId;
   steps = &gMainRoutineWork.encounterSteps;
   entrance = &gMainRoutineWork.entrance;
-  turn = &gMainRoutineWork.layer;
+  layer = &gMainRoutineWork.layer;
   for (;;) {
     GameFlag_Set(FLAG_FIELD_HANDLING_REQUESTS);
     leader = WorldMap_Unfreeze();
     Actor_StartIdleFar(leader);
     SET_POSITION(party, leader->x.fixed, 0, leader->z.fixed);
     party->heading = leader->facing;
-    *turn = leader->layer;
+    *layer = leader->layer;
     while (Field_CountRequests() != 0) {
       if (work->exit != 0) {
         result = work->exit;
@@ -279,7 +279,7 @@ s32 FieldSequence_Run(void) {
               WorldMap_SetReturnLeavingScene((s16)restartScene,
                                              (s16)restartEntrance);
             }
-            result = 999;
+            result = EXIT_KEEP_DESTINATION;
             WorldMap_ReloadPendingAreaGraphics();
             goto done;
           }
@@ -352,7 +352,7 @@ s32 FieldSequence_Run(void) {
         party->returnMusic = -1;
         party->next = 510;
         *entrance = work->encounter;
-        work->exit = 999;
+        work->exit = EXIT_KEEP_DESTINATION;
         Field_StartEncounterTransition(work->encounter);
         work->encounterBias = 0;
         work->encounter = 0;
@@ -494,19 +494,6 @@ done:
   return result;
 }
 
-/* VIEW(field_sequence): tag struct Object as struct Object__field_sequence;
- * scene/shared.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence_run.c:508: structure has no member named
- * `pos'. */
-struct Object__field_sequence {
-  u8 pad0[6];
-  u16 angle;
-  struct EffectVector pos;
-  u8 pad1[14];
-  u8 kind;
-};
-
 /// Returns the cell behavior of the map cell 16 pixels ahead of the party
 /// leader when there is something to search there: a fixed search spot whose
 /// ground is level with the leader or up to 64 pixels above it, or a behavior
@@ -514,7 +501,7 @@ struct Object__field_sequence {
 s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   struct FieldWork *work;
   u8 *mapBytes;
-  struct Object__field_sequence *leader;
+  struct Actor *leader;
   union PolarOffsetPosition probePosition;
   u8 *cell;
   s32 collisionCode;
@@ -523,16 +510,16 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 
   result = 0;
   leader = WorldMap_Unfreeze();
-  work = Ram_HeapSlots->fieldWork;
+  work = gFieldWork;
   mapBytes = (u8 *)Ram_HeapSlots->mapGrid;
   if (leader != 0) {
-    probePosition.vector.x = leader->pos.x;
-    probePosition.vector.y = leader->pos.y;
-    probePosition.vector.z = leader->pos.z;
+    probePosition.vector.x = leader->x.fixed;
+    probePosition.vector.y = leader->y.fixed;
+    probePosition.vector.z = leader->z.fixed;
     {
       s32 *position = probePosition.coordinates;
 
-      Vector_AddPolarOffset(px(16), leader->angle, position);
+      Vector_AddPolarOffset(px(16), leader->facing, position);
     }
     if (work->mode == 3) {
       s32 x, z;
@@ -540,21 +527,21 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
       x = probePosition.vector.x;
       z = probePosition.vector.z;
       cell = Ram_MapBlocks +
-             ((((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)) << 2);
+             ((((x / px(32)) & 31) + (((z / px(32)) & 31) << 5)) << 2);
     } else {
       s32 x, z;
 
       cell = *(u8 **)(mapBytes + 0x138);
       x = probePosition.vector.x;
       z = probePosition.vector.z;
-      cell += (((x / 0x100000) + ((z / 0x100000) << 7)) << 2);
+      cell += (((x / px(16)) + ((z / px(16)) << 7)) << 2);
     }
     collisionCode = cell[2];
     if (collisionCode >= 242 && collisionCode <= 247) {
       terrainHeight = MapGrid_GetTerrainHeightFar(
-          leader->kind, probePosition.vector.x, probePosition.vector.z);
-      if (terrainHeight >= leader->pos.y &&
-          terrainHeight <= leader->pos.y + 0x100000) {
+          leader->layer, probePosition.vector.x, probePosition.vector.z);
+      if (terrainHeight >= leader->y.fixed &&
+          terrainHeight <= leader->y.fixed + px(16)) {
         result = collisionCode;
       }
     } else if (Scene_FindTrigger(3, collisionCode) != 0) {
@@ -596,21 +583,20 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
   }
 
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    SET_POSITION(&gMainRoutineWork, entry->x << 16, entry->y << 16,
-                 entry->z << 16);
+    SET_POSITION(&gMainRoutineWork, px(entry->x), px(entry->y), entry->z << 16);
     gMainRoutineWork.heading = entry->facing;
     gMainRoutineWork.layer = 0;
   }
 
   left = entry->cameraLeft;
   if (left != -1)
-    map->minX = left << 16;
+    map->minX = px(left);
   if (entry->cameraTop != -1)
-    map->minZ = entry->cameraTop << 16;
+    map->minZ = px(entry->cameraTop);
   if (entry->cameraRight != -1)
-    map->maxX = entry->cameraRight << 16;
+    map->maxX = px(entry->cameraRight);
   if (entry->cameraBottom != -1)
-    map->maxZ = entry->cameraBottom << 16;
+    map->maxZ = px(entry->cameraBottom);
 
   if (map->minX + px(240) > map->maxX)
     map->minX = map->maxX - px(240);
@@ -628,7 +614,7 @@ s32 Field_PlaceAtEntrance(void) {
   s32 xFixed;
   u8 *cursor = gData_0202e000;
   s32 *angle;
-  u16 *turn;
+  u16 *layer;
   s32 entrance = work->entrance;
   s32 height;
   s32 x;
@@ -644,25 +630,23 @@ s32 Field_PlaceAtEntrance(void) {
 
   cursor = gData_0202e000 + (u16)Stream_ReadU16(&cursor);
   angle = &gMainRoutineWork.heading;
-  turn = &gMainRoutineWork.layer;
+  layer = &gMainRoutineWork.layer;
   for (;; cursor += 6) {
     if (*(s8 *)cursor == -1) {
       *angle = 0x4000;
       {
-        /* FAKEMATCH(temporary): the zero in a local of its own. */
-        s32 zero = 0;
-        *turn = zero;
+        u32 cleared = 0;
+
+        *layer = cleared;
       }
       return 0;
     }
     if (*(s8 *)cursor == entrance) {
-      /* FAKEMATCH(barrier): an empty asm reading work. */
-      asm("" : : "r"(work));
       cursor++;
       x = Stream_ReadS16(&cursor);
       z = Stream_ReadS16(&cursor);
-      xFixed = x << 16;
-      zFixed = z << 16;
+      xFixed = px(x);
+      zFixed = px(z);
       height = MapGrid_GetTerrainHeightFar(0, xFixed, zFixed) >> 16;
       flags = *cursor;
       base = (s32)gData_0202e000;
@@ -670,7 +654,7 @@ s32 Field_PlaceAtEntrance(void) {
         gMainRoutineWork.x = xFixed;
         gMainRoutineWork.z = zFixed;
         *angle = (flags & 15) << 12;
-        *turn = 0;
+        *layer = 0;
         if (flags & 16)
           gMainRoutineWork.y = px(8);
       }

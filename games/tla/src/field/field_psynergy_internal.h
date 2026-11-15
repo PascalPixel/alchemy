@@ -13,6 +13,7 @@
 #include "window/message_argument.h"
 #include "field/perspective.h"
 #include "system/iwram_call.h"
+#include "system/io_write.h"
 #include "field/objdisp.h"
 #include "system/system.h"
 #include "fixed_math.h"
@@ -53,6 +54,7 @@
 #include "field/canvas_sprite.h"
 #include "system/io_reg.h"
 #include "field/map_grid.h"
+#include "field/field_sequence.h"
 
 void FieldEffect_AdvanceMotion(union FieldObject *object);
 
@@ -62,10 +64,14 @@ struct WhirlSpark {
   s32 x;
   s32 y;
   s32 z;
-  s32 angle; ///< 1/65536 turns
-  s32 unused10;
-  s32 radius; ///< 16.16 fixed-point pixels
+  s32 angle;            ///< 1/65536 turns
+  s32 unusedAfterAngle; ///< no code names it
+  s32 radius;           ///< 16.16 fixed-point pixels
   s32 age;
 };
+
+/// The phase or state a field Psynergy's work is left in when it has
+/// finished, which the cast waits for.
+#define FIELD_PSYNERGY_FINISHED 999
 
 #endif // ALCHEMY_FIELD_PSYNERGY_INTERNAL_H

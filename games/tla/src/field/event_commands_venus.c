@@ -11,9 +11,9 @@ struct FieldEffectWork;
 
 /// A Venus Djinni joining the party, as The Broken Seal's
 /// Djinn_RunVenusJoinEffect.
-void Djinn_RunVenusJoinEffect(s32 arg) {
-  struct CaptureObject *leader;
-  struct CaptureObject *djinni;
+void Djinn_RunVenusJoinEffect(s32 djinniId) {
+  struct Actor *leader;
+  struct Actor *djinni;
   void *effectSlots;
   u8 *slot;
   s8 *slotState;
@@ -21,40 +21,40 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   s32 scale;
   s32 position[3];
 
-  leader =
-      (struct CaptureObject *)Actor_GetById(gMainRoutineWork.leaderActorId);
-  djinni = (struct CaptureObject *)Actor_GetById(arg);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  djinni = Actor_GetById(djinniId);
   if (djinni == NULL)
     return;
 
   FieldEffect_InitializeSlots();
   effectSlots = gEffectWork;
-  Shop_SaveAndTintFieldPaletteFar(0x201204);
+  Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(4, 16, 4));
   wait(30);
-  djinni->visible = 0;
+  djinni->paused = 0;
   Sound_PlayFar(SE_JUMP);
-  Actor_Jump(arg, 4, 15);
+  Actor_Jump(djinniId, 4, 15);
   Sound_PlayFar(SE_JUMP);
-  Actor_Jump(arg, 4, 15);
+  Actor_Jump(djinniId, 4, 15);
   wait(30);
-  djinni->callback = (void *)BattleEffect_AdvanceSpinAngle;
+  djinni->update = (void (*)(void))BattleEffect_AdvanceSpinAngle;
   Sound_PlayFar(SE_HIGH_JUMP);
-  Actor_Jump(arg, 8, 22);
+  Actor_Jump(djinniId, 8, 22);
   Sound_PlayFar(SE_SPIN);
-  MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, Q16_ONE);
-  djinni->callback = (void *)FieldEffect_ShrinkActorAndDestroyFast;
-  Actor_SelectAnimationFar((struct Actor *)djinni, 3);
+  MapGrid_SetScreenShakeFar(px(13) / 10, px(13) / 10, Q16_ONE);
+  djinni->update = (void (*)(void))FieldEffect_ShrinkActorAndDestroyFast;
+  Actor_SelectAnimationFar(djinni, 3);
   wait(90);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, 0x4000, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
-  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId), 28);
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId),
+                           ANIM_LEADER_ARMS_RAISED);
   wait(30);
-  MapGrid_SetScreenShakeFar(0x19999, 0x19999, Q16_ONE);
+  MapGrid_SetScreenShakeFar(px(8) / 5, px(8) / 5, Q16_ONE);
 
-  position[0] = djinni->x;
-  position[1] = djinni->y;
-  position[2] = djinni->z;
-  Camera_WorldToScreen(position);
+  position[0] = djinni->x.fixed;
+  position[1] = djinni->y.fixed;
+  position[2] = djinni->z.fixed;
+  Camera_WorldToScreen(&position);
 
   slot = (u8 *)effectSlots + 80;
   remaining = 23;
@@ -91,21 +91,20 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   wait(30);
 
   for (remaining = 0; remaining <= 23; remaining++) {
-    position[0] = leader->x;
-    position[1] = leader->y + 0x780000;
-    position[2] = leader->z;
-    djinni = (struct CaptureObject *)Actor_Spawn(672, position[0], position[1],
-                                                 position[2]);
+    position[0] = leader->x.fixed;
+    position[1] = leader->y.fixed + px(120);
+    position[2] = leader->z.fixed;
+    djinni = Actor_Spawn(672, position[0], position[1], position[2]);
     if (djinni != NULL) {
       scale = Random16() / 3 + Q16_ONE;
       djinni->scaleY = scale;
       djinni->scaleX = scale;
-      djinni->timer = 100;
-      djinni->angle = (remaining << 16) / 24;
-      djinni->callback = (void *)FieldEffect_UpdateDescendingOrbitActor;
-      djinni->mode = 0;
-      Actor_SelectAnimationFar((struct Actor *)djinni, 7);
-      Actor_SetSpriteColorModeFar(djinni, 11);
+      djinni->orbitFrames = 100;
+      djinni->orbitAngle = (remaining << 16) / 24;
+      djinni->update = (void (*)(void))FieldEffect_UpdateDescendingOrbitActor;
+      djinni->motionFlags = 0;
+      Actor_SelectAnimationFar(djinni, 7);
+      Actor_SetSpriteColorModeFar(djinni, SPRITE_COLOR_GREEN_TINT);
     }
   }
 
@@ -113,25 +112,23 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   Sound_PlayFar(SE_STOP_MUSIC_PLAYER_5);
   wait(1);
   Sound_PlayFar(SE_LIGHT_APPEAR);
-  position[0] = leader->x;
-  position[1] = leader->y + 0x120000;
-  position[2] = leader->z;
+  position[0] = leader->x.fixed;
+  position[1] = leader->y.fixed + px(18);
+  position[2] = leader->z.fixed;
   for (remaining = 0; remaining <= 7; remaining++) {
-    djinni = (struct CaptureObject *)Actor_Spawn(672, position[0], position[1],
-                                                 position[2]);
+    djinni = Actor_Spawn(672, position[0], position[1], position[2]);
     if (djinni == NULL)
       break;
-    djinni->scaleY = 0x9999;
-    djinni->scaleX = 0x9999;
-    djinni->mode = 2;
-    djinni->gravity = px(5);
-    djinni->baseY = djinni->y;
-    djinni->speed = Random16() + 0x16666;
+    djinni->scaleY = Q16_ONE * 3 / 5;
+    djinni->scaleX = Q16_ONE * 3 / 5;
+    djinni->motionFlags = 2;
+    djinni->velocityY = px(5);
+    djinni->groundHeight = djinni->y.fixed;
+    djinni->speedLimit = Random16() + px(7) / 5;
     Actor_SetTargetPositionFromMagnitudeAngle(djinni, px(32), Random16());
-    Actor_SetSpriteColorModeFar(djinni, 11);
-    djinni->lifetime = 8;
-    Actor_StartScriptFar((struct Actor *)djinni,
-                         gBattleEffect_SharedParticleScript);
+    Actor_SetSpriteColorModeFar(djinni, SPRITE_COLOR_GREEN_TINT);
+    djinni->wait = 8;
+    Actor_StartScriptFar(djinni, gBattleEffect_SharedParticleScript);
   }
 
   wait(15);
@@ -159,14 +156,14 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
 
   if (state == 0) {
     position.x = source->x.fixed;
-    position.y = source->y.fixed + Random16() * 5 + 0xf0000;
+    position.y = source->y.fixed + Random16() * 5 + px(15);
     {
       struct EffectVector *p = &position;
 
       position.z = source->z.fixed;
       Camera_WorldToScreen(p);
     }
-    Vector_AddPolarOffset(Random16() * 6 + 0x20000, Random16(), &position);
+    Vector_AddPolarOffset(Random16() * 6 + px(2), Random16(), &position);
 
     {
       s32 accel = 0x30000;
@@ -174,10 +171,10 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
       effect->targetX = position.x;
       effect->targetZ = position.z;
       effect->x = position.x;
-      effect->z = position.z - 0x640000;
+      effect->z = position.z - px(100);
       effect->acceleration = accel;
     }
-    effect->maxSpeed = Random16() * 3 + 0x30000;
+    effect->maxSpeed = Random16() * 3 + px(3);
     effect->scaleX = Q16_ONE;
     effect->scaleY = Q16_ONE;
     effect->limitTurnStep = state;
@@ -199,9 +196,9 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
       Sound_PlayFar(SE_CRACK);
 
       if (*statePointer == 1)
-        (*statePointer)--;
+        effect->state--;
       else
-        (*statePointer)++;
+        effect->state++;
       effect->callbackDelay = 6;
     }
   } else if (state == 3) {

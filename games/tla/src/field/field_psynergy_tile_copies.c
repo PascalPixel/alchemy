@@ -26,18 +26,18 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
       ((struct TouchMap *)Ram_HeapSlots->mapGrid)->layers;
   struct TouchCell *cell = (struct TouchCell *)(event + 0xcc0);
   s32 lift;
-  s32 scrollX = layer->x >> 20;
-  s32 scrollZ = layer->z >> 20;
+  s32 scrollX = FIELD_CELL(layer->x);
+  s32 scrollZ = FIELD_CELL(layer->z);
   s32 layerX, layerZ;
   s32 left, top, i;
 
   if (layerIndex <= 2)
     layer += layerIndex;
-  layerX = layer->x >> 20;
-  layerZ = layer->z >> 20;
+  layerX = FIELD_CELL(layer->x);
+  layerZ = FIELD_CELL(layer->z);
   left = x - layerX;
   top = z - layerZ;
-  lift = -(owner->groundHeight >> 20);
+  lift = -(FIELD_CELL(owner->groundHeight));
 
   /* FAKEMATCH(signature): gSceneLocalState typed as 1491 TouchCells before the
    * copies. */
@@ -57,7 +57,7 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
 
       MapGrid_CopyCellPictureCellsRectFar(toX + dx, toZ + dz, 1, 1, x + dx,
                                           z + dz);
-      MapGrid_GetCellAt(cx << 20, cz << 20, 2)->unk02 = 0;
+      MapGrid_GetCellAt(cx << 20, cz << 20, 2)->collisionCode = 0;
       n = gSceneLocalState.count;
       if (n < 64) {
         gSceneLocalState.copies[n].toX = toX + dx;
@@ -79,7 +79,7 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
 void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
   s32 ownerId = Party_GetLeaderActor();
   struct Actor *owner = Actor_GetById(ownerId);
-  struct Actor *object = Actor_CreateFar(sprite, x << 16, 0, z << 16);
+  struct Actor *object = Actor_CreateFar(sprite, px(x), 0, px(z));
   s32 from[3];
   s32 to[3];
   s32 i;
@@ -94,7 +94,7 @@ void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
   do {
     wait(1);
     object->scaleY = object->scaleX = object->scaleX + 0x3d7;
-    object->facing += TRIG_TURN / 16;
+    object->facing += FACING_STEP;
   } while (object->scaleX <= 0xffff);
   object->scaleY = object->scaleX = Q16_ONE;
   Actor_SelectAnimationFar(owner, 1);
@@ -135,8 +135,8 @@ void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
 void Cyclone_PlotArc(s32 radius, s32 angle, u16 *offsets, u8 *pixels) {
   s32 i;
 
-  if (radius > 31)
-    radius = 31;
+  if (radius > RGB_LEVEL_MAX)
+    radius = RGB_LEVEL_MAX;
   for (i = 0; i <= 29; i++) {
     s32 x = ((radius * Trig_Cos(angle)) >> 16) + 32;
     s32 y = ((radius * Trig_Sin(angle)) >> 16) + 32;
@@ -157,8 +157,8 @@ void ParticleBurst_Start(void) {
   u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = effect->mainActor;
   struct BurstCell *cell = (struct BurstCell *)(event + 0xcc0);
-  s32 dx = (cell->x << 20) - owner->x.fixed + 0x80000;
-  s32 dz = (cell->z << 20) - owner->z.fixed + 0x80000;
+  s32 dx = (cell->x << 20) - owner->x.fixed + px(8);
+  s32 dz = (cell->z << 20) - owner->z.fixed + px(8);
   s32 heading = (u16)ArcTan2(dz, dx);
   struct EffectSprite *sprite;
   struct BurstParticle *particle;
@@ -182,7 +182,7 @@ void ParticleBurst_Start(void) {
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     SET_POSITION(particle, owner->x.fixed, owner->y.fixed, owner->z.fixed);
-    Vector_AddPolarOffset(Random16() * 8 + 0x80000, Random16(), &particle->x);
+    Vector_AddPolarOffset(Random16() * 8 + px(8), Random16(), &particle->x);
     particle->heading = heading;
     particle->speed = Random16() + 0x10000;
     particle->spin = (Random16() >> 6) + 384;

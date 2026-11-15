@@ -3,12 +3,13 @@
 
 #include "types.h"
 #include "system/field_effect.h"
+#include "field/sprite.h"
 
 /// Integrates linear motion, scale changes and rotation once per effect frame.
 void FieldEffect_UpdateMotionScaleAndSpin(union FieldObject *object) {
   s32 x;
   s32 velocityX;
-  struct FieldSprite *sprite;
+  struct Sprite *sprite;
 
   x = object->effect.x;
   velocityX = object->effect.velocity.x;

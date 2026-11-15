@@ -55,8 +55,8 @@ void Rope_Draw(void) {
   s32 started = 0;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
-  s32 viewX = view[0] & 0xffff0000;
-  s32 viewZ = view[1] & 0xffff0000;
+  s32 viewX = view[0] & FIELD_PIXEL_MASK;
+  s32 viewZ = view[1] & FIELD_PIXEL_MASK;
   s32 originY = map->origin[1];
   struct AffineTransform transform;
   struct RopeNode *node;
@@ -87,15 +87,15 @@ void Rope_Draw(void) {
         screenY = depth - prevY;
         if ((u32)(screenX + 0x1fffff) <= 0x12ffffe && screenY > -0x200000 &&
             screenY <= 0xdfffff) {
-          s32 spriteX = ((screenX >> 16) - 4) & 0x1ff;
-          s32 spriteY = ((screenY >> 16) - 4) & 0xff;
+          s32 spriteX = (FIELD_PIXEL(screenX) - 4) & 0x1ff;
+          s32 spriteY = (FIELD_PIXEL(screenY) - 4) & 0xff;
           struct AnimationSpritePart *sprite;
 
-          prevY = ((prevY + depth) >> 16) + 58;
+          prevY = FIELD_PIXEL(prevY + depth) + 58;
           sprite = &node->sprite;
 
           ((u32 *)sprite)[0] = 0;
-          ((u32 *)&node->sprite)[1] = spriteY | (spriteX << 16) | 0x2000;
+          ((u32 *)&node->sprite)[1] = spriteY | OBJ_X(spriteX) | 0x2000;
           ((u32 *)&node->sprite)[2] = 0x800 | tile;
           if (angle != 0) {
             transform.angle = angle;
@@ -192,7 +192,7 @@ void Rope_Tie(s32 index, s32 id, s32 other) {
     s32 lift;
 
     if (first->spriteStorageKind == 1)
-      priority = ((struct FieldSprite *)first->sprite)->priority;
+      priority = ((struct Sprite *)first->sprite)->image.priority;
     slot = &work->slots[index];
     slot->first = id;
     slot->second = other;
@@ -272,8 +272,8 @@ void Rope_SwingBetween(s32 index, s32 from, s32 to, s32 mode) {
   struct Actor *b = Actor_Lookup(to);
 
   if (a != NULL && b != NULL)
-    Rope_LayBowed(index, a->x.fixed, a->y.fixed + 0x80000, a->z.fixed,
-                  b->x.fixed, b->y.fixed + 0x80000, b->z.fixed, mode);
+    Rope_LayBowed(index, a->x.fixed, a->y.fixed + px(8), a->z.fixed, b->x.fixed,
+                  b->y.fixed + px(8), b->z.fixed, mode);
 }
 
 /* VIEW(f0d8ff8): routine ArcTan2 as s16 ArcTan2(s32 y, s32 x); f0d8740 has s32
@@ -325,7 +325,7 @@ void Rope_Coil(s32 index, s32 firstId, s32 secondId) {
     s32 lift;
 
     if (first->spriteStorageKind == 1)
-      priority = ((struct FieldSprite *)first->sprite)->priority;
+      priority = ((struct Sprite *)first->sprite)->image.priority;
     slot = &work->slots[index];
     slot->first = firstId;
     slot->second = secondId;
@@ -351,7 +351,7 @@ s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   struct RopeSlot *slot = &work->slots[index];
   struct RopeNode **link = &slot->head;
   s32 angle = 0;
-  s32 radius = 0x40000;
+  s32 radius = px(4);
   s32 i;
   s32 kind = 2; // One constant for its whole life.
 
@@ -368,7 +368,7 @@ s32 Rope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
                  z + Iwram_MulQ16(Trig_Sin(angle), radius));
     node->kind = kind;
     *link = node;
-    step = ArcTan2(0x60000, radius);
+    step = ArcTan2(px(6), radius);
     angle += step;
     link = &node->next;
     radius += step * 4;
@@ -430,15 +430,15 @@ void Rope_Lash(s32 index, s32 fromId, s32 toId) {
       y = toY;
       z = from->z.fixed + (toZ - from->z.fixed) * count / segments;
 
-      Rope_Throw(index, from->x.fixed, from->y.fixed + 0x80000, from->z.fixed,
-                 x, y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
+      Rope_Throw(index, from->x.fixed, from->y.fixed + px(8), from->z.fixed, x,
+                 y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
       slot->swinging = 0;
       wait(1);
-      Rope_Recoil(index, from->x.fixed, from->y.fixed + 0x80000, from->z.fixed,
-                  x, y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
+      Rope_Recoil(index, from->x.fixed, from->y.fixed + px(8), from->z.fixed, x,
+                  y + 0x80000, z, Trig_Sin(gRope_LashPhase) << 2);
     } else {
-      Rope_Throw(index, from->x.fixed, from->y.fixed + 0x80000, from->z.fixed,
-                 to->x.fixed, to->y.fixed + 0x80000, to->z.fixed,
+      Rope_Throw(index, from->x.fixed, from->y.fixed + px(8), from->z.fixed,
+                 to->x.fixed, to->y.fixed + px(8), to->z.fixed,
                  Trig_Sin(gRope_LashPhase) << 2);
       gRope_LashPhase += 0x1000;
       wait(6);
@@ -522,7 +522,7 @@ s32 Rope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   }
   slot = &work->slots[index];
   slot->swinging = 1;
-  slot->amplitude = 0x40000;
+  slot->amplitude = px(4);
   slot->phase = 0x4000;
   if (slot->flag != 0)
     GameFlag_Set(slot->flag);
@@ -545,8 +545,8 @@ void Rope_Untie(s32 index, s32 fromId, s32 toId) {
   if (from != NULL && to != NULL) {
     work->recoilFrom = from;
     work->recoilTo = to;
-    Rope_Recoil(index, from->x.fixed, from->y.fixed + 0x80000, from->z.fixed,
-                to->x.fixed, to->y.fixed + 0x80000, to->z.fixed,
+    Rope_Recoil(index, from->x.fixed, from->y.fixed + px(8), from->z.fixed,
+                to->x.fixed, to->y.fixed + px(8), to->z.fixed,
                 Trig_Sin(gRope_UntiePhase) * 4);
     gRope_UntiePhase += 0x1000;
   }
@@ -594,7 +594,7 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
   wait(4);
   for (frame = 0; frame <= segments; frame++) {
     angle = frame << 12;
-    radius = 0x40000;
+    radius = px(4);
     for (i = 0; i <= segments; i++) {
       node = nodes[i];
       node->slot = 0;
@@ -608,7 +608,7 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
         node->z = z + Iwram_MulQ16(Trig_Sin(angle), radius);
         lastZ = node->z;
         node->kind = 2;
-        step = ArcTan2(0x60000, radius);
+        step = ArcTan2(px(6), radius);
         angle += step;
         radius += step * 4;
       } else {
@@ -660,15 +660,15 @@ s32 Rope_IsLeaderAtEnd(s32 firstId, s32 secondId) {
   struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *first = Actor_GetById(firstId);
   struct Actor *second = Actor_GetById(secondId);
-  s32 x = owner->x.fixed >> 20;
-  s32 y = owner->y.fixed >> 20;
-  s32 z = owner->z.fixed >> 20;
-  s32 firstX = first->x.fixed >> 20;
-  s32 firstY = first->y.fixed >> 20;
-  s32 firstZ = first->z.fixed >> 20;
-  s32 secondX = second->x.fixed >> 20;
-  s32 secondY = second->y.fixed >> 20;
-  s32 secondZ = second->z.fixed >> 20;
+  s32 x = FIELD_CELL(owner->x.fixed);
+  s32 y = FIELD_CELL(owner->y.fixed);
+  s32 z = FIELD_CELL(owner->z.fixed);
+  s32 firstX = FIELD_CELL(first->x.fixed);
+  s32 firstY = FIELD_CELL(first->y.fixed);
+  s32 firstZ = FIELD_CELL(first->z.fixed);
+  s32 secondX = FIELD_CELL(second->x.fixed);
+  s32 secondY = FIELD_CELL(second->y.fixed);
+  s32 secondZ = FIELD_CELL(second->z.fixed);
 
   if (y == firstY) {
     if (x == firstX) {
@@ -766,8 +766,8 @@ void Tightrope_Draw(void) {
   u32 tile = gVramCacheEntries[work->vramEntry].offset >> 5;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
-  s32 viewX = view[0] & 0xffff0000;
-  s32 viewZ = view[1] & 0xffff0000;
+  s32 viewX = view[0] & FIELD_PIXEL_MASK;
+  s32 viewZ = view[1] & FIELD_PIXEL_MASK;
   s32 originY = map->origin[1];
   struct AffineTransform transform;
 
@@ -804,12 +804,12 @@ void Tightrope_Draw(void) {
 
         if ((u32)(screenX + 0x1fffff) <= 0x12ffffe && screenY > -0x200000 &&
             screenY <= 0xdfffff) {
-          s32 left = ((screenX >> 16) - 4) & 0x1ff;
-          s32 top = ((screenY >> 16) - 4) & 0xff;
-          s32 key = ((prevY + prevZ) >> 16) + 58;
+          s32 left = (FIELD_PIXEL(screenX) - 4) & 0x1ff;
+          s32 top = (FIELD_PIXEL(screenY) - 4) & 0xff;
+          s32 key = FIELD_PIXEL(prevY + prevZ) + 58;
 
           ((u32 *)&node->sprite)[0] = 0;
-          ((u32 *)&node->sprite)[1] = top | (left << 16) | 0x2000;
+          ((u32 *)&node->sprite)[1] = top | OBJ_X(left) | 0x2000;
           ((u32 *)&node->sprite)[2] = tile | 0x800;
           node->sprite.affine = affine;
           node->sprite.affineIndex = matrix;
@@ -903,8 +903,8 @@ void Tightrope_Place(s32 slotNo, s32 firstId, s32 secondId) {
 
     slot->first = firstId;
     slot->second = secondId;
-    Tightrope_Lay(slotNo, first->x.fixed, first->y.fixed + 0x80000,
-                  first->z.fixed, second->x.fixed, second->y.fixed + 0x80000,
+    Tightrope_Lay(slotNo, first->x.fixed, first->y.fixed + px(8),
+                  first->z.fixed, second->x.fixed, second->y.fixed + px(8),
                   second->z.fixed);
     Actor_SelectAnimationFar(first, 4);
     Actor_SelectAnimationFar(second, 4);
@@ -958,8 +958,8 @@ void Tightrope_WobbleBetween(s32 index, s32 from, s32 to, s32 mode) {
   struct Actor *b = Actor_Lookup(to);
 
   if (a != NULL && b != NULL)
-    Tightrope_LayBowed(index, a->x.fixed, a->y.fixed + 0x80000, a->z.fixed,
-                       b->x.fixed, b->y.fixed + 0x80000, b->z.fixed, mode);
+    Tightrope_LayBowed(index, a->x.fixed, a->y.fixed + px(8), a->z.fixed,
+                       b->x.fixed, b->y.fixed + px(8), b->z.fixed, mode);
 }
 
 s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
@@ -1003,8 +1003,8 @@ void Tightrope_Coil(s32 index, s32 from, s32 to) {
 
     slot->first = from;
     slot->second = to;
-    Tightrope_LayCoil(index, a->x.fixed, a->y.fixed + 0x80000, a->z.fixed,
-                      b->x.fixed, b->y.fixed + 0x80000, b->z.fixed);
+    Tightrope_LayCoil(index, a->x.fixed, a->y.fixed + px(8), a->z.fixed,
+                      b->x.fixed, b->y.fixed + px(8), b->z.fixed);
   }
 }
 
@@ -1023,7 +1023,7 @@ s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
   s32 segments = length / 6 + 1;
   struct TightropeNode **link = &work->slots[index].head;
   s32 angle = 0;
-  s32 radius = 0x40000;
+  s32 radius = px(4);
   s32 i;
   s32 kind = 2; // One constant for its whole life.
 
@@ -1039,7 +1039,7 @@ s32 Tightrope_LayCoil(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
                  z + Iwram_MulQ16(Trig_Sin(angle), radius));
     node->kind = kind;
     *link = node;
-    step = ArcTan2(0x60000, radius);
+    step = ArcTan2(px(6), radius);
     angle += step;
     link = &node->next;
     radius += step * 4;
@@ -1057,9 +1057,9 @@ void Tightrope_Lash(s32 arg, s32 firstId, s32 secondId) {
   struct Actor *second = Actor_Lookup(secondId);
 
   if (first != NULL && second != NULL) {
-    Tightrope_Throw(arg, first->x.fixed, first->y.fixed + 0x80000,
-                    first->z.fixed, second->x.fixed, second->y.fixed + 0x80000,
-                    second->z.fixed, Trig_Sin(gTightrope_LashPhase) << 2);
+    Tightrope_Throw(arg, first->x.fixed, first->y.fixed + px(8), first->z.fixed,
+                    second->x.fixed, second->y.fixed + px(8), second->z.fixed,
+                    Trig_Sin(gTightrope_LashPhase) << 2);
     gTightrope_LashPhase += 0x1000;
     wait(6);
     Actor_SelectAnimationFar(first, 2);
@@ -1140,7 +1140,7 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   }
   slot = &work->slots[index];
   slot->wobbling = 1;
-  slot->amplitude = 0x40000;
+  slot->amplitude = px(4);
   slot->phase = 0x4000;
   Heap_Release(nodes);
   return 0;
@@ -1161,8 +1161,8 @@ void Tightrope_Untie(s32 arg, s32 firstId, s32 secondId) {
   if (first != NULL && second != NULL) {
     work->recoilFrom = first;
     work->recoilTo = second;
-    Tightrope_Recoil(arg, first->x.fixed, first->y.fixed + 0x80000,
-                     first->z.fixed, second->x.fixed, second->y.fixed + 0x80000,
+    Tightrope_Recoil(arg, first->x.fixed, first->y.fixed + px(8),
+                     first->z.fixed, second->x.fixed, second->y.fixed + px(8),
                      second->z.fixed, Trig_Sin(gTightrope_UntiePhase) << 2);
     gTightrope_UntiePhase += 0x1000;
   }
@@ -1208,7 +1208,7 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
   wait(4);
   for (frame = 0; frame <= count; frame++) {
     angle = frame << 12;
-    dist = 0x40000;
+    dist = px(4);
     for (i = 0; i <= count; i++) {
       node = nodes[i];
       node->slot = 0;
@@ -1218,7 +1218,7 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
         z = node->z = z1 + Iwram_MulQ16(Trig_Sin(angle), dist);
         node->kind = 2;
         {
-          u16 step = ArcTan2(0x60000, dist);
+          u16 step = ArcTan2(px(6), dist);
 
           angle += step;
           dist += step * 4;
@@ -1333,7 +1333,7 @@ struct HangingVineWork *HangingVine_Initialize(s32 kind) {
 
     Task_Add(HangingVine_Draw, priority);
   }
-  Task_Add(HangingVine_Update, 0x48f);
+  Task_Add(HangingVine_Update, TASK_PASS_VBLANK + 15);
   Heap_Release(pictures);
   return work;
 }
@@ -1349,8 +1349,8 @@ void HangingVine_Draw(void) {
   s32 prevZ = 0;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
-  s32 viewX = view[0] & 0xffff0000;
-  s32 viewZ = view[1] & 0xffff0000;
+  s32 viewX = view[0] & FIELD_PIXEL_MASK;
+  s32 viewZ = view[1] & FIELD_PIXEL_MASK;
   s32 height = map->origin[1];
   struct AffineTransform transform;
   struct HangingVineLink *link;
@@ -1379,13 +1379,13 @@ void HangingVine_Draw(void) {
         screenY = prevZ - prevY;
         if ((u32)(screenX + 0x1fffff) <= 0x12ffffe && screenY > -0x200000 &&
             screenY <= 0xdfffff) {
-          s32 sx = ((screenX >> 16) - 8) & 0x1ff;
-          s32 sy = ((screenY >> 16) - 8) & 0xff;
-          s32 priority = ((prevY + prevZ) >> 16) + 34;
+          s32 sx = (FIELD_PIXEL(screenX) - 8) & 0x1ff;
+          s32 sy = (FIELD_PIXEL(screenY) - 8) & 0xff;
+          s32 priority = FIELD_PIXEL(prevY + prevZ) + 34;
           struct AnimationSpritePart *sprite = &link->sprite;
 
           ((u32 *)sprite)[0] = 0;
-          ((u32 *)&link->sprite)[1] = sy | (sx << 16) | 0x40002000;
+          ((u32 *)&link->sprite)[1] = sy | OBJ_X(sx) | 0x40002000;
           ((u32 *)&link->sprite)[2] = tile | 0x800;
           if (angle != 0) {
             transform.angle = angle;
@@ -1561,8 +1561,8 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
     return;
 
   // Clear the collision codes of the five cells above the object.
-  x = object->x >> 20;
-  z = (object->z - object->y) >> 20;
+  x = FIELD_CELL(object->x);
+  z = FIELD_CELL(object->z - object->y);
   cells = map->layers[2].cells;
   for (i = 0; i < 5; i++) {
     z++;
@@ -1796,7 +1796,7 @@ void HangingVine_Place(s32 id, s32 force) {
       zero = 0;
       object->z.fixed += 0xfff00000;
       y = object->y.fixed;
-      object->y.fixed = y + 0x400000;
+      object->y.fixed = y + px(64);
       HangingVine_Hang(id, zero);
     } else if (force) {
       HangingVine_Hang(id, 0);

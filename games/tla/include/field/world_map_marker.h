@@ -8,7 +8,7 @@
 
 /// A marker sprite's OAM entry, after a word of its own.
 struct WorldMapMarker {
-  u8 unk00[4];
+  u8 unused[4]; ///< no code names it
   u16 y : 8;
   u16 affine : 2;
   u16 objectMode : 2;
@@ -21,7 +21,7 @@ struct WorldMapMarker {
   u16 tile : 10;
   u16 priority : 2;
   u16 palette : 4;
-  u8 unk0a[2];
+  u8 unusedAfterPalette[2]; ///< no code names it
 };
 
 #endif

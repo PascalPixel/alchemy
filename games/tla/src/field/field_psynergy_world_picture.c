@@ -32,8 +32,8 @@ void WorldPicture_Initialize(void) {
   screenX = 0;
   screenY = 0;
   work->vramBlock = VramCache_FindFreeEntry();
-  work->unk644 = 0;
-  work->unk648 = 0;
+  work->searchX = 0;
+  work->searchZ = 0;
   Dma_Fill32(0, markerTiles, 0x80);
   markerTiles[0] = 255;
   markerTiles[1] = 0x1ff;
@@ -61,8 +61,8 @@ void WorldPicture_Initialize(void) {
     work->z = px(16);
   } else {
     WorldPicture_GetLeaderPoint(&screenX, &screenY);
-    work->x = screenX << 16;
-    work->z = screenY << 16;
+    work->x = px(screenX);
+    work->z = px(screenY);
   }
   screenX = work->x - px(120);
   screenY = work->z - px(80);
@@ -84,7 +84,7 @@ void WorldPicture_Initialize(void) {
   work->window = Window_CreateFar(0, 0, 0, 0, 2);
   work->shown = -1;
   work->speed = px(1);
-  cursorAttributes = 0x40000000;
+  cursorAttributes = OBJ_SIZE_16X16;
   *oam++ = 0;
   *oam++ = cursorAttributes;
   cursorAttributes = 0x400;
@@ -115,8 +115,8 @@ void WorldPicture_PlaceLeaderAt(s32 x, s32 z) {
     x >>= 16;
     x = ((x << 14) + 0x434000) / 853;
     z >>= 16;
-    object->x.fixed = x << 16;
-    object->z.fixed = (((z << 14) + 0x1c0000) / 640) << 16;
+    object->x.fixed = px(x);
+    object->z.fixed = px(((z << 14) + px(28)) / 640);
     camera[0] = object->x.fixed;
     camera[2] = object->z.fixed;
   }

@@ -11,12 +11,12 @@
 #include "field/field.h"
 
 struct SpritePictures {
-  u8 unk00[5];
+  u8 unused[5]; ///< no code names it
   u8 picture;
 };
 
 struct AnimatedSprite {
-  u8 unk00[0x12];
+  u8 unused[0x12]; ///< no code names it
   s16 rotation;
   u8 unk14[5];
   u8 picture;
@@ -100,7 +100,7 @@ struct ChasingMote {
 /// pictures, the sparks and motes that fly between the tablet and the leader,
 /// and the circle they gather on.
 struct MoteWork {
-  u8 unk0000[0x800];
+  u8 unused[0x800]; ///< no code names it
   struct ChasingMote sparks[32];
   struct EffectSprite sparkSprites[32];
   struct ChasingMote motes[48];
@@ -153,20 +153,20 @@ void SummonTablet_UpdateMotes(void) {
   for (i = 47; i >= 0; i--, sprite++, mote++) {
     if (work->state == 0) {
       if (mote->timer >= 0) {
-        Motion_StepTowardTarget(mote, 0x40000);
+        Motion_StepTowardTarget(mote, px(4));
         sprite->x = mote->x;
         sprite->y = mote->z;
         EffectSprite_Draw(sprite);
       }
       mote->timer++;
     } else if (work->state == 2) {
-      Motion_StepTowardTarget(mote, 0x60000);
+      Motion_StepTowardTarget(mote, px(6));
       sprite->x = mote->x;
       sprite->y = mote->z;
       EffectSprite_Draw(sprite);
     } else if (work->state == 3) {
       if (mote->x != work->targetX || mote->z != work->targetZ) {
-        Motion_StepTowardTarget(mote, 0x60000);
+        Motion_StepTowardTarget(mote, px(6));
         sprite->x = mote->x;
         sprite->y = mote->z;
         EffectSprite_Draw(sprite);
@@ -267,7 +267,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   mote = work->sparks;
   sprite = work->sparkSprites;
   for (i = 31; i >= 0; i--) {
-    EffectSprite_Init(sprite, 8, 8, 0x40000000, sparkTile);
+    EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, sparkTile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -286,7 +286,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   Event_Wait(80);
   Actor_StartScriptFar(target, Data_080f1040);
   work->moving = 0;
-  Task_Add(SummonTablet_UpdateMotes, 0x480);
+  Task_Add(SummonTablet_UpdateMotes, TASK_PASS_VBLANK);
   state = 0;
   timer = 0;
   do {
@@ -410,7 +410,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
         Sound_PlayFar(SE_MAP_TRANSITION);
       work->state = 3;
       if (timer == 60)
-        state = 999;
+        state = FIELD_PSYNERGY_FINISHED;
       break;
     }
     for (i = 0; i < sparks; i++) {
@@ -431,7 +431,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
     sparks = 0;
     wait(1);
     timer++;
-  } while (state != 999);
+  } while (state != FIELD_PSYNERGY_FINISHED);
   Actor_StartIdleFar(owner);
   owner->scaleX = Q16_ONE;
   owner->scaleY = Q16_ONE;

@@ -43,23 +43,16 @@ void FieldPsynergy_WatchSandGround(void) {
     reason = 1;
   if (MapGrid_IsSandCell(object->x.fixed, object->z.fixed, object->layer) == 0)
     reason = 2;
-  if (party->movementMode == 5 && *(s16 *)((u8 *)object + 102) != 0 &&
+  if (party->movementMode == 5 && object->userValue != 0 &&
       object->timer == 0) {
     s32 x;
     s32 z;
-    s32 back;
 
     if (MapGrid_IsClimbableCell(object->x.fixed, object->z.fixed, 2) == 0)
       reason = 3;
-    x = object->x.fixed & 0xfff00000;
-    z = object->z.fixed & 0xfff00000;
-    back = -0x80000;
-    /* FAKEMATCH(barrier): back through an empty asm. */
-    asm("" : "+l"(back));
-    /* FAKEMATCH(dead): an empty once-only block. */
-    do {
-    } while (0);
-    if (MapGrid_IsClimbableCell(x + 0x80000, z + back, 2) == 0)
+    x = (object->x.fixed & FIELD_CELL_MASK) + px(8);
+    z = (object->z.fixed & FIELD_CELL_MASK) - px(8);
+    if (MapGrid_IsClimbableCell(x, z, 2) == 0)
       reason = 4;
   }
   if (reason != 0 && (Actor_CheckBlocked(object) & 2) == 0)
@@ -74,12 +67,12 @@ void FieldPsynergy_WatchSandGround(void) {
 /// A sprite layer as FieldPsynergy_DecodePicture reads it: how its pictures
 /// are coded and the one shown.
 struct PictureSource {
-  u8 unk00[5];
+  u8 unused[5]; ///< no code names it
   u8 decodeMode;
   u8 unk06;
   u8 format;
   const void **pictures;
-  u8 unk0c[10];
+  u8 unusedAfterPictures[10]; ///< no code names it
   u8 picture;
 };
 
@@ -150,7 +143,7 @@ void Picture_SinkColumnsByWave(u8 *source, u8 *destination, s32 phase) {
 
     for (row = 0; row < height; row++) {
       s32 base = phase * 0x14ccc;
-      s32 rowOffset = row * 0x40000 - 0x7c0000;
+      s32 rowOffset = row * px(4) - px(124);
       s32 shift = base + rowOffset - wave;
 
       shift >>= 16;
@@ -171,7 +164,7 @@ void Sand_InitLeaderSprite(struct EffectSprite *sprite, s32 tiles) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 position[3];
 
-  EffectSprite_Init(sprite, 16, 30, 0x80000000, tiles);
+  EffectSprite_Init(sprite, 16, 30, OBJ_SIZE_32X32, tiles);
   sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor);
   sprite->oam.priority = BattleEffect_GetObjectPriority(scene->mainActor);
   sprite->oam.palette256 = 1;
@@ -209,7 +202,7 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
   position[1] = y = mainActor->y.fixed;
   position[2] = mainActor->z.fixed;
   if (high) {
-    position[1] = y + 0x20000;
+    position[1] = y + px(2);
     Vector_AddPolarOffset(px(2), Random16(), position);
   } else {
     Vector_AddPolarOffset(px(4), Random16(), position);
@@ -224,7 +217,7 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
   particle->velocityX = position[0];
   particle->velocityY = 0;
   particle->velocityZ = position[2];
-  EffectSprite_Init(sprite, 8, 8, 0x40000000, tiles);
+  EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tiles);
   sprite->scaleX = 0x3333;
   sprite->scaleY = 0x3333;
   sprite->oam.priority = BattleEffect_GetObjectPriority(mainActor);
@@ -325,7 +318,7 @@ void FieldPsynergy_EndSand(void) {
   // Set before the move: 63 is held in a saved register across both calls.
   mask = 63;
   Actor_SetPositionAndResetMotionFar(owner, owner->x.fixed,
-                                     owner->y.fixed + 0xa0000, owner->z.fixed);
+                                     owner->y.fixed + px(10), owner->z.fixed);
   party = &gMainRoutineWork;
   Actor_SetFirstSpriteAnimationFar(owner, party->leaderActorId);
   ((u8 *)owner->sprite)[5] &= mask;
@@ -343,16 +336,9 @@ void FieldPsynergy_EndSand(void) {
     void *source = *(void **)((u8 *)owner->sprite + 40);
 
     sprite = 0x400;
-    {
-      /* FAKEMATCH(pin): the copy's size pinned to r2. */
-      register s32 size asm("r2") = sprite;
-
-      FieldPsynergy_DecodePicture(source, work->picture, size);
-    }
+    FieldPsynergy_DecodePicture(source, work->picture, sprite);
   }
   Animation_ApplyChildValueToFirstFar(owner->sprite, 15);
-  /* FAKEMATCH(barrier): an empty asm reading party. */
-  asm("" : : "r"(party));
   pictureEntry = VramCache_FindFreeEntry();
   sprite = VramCache_Load(pictureEntry, sprite, NULL);
   Sand_InitLeaderSprite(&work->leader, sprite);
@@ -387,7 +373,7 @@ void FieldPsynergy_EndSand(void) {
       if (event->standing == 0)
         Field_RunPsynergyEvent(
             Scene_FindPsynergyTrigger(
-                0x40000005, effect->fieldPsynergy,
+                PSYNERGY_TRIGGER(PSYNERGY_PHASE_FADES), effect->fieldPsynergy,
                 Scene_SelectPsynergyTarget(effect->fieldPsynergy)),
             effect->firstActorId, -1);
     }
@@ -523,7 +509,7 @@ void FieldPsynergy_Sand(void) {
   event->unkd4a = 3;
   gMainRoutineWork.pendingThird = 1;
   if (event->standing == 0)
-    Task_Add(FieldPsynergy_WatchSandGround, 0x480);
+    Task_Add(FieldPsynergy_WatchSandGround, TASK_PASS_VBLANK);
   Actor_SetOthersPaused(owner, 0, 16);
   VramCache_FreeEntry(pictureEntry);
   VramCache_FreeEntry(particleEntry);

@@ -88,7 +88,7 @@ void FieldPsynergy_Run(void) {
   else if (animation == FIELD_PSYNERGY_LASH)
     FieldPsynergy_Lash();
   else if (animation == FIELD_PSYNERGY_UNNAMED_29)
-    FieldPsynergy_Unnamed29();
+    FieldPsynergy_Arrow();
   else if (animation == FIELD_PSYNERGY_CYCLONE)
     FieldPsynergy_Cyclone();
   else if (animation == FIELD_PSYNERGY_BLAZE)
@@ -112,7 +112,7 @@ void FieldPsynergy_Run(void) {
   else if (animation == FIELD_PSYNERGY_PARCH)
     FieldPsynergy_Parch();
   else if (animation == FIELD_PSYNERGY_UNNAMED_28)
-    FieldPsynergy_Unnamed28();
+    FieldPsynergy_Ring();
   else if (animation == FIELD_PSYNERGY_HALT) {
     // Let the object stopped last time go, then stop the nearest one that
     // has an event to run; with none, play the fallback transition.
@@ -204,7 +204,7 @@ void FieldPsynergy_Dispatch(void) {
   else if (animation == FIELD_PSYNERGY_POUND)
     FieldPsynergy_PoundOnTarget(targetId);
   else if (animation == FIELD_PSYNERGY_UNNAMED_28)
-    FieldPsynergy_Unnamed28();
+    FieldPsynergy_Ring();
   else if (animation == FIELD_PSYNERGY_MIND_READ) {
     // A wave still running from the last cast is reset first; a target that
     // is not the paused object stops walking while the wave runs.
@@ -267,7 +267,7 @@ void FieldPsynergy_RunExtraHandler(void) {
     FieldPsynergy_EndHover();
     break;
   case FIELD_PSYNERGY_UNNAMED_28:
-    FieldPsynergy_EndUnnamed28();
+    FieldPsynergy_EndRing();
     break;
   }
 }
@@ -352,7 +352,8 @@ s32 BattleEffect_GetObjectDepth(struct Actor *object) {
     s32 base = map->base->base;
 
     depth =
-        ((object->y.fixed - base + object->z.fixed - base - bias) >> 16) + 62;
+        FIELD_PIXEL(object->y.fixed - base + object->z.fixed - base - bias) +
+        62;
   }
   return depth;
 }
@@ -375,23 +376,20 @@ void Func_080dba5c(void) {
   if (scene->mode == 0xc000) {
     scene->active = 1;
     buffer = Heap_Alloc(0x200);
-    /* FAKEMATCH(dead): an empty once-only loop. */
-    do {
-    } while (0);
-    Iwram_FillWordsEntry(buffer, 0x200, 0);
+    IWRAM_FILL_WORDS(buffer, 0x200, 0);
     slot = VramCache_FindFreeEntry();
     tiles = VramCache_Load(slot, 0x200, buffer);
     scene->vramSlot = slot;
     Heap_Release(buffer);
     sprite = &scene->sprite;
-    EffectSprite_Init(sprite, 16, 31, 0x80000000, tiles);
+    EffectSprite_Init(sprite, 16, 31, OBJ_SIZE_32X32, tiles);
     sprite->frame = 0;
     sprite->priority = 0;
     sprite->hidden = 0;
     sprite->layer = 0;
     sprite->scale = Q16_ONE * 2;
     position[0] = scene->x;
-    position[1] = mainActor->y.fixed + 0x1c0000;
+    position[1] = mainActor->y.fixed + px(28);
     position[2] = mainActor->z.fixed;
     Camera_WorldToScreen(position);
     sprite->x = position[0];

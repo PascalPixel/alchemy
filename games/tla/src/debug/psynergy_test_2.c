@@ -11,7 +11,9 @@
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
+#include "system/io_reg.h"
 #include "types.h"
+#include "sprite_ids.h"
 #include "field/scene_tables.h"
 #include "field/actor.h"
 #include "field/event_inline.h"
@@ -249,7 +251,7 @@ void PsynergyTest2_StartRocks(void) {
   rock = work->rocks;
   sprite = work->sprites;
   for (i = 63; i >= 0; i--, sprite++, rock++) {
-    EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
+    EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -325,14 +327,14 @@ UNUSED void PsynergyTest2_RaiseMonster(s32 mode, s32 x, s32 z, s32 row,
   struct Actor *object;
 
   if (mode == 1) {
-    object = FieldActor_Create(354, x << 16, 0, z << 16);
+    object = FieldActor_Create(354, px(x), 0, px(z));
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
       object->priorityFlags = 2;
     }
   }
   if (mode == 2) {
-    object = (FieldActor_Create(252, x << 16, 0, z << 16));
+    object = (FieldActor_Create(SPRITE_WINGED_STATUE, px(x), 0, px(z)));
     if (object != NULL) {
       s32 scale;
 
@@ -343,12 +345,7 @@ UNUSED void PsynergyTest2_RaiseMonster(s32 mode, s32 x, s32 z, s32 row,
       while (object->scaleX < Q16_ONE) {
         System_Wait(1);
         scale = object->scaleX + 0x51e;
-        {
-          /* FAKEMATCH(temporary): the turn is added as a word. */
-          s32 angle = object->facing + TRIG_TURN / 16;
-
-          object->facing = angle;
-        }
+        object->facing += FACING_STEP;
         object->scaleX = scale;
         object->scaleY = scale;
       }

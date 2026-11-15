@@ -135,7 +135,7 @@ void FieldPsynergy_Douse(void) {
   struct Actor *mote;
   struct PendingEvent *ev;
 
-  orb = Actor_Spawn(300, i = raised = 0, 0, 0);
+  orb = Actor_Spawn(SPRITE_RAIN_CLOUD, i = raised = 0, 0, 0);
   if (orb == 0)
     return;
   FieldPsynergy_FadeToCastColor();
@@ -199,7 +199,7 @@ void FieldPsynergy_Douse(void) {
         wait(20);
         SET_POSITION(&pos, orb->x.fixed, orb->y.fixed, orb->z.fixed);
       }
-      mote = Actor_Spawn(301, pos.x, pos.y, pos.z);
+      mote = Actor_Spawn(SPRITE_DROPLET, pos.x, pos.y, pos.z);
       if (mote != 0) {
         struct Actor *ground = work->child;
 
@@ -217,7 +217,7 @@ void FieldPsynergy_Douse(void) {
       Sound_PlayFar(SE_WATER);
       wait(6);
       if (n == 12) {
-        ev = Scene_FindPsynergyTrigger(0x50000005, 5,
+        ev = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), 5,
                                        Scene_SelectPsynergyTarget(5));
         if (ev != 0)
           Field_RunPsynergyEvent(ev, work->firstActorId, work->secondActorId);
@@ -292,7 +292,7 @@ void FieldEffect_SpawnFallingParticles(void) {
   dist = Random16() * 3;
   Vector_AddPolarOffset(dist * 16, Random16(), &pos);
 
-  obj = Actor_Spawn(673, pos.x, pos.y, pos.z);
+  obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
   if (obj != 0) {
     obj->motionFlags = 2;
     obj->gravity = 0x1999;
@@ -344,24 +344,24 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   /* FAKEMATCH(temporary): p holds &position everywhere but the steering loop's
    * first part. */
   p = &position;
-  SET_POSITION(p, work->x, work->y + 0x100000, work->z);
-  object = FieldEffect_SpawnCarryHand(p->x + 0x200000, p->y, p->z, 0x8000);
+  SET_POSITION(p, work->x, work->y + px(16), work->z);
+  object = FieldEffect_SpawnCarryHand(p->x + px(32), p->y, p->z, 0x8000);
   anchors[0] = object;
-  right = FieldEffect_SpawnCarryHand(p->x - 0x200000, p->y, p->z, 0);
+  right = FieldEffect_SpawnCarryHand(p->x - px(32), p->y, p->z, 0);
   anchors[1] = right;
   if (anchors[0] == NULL || right == NULL) {
     FieldPsynergy_FadeFromCastColor();
     return;
   }
   wait(15);
-  SET_POSITION(p, target->x.fixed, target->y.fixed + 0x100000, target->z.fixed);
-  Actor_SetMoveTargetFar(object, p->x + 0x100000, p->y, p->z);
-  Actor_SetMoveTargetFar(right, p->x - 0x100000, p->y, p->z);
+  SET_POSITION(p, target->x.fixed, target->y.fixed + px(16), target->z.fixed);
+  Actor_SetMoveTargetFar(object, p->x + px(16), p->y, p->z);
+  Actor_SetMoveTargetFar(right, p->x - px(16), p->y, p->z);
   Actor_WaitForMoveFar(object);
   Actor_WaitForMoveFar(right);
-  object->x.fixed = p->x + 0x100000;
+  object->x.fixed = p->x + px(16);
   object->velocityX = 0;
-  right->x.fixed = p->x - 0x100000;
+  right->x.fixed = p->x - px(16);
   right->velocityX = 0;
   target->update = Actor_ApplyRandomChildValues;
   Task_Add((s32)FieldEffect_SpawnFallingParticles, TASK_PASS_VBLANK);
@@ -369,7 +369,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   target->motionFlags = 4;
   Actor_SetSpriteFlagsFar(target, 0);
   if (anchors[0] != NULL && anchors[1] != NULL) {
-    while (target->y.fixed - target->groundHeight <= 0x180000) {
+    while (target->y.fixed - target->groundHeight <= px(24)) {
       object->y.fixed += px(3) / 8;
       right->y.fixed += px(3) / 8;
       target->y.fixed += px(3) / 8;
@@ -390,22 +390,22 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       break;
     angle = (u16)Input_GetDpadAngle(gInput.held);
     if (angle == 0xffff) {
-      SET_POSITION(&position, target->x.fixed, target->y.fixed + 0x100000,
+      SET_POSITION(&position, target->x.fixed, target->y.fixed + px(16),
                    target->z.fixed);
-      Actor_SetMoveTargetFar(anchors[0], position.x + 0x100000, position.y,
+      Actor_SetMoveTargetFar(anchors[0], position.x + px(16), position.y,
                              position.z);
-      Actor_SetMoveTargetFar(anchors[1], position.x - 0x100000, position.y,
+      Actor_SetMoveTargetFar(anchors[1], position.x - px(16), position.y,
                              position.z);
       Actor_SelectAnimationFar(anchors[0], 1);
       Actor_SelectAnimationFar(anchors[1], 1);
       continue;
     }
-    SET_POSITION(&position, target->x.fixed, target->y.fixed + 0x100000,
+    SET_POSITION(&position, target->x.fixed, target->y.fixed + px(16),
                  target->z.fixed);
     Vector_AddPolarOffset(px(2), angle, &position);
-    Actor_SetMoveTargetFar(anchors[0], position.x + 0x100000, position.y,
+    Actor_SetMoveTargetFar(anchors[0], position.x + px(16), position.y,
                            position.z);
-    Actor_SetMoveTargetFar(anchors[1], position.x - 0x100000, position.y,
+    Actor_SetMoveTargetFar(anchors[1], position.x - px(16), position.y,
                            position.z);
     Actor_WaitForMoveFar(anchors[0]);
     Actor_WaitForMoveFar(anchors[1]);
@@ -444,8 +444,8 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       second = anchors[1];
       second->speedLimit = 0x3333;
       second->acceleration = 0x3333;
-      Actor_SetMoveTargetFar(anchors[0], p->x + 0x100000, p->y, p->z);
-      Actor_SetMoveTargetFar(second, p->x - 0x100000, p->y, p->z);
+      Actor_SetMoveTargetFar(anchors[0], p->x + px(16), p->y, p->z);
+      Actor_SetMoveTargetFar(second, p->x - px(16), p->y, p->z);
       Actor_WaitForMoveFar(target);
       target->x.fixed = x;
       target->z.fixed = z;
@@ -462,16 +462,16 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   wait(15);
   Sound_PlayFar(SE_CLICK);
   wait(15);
-  SET_POSITION(p, target->x.fixed, target->y.fixed + 0x100000, target->z.fixed);
+  SET_POSITION(p, target->x.fixed, target->y.fixed + px(16), target->z.fixed);
   {
     struct Actor **walk = shards;
 
     for (i = 0; i < 20; i++) {
-      object = Actor_Spawn(0x2a1, p->x, p->y, p->z);
+      object = Actor_Spawn(SPRITE_SPARKLE, p->x, p->y, p->z);
       *walk++ = object;
       if (object != NULL) {
         Actor_StartScriptFar(object, (u32)gFieldEffect_FragmentScript);
-        object->speedLimit = Random16() + 0x20000;
+        object->speedLimit = Random16() + px(2);
         object->acceleration = 0x20000;
         object->motionFlags = 0;
         magnitude = Random16() * 24 + 0x80000;

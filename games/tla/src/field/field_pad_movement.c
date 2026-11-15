@@ -66,19 +66,19 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
                             GameFlag_Get(FLAG_DEBUG_STEPS_OFF) == 0)) {
       SET_POSITION(&leftPosition, object->x.fixed, object->y.fixed,
                    object->z.fixed);
-      Vector_AddPolarOffset(px(8), direction + 0x1555, &leftPosition);
+      Vector_AddPolarOffset(px(8), direction + TRIG_TURN / 12, &leftPosition);
       SET_POSITION(&rightPosition, object->x.fixed, object->y.fixed,
                    object->z.fixed);
-      Vector_AddPolarOffset(px(8), direction - 0x1555, &rightPosition);
+      Vector_AddPolarOffset(px(8), direction - TRIG_TURN / 12, &rightPosition);
       if ((WorldMap_IsWalkable(object, &position) |
            WorldMap_IsWalkable(object, &leftPosition) |
            WorldMap_IsWalkable(object, &rightPosition)) != 0) {
-        angleOffsets[count++] = direction + TRIG_TURN / 16;
-        angleOffsets[count++] = direction - TRIG_TURN / 16;
+        angleOffsets[count++] = direction + FIELD_PROBE_ANGLE;
+        angleOffsets[count++] = direction - FIELD_PROBE_ANGLE;
         angleOffsets[count++] = direction + TRIG_TURN / 8;
         angleOffsets[count++] = direction - TRIG_TURN / 8;
-        angleOffsets[count++] = direction + TRIG_TURN * 3 / 16;
-        angleOffsets[count++] = direction - TRIG_TURN * 3 / 16;
+        angleOffsets[count++] = direction + FIELD_PROBE_ANGLE * 3;
+        angleOffsets[count++] = direction - FIELD_PROBE_ANGLE * 3;
         for (angleIndex = 0; angleIndex < count; angleIndex++) {
           direction = angleOffsets[angleIndex];
           SET_POSITION(&position, object->x.fixed, object->y.fixed,
@@ -86,10 +86,12 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
           Vector_AddPolarOffset(px(8), direction, &position);
           SET_POSITION(&leftPosition, object->x.fixed, object->y.fixed,
                        object->z.fixed);
-          Vector_AddPolarOffset(px(8), direction + 0x1555, &leftPosition);
+          Vector_AddPolarOffset(px(8), direction + TRIG_TURN / 12,
+                                &leftPosition);
           SET_POSITION(&rightPosition, object->x.fixed, object->y.fixed,
                        object->z.fixed);
-          Vector_AddPolarOffset(px(8), direction - 0x1555, &rightPosition);
+          Vector_AddPolarOffset(px(8), direction - TRIG_TURN / 12,
+                                &rightPosition);
           if ((WorldMap_IsWalkable(object, &position) |
                WorldMap_IsWalkable(object, &leftPosition) |
                WorldMap_IsWalkable(object, &rightPosition)) != 0)
@@ -97,7 +99,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
           angle = (s16)direction;
           goto update_object;
         }
-        collision |= 1;
+        collision |= PLAYER_STEP_BLOCKED_BY_MAP;
       }
     }
   }
@@ -105,7 +107,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
 update_object:
   work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
-    if ((collision & 3) != 0)
+    if ((collision & PLAYER_STEP_BLOCKED) != 0)
       work->blockedSteps++;
     else
       work->blockedSteps = 0;
@@ -121,13 +123,13 @@ update_object:
     object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityZ = 0;
-    if ((collision & 3) != 0) {
+    if ((collision & PLAYER_STEP_BLOCKED) != 0) {
       direction = angle;
       difference = (s16)(direction - object->facing);
-      if (difference > 0x1000)
-        difference = 0x1000;
-      if (difference < -0x1000)
-        difference = -0x1000;
+      if (difference > FIELD_BLOCKED_TURN_MAX)
+        difference = FIELD_BLOCKED_TURN_MAX;
+      if (difference < -FIELD_BLOCKED_TURN_MAX)
+        difference = -FIELD_BLOCKED_TURN_MAX;
       object->facing += difference;
     }
     object->timer = 0;
@@ -193,7 +195,7 @@ update_object:
 
 /// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys) and
 /// steps the script on. Returns 1.
-s32 Field_CheckConfiguredKeysAndCount(struct ActorScriptView *interpreter) {
+s32 Field_CheckConfiguredKeysAndCount(struct Actor *interpreter) {
   Field_CheckConfiguredKeys();
   interpreter->scriptCursor++;
   return 1;
@@ -285,7 +287,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
       if (other == object)
         continue;
       dy = object->y.fixed - other->y.fixed;
-      if ((dy - 0x100000 < 0 ? -(dy - 0x100000) : dy - 0x100000) > 0x7ffff)
+      if ((dy - px(16) < 0 ? -(dy - px(16)) : dy - px(16)) > 0x7ffff)
         continue;
       if (SAME_CELL(object->x.fixed, other->x.fixed) &&
           SAME_CELL(object->z.fixed, other->z.fixed))
@@ -311,11 +313,13 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   if (!MapGrid_CheckCollision(object, &position)) {
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(19), (u16)angle + TRIG_TURN / 16, &testPosition);
+    Vector_AddPolarOffset(px(19), (u16)angle + FIELD_PROBE_ANGLE,
+                          &testPosition);
     if (!MapGrid_CheckCollision(object, &testPosition)) {
       SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                    object->z.fixed);
-      Vector_AddPolarOffset(px(19), (u16)angle - TRIG_TURN / 16, &testPosition);
+      Vector_AddPolarOffset(px(19), (u16)angle - FIELD_PROBE_ANGLE,
+                            &testPosition);
       if (!MapGrid_CheckCollision(object, &testPosition)) {
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
@@ -336,12 +340,12 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   }
   direction = angle;
   headingCount = 0;
-  angleOffsets[headingCount++] = direction + TRIG_TURN / 16;
-  angleOffsets[headingCount++] = direction - TRIG_TURN / 16;
+  angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE;
+  angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE;
   angleOffsets[headingCount++] = direction + TRIG_TURN / 8;
   angleOffsets[headingCount++] = direction - TRIG_TURN / 8;
-  angleOffsets[headingCount++] = direction + TRIG_TURN * 3 / 16;
-  angleOffsets[headingCount++] = direction - TRIG_TURN * 3 / 16;
+  angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE * 3;
+  angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE * 3;
   /* FAKEMATCH(dead): an empty once-only loop. */
   do {
   } while (0);
@@ -353,12 +357,14 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(19), (u16)heading + TRIG_TURN / 16, &testPosition);
+    Vector_AddPolarOffset(px(19), (u16)heading + FIELD_PROBE_ANGLE,
+                          &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(19), (u16)heading - TRIG_TURN / 16, &testPosition);
+    Vector_AddPolarOffset(px(19), (u16)heading - FIELD_PROBE_ANGLE,
+                          &testPosition);
     if (MapGrid_CheckCollision(object, &testPosition))
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
@@ -373,7 +379,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
       goto push_objects;
   }
   SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
-  collision |= 1;
+  collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
 push_objects:
   SET_POSITION(&contact, object->x.fixed, object->y.fixed, object->z.fixed);
@@ -406,13 +412,15 @@ push_objects:
         if (!MapGrid_CheckCollision(other, &testPosition)) {
           SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
                        other->z.fixed);
-          Vector_AddPolarOffset(px(21), direction + 0x1000, &testPosition);
+          Vector_AddPolarOffset(px(21), direction + FIELD_PROBE_ANGLE,
+                                &testPosition);
           // The same probe is tested twice.
           if (!MapGrid_CheckCollision(other, &testPosition) &&
               !MapGrid_CheckCollision(other, &testPosition)) {
             SET_POSITION(&testPosition, other->x.fixed, other->y.fixed,
                          other->z.fixed);
-            Vector_AddPolarOffset(px(21), direction - 0x1000, &testPosition);
+            Vector_AddPolarOffset(px(21), direction - FIELD_PROBE_ANGLE,
+                                  &testPosition);
             if (!MapGrid_CheckCollision(other, &testPosition)) {
               Vector_AddPolarOffset(px(1) / 4, direction,
                                     (struct FieldPosition *)&other->x.fixed);
@@ -426,7 +434,7 @@ push_objects:
         }
       }
     }
-    collision |= 2;
+    collision |= PLAYER_STEP_BLOCKED_BY_ACTOR;
   }
   if (collision == 0 && pushed != 0) {
     object->speedLimit = px(1) / 4;
@@ -436,7 +444,7 @@ push_objects:
 counted:
   work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
-    if (collision & 3)
+    if (collision & PLAYER_STEP_BLOCKED)
       work->blockedSteps++;
     else
       work->blockedSteps = 0;
@@ -458,11 +466,11 @@ counted:
     object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityZ = 0;
-    if (collision & 3) {
+    if (collision & PLAYER_STEP_BLOCKED) {
       difference = (s16)((u16)angle - object->facing);
-      if (difference > 0x1000)
+      if (difference > FIELD_BLOCKED_TURN_MAX)
         difference = 0x400;
-      if (difference < -0x1000)
+      if (difference < -FIELD_BLOCKED_TURN_MAX)
         difference = -0x400;
       object->facing += difference;
     }
@@ -482,9 +490,9 @@ counted:
       object->timer--;
     object->steeringFlags &= ~1;
     difference = (s16)((u16)angle - object->facing);
-    if (difference > 0x1000)
+    if (difference > FIELD_BLOCKED_TURN_MAX)
       difference = 0x400;
-    if (difference < -0x1000)
+    if (difference < -FIELD_BLOCKED_TURN_MAX)
       difference = -0x400;
     object->facing += difference;
   }
@@ -552,31 +560,34 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
       if (WorldMap_IsSailable(object, &position) == 0) {
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
-        Vector_AddPolarOffset(px(8), direction + 0x1000, &testPosition);
+        Vector_AddPolarOffset(px(8), direction + FIELD_PROBE_ANGLE,
+                              &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) == 0) {
           SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                        object->z.fixed);
-          Vector_AddPolarOffset(px(8), direction - 0x1000, &testPosition);
+          Vector_AddPolarOffset(px(8), direction - FIELD_PROBE_ANGLE,
+                                &testPosition);
           if (WorldMap_IsSailable(object, &testPosition) == 0) {
             SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                          object->z.fixed);
-            Vector_AddPolarOffset(px(8), direction + 0x2000, &testPosition);
+            Vector_AddPolarOffset(OBJ_X(8), direction + 0x2000, &testPosition);
             if (WorldMap_IsSailable(object, &testPosition) == 0) {
               SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                            object->z.fixed);
-              Vector_AddPolarOffset(px(8), direction - 0x2000, &testPosition);
+              Vector_AddPolarOffset(OBJ_X(8), direction - 0x2000,
+                                    &testPosition);
               if (WorldMap_IsSailable(object, &testPosition) == 0)
                 goto update_object;
             }
           }
         }
       }
-      angleOffsets[count++] = direction + TRIG_TURN / 16;
-      angleOffsets[count++] = direction - TRIG_TURN / 16;
+      angleOffsets[count++] = direction + FIELD_PROBE_ANGLE;
+      angleOffsets[count++] = direction - FIELD_PROBE_ANGLE;
       angleOffsets[count++] = direction + TRIG_TURN / 8;
       angleOffsets[count++] = direction - TRIG_TURN / 8;
-      angleOffsets[count++] = direction + TRIG_TURN * 3 / 16;
-      angleOffsets[count++] = direction - TRIG_TURN * 3 / 16;
+      angleOffsets[count++] = direction + FIELD_PROBE_ANGLE * 3;
+      angleOffsets[count++] = direction - FIELD_PROBE_ANGLE * 3;
       for (angleIndex = 0; angleIndex < count; angleIndex++) {
         direction = angleOffsets[angleIndex];
         SET_POSITION(&position, object->x.fixed, object->y.fixed,
@@ -586,35 +597,37 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
           continue;
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
-        Vector_AddPolarOffset(px(8), direction + 0x1000, &testPosition);
+        Vector_AddPolarOffset(px(8), direction + FIELD_PROBE_ANGLE,
+                              &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
-        Vector_AddPolarOffset(px(8), direction - 0x1000, &testPosition);
+        Vector_AddPolarOffset(px(8), direction - FIELD_PROBE_ANGLE,
+                              &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
-        Vector_AddPolarOffset(px(8), direction + 0x2000, &testPosition);
+        Vector_AddPolarOffset(OBJ_X(8), direction + 0x2000, &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
-        Vector_AddPolarOffset(px(8), direction - 0x2000, &testPosition);
+        Vector_AddPolarOffset(OBJ_X(8), direction - 0x2000, &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
         angle = (s16)direction;
         goto update_object;
       }
-      collision |= 1;
+      collision |= PLAYER_STEP_BLOCKED_BY_MAP;
     }
   }
 
 update_object:
   work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
-    if ((collision & 3) != 0)
+    if ((collision & PLAYER_STEP_BLOCKED) != 0)
       work->blockedSteps++;
     else
       work->blockedSteps = 0;
@@ -643,13 +656,13 @@ update_object:
     object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityZ = 0;
-    if ((collision & 3) != 0) {
+    if ((collision & PLAYER_STEP_BLOCKED) != 0) {
       direction = angle;
       difference = (s16)(direction - object->facing);
-      if (difference > 0x1000)
-        difference = 0x1000;
-      if (difference < -0x1000)
-        difference = -0x1000;
+      if (difference > FIELD_BLOCKED_TURN_MAX)
+        difference = FIELD_BLOCKED_TURN_MAX;
+      if (difference < -FIELD_BLOCKED_TURN_MAX)
+        difference = -FIELD_BLOCKED_TURN_MAX;
       object->facing += difference;
     }
     object->timer = 0;
@@ -667,9 +680,9 @@ update_object:
       object->timer--;
     object->steeringFlags &= ~1;
     difference = (s16)(direction - object->facing);
-    if (difference > 0x1000)
+    if (difference > FIELD_BLOCKED_TURN_MAX)
       difference = 0x400;
-    if (difference < -0x1000)
+    if (difference < -FIELD_BLOCKED_TURN_MAX)
       difference = -0x400;
     object->facing += difference;
   }
@@ -767,31 +780,32 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
   if (WorldMap_IsFlyable(object, &position) == 0) {
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), direction + 0x1000, &testPosition);
+    Vector_AddPolarOffset(px(8), direction + FIELD_PROBE_ANGLE, &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) == 0) {
       SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                    object->z.fixed);
-      Vector_AddPolarOffset(px(8), direction - 0x1000, &testPosition);
+      Vector_AddPolarOffset(px(8), direction - FIELD_PROBE_ANGLE,
+                            &testPosition);
       if (WorldMap_IsFlyable(object, &testPosition) == 0) {
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
-        Vector_AddPolarOffset(px(8), direction + 0x2000, &testPosition);
+        Vector_AddPolarOffset(OBJ_X(8), direction + 0x2000, &testPosition);
         if (WorldMap_IsFlyable(object, &testPosition) == 0) {
           SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                        object->z.fixed);
-          Vector_AddPolarOffset(px(8), direction - 0x2000, &testPosition);
+          Vector_AddPolarOffset(OBJ_X(8), direction - 0x2000, &testPosition);
           if (WorldMap_IsFlyable(object, &testPosition) == 0)
             goto check_objects;
         }
       }
     }
   }
-  angleOffsets[count++] = direction + TRIG_TURN / 16;
-  angleOffsets[count++] = direction - TRIG_TURN / 16;
+  angleOffsets[count++] = direction + FIELD_PROBE_ANGLE;
+  angleOffsets[count++] = direction - FIELD_PROBE_ANGLE;
   angleOffsets[count++] = direction + TRIG_TURN / 8;
   angleOffsets[count++] = direction - TRIG_TURN / 8;
-  angleOffsets[count++] = direction + TRIG_TURN * 3 / 16;
-  angleOffsets[count++] = direction - TRIG_TURN * 3 / 16;
+  angleOffsets[count++] = direction + FIELD_PROBE_ANGLE * 3;
+  angleOffsets[count++] = direction - FIELD_PROBE_ANGLE * 3;
   for (angleIndex = 0; angleIndex < count; angleIndex++) {
     direction = angleOffsets[angleIndex];
     SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
@@ -800,28 +814,28 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), direction + 0x1000, &testPosition);
+    Vector_AddPolarOffset(px(8), direction + FIELD_PROBE_ANGLE, &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), direction - 0x1000, &testPosition);
+    Vector_AddPolarOffset(px(8), direction - FIELD_PROBE_ANGLE, &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), direction + 0x2000, &testPosition);
+    Vector_AddPolarOffset(OBJ_X(8), direction + 0x2000, &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), direction - 0x2000, &testPosition);
+    Vector_AddPolarOffset(OBJ_X(8), direction - 0x2000, &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     angle = (s16)direction;
     goto check_objects;
   }
-  collision |= 1;
+  collision |= PLAYER_STEP_BLOCKED_BY_MAP;
 
 check_objects:
   other = Ram_HeapSlots->actors;
@@ -830,19 +844,19 @@ check_objects:
         other != object &&
         Field_CheckSpheresOverlap(&other->x.fixed, other->radius, &position.x,
                                   object->radius) >= 0)
-      collision |= 2;
+      collision |= PLAYER_STEP_BLOCKED_BY_ACTOR;
   }
 
 update_object:
   work = Ram_HeapSlots->fieldWork;
   if (work != NULL) {
-    if ((collision & 3) != 0)
+    if ((collision & PLAYER_STEP_BLOCKED) != 0)
       work->blockedSteps++;
     else
       work->blockedSteps = 0;
     work->heldKeys = gInput.held;
   }
-  if (object->y.fixed >= 0x40000)
+  if (object->y.fixed >= px(4))
     Actor_SelectAnimation(object, 6);
   else if (collision != 0)
     Actor_SelectAnimation(object, 1);
@@ -855,13 +869,13 @@ update_object:
     object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityZ = 0;
-    if ((collision & 3) != 0) {
+    if ((collision & PLAYER_STEP_BLOCKED) != 0) {
       direction = angle;
       difference = (s16)(direction - object->facing);
-      if (difference > 0x1000)
-        difference = 0x1000;
-      if (difference < -0x1000)
-        difference = -0x1000;
+      if (difference > FIELD_BLOCKED_TURN_MAX)
+        difference = FIELD_BLOCKED_TURN_MAX;
+      if (difference < -FIELD_BLOCKED_TURN_MAX)
+        difference = -FIELD_BLOCKED_TURN_MAX;
       object->facing += difference;
     }
     object->timer = 0;
@@ -879,9 +893,9 @@ update_object:
       object->timer--;
     object->steeringFlags &= ~1;
     difference = (s16)(direction - object->facing);
-    if (difference > 0x1000)
+    if (difference > FIELD_BLOCKED_TURN_MAX)
       difference = 0x400;
-    if (difference < -0x1000)
+    if (difference < -FIELD_BLOCKED_TURN_MAX)
       difference = -0x400;
     object->facing += difference;
   }
@@ -900,7 +914,7 @@ update_object:
 
   kind = object->spriteStorageKind;
   if (kind == 1) {
-    if (object->y.fixed < 0x40000) {
+    if (object->y.fixed < px(4)) {
       if (object->timer == 0 && collision == 0) {
         ripple = Actor_Create(0x10d, object->x.fixed, 0, object->z.fixed);
         if (ripple != 0) {
@@ -933,7 +947,7 @@ update_object:
     object->y.fixed -= px(1) / 4;
   if (object->y.fixed <= 0 && flightWork->climbing != 0)
     ((struct FieldWork *)flightWork)->raisedTrigger = 254;
-  if (object->y.fixed >= 0xc0000)
+  if (object->y.fixed >= px(12))
     object->y.fixed = px(12);
   if (object->y.fixed <= 0)
     object->y.fixed = 0;

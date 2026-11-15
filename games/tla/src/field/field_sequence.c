@@ -29,13 +29,18 @@
 
 #undef PartyInventory_GiveItem
 
+#include "field_sequence_item_display.c"
 #include "field_sequence_screen_transition.c"
+#include "field_sequence_palette_fade.c"
+#include "field_sequence_ground_mask.c"
+#include "field_sequence_speakers.c"
+#include "field_sequence_heading.c"
 
 /* VIEW(event_commands): routine GameFlag_GetByte as u8 GameFlag_GetByte(s32
  * flag); field/event.h has s32 GameFlag_GetByte(s32 flag); tried as the
  * definition's u8 GameFlag_GetByte(s32 flag), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/include/game/game_flags.h:13: conflicting types for
+ * games/tla/include/game/game_flags.h:16: conflicting types for
  * `GameFlag_GetByte'. */
 u8 GameFlag_GetByte__event_commands(s32 flag) __asm__("GameFlag_GetByte");
 #define GameFlag_GetByte GameFlag_GetByte__event_commands
@@ -53,7 +58,6 @@ void Actor_MoveToObject(u32 objectId, u32 otherId);
 #include "field_sequence_actor_commands.c"
 
 #undef Field_RequestDjinnBattle
-#undef EventWork1cc
 #undef Actor_SetHorizontalPositionAndAngleWithTerrain
 #undef GameFlag_GetByte
 #undef Actor_SetHorizontalPositionWithTerrain

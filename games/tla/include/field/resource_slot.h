@@ -11,24 +11,24 @@ struct Actor;
 struct SpriteAnimation;
 
 struct MetadataSlotState {
-  u8 unk00[0x0c];
+  u8 unused[0x0c]; ///< no code names it
   s32 scale;
-  u8 unk10[4];
+  u8 unusedAfterScale[4]; ///< no code names it
   u8 width;
   u8 height;
   s8 offsetX;
   s8 offsetY;
-  u8 unk18[3];
+  u8 unusedAfterOffsetY[3]; ///< no code names it
   u8 count;
-  u8 unk1c[0x0c];
+  u8 unusedAfterCount[0x0c]; ///< no code names it
   s32 slots[4];
 };
 
 struct ResourceObjectWork {
-  u8 unk00[16];
-  u8 resource; ///< VRAM cache index.
-  u8 flags;    ///< Bit 0: do not return the VRAM cache entry.
-  u8 unk12[22];
+  u8 unused[16];           ///< no code names it
+  u8 resource;             ///< VRAM cache index.
+  u8 flags;                ///< Bit 0: do not return the VRAM cache entry.
+  u8 unusedAfterFlags[22]; ///< no code names it
   void *children[4];
 };
 

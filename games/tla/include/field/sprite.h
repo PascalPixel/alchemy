@@ -65,7 +65,7 @@ struct ResourceSlot {
 /// outline's edge and fill colours, and the resource slots.
 struct ObjectSystemWork {
   u16 used;
-  u8 unk02[2];
+  u8 unusedAfterUsed[2]; ///< no code names it
   s16 suspended; ///< nonzero while a menu has suspended sprite projection
   u8 edge;       ///< outline edge colour
   u8 fill;       ///< outline fill colour
@@ -85,7 +85,7 @@ void Map_BuildProbeRing(s32 x, s32 z, struct SpritePlacement *points);
 /// its shadow) is drawn with: the link to the next part queued at its depth,
 /// then the OAM entry's attributes 0 to 3.
 struct AnimationSpritePart {
-  u8 unk00[4];
+  u8 unused[4]; ///< no code names it
   u16 y : 8;
   u16 affine : 2;
   u16 objectMode : 2;
@@ -98,7 +98,14 @@ struct AnimationSpritePart {
   u16 tile : 10;
   u16 priority : 2;
   u16 palette : 4;
-  u8 unk0a[2];
+  u8 unusedAfterPalette[2]; ///< no code names it
+};
+
+/// Sprite.flags.
+enum SpriteFlag {
+  SPRITE_FLAG_SHADOW = 1 << 0, ///< its shadow is drawn; set when created
+  /// Drawn as an outline, in the actor system's edge and fill colours.
+  SPRITE_FLAG_OUTLINED = 1 << 1
 };
 
 /// An animated sprite: its image, scale, rotation, size, its shadow and up to
@@ -111,12 +118,12 @@ struct Sprite {
   u8 retainCacheEntry : 1;
   /// Drawn at its own scale, not scaled by distance (fixed camera).
   u8 useOwnScale : 1;
-  u8 unusedFlags : 6; ///< no code names them
-  u16 rotation;       ///< 1/65536 turns
-  u8 width;           ///< pixels; zero marks a free sprite
-  u8 height;          ///< pixels
-  s8 offsetX;         ///< pixels
-  s8 offsetY;         ///< pixels
+  u8 sunkRows : 6; ///< rows the picture is sunk (flags bit 3) or shaded (bit 2)
+  u16 rotation;    ///< 1/65536 turns
+  u8 width;        ///< pixels; zero marks a free sprite
+  u8 height;       ///< pixels
+  s8 offsetX;      ///< pixels
+  s8 offsetY;      ///< pixels
   /// The animation number last selected, which selecting again skips.
   u8 lastNo;
   u8 dirty; ///< nonzero redraws its pixels into VRAM when next drawn
@@ -156,8 +163,9 @@ enum ActorAnimation {
   ANIM_LEADER_ARRIVE_ALTERNATE = 23,
   ANIM_LEADER_ARRIVE = 24,
   ANIM_LEADER_LEAVE_ALTERNATE = 25,
-  ANIM_LEADER_LEAVE = 26
+  ANIM_LEADER_LEAVE = 26,
   ///@}
+  ANIM_LEADER_ARMS_RAISED = 28 ///< both arms raised over his head
 };
 
 #endif

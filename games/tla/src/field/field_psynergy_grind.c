@@ -11,30 +11,20 @@
 /// Grind's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the splash picture and 64
 /// splash particles.
 struct GrindWork {
-  u8 unk0000[0x20];
+  u8 unused[0x20]; ///< no code names it
   u8 picture[0x800];
   struct FieldPsynergyParticle particles[64];
   struct EffectSprite sprites[64];
 };
 
 struct SplashAnimation {
-  u8 unk00[16];
+  u8 unused[16]; ///< no code names it
   u8 entry;
-  u8 unk11[3];
+  u8 unusedAfterEntry[3]; ///< no code names it
   u8 width;
   u8 height;
-  u8 unk16[18];
+  u8 unusedAfterHeight[18]; ///< no code names it
   void *tiles;
-};
-
-/* VIEW(f0e92b4): tag struct PendingEvent as struct PendingEvent__f0e92b4;
- * event_work.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy_grind.c:212: structure has no member named
- * `callback'. */
-struct PendingEvent__f0e92b4 {
-  u8 unk00[8];
-  void (*callback)(s32, s32, s32);
 };
 
 /// Grind ("Pulverize large objects."): the screen shakes harder and harder
@@ -65,20 +55,20 @@ void FieldPsynergy_GrindOnTarget(void) {
   s32 mode;
   s32 radius;
   s32 selector;
-  struct PendingEvent__f0e92b4 *pending;
+  struct TriggerEvent *pending;
   u8 *picture;
   s32 counter;
   s32 amplitude;
 
   shifts = 0;
-  radius = 0xe0000;
+  radius = px(14);
   animating = 0;
   spraying = 0;
   next = 0;
   mode = 0;
   selector = Scene_SelectPsynergyTarget(scene->fieldPsynergy);
-  pending =
-      Scene_FindPsynergyTrigger(0x50000005, scene->fieldPsynergy, selector);
+  pending = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
+                                      scene->fieldPsynergy, selector);
   if (child != NULL) {
     if (animation != NULL) {
       if (animation->width * animation->height <= 0x800) {
@@ -87,7 +77,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     }
   } else {
     scene->x = caster->x.fixed;
-    scene->z = caster->z.fixed + 0x80000;
+    scene->z = caster->z.fixed + px(8);
     scene->y = caster->y.fixed;
     Vector_AddPolarOffset(px(32), scene->angle, &scene->x);
   }
@@ -99,9 +89,9 @@ void FieldPsynergy_GrindOnTarget(void) {
   if (child == NULL)
     mode = 2;
   if (mode == 1)
-    radius = 0xe0000;
+    radius = px(14);
   if (mode == 2)
-    radius = 0x150000;
+    radius = px(21);
 
   FieldPsynergy_FadeToCastColor();
   source = Resource_GetTableEntry((s32)&ResourceId_WaterSplash);
@@ -112,7 +102,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   particle = work->particles;
   for (i = 0; i < 64; i++) {
     sprite = &work->sprites[i];
-    EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
+    EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.palette256 = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -129,15 +119,15 @@ void FieldPsynergy_GrindOnTarget(void) {
   wait(1);
   Sound_PlayFar(SE_PUSH_STEP);
   counter = 0;
-  amplitude = 0x20000;
+  amplitude = px(2);
   phase = 0;
   timer = 0;
   do {
     if (spraying) {
       if (mode == 1) {
-        if (radius > 0x50000)
+        if (radius > px(5))
           radius += -0xa3d;
-      } else if (radius > 0x50000) {
+      } else if (radius > px(5)) {
         radius += -0x147a;
       }
     }
@@ -155,8 +145,8 @@ void FieldPsynergy_GrindOnTarget(void) {
           sprite->depth = BattleEffect_GetObjectDepth(child) - 15;
       }
       particle->timer = 0;
-      SET_POSITION(particle, scene->x, scene->y + 0x50000, scene->z);
-      if (radius > 0x50000)
+      SET_POSITION(particle, scene->x, scene->y + px(5), scene->z);
+      if (radius > px(5))
         Vector_AddPolarOffset(radius + Random16() * 5, angle, &particle->x);
       else
         Vector_AddPolarOffset(radius - (Random16() << 2), angle, &particle->x);
@@ -207,7 +197,7 @@ void FieldPsynergy_GrindOnTarget(void) {
           timer = -1;
         }
         if (pending != NULL)
-          pending->callback(0, timer, selector);
+          ((void (*)(s32, s32, s32))pending->value)(0, timer, selector);
       } else {
         if (timer == animation->height * 3) {
           phase = 2;
@@ -222,7 +212,7 @@ void FieldPsynergy_GrindOnTarget(void) {
       if (timer == 5 && mode != 0)
         spraying = 0;
       amplitude += -0x2666;
-      if (amplitude <= 0x20000) {
+      if (amplitude <= px(2)) {
         phase++;
         timer = -1;
       }
@@ -230,12 +220,12 @@ void FieldPsynergy_GrindOnTarget(void) {
     case 3:
       amplitude = 0;
       if (timer == 0)
-        phase = 999;
+        phase = FIELD_PSYNERGY_FINISHED;
       break;
     }
     wait(1);
     timer++;
-  } while (phase != 999);
+  } while (phase != FIELD_PSYNERGY_FINISHED);
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   ViewMove_End();
   FieldPsynergy_FadeFromCastColor();
@@ -250,7 +240,7 @@ end:
 
 /// The sway's amplitude (16.16 pixels) and how it ramps.
 #define SWAY_START 0x20000
-#define SWAY_PEAK 0x60000
+#define SWAY_PEAK px(6)
 #define SWAY_RAMP 0x2666 ///< 0.15 pixels a frame
 #define SWAY_HOLD_FRAMES 10
 

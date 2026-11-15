@@ -35,10 +35,6 @@
 
 #undef CLOAK_FLICKER_PALETTE
 
-#undef Actor_ApplyRandomChildValues
-#undef ScreenPoint
-#undef EffectWork
-
 #include "event_commands_cloak.c"
 
 #include "event_commands_carry.c"

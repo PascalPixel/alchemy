@@ -102,7 +102,7 @@ s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *actor, s32 *position) {
   s32 height = MapGrid_GetTerrainHeightAboveFar(
       position[0], position[2], actor->layer, actor->groundHeight);
 
-  if (ABS(height) <= entry->height << 16)
+  if (ABS(height) <= px(entry->height))
     return ABS(height);
   return -1;
 }
@@ -134,7 +134,7 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
 
   // Height: within the rule's pixels above or below.
   rule = Field_GetPsynergyReach(animation);
-  height = rule->height << 16;
+  height = px(rule->height);
   if (animation == ANIMATION_MEASURES_FOOTING) {
     if (ABS(other->groundHeight - self->groundHeight) > height)
       return -1;
@@ -205,7 +205,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
   if (object != 0) {
     Sound_PlayFar(SE_CHEST_OPEN);
     Actor_SelectAnimationFar(object, 4);
-    wait(0xC);
+    wait(12);
     result = (s32)BattleEffect_StartRandomParticleEmitter(effect, mode);
   }
   return result;
@@ -255,7 +255,7 @@ s32 Leader_CanPushObjectAhead(void) {
   if (hit != 0 && (hit->collisionFlags & 1))
     return 0;
   above[0] = target->x.fixed;
-  above[1] = target->y.fixed + 0x100000;
+  above[1] = target->y.fixed + px(16);
   above[2] = target->z.fixed;
   hit = Actor_FindAtCell(above, 1);
   if (hit != 0 && (hit->collisionFlags & 1))

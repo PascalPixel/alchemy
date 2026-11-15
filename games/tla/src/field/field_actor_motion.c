@@ -11,20 +11,22 @@
 /// Returns 1 when the actor has no movement target: none of its target
 /// coordinates set, or for an actor moved by the ground (any motion flag)
 /// neither its target x nor z.
-s32 Actor_IsTargetUnset(struct Actor *object) {
+s32 Actor_IsTargetUnset(struct Actor *actor) {
   s32 first;
   s32 second;
 
-  if (object->motionFlags == 0) {
-    second = object->targetX;
-    if (second != (s32)0x80000000)
+  // One compare of three values: all must equal TARGET_UNSET, or with
+  // motion flags only x and z.
+  if (actor->motionFlags == 0) {
+    second = actor->targetX;
+    if (second != TARGET_UNSET)
       return 0;
-    first = object->targetY;
+    first = actor->targetY;
   } else {
-    first = object->targetX;
-    second = (s32)0x80000000;
+    first = actor->targetX;
+    second = TARGET_UNSET;
   }
-  if (first != second || object->targetZ != first)
+  if (first != second || actor->targetZ != first)
     return 0;
   return 1;
 }
@@ -64,16 +66,16 @@ struct MotionObject {
   u8 animationKind;
   u8 motionFlags;
   u8 arrivalAxis;
-  u8 unk57;
+  u8 unusedAfterArrivalAxis; ///< no code names it
   u8 snapToTarget;
   u8 collisionFlags;
   u8 actionFlags;
   u8 paused;
-  u8 unk5c[2];
+  u8 unusedAfterPaused[2]; ///< no code names it
   s16 wait;
   u8 refused;
   u8 frozen;
-  u8 unk62[0x0a];
+  u8 unusedAfterFrozen[0x0a]; ///< no code names it
   void (*update)(struct MotionObject *object);
   s32 moved[3];
   struct MotionObject *standingOn;
@@ -168,7 +170,7 @@ void Actor_UpdateAllThumb(void) {
             y = object->targetY;
             z = object->targetZ;
           } else {
-            ratio = Iwram_RatioMulQ14(distance << 16, object->acceleration);
+            ratio = Iwram_RatioMulQ14(px(distance), object->acceleration);
             object->velocityX += dx * ratio;
             object->velocityY += dy * ratio;
             object->velocityZ += dz * ratio;
@@ -269,16 +271,15 @@ void Actor_UpdateAllThumb(void) {
                 continue;
               if (other == object)
                 continue;
-              if (((velocityX - other->x + 0x80000) >> 20) != 0)
+              if ((FIELD_CELL(velocityX - other->x + px(8))) != 0)
                 continue;
-              if (((velocityZ - other->z + 0x80000) >> 20) != 0)
+              if ((FIELD_CELL(velocityZ - other->z + px(8))) != 0)
                 continue;
               dy = y - other->y;
-              if ((dy - 0x100000 < 0 ? -(dy - 0x100000) : dy - 0x100000) >
-                  0x7ffff)
+              if ((dy - px(16) < 0 ? -(dy - px(16)) : dy - px(16)) > 0x7ffff)
                 continue;
               standing = 1;
-              ground = other->y + 0x100000;
+              ground = other->y + px(16);
               object->standingOn = other;
               break;
             }
@@ -287,7 +288,7 @@ void Actor_UpdateAllThumb(void) {
             ground = MapGrid_GetTerrainHeight(object->terrainId, velocityX,
                                               velocityZ);
           velocityY = ground - object->groundHeight;
-          if (ground - y > -0x40000)
+          if (ground - y > -px(4))
             y += velocityY;
           if (velocityY < 0)
             velocityY = -velocityY;
@@ -370,12 +371,12 @@ void Actor_UpdateAllThumb(void) {
           ((object->x - object->targetX) ^ (x - object->targetX)) < 0)
         arrivedAtTarget = 1;
       break;
-    case 17:
+    case ARRIVAL_AXIS_Y:
       if (y == object->targetY ||
           ((object->y - object->targetY) ^ (y - object->targetY)) < 0)
         arrivedAtTarget = 1;
       break;
-    case 18:
+    case ARRIVAL_AXIS_Z:
       if (z == object->targetZ ||
           ((object->z - object->targetZ) ^ (z - object->targetZ)) < 0)
         arrivedAtTarget = 1;
@@ -414,10 +415,10 @@ void Actor_UpdateAllThumb(void) {
 
         facingStep = (s16)(ArcTan2(z, x) - object->angle);
 
-        maximumFacingStep = TRIG_TURN / 16;
+        maximumFacingStep = FACING_STEP;
         if (facingStep > maximumFacingStep)
           facingStep = maximumFacingStep;
-        maximumFacingStep = -TRIG_TURN / 16;
+        maximumFacingStep = -FACING_STEP;
         if (facingStep < maximumFacingStep)
           facingStep = maximumFacingStep;
         object->angle += facingStep;
@@ -447,7 +448,7 @@ void Actor_MoveWithCarriers(void) {
         if (carrier != NULL) {
           if (WORD_AT(carrier, 0x74) != 0) {
             if (y == object->groundHeight) {
-              object->groundHeight = carrier->y.fixed + 0x100000;
+              object->groundHeight = carrier->y.fixed + px(16);
               y = object->groundHeight;
             } else {
               object->groundHeight += WORD_AT(carrier, 0x74);
@@ -465,17 +466,16 @@ void Actor_MoveWithCarriers(void) {
 
 // Objects: set position and cancel motion.
 
-/// Sets the position, clears the destination and zeroes the velocity.
-/// obj: object.
-/// x, y, z: 16.16 fixed-point position.
-void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z) {
-  obj->z.fixed = z;
-  obj->targetX = TARGET_UNSET; // No destination.
-  obj->targetY = TARGET_UNSET;
-  obj->targetZ = TARGET_UNSET;
-  obj->x.fixed = x;
-  obj->y.fixed = y;
-  SET_VELOCITY(obj, 0, 0, 0);
+/// Places the actor at (x, y, z), in 16.16 pixels, clears its movement target
+/// and stops it.
+void Actor_SetPositionAndResetMotion(struct Actor *actor, s32 x, s32 y, s32 z) {
+  actor->z.fixed = z;
+  actor->targetX = TARGET_UNSET;
+  actor->targetY = TARGET_UNSET;
+  actor->targetZ = TARGET_UNSET;
+  actor->x.fixed = x;
+  actor->y.fixed = y;
+  SET_VELOCITY(actor, 0, 0, 0);
 }
 
 /// Sends an actor towards (x, y, z), in 16.16 pixels. Within a pixel it arrives
@@ -493,14 +493,14 @@ void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   dz = (z - object->z.fixed) / Q16_ONE;
   squaredZ = dz * dz;
   distance = Iwram_Sqrt(dx * dx + dy * dy + squaredZ) << 16;
-  if (distance < 0x100000) {
+  if (distance < px(16)) {
     dx = x - object->x.fixed;
     dy = y - object->y.fixed;
     dz = z - object->z.fixed;
     distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
                          Iwram_MulQ16(dz, dz));
   }
-  if (distance < 0x10000) {
+  if (distance < Q16_ONE) {
     SET_ACTOR_POSITION(object, x, y, z);
     object->targetX = TARGET_UNSET;
     object->targetY = TARGET_UNSET;

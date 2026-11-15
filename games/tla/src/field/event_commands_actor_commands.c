@@ -27,12 +27,12 @@ void Actor_ClearDestinationAndStand(u32 objectId) {
 /// The event command "actor face direction": the actor turns toward angle
 /// (TRIG_TURN a full turn; Actor_StepAngle), then the event waits the given
 /// number of frames.
-void Actor_FaceDirectionById(s32 objectId, s32 angle, s32 frames) {
-  struct Actor *object = Actor_Lookup(objectId);
+void Actor_FaceDirectionById(s32 actorId, s32 angle, s32 frames) {
+  struct Actor *actor = Actor_Lookup(actorId);
 
-  if (object != NULL) {
-    object->timer = angle;
-    Actor_StartScriptFar(object, (u32)gActor_StepAngleScript);
+  if (actor != NULL) {
+    actor->timer = angle;
+    Actor_StartScriptFar(actor, (const s32 *)gActor_StepAngleScript);
     Event_Wait(frames);
   }
 }
@@ -54,10 +54,10 @@ void Actor_SetSpritePriority(u32 objectId, s32 priority) {
   struct Actor *object = Actor_Lookup(objectId);
 
   if (object != NULL && (object->spriteStorageKind & 0xF) == 1) {
-    struct FieldSprite *sprite = object->sprite;
+    struct Sprite *sprite = object->sprite;
 
-    sprite->priority = priority;
-    sprite->partPriority = priority;
+    sprite->image.priority = priority;
+    sprite->shadow.priority = priority;
     object->priorityFlags &= ~1;
   }
 }
@@ -65,19 +65,20 @@ void Actor_SetSpritePriority(u32 objectId, s32 priority) {
 /// Makes the target actor's sprite show the source actor's graphics (its VRAM
 /// block and tile). Neither actor is checked for NULL.
 void Actor_CopyGraphics(u32 targetId, u32 sourceId) {
-  struct FieldSprite *sprite;
-  u8 block;
+  struct Actor *actor;
+  struct Sprite *sprite;
+  u8 vramBlock;
   u32 tile;
 
-  sprite = (struct FieldSprite *)Actor_GetById(sourceId);
-  sprite = ((struct Actor *)sprite)->sprite;
-  block = sprite->vramBlock;
-  tile = sprite->tile;
+  actor = Actor_GetById(sourceId);
+  sprite = actor->sprite;
+  vramBlock = sprite->slot;
+  tile = sprite->image.tile;
 
-  sprite = (struct FieldSprite *)Actor_GetById(targetId);
-  sprite = ((struct Actor *)sprite)->sprite;
-  sprite->vramBlock = block;
-  sprite->tile = tile;
+  actor = Actor_GetById(targetId);
+  sprite = actor->sprite;
+  sprite->slot = vramBlock;
+  sprite->image.tile = tile;
 }
 
 /// Stops actor id moving and colliding and hides it.
@@ -92,17 +93,17 @@ void Actor_DisableById(u32 id) {
 /// Turns actor id's sprite to rotation (1/65536 turns).
 void Actor_SetSpriteRotationById(s32 id, s32 rotation) {
   struct Actor *object = Actor_GetById(id);
-  struct FieldSprite *sprite = object->sprite;
+  struct Sprite *sprite = object->sprite;
 
   if (object != NULL && sprite != NULL)
     sprite->rotation = rotation;
 }
 
 /* VIEW(event_commands): routine Icon_DrawItemFar as void Icon_DrawItemFar(s32
- * resource, u8 *buffer); field/field.h has void Icon_DrawItemFar(s32
- * item); tried as the rest of the object declares it, it does not compile in
- * tla-ja: games/tla/src/field/event_commands_actor_commands.c:199: too many
- * arguments to function `Icon_DrawItemFar'. */
+ * resource, u8 *buffer); field/field.h has void Icon_DrawItemFar(s32 item);
+ * tried as the rest of the object declares it, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands_actor_commands.c:207: too many arguments
+ * to function `Icon_DrawItemFar'. */
 extern void
 Func_08038248__event_commands(s32 resource,
                               u8 *buffer) __asm__("Icon_DrawItemFar");
@@ -150,7 +151,7 @@ void Actor_FallOverById(u32 id, u32 angle) {
 /// moving the actor itself half a cell the way it falls.
 void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
   struct Actor *object = Actor_GetById(id);
-  struct FieldSprite *sprite = object->sprite;
+  struct Sprite *sprite = object->sprite;
   s32 position[3];
 
   if (object == NULL || sprite == NULL)
@@ -167,26 +168,26 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
   case 0:
     object->x.fixed += px(8);
     object->z.fixed += px(1);
-    ((s8 *)sprite->unk14)[2] -= 4;
-    ((s8 *)sprite->unk14)[3] += 15;
+    sprite->offsetX -= 4;
+    sprite->offsetY += 15;
     break;
   case 0x8000:
     object->x.fixed -= px(8);
     object->z.fixed += px(1);
-    ((s8 *)sprite->unk14)[2] += 3;
-    ((s8 *)sprite->unk14)[3] += 16;
+    sprite->offsetX += 3;
+    sprite->offsetY += 16;
     break;
   case 0xc000:
-    ((s8 *)sprite->unk14)[3] += 1;
+    sprite->offsetY += 1;
     break;
   case 0x4000:
     object->z.fixed += px(8);
-    ((s8 *)sprite->unk14)[3] += 13;
+    sprite->offsetY += 13;
     break;
   }
   object->collisionFlags = 0;
   object->priorityFlags |= 2;
-  sprite->nextFrame = 0;
+  sprite->flags = 0;
   sprite->rotation = angle + TRIG_TURN / 4;
 }
 
@@ -195,7 +196,7 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
 /// into the sprite's VRAM block as its tile.
 void Actor_ShowItemIconById(s32 id, s32 resource) {
   struct Actor *object = Actor_GetById(id);
-  struct FieldSprite *sprite;
+  struct Sprite *sprite;
   u8 *buffer;
   s32 zero;
   s32 tile;
@@ -212,27 +213,23 @@ void Actor_ShowItemIconById(s32 id, s32 resource) {
       buffer += 0x400;
       Dma_Fill32(zero, buffer, 0x80);
       Func_08038248__event_commands(resource, buffer);
-      tile = VramCache_Load(sprite->vramBlock, 0x80, buffer);
+      tile = VramCache_Load(sprite->slot, 0x80, buffer);
       HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       object->retainSpriteCache = kind;
-      SpriteAnimation_ClearFar(sprite->record);
-      sprite->record = NULL;
-      sprite->unk1b[0] = zero;
-      sprite->fullColor = zero;
-      sprite->tile = tile;
-      sprite->unk19 = zero;
-      sprite->nextFrame = zero;
+      SpriteAnimation_ClearFar(sprite->entries[0]);
+      sprite->entries[0] = NULL;
+      sprite->count = zero;
+      sprite->image.fullColor = zero;
+      sprite->image.tile = tile;
+      sprite->dirty = zero;
+      sprite->flags = zero;
     }
   }
 }
 
 /// The event command "set message": the number of the event's next message,
 /// written to work->message.
-void Event_SetMessageId(s32 message) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-
-  event->message = message;
-}
+void Event_SetMessageId(s32 message) { gFieldWork->message = message; }
 
 /// Returns the sprite (the first animation's id) of the actor in the low 12
 /// bits of actorId, or -1 if there is no such animated actor.
@@ -242,7 +239,7 @@ s32 Actor_GetSpriteById(s32 key) {
   struct Actor *object = event->actors[key & 0x0fff];
 
   if (object != NULL && object->spriteStorageKind == 1)
-    result = *((struct ObjectAnimationState *)object->sprite)->value28;
+    result = ((struct Sprite *)object->sprite)->entries[0]->animationId;
   return result;
 }
 
@@ -257,7 +254,7 @@ s32 Actor_FindBySprite(s32 value) {
   for (index = 8; index <= 79; index++) {
     object = event->actors[index];
     if (object != NULL && object->spriteStorageKind == 1 &&
-        *((struct ObjectAnimationState *)object->sprite)->value28 == value) {
+        ((struct Sprite *)object->sprite)->entries[0]->animationId == value) {
       result = index;
       break;
     }

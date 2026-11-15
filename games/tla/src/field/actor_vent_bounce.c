@@ -24,7 +24,7 @@ void VENT_BOUNCE(struct Actor *object) {
   struct Actor *other = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 dx = object->bounce;
   s32 dz;
-  struct FieldSprite *sprite;
+  struct Sprite *sprite;
   s32 i;
 
   object->x.fixed += dx;

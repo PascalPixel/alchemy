@@ -7,41 +7,26 @@
 #include "field/field_bank.h"
 #include "field/object.h"
 
-/* VIEW(ground_particles): tag struct GroundParticleWork as struct
- * GroundParticleWork__ground_particles; event_commands.c has another
- * definition; tried with the definition the rest of the object has, it does not
- * compile in tla-ja: games/tla/src/field/event_commands_ground_particles.c:34:
- * structure has no member named `entry'. */
-struct GroundParticleWork__ground_particles {
-  s32 entry;
-  s32 tileBase;
-  struct GroundParticle__event_commands particles[64];
-  s32 unk808;
-  s32 stopped;
-  s32 unk810;
-};
-
 /// Unused: nothing calls GroundParticles_StartFar. The Broken Seal's
 /// Weather_StartRain, kept whole: 64 sprites placed at the leader's position on
 /// the terrain, their tiles decoded into VRAM, the blend set, and
 /// GroundParticles_Update scheduled to move them. The Lost Age's rain is
 /// Weather_StartRain.
 void GroundParticles_Start(void) {
-  struct GroundParticleWork__ground_particles *work;
+  struct WeatherWork *work;
   s32 *leader;
-  struct GroundParticle__event_commands *particle;
+  struct GroundParticle *particle;
   // words is the decode buffer, then each particle's attribute cursor.
   u32 *words;
   u32 i;
   // The fill's value; as a literal 0 the fill differs.
   u32 zero = 0;
 
-  work = HeapSlot_AllocEwram(
-      116, sizeof(struct GroundParticleWork__ground_particles));
+  work = HeapSlot_AllocEwram(116, sizeof(struct WeatherWork));
   leader = Ram_HeapSlots->mapGrid->origin;
   Scene_QueueMusic(SE_170);
   particle = work->particles;
-  Dma_Fill32(zero, work, sizeof(struct GroundParticleWork__ground_particles));
+  Dma_Fill32(zero, work, sizeof(struct WeatherWork));
   words = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Resource_DecodeByteLzInRam(gFieldEffect_GroundParticleTiles, words);
   work->entry = VramCache_FindFreeEntry();
@@ -53,8 +38,8 @@ void GroundParticles_Start(void) {
 
     words = (u32 *)particle;
     *words++ = 0;
-    *words++ = 0x40000400;
-    *words = 0xd400;
+    *words++ = OBJ_SIZE_16X16 | OBJ_MODE(1);
+    *words = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
     x = leader[0];
     z = leader[2];
     particle->posX = x;
@@ -150,10 +135,10 @@ void RisingParticles_Start(void) {
     s32 z;
 
     *sprite++ = 0;
-    *sprite++ = 0x40000400;
-    *sprite = 0xd400;
+    *sprite++ = OBJ_SIZE_16X16 | OBJ_MODE(1);
+    *sprite = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
     x = Random16() * 200 + 0x1200000;
-    z = 0x500000 - Random16() * 20;
+    z = px(80) - Random16() * 20;
     particle->posX = x;
     particle->posZ = z;
     particle->posY = MapGrid_GetTerrainHeightFar(0, x, z);
@@ -164,21 +149,14 @@ void RisingParticles_Start(void) {
   Task_Add(RisingParticles_Update, priority);
 }
 
-/// The work of the ground motes: their VRAM entry, tiles and 64 particles.
-struct MoteWork {
-  s32 entry;
-  s32 tileBase;
-  struct MoteParticle particles[64];
-};
-
 /// The Broken Seal's routine with 64 motes in the heap slot 0x74
 /// workspace, started by FieldMotes_Start.
 void FieldMotes_Update(void) {
-  struct MoteWork *work = Ram_HeapSlots->weather;
+  struct WeatherWork *work = Ram_HeapSlots->weather;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   u32 spawned = 0;
   u32 i;
-  struct MoteParticle *mote;
+  struct GroundParticle *mote;
 
   for (i = 0, mote = work->particles; i < 64; i++, mote++) {
     s32 x;
@@ -198,9 +176,9 @@ void FieldMotes_Update(void) {
       }
       firstJitterDraw = Random16();
       secondJitterDraw = Random16();
-      x = ((mote->posX - cameraX) >> 16) +
+      x = FIELD_PIXEL(mote->posX - cameraX) +
           (((firstJitterDraw & 1) + (secondJitterDraw & 1)) >> 1) - 1;
-      y = ((mote->posZ - mote->posY - cameraZ) >> 16) - (u16)age;
+      y = FIELD_PIXEL(mote->posZ - mote->posY - cameraZ) - (u16)age;
       if ((u32)(x + 16) <= 255 && y >= -32 && y <= 159) {
         if (mote->timer < 60) {
           mote->tile = work->tileBase + 16;

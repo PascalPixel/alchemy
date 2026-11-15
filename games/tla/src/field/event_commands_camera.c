@@ -37,7 +37,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
   // down the map by its height.
   minimumX = map->minX + 0x780000;
   objectZOffset = object->y.fixed;
-  minimumZ = map->minZ + objectZOffset + 0x600000;
+  minimumZ = map->minZ + objectZOffset + px(96);
   maximumX = map->maxX + 0xFF880000;
   maximumZ = map->maxZ + objectZOffset + 0xFFC00000;
   map->origin = &object->x.fixed;
@@ -65,8 +65,8 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
   }
   if (shouldUseSetter == 0) {
     SET_ACTOR_POSITION(object, positionX, positionY, positionZ);
-    wait(1);
-    if (runtimeBlock->mode != 3) {
+    wait(1U);
+    if (runtimeBlock->mode != ACTOR_SYSTEM_WORLD_MAP) {
       MapGrid_CenterOnFollowedPointFar();
     }
   } else {
@@ -92,32 +92,35 @@ void FieldCamera_MoveToActor(s32 id, s32 use_setter) {
                                     use_setter);
 }
 
-/// Waits (at most 600 frames) for the camera to arrive, then 2 frames more.
+/// The event command "camera wait for move": waits (at most 600 frames) for
+/// the camera to arrive, then 2 frames more.
 void FieldCamera_WaitForArrival(void) {
-  Actor_WaitForMoveFar(
-      ((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50))
-          ->camera);
+  Actor_WaitForMoveFar(((struct FieldWork *)HeapSlot_AllocEwram(
+                            HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
+                           ->camera);
   Event_Wait(2);
 }
 
 /// The event command "get view centre": returns the camera actor.
 struct Actor *FieldCamera_GetActor(void) {
-  return ((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50))
+  return ((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                                  sizeof(struct FieldWork)))
       ->camera;
 }
 
-/// Unused: makes the camera follow target; unless keepCurrentPosition is set
-/// it jumps there at once.
-void FieldCamera_Follow(struct Actor *target, s32 keepCurrentPosition) {
-  struct Actor *object;
+/// Unused: makes the camera follow target; unless keepCurrentPosition is set it
+/// jumps there at once.
+UNUSED void FieldCamera_Follow(struct Actor *target, s32 keepCurrentPosition) {
+  struct Actor *camera;
 
-  object =
-      ((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50))->camera;
+  camera = ((struct FieldWork *)HeapSlot_AllocEwram(HEAP_SLOT_FIELD,
+                                                    sizeof(struct FieldWork)))
+               ->camera;
   if (target != NULL) {
-    Actor_StartCameraFar(object, NULL);
-    object->watchedActor = target;
+    Actor_StartCameraFar(camera, 0);
+    camera->watchedActor = target;
     if (keepCurrentPosition == 0) {
-      SET_ACTOR_POSITION(object, target->x.fixed, target->y.fixed,
+      SET_ACTOR_POSITION(camera, target->x.fixed, target->y.fixed,
                          target->z.fixed);
     }
   }

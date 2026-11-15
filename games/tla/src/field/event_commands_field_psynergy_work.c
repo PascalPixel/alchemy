@@ -56,8 +56,8 @@ void Camera_WorldToScreen(struct EffectVector *position) {
     s32 result[3];
 
     Render_ProjectPoint(position, result);
-    position->x = result[0] << 16;
-    position->z = result[1] << 16;
+    position->x = px(result[0]);
+    position->z = px(result[1]);
     position->y = 0;
   } else {
     u8 *state = (u8 *)slots->mapGrid;
@@ -99,10 +99,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
 
   if (event->psynergyActing == 0) {
     work = HeapSlot_Alloc(HEAP_SLOT_FIELD_EFFECT, sizeof(*work));
-    /* FAKEMATCH(dead): an empty once-only loop. */
-    do {
-    } while (0);
-    Iwram_FillWordsEntry(work, sizeof(*work), 0);
+    IWRAM_FILL_WORDS(work, sizeof(*work), 0);
   } else {
     work = Ram_HeapSlots->fieldEffectWork;
   }
@@ -149,7 +146,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   event->unkd38 = 0;
   event->unkd30 = 255;
   BattleEffect_StartArcEffect();
-  Task_Add(BattleEffect_UpdateAllEffectSlots, 0x480);
+  Task_Add(BattleEffect_UpdateAllEffectSlots, TASK_PASS_VBLANK);
 }
 
 /// Records the caster and the target of a field Psynergy.
@@ -166,7 +163,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   target = Actor_Lookup((s16)targetId);
   scene->angle = (user->facing + TRIG_TURN / 8) &
                  TRIG_TURN * 3 / 4; // Round to four directions.
-  scene->angle8 = (user->facing + TRIG_TURN / 16) & 0xe000;
+  scene->angle8 = (user->facing + FACING_STEP) & 0xe000;
   scene->child = target;
   if (user != NULL) {
     u8 terrain;
@@ -202,25 +199,15 @@ void FieldPsynergy_StartCast(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *object = work->mainActor;
   s32 ability = work->action;
-  s32 zero;
-  s8 sound;
 
   Actor_SelectAnimationFar(object, 20);
-  /* FAKEMATCH(dead): the stores in a once-only block keep them all ahead of the
-   * sound's read. */
-  do {
-    object->targetX = object->x.fixed;
-    object->velocityX = 0;
-    object->targetY = object->y.fixed;
-    object->velocityY = 0;
-    object->targetZ = object->z.fixed;
-    object->velocityZ = 0;
-  } while (0);
-  sound = work->visible;
-  /* FAKEMATCH(barrier): the zero set through an empty asm after the sound's
-   * read. */
-  asm("" : "=r"(zero) : "0"(0));
-  if (sound != 0) {
+  object->targetX = object->x.fixed;
+  object->velocityX = 0;
+  object->targetY = object->y.fixed;
+  object->velocityY = 0;
+  object->targetZ = object->z.fixed;
+  object->velocityZ = 0;
+  if (work->visible != 0) {
     Sound_PlayFar(SE_POWER_UP);
     BattleEffect_SetObjectUpdateMode(object, 1);
   }
@@ -230,7 +217,7 @@ void FieldPsynergy_StartCast(void) {
     MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
     FieldMessage_ShowFar((s32)&MsgBlank2, work->messageMode);
     Actor_SetOthersPaused(object, 0, 16);
-    work->messageShown = zero;
+    work->messageShown = 0;
   }
   if (GameFlag_Get(FLAG_PLAY_PSYNERGY_CAST)) {
     if (work->visible != 0)
@@ -293,7 +280,8 @@ void FieldPsynergy_End(void) {
   map->shakeDecay = work->savedShakeDecay;
   if (owner != NULL) {
     owner->priorityFlags = work->savedPriorityFlags;
-    ((struct FieldSprite *)owner->sprite)->priority = work->savedSpritePriority;
+    ((struct Sprite *)owner->sprite)->image.priority =
+        work->savedSpritePriority;
   }
   if (work->fieldPsynergy != 8)
     event->effectTimerRunning = 1;
@@ -314,12 +302,12 @@ void FieldPsynergy_MarkWorldMapTilesUsed(void) {
 }
 
 /* VIEW(scene): tag struct WaveFxWork as struct WaveFxWork__scene;
- * field/event_commands.h has another definition; tried with the
- * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands_field_psynergy_work.c: structure has no
- * member named `id'. */
+ * field/event_commands.h has another definition; tried with the definition the
+ * rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/field/event_commands_field_psynergy_work.c:327: structure has
+ * no member named `id'. */
 struct WaveFxWork__scene {
-  u8 unk000[0x28b];
+  u8 unused[0x28b]; ///< no code names it
   s8 red;
   s8 green;
   s8 blue;
@@ -328,7 +316,7 @@ struct WaveFxWork__scene {
   u16 value;
   u8 steps;
   u8 unk295;
-  u8 unk296[2];
+  u8 unusedB[2]; ///< no code names it
 };
 
 /// Starts the wave effect's work in heap slot HEAP_SLOT_MIND_READ: a phase
@@ -366,9 +354,7 @@ void FieldPsynergy_StopMindReadWave(void) {
   HeapSlot_Release(HEAP_SLOT_MIND_READ);
 }
 
-#define BG_PLTT_COLOR(bank, color)                                             \
-  (*(volatile u16 *)(0x05000000 + ((bank) * 16 + (color)) * 2))
-#define GREY28 0x739c
+#define MIND_READ_GREY RGB(28, 28, 28)
 
 /// Gray BG palette 15 colors 1 and 3-12, then start line scrolling.
 void FieldPsynergy_GreyMindReadPalette(void) {
@@ -376,27 +362,27 @@ void FieldPsynergy_GreyMindReadPalette(void) {
 
   Ram_HeapSlots->windowWork[4] = 1;
   p = &BG_PLTT_COLOR(15, 1);
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 2;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 8;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p -= 8;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   Task_Add((TaskFunc)FieldEffect_ArmBg0HBlankDma, TASK_PASS_FRAME - 20);
 }
 
@@ -405,8 +391,8 @@ void FieldPsynergy_RestoreMindReadPalette(void) {
   u8 *work = Ram_HeapSlots->windowWork;
 
   Task_Remove((TaskFunc)FieldEffect_ArmBg0HBlankDma);
-  BG_PLTT_COLOR(15, 1) = 0x7fff;  // White.
-  BG_PLTT_COLOR(15, 3) = 0;       // Black.
+  BG_PLTT_COLOR(15, 1) = RGB(31, 31, 31);
+  BG_PLTT_COLOR(15, 3) = RGB(0, 0, 0);
   BG_PLTT_COLOR(15, 11) = 0x294a; // Gray (10).
   BG_PLTT_COLOR(15, 12) = 0x5294; // Gray (20).
   WindowColor_ApplyFar(gMainRoutineWork.unusedAfterParty[5],

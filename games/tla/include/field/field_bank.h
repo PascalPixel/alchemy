@@ -71,6 +71,12 @@ struct DiceWork {
   struct DiceParticle particles[4];
 };
 
+/// Attribute 2's 16-colour palette above its tile number, and a sprite's x in
+/// the attr01 word of an OAM entry, whose attribute 1 is its high half: as
+/// The Broken Seal's io_reg.h writes them, for the field's minigames.
+#define OBJ_PALETTE(n) ((n) << 12)
+#define OBJ_X(x) ((x) << 16)
+
 /// An OAM entry's attributes 0 and 1, then 2, as the dice games write them.
 struct DiceOam {
   volatile u32 attr01;
@@ -101,51 +107,51 @@ struct EffectVector {
 };
 
 struct TouchWork {
-  u8 unk00[16];
+  u8 unused[16]; ///< no code names it
   struct TouchOwner *owner;
   u8 unk14[4];
   s16 argument0;
   s16 argument1;
-  u8 unk1c[2];
+  u8 unusedB[2]; ///< no code names it
   s16 kind;
 };
 
 struct ScriptChannel {
-  u8 unk00[2];
+  u8 unused[2]; ///< no code names it
   u16 unk02;
   u8 unk04;
-  u8 unk05[11];
+  u8 unusedB[11]; ///< no code names it
   u8 *script;
   u8 position;
-  u8 unk15[2];
+  u8 unusedAfterPosition[2]; ///< no code names it
   u8 unk17;
 };
 
 struct ScriptPlayer {
-  u8 unk00[22];
+  u8 unused[22]; ///< no code names it
   u8 unk16;
   u8 unk17;
   u8 unk18;
   u8 unk19;
   u8 unk1a;
   u8 channelCount;
-  u8 unk1c[12];
+  u8 unusedAfterChannelCount[12]; ///< no code names it
   struct ScriptChannel *channels[1];
 };
 
 struct ObjectSystemColours {
   u16 used;
-  u8 unk02[4];
+  u8 unusedAfterUsed[4]; ///< no code names it
   u8 edge;
   u8 fill;
 };
 
 /// A party member's unit as the field reads it: its gauges and its HP and PP.
 struct FieldUnit {
-  u8 unk00[20];
+  u8 unused[20]; ///< no code names it
   s16 hpGauge;
   s16 ppGauge;
-  u8 unk18[28];
+  u8 unusedAfterPpGauge[28]; ///< no code names it
   s16 hpMax;
   s16 ppMax;
   s16 hp;
@@ -163,10 +169,10 @@ struct LuckyDiceSprites {
 };
 
 struct BattleFxTransferWork {
-  u8 unk0000[0x7780];
+  u8 unused[0x7780]; ///< no code names it
   s32 transferMode;
   s32 transferValue;
-  u8 unk_7788[0x78e4 - 0x7788];
+  u8 unusedAfterTransferValue[0x78e4 - 0x7788]; ///< no code names it
   s32 vblanksSinceTransfer;
   s32 transferPending;
 };
@@ -187,18 +193,18 @@ struct ReelEffectWork {
   u8 unkAfterParticles[0x700 - REEL_TITLE_LETTERS * sizeof(struct Particle)];
   u16 bgShade[0x100];
   u16 objShade[0x100];
-  u8 unk0b00[0x7780 - 0xb00];
+  u8 unusedAfterObjShade[0x7780 - 0xb00]; ///< no code names it
   s32 transferMode;
   s32 transferValue;
-  u8 unk7788[4];
+  u8 unusedAfterTransferValue[4]; ///< no code names it
   s32 frame;
-  u8 unk7790[0x78e8 - 0x7790];
+  u8 unusedAfterFrame[0x78e8 - 0x7790]; ///< no code names it
   s32 transferPending;
 };
 
 /// The save as Lucky Wheels reads it: the prizes won.
 struct ReelSave {
-  u8 unk000[0x140];
+  u8 unused[0x140]; ///< no code names it
   s8 wonPrizes[16];
 };
 
@@ -243,18 +249,18 @@ enum TerrainKind {
 };
 
 struct ObjectSprite {
-  u8 unk00[4];
+  u8 unused[4]; ///< no code names it
   u16 y : 8;
   u16 affineMode : 2;
   u16 objectMode : 2;
   u16 mosaic : 1;
   u16 palette256 : 1;
   u16 shape : 2;
-  u8 unk06[2];
+  u8 unusedAfterShape[2]; ///< no code names it
   u16 tile : 10;
   u16 priority : 2;
   u16 palette : 4;
-  u8 unk0a[6];
+  u8 unusedAfterPalette[6]; ///< no code names it
   u8 vramBlock;
   u8 unk11;
   u16 rotation;
@@ -265,14 +271,14 @@ struct ObjectSprite {
   u8 frameTimer;
   u8 nextFrame;
   u8 unk1b;
-  u8 unk1c[0xc];
+  u8 unusedB[0xc]; ///< no code names it
   void *record;
 };
 
 struct ActorDescriptor {
   s16 action;
   s16 scene;
-  u8 unk04[4];
+  u8 unusedAfterScene[4]; ///< no code names it
   s32 x;
   s32 y;
   s32 z;
@@ -281,16 +287,6 @@ struct ActorDescriptor {
 struct MapActor {
   s16 id;
   s16 event;
-};
-
-struct ContextAnimation {
-  u8 unk00[0x1a];
-  u8 flags;
-};
-
-struct ContextEffect {
-  u8 unk00[5];
-  u8 param;
 };
 
 /// One node of a tightrope (Tightrope_Initialize's work): a point on the rope,
@@ -302,7 +298,7 @@ struct TightropeNode {
   s32 z;
   s8 kind; ///< 0 while free; 1 a node the leader can step onto; 2 coiled
   s8 slot; ///< the tightrope's index plus one while it is thrown, else 0
-  u8 unk12[2];
+  u8 unusedAfterSlot[2]; ///< no code names it
   struct AnimationSpritePart sprite;
 };
 
@@ -310,9 +306,9 @@ struct TightropeNode {
 struct TightropeSlot {
   s16 first;
   s16 second;
-  u32 direction; ///< the sprites' turn, along the tightrope
-  s32 amplitude; ///< the wobble's size, decaying each frame
-  u8 unk0c[4];
+  u32 direction;              ///< the sprites' turn, along the tightrope
+  s32 amplitude;              ///< the wobble's size, decaying each frame
+  u8 unusedAfterAmplitude[4]; ///< no code names it
   s32 phase;
   s32 wobbling;
   struct TightropeNode *head;
@@ -331,52 +327,52 @@ struct TightropeWork {
 #define TIGHTROPE_WORK ((struct TightropeWork *)Ram_HeapSlots->tightrope)
 
 struct ChainObject {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
   s32 y;
   s32 z;
   u8 unk14[0x3c];
   struct {
-    u8 unk00[0x28];
+    u8 unused[0x28]; ///< no code names it
     s16 *entries[4];
   } *sprite;
-  u8 unk54;
+  u8 unusedB; ///< no code names it
   u8 motionFlags;
-  u8 unk56[3];
+  u8 unusedAfterMotionFlags[3]; ///< no code names it
   u8 collisionFlags;
 };
 
 struct Unk_080db0b0Sprite {
-  u8 unk00[18];
+  u8 unused[18]; ///< no code names it
   u16 unk12;
 };
 
 struct CompositeAnimation {
-  u8 unk00[0x11];
+  u8 unused[0x11]; ///< no code names it
   u8 displayFlags;
-  u8 unk12[7];
+  u8 unusedAfterDisplayFlags[7]; ///< no code names it
   u8 dirty;
   u8 unk1a;
   u8 count;
-  u8 unk1c[0x0c];
+  u8 unusedAfterCount[0x0c]; ///< no code names it
   struct SpriteAnimation *entries[4];
 };
 
 /// unk26a from main_routine_work.h.
 struct PartyPauseView {
-  u8 unk000[0x26a];
+  u8 unused[0x26a]; ///< no code names it
   s16 pausedObject;
 };
 
 struct DepthPart {
-  u8 unk00[9];
+  u8 unused[9]; ///< no code names it
   u8 unk09_0 : 2;
   u8 priority : 2;
   u8 unk09_4 : 4;
 };
 
 struct DepthMapBase {
-  u8 unk00[4];
+  u8 unused[4]; ///< no code names it
   s32 base;
 };
 
@@ -387,34 +383,34 @@ struct DepthScroll {
 
 struct DepthMap {
   struct DepthMapBase *base;
-  u8 unk04[0xe0];
+  u8 unusedAfterBase[0xe0]; ///< no code names it
   struct DepthScroll scroll;
 };
 
 struct DepthSprite {
-  u8 unk00[5];
+  u8 unused[5]; ///< no code names it
   u8 unk05_0 : 5;
   u8 hidden : 1;
   u8 unk05_6 : 2;
-  u8 unk06[3];
+  u8 unusedB[3]; ///< no code names it
   u8 unk09_0 : 2;
   u8 priority : 2;
   u8 layer : 4;
-  u8 unk0a[2];
+  u8 unusedAfterLayer[2]; ///< no code names it
   s32 x;
   s32 y;
   u8 unk14[4];
   s32 scale;
-  u8 unk1c[2];
+  u8 unusedAfterScale[2]; ///< no code names it
   u16 frame;
-  u8 unk20[8];
+  u8 unusedAfterFrame[8]; ///< no code names it
 };
 
 struct DepthScene {
   u16 mode;
-  u8 unk02[2];
+  u8 unusedAfterMode[2]; ///< no code names it
   s32 x;
-  u8 unk08[8];
+  u8 unusedAfterX[8]; ///< no code names it
   struct Actor *mainActor;
   u8 unk14[0x7b4];
   struct DepthSprite sprite;
@@ -428,7 +424,7 @@ struct RisingParticle {
   union {
     u32 words[3];
     struct {
-      u8 unk00[4];
+      u8 unusedAfterWords[4]; ///< no code names it
       /// OAM attributes 0 to 2.
       ///@{
       u16 y : 8; ///< screen pixels
@@ -443,7 +439,7 @@ struct RisingParticle {
       u16 priority : 2;
       u16 palette : 4;
       ///@}
-      u8 unk0a[2];
+      u8 unusedAfterPalette[2]; ///< no code names it
     } attributes;
   } sprite;
   s32 posX;
@@ -451,7 +447,7 @@ struct RisingParticle {
   s32 posZ;
   s32 drift;
   u16 timer;
-  u8 unk1e[2];
+  u8 unusedAfterTimer[2]; ///< no code names it
 };
 
 /// Heap slot 0x74 while the rising particles run.
@@ -461,30 +457,8 @@ struct RisingParticleWork {
   struct RisingParticle particles[64];
 };
 
-struct MoteParticle {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 attr3[2];
-  s32 posX;
-  s32 posY;
-  s32 posZ;
-  s32 delay;
-  u16 timer;
-};
-
 struct EffectOwner {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   struct EffectVector position;
   u8 unk14[0x3c];
   struct Sprite *sprite;
@@ -497,62 +471,13 @@ struct OrbitPosition {
 };
 
 struct DescendingOrbitObject {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
   s32 y;
   s32 z;
   u8 unk14[80];
   u16 timer;
   s16 angle;
-};
-
-struct CaptureObject {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 baseY;
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk20[8];
-  s32 gravity;
-  u8 unk2c[4];
-  s32 speed;
-  u8 unk34[33];
-  u8 mode;
-  u8 unk56[5];
-  u8 visible;
-  u8 unk5c[2];
-  u16 lifetime;
-  u8 unk60[4];
-  u16 timer;
-  u16 angle;
-  u8 unk68[4];
-  void *callback;
-};
-
-struct LinkedCaptureObject {
-  u8 padding000[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 padding014[84];
-  struct LinkedCaptureObject *target;
-};
-
-struct ContextSprite {
-  u8 unk00[0xc];
-  s32 scale;
-  u8 unk10[0xa];
-  u8 flags;
-  u8 count;
-  u8 unk1c[0xc];
-  void *entries[4];
-};
-
-struct ContextEffectEntry {
-  u8 unk00[5];
-  u8 param;
 };
 
 struct DmaFxPage {
@@ -569,7 +494,7 @@ struct DisplayScrollWork {
   u8 page;
   u8 mode;
   u16 frame;
-  u8 unkf04[4];
+  u8 unusedAfterFrame[4]; ///< no code names it
   s32 freqX;
   s32 freqY;
   s32 stepX;
@@ -579,9 +504,9 @@ struct DisplayScrollWork {
 };
 
 struct DmaFxWork {
-  u8 unk000[0xf01];
+  u8 unused[0xf01]; ///< no code names it
   u8 kind;
-  u8 unkf02[6];
+  u8 unusedAfterKind[6]; ///< no code names it
   s32 unkf08;
   s32 unkf0c;
   s32 unkf10;
@@ -591,27 +516,17 @@ struct DmaFxWork {
 };
 
 struct DjinniObject {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
   s32 y;
   s32 z;
   u8 unk14[4];
   s32 scaleX;
   s32 scaleY;
-  u8 unk20[68];
+  u8 unusedAfterScaleY[68]; ///< no code names it
   u16 timer;
-  u8 unk66[6];
+  u8 unusedAfterTimer[6]; ///< no code names it
   void *update;
-};
-
-struct CaptureSprite {
-  u8 unk00[40];
-  s16 *resource;
-};
-
-struct CaptureResource {
-  u8 unk00[16];
-  u8 id;
 };
 
 /// One node of a rope Lash throws and ties (Rope_Initialize's work): a point on
@@ -636,7 +551,7 @@ struct RopeSlot {
   s16 flag;     ///< set while the rope is tied
   s16 state;    ///< 1 once thrown or tied
   s32 amplitude;
-  u8 unk10[4];
+  u8 unusedAfterAmplitude[4]; ///< no code names it
   s32 phase;
   s32 swinging;
   struct RopeNode *head;
@@ -653,80 +568,15 @@ struct RopeWork {
 
 #define ROPE_WORK ((struct RopeWork *)Ram_HeapSlots->rope)
 
-union MoteWord {
-  u32 value;
-  void *link;
-};
-
-/// One floating mote: its sprite's attribute words and its world position.
-struct Mote {
-  union MoteWord link;
-  u32 attr01;
-  u32 attr2;
-  s32 posX;
-  s32 posY;
-  s32 posZ;
-  u8 pad18[4];
-  u16 timer;
-  u8 pad1e[2];
-};
-
-/// One of Weather_UpdateRain's particles: its sprite's attribute words, its
-/// world position and its frames left.
-struct SparkParticle {
-  u32 sprite[3];
-  s32 posX;
-  s32 posY;
-  s32 posZ;
-  u8 unk18[4];
-  u16 timer;
-  u8 unk1e[2];
-};
-
-/// Heap slot 0x74 while the particles run.
-struct SparkParticleWork {
-  s32 vramEntry;
-  s32 tile;
-  struct SparkParticle particles[64];
-};
-
-struct Sparkle {
-  u8 padding00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 matrix : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 padding0a[2];
-  s32 posX;
-  s32 height;
-  s32 posZ;
-  s32 delay;
-  u16 timer;
-  u8 padding1e[2];
-};
-
-union DustWord {
-  u32 value;
-  void *link;
-};
-
 struct LinkedEffectVisual {
-  u8 unk00[9];
+  u8 unused[9]; ///< no code names it
   u8 flags;
-  u8 unk0a[16];
+  u8 unusedAfterFlags[16]; ///< no code names it
   u8 value26;
 };
 
 struct LinkedEffectObject {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
   s32 y;
   s32 z;
@@ -734,58 +584,53 @@ struct LinkedEffectObject {
   struct LinkedEffectVisual *visual;
   u8 value54;
   u8 value55;
-  u8 unk56[14];
+  u8 unusedB[14]; ///< no code names it
   u16 counter;
   u16 resourceId;
   struct LinkedEffectObject *resource;
   void (*callback)(void);
 };
 
-struct ObjectFlags23 {
-  u8 unk00[0x23];
-  u8 flags23;
-};
-
 struct ObjectLayerAnimation {
-  u8 unk00[9];
+  u8 unused[9]; ///< no code names it
   u8 unused09 : 2;
   u8 layer : 2;
-  u8 unk0a[27];
+  u8 unusedAfterLayer[27]; ///< no code names it
   u8 unused25 : 2;
   u8 shadowLayer : 2;
 };
 
 struct ObjectAnimation {
-  u8 unk00[0x18];
+  u8 unused[0x18]; ///< no code names it
   u8 unk18;
-  u8 unk19[0x0f];
-  s16 *definition; ///< the sprite definition, its animation id first
+  u8 unusedB[0x0f]; ///< no code names it
+  s16 *definition;  ///< the sprite definition, its animation id first
 };
 
 struct JumpSprite {
-  u8 unk00[26];
+  u8 unused[26]; ///< no code names it
   u8 flags;
 };
 
 struct ClimbSprite {
-  u8 unk00[26];
+  u8 unused[26]; ///< no code names it
   u8 flags;
 };
 
 struct GrabSave {
-  u8 unk00[98];
+  u8 unused[98]; ///< no code names it
   u8 priority;
 };
 
 struct BattleEffectVisual {
-  u8 unk00[9];
+  u8 unused[9]; ///< no code names it
   u8 flags;
-  u8 unk0a[16];
+  u8 unusedAfterFlags[16]; ///< no code names it
   u8 value26;
 };
 
 struct BattleEffectResource {
-  u8 unk00[8];
+  u8 unused[8]; ///< no code names it
   s32 x;
   s32 y;
   s32 z;
@@ -794,11 +639,11 @@ struct BattleEffectResource {
 };
 
 struct BattleEffectWatchedObject {
-  u8 unk00[80];
+  u8 unused[80]; ///< no code names it
   struct BattleEffectVisual *visual;
   u8 value54;
   u8 value55;
-  u8 unk56[14];
+  u8 unusedB[14]; ///< no code names it
   u16 counter;
   u16 resourceId;
   struct BattleEffectResource *resource;
@@ -806,17 +651,17 @@ struct BattleEffectWatchedObject {
 };
 
 struct AnimationGroup {
-  u8 unk00[0x16];
+  u8 unused[0x16]; ///< no code names it
   s8 offsetX;
   s8 offsetY;
   u8 lastNo;
-  u8 unk19[2];
+  u8 unusedAfterLastNo[2]; ///< no code names it
   u8 count;
-  u8 unk1c[0x0c];
+  u8 unusedAfterCount[0x0c]; ///< no code names it
   struct SpriteAnimation *entries[4];
 };
 
-extern const u8 gData_081ba30c[];
+extern const u8 gSuperLuckyDice_FaceTiles[];
 s32 SuperLuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                      s32 count);
 void SuperLuckyDice_BrightenColors(u16 *source, u16 *destination, u32 count,

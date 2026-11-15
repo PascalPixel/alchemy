@@ -6,6 +6,7 @@
 
 #include "field_internal.h"
 #include "flags.h"
+#include "field/world_map.h"
 
 #include "field/map_grid.h"
 #include "graphics/graphics.h"
@@ -18,13 +19,9 @@
 #include "field/curve.h"
 #include "edition.h"
 
-/* VIEW(tile_animation): variable gWorldMapWork as u8 gWorldMapWork[];
- * battle/battle.h has struct WorldMapWork gWorldMapWork; tried as the rest of
- * the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/field_tile_animation.c:124: `gWorldMapWork' has an
- * incomplete type. */
-extern u8 gWorldMapWork__tile_animation[] __asm__("gWorldMapWork");
-#define gWorldMapWork gWorldMapWork__tile_animation
+// A tileset animation script's commands, a halfword each where a source tile
+// would stand (TilesetAnim_Update and TilesetAnim_StartAll).
+#define TILESET_ANIM_JUMP 0xfe00 ///< low byte: the halfword pair to jump to
 
 /// Loads the first of the 2x2 world map tiles around the player that is not
 /// shown yet (at most one a frame), without drawing it. When the region under
@@ -68,7 +65,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     }
   }
   block = (struct WorldMapCell *)Ram_MapBlocks +
-          (((x / 0x200000) & 31) + (((y / 0x200000) & 31) << 5));
+          (((x / px(32)) & 31) + (((y / px(32)) & 31) << 5));
   WorldMap_UpdateRegionTint(block->region, 1);
   value = block->region;
   switch (value / 10) {
@@ -102,7 +99,7 @@ void WorldMap_PreloadCurrentTileBlock(void) {
 
     Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
     *(s16 *)buffer = backdropColor;
-    Dma_Set(buffer, (void *)BG_PLTT, 0x84000070, REG_DMA3);
+    Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
     {
       u8 *anim = Data_0202d000;
       PaletteFade_LoadPaletteFar(buffer);
@@ -116,31 +113,35 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gData_02038000);
     break;
   case 10:
-    Dma_Set(gData_02038000, (void *)BG_CHAR_BLOCK(2), 0x84000800, REG_DMA3);
+    Dma_Set(gData_02038000, (void *)BG_CHAR_BLOCK(2), DMA_COPY_WORDS(2048),
+            REG_DMA3);
     break;
   case 9:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[4]), gData_0203a000);
     break;
   case 8:
-    Dma_Set(gData_0203a000, (void *)BG_SCREEN_BLOCK(20), 0x84000800, REG_DMA3);
+    Dma_Set(gData_0203a000, (void *)BG_SCREEN_BLOCK(20), DMA_COPY_WORDS(2048),
+            REG_DMA3);
     break;
   case 7:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gData_0203c000);
     break;
   case 6:
-    Dma_Set(gData_0203c000, (void *)BG_CHAR_BLOCK(3), 0x84000800, REG_DMA3);
+    Dma_Set(gData_0203c000, (void *)BG_CHAR_BLOCK(3), DMA_COPY_WORDS(2048),
+            REG_DMA3);
     break;
   case 5:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[6]), gData_0203e000);
     break;
   case 4:
-    Dma_Set(gData_0203e000, (void *)BG_SCREEN_BLOCK(28), 0x84000800, REG_DMA3);
+    Dma_Set(gData_0203e000, (void *)BG_SCREEN_BLOCK(28), DMA_COPY_WORDS(2048),
+            REG_DMA3);
     break;
   case 3:
     Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
     break;
   case 1:
-    Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), gWorldMapWork);
+    Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
     break;
   }
   perspective->reloadSteps--;
@@ -149,20 +150,16 @@ void WorldMap_PreloadCurrentTileBlock(void) {
 
 /// VBlank: shows BG1 and copies the decoded picture's tiles into VRAM.
 void WorldMap_PresentStillPicture(void) {
-  s32 control;
-  volatile u32 *dma;
-
-  control = 0xa80b;
-  REG_BG3CNT = control;
-  control = 0xaa0f;
-  REG_BG2CNT = control;
-  control = 0x682;
-  REG_BG1CNT = control;
-  dma = REG_DMA3;
-  /* FAKEMATCH(barrier): an empty asm on dma. */
-  __asm__ volatile("" : "+l"(dma));
+  Io_Write16(BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(8) |
+                 BGCNT_WRAP | BGCNT_SIZE(2),
+             &REG_BG3CNT);
+  Io_Write16(BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(10) |
+                 BGCNT_WRAP | BGCNT_SIZE(2),
+             &REG_BG2CNT);
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
+             &REG_BG1CNT);
   Dma_Set(Ram_MapCellBuffer, (void *)BG_SCREEN_BLOCK(12),
-          DMA_COPY_WORDS(0xa000 / 4), dma);
+          DMA_COPY_WORDS(0xa000 / 4), REG_DMA3);
 }
 
 /// Freezes the world map's perspective view as a still picture on BG1: decodes
@@ -200,20 +197,15 @@ void WorldMap_StartStillPicture(void) {
 
 /// VBlank: shows BG1 and copies the area's tiles back into VRAM.
 void WorldMap_ShowBg1FromBuffer(void) {
-  s32 control;
-  volatile u32 *dma;
-
-  control = 0xa80a;
-  REG_BG3CNT = control;
-  control = 0xaa0e;
-  REG_BG2CNT = control;
-  control = 0x501;
-  REG_BG1CNT = control;
-  dma = REG_DMA3;
-  /* FAKEMATCH(barrier): an empty asm on dma. */
-  __asm__ volatile("" : "+l"(dma));
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(8) |
+                 BGCNT_WRAP | BGCNT_SIZE(2),
+             &REG_BG3CNT);
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(10) |
+                 BGCNT_WRAP | BGCNT_SIZE(2),
+             &REG_BG2CNT);
+  Io_Write16(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5), &REG_BG1CNT);
   Dma_Set(gData_02038000, (void *)BG_CHAR_BLOCK(2), DMA_COPY_WORDS(0x8000 / 4),
-          dma);
+          REG_DMA3);
 }
 
 /// Reloads the world map area's palette and tiles after the still picture, puts
@@ -236,7 +228,7 @@ s32 WorldMap_LoadAreaGraphics(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(resources[5]), gData_0203c000);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[6]), gData_0203e000);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
-  Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), gWorldMapWork);
+  Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
   gVBlankCallback = WorldMap_ShowBg1FromBuffer;
   perspective->windowTop = 0;
   perspective->windowBottom = 159;
@@ -468,14 +460,14 @@ void BlendScript_Start(u16 *script) {
 }
 
 /// Suspends the blend script; scenes reach it through BlendScript_SuspendFar.
-void BlendScript_Suspend(void) { Task_SuspendAll((u32)BlendScript_Run); }
+void BlendScript_Suspend(void) { Task_SuspendAll(BlendScript_Run); }
 
 /// Resumes the blend script, through BlendScript_ResumeFar.
-void BlendScript_Resume(void) { Task_ResumeAll((u32)BlendScript_Run); }
+void BlendScript_Resume(void) { Task_ResumeAll(BlendScript_Run); }
 
 /// Unused: allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with
 /// its four entries cleared.
-void PaletteCycle_Initialize(void) {
+UNUSED void PaletteCycle_Initialize(void) {
   struct PaletteSnapshotWork *queue;
   struct PaletteSnapshot *entry;
   u16 i;
@@ -576,30 +568,7 @@ void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
   }
   if (perspective->tint > 0) {
     IO_WRITE_QUEUE_PUSH(0x4000050, 0x3f8e, 0x20000);
-    {
-      struct IoWriteQueue *q = &gIoWriteQueue;
-      u32 saved;
-      s32 count;
-
-      IRQ_LOCK(saved);
-      count = q->count;
-      if (count <= 31) {
-        u32 *entry;
-        /* FAKEMATCH(temporary): the entry's byte offset held in offset and
-         * scaled after the count store. */
-        s32 offset = count * 3;
-
-        q->count = count + 1;
-        offset *= sizeof(u32);
-        /* FAKEMATCH(barrier): an empty asm. */
-        asm("");
-        entry = (u32 *)((u8 *)q->entries + offset);
-        *entry++ = (u16)perspective->tint;
-        *entry++ = 0x4000054;
-        *entry = 0x20000;
-      }
-      IRQ_UNLOCK(saved);
-    }
+    IO_WRITE_QUEUE_PUSH(0x4000054, (u16)perspective->tint, 0x20000);
   } else {
     IO_WRITE_QUEUE_PUSH(0x4000050, 0x3fce, 0x20000);
     IO_WRITE_QUEUE_PUSH(0x4000054, (u16)-perspective->tint, 0x20000);
@@ -754,19 +723,13 @@ s32 Terrain_GetBendDifferenceDiagonalHeight(const s8 *samples, s32 start,
 /// is 1, sample 0 in the corners.
 s32 Terrain_GetRoundedSquareHeight(const s8 *samples, s32 position, s32 row) {
   s32 start;
-  s32 end;
-  s32 weight;
-  u8 *table;
 
-  start = samples[0];
-  end = samples[1];
-  table = gTerrain_LerpWeightTable;
-  /* FAKEMATCH(barrier): an empty asm reading the table's address. */
-  __asm__("" : : "r"(table));
-  position += row * CURVE_FULL_STEPS;
-  weight = table[position];
-  start <<= CURVE_VALUE_SHIFT;
-  return start + (((end << CURVE_VALUE_SHIFT) - start) * weight);
+  start = samples[0] << CURVE_VALUE_SHIFT;
+  // The weight is 0 or 1, so the result is one sample or the other, never
+  // between.
+  return start +
+         (((samples[1] << CURVE_VALUE_SHIFT) - start) *
+          gTerrain_LerpWeightTable[position + (row * CURVE_FULL_STEPS)]);
 }
 
 /// The height of a step across x at position (0 to 15 of the cell):
@@ -874,7 +837,7 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 z) {
     grid = work->layers[layer & 3].terrainIds;
   else
     grid = gMapShapeGrid;
-  grid += x / 16 + (z / 16 << 7);
+  grid += x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7);
   code = Ram_MapCollision + *grid * 4;
   return gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15);
 }
@@ -891,7 +854,10 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 z) {
     grid = work->layers[layer & 3].terrainIds;
   else
     grid = gMapShapeGrid;
-  return Ram_MapCollision[grid[x / 16 + ((z / 16) << 7)] * 4] & 15;
+  return Ram_MapCollision[grid[x / MAPGRID_CELL_PIXELS +
+                               (z / MAPGRID_CELL_PIXELS << 7)] *
+                          4] &
+         15;
 }
 
 /// As MapGrid_GetCellAttributeLowNibble, but a rounded square whose two
@@ -908,7 +874,9 @@ s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 layer, s32 x, s32 z) {
     grid = work->layers[layer & 3].terrainIds;
   else
     grid = gMapShapeGrid;
-  code = &Ram_MapCollision[grid[x / 16 + ((z / 16) << 7)] * 4];
+  code =
+      &Ram_MapCollision
+          [grid[x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7)] * 4];
   kind = code[0];
   if (kind == 7 && code[1] != code[2])
     kind = 99;
@@ -945,7 +913,7 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height) {
 
   shape = gMapShapeGrid +
           (work->layers[layer & 3].cells - (struct MapCell *)Ram_MapCellBuffer);
-  shape += (x >> 20) + ((z >> 20) << 7);
+  shape += (FIELD_CELL(x)) + ((FIELD_CELL(z)) << 7);
   *shape = MapCollision_FindOrAddTagFar(layer, 0, height);
 }
 
@@ -965,7 +933,10 @@ s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z) {
     grid = work->layers[layer & 3].terrainIds;
   else
     grid = gMapShapeGrid;
-  return Ram_MapCollision[grid[x / 16 + ((z / 16) << 7)] * 4] & 15;
+  return Ram_MapCollision[grid[x / MAPGRID_CELL_PIXELS +
+                               (z / MAPGRID_CELL_PIXELS << 7)] *
+                          4] &
+         15;
 }
 
 /// Returns the cell behavior of a layer's cell at (x, y) in 16.16 pixels. The
@@ -1004,8 +975,8 @@ void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 collisionCode) {
 /// less base; a layer past 2 reads the shape grid. With no map, or while the
 /// event mode is 3, it is 0.
 s32 MapGrid_GetTerrainHeightAbove(s32 px, s32 pz, s32 layer, s32 base) {
-  s32 x = px >> 16;
-  s32 z = pz >> 16;
+  s32 x = FIELD_PIXEL(px);
+  s32 z = FIELD_PIXEL(pz);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *shapes;
@@ -1019,7 +990,8 @@ s32 MapGrid_GetTerrainHeightAbove(s32 px, s32 pz, s32 layer, s32 base) {
     shapes = map->layers[layer].terrainIds;
   else
     shapes = gMapShapeGrid;
-  code = Ram_MapCollision + shapes[x / 16 + ((z / 16) << 7)] * 4;
+  code = Ram_MapCollision +
+         shapes[x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7)] * 4;
   return gMapGrid_TerrainHeightFunctions[*code++ & 15](code, x & 15, z & 15) -
          base;
 }
@@ -1030,8 +1002,8 @@ s32 MapGrid_GetTerrainHeightAbove(s32 px, s32 pz, s32 layer, s32 base) {
 /// 2 reads the cell buffer and shape grid. With no map, or while the event
 /// mode is 3, every point is level (0).
 s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
-  s32 x = px >> 16;
-  s32 z = pz >> 16;
+  s32 x = FIELD_PIXEL(px);
+  s32 z = FIELD_PIXEL(pz);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *cells;
@@ -1051,7 +1023,7 @@ s32 MapGrid_CheckCollisionAt(s32 px, s32 pz, s32 layer, s32 height) {
     cells = gMapGridCellBuffer;
     shapes = gMapShapeGrid;
   }
-  index = x / 16 + ((z / 16) << 7);
+  index = x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7);
   cells += index * 4;
   shapes += index;
   if (cells[2] == 255)
@@ -1091,7 +1063,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor,
     cells = gMapGridCellBuffer;
     shapes = gMapShapeGrid;
   }
-  index = x / 16 + ((z / 16) << 7);
+  index = x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7);
   cells += index * 4;
   shapes += index;
   if (cells[2] == 255)
@@ -1131,7 +1103,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
     cells = gMapGridCellBuffer;
     shapes = gMapShapeGrid;
   }
-  index = x / 16 + ((z / 16) << 7);
+  index = x / MAPGRID_CELL_PIXELS + (z / MAPGRID_CELL_PIXELS << 7);
   cells += index * 4;
   shapes += index;
   if (cells[2] == 255)
@@ -1149,7 +1121,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
 /// map work exists.
 s32 MapGrid_IsWallAt(s32 *position) {
   s32 x = position[0] / 65536;
-  s32 z = (u32)((position[2] & 0xfff00000) - position[1]) >> 16;
+  s32 z = (u32)((position[2] & FIELD_CELL_MASK) - position[1]) >> 16;
   u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   u8 *cell;
 
@@ -1163,7 +1135,7 @@ s32 MapGrid_IsWallAt(s32 *position) {
 /* VIEW(f02c58c): variable gCellPictures as struct WorldMapBlock
  * gCellPictures[]; scene/shared.h has u32 gCellPictures[]; tried as the rest of
  * the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/field_tile_animation.c:1118: request for member `unk2' in
+ * games/tla/src/field/field_tile_animation.c:1189: request for member `unk2' in
  * something not a structure or union. */
 extern struct WorldMapBlock gMapBlocks__f02c58c[] __asm__("gCellPictures");
 
@@ -1269,7 +1241,7 @@ s32 WorldMap_IsFlyable(struct WorldMover *mover,
 
     s32 height = mover->height;
 
-    if (height < 0x40000) {
+    if (height < px(4)) {
       if ((u32)(collision - 1) > 3 && collision != 6)
         return -1;
       return 0;

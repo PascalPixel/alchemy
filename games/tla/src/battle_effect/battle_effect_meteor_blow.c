@@ -140,21 +140,14 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
        arcAngle += 1092, offset += 8, frame++) {
     s32 y = Q_16_16_TO_INT(-Trig_Cos(arcAngle) * 48);
     s32 r = Q_16_16_TO_INT(Trig_Sin(arcAngle) * 48);
-    u8 *v;
+    struct ModelVertex *v;
 
     j = 0;
-    v = meshA + offset;
-    for (; j != 2; v += 4) {
-      s32 c;
-
-      v[0] = Q_16_16_TO_INT(Trig_Sin(j << 13) * r);
-      v[1] = y;
-      c = Q_16_16_TO_INT(Trig_Cos(j << 13) * r);
-      j++;
-      /* FAKEMATCH(dead): a once-only block. */
-      do {
-        v[2] = c;
-      } while (0);
+    v = (struct ModelVertex *)(meshA + offset);
+    for (; j != 2; j++, v++) {
+      v->x = Q_16_16_TO_INT(Trig_Sin(j << 13) * r);
+      v->y = y;
+      v->z = Q_16_16_TO_INT(Trig_Cos(j << 13) * r);
     }
   }
   mode = 3;

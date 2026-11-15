@@ -29,6 +29,11 @@ struct MapAnimation {
 /// edges.
 #define MAPGRID_SIZE 128
 #define MAPGRID_CELL_PIXELS 16
+/// A layer window's row mask (MapLayer.maskY) over the whole grid, which wraps
+/// there rather than at a window of its own.
+#define MAPGRID_ROW_MASK ((MAPGRID_SIZE - 1) * MAPGRID_SIZE)
+/// The bytes between one layer's BG map and the next, from screen block 5.
+#define MAPGRID_LAYER_SCREEN_BYTES 2048
 
 struct MapCell {
   u16 cellPictureAndFlags;
@@ -109,6 +114,10 @@ struct MapWork {
   s16 zoomFrames;
   s16 zoomStep;
 };
+
+/// The bytes of MapWork a field map uses: up to its third layer, the last the
+/// field scrolls.
+#define MAPGRID_FIELD_WORK_SIZE offsetof(struct MapWork, layers[3])
 
 /// A view of the map work as the screen transitions read it: the display
 /// control bits, the window edges and interrupt lines of a transition, and

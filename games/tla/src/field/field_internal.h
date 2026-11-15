@@ -124,6 +124,11 @@ struct MapHeaderLayer {
   u8 periodY; ///< 8-pixel tiles
 };
 
+/// Where a layout's tileset animation and blend scripts are decoded, in the
+/// map collision buffer after the collision, as The Broken Seal's.
+#define MAPGRID_ANIMATION_SCRIPT (Ram_MapCollision + 0x1000)
+#define MAPGRID_BLEND_SCRIPT (Ram_MapCollision + 0x1e00)
+
 /// A layout's header: the camera's bounds, the layers' priorities, tile
 /// bases and setup, and the offsets, from the header's start, of its packed
 /// cell pictures, collision, cells, shapes, tileset animation, blend script
@@ -145,32 +150,6 @@ struct MapHeader {
   s32 script;       ///< into Ram_MapCollision + 0x2000
 };
 
-struct MapLayerScroll {
-  s32 x, y;
-  s32 offsetX, offsetY;
-  s32 scaleX, scaleY;
-  s32 speedX, speedY;
-  s32 phaseX, phaseY;
-  u16 maskX, maskY;
-  u16 cellX, cellY;
-  struct MapCell *cells;
-  u8 *shapes;
-};
-
-struct MapScrollWork {
-  u8 unused[0x14]; ///< no code names it
-  u16 flags;
-  u8 unusedAfterFlags[0xe4 - 0x16]; ///< no code names it
-  s32 viewX, viewY;
-  s32 minX, minY, maxX, maxY;
-  u8 unusedAfterUnusedAfterFlags[5]; ///< no code names it
-  u8 basePriority;                   ///< as MapWork.basePriority
-  u8 unusedB[2];                     ///< no code names it
-  u8 enabled[3];
-  u8 unusedAfterEnabled; ///< no code names it
-  struct MapLayerScroll layers[3];
-};
-
 /// FieldWork as the sand trail reads its priority (FieldWork.unkd4a).
 struct SandTrailWork {
   u8 unused[0xd4a]; ///< no code names it
@@ -179,22 +158,8 @@ struct SandTrailWork {
   u16 unusedHigh : 8; ///< no code names it
 };
 
-/// A map layer as its renderers read it: its scroll, then the window over
-/// the map's cells (masks and origins that wrap the source cells).
-struct MapLayerWindow {
-  s32 x, y;
-  s32 offsetX, offsetY;
-  s32 scaleX, scaleY;
-  s32 speedX, speedY;
-  s32 phaseX, phaseY;
-  u16 maskX, maskY;
-  u16 originX, originY;
-  struct MapCell *cells;
-  u8 *terrainIds;
-};
-
 /// A map layer's scroll position in whole 16-pixel cells.
-struct TilePos {
+struct MapGridTilePosition {
   s32 x, y;
 };
 

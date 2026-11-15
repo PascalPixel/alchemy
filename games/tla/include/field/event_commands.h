@@ -74,8 +74,10 @@ struct TouchCopy {
   u8 unusedAfterCellZ[2]; ///< no code names it
 };
 
+/// The copies of cells Cyclone blew away, kept after the scene's own state so
+/// that TileCopies_Restore makes them again.
 struct TouchCopies {
-  struct TouchCell unk0000[1491];
+  struct TouchCell sceneState[1491]; ///< the scene's own state, not read here
   struct TouchCopy copies[64];
   s8 count;
 };
@@ -101,9 +103,9 @@ struct ParticleBurstWork {
   u8 tiles[384];
   struct EffectSprite sprites[96];
   struct BurstParticle particles[96];
-  s16 resource;
-  s16 vram;
-  s16 flash; ///< set on frame 30 only
+  s16 cacheEntry; ///< the VRAM cache entry holding the leaves' tiles
+  s16 tile;       ///< their first tile in OBJ VRAM
+  s16 flash;      ///< set on frame 30 only
   s16 frame;
   s16 active;
 };

@@ -1733,14 +1733,14 @@ void FieldPsynergy_Arrow(void) {
 /// Looks at 21 map cells around the effect owner, at the tile offsets of
 /// gFieldPsynergy_NearbyCellOffsets (signed x, z byte pairs), on the owner's
 /// layer. Each cell of kind 1, 2 or 3 that Field_MeasurePsynergyHeight accepts
-/// for the effect's id is listed as a tile in the event work's point list at
-/// 0xcc0, which ends with -1, -1; a kind-1 cell also stores its kind in the
-/// heap slot 0x5c work's byte 0x1b34, and the last kind-2 and kind-3 cells are
-/// kept in pixels, centred on their tile, at 0xd3c and 0xd40.
+/// for the effect's id is listed as a tile in the field work's points, which
+/// end with -1, -1; a kind-1 cell also sets CycloneWork.kind, and the last
+/// kind-2 and kind-3 cells are kept in pixels, centred on their tile, as
+/// cycloneCarryX, Z and cycloneLiftX, Z.
 void FieldPsynergy_GatherNearbyCells(void) {
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct PointWork *event = Ram_HeapSlots->fieldWork;
-  u8 *work = Ram_HeapSlots->battleEffect;
+  struct CycloneWork *work = Ram_HeapSlots->battleEffect;
   s16 *points = event->points;
   struct Actor *owner = effect->mainActor;
   s32 position[3];
@@ -1749,7 +1749,7 @@ void FieldPsynergy_GatherNearbyCells(void) {
   u32 i;
   s32 count = 0;
 
-  work[0x1b34] = count;
+  work->kind = count;
   event->cycloneCarryX = -1;
   event->cycloneCarryZ = -1;
   event->cycloneLiftX = -1;
@@ -1768,14 +1768,16 @@ void FieldPsynergy_GatherNearbyCells(void) {
       points[count * 2] = x / px(16);
       points[count * 2 + 1] = z / px(16);
       count++;
-      work[0x1b34] = kind;
+      work->kind = kind;
     }
     if (kind == 2 && Field_MeasurePsynergyHeight(effect->fieldPsynergy, owner,
                                                  position) != -1) {
       event->cycloneCarryX = FIELD_PIXEL(x);
       event->cycloneCarryZ = FIELD_PIXEL(z);
-      event->cycloneCarryX = (event->cycloneCarryX & 0xfff0) + 8;
-      event->cycloneCarryZ = (event->cycloneCarryZ & 0xfff0) + 8;
+      event->cycloneCarryX =
+          (event->cycloneCarryX & ~(MAPGRID_CELL_PIXELS - 1)) + 8;
+      event->cycloneCarryZ =
+          (event->cycloneCarryZ & ~(MAPGRID_CELL_PIXELS - 1)) + 8;
       points[count * 2] = x / px(16);
       points[count * 2 + 1] = z / px(16);
       count++;
@@ -1784,8 +1786,10 @@ void FieldPsynergy_GatherNearbyCells(void) {
                                                  position) != -1) {
       event->cycloneLiftX = FIELD_PIXEL(x);
       event->cycloneLiftZ = FIELD_PIXEL(z);
-      event->cycloneLiftX = (event->cycloneLiftX & 0xfff0) + 8;
-      event->cycloneLiftZ = (event->cycloneLiftZ & 0xfff0) + 8;
+      event->cycloneLiftX =
+          (event->cycloneLiftX & ~(MAPGRID_CELL_PIXELS - 1)) + 8;
+      event->cycloneLiftZ =
+          (event->cycloneLiftZ & ~(MAPGRID_CELL_PIXELS - 1)) + 8;
       points[count * 2] = x / px(16);
       points[count * 2 + 1] = z / px(16);
       count++;
@@ -1858,9 +1862,9 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer);
 void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
                                  s32 height, s32 windowX, s16 windowZ,
                                  s32 layerIndex) {
-  u8 *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
-  struct TouchCell *cell = (struct TouchCell *)(event + 0xcc0);
+  struct TouchCell *cell = (struct TouchCell *)event->psynergyCells;
   s32 ownerHeight = FIELD_CELL(owner->groundHeight);
   struct TouchMap *map = (struct TouchMap *)Ram_HeapSlots->mapGrid;
   struct TouchLayer *layer = &map->layers[layerIndex];
@@ -1896,26 +1900,26 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
 }
 #undef BOW_NEXT_PHASE
 
-/* VIEW(f0e2718): variable gSceneLocalState as u8 gTileCopies_RestoreState[];
+/* VIEW(f0e2718): variable gSceneLocalState as struct TouchCopies
+ * gTileCopies_RestoreState;
  * system/ram_buffer.h has u8 gSceneLocalState[]; tried as the one declaration,
  * the restore's address is shared with the copies above and its loop moves (29
  * lines in tla-en). */
-extern u8 gTileCopies_RestoreState[] __asm__("gSceneLocalState");
+extern struct TouchCopies gTileCopies_RestoreState __asm__("gSceneLocalState");
 
-/// For each entry of the event work's list at 0x174c, calls
-/// MapGrid_CopyCellPictureCellsRectFar with its bytes and clears the collision
-/// code of the cell at its position.
+/// Makes again each copy TileCopies_CopyTouchedCells recorded: copies the cell
+/// picture back and opens the cell on layer 2.
 void TileCopies_Restore(void) {
-  u8 *base = gTileCopies_RestoreState;
+  struct TouchCopies *base = &gTileCopies_RestoreState;
   s32 i;
 
-  for (i = 0; i < (s8)gTileCopies_RestoreState[0x194c]; i++) {
-    u8 *entry = base + 0x174c + i * 8;
+  for (i = 0; i < gTileCopies_RestoreState.count; i++) {
+    struct TouchCopy *entry = &base->copies[i];
 
-    MapGrid_CopyCellPictureCellsRectFar(entry[0], entry[1], 1, 1, entry[2],
-                                        entry[3]);
-    MapGrid_GetCellAt(FIELD_CELL_ORIGIN(entry[4]), FIELD_CELL_ORIGIN(entry[5]),
-                      2)
+    MapGrid_CopyCellPictureCellsRectFar(entry->toX, entry->toZ, 1, 1,
+                                        entry->fromX, entry->fromZ);
+    MapGrid_GetCellAt(FIELD_CELL_ORIGIN(entry->cellX),
+                      FIELD_CELL_ORIGIN(entry->cellZ), 2)
         ->collisionCode = 0;
   }
 }

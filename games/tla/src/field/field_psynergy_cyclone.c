@@ -46,7 +46,7 @@ void ParticleBurst_Update(void) {
   for (i = 0; i < 96; i++, particle++) {
     sprite = &work->sprites[i];
     if ((u32)particle->delay < 64) {
-      sprite->oam.index = work->vram + (particle->delay >> 3) % 6 * 2;
+      sprite->oam.index = work->tile + (particle->delay >> 3) % 6 * 2;
       position[0] = particle->x;
       position[1] = particle->y;
       position[2] = particle->z;
@@ -73,27 +73,11 @@ void ParticleBurst_Update(void) {
 /// Ends the particle burst (ParticleBurst_Start): stops its task and frees its
 /// tiles.
 void BattleEffect_EndX(void) {
-  u8 *work = Ram_HeapSlots->battleEffect;
+  struct ParticleBurstWork *work = Ram_HeapSlots->battleEffect;
 
   Task_Remove((u32)ParticleBurst_Update);
-  VramCache_FreeEntry(*(s16 *)(work + 0x1b00));
+  VramCache_FreeEntry(work->cacheEntry);
 }
-
-/// Cyclone's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the particle burst
-/// (ParticleBurstWork) at its start, then the leader's ride on the whirlwind.
-struct CycloneWork {
-  u8 particleBurst[0x1b08];
-  s16 count;
-  u8 unusedAfterCount[2]; ///< no code names it
-  struct Actor *follower; ///< the actor carried with the leader
-  s16 state;              ///< the stage of the ride; 999 once it ends
-  s16 timer;              ///< frames into the ride
-  s32 angle;              ///< the whirlwind's turn, 1/65536 turns
-  s32 radius;
-  s32 from[3]; ///< where the ride starts, 16.16 pixels
-  s32 to[3];   ///< where it ends, 16.16 pixels
-  s8 kind;     ///< nonzero runs the particle burst with it
-};
 
 /// Task of the Cyclone: the whirlwind carries the leader over 128 frames from
 /// where it stood to the nearby kind 2 cell (a Cyclone teleporter), circling

@@ -172,8 +172,8 @@ void ParticleBurst_Start(void) {
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Leaves), work);
   resource = VramCache_FindFreeEntry();
   vram = VramCache_Load(resource, 384, work);
-  work->resource = resource;
-  work->vram = vram;
+  work->cacheEntry = resource;
+  work->tile = vram;
 
   for (i = 0, particle = work->particles; i < 96; i++, particle++) {
     sprite = &work->sprites[i];

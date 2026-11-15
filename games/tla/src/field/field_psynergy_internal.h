@@ -89,4 +89,22 @@ enum RetreatParticleState {
 /// finished, which the cast waits for.
 #define FIELD_PSYNERGY_FINISHED 999
 
+/// Cyclone's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the particle burst
+/// (ParticleBurstWork) at its start, then the leader's ride on the whirlwind.
+struct CycloneWork {
+  u8 particleBurst[0x1b08];
+  s16 count;
+  u8 unusedAfterCount[2]; ///< no code names it
+  struct Actor *follower; ///< the actor carried with the leader
+  s16 state;              ///< the stage of the ride; 999 once it ends
+  s16 timer;              ///< frames into the ride
+  s32 angle;              ///< the whirlwind's turn, 1/65536 turns
+  s32 radius;
+  s32 from[3]; ///< where the ride starts, 16.16 pixels
+  s32 to[3];   ///< where it ends, 16.16 pixels
+  /// Nonzero runs the particle burst with it: a nearby cell of kind 1
+  /// (FieldPsynergy_GatherNearbyCells).
+  s8 kind;
+};
+
 #endif // ALCHEMY_FIELD_PSYNERGY_INTERNAL_H

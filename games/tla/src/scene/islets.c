@@ -224,12 +224,7 @@ extern s32 gIslets_FirstCrateZ;
 extern s32 gIslets_SecondCrateX;
 extern s32 gIslets_FirstCrateX;
 extern s32 gIslets_EnterDoorScript[];
-/* VIEW(first): routine gIslets_Doors as this part declared it; the joined file
- * has another; tried as the definition's extern s32 gIslets_Doors[], it does
- * not compile in tla-ja: games/tla/src/scene/islets.c:1568: `gIslets_Doors'
- * undeclared (first use in this function). */
-extern const struct IsletsExit gIslets_Doors__first[] __asm__("gIslets_Doors");
-#define gIslets_Doors gIslets_Doors__first
+extern struct IsletsExit gIslets_Doors[];
 extern u16 gPushKinds[];
 
 void Islets_SetCellCollision(s32 x, s32 z, s32 layers, s32 value);
@@ -879,13 +874,7 @@ void Islets_RideOnLonesomeGeorge(struct Actor *object) {
 #define ISLETS_GIFT_TRANSITION 513
 #endif
 
-/* VIEW(first): routine gIslets_SpinScript as this part declared it; the joined
- * file has another; tried as the definition's extern s32 gIslets_SpinScript[],
- * it does not compile in tla-ja: games/tla/src/scene/islets.c:844:
- * `gIslets_SpinScript' undeclared (first use in this function). */
-extern struct ActionScript
-    gIslets_SpinScript__first __asm__("gIslets_SpinScript");
-#define gIslets_SpinScript gIslets_SpinScript__first
+extern struct ActionScript gIslets_SpinScript;
 
 /// "At long last, I have a friend! Lonesome George I am no more!"
 void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
@@ -2698,8 +2687,6 @@ void Actor_StopAtPushTarget(struct Actor *object) {
 #undef EVENT_S16
 #undef HI
 #undef ABS
-#undef gIslets_Doors
-#undef gIslets_SpinScript
 #include "text/msg_ids.h"
 
 void Islets_TalkToPengulina(void);
@@ -2713,12 +2700,12 @@ void Islets_FinishPushingCrate(void);
 void Islets_EnterDoor(void);
 
 // clang-format off
-u32 gIslets_SpinScript[] = {
+struct ActionScript gIslets_SpinScript = {{
     SC_ADD(SW_FACING, FACING_STEP),
     SC_WAIT(1),
     SC_LOOP(16, SC_TOP),
     SC_END,
-};
+}};
 
 s32 gIslets_EnterDoorScript[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
@@ -2926,12 +2913,10 @@ s16 gIslets_NoDoorFrames[] = {
     -1,
 };
 
-s32 gIslets_Doors[] = {                                                               
-      (s32)gIslets_NoDoorFrames,                                                              
-      0x400040,                                                                      
-      (s32)gIslets_DoorFrames,                                                              
-      0xa0052,                                                                      
-  };
+struct IsletsExit gIslets_Doors[] = {
+    {(s32)gIslets_NoDoorFrames, {64, 64}},
+    {(s32)gIslets_DoorFrames, {82, 10}},
+};
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 208, 0, 800, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

@@ -200,12 +200,6 @@ struct CellPoint {
   s16 position[2];
 };
 
-struct BoulderSprite {
-  u8 unk00[9];
-  u8 unused09 : 2;
-  u8 layer : 2;
-};
-
 struct GaiaRockInsideOrbit {
   u8 unk00[8];
   s32 x;
@@ -248,7 +242,7 @@ extern struct ActorPlacement gGaiaRockInside_LairPlacements[];
 extern struct ActorPlacement gGaiaRockInside_TwinAltarsActorPlacements[];
 extern struct ActorPlacement gGaiaRockInside_PlatformsActorPlacements[];
 extern struct ActorPlacement gGaiaRockInside_AltarActorPlacements[];
-extern s32 gGaiaRockInside_PlatformUpScript[];
+extern s32 gGaiaRockInside_SquashYScript[];
 
 void Cyclone_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 void MadPlant_LeapAtLeader(s32 a, s32 b, s32 c);
@@ -548,17 +542,6 @@ s32 GaiaRockInside_SerpentSettles(void) {
 
 #include "text/msg_ids.h"
 
-/* VIEW(s07f4): tag struct DustSprite as struct DustSprite__s07f4;
- * scene/scene.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja (gaia_rock_inside.c):
- * games/tla/src/scene/gaia_rock_inside.c:495: structure has no member named
- * `layer'. */
-struct DustSprite__s07f4 {
-  u8 unk00[9];
-  u8 unused09 : 2;
-  u8 layer : 2;
-};
-
 s32 GaiaRockInside_SerpentBreathesFire(void) {
   struct Actor *source = Actor_Get(ACTOR_CASK);
   s32 i;
@@ -576,7 +559,7 @@ s32 GaiaRockInside_SerpentBreathesFire(void) {
         Actor_SetSpriteFlags(dust, 0);
         Actor_SelectAnimation(dust, 1);
         Actor_StartScript(dust, gGaiaRockInside_FlameScript);
-        ((struct DustSprite__s07f4 *)dust->sprite)->layer = 1;
+        ((struct FieldSprite *)dust->sprite)->priority = 1;
         dust->bounce = Trig_Cos(((Random16() << 3) >> 16) << 14) >> 1;
         dust->riseBaseY = Math_Sin(((Random16() << 3) >> 16) << 14) >> 1;
         dust->gravity = 0;
@@ -641,8 +624,8 @@ void GaiaRockInside_CountClash(struct Counted *object) {
 
 extern struct ActorPlacement gGaiaRockInside_FirstAltarActorPlacements[];
 
-extern s32 gGaiaRockInside_PlatformFrame;
-extern s32 gGaiaRockInside_PlatformDownScript[];
+extern s32 gGaiaRockInside_ArrowFrame;
+extern s32 gGaiaRockInside_SquashXScript[];
 
 /// Return the table for the current room.
 const void *Scene_GetActorPlacements(void) {
@@ -659,32 +642,35 @@ const void *Scene_GetActorPlacements(void) {
   return gGaiaRockInside_Placements;
 }
 
-void GaiaRockInside_SwayPlatformDown(struct Actor *object) {
+/// The update of a maze plant Growth has turned into an arrow: it flickers, and
+/// every 32 frames stretches along its arrow, sideways here and up and down in
+/// GaiaRockInside_PulseUpDownArrow.
+void GaiaRockInside_PulseSidewaysArrow(struct Actor *object) {
   s32 value = 0;
 
-  if ((gGaiaRockInside_PlatformFrame & 7) <= 0)
+  if ((gGaiaRockInside_ArrowFrame & 7) <= 0)
     value = 7;
   Actor_SetSpriteColorMode(object, value & 7);
-  if ((gGaiaRockInside_PlatformFrame & 31) == 0) {
+  if ((gGaiaRockInside_ArrowFrame & 31) == 0) {
     object->scaleX = Q16_ONE;
-    Actor_StartScript(object, gGaiaRockInside_PlatformDownScript);
+    Actor_StartScript(object, gGaiaRockInside_SquashXScript);
     Event_PlaySound(SE_DRIP);
   }
-  gGaiaRockInside_PlatformFrame++;
+  gGaiaRockInside_ArrowFrame++;
 }
 
-void GaiaRockInside_SwayPlatformUp(struct Actor *object) {
+void GaiaRockInside_PulseUpDownArrow(struct Actor *object) {
   s32 value = 0;
 
-  if ((gGaiaRockInside_PlatformFrame & 7) <= 0)
+  if ((gGaiaRockInside_ArrowFrame & 7) <= 0)
     value = 7;
   Actor_SetSpriteColorMode(object, value & 7);
-  if ((gGaiaRockInside_PlatformFrame & 31) == 0) {
+  if ((gGaiaRockInside_ArrowFrame & 31) == 0) {
     object->scaleY = Q16_ONE;
-    Actor_StartScript(object, gGaiaRockInside_PlatformUpScript);
+    Actor_StartScript(object, gGaiaRockInside_SquashYScript);
     Event_PlaySound(SE_DRIP);
   }
-  gGaiaRockInside_PlatformFrame++;
+  gGaiaRockInside_ArrowFrame++;
 }
 
 void GaiaRockInside_PlantPointsTheWay(s32 unused, u32 id) {
@@ -697,9 +683,9 @@ void GaiaRockInside_PlantPointsTheWay(s32 unused, u32 id) {
   object->collisionFlags = 0;
   Actor_SelectAnimation(object, ((direction & 0xc000) >> 14) + 2);
   if (direction & 0x4000)
-    object->update = (void (*)(void))GaiaRockInside_SwayPlatformUp;
+    object->update = (void (*)(void))GaiaRockInside_PulseUpDownArrow;
   else
-    object->update = (void (*)(void))GaiaRockInside_SwayPlatformDown;
+    object->update = (void (*)(void))GaiaRockInside_PulseSidewaysArrow;
   object->collisionFlags = 1;
   Event_SetFlag(*state + 0xa50);
   Event_SetFlag(FLAG_SCENE_TEMP_00);
@@ -775,15 +761,7 @@ void GaiaRockInside_ClearPlatformsSmallBushes(void) {
   GaiaRockInside_CopyTouchedCells(18, 17, 0, 3, 3, 31, 0);
 }
 
-/* VIEW(s07f4): variable gGaiaRockInside_CobwebCells as const struct CellPoint
- * gGaiaRockInside_CobwebCells[12]; scene/gaia_rock_inside/s4d00 has u16
- * gGaiaRockInside_CobwebCells[] = {; tried as the definition's extern u16
- * gGaiaRockInside_CobwebCells[], it does not compile in tla-ja
- * (gaia_rock_inside.c): games/tla/src/scene/gaia_rock_inside.c:726:
- * `gGaiaRockInside_CobwebCells' undeclared (first use in this function). */
-extern const struct CellPoint gGaiaRockInside_CobwebCells__cobweb[12] __asm__(
-    "gGaiaRockInside_CobwebCells");
-#define gGaiaRockInside_CobwebCells gGaiaRockInside_CobwebCells__cobweb
+extern struct CellPoint gGaiaRockInside_CobwebCells[12];
 
 void GaiaRockInside_CycloneClearsCobweb(void) {
   struct Actor *guard;
@@ -836,7 +814,7 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
   OverlayObject_PrepareObject(181 << 18, 0, 0x1ea0000, 286);
   Event_PlaySound(SE_DUST_PUFF);
   guard->motionFlags = 3;
-  ((struct BoulderSprite *)guard->sprite)->layer = 3;
+  ((struct FieldSprite *)guard->sprite)->priority = 3;
   FieldEvent_Wait(10);
   Actor_SetPosition(ACTOR_FALLING_ALTAR, 0, 0);
   ObjectTable_Snapshot();
@@ -911,17 +889,7 @@ void GaiaRockInside_RestoreSusa(void) {
   Actor_SetAnimationSpeed(object, gGaiaRockInside_SavedSusaAnimation);
 }
 
-#undef gGaiaRockInside_CobwebCells
 #include "text/msg_ids.h"
-
-/* VIEW(s1048): variable gGaiaRockInside_SavedSusa as extern s32
- * gGaiaRockInside_SavedSusa[]; s07f4 has extern struct Actor
- * gGaiaRockInside_SavedSusa; tried as the one declaration extern s32
- * gGaiaRockInside_SavedSusa[], it does not compile in tla-ja
- * (gaia_rock_inside.c): games/tla/src/scene/gaia_rock_inside.c:844: conflicting
- * types for `gGaiaRockInside_SavedSusa'. */
-extern s32
-    gGaiaRockInside_SavedSusa__restore[] __asm__("gGaiaRockInside_SavedSusa");
 
 /// Stepping near Susa the first time: he turns on the party ("Who are you? How
 /// did you get here?"), tells them to stand aside while the camera looks at the
@@ -971,10 +939,10 @@ void GaiaRockInside_MeetSusa(void) {
   Event_SetFlag(FLAG_MET_SUSA);
   if (object->script == gGaiaRockInside_SerpentTurnLeftScript ||
       object->script == gGaiaRockInside_SerpentTurnRightScript) {
-    gGaiaRockInside_SavedSusa__restore[2] = gGaiaRockInside_SavedSusaX =
-        gGaiaRockInside_SavedSusa__restore[14];
-    gGaiaRockInside_SavedSusa__restore[4] = gGaiaRockInside_SavedSusaZ =
-        gGaiaRockInside_SavedSusa__restore[16];
+    gGaiaRockInside_SavedSusa.x.fixed = gGaiaRockInside_SavedSusaX =
+        gGaiaRockInside_SavedSusa.targetX;
+    gGaiaRockInside_SavedSusa.z.fixed = gGaiaRockInside_SavedSusaZ =
+        gGaiaRockInside_SavedSusa.targetZ;
   }
   GaiaRockInside_RestoreSusa();
   Event_End();
@@ -2472,7 +2440,7 @@ s32 Scene_Initialize(void) {
         Event_Wait(30);
         FieldCamera_MoveToActorById(ACTOR_SUSA, 1);
         FieldCamera_WaitForArrival();
-        movement = (s32)gGaiaRockInside_PlatformDownScript;
+        movement = (s32)gGaiaRockInside_SquashXScript;
         Actor_SetMovementTypeById(ACTOR_SUSA, movement);
         Actor_WaitForScriptEndById(ACTOR_SUSA);
         Event_Wait(20);
@@ -2894,26 +2862,6 @@ void GaiaRockInside_ClearMazeLayer(s32 a0) {
 
 struct Unit *Unit_Get(u32 unitId);
 void BlendScript_Start(u16 *script);
-/* VIEW(s2cb4): routine GaiaRockInside_SwayPlatformUp as void
- * GaiaRockInside_SwayPlatformUp(void);
- * games/tla/src/scene/gaia_rock_inside/s07f4 has void
- * GaiaRockInside_SwayPlatformUp(struct Actor *object) {; tried as the
- * definition's void GaiaRockInside_SwayPlatformUp(void), Scene_PrepareMap
- * moves: 1 of 226 instructions in tla-ja (gaia_rock_inside.c). */
-void GaiaRockInside_SwayPlatformUp__platforms(void) __asm__(
-    "GaiaRockInside_SwayPlatformUp");
-#define GaiaRockInside_SwayPlatformUp GaiaRockInside_SwayPlatformUp__platforms
-/* VIEW(s2cb4): routine GaiaRockInside_SwayPlatformDown as void
- * GaiaRockInside_SwayPlatformDown(void);
- * games/tla/src/scene/gaia_rock_inside/s07f4 has void
- * GaiaRockInside_SwayPlatformDown(struct Actor *object) {; tried as the
- * definition's void GaiaRockInside_SwayPlatformDown(struct Actor *object),
- * which the object already declares, Scene_PrepareMap moves: 1 of 226
- * instructions in tla-ja (gaia_rock_inside.c). */
-void GaiaRockInside_SwayPlatformDown__platforms(void) __asm__(
-    "GaiaRockInside_SwayPlatformDown");
-#define GaiaRockInside_SwayPlatformDown                                        \
-  GaiaRockInside_SwayPlatformDown__platforms
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_MAZE) {
@@ -2948,15 +2896,15 @@ s32 Scene_PrepareMap(void) {
       if (*stage == 9)
         Actor_SetPosition(65, 104, 72);
       if (GameFlag_Get(*stage + 0xa50)) {
-        struct Actor *climber = Actor_GetById(8);
+        struct Actor *plant = Actor_GetById(ACTOR_ARROW_PLANT);
         u32 angle = GaiaRockInside_GetMazeWayOn();
 
-        climber->collisionFlags = 0;
-        Actor_SelectAnimation(climber, ((angle & 0xc000) >> 14) + 2);
-        climber->update = (angle & 0x4000) != 0
-                              ? GaiaRockInside_SwayPlatformUp
-                              : GaiaRockInside_SwayPlatformDown;
-        climber->collisionFlags = 1;
+        plant->collisionFlags = 0;
+        Actor_SelectAnimation(plant, ((angle & 0xc000) >> 14) + 2);
+        plant->update = (angle & 0x4000) != 0
+                            ? (void (*)(void))GaiaRockInside_PulseUpDownArrow
+                            : (void (*)(void))GaiaRockInside_PulseSidewaysArrow;
+        plant->collisionFlags = 1;
         GameFlag_Set(FLAG_SCENE_TEMP_00);
       }
     } else if (gMainRoutineWork.entrance > 8) {
@@ -3465,9 +3413,6 @@ burst:
   Event_SetFlag(flag);
 }
 
-#undef GaiaRockInside_SwayPlatformUp
-#undef GaiaRockInside_SwayPlatformDown
-
 void GaiaRockInside_StartWallTriggers(void) {
   Task_AddFrame((s32)GaiaRockInside_TriggerWallCell, TASK_PASS_VBLANK);
 }
@@ -3547,10 +3492,11 @@ u32 gGaiaRockInside_LeaderStepsBackScript[] = {
     SC_END,
 };
 
-u16 gGaiaRockInside_CobwebCells[] = {
-    42, 30, 44, 20, 46, 21, 47, 23,
-    47, 24, 46, 26, 44, 27, 43, 27,
-    41, 26, 40, 24, 40, 23, 41, 21,
+/// The twelve cells of the cobweb, as column and row; Cyclone clears the web
+/// when it reaches one of them (GaiaRockInside_CycloneClearsCobweb).
+struct CellPoint gGaiaRockInside_CobwebCells[] = {
+    {{42, 30}}, {{44, 20}}, {{46, 21}}, {{47, 23}}, {{47, 24}}, {{46, 26}},
+    {{44, 27}}, {{43, 27}}, {{41, 26}}, {{40, 24}}, {{40, 23}}, {{41, 21}},
 };
 
 u32 gGaiaRockInside_SparkScript[] = {
@@ -3920,7 +3866,7 @@ struct ActorPlacement gGaiaRockInside_AltarActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-s32 gGaiaRockInside_PlatformUpScript[] = {
+s32 gGaiaRockInside_SquashYScript[] = {
     SC_LABEL(1),
     SC_ADD(SW_SCALE_Y, 0x1800),
     SC_WAIT(1),
@@ -3944,7 +3890,7 @@ s32 gGaiaRockInside_PlatformUpScript[] = {
     SC_END,
 };
 
-s32 gGaiaRockInside_PlatformDownScript[] = {
+s32 gGaiaRockInside_SquashXScript[] = {
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, 0x1800),
     SC_WAIT(1),
@@ -3968,7 +3914,7 @@ s32 gGaiaRockInside_PlatformDownScript[] = {
     SC_END,
 };
 
-s32 gGaiaRockInside_PlatformFrame = 0;
+s32 gGaiaRockInside_ArrowFrame = 0;
 
 struct Trigger gGaiaRockInside_Triggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(GaiaRockInside_TakeMazeExit)},
@@ -4134,7 +4080,6 @@ s32 gGaiaRockInside_DustScript[] = {
 #undef AT
 #undef AT_ADDRESS
 #undef GAIA_ROCK_INSIDE_PATH
-#undef gGaiaRockInside_CobwebCells
 #undef gSceneState
-#undef GaiaRockInside_SwayPlatformUp
-#undef GaiaRockInside_SwayPlatformDown
+#undef GaiaRockInside_PulseUpDownArrow
+#undef GaiaRockInside_PulseSidewaysArrow

@@ -261,22 +261,8 @@ void Orbs_SpawnRising(void) {
   }
 }
 
-/* VIEW(jupiter_lighthouse_room_5): routine gJupiterLighthouse_PulseStep as this
- * part declared it; the joined file has another; tried as the definition's
- * extern u32 gJupiterLighthouse_PulseStep[], it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:199:
- * `gJupiterLighthouse_PulseStep' undeclared (first use in this function). */
-extern s32 gJupiterLighthouse_PulseStep__room_5 __asm__(
-    "gJupiterLighthouse_PulseStep");
-#define gJupiterLighthouse_PulseStep gJupiterLighthouse_PulseStep__room_5
-/* VIEW(jupiter_lighthouse_room_5): routine gJupiterLighthouse_PulseOn as this
- * part declared it; the joined file has another; tried as the definition's
- * extern u32 gJupiterLighthouse_PulseOn[], it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:197:
- * `gJupiterLighthouse_PulseOn' undeclared (first use in this function). */
-extern s32
-    gJupiterLighthouse_PulseOn__room_5 __asm__("gJupiterLighthouse_PulseOn");
-#define gJupiterLighthouse_PulseOn gJupiterLighthouse_PulseOn__room_5
+extern s32 gJupiterLighthouse_PulseStep;
+extern s32 gJupiterLighthouse_PulseOn;
 
 void JupiterLighthouse_AddSparks();
 
@@ -426,15 +412,7 @@ struct SparkWork {
   s16 resource;
 };
 
-/* VIEW(jupiter_lighthouse_room_5): routine gPaletteCyclePausesInEvents as this
- * part declared it; the joined file has another; tried as the definition's
- * extern s32 gPaletteCyclePausesInEvents, it does not compile in tla-ja:
- * games/tla/src/scene/shared/palette_cycle_set_pauses_in_events.h:3:
- * `gPaletteCyclePausesInEvents' undeclared (first use in this function). */
-extern s32 gPaletteCyclePausesInEvents__jupiter_lighthouse_room_5 __asm__(
-    "gPaletteCyclePausesInEvents");
-#define gPaletteCyclePausesInEvents                                            \
-  gPaletteCyclePausesInEvents__jupiter_lighthouse_room_5
+extern s32 gPaletteCyclePausesInEvents;
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -1023,9 +1001,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #include "../field/field_effect_move.c"
 
 #undef EVENT_WORK
-#undef gJupiterLighthouse_PulseStep
-#undef gJupiterLighthouse_PulseOn
-#undef gPaletteCyclePausesInEvents
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
@@ -1228,13 +1203,9 @@ u32 gOrbScript[] = {
       SC_RELEASE,                                                                 
   };
 
-u32 gJupiterLighthouse_PulseStep[] = {
-    0,
-};
+s32 gJupiterLighthouse_PulseStep = 0;
 
-u32 gJupiterLighthouse_PulseOn[] = {
-    1,
-};
+s32 gJupiterLighthouse_PulseOn = 1;
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
@@ -1270,9 +1241,7 @@ struct Trigger gSceneEvents[] = {
 
 s32 gPaletteCycleFrame = -1;
 
-u32 gPaletteCyclePausesInEvents[] = {
-    1,
-};
+s32 gPaletteCyclePausesInEvents = 1;
 
 s32 gJupiterLighthouse_OrbScript[] = {
     SC_ANIMATION(5),

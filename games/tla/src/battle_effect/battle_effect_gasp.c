@@ -279,14 +279,14 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
     // The canvas layer.
     if (mode == GASP_MODE_GASP) {
-      s32 *lines = (s32 *)(work->sheet + 0x6980);
+      s32 *lines = work->bg2xLines;
 
-      for (i = 0; i != 160; i++)
+      for (i = 0; i != ARRAY_COUNT(work->bg2xLines); i++)
         *lines++ = (Random16() & 31) << 4;
     } else if (mode == GASP_MODE_LULL) {
-      s32 *lines = (s32 *)(work->sheet + 0x6980);
+      s32 *lines = work->bg2xLines;
 
-      for (i = 0; i != 160; i++)
+      for (i = 0; i != ARRAY_COUNT(work->bg2xLines); i++)
         *lines++ = (0x60000 - Trig_Sin((frame << 11) + i * 0x800) * 6) >> 10;
     } else if (mode == 1 && frame > 31) {
       u16 *pal = (u16 *)&BG_PLTT_COLOR(0, 1);

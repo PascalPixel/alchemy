@@ -14,6 +14,9 @@ struct StripQuad;
 
 /// Where TornadoSheet is decoded in the effect's pictures.
 #define BOLT_TRAIL_TORNADO_PICTURES 0x800
+/// The bolts' four 24x120 pictures, each copied 4 pixels in from the left of
+/// a 32x128 cell, after TornadoSheet.
+#define BOLT_TRAIL_BOLT_COLUMNS 0x1456
 
 #define BOLT_TRAIL_FRAMES 50
 
@@ -69,13 +72,13 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   }
 
   // The bolts' four pictures, 24 by 120, each in a 32-wide cell.
-  Iwram_ClearWordsEntry(work->sheet + 0x1456, 0x4000);
+  Iwram_ClearWordsEntry(work->sheet + BOLT_TRAIL_BOLT_COLUMNS, 0x4000);
   for (i = 0; i != 4; i++) {
     for (k = 0; k != 120; k++) {
       s32 j;
 
       for (j = 0; j != 24; j++) {
-        work->sheet[0x145a + i * 0x1000 + k * 32 + j] =
+        work->sheet[BOLT_TRAIL_BOLT_COLUMNS + 4 + i * 0x1000 + k * 32 + j] =
             buffer[(i * 45 << 6) + k * 24 + j];
       }
     }
@@ -274,7 +277,8 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
 
           shade = -fade;
         }
-        texture.pixels = work->sheet + 0x1456 + (bolt->variant << 12);
+        texture.pixels =
+            work->sheet + BOLT_TRAIL_BOLT_COLUMNS + (bolt->variant << 12);
         model->shade = shade;
         Transform_Reset();
         Transform_ApplyTranslation(ball->x / 2 - px(64), ball->y - px(64), 0);

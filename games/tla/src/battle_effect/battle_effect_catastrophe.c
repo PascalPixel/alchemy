@@ -15,6 +15,16 @@ struct MeshVertex {
 /// Where FlashBurstSheet is decoded in the effect's pictures.
 #define CATASTROPHE_FLASH_BURST_PICTURES 0x1800
 
+/// Where Catastrophe decodes its pictures: JaggedStreakSheet in act one;
+/// PentagonSealTexture after TriangleSealTexture, in the pictures in act one
+/// and the map cell buffer in act two; SwirlTexture and then FireRingTexture in
+/// the map cell buffer; and TornadoSheet (act two) or ClawSlashSheet (act
+/// three), whose glints and slash the last acts sweep across.
+#define CATASTROPHE_JAGGED_STREAKS 0x2000
+#define CATASTROPHE_PENTAGON_SEAL 0x1000
+#define CATASTROPHE_RING 0x2000
+#define CATASTROPHE_SWEEP_PICTURES 0x800
+
 /// Catastrophe: over a red sky the chained demon in golden armour spreads its
 /// wings and drives down a sword of light; the blade's orb falls on the land
 /// far below and bursts in a ring and a white flash; then violet lightning
@@ -204,14 +214,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   }
   Iwram_CopyWords(work->sheet + 0x5000, (void *)OBJ_PLTT, 480);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F9, work->sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0F8, work->sheet + 0x2000, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0F8,
+                             work->sheet + CATASTROPHE_JAGGED_STREAKS, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                   SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
-                             Ram_MapCellBuffer + 0x2000, 0, 0);
+                             Ram_MapCellBuffer + CATASTROPHE_RING, 0, 0);
   zero = 0;
   camZ = 0;
   swapped = 0;
@@ -701,7 +711,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           s32 cell = p->velocityX;
 
           model->shade = shade;
-          texture.pixels = work->sheet + 0x2000 + (cell << 12);
+          texture.pixels =
+              work->sheet + CATASTROPHE_JAGGED_STREAKS + (cell << 12);
           Transform_Reset();
           {
             s32 t = p->x / 8;
@@ -784,16 +795,16 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     }
     if (frame == 552) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
-                                 Ram_MapCellBuffer + 0x2000, 0, 0);
+                                 Ram_MapCellBuffer + CATASTROPHE_RING, 0, 0);
     }
     if (frame == 551) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0EE, work->sheet, 0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0EF, work->sheet + 0x1000,
-                                 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0EF,
+                                 work->sheet + CATASTROPHE_PENTAGON_SEAL, 0, 0);
     }
     if (frame == 602) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
-                                 Ram_MapCellBuffer + 0x2000, 0, 0);
+                                 Ram_MapCellBuffer + CATASTROPHE_RING, 0, 0);
     }
     if ((u32)(frame - 602) <= 6) {
       camZ += px(16);
@@ -817,7 +828,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         model->texture = &texture;
         model->mesh = gBattleEffect_SquareMesh;
         model->vertices = verts;
-        texture.pixels = work->sheet + 0x1000;
+        texture.pixels = work->sheet + CATASTROPHE_PENTAGON_SEAL;
         Transform_Reset();
         b = span - drift;
         Transform_ApplyTranslation(b / 2 + px(5), camZ + px(230), 0);
@@ -863,7 +874,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           }
           if (shade > MODEL_SHADE_INVISIBLE) {
             model->shade = shade;
-            texture.pixels = Ram_MapCellBuffer + 0x2000;
+            texture.pixels = Ram_MapCellBuffer + CATASTROPHE_RING;
             Transform_Reset();
             if (frame > 553) {
               s32 v = (554 - frame) * 120000;
@@ -895,7 +906,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         model->shade = shade;
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->kind = MODEL_SHADED_ADDITIVE;
-        texture.pixels = Ram_MapCellBuffer + 0x2000;
+        texture.pixels = Ram_MapCellBuffer + CATASTROPHE_RING;
         texture.logWidth = 7;
         texture.logHeight = 7;
         Transform_Reset();
@@ -954,8 +965,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, cellBuffer, 1,
                              1);
-  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x800,
-                             1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
+                             work->sheet + CATASTROPHE_SWEEP_PICTURES, 1, 0);
   Iwram_ClearWordsEntry(work->sheet + 0x1456, 0x4000);
   for (i = 0; i != 4; i++) {
     {
@@ -978,9 +989,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0EE, cellBuffer, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0EF,
-                             Ram_MapCellBuffer + 0x1000, 0, 0);
+                             Ram_MapCellBuffer + CATASTROPHE_PENTAGON_SEAL, 0,
+                             0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
-                             Ram_MapCellBuffer + 0x2000, 0, 0);
+                             Ram_MapCellBuffer + CATASTROPHE_RING, 0, 0);
   {
     s32 rise;
     s32 top;
@@ -1095,7 +1107,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                 do {
                 } while (0);
                 ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-                    canvas, work->sheet + 0x800 + at, x, y,
+                    canvas, work->sheet + CATASTROPHE_SWEEP_PICTURES + at, x, y,
                     gBattleEffect_GlintPictureWidths[n],
                     gBattleEffect_GlintPictureHeights[n]);
               }
@@ -1126,7 +1138,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           aerialModel->texture = &aerialTexture;
           aerialModel->mesh = gBattleEffect_SquareMesh;
           aerialModel->vertices = aerialVertices;
-          aerialTexture.pixels = Ram_MapCellBuffer + 0x1000;
+          aerialTexture.pixels = Ram_MapCellBuffer + CATASTROPHE_PENTAGON_SEAL;
           Transform_Reset();
           Transform_ApplyTranslation(-px(2), rise, 0);
           Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
@@ -1192,7 +1204,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                 aerialModel->shade = aerialShade;
                 aerialModel->mesh = gBattleEffect_LargeSquareMesh;
                 aerialModel->kind = MODEL_SHADED_MAX;
-                aerialTexture.pixels = Ram_MapCellBuffer + 0x2000;
+                aerialTexture.pixels = Ram_MapCellBuffer + CATASTROPHE_RING;
                 aerialTexture.logWidth = 7;
                 aerialTexture.logHeight = 7;
                 Transform_Reset();
@@ -1323,7 +1335,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
                                1);
     Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
-                               work->sheet + 0x800, 1, 0);
+                               work->sheet + CATASTROPHE_SWEEP_PICTURES, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0,
                                0);
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
@@ -1509,7 +1521,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         sweepModel->mesh = gBattleEffect_SquareMesh;
         sweepTexture.logHeight = 6;
         sweepModel->scrollU = 0;
-        sweepTexture.pixels = work->sheet + 0x800;
+        sweepTexture.pixels = work->sheet + CATASTROPHE_SWEEP_PICTURES;
         Transform_ApplyTranslation(-0x20000,
                                    (Trig_Sin(frame << 10) << 2) + -0x60000, 0);
         Transform_ApplyRoll(-TRIG_TURN / 32);

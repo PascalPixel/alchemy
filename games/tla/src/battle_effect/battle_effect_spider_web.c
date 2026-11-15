@@ -188,6 +188,11 @@ struct StripQuad;
 extern const struct Scale gUlysses_ShipScale;
 
 /// Where RuneCircleSheet is decoded in the effect's pictures.
+/// Where UlyssesSilhouette, then FlutteringFlakeSheet's cels, are decoded in
+/// the effect's pictures, and the silhouette's size.
+#define ULYSSES_PICTURES 0x1781
+#define ULYSSES_SILHOUETTE_WIDTH 80
+#define ULYSSES_SILHOUETTE_HEIGHT 112
 #define ULYSSES_RUNE_CIRCLE_PICTURES 0x2781
 /// Where YellowOrbSheet is decoded in the effect's pictures.
 #define ULYSSES_YELLOW_ORB_PICTURES 0x1e97
@@ -296,15 +301,16 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   blit = blits;
   BattleEffect_FetchRectangleBlitters(0, (void **)blit);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  cells = work->sheet + 0x1781;
+  cells = work->sheet + ULYSSES_PICTURES;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B1, cells, 0, 0);
-  for (i = 0; i != 0x2300; i++, cells++) {
+  for (i = 0; i != PICTURE_BYTES(ULYSSES_SILHOUETTE); i++, cells++) {
     if (*cells) {
       *cells += 128;
     }
   }
-  picture = work->sheet + 0x1781;
-  blits[0](canvas, picture, 24, 8, 80, 112);
+  picture = work->sheet + ULYSSES_PICTURES;
+  blits[0](canvas, picture, 24, 8, ULYSSES_SILHOUETTE_WIDTH,
+           ULYSSES_SILHOUETTE_HEIGHT);
   EFFECT_PRESENT_CANVAS(work);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
@@ -362,7 +368,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       s32 k = (frame / 4) % 18;
       s32 x = 60 - (Q_16_16_TO_INT(Trig_Sin(frame * 860) << 3));
       s32 y = frame - 8;
-      u8 *source = work->sheet + 0x1781 + gUlysses_Pictures[k];
+      u8 *source = work->sheet + ULYSSES_PICTURES + gUlysses_Pictures[k];
       u8 w = gUlysses_PictureWidths[k];
       s32 left = x - (w >> 1);
       u8 h = gUlysses_PictureHeights[k];
@@ -565,7 +571,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
         }
         if ((u32)(t - 12) <= 31) {
           s32 k = ((t - 12) / 4) % 18;
-          u8 *source = work->sheet + 0x1781 + gUlysses_Pictures[k];
+          u8 *source = work->sheet + ULYSSES_PICTURES + gUlysses_Pictures[k];
           s32 x = Q_16_16_TO_INT(step->x);
           u8 w = gUlysses_PictureWidths[k];
           s32 left = x - (w >> 1);

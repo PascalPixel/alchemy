@@ -307,7 +307,6 @@ void Window_WaitZoom(void *work) {
 }
 
 void WindowSprite_PrepareForRedraw(struct Window *work);
-/// Redraws a window empty, its border and fill, at its current rectangle.
 void WindowSprite_RedrawSavedRect(struct Window *window);
 
 /// Closes a window: clears its contents and remembers its last rectangle.
@@ -359,6 +358,7 @@ void WindowSprite_PrepareForRedraw(struct Window *work) {
   }
 }
 
+/// Redraws a window empty, its border and fill, at its current rectangle.
 void WindowSprite_RedrawSavedRect(struct Window *window) {
   Window_DrawBorder((s16)window->x, (s16)window->y, window->width,
                     window->height);

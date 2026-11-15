@@ -23,11 +23,7 @@ void SelectionMenu_HighlightIcon(struct SelectionScreen *state, u32 rowIndex);
 void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward);
 void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
                              s32 reuse);
-/// Chooses the entry under the cursor: the other icons gather into it and
-/// vanish, and it joins the chosen icons at the top left.
 u32 Menu_ConfirmSelection(struct SelectionScreen *screen);
-/// Opens the party status window that shows with the field menu (flags 1) and
-/// waits a frame.
 void PartyStatus_OpenAndWait(void);
 
 extern const u8 gMenu_AnimatedCursorTiles[];
@@ -1180,6 +1176,8 @@ void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
   sprite->priority = 0;
 }
 
+/// Chooses the entry under the cursor: the other icons gather into it and
+/// vanish, and it joins the chosen icons at the top left.
 u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   struct SelectionNode *node;
   struct SelectionNode *other = NULL;
@@ -1457,6 +1455,8 @@ s32 FieldMenu_Run(void) {
   return ret;
 }
 
+/// Opens the party status window that shows with the field menu (flags 1) and
+/// waits a frame.
 void PartyStatus_OpenAndWait(void) {
   PartyStatus_CreateWindow(1);
   wait(1);

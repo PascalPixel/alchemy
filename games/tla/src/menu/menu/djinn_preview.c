@@ -626,8 +626,6 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   return result;
 }
 
-/// Tests whether a hypothetical give leaves every pair of party members within
-/// one Djinn.
 s32 Djinn_CheckGiveBalance(s32 self, s32 other);
 
 /// Marks in table each other owner a djinn can move to from self and keep the
@@ -668,6 +666,8 @@ s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn) {
 void Djinn_CountOwned(u8 *counts);
 
 // Test whether moving one from from to to preserves the balance.
+/// Tests whether a hypothetical give leaves every pair of party members within
+/// one Djinn.
 s32 Djinn_CheckGiveBalance(s32 from, s32 to) {
   s8 counts[16];
   s32 balanced;

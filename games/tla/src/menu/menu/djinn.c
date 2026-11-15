@@ -120,7 +120,6 @@ s32 DjinnMenu_Run(void) {
 
 void Menu_OpenBackdropScreen(void);
 
-/// The Djinn list's chooser.
 s32 DjinnMenu_SelectDjinn(s32 mode);
 s32 DjinnMenu_ShowMemberStatus(void);
 s32 DjinnMenu_ShowHelp(void);
@@ -918,6 +917,7 @@ s32 Menu_GetModuloOfSum(s32 value, s32 count) __attribute__((const));
       wait(1);                                                                 \
   } while (0)
 
+/// The Djinn list's chooser.
 s32 DjinnMenu_SelectDjinn(s32 mode) {
   s8 columnFlags[8];
   u8 requiresTrade[16];

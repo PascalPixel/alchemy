@@ -116,7 +116,6 @@ s32 PsynergyMenu_SetShortcut(s32 kind, s32 id, s32 second);
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
 s32 PsynergyMenu_SelectPartySlot(s32 paneIndex);
-/// Chooses the party member to use the selected Psynergy on.
 s32 PsynergyMenu_SelectTarget(s32 paneIndex);
 s32 PsynergyMenu_RunList(s32 paneIndex);
 
@@ -354,7 +353,6 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
 
 s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
                                 s32 mode);
-/// The party member row of the Psynergy menu.
 s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused);
 
 /// Shows side partySlot's icon, collects the actions of the member chosen
@@ -399,6 +397,7 @@ void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId);
 
 s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner);
 
+/// The party member row of the Psynergy menu.
 s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
   struct PsynergyMenuWork *menu;
   s32 selection;
@@ -519,6 +518,7 @@ void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId) {
   }
 }
 
+/// Chooses the party member to use the selected Psynergy on.
 s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
   struct PsynergyMenuWork *menu;
   s32 selection;

@@ -276,8 +276,6 @@ void Text_ResetStyle(void) {
   state->unknownAfterLineSpacing = 1;
 }
 
-/// The window system's per-frame task: windows, then messages, then sprite
-/// animation.
 void WindowSystem_Update(void);
 
 /// Reserves the glyph sprites' tiles, resets the text style, starts the ring of
@@ -565,6 +563,8 @@ void FieldMessage_Show(s32 no, s32 flags) {
   wait(3);
 }
 
+/// The window system's per-frame task: windows, then messages, then sprite
+/// animation.
 void WindowSystem_Update(void) {
   Window_UpdateZooms();
   Message_UpdateAll();

@@ -240,8 +240,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
         curl = 16;
       }
       size = 64 - curl * 2;
-      // DEAD: the ROM sets these defaults and tests frame >= 0, which inside
-      // this range is always true, so the defaults are always overwritten.
+      // DEAD: frame >= 0 is always true inside this range, so the defaults are
+      // always overwritten; the ROM keeps both moves and the compare.
       centerX = 120;
       centerY = -16;
       if (frame >= 0) {
@@ -258,8 +258,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       {
         s32 ratio = 0x2000 / size;
 
-        // DEAD: the ROM reads each scale before storing it and drops the value
-        // (as plain stores, 4 of 1139 differ).
+        // DEAD: each scale is read before it is stored and the value dropped;
+        // the ROM keeps both loads.
         *(volatile u16 *)&work->bg2pa;
         work->bg2pa = ratio;
         *(volatile u16 *)&work->bg2pd;

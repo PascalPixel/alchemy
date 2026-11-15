@@ -584,8 +584,8 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
                                                px(1) / 2);
           if (Q_16_16_UPPER_HALF(drop->y) > 111) {
             drop->variant = 1;
-            // DEAD: overwritten by the next store; the random number is still
-            // drawn.
+            // DEAD: overwritten by the next store; the ROM keeps the call, its
+            // arithmetic and the store.
             drop->velocityX = ((Random16() & 31) - 16) << 12;
             drop->velocityX = gWyrdCurse_DropBounces[i % 4] << 13;
             drop->velocityY = 0;

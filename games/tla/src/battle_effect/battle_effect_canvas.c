@@ -1076,7 +1076,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
                            (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       break;
     }
-    // DEAD: nothing uses the counter read here; its load is in the ROM.
+    // DEAD: nothing uses the counter read here; the ROM keeps its load.
     (void)*(volatile s32 *)&work->vblanksSinceTransfer;
     work->vblanksSinceTransfer = 1;
   } else {
@@ -1138,7 +1138,7 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
                          BATTLE_BACKGROUND_BYTES);
       break;
     }
-    // DEAD: nothing uses the counter read here; its load is in the ROM.
+    // DEAD: nothing uses the counter read here; the ROM keeps its load.
     (void)*(volatile s32 *)&work->vblanksSinceTransfer;
     work->vblanksSinceTransfer = 1;
   } else {
@@ -1180,7 +1180,7 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
                          0x3c00);
       break;
     }
-    // DEAD: nothing uses the counter read here; its load is in the ROM.
+    // DEAD: nothing uses the counter read here; the ROM keeps its load.
     (void)*(volatile s32 *)&work->vblanksSinceTransfer;
     work->vblanksSinceTransfer = 1;
   } else {

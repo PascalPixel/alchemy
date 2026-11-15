@@ -126,7 +126,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
     // The strip mesh held in a per-frame local, as the vertex buffer is.
     strip = Ram_MapCellBuffer + 0x2000;
     corners = (struct Corner *)gMapGridCellBuffer;
-    // DEAD: frame never falls below 0; the source keeps the test.
+    // DEAD: frame never falls below 0; the ROM keeps the compare and branch.
     if (frame >= 0) {
       s32 width;
       s32 step;

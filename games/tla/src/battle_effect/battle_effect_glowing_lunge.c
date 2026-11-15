@@ -199,10 +199,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       struct Particle *spark;
 
       Transform_Reset();
-      spark = Ram_MapCellBuffer + 0x4000;
-      /* FAKEMATCH(barrier): an empty asm on spark. */
-      __asm__("" : "=r"(spark) : "0"(spark));
       Transform_SetLookAt(camera->eye, camera->focus);
+      spark = Ram_MapCellBuffer + 0x4000;
       for (i = 0; i != SPARK_COUNT; i++, spark++) {
         s32 life = spark->variant;
 

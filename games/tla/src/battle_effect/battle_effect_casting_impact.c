@@ -1184,7 +1184,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                     screen, (u8 *)tiles + gBattleEffect_MotePictures[n - 1],
                     point[0] - n / 2, point[1] - n, n, n * 2);
                 // DEAD: this arm runs only for kind 79, so the kind 89 test
-                // never holds; the source keeps it.
+                // never holds; the ROM keeps the compare and both arms.
                 {
                   s32 gravity;
                   if (kind == CASTING_IMPACT_IMPACT_FLASH_PUNCH)
@@ -1344,8 +1344,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             angle = frame * 1848 + i * (TRIG_TURN / 4);
             m = ((frame + i * 3) / 2) & 3;
             x = target[0] / 2 + (Q_16_16_TO_INT(Trig_Sin(angle) << 5));
-            // DEAD: the cosine is computed and dropped; the source keeps the
-            // call.
+            // DEAD: the cosine is computed and dropped; the ROM keeps the call.
             Trig_Cos(angle);
             drawFuncs.draw[0](screen,
                               buffer + GLINT_SET_BYTES +
@@ -2690,7 +2689,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               EffectPosition_ProjectPoint(p, point);
               point[0] = point[0] / 2;
               // DEAD: kind 74 has its own arm above, so only kind 69 reaches
-              // this test.
+              // this test; the ROM keeps both compares.
               if (kind == CASTING_IMPACT_IMPACT_SEARING_FOG ||
                   kind == CASTING_IMPACT_IMPACT_SCORPIONFISH)
                 drawFuncs.draw[1](screen,

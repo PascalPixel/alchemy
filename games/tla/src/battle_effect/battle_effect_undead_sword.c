@@ -1065,7 +1065,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
                              work->sheet + DIAMOND_BERG_FIRE_RING, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  // DEAD: frame 0 sets top to -104 before anything reads it.
+  // DEAD: frame 0 sets top to -104 before anything reads it; the ROM keeps
+  // the\n  // move.
   top = -128;
 
   for (frame = 0; frame != DIAMOND_BERG_FRAMES; frame++) {

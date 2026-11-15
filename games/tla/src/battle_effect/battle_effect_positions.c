@@ -34,7 +34,8 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
   work = Ram_HeapSlots->battleEffect;
   args = work->args;
 
-  // DEAD: nothing uses the held keys read here; their load is in the ROM.
+  // DEAD: nothing uses the held keys read here; the ROM keeps the test and the
+  // load.
   if (args->targets[0] > 0x7f)
     (void)gInput.held;
 }

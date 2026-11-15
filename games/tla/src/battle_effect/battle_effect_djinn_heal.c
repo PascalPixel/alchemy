@@ -135,7 +135,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
       if (frame <= 3)
         draws[0](canvas, work->sheet + SHEET_DJINN, x, y, DJINNI_WIDTH,
                  DJINNI_HEIGHT);
-      // DEAD: frame never passes 63 here; the source keeps the test.
+      // DEAD: frame never passes 63 here; the ROM keeps the compare and branch.
       if (frame <= 79) {
         s32 angle;
         s32 lineX;
@@ -159,7 +159,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
     // translation, scale, pitch and roll.
     Transform_Reset();
     gProjection.centerY = 104;
-    // DEAD: frame never passes 63 here; the source keeps the test.
+    // DEAD: frame never passes 63 here; the ROM keeps the compare and branch.
     if (frame <= 63) {
       vertices = Heap_AllocEwram(32);
       job = Render_AllocateModelList(1);

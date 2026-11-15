@@ -29,8 +29,8 @@ struct StripQuad;
     Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE);                   \
     Transform_ApplyRoll((p)->z);                                               \
   } while (0)
-/// DEAD: each test reads the count twice and drops the first read; both loads
-/// are in the ROM.
+// DEAD: each test reads the count twice and drops the first read; the ROM
+// keeps both loads.
 #define WAIT_TRANSFER(work)                                                    \
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \
          *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
@@ -583,8 +583,6 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           s32 t = frame - k * 32;
           s32 scale = (t << 10) + Q16_ONE / 16;
           s32 shade = 0;
-          /* FAKEMATCH(pin): half kept in r5. */
-          register s32 half __asm__("r5");
 
           if (t > 63) {
             shade = (64 - t) * 4;
@@ -592,9 +590,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
               continue;
           }
           model->shade = shade;
-          half = scale >> 1;
           Transform_Reset();
-          Transform_ApplyAxisScale(half, scale, scale);
+          Transform_ApplyAxisScale(scale >> 1, scale, scale);
           Transform_ApplyRoll((frame << 8) + TRIG_TURN * 3 / 4);
           Transform_ApplyPitch((frame << 6) - 0x4770);
           for (i = 0; i != 12; i++) {
@@ -602,7 +599,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
             Transform_Push();
             Transform_ApplyRoll(frame * 356 + i * 5461);
             Transform_ApplyTranslation(0, px(116), 0);
-            Transform_ApplyAxisScale(half, half, half);
+            Transform_ApplyAxisScale(scale >> 1, scale >> 1, scale >> 1);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts,
                                      4);
             Transform_Pop();

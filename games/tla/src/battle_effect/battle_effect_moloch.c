@@ -808,7 +808,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
       typeof(gBgScroll[0]) *scroll = gBgScroll;
       s16 base = 32;
 
-      // DEAD: both arms below set it again.
+      // DEAD: both arms below set it again; the ROM keeps the store.
       scroll[1].y = base;
       if (t & 1)
         scroll[1].y = shake + 32;

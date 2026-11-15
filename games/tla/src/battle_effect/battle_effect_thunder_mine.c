@@ -200,8 +200,8 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       }
       Canvas_BlitAtFoot(buffer, x, y, radius);
       for (i = 0; i != 4; i++) {
-        // DEAD: i runs 0 to 3, so the mask changes nothing; the source keeps
-        // it.
+        // DEAD: i runs 0 to 3, so the mask changes nothing; the ROM keeps the
+        // and.
         s32 cell = i & 3;
         s32 half = radius / 2;
         s32 angle = Random16();
@@ -253,7 +253,8 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       model = Render_AllocateModelList(1);
       texture.logWidth = 5;
       texture.logHeight = 7;
-      // DEAD: both kinds are overwritten by the 6 below; the source keeps them.
+      // DEAD: both kinds are overwritten by the 6 below; the ROM keeps the
+      // test\n      // and both stores.
       if (mode == BOLT_TRAIL_THUNDER_MINE) {
         model->kind = MODEL_SHADED_MAX;
       } else {

@@ -281,7 +281,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         *c++ = 0;
       }
     }
-    // DEAD: frame never falls below 0; the source keeps the test.
+    // DEAD: frame never falls below 0; the ROM keeps the compare and branch.
     if (frame >= 0) {
       base.x += vel.x;
       base.y += vel.y;

@@ -408,7 +408,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         /* FAKEMATCH(dead): green is taken and clamped, then never used. */
         green = RGB_GREEN((u16)entry);
         blue = RGB_BLUE((u16)entry);
-        // DEAD: both channels are already at most 31.
+        // DEAD: both channels are already at most 31; the ROM keeps both
+        // compares.
         if (red > RGB_LEVEL_MAX) {
           red = RGB_LEVEL_MAX;
         }
@@ -483,7 +484,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       }
       Palette_BrightenBgEntries(2, 2, 2);
     }
-    // DEAD: frame is never negative.
+    // DEAD: frame is never negative; the ROM keeps the compare and branch.
     if (frame < 0) {
       goto next;
     }

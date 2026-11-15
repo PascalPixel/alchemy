@@ -144,7 +144,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   mode = 3;
   BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, mode, 1);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  // DEAD: both fields are set again before anything reads them.
+  // DEAD: both fields are set again before anything reads them; the ROM keeps\n
+  // // the two stores.
   EFFECT_SET_TRANSFER(work, mode, CANVAS_FILL_WORD(4));
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add(BattleEffect_ArmMeteorBlowPaletteDma, TASK_PASS_FRAME + 126);
@@ -211,7 +212,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       }
       scale = Q16_ONE;
     }
-    // DEAD: frame never reaches 1600 here; the source keeps the test.
+    // DEAD: frame never reaches 1600 here; the ROM keeps the compare and
+    // branch.
     if (frame <= 1599) {
       u16 *dst = (u16 *)((u8 *)work + 0x7640);
       s32 value = work->frame;
@@ -296,8 +298,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       }
       Heap_Release(model);
     } else {
-      // DEAD: frame is at most 115 here, so the second arm never runs; the
-      // source keeps both tests.
+      // DEAD: frame is at most 115 here, so the second arm never runs; the ROM
+      // keeps both compares and the arm.
       if (frame <= 159) {
         pitch = Q_16_16_TO_INT(px(pitch) + px(256));
       } else if (frame <= 191) {
@@ -392,7 +394,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_SetupBlendedDisplay();
-  // DEAD: frame 0 sets hx and hz again before any read.
+  // DEAD: frame 0 sets hx and hz again before any read; the ROM keeps both\n //
+  // moves.
   hx = 200;
   hz = 0;
   REG_BG2PA = Q_8_8(0.5);

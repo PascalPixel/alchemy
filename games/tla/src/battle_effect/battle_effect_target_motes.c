@@ -771,12 +771,10 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
 
               EffectPosition_ProjectPoint((s32 *)spark, &view);
               view.x >>= 1;
-              if (view.depth < 314)
-                view.depth = 314;
-              if (view.depth > 634)
-                view.depth = 634;
-              // DEAD: BattleEffect_RunHealingMotes' size by depth, copied with
-              // its code; the next line sets cel for real.
+              /* LEFTOVER(template): the clamp and size by depth, idle here, as
+               * in the twin; as the clamp alone, 448 of 744 instructions differ
+               * in tla-en. */
+              CLAMP(view.depth, 314, 634);
               cel = 3 - (view.depth - 314) / 128;
               cel = (i * 4 + frame) % 9;
               {

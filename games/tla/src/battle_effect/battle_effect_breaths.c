@@ -421,7 +421,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           if (frame >= i * 4 + gBreaths_BurstFrames[mode] &&
               frame < gBreaths_Frames[mode] - 8 && (frame & 3) == i) {
             work->shakeFrames = 8;
-            // DEAD: never true inside Blast Breath; the source keeps the test.
+            // DEAD: never true inside Blast Breath; the ROM keeps the compare
+            // and the black tint's call.
             if (mode == 6)
               BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_BLACK,
                                        POSE_DAMAGE, i, 3);

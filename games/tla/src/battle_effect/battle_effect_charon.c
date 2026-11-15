@@ -16,52 +16,11 @@
 /// The crew's sprites, Charon's first.
 #define OBJECTS ((struct Sprite **)work->sprites)
 
-/// The battle work as Charon reads it: the backdrop's colours, its background
-/// and the byte at 0x867.
-struct CharonBattle {
-  u8 unk000[0x56c];
-  u16 palette[0x82];
-  u16 unk670;
-  u8 unk672[0x1f5];
-  u8 unk867;
-};
-
-/// The battle camera as Charon reads it: its yaw.
-struct CharonCamera {
-  u8 unk00[0x36];
-  s16 yaw;
-};
-
-/// The line scroll's work as Charon reads it.
-struct LineScrollView {
-  u8 unk00[0x10];
-  s32 unk10;
-};
-
 /// A list of units to spawn, as Charon passes an empty one.
 struct SpawnList {
   u16 value;
   u8 unk02[26];
 };
-
-/// The heap slots as Charon reads them.
-struct SystemWork {
-  u8 unk00[0x24];
-  struct CharonBattle *battle;
-  u8 unk28[0x8];
-  struct CharonCamera *camera;
-  u8 unk34[0x28];
-  struct BattleEffectWork *summon;
-  u8 *canvas;
-  u8 *glyphs;
-  s32 (*blit)(void *, const void *, s32, s32, s32, s32);
-  u8 unk6c[0x44];
-  struct LineScrollView *lineScroll;
-  u8 unkb4[0x8];
-  s32 (*blitBc)(void *, const void *, s32, s32, s32, s32);
-};
-
-#define SYSTEM_WORK ((struct SystemWork *)Ram_HeapSlots)
 
 #define SPRITES ((struct Sprite **)Ram_MapCellBuffer)
 #define SPRITE_BUFFER gMapGridCellBuffer
@@ -98,12 +57,12 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   struct ModelTexture openingTexture;
   u8 *canvas;
   struct BattleEffectWork *work;
-  struct LineScrollView *lineScroll;
+  struct BattlePresentationTransition *backgroundView;
   s32 j;
   s32 frame;
   u32 savedWidth;
   u8 *glyphs;
-  struct CharonBattle *battle;
+  struct BattleWork *battle;
   DrawRectangleFn *blit;
   s32 posX;
   s32 posZ;
@@ -111,7 +70,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   s32 red;
   s32 green;
   s32 blue;
-  struct CharonCamera *camera;
+  struct BattleCamera *camera;
   s32 shake;
   s16 savedYaw;
   s32 i;
@@ -128,13 +87,13 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   s32 twenty;
   s32 width;
 
-  canvas = SYSTEM_WORK->canvas;
-  work = SYSTEM_WORK->summon;
-  lineScroll = SYSTEM_WORK->lineScroll;
+  canvas = Ram_HeapSlots->battleCanvas;
+  work = Ram_HeapSlots->battleEffect;
+  backgroundView = Ram_HeapSlots->battleBackground;
   savedWidth = gBgScroll[1].x;
-  glyphs = SYSTEM_WORK->glyphs;
+  glyphs = Ram_HeapSlots->battleSheet;
   sprites = (struct Sprite **)gMapGridCellBuffer;
-  battle = SYSTEM_WORK->battle;
+  battle = Ram_HeapSlots->battleWork;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -148,7 +107,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   }
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
-  lineScroll->unk10 = 1;
+  backgroundView->active = 1;
   gBgScroll[1].x = 0;
   emptyList.value = 255;
   BattleActor_SpawnObjectsForListFar(&emptyList, 0);
@@ -157,7 +116,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   REG_WIN0H = 240;
   wait(1);
   Palette_LoadBasicSpriteColors();
-  battle->unk867 = 1;
+  battle->keepBackdropPalette = 1;
   BattleBackground_LoadFar(1, (s32)&ResourceId_AerialViewBackdrop, 0);
   Palette_BrightenSavedBattleBg(0, -20, -20);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
@@ -925,7 +884,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         Canvas_BlitAtFoot(work->sheet + 0x1000, height, 58, t);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                             BLITTER_ADDITIVE);
-        blit[1] = SYSTEM_WORK->blitBc;
+        blit[1] = Ram_HeapSlots->ramCodePaired;
       }
       for (j = 0; j != 2; j++) {
         s32 t = frame - 357 - j * 19;
@@ -1202,8 +1161,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   Palette_LoadBasicSpriteColors();
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
   wait(1);
-  battle->unk867 = 0;
-  BattleBackground_LoadFar(1, battle->unk670, 24);
+  battle->keepBackdropPalette = 0;
+  BattleBackground_LoadFar(1, battle->background, 24);
   /* FAKEMATCH(dead): an empty once-only loop before the canvas fill. */
   do {
   } while (0);
@@ -1213,7 +1172,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   } while (0);
   Iwram_FillWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES, 0);
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
-  camera = SYSTEM_WORK->camera;
+  camera = Ram_HeapSlots->cameraWork;
   shake = 0;
   savedYaw = camera->yaw;
   camera->yaw = shake;
@@ -1366,7 +1325,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-      routine[0] = SYSTEM_WORK->blit;
+      routine[0] = ((DrawRectangle)Ram_HeapSlots->ramCode);
       for (i = 0; i != 16; i++) {
         struct Particle *p = &PARTICLES[96 + i];
 
@@ -1411,7 +1370,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
         if (frame >= gCharon_FlashFrames[i] + 1 &&
             frame < gCharon_FlashFrames[i] + 16) {
-          u16 *target = SYSTEM_WORK->battle->palette;
+          u16 *target = Ram_HeapSlots->battleWork->palette;
           u16 *color = PLTT + 0x60;
 
           for (j = 0; j != 128; j++) {
@@ -1448,7 +1407,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     if (frame > 120) {
       if (frame == 121) {
         gBgScroll[1].x = savedWidth;
-        lineScroll->unk10 = 0;
+        backgroundView->active = 0;
         camera->yaw = savedYaw;
       }
       if (frame < 148) {
@@ -1544,8 +1503,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
               EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                                   BLITTER_MAX);
             }
-            SYSTEM_WORK->blit(canvas, work->sheet, column->x - halfCell,
-                              column->y, halfCell, width);
+            ((DrawRectangle)Ram_HeapSlots->ramCode)(canvas, work->sheet,
+                                                    column->x - halfCell,
+                                                    column->y, halfCell, width);
           }
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
@@ -1570,7 +1530,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-        routine[0] = SYSTEM_WORK->blit;
+        routine[0] = ((DrawRectangle)Ram_HeapSlots->ramCode);
         for (i = 0; i != 4; i++) {
           s32 width = 120 - COLUMNS[i].x;
 
@@ -1583,7 +1543,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                             BLITTER_TRANSPARENT);
-        routine[0] = SYSTEM_WORK->blit;
+        routine[0] = ((DrawRectangle)Ram_HeapSlots->ramCode);
         for (i = 0; i != 96; i++) {
           struct Particle *p = &PARTICLES[i];
 
@@ -1690,7 +1650,6 @@ void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
   }
   SET_VECTOR(quad[count].upper.vertex, 0, 0, 0);
 }
-#undef SYSTEM_WORK
 #undef SPRITES
 #undef SPRITE_BUFFER
 #undef OAM_BUFFER

@@ -9,17 +9,6 @@
 
 struct StripQuad;
 
-/// A sprite as Flora reads it: its tile, flags and resource.
-struct FloraObject {
-  u8 unk0[8];
-  u16 tile : 10;
-  u16 flags : 2;
-  u16 unk08 : 4;
-  u16 unk0a;
-  u8 unk0c[4];
-  u8 resource;
-};
-
 /// Flora's petals in the scratch block at 0x02014000: the bloom's fifteen
 /// tile numbers, each petal's animation phase, position and velocity, and
 /// the object palette as it fades.
@@ -35,7 +24,7 @@ struct FloraWork {
 };
 
 #define w ((struct FloraWork *)petals)
-#define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->resource].offset)
+#define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->slot].offset)
 
 /// The effect work's sheet.
 static inline u8 *SheetOf(struct BattleEffectWork *owner) {
@@ -120,16 +109,15 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 15; i++) {
-        struct FloraObject *obj =
+        struct Sprite *obj =
             EffectSprite_CreateWithTiles(16, 16, 0x40000000, 0xf000);
         work->sprites[12 + i] = obj;
-        obj->flags = 2;
+        obj->image.priority = 2;
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 128, 128);
-        w->tiles[i] = ((struct FloraObject *)work->sprites[12 + i])->tile;
+        w->tiles[i] = ((struct Sprite *)work->sprites[12 + i])->image.tile;
       }
       for (i = 0; i != 17; i++) {
-        struct FloraObject *obj =
-            EffectSprite_Acquire(16, 16, 0x40000000, 0xf000);
+        struct Sprite *obj = EffectSprite_Acquire(16, 16, 0x40000000, 0xf000);
         work->sprites[27 + i] = obj;
         Iwram_CopyWordsEntry(obj, work->sprites[12], 24);
       }
@@ -137,7 +125,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       phase = Data_0201401e;
       for (; i != 32; i++, phase++) {
         *phase = (Random16() % 15) << 8;
-        ((struct FloraObject *)work->sprites[12 + i])->tile =
+        ((struct Sprite *)work->sprites[12 + i])->image.tile =
             w->tiles[*phase / 256];
       }
       e = Resource_GetTableEntry((s32)&ResourceId_GreenHairedMaidenTiles);
@@ -145,9 +133,9 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       Decompress_TaggedLz(e, source);
       cells = Ram_MapCellBuffer;
       for (i = 0; i != 12; i++) {
-        struct FloraObject *obj =
+        struct Sprite *obj =
             EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
-        obj->flags = 2;
+        obj->image.priority = 2;
         work->sprites[i] = obj;
         Iwram_CopyWordsEntry((void *)OBJ_TILES(obj), cells + i * 0x400, 0x400);
       }
@@ -496,7 +484,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
       } else {
         Data_02014002[14 + i] = (Data_02014002[14 + i] + 128) % 3840;
       }
-      ((struct FloraObject *)work->sprites[12 + i])->tile =
+      ((struct Sprite *)work->sprites[12 + i])->image.tile =
           w->tiles[Data_02014002[14 + i] >> 8];
     }
     for (i = 0; i != 32; i++) {

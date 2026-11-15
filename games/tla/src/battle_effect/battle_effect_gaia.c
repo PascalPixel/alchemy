@@ -13,31 +13,6 @@
 /// The rocks' motion is particles[10..20], the late rocks' columns [16..21].
 #define FIRST_ROCK 10
 
-/// One OAM entry of a rock sprite.
-struct RockSpritePart {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 objectMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[2];
-};
-
-/// A rock sprite of the wall: its two OAM entries and its flags.
-struct RockObject {
-  struct RockSpritePart part[2];
-  u8 unk18[2];
-  u8 flags;
-};
-
 /// Flames flicker at the targets' feet under a narrow shaft of orange light,
 /// which widens into a glowing wall and stands while rocks tumble up through it
 /// and the targets are battered, then narrows away again.
@@ -142,13 +117,13 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
   // The rocks: eleven animated objects, four of each size.
   for (i = 0; i != ROCK_COUNT; i++) {
-    struct RockObject *object = Sprite_CreateFar(653);
+    struct Sprite *object = Sprite_CreateFar(653);
 
     work->sprites[i] = object;
     if (object != 0) {
       object->flags = 0;
       Sprite_StartAnimationFar(object, i / 4);
-      ((struct RockObject *)work->sprites[i])->part[0].priority = 1;
+      ((struct Sprite *)work->sprites[i])->image.priority = 1;
     }
   }
   // Two max blitters, the second mirrored for the right half.

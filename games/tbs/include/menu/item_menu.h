@@ -16,11 +16,16 @@ struct Sprite;
 
 struct Window;
 
-/// The item menu's work, in the HEAP_SLOT_MENU heap slot: its windows, the
-/// party figures, the items listed and the two choices a command makes.
 /// The icons the menus keep for their entries: items, Psynergy and Djinn.
 #define MENU_ENTRY_ICONS 32
 
+/// Where an entry or category icon waits, just past the screen's bottom right
+/// corner, until a screen places it.
+#define MENU_ICON_HIDDEN_X (DISPLAY_WIDTH + 8)
+#define MENU_ICON_HIDDEN_Y (DISPLAY_HEIGHT + 8)
+
+/// The item menu's work, in the HEAP_SLOT_MENU heap slot: its windows, the
+/// party figures, the items listed and the two choices a command makes.
 struct ItemMenuWork {
   u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
   s32 selectedMember;         ///< the party member chosen

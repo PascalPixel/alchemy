@@ -1043,18 +1043,22 @@ void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
     width += x;
     x = 0;
   }
-  if (x + width > 29) {
-    width = 30 - x;
+  if (x + width > DISPLAY_TILE_WIDTH - 1) {
+    width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
-  // The test is the columns' (past 29) but the clip is to the screen's 20 rows,
-  // so a rectangle ending in rows 20 to 28 would be kept whole and write past
-  // the 32 by 20 tilemap into the windows after it.
-  if (y + height > 29) {
-    height = 20 - y;
+  // BUG: tests the bottom against the screen's width but clips to its rows, so
+  // a rectangle ending in rows 20 to 28 is kept whole and writes past the 32
+  // by 20 tilemap into the windows after it.
+#ifdef BUGFIX
+  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
+#else
+  if (y + height > DISPLAY_TILE_WIDTH - 1) {
+#endif
+    height = DISPLAY_TILE_HEIGHT - y;
   }
   if (width > 0 && height > 0) {
     // Byte offset of the first entry: 32 two-byte entries a row.

@@ -293,13 +293,16 @@ struct BattleAIState {
   unsigned remaining : 28; ///< not used here
 };
 
+/// A unit's name buffer: 14 characters and the 0 that ends them.
+#define UNIT_NAME_SIZE 15
+
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
 /// Djinn and statuses.
 struct Unit {
   /// The name, one byte a character, ending in 0. An enemy's is its message
   /// name cut to 14 characters, with the suffix letter BattleUnit_Set is given
-  /// (a digit in Japanese); name[14] is always 0.
-  u8 name[15];
+  /// (a digit in Japanese); its last byte is always 0.
+  u8 name[UNIT_NAME_SIZE];
   u8 level;        ///< 1 to 99 for a character
   s16 baseHp;      ///< before equipment, Djinn and class (Unit_Calculate)
   s16 basePp;      ///< before equipment, Djinn and class (Unit_Calculate)

@@ -550,6 +550,11 @@ void BattleMessage_ShowAndWait(s32 argument);
 s32 Message_OpenDecoded(struct Window *window, s32 argument);
 void Message_SetDecodeFlags(s32 flags);
 struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
+/// The bob of a prompt or cursor: up and down by up to 2 pixels, a sine every
+/// 16 frames.
+#define CURSOR_BOB_Y()                                                         \
+  (Trig_Sin(gFrameCount * (TRIG_TURN / 16)) / (Q16_ONE / 2))
+
 /// Message_OpenWindow's packed argument: the speaker's voice in bits 16 to 27,
 /// above the window options.
 #define MESSAGE_WINDOW_VOICE(voice) ((voice) << 16)

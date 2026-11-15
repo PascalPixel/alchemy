@@ -867,7 +867,8 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
 }
 
 /// Creates the 32 item icon sprites in window, off screen until placed: slots 0
-/// to 7 at x 248, the rest at x 256, all at y 168, each showing item graphic
+/// to 7 at MENU_ICON_HIDDEN_X, the rest 8 pixels further, all at
+/// MENU_ICON_HIDDEN_Y, each showing item graphic
 /// slot of the same number.
 void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
   struct WindowSprite **firstIcons;
@@ -879,19 +880,19 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
 
   firstSlot = 0;
   {
-    s32 y = 168;
+    s32 y = MENU_ICON_HIDDEN_Y;
 
     firstIcons = &menu->entryIcons[0];
     do {
       *firstIcons++ = WindowSprite_CreateFromResourceFar(
-          ICON_KIND_ITEM, firstSlot, window, 248, y);
+          ICON_KIND_ITEM, firstSlot, window, MENU_ICON_HIDDEN_X, y);
       firstSlot++;
     } while (firstSlot <= 7);
   }
 
   secondSlot = 8;
   {
-    s32 y = 168;
+    s32 y = MENU_ICON_HIDDEN_Y;
 
     secondIcons = &menu->entryIcons[8];
     do {
@@ -903,7 +904,7 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
 
   remainingSlot = 16;
   {
-    s32 y = 168;
+    s32 y = MENU_ICON_HIDDEN_Y;
 
     remainingIcons = &menu->entryIcons[16];
     do {

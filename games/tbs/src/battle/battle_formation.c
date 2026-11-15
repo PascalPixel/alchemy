@@ -284,7 +284,7 @@ UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
   if (index == count || battle->nameLetterMasks[index] == 0)
     return;
 
-  for (nameLength = 0; nameLength <= 13; nameLength++) {
+  for (nameLength = 0; nameLength < UNIT_NAME_SIZE - 1; nameLength++) {
     if (unit->name[nameLength] == 0)
       break;
   }

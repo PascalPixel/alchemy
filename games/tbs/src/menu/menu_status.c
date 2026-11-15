@@ -99,6 +99,16 @@
 #define STATUS_FIGURE_X(index) (130 + (index) * 32)
 #define STATUS_FIGURE_ROW_Y 128
 
+/// The switch help's two lines, drawn above the status window's interior.
+#define SWITCH_HELP_Y -24
+
+/// The status page's ailments, one a row of 16 pixels from y 40.
+#define STATUS_AILMENT_Y(row) ((row) * 16 + 40)
+
+/// The status page's four element columns, 4 tiles apart from tile 15, where
+/// each element's icon stands; its figures end left of it.
+#define STATUS_ELEMENT_X(element) (((element) * 4 + 15) * 8)
+
 /// Lets the player choose one party member, over the field (the Colosso scenes
 /// use it, through menu.s, and so does the debug test).
 s32 PartyMemberChooser_Open(void) {
@@ -772,9 +782,10 @@ s32 StatusScreen_SelectCommand(void) {
           WindowSprite_RedrawSavedRectFar(menu->helpWindow);
           if (hasAilments == 0) {
             Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp,
-                                       menu->statusWindow, SWITCH_HELP_X, -24);
+                                       menu->statusWindow, SWITCH_HELP_X,
+                                       SWITCH_HELP_Y);
             Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 1,
-                                       menu->statusWindow, 0, -24);
+                                       menu->statusWindow, 0, SWITCH_HELP_Y);
           }
         } else {
           // The right side has eight entries, seven without the Djinn row.
@@ -1015,27 +1026,27 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
   // The statuses, one a row, or "Normal".
   i = 0;
   if (ailments[CHARACTER_DOWN] != 0) {
-    Text_DrawMessageAsTilesFar(MsgDownLabel, window, 16, 40);
+    Text_DrawMessageAsTilesFar(MsgDownLabel, window, 16, STATUS_AILMENT_Y(0));
     i = 1;
   }
   if (ailments[CHARACTER_POISON] != 0) {
-    Text_DrawMessageAsTilesFar(MsgPoisonLabel, window, 16, i * 16 + 40);
+    Text_DrawMessageAsTilesFar(MsgPoisonLabel, window, 16, STATUS_AILMENT_Y(i));
     i++;
   }
   if (ailments[CHARACTER_VENOM] != 0) {
-    Text_DrawMessageAsTilesFar(MsgVenomLabel, window, 16, i * 16 + 40);
+    Text_DrawMessageAsTilesFar(MsgVenomLabel, window, 16, STATUS_AILMENT_Y(i));
     i++;
   }
   if (ailments[CHARACTER_CURSE] != 0) {
-    Text_DrawMessageAsTilesFar(MsgCurseLabel, window, 16, i * 16 + 40);
+    Text_DrawMessageAsTilesFar(MsgCurseLabel, window, 16, STATUS_AILMENT_Y(i));
     i++;
   }
   if (ailments[CHARACTER_HAUNT] != 0) {
-    Text_DrawMessageAsTilesFar(MsgHauntLabel, window, 16, i * 16 + 40);
+    Text_DrawMessageAsTilesFar(MsgHauntLabel, window, 16, STATUS_AILMENT_Y(i));
     i++;
   }
   if (i == 0)
-    Text_DrawMessageAsTilesFar(MsgNormalLabel, window, 0, 40);
+    Text_DrawMessageAsTilesFar(MsgNormalLabel, window, 0, STATUS_AILMENT_Y(0));
   StatusScreen_UpdateSelectionIcons(ailments);
   StatusScreen_ShowStatusIcons(ailments);
   if (menu->page == 3)
@@ -1054,32 +1065,34 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
     Window_SetTilemapEntryFar(window, 4, 27, djinnRow, TILEMAP_ENTRY_ICON);
   }
   if (hasDjinn)
-    Text_DrawMessageAsTilesFar(MsgDjinnLabel, window, 64, djinnRow * 8 + 8);
+    Text_DrawMessageAsTilesFar(MsgDjinnLabel, window, 64, (djinnRow + 1) * 8);
   if (mode == 1) {
     if (!hasDjinn)
       djinnRow--;
-    MENU_DRAW_STATUS_LABEL(gMenu_LvString, window, 64, djinnRow * 8 + 16);
-    Text_DrawMessageAsTilesFar(MsgPowerLabel, window, 64, djinnRow * 8 + 24);
+    MENU_DRAW_STATUS_LABEL(gMenu_LvString, window, 64, (djinnRow + 2) * 8);
+    Text_DrawMessageAsTilesFar(MsgPowerLabel, window, 64, (djinnRow + 3) * 8);
     Text_DrawMessageAsTilesFar(MsgPowerLabel + 1, window, 64,
-                               djinnRow * 8 + 32);
+                               (djinnRow + 4) * 8);
   }
   for (i = 0; i <= 3; i++) {
     if (hasDjinn)
       Text_DrawNumberInWindowFar(unit->djinnHeldCounts[i], 1, window,
-                                 i * 32 + 120, djinnRow * 8 + 8);
+                                 STATUS_ELEMENT_X(i), (djinnRow + 1) * 8);
     if ((mode & 0xff) == 1) {
       if (hasDjinn) {
         Text_DrawNumberInWindowFar(unit->djinnSetCounts[i], 1, window,
-                                   i * 32 + 104, djinnRow * 8 + 8);
-        Text_DrawStringInWindowFar(gMenu_SlashString, window, i * 32 + 112,
-                                   djinnRow * 8 + 8);
+                                   STATUS_ELEMENT_X(i) - 16,
+                                   (djinnRow + 1) * 8);
+        Text_DrawStringInWindowFar(gMenu_SlashString, window,
+                                   STATUS_ELEMENT_X(i) - 8, (djinnRow + 1) * 8);
       }
       Text_DrawNumberInWindowFar(Unit_GetElementLevelFar(memberId, i), 2,
-                                 window, i * 32 + 112, djinnRow * 8 + 16);
+                                 window, STATUS_ELEMENT_X(i) - 8,
+                                 (djinnRow + 2) * 8);
       Text_DrawNumberInWindowFar(unit->element[i].power, 3, window,
-                                 i * 32 + 104, djinnRow * 8 + 24);
+                                 STATUS_ELEMENT_X(i) - 16, (djinnRow + 3) * 8);
       Text_DrawNumberInWindowFar(unit->element[i].resistance, 3, window,
-                                 i * 32 + 104, djinnRow * 8 + 32);
+                                 STATUS_ELEMENT_X(i) - 16, (djinnRow + 4) * 8);
     }
   }
 }
@@ -1274,8 +1287,7 @@ void PsynergyMenu_DrawRange(struct Window *window, s32 x, s32 y, s32 range,
 
   iconIndex = range * 2;
   tile = iconIndex + RANGE_ICON_TILE + 1;
-  // 0x400 is the map entry's horizontal flip bit.
-  Window_SetTilemapEntryFar(window, 0x400 | tile, x, y, 0); // flipped
+  Window_SetTilemapEntryFar(window, TILE_HFLIP | tile, x, y, 0);
   Window_SetTilemapEntryFar(window, iconIndex + RANGE_ICON_TILE, x + 1, y, 0);
   Window_SetTilemapEntryFar(window, tile, x + 2, y, 0);
 }
@@ -1494,9 +1506,9 @@ s32 PsynergyMenu_SelectAction(void) {
   Task_Remove(Menu_PlacePartyFigures);
   Menu_SpawnIconEntries((struct ItemMenuWork *)menu, menu->messageWindow);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, menu->statusWindow,
-                             SWITCH_HELP_X, -24);
+                             SWITCH_HELP_X, SWITCH_HELP_Y);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 2, menu->statusWindow, 0,
-                             -24);
+                             SWITCH_HELP_Y);
 
   while (done == 0 && GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
     ItemMenu_PositionCategory();
@@ -1747,7 +1759,7 @@ s32 ItemMenu_SelectItem(void) {
   s32 navigationResult;
   s32 memberIndex;
   s32 iconIndex;
-  u16 savedInventory[15];
+  u16 savedInventory[INVENTORY_SLOTS];
   struct PagedList state;
 
   menu = gMenuWork;
@@ -1770,9 +1782,9 @@ s32 ItemMenu_SelectItem(void) {
 
   Task_Remove(Menu_PlacePartyFigures);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp, menu->statusWindow, 64,
-                             -24);
+                             SWITCH_HELP_Y);
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 3, menu->statusWindow, 0,
-                             -24);
+                             SWITCH_HELP_Y);
   ItemMenu_PositionCategory();
   wait(1);
   Menu_SpawnIconEntries((struct ItemMenuWork *)menu, menu->questionWindow);
@@ -1782,7 +1794,7 @@ s32 ItemMenu_SelectItem(void) {
     ItemMenu_PositionCategory();
     WindowSprite_RedrawSavedRectFar(menu->statusWindow);
     member = Unit_GetFar(menu->sideMember[0]);
-    for (iconIndex = 0; iconIndex <= 14; iconIndex++)
+    for (iconIndex = 0; iconIndex < INVENTORY_SLOTS; iconIndex++)
       savedInventory[iconIndex] = member->inventory[iconIndex];
     menu->itemCount = ItemMenu_CollectItems(member, menu->items, 0);
     ItemMenu_Sort(menu->items, LIST_SORT_EQUIPPED_THEN_ITEMS);
@@ -1842,7 +1854,7 @@ s32 ItemMenu_SelectItem(void) {
           memberIndex--;
         // Copy back the inventory saved as the list was built; only the list
         // was sorted, so this writes what is already there.
-        for (iconIndex = 0; iconIndex <= 14; iconIndex++)
+        for (iconIndex = 0; iconIndex < INVENTORY_SLOTS; iconIndex++)
           member->inventory[iconIndex] = savedInventory[iconIndex];
         memberIndex = (memberIndex + menu->partyCount) % menu->partyCount;
         menu->selectedMember = menu->memberIds[memberIndex];
@@ -2061,14 +2073,14 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
   }
 }
 
-/// Moves all 32 entry icons off screen, to (248, 168), before a screen lays
-/// them out again.
+/// Moves all 32 entry icons off screen, to MENU_ICON_HIDDEN_X and _Y, before a
+/// screen lays them out again.
 void ItemMenu_PositionCategory(void) {
   struct ItemMenuWork *menu = gMenuWork;
-  s32 x = 248;
+  s32 x = MENU_ICON_HIDDEN_X;
   struct WindowSprite **entry = menu->entryIcons;
-  s32 y = 168;
-  s32 remaining = 31;
+  s32 y = MENU_ICON_HIDDEN_Y;
+  s32 remaining = MENU_ENTRY_ICONS - 1;
 
   do {
     struct WindowSprite *object = *entry++;
@@ -2082,9 +2094,10 @@ void ItemMenu_PositionCategory(void) {
   } while (remaining >= 0);
 }
 
-/// Creates the eight category sprites in window, off screen at (248, 168), each
-/// on item graphic slot of the same number; the Status menu shows the status
-/// icons with the first five (StatusScreen_UpdateSelectionIcons).
+/// Creates the eight category sprites in window, off screen at
+/// MENU_ICON_HIDDEN_X and _Y, each on item graphic slot of the same number; the
+/// Status menu shows the status icons with the first five
+/// (StatusScreen_UpdateSelectionIcons).
 s32 Menu_CreateEightEntryActors(struct Window *window) {
   struct WindowSprite **slot;
   struct WindowSprite *icon;
@@ -2094,12 +2107,12 @@ s32 Menu_CreateEightEntryActors(struct Window *window) {
   menu = gMenuWork;
   slotIndex = 0;
   {
-    s32 y = 168;
+    s32 y = MENU_ICON_HIDDEN_Y;
 
     slot = menu->categoryIcons;
     do {
       icon = WindowSprite_CreateFromResourceFar(ICON_KIND_ITEM, slotIndex,
-                                                window, 248, y);
+                                                window, MENU_ICON_HIDDEN_X, y);
       slotIndex += 1;
       *slot = icon;
       slot += 1;
@@ -2142,8 +2155,8 @@ void ItemMenu_ResetCategory(void) {
     struct WindowSprite *object = menu->categoryIcons[index];
 
     if (object != 0) {
-      object->x = 248;
-      object->y = 168;
+      object->x = MENU_ICON_HIDDEN_X;
+      object->y = MENU_ICON_HIDDEN_Y;
       object->sentinel = OAM_DEPTH_WINDOW;
       Icon_PrepareActor(object);
     }
@@ -2202,3 +2215,6 @@ s32 StatusScreen_UpdateSelectionIcons(const u8 *enabled) {
 #undef STATUS_ITEM_EMPTY_MESSAGE_X
 #undef STATUS_EQUIP_WINDOW_WIDTH
 #undef STATUS_EQUIPPED_NAME_X
+#undef SWITCH_HELP_Y
+#undef STATUS_AILMENT_Y
+#undef STATUS_ELEMENT_X

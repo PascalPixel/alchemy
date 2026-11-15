@@ -20,7 +20,7 @@
 s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   struct Unit *unit;
   const struct EnemyDefinition *enemy;
-  u16 name[15];
+  u16 name[UNIT_NAME_SIZE];
   s32 i;
   u32 index;
   s32 q;
@@ -57,7 +57,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   unit->baseHpRegen = enemy->hpRegen;
   unit->basePpRegen = enemy->ppRegen;
   Message_DecodeRawFar(index + MsgEnemyName, name, 15);
-  for (i = 0; i < 14 && name[i] != 0; i++)
+  for (i = 0; i < UNIT_NAME_SIZE - 1 && name[i] != 0; i++)
     unit->name[i] = name[i];
   // Enemies of one kind are told apart by a letter after the name; past the
   // last letter the name stays bare.
@@ -66,7 +66,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
     i++;
   }
   unit->name[i] = 0;
-  unit->name[14] = 0;
+  unit->name[UNIT_NAME_SIZE - 1] = 0;
   count = 0;
   for (i = 0; i < 4; i++) {
     if (enemy->items[i] != 0) {

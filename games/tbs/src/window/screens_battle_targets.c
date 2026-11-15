@@ -43,7 +43,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 spreadActorIds[14];
   u8 spreadTrackIndices[8];
   struct ScreenPoint selectedPosition;
-  u16 targetName[15];
+  u16 targetName[UNIT_NAME_SIZE];
   struct ScreenPoint namePosition;
   struct ScreenPoint markerPosition;
   struct AffineTransform effect;
@@ -208,8 +208,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     firstSprite->tile =
         VramCache_Reload(cursorSlot, (((gFrameCount >> 2) & 31) << 8) +
                                          (s32)gMenu_AnimatedCursorTiles);
-    selectedPosition.y +=
-        Trig_Sin(gFrameCount * (TRIG_TURN / 16)) / (Q16_ONE / 2);
+    selectedPosition.y += CURSOR_BOB_Y();
     y = selectedPosition.y;
     // Ease halfway each frame; the other markers show once the cursor is
     // within 7 pixels of its target.
@@ -617,8 +616,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         target = Unit_GetFar(candidateIds[targetIndex]);
         BattleMotion_ProjectConditionalPositionFar(
             candidateIds[targetIndex], ScreenPoint_Coordinates(&namePosition));
-        namePosition.y +=
-            Trig_Sin(gFrameCount * (TRIG_TURN / 16)) / (Q16_ONE / 2);
+        namePosition.y += CURSOR_BOB_Y();
         if (target->id == ENEMY_MYSTERY_WOMAN ||
             target->id == ENEMY_MYSTERY_MAN) {
           width = MsgMysteryPersonName;
@@ -627,7 +625,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           TARGET_MYSTERY_NAME_COPY(width, targetName,
                                    TARGET_MYSTERY_NAME_CAPACITY);
         } else {
-          for (i = 0; i <= 13; i++) {
+          for (i = 0; i < UNIT_NAME_SIZE - 1; i++) {
             targetName[i] = n = target->name[i];
             if (!n)
               break;
@@ -652,9 +650,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         track = &cursorTracks[spreadTrackIndices[i]];
         BattleMotion_ProjectConditionalPositionFar(
             spreadActorIds[i], ScreenPoint_Coordinates(&markerPosition));
-        markerPosition.y =
-            markerPosition.y +
-            Trig_Sin(gFrameCount * (TRIG_TURN / 16)) / (Q16_ONE / 2);
+        markerPosition.y = markerPosition.y + CURSOR_BOB_Y();
         *marker = *firstSprite;
         if (track->flags & 1) {
           s32 x = (markerPosition.x + track->x) / 2;

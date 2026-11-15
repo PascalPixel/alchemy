@@ -255,12 +255,12 @@ void Party_InitializeCharacters(void) {
     if (nameBuf[0] != 0) {
       do {
         i++;
-        if (i > 13)
+        if (i >= UNIT_NAME_SIZE - 1)
           break;
         name[i] = nameBuf[i];
       } while (nameBuf[i] != 0);
     }
-    unit->name[14] = 0;
+    unit->name[UNIT_NAME_SIZE - 1] = 0;
   }
 
   // gCharacter_StartingEquipUnitIds lists the characters given starting

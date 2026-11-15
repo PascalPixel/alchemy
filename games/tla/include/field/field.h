@@ -772,7 +772,7 @@ s32 MapGrid_GetCellAttributeLowNibbleFar(s32 layer, s32 x, s32 z);
 extern const u8 gFieldEffect_GroundParticleTiles[];
 extern const u8 gFieldEffect_MoteTiles[];
 
-extern u32 gBattleEffect_PulseScales[];
+extern const u32 gBattleEffect_PulseScales[];
 
 extern const s16 gLineScroll_WaveSine[];
 

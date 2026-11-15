@@ -84,7 +84,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
 /// values of gBattleEffect_PulseScales every 4 frames.
 void FieldEffect_PulseActorScale(u8 *object) {
   u32 *vblankCount = &gVBlankCount;
-  u32 *table;
+  const u32 *table;
   u32 index;
   u32 value;
 

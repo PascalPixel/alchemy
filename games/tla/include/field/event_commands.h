@@ -418,7 +418,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *source);
 /// gBattleEffect_EightWayHeadingWords.
 #define DPAD_ANGLE_NONE 0xffff
 
-extern u8 gAnim_ChildPaletteCycle[];
+extern const u8 gAnim_ChildPaletteCycle[];
 
 struct Actor *ActorScript_FindOverlappingEntryFar(struct Actor *object,
                                                   struct Vec3 *position);

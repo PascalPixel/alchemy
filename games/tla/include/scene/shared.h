@@ -248,7 +248,7 @@ s32 IwramMulQ16(s32 a, s32 b) __attribute__((long_call));
 extern u8 gDebugTextEnabled;
 extern u32 Data_02018000[];
 extern s16 gSaveSlot;
-extern u16 gData_02003860;
+extern s16 gData_02003860;
 extern u8 gSaveBuffer[];
 extern u16 gData_02003a74[];
 

@@ -271,10 +271,6 @@ s32 Clear_CanRetreat(void) {
 
 #include "text/msg_ids.h"
 
-/* VIEW(clear): variable gData_02003860 as s16 gData_02003860; scene/shared.h
- * has u16 gData_02003860; tried as the rest of the object declares it,
- * Scene_Initialize moves: 4 of 738 instructions in tla-ja. */
-extern s16 gData_02003860__clear __asm__("gData_02003860");
 /* VIEW(clear): variable gSceneLocalState as u32 gSceneLocalState;
  * scene/shared.h has s8 gSceneLocalState[]; tried as the rest of the object
  * declares it, Scene_Initialize moves: 2 of 738 instructions in tla-ja. */
@@ -442,14 +438,14 @@ top:
       limit = 4;
     if (++i < limit)
       goto close;
-    if (gData_02003860__clear != 0) {
+    if (gData_02003860 != 0) {
     save:
       message = (s32)MsgPlayOnEasyLevel;
       FieldMessage_Show(message, 13);
       i = YesNoMenu_Run(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
       if (i == 0) {
-        if (gData_02003860__clear == 0) {
+        if (gData_02003860 == 0) {
           FieldMessage_Show(message + 1, 1);
         } else {
           SAVE_CELLS();

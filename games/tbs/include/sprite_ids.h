@@ -7,34 +7,23 @@
 /// SPRITE_ (isaac.png for SPRITE_ISAAC).
 
 /// Sprite ids, one for each row of the sprite bank (gSprite_AnimationMetadata,
-/// in sprites.tsv's order) in order; a row the code doesn't name yet keeps its
-/// number as its placeholder. A party member's field sprite shares its
+/// in sprites.tsv's order) in order. A party member's field sprite shares its
 /// character number, so the field draws a character id as its sprite. The
 /// summons' figures, from SPRITE_ATALANTA on, are each summon's own sprite:
 /// its event creates its objects of it (BattleEffect_SpawnObjects), each
 /// playing one of its animations.
-/// A row sprites.tsv leaves empty, with no size and no pictures, keeps its
-/// number: it shows nothing to name.
+/// A row sprites.tsv leaves empty, with no size and no pictures, shows nothing
+/// and has no name; the next named row's number is written after it.
 enum SpriteId {
   SPRITE_ISAAC,
   SPRITE_GARET,
   SPRITE_IVAN,
   SPRITE_MIA,
-  SPRITE_004, ///< empty: Felix's character number, whose sprite is SPRITE_FELIX
-  SPRITE_JENNA,
+  SPRITE_JENNA = 5,
   SPRITE_SHEBA,
-  SPRITE_007, ///< empty: Piers's character number
-  SPRITE_008,
-  SPRITE_009,
-  SPRITE_010,
-  SPRITE_011,
-  SPRITE_012,
-  SPRITE_013,
-  SPRITE_014,
-  SPRITE_015,
   /// The leader riding one of Altin's mine carts, added as a layer of the
   /// cart's sprite (AltinPeak_RollCart).
-  SPRITE_CART_RIDER,
+  SPRITE_CART_RIDER = 16,
   /// Isaac's grown sprite while FLAG_ISAAC_WEARS_TUNIC is set.
   SPRITE_ISAAC_TUNIC,
   /// Isaac as a child, shown in his place while FLAG_CHILDHOOD is set.
@@ -69,8 +58,7 @@ enum SpriteId {
   SPRITE_DOORWAY,
   /// The Psynergy Stones a map's treasure spots place.
   SPRITE_PSYNERGY_STONE,
-  SPRITE_029,
-  SPRITE_KRADEN,
+  SPRITE_KRADEN = 30,
   /// The sprite of Dora, Isaac's mother.
   SPRITE_DORA,
   SPRITE_SATUROS,
@@ -121,38 +109,13 @@ enum SpriteId {
   /// Tret's face again: SPRITE_TRET's pictures and animations drawn 12 pixels
   /// higher (sprites.tsv's TRET_RAISED), as Kolima Forest shows him.
   SPRITE_TRET_RAISED,
-  SPRITE_072,
-  SPRITE_073,
-  SPRITE_074,
-  SPRITE_075,
-  SPRITE_076,
-  SPRITE_077,
-  SPRITE_078,
-  SPRITE_079,
-  SPRITE_080,
-  SPRITE_081,
-  SPRITE_082,
-  SPRITE_083,
-  SPRITE_084,
-  SPRITE_085,
-  SPRITE_086,
-  SPRITE_087,
-  SPRITE_088,
-  SPRITE_089,
   /// A Venus Djinni; gDjinn_ElementSprites gives each element's Djinni
   /// sprite.
-  SPRITE_VENUS_DJINNI,
+  SPRITE_VENUS_DJINNI = 90,
   SPRITE_MERCURY_DJINNI,
   SPRITE_MARS_DJINNI,
   SPRITE_JUPITER_DJINNI,
-  SPRITE_094,
-  SPRITE_095,
-  SPRITE_096,
-  SPRITE_097,
-  SPRITE_098,
-  SPRITE_099,
-  SPRITE_100,
-  SPRITE_BURLY_MAN_WITH_GREY_HAIR,
+  SPRITE_BURLY_MAN_WITH_GREY_HAIR = 101,
   SPRITE_GIRL_WITH_PIGTAILS,
   SPRITE_OLD_MAN_WITH_CANE,
   SPRITE_DOG,
@@ -196,13 +159,7 @@ enum SpriteId {
   SPRITE_MAN_IN_ORANGE,
   SPRITE_MAN_WITH_PICKAXE,
   SPRITE_CAT,
-  SPRITE_137,
-  SPRITE_138,
-  SPRITE_139,
-  SPRITE_140,
-  SPRITE_141,
-  SPRITE_142,
-  SPRITE_MAN_IN_WHITE_TURBAN,
+  SPRITE_MAN_IN_WHITE_TURBAN = 143,
   SPRITE_MAN_IN_RED_BANDANA,
   SPRITE_MAN_IN_BLUE_BANDANA,
   SPRITE_MAN_IN_YELLOW_BANDANA,
@@ -232,24 +189,11 @@ enum SpriteId {
   SPRITE_GIRL_IN_PINK,
   SPRITE_MUSCULAR_MAN_WITH_TOPKNOT,
   SPRITE_MAN_CARRYING_A_PACK,
+  /// Empty, yet the Vault's unused drift effect creates an actor of it.
   SPRITE_172, ///< empty; only Vault's unused Vault_SpawnDriftingEffect makes an
               ///< actor of it
-  SPRITE_173,
-  SPRITE_174,
-  SPRITE_175,
-  SPRITE_176,
-  SPRITE_177,
-  SPRITE_178,
-  SPRITE_179,
-  SPRITE_180,
-  SPRITE_181,
-  SPRITE_182,
-  SPRITE_183,
-  SPRITE_184,
-  SPRITE_185,
-  SPRITE_186,
   /// Toadonpa in Lunpa Fortress, before his battle.
-  SPRITE_TOADONPA,
+  SPRITE_TOADONPA = 187,
   /// The Tolbi-bound Ship's oars and the sea monsters that attack it.
   SPRITE_RESTING_OAR,
   SPRITE_JELLYFISH_MONSTER,
@@ -351,10 +295,9 @@ enum SpriteId {
   /// The figures that spiral in around Ply's target.
   SPRITE_WINGED_FIGURE,
   SPRITE_SNOWMAN,
-  SPRITE_235,
   /// The logs that float on the water of Fuchin Falls Cave, Crossbone Isle's
   /// floating logs room and the Colosso's Lumber Water Crossing Area.
-  SPRITE_FLOATING_LOG_WEST_EAST,
+  SPRITE_FLOATING_LOG_WEST_EAST = 236,
   SPRITE_FLOATING_LOG_NORTH_SOUTH,
   /// The sprout Growth grows.
   SPRITE_SPROUT,
@@ -409,10 +352,8 @@ enum SpriteId {
   SPRITE_STATUE_WITH_WREATH,
   /// The log Force knocks down onto the Board Walk in Satrage's match.
   SPRITE_FALLING_LOG,
-  SPRITE_260,
-  SPRITE_WORLD_MAP_VILLAGE,
-  SPRITE_262,
-  SPRITE_WORLD_MAP_TOWN,
+  SPRITE_WORLD_MAP_VILLAGE = 261,
+  SPRITE_WORLD_MAP_TOWN = 263,
   SPRITE_WORLD_MAP_STUMP_VILLAGE,
   SPRITE_WORLD_MAP_SNOWY_VILLAGE,
   SPRITE_WORLD_MAP_BLUE_ROOFED_TOWN,
@@ -441,10 +382,9 @@ enum SpriteId {
   /// The particles Mind Read sends from its target to the caster, also shot in
   /// Fuchin Temple.
   SPRITE_CRESCENT,
-  SPRITE_282,
   /// The impact of Lift and of Xian's training tree, and the battle's hit flash
   /// (BattleMotion_PlayHitFlash, which nothing calls).
-  SPRITE_STAR_BURST,
+  SPRITE_STAR_BURST = 283,
   /// The particles of Growth and of a Djinni's capture, and the gate effects
   /// of Venus Lighthouse.
   SPRITE_PARTICLE,
@@ -488,36 +428,20 @@ enum SpriteId {
   SPRITE_BATTLE_GARET,
   SPRITE_BATTLE_IVAN,
   SPRITE_BATTLE_MIA,
-  SPRITE_304,
-  SPRITE_BATTLE_JENNA,
-  SPRITE_306,
-  SPRITE_307,
-  SPRITE_308,
-  SPRITE_309,
-  SPRITE_310,
-  SPRITE_311,
-  SPRITE_312,
-  SPRITE_313,
-  SPRITE_314,
-  SPRITE_315,
-  SPRITE_316,
-  SPRITE_317,
-  SPRITE_318,
-  SPRITE_319,
+  SPRITE_BATTLE_JENNA = 305,
   /// The weapons drawn in a party member's hand as they attack, from here to
   /// SPRITE_WEAPON_JENNA_BLADE: each member's gBattleUnit_WeaponAnimations
   /// table (battle_tables.c) gives one for each enum BattleWeaponKind. Isaac's
   /// for long swords, and for staffs, ankhs and anything the list lacks.
-  SPRITE_WEAPON_ISAAC_SWORD,
+  SPRITE_WEAPON_ISAAC_SWORD = 320,
   /// Garet's for maces, staffs, ankhs and anything the list lacks.
   SPRITE_WEAPON_GARET_MACE,
   /// Ivan's for staffs and anything the list lacks.
   SPRITE_WEAPON_IVAN_STAFF,
   /// Mia's for swords, light blades, ankhs and anything the list lacks.
   SPRITE_WEAPON_MIA_ANKH,
-  SPRITE_324,
   /// Jenna's for axes, maces, staffs, ankhs and anything the list lacks.
-  SPRITE_WEAPON_JENNA_STAFF,
+  SPRITE_WEAPON_JENNA_STAFF = 325,
   SPRITE_WEAPON_ISAAC_AXE,
   SPRITE_WEAPON_ISAAC_MACE,
   SPRITE_WEAPON_GARET_AXE,
@@ -535,13 +459,10 @@ enum SpriteId {
   SPRITE_WEAPON_UNUSED_SWORD,
   /// Jenna's for swords and light blades.
   SPRITE_WEAPON_JENNA_BLADE,
-  SPRITE_337,
-  SPRITE_338,
-  SPRITE_339,
   /// The status icons over a unit 32 pixels wide, in the order of
   /// battle_objects.c's ICON_ bits (BattleStatusIcon_Cycle); from
   /// SPRITE_STATUS_WIDE_POISON on, the same over wider units.
-  SPRITE_STATUS_POISON,
+  SPRITE_STATUS_POISON = 340,
   SPRITE_STATUS_VENOM,
   SPRITE_STATUS_STUN,
   SPRITE_STATUS_PSY_SEAL,
@@ -556,8 +477,7 @@ enum SpriteId {
   SPRITE_STATUS_GRIM_REAPER_5,
   SPRITE_STATUS_GRIM_REAPER_6,
   SPRITE_STATUS_GRIM_REAPER_7,
-  SPRITE_354,
-  SPRITE_STATUS_WIDE_POISON,
+  SPRITE_STATUS_WIDE_POISON = 355,
   SPRITE_STATUS_WIDE_VENOM,
   SPRITE_STATUS_WIDE_STUN,
   SPRITE_STATUS_WIDE_PSY_SEAL,
@@ -571,13 +491,11 @@ enum SpriteId {
   SPRITE_STATUS_WIDE_GRIM_REAPER_5,
   SPRITE_STATUS_WIDE_GRIM_REAPER_6,
   SPRITE_STATUS_WIDE_GRIM_REAPER_7,
-  SPRITE_369,
-  SPRITE_ATALANTA,
+  SPRITE_ATALANTA = 370,
   SPRITE_THOR,
   SPRITE_BOREAS,
   SPRITE_KIRIN,
-  SPRITE_374,
-  SPRITE_CYBELE,
+  SPRITE_CYBELE = 375,
   SPRITE_PROCNE,
   SPRITE_TIAMAT,
   SPRITE_NEPTUNE,
@@ -585,24 +503,12 @@ enum SpriteId {
   SPRITE_NEREID,
   SPRITE_METEOR,
   SPRITE_JUDGMENT,
-  SPRITE_383,
-  SPRITE_384,
-  SPRITE_385,
-  SPRITE_386,
-  SPRITE_387,
-  SPRITE_388,
-  SPRITE_389,
   /// The rocks Gaia throws up, Ramses' rocks and Judgment's debris, in three
   /// animations.
-  SPRITE_BATTLE_ROCKS,
-  SPRITE_391,
-  SPRITE_392,
-  SPRITE_393,
-  SPRITE_394,
-  SPRITE_395,
+  SPRITE_BATTLE_ROCKS = 390,
   /// One of the two kinds of obstacle that move in Tolbi Spring while a token
   /// flies over it.
-  SPRITE_CRAB,
+  SPRITE_CRAB = 396,
   /// The other kind of Tolbi Spring obstacle.
   SPRITE_TURTLE,
   /// The coin tossed into Tolbi Spring, spinning, with its shadow and its
@@ -619,56 +525,25 @@ enum SpriteId {
   SPRITE_BATTLE_HARPY,
   SPRITE_BATTLE_GOLEM,
   SPRITE_BATTLE_GHOST,
-  SPRITE_405,
-  SPRITE_406,
-  SPRITE_407,
-  SPRITE_BATTLE_GRYPHON,
+  SPRITE_BATTLE_GRYPHON = 408,
   SPRITE_BATTLE_RAT_SOLDIER,
   SPRITE_BATTLE_GHOUL,
   SPRITE_BATTLE_CHIMERA,
-  SPRITE_412,
-  SPRITE_413,
-  SPRITE_414,
-  SPRITE_BATTLE_DEADBEARD,
-  SPRITE_416,
-  SPRITE_BATTLE_MANTICORE,
-  SPRITE_418,
-  SPRITE_419,
-  SPRITE_420,
-  SPRITE_BATTLE_KOBOLD,
-  SPRITE_422,
-  SPRITE_423,
-  SPRITE_BATTLE_GARGOYLE,
-  SPRITE_425,
-  SPRITE_426,
-  SPRITE_427,
-  SPRITE_428,
-  SPRITE_BATTLE_LIZARD_MAN,
+  SPRITE_BATTLE_DEADBEARD = 415,
+  SPRITE_BATTLE_MANTICORE = 417,
+  SPRITE_BATTLE_KOBOLD = 421,
+  SPRITE_BATTLE_GARGOYLE = 424,
+  SPRITE_BATTLE_LIZARD_MAN = 429,
   SPRITE_BATTLE_ORC,
-  SPRITE_431,
-  SPRITE_432,
   /// The Venus Djinn's, as Quartz and Vine fight.
-  SPRITE_BATTLE_VENUS_DJINNI,
+  SPRITE_BATTLE_VENUS_DJINNI = 433,
   SPRITE_BATTLE_JUPITER_DJINNI,
   SPRITE_BATTLE_MARS_DJINNI,
   SPRITE_BATTLE_MERCURY_DJINNI,
-  SPRITE_437,
-  SPRITE_438,
-  SPRITE_439,
-  SPRITE_440,
-  SPRITE_441,
-  SPRITE_442,
-  SPRITE_443,
-  SPRITE_444,
-  SPRITE_445,
-  SPRITE_446,
-  SPRITE_447,
-  SPRITE_BATTLE_DREAD_HOUND,
-  SPRITE_449,
-  SPRITE_BATTLE_MAULER,
+  SPRITE_BATTLE_DREAD_HOUND = 448,
+  SPRITE_BATTLE_MAULER = 450,
   SPRITE_BATTLE_SIREN,
-  SPRITE_452,
-  SPRITE_BATTLE_VERMIN,
+  SPRITE_BATTLE_VERMIN = 453,
   SPRITE_BATTLE_WILD_MUSHROOM,
   SPRITE_BATTLE_SLIME,
   SPRITE_BATTLE_CUTTLE,
@@ -709,31 +584,13 @@ enum SpriteId {
   /// The Colosso finalists Azart, Satrage and Navampa in battle.
   SPRITE_BATTLE_WARRIOR_IN_GOLDEN_HELMET,
   SPRITE_BATTLE_BANDIT,
-  SPRITE_487,
-  SPRITE_488,
-  SPRITE_489,
-  SPRITE_490,
-  SPRITE_491,
-  SPRITE_492,
-  SPRITE_493,
-  SPRITE_494,
-  SPRITE_495,
-  SPRITE_496,
-  SPRITE_497,
-  SPRITE_498,
-  SPRITE_499,
   /// The statues that chase the leader in Crossbone Isle, and those of the
   /// Tunnel Ruins and Venus Lighthouse.
-  SPRITE_LADY_STATUE,
+  SPRITE_LADY_STATUE = 500,
   SPRITE_SHIPWRECK,
   SPRITE_GANGWAY,
   SPRITE_WATER_DROP,
   SPRITE_WORLD_MAP_ISLAND,
-  SPRITE_505,
-  SPRITE_506,
-  SPRITE_507,
-  SPRITE_508,
-  SPRITE_509,
   /// The shadow a unit casts on the ground in battle, BattleObject.shadow as a
   /// battle object is made: the sprite BattleObject_SpawnObjectsForList adds as
   /// a layer of every one-part body (SPRITE_BATTLE_SHADOW_NARROW on a body 32
@@ -742,7 +599,7 @@ enum SpriteId {
   /// ground while the unit is off it (BattleObject_UpdateSpritePriorities), and
   /// adding it clears the sprite's own shadow (Sprite.flags bit 0), so a unit
   /// casts one.
-  SPRITE_BATTLE_SHADOW,
+  SPRITE_BATTLE_SHADOW = 510,
   /// The shadow a body 32 pixels wide takes instead of SPRITE_BATTLE_SHADOW.
   SPRITE_BATTLE_SHADOW_NARROW
 };

@@ -1,5 +1,6 @@
 	.include "games/tbs/include/edition.inc"
 	.include "enums/sprite_ids.inc"
+	.include "enums/game/character_ids.inc"
 	.section .rodata
 	.balign 4
 	.global gWindowSprite_PageArrowTiles
@@ -107,16 +108,17 @@ gNameEntry_EndKeyLabel:
 gDjinn_ElementSprites:
 	.2byte SPRITE_VENUS_DJINNI, SPRITE_MERCURY_DJINNI, SPRITE_MARS_DJINNI
 	.2byte SPRITE_JUPITER_DJINNI
-@ The sprite of each party member
+@ The sprite of each party member; Piers, who has none, keeps his character
+@ number, an empty row of the sprites.
 	.global gCharacter_SpriteTable
 gCharacter_SpriteTable:
 	.2byte SPRITE_ISAAC, SPRITE_GARET, SPRITE_IVAN, SPRITE_MIA, SPRITE_FELIX
-	.2byte SPRITE_JENNA, SPRITE_SHEBA, SPRITE_007
+	.2byte SPRITE_JENNA, SPRITE_SHEBA, PIERS
 @ The sprite of each party member as a child (while FLAG_CHILDHOOD is set)
 	.global gCharacter_ChildSpriteTable
 gCharacter_ChildSpriteTable:
 	.2byte SPRITE_ISAAC_CHILD, SPRITE_GARET_CHILD, SPRITE_IVAN, SPRITE_MIA
-	.2byte SPRITE_FELIX_CHILD, SPRITE_JENNA_CHILD, SPRITE_SHEBA, SPRITE_007
+	.2byte SPRITE_FELIX_CHILD, SPRITE_JENNA_CHILD, SPRITE_SHEBA, PIERS
 	.global gMenuTitleBobOffsets
 gMenuTitleBobOffsets:
 	.ifdef TBS_EDITION_ES

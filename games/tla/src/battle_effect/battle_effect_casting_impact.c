@@ -267,7 +267,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
   struct BattleEffectWork *work;
   void *screen;
   s32 frame;
-  void *bg;
+  struct BattleCamera *bg;
   void *tiles;
   s32 scrollA;
   s32 scrollB;
@@ -705,7 +705,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       }
       if (kind <= CASTING_IMPACT_LAST_DJINNI && count < CASTING_IMPACT_SPARKS) {
         Transform_Reset();
-        Transform_SetLookAt(bg, (u8 *)bg + 12);
+        Transform_SetLookAt(bg->eye, bg->focus);
         EffectPosition_ProjectPoint(origin, pos);
         pos[0] = pos[0] / 2;
         drawFuncs.draw[0](screen, buffer + CASTING_IMPACT_DJINNI_PICTURE,
@@ -1167,7 +1167,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                   ((frame - 4) / 2) * PICTURE_BYTES(YELLOW_ORB_PACKED),
               target[0] / 2 - 8, base[1] - 24, 20, YELLOW_ORB_PACKED_HEIGHT);
         Transform_Reset();
-        Transform_SetLookAt(bg, (u8 *)bg + 12);
+        Transform_SetLookAt(bg->eye, bg->focus);
         if (frame > 3) {
           if (kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE) {
             struct Particle *r;

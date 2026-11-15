@@ -158,6 +158,10 @@ void Palette_MirrorBgColors(void) {
 /// grows for 20 frames, then shrinks, and its sideways speed grows from frame
 /// 12), and steps the object's animation through cels 7 to 14, seven frames
 /// each.
+/// The particle Ulysses_MoveLastParticle moves: the work's last.
+#define ULYSSES_LAST_PARTICLE                                                  \
+  (work->particles[ARRAY_COUNT(work->particles) - 1])
+
 void Ulysses_MoveLastParticle(void) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct SpriteScale scale = gUlysses_ParticleScale;
@@ -167,17 +171,17 @@ void Ulysses_MoveLastParticle(void) {
 
   place.height = 0;
 
-  place.x = work->particles[63].x;
-  place.y = work->particles[63].y;
+  place.x = ULYSSES_LAST_PARTICLE.x;
+  place.y = ULYSSES_LAST_PARTICLE.y;
   Render_ApplyProjectedPlacementFar(work->sprites[7], &place.x, &scale.x, 0);
-  work->particles[63].x += work->particles[63].velocityX;
-  work->particles[63].y += work->particles[63].velocityY;
+  ULYSSES_LAST_PARTICLE.x += ULYSSES_LAST_PARTICLE.velocityX;
+  ULYSSES_LAST_PARTICLE.y += ULYSSES_LAST_PARTICLE.velocityY;
   if (work->frame <= 19)
-    work->particles[63].velocityY += px(1) / 16;
+    ULYSSES_LAST_PARTICLE.velocityY += px(1) / 16;
   else
-    work->particles[63].velocityY -= px(1) / 16;
+    ULYSSES_LAST_PARTICLE.velocityY -= px(1) / 16;
   if (work->frame > 11)
-    work->particles[63].velocityX += px(1) / 16;
+    ULYSSES_LAST_PARTICLE.velocityX += px(1) / 16;
   Animation_ApplyChildArgumentFar__f15b3b0(work->sprites[7],
                                            work->frame / 7 % 8 + 7);
   work->frame++;
@@ -187,12 +191,12 @@ struct StripQuad;
 
 extern const struct Scale gUlysses_ShipScale;
 
-/// Where RuneCircleSheet is decoded in the effect's pictures.
 /// Where UlyssesSilhouette, then FlutteringFlakeSheet's cels, are decoded in
 /// the effect's pictures, and the silhouette's size.
 #define ULYSSES_PICTURES 0x1781
 #define ULYSSES_SILHOUETTE_WIDTH 80
 #define ULYSSES_SILHOUETTE_HEIGHT 112
+/// Where RuneCircleSheet is decoded in the effect's pictures.
 #define ULYSSES_RUNE_CIRCLE_PICTURES 0x2781
 /// Where YellowOrbSheet is decoded in the effect's pictures.
 #define ULYSSES_YELLOW_ORB_PICTURES 0x1e97
@@ -784,10 +788,10 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
     }
     if (frame == 288) {
       Task_Add(Ulysses_MoveLastParticle, TASK_PASS_VBLANK);
-      work->particles[63].x = px(188);
-      work->particles[63].y = px(96);
-      work->particles[63].velocityX = 0;
-      work->particles[63].velocityY = 0;
+      ULYSSES_LAST_PARTICLE.x = px(188);
+      ULYSSES_LAST_PARTICLE.y = px(96);
+      ULYSSES_LAST_PARTICLE.velocityX = 0;
+      ULYSSES_LAST_PARTICLE.velocityY = 0;
       work->frame = 0;
       dmaArmed = 1;
     }
@@ -1097,3 +1101,4 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
 #undef RELEASE_QUARTER
 #undef BLITTER
 #undef CLIP
+#undef ULYSSES_LAST_PARTICLE

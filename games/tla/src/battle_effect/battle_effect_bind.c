@@ -126,7 +126,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   s32 frame;
   DrawRectangle draw[2];
   s32 member;
-  s32 *camera;
+  struct BattleCamera *camera;
   s32 shift;
   u8 *graphics;
   struct MotionObject *motion;
@@ -206,7 +206,7 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
       memberFrame = frame - member * 8;
       if (memberFrame >= 0 && memberFrame < 96) {
         Transform_Reset();
-        Transform_SetLookAt(camera, camera + 3);
+        Transform_SetLookAt(camera->eye, camera->focus);
         vector[0] = motion->x;
         vector[1] = motion->y;
         vector[2] = motion->z;
@@ -289,7 +289,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   s32 frame;
   DrawRectangle draw[2];
   s32 member;
-  s32 *camera;
+  struct BattleCamera *camera;
   s32 shift;
   u8 *graphics;
   struct MotionObject *object;
@@ -344,7 +344,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
       memberFrame = frame - member * 8;
       if (memberFrame >= 0 && memberFrame < 96) {
         Transform_Reset();
-        Transform_SetLookAt(camera, camera + 3);
+        Transform_SetLookAt(camera->eye, camera->focus);
         vector[0] = object->x;
         vector[1] = object->y;
         vector[2] = object->z;

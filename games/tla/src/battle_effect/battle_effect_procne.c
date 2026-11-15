@@ -41,7 +41,7 @@ enum DragonFireMode {
 /// Abilities: Procne.
 void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   void *canvas;
-  void *camera;
+  struct BattleCamera *camera;
   struct BattleEffectWork *work;
   DrawRectangle draw[2];
   s32 frame;
@@ -129,7 +129,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       }
 
       Transform_Reset();
-      Transform_SetLookAt(camera, (s32 *)((u8 *)camera + 12));
+      Transform_SetLookAt(camera->eye, camera->focus);
 
       if (frame == 16)
         Sound_PlayFar(SE_RUMBLE);
@@ -579,7 +579,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint origin;
   DrawRectangle draw[2];
   void *canvas;
-  s32 *camera;
+  struct BattleCamera *camera;
   struct BattleEffectWork *work;
   s32 frame;
   u8 *sheet;
@@ -686,7 +686,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         frame = DRAGON_FIRE_FLASH_FRAME;
       }
       Transform_Reset();
-      Transform_SetLookAt(camera, camera + 3);
+      Transform_SetLookAt(camera->eye, camera->focus);
       if (frame == 178)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 

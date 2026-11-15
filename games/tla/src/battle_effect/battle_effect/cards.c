@@ -259,7 +259,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       model->mesh = gBattleEffect_TallMesh;
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE, Q16_ONE);
-      SceneTransform_ApplyPosition3(overflow << 16, (card.y << 16) - px(64), 0);
+      SceneTransform_ApplyPosition3(px(overflow), px(card.y) - px(64), 0);
       if (frame <= 47) {
         if (args->side == EFFECT_SIDE_ENEMIES)
           Transform_ApplyRoll((frame << 10) - 0xd000);

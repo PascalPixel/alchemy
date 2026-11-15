@@ -154,8 +154,8 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
       // Passed its target: the burst.
       for (k = 0; k != 4; k++) {
         particle = &work->particles[STARS + delay + k];
-        particle->x = pos.x << 16;
-        particle->y = pos.y << 16;
+        particle->x = px(pos.x);
+        particle->y = px(pos.y);
         particle->velocityX = ((Random16() & 127) - 64) << 12;
         particle->velocityY = (192 - (Random16() & 255)) << 10;
         particle->variant = 0;
@@ -165,8 +165,8 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
         s32 speed;
 
         drop = &DROPS[firstDrop + k];
-        drop->x = pos.x << 16;
-        drop->y = pos.y << 16;
+        drop->x = px(pos.x);
+        drop->y = px(pos.y);
         angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
         speed = (Random16() & 255) + 127;
         drop->velocityX = (Trig_Sin(angle) * speed) >> 5;
@@ -452,7 +452,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       victim[3] = (frame * 9 << 16) - px(18);
     } else if (frame > 59) {
       victim[2] = 0;
-      victim[3] = (294 - height) << 16;
+      victim[3] = px(294 - height);
       victim[4] = -(Trig_Sin(frame << 10) << 3);
       if (frame == 60) {
         EffectPosition_ProjectBattler(args->targets[0], &source);
@@ -502,7 +502,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     Transform_Reset();
     SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
     Transform_Push();
-    SceneTransform_ApplyPosition3((source.x - 128) << 16, height << 16, 0);
+    SceneTransform_ApplyPosition3(px(source.x - 128), px(height), 0);
     if (args->side == EFFECT_SIDE_PARTY) {
       Transform_ApplyYaw(TRIG_TURN / 2);
     }
@@ -517,8 +517,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       model->mesh = gBattleEffect_SquareMesh;
       model->scrollU = zero;
       tex->pixels = work->sheet + 0x4000;
-      SceneTransform_ApplyPosition3((target.x - 124) << 16,
-                                    (height - 144) << 16, 0);
+      SceneTransform_ApplyPosition3(px(target.x - 124), px(height - 144), 0);
       Transform_ApplyRoll(TRIG_TURN / 4);
       SceneTransform_ApplyScale3(0x19c40, 0x14e20, Q16_ONE);
       Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
@@ -583,7 +582,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         y = height - 80;
       }
       first = slot * 2;
-      for (i = 0, startY = y << 16, trail = &SPARKS[128 + first]; i != 2;
+      for (i = 0, startY = px(y), trail = &SPARKS[128 + first]; i != 2;
            i++, trail++) {
         s32 random;
         s32 angle;
@@ -591,7 +590,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         s32 x = source.x / 2;
 
         trail->y = startY;
-        trail->x = x << 16;
+        trail->x = px(x);
         random = Random16() & 0x7fff;
         angle = random + TRIG_TURN / 4;
         if (frame > 59) {

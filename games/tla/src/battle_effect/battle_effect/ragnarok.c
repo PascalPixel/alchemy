@@ -352,7 +352,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
   // The sparks wait at the target's feet.
   i = 0;
-  origin = centerX << 16;
+  origin = px(centerX);
   do {
     struct Particle *spark = &SPARK[i];
     s32 speed;

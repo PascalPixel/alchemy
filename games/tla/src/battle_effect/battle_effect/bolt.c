@@ -92,8 +92,8 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
             s32 speed = (Random16() & 0x1ff) + 64;
             s32 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
 
-            spark->x = pos.x << 16;
-            spark->y = GROUND_Y << 16;
+            spark->x = px(pos.x);
+            spark->y = px(GROUND_Y);
             spark->velocityX = (Trig_Sin(angle) * speed) >> 5;
             spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
             spark->variant = (Random16() & 7) + 32;
@@ -142,7 +142,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
       if (spark->variant > 0) {
         spark->variant--;
         BattleEffectKernels_IntegrateVector2(spark, 60, px(1) / 16);
-        if (spark->y > GROUND_Y << 16) {
+        if (spark->y > px(GROUND_Y)) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x < px(127)) && spark->y >= 0) {
           s32 size = spark->variant / 16 + 1;

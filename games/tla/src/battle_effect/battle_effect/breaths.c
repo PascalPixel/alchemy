@@ -204,8 +204,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         if (frame == gBreaths_BurstFrames[mode]) {
           for (i = 0; i != 32; i++) {
             step = &work->particles[32 + i];
-            step->x = mouthX << 16;
-            step->y = mouthY << 16;
+            step->x = px(mouthX);
+            step->y = px(mouthY);
             step->velocityY = ((Random16() & 63) - 32) << 14;
             if (args->side == EFFECT_SIDE_ENEMIES)
               step->velocityX = -(Random16() & 63) << 13;
@@ -319,18 +319,18 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
             for (i = 0; i != count; i++) {
               Transform_Reset();
               if (mode == BREATH_BLAST) {
-                SceneTransform_ApplyPosition3((mouthX - 64) << 16,
-                                              (mouthY - 64) << 16, 0);
+                SceneTransform_ApplyPosition3(px(mouthX - 64), px(mouthY - 64),
+                                              0);
                 SceneTransform_ApplyScale3(Q16_ONE, Q16_ONE * 2, Q16_ONE);
                 Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
                 Transform_ApplyPitch(-TRIG_TURN / 16);
               } else {
                 if (args->side == EFFECT_SIDE_ENEMIES)
-                  SceneTransform_ApplyPosition3((mouthX - 72) << 16,
-                                                (mouthY - 64) << 16, 0);
+                  SceneTransform_ApplyPosition3(px(mouthX - 72),
+                                                px(mouthY - 64), 0);
                 else
-                  SceneTransform_ApplyPosition3((mouthX - 56) << 16,
-                                                (mouthY - 64) << 16, 0);
+                  SceneTransform_ApplyPosition3(px(mouthX - 56),
+                                                px(mouthY - 64), 0);
                 Transform_ApplyYaw(0x32c8);
                 Transform_ApplyPitch(TRIG_TURN / 4);
               }
@@ -367,21 +367,21 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                   scale /= 2;
                   if (args->side == EFFECT_SIDE_ENEMIES)
                     SceneTransform_ApplyPosition3(
-                        (mouthX + gBreaths_RingX[mode * 4 + i] - 48) << 16,
-                        (mouthY - 64) << 16, 0);
+                        px(mouthX + gBreaths_RingX[mode * 4 + i] - 48),
+                        px(mouthY - 64), 0);
                   else
                     SceneTransform_ApplyPosition3(
-                        (mouthX - gBreaths_RingX[mode * 4 + i] - 80) << 16,
-                        (mouthY - 64) << 16, 0);
+                        px(mouthX - gBreaths_RingX[mode * 4 + i] - 80),
+                        px(mouthY - 64), 0);
                 } else {
                   if (args->side == EFFECT_SIDE_ENEMIES)
                     SceneTransform_ApplyPosition3(
-                        (mouthX + gBreaths_RingX[mode * 4 + i] - 64) << 16,
-                        (mouthY - 64) << 16, 0);
+                        px(mouthX + gBreaths_RingX[mode * 4 + i] - 64),
+                        px(mouthY - 64), 0);
                   else
                     SceneTransform_ApplyPosition3(
-                        (mouthX - gBreaths_RingX[mode * 4 + i] - 64) << 16,
-                        (mouthY - 64) << 16, 0);
+                        px(mouthX - gBreaths_RingX[mode * 4 + i] - 64),
+                        px(mouthY - 64), 0);
                 }
                 SceneTransform_ApplyScale3(scale, scale, scale);
                 Transform_ApplyYaw(0x36b0);
@@ -410,8 +410,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           model->mesh = gBattleEffect_SmallSquareMesh;
           texture.pixels = work->sheet;
           Transform_Reset();
-          SceneTransform_ApplyPosition3((mouthX - 64) << 16,
-                                        (mouthY - 64) << 16, 0);
+          SceneTransform_ApplyPosition3(px(mouthX - 64), px(mouthY - 64), 0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           if (frame > 7)
             angle = (frame << 7) + 0x2c60;

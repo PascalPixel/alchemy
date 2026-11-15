@@ -153,7 +153,7 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     } else {
       ramp[1] = ramp[DISC_RINGS];
       Dma_Set(ramp + DISC_RINGS - 1, ramp + DISC_RINGS,
-              (DMA_ENABLE | DMA_DEST_DEC | DMA_SRC_DEC) << 16 | 62, REG_DMA3);
+              px(DMA_ENABLE | DMA_DEST_DEC | DMA_SRC_DEC) | 62, REG_DMA3);
       IO_WRITE_QUEUE_PUSH((u32)&((u16 *)BG_PLTT)[1], (u32)(ramp + 1),
                           DMA_COPY_HALFWORDS(63));
     }

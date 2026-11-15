@@ -52,10 +52,10 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
     x = Random16() & 31;
     seed->y = -px(64);
     if (args->side == EFFECT_SIDE_PARTY) {
-      x = ((Random16() & 31) + 80) << 16;
+      x = px((Random16() & 31) + 80);
       seed->velocityX = (Random16() & 63) << 12;
     } else {
-      x = ((Random16() & 31) + 8) << 16;
+      x = px((Random16() & 31) + 8);
       seed->velocityX = -(Random16() & 63) << 12;
     }
     seed->x = x - seed->velocityX * 18;
@@ -116,8 +116,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
             cry->y = GROUND_Y;
             for (j = 0; j != SHARDS_PER_CRYSTAL; j++) {
               shard = &shards[i * SHARDS_PER_CRYSTAL + j];
-              shard->x = ((gPrism_ShardStarts[j * 2] - 40) << 16) + cry->x;
-              shard->y = gPrism_ShardStarts[j * 2 + 1] << 16;
+              shard->x = px(gPrism_ShardStarts[j * 2] - 40) + cry->x;
+              shard->y = px(gPrism_ShardStarts[j * 2 + 1]);
               shard->velocityX = ((Random16() & 127) - 64) << 11;
               shard->velocityY = -(Random16() & 127) << 11;
               if (i & 1) {

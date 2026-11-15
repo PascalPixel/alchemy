@@ -180,8 +180,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       model->scrollV = 0;
       model->scrollU = 127 & ~(frame << 2);
       Transform_Reset();
-      SceneTransform_ApplyPosition3((pos.x / 2 - 64) << 16,
-                                    (pos.y << 16) + 0xffd60000, 0);
+      SceneTransform_ApplyPosition3(px(pos.x / 2 - 64), px(pos.y) + 0xffd60000,
+                                    0);
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
       if (args->side == EFFECT_SIDE_PARTY) {
         Transform_ApplyYaw(TRIG_TURN / 2);
@@ -203,7 +203,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       model->scrollV = 0;
       texture.pixels = work->sheet + 0x4000;
       model->shade = 0;
-      SceneTransform_ApplyPosition3(endX << 16, endY << 16, 0);
+      SceneTransform_ApplyPosition3(px(endX), px(endY), 0);
       Transform_ApplyRoll(22384 - (length << 5));
       SceneTransform_ApplyUniformScale(length * 23 + Q16_ONE / 2);
       Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);

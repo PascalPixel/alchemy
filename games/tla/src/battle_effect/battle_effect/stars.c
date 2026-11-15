@@ -70,13 +70,13 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   source = ACTOR(args->user);
   target = ACTOR(args->targets[0]);
   for (i = 0, point = work->particles; i != BOLT_COUNT; i++) {
-    SET_POSITION(point, source->x.fixed, source->y.fixed + 0x280000,
+    SET_POSITION(point, source->x.fixed, source->y.fixed + px(40),
                  source->z.fixed);
     if (i == 0)
       point->velocityX = (target->x.fixed - point->x) / 12;
     else
       point->velocityX = (target->x.fixed * 2 - point->x) / 12;
-    point->velocityY = (target->y.fixed - point->y + 0x280000) / 12;
+    point->velocityY = (target->y.fixed - point->y + px(40)) / 12;
     point->velocityZ = (target->z.fixed - point->z) / 12;
     point->variant = 0;
     point++;
@@ -170,10 +170,10 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
           target->steeringFlags = 0;
           Actor_StartIdleFar(target);
           if (target->x.fixed < 0)
-            Actor_SetMoveTargetFar(target, target->x.fixed - 0x280000, 0,
+            Actor_SetMoveTargetFar(target, target->x.fixed - px(40), 0,
                                    target->z.fixed);
           else
-            Actor_SetMoveTargetFar(target, target->x.fixed + 0x280000, 0,
+            Actor_SetMoveTargetFar(target, target->x.fixed + px(40), 0,
                                    target->z.fixed);
           if (i == 2) {
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -248,10 +248,10 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   for (i = 0, point = work->particles; i != STAR_COUNT; i++) {
     s32 delay = i * 8;
 
-    SET_POSITION(point, source->x / 2, source->y + 0x780000, source->z);
+    SET_POSITION(point, source->x / 2, source->y + px(120), source->z);
     point->velocityX =
         (target->x + ((s32)((Random16() & 0x7f) - 64) << 16) - point->x) / 12;
-    point->velocityY = (target->y - point->y + 0x140000) / 12;
+    point->velocityY = (target->y - point->y + px(20)) / 12;
     point->velocityZ = (target->z - point->z) / 12;
     point->variant = (Random16() & 15) + delay;
     point++;

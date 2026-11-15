@@ -494,18 +494,15 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     if (!(frame & 1) || !skip) {
       if (frame > 156) {
         for (i = 0; i != ZAGAN_PARTS - 1; i++) {
-          placement[0] =
-              (gZagan_ChargePoints[i][0] << 16) + position.x - 0x200000;
-          placement[2] =
-              (gZagan_ChargePoints[i][1] << 16) + position.y + 0x100000;
+          placement[0] = px(gZagan_ChargePoints[i][0]) + position.x - px(32);
+          placement[2] = px(gZagan_ChargePoints[i][1]) + position.y + px(16);
           Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
                                             (s32 *)&request, 0);
         }
       } else {
         for (i = 0; i != ZAGAN_PARTS; i++) {
-          placement[0] = (gZagan_GallopPoints[i][0] << 16) + position.x;
-          placement[2] =
-              (gZagan_GallopPoints[i][1] << 16) + position.y - 0x100000;
+          placement[0] = px(gZagan_GallopPoints[i][0]) + position.x;
+          placement[2] = px(gZagan_GallopPoints[i][1]) + position.y - px(16);
           Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
                                             (s32 *)&request, 0);
         }
@@ -582,8 +579,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         }
         model->shade = shade;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(-0x100000, gZagan_RingHeights[k] << 16,
-                                      0);
+        SceneTransform_ApplyPosition3(-px(16), px(gZagan_RingHeights[k]), 0);
         SceneTransform_ApplyScale3(scale, scale * 4 / 3, scale);
         Transform_ApplyPitch(3000);
         model->scrollU = ((frame + k * 5) & 7) * 16;

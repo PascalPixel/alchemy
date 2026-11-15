@@ -299,9 +299,9 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
           }
           scale.y = scale.x;
           position[3] = 0;
-          position[0] = (rock->x + rockX * 2) << 16;
-          position[1] = 0x2000000 - (rock->y << 16);
-          position[2] = 0x2000000;
+          position[0] = px(rock->x + rockX * 2);
+          position[1] = px(512) - px(rock->y);
+          position[2] = px(512);
           slot = (frame / 2 + k) % ROCK_COUNT;
           if (slot != -1)
             Render_ApplyProjectedPlacementFar(work->sprites[slot], position,

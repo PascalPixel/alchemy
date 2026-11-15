@@ -271,7 +271,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     dy = 0;
     place[3] = 0;
     dx = 0;
-    place[1] = 0xff0000;
+    place[1] = px(255);
     if (frame <= 119) {
       posX = Trig_Sin(0xcd00) * 24 + 0x980000;
       posY = Trig_Cos(0xcd00) * 20 + 0x2c0000;
@@ -329,8 +329,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     }
     if (frame > 111) {
       for (i = 0; i != 12; i++) {
-        place[0] = posX + ((i % 3 * 32 + dx) << 16);
-        place[2] = posY + ((i / 3 * 32 + dy) << 16);
+        place[0] = posX + px(i % 3 * 32 + dx);
+        place[2] = posY + px(i / 3 * 32 + dy);
         Render_ApplyProjectedPlacementFar(work->sprites[i], place, (s32 *)&req,
                                           0);
       }
@@ -449,8 +449,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           w->x[i] = px(248);
           w->y[i] = frame;
         } else if (frame == start) {
-          w->x[i] = ((Random16() & 7) << 16) + 0x5c0000;
-          w->y[i] = ((Random16() & 7) << 16) + 0x680000;
+          w->x[i] = px(Random16() & 7) + px(92);
+          w->y[i] = px(Random16() & 7) + px(104);
           w->vx[i] = (Random16() & 0xffff) * 12 + -0xc0000;
           w->vy[i] = 0x40000;
         } else if (frame >= start) {
@@ -458,8 +458,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
             w->x[i] += w->vx[i];
             w->y[i] += w->vy[i];
           } else if (frame <= 251) {
-            w->x[i] = ((Random16() & 7) << 16) + 0x5c0000;
-            w->y[i] = ((Random16() & 7) << 16) + 0x680000;
+            w->x[i] = px(Random16() & 7) + px(92);
+            w->y[i] = px(Random16() & 7) + px(104);
           }
         }
       } else if (i <= 31) {
@@ -470,16 +470,16 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           u32 a = Random16() & 0xffff;
           s32 s = ((Random16() & 255) << 1) + 256;
 
-          w->x[i] = ((Random16() & 7) << 16) + 0xa80000;
-          w->y[i] = ((Random16() & 7) << 16) + 0x5c0000;
+          w->x[i] = px(Random16() & 7) + px(168);
+          w->y[i] = px(Random16() & 7) + px(92);
           w->vx[i] = Trig_Sin(a) * s / 256;
           w->vy[i] = Trig_Cos(a) * s / 256;
         } else if (frame == 252) {
           u32 a = Random16() & 0xffff;
           s32 s = ((Random16() & 255) << 1) + 256;
 
-          w->x[i] = ((Random16() & 7) << 16) + 0x5c0000;
-          w->y[i] = ((Random16() & 7) << 16) + 0x680000;
+          w->x[i] = px(Random16() & 7) + px(92);
+          w->y[i] = px(Random16() & 7) + px(104);
           w->vx[i] = Trig_Sin(a) * s / 256;
           w->vy[i] = Trig_Cos(a) * s / 256;
         } else if (frame > 111) {
@@ -503,8 +503,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           w->tiles[Data_02014002[14 + i] >> 8];
     }
     for (i = 0; i != 32; i++) {
-      place[0] = w->x[i] + -0x80000;
-      place[2] = w->y[i] + -0x80000;
+      place[0] = w->x[i] - px(8);
+      place[2] = w->y[i] - px(8);
       Render_ApplyProjectedPlacementFar(work->sprites[12 + i], place,
                                         (s32 *)&req, 0);
     }
@@ -533,8 +533,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
         model->shade = sh;
         if (sh > -64) {
           Transform_Reset();
-          SceneTransform_ApplyPosition3(gFlora_BloomX[i] << 16,
-                                        gFlora_BloomY[i] << 16, 0);
+          SceneTransform_ApplyPosition3(px(gFlora_BloomX[i]),
+                                        px(gFlora_BloomY[i]), 0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           Transform_ApplyRoll(gFlora_BloomRolls[i]);
           Transform_ApplyPitch(gFlora_BloomPitches[i]);
@@ -834,9 +834,9 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
       object->velocityY += px(5) / 2;
     Actor_StartIdleFar(object);
     if (slot->anchorX > 0)
-      x = object->x + 0xf0000;
+      x = object->x + px(15);
     else
-      x = object->x - 0xf0000;
+      x = object->x - px(15);
     Actor_SetMoveTargetFar(object, x, 0, slot->anchorZ);
   }
   object->verticalMotionStrength = 0x9999;
@@ -910,7 +910,7 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
 
       for (i = 0, zero = 0, y = px(128), dagger = work->particles; i != 32;
            i++, dagger++) {
-        SET_POSITION(dagger, ((Random16() & 63) + 32) << 16, y, Random16());
+        SET_POSITION(dagger, px((Random16() & 63) + 32), y, Random16());
         dagger->velocityX = zero;
         dagger->velocityY = -((Random16() & 31) + 32) << 10;
         dagger->velocityZ = (Random16() & 0x3ff) + 0x400;

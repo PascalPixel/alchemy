@@ -270,7 +270,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       s32 v;
 
       gBgScroll[1].y = v = (frame - 380) / 4;
-      if ((u32)(v << 16) > 0x680000) {
+      if ((u32)px(v) > px(104)) {
         gBgScroll[1].y = 104;
       }
     }
@@ -485,14 +485,14 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     if (frame <= 593) {
       req = gCatastrophe_UnitScale;
       place[3] = 0;
-      place[1] = 0xff0000;
+      place[1] = px(255);
       {
 
         for (i = 0; i != 28; i++) {
-          place[0] = (gCatastrophe_DemonX[i] << 16) + 0x80000;
-          place[2] = (gCatastrophe_DemonZ[i] << 16) + camZ;
+          place[0] = px(gCatastrophe_DemonX[i]) + px(8);
+          place[2] = px(gCatastrophe_DemonZ[i]) + camZ;
           if (place[2] > 0xfffff) {
-            if (place[2] <= 0xa80000) {
+            if (place[2] <= px(168)) {
               Render_ApplyProjectedPlacementFar(work->sprites[i], place,
                                                 (s32 *)&req, 0);
             }
@@ -502,20 +502,20 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       for (i = 0; i != 5; i++) {
         s32 h = i / 2;
 
-        place[0] = ((i - h * 2) << 21) + drift + 0x480000;
-        place[2] = (h << 21) + camZ + sway + 0x3c0000;
+        place[0] = ((i - h * 2) << 21) + drift + px(72);
+        place[2] = (h << 21) + camZ + sway + px(60);
         if (place[2] > 0xfffff) {
-          if (place[2] <= 0xa80000) {
+          if (place[2] <= px(168)) {
             Render_ApplyProjectedPlacementFar(work->sprites[34 + i], place,
                                               (s32 *)&req, 0);
           }
         }
       }
       for (i = 0; i != 11; i++) {
-        place[0] = (gCatastrophe_ArmourX[i] << 16) - drift + 0x840000;
-        place[2] = (gCatastrophe_ArmourZ[i] << 16) + camZ + sway + 0x1d0000;
+        place[0] = px(gCatastrophe_ArmourX[i]) - drift + px(132);
+        place[2] = px(gCatastrophe_ArmourZ[i]) + camZ + sway + px(29);
         if (place[2] > 0xfffff) {
-          if (place[2] <= 0xa80000) {
+          if (place[2] <= px(168)) {
             Render_ApplyProjectedPlacementFar(work->sprites[39 + i], place,
                                               (s32 *)&req, 0);
           }
@@ -523,10 +523,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
       req.x = -0x10001;
       for (i = 0; i != 6; i++) {
-        place[0] = (gCatastrophe_MirroredDemonX[i] << 16) + 0x80000;
-        place[2] = (gCatastrophe_MirroredDemonZ[i] << 16) + camZ;
+        place[0] = px(gCatastrophe_MirroredDemonX[i]) + px(8);
+        place[2] = px(gCatastrophe_MirroredDemonZ[i]) + camZ;
         if (place[2] > 0xfffff) {
-          if (place[2] <= 0xa80000) {
+          if (place[2] <= px(168)) {
             Render_ApplyProjectedPlacementFar(work->sprites[28 + i], place,
                                               (s32 *)&req, 0);
           }
@@ -552,8 +552,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         model->shade = shade;
         texture.pixels = work->sheet + c * 0x600;
         Transform_Reset();
-        SceneTransform_ApplyPosition3((gCatastrophe_BurstX[i] - 48) << 16,
-                                      (gCatastrophe_BurstY[i] - 44) << 16, 0);
+        SceneTransform_ApplyPosition3(px(gCatastrophe_BurstX[i] - 48),
+                                      px(gCatastrophe_BurstY[i] - 44), 0);
         Transform_ApplyRoll(0);
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
@@ -708,9 +708,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             s32 t = p->x / 8;
             s32 b = span - drift;
 
-            SceneTransform_ApplyPosition3(((t - 64) << 16) + b / 2,
-                                          ((p->y / 8 - 64) << 16) + camZ + sway,
-                                          0);
+            SceneTransform_ApplyPosition3(px(t - 64) + b / 2,
+                                          px(p->y / 8 - 64) + camZ + sway, 0);
           }
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
           Transform_ApplyRoll(p->z);
@@ -739,8 +738,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
       texture.pixels = work->sheet + p->z;
       Transform_Reset();
-      SceneTransform_ApplyPosition3((span - drift) / 2 + 0x40000,
-                                    camZ + 0xcc0000, 0);
+      SceneTransform_ApplyPosition3((span - drift) / 2 + px(4), camZ + 0xcc0000,
+                                    0);
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE);
       Transform_ApplyRoll(p->y);
       SceneTransform_ApplyScale3(Q16_ONE * 4, 85536, Q16_ONE / 2);
@@ -771,11 +770,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       for (i = 0; i != n; i++) {
         struct Particle *p4 = &work->particles[i];
 
-        SET_POSITION(p4, (Random16() % spread - spread / 2) << 16,
-                     camZ + 0xc80000, ((base + i) % 3 << 12) + 0x2000);
+        SET_POSITION(p4, px(Random16() % spread - spread / 2), camZ + 0xc80000,
+                     ((base + i) % 3 << 12) + 0x2000);
         texture.pixels = work->sheet + p4->z;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(0x10000, p4->y, 0);
+        SceneTransform_ApplyPosition3(px(1), p4->y, 0);
         SceneTransform_ApplyScale3(sx, Q16_ONE, Q16_ONE / 2);
         SceneTransform_ApplyPosition3(p4->x, 0, 0);
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE * 2, Q16_ONE);
@@ -820,16 +819,16 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         texture.pixels = work->sheet + 0x1000;
         Transform_Reset();
         b = span - drift;
-        SceneTransform_ApplyPosition3(b / 2 + 0x50000, camZ + 0xe60000, 0);
+        SceneTransform_ApplyPosition3(b / 2 + px(5), camZ + px(230), 0);
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Transform_ApplyPitch(18768);
         a = -frame;
         a <<= 10;
         Transform_ApplyRoll(a);
         SceneTransform_ApplyUniformScale(s);
-        SceneTransform_ApplyPosition3(0, -0xf0000, 0);
+        SceneTransform_ApplyPosition3(0, -px(15), 0);
         Render_TransformVertices(gBattleEffect_SquareCorners, verts, 4);
-        SceneTransform_ApplyPosition3(0, 0xf0000, 0);
+        SceneTransform_ApplyPosition3(0, px(15), 0);
         Render_DrawModelList(model);
         texture.pixels = work->sheet;
         for (i = 0; i != 3; i++) {
@@ -839,7 +838,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             s32 phase = i * 21845 + 10922;
             model->shade = -24 - (Trig_Cos(phase + a) << 3 >> 16);
           }
-          SceneTransform_ApplyPosition3(0, -0x100000, 0);
+          SceneTransform_ApplyPosition3(0, -px(16), 0);
           if (frame > 579) {
             s32 v = (frame - 580) * 1096;
 
@@ -899,7 +898,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         texture.logWidth = 7;
         texture.logHeight = 7;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(0x10000, -0x100000, 0);
+        SceneTransform_ApplyPosition3(px(1), -px(16), 0);
         SceneTransform_ApplyScale3(Q16_ONE, 32000, Q16_ONE);
         Transform_ApplyRoll(frame << 10);
         SceneTransform_ApplyUniformScale(s);
@@ -1121,15 +1120,15 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           model2->vertices = verts2;
           texture2.pixels = Data_02011000;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(-0x20000, rise, 0);
+          SceneTransform_ApplyPosition3(-px(2), rise, 0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           Transform_ApplyPitch(18768);
           a = frame << 9;
           Transform_ApplyRoll(a);
           SceneTransform_ApplyUniformScale(s);
-          SceneTransform_ApplyPosition3(0, -0xf0000, 0);
+          SceneTransform_ApplyPosition3(0, -px(15), 0);
           Render_TransformVertices(gBattleEffect_SquareCorners, verts2, 4);
-          SceneTransform_ApplyPosition3(0, 0xf0000, 0);
+          SceneTransform_ApplyPosition3(0, px(15), 0);
           Render_DrawModelList(model2);
           texture2.pixels = cellBuffer;
           for (i = 0; i != 3; i++) {
@@ -1140,7 +1139,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             Transform_Push();
             Transform_ApplyRoll(i * 21845 + 10922);
             model2->shade = tone;
-            SceneTransform_ApplyPosition3(0, -0x100000, 0);
+            SceneTransform_ApplyPosition3(0, -px(16), 0);
             v = 19712;
             if (frame > 63) {
               v = v - (frame << 10) + 0x10000;
@@ -1187,7 +1186,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                 texture2.logWidth = 7;
                 texture2.logHeight = 7;
                 Transform_Reset();
-                SceneTransform_ApplyPosition3(0, 0x100000, 0);
+                SceneTransform_ApplyPosition3(0, px(16), 0);
                 SceneTransform_ApplyScale3(Q16_ONE, 32000, Q16_ONE);
                 Transform_ApplyRoll(frame << 10);
                 SceneTransform_ApplyUniformScale(s);
@@ -1402,7 +1401,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           s32 angle;
           s32 speed;
 
-          q->x = sum << 16;
+          q->x = px(sum);
           q->y = px(Random16() % 112 + 4);
           angle = (Random16() & 0x7fff) + TRIG_TURN / 2;
           speed = (Random16() & 127) + 128;
@@ -1542,7 +1541,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                   s32 angle;
                   s32 speed;
 
-                  q->x = p2->x << 16;
+                  q->x = px(p2->x);
                   q->y = px(104);
                   angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
                   speed = (Random16() & 127) + 128;

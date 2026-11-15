@@ -145,8 +145,8 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
           model->alpha = alpha;
           Transform_Reset();
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          SceneTransform_ApplyPosition3((BITE_ANCHOR(i)->x - 128) << 16,
-                                        (BITE_ANCHOR(i)->y - 64) << 16, 0);
+          SceneTransform_ApplyPosition3(px(BITE_ANCHOR(i)->x - 128),
+                                        px(BITE_ANCHOR(i)->y - 64), 0);
           Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
           Transform_ApplyPitch(-TRIG_TURN / 16);
           SceneTransform_ApplyUniformScale(scale);

@@ -188,7 +188,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
                       Q_16_16_UPPER_HALF(step->x) - size / 2,
                       Q_16_16_UPPER_HALF(step->y) - size, size, size * 2);
           BattleEffectKernels_IntegrateVector2(step, 62, px(1) / 4);
-          if (step->y > ((i & 3) + 108) << 16)
+          if (step->y > px((i & 3) + 108))
             step->velocityY = -step->velocityY / 2;
           step->variant--;
         }
@@ -270,8 +270,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
         index = ((frame * 4 + i) & 127) + 256;
         step = &SPARKS[index];
-        step->x = position.x << 16;
-        step->y = position.y << 16;
+        step->x = px(position.x);
+        step->y = px(position.y);
         angle = Random16();
         force = (Random16() & 255) + 127;
         step->velocityX = (Trig_Sin(angle) * force) >> 7;

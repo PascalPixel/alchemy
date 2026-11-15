@@ -184,8 +184,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     // The three lines, drawn dot by dot between pairs of points.
     if (frame <= 149) {
       for (i = 0; i != 6; i++) {
-        SET_VECTOR(point, (gThor_Points[i][0] - 96) << 16, 0,
-                   (gThor_Points[i][1] - 96) << 16);
+        SET_VECTOR(point, px(gThor_Points[i][0] - 96), 0,
+                   px(gThor_Points[i][1] - 96));
         EffectPosition_ProjectPoint(point, &screen[i]);
         screen[i].x = (screen[i].x >> 17) + 64;
         screen[i].y = (screen[i].y >> 16) + 60;
@@ -362,8 +362,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                 s32 angle;
                 speed &= Random16();
                 angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
-                spark->x = pillarX << 16;
-                spark->y = pillarY << 16;
+                spark->x = px(pillarX);
+                spark->y = px(pillarY);
                 speed += 32;
                 spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
                 spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;
@@ -453,8 +453,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             s32 angle;
             speed &= Random16();
             angle = Random16() & 0xffff;
-            spark->x = mirrorX << 16;
-            spark->y = moteY << 16;
+            spark->x = px(mirrorX);
+            spark->y = px(moteY);
             speed += 64;
             spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
             spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 7;

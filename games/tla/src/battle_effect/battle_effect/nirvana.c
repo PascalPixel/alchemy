@@ -336,7 +336,7 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
           s32 speed = (Random16() & 0xff) + 256;
           s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
 
-          spark->x = position.x << 16;
+          spark->x = px(position.x);
           spark->y = px(96 - (Random16() & 31));
           spark->velocityX = (Trig_Sin(angle) * speed) >> 7;
           spark->velocityY = (Trig_Cos(angle) * speed) >> 9;
@@ -716,7 +716,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
         screen.x = 176;
       }
       gCameraSceneParameters[3] = 184 - screen.x;
-      IO_WRITE_QUEUE_PUSH(0x04000028, (64 - screen.x) << 8, 0x30000);
+      IO_WRITE_QUEUE_PUSH(0x04000028, (64 - screen.x) << 8, px(3));
 
       // Dust where the Djinni lands.
       if ((u32)frame <= 63) {
@@ -754,7 +754,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
       // The Djinni falls.
       if (frame <= 29) {
         point.x = target->x;
-        point.y = 0x3c0000 - (frame << 17);
+        point.y = px(60) - (frame << 17);
         point.depth = target->z + (Trig_Sin(frame << 9) << 5);
         Render_ProjectPoint(&point, &dropScreen);
         blitters[1](canvas, work->sheet + 0x4000, dropScreen.x - 20,
@@ -895,7 +895,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             scale = 60000;
           }
           model->shade = (const void *)spireShade;
-          SceneTransform_ApplyPosition3(target->x, -0x40000, target->z);
+          SceneTransform_ApplyPosition3(target->x, -px(4), target->z);
           SceneTransform_ApplyScale3(scale, scale, scale);
           Render_ProjectVertices((const u8 *)gMapGridCellBuffer, vertices, 64);
           Render_DrawModelList(model);
@@ -937,8 +937,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             }
             Transform_Push();
             model->shade = (const void *)shade;
-            SceneTransform_ApplyPosition3(
-                target->x, gSerac_RingHeights[i] << 16, target->z);
+            SceneTransform_ApplyPosition3(target->x, px(gSerac_RingHeights[i]),
+                                          target->z);
             SceneTransform_ApplyScale3(size, size, size);
             model->scrollU = ((frame + i * 5) & 7) << 4;
             Render_ProjectVertices(gBattleEffect_CylinderCorners, vertices, 32);

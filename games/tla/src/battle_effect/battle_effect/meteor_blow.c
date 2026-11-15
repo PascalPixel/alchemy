@@ -285,7 +285,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       for (; i != 5; i++) {
         model->scrollV = ~scroll & 127;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(-0x20000, -0x400000, 0);
+        SceneTransform_ApplyPosition3(-px(2), -px(64), 0);
         SceneTransform_ApplyScale3(42000, 0x24650, Q16_ONE);
         SceneTransform_ApplyScale3(scale, scale, scale);
         Transform_ApplyRoll(TRIG_TURN / 2);
@@ -346,7 +346,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     req[1] = size;
     req[0] = size;
     place[3] = 0;
-    place[1] = 0xff0000;
+    place[1] = px(255);
     place[0] = x;
     place[2] = z;
     Render_ApplyProjectedPlacementFar(work->sprites[0], place, req, 0);
@@ -446,8 +446,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       summonScale = gMeteorBlow_DoubleScale;
       summonPlace[3] = 0;
       summonPlace[1] = 0xff0000;
-      summonPlace[0] = hx << 16;
-      summonPlace[2] = hz << 16;
+      summonPlace[0] = px(hx);
+      summonPlace[2] = px(hz);
       if (frame <= 15) {
         hx -= 1;
         hz += 9;
@@ -466,7 +466,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
 
       p = (struct Particle *)gMapGridCellBuffer;
       i = 0;
-      half = (hx / 2) << 16;
+      half = px(hx / 2);
       /* FAKEMATCH(dead): updates of hx that cancel out end the shard's halving
        * here. */
       hx++;
@@ -526,7 +526,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
 
           model->shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(x0 << 16, 0x280000, 0);
+          SceneTransform_ApplyPosition3(px(x0), px(40), 0);
           SceneTransform_ApplyScale3(s, s * gMeteorBlow_WaveStretch[i], s / 4);
           Transform_ApplyPitch(1000);
           if (i & 1) {
@@ -559,8 +559,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           model->shade = shade;
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(half << 16,
-                                        gMeteorBlow_RingHeights[i] << 16, 0);
+          SceneTransform_ApplyPosition3(px(half),
+                                        px(gMeteorBlow_RingHeights[i]), 0);
           SceneTransform_ApplyScale3(s, s * 2, s);
           Transform_ApplyPitch(2000);
           Render_TransformVertices(gBattleEffect_CylinderCorners, verts, 32);

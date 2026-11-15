@@ -130,8 +130,8 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != 32; i++) {
         struct Particle *star = &work->particles[i];
 
-        SET_POSITION(star, ((Random16() & 31) - 16) << 16,
-                     ((Random16() & 63) - 16) << 16, (Random16() & 127) + 128);
+        SET_POSITION(star, px((Random16() & 31) - 16),
+                     px((Random16() & 63) - 16), (Random16() & 127) + 128);
         star->velocityY = Random16();
         star->variant = -i * 2;
       }

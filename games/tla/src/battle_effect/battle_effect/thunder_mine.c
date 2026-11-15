@@ -98,9 +98,9 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       EffectPosition_ProjectBattler(args->user, &source);
       EffectPosition_ProjectBattler(args->targets[0], &target);
       if (mode == 0) {
-        ball->x = source.x << 16;
+        ball->x = px(source.x);
         ball->y = px(source.y - 32);
-        ball->velocityX = ((target.x << 16) - ball->x) / frames;
+        ball->velocityX = (px(target.x) - ball->x) / frames;
       } else {
         if (args->side == EFFECT_SIDE_ENEMIES) {
           ball->x = px(source.x - 32);
@@ -108,9 +108,9 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
           ball->x = px(source.x + 32);
         }
         ball->y = px(source.y - 80);
-        ball->velocityX = (((target.x - 32) << 16) - ball->x) / frames;
+        ball->velocityX = (px(target.x - 32) - ball->x) / frames;
       }
-      ball->velocityY = (((target.y - 32) << 16) - ball->y) / frames;
+      ball->velocityY = (px(target.y - 32) - ball->y) / frames;
       Sound_PlayFar(SE_RISE_WITH_SPARKS);
       for (i = 0, bolt = &work->particles[1]; i != 63; i++, bolt++) {
         bolt->z = Random16();
@@ -273,8 +273,8 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
         texture.pixels = work->sheet + 0x1456 + (bolt->variant << 12);
         model->shade = shade;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(ball->x / 2 - 0x400000,
-                                      ball->y - 0x400000, 0);
+        SceneTransform_ApplyPosition3(ball->x / 2 - px(64), ball->y - px(64),
+                                      0);
         Transform_ApplyRoll(bolt->z);
         bolt->z += bolt->velocityZ;
         if (mode == 0) {
@@ -563,7 +563,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
           placement[3] = 0;
           placement[1] = 0;
           placement[0] = column << 17;
-          placement[2] = fall << 16;
+          placement[2] = px(fall);
           Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
                                             &request.x, 0);
           if (t == 9) {
@@ -578,7 +578,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
               s32 angle = Random16() & 0x7fff;
               s32 speed = Random16() & 255;
 
-              spark->x = column << 16;
+              spark->x = px(column);
               spark->y = px(112);
               spark->velocityY = (-Trig_Sin(angle) * speed) >> 5;
               spark->velocityX = (Trig_Cos(angle) * speed) >> 5;
@@ -772,9 +772,9 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
 
       caster = BattleObject_GetFar(args->user)->object;
       if (caster->x > 0) {
-        point[0] = caster->x - 0x80000;
+        point[0] = caster->x - px(8);
       } else {
-        point[0] = caster->x + 0x80000;
+        point[0] = caster->x + px(8);
       }
 
       // The hexagon, one side every 36 frames.
@@ -783,8 +783,8 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
         for (i = 0; i != 6; i++) {
           s32 corner = (i + 4) % 6;
 
-          point[1] = (gVoidBeam_Corners[corner * 2 + 1] << 16) + 0x1e0000;
-          point[2] = (gVoidBeam_Corners[corner * 2] << 16) + caster->z;
+          point[1] = px(gVoidBeam_Corners[corner * 2 + 1]) + px(30);
+          point[2] = px(gVoidBeam_Corners[corner * 2]) + caster->z;
           EffectPosition_ProjectPoint(point, &corners[i]);
           corners[i].x >>= 1;
         }
@@ -840,7 +840,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
         if (frame == 72) {
           work->particles[0].x = point[0];
           if (work->particles[0].x > 0) {
-            work->particles[0].velocityX = -(px(32));
+            work->particles[0].velocityX = -px(32);
           } else {
             work->particles[0].velocityX = px(32);
           }
@@ -856,7 +856,7 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
         }
         for (i = 0; i != BEAM_SEGMENTS; i++) {
           point[0] = work->particles[0].x + work->particles[0].velocityX * i;
-          point[1] = 0x1e0000;
+          point[1] = px(30);
           point[2] = caster->z;
           EffectPosition_ProjectPoint(point, &segment);
           segment.x >>= 1;

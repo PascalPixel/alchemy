@@ -173,8 +173,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         placement[3] = 0;
         placement[1] = px(255);
         for (i = 0; i != 4; i++) {
-          placement[0] = (left << 17) + 0x100000;
-          placement[2] = (rise + 40 + i * 32) << 16;
+          placement[0] = (left << 17) + px(16);
+          placement[2] = px(rise + 40 + i * 32);
           Render_ApplyProjectedPlacementFar(work->sprites[i], placement,
                                             (s32 *)&source, 0);
         }
@@ -207,7 +207,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           s32 sine;
 
           sine = Trig_Sin(heading) * speed;
-          x = centerX << 16;
+          x = px(centerX);
           p->x = (sine >> 4) + x;
           p->y = ((Trig_Cos(heading) * speed) >> 3) + 0x680000;
           angle += TRIG_TURN * 3 / 4;
@@ -266,8 +266,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         }
         model->shade = shade;
         Transform_Reset();
-        SceneTransform_ApplyPosition3((centerX - 64) << 16,
-                                      gTrident_RingHeights[i] << 16, 0);
+        SceneTransform_ApplyPosition3(px(centerX - 64),
+                                      px(gTrident_RingHeights[i]), 0);
         SceneTransform_ApplyScale3(scale, scale * 2, scale);
         model->scrollU = ((frame + i * 5) & 7) << 4;
         Transform_ApplyPitch(3000);
@@ -313,7 +313,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           }
           texture.pixels = work->sheet + (x << 12) + 0xc56;
           Transform_Reset();
-          SceneTransform_ApplyPosition3((centerX - 64) << 16, 0x200000, 0);
+          SceneTransform_ApplyPosition3(px(centerX - 64), px(32), 0);
           Transform_ApplyRoll(spinner->z);
           if (i & 1) {
             Transform_ApplyYaw(TRIG_TURN / 2);
@@ -334,7 +334,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
       const u8 *cellTable;
 
       if (frame == 64) {
-        for (i = 0, p = work->particles, x = centerX << 16; i != 32; i++, p++) {
+        for (i = 0, p = work->particles, x = px(centerX); i != 32; i++, p++) {
           s32 angle = Random16();
           s32 speed = (Random16() & 511) + 512;
           s32 velocityY;
@@ -344,7 +344,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           p->velocityY = velocityY;
           if (i > 15) {
             p->x = (p->velocityX << 2) + x;
-            p->y = (velocityY << 2) + 0x640000;
+            p->y = (velocityY << 2) + px(100);
             p->variant = (16 - i) / 4;
           } else {
             p->x = x;
@@ -590,7 +590,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
             angle = Random16() & 0xffff;
 
             speed += 32;
-            spark->x = pos.x << 16;
+            spark->x = px(pos.x);
             spark->y = px(pos.y - 24);
             spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
             spark->velocityY = -((Trig_Cos(angle) * speed) << 1) >> 6;
@@ -644,8 +644,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
         model->shade = shade;
         if (frame <= 45) {
           Transform_Reset();
-          SceneTransform_ApplyPosition3((pos.x - 60) << 16, (pos.y - 80) << 16,
-                                        0);
+          SceneTransform_ApplyPosition3(px(pos.x - 60), px(pos.y - 80), 0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           if (args->side == EFFECT_SIDE_ENEMIES) {
             Transform_ApplyRoll(-0x3388);
@@ -682,7 +681,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
               Transform_Reset();
               model->scrollV = (frame * 8 + i * 16) & 63;
               SceneTransform_ApplyPosition3(
-                  (pos.x - 60) << 16, gLeapingStrike_WaveHeights[i] << 16, 0);
+                  px(pos.x - 60), px(gLeapingStrike_WaveHeights[i]), 0);
               SceneTransform_ApplyScale3(scale >> 1, scale << 2, scale / 4);
               Transform_ApplyPitch(1000);
               if (i & 1)
@@ -729,7 +728,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
               model->scrollU = scroll << 4;
               Transform_Reset();
               SceneTransform_ApplyPosition3(
-                  (base->x - 60) << 16, gLeapingStrike_RingHeights[i] << 16, 0);
+                  px(base->x - 60), px(gLeapingStrike_RingHeights[i]), 0);
               SceneTransform_ApplyScale3(scale, scale * 2, scale);
               Transform_ApplyPitch(2000);
               Render_TransformVertices(gBattleEffect_CylinderCorners, projected,

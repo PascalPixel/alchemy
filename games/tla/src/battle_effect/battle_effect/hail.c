@@ -213,8 +213,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
 
       SET_POSITION(rock, actor->x, px(66), actor->z);
       rock->velocityX = (i * 0x500000) >> 5;
-      rock->velocityY = (s32)(((Random16() & 127) - 64) << 16) >> 6;
-      rock->velocityZ = (s32)(((Random16() & 255) - 127) << 16) >> 5;
+      rock->velocityY = (s32)px((Random16() & 127) - 64) >> 6;
+      rock->velocityZ = (s32)px((Random16() & 255) - 127) >> 5;
       if (rock->x > 0)
         rock->velocityX = -rock->velocityX;
       rock->variant = 1;
@@ -324,7 +324,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
           // and slowed until frame 2i + 85; below y 20 it hits.
           if (frame > i * 2 + 16) {
             rock->velocityX += (target->x - rock->x) >> 8;
-            rock->velocityY += (0x140000 - rock->y) >> 8;
+            rock->velocityY += (px(20) - rock->y) >> 8;
             rock->velocityZ += (target->z - rock->z) >> 8;
             if (frame < i * 2 + 85) {
               rock->velocityX = rock->velocityX * 60 / 64;

@@ -120,8 +120,8 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
             dot = &DOTS[i * DOTS_PER_FLAME + j];
             direction = Random16() & 0xffff;
             speed = (Random16() & 0x1ff) + 256;
-            dot->x = flame->x << 16;
-            dot->y = flame->y << 16;
+            dot->x = px(flame->x);
+            dot->y = px(flame->y);
             dot->velocityX = (Trig_Sin(direction) * speed) >> 8;
             dot->velocityY = (Trig_Cos(direction) * speed) >> 7;
             // Each dot lives 32 to 47 frames.
@@ -265,8 +265,8 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
             dot = &DOTS[i * DOTS_PER_BALL + j];
             direction = Random16() & 0xffff;
             speed = (Random16() & 0x1ff) + 256;
-            dot->x = ball->x << 16;
-            dot->y = ball->y << 16;
+            dot->x = px(ball->x);
+            dot->y = px(ball->y);
             dot->velocityX = (Trig_Sin(direction) * speed) >> 7;
             dot->velocityY = (Trig_Cos(direction) * speed) >> 6;
             // Each dot lives 32 to 47 frames.
@@ -411,7 +411,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
             dot = &DOTS[i * DOTS_PER_COLUMN + j];
             direction = (Random16() & 0x7fff) + 0x4000;
             speed = (Random16() & 0x1ff) + 256;
-            dot->x = column->x << 16;
+            dot->x = px(column->x);
             dot->y = px(column->y + 16);
             dot->velocityX = (Trig_Sin(direction) * speed) >> 7;
             dot->velocityY = (Trig_Cos(direction) * speed) >> 6;

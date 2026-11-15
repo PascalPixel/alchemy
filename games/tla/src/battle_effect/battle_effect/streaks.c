@@ -209,7 +209,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
             struct MotionObject *struck =
                 BattleObject_GetFar(args->targets[k])->object;
 
-            struck->x += gStreaks_Tremble[(frame - k * 32 - 30) % 8] << 16;
+            struck->x += px(gStreaks_Tremble[(frame - k * 32 - 30) % 8]);
             if (struck->x > 0)
               struck->x += px(1) / 2;
             else
@@ -327,11 +327,11 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
       else
         angle = Random16() & 0x7fff;
       speed = (Random16() & 0x3ff) + 0x800;
-      mote->y = source->y + (Random16() << 4) + 0x50000;
+      mote->y = source->y + (Random16() << 4) + px(5);
     } else {
       angle = Random16();
       speed = (Random16() & 0x3ff) + 32;
-      mote->y = source->y + 0x50000;
+      mote->y = source->y + px(5);
     }
     mote->x = source->x;
     mote->z = source->z;

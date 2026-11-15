@@ -103,7 +103,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
           flame->x = px(54);
           flame->y = px(56);
           flame->variant = i * -2;
-          flame->velocityX = -(((Random16() & 3) << 16) + px(2));
+          flame->velocityX = -(px(Random16() & 3) + px(2));
           flame->velocityY = -(Random16() & 3) << 15;
         }
       }
@@ -125,7 +125,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
                 Q_16_16_UPPER_HALF(mote->y) <= 113) {
               s32 dx;
 
-              mote->velocityX = ((Random16() & 63) << 16) + px(56);
+              mote->velocityX = px(Random16() & 63) + px(56);
               dx = mote->velocityX - mote->x;
               mote->velocityX = dx / ((px(114) - mote->y) / (size << 14));
             }
@@ -137,9 +137,9 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
 
               if (distance < 0)
                 distance = -distance;
-              pull = (mote->y / 2 - distance + (s32)((Random16() & 31) << 16) +
-                      px(96)) /
-                     32;
+              pull =
+                  (mote->y / 2 - distance + (s32)px(Random16() & 31) + px(96)) /
+                  32;
               if (mote->x < px(96) && pull > 0)
                 pull = -pull;
               if (mote->x > px(96) && pull < 0)
@@ -226,7 +226,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
             if (++flame->variant == 24) {
               flame->x = px(54);
               flame->y = px(56);
-              flame->velocityX = -(((Random16() & 3) << 16) + px(2));
+              flame->velocityX = -(px(Random16() & 3) + px(2));
               flame->variant = 0;
             }
           }
@@ -262,8 +262,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
             continue;
           model->shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyPosition3(px(16), gMoloch_RingHeights[i] << 16,
-                                        0);
+          SceneTransform_ApplyPosition3(px(16), px(gMoloch_RingHeights[i]), 0);
           SceneTransform_ApplyScale3(scale, scale, scale);
           Transform_ApplyPitch(0xbb8);
           model->scrollU = ((frame + i * 5) & 7) << 4;
@@ -468,7 +467,7 @@ void Iris_DrawPillar(s32 halfWidth, s32 x, s32 height) {
   vertices[4].y = height;
 
   Transform_Reset();
-  SET_POSITION(&position, (x << 16) - px(63), (63 - height) << 16, 0);
+  SET_POSITION(&position, px(x) - px(63), px(63 - height), 0);
   SceneTransform_ApplyPosition(&position);
 
   model->kind = 4;
@@ -809,7 +808,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (sparks->life[i] != 0) {
         scale.x = scale.y = sparks->life[i] * 2;
         place[3] = 0;
-        place[1] = 0xff0000;
+        place[1] = px(255);
         place[0] = sparks->x[i];
         place[2] = sparks->y[i];
         Render_ApplyProjectedPlacementFar(objects[i], place, (s32 *)&scale, 0);
@@ -888,8 +887,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           texture.logHeight = 6;
           texture.pixels = work->sheet + 0x1810 + offset;
           Transform_ResetMatrix();
-          place[0] = work->particles[i].x - 0x400000;
-          place[1] = work->particles[i].y - 0x400000;
+          place[0] = work->particles[i].x - px(64);
+          place[1] = work->particles[i].y - px(64);
           place[2] = 0;
           SceneTransform_ApplyPosition(place);
           place[1] = place[0] = work->particles[i].velocityZ;
@@ -1070,8 +1069,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       for (i = 0; i != 15; i++) {
         struct IrisPoint *s = streaks[i];
 
-        s->x = gIris_StreakX[i] << 16;
-        s->y = gIris_StreakY[i] << 16;
+        s->x = px(gIris_StreakX[i]);
+        s->y = px(gIris_StreakY[i]);
         s->angle = gIris_StreakAngles[i];
         s->speed = gIris_StreakSpeeds[i];
         s->unk10 = 0;
@@ -1225,27 +1224,27 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         objects[i]->tile = sparks->tiles[sparks->frames[i]];
       }
       for (i = 0; i != 18; i++) {
-        sparks->x[i] = (Random16() % 15 << 16) + 0x390000;
-        sparks->y[i] = (Random16() % 15 << 16) + 0x4f0000;
+        sparks->x[i] = (Random16() % 15 << 16) + px(57);
+        sparks->y[i] = (Random16() % 15 << 16) + px(79);
         sparks->vx[i] = ((Random16() & 63) - 32) << 12;
         sparks->vy[i] = ((Random16() & 63) - 32) << 12;
       }
       for (; i != 36; i++) {
-        sparks->x[i] = (Random16() % 15 << 16) + 0xa90000;
-        sparks->y[i] = (Random16() % 15 << 16) + 0x4f0000;
+        sparks->x[i] = (Random16() % 15 << 16) + px(169);
+        sparks->y[i] = (Random16() % 15 << 16) + px(79);
         sparks->vx[i] = ((Random16() & 63) - 32) << 12;
         sparks->vy[i] = ((Random16() & 63) - 32) << 12;
       }
       Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, work->sheet,
                                  0, 0);
       for (i = 0; i != 6; i++) {
-        work->particles[i].x = (Random16() % 15 << 16) + 0x210000;
-        work->particles[i].y = (Random16() % 15 << 16) + 0x390000;
+        work->particles[i].x = (Random16() % 15 << 16) + px(33);
+        work->particles[i].y = (Random16() % 15 << 16) + px(57);
         work->particles[i].velocityX = -(Random16() & motesMask) << 12;
       }
       for (; i != 12; i++) {
-        work->particles[i].x = (Random16() % 15 << 16) + 0x510000;
-        work->particles[i].y = (Random16() % 15 << 16) + 0x390000;
+        work->particles[i].x = (Random16() % 15 << 16) + px(81);
+        work->particles[i].y = (Random16() % 15 << 16) + px(57);
         work->particles[i].velocityX = (Random16() & motesMask) << 12;
       }
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 70);
@@ -1253,7 +1252,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     if ((u32)(frame - 177) <= 216) {
       scale = gIris_UnitScale;
       pos[3] = 0;
-      pos[1] = 0xff0000;
+      pos[1] = px(255);
       lift = 0;
       if (frame > 350) {
         u16 *pal = (u16 *)(PLTT + 0x200);
@@ -1286,8 +1285,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           lift = (Trig_Sin((frame << 6) - 0x2c00) << 6) - 0x147200;
         for (j = 0; j != 4; j++) {
           for (column = 0; column != 4; column++) {
-            pos[0] = 0x480000 + column * 0x200000;
-            pos[2] = lift + 0x380000 + j * 0x200000;
+            pos[0] = px(72) + column * px(32);
+            pos[2] = lift + px(56) + j * px(32);
             Render_ApplyProjectedPlacementFar(work->sprites[j * 4 + column],
                                               pos, (s32 *)&scale, 0);
           }
@@ -1324,9 +1323,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 177) <= 46) {
       for (i = 0; i != 36; i++) {
-        shrink.x = shrink.y = 0x10000 - ((frame - 177) >> 1 << 11);
+        shrink.x = shrink.y = px(1) - ((frame - 177) >> 1 << 11);
         pos[3] = 0;
-        pos[1] = 0xff0000;
+        pos[1] = px(255);
         pos[0] = sparks->x[i];
         pos[2] = sparks->y[i];
         Render_ApplyProjectedPlacementFar(objects[i], pos, (s32 *)&shrink, 0);
@@ -1451,7 +1450,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
               sparks->life[s] = 0x7900;
               sparks->x[s] = gIris_SplashX[j] << 17;
-              sparks->y[s] = (gIris_SplashY[j] << 16) + 0x200000;
+              sparks->y[s] = px(gIris_SplashY[j]) + px(32);
               sparks->vx[s] = ((Random16() & 31) - 16) << 12;
               sparks->vy[s] = -(Random16() & 31) << 12;
             }
@@ -1733,7 +1732,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
             sparks->x[s] = (leftSpans.p[(r + 1) >> 5].left +
                             Random16() % leftSpans.p[(r + 1) >> 5].width)
                            << 16;
-            sparks->y[s] = (r << 16) + 0x100000;
+            sparks->y[s] = px(r) + px(16);
             sparks->vx[s] = (Random16() & 15) * 3 << 11;
             sparks->vy[s] = -0x8000 - ((Random16() & 31) * 3 << 11);
           }
@@ -1763,7 +1762,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
             sparks->x[s] = (rightSpans.p[(r + 1) >> 5].left +
                             Random16() % rightSpans.p[(r + 1) >> 5].width)
                            << 16;
-            sparks->y[s] = (r << 16) + 0x100000;
+            sparks->y[s] = px(r) + px(16);
             sparks->vx[s] = (Random16() & 15) * 3 << 11;
             sparks->vy[s] = -0x8000 - ((Random16() & 31) * 3 << 11);
           }
@@ -1943,8 +1942,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       texture2.logHeight = 5;
       texture2.pixels = work->sheet + 0x5810;
       Transform_ResetMatrix();
-      place[0] = 0x200000;
-      place[1] = -0x180000;
+      place[0] = px(32);
+      place[1] = -px(24);
       place[2] = 0;
       SceneTransform_ApplyPosition(place);
       Transform_ApplyRoll(0x9800);
@@ -1977,7 +1976,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           s32 spin = Random16() & 3;
 
           work->particles[n].x = px(96);
-          work->particles[n].y = ((Random16() & 7) << 16) + 0x240000;
+          work->particles[n].y = px(Random16() & 7) + px(36);
           work->particles[n].z = frame;
           work->particles[n].velocityX =
               Iwram_MulQ16((spin + 2) << 15, Trig_Sin(0x9800));
@@ -1987,7 +1986,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         }
         n = FindFreeParticle();
         if (n != -1) {
-          work->particles[n].x = ((Random16() & 31) << 16) + 0x600000;
+          work->particles[n].x = px(Random16() & 31) + px(96);
           work->particles[n].y = px(Random16() & 31);
           work->particles[n].z = frame;
           work->particles[n].velocityX = -((Random16() & 15) << 13);
@@ -2277,19 +2276,19 @@ void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
     cy = &vertices[vertexCount + 7];
     ay = &vertices[vertexCount + 1];
     by = &vertices[vertexCount + 4];
-    Dma_Set(&vertices[faces[i].vertex[0]], ax,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 3, REG_DMA3);
-    Dma_Set(&vertices[faces[i].vertex[1]], bx,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 3, REG_DMA3);
-    Dma_Set(&vertices[faces[i].vertex[2]], cx,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 3, REG_DMA3);
+    Dma_Set(&vertices[faces[i].vertex[0]], ax, px(DMA_ENABLE | DMA_32BIT) | 3,
+            REG_DMA3);
+    Dma_Set(&vertices[faces[i].vertex[1]], bx, px(DMA_ENABLE | DMA_32BIT) | 3,
+            REG_DMA3);
+    Dma_Set(&vertices[faces[i].vertex[2]], cx, px(DMA_ENABLE | DMA_32BIT) | 3,
+            REG_DMA3);
 
     // Back faces are skipped.
     if (Iwram_MulQ16(*bx - *ax, *cy - *ay) -
             Iwram_MulQ16(*cx - *ax, *by - *ay) >=
         0) {
       work = (struct BattleEffectWork *)Ram_HeapSlots->battleEffect;
-      Dma_Set(uvs[i], uv, (DMA_ENABLE | DMA_32BIT) << 16 | 6, REG_DMA3);
+      Dma_Set(uvs[i], uv, px(DMA_ENABLE | DMA_32BIT) | 6, REG_DMA3);
       *ax += 64 << 16;
       *ay += 64 << 16;
       *bx += 64 << 16;
@@ -2866,7 +2865,7 @@ void Render_ProjectVertices(struct ModelVertex *vertices,
   s32 point[3];
 
   for (; count != 0; count--) {
-    SET_VECTOR(point, vertices->x << 16, vertices->y << 16, vertices->z << 16);
+    SET_VECTOR(point, px(vertices->x), px(vertices->y), px(vertices->z));
     Render_ProjectPoint(point, point);
     screen->x = point[0];
     screen->y = point[1];

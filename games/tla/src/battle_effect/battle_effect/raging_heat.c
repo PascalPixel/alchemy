@@ -185,11 +185,11 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
         Transform_Reset();
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (i == 0) {
-          SceneTransform_ApplyPosition3((centerX << 16) - 0x800000,
-                                        (baseY << 16) - 0x400000, 0);
+          SceneTransform_ApplyPosition3(px(centerX) - px(128),
+                                        px(baseY) - px(64), 0);
         } else {
-          SceneTransform_ApplyPosition3((centerX << 16) - 0x800000,
-                                        ((baseY + 8) << 16) - 0x400000, 0);
+          SceneTransform_ApplyPosition3(px(centerX) - px(128),
+                                        px(baseY + 8) - px(64), 0);
         }
         Transform_ApplyPitch(2000);
         if (frame <= 47) {
@@ -318,19 +318,19 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
     if (lift > gJuggle_Styles[args->variant][RING_LIFT_MAX])
       lift = gJuggle_Styles[args->variant][RING_LIFT_MAX];
     if (frame < RING_THROW_FRAME) {
-      ring->x = caster.x << 16;
+      ring->x = px(caster.x);
       ring->y = px(caster.y - lift - 32);
     } else {
       // The throw: z and velocityZ hold the pull toward the midpoint, and
       // the ring keeps three quarters of its speed each frame.
       if (frame == RING_THROW_FRAME) {
         BattleEffect_GetTargetsMidpoint(&midpoint);
-        ring->x = caster.x << 16;
+        ring->x = px(caster.x);
         ring->y = px(caster.y - lift - 32);
         ring->velocityX = 0;
         ring->velocityY = 0;
-        ring->z = ((midpoint.x << 16) - ring->x) / 64;
-        ring->velocityZ = (((midpoint.y - 32) << 16) - ring->y) / 64;
+        ring->z = (px(midpoint.x) - ring->x) / 64;
+        ring->velocityZ = (px(midpoint.y - 32) - ring->y) / 64;
       }
       ring->x += ring->velocityX;
       ring->y += ring->velocityY;
@@ -359,7 +359,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
       place = vector;
       place[0] = 0;
       place[1] = 0;
-      place[2] = lift << 16;
+      place[2] = px(lift);
       TransformVector(place, place);
       x = place[0] >> 17;
       place[0] = x + 64;
@@ -384,7 +384,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
           s32 speed;
 
           spark->x = px(target.x / 2);
-          spark->y = target.y << 16;
+          spark->y = px(target.y);
           angle = Random16();
           speed = (Random16() & 255) + 127;
           spark->velocityX = (Trig_Sin(angle) * speed) >> 6;

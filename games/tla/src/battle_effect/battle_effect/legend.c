@@ -96,7 +96,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
       for (i = 0; i != 3; i++) {
         step = &work->particles[i];
         step->x = start.x << 15;
-        step->y = start.y << 16;
+        step->y = px(start.y);
         step->velocityX = (target.x - start.x) << 11;
         step->velocityY = (target.y - start.y) << 12;
         step->variant = 0;
@@ -209,7 +209,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         model->alpha = alpha;
         Transform_Reset();
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-        SceneTransform_ApplyPosition3((start.x - 128) << 16, height << 16, 0);
+        SceneTransform_ApplyPosition3(px(start.x - 128), px(height), 0);
         Transform_ApplyPitch(0x5900);
         if (args->side == EFFECT_SIDE_ENEMIES)
           Transform_ApplyYaw(0x1900);
@@ -236,7 +236,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
             model->alpha = alpha;
             Transform_Reset();
             SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-            SceneTransform_ApplyPosition3((start.x - 128) << 16, -px(48), 0);
+            SceneTransform_ApplyPosition3(px(start.x - 128), -px(48), 0);
             Transform_ApplyPitch(0x5900);
             if (args->side == EFFECT_SIDE_ENEMIES)
               Transform_ApplyYaw(0x1900);
@@ -260,7 +260,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
           model->alpha = 0;
           Transform_Reset();
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          SceneTransform_ApplyPosition3((start.x - 128) << 16, -px(80), 0);
+          SceneTransform_ApplyPosition3(px(start.x - 128), -px(80), 0);
           Transform_ApplyPitch(0x47d0);
           Transform_ApplyRoll((frame + i * 16) << 9);
           scale = (frame << 12) - Q16_ONE / 4;
@@ -447,7 +447,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           struct Particle *step = &work->particles[frame % 56];
 
           step->x = card.x << 15;
-          step->y = card.y << 16;
+          step->y = px(card.y);
           step->velocityX = (aim.x - card.x) << 11;
           step->velocityY = (aim.y - card.y) << 11;
           step->z = 32;
@@ -577,8 +577,8 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       // The card: it swings from side to side as it rises, tilted back.
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-      SceneTransform_ApplyPosition3((card.x << 16) - px(128),
-                                    (card.y << 16) - px(64), 0);
+      SceneTransform_ApplyPosition3(px(card.x) - px(128), px(card.y) - px(64),
+                                    0);
       if (frame <= 47) {
         Transform_ApplyPitch((48 - frame) << 10);
         if (args->side == EFFECT_SIDE_ENEMIES)
@@ -654,8 +654,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
 
         texture.pixels = work->sheet + step->z;
         Transform_Reset();
-        SceneTransform_ApplyPosition3((step->x - 60) << 16,
-                                      (step->y - 64) << 16, 0);
+        SceneTransform_ApplyPosition3(px(step->x - 60), px(step->y - 64), 0);
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (args->side == EFFECT_SIDE_PARTY)
           Transform_ApplyYaw(TRIG_TURN / 2);

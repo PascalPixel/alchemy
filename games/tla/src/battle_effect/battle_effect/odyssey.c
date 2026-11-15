@@ -187,7 +187,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         if (args->side == EFFECT_SIDE_PARTY)
           angle += TRIG_TURN / 2;
         shard->x = px(to.x / 2);
-        shard->y = to.y << 16;
+        shard->y = px(to.y);
         shard->velocityX = (Trig_Sin(angle) * speed) >> 6;
         shard->velocityY = -(Trig_Cos(angle) * speed) >> 5;
         shard->z = Random16();
@@ -261,7 +261,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
           }
           spark = &work->particles[i * 32 + k];
           spark->x = px(to.x / 2);
-          spark->y = to.y << 16;
+          spark->y = px(to.y);
           spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
           spark->velocityY = -(Trig_Cos(angle) * speed) >> 5;
           spark->variant = (Random16() & 7) + 17;
@@ -338,7 +338,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
           model->look.shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyPosition3((from.x / 2 - 64) << 16, 0, 0);
+          SceneTransform_ApplyPosition3(px(from.x / 2 - 64), 0, 0);
           SceneTransform_ApplyScale3(scale, scale * 2, scale);
           Transform_ApplyPitch(gOdyssey_FlashPitches[i]);
           Transform_ApplyYaw(gOdyssey_FlashYaws[i]);
@@ -364,7 +364,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
         model->look.shade = 0;
         Transform_Reset();
-        SceneTransform_ApplyPosition3((from.x / 2 - 64) << 16, 0, 0);
+        SceneTransform_ApplyPosition3(px(from.x / 2 - 64), 0, 0);
         SceneTransform_ApplyScale3(scale, scale * 2, scale);
         Transform_ApplyPitch(gOdyssey_FlashPitches[i]);
         Transform_ApplyYaw(gOdyssey_FlashYaws[i]);
@@ -385,7 +385,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 
           model->look.shade = shade;
           Transform_Reset();
-          SceneTransform_ApplyPosition3((to.x / 2 - 64) << 16, 0, 0);
+          SceneTransform_ApplyPosition3(px(to.x / 2 - 64), 0, 0);
           SceneTransform_ApplyScale3(scale, scale * 2, scale);
           Transform_ApplyPitch(gOdyssey_FlashPitches[i]);
           Transform_ApplyYaw(gOdyssey_FlashYaws[i]);

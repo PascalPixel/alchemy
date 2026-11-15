@@ -131,9 +131,9 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
         fall->velocityX = target->x + Trig_Sin(angle) * radius;
         z = target->z + Trig_Cos(angle) * radius;
         fall->velocityZ = z;
-        fall->velocityY = -(px(8));
+        fall->velocityY = -px(8);
         fall->velocityX = (fall->velocityX - fall->x) / 6;
-        fall->velocityY = (-0x80000 - fall->y) / 6;
+        fall->velocityY = (-px(8) - fall->y) / 6;
         fall->velocityZ = (z - fall->z) / 6;
         fall->variant = -i * 4;
       }
@@ -285,7 +285,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       model->mesh = gBattleEffect_SmallSquareMeshReversed;
       for (i = 0; i != 4; i++) {
         s32 sway = Trig_Sin((frame << 8) + TRIG_TURN / 16);
-        s32 x = ((center.x / 2 - 64) << 16) -
+        s32 x = px(center.x / 2 - 64) -
                 (gLightSurge_PillarOffsets[i] * sway / (TRIG_TURN)) *
                     Trig_Sin((s16)camera->yaw);
         s32 z = -((gLightSurge_PillarOffsets[i] * sway / (TRIG_TURN)) *

@@ -151,8 +151,8 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
           }
           texture.pixels = work->sheet + i * 0x1000;
           Transform_Reset();
-          SceneTransform_ApplyPosition3((source.x / 2 - 64) << 16,
-                                        (source.y - 88) << 16, 0);
+          SceneTransform_ApplyPosition3(px(source.x / 2 - 64),
+                                        px(source.y - 88), 0);
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           if (args->side == EFFECT_SIDE_ENEMIES) {
             Transform_ApplyRoll(TRIG_TURN / 2 - step->variant);
@@ -191,8 +191,8 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
 
         texture.pixels = work->sheet;
         Transform_Reset();
-        SceneTransform_ApplyPosition3(work->particles[0].x - 0x400000,
-                                      work->particles[0].y - 0x400000, 0);
+        SceneTransform_ApplyPosition3(work->particles[0].x - px(64),
+                                      work->particles[0].y - px(64), 0);
         SceneTransform_ApplyScale3(scale >> 1, scale, Q16_ONE / 2);
         Transform_ApplyRoll(work->particles[0].z);
         if (args->side == EFFECT_SIDE_ENEMIES) {
@@ -632,7 +632,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
         last->variant = level - 24;
       }
       Transform_Reset();
-      SceneTransform_ApplyPosition3(last->x - 0x400000, last->y - 0x400000, 0);
+      SceneTransform_ApplyPosition3(last->x - px(64), last->y - px(64), 0);
       SceneTransform_ApplyScale3(scale * 2, scale, scale * 2);
       Transform_ApplyPitch(-TRIG_TURN / 8);
       Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices, 4);
@@ -654,7 +654,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
       model->shade = zero;
       texture.pixels = work->sheet + 0x4000 + ((i % 2) << 10);
       Transform_Reset();
-      SceneTransform_ApplyPosition3(drop->x - 0x400000, drop->y - 0x300000, 0);
+      SceneTransform_ApplyPosition3(drop->x - px(64), drop->y - px(48), 0);
       SceneTransform_ApplyScale3(splash >> 1, splash, splash >> 1);
       Transform_ApplyPitch(-TRIG_TURN / 4);
       Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices, 4);
@@ -853,8 +853,8 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
             brightness = (16 - square->variant) * 8;
           model->shade = brightness;
           Transform_Reset();
-          SceneTransform_ApplyPosition3((square->x - 64) << 16,
-                                        (square->y - 64) << 16, 0);
+          SceneTransform_ApplyPosition3(px(square->x - 64), px(square->y - 64),
+                                        0);
           Transform_ApplyRoll(square->velocityZ);
           Transform_ApplyPitch(square->velocityY);
           SceneTransform_ApplyUniformScale(roll);

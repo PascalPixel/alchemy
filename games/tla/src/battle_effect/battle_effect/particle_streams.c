@@ -321,36 +321,36 @@ void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
     break;
   case 1:
     for (i = 0; i != 12; i++) {
-      pos[0] = (gHelmSplitter_TwelveX[i] << 16) + x - px(16);
-      pos[2] = (gHelmSplitter_TwelveZ[i] << 16) + z - px(32);
+      pos[0] = px(gHelmSplitter_TwelveX[i]) + x - px(16);
+      pos[2] = px(gHelmSplitter_TwelveZ[i]) + z - px(32);
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
     }
     break;
   case 2:
     for (i = 0; i != 8; i++) {
-      pos[0] = (gHelmSplitter_RightEightX[i] << 16) + x + px(16);
-      pos[2] = (gHelmSplitter_RightEightZ[i] << 16) + z;
+      pos[0] = px(gHelmSplitter_RightEightX[i]) + x + px(16);
+      pos[2] = px(gHelmSplitter_RightEightZ[i]) + z;
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
     }
     break;
   case 6:
     for (i = 0; i != 8; i++) {
-      pos[0] = (gFormationObjects_X[i] << 16) + x;
-      pos[2] = (gFormationObjects_Z[i] << 16) + z;
+      pos[0] = px(gFormationObjects_X[i]) + x;
+      pos[2] = px(gFormationObjects_Z[i]) + z;
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
     }
     break;
   case 3:
     for (i = 0; i != 8; i++) {
-      pos[0] = (gHelmSplitter_SmallEightX[i] << 16) + x;
-      pos[2] = (gHelmSplitter_SmallEightZ[i] << 16) + z;
+      pos[0] = px(gHelmSplitter_SmallEightX[i]) + x;
+      pos[2] = px(gHelmSplitter_SmallEightZ[i]) + z;
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &big.x, 0);
     }
     break;
   case 4:
     for (i = 0; i != 11; i++) {
-      pos[0] = (gFormationObjects_WideX[i] << 16) + x;
-      pos[2] = (gFormationObjects_WideZ[i] << 16) + z;
+      pos[0] = px(gFormationObjects_WideX[i]) + x;
+      pos[2] = px(gFormationObjects_WideZ[i]) + z;
       Render_ApplyProjectedPlacementFar(work->sprites[i], pos, &normal.x, 0);
     }
     break;
@@ -937,13 +937,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         x = 64 - frame / 4;
       y = 96 - frame;
       position[3] = 0;
-      position[1] = 0xff0000;
+      position[1] = px(255);
       if (mode == 1) {
         size = angle + 0xa000;
         scale.x = size;
         scale.y = size;
-        position[0] = (x << 16) + 0x500000;
-        position[2] = (64 - y) << 16;
+        position[0] = px(x) + px(80);
+        position[2] = px(64 - y);
         Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale,
                                           0);
         Render_ApplyProjectedPlacementFar(work->sprites[1], position, &scale,
@@ -952,8 +952,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         size = angle + TRIG_TURN;
         scale.x = size;
         scale.y = size;
-        position[0] = (x << 16) + 0x600000;
-        position[2] = (96 - y) << 16;
+        position[0] = px(x) + px(96);
+        position[2] = px(96 - y);
         Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale,
                                           0);
       }
@@ -981,9 +981,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       Transform_ApplyRoll(TRIG_TURN / 32);
       Transform_ApplyYaw(frame << 8);
       for (i = 0; i != 7; i++) {
-        vector[0] = (gParticleStreams_OrbitPoints[i][0] / 2) << 16;
-        vector[1] = (gParticleStreams_OrbitPoints[i][1] + frame) << 16;
-        vector[2] = (gParticleStreams_OrbitPoints[i][2] / 2) << 16;
+        vector[0] = px(gParticleStreams_OrbitPoints[i][0] / 2);
+        vector[1] = px(gParticleStreams_OrbitPoints[i][1] + frame);
+        vector[2] = px(gParticleStreams_OrbitPoints[i][2] / 2);
         EffectPosition_ProjectPoint(vector, pos = &spot);
         pos->x = Q_16_16_UPPER_HALF(pos->x) + 128;
         pos->y = Q_16_16_UPPER_HALF(pos->y) + 60;
@@ -1005,8 +1005,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
                gParticleStreams_FireballPoints[i][0] + x - 12, drop - 12, 24,
                24);
         else if (drop <= 95)
-          AddFlame((gParticleStreams_FireballPoints[i][0] + x) << 16,
-                   drop << 16, 1);
+          AddFlame(px(gParticleStreams_FireballPoints[i][0] + x), px(drop), 1);
       }
 
       // The motes drift up and away, six pictures each.
@@ -1186,19 +1185,19 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     y = 64 - frame * 2;
     grow = (frame << 8) + 0x20000;
     position[3] = 0;
-    position[1] = 0xff0000;
+    position[1] = px(255);
     if (mode == 1) {
       scale.x = size;
       scale.y = size;
-      position[0] = (x << 16) + 0x600000;
-      position[2] = (96 - y) << 16;
+      position[0] = px(x) + px(96);
+      position[2] = px(96 - y);
       Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale, 0);
       Render_ApplyProjectedPlacementFar(work->sprites[1], position, &scale, 0);
     } else {
       scale.x = grow;
       scale.y = grow;
-      position[0] = (x << 16) + 0x600000;
-      position[2] = (96 - y) << 16;
+      position[0] = px(x) + px(96);
+      position[2] = px(96 - y);
       Render_ApplyProjectedPlacementFar(work->sprites[0], position, &scale, 0);
     }
     work->shakeFrames = 1;

@@ -174,8 +174,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             struct Particle *q = work->particles;
 
             for (i = 0; i != 63; i++, q++) {
-              SET_POSITION(q, point[0], ((Random16() & 31) << 16) + 0x400000,
-                           0);
+              SET_POSITION(q, point[0], px(Random16() & 31) + px(64), 0);
               q->velocityX = ((Random16() & 63) + 64) << 13;
               if (q->x > 0) {
                 q->velocityX = -q->velocityX;
@@ -197,7 +196,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         }
         pos[1] = point[1] + (k << 16) - Trig_Cos(frame * 3304) * k;
         if (frame > 27) {
-          pos[1] = pos[1] + (frame << 18) - 0x700000;
+          pos[1] = pos[1] + (frame << 18) - px(112);
         }
         {
           /* FAKEMATCH(temporary): out stands in for screen's address. */
@@ -417,7 +416,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           s32 y = 64 - ((Trig_Sin(frame * 630) << 6) >> 16);
 
           Transform_Push();
-          SceneTransform_ApplyPosition3(0, ((y - i * 8) << 16) + 0x300000, 0);
+          SceneTransform_ApplyPosition3(0, px(y - i * 8) + px(48), 0);
           if (args->side == EFFECT_SIDE_PARTY) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
@@ -449,8 +448,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             model->shade = shade;
             if (shade > -64) {
               Transform_Reset();
-              SceneTransform_ApplyPosition3((apos.x / 2 - 64) << 16,
-                                            (apos.y - 64) << 16, 0);
+              SceneTransform_ApplyPosition3(px(apos.x / 2 - 64),
+                                            px(apos.y - 64), 0);
               SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
               Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
               Transform_ApplyPitch(-TRIG_TURN / 16);
@@ -491,8 +490,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           scroll &= 127;
           model->scrollU = scroll;
           Transform_Reset();
-          SceneTransform_ApplyPosition3((spos.x / 2 - 64) << 16,
-                                        (spos.y << 16) - 0x340000, 0);
+          SceneTransform_ApplyPosition3(px(spos.x / 2 - 64),
+                                        px(spos.y) - px(52), 0);
           if (args->side == EFFECT_SIDE_PARTY) {
             Transform_ApplyYaw(TRIG_TURN / 2);
           }
@@ -522,7 +521,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           }
           model->scrollV = 0;
           SceneTransform_ApplyPosition(pos);
-          SceneTransform_ApplyPosition3(0, 0x100000, 0);
+          SceneTransform_ApplyPosition3(0, px(16), 0);
           for (i = 0; i != 3; i++) {
             Transform_Push();
             if (args->side == EFFECT_SIDE_PARTY) {

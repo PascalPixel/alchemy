@@ -199,8 +199,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       position[3] = 0;
       position[1] = 0;
       for (i = 0; i != 8; i++) {
-        position[0] = ((i & 3) * 48 << 16) + serpentX - 0x200000;
-        position[2] = ((i / 4) * 48 << 16) + serpentY - 0x180000;
+        position[0] = ((i & 3) * 48 << 16) + serpentX - px(32);
+        position[2] = ((i / 4) * 48 << 16) + serpentY - px(24);
         Render_ApplyProjectedPlacementFar(work->sprites[i], position, &scale.x,
                                           0);
       }
@@ -464,8 +464,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 
               r &= Random16();
               a = (Random16() & 0x7fff) - 0x4000;
-              PARTICLES[j].x = pillarX << 16;
-              PARTICLES[j].y = ground << 16;
+              PARTICLES[j].x = px(pillarX);
+              PARTICLES[j].y = px(ground);
               r += 32;
               PARTICLES[j].velocityX = (Trig_Sin(a) * r) >> 7;
               PARTICLES[j].velocityY = -(Trig_Cos(a) * r * 2) >> 7;

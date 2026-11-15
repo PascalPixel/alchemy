@@ -506,12 +506,12 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       q = (struct Particle *)(work->sheet + 0x4b98);
       for (i = 0; i != 6; i++, src += 5) {
         p = &work->particles[i];
-        p->x = src[0] << 16;
+        p->x = px(src[0]);
         p->variant = -8 * i;
         /* FAKEMATCH(barrier): an empty asm parts the particle's first stores
          * from the rest. */
         __asm__("");
-        p->y = src[1] << 16;
+        p->y = px(src[1]);
         p->z = src[2] << 6;
         p->velocityX = src[3] << 15;
         p->velocityY = src[4] << 15;
@@ -598,7 +598,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           s32 vx;
           s32 x = step->x;
           s32 mx = x - 0x400000;
-          s32 my = step->y - 0x400000;
+          s32 my = step->y - px(64);
           s32 u = t - 59;
 
           if (u < 0) {
@@ -717,7 +717,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           s32 sc;
 
           Transform_Reset();
-          SceneTransform_ApplyPosition3(0x80000, 0, 0);
+          SceneTransform_ApplyPosition3(px(8), 0, 0);
           Transform_ApplyPitch(TRIG_TURN / 4);
           if (j == 0) {
             sc = t * 3072 - 0x12000;
@@ -758,8 +758,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       if (draw) {
         place[1] = place[3] = 0;
         for (i = 0; i != 7; i++) {
-          place[0] = (gUlysses_ObjectX[i] << 16) + ship.x - 0x200000;
-          place[2] = (gUlysses_ObjectZ[i] << 16) + ship.z - 0x200000;
+          place[0] = px(gUlysses_ObjectX[i]) + ship.x - px(32);
+          place[2] = px(gUlysses_ObjectZ[i]) + ship.z - px(32);
           Render_ApplyProjectedPlacementFar(work->sprites[i], place,
                                             (s32 *)&req, 0);
         }

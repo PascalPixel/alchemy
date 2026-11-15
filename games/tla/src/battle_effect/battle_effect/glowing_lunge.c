@@ -169,8 +169,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     if (frame < LUNGE_STREAK_FRAMES) {
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-      SceneTransform_ApplyPosition3((caster.x - 128) << 16,
-                                    (caster.y - 88) << 16, 0);
+      SceneTransform_ApplyPosition3(px(caster.x - 128), px(caster.y - 88), 0);
       SceneTransform_ApplyScale3(gRushingStrike_Scales[mode] << 1,
                                  gRushingStrike_Scales[mode] << 1,
                                  gRushingStrike_Scales[mode]);
@@ -201,11 +200,9 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       Transform_Reset();
       SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
       if (args->side == EFFECT_SIDE_ENEMIES)
-        SceneTransform_ApplyPosition3((target.x - 144) << 16,
-                                      (target.y - 84) << 16, 0);
+        SceneTransform_ApplyPosition3(px(target.x - 144), px(target.y - 84), 0);
       else
-        SceneTransform_ApplyPosition3((target.x - 112) << 16,
-                                      (target.y - 84) << 16, 0);
+        SceneTransform_ApplyPosition3(px(target.x - 112), px(target.y - 84), 0);
       SceneTransform_ApplyScale3(scale, scale << 2, scale);
       Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
       Render_DrawModelList(quad);

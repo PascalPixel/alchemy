@@ -207,7 +207,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
             if (p->variant != -1) {
               continue;
             }
-            SET_POSITION(p, target[2], target[3] + 0x50000, target[4]);
+            SET_POSITION(p, target[2], target[3] + px(5), target[4]);
             p->velocityX = ((Random16() & 511) + 256) << 10;
             if (args->side == EFFECT_SIDE_PARTY) {
               p->velocityX = -p->velocityX;
@@ -240,7 +240,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
             s32 speed;
 
             p = &work->particles[i];
-            SET_POSITION(p, target[2], target[3] + 0xa0000, target[4]);
+            SET_POSITION(p, target[2], target[3] + px(10), target[4]);
             angle = (Random16() & 0x7fff) - TRIG_TURN / 4;
             // DEAD: both arms alike; the ROM keeps the test and both calls.
             if (i > 53) {
@@ -364,7 +364,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         gCameraSceneParameters[3] = 60;
         SceneTransform_ApplyPosition(focus);
-        SceneTransform_ApplyPosition3(0, 0x100000, 0);
+        SceneTransform_ApplyPosition3(0, px(16), 0);
         if (args->side == EFFECT_SIDE_ENEMIES) {
           Transform_ApplyRoll(20576);
         } else {

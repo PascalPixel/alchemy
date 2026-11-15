@@ -206,7 +206,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
 
         step = &work->particles[i];
         step->x = px(position.x / 2);
-        step->y = position.y << 16;
+        step->y = px(position.y);
         step->velocityX = (Trig_Sin(angle) * speed) >> 8;
         step->velocityY = -(Trig_Cos(angle) * speed * 2) >> 8;
         step->variant = -i;
@@ -618,7 +618,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
       if (shift < -64) {
         shift = -64;
       }
-      SceneTransform_ApplyPosition3(shift << 16, 0, 0);
+      SceneTransform_ApplyPosition3(px(shift), 0, 0);
     }
     model->kind = 7;
     model->texture = &texture;
@@ -694,8 +694,8 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
           continue;
         }
         Transform_Reset();
-        SceneTransform_ApplyPosition3((target.x / 2 - 64) << 16,
-                                      (target.y - 64) << 16, 0);
+        SceneTransform_ApplyPosition3(px(target.x / 2 - 64), px(target.y - 64),
+                                      0);
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
         Transform_ApplyPitch(TRIG_TURN / 16);
@@ -939,7 +939,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
       if (mode == 0) {
         s32 scale;
 
-        SceneTransform_ApplyPosition3((screen.x / 2 - 64) << 16, 0x280000, 0);
+        SceneTransform_ApplyPosition3(px(screen.x / 2 - 64), px(40), 0);
         Transform_ApplyPitch(k << 11);
         Transform_ApplyYaw(k * 21000 + yaw);
         scale = 85536 - Trig_Sin(frame * 964);
@@ -950,7 +950,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
       } else {
         s32 scale;
 
-        SceneTransform_ApplyPosition3((screen.x / 2 - 64) << 16,
+        SceneTransform_ApplyPosition3(px(screen.x / 2 - 64),
                                       (k << 20) + 0x100000, 0);
         Transform_ApplyPitch((k << 12) - TRIG_TURN / 32);
         Transform_ApplyYaw(k * 21000 + yaw);
@@ -1086,7 +1086,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
 
             shard = &work->particles[((t - 7) / 8 * 8 + k + 32) & 63];
             shard->y = px(96);
-            shard->x = centerX << 16;
+            shard->x = px(centerX);
             shard->velocityX = ((Random16() & 127) - 64) << 11;
             shard->velocityY = -((Random16() & 127) + 64) << 11;
             shard->z = 32;
@@ -1110,7 +1110,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_CRASH);
       for (k = 0, shard = work->particles; k != 32; k++, shard++) {
         shard->y = px(96);
-        shard->x = centerX << 16;
+        shard->x = px(centerX);
         shard->velocityX = ((Random16() & 127) - 64) << 12;
         shard->velocityY = -((Random16() & 127) + 64) << 12;
         shard->z = 32;
@@ -1191,8 +1191,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
         }
         model->shade = shade;
         Transform_Reset();
-        SceneTransform_ApplyPosition3((centerX - 64) << 16,
-                                      gDiamondBerg_RingHeights[k] << 16, 0);
+        SceneTransform_ApplyPosition3(px(centerX - 64),
+                                      px(gDiamondBerg_RingHeights[k]), 0);
         SceneTransform_ApplyScale3(scale, scale, scale);
         model->scrollU = ((frame + k * 5) & 7) << 4;
         Transform_ApplyPitch(3000);
@@ -1225,8 +1225,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
           continue;
         }
         Transform_Reset();
-        SceneTransform_ApplyPosition3((target.x / 2 - 64) << 16,
-                                      (target.y - 80) << 16, 0);
+        SceneTransform_ApplyPosition3(px(target.x / 2 - 64), px(target.y - 80),
+                                      0);
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         Transform_ApplyYaw((args->side << 15) + TRIG_TURN / 2);
         Transform_ApplyRoll(gDiamondBerg_ShardRolls[k]);

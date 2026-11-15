@@ -540,7 +540,7 @@ void BattleEffect_RunDjinnHeal(struct BattleEffectParams *args) {
     s32 heading = Random16() & 0xffff;
     s32 speed = (Random16() & 0xff) + 128;
 
-    SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
+    SET_POSITION(spark, 0, px((Random16() & 31) + 20), 0);
     spark->velocityX = (Trig_Sin(heading) * speed) >> 5;
     spark->velocityY = 0;
     spark->velocityZ = (Trig_Cos(heading) * speed) >> 5;

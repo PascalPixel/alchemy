@@ -357,7 +357,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
             splash =
                 &gDropSplashes->splashes[i * SPLASH_COUNT(args->variant) + k];
             splash->x = px(x + 12);
-            splash->y = y << 16;
+            splash->y = px(y);
             splash->velocityX = ((Random16() & 255) - 128) << 9;
             if (args->variant == EFFECT_VARIANT_STRONGEST)
               splash->velocityY = ((Random16() & 0x1ff) - 0x180) << 10;

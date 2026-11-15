@@ -119,7 +119,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
     s32 angle = Random16() & 0xffff;
     s32 speed = (Random16() & 255) + 128;
 
-    SET_POSITION(spark, 0, ((Random16() & 31) + 20) << 16, 0);
+    SET_POSITION(spark, 0, px((Random16() & 31) + 20), 0);
     spark->velocityX = (Trig_Sin(angle) * speed) >> 5;
     spark->velocityY = 0;
     spark->velocityZ = (Trig_Cos(angle) * speed) >> 5;
@@ -290,7 +290,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
         s32 speed = (Random16() & 255) + 128;
 
         mote->x = screen[0] << 15;
-        mote->y = screen[1] << 16;
+        mote->y = px(screen[1]);
         mote->velocityX = (Trig_Sin(angle) * speed) >> 6;
         mote->velocityY = (Trig_Cos(angle) * speed) >> 5;
         mote->variant = (Random16() & 15) + 8;
@@ -657,25 +657,25 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         else
           shot->x = user->x;
         if (mode == 7)
-          shot->y = user->y + ((Random16() & 15) << 16) + 0x3a0000;
+          shot->y = user->y + px(Random16() & 15) + px(58);
         else if (mode == 10)
           shot->y = user->y + height / 2;
         else if (mode == 18)
-          shot->y = user->y + 0x320000;
+          shot->y = user->y + px(50);
         else if (mode == 6)
           shot->y = user->y + height / 2;
         else if (mode >= 12 && mode <= 14)
-          shot->y = user->y + height / 2 + ((Random16() % 80 - 16) << 16);
+          shot->y = user->y + height / 2 + px(Random16() % 80 - 16);
         else if (mode == 9)
-          shot->y = user->y + height / 2 + ((16 - (Random16() & 31)) << 16);
+          shot->y = user->y + height / 2 + px(16 - (Random16() & 31));
         else if (mode == 3 || mode == 4)
-          shot->y = user->y + height / 2 + ((16 - (Random16() & 31)) << 16);
+          shot->y = user->y + height / 2 + px(16 - (Random16() & 31));
         else if (mode == 11)
-          shot->y = user->y + height / 2 + ((32 - (Random16() & 63)) << 16);
+          shot->y = user->y + height / 2 + px(32 - (Random16() & 63));
         else if (mode == 5)
           shot->y = user->y + height / 2;
         else if (mode >= 15 && mode <= 17)
-          shot->y = user->y + ((Random16() % 24) << 16);
+          shot->y = user->y + px(Random16() % 24);
         else
           shot->y = user->y + height;
         shot->z = user->z;
@@ -683,34 +683,28 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         shot->velocityZ = (target->z - shot->z) / steps;
         if (mode == 7) {
           shot->velocityY =
-              (s32)(target->y + ((Random16() & 63) << 16) - shot->y - 0xc0000) /
-              steps;
+              (s32)(target->y + px(Random16() & 63) - shot->y - px(12)) / steps;
         } else if (mode == 8) {
           shot->velocityY =
-              (s32)(target->y + ((Random16() & 7) << 16) - shot->y + 0x160000) /
-              steps;
+              (s32)(target->y + px(Random16() & 7) - shot->y + px(22)) / steps;
         } else if (mode == 14) {
           shot->velocityY =
-              (s32)(target->y + ((64 - (Random16() & 63)) << 16) - shot->y) /
-              steps;
+              (s32)(target->y + px(64 - (Random16() & 63)) - shot->y) / steps;
         } else if (mode == 9) {
           shot->velocityY =
-              (s32)(target->y + ((64 - (Random16() & 63)) << 16) - shot->y) /
-              steps;
+              (s32)(target->y + px(64 - (Random16() & 63)) - shot->y) / steps;
         } else if (mode >= 15 && mode <= 17) {
           shot->velocityY = shot->y / 32;
         } else if (mode == 10) {
           // These start two steps along their flight.
           shot->velocityY =
-              (s32)(target->y + ((Random16() & 31) << 16) - shot->y + 0x40000) /
-              steps;
+              (s32)(target->y + px(Random16() & 31) - shot->y + px(4)) / steps;
           shot->x += shot->velocityX * 2;
           shot->y += shot->velocityY * 2;
           shot->z += shot->velocityZ * 2;
         } else if (mode == 18) {
           shot->velocityY =
-              (s32)(target->y + ((Random16() & 31) << 16) - shot->y + 0x40000) /
-              steps;
+              (s32)(target->y + px(Random16() & 31) - shot->y + px(4)) / steps;
           shot->x += shot->velocityX * 2;
           shot->y += shot->velocityY * 2;
           shot->z += shot->velocityZ * 2;
@@ -719,12 +713,12 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           shot->velocityY = 0;
         } else if (mode == 6) {
           shot->velocityY = (s32)(target->y + targetHeight / 2 +
-                                  ((Random16() & 15) << 16) - shot->y) /
+                                  px(Random16() & 15) - shot->y) /
                             steps;
         } else {
-          shot->velocityY = (s32)(target->y + targetHeight -
-                                  ((Random16() & 15) << 16) - shot->y) /
-                            steps;
+          shot->velocityY =
+              (s32)(target->y + targetHeight - px(Random16() & 15) - shot->y) /
+              steps;
         }
         shot->variant = 0;
       }
@@ -737,7 +731,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     for (i = 0; i != 64; i++) {
       struct Particle *p = &PARTICLES[PTCL_STREAKS + i];
 
-      SET_POSITION(p, (origin.x / 2) << 16, px(80), 0);
+      SET_POSITION(p, px(origin.x / 2), px(80), 0);
       p->velocityX = ((Random16() & 255) - 128) << 9;
       p->velocityY = ((Random16() & 255) - 128) << 9;
       p->velocityZ = 0;
@@ -829,8 +823,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               struct Particle *p = &PARTICLES[k];
 
               if (p->variant == 0) {
-                p->x = position.x << 16;
-                p->y = position.y << 16;
+                p->x = px(position.x);
+                p->y = px(position.y);
                 p->velocityX = ((Random16() & 255) - 128) << 11;
                 p->velocityY = ((Random16() & 255) - 128) << 11;
                 p->variant = (Random16() & 7) + 32;
@@ -919,8 +913,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                   struct Particle *p = &PARTICLES[k];
 
                   if (p->variant == 0) {
-                    p->x = position.x << 16;
-                    p->y = position.y << 16;
+                    p->x = px(position.x);
+                    p->y = px(position.y);
                     p->velocityX = ((Random16() & 255) - 128) << shift;
                     p->velocityY = ((Random16() & 255) - 128) << shift;
                     p->variant = (Random16() & 7) + 16;

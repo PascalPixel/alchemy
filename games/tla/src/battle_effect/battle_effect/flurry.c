@@ -227,7 +227,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   for (i = 0; i != FLURRY_MOTE_COUNT; i++) {
     struct Particle *mote = &MOTES[i];
 
-    SET_POSITION(mote, target->x, target->y + 0x190000, target->z);
+    SET_POSITION(mote, target->x, target->y + px(25), target->z);
     mote->velocityX = (Random16() & 255) << 12;
     mote->velocityY = ((Random16() & 255) - 127) << 12;
     mote->velocityZ = ((Random16() & 255) - 127) << 12;
@@ -239,7 +239,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   for (i = 0; i != 64; i++) {
     struct Particle *puff = &work->particles[i];
 
-    SET_POSITION(puff, (targetPos.x / 2) << 16, px(88), 0);
+    SET_POSITION(puff, px(targetPos.x / 2), px(88), 0);
     puff->velocityX = ((Random16() & 255) - 128) << 9;
     puff->velocityY = ((Random16() & 255) - 128) << 9;
     puff->variant = -i;

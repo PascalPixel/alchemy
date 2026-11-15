@@ -211,8 +211,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
           for (i = 0, angle = TRIG_TURN / 8; i != 2;
                angle += TRIG_TURN / 4, i++) {
             Transform_Reset();
-            SceneTransform_ApplyPosition3((targetScreen.x / 2 - 64) << 16,
-                                          px(32), 0);
+            SceneTransform_ApplyPosition3(px(targetScreen.x / 2 - 64), px(32),
+                                          0);
             SceneTransform_ApplyScale3(scale, scale, scale);
             Transform_ApplyRoll(angle);
             Transform_ApplyPitch(-TRIG_TURN / 16);

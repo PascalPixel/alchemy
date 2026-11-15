@@ -101,9 +101,9 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     if (frame == 48) {
       EffectPosition_ProjectScaledBattler(args->targets[0], pos);
       if (args->side == EFFECT_SIDE_PARTY)
-        curve[0] = (pos[0].x - 128) << 16;
+        curve[0] = px(pos[0].x - 128);
       else
-        curve[0] = (pos[0].x - 64) << 16;
+        curve[0] = px(pos[0].x - 64);
       curve[1] = 0;
       visible = 0;
     }

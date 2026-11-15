@@ -88,7 +88,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           s32 cel = i % 8;
 
           mote = &work->particles[i];
-          if (mote->y < (48 - i / 2) << 16 && mote->y > -px(48)) {
+          if (mote->y < px(48 - i / 2) && mote->y > -px(48)) {
             struct ScreenPoint *pos;
             u32 width;
             u32 height;
@@ -156,8 +156,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
       for (i = 0; i != 32; i++) {
         struct Particle *chip = &CHIPS[i];
 
-        SET_POSITION(chip, (Random16() & 127) << 16,
-                     ((Random16() & 15) + 80) << 16,
+        SET_POSITION(chip, px(Random16() & 127), px((Random16() & 15) + 80),
                      ((Random16() & 63) - 32) << 12);
         chip->velocityY = ((-Random16() & 15) - 16) << 13;
         chip->variant = (Random16() & 15) + 16;
@@ -196,7 +195,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
         puff->velocityX = px(Random16() & 127);
         if (ymax == ymin)
-          puff->velocityY = ymin << 16;
+          puff->velocityY = px(ymin);
         else
           puff->velocityY = px(Random16() % (ymax - ymin) + ymin);
         puff->variant = (Random16() & 15) + 20;

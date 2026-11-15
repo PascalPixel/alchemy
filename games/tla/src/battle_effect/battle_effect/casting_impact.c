@@ -577,7 +577,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
      * filled. */
     vec = origin;
     vec[0] = object->x;
-    vec[1] = object->y + 0x500000;
+    vec[1] = object->y + px(80);
     vec[2] = object->z;
     savedVelocityX = object->velocityX;
     savedVelocityY = object->velocityY;
@@ -737,7 +737,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     targetObject = BattleObject_GetFar(action->targets[0])->object;
     {
       center[0] = (targetObject->x - origin[0]) / 6;
-      center[1] = (targetObject->y - origin[1] + 0x1e0000) / 6;
+      center[1] = (targetObject->y - origin[1] + px(30)) / 6;
       center[2] = (targetObject->z - origin[2]) / 6;
     }
     for (i = 0; i != 64; i++)
@@ -1947,8 +1947,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           REG_BG2PA = Q_8_8(1);
           p = work->particle;
           for (i = 0; i != 32; i++, p++) {
-            SET_POSITION(p, ((Random16() & 31) + 48) << 16,
-                         ((Random16() & 31) + 64) << 16, Random16());
+            SET_POSITION(p, px((Random16() & 31) + 48),
+                         px((Random16() & 31) + 64), Random16());
             p->velocityX = ((Random16() & 63) - 32) << 12;
             p->velocityY = -((Random16() & 127) + 16) << 12;
             p->velocityZ = (Random16() & 15) + 16;
@@ -2064,8 +2064,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 p->variant = (life + 1) & 3;
               }
               Transform_Reset();
-              SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
-                                            (target[1] - 64) << 16, 0);
+              SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
+                                            px(target[1] - 64), 0);
               Transform_ApplyRoll(p->z);
               p->z += p->velocityZ;
               SceneTransform_ApplyScale3(Q16_ONE * 4, Q16_ONE, Q16_ONE);
@@ -2099,8 +2099,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         model->matrix = matrix;
         model->fade = fade;
         Transform_Reset();
-        SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
-                                      (target[1] - 64) << 16, 0);
+        SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
+                                      px(target[1] - 64), 0);
         SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
         if (frame == 8)
           Sound_PlayFar(SE_104);
@@ -2173,8 +2173,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               model->fade = fade;
               if (fade > -64) {
                 Transform_Reset();
-                SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
-                                              (target[1] - 64) << 16, 0);
+                SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
+                                              px(target[1] - 64), 0);
                 SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
                 Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
                 Transform_ApplyPitch(-TRIG_TURN / 16);
@@ -2197,8 +2197,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             model->fade = fade;
             if (fade >= -63) {
               Transform_Reset();
-              SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
-                                            (target[1] - 64) << 16, 0);
+              SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
+                                            px(target[1] - 64), 0);
               SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
               Transform_ApplyPitch(TRIG_TURN / 4);
               SceneTransform_ApplyUniformScale(angle);
@@ -2218,8 +2218,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               model->fade = fade;
               if (fade > -64) {
                 Transform_Reset();
-                SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16,
-                                              (target[1] - 64) << 16, 0);
+                SceneTransform_ApplyPosition3(px(target[0] / 2 - 64),
+                                              px(target[1] - 64), 0);
                 SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
                 Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
                 Transform_ApplyPitch(-TRIG_TURN / 16);
@@ -2290,8 +2290,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           model->fade = fade;
           if (fade >= -63) {
             Transform_Reset();
-            SceneTransform_ApplyPosition3((target[0] / 2 - 64) << 16, 0x280000,
-                                          0);
+            SceneTransform_ApplyPosition3(px(target[0] / 2 - 64), px(40), 0);
             SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
             Transform_ApplyPitch(1000);
             SceneTransform_ApplyUniformScale(angle);
@@ -2318,8 +2317,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               model->fade = fade;
               Transform_Reset();
               SceneTransform_ApplyPosition3(
-                  (target[0] / 2 - 60) << 16,
-                  gCastingImpact_StunJipBandHeights[i] << 16, 0);
+                  px(target[0] / 2 - 60),
+                  px(gCastingImpact_StunJipBandHeights[i]), 0);
               SceneTransform_ApplyScale3(scale * 2, scale * 4, scale / 4);
               Transform_ApplyPitch(1000);
               if (i & 1)
@@ -2365,8 +2364,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                       Q16_ONE / 4;
               model->fade = fade;
               Transform_Reset();
-              SceneTransform_ApplyPosition3((target[0] / 2 - 60) << 16,
-                                            0x280000, 0);
+              SceneTransform_ApplyPosition3(px(target[0] / 2 - 60), 0x280000,
+                                            0);
               SceneTransform_ApplyScale3(
                   scale, gCastingImpact_ArmorCrushWaveStretch[i] * scale * 2,
                   scale / 4);

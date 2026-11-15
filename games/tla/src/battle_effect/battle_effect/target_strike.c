@@ -249,7 +249,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     for (i = 0; i != 64; i++) {
       struct Particle *step = &work->particles[i];
 
-      SET_POSITION(step, (ground.x / 2) << 16, px(80), 0);
+      SET_POSITION(step, px(ground.x / 2), px(80), 0);
       step->velocityX = ((Random16() & 255) - 128) << 9;
       step->velocityY = ((Random16() & 255) - 128) << 9;
       step->velocityZ = 0;
@@ -606,7 +606,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             step->variant++;
             if (step->variant > 10) {
               s32 dx = (source->x - step->x) >> 8;
-              s32 dy = (source->y - step->y + 0x140000) >> 8;
+              s32 dy = (source->y - step->y + px(20)) >> 8;
               s32 dz = (source->z - step->z) >> 8;
 
               step->velocityX += dx;
@@ -662,8 +662,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
             Trig_Sin(((frame - 8) << 11) + TRIG_TURN * 3 / 16) * 612 >> 8;
 
         Transform_Reset();
-        SceneTransform_ApplyPosition3((targetPosition.x / 2 - 64) << 16,
-                                      (targetPosition.y - 64) << 16, 0);
+        SceneTransform_ApplyPosition3(px(targetPosition.x / 2 - 64),
+                                      px(targetPosition.y - 64), 0);
         Transform_ApplyPitch(TRIG_TURN / 4);
         Transform_ApplyYaw(TRIG_TURN / 8);
         SceneTransform_ApplyScale3(scale, scale / 2, scale / 2);

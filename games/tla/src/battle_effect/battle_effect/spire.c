@@ -68,7 +68,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
       struct Particle *seed = &SHARDS[i * SHARDS_PER_ROCK + j];
 
       seed->x = px(gSpire_ShardOffsets[j * 2] + gSpire_RockX[i]);
-      seed->y = gSpire_ShardOffsets[j * 2 + 1] << 16;
+      seed->y = px(gSpire_ShardOffsets[j * 2 + 1]);
       seed->velocityX = ((Random16() % 96) - 48) << 10;
       seed->velocityY = -((Random16() & 127) + 32) << 11;
       seed->z = 32;

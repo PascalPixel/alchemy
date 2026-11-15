@@ -308,9 +308,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         place[3] = 0;
         index = 0;
         do {
-          place[0] = (gProcne_GridX[index] << 16) + wave.x + 0x280000;
-          place[1] = 0xff0000 + index * 0x400000;
-          place[2] = ((gProcne_GridY[index] + index * 64) << 16) + wave.y;
+          place[0] = px(gProcne_GridX[index]) + wave.x + px(40);
+          place[1] = px(255) + index * px(64);
+          place[2] = px(gProcne_GridY[index] + index * 64) + wave.y;
           Render_ApplyProjectedPlacementFar(
               (struct ScaledSprite *)work->sprites[index], place, &scale.x, 0);
           index++;
@@ -726,7 +726,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                 }
               } else {
                 spark->x = px((Random16() & 7) + origin.x - 8);
-                spark->y = origin.y << 16;
+                spark->y = px(origin.y);
               }
               spark->velocityX = speed * Trig_Sin(angle) >> 9;
               spark->velocityY = speed * Trig_Cos(angle) >> 9;
@@ -763,8 +763,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                 flash->y = px(64);
               }
             } else {
-              flash->x = origin.x << 16;
-              flash->y = origin.y << 16;
+              flash->x = px(origin.x);
+              flash->y = px(origin.y);
             }
             flash->velocityX = speed * Trig_Sin(angle) >> 6;
             flash->velocityY = speed * Trig_Cos(angle) >> 6;

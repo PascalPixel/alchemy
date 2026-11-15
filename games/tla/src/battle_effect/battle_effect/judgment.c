@@ -312,7 +312,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
       model->shade = shade;
       Transform_Reset();
-      SceneTransform_ApplyPosition3(-0x40000, 0x180000, 0);
+      SceneTransform_ApplyPosition3(-px(4), px(24), 0);
       SceneTransform_ApplyUniformScale(s);
       Transform_ApplyPitch(3000);
       Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
@@ -586,7 +586,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
       model->shade = shade;
       Transform_Reset();
-      SceneTransform_ApplyPosition3(-0x40000, 0x80000, 0);
+      SceneTransform_ApplyPosition3(-px(4), px(8), 0);
       SceneTransform_ApplyUniformScale(s);
       Transform_ApplyPitch(5000);
       Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts, 4);
@@ -736,7 +736,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           scale[1] = scale[0];
           drift[0] = p->x;
           drift[1] = 0xff0000;
-          drift[2] = p->y + 0xff0000;
+          drift[2] = p->y + px(255);
           Render_ApplyProjectedPlacementFar(work->sprites[i], drift, scale, 0);
           p->y -= p->velocityY;
           if (p->y <= 0xfffff) {
@@ -750,7 +750,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
             } else if (frame > 245) {
               p->y = px(96);
             } else {
-              p->y = 0xc00000 - p->x;
+              p->y = px(192) - p->x;
             }
           }
         }

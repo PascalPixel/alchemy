@@ -601,7 +601,7 @@ void BattleEffect_RunProjectileVolleyB(struct BattleEffectParams *args,
           s32 dy;
 
           shot->x = x;
-          y = user->y << 16;
+          y = px(user->y);
           shot->y = y;
           dx = aim[0] - user->x;
           shot->velocityX = dx << 11;

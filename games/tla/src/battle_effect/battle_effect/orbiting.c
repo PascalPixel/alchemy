@@ -29,9 +29,8 @@ void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(args->side ^ 1, draw);
   for (i = 0; i != 256; i++) {
     star = &STARS[i];
-    SET_POSITION(star, ((Random16() & 0xff) - 127) << 16,
-                 ((Random16() & 0xff) - 127) << 16,
-                 ((Random16() & 0xff) - 127) << 16);
+    SET_POSITION(star, px((Random16() & 0xff) - 127),
+                 px((Random16() & 0xff) - 127), px((Random16() & 0xff) - 127));
     star->velocityX = 0;
     star->velocityY = 0;
     star->velocityZ = 0;

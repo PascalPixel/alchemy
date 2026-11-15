@@ -56,7 +56,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
     angle = Random16();
     speed = (Random16() & 127) + 127;
     ember->velocityX = (Trig_Sin(angle) * speed) >> 6;
-    ember->velocityY = (s32)(((Random16() & 127) - 16) << 16) >> 6;
+    ember->velocityY = (s32)px((Random16() & 127) - 16) >> 6;
     ember->velocityZ = (Trig_Cos(angle) * speed) >> 6;
     SET_POSITION(ember, user->x, top, user->z);
     ember->variant = IN_FLIGHT;

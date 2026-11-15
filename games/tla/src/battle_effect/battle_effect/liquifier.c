@@ -84,7 +84,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
 
       // The shards start about the target, each with its own roll.
       for (i = 0, shard = &work->particles[32]; i != 16; i++, shard++) {
-        SET_POSITION(shard, (to.x + (Random16() & 127) - 64) << 16, to.y << 16,
+        SET_POSITION(shard, px(to.x + (Random16() & 127) - 64), px(to.y),
                      (Random16() & 0x1fff) + 0x7000);
       }
     }
@@ -166,7 +166,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           step->x = px(from.x / 2);
           y = from.y - (Random16() & 15) - 8;
           step->x -= step->velocityX << 6;
-          step->y = (y << 16) - (step->velocityY << 6);
+          step->y = px(y) - (step->velocityY << 6);
           step->variant = 0;
           step++;
         }
@@ -225,8 +225,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           age = frame - start;
           Transform_Reset();
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          SceneTransform_ApplyPosition3((from.x - 128) << 16,
-                                        (from.y - 74) << 16, 0);
+          SceneTransform_ApplyPosition3(px(from.x - 128), px(from.y - 74), 0);
           Transform_ApplyRoll((i << 12) - 0x3800);
           SceneTransform_ApplyScale3(0x5555,
                                      Trig_Sin(age << 11) *
@@ -305,8 +304,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           model->shade = shade;
           Transform_Reset();
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
-          SceneTransform_ApplyPosition3((from.x - 128) << 16,
-                                        (from.y - 80) << 16, 0);
+          SceneTransform_ApplyPosition3(px(from.x - 128), px(from.y - 80), 0);
           SceneTransform_ApplyScale3(scale * 2, scale * 2, scale);
           Transform_ApplyRoll(TRIG_TURN * 3 / 8 - (i << 14));
           Transform_ApplyPitch(-TRIG_TURN / 16);

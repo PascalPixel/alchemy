@@ -289,11 +289,11 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           model->scrollU = 127 & ~(frame << 3);
           Transform_Reset();
           if (args->side == EFFECT_SIDE_ENEMIES) {
-            SceneTransform_ApplyPosition3((source.x / 2 - 68) << 16,
-                                          (source.y << 16) - 0x600000, 0);
+            SceneTransform_ApplyPosition3(px(source.x / 2 - 68),
+                                          px(source.y) - px(96), 0);
           } else {
-            SceneTransform_ApplyPosition3((source.x / 2 - 52) << 16,
-                                          (source.y << 16) - 0x600000, 0);
+            SceneTransform_ApplyPosition3(px(source.x / 2 - 52),
+                                          px(source.y) - px(96), 0);
           }
           SceneTransform_ApplyScale3(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
           if (args->side == EFFECT_SIDE_PARTY) {
@@ -309,7 +309,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
             model->scrollU = 0;
             model->mesh = gBattleEffect_SquareMesh;
             texture.pixels = work->sheet + 0x4000;
-            SceneTransform_ApplyPosition3(endX[i] << 16, endY[i] << 16, 0);
+            SceneTransform_ApplyPosition3(px(endX[i]), px(endY[i]), 0);
             Transform_ApplyRoll(0x3060 - (arcs[i * 2] << 5));
             SceneTransform_ApplyUniformScale(20768);
             Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);

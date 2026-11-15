@@ -57,7 +57,9 @@ enum SoundId {
   /// the stars..."), and as Echo is met on the World Map once
   /// FLAG_ALREADY_KNOWS_DJINN is set.
   MUS_SONG_GAME,
-  MUS_018,
+  /// MUS_SONG_GAME's tune arranged on four tracks for its eight; only the link
+  /// lobby's song request plays it.
+  MUS_SONG_GAME_SHORT,
   /// The field music of Air's Rock.
   MUS_AIRS_ROCK = 20,
   /// The field music of Aqua Rock.
@@ -120,13 +122,18 @@ enum SoundId {
   MUS_JENNA_BATTLE = 49,
   /// The battle music: the usual one, and with Felix in the front row.
   MUS_BATTLE,
-  MUS_051,
+  /// Battle music gEncounter_BattleMusic gives Briggs's battle on his ship at
+  /// Eastern Alhafra (encounter table 10, slot 1) and encounter table 13's
+  /// slots 0 to 4.
+  MUS_BRIGGS_BATTLE,
   /// Plays as the Aqua Hydra rises before the Lemurian Ship
   /// (LemurianShip_FightAquaHydra).
   MUS_AQUA_HYDRA,
   /// Plays as Karst and Agatio wake as the Flame Dragons in the Mars Star room.
   MUS_FLAME_DRAGONS,
-  MUS_054,
+  /// Battle music of the Doom Dragon at Mars Lighthouse's aerie (encounter
+  /// table 102, slot 1).
+  MUS_DOOM_DRAGON_BATTLE,
   /// The Broken Seal's MUS_BOULDER_CHASE, note for note: after a link battle's
   /// own music (Battle_Run), and at Super Lucky Dice's results past the second
   /// kind (SuperLuckyDice_Run).
@@ -134,7 +141,9 @@ enum SoundId {
   /// The battle music at sea, while the Lemurian Ship is the actor events move
   /// (ownerOverride) and it does not fly.
   MUS_SHIP_BATTLE,
-  MUS_057,
+  /// Battle music of Karst and Agatio at Jupiter Lighthouse's beacon (encounter
+  /// table 13, slot 7, and slots 5 and 6); its tune is MUS_KARST_AND_AGATIO's.
+  MUS_KARST_AND_AGATIO_BATTLE,
   /// The battle is won.
   MUS_VICTORY,
   /// The party falls in battle.
@@ -213,6 +222,9 @@ enum SoundId {
   SE_SHOP_PURCHASE,
   SE_SHOP_SELL,
   SE_CURSE,
+  /// Something launched: the Stone Justice boulders thrown up, a rolling block
+  /// launched ahead (Actor_LaunchAhead), and the Azul, Charon, Megiddo, Flora,
+  /// Moloch and other battle effects; The Broken Seal's row 104 note for note.
   SE_104,
   /// Super Lucky Dice's winnings counted into the party's coins.
   SE_COIN_PAYOUT,
@@ -284,6 +296,10 @@ enum SoundId {
   /// 162; also Charon and Meteor Blow, the Aquarius Stone in Aqua Rock and the
   /// Kandorean Temple's steam vents and lifts.
   SE_WAVE,
+  /// SE_WAVE's notes thirteen semitones higher: the tidal wave that carries
+  /// Idejima off on the World Map, the whirlwinds clearing Air's Rock's sand
+  /// wall and fog, and the Meteor Blow, Megaera and Daedalus battle effects;
+  /// The Broken Seal's row 163 note for note.
   SE_163,
   SE_SCATTER,
   /// Played as the birds land on Venus Lighthouse's entrance and fly off.
@@ -305,8 +321,15 @@ enum SoundId {
   SE_NOTE_MID,
   SE_NOTE_HIGH,
   SE_KOLIMA_BRIDGE_HOP,
+  /// The Thunder card striking in Legend's element cards
+  /// (BattleEffect_RunElementCards); The Broken Seal's row 177 note for note.
   SE_177,
+  /// Power gathering round someone: the leader lighting Jupiter Lighthouse, and
+  /// Alex's arc of energy at Mt. Aleph and Venus Lighthouse; The Broken Seal's
+  /// row 178 note for note.
   SE_178,
+  /// The wind funnel battle effect forming (BattleEffect_RunWindFunnel); The
+  /// Broken Seal's row 179 note for note.
   SE_179,
   SE_SETTLE,
   SE_BOOM,
@@ -321,6 +344,9 @@ enum SoundId {
   SE_STONE_GRIND,
   SE_WARP,
   SE_191,
+  /// Shriek's and Harpy's cry as their streaks set out
+  /// (BattleEffect_RunStreakVolley, mode 1): SE_SPARKS's notes on voice 25; The
+  /// Broken Seal's row 192 note for note.
   SE_192,
   /// A doll placed on one of Gaia Rock's altars ("Felix placed a doll on the
   /// altar.").
@@ -333,8 +359,13 @@ enum SoundId {
   /// learned, and the Anemos Inner Sanctum's pillar sparks.
   SE_SPARKS,
   SE_WISE_ONE_QUEST,
+  /// The Great Gabomba speaking to Kibombo's witch doctor
+  /// (GabombaStatueChamber_GabombaNamesWitchDoctor): one note bent down and
+  /// down; The Broken Seal's row 197 note for note.
   SE_197,
   SE_KOLIMA_BRIDGE_POST,
+  /// A water column rising (BattleEffect_RunWaterColumn); The Broken Seal's row
+  /// 199 note for note.
   SE_199,
   SE_SPARKLE_FALL,
   SE_ASCEND,
@@ -387,6 +418,9 @@ enum SoundId {
   /// A lift of the Lemurian Ship stepped on (LemurianShip_StepOnLift).
   SE_LEMURIAN_SHIP_LIFT,
   SE_SANDSTORM,
+  /// Held while a room's air or water streams: queued with Air's Rock's inner
+  /// rooms and the Kandorean Temple's lift room, and played as the Shrine of
+  /// the Sea God's water falls; The Broken Seal's row 245 note for note.
   SE_245,
   SE_GLITTER,
   SE_COLOSSO_LETTERING,
@@ -467,7 +501,9 @@ enum SoundId {
   /// The beams of Jupiter Lighthouse's aerie flickering as its angels are
   /// energized.
   SE_JUPITER_LIGHTHOUSE_BEAMS,
-  SE_523,
+  /// SE_MARS_LIGHTHOUSE_DOORWAY's notes on voice 70 at tempo 100; nothing plays
+  /// it.
+  SE_UNUSED_MARS_LIGHTHOUSE_DOORWAY_A,
   SE_524,
   /// Played as Garoh's people howl at night.
   SE_HOWL,
@@ -504,38 +540,63 @@ enum SoundId {
   /// Played as Magma Rock's flames grow.
   SE_FLAME_GROW = 554,
   SE_555,
+  /// SE_RISE_WITH_SPARKS two semitones higher, held until stopped: the Ankohl
+  /// Ruins' sand rising, Aqua Rock's pillars rising as its stones are Doused,
+  /// Jupiter Lighthouse's angels lifted, and the Sea of Time's waves stilled.
   SE_556,
+  /// SE_RISE_WITH_SPARKS three semitones lower, held until stopped: Aqua Rock's
+  /// spring and pillars sinking, Magma Rock's flames growing, and the Sea of
+  /// Time's waves starting and the sea opening.
   SE_557,
   SE_558,
   SE_559,
   /// A doorway of Mars Lighthouse's dragon-statue room flashing as it is
   /// stepped toward.
   SE_MARS_LIGHTHOUSE_DOORWAY,
-  SE_561,
+  /// SE_MARS_LIGHTHOUSE_DOORWAY's notes on voice 94 at tempo 110; nothing plays
+  /// it.
+  SE_UNUSED_MARS_LIGHTHOUSE_DOORWAY_B,
   SE_562,
-  SE_563,
+  /// SE_COIN_PAYOUT's notes with voice 93 in its first track; nothing plays it.
+  SE_UNUSED_COIN_PAYOUT_A,
+  /// SE_COIN_PAYOUT's notes on voices 92 and 90: a stone face's eyes glowing as
+  /// its piece is set, in the Ankohl Ruins and at Gaia Rock's altars.
   SE_564,
-  SE_565,
+  /// SE_LUCKY_WHEELS_HOLD five semitones lower, on voice 92; nothing plays it.
+  SE_UNUSED_LUCKY_WHEELS_HOLD_LOW,
+  /// The leader spinning as Sand begins (FieldPsynergy_Sand), and as the party
+  /// rides Aqua Rock's falls.
   SE_566,
   /// The field Psynergy Pound strikes, and the like blows of Magma Rock's rocks
   /// and Treasure Isle's spiky rock.
   SE_POUND,
-  SE_568,
-  SE_569,
+  /// SE_SPIN_AWAY's notes with voice 97 in its first track; nothing plays it.
+  SE_UNUSED_SPIN_AWAY_B,
+  /// SE_SPIN_AWAY an octave higher and faster, on voice 93; nothing plays it.
+  SE_UNUSED_SPIN_AWAY_HIGH,
   SE_570,
-  SE_571,
+  /// SE_CURRENT at volume 100 for its 40; nothing plays it, nor its copy
+  /// SE_UNUSED_LOUD_CURRENT_B.
+  SE_UNUSED_LOUD_CURRENT_A,
   /// A rolling block crumbling (Actor_RollAndCrumble), Mars Lighthouse's ice
   /// ground away, and the Doom Dragon faced.
   SE_CRUMBLE,
   /// Played as Mars Lighthouse's ice sheets crack.
   SE_ICE_CRACK,
+  /// The white flash: as Psynergy is learned in the four rocks, as a pillar of
+  /// the Anemos Inner Sanctum lights, and as Burst breaks Mars Lighthouse's
+  /// ice.
   SE_574,
   /// A face piece or pillar set in place in the Ankohl Ruins.
   SE_ANKOHL_RUINS_PIECE,
+  /// A statue stirring: Gaia Rock's faces turning to the doll set before them,
+  /// the Great Gabomba answering Kibombo's offerings, and Gabomba bestowing its
+  /// power in the catacombs.
   SE_576,
   /// The Great Gabomba's jaws opening as it sees Kibombo's jewel.
   SE_GABOMBA_JAWS_OPEN,
-  SE_578,
+  /// SE_UNUSED_LOUD_CURRENT_A's notes again; nothing plays it.
+  SE_UNUSED_LOUD_CURRENT_B,
   SE_579,
   SE_580,
   /// The leader jumping down a hole of the Gabomba Statue.
@@ -569,15 +630,23 @@ enum SoundId {
   /// Psynergy test room.
   SE_RISING_RINGS,
   SE_610 = 610,
-  SE_611,
+  /// SE_COIN_PAYOUT's notes with voice 119 in its first track; nothing plays
+  /// it.
+  SE_UNUSED_COIN_PAYOUT_B,
   /// Played as the leader spins away.
   SE_SPIN_AWAY,
   SE_613,
   SE_614,
   SE_615,
-  SE_616,
-  SE_617,
-  SE_618,
+  /// SE_WHIRLWIND an octave lower; nothing plays it.
+  SE_UNUSED_WHIRLWIND_LOW_A,
+  /// SE_WHIRLWIND an octave lower, on voice 99; nothing plays it.
+  SE_UNUSED_WHIRLWIND_LOW_B,
+  /// SE_RISE_WITH_SPARKS's notes ending with the last one instead of held;
+  /// nothing plays it.
+  SE_UNUSED_RISE_WITH_SPARKS_SHORT,
+  /// One long note: Piers's uncle calling the bird in Lemuria, and the Gasp
+  /// battle effect's burst.
   SE_619,
   SE_620,
   SE_621,
@@ -613,7 +682,8 @@ enum SoundId {
   /// The Broken Seal's MUS_ELEMENTAL_STARS, note for note; Mt. Aleph's summit
   /// plays it.
   MUS_ELEMENTAL_STARS,
-  MUS_723,
+  /// The Broken Seal's MUS_DANGER; only the link lobby's song request plays it.
+  MUS_DANGER,
   /// The field music of Suhalla Gate and the Yampi Desert Cave.
   MUS_SUHALLA_GATE,
   /// The field music of the Yampi Desert.
@@ -637,12 +707,21 @@ enum SoundId {
   MUS_VENUS_LIGHTHOUSE,
   /// The battle music when Isaac is in the front row and Felix is not.
   MUS_ISAAC_BATTLE = 750,
-  MUS_751,
+  /// The Broken Seal's MUS_SATUROS_BATTLE, the battle music
+  /// gEncounter_BattleMusic gives encounter table 103's slot 0.
+  MUS_SATUROS_BATTLE,
   /// The Broken Seal's MUS_BOSS_BATTLE, note for note.
   MUS_BOSS_BATTLE,
-  MUS_753,
-  MUS_754,
-  MUS_ENDING_LOGO
+  /// The Broken Seal's MUS_SATUROS_AND_MENARDI_BATTLE, the battle music
+  /// gEncounter_BattleMusic gives encounter table 103's slot 2.
+  MUS_SATUROS_AND_MENARDI_BATTLE,
+  /// The Broken Seal's MUS_FUSION_DRAGON_BATTLE, the battle music
+  /// gEncounter_BattleMusic gives the Shadow's battle at the Anemos Inner
+  /// Sanctum's entrance (encounter table 103, slot 3).
+  MUS_FUSION_DRAGON_BATTLE,
+  /// The Broken Seal's MUS_ENDING_LOGO, note for note, on the song table's last
+  /// row; nothing in this game plays it.
+  MUS_ENDING_LOGO = 799
 };
 
 /// The first voice: the first blip of the animals'.

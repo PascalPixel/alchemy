@@ -24,8 +24,11 @@ A sound whose notes are The Broken Seal's own takes that game's name (the
 message voices, `SE_BELL`, `MUS_VALE`), a tune is named for the place it
 is the music of (`MUS_MADRA`) or the moment it marks (`MUS_INN`), an effect
 for what it plays with (`SE_DOLL_PLACED`), and the rest keep their number,
-`SE_104`, until something names them. The one routine that takes them all
-is `Sound_Play`.
+`SE_119`, until something names them. A sound that repeats another's
+notes higher, lower or on another voice is named for it
+(`SE_RISE_WITH_SPARKS_HIGH`), and one nothing plays says so
+(`SE_UNUSED_WHIRLWIND_LOW_A`). The one routine that takes them all is
+`Sound_Play`.
 
 Every sound played is also marked as heard, one bit for each number. In
 the link lobby the player can ask for a tune by number, and only the ones

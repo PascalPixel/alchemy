@@ -192,7 +192,9 @@ SECTIONS
         "*/games/tla/src/window/counted_nouns.o"(.rodata)
 #endif
         "*/games/tla/src/graphics/ui/slider_palette.o"(.rodata)
+        "*/games/tla/src/window/debug_tables.o"(.rodata)
         "*/games/tla/src/window/keyboard.o"(.rodata)
+        "*/games/tla/src/window/fixed_tile_blocks.o"(.data)
         . = ABSOLUTE(ROM_SHIFT + GAME_BANK_START);
         "*/games/tla/src/gamepak/far_call/game.o"(.text .rodata .data .padding)
         "*/games/tla/src/game/game.o"(.text)

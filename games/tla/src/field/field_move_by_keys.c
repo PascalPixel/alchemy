@@ -49,7 +49,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
 
     angle = *(const u16 *)((const u8 *)table + (((keys >> 4) & 15) << 1));
   }
-  if (angle == 0xffff) {
+  if (angle == WORLD_MAP_KEY_HEADING_NONE) {
     collisionFlags = 4;
   } else {
     animation = 14;
@@ -144,8 +144,8 @@ s32 Actor_CrossRope(struct Actor *object) {
   object->speedLimit = px(1) / 2;
   object->acceleration = px(1) / 2;
   object->motionFlags = 0;
-  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
-  if (angle == 0xffff) {
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
+  if (angle == WORLD_MAP_KEY_HEADING_NONE) {
     best = (struct RopeNode *)object->watchedActor;
     value = 0;
   } else {
@@ -269,8 +269,8 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   object->speedLimit = px(1) / 2;
   object->acceleration = px(1) / 2;
   object->motionFlags = 0;
-  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
-  if (angle == 0xffff) {
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
+  if (angle == WORLD_MAP_KEY_HEADING_NONE) {
     collisionFlags = 4;
     best = (struct TightropeNode *)object->watchedActor;
     SET_POSITION(&position, object->x.fixed, best->y, object->z.fixed);
@@ -431,7 +431,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   y = actor->y.fixed;
   terrainId = &actor->layer;
   groundHere = MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ);
-  groundAhead = MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ + 0xfff00000);
+  groundAhead = MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ - px(16));
   if (actor->timer != 0) {
     if (actor->targetX != TARGET_UNSET)
       goto done;
@@ -440,7 +440,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   }
   if ((s16)actor->userValue != 0) {
     if (groundAhead < y) {
-      s32 topZ = cellZ + 0xfff80000;
+      s32 topZ = cellZ - px(8);
 
       if (MapGrid_CheckCollisionAt(actor->x.fixed, topZ, *terrainId,
                                    actor->groundHeight) == 2) {
@@ -465,8 +465,8 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
       (void)gInput.held;
     actor->speedLimit = px(1) / 2;
     actor->acceleration = px(1) / 4;
-    angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
-    if ((u16)angle == 0xffff) {
+    angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
+    if ((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
       collision = 4;
     } else {
       SET_POSITION(&position, actor->x.fixed, 0, 0);
@@ -535,7 +535,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     if ((gFrameCount & 15) == 0) {
       SET_POSITION(&spawn, actor->x.fixed - Random16() * 6 + px(3),
                    actor->y.fixed, actor->z.fixed);
-      effect = Actor_Create(0x11d, spawn.x, spawn.y, spawn.z);
+      effect = Actor_Create(SPRITE_DUST_CLOUD, spawn.x, spawn.y, spawn.z);
       if (effect != NULL) {
         effect->groundHeight = actor->groundHeight;
         sprite = effect->sprite;
@@ -563,8 +563,8 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   collision = 0;
   actor->speedLimit = px(1);
   actor->acceleration = px(1) / 4;
-  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
-  if ((u16)angle == 0xffff) {
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
+  if ((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
     collision = 4;
     goto counted;
   }
@@ -639,7 +639,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   // Up against a face more than 8 pixels high: start climbing it.
   if ((gInput.held & KEY_UP) && groundAhead > y + px(8)) {
     cellX = (position.x & FIELD_CELL_MASK) + px(8);
-    cellZ = (position.z & FIELD_CELL_MASK) + 0xfff80000;
+    cellZ = (position.z & FIELD_CELL_MASK) - px(8);
 
     if (MapGrid_IsClimbableCellFar(cellX, cellZ, 2)) {
       actor->motionFlags = 0;
@@ -655,13 +655,12 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   // Down at a drop: climb down the face south of the cell.
   if (gInput.held & KEY_DOWN) {
     cellX = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
-    cellZ = (actor->z.fixed & FIELD_CELL_MASK) + 0x180000;
+    cellZ = (actor->z.fixed & FIELD_CELL_MASK) + px(24);
 
     if (MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ) < y &&
         MapGrid_IsClimbableCellFar(cellX, cellZ, 2)) {
       actor->motionFlags = 0;
-      Actor_SetMoveTarget(actor, actor->x.fixed, groundHere + 0xfffe0000,
-                          cellZ);
+      Actor_SetMoveTarget(actor, actor->x.fixed, groundHere - px(2), cellZ);
       actor->timer = 1;
       actor->userValue = 1;
       actor->velocityX = 0;
@@ -721,7 +720,7 @@ counted:
   // The retest reads through the actor, not wakeTimer: that keeps its
   // zero path from skipping it.
   if (actor->wakeTimer == 0 && collision == 0) {
-    effect = Actor_Create(0x164, actor->x.fixed, actor->y.fixed,
+    effect = Actor_Create(WORLD_MAP_SPRITE_WAKE, actor->x.fixed, actor->y.fixed,
                           actor->z.fixed - px(2));
     if (effect != NULL) {
       effect->groundHeight = actor->groundHeight;
@@ -790,9 +789,9 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
   if (gInput.repeat & KEY_L)
     object->speedLimit = px(4);
 
-  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
   direction = angle;
-  if (direction == 0xffff) {
+  if (direction == WORLD_MAP_KEY_HEADING_NONE) {
     collision |= 4;
   } else {
     SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
@@ -886,12 +885,12 @@ update_object:
   }
 
   camera = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
-  targetCameraYaw = gWorldMap_KeyYaws[(gInput.held >> 4) & 15];
+  targetCameraYaw = gWorldMap_KeyYaws[DPAD_INDEX(gInput.held)];
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
-  if (yawStep > 0x200)
-    yawStep = 0x200;
-  if (yawStep < -0x200)
-    yawStep = -0x200;
+  if (yawStep > WORLD_MAP_YAW_STEP_MAX)
+    yawStep = WORLD_MAP_YAW_STEP_MAX;
+  if (yawStep < -WORLD_MAP_YAW_STEP_MAX)
+    yawStep = -WORLD_MAP_YAW_STEP_MAX;
   if (yawStep > -16 && yawStep < 16)
     yawStep = targetCameraYaw - camera->yaw;
   camera->yaw += yawStep;
@@ -906,8 +905,8 @@ update_object:
       playerSprite->secondLayer->priority = 9;
   }
   if (*timer == 0 && collision == 0) {
-    ripple = Actor_Create(0x164, object->x.fixed, object->y.fixed,
-                          object->z.fixed - px(2));
+    ripple = Actor_Create(WORLD_MAP_SPRITE_WAKE, object->x.fixed,
+                          object->y.fixed, object->z.fixed - px(2));
     if (ripple != 0) {
       ripple->groundHeight = object->groundHeight;
       rippleSprite = ripple->sprite;

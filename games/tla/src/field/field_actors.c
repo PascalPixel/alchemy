@@ -634,11 +634,13 @@ void ActorSystem_SuspendProjectionAndShowSprites(void) {
 
   Task_SuspendAll(ActorSystem_PlaceSprites);
   Task_SuspendAll(ActorSystem_ProjectSprites);
-  PaletteFade_SetTargetFar(0x10000, 1);
+  PaletteFade_SetTargetFar(Q16_ONE, 1);
   PaletteFade_StartInterpolationFar(1);
   wait(1);
   dispcnt = REG_DISPCNT;
-  REG_DISPCNT = (dispcnt & 0xf1ff) | DISPCNT_OBJ_ON;
+  REG_DISPCNT =
+      (dispcnt & (u16)~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON)) |
+      DISPCNT_OBJ_ON;
 }
 
 /// Resumes the actor camera updates and hides BG1-3 and the sprites.
@@ -730,8 +732,8 @@ void ActorSystem_PlaceSprites(void) {
       dx = object->x.fixed - viewX;
       dz = object->z.fixed - viewZ;
       screenTop = dz - object->y.fixed;
-      if (dx > -px(32) && dx < 0x1100000 && screenTop > -px(32) &&
-          screenTop < 0xe00000 &&
+      if (dx > -px(32) && dx < px(272) && screenTop > -px(32) &&
+          screenTop < px(224) &&
           (priorityFlags = &object->priorityFlags,
            !(*priorityFlags & ACTOR_PRIORITY_NOT_DRAWN))) {
         terrainId = &object->layer;
@@ -935,7 +937,7 @@ void ActorSystem_ProjectSprites(void) {
   system->used = 0;
   if (GameFlag_Get(FLAG_CHOOSING_COMMANDS)) {
     Transform_Reset();
-    angle += 0xffffe000;
+    angle -= TRIG_TURN / 8;
     Iwram_TransformMatrixEntry(gCamera_FixedViewMatrix);
     Transform_ApplyLookAt((s32 *)eye, (s32 *)target);
   } else {

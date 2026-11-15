@@ -236,7 +236,10 @@ enum {
   FIELD_SPRITE_FOOTPRINT = 25, ///< a footprint, on maps that show them
   /// The ripple behind the leader or the ship in the world map's shallow
   /// water, rings that widen and fade (spr_269.png).
-  WORLD_MAP_SPRITE_RIPPLE = 269
+  WORLD_MAP_SPRITE_RIPPLE = 269,
+  /// The puffs the ship leaves behind it as it sails or flies low, on
+  /// gActor_WakeScript (spr_356.png).
+  WORLD_MAP_SPRITE_WAKE = 356
 };
 
 /// How a layout's cell picture data is packed: the method byte

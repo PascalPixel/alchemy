@@ -137,7 +137,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     // The stat items.
     case ABILITY_FORMULA_NO_POWER:
       // The rise varies by -1, 0 (half the time) or 1.
-      randomAdjust = (Random16() * 4) >> 16;
+      randomAdjust = Random16_Below(4);
       if (randomAdjust == 0) {
         randomAdjust = -1;
       } else {
@@ -279,7 +279,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
       break;
 
-    case ABILITY_EFFECT_REVIVE_80:
+    case ABILITY_EFFECT_DEW:
       if (target->hp == 0) {
         target->hp = target->hpMax * 7 / 10;
         Unit_RecalculateGaugesFar(targetId);

@@ -52,7 +52,7 @@
 #include "system/system_call.h"
 #include "text/msg_ids.h"
 
-u8 gKolimaForestFloodgate_Unk_0[8] BSS_DATA;
+u8 gKolimaForestFloodgate_UnusedBeforeRecords[8] BSS_DATA;
 /// The bend's logs in gSceneLocalState from byte 4, so they survive a battle.
 struct FloodgateLog *gKolimaForestFloodgateRecords BSS_DATA;
 /// The short log's place in gSceneLocalState's first halfword: 1 west, 0 east.
@@ -60,13 +60,13 @@ u16 *gKolimaForestFloodgateReturned BSS_DATA;
 /// The bend's water level in gSceneLocalState's second halfword: 1 high (the
 /// logs float), 0 low; the floodgate switch flips it.
 s16 *gKolimaForestFloodgateMap BSS_DATA;
-u8 gKolimaForestFloodgate_Unk_14[4] BSS_DATA;
+u8 gKolimaForestFloodgate_UnusedAfterMap[4] BSS_DATA;
 /// The healthy colours: the first 448 colours (896 bytes) of the colour buffer,
 /// kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
 u8 gKolimaPalette_Healthy[1792] BSS_DATA;
 /// The cursed colours, kept by KolimaPalette_SaveCursed.
 u8 gKolimaPalette_Cursed[896] BSS_DATA;
-u8 gKolimaForestFloodgate_Unk_a98[896] BSS_DATA;
+u8 gKolimaForestFloodgate_UnusedAfterCursed[896] BSS_DATA;
 /// The background scroll words captured each frame for the shaken lines.
 u32 gKolimaForestFloodgate_ShakeScroll[3] BSS_DATA;
 /// The percent chance that a line above the split shows the shaken scroll: 0
@@ -435,8 +435,7 @@ s32 Scene_Initialize(void) {
   MapGrid_CopyCellAttributes(32, 0, 32, 32, 0, 32);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     Dma_Set(gKolimaForestFloodgate_DefaultRecords,
-            gKolimaForestFloodgateRecords, (DMA_ENABLE | DMA_32BIT) << 16 | 18,
-            REG_DMA3);
+            gKolimaForestFloodgateRecords, DMA_COPY_WORDS(18), REG_DMA3);
     *gKolimaForestFloodgateReturned = 0;
     *gKolimaForestFloodgateMap = 1;
   }
@@ -467,9 +466,9 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
   for (; entry->sprite != -1; entry++) {
     if (entry->vertical == 0) {
       x = (entry->x << 20) + px(32);
-      z = (entry->z << 20) + px(8);
+      z = FIELD_CELL_CENTER(entry->z);
     } else {
-      x = (entry->x << 20) + px(8);
+      x = FIELD_CELL_CENTER(entry->x);
       z = (entry->z << 20) + px(32);
     }
     actor = FieldActor_Create(entry->sprite, x, 0, z);
@@ -571,7 +570,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
 
   moved = 0;
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  facing = (actor->facing + TRIG_TURN / 8) & 0xc000;
+  facing = FACING_NEAREST_CARDINAL(actor->facing);
   SET_VECTOR(point, (actor->x.fixed & FIELD_CELL_MASK) + px(8), actor->y.fixed,
              (actor->z.fixed & FIELD_CELL_MASK) + px(8));
   Vector_AddPolarOffset(px(16), facing, point);

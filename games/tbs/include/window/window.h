@@ -102,6 +102,15 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 
 /// The window system's work: the windows' tilemap, the windows, the three text
 /// messages, the 64 window sprites, and the decoded message and its arguments.
+/// The window tiles text is drawn into: TEXT_TILES from TEXT_TILE_FIRST, and
+/// with WindowWork.extraTextTiles as many more from TEXT_EXTRA_TILE_FIRST.
+#define TEXT_TILE_FIRST 128
+#define TEXT_TILES 128
+#define TEXT_EXTRA_TILE_FIRST 512
+
+/// WindowWork.glyphResource when no glyph resource is loaded.
+#define NO_GLYPH_RESOURCE 99
+
 struct WindowWork {
   u16 tilemap[640]; ///< the windows' BG tilemap, 32 by 20 tiles
   struct Window windows[WINDOW_COUNT]; ///< 12 in Japanese, 8 in the others
@@ -110,7 +119,7 @@ struct WindowWork {
   struct WindowSpriteList freeSprites; ///< the sprites not in any window
   /// Per text tile (tiles 128 to 255, then 512 to 639): bit 0 once allocated,
   /// bit 1 while the tilemap shows it, 0 when free.
-  u8 textTileState[256];
+  u8 textTileState[2 * TEXT_TILES];
   u16 nextTextTile;  ///< the text tile the next search for a free one starts at
   u8 extraTextTiles; ///< 1 lets text use 256 tiles, adding tiles 512 to 639
   /// The tilemap's 4-row bands to upload: bit 0 for all, bit n + 1 for band n.
@@ -129,9 +138,10 @@ struct WindowWork {
   u16 letterSpacing;                    ///< pixels between sprite glyphs; 9
   u16 textBufferEnd;    ///< where the next code goes in textBuffer
   u16 lastMessageStart; ///< where the last decoded message began in textBuffer
-  u16 glyphResource;    ///< VRAM cache slot of the page arrow; 99 when none
-  u16 glyphTiles;       ///< first sprite tile of the glyph sheet
-                        ///< (VRAM_CACHE_ENTRY_GLYPH_SHEET)
+  /// VRAM cache slot of the page arrow; NO_GLYPH_RESOURCE when none.
+  u16 glyphResource;
+  u16 glyphTiles; ///< first sprite tile of the glyph sheet
+                  ///< (VRAM_CACHE_ENTRY_GLYPH_SHEET)
   /// Message argument values (MessageArgument_Push).
   u32 argumentValues[8];
   u16 argumentKinds[8]; ///< the MESSAGE_ARGUMENT_ kind of each value; 0 for a
@@ -355,7 +365,7 @@ enum {
   /// Three motions WindowSprite_UpdateAll runs alike: a hop down and back.
   WINDOW_SPRITE_MOTION_HOP_DOWN = 14,
   WINDOW_SPRITE_MOTION_HOP_DOWN_NEXT_PAGE = 15,
-  WINDOW_SPRITE_MOTION_HOP_DOWN_3 = 16,
+  WINDOW_SPRITE_MOTION_HOP_DOWN_UNUSED = 16, ///< Unused: nothing sets it
   WINDOW_SPRITE_MOTION_HOP_UP = 17,
   WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT = 18,
 };
@@ -544,6 +554,14 @@ void BattleMessage_ShowAndWait(s32 argument);
 s32 Message_OpenDecoded(struct Window *window, s32 argument);
 void Message_SetDecodeFlags(s32 flags);
 struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
+/// The bob of a prompt or cursor: up and down by up to 2 pixels, a sine every
+/// 16 frames.
+#define CURSOR_BOB_Y()                                                         \
+  (Trig_Sin(gFrameCount * (TRIG_TURN / 16)) / (Q16_ONE / 2))
+
+/// Message_OpenWindow's packed argument: the speaker's voice in bits 16 to 27,
+/// above the window options.
+#define MESSAGE_WINDOW_VOICE(voice) ((voice) << 16)
 void FieldMessage_Show(s32 no, s32 flags);
 void WindowSystem_Update(void);
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -694,10 +712,10 @@ void SelectionMenu_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
 u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen);
 void MenuArrow_NoOpCallback(void);
 void MenuArrow_NoOpCallbackBank(void);
-void MenuArrow_NoOpCallback1(void);
-void MenuArrow_NoOpCallback2(void);
-void MenuArrow_NoOpCallback3(void);
-void MenuArrow_NoOpCallback4(void);
+void MenuArrow_NoOpCallbackA(void);
+void MenuArrow_NoOpCallbackB(void);
+void MenuArrow_NoOpCallbackC(void);
+void MenuArrow_NoOpCallbackD(void);
 void MenuArrow_Create(struct MenuSprite *object, s32 *slot);
 void MenuArrow_SetPosition(struct MenuSprite *obj, s32 x, s32 y);
 void MenuArrow_Release(s32 value);

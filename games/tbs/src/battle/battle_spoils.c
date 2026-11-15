@@ -52,7 +52,7 @@ static __inline__ s32 BattleEnemy_CalculateCoinReward(struct Unit *unit,
   s32 minimumBonus;
 
   for (rollIndex = 0; rollIndex < (u8)(unit->level / 10U) + 1; rollIndex++)
-    bonus += ((Random16() * 6) >> 16) + 1;
+    bonus += Random16_Below(6) + 1;
   base = *reward;
   minimumBonus = base * 3 / 10;
   if (bonus < minimumBonus)
@@ -70,7 +70,7 @@ static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct Unit *unit,
   s32 minimumBonus;
 
   for (rollIndex = 0; rollIndex < (u8)(unit->level / 10U) + 1; rollIndex++)
-    bonus += ((Random16() * 4) >> 16) + 1;
+    bonus += Random16_Below(4) + 1;
   base = *reward;
   minimumBonus = base * 3 / 10;
   if (bonus < minimumBonus)
@@ -215,16 +215,17 @@ void Battle_AwardSpoils(void) {
         BattleMessage_ShowAndWaitFar(MsgLevelUp);
         BattleMessage_WaitForAdvance();
         // A class ability (bit 15) the copy lacks is newly learned.
-        for (abilityIndex = 0; abilityIndex < 32; abilityIndex++) {
+        for (abilityIndex = 0; abilityIndex < PSYNERGY_SLOTS; abilityIndex++) {
           encodedAbility = unit->psynergy[abilityIndex].encodedAction;
           if ((encodedAbility & PSYNERGY_ABILITY_MASK) &&
               (encodedAbility >> 15)) {
-            for (oldAbilityIndex = 0; oldAbilityIndex < 32; oldAbilityIndex++) {
+            for (oldAbilityIndex = 0; oldAbilityIndex < PSYNERGY_SLOTS;
+                 oldAbilityIndex++) {
               if (encodedAbility ==
                   beforeLevelUp->psynergy[oldAbilityIndex].encodedAction)
                 break;
             }
-            if (oldAbilityIndex == 32) {
+            if (oldAbilityIndex == PSYNERGY_SLOTS) {
               MessageArgument_ClearAllFar();
               MessageArgument_PushFar(unit->classId, MESSAGE_ARGUMENT_CLASS);
               MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);

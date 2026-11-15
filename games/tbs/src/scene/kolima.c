@@ -337,7 +337,7 @@ static void Kolima_WalkThroughExit(s32 exitNumber) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Import_EventSetExitRequest(exitNumber);
 }
 
@@ -371,7 +371,7 @@ static void Kolima_EnterDoor(void) {
     Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
     Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, 8);
-    gFieldWork->transitionFrames = 16;
+    gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
     Import_EventSetExitRequest(KOLIMA_TO_HOUSE_NORTH);
     Event_End();
     return;
@@ -756,7 +756,7 @@ static void Kolima_WitnessForestCurse(void) {
   Kolima_FaceActorAndWait(ACTOR_IVAN, FACING_NORTH, 10);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Sound_Play(SE_CURSE_FALL);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   wait(1);
   // The falling sparkles threaten to turn the party into trees as well.

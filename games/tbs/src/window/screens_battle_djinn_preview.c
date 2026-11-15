@@ -8,6 +8,11 @@
 /// String_FormatDecimal writes, its terminator and the two bytes after.
 #define NUMBER_TEXT_WIDE_LENGTH 14
 
+/// A changed stat's arrow, right of its value on window tile row `row` (HP
+/// on row 1 to Luck on row 6).
+#define PREVIEW_STAT_ARROW_X 80
+#define PREVIEW_STAT_ARROW_Y(row) ((row) * 8 + 6)
+
 // Writes `value` into `out` as String_FormatDecimal's eleven-character,
 // right-aligned decimal text, widened to halfwords for
 // Text_DrawWideStringInWindow: out + 7 is its last four characters, out + 8 its
@@ -139,7 +144,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       sprite->kind = WINDOW_SPRITE_ICON;
       *(s8 *)&sprite->index = VramCache_AllocEntry(128);
       entry = (struct PreviewSprite *)sprite->link;
-      sprite->sentinel = 240;
+      sprite->depth = OAM_DEPTH_WINDOW;
       sprite->x = 120;
       sprite->y = 120;
       /* FAKEMATCH(type): the two words stored through pointer types. */
@@ -178,8 +183,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
                                      sizeof(*changedAbilities));
   Iwram_CopyWords(savedUnit, unit, sizeof(*savedUnit));
 
-  element = (encodedDjinn >> 8) & 15;
-  djinnIndex = encodedDjinn & 255;
+  element = DJINN_COMMAND_ELEMENT(encodedDjinn);
+  djinnIndex = DJINN_COMMAND_INDEX(encodedDjinn);
   if (Djinn_IsSetFar(member, element, djinnIndex) != 0)
     Djinn_PutOnStandbyFar(member, element, djinnIndex);
   else
@@ -313,7 +318,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       rising = 0;
       if (unit->hp > oldHp)
         rising = 1;
-      DjinnMenu_DrawStatArrow(80, 14, rising);
+      DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(1),
+                              rising);
     }
 
     String_FormatNumberToHalfwords(numberText, unit->pp);
@@ -322,7 +328,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       rising = 0;
       if (unit->pp > oldPp)
         rising = 1;
-      DjinnMenu_DrawStatArrow(80, 22, rising);
+      DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(2),
+                              rising);
     }
 
     String_FormatNumberToHalfwords(numberText, unit->atk);
@@ -331,7 +338,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       rising = 0;
       if (unit->atk > oldAtk)
         rising = 1;
-      DjinnMenu_DrawStatArrow(80, 30, rising);
+      DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(3),
+                              rising);
     }
 
     String_FormatNumberToHalfwords(numberText, unit->def);
@@ -340,7 +348,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       rising = 0;
       if (unit->def > oldDef)
         rising = 1;
-      DjinnMenu_DrawStatArrow(80, 38, rising);
+      DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(4),
+                              rising);
     }
 
     String_FormatNumberToHalfwords(numberText, unit->agi);
@@ -349,7 +358,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       rising = 0;
       if (unit->agi > oldAgi)
         rising = 1;
-      DjinnMenu_DrawStatArrow(80, 46, rising);
+      DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(5),
+                              rising);
     }
 
     String_FormatNumberToHalfwords(numberText, unit->luck);
@@ -358,7 +368,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       rising = 0;
       if (unit->luck > savedUnit->luck)
         rising = 1;
-      DjinnMenu_DrawStatArrow(80, 54, rising);
+      DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, PREVIEW_STAT_ARROW_Y(6),
+                              rising);
     }
   }
 

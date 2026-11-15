@@ -180,7 +180,7 @@ s32 BattleStaging_RunFlee(struct BattleActionRun *plan) {
       wait(22);
       completed = 1;
     }
-  } else if (((Random16() * 10) >> 16) <= 6) {
+  } else if (Random16_Below(10) <= 6) {
     // An enemy: a roll of 0 to 9, 7 in 10 away.
     s16 event[2];
 
@@ -271,8 +271,8 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   ElementGlow_Play(work.effect.user, plan->element, GLOW_STAR_FIELD, 0);
   if (mode & STAGING_HIDE_ACTOR)
     BattleHighlight_SetSpriteMode(actor, SPRITE_SEMI_TRANSPARENT);
-  for (i = 0; i != 16; i++) {
-    REG_BLDALPHA = BLEND_ALPHA(16 - i, 16);
+  for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
+    REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX - i, BLEND_WEIGHT_MAX);
     wait(1);
   }
   // A failed cast: "blocked" (sealed) or too little PP, shown at once.
@@ -351,13 +351,13 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
     if ((target <= ALLY_MAX) != (units[i] <= ALLY_MAX))
       BattleHighlight_SetSpriteMode(units[i], SPRITE_SEMI_TRANSPARENT);
   }
-  for (i = 0; i != 16; i++) {
-    REG_BLDALPHA = BLEND_ALPHA(i, 16);
+  for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
+    REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
     wait(1);
   }
   for (i = 0; i != count; i++)
     BattleHighlight_SetSpriteMode(units[i], SPRITE_OPAQUE);
-  BattleCamera_SetView(0, 0, 0, 100);
+  BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
   wait(1);
   return 0;
 }
@@ -528,7 +528,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
     if (critical != 0) {
       view->flag = 0;
       BattleUnit_ListAllAndSubmit();
-      BattleCamera_SetView(0, 0, 0, 100);
+      BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
     }
     BattleMotion_ReturnToSpot(work.effect.targets[0]);
   }
@@ -859,7 +859,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode) {
 }
 
 /// Flashes a unit as it is hit, white and back twice in its damage pose.
-void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
+void BattleMotion_FlashHit(s32 unitId, s32 unusedA, s32 unusedB) {
   u16 selection[2];
   s32 flash;
 

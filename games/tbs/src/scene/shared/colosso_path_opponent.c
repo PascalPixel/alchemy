@@ -152,33 +152,33 @@ static void Colosso_DrawGauge(void) {
   *dst++ = 0;
   *dst++ = (x << 16) | y | shape;
   *dst++ = tile | OBJ_PRIORITY(1) | OBJ_PALETTE(14);
-  Oam_AddSpriteAtDepth(entry++, 255);
+  Oam_AddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
   for (i = 0; i < segments; i++) {
     x = 96 - i * 16;
     shape = OBJ_SIZE_16X16;
     *dst++ = 0;
     *dst++ = (x << 16) | y | shape;
     *dst++ = (tile + 2) | OBJ_PRIORITY(1) | OBJ_PALETTE(14);
-    Oam_AddSpriteAtDepth(entry++, 255);
+    Oam_AddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
   }
   x = 112;
   shape = OBJ_SIZE_8X16;
   *dst++ = 0;
   *dst++ = (x << 16) | y | shape;
   *dst++ = (tile + 6) | OBJ_PRIORITY(1) | OBJ_PALETTE(14);
-  Oam_AddSpriteAtDepth(entry++, 255);
+  Oam_AddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
   x = 120;
   *dst++ = 0;
   *dst++ = (x << 16) | y | shape | OBJ_HFLIP;
   *dst++ = (tile + 6) | OBJ_PRIORITY(1) | OBJ_PALETTE(14);
-  Oam_AddSpriteAtDepth(entry++, 255);
+  Oam_AddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
   for (i = 0; i < segments; i++) {
     x = 128 + i * 16;
     shape = OBJ_SIZE_16X16;
     *dst++ = 0;
     *dst++ = y | (x << 16) | shape | OBJ_HFLIP;
     *dst++ = (tile + 2) | OBJ_PRIORITY(1) | OBJ_PALETTE(14);
-    Oam_AddSpriteAtDepth(entry++, 255);
+    Oam_AddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
   }
   x = width + 128;
   shape = OBJ_SIZE_8X16;
@@ -188,7 +188,7 @@ static void Colosso_DrawGauge(void) {
   y |= OBJ_HFLIP;
   *dst++ = y;
   *dst++ = tile | OBJ_PRIORITY(1) | OBJ_PALETTE(14);
-  Oam_AddSpriteAtDepth(entry++, 255);
+  Oam_AddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
 
   if ((gFrameCount & 15) > 4) {
     shape = OBJ_SIZE_16X16;
@@ -202,7 +202,7 @@ static void Colosso_DrawGauge(void) {
       y |= shape;
       *dst++ = y;
       *dst++ = (tile + 12) | OBJ_PRIORITY(1) | OBJ_PALETTE(14);
-      Oam_AddSpriteAtDepth(entry++, 255);
+      Oam_AddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
     }
     actor = Actor_Lookup(gauge->playerActorId);
     if (actor != NULL) {
@@ -214,7 +214,7 @@ static void Colosso_DrawGauge(void) {
       y |= shape;
       *dst++ = y;
       *dst++ = (tile + 8) | OBJ_PRIORITY(1) | OBJ_PALETTE(14);
-      Oam_AddSpriteAtDepth(entry++, 255);
+      Oam_AddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
     }
   }
 }

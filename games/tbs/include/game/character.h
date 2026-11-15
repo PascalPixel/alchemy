@@ -55,11 +55,8 @@ struct ClassAbility {
 };
 
 /// ClassDefinition.series for the series a character's elements can choose
-/// (gClass_SeriesByElements), each named by its first class. Two more stay
-/// numbers, as no pair of elements chooses them: 11 holds the classes
-/// Class_Determine gives outright (200 and 201, "?", to Isaac and Garet as
-/// children, and 202, "Flame User", to Jenna), and 12 class 0, "NPC", an
-/// enemy's (CLASS_NONE).
+/// (gClass_SeriesByElements), each named by its first class, and two that no
+/// pair of elements chooses.
 enum ClassSeries {
   CLASS_SERIES_SQUIRE = 1,
   CLASS_SERIES_GUARD,
@@ -70,7 +67,22 @@ enum ClassSeries {
   CLASS_SERIES_WIND_SEER,
   CLASS_SERIES_SEER,
   CLASS_SERIES_PILGRIM,
-  CLASS_SERIES_HERMIT
+  CLASS_SERIES_HERMIT,
+  /// The classes Class_Determine gives outright, whatever the elements.
+  CLASS_SERIES_FIXED,
+  /// Class 0, "NPC", an enemy's (CLASS_NONE).
+  CLASS_SERIES_NPC
+};
+
+/// The classes of CLASS_SERIES_FIXED, the last rows of gClass_DefinitionTable.
+enum FixedClass {
+  /// Isaac's while FLAG_CHILDHOOD is set; the text names it "?".
+  CLASS_ISAAC_CHILD = 200,
+  /// Garet's while FLAG_CHILDHOOD is set; the text names it "?".
+  CLASS_GARET_CHILD,
+  /// Jenna's, "Flame User", whatever her elements.
+  CLASS_FLAME_USER,
+  CLASS_COUNT
 };
 
 /// How many actions a class can teach (ClassDefinition.abilities).

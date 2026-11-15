@@ -7,10 +7,18 @@
 #include "edition.h"
 #include "types.h"
 
-/// The current 3D transform, twelve 16.16 words: a 3x3 rotation, then a
-/// translation. Iwram_TransformMatrix multiplies the matrix it is given into
-/// it.
-extern s32 gTransform[12];
+/// A transform's twelve 16.16 words: a 3x3 rotation, then the translation's
+/// x, y and z.
+enum {
+  TRANSFORM_TRANSLATION_X = 9,
+  TRANSFORM_TRANSLATION_Y = 10,
+  TRANSFORM_TRANSLATION_Z = 11,
+  TRANSFORM_WORDS = 12
+};
+
+/// The current 3D transform. Iwram_TransformMatrix multiplies the matrix it is
+/// given into it.
+extern s32 gTransform[TRANSFORM_WORDS];
 
 /// Matrices saved by Transform_Push, 0 or 1: the save area holds one.
 extern s32 gTransformStackDepth;

@@ -64,7 +64,7 @@ static void Colosso_ShowOpeningLettering(s32 match) {
   Event_Wait(30);
   // The 1st to 3rd Match play MUS_JINGLE_SMALL, MUS_JINGLE_MEDIUM and
   // MUS_JINGLE_LARGE.
-  Sound_Play(match + (MUS_JINGLE_SMALL - COLOSSO_PICTURE_MATCH_1));
+  Sound_Play(match + (MUS_JINGLE_SMALL - COLOSSO_PICTURE_MATCH_TITLE_FIRST));
   Colosso_LoadLettering(match);
   Colosso_StartLettering(COLOSSO_SHAPE_TITLE, 0);
   Event_Wait(120);
@@ -72,14 +72,14 @@ static void Colosso_ShowOpeningLettering(s32 match) {
     wait(1);
   }
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
+  Colosso_LoadLettering(COLOSSO_PICTURE_COUNTDOWN_START);
   Colosso_StartLettering(COLOSSO_SHAPE_DIGIT, 0);
   Sound_Play(SE_COLOSSO_COUNTDOWN);
   Event_Wait(60);
   Colosso_StartLettering(COLOSSO_SHAPE_DIGIT, 1);
   Sound_Play(SE_COLOSSO_COUNTDOWN);
   Event_Wait(60);
-  Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_1);
+  Colosso_LoadLettering(COLOSSO_PICTURE_COUNTDOWN_END);
   Colosso_StartLettering(COLOSSO_SHAPE_DIGIT, 0);
   Sound_Play(SE_COLOSSO_COUNTDOWN);
   Event_Wait(60);

@@ -213,7 +213,7 @@ static void Ship_UpdateSwell(void) {
     gOrbGlowPhase++;
   }
   if (gSwellActive != 0) {
-    swell = Iwram_MulQ16(Trig_Sin(gSwellPhase << 9), 2) << 16;
+    swell = px(Iwram_MulQ16(Trig_Sin(gSwellPhase << 9), 2));
     grid->layers[MAPGRID_LAYER_MIDDLE].offsetY = gShipHullY + swell;
     grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY = gShipDeckY + swell;
     if (gLeaderDeckY != SHIP_NOT_ON_DECK) {
@@ -245,10 +245,10 @@ static void Ship_UpdateSwell(void) {
   if (gSprayActive != 0 && (gFrameCount & 1) != 0) {
     x = grid->view[0] & FIELD_PIXEL_MASK;
     z = grid->view[1] & FIELD_PIXEL_MASK;
-    x += Random_Next() * 240;
+    x += Random_Next() * DISPLAY_WIDTH;
     sprayPosition.x = x;
     sprayPosition.y = 0;
-    z += Random_Next() * 160;
+    z += Random_Next() * DISPLAY_HEIGHT;
     z += px(30);
     sprayPosition.z = z;
     actor = FieldActor_Create(SPRITE_WATER_DROP, sprayPosition.x,
@@ -777,7 +777,7 @@ void LineScroll_BuildPage(void) {
   angle = (work->phase + y) * work->frequency[0];
   amplitude = work->amplitude[0];
   base = gBgScroll[3].x;
-  for (i = 0; i != 160; i++) {
+  for (i = 0; i != DISPLAY_HEIGHT; i++) {
     *line = LemurianShip_WaveOffset(angle, amplitude, base);
     angle += step;
     line += 2;
@@ -786,7 +786,7 @@ void LineScroll_BuildPage(void) {
   step = work->step[1];
   angle = (work->phase + y) * work->frequency[1];
   amplitude = work->amplitude[1];
-  for (i = 0; i != 160; i++) {
+  for (i = 0; i != DISPLAY_HEIGHT; i++) {
     *line = LemurianShip_WaveOffset(angle, amplitude, y);
     angle += step;
     line += 2;
@@ -864,7 +864,7 @@ static void Curtain_Close(void) {
   for (; i < 8; i++)
     CURTAIN_PART((i << 21) | edge | OBJ_SIZE_32X16, tile);
   for (i = 0; i < 24; i++)
-    Oam_AddSpriteAtDepth(&sCurtainSprites[i], 255);
+    Oam_AddSpriteAtDepth(&sCurtainSprites[i], OAM_DEPTH_FRONT);
 }
 
 /// Fills a 256-byte tile with colour 1 and starts the curtains 48 pixels

@@ -201,9 +201,9 @@ static s32 TunnelRuins_RefreshActorAfterShrinking(struct Actor *actor) {
 /// pixel.
 static inline s32 TunnelRuins_GetLandingPixel(s32 coordinate) {
 #if TBS_PATCH_1
-  return ((coordinate >> 20) << 4) + 8;
+  return (FIELD_CELL(coordinate) << 4) + 8;
 #else
-  return (s16)(coordinate >> 16);
+  return (s16)(FIELD_PIXEL(coordinate));
 #endif
 }
 
@@ -218,7 +218,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
   adjacentTile.y = actor->y.fixed;
   adjacentTile.z = (actor->z.fixed & FIELD_CELL_MASK) + px(8);
 
-  FieldVector_AddPolarOffset(16, (actor->facing + TRIG_TURN / 8) & 0xc000,
+  FieldVector_AddPolarOffset(16, FACING_NEAREST_CARDINAL(actor->facing),
                              &adjacentTile);
 
   if (FieldActor_CheckMovementCollision(actor, &adjacentTile) != 1 &&
@@ -324,9 +324,9 @@ static UNREAD_RESULT TunnelRuins_SplashDousedPillar(struct Actor *actor) {
     RETURN_UNREAD(0);
   options.startScaleX = 3 * Q16_ONE / 10;
   options.startScaleY = 3 * Q16_ONE / 10;
-  options.palette = 5;
-  x = actor->x.fixed + (((Random_Below(7)) - 3) << 16);
-  z = actor->z.fixed + (((Random_Below(7)) - 3) << 16);
+  options.palette = SPRITE_COLOR_BRG;
+  x = actor->x.fixed + px(Random_Below(7) - 3);
+  z = actor->z.fixed + px(Random_Below(7) - 3);
   FieldEffect_Spawn(x, actor->y.fixed + px(16), z, 0, 0, 0,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
                         EFFECT_SCRIPT_MEDIUM,
@@ -627,7 +627,7 @@ static void TunnelRuins_SinkNorthwestPillar(void) {
     // The pillar sinks a pixel every three frames, raising dust around it.
     options.startScaleX = 3 * Q16_ONE / 5;
     options.startScaleY = 3 * Q16_ONE / 5;
-    options.palette = 7;
+    options.palette = SPRITE_COLOR_WHITE;
     Actor_Get(ACTOR_NORTHWEST_SINKING_PILLAR)->motionFlags = 0;
     Sound_Play(SE_PUSH);
     for (i = 0; i < 16; i++) {
@@ -694,7 +694,7 @@ static void TunnelRuins_SinkSoutheastPillar(void) {
       overlay = Actor_Prepare(770, 0, 274, SPRITE_CRATE);
       options.startScaleX = 3 * Q16_ONE / 5;
       options.startScaleY = 3 * Q16_ONE / 5;
-      options.palette = 7;
+      options.palette = SPRITE_COLOR_WHITE;
       Actor_Get(ACTOR_SOUTHEAST_SINKING_PILLAR)->motionFlags = 0;
       Sound_Play(SE_PUSH);
       for (i = 0; i < 16; i++) {
@@ -817,7 +817,7 @@ static void TunnelRuins_FreezeDousePillarFrostTarget(void) {
 
   column = Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->x.fixed;
   row = FIELD_CELL(Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->z.fixed);
-  MapGrid_CopyCellAttributes(26, 8, 1, 1, column >> 20, row);
+  MapGrid_CopyCellAttributes(26, 8, 1, 1, FIELD_CELL(column), row);
 
   Actor_Get(ACTOR_DOUSE_PILLAR_FROST_TARGET)->update = UPDATE_BY_RELATIVE_DEPTH;
 

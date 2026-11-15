@@ -4,9 +4,6 @@
 
 #include "battle_internal.h"
 
-/// The entries of an array whose size is declared.
-#define ARRAY_COUNT(array) (sizeof(array) / sizeof((array)[0]))
-
 // How many name letters tell the enemies of one class apart: 26 in Japanese,
 // 9 in the localizations.
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -161,7 +158,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
     matchCount = FORMATION_POOL_SIZE;
 
   if (matchCount != 0) {
-    struct FormationCandidate *chosen = &pool[(matchCount * Random16()) >> 16];
+    struct FormationCandidate *chosen = &pool[Random16_Below(matchCount)];
 
     result = chosen->recordId;
     *outMargin = targetLevel - chosen->score;
@@ -284,7 +281,7 @@ UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
   if (index == count || battle->nameLetterMasks[index] == 0)
     return;
 
-  for (nameLength = 0; nameLength <= 13; nameLength++) {
+  for (nameLength = 0; nameLength < UNIT_NAME_SIZE - 1; nameLength++) {
     if (unit->name[nameLength] == 0)
       break;
   }
@@ -350,7 +347,7 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
     if (record->maximumCounts[member] != 0)
       choices[choiceCount++] = record->memberIds[member] + ENEMY_ID_FIRST;
   }
-  return choices[(Random16() * choiceCount) >> 16];
+  return choices[Random16_Below(choiceCount)];
 }
 
 /// Builds the battle's enemies from a formation and returns how many there are:
@@ -456,8 +453,8 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     for (i = 0; i < FORMATION_MEMBERS; i++)
       memberOrder[i] = i;
     for (i = 0; i < 10; i++) {
-      s32 first = (Random16() * FORMATION_MEMBERS) >> 16;
-      s32 second = (Random16() * FORMATION_MEMBERS) >> 16;
+      s32 first = Random16_Below(FORMATION_MEMBERS);
+      s32 second = Random16_Below(FORMATION_MEMBERS);
       s32 swap = memberOrder[first];
 
       memberOrder[first] = memberOrder[second];
@@ -481,7 +478,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
       }
       if (remainingKinds == 0)
         break;
-      j = memberOrder[(Random16() * remainingKinds) >> 16];
+      j = memberOrder[Random16_Below(remainingKinds)];
       enemyKinds[enemyCount++] = record->memberIds[j] + ENEMY_ID_FIRST;
       memberCounts[j]--;
     }

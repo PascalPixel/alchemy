@@ -11,6 +11,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "system/dma.h"
+#include "system/frame.h"
 #include "system/io_write_queue.h"
 #include "system/iwram_call.h"
 #include "system/oam_words.h"
@@ -28,6 +29,13 @@ struct IntroSprite {
   s32 tile;
 };
 
+/// The intro's frames: A or START skips to the approach only after the first
+/// INTRO_SKIP_AFTER_FRAME, and the screen flashes white into the title at
+/// INTRO_FLASH_FRAME.
+#define INTRO_SKIP_AFTER_FRAME 20
+#define INTRO_APPROACH_FRAME 239
+#define INTRO_FLASH_FRAME 280
+
 /// IntroWork.state, which the intro writes and nothing reads.
 enum IntroState {
   INTRO_STATE_SCROLLING = 0, ///< the pictures scroll in
@@ -36,6 +44,9 @@ enum IntroState {
   /// Set from frame 281, which the loop never reaches: it ends at 280.
   INTRO_STATE_AFTER_FLASH = 2
 };
+
+/// OAM entries the intro builds each VBlank.
+#define INTRO_OBJECT_COUNT 120
 
 /// The title intro's state, in HEAP_SLOT_TITLE_INTRO.
 struct IntroWork {
@@ -46,7 +57,7 @@ struct IntroWork {
   s32 state; ///< an enum IntroState
   s32 rise;  ///< how far the sprites have risen
   union {
-    struct OamWords objects[120];
+    struct OamWords objects[INTRO_OBJECT_COUNT];
     struct {
       u8 introObjects[104]; ///< objects[0] to [12], still the intro's
       struct IntroSprite sprites[8];
@@ -59,12 +70,21 @@ struct IntroWork {
 #define INTRO_BACK_TILE(n) (BG_CHAR_BLOCK(0) + (n) * TILE_SIZE_4BPP)
 #define INTRO_FRONT_TILE(n) (BG_CHAR_BLOCK(0) + (n) * 2 * TILE_SIZE_4BPP)
 
+/// The screen blocks of the two pictures' maps
+#define INTRO_FRONT_SCREEN 30
+#define INTRO_BACK_SCREEN 31
+/// Both pictures start scrolled this far down and scroll up into place.
+#define INTRO_SCROLL_START 96
+
 /// The x of each of the six columns of intro sprites
 const u8 gTitle_IntroSpriteColumns[] = {96, 136, 140, 160, 168, 184};
 
-/// The prompt's blend level over its 60-frame pulse
+/// The prompt pulses once a second.
+#define PROMPT_PULSE_FRAMES FRAMES_PER_SECOND
+
+/// The prompt's blend level over its pulse
 // clang-format off
-const u8 gTitle_PromptBlendLevels[60] = {
+const u8 gTitle_PromptBlendLevels[PROMPT_PULSE_FRAMES] = {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
     16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
     16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
@@ -81,26 +101,32 @@ const u8 gTitle_PromptBlendLevels[60] = {
   while ((v) < 0)                                                              \
   (v) += 256
 
+/// The slope the sprites rise along runs from slopeBaseY at this x to slopeTopY
+/// at INTRO_SLOPE_RIGHT.
+#define INTRO_SLOPE_LEFT 104
+#define INTRO_SLOPE_RIGHT 184
+
 /// Sets x and y to the top left of a sprite of half-width `half` centred on
-/// column `column`, between slopeBaseY at x = 104 and slopeTopY at x = 184.
+/// column `column`, on the slope.
 #define PLACE_ON_SLOPE(column, half)                                           \
   x = gTitle_IntroSpriteColumns[column] - (half);                              \
-  y = (slopeTopY - slopeBaseY) * ((x + (half)) - 104) / 80 + slopeBaseY -      \
-      (half);                                                                  \
+  y = (slopeTopY - slopeBaseY) * ((x + (half)) - INTRO_SLOPE_LEFT) /           \
+          (INTRO_SLOPE_RIGHT - INTRO_SLOPE_LEFT) +                             \
+      slopeBaseY - (half);                                                     \
   WRAP_TO_BYTE(y)
 
 /// Writes OAM entries i to i + 3: four sprites of `size` pixels, mirrored into
 /// the four quarters of one picture at (x, y)
 #define MIRRORED_QUAD(i, size, shape, tile)                                    \
-  INTRO_OBJ(i).attr01 = ((x + 4) << 16) | y | (shape) |                        \
+  INTRO_OBJ(i).attr01 = OBJ_X(x + 4) | y | (shape) |                           \
                         OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) | OBJ_256_COLORS;  \
-  INTRO_OBJ((i) + 1).attr01 = ((x + 4 + (size)) << 16) | y | (shape) |         \
+  INTRO_OBJ((i) + 1).attr01 = OBJ_X(x + 4 + (size)) | y | (shape) |            \
                               OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) |            \
                               OBJ_256_COLORS | OBJ_HFLIP;                      \
-  INTRO_OBJ((i) + 2).attr01 = ((x + 4) << 16) | (u8)(y + (size)) | (shape) |   \
+  INTRO_OBJ((i) + 2).attr01 = OBJ_X(x + 4) | (u8)(y + (size)) | (shape) |      \
                               OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) |            \
                               OBJ_256_COLORS | OBJ_VFLIP;                      \
-  INTRO_OBJ((i) + 3).attr01 = ((x + 4 + (size)) << 16) | (u8)(y + (size)) |    \
+  INTRO_OBJ((i) + 3).attr01 = OBJ_X(x + 4 + (size)) | (u8)(y + (size)) |       \
                               (shape) | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) |  \
                               OBJ_256_COLORS | OBJ_HFLIP | OBJ_VFLIP;          \
   INTRO_OBJ(i).attr2 = (tile);                                                 \
@@ -133,13 +159,13 @@ void Title_UpdateIntroSprites(void) {
   slopeTopY = 144 - work->rise;
   // Alternating the two groups fits six shapes into twelve OAM entries;
   // each group is visible every other VBlank.
-  if (work->frame < 280) {
+  if (work->frame < INTRO_FLASH_FRAME) {
     if ((work->frameCount & 1) == 0) {
       PLACE_ON_SLOPE(0, 16);
       MIRRORED_QUAD(spriteCount, 16, OBJ_SIZE_16X16, 232);
       spriteCount += 4;
       PLACE_ON_SLOPE(2, 16);
-      INTRO_OBJ(spriteCount).attr01 = ((x + 4) << 16) | y | OBJ_SIZE_32X32 |
+      INTRO_OBJ(spriteCount).attr01 = OBJ_X(x + 4) | y | OBJ_SIZE_32X32 |
                                       OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) |
                                       OBJ_256_COLORS;
       INTRO_OBJ(spriteCount).attr2 = 128;
@@ -159,8 +185,9 @@ void Title_UpdateIntroSprites(void) {
       spriteCount += 4;
     }
   }
-  for (; spriteCount <= 119; spriteCount++)
-    INTRO_OBJ(spriteCount).attr01 = 160 | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+  for (; spriteCount < INTRO_OBJECT_COUNT; spriteCount++)
+    INTRO_OBJ(spriteCount).attr01 =
+        DISPLAY_HEIGHT | OBJ_SIZE_16X16 | OBJ_256_COLORS;
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(14, 14);
   Dma_Set(&INTRO_OBJ(0), OAM, DMA_COPY_WORDS((spriteCount * 8) >> 2), REG_DMA3);
@@ -168,7 +195,7 @@ void Title_UpdateIntroSprites(void) {
   // beyond the 120-entry list; it reuses a hidden shadow-buffer entry.
   stripY = 32 - gBgScroll[1].y;
   WRAP_TO_BYTE(stripY);
-  INTRO_OBJ(12).attr01 = stripY | (92 << 16) | OBJ_SIZE_64X64 | OBJ_256_COLORS;
+  INTRO_OBJ(12).attr01 = stripY | OBJ_X(92) | OBJ_SIZE_64X64 | OBJ_256_COLORS;
   INTRO_OBJ(12).attr2 = OBJ_PRIORITY(2);
   Dma_Set(&INTRO_OBJ(12), (u8 *)OAM + spriteCount * 8, DMA_COPY_WORDS(2),
           REG_DMA3);
@@ -188,16 +215,18 @@ void Title_LoadIntroBackgrounds(void) {
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_TITLE_INTRO);
   REG_DISPCNT = 0;
   resourceData = Resource_GetTableEntry(RESOURCE_INTRO_GRAPHICS_A);
-  Dma_Set(resourceData, (void *)OBJ_PLTT, DMA_COPY_WORDS(128), REG_DMA3);
+  Dma_Set(resourceData, (void *)OBJ_PLTT, DMA_COPY_WORDS(BG_PLTT_SIZE / 4),
+          REG_DMA3);
   OBJ_PLTT[0] = 0;
-  resourceData += 512;
+  resourceData += BG_PLTT_SIZE;
   Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0, DMA_COPY_HALFWORDS(3840),
           REG_DMA3);
   resourceData = Resource_GetTableEntry(RESOURCE_INTRO_GRAPHICS_C);
-  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(128), REG_DMA3);
+  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(BG_PLTT_SIZE / 4),
+          REG_DMA3);
   BG_PLTT[0] = 0;
-  resourceData += 512;
+  resourceData += BG_PLTT_SIZE;
   Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer + 10560, BG_CHAR_BLOCK(0),
           DMA_COPY_HALFWORDS(10080), REG_DMA3);
@@ -207,39 +236,41 @@ void Title_LoadIntroBackgrounds(void) {
   {
     s32 blankTile = 511;
 
-    tilemap = (u16 *)BG_SCREEN_BLOCK(30);
+    tilemap = (u16 *)BG_SCREEN_BLOCK(INTRO_FRONT_SCREEN);
     tileIndex = 615;
     for (row = 0; row <= 10; row++) {
-      for (column = 0; column < 30; column++)
+      for (column = 0; column < DISPLAY_TILE_WIDTH; column++)
         *tilemap++ = tileIndex++;
       *tilemap++ = blankTile;
       *tilemap++ = blankTile;
     }
     tileIndex = 315;
     for (row = 11; row <= 31; row++) {
-      for (column = 0; column < 30; column++)
+      for (column = 0; column < DISPLAY_TILE_WIDTH; column++)
         *tilemap++ = tileIndex++;
       *tilemap++ = blankTile;
       *tilemap++ = blankTile;
     }
-    tilemap = (u16 *)BG_SCREEN_BLOCK(31);
+    tilemap = (u16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN);
     tileIndex = 300;
     for (row = 0; row <= 10; row++) {
-      for (column = 0; column < 30; column++)
+      for (column = 0; column < DISPLAY_TILE_WIDTH; column++)
         *tilemap++ = tileIndex++;
       *tilemap++ = blankTile;
       *tilemap++ = blankTile;
     }
     tileIndex = 0;
     for (row = 11; row <= 31; row++) {
-      for (column = 0; column < 30; column++)
+      for (column = 0; column < DISPLAY_TILE_WIDTH; column++)
         *tilemap++ = tileIndex++;
       *tilemap++ = blankTile;
       *tilemap++ = blankTile;
     }
 
-    REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_MOSAIC | BGCNT_SCREEN_BASE(31);
-    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(30);
+    REG_BG1CNT =
+        BGCNT_PRIORITY(3) | BGCNT_MOSAIC | BGCNT_SCREEN_BASE(INTRO_BACK_SCREEN);
+    REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS |
+                 BGCNT_SCREEN_BASE(INTRO_FRONT_SCREEN);
     REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
     REG_WIN0V = WIN_RANGE(0, DISPLAY_HEIGHT - 1);
     REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
@@ -250,8 +281,8 @@ void Title_LoadIntroBackgrounds(void) {
       gBgScroll[row].y = 0;
       gBgScroll[row].x = 0;
     }
-    gBgScroll[1].y = 96;
-    gBgScroll[2].y = 96;
+    gBgScroll[1].y = INTRO_SCROLL_START;
+    gBgScroll[2].y = INTRO_SCROLL_START;
     work->frame = 0;
     work->backRows = 0;
     work->frontRows = 0;
@@ -260,10 +291,15 @@ void Title_LoadIntroBackgrounds(void) {
     work->state = INTRO_STATE_SCROLLING;
     Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
     REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
-    REG_BLDALPHA = BLEND_ALPHA(16, 16);
+    REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX);
     REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   }
 }
+
+/// How long the title waits for A or START: a minute with the prompt shown,
+/// five seconds without.
+#define TITLE_PROMPT_HOLD_FRAMES (60 * FRAMES_PER_SECOND)
+#define TITLE_HOLD_FRAMES (5 * FRAMES_PER_SECOND)
 
 // The "Press Start" prompt: its tile count, rows and sprites, and where it
 // stands, by edition.
@@ -324,7 +360,7 @@ s32 Title_ShowIntro(s32 prompt) {
                       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON | DISPCNT_OBJWIN_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   TitlePaletteFade_Start(60);
   Task_Add(Title_UpdateIntroSprites, TASK_PASS_VBLANK);
 
@@ -336,15 +372,15 @@ s32 Title_ShowIntro(s32 prompt) {
     // A skip retains the final approach to the flash rather than replacing
     // the animated screen at an arbitrary scroll position.
     frame = work->frame;
-    if (frame > 20 && frame < 239 &&
+    if (frame > INTRO_SKIP_AFTER_FRAME && frame < INTRO_APPROACH_FRAME &&
         (gKeysPressed & (KEY_A | KEY_START)) != 0) {
       work->state = INTRO_STATE_APPROACH;
-      work->frame = 239;
-      frame = 239;
+      work->frame = INTRO_APPROACH_FRAME;
+      frame = INTRO_APPROACH_FRAME;
     }
     nextFrame = frame + 1;
     work->frame = nextFrame;
-    if (nextFrame <= 278) {
+    if (nextFrame <= INTRO_FLASH_FRAME - 2) {
       // The back layer (BG1) scrolls a pixel every third frame, the front
       // (BG2) every other one; each new row of eight pixels copies the next
       // band of the picture from the decode buffer before it becomes visible.
@@ -378,11 +414,13 @@ s32 Title_ShowIntro(s32 prompt) {
             clearValue = 0;
             Dma_Set(&clearValue,
                     INTRO_FRONT_TILE(315) +
-                        (160 - work->frontRows * 8) % 160 * 240,
-                    (DMA_ENABLE | DMA_SRC_FIXED) << 16 | 960, REG_DMA3);
-            tilemap = (u16 *)BG_SCREEN_BLOCK(30) + 27 * 32;
+                        (DISPLAY_HEIGHT - work->frontRows * 8) %
+                            DISPLAY_HEIGHT * DISPLAY_WIDTH,
+                    DMA_FILL_HALFWORDS(960), REG_DMA3);
+            tilemap = (u16 *)BG_SCREEN_BLOCK(INTRO_FRONT_SCREEN) +
+                      27 * BG_SCREEN_WIDTH;
             for (i = 0; i < 5; i++) {
-              for (j = 0; j < 30; j++)
+              for (j = 0; j < DISPLAY_TILE_WIDTH; j++)
                 *tilemap++ = 315;
               *tilemap++ = 315;
               *tilemap++ = 315;
@@ -391,14 +429,14 @@ s32 Title_ShowIntro(s32 prompt) {
           work->frontRows++;
         }
       }
-      if (work->frame == 239)
+      if (work->frame == INTRO_APPROACH_FRAME)
         work->state = INTRO_STATE_APPROACH;
-    } else if (nextFrame == 281) {
+    } else if (nextFrame == INTRO_FLASH_FRAME + 1) {
       // The frame-280 branch below exits before these later states can run.
       work->state = INTRO_STATE_AFTER_FLASH;
-    } else if (nextFrame == 289) {
+    } else if (nextFrame == INTRO_FLASH_FRAME + 9) {
       work->state = INTRO_STATE_SCROLLING;
-    } else if (nextFrame == 280) {
+    } else if (nextFrame == INTRO_FLASH_FRAME) {
       // Hide the background replacement behind white, and restore the
       // normal OAM uploader before drawing the title prompt.
       ScreenFade_ToWhite(1);
@@ -411,7 +449,7 @@ s32 Title_ShowIntro(s32 prompt) {
       resourceData = Resource_GetTableEntry(RESOURCE_INTRO_GRAPHICS_B);
       Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(120), REG_DMA3);
       BG_PLTT[0] = 0;
-      resourceData += 512;
+      resourceData += BG_PLTT_SIZE;
       Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
       Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1),
               DMA_COPY_HALFWORDS(19200), REG_DMA3);
@@ -424,8 +462,8 @@ s32 Title_ShowIntro(s32 prompt) {
   }
   // Blank the two off-screen columns so the 30-tile picture occupies a
   // complete 32-tile hardware map row.
-  for (; i < 20; i++) {
-    for (j = 0; j < 30; j++)
+  for (; i < DISPLAY_TILE_HEIGHT; i++) {
+    for (j = 0; j < DISPLAY_TILE_WIDTH; j++)
       *tilemap++ = tile++;
     *tilemap++ = blankTile;
     *tilemap++ = blankTile;
@@ -455,9 +493,9 @@ s32 Title_ShowIntro(s32 prompt) {
   REG_DISPCNT =
       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   if (prompt != 0)
-    holdFrames = 3600;
+    holdFrames = TITLE_PROMPT_HOLD_FRAMES;
   else
-    holdFrames = 300;
+    holdFrames = TITLE_HOLD_FRAMES;
   for (i = 0; i < holdFrames; i++) {
     if (prompt != 0) {
       struct IntroSprite *sprite = work->area.prompt.sprites;
@@ -487,11 +525,11 @@ s32 Title_ShowIntro(s32 prompt) {
       }
 #endif
       // The prompt pulses once a second: its blend weight over the picture.
-      level = gTitle_PromptBlendLevels[i % 60];
+      level = gTitle_PromptBlendLevels[i % PROMPT_PULSE_FRAMES];
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG0 |
                    BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
                    BLDCNT_TGT2_BD;
-      REG_BLDALPHA = (16 - level) * 256 + level;
+      REG_BLDALPHA = (BLEND_WEIGHT_MAX - level) * 256 + level;
     }
     if ((gKeysPressed & (KEY_A | KEY_START)) != 0) {
       result = 1;
@@ -509,6 +547,9 @@ s32 Title_ShowIntro(s32 prompt) {
 
 /// Unused: palette entry retained in the far-call table.
 UNUSED void Title_NoOpPalette(void) {}
+
+/// Each logo resource begins with its 224 colours.
+#define LOGO_PALETTE_BYTES (224 * 2)
 
 /// Shows the Nintendo logo with its jingle.
 s32 Title_ShowNintendoLogo(s32 mode) {
@@ -534,15 +575,17 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   gBgScroll[2].y = result;
   // The resource begins with 224 colours; its packed tiles follow them.
   resourceData = Resource_GetTableEntry(resourceId);
-  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
-  Decompress_TaggedLz(resourceData + 448, Ram_MapGridCellBuffer);
+  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4),
+          REG_DMA3);
+  Decompress_TaggedLz(resourceData + LOGO_PALETTE_BYTES, Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(9600),
           REG_DMA3);
   // Pad the 30-tile picture to the hardware map's 32-tile row width.
   tileIndex = 256;
   tilemap = (u16 *)BG_SCREEN_BLOCK(6);
-  for (rowOrHoldFrame = 0; rowOrHoldFrame < 20; rowOrHoldFrame++) {
-    for (column = 0; column < 30; column++)
+  for (rowOrHoldFrame = 0; rowOrHoldFrame < DISPLAY_TILE_HEIGHT;
+       rowOrHoldFrame++) {
+    for (column = 0; column < DISPLAY_TILE_WIDTH; column++)
       *tilemap++ = tileIndex++;
     *tilemap++ = blankTile;
     *tilemap++ = blankTile;
@@ -559,7 +602,8 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   if (mode == 0) {
     ScreenFade_FromBlack(1);
     ScreenFade_Wait();
-    for (rowOrHoldFrame = 0; rowOrHoldFrame < 120; rowOrHoldFrame++) {
+    for (rowOrHoldFrame = 0; rowOrHoldFrame < 2 * FRAMES_PER_SECOND;
+         rowOrHoldFrame++) {
       if (gKeysPressed & (KEY_A | KEY_START)) {
         result = -1;
         break;
@@ -570,7 +614,8 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   }
   // Otherwise a second of black, a second's fade in, three seconds held and
   // a second's fade out; a skip shortens each fade to eight frames.
-  for (rowOrHoldFrame = 0; rowOrHoldFrame < 60; rowOrHoldFrame++) {
+  for (rowOrHoldFrame = 0; rowOrHoldFrame < FRAMES_PER_SECOND;
+       rowOrHoldFrame++) {
     if (gKeysPressed & (KEY_A | KEY_START)) {
       result = -1;
       break;
@@ -580,10 +625,11 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   if (result != 0)
     ScreenFade_FromBlack(8);
   else
-    ScreenFade_FromBlack(60);
+    ScreenFade_FromBlack(FRAMES_PER_SECOND);
   ScreenFade_Wait();
   if (result == 0) {
-    for (rowOrHoldFrame = 0; rowOrHoldFrame < 180; rowOrHoldFrame++) {
+    for (rowOrHoldFrame = 0; rowOrHoldFrame < 3 * FRAMES_PER_SECOND;
+         rowOrHoldFrame++) {
       if (gKeysPressed & (KEY_A | KEY_START)) {
         result = -1;
         break;
@@ -594,7 +640,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   if (result != 0)
     ScreenFade_ToBlack(8);
   else
-    ScreenFade_ToBlack(60);
+    ScreenFade_ToBlack(FRAMES_PER_SECOND);
   ScreenFade_Wait();
   return result;
 }
@@ -623,10 +669,12 @@ s32 Title_ShowCamelotLogo(void) {
   // The decoded resource: 224 colours, the map, the still tiles, then four
   // animation pictures of 1024 bytes each.
   resourceData = Ram_MapGridCellBuffer;
-  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(448 / 4), REG_DMA3);
-  resourceData += 448;
-  Dma_Set(resourceData, BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(2048 / 4), REG_DMA3);
-  resourceData += 2048;
+  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4),
+          REG_DMA3);
+  resourceData += LOGO_PALETTE_BYTES;
+  Dma_Set(resourceData, BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(BG_SCREEN_SIZE / 4),
+          REG_DMA3);
+  resourceData += BG_SCREEN_SIZE;
   Dma_Set(resourceData, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(BG_CHAR_SIZE / 4),
           REG_DMA3);
   resourceData += BG_CHAR_SIZE;
@@ -643,7 +691,7 @@ s32 Title_ShowCamelotLogo(void) {
       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   // Replace only the animated tiles; the rest of the decoded logo stays
   // in VRAM while the four animation pictures cycle.
-  for (workIndex = 0; workIndex < 120; workIndex++) {
+  for (workIndex = 0; workIndex < 2 * FRAMES_PER_SECOND; workIndex++) {
     Dma_Set(((gFrameCount >> 3) & 3) * 1024 + resourceData,
             BG_CHAR_BLOCK(1) + 256, DMA_COPY_WORDS(832 / 4), REG_DMA3);
     if (gKeysPressed & (KEY_A | KEY_START))
@@ -669,7 +717,7 @@ void TitlePaletteFade_CalculateSteps(s16 *sourceComponents,
   s32 targetValue;
 
   if (frames > 0) {
-    remaining = 3 * 512 - 1;
+    remaining = TITLE_PALETTE_FADE_CHANNELS - 1;
     do {
       sourceValue = *sourceComponents;
       targetValue = *targetComponents;
@@ -711,7 +759,7 @@ void TitlePaletteFade_Update(void) {
   {
     s32 blueMask = 0x7c00;
 
-    remaining = 512;
+    remaining = PLTT_COLORS;
     currentComponents = work->current;
     for (; remaining != 0; remaining--) {
       *packedColors++ = (currentComponents[0] & blueMask) |
@@ -725,10 +773,10 @@ void TitlePaletteFade_Update(void) {
       u16 *backgroundColors = pagePalettes;
 
       IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)backgroundColors,
-                          DMA_COPY_WORDS(128));
+                          DMA_COPY_WORDS(BG_PLTT_SIZE / 4));
     }
-    IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(pagePalettes + 256),
-                        DMA_COPY_WORDS(128));
+    IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(pagePalettes + BG_PLTT_COLORS),
+                        DMA_COPY_WORDS(BG_PLTT_SIZE / 4));
   }
 }
 
@@ -742,7 +790,7 @@ void TitlePaletteFade_Update(void) {
 void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
                                   s32 selectedPalettes) {
   u32 colorIndex;
-  u32 colorCount = 512;
+  u32 colorCount = PLTT_COLORS;
   s32 red;
   s32 blue;
   u32 colorWork;
@@ -751,11 +799,11 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
   if (mode == PALETTE_TINT_FROM_SOURCE)
     mode = *source;
   if (selectedPalettes == PALETTES_BG) {
-    colorCount = 256;
+    colorCount = BG_PLTT_COLORS;
   } else if (selectedPalettes == PALETTES_OBJECTS) {
-    destination += 768;
-    source += 256;
-    colorCount = 256;
+    destination += 3 * BG_PLTT_COLORS;
+    source += BG_PLTT_COLORS;
+    colorCount = BG_PLTT_COLORS;
   }
 
   if (mode < PALETTE_TINT_FROM_SOURCE) {
@@ -781,9 +829,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     case PALETTE_TINT_SEPIA:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
-        red = colorWork & 31;
+        red = RGB_RED(colorWork);
         colorWork = Iwram_SignedDivide(
-            red + ((colorWork >> 5) & 31) + ((colorWork >> 10) & 31), 10);
+            red + (RGB_GREEN(colorWork)) + (RGB_BLUE(colorWork)), 10);
         red = colorWork * 4 + 5;
         blue = colorWork * 3 + 5;
         /* FAKEMATCH(dead): two XORs with red that cancel fold late. */
@@ -813,9 +861,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     case PALETTE_TINT_WARM:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
-        red = colorWork & 31;
-        green = (colorWork >> 5) & 31;
-        blue = (colorWork >> 10) & 31;
+        red = RGB_RED(colorWork);
+        green = RGB_GREEN(colorWork);
+        blue = RGB_BLUE(colorWork);
         red -= (u32)red >> 1;
         green -= green / 3;
         red += 6;
@@ -833,9 +881,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     case PALETTE_TINT_MUTED:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
-        red = colorWork & 31;
-        green = (colorWork >> 5) & 31;
-        blue = (colorWork >> 10) & 31;
+        red = RGB_RED(colorWork);
+        green = RGB_GREEN(colorWork);
+        blue = RGB_BLUE(colorWork);
         if (red < 10)
           red = 10;
         if (green < 16)
@@ -863,9 +911,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
         s32 mean;
 
         colorWork = *source++;
-        red = colorWork & 31;
-        green = (colorWork >> 5) & 31;
-        blue = (colorWork >> 10) & 31;
+        red = RGB_RED(colorWork);
+        green = RGB_GREEN(colorWork);
+        blue = RGB_BLUE(colorWork);
         mean = TitlePaletteFade_ClampComponent((red + green + blue) / 3);
         red = (red >> 1) + mean;
         green = (green >> 1) + mean;
@@ -882,9 +930,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     case PALETTE_TINT_RED:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
-        red = colorWork & 31;
-        green = (colorWork >> 5) & 31;
-        blue = (colorWork >> 10) & 31;
+        red = RGB_RED(colorWork);
+        green = RGB_GREEN(colorWork);
+        blue = RGB_BLUE(colorWork);
         red += ((green >> 3) + (blue >> 3));
         red = TitlePaletteFade_ClampComponent(red);
         green -= green / 3;
@@ -898,9 +946,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     case PALETTE_TINT_WARM_DARK:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
-        red = colorWork & 31;
-        green = (colorWork >> 5) & 31;
-        blue = (colorWork >> 10) & 31;
+        red = RGB_RED(colorWork);
+        green = RGB_GREEN(colorWork);
+        blue = RGB_BLUE(colorWork);
         red -= (u32)red >> 1;
         green -= green / 3;
         red += 6;
@@ -929,9 +977,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     u32 tintGreen;
     u32 tintBlue;
 
-    tintRed = mode & 31;
-    tintGreen = (mode >> 5) & 31;
-    tintBlue = (mode >> 10) & 31;
+    tintRed = RGB_RED(mode);
+    tintGreen = RGB_GREEN(mode);
+    tintBlue = RGB_BLUE(mode);
     for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
       colorWork = *source++;
       red = ((colorWork << 11) & 0xf800);
@@ -952,14 +1000,14 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     u32 tintGreen;
     u32 tintBlue;
 
-    tintRed = mode & 31;
-    tintGreen = (mode >> 5) & 31;
-    tintBlue = (mode >> 10) & 31;
+    tintRed = RGB_RED(mode);
+    tintGreen = RGB_GREEN(mode);
+    tintBlue = RGB_BLUE(mode);
     for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
       colorWork = *source++;
-      red = colorWork & 31;
+      red = RGB_RED(colorWork);
       colorWork = Iwram_SignedDivide(
-          (red + ((colorWork >> 5) & 31) + ((colorWork >> 10) & 31)) << 4,
+          (red + (RGB_GREEN(colorWork)) + (RGB_BLUE(colorWork))) << 4,
           tintRed + tintGreen + tintBlue);
       red = Iwram_MulQ16(((colorWork * tintRed) >> 4) << 16,
                          (s32)(tintRed << 16) >> 4);
@@ -983,7 +1031,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     }
   } else {
     if (selectedPalettes == PALETTES_OBJECTS)
-      mode += 1536;
+      mode += 3 * BG_PLTT_SIZE;
     Dma_Set((const void *)mode, destination,
             DMA_COPY_WORDS((colorCount * 6) >> 2), REG_DMA3);
   }
@@ -996,9 +1044,9 @@ void TitlePaletteFade_Initialize(void) {
 
   buffer = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*buffer));
   Dma_Fill32(0, buffer, sizeof(*buffer));
-  Dma_Set((void *)BG_PLTT, buffer, DMA_COPY_WORDS(128), REG_DMA3);
-  Dma_Set((void *)OBJ_PLTT, &buffer->palette[256], DMA_COPY_WORDS(128),
-          REG_DMA3);
+  Dma_Set((void *)BG_PLTT, buffer, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, &buffer->palette[BG_PLTT_COLORS],
+          DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
   TitlePaletteFade_BuildColors(PALETTE_TINT_NONE, buffer->palette,
                                buffer->target, PALETTES_ALL);
   Task_Add(TitlePaletteFade_Update, TASK_PASS_FRAME);
@@ -1054,8 +1102,8 @@ void TitlePaletteFade_Start(s32 frames) {
 
 /// Clamps a five-bit colour channel to 0..31.
 s32 TitlePaletteFade_ClampComponent(s32 value) {
-  if (value > 31)
-    return 31;
+  if (value > RGB_LEVEL_MAX)
+    return RGB_LEVEL_MAX;
   if (value < 0)
     value = 0;
   return value;

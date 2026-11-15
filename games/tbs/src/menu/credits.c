@@ -56,7 +56,7 @@ void Credits_ClearBuffer(s32 alternate) {
   } else {
     fillColor = 0x81818181;
     tileDestination = BG_CHAR_BLOCK(2);
-    paletteDestination = (void *)&BG_PLTT[128];
+    paletteDestination = (void *)&BG_PLTT_COLOR(8, 0);
   }
   Dma_Fill32Cell(dmaFill, fillColor, tileDestination, 30720);
   Dma_Fill32Cell(dmaFill, 0, paletteDestination, 256);
@@ -122,7 +122,7 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
   } else {
     paletteOffset = 0x80808080;
     tileDestination = BG_CHAR_BLOCK(2);
-    paletteDestination = (u32)&BG_PLTT[128];
+    paletteDestination = (u32)&BG_PLTT_COLOR(8, 0);
   }
   // Offset every pixel into the selected palette half so both pictures
   // can remain visible throughout a crossfade.
@@ -221,11 +221,11 @@ s32 Credits_Run(void) {
     Credits_LoadBackground(gCredits_Backgrounds[slide], (slide & 1) ^ 1);
     // Fade the new half in: an even slide went to BG2, the first target
     // (BLDALPHA bits 4..0), an odd one to BG3, the second (bits 12..8).
-    for (alpha = 1; alpha <= 16; alpha++) {
+    for (alpha = 1; alpha <= BLEND_WEIGHT_MAX; alpha++) {
       if (slide & 1)
-        Io_Write16((alpha << 8) | (16 - alpha), &REG_BLDALPHA);
+        Io_Write16((alpha << 8) | (BLEND_WEIGHT_MAX - alpha), &REG_BLDALPHA);
       else
-        Io_Write16(((16 - alpha) << 8) | alpha, &REG_BLDALPHA);
+        Io_Write16(((BLEND_WEIGHT_MAX - alpha) << 8) | alpha, &REG_BLDALPHA);
       wait(4);
     }
     wait(267);
@@ -945,7 +945,7 @@ void Credits_UpdateTextSprites(void) {
 
     for (column = 0; column < CREDITS_COLUMNS; column++) {
       *oamWords++ = (row * 8 + 16 - scrollWithinTile) |
-                    ((column * 32 + 24) << 16) | OBJ_SIZE_32X8;
+                    OBJ_X(column * 32 + 24) | OBJ_SIZE_32X8;
       *oamWords++ = tileIndex;
       tileIndex += 4;
       if (tileIndex == CREDITS_RING_TILES)
@@ -1018,13 +1018,13 @@ void Credits_InitTextSprites(void) {
   for (row = 0; row < CREDITS_VISIBLE_ROWS; row++) {
     for (column = 0; column < CREDITS_COLUMNS; column++) {
       u32 tileIndex = (row * 3) * 8 + column * 4;
-      *oamWords++ = (row * 8 + 16) | ((column * 32 + 24) << 16) | OBJ_SIZE_32X8;
+      *oamWords++ = (row * 8 + 16) | OBJ_X(column * 32 + 24) | OBJ_SIZE_32X8;
       *oamWords++ = tileIndex;
     }
   }
   // The last eight entries are parked off screen.
   for (row = 0; row < 8; row++) {
-    *oamWords++ = (192 << 16) | 192;
+    *oamWords++ = OBJ_X(192) | 192;
     *oamWords++ = CREDITS_RING_TILES;
   }
   gCreditsScrollPosition = 0;
@@ -1076,8 +1076,10 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
     Iwram_FillWords(linePixels, CREDITS_BUFFER_BYTES, 0);
     GameFlag_SetFar(FLAG_CREDITS_LINE_DRAWN);
   } else {
-    Iwram_CopyWords(linePixels, linePixels + 2048, 256);
-    Iwram_FillWords(linePixels + 256, 2048, 0);
+    Iwram_CopyWords(linePixels, linePixels + 8 * CREDITS_RASTER_STRIDE,
+                    CREDITS_RASTER_STRIDE);
+    Iwram_FillWords(linePixels + CREDITS_RASTER_STRIDE,
+                    8 * CREDITS_RASTER_STRIDE, 0);
   }
 
   // Measure the line in the credits font, then choose where it starts.
@@ -1085,8 +1087,8 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   sourceBytes = text;
   textAdvance = 0;
   while ((sourceValue = *sourceBytes++) != 0) {
-    if (sourceValue > 31)
-      textAdvance += gCredits_GlyphWidths[sourceValue - 32];
+    if (sourceValue >= ' ')
+      textAdvance += gCredits_GlyphWidths[sourceValue - ' '];
   }
   if (alignment == 2)
     startX = lineWidth - textAdvance;
@@ -1098,8 +1100,8 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   sourceBytes = text;
   textAdvance = 0;
   while ((sourceValue = *text++) != 0) {
-    if (sourceValue > 31) {
-      glyphIndex = sourceValue - 32;
+    if (sourceValue >= ' ') {
+      glyphIndex = sourceValue - ' ';
       sourceBytes = font + glyphIndex * 8;
       destination = linePixels + startX + textAdvance;
       for (row = 0; row < 8; row++) {
@@ -1107,7 +1109,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
         glyphMask = 0x80;
         for (columnIndex = 0; columnIndex < 8; columnIndex++) {
           if (glyphBits & glyphMask) {
-            destination[257] = 1;
+            destination[CREDITS_RASTER_STRIDE + 1] = 1;
             destination[0] = 15;
           }
           destination++;
@@ -1116,7 +1118,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
         destination += CREDITS_RASTER_STRIDE - 8;
       }
       glyphWidth = 1;
-      if (sourceValue > 31)
+      if (sourceValue >= ' ')
         glyphWidth = gCredits_GlyphWidths[glyphIndex];
       textAdvance += glyphWidth;
     }
@@ -1143,13 +1145,13 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
 
     // A tile's eight rows of 4 bytes, each a 256-pixel raster row apart.
     OBJ_TILE_ROW(tileIndex, 0) = words[0];
-    OBJ_TILE_ROW(tileIndex, 1) = words[64];
-    OBJ_TILE_ROW(tileIndex, 2) = words[128];
-    OBJ_TILE_ROW(tileIndex, 3) = words[192];
-    OBJ_TILE_ROW(tileIndex, 4) = words[256];
-    OBJ_TILE_ROW(tileIndex, 5) = words[320];
-    OBJ_TILE_ROW(tileIndex, 6) = words[384];
-    OBJ_TILE_ROW(tileIndex, 7) = words[448];
+    OBJ_TILE_ROW(tileIndex, 1) = words[1 * (CREDITS_RASTER_STRIDE / 4)];
+    OBJ_TILE_ROW(tileIndex, 2) = words[2 * (CREDITS_RASTER_STRIDE / 4)];
+    OBJ_TILE_ROW(tileIndex, 3) = words[3 * (CREDITS_RASTER_STRIDE / 4)];
+    OBJ_TILE_ROW(tileIndex, 4) = words[4 * (CREDITS_RASTER_STRIDE / 4)];
+    OBJ_TILE_ROW(tileIndex, 5) = words[5 * (CREDITS_RASTER_STRIDE / 4)];
+    OBJ_TILE_ROW(tileIndex, 6) = words[6 * (CREDITS_RASTER_STRIDE / 4)];
+    OBJ_TILE_ROW(tileIndex, 7) = words[7 * (CREDITS_RASTER_STRIDE / 4)];
   }
   Heap_Release(linePixels);
   return 0;

@@ -276,8 +276,8 @@ ValeCave_SinkActorWithParticles(s32 actorId, s32 baseX, s32 baseZ,
   u32 frame;
 
   for (frame = 0; frame < 68; frame++) {
-    s32 particleX = ((Random_Below(17)) << 16) + baseX;
-    s32 particleZ = ((Random_Below(14)) << 16) + baseZ;
+    s32 particleX = px(Random_Below(17)) + baseX;
+    s32 particleZ = px(Random_Below(14)) + baseZ;
 
     FieldEffect_Spawn(particleX, 0, particleZ, 0, 0, 0,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
@@ -309,7 +309,7 @@ static void ValeCave_MoveWestCratesIntoWater(void) {
     // Surround the sinking crates with one particle per frame.
     options.startScaleX = 3 * Q16_ONE / 5;
     options.startScaleY = 3 * Q16_ONE / 5;
-    options.palette = 7;
+    options.palette = SPRITE_COLOR_WHITE;
     Sound_Play(SE_BURST);
     ValeCave_SinkActorWithParticles(ACTOR_WEST_CRATES, px(368), px(624),
                                     &options);
@@ -348,7 +348,7 @@ static void ValeCave_MoveEastCratesIntoWater(void) {
     // Surround the sinking crates with one particle per frame.
     options.startScaleX = 3 * Q16_ONE / 5;
     options.startScaleY = 3 * Q16_ONE / 5;
-    options.palette = 7;
+    options.palette = SPRITE_COLOR_WHITE;
     Sound_Play(SE_BURST);
     ValeCave_SinkActorWithParticles(ACTOR_EAST_CRATES, px(432), px(656),
                                     &options);
@@ -383,9 +383,9 @@ static s32 ValeCave_HopDownLedge(s32 unusedArgument) {
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   savedMotionFlags = leader->motionFlags;
 #if TBS_PATCH_1
-  landingPosition[0].fixed = (leader->x.fixed & -0x100000) + px(8);
+  landingPosition[0].fixed = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
   landingPosition[1].fixed = leader->y.fixed;
-  landingPosition[2].fixed = (leader->z.fixed & -0x100000) + px(40);
+  landingPosition[2].fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(40);
 #else
   landingPosition[0].fixed = leader->x.fixed;
   landingPosition[1].fixed = leader->y.fixed;
@@ -683,8 +683,8 @@ static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
     Actor_SetSpritePriority(actorId, 3);
     actor->layer = 2;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    actor->x.fixed = (column << 20) + px(8);
-    actor->z.fixed = (row << 20) + px(8);
+    actor->x.fixed = FIELD_CELL_CENTER(column);
+    actor->z.fixed = FIELD_CELL_CENTER(row);
   }
 }
 

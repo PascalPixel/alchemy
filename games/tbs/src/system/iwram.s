@@ -89,8 +89,8 @@ gResetRequested:
 	.global gDebugTextCursor
 gDebugTextCursor:
 	.space 4
-	.global gCamera_UnreadWord1
-gCamera_UnreadWord1:
+	.global gCamera_UnreadWordA
+gCamera_UnreadWordA:
 	.space 4
 	.global gTransformStackDepth
 gTransformStackDepth:
@@ -138,8 +138,8 @@ gKeysHeldAtVBlank:
 	.global gOamCopyEnabled
 gOamCopyEnabled:
 	.space 4
-	.global gCamera_UnreadWord2
-gCamera_UnreadWord2:
+	.global gCamera_UnreadWordB
+gCamera_UnreadWordB:
 	.space 4
 	.global gDebugPaused
 gDebugPaused:

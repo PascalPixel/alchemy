@@ -256,7 +256,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 /// and arrows, and the summon list's element icon.
 enum {
   /// Element icon: + enum Element, in BASIC_COLORS_PALETTE.
-  LIST_TILE_SUMMON_ELEMENT = (BASIC_COLORS_PALETTE << 12) | 1,
+  LIST_TILE_SUMMON_ELEMENT = BG_TILE_PALETTE(BASIC_COLORS_PALETTE) | 1,
   /// Page n's number: + n gives digit n + 1, from LIST_PAGE_DIGITS_TILE + 1,
   /// the UI digits with colour 1 drawn as 10.
   LIST_TILE_PAGE_NUMBER = WINDOW_TILE(LIST_PAGE_DIGITS_TILE + 1),

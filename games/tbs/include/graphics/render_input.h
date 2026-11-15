@@ -82,7 +82,7 @@ struct WindowSprite {
   s8 index;          ///< VRAM cache slot, or a glyph's tile after glyphTiles
   /// The depth slot it is drawn at (Oam_AddSpriteAtDepth): a higher slot is
   /// drawn in front. The windows' glyphs take 254.
-  u8 sentinel;
+  u8 depth;
   /// The depth queue's link: with oam it is the sprite entry queued each
   /// frame, read as struct CursorSprite.
   u8 link[4];
@@ -100,7 +100,7 @@ STATIC_ASSERT(offsetof(struct WindowSpriteList, tailLink) == 4);
 
 STATIC_ASSERT(offsetof(struct WindowSprite, animationStep) == 0x0c);
 
-STATIC_ASSERT(offsetof(struct WindowSprite, sentinel) == 0x0f);
+STATIC_ASSERT(offsetof(struct WindowSprite, depth) == 0x0f);
 STATIC_ASSERT(offsetof(struct WindowSprite, oam) == 0x14);
 STATIC_ASSERT(sizeof(struct WindowSprite) == 0x1c);
 

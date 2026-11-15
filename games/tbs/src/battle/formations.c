@@ -98,22 +98,22 @@ struct Formation gFormations[] = {
     },
     {0},
     {
-        .memberIds = {ENEMY_ROW(ENEMY_VERMIN_2)},
+        .memberIds = {ENEMY_ROW(ENEMY_VERMIN_WORLD_MAP)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_BAT_2)},
+        .memberIds = {ENEMY_ROW(ENEMY_BAT_WORLD_MAP)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_WILD_MUSHROOM_2)},
+        .memberIds = {ENEMY_ROW(ENEMY_WILD_MUSHROOM_WORLD_MAP)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_SLIME_2)},
+        .memberIds = {ENEMY_ROW(ENEMY_SLIME_WORLD_MAP)},
         .minimumCounts = {1},
         .maximumCounts = {3},
     },
@@ -128,12 +128,12 @@ struct Formation gFormations[] = {
         .maximumCounts = {1},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_VERMIN_2), ENEMY_ROW(ENEMY_BAT_2), ENEMY_ROW(ENEMY_WILD_MUSHROOM_2)},
+        .memberIds = {ENEMY_ROW(ENEMY_VERMIN_WORLD_MAP), ENEMY_ROW(ENEMY_BAT_WORLD_MAP), ENEMY_ROW(ENEMY_WILD_MUSHROOM_WORLD_MAP)},
         .minimumCounts = {1},
         .maximumCounts = {2, 1, 1},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_SLIME_2), ENEMY_ROW(ENEMY_AMAZE_WORLD_MAP), ENEMY_ROW(ENEMY_BAT_2)},
+        .memberIds = {ENEMY_ROW(ENEMY_SLIME_WORLD_MAP), ENEMY_ROW(ENEMY_AMAZE_WORLD_MAP), ENEMY_ROW(ENEMY_BAT_WORLD_MAP)},
         .minimumCounts = {0, 1},
         .maximumCounts = {1, 2, 1},
     },
@@ -150,12 +150,12 @@ struct Formation gFormations[] = {
     },
     {0},
     {
-        .memberIds = {ENEMY_ROW(ENEMY_GHOST), ENEMY_ROW(ENEMY_VERMIN_2), ENEMY_ROW(ENEMY_WILD_MUSHROOM_2)},
+        .memberIds = {ENEMY_ROW(ENEMY_GHOST), ENEMY_ROW(ENEMY_VERMIN_WORLD_MAP), ENEMY_ROW(ENEMY_WILD_MUSHROOM_WORLD_MAP)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2, 2},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_ZOMBIE), ENEMY_ROW(ENEMY_BAT_2), ENEMY_ROW(ENEMY_SLIME_2)},
+        .memberIds = {ENEMY_ROW(ENEMY_ZOMBIE), ENEMY_ROW(ENEMY_BAT_WORLD_MAP), ENEMY_ROW(ENEMY_SLIME_WORLD_MAP)},
         .minimumCounts = {1},
         .maximumCounts = {2, 2, 2},
     },
@@ -219,12 +219,12 @@ struct Formation gFormations[] = {
         .maximumCounts = {2, 1},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_GHOST), ENEMY_ROW(ENEMY_BAT_2), ENEMY_ROW(ENEMY_ZOMBIE)},
+        .memberIds = {ENEMY_ROW(ENEMY_GHOST), ENEMY_ROW(ENEMY_BAT_WORLD_MAP), ENEMY_ROW(ENEMY_ZOMBIE)},
         .minimumCounts = {1},
         .maximumCounts = {1, 2, 1},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_SKELETON), ENEMY_ROW(ENEMY_BAT_2), ENEMY_ROW(ENEMY_RAT_SOLDIER)},
+        .memberIds = {ENEMY_ROW(ENEMY_SKELETON), ENEMY_ROW(ENEMY_BAT_WORLD_MAP), ENEMY_ROW(ENEMY_RAT_SOLDIER)},
         .minimumCounts = {0, 0, 1},
         .maximumCounts = {1, 3, 2},
     },
@@ -234,7 +234,7 @@ struct Formation gFormations[] = {
         .maximumCounts = {2, 2},
     },
     {
-        .memberIds = {ENEMY_ROW(ENEMY_RAT_SOLDIER), ENEMY_ROW(ENEMY_RAT), ENEMY_ROW(ENEMY_BAT_2)},
+        .memberIds = {ENEMY_ROW(ENEMY_RAT_SOLDIER), ENEMY_ROW(ENEMY_RAT), ENEMY_ROW(ENEMY_BAT_WORLD_MAP)},
         .minimumCounts = {1},
         .maximumCounts = {2, 2, 1},
     },

@@ -13,38 +13,40 @@
 #define ENEMY_ROW(id) ((id) - ENEMY_ID_FIRST)
 
 /// Enemy ids, one for each row of enemy_table.c in order: an enemy id is the
-/// row plus ENEMY_ID_FIRST, and a row the code doesn't name yet keeps its row
-/// number as its placeholder. Where several rows share a name, each takes what
-/// tells its battle apart: the one place it is fought (its formation in
-/// formations.c, chosen from a zone of encounter_zones.c), the prize a Colosso
-/// finalist carries, or the Djinni a Djinni battle is with; a row fought in
-/// several places takes `_2` onwards in row order.
+/// row plus ENEMY_ID_FIRST. The rows the text names "?" are unused: two
+/// enemies in no formation, three blank rows after the Djinn lesson's Zombie
+/// and the empty row that ends the table, which have no names here. Where
+/// several rows share a name, each takes what tells its battle apart: the one
+/// place it is fought (its formation in formations.c, chosen from a zone of
+/// encounter_zones.c), the prize a Colosso finalist carries, or the Djinni a
+/// Djinni battle is with; a row fought in several places is named for where it
+/// is first met.
 enum EnemyId {
-  ENEMY_000 = ENEMY_ID_FIRST,
+  /// Row 0: "???", in no formation; a formation's empty places list it.
+  ENEMY_NONE = ENEMY_ID_FIRST,
   /// Level 1: fought on the stormy night in Vale (slots 0 and 3 of
   /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT) and in Sol Sanctum.
   ENEMY_VERMIN,
   /// Level 3: fought on the world map around Vale and Vault and in Goma Cave.
-  ENEMY_VERMIN_2,
+  ENEMY_VERMIN_WORLD_MAP,
   ENEMY_MAD_VERMIN,
   /// Level 1: fought on the stormy night in Vale (slots 1 and 3 of
   /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT) and in Sol Sanctum.
   ENEMY_BAT,
   /// Level 3: fought on the world map and in Goma Cave and the Kolima Tunnel.
-  ENEMY_BAT_2,
+  ENEMY_BAT_WORLD_MAP,
   ENEMY_RABID_BAT,
   /// Level 1: fought on the stormy night in Vale (slot 2 of
   /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT) and in Sol Sanctum.
   ENEMY_WILD_MUSHROOM,
   /// Level 3: fought on the world map around Vale and Vault and in Goma Cave.
-  ENEMY_WILD_MUSHROOM_2,
+  ENEMY_WILD_MUSHROOM_WORLD_MAP,
   ENEMY_DEATH_CAP,
   /// Level 2: fought only in Sol Sanctum (formations 11 to 14 and 16).
   ENEMY_SLIME_SOL_SANCTUM,
   /// Level 3: the Slime of the world map's first encounter region, around
   /// Vale and Vault (formations 23 and 27), and of Goma Cave (formation 32).
-  /// Fought in both, it has no one place to be named for.
-  ENEMY_SLIME_2,
+  ENEMY_SLIME_WORLD_MAP,
   ENEMY_OOZE,
   ENEMY_SLIME_BEAST,
   ENEMY_GHOST,
@@ -138,7 +140,9 @@ enum EnemyId {
   ENEMY_RAGING_ROCK,
   ENEMY_CHIMERA,
   ENEMY_CHIMERA_MAGE,
-  ENEMY_104,
+  /// Unused, in no formation: the Chimera's picture in palette 3, with
+  /// Fire Blessing, Rabid Fang, Mad Dash and Eruption.
+  ENEMY_UNUSED_CHIMERA,
   /// Level 2: fought only in Sol Sanctum.
   ENEMY_AMAZE_SOL_SANCTUM,
   /// Level 3: fought only on the world map around Vale and Vault.
@@ -150,10 +154,7 @@ enum EnemyId {
   /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT): ENEMY_ZOMBIE's stats but agility 1,
   /// and it leaves no coins, item or experience.
   ENEMY_ZOMBIE_DJINN_LESSON,
-  ENEMY_110,
-  ENEMY_111,
-  ENEMY_112,
-  ENEMY_KRAKEN,
+  ENEMY_KRAKEN = ENEMY_ID_FIRST + 113,
   ENEMY_MYSTERY_MAN,
   /// Level 18.
   ENEMY_SATUROS_MERCURY_LIGHTHOUSE,
@@ -189,7 +190,9 @@ enum EnemyId {
   ENEMY_DOODLE_BUG,
   ENEMY_TOADONPA,
   ENEMY_POISON_TOAD,
-  ENEMY_135,
+  /// Unused, in no formation: Toadonpa's picture in palette 5, which
+  /// only attacks.
+  ENEMY_UNUSED_TOADONPA,
   ENEMY_TORNADO_LIZARD,
   ENEMY_STORM_LIZARD,
   ENEMY_TEMPEST_LIZARD,
@@ -237,8 +240,7 @@ enum EnemyId {
   /// Level 18, in Altmiller Cave.
   ENEMY_JUPITER_DJINNI_SQUALL,
   /// Level 25, in Babi Lighthouse.
-  ENEMY_JUPITER_DJINNI_LUFF,
-  ENEMY_164
+  ENEMY_JUPITER_DJINNI_LUFF
 };
 
 #endif

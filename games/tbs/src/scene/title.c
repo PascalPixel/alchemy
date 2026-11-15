@@ -168,8 +168,8 @@ static void Title_LoadSprites(s32 unused) {
     gTitleVramBlock = VramCache_FindFreeEntry();
   FieldDecompress_TaggedLz(Resource_GetTableEntry(RESOURCE_INTRO_TILES_B),
                            decodedSprites);
-  Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(15, 0),
-          (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+  Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_COPY_WORDS(8),
+          REG_DMA3);
   Vram_Load(gTitleVramBlock, 40 * TILE_SIZE_4BPP, decodedSprites + 32);
 #endif
   dma3 = REG_DMA3;
@@ -218,7 +218,7 @@ static void Title_UpdateSpriteReveal(void) {
       if (revealAge <= 2 && (gFrameCount & 1))
         revealAge = 0;
       if (revealAge != 0)
-        Oam_AddSpriteAtDepth(sprite, 255);
+        Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_FRONT);
       sprite++;
       tileIndex += 2;
     }
@@ -247,7 +247,7 @@ static void Title_UpdateSpriteReveal(void) {
     if (revealAge <= 2 && (gFrameCount & 1))
       revealAge = 0;
     if (revealAge != 0)
-      Oam_AddSpriteAtDepth(sprite++, 255);
+      Oam_AddSpriteAtDepth(sprite++, OAM_DEPTH_FRONT);
     tileIndex += 2;
   } while (++column <= 17);
 #endif
@@ -269,18 +269,19 @@ static void Title_RevealScreen(s32 unused) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON |
                           DISPCNT_OBJ_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                           BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_BG0 |
                           BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
                           BLDCNT_TGT2_BD,
-                      IO_WRITE_16);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, IO_WRITE_16);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16), IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, IO_WRITE_HALFWORD);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16),
+                      IO_WRITE_HALFWORD);
   Event_Wait(120);
   for (brightnessStep = 0; brightnessStep <= 16; brightnessStep++) {
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - brightnessStep, IO_WRITE_16);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - brightnessStep, IO_WRITE_HALFWORD);
     wait(3);
   }
   gFieldWork->transition = 0;
@@ -326,7 +327,7 @@ static void Title_LoadBackground(void) {
     bgScroll->x = 0;
     bgScroll++;
   }
-  Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
+  Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   ((struct MapGridScrollWork *)gMapGridWork[0])->flags =
       DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
 }

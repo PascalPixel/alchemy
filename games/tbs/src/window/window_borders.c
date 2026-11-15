@@ -134,10 +134,11 @@ u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count) {
 /// width by height tiles, and frees the text tiles the rectangle showed.
 void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
   struct WindowWork *canvas = WINDOW_WORK;
-  u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)canvas->tilemap);
+  u16 *cursor = (u16 *)((y * BG_SCREEN_WIDTH + x) * 2 + (u32)canvas->tilemap);
   u32 row;
 
-  if (width <= 1 || height <= 1 || width > 30 || height > 30)
+  if (width <= 1 || height <= 1 || width > DISPLAY_TILE_WIDTH ||
+      height > DISPLAY_TILE_WIDTH)
     return;
   Window_ClearTextTilesInRect(x, y, width, height);
   // The top edge.
@@ -151,7 +152,7 @@ void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
     *cursor++ = WINDOW_TILE_BORDER_ROUND_CORNER | TILE_HFLIP;
   else
     *cursor++ = WINDOW_TILE_BORDER_TOP_RIGHT;
-  cursor += 32 - width;
+  cursor += BG_SCREEN_WIDTH - width;
   // The sides and the fill between them.
   for (row = 1; row < height - 1; row++) {
     *cursor++ = WINDOW_TILE_BORDER_LEFT;
@@ -159,7 +160,7 @@ void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
       cursor = Memory_FillHalfwordsDma(
           cursor, WINDOW_TILE_PAIR(WINDOW_TILE_WINDOW_FILL), width - 2);
     *cursor++ = WINDOW_TILE_BORDER_RIGHT;
-    cursor += 32 - width;
+    cursor += BG_SCREEN_WIDTH - width;
   }
   // The bottom edge.
   if (canvas->mindRead != 0)
@@ -180,16 +181,17 @@ void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
 void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
                                s32 fullWidth) {
   struct WindowWork *canvas = WINDOW_WORK;
-  u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)canvas->tilemap);
+  u16 *cursor = (u16 *)((y * BG_SCREEN_WIDTH + x) * 2 + (u32)canvas->tilemap);
   u32 row;
   u32 col;
 
-  if (width <= 1 || height <= 1 || width > 30 || height > 30)
+  if (width <= 1 || height <= 1 || width > DISPLAY_TILE_WIDTH ||
+      height > DISPLAY_TILE_WIDTH)
     return;
   // Canvas tiles run down each column of the interior: the tile at interior
   // row r (from 1) of column c (from 0) is TEXT_CANVAS_FIRST_TILE - 1 + r plus
   // c columns of height - 2 tiles.
-  cursor += 32;
+  cursor += BG_SCREEN_WIDTH;
   if (fullWidth == 0) {
     for (row = 1; row < height - 1; row++) {
       cursor++;
@@ -198,14 +200,14 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
             (TEXT_CANVAS_FIRST_TILE - 1 + row + (col - 1) * (height - 2)) &
             0xfff);
       cursor++;
-      cursor += 32 - width;
+      cursor += BG_SCREEN_WIDTH - width;
     }
   } else {
     for (row = 1; row < height - 1; row++) {
       for (col = 0; col < width; col++)
         *cursor++ = WINDOW_TILE(
             (TEXT_CANVAS_FIRST_TILE - 1 + row + col * (height - 2)) & 0xfff);
-      cursor += 32 - width;
+      cursor += BG_SCREEN_WIDTH - width;
     }
   }
   canvas->dirty = 1;
@@ -244,8 +246,8 @@ s32 Window_IsClosed(struct Window *window) {
 void Text_ResetStyle(void) {
   struct WindowWork *state = WINDOW_WORK;
 
-  state->colour = 15;
-  state->lineSpacing = 10;
+  state->colour = TEXT_DEFAULT_COLOR;
+  state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->letterSpacing = 9;
   state->outline = TEXT_STYLE_PLAIN;
   state->unusedAfterLineSpacing = 1;
@@ -261,9 +263,9 @@ void WindowSystem_StartFieldUpdate(void) {
   // tiles, the four of a 16x16 glyph for each of the 64 window sprites.
   state->glyphTiles = VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, 128 << 6, 0);
   state->letterSpacing = 9;
-  state->lineSpacing = 10;
+  state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
-  state->colour = 15;
+  state->colour = TEXT_DEFAULT_COLOR;
   state->textBufferEnd = 0;
   Task_Add(WindowSystem_Update, TASK_PASS_FRAME);
 }
@@ -279,9 +281,9 @@ void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles) {
     state->glyphTiles =
         VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, 128 << 6, 0);
   state->letterSpacing = 9;
-  state->lineSpacing = 10;
+  state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
-  state->colour = 15;
+  state->colour = TEXT_DEFAULT_COLOR;
   state->textBufferEnd = 0;
   Task_Add(WindowSystem_Update, TASK_PASS_FRAME);
 }
@@ -469,7 +471,7 @@ void FieldMessage_Show(s32 message, s32 flags) {
   Text_GetMessageSize(message, &x, &y, (u32 *)&width, (u32 *)&height);
 
   // Centre the window across the screen, and in the top 12 rows.
-  x = (30 - width) >> 1;
+  x = (DISPLAY_TILE_WIDTH - width) >> 1;
   y = (12 - height) >> 1;
 
   if (flags & FIELD_MESSAGE_LOWER) {

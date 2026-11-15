@@ -21,7 +21,7 @@
 ///
 /// Webs hold cocoons. Each is a step trigger (cell behaviors 21 to 29, 31, 32
 /// and 50 to 59) with a temporary flag of its own
-/// (FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN and the others).
+/// (FLAG_TRET_TREE_SECOND_FLOOR_COCOON_A_TORN and the others).
 ///
 /// The first step on a cocoon tears it. Its cell is redrawn and its flag set.
 ///
@@ -140,7 +140,7 @@ enum {
 /// SPEAKER_WINDOW_BELOW.
 #define SPEAKER(actorId) (SPEAKER_WINDOW_BELOW | (actorId))
 
-// The scene's temporary flags: FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN and
+// The scene's temporary flags: FLAG_TRET_TREE_SECOND_FLOOR_COCOON_A_TORN and
 // the others are set the first time each cocoon is stepped on, tearing it; the
 // next step breaks through (gTreeRooms_MapPatches lists them).
 
@@ -185,32 +185,32 @@ static s16 *sLastCocoon;
 
 /// Cocoon 21 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN FLAG_SCENE_TEMP_00
+#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_A_TORN FLAG_SCENE_TEMP_00
 /// Cocoon 22 has been torn by a first step, so the next step on it drops the
 /// leader to the room below. The layout draws it torn, and the setup sets this
 /// flag.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_2_TORN FLAG_SCENE_TEMP_01
+#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_B_TORN FLAG_SCENE_TEMP_01
 /// Cocoon 23 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_3_TORN FLAG_SCENE_TEMP_02
+#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_C_TORN FLAG_SCENE_TEMP_02
 /// Cocoon 24 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_4_TORN FLAG_SCENE_TEMP_03
+#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_D_TORN FLAG_SCENE_TEMP_03
 /// Cocoon 25 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_5_TORN FLAG_SCENE_TEMP_04
+#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_E_TORN FLAG_SCENE_TEMP_04
 /// Cocoon 26 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_6_TORN FLAG_SCENE_TEMP_05
+#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_F_TORN FLAG_SCENE_TEMP_05
 /// Cocoon 27 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_7_TORN FLAG_SCENE_TEMP_06
+#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_G_TORN FLAG_SCENE_TEMP_06
 /// Cocoon 28 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_8_TORN FLAG_SCENE_TEMP_07
+#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_H_TORN FLAG_SCENE_TEMP_07
 /// Cocoon 29 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
-#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_9_TORN FLAG_SCENE_TEMP_08
+#define FLAG_TRET_TREE_SECOND_FLOOR_COCOON_I_TORN FLAG_SCENE_TEMP_08
 /// Cocoon 31 has been torn by a first step, so the next step on it drops the
 /// leader to the room below.
 #define FLAG_TRET_TREE_THIRD_FLOOR_WEST_COCOON_TORN FLAG_SCENE_TEMP_09
@@ -324,52 +324,52 @@ static void TreeRooms_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
 // The cocoons' step triggers in Tret Tree, one per cocoon: each passes its
 // flag, the staging cell of its torn picture and its own number, the landing
 // entrance, to TreeRooms_StepOnCocoon. The second floor's nine
-// are alike, on one web, and keep their numbers 1 to 9 in the order of their
-// step triggers and landing entrances, 21 to 29.
+// are alike, on one web, and are lettered A to I in the order of their step
+// triggers and landing entrances, 21 to 29.
 
-static void TreeRooms_StepOnSecondFloorCocoon1(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN, 64, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_1);
+static void TreeRooms_StepOnSecondFloorCocoonA(void) {
+  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_A_TORN, 64, 35,
+                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_A);
 }
 
-static void TreeRooms_StepOnSecondFloorCocoon2(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_2_TORN, 65, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_2);
+static void TreeRooms_StepOnSecondFloorCocoonB(void) {
+  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_B_TORN, 65, 35,
+                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_B);
 }
 
-static void TreeRooms_StepOnSecondFloorCocoon3(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_3_TORN, 66, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_3);
+static void TreeRooms_StepOnSecondFloorCocoonC(void) {
+  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_C_TORN, 66, 35,
+                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_C);
 }
 
-static void TreeRooms_StepOnSecondFloorCocoon4(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_4_TORN, 67, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_4);
+static void TreeRooms_StepOnSecondFloorCocoonD(void) {
+  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_D_TORN, 67, 35,
+                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_D);
 }
 
-static void TreeRooms_StepOnSecondFloorCocoon5(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_5_TORN, 68, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_5);
+static void TreeRooms_StepOnSecondFloorCocoonE(void) {
+  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_E_TORN, 68, 35,
+                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_E);
 }
 
-static void TreeRooms_StepOnSecondFloorCocoon6(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_6_TORN, 69, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_6);
+static void TreeRooms_StepOnSecondFloorCocoonF(void) {
+  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_F_TORN, 69, 35,
+                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_F);
 }
 
-static void TreeRooms_StepOnSecondFloorCocoon7(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_7_TORN, 70, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_7);
+static void TreeRooms_StepOnSecondFloorCocoonG(void) {
+  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_G_TORN, 70, 35,
+                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_G);
 }
 
-static void TreeRooms_StepOnSecondFloorCocoon8(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_8_TORN, 71, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_8);
+static void TreeRooms_StepOnSecondFloorCocoonH(void) {
+  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_H_TORN, 71, 35,
+                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_H);
 }
 
-static void TreeRooms_StepOnSecondFloorCocoon9(void) {
-  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_9_TORN, 72, 35,
-                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_9);
+static void TreeRooms_StepOnSecondFloorCocoonI(void) {
+  TreeRooms_StepOnCocoon(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_I_TORN, 72, 35,
+                         TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_I);
 }
 
 static void TreeRooms_StepOnThirdFloorWestCocoon(void) {
@@ -786,7 +786,7 @@ s32 Scene_Initialize(void) {
   layer->scaleY = 9 * Q16_ONE / 10;
   // The layout draws four cocoons already torn: the first step on them breaks
   // through.
-  GameFlag_Set(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_2_TORN);
+  GameFlag_Set(FLAG_TRET_TREE_SECOND_FLOOR_COCOON_B_TORN);
   GameFlag_Set(FLAG_TRET_TREE_FIFTH_FLOOR_NORTH_COCOON_TORN);
   GameFlag_Set(FLAG_TRET_TREE_FIFTH_FLOOR_WEST_COCOON_TORN);
   GameFlag_Set(FLAG_TRET_TREE_FIFTH_FLOOR_SOUTHEAST_COCOON_TORN);
@@ -833,8 +833,8 @@ s32 Scene_Initialize(void) {
 
 /// Saves background palettes 0 to 13 as the base for Tret's map tint.
 static void TretPalette_SaveMapColors(void) {
-  Dma_Set((const void *)BG_PLTT, gPaletteFadeWork->palette,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 112, REG_DMA3);
+  Dma_Set((const void *)BG_PLTT, gPaletteFadeWork->palette, DMA_COPY_WORDS(112),
+          REG_DMA3);
 }
 
 /// Tints background colours 16 to 78 every thirty-two frames, leaving
@@ -1107,14 +1107,14 @@ static void TreeRooms_RunLandingDustEvent(void) {
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(24);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = 4 * Q16_ONE / 5;
   options.startScaleY = 4 * Q16_ONE / 5;
   for (particleIndex = 0; particleIndex <= 16; particleIndex++) {
-    velocity.x = Trig_Cos(particleIndex << 12);
+    velocity.x = Trig_Cos(particleIndex * FACING_STEP);
     velocity.y = 0;
-    velocityZ = Trig_Sin(particleIndex << 12);
+    velocityZ = Trig_Sin(particleIndex * FACING_STEP);
     velocityX = velocity.x;
     velocity.z = velocityZ;
     velocityX += velocityX / 2;
@@ -1146,15 +1146,15 @@ static void TreeRooms_RunLandingDustEvent(void) {
 /// cell x/y and the cocoon's cell x/y.
 // clang-format off
 s16 gTreeRooms_MapPatches[] = {
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_1_TORN, 1, 64, 35, 113, 6,
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_2_TORN, 0, 65, 35, 115, 6,
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_3_TORN, 1, 66, 35, 110, 8,
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_4_TORN, 1, 67, 35, 110, 10,
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_5_TORN, 1, 68, 35, 111, 12,
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_6_TORN, 1, 69, 35, 113, 12,
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_7_TORN, 1, 70, 35, 112, 14,
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_8_TORN, 1, 71, 35, 114, 14,
-    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_9_TORN, 1, 72, 35, 116, 14,
+    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_A_TORN, 1, 64, 35, 113, 6,
+    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_B_TORN, 0, 65, 35, 115, 6,
+    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_C_TORN, 1, 66, 35, 110, 8,
+    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_D_TORN, 1, 67, 35, 110, 10,
+    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_E_TORN, 1, 68, 35, 111, 12,
+    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_F_TORN, 1, 69, 35, 113, 12,
+    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_G_TORN, 1, 70, 35, 112, 14,
+    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_H_TORN, 1, 71, 35, 114, 14,
+    FLAG_TRET_TREE_SECOND_FLOOR_COCOON_I_TORN, 1, 72, 35, 116, 14,
     FLAG_TRET_TREE_THIRD_FLOOR_WEST_COCOON_TORN, 1, 73, 35, 71, 23,
     FLAG_TRET_TREE_THIRD_FLOOR_EAST_COCOON_TORN, 1, 74, 35, 77, 24,
     FLAG_TRET_TREE_FIFTH_FLOOR_NORTHWEST_COCOON_TORN, 1, 75, 35, 112, 24,
@@ -1313,15 +1313,15 @@ struct SceneEntrance gTreeRoomsEntrances[] = {
     { TREE_ROOMS_FOURTH_FLOOR_FROM_THIRD_FLOOR, CONDITION_ALWAYS, 552, 0, 360, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
     { TREE_ROOMS_TRET_FROM_ENTRANCE, CONDITION_ALWAYS, 168, 24, 152, FACING_SOUTH, 0, 32, 0, 304, 272, 0 },
     { TREE_ROOMS_ENTRANCE_FROM_TRET, CONDITION_ALWAYS, 488, 0, 168, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_1, CONDITION_ALWAYS, 472, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_2, CONDITION_ALWAYS, 504, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_3, CONDITION_ALWAYS, 424, 0, 136, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_4, CONDITION_ALWAYS, 424, 0, 168, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_5, CONDITION_ALWAYS, 440, 0, 200, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_6, CONDITION_ALWAYS, 488, 0, 200, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_7, CONDITION_ALWAYS, 456, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_8, CONDITION_ALWAYS, 488, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
-    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_9, CONDITION_ALWAYS, 520, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_A, CONDITION_ALWAYS, 472, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_B, CONDITION_ALWAYS, 504, 0, 104, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_C, CONDITION_ALWAYS, 424, 0, 136, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_D, CONDITION_ALWAYS, 424, 0, 168, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_E, CONDITION_ALWAYS, 440, 0, 200, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_F, CONDITION_ALWAYS, 488, 0, 200, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_G, CONDITION_ALWAYS, 456, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_H, CONDITION_ALWAYS, 488, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
+    { TREE_ROOMS_FROM_SECOND_FLOOR_COCOON_I, CONDITION_ALWAYS, 520, 0, 232, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
     { TREE_ROOMS_FROM_THIRD_FLOOR_WEST_COCOON, CONDITION_ALWAYS, 760, 0, 104, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
     { TREE_ROOMS_FROM_THIRD_FLOOR_EAST_COCOON, CONDITION_ALWAYS, 856, 0, 120, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
     { TREE_ROOMS_FROM_FIFTH_FLOOR_NORTHWEST_COCOON, CONDITION_ALWAYS, 456, 0, 392, FACING_SOUTH, 0, 352, 272, 640, 544, 0 },
@@ -1453,23 +1453,23 @@ struct Trigger gTreeRoomsTriggers[] = {
     {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 59, CONDITION_ALWAYS,
      EVENT(TreeRooms_JumpFromCocoon)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoon1)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoonA)},
     {TRIGGER_STEP, 22, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoon2)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoonB)},
     {TRIGGER_STEP, 23, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoon3)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoonC)},
     {TRIGGER_STEP, 24, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoon4)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoonD)},
     {TRIGGER_STEP, 25, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoon5)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoonE)},
     {TRIGGER_STEP, 26, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoon6)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoonF)},
     {TRIGGER_STEP, 27, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoon7)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoonG)},
     {TRIGGER_STEP, 28, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoon8)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoonH)},
     {TRIGGER_STEP, 29, CONDITION_ALWAYS,
-     EVENT(TreeRooms_StepOnSecondFloorCocoon9)},
+     EVENT(TreeRooms_StepOnSecondFloorCocoonI)},
     {TRIGGER_STEP, 31, CONDITION_ALWAYS,
      EVENT(TreeRooms_StepOnThirdFloorWestCocoon)},
     {TRIGGER_STEP, 32, CONDITION_ALWAYS,

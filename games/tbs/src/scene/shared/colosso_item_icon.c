@@ -19,7 +19,7 @@ void Colosso_ShowItemIcon(s32 id, s32 item) {
     icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Dma_Fill32(0, icon->tiles, 128);
     Icon_DrawItem(item);
-    tile = VramCache_Load(sprite->slot, 128, icon->tiles);
+    tile = VramCache_Load(sprite->slot, ICON_TILE_BYTES, icon->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     actor->retainSpriteCache = 1;
     SpriteAnimation_Clear(sprite->entries[0]);

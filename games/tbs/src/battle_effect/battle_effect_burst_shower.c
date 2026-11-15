@@ -6,6 +6,12 @@
 
 /// Where the burst, lightning or face pictures start in the sheet.
 #define BURST_SHOWER_PICTURES GLINT_SET_BYTES
+/// VioletLightningSheetA's bolts (one every 72x64 bytes, drawn 62 tall) and
+/// DemonFaceSheet's face.
+#define VIOLET_LIGHTNING_WIDTH 72
+#define VIOLET_LIGHTNING_HEIGHT 62
+#define DEMON_FACE_WIDTH 32
+#define DEMON_FACE_HEIGHT 64
 #define BURST_SHOWER_BURSTS 48     ///< one fired a frame from frame 0
 #define BURST_SHOWER_BURST_LIFE 24 ///< frames each burst lives
 
@@ -103,16 +109,16 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   if (mode == BURST_SHOWER_MODE_FACES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
     draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   } else {
     BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   }
@@ -155,7 +161,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
         paletteId = RESOURCE_MARS_DJINN_SHEET;
         break;
       }
-      Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(paletteId), 128);
+      Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(paletteId),
+                      SHEET_PALETTE_BYTES);
     }
   }
 
@@ -219,12 +226,14 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
         draw[0](canvas,
                 (work->sheet + BURST_SHOWER_PICTURES) +
                     ((frame / 3 % 3 * 9) << 9),
-                origin.x - 2, origin.y - 32, 72, 62);
+                origin.x - 2, origin.y - 32, VIOLET_LIGHTNING_WIDTH,
+                VIOLET_LIGHTNING_HEIGHT);
       } else {
         draw[0](canvas,
                 (work->sheet + BURST_SHOWER_PICTURES) +
                     ((frame / 3 % 3 * 9) << 9),
-                origin.x - 70, origin.y - 32, 72, 62);
+                origin.x - 70, origin.y - 32, VIOLET_LIGHTNING_WIDTH,
+                VIOLET_LIGHTNING_HEIGHT);
       }
     } else {
       aim[0] = (targetSpots[target].x + (Random16() & 31)) - 16;
@@ -246,26 +255,29 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
       if (spark->variant >= 0) {
         if (mode == BURST_SHOWER_MODE_FACES) {
           if (spark->variant > 5) {
-            draw[work->args->side](canvas,
-                                   (work->sheet + BURST_SHOWER_PICTURES),
-                                   Q_16_16_TO_INT(spark->x) - 16,
-                                   Q_16_16_TO_INT(spark->y) - 32, 32, 64);
+            draw[work->args->side](
+                canvas, (work->sheet + BURST_SHOWER_PICTURES),
+                Q_16_16_TO_INT(spark->x) - DEMON_FACE_WIDTH / 2,
+                Q_16_16_TO_INT(spark->y) - DEMON_FACE_HEIGHT / 2,
+                DEMON_FACE_WIDTH, DEMON_FACE_HEIGHT);
           }
         } else if (mode == BURST_SHOWER_MODE_DJINNI) {
           if (spark->variant > 5) {
             draw[0](canvas,
                     (work->sheet + BURST_SHOWER_PICTURES) +
                         ((spark->variant / 4) << 11),
-                    Q_16_16_TO_INT(spark->x) - 16,
-                    Q_16_16_TO_INT(spark->y) - 32, 32, 64);
+                    Q_16_16_TO_INT(spark->x) - FLASH_BURST_WIDTH / 2,
+                    Q_16_16_TO_INT(spark->y) - FLASH_BURST_HEIGHT / 2,
+                    FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           }
         } else if (mode != BURST_SHOWER_MODE_LIGHTNING) {
           if (spark->variant > 1) {
             draw[0](canvas,
                     (work->sheet + BURST_SHOWER_PICTURES) +
                         ((spark->variant / 4) << 11),
-                    Q_16_16_TO_INT(spark->x) - 16,
-                    Q_16_16_TO_INT(spark->y) - 32, 32, 64);
+                    Q_16_16_TO_INT(spark->x) - FLASH_BURST_WIDTH / 2,
+                    Q_16_16_TO_INT(spark->y) - FLASH_BURST_HEIGHT / 2,
+                    FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           }
         }
         spark->x += spark->velocityX;

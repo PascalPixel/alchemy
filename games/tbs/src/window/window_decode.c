@@ -354,7 +354,7 @@ s32 Message_Decode(s32 script, s32 clear) {
       // Once halting speech has broken off, the rest of the message is
       // skipped, though its arguments are still taken from the table.
       if (overflow != 0) {
-        if (code < 32) {
+        if (code < TEXT_SPACE) {
           switch (code) {
           case MESSAGE_ARGUMENT_CLASS_NAME:
             decode(messageReader);
@@ -420,7 +420,8 @@ s32 Message_Decode(s32 script, s32 clear) {
             code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED &&
             previousCode <= 256 && previousCode > 127 &&
             previousCode != TEXT_MARK_VOICED &&
-            previousCode != TEXT_MARK_SEMIVOICED && previousCode != 32 &&
+            previousCode != TEXT_MARK_SEMIVOICED &&
+            previousCode != TEXT_SPACE &&
             previousCode != TEXT_JAPANESE_MIDDLE_DOT &&
             previousCode != TEXT_JAPANESE_FULL_STOP &&
             previousCode != TEXT_JAPANESE_COMMA) {
@@ -429,14 +430,15 @@ s32 Message_Decode(s32 script, s32 clear) {
 
 #endif
         // A character.
-        if (code > 31) {
-          if (work->haltingSpeech != 0 && (code == 32 || decodedCount > 10)) {
+        if (code >= TEXT_SPACE) {
+          if (work->haltingSpeech != 0 &&
+              (code == TEXT_SPACE || decodedCount > 10)) {
             TEXT_APPEND(entry, writePosition, '.');
             TEXT_APPEND(entry, writePosition, '.');
             TEXT_APPEND(entry, writePosition, '.');
             overflow = 1;
             if (decodedCount > 10)
-              code = 32;
+              code = TEXT_SPACE;
           }
           // Every other double quote, the opening one, becomes
           // TEXT_OPENING_QUOTE.
@@ -835,7 +837,7 @@ s32 Message_Decode(s32 script, s32 clear) {
       // Once halting speech has broken off, the rest of the message is
       // skipped, though its arguments are still taken from the table.
       if (overflow != 0) {
-        if (code < 32) {
+        if (code < TEXT_SPACE) {
           switch (code) {
           case MESSAGE_ARGUMENT_CLASS_NAME:
             MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
@@ -888,27 +890,29 @@ s32 Message_Decode(s32 script, s32 clear) {
             code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED &&
             previousCode <= 256 && previousCode > 127 &&
             previousCode != TEXT_MARK_VOICED &&
-            previousCode != TEXT_MARK_SEMIVOICED && previousCode != 32 &&
+            previousCode != TEXT_MARK_SEMIVOICED &&
+            previousCode != TEXT_SPACE &&
             previousCode != TEXT_JAPANESE_MIDDLE_DOT &&
             previousCode != TEXT_JAPANESE_FULL_STOP &&
             previousCode != TEXT_JAPANESE_COMMA) {
           TEXT_APPEND(entry, writePosition, ENTRY_WIDE_GAP);
         }
         // A character.
-        if (code > 31) {
+        if (code >= TEXT_SPACE) {
           // A battle message doubles each space. The ellipsis here is
           // ・・・。.
           if (mode != 0 && code == ' ') {
             TEXT_APPEND(entry, writePosition, code);
           }
-          if (work->haltingSpeech != 0 && (code == 32 || decodedCount > 10)) {
+          if (work->haltingSpeech != 0 &&
+              (code == TEXT_SPACE || decodedCount > 10)) {
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_FULL_STOP);
             overflow = 1;
             if (decodedCount > 10)
-              code = 32;
+              code = TEXT_SPACE;
           }
           TEXT_APPEND(entry, writePosition, (u16)code);
           lineStart = 0;

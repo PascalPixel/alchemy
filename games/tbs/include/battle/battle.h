@@ -229,7 +229,7 @@ struct DjinnRecoveryTable *BattleSummon_UpdateAvailability(void);
 void BattleSummon_ReservedNoOp(void);
 s32 LinkBattle_ReceiveParty(void);
 UNREAD_RESULT LinkBattle_SendParty(void);
-u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source);
+u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unusedA, u32 unusedB, u16 *source);
 s32 LinkBattle_WaitSync(void);
 s32 LinkBattle_SyncTurn(void);
 UNREAD_RESULT BattleParty_AssignOpponentSlots(void);
@@ -365,7 +365,7 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
 UNREAD_RESULT BattleObject_SetColorMode(struct Actor *actor, s32 palette);
 s32 BattleStaging_RunPsynergyCast(struct BattleActionRun *plan, s32 mode);
 
-void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1);
+void BattleMotion_FlashHit(s32 unitId, s32 unusedA, s32 unusedB);
 void BattleObject_RemoveFromLists(s32 unitId);
 void BattleMotion_ShowDowned(s32 unitId);
 s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit);
@@ -433,6 +433,10 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom);
 #else
 void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y);
 #endif
+/// BG1's vertical scroll that sets the battle background in the battle view.
+#define BATTLE_BACKGROUND_SCROLL_Y 32
+/// BattleCamera_SetView's zoom, in percent, for the battle's usual view.
+#define BATTLE_ZOOM_NORMAL 100
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom);
 void BattleCamera_SetViewAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
                                         s32 zoom);

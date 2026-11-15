@@ -100,9 +100,9 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   for (element = 0; element <= 3; element++) {
     for (djinnIndex = 0,
         entryCursor = (u32 *)((djinnCount << 2) + (u32)djinnEntries);
-         djinnIndex <= 19; djinnIndex++) {
+         djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
       if (unit->djinnSet[element] & (u32)(1 << djinnIndex)) {
-        *entryCursor = (u32)((element << 8) | djinnIndex);
+        *entryCursor = (u32)DJINN_COMMAND(element, djinnIndex);
         entryCursor++;
         djinnCount++;
       } else if (unit->djinnHeld[element] & (u32)(1 << djinnIndex)) {
@@ -120,7 +120,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
             break;
           }
         }
-        v = (u32)((element << 8) | djinnIndex | DJINN_ENTRY_STANDBY);
+        v = (u32)(DJINN_COMMAND(element, djinnIndex) | DJINN_ENTRY_STANDBY);
         *entryCursor = v;
         if (list->entries[k].turns > 0) {
           v |= (u32)(list->entries[k].turns << DJINN_ENTRY_RECOVERY_SHIFT);
@@ -324,8 +324,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       held = 0;
       if (navigation->tutorialDelay == 0) {
         navigation->tutorialDelay = 60;
-        repeated = 1;
-        pressed = 1;
+        repeated = KEY_A;
+        pressed = KEY_A;
       } else {
         navigation->tutorialDelay--;
       }
@@ -488,7 +488,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     sprite->x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
     sprite->y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
     if (djinnCount != 0) {
-      Oam_AddSpriteAtDepth(sprite, 242);
+      Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
     }
     // In the party status window's Djinn column (PARTY_STATUS_SHOW_DJINN),
     // the element of a ready standby Djinni under the cursor blinks between

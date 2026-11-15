@@ -25,11 +25,11 @@ extern struct IoWriteQueue gIoWriteQueue;
 // and 19 its operation; Resource_ExecuteTransfer reads them.
 
 /// Writes a byte.
-#define IO_WRITE_8 (1 << 16)
+#define IO_WRITE_BYTE (1 << 16)
 /// Writes a halfword.
-#define IO_WRITE_16 (2 << 16)
+#define IO_WRITE_HALFWORD (2 << 16)
 /// Writes a word.
-#define IO_WRITE_32 (3 << 16)
+#define IO_WRITE_WORD (3 << 16)
 /// ORs the value into the register instead of storing it.
 #define IO_WRITE_SET (4 << 16)
 /// Clears the value's bits in the register instead of storing it.
@@ -47,8 +47,8 @@ void IoWriteQueue_ClearBits32(u32 address, u32 value);
 
 /// Disables interrupts to add one register write or DMA to the queue; a write
 /// to a full queue is dropped.
-/// @param control a width (IO_WRITE_8 to IO_WRITE_32), with IO_WRITE_SET or
-/// IO_WRITE_CLEAR to change bits; or a DMA control word.
+/// @param control a width (IO_WRITE_BYTE to IO_WRITE_WORD), with IO_WRITE_SET
+/// or IO_WRITE_CLEAR to change bits; or a DMA control word.
 #define IO_WRITE_QUEUE_PUSH(address, value, control)                           \
   {                                                                            \
     struct IoWriteQueue *q = &gIoWriteQueue;                                   \

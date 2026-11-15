@@ -886,9 +886,10 @@ u8 gEruption_Counts[][3] = {{16, 8, 72}, {32, 16, 80}, {128, 32, 88}};
 u16 gEruption_PuffPictures[] = BLAST_PICTURES;
 u16 gEruption_PuffSizes[] = BLAST_PICTURE_SIZES;
 
-// Unreferenced picture layouts, from 6x6 through 20x20. gUnused_SheetPictures6
-// is the first six offsets of gUnused_SheetPictures, named for its length.
-u16 gUnused_SheetPictures6[] = {0, 36, 100, 200, 344, 540};
+// Unreferenced picture layouts, from 6x6 through 20x20.
+// gUnused_SheetPicturesShort stops at the 16x16 picture's offset, the first
+// six of gUnused_SheetPictures.
+u16 gUnused_SheetPicturesShort[] = {0, 36, 100, 200, 344, 540};
 u16 gUnused_SheetPictures[] = {0,   36,   100,  200,  344, 540,
                                796, 1120, 1520, 1900, 2300};
 u8 gUnused_SheetWidths[] = {6, 8, 10, 12, 14, 16, 18, 20, 19, 20};

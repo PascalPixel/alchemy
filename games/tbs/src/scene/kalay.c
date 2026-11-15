@@ -127,6 +127,7 @@
 #include "field/event.h"
 #include "field/field.h"
 #include "field/ground_mask.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
 #include "game/game.h"
@@ -144,7 +145,7 @@
 #include "window/screens.h"
 #include "text/msg_ids.h"
 
-u8 gKalay_Unk_0[12] BSS_DATA ALIGNED(8);
+u8 gKalay_UnusedBeforeDanceStep[12] BSS_DATA ALIGNED(8);
 /// Which of the two guides' turns Kalay_AlternateGuidesPacing is at, 0 to 4.
 s32 gKalay_DanceStep BSS_DATA;
 
@@ -1158,7 +1159,7 @@ s32 Scene_Initialize(void) {
 /// Sets up Kalay.
 static void Kalay_PrepareTown(void) {
   OrbitingMapActor *nut;
-  u8 *heap;
+  GlyphTransfer *glyph;
   OrbitingMapActorSprite *sprite;
 
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
@@ -1189,9 +1190,9 @@ static void Kalay_PrepareTown(void) {
     nut->mode = 0;
     nut->y = px(10);
     nut->visible = 1;
-    heap = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(ITEM_NUT);
-    VramCache_Load(sprite->palette, 128, heap + 1024);
+    VramCache_Load(sprite->palette, ICON_TILE_BYTES, glyph->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     nut->orbitAngle = 0;
     nut->orbitCenterX = nut->x;
@@ -1979,10 +1980,10 @@ static void Kalay_PushTunnelStatue(void) {
   s32 leaderX;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  direction = (leader->facing >> 12);
+  direction = FACING_INDEX(leader->facing);
   leaderX = leader->x.part[0].pixel;
   probeStep = gKalay_TileStepByFacing[direction];
-  statue = Actor_FindAtCell((leaderX + (probeStep >> 16)) >> 4,
+  statue = Actor_FindAtCell((leaderX + (FIELD_PIXEL(probeStep))) >> 4,
                             (leader->z.part[0].pixel + (s16)probeStep) >> 4);
   if (statue != NULL) {
     statue->layer = 2;
@@ -2252,19 +2253,14 @@ static void Kalay_FreezePuddle(void) {
 
 #include "shared/actor_orbit.c"
 
-// One cell in each facing direction: x in the high 16 bits, z in the low 16.
-// UB: negative x coordinates cannot be left-shifted as signed integers.
-#ifdef UBFIX
-#define TILE_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
-#else
-#define TILE_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
-#endif
-
+/// One cell in each facing direction.
 s32 gKalay_TileStepByFacing[] = {
-    TILE_STEP(16, 0),  TILE_STEP(16, 0),  TILE_STEP(16, 0),  TILE_STEP(0, 16),
-    TILE_STEP(0, 16),  TILE_STEP(0, 16),  TILE_STEP(0, 16),  TILE_STEP(-16, 0),
-    TILE_STEP(-16, 0), TILE_STEP(-16, 0), TILE_STEP(-16, 0), TILE_STEP(0, -16),
-    TILE_STEP(0, -16), TILE_STEP(0, -16), TILE_STEP(0, -16), TILE_STEP(16, 0),
+    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
+    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(16, 0),
 };
 
 s32 gKalay_TourGroupWalkScript[] = {
@@ -2339,7 +2335,7 @@ s32 gKalay_GuidePaceScript[] = {
     SC_MOVE(246, 0, 296),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_SET(SW_FACING, TRIG_TURN * 13 / 16),
+    SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_WAIT(40),
     SC_SET(SW_TIMER, 1),
     SC_END,

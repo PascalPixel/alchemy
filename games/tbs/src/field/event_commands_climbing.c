@@ -17,8 +17,7 @@ s32 Field_TryJumpForward(void) {
   // failure returns, before taking control of the field again.
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 result = -1;
-  s32 angle =
-      (leader->facing + TRIG_TURN / 8) & 0xc000; // to the nearest quarter
+  s32 angle = FACING_NEAREST_CARDINAL(leader->facing);
   u8 saved = leader->motionFlags;
   struct FieldWork *work = gFieldWork;
   s32 spriteFlags = 1;
@@ -106,7 +105,8 @@ s32 Field_ClimbDown(void) {
   Event_Start();
 
   if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
-    s32 index = gridX / 16 + (gridZ / 16) * 128;
+    s32 index = gridX / MAPGRID_CELL_PIXELS +
+                (gridZ / MAPGRID_CELL_PIXELS) * MAPGRID_SIZE;
 
     // A wall goes down only where the cell below is the same climbing code.
     if (TILE_CELLS[index].behavior == TILE_CELLS_SOUTH[index].behavior) {
@@ -177,7 +177,8 @@ s32 Field_ClimbUp(void) {
     spriteFlags = actor->sprite->flags;
 
   if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
-    s32 index = gridX / 16 + (gridZ / 16) * 128;
+    s32 index = gridX / MAPGRID_CELL_PIXELS +
+                (gridZ / MAPGRID_CELL_PIXELS) * MAPGRID_SIZE;
 
     if (TILE_CELLS[index].behavior == TILE_CELLS_NORTH[index].behavior) {
       // Six words, of which the position uses three; the rest give the stack

@@ -452,7 +452,7 @@ s32 Scene_Initialize(void) {
             if (prizeIndex == 0) {
               Event_SetMessageId(MsgTolbiWonItemGo);
             } else {
-              Event_SetMessageId(MsgTolbiWonItemGo2);
+              Event_SetMessageId(MsgTolbiAndYouWonItem);
             }
             item = TolbiSpring_SelectLuckyWheelsPrize(wonPrizes[prizeIndex]);
             MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
@@ -918,7 +918,7 @@ static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
 /// speed and colours.
 static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
                                            s32 facing, s32 colorVariant,
-                                           s32 childValue) {
+                                           s32 animationSpeed) {
   struct Actor *actor = Actor_Get(actorId);
   struct Sprite *sprite;
   u32 count;
@@ -930,7 +930,7 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
     actor->facing = facing;
     actor->motionFlags = 0;
     actor->sprite->flags = 0;
-    Actor_SetAnimationSpeed(actor, childValue);
+    Actor_SetAnimationSpeed(actor, animationSpeed);
   }
   // BUG: actor is read even when Actor_Get found none.
   sprite = actor->sprite;
@@ -1063,8 +1063,8 @@ static void TolbiSpring_UpdateTossSimulation(void) {
             TolbiSpring_SetSpriteStorageKind(TOLBI_SPRING_COIN_TRAIL(3), 0);
           }
           {
-            s32 deltaX = (TOLBI_SPRING_CENTER_X - toss->trail[0].x) >> 16;
-            s32 deltaZ = (TOLBI_SPRING_CENTER_Z - toss->trail[0].z) >> 16;
+            s32 deltaX = FIELD_PIXEL(TOLBI_SPRING_CENTER_X - toss->trail[0].x);
+            s32 deltaZ = FIELD_PIXEL(TOLBI_SPRING_CENTER_Z - toss->trail[0].z);
             s32 distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
 
             // Classify squared pixel distance into the five prize rings.
@@ -1277,8 +1277,8 @@ static void TolbiSpring_UpdateTossSimulation(void) {
       s32 deltaZ;
       s32 distanceSquared;
 
-      deltaX = (obstacle->position.x - toss->trail[0].x) >> 16;
-      deltaZ = (obstacle->position.z - toss->trail[0].z) >> 16;
+      deltaX = FIELD_PIXEL(obstacle->position.x - toss->trail[0].x);
+      deltaZ = FIELD_PIXEL(obstacle->position.z - toss->trail[0].z);
       distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
       if (distanceSquared <= 119 && toss->attractionFrames > 30) {
         s32 speed;

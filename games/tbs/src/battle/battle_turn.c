@@ -11,25 +11,25 @@ void Palette_UpdatePulseBrightness(void) {
   u16 *palette = &BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   s32 i;
 
-  for (i = 0; i < 16; i++) {
+  for (i = 0; i < PALETTE_COLORS; i++) {
     // 3/64 of a turn a frame, a pulse about every 21 frames; 1 - cos runs
     // from 0 to 2.0 (16.16), and a sixth of 1.0 is one step.
     u32 angle = (gFrameCount * 3U) << 10;
-    u32 color = palette[16];
+    u32 color = palette[PALETTE_COLORS];
     s32 brightness = (Q16_ONE - Trig_Cos(angle)) / (Q16_ONE / 6);
-    s32 blue = (color >> 10) & 0x1f;
-    s32 green = (color >> 5) & 0x1f;
-    s32 red = color & 0x1f;
+    s32 blue = RGB_BLUE(color);
+    s32 green = RGB_GREEN(color);
+    s32 red = RGB_RED(color);
 
     blue += brightness;
     green += brightness;
     red += brightness;
-    if (blue < 0 || blue > 31)
-      blue = 31;
-    if (green < 0 || green > 31)
-      green = 31;
-    if (red < 0 || red > 31)
-      red = 31;
+    if (blue < 0 || blue > RGB_LEVEL_MAX)
+      blue = RGB_LEVEL_MAX;
+    if (green < 0 || green > RGB_LEVEL_MAX)
+      green = RGB_LEVEL_MAX;
+    if (red < 0 || red > RGB_LEVEL_MAX)
+      red = RGB_LEVEL_MAX;
     *palette++ = RGB(red, green, blue);
   }
 }
@@ -70,7 +70,7 @@ void BattleCamera_SetCommandView(s32 verticalOffset) {
   Projection_Set(0, result, px(1938));
 
   // While the view is busy, BattleCamera_SetRange leaves BG1's scroll alone.
-  gProjection.centerY = verticalOffset + 120;
+  gProjection.centerY = verticalOffset + BATTLE_PROJECTION_CENTER_Y;
   view->busy = 1;
   BattleCamera_SetRange(px(120), px(118 - verticalOffset), 0, 8 << 8,
                         Q16_ONE * 2);
@@ -129,7 +129,7 @@ s32 BattleFlee_CheckSuccess(void) {
     }
     chance -= levelTotal * 500 / livingCount;
     // A roll from 0 to 9999 against the chance.
-    if ((chance > 0) && (((10000 * Random16()) >> 16) < chance)) {
+    if ((chance > 0) && (Random16_Below(10000) < chance)) {
       escaped = 1;
     }
     *failedAttempts += 1;
@@ -213,8 +213,8 @@ s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
   }
 
   for (i = 31; i >= 0; i--) {
-    u32 first = (unitCount * Random16()) >> 16;
-    u32 second = (unitCount * Random16()) >> 16;
+    u32 first = Random16_Below(unitCount);
+    u32 second = Random16_Below(unitCount);
     s32 swap = unitIds[first];
     unitIds[first] = unitIds[second];
     unitIds[second] = swap;
@@ -222,7 +222,7 @@ s32 Battle_BuildEnemyActions(struct BattleAction *entries) {
 
   // A roll of 1 to 5, raised to at least 2.
   if (battle->firstStrike == FIRST_STRIKE_ENEMIES) {
-    s32 limit = ((Random16() * 5) >> 16) + 1;
+    s32 limit = Random16_Below(5) + 1;
 
     if (limit <= 1) {
       limit = 2;
@@ -284,11 +284,11 @@ void BattleActionOrder_Sort(struct BattleAction *entries, s32 count) {
     if (entry->command == COMMAND_DJINN) {
       struct AbilityDefinition *action;
 
-      // parameter: the Djinni's element in bits 8 to 11, its number below.
       // The unit lookup's result is unused.
       Unit_GetFar(entry->unitId);
-      action = Ability_Get(Djinn_GetAbilityIdFar(entry->parameter >> 8 & 15,
-                                                 entry->parameter & 0xff));
+      action = Ability_Get(
+          Djinn_GetAbilityIdFar(DJINN_COMMAND_ELEMENT(entry->parameter),
+                                DJINN_COMMAND_INDEX(entry->parameter)));
       if (action->effect == ABILITY_EFFECT_DEFEND ||
           action->effect == ABILITY_EFFECT_TOTAL_DEFENSE ||
           action->effect == ABILITY_EFFECT_GROUND) {
@@ -501,28 +501,28 @@ fail:
 /// Copies BG palette 15 to 14 and 5 to 4, each channel moved by offset.
 void Palette_CopyWithBrightnessOffset(s32 offset) {
   s32 bank;
-  s32 source = 15;
+  s32 source = WINDOW_PALETTE;
   s32 i;
 
   // Palettes 15 and 5, each into the palette before it, 14 and 4.
   for (bank = 0; bank < 2; bank++) {
-    for (i = 0; i < 16; i++) {
-      s32 index = source * 16 + i;
+    for (i = 0; i < PALETTE_COLORS; i++) {
+      s32 index = source * PALETTE_COLORS + i;
       u32 color = ((u16 *)BG_PLTT)[index];
-      s32 blue = (color >> 10) & 31;
-      s32 green = (color >> 5) & 31;
-      s32 red = color & 31;
+      s32 blue = RGB_BLUE(color);
+      s32 green = RGB_GREEN(color);
+      s32 red = RGB_RED(color);
       s32 adjusted;
 
       blue += offset;
       green += offset;
       red += offset;
-      if (blue > 31)
-        blue = 31;
-      if (green > 31)
-        green = 31;
-      if (red > 31)
-        red = 31;
+      if (blue > RGB_LEVEL_MAX)
+        blue = RGB_LEVEL_MAX;
+      if (green > RGB_LEVEL_MAX)
+        green = RGB_LEVEL_MAX;
+      if (red > RGB_LEVEL_MAX)
+        red = RGB_LEVEL_MAX;
       if (blue < 0)
         blue = 0;
       if (green < 0)
@@ -532,7 +532,7 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
       adjusted = blue << 10;
       adjusted |= green << 5;
       adjusted |= red;
-      ((u16 *)BG_PLTT)[index - 16] = adjusted;
+      ((u16 *)BG_PLTT)[index - PALETTE_COLORS] = adjusted;
     }
     source = 5;
   }

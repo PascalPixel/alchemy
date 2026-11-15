@@ -4,6 +4,14 @@
 
 #include "field_sequence_internal.h"
 
+/// A window transition's value: from 0, the screen covered, it opens to
+/// TRANSITION_OPEN and closes again to TRANSITION_CLOSED; a mode draws the
+/// opening half and the closing half mirrored.
+#define TRANSITION_OPEN 32
+#define TRANSITION_CLOSED 64
+/// WININ or WINOUT showing every layer in both windows (bits 6 and 14 set too).
+#define TRANSITION_SHOW_ALL 0x7f7f
+
 /// Each VBlank, before drawing: turns windows 0 and 1 on, writes the first four
 /// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0
 /// copy the rest into WIN0H and WIN1H one word each HBlank, so that every line
@@ -69,7 +77,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
         // A transition that closed (value 64) also turns backgrounds 1 to 3
         // and the sprites off, so the screen stays covered; one that opened
         // just turns the windows off.
-        if (state->end == 64) {
+        if (state->end == TRANSITION_CLOSED) {
           REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                            DISPCNT_OBJ_ON | DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
         } else {
@@ -99,24 +107,24 @@ void ScreenTransition_UpdateScanlineTable(void) {
   scanlineData = state->pages[1 ^ state->page];
   ScanlineWindow_FillSpansFar(scanlineData + 2);
 
-  // Each mode writes WININ and WINOUT first. 0x7f7f shows every layer inside
-  // both windows and 1 only background 0 outside them; a mode swaps the two to
-  // cover the screen inside the windows instead.
+  // Each mode writes WININ and WINOUT first. TRANSITION_SHOW_ALL shows every
+  // layer inside both windows and 1 only background 0 outside them; a mode
+  // swaps the two to cover the screen inside the windows instead.
   switch (state->mode) {
   case WINDOW_TRANSITION_BARS:
-    *scanlineData++ = 0x7f7f;
+    *scanlineData++ = TRANSITION_SHOW_ALL;
     *scanlineData++ = 1;
     value = state->value;
-    if (value & 32) {
-      value = 32 - (value & 31);
+    if (value & TRANSITION_OPEN) {
+      value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
     } else {
-      value &= 31;
+      value &= TRANSITION_OPEN - 1;
     }
     // Each line shows one bar of the table's width at a random place on the
     // 240-pixel line.
     value = gScreenTransition_NoiseWidths[value];
     for (i = 0; i < DISPLAY_HEIGHT; i++) {
-      leftEdge = (Random16() * (241 - value)) >> 16;
+      leftEdge = (Random16() * (DISPLAY_WIDTH + 1 - value)) >> 16;
       scanlineData[0] = ((leftEdge << 8) | (leftEdge + value));
       scanlineData += 2;
     }
@@ -124,8 +132,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
 
   case WINDOW_TRANSITION_SHAPE:
     value = state->value;
-    shape = &gScreenTransition_Shapes[value & 31];
-    if (value & 32) {
+    shape = &gScreenTransition_Shapes[value & (TRANSITION_OPEN - 1)];
+    if (value & TRANSITION_OPEN) {
       *scanlineData++ = shape->first;
       *scanlineData++ = shape->second;
     } else {
@@ -163,16 +171,16 @@ void ScreenTransition_UpdateScanlineTable(void) {
 
   case WINDOW_TRANSITION_NOISE:
     value = state->value - 1;
-    if (value & 32) {
+    if (value & TRANSITION_OPEN) {
       *scanlineData++ = 1;
-      *scanlineData++ = 0x7f7f;
+      *scanlineData++ = TRANSITION_SHOW_ALL;
     } else {
-      *scanlineData++ = 0x7f7f;
+      *scanlineData++ = TRANSITION_SHOW_ALL;
       *scanlineData++ = 1;
     }
     // Each line's window runs from the left edge to 16 pixels per step of
     // progress plus up to 15 at random, at most 255.
-    value &= 31;
+    value &= TRANSITION_OPEN - 1;
     for (i = 0; i < DISPLAY_HEIGHT; i++) {
       horizontalExtent = (value << 4) + ((16 * Random16()) >> 16);
       if (horizontalExtent > 255) {
@@ -188,25 +196,25 @@ void ScreenTransition_UpdateScanlineTable(void) {
     // Closing writes four header halfwords, then 160 pairs: its last write
     // crosses the 322-halfword page.
     u8 *pageBytes = (u8 *)state + (1 ^ state->page) * sizeof(state->pages[0]);
-    const u16 header[4] = {0x7f7f, 1, 1, 0x7f7f};
+    const u16 header[4] = {TRANSITION_SHOW_ALL, 1, 1, TRANSITION_SHOW_ALL};
     u32 headerSize = 2 * sizeof(u16);
     u16 edges;
 #endif
     value = state->value;
 #ifdef UBFIX
-    if ((u32)value > 32) {
+    if ((u32)value > TRANSITION_OPEN) {
       headerSize = sizeof(header);
-      value = 64 - value;
+      value = TRANSITION_CLOSED - value;
     }
     memcpy(pageBytes, header, headerSize);
     pageBytes += headerSize;
 #else
-    *scanlineData++ = 0x7f7f;
+    *scanlineData++ = TRANSITION_SHOW_ALL;
     *scanlineData++ = 1;
-    if ((u32)value > 32) {
+    if ((u32)value > TRANSITION_OPEN) {
       *scanlineData++ = 1;
-      *scanlineData++ = 0x7f7f;
-      value = 64 - value;
+      *scanlineData++ = TRANSITION_SHOW_ALL;
+      value = TRANSITION_CLOSED - value;
     }
 #endif
     // A circle about the screen's centre (120, 80) whose radius grows 5
@@ -215,11 +223,11 @@ void ScreenTransition_UpdateScanlineTable(void) {
     value *= 5;
     radiusSquaredQ16 = (value * value) << 16;
     for (i = 0; i < DISPLAY_HEIGHT; i++) {
-      value = i - 80;
+      value = i - DISPLAY_HEIGHT / 2;
       horizontalExtent =
           Iwram_Sqrt(radiusSquaredQ16 - ((value * value) << 16)) >> 8;
-      left = 120 - horizontalExtent;
-      right = horizontalExtent + 120;
+      left = DISPLAY_WIDTH / 2 - horizontalExtent;
+      right = horizontalExtent + DISPLAY_WIDTH / 2;
       if (left < 0) {
         left = 0;
       }
@@ -246,16 +254,16 @@ void ScreenTransition_UpdateScanlineTable(void) {
 
   case WINDOW_TRANSITION_INTERLACED_WIPE:
     value = state->value;
-    if (value & 32) {
+    if (value & TRANSITION_OPEN) {
       *scanlineData++ = 1;
-      *scanlineData++ = 0x7f7f;
+      *scanlineData++ = TRANSITION_SHOW_ALL;
     } else {
-      *scanlineData++ = 0x7f7f;
+      *scanlineData++ = TRANSITION_SHOW_ALL;
       *scanlineData++ = 1;
     }
     // Even lines' windows grow from the left edge and odd lines' from the
     // right, by up to 240 pixels over 32 steps.
-    value = (u32)(DISPLAY_WIDTH * (value & 31)) >> 5;
+    value = (u32)(DISPLAY_WIDTH * (value & (TRANSITION_OPEN - 1))) >> 5;
     for (i = 0; i < DISPLAY_HEIGHT; i += 2) {
       oppositeEdges = ((DISPLAY_WIDTH - value) << 8) + DISPLAY_WIDTH;
       scanlineData[0] = value;
@@ -285,10 +293,10 @@ void ScreenTransition_UpdateScanlineTable(void) {
     *scanlineData++ = state->active;
     *scanlineData++ = state->mask;
     value = state->value;
-    if ((value & 32) == 0) {
-      value = 32 - (value & 31);
+    if ((value & TRANSITION_OPEN) == 0) {
+      value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
     } else {
-      value &= 31;
+      value &= TRANSITION_OPEN - 1;
     }
     // On odd frames the ellipse has no size: the flicker.
     if (gFrameCount & 1) {
@@ -336,10 +344,10 @@ void ScreenTransition_UpdateScanlineTable(void) {
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
     value = state->value;
-    if (value & 32) {
-      value = 32 - (value & 31);
+    if (value & TRANSITION_OPEN) {
+      value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
     } else {
-      value &= 31;
+      value &= TRANSITION_OPEN - 1;
     }
     value *= 5;
     radiusSquaredQ16 = (value * value) << 16;
@@ -395,10 +403,10 @@ void ScreenTransition_UpdateScanlineTable(void) {
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
     value = state->value;
-    if (value & 32) {
-      value = 32 - (value & 31);
+    if (value & TRANSITION_OPEN) {
+      value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
     } else {
-      value &= 31;
+      value &= TRANSITION_OPEN - 1;
     }
     value *= 5;
     radiusSquaredQ16 = (value * value) << 16;
@@ -445,10 +453,10 @@ void ScreenTransition_UpdateScanlineTable(void) {
     *scanlineData++ = state->mask;
     *scanlineData++ = state->active;
     value = state->value;
-    if (value & 32) {
-      value = 32 - (value & 31);
+    if (value & TRANSITION_OPEN) {
+      value = TRANSITION_OPEN - (value & (TRANSITION_OPEN - 1));
     } else {
-      value &= 31;
+      value &= TRANSITION_OPEN - 1;
     }
     // sqrt(r * r - 0.75 * dy * dy): 1.15 times as tall as it is wide.
     value *= 5;
@@ -537,7 +545,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     PaletteFade_StartInterpolation(frames);
     wait(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
-                        IO_WRITE_16);
+                        IO_WRITE_HALFWORD);
     PaletteFade_SetBackdrop(0);
     return;
   // The window, dissolve and centre-line kinds open from value 0 (closed) to
@@ -547,15 +555,15 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
         ScreenTransition_AllocateAndClearState();
     state->mode = variant;
     state->value = 0;
-    state->mask = 63;
+    state->mask = WININ_WIN0_ALL;
     state->active = 1;
     Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
     Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK);
     wait(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
-                        IO_WRITE_16);
+                        IO_WRITE_HALFWORD);
     state->start = 0;
-    state->end = 32;
+    state->end = TRANSITION_OPEN;
     state->duration = frames;
     state->step = 0;
     return;
@@ -564,14 +572,14 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     struct ScreenTransitionState *state =
         ScreenTransition_AllocateAndClearState();
     state->mode = variant;
-    state->value = 32;
+    state->value = TRANSITION_OPEN;
     ScreenTransition_FillTilemapAndSolidTile(15);
     wait(1);
     Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_FRAME);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
-                        IO_WRITE_16);
+                        IO_WRITE_HALFWORD);
     state->start = 0;
-    state->end = 32;
+    state->end = TRANSITION_OPEN;
     state->duration = frames;
     state->step = 0;
     return;
@@ -581,20 +589,20 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
 
     display = gMapGridWork[0];
     state = ScreenTransition_AllocateAndClearState();
-    display->firstLine = 80;
-    display->secondLine = 80;
+    display->firstLine = DISPLAY_HEIGHT / 2;
+    display->secondLine = DISPLAY_HEIGHT / 2;
     wait(1);
     if (variant == 0) {
       Task_Add(ScreenTransition_Update, TASK_PASS_FRAME);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
-      state->start = 80;
+      state->start = DISPLAY_HEIGHT / 2;
       state->end = 0;
       state->duration = frames;
       state->step = 0;
     } else {
       Task_Add(ScreenTransition_UpdateFromCentre, TASK_PASS_FRAME);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
-      state->start = 80;
+      state->start = DISPLAY_HEIGHT / 2;
       state->end = 0;
       state->duration = frames;
       state->step = 0;
@@ -603,7 +611,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
   }
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
 }
 
 /// Fades the screen out over frames frames, as ScreenTransition_Start fades it
@@ -627,14 +635,14 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     struct ScreenTransitionState *state =
         ScreenTransition_AllocateAndClearState();
     state->mode = variant;
-    state->value = 32;
-    state->mask = 63;
+    state->value = TRANSITION_OPEN;
+    state->mask = WININ_WIN0_ALL;
     state->active = 1;
     Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
     Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK);
     wait(1);
-    state->start = 32;
-    state->end = 64;
+    state->start = TRANSITION_OPEN;
+    state->end = TRANSITION_CLOSED;
     state->duration = frames;
     state->step = 0;
     break;
@@ -643,12 +651,12 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     struct ScreenTransitionState *state =
         ScreenTransition_AllocateAndClearState();
     state->mode = variant;
-    state->value = 32;
+    state->value = TRANSITION_OPEN;
     ScreenTransition_FillTilemapAndSolidTile(0);
     wait(1);
     Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_FRAME);
-    state->start = 32;
-    state->end = 64;
+    state->start = TRANSITION_OPEN;
+    state->end = TRANSITION_CLOSED;
     state->duration = frames;
     state->step = 0;
     break;
@@ -660,14 +668,14 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
       Task_Add(ScreenTransition_Update, TASK_PASS_FRAME);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = 0;
-      state->end = 80;
+      state->end = DISPLAY_HEIGHT / 2;
       state->duration = frames;
       state->step = 0;
     } else {
       Task_Add(ScreenTransition_UpdateFromCentre, TASK_PASS_FRAME);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = 0;
-      state->end = 80;
+      state->end = DISPLAY_HEIGHT / 2;
       state->duration = frames;
       state->step = 0;
     }
@@ -724,12 +732,12 @@ void ScreenTransition_Update(void) {
   // At 80 or more the lines are put below the screen's 160, so no switch
   // happens.
   edgeDistance = state->value;
-  if (edgeDistance > 79) {
+  if (edgeDistance >= DISPLAY_HEIGHT / 2) {
     display->firstLine = 200;
     display->secondLine = 250;
   } else {
     display->firstLine = edgeDistance;
-    display->secondLine = 159 - edgeDistance;
+    display->secondLine = DISPLAY_HEIGHT - 1 - edgeDistance;
   }
 }
 
@@ -757,15 +765,15 @@ void ScreenTransition_UpdateFromCentre(void) {
   }
 
   edgeDistance = state->value;
-  if (edgeDistance > 79) {
+  if (edgeDistance >= DISPLAY_HEIGHT / 2) {
     window->firstLine = 200;
     window->secondLine = 250;
   } else if (edgeDistance != 0 && (gFrameCount & 1)) {
-    window->firstLine = edgeDistance + 80;
-    window->secondLine = 80 - edgeDistance;
+    window->firstLine = edgeDistance + DISPLAY_HEIGHT / 2;
+    window->secondLine = DISPLAY_HEIGHT / 2 - edgeDistance;
   } else {
     window->firstLine = 0;
-    window->secondLine = 159;
+    window->secondLine = DISPLAY_HEIGHT - 1;
   }
 }
 
@@ -857,9 +865,9 @@ void ScreenTransition_UpdateDissolve(void) {
   ditherIndex = state->value - 1;
   state->ditherToggle ^= 1;
   colorIndex = 0;
-  if (ditherIndex & 32)
+  if (ditherIndex & TRANSITION_OPEN)
     colorIndex = 15;
-  ditherIndex = (ditherIndex & 31) * 2;
+  ditherIndex = (ditherIndex & (TRANSITION_OPEN - 1)) * 2;
   for (i = 0; i <= 1; i++) {
     u8 pixelIndex = gScreenTransition_DitherTable[ditherIndex & 63];
     u8 *tileByte = &state->paletteNibbles[pixelIndex >> 1];
@@ -905,3 +913,6 @@ void ScreenTransition_InitializeState(s32 value) {
   Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_FRAME);
   wait(120);
 }
+#undef TRANSITION_OPEN
+#undef TRANSITION_CLOSED
+#undef TRANSITION_SHOW_ALL

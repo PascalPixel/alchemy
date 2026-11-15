@@ -26,7 +26,7 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   z = actor->z.fixed - cameraZ - actor->y.fixed;
   *position++ = x / Q16_ONE;
   *position = z / Q16_ONE;
-  if ((actor->spriteStorageKind & 15) == ACTOR_SPRITE_ONE)
+  if ((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE)
     *position -=
         Resource_GetMetadataRecordFar(actor->sprite->entries[0]->animationId)
             ->boxX;
@@ -50,7 +50,7 @@ UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
     // On the World Map the flash colours BG palette colour 243 instead, and the
     // screen closes on the flickering centre line (style 4, variant 1); a field
     // scene closes with WINDOW_TRANSITION_LEADER_INVERSE.
-    Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
+    Io_Write16(RGB_WHITE, (u16 *)&BG_PLTT_COLOR(15, 3));
     ScreenTransition_Finish(SCENE_TRANSITION(4, 1), 16);
     work->transitionActive = 0;
     wait(16);
@@ -61,7 +61,7 @@ UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
       wait(1);
     }
   } else {
-    Io_Write16(RGB(31, 31, 31), &PLTT_BACKDROP);
+    Io_Write16(RGB_WHITE, &PLTT_BACKDROP);
     ScreenTransition_Finish(
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER_INVERSE),
         16);

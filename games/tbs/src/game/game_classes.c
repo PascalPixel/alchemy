@@ -20,7 +20,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
     u32 index;
 
     index = Enemy_GetDefinition(record)->elementPreset;
-    if (index > 43)
+    if (index >= ENEMY_ELEMENT_PRESET_COUNT)
       index = 0;
 
     i = 0;
@@ -69,7 +69,7 @@ s32 Enemy_GetAttackElement(struct Unit *unit) {
   const struct EnemyDefinition *enemy = Enemy_GetDefinition(unit->id);
   u8 presetIndex = enemy->elementPreset;
 
-  if (presetIndex > 43)
+  if (presetIndex >= ENEMY_ELEMENT_PRESET_COUNT)
     presetIndex = 0;
   return gEnemy_ElementPresetTable[presetIndex].first;
 }
@@ -85,7 +85,7 @@ Unit_CalculateBaseElements(s32 unitId, struct BattleElementStats *destination) {
   if (state->classId == CLASS_NONE) {
     u32 preset = Enemy_GetDefinition(state->id)->elementPreset;
 
-    if (preset > 43)
+    if (preset >= ENEMY_ELEMENT_PRESET_COUNT)
       preset = 0;
     // The copy returns from inside its loop, as the last element is written.
     for (i = 0;;) {
@@ -131,12 +131,12 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
   Unit_GetElementLevels(character, djinn, levels);
   if (GameFlag_Get(FLAG_CHILDHOOD)) {
     if (character == ISAAC)
-      return 200;
+      return CLASS_ISAAC_CHILD;
     if (character == GARET)
-      return 201;
+      return CLASS_GARET_CHILD;
   }
   if (character == JENNA)
-    return 202;
+    return CLASS_FLAME_USER;
   if (result != -1)
     return result;
   best = result;
@@ -159,7 +159,7 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
   // element.
   series = Class_GetSeries(primary, levels[j] > 9 ? j : primary);
   // The last class of the series that the element levels reach.
-  for (i = 202; i >= 0; i--) {
+  for (i = CLASS_COUNT - 1; i >= 0; i--) {
     if (gClass_DefinitionTable[i].series != series)
       continue;
     for (j = 0; j < ELEMENT_COUNT; j++) {

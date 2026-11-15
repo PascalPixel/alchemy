@@ -92,6 +92,12 @@ enum CellPicturePacking {
 /// A movement target coordinate that is not set.
 #define TARGET_UNSET ((s32)0x80000000)
 
+/// Where a layout's tileset animation and blend scripts are decoded, in the
+/// space after the shapes; the world map decodes its tileset animation there
+/// too.
+#define MAPGRID_ANIMATION_SCRIPT (Ram_MapGridShapes + 0x1000)
+#define MAPGRID_BLEND_SCRIPT (Ram_MapGridShapes + 0x1e00)
+
 /// A row of gSpritePictureCache_Sources: the packed resource that holds an
 /// animation number's pictures, ending at number 0.
 struct SpritePictureCacheSource {

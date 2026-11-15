@@ -133,5 +133,5 @@ void Inn_PlaySleep(s32 roomPrice) {
   Event_StartScreenTransitionFar();
   Event_WaitTransitionFramesFar();
   wait(30);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
 }

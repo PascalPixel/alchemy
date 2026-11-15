@@ -82,7 +82,7 @@ s32 Battle_Run(s32 enemyGroup) {
   SET_VECTOR(camera->eye, 0, px(180), px(64));
   camera->yaw = TRIG_TURN * 5 / 32;
   camera->pitch = TRIG_TURN * 5 / 16;
-  camera->distance = 256 << 16;
+  camera->distance = px(256);
   enemyCount = BattleFormation_BuildEnemyList(battle->formation);
 
   // A link battle: the opponent's party, which the Battle Arena left in
@@ -143,7 +143,7 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleBackground_Init();
   BattleBackground_Load(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   // The camera on the centre at 190 percent until the opening zooms.
-  BattleCamera_SetRange(px(160), px(80), 0, 0, 2 << 16);
+  BattleCamera_SetRange(px(160), px(80), 0, 0, 2 * Q16_ONE);
   BattleCamera_SetView(0, 0, 0, 190);
   Party_BattleSetupNoOp(1);
   REG_BLDCNT = 0;

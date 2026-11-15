@@ -80,7 +80,7 @@ void IconMenu_DrawIcons(void) {
         spriteY = (pulseScale * 15 / 256 - 30) & 255;
       word = entry->sprite;
       *word++ = 0;
-      *word++ = (affineIndex << 25) | spriteY | (left << 16) | OBJ_SIZE_32X32 |
+      *word++ = (affineIndex << 25) | spriteY | OBJ_X(left) | OBJ_SIZE_32X32 |
                 OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
       *word = gVramCacheEntries[entry->slot].offset >> 5;
       drawLayer = 246;
@@ -91,7 +91,7 @@ void IconMenu_DrawIcons(void) {
       word = entry->sprite;
       spriteY = *(s16 *)&entry->y;
       *word++ = 0;
-      attributes = spriteY | (x << 16) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
+      attributes = spriteY | OBJ_X(x) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
       tileOffset = gVramCacheEntries[entry->slot].offset;
       *word++ = attributes;
       *word = tileOffset >> 5;

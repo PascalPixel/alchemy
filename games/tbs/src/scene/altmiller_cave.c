@@ -441,8 +441,7 @@ static void AltmillerCave_StartRetreat(void) {
   replacement = FieldActor_Create(0, original->x.fixed, original->y.fixed,
                                   original->z.fixed);
   if (replacement != NULL) {
-    Dma_Set(original, replacement,
-            (DMA_ENABLE | DMA_32BIT) << 16 | sizeof(struct Actor) / 4,
+    Dma_Set(original, replacement, DMA_COPY_WORDS(sizeof(struct Actor) / 4),
             REG_DMA3);
     original->update = 0;
     effectWork->mainActor = replacement;
@@ -524,7 +523,7 @@ static void AltmillerCave_HopSelectedActor(void) {
   components[1].fixed = actor->y.fixed;
   components[2].fixed = actor->z.fixed;
   {
-    s32 angle = actor->facing & 0xf000;
+    s32 angle = FACING_SIXTEENTH(actor->facing);
 
     Vector_AddPolarOffset(px(32), angle, destination.coordinates);
   }

@@ -394,7 +394,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
             tile = WINDOW_TILE('0');
           }
           if (index == selectedPages[page]) {
-            tile -= (WINDOW_PALETTE - HIGHLIGHT_PALETTE) << 12;
+            tile -= BG_TILE_PALETTE(WINDOW_PALETTE - HIGHLIGHT_PALETTE);
           }
           Window_SetTilemapEntryFar(
               list, tile, list->width - pageCounts[page] + index - 2, -1, 0);
@@ -618,7 +618,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
         if (pageIndex > 9)
           tile = WINDOW_TILE('0');
         if (pageIndex == selectedPages[side])
-          tile -= (WINDOW_PALETTE - HIGHLIGHT_PALETTE) << 12;
+          tile -= BG_TILE_PALETTE(WINDOW_PALETTE - HIGHLIGHT_PALETTE);
         Window_SetTilemapEntryFar(
             window, tile, window->width - counts[side] + pageIndex - 2, -1, 0);
       }
@@ -767,7 +767,7 @@ void Djinn_CountOwned(u8 *ownedCounts) {
     unit = Unit_GetFar(menu->members[memberIndex]);
     ownedCount = 0;
     for (element = 0; element <= 3; element++) {
-      for (djinnIndex = 0; djinnIndex <= 19; djinnIndex++) {
+      for (djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
         if (unit->djinnSet[element] & (1 << djinnIndex))
           ownedCount++;
         else if (unit->djinnHeld[element] & (1 << djinnIndex))

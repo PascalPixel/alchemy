@@ -221,13 +221,14 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
 /// cache entry and first layer that Avoid's arcs set on it, under struct
 /// Sprite's names; its image bit fields are read here as bytes.
 struct DescendingArcSprite {
-  u8 padding00[5];
+  u8 link[4];
+  u8 y;
   u8 affine : 2;
   u8 objectMode : 2;
   u8 mosaic : 1;
   u8 fullColor : 1; ///< 0 for 16 colours
   u8 shape : 2;     ///< 1 wide
-  u8 padding06;
+  u8 xLow;
   u8 xHigh : 1;
   u8 affineIndex : 5;
   u8 size : 2;
@@ -244,12 +245,19 @@ struct DescendingArcSprite {
       u8 palette : 4;
     } byte;
   } attr;
-  u8 padding0c[16];
+  struct AnimationSpritePart shadow;
+  s32 scale;
   u8 slot;                 ///< the VRAM cache entry holding its tiles
   u8 retainCacheEntry : 1; ///< the borrowed tiles stay loaded
   u8 useOwnScale : 1;
   u8 unusedFlags : 6;
-  u8 padding1e[8];
+  u16 rotation;
+  u8 width;
+  u8 height;
+  s8 offsetX;
+  s8 offsetY;
+  u8 lastNo;
+  u8 dirty;
   u8 flags; ///< 0 drops the shadow
   u8 count;
   struct SpriteAnimation *firstEntry; ///< entries[0], its first layer

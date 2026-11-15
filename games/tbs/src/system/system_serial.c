@@ -657,7 +657,7 @@ void SerialTest_Run(void) {
   // WINDOW_PALETTE, where the received 640 bytes are copied
   n = 19;
   tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * 32 + 19;
-  value = (s16)(WINDOW_PALETTE << 12 | (128 + 19));
+  value = (s16)(BG_TILE_PALETTE(WINDOW_PALETTE) | (128 + 19));
   do {
     n--;
     *tile = value;

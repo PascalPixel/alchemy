@@ -238,6 +238,8 @@ typedef struct {
 /// PARTICLES as particles. The effects use these two, not gMapGridCellBuffer
 /// itself.
 #define PARTICLES ((struct Particle *)Ram_MapGridCellBuffer)
+/// The particles PARTICLES holds.
+#define PARTICLE_POOL_COUNT 1024
 
 /// Clips overflow on all four sides.
 #define EFFECT_CLIP_BOUNDS (BLITTER_CLIP_X | BLITTER_CLIP_Y)
@@ -261,12 +263,12 @@ struct Point2D {
 };
 
 /// A blitter pair: [0] built in HEAP_SLOT_RAM_CODE and [1] in
-/// HEAP_SLOT_RAM_CODE_2 (BattleEffect_FetchRectangleBlitters fills one).
+/// HEAP_SLOT_RAM_CODE_PAIRED (BattleEffect_FetchRectangleBlitters fills one).
 /// Many effects keep this pair in their stack frame.
 typedef DrawRectangle BlitterPair[2];
 
 /// The heap slots read as blitters: EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE] and
-/// EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2].
+/// EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_PAIRED].
 #define EFFECT_BLITTERS ((DrawRectangle *)gHeapSlots)
 
 // The functions the parts of battle_effect.c define, part by part in include

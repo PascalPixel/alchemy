@@ -4,9 +4,13 @@
 
 #include "battle_effect_internal.h"
 
-#define DJINN_BEAMS_MOTE_PICTURES                                              \
-  10000 ///< the motes (CrescentMoonSheet, 24x24)
-#define DJINN_BEAMS_DJINNI_PICTURE 26048 ///< the Djinni (40x40)
+#define DJINN_BEAMS_MOTES 512 ///< motes in PARTICLES
+
+/// The motes (CrescentMoonSheet), then the Djinni.
+#define DJINN_BEAMS_MOTE_PICTURES 10000
+#define DJINN_BEAMS_MOTE_WIDTH 24
+#define DJINN_BEAMS_MOTE_HEIGHT 24
+#define DJINN_BEAMS_DJINNI_PICTURE 26048
 
 /// Motes drift down over each target and a column of light falls on it, in the
 /// Venus Djinni's colours; with a prelude, a Venus Djinni appears first.
@@ -49,22 +53,22 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
                                    work->args->side ^ work->args->prelude,
                                    DJINNI_ANCHOR_OVER_TARGET, &djinnX, &djinnY);
   palette = Resource_GetTableEntry(RESOURCE_EARTH_WALL_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  palette += 128;
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry(RESOURCE_CRESCENT_MOON_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  palette += 128;
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_MOTE_PICTURES);
   if (element == ELEMENT_VENUS)
     palette = Resource_GetTableEntry(RESOURCE_VENUS_DJINN_SHEET);
   else
     palette = Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  palette += 128;
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet + DJINN_BEAMS_DJINNI_PICTURE);
 
-  for (i = 0; i != 512; i++) {
+  for (i = 0; i != DJINN_BEAMS_MOTES; i++) {
     PARTICLES[i].x = 0;
     PARTICLES[i].y = px(80);
     PARTICLES[i].z = (Random16() | -32) << 14;
@@ -74,10 +78,10 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   REG_BG2PA = Q_8_8(1);
   if (work->args->targetCount == 1) {
     Projection_ScaledUnit(work->args->targets[0], &one);
-    offsetX = 64 - one.x;
+    offsetX = CANVAS_SIZE / 2 - one.x;
   } else {
     if (work->args->side == EFFECT_SIDE_PARTY)
-      offsetX = -112;
+      offsetX = -NARROW_CANVAS_PARTY_X;
     else
       offsetX = 0;
   }
@@ -96,24 +100,26 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
     k = work->args->prelude;
     if (k == 1) {
       s32 angle = frame << 11;
-      s32 x = (-Trig_Sin(angle) * 20 >> 16) + djinnX + offsetX - 20;
-      s32 y = (Trig_Cos(angle) * 4 >> 16) + djinnY - 24;
+      s32 x = Q_16_16_TO_INT(-Trig_Sin(angle) * 20) + djinnX + offsetX - 20;
+      s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * 4) + djinnY - 24;
 
       BattleEffect_FetchRectangleBlitters(work->args->side ^ k, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
-      draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y, 40, 40);
+      draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
+              DJINNI_WIDTH, DJINNI_HEIGHT);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y, 40, 40);
+        draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_PICTURE, x, y,
+                DJINNI_WIDTH, DJINNI_HEIGHT);
       EFFECT_RELEASE_BLITTERS();
     }
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
     draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
-    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
 
     // Motes sink, swaying.
     EFFECT_FOR_EACH_TARGET(k, work->args) {
@@ -133,7 +139,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
 
             Projection_Point(mote, &screenPosition);
             screenPosition.x += offsetX;
-            sway = Trig_Sin(mote->variant << 10) * 16 >> 16;
+            sway = Q_16_16_TO_INT(Trig_Sin(mote->variant << 10) * 16);
             if (i & 1)
               screenPosition.x -= sway;
             else
@@ -141,9 +147,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
             draw[i & 1](canvas,
                         work->sheet +
                             gDjinnBeams_MotePictures[mote->variant / 8 & 7] *
-                                (24 * 24) +
+                                PICTURE_BYTES(DJINN_BEAMS_MOTE) +
                             DJINN_BEAMS_MOTE_PICTURES,
-                        screenPosition.x - 12, screenPosition.y - 12, 24, 24);
+                        screenPosition.x - DJINN_BEAMS_MOTE_WIDTH / 2,
+                        screenPosition.y - DJINN_BEAMS_MOTE_HEIGHT / 2,
+                        DJINN_BEAMS_MOTE_WIDTH, DJINN_BEAMS_MOTE_HEIGHT);
             mote->y -= px(1);
             mote->variant++;
           }

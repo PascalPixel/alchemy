@@ -47,6 +47,9 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// scale by: 256 is 1.
 #define FULL_RATE 256
 
+/// The element power an item, or an ability with no element, acts with.
+#define ITEM_ELEMENT_POWER 100
+
 /// A message operand that shows nothing: the event only waits for the player.
 #define MESSAGE_NONE -1
 
@@ -172,7 +175,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       plan->command != COMMAND_ITEM)
     elementPower = actor->element[plan->element].power;
   else
-    elementPower = 100;
+    elementPower = ITEM_ELEMENT_POWER;
 
   // 2. The Djinn bonus, and whether the effect lands.
   if (plan->command == COMMAND_DJINN &&
@@ -183,7 +186,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
     chance = elementPower - target->element[plan->element].resistance;
     chance += 30;
     // Percent to a fraction of the 16-bit random range.
-    chance *= 65536 / 100;
+    chance *= Q16_ONE / 100;
     if (chance > (Battle_RandomFar() & 0xffff))
       BattlePlayback_Push(PLAYBACK_DJINN_BONUS, 5);
   }
@@ -442,7 +445,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       // An ability with no element (an item) heals as if at power 100.
       power = ability->power;
       amount = Battle_CalculateRecoveryFar(
-          power, element == ELEMENT_NONE ? 100 : elementPower, FULL_RATE);
+          power, element == ELEMENT_NONE ? ITEM_ELEMENT_POWER : elementPower,
+          FULL_RATE);
       amount = amount * gRangeFalloff_HealHp[distance] / 100;
       amount *= multiplier;
       amount += Battle_RandomFar() & 3;
@@ -596,7 +600,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       pp = target->pp;
       power = ability->power;
       amount = Battle_CalculateRecoveryFar(
-          power, element == ELEMENT_NONE ? 100 : elementPower, FULL_RATE);
+          power, element == ELEMENT_NONE ? ITEM_ELEMENT_POWER : elementPower,
+          FULL_RATE);
       amount = amount * gRangeFalloff_HealPp[distance] / 100;
       amount *= multiplier;
       pp += amount;
@@ -732,8 +737,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       PUSH_MESSAGE(MsgCureCurse);
       break;
 
-    case ABILITY_EFFECT_HEAL_HP_60:
-    case ABILITY_EFFECT_HEAL_HP_30: {
+    case ABILITY_EFFECT_FIZZ:
+    case ABILITY_EFFECT_SPRITZ: {
       s32 oldHp;
       s32 maxHpBits;
       s32 hpMax;
@@ -759,7 +764,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       maxHpBits = *stat--;
       hpMax = *(s16 *)(stat + 1);
 #endif
-      if (ability->effect == ABILITY_EFFECT_HEAL_HP_60)
+      if (ability->effect == ABILITY_EFFECT_FIZZ)
         newHp += hpMax * 60 / 100;
       else
         newHp += hpMax * 30 / 100;
@@ -780,7 +785,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       break;
     }
 
-    case ABILITY_EFFECT_HEAL_PP_7: {
+    case ABILITY_EFFECT_EMBER: {
       s32 oldPp;
       s32 ppMax;
       s32 newPp;
@@ -833,7 +838,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_ATTACK_DOWN_2:
+    case ABILITY_EFFECT_ATTACK_DOWN_SHARPLY:
       target->attackStage -= 2;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
@@ -851,7 +856,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->attackTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_ATTACK_UP_2:
+    case ABILITY_EFFECT_ATTACK_UP_SHARPLY:
       target->attackStage += 2;
       CLAMP_STAT_STAGE(target->attackStage);
       Unit_CalculateFar(targetId);
@@ -869,7 +874,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_DEFENSE_DOWN_2:
+    case ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY:
       target->defenseStage -= 2;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
@@ -887,7 +892,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->defenseTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_DEFENSE_UP_2:
+    case ABILITY_EFFECT_DEFENSE_UP_SHARPLY:
       target->defenseStage += 2;
       CLAMP_STAT_STAGE(target->defenseStage);
       Unit_CalculateFar(targetId);
@@ -914,7 +919,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       Unit_RecalculateGaugesFar(targetId);
       break;
 
-    case ABILITY_EFFECT_REVIVE_80:
+    case ABILITY_EFFECT_DEW:
       if (target->hp != 0)
         break;
       PUSH_MESSAGE(MsgRevived);
@@ -940,7 +945,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->resistanceTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_RESISTANCE_DOWN_2:
+    case ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY:
       target->resistanceStage -= 2;
       CLAMP_STAT_STAGE(target->resistanceStage);
       BattlePlayback_Push(PLAYBACK_NUMBER, (savedTarget->resistanceStage -
@@ -960,7 +965,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       target->resistanceTurns = STAT_CHANGE_TURNS;
       break;
 
-    case ABILITY_EFFECT_RESISTANCE_UP_2:
+    case ABILITY_EFFECT_RESISTANCE_UP_SHARPLY:
       target->resistanceStage += 2;
       CLAMP_STAT_STAGE(target->resistanceStage);
       BattlePlayback_Push(PLAYBACK_NUMBER, (target->resistanceStage -
@@ -1183,14 +1188,14 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
 
     // The guards: the message shows either way, but a guard is never lowered.
     case ABILITY_EFFECT_DEFEND:
-      PUSH_MESSAGE(MsgAura);
+      PUSH_MESSAGE(MsgDefendAura);
       if (target->defendLevel > 0)
         break;
       target->defendLevel = DEFEND_NORMAL;
       break;
 
     case ABILITY_EFFECT_TOTAL_DEFENSE:
-      PUSH_MESSAGE(MsgAura2);
+      PUSH_MESSAGE(MsgTotalDefenseAura);
       if (target->defendLevel > DEFEND_NORMAL)
         break;
       target->defendLevel = DEFEND_TOTAL;

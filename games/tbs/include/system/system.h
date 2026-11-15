@@ -102,7 +102,7 @@ void Stub_ReservedNoOpB(void);
 void Stub_ReservedNoOpC(void);
 void Stub_ReservedNoOpD(void);
 void Stub_ReservedNoOpE(void);
-s32 Stub_ReturnZero(s32 unused0, const u8 *unused1);
+s32 Stub_ReturnZero(s32 resourceId, const u8 *table);
 void System_CopyBuildStamp(void);
 void Stub_NoOpHook(s32 unused);
 void *Resource_GetTableEntry(s32 index);
@@ -134,6 +134,13 @@ void IoWriteQueue_FlushPending(void);
 void ScreenFade_Update(void);
 void ScreenFade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 vblanks);
 void ScreenFade_Wait(void);
+
+/// Depth slots of Oam_AddSpriteAtDepth: a higher slot is drawn in front. The
+/// windows' sprites, icons and cursors take the slots from OAM_DEPTH_WINDOW up,
+/// in front of the field's and the battle's, and OAM_DEPTH_FRONT is in front of
+/// everything.
+#define OAM_DEPTH_WINDOW 240
+#define OAM_DEPTH_FRONT 255
 
 void Oam_ResetFrame(void);
 s32 OamMatrix_AllocFromTransform(struct AffineTransform *source);
@@ -167,6 +174,8 @@ s32 Task_ResumeOverlayTasks(void);
 void Task_RunPass(s32 pass);
 
 u32 Random16(void);
+/// A random whole number from 0 to count - 1, from Random16.
+#define Random16_Below(count) ((Random16() * (count)) >> 16)
 void Vector_AddPolarOffset(s32 radius, s32 angle, void *position);
 s32 ArcTan2(s32 x, s32 y);
 s32 Math_IntegerSqrt(s32 value);

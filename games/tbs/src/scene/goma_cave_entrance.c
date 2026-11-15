@@ -537,7 +537,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   Sound_Play(SE_RUMBLE);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   for (i = 0; i <= 16; i++) {
-    SET_POSITION(&dir, Trig_Cos(i << 12), 0, Trig_Sin(i << 12));
+    SET_POSITION(&dir, Trig_Cos(i * FACING_STEP), 0, Trig_Sin(i * FACING_STEP));
     dir.x -= dir.x / 4;
     dir.z -= dir.z / 2;
     FieldEffect_Spawn(stump->x.fixed, stump->y.fixed, stump->z.fixed, dir.x,

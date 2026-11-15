@@ -67,6 +67,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/actor_pulse.h"
 #include "scene/event_psynergy.h"
 #include "scene/import.h"
 #include "scene/walk_into_leader.h"
@@ -255,6 +256,11 @@ enum StormNightAreaFlag {
 static s32 sShakeDone;
 static s32 sShakeShift;
 
+/// A random pause of 20 to 39 frames between the glances of
+/// gValePrologue_LookAroundScript.
+#define VALE_PROLOGUE_GLANCE_PAUSE()                                           \
+  (Math_RemainderUnsigned(Random_Next(), 20) + 20)
+
 /// The step of gValePrologue_LookAroundScript.
 static s32 ValePrologue_RerollHeadingOnCountdown(struct Actor *actor) {
   s32 timer = actor->timer;
@@ -262,7 +268,7 @@ static s32 ValePrologue_RerollHeadingOnCountdown(struct Actor *actor) {
 
   if (timer == 0) {
     actor->facing = Random_Next();
-    countdown = Math_RemainderUnsigned(Random_Next(), 20) + 20;
+    countdown = VALE_PROLOGUE_GLANCE_PAUSE();
     actor->timer = countdown;
   }
   actor->timer = countdown - 1;
@@ -507,7 +513,7 @@ s32 Scene_Initialize(void) {
 
       actor = Actor_Get(ACTOR_DORA);
       actor->facing = FACING_NORTHEAST;
-      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+      actor->timer = SQUASH_AND_STRETCH_PAUSE();
       table = gValePrologue_SquashAndStretchScript;
       actor->userValue = 1;
       Actor_SetScript(ACTOR_DORA, table);
@@ -518,7 +524,7 @@ s32 Scene_Initialize(void) {
 
       actor = Actor_Get(ACTOR_JENNA_CHILD);
       actor->facing = FACING_NORTHEAST;
-      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+      actor->timer = SQUASH_AND_STRETCH_PAUSE();
       actor->userValue = 2;
       Actor_SetScript(ACTOR_JENNA_CHILD, table);
     }
@@ -528,7 +534,7 @@ s32 Scene_Initialize(void) {
 
       actor = Actor_Get(ACTOR_GARET_CHILD);
       actor->facing = FACING_NORTHEAST;
-      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+      actor->timer = SQUASH_AND_STRETCH_PAUSE();
       actor->userValue = 3;
       Actor_SetScript(ACTOR_GARET_CHILD, table);
     }
@@ -538,7 +544,7 @@ s32 Scene_Initialize(void) {
 
       actor = Actor_Get(ACTOR_EXHAUSTED_STRONGMAN);
       actor->facing = FACING_NORTHEAST;
-      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+      actor->timer = SQUASH_AND_STRETCH_PAUSE();
       actor->userValue = 4;
       Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN, table);
     }
@@ -565,7 +571,7 @@ s32 Scene_Initialize(void) {
       struct Actor *actor;
 
       actor = Actor_Get(ACTOR_KYLE);
-      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+      actor->timer = SQUASH_AND_STRETCH_PAUSE();
     }
     table = gValePrologue_SquashAndStretchScript;
     Actor_SetScript(ACTOR_KYLE, table);
@@ -576,7 +582,7 @@ s32 Scene_Initialize(void) {
       struct Actor *actor;
 
       actor = Actor_Get(ACTOR_JENNAS_FATHER);
-      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+      actor->timer = SQUASH_AND_STRETCH_PAUSE();
     }
     Actor_SetScript(ACTOR_JENNAS_FATHER, table);
     Actor_SetPosition(ACTOR_JENNAS_MOTHER, 247, 1214);
@@ -586,7 +592,7 @@ s32 Scene_Initialize(void) {
       struct Actor *actor;
 
       actor = Actor_Get(ACTOR_JENNAS_MOTHER);
-      actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+      actor->timer = SQUASH_AND_STRETCH_PAUSE();
     }
     Actor_SetScript(ACTOR_JENNAS_MOTHER, table);
     Actor_SetPosition(ACTOR_FELIX_CHILD, 243, 1277);
@@ -675,7 +681,7 @@ static void ValePrologue_DoraSendsIsaacToThePlaza(void) {
   Actor_SetPosition(ACTOR_KYLE, 294, 868);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Weather_ResumeLightning();
@@ -1518,7 +1524,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     struct Actor *actor;
     s32 pulseDelay;
     actor = Actor_Get(ACTOR_KYLE);
-    pulseDelay = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+    pulseDelay = SQUASH_AND_STRETCH_PAUSE();
     pulseScript = gValePrologue_SquashAndStretchScript;
     actor->timer = pulseDelay;
     Actor_SetScript(ACTOR_KYLE, pulseScript);
@@ -1532,7 +1538,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     struct Actor *actor;
     s32 pulseDelay;
     actor = Actor_Get(ACTOR_JENNAS_FATHER);
-    pulseDelay = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+    pulseDelay = SQUASH_AND_STRETCH_PAUSE();
     actor->timer = pulseDelay;
     Actor_SetScript(ACTOR_JENNAS_FATHER, pulseScript);
   }
@@ -1543,7 +1549,7 @@ static void ValePrologue_WatchAttemptToSaveFelix(void) {
     struct Actor *actor;
     s32 pulseDelay;
     actor = Actor_Get(ACTOR_JENNAS_MOTHER);
-    pulseDelay = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+    pulseDelay = SQUASH_AND_STRETCH_PAUSE();
     actor->timer = pulseDelay;
     Actor_SetScript(ACTOR_JENNAS_MOTHER, pulseScript);
   }
@@ -1783,11 +1789,11 @@ static void ValePrologue_DoraGoesForHelp(void) {
   Actor_SetAnimation(ACTOR_JENNAS_FATHER, ANIM_PARENT_REACH_OUT);
   Actor_SetAnimation(ACTOR_JENNAS_MOTHER, ANIM_PARENT_REACH_OUT);
   villager = Actor_Get(ACTOR_KYLE);
-  villager->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+  villager->timer = SQUASH_AND_STRETCH_PAUSE();
   villager = Actor_Get(ACTOR_JENNAS_FATHER);
-  villager->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+  villager->timer = SQUASH_AND_STRETCH_PAUSE();
   villager = Actor_Get(ACTOR_JENNAS_MOTHER);
-  villager->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+  villager->timer = SQUASH_AND_STRETCH_PAUSE();
   script = gValePrologue_SquashAndStretchScript;
   Actor_SetScript(ACTOR_KYLE, script);
   Actor_SetScript(ACTOR_JENNAS_FATHER, script);
@@ -1910,7 +1916,7 @@ static void ValePrologue_TalkAboutSavingFelix(void) {
     struct Actor *villager;
     s32 pulseDelay;
     villager = Actor_Get(ACTOR_KYLE);
-    pulseDelay = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+    pulseDelay = SQUASH_AND_STRETCH_PAUSE();
     pulseScript = gValePrologue_SquashAndStretchScript;
     villager->timer = pulseDelay;
     Actor_SetScript(ACTOR_KYLE, pulseScript);
@@ -2118,15 +2124,15 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_FaceEachOther(ACTOR_GARET_CHILD, ACTOR_PARTY_LEADER, 0);
   Event_Wait(20);
   lookingActor = Actor_Get(ACTOR_PARTY_LEADER);
-  lookingActor->timer = Math_RemainderUnsigned(Random_Next(), 20) + 20;
+  lookingActor->timer = VALE_PROLOGUE_GLANCE_PAUSE();
   lookingActor = Actor_Get(ACTOR_GARET_CHILD);
-  lookingActor->timer = Math_RemainderUnsigned(Random_Next(), 20) + 20;
+  lookingActor->timer = VALE_PROLOGUE_GLANCE_PAUSE();
   lookingActor = Actor_Get(ACTOR_JENNA_CHILD);
-  lookingActor->timer = Math_RemainderUnsigned(Random_Next(), 20) + 20;
+  lookingActor->timer = VALE_PROLOGUE_GLANCE_PAUSE();
   lookingActor = Actor_Get(ACTOR_EXHAUSTED_STRONGMAN);
-  lookingActor->timer = Math_RemainderUnsigned(Random_Next(), 20) + 20;
+  lookingActor->timer = VALE_PROLOGUE_GLANCE_PAUSE();
   lookingActor = Actor_Get(ACTOR_DORA);
-  lookingActor->timer = Math_RemainderUnsigned(Random_Next(), 20) + 20;
+  lookingActor->timer = VALE_PROLOGUE_GLANCE_PAUSE();
   lookAroundActions = gValePrologue_LookAroundScript;
   Actor_SetScript(ACTOR_DORA, lookAroundActions);
   Event_Wait(30);
@@ -2295,8 +2301,8 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(120);
   wait(160);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_BG);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_OBJECTS);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_BG);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_OBJECTS);
   PaletteFade_StartInterpolation(80);
   Event_Wait(80);
   Event_Wait(100);
@@ -2314,7 +2320,7 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetAnimation(ACTOR_DORA, ANIM_STAND);
   actor = Actor_Get(ACTOR_DORA);
   actor->facing = FACING_NORTHEAST;
-  actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+  actor->timer = SQUASH_AND_STRETCH_PAUSE();
   departureActions = gValePrologue_SquashAndStretchScript;
   actor->userValue = 1;
   Actor_SetScript(ACTOR_DORA, departureActions);
@@ -2322,20 +2328,20 @@ static void ValePrologue_ShowBoulderSweepingDownriver(void) {
   Actor_SetAnimation(ACTOR_JENNA_CHILD, ANIM_STAND);
   actor = Actor_Get(ACTOR_JENNA_CHILD);
   actor->facing = FACING_NORTHEAST;
-  actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+  actor->timer = SQUASH_AND_STRETCH_PAUSE();
   actor->userValue = 2;
   Actor_SetScript(ACTOR_JENNA_CHILD, departureActions);
   Actor_SetPosition(ACTOR_GARET_CHILD, 152, 1285);
   Actor_SetAnimation(ACTOR_GARET_CHILD, ANIM_STAND);
   actor = Actor_Get(ACTOR_GARET_CHILD);
   actor->facing = FACING_NORTHEAST;
-  actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+  actor->timer = SQUASH_AND_STRETCH_PAUSE();
   actor->userValue = 3;
   Actor_SetScript(ACTOR_GARET_CHILD, departureActions);
   Actor_SetPosition(ACTOR_EXHAUSTED_STRONGMAN, 180, 1311);
   actor = Actor_Get(ACTOR_EXHAUSTED_STRONGMAN);
   actor->facing = FACING_NORTHEAST;
-  actor->timer = Math_RemainderUnsigned(Random_Next(), 90) + 60;
+  actor->timer = SQUASH_AND_STRETCH_PAUSE();
   actor->userValue = 4;
   Actor_SetScript(ACTOR_EXHAUSTED_STRONGMAN, departureActions);
   Actor_SetAnimation(ACTOR_EXHAUSTED_STRONGMAN, STRONGMAN_ANIMATION_SPRAWLED);

@@ -61,6 +61,7 @@
 #include "field/event_commands.h"
 #include "field/event_inline.h"
 #include "field/field.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -117,15 +118,15 @@ enum {
 };
 
 /// The second relief room's row of six, each of which can be pushed a cell
-/// east or west; alike, they are numbered west to east, each starting 64 pixels
+/// east or west; alike, they are lettered west to east, each starting 64 pixels
 /// east of the one before (SolSanctumEntrance_RestoreInteriorState).
 enum {
-  ACTOR_ROW_STATUE_1 = ACTOR_FIRST_PLACED + 1,
-  ACTOR_ROW_STATUE_2,
-  ACTOR_ROW_STATUE_3,
-  ACTOR_ROW_STATUE_4,
-  ACTOR_ROW_STATUE_5,
-  ACTOR_ROW_STATUE_6
+  ACTOR_ROW_STATUE_A = ACTOR_FIRST_PLACED + 1,
+  ACTOR_ROW_STATUE_B,
+  ACTOR_ROW_STATUE_C,
+  ACTOR_ROW_STATUE_D,
+  ACTOR_ROW_STATUE_E,
+  ACTOR_ROW_STATUE_F
 };
 
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
@@ -142,18 +143,18 @@ enum {
 #define FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST FLAG_AREA_TEMP_02
 #define FLAG_SOL_SANCTUM_WEST_STATUE_AT_WEST FLAG_AREA_TEMP_03
 /// The second relief room's row of six statues, each two flags as above.
-#define FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST FLAG_AREA_TEMP_10
-#define FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_WEST FLAG_AREA_TEMP_11
-#define FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_EAST FLAG_AREA_TEMP_12
-#define FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_WEST FLAG_AREA_TEMP_13
-#define FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_EAST FLAG_AREA_TEMP_14
-#define FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_WEST FLAG_AREA_TEMP_15
-#define FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_EAST FLAG_AREA_TEMP_16
-#define FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_WEST FLAG_AREA_TEMP_17
-#define FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_EAST FLAG_AREA_TEMP_18
-#define FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_WEST FLAG_AREA_TEMP_19
-#define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_EAST FLAG_AREA_TEMP_1A
-#define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST FLAG_AREA_TEMP_1B
+#define FLAG_SOL_SANCTUM_ROW_STATUE_A_AT_EAST FLAG_AREA_TEMP_10
+#define FLAG_SOL_SANCTUM_ROW_STATUE_A_AT_WEST FLAG_AREA_TEMP_11
+#define FLAG_SOL_SANCTUM_ROW_STATUE_B_AT_EAST FLAG_AREA_TEMP_12
+#define FLAG_SOL_SANCTUM_ROW_STATUE_B_AT_WEST FLAG_AREA_TEMP_13
+#define FLAG_SOL_SANCTUM_ROW_STATUE_C_AT_EAST FLAG_AREA_TEMP_14
+#define FLAG_SOL_SANCTUM_ROW_STATUE_C_AT_WEST FLAG_AREA_TEMP_15
+#define FLAG_SOL_SANCTUM_ROW_STATUE_D_AT_EAST FLAG_AREA_TEMP_16
+#define FLAG_SOL_SANCTUM_ROW_STATUE_D_AT_WEST FLAG_AREA_TEMP_17
+#define FLAG_SOL_SANCTUM_ROW_STATUE_E_AT_EAST FLAG_AREA_TEMP_18
+#define FLAG_SOL_SANCTUM_ROW_STATUE_E_AT_WEST FLAG_AREA_TEMP_19
+#define FLAG_SOL_SANCTUM_ROW_STATUE_F_AT_EAST FLAG_AREA_TEMP_1A
+#define FLAG_SOL_SANCTUM_ROW_STATUE_F_AT_WEST FLAG_AREA_TEMP_1B
 
 // Scene flags, cleared on every ordinary arrival:
 // - FLAG_SOL_SANCTUM_IN_SECOND_RELIEF_ROOM: set on entering the second relief
@@ -465,9 +466,9 @@ static void SolSanctumEntrance_EastStatueMoved(void) {
 }
 
 /// Sol Sanctum, the second relief room: Move on the first statue of the row
-/// (ACTOR_ROW_STATUE_1), and called by SolSanctumEntrance_PushStatue there.
-static void SolSanctumEntrance_RowStatue1Moved(void) {
-  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_1);
+/// (ACTOR_ROW_STATUE_A), and called by SolSanctumEntrance_PushStatue there.
+static void SolSanctumEntrance_RowStatueAMoved(void) {
+  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_A);
   s32 column;
 
   if (statue == NULL) {
@@ -475,14 +476,14 @@ static void SolSanctumEntrance_RowStatue1Moved(void) {
   }
   column = FIELD_CELL(statue->x.fixed);
   SolSanctumEntrance_RecordStatueColumn(
-      column, FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST, 99, 101);
+      column, FLAG_SOL_SANCTUM_ROW_STATUE_A_AT_EAST, 99, 101);
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-/// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatue1Moved,
-/// for the row's second statue (ACTOR_ROW_STATUE_2).
-static void SolSanctumEntrance_RowStatue2Moved(void) {
-  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_2);
+/// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatueAMoved,
+/// for the row's second statue (ACTOR_ROW_STATUE_B).
+static void SolSanctumEntrance_RowStatueBMoved(void) {
+  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_B);
   s32 column;
 
   if (statue == NULL) {
@@ -490,14 +491,14 @@ static void SolSanctumEntrance_RowStatue2Moved(void) {
   }
   column = FIELD_CELL(statue->x.fixed);
   SolSanctumEntrance_RecordStatueColumn(
-      column, FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_EAST, 103, 105);
+      column, FLAG_SOL_SANCTUM_ROW_STATUE_B_AT_EAST, 103, 105);
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-/// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatue1Moved,
-/// for the row's third statue (ACTOR_ROW_STATUE_3).
-static void SolSanctumEntrance_RowStatue3Moved(void) {
-  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_3);
+/// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatueAMoved,
+/// for the row's third statue (ACTOR_ROW_STATUE_C).
+static void SolSanctumEntrance_RowStatueCMoved(void) {
+  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_C);
   s32 column;
 
   if (statue == NULL) {
@@ -505,14 +506,14 @@ static void SolSanctumEntrance_RowStatue3Moved(void) {
   }
   column = FIELD_CELL(statue->x.fixed);
   SolSanctumEntrance_RecordStatueColumn(
-      column, FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_EAST, 107, 109);
+      column, FLAG_SOL_SANCTUM_ROW_STATUE_C_AT_EAST, 107, 109);
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-/// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatue1Moved,
-/// for the row's fourth statue (ACTOR_ROW_STATUE_4).
-static void SolSanctumEntrance_RowStatue4Moved(void) {
-  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_4);
+/// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatueAMoved,
+/// for the row's fourth statue (ACTOR_ROW_STATUE_D).
+static void SolSanctumEntrance_RowStatueDMoved(void) {
+  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_D);
   s32 column;
 
   if (statue == NULL) {
@@ -520,14 +521,14 @@ static void SolSanctumEntrance_RowStatue4Moved(void) {
   }
   column = FIELD_CELL(statue->x.fixed);
   SolSanctumEntrance_RecordStatueColumn(
-      column, FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_EAST, 111, 113);
+      column, FLAG_SOL_SANCTUM_ROW_STATUE_D_AT_EAST, 111, 113);
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-/// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatue1Moved,
-/// for the row's fifth statue (ACTOR_ROW_STATUE_5).
-static void SolSanctumEntrance_RowStatue5Moved(void) {
-  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_5);
+/// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatueAMoved,
+/// for the row's fifth statue (ACTOR_ROW_STATUE_E).
+static void SolSanctumEntrance_RowStatueEMoved(void) {
+  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_E);
   s32 column;
 
   if (statue == NULL) {
@@ -535,21 +536,21 @@ static void SolSanctumEntrance_RowStatue5Moved(void) {
   }
   column = FIELD_CELL(statue->x.fixed);
   SolSanctumEntrance_RecordStatueColumn(
-      column, FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_EAST, 115, 117);
+      column, FLAG_SOL_SANCTUM_ROW_STATUE_E_AT_EAST, 115, 117);
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-/// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatue1Moved,
-/// for the row's sixth statue (ACTOR_ROW_STATUE_6).
-static void SolSanctumEntrance_RowStatue6Moved(void) {
-  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_6);
+/// Sol Sanctum, the second relief room: as SolSanctumEntrance_RowStatueAMoved,
+/// for the row's sixth statue (ACTOR_ROW_STATUE_F).
+static void SolSanctumEntrance_RowStatueFMoved(void) {
+  struct Actor *statue = Actor_Get(ACTOR_ROW_STATUE_F);
   s32 column;
 
   if (statue == NULL)
     return;
   column = FIELD_CELL(statue->x.fixed);
   SolSanctumEntrance_RecordStatueColumn(
-      column, FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_EAST, 119, 121);
+      column, FLAG_SOL_SANCTUM_ROW_STATUE_F_AT_EAST, 119, 121);
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
@@ -568,9 +569,11 @@ static void SolSanctumEntrance_PushStatue(void) {
   struct FieldPosition target;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  direction = leader->facing >> 12;
+  direction = FACING_INDEX(leader->facing);
   statue = Actor_FindAtCell(
-      (leader->x.part[0].pixel + (gSolSanctumPushSteps[direction] >> 16)) >> 4,
+      (leader->x.part[0].pixel +
+       (FIELD_PIXEL(gSolSanctumPushSteps[direction]))) >>
+          4,
       (leader->z.part[0].pixel + (s16)gSolSanctumPushSteps[direction]) >> 4);
   if (statue != NULL) {
     statue->layer = 2;
@@ -602,12 +605,12 @@ static void SolSanctumEntrance_PushStatue(void) {
       case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST:
       case SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_FROM_ROUND_PASSAGE:
       case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS:
-        SolSanctumEntrance_RowStatue1Moved();
-        SolSanctumEntrance_RowStatue2Moved();
-        SolSanctumEntrance_RowStatue3Moved();
-        SolSanctumEntrance_RowStatue4Moved();
-        SolSanctumEntrance_RowStatue5Moved();
-        SolSanctumEntrance_RowStatue6Moved();
+        SolSanctumEntrance_RowStatueAMoved();
+        SolSanctumEntrance_RowStatueBMoved();
+        SolSanctumEntrance_RowStatueCMoved();
+        SolSanctumEntrance_RowStatueDMoved();
+        SolSanctumEntrance_RowStatueEMoved();
+        SolSanctumEntrance_RowStatueFMoved();
         break;
       }
     }
@@ -715,12 +718,12 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST:
   case SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_FROM_ROUND_PASSAGE:
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS:
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_1), 0);
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_2), 0);
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_3), 0);
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_4), 0);
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_5), 0);
-    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_6), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_A), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_B), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_C), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_D), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_E), 0);
+    Actor_SetSpriteFlags(Actor_Get(ACTOR_ROW_STATUE_F), 0);
     if (GameFlag_Get(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN) == 0)
       SolSanctumEntrance_KradenSeesStatuesOutOfReach();
     SolSanctumEntrance_RestoreRowStatueCells(1);
@@ -1083,81 +1086,81 @@ static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeActors) {
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 112, 32);
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 116, 32);
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 120, 32);
-  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_WEST) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_A_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 100, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_1, 1592, 520);
+      Actor_SetPosition(ACTOR_ROW_STATUE_A, 1592, 520);
     }
   } else {
-    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_A_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 100, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_1, 1624, 520);
+        Actor_SetPosition(ACTOR_ROW_STATUE_A, 1624, 520);
       }
     }
   }
-  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_WEST) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_B_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 104, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_2, 1656, 520);
+      Actor_SetPosition(ACTOR_ROW_STATUE_B, 1656, 520);
     }
   } else {
-    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_EAST) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_B_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 104, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_2, 1688, 520);
+        Actor_SetPosition(ACTOR_ROW_STATUE_B, 1688, 520);
       }
     }
   }
-  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_WEST) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_C_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 108, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_3, 1720, 520);
+      Actor_SetPosition(ACTOR_ROW_STATUE_C, 1720, 520);
     }
   } else {
-    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_EAST) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_C_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 108, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_3, 1752, 520);
+        Actor_SetPosition(ACTOR_ROW_STATUE_C, 1752, 520);
       }
     }
   }
-  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_WEST) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_D_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 112, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_4, 1784, 520);
+      Actor_SetPosition(ACTOR_ROW_STATUE_D, 1784, 520);
     }
   } else {
-    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_EAST) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_D_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 112, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_4, 1816, 520);
+        Actor_SetPosition(ACTOR_ROW_STATUE_D, 1816, 520);
       }
     }
   }
-  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_WEST) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_E_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 116, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_5, 1848, 520);
+      Actor_SetPosition(ACTOR_ROW_STATUE_E, 1848, 520);
     }
   } else {
-    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_EAST) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_E_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 116, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_5, 1880, 520);
+        Actor_SetPosition(ACTOR_ROW_STATUE_E, 1880, 520);
       }
     }
   }
-  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_F_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 120, 32);
     if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_6, 1912, 520);
+      Actor_SetPosition(ACTOR_ROW_STATUE_F, 1912, 520);
     }
   } else {
-    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_EAST) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_F_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 120, 32);
       if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_6, 1944, 520);
+        Actor_SetPosition(ACTOR_ROW_STATUE_F, 1944, 520);
       }
     }
   }
@@ -1467,12 +1470,12 @@ struct Trigger gSolSanctumReliefs_SecondReliefRoomTriggers[] = {
     { TRIGGER_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
     { TRIGGER_EXIT, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
     { TRIGGER_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_1, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_RowStatue1Moved) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_2, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_RowStatue2Moved) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_3, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_RowStatue3Moved) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_4, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_RowStatue4Moved) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_5, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_RowStatue5Moved) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_6, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_RowStatue6Moved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_A, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_RowStatueAMoved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_B, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_RowStatueBMoved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_C, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_RowStatueCMoved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_D, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_RowStatueDMoved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_E, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_RowStatueEMoved) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_F, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_RowStatueFMoved) },
     { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_ROW_STATUE, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_PushStatue) },
     { USE_ITEM(ITEM_SMALL_JEWEL), SOL_SANCTUM_ITEM_OWN_MESSAGE | CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_SECOND_RELIEF, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_SetSecondSmallJewel) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_SOL_SANCTUM_RELIEFS_SECOND_RELIEF, CONDITION_ALWAYS, EVENT(SolSanctumEntrance_InspectSecondMinotaurRelief) },
@@ -1480,12 +1483,12 @@ struct Trigger gSolSanctumReliefs_SecondReliefRoomTriggers[] = {
 };
 // clang-format on
 
-/// Packs a push step, with X in the upper halfword and Z in the lower (pixels).
-#define PUSH_STEP(x, z) (((x) << 16) | ((z) & 0xffff))
-
+/// The push step for each of the 16 facings.
 s32 gSolSanctumPushSteps[] = {
-    PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(0, 16),
-    PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(-16, 0),
-    PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),
-    PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(16, 0),
+    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
+    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(16, 0),
 };

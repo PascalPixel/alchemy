@@ -27,10 +27,11 @@ enum ColossoLetteringCommand {
 /// The lettering pictures, in lettering.tsv's order (Colosso_LoadLettering).
 enum ColossoLetteringPicture {
   COLOSSO_PICTURE_LEND_A_HAND = 0,
-  COLOSSO_PICTURE_MATCH_1 = 1, ///< "The 1st Match", then the 2nd and 3rd
+  COLOSSO_PICTURE_MATCH_TITLE_FIRST =
+      1, ///< "The 1st Match", then the 2nd and 3rd
   COLOSSO_PICTURE_WIN_LOSE = 4,
-  COLOSSO_PICTURE_COUNT_3_2 = 5, ///< the countdown's 3 and 2
-  COLOSSO_PICTURE_COUNT_1 = 6,   ///< the countdown's 1
+  COLOSSO_PICTURE_COUNTDOWN_START = 5, ///< the countdown's 3 and 2
+  COLOSSO_PICTURE_COUNTDOWN_END = 6,   ///< the countdown's 1
   COLOSSO_PICTURE_GO = 7,
   /// COLOSSO_PICTURE_WIN_LOSE in the blue palette a loss shows it in.
   COLOSSO_PICTURE_WIN_LOSE_FOR_LOSS = 8
@@ -76,8 +77,8 @@ static void Colosso_LoadLettering(s32 id) {
   if (id == COLOSSO_PICTURE_WIN_LOSE_FOR_LOSS)
     id = COLOSSO_PICTURE_WIN_LOSE;
   FieldDecompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LETTERING), buf);
-  Dma_Set(buf + off, (void *)&OBJ_PLTT_COLOR(15, 0),
-          (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+  Dma_Set(buf + off, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_COPY_WORDS(8),
+          REG_DMA3);
   Vram_Load(gColosso_LetteringSlot, COLOSSO_LETTERING_PICTURE_BYTES,
             (u8 *)((id * COLOSSO_LETTERING_PICTURE_BYTES) + (s32)buf +
                    COLOSSO_PALETTE_BYTES));
@@ -283,7 +284,7 @@ commands:
     }
     break;
   }
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_HALFWORD);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
 }

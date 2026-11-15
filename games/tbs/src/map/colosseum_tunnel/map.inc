@@ -14,7 +14,7 @@ Field_ColosseumTunnel:
 	.incbin "games/tbs/src/map/colosseum_tunnel/cell_pictures.delta1.lz"
 	.balign 4, 0
 .LField_ColosseumTunnel_SHAPES:
-	.incbin "games/tbs/src/map/map_001/shapes.table.lz"
+	.incbin "games/tbs/src/map/empty_map/shapes.table.lz"
 	.balign 4, 0
 .LField_ColosseumTunnel_GRID:
 	.incbin "games/tbs/src/map/colosseum_tunnel/map.grid.lz"

@@ -219,7 +219,7 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
 
     // Whether the party member already knows it, from any of the 32 action
     // slots.
-    for (i = 0; i < 32; i++) {
+    for (i = 0; i < PSYNERGY_SLOTS; i++) {
       if ((unit->psynergy[i].encodedAction & PSYNERGY_ABILITY_MASK) ==
           psynergy) {
         known = 1;
@@ -391,9 +391,6 @@ void Text_DrawStatComparison(const struct Unit *after,
   }
 }
 
-/// Size of one 16x16 4bpp sprite tile block.
-#define ICON_TILE_BYTES 128
-
 /// Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
 /// into a free VRAM block.
 UNUSED s32 Icon_CreateWithResource(struct Window *window, s32 unused, s32 x,
@@ -454,7 +451,7 @@ void Menu_ReloadMemberPortrait(const void *unused, s32 unit) {
 struct Window *MenuCursor_Create(void *source) {
   struct PsynergyMenuWork *menu = source;
   struct Window *window;
-  s32 sentinel;
+  s32 depth;
   struct WindowSprite *cursor;
 
   menu->auxiliaryWindow = NULL;
@@ -466,13 +463,13 @@ struct Window *MenuCursor_Create(void *source) {
   menu->tabIndex[0] = 255;
   menu->tabIndex[1] = 0;
   menu->sideIcon[0] = cursor;
-  // sentinel is the depth slot an icon is drawn at: the hand at 254, with
+  // depth is the depth slot an icon is drawn at: the hand at 254, with
   // the glyphs.
-  sentinel = 254;
-  cursor->sentinel = sentinel;
-  sentinel -= 255;
+  depth = OAM_DEPTH_FRONT - 1;
+  cursor->depth = depth;
+  depth -= 255;
   // sideIcon[1] gets slot 255.
-  menu->sideIcon[1]->sentinel = sentinel; // -1
+  menu->sideIcon[1]->depth = depth; // -1
   return window;
 }
 
@@ -666,7 +663,7 @@ void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
     }
     index++;
     slot++;
-  } while (index < 32);
+  } while (index < MENU_ENTRY_ICONS);
 }
 
 /// Places the icon in *slot at grid cell index (0 above 31) of a grid of
@@ -675,7 +672,7 @@ void PsynergyMenu_PositionMemberEntry(struct WindowSprite **slot, s32 index,
                                       s32 originX, s32 originY, s32 columns) {
   struct WindowSprite *icon;
 
-  if (index > 31) {
+  if (index > MENU_ENTRY_ICONS - 1) {
     index = 0;
   }
   icon = *slot;
@@ -698,8 +695,8 @@ void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 slotIndex, s32 originX,
   Icon_PrepareActor(icon);
 }
 
-/// Lays the inventory's 15 item icons out five to a row from (116, y): y is
-/// 56 for layout 1 and 40 otherwise.
+/// Lays the inventory's INVENTORY_SLOTS item icons out five to a row from (116,
+/// y): y is 56 for layout 1 and 40 otherwise.
 void ItemMenu_RefreshEntry(s32 layout) {
   struct WindowSprite **slot;
   struct WindowSprite **scan;
@@ -723,7 +720,7 @@ void ItemMenu_RefreshEntry(s32 layout) {
     }
     index++;
     slot++;
-  } while (index < 15);
+  } while (index < INVENTORY_SLOTS);
 }
 
 /// Shows message in the item menu, with the hand cursor hidden meanwhile.
@@ -797,16 +794,16 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
   sortedCount = 0;
   Menu_CopyListOrder(mode, order);
 
-  for (i = 0; i < 15; i++)
+  for (i = 0; i < INVENTORY_SLOTS; i++)
     items[i] = inventory[i];
 
   count = 0;
-  for (i = 0; i < 15; i++) {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     if (items[i] != 0)
       count++;
   }
 
-  for (i = count; i < 15; i++)
+  for (i = count; i < INVENTORY_SLOTS; i++)
     sorted[i] = 0;
 
   // One pass for each entry of the order: move its items across, the highest
@@ -976,13 +973,13 @@ void Palette_LightenHighlight(s32 paletteNumber) {
   // Both transfers copy the same 32 bytes, first as 16 halfwords and then as
   // 8 words.
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
-          DMA_COPY_HALFWORDS(16), REG_DMA3);
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
           DMA_COPY_WORDS(8), REG_DMA3);
   // BGR555: five bits a channel, 0 to 31, red lowest.
   blue = palette[WINDOW_BACKGROUND_COLOR] >> 10;
-  green = (palette[WINDOW_BACKGROUND_COLOR] >> 5) & 31;
-  red = palette[WINDOW_BACKGROUND_COLOR] & 31;
+  green = RGB_GREEN(palette[WINDOW_BACKGROUND_COLOR]);
+  red = RGB_RED(palette[WINDOW_BACKGROUND_COLOR]);
   blue += HIGHLIGHT_LIGHTEN_STEPS;
   if (blue > RGB_LEVEL_MAX)
     blue = RGB_LEVEL_MAX;
@@ -1038,23 +1035,27 @@ void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
 
   x += window->x + 1;
   y += window->y + 1;
-  palette <<= 12;
+  palette = BG_TILE_PALETTE(palette);
   if (x < 0) {
     width += x;
     x = 0;
   }
-  if (x + width > 29) {
-    width = 30 - x;
+  if (x + width > DISPLAY_TILE_WIDTH - 1) {
+    width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
-  // The test is the columns' (past 29) but the clip is to the screen's 20 rows,
-  // so a rectangle ending in rows 20 to 28 would be kept whole and write past
-  // the 32 by 20 tilemap into the windows after it.
-  if (y + height > 29) {
-    height = 20 - y;
+  // BUG: tests the bottom against the screen's width but clips to its rows, so
+  // a rectangle ending in rows 20 to 28 is kept whole and writes past the 32
+  // by 20 tilemap into the windows after it.
+#ifdef BUGFIX
+  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
+#else
+  if (y + height > DISPLAY_TILE_WIDTH - 1) {
+#endif
+    height = DISPLAY_TILE_HEIGHT - y;
   }
   if (width > 0 && height > 0) {
     // Byte offset of the first entry: 32 two-byte entries a row.
@@ -1083,7 +1084,7 @@ void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
 /// TEXT_BACKGROUND_COLOR (as StatusScreen_Run does for palettes 0 and 1).
 void Palette_LoadIconsIntoHighlight(void) {
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
-          DMA_COPY_HALFWORDS(16), REG_DMA3);
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_COPY_HALFWORDS(1), REG_DMA3);
@@ -1098,7 +1099,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, struct Window *window, s32 x,
   struct WindowSprite *icon;
   s32 i;
 
-  for (i = 0; i < 32; i++) {
+  for (i = 0; i < MENU_ENTRY_ICONS; i++) {
     icon = menu->entryIcons[i];
     if (icon != NULL)
       icon->motion = ICON_HIDDEN;
@@ -1199,6 +1200,5 @@ void WindowPalette_SetLowHpTextColor(void) {
 #undef WINDOW_KEEP_EXISTING
 #undef WINDOW_STYLE_MASK
 #undef NUMBER_PIXELS_PER_DIGIT
-#undef ICON_TILE_BYTES
 #undef CURSOR_BOB_STEP
 #undef PAGE_LABEL_FIRST

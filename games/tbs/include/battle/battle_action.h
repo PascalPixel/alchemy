@@ -54,6 +54,12 @@ enum BattleCommand {
   COMMAND_FLEE = 99
 };
 
+/// COMMAND_DJINN's parameter: the Djinni's element in bits 11 to 8, its
+/// number within the element below.
+#define DJINN_COMMAND(element, index) (((element) << 8) | (index))
+#define DJINN_COMMAND_ELEMENT(parameter) (((parameter) >> 8) & 15)
+#define DJINN_COMMAND_INDEX(parameter) ((parameter) & 255)
+
 /// A unit's chosen action for the turn: its command, the command's parameter,
 /// its target and range, and its priority in the action order.
 /// BattleWork.actions holds the turn's actions.

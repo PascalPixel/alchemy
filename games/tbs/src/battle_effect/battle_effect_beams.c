@@ -5,6 +5,9 @@
 
 #include "battle_effect_internal.h"
 
+#define BEAM_FRAMES 32 ///< the slash's and the critical hit's length
+#define BEAM_SPARKS 64 ///< sparks in work->particles, drawn in pairs
+
 /// The plain attack's pictures, by effect kind: the attacker's attack effect.
 enum BeamKind {
   BEAM_PLAIN_ATTACK,  ///< drawn as BEAM_ARC_A; no attack has kind 0
@@ -52,7 +55,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_ADDITIVE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
     } else {
@@ -60,7 +63,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_ADDITIVE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
@@ -69,13 +72,13 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
     } else {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_ADDITIVE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
     }
@@ -84,7 +87,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     DrawRectangle *blitters = EFFECT_BLITTERS;
 
     draw[0] = blitters[HEAP_SLOT_RAM_CODE];
-    draw[1] = blitters[HEAP_SLOT_RAM_CODE_2];
+    draw[1] = blitters[HEAP_SLOT_RAM_CODE_PAIRED];
   }
   wait(1);
   if (kind == BEAM_WAVE) {
@@ -104,11 +107,12 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     }
   }
   if (work->args->user > PIERS)
-    Iwram_CopyWords(
-        BG_PLTT, Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET), 128);
+    Iwram_CopyWords(BG_PLTT,
+                    Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
+                    SHEET_PALETTE_BYTES);
   else
     Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_CRESCENT_SHEET),
-                    128);
+                    SHEET_PALETTE_BYTES);
   wait(1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, Ram_MapGridCellBuffer,
@@ -133,7 +137,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   // Sparks fly from the target, mostly rising.
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   half = BattleUnit_GetEffectHeightFar(work->args->targets[0]) / 2;
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != BEAM_SPARKS; i++) {
     struct Particle *spark = &work->particles[i];
 
     SET_POSITION(spark, target->x.fixed, target->y.fixed + half,
@@ -147,7 +151,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     spark->variant = i + 16;
   }
 
-  for (frame = 0; frame != 32; frame++) {
+  for (frame = 0; frame != BEAM_FRAMES; frame++) {
     if (frame == 5) {
       if (BattleSprite_HasHeavyImpactFar(unit->id))
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -162,23 +166,25 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     if (kind == BEAM_WAVE) {
       if (frame <= 11) {
         if (work->args->side == EFFECT_SIDE_ENEMIES)
-          draw[1](canvas, work->sheet + (5 - frame / 2) * (48 * 16),
-                  screenPosition.x + scrollX - 48, screenPosition.y - 8, 48,
-                  16);
+          draw[1](canvas, work->sheet + (5 - frame / 2) * PICTURE_BYTES(WAVE),
+                  screenPosition.x + scrollX - WAVE_WIDTH,
+                  screenPosition.y - WAVE_HEIGHT / 2, WAVE_WIDTH, WAVE_HEIGHT);
         else
-          draw[1](canvas, work->sheet + (5 - frame / 2) * (48 * 16),
-                  screenPosition.x + scrollX, screenPosition.y - 8, 48, 16);
+          draw[1](canvas, work->sheet + (5 - frame / 2) * PICTURE_BYTES(WAVE),
+                  screenPosition.x + scrollX,
+                  screenPosition.y - WAVE_HEIGHT / 2, WAVE_WIDTH, WAVE_HEIGHT);
       }
     } else if ((kind >= BEAM_PLAIN_ATTACK && kind <= BEAM_ARC_B) ||
                kind == BEAM_ARC_A_INVERTED) {
       if (frame <= 11) {
         if (work->args->side == EFFECT_SIDE_ENEMIES)
-          draw[1](canvas, work->sheet + frame / 2 * (48 * 72),
-                  screenPosition.x + scrollX - 48, screenPosition.y - 40, 48,
-                  72);
+          draw[1](canvas, work->sheet + frame / 2 * PICTURE_BYTES(BLUE_ARC),
+                  screenPosition.x + scrollX - BLUE_ARC_WIDTH,
+                  screenPosition.y - 40, BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
         else
-          draw[1](canvas, work->sheet + frame / 2 * (48 * 72),
-                  screenPosition.x + scrollX, screenPosition.y - 40, 48, 72);
+          draw[1](canvas, work->sheet + frame / 2 * PICTURE_BYTES(BLUE_ARC),
+                  screenPosition.x + scrollX, screenPosition.y - 40,
+                  BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
       }
     } else {
       if (frame <= 17) {
@@ -200,12 +206,15 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
     }
     // The yellow orb flashes over the target.
     if (frame >= 4 && frame <= 15)
-      draw[0](canvas, Ram_MapGridCellBuffer + (frame - 4) / 2 * (40 * 48),
-              anchor.x - 16, anchor.y - 24, 40, 48);
+      draw[0](canvas,
+              Ram_MapGridCellBuffer +
+                  (frame - 4) / 2 * PICTURE_BYTES(YELLOW_ORB),
+              anchor.x - 16, anchor.y - YELLOW_ORB_HEIGHT / 2, YELLOW_ORB_WIDTH,
+              YELLOW_ORB_HEIGHT);
     EFFECT_VIEW_FROM_CAMERA(camera);
     // The sparks fly.
     if (frame >= 4 && frame <= 31) {
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != BEAM_SPARKS; i++) {
         s32 pair = i / 2;
         struct Particle *spark = &work->particles[pair];
         s32 size = spark->variant;
@@ -227,7 +236,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleEffect_HideBg1AndRestoreBackdrop();
 }
 
@@ -277,13 +286,13 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   if (work->args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
   } else {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_LIGHTEN);
   }
@@ -291,7 +300,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     DrawRectangle *blitters = EFFECT_BLITTERS;
 
     draw[0] = blitters[HEAP_SLOT_RAM_CODE];
-    draw[1] = blitters[HEAP_SLOT_RAM_CODE_2];
+    draw[1] = blitters[HEAP_SLOT_RAM_CODE_PAIRED];
   }
   BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                         work->args->firstTarget, 130);
@@ -304,8 +313,9 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_CRESCENT_SHEET, Ram_MapGridCellBuffer, 1,
                              1);
   if (work->args->user > PIERS)
-    Iwram_CopyWords(
-        BG_PLTT, Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET), 128);
+    Iwram_CopyWords(BG_PLTT,
+                    Resource_GetTableEntry(RESOURCE_MARS_DJINN_SMALL_SHEET),
+                    SHEET_PALETTE_BYTES);
   BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                         work->args->firstTarget, 130);
   wait(1);
@@ -338,11 +348,11 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     scrollX = 64 - screenPosition.x;
     gBgScroll[1].x = scrollX;
     gBgScroll[1].y = 80;
-    work->fadeFrames = 24;
+    work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
     Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
     Sound_PlayFar(SE_POWER_UP);
-    for (frame = 0; frame != 32; frame++) {
+    for (frame = 0; frame != BEAM_FRAMES; frame++) {
       BattleCamera_SetViewAtPairMidpointFar(work->args->user,
                                             work->args->firstTarget, 130);
       for (i = 0; i != 64; i++) {
@@ -395,7 +405,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
   gBgScroll[1].x = scrollX;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   half = BattleUnit_GetEffectHeightFar(work->args->targets[0]) / 2;
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != BEAM_SPARKS; i++) {
     struct Particle *spark = &work->particles[i];
 
     SET_POSITION(spark, target->x.fixed, target->y.fixed + half,
@@ -407,7 +417,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     spark->variant = i + 16;
   }
 
-  for (frame = 0; frame != 32; frame++) {
+  for (frame = 0; frame != BEAM_FRAMES; frame++) {
     if (frame == 5)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 4)
@@ -416,17 +426,23 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
     screenPosition.y += 16;
     // The slash: a star, an arc, then two crescents.
     if (frame <= 1)
-      draw[0](canvas, work->imageStorage, 0, 0, 120, 120);
+      draw[0](canvas, work->imageStorage, 0, 0, SLASH_PICTURE_SIZE,
+              SLASH_PICTURE_SIZE);
     else if (frame <= 3)
-      draw[0](canvas, work->imageStorage + (120 * 120), 0, 0, 120, 120);
+      draw[0](canvas,
+              work->imageStorage + SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE, 0,
+              0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
     else if (frame <= 5)
-      draw[0](canvas, Ram_MapGridCellBuffer, 0, 0, 120, 120);
+      draw[0](canvas, Ram_MapGridCellBuffer, 0, 0, SLASH_PICTURE_SIZE,
+              SLASH_PICTURE_SIZE);
     else if (frame <= 7)
-      draw[0](canvas, Ram_MapGridCellBuffer + (120 * 120), 0, 0, 120, 120);
+      draw[0](canvas,
+              Ram_MapGridCellBuffer + SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE,
+              0, 0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
     EFFECT_VIEW_FROM_CAMERA(camera);
     // The sparks fly.
     if (frame >= 4 && frame <= 31) {
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != BEAM_SPARKS; i++) {
         s32 pair = i / 2;
         struct Particle *spark = &work->particles[pair];
         s32 size = spark->variant;
@@ -449,7 +465,7 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   battle = gBattleWork;
   for (frame = 0; frame != 7; frame++) {
     BattleBackground_SetPaletteLevelFar(battle->background, 6 - frame);

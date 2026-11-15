@@ -46,7 +46,7 @@ next_page:
   selectionIndex = selected;
   stockWindow = Window_CreateFar(0, 12, 30, 4, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
-  shop->mode = 12;
+  shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
   messageWindow = Window_CreateFar(0, 17, 30, 3, WINDOW_FLAG_INSTANT);
   redraw = 1;
 
@@ -59,7 +59,7 @@ next_page:
       redraw = 0;
       MenuCursor_Place(stockWindow,
                        selectionIndex % SHOP_STOCK_PAGE_ITEMS * 32 - 8, 8);
-      shop->mode = 4;
+      shop->cursorFrames = 4;
       Shop_DrawStock(stockWindow, selectionIndex);
       Shop_DrawMessage(messageWindow, itemId + MsgItemPlainName);
       WindowSprite_RedrawSavedRectFar(priceWindow);
@@ -128,7 +128,7 @@ next_page:
   selectionIndex = 0;
   partyWindow = Window_CreateFar(0, 14, 13, 3, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-  shop->mode = 12;
+  shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
   Menu_CreatePartyFiguresFar(partyWindow, 2, 0, 8, 0);
   itemWindow = Window_CreateFar(16, 11, 14, 9, WINDOW_FLAG_INSTANT);
   redraw = 1;
@@ -145,7 +145,7 @@ next_page:
           (selectionIndex + shop->partyMemberCount) % shop->partyMemberCount;
       unitId = shop->partyMemberIds[selectionIndex];
       MenuCursor_Place(partyWindow, selectionIndex * 24 - 12, 0);
-      shop->mode = 3;
+      shop->cursorFrames = 3;
       Shop_DrawParty(partyWindow, selectionIndex, shop->selectedItem);
       if (Item_GetEquipmentGroupFar(shop->selectedItem) == EQUIPMENT_GROUP_NONE)
         Shop_DrawCarriedItem(itemWindow, unitId, shop->selectedItem);
@@ -278,14 +278,14 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
         // Depth slots: the items 252, the chosen one 253, the prices 251
         icon =
             WindowSprite_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
-        icon->sentinel = 252;
+        icon->depth = OAM_DEPTH_FRONT - 3;
         if (stockIndex == selected) {
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
           icon->animationStep = 10;
-          icon->sentinel = 253;
+          icon->depth = OAM_DEPTH_FRONT - 2;
         }
         icon = Shop_CreatePriceSprite(item->price, window, priceX, 0);
-        icon->sentinel = 251;
+        icon->depth = OAM_DEPTH_FRONT - 4;
       }
     }
   }
@@ -490,7 +490,7 @@ void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
       for (;;) {
         icon = (u8 *)WindowSprite_CreateLoadedFar(unit->inventory[itemIndex],
                                                   27, window, x, y);
-        icon[offsetof(struct WindowSprite, sentinel)] = 252;
+        icon[offsetof(struct WindowSprite, depth)] = 252;
         x += 16;
         if (itemIndex == 4) {
           x = 8;
@@ -553,7 +553,7 @@ s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
     if (quantityLimit > SHOP_STACK_LIMIT)
       quantityLimit = SHOP_STACK_LIMIT;
 
-    shop->mode = 12;
+    shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
     MenuCursor_Place(0, SHOP_QUANTITY_CURSOR_X, 48);
     selectedQuantity =
         Shop_SelectQuantity(carriedQuantity, quantityLimit, item->price);
@@ -629,8 +629,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           redraw = 0;
           quantityIndex = (quantityIndex + maximum) % maximum;
           Dma_Set(gShop_QuantityTiles, tileBuffer,
-                  (DMA_ENABLE | DMA_32BIT) << 16 | 8 * TILE_SIZE_4BPP / 4,
-                  REG_DMA3);
+                  DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4), REG_DMA3);
           // Paint capacity, available stock, selection and carried items in
           // that order; each shorter prefix overwrites the previous colour.
           QuantityBar_Fill(SHOP_STACK_LIMIT, 14, tileBuffer);

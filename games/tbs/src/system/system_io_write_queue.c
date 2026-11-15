@@ -14,23 +14,24 @@ typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
   }
 
 /// Queues a byte store.
-IO_QUEUE_DEFINE_WRITE(IoWriteQueue_Store8, IO_WRITE_8)
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_Store8, IO_WRITE_BYTE)
 /// Queues a halfword store.
-IO_QUEUE_DEFINE_WRITE(IoWriteQueue_Store16, IO_WRITE_16)
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_Store16, IO_WRITE_HALFWORD)
 /// Queues a word store.
-IO_QUEUE_DEFINE_WRITE(IoWriteQueue_Store32, IO_WRITE_32)
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_Store32, IO_WRITE_WORD)
 /// Queues setting a byte register's bits.
-IO_QUEUE_DEFINE_WRITE(IoWriteQueue_SetBits8, IO_WRITE_SET | IO_WRITE_8)
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_SetBits8, IO_WRITE_SET | IO_WRITE_BYTE)
 /// Queues setting a halfword register's bits.
-IO_QUEUE_DEFINE_WRITE(IoWriteQueue_SetBits16, IO_WRITE_SET | IO_WRITE_16)
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_SetBits16, IO_WRITE_SET | IO_WRITE_HALFWORD)
 /// Queues setting a word register's bits.
-IO_QUEUE_DEFINE_WRITE(IoWriteQueue_SetBits32, IO_WRITE_SET | IO_WRITE_32)
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_SetBits32, IO_WRITE_SET | IO_WRITE_WORD)
 /// Queues clearing a byte register's bits.
-IO_QUEUE_DEFINE_WRITE(IoWriteQueue_ClearBits8, IO_WRITE_CLEAR | IO_WRITE_8)
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_ClearBits8, IO_WRITE_CLEAR | IO_WRITE_BYTE)
 /// Queues clearing a halfword register's bits.
-IO_QUEUE_DEFINE_WRITE(IoWriteQueue_ClearBits16, IO_WRITE_CLEAR | IO_WRITE_16)
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_ClearBits16,
+                      IO_WRITE_CLEAR | IO_WRITE_HALFWORD)
 /// Queues clearing a word register's bits.
-IO_QUEUE_DEFINE_WRITE(IoWriteQueue_ClearBits32, IO_WRITE_CLEAR | IO_WRITE_32)
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_ClearBits32, IO_WRITE_CLEAR | IO_WRITE_WORD)
 
 /// Runs the queued register writes and empties the queue, with a copy of the
 /// executor routine on the stack.

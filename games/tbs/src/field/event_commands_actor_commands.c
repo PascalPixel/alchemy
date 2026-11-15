@@ -260,14 +260,14 @@ void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
       terrainId = actor->layer;
       tileX = x;
       if (tileX < 0) {
-        tileX += 0xFFFF;
+        tileX += Q16_ONE - 1;
       }
-      tileX >>= 16;
+      tileX = FIELD_PIXEL(tileX);
       tileZ = z;
       if (tileZ < 0) {
-        tileZ += 0xFFFF;
+        tileZ += Q16_ONE - 1;
       }
-      tileZ >>= 16;
+      tileZ = FIELD_PIXEL(tileZ);
       groundHeight = px(MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ));
       actor->y.fixed = (actor->y.fixed - actor->groundHeight) + groundHeight;
       actor->groundHeight = groundHeight;
@@ -295,15 +295,15 @@ void Actor_SetPositionWithTerrain(u32 actorId, s32 x, s32 y, s32 z) {
       s32 terrainId = actor->layer;
       tileX = x;
       if (tileX < 0) {
-        tileX += 0xFFFF;
+        tileX += Q16_ONE - 1;
       }
-      tileX >>= 16;
+      tileX = FIELD_PIXEL(tileX);
       tileZ = z;
       if (tileZ < 0) {
-        tileZ += 0xFFFF;
+        tileZ += Q16_ONE - 1;
       }
       groundHeight =
-          px(MapGrid_GetTerrainHeightFar(terrainId, tileX, tileZ >> 16));
+          px(MapGrid_GetTerrainHeightFar(terrainId, tileX, FIELD_PIXEL(tileZ)));
       actor->y.fixed = (actor->y.fixed - actor->groundHeight) + groundHeight;
       actor->groundHeight = groundHeight;
     }
@@ -819,7 +819,7 @@ s32 Actor_GetSpriteById(s32 actorId) {
   s32 sprite = -1;
   struct Actor *entry;
 
-  actorId &= 0x0fff;
+  actorId &= SPEAKER_ACTOR_MASK;
   // BUG: the -1 sentinel becomes index 4095, beyond the field work. All
   // indices from ACTOR_ID_COUNT to 4095 lie outside the actor table.
   if (actorId >= ACTOR_ID_COUNT)
@@ -828,7 +828,7 @@ s32 Actor_GetSpriteById(s32 actorId) {
 #else
   struct FieldWork *state = gFieldWork;
   s32 sprite = -1;
-  struct Actor *entry = state->actors[actorId & 0x0fff];
+  struct Actor *entry = state->actors[actorId & SPEAKER_ACTOR_MASK];
 #endif
 
   if (entry != 0 && entry->spriteStorageKind == ACTOR_SPRITE_ONE)

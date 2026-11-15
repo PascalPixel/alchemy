@@ -85,13 +85,13 @@ extern s32 gTolbiShipMast_FollowCameraActions[];
 extern s32 gTolbiShipMast_LookoutActions[];
 extern s32 gTolbiShipMast_DriftActions[];
 extern s32 gTolbiShipMast_WaveActions[];
-extern s32 gTolbiShipMast_BirdDeparture0[];
-extern s32 gTolbiShipMast_BirdDeparture1[];
-extern s32 gTolbiShipMast_BirdDeparture2[];
-extern s32 gTolbiShipMast_BirdDeparture3[];
-extern s32 gTolbiShipMast_BirdDeparture4[];
-extern s32 gTolbiShipMast_BirdDeparture5[];
-extern u32 gTolbiShipMast_BirdDeparture6[];
+extern s32 gTolbiShipMast_BirdDepartureA[];
+extern s32 gTolbiShipMast_BirdDepartureB[];
+extern s32 gTolbiShipMast_BirdDepartureC[];
+extern s32 gTolbiShipMast_BirdDepartureD[];
+extern s32 gTolbiShipMast_BirdDepartureE[];
+extern s32 gTolbiShipMast_BirdDepartureF[];
+extern u32 gTolbiShipMast_BirdDepartureG[];
 extern struct SceneEntrance gTolbiShipMast_Entrances[];
 extern struct SceneExitRegion gTolbiShipMast_Regions[];
 extern u32 gTolbiShipMast_Exits[];
@@ -634,7 +634,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   Actor_Jump(ACTOR_LOOKOUT, 6, 40);
   Sound_Play(MUS_CONFRONTATION);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
-  Event_SetMessageId(MsgTolbiShipMonsters2);
+  Event_SetMessageId(MsgTolbiShipMonstersExclaimed);
   // "Monsters!"
   Event_ShowMessageThenWait(ACTOR_SEAN, 0, 20);
   Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -787,13 +787,13 @@ static void TolbiShipMast_AnnounceLand(void) {
   Event_Wait(400);
   // Each bird takes its own way off while shrinking out of view.
   TolbiShipMast_PrepareGroupDeparture();
-  Actor_SetScript(ACTOR_FIRST_BIRD, gTolbiShipMast_BirdDeparture0);
-  Actor_SetScript(ACTOR_FIRST_BIRD + 1, gTolbiShipMast_BirdDeparture1);
-  Actor_SetScript(ACTOR_FIRST_BIRD + 2, gTolbiShipMast_BirdDeparture2);
-  Actor_SetScript(ACTOR_FIRST_BIRD + 3, gTolbiShipMast_BirdDeparture3);
-  Actor_SetScript(ACTOR_FIRST_BIRD + 4, gTolbiShipMast_BirdDeparture4);
-  Actor_SetScript(ACTOR_FIRST_BIRD + 5, gTolbiShipMast_BirdDeparture5);
-  Actor_SetScript(ACTOR_FIRST_BIRD + 6, gTolbiShipMast_BirdDeparture6);
+  Actor_SetScript(ACTOR_FIRST_BIRD, gTolbiShipMast_BirdDepartureA);
+  Actor_SetScript(ACTOR_FIRST_BIRD + 1, gTolbiShipMast_BirdDepartureB);
+  Actor_SetScript(ACTOR_FIRST_BIRD + 2, gTolbiShipMast_BirdDepartureC);
+  Actor_SetScript(ACTOR_FIRST_BIRD + 3, gTolbiShipMast_BirdDepartureD);
+  Actor_SetScript(ACTOR_FIRST_BIRD + 4, gTolbiShipMast_BirdDepartureE);
+  Actor_SetScript(ACTOR_FIRST_BIRD + 5, gTolbiShipMast_BirdDepartureF);
+  Actor_SetScript(ACTOR_FIRST_BIRD + 6, gTolbiShipMast_BirdDepartureG);
   Event_Wait(40);
   Actor_StartRepeatedMotion(ACTOR_LOOKOUT, 3);
   Actor_SetAttachedEffect(ACTOR_LOOKOUT,
@@ -923,7 +923,7 @@ s32 gTolbiShipMast_WaveActions[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gTolbiShipMast_BirdDeparture0[] = {
+s32 gTolbiShipMast_BirdDepartureA[] = {
     SC_MOVE(72, 0, 216),
     SC_SYNC,
     SC_MOVE(152, 0, 196),
@@ -931,7 +931,7 @@ s32 gTolbiShipMast_BirdDeparture0[] = {
     SC_END,
 };
 
-s32 gTolbiShipMast_BirdDeparture1[] = {
+s32 gTolbiShipMast_BirdDepartureB[] = {
     SC_MOVE(132, 0, 242),
     SC_SYNC,
     SC_MOVE(152, 0, 196),
@@ -939,7 +939,7 @@ s32 gTolbiShipMast_BirdDeparture1[] = {
     SC_END,
 };
 
-s32 gTolbiShipMast_BirdDeparture2[] = {
+s32 gTolbiShipMast_BirdDepartureC[] = {
     SC_MOVE(88, 0, 166),
     SC_SYNC,
     SC_MOVE(152, 0, 196),
@@ -947,7 +947,7 @@ s32 gTolbiShipMast_BirdDeparture2[] = {
     SC_END,
 };
 
-s32 gTolbiShipMast_BirdDeparture3[] = {
+s32 gTolbiShipMast_BirdDepartureD[] = {
     SC_MOVE(220, 0, 134),
     SC_SYNC,
     SC_MOVE(152, 0, 196),
@@ -955,7 +955,7 @@ s32 gTolbiShipMast_BirdDeparture3[] = {
     SC_END,
 };
 
-s32 gTolbiShipMast_BirdDeparture4[] = {
+s32 gTolbiShipMast_BirdDepartureE[] = {
     SC_MOVE(264, 0, 228),
     SC_SYNC,
     SC_MOVE(152, 0, 196),
@@ -963,7 +963,7 @@ s32 gTolbiShipMast_BirdDeparture4[] = {
     SC_END,
 };
 
-s32 gTolbiShipMast_BirdDeparture5[] = {
+s32 gTolbiShipMast_BirdDepartureF[] = {
     SC_MOVE(282, 0, 168),
     SC_SYNC,
     SC_MOVE(152, 0, 196),
@@ -972,7 +972,7 @@ s32 gTolbiShipMast_BirdDeparture5[] = {
 };
 
 // clang-format off
-u32 gTolbiShipMast_BirdDeparture6[] = {
+u32 gTolbiShipMast_BirdDepartureG[] = {
     SC_MOVE(154, 0, 135),
     SC_SYNC,
     SC_MOVE(152, 0, 196),

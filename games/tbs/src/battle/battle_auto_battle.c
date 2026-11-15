@@ -45,10 +45,10 @@ s32 AutoBattle_BuildActions(struct BattleAction *entries) {
     entry->unitId = unitId;
     entry->priority = unit->agi >> 1;
     if (entry->priority != 0)
-      entry->priority += (Random16() * unit->agi) >> 16;
+      entry->priority += Random16_Below(unit->agi);
     entry->command = COMMAND_ATTACK;
     entry->parameter = 0;
-    entry->target = (Random16() * targetRange) >> 16;
+    entry->target = Random16_Below(targetRange);
     count++;
     entry++;
   }
@@ -245,8 +245,8 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   for (index = 0; index != sideCount; index++) {
     BattleHighlight_SetSpriteMode(index + sideStart, SPRITE_SEMI_TRANSPARENT);
   }
-  for (index = 0; index != 16; index++) {
-    REG_BLDALPHA = BLEND_ALPHA(16 - index, 16);
+  for (index = 0; index != BLEND_WEIGHT_MAX; index++) {
+    REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX - index, BLEND_WEIGHT_MAX);
     wait(1);
   }
   PartyStatus_DrawFar(PARTY_STATUS_CLOSED);
@@ -291,14 +291,14 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   for (index = 0; index != sideCount; index++) {
     BattleHighlight_SetSpriteMode(index + sideStart, SPRITE_SEMI_TRANSPARENT);
   }
-  for (index = 0; index != 16; index++) {
-    REG_BLDALPHA = BLEND_ALPHA(index, 16);
+  for (index = 0; index != BLEND_WEIGHT_MAX; index++) {
+    REG_BLDALPHA = BLEND_ALPHA(index, BLEND_WEIGHT_MAX);
     wait(1);
   }
   for (index = 0; index != sideCount; index++) {
     BattleHighlight_SetSpriteMode(index + sideStart, SPRITE_OPAQUE);
   }
-  BattleCamera_SetView(0, 0, 0, 100);
+  BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
   wait(3);
   return 0;
 }
@@ -534,5 +534,5 @@ s32 BattleAbility_ReplaceDefeated(const struct BattleAction *action) {
     return TARGET_SIDE_DEFEATED;
   }
 
-  return (s16)livingUnits[(Random16() * livingCount) >> 16];
+  return (s16)livingUnits[Random16_Below(livingCount)];
 }

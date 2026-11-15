@@ -18,6 +18,10 @@
 /// No backup memory. "Unable to detect backup memory."
 #define SAVE_ERROR_NO_MEMORY -9
 
+/// The play time shown stops at PLAY_TIME_HOURS_MAX hours and 59 minutes.
+#define PLAY_TIME_HOURS_MAX 999
+#define MINUTES_PER_HOUR 60
+
 /// Writes the play time `frames` (at 60 frames a second) into `out` as hours
 /// and minutes, "hhh:mm" with the hours right-aligned in three characters, and
 /// returns `out`. The time stops at 999:59.
@@ -30,11 +34,13 @@ void *String_FormatPlayTime(s32 frames, u8 *out) {
   u8 *textCursor;
 
   totalMinutes = (u32)frames / (60 * 60);
-  if (totalMinutes > 999 * 60 + 59)
-    totalMinutes = 999 * 60 + 59;
+  if (totalMinutes >
+      PLAY_TIME_HOURS_MAX * MINUTES_PER_HOUR + MINUTES_PER_HOUR - 1)
+    totalMinutes =
+        PLAY_TIME_HOURS_MAX * MINUTES_PER_HOUR + MINUTES_PER_HOUR - 1;
 
-  hours = totalMinutes / 60;
-  minutes = totalMinutes % 60;
+  hours = totalMinutes / MINUTES_PER_HOUR;
+  minutes = totalMinutes % MINUTES_PER_HOUR;
 
   digitsCursor = String_FormatNumber(digits, hours, 3);
   *out = *digitsCursor;
@@ -530,15 +536,15 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
     width += x;
     x = 0;
   }
-  if (x + width > 29)
-    width = 30 - x;
+  if (x + width > DISPLAY_TILE_WIDTH - 1)
+    width = DISPLAY_TILE_WIDTH - x;
 
   if (y < 0) {
     height += y;
     y = 0;
   }
   if (y + height > 29)
-    height = 20 - y;
+    height = DISPLAY_TILE_HEIGHT - y;
 
   if (width > 0 && height > 0) {
     // Byte offsets: 32 entries of 2 bytes a row.
@@ -549,7 +555,7 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
       s32 remaining = width;
       u16 *cell = (u16 *)(offset + (s32)tilemap);
       for (; remaining != 0; remaining--)
-        *cell++ = (HIGHLIGHT_PALETTE << 12) | 6;
+        *cell++ = BG_TILE_PALETTE(HIGHLIGHT_PALETTE) | 6;
       height--;
       offset += 64;
     } while (height != 0);

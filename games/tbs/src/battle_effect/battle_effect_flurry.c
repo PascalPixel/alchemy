@@ -4,6 +4,10 @@
 
 #include "battle_effect_internal.h"
 
+#define FLURRY_WAITING_MOTES                                                   \
+  768                          ///< motes in PARTICLES, waiting above the target
+#define FLURRY_DRAWN_MOTES 512 ///< of which the strikes draw
+
 /// Each plays the flurry mode `basic`, `stronger` or `strongest` as the
 /// effect's variant (enum EffectVariant) says.
 #define FLURRY_DEFINE_BY_VARIANT(name, basic, stronger, strongest)             \
@@ -109,7 +113,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   if (work->args->prelude == 1)
     BattleEffect_RunDjinniEntrance(args, ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG,
                                    work->args->side, DJINNI_ANCHOR_OVER_USER,
@@ -118,10 +122,10 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
 
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, work->sheet, 1, 0);
-  for (row = 0; row != 288; row++) {
-    for (col = 0; col != 40; col++) {
-      s32 src = row * 40 + col;
-      s32 dst = row * 20 + col / 2 + FLURRY_FLASH_PICTURES;
+  for (row = 0; row != YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT; row++) {
+    for (col = 0; col != YELLOW_ORB_WIDTH; col++) {
+      s32 src = row * YELLOW_ORB_WIDTH + col;
+      s32 dst = row * YELLOW_ORB_PACKED_WIDTH + col / 2 + FLURRY_FLASH_PICTURES;
 
       work->sheet[dst] = work->sheet[src];
     }
@@ -146,7 +150,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     break;
   }
   palette = Resource_GetTableEntry(paletteId);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   wait(1);
 
   Projection_ScaledUnit(work->args->targets[0], &targetPos);
@@ -154,7 +158,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
 
   // Motes wait above the target until their strike releases them.
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
-  for (i = 0; i != 768; i++) {
+  for (i = 0; i != FLURRY_WAITING_MOTES; i++) {
     struct Particle *mote = &PARTICLES[i];
 
     SET_POSITION(mote, target->x.fixed, target->y.fixed + px(25),
@@ -178,19 +182,19 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_LIGHTEN);
     } else {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_LIGHTEN);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                           COMPOSITE_LIGHTEN);
     }
     draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
     for (i = 0; i != bursts; i++) {
       s32 start = i * gFlurry_Styles[mode][FLURRY_INTERVAL];
 
@@ -200,18 +204,24 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
         if ((i & 3) <= 1 ||
             gFlurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS) {
           if (work->args->side == EFFECT_SIDE_ENEMIES)
-            draw[i & 1](canvas, work->sheet + step * (48 * 72),
-                        targetPos.x / 2 - 16, targetPos.y - 40, 48, 72);
+            draw[i & 1](canvas, work->sheet + step * PICTURE_BYTES(BLUE_ARC),
+                        targetPos.x / 2 - 16, targetPos.y - 40, BLUE_ARC_WIDTH,
+                        BLUE_ARC_HEIGHT);
           else
-            draw[i & 1](canvas, work->sheet + step * (48 * 72),
-                        targetPos.x / 2 - 32, targetPos.y - 40, 48, 72);
+            draw[i & 1](canvas, work->sheet + step * PICTURE_BYTES(BLUE_ARC),
+                        targetPos.x / 2 - 32, targetPos.y - 40, BLUE_ARC_WIDTH,
+                        BLUE_ARC_HEIGHT);
         } else {
           if (work->args->side == EFFECT_SIDE_ENEMIES)
-            draw[i & 1](canvas, FLURRY_WAVE_PICTURES + step * (48 * 16),
-                        targetPos.x / 2 - 16, actorPos.y - 8, 48, 16);
+            draw[i & 1](canvas,
+                        FLURRY_WAVE_PICTURES + step * PICTURE_BYTES(WAVE),
+                        targetPos.x / 2 - 16, actorPos.y - WAVE_HEIGHT / 2,
+                        WAVE_WIDTH, WAVE_HEIGHT);
           else
-            draw[i & 1](canvas, FLURRY_WAVE_PICTURES + step * (48 * 16),
-                        targetPos.x / 2 - 32, actorPos.y - 8, 48, 16);
+            draw[i & 1](canvas,
+                        FLURRY_WAVE_PICTURES + step * PICTURE_BYTES(WAVE),
+                        targetPos.x / 2 - 32, actorPos.y - WAVE_HEIGHT / 2,
+                        WAVE_WIDTH, WAVE_HEIGHT);
         }
       }
       if (frame == start + 2) {
@@ -236,9 +246,13 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
       }
       if (frame >= start + 2 && frame < start + 14)
         draw[0](canvas,
-                work->sheet + ((frame - start - 2) / 2) * (20 * 48) +
+                work->sheet +
+                    ((frame - start - 2) / 2) *
+                        PICTURE_BYTES(YELLOW_ORB_PACKED) +
                     FLURRY_FLASH_PICTURES,
-                targetPos.x / 2 - 10, targetPos.y - 24, 20, 48);
+                targetPos.x / 2 - YELLOW_ORB_PACKED_WIDTH / 2,
+                targetPos.y - YELLOW_ORB_PACKED_HEIGHT / 2,
+                YELLOW_ORB_PACKED_WIDTH, YELLOW_ORB_PACKED_HEIGHT);
     }
     EFFECT_RELEASE_BLITTERS();
 
@@ -246,11 +260,11 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     EFFECT_VIEW_FROM_CAMERA(camera);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_LIGHTEN);
     draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
-    for (i = 0; i != 512; i++) {
+    draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
+    for (i = 0; i != FLURRY_DRAWN_MOTES; i++) {
       struct Particle *mote = &PARTICLES[i];
 
       s32 size = mote->variant;

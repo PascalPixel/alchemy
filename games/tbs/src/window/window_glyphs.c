@@ -7,6 +7,10 @@
 // Text_DrawGlyphPair draws its glyphs into a buffer of one byte per pixel
 // (Iwram_ExpandBitRuns writes a glyph's rows there in a colour), in rows 16
 // bytes apart, then packs its top 16 rows into 4bpp tiles.
+// A glyph is drawn from row 2, its shadow a pixel right of and below it, and
+// a kana's mark at the top right.
+#define GLYPH_BUFFER_WIDTH 16
+#define GLYPH_PIXEL(x, y) ((y) * GLYPH_BUFFER_WIDTH + (x))
 
 #if LANGUAGE != LANGUAGE_JAPANESE
 /// Draws a character, and a second one when the code carries it in bits 8 to
@@ -33,7 +37,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   work = WINDOW_WORK;
   secondIndex = (code << 8) >> 16;
   code &= 255;
-  Iwram_ClearWords(pixels, 384);
+  Iwram_ClearWords(pixels, sizeof(pixels));
   // While WindowWork.mindRead is set, the text is colour 8 with no shadow.
   if (work->mindRead != 0) {
     shadowColour = 0;
@@ -42,46 +46,46 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
     shadowColour = 1;
     colour = work->colour;
   }
-  firstIndex = code - 32;
+  firstIndex = code - TEXT_SPACE;
   glyph = firstIndex * sizeof(struct FontGlyph) + (const u8 *)gFont_Glyphs;
   width = ((const struct FontGlyph *)glyph)->width;
   glyph = (const u8 *)((const struct FontGlyph *)glyph)->rows;
   // Outlined text is the glyph drawn twice a pixel apart, over its shadow
   // drawn the same way: one pixel wider.
   if (work->outline == TEXT_STYLE_OUTLINED) {
-    Iwram_ExpandBitRuns(glyph, pixels + 49, shadowColour);
-    Iwram_ExpandBitRuns(glyph, pixels + 50, shadowColour);
-    Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
-    Iwram_ExpandBitRuns(glyph, pixels + 33, colour);
+    Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(1, 3), shadowColour);
+    Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(2, 3), shadowColour);
+    Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(0, 2), colour);
+    Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(1, 2), colour);
     width++;
   } else {
-    Iwram_ExpandBitRuns(glyph, pixels + 49, shadowColour);
-    Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
+    Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(1, 3), shadowColour);
+    Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(0, 2), colour);
   }
   // The second character follows the first, starting width pixels along.
   if ((u16)secondIndex != 0) {
 #ifdef UBFIX
-    // Form only the actual glyph address: &glyphs[-32] is already outside the
-    // array before the later byte offset is added.
+    // Form only the actual glyph address: &glyphs[-TEXT_SPACE] is already
+    // outside the array before the later byte offset is added.
     glyph = (const u8 *)&gFont_Glyphs[(u16)secondIndex - 32];
 #else
-    glyph = (const u8 *)&gFont_Glyphs[-32] + ((u16)secondIndex << 5);
+    glyph = (const u8 *)&gFont_Glyphs[-TEXT_SPACE] + ((u16)secondIndex << 5);
 #endif
     secondWidth = *(const u16 *)glyph;
     glyph += 2;
     if (work->outline == TEXT_STYLE_OUTLINED) {
       u8 *dst = pixels + width;
-      Iwram_ExpandBitRuns(glyph, dst + 49, shadowColour);
-      Iwram_ExpandBitRuns(glyph, dst + 50, shadowColour);
-      Iwram_ExpandBitRuns(glyph, dst + 32, colour);
-      Iwram_ExpandBitRuns(glyph, dst + 33, colour);
+      Iwram_ExpandBitRuns(glyph, dst + GLYPH_PIXEL(1, 3), shadowColour);
+      Iwram_ExpandBitRuns(glyph, dst + GLYPH_PIXEL(2, 3), shadowColour);
+      Iwram_ExpandBitRuns(glyph, dst + GLYPH_PIXEL(0, 2), colour);
+      Iwram_ExpandBitRuns(glyph, dst + GLYPH_PIXEL(1, 2), colour);
       secondWidth += 1;
     } else {
       u8 *dst = pixels + width;
       u8 *p;
-      p = dst + 49;
+      p = dst + GLYPH_PIXEL(1, 3);
       Iwram_ExpandBitRuns(glyph, p, shadowColour);
-      p = dst + 32;
+      p = dst + GLYPH_PIXEL(0, 2);
       Iwram_ExpandBitRuns(glyph, p, colour);
     }
     width += secondWidth;
@@ -92,7 +96,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
 /// text colour over a shadow, or with an outline when WindowWork.outline is 1,
 /// with the kana mark in the code's top two bits above its top right.
 s32 Text_DrawGlyphPair(u32 code, u32 *out) {
-  u8 pixels[256];
+  u8 pixels[GLYPH_BUFFER_WIDTH * GLYPH_BUFFER_WIDTH];
   struct WindowWork *work;
   const u8 *glyph;
   const u8 *markGlyph;
@@ -113,19 +117,21 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
   if (markCode != 0)
     markGlyph =
         (const u8 *)((const struct FontGlyph *)((const u8 *)gFont_Glyphs +
-                                                (markCode - 32) *
+                                                (markCode - TEXT_SPACE) *
                                                     sizeof(struct FontGlyph)))
             ->rows;
   code &= (1 << TEXT_CODE_MARK_SHIFT) - 1;
   if (code <= TEXT_LAST_FONT_CODE) {
-    glyph = (const u8 *)gFont_Glyphs + (code - 32) * sizeof(struct FontGlyph);
+    glyph = (const u8 *)gFont_Glyphs +
+            (code - TEXT_SPACE) * sizeof(struct FontGlyph);
     width = ((const struct FontGlyph *)glyph)->width;
     glyph = (const u8 *)((const struct FontGlyph *)glyph)->rows;
   } else {
-    glyph = gFont_KanjiGlyphs + (code - 256) * 24;
-    width = 10;
+    glyph = gFont_KanjiGlyphs +
+            (code - (TEXT_LAST_FONT_CODE + 1)) * KANJI_GLYPH_SIZE;
+    width = KANJI_WIDTH;
   }
-  Iwram_ClearWords(pixels, 256);
+  Iwram_ClearWords(pixels, sizeof(pixels));
   if (work->mindRead != 0) {
     shadowColour = 0;
     colour = 8;
@@ -134,14 +140,14 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
     colour = work->colour;
   }
   if (work->outline == TEXT_STYLE_OUTLINED) {
-    Iwram_ExpandBitRuns(glyph, pixels + 49, shadowColour);
-    Iwram_ExpandBitRuns(glyph, pixels + 50, shadowColour);
+    Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(1, 3), shadowColour);
+    Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(2, 3), shadowColour);
     if (markGlyph != 0) {
-      Iwram_ExpandBitRuns(markGlyph, pixels + 24, shadowColour);
-      Iwram_ExpandBitRuns(markGlyph, pixels + 25, shadowColour);
+      Iwram_ExpandBitRuns(markGlyph, pixels + GLYPH_PIXEL(8, 1), shadowColour);
+      Iwram_ExpandBitRuns(markGlyph, pixels + GLYPH_PIXEL(9, 1), shadowColour);
     }
-    Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
-    Iwram_ExpandBitRuns(glyph, pixels + 33, colour);
+    Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(0, 2), colour);
+    Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(1, 2), colour);
     if (markGlyph != 0) {
       pixel = pixels + 7;
       Iwram_ExpandBitRuns(markGlyph, pixel, colour);
@@ -149,10 +155,10 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
     }
     width++;
   } else {
-    Iwram_ExpandBitRuns(glyph, pixels + 49, shadowColour);
+    Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(1, 3), shadowColour);
     if (markGlyph != 0)
-      Iwram_ExpandBitRuns(markGlyph, pixels + 24, shadowColour);
-    Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
+      Iwram_ExpandBitRuns(markGlyph, pixels + GLYPH_PIXEL(8, 1), shadowColour);
+    Iwram_ExpandBitRuns(glyph, pixels + GLYPH_PIXEL(0, 2), colour);
     if (markGlyph != 0) {
       pixel = pixels + 7;
       Iwram_ExpandBitRuns(markGlyph, pixel, colour);
@@ -225,7 +231,7 @@ s32 Text_GetWideStringWidth(u16 *text) {
         width += FONT_GLYPH(glyphIndex)->width;
       }
     } else {
-      width += 10;
+      width += KANJI_WIDTH;
 #endif
     }
     code = *cursor;
@@ -293,7 +299,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
         break;
       case TEXT_NEWLINE:
         x = lineStartX;
-        y += 15;
+        y += TEXT_LINE_HEIGHT;
         break;
       case 14:
       case TEXT_WINDOW_STATE:
@@ -303,9 +309,9 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
         // Fall through.
       case 11:
       case 12:
-      case 17:
+      case TEXT_ACTOR_NAME:
 #if LANGUAGE != LANGUAGE_JAPANESE
-      case 29:
+      case TEXT_ARTICLE_CLASS:
 #endif
         text++;
         break;
@@ -317,9 +323,9 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
       if ((window->flags & WINDOW_FLAG_TEXT_CANVAS) == 0) {
         nextCode = *text;
 #if LANGUAGE == LANGUAGE_SPANISH
-        if (code > 32 && nextCode > 32) {
-          s16 width =
-              gFont_Glyphs[code - 32].width + gFont_Glyphs[nextCode - 32].width;
+        if (code > TEXT_SPACE && nextCode > TEXT_SPACE) {
+          s16 width = gFont_Glyphs[code - TEXT_SPACE].width +
+                      gFont_Glyphs[nextCode - TEXT_SPACE].width;
 
           if (work->outline == TEXT_STYLE_OUTLINED) {
             if ((u16)width <= 14) {
@@ -332,9 +338,9 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
           }
         }
 #else
-        if (code > 32 && nextCode > 32 &&
-            (u16)(gFont_Glyphs[code - 32].width +
-                  gFont_Glyphs[nextCode - 32].width) <= 15) {
+        if (code > TEXT_SPACE && nextCode > TEXT_SPACE &&
+            (u16)(gFont_Glyphs[code - TEXT_SPACE].width +
+                  gFont_Glyphs[nextCode - TEXT_SPACE].width) <= 15) {
           code |= nextCode << 8;
           text++;
         }
@@ -370,7 +376,7 @@ UNUSED void Text_DrawGlyphTileAtWorkOffset(u16 *buffer,
   }
 
   cell = ((window->y + offsetY + 1) << 5) + (window->x + offsetX) + 1;
-  if (cell < 32 * 20) {
+  if (cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) {
     // Inside the tilemap.
     s32 src;
     s32 dst;
@@ -421,9 +427,9 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
         case TEXT_LINE_SPACING:
         case 11:
         case 12:
-        case 17:
+        case TEXT_ACTOR_NAME:
 #if LANGUAGE != LANGUAGE_JAPANESE
-        case 29:
+        case TEXT_ARTICLE_CLASS:
 #endif
           text++;
           break;
@@ -444,8 +450,11 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
   work->dirty = 1;
 }
 
-/// Writes value as decimal text into buffer (14 bytes) and returns where the
-/// text starts.
+/// The digits String_FormatNumber writes, in buffer[1] to [12].
+#define NUMBER_DIGITS 12
+
+/// Writes value as decimal text into buffer (NUMBER_DIGITS + 2 bytes) and
+/// returns where the text starts.
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
   s32 offset;
   s32 value;
@@ -463,22 +472,22 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
     value = 0U - value;
   }
 
-  // Twelve digits in buffer[1] to [12], then spaces for the leading zeros
-  // (the last digit stays) and the sign in front; buffer[13] ends the text.
+  // The digits, then spaces for the leading zeros (the last digit stays) and
+  // the sign in front; the byte after them ends the text.
   buffer[0] = ' ';
-  for (offset = 12; offset != 0; offset--) {
+  for (offset = NUMBER_DIGITS; offset != 0; offset--) {
     buffer[offset] = value % 10 + '0';
     value = value / 10;
   }
 
   offset = 0;
-  buffer[13] = offset;
+  buffer[NUMBER_DIGITS + 1] = offset;
   spaceCharacter = ' ';
   offset = 1;
   minusCharacter = '-';
-  for (leading = buffer; offset != 13; leading++, offset++) {
+  for (leading = buffer; offset != NUMBER_DIGITS + 1; leading++, offset++) {
     if (leading[1] == '0') {
-      if (offset != 12)
+      if (offset != NUMBER_DIGITS)
         leading[1] = spaceCharacter;
     } else {
       if (negative != 0)
@@ -493,7 +502,7 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
       trim = buffer;
       do {
         offset++;
-        if (offset == 12)
+        if (offset == NUMBER_DIGITS)
           break;
         trim++;
       } while (*trim == ' ');
@@ -501,7 +510,7 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
     return buffer + offset;
   }
 
-  if (width < 0 || width > 12)
-    width = 12;
-  return buffer + 13 - width;
+  if (width < 0 || width > NUMBER_DIGITS)
+    width = NUMBER_DIGITS;
+  return buffer + NUMBER_DIGITS + 1 - width;
 }

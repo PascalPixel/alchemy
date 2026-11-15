@@ -21,7 +21,7 @@ u16 ProgramFlashSector(u16 sector, u8 *source) {
   // The byte reader WaitForFlashWrite polls with lives in savedCode until this
   // function returns.
   CopyFlashReadRoutineToRam(savedCode);
-  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash->wait[0];
+  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | gFlash->wait[0];
   gFlashNumRemainingBytes = gFlash->sector.size;
   destination = (u8 *)((sector << gFlash->sector.shift) + FLASH_BASE);
 
@@ -34,7 +34,7 @@ u16 ProgramFlashSector(u16 sector, u8 *source) {
     destination++;
   }
 
-  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | WAITCNT_SRAM_8;
+  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_SLOWEST;
 
   return result;
 }

@@ -49,7 +49,7 @@ s32 Shop_SelectRepair(s32 unitId) {
   for (;;) {
     descriptionWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
     shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
-    shop->mode = 12;
+    shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
     redraw = 1;
 
     while (1) {
@@ -63,7 +63,7 @@ s32 Shop_SelectRepair(s32 unitId) {
         x = slot % SHOP_INVENTORY_COLUMNS * 16;
         y = slot / SHOP_INVENTORY_COLUMNS * 16 + 8;
         MenuCursor_Place(window, x, y);
-        shop->mode = 3;
+        shop->cursorFrames = 3;
         repairCost = Shop_RepairPrice(unit->inventory[slot]);
         Shop_DrawItemPrice(priceWindow, itemId, repairCost,
                            SHOP_PRICE_KIND_REPAIR);

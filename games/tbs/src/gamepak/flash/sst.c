@@ -11,7 +11,7 @@ u16 EraseFlashChip(void) {
   u8 savedCode[64];
   u16 result;
 
-  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash->wait[0];
+  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | gFlash->wait[0];
 
   FLASH_SEND_COMMAND(FLASH_COMMAND_ERASE);
   FLASH_SEND_COMMAND(FLASH_COMMAND_ERASE_CHIP);
@@ -21,7 +21,7 @@ u16 EraseFlashChip(void) {
   result = gWaitForFlashWrite(FLASH_PHASE_ERASE_CHIP, (u8 *)FLASH_BASE,
                               FLASH_ERASED_BYTE);
 
-  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | WAITCNT_SRAM_8;
+  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_SLOWEST;
 
   return result;
 }
@@ -37,13 +37,13 @@ u16 EraseFlashSector(u16 sector) {
     return FLASH_ERROR_NO_SECTOR;
   }
 
-  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash->wait[0];
+  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | gFlash->wait[0];
 
   target = (volatile u8 *)((sector << gFlash->sector.shift) + FLASH_BASE);
 
   FLASH_SEND_COMMAND(FLASH_COMMAND_ERASE);
-  FLASH_WRITE(FLASH_COMMAND_ADDRESS, FLASH_UNLOCK_1);
-  FLASH_WRITE(FLASH_UNLOCK_ADDRESS, FLASH_UNLOCK_2);
+  FLASH_WRITE(FLASH_COMMAND_ADDRESS, FLASH_UNLOCK_A);
+  FLASH_WRITE(FLASH_UNLOCK_ADDRESS, FLASH_UNLOCK_B);
   *target = FLASH_COMMAND_ERASE_SECTOR;
 
   CopyFlashReadRoutineToRam(savedCode);
@@ -51,7 +51,7 @@ u16 EraseFlashSector(u16 sector) {
   result = gWaitForFlashWrite(FLASH_PHASE_ERASE_SECTOR, (u8 *)target,
                               FLASH_ERASED_BYTE);
 
-  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | WAITCNT_SRAM_8;
+  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_SLOWEST;
 
   return result;
 }
@@ -126,7 +126,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
 
   CopyFlashReadRoutineToRam(ramCode);
 
-  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash->wait[0];
+  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | gFlash->wait[0];
 
   // Program the verified sector, stopping at the first failed byte.
   gFlashNumRemainingBytes = gFlash->sector.size;
@@ -140,7 +140,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
     destination++;
   }
 
-  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | WAITCNT_SRAM_8;
+  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_SLOWEST;
 
   return status;
 }

@@ -2017,7 +2017,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Party_RemoveMemberRestored(JENNA);
   SolSanctumElementalStarRoom_GiveMythrilBags();
   MapGrid_CopyCellAttributes(8, 0, 5, 1, 27, 17);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   Event_End();
 }
@@ -2097,7 +2097,7 @@ static s32 SolSanctumElementalStarRoom_PresentStarFixed(s32 item, s32 x, s32 y,
   actor->gravity = px(1) / 4;
   glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
   Icon_DrawItem(item);
-  VramCache_Load(sprite->slot, 128, glyph->tiles);
+  VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   Sound_Play(MUS_TREASURE_FOUND);
   ItemDisplay_ShowPicture(actor, 3);
@@ -2149,17 +2149,17 @@ static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void) {
   Sound_Play(SE_WARP);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
   options.priority = 1;
-  options.palette = 5;
+  options.palette = SPRITE_COLOR_BRG;
   options.type = SPRITE_PARTICLE;
   options.startScaleX = 2 * Q16_ONE / 5;
   options.startScaleY = 3 * Q16_ONE;
   for (frame = 0; frame <= 31; frame++) {
     Event_Wait(1);
     if (!(frame & 1)) {
-      xOffset = (Random_Below(24)) << 16;
+      xOffset = px(Random_Below(24));
       x = alex->x.fixed + xOffset;
       x -= px(12);
-      FieldEffect_Spawn(x, alex->y.fixed + ((Random_Below(32)) << 16) + px(32),
+      FieldEffect_Spawn(x, alex->y.fixed + px(Random_Below(32)) + px(32),
                         alex->z.fixed, 0, -px(4), 0,
                         EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                             EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,

@@ -26,6 +26,13 @@ void BattleEffect_RunHaunting(struct BattleEffectParams *args) {
   BattleEffect_RunGatheringLights(args, GATHERING_LIGHTS_HAUNTING);
 }
 #define GATHERING_LIGHTS_SLOTS 128 ///< particles reserved for each target
+/// The targets' turns, this many frames apart: each is struck by its lights
+/// from GATHERING_LIGHTS_HIT_FRAME.
+#define GATHERING_LIGHTS_TARGET_FRAMES 20
+#define GATHERING_LIGHTS_HIT_FRAME 70
+/// MemberBurstImage's three lights.
+#define MEMBER_BURST_WIDTH 20
+#define MEMBER_BURST_HEIGHT 32
 
 /// For each target in turn, lights burst out of the user and are pulled into
 /// the middle of the target's body, which is struck as they arrive; the effect
@@ -55,11 +62,12 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     paletteId = RESOURCE_MARS_DJINN_SHEET;
   else
     paletteId = RESOURCE_MERCURY_DJINN_SHEET;
-  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(paletteId), 128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(paletteId),
+                  SHEET_PALETTE_BYTES);
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
 
   // The lights fly off the user in every direction.
-  EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
+  EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
   EFFECT_FOR_EACH_TARGET(k, work->args) {
     struct Actor *src = GetBattleObjectSlotFar(work->args->user)->actor;
     s32 height = BattleUnit_GetEffectHeightFar(work->args->user);
@@ -81,7 +89,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
 
   for (frame = 0;
        frame != gGatheringLights_Counts[mode][GATHERING_LIGHTS_FRAMES] +
-                    work->args->targetCount * 20;
+                    work->args->targetCount * GATHERING_LIGHTS_TARGET_FRAMES;
        frame++) {
     s32 *row;
 
@@ -96,23 +104,25 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
     // Ripple the canvas line by line.
     row = work->bg2xLines;
     for (i = 0; i != DISPLAY_HEIGHT; i++)
-      *row++ = ((16 << 16) - Trig_Sin((frame + i) << 10) * 16) >> 10;
+      *row++ = (px(16) - Trig_Sin((frame + i) << 10) * 16) >> 10;
 
     EFFECT_FOR_EACH_TARGET(k, work->args) {
       struct Actor *target =
           GetBattleObjectSlotFar(work->args->targets[k])->actor;
       s32 half = BattleUnit_GetEffectHeightFar(work->args->targets[k]) / 2;
 
-      if (frame == k * 20 + 71) {
+      if (frame ==
+          k * GATHERING_LIGHTS_TARGET_FRAMES + GATHERING_LIGHTS_HIT_FRAME + 1) {
         if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
           Sound_PlayFar(SE_HEAVY_IMPACT);
         else
           Sound_PlayFar(SE_IMPACT);
       }
-      if (frame == k * 20 + 70)
+      if (frame ==
+          k * GATHERING_LIGHTS_TARGET_FRAMES + GATHERING_LIGHTS_HIT_FRAME)
         BattleEffect_TintBattler(work->args->targets[k], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, k, 26);
-      if (frame > k * 20) {
+      if (frame > k * GATHERING_LIGHTS_TARGET_FRAMES) {
         for (i = 0; i != gGatheringLights_Counts[mode][GATHERING_LIGHTS_COUNT];
              i++) {
           struct Particle *mote = &PARTICLES[k * GATHERING_LIGHTS_SLOTS + i];
@@ -120,10 +130,12 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
           if (frame > (k * 10 + i) * 2 && mote->variant >= 0) {
             Projection_Point(mote, &screenPosition);
             screenPosition.x >>= 1;
-            draw[0](canvas, work->sheet + i % 3 * (20 * 32),
-                    screenPosition.x - 10, screenPosition.y - 16, 20, 32);
+            draw[0](canvas, work->sheet + i % 3 * PICTURE_BYTES(MEMBER_BURST),
+                    screenPosition.x - MEMBER_BURST_WIDTH / 2,
+                    screenPosition.y - MEMBER_BURST_HEIGHT / 2,
+                    MEMBER_BURST_WIDTH, MEMBER_BURST_HEIGHT);
             Particle_AdvanceWithGravity3D(mote, 62, 0);
-            if (frame > k * 20 + i + 30) {
+            if (frame > k * GATHERING_LIGHTS_TARGET_FRAMES + i + 30) {
               s32 dx = (target->x.fixed - mote->x) >> 9;
               s32 dy = (target->y.fixed + half - mote->y) >> 9;
               s32 dz = (target->z.fixed - mote->z) >> 9;

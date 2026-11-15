@@ -64,7 +64,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   effectWork->secondActorId = targetId;
   effectWork->mainActor = user;
   target = Actor_Lookup((s16)targetId);
-  dir = (user->facing + TRIG_TURN / 8) & 0xc000; // to the nearest quarter turn
+  dir = FACING_NEAREST_CARDINAL(user->facing);
   effectWork->child = target;
   effectWork->angle = dir;
   if (target != NULL) {

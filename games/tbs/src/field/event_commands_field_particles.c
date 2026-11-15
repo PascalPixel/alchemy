@@ -113,10 +113,9 @@ u32 FieldParticle_HasPendingTarget(struct FieldParticle *effect) {
   if (effect->stopAtTarget == 0) {
     return 0;
   }
-  // (-t | t) >> 31 is 1 for any nonzero t: targetX is not
-  // FIELD_EFFECT_SPRITE_NO_TARGET.
+  // Nonzero where the target is not FIELD_EFFECT_SPRITE_NO_TARGET.
   targetX = effect->targetX ^ (u32)FIELD_EFFECT_SPRITE_NO_TARGET;
-  return ((0u - targetX) | targetX) >> 31;
+  return NONZERO(targetX);
 }
 
 /// Places a field effect sprite at (x, z), at rest with no target.

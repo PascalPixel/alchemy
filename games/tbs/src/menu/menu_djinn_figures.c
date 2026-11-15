@@ -9,7 +9,7 @@
 /// task: one Djinni figure of each element (gDjinnFigures_SpriteIds) in
 /// ANIM_WALK, at (16, 32) until the screen moves them, placed each frame by
 /// DjinnFigures_UpdateAllPositions.
-void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
+void DjinnFigures_InitializeTopRow(void *window, s32 unused) {
   struct ItemMenuWork *state = gMenuWork;
   s32 index;
 
@@ -138,7 +138,7 @@ void DjinnFigures_UpdateBottomRow(void) {
 /// Replaces the bottom row's four sprites and starts its easing task: one
 /// Djinni figure of each element in ANIM_WALK, at full size, at (16, 200) below
 /// the screen until the Djinn menu moves one.
-void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1) {
+void DjinnFigures_InitializeBottomRow(s32 window, s32 unused) {
   struct ItemMenuWork *state = gMenuWork;
   s32 index;
 

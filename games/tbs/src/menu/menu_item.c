@@ -222,8 +222,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
     // Choose whose items to look at.
     case ITEM_STEP_MEMBER:
       menu->selectedSlots[0] = 0;
-      ItemMenu_SetMessageWindowHeight3();
-      ItemMenu_SetItemWindowRow3();
+      ItemMenu_FitMessageWindowToQuestion();
+      ItemMenu_PlaceItemWindowBelowQuestion();
       menu->selectedItemIcon->motion = ICON_HIDDEN;
       ItemMenu_DrawMessage(0, MsgWhoseItem);
 #if TBS_PATCH_1
@@ -259,8 +259,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         state = ITEM_STEP_MEMBER;
         break;
       }
-      ItemMenu_SetMessageWindowHeight3();
-      ItemMenu_SetItemWindowRow3();
+      ItemMenu_FitMessageWindowToQuestion();
+      ItemMenu_PlaceItemWindowBelowQuestion();
       menu->selectedItemIcon->motion = ICON_HIDDEN;
       menu->sideIcons[0]->motion = ICON_SHOWN;
       ItemMenu_DrawMessage(0, MsgWhichItem);
@@ -346,8 +346,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
     // Use the item on the party member chosen.
     case ITEM_STEP_USE:
       ItemMenu_HideAllIcons();
-      ItemMenu_SetMessageWindowHeight5();
-      ItemMenu_SetItemWindowRow5();
+      ItemMenu_FitMessageWindowToItemQuestion();
+      ItemMenu_PlaceItemWindowBelowItemQuestion();
       WindowSprite_RedrawSavedRectFar(menu->questionWindow);
       ItemMenu_DrawItemHead();
       Text_DrawMessageAsTilesFar(MsgUseOnWhom, menu->questionWindow, 16, 16);
@@ -385,8 +385,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
 
     // Give: choose to whom.
     case ITEM_STEP_TARGET:
-      ItemMenu_SetMessageWindowHeight5();
-      ItemMenu_SetItemWindowRow5();
+      ItemMenu_FitMessageWindowToItemQuestion();
+      ItemMenu_PlaceItemWindowBelowItemQuestion();
       WindowSprite_RedrawSavedRectFar(menu->questionWindow);
       ItemMenu_DrawItemHead();
       Text_DrawMessageAsTilesFar(MsgGiveToWhom, menu->questionWindow, 16, 16);
@@ -454,7 +454,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         }
         Unit_CalculateFar(member);
 #endif
-        ItemMenu_SetItemWindowRow3();
+        ItemMenu_PlaceItemWindowBelowQuestion();
         ItemMenu_RefreshMember(menu->sideMember[0], 0);
         menu->selectedItemIcon->motion = ICON_HIDDEN;
         menu->sideIcons[0]->motion = ICON_HIDDEN;
@@ -545,7 +545,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         menu->sideMember[0] = menu->sideMember[1];
         menu->selectedItems[0] &= INVENTORY_ITEM_ID_MASK;
 #if LANGUAGE != LANGUAGE_JAPANESE
-        ItemMenu_SetMessageWindowHeight6();
+        ItemMenu_FitMessageWindowToLongItemQuestion();
 #endif
         WindowSprite_RedrawSavedRectFar(menu->questionWindow);
         ItemMenu_DrawItemHead();
@@ -586,8 +586,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
     // Trade: the receiver gives back one of their items.
     case ITEM_STEP_TRADE:
       transferFailed = 0;
-      ItemMenu_SetMessageWindowHeight3();
-      ItemMenu_SetItemWindowRow3();
+      ItemMenu_FitMessageWindowToQuestion();
+      ItemMenu_PlaceItemWindowBelowQuestion();
       ItemMenu_DrawMessage(0, MsgSwapForWhat);
 #if TBS_PATCH_4
       if (ItemMenu_RunList(1) == -1) {
@@ -606,11 +606,11 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       targetCopy = Heap_Alloc(BATTLE_UNIT_SIZE);
       ITEM_IWRAM_COPY_WORDS(sourceCopy, sourceUnit, BATTLE_UNIT_SIZE);
       ITEM_IWRAM_COPY_WORDS(targetCopy, targetUnit, BATTLE_UNIT_SIZE);
-      // Take both whole stacks out, one item at a time (at most a stack of 30):
-      // Inventory_RemoveFar returns INVENTORY_REMOVE_LAST for the last one and
-      // INVENTORY_REMOVE_EMPTY_SLOT for an empty slot.
+      // Take both whole stacks out, one item at a time (at most
+      // INVENTORY_STACK_MAX): Inventory_RemoveFar returns INVENTORY_REMOVE_LAST
+      // for the last one and INVENTORY_REMOVE_EMPTY_SLOT for an empty slot.
       sourceQuantity = 0;
-      while (sourceQuantity <= 29) {
+      while (sourceQuantity <= INVENTORY_STACK_MAX - 1) {
         result =
             Inventory_RemoveFar(menu->sideMember[0], menu->selectedSlots[0]);
         if (result == INVENTORY_REMOVE_LAST) {
@@ -624,7 +624,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       }
       sourceQuantity++;
       targetQuantity = 0;
-      while (targetQuantity <= 29) {
+      while (targetQuantity <= INVENTORY_STACK_MAX - 1) {
         // The receiver cannot trade away a worn item that will not come off.
         if ((menu->selectedItems[1] & INVENTORY_EQUIPPED) != 0) {
           item = Item_GetDirectFar(menu->selectedItems[1] &
@@ -684,9 +684,9 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         Unit_CalculateFar(menu->sideMember[1]);
         Unit_RefreshPsynergyFar(menu->sideMember[0]);
         Unit_RefreshPsynergyFar(menu->sideMember[1]);
-        ItemMenu_SetMessageWindowHeight5();
+        ItemMenu_FitMessageWindowToItemQuestion();
 #if LANGUAGE != LANGUAGE_JAPANESE
-        ItemMenu_SetMessageWindowHeight6();
+        ItemMenu_FitMessageWindowToLongItemQuestion();
         ItemMenu_HidePageIcons();
 #endif
         WindowSprite_RedrawSavedRectFar(menu->questionWindow);
@@ -696,7 +696,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         result = ItemMenu_ConfirmEquip(0);
         if (GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
           WindowSprite_ClearListFar(menu->descriptionWindow);
-          ItemMenu_SetItemWindowRow5();
+          ItemMenu_PlaceItemWindowBelowItemQuestion();
           ItemMenu_RefreshMember(menu->sideMember[1], 1);
           if (result == 0) {
             ItemMenu_DrawEquipPreview(menu->sideMember[1],
@@ -794,7 +794,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
     // Unused: not reached from any command. Chooses a quantity and keeps it in
     // heldCount, which nothing reads.
     case ITEM_STEP_QUANTITY:
-      result = ItemMenu_SelectGiveQuantity(0, 30, 0);
+      result = ItemMenu_SelectGiveQuantity(0, INVENTORY_STACK_MAX, 0);
       if (result != -1) {
         // Unused: the quantity chosen, which nothing reads.
         heldCount = result;
@@ -854,7 +854,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
   // The four figures stand at screen y 30; the screens raise the party member
   // chosen to 26.
   for (memberIndex = 3; memberIndex >= 0; memberIndex--)
-    menu->memberY[memberIndex] = 30;
+    menu->memberY[memberIndex] = MENU_MEMBER_Y;
 
   menu->buttonHelpWindow = NULL;
   menu->statusWindow = NULL;
@@ -867,7 +867,8 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
 }
 
 /// Creates the 32 item icon sprites in window, off screen until placed: slots 0
-/// to 7 at x 248, the rest at x 256, all at y 168, each showing item graphic
+/// to 7 at MENU_ICON_HIDDEN_X, the rest 8 pixels further, all at
+/// MENU_ICON_HIDDEN_Y, each showing item graphic
 /// slot of the same number.
 void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
   struct WindowSprite **firstIcons;
@@ -879,19 +880,19 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
 
   firstSlot = 0;
   {
-    s32 y = 168;
+    s32 y = MENU_ICON_HIDDEN_Y;
 
     firstIcons = &menu->entryIcons[0];
     do {
       *firstIcons++ = WindowSprite_CreateFromResourceFar(
-          ICON_KIND_ITEM, firstSlot, window, 248, y);
+          ICON_KIND_ITEM, firstSlot, window, MENU_ICON_HIDDEN_X, y);
       firstSlot++;
     } while (firstSlot <= 7);
   }
 
   secondSlot = 8;
   {
-    s32 y = 168;
+    s32 y = MENU_ICON_HIDDEN_Y;
 
     secondIcons = &menu->entryIcons[8];
     do {
@@ -903,23 +904,23 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
 
   remainingSlot = 16;
   {
-    s32 y = 168;
+    s32 y = MENU_ICON_HIDDEN_Y;
 
     remainingIcons = &menu->entryIcons[16];
     do {
       *remainingIcons++ = WindowSprite_CreateFromResourceFar(
           ICON_KIND_ITEM, remainingSlot, window, 256, y);
       remainingSlot++;
-    } while (remainingSlot <= 31);
+    } while (remainingSlot <= MENU_ENTRY_ICONS - 1);
   }
 }
 
-/// Hides all 32 item icons.
+/// Hides all the item icons.
 void ItemMenu_HideAllIcons(void) {
   struct WindowSprite **icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
   s32 slot;
 
-  for (slot = 0; slot < 32; slot++) {
+  for (slot = 0; slot < MENU_ENTRY_ICONS; slot++) {
     struct WindowSprite *icon = *icons++;
     if (icon != 0) {
       icon->motion = ICON_HIDDEN;
@@ -941,7 +942,7 @@ void ItemMenu_HidePageIcons(void) {
     if (icon != NULL && slot % MENU_ITEM_GRID_COLUMNS == 0)
       icon->motion = hidden;
     slot++;
-  } while (slot <= 31);
+  } while (slot <= MENU_ENTRY_ICONS - 1);
 }
 #endif
 
@@ -986,7 +987,7 @@ s32 ItemMenu_SelectMember(s32 side) {
     menu->sideIndex[side] = result;
     memberIndex = 0;
   } else {
-    MenuCursor_Slide(memberIndex * 24 - 10, 16);
+    MenuCursor_Slide(MENU_MEMBER_CURSOR_X(memberIndex), 16);
   }
   unit = Unit_GetFar(menu->memberIds[memberIndex]);
   menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
@@ -1042,7 +1043,7 @@ s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items) {
   menu->sideIcons[0]->motion = redraw; // ICON_SHOWN
   while (!GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
     selection = (selection + memberCount) % memberCount;
-    MenuCursor_Position(selection * 24 - 10, 16);
+    MenuCursor_Position(MENU_MEMBER_CURSOR_X(selection), 16);
     if (redraw) {
       sortMode = 0;
       redraw = 0;
@@ -1060,8 +1061,8 @@ s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items) {
       }
       // Raise the chosen party member's figure.
       for (memberIndex = 3; memberIndex >= 0; memberIndex--)
-        menu->memberY[memberIndex] = 30;
-      menu->memberY[selection] = 26;
+        menu->memberY[memberIndex] = MENU_MEMBER_Y;
+      menu->memberY[selection] = MENU_MEMBER_RAISED_Y;
     }
     wait(1);
     // L + A sorts, cycling through the four sort orders.
@@ -1215,7 +1216,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
         }
       }
     }
-    MenuCursor_Position(memberIndex * 24 - 10, 16);
+    MenuCursor_Position(MENU_MEMBER_CURSOR_X(memberIndex), 16);
     wait(1);
     if (gKeysPressed & KEY_A) {
       if (mode == ITEM_TARGET_GIVE && memberIndex == menu->sideIndex[0]) {
@@ -1328,7 +1329,7 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 slot;
 
-  for (slot = 0; slot < 32; slot++) {
+  for (slot = 0; slot < MENU_ENTRY_ICONS; slot++) {
     if (items[slot] == 0) {
       Icon_PrepareActor(menu->entryIcons[slot]);
       menu->entryIcons[slot]->motion = ICON_HIDDEN;
@@ -1385,7 +1386,7 @@ s32 ItemMenu_CollectItems(struct Unit *unit, u16 *items, s32 mode) {
   s32 itemCount;
   s32 slotIndex;
 
-  for (slotIndex = 0; slotIndex < 32; slotIndex++) {
+  for (slotIndex = 0; slotIndex < MENU_ENTRY_ICONS; slotIndex++) {
     items[slotIndex] = 0;
   }
   itemCount = 0;
@@ -1562,6 +1563,13 @@ s32 Inventory_RemoveFirstUnflagged(s32 memberId) {
   return result;
 }
 
+/// The item command cursor on the command grid's rows, 8 pixels apart from y
+/// 30, and in Japanese on its columns, 40 pixels apart from x 86.
+#define ITEM_COMMAND_CURSOR_Y(row) ((row) * 8 + 30)
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define ITEM_COMMAND_CURSOR_X(column) ((column) * 40 + 86)
+#endif
+
 #if LANGUAGE != LANGUAGE_JAPANESE
 
 /// Returns the x of the item command cursor on column and row of the command
@@ -1572,14 +1580,15 @@ s32 ItemMenu_CommandCursorX(s32 column, s32 row) {
   return gItemMenu_CommandColumnXTable[row * 3 + column];
 }
 
-/// Returns the y of the item command cursor: 30 on the top row, 38 below.
+/// Returns the y of the item command cursor: its top row, or the row below
+/// for any other row.
 s32 ItemMenu_CommandCursorY(s32 column, s32 row) {
   s32 y;
 
   (void)column;
-  y = 30;
+  y = ITEM_COMMAND_CURSOR_Y(0);
   if (row != 0) {
-    y = 38;
+    y = ITEM_COMMAND_CURSOR_Y(1);
   }
   return y;
 }
@@ -1620,7 +1629,7 @@ s32 ItemMenu_ChooseCommand(void) {
     ItemMenu_HideAllIcons();
     WindowSprite_RedrawSavedRectFar((void *)menu->listWindow);
     messageWindow = menu->questionWindow;
-    ItemMenu_SetMessageWindowHeight7();
+    ItemMenu_FitMessageWindowToItemChoices();
     WindowSprite_RedrawSavedRectFar((void *)messageWindow);
     Window_DrawDividerLineFar(messageWindow, 0, 3, 16, 3);
     ItemMenu_DrawItemHead();
@@ -1667,7 +1676,7 @@ s32 ItemMenu_ChooseCommand(void) {
   cursorY = ItemMenu_CommandCursorY(column, row);
   MenuCursor_Slide(cursorX, cursorY);
 #else
-  MenuCursor_Slide(column * 40 + 86, row * 8 + 30);
+  MenuCursor_Slide(ITEM_COMMAND_CURSOR_X(column), ITEM_COMMAND_CURSOR_Y(row));
 #endif
 
   for (;;) {
@@ -1704,7 +1713,8 @@ s32 ItemMenu_ChooseCommand(void) {
     cursorY = ItemMenu_CommandCursorY(column, row);
     MenuCursor_Position(cursorX, cursorY);
 #else
-    MenuCursor_Position(column * 40 + 86, row * 8 + 30);
+    MenuCursor_Position(ITEM_COMMAND_CURSOR_X(column),
+                        ITEM_COMMAND_CURSOR_Y(row));
 #endif
     wait(1);
 
@@ -2291,40 +2301,48 @@ void ItemMenu_DrawStat(s32 statChange, s32 unused, struct Window *window, s32 x,
   }
 }
 
-/// Moves the item window to row 5 of the right-hand side.
-void ItemMenu_SetItemWindowRow5(void) {
+/// Moves the item window to row 5 of the right-hand side, below a question
+/// headed by the item.
+void ItemMenu_PlaceItemWindowBelowItemQuestion(void) {
   Window_SetBounds(
       (struct Window *)((struct ItemMenuWork *)gMenuWork)->itemWindow, 13, 5,
       17, 10);
 }
 
-/// Moves the item window to row 3 of the right-hand side.
-void ItemMenu_SetItemWindowRow3(void) {
+/// Moves the item window to row 3 of the right-hand side, below a one-line
+/// question.
+void ItemMenu_PlaceItemWindowBelowQuestion(void) {
   Window_SetBounds(
       (struct Window *)((struct ItemMenuWork *)gMenuWork)->itemWindow, 13, 3,
       17, 10);
 }
 
-/// Makes the message window, along the top right, 5 rows tall.
-void ItemMenu_SetMessageWindowHeight5(void) {
+/// Makes the message window, along the top right, 5 rows tall: the item's name
+/// and a question below it.
+void ItemMenu_FitMessageWindowToItemQuestion(void) {
   Window_SetBounds(
       (struct Window *)((struct ItemMenuWork *)gMenuWork)->questionWindow, 13,
       0, 17, 5);
 }
 
-void ItemMenu_SetMessageWindowHeight6(void) {
+/// Makes the message window 6 rows tall, for the longer questions outside
+/// Japanese.
+void ItemMenu_FitMessageWindowToLongItemQuestion(void) {
   Window_SetBounds(
       (struct Window *)((struct ItemMenuWork *)gMenuWork)->questionWindow, 13,
       0, 17, 6);
 }
 
-void ItemMenu_SetMessageWindowHeight7(void) {
+/// Makes the message window 7 rows tall: the item's name above the command grid
+/// or the quantity dial.
+void ItemMenu_FitMessageWindowToItemChoices(void) {
   Window_SetBounds(
       (struct Window *)((struct ItemMenuWork *)gMenuWork)->questionWindow, 13,
       0, 17, 7);
 }
 
-void ItemMenu_SetMessageWindowHeight3(void) {
+/// Makes the message window 3 rows tall, for a one-line question.
+void ItemMenu_FitMessageWindowToQuestion(void) {
   Window_SetBounds(
       (struct Window *)((struct ItemMenuWork *)gMenuWork)->questionWindow, 13,
       0, 17, 3);
@@ -2352,7 +2370,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   changed = 1;
   receiverCount = 0;
   window = menu->questionWindow;
-  ItemMenu_SetMessageWindowHeight7();
+  ItemMenu_FitMessageWindowToItemChoices();
   WindowSprite_RedrawSavedRectFar(window);
   // How many each party member holds now.
   if (dropMode == 0)
@@ -2376,7 +2394,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
         Text_DrawMessageAsTilesFar(MsgGiveHowMany, window, ITEM_GIVE_ASK_X,
                                    ITEM_GIVE_ASK_Y);
         Dma_Set(gMenu_QuantityTiles, tiles, DMA_COPY_WORDS(64), REG_DMA3);
-        QuantityBar_FillFar(30, 14, tiles);
+        QuantityBar_FillFar(INVENTORY_STACK_MAX, 14, tiles);
         QuantityBar_FillFar(quantityRange + baseQuantity, 0, tiles);
         QuantityBar_FillFar(baseQuantity + quantity + 1, 10, tiles);
         QuantityBar_FillFar(baseQuantity, 2, tiles);
@@ -2804,7 +2822,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
           // Icon_PrepareActor stills it again when the cursor leaves.
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
           icon->animationStep = 0;
-          icon->sentinel = 250;
+          icon->depth = OAM_DEPTH_FRONT - 5;
         }
         for (i = 0; i < menu->partyCount; i++) {
           Sprite_StartAnimationFar(menu->memberSprites[i], ANIM_STAND);
@@ -2874,9 +2892,9 @@ s32 ItemMenu_RunList(s32 sideIndex) {
                 Unit_GetFar(menu->sideMember[sideIndex]), menu->items, 0);
           } while (menu->itemCount == 0);
           for (i = 0; i <= 3; i++) {
-            menu->memberY[i] = 30;
+            menu->memberY[i] = MENU_MEMBER_Y;
           }
-          menu->memberY[member] = 26;
+          menu->memberY[member] = MENU_MEMBER_RAISED_Y;
           break;
         }
       }

@@ -12,7 +12,7 @@
 // see SelectionMenuCursorView.
 /// A chain node seen only as its link to the next.
 struct SelectionNodeLinkView {
-  u8 padding00[4]; ///< SelectionNode.prev, if it is one
+  u8 paddingBeforeNext[4]; ///< SelectionNode.prev, if it is one
   struct SelectionNodeLinkView *next;
 };
 
@@ -22,9 +22,9 @@ struct SelectionNodeLinkView {
 /// A chain's first node and how many links to follow from it, which the unused
 /// NodeChain_GetNodeAtIndex reads.
 struct SelectionMenuCursorView {
-  u8 padding000[840];
+  u8 paddingBeforeNode[840];
   struct SelectionNodeLinkView *node; ///< SelectionMenuWork.head, if it is one
-  u8 padding34c[82];
+  u8 paddingBeforeCount[82];
   u16 count; ///< SelectionMenuWork.cursorIndex, if it is one
 };
 

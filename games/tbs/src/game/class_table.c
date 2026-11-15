@@ -9,7 +9,7 @@
 const struct ClassDefinition gClass_DefinitionTable[] = {
     // NPC
     {
-        .series = 12,
+        .series = CLASS_SERIES_NPC,
         .hp = 10,
         .pp = 10,
         .atk = 10,
@@ -187,7 +187,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_ERUPTION, .level = 22},
             {.ability = ABILITY_PYROCLASM, .level = 48},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_2, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
     // Soldier
     {
@@ -212,7 +212,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_ERUPTION, .level = 22},
             {.ability = ABILITY_PYROCLASM, .level = 48},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_2, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
     // Warrior
     {
@@ -241,7 +241,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_IMPAIR, .level = 9},
             {.ability = ABILITY_DEBILITATE, .level = 26},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_2, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
     // Champion
     {
@@ -270,7 +270,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_IMPAIR, .level = 9},
             {.ability = ABILITY_DEBILITATE, .level = 26},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_2, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
     // Hero
     {
@@ -299,7 +299,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_IMPAIR, .level = 9},
             {.ability = ABILITY_DEBILITATE, .level = 26},
         },
-        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_2, ABILITY_EFFECT_DEFENSE_DOWN},
+        .weakEffects = {ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY, ABILITY_EFFECT_DEFENSE_DOWN},
     },
     {0},
     {0},
@@ -2214,7 +2214,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     // Ruffian
     {
@@ -2244,7 +2244,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     // Savage
     {
@@ -2274,7 +2274,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     // Barbarian
     {
@@ -2304,7 +2304,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     // Berserker
     {
@@ -2334,7 +2334,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     // Chaos Lord
     {
@@ -2364,7 +2364,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_CURSE, .level = 24},
             {.ability = ABILITY_CONDEMN, .level = 29},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     {0},
     {0},
@@ -2398,7 +2398,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_MAGIC_SHELL, .level = 10},
             {.ability = ABILITY_MAGIC_SHIELD, .level = 27},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     // Ronin
     {
@@ -2428,7 +2428,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
             {.ability = ABILITY_MAGIC_SHELL, .level = 10},
             {.ability = ABILITY_MAGIC_SHIELD, .level = 27},
         },
-        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_2, ABILITY_EFFECT_ATTACK_DOWN},
+        .weakEffects = {ABILITY_EFFECT_ATTACK_DOWN_SHARPLY, ABILITY_EFFECT_ATTACK_DOWN},
     },
     {0},
     {0},
@@ -2683,7 +2683,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     {0},
     {0},
     {
-        .series = 11,
+        .series = CLASS_SERIES_FIXED,
         .required = {5},
         .hp = 8,
         .pp = 6,
@@ -2693,7 +2693,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
         .luck = 10,
     },
     {
-        .series = 11,
+        .series = CLASS_SERIES_FIXED,
         .required = {0, 0, 5},
         .hp = 8,
         .pp = 6,
@@ -2704,7 +2704,7 @@ const struct ClassDefinition gClass_DefinitionTable[] = {
     },
     // Flame User
     {
-        .series = 11,
+        .series = CLASS_SERIES_FIXED,
         .required = {0, 0, 5},
         .hp = 10,
         .pp = 12,

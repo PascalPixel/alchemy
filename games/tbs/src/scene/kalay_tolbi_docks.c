@@ -414,7 +414,7 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
   s16 cardinalFacing;
 
   cardinalFacing =
-      ((Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff);
+      FACING_NEAREST_CARDINAL(Actor_Get(ACTOR_PARTY_LEADER)->facing);
   Event_Start();
   if (Event_GetFlag(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
     if (Event_GetFlag(FLAG_KALAY_DOCKS_WENT_ASHORE) != 0) {

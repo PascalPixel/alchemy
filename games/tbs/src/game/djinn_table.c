@@ -51,58 +51,21 @@ const struct DjinnDefinition gDjinn_DefinitionTable[] = {
         .hp = 12,
         .atk = 4,
     },
-    // =
-    [DJINNI_07] = {
-        .abilityId = ABILITY_307,
-    },
-    // =
-    [DJINNI_08] = {
-        .abilityId = ABILITY_308,
-    },
-    // =
-    [DJINNI_09] = {
-        .abilityId = ABILITY_309,
-    },
-    // =
-    [DJINNI_10] = {
-        .abilityId = ABILITY_310,
-    },
-    // =
-    [DJINNI_11] = {
-        .abilityId = ABILITY_311,
-    },
-    // =
-    [DJINNI_12] = {
-        .abilityId = ABILITY_312,
-    },
-    // =
-    [DJINNI_13] = {
-        .abilityId = ABILITY_313,
-    },
-    // =
-    [DJINNI_14] = {
-        .abilityId = ABILITY_314,
-    },
-    // =
-    [DJINNI_15] = {
-        .abilityId = ABILITY_315,
-    },
-    // =
-    [DJINNI_16] = {
-        .abilityId = ABILITY_316,
-    },
-    // =
-    [DJINNI_17] = {
-        .abilityId = ABILITY_317,
-    },
-    // =
-    [DJINNI_18] = {
-        .abilityId = ABILITY_318,
-    },
-    // =
-    [DJINNI_19] = {
-        .abilityId = ABILITY_319,
-    },
+    // Each element's Djinn after its seventh are spares, which hold only their
+    // abilities; the text names both "=".
+    [DJINNI_BANE + 1] = {.abilityId = ABILITY_BANE + 1},
+    [DJINNI_BANE + 2] = {.abilityId = ABILITY_BANE + 2},
+    [DJINNI_BANE + 3] = {.abilityId = ABILITY_BANE + 3},
+    [DJINNI_BANE + 4] = {.abilityId = ABILITY_BANE + 4},
+    [DJINNI_BANE + 5] = {.abilityId = ABILITY_BANE + 5},
+    [DJINNI_BANE + 6] = {.abilityId = ABILITY_BANE + 6},
+    [DJINNI_BANE + 7] = {.abilityId = ABILITY_BANE + 7},
+    [DJINNI_BANE + 8] = {.abilityId = ABILITY_BANE + 8},
+    [DJINNI_BANE + 9] = {.abilityId = ABILITY_BANE + 9},
+    [DJINNI_BANE + 10] = {.abilityId = ABILITY_BANE + 10},
+    [DJINNI_BANE + 11] = {.abilityId = ABILITY_BANE + 11},
+    [DJINNI_BANE + 12] = {.abilityId = ABILITY_BANE + 12},
+    [DJINNI_BANE + 13] = {.abilityId = ABILITY_BANE + 13},
     [DJINNI_FIZZ] = {
         .abilityId = ABILITY_FIZZ,
         .hp = 9,
@@ -145,58 +108,19 @@ const struct DjinnDefinition gDjinn_DefinitionTable[] = {
         .pp = 4,
         .agi = 4,
     },
-    // =
-    [DJINNI_27] = {
-        .abilityId = ABILITY_327,
-    },
-    // =
-    [DJINNI_28] = {
-        .abilityId = ABILITY_328,
-    },
-    // =
-    [DJINNI_29] = {
-        .abilityId = ABILITY_329,
-    },
-    // =
-    [DJINNI_30] = {
-        .abilityId = ABILITY_330,
-    },
-    // =
-    [DJINNI_31] = {
-        .abilityId = ABILITY_331,
-    },
-    // =
-    [DJINNI_32] = {
-        .abilityId = ABILITY_332,
-    },
-    // =
-    [DJINNI_33] = {
-        .abilityId = ABILITY_333,
-    },
-    // =
-    [DJINNI_34] = {
-        .abilityId = ABILITY_334,
-    },
-    // =
-    [DJINNI_35] = {
-        .abilityId = ABILITY_335,
-    },
-    // =
-    [DJINNI_36] = {
-        .abilityId = ABILITY_336,
-    },
-    // =
-    [DJINNI_37] = {
-        .abilityId = ABILITY_337,
-    },
-    // =
-    [DJINNI_38] = {
-        .abilityId = ABILITY_338,
-    },
-    // =
-    [DJINNI_39] = {
-        .abilityId = ABILITY_339,
-    },
+    [DJINNI_DEW + 1] = {.abilityId = ABILITY_DEW + 1},
+    [DJINNI_DEW + 2] = {.abilityId = ABILITY_DEW + 2},
+    [DJINNI_DEW + 3] = {.abilityId = ABILITY_DEW + 3},
+    [DJINNI_DEW + 4] = {.abilityId = ABILITY_DEW + 4},
+    [DJINNI_DEW + 5] = {.abilityId = ABILITY_DEW + 5},
+    [DJINNI_DEW + 6] = {.abilityId = ABILITY_DEW + 6},
+    [DJINNI_DEW + 7] = {.abilityId = ABILITY_DEW + 7},
+    [DJINNI_DEW + 8] = {.abilityId = ABILITY_DEW + 8},
+    [DJINNI_DEW + 9] = {.abilityId = ABILITY_DEW + 9},
+    [DJINNI_DEW + 10] = {.abilityId = ABILITY_DEW + 10},
+    [DJINNI_DEW + 11] = {.abilityId = ABILITY_DEW + 11},
+    [DJINNI_DEW + 12] = {.abilityId = ABILITY_DEW + 12},
+    [DJINNI_DEW + 13] = {.abilityId = ABILITY_DEW + 13},
     [DJINNI_FORGE] = {
         .abilityId = ABILITY_FORGE,
         .hp = 10,
@@ -241,58 +165,19 @@ const struct DjinnDefinition gDjinn_DefinitionTable[] = {
         .atk = 3,
         .luck = 1,
     },
-    // =
-    [DJINNI_47] = {
-        .abilityId = ABILITY_347,
-    },
-    // =
-    [DJINNI_48] = {
-        .abilityId = ABILITY_348,
-    },
-    // =
-    [DJINNI_49] = {
-        .abilityId = ABILITY_349,
-    },
-    // =
-    [DJINNI_50] = {
-        .abilityId = ABILITY_350,
-    },
-    // =
-    [DJINNI_51] = {
-        .abilityId = ABILITY_351,
-    },
-    // =
-    [DJINNI_52] = {
-        .abilityId = ABILITY_352,
-    },
-    // =
-    [DJINNI_53] = {
-        .abilityId = ABILITY_353,
-    },
-    // =
-    [DJINNI_54] = {
-        .abilityId = ABILITY_354,
-    },
-    // =
-    [DJINNI_55] = {
-        .abilityId = ABILITY_355,
-    },
-    // =
-    [DJINNI_56] = {
-        .abilityId = ABILITY_356,
-    },
-    // =
-    [DJINNI_57] = {
-        .abilityId = ABILITY_357,
-    },
-    // =
-    [DJINNI_58] = {
-        .abilityId = ABILITY_358,
-    },
-    // =
-    [DJINNI_59] = {
-        .abilityId = ABILITY_359,
-    },
+    [DJINNI_TORCH + 1] = {.abilityId = ABILITY_TORCH + 1},
+    [DJINNI_TORCH + 2] = {.abilityId = ABILITY_TORCH + 2},
+    [DJINNI_TORCH + 3] = {.abilityId = ABILITY_TORCH + 3},
+    [DJINNI_TORCH + 4] = {.abilityId = ABILITY_TORCH + 4},
+    [DJINNI_TORCH + 5] = {.abilityId = ABILITY_TORCH + 5},
+    [DJINNI_TORCH + 6] = {.abilityId = ABILITY_TORCH + 6},
+    [DJINNI_TORCH + 7] = {.abilityId = ABILITY_TORCH + 7},
+    [DJINNI_TORCH + 8] = {.abilityId = ABILITY_TORCH + 8},
+    [DJINNI_TORCH + 9] = {.abilityId = ABILITY_TORCH + 9},
+    [DJINNI_TORCH + 10] = {.abilityId = ABILITY_TORCH + 10},
+    [DJINNI_TORCH + 11] = {.abilityId = ABILITY_TORCH + 11},
+    [DJINNI_TORCH + 12] = {.abilityId = ABILITY_TORCH + 12},
+    [DJINNI_TORCH + 13] = {.abilityId = ABILITY_TORCH + 13},
     [DJINNI_GUST] = {
         .abilityId = ABILITY_GUST,
         .hp = 9,
@@ -336,57 +221,18 @@ const struct DjinnDefinition gDjinn_DefinitionTable[] = {
         .def = 2,
         .luck = 1,
     },
-    // =
-    [DJINNI_67] = {
-        .abilityId = ABILITY_367,
-    },
-    // =
-    [DJINNI_68] = {
-        .abilityId = ABILITY_368,
-    },
-    // =
-    [DJINNI_69] = {
-        .abilityId = ABILITY_369,
-    },
-    // =
-    [DJINNI_70] = {
-        .abilityId = ABILITY_370,
-    },
-    // =
-    [DJINNI_71] = {
-        .abilityId = ABILITY_371,
-    },
-    // =
-    [DJINNI_72] = {
-        .abilityId = ABILITY_372,
-    },
-    // =
-    [DJINNI_73] = {
-        .abilityId = ABILITY_373,
-    },
-    // =
-    [DJINNI_74] = {
-        .abilityId = ABILITY_374,
-    },
-    // =
-    [DJINNI_75] = {
-        .abilityId = ABILITY_375,
-    },
-    // =
-    [DJINNI_76] = {
-        .abilityId = ABILITY_376,
-    },
-    // =
-    [DJINNI_77] = {
-        .abilityId = ABILITY_377,
-    },
-    // =
-    [DJINNI_78] = {
-        .abilityId = ABILITY_378,
-    },
-    // =
-    [DJINNI_79] = {
-        .abilityId = ABILITY_379,
-    },
+    [DJINNI_LUFF + 1] = {.abilityId = ABILITY_LUFF + 1},
+    [DJINNI_LUFF + 2] = {.abilityId = ABILITY_LUFF + 2},
+    [DJINNI_LUFF + 3] = {.abilityId = ABILITY_LUFF + 3},
+    [DJINNI_LUFF + 4] = {.abilityId = ABILITY_LUFF + 4},
+    [DJINNI_LUFF + 5] = {.abilityId = ABILITY_LUFF + 5},
+    [DJINNI_LUFF + 6] = {.abilityId = ABILITY_LUFF + 6},
+    [DJINNI_LUFF + 7] = {.abilityId = ABILITY_LUFF + 7},
+    [DJINNI_LUFF + 8] = {.abilityId = ABILITY_LUFF + 8},
+    [DJINNI_LUFF + 9] = {.abilityId = ABILITY_LUFF + 9},
+    [DJINNI_LUFF + 10] = {.abilityId = ABILITY_LUFF + 10},
+    [DJINNI_LUFF + 11] = {.abilityId = ABILITY_LUFF + 11},
+    [DJINNI_LUFF + 12] = {.abilityId = ABILITY_LUFF + 12},
+    [DJINNI_LUFF + 13] = {.abilityId = ABILITY_LUFF + 13},
 };
 // clang-format on

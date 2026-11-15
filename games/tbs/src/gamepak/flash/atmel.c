@@ -13,7 +13,8 @@ u16 EraseAtmelFlashChip(void) {
 
   CopyFlashReadRoutineToRam(savedCode);
 
-  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | gFlash_ChipAtmelLayout.type.wait[0];
+  REG_WAITCNT =
+      (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | gFlash_ChipAtmelLayout.type.wait[0];
 
   FLASH_SEND_COMMAND(FLASH_COMMAND_ERASE);
   FLASH_SEND_COMMAND(FLASH_COMMAND_ERASE_CHIP);
@@ -21,7 +22,7 @@ u16 EraseAtmelFlashChip(void) {
   result = gWaitForFlashWrite(FLASH_PHASE_ERASE_CHIP, (u8 *)FLASH_BASE,
                               FLASH_ERASED_BYTE);
 
-  REG_WAITCNT = (REG_WAITCNT & 0xFFFC) | WAITCNT_SRAM_8;
+  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_SLOWEST;
 
   return result;
 }
@@ -70,7 +71,8 @@ u16 EraseAtmelFlashBlock(u16 sector) {
     return FLASH_ERROR_NO_SECTOR;
 
   CopyFlashReadRoutineToRam(savedCode);
-  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | gFlash_ChipAtmelLayout.type.wait[0];
+  REG_WAITCNT =
+      (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | gFlash_ChipAtmelLayout.type.wait[0];
 
   smallSector = sector << 4;
   smallSector = (u16)(smallSector << 1);
@@ -93,7 +95,7 @@ advanceSector:
     if ((u32)sectorsErased <= 31)
       goto nextSector;
   }
-  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | WAITCNT_SRAM_8;
+  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_SLOWEST;
   return result;
 }
 
@@ -137,7 +139,8 @@ u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
     return FLASH_ERROR_NO_SECTOR;
 
   CopyFlashReadRoutineToRam(savedCode);
-  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | gFlash_ChipAtmelLayout.type.wait[0];
+  REG_WAITCNT =
+      (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | gFlash_ChipAtmelLayout.type.wait[0];
 
   smallSector = sector << 5;
   gFlashNumRemainingBytes = gFlash_ChipAtmel.type.sector.size;
@@ -161,6 +164,6 @@ u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
     smallSector += 1;
   }
 
-  REG_WAITCNT = (REG_WAITCNT & 0xfffc) | WAITCNT_SRAM_8;
+  REG_WAITCNT = (REG_WAITCNT & ~WAITCNT_SRAM_MASK) | WAITCNT_SRAM_SLOWEST;
   return result;
 }

@@ -241,7 +241,7 @@ static void GomaCavePillar_MoveWestPillar(void) {
   x = Actor_Get(ACTOR_WEST_PILLAR)->x.fixed;
   if (x < 0)
     x += px(16) - 1;
-  x >>= 20;
+  x = FIELD_CELL(x);
   Event_Start();
   if (x == 20) {
     GomaCavePillar_CopyWestPillarCells(18);
@@ -470,8 +470,9 @@ static void GomaCavePillar_JumpGapWest(void) {
     leader->velocityY = px(4);
     *motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(leader, 0);
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, (s16)((u32)destination->x >> 16),
-                        (s16)((u32)destination->z >> 16));
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER,
+                        (s16)(FIELD_PIXEL((u32)destination->x)),
+                        (s16)(FIELD_PIXEL((u32)destination->z)));
     Actor_SelectAnimation(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     *motionFlags = savedMotionFlags;

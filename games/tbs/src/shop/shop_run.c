@@ -50,7 +50,7 @@ void Shop_InitializeWork(void) {
   Field_EndBusyAndRevealFar();
   Dma_Fill32(0, shop, sizeof(struct ShopWork));
   // The hand cursor's glides take 12 frames until a screen changes it
-  shop->mode = 12;
+  shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
   shop->partyMemberCount = Party_ListMembersFar(shop->partyMemberIds);
   // Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite
   resourceSlot = VramCache_FindFreeEntry();
@@ -215,7 +215,8 @@ void Shop_ShowKeeperMessage(s32 messageId) {
   // A warriors' shop adds its distance on top of its type's
   if ((s8)shop->warriorShop != 0)
     resolvedMessage += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
-  Message_OpenWindowFar(resolvedMessage, 5, 0, (portraitResource << 16) | 0x22);
+  Message_OpenWindowFar(resolvedMessage, 5, 0,
+                        MESSAGE_WINDOW_VOICE(portraitResource) | 0x22);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
@@ -250,7 +251,8 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   }
   (*cursorSlot)->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
-  Message_OpenWindowFar(resolvedMessage, 5, 0, (portraitResource << 16) | 0x22);
+  Message_OpenWindowFar(resolvedMessage, 5, 0,
+                        MESSAGE_WINDOW_VOICE(portraitResource) | 0x22);
   while (Message_AllTypedFar() == 0) {
     wait(1);
   }

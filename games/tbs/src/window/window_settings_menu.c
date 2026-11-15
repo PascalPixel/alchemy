@@ -4,6 +4,9 @@
 
 #include "window_internal.h"
 
+/// The pixels a settings slider's marker runs across, from OPTION_SLIDER_X.
+#define OPTION_SLIDER_WIDTH 60
+
 /// Nothing calls them.
 UNUSED void SettingsMenu_ReservedNoOpC9BC(void) {}
 UNUSED void SettingsMenu_ReservedNoOpC9C0(void) {}
@@ -321,9 +324,6 @@ void SettingsMenu_Release(void) {
 }
 
 #define SLIDER_PALETTE 14 ///< the sprite palette of the hue slider's ends
-/// VRAM_CACHE_ENTRY_COUNT, which VramCache_FindFreeEntry returns when no entry
-/// is free.
-#define RESOURCE_SLOTS 96
 
 /// Opens the settings menu's window: the labels, the hue and brightness sliders
 /// with their markers, the cursor and the setting icons. Returns the window.
@@ -358,7 +358,7 @@ struct Window *SettingsMenu_Open(void) {
   Text_DrawMessageAsTiles(MsgAutoSleepLabel, window, 8, 88);
 
   x = VramCache_FindFreeEntry();
-  if (x < RESOURCE_SLOTS) {
+  if (x < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(x, 128, gPointingHandTiles);
     marker = WindowSprite_Create(x, OUTPUT_SIZE_16X16, window, 0, 0);
     work->cursor.sprite = marker;
@@ -371,7 +371,7 @@ struct Window *SettingsMenu_Open(void) {
   // into the picture; the hue slider's in palette 14, the brightness slider's
   // in 15.
   x = VramCache_FindFreeEntry();
-  if (x < RESOURCE_SLOTS) {
+  if (x < VRAM_CACHE_ENTRY_COUNT) {
     Dma_Set(gSettingsMenu_SliderPalette,
             (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0), DMA_COPY_HALFWORDS(32),
             REG_DMA3);
@@ -397,25 +397,25 @@ struct Window *SettingsMenu_Open(void) {
   // The two markers: 16x16 sprites of 256 colours, whose 256 bytes
   // SettingsMenu_AnimateCursors fills each frame.
   x = VramCache_FindFreeEntry();
-  if (x < RESOURCE_SLOTS) {
+  if (x < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(x, 256, 0);
     marker = WindowSprite_Create(x, OUTPUT_SIZE_16X16, window, 0, 0);
     marker->oam.fullColor = 1;
     work->marker[0].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
-    x += work->option[0] * 60 / work->optionCount[0];
+    x += work->option[0] * OPTION_SLIDER_WIDTH / work->optionCount[0];
     y = window->y * 8 + 4;
     MenuCursor_SetPositionImmediateFar(&work->marker[0].cursor, x, y);
   }
 
   x = VramCache_FindFreeEntry();
-  if (x < RESOURCE_SLOTS) {
+  if (x < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(x, 256, 0);
     marker = WindowSprite_Create(x, OUTPUT_SIZE_16X16, window, 0, 0);
     marker->oam.fullColor = 1;
     work->marker[1].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
-    x += work->option[1] * 60 / work->optionCount[1];
+    x += work->option[1] * OPTION_SLIDER_WIDTH / work->optionCount[1];
     y = window->y * 8 + 20;
     MenuCursor_SetPositionImmediateFar(&work->marker[1].cursor, x, y);
   }
@@ -490,7 +490,7 @@ s32 SettingsMenu_Run(void) {
       // the row's setting.
       for (i = 0; i <= 2; i++) {
         frame = work->choiceIcons[0][i];
-        frame->sentinel = 251;
+        frame->depth = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(frame);
         resourceIndex = (u8)work->choiceIcons[0][i]->index;
         dimmed = 0;
@@ -500,7 +500,7 @@ s32 SettingsMenu_Run(void) {
       }
       for (i = 0; i <= 1; i++) {
         frame = work->choiceIcons[1][i];
-        frame->sentinel = 251;
+        frame->depth = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(frame);
         resourceIndex = (u8)work->choiceIcons[1][i]->index;
         dimmed = 0;
@@ -510,7 +510,7 @@ s32 SettingsMenu_Run(void) {
       }
       for (i = 0; i <= 1; i++) {
         frame = work->choiceIcons[2][i];
-        frame->sentinel = 251;
+        frame->depth = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(frame);
         resourceIndex = (u8)work->choiceIcons[2][i]->index;
         dimmed = 0;
@@ -520,11 +520,11 @@ s32 SettingsMenu_Run(void) {
       }
 
       x = settingsWindow->x * 8 + OPTION_SLIDER_X;
-      x += (*hue * 60) / work->optionCount[0];
+      x += (*hue * OPTION_SLIDER_WIDTH) / work->optionCount[0];
       y = settingsWindow->y * 8 + 4;
       MenuCursor_SetFar(&work->marker[0].cursor, x, y, 1);
       x = settingsWindow->x * 8 + OPTION_SLIDER_X;
-      x += (*brightness * 60) / work->optionCount[1];
+      x += (*brightness * OPTION_SLIDER_WIDTH) / work->optionCount[1];
       y = settingsWindow->y * 8 + 20;
       MenuCursor_SetFar(&work->marker[1].cursor, x, y, 1);
 
@@ -682,9 +682,9 @@ struct Window *PauseMenu_Open(void) {
   // Three tiles a row and a tile more.
   top = 8 - rows;
   height = rows * 3 + 1;
-  if (top + height > 19) {
+  if (top + height > DISPLAY_TILE_HEIGHT - 1) {
     top = 1;
-    height = 19;
+    height = DISPLAY_TILE_HEIGHT - 1;
   }
   window = Window_Create(5, top, 20, height, WINDOW_FLAG_INSTANT);
   for (i = 1; i < rows; i++)
@@ -710,7 +710,7 @@ struct Window *PauseMenu_Open(void) {
     Text_DrawMessage(labelMessage, window, PAUSE_MENU_TEXT_X, y);
   }
   cacheSlot = VramCache_FindFreeEntry();
-  if (cacheSlot < RESOURCE_SLOTS) {
+  if (cacheSlot < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(cacheSlot, 128, gPointingHandTiles);
     work->cursor.sprite =
         WindowSprite_Create(cacheSlot, OUTPUT_SIZE_16X16, window, 0, 0);
@@ -787,7 +787,7 @@ s32 PauseMenu_Choose(void) {
         pauseIcons = gPauseMenu_Icons;
         do {
           icon = work->icon[i];
-          icon->sentinel = 251;
+          icon->depth = OAM_DEPTH_FRONT - 4;
           Icon_PrepareActorFar(icon);
           resourceIndex = (u8)icon->index;
           dimmed = 0;

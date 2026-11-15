@@ -68,7 +68,7 @@ void SoundInit(struct SoundInfo *work) {
   work->commands = gMPlayJumpTable;
   // Rate 4 (224 samples a VBlank, 13379 a second) until m4aSoundInit sets
   // the game's mode.
-  SampleFreqSet(SOUND_MODE_FREQ_13379);
+  SampleFreqSet(SOUND_MODE_FREQ_INITIAL);
   work->ident = ID_NUMBER;
 }
 
@@ -461,11 +461,11 @@ s32 MidiKeyToCgbFreq(u8 kind, u8 key, u8 fine) {
 /// Disables one CGB channel using its envelope or wave-control register.
 void CgbOscOff(u8 channel) {
   switch (channel) {
-  case CGB_CHANNEL_SQUARE_1:
+  case CGB_CHANNEL_SWEEP_SQUARE:
     REG_NR12 = 8;
     REG_NR14 = 0x80;
     break;
-  case CGB_CHANNEL_SQUARE_2:
+  case CGB_CHANNEL_SQUARE:
     REG_NR22 = 8;
     REG_NR24 = 0x80;
     break;
@@ -536,21 +536,21 @@ void CgbSound(void) {
   else
     work->c15 = 14;
 
-  for (channel = CGB_CHANNEL_SQUARE_1, note = work->cgbNotes;
+  for (channel = CGB_CHANNEL_SWEEP_SQUARE, note = work->cgbNotes;
        channel <= SOUND_CGB_CHANNEL_COUNT; channel++, note++) {
     if (!(note->state & SOUND_CHANNEL_SF_ON))
       continue;
 
     // Select this channel's sweep, length, envelope and frequency registers.
     switch (channel) {
-    case CGB_CHANNEL_SQUARE_1:
+    case CGB_CHANNEL_SWEEP_SQUARE:
       sweepOrWaveControl = &REG_NR10;
       lengthDutyRegister = &REG_NR11;
       volumeEnvelopeRegister = &REG_NR12;
       frequencyOrNoiseRegister = &REG_NR13;
       triggerRegister = &REG_NR14;
       break;
-    case CGB_CHANNEL_SQUARE_2:
+    case CGB_CHANNEL_SQUARE:
       sweepOrWaveControl = &REG_NR10 + 1;
       lengthDutyRegister = &REG_NR21;
       volumeEnvelopeRegister = &REG_NR22;
@@ -583,10 +583,10 @@ void CgbSound(void) {
         note->modified = CGB_CHANNEL_MO_VOL | CGB_CHANNEL_MO_PIT;
         CgbModVol(note);
         switch (channel) {
-        case CGB_CHANNEL_SQUARE_1:
+        case CGB_CHANNEL_SWEEP_SQUARE:
           *sweepOrWaveControl = note->sweep;
           // Fall through.
-        case CGB_CHANNEL_SQUARE_2:
+        case CGB_CHANNEL_SQUARE:
           // NRx1: the duty, which a square voice keeps in wave, in bits 7..6
           // over the length.
           *lengthDutyRegister = ((u32)note->wave << 6) + note->length;
@@ -761,9 +761,9 @@ void CgbSound(void) {
         envelopeControl &= 0xf;
         *volumeEnvelopeRegister = (note->level << 4) + envelopeControl;
         *triggerRegister = note->trigger | 0x80;
-        // CGB_CHANNEL_SQUARE_1 is restarted a second time unless NR10 bit 3 is
-        // set (a falling sweep, or 8 alone, no sweep), as in pret's m4a.c.
-        if (channel == CGB_CHANNEL_SQUARE_1 && !(*sweepOrWaveControl & 8))
+        // CGB_CHANNEL_SWEEP_SQUARE is restarted a second time unless NR10 bit 3
+        // is set (a falling sweep, or 8 alone, no sweep), as in pret's m4a.c.
+        if (channel == CGB_CHANNEL_SWEEP_SQUARE && !(*sweepOrWaveControl & 8))
           *triggerRegister = note->trigger | 0x80;
       }
     }
@@ -1049,10 +1049,10 @@ void ply_xcmd(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
 union WordBytes {
   u32 value;
   struct {
-    u32 byte0 : 8;
-    u32 byte1 : 8;
-    u32 byte2 : 8;
-    u32 byte3 : 8;
+    u32 lowest : 8;
+    u32 low : 8;
+    u32 high : 8;
+    u32 highest : 8;
   } part;
 };
 
@@ -1070,10 +1070,10 @@ void ply_xwave(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
   const u8 *source = track->cursor;
   union WordBytes targetAddress;
 
-  targetAddress.part.byte0 = source[0];
-  targetAddress.part.byte1 = source[1];
-  targetAddress.part.byte2 = source[2];
-  targetAddress.part.byte3 = source[3];
+  targetAddress.part.lowest = source[0];
+  targetAddress.part.low = source[1];
+  targetAddress.part.high = source[2];
+  targetAddress.part.highest = source[3];
   track->voice.target = (const void *)targetAddress.value;
   track->cursor = source + 4;
 }

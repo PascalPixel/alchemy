@@ -60,8 +60,10 @@ extern const struct DjinnDefinition gDjinn_DefinitionTable[];
 /// the multiplier in 256ths (256 = 1x), from 200 (+256) down to -200 (-256);
 /// Battle_GetElementMultiplier interpolates and adds 256.
 extern const s16 gElement_PowerResistCurve[5][2];
-/// The 165 enemies (enemy_table.c).
-extern const struct EnemyDefinition gEnemy_Definitions[];
+/// The enemies' rows (enemy_table.c), from ENEMY_ID_FIRST to the last Djinni,
+/// then a closing row named 0xff.
+#define ENEMY_DEFINITION_COUNT 165
+extern const struct EnemyDefinition gEnemy_Definitions[ENEMY_DEFINITION_COUNT];
 /// The enemies' element presets (element_table.c): attack element, levels and
 /// base power and resistance.
 extern const struct EnemyElementPreset gEnemy_ElementPresetTable[];

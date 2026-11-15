@@ -352,7 +352,7 @@ static void VenusLighthouseAerie_JumpToNextPlatform(void) {
   u8 flags;
 
   actor = Actor_Get(ACTOR_PARTY_LEADER);
-  angle = (actor->facing + TRIG_TURN / 16) & 0xe000;
+  angle = FACING_NEAREST_EIGHTH(actor->facing);
   flags = actor->motionFlags;
   SET_VECTOR(destination.coordinates,
              (actor->x.fixed & FIELD_CELL_MASK) + px(8), actor->y.fixed,
@@ -370,8 +370,9 @@ static void VenusLighthouseAerie_JumpToNextPlatform(void) {
     actor->velocityY = px(4);
     actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
-    Actor_MoveToAndWait(ACTOR_PARTY_LEADER, destination.coordinates[0] >> 16,
-                        destination.coordinates[2] >> 16);
+    Actor_MoveToAndWait(ACTOR_PARTY_LEADER,
+                        FIELD_PIXEL(destination.coordinates[0]),
+                        FIELD_PIXEL(destination.coordinates[2]));
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     actor->motionFlags = flags;
@@ -1587,7 +1588,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
   PaletteFade_Interpolate(16);
   wait(20);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_Interpolate(24);
   wait(60);
   Task_AddFrame(VenusLighthouseAerie_SpawnUpperOrbitParticles, TASK_PASS_FRAME);
@@ -1813,7 +1814,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
 /// Flashes the sprite palette white, then restores the transformation colour.
 static void VenusLighthouseAerie_FlashScreen(void) {
   Sound_Play(SE_FALLING_LIGHT);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_BG);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_BG);
   PaletteFade_StartInterpolation(1);
   wait(4);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(13, 8, 9), PALETTES_BG);
@@ -1876,15 +1877,13 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
   }
   center = Actor_Get(ACTOR_BEAM_BOTTOM);
   if (GameFlag_Get(FLAG_VENUS_AERIE_BEACON_ERUPTED) != 0) {
-    effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                               (s32)(Random_Below(256) << 16) +
-                                   center->y.fixed - px(28),
-                               center->z.fixed);
+    effect = FieldActor_Create(
+        SPRITE_PARTICLE, center->x.fixed,
+        (s32)px(Random_Below(256)) + center->y.fixed - px(28), center->z.fixed);
   } else {
-    effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
-                               (s32)(Random_Below(64) << 16) + center->y.fixed -
-                                   px(28),
-                               center->z.fixed);
+    effect = FieldActor_Create(
+        SPRITE_PARTICLE, center->x.fixed,
+        (s32)px(Random_Below(64)) + center->y.fixed - px(28), center->z.fixed);
   }
   if (effect != NULL) {
     sprite = effect->sprite;
@@ -2330,7 +2329,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(31, 31, 24), PALETTES_ALL);
   PaletteFade_StartInterpolation(16);
   wait(20);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(24);
   wait(60);
   Sound_Play(SE_RUMBLE);
@@ -2491,7 +2490,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
   Actor_Snapshot();
   Event_SetDestination(SCENE_WORLD_MAP, WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT);
-  white = RGB(31, 31, 31);
+  white = RGB_WHITE;
 
   PLTT_BACKDROP = white;
   gFieldWork->transitionFrames = 1;
@@ -2567,7 +2566,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
   Task_AddFrame(VenusLighthouseAerie_SpawnSideOrbitParticles, TASK_PASS_FRAME);
   gFieldWork->transitionFrames = 1;
   Event_StartScreenTransition();
-  PaletteFade_ApplySource(RGB(31, 31, 31), PALETTES_ALL);
+  PaletteFade_ApplySource(RGB_WHITE, PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(40);
   wait(60);
@@ -2905,7 +2904,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Actor_WalkTo(ACTOR_PARTY_LEADER, 272, 254);
   Event_Wait(80);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(80);
@@ -3009,7 +3008,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
     break;
   case 36:
     Sound_Play(SE_FALLING_LIGHT);
-    PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+    PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
     PaletteFade_StartInterpolation(12);
     break;
   case 48:
@@ -3018,7 +3017,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
     break;
   }
   if (spawnParticles) {
-    randomHeight = (Random_Below(80)) << 16;
+    randomHeight = px(Random_Below(80));
     effect = FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
                                center->y.fixed - randomHeight - px(8),
                                center->z.fixed);
@@ -3077,8 +3076,8 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
 
   center = (Actor_Get(23));
   grid = gMapGridWork[0];
-  drift = Random_Below(48) << 16;
-  if ((s16)(grid->view[1] >> 16) <= 129) {
+  drift = px(Random_Below(48));
+  if ((s16)(FIELD_PIXEL(grid->view[1])) <= 129) {
     if (gFrameCount & 1) {
       Actor_SetPosition(ACTOR_BEACON_ORB, 304, 164);
       Actor_Get(ACTOR_BEACON_ORB)->scaleX = Q16_ONE;

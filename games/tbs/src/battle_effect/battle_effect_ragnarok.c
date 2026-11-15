@@ -40,7 +40,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   args->variant = EFFECT_VARIANT_STRONGER;
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(work->args->side, blit);
   // The user takes its leap pose and animates fast until the end.
   Actor_SelectAnimationFar(user, POSE_LEAP);
@@ -149,8 +149,9 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       if (frame >= start) {
         if (frame < start + 2) {
           blit[0](canvas, work->sheet + RAGNAROK_FLASH_PICTURES,
-                  gRagnarok_StrikeColumns[work->args->side][col] - 16, 56, 32,
-                  64);
+                  gRagnarok_StrikeColumns[work->args->side][col] -
+                      FLASH_BURST_WIDTH / 2,
+                  56, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
         }
         for (i = 0; i != RAGNAROK_RING; i++) {
           struct Particle *flash = &work->particles[col * RAGNAROK_FLASHES + i];
@@ -166,9 +167,11 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
           if (life >= 0 && life <= 17) {
             blit[0](canvas,
                     work->sheet +
-                        gRagnarok_FlashPictures[life / 3] * (32 * 64) +
+                        gRagnarok_FlashPictures[life / 3] *
+                            PICTURE_BYTES(FLASH_BURST) +
                         RAGNAROK_FLASH_PICTURES,
-                    x - 16, y + 56, 32, 64);
+                    x - FLASH_BURST_WIDTH / 2, y + 56, FLASH_BURST_WIDTH,
+                    FLASH_BURST_HEIGHT);
           }
           life = flash->variant;
           flash->variant = life > 0 ? life - 1 : -1;
@@ -185,7 +188,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
             s32 y;
             s32 size;
 
-            Particle_AdvanceWithGravity2D(spark, 64, px(1) / 16);
+            Particle_AdvanceWithGravity2D(spark, PARTICLE_DAMPING_NONE,
+                                          px(1) / 16);
             spark->variant--;
             y = spark->y;
             if (y > px(108)) {
@@ -195,8 +199,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
               if ((x >= 0 && x < px(127)) && y >= 0) {
                 u8 *picture;
                 s32 lane;
-                s32 drawY = y >> 16;
-                s32 drawX = x >> 16;
+                s32 drawY = Q_16_16_TO_INT(y);
+                s32 drawX = Q_16_16_TO_INT(x);
 
                 size = spark->variant / 5 + 1;
                 lane = i & 1;

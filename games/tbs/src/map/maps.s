@@ -3,7 +3,7 @@
 	.include "games/tbs/include/edition.inc"
 	.include "games/tbs/src/map/macros.inc"
 	.section .rodata
-	.include "games/tbs/src/map/map_001/map.inc"
+	.include "games/tbs/src/map/empty_map/map.inc"
 	.include "games/tbs/src/map/vale_prologue/map.inc"
 	.include "games/tbs/src/map/vale/map.inc"
 	.include "games/tbs/src/map/vale_plaza/map.inc"

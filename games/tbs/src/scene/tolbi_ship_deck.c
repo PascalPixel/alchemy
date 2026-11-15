@@ -80,6 +80,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/actor_pulse.h"
 #include "scene/tolbi_ship.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
@@ -464,14 +465,14 @@ TOLBI_SHIP_DECK_HOVER_AND_DIVE(TolbiShipDeck_HoverAndDiveAtSean, ACTOR_SEA_SEAN,
 static u16 sStrokePhase[4] ALIGNED(16);
 
 static s32 sSwayAngleY;
-UNUSED static s32 sUnused0; ///< never used; keeps the statics' layout
+UNUSED static s32 sUnusedAfterSwayY; ///< never used; keeps the statics' layout
 
 static u16 sOarAngle[8];
 
 static s32 sSeaScroll[2];
 
 static s32 sSwayAngleX;
-UNUSED static s32 sUnused1; ///< never used; keeps the statics' layout
+UNUSED static s32 sUnusedAfterSwayX; ///< never used; keeps the statics' layout
 
 static s32 sSeaSpeed[2];
 
@@ -1167,13 +1168,11 @@ static void TolbiShipDeck_PlaceWaitingPassengers(void) {
   if (flag != 0) {
     Actor_SetPosition(ACTOR_KALAY_CREW_MEMBER, 264, 702);
     Actor_Get(ACTOR_KALAY_CREW_MEMBER)->facing = FACING_SOUTH_SOUTHWEST;
-    Actor_Get(ACTOR_KALAY_CREW_MEMBER)->timer =
-        Math_RemainderUnsigned(Random_Next(), 90) + 60;
+    Actor_Get(ACTOR_KALAY_CREW_MEMBER)->timer = SQUASH_AND_STRETCH_PAUSE();
     Actor_SetScript(ACTOR_KALAY_CREW_MEMBER,
                     gTolbiShipDeck_SquashAndStretchActions);
     Actor_SetPosition(ACTOR_KALAY_TOUR_GUIDE, 248, 680);
-    Actor_Get(ACTOR_KALAY_TOUR_GUIDE)->timer =
-        Math_RemainderUnsigned(Random_Next(), 90) + 60;
+    Actor_Get(ACTOR_KALAY_TOUR_GUIDE)->timer = SQUASH_AND_STRETCH_PAUSE();
     Actor_SetScript(ACTOR_KALAY_TOUR_GUIDE,
                     gTolbiShipDeck_SquashAndStretchActions);
     Actor_SetPosition(ACTOR_KALAY_CAPTAIN, 0, 0);
@@ -1983,7 +1982,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
       Event_SetMessageId(MsgTolbiShipMadeFinallyLucky);
       break;
     case ROWER_REPLY_OTHERS_ALREADY:
-      TolbiShipDeck_Turn(actorId, 208 << 8);
+      TolbiShipDeck_Turn(actorId, FACING_NORTH_NORTHEAST);
       Actor_ShowEmote(actorId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
       Event_SetMessageId(MsgTolbiShipOtherPassengersAlready);
       break;

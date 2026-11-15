@@ -810,7 +810,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   Actor_SetScript(ACTOR_IVAN, partyScript);
   Actor_RunScriptAndWait(ACTOR_MIA, partyScript);
   work = gFieldWork;
-  work->transitionFrames = 16;
+  work->transitionFrames = MAP_TRANSITION_FRAMES;
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -1013,7 +1013,7 @@ static void HammetPalace_HammetsHomecoming(void) {
   Actor_SetScript(ACTOR_IVAN, partyScript);
   Actor_RunScriptAndWait(ACTOR_MIA, partyScript);
   work = gFieldWork;
-  work->transitionFrames = 16;
+  work->transitionFrames = MAP_TRANSITION_FRAMES;
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);

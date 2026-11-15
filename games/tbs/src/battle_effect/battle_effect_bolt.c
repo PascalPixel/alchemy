@@ -5,7 +5,7 @@
 #include "battle_effect_internal.h"
 
 /// The second blitter, made anew for each glint with its random flip.
-#define BOLT_GLINT_BLITTER EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)
+#define BOLT_GLINT_BLITTER EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED)
 
 /// The columns of a gBolt_Counts row.
 enum {
@@ -47,7 +47,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_BOLT_SHEET,
                              work->sheet + BOLT_PICTURES, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
-  for (j = 0; j != 1024; j++)
+  for (j = 0; j != PARTICLE_POOL_COUNT; j++)
     PARTICLES[j].variant = 0;
   EFFECT_FREE_PARTICLES(j, work->particles, 64);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
@@ -123,7 +123,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
           x -= spread / 2;
           x -= (gBattleEffect_GlintPictureWidths[kind] >> 1);
 
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               gBolt_GlintFlips[Random16() & 3] |
                                   EFFECT_CLIP_BOUNDS,
                               gBolt_GlintModes[work->args->variant]);
@@ -131,13 +131,13 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
                              work->sheet + gBattleEffect_GlintPictures[kind], x,
                              y, gBattleEffect_GlintPictureWidths[kind],
                              gBattleEffect_GlintPictureHeights[kind]);
-          HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
+          HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
       }
     }
 
     // Sparks fall, bounce and shrink as they die.
-    for (j = 0; j != 1024; j++) {
+    for (j = 0; j != PARTICLE_POOL_COUNT; j++) {
       struct Particle *spark = &PARTICLES[j];
 
       if (spark->variant > 0) {
@@ -147,8 +147,8 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x < px(127)) && spark->y >= 0) {
           s32 size = spark->variant / 16 + 1;
-          s32 x = spark->x >> 16;
-          s32 y = spark->y >> 16;
+          s32 x = Q_16_16_TO_INT(spark->x);
+          s32 y = Q_16_16_TO_INT(spark->y);
 
           EFFECT_DRAW_MOTE(draw[0], canvas, sprites, x, y, size);
         }

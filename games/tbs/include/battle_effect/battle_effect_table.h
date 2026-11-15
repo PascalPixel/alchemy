@@ -290,7 +290,7 @@ extern u8 gRay_Sparks[][2];
 extern u8 gEruption_Counts[][3];
 extern u16 gEruption_PuffPictures[];
 extern u16 gEruption_PuffSizes[];
-extern u16 gUnused_SheetPictures6[];
+extern u16 gUnused_SheetPicturesShort[];
 extern u16 gUnused_SheetPictures[];
 extern u8 gUnused_SheetWidths[];
 extern u8 gUnused_SheetHeights[];

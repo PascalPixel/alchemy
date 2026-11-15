@@ -334,7 +334,7 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
   entryIndex = Message_Decode(message, 1);
   if (work->textBuffer[entryIndex] != 0) {
     Text_GetMessageSize(message, &x, &y, (u32 *)&width, (u32 *)&height);
-    x = (30 - width) >> 1;
+    x = (DISPLAY_TILE_WIDTH - width) >> 1;
     y = ((15 - height) >> 1) + yOffset;
     // Flags 2 is WINDOW_FLAG_INSTANT; mode is CENTERED_MESSAGE_BARE in the
     // second branch.

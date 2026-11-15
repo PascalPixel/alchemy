@@ -21,7 +21,6 @@ struct SolSanctumRingEntry {
   s32 scaleStep; ///< 16.16 fixed point
   u8 timer;
   u8 hold;
-  u8 pad26[2];
 };
 
 /// The floating lights' work in HEAP_SLOT_SOL_SANCTUM_LIGHTS, one entry per

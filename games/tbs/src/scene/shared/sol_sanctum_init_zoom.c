@@ -15,7 +15,7 @@ s32 Scene_Initialize(void) {
   work = gFieldWork;
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  work->transitionFrames = 16;
+  work->transitionFrames = MAP_TRANSITION_FRAMES;
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     Scene_QueueMusic(SE_RUMBLE);
     MapGrid_SetScreenShake(shakeX, shakeY, shakeDecay);

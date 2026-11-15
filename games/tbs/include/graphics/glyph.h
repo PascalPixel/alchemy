@@ -57,4 +57,8 @@ STATIC_ASSERT(offsetof(GlyphTransfer, tiles) == 0x400);
 STATIC_ASSERT(offsetof(GlyphTransfer, width) == 0x600);
 STATIC_ASSERT(offsetof(GlyphTransfer, encoded) == 0x604);
 
+/// A 16-pixel square icon's tiles at 4 bits a pixel, what VRAM takes of
+/// GlyphTransfer.tiles for an item, Psynergy or status icon.
+#define ICON_TILE_BYTES (16 * 16 / 2)
+
 #endif

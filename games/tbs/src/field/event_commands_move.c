@@ -9,7 +9,7 @@
 /// DPAD_ANGLE_NONE when none or a diagonal is held.
 s32 Input_GetDpadAngle(u32 unused) {
   // Indexed by the right, left, up and down bits.
-  return gFieldEffect_CyclePatternWords[(gKeysHeld >> 4) & 15];
+  return gFieldEffect_CyclePatternWords[DPAD_INDEX(gKeysHeld)];
 }
 
 /// Per-frame update of Move's hand (FieldEffect_SpawnMoveHand): turns it
@@ -317,8 +317,7 @@ struct Actor *FieldEffect_SpawnMoveHand(struct Actor *caster) {
   u32 spread;
   u32 jitter;
 
-  angle =
-      (caster->facing + TRIG_TURN / 8) & 0xc000; // to the nearest quarter turn
+  angle = FACING_NEAREST_CARDINAL(caster->facing);
   parent = Actor_Spawn(SPRITE_MOVE_HAND, caster->x.fixed,
                        caster->y.fixed + px(16), caster->z.fixed);
   if (parent == 0)
@@ -365,11 +364,11 @@ void FieldEffect_SnapScaleToFull(struct Actor *actor) {
 
   if (actor != NULL) {
     scale = actor->scaleX;
-    if (scale <= 0xffff) {
+    if (scale < Q16_ONE) {
       do {
         next = scale + Q16_ONE / 16;
         scale = next;
-      } while (next <= 0xffff);
+      } while (next < Q16_ONE);
       actor->scaleX = next;
       actor->scaleY = next;
     }

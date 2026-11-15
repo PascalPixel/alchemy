@@ -23,6 +23,9 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #define WINDOW_X 23
 #endif
 
+/// The command window's top tile row: it runs along the bottom three rows.
+#define COMMAND_ROW_TOP 17
+
 /// Runs a battle command row: the commands as icons along the bottom of the
 /// screen, the selected one pulsing as a sprite and named in a window, until a
 /// command is chosen.
@@ -50,7 +53,8 @@ s32 BattleCommandRow_Run(s32 mode) {
   if (mode == COMMAND_ROW_PARTY)
     selectionUi->window = Window_Create(20, 17, 10, 3, 6);
   else
-    selectionUi->window = Window_Create(WINDOW_X, 17, 30 - WINDOW_X, 3, 6);
+    selectionUi->window = Window_Create(WINDOW_X, COMMAND_ROW_TOP,
+                                        DISPLAY_TILE_WIDTH - WINDOW_X, 3, 6);
   selectionUi->drawnIndex = -1;
   // The commands, as listed above. tradeCount counts the party's standby
   // Djinn.
@@ -90,11 +94,11 @@ s32 BattleCommandRow_Run(s32 mode) {
                               selectionUi->commandKinds[entryIndex]);
   }
   selectionUi->iconCount = entryIndex;
-  selectionUi->affine.scaleX = 320;
-  selectionUi->affine.scaleY = 304;
+  selectionUi->affine.scaleX = Q_8_8(1.25);
+  selectionUi->affine.scaleY = Q_8_8(19.0 / 16);
   selectionUi->affine.angle = 0;
-  // Icons 24 pixels apart on line 136 (tile row 17), the last ending by the
-  // name window.
+  // Icons 24 pixels apart on the command row's top line, the last ending by
+  // the name window.
   entryIndex = 0;
   if (entryIndex < selectionUi->iconCount) {
     do {
@@ -103,14 +107,14 @@ s32 BattleCommandRow_Run(s32 mode) {
       selectionUi->entries[entryIndex].positionX = x + 155;
       if (mode != COMMAND_ROW_PARTY)
         selectionUi->entries[entryIndex].positionX = x + WINDOW_X * 8 - 5;
-      selectionUi->entries[entryIndex].positionY = 136;
+      selectionUi->entries[entryIndex].positionY = COMMAND_ROW_TOP * 8;
       entryIndex++;
     } while (entryIndex < selectionUi->iconCount);
   }
   // BG1 shows the icons: behind the other layers above line 136, in front
   // from there down (CommandRow_PutBg1Behind).
   Task_Add(CommandRow_PutBg1Behind, TASK_PASS_VBLANK);
-  Irq_SetHandler(IRQ_VCOUNT, 136, CommandRow_PutBg1InFront);
+  Irq_SetHandler(IRQ_VCOUNT, COMMAND_ROW_TOP * 8, CommandRow_PutBg1InFront);
 
   for (;;) {
     // 304 to 336 in 8.8 (1.19 to 1.31 times), over 16 frames.
@@ -133,22 +137,24 @@ s32 BattleCommandRow_Run(s32 mode) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++)
-              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + WINDOW_X -
-                18 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
+              *(work->tilemap +
+                (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
+                WINDOW_X - 18 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++) {
-              volatile u16 *vram =
-                  (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + WINDOW_X;
+              volatile u16 *vram = (volatile u16 *)BG_SCREEN_BLOCK(31) +
+                                   21 * BG_SCREEN_WIDTH + WINDOW_X;
 
-              vram[panel * 3 + entryIndex * 32 + (col & 3) -
+              vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH + (col & 3) -
                    selectionUi->iconCount * 3] =
                   panel * 16 + entryIndex * 4 + col + COMMAND_ROW_ICON_TILE;
-              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + (col & 3) -
-                selectionUi->iconCount * 3 + WINDOW_X) = 0;
+              *(work->tilemap +
+                (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
+                (col & 3) - selectionUi->iconCount * 3 + WINDOW_X) = 0;
             }
           }
         }
@@ -158,22 +164,24 @@ s32 BattleCommandRow_Run(s32 mode) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++)
-              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + 2 +
-                (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
+              *(work->tilemap +
+                (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
+                2 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++) {
-              volatile u16 *vram =
-                  (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + 20;
+              volatile u16 *vram = (volatile u16 *)BG_SCREEN_BLOCK(31) +
+                                   21 * BG_SCREEN_WIDTH + 20;
 
-              vram[panel * 3 + entryIndex * 32 + (col & 3) -
+              vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH + (col & 3) -
                    selectionUi->iconCount * 3] =
                   panel * 16 + entryIndex * 4 + col + COMMAND_ROW_ICON_TILE;
-              *(work->tilemap + (entryIndex + 17) * 32 + panel * 3 + (col & 3) -
-                selectionUi->iconCount * 3 + 20) = 0;
+              *(work->tilemap +
+                (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH + panel * 3 +
+                (col & 3) - selectionUi->iconCount * 3 + 20) = 0;
             }
           }
         }
@@ -203,7 +211,7 @@ s32 BattleCommandRow_Run(s32 mode) {
         entry->sprite.oam.f.affine = 3;
         entry->sprite.oam.f.x = entry->positionX + pulseScale * 7 / 512 - 14;
         entry->sprite.oam.f.y = entry->positionY + pulseScale * 3 / 256 - 20;
-        Oam_AddSpriteAtDepth(entry, 241);
+        Oam_AddSpriteAtDepth(entry, OAM_DEPTH_WINDOW + 1);
       } else {
         entry->sprite.oam.f.x = entry->positionX;
         entry->sprite.oam.f.y = entry->positionY;
@@ -222,9 +230,9 @@ s32 BattleCommandRow_Run(s32 mode) {
         if (navigation->commandActor == 1) {
           if (selectionUi->commandKinds[selectionUi->selectedIndex] ==
               COMMAND_ICON_DEFEND)
-            keys = repeat = 1;
+            keys = repeat = KEY_A;
           else
-            keys = repeat = 32;
+            keys = repeat = KEY_LEFT;
           navigation->tutorialDelay = 30;
         } else if (navigation->commandActor == 0) {
           s32 kind = selectionUi->commandKinds[selectionUi->selectedIndex];
@@ -242,16 +250,16 @@ s32 BattleCommandRow_Run(s32 mode) {
               navigation->tutorialStep++;
               navigation->tutorialDelay = 45;
             } else {
-              keys = repeat = 1;
+              keys = repeat = KEY_A;
               navigation->tutorialDelay = 200;
             }
           } else {
-            keys = repeat = 16;
+            keys = repeat = KEY_RIGHT;
             navigation->tutorialDelay = 40;
           }
         } else {
           navigation->tutorialDelay = 60;
-          keys = repeat = 1;
+          keys = repeat = KEY_A;
         }
       } else {
         navigation->tutorialDelay--;
@@ -310,8 +318,10 @@ s32 BattleCommandRow_Run(s32 mode) {
         /* FAKEMATCH(volatile): the window tilemap, in RAM, stored through a
          * volatile pointer. */
         for (col = 0; col <= 2; col++)
-          *(volatile u16 *)(work->tilemap + (entryIndex + 17) * 32 + panel * 3 +
-                            5 + (col & 3)) = WINDOW_TILE_COMMAND_PANEL;
+          *(volatile u16 *)(work->tilemap +
+                            (entryIndex + COMMAND_ROW_TOP) * BG_SCREEN_WIDTH +
+                            panel * 3 + 5 + (col & 3)) =
+              WINDOW_TILE_COMMAND_PANEL;
       }
     }
   }
@@ -323,7 +333,7 @@ s32 BattleCommandRow_Run(s32 mode) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   Heap_Release(selectionUi);
   work->holdTilemapUpload = 0;
   wait(1);
@@ -338,26 +348,32 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
   struct WindowWork *work = WINDOW_WORK;
 
   paletteBit &= 1;
-  paletteBit <<= 12;
+  paletteBit = BG_TILE_PALETTE(paletteBit);
 
   if (x < 0) {
     width += x;
     x = 0;
   }
-  if (x + width > 29) {
-    width = 30 - x;
+  if (x + width > DISPLAY_TILE_WIDTH - 1) {
+    width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
-  if (y + height > 29) {
-    height = 20 - y;
+  // BUG: tests the bottom against the screen's width, so a window reaching
+  // below the screen draws into the map's unseen rows.
+#ifdef BUGFIX
+  if (y + height > DISPLAY_TILE_HEIGHT - 1) {
+#else
+  if (y + height > DISPLAY_TILE_WIDTH - 1) {
+#endif
+    height = DISPLAY_TILE_HEIGHT - y;
   }
 
   if (width > 0 && height > 0) {
     do {
-      u16 *cell = &((u16 (*)[32])work->tilemap)[y][x];
+      u16 *cell = &((u16 (*)[BG_SCREEN_WIDTH])work->tilemap)[y][x];
       s32 remaining = width;
 
       while (remaining != 0) {

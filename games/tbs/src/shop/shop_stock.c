@@ -26,7 +26,7 @@ const s16 gShop_GiftItemIds[21] = {
     ITEM_SILVER_BLADE, ITEM_MASAMUNE, ITEM_ARCTIC_BLADE, ITEM_GAIA_BLADE,
     ITEM_SOL_BLADE, ITEM_MURAMASA, ITEM_SHORT_SWORD, ITEM_MINT, ITEM_DEMON_AXE,
     ITEM_ASURAS_ARMOR, ITEM_COTTON_SHIRT, ITEM_TRAVEL_VEST, ITEM_HERB, ITEM_NUT,
-    ITEM_190, 0,
+    ITEM_WATER_OF_LIFE + 1, ITEM_NONE,
 };
 // clang-format on
 
@@ -65,7 +65,7 @@ void Shop_GiveGameTicket(struct Window *window, struct Window *itemWindow) {
           (memberIndex + shop->partyMemberCount) % shop->partyMemberCount;
       unitId = shop->partyMemberIds[memberIndex];
       MenuCursor_Place(window, memberIndex * 24 - 12, 0);
-      shop->mode = 3;
+      shop->cursorFrames = 3;
       Shop_DrawParty(window, memberIndex, shop->selectedItem);
       Shop_DrawCarriedItem(itemWindow, unitId, shop->selectedItem);
     }

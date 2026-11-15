@@ -1200,7 +1200,7 @@ static void UNUSED LunpaFortress_UnusedFirstPatrolThrowsPartyOut(void) {
   Actor_SetAnimation(ACTOR_UPPER_FLOOR_FIRST_PATROL, ANIM_STILL);
   Actor_SetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
   {
-    s32 challengeMessage = MsgLunpaWho2;
+    s32 challengeMessage = MsgLunpaWhoAreYou;
 
     Event_SetMessageId(challengeMessage);
     // "Who are you?"
@@ -1231,7 +1231,7 @@ static void LunpaFortress_GuardThrowsPartyOut(s32 actorId) {
   Actor_SetAnimation(actorId, ANIM_STILL);
   Actor_SetMovementTypeById(ACTOR_PARTY_LEADER, MOVEMENT_TYPE_STAND);
   {
-    s32 challengeMessage = MsgLunpaWho2;
+    s32 challengeMessage = MsgLunpaWhoAreYou;
 
     Event_SetMessageId(challengeMessage);
     // "Who are you?"
@@ -1400,7 +1400,7 @@ static void LunpaFortress_FightThreeGuards(void) {
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_Wait(30);
   Actor_FaceActor(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, ACTOR_PARTY_LEADER, 0);
-  messageBase = MsgLunpaWho3;
+  messageBase = MsgLunpaWhoAreYouShouted;
   Event_SetMessageId(messageBase);
   // "Who are you!?"
   Event_ShowMessage(ACTOR_UPPER_FLOOR_THREE_GUARDS_WEST, 0);
@@ -1506,7 +1506,7 @@ static void LunpaFortress_EntranceGuardThrowsPartyOut(void) {
   Actor_ShowEmote(ACTOR_GROUND_FLOOR_ENTRANCE_GUARD,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   {
-    s32 challengeMessage = MsgLunpaWho2;
+    s32 challengeMessage = MsgLunpaWhoAreYou;
 
     Event_SetMessageId(challengeMessage);
     // "Who are you?"
@@ -1538,7 +1538,7 @@ static void LunpaFortress_SentriesThrowPartyOut(void) {
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceActor(ACTOR_GROUND_FLOOR_SECOND_SENTRY, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_GROUND_FLOOR_FIRST_SENTRY, ACTOR_PARTY_LEADER, 0);
-  challengeMessage = MsgLunpaWho2;
+  challengeMessage = MsgLunpaWhoAreYou;
   Event_SetMessageId(challengeMessage);
   // "Who are you?"
   Event_ShowMessage(ACTOR_GROUND_FLOOR_FIRST_SENTRY, 0);

@@ -7,11 +7,12 @@
 // The lightning pillars throw their sparks into one pool in PARTICLES, as
 // Volcano's fire pillars do, and the sparks bounce off the ground.
 
-#define PLASMA_SPARK_COUNT 1024 ///< sparks in PARTICLES, shared by every pillar
+#define PLASMA_SPARK_COUNT                                                     \
+  PARTICLE_POOL_COUNT ///< sparks in PARTICLES, shared by every pillar
 
 #define PLASMA_SPACING 8 ///< frames between pillars
 /// The second picture in the sheet, after the first 48x112 one.
-#define PLASMA_SECOND_PICTURE (48 * 112)
+#define PLASMA_SECOND_PICTURE PICTURE_BYTES(LIGHTNING_PILLAR)
 
 /// gPlasma_Columns has seven pillars for each side.
 #define PLASMA_COLUMN_X(side, pillar) gPlasma_Columns[(side)][(pillar)]
@@ -40,19 +41,19 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
   sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
-  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   Resource_LoadAndDecompress(RESOURCE_LIGHTNING_PILLAR_SHEET, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   if (work->args->variant != EFFECT_VARIANT_STRONGEST) {
     void *palette = Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_B);
-    Iwram_CopyWords(BG_PLTT, palette, 128);
+    Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
 
   life = &((struct Particle *)PARTICLES)->variant;
@@ -91,10 +92,14 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
       if (frame >= start && frame < start + 9) {
         if (frame >= start + 1 && frame < start + 2)
           draw[0](canvas, work->sheet,
-                  PLASMA_COLUMN_X(work->args->side, i) - 24, 0, 48, 112);
+                  PLASMA_COLUMN_X(work->args->side, i) -
+                      LIGHTNING_PILLAR_WIDTH / 2,
+                  0, LIGHTNING_PILLAR_WIDTH, LIGHTNING_PILLAR_HEIGHT);
         if (frame >= start + 2 && frame < start + 4)
           draw[0](canvas, work->sheet + PLASMA_SECOND_PICTURE,
-                  PLASMA_COLUMN_X(work->args->side, i) - 24, 0, 48, 112);
+                  PLASMA_COLUMN_X(work->args->side, i) -
+                      LIGHTNING_PILLAR_WIDTH / 2,
+                  0, LIGHTNING_PILLAR_WIDTH, LIGHTNING_PILLAR_HEIGHT);
 
         // Sparks fly up from the pillar's foot, and the screen shakes.
         if (frame == start + 2) {
@@ -142,12 +147,12 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
         if (spark->y > px(104)) {
           spark->velocityY = -spark->velocityY / 2;
         } else {
-          s32 x = spark->x >> 16;
+          s32 x = Q_16_16_TO_INT(spark->x);
           s32 y;
           s32 size;
 
           if (spark->x >= 0 && x <= 119 && spark->y >= 0) {
-            y = spark->y >> 16;
+            y = Q_16_16_TO_INT(spark->y);
             size = spark->variant / 8 + 1;
             EFFECT_DRAW_MOTE(draw[k & 1], canvas, sprites, x, y, size);
           }
@@ -215,21 +220,22 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
     originX = screenPosition.x / 2;
     originY = screenPosition.y + 48;
   }
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   if (mode == SPARK_GROUPS_DYNAMITE) {
     Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
-                    128);
+                    SHEET_PALETTE_BYTES);
   } else if (mode == SPARK_GROUPS_RISING) {
     Iwram_CopyWords(BG_PLTT,
-                    Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET), 128);
+                    Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET),
+                    SHEET_PALETTE_BYTES);
   }
   sparks = PARTICLES;
 
@@ -314,14 +320,16 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
               originX -
                   gPlasma_Shapes[work->args->variant][SPARK_GROUPS_OFFSET + i] +
                   12,
-              originY - 32, 32, 64);
+              originY - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
+              FLASH_BURST_HEIGHT);
         else
           draw[0](
               canvas, work->sheet,
               originX +
                   gPlasma_Shapes[work->args->variant][SPARK_GROUPS_OFFSET + i] -
                   44,
-              originY - 32, 32, 64);
+              originY - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
+              FLASH_BURST_HEIGHT);
       }
       if (frame >= start) {
         for (j = 0; j != SPARK_GROUPS_RING; j++) {
@@ -342,7 +350,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
             draw[0](canvas,
                     work->sheet +
                         (gPlasma_FlashPictures[point->variant / 3] << 11),
-                    x - 16, y - 32, 32, 64);
+                    x - FLASH_BURST_WIDTH / 2, y - FLASH_BURST_HEIGHT / 2,
+                    FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           if (point->variant > 0)
             point->variant--;
           else

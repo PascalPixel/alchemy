@@ -144,8 +144,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 /// Suhalla's merchant.
 static void TimberRoomsA_TalkToMerchant(s32 actorId) {
-  u16 facing =
-      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
+  u16 facing = FACING_NEAREST_CARDINAL(Actor_Get(ACTOR_PARTY_LEADER)->facing);
   if (facing == FACING_NORTH) {
     Shop_Run(SHOP_SUHALLA, actorId);
   } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
@@ -169,8 +168,7 @@ static void TimberRoomsA_TalkToMerchant(s32 actorId) {
 
 /// Suhalla's innkeeper.
 static void TimberRoomsA_TalkToInnkeeper(s32 actorId) {
-  u16 facing =
-      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
+  u16 facing = FACING_NEAREST_CARDINAL(Actor_Get(ACTOR_PARTY_LEADER)->facing);
   if (facing == FACING_NORTH) {
     Inn_CheckIn(INN_SUHALLA, actorId);
   } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
@@ -186,8 +184,7 @@ static void TimberRoomsA_TalkToInnkeeper(s32 actorId) {
 
 /// Suhalla Sanctum's Healer.
 static void TimberRoomsA_TalkToHealer(s32 actorId) {
-  u16 facing =
-      (Actor_Get(ACTOR_PARTY_LEADER)->facing + TRIG_TURN / 8) & ~0x3fff;
+  u16 facing = FACING_NEAREST_CARDINAL(Actor_Get(ACTOR_PARTY_LEADER)->facing);
   if (facing == FACING_NORTH) {
     Sanctum_Run(actorId);
   } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {

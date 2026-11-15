@@ -34,9 +34,9 @@ struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
   // The picture is 8 tiles. Neither sprite is checked for NULL.
   MenuTitle_Load(picture, slot);
   first = WindowSprite_Create(slot, OUTPUT_SIZE_32X16, window, x, y);
-  first->sentinel = 253;
+  first->depth = OAM_DEPTH_FRONT - 2;
   second = WindowSprite_Create(slot, OUTPUT_SIZE_32X16, window, x + 32, y);
-  second->sentinel = 253;
+  second->depth = OAM_DEPTH_FRONT - 2;
   // The right half's tiles, after the left half's 8.
   second->oam.index += 8;
   return first;
@@ -88,7 +88,7 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
     CommandIcon_Load(icon, slot, remap);
     sprite = WindowSprite_Create(slot, OUTPUT_SIZE_32X32, window, x, y);
     sprite->oam.fullColor = 1;
-    sprite->sentinel = 251;
+    sprite->depth = OAM_DEPTH_FRONT - 4;
   }
   return sprite;
 }
@@ -114,7 +114,7 @@ void WindowSprite_Pulse(struct WindowSprite *obj) {
     obj->oam.affineMode = 3;
     obj->oam.x = obj->x + 0xfff0;
     obj->oam.y = (u8)obj->y + 0xf0;
-    obj->sentinel = 252;
+    obj->depth = OAM_DEPTH_FRONT - 3;
   }
 }
 

@@ -237,7 +237,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 90, .resistance = 48},
         },
     },
-    // Cerebus, Fenrir, Kraken, Toadonpa, Poison Toad and ? (ENEMY_135)
+    // Cerebus, Fenrir, Kraken, Toadonpa, Poison Toad and ? (ENEMY_UNUSED_TOADONPA)
     {
         .first = ELEMENT_NONE,
         .elementLevels = {2, 4, 0, 2},
@@ -248,7 +248,7 @@ const struct EnemyElementPreset gEnemy_ElementPresetTable[] = {
             {.power = 95, .resistance = 100},
         },
     },
-    // Manticore, Magicore, Manticore King, Dread Hound, Chimera, Chimera Mage, ? (ENEMY_104), Ant Lion, Roach and Doodle Bug
+    // Manticore, Magicore, Manticore King, Dread Hound, Chimera, Chimera Mage, ? (ENEMY_UNUSED_CHIMERA), Ant Lion, Roach and Doodle Bug
     {
         .first = ELEMENT_NONE,
         .elementLevels = {2, 0, 4, 2},

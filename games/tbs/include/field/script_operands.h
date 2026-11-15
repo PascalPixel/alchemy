@@ -29,7 +29,8 @@ struct ScriptOperands {
   u32 scaleX;        ///< SW_SCALE_X, 16.16 fixed point
   u32 scaleY;        ///< SW_SCALE_Y, and work value 11
   u16 radius;        ///< SW_RADIUS, in pixels; compared as signed
-  u8 padding22[2];   ///< the layer and priority flags; no work value
+  u8 layer;          ///< no work value
+  u8 priorityFlags;  ///< no work value
   u32 velocityX;     ///< SW_VELOCITY_X, 16.16 fixed-point pixels per frame
   u32 velocityY;     ///< SW_VELOCITY_Y
   u32 velocityZ;     ///< SW_VELOCITY_Z

@@ -67,15 +67,14 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode);
 void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 #endif
 
-/// A glyph resource id meaning no glyph resource is loaded.
-#define NO_GLYPH_RESOURCE 99
-
 // WindowWork owns three messages, each with four line gaps.
 #define MESSAGE_COUNT 3
 #define MESSAGE_LINE_COUNT 4 ///< lines a page; spacing has one gap each
 #define TEXT_DEFAULT_COLOR                                                     \
   TEXT_COLOR_WHITE                   ///< a message's text colour at start
 #define TEXT_DEFAULT_LINE_SPACING 10 ///< a message's line spacing at start
+/// The pixels a line of text takes in a window fitted to it.
+#define TEXT_LINE_HEIGHT 15
 
 // Window animation lengths.
 #define WINDOW_OPEN_FRAMES 8
@@ -111,7 +110,17 @@ enum {
   /// its line's top.
   TEXT_LINE_SPACING = 10,
   TEXT_WINDOW_STATE = 15, ///< the next entry is the window animation to run
-  TEXT_END_ALT = 30,      ///< ends the text as TEXT_END does
+  /// MESSAGE_ACTOR_NAME as Message_DecodeRaw keeps it, unexpanded: the next
+  /// entry names the unit, and drawing and measuring skip both.
+  TEXT_ACTOR_NAME = 17,
+  /// MESSAGE_ARTICLE_CLASS as Message_DecodeRaw keeps it outside Japanese, at
+  /// the head of an item or class name: drawing skips it and its class.
+  TEXT_ARTICLE_CLASS = 29,
+  // XXX: codes 11 and 12 (one operand), 14 (two) and 28 (one) reach decoded
+  // text with their operands, which drawing and measuring skip, but no
+  // message of any edition uses them. A message that did, or Camelot's name
+  // for them, would name them.
+  TEXT_END_ALT = 30, ///< ends the text as TEXT_END does
   /// The message runs the codes below it as control codes and draws the rest.
   TEXT_COMMANDS = 31,
   TEXT_SPACE = 32,

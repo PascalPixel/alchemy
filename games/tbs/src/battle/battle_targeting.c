@@ -94,7 +94,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   if (count == 0)
     return 0;
   // A 16-bit roll times the count, over 65536: an index below count.
-  return positions[(Random16() * count) >> 16];
+  return positions[Random16_Below(count)];
 }
 
 // XXX (no evidence): which list is the slip; Restore cures stun and never
@@ -155,42 +155,42 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   {                                                                            \
     (applies) = 0;                                                             \
     switch ((action)->effect) {                                                \
-    case ABILITY_EFFECT_ATTACK_UP_2:                                           \
+    case ABILITY_EFFECT_ATTACK_UP_SHARPLY:                                     \
     case ABILITY_EFFECT_ATTACK_UP:                                             \
       if ((unit)->attackStage + 1 <= 4)                                        \
         (applies) = 1;                                                         \
       if ((unit)->attackTurns == 1)                                            \
         (applies)++;                                                           \
       break;                                                                   \
-    case ABILITY_EFFECT_ATTACK_DOWN_2:                                         \
+    case ABILITY_EFFECT_ATTACK_DOWN_SHARPLY:                                   \
     case ABILITY_EFFECT_ATTACK_DOWN:                                           \
       if ((unit)->attackStage - 1 >= -4)                                       \
         (applies) = 1;                                                         \
       if ((unit)->attackTurns == 1)                                            \
         (applies)++;                                                           \
       break;                                                                   \
-    case ABILITY_EFFECT_DEFENSE_UP_2:                                          \
+    case ABILITY_EFFECT_DEFENSE_UP_SHARPLY:                                    \
     case ABILITY_EFFECT_DEFENSE_UP:                                            \
       if ((unit)->defenseStage + 1 <= 4)                                       \
         (applies) = 1;                                                         \
       if ((unit)->defenseTurns == 1)                                           \
         (applies)++;                                                           \
       break;                                                                   \
-    case ABILITY_EFFECT_DEFENSE_DOWN_2:                                        \
+    case ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY:                                  \
     case ABILITY_EFFECT_DEFENSE_DOWN:                                          \
       if ((unit)->defenseStage - 1 >= -4)                                      \
         (applies) = 1;                                                         \
       if ((unit)->defenseTurns == 1)                                           \
         (applies)++;                                                           \
       break;                                                                   \
-    case ABILITY_EFFECT_RESISTANCE_UP_2:                                       \
+    case ABILITY_EFFECT_RESISTANCE_UP_SHARPLY:                                 \
     case ABILITY_EFFECT_RESISTANCE_UP:                                         \
       if ((unit)->resistanceStage + 1 <= 4)                                    \
         (applies) = 1;                                                         \
       if ((unit)->resistanceTurns == 1)                                        \
         (applies)++;                                                           \
       break;                                                                   \
-    case ABILITY_EFFECT_RESISTANCE_DOWN_2:                                     \
+    case ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY:                               \
     case ABILITY_EFFECT_RESISTANCE_DOWN:                                       \
       if ((unit)->resistanceStage - 1 >= -4)                                   \
         (applies) = 1;                                                         \
@@ -204,8 +204,8 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
     case ABILITY_EFFECT_RESTORE:                                               \
       COUNT_PARTIAL_CURES((unit), (applies));                                  \
       break;                                                                   \
-    case ABILITY_EFFECT_HEAL_HP_60:                                            \
-    case ABILITY_EFFECT_HEAL_HP_30:                                            \
+    case ABILITY_EFFECT_FIZZ:                                                  \
+    case ABILITY_EFFECT_SPRITZ:                                                \
       if ((unit)->hp < (unit)->hpMax)                                          \
         (applies) = 1;                                                         \
       break;                                                                   \
@@ -241,7 +241,7 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
       break;                                                                   \
     case ABILITY_EFFECT_REVIVE:                                                \
     case ABILITY_EFFECT_REVIVE_HALF:                                           \
-    case ABILITY_EFFECT_REVIVE_80:                                             \
+    case ABILITY_EFFECT_DEW:                                                   \
       if ((unit)->hp == 0)                                                     \
         (applies) = 100;                                                       \
       break;                                                                   \
@@ -412,13 +412,13 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
       selected = 0;
       break;
     case 2:
-      roll = (11 * Random16()) >> 16;
+      roll = Random16_Below(11);
       selected = 0;
       if (roll > 5)
         selected = 1;
       break;
     case 3:
-      selected = (15 * Random16()) >> 16;
+      selected = Random16_Below(15);
       if (selected <= 5)
         selected = 0;
       else if (selected <= 10)
@@ -427,7 +427,7 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
         selected = 2;
       break;
     case 4:
-      selected = (18 * Random16()) >> 16;
+      selected = Random16_Below(18);
       if (selected <= 5)
         selected = 0;
       else if (selected <= 10)
@@ -442,5 +442,5 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
     if (selected >= 0)
       return targetPositions[selected];
   }
-  return targetPositions[(Random16() * targetCount) >> 16];
+  return targetPositions[Random16_Below(targetCount)];
 }

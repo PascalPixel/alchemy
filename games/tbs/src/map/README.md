@@ -76,9 +76,10 @@ with, each a resource of its own
 many maps share tiles.
 
 A folder is named for the scene that uses it, or for the place when
-several scenes of one place share it. The three that no one
-place or scene names keep their resource number, such as `map_001/`, the
-first row `gMaps` counts from.
+several scenes of one place share it. The empty layout of
+the title, the File Screen and the World Map, the first row `gMaps` counts
+from, is `empty_map/`; the two that no place or scene names keep their
+resource number.
 
 When the party arrives, the grid, the cell pictures, the shapes and the
 tiles are unpacked into memory, where the field reads them directly.

@@ -10,6 +10,8 @@
                        TITAN_BLADE_DUST * sizeof(struct Particle)))
 
 #define TITAN_BLADE_FRAMES 102
+/// The sword strikes: the crash, the damage and the canvas filled bright.
+#define TITAN_BLADE_STRIKE_FRAME 60
 #define TITAN_BLADE_SWORD_PICTURE 20000 ///< the sword picture in the sheet
 #define TITAN_BLADE_FLASHES 32          ///< flashes scattered
 #define TITAN_BLADE_RING 16             ///< of which drawn as the ring
@@ -18,7 +20,7 @@
 #define TITAN_BLADE_DRAWN_DUST 342 ///< dust moved and drawn
 #define TITAN_BLADE_SPARKS 340     ///< sparks after the dust
 /// The flash pictures in the sheet, after the 34x104 fire pillar.
-#define TITAN_BLADE_FLASH_PICTURES (34 * 104)
+#define TITAN_BLADE_FLASH_PICTURES PICTURE_BYTES(FIRE_PILLAR)
 
 /// A huge gold-hilted sword drops onto the first target and is driven into the
 /// ground amid flashes, golden dust and sparks.
@@ -47,7 +49,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Projection_Unit(work->args->targets[0], &screenPosition);
   canvasCenterX = screenPosition.x / 2;
 
@@ -55,10 +57,10 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
                       COMPOSITE_LIGHTEN);
   blitters[0] =
       HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   blitters[1] =
-      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_RAM_CODE_2);
+      HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE_EFFECT, HEAP_SLOT_RAM_CODE_PAIRED);
 
   Resource_LoadAndDecompress(RESOURCE_SWORD_SHEET,
                              work->sheet + TITAN_BLADE_SWORD_PICTURE, 1, 1);
@@ -117,7 +119,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     if (frame == 48) {
       work->shakeFrames = 8;
     }
-    if (frame == 60) {
+    if (frame == TITAN_BLADE_STRIKE_FRAME) {
       work->shakeFrames = 16;
     }
 
@@ -127,7 +129,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     if (frame == 32) {
       Sound_PlayFar(SE_SCATTER);
     }
-    if (frame == 60) {
+    if (frame == TITAN_BLADE_STRIKE_FRAME) {
       Sound_PlayFar(SE_CRASH);
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
@@ -148,7 +150,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
                       work->sheet +
                           (gTitanBlade_FlashPictures[life / 3] << 11) +
                           TITAN_BLADE_FLASH_PICTURES,
-                      x - 16, y + 48, 32, 64);
+                      x - FLASH_BURST_WIDTH / 2, y + 48, FLASH_BURST_WIDTH,
+                      FLASH_BURST_HEIGHT);
         }
         life = flash->variant;
         flash->variant = life > 0 ? life - 1 : -1;
@@ -233,8 +236,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           dust->y += dust->velocityY;
           EFFECT_FALL_MOTE(dust->velocityY, gTitanBlade_DustGravity[i & 3],
                            frame);
-          dust->velocityX = dust->velocityX * 62 / 64;
-          dust->velocityY = dust->velocityY * 62 / 64;
+          dust->velocityX = dust->velocityX * 62 / DAMPING_SCALE;
+          dust->velocityY = dust->velocityY * 62 / DAMPING_SCALE;
           dust->variant++;
           if (dust->velocityY > 0 && Q_16_16_TO_INT(dust->y) > 108) {
             dust->variant = -1;
@@ -251,7 +254,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 
       x = canvasCenterX - 18;
       high = 120;
-      if (frame > 60) {
+      if (frame > TITAN_BLADE_STRIKE_FRAME) {
         top = frame * 8 - 450;
       } else if (frame > 32) {
         top = step / 2 + 16;
@@ -279,7 +282,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           s32 y;
           s32 size;
 
-          Particle_AdvanceWithGravity2D(spark, 64, px(1) / 8);
+          Particle_AdvanceWithGravity2D(spark, PARTICLE_DAMPING_NONE,
+                                        px(1) / 8);
           y = spark->y;
           spark->variant--;
           if (y > px(108)) {
@@ -291,8 +295,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 
               size = spark->variant / 5 + 1;
               picture = sheet + gBattleEffect_MotePictures[size - 1];
-              x >>= 16;
-              y >>= 16;
+              x = Q_16_16_TO_INT(x);
+              y = Q_16_16_TO_INT(y);
               x -= size / 2;
               y -= size;
               blitters[0](canvas, picture, x, y, size, size * 2);
@@ -316,7 +320,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
       Iwram_FillWords(canvas, CANVAS_BYTES,
                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
-    if (frame == 60) {
+    if (frame == TITAN_BLADE_STRIKE_FRAME) {
       Iwram_FillWords(canvas, CANVAS_BYTES,
                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }

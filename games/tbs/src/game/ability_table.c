@@ -8,8 +8,7 @@
 
 // clang-format off
 const struct AbilityDefinition gAbilityDefinitions[] = {
-    // Nothing
-    [ABILITY_000] = {
+    [ABILITY_NONE] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_NONE,
@@ -164,30 +163,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .ppCost = 23,
         .power = 140,
     },
-    [ABILITY_018] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_019] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_020] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_021] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_022] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_023] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
     [ABILITY_FROST] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
@@ -325,30 +300,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .ppCost = 31,
         .power = 150,
     },
-    [ABILITY_039] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_040] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_041] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_042] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_043] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_044] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
     [ABILITY_FLARE] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
@@ -483,30 +434,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 4,
         .ppCost = 31,
         .power = 150,
-    },
-    [ABILITY_060] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_061] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_062] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_063] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_064] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_065] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
     },
     [ABILITY_BOLT] = {
         .targetMode = ABILITY_TARGET_FOES,
@@ -644,42 +571,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .ppCost = 27,
         .power = 160,
     },
-    [ABILITY_081] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_082] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_083] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_084] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_085] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_086] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_087] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_088] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_089] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
     [ABILITY_CURE] = {
         .targetMode = ABILITY_TARGET_ALLIES,
         .flags = ABILITY_USABLE_IN_FIELD | ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
@@ -795,7 +686,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_ALLIES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = ABILITY_EFFECT_ATTACK_UP_2,
+        .effect = ABILITY_EFFECT_ATTACK_UP_SHARPLY,
         .icon = 73,
         .range = 1,
         .ppCost = 7,
@@ -813,7 +704,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = ABILITY_EFFECT_ATTACK_DOWN_2,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN_SHARPLY,
         .icon = 75,
         .range = 1,
         .ppCost = 6,
@@ -831,7 +722,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_ALLIES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = ABILITY_EFFECT_DEFENSE_UP_2,
+        .effect = ABILITY_EFFECT_DEFENSE_UP_SHARPLY,
         .icon = 77,
         .range = 1,
         .ppCost = 3,
@@ -849,7 +740,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = ABILITY_EFFECT_DEFENSE_DOWN_2,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY,
         .icon = 79,
         .range = 1,
         .ppCost = 4,
@@ -867,7 +758,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_ALLIES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = ABILITY_EFFECT_RESISTANCE_UP_2,
+        .effect = ABILITY_EFFECT_RESISTANCE_UP_SHARPLY,
         .icon = 81,
         .range = 1,
         .ppCost = 3,
@@ -885,7 +776,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = ABILITY_EFFECT_RESISTANCE_DOWN_2,
+        .effect = ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY,
         .icon = 83,
         .range = 1,
         .ppCost = 4,
@@ -1039,46 +930,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 1,
         .ppCost = 5,
     },
-    [ABILITY_130] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_131] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_132] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_133] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_134] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_135] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_136] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_137] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_138] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_139] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
     [ABILITY_MOVE] = {
         .targetMode = ABILITY_TARGET_ONE,
         .flags = ABILITY_FORMULA_NO_POWER,
@@ -1178,42 +1029,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .ppCost = 5,
         .fieldPsynergy = 16,
     },
-    [ABILITY_151] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_152] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_153] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_154] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_155] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_156] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_157] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_158] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_159] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
     [ABILITY_DRAGON_CLOUD] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
@@ -1310,7 +1125,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_ALLIES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = ABILITY_EFFECT_ATTACK_UP_2,
+        .effect = ABILITY_EFFECT_ATTACK_UP_SHARPLY,
         .icon = 110,
         .range = 1,
         .ppCost = 7,
@@ -1328,7 +1143,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_ALLIES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = ABILITY_EFFECT_DEFENSE_UP_2,
+        .effect = ABILITY_EFFECT_DEFENSE_UP_SHARPLY,
         .icon = 114,
         .range = 1,
         .ppCost = 3,
@@ -1346,7 +1161,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_ALLIES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = ABILITY_EFFECT_RESISTANCE_UP_2,
+        .effect = ABILITY_EFFECT_RESISTANCE_UP_SHARPLY,
         .icon = 112,
         .range = 1,
         .ppCost = 3,
@@ -1552,58 +1367,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .ppCost = 7,
         .power = 36,
     },
-    [ABILITY_197] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_198] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_199] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_200] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_201] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_202] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_203] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_204] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_205] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_206] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_207] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_208] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_209] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
     [ABILITY_TERRA_STRIKE] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
@@ -1662,7 +1425,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = ABILITY_EFFECT_ATTACK_DOWN_2,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN_SHARPLY,
         .range = 1,
         .power = 18,
     },
@@ -1709,7 +1472,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = ABILITY_EFFECT_DEFENSE_DOWN_2,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY,
         .range = 1,
         .power = 47,
     },
@@ -1741,7 +1504,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MARS,
-        .effect = ABILITY_EFFECT_ATTACK_DOWN_2,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN_SHARPLY,
         .range = 1,
         .power = 34,
     },
@@ -1780,7 +1543,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = ABILITY_EFFECT_RESISTANCE_DOWN_2,
+        .effect = ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY,
         .range = 1,
         .power = 38,
     },
@@ -1796,7 +1559,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_JUPITER,
-        .effect = ABILITY_EFFECT_DOUBLE_BLOW_60,
+        .effect = ABILITY_EFFECT_DOUBLE_BLOW_LIKELY,
         .range = 1,
         .power = 9,
     },
@@ -1804,7 +1567,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = ABILITY_EFFECT_TRIPLE_BLOW_60,
+        .effect = ABILITY_EFFECT_TRIPLE_BLOW_LIKELY,
         .range = 1,
     },
     [ABILITY_ASURA] = {
@@ -1829,50 +1592,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .effect = ABILITY_EFFECT_DELUSION,
         .range = 1,
         .power = 57,
-    },
-    [ABILITY_239] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_240] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_241] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_242] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_243] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_244] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_245] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_246] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_247] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_248] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_249] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
     },
     [ABILITY_HERB] = {
         .targetMode = ABILITY_TARGET_ALLIES,
@@ -1937,10 +1656,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .effect = ABILITY_EFFECT_REVIVE,
         .range = 1,
     },
-    [ABILITY_259] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
     [ABILITY_POWER_BREAD] = {
         .targetMode = ABILITY_TARGET_ALLIES,
         .flags = ABILITY_USABLE_IN_FIELD | ABILITY_FORMULA_NO_POWER,
@@ -1983,10 +1698,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 1,
         .power = 2,
     },
-    [ABILITY_266] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
     [ABILITY_SMOKE_BOMB] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
@@ -2014,122 +1725,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .element = ELEMENT_NONE,
         .range = 1,
         .power = 100,
-    },
-    [ABILITY_271] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_272] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_273] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_274] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_275] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_276] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_277] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_278] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_279] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_280] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_281] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_282] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_283] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_284] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_285] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_286] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_287] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_288] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_289] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_290] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_291] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_292] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_293] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_294] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_295] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_296] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_297] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_298] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_299] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
     },
     [ABILITY_DJINNI_FIRST] = {
         .targetMode = ABILITY_TARGET_FOES,
@@ -2182,92 +1777,9 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 1,
         .power = 60,
     },
-    // =
-    [ABILITY_307] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_308] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_309] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_310] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_311] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_312] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_313] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_314] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_315] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_316] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_317] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_318] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_319] = {
+    // Each element's Djinn after its seventh are spares, and so are their
+    // abilities: this row, named "=" in the text.
+    [ABILITY_BANE + 1 ... ABILITY_FIZZ - 1] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_VENUS,
@@ -2277,14 +1789,14 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_ALLIES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
-        .effect = ABILITY_EFFECT_HEAL_HP_60,
+        .effect = ABILITY_EFFECT_FIZZ,
         .range = 1,
     },
     [ABILITY_SLEET] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = ABILITY_EFFECT_ATTACK_DOWN_2,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN_SHARPLY,
         .range = 1,
         .power = 30,
     },
@@ -2300,14 +1812,14 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_ALLIES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_HP,
         .element = ELEMENT_MERCURY,
-        .effect = ABILITY_EFFECT_HEAL_HP_30,
+        .effect = ABILITY_EFFECT_SPRITZ,
         .range = ABILITY_RANGE_ALL,
     },
     [ABILITY_HAIL] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_MERCURY,
-        .effect = ABILITY_EFFECT_DEFENSE_DOWN_2,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY,
         .range = 1,
         .power = 40,
     },
@@ -2322,95 +1834,10 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_ALLIES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MERCURY,
-        .effect = ABILITY_EFFECT_REVIVE_80,
+        .effect = ABILITY_EFFECT_DEW,
         .range = 1,
     },
-    // =
-    [ABILITY_327] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_328] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_329] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_330] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_331] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_332] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_333] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_334] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_335] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_336] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_337] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_338] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_339] = {
+    [ABILITY_DEW + 1 ... ABILITY_FORGE - 1] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_VENUS,
@@ -2420,7 +1847,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_ALLIES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = ABILITY_EFFECT_ATTACK_UP_2,
+        .effect = ABILITY_EFFECT_ATTACK_UP_SHARPLY,
         .range = ABILITY_RANGE_ALL,
     },
     [ABILITY_FEVER] = {
@@ -2435,7 +1862,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_ALLIES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_MARS,
-        .effect = ABILITY_EFFECT_DEFENSE_UP_2,
+        .effect = ABILITY_EFFECT_DEFENSE_UP_SHARPLY,
         .range = ABILITY_RANGE_ALL,
     },
     [ABILITY_SCORCH] = {
@@ -2450,7 +1877,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_ALLIES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_HEAL_PP,
         .element = ELEMENT_MARS,
-        .effect = ABILITY_EFFECT_HEAL_PP_7,
+        .effect = ABILITY_EFFECT_EMBER,
         .range = ABILITY_RANGE_ALL,
     },
     [ABILITY_FLASH] = {
@@ -2468,92 +1895,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 1,
         .power = 30,
     },
-    // =
-    [ABILITY_347] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_348] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_349] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_350] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_351] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_352] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_353] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_354] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_355] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_356] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_357] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_358] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_359] = {
+    [ABILITY_TORCH + 1 ... ABILITY_GUST - 1] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_VENUS,
@@ -2563,7 +1905,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = ABILITY_EFFECT_DOUBLE_BLOW_60,
+        .effect = ABILITY_EFFECT_DOUBLE_BLOW_LIKELY,
         .range = 1,
         .power = 10,
     },
@@ -2571,7 +1913,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_ALLIES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_JUPITER,
-        .effect = ABILITY_EFFECT_RESISTANCE_UP_2,
+        .effect = ABILITY_EFFECT_RESISTANCE_UP_SHARPLY,
         .range = ABILITY_RANGE_ALL,
     },
     [ABILITY_ZEPHYR] = {
@@ -2611,92 +1953,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .effect = ABILITY_EFFECT_SEAL_2_TURNS,
         .range = 1,
     },
-    // =
-    [ABILITY_367] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_368] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_369] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_370] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_371] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_372] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_373] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_374] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_375] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_376] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_377] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_378] = {
-        .targetMode = ABILITY_TARGET_FOES,
-        .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
-        .element = ELEMENT_VENUS,
-        .range = 1,
-    },
-    // =
-    [ABILITY_379] = {
+    [ABILITY_LUFF + 1 ... ABILITY_VENUS - 1] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_VENUS,
@@ -2734,14 +1991,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 6,
         .power = 240,
     },
-    [ABILITY_384] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_385] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
     [ABILITY_MERCURY] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
@@ -2773,14 +2022,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .icon = 147,
         .range = 6,
         .power = 240,
-    },
-    [ABILITY_390] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_391] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
     },
     [ABILITY_MARS] = {
         .targetMode = ABILITY_TARGET_FOES,
@@ -2814,14 +2055,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 6,
         .power = 240,
     },
-    [ABILITY_396] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_397] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
     [ABILITY_JUPITER] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_SUMMON,
@@ -2853,78 +2086,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .icon = 155,
         .range = 6,
         .power = 240,
-    },
-    [ABILITY_402] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_403] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_404] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_405] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_406] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_407] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_408] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_409] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_410] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_411] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_412] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_413] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_414] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_415] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_416] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_417] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_418] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_419] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
     },
     [ABILITY_FIRE_BLESSING] = {
         .targetMode = ABILITY_TARGET_FOES,
@@ -3127,18 +2288,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 2,
         .power = 30,
     },
-    [ABILITY_447] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_448] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
-    [ABILITY_449] = {
-        .targetMode = ABILITY_TARGET_ONE,
-        .element = ELEMENT_VENUS,
-    },
     [ABILITY_RUMBLE] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
@@ -3157,7 +2306,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .element = ELEMENT_JUPITER,
-        .effect = ABILITY_EFFECT_DOUBLE_BLOW_60,
+        .effect = ABILITY_EFFECT_DOUBLE_BLOW_LIKELY,
         .range = 1,
         .power = 9,
     },
@@ -3224,7 +2373,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4,
+        .effect = ABILITY_EFFECT_DOUBLE_BLOW,
         .range = 1,
         .power = 8,
     },
@@ -3299,7 +2448,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = ABILITY_EFFECT_TRIPLE_BLOW_1_IN_4,
+        .effect = ABILITY_EFFECT_TRIPLE_BLOW,
         .range = 1,
         .power = 15,
     },
@@ -3307,7 +2456,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_DAMAGE,
         .element = ELEMENT_MARS,
-        .effect = ABILITY_EFFECT_DEFENSE_DOWN_2,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY,
         .range = 1,
         .power = 44,
     },
@@ -3322,7 +2471,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_VENUS,
-        .effect = ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4,
+        .effect = ABILITY_EFFECT_DOUBLE_BLOW,
         .range = 1,
         .power = 35,
     },
@@ -3346,7 +2495,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK,
         .element = ELEMENT_JUPITER,
-        .effect = ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4,
+        .effect = ABILITY_EFFECT_DOUBLE_BLOW,
         .range = 1,
         .power = 30,
     },
@@ -3421,14 +2570,14 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_VENUS,
-        .effect = ABILITY_EFFECT_DEFENSE_DOWN_2,
+        .effect = ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY,
         .range = 1,
     },
     [ABILITY_HEARTRENDER] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_NONE,
-        .effect = ABILITY_EFFECT_ATTACK_DOWN_2,
+        .effect = ABILITY_EFFECT_ATTACK_DOWN_SHARPLY,
         .range = 1,
     },
     [ABILITY_MAD_SPATTER] = {
@@ -3477,7 +2626,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .targetMode = ABILITY_TARGET_SELF,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_EFFECT,
         .element = ELEMENT_VENUS,
-        .effect = ABILITY_EFFECT_ATTACK_UP_2,
+        .effect = ABILITY_EFFECT_ATTACK_UP_SHARPLY,
         .range = 1,
     },
     [ABILITY_LUCID_PROPHECY] = {

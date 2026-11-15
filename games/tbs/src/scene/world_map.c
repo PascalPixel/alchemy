@@ -785,7 +785,7 @@ s32 Scene_Initialize(void) {
   } else {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 0);
-    gFieldWork->transitionFrames = 16;
+    gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
     wait(1);
     FieldCamera_SetSpeed(8);
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
@@ -1520,7 +1520,7 @@ static void WorldMap_MeetFlint(void) {
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-    Actor_WalkToAndWait(ACTOR_VENUS_DJINNI, x >> 16, z >> 16);
+    Actor_WalkToAndWait(ACTOR_VENUS_DJINNI, FIELD_PIXEL(x), FIELD_PIXEL(z));
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
@@ -1639,7 +1639,7 @@ static void WorldMap_MeetFlint(void) {
     if (Event_AskYesNoWithActorAnimation(0, 0) != 1) {
       // "Well, then, I guess I'll start from the beginning, OK?"
       Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-      Actor_WalkToAndWait(ACTOR_VENUS_DJINNI, x >> 16, z >> 16);
+      Actor_WalkToAndWait(ACTOR_VENUS_DJINNI, FIELD_PIXEL(x), FIELD_PIXEL(z));
       WorldMap_ShowDjinnTutorial();
       WorldMap_Unfreeze();
       return;
@@ -2057,6 +2057,11 @@ u16 gWorldMapBlend;
   IO_WRITE_QUEUE_PUSH((u32)BG_SCREEN_BLOCK(4), (u32)((buffer) + (offset)),     \
                       DMA_COPY_WORDS(320))
 
+/// Where picture `size` of the ball of light lies in the unpacked buffer: 0 is
+/// the ball at its largest, 6 at its smallest, and 7 the picture shown before
+/// it swells and after it shrinks.
+#define WORLD_MAP_LIGHT_BALL(size) (0x1080 + (size) * 0x600)
+
 /// The ending, on the island Jenna and Kraden are adrift on.
 static void WorldMap_ShowEndingEvent(void) {
   WindowColor_Apply(gMainRoutineWork.windowHue,
@@ -2071,7 +2076,7 @@ static void WorldMap_ShowEndingEvent(void) {
   WorldMap_StartZoom(3 * Q16_ONE / 2, 16);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_StartScreenTransition();
   Event_WaitForZoomTransition();
   WorldMap_Freeze();
@@ -2396,8 +2401,8 @@ static void WorldMap_ShowIslandDrifting(void) {
   Event_Wait(120);
   WorldMap_StartZoom(7 * Q16_ONE / 5, 300);
   Event_Wait(270);
-  gFieldWork->transitionFrames = 16;
-  PLTT_BACKDROP = RGB(31, 31, 31);
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
+  PLTT_BACKDROP = RGB_WHITE;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(WORLD_MAP_TO_JENNA_AND_KRADEN_ADRIFT);
@@ -2411,7 +2416,7 @@ static void WorldMap_UpdateStormTimer(void) {
 
   actor = Actor_Get(gMainRoutineWork.leaderActorId);
   work = gFieldWork;
-  actor->facing = (gFrameCount << 12);
+  actor->facing = gFrameCount * FACING_STEP;
 
   progress = FieldGameFlag_GetByte(FLAG_WORLD_MAP_STORM_FRAMES_LEFT);
   if (progress != 0) {
@@ -2590,39 +2595,39 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
                       DMA_COPY_WORDS(1024));
   Task_AddFrame(WorldMap_UpdateTransitionBlend, TASK_PASS_FRAME);
   Event_Start();
-  WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, 0x3a80);
+  WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, WORLD_MAP_LIGHT_BALL(7));
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_GLITTER);
 
   gWorldMapBlend = BLEND_ALPHA(0, 14);
-  WorldMap_ShowTransitionPicture(buffer, 0x3480, 2);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(6), 2);
   gWorldMapBlend = BLEND_ALPHA(0, 13);
-  WorldMap_ShowTransitionPicture(buffer, 0x2e80, 2);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(5), 2);
   gWorldMapBlend = BLEND_ALPHA(0, 12);
-  WorldMap_ShowTransitionPicture(buffer, 0x2880, 2);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(4), 2);
   gWorldMapBlend = BLEND_ALPHA(0, 11);
-  WorldMap_ShowTransitionPicture(buffer, 0x2280, 2);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(3), 2);
   gWorldMapBlend = BLEND_ALPHA(0, 10);
-  WorldMap_ShowTransitionPicture(buffer, 0x1c80, 2);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(2), 2);
   gWorldMapBlend = BLEND_ALPHA(0, 9);
-  WorldMap_ShowTransitionPicture(buffer, 0x1680, 2);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(1), 2);
   gWorldMapBlend = BLEND_ALPHA(0, 8);
-  WorldMap_ShowTransitionPicture(buffer, 0x1080, 140);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(0), 140);
 
-  WorldMap_ShowTransitionPicture(buffer, 0x1680, 4);
-  WorldMap_ShowTransitionPicture(buffer, 0x1c80, 4);
-  WorldMap_ShowTransitionPicture(buffer, 0x2280, 4);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(1), 4);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(2), 4);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(3), 4);
   gWorldMapBlend = BLEND_ALPHA(0, 9);
-  WorldMap_ShowTransitionPicture(buffer, 0x2880, 4);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(4), 4);
   gWorldMapBlend = BLEND_ALPHA(0, 10);
-  WorldMap_ShowTransitionPicture(buffer, 0x2e80, 4);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(5), 4);
   gWorldMapBlend = BLEND_ALPHA(0, 11);
-  WorldMap_ShowTransitionPicture(buffer, 0x3480, 4);
+  WorldMap_ShowTransitionPicture(buffer, WORLD_MAP_LIGHT_BALL(6), 4);
   gWorldMapBlend = BLEND_ALPHA(0, 12);
-  WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, 0x3a80);
+  WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, WORLD_MAP_LIGHT_BALL(7));
   WorldMap_LoadAreaGraphics();
   Task_AddFrame(WorldMap_JitterTransitionCamera, TASK_PASS_FRAME);
   Sound_Play(SE_RUMBLE);

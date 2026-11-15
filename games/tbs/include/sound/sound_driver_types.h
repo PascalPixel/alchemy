@@ -27,8 +27,10 @@
 #define SOUND_MODE_MAXCHN_SHIFT 8
 #define SOUND_MODE_MASVOL 0x0000F000 ///< PCM volume
 #define SOUND_MODE_MASVOL_SHIFT 12
-#define SOUND_MODE_FREQ_13379 0x00040000 ///< rate 4: 13379 samples a second
-#define SOUND_MODE_FREQ 0x000F0000       ///< the rate
+/// Rate 4, 13379 samples a second: the rate SoundInit starts the driver at
+/// (pret's SOUND_MODE_FREQ_13379).
+#define SOUND_MODE_FREQ_INITIAL 0x00040000
+#define SOUND_MODE_FREQ 0x000F0000 ///< the rate
 #define SOUND_MODE_FREQ_SHIFT 16
 #define SOUND_MODE_DA_BIT 0x00B00000 ///< the sound bias's resolution
 
@@ -118,10 +120,10 @@ enum SoundDriverLimit {
 
 /// The four CGB channels, numbered as the hardware's NR registers are.
 enum CgbChannelId {
-  CGB_CHANNEL_SQUARE_1 = 1, ///< a square wave with a sweep (NR10 to NR14)
-  CGB_CHANNEL_SQUARE_2 = 2, ///< a square wave (NR21 to NR24)
-  CGB_CHANNEL_WAVE = 3,     ///< a pattern from wave RAM (NR30 to NR34)
-  CGB_CHANNEL_NOISE = 4     ///< noise (NR41 to NR44)
+  CGB_CHANNEL_SWEEP_SQUARE = 1, ///< a square wave with a sweep (NR10 to NR14)
+  CGB_CHANNEL_SQUARE = 2,       ///< a square wave (NR21 to NR24)
+  CGB_CHANNEL_WAVE = 3,         ///< a pattern from wave RAM (NR30 to NR34)
+  CGB_CHANNEL_NOISE = 4         ///< noise (NR41 to NR44)
 };
 
 enum SoundModulationTarget {
@@ -143,8 +145,8 @@ struct ToneData {
   u8 kind;
   u8 baseKey; ///< Key a rhythm entry plays every note at.
   u8 length;  ///< CGB sound length (NRx1); 0 plays until released.
-  /// CGB_CHANNEL_SQUARE_1's sweep (NR10) when bit 7 is clear and bits 6..4 are
-  /// not; else no sweep.
+  /// CGB_CHANNEL_SWEEP_SQUARE's sweep (NR10) when bit 7 is clear and bits 6..4
+  /// are not; else no sweep.
   u8 panOrSweep;
   /// The PCM sample, the CGB wave pattern, duty or noise width, or for a
   /// rhythm or split voice its voice table.
@@ -185,17 +187,16 @@ struct SoundChannel {
   /// For a PCM note, the mixer writes the envelope's right level here each
   /// VBlank; the name comes from CgbChannel.peak.
   u8 peak;
-  u8 levelLeft;  ///< The envelope's left level, written by the mixer.
-  u8 echoLevel;  ///< After release, the level held.
-  u8 echoLength; ///< VBlanks the echo lasts.
-  u8 dummy1;     ///< Unused by this driver, as in pret's.
-  u8 dummy2;     ///< Unused by this driver, as in pret's.
-  u8 gate;       ///< Ticks until the note is released.
-  u8 songKey;    ///< The key as the song wrote it.
-  u8 velocity;   ///< 0 to 127, from the note command.
-  u8 priority;   ///< A new note of higher priority takes this one's place.
-  u8 rhythmPan;  ///< A rhythm voice's pan.
-  u8 dummy3[3];  ///< Unused by this driver, as in pret's.
+  u8 levelLeft;           ///< The envelope's left level, written by the mixer.
+  u8 echoLevel;           ///< After release, the level held.
+  u8 echoLength;          ///< VBlanks the echo lasts.
+  u8 paddingAfterEcho[2]; ///< Unused by this driver (pret's dummy1, dummy2).
+  u8 gate;                ///< Ticks until the note is released.
+  u8 songKey;             ///< The key as the song wrote it.
+  u8 velocity;            ///< 0 to 127, from the note command.
+  u8 priority;  ///< A new note of higher priority takes this one's place.
+  u8 rhythmPan; ///< A rhythm voice's pan.
+  u8 paddingAfterPan[3]; ///< Unused by this driver (pret's dummy3).
   /// The low byte of the word at 0x18 in which the mixer keeps a PCM note's
   /// samples left.
   u8 samplesLeftLow;
@@ -221,7 +222,7 @@ struct SoundChannel {
   struct SoundChannel *previous;
   /// The note started before this one in the track's list; NULL at the end.
   struct SoundChannel *next;
-  u32 dummy4; ///< Unused by this driver, as in pret's.
+  u32 paddingAfterNext; ///< Unused by this driver (pret's dummy4).
   /// pret's later mixer keeps the index of the compressed-sample block it last
   /// decoded here; this driver plays no compressed samples and never touches
   /// it.
@@ -249,25 +250,24 @@ struct CgbChannel {
   /// Top of the envelope: (outRight + outLeft) / 16, at most 15 when one
   /// side plays.
   u8 peak;
-  u8 counter;      ///< VBlanks left in the current envelope step.
-  u8 echoLevel;    ///< After release, the level held is peak * echoLevel / 256.
-  u8 echoLength;   ///< VBlanks the echo lasts.
-  u8 dummy1;       ///< Unused by this driver, as in pret's.
-  u8 dummy2;       ///< Unused by this driver, as in pret's.
-  u8 gate;         ///< Ticks until the note is released.
-  u8 songKey;      ///< The key as the song wrote it.
-  u8 velocity;     ///< 0 to 127, from the note command.
-  u8 priority;     ///< A new note of higher priority takes the channel.
-  u8 rhythmPan;    ///< A rhythm voice's pan.
-  u8 dummy3[3];    ///< Unused by this driver, as in pret's.
-  u8 dummy5;       ///< Unused by this driver, as in pret's.
+  u8 counter;    ///< VBlanks left in the current envelope step.
+  u8 echoLevel;  ///< After release, the level held is peak * echoLevel / 256.
+  u8 echoLength; ///< VBlanks the echo lasts.
+  u8 paddingAfterEcho[2]; ///< Unused by this driver (pret's dummy1, dummy2).
+  u8 gate;                ///< Ticks until the note is released.
+  u8 songKey;             ///< The key as the song wrote it.
+  u8 velocity;            ///< 0 to 127, from the note command.
+  u8 priority;            ///< A new note of higher priority takes the channel.
+  u8 rhythmPan;           ///< A rhythm voice's pan.
+  /// Unused by this driver (pret's dummy3 and dummy5).
+  u8 paddingAfterPan[4];
   u8 sustainLevel; ///< (peak * sustain + 15) / 16.
   u8 trigger;      ///< Value for NRx4: 7 restart, 6 length on, 2..0 frequency.
   u8 panBits;      ///< NR51 bits this note sets: one side or both.
   u8 channelBits;  ///< This channel's NR51 bits: 0x11, 0x22, 0x44, 0x88.
   u8 modified;     ///< CgbChannelModify: what to write to the channel.
   u8 length;       ///< The voice's length.
-  u8 sweep;        ///< CGB_CHANNEL_SQUARE_1's NR10 sweep; 8 when none.
+  u8 sweep;        ///< CGB_CHANNEL_SWEEP_SQUARE's NR10 sweep; 8 when none.
   /// Tone frequency from MidiKeyToCgbFreq (2048 added), or
   /// CGB_CHANNEL_NOISE's NR43 value.
   u32 frequency;
@@ -278,7 +278,7 @@ struct CgbChannel {
   struct MusicPlayerTrack *track; ///< As in SoundChannel.
   struct SoundChannel *previous;  ///< As in SoundChannel.
   struct SoundChannel *next;      ///< As in SoundChannel.
-  u8 dummy4[8];                   ///< Unused by this driver, as in pret's.
+  u8 paddingAfterNext[8];         ///< Unused by this driver (pret's dummy4).
 };
 
 enum SoundChannelFlag {
@@ -397,9 +397,9 @@ struct MusicPlayerTrack {
   ///@{
   u8 gap[10];
   u16 timer;
-  /// pret's later ply_note copies it into a new note's samples left; this
-  /// driver's never reads it.
-  u32 unk_3C;
+  /// pret's later ply_note copies it into a new note's samples left (its
+  /// unk_3C); this driver's never reads it.
+  u32 paddingAfterTimer;
   ///@}
   /// The next command byte in the song's data, from the header's track
   /// pointer; a track's commands end at a finish command (0xB1).
@@ -503,7 +503,7 @@ struct SoundInfo {
   /// The hook pret's MusicPlayer2000 calls ExtVolPit; set to
   /// DummyFunc by SoundInit, and no code calls it.
   void (*externalVolumePitch)(void);
-  u8 gap2[16];                      ///< Unused by this driver, as in pret's.
+  u8 paddingBeforeNotes[16];        ///< Unused by this driver (pret's gap2).
   struct SoundChannel pcmNotes[12]; ///< pcmNoteCount of them play.
   /// Right (0, DMA 1 to FIFO A) and left (1, DMA 2 to FIFO B) samples,
   /// transferPeriod VBlanks of pcmSamplesPerVBlank each.

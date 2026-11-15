@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define UNDEAD_SWORD_FRAMES 54 ///< frames of the columns
+
 #define UNDEAD_SWORD_SPARK_SHEET (14 * 80)
 
 /// Two mirrored columns of light rise at the first target's feet and sink
@@ -61,7 +63,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
     spark++;
   }
   work->shakeFrames = 8;
-  for (frame = 0; frame != 54; frame++) {
+  for (frame = 0; frame != UNDEAD_SWORD_FRAMES; frame++) {
     // The strike, with a second 8-frame shake.
     if (frame == 10) {
       work->shakeFrames = 8;

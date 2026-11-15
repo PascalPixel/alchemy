@@ -222,12 +222,12 @@ static s32 Tolbi_KidStopForTarget(struct Actor *kid, struct Actor *target,
     // The heading to the target, and the eight-way directions around it.
     u32 heading = (u16)ArcTan2(target->z.fixed - kid->z.fixed,
                                target->x.fixed - kid->x.fixed);
-    u32 farLeft = (heading - 2 * FACING_STEP) & 0xf000;
-    u32 farRight = (heading + 2 * FACING_STEP) & 0xf000;
-    u32 left = (heading - FACING_STEP) & 0xf000;
-    u32 right = (heading + FACING_STEP) & 0xf000;
-    u32 ahead = heading & 0xf000;
-    u32 facing = kid->facing & 0xf000;
+    u32 farLeft = FACING_SIXTEENTH(heading - 2 * FACING_STEP);
+    u32 farRight = FACING_SIXTEENTH(heading + 2 * FACING_STEP);
+    u32 left = FACING_SIXTEENTH(heading - FACING_STEP);
+    u32 right = FACING_SIXTEENTH(heading + FACING_STEP);
+    u32 ahead = FACING_SIXTEENTH(heading);
+    u32 facing = FACING_SIXTEENTH(kid->facing);
 
     if (ahead == facing || right == facing || left == facing || force != 0) {
       kid->paused = 1;

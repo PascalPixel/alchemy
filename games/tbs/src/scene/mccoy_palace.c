@@ -752,7 +752,7 @@ static void McCoyPalace_AudienceWithMcCoy(void) {
     GameFlag_Set(FLAG_MCCOY_PALACE_JOB_REFUSED);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 752);
-    gFieldWork->transitionFrames = 16;
+    gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     goto leave;
@@ -1068,7 +1068,7 @@ accepted:
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 752);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_Set(FLAG_CAPTAIN_SEEING_PARTY_OUT);
@@ -1174,7 +1174,7 @@ static void McCoyPalace_McCoyRewardsParty(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
 
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1471,7 +1471,7 @@ static void McCoyPalace_PresentRewardChests(void) {
   wait(1);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_SetSpeed(ACTOR_CAPTAIN, 0.6);

@@ -228,9 +228,10 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
   // gMainRoutineWork.layer keeps the leader's map grid layer (FieldSequence_Run
   // saves its layer there).
   actor->layer = gMainRoutineWork.layer;
-  pos = (actor->x.fixed / px(16)) + (actor->z.fixed / px(16)) * 128;
+  pos = actor->x.fixed / px(MAPGRID_CELL_PIXELS) +
+        (actor->z.fixed / px(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE;
   cell = &MAPGRID_CELLS[pos];
-  above = &MAPGRID_CELLS[pos - 128];
+  above = &MAPGRID_CELLS[pos - MAPGRID_SIZE];
   if (gMainRoutineWork.y != 0 && cell->behavior == CELL_BEHAVIOR_CLIMB &&
       above->behavior == CELL_BEHAVIOR_CLIMB) {
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_CLIMB;

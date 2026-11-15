@@ -686,7 +686,7 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   Actor_SetScript(ACTOR_PARTY_LEADER, gCottageRoomsB_IsaacLeavesScript);
   Event_Wait(20);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Import_EventSetExitRequest(
@@ -836,7 +836,7 @@ static void CottageRoomsB_TalkToInnkeeper(void) {
       Actor_RunRepeatedMotion(ACTOR_INNKEEPER, 2);
       Actor_FaceActor(ACTOR_INNKEEPER, ACTOR_PARTY_LEADER, 10);
       if (Event_GetFlag(FLAG_VALE_INNKEEPER_WELCOMED_ISAAC) == 0) {
-        Event_SetMessageId(MsgValeCameBack2);
+        Event_SetMessageId(MsgValeOhItsYouCameBack);
         // "Oh, it's you, Isaac. You came back, huh?"
         Event_ShowMessage(ACTOR_INNKEEPER, 0);
         GameFlag_Set(FLAG_VALE_INNKEEPER_WELCOMED_ISAAC);
@@ -1073,7 +1073,7 @@ static void CottageRoomsB_ShowMythrilBag(void) {
   sprite->image.palette = 0;
   glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
   Icon_DrawItem(ITEM_MYTHRIL_BAG);
-  VramCache_Load(sprite->slot, 128, glyph->tiles);
+  VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Event_StartScreenTransition();

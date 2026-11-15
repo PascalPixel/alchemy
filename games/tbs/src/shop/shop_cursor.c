@@ -151,11 +151,11 @@ void MenuCursor_Advance(struct MenuCursor *cursor) {
 
   if (cursor == NULL)
     return;
-  durationFrames = cursor->kind;
+  durationFrames = cursor->frames;
   if (durationFrames == 0)
     return;
   sprite = cursor->anchor;
-  frame = ++cursor->active;
+  frame = ++cursor->frame;
   cursorX =
       cursor->x + (cursor->targetX - (s16)cursor->x) * frame / durationFrames;
   sprite->x = cursorX;
@@ -165,8 +165,8 @@ void MenuCursor_Advance(struct MenuCursor *cursor) {
   sprite->y = cursorY;
   sprite->oam.y = cursorY;
   if (frame == durationFrames) {
-    cursor->kind = 0;
-    cursor->active = 0;
+    cursor->frames = 0;
+    cursor->frame = 0;
   }
 }
 
@@ -220,15 +220,15 @@ void MenuCursor_MoveTowardTarget(struct MenuCursor *cursor) {
 /// Starts a glide of the cursor from where it is to (targetX, targetY) over
 /// `kind` frames, for MenuCursor_Advance to run.
 void MenuCursor_Set(struct MenuCursor *cursor, s32 targetX, s32 targetY,
-                    s32 kind) {
+                    s32 frames) {
   struct WindowSprite *anchor = cursor->anchor;
 
   cursor->x = anchor->x;
   cursor->y = anchor->y;
   cursor->targetX = targetX;
   cursor->targetY = targetY;
-  cursor->kind = kind;
-  cursor->active = 0;
+  cursor->frames = frames;
+  cursor->frame = 0;
 }
 
 /// Places the cursor and its sprite at (x, y) at once, with a one-frame glide
@@ -239,8 +239,8 @@ void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y) {
     struct WindowSprite *sprite = cursor->anchor;
 
     cursor->targetX = x;
-    cursor->kind = 1;
-    cursor->active = 0;
+    cursor->frames = 1;
+    cursor->frame = 0;
     cursor->x = x;
     sprite->oam.x = sprite->x = x;
   }
@@ -255,7 +255,7 @@ void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y) {
 }
 
 /// Starts the hand cursor's glide to (x, y) pixels inside `window` (the screen
-/// when it is NULL), over the frames shop->mode holds.
+/// when it is NULL), over the frames shop->cursorFrames holds.
 void MenuCursor_Place(struct Window *window, s32 x, s32 y) {
   s32 cursorX;
   s32 cursorY;
@@ -270,5 +270,5 @@ void MenuCursor_Place(struct Window *window, s32 x, s32 y) {
     cursorX = cursorX + (window->x * 8) + 8;
     cursorY = cursorY + (window->y * 8) + 8;
   }
-  MenuCursor_Set(&shop->cursor, cursorX, cursorY, (s8)shop->mode);
+  MenuCursor_Set(&shop->cursor, cursorX, cursorY, (s8)shop->cursorFrames);
 }

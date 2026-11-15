@@ -14,7 +14,7 @@ Field_StoneRooms:
 	.incbin "games/tbs/src/map/stone_rooms/cell_pictures.delta1.lz"
 	.balign 4, 0
 .LField_StoneRooms_SHAPES:
-	.incbin "games/tbs/src/map/map_001/shapes.table.lz"
+	.incbin "games/tbs/src/map/empty_map/shapes.table.lz"
 	.balign 4, 0
 .LField_StoneRooms_GRID:
 	.incbin "games/tbs/src/map/stone_rooms/map.grid.lz"

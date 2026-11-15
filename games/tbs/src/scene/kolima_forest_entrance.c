@@ -329,7 +329,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   KolimaForestEntrance_FaceActorAndWait(ACTOR_IVAN, FACING_NORTH, 10);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Sound_Play(SE_CURSE_FALL);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   wait(1);
   gKolimaForestEntrance_SparkleSoundOn = 1;

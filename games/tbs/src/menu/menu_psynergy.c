@@ -5,6 +5,11 @@
 
 #include "menu_internal.h"
 
+/// A Psynergy shortcut, and the field's Psynergy request packed the same way:
+/// its party member above bit 10, the Psynergy's id below.
+#define PSYNERGY_SHORTCUT_MEMBER_SHIFT 10
+#define PSYNERGY_SHORTCUT_ID_MASK 0x3ff
+
 // The German, Spanish, French and Italian Psynergy menus save the window
 // tiles they draw over and restore them after.
 #if TBS_PATCH_2
@@ -72,7 +77,7 @@ s32 PsynergyMenu_Run(void) {
     u16 request;
     // The action looked up here is not used.
     Ability_Get(PSYNERGY_ABILITY_MASK & menu->sideAction[0]);
-    request = psynergy | (member << 10);
+    request = psynergy | (member << PSYNERGY_SHORTCUT_MEMBER_SHIFT);
     target->psynergy = request;
   }
   // Close the menu and give the screen back to the field.
@@ -334,7 +339,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
     menu->tabIndex[partySlot] = 0;
     memberIndex = 0;
   } else {
-    MenuCursor_Slide(memberIndex * 24 - 10, 16);
+    MenuCursor_Slide(MENU_MEMBER_CURSOR_X(memberIndex), 16);
   }
 
   unit = Unit_GetFar(menu->memberTable[memberIndex]);
@@ -390,9 +395,9 @@ s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
       PsynergyMenu_DrawShortcuts(menu->shortcutWindow, memberIds[selection]);
       Menu_ReloadMemberPortrait(menu, memberIds[selection]);
       for (i = 3; i >= 0; i--)
-        menu->rowPositions[i] = 30;
+        menu->rowPositions[i] = MENU_MEMBER_Y;
       // Raise the chosen party member.
-      menu->rowPositions[selection] = 26;
+      menu->rowPositions[selection] = MENU_MEMBER_RAISED_Y;
       if (!GameFlag_GetFar(FLAG_MENU_INFO_KEPT) && !shown) {
         WindowSprite_ClearListFar((void *)menu->infoWindow);
 #if TBS_PATCH_1
@@ -404,7 +409,7 @@ s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
         GameFlag_ClearFar(FLAG_MENU_INFO_KEPT);
       }
     }
-    MenuCursor_Position(selection * 24 - 10, 16);
+    MenuCursor_Position(MENU_MEMBER_CURSOR_X(selection), 16);
     wait(1);
     if (gKeysPressed & KEY_A) {
       if (menu->psynergyCount) {
@@ -499,7 +504,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
   result = 0;
   shown = 0;
   Unit_GetFar(menu->memberTable[menu->tabIndex[0]]);
-  MenuCursor_Slide(selection * 24 - 10, 16);
+  MenuCursor_Slide(MENU_MEMBER_CURSOR_X(selection), 16);
   while (!GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       redraw = 0;
@@ -524,7 +529,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
         }
       }
     }
-    MenuCursor_Position(selection * 24 - 10, 16);
+    MenuCursor_Position(MENU_MEMBER_CURSOR_X(selection), 16);
     wait(1);
     if (gKeysPressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
@@ -558,10 +563,6 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
   menu->memberIds[1] = menu->memberTable[selection];
   return result;
 }
-
-/// A Psynergy shortcut: its party member above bit 10, the Psynergy's id below.
-#define PSYNERGY_SHORTCUT_MEMBER_SHIFT 10
-#define PSYNERGY_SHORTCUT_ID_MASK 0x3ff
 
 /// Sets the L or R Psynergy shortcut (enum PsynergyShortcut):
 /// memberId << 10 | the Psynergy's id. Returns 1.
@@ -797,7 +798,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
 
   icons = ((struct PsynergyMenuWork *)gMenuWork)->entryIcons;
   p = psynergies;
-  for (i = 0; i < 32; i++) {
+  for (i = 0; i < PSYNERGY_SLOTS; i++) {
     psynergyId = *p++;
     if (psynergyId != 0) {
       Resource_LoadByModeIntoSlotFar(ICON_KIND_ABILITY, psynergyId,
@@ -1088,7 +1089,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
           // Swell the selected icon, in depth slot 250, as in ItemMenu_RunList.
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
           icon->animationStep = 0;
-          icon->sentinel = 250;
+          icon->depth = OAM_DEPTH_FRONT - 5;
         }
         for (i = 0; i < menu->memberCount; i++) {
           Sprite_StartAnimationFar(menu->tabSprites[i], ANIM_STAND);
@@ -1197,9 +1198,9 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
         } while (menu->psynergyCount == 0);
         menu->tabIndex[sideIndex] = member;
         for (i = 0; i < 4; i++) {
-          menu->rowPositions[i] = 30;
+          menu->rowPositions[i] = MENU_MEMBER_Y;
         }
-        menu->rowPositions[member] = 26;
+        menu->rowPositions[member] = MENU_MEMBER_RAISED_Y;
         StatusPanel_Draw(menu->statusWindow, menu->memberTable[member], 0,
                          STATUS_PANEL_EXPERIENCE);
         Menu_ReloadMemberPortrait(menu, menu->memberTable[member]);

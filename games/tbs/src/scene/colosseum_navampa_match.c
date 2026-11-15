@@ -91,7 +91,7 @@
 #include "text/msg_ids.h"
 
 s32 gColossoParticleCount BSS_DATA ALIGNED(16);
-u8 gColosseumNavampaMatch_Unk_4[12] BSS_DATA;
+u8 gColosseumNavampaMatch_UnusedAfterParticleCount[12] BSS_DATA;
 s16 gColosso_MarkerStep BSS_DATA;
 s16 gColosso_ModeScaleDuration BSS_DATA ALIGNED(4);
 s16 gColosso_MarkerFlip BSS_DATA ALIGNED(4);
@@ -118,7 +118,7 @@ s16 gColosso_LetteringTimer BSS_DATA ALIGNED(4);
 s16 *gColosso_LetteringScript BSS_DATA;
 union MarkerCoordinate gColosso_MarkerStartX BSS_DATA;
 s16 gColosso_ModeBlendDuration BSS_DATA ALIGNED(4);
-u8 gColosseumNavampaMatch_Unk_6a[6] BSS_DATA;
+u8 gColosseumNavampaMatch_UnusedAfterBlendDuration[6] BSS_DATA;
 /// The blinking pointer's sprite part: the queue link and attributes 0 to 2.
 s32 gColosso_PointerOam[3] BSS_DATA;
 union MarkerCoordinate gColosso_MarkerStartY BSS_DATA;
@@ -585,8 +585,8 @@ static s32 ColosseumNavampaMatch_CheckLongLogCell(s32 x, s32 z) {
     return -2;
   }
   actor = Actor_Get(ACTOR_LOG_AREA_STONE_A);
-  x >>= 20;
-  z >>= 20;
+  x = FIELD_CELL(x);
+  z = FIELD_CELL(z);
   if (FIELD_CELL(actor->x.fixed) == x && FIELD_CELL(actor->z.fixed) == z) {
     return -1;
   }
@@ -634,8 +634,8 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   steps = 0;
   angle = gColosseumNavampaMatch_FacingAngles[rider->facing >> 13];
   actorId = gMainRoutineWork.leaderActorId;
-  SET_VECTOR(ahead, (rider->x.fixed & -0x100000) + px(8), rider->y.fixed,
-             (rider->z.fixed & -0x100000) + px(8));
+  SET_VECTOR(ahead, (rider->x.fixed & FIELD_CELL_MASK) + px(8), rider->y.fixed,
+             (rider->z.fixed & FIELD_CELL_MASK) + px(8));
   Vector_AddPolarOffset(px(16), angle, ahead);
   x = log->x.fixed;
   z = log->z.fixed;
@@ -716,7 +716,7 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
     Actor_SelectAnimation(log, 1);
     Sound_Play(SE_STOP_ACTION_SE);
     Sound_Play(SE_HEAVY_STOP);
-    column = x >> 20;
+    column = FIELD_CELL(x);
     MapGrid_CopyCellAttributes(85, 9, 1, 4, column, 9);
     MapGrid_CopyCellAttributes(85, 9, 1, 4, column, 61);
   }
@@ -983,7 +983,7 @@ s32 Scene_Initialize(void) {
     column = 19;
   }
   actor = Actor_Get(ACTOR_STONE);
-  actor->x.fixed = (column << 20) + (px(8));
+  actor->x.fixed = FIELD_CELL_CENTER(column);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(18, 10, 3, 1, 18, 11);

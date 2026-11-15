@@ -8,9 +8,11 @@
 #define HELM_SPLITTER_STRIKE_FRAME 18 ///< the swirl strikes the target
 /// The pink star effect, after the swirl.
 #define HELM_SPLITTER_STAR_PICTURES 16000
-#define HELM_SPLITTER_CLEARED_SLOTS 1024 ///< PARTICLES slots freed first
-#define HELM_SPLITTER_SPARKS 16          ///< sparks scattered by the strike
-#define HELM_SPLITTER_SPARK_SLOTS 128    ///< spark slots moved and drawn
+#define HELM_SPLITTER_STAR_SIZE 16 ///< PinkStarSheet's six stars
+#define HELM_SPLITTER_CLEARED_SLOTS                                            \
+  PARTICLE_POOL_COUNT                 ///< PARTICLES slots freed first
+#define HELM_SPLITTER_SPARKS 16       ///< sparks scattered by the strike
+#define HELM_SPLITTER_SPARK_SLOTS 128 ///< spark slots moved and drawn
 
 /// The user leaps at the first target and strikes through a fire swirl; the
 /// target reels and sparks scatter, bouncing off the ground.
@@ -126,13 +128,15 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x <= px(127) - 1) &&
                    spark->y >= 0) {
-          s32 sx = spark->x >> 16;
-          s32 sy = spark->y >> 16;
+          s32 sx = Q_16_16_TO_INT(spark->x);
+          s32 sy = Q_16_16_TO_INT(spark->y);
 
           draw[0](canvas,
                   work->sheet + HELM_SPLITTER_STAR_PICTURES +
                       (((frame + i) / 4 % 6) << 8),
-                  sx - 8, sy - 8, 16, 16);
+                  sx - HELM_SPLITTER_STAR_SIZE / 2,
+                  sy - HELM_SPLITTER_STAR_SIZE / 2, HELM_SPLITTER_STAR_SIZE,
+                  HELM_SPLITTER_STAR_SIZE);
         }
       }
     }
@@ -235,9 +239,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   maxBlend = slots[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_EFFECT];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  additive = slots[HEAP_SLOT_RAM_CODE_2 - HEAP_SLOT_BATTLE_EFFECT];
+  additive = slots[HEAP_SLOT_RAM_CODE_PAIRED - HEAP_SLOT_BATTLE_EFFECT];
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FLARE_SHEET, work->sheet, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FLARE_IMAGE,
@@ -296,14 +300,14 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
       width = gHelmSplitter_ImpactBurstPictureWidths[picture];
       height = gHelmSplitter_ImpactBurstPictureHeights[picture];
       maxBlend(canvas, work->sheet + gHelmSplitter_ImpactBurstPictures[picture],
-               (x >> 16) - (width >> 1), (y >> 16) - (height >> 1), width,
-               height);
+               Q_16_16_TO_INT(x) - (width >> 1),
+               Q_16_16_TO_INT(y) - (height >> 1), width, height);
 #else
       maxBlend(
           canvas, work->sheet + gHelmSplitter_ImpactBurstPictures[picture],
-          (x >> 16) -
+          Q_16_16_TO_INT(x) -
               ((width = gHelmSplitter_ImpactBurstPictureWidths[picture]) >> 1),
-          (y >> 16) -
+          Q_16_16_TO_INT(y) -
               ((height = gHelmSplitter_ImpactBurstPictureHeights[picture]) >>
                1),
           width, height);
@@ -351,7 +355,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
         s32 drawX;
         s32 drawY;
 
-        Particle_AdvanceWithGravity2D(shard, 64, 0);
+        Particle_AdvanceWithGravity2D(shard, PARTICLE_DAMPING_NONE, 0);
         picture = (frame - 36) / 7;
         drawX = Q_16_16_UPPER_HALF(shard->x);
         drawY = Q_16_16_UPPER_HALF(shard->y);

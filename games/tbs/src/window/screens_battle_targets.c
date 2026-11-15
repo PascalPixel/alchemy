@@ -43,7 +43,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 spreadActorIds[14];
   u8 spreadTrackIndices[8];
   struct ScreenPoint selectedPosition;
-  u16 targetName[15];
+  u16 targetName[UNIT_NAME_SIZE];
   struct ScreenPoint namePosition;
   struct ScreenPoint markerPosition;
   struct AffineTransform effect;
@@ -208,7 +208,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     firstSprite->tile =
         VramCache_Reload(cursorSlot, (((gFrameCount >> 2) & 31) << 8) +
                                          (s32)gMenu_AnimatedCursorTiles);
-    selectedPosition.y += Trig_Sin(gFrameCount << 12) / 32768;
+    selectedPosition.y += CURSOR_BOB_Y();
     y = selectedPosition.y;
     // Ease halfway each frame; the other markers show once the cursor is
     // within 7 pixels of its target.
@@ -237,15 +237,15 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     }
     firstSprite->x = selectedPosition.x - 8;
     firstSprite->y = (u8)(selectedPosition.y - 16);
-    Oam_AddSpriteAtDepth(firstSprite, 240);
-    // The other markers' scale in 8.8: 176 (0.69 times) beside an aimed one,
-    // full size when the action takes every unit.
+    Oam_AddSpriteAtDepth(firstSprite, OAM_DEPTH_WINDOW);
+    // The other markers' scale: 11/16 beside an aimed one, full size when the
+    // action takes every unit.
     if (spread == ABILITY_RANGE_ALL) {
-      effect.scaleX = 256;
-      effect.scaleY = 256;
+      effect.scaleX = Q_8_8(1);
+      effect.scaleY = Q_8_8(1);
     } else {
-      effect.scaleX = 176;
-      effect.scaleY = 176;
+      effect.scaleX = Q_8_8(11.0 / 16);
+      effect.scaleY = Q_8_8(11.0 / 16);
     }
     effect.angle = 0;
 #if !TBS_PATCH_4
@@ -328,28 +328,28 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             helpColumn = anchor - 4;
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
             if (System_GetLanguage() == CARTRIDGE_LANGUAGE_ITALIAN) {
-              if (anchor + 6 > 29)
+              if (anchor + 6 > DISPLAY_TILE_WIDTH - 1)
                 helpColumn = 20;
               conditionWindow = Window_Create(helpColumn, 8, 10, 3, 6);
             } else if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
-              if (anchor + 7 > 29)
+              if (anchor + 7 > DISPLAY_TILE_WIDTH - 1)
                 helpColumn = 19;
               conditionWindow = Window_Create(helpColumn, 8, 11, 3, 6);
             } else {
-              if (anchor + 5 > 29)
+              if (anchor + 5 > DISPLAY_TILE_WIDTH - 1)
                 helpColumn = 21;
               conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
             }
 #elif LANGUAGE == LANGUAGE_FRENCH
-            if (anchor + 5 > 29)
+            if (anchor + 5 > DISPLAY_TILE_WIDTH - 1)
               helpColumn = 21;
             conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
 #elif LANGUAGE == LANGUAGE_JAPANESE
-            if (anchor + 4 > 29)
+            if (anchor + 4 > DISPLAY_TILE_WIDTH - 1)
               helpColumn = 22;
             conditionWindow = Window_Create(helpColumn, 8, 8, 3, 6);
 #else
-            if (anchor + 4 > 29)
+            if (anchor + 4 > DISPLAY_TILE_WIDTH - 1)
               helpColumn = 22;
             conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
 #endif
@@ -363,7 +363,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
             anchor = selectedPosition.x / 8;
             helpColumn = anchor - 7;
-            if (anchor + 6 > 29)
+            if (anchor + 6 > DISPLAY_TILE_WIDTH - 1)
               helpColumn = 17;
             conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
           }
@@ -400,7 +400,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
             anchor = selectedPosition.x / 8;
             helpColumn = anchor - 7;
-            if (anchor + 6 > 29)
+            if (anchor + 6 > DISPLAY_TILE_WIDTH - 1)
               helpColumn = 17;
             conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
           }
@@ -416,7 +416,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
             anchor = selectedPosition.x / 8;
             helpColumn = anchor - 7;
-            if (anchor + 5 > 29)
+            if (anchor + 5 > DISPLAY_TILE_WIDTH - 1)
               helpColumn = 18;
             conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
           }
@@ -429,7 +429,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
             anchor = selectedPosition.x / 8;
             helpColumn = anchor - 7;
-            if (anchor + 5 > 29)
+            if (anchor + 5 > DISPLAY_TILE_WIDTH - 1)
               helpColumn = 18;
             conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
           }
@@ -461,23 +461,23 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               helpColumn = anchor - 7;
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
               if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
-                if (anchor + 10 > 29)
+                if (anchor + 10 > DISPLAY_TILE_WIDTH - 1)
                   helpColumn = 13;
                 conditionWindow =
                     Window_Create(helpColumn, helpRow, 17, count + 2, 6);
               } else {
-                if (anchor + 9 > 29)
+                if (anchor + 9 > DISPLAY_TILE_WIDTH - 1)
                   helpColumn = 14;
                 conditionWindow =
                     Window_Create(helpColumn, helpRow, 16, count + 2, 6);
               }
 #elif LANGUAGE == LANGUAGE_JAPANESE
-              if (anchor + 7 > 29)
+              if (anchor + 7 > DISPLAY_TILE_WIDTH - 1)
                 helpColumn = 16;
               conditionWindow =
                   Window_Create(helpColumn, helpRow, 14, count + 2, 6);
 #else
-              if (anchor + 9 > 29)
+              if (anchor + 9 > DISPLAY_TILE_WIDTH - 1)
                 helpColumn = 14;
               conditionWindow =
                   Window_Create(helpColumn, helpRow, 16, count + 2, 6);
@@ -542,23 +542,23 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               helpColumn = anchor - 7;
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
               if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
-                if (anchor + 10 > 29)
+                if (anchor + 10 > DISPLAY_TILE_WIDTH - 1)
                   helpColumn = 13;
                 conditionWindow =
                     Window_Create(helpColumn, helpRow, 17, count + 2, 6);
               } else {
-                if (anchor + 9 > 29)
+                if (anchor + 9 > DISPLAY_TILE_WIDTH - 1)
                   helpColumn = 14;
                 conditionWindow =
                     Window_Create(helpColumn, helpRow, 16, count + 2, 6);
               }
 #elif LANGUAGE == LANGUAGE_JAPANESE
-              if (anchor + 7 > 29)
+              if (anchor + 7 > DISPLAY_TILE_WIDTH - 1)
                 helpColumn = 16;
               conditionWindow =
                   Window_Create(helpColumn, helpRow, 14, count + 2, 6);
 #else
-              if (anchor + 9 > 29)
+              if (anchor + 9 > DISPLAY_TILE_WIDTH - 1)
                 helpColumn = 14;
               conditionWindow =
                   Window_Create(helpColumn, helpRow, 16, count + 2, 6);
@@ -616,7 +616,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         target = Unit_GetFar(candidateIds[targetIndex]);
         BattleMotion_ProjectConditionalPositionFar(
             candidateIds[targetIndex], ScreenPoint_Coordinates(&namePosition));
-        namePosition.y += Trig_Sin(gFrameCount << 12) / 32768;
+        namePosition.y += CURSOR_BOB_Y();
         if (target->id == ENEMY_MYSTERY_WOMAN ||
             target->id == ENEMY_MYSTERY_MAN) {
           width = MsgMysteryPersonName;
@@ -625,7 +625,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           TARGET_MYSTERY_NAME_COPY(width, targetName,
                                    TARGET_MYSTERY_NAME_CAPACITY);
         } else {
-          for (i = 0; i <= 13; i++) {
+          for (i = 0; i < UNIT_NAME_SIZE - 1; i++) {
             targetName[i] = n = target->name[i];
             if (!n)
               break;
@@ -650,8 +650,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         track = &cursorTracks[spreadTrackIndices[i]];
         BattleMotion_ProjectConditionalPositionFar(
             spreadActorIds[i], ScreenPoint_Coordinates(&markerPosition));
-        markerPosition.y =
-            markerPosition.y + Trig_Sin(gFrameCount << 12) / 32768;
+        markerPosition.y = markerPosition.y + CURSOR_BOB_Y();
         *marker = *firstSprite;
         if (track->flags & 1) {
           s32 x = (markerPosition.x + track->x) / 2;
@@ -679,7 +678,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         else
           marker->affine = 1;
         marker->matrix = matrix;
-        Oam_AddSpriteAtDepth(marker, 240);
+        Oam_AddSpriteAtDepth(marker, OAM_DEPTH_WINDOW);
       }
     }
     pressed = gKeysPressed;
@@ -689,8 +688,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       pressed = 0;
       if (gBattleMenuWork->tutorialDelay == 0) {
         gBattleMenuWork->tutorialDelay = 60;
-        repeated = 1;
-        pressed = 1;
+        repeated = KEY_A;
+        pressed = KEY_A;
       } else {
         gBattleMenuWork->tutorialDelay--;
       }

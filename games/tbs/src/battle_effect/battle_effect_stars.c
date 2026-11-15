@@ -4,6 +4,9 @@
 
 #include "battle_effect_internal.h"
 
+#define SHINING_STAR_FRAMES 128 ///< frames of Shining Star
+#define ASTRAL_BLAST_FRAMES 60  ///< frames of Astral Blast
+
 // Astral Blast flies three five-pointed stars at the target; Shining Star drops
 // eight that bounce near it. Each outline's ten corners are projected onto the
 // canvas and each edge stamped with motes.
@@ -46,7 +49,8 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   caster = GetBattleObjectSlotFar(args->user)->actor;
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_RUNE_SHEET), 128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_RUNE_SHEET),
+                  SHEET_PALETTE_BYTES);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       graphics);
   Actor_SelectAnimationFar(caster, POSE_LEAP);
@@ -74,7 +78,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   }
 
   trails = PARTICLES;
-  for (frame = 0; frame != 60; frame++) {
+  for (frame = 0; frame != ASTRAL_BLAST_FRAMES; frame++) {
     if (frame <= 47) {
       struct BattleCamera *view = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
       s32 speed;
@@ -205,7 +209,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_RUNE_SHEET), 128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_RUNE_SHEET),
+                  SHEET_PALETTE_BYTES);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       graphics);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -222,9 +227,8 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
 
     SET_POSITION(point, source->x.fixed / 2, source->y.fixed + px(120),
                  source->z.fixed);
-    point->velocityX = (target->x.fixed +
-                        ((s32)((Random16() & 0x7f) - 64) * 65536) - point->x) /
-                       12;
+    point->velocityX =
+        (target->x.fixed + px((s32)((Random16() & 0x7f) - 64)) - point->x) / 12;
     point->velocityY = (target->y.fixed - point->y + px(20)) / 12;
     point->velocityZ = (target->z.fixed - point->z) / 12;
     point->variant = (Random16() & 15) + delay;
@@ -234,7 +238,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
   /* LEFTOVER(template): size holds 2. */
   size = 2;
   trails = PARTICLES;
-  for (frame = 0; frame != 128; frame++) {
+  for (frame = 0; frame != SHINING_STAR_FRAMES; frame++) {
     // The stars run through the colours of the rainbow.
     BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
                                     TRIG_TURN / 3, 0);
@@ -251,15 +255,15 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
           for (j = 0; j != 10; j++) {
             trails[i * 10 + j].velocityX =
                 screenPosition.x +
-                ((Trig_Sin(j * 0x199a - ((frame - step->variant) << 11)) *
-                  gStar_Radii[j & 1]) /
-                     2 >>
-                 16);
+                Q_16_16_TO_INT(
+                    (Trig_Sin(j * 0x199a - ((frame - step->variant) << 11)) *
+                     gStar_Radii[j & 1]) /
+                    2);
             trails[i * 10 + j].velocityY =
                 screenPosition.y -
-                (Trig_Cos(j * 0x199a - ((frame - step->variant) << 11)) *
-                     gStar_Radii[j & 1] >>
-                 16);
+                Q_16_16_TO_INT(
+                    Trig_Cos(j * 0x199a - ((frame - step->variant) << 11)) *
+                    gStar_Radii[j & 1]);
           }
           for (j = 0; j != 10; j++) {
             struct Particle *from = &trails[j + i * 10];

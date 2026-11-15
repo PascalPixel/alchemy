@@ -379,7 +379,7 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
   Actor_SetPosition(actorId, x, z);
   for (frames = 60; frames != 0; --frames) {
     wait(1);
-    if ((jumpingActor->velocityY >> 16) == 0)
+    if ((FIELD_PIXEL(jumpingActor->velocityY)) == 0)
       break;
   }
   Actor_SetSpriteFlags(jumpingActor, SPRITE_FLAG_SHADOW);
@@ -411,7 +411,7 @@ static void VaultRevisit_RingBell(void) {
 static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitNumber) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, z);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Import_EventSetExitRequest(exitNumber);
 }
 
@@ -536,7 +536,7 @@ static void VaultRevisit_RevealPassage(void) {
 /// The dog barks.
 static void VaultRevisit_TalkToDog(void) {
   Event_Start();
-  Event_SetMessageId(MsgVaultRuffRrruff2);
+  Event_SetMessageId(MsgVaultRuffRrruffAfterCapture);
   Actor_SetAnimation(ACTOR_VAULT_DOG, ANIM_STILL);
   Actor_TurnToFaceEachOther(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 0);
   Event_Wait(2);

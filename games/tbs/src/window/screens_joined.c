@@ -126,7 +126,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   // frame: a link word, attributes 0 and 1 and attribute 2.
   word = entry;
   *word++ = cleared;
-  *word++ = OBJ_SIZE_32X32 | ((DJINN_JOIN_X * 8 + 4) << 16) | 12;
+  *word++ = OBJ_SIZE_32X32 | OBJ_X(DJINN_JOIN_X * 8 + 4) | 12;
   *word = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
   // No voice blips while the message types.
   work->voiceSound = cleared;
@@ -140,7 +140,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
       36, 2, cleared);
   Sound_PlayFar(MUS_JOINED);
   do {
-    Oam_AddSpriteAtDepth(entry, 250);
+    Oam_AddSpriteAtDepth(entry, OAM_DEPTH_FRONT - 5);
     wait(1);
   } while (Sound_GetBgmRestoreDelayFar() != 0 &&
            (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
@@ -183,7 +183,7 @@ void Party_ShowJoinedMessage(s32 member) {
     // a link word, attributes 0 and 1 and attribute 2.
     p = entry;
     *p++ = 0;
-    *p++ = OBJ_SIZE_32X32 | ((2 * 8 + 4) << 16) | 12;
+    *p++ = OBJ_SIZE_32X32 | OBJ_X(2 * 8 + 4) | 12;
     *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
     work->voiceSound = 0;
     work->voiceCountdown = 0;
@@ -192,7 +192,7 @@ void Party_ShowJoinedMessage(s32 member) {
                       36, 2, 0);
     Sound_PlayFar(MUS_JOINED);
     do {
-      Oam_AddSpriteAtDepth(entry, 250);
+      Oam_AddSpriteAtDepth(entry, OAM_DEPTH_FRONT - 5);
       wait(1);
     } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
@@ -238,7 +238,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     // a link word, attributes 0 and 1 and attribute 2.
     p = firstEntry;
     *p++ = 0;
-    *p++ = OBJ_SIZE_32X32 | (12 << 16) | 12;
+    *p++ = OBJ_SIZE_32X32 | OBJ_X(12) | 12;
     *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE);
 
     secondEntry = secondOam;
@@ -262,8 +262,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     Sound_PlayFar(MUS_JOINED);
 
     do {
-      Oam_AddSpriteAtDepth(firstEntry, 250);
-      Oam_AddSpriteAtDepth(secondEntry, 250);
+      Oam_AddSpriteAtDepth(firstEntry, OAM_DEPTH_FRONT - 5);
+      Oam_AddSpriteAtDepth(secondEntry, OAM_DEPTH_FRONT - 5);
       wait(1);
     } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);

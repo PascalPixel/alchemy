@@ -4,8 +4,9 @@
 
 #include "battle_effect_internal.h"
 
-#define PRISM_GROUND_Y px(56)          ///< y 56, where the crystals shatter
-#define PRISM_SHARD_PICTURES (32 * 64) ///< the shards, after the 32x64 crystal
+#define PRISM_GROUND_Y px(56) ///< y 56, where the crystals shatter
+#define PRISM_SHARD_PICTURES                                                   \
+  PICTURE_BYTES(CRYSTAL) ///< the shards, after the crystal
 
 /// Crystals drop out of the sky onto the targets' side and shatter on the
 /// ground into spinning shards, flashing the targets and shaking the screen.
@@ -30,7 +31,7 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress(RESOURCE_CRYSTAL_SHEET, work->sheet, 1, 1);
   BattleEffect_FetchRectangleBlitters(work->args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -43,10 +44,10 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
     x = Random16() & 31;
     seed->y = -px(64);
     if (work->args->side == EFFECT_SIDE_PARTY) {
-      x = ((Random16() & 31) + 80) << 16;
+      x = px((Random16() & 31) + 80);
       seed->velocityX = (Random16() & 63) << 12;
     } else {
-      x = ((Random16() & 31) + 8) << 16;
+      x = px((Random16() & 31) + 8);
       seed->velocityX = -(Random16() & 63) << 12;
     }
     seed->x = x - seed->velocityX * 18;
@@ -95,16 +96,20 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
                 Q_16_16_TO_INT(shard->x) - gPrism_ShardWidths[picture] / 2,
                 Q_16_16_TO_INT(shard->y) - gPrism_ShardHeights[picture] / 2,
                 gPrism_ShardWidths[picture], gPrism_ShardHeights[picture]);
-            Particle_AdvanceWithGravity2D(shard, 64, px(1) / 8);
+            Particle_AdvanceWithGravity2D(shard, PARTICLE_DAMPING_NONE,
+                                          px(1) / 8);
             shard->variant += shard->z;
             if (shard->z > 1 && (frame & 1))
               shard->z--;
           }
         } else if (frame >= crystal->variant) {
           // A falling crystal.
-          draw[i & 1](canvas, work->sheet, Q_16_16_TO_INT(crystal->x) - 16,
-                      Q_16_16_TO_INT(crystal->y), 32, 64);
-          Particle_AdvanceWithGravity2D(crystal, 64, Q16_ONE);
+          draw[i & 1](canvas, work->sheet,
+                      Q_16_16_TO_INT(crystal->x) - CRYSTAL_WIDTH / 2,
+                      Q_16_16_TO_INT(crystal->y), CRYSTAL_WIDTH,
+                      CRYSTAL_HEIGHT);
+          Particle_AdvanceWithGravity2D(crystal, PARTICLE_DAMPING_NONE,
+                                        Q16_ONE);
           if (crystal->y > PRISM_GROUND_Y) {
             // Shatter it on reaching the ground (y 56).
             crystal->z = 1;
@@ -173,9 +178,9 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
     green = (index + greenOffset) / 2;
     blue = (index + blueOffset) / 2;
 
-    CLAMP(red, 0, 31);
-    CLAMP(green, 0, 31);
-    CLAMP(blue, 0, 31);
+    CLAMP(red, 0, RGB_LEVEL_MAX);
+    CLAMP(green, 0, RGB_LEVEL_MAX);
+    CLAMP(blue, 0, RGB_LEVEL_MAX);
 
     *output++ = RGB(red, green, blue);
     index++;

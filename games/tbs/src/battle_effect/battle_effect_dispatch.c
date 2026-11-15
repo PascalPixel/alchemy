@@ -103,11 +103,11 @@ void BattleEffect_BuildWindowEdgeTable(void) {
   s32 scanline;
   s32 rightEdge;
 
-  baseRightEdge = (u16 *)Ram_MapGridCellBuffer;
-  scanlineEdges = (u16 *)(Ram_MapGridCellBuffer + 130);
-  edgeOffsets = Ram_MapGridCellBuffer + 2;
+  baseRightEdge = WINDOW_EDGE_RIGHT;
+  scanlineEdges = (u16 *)WINDOW_EDGE_LINES;
+  edgeOffsets = WINDOW_EDGE_INSETS;
   for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
-    if (scanline >= 8 && scanline <= 135) {
+    if (scanline >= 8 && scanline < 8 + WINDOW_EDGE_INSET_LINES) {
       rightEdge = *baseRightEdge - edgeOffsets[scanline - 8];
       CLAMP(rightEdge, 0, DISPLAY_WIDTH);
       scanlineEdges[scanline] = rightEdge;
@@ -119,8 +119,8 @@ void BattleEffect_BuildWindowEdgeTable(void) {
     volatile u16 *channel = REG_DMA0;
 
     Dma_Stop(channel);
-    Dma_Set(Ram_MapGridCellBuffer + 130, &REG_WIN0H,
-            DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);
+    Dma_Set(WINDOW_EDGE_LINES, &REG_WIN0H, DMA_HBLANK_HALFWORD_PER_LINE,
+            (volatile u32 *)channel);
   }
 }
 
@@ -156,16 +156,16 @@ void BattleEffect_SetupBlendedDisplay(void) {
   volatile u32 fill;
 
   REG_DISPCNT = DISPCNT_MODE_1;
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
   Dma_Fill32Cell(fill, 0, canvas, CANVAS_BYTES);
   Dma_Fill32Cell(fill, 0, BG_CHAR_BLOCK(1), CANVAS_BYTES);
   wait(1);
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_DISPCNT = EFFECT_DISPCNT;
-  gProjection.centerY = 120;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
 }
 
 /// Updates every effect group of one unit's battle object.

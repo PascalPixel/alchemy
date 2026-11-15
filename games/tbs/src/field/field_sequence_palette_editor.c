@@ -9,6 +9,15 @@
 #define EDITOR_PALETTE ((u16 *)PLTT)
 #define EDITOR_MAP ((u16 *)BG_SCREEN_BLOCK(4) + 32 + 13)
 #define EDITOR_HEX_DIGIT 0xf0e0 ///< the tile of digit 0, in WINDOW_PALETTE
+#define EDITOR_MAP_ROW 32 ///< tile entries from one row of the map to the next
+/// The swatch tiles, from tile 208 of character block 0: colour n is drawn with
+/// EDITOR_SWATCH_TILE + n.
+#define EDITOR_SWATCH_TILE 208
+/// The editor cycles through the map's 14 background palettes.
+#define EDITOR_PALETTES 14
+/// START blinks the colour every 10 frames: white, the colour, black, the
+/// colour.
+#define EDITOR_BLINK_FRAMES 10
 
 /// The debug palette editor (L on the Pause menu in debug mode). Shows colours
 /// 1 to 15 of a palette with their red, green and blue values in hex.
@@ -26,35 +35,33 @@ void PaletteEditor_Run(void) {
   u32 blue;
   u32 i;
 
-  // The swatch tiles go to tile 208 of character block 0; colour n is drawn
-  // with tile 208 + n.
   Decompress_Halfwords(gDebug_PaletteSwatchTiles,
-                       BG_CHAR_BLOCK(0) + 208 * TILE_SIZE_4BPP);
+                       BG_CHAR_BLOCK(0) + EDITOR_SWATCH_TILE * TILE_SIZE_4BPP);
 redraw:
   // Column 0 shows the palette number and R, G, B; columns 1 to 15 show each
   // colour's swatch, drawn in the palette being edited, and its three channels.
-  tile = (palette << 12) + 209;
+  tile = (palette << 12) + EDITOR_SWATCH_TILE + 1;
   paletteColor = &EDITOR_PALETTE[palette * 16 + 1];
   swatchColumn = EDITOR_MAP;
   tileEntry = swatchColumn;
   *tileEntry = EDITOR_HEX_DIGIT + palette;
-  tileEntry += 32;
+  tileEntry += EDITOR_MAP_ROW;
   *tileEntry = WINDOW_TILE('R');
-  tileEntry += 32;
+  tileEntry += EDITOR_MAP_ROW;
   *tileEntry = WINDOW_TILE('G');
-  tileEntry += 32;
+  tileEntry += EDITOR_MAP_ROW;
   *tileEntry = WINDOW_TILE('B');
   swatchColumn++;
   for (i = 1; i < 16; i++) {
     tileEntry = swatchColumn;
     *tileEntry = tile++;
     rgb555 = *paletteColor++;
-    tileEntry += 32;
-    *tileEntry = (rgb555 & 31) + EDITOR_HEX_DIGIT;
-    tileEntry += 32;
-    *tileEntry = ((rgb555 >> 5) & 31) + EDITOR_HEX_DIGIT;
-    tileEntry += 32;
-    *tileEntry = ((rgb555 >> 10) & 31) + EDITOR_HEX_DIGIT;
+    tileEntry += EDITOR_MAP_ROW;
+    *tileEntry = RGB_RED(rgb555) + EDITOR_HEX_DIGIT;
+    tileEntry += EDITOR_MAP_ROW;
+    *tileEntry = RGB_GREEN(rgb555) + EDITOR_HEX_DIGIT;
+    tileEntry += EDITOR_MAP_ROW;
+    *tileEntry = RGB_BLUE(rgb555) + EDITOR_HEX_DIGIT;
     swatchColumn++;
   }
   wait(1);
@@ -82,26 +89,26 @@ redraw:
     if (gKeysRepeat & KEY_L) {
       palette--;
       if (palette < 0)
-        palette = 13;
+        palette = EDITOR_PALETTES - 1;
       goto redraw;
     }
     if (gKeysRepeat & KEY_R) {
       palette++;
-      if (palette > 13)
+      if (palette >= EDITOR_PALETTES)
         palette = 0;
       goto redraw;
     }
     if (gKeysRepeat & KEY_A) {
       paletteColor = &EDITOR_PALETTE[palette * 16 + color];
       rgb555 = *paletteColor;
-      red = rgb555 & 31;
-      green = (rgb555 >> 5) & 31;
-      blue = (rgb555 >> 10) & 31;
-      if (channel == 1 && red < 31)
+      red = RGB_RED(rgb555);
+      green = RGB_GREEN(rgb555);
+      blue = RGB_BLUE(rgb555);
+      if (channel == 1 && red < RGB_LEVEL_MAX)
         red++;
-      if (channel == 2 && green < 31)
+      if (channel == 2 && green < RGB_LEVEL_MAX)
         green++;
-      if (channel == 3 && blue < 31)
+      if (channel == 3 && blue < RGB_LEVEL_MAX)
         blue++;
       *paletteColor = RGB(red, green, blue);
       goto redraw;
@@ -109,9 +116,9 @@ redraw:
     if (gKeysRepeat & KEY_B) {
       paletteColor = &EDITOR_PALETTE[palette * 16 + color];
       rgb555 = *paletteColor;
-      red = rgb555 & 31;
-      green = (rgb555 >> 5) & 31;
-      blue = (rgb555 >> 10) & 31;
+      red = RGB_RED(rgb555);
+      green = RGB_GREEN(rgb555);
+      blue = RGB_BLUE(rgb555);
       if (channel == 1 && red != 0)
         red--;
       if (channel == 2 && green != 0)
@@ -122,8 +129,7 @@ redraw:
       goto redraw;
     }
     if (gKeysRepeat & KEY_START) {
-      // Blink white, the colour, black, the colour, every 10 frames; red
-      // counts the frames here.
+      // red counts the frames here.
       paletteColor = &EDITOR_PALETTE[palette * 16 + color];
       rgb555 = *paletteColor;
       red = 0;
@@ -132,14 +138,14 @@ redraw:
         if (!(gKeysHeld & KEY_START))
           break;
         if (red == 0)
-          *paletteColor = RGB(31, 31, 31);
-        if (red == 10)
+          *paletteColor = RGB_WHITE;
+        if (red == EDITOR_BLINK_FRAMES)
           *paletteColor = rgb555;
-        if (red == 20)
+        if (red == EDITOR_BLINK_FRAMES * 2)
           *paletteColor = 0;
-        if (red == 30)
+        if (red == EDITOR_BLINK_FRAMES * 3)
           *paletteColor = rgb555;
-        if (++red >= 40)
+        if (++red >= EDITOR_BLINK_FRAMES * 4)
           red = 0;
       }
       *paletteColor = rgb555;
@@ -156,3 +162,7 @@ redraw:
 #undef EDITOR_PALETTE
 #undef EDITOR_MAP
 #undef EDITOR_HEX_DIGIT
+#undef EDITOR_MAP_ROW
+#undef EDITOR_SWATCH_TILE
+#undef EDITOR_PALETTES
+#undef EDITOR_BLINK_FRAMES

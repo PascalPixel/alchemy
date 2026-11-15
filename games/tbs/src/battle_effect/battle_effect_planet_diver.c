@@ -6,13 +6,13 @@
 
 /// One chip of the impact, over a particle's entry with its velocities moved.
 struct ImpactChip {
-  s32 x;         ///< canvas position, 16.16 fixed point
-  s32 y;         ///< canvas position, 16.16; the ground is y 112
-  s32 velocityX; ///< 16.16 pixels a frame, damped to 56/64 each frame
-  s32 unused0c;  ///< a Particle's velocityX; never read
-  s32 velocityY; ///< 16.16 pixels a frame, with 1/8 pixel of gravity
-  s32 unused14;  ///< a Particle's velocityZ; never read
-  s32 life;      ///< frames left; 0 is free
+  s32 x;               ///< canvas position, 16.16 fixed point
+  s32 y;               ///< canvas position, 16.16; the ground is y 112
+  s32 velocityX;       ///< 16.16 pixels a frame, damped to 56/64 each frame
+  s32 unusedVelocityX; ///< a Particle's velocityX; never read
+  s32 velocityY;       ///< 16.16 pixels a frame, with 1/8 pixel of gravity
+  s32 unusedVelocityZ; ///< a Particle's velocityZ; never read
+  s32 life;            ///< frames left; 0 is free
 };
 
 /// Ram_MapGridCellBuffer seen as Planet Diver's chips.
@@ -47,15 +47,15 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       sprites);
   palette = Resource_GetTableEntry(RESOURCE_FLASH_BURST_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  palette += 128;
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_LIGHTEN);
-  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (i = 0; i != PLANET_DIVER_CLEARED_CHIPS; i++)
@@ -78,15 +78,19 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
 
     // The flash spreads from the user.
     if (frame >= 2 && frame <= 3)
-      draw[0](canvas, work->sheet, screenPosition.x - 16, screenPosition.y - 64,
-              32, 64);
+      draw[0](canvas, work->sheet, screenPosition.x - FLASH_BURST_WIDTH / 2,
+              screenPosition.y - FLASH_BURST_HEIGHT, FLASH_BURST_WIDTH,
+              FLASH_BURST_HEIGHT);
     if (frame >= 4 && frame <= 15) {
       for (i = 0; i != 16; i++) {
-        s32 x = screenPosition.x + (frame * Trig_Sin(i << 12) >> 16);
-        s32 y = screenPosition.y + (frame * Trig_Cos(i << 12) >> 16) - frame;
+        s32 x = screenPosition.x + Q_16_16_TO_INT(frame * Trig_Sin(i << 12));
+        s32 y = screenPosition.y + Q_16_16_TO_INT(frame * Trig_Cos(i << 12)) -
+                frame;
 
-        draw[0](canvas, work->sheet + (frame - 4) / 2 * (32 * 64), x - 16,
-                y - 64, 32, 64);
+        draw[0](canvas,
+                work->sheet + (frame - 4) / 2 * PICTURE_BYTES(FLASH_BURST),
+                x - FLASH_BURST_WIDTH / 2, y - FLASH_BURST_HEIGHT,
+                FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
       }
     }
     // The user leaps, heading out past its own position.
@@ -104,8 +108,8 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
     }
     if (frame == 16) {
       palette = Resource_GetTableEntry(RESOURCE_FLAMEBALL_SHEET);
-      Iwram_CopyWords(BG_PLTT, palette, 128);
-      palette += 128;
+      Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+      palette += SHEET_PALETTE_BYTES;
       Decompress_TaggedLz(palette, work->sheet);
       actor->gravity = 0;
       actor->velocityX = 0;
@@ -124,12 +128,12 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
         // XXX (no evidence): whether screenPosition.x += 8 was meant, as side
         // 0 moves x; only the author's intent would say.
         if (work->args->side == EFFECT_SIDE_ENEMIES) {
-          draw[0](canvas, work->sheet, screenPosition.x - 20,
-                  screenPosition.y - 52, 40, 64);
+          draw[0](canvas, work->sheet, screenPosition.x - FLAMEBALL_WIDTH / 2,
+                  screenPosition.y - 52, FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
           screenPosition.x -= 8;
         } else {
           draw[1](canvas, work->sheet, screenPosition.x - 26,
-                  screenPosition.y - 52, 40, 64);
+                  screenPosition.y - 52, FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
           screenPosition.y += 8;
         }
       }
@@ -167,15 +171,16 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
         y = chip->y + chip->velocityY;
         chip->life--;
         chip->y = y;
-        chip->velocityX = chip->velocityX * 56 / 64;
-        chip->velocityY = chip->velocityY * 56 / 64 + px(1) / 8;
+        chip->velocityX = chip->velocityX * 56 / DAMPING_SCALE;
+        chip->velocityY = chip->velocityY * 56 / DAMPING_SCALE + px(1) / 8;
         if (chip->y > px(112)) {
           chip->velocityY = -chip->velocityY / 2;
         } else if ((chip->x >= 0 && chip->x < px(127)) && chip->y >= 0) {
           s32 size = chip->life / 8 + 1;
 
-          EFFECT_DRAW_MOTE(draw[i & 1], canvas, sprites, (chip->x >> 16),
-                           (chip->y >> 16), size);
+          EFFECT_DRAW_MOTE(draw[i & 1], canvas, sprites,
+                           Q_16_16_TO_INT(chip->x), Q_16_16_TO_INT(chip->y),
+                           size);
         }
       }
     }
@@ -209,17 +214,17 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   palette = Resource_GetTableEntry(RESOURCE_SKULL_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  palette += 128;
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
@@ -240,7 +245,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
     row = work->bg2xLines;
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ = ((6 << 16) - Trig_Sin((frame + i) << 11) * 6) >> 10;
+        *row++ = (px(6) - Trig_Sin((frame + i) << 11) * 6) >> 10;
     } else {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
         *row++ = Trig_Sin((frame + i) << 11) * 6 >> 10;
@@ -273,8 +278,10 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
             if (dist != 0) {
               Projection_Point(skull, &screenPosition);
               screenPosition.x >>= 1;
-              draw[0](canvas, work->sheet + i % 3 * (24 * 24),
-                      screenPosition.x - 12, screenPosition.y - 12, 24, 24);
+              draw[0](canvas, work->sheet + i % 3 * PICTURE_BYTES(SKULL),
+                      screenPosition.x - SKULL_WIDTH / 2,
+                      screenPosition.y - SKULL_HEIGHT / 2, SKULL_WIDTH,
+                      SKULL_HEIGHT);
               skull->x -= skull->x / dist;
               skull->y -= skull->y / dist;
               skull->z -= skull->z / dist;
@@ -320,19 +327,19 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   work->args = args;
   EFFECT_START_NARROW_CANVAS(0);
   palette = Resource_GetTableEntry(RESOURCE_SPIRAL_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  Decompress_TaggedLz((u8 *)palette + 128, work->sheet);
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  Decompress_TaggedLz((u8 *)palette + SHEET_PALETTE_BYTES, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
-                      COMPOSITE_LIGHTEN);
-  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
+                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_LIGHTEN);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   if (work->args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -(104 << 8);
-    offsetX = -112;
+    offsetX = -NARROW_CANVAS_PARTY_X;
   } else {
     offsetX = 0;
   }
@@ -347,8 +354,8 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
         *row++ = (px(8) - Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8) >> 10;
     } else {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ =
-            (Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8 >> 10) - (112 << 8);
+        *row++ = (Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8 >> 10) -
+                 (NARROW_CANVAS_PARTY_X << 8);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
     EFFECT_FOR_EACH_TARGET(member, work->args) {
@@ -374,12 +381,14 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
           s32 half;
 
           spin = (frame << 9) + (i << 14);
-          x = (screen.x + (Trig_Sin(spin) * 16 >> 16)) + offsetX;
-          y = screen.y + (Trig_Cos(spin) * 16 >> 16);
+          x = (screen.x + Q_16_16_TO_INT(Trig_Sin(spin) * 16)) + offsetX;
+          y = screen.y + Q_16_16_TO_INT(Trig_Cos(spin) * 16);
           half = frame / 16;
           draw[half & 1](canvas,
-                         work->sheet + (frame / 4 - half * 4) * (32 * 32),
-                         x - 16, y - 16, 32, 32);
+                         work->sheet +
+                             (frame / 4 - half * 4) * PICTURE_BYTES(SPIRAL),
+                         x - SPIRAL_WIDTH / 2, y - SPIRAL_HEIGHT / 2,
+                         SPIRAL_WIDTH, SPIRAL_HEIGHT);
         }
       }
     }

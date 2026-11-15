@@ -4,10 +4,10 @@
 
 #include "system_internal.h"
 
-// The 3D transform. gTransform is twelve s32 in 16.16 fixed point (1.0 is
-// Q16_ONE): [0] to [8] a 3x3 rotation, [9] to [11] a translation.
+// The 3D transform. gTransform is TRANSFORM_WORDS s32 in 16.16 fixed point
+// (1.0 is Q16_ONE): [0] to [8] a 3x3 rotation, then the translation.
 
-#define TRANSFORM_DMA (DMA_COPY_WORDS(12)) ///< one matrix
+#define TRANSFORM_DMA (DMA_COPY_WORDS(TRANSFORM_WORDS)) ///< one matrix
 
 typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 
@@ -60,7 +60,7 @@ void Transform_ResetMatrix(void) {
 /// Z axes, in that order, with one combined matrix.
 void Transform_ApplyRotation(s32 *angles) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
-  s32 matrix[12];
+  s32 matrix[TRANSFORM_WORDS];
 
   sinX = Trig_Sin(angles[0]);
   cosX = Trig_Cos(angles[0]);
@@ -81,15 +81,15 @@ void Transform_ApplyRotation(s32 *angles) {
   matrix[7] =
       Iwram_MulQ16(Iwram_MulQ16(cosX, sinY), sinZ) - Iwram_MulQ16(sinX, cosZ);
   matrix[8] = Iwram_MulQ16(cosX, cosY);
-  matrix[9] = 0;
-  matrix[10] = 0;
-  matrix[11] = 0;
+  matrix[TRANSFORM_TRANSLATION_X] = 0;
+  matrix[TRANSFORM_TRANSLATION_Y] = 0;
+  matrix[TRANSFORM_TRANSLATION_Z] = 0;
   Iwram_TransformMatrix(matrix);
 }
 
 /// Rotates gTransform about the X axis by `angle`.
 void Transform_ApplyPitch(s32 angle) {
-  s32 matrix[12];
+  s32 matrix[TRANSFORM_WORDS];
   s32 sine = Trig_Sin(angle);
   s32 cosine = Trig_Cos(angle);
 
@@ -104,7 +104,7 @@ void Transform_ApplyPitch(s32 angle) {
 
 /// Rotates gTransform about the Y axis by `angle`.
 void Transform_ApplyYaw(s32 angle) {
-  s32 matrix[12];
+  s32 matrix[TRANSFORM_WORDS];
   s32 sine = Trig_Sin(angle);
   s32 cosine = Trig_Cos(angle);
 
@@ -119,7 +119,7 @@ void Transform_ApplyYaw(s32 angle) {
 
 /// Rotates gTransform about the Z axis by `angle`.
 void Transform_ApplyRoll(s32 angle) {
-  s32 matrix[12];
+  s32 matrix[TRANSFORM_WORDS];
   s32 sine = Trig_Sin(angle);
   s32 cosine = Trig_Cos(angle);
 
@@ -134,19 +134,19 @@ void Transform_ApplyRoll(s32 angle) {
 
 /// Translates gTransform by `position` (x, y, z in 16.16).
 void Transform_ApplyPosition(const s32 *position) {
-  s32 matrix[12];
+  s32 matrix[TRANSFORM_WORDS];
 
   CAMELOT_ASM("the fixed-register identity store of transform.h")
   Transform_SetIdentity(matrix);
-  matrix[9] = position[0];
-  matrix[10] = position[1];
-  matrix[11] = position[2];
+  matrix[TRANSFORM_TRANSLATION_X] = position[0];
+  matrix[TRANSFORM_TRANSLATION_Y] = position[1];
+  matrix[TRANSFORM_TRANSLATION_Z] = position[2];
   Iwram_TransformMatrix(matrix);
 }
 
 /// Scales gTransform by `scale` (x, y, z factors in 16.16).
 void Transform_ApplyScale(const s32 *scale) {
-  s32 matrix[12];
+  s32 matrix[TRANSFORM_WORDS];
 
   CAMELOT_ASM("the fixed-register identity store of transform.h")
   Transform_SetIdentity(matrix);
@@ -160,7 +160,7 @@ void Transform_ApplyScale(const s32 *scale) {
 /// matrix. Reached through the far-call table.
 void Transform_ApplyRotationTranslation(s32 *angles, s32 *position) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
-  s32 matrix[12];
+  s32 matrix[TRANSFORM_WORDS];
 
   sinX = Trig_Sin(angles[0]);
   cosX = Trig_Cos(angles[0]);
@@ -181,9 +181,9 @@ void Transform_ApplyRotationTranslation(s32 *angles, s32 *position) {
   matrix[7] =
       Iwram_MulQ16(Iwram_MulQ16(cosX, sinY), sinZ) - Iwram_MulQ16(sinX, cosZ);
   matrix[8] = Iwram_MulQ16(cosX, cosY);
-  matrix[9] = position[0];
-  matrix[10] = position[1];
-  matrix[11] = position[2];
+  matrix[TRANSFORM_TRANSLATION_X] = position[0];
+  matrix[TRANSFORM_TRANSLATION_Y] = position[1];
+  matrix[TRANSFORM_TRANSLATION_Z] = position[2];
   Iwram_TransformMatrix(matrix);
 }
 
@@ -192,7 +192,7 @@ void Transform_ApplyRotationTranslation(s32 *angles, s32 *position) {
 void Transform_ApplyScaledRotation(s32 *angles, s32 *position, s32 *scale) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
   s32 axisScale;
-  s32 matrix[12];
+  s32 matrix[TRANSFORM_WORDS];
 
   sinX = Trig_Sin(angles[0]);
   cosX = Trig_Cos(angles[0]);
@@ -220,9 +220,9 @@ void Transform_ApplyScaledRotation(s32 *angles, s32 *position, s32 *scale) {
       Iwram_MulQ16(axisScale, Iwram_MulQ16(Iwram_MulQ16(cosX, sinY), sinZ) -
                                   Iwram_MulQ16(sinX, cosZ));
   matrix[8] = Iwram_MulQ16(axisScale, Iwram_MulQ16(cosX, cosY));
-  matrix[9] = position[0];
-  matrix[10] = position[1];
-  matrix[11] = position[2];
+  matrix[TRANSFORM_TRANSLATION_X] = position[0];
+  matrix[TRANSFORM_TRANSLATION_Y] = position[1];
+  matrix[TRANSFORM_TRANSLATION_Z] = position[2];
   Iwram_TransformMatrix(matrix);
 }
 
@@ -288,15 +288,15 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   out[0] = ux;
   out[3] = uy;
   out[6] = uz;
-  out[9] = -dot(ex, ux, ez, uz, uy, uy);
+  out[TRANSFORM_TRANSLATION_X] = -dot(ex, ux, ez, uz, uy, uy);
   out[4] = vy;
   out[7] = vz;
   out[1] = vx;
-  out[10] = -dot(ex, vx, ey, vy, ez, vz);
+  out[TRANSFORM_TRANSLATION_Y] = -dot(ex, vx, ey, vy, ez, vz);
   out[2] = dx;
   out[5] = dy;
   out[8] = dz;
-  out[11] = -dot(ex, dx, ey, dy, ez, dz);
+  out[TRANSFORM_TRANSLATION_Z] = -dot(ex, dx, ey, dy, ez, dz);
 }
 
 /// Makes the camera at `eye` looking at `target` the whole of gTransform.
@@ -306,7 +306,7 @@ void Transform_SetLookAt(s32 *eye, s32 *target) {
 
 /// Multiplies the camera at `eye` looking at `target` into gTransform.
 void Transform_ApplyLookAt(s32 *eye, s32 *target) {
-  s32 work[12];
+  s32 work[TRANSFORM_WORDS];
 
   Transform_BuildLookAt(eye, target, work);
   Iwram_TransformMatrix(work);
@@ -323,7 +323,7 @@ void Projection_SetFieldOfView(u32 fieldOfView, s32 nearDepth, s32 farDepth) {
   halfAngle = (s32)(fieldOfView + (fieldOfView >> 31)) >> 1;
   sine = Trig_Sin(halfAngle);
   // Iwram_RatioMulQ14(d, v) is v * Q16_ONE / d: here 80 * cos / sin
-  focal = Iwram_RatioMulQ14(sine, Trig_Cos(halfAngle) * 80);
+  focal = Iwram_RatioMulQ14(sine, Trig_Cos(halfAngle) * (DISPLAY_HEIGHT / 2));
   gProjection.near = nearDepth;
   gProjection.focal = focal;
   gProjection.far = farDepth;

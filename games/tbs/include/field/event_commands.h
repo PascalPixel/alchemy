@@ -149,8 +149,8 @@ void Event_ShowMessageThenWait(s32 actorId, s32 flags, s32 frames);
 s32 Event_AskYesNoAndShowResponse(s32 actorId, s32 flags);
 void Event_EmptyCallback(void);
 void Event_ShowSpeakerMessage(s32 speaker);
-void Event_ForwardShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
-void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
+void Event_ForwardShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x, s32 y);
+void Event_ShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x, s32 y);
 void Actor_ClosePortrait(s32 actorId);
 void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
                                   s32 firstPortraitX, s32 firstPortraitY,

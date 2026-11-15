@@ -493,7 +493,7 @@ static void Vault_AskWhoCapturedThieves(void) {
 /// In Vault after the thieves are jailed, the dog barks.
 static void Vault_TalkToDogAfterCapture(void) {
   Event_Start();
-  Event_SetMessageId(MsgVaultRuffRrruff2);
+  Event_SetMessageId(MsgVaultRuffRrruffAfterCapture);
   Actor_SetAnimation(ACTOR_VAULT_DOG, ANIM_STILL);
   Vault_FaceActorAndWait(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 2);
   Event_ShowMessage(ACTOR_VAULT_DOG, 0);
@@ -617,7 +617,7 @@ static void Vault_ReadWomanWantingTheRoofFixedMind(void) {
 static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, y);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Import_EventSetExitRequest(continuation);
 }
 
@@ -716,7 +716,7 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
   Actor_SetPosition(actorId, x, z);
   for (frames = 60; frames != 0; --frames) {
     wait(1);
-    if ((actor->velocityY >> 16) == 0)
+    if ((FIELD_PIXEL(actor->velocityY)) == 0)
       break;
   }
   Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);

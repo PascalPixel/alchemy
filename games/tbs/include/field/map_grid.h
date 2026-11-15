@@ -20,8 +20,8 @@ enum CellBehavior {
   CELL_BEHAVIOR_EVENT_FIRST = 1,
   CELL_BEHAVIOR_EVENT_LAST = 239,
   /// Ground with encounters of its own: grounds 1 and 2 of the map's zones.
-  CELL_BEHAVIOR_ENCOUNTER_GROUND_1 = 240,
-  CELL_BEHAVIOR_ENCOUNTER_GROUND_2 = 241,
+  CELL_BEHAVIOR_ENCOUNTER_GROUND_A = 240,
+  CELL_BEHAVIOR_ENCOUNTER_GROUND_B = 241,
   /// 242 to 247: examine triggers with lines of their own, the same on every
   /// map (Field_ExamineCell, gField_ExamineTriggerMessageOffsets).
   CELL_BEHAVIOR_JAR = 242,
@@ -108,11 +108,19 @@ extern u8 gMapGridShapes[];
 /// after the still picture.
 extern u8 gBgTileBuffer[];
 
+/// The map grid: 128 by 128 cells, each 16 pixels square, wrapping at its
+/// edges.
+#define MAPGRID_SIZE 128
+#define MAPGRID_CELL_PIXELS 16
+/// The low four bits of a shape's first byte: its kind, which height
+/// function reads its samples (gMapGrid_TerrainHeightFunctions).
+#define MAPGRID_SHAPE_KIND_MASK 0xf
+
 /// HEAP_SLOT_WORLD_MAP_AFFINE under its own name, which no code reads; the
 /// world map keeps its struct WorldMapAffineWork in the slot.
 #define gWorldMapAffineWork (*(u8 **)&gHeapSlots[HEAP_SLOT_WORLD_MAP_AFFINE])
 
-/// A row of gMaps: a layout's resources, each counted from ResourceId_Map001.
+/// A row of gMaps: a layout's resources, each counted from ResourceId_EmptyMap.
 struct MapResources {
   u16 header;
   u16 palette;

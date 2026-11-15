@@ -7,9 +7,10 @@
 #include "types.h"
 
 /// A floating Nut's sprite, seen as the attribute bits, palette and state its
-/// scenes set.
+/// scenes set: struct Sprite read a byte at a time.
 typedef struct OrbitingMapActorSprite {
-  u8 padding00[5]; ///< Sprite's queue link and attribute 0's y
+  u8 link[4]; ///< Sprite's queue link
+  u8 y;       ///< attribute 0's y
   /// Sprite's attribute 0 high byte.
   /// bits: 7..6 shape | 5 full colour | 4 mosaic | 3..2 sprite mode |
   /// 1..0 affine
@@ -18,7 +19,8 @@ typedef struct OrbitingMapActorSprite {
   u8 fullColor : 1;        ///< the Nut's scenes clear it
   u8 shape : 2;            ///< the scenes leave it
   ///@}
-  u8 padding06[3]; ///< attribute 1 and the low byte of attribute 2
+  u8 attr1[2];
+  u8 tileLow; ///< attribute 2's low byte
   /// Sprite's attribute 2 high byte.
   /// bits: 7..4 palette | 3..2 priority | 1..0 tile bits 9..8
   ///@{
@@ -26,49 +28,79 @@ typedef struct OrbitingMapActorSprite {
   u8 priority : 2;      ///< the Nut's scenes set 1
   u8 paletteNumber : 4; ///< the Nut's scenes set 0
   ///@}
-  u8 padding0a[18];
+  u8 attr3[2];
+  u8 shadow[12]; ///< Sprite's shadow part
+  u8 scale[4];
   /// Sprite's slot: the VRAM cache entry the Nut's icon is loaded
   /// into.
   u8 palette;
-  u8 padding1d[10];
+  u8 cacheFlags; ///< retainCacheEntry and useOwnScale
+  u8 rotation[2];
+  u8 width;
+  u8 height;
+  u8 offsetX;
+  u8 offsetY;
+  u8 lastNo;
+  u8 dirty;
+  u8 flags;
   u8 state; ///< Sprite's count of layers; the Nut's scenes zero it
 } OrbitingMapActorSprite;
 
 /// A floating Nut's actor: its position, the spot it sways around and
 /// how far through the sway it is, its sprite and its update routine.
 typedef struct OrbitingMapActor {
-  u8 padding00[8];
+  const s32 *script;
+  s16 scriptCursor;
+  u16 facing;
   s32 x; ///< 16.16 fixed-point pixels
   s32 y; ///< 16.16 fixed-point pixels
   s32 z; ///< 16.16 fixed-point pixels
-  u8 padding14[15];
+  s32 groundHeight;
+  s32 scaleX;
+  s32 scaleY;
+  u16 radius;
+  u8 layer;
   /// Actor's priorityFlags; the Nut's scenes clear bit 0,
   /// ACTOR_PRIORITY_AUTOMATIC.
   u8 priorityFlags;
-  u8 padding24[12];
-  /// 1/65536 turns; advanced by TRIG_TURN / 64 plus two random steps each
-  /// frame.
+  s32 velocityX;
+  s32 velocityY;
+  s32 velocityZ;
+  /// Actor.speedLimit: 1/65536 turns; advanced by TRIG_TURN / 64 plus two
+  /// random steps each frame.
   s32 orbitAngle;
-  u8 padding34[4];
-  s32 orbitCenterX; ///< 16.16 fixed-point pixels
-  s32 orbitCenterY; ///< 16.16 fixed-point pixels
-  s32 orbitCenterZ; ///< 16.16 fixed-point pixels
-  u8 padding44[12];
+  s32 acceleration;
+  s32 orbitCenterX; ///< Actor.targetX: 16.16 fixed-point pixels
+  s32 orbitCenterY; ///< Actor.targetY: 16.16 fixed-point pixels
+  s32 orbitCenterZ; ///< Actor.targetZ: 16.16 fixed-point pixels
+  s32 bounce;
+  s32 gravity;
+  s32 riseBaseY;
   OrbitingMapActorSprite *sprite;
-  u8 padding54;
+  u8 spriteStorageKind;
   u8 mode; ///< Actor's motionFlags; the Nut's scenes zero it
   /// Actor.arrivalAxis, the axis watched for arrival; Scene_FloatNut
   /// zeroes it.
   u8 state;
-  u8 padding57[5];
+  u8 conditionResult;
+  u8 snapToTarget;
+  u8 collisionFlags;
+  u8 steeringFlags;
+  u8 paused;
   /// Actor.retainSpriteCache: the Nut's scenes keep its sprite's VRAM
   /// cache entry.
   u8 active;
-  u8 padding5d[4];
+  u8 repeatCount;
+  s16 wait;
+  u8 refused;
   /// Actor's frozen, which skips steering, terrain, gravity and floating;
   /// the Nut's scenes set it.
   u8 visible;
-  u8 padding62[10];
+  u8 riseCounter;
+  u8 riseEnabled;
+  s16 timer;
+  u16 userValue;
+  struct Actor *watchedActor;
   /// Actor's update routine; Scene_FloatNut sets
   /// Scene_UpdateFloatingNut.
   u32 callback;

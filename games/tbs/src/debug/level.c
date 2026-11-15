@@ -52,10 +52,11 @@ extern struct Trigger gIncreaseItemAndLevel_Triggers[];
 #define ITEM_DEBUG_DRAW_ITEM_NAME Text_DrawMessage
 #endif
 
-#define ITEM_COUNT 270      ///< The browser's item numbers, 0 to 269, wrapping.
-#define ABILITY_COUNT 270   ///< The ability browser's numbers, 0 to 269.
-#define BROWSER_ROW_STEP 10 ///< Right and Left move ten numbers.
-#define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
+#define DEBUG_ITEM_COUNT                                                       \
+  270 ///< The browser's item numbers, 0 to 269, wrapping.
+#define DEBUG_ABILITY_COUNT 270 ///< The ability browser's numbers, 0 to 269.
+#define BROWSER_ROW_STEP 10     ///< Right and Left move ten numbers.
+#define BROWSER_PAGE_STEP 30    ///< R and L move thirty.
 
 // ACTOR_LEVEL_EDITOR's scale in 16.16, which the international editions
 // changed (Scene_Initialize).
@@ -220,7 +221,7 @@ static void IncreaseItemAndLevel_SelectItem(void) {
   s32 entryCount;
   s8 seekDirection;
 
-  entryCount = ITEM_COUNT;
+  entryCount = DEBUG_ITEM_COUNT;
   seekDirection = 0;
   selectedItemId = 1;
   Sound_Play(SE_MENU_CONFIRM);
@@ -241,7 +242,7 @@ static void IncreaseItemAndLevel_SelectItem(void) {
     if (redraw) {
       redraw = 0;
       // Wrap the number into 0 to 269 (a step back from 0 is 269).
-      selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
+      selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % entryCount;
       WindowSprite_RedrawSavedRect(window);
       WindowSprite_ClearList(window);
       Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemPrompt, window, 0, 0);
@@ -309,19 +310,19 @@ static void IncreaseItemAndLevel_SelectItem(void) {
     }
     // Step on past numbers with no item, in the direction moved.
     if (seekDirection == -1) {
-      selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
+      selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % entryCount;
       goto check_back;
     back:
-      selectedItemId = (selectedItemId + ITEM_COUNT - 1) % entryCount;
+      selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT - 1) % entryCount;
     check_back:
       if (Item_GetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon == 0)
         goto back;
     }
     if (seekDirection == 1) {
-      selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
+      selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT) % entryCount;
       goto check_ahead;
     ahead:
-      selectedItemId = (selectedItemId + ITEM_COUNT + 1) % entryCount;
+      selectedItemId = (selectedItemId + DEBUG_ITEM_COUNT + 1) % entryCount;
     check_ahead:
       if (Item_GetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon == 0)
         goto ahead;
@@ -349,7 +350,7 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
   s32 entryCount;
   s8 seekDirection;
 
-  entryCount = ABILITY_COUNT;
+  entryCount = DEBUG_ABILITY_COUNT;
   seekDirection = 0;
   selectedAbilityId = 1;
   Sound_Play(SE_MENU_CONFIRM);
@@ -365,7 +366,8 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
   while (1) {
     if (redraw) {
       redraw = 0;
-      selectedAbilityId = (selectedAbilityId + ABILITY_COUNT) % entryCount;
+      selectedAbilityId =
+          (selectedAbilityId + DEBUG_ABILITY_COUNT) % entryCount;
       WindowSprite_RedrawSavedRect(window);
       WindowSprite_ClearList(window);
       Text_DrawStringInWindow(gIncreaseItemAndLevel_PsyPrompt, window, 0, 0);
@@ -420,19 +422,23 @@ UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
     }
     // Step on past numbers with no ability, in the direction moved.
     if (seekDirection == -1) {
-      selectedAbilityId = (selectedAbilityId + ABILITY_COUNT) % entryCount;
+      selectedAbilityId =
+          (selectedAbilityId + DEBUG_ABILITY_COUNT) % entryCount;
       goto check_back;
     back:
-      selectedAbilityId = (selectedAbilityId + ABILITY_COUNT - 1) % entryCount;
+      selectedAbilityId =
+          (selectedAbilityId + DEBUG_ABILITY_COUNT - 1) % entryCount;
     check_back:
       if (Ability_GetDirect(selectedAbilityId & ACTION_ID_MASK)->icon == 0)
         goto back;
     }
     if (seekDirection == 1) {
-      selectedAbilityId = (selectedAbilityId + ABILITY_COUNT) % entryCount;
+      selectedAbilityId =
+          (selectedAbilityId + DEBUG_ABILITY_COUNT) % entryCount;
       goto check_ahead;
     ahead:
-      selectedAbilityId = (selectedAbilityId + ABILITY_COUNT + 1) % entryCount;
+      selectedAbilityId =
+          (selectedAbilityId + DEBUG_ABILITY_COUNT + 1) % entryCount;
     check_ahead:
       if (Ability_GetDirect(selectedAbilityId & ACTION_ID_MASK)->icon == 0)
         goto ahead;

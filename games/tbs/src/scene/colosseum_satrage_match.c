@@ -122,7 +122,7 @@ s16 gColosso_LetteringTimer BSS_DATA ALIGNED(4);
 s16 *gColosso_LetteringScript BSS_DATA;
 union MarkerCoordinate gColosso_MarkerStartX BSS_DATA;
 s16 gColosso_ModeBlendDuration BSS_DATA ALIGNED(4);
-u8 gColosseumSatrageMatch_Unk_5a[6] BSS_DATA;
+u8 gColosseumSatrageMatch_UnusedAfterBlendDuration[6] BSS_DATA;
 /// The blinking pointer's sprite part: the queue link and attributes 0 to 2.
 s32 gColosso_PointerOam[3] BSS_DATA;
 union MarkerCoordinate gColosso_MarkerStartY BSS_DATA;
@@ -177,7 +177,7 @@ extern s16 gColosso_MarkerSlot;
 #ifdef UBFIX
 #define COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(value) ((value) * px(1))
 #else
-#define COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(value) ((value) << 16)
+#define COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(value) px(value)
 #endif
 
 // UB: each of these calls a void function through an s32 function type, the
@@ -475,7 +475,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
     FieldActor_SetMoveTargetFixed(pusher, destinationX, pusher->y.fixed,
                                   destinationZ);
   }
-  Actor_SelectAnimation(pusher, 27);
+  Actor_SelectAnimation(pusher, ANIM_LEADER_WALK_BACKWARDS);
   {
     destinationX =
         ((log->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &
@@ -540,7 +540,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   s32 pusher = gMainRoutineWork.leaderActorId;
   struct Actor *pusherActor = Actor_Get(pusher);
   struct Actor *log = Actor_Get(logId);
-  s32 heading = (pusherActor->facing + TRIG_TURN / 16) & 0xe000;
+  s32 heading = FACING_NEAREST_EIGHTH(pusherActor->facing);
   s32 alongX = FIELD_CELL(log->x.fixed) != halfCellX / 2;
   s32 offsetX;
   s32 offsetZ;
@@ -957,7 +957,7 @@ s32 Scene_Initialize(void) {
     x = 73;
   }
   actor = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR);
-  actor->x.fixed = (x << 20) + px(8);
+  actor->x.fixed = FIELD_CELL_CENTER(x);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
@@ -966,7 +966,7 @@ s32 Scene_Initialize(void) {
     x = 76;
   }
   actor = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 1);
-  actor->x.fixed = (x << 20) + px(8);
+  actor->x.fixed = FIELD_CELL_CENTER(x);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
@@ -975,7 +975,7 @@ s32 Scene_Initialize(void) {
     x = 79;
   }
   actor = Actor_Get(ACTOR_MINI_MAZE_FIRST_PILLAR + 2);
-  actor->x.fixed = (x << 20) + px(8);
+  actor->x.fixed = FIELD_CELL_CENTER(x);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   MapGrid_CopyCellAttributes(71, 16, 1, 1, x, 16);
@@ -1081,16 +1081,15 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_IVAN, 1);
   Actor_SetSpeed(ACTOR_MIA, 1);
-  Actor_SetPositionFixed(ACTOR_PARTY_LEADER, (attendantX << 16),
-                         ((attendantZ << 16) - px(48)));
-  Actor_SetPositionFixed(ACTOR_GARET, (attendantX << 16) - px(16),
-                         (attendantZ << 16) - px(40));
-  Actor_SetPositionFixed(ACTOR_IVAN, (attendantX << 16) + px(16),
-                         (attendantZ << 16) - px(40));
-  Actor_SetPositionFixed(ACTOR_MIA, (attendantX << 16),
-                         ((attendantZ << 16) - px(32)));
-  Actor_SetPositionFixed(attendantId, (attendantX << 16),
-                         ((attendantZ << 16) - px(80)));
+  Actor_SetPositionFixed(ACTOR_PARTY_LEADER, px(attendantX),
+                         (px(attendantZ) - px(48)));
+  Actor_SetPositionFixed(ACTOR_GARET, px(attendantX) - px(16),
+                         px(attendantZ) - px(40));
+  Actor_SetPositionFixed(ACTOR_IVAN, px(attendantX) + px(16),
+                         px(attendantZ) - px(40));
+  Actor_SetPositionFixed(ACTOR_MIA, px(attendantX), (px(attendantZ) - px(32)));
+  Actor_SetPositionFixed(attendantId, px(attendantX),
+                         (px(attendantZ) - px(80)));
   Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
   FieldCamera_FollowActor(ACTOR_PARTY_LEADER, 0);
   Event_StartScreenTransition();

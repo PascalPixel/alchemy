@@ -36,17 +36,17 @@ void KolimaPalette_Curse(s32 strength) {
 /// One cursed colour: red gains a 4 * adj'th of itself (up to 31), and green
 /// and blue lose an adj'th.
 static u16 KolimaPalette_AdjustColorChannels(u16 color, s32 adj) {
-  s16 green = ((color >> 5) & 31);
-  s16 red = (color & 31);
-  s16 blue = ((color >> 10) & 31);
+  s16 green = RGB_GREEN(color);
+  s16 red = RGB_RED(color);
+  s16 blue = RGB_BLUE(color);
   u32 packed;
 
   red = (red + Math_Divide(red, (adj << 2)));
   green = (green - Math_Divide(green, adj));
   blue = (blue - Math_Divide(blue, adj));
 
-  if (red > 31)
-    red = 31;
+  if (red > RGB_LEVEL_MAX)
+    red = RGB_LEVEL_MAX;
 
   packed = red | ((blue << 10) | (green << 5));
   return packed;
@@ -56,14 +56,14 @@ static u16 KolimaPalette_AdjustColorChannels(u16 color, s32 adj) {
 /// gKolimaPalette_Healthy.
 static void KolimaPalette_SaveHealthy(void) {
   Dma_Set(gPaletteFadeWork->palette, gKolimaPalette_Healthy,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 224, REG_DMA3);
+          DMA_COPY_WORDS(224), REG_DMA3);
 }
 
 /// Keeps the cursed colours: the palette fade's colours into
 /// gKolimaPalette_Cursed.
 static void KolimaPalette_SaveCursed(void) {
-  Dma_Set(gPaletteFadeWork->palette, gKolimaPalette_Cursed,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 224, REG_DMA3);
+  Dma_Set(gPaletteFadeWork->palette, gKolimaPalette_Cursed, DMA_COPY_WORDS(224),
+          REG_DMA3);
 }
 
 /// Copies the palettes on the screen, background and sprites, into the palette
@@ -71,10 +71,8 @@ static void KolimaPalette_SaveCursed(void) {
 static void KolimaPalette_Capture(void) {
   u16 *buf = gPaletteFadeWork->palette;
 
-  Dma_Set((const void *)BG_PLTT, buf, (DMA_ENABLE | DMA_32BIT) << 16 | 112,
-          REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, buf + 224,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 112, REG_DMA3);
+  Dma_Set((const void *)BG_PLTT, buf, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, buf + 224, DMA_COPY_WORDS(112), REG_DMA3);
   PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
 }
 
@@ -85,11 +83,9 @@ void KolimaPalette_Restore(s32 second) {
   u16 *buf = gPaletteFadeWork->palette;
 
   if (second)
-    Dma_Set(gKolimaPalette_Cursed, buf, (DMA_ENABLE | DMA_32BIT) << 16 | 224,
-            REG_DMA3);
+    Dma_Set(gKolimaPalette_Cursed, buf, DMA_COPY_WORDS(224), REG_DMA3);
   else
-    Dma_Set(gKolimaPalette_Healthy, buf, (DMA_ENABLE | DMA_32BIT) << 16 | 224,
-            REG_DMA3);
+    Dma_Set(gKolimaPalette_Healthy, buf, DMA_COPY_WORDS(224), REG_DMA3);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   KolimaPalette_Capture();
 }

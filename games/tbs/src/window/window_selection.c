@@ -4,6 +4,9 @@
 
 #include "window_internal.h"
 
+/// The selection row's icons stand 16 pixels apart.
+#define SELECTION_ICON_SPACING 16
+
 /// Allocates and resets the selection screen: the row of icons the player picks
 /// from, with arrows at each end and a pointing hand over the chosen target.
 void SelectionMenu_Create(void) {
@@ -119,10 +122,10 @@ void SelectionMenu_BuildEntries(u32 unused) {
     entryIndex++;
   }
 
-  // Icons are 16 pixels apart: the row is centred on x 100, at y 140.
-  screen->baseX = 100 - rowPosition * 8;
+  // The row is centred on x 100, at y 140.
+  screen->baseX = 100 - rowPosition * SELECTION_ICON_SPACING / 2;
   screen->baseY = 140;
-  // rowPosition, the row's icon count, now steps 16 pixels an icon.
+  // rowPosition, the row's icon count, now steps an icon's spacing.
   for (previous = screen->head, rowPosition = 0; previous != 0;
        previous = previous->next) {
     s32 x = screen->baseX + rowPosition;
@@ -140,7 +143,7 @@ void SelectionMenu_BuildEntries(u32 unused) {
     }
     previous->dx = 0;
     previous->dy = 0;
-    rowPosition += 16;
+    rowPosition += SELECTION_ICON_SPACING;
   }
   SelectionMenu_LoadLargeIcon();
 }
@@ -284,7 +287,7 @@ void SelectionMenu_Draw(void) {
     if (GameFlag_GetFar(FLAG_IN_BATTLE) != 0) {
       commandSprite->mode = 1;
     }
-    Oam_AddSpriteAtDepth(commandSprite, 248);
+    Oam_AddSpriteAtDepth(commandSprite, OAM_DEPTH_WINDOW + 8);
   }
   SelectionMenu_DrawArrow(state, 0);
   SelectionMenu_DrawArrow(state, 1);
@@ -323,7 +326,7 @@ void SelectionMenu_Draw(void) {
         sprite->mode = 1;
       }
     }
-    Oam_AddSpriteAtDepth(sprite, 240);
+    Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW);
     node = node->next;
   }
   // Point at the selected battle target, smoothing each axis separately: the
@@ -360,7 +363,7 @@ void SelectionMenu_Draw(void) {
         cursorEntry->mode = 0;
       }
     }
-    Oam_AddSpriteAtDepth(cursorEntry, 248);
+    Oam_AddSpriteAtDepth(cursorEntry, OAM_DEPTH_WINDOW + 8);
   }
   state->status += 1;
 }
@@ -396,7 +399,7 @@ void SelectionMenu_DrawArrow(struct SelectionMenuWork *state, s32 side) {
     else
       arrow->mode = 0;
   }
-  Oam_AddSpriteAtDepth(arrow, 238);
+  Oam_AddSpriteAtDepth(arrow, OAM_DEPTH_WINDOW - 2);
   if (state->records[side].base != 0)
     state->records[side].base--;
 }
@@ -501,7 +504,7 @@ void SelectionMenu_SetPosition(u32 x, u32 y) {
     node->y = y;
     node->targetY = y;
     node = node->next;
-    x += 16;
+    x += SELECTION_ICON_SPACING;
   }
 }
 
@@ -534,7 +537,8 @@ void SelectionMenu_SetupArrow(struct SelectionMenuWork *state, s32 side) {
     }
     arrowTiles = right;
     // Just past the last of the at most five icons shown.
-    state->records[1].x = state->baseX + 16 * (count - 1) + 17;
+    state->records[1].x =
+        state->baseX + SELECTION_ICON_SPACING * (count - 1) + 17;
   } else {
     arrowTiles = gMenu_CursorLeftActorTiles;
     state->records[0].x = state->baseX - 9;
@@ -755,13 +759,13 @@ void SelectionMenu_StepRight(struct SelectionMenuWork *state) {
       state->cursorIndex = 0;
       state->top = 0;
       node = state->head;
-      y = node->x + 16;
+      y = node->x + SELECTION_ICON_SPACING;
       node = node->next;
       while (node != NULL) {
         node->targetX = y;
         node->dx = 12;
         node = node->next;
-        y += 16;
+        y += SELECTION_ICON_SPACING;
       }
       state->records[1].kind = TRUE;
     } else if (state->cursorIndex == SELECTION_LAST_PLACE &&
@@ -812,7 +816,7 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
       }
     } else {
       node = state->head;
-      i = 64;
+      i = SELECTION_LAST_PLACE * SELECTION_ICON_SPACING;
       // kind, which later takes the head's kind, carries the 0 first.
       kind = 0;
       state->records[1].kind = kind;
@@ -820,7 +824,7 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
         node->targetX = node->x + i;
         node->dx = 12;
         node = node->next;
-        i -= 16;
+        i -= SELECTION_ICON_SPACING;
       }
       node = state->head;
       while (node->x != node->targetX)
@@ -842,7 +846,7 @@ void SelectionMenu_StepLeft(struct SelectionMenuWork *state) {
         node->targetX = i;
         node->dx = -12;
         node = node->next;
-        i += 16;
+        i += SELECTION_ICON_SPACING;
       }
       state->records[0].kind = TRUE;
     }
@@ -934,21 +938,21 @@ void SelectionMenu_Scroll(struct SelectionMenuWork *screen, s32 forward) {
       return;
     SelectionMenu_SetupIcon(kind, base, node, 0);
     rowX = screen->baseX;
-    node->x = rowX + 80;
+    node->x = rowX + (SELECTION_LAST_PLACE + 1) * SELECTION_ICON_SPACING;
     rowY = screen->baseY;
-    node->targetX = rowX + 64;
+    node->targetX = rowX + SELECTION_LAST_PLACE * SELECTION_ICON_SPACING;
     node->y = rowY;
     node->targetY = rowY;
-    node->scaleStep = 32;
-    node->scale = 32;
-    node->scaleEnd = 256;
+    node->scaleStep = Q_8_8(1) / 8;
+    node->scale = Q_8_8(1) / 8;
+    node->scaleEnd = Q_8_8(1);
     node->dx = -2;
     last = node;
     node = screen->head;
-    node->scaleStep = -32;
+    node->scaleStep = -Q_8_8(1) / 8;
     node->scaleEnd = 0;
     for (;;) {
-      node->targetX = node->x - 16;
+      node->targetX = node->x - SELECTION_ICON_SPACING;
       node->dx = -2;
       if (node->next == NULL)
         break;
@@ -974,14 +978,14 @@ void SelectionMenu_Scroll(struct SelectionMenuWork *screen, s32 forward) {
     if (node == NULL)
       return;
     SelectionMenu_SetupIcon(kind, base, node, 0);
-    node->x = screen->baseX - 16;
+    node->x = screen->baseX - SELECTION_ICON_SPACING;
     node->y = screen->baseY;
     node->targetY = node->y;
     node->dx = 2;
-    node->scale = 32;
-    node->scaleStep = 32;
-    node->targetX = node->x + 16;
-    node->scaleEnd = 256;
+    node->scale = Q_8_8(1) / 8;
+    node->scaleStep = Q_8_8(1) / 8;
+    node->targetX = node->x + SELECTION_ICON_SPACING;
+    node->scaleEnd = Q_8_8(1);
     first = node;
     node = screen->head;
     node->previous = first;
@@ -990,18 +994,18 @@ void SelectionMenu_Scroll(struct SelectionMenuWork *screen, s32 forward) {
     screen->head = first;
     node = first;
     for (;;) {
-      node->targetX = node->x + 16;
+      node->targetX = node->x + SELECTION_ICON_SPACING;
       node->dx = 2;
       if (node->next == NULL)
         break;
       node = node->next;
     }
     node->scaleEnd = 0;
-    node->scaleStep = -32;
+    node->scaleStep = -Q_8_8(1) / 8;
     node = screen->head;
     do {
       wait(1);
-    } while (node->scale != 256);
+    } while (node->scale != Q_8_8(1));
     while (node->next != NULL)
       node = node->next;
     VramCache_FreeEntry(node->slot);
@@ -1182,7 +1186,7 @@ u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen) {
   node->targetX = 4;
   for (other = screen->path, nodeIndex = 0; other != NULL;
        other = other->next) {
-    node->targetX += 16;
+    node->targetX += SELECTION_ICON_SPACING;
     nodeIndex++;
   }
   screen->pathTop[nodeIndex] = screen->top;
@@ -1236,10 +1240,10 @@ u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen) {
 /// others are reached only through bare entries of the window far-call table.
 UNUSED void MenuArrow_NoOpCallback(void) {}
 void MenuArrow_NoOpCallbackBank(void) {}
-void MenuArrow_NoOpCallback1(void) {}
-UNUSED void MenuArrow_NoOpCallback2(void) {}
-UNUSED void MenuArrow_NoOpCallback3(void) {}
-void MenuArrow_NoOpCallback4(void) {}
+void MenuArrow_NoOpCallbackA(void) {}
+UNUSED void MenuArrow_NoOpCallbackB(void) {}
+UNUSED void MenuArrow_NoOpCallbackC(void) {}
+void MenuArrow_NoOpCallbackD(void) {}
 
 /// Sets up a sprite as the right-pointing arrow, in a free tile slot (returned
 /// in *slot).
@@ -1264,7 +1268,7 @@ void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot) {
 void MenuArrow_SetPosition(struct MenuSprite *sprite, s32 x, s32 y) {
   sprite->oam.f.x = x;
   sprite->oam.f.y = y;
-  Oam_AddSpriteAtDepth(sprite, 252);
+  Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_FRONT - 3);
 }
 
 /// Frees an arrow sprite's tile slot.

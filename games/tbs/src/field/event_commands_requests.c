@@ -74,7 +74,7 @@ void Event_LeaveFor(u16 sceneId, u16 entrance) {
   work->exit = EXIT_KEEP_DESTINATION;
 }
 
-/// Plays SE_STOP_MUSIC_PLAYER_5, then soundId (SOUND_FADE_OUT_ACTION_SE for
+/// Plays SE_STOP_EXIT_SE, then soundId (SOUND_FADE_OUT_ACTION_SE for
 /// -1), and remembers soundId for Scene_PlayQueuedMusic in the field work's
 /// queuedSound; -1 is remembered as none, so it plays SOUND_FADE_OUT_ACTION_SE
 /// now and nothing later.
@@ -83,7 +83,7 @@ void Scene_QueueMusic(s32 soundId) {
   if ((s16)soundId == -1) {
     soundId = SOUND_FADE_OUT_ACTION_SE;
   }
-  Sound_PlayFar(SE_STOP_MUSIC_PLAYER_5);
+  Sound_PlayFar(SE_STOP_EXIT_SE);
   Sound_PlayFar(soundId);
 }
 

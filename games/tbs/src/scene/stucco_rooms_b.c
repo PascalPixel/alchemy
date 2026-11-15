@@ -185,10 +185,6 @@ enum StuccoRoomsBCellBehavior {
   CELL_BEHAVIOR_STUCCO_ROOMS_B_SEAFOOD_PASTA_OVEN = 202,
 };
 
-/// A facing rounded to the nearest of east, south, west and north.
-#define FACING_NEAREST_CARDINAL(facing)                                        \
-  ((u16)(((facing) + TRIG_TURN / 8) & ~0x3fff))
-
 // Area flags: Scene_Arrive clears 0x300 to 0x3ff when the
 // party enters another area, and other areas use the numbers for
 // their own.
@@ -471,7 +467,7 @@ s32 Scene_Initialize(void) {
 /// In Tolbi, the item merchant sells or chats, by where the leader stands.
 static void StuccoRoomsB_TalkToItemMerchant(s32 speaker) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_WEST) {
+  if ((u16)FACING_NEAREST_CARDINAL(leader->facing) == FACING_WEST) {
     Shop_Run(STUCCO_ROOMS_B_ITEM_SHOP, speaker);
   } else if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     Event_SetMessageId(MsgTolbiRightOneWell);
@@ -489,7 +485,7 @@ static void StuccoRoomsB_TalkToItemMerchant(s32 speaker) {
 /// In Tolbi, the weapon merchant sells or chats, by where the leader stands.
 static void StuccoRoomsB_TalkToWeaponMerchant(s32 speaker) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
+  if ((u16)FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
     Shop_Run(STUCCO_ROOMS_B_WEAPON_SHOP, speaker);
   } else if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     StuccoRoomsB_AskYesNo(MsgTolbiComeWayKalay, speaker);
@@ -511,7 +507,7 @@ static void StuccoRoomsB_TalkToWeaponMerchant(s32 speaker) {
 /// In Tolbi, the armor merchant sells or chats, by where the leader stands.
 static void StuccoRoomsB_TalkToArmorMerchant(s32 speaker) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
+  if ((u16)FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
     Shop_Run(STUCCO_ROOMS_B_ARMOR_SHOP, speaker);
   } else {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
@@ -608,7 +604,7 @@ static void StuccoRoomsB_TalkToFellowPassenger(s32 speaker) {
 /// In Tolbi Sanctum, the healer heals or chats, by where the leader stands.
 static void StuccoRoomsB_TalkToHealer(s32 speaker) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
+  if ((u16)FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
     Sanctum_Run(speaker);
   } else {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {

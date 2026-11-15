@@ -86,7 +86,7 @@ struct BattleEffectWork {
   /// The transfer mode's argument: the fill value, the share kept (50 or 75
   /// percent) or the darken or brighten amount.
   s32 transferValue;
-  s32 unused7788;     ///< never read or written in either game
+  s32 unused;         ///< never read or written in either game
   s32 frame;          ///< frame counter some effects keep, from 0
   s32 scrollTimer;    ///< frames since the last interval scroll step
   s32 scrollInterval; ///< frames between interval scroll steps

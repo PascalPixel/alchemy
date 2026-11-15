@@ -126,6 +126,7 @@
 #include "scene/import.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
+#include "system/heap.h"
 #include "system/input.h"
 #include "system/io_reg.h"
 #include "system/main_routine.h"
@@ -1292,7 +1293,7 @@ static void FuchinFallsCave_RebuildArcticBladeRoomLogs(void) {
 /// The fade overlay follows the leader through the dragon statue room.
 static void FuchinFallsCave_FollowLeaderWithLight(void) {
   if (gImilFuchinFalls_TrackLeader != 0) {
-    struct FadeOverlayWork *work = *(gHeapSlots + 36);
+    struct FadeOverlayWork *work = *(gHeapSlots + HEAP_SLOT_FADE_OVERLAY);
 
     work->actor = Actor_Get(ACTOR_PARTY_LEADER);
   }
@@ -1302,7 +1303,7 @@ static void FuchinFallsCave_FollowLeaderWithLight(void) {
 /// following the leader.
 static void FuchinFallsCave_StopLightFollowingLeader(void) {
   if (gImilFuchinFalls_TrackLeader != 0) {
-    struct FadeOverlayWork *work = *(gHeapSlots + 36);
+    struct FadeOverlayWork *work = *(gHeapSlots + HEAP_SLOT_FADE_OVERLAY);
 
     work->actor = NULL;
   }
@@ -1477,7 +1478,7 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
     actor->retainSpriteCache = 1;
     glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*glyph));
     Icon_DrawItem(ITEM_DRAGONS_EYE);
-    VramCache_Load(sprite->slot, 128, glyph->tiles);
+    VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     gImilFuchinFalls_DragonsEye = actor;
   }
@@ -1584,14 +1585,14 @@ static void ImilFuchinFalls_BlowCaveMouthDust(void) {
   framePhase = gFrameCount & 3;
   if (framePhase != 0)
     return;
-  options.palette = 10;
+  options.palette = SPRITE_COLOR_RED_TINT;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
   options.targetScaleX = 9 * Q16_ONE / 5;
   options.targetScaleY = 9 * Q16_ONE / 5;
   if ((gFrameCount & 7) == 0)
     Sound_Play(SE_WHOOSH);
-  velocityX = -px(1) - ((Random_Below(2)) << 16);
+  velocityX = -px(1) - px(Random_Below(2));
   velocityY = -((Random_Below(3)) * (px(1) / 5));
   ImilFuchinFalls_SpawnDust(
       px(308), px(64), px(222), velocityX, velocityY, framePhase,
@@ -1694,8 +1695,8 @@ static void FuchinFallsCave_EndRevealLighting(void) {
 
   if (gMainRoutineWork.entrance <=
       FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_EAST) {
-    effectWork = *(gHeapSlots + 56);
-    state = *(gHeapSlots + 31);
+    effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
+    state = *(gHeapSlots + HEAP_SLOT_SCREEN_TRANSITION);
     effectWork->childOption = 1;
     state->nextMode = 0;
     state->duration = 1;
@@ -1720,7 +1721,7 @@ static void Imil_TurnSkaterTowardHeldDirection(struct Actor *actor) {
     return;
   }
   actor->steeringFlags = 0;
-  direction = gImilFuchinFalls_KeyHeadings[(gKeysHeld >> 4) & 15];
+  direction = gImilFuchinFalls_KeyHeadings[DPAD_INDEX(gKeysHeld)];
   if (direction == -1) {
     Actor_SelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
     return;
@@ -1750,7 +1751,7 @@ static void Imil_SlideActorAcrossIce(void) {
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
 
   for (;;) {
-    heading = gImilFuchinFalls_SlideHeadings[(gKeysHeld >> 4) & 15];
+    heading = gImilFuchinFalls_SlideHeadings[DPAD_INDEX(gKeysHeld)];
     if ((u16)heading == 0xffff) {
       return;
     }

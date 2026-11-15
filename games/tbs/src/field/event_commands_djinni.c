@@ -28,11 +28,9 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   s32 i;
   UNUSED struct Actor *copies[DJINNI_CLONE_MAX];
 
-  // The way the leader faces, to the nearest quarter turn.
   djinni = Actor_GetById(djinniId);
-  dir =
-      (Actor_GetById(gMainRoutineWork.leaderActorId)->facing + TRIG_TURN / 8) &
-      0xc000;
+  dir = FACING_NEAREST_CARDINAL(
+      Actor_GetById(gMainRoutineWork.leaderActorId)->facing);
   Event_Start();
   wait(10);
   Sound_PlayFar(SE_NOTE_LOW);
@@ -84,8 +82,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
                            djinni->z.fixed);
     copies[i] = copy;
     if (copy != NULL) {
-      copy->scaleY = Q16_ONE * 15 / 16;
-      copy->scaleX = Q16_ONE * 15 / 16;
+      copy->scaleY = AFTERIMAGE_SCALE;
+      copy->scaleX = AFTERIMAGE_SCALE;
       copy->motionFlags = 0;
       copy->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       copy->steeringFlags |= ACTOR_FACES_MOTION;
@@ -130,7 +128,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   work = gFieldWork;
   if (GameFlag_GetFar(FLAG_DJINN_LESSON) != 0) {
     owner = 0;
-    GameFlag_SetFar(djinn + element * 20 + FLAG_DJINN_FIRST);
+    GameFlag_SetFar(djinn + element * DJINN_PER_ELEMENT + FLAG_DJINN_FIRST);
   } else {
     owner = Djinn_GiveToPartyFar(element, djinn);
   }
@@ -181,7 +179,8 @@ void Djinn_RestoreActorAfterBattle(void) {
     event &= DJINN_PENDING_BATTLE_EVENT_MASK;
     // event is unsigned: events below DJINNI_BATTLE_EVENT_FIRST fail the range
     // test too.
-    if (event - DJINNI_BATTLE_EVENT_FIRST <= 80 &&
+    if (event - DJINNI_BATTLE_EVENT_FIRST <=
+            ELEMENT_COUNT * DJINN_PER_ELEMENT &&
         gMainRoutineWork.sequenceResult > 0) {
       for (id = ACTOR_FIRST_PLACED; id <= ACTOR_LAST_ID; id++) {
         struct ActorPlacement *desc = Scene_FindActorPlacement(id);
@@ -225,13 +224,13 @@ void Djinn_ResolvePending(s32 shown) {
     if (kind == 0) {
       flag &= DJINN_PENDING_BATTLE_EVENT_MASK;
       if (flag < DJINNI_BATTLE_EVENT_FIRST ||
-          flag > DJINNI_BATTLE_EVENT_FIRST + 80)
+          flag > DJINNI_BATTLE_EVENT_FIRST + ELEMENT_COUNT * DJINN_PER_ELEMENT)
         return;
       // Won: the event waits for the call once the scene is shown.
       if (st->sequenceResult > 0 && st->sequenceResult != 999)
         return;
-      // DJINNI_BATTLE_EVENT_FIRST + n less 172 is FLAG_DJINN_HIDING_FIRST + n.
-      GameFlag_SetFar(flag - 172);
+      GameFlag_SetFar(flag -
+                      (DJINNI_BATTLE_EVENT_FIRST - FLAG_DJINN_HIDING_FIRST));
       st->pendingDjinni = kind;
     } else if (kind == CONDITION_FLAG_SET) {
       if (st->sequenceResult == 1)
@@ -243,12 +242,12 @@ void Djinn_ResolvePending(s32 shown) {
   if (kind == 0) {
     flag &= DJINN_PENDING_BATTLE_EVENT_MASK;
     if (flag >= DJINNI_BATTLE_EVENT_FIRST &&
-        flag <= DJINNI_BATTLE_EVENT_FIRST + 80) {
+        flag <= DJINNI_BATTLE_EVENT_FIRST + ELEMENT_COUNT * DJINN_PER_ELEMENT) {
       flag &= DJINN_PENDING_BATTLE_EVENT_MASK;
       if (st->sequenceResult > 0) {
         s32 djinni = flag - DJINNI_BATTLE_EVENT_FIRST;
-        s32 element = djinni / 20;
-        s32 index = djinni % 20;
+        s32 element = djinni / DJINN_PER_ELEMENT;
+        s32 index = djinni % DJINN_PER_ELEMENT;
         s32 actorId;
 
         for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_ID;

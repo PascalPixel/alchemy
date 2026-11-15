@@ -36,7 +36,7 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                       BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |
                           BLDCNT_TGT2_BG3,
-                      IO_WRITE_16);
+                      IO_WRITE_HALFWORD);
   sprite->image.objectMode = 1;
   sprite->shadow.objectMode = 1;
   Sound_Play(SE_COLOSSO_WARRIOR_APPEAR);
@@ -44,10 +44,11 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
     actor->scaleX = (i << 12) + Q16_ONE / 16;
     actor->scaleY = 31 * Q16_ONE / 16 - (i << 12);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((15 - i) << 8) | (i + 1),
-                        IO_WRITE_16);
+                        IO_WRITE_HALFWORD);
     wait(1);
   }
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 0), IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 0),
+                      IO_WRITE_HALFWORD);
   actor->scaleX = 17 * Q16_ONE / 16;
   actor->scaleY = 15 * Q16_ONE / 16;
   Event_Wait(1);
@@ -166,7 +167,7 @@ static void Colosso_UpdateMarker(void) {
     *dst++ = 0;
     *dst++ = (y - 8) | ((x - 8) << 16) | size | (gColosso_MarkerFlip << 28);
     *dst = tile | OBJ_PRIORITY(1);
-    Oam_AddSpriteAtDepth(oam, 255);
+    Oam_AddSpriteAtDepth(oam, OAM_DEPTH_FRONT);
   } else if (gColosso_MarkerBlink > 19) {
     gColosso_MarkerBlink = 0;
   }

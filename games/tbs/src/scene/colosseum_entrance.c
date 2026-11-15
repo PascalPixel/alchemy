@@ -1092,7 +1092,7 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
     Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 184, 796);
     Actor_SetPosition(ACTOR_FAILING_WARRIOR, 0, 0);
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-    gFieldWork->transitionFrames = 16;
+    gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1242,7 +1242,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, WARRIOR_ANIMATION_ARMS_RAISED);
   Event_Wait(80);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  gFieldWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_Set(FLAG_COLOSSO_CLEARED_TRIAL_SEEN);

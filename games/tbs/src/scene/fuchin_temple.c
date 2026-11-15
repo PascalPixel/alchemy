@@ -591,7 +591,7 @@ static void FuchinTemple_ToppleTreeWest(void) {
   s32 angle;
 
   for (turnStep = 8; turnStep > 3; turnStep--) {
-    angle = turnStep << 12;
+    angle = turnStep * FACING_STEP;
     tree->sprite->rotation = angle;
     wait((turnStep - 4) * 2);
     tree->x.fixed += Trig_Cos(angle) * 6;
@@ -620,7 +620,7 @@ static void FuchinTemple_ToppleTreeEast(void) {
 
   tree = Actor_Get(ACTOR_TRAINING_TREE);
   for (turnStep = 8; turnStep <= 12; turnStep++) {
-    angle = turnStep << 12;
+    angle = turnStep * FACING_STEP;
     tree->sprite->rotation = angle;
     wait((12 - turnStep) * 2);
     tree->x.fixed -= Trig_Cos(angle) * 6;

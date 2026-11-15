@@ -5,6 +5,10 @@
 
 #include "field_sequence_internal.h"
 
+/// The frames the leader pushes against a step trigger, a ledge, a gap or a
+/// wall before it runs, jumps or climbs.
+#define FIELD_PUSH_FRAMES 12
+
 /// Returns the actor placement of actor id in the scene's
 /// actor placement tables, or NULL: for a party character (0 to 7) the row with
 /// its sprite, and for a placed actor (8 on) the row it was created
@@ -108,7 +112,7 @@ const struct Trigger *Scene_FindTrigger(s32 kind, s32 target) {
          (GameFlag_IsConditionActive(trigger->condition) != 0 &&
           (flags = trigger->kind, 1)))) {
       s32 matches = 0;
-      s32 minimumPushFrames = 12;
+      s32 minimumPushFrames = FIELD_PUSH_FRAMES;
       s32 touchRequirements;
 
       if ((flags & STEP_TRIGGER_FLAG_QUICK) != 0)
@@ -213,13 +217,14 @@ s32 Scene_TalkToActor(s32 id) {
 
   if (trigger != 0 && trigger->value != 0) {
     if (!actorPaused) {
-      // Stop the actor; with talk facing 0, 1 or 3, also stop the leader
-      // and make each watch the other.
+      // Stop the actor; with any talk facing but TALK_FACING_KEEP, also stop
+      // the leader and make each watch the other.
       actor->paused = 1;
       Actor_SetAnimationSpeedFar(actor, 0);
       savedAngle = actor->facing;
       talkFacing = (u8)placement->talkFacing << 24;
-      if (talkFacing <= (1 << 24) || talkFacing == (3 << 24)) {
+      if (talkFacing <= (TALK_FACING_PARTY_AND_BACK << 24) ||
+          talkFacing == (TALK_FACING_PARTY_THEN_WATCH << 24)) {
         struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
         leader->targetX = leader->x.fixed;
@@ -242,20 +247,20 @@ s32 Scene_TalkToActor(s32 id) {
       ((void (*)(s32))trigger->value)(id);
     }
     if (!actorPaused) {
-      // An actor left idle (script command 16) goes back to what its
-      // talk facing says: following the leader (3) or its old angle (1).
-      if (actor->script[actor->scriptCursor] == 16) {
-        if ((s8)placement->talkFacing == 3) {
+      // An actor whose script has ended goes back to what its talk facing
+      // says: watching the leader or its old angle.
+      if (actor->script[actor->scriptCursor] == SCRIPT_CMD_END) {
+        if ((s8)placement->talkFacing == TALK_FACING_PARTY_THEN_WATCH) {
           actor->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
           actor->steeringFlags |= 1;
           Actor_SetMovementType(actor, (s32)gActor_FaceWatchedScript);
-        } else if ((s8)placement->talkFacing == 1) {
+        } else if ((s8)placement->talkFacing == TALK_FACING_PARTY_AND_BACK) {
           actor->timer = savedAngle;
           Actor_StartScriptFar(actor, (const s32 *)gActor_StepAngleScript);
         }
       }
       actor->paused = 0;
-      Actor_SetAnimationSpeedFar(actor, 16);
+      Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
     }
     result = 0;
   }
@@ -358,20 +363,20 @@ s32 Field_RunPushCell(s32 behavior) {
 
   switch (behavior) {
   case CELL_BEHAVIOR_LEDGE:
-    if (work->blockedSteps > 12 && (gKeysHeld & KEY_DOWN)) {
+    if (work->blockedSteps > FIELD_PUSH_FRAMES && (gKeysHeld & KEY_DOWN)) {
       Actor_JumpDownLedge(leader, ANIM_LEADER_SPRING, 0);
       work->blockedSteps = 0;
     }
     break;
   case CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED:
   case CELL_BEHAVIOR_JUMP_FORWARD:
-    if (work->blockedSteps > 12) {
+    if (work->blockedSteps > FIELD_PUSH_FRAMES) {
       Field_TryJumpForward();
       work->blockedSteps = 0;
     }
     break;
   case CELL_BEHAVIOR_CLIMB:
-    if (work->blockedSteps > 12) {
+    if (work->blockedSteps > FIELD_PUSH_FRAMES) {
       if (gKeysHeld & KEY_DOWN) {
         Field_ClimbDown();
       } else if (gKeysHeld & KEY_UP) {
@@ -597,3 +602,5 @@ s32 Field_ExamineCell(s32 tile) {
   }
   return 0;
 }
+
+#undef FIELD_PUSH_FRAMES

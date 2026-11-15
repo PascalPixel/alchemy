@@ -219,7 +219,7 @@ void DebugFlagEditor_DrawTable(struct Window *window, s32 page) {
 
     for (i = 0; i < 16; i++) {
       s32 set = GameFlag_GetFar(flag);
-      bits[i] = (set != 0) + 48;
+      bits[i] = (set != 0) + '0';
       flag++;
     }
     bits[i] = 0;

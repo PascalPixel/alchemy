@@ -77,7 +77,8 @@ void Sanctum_ShowKeeperMessage(s32 messageId) {
       Speaker_GetVoiceFar(((struct ShopWork *)gMenuWork)->keeperGraphics);
   Message_CloseFinishedWindowsFar();
   messageId = Sanctum_GetServiceMessage(messageId);
-  Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
+  Message_OpenWindowFar(messageId, 5, 0,
+                        MESSAGE_WINDOW_VOICE(portraitResource) | 0x22);
   while (Message_AllTypedFar() == 0) {
     wait(1);
   }
@@ -93,7 +94,8 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
   messageId = Sanctum_GetServiceMessage(messageId);
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
-  Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
+  Message_OpenWindowFar(messageId, 5, 0,
+                        MESSAGE_WINDOW_VOICE(portraitResource) | 0x22);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
@@ -191,7 +193,7 @@ s32 Sanctum_RunPartyService(void) {
   listWindow = Window_CreateFar(1, 12, 13, 3, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   // redraw is 1 here: the hand's first move to a party member takes one frame
-  shop->mode = redraw;
+  shop->cursorFrames = redraw;
   Menu_CreatePartyFiguresFar(listWindow, 2, 0, 8, 0);
   priceWindow =
       Window_CreateFar(SANCTUM_PRICE_WINDOW_X, 16, SANCTUM_PRICE_WINDOW_WIDTH,
@@ -227,7 +229,7 @@ s32 Sanctum_RunPartyService(void) {
           (memberIndex + shop->partyMemberCount) % shop->partyMemberCount;
       unitId = shop->partyMemberIds[memberIndex];
       MenuCursor_Place(listWindow, memberIndex * 24 - 12, 0);
-      shop->mode = 3;
+      shop->cursorFrames = 3;
       Sanctum_HighlightMembers(listWindow, memberIndex);
       Sanctum_DrawFee(priceWindow, unitId);
     }
@@ -417,7 +419,7 @@ void Sanctum_UpdateBurst(void) {
   burstMember = shop->burstMember;
   if (burstMember != -1)
     Sprite_SetAnimationColorModesFar(shop->partyMemberIcons[burstMember],
-                                     (Random16() * 7) >> 16);
+                                     Random16_Below(7));
 }
 
 /// The tune each service's burst plays.
@@ -459,7 +461,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
                                 position.z);
     FieldParticle_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
     FieldParticle_SetActorModeFar(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->actor, (Random16() * 7) >> 16);
+    Sprite_SetAnimationColorModesFar(effect->actor, Random16_Below(7));
     effect->scaleY = Q16_ONE * 7 / 10;
     effect->scaleX = Q16_ONE * 7 / 10;
     wait(3);

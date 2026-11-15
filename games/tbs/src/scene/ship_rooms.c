@@ -109,6 +109,7 @@
 #include "field/event_inline.h"
 #include "field/field.h"
 #include "field/field_sequence.h"
+#include "field/pushed_actor.h"
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
 #include "game/game.h"
@@ -1117,17 +1118,17 @@ static void ShipRooms_StepBesideLeader(s32 passengerId) {
   passenger->priorityFlags =
       ACTOR_PRIORITY_AUTOMATIC | passenger->priorityFlags;
   // Try the leader's right, then left, then the space behind.
-  direction = ((leader->facing + TRIG_TURN / 4) & 0xf000) >> 12;
+  direction = FACING_SIXTEENTH(leader->facing + TRIG_TURN / 4) >> 12;
   if (ShipRooms_IsSpotFree(direction) != 0) {
     blocked = 0;
   }
   if (blocked != 0) {
-    direction = ((leader->facing - TRIG_TURN / 4) & 0xf000) >> 12;
+    direction = FACING_SIXTEENTH(leader->facing - TRIG_TURN / 4) >> 12;
     if (ShipRooms_IsSpotFree(direction) != 0) {
       blocked = 0;
     }
     if (blocked != 0) {
-      direction = ((leader->facing + TRIG_TURN / 2) & 0xf000) >> 12;
+      direction = FACING_SIXTEENTH(leader->facing + TRIG_TURN / 2) >> 12;
     }
   }
   {
@@ -2028,7 +2029,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   ShipRooms_Turn(ACTOR_QUARTERS_CAPTAIN, FACING_SOUTH_SOUTHWEST);
   ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_SECOND_GUIDE, 1);
-  ShipRooms_Turn(ACTOR_QUARTERS_SECOND_GUIDE, (176 << 8));
+  ShipRooms_Turn(ACTOR_QUARTERS_SECOND_GUIDE, FACING_NORTH_NORTHWEST);
   Event_ShowMessageThenWait(ACTOR_QUARTERS_SECOND_GUIDE, 0, 20);
   Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
   Actor_SetSpeed(ACTOR_QUARTERS_CAPTAIN, 0.8);
@@ -2042,13 +2043,13 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_SetAnimation(ACTOR_QUARTERS_CAPTAIN, ANIM_SHAKE_HEAD);
   Event_ShowMessageThenWait(captainAboveSpeech, 0, 40);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_OURANOS, 1);
-  ShipRooms_Turn(ACTOR_QUARTERS_OURANOS, (176 << 8));
+  ShipRooms_Turn(ACTOR_QUARTERS_OURANOS, FACING_NORTH_NORTHWEST);
   ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_OURANOS, SPEAKER_PORTRAIT_LEFT));
   Actor_ShowEmote(ACTOR_QUARTERS_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   Actor_SetSpeed(ACTOR_QUARTERS_CREWMAN, 2.4);
   Actor_Jump(ACTOR_QUARTERS_CREWMAN, 2, 0);
   Actor_WalkToAndWait(ACTOR_QUARTERS_CREWMAN, 462, 674);
-  ShipRooms_Turn(ACTOR_QUARTERS_CREWMAN, (176 << 8));
+  ShipRooms_Turn(ACTOR_QUARTERS_CREWMAN, FACING_NORTH_NORTHWEST);
   Actor_StartRepeatedMotion(ACTOR_QUARTERS_CREWMAN, 2);
   ShipRooms_Say(ACTOR_QUARTERS_CREWMAN);
   ShipRooms_Turn(ACTOR_QUARTERS_KAJA, FACING_SOUTH_SOUTHWEST);
@@ -2065,9 +2066,9 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   ShipRooms_Turn(ACTOR_QUARTERS_SEAN, 0);
   Actor_FaceDirection(ACTOR_QUARTERS_CAPTAIN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_QUARTERS_KAJA, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(ACTOR_QUARTERS_OURANOS, (176 << 8), 0);
-  Actor_FaceDirection(ACTOR_QUARTERS_SECOND_GUIDE, (176 << 8), 0);
-  Actor_FaceDirection(ACTOR_QUARTERS_CREWMAN, (176 << 8), 20);
+  Actor_FaceDirection(ACTOR_QUARTERS_OURANOS, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_QUARTERS_SECOND_GUIDE, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_QUARTERS_CREWMAN, FACING_NORTH_NORTHWEST, 20);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_SEAN, 1);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_QUARTERS_SEAN, 0, 20);
   Actor_ShowEmote(ACTOR_QUARTERS_CAPTAIN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
@@ -2936,7 +2937,7 @@ static struct Actor *ShipRooms_PlaceAnchorCharm(void) {
   s32 set = Event_GetFlag(FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN);
   struct Actor *actor;
   struct Sprite *sprite;
-  u8 *buffer;
+  GlyphTransfer *glyph;
 
   if (set != 0) {
     return gShipRooms_AnchorObject;
@@ -2948,9 +2949,9 @@ static struct Actor *ShipRooms_PlaceAnchorCharm(void) {
   sprite->count = set;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
-  buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Icon_DrawItem(ITEM_ANCHOR_CHARM);
-  VramCache_Load(sprite->slot, 128, buffer + 1024);
+  VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   GameFlag_Set(FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN);
   gShipRooms_AnchorObject = actor;
@@ -3081,6 +3082,9 @@ static void ShipRooms_MoveCameraAndWaitFixed(s32 x, s32 y, s32 z, u32 flags) {
 }
 
 /// Reuses the voyage's actor, camera, transition and selection operations.
+/// `opt` is most often a wait in frames (the party's last turn, a nod, an
+/// emote); other steps take it as an animation speed, a second actor or the
+/// last of a range of flags.
 static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
   u32 slot;
 
@@ -4064,15 +4068,14 @@ static void ShipRooms_SwapRowerSelections(s32 firstSeatFlags,
   GameFlag_Set(firstSeatFlags + secondPassenger);
 }
 
-/// The step beside the leader for each of the 16 facings, with x in the high 16
-/// bits and z in the low 16 bits.
-#define TURN_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
-
+/// The step beside the leader for each of the 16 facings.
 s32 gShipRooms_TurnSteps[] = {
-    TURN_STEP(16, 0),  TURN_STEP(16, 0),  TURN_STEP(16, 0),  TURN_STEP(0, 16),
-    TURN_STEP(0, 16),  TURN_STEP(0, 16),  TURN_STEP(0, 16),  TURN_STEP(-16, 0),
-    TURN_STEP(-16, 0), TURN_STEP(-16, 0), TURN_STEP(-16, 0), TURN_STEP(0, -16),
-    TURN_STEP(0, -16), TURN_STEP(0, -16), TURN_STEP(0, -16), TURN_STEP(16, 0),
+    DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
+    DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
+    DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0), DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16), DIRECTION_STEP(0, -16),
+    DIRECTION_STEP(16, 0),
 };
 
 /// The warriors walk out of the hold.

@@ -19,7 +19,7 @@
 /// (Summon_ListLearnedFar, DjinnRecoveryTable.summonMask), four to a page,
 /// those `standby` can pay for first, each with its Djinn cost by element, the
 /// others in TEXT_COLOR_RED.
-s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
+s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
   struct MenuSprite cursorStorage;
   struct MenuSprite sprites[4];
   u8 learnedSummons[33]; // The callable summons, in menu order
@@ -217,7 +217,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     // Each frame: the row icons and the cursor.
     for (index = 0; index <= 3; index++) {
       if (visibleSummons[index] != 0)
-        Oam_AddSpriteAtDepth(&sprites[index], 240);
+        Oam_AddSpriteAtDepth(&sprites[index], OAM_DEPTH_WINDOW);
     }
 
     // The cursor wobbles every four frames.
@@ -228,7 +228,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     cur->oam.f.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     // sprite, done with the row icons, now names the cursor.
     sprite = &cursorStorage;
-    Oam_AddSpriteAtDepth(sprite, 242);
+    Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
 
     // Blink required elements' standby counts every eight frames.
     {

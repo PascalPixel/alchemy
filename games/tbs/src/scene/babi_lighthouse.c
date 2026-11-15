@@ -219,12 +219,13 @@ static void BabiLighthouse_LandWithParticles(void) {
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Event_Wait(24);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   options.update = (void (*)(struct Actor *))FieldEffect_AdvanceMotion;
   options.startScaleX = 4 * Q16_ONE / 5;
   options.startScaleY = 4 * Q16_ONE / 5;
   for (particle = 0; particle < 17; particle++) {
-    SET_VECTOR(velocity, Trig_Cos(particle << 12), 0, Trig_Sin(particle << 12));
+    SET_VECTOR(velocity, Trig_Cos(particle * FACING_STEP), 0,
+               Trig_Sin(particle * FACING_STEP));
     velocity[0] += velocity[0] / 2;
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                       velocity[0], velocity[1], velocity[2],
@@ -1115,7 +1116,7 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
 /// The cell one direction-table step ahead of the actor, at its ground height.
 static inline void BabiLighthouse_FindCellAhead(struct FieldPosition *ahead,
                                                 struct Actor *actor) {
-  s32 step = gPushedActor_DirectionSteps[actor->facing >> 12];
+  s32 step = gPushedActor_DirectionSteps[FACING_INDEX(actor->facing)];
 
   // A step holds its x pixels in the high halfword and its z in the low.
   ahead->x = actor->x.fixed + (step & -0x10000);
@@ -1186,7 +1187,7 @@ static void BabiLighthouse_PushRoadPillar(void) {
 static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *ahead = BabiLighthouse_FindActorAhead(leader);
-  s32 climbDirection = (leader->facing + TRIG_TURN / 8) & 0xc000;
+  s32 climbDirection = FACING_NEAREST_CARDINAL(leader->facing);
   s32 climbResult = -1;
 
   if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_CLIMB || ahead == NULL) {

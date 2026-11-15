@@ -37,10 +37,10 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
-  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // The embers leave the top of the user in a random direction.
   user = GetBattleObjectSlotFar(work->args->user)->actor;
@@ -53,7 +53,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
     angle = Random16();
     speed = (Random16() & 127) + 127;
     SET_VELOCITY(ember, (Trig_Sin(angle) * speed) >> 6,
-                 (s32)(((Random16() & 127) - 16) << 16) >> 6,
+                 (s32)px((Random16() & 127) - 16) >> 6,
                  (Trig_Cos(angle) * speed) >> 6);
     SET_POSITION(ember, user->x.fixed, bodyTop, user->z.fixed);
     ember->variant = -1;
@@ -73,7 +73,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
       work->cameraDelta = 0;
     if (frame == (gFire_Counts[work->args->variant] >> 1) + 108)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
-    BattleCamera_SetViewFar(0, 0, 0, 100);
+    BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     // The embers in flight.
@@ -110,7 +110,8 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
         vy = ember->velocityY += (target->y.fixed - ember->y) >> 9;
         vz = ember->velocityZ += (target->z.fixed - ember->z) >> 9;
         if (frame < launchFrame + 85) {
-          SET_VELOCITY(ember, vx * 60 / 64, vy * 60 / 64, vz * 60 / 64);
+          SET_VELOCITY(ember, vx * 60 / DAMPING_SCALE, vy * 60 / DAMPING_SCALE,
+                       vz * 60 / DAMPING_SCALE);
         }
 
         // Below the ground it hits.

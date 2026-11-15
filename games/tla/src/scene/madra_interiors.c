@@ -559,7 +559,7 @@ UNUSED s32 MadraInteriors_StraightenSprite(struct Actor *object) {
 /// "Admit it! You're one of the Champa, aren't you, Piers?"
 void MadraInteriors_InterrogatePiers(void) {
   s32 i;
-  struct Actor *object14;
+  struct Actor *felix;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -784,11 +784,11 @@ answered:
   Actor_SetAnimationAndWait(ACTOR_JAIL_KRADEN, ANIM_NOD);
   FieldEvent_Wait(10);
   Actor_SetAnimation(ACTOR_JAIL_KRADEN, ANIM_WALK);
-  object14 = Actor_Get(ACTOR_FELIX);
-  if (object14 == 0)
+  felix = Actor_Get(ACTOR_FELIX);
+  if (felix == 0)
     goto piersLeft;
-  Actor_SetDestination(ACTOR_JAIL_KRADEN, *(s16 *)((u8 *)object14 + 10),
-                       *(s16 *)((u8 *)object14 + 18));
+  Actor_SetDestination(ACTOR_JAIL_KRADEN, felix->x.part[0].pixel,
+                       felix->z.part[0].pixel);
 piersLeft:
   FieldActor_WaitForMoveById(ACTOR_JAIL_KRADEN);
   Actor_SetPosition(ACTOR_JAIL_KRADEN, 0, 0);

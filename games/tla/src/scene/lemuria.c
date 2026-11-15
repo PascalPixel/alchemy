@@ -48,6 +48,10 @@
 /// Set once the Lemurian at the window has told the party the door is broken
 /// and to climb through ("The door's broken, I'm afraid.").
 #define FLAG_LEMURIA_TOLD_DOOR_IS_BROKEN 0x968
+/// Piers away at his mother's grave, and Sheba having told why, both set in
+/// Lemuria's houses (lemuria_interiors.c).
+#define FLAG_PIERS_AT_MOTHERS_GRAVE 0x966
+#define FLAG_TOLD_OF_PIERS_MOTHER 0x969
 /// Set once the Lemurian has let a rope down from the window ("There! Is that
 /// better? Now climb up here.").
 #define FLAG_LEMURIA_ROPE_LET_DOWN 0x96f
@@ -401,11 +405,11 @@ void Lemuria_KnockAtBrokenDoor(void) {
   struct Actor *object;
 
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > px(96) ||
-      Event_GetFlag(0x969)) {
+      Event_GetFlag(FLAG_TOLD_OF_PIERS_MOTHER)) {
     gFieldWork->fieldMenu = 1;
     return;
   }
-  if (!Event_GetFlag(0x966) ||
+  if (!Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE) ||
       Event_GetFlag(FLAG_LEMURIA_TOLD_DOOR_IS_BROKEN)) {
     FieldEvent_SetMessageId((s32)&MsgTheDoorDoesn);
     // "The door doesn't want to open."
@@ -648,16 +652,18 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(FLAG_LEMURIA_SPRING_LUCK_TRIED)) {
     Actor_SetPosition(30, 440, 1048);
   }
-  if (Event_GetFlag(FLAG_LEMURIA_CITY_ADMIRED) && !Event_GetFlag(0x969)) {
+  if (Event_GetFlag(FLAG_LEMURIA_CITY_ADMIRED) &&
+      !Event_GetFlag(FLAG_TOLD_OF_PIERS_MOTHER)) {
     Actor_SetPosition(24, 456, 520);
     Actor_SetPosition(25, 472, 520);
   }
-  if (!Event_GetFlag(0x969)) {
+  if (!Event_GetFlag(FLAG_TOLD_OF_PIERS_MOTHER)) {
     Actor_SetPosition(26, 0, 0);
   } else {
     Actor_Get(26)->update = Lemuria_TakeLeaderLayer;
   }
-  if (Event_GetFlag(0x966) && !Event_GetFlag(0x969)) {
+  if (Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE) &&
+      !Event_GetFlag(FLAG_TOLD_OF_PIERS_MOTHER)) {
     Actor_SetPosition(ACTOR_PIERS, 56, 1016);
     Actor_SetAnimation(ACTOR_PIERS, 9);
   }
@@ -689,7 +695,7 @@ s32 Scene_Initialize(void) {
   if (!Event_GetFlag(FLAG_AREA_TEMP_07)) {
     Actor_SetWideSprite(71, 0);
   }
-  if (Event_GetFlag(0x966)) {
+  if (Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE)) {
     MapGrid_CopyCellsLayered(3, 1, 1, 1, 54, 45);
   }
   actor = Actor_Get(31);

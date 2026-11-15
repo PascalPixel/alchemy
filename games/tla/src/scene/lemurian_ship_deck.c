@@ -717,8 +717,7 @@ void LemurianShipDeck_LeaveToFindCrew(void) {
     Actor_SetAnimation(9, 2);
     object = Actor_Get(gMainRoutineWork.leaderActorId);
     if (object != 0)
-      Actor_SetDestination(9, *(s16 *)((u8 *)object + 10),
-                           *(s16 *)((u8 *)object + 18));
+      Actor_SetDestination(9, object->x.part[0].pixel, object->z.part[0].pixel);
     FieldActor_WaitForMoveById(9);
     Actor_SetPosition(9, 0, 0);
     Event_SetFlag(0x988);
@@ -1174,8 +1173,8 @@ void LemurianShipDeck_SetOutForMadra(void) {
     Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
     object = Actor_Get(ACTOR_FELIX);
     if (object != 0)
-      Actor_SetDestination(ACTOR_PIERS, *(s16 *)((u8 *)object + 10),
-                           *(s16 *)((u8 *)object + 18));
+      Actor_SetDestination(ACTOR_PIERS, object->x.part[0].pixel,
+                           object->z.part[0].pixel);
     FieldActor_WaitForMoveById(ACTOR_PIERS);
     Actor_SetPosition(ACTOR_PIERS, 0, 0);
     Actor_Get(ACTOR_PIERS)->update = 0;

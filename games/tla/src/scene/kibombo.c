@@ -1795,7 +1795,8 @@ void Kibombo_RaiseEmbers(void) {
   s32 phase = gFrameCount & 3;
 
   if (phase == 0) {
-    struct Actor *object = Import_ActorCreate(0x16e, px(264), px(32), px(316));
+    struct Actor *object =
+        Import_ActorCreate(SPRITE_BLAZE_FLAME, px(264), px(32), px(316));
     s32 value;
 
     if (object != 0) {
@@ -1820,10 +1821,10 @@ void Kibombo_RaiseEmbers(void) {
 void Kibombo_RiseSmoke(struct Actor *object) {
   object->x.fixed += object->timer << 8;
 
-  object->y.fixed += 0x8000;
+  object->y.fixed += px(1) / 2;
 
-  object->scaleX += 0x51e;
-  object->scaleY += 0x51e;
+  object->scaleX += Q16_ONE / 50;
+  object->scaleY += Q16_ONE / 50;
   object->timer += 2;
   if (--*(s32 *)&object->watchedActor == 0)
     Actor_Release(object);
@@ -1832,7 +1833,8 @@ void Kibombo_RiseSmoke(struct Actor *object) {
 /// Smoke puffs from the fire every 64 frames.
 void Kibombo_PuffSmoke(void) {
   if ((gFrameCount & 63) == 0) {
-    struct Actor *object = Import_ActorCreate(0x11d, px(88), px(16), px(314));
+    struct Actor *object =
+        Import_ActorCreate(SPRITE_DUST_CLOUD, px(88), px(16), px(314));
     u8 *part;
     s32 mask;
 
@@ -1872,7 +1874,7 @@ void Kibombo_FlickerFlame(struct Actor *object) {
 
 /// A flame that flickers by its own timer.
 void Kibombo_SpawnFlame(s32 x, s32 y, s32 z) {
-  struct Actor *object = Import_ActorCreate(0x106, x, y, z);
+  struct Actor *object = Import_ActorCreate(SPRITE_FLAME_AND_SMOKE, x, y, z);
   struct FieldSprite *sprite;
 
   if (object != 0) {
@@ -2113,7 +2115,7 @@ void Kibombo_AkafubuChants(void) {
     x = center->x.fixed;
     y = center->y.fixed + px(24);
     z = center->z.fixed;
-    spark = Import_ActorCreate(673, x, y, z);
+    spark = Import_ActorCreate(SPRITE_SPARKLE, x, y, z);
     if (spark != 0) {
       previous = Sprite_ShareVramCacheEntry(spark->sprite, previous);
       spark->motionFlags = 0;
@@ -2869,14 +2871,14 @@ void Kibombo_GabombaRespondsToGift(void) {
   Kibombo_SetStatueTongue(1, 0);
   Event_Wait(20);
   Sound_Play(SE_CART_ROLL);
-  object->scaleY = 0x1999;
+  object->scaleY = Q16_ONE / 10;
   Actor_SetPositionAndResetMotion(Actor_GetById(ACTOR_STATUE_TONGUE), px(264),
                                   px(24), px(308));
   wait(1);
   Actor_SetAnimationById(ACTOR_STATUE_TONGUE, 3);
   for (i = 0; i < 64; i++) {
-    object->scaleY += 0x400;
-    object->y.fixed += 0x2000;
+    object->scaleY += Q16_ONE / 64;
+    object->y.fixed += px(1) / 8;
     wait(1);
   }
   Sound_Play(SE_STOP_MUSIC_PLAYER_5);
@@ -2886,7 +2888,7 @@ void Kibombo_GabombaRespondsToGift(void) {
     gift->motionFlags = 0;
     if (gift->y.fixed > px(36)) {
       do {
-        gKibombo_BlackCrystal->y.fixed -= 0x8000;
+        gKibombo_BlackCrystal->y.fixed -= px(1) / 2;
         wait(1);
       } while (gKibombo_BlackCrystal->y.fixed > px(36));
     }
@@ -2898,14 +2900,14 @@ void Kibombo_GabombaRespondsToGift(void) {
     do {
       gKibombo_BlackCrystal->y.fixed += px(6);
       object->scaleY -= Q16_ONE / 8;
-      object->y.fixed -= 0x8000;
+      object->y.fixed -= px(1) / 2;
       wait(1);
       i++;
     } while (i < 4);
     Actor_SetPositionAndResetMotion(gKibombo_BlackCrystal, 0, 0, 0);
     for (i = 0; i < 4; i++) {
       object->scaleY -= Q16_ONE / 8;
-      object->y.fixed -= 0x8000;
+      object->y.fixed -= px(1) / 2;
       wait(1);
     }
   }
@@ -2924,7 +2926,7 @@ void Kibombo_GabombaRespondsToGift(void) {
   wait(1);
   for (i = 0; i < 8; i++) {
     object->scaleY += Q16_ONE / 8;
-    object->y.fixed += 0x8000;
+    object->y.fixed += px(1) / 2;
     wait(1);
   }
   FieldEffect_SetAttached(ACTOR_AKAFUBU,

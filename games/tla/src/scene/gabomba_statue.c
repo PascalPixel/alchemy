@@ -700,8 +700,8 @@ void GabombaStatue_EndRide(struct Actor *object) {
   Actor_SetAnimation(party->leaderActorId, 28);
   FieldEvent_Wait(10);
   for (i = 0; i <= 19; i++) {
-    object->scaleX -= 0x300;
-    object->scaleY -= 0x300;
+    object->scaleX -= Q16_ONE * 3 / 256;
+    object->scaleY -= Q16_ONE * 3 / 256;
     object->y.fixed -= px(3) / 2;
     System_Wait(1);
     if (i == 10)

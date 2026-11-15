@@ -429,7 +429,7 @@ void GaiaRock_StatueBlowsWind(void) {
       object->acceleration = px(2);
       object->speedLimit = px(2);
       object->scaleX = Q16_ONE / 2;
-      object->scaleY = 0x1999;
+      object->scaleY = Q16_ONE / 10;
       object->priorityFlags = phase;
       Actor_SelectAnimation(object, 2);
       FieldActor_SetMoveTargetFixed(object, object->x.fixed - px(32),
@@ -626,7 +626,7 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
         dust->acceleration = 0;
         dust->scaleX = scale;
         dust->scaleY = scale;
-        dust->gravity = 0x547a;
+        dust->gravity = px(33) / 100;
         dust->bounce = Q16_ONE / 2;
       }
     }
@@ -641,7 +641,7 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   Event_PlaySound(SE_DUST_PUFF);
   leader->motionFlags = 3;
   id = 0;
-  leader->gravity = 0x547a;
+  leader->gravity = px(33) / 100;
   goto fall;
 next:
   id++;

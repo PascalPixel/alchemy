@@ -300,7 +300,7 @@ void JupiterLighthouse_RaiseBeaconLight(void) {
       if ((gFrameCount & 7) == 0)
         Event_PlayCue(246);
       spawn = 1;
-      center->y.fixed += 0x24000;
+      center->y.fixed += px(9) / 4;
     }
     break;
   case 26:
@@ -313,7 +313,7 @@ void JupiterLighthouse_RaiseBeaconLight(void) {
       if ((gFrameCount & 7) == 0)
         Event_PlayCue(246);
       spawn = 1;
-      center->y.fixed += 0x24000;
+      center->y.fixed += px(9) / 4;
     }
     break;
   case 27:
@@ -462,8 +462,8 @@ void JupiterLighthouse_PulseBeacon(void) {
     } else {
       Actor_SetPosition(ACTOR_BEACON_ORB, 512, 264);
       Actor_Get(ACTOR_BEACON_ORB)->y.fixed = 0x688000;
-      Actor_Get(ACTOR_BEACON_ORB)->scaleX = 0x14ccc;
-      Actor_Get(ACTOR_BEACON_ORB)->scaleY = 0x14ccc;
+      Actor_Get(ACTOR_BEACON_ORB)->scaleX = Q16_ONE * 13 / 10;
+      Actor_Get(ACTOR_BEACON_ORB)->scaleY = Q16_ONE * 13 / 10;
     }
   } else {
     Actor_SetPosition(ACTOR_BEACON_ORB, 0, 0);
@@ -520,8 +520,8 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         star->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         star->motionFlags = 0;
         star->retainSpriteCache = 1;
-        star->speedLimit = 0x6666;
-        star->acceleration = 0xccc;
+        star->speedLimit = px(2) / 5;
+        star->acceleration = px(1) / 20;
         buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
         Item_LoadIcon(ITEM_JUPITER_STAR);
         Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
@@ -533,8 +533,8 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       shadow->y.fixed = px(96);
       shadow->z.fixed = felix->z.fixed;
       shadow->motionFlags = 3;
-      shadow->acceleration = 0xccc;
-      shadow->speedLimit = 0x6666;
+      shadow->acceleration = px(1) / 20;
+      shadow->speedLimit = px(2) / 5;
       shadow->scaleX = Q16_ONE / 8;
       shadow->scaleY = Q16_ONE / 8;
       FieldEvent_SetMessageId((s32)MsgThereSeemsTo + 1);
@@ -542,8 +542,8 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       if (star != 0) {
         flags = &star->motionFlags;
         *flags = 0;
-        star->gravity = 0x9999;
-        star->bounce = 0xcccc;
+        star->gravity = px(3) / 5;
+        star->bounce = Q16_ONE * 4 / 5;
         star->velocityY = px(8);
         FieldActor_SetMoveTarget(star, 512, 128, 294);
         FieldActor_SetMoveTargetFixed(shadow, px(512), -1, px(294));
@@ -637,7 +637,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       FieldActor_SetSpriteColor(Actor_GetById(ACTOR_BEAM_A), 7);
       beamA = Actor_GetById(ACTOR_BEAM_A);
       beamA->scaleY = 0xffff0000;
-      beamA->scaleX = 0x1999;
+      beamA->scaleX = Q16_ONE / 10;
       beamA->motionFlags = 0;
       beamA->x.fixed = px(512);
       beamA->y.fixed = px(128);
@@ -647,7 +647,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       FieldActor_SetSpriteColor(Actor_GetById(ACTOR_BEAM_B), 7);
       beamB = Actor_GetById(ACTOR_BEAM_B);
       beamB->scaleY = 0xffff0000;
-      beamB->scaleX = 0x1999;
+      beamB->scaleX = Q16_ONE / 10;
       beamB->motionFlags = 0;
       beamB->x.fixed = px(512);
       beamB->y.fixed = px(160);

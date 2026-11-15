@@ -161,7 +161,7 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
   if (mode == 0 || mode == 2) {
     Event_PlaySound(SE_556);
     for (i = 0; i <= 63; i++) {
-      left->y.fixed += 0x1999;
+      left->y.fixed += px(1) / 10;
       lid->y.fixed += 0x7ae;
       // Through a union, so this store may alias the sprite read after it.
       ((union ActorCoordinate *)&lid->x.fixed)->value += -0xa3d;
@@ -171,7 +171,7 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
   } else {
     Event_PlaySound(SE_556);
     for (i = 0; i <= 63; i++) {
-      right->y.fixed += 0x1999;
+      right->y.fixed += px(1) / 10;
       lid->y.fixed += 0x7ae;
       lid->x.fixed += 0xa3d;
       *(u16 *)(sprite + 18) += 0xffe0;
@@ -185,9 +185,9 @@ void JupiterLighthouse_EnergizeAngels(s32 mode) {
   JupiterLighthouse_StartBeamFlicker(right);
   Event_PlaySound(SE_JUPITER_LIGHTHOUSE_BEAMS);
   for (i = 255; i >= 0; i--) {
-    Actor_Get(ACTOR_LEFT_ANGEL)->y.fixed += 0x1999;
-    Actor_Get(ACTOR_RIGHT_ANGEL)->y.fixed += 0x1999;
-    lid->y.fixed += 0x1999;
+    Actor_Get(ACTOR_LEFT_ANGEL)->y.fixed += px(1) / 10;
+    Actor_Get(ACTOR_RIGHT_ANGEL)->y.fixed += px(1) / 10;
+    lid->y.fixed += px(1) / 10;
     System_Wait(1);
   }
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -590,8 +590,8 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   Event_PlaySound(SE_WHIRLWIND);
   position.x = source->x + Math_MulQ16(px(8), Trig_Cos(source->angle));
   position.z = source->z + Math_MulQ16(px(8), Math_Sin(source->angle));
-  object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
-                                                   position.z));
+  object = ((struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
+                                                   source->y, position.z));
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
@@ -604,7 +604,7 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, 0x30000,
+  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, px(3),
                     &options);
   return object;
 }
@@ -619,13 +619,13 @@ s32 JupiterLighthouse_SparkBeam(struct Actor *object) {
     s32 speed;
 
     spark.priority = 3;
-    spark.startScaleX = 0xb333;
-    spark.startScaleY = 0xb333;
+    spark.startScaleX = Q16_ONE * 7 / 10;
+    spark.startScaleY = Q16_ONE * 7 / 10;
     spark.palette = 14;
     x = object->x.fixed + (((Random_Below(9)) - 4) << 16);
     y = object->y.fixed + ((32 - (Random_Below(20))) << 16);
     speed = (s32)(((Random_Below(5)) << 16) + 0x50000) / 10;
-    FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, frame, 0xb0000, &spark);
+    FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, frame, px(11), &spark);
   }
   return 0;
 }

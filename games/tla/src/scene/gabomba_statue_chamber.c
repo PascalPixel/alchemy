@@ -193,7 +193,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
       if (i == 20)
         Actor_ShowEmote(ACTOR_CHAMBER_AKAFUBU,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-      gGabombaStatueChamber_ShownItem->y.fixed += 0x8000;
+      gGabombaStatueChamber_ShownItem->y.fixed += px(1) / 2;
       wait(1);
     } while (++i <= 79);
     gGabombaStatueChamber_ShownItem->motionFlags = 4;

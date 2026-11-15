@@ -205,8 +205,8 @@ struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source) {
   Event_PlaySound(SE_WHIRLWIND);
   position.x = source->x + Math_MulQ16(px(8), Trig_Cos(source->angle));
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
-  object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
-                                                   position.z));
+  object = ((struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
+                                                   source->y, position.z));
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
@@ -219,7 +219,7 @@ struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source) {
   object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, 0x30000,
+  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, px(3),
                     &options);
   return object;
 }
@@ -231,13 +231,13 @@ s32 JupiterLighthouse_EmitRisingMotes(struct SceneEffectSource *object) {
   phase = gFrameCount & 7;
   if (phase == 0) {
     params.priority = 3;
-    params.startScaleX = 0xb333;
-    params.startScaleY = 0xb333;
+    params.startScaleX = Q16_ONE * 7 / 10;
+    params.startScaleY = Q16_ONE * 7 / 10;
     params.palette = 14;
     x = object->x + (((s32)(Random_Below(9)) - 4) << 16);
     y = object->y + ((32 - (s32)(Random_Below(20))) << 16);
     speed = ((((s32)(Random_Below(5))) << 16) + 0x50000) / 10;
-    FieldEffect_Spawn(x, y, object->z, 0, speed, phase, 0xb0000, &params);
+    FieldEffect_Spawn(x, y, object->z, 0, speed, phase, px(11), &params);
   }
   return 0;
 }

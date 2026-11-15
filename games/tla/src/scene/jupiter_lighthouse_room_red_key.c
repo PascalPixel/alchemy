@@ -278,7 +278,7 @@ static __inline__ void Bring(s32 id) {
   object->motionFlags = 0;
   object->priorityFlags |= 2;
   object->scaleY = 0xffff0000;
-  object->scaleX = 0x1999;
+  object->scaleX = Q16_ONE / 10;
   Actor_SetMovementTypeById(id, gJupiterLighthouse_BringInScript);
 }
 
@@ -461,8 +461,8 @@ void JupiterLighthouse_AlexAppears(void) {
       x += -0xc0000;
       random2 = Random16();
       y = actor->y;
-      FieldEffect_Spawn(x, y + (((random2 << 5) >> 16) << 16) + 0x200000,
-                        actor->z, 0, -0x40000, 0, 0x1b0000, p);
+      FieldEffect_Spawn(x, y + (((random2 << 5) >> 16) << 16) + px(32),
+                        actor->z, 0, -px(4), 0, px(27), p);
     }
     if (i == 20)
       Actor_SetSpriteColorById(ACTOR_ALEX, 0x100);
@@ -753,8 +753,8 @@ struct GustObject *JupiterLighthouse_SpawnGust(struct GustObject *source) {
   Event_PlaySound(SE_WHIRLWIND);
   position.x = source->x + Math_MulQ16(px(8), Trig_Cos(source->angle));
   position.z = source->z + Math_MulQ16(px(8), Math_Sin(source->angle));
-  object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
-                                                   position.z));
+  object = ((struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
+                                                   source->y, position.z));
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
@@ -767,7 +767,7 @@ struct GustObject *JupiterLighthouse_SpawnGust(struct GustObject *source) {
   object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, 0x30000,
+  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, px(3),
                     &options);
   return object;
 }
@@ -780,8 +780,8 @@ s32 JupiterLighthouse_UpdateGust(struct Actor *object) {
   if (phase != 0)
     goto done;
   options.priority = 3;
-  options.startScaleX = 0xb333;
-  options.startScaleY = 0xb333;
+  options.startScaleX = Q16_ONE * 7 / 10;
+  options.startScaleY = Q16_ONE * 7 / 10;
   options.palette = 14;
   x = object->x.fixed + (((s32)(Random_Below(9)) - 4) << 16);
   y = object->y.fixed + ((32 - (s32)(Random_Below(20))) << 16);

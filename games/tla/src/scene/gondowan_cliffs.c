@@ -218,7 +218,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
     actor->update = GondowanCliffs_RollPillar;
     Actor_SetSpeed(id, 3);
     Actor_SetDestination(id, 1193, 530);
-    actor->gravity = 0xcccc;
+    actor->gravity = px(4) / 5;
     actor->motionFlags = 3;
     actor->layer = 0;
     FieldActor_WaitForMoveById(id);
@@ -232,10 +232,10 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
     // effect options.
     *(u32 *)&actor->update = 0;
     options.type = 276;
-    options.startScaleX = 0x8000;
-    options.targetScaleX = 0x18000;
-    options.targetScaleY = 0x13333;
-    options.startScaleY = 0xcccc;
+    options.startScaleX = Q16_ONE / 2;
+    options.targetScaleX = Q16_ONE * 3 / 2;
+    options.targetScaleY = Q16_ONE * 6 / 5;
+    options.startScaleY = Q16_ONE * 4 / 5;
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
                       EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                           EFFECT_SCALE_TO_TARGET,

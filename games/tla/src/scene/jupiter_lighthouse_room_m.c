@@ -1688,8 +1688,8 @@ struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source) {
   Event_PlaySound(SE_WHIRLWIND);
   position.x = source->x + Math_MulQ16(px(8), Trig_Cos(source->angle));
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
-  object = ((struct GustObject *)FieldActor_Create(280, position.x, source->y,
-                                                   position.z));
+  object = ((struct GustObject *)FieldActor_Create(SPRITE_WHIRLWIND, position.x,
+                                                   source->y, position.z));
   Import_ActorSelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
@@ -1702,7 +1702,7 @@ struct GustObject *Whirlwind_SpawnUpper(struct GustObject *source) {
   object->speedLimit = px(3) / 2;
   options.priority = 1;
   options.palette = 7;
-  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, 0x30000,
+  FieldEffect_Spawn(position.x, source->y, position.z - px(6), 0, 0, 0, px(3),
                     &options);
   return object;
 }

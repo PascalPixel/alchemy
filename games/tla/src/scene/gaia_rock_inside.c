@@ -332,8 +332,8 @@ static __inline__ void GaiaRockInside_JumpDownLedge(s32 id, s32 a, s32 b) {
 
 void GaiaRockInside_JumpDownByAltar(void) {
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
-  OverlayObject_PrepareObject(0x2c80000, 0, 0x1d40000, 286);
-  OverlayObject_PrepareObject(0x2c80000, 0, 0x1ea0000, 286);
+  OverlayObject_PrepareObject(px(712), 0, px(468), 286);
+  OverlayObject_PrepareObject(px(712), 0, px(490), 286);
   GaiaRockInside_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0x800);
   Event_PlaySound(SE_FALL);
   Event_SetFlag(290);
@@ -376,8 +376,8 @@ s32 GaiaRockInside_RaiseDust(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = 0xa3d7;
-  options.startScaleY = 0xa3d7;
+  options.startScaleX = Q16_ONE * 16 / 25;
+  options.startScaleY = Q16_ONE * 16 / 25;
   for (i = 0; i <= 16; i++) {
     s32 angle;
     s32 velocity[3];
@@ -392,7 +392,9 @@ s32 GaiaRockInside_RaiseDust(void) {
     velocity[0] += (Random_Below(0xc000)) - 0x6000;
     velocity[2] += (Random_Below(0x6000)) - 0x3000;
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-                      velocity[0], velocity[1], velocity[2], 0x1090001,
+                      velocity[0], velocity[1], velocity[2],
+                      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                          EFFECT_USE_PALETTE | 1,
                       &options);
   }
   Event_PlaySound(SE_THUMP);
@@ -473,8 +475,8 @@ s32 GaiaRockInside_SerpentSpits(void) {
   object->motionFlags = 0;
   Actor_SetSpriteFlags(object, 0);
   Actor_StartScript(object, gGaiaRockInside_SprayScript);
-  object->scaleX = 0x6666;
-  object->scaleY = 0x6666;
+  object->scaleX = Q16_ONE * 2 / 5;
+  object->scaleY = Q16_ONE * 2 / 5;
   sprite = object->sprite;
   sprite->priority = 1;
   object->bounce = 0;
@@ -795,10 +797,10 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
     MapGrid_CopyCellAttributes(49, destY, 8, 8, destX, destY);
   }
   FieldEvent_Wait(30);
-  OverlayObject_PrepareObject(px(700), 0, 0x1d40000, 286);
-  OverlayObject_PrepareObject(px(700), 0, 0x1ea0000, 286);
-  OverlayObject_PrepareObject(px(724), 0, 0x1d40000, 286);
-  OverlayObject_PrepareObject(px(724), 0, 0x1ea0000, 286);
+  OverlayObject_PrepareObject(px(700), 0, px(468), 286);
+  OverlayObject_PrepareObject(px(700), 0, px(490), 286);
+  OverlayObject_PrepareObject(px(724), 0, px(468), 286);
+  OverlayObject_PrepareObject(px(724), 0, px(490), 286);
   Event_PlaySound(SE_DUST_PUFF);
   guard->motionFlags = 3;
   ((struct FieldSprite *)guard->sprite)->priority = 3;
@@ -1000,8 +1002,8 @@ void GaiaRockInside_SpawnSpark(struct Orbiter *source) {
   struct Actor *t0 =
       FieldActor_Create(SPRITE_PARTICLE, source->x, source->y, source->z);
 
-  t0->scaleY = 0x6666;
-  t0->scaleX = 0x6666;
+  t0->scaleY = Q16_ONE * 2 / 5;
+  t0->scaleX = Q16_ONE * 2 / 5;
   t0->motionFlags = 0;
   FieldActor_SetSpriteColor(t0, 2);
   Scene_SetActorSpritePriority(t0, 1);
@@ -1112,8 +1114,8 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   PaletteFade_SetTarget(0x10003, 1);
   PaletteFade_StartInterpolation(60);
   a->motionFlags = 0;
-  a->acceleration = 0x3333;
-  a->speedLimit = 0x3333;
+  a->acceleration = px(1) / 5;
+  a->speedLimit = px(1) / 5;
   Actor_SetMovementTypeById(idA, gGaiaRockInside_TabletRiseScript);
   Sound_Play(SE_TABLET_RISE);
   Event_Wait(45);
@@ -1129,7 +1131,7 @@ first:
     spark->x += ((Random16() & 31) - 16) << 16;
     spark->y += ((Random16() & 15) - 8) << 16;
     spark->speedLimit = px(8);
-    spark->acceleration = 0x3333;
+    spark->acceleration = px(1) / 5;
     spark->motionFlags = 0;
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
@@ -1174,8 +1176,8 @@ second:
     if (i == 3) {
       Actor_SetSpriteColorById(idB, 0x100);
       b->motionFlags = 0;
-      b->acceleration = 0x3333;
-      b->speedLimit = 0x3333;
+      b->acceleration = px(1) / 5;
+      b->speedLimit = px(1) / 5;
       /* FAKEMATCH(barrier): references to idA rank it over idB and hold idB in
        * r0 before the script load. */
       asm("" : : "r"(idA));
@@ -2366,7 +2368,8 @@ s32 Scene_Initialize(void) {
         Actor_SetAnimationSpeed(serpent, 0);
         Event_Wait(15);
         Sound_Play(SE_SPLASH_SMALL);
-        object = FieldActor_Create(285, px(488), -px(16), px(345));
+        object =
+            FieldActor_Create(SPRITE_DUST_CLOUD, px(488), -px(16), px(345));
         Actor_SetSpriteFlags(object, 0);
         Actor_StartScript(object, gGaiaRockInside_SerpentSmokeScript);
         Actor_SelectAnimation(object, 1);
@@ -2377,7 +2380,7 @@ s32 Scene_Initialize(void) {
         Event_Wait(55);
         Event_Wait(5);
         Sound_Play(SE_WHOOSH);
-        object = FieldActor_Create(412, px(488), -px(16), px(345));
+        object = FieldActor_Create(SPRITE_FIREBALL, px(488), -px(16), px(345));
         Actor_SetSpriteFlags(object, 0);
         Actor_StartScript(object, gGaiaRockInside_SerpentGlowScript);
         ((struct GaiaRockAnimation *)object->sprite)->angle = 0x2000;
@@ -2403,7 +2406,7 @@ s32 Scene_Initialize(void) {
           if ((i & 1) == 0)
             dz = 8;
           shards[i] = (struct Actor *)Import_ActorCreate(
-              403, 0x1c80000 + (dx << 16), -px(32), 0x1660000 + (dz << 16));
+              403, px(456) + (dx << 16), -px(32), px(358) + (dz << 16));
           Actor_SelectAnimation(shards[i], 2);
           Actor_SetSpriteFlags(shards[i], 0);
           Actor_StartScript(shards[i], gGaiaRockInside_SerpentSmokeScript);
@@ -2600,7 +2603,7 @@ s32 Scene_Initialize(void) {
 
         x = 0x1d00000;
         z = 0x15c0000;
-        object = OverlayObject_PrepareObject(x, -0x200000, z, 323);
+        object = OverlayObject_PrepareObject(x, -px(32), z, 323);
         Actor_SetHorizontalPositionWithTerrain(ACTOR_SAND_TABLET, x, z);
       }
       for (i = 0; i < 20; i++) {
@@ -2766,7 +2769,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_EAST_ALTAR, 672, 384);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_EAST_ALTAR), 0);
       object = Actor_GetById(ACTOR_EAST_ALTAR);
-      other = FieldActor_Create(324, object->x.fixed, object->y.fixed,
+      other = FieldActor_Create(SPRITE_LIGHT, object->x.fixed, object->y.fixed,
                                 object->z.fixed);
       if (other != NULL) {
         Actor_SetSpriteFlags(other, 0);
@@ -2774,8 +2777,8 @@ s32 Scene_Initialize(void) {
         Actor_SelectAnimation(other, 1);
         Actor_SetSpriteColorMode(other, 14);
         ((u8 *)other->sprite)[9] |= 12;
-        other->scaleX = 0x13333;
-        other->scaleY = 0x13333;
+        other->scaleX = Q16_ONE * 6 / 5;
+        other->scaleY = Q16_ONE * 6 / 5;
       }
       object->y.fixed += px(128);
       for (; frames != 0; frames--) {
@@ -3333,8 +3336,8 @@ void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
   Actor_StartScript(object, gGaiaRockInside_DustScript);
   i = 15;
 burst:
-  object = (FieldActor_Create(255, leader->x.fixed, leader->y.fixed + px(16),
-                              leader->z.fixed));
+  object = (FieldActor_Create(SPRITE_ROCK, leader->x.fixed,
+                              leader->y.fixed + px(16), leader->z.fixed));
   if (object != NULL) {
     u32 angle;
     u32 size;
@@ -3350,7 +3353,7 @@ burst:
     object->acceleration = 0;
     object->scaleX = scale;
     object->scaleY = scale;
-    object->gravity = 0x547a;
+    object->gravity = px(33) / 100;
     object->bounce = Q16_ONE / 2;
   }
   i--;
@@ -3365,7 +3368,7 @@ burst:
   FieldEvent_Wait(40);
   Event_PlaySound(SE_DUST_PUFF);
   leader->motionFlags = 3;
-  leader->gravity = 0x547a;
+  leader->gravity = px(33) / 100;
   for (value = 0; value < 180; value++) {
     System_Wait(1);
     if (leader->y.fixed <= leader->groundHeight)

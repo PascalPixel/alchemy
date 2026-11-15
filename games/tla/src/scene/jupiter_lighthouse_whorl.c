@@ -921,7 +921,7 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
         a = list[0];
         flag = list[1];
         if (count < 8)
-          object->scaleY -= 0x1f00;
+          object->scaleY -= Q16_ONE * 31 / 256;
         if (mode == 1) {
           Event_SetFlag(flag);
           Actor_SetCellOpen(id, a, flag, object->layer);

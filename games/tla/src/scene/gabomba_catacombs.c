@@ -389,7 +389,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   statue->motionFlags = 6;
   statue->groundHeight += px(16);
   Sound_Play(SE_SHIMMER);
-  glow = ((struct Actor *)Import_ActorCreate(412, 0, 0, 0));
+  glow = ((struct Actor *)Import_ActorCreate(SPRITE_FIREBALL, 0, 0, 0));
   Actor_StartScript(glow, gFieldEffect_MediumScript);
   Actor_SetSpriteColorMode(glow, 1);
   glow->motionFlags = 0;

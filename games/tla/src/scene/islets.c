@@ -908,8 +908,8 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   Actor_WalkToAndWait(ACTOR_LONESOME_GEORGE, 296, 452);
   guide->update = 0;
   Actor_FaceDirection(ACTOR_LONESOME_GEORGE, FACING_SOUTH_SOUTHWEST, 0);
-  gift->speedLimit = 0x19999;
-  gift->acceleration = 0xcccc;
+  gift->speedLimit = px(8) / 5;
+  gift->acceleration = px(4) / 5;
   gift->update = Actor_EmitSmoke;
   Actor_SelectAnimation(gift, 2);
   FieldActor_SetMoveTarget(gift, 278, 0, 452);
@@ -934,8 +934,8 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   // "And we're off!"
   Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
   Actor_SetSpeed(ACTOR_LONESOME_GEORGE, 0.8);
-  gift->speedLimit = 0xcccc;
-  gift->acceleration = 0x6666;
+  gift->speedLimit = px(4) / 5;
+  gift->acceleration = px(2) / 5;
   guide->update = Actor_EmitSmoke;
   Actor_SetDestination(ACTOR_LONESOME_GEORGE, 288, 538);
   FieldEvent_Wait(20);
@@ -1852,8 +1852,8 @@ void Islets_StartIceberg(s32 id) {
   object->retainSpriteCache = 3;
   object->motionFlags = 0;
   object->priorityFlags |= 0x80;
-  object->acceleration = 0x2666;
-  object->speedLimit = 0x4ccc;
+  object->acceleration = px(3) / 20;
+  object->speedLimit = px(3) / 10;
 }
 
 void Islets_MoveIceberg(s32 id, s32 column, s32 row) {

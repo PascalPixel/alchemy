@@ -342,14 +342,14 @@ s32 JupiterLighthouse_RaiseSparkles(struct Actor *object) {
     s32 y;
 
     params.priority = 3;
-    params.startScaleX = 0xb333;
-    params.startScaleY = 0xb333;
+    params.startScaleX = Q16_ONE * 7 / 10;
+    params.startScaleY = Q16_ONE * 7 / 10;
     params.palette = 14;
     x = object->x.fixed + (((Random_Below(9)) - 4) << 16);
     y = object->y.fixed + ((32 - (Random_Below(20))) << 16);
     FieldEffect_Spawn(x, y, object->z.fixed, 0,
-                      (s32)(((Random_Below(5)) << 16) + 0x50000) / 10, 0,
-                      0xb0000, &params);
+                      (s32)(((Random_Below(5)) << 16) + px(5)) / 10, 0, px(11),
+                      &params);
   }
   return 0;
 }

@@ -354,7 +354,7 @@ s32 KandoreanTemple_LevitateStudentBob(struct Actor *object) {
     break;
   case 2:
     object->scaleX += Q16_ONE / 16;
-    object->scaleY -= 0x800;
+    object->scaleY -= Q16_ONE / 32;
     break;
   case 0:
     object->scaleX = Q16_ONE;
@@ -370,8 +370,8 @@ s32 KandoreanTemple_LevitateStudentBob(struct Actor *object) {
 /// size, with no shadow.
 s32 KandoreanTemple_PlaceLevitatingStudent(struct Actor *object) {
   object->motionFlags = 0;
-  object->scaleX = 0xcccc;
-  object->scaleY = 0xcccc;
+  object->scaleX = Q16_ONE * 4 / 5;
+  object->scaleY = Q16_ONE * 4 / 5;
   object->collisionFlags |= 8;
   Actor_SetSpriteFlags(object, 0);
   return 0;
@@ -723,8 +723,8 @@ void KandoreanTemple_UpdateStreamSteam(struct Actor *object) {
 
 /// Blows a cloud of steam from the lift room's stream.
 void KandoreanTemple_BlowStreamSteam(void) {
-  struct Actor *object =
-      ((struct Actor *)Import_ActorCreate(0x11d, px(696), px(28), px(156)));
+  struct Actor *object = ((struct Actor *)Import_ActorCreate(
+      SPRITE_DUST_CLOUD, px(696), px(28), px(156)));
 
   if (object) {
     s32 timer;
@@ -800,13 +800,13 @@ void KandoreanTemple_BlowStream(void) {
 
 /// Lowers a piece of the west column flat under its platform.
 void KandoreanTemple_LowerLeftColumn(s32 id) {
-  Actor_GetById(id)->scaleY = 0x800;
+  Actor_GetById(id)->scaleY = Q16_ONE / 32;
   FieldActor_SetPositionAndResetMotion(Actor_GetById(id), px(216), 0, px(216));
 }
 
 /// Lowers a piece of the east column flat under its platform.
 void KandoreanTemple_LowerRightColumn(s32 id) {
-  Actor_GetById(id)->scaleY = 0x800;
+  Actor_GetById(id)->scaleY = Q16_ONE / 32;
   FieldActor_SetPositionAndResetMotion(Actor_GetById(id), px(376), 0, px(248));
 }
 
@@ -945,7 +945,7 @@ void KandoreanTemple_RunLeftVent(void) {
     t = *timer;
     if (flag) {
       if (t <= 316) {
-        statue->y.fixed += 0x48000;
+        statue->y.fixed += px(9) / 2;
         limit = 0x1000;
         KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_TOP, 0x20000, limit);
         KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_UPPER_PIECE, 0x18000,
@@ -972,7 +972,7 @@ void KandoreanTemple_RunLeftVent(void) {
         statue->y.fixed += Trig_Sin(*phase) >> 1;
         *phase += 0x1000;
       } else {
-        statue->y.fixed += -0x6c000;
+        statue->y.fixed += -px(27) / 4;
         limit = 0x1800;
         KandoreanTemple_ShrinkColumn(ACTOR_WEST_COLUMN_TOP, 0x30000, limit);
         KandoreanTemple_ShrinkColumn(ACTOR_WEST_COLUMN_UPPER_PIECE, 0x24000,
@@ -1093,7 +1093,7 @@ void KandoreanTemple_RunRightVent(void) {
       t = *timer;
       if (raised) {
         if (t <= 316) {
-          statue->y.fixed += 0x48000;
+          statue->y.fixed += px(9) / 2;
           limit = 0x1000;
           KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_TOP, 0x20000, limit);
           KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_UPPER_PIECE, 0x18000,
@@ -1119,7 +1119,7 @@ void KandoreanTemple_RunRightVent(void) {
           }
           BOB(statue, phase);
         } else {
-          statue->y.fixed += -0x6c000;
+          statue->y.fixed += -px(27) / 4;
           limit = 0x1800;
           KandoreanTemple_ShrinkColumn(ACTOR_EAST_COLUMN_TOP, 0x30000, limit);
           KandoreanTemple_ShrinkColumn(ACTOR_EAST_COLUMN_UPPER_PIECE, 0x24000,
@@ -1217,7 +1217,7 @@ void KandoreanTemple_RunWestLift(void) {
     Actor_SetSpritePriority(ACTOR_WEST_LIFT, 3);
     Actor_SetSpritePriority(ACTOR_WEST_LIFT_COLUMN, 3);
     base->priorityFlags |= 2;
-    base->scaleY = 0x400;
+    base->scaleY = Q16_ONE / 64;
     Actor_SetAnimationById(ACTOR_WEST_LIFT, 0);
     Actor_SetAnimationById(ACTOR_WEST_LIFT_COLUMN, 2);
   } else if ((u32)(*timer - 301) <= 1698) {
@@ -1275,7 +1275,7 @@ void KandoreanTemple_RunEastLift(void) {
     Actor_SetSpritePriority(ACTOR_EAST_LIFT, 3);
     Actor_SetSpritePriority(ACTOR_EAST_LIFT_COLUMN, 3);
     base->priorityFlags |= 2;
-    base->scaleY = 0x400;
+    base->scaleY = Q16_ONE / 64;
     Actor_SetAnimationById(ACTOR_EAST_LIFT, 0);
     Actor_SetAnimationById(ACTOR_EAST_LIFT_COLUMN, 2);
   } else if ((u32)(*timer - 301) <= 1698) {
@@ -1825,7 +1825,8 @@ void KandoreanTemple_StepBehindThePole(void) {
 
 /// Stepping out from behind a rope's pole, the leader is drawn in front again.
 void KandoreanTemple_StepOutFromThePole(void) {
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags &= ~32;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags &=
+      ~ACTOR_PRIORITY_IGNORES_RISES;
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_AUTOMATIC;
 }
@@ -1985,8 +1986,8 @@ void KandoreanTemple_StartChestbeaterRoom(void) {
   }
   Actor_PlaceBlocks(gKandoreanTemple_PillarActors);
   object = Actor_GetById(ACTOR_POIS_SIGN);
-  object->scaleX = 0xb333;
-  object->scaleY = 0xb333;
+  object->scaleX = Q16_ONE * 7 / 10;
+  object->scaleY = Q16_ONE * 7 / 10;
   object->collisionFlags = 0;
   FieldEffect_StartBlankOverlay(0);
   if (Event_GetFlag(FLAG_LADDER_LOWERED)) {
@@ -2121,8 +2122,8 @@ void KandoreanTemple_LandFromAbove(void) {
   Event_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = 0xcccc;
-  options.startScaleY = 0xcccc;
+  options.startScaleX = Q16_ONE * 4 / 5;
+  options.startScaleY = Q16_ONE * 4 / 5;
   for (i = 0; i <= 16; i++) {
     s32 velocity[3];
 
@@ -2178,9 +2179,9 @@ void KandoreanTemple_RiseOnLeftVent(void) {
   KandoreanTemple_StartLeftVent();
   i = 0;
   do {
-    leader->y.fixed += 0x48000;
-    statue->y.fixed += 0x48000;
-    ride->y.fixed += 0x1cccc;
+    leader->y.fixed += px(9) / 2;
+    statue->y.fixed += px(9) / 2;
+    ride->y.fixed += px(9) / 5;
     limit = 0x1000;
     KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_TOP, 0x20000, limit);
     KandoreanTemple_GrowColumn(ACTOR_WEST_COLUMN_UPPER_PIECE, 0x18000, limit);
@@ -2199,9 +2200,9 @@ void KandoreanTemple_RiseOnLeftVent(void) {
   Event_Wait(10);
 #define SINK_PLATFORM(top, upper, middle, lower, foot)                         \
   do {                                                                         \
-    leader->y.fixed += -0x6c000;                                               \
-    statue->y.fixed += -0x6c000;                                               \
-    ride->y.fixed += -0x2b333;                                                 \
+    leader->y.fixed += -px(27) / 4;                                            \
+    statue->y.fixed += -px(27) / 4;                                            \
+    ride->y.fixed += -px(27) / 10;                                             \
     limit = 0x1800;                                                            \
     KandoreanTemple_ShrinkColumn(top, 0x30000, limit);                         \
     KandoreanTemple_ShrinkColumn(upper, 0x24000, limit);                       \
@@ -2258,9 +2259,9 @@ void KandoreanTemple_RiseOnRightVent(void) {
   KandoreanTemple_StartRightVent();
   i = 0;
   do {
-    leader->y.fixed += 0x48000;
-    statue->y.fixed += 0x48000;
-    ride->y.fixed += 0x1cccc;
+    leader->y.fixed += px(9) / 2;
+    statue->y.fixed += px(9) / 2;
+    ride->y.fixed += px(9) / 5;
     limit = 0x1000;
     KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_TOP, 0x20000, limit);
     KandoreanTemple_GrowColumn(ACTOR_EAST_COLUMN_UPPER_PIECE, 0x18000, limit);
@@ -2399,7 +2400,7 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
                                                                                \
       *flags = c;                                                              \
     }                                                                          \
-    second->scaleY = 0x400;                                                    \
+    second->scaleY = Q16_ONE / 64;                                             \
     Actor_SetAnimationById(liftId, 4);                                         \
     Actor_SetAnimationById(columnId, 2);                                       \
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);           \
@@ -2749,7 +2750,7 @@ void KandoreanTemple_TestTheStudents(void) {
   object->motionFlags = 0;
   i = 0;
   do {
-    object->y.fixed += 0x2666;
+    object->y.fixed += px(3) / 20;
     Event_Wait(1);
     i++;
   } while (i <= 63);
@@ -2784,7 +2785,7 @@ void KandoreanTemple_TestTheStudents(void) {
   object->motionFlags = 0;
   i = 0;
   do {
-    object->y.fixed += 0x3333;
+    object->y.fixed += px(1) / 5;
     Event_Wait(1);
     i++;
   } while (i <= 63);
@@ -2798,7 +2799,7 @@ void KandoreanTemple_TestTheStudents(void) {
   Event_Wait(60);
   i = 0;
   do {
-    object->y.fixed += -0x3333;
+    object->y.fixed += -px(1) / 5;
     Event_Wait(1);
     i++;
   } while (i <= 63);

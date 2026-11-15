@@ -432,8 +432,8 @@ UNUSED s32 Actor_EmitRisingSparks(struct Actor *object) {
 
   if ((gFrameCount & 7) == 0) {
     options.priority = 3;
-    options.startScaleX = 0xb333;
-    options.startScaleY = 0xb333;
+    options.startScaleX = Q16_ONE * 7 / 10;
+    options.startScaleY = Q16_ONE * 7 / 10;
     options.palette = 14;
     x = object->x.fixed + (((Random_Below(9)) - 4) << 16);
     y = object->y.fixed + ((32 - (Random_Below(20))) << 16);

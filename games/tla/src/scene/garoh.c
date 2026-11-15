@@ -967,7 +967,7 @@ s32 timer;
   struct SpawnObject *object;
   struct FieldSprite *sprite;
 
-  object = (struct SpawnObject *)FieldActor_Create(0x1e8, x, y, z);
+  object = (struct SpawnObject *)FieldActor_Create(SPRITE_EMOTE, x, y, z);
   if (object != 0) {
     sprite = object->sprite;
     Actor_SelectAnimation(object, 1);

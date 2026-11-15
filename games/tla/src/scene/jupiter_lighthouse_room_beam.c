@@ -265,8 +265,8 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
   effect->scaleX = Q16_ONE / 2;
   effect->scaleY = Q16_ONE * 3 / 4;
   for (i = 31; i >= 0; i--) {
-    effect->scaleX += 0x800;
-    effect->scaleY += 0x200;
+    effect->scaleX += Q16_ONE / 32;
+    effect->scaleY += Q16_ONE / 128;
     System_Wait(1);
   }
   effect->scaleX = Q16_ONE * 3 / 2;
@@ -277,7 +277,7 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
   i = 19;
   do {
     leader->facing += 0x2000;
-    leader->scaleX += 0x800;
+    leader->scaleX += Q16_ONE / 32;
     leader->scaleY = leader->scaleX;
     System_Wait(1);
     i--;

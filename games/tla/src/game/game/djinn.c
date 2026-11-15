@@ -104,12 +104,11 @@ s32 Djinn_CanSet(s32 unitId, s32 element, s32 djinnIndex) {
 }
 
 /// Returns 1 when the Djinni is set on the unit.
-u32 Djinn_IsSet(s32 owner, s32 index, s32 bit) {
-  s32 value =
-      ((struct OwnerDjinnState *)Unit_Get(owner))->flags.banks.active[index] &
-      (1 << bit);
+u32 Djinn_IsSet(s32 unitId, s32 element, s32 djinnIndex) {
+  s32 set = ((struct BattleUnit *)Unit_Get(unitId))->djinnSet[element] &
+            (1 << djinnIndex);
 
-  return (u32)(-value | value) >> 31;
+  return NONZERO(set);
 }
 
 /// Sets a ready Djinni on the unit, counts it and works out the unit's class
@@ -245,18 +244,18 @@ u16 Djinn_GetDefinitionHeader(u32 group, u32 index) {
 
 /// Returns how many Djinn of element `index` the unit holds, or of every
 /// element for -1.
-s32 Owner_SumDjinnCounts(s32 owner, s32 index) {
-  struct OwnerDjinnState *state;
+s32 Owner_SumDjinnCounts(s32 unitId, s32 index) {
+  struct BattleUnit *unit;
   s32 result;
 
-  state = Unit_Get(owner);
+  unit = Unit_Get(unitId);
   if (index == -1) {
-    result = state->counts.banks.owned[0];
-    result += state->counts.banks.owned[1];
-    result += state->counts.banks.owned[2];
-    result += state->counts.banks.owned[3];
+    result = unit->djinnOwnedCounts[0];
+    result += unit->djinnOwnedCounts[1];
+    result += unit->djinnOwnedCounts[2];
+    result += unit->djinnOwnedCounts[3];
   } else {
-    result = state->counts.banks.owned[index];
+    result = unit->djinnOwnedCounts[index];
   }
   return result;
 }

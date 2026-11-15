@@ -5,6 +5,7 @@
 /// call between them.
 
 #include "sound/sound.h"
+#include "macros.h"
 #include "sounds.h"
 #include "types.h"
 #include "module/sound/sound.h"
@@ -110,7 +111,7 @@ s32 SoundFlag_Test(s32 sound) {
   sound = (sound & 0x3ff) >> 3;
   bytes = gSoundFlags;
   value = bytes[sound] & mask;
-  return (u32)(-value | value) >> 31;
+  return NONZERO(value);
 }
 
 /// Sets sound `sound`'s bit in gSoundFlags.

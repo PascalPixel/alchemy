@@ -35,20 +35,17 @@ struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide) {
 /// Returns the average level of the party members, rounded down (0 with no
 /// party members).
 u32 Party_GetAverageLevel(void) {
-  s32 count;
-  s32 total;
+  s32 totalLevels = 0;
+  s32 partySize = Party_CountMembers();
   s32 i;
 
-  total = 0;
-  count = Party_CountMembers();
-  if (count == 0) {
+  if (partySize == 0)
     return 0;
-  }
-  for (i = 0; i < count; i++) {
-    total += ((struct BattleUnit *)Unit_Get(gMainRoutineWork.party[i]))->level;
-  }
-  total = total / count;
-  return total;
+  for (i = 0; i < partySize; i++)
+    totalLevels +=
+        ((struct BattleUnit *)Unit_Get(gMainRoutineWork.party[i]))->level;
+  totalLevels /= partySize;
+  return totalLevels;
 }
 
 /// Returns the definition of enemy selector; enemy ids start past the eight
@@ -376,7 +373,7 @@ void Unit_Calculate(s32 unitId) {
 
   if (unit->classId == CLASS_NONE) {
     hpLimit = UNIT_ENEMY_HP_MAX;
-    ppLimit = UNIT_HP_MAX;
+    ppLimit = UNIT_ENEMY_PP_MAX;
   } else {
     hpLimit = ppLimit = UNIT_CHARACTER_HP_MAX;
   }
@@ -635,7 +632,8 @@ void MainRoutineWork_InitializeDefaults(void) {
   // XXX: what reads these two tables of the scene state, 32 rows of eight
   // random numbers 0 to 4 (12 bytes apart) and a copy of Data_080b1f2c; a
   // search of the scenes for gSceneLocalState + 0x11b8 and + 0x1338
-  // (gItemCounters + 0x12c and + 0x2ac as ewram.s labels them) would settle it.
+  // (gRareItemStock + 0x12c and + 0x2ac as ewram.s labels them) would settle
+  // it.
   for (i = 0; i < 32; i++) {
     for (j = 0; j < 8; j++)
       gSceneLocalState[0x11b8 + i * 12 + j] = (Random16() * 5) >> 16;
@@ -777,12 +775,12 @@ void Party_BalanceDjinn(void) {
 
     for (i = 0; i < count; i++) {
       s32 owner = gMainRoutineWork.party[i];
-      struct OwnerDjinnState *unit = Unit_Get(owner);
+      struct BattleUnit *unit = Unit_Get(owner);
       u8 *counts;
       s32 j;
 
       sum = 0;
-      counts = unit->counts.banks.owned;
+      counts = unit->djinnOwnedCounts;
       j = 3;
       do {
         u8 value = *counts;
@@ -1115,111 +1113,55 @@ void Unit_RecalculateGauges(s32 unitId) {
   Unit_UpdateGauges(unit);
 }
 
-/// Sets the unit's HP, clamped to 0..hpMax, and recomputes its HP and PP
-/// gauges inline.
-void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
-  s32 value;
-
-  if (hp > unit->hpMax) {
-    value = unit->hpMax;
-  } else {
-    value = 0;
-    if (hp >= 0) {
-      value = hp;
-    }
-  }
-  unit->hp = value;
-  value = ((value << 16) >> 2) / unit->hpMax;
-
-  {
-    s32 output = 0x4000;
-
-    if (value <= output) {
-      output = 0;
-      if (value >= 0) {
-        output = value;
-      }
-    }
-    unit->hpGauge = output;
-    if ((output << 16) == 0 && unit->hp != 0) {
-      unit->hpGauge = 1;
-    }
-  }
-
-  value = (unit->pp << 14) / unit->ppMax;
-  {
-    s32 output = 0x4000;
-
-    if (value <= output) {
-      output = 0;
-      if (value >= 0) {
-        output = value;
-      }
-    }
-    unit->ppGauge = output;
-    if ((output << 16) == 0 && unit->pp != 0) {
-      unit->ppGauge = 1;
-    }
-  }
-}
-
-/// Sets the unit's PP, clamped to 0..ppMax, and recomputes its HP and PP
-/// gauges.
-void Unit_SetPp(struct BattleUnit *unit, s32 pp) {
-  s32 clamped;
-
-  if (pp > unit->ppMax) {
-    clamped = unit->ppMax;
-  } else {
-    clamped = 0;
-    if (pp >= 0)
-      clamped = pp;
-  }
-  unit->pp = clamped;
-  Unit_UpdateGauges(unit);
-}
-
-/// Adds delta to the HP of unit owner, clamped to 0..hpMax, recomputes its
-/// gauges and returns the new HP.
-s32 Unit_AddHp(s32 owner, s32 delta) {
-  struct BattleUnit *state = Unit_Get(owner);
-  s32 cur = state->hp;
-  s32 max = state->hpMax;
-  s32 value = cur + delta;
+/// Clamps a new HP or PP value to 0 and the maximum.
+static inline s32 Unit_ClampGaugeValue(s32 value, s32 maximum) {
   s32 result;
 
-  if (value > max)
-    result = max;
+  if (value > maximum)
+    result = maximum;
   else {
     result = 0;
     if (value >= 0)
       result = value;
   }
-  state->hp = result;
-  Unit_RecalculateGauges(owner);
-  return state->hp;
+  return result;
 }
 
-/// Adds delta to the PP of unit owner, clamped to 0..ppMax, recomputes its
-/// gauges and returns the new PP.
-s16 Unit_AddPp(s32 owner, s32 delta) {
-  struct BattleUnit *state = Unit_Get(owner);
-  s32 cur = state->pp;
-  s32 max = state->ppMax;
-  s32 value = cur + delta;
-  s32 result;
-
-  if (value > max)
-    result = max;
-  else {
-    result = 0;
-    if (value >= 0)
-      result = value;
+/// Each sets the unit's HP or PP, clamped to 0 and its maximum, and recomputes
+/// its HP and PP gauges.
+#define UNIT_DEFINE_SET(name, field, maximum)                                  \
+  void name(struct BattleUnit *unit, s32 value) {                              \
+    s32 clamped;                                                               \
+                                                                               \
+    clamped = Unit_ClampGaugeValue(value, unit->maximum);                      \
+    unit->field = clamped;                                                     \
+    Unit_UpdateGauges(unit);                                                   \
   }
-  state->pp = result;
-  Unit_RecalculateGauges(owner);
-  return state->pp;
-}
+
+UNIT_DEFINE_SET(Unit_SetHp, hp, hpMax)
+UNIT_DEFINE_SET(Unit_SetPp, pp, ppMax)
+
+/// Each adds delta to the HP or PP of unit unitId, clamped to 0 and its
+/// maximum, recomputes its gauges and returns the new value, as `type`.
+#define UNIT_DEFINE_ADD(type, name, field, maximum)                            \
+  type name(s32 unitId, s32 delta) {                                           \
+    struct BattleUnit *unit = Unit_Get(unitId);                                \
+    s32 current = unit->field;                                                 \
+    s32 limit = unit->maximum;                                                 \
+    s32 value = current + delta;                                               \
+    s32 result;                                                                \
+                                                                               \
+    result = Unit_ClampGaugeValue(value, limit);                               \
+    unit->field = result;                                                      \
+    Unit_RecalculateGauges(unitId);                                            \
+    return unit->field;                                                        \
+  }
+
+UNIT_DEFINE_ADD(s32, Unit_AddHp, hp, hpMax)
+UNIT_DEFINE_ADD(s16, Unit_AddPp, pp, ppMax)
+
+#undef UNIT_DEFINE_SET
+#undef UNIT_DEFINE_ADD
 
 #undef UNIT_STAT_DIFF
 #undef SCALE_EFFECT

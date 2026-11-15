@@ -36,8 +36,8 @@ gSceneLocalState:
 	.global gSnapshotObjects
 gSnapshotObjects:
 	.space 0x00001068
-	.global gItemCounters
-gItemCounters:
+	.global gRareItemStock
+gRareItemStock:
 	.space 0x000002c0
 	.global gSceneState
 gSceneState:

@@ -74,7 +74,7 @@ enum ClassSeries {
 // The caps on a unit's level and stats (Unit_Calculate).
 #define UNIT_LEVEL_MAX 99
 #define UNIT_ENEMY_HP_MAX 16383    ///< maximum HP, an enemy's
-#define UNIT_HP_MAX 9999           ///< maximum PP, an enemy's
+#define UNIT_ENEMY_PP_MAX 9999     ///< maximum PP, an enemy's
 #define UNIT_CHARACTER_HP_MAX 1999 ///< maximum HP and PP, a character's
 #define UNIT_STAT_MAX 999          ///< Attack, Defense and Agility
 #define UNIT_LUCK_MAX 99

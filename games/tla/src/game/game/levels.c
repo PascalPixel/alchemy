@@ -41,18 +41,18 @@ s32 Party_FindOwnerWithAction(s32 action) {
 /// Returns 1 when `abilityId` is in the unit's Psynergy list. Called by the
 /// events that check whether a party member knows a Psynergy
 /// (Party_CheckShortcut).
-s32 Unit_KnowsPsynergy(s32 owner, s32 value) {
-  struct BattleUnit *unit = Unit_Get(owner);
+s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
+  struct BattleUnit *unit = Unit_Get(unitId);
   struct OwnerActionSlot *entry;
   s32 index = 0;
-  s32 mask = OWNER_ACTION_ID_MASK;
+  s32 actionMask = OWNER_ACTION_ID_MASK;
 
   entry = unit->psynergy;
   do {
-    s32 current = entry->encodedAction;
+    s32 currentAction = entry->encodedAction;
 
     entry++;
-    if ((current & mask) == value)
+    if ((currentAction & actionMask) == abilityId)
       return 1;
     index++;
   } while (index <= PSYNERGY_SLOTS - 1);
@@ -410,15 +410,16 @@ struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains) {
   return 0;
 }
 
-/// Level up one level at a time until the target, recalculating stats each
-/// time. unit: character ID. lv: target level.
-void Unit_LevelUpTo(s32 unit, s32 lv) {
-  u8 res[16]; // Receives struct LevelUpResult (unused).
-  s32 cur = ((struct BattleUnit *)Unit_Get(unit))->level;
+/// Levels character `unitId` up one level at a time until `targetLevel`, then
+/// recomputes its stats.
+void Unit_LevelUpTo(s32 unitId, s32 targetLevel) {
+  // Each level's gains are discarded.
+  struct LevelUpResult gains;
+  s32 currentLevel = ((struct BattleUnit *)Unit_Get(unitId))->level;
 
-  while (cur < lv) {
-    Unit_LevelUp(unit, (struct LevelUpResult *)res);
-    cur++;
+  while (currentLevel < targetLevel) {
+    Unit_LevelUp(unitId, &gains);
+    currentLevel++;
   }
-  Unit_Calculate(unit);
+  Unit_Calculate(unitId);
 }

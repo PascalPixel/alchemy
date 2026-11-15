@@ -213,10 +213,9 @@ struct ClassDefinition *Class_GetDefinition(s32 classId) {
 void Unit_UpdateClass(s32 unitId) {
   struct BattleUnit *unit = Unit_Get(unitId);
 
-  unit->classId = Class_Determine(
-      unit->enemyId, unit->djinnHeld,
-      Inventory_GetEquippedItem((struct OwnerInventoryState *)unit,
-                                ITEM_TYPE_CLASS_CHANGE));
+  unit->classId =
+      Class_Determine(unit->enemyId, unit->djinnHeld,
+                      Inventory_GetEquippedItem(unit, ITEM_TYPE_CLASS_CHANGE));
   Owner_UpdateClassActions(unitId);
   Unit_CalculateBaseElements(unitId, unit->baseElement);
 }

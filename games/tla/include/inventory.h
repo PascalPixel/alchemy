@@ -9,8 +9,8 @@
 s32 Inventory_Count(s32 owner);
 s32 Inventory_CountItem(s32 owner, s32 item);
 s32 Inventory_FindEquipped(s32 owner, s32 type);
-struct ItemDefinition *
-Inventory_GetEquippedDefinition(struct OwnerInventoryState *owner, s32 type);
+struct ItemDefinition *Inventory_GetEquippedDefinition(struct BattleUnit *unit,
+                                                       s32 type);
 s32 Inventory_RemoveFirstUnflagged(s32 owner);
 s32 Inventory_AddItem(s32 owner, s32 item);
 s32 Inventory_Find(s32 owner, s32 item);

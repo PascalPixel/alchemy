@@ -69,7 +69,8 @@ static inline void Inventory_CompactSlots(s16 *inventory) {
 #include "battle/battle_unit.h"
 #include "owner_state.h"
 
-/// One of the 48 element presets an enemy record names.
+/// The rare item counters RareItemStock_Adjust keeps; an index from here on
+/// has no stock.
 enum { ITEM_COUNTER_COUNT = 300 };
 
 enum { OWNER_ACTION_CLASS = 0x8000, OWNER_ACTION_ITEM = 0x4000 };
@@ -119,6 +120,8 @@ struct StatWork {
   s32 unusedAfterItem;         ///< never written
 };
 
-extern u8 gItemCounters[ITEM_COUNTER_COUNT];
+/// How many of each rare item the shops may still sell, 0 to 99, by counter
+/// number (gItem_ArtifactSlotTable; RareItemStock_Adjust).
+extern u8 gRareItemStock[ITEM_COUNTER_COUNT];
 
 #endif

@@ -29,6 +29,11 @@
 /// The magnitude of v. v is read twice.
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
+/// 1 when `v` is not zero and 0 when it is, without a branch: the sign bit of
+/// `v | -v`. The flag readers and the Psynergy tests return their truth values
+/// so; the name is ours. `v` is read twice.
+#define NONZERO(v) ((u32)(-(v) | (v)) >> 31)
+
 /// A scene's data that its overlay places after pictures linked between its
 /// tables: the overlay's linker script places .data.late after the first
 /// of them and .data.last after the next.

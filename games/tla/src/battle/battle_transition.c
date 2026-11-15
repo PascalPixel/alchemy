@@ -17,6 +17,8 @@
 #define TRANSITION_CURTAIN_MIDDLE_ROW 13
 #define TRANSITION_CURTAIN_LAST_ROW 20
 #define TRANSITION_OPEN_FRAMES 80
+/// Tile 128 + n of BG character block 1, the curtain's tiles.
+#define CURTAIN_TILE(n) (BG_CHAR_BLOCK(1) + (128 + (n)) * TILE_SIZE_4BPP)
 
 /// Fades the screen to black over sixteen frames as every background's
 /// mosaic grows, then shows no layer. Sets REG_BLDCNT to darken the
@@ -120,7 +122,7 @@ void BattleBackground_ShowZoomedPage(void) {
   u16 *record;
 
   if (((struct BattleBackgroundView *)Ram_HeapSlots->battleBackground)->mode ==
-      2) {
+      BATTLE_BACKGROUND_ZOOMED) {
     records = Ram_HeapSlots->battleScanlines;
     record = records->lines[records->page];
     Io_Write16(record[0], &REG_BG2CNT);
@@ -131,14 +133,14 @@ void BattleBackground_ShowZoomedPage(void) {
 }
 
 /// Copies one of eight tiles from gBattleTransition_CurtainVariants into
-/// 0x06005000, a new one every four frames while the transition timer
+/// CURTAIN_TILE(0), a new one every four frames while the transition timer
 /// (unk84[9], as BattleTransition_AdvanceTimer counts it) runs from 1 to 32.
 void BattleTransition_UploadTileVariant(void) {
   u32 variant = *(s32 *)Ram_HeapSlots->battleEntryTimer - 1;
 
   if (variant <= 31)
     Dma_Set(gBattleTransition_CurtainVariants + (variant >> 2) * 32,
-            (void *)BG_SCREEN_BLOCK(10), DMA_COPY_WORDS(8), REG_DMA3);
+            CURTAIN_TILE(0), DMA_COPY_WORDS(8), REG_DMA3);
 }
 
 /// Advances the curtain opening by a frame: BG0 slides into place as the camera
@@ -228,30 +230,31 @@ void BattleTransition_Run(s32 arg, s32 kind) {
   heap = Ram_HeapSlots;
   view = (struct BattleBackgroundView *)heap->battleBackground;
   timer = HeapSlot_Alloc(HEAP_SLOT_BATTLE_ENTRY_TIMER, 4);
-  if ((u32)(kind - 78) > 2) {
+  if ((u32)(kind - FORMATION_DOOM_DRAGON_A) >
+      FORMATION_DOOM_DRAGON_C - FORMATION_DOOM_DRAGON_A) {
     s32 y;
     s32 zero;
 
-    Dma_Set(gBattleTransition_CurtainTiles, (void *)0x06005020,
-            DMA_COPY_WORDS(8), DMA3);
-    Dma_Set(gBattleTransition_CurtainTiles + 32, (void *)0x06005040,
-            DMA_COPY_WORDS(8), DMA3);
-    Dma_Set(gBattleTransition_CurtainTiles + 64, (void *)0x06005060,
-            DMA_COPY_WORDS(8), DMA3);
-    Dma_Set(gBattleTransition_CurtainTiles + 96, (void *)0x06005080,
-            DMA_COPY_WORDS(8), DMA3);
-    Dma_Set(gBattleTransition_CurtainTiles + 128, (void *)0x060050a0,
-            DMA_COPY_WORDS(8), DMA3);
-    Dma_Set(gBattleTransition_CurtainTiles + 160, (void *)0x060050c0,
-            DMA_COPY_WORDS(8), DMA3);
-    Dma_Set(gBattleTransition_CurtainTiles + 192, (void *)0x060050e0,
-            DMA_COPY_WORDS(8), DMA3);
-    view->secondMode = 1;
+    Dma_Set(gBattleTransition_CurtainTiles, CURTAIN_TILE(1), DMA_COPY_WORDS(8),
+            DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 1 * TILE_SIZE_4BPP,
+            CURTAIN_TILE(2), DMA_COPY_WORDS(8), DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 2 * TILE_SIZE_4BPP,
+            CURTAIN_TILE(3), DMA_COPY_WORDS(8), DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 3 * TILE_SIZE_4BPP,
+            CURTAIN_TILE(4), DMA_COPY_WORDS(8), DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 4 * TILE_SIZE_4BPP,
+            CURTAIN_TILE(5), DMA_COPY_WORDS(8), DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 5 * TILE_SIZE_4BPP,
+            CURTAIN_TILE(6), DMA_COPY_WORDS(8), DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 6 * TILE_SIZE_4BPP,
+            CURTAIN_TILE(7), DMA_COPY_WORDS(8), DMA3);
+    view->secondMode = BATTLE_BACKGROUND_FIXED;
     view->busy = 0;
-    view->mode = 1;
+    view->mode = BATTLE_BACKGROUND_FIXED;
     REG_DISPCNT = DISPCNT_MODE_1;
-    IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(10), 32, 0x33333333);
-    IWRAM_FILL_WORDS((void *)0x06005100, 32, 0);
+    IWRAM_FILL_WORDS(CURTAIN_TILE(0), TILE_SIZE_4BPP, 0x33333333);
+    IWRAM_FILL_WORDS(CURTAIN_TILE(8), TILE_SIZE_4BPP, 0);
     REG_BG1CNT =
         BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(TRANSITION_CURTAIN_SCREEN);
     REG_BG0CNT |= BGCNT_PRIORITY(2);
@@ -279,39 +282,45 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     gBgScroll[1].y = y;
     zero = 0;
     wait(1);
-    REG_WIN0H = 0xf0;
-    REG_WIN0V = 0x88;
-    REG_WIN1H = 0xf0;
-    REG_WIN1V = 0x88;
+    REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
+    REG_WIN0V = WIN_RANGE(0, 136);
+    REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
+    REG_WIN1V = WIN_RANGE(0, 136);
     REG_WININ = WININ_WIN0_BG0 | WININ_WIN0_BG1 | WININ_WIN0_BG2 |
                 WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
                 WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
     REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
-    IoWriteQueue_Store16((u32)&REG_DISPCNT, 0x7741);
-    BattleCamera_SetView(0, 0, 0, 180);
+    IoWriteQueue_Store16((u32)&REG_DISPCNT,
+                         DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                             DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                             DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
+    BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL + TRANSITION_OPEN_FRAMES);
     *timer = zero;
     Task_Add(BattleTransition_AdvanceTimer, TASK_PASS_VBLANK);
     Task_Add(BattleTransition_DrawRows, TASK_PASS_FRAME);
-    Irq_SetHandler(2, 32, BattleTransition_ResetBg0Scroll);
+    Irq_SetHandler(IRQ_VCOUNT, 32, BattleTransition_ResetBg0Scroll);
     gBgScroll[0].y = y;
     wait(1);
     PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
     wait(20);
     IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, 2);
     IoWriteQueue_SetBits16((u32)&REG_BG0CNT, 0);
-    if ((u32)(kind - 74) <= 2 || kind == 638)
+    // Karst and Agatio's battles open with no announcement.
+    if ((u32)(kind - FORMATION_KARST_AND_AGATIO_A) <=
+            FORMATION_KARST_AND_AGATIO_C - FORMATION_KARST_AND_AGATIO_A ||
+        kind == FORMATION_KARST_AND_AGATIO_VS_ISAAC)
       wait(60);
     else
       BattleIntro_AnnounceEncounter(arg);
     Task_Remove(BattleTransition_AdvanceTimer);
     Task_Remove(BattleTransition_DrawRows);
     gBgScroll[0].y = 0;
-    Irq_SetHandler(2, 0, 0);
+    Irq_SetHandler(IRQ_VCOUNT, 0, 0);
   } else {
     s32 zero;
 
     battle = heap->battleWork;
-    view->secondMode = 1;
+    view->secondMode = BATTLE_BACKGROUND_FIXED;
     view->busy = 0;
     ownerCount = BattleParty_PrepareMembers(owners);
     ownerCount += BattleParty_PrepareReserveOwners(owners + ownerCount);
@@ -324,7 +333,10 @@ void BattleTransition_Run(s32 arg, s32 kind) {
           enemyId != ENEMY_DOOM_DRAGON_E && enemyId != ENEMY_DOOM_DRAGON_H)
         battleObject->scale = Q16_ONE * 7 / 10;
     }
-    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x6041, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                        DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_WIN0_ON |
+                            DISPCNT_WIN1_ON,
+                        IO_WRITE_HALFWORD);
     wait(1);
     {
       s32 background = (s32)&ResourceId_SerpentStarsBackdrop;
@@ -339,7 +351,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     BattleEffect_RunShatteringOpeningFar(&work);
     BattleCamera_SetView(0, 0, 0, 100);
     *timer = zero;
-    Irq_SetHandler(2, 32, BattleTransition_ResetBg0Scroll);
+    Irq_SetHandler(IRQ_VCOUNT, 32, BattleTransition_ResetBg0Scroll);
     wait(1);
     wait(20);
     PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
@@ -361,13 +373,13 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     BattleIntro_AnnounceEncounter(arg);
     gBgScroll[0].y = 0;
     wait(1);
-    Irq_SetHandler(2, 0, 0);
+    Irq_SetHandler(IRQ_VCOUNT, 0, 0);
   }
-  Irq_SetHandler(2, 0, 0);
+  Irq_SetHandler(IRQ_VCOUNT, 0, 0);
   REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   wait(1);
   REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
-  REG_BG0CNT &= 0xfffd;
+  REG_BG0CNT &= ~BGCNT_PRIORITY(2);
   gBgScroll[1].x = 8;
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                 DISPCNT_BG2_ON | DISPCNT_OBJ_ON;

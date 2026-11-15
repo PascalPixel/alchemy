@@ -354,7 +354,7 @@ void Text_DrawGlyphTileAtWorkOffset(u16 *buffer, const struct Window *work,
     s32 dst;
 
     cell *= 2;
-    dst = 0x06002000 + cell;
+    dst = (s32)WINDOW_TILEMAP_VRAM + cell;
     src = (s32)canvas->tilemap + cell;
 
     Text_DrawStringAsTiles(buffer, (u16 *)src, (u16 *)dst, offsetX & 7);

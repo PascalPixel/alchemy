@@ -327,10 +327,14 @@ void PartyStatus_Draw(s32 flags) {
     if (flags & PARTY_STATUS_SHOW_PP)
       row++;
     Func_08118130__screens(0, standbyDjinn);
-    Window_SetTilemapEntry(window, 0x5001, 0, row, 0);
-    Window_SetTilemapEntry(window, 0x5002, 2, row, 0);
-    Window_SetTilemapEntry(window, 0x5003, 0, row + 1, 0);
-    Window_SetTilemapEntry(window, 0x5004, 2, row + 1, 0);
+    Window_SetTilemapEntry(window, ELEMENT_ICON_TILE + ELEMENT_VENUS, 0, row,
+                           0);
+    Window_SetTilemapEntry(window, ELEMENT_ICON_TILE + ELEMENT_MERCURY, 2, row,
+                           0);
+    Window_SetTilemapEntry(window, ELEMENT_ICON_TILE + ELEMENT_MARS, 0, row + 1,
+                           0);
+    Window_SetTilemapEntry(window, ELEMENT_ICON_TILE + ELEMENT_JUPITER, 2,
+                           row + 1, 0);
     if (standbyDjinn[0] > 9 || standbyDjinn[1] > 9 || standbyDjinn[2] > 9 ||
         standbyDjinn[3] > 9)
       Dma_Set(gPartyStatus_DigitTiles, (void *)0x06003400, DMA_COPY_WORDS(72),

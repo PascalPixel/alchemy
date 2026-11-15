@@ -454,7 +454,7 @@ void Credits_InitCrawlSprites(void) {
   for (i = 0; i < 8; i++) {
     u32 *q = entry;
 
-    *q++ = 0x00c000c0;
+    *q++ = OBJ_X(192) | 192;
     *q = CREDITS_RING_TILES;
     entry += 2;
   }
@@ -658,7 +658,7 @@ void Credits_InitTextSpritesAtPage(s32 page) {
   for (i = 0; i < 8; i++) {
     u32 *q = entry;
 
-    *q++ = 0x00c000c0;
+    *q++ = OBJ_X(192) | 192;
     *q = CREDITS_RING_TILES;
     entry += 2;
   }

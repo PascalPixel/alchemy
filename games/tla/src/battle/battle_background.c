@@ -890,7 +890,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     s32 angle;
 
     ring = &work->rings[i];
-    angle = i * 0x5555;
+    angle = i * (TRIG_TURN / 3);
     ring->x = PolarX(angle, radius);
     ring->y = PolarY(angle, radius);
     ring->velX = PolarX(angle, 0x200);
@@ -986,16 +986,17 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
                                               DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                                               DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
                                               DISPCNT_WIN0_ON);
-  IoWriteQueue_Store16((u32)&REG_BG2CNT, 0x784);
+  IoWriteQueue_Store16((u32)&REG_BG2CNT, BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                                             BGCNT_SCREEN_BASE(7));
   IoWriteQueue_Store16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   wait(1);
   Io_Write16(DISPLAY_WIDTH, &REG_WIN0H);
-  Io_Write16(0x1088, &REG_WIN0V);
+  Io_Write16(WIN_RANGE(16, 136), &REG_WIN0V);
   Io_Write16(WININ_WIN0_ALL, &REG_WININ);
   Io_Write16(WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ, &REG_WINOUT);
   if (mode == GLOW_STAR_FIELD) {
-    IoWriteQueue_Store16((u32)&REG_BLDALPHA, 0x100e);
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA, BLEND_ALPHA(14, BLEND_WEIGHT_MAX));
     ElementGlow_InitializeStarField(kind);
     for (frame = 0, pos = &starPosition; frame <= 44; frame++) {
       brightness = &session->brightness;

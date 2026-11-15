@@ -52,7 +52,7 @@ void BattleMotion_SetupEscapeObject(s32 objectId) {
   object->acceleration = px(2);
   object->speedLimit = px(8);
   object->velocityY = px(5);
-  object->verticalMotionStrength = 0x7851;
+  object->verticalMotionStrength = px(47) / 100;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_StartIdleFar(object);
@@ -107,7 +107,7 @@ void BattleMotion_HopBack(s32 objectId) {
   object->acceleration = Q16_ONE;
   object->speedLimit = px(4);
   object->velocityY = px(3);
-  object->verticalMotionStrength = 0x9999;
+  object->verticalMotionStrength = px(3) / 5;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_StartIdleFar(object);
@@ -127,7 +127,7 @@ void BattleMotion_LeapBack(s32 objectId) {
   object->acceleration = Q16_ONE;
   object->speedLimit = px(4);
   object->velocityY = px(4);
-  object->verticalMotionStrength = 0x9999;
+  object->verticalMotionStrength = px(3) / 5;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_StartIdleFar(object);
@@ -136,7 +136,8 @@ void BattleMotion_LeapBack(s32 objectId) {
     s32 anchor = slot->anchorX;
 
     mul = Iwram_MulQ16;
-    Actor_SetMoveTargetFar(object, mul(anchor, 0x14ccc), 0, slot->anchorZ);
+    Actor_SetMoveTargetFar(object, mul(anchor, Q16_ONE * 13 / 10), 0,
+                           slot->anchorZ);
   }
   Actor_SelectAnimationFar(object, POSE_DAMAGE);
 }
@@ -171,7 +172,7 @@ void BattleMotion_ApplyKnockback(s32 id, s32 variant) {
     x = (scale * gBattleKnockback_DistancePercent[variant]) / 100;
     Actor_SetMoveTargetFar(object, x, 0, slot->anchorZ);
   }
-  object->verticalMotionStrength = 0x9999;
+  object->verticalMotionStrength = px(3) / 5;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_SelectAnimationFar(object, POSE_DAMAGE);

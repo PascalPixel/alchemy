@@ -74,7 +74,7 @@ void Window_CopyTilemapRegion(struct Window *window, const void *resource) {
   Decompress_TaggedLz(resource, buffer);
   offset = (((s16)window->y << 5) + (s16)window->x) * 2;
   map = (u16 *)((u8 *)work->tilemap + offset);
-  vram = (u16 *)(offset + 0x06002000);
+  vram = (u16 *)(offset + WINDOW_TILEMAP_VRAM);
   for (row = 0; row < window->height; row++) {
     for (col = 0; col < window->width;) {
       s16 tile = *source;
@@ -365,7 +365,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette, DMA_COPY_WORDS(8),
           REG_DMA3);
-  palette[WINDOW_BACKGROUND_COLOR] = 0x6318;
+  palette[WINDOW_BACKGROUND_COLOR] = RGB(24, 24, 24);
   end = (u8 *)(byteCount + (s32)editedName) - 1;
   while (1) {
     s32 width = 1;
@@ -654,7 +654,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   palette = (u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0);
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette, DMA_COPY_WORDS(8),
           REG_DMA3);
-  palette[WINDOW_BACKGROUND_COLOR] = 0x6318;
+  palette[WINDOW_BACKGROUND_COLOR] = RGB(24, 24, 24);
   end = (u8 *)(originalLength + (s32)editedName);
   while (1) {
     s32 width = 1;

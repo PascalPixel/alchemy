@@ -503,7 +503,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   shop->burstMember = -1;
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Sound_PlayFar(gSanctum_ServiceTunes[shop->action]);
-  Shop_SaveAndTintFieldPalette(0x00202108);
+  Shop_SaveAndTintFieldPalette(PALETTE_TINT_CUSTOM | RGB(8, 8, 8));
   Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member], 0);
   wait(20);
   taskPriority = 0x480;

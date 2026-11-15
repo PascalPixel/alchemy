@@ -19,7 +19,7 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
   u32 i;
 
   dst = pixels;
-  src = (u8 *)(0x06000000 + TILE_SIZE_4BPP * slot);
+  src = BG_CHAR_BLOCK(0) + TILE_SIZE_4BPP * slot;
   for (i = 0; i < 32; i++) {
     n = *src++;
     *dst++ = n & 15;
@@ -70,7 +70,7 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
     *entry = WINDOW_TILE(slot);
     *mirror = WINDOW_TILE(slot);
   }
-  Dma_Set(pixels, (void *)(0x06000000 + slot * 32), DMA_COPY_WORDS(8),
+  Dma_Set(pixels, BG_CHAR_BLOCK(0) + slot * TILE_SIZE_4BPP, DMA_COPY_WORDS(8),
           REG_DMA3);
 }
 
@@ -126,11 +126,11 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   if (attr == BG_TILE_PALETTE(WINDOW_PALETTE)) {
     pens[1] = gText_ColourPens[work->colour & (PALETTE_COLORS - 1)];
     pens[3] = 3;
-    Iwram_FillWords(canvas, 0x800, 0x04040404);
+    Iwram_FillWords(canvas, 0x800, PIXELS_8BPP(WINDOW_BACKGROUND_COLOR));
   } else {
     pens[1] = (u8)work->colour & (PALETTE_COLORS - 1);
     pens[3] = 1;
-    Iwram_FillWords(canvas, 0x800, 0x0E0E0E0E);
+    Iwram_FillWords(canvas, 0x800, PIXELS_8BPP(TEXT_BACKGROUND_COLOR));
   }
   if (script != 0) {
     for (;;) {
@@ -257,7 +257,7 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
       *tiles = attr | tile;
       *mirror = attr | tile;
     }
-    p = (u32 *)(0x06000000 + tile * TILE_SIZE_4BPP);
+    p = (u32 *)(BG_CHAR_BLOCK(0) + tile * TILE_SIZE_4BPP);
     *p++ = ((u32 *)canvas)[i];
     *p++ = ((u32 *)canvas)[i + 0x40];
     *p++ = ((u32 *)canvas)[i + 0x80];
@@ -585,7 +585,7 @@ void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position,
          ((s16)position->x + (offsetX >> 3)) + 1;
   if (cell < 0x280U) {
     byteOffset = cell * 2;
-    vramAddress = byteOffset + 0x06002000;
+    vramAddress = byteOffset + (s32)WINDOW_TILEMAP_VRAM;
     text = canvas->textBuffer;
     Text_DrawStringAsTiles(text, (s32)((u8 *)canvas->tilemap + byteOffset),
                            vramAddress, 7 & offsetX);
@@ -634,7 +634,7 @@ void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
   cell = (((s16)work->y + ((u32)offsetY >> 3) + 1) << 5) +
          ((s16)work->x + ((u32)offsetX >> 3)) + 1;
   if (cell < 0x280) {
-    vram = 0x06002000;
+    vram = (s32)WINDOW_TILEMAP_VRAM;
     cell *= 2;
     dst = vram + cell;
     src = (s32)canvas->tilemap + cell;
@@ -729,7 +729,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, struct RenderInput *work,
   cell = (((s16)work->y + ((u32)offsetY >> 3) + 1) << 5) +
          ((s16)work->x + ((u32)offsetX >> 3)) + 1;
   if (cell < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT) {
-    vram = 0x06002000;
+    vram = (s32)WINDOW_TILEMAP_VRAM;
     cell *= 2;
     dst = vram + cell;
     src = (s32)canvas->tilemap + cell;

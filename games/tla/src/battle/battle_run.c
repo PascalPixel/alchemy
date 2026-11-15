@@ -527,7 +527,7 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
   s32 count;
   s32 index;
 
-  limit = 4;
+  limit = PARTY_BATTLE_SIZE;
   if (Ram_HeapSlots->battleWork->isLink != 0)
     limit = 3;
 
@@ -586,7 +586,7 @@ s32 BattleEnemy_List(s16 *unit_ids) {
 
   output = unit_ids;
   listed = 0;
-  limit = 6;
+  limit = ENEMY_BATTLE_SIZE;
   count = 0;
   if (output != NULL) {
     if (GameFlag_Get(FLAG_LINK_BATTLE) != 0)
@@ -624,7 +624,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
 
   output = unitIds;
   livingCount = 0;
-  enemyCapacity = 6;
+  enemyCapacity = ENEMY_BATTLE_SIZE;
   if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
     enemyCapacity = 3;
   }
@@ -650,8 +650,8 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
     }
   }
   if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
-    remaining = 0x80;
-    enemyLimit = enemyCapacity + 0x80;
+    remaining = FIRST_ENEMY_UNIT;
+    enemyLimit = enemyCapacity + FIRST_ENEMY_UNIT;
     if (remaining < enemyLimit) {
       do {
         unit = Unit_Get(remaining);
@@ -690,7 +690,7 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
 
   output = unitIds;
   livingCount = 0;
-  enemyCapacity = 6;
+  enemyCapacity = ENEMY_BATTLE_SIZE;
   if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
     enemyCapacity = 3;
   }
@@ -717,8 +717,8 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
     }
   }
   if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
-    remaining = 0x80;
-    enemyLimit = enemyCapacity + 0x80;
+    remaining = FIRST_ENEMY_UNIT;
+    enemyLimit = enemyCapacity + FIRST_ENEMY_UNIT;
     if (remaining < enemyLimit) {
       do {
         unit = Unit_Get(remaining);
@@ -748,7 +748,7 @@ s32 BattleUnit_ListIds(s32 groups, u16 *dst) {
 
   order = Ram_HeapSlots->battleWork;
   count = 0;
-  if (groups & 1) {
+  if (groups & BATTLE_SIDE_MASK_PARTY) {
     for (i = 0; order->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
       if (order->partyUnits[i] != BATTLE_UNIT_REMOVED) {
         if (dst != NULL)
@@ -757,7 +757,7 @@ s32 BattleUnit_ListIds(s32 groups, u16 *dst) {
       }
     }
   }
-  if (groups & 2) {
+  if (groups & BATTLE_SIDE_MASK_ENEMIES) {
     for (i = 0; order->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
       if (order->enemyIds[i] != BATTLE_UNIT_REMOVED) {
         if (dst != NULL)

@@ -236,6 +236,6 @@ void Menu_ReservedNoOp(void) {}
 /// Sets the Djinni's collected flag, then adds it to the specified party
 /// member. The flag is FLAG_DJINN_FIRST + DJINN_PER_ELEMENT * element + index.
 void Djinn_SetFoundFlagAndAdd(s32 member, s32 element, s32 index) {
-  GameFlag_Set((element * 0x14) + index + 0x30);
+  GameFlag_Set((element * DJINN_PER_ELEMENT) + index + FLAG_DJINN_FIRST);
   Djinn_GiveFar(member, element, index);
 }

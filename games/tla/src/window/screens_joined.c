@@ -130,7 +130,7 @@ void Party_ShowJoinedMessage(s32 member) {
     work->dirty = 1;
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(member)), 0, &slot,
-        &tile, 14, 0);
+        &tile, PORTRAIT_PALETTE, 0);
     // The portrait as a bare OAM entry, pushed at depth 250 each frame: a link
     // word, attributes 0 and 1 (32x32 at x 20, y 12) and attribute 2, its tile
     // with palette 14.

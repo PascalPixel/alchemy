@@ -12,11 +12,12 @@
 #define GLYPH_PIXELS_SIZE (16 * 24)
 #endif
 
+/// Every kanji is drawn 10 pixels wide.
+#define KANJI_WIDTH 10
+
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 /// The first kanji's code; the codes below it are the font's glyphs.
 #define KANJI_FIRST_CODE 256
-/// Every kanji is drawn 10 pixels wide.
-#define KANJI_WIDTH 10
 #endif
 
 /// Draws a character, and a second one when the code carries it in bits 8 to
@@ -124,7 +125,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
     Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
   }
   if ((u16)secondIndex != 0) {
-    glyph = (const u8 *)&gFont_Glyphs[-32] + ((u16)secondIndex << 5);
+    glyph = (const u8 *)&gFont_Glyphs[-TEXT_SPACE] + ((u16)secondIndex << 5);
     secondWidth = *(const s16 *)glyph;
     glyph += 2;
     if (work->outline == 1) {
@@ -199,9 +200,9 @@ s32 Text_GetWideStringWidth(u16 *text) {
   p = text + 1;
   if (c != 0) {
     do {
-      if (c == 0x20) {
+      if (c == TEXT_SPACE) {
         width += 4;
-      } else if (c <= 0xffU) {
+      } else if (c <= TEXT_LAST_FONT_CODE) {
 #if defined(WIDE_WIDTH_FIXED)
         width += 10;
 #else
@@ -211,7 +212,7 @@ s32 Text_GetWideStringWidth(u16 *text) {
           width += FONT_GLYPH(idx)->width;
         }
       } else {
-        width += 10;
+        width += KANJI_WIDTH;
 #endif
       }
       c = *p;
@@ -244,7 +245,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
   for (;;) {
     c = *text++;
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-    if (c > 0xff)
+    if (c > TEXT_LAST_FONT_CODE)
       c = 0x40;
 #endif
     if (c == 0)
@@ -255,27 +256,27 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
     if (c <= 30 || c == 176) {
 #endif
       switch (c) {
-      case 8:
+      case TEXT_COLOR:
         work->colour = *text;
         text++;
         break;
-      case 9:
+      case TEXT_OUTLINE:
         work->outline = *text;
         text++;
         break;
-      case 10:
+      case TEXT_LINE_SPACING:
         work->lineSpacing = *text;
         text++;
         break;
-      case 7:
+      case TEXT_COLORS_RESET:
         Text_ResetStyle();
         break;
-      case 3:
+      case TEXT_NEWLINE:
         x = start;
         y += 15;
         break;
       case 14:
-      case 15:
+      case TEXT_WINDOW_STATE:
       case 28:
         text++;
       case 11:
@@ -302,9 +303,9 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
       if ((window->flags & 8) == 0) {
         next = *text;
 #if TLA_PATCH_4
-        if (c > 32 && next > 32) {
-          s16 pairWidth =
-              gFont_Glyphs[c - 32].width + gFont_Glyphs[next - 32].width;
+        if (c > TEXT_SPACE && next > TEXT_SPACE) {
+          s16 pairWidth = gFont_Glyphs[c - TEXT_SPACE].width +
+                          gFont_Glyphs[next - TEXT_SPACE].width;
 
           // Outlined text joins only pairs one pixel narrower.
           if (work->outline == 1) {
@@ -318,9 +319,9 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
           }
         }
 #else
-        if (c > 32 && next > 32 &&
-            (u16)(gFont_Glyphs[c - 32].width + gFont_Glyphs[next - 32].width) <=
-                15) {
+        if (c > TEXT_SPACE && next > TEXT_SPACE &&
+            (u16)(gFont_Glyphs[c - TEXT_SPACE].width +
+                  gFont_Glyphs[next - TEXT_SPACE].width) <= 15) {
           c |= next << 8;
           text++;
         }
@@ -490,7 +491,5 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
 
 #undef Iwram_ExpandBitRuns
 #undef GLYPH_PIXELS_SIZE
-#undef KANJI_FIRST_CODE
-#undef KANJI_WIDTH
 #undef WIDE_WIDTH_FIXED
 #undef FONT_GLYPH

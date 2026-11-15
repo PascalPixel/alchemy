@@ -171,7 +171,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   candidateIds[targetCount] = 255;
   candidateCount = targetCount;
   if (mode == ABILITY_TARGET_ALLIES) {
-    if (spread != 255 && kind != 0) {
+    if (spread != ABILITY_RANGE_ALL && kind != 0) {
       found = 0;
       for (j = 0; j < targetCount; j++) {
         struct Unit *candidate;
@@ -224,12 +224,12 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (targetIndex < 0)
     targetIndex = (targetCount - 1) / 2;
   while (candidateIds[targetIndex] == BATTLE_UNIT_REMOVED ||
-         (GameFlag_Get(FLAG_LINK_BATTLE) && mode == 1 &&
+         (GameFlag_Get(FLAG_LINK_BATTLE) && mode == ABILITY_TARGET_FOES &&
           Unit_Get(candidateIds[targetIndex])->hp == 0)) {
     targetIndex = targetIndex + targetCount - 1;
     targetIndex %= targetCount;
   }
-  if (mode != 2) {
+  if (mode != ABILITY_TARGET_ALLIES) {
     BattleMotion_ProjectConditionalPositionFar(selection, &actorPosition);
     cursorTracks[0].flags = 8;
     cursorTracks[0].x = actorPosition.x;
@@ -286,7 +286,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     firstSprite->x = selectedPosition.x - 8;
     firstSprite->y = selectedPosition.y - 16;
     Oam_AddSpriteAtDepth__menus(firstSprite, 240);
-    if (spread == 255) {
+    if (spread == ABILITY_RANGE_ALL) {
       effect.scaleX = 256;
       effect.scaleY = 256;
     } else {
@@ -331,7 +331,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       BattleHighlight_SetModesFar(spreadActorIds, HIGHLIGHT_SELECTED);
       // The (u32) compares the stored id unsigned, as the bytes do.
       if ((u32)(NAVIGATION->lastTarget = candidateIds[targetIndex]) <= 7) {
-        if (spread != 255 && kind != 0) {
+        if (spread != ABILITY_RANGE_ALL && kind != 0) {
           unit = Unit_Get(candidateIds[targetIndex]);
           BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
                                                      &selectedPosition);
@@ -547,14 +547,15 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             break;
           }
         }
-      } else if (spread != 255) {
+      } else if (spread != ABILITY_RANGE_ALL) {
         target = Unit_Get(candidateIds[targetIndex]);
         BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
                                                    &namePosition);
         TARGET_BOB(namePosition.y);
-        if (target->enemyId == 355 || target->enemyId == 352) {
+        if (target->enemyId == ENEMY_MYSTERY_WOMAN ||
+            target->enemyId == ENEMY_MYSTERY_MAN) {
           width = (s32)MsgMysteryMan;
-          if (target->enemyId == 355)
+          if (target->enemyId == ENEMY_MYSTERY_WOMAN)
             width++;
           TARGET_MYSTERY_NAME_COPY(width, targetName,
                                    TARGET_MYSTERY_NAME_CAPACITY);
@@ -608,7 +609,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         marker->mode = 1;
         marker->x = markerPosition.x - 8;
         marker->y = markerPosition.y - 12;
-        if (spread == 255)
+        if (spread == ABILITY_RANGE_ALL)
           marker->affine = 0;
         else
           marker->affine = 1;
@@ -651,7 +652,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         }
       }
       targetIndex = result;
-    } else if (spread != 255) {
+    } else if (spread != ABILITY_RANGE_ALL) {
       if (repeated & (KEY_RIGHT | KEY_DOWN)) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         do {

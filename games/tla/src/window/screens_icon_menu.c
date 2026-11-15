@@ -269,9 +269,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       s32 count;
 
       if (gDebugMode != 0 && (gInput.held & KEY_START))
-        side = 2;
+        side = BATTLE_SIDE_MASK_ENEMIES;
       else
-        side = 1;
+        side = BATTLE_SIDE_MASK_PARTY;
       count = BattleUnit_ListIdsFar(side, block);
       if (side == 1)
         count += BattleParty_PrepareReserveOwnersFar(block + count);
@@ -401,7 +401,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Window_Close(commandWindow, 1);
         if (mode == -1)
           goto mark_visible;
-        commandKind = 0;
+        commandKind = COMMAND_ATTACK;
         target = mode;
         command->range = 1;
         break;
@@ -436,7 +436,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
               cnt++;
             }
             k++;
-            if (k == 32)
+            if (k == PSYNERGY_SLOTS)
               break;
             entryValue =
                 unit->psynergy[k].encodedAction & PSYNERGY_ABILITY_MASK;
@@ -466,7 +466,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.tile =
             Resource_LoadIndexedEntryToBuffer(parameter, handle);
         state->iconShown[1] = 1;
-        work->textPalette = 5;
+        work->textPalette = BASIC_COLORS_PALETTE;
         if (ability->ppCost > unit->pp)
           Text_SetColor(TEXT_COLOR_RED);
         else if (unit->psySeal != 0)
@@ -479,7 +479,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Window_SetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL, 11, 0, 0);
         Window_SetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL_END, 12, 0,
                                0);
-        if (ability->element != 4)
+        if (ability->element != ELEMENT_NONE)
           Window_SetTilemapEntry(
               commandWindow, ability->element + ELEMENT_ICON_TILE, 15, 0, 0);
         command->range = cost;
@@ -491,7 +491,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Window_Close(commandWindow, 1);
         if (mode == -1)
           goto psynergy_menu;
-        commandKind = 1;
+        commandKind = COMMAND_PSYNERGY;
         target = mode;
         break;
       }
@@ -513,7 +513,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         PartyStatus_HighlightMembers(signatureHeader);
         if (mode == -1)
           goto mark_visible;
-        commandKind = 6;
+        commandKind = COMMAND_SUMMON;
         parameter = mode;
         wait(1);
         iconSprite = &state->icons[1];
@@ -549,7 +549,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
             Window_SetTilemapEntry(commandWindow, j + ELEMENT_ICON_TILE,
                                    n * 2 + SUMMON_COST_X, 0, 0);
             Window_PutGlyph(commandWindow, summon->djinnRequired[j] + '0',
-                            n * 2 + SUMMON_COST_X + 1, 0, 0);
+                            n * 2 + SUMMON_COST_X + 1, 0, GLYPH_DRAW_CHARACTER);
             n++;
           }
         }
@@ -734,13 +734,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Window_Close(commandWindow, 1);
         if (mode == -1)
           goto item_menu;
-        commandKind = 2;
+        commandKind = COMMAND_ITEM;
         target = mode;
         break;
       }
 
       case COMMAND_ICON_DEFEND:
-        commandKind = 3;
+        commandKind = COMMAND_DEFEND;
         break;
       }
 

@@ -178,7 +178,7 @@ void BattlePlayback_Run(void) {
               Sound_PlayFar(events->pendingCue);
             events->actorId = events->queue.operands[eventIndex];
             Actor_SelectAnimationFar(BattleObject_Get(events->actorId)->object,
-                                     5);
+                                     POSE_DAMAGE);
             events->phase = 10;
             events->timer = 0;
             break;
@@ -197,9 +197,9 @@ void BattlePlayback_Run(void) {
                                       recordIndex)) != 0;
                  recordIndex++) {
               if (unit->side != 1)
-                Sprite_StartAnimationFar(record, 4);
+                Sprite_StartAnimationFar(record, POSE_PARTY_HELD);
               else
-                Sprite_StartAnimationFar(record, 5);
+                Sprite_StartAnimationFar(record, POSE_ENEMY_DOWN);
             }
             if (unit->side == 1) {
               events->phase = 11;
@@ -291,7 +291,7 @@ void BattlePlayback_Run(void) {
           selection[0] = events->actorId;
           selection[1] = BATTLE_UNIT_LIST_END;
           BattleObject_SetColorMode(BattleObject_Get(events->actorId)->object,
-                                    7);
+                                    SPRITE_COLOR_WHITE);
         }
         PartyStatus_HighlightMembersFar(selection);
       }
@@ -302,7 +302,7 @@ void BattlePlayback_Run(void) {
       events->timer = 0;
     } else if (events->phase == 11) {
       if (events->timer == 0 || events->timer >= 0x400) {
-        s32 colorMode = 6;
+        s32 colorMode = SPRITE_COLOR_GREY;
 
         if (events->timer == 0 && events->flags != 0) {
           s32 kind =
@@ -312,7 +312,7 @@ void BattlePlayback_Run(void) {
             kind--;
             if (kind < 0)
               kind = 0;
-            Sound_PlayFar(146 + kind);
+            Sound_PlayFar(SE_ENEMY_CRY + kind);
           }
           events->timer = 0x400;
         }
@@ -323,11 +323,11 @@ void BattlePlayback_Run(void) {
               BattleSprite_GetDefeatSound(Unit_Get(events->actorId)->enemyId);
 
           if (kind >= 0)
-            Sound_PlayFar(146 + kind);
+            Sound_PlayFar(SE_ENEMY_CRY + kind);
         }
         if (events->timer >= 0x400)
-          colorMode = (events->timer - 0x400) / 8 % 5 + 1;
-        if (colorMode == 6 || (events->timer & 7) == 0) {
+          colorMode = (events->timer - 0x400) / 8 % 5 + SPRITE_COLOR_GRB;
+        if (colorMode == SPRITE_COLOR_GREY || (events->timer & 7) == 0) {
           struct MotionRecord *record;
           s32 recordIndex;
           struct MotionRecord **slot;

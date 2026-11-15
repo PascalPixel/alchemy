@@ -19,7 +19,7 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
   u32 i;
 
   dst = pixels;
-  src = (u8 *)(0x06000000 + 32 * slot);
+  src = (u8 *)(0x06000000 + TILE_SIZE_4BPP * slot);
   for (i = 0; i < 32; i++) {
     n = *src++;
     *dst++ = n & 15;
@@ -138,23 +138,23 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
       code = c;
       if (c == 0)
         break;
-      if (c <= 30) {
+      if (c <= TEXT_END_ALT) {
         switch (c) {
-        case 8:
+        case TEXT_COLOR:
           work->colour = *script++;
           pens[1] = gText_ColourPens[work->colour & 15];
           break;
-        case 7:
-        case 9:
-        case 10:
+        case TEXT_COLORS_RESET:
+        case TEXT_OUTLINE:
+        case TEXT_LINE_SPACING:
           work->colour = 15;
           pens[1] = gText_ColourPens[work->colour];
           break;
-        case 3:
+        case TEXT_NEWLINE:
           x += TEXT_CODE_3_WIDTH;
           break;
         case 14:
-        case 15:
+        case TEXT_WINDOW_STATE:
         case 28:
           script++;
         case 11:
@@ -204,7 +204,7 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
           else
 #endif
               if (c > 31)
-            w = gFont_GlyphWidths[c - 32];
+            w = gFont_GlyphWidths[c - TEXT_SPACE];
           else
             w = 1;
           x += w;
@@ -257,7 +257,7 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
       *tiles = attr | tile;
       *mirror = attr | tile;
     }
-    p = (u32 *)(0x06000000 + tile * 32);
+    p = (u32 *)(0x06000000 + tile * TILE_SIZE_4BPP);
     *p++ = ((u32 *)canvas)[i];
     *p++ = ((u32 *)canvas)[i + 0x40];
     *p++ = ((u32 *)canvas)[i + 0x80];
@@ -287,14 +287,14 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
     for (column = 0; column < width; column++) {
       u32 tile = *cursor++ & TILE_NUMBER_MASK;
 
-      if ((tile - 0x80) <= 0x7f ||
+      if ((tile - TEXT_TILE_FIRST) <= 0x7f ||
           (alternate != 0 && tile > 0x1ff && tile <= 0x27f)) {
         u32 index = ((tile & 0xff) ^ 0x80);
 
         ((struct WindowWork *)base)->textTileState[index] &= 0xfc;
       }
     }
-    cursor += 32 - width;
+    cursor += BG_SCREEN_WIDTH - width;
   }
 }
 
@@ -308,11 +308,11 @@ void Window_MarkVisibleTextTiles(void) {
   s32 row;
   s32 x;
 
-  for (row = 20; row != 0; row--) {
+  for (row = DISPLAY_TILE_HEIGHT; row != 0; row--) {
     for (x = 0; x < width; x++) {
       u32 tile = *cursor++ & 0x3ff;
 
-      if ((tile - 0x80) <= 0x7f ||
+      if ((tile - TEXT_TILE_FIRST) <= 0x7f ||
           (alternate != 0 && tile > 0x1ff && tile <= 0x27f)) {
         u32 index = ((tile & 0xff) ^ 0x80);
 
@@ -665,7 +665,7 @@ void Text_DrawStringInWindow(u8 *text, s32 window, u32 x, u32 y) {
 /// The number writers format the value in a 16-byte buffer and draw it with
 /// the matching string writer.
 void Text_DrawNumber(s32 value, s32 width, s32 output, s32 x, s32 y) {
-  u8 data[16];
+  u8 data[TEXT_NUMBER_BUFFER_SIZE];
   s32 pinned = value;
 
   Text_DrawString(String_FormatNumber(data, pinned, width), output, x, y);
@@ -675,7 +675,7 @@ void Text_DrawNumber(s32 value, s32 width, s32 output, s32 x, s32 y) {
 /// (x, y) of its interior.
 void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work,
                              s32 x, s32 y) {
-  u8 data[16];
+  u8 data[TEXT_NUMBER_BUFFER_SIZE];
   s32 pinned = value;
 
   Text_DrawStringAtOffset(String_FormatNumber(data, pinned, width), work, x, y);
@@ -684,7 +684,7 @@ void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work,
 /// Draws a number (width as String_FormatNumber) into a window's tilemap at
 /// pixel (x, y) of its interior.
 void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y) {
-  u8 data[16];
+  u8 data[TEXT_NUMBER_BUFFER_SIZE];
   s32 pinned = value;
 
   Text_DrawStringInWindow(String_FormatNumber(data, pinned, width), output, x,

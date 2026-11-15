@@ -286,7 +286,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
     s32 known = 0;
     s32 i;
 
-    for (i = 0; i < 32; i++) {
+    for (i = 0; i < PSYNERGY_SLOTS; i++) {
       if ((unit->psynergy[i].encodedAction & PSYNERGY_ABILITY_MASK) ==
           psynergy) {
         known = 1;
@@ -828,16 +828,16 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
   sorted_count = 0;
   Menu_CopyListOrder(mode, order);
 
-  for (i = 0; i < 15; i++)
+  for (i = 0; i < INVENTORY_SLOTS; i++)
     items[i] = inventory[i];
 
   count = 0;
-  for (i = 0; i < 15; i++) {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     if (items[i] != 0)
       count++;
   }
 
-  for (i = count; i < 15; i++)
+  for (i = count; i < INVENTORY_SLOTS; i++)
     sorted[i] = 0;
 
   pass = 0;
@@ -1107,7 +1107,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
   struct WindowSprite *icon;
   s32 i;
 
-  for (i = 0; i < 32; i++) {
+  for (i = 0; i < MENU_ENTRY_ICONS; i++) {
     icon = menu->entryIcons[i];
     if (icon != NULL)
       icon->motion = WINDOW_SPRITE_MOTION_HIDDEN;

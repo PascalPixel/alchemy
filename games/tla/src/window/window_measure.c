@@ -31,7 +31,7 @@ void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
 #endif
   x = *px;
   y = *py;
-  limit = 30;
+  limit = DISPLAY_TILE_WIDTH;
 
   if (!(flags & 2)) {
     if (flags & 1)
@@ -64,8 +64,8 @@ void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
       x = 0;
   }
   bottom = y + *ph;
-  if (bottom > 20) {
-    over = bottom - 20;
+  if (bottom > DISPLAY_TILE_HEIGHT) {
+    over = bottom - DISPLAY_TILE_HEIGHT;
     pos = y - over;
     if (pos >= 0)
       y = pos;
@@ -78,8 +78,8 @@ void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
     y = 0;
   if (x > limit - *pw)
     x = limit - *pw;
-  if (y > 20 - *ph)
-    y = 20 - *ph;
+  if (y > DISPLAY_TILE_HEIGHT - *ph)
+    y = DISPLAY_TILE_HEIGHT - *ph;
   *px = x;
   *py = y;
 }

@@ -19,18 +19,18 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
   u8 effect;
 
   kind = 0;
-  type = act->flags & 15;
-  if (type == 1) // Restore HP.
+  type = act->flags & ABILITY_FORMULA_MASK;
+  if (type == ABILITY_FORMULA_HEAL_HP) // Restore HP.
     kind = 1;
-  if (type == 11) // Restore PP.
+  if (type == ABILITY_FORMULA_HEAL_PP) // Restore PP.
     kind = 2;
   val = (s8)act->effect;
   effect = val;
-  if (effect == 3) // Cure poison.
+  if (effect == ABILITY_EFFECT_CURE_POISON) // Cure poison.
     kind = 3;
-  if (effect == 4) // Cure an ailment.
+  if (effect == ABILITY_EFFECT_RESTORE) // Cure an ailment.
     kind = 4;
-  if (effect == 64) // Cure all ailments.
+  if (effect == ABILITY_EFFECT_CURE_ALL) // Cure all ailments.
     kind = 6;
   if (Battle_IsReviveEffectFar(act->effect) != 0) // Revive.
     kind = 5;

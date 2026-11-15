@@ -1587,7 +1587,7 @@ s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element) {
 
   if (element == -1) {
     for (elementIndex = 0; elementIndex < 4; elementIndex++) {
-      for (djinnIndex = 0; djinnIndex < 20; djinnIndex++) {
+      for (djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
         if (unit->djinnSet[elementIndex] & (1 << djinnIndex)) {
           encodedDjinn = (elementIndex << 5) | djinnIndex | DJINN_ENTRY_SET;
           encodedDjinn |= memberId << 8;
@@ -1599,7 +1599,7 @@ s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element) {
       }
     }
   } else {
-    for (djinnIndex = 0; djinnIndex < 20; djinnIndex++) {
+    for (djinnIndex = 0; djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
       if (unit->djinnSet[element] & (1 << djinnIndex))
         entriesOut[count++] = (element << 5) | djinnIndex | DJINN_ENTRY_SET;
       else if (unit->djinnHeld[element] & (1 << djinnIndex))
@@ -1626,7 +1626,7 @@ s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
   struct DjinnMenuWork *menu;
 
   menu = Ram_HeapSlots->menuWork;
-  if (mode == 0) {
+  if (mode == DJINN_COMPARE_TRADE) {
     savedMode = mode;
     first = menu->pairMember[1];
     DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, first, 1, mode,

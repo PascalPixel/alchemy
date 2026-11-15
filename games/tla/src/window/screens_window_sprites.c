@@ -64,7 +64,7 @@ struct WindowSprite *WindowSprite_CreateLoaded(s32 icon, s32 layers,
 
   no = VramCache_FindFreeEntry();
   result = NULL;
-  if (no != 0x60) {
+  if (no != VRAM_CACHE_ENTRY_COUNT) {
     Icon_CopyResourceToSlot(icon, layers, no);
     result = WindowSprite_Create(no, OUTPUT_SIZE_16X16, window, x, y);
   }
@@ -118,7 +118,7 @@ struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
     }
   }
 
-  slot = 14 + side;
+  slot = PORTRAIT_PALETTE + side;
   Icon_LoadWithPalette(id, position, &first, &second, slot, 0);
   object = WindowSprite_Create(first, OUTPUT_SIZE_32X32,
                                (struct RenderInput *)window, x, y);

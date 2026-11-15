@@ -57,7 +57,7 @@ void BattleMotion_SetupEscapeObject(s32 objectId) {
   object->autoFaceMotion = 0;
   Actor_StartIdleFar(object);
   Actor_SetMoveTargetFar(object, slot->anchorX * 3, 0, slot->anchorZ);
-  Actor_SelectAnimationFar(object, 1);
+  Actor_SelectAnimationFar(object, POSE_STANDING);
 }
 
 /// Sends the actor of startSlot leaping progress percent of the way toward
@@ -138,7 +138,7 @@ void BattleMotion_LeapBack(s32 objectId) {
     mul = Iwram_MulQ16;
     Actor_SetMoveTargetFar(object, mul(anchor, 0x14ccc), 0, slot->anchorZ);
   }
-  Actor_SelectAnimationFar(object, 5);
+  Actor_SelectAnimationFar(object, POSE_DAMAGE);
 }
 
 /// Sends a battle object back by its variant's distance and speed, with a hop
@@ -174,7 +174,7 @@ void BattleMotion_ApplyKnockback(s32 id, s32 variant) {
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  Actor_SelectAnimationFar(object, 5);
+  Actor_SelectAnimationFar(object, POSE_DAMAGE);
 }
 
 /// The actor walks three quarters of the way to its target, at a speed that
@@ -288,7 +288,7 @@ void BattleMotion_PlayHitFlash(s32 slot) {
   if (battleObject->object != NULL) {
     if ((battleObject->object->recordStorageKind & 0xf) == 1) {
       effect = (struct SpriteAnimation *)Sprite_AddAnimationFar(
-          battleObject->object->records, 0x29f);
+          battleObject->object->records, SPRITE_STAR_BURST);
       if (effect != NULL) {
         SpriteAnimation_StartFar(effect, 1);
         effect->priority = 3;

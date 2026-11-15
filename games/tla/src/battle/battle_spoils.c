@@ -20,10 +20,10 @@ u32 BattleSpoils_RankItem(u32 value) {
   {
     u8 flags = Item_GetDirectFar(base)->flags;
 
-    if (flags & 8)
+    if (flags & ITEM_INDISPENSABLE)
       bank = 1;
     bank <<= 1;
-    if (flags & 4)
+    if (flags & ITEM_RARE)
       bank++;
     bank <<= 9;
     bank += base;
@@ -133,7 +133,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   spoils = &battle->spoils;
   if (unitId >= 0 && unitId < 8)
     return -1;
-  if (unit->classId != 0)
+  if (unit->classId != CLASS_NONE)
     return -2;
   slot = spoils->lastSlot = (spoils->lastSlot + 1) % 2;
   spoils->lastEnemyIds[slot] = unit->enemyId;
@@ -148,7 +148,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
         break;
     } while (battle->enemyClasses[classIndex] != unit->enemyId);
   }
-  if (classIndex != 6)
+  if (classIndex != ENEMY_BATTLE_SIZE)
     classSlot = classIndex;
   if (battle->defeatState != 2) {
     if (classSlot < battle->firstDefeated)
@@ -238,7 +238,7 @@ void Battle_AwardSpoils(void) {
   }
   list = units;
   living = BattleUnit_ListLiving(1, list);
-  count = BattleUnit_ListLivingWithReserve(1, list);
+  count = BattleUnit_ListLivingWithReserve(BATTLE_SIDE_MASK_PARTY, list);
   backup = Heap_AllocEwram(sizeof(struct Unit));
   for (i = 0; i < count; i++) {
     unitId = list[i];
@@ -257,14 +257,14 @@ void Battle_AwardSpoils(void) {
       // "<name> is now a level N ..."
       BattleMessage_ShowAndWaitFar((s32)MsgLevelUp);
       BattleMessage_WaitForAdvance();
-      for (cnt = 0; cnt < 32; cnt++) {
+      for (cnt = 0; cnt < PSYNERGY_SLOTS; cnt++) {
         learned = unit->psynergy[cnt].encodedAction;
         if ((learned & ACTION_ID_MASK) && (learned >> 15)) {
-          for (j = 0; j < 32; j++) {
+          for (j = 0; j < PSYNERGY_SLOTS; j++) {
             if (learned == backup->psynergy[j].encodedAction)
               break;
           }
-          if (j == 32) {
+          if (j == PSYNERGY_SLOTS) {
             MessageArgument_ClearAllFar();
             MessageArgument_PushFar(unit->classId, MESSAGE_ARGUMENT_CLASS);
             MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);

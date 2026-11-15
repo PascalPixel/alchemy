@@ -149,7 +149,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
   }
 
   do {
-    code = 0;
+    code = TEXT_END;
     if (channel->ended == 0)
       code = work->textBuffer[channel->entry];
 
@@ -159,7 +159,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
     if (code <= 30) {
 #endif
       switch (code) {
-      case 3:
+      case TEXT_NEWLINE:
         channel->x = channel->startX;
         if (channel->work->flags & WINDOW_FLAG_TEXT_CANVAS) {
           if (channel->y >= 13 << 8) {
@@ -175,7 +175,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         }
         break;
 
-      case 1:
+      case TEXT_PAGE:
         if (channel->countdown == 0) {
           channel->countdown = gMessageSpeed_Delays[TEXT_SPEED];
           if (work->mindRead != 0)
@@ -187,7 +187,8 @@ s32 Message_Type(struct UiChannelSlot *channel) {
           if (pane->width == 0 || pane->height == 0 ||
               work->pageArrowShown != 0)
             break;
-          Glyph_Draw(pane, 1, pane->width * 4 - 8, pane->height * 8 - 16, 1);
+          Glyph_Draw(pane, 1, pane->width * 4 - 8, pane->height * 8 - 16,
+                     GLYPH_DRAW_PAGE_ARROW);
           work->pageArrowShown = 1;
           break;
         }
@@ -238,10 +239,10 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         channel->lineSpacing = 10;
         Message_ApplyStyle(channel);
         VramCache_FreeEntry(work->glyphResource);
-        work->glyphResource = 99;
+        work->glyphResource = NO_GLYPH_RESOURCE;
         break;
 
-      case 2:
+      case TEXT_WAIT_KEY:
         if (channel->countdown == 0) {
           channel->countdown = gMessageSpeed_Delays[TEXT_SPEED];
           if (work->mindRead != 0)
@@ -251,60 +252,60 @@ s32 Message_Type(struct UiChannelSlot *channel) {
           return 9;
         break;
 
-      case 5:
+      case TEXT_PAUSE_SHORT:
         if (channel->countdown == 0)
           channel->countdown = 20;
         work->speakerVoiceCountdown = 0;
         Text_CheckPauseSkipped(channel);
         break;
 
-      case 6:
+      case TEXT_PAUSE_LONGEST:
         if (channel->countdown == 0)
           channel->countdown = 120;
         work->speakerVoiceCountdown = 0;
         Text_CheckPauseSkipped(channel);
         break;
 
-      case 4:
+      case TEXT_PAUSE_LONG:
         if (channel->countdown == 0)
           channel->countdown = 60;
         work->speakerVoiceCountdown = 0;
         break;
 
-      case 8:
+      case TEXT_COLOR:
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
         channel->colour = work->textBuffer[channel->entry];
         Message_ApplyStyle(channel);
         break;
 
-      case 9:
+      case TEXT_OUTLINE:
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
         channel->outline = work->textBuffer[channel->entry];
         Message_ApplyStyle(channel);
         break;
 
-      case 10:
+      case TEXT_LINE_SPACING:
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
         channel->lineSpacing = work->textBuffer[channel->entry];
         Message_ApplyStyle(channel);
         break;
 
-      case 7:
+      case TEXT_COLORS_RESET:
         channel->colour = 15;
         channel->outline = 0;
         channel->lineSpacing = 10;
         Message_ApplyStyle(channel);
         break;
 
-      case 15:
+      case TEXT_WINDOW_STATE:
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
         channel->work->animation = work->textBuffer[channel->entry];
         channel->countdown = 11;
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
         break;
 
-      case 0:
-      case 30:
+      case TEXT_END:
+      case TEXT_END_ALT:
         channel->ended = 1;
         return 8;
       }
@@ -333,10 +334,10 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 #endif
 #if LANGUAGE != LANGUAGE_JAPANESE
 #if TLA_PATCH_4
-      if (!(channel->work->flags & WINDOW_FLAG_TEXT_CANVAS) && code > 32 &&
-          nextCode > 32) {
-        s16 pairWidth =
-            gFont_Glyphs[code - 32].width + gFont_Glyphs[nextCode - 32].width;
+      if (!(channel->work->flags & WINDOW_FLAG_TEXT_CANVAS) &&
+          code > TEXT_SPACE && nextCode > TEXT_SPACE) {
+        s16 pairWidth = gFont_Glyphs[code - TEXT_SPACE].width +
+                        gFont_Glyphs[nextCode - TEXT_SPACE].width;
 
         if (work->outline == 1) {
           if ((u16)pairWidth <= 14) {
@@ -349,10 +350,10 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         }
       }
 #else
-      if (!(channel->work->flags & WINDOW_FLAG_TEXT_CANVAS) && code > 32 &&
-          nextCode > 32 &&
-          (u16)(gFont_Glyphs[code - 32].width +
-                gFont_Glyphs[nextCode - 32].width) <= 15) {
+      if (!(channel->work->flags & WINDOW_FLAG_TEXT_CANVAS) &&
+          code > TEXT_SPACE && nextCode > TEXT_SPACE &&
+          (u16)(gFont_Glyphs[code - TEXT_SPACE].width +
+                gFont_Glyphs[nextCode - TEXT_SPACE].width) <= 15) {
         code |= nextCode << 8;
         channel->entry = (channel->entry + 1) & ENTRY_MASK;
       }
@@ -360,13 +361,14 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 #endif
       if (work->textMode != 0 && channel->unk26 != 0)
         pixelY = (channel->y + 128) / 320 - 3;
-      glyphWidth = Glyph_Draw(channel->work, code, pixelX, pixelY, 0);
+      glyphWidth =
+          Glyph_Draw(channel->work, code, pixelX, pixelY, GLYPH_DRAW_CHARACTER);
       channel->glyphDelay = gText_SpeedDelays[TEXT_SPEED];
       if (glyphWidth == 0)
         return 9;
       if (work->speakerVoiceSound != 0) {
         if (work->speakerVoiceCountdown == 0) {
-          if (code != 32) {
+          if (code != TEXT_SPACE) {
             Sound_PlayFar(work->speakerVoiceSound + (code & 3));
             work->speakerVoiceCountdown = voiceGap;
           }
@@ -382,7 +384,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         glyphAdvance += channel->spacing[channel->line];
 #endif
       channel->x += glyphAdvance;
-      if (code == 32 && work->battleMode == 0)
+      if (code == TEXT_SPACE && work->battleMode == 0)
         glyphsLeft = 1;
     }
 

@@ -175,7 +175,7 @@ void SelectionMenu_BuildEntries(u32 unused) {
     previous->targetX = x;
     previous->targetY = y;
     // While locked is 0 a yes or no row sits at the top of the screen.
-    if (previous->kind == 6 && screen->locked == 0) {
+    if (previous->kind == ICON_KIND_YES_NO && screen->locked == 0) {
       previous->y = 6;
       previous->targetY = 6;
     }
@@ -205,13 +205,13 @@ s32 SelectionMenu_FindFreeIcon(s32 kind) {
 
   if (kind != 0) {
     for (i = 0; i != 5; i++) {
-      if (state->records[i + 9].kind == 0)
-        return (s32)&state->records[i + 9];
+      if (state->records[i + SELECTION_RECORD_CHOSEN].kind == ICON_KIND_NONE)
+        return (s32)&state->records[i + SELECTION_RECORD_CHOSEN];
     }
   } else {
     for (i = 0; i != 7; i++) {
-      if (state->records[i + 2].kind == 0)
-        return (s32)&state->records[i + 2];
+      if (state->records[i + SELECTION_RECORD_ROW].kind == ICON_KIND_NONE)
+        return (s32)&state->records[i + SELECTION_RECORD_ROW];
     }
   }
   return 0;
@@ -273,7 +273,7 @@ void SelectionMenu_Draw(void) {
       e->x = node->x;
     } else if (cnt == state->cursorIndex) {
       slot = 241;
-      if (cursor->kind != 0) {
+      if (cursor->kind != ICON_KIND_NONE) {
         if (BattleMotion_ProjectScaledPositionFar(node->base, (s32 *)&pos) !=
             -1) {
           cursor->targetX = pos.x;
@@ -288,12 +288,12 @@ void SelectionMenu_Draw(void) {
     }
     if (node->scale != 0) {
       if (GameFlag_Get(FLAG_IN_BATTLE) != 0) {
-        if (state->records[SELECTION_RECORD_HAND].kind == 1) {
+        if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND) {
           e->mode = 1;
         } else {
           e->mode = 0;
         }
-        if (node->kind == 1) {
+        if (node->kind == ICON_KIND_COMMAND) {
           e->mode = 1;
         }
       }
@@ -302,7 +302,7 @@ void SelectionMenu_Draw(void) {
     node = node->next;
     cnt++;
   }
-  if (transfer->kind != 0) {
+  if (transfer->kind != ICON_KIND_NONE) {
     node = SelectionMenu_GetCursorNode(state);
     te = &transfer->sprite;
     te->mode = 0;
@@ -359,19 +359,19 @@ void SelectionMenu_Draw(void) {
       e->matrix = 0;
     }
     if (GameFlag_Get(FLAG_IN_BATTLE) != 0) {
-      if (state->records[SELECTION_RECORD_HAND].kind == 1) {
+      if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND) {
         e->mode = 1;
       } else {
         e->mode = 0;
       }
-      if (node->kind == 1) {
+      if (node->kind == ICON_KIND_COMMAND) {
         e->mode = 1;
       }
     }
     Oam_AddSpriteAtDepth((s32 *)e, 240);
     node = node->next;
   }
-  if (cursor->kind != 0) {
+  if (cursor->kind != ICON_KIND_NONE) {
     cnt = (s32)gMenu_AnimatedCursorTiles;
     {
       void *src = (void *)(cnt + (((gVBlankCount >> 2) & 15) << 8));
@@ -397,7 +397,7 @@ void SelectionMenu_Draw(void) {
         cursor->y + gMenu_CursorBobOffsets[(gVBlankCount >> 2) & 15] - 32;
     cursorEntry->x = cursor->x - 4;
     if (GameFlag_Get(FLAG_IN_BATTLE) != 0) {
-      if (state->records[SELECTION_RECORD_HAND].kind == 1) {
+      if (state->records[SELECTION_RECORD_HAND].kind == ICON_KIND_COMMAND) {
         cursorEntry->mode = 1;
       } else {
         cursorEntry->mode = 0;
@@ -467,7 +467,7 @@ void SelectionMenu_OpenNameWindow(s32 mode, u32 count) {
   slot = &screen->window;
   window = *slot;
   if (window == 0) {
-    if (mode == 6) {
+    if (mode == ICON_KIND_YES_NO) {
       if (screen->locked != 0) {
         *slot = Window_Create(17, 17, 5, 3, mode);
       } else {
@@ -491,11 +491,11 @@ void SelectionMenu_OpenNameWindow(s32 mode, u32 count) {
                             0, 0);
   } else {
     switch (mode) {
-    case 4:
+    case ICON_KIND_ABILITY:
       Text_DrawMessageAsTiles((s32)MsgAbilityNotKnown,
                               (struct RenderInput *)screen->window, 0, 0);
       break;
-    case 2:
+    case ICON_KIND_ITEM:
       Text_DrawMessageAsTiles((s32)MsgItemNotHeld,
                               (struct RenderInput *)screen->window, 0, 0);
       break;
@@ -515,17 +515,17 @@ void SelectionMenu_Close(void) {
   wait(1);
   node = state->head;
   while (node != 0) {
-    if (node->kind != 0) {
+    if (node->kind != ICON_KIND_NONE) {
       VramCache_FreeEntry(node->slot);
-      node->kind = 0;
+      node->kind = ICON_KIND_NONE;
     }
     node = node->next;
   }
   node = state->path;
   while (node != 0) {
-    if (node->kind != 0) {
+    if (node->kind != ICON_KIND_NONE) {
       VramCache_FreeEntry(node->slot);
-      node->kind = 0;
+      node->kind = ICON_KIND_NONE;
     }
     node = node->next;
   }
@@ -1015,7 +1015,7 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
     } while (p->scale != 0);
     screen->head = p->next;
     VramCache_FreeEntry(p->slot);
-    p->kind = 0;
+    p->kind = ICON_KIND_NONE;
     p = p->next;
     p->prev = NULL;
   } else {
@@ -1057,7 +1057,7 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
     while (p->next != NULL)
       p = p->next;
     VramCache_FreeEntry(p->slot);
-    p->kind = 0;
+    p->kind = ICON_KIND_NONE;
     p->prev->next = NULL;
   }
 }
@@ -1095,25 +1095,25 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
 
   if (result == -1) {
     result = VramCache_FindFreeEntry();
-    if (result == 0x60)
+    if (result == VRAM_CACHE_ENTRY_COUNT)
       return original;
   }
 
   switch (mode) {
-  case 1:
-  case 6:
+  case ICON_KIND_COMMAND:
+  case ICON_KIND_YES_NO:
     Icon_BuildCommandIconTiles(value, option, &result, &output, 1);
     break;
-  case 2:
+  case ICON_KIND_ITEM:
     Icon_CopyResourceToSlot(value, 58, result);
     break;
-  case 7:
+  case ICON_KIND_EQUIPMENT_ITEM:
     Icon_CopyResourceToSlot(value, 42, result);
     break;
-  case 4:
+  case ICON_KIND_ABILITY:
     Ability_LoadGlyph(value, option, &result, &output, 1);
     break;
-  case 8:
+  case ICON_KIND_PATTERN:
     Icon_BuildMiscIconTiles(value, 0, result);
     break;
   }
@@ -1213,7 +1213,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   for (other = screen->head; other != NULL; other = other->next) {
     if (other != node) {
       VramCache_FreeEntry(other->slot);
-      other->kind = 0;
+      other->kind = ICON_KIND_NONE;
     }
   }
   screen->head = node;
@@ -1254,7 +1254,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   sprite->shape = 0;
   sprite->palette = 0;
   sprite->tile = other->tile;
-  node->kind = 0;
+  node->kind = ICON_KIND_NONE;
   screen->head = NULL;
   if (screen->path != NULL) {
     node = screen->path;
@@ -1342,7 +1342,8 @@ void SelectionMenu_LoadLargeIcon(void) {
   void *resource;
   s32 no;
 
-  if (selection->kind != 1 && selection->kind != 6)
+  if (selection->kind != ICON_KIND_COMMAND &&
+      selection->kind != ICON_KIND_YES_NO)
     return;
 
   buffer = (GlyphTransfer *)HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER,
@@ -1357,10 +1358,10 @@ void SelectionMenu_LoadLargeIcon(void) {
   }
   Resource_DecodeByteLzInRam(resource, buffer);
 
-  if (transfer->kind == 0)
+  if (transfer->kind == ICON_KIND_NONE)
     transfer->slot = VramCache_FindFreeEntry();
   transfer->tile = VramCache_Load(transfer->slot, 0x400, buffer);
-  transfer->kind = 1;
+  transfer->kind = ICON_KIND_COMMAND;
   transfer->base = no;
   transfer->scale = 40;
   transfer->scaleStep = 40;
@@ -1375,9 +1376,9 @@ void Resource_ResetPendingTransfer(void) {
       &((struct SelectionScreen *)Ram_HeapSlots->selectionMenu)
            ->records[SELECTION_RECORD_LARGE_ICON];
 
-  if (transfer->kind != 0) {
+  if (transfer->kind != ICON_KIND_NONE) {
     VramCache_FreeEntry(transfer->slot);
-    transfer->kind = 0;
+    transfer->kind = ICON_KIND_NONE;
   }
 }
 

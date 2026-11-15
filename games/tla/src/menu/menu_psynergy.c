@@ -193,7 +193,8 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
           break;
         }
         ItemMenu_PositionCategory();
-        StatusPanel_Draw(menu->statusWindow, menu->memberIds[0], 0, 0);
+        StatusPanel_Draw(menu->statusWindow, menu->memberIds[0], 0,
+                         STATUS_PANEL_EXPERIENCE);
         chosenAction = PsynergyMenu_RunList(0);
         step = PSYNERGY_STEP_MEMBER;
         if (chosenAction != -1) {
@@ -275,7 +276,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
 
         /* FAKEMATCH(temporary): the target read before the window. */
         window = menu->statusWindow;
-        StatusPanel_Draw(window, target, 0, 0);
+        StatusPanel_Draw(window, target, 0, STATUS_PANEL_EXPERIENCE);
         {
           u32 entry = menu->sideAction[0];
           u32 mask;

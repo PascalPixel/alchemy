@@ -1202,7 +1202,8 @@ void TitlePaletteFade_Update(void) {
   work->page ^= 1;
   bank = work->packed[work->page];
   IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)bank, DMA_COPY_WORDS(128));
-  IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(bank + 256), DMA_COPY_WORDS(128));
+  IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(bank + BG_PLTT_COLORS),
+                      DMA_COPY_WORDS(128));
 }
 
 /// Tints 512 source colours into destination components (three per colour, each
@@ -1225,11 +1226,11 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
   if (mode == PALETTE_TINT_FROM_SOURCE)
     mode = *source;
   if (selectedPalettes == PALETTES_BG) {
-    colorCount = 256;
+    colorCount = BG_PLTT_COLORS;
   } else if (selectedPalettes == PALETTES_OBJECTS) {
     destination += 768;
-    source += 256;
-    colorCount = 256;
+    source += BG_PLTT_COLORS;
+    colorCount = BG_PLTT_COLORS;
   }
 
   if (mode < PALETTE_TINT_FROM_SOURCE) {

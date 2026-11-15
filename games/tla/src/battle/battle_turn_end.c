@@ -283,7 +283,7 @@ s32 DjinnRecovery_CountDown(void) {
   s32 removed;
   s32 initialCount;
 
-  list = &Djinn_GetRecoveryTableFar(0)->list;
+  list = &Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->list;
   initialCount = list->count;
   index = 0;
   removed = 0;
@@ -751,7 +751,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
   u32 unitId;
   struct Unit *unit;
   s32 battleContinues;
-  s32 counts[4];
+  s32 counts[ELEMENT_COUNT];
   struct DjinnRecoveryList *list;
   s32 strongestElement;
   s32 recoveryTurn;
@@ -771,7 +771,8 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
       }
     }
   }
-  if (BattleUnit_ListLiving(1, 0) != 0 && BattleUnit_ListLiving(2, 0) != 0) {
+  if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, 0) != 0 &&
+      BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) != 0) {
     battleContinues = 1;
   }
   {
@@ -784,7 +785,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
              unitId > ALLY_MAX &&
              ((struct BattleWork *)Ram_HeapSlots->battleWork)->isLink != 0)
              ->list;
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < ELEMENT_COUNT; i++) {
       counts[i] = 0;
     }
     for (;;) {
@@ -840,7 +841,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
         BattlePlayback_SchedulePhase(25);
         BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
         BattlePlayback_Push(PLAYBACK_NUMBER, gain);
-        BattlePlayback_Push(PLAYBACK_SOUND, 175);
+        BattlePlayback_Push(PLAYBACK_SOUND, SE_NOTE_HIGH);
         // Messages 3285 to 3288, 3232, 3240, 3185, 3191 and 3188 in English;
         // all but MsgGoesDown still need their names in the PO catalogs.
         BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgEarthPowerUp + i);
@@ -892,9 +893,9 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
       BattlePlayback_Push(PLAYBACK_NUMBER, damage);
       BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgPoisonDamage);
       if (*poison != 0) {
-        state->events.pendingCue = 134;
+        state->events.pendingCue = SE_HEAVY_IMPACT;
       } else {
-        state->events.pendingCue = 133;
+        state->events.pendingCue = SE_IMPACT;
       }
       if (Unit_AddHpFar(unitId, -damage) == 0) {
         if (BattleUnit_KeepsOneHp(unitId)) {

@@ -521,9 +521,9 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
   }
   Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
   if (plan->targetIds[0] <= ALLY_MAX)
-    work.side = 1;
+    work.side = EFFECT_SIDE_PARTY;
   else
-    work.side = 0;
+    work.side = EFFECT_SIDE_ENEMIES;
 
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.count;
        targetOrFadeIndex++) {
@@ -549,7 +549,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
 
       if (targetOrFadeIndex < 20) {
         u16 *palette = battle->palette;
-        s32 value = 0x10000 - fade;
+        s32 value = Q16_ONE - fade;
 
         battle->brightness = value;
         ColorBuffer_Scale(palette, 0x050000c0, value, 128);
@@ -566,7 +566,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
     wait(60);
   }
   BattlePlayback_WaitForReady();
-  Actor_SelectAnimationFar(object, 1);
+  Actor_SelectAnimationFar(object, POSE_STANDING);
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.count;
        targetOrFadeIndex++)
     BattleMotion_ReturnToSpot(work.actors[targetOrFadeIndex]);
@@ -574,15 +574,15 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
   unit = Unit_Get(selection->unitId);
   inventoryEntry = unit->inventory[selection->parameter];
   itemDefinition = Item_GetDirectFar(inventoryEntry);
-  if (itemDefinition->useType == 1) {
+  if (itemDefinition->useType == ITEM_USE_CONSUMED) {
     s32 result = Inventory_RemoveFar(selection->unitId, selection->parameter);
     s32 index = selection->parameter;
-    if (result == 2) {
+    if (result == INVENTORY_REMOVE_LAST) {
       struct BattleWork *battle = Ram_HeapSlots->battleWork;
       u32 row;
 
-      for (row = 0; row < 20; row++) {
-        if (battle->actions[row].command == 2 &&
+      for (row = 0; row < BATTLE_ACTION_CAPACITY; row++) {
+        if (battle->actions[row].command == COMMAND_ITEM &&
             battle->actions[row].unitId == selection->unitId) {
           if (battle->actions[row].parameter == index)
             battle->actions[row].parameter = -1;
@@ -591,7 +591,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
         }
       }
     }
-  } else if (itemDefinition->useType == 2) {
+  } else if (itemDefinition->useType == ITEM_USE_MAY_BREAK) {
     if ((Battle_RandomFar() & 7) == 0) {
       BattlePlayback_Push(PLAYBACK_ITEM_NAME,
                           unit->inventory[selection->parameter]);
@@ -599,9 +599,9 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
       Inventory_BreakFar(selection->unitId, selection->parameter);
       BattlePlayback_RunAll();
     }
-  } else if (itemDefinition->useType == 4) {
-    if ((inventoryEntry & 0x1ff) == 184)
-      inventoryEntry = 185;
+  } else if (itemDefinition->useType == ITEM_USE_EMPTIES) {
+    if ((inventoryEntry & 0x1ff) == ITEM_HERMES_WATER)
+      inventoryEntry = ITEM_EMPTY_BOTTLE;
     unit->inventory[selection->parameter] = inventoryEntry;
   }
   return 0;
@@ -762,7 +762,7 @@ void BattleMotion_FlashHit(s32 id, s32 unusedA, s32 unusedB) {
   s32 remaining;
 
   Unit_Get(id);
-  Actor_SelectAnimationFar(BattleObject_Get(id)->object, 5);
+  Actor_SelectAnimationFar(BattleObject_Get(id)->object, POSE_DAMAGE);
 
   selected = selection;
   remaining = 1;
@@ -771,7 +771,7 @@ void BattleMotion_FlashHit(s32 id, s32 unusedA, s32 unusedB) {
     selected[1] = target;
     selected[0] = id;
     PartyStatus_HighlightMembersFar(selected);
-    BattleObject_SetColorMode(BattleObject_Get(id)->object, 7);
+    BattleObject_SetColorMode(BattleObject_Get(id)->object, SPRITE_COLOR_WHITE);
     wait(2);
 
     selected[0] = id;
@@ -844,9 +844,9 @@ void BattleMotion_ShowDowned(s32 id) {
   n = 0;
   while ((rec = GetMotionRecord(BattleObject_Get(id)->object, n)) != 0) {
     if (unit->side != BATTLE_UNIT_ENEMY)
-      Sprite_StartAnimationFar(rec, 4);
+      Sprite_StartAnimationFar(rec, POSE_PARTY_HELD);
     else
-      Sprite_StartAnimationFar(rec, 5);
+      Sprite_StartAnimationFar(rec, POSE_ENEMY_DOWN);
     n++;
   }
 
@@ -855,7 +855,7 @@ void BattleMotion_ShowDowned(s32 id) {
     while ((rec = GetMotionRecord(BattleObject_Get(id)->object, n)) != 0) {
       ent = rec->entries[0];
       recs[n] = rec;
-      ent->colorMode = 6;
+      ent->colorMode = SPRITE_COLOR_GREY;
       ent->picture = 0xff;
       n++;
     }

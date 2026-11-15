@@ -63,7 +63,7 @@ s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
   s32 slot;
 
   slot = VramCache_FindFreeEntry();
-  if (slot != 0x60) {
+  if (slot != VRAM_CACHE_ENTRY_COUNT) {
     Icon_LoadResourceIntoSlot(resourceId, slot);
     WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, x, y);
   }

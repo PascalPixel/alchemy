@@ -230,7 +230,7 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
   for (i = 0; i < count; i++) {
     struct BattleActionRecord *entry = &entries[i];
 
-    if (entry->command == 5) {
+    if (entry->command == COMMAND_DJINN) {
       struct BattleAct *action;
 
       Unit_Get(entry->unitId);
@@ -239,7 +239,7 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
       if (action->effect == 72 || action->effect == 76 ||
           action->effect == 79 || action->effect == 74 ||
           action->effect == 46 || action->effect == 47 ||
-          action->effect == 88 || action->effect == 53) {
+          action->effect == 88 || action->effect == ABILITY_EFFECT_GROUND) {
         u32 priority = entry->priority;
 
         entry->priority = priority + 10000;
@@ -431,7 +431,7 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
       s32 r;
       s32 val;
 
-      idx = paletteNumber * 16 + col;
+      idx = paletteNumber * PALETTE_COLORS + col;
       color = ((u16 *)BG_PLTT)[idx];
       b = (color >> 10) & mask;
       g = (color >> 5) & mask;
@@ -439,12 +439,12 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
       b += offset;
       g += offset;
       r += offset;
-      if (b > 31)
-        b = 31;
-      if (g > 31)
-        g = 31;
-      if (r > 31)
-        r = 31;
+      if (b > RGB_LEVEL_MAX)
+        b = RGB_LEVEL_MAX;
+      if (g > RGB_LEVEL_MAX)
+        g = RGB_LEVEL_MAX;
+      if (r > RGB_LEVEL_MAX)
+        r = RGB_LEVEL_MAX;
       if (b < 0)
         b = 0;
       if (g < 0)
@@ -479,7 +479,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
     struct BattleActionRecord *rec = work->actions;
     u32 n;
 
-    for (n = 0; n < 20; n++) {
+    for (n = 0; n < BATTLE_ACTION_CAPACITY; n++) {
       rec[n].unitId = BATTLE_UNIT_LIST_END;
       rec[n].priority = 0x8000; // Lowest priority.
     }
@@ -529,9 +529,10 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
 
     i = cnt;
     do {
-      if (act->command == 3 || act->command == 7) {
+      if (act->command == COMMAND_DEFEND ||
+          act->command == COMMAND_TOTAL_DEFENSE) {
         unit = Unit_Get(act->unitId);
-        unit->defendLevel = act->command == 3 ? 1 : 3;
+        unit->defendLevel = act->command == COMMAND_DEFEND ? DEFEND_NORMAL : 3;
       }
       act++;
       i--;

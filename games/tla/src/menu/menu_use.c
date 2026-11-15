@@ -24,13 +24,13 @@ s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
                                      memberId, targetId, 1);
   if (useResult != -1) {
     item = Item_GetDirectFar(unit->inventory[slot]);
-    if (item->useType == 1) {
+    if (item->useType == ITEM_USE_CONSUMED) {
       Inventory_RemoveFar(memberId, slot);
       menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
     }
-    if (item->useType == 4) {
-      if (itemId == 184)
-        itemId = 185;
+    if (item->useType == ITEM_USE_EMPTIES) {
+      if (itemId == ITEM_HERMES_WATER)
+        itemId = ITEM_EMPTY_BOTTLE;
       unit->inventory[slot] = itemId;
     }
     useResult = 0;
@@ -71,20 +71,20 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
   /* FAKEMATCH(dead): the dead test loads effect->range ahead of the count
    * guard. */
-  if (effect->range == 0xff && partyResultShown != 0)
+  if (effect->range == ABILITY_RANGE_ALL && partyResultShown != 0)
     messageOffset = 3;
 
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++) {
-    if (effect->range == 0xff) {
+    if (effect->range == ABILITY_RANGE_ALL) {
       targetId = (u16)menu->memberIds[targetIndex];
       target = Unit_Get(targetId);
     }
 
     amount = effect->power;
-    switch (effect->flags & 0xf) {
+    switch (effect->flags & ABILITY_FORMULA_MASK) {
     case BATTLE_DAMAGE_HP_HEAL:
       if (fixedScale == 0) {
-        if (effect->element != 4) {
+        if (effect->element != ELEMENT_NONE) {
           s32 elementIndex;
 
           caster = Unit_Get(sourceId);
@@ -114,7 +114,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
           }
           Unit_RecalculateGaugesFar(targetId);
           changed = 1;
-          if (effect->range == 0xff) {
+          if (effect->range == ABILITY_RANGE_ALL) {
             partyResultShown = 1;
             messageOffset = 3;
           }
@@ -122,7 +122,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
       break;
 
-    case 9:
+    case ABILITY_FORMULA_NO_POWER:
       randomAdjust = (Random16() * 4) >> 16;
       if (randomAdjust == 0) {
         randomAdjust = -1;
@@ -133,33 +133,33 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
 
       switch (effectId & PSYNERGY_ABILITY_MASK) {
-      case 0x104:
+      case ABILITY_POWER_BREAD:
         target->baseHp += amount + randomAdjust;
         messageOffset = 0x10;
         changed = 1;
         break;
-      case 0x105:
+      case ABILITY_COOKIE:
         target->basePp += amount + randomAdjust;
         messageOffset = 0x11;
         changed = 1;
         break;
-      case 0x108:
+      case ABILITY_MINT:
         target->baseAgility += amount + randomAdjust;
         messageOffset = 0x12;
         changed = 1;
         break;
-      case 0x109:
+      case ABILITY_LUCKY_PEPPER:
         target->baseLuck += amount;
         messageOffset = 0x13;
         changed = 1;
         break;
-      case 0x106:
+      case ABILITY_APPLE:
         target->baseAttack += amount + randomAdjust;
         MessageArgument_PushFar(3, MESSAGE_ARGUMENT_NUMBER);
         messageOffset = 0x14;
         changed = 1;
         break;
-      case 0x107:
+      case ABILITY_HARD_NUT:
         target->baseDefense += amount + randomAdjust;
         MessageArgument_PushFar(4, MESSAGE_ARGUMENT_NUMBER);
         messageOffset = 0x15;
@@ -184,21 +184,21 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         }
         Unit_RecalculateGaugesFar(targetId);
         changed = 1;
-        if (effect->range == 0xff) {
+        if (effect->range == ABILITY_RANGE_ALL) {
           partyResultShown = 1;
           messageOffset = 8;
         }
       }
       break;
 
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 10:
+    case ABILITY_FORMULA_EFFECT:
+    case ABILITY_FORMULA_ATTACK:
+    case ABILITY_FORMULA_ATTACK_MULTIPLIED:
+    case ABILITY_FORMULA_DAMAGE:
+    case ABILITY_FORMULA_ENEMY_DAMAGE:
+    case ABILITY_FORMULA_EFFECT_ONLY:
+    case ABILITY_FORMULA_SUMMON:
+    case ABILITY_FORMULA_PP_DAMAGE:
       break;
     }
 
@@ -285,7 +285,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       break;
     }
 
-    if (effect->range != 0xff)
+    if (effect->range != ABILITY_RANGE_ALL)
       break;
   }
 
@@ -314,9 +314,9 @@ s32 Ability_PlayUseAnimation(s32 action) {
   u8 *definition = Ability_Get(action);
 
   switch (definition[1] & 15) {
-  case 1:
+  case ABILITY_FORMULA_HEAL_HP:
     Sound_PlayReturnOne(SE_RECOVERY);
-  case 11:
+  case ABILITY_FORMULA_HEAL_PP:
     Sound_PlayReturnOne(SE_RECOVERY);
     break;
   default:
@@ -329,7 +329,7 @@ s32 Ability_PlayUseAnimation(s32 action) {
     case 5:
       Sound_PlayReturnOne(MUS_REVIVE);
       break;
-    case 3:
+    case ABILITY_EFFECT_CURE_POISON:
       Sound_PlayReturnOne(MUS_CURE);
       break;
     default:

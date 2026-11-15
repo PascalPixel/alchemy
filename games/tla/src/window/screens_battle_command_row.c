@@ -74,7 +74,8 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   if (mode == 0)
     selectionUi->window = Window_Create(20, 17, 10, 3, 6);
   else
-    selectionUi->window = Window_Create(WINDOW_X, 17, 30 - WINDOW_X, 3, 6);
+    selectionUi->window =
+        Window_Create(WINDOW_X, 17, DISPLAY_TILE_WIDTH - WINDOW_X, 3, 6);
   selectionUi->drawnIndex = -1;
   if (mode == 0) {
     kindCount = 0;
@@ -83,8 +84,8 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
         battleMenu->swappedUnit == -1 && Party_CountMembersFar() > 4)
       selectionUi->commandKinds[kindCount++] = 49;
     if (fleeAllowed > 0 && gMainRoutineWork.battleType != BATTLE_TYPE_NO_ESCAPE)
-      selectionUi->commandKinds[kindCount++] = 4;
-    selectionUi->commandKinds[kindCount++] = 7;
+      selectionUi->commandKinds[kindCount++] = COMMAND_ICON_FLEE;
+    selectionUi->commandKinds[kindCount++] = COMMAND_ICON_STATUS;
     selectionUi->commandKinds[kindCount] = -1;
     selectionUi->selectedIndex = NAVIGATION->commandSelection[0];
   } else {
@@ -92,18 +93,18 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
 
     selectionUi->selectedIndex = NAVIGATION->commandSelection[1];
     memberCount = 0;
-    selectionUi->commandKinds[memberCount++] = 0;
-    selectionUi->commandKinds[memberCount++] = 1;
+    selectionUi->commandKinds[memberCount++] = COMMAND_ICON_ATTACK;
+    selectionUi->commandKinds[memberCount++] = COMMAND_ICON_PSYNERGY;
     if (*(s32 *)Djinn_GetRecoveryTableFar(0) != 0) {
       Func_08118130__screens(0, party);
       for (i = 0; i <= 3; i++)
         tradeCount += party[i];
-      selectionUi->commandKinds[memberCount++] = 15;
+      selectionUi->commandKinds[memberCount++] = COMMAND_ICON_DJINN;
       if (tradeCount != 0)
-        selectionUi->commandKinds[memberCount++] = 16;
+        selectionUi->commandKinds[memberCount++] = COMMAND_ICON_SUMMON;
     }
-    selectionUi->commandKinds[memberCount++] = 2;
-    selectionUi->commandKinds[memberCount++] = 3;
+    selectionUi->commandKinds[memberCount++] = COMMAND_ICON_ITEM;
+    selectionUi->commandKinds[memberCount++] = COMMAND_ICON_DEFEND;
     selectionUi->commandKinds[memberCount] = -1;
   }
   for (entryIndex = 0; entryIndex <= 5; entryIndex++) {
@@ -130,7 +131,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     } while (entryIndex < selectionUi->iconCount);
   }
   Task_Add(CommandRow_PutBg1Behind, 0xc80);
-  Irq_SetHandler(2, 136, CommandRow_PutBg1InFront);
+  Irq_SetHandler(IRQ_VCOUNT, 136, CommandRow_PutBg1InFront);
 
   for (;;) {
     pulseScale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
@@ -149,8 +150,8 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             s32 col;
 
             for (col = 0; col <= 2; col++)
-              *(work->tilemap[0] + (entryIndex + 17) * 32 + panel * 3 +
-                WINDOW_X - 18 + (col & 3)) = 0xf07f;
+              *(work->tilemap[0] + (entryIndex + 17) * BG_SCREEN_WIDTH +
+                panel * 3 + WINDOW_X - 18 + (col & 3)) = 0xf07f;
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
@@ -158,14 +159,15 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             s32 col;
 
             for (col = 0; col <= 2; col++) {
-              volatile u16 *vram =
-                  (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + WINDOW_X;
+              volatile u16 *vram = (volatile u16 *)BG_SCREEN_BLOCK(31) +
+                                   21 * BG_SCREEN_WIDTH + WINDOW_X;
 
-              vram[panel * 3 + entryIndex * 32 + (col & 3) -
+              vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH + (col & 3) -
                    selectionUi->iconCount * 3] =
                   panel * 16 + entryIndex * 4 + col + 0x100;
-              *(work->tilemap[0] + (entryIndex + 17) * 32 + panel * 3 +
-                (col & 3) - selectionUi->iconCount * 3 + WINDOW_X) = 0;
+              *(work->tilemap[0] + (entryIndex + 17) * BG_SCREEN_WIDTH +
+                panel * 3 + (col & 3) - selectionUi->iconCount * 3 + WINDOW_X) =
+                  0;
             }
           }
         }
@@ -177,8 +179,8 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             s32 col;
 
             for (col = 0; col <= 2; col++)
-              *(work->tilemap[0] + (entryIndex + 17) * 32 + panel * 3 + 2 +
-                (col & 3)) = 0xf07f;
+              *(work->tilemap[0] + (entryIndex + 17) * BG_SCREEN_WIDTH +
+                panel * 3 + 2 + (col & 3)) = 0xf07f;
           }
         }
         for (panel = 0; panel < selectionUi->iconCount; panel++) {
@@ -186,14 +188,14 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
             s32 col;
 
             for (col = 0; col <= 2; col++) {
-              volatile u16 *vram =
-                  (volatile u16 *)BG_SCREEN_BLOCK(31) + 21 * 32 + 20;
+              volatile u16 *vram = (volatile u16 *)BG_SCREEN_BLOCK(31) +
+                                   21 * BG_SCREEN_WIDTH + 20;
 
-              vram[panel * 3 + entryIndex * 32 + (col & 3) -
+              vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH + (col & 3) -
                    selectionUi->iconCount * 3] =
                   panel * 16 + entryIndex * 4 + col + 0x100;
-              *(work->tilemap[0] + (entryIndex + 17) * 32 + panel * 3 +
-                (col & 3) - selectionUi->iconCount * 3 + 20) = 0;
+              *(work->tilemap[0] + (entryIndex + 17) * BG_SCREEN_WIDTH +
+                panel * 3 + (col & 3) - selectionUi->iconCount * 3 + 20) = 0;
             }
           }
         }
@@ -236,7 +238,8 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
       keys = repeat = 0;
       if (navigation->tutorialDelay == 0) {
         if ((u32)(navigation->commandActor - 5) <= 1) {
-          if (selectionUi->commandKinds[selectionUi->selectedIndex] == 3)
+          if (selectionUi->commandKinds[selectionUi->selectedIndex] ==
+              COMMAND_ICON_DEFEND)
             keys = repeat = 1;
           else
             keys = repeat = 32;
@@ -244,16 +247,18 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
         } else if (navigation->commandActor == 4) {
           s32 kind = selectionUi->commandKinds[selectionUi->selectedIndex];
 
-          if (kind == 16 || (tradeCount == 0 && kind == 15)) {
+          if (kind == COMMAND_ICON_SUMMON ||
+              (tradeCount == 0 && kind == COMMAND_ICON_DJINN)) {
             if (navigation->tutorialStep == 1) {
               void *message;
 
               ((u8 *)Ram_HeapSlots->windowWork)[5] |= 4;
-              if (selectionUi->commandKinds[selectionUi->selectedIndex] == 15)
+              if (selectionUi->commandKinds[selectionUi->selectedIndex] ==
+                  COMMAND_ICON_DJINN)
                 message = Message_ShowAndWait(
                     Djinn_GetGiveTutorialMessage() + 10, 15, 8);
               else if (selectionUi->commandKinds[selectionUi->selectedIndex] ==
-                       16)
+                       COMMAND_ICON_SUMMON)
                 message = Message_ShowAndWait(
                     Djinn_GetGiveTutorialMessage() + 9, 15, 8);
               ((u8 *)Ram_HeapSlots->windowWork)[5] &= ~4;
@@ -323,15 +328,16 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
         s32 col;
 
         for (col = 0; col <= 2; col++)
-          *(volatile u16 *)(work->tilemap[0] + (entryIndex + 17) * 32 +
-                            panel * 3 + 5 + (col & 3)) = 0xf07f;
+          *(volatile u16 *)(work->tilemap[0] +
+                            (entryIndex + 17) * BG_SCREEN_WIDTH + panel * 3 +
+                            5 + (col & 3)) = 0xf07f;
       }
     }
   }
   work->dirty = 1;
   wait(1);
   Task_Remove(CommandRow_PutBg1Behind);
-  Irq_SetHandler(2, 0, 0);
+  Irq_SetHandler(IRQ_VCOUNT, 0, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1541, 0x20000);
   Heap_Release(selectionUi);
   work->holdTilemapUpload = 0;

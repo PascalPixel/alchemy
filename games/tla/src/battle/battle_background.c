@@ -370,10 +370,10 @@ void BattleBackground_FadeAlphaOut(void) {
   s32 step;
 
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BD;
-  for (step = 1; step <= 16; step += 2) {
+  for (step = 1; step <= BLEND_WEIGHT_MAX; step += 2) {
     // Arithmetic on BLEND_ALPHA, not the macro's | form, which changes the
     // code.
-    REG_BLDALPHA = BLEND_ALPHA(16, 16) - step;
+    REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX) - step;
     wait(1);
   }
 }
@@ -387,8 +387,8 @@ void BattleBackground_FadeAlphaIn(void) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BD;
   // Arithmetic on BLEND_ALPHA, not the macro's | form, which changes the
   // code.
-  for (step = 1; step <= 16; step += 2) {
-    REG_BLDALPHA = step + BLEND_ALPHA(0, 16);
+  for (step = 1; step <= BLEND_WEIGHT_MAX; step += 2) {
+    REG_BLDALPHA = step + BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
     wait(1);
   }
 }
@@ -590,7 +590,7 @@ void BattleBackground_StepHighlightBlend(void) {
           (battle->highlightStep > 14 ? BLEND_WEIGHT_MAX : 0);
     } else if (battle->highlightMode != HIGHLIGHT_OFF) {
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
-      REG_BLDALPHA = BLEND_ALPHA(16, 0);
+      REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
       REG_BLDY = gBattleHighlight_BlendRamp[battle->highlightStep];
       battle->highlightStep =
           ((battle->highlightStep + 1) & 0xf) |
@@ -619,7 +619,7 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
     battle->highlightMode = mode;
     battle->highlightStep = 0;
     REG_BLDY = 0;
-    Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
+    Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
 
     count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, (u16 *)activeActors);
     for (i = 0; i < count; i++)
@@ -745,7 +745,7 @@ void ElementGlow_UpdateStarField(void) {
     }
     if (life == 0 && work->frames <= 24) {
       angle = Random16();
-      radius = Random16() + 0x10000;
+      radius = Random16() + Q16_ONE;
       half = radius >> 1;
       spark->pos[0] = Iwram_MulQ16(Trig_Cos(angle), half);
       spark->pos[1] = Iwram_MulQ16(Trig_Sin(angle), half);
@@ -846,7 +846,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   for (i = 0; i < 16; i++) {
     s32 angle = Random16();
-    u32 radius = Random16() + 0x10000;
+    u32 radius = Random16() + Q16_ONE;
     u32 half = radius >> 1;
 
     spark = &work->sparks[i];
@@ -883,13 +883,13 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   data += 128;
   Decompress_TaggedLz(data, work);
   switch (mode) {
-  case 0:
+  case ELEMENT_VENUS:
     data = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteB);
     break;
-  case 1:
+  case ELEMENT_MERCURY:
     data = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
     break;
-  case 2:
+  case ELEMENT_MARS:
     data = Resource_GetTableEntry((s32)&ResourceId_RedPaletteC);
     break;
   default:

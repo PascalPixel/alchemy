@@ -38,8 +38,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   targetLevel += (s8)GameFlag_GetByte(0x3f8);
   if (targetLevel <= 0)
     targetLevel = 1;
-  if (targetLevel > 99)
-    targetLevel = 99;
+  if (targetLevel > UNIT_LEVEL_MAX)
+    targetLevel = UNIT_LEVEL_MAX;
 
   for (candidateOrUnitIndex = 0; candidateOrUnitIndex <= 31;
        candidateOrUnitIndex++)
@@ -198,7 +198,7 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
     value = 999;
   state->stats.agi = value;
 
-  for (i = 0; i < 4; i++) {
+  for (i = 0; i < ELEMENT_COUNT; i++) {
     value = state->stats.element[i].power + levels * 15;
     floor = __divsi3(base->element[i].power * 7, 10);
     if (value < floor)
@@ -310,7 +310,7 @@ s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
   s32 classId;
 
   actor = Unit_Get(actorId);
-  if (actor->unavailable != 0)
+  if (actor->unavailable != CLASS_NONE)
     return;
 
   classId = actor->classId;
@@ -345,7 +345,7 @@ s32 BattleEnemy_LetterFirstOfKind(s32 enemyId) {
   objectIndex = 0;
   marker = LIST_MARKER_CHAR;
 scan_objects:
-  summon = Unit_Get(objectIndex + 0x80);
+  summon = Unit_Get(objectIndex + FIRST_ENEMY_UNIT);
   occupied = summon->side;
   if (occupied != 1)
     goto next_object;

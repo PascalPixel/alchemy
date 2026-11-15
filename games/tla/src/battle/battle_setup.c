@@ -248,7 +248,7 @@ void DjinnRecovery_Reconcile(void) {
     for (element = 0; element <= 3; element++) {
       for (djinn = 0; djinn <= 19; djinn++) {
         if (Djinn_CanSetFar(owner, element, djinn) != 0) {
-          list = &(Djinn_GetRecoveryTableFar(owner > 7))->list;
+          list = &(Djinn_GetRecoveryTableFar(owner > ALLY_MAX))->list;
           for (i = 0; i < list->count; i++) {
             if (element == list->entries[i].element &&
                 djinn == list->entries[i].index)
@@ -275,7 +275,7 @@ void DjinnRecovery_Reconcile(void) {
 /// only while a Djinni is on standby. Writes the party recovery table's
 /// availableMask.
 void BattleSummon_UpdateAvailability(void) {
-  u8 totals[4];
+  u8 totals[ELEMENT_COUNT];
   u16 partyMembers[10];
   s32 partySize;
   s32 element;
@@ -320,13 +320,13 @@ void BattleSummon_UpdateAvailability(void) {
         } while (*total >= *required);
       }
 
-      if (elementsMet == 4)
+      if (elementsMet == ELEMENT_COUNT)
         availableMask |= 1u << element;
     }
     element++;
   } while (element <= 15);
 
-  Djinn_GetRecoveryTableFar(0)->summonMask = availableMask;
+  Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->summonMask = availableMask;
 }
 
 /// An empty function, right after BattleSummon_UpdateAvailability.

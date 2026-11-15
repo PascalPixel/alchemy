@@ -16,7 +16,7 @@ s32 PartyMemberChooser_Run(void);
 /// (HEAP_SLOT_MENU) while it runs and frees it before returning.
 s32 PartyMemberChooser_Open(void) {
   struct StatusScreenWork *state =
-      (struct StatusScreenWork *)HeapSlot_Alloc(HEAP_SLOT_MENU, 0x0cec);
+      (struct StatusScreenWork *)HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   s32 result;
   s32 index;
 
@@ -856,7 +856,7 @@ void StatusScreen_ShowMemberProgressMessage(void *window, s32 help, s32 full) {
     u8 *owner = menu + 0x216;
     struct Unit *state = Unit_Get(*owner);
 
-    if (state->level == 99)
+    if (state->level == UNIT_LEVEL_MAX)
       help = 8;
     else
       MessageArgument_PushFar(
@@ -991,7 +991,7 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
 
   menu = Ram_HeapSlots->menuWork;
   unit = Unit_Get(owner);
-  menu->cursor->motion = 1;
+  menu->cursor->motion = ICON_SHOWN;
   flags &= 0x100;
   if (flags == 0)
     Window_ClearInteriorTilesFar(window, 0, 0, 128, 40);
@@ -1616,19 +1616,19 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
     item = Item_GetDirectFar(menu->items[state->selectedIndex] &
                              INVENTORY_ITEM_ID_MASK);
     switch (item->type) {
-    case 1:
+    case ITEM_TYPE_WEAPON:
       Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 1,
                                 EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
       break;
-    case 4:
+    case ITEM_TYPE_HELM:
       Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 3,
                                 EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
       break;
-    case 3:
+    case ITEM_TYPE_SHIELD:
       Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 5,
                                 EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
       break;
-    case 2:
+    case ITEM_TYPE_ARMOR:
       Render_SetTilemapFlagRect(menu->equipWindow, EQUIP_SLOT_X, 7,
                                 EQUIP_SLOT_WIDTH, 1, HIGHLIGHT_PALETTE);
       break;
@@ -1875,16 +1875,16 @@ void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items) {
     if (items[i] & INVENTORY_EQUIPPED) {
       item = items[i] & INVENTORY_ITEM_ID_MASK;
       switch (Item_GetDirectFar(item)->type) {
-      case 1:
+      case ITEM_TYPE_WEAPON:
         Text_DrawMessageAsTilesFar(item + MsgItemName, window, 16, 8);
         break;
-      case 2:
+      case ITEM_TYPE_ARMOR:
         Text_DrawMessageAsTilesFar(item + MsgItemName, window, 16, 56);
         break;
-      case 3:
+      case ITEM_TYPE_SHIELD:
         Text_DrawMessageAsTilesFar(item + MsgItemName, window, 16, 40);
         break;
-      case 4:
+      case ITEM_TYPE_HELM:
         Text_DrawMessageAsTilesFar(item + MsgItemName, window, 16, 24);
         break;
       }
@@ -1932,24 +1932,24 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
 
   state = Ram_HeapSlots->menuWork;
   ItemMenu_PositionCategory();
-  for (i = 0; i < 15; i++) {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     if (items[i] != 0 && (items[i] & INVENTORY_EQUIPPED) != 0) {
       icon = state->entryIcons[i];
       if (icon != 0) {
         switch (Item_GetDirectFar(items[i] & INVENTORY_ITEM_ID_MASK)->type) {
-        case 1:
+        case ITEM_TYPE_WEAPON:
           icon->x = 216;
           icon->y = 32;
           break;
-        case 2:
+        case ITEM_TYPE_ARMOR:
           icon->x = 216;
           icon->y = 80;
           break;
-        case 3:
+        case ITEM_TYPE_SHIELD:
           icon->x = 216;
           icon->y = 64;
           break;
-        case 4:
+        case ITEM_TYPE_HELM:
           icon->x = 216;
           icon->y = 48;
           break;
@@ -1964,9 +1964,9 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
 /// them out again.
 void ItemMenu_PositionCategory(void) {
   struct ItemMenuWork *state = Ram_HeapSlots->menuWork;
-  s32 x = 248;
+  s32 x = MENU_ICON_HIDDEN_X;
   struct WindowSprite **entry = state->entryIcons;
-  s32 y = 168;
+  s32 y = MENU_ICON_HIDDEN_Y;
   s32 remaining = 31;
 
   do {

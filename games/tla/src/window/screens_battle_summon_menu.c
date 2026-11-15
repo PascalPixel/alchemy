@@ -190,7 +190,8 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
               tile = standby[element] + 0xf196;
             else
               tile = (standby[element] + '0') | 0xf000;
-            Window_SetTilemapEntry(counts, tile, element * 2 + 1, 0, 0);
+            Window_SetTilemapEntry(counts, tile, element * 2 + 1, 0,
+                                   GLYPH_DRAW_CHARACTER);
           }
         }
         {
@@ -207,7 +208,7 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
               if (summon->djinnRequired[element] > standby[element])
                 break;
             }
-            affordable = element == 4;
+            affordable = element == ELEMENT_COUNT;
             Ability_LoadGlyph(summon->nameMessageId & 0x3fff, 0,
                               &iconSlots[index], &glyph, 1);
             y = index * 2;
@@ -222,7 +223,8 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
                 Window_SetTilemapEntry(window, element + ELEMENT_ICON_TILE,
                                        col * 2 + SUMMON_COST_X, y, 0);
                 Window_PutGlyph(window, summon->djinnRequired[element] + '0',
-                                col * 2 + SUMMON_COST_X + 1, y, 0);
+                                col * 2 + SUMMON_COST_X + 1, y,
+                                GLYPH_DRAW_CHARACTER);
                 col++;
               }
             }

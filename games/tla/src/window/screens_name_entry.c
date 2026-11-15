@@ -192,14 +192,14 @@ void NameEntry_DrawName(s32 output, u8 *input) {
   }
 
   text[length++] = 8;
-  text[length++] = 2;
+  text[length++] = TEXT_COLOR_RED;
 
   while (length <= 6) {
     text[length++] = 95;
   }
 
   text[length++] = 8;
-  text[length++] = 15;
+  text[length++] = TEXT_COLOR_WHITE;
   text[length] = 0;
   Text_DrawString(text, output, 0, -2);
 }

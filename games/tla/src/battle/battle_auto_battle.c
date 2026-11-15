@@ -114,7 +114,7 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
   if (action->unitId > 4)
     yaw = -0x2000;
   else
-    yaw = 0x2000;
+    yaw = YAW_PARTY_ACTION;
   transition->targetYaw = yaw;
   transition->frames = 60;
   MessageArgument_ClearAllFar();
@@ -250,10 +250,10 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   actorRecord = BattleObject_Get(actorId)->object;
 
   if (targetId >= 0 && targetId <= ALLY_MAX) {
-    sideCount = BattleUnit_ListLiving(2, visibleUnits);
-    sideStart = 0x80;
+    sideCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, visibleUnits);
+    sideStart = FIRST_ENEMY_UNIT;
   } else {
-    sideCount = BattleUnit_ListLiving(1, visibleUnits);
+    sideCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, visibleUnits);
     sideStart = 0;
   }
 
@@ -266,21 +266,21 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++)
     BattleHighlight_SetSpriteMode(index + sideStart, 1);
-  for (index = 0; index != 16; index++) {
-    REG_BLDALPHA = (16 - index) | 0x1000;
+  for (index = 0; index != BLEND_WEIGHT_MAX; index++) {
+    REG_BLDALPHA = (BLEND_WEIGHT_MAX - index) | 0x1000;
     wait(1);
   }
-  PartyStatus_DrawFar(9);
+  PartyStatus_DrawFar(PARTY_STATUS_CLOSED);
 
   if (targetId > 0x7f) {
-    u32 count = BattleUnit_ListLiving(2, visibleUnits);
+    u32 count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, visibleUnits);
     for (index = 0; livingCount != count; index++) {
-      u32 unit = index + 0x80;
+      u32 unit = index + FIRST_ENEMY_UNIT;
       if (Unit_Get(unit)->hp > 0)
         visibleUnits[livingCount++] = unit;
     }
   } else {
-    u32 count = BattleUnit_ListLiving(1, visibleUnits);
+    u32 count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, visibleUnits);
     for (index = 0; livingCount != count; index++) {
       if (Unit_Get(index)->hp > 0)
         visibleUnits[livingCount++] = index;
@@ -295,9 +295,9 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
     context.actors[index] = visibleUnits[index];
   context.count = livingCount;
   if (targetId >= 0 && targetId <= ALLY_MAX)
-    context.side = 1;
+    context.side = EFFECT_SIDE_PARTY;
   else
-    context.side = 0;
+    context.side = EFFECT_SIDE_ENEMIES;
   BattleEffect_RunSummonFar((s32 *)&context);
 
   wait(10);
@@ -305,7 +305,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++)
     BattleHighlight_SetSpriteMode(index + sideStart, 1);
-  for (index = 0; index != 16; index++) {
+  for (index = 0; index != BLEND_WEIGHT_MAX; index++) {
     REG_BLDALPHA = index | 0x1000;
     wait(1);
   }
@@ -349,9 +349,9 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
 
   work.count = 1;
   if ((u16)work.actors[0] <= ALLY_MAX)
-    work.side = 1;
+    work.side = EFFECT_SIDE_PARTY;
   else
-    work.side = 0;
+    work.side = EFFECT_SIDE_ENEMIES;
   work.flags = 0;
 
   wait(4);
@@ -394,20 +394,23 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   if (BattleObject_IsValidId(work.actor) < 0)
     return -1;
   if (work.firstTarget > 127)
-    work.count = BattleUnit_ListLiving(2, (u16 *)work.actors);
+    work.count =
+        BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, (u16 *)work.actors);
   else
-    work.count = BattleUnit_ListLiving(1, (u16 *)work.actors);
-  PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
+    work.count =
+        BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, (u16 *)work.actors);
+  PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus &
+                      ~PARTY_STATUS_SHOW_PP);
   object = BattleObject_Get(work.actor)->object;
   Actor_SelectAnimationFar((struct Actor *)object, 3);
   Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
   if ((u16)action->target <= ALLY_MAX) {
-    work.side = 1;
-    BattleUnit_ListLiving(1, (u16 *)work.actors);
+    work.side = EFFECT_SIDE_PARTY;
+    BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, (u16 *)work.actors);
     work.count = 1;
   } else {
-    work.side = 0;
-    BattleUnit_ListLiving(2, (u16 *)work.actors);
+    work.side = EFFECT_SIDE_ENEMIES;
+    BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, (u16 *)work.actors);
     work.count = 1;
   }
   for (i = 0; i != work.count; i++) {
@@ -418,18 +421,18 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
     for (j = 0; j != animation->count - 1; j++)
       work.params[i][j] = animation->entries[j]->colorMode;
   }
-  work.kind = 0;
+  work.kind = ELEMENT_VENUS;
   work.variant = 0;
   BattleEffect_RunElementPillarFar(&work);
-  work.kind = 1;
+  work.kind = ELEMENT_MERCURY;
   BattleEffect_RunElementPillarFar(&work);
-  work.kind = 2;
+  work.kind = ELEMENT_MARS;
   BattleEffect_RunElementPillarFar(&work);
-  work.kind = 3;
+  work.kind = ELEMENT_JUPITER;
   BattleEffect_RunElementPillarFar(&work);
   work.kind = 0;
   BattleEffect_RunFromTableFar(&work);
-  Actor_SelectAnimationFar((struct Actor *)object, 1);
+  Actor_SelectAnimationFar((struct Actor *)object, POSE_STANDING);
   /* FAKEMATCH(dead): an empty once-only loop. */
   do {
   } while (0);
@@ -461,7 +464,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
     character->hp = 0;
 
   slot = BattleObject_Get(unitId);
-  Actor_SelectAnimationFar((struct Actor *)slot->object, 5);
+  Actor_SelectAnimationFar((struct Actor *)slot->object, POSE_DAMAGE);
   PartyStatus_DrawFar(0);
   MessageArgument_ClearAllFar();
 
@@ -492,7 +495,7 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   }
 
   slot = BattleObject_Get(unitId);
-  Actor_SelectAnimationFar((struct Actor *)slot->object, 1);
+  Actor_SelectAnimationFar((struct Actor *)slot->object, POSE_STANDING);
 }
 
 /// For a unit whose HP has run out: plays its falling effect to the last frame
@@ -503,9 +506,9 @@ void BattleMotion_PlayFall(s32 unitId) {
 
   if (Unit_Get(unitId)->hp <= 0) {
     animation = BattleObject_Get(unitId)->object->records;
-    Sprite_StartAnimationFar(animation, 5);
+    Sprite_StartAnimationFar(animation, POSE_DAMAGE);
     entry = animation->entry;
-    entry->colorMode = 6;
+    entry->colorMode = SPRITE_COLOR_GREY;
     entry->picture = 0xff;
     wait(4);
     SpriteDissolve_RunFar(animation);

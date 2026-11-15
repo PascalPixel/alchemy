@@ -464,4 +464,16 @@ void Text_FillCanvasBackground(void);
 
 void PartyStatus_OpenAndWait(void);
 
+/// The party status window's flags (PartyStatus_Draw,
+/// PartyStatus_CreateWindow): one column of six tiles per party member
+/// (name, HP and, when shown, PP with a bar under each), and in battle an
+/// optional five-tile column of standby Djinn counts on its left.
+enum PartyStatusFlag {
+  PARTY_STATUS_HP_ONLY = 0,     ///< names and HP
+  PARTY_STATUS_SHOW_PP = 1,     ///< add the PP row
+  PARTY_STATUS_SHOW_DJINN = 2,  ///< add the Djinn column (needs the PP row)
+  PARTY_STATUS_CLOSED = 9,      ///< erase the window
+  PARTY_STATUS_KEEP_FLAGS = -1, ///< redraw with the flags it has
+};
+
 #endif

@@ -147,7 +147,7 @@ void BattleObject_UpdatePose(s32 id) {
   s32 value;
 
   state = Unit_Get(id);
-  value = 1;
+  value = POSE_STANDING;
   if (state->hp != 0) {
     if (state->sleep != 0 || state->stun != 0 || state->immobile != 0)
       value = (state->side != 1) * 4;
@@ -210,7 +210,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
   u8 boxY;
 
   if (releaseOthers) {
-    for (unitIndex = 0; unitIndex < 14; unitIndex++) {
+    for (unitIndex = 0; unitIndex < UNIT_MAX; unitIndex++) {
       if (!BattlePlacement_ContainsId(unitIds, unitIndex)) {
         releasedUnitId = unitIndex + 120;
         if (unitIndex <= ALLY_MAX)
@@ -222,8 +222,8 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
   if (gTasksRunning == 0)
     wait(1);
 
-  for (unitIndex = 0;
-       unitIndex < 14 && (unitId = unitIds[unitIndex]) != BATTLE_UNIT_LIST_END;
+  for (unitIndex = 0; unitIndex < UNIT_MAX &&
+                      (unitId = unitIds[unitIndex]) != BATTLE_UNIT_LIST_END;
        unitIndex++) {
     if (unitId == BATTLE_UNIT_REMOVED)
       continue;
@@ -290,7 +290,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         }
         if ((spriteId = battleObject->shadow) != 0) {
           if (record->width == 32)
-            spriteId = 687;
+            spriteId = SPRITE_BATTLE_SHADOW_NARROW;
           entry = (struct SpriteAnimation *)Sprite_AddAnimationFar(record,
                                                                    spriteId);
           battleObject->shadowEntry = entry;
@@ -311,7 +311,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
             (object = battleObject->object) != 0)
           BattleObject_UpdatePose(spriteId);
         unitIndex++;
-        if (unitIndex >= 14 ||
+        if (unitIndex >= UNIT_MAX ||
             (spriteId = unitIds[unitIndex]) == BATTLE_UNIT_LIST_END)
           break;
       }

@@ -216,9 +216,10 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
   u32 row;
   u32 column;
 
-  if (width <= 1 || height <= 1 || width > 30 || height > 30)
+  if (width <= 1 || height <= 1 || width > DISPLAY_TILE_WIDTH ||
+      height > DISPLAY_TILE_WIDTH)
     return;
-  cursor += 32;
+  cursor += BG_SCREEN_WIDTH;
   if (fullWidth == 0) {
     for (row = 1; row < height - 1; row++) {
       cursor++;
@@ -227,14 +228,14 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
             (TEXT_CANVAS_FIRST_TILE - 1 + row + (column - 1) * (height - 2)) &
             0xfff);
       cursor++;
-      cursor += 32 - width;
+      cursor += BG_SCREEN_WIDTH - width;
     }
   } else {
     for (row = 1; row < height - 1; row++) {
       for (column = 0; column < width; column++)
         *cursor++ = WINDOW_TILE(
             (TEXT_CANVAS_FIRST_TILE - 1 + row + column * (height - 2)) & 0xfff);
-      cursor += 32 - width;
+      cursor += BG_SCREEN_WIDTH - width;
     }
   }
   canvas->dirty = 1;

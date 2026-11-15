@@ -10,6 +10,8 @@
 #include "system/system_bank.h"
 #include "scene/shared.h"
 #include "window/screens.h"
+
+#define SAVE_FILE_COUNT 3
 #include "window/window.h"
 #include "gamepak/far_call/field.h"
 
@@ -271,7 +273,7 @@ u32 Save_FindFreeFile(void) {
   u32 i;
 
   p = work->summary;
-  for (i = 0; i < 3; i++, p++) {
+  for (i = 0; i < SAVE_FILE_COUNT; i++, p++) {
     if (p->level == 0)
       return i;
   }
@@ -294,7 +296,7 @@ s32 Save_CountFilesExcludingSent(s32 flag) {
     if (flag != 0) {
       work = Ram_HeapSlots->saveWork;
       summary = work->summary;
-      for (i = 0; i < 3; i++) {
+      for (i = 0; i < SAVE_FILE_COUNT; i++) {
         if (summary[i].sendFlag != 0)
           cnt--;
       }
@@ -922,7 +924,6 @@ void FileList_DrawSummary(s32 win, u8 *rec) {
 #define FILE_LIST_AREA_X 62
 #endif
 
-#define SAVE_FILE_COUNT 3
 #define SAVE_MENU_NO_FILE -2
 
 s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {

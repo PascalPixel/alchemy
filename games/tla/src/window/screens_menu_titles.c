@@ -97,7 +97,7 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
 
   index = VramCache_FindFreeEntry();
   entity = NULL;
-  if (index != 0x60) {
+  if (index != VRAM_CACHE_ENTRY_COUNT) {
     CommandIcon_Load(icon, index, remap);
     entity = WindowSprite_Create(index, OUTPUT_SIZE_32X32, window, x, y);
     entity->sprite.oam.palette256 = 1;

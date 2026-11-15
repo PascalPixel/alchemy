@@ -21,6 +21,7 @@
 #include "system/serial.h"
 #include "text/msg_ids.h"
 #include "battle/battle_side.h"
+#include "battle/battle_effect_params.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "battle/battle.h"

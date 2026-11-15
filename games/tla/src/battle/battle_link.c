@@ -6,6 +6,9 @@
 #include "system/heap_slots.h"
 #include "battle/battle.h"
 
+#define LINK_PARTY_UNIT_BYTES 340
+#define LINK_PARTY_OFFER_BYTES 340
+
 /// Unused: receives the opponent's party into the enemy units, "Enemy" before
 /// each name, then its Djinn recovery list. Returns how many party members
 /// came.
@@ -18,11 +21,11 @@ s32 LinkBattle_ReceiveParty(void) {
   s32 len;
   s32 i;
 
-  buffer = Heap_AllocEwram(340);
+  buffer = Heap_AllocEwram(LINK_PARTY_UNIT_BYTES);
   named_count = 0;
   index = 0;
   while (index <= 2) {
-    name_entry = Unit_Get(index + 128);
+    name_entry = Unit_Get(index + FIRST_ENEMY_UNIT);
     if (Serial_StartReceive(name_entry) == -1) {
       break;
     }
@@ -58,17 +61,15 @@ s32 LinkBattle_ReceiveParty(void) {
     index += 1;
   }
   Heap_Release(buffer);
-  buffer = Heap_AllocEwram(340);
-  if (Serial_StartReceive(Djinn_GetRecoveryTableFar(1)) != -1) {
+  buffer = Heap_AllocEwram(LINK_PARTY_OFFER_BYTES);
+  if (Serial_StartReceive(Djinn_GetRecoveryTableFar(DJINN_RECOVERY_OPPONENT)) !=
+      -1) {
     Serial_WaitForReceive();
     wait(2);
   }
   Heap_Release(buffer);
   return named_count;
 }
-
-#define LINK_PARTY_UNIT_BYTES 340
-#define LINK_PARTY_OFFER_BYTES 340
 
 /// Unused: sends the party, then the Djinn recovery list, each unit under the
 /// id the opponent knows it by.
@@ -93,7 +94,7 @@ s32 LinkBattle_SendParty(void) {
   for (i = 0; i < count; i++) {
     Iwram_CopyWordsEntry(buffer, Unit_Get(owners[i]), size);
     ((struct Unit *)buffer)->side = 2;
-    work->opponentSlots[owners[i]] = i - 128;
+    work->opponentSlots[owners[i]] = i - FIRST_ENEMY_UNIT;
     if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     Serial_WaitForSend();
@@ -111,7 +112,8 @@ s32 LinkBattle_SendParty(void) {
   buffer = (u8 *)Heap_AllocEwram(size);
   /* FAKEMATCH(dead): the copy in a one-pass loop, a scheduling barrier. */
   do {
-    Iwram_CopyWordsEntry(buffer, Djinn_GetRecoveryTableFar(0), size);
+    Iwram_CopyWordsEntry(buffer,
+                         Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY), size);
   } while (0);
   list = &((struct DjinnRecoveryTable *)buffer)->list;
   for (j = 0; j < list->count;) {

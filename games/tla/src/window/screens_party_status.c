@@ -8,6 +8,9 @@
 #include "window/screens.h"
 #include "window/window.h"
 
+/// The party status window's column a party member, in tiles.
+#define PARTY_STATUS_COLUMN_WIDTH 6
+
 /// Sizes the party status window by the party: a column of six tiles a party
 /// member (four at most outside battle), one more row with flag 1 and five more
 /// columns with flag 2, against the screen's right edge.
@@ -27,14 +30,14 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
     if ((u32)n > 4)
       n = 4;
   }
-  if (flags & 1)
+  if (flags & PARTY_STATUS_SHOW_PP)
     height++;
   else
     flags &= -3;
 
-  n *= 6;
+  n *= PARTY_STATUS_COLUMN_WIDTH;
   width = n + 1;
-  if (flags & 2)
+  if (flags & PARTY_STATUS_SHOW_DJINN)
     width = n + 6;
 
   x = 30;
@@ -151,14 +154,15 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
 
   if (canvas->battleMode == 0) {
     Dma_Set((const void *)Palette_GetBasicSpriteColors(),
-            (void *)&BG_PLTT_COLOR(14, 0), DMA_COPY_HALFWORDS(16), REG_DMA3);
+            (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
+            DMA_COPY_HALFWORDS(16), REG_DMA3);
     BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR) =
         BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   }
   x += (s16)window->x;
   y += (s16)window->y;
   for (i = 0; i < 5; i++, x++) {
-    id = canvas->tilemap[0][y * 32 + x];
+    id = canvas->tilemap[0][y * BG_SCREEN_WIDTH + x];
     light = PIXELS_4BPP(2);
     dark = PIXELS_4BPP(12);
     id &= 0x3ff;
@@ -191,12 +195,7 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
   }
 }
 
-#define PARTY_STATUS_KEEP_FLAGS -1
-#define PARTY_STATUS_SHOW_PP 1
-#define PARTY_STATUS_SHOW_DJINN 2
-#define PARTY_STATUS_CLOSED 9
 #define PARTY_STATUS_DJINN_WIDTH 5
-#define PARTY_STATUS_COLUMN_WIDTH 6
 
 /* VIEW(screens): routine BattleDjinn_CountStandbyFar as s32
  * BattleDjinn_CountStandbyFar(s32 a, u8 *counts); window/window.h has
@@ -355,10 +354,6 @@ void PartyStatus_Close(void) {
 }
 
 #undef TILE_ROW_FROM_BOTTOM
-#undef PARTY_STATUS_KEEP_FLAGS
-#undef PARTY_STATUS_SHOW_PP
-#undef PARTY_STATUS_SHOW_DJINN
-#undef PARTY_STATUS_CLOSED
 #undef PARTY_STATUS_DJINN_WIDTH
 #undef PARTY_STATUS_COLUMN_WIDTH
 #undef DJINN_COUNT_TILE

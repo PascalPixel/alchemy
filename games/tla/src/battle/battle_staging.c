@@ -387,7 +387,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
 
   if (aid <= ALLY_MAX) {
     partyMode = completed;
-    if (scene->firstStrike != 2)
+    if (scene->firstStrike != FIRST_STRIKE_ENEMIES)
       partyMode = 1;
 
     if (!partyMode) {
@@ -395,7 +395,8 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
       BattleMessage_WaitForAdvance();
     } else {
       s16 unitIds[UNIT_MAX];
-      s32 index = BattleUnit_ListLiving(1, (u16 *)unitIds) - 1;
+      s32 index =
+          BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, (u16 *)unitIds) - 1;
 
       while (index != -1) {
         struct Unit *unit = Unit_Get(unitIds[index]);

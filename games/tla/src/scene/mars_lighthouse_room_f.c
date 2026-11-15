@@ -838,9 +838,9 @@ step:
   if (frame == 5)
     Event_PlaySound(SE_DUST_PUFF);
   object->motionFlags = 0;
-  object->scaleX += (-0x400);
-  object->scaleY += -0x300;
-  object->y.fixed += -0x9999;
+  object->scaleX += -(Q16_ONE / 64);
+  object->scaleY += -(Q16_ONE * 3 / 256);
+  object->y.fixed += -(px(6) / 10);
   System_Wait(1);
   if (++frame <= 39)
     goto step;
@@ -1282,13 +1282,13 @@ s32 Scene_PrepareMap(void) {
 /// The statue below the torch shoots its fireball at the center wall.
 void MarsLighthouseRoomF_ShootFireballAtWall(void) {
   Actor_Attach(ACTOR_WALL_STATUE, ACTOR_WALL_FIREBALL, ACTOR_WALL_FIREBALL_ROLL,
-               0x4000, gMarsLighthouseRoomF_FireballToWall);
+               FACING_SOUTH, gMarsLighthouseRoomF_FireballToWall);
 }
 
 /// The flame reaches the statue, which shoots its fireball at the icebergs.
 void MarsLighthouseRoomF_ShootFireballAtIcebergs(void) {
   Actor_Attach(ACTOR_ICEBERG_STATUE, ACTOR_ICEBERG_FIREBALL,
-               ACTOR_ICEBERG_FIREBALL_ROLL, 0x4000,
+               ACTOR_ICEBERG_FIREBALL_ROLL, FACING_SOUTH,
                gMarsLighthouseRoomF_FireballToIcebergs);
   Ride_SetEntry(3, FLAME_SPARK | 3);
 }
@@ -1296,7 +1296,7 @@ void MarsLighthouseRoomF_ShootFireballAtIcebergs(void) {
 /// The flame reaches the statue, whose fireball drops to the floor below.
 void MarsLighthouseRoomF_DropFireball(void) {
   Actor_Attach(ACTOR_DROP_STATUE, ACTOR_DROP_FIREBALL, ACTOR_DROP_FIREBALL_ROLL,
-               0x4000, gMarsLighthouseRoomF_FireballDrop);
+               FACING_SOUTH, gMarsLighthouseRoomF_FireballDrop);
 }
 
 #include "shared/scene_set_arrival_flags.c"
@@ -1322,7 +1322,7 @@ void PaletteCycle_Step(void) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     s16 *state = &work->psynergy;
 
-    if (*state != 0 && (*state & 0x3ff) != 153)
+    if (*state != 0 && (*state & 0x3ff) != ABILITY_HOVER)
       return;
     if (work->revealActive != 0)
       return;
@@ -2449,9 +2449,10 @@ void Actor_RollAndCrumble(struct Actor *actor) {
 
 void Actor_HoldDuringEvent(struct Actor *object);
 
-void Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
-  struct Actor *source = Actor_Get(id);
-  struct Actor *object = Actor_Get(target);
+void Actor_Attach(s32 sourceId, s32 id, s32 value, s32 angle,
+                  const void *script) {
+  struct Actor *source = Actor_Get(sourceId);
+  struct Actor *object = Actor_Get(id);
 
   FieldActor_SetPositionAndResetMotion(object, source->x.fixed, source->y.fixed,
                                        source->z.fixed);
@@ -2461,8 +2462,8 @@ void Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   Actor_SelectAnimation(object, 1);
   object->watchedActor = source;
   object->timer = 0;
-  object->userValue = a3;
-  BYTE_AT(object, 98) = kind;
+  object->userValue = angle;
+  BYTE_AT(object, 98) = value;
   object->update = Actor_HoldDuringEvent;
 }
 

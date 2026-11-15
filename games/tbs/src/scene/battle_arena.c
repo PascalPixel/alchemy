@@ -659,28 +659,23 @@ static s32 BattleArena_SendPartyRecords(void) {
   }
   // Pad to three records with the last copy marked absent (BATTLE_SIDE_NONE):
   // each pad is started at padNext and waited for at padTest.
-  goto padNext;
-padWait:
-  wait(1);
-  if (--timeout < 0 ||
-      (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-    if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
-      result = -1;
-      goto done;
-    }
-  }
-padTest:
-  if (Serial_GetActiveTransfers() != 0) {
-    goto padWait;
-  }
-  wait(2);
-  i++;
-padNext:
-  if (i < LOBBY_UNIT_RECORD_COUNT) {
+  for (; i < LOBBY_UNIT_RECORD_COUNT; i++) {
     ((struct Unit *)buffer)->side = tries = 0;
-    if ((started = Serial_StartSend(buffer, size)) != -1) {
-      goto padTest;
+    if ((started = Serial_StartSend(buffer, size)) == -1)
+      break;
+    while (Serial_GetActiveTransfers() != 0) {
+      wait(1);
+      if (--timeout < 0 ||
+          (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
+        if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
+          result = -1;
+          goto done;
+        }
+      }
     }
+    wait(2);
+  }
+  if (i < LOBBY_UNIT_RECORD_COUNT) {
     result = started;
     goto done;
   }

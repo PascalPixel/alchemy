@@ -2576,7 +2576,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_SUSA, 0, 0);
       Actor_WalkToById(*owner, 488, 376);
       Actor_WaitForMoveById(*owner);
-      MapGrid_SetShakeFixed(0x50000, 0x50000, scale);
+      MapGrid_SetShakeFixed(px(5), px(5), scale);
       Sound_Play(SE_TREMOR);
       Event_Wait(30);
       Actor_ShowEmoteById(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2585,7 +2585,7 @@ s32 Scene_Initialize(void) {
       Event_Wait(15);
       other = Actor_GetById(ACTOR_SAND_TABLET);
       alpha = REG_BLDALPHA;
-      MapGrid_SetShakeFixed(0xa0000, 0xa0000, scale);
+      MapGrid_SetShakeFixed(px(10), px(10), scale);
       Sound_Play(SE_TREMOR);
       BlendScript_Suspend();
       alpha = *(u8 *)&alpha;
@@ -3280,8 +3280,8 @@ void GaiaRockInside_TriggerWallCell(void) {
     struct FieldWork *event = Ram_HeapSlots->fieldWork;
     struct MapWork *map = Ram_HeapSlots->mapGrid;
     struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-    s32 x = object->x.fixed / 0x100000;
-    s32 z = (object->z.fixed - object->y.fixed + 0x7fff) / 0x100000;
+    s32 x = object->x.fixed / px(16);
+    s32 z = (object->z.fixed - object->y.fixed + 0x7fff) / px(16);
     struct MapCell *cells = map->layers[2].cells;
     struct MapCell *cell = &cells[x + (z << 7)];
     s32 code = cell->collisionCode;
@@ -3294,8 +3294,8 @@ void GaiaRockInside_TriggerWallCell(void) {
 void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *object = Actor_Get(id);
   struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[2].cells;
-  s32 column = x / 0x100000;
-  s32 row = (z - y + 0x7fff) / 0x100000;
+  s32 column = x / px(16);
+  s32 row = (z - y + 0x7fff) / px(16);
 
   cell += column + (row << 7);
   cell->collisionCode = 255;

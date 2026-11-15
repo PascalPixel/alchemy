@@ -561,8 +561,8 @@ void GaiaRock_TriggerWallCell(void) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
     struct MapWork *map = Ram_HeapSlots->mapGrid;
     struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-    s32 x = object->x.fixed / 0x100000;
-    s32 z = (object->z.fixed - object->y.fixed + 0x7fff) / 0x100000;
+    s32 x = object->x.fixed / px(16);
+    s32 z = (object->z.fixed - object->y.fixed + 0x7fff) / px(16);
     struct MapCell *cells = map->layers[2].cells;
     struct MapCell *cell = &cells[x + (z << 7)];
     s32 code = cell->collisionCode;
@@ -575,8 +575,8 @@ void GaiaRock_TriggerWallCell(void) {
 void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *object = Actor_Get(id);
   struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[2].cells;
-  s32 cellX = x / 0x100000;
-  s32 cellZ = (z - y + 0x7fff) / 0x100000;
+  s32 cellX = x / px(16);
+  s32 cellZ = (z - y + 0x7fff) / px(16);
 
   cell += cellX + (cellZ << 7);
   cell->collisionCode = 255;

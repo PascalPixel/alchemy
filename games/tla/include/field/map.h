@@ -77,8 +77,6 @@ struct Vec2 {
 
 struct Actor *Actor_FindAtCell(s32 *position, s32 check_y);
 
-void Func_0200189c(void);
-
 extern u8 gBgTileBuffer[];
 /// The world map area's four tile sets, decoded one after another into
 /// gBgTileBuffer and copied to the two halves of BG char blocks 2 and 3, as

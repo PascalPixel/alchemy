@@ -469,16 +469,6 @@ struct OrbitPosition {
   s32 z;
 };
 
-struct DescendingOrbitObject {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[80];
-  u16 timer;
-  s16 angle;
-};
-
 struct LineScrollWork {
   struct BgScroll rows[2][160][3];
   u8 page;
@@ -782,9 +772,6 @@ extern const u8 gFieldEffect_GroundParticleTiles[];
 extern const u8 gFieldEffect_MoteTiles[];
 
 extern u32 gBattleEffect_PulseScales[];
-
-void BattleEffect_UpdateDescendingOrbitObject(
-    struct DescendingOrbitObject *arg);
 
 extern const s16 gLineScroll_WaveSine[];
 

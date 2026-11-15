@@ -317,28 +317,20 @@ s32 Text_CheckTextDismissed(struct UiChannelSlot *ch) {
   return 0;
 }
 
-/// A window as Message_CloseFinishedWindows reads it: its state and flags, and
-/// its zoom stage and duration read as one word, nonzero while a zoom runs.
-struct UiWindowState {
-  u8 unk00[0x14];
-  u16 state;
-  u16 flags;
-  s32 pendingValue;
-};
-
 /// Closes each message's window whose text has ended, then waits ten frames.
 void Message_CloseFinishedWindows(void) {
   s32 slotIndex;
   struct UiChannelSlot *slot;
-  struct UiWindowState *work;
+  struct Window *work;
 
   slot = ((struct WindowWork *)Ram_HeapSlots->windowWork)->channels;
   slotIndex = 0;
   do {
-    work = (struct UiWindowState *)slot->work;
-    if (work != NULL && work->pendingValue == 0 && work->flags != 0 &&
+    work = slot->work;
+    // The zoom's stage and duration are read as one word: both zero.
+    if (work != NULL && *(s32 *)&work->zoomStage == 0 && work->flags != 0 &&
         work->state != 0) {
-      Window_Close((struct Window *)work, work->flags & 2);
+      Window_Close(work, WINDOW_FLAG_INSTANT & work->flags);
     }
     slotIndex++;
     slot++;

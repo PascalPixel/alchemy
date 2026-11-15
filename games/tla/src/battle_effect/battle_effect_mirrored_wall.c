@@ -344,6 +344,12 @@ void BattleEffect_RunFormicAcid(struct BattleEffectParams *args) {
 #define SMOKE_SHEET 0x3e80 ///< the smoke, after the gold shells
 #define SHARD_SHEET 0x1e00 ///< the shards, among the gold shells
 
+#define LOBBED_SHELLS_SLOTS 16        ///< particles reserved for each target
+#define LOBBED_SHELLS_BURST_SLOTS 256 ///< burst particles after the shells
+/// GoldShellSheet's shell as it tumbles, upright and then turned on its side.
+#define LOBBED_SHELL_WIDTH 24
+#define LOBBED_SHELL_HEIGHT 32
+
 /// Shots arc from the caster to each target, one or four per target eight
 /// frames apart, turning as they fly; each bursts where it lands into smoke or
 /// shards, flashing the target. The mode picks the colours and its row of
@@ -423,8 +429,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     struct MotionObject *target =
         BattleObject_GetFar(args->targets[k % args->targetCount])->object;
 
-    for (i = 0; i != 16; i++) {
-      struct Particle *shot = &PARTICLES[k * 16 + i];
+    for (i = 0; i != LOBBED_SHELLS_SLOTS; i++) {
+      struct Particle *shot = &PARTICLES[k * LOBBED_SHELLS_SLOTS + i];
       s32 aimZ;
 
       SET_POSITION(shot, source->x, height, source->z);
@@ -484,11 +490,11 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
             if (step > 4)
               draw[gLobbedShells_Styles[mode * 4 + RECORD_SHOT_BLITTER]](
                   canvas, work->sheet + step * 768, position.x - 16,
-                  position.y - 12, 32, 24);
+                  position.y - 12, LOBBED_SHELL_HEIGHT, 24);
             else
               draw[gLobbedShells_Styles[mode * 4 + RECORD_SHOT_BLITTER]](
                   canvas, work->sheet + step * 768, position.x - 12,
-                  position.y - 16, 24, 32);
+                  position.y - 16, LOBBED_SHELL_WIDTH, LOBBED_SHELL_HEIGHT);
             if (shot->variant == 0)
               BattleEffectKernels_IntegrateVector3(shot, 63, -px(1) / 2);
             if (shot->y < 0) {
@@ -523,7 +529,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 
     // The bursts: smoke rises slowly and spreads; shards fly up, fall and
     // tumble, facing the way they move. Each lives 45 frames.
-    for (i = 0, burst = BURSTS; i != 256; burst++, i++) {
+    for (i = 0, burst = BURSTS; i != LOBBED_SHELLS_BURST_SLOTS; burst++, i++) {
       if ((u32)burst->variant <= 44 && burst->y >= 0) {
         EffectPosition_ProjectPoint((s32 *)burst, &position);
         position.x >>= 1;

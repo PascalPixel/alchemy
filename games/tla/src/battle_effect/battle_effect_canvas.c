@@ -149,7 +149,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, FLASHES, 0, 0);
       }
       if (frame == 136) {
-        u8 *dst = Data_02010400;
+        u8 *dst = Ram_MapCellBuffer + 0x400;
         for (i = 0; i != 7; i++) {
 
           void *o = (void *)OBJ_TILES(
@@ -547,9 +547,9 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   {
-    const void *mesh = Data_02011000;
+    const void *mesh = Ram_MapCellBuffer + 0x1000;
     void *vertices = gMapGridCellBuffer;
-    const void *bandMesh = Data_02012800;
+    const void *bandMesh = Ram_MapCellBuffer + 0x2800;
 
     for (frame = 0; frame != 26; frame++) {
       if ((gInput.repeat & (KEY_A | KEY_B)) && count == -1) {
@@ -639,14 +639,15 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       }
       if (frame == 0) {
         Sound_PlayFar(SE_BANE_ESCAPE);
-        Mesh_BuildGrid(Data_02011000, 16, 8, 8, 8);
+        Mesh_BuildGrid(Ram_MapCellBuffer + 0x1000, 16, 8, 8, 8);
         {
           s32 ringAngle = 0;
           for (ring = 0, offset = 0; ring != 8;
                ringAngle += 0x888, offset += 64, ring++) {
             s32 y = Q_16_16_TO_INT(-Trig_Cos(ringAngle) * 96);
             s32 rr = Q_16_16_TO_INT(Trig_Sin(ringAngle) * 48);
-            struct ModelVertex *v = (struct ModelVertex *)Data_02010800;
+            struct ModelVertex *v =
+                (struct ModelVertex *)(Ram_MapCellBuffer + 0x800);
 
             k = 0;
             v = (struct ModelVertex *)((u8 *)v + offset);
@@ -657,7 +658,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
             }
           }
         }
-        Mesh_BuildCylinderBand(Data_02012000, Data_02012800, 32);
+        Mesh_BuildCylinderBand(Ram_MapCellBuffer + 0x2000,
+                               Ram_MapCellBuffer + 0x2800, 32);
       }
       landingTexture.logWidth = 5;
       landingTexture.logHeight = 5;
@@ -681,7 +683,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         Transform_ApplyPitch(TRIG_TURN / 8);
         Transform_ApplyYaw(-frame << 10);
         Transform_ApplyUniformScale(s);
-        Render_TransformVertices(Data_02010800, vertices, 128);
+        Render_TransformVertices(Ram_MapCellBuffer + 0x800, vertices, 128);
         Render_DrawModelList(model);
       }
       landingTexture.logHeight = 5;
@@ -716,7 +718,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
             Transform_ApplyYaw((frame + i * 8) << 10);
             Transform_ApplyAxisScale(Q16_ONE, Q16_ONE * 6, Q16_ONE);
             Transform_ApplyTranslation(0, px(gEclipse_RingHeights[i]), 0);
-            Render_TransformVertices(Data_02012000, vertices, 64);
+            Render_TransformVertices(Ram_MapCellBuffer + 0x2000, vertices, 64);
             Render_DrawModelList(model);
           }
         }
@@ -1115,7 +1117,8 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
       break;
     case 2:
       if (work->transferValue == 50)
-        ColorBuffer_Halve(source, (void *)BG_CHAR_BLOCK(2), 0x7800);
+        ColorBuffer_Halve(source, (void *)BG_CHAR_BLOCK(2),
+                          BATTLE_BACKGROUND_BYTES);
       else
         ColorBuffer_ScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(2),
                                        BATTLE_BACKGROUND_BYTES);

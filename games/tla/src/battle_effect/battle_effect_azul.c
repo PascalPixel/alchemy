@@ -130,7 +130,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     ((struct AzulObject *)work->sprites[i])->priority = 1;
   }
   mapCells = gMapGridCellBuffer;
-  planes = gData_02014000;
+  planes = Ram_MapCellBuffer + 0x4000;
   stripEnd = 0x3a08;
   for (frame = 0; frame != AZUL_FRAMES; frame++) {
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 15 && frame <= 185) {
@@ -538,8 +538,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           v++;
         }
       }
-      Resource_LoadAndDecompress((s32)&ResourceId_WispSheet, gData_02014000, 1,
-                                 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_WispSheet,
+                                 Ram_MapCellBuffer + 0x4000, 1, 0);
       for (i = 0; i != 6; i++) {
         for (k = 0; k != 16; k++) {
           for (j = 0; j != 64; j++) {
@@ -549,15 +549,16 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         }
       }
       Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet,
-                                 gData_02014000, 1, 0);
-      Picture_MirrorIntoQuadrants(gData_02014000, gMapGridCellBuffer, 64, 64);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0,
-                                 0);
+                                 (Ram_MapCellBuffer + 0x4000), 1, 0);
+      Picture_MirrorIntoQuadrants(Ram_MapCellBuffer + 0x4000,
+                                  gMapGridCellBuffer, 64, 64);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+                                 Ram_MapCellBuffer + 0x4000, 0, 0);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 152) {
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, gData_02014000, 0,
-                                 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
+                                 Ram_MapCellBuffer + 0x4000, 0, 0);
     }
     u = frame - 80;
     if (u <= 107) {
@@ -624,7 +625,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           shade = 0;
         }
         if (shade > MODEL_SHADE_INVISIBLE) {
-          scratchTexture.pixels = gData_02014000;
+          scratchTexture.pixels = Ram_MapCellBuffer + 0x4000;
           scratchTexture.logWidth = 7;
           model->mesh = gBattleEffect_LargeSquareMesh;
           /* FAKEMATCH(dead): a once-only block. */
@@ -646,7 +647,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         size = (frame << 13) + -0x130000;
         scratchTexture.logWidth = 6;
         scratchTexture.logHeight = 6;
-        scratchTexture.pixels = gData_02014000;
+        scratchTexture.pixels = Ram_MapCellBuffer + 0x4000;
         model->shade = shade;
         model->mesh = gBattleEffect_SquareMesh;
         Transform_Reset();
@@ -733,8 +734,9 @@ void Particle_AdvanceWithGravity3D(struct Particle *step, s32 damping,
   step->x += vx;
   step->y += vy;
   step->z += vz;
-  SET_VELOCITY(step, vx * damping / 64, (vy + gravity) * damping / 64,
-               vz * damping / 64);
+  SET_VELOCITY(step, vx * damping / DAMPING_SCALE,
+               (vy + gravity) * damping / DAMPING_SCALE,
+               vz * damping / DAMPING_SCALE);
 }
 
 /// Moves a particle one frame on the screen.
@@ -746,8 +748,8 @@ void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
 
   step->x = x + vx;
   step->y += vy;
-  step->velocityX = vx * damping / 64;
-  step->velocityY = (vy + gravity) * damping / 64;
+  step->velocityX = vx * damping / DAMPING_SCALE;
+  step->velocityY = (vy + gravity) * damping / DAMPING_SCALE;
 }
 
 /// Projects a 16.16 point onto the screen through the current transform, 16

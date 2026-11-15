@@ -258,7 +258,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   s32 j;
 
   none = 0;
-  ringPixels = gData_02014000; // the rings' texture, for the whole function
+  ringPixels =
+      Ram_MapCellBuffer + 0x4000; // the rings' texture, for the whole function
   battle = Ram_HeapSlots->battleWork;
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;

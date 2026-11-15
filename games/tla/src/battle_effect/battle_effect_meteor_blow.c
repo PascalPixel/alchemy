@@ -436,7 +436,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        SHEET_PALETTE_BYTES);
   {
-    s32 *q = (s32 *)Data_02010018;
+    s32 *q = (s32 *)((s32 *)(Ram_MapCellBuffer + 0x18));
 
     for (i = 0; i != 256; i++, q += 7) {
       *q = 0;

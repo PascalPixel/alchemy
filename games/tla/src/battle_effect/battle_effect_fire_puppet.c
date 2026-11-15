@@ -58,7 +58,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   s32 endY;
   s32 i;
 
-  buffer = Data_02012000;
+  buffer = Ram_MapCellBuffer + 0x2000;
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
@@ -123,7 +123,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       /* FAKEMATCH(temporary): the cell buffer by its fixed address. */
       struct ModelVertex(*cells)[2] =
           (struct ModelVertex(*)[2])Ram_MapCellBuffer;
-      u8 *projected = Data_02011000;
+      u8 *projected = Ram_MapCellBuffer + 0x1000;
       s32 shade;
 
       length = frame * 44 - 704;
@@ -187,7 +187,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
         Transform_ApplyUniformScale((212 << 10) - (frame << 11));
       }
       /* FAKEMATCH(temporary): the buffers named, not cells and projected. */
-      Render_TransformVertices(Ram_MapCellBuffer, Data_02011000, 66);
+      Render_TransformVertices(Ram_MapCellBuffer, Ram_MapCellBuffer + 0x1000,
+                               66);
       Render_DrawModelList(model);
 
       // The hand at the arm's end.

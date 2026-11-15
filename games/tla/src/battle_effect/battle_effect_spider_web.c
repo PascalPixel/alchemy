@@ -269,7 +269,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
     Iwram_FillWords(map, 256, -1);
     map += 64;
     Iwram_FillWords(map, 128, 0x03ff03ff);
-    v = (u32)Data_02010200;
+    v = (u32)(Ram_MapCellBuffer + 0x200);
     map += 32;
     for (y = 0; y != 16; y++) {
       for (x = 0; x != 8; x++) {

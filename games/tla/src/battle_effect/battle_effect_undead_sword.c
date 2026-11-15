@@ -369,7 +369,7 @@ struct WaterTriangle {
 #define WATER_ROWS 8
 #define WATER_QUADS ((WATER_ROWS - 1) * (WATER_COLUMNS - 1))
 /// The water's mesh as triangles, two to a quad.
-#define WATER_MESH ((struct WaterTriangle *)gData_02014000)
+#define WATER_MESH ((struct WaterTriangle *)(Ram_MapCellBuffer + 0x4000))
 
 /// The body of Dreamtide (mode 0) and Watery Grave (mode 1): a sheet of
 /// water (a 16 by 8 grid of vertices, its mesh built here) rolls in under
@@ -400,7 +400,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(1);
-  mesh = gData_02014000;
+  mesh = Ram_MapCellBuffer + 0x4000;
   if (mode == WATER_SHEET_DREAMTIDE) {
     REG_BLDALPHA = BLEND_ALPHA(16, 12);
   } else {
@@ -811,7 +811,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(
       (s32)&ResourceId_JupiterDjinnSmallSheet,
       work->sheet + WIND_FUNNEL_JUPITER_DJINN_SMALL_PICTURES, 1, 1);
-  Render_BuildQuadStrip(Data_02010318, 4, 32, 32);
+  Render_BuildQuadStrip(Ram_MapCellBuffer + 0x318, 4, 32, 32);
 
   for (frame = 0; frame != frames; frame++) {
     s32 shade;
@@ -932,7 +932,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
     model = Render_AllocateModelList(1);
-    vertices = Data_02010108;
+    vertices = Ram_MapCellBuffer + 0x108;
     shade = 0;
     if (frame <= 15) {
       shade = frame * 4 - 64;
@@ -950,7 +950,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     texture.pixels = work->sheet;
     model->kind = 6;
     model->texture = &texture;
-    model->mesh = Data_02010318;
+    model->mesh = Ram_MapCellBuffer + 0x318;
     model->scrollU = 0;
     model->scrollV = 0;
     gProjection.centerY = 104;
@@ -982,7 +982,7 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
         }
         Transform_ApplyAxisScale(scale * 2, Q16_ONE, scale * 2);
       }
-      Render_TransformVertices(funnel, Data_02010108, 66);
+      Render_TransformVertices(funnel, Ram_MapCellBuffer + 0x108, 66);
       Render_DrawModelList(model);
     }
     gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
@@ -1126,7 +1126,9 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
         height = height - top + 4;
       }
       if (height > 0) {
-        blit[0](canvas, Data_02014e20, centerX - 24, top, 48, height);
+        blit[0](canvas,
+                Ram_MapCellBuffer + DIAMOND_BERG_CRYSTAL_BITMAP_PICTURES,
+                centerX - 24, top, 48, height);
       }
     }
     if (frame == 7) {

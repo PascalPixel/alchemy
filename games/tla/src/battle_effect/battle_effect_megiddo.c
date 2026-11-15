@@ -76,9 +76,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   savedYaw = 0;
   zero = 0;
   ring = gMapGridCellBuffer;
-  transformed = Data_02011000;
-  strip = Data_02012000;
-  scratchSheet = gData_02014000;
+  transformed = Ram_MapCellBuffer + 0x1000;
+  strip = Ram_MapCellBuffer + 0x2000;
+  scratchSheet = Ram_MapCellBuffer + 0x4000;
   BattleMotion_ApproachTargetFar(args->user, args->user, 150, px(5));
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -137,8 +137,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     if (frame == 0) {
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0,
-                                 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+                                 Ram_MapCellBuffer + 0x4000, 0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, work->sheet, 0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x800,
                                  0, 0);

@@ -180,7 +180,6 @@ void BattleEffectKernels_IntegrateVector3(struct Particle *step, s32 damping,
                                           s32 gravity);
 void BattleEffect_StartTiledCanvas(s32 bgControl);
 void BattleEffect_StartTiledCanvasFilled(s32 bgControl);
-extern u8 Data_02011000[];
 extern u8
     Data_02012000[]; // the crystal texture and the flashes, after the map cells
 void RagingHeat_FillGradientCanvas(void);

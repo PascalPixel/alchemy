@@ -47,7 +47,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
     offset += (i * 2 + 3) * size / 2;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, work->sheet, 0, 0);
-  Picture_MirrorIntoQuadrants(work->sheet, gData_02014000, 64, 64);
+  Picture_MirrorIntoQuadrants(work->sheet, Ram_MapCellBuffer + 0x4000, 64, 64);
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
       args,
@@ -169,7 +169,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
         model->vertices = vertices;
         texture.logWidth = 7;
         texture.logHeight = 7;
-        texture.pixels = gData_02014000;
+        texture.pixels = Ram_MapCellBuffer + 0x4000;
         if (frame > 15) {
           s32 scale = (frame << 12) - Q16_ONE;
 

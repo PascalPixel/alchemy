@@ -140,7 +140,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, 1024);
     }
     {
-      u8 *cells = Data_02016000;
+      u8 *cells = Ram_MapCellBuffer + 0x6000;
 
       for (i = 0; i != 4; i++) {
         obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
@@ -150,7 +150,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                         cells + i * 1024, 1024);
       }
     }
-    Iwram_CopyWords(cellBuffer + 0x1000, Data_02016000, 0x1000);
+    Iwram_CopyWords(cellBuffer + 0x1000, Ram_MapCellBuffer + 0x6000, 0x1000);
   }
   for (i = 0; i != 6; i++) {
     obj = EffectSprite_Acquire(32, 32, OBJ_SIZE_32X32 | OBJ_256_COLORS, 0);
@@ -213,7 +213,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                   Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                   SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, Data_02012000, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
+                             Ram_MapCellBuffer + 0x2000, 0, 0);
   zero = 0;
   camZ = 0;
   swapped = 0;
@@ -477,7 +478,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       u8 *cells;
 
       swapped = 0;
-      cells = Data_02011000;
+      cells = Ram_MapCellBuffer + 0x1000;
       for (i = 0; i != 4; i++) {
         Iwram_CopyWords((void *)OBJ_TILES(work->sprites[24 + i]),
                         cells + i * 1024, 1024);
@@ -784,7 +785,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
     }
     if (frame == 552) {
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, Data_02012000, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
+                                 Ram_MapCellBuffer + 0x2000, 0, 0);
     }
     if (frame == 551) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0EE, work->sheet, 0, 0);
@@ -792,7 +794,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                                  0, 0);
     }
     if (frame == 602) {
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Data_02012000, 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+                                 Ram_MapCellBuffer + 0x2000, 0, 0);
     }
     if ((u32)(frame - 602) <= 6) {
       camZ += px(16);
@@ -862,7 +865,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           }
           if (shade > MODEL_SHADE_INVISIBLE) {
             model->shade = shade;
-            texture.pixels = Data_02012000;
+            texture.pixels = Ram_MapCellBuffer + 0x2000;
             Transform_Reset();
             if (frame > 553) {
               s32 v = (554 - frame) * 120000;
@@ -894,7 +897,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         model->shade = shade;
         model->mesh = gBattleEffect_LargeSquareMesh;
         model->kind = 7;
-        texture.pixels = Data_02012000;
+        texture.pixels = Ram_MapCellBuffer + 0x2000;
         texture.logWidth = 7;
         texture.logHeight = 7;
         Transform_Reset();
@@ -975,8 +978,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     }
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0EE, cellBuffer, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0EF, Data_02011000, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, Data_02012000, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0EF,
+                             Ram_MapCellBuffer + 0x1000, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+                             Ram_MapCellBuffer + 0x2000, 0, 0);
   {
     s32 rise;
     s32 top;
@@ -1120,7 +1125,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           aerialModel->texture = &aerialTexture;
           aerialModel->mesh = gBattleEffect_SquareMesh;
           aerialModel->vertices = aerialVertices;
-          aerialTexture.pixels = Data_02011000;
+          aerialTexture.pixels = Ram_MapCellBuffer + 0x1000;
           Transform_Reset();
           Transform_ApplyTranslation(-px(2), rise, 0);
           Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
@@ -1186,7 +1191,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                 aerialModel->shade = aerialShade;
                 aerialModel->mesh = gBattleEffect_LargeSquareMesh;
                 aerialModel->kind = 6;
-                aerialTexture.pixels = Data_02012000;
+                aerialTexture.pixels = Ram_MapCellBuffer + 0x2000;
                 aerialTexture.logWidth = 7;
                 aerialTexture.logHeight = 7;
                 Transform_Reset();
@@ -1298,10 +1303,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     s32 slide;
     s32 slideStep;
     u8 *bolts;
-    void *quads = Data_02011000;
+    void *quads = Ram_MapCellBuffer + 0x1000;
     void *strip = Ram_MapCellBuffer + 0x2000;
-    struct Particle *steps = Data_02016d00;
-    struct Particle *debris = &Data_02016d00[64];
+    struct Particle *steps = ((struct Particle *)(Ram_MapCellBuffer + 0x6d00));
+    struct Particle *debris =
+        &((struct Particle *)(Ram_MapCellBuffer + 0x6d00))[64];
 
     // Act three: back on the battlefield, lightning and smoke sweep the foes.
     bolts = Ram_MapCellBuffer + 0x4000;
@@ -1323,7 +1329,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                                1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, bolts, 1,
                                0);
-    Render_BuildQuadStrip(Data_02012000, 4, 32, 11);
+    Render_BuildQuadStrip(Ram_MapCellBuffer + 0x2000, 4, 32, 11);
     REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
     frame = 0;
     do {
@@ -1415,7 +1421,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           q->velocityY = Trig_Cos(angle) * speed >> 6;
           q->variant = 0;
         }
-        q2 = Data_02016d00;
+        q2 = ((struct Particle *)(Ram_MapCellBuffer + 0x6d00));
         for (i = 0; i != 64; i++, q2++) {
           if ((u32)q2->variant <= 11) {
             blit[0](canvas,
@@ -1562,7 +1568,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                 }
               }
               if (frame >= lim && frame < lim + 8) {
-                u8 *src = gData_02014000;
+                u8 *src = Ram_MapCellBuffer + 0x4000;
 
                 blit[0](
                     canvas,

@@ -24,7 +24,7 @@ struct SpawnList {
 
 #define SPRITES ((struct Sprite **)Ram_MapCellBuffer)
 #define SPRITE_BUFFER gMapGridCellBuffer
-#define OAM_BUFFER ((u32 *)gData_02014000)
+#define OAM_BUFFER ((u32 *)(gMapGridCellBuffer + 0x4000))
 #define REVEAL_BUFFER (Ram_MapCellBuffer + 0x4000)
 #define PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4200))
 #define OBJ_VRAM ((u8 *)OBJ_VRAM0)
@@ -537,10 +537,10 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             (u8 *)Resource_GetTableEntry((s32)&ResourceId_RedCrescentTiles);
         Iwram_FillWords((u16 *)&OBJ_PLTT_COLOR(12, 0), 64, 0);
         source += 64;
-        Decompress_TaggedLz(source, gData_02014000);
+        Decompress_TaggedLz(source, gMapGridCellBuffer + 0x4000);
         for (i = 0; i != 0x1000; i++) {
-          if (gData_02014000[i] != 0) {
-            gData_02014000[i] += 192;
+          if ((gMapGridCellBuffer + 0x4000)[i] != 0) {
+            (gMapGridCellBuffer + 0x4000)[i] += 192;
           }
         }
         for (i = 0; i != 32; i++) {
@@ -558,7 +558,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 
             mask = 31;
             half = 0x1000;
-            other = (Random16() & mask) + gData_02014000;
+            other = (Random16() & mask) + (gMapGridCellBuffer + 0x4000);
             other += half;
             swap = *slot;
             value = *other;

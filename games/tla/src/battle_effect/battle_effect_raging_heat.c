@@ -297,7 +297,7 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   lift = 0;
   {
-    s32 *life = Data_02010018;
+    s32 *life = ((s32 *)(Ram_MapCellBuffer + 0x18));
 
     for (i = 0; i != SPARK_COUNT; i++) {
       *life = -1;
@@ -433,8 +433,8 @@ void RagingHeat_FillGradientCanvas(void) {
   REG_BG2PA = 0x4e;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  for (y = 0; y != 128; y++) {
-    for (x = 0; x != 128; x++) {
+  for (y = 0; y != CANVAS_SIZE; y++) {
+    for (x = 0; x != CANVAS_SIZE; x++) {
       s32 level;
 
       if (y < 32)

@@ -90,7 +90,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     // The first frame readies the sparks and mode 5's bursts at the
     // target, 8 pixels to the outside of it, flying back the other way.
     if (frame == 0) {
-      struct Particle *spark = gData_02014000;
+      struct Particle *spark = Ram_MapCellBuffer + 0x4000;
 
       for (i = 0; i != SPARK_COUNT; i++, spark++) {
         spark->x = targetObject->x;
@@ -198,7 +198,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       struct Particle *spark;
 
       Transform_Reset();
-      spark = gData_02014000;
+      spark = Ram_MapCellBuffer + 0x4000;
       /* FAKEMATCH(barrier): an empty asm on spark. */
       __asm__("" : "=r"(spark) : "0"(spark));
       Transform_SetLookAt(camera, camera + 3);

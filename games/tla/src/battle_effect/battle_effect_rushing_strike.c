@@ -289,8 +289,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   s32 i;
   s32 j;
 
-  vertices = Data_02011000;
-  strip = Data_02012000;
+  vertices = Ram_MapCellBuffer + 0x1000;
+  strip = Ram_MapCellBuffer + 0x2000;
   cells = (struct CornerRow *)Ram_MapCellBuffer;
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;

@@ -81,7 +81,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   savedScroll = gBgScroll[1].x;
   transition = (s32 *)Ram_HeapSlots->battleBackground;
-  petals = (s32)&gData_02014000;
+  petals = (s32)gData_02014000;
   source = Ram_MapCellBuffer;
   sprites = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);

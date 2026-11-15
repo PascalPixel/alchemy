@@ -257,7 +257,8 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
         // Landed: the rune picture, its right half mirrored from the left.
         if (memberFrame > 63) {
           draw[0](canvas, work->sheet, screen.x - RUNE_HALF_WIDTH,
-                  screen.y - 24, RUNE_HALF_WIDTH, RUNE_HALF_HEIGHT);
+                  screen.y - RUNE_HALF_WIDTH, RUNE_HALF_WIDTH,
+                  RUNE_HALF_HEIGHT);
           draw[1](canvas, work->sheet, screen.x, screen.y - 24, RUNE_HALF_WIDTH,
                   RUNE_HALF_HEIGHT);
         }
@@ -392,7 +393,8 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
         // Landed: the rune picture, its right half mirrored from the left.
         if (memberFrame > 63) {
           draw[0](canvas, work->sheet, screen.x - RUNE_HALF_WIDTH,
-                  screen.y - 24, RUNE_HALF_WIDTH, RUNE_HALF_HEIGHT);
+                  screen.y - RUNE_HALF_WIDTH, RUNE_HALF_WIDTH,
+                  RUNE_HALF_HEIGHT);
           draw[1](canvas, work->sheet, screen.x, screen.y - 24, RUNE_HALF_WIDTH,
                   RUNE_HALF_HEIGHT);
         }

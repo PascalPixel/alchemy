@@ -498,8 +498,8 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
                      gGrowth_X[i] - lean, 108 - height,
                      THORN_SMALL_PICTURE_WIDTH, height);
           } else {
-            draw(canvas, work->sheet + 0xf00, gGrowth_X[i] + lean, 108 - height,
-                 THORN_SMALL_PICTURE_WIDTH, height);
+            draw(canvas, work->sheet + THORN_SMALL_PICTURE, gGrowth_X[i] + lean,
+                 108 - height, THORN_SMALL_PICTURE_WIDTH, height);
           }
         }
         if (frame == start + 1) {

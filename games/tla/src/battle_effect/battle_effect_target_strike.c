@@ -974,7 +974,7 @@ void BattleEffect_RunElementPillar(struct BattleEffectParams *args) {
       n = frame / 2 % 4;
       draw[1](canvas, work->sheet + n * 1088, 64,
               ground.y - ELEMENT_PILLAR_HALF_HEIGHT, ELEMENT_PILLAR_HALF_WIDTH,
-              64);
+              ELEMENT_PILLAR_HALF_HEIGHT);
       n = frame / 4 % 3;
       draw[1](canvas, work->sheet + n * 1032 + 0x1100, 64, ground.y - 36,
               ELEMENT_PILLAR_GLOW_WIDTH, ELEMENT_PILLAR_GLOW_HEIGHT);
@@ -1085,7 +1085,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   // Keep the picture at 0x06008000 aside, show the battle background with
   // its colours black, and flash the first target.
   Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x7800);
-  Iwram_FillWords(Ram_MapCellBuffer, 0x7800, 0x01010101);
+  Iwram_FillWords(Ram_MapCellBuffer, BATTLE_BACKGROUND_BYTES, 0x01010101);
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
   BattleBackground_LoadFar(1, BACKGROUND(battle), -1);

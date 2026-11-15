@@ -151,6 +151,8 @@ void BattleEffect_RunTrueCollide(struct BattleEffectParams *args) {
 #define MOTES_PER_MEMBER 128
 #define MOTES ((struct Particle *)Ram_MapCellBuffer)
 
+#define DRAIN_DRAWN 32 ///< motes drawn for each target
+
 /// Motes of light burst out of each target in turn, 20 frames apart, and
 /// are drawn into the user.
 /// Setup: each target's 128 motes start at the middle of its body with
@@ -237,7 +239,8 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
   Sound_PlayFar(SE_SWIRL);
 
-  for (frame = 0; frame != args->targetCount * 20 + 72; frame++) {
+  for (frame = 0; frame != args->targetCount * DRAIN_TARGET_FRAMES + 72;
+       frame++) {
     struct MotionObject *user;
     s32 half;
 
@@ -250,15 +253,15 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
     if (frame == 40)
       BattleEffect_TintBattler(args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
                                TINT_KEEP, 0);
-    if (frame == args->targetCount * 20 + 52)
+    if (frame == args->targetCount * DRAIN_TARGET_FRAMES + 52)
       BattleEffect_TintBattler(args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
                                TINT_KEEP, 0);
     for (member = 0; member != args->targetCount; member++) {
-      if (frame == member * 20)
+      if (frame == member * DRAIN_TARGET_FRAMES)
         BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, member, 42);
-      if (frame > member * 20) {
-        for (i = 0; i != 32; i++) {
+      if (frame > member * DRAIN_TARGET_FRAMES) {
+        for (i = 0; i != DRAIN_DRAWN; i++) {
           struct Particle *mote = &MOTES[member * MOTES_PER_MEMBER + i];
 
           if (mote->variant >= 0) {
@@ -278,7 +281,7 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
             }
 
             // Home in on the user once ten frames out.
-            if (frame > member * 20 + i + 10) {
+            if (frame > member * DRAIN_TARGET_FRAMES + i + 10) {
               s32 dx;
               s32 dy;
               s32 dz;

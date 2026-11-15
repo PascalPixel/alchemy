@@ -8,7 +8,7 @@
 struct StripQuad;
 
 /// The sparks, after the map cells.
-#define BOLT_SPARKS ((struct Particle *)gData_02014000)
+#define BOLT_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
 
 /// Where TornadoSheet is decoded in the effect's pictures.
 #define BOLT_TRAIL_TORNADO_PICTURES 0x800

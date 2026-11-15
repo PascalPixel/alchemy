@@ -74,7 +74,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
                              work->sheet + FUME_CLAW_SLASH_PICTURES, 1, 0);
   REG_BG2PA = Q_8_8(0.5);
-  Render_BuildQuadStrip(Data_02012000, 4, 32, 32);
+  Render_BuildQuadStrip(Ram_MapCellBuffer + 0x2000, 4, 32, 32);
 
   for (frame = 0; frame != FUME_FRAMES; frame++) {
     if (frame == 0) {
@@ -121,9 +121,9 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
       particle->variant++;
     }
 
-    buffer = Data_02011000;
+    buffer = Ram_MapCellBuffer + 0x1000;
     // The strip mesh held in a per-frame local, as the vertex buffer is.
-    strip = Data_02012000;
+    strip = Ram_MapCellBuffer + 0x2000;
     corners = (struct Corner *)gMapGridCellBuffer;
     // DEAD: frame never falls below 0; the source keeps the test.
     if (frame >= 0) {

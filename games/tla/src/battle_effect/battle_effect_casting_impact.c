@@ -187,6 +187,38 @@ enum CastingImpact {
 #define ASURA_CRESCENT_FADE_D                                                  \
   (ASURA_CRESCENT_FADE_C + CANVAS_SIZE * ASURA_CRESCENT_FADE_C_HEIGHT)
 
+/// Sarcophagus's sheet: the coffin, then seven pictures of the ghost rising
+/// out of it, one after another.
+#define SARCOPHAGUS_COFFIN_WIDTH 69
+#define SARCOPHAGUS_COFFIN_HEIGHT 96
+#define SARCOPHAGUS_GHOST_A PICTURE_BYTES(SARCOPHAGUS_COFFIN)
+#define SARCOPHAGUS_GHOST_A_WIDTH 59
+#define SARCOPHAGUS_GHOST_A_HEIGHT 24
+#define SARCOPHAGUS_GHOST_B                                                    \
+  (SARCOPHAGUS_GHOST_A + PICTURE_BYTES(SARCOPHAGUS_GHOST_A))
+#define SARCOPHAGUS_GHOST_B_WIDTH 70
+#define SARCOPHAGUS_GHOST_B_HEIGHT 27
+#define SARCOPHAGUS_GHOST_C                                                    \
+  (SARCOPHAGUS_GHOST_B + PICTURE_BYTES(SARCOPHAGUS_GHOST_B))
+#define SARCOPHAGUS_GHOST_C_WIDTH 84
+#define SARCOPHAGUS_GHOST_C_HEIGHT 55
+#define SARCOPHAGUS_GHOST_D                                                    \
+  (SARCOPHAGUS_GHOST_C + PICTURE_BYTES(SARCOPHAGUS_GHOST_C))
+#define SARCOPHAGUS_GHOST_D_WIDTH 75
+#define SARCOPHAGUS_GHOST_D_HEIGHT 57
+#define SARCOPHAGUS_GHOST_E                                                    \
+  (SARCOPHAGUS_GHOST_D + PICTURE_BYTES(SARCOPHAGUS_GHOST_D))
+#define SARCOPHAGUS_GHOST_E_WIDTH 67
+#define SARCOPHAGUS_GHOST_E_HEIGHT 86
+#define SARCOPHAGUS_GHOST_F                                                    \
+  (SARCOPHAGUS_GHOST_E + PICTURE_BYTES(SARCOPHAGUS_GHOST_E))
+#define SARCOPHAGUS_GHOST_F_WIDTH 50
+#define SARCOPHAGUS_GHOST_F_HEIGHT 65
+#define SARCOPHAGUS_GHOST_G                                                    \
+  (SARCOPHAGUS_GHOST_F + PICTURE_BYTES(SARCOPHAGUS_GHOST_F))
+#define SARCOPHAGUS_GHOST_G_WIDTH 48
+#define SARCOPHAGUS_GHOST_G_HEIGHT 29
+
 /// Terra Strike's rock spire at its tallest.
 #define ROCK_SPIRE_WIDTH 32
 #define ROCK_SPIRE_HEIGHT 96
@@ -786,7 +818,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     }
     if (kind == CASTING_IMPACT_IMPACT_APOCALYPSE) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0DD, buffer, 1, 1);
-      REG_BLDALPHA = BLEND_ALPHA(16, 8);
+      REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 8);
     }
     if (kind == CASTING_IMPACT_IMPACT_ASURA) {
       Resource_LoadAndDecompress((s32)&ResourceId_BlueBeastSheet, work->sheet,
@@ -1539,7 +1571,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                             BLITTER_TRANSPARENT);
         drawFuncs.draw[0] = BLITTER;
         if (frame == 0) {
-          for (i = 0; i != 1104; i++)
+          for (i = 0; i != 16 * SARCOPHAGUS_COFFIN_WIDTH; i++)
             work->sheet[i] = Random16() & 31;
         }
         y = frame * 28 - 96;
@@ -1548,7 +1580,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         {
           /* FAKEMATCH(pin): hold, an input of the empty asm below. */
           register s32 hold __asm__("r2");
-          h = ROCK_SPIRE_HEIGHT;
+          h = SARCOPHAGUS_COFFIN_HEIGHT;
           /* FAKEMATCH(barrier): an empty asm through h, with hold as an input.
            */
           __asm__("" : "=r"(h) : "0"(h), "r"(hold));
@@ -1562,38 +1594,46 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             if (row >= 0 && row < 96) {
               s32 k;
               s32 threshold;
-              for (k = 0, threshold = t; k != 69; k++) {
+              for (k = 0, threshold = t; k != SARCOPHAGUS_COFFIN_WIDTH; k++) {
                 /* FAKEMATCH(barrier): an empty asm through threshold. */
                 __asm__("" : "=r"(threshold) : "0"(threshold));
-                if (work->sheet[(row & 15) * 69 + k] < threshold)
-                  buffer[row * 69 + k] = 0;
+                if (work->sheet[(row & 15) * SARCOPHAGUS_COFFIN_WIDTH + k] <
+                    threshold)
+                  buffer[row * SARCOPHAGUS_COFFIN_WIDTH + k] = 0;
               }
             }
           }
         }
-        drawFuncs.draw[0](screen, buffer, 29, y, 69, h);
+        drawFuncs.draw[0](screen, buffer, 29, y, SARCOPHAGUS_COFFIN_WIDTH, h);
         if (frame > 5) {
           switch ((frame - 6) / 4) {
           case 0:
-            drawFuncs.draw[0](screen, buffer + 0x19e0, 32, 92, 59, 24);
+            EFFECT_DRAW_PICTURE(drawFuncs.draw[0], screen, buffer,
+                                SARCOPHAGUS_GHOST_A, 32, 92);
             break;
           case 1:
-            drawFuncs.draw[0](screen, buffer + 0x1f68, 30, 87, 70, 27);
+            EFFECT_DRAW_PICTURE(drawFuncs.draw[0], screen, buffer,
+                                SARCOPHAGUS_GHOST_B, 30, 87);
             break;
           case 2:
-            drawFuncs.draw[0](screen, buffer + 0x26ca, 23, 57, 84, 55);
+            EFFECT_DRAW_PICTURE(drawFuncs.draw[0], screen, buffer,
+                                SARCOPHAGUS_GHOST_C, 23, 57);
             break;
           case 3:
-            drawFuncs.draw[0](screen, buffer + 0x38d6, 27, 55, 75, 57);
+            EFFECT_DRAW_PICTURE(drawFuncs.draw[0], screen, buffer,
+                                SARCOPHAGUS_GHOST_D, 27, 55);
             break;
           case 4:
-            drawFuncs.draw[0](screen, buffer + 0x4989, 28, 19, 67, 86);
+            EFFECT_DRAW_PICTURE(drawFuncs.draw[0], screen, buffer,
+                                SARCOPHAGUS_GHOST_E, 28, 19);
             break;
           case 5:
-            drawFuncs.draw[0](screen, buffer + 0x600b, 33, 22, 50, 65);
+            EFFECT_DRAW_PICTURE(drawFuncs.draw[0], screen, buffer,
+                                SARCOPHAGUS_GHOST_F, 33, 22);
             break;
           case 6:
-            drawFuncs.draw[0](screen, buffer + 0x6cbd, 41, 21, 48, 29);
+            EFFECT_DRAW_PICTURE(drawFuncs.draw[0], screen, buffer,
+                                SARCOPHAGUS_GHOST_G, 41, 21);
             break;
           }
         }
@@ -1732,7 +1772,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         REG_BG2X = (Q_16_16_TO_INT(scrollA)) << 8;
         t = frame - 29;
         if (t >= 0 && t < 16)
-          REG_BLDALPHA = ((t / 2 + 8) << 8) | (16 - t);
+          REG_BLDALPHA = ((t / 2 + 8) << 8) | (BLEND_WEIGHT_MAX - t);
         if (frame > 4)
           drawFuncs.draw[0](screen, buffer, 35, 17, 60, 95);
         if (frame == 5)
@@ -2506,7 +2546,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             EffectPosition_ProjectPoint(p, point);
             point[0] = point[0] / 2;
             drawFuncs.draw[1](screen, buffer + m * 0x400, point[0] - 16,
-                              point[1] - 16, 32, 32);
+                              point[1] - 16, FALLING_FLAME_WIDTH, 32);
             BattleEffectKernels_IntegrateVector3(p, 62, px(1) / 32);
             BattleEffectKernels_IntegrateVector3(p, 62, px(1) / 32);
             p->variant++;

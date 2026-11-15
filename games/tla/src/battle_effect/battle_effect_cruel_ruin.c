@@ -828,7 +828,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet, work->sheet, 1,
                              0);
-  Picture_MirrorIntoQuadrants(work->sheet, gData_02014000, 64, 64);
+  Picture_MirrorIntoQuadrants(work->sheet, Ram_MapCellBuffer + 0x4000, 64, 64);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->sheet + 0x2648, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x3648, 0,
@@ -1060,7 +1060,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
               shade = 224 - frame * 4;
             }
             model->shade = shade;
-            texture.pixels = gData_02014000;
+            texture.pixels = Ram_MapCellBuffer + 0x4000;
             t <<= 9;
             Transform_Reset();
             Transform_ApplyTranslation(-px(4), -px(44), 0);
@@ -1172,7 +1172,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   {
     s32 count = -1;
     s32 fadeStep = 2;
-    u8 *strip = Data_02012000;
+    u8 *strip = Ram_MapCellBuffer + 0x2000;
     void *verts;
     Render_BuildQuadStrip(strip, 8, 16, 32);
     for (k = 0; k != 2; k++) {

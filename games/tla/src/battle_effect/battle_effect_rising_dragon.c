@@ -87,7 +87,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
         (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
     REG_BG2PA = Q_8_8(0.5);
-    Render_BuildQuadStrip(Data_02012000, 4, 32, 32);
+    Render_BuildQuadStrip(gMapGridCellBuffer + 0x2000, 4, 32, 32);
 
     for (frame = 0; frame != args->variant * 10 + 60; frame++) {
       Transform_Reset();
@@ -156,7 +156,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
       if (frame > 15) {
         struct StripVertex *stripA = (struct StripVertex *)gMapGridCellBuffer;
         s32 scale = 20768;
-        const u8 *stripMesh = Data_02012000;
+        const u8 *stripMesh = gMapGridCellBuffer + 0x2000;
 
         // The arcs' heads and tails, 44 units a frame.
         arcs[0] = frame * 44 - 704;
@@ -251,7 +251,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
         }
 
         model = Render_AllocateModelList(1);
-        vertices = Data_02011000;
+        vertices = gMapGridCellBuffer + 0x1000;
         model->scrollV = 0;
         model->kind = 6;
         model->texture = &texture;

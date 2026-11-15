@@ -464,6 +464,14 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
 #define MARKER_STAGGER 16
 #define MARKER_CELS 9
 
+/// FlameColumnSheet: the flame's nine pictures, then the marker at the
+/// target's feet.
+#define CURSE_FLAME_WIDTH 16
+#define CURSE_FLAME_HEIGHT 12
+#define CURSE_MARKER_PICTURE_WIDTH 16
+#define CURSE_MARKER_PICTURE_HEIGHT 20
+#define CURSE_MARKER_PICTURE (9 * PICTURE_BYTES(CURSE_FLAME))
+
 /// A small flame burns above each target in turn, over a marker at its feet.
 ///
 /// Abilities: Curse; Lucid Prophecy.
@@ -519,16 +527,18 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
           marker = &work->particles[i];
           EffectPosition_ProjectScaledBattler(args->targets[i], &pos);
           if (args->side == EFFECT_SIDE_PARTY) {
-            pos.x -= 112;
+            pos.x -= NARROW_CANVAS_PARTY_X;
           }
           y = pos.y;
           pos.y = y - 16;
-          draw[0](canvas, work->sheet + 1728, pos.x - 8, y - 20, 16, 20);
+          draw[0](canvas, work->sheet + CURSE_MARKER_PICTURE, pos.x - 8,
+                  y - CURSE_MARKER_PICTURE_HEIGHT, CURSE_MARKER_PICTURE_WIDTH,
+                  CURSE_MARKER_PICTURE_HEIGHT);
           // DEAD: always true here; the ROM keeps the test.
           if (frame >= start) {
             cel = ((frame - start) + marker->variant) / 6 % MARKER_CELS;
-            draw[0](canvas, work->sheet + cel * 192, pos.x - 8, pos.y - 16, 16,
-                    12);
+            draw[0](canvas, work->sheet + cel * 192, pos.x - 8, pos.y - 16,
+                    CURSE_FLAME_WIDTH, CURSE_FLAME_HEIGHT);
           }
         }
         i++;

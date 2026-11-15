@@ -581,9 +581,9 @@ struct FourSpans {
   } p[4];
 };
 
-extern struct IrisSparks Data_02011f40;
-extern struct IrisScene Data_02012ee0;
-#define Data_02012ef4 ((struct IrisPoint(*)[10])(Ram_MapCellBuffer + 0x2ef4))
+#define IRIS_SPARKS (*(struct IrisSparks *)(Ram_MapCellBuffer + 0x1f40))
+#define IRIS_SCENE (*(struct IrisScene *)(Ram_MapCellBuffer + 0x2ee0))
+#define IRIS_STREAKS ((struct IrisPoint(*)[10])(Ram_MapCellBuffer + 0x2ef4))
 
 extern const struct FiveWidths gIris_RisingPillarWidths;
 extern const struct SevenWidths gIris_WideningPillarWidths;
@@ -592,8 +592,8 @@ extern const struct FourSpans gIris_LeftStripSpans;
 extern const struct FourSpans gIris_RightStripSpans;
 
 #define OBJ_TILES(obj) (OBJ_VRAM0 + gVramCacheEntries[(obj)->resource].offset)
-#define SCENE (&Data_02012ee0)
-#define STREAK(i, j) (((struct IrisPoint *)Data_02012ef4)[(i) * 10 + (j)])
+#define SCENE (&IRIS_SCENE)
+#define STREAK(i, j) (((struct IrisPoint *)IRIS_STREAKS)[(i) * 10 + (j)])
 /// The 128 background colours the scene fades (entries 96 to 223).
 #define FADE_PLTT ((u16 *)&BG_PLTT_COLOR(6, 0))
 
@@ -764,12 +764,12 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
 /// centre, and the screen whitens as she heals the party.
 void BattleEffect_RunIris(struct BattleEffectParams *args) {
   typeof(SCENE) scene = SCENE;
-  struct IrisPoint(*streaks)[10] = Data_02012ef4;
+  struct IrisPoint(*streaks)[10] = IRIS_STREAKS;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct IrisSprite **objects = (struct IrisSprite **)gMapGridCellBuffer;
   u8 *sprites = Ram_HeapSlots->battleSheet;
-  struct IrisSparks *sparks = &Data_02011f40;
+  struct IrisSparks *sparks = &IRIS_SPARKS;
   u8 *battle = (u8 *)Ram_HeapSlots->battleWork;
   s32 savedScroll = gBgScroll[1].x;
   s16 *camera = Ram_HeapSlots->cameraWork;
@@ -3032,7 +3032,7 @@ void Render_DrawModelList(struct RenderModel *model) {
 #undef MOLOCH_SKIP_TO
 #undef BLITTER
 #undef HALF
-#undef Data_02012ef4
+#undef IRIS_STREAKS
 #undef OBJ_TILES
 #undef SCENE
 #undef STREAK

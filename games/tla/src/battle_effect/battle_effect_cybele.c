@@ -498,7 +498,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
                   screen.y - CYBELE_RING_HALF_HEIGHT, CYBELE_RING_HALF_WIDTH,
                   CYBELE_RING_HALF_HEIGHT);
           draw[1](canvas, work->sheet + cel * 480, screen.x,
-                  screen.y - CYBELE_RING_HALF_HEIGHT, 20,
+                  screen.y - CYBELE_RING_HALF_HEIGHT, CYBELE_RING_HALF_WIDTH,
                   CYBELE_RING_HALF_HEIGHT);
         }
         if (frame >= start + 6) {

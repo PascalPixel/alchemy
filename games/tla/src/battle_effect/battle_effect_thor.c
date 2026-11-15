@@ -29,6 +29,9 @@
 #define THOR_BOLT_WIDTH 72
 #define THOR_BOLT_HEIGHT 72
 
+#define THOR_LIGHT_FAN_WIDTH 32
+#define THOR_LIGHT_FAN_HEIGHT 96
+
 /// Thor. In the dusk part (STORM_DUSK_FRAMES, which A or B cuts
 /// short) a circle of 128 dots and three lines across it form over scrolling
 /// dusk clouds, turn, sink into the sky and send down a beam of light; in the
@@ -289,7 +292,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_MAX);
       BLITTER_ALTERNATE(canvas, work->sheet, 32,
-                        (frame - THOR_BEAM_FRAME) * 20 - 12, 32, 96);
+                        (frame - THOR_BEAM_FRAME) * 20 - 12,
+                        THOR_LIGHT_FAN_WIDTH, THOR_LIGHT_FAN_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       /* FAKEMATCH(dead): a never-true test of never and neverToo. */
       if (never || neverToo) {
@@ -298,7 +302,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
       BLITTER_ALTERNATE(canvas, work->sheet, 64,
-                        (frame - THOR_BEAM_FRAME) * 20 - 12, 32, 96);
+                        (frame - THOR_BEAM_FRAME) * 20 - 12,
+                        THOR_LIGHT_FAN_WIDTH, THOR_LIGHT_FAN_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
     EFFECT_PRESENT_CANVAS(work);

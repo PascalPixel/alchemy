@@ -104,7 +104,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
                              work->sheet + JUDGMENT_TORNADO_PICTURES, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+                             Ram_MapCellBuffer + 0x4000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   pal = Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet);
   Iwram_CopyWordsEntry((void *)BG_PLTT, pal, SHEET_PALETTE_BYTES);
@@ -330,7 +331,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       s = (frame << 13) - 0x11e000;
       texture.logWidth = 7;
       texture.logHeight = 7;
-      texture.pixels = gData_02014000;
+      texture.pixels = Ram_MapCellBuffer + 0x4000;
       model->texture = &texture;
       model->kind = 7;
       model->mesh = gBattleEffect_LargeSquareMesh;
@@ -609,7 +610,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       s = (frame << 13) - 0x8f800;
       glare.logWidth = 7;
       glare.logHeight = 7;
-      glare.pixels = gData_02014000;
+      glare.pixels = Ram_MapCellBuffer + 0x4000;
       shade = 0;
       model->kind = 7;
       model->texture = &glare;
@@ -733,7 +734,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         draw[0](canvas,
                 work->sheet +
                     ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_PICTURE_BYTES +
-                    0x4000,
+                    JUDGMENT_SHEET_EXPLOSION,
                 x + 44, y + 17, JUDGMENT_EXPLOSION_WIDTH,
                 JUDGMENT_EXPLOSION_HEIGHT);
       }
@@ -803,7 +804,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           draw[1](canvas,
                   work->sheet +
                       ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_PICTURE_BYTES +
-                      0x4000,
+                      JUDGMENT_SHEET_EXPLOSION,
                   x, y, JUDGMENT_EXPLOSION_WIDTH, JUDGMENT_EXPLOSION_HEIGHT);
         }
       } else {
@@ -815,7 +816,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
           draw[1](canvas,
                   work->sheet +
                       ((frame / 2 + i) % 4) * JUDGMENT_EXPLOSION_PICTURE_BYTES +
-                      0x4000,
+                      JUDGMENT_SHEET_EXPLOSION,
                   x, y, JUDGMENT_EXPLOSION_WIDTH, JUDGMENT_EXPLOSION_HEIGHT);
         }
       }

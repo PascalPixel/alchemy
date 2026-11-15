@@ -1177,7 +1177,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
            work->sheet +
                (gBattleEffect_MotePictures[size - 1] +
                 (i & 1) * MOTE_SET_BYTES) +
-               0x3200,
+               PARTICLE_STREAMS_MOTE_PICTURES,
            mote->x - size / 2, mote->y - size, size, size * 2);
       mote->y = mote->y - rise - 8;
       if (mote->y < -10)

@@ -105,8 +105,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapGridCellBuffer,
                                  0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, gData_02014000, 0,
-                                 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0E9,
+                                 Ram_MapCellBuffer + 0x4000, 0, 0);
       Graphics_LoadGreyRamp();
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       EFFECT_FREE_PARTICLES(i, work->particles, 64);
@@ -179,7 +179,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
       work->shakeFrames = 8;
-      shard = Data_02016000;
+      shard = Ram_MapCellBuffer + 0x6000;
       for (i = 0; i != 128; i++) {
         s32 speed = (Random16() & 0x1ff) + 32;
         s32 angle = Random16() & 0x7fff;
@@ -411,7 +411,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         EFFECT_SET_TRANSFER(work, fillMode, CANVAS_FILL_WORD(2));
         Palette_BrightenBgEntries(2, 2, 2);
       }
-      for (i = 0, step = Data_02016000; i != 128; i++) {
+      for (i = 0, step = Ram_MapCellBuffer + 0x6000; i != 128; i++) {
         color[0] = (i & 7) + 32;
         model->look.color = color;
         Transform_Reset();

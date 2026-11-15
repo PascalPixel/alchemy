@@ -170,12 +170,6 @@ struct ModelDraw {
   s32 tail;
 };
 
-extern u8 Data_02010400[];
-
-extern u8 Data_02010800[];
-
-extern u8 Data_02012800[];
-
 extern const struct Scale gEclipse_Scales;
 
 extern const struct Scale gCruelRuin_UnitScale;
@@ -1667,18 +1661,12 @@ extern struct Scale gGaia_UnitScale;
 /// spider_web.c
 /// A scale of one in 16.16 on both axes.
 extern const struct SpriteScale gUlysses_ParticleScale;
-extern u8 Data_02010200[];
 
 // The 64 sparks, past the map cells' first 16 KB.
 extern u8 gData_02014000[];
 
 /// neptune.c
 extern struct Scale gNeptune_UnitScale; ///< the serpent's scale
-
-/// undead_sword.c
-extern u8 Data_02010108[];
-extern u8 Data_02010318[];
-extern u8 Data_02014e20[]; ///< gMapGridCellBuffer + 20000, the berg
 
 // geode.c
 
@@ -1687,14 +1675,6 @@ extern u8 Data_02012000[];
 extern u8 Data_02012540[]; ///< the mesh's end, after 112 faces
 
 extern const s8 gVoidBeam_Corners[]; ///< the hexagon's corners (z, y)
-
-/// rising_dragon.c
-extern u8 Data_02011000[];
-
-/// raging_heat.c
-/// The life of each spark in the map cell buffer: gMapGridCellBuffer's
-/// Particles from their variant field on.
-extern s32 Data_02010018[];
 
 /// flora.c
 extern const struct Scale gFlora_UnitScale;
@@ -1711,21 +1691,8 @@ extern struct Scale gDaedalus_WaveScale;
 extern struct Scale gDaedalus_ShipScale;
 extern struct Scale gDaedalus_ParticleScale;
 
-/// vengeance.c
-extern u8 Data_020112e8[]; ///< the reaper's raised pose
-extern u8 Data_0201276b[]; ///< the blade's texture
-extern u8 Data_0201476b[]; ///< the handle's texture
-extern u8 Data_0201576b[]; ///< the flash's texture
-/// 256 bubbles past the map cells. Each is an Particle with its picture in z
-/// and its life in variant (-1 once it has left the top of the canvas).
-extern struct Particle gData_02015000[];
-extern u8 Data_02014400[];
-extern u8 Data_02014800[];
 extern const struct Scale gCoatlicue_UnitScale;
 
-/// catastrophe.c
-extern u8 Data_02016000[];
-extern struct Particle Data_02016d00[];
 extern const struct Scale gCatastrophe_UnitScale;
 
 /// haures.c
@@ -1735,10 +1702,6 @@ extern u8 Data_02010fa0[];
 extern const struct Scale gHaures_ChargeScale;
 extern const struct Scale gHaures_OrbitScale;
 extern const struct Scale gHaures_OpeningScale;
-
-/// trident.c
-extern u8 Data_02011400[];
-extern u8 Data_02012964[]; ///< 128 sparks
 
 /// moloch.c
 extern const u8 gMoloch_MoteSizes[];

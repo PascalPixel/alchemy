@@ -18,7 +18,7 @@
 ///
 /// Abilities: Ocean Fist.
 void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
-  u8 *spraySheet = gData_02014000;
+  u8 *spraySheet = Ram_MapCellBuffer + 0x4000;
   void *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
@@ -55,7 +55,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
     s32 scroll = 0;
     for (frame = 0; frame != OCEAN_FIST_FRAMES; scroll += 8, frame++) {
       if (frame == 0) {
-        s32 *life = Data_02010018;
+        s32 *life = ((s32 *)(Ram_MapCellBuffer + 0x18));
 
         for (i = 0; i != OCEAN_DROPS; i++) {
           *life = -1;
@@ -67,7 +67,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
         work->shakeFrames = 4;
         halfWidth = 48;
         width = 96;
-        sheet = gData_02014000;
+        sheet = Ram_MapCellBuffer + 0x4000;
       }
       if (frame == 32) {
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,

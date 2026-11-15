@@ -36,8 +36,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
   s32 count;
   s32 i;
 
-  mesh = gData_02014000;
-  projected = Data_02012000;
+  mesh = Ram_MapCellBuffer + 0x4000;
+  projected = Ram_MapCellBuffer + 0x2000;
   cells = gMapGridCellBuffer;
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;

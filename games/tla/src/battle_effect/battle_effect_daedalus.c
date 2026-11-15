@@ -1356,7 +1356,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 /// The summon's placement source.
 extern const struct Scale gDaedalusAlt_SummonScale;
 /// The sparks, after the map cells.
-#define STRIKE_SPARKS ((struct Particle *)gData_02014000)
+#define STRIKE_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define DAEDALUS_FRAMES 108

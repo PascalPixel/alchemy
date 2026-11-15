@@ -17,6 +17,9 @@ struct StripQuad;
 extern const struct Scale gTrident_UnitScale;
 
 #define TRIDENT_FRAMES 104
+/// The sparks the trident throws, in the map cell buffer.
+#define TRIDENT_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x2964))
+#define TRIDENT_SPARK_COUNT 128
 
 /// Poseidon (four objects) rises behind the targets as rings of foam
 /// spread across the water; seven spinning tridents fly in from frame 18,
@@ -93,8 +96,10 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
     size += 2;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, (u8 *)cells, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0FA, Data_02011000, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, Data_02011400, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0FA,
+                             Ram_MapCellBuffer + 0x1000, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA,
+                             Ram_MapCellBuffer + 0x1400, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_EffectPalette02),
@@ -354,7 +359,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
             p->variant = -i / 4;
           }
         }
-        for (i = 0, p = (struct Particle *)Data_02012964; i != 128; i++, p++) {
+        for (i = 0, p = TRIDENT_SPARKS; i != TRIDENT_SPARK_COUNT; i++, p++) {
           s32 angle = (Random16() & 0x7fff) + TRIG_TURN / 4;
           s32 speed = (Random16() & 511) + 512;
 
@@ -377,7 +382,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
         drawn->variant++;
       }
       for (i = 0, cellTable = (const u8 *)gBattleEffect_MotePictures,
-          drawn = (struct Particle *)Data_02012964;
+          drawn = TRIDENT_SPARKS;
            i != 128; i++, drawn++) {
         s32 spark;
         s32 at;
@@ -528,15 +533,15 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
 
     // Frames 2-15: a flash, then sixteen flames ringing the caster.
     if ((u32)(frame - 2) <= 1)
-      draw[0](canvas, work->sheet, pos.x - 16, pos.y - 64, FLASH_BURST_WIDTH,
-              FLASH_BURST_HEIGHT);
+      draw[0](canvas, work->sheet, pos.x - 16, pos.y - FLASH_BURST_HEIGHT,
+              FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
     if ((u32)(frame - 4) <= 11) {
       for (i = 0; i != 16; i++) {
         s32 x = pos.x + (Q_16_16_TO_INT(frame * Trig_Sin(i << 12)));
         s32 y = pos.y + (Q_16_16_TO_INT(frame * Trig_Cos(i << 12))) - frame;
 
-        draw[0](canvas, work->sheet + ((frame - 4) / 2 << 11), x - 16, y - 64,
-                FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
+        draw[0](canvas, work->sheet + ((frame - 4) / 2 << 11), x - 16,
+                y - FLASH_BURST_HEIGHT, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
       }
     }
 

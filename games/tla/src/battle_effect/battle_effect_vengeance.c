@@ -310,6 +310,12 @@ struct Scythe {
 };
 
 #define LIFE_SHEAR_FRAMES 90
+/// Life Shear's pictures in the map cell buffer: the reaper's raised pose, and
+/// the textures of the scythe's blade, its handle and its flash.
+#define LIFE_SHEAR_REAPER_RAISED (Ram_MapCellBuffer + 0x12e8)
+#define LIFE_SHEAR_BLADE_TEXTURE (Ram_MapCellBuffer + 0x276b)
+#define LIFE_SHEAR_HANDLE_TEXTURE (Ram_MapCellBuffer + 0x476b)
+#define LIFE_SHEAR_FLASH_TEXTURE (Ram_MapCellBuffer + 0x576b)
 
 /// The reaper (a tiled background picture) glides in from the far side and
 /// swings its scythe (a two-part model) through the target at frame 50, with
@@ -413,8 +419,8 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
     REG_BG2X = -x << 8;
     if ((u32)(frame - 24) <= 39) {
       x = args->side == EFFECT_SIDE_ENEMIES ? 64 : 5;
-      blit[0](canvas, Data_020112e8, x + shift, Q_16_16_TO_INT(reaperY), 59,
-              89);
+      blit[0](canvas, LIFE_SHEAR_REAPER_RAISED, x + shift,
+              Q_16_16_TO_INT(reaperY), 59, 89);
     } else {
       if (args->side == EFFECT_SIDE_ENEMIES) {
         x = frame * 2 + 16;
@@ -518,7 +524,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
         Transform_ApplyRoll(work->particles[0].z);
         Transform_ApplyUniformScale(scale);
         texture.logHeight = 5;
-        texture.pixels = Data_0201476b;
+        texture.pixels = LIFE_SHEAR_HANDLE_TEXTURE;
         texture.logWidth = width;
         model->mesh = gLifeShear_HandleMesh;
         Transform_Push();
@@ -531,7 +537,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
         model->mesh = gLifeShear_BladeMesh;
         texture.logWidth = width;
         texture.logHeight = 6;
-        texture.pixels = Data_0201276b;
+        texture.pixels = LIFE_SHEAR_BLADE_TEXTURE;
         Transform_ApplyRoll(
             TRIG_TURN / 8 -
             (Trig_Sin(work->particles[0].velocityZ << 11) >> 3));
@@ -557,7 +563,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
         model->mesh = gBattleEffect_SmallSquareMeshReversed;
         texture.logWidth = 5;
         texture.logHeight = 5;
-        texture.pixels = Data_0201576b;
+        texture.pixels = LIFE_SHEAR_FLASH_TEXTURE;
         for (i = 0; i != 4; i++) {
           Transform_Push();
           Transform_ApplyRoll(i * (TRIG_TURN / 4) + 0x5650);
@@ -675,7 +681,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
 
         spawned = 0;
         i = 0;
-        life = Data_02010018;
+        life = ((s32 *)(Ram_MapCellBuffer + 0x18));
         for (; i != DROP_COUNT; i++) {
           *life = -1;
           life += 7;
@@ -1032,6 +1038,9 @@ void BattleEffect_StartBubbleColumn(s32 arg) {
 
 #define BUBBLE_COUNT 256
 #define BUBBLE_FRAMES 60
+/// The bubbles past the map cells: each keeps its picture in z and its life in
+/// variant, -1 once it has left the top of the canvas.
+#define BUBBLES ((struct Particle *)(Ram_MapCellBuffer + 0x5000))
 
 /// A column of bubbles. On the first frame 256 glowing ovals of random size
 /// appear over the bottom left of the canvas; for 60 frames they float up
@@ -1062,7 +1071,7 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
   for (frame = 0; frame != BUBBLE_FRAMES; frame++) {
     // The first frame scatters every bubble below the bottom left.
     if (frame == 0) {
-      struct Particle *spawn = gData_02015000;
+      struct Particle *spawn = BUBBLES;
 
       for (i = 0; i != BUBBLE_COUNT; i++) {
         spawn->x = px(Random16() & 127);
@@ -1077,7 +1086,7 @@ void BattleEffect_RunBubbleColumn(struct BattleEffectParams *args) {
 
     // Draw each bubble centred on its place, let it rise, and drop it once
     // it is wholly above the canvas.
-    bubble = gData_02015000;
+    bubble = BUBBLES;
     for (i = 0; i != BUBBLE_COUNT; i++) {
       if (bubble->variant >= 0) {
         s32 cel = bubble->z;
@@ -1235,7 +1244,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   s32 ty;
   s32 spin;
   s32 zero;
-  u8 *coilMesh = Data_02014800;
+  u8 *coilMesh = Ram_MapCellBuffer + 0x4800;
   s16 list[14];
   s32 place[4];
   struct Scale req;
@@ -1273,7 +1282,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   FILL_GRADIENT(table, i, level, color);
   Task_Add(BattleEffect_ArmPaletteHBlankDma, TASK_PASS_FRAME + 126);
   skip = 0;
-  Mesh_BuildCylinderBand(Data_02014400, coilMesh, 32);
+  Mesh_BuildCylinderBand(Ram_MapCellBuffer + 0x4400, coilMesh, 32);
   list[0] = 255;
   BattleActor_SpawnObjectsForListFar(list, 0);
   {
@@ -2007,7 +2016,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           model->shade = sh;
           Transform_ApplyPitch((frame - i * 82) * 22 - 3000);
           Transform_ApplyYaw(-frame << 10);
-          Render_TransformVertices(Data_02014400, verts, 64);
+          Render_TransformVertices(Ram_MapCellBuffer + 0x4400, verts, 64);
           Render_DrawModelList(model);
         }
       }

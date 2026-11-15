@@ -758,19 +758,6 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
 
 #undef OWNER_NAME_WIDTH_LIMIT
 
-/// A Psynergy entry's icon sprite as the Psynergy menu reads its VRAM cache
-/// slot.
-struct PsynergyEntryIcon {
-  u8 unk00[14];
-  u8 slot;
-};
-
-/// The menu work as the Psynergy menu's icons read it: each entry's icon.
-struct PsynergyEntryMenu {
-  u8 unk000[0x4c];
-  struct PsynergyEntryIcon *entryIcons[32];
-};
-
 /// Loads each listed Psynergy's icon into its icon sprite (32 entries) and
 /// hides the icons of empty entries.
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
@@ -847,7 +834,7 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
 // Psynergy menu workspace (known fields only).
 
 /// Split the selected slot owner's Psynergy into pages of five rows.
-s32 PsynergyMenu_BuildPagedList(struct MenuResult *result, s32 index) {
+s32 PsynergyMenu_BuildPagedList(struct PagedList *result, s32 index) {
   s32 ownerState;
   struct PsynergyMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 entryCount;
@@ -870,7 +857,7 @@ s32 PsynergyMenu_BuildPagedList(struct MenuResult *result, s32 index) {
   if (entryCount % LIST_PAGE_SIZE != 0) {
     pageCount++;
   }
-  result->ownerState = ownerState;
+  result->memberState = ownerState;
   result->page = page;
   result->pageCount = pageCount;
   result->row = row;
@@ -886,7 +873,7 @@ s32 PsynergyMenu_BuildPagedList(struct MenuResult *result, s32 index) {
 /// description in the info window, unless a kept message is there, and
 /// highlights its row of the five. window and work are not used.
 s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
-                                struct MenuResult *state) {
+                                struct PagedList *state) {
   struct PsynergyMenuWork *menu;
   s32 combined;
   s32 row;
@@ -962,7 +949,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
 /// short or the action restricted): The Broken Seal's
 /// PsynergyMenu_DrawActionPage with this game's work-block offsets.
 s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
-                                const struct MenuResult *state) {
+                                const struct PagedList *state) {
   u32 firstEntry;
   u32 visibleCount;
   u8 row;
@@ -1062,7 +1049,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   s32 previous;
   s32 shortcutHelp;
   s32 work[5];
-  struct MenuResult state;
+  struct PagedList state;
 
   menu = Ram_HeapSlots->menuWork;
   result = 0;

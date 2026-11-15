@@ -129,15 +129,11 @@ s32 ItemMenu_Run(void) {
   result = ItemMenu_RunCommands(&owner, &target, &item);
   Menu_StopWatchingStart();
   if (result == 1) {
-    struct AssetSelectionResult {
-      s32 unk000[0x5a];
-      u16 chosenItem;
-      u8 unk16a[0x18];
-      u16 chosenSlot;
-    } *selection = Ram_HeapSlots->fieldWork;
+    struct FieldWork *field = Ram_HeapSlots->fieldWork;
 
-    selection->chosenItem = (owner << 10) | (item & INVENTORY_ITEM_ID_MASK);
-    selection->chosenSlot = screen->selectedSlots[0];
+    // The item goes to the field to be used, as Field_UseItem reads it.
+    field->item = (owner << 10) | (item & INVENTORY_ITEM_ID_MASK);
+    field->itemSlot = screen->selectedSlots[0];
   }
 
   WindowSprite_ClearListFar(screen->statusWindow);
@@ -2782,7 +2778,7 @@ void Resource_LoadPairedBlocks(void) {
 }
 
 /// Splits the selected slot owner's items into pages of five rows.
-s32 ItemMenu_BuildPagedList(struct MenuResult *result, s32 index) {
+s32 ItemMenu_BuildPagedList(struct PagedList *result, s32 index) {
   s32 encoded;
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 limit;
@@ -2803,7 +2799,7 @@ s32 ItemMenu_BuildPagedList(struct MenuResult *result, s32 index) {
   if (limit % LIST_PAGE_SIZE != 0) {
     groups++;
   }
-  result->ownerState = encoded;
+  result->memberState = encoded;
   result->page = quotient;
   result->pageCount = groups;
   result->row = remainder;
@@ -2814,7 +2810,7 @@ s32 ItemMenu_BuildPagedList(struct MenuResult *result, s32 index) {
 
 /// Draws the selected item-list row's name and highlights only that row.
 s32 ItemMenu_DrawItemDetailPage(s32 listWindow, void *memberWork,
-                                struct MenuResult *state) {
+                                struct PagedList *state) {
   struct ItemMenuWork *menu;
   s32 page;
   s32 combined;
@@ -2878,7 +2874,7 @@ s32 ItemMenu_DrawItemDetailPage(s32 listWindow, void *memberWork,
 /// Draws the names on one five-row page of the item list: The Broken Seal's
 /// ItemMenu_DrawNamePage over this game's menu offsets.
 s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
-                          const struct MenuResult *state) {
+                          const struct PagedList *state) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   u32 page;
   u32 firstEntry;
@@ -2950,7 +2946,7 @@ s32 ItemMenu_RunList(s32 pane) {
   s32 previous;
   struct WindowSprite *icon;
   s32 work[5];
-  struct MenuResult state;
+  struct PagedList state;
 
   menu = Ram_HeapSlots->menuWork;
   result = 0;

@@ -189,7 +189,7 @@ struct DebugPartyEntry {
   s8 djinnCounts[4];
   u16 items[6];
   u16 actions[2];
-  u16 unk16;
+  u16 unused; ///< 0 in every row; nothing reads it
 };
 
 /// The packet the two consoles exchange each turn of a link battle: how many

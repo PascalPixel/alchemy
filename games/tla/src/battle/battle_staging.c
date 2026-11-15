@@ -247,7 +247,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     case STAGING_TEAM_STRIKE: {
       u8 swap = battle->plan.targetIds[0];
 
-      battle->events.unk16a = 1;
+      battle->events.keepPendingSound = 1;
       battle->plan.targetIds[0] = battle->plan.partnerId;
       battle->skipPlayback = 1;
       BattleStaging_RunPsynergyCast(&battle->plan, CAST_DJINNI);

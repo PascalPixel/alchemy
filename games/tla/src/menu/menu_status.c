@@ -1065,34 +1065,12 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
 #define PAGE_ROWS 5
 #endif
 
-/// The menu work as PagedList_Build reads it: the party's count, the party, and
-/// which members are chosen.
-struct MenuOwnerWork {
-  u8 unk000[0x214];
-  u8 count;
-  u8 unk215;
-  u8 owners[0x264 - 0x216];
-  s8 selected[8];
-};
-
-/// A paged list as PagedList_Build fills it: its owner, page, pages, row, count
-/// and the entry chosen.
-struct MenuPageResult {
-  void *owner;
-  s32 unk04;
-  s32 page;
-  s32 pageCount;
-  s32 row;
-  s32 count;
-  s32 selected;
-};
-
 /// Fills result with the item list of the party member in side index for the
 /// equipment pages: their unit, the menu's item count, and the page and row of
 /// the item chosen last for them, STATUS_EQUIP_PAGE_SIZE items to a page.
 /// Returns 1.
-s32 PagedList_Build(struct MenuPageResult *result, s32 index) {
-  struct MenuOwnerWork *menu = Ram_HeapSlots->menuWork;
+s32 PagedList_Build(struct PagedList *result, s32 index) {
+  struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   void *owner;
   s32 count;
   s32 value;
@@ -1100,9 +1078,9 @@ s32 PagedList_Build(struct MenuPageResult *result, s32 index) {
   s32 row;
   s32 pages;
 
-  owner = Unit_Get(menu->owners[index]);
-  count = menu->count;
-  value = menu->selected[menu->owners[index]];
+  owner = Unit_Get(menu->sideMember[index]);
+  count = menu->itemCount;
+  value = menu->selectedIndexByMember[menu->sideMember[index]];
 
   if (value + 1 > count)
     value = count - 1;
@@ -1113,12 +1091,12 @@ s32 PagedList_Build(struct MenuPageResult *result, s32 index) {
   pages = count / PAGE_ROWS;
   if (count % PAGE_ROWS != 0)
     pages++;
-  result->owner = owner;
+  result->memberState = (s32)owner;
   result->page = page;
   result->pageCount = pages;
   result->row = row;
-  result->count = count;
-  result->selected = value;
+  result->entryCount = count;
+  result->selectedIndex = value;
   return 1;
 }
 
@@ -1221,7 +1199,7 @@ extern u8 MsgUsableAnywhere[];
 /// description in the info window, where it can be used (in the field, in
 /// battle, or anywhere), and the row highlights with the range icons.
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
-                               struct MenuResult *state) {
+                               struct PagedList *state) {
   struct PsynergyMenuWork *menu;
   struct BattleAct *ability;
   s32 row;
@@ -1360,7 +1338,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 /// The Psynergy menu's list page: each ability's name, PP cost and range, "no
 /// Psynergy" when empty, then the owner's name, class and level.
 s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
-                              const struct MenuResult *res) {
+                              const struct PagedList *res) {
   struct PsynergyMenuWork *menu = Ram_HeapSlots->menuWork;
   u8 *owner;
   u32 first;
@@ -1465,7 +1443,7 @@ s32 PsynergyMenu_SelectAction(void) {
   s32 listNeedsRedraw;
   s32 navigation;
   s32 ownerIndex;
-  struct MenuResult state;
+  struct PagedList state;
 
   menu = Ram_HeapSlots->menuWork;
   window = menu->statusWindow;
@@ -1571,7 +1549,7 @@ s32 PsynergyMenu_SelectAction(void) {
 /// Updates the Status menu's equipment page for the row under the cursor: the
 /// item's plain name in the info window, the row highlights, and in the
 /// equipment window the highlight of the slot the item is worn in, if it is.
-s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
+s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct PagedList *state) {
   struct ItemMenuWork *menu;
   struct ItemDefinition *item;
   s32 base;
@@ -1699,7 +1677,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
 
 /// Draws one page of the member's items into window: five names a page, or
 /// "no items", then the member's name, Attack and Defense.
-s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct MenuResult *state) {
+s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct PagedList *state) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   struct Unit *unit;
   u16 *inventoryEntry;
@@ -1780,7 +1758,7 @@ s32 ItemMenu_SelectItem(void) {
   s32 navigation;
   s32 ownerIndex;
   s32 i;
-  struct MenuResult state;
+  struct PagedList state;
   u16 savedInventory[15];
 
   menu = Ram_HeapSlots->menuWork;

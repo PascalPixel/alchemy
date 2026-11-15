@@ -638,8 +638,8 @@ u32 BattlePlayback_RunAll(void) {
         MessageArgument_ClearAllFar();
         break;
       case PLAYBACK_HIT:
-        if (runtime->pendingCue > 0)
-          Sound_PlayFar(runtime->pendingCue);
+        if (runtime->pendingSound > 0)
+          Sound_PlayFar(runtime->pendingSound);
         BattleMotion_FlashHit(queue->operands[i], 0, 0);
         break;
       case PLAYBACK_DEFEAT:

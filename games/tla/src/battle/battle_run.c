@@ -155,7 +155,7 @@ s32 Battle_Run(s32 enemyGroup) {
   struct BattleWork *battle;
   struct BattlePresentationTransition *transition;
   s32 enemyCount;
-  u8 *ownerStateDestination;
+  u8 *enemyUnitDestination;
   s32 round;
   s32 actionCount;
   s32 i;
@@ -223,9 +223,9 @@ s32 Battle_Run(s32 enemyGroup) {
       }
     }
     battle->linkSide = SIO_ID_OF(REG_SIOCNT);
-    ownerStateDestination = Ram_HeapSlots->enemyUnits;
+    enemyUnitDestination = Ram_HeapSlots->enemyUnits;
     for (copyIndex = 0; copyIndex < ENEMY_UNITS_SIZE; copyIndex++)
-      *ownerStateDestination++ = gActorSpriteSlots[copyIndex];
+      *enemyUnitDestination++ = gActorSpriteSlots[copyIndex];
     enemyCount = GameFlag_GetByte(FLAG_AREA_TEMP_F0);
     BattleParty_AssignOpponentSlots();
     battle->layout = FORMATION_LAYOUT_SHUFFLED;

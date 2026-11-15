@@ -19,8 +19,8 @@ void BattlePlayback_Start(s32 cue) {
   if (ev->phase == BATTLE_PLAYBACK_PHASE_IDLE) {
     ev->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
     if (cue != 0) {
-      if (ev->unk16a == 0)
-        ev->pendingCue = cue;
+      if (ev->keepPendingSound == 0)
+        ev->pendingSound = cue;
     }
   }
 }
@@ -149,8 +149,8 @@ void BattlePlayback_Run(void) {
                 events->queue.operands[eventIndex]);
             break;
           case PLAYBACK_HIT:
-            if (events->pendingCue > 0)
-              Sound_PlayFar(events->pendingCue);
+            if (events->pendingSound > 0)
+              Sound_PlayFar(events->pendingSound);
             events->unitId = events->queue.operands[eventIndex];
             Actor_SelectAnimationFar(BattleObject_Get(events->unitId)->object,
                                      POSE_DAMAGE);
@@ -388,8 +388,8 @@ u32 BattlePlayback_Reset(void) {
   events->eventIndex = 0;
   events->timer = 0;
   events->queue.targetIndex = 0;
-  events->pendingCue = 0x86;
-  events->unk16a = 0;
+  events->pendingSound = SE_HEAVY_IMPACT;
+  events->keepPendingSound = 0;
   events->flags = 0;
 }
 

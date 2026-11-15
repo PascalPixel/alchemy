@@ -878,9 +878,9 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
       BattlePlayback_Push(PLAYBACK_NUMBER, damage);
       BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgPoisonDamage);
       if (*poison != 0) {
-        state->events.pendingCue = SE_HEAVY_IMPACT;
+        state->events.pendingSound = SE_HEAVY_IMPACT;
       } else {
-        state->events.pendingCue = SE_IMPACT;
+        state->events.pendingSound = SE_IMPACT;
       }
       if (Unit_AddHpFar(unitId, -damage) == 0) {
         if (BattleUnit_KeepsOneHp(unitId)) {

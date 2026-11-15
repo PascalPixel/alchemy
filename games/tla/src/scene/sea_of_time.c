@@ -630,14 +630,11 @@ void SeaOfTime_TrackWaves(void) {
 // SeaOfTime_StopWaves, back to its saved colours.
 
 extern u32 gSeaOfTime_WaveState;
-/* VIEW(s0c94): routine Event_End as s32 Event_End(void); sea_of_time.h has void
- * Event_End(void); not tried: Event_End's bound declaration was not found. */
-extern s32 Event_EndWithResult(void) __asm__("Event_End");
 
 /// Fades BG palette 3's entries 1 to 13 toward RGB(11, 6, 23), one unit per
 /// channel every 10 frames, then hands the rest of the event to
 /// SeaOfTime_TrackWaves's task.
-s32 SeaOfTime_StartWaves(void) {
+void SeaOfTime_StartWaves(void) {
   volatile u16 *palette;
   s32 changed;
   s32 i;
@@ -688,12 +685,12 @@ s32 SeaOfTime_StartWaves(void) {
   gSeaOfTime_WaveState = 360;
   gSeaOfTime_WaveStartFrame = frame;
   Task_Add(SeaOfTime_TrackWaves, TASK_PASS_VBLANK);
-  return Event_EndWithResult();
+  Event_End();
 }
 
 extern struct SavedColors gSeaOfTime_SavedColors;
 
-s32 SeaOfTime_StopWaves(void) {
+void SeaOfTime_StopWaves(void) {
   s32 changed;
   volatile u16 *palette;
   struct SavedColors *saved;
@@ -752,10 +749,8 @@ fade:
   if (changed)
     goto fade;
   gSeaOfTime_WaveState = 1;
-  GameFlag_Clear(FLAG_WAVES_RUNNING);
-  /* FAKEMATCH(signature): typed to return s32, passing on Event_End's, though
-   * its target Event_End returns nothing. */
-  return Event_EndWithResult();
+  Event_ClearFlag(FLAG_WAVES_RUNNING);
+  Event_End();
 }
 
 // next object the overlay links.

@@ -48,7 +48,7 @@ s32 BattleParty_ChooseReserve(s32 slot) {
     s32 sel;
     s32 redraw;
     s32 result;
-    s32 *reserve;
+    struct BattleMenuWork *menu;
     s32 current;
     s32 newId;
     s32 i;
@@ -57,7 +57,7 @@ s32 BattleParty_ChooseReserve(s32 slot) {
     redraw = 1;
     battle = Ram_HeapSlots->battleWork;
     result = 0;
-    reserve = Ram_HeapSlots->battleMenuWork;
+    menu = Ram_HeapSlots->battleMenuWork;
     if (count <= 0)
       return -1;
     slot &= 0xff;
@@ -79,8 +79,8 @@ s32 BattleParty_ChooseReserve(s32 slot) {
             goto test;
           }
           Sound_PlayFar(SE_CHIME);
-          reserve[65] = current;
-          reserve[66] = slot;
+          menu->swappedUnit = current;
+          menu->swappedPlace = slot;
           for (i = 0; i < 8; i++) {
             if (gMainRoutineWork.party[i] == current)
               gMainRoutineWork.party[i] = newId;

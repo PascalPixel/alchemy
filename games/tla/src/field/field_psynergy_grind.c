@@ -27,16 +27,6 @@ struct SplashAnimation {
   void *tiles;
 };
 
-/* VIEW(f0e92b4): tag struct PendingEvent as struct PendingEvent__f0e92b4;
- * event_work.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy_grind.c:201: structure has no member named
- * `callback'. */
-struct PendingEvent__f0e92b4 {
-  u8 unused[8]; ///< no code names it
-  void (*callback)(s32, s32, s32);
-};
-
 /// Grind ("Pulverize large objects."): the screen shakes harder and harder
 /// while spray rises round the target, or round the spot 32 pixels before the
 /// caster. A target of sprite 424 is ground down row by row; otherwise the
@@ -65,7 +55,7 @@ void FieldPsynergy_GrindOnTarget(void) {
   s32 mode;
   s32 radius;
   s32 selector;
-  struct PendingEvent__f0e92b4 *pending;
+  struct TriggerEvent *pending;
   u8 *picture;
   s32 counter;
   s32 amplitude;
@@ -77,8 +67,8 @@ void FieldPsynergy_GrindOnTarget(void) {
   next = 0;
   mode = 0;
   selector = Scene_SelectPsynergyTarget(scene->fieldPsynergy);
-  pending =
-      Scene_FindPsynergyTrigger(0x50000005, scene->fieldPsynergy, selector);
+  pending = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
+                                      scene->fieldPsynergy, selector);
   if (child != NULL) {
     if (animation != NULL) {
       if (animation->width * animation->height <= 0x800) {
@@ -207,7 +197,7 @@ void FieldPsynergy_GrindOnTarget(void) {
           timer = -1;
         }
         if (pending != NULL)
-          pending->callback(0, timer, selector);
+          ((void (*)(s32, s32, s32))pending->value)(0, timer, selector);
       } else {
         if (timer == animation->height * 3) {
           phase = 2;

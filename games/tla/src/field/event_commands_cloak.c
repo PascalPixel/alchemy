@@ -217,7 +217,7 @@ void FieldPsynergy_Douse(void) {
       Sound_PlayFar(SE_WATER);
       wait(6);
       if (n == 12) {
-        ev = Scene_FindPsynergyTrigger(0x50000005, 5,
+        ev = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), 5,
                                        Scene_SelectPsynergyTarget(5));
         if (ev != 0)
           Field_RunPsynergyEvent(ev, work->firstActorId, work->secondActorId);

@@ -318,7 +318,7 @@ void FieldPsynergy_Pound(void) {
     wait(1);
   } else {
     pending = Scene_FindPsynergyTrigger(
-        0x50000005, scene->fieldPsynergy,
+        PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy,
         Scene_SelectPsynergyTarget(scene->fieldPsynergy));
     Task_Add(FieldPsynergy_UpdatePound, TASK_PASS_VBLANK);
     frame = 0;

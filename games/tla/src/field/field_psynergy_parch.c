@@ -116,7 +116,7 @@ void FieldPsynergy_Parch(void) {
     pending = NULL;
   } else if (MapGrid_IsWaterCell(pos[0], pos[2], caster->layer) != 0) {
     pending = Scene_FindPsynergyTrigger(
-        0x50000005, scene->fieldPsynergy,
+        PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy,
         MapGrid_GetCellBehavior(pos[0], pos[2], caster->layer));
     result = 2;
     if (pending == NULL)

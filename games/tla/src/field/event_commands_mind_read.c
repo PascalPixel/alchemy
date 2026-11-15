@@ -344,7 +344,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
   }
 
   event = Scene_FindPsynergyTrigger(
-      0x50000005, scene->fieldPsynergy,
+      PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy,
       Scene_SelectPsynergyTarget(scene->fieldPsynergy));
   pusher->watchedActor = target;
   SET_POSITION(&position, target->x.fixed, target->y.fixed + px(16),
@@ -716,7 +716,6 @@ void FieldPsynergy_WatchLeaderDistance(void) {
   }
 }
 
-#define REVEAL_EVENT_START 0x50000005 // the Reveal event, stage 5
 #define REVEAL_FRAMES 600
 
 /// Reveal: open a circle of the transition on the caster, wash the screen
@@ -744,7 +743,7 @@ void FieldPsynergy_Reveal(void) {
   wait(1);
 
   pending = Scene_FindPsynergyTrigger(
-      REVEAL_EVENT_START, FIELD_PSYNERGY_REVEAL,
+      PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), FIELD_PSYNERGY_REVEAL,
       Scene_SelectPsynergyTarget(FIELD_PSYNERGY_REVEAL));
   if (pending != 0)
     Field_RunPsynergyEvent(pending, scene->firstActorId, scene->secondActorId);
@@ -790,7 +789,7 @@ void FieldPsynergy_EndReveal(void) {
     PaletteFade_StartInterpolation(30);
     wait(1);
     pending = Scene_FindPsynergyTrigger(
-        0x40000005, FIELD_PSYNERGY_REVEAL,
+        PSYNERGY_TRIGGER(PSYNERGY_PHASE_FADES), FIELD_PSYNERGY_REVEAL,
         Scene_SelectPsynergyTarget(FIELD_PSYNERGY_REVEAL));
     if (pending != NULL)
       Field_RunPsynergyEvent(pending, scene->firstActorId,
@@ -1330,8 +1329,8 @@ void FieldPsynergy_Force(void) {
     }
   }
 
-  event =
-      Scene_FindPsynergyTrigger(0x50000005, 4, Scene_SelectPsynergyTarget(4));
+  event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), 4,
+                                    Scene_SelectPsynergyTarget(4));
   if (event != NULL)
     Field_RunPsynergyEvent(event, scene->firstActorId, scene->secondActorId);
   wait(10);
@@ -1500,8 +1499,8 @@ void FieldPsynergy_Frost(void) {
     }
 
     target->update = (void (*)(void))FieldEffect_UpdateFrostGlint;
-    ev =
-        Scene_FindPsynergyTrigger(0x50000005, 6, Scene_SelectPsynergyTarget(6));
+    ev = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), 6,
+                                   Scene_SelectPsynergyTarget(6));
     if (ev != NULL)
       Field_RunPsynergyEvent(ev, scene->firstActorId, scene->secondActorId);
     wait(20);

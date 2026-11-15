@@ -307,9 +307,9 @@ s32 Scene_SelectPsynergyTarget(s32 kind) {
 
 /// Returns the scene's first Psynergy trigger (kind 5) for a field Psynergy
 /// kind whose condition holds, whose facing (when it has one) the leader
-/// faces, whose stage matches filter (0xf0000005 takes any) and whose target
-/// is what selector names (Scene_SelectPsynergyTarget: a cell, an actor, or
-/// anything); NULL when there is none.
+/// faces, whose stage matches filter (PSYNERGY_TRIGGER_ANY takes any) and whose
+/// target is what selector names (Scene_SelectPsynergyTarget: a cell, an actor,
+/// or anything); NULL when there is none.
 struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
                                                s32 selector) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -336,7 +336,8 @@ struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
         if (distance > 0x17ff)
           goto next;
       }
-      if (filter != 0xf0000005 && (event->control & 0xf000000f) != filter)
+      if (filter != PSYNERGY_TRIGGER_ANY &&
+          (event->control & 0xf000000f) != filter)
         goto next;
       flags = event->control;
       {
@@ -372,10 +373,10 @@ s32 Field_RunPsynergyEndEvents(u32 packed) {
   mode = (packed >> 10) & 15;
   kind = Ability_Get(action)->fieldEffect;
   selector = Scene_SelectPsynergyTarget(kind);
-  first = (struct PendingEvent *)Scene_FindPsynergyTrigger(0x30000005, kind,
-                                                           selector);
-  second = (struct PendingEvent *)Scene_FindPsynergyTrigger(0x20000005, kind,
-                                                            selector);
+  first = (struct PendingEvent *)Scene_FindPsynergyTrigger(
+      PSYNERGY_TRIGGER(PSYNERGY_PHASE_BEFORE_END), kind, selector);
+  second = (struct PendingEvent *)Scene_FindPsynergyTrigger(
+      PSYNERGY_TRIGGER(PSYNERGY_PHASE_AFTER_END), kind, selector);
   target = -1;
   if (first != NULL || second != NULL) {
     if (selector != -1 && (selector & 0x100))

@@ -6,43 +6,19 @@
 
 #include "macros.h"
 
-/* VIEW(psynergy_effects_11): tag struct EffectSprite as struct
- * EffectSprite__psynergy_effects_11; effect_sprite.h has another definition;
- * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/field/field_psynergy_growing_sprite.c:21: structure has
- * no member named `tile'. */
-struct EffectSprite__psynergy_effects_11 {
-  u8 unused[4]; ///< no code names it
-  u16 attr0_0 : 13;
-  u16 color : 1;
-  u16 attr0_14 : 2;
-  u16 attr1;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unusedAfterPalette[2]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 scaleX;
-  s32 scaleY;
-  u8 unusedAfterScaleY[2]; ///< no code names it
-  u16 depth;
-  u8 unusedAfterDepth[8]; ///< no code names it
-};
-
 void Camera_WorldToScreen(s32 *position);
 
 /// Animates a particle's sprite through 8 tiles (4 frames each), grows its
 /// scale by 0.1 a frame up to 1.0, draws it at the particle's projected
 /// position and advances the particle.
 void BattleEffect_UpdateGrowingParticleSprite(
-    struct EffectSprite__psynergy_effects_11 *sprite,
-    struct FieldPsynergyParticle *particle, s32 tiles) {
+    struct EffectSprite *sprite, struct FieldPsynergyParticle *particle,
+    s32 tiles) {
   s32 position[3];
   s32 scale;
 
-  sprite->tile = tiles + ((particle->timer >> 2) & 7) * 8;
-  scale = sprite->scaleX + 0x1999;
+  sprite->oam.index = tiles + ((particle->timer >> 2) & 7) * 8;
+  scale = sprite->scaleX + Q16_ONE / 10;
   sprite->scaleX = scale;
   if (scale > Q16_ONE)
     scale = Q16_ONE;

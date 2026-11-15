@@ -1853,8 +1853,8 @@ void FieldPsynergy_RunTouchedEvents(void) {
 
   for (i = 0; ids[i] != -1; i++) {
     /* FAKEMATCH(wrapper): ids[Index(i)], through an inline that returns i. */
-    s32 event =
-        Scene_FindPsynergyTrigger(0x50000005, work->kind, ids[Index(i)]);
+    s32 event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
+                                          work->kind, ids[Index(i)]);
 
     if (event != 0)
       Field_RunPsynergyEvent(event, work->argument0, work->argument1);

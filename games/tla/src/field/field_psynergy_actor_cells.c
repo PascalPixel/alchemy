@@ -6,17 +6,6 @@
 #include "field_psynergy_internal.h"
 #include "stddef.h"
 
-/* VIEW(f0eabd0): tag struct SwitchCell as struct SwitchCell__f0eabd0; field.h
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy_actor_cells.c:45: structure has no member
- * named `flags'. */
-struct SwitchCell__f0eabd0 {
-  u8 unused[2]; ///< no code names it
-  u8 block;
-  u8 flags;
-};
-
 /// Makes each listed actor (ids, ended by 0xffff) a block in the map: its
 /// cell's shape is tagged 32 pixels above the ground, so the party can stand
 /// on it, its cell is marked raised (the old mark kept in the actor) and layer
@@ -24,7 +13,7 @@ struct SwitchCell__f0eabd0 {
 /// as they start, for the blocks Move pushes.
 void Actor_PlaceBlocks(u16 *actors) {
   struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapGrid;
-  struct SwitchCell__f0eabd0 *blocks = map->layers[2].cells;
+  struct MapCell *blocks = map->layers[2].cells;
   u8 *grid = gMapShapeGrid;
   struct Actor *leader;
   s32 height;
@@ -37,12 +26,12 @@ void Actor_PlaceBlocks(u16 *actors) {
                                             object->z.fixed) >>
                 19;
     s32 slot = Actor_GetCellIndex(object);
-    struct SwitchCell__f0eabd0 *cells = map->layers[object->layer].cells;
+    struct MapCell *cells = map->layers[object->layer].cells;
     // The row's address as an integer sum, index first: &grid[row] adds the
     // grid first.
     u8 *shapes =
         (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
-    struct SwitchCell__f0eabd0 *cell;
+    struct MapCell *cell;
     s32 tag;
     u8 flags;
 
@@ -52,13 +41,13 @@ void Actor_PlaceBlocks(u16 *actors) {
     shapes += slot;
     tag = MapCollision_FindOrAddTag(object->layer, key, level + 4);
     cell = &cells[slot];
-    flags = cell->flags;
+    flags = cell->attributeB;
     object->riseBaseY = flags;
-    cell->flags = flags | 0x80;
+    cell->attributeB = flags | 0x80;
     *shapes = tag;
     // Reused for the block in layer 2's table.
     cell = &blocks[slot];
-    cell->block = 0xff;
+    cell->collisionCode = 0xff;
   }
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   height = MapGrid_GetTerrainHeightFar(leader->layer, leader->x.fixed,
@@ -94,8 +83,8 @@ void Actor_LiftTargetBlock(u16 *actors) {
       struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapGrid;
       s32 zero = 0;
       u8 *grid = gMapShapeGrid;
-      struct SwitchCell__f0eabd0 *cells = map->layers[target->layer].cells;
-      struct SwitchCell__f0eabd0 *blocks = map->layers[2].cells;
+      struct MapCell *cells = map->layers[target->layer].cells;
+      struct MapCell *blocks = map->layers[2].cells;
       u8 *shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
       u32 key = MapGrid_GetTerrainKindFar(target->layer, target->x.fixed,
                                           target->z.fixed);
@@ -109,8 +98,8 @@ void Actor_LiftTargetBlock(u16 *actors) {
       cells += slot;
       blocks += slot;
       ((struct ShapeCell *)shapes)->shape = tag;
-      cells->flags = target->riseBaseY;
-      blocks->block = zero;
+      cells->attributeB = target->riseBaseY;
+      blocks->collisionCode = zero;
       *(struct Actor **)(event + 0xcbc) = target;
     }
   }
@@ -131,9 +120,8 @@ void Actor_PlaceMovedBlock(void) {
      * the read. */
     s32 offset = offsetof(struct RestoreMap, layers[target->layer].cells);
     u8 *grid = gMapShapeGrid;
-    struct SwitchCell__f0eabd0 *cells =
-        *(struct SwitchCell__f0eabd0 **)((u8 *)map + offset);
-    struct SwitchCell__f0eabd0 *blocks = map->layers[2].cells;
+    struct MapCell *cells = *(struct MapCell **)((u8 *)map + offset);
+    struct MapCell *blocks = map->layers[2].cells;
     s32 index = ((s32)cells - (s32)Ram_MapCellBuffer) >> 2;
     u8 *shapes;
     u32 key;
@@ -156,11 +144,11 @@ void Actor_PlaceMovedBlock(void) {
     tag = MapCollision_FindOrAddTag(target->layer, key, (level >> 19) + 4);
     ((struct ShapeCell *)shapes)->shape = tag;
     cells += slot;
-    flags = cells->flags;
+    flags = cells->attributeB;
     target->riseBaseY = flags;
-    cells->flags = flags | 0x80;
+    cells->attributeB = flags | 0x80;
     blocks += slot;
-    blocks->block = 0xff;
+    blocks->collisionCode = 0xff;
   }
 }
 

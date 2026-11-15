@@ -417,7 +417,7 @@ void FieldPsynergy_Scoop(void) {
     }
   } else {
     pending = Scene_FindPsynergyTrigger(
-        0x50000005, scene->fieldPsynergy,
+        PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), scene->fieldPsynergy,
         Scene_SelectPsynergyTarget(scene->fieldPsynergy));
     frame = 0;
     while (work->phase != 999) {

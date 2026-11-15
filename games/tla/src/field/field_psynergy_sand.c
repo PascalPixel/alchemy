@@ -387,7 +387,7 @@ void FieldPsynergy_EndSand(void) {
       if (event->standing == 0)
         Field_RunPsynergyEvent(
             Scene_FindPsynergyTrigger(
-                0x40000005, effect->fieldPsynergy,
+                PSYNERGY_TRIGGER(PSYNERGY_PHASE_FADES), effect->fieldPsynergy,
                 Scene_SelectPsynergyTarget(effect->fieldPsynergy)),
             effect->firstActorId, -1);
     }

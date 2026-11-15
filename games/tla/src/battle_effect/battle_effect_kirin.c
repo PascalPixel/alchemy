@@ -226,7 +226,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
   gBgScroll[1].x = savedX;
   view->active = 0;
   BattleEffect_SetupBlendedDisplay();
-  REG_WIN0H = WIN_RANGE(0, 240);
+  REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
 
   for (i = 0; i != 9; i++)
     ((u8 *)work->sprites[i])[9] |= 12;

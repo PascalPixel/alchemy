@@ -109,13 +109,13 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
     store:
       tile = (tileY * 8 + tileX) * 2;
       entry = ((tile + 1) << 8) | tile;
-      *(volatile s16 *)(0x06003800 + i) = entry;
+      *(volatile s16 *)(BG_SCREEN_BLOCK(7) + i) = entry;
     }
   }
-  REG_BG2Y = 0xffffd800;
-  REG_WIN0H = WIN_RANGE(0, 240);
+  REG_BG2Y = -(40 << 8);
+  REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
   REG_WIN0V = WIN_RANGE(40, 136);
-  REG_WIN1H = WIN_RANGE(0, 240);
+  REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
   REG_WIN1V = WIN_RANGE(40, 136);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
@@ -180,16 +180,16 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
     if (frame <= 24) {
       REG_BG2X = -(Q_16_16_TO_INT(backgroundX)) << 8;
       if (args->side == EFFECT_SIDE_ENEMIES) {
-        REG_WIN0H = ((Q_16_16_TO_INT(backgroundX)) + 120) << 8 | 0xf0;
-        REG_WIN1H = ((Q_16_16_TO_INT(backgroundX)) + 120) << 8 | 0xf0;
+        REG_WIN0H = WIN_RANGE(Q_16_16_TO_INT(backgroundX) + 120, DISPLAY_WIDTH);
+        REG_WIN1H = WIN_RANGE(Q_16_16_TO_INT(backgroundX) + 120, DISPLAY_WIDTH);
       } else {
-        REG_WIN0H = (Q_16_16_TO_INT(backgroundX)) + 240;
-        REG_WIN1H = (Q_16_16_TO_INT(backgroundX)) + 240;
+        REG_WIN0H = Q_16_16_TO_INT(backgroundX) + DISPLAY_WIDTH;
+        REG_WIN1H = Q_16_16_TO_INT(backgroundX) + DISPLAY_WIDTH;
       }
     } else {
       REG_BG2X = -(Q_16_16_TO_INT(backgroundX)) << 8;
-      REG_WIN0H = WIN_RANGE(0, 240);
-      REG_WIN1H = WIN_RANGE(0, 240);
+      REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
+      REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
     }
     backgroundX -= speed;
     speed = speed * 52 / DAMPING_SCALE;
@@ -328,8 +328,8 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
     BattleCamera_Shake(1, 4);
     EFFECT_PRESENT_CANVAS(work);
   }
-  REG_WIN0V = WIN_RANGE(16, 136);
-  REG_WIN1V = WIN_RANGE(16, 136);
+  REG_WIN0V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM);
+  REG_WIN1V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM);
   EFFECT_FINISH_CANVAS();
 }
 
@@ -1060,13 +1060,13 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
 /// 24-frame palette fade counter (read by Palette_StepFadeTransfer), then runs
 /// the effect body BattleEffect_RunBubbleColumn.
 void BattleEffect_StartBubbleColumn(s32 arg) {
-  u8 *work = Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
 
   BattleEffect_StartCanvasLayer(0);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  *(s32 *)(work + 0x77b4) = 24;
-  *(s32 *)(work + 0x77b8) = 0;
+  work->fadeFrames = 24;
+  work->fadeStep = 0;
   BattleEffect_RunBubbleColumn(arg);
 }
 
@@ -1223,7 +1223,7 @@ struct MeshVertex;
     s32 n_ = (p)->z;                                                           \
                                                                                \
     {                                                                          \
-      u8 *src_ = work->sheet + 0x4800 + gCoatlicue_Pictures[n_];               \
+      u8 *src_ = work->sheet + COATLICUE_BUBBLES + gCoatlicue_Pictures[n_];    \
       s32 x0_ = Q_16_16_UPPER_HALF((p)->x);                                    \
       u8 w_ = gCoatlicue_PictureWidths[n_];                                    \
       s32 x_ = x0_ - (w_ >> 1);                                                \
@@ -1240,6 +1240,10 @@ struct MeshVertex;
 
 /// Where ScaleTexture is decoded in the effect's pictures.
 #define COATLICUE_SCALES 0x4000
+/// BubbleSheet's fifteen pictures, then a copy of them at half brightness.
+#define COATLICUE_BUBBLES 0x4800
+#define BUBBLE_SHEET_BYTES 3000
+#define COATLICUE_DIM_BUBBLES (COATLICUE_BUBBLES + BUBBLE_SHEET_BYTES)
 
 /// Coatlicue: under water among rising bubbles a ring of light spins and
 /// crosses a second; they settle into a ripple and burst in a froth of
@@ -1333,11 +1337,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FC,
                              work->sheet + COATLICUE_SCALES, 0, 0);
   {
-    u8 *src = work->sheet + 0x4800;
+    u8 *src = work->sheet + COATLICUE_BUBBLES;
 
     Resource_LoadAndDecompress((s32)&ResourceId_Data0FD, src, 0, 0);
-    for (i = 0; i != 3000; i++) {
-      work->sheet[0x53b8 + i] = src[i] >> 1;
+    for (i = 0; i != BUBBLE_SHEET_BYTES; i++) {
+      work->sheet[COATLICUE_DIM_BUBBLES + i] = src[i] >> 1;
     }
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cellBuffer, 0, 0);
@@ -1728,9 +1732,9 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             q->y = q->y - frame + 534;
           }
           if (p->variant <= 1) {
-            BLIT_CELL(0x4800, n, q->x, q->y);
+            BLIT_CELL(COATLICUE_BUBBLES, n, q->x, q->y);
           } else {
-            BLIT_CELL(0x53b8, n, q->x, q->y);
+            BLIT_CELL(COATLICUE_DIM_BUBBLES, n, q->x, q->y);
           }
           if (frame <= 453 || frame >= i / 16 + 540) {
             p->y += p->velocityY;
@@ -1756,7 +1760,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             n = 0;
           }
           {
-            u8 *src = work->sheet + 0x53b8 + gCoatlicue_Pictures[n];
+            u8 *src =
+                work->sheet + COATLICUE_DIM_BUBBLES + gCoatlicue_Pictures[n];
             u8 w = gCoatlicue_PictureWidths[n];
             s32 x0 = x - (w >> 1);
             s32 y0 = Q_16_16_TO_INT(top);

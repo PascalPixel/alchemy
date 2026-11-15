@@ -434,7 +434,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
           DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   Task_Remove(BattleEffect_ResetBg2Pa);
-  REG_WIN0H = WIN_RANGE(0, 240);
+  REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   for (i = 0; i != PARTICLE_POOL_COUNT; i++)
     PARTICLES[i].variant = 0;

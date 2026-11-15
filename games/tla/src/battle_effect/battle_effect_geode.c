@@ -199,8 +199,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
         REG_WIN1H = WIN_RANGE(0, 208);
       }
     } else if (frame == 40) {
-      REG_WIN0H = WIN_RANGE(0, 240);
-      REG_WIN1H = WIN_RANGE(0, 240);
+      REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
+      REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
     }
 
     // The Djinni flies to the target.

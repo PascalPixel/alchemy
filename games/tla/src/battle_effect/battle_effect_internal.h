@@ -216,6 +216,14 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define BATTLE_VIEW_TOP 16
 #define BATTLE_VIEW_HEIGHT 120
 #define BATTLE_VIEW_BOTTOM (BATTLE_VIEW_TOP + BATTLE_VIEW_HEIGHT)
+
+/// Windows 0 and 1 both cover the battle view: the full width, lines 16 to
+/// 135.
+#define EFFECT_SET_BATTLE_WINDOWS()                                            \
+  (REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH),                                    \
+   REG_WIN0V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM),                 \
+   REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH),                                    \
+   REG_WIN1V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM))
 /// The canvas's first BATTLE_VIEW_HEIGHT lines, which the battle view shows:
 /// what most of this game's effects clear and fill, leaving the last 8.
 #define CANVAS_VIEW_BYTES (CANVAS_SIZE * BATTLE_VIEW_HEIGHT)

@@ -196,14 +196,6 @@ void LemurianShipDeck_BobDeck(void) {
 
 struct Actor;
 
-struct MapMode {
-  u8 unk00[23];
-  struct MapModeBits {
-    u8 low : 2;
-    u8 mode : 2;
-  } __attribute__((packed)) bits;
-};
-
 extern u32 gLemurianShipDeck_FirstCrewLooksAround[];
 
 extern u32 gLemurianShipDeck_SecondCrewLooksAround[];
@@ -543,30 +535,18 @@ void LemurianShipDeck_SetUpTillerDeck(void) {
 }
 
 s32 Scene_Initialize(void) {
-  struct MainRoutineWork *party;
-  struct MapMode *map = (struct MapMode *)Ram_HeapSlots->mapGrid;
-  struct MapModeBits bits = map->bits;
+  struct MapBits *map = (struct MapBits *)Ram_HeapSlots->mapGrid;
 
-  /* FAKEMATCH(temporary): the mode bits changed in a one-byte copy, bits, and
-   * stored back. */
-  bits.mode = 1;
-  /* FAKEMATCH(dead): an empty once-only block before the copy's store. */
-  do {
-  } while (0);
-  party = &gMainRoutineWork;
-  map->bits = bits;
-  if (party->next == SCENE_LEMURIAN_SHIP_DECK_1) {
+  map->mode = 1;
+  if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_DECK_1) {
     LemurianShipDeck_SetUpTillerDeck();
   } else {
     gFieldWork->transition = 0x100;
-    /* FAKEMATCH(dead): an empty once-only block. */
-    do {
-    } while (0);
-    Actor_Get(party->leaderActorId)->priorityFlags |= 0x20;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
     Actor_SetAnimation(ACTOR_PUDDLE, 1);
     FlagBlock_PlaceAll(gLemurianShipDeck_Puddles);
     FieldTask_AddFrame(LemurianShipDeck_RotateColors12To15, TASK_PASS_VBLANK);
-    if (party->entrance == 99)
+    if (gMainRoutineWork.entrance == 99)
       LemurianShipDeck_ShowArrival();
     else
       FieldTask_AddFrame(LemurianShipDeck_RotateColors4To9, TASK_PASS_VBLANK);

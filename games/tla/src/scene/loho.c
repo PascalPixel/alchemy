@@ -751,13 +751,9 @@ loop:
 }
 
 void Loho_EnterDoor(void) {
-  struct MainRoutineWork *party = &gMainRoutineWork;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = gFieldWork;
 
-  /* FAKEMATCH(dead): an empty once-only block. */
-  do {
-  } while (0);
-  Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Event_PlaySound(SE_MAP_EXIT);
   Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -4);

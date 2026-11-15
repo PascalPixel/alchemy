@@ -1181,6 +1181,12 @@ void Madra_StopPartyAfterRaid(void) {
     Actor_SetAnimation(id, mode);                                              \
   } while (0)
 
+#define SET_MODE_AND_WAIT(id, mode, frames)                                    \
+  do {                                                                         \
+    Actor_SetAnimation(id, mode);                                              \
+    Event_Wait(frames);                                                        \
+  } while (0)
+
 /// On the party's return the mayor stops Felix to give him the Cyclone Chip he
 /// promised for mending the boat (or, with no room for it, puts it in a pot),
 /// and Karst comes in at the gate looking for Menardi.
@@ -1212,12 +1218,7 @@ void Madra_MeetKarst(void) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_MAYOR, x, z,
                                                  FACING_SOUTH);
   Actor_WalkByAndWaitById(ACTOR_MAYOR, 0, 4);
-  SET_MODE(34, 3);
-  /* FAKEMATCH(dead): this wait in a once-only block, which starts its own
-   * scheduling region. */
-  do {
-    Event_Wait(20);
-  } while (0);
+  SET_MODE_AND_WAIT(34, 3, 20);
   // "I believe I promised you a reward for helping with the boat, didn't I?"
   FieldMessage_ShowAtActor(ACTOR_MAYOR, 0);
   Actor_FaceActorById(ACTOR_KRADEN, ACTOR_FELIX, 0);
@@ -1682,12 +1683,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   SET_MODE(4, 3);
   Event_Wait(20);
-  SET_MODE(32, 3);
-  /* FAKEMATCH(dead): this wait in a once-only block, which starts its own
-   * scheduling region. */
-  do {
-    Event_Wait(20);
-  } while (0);
+  SET_MODE_AND_WAIT(32, 3, 20);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   SET_MODE(32, 2);
   object = Actor_GetById(ACTOR_FELIX);

@@ -1509,8 +1509,10 @@ struct MarsLighthouseBeam__ride_handle {
   u8 unk0c[4];
   s32 unk10;
   struct MarsLighthouseBeamTarget targets[4];
-  u16 stopCount;
-  u16 stops[7];
+  struct MarsLighthouseBeamStop {
+    u16 kind;
+    u16 value;
+  } stops[4];
 };
 
 void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
@@ -1521,81 +1523,35 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 a2, s32 a3) {
   s32 i;
 
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
-    i = 0;
-    id = *targets++;
-    {
-      /* FAKEMATCH(dead): a test combine folds, keeping the first loop's refs
-       * unweighted. */
-      s32 never = id & 0x40;
-      if (never < 0) {
-        id = 0;
-        goto afterTarget;
-      }
-    }
-    if (id > 0) {
-    nextTarget:
-      {
-        s32 flags = *targets;
-        s32 height = flags & 15;
-        struct Actor *object;
-        s32 one;
+    for (i = 0; i <= 3 && (id = *targets++) > 0; i++) {
+      s32 flags = *targets;
+      s32 height = flags & 15;
+      struct Actor *object;
 
-        flags &= 0xf0;
-        object = Actor_Get(id);
-        targets++;
-        if (object != NULL) {
-          Actor_SetSpriteFlags(object, 0);
-          ((u8 *)object)[98] = one = 1;
-          if ((flags & 0x80) == 0)
-            object->collisionFlags = 0;
-          target->active = one;
-          target->flags = flags;
-          target->object = Actor_Get(id);
-          target->height = height << 16;
-          target->index = i;
-          target++;
-        }
-      }
-    afterTarget:
-      i++;
-      if (i <= 3) {
-        if ((id = *targets++) > 0)
-          goto nextTarget;
+      flags &= 0xf0;
+      object = Actor_Get(id);
+      targets++;
+      if (object != NULL) {
+        Actor_SetSpriteFlags(object, 0);
+        object->riseCounter = 1;
+        if ((flags & 0x80) == 0)
+          object->collisionFlags = 0;
+        target->active = 1;
+        target->flags = flags;
+        target->object = Actor_Get(id);
+        target->height = height << 16;
+        target->index = i;
+        target++;
       }
     }
     if (stops != NULL) {
-      s32 count;
-      s32 stopOffset;
-      u16 *p;
+      for (i = 0; i <= 3; i++) {
+        s32 kind = *stops++;
 
-      i = 0;
-      count = *stops++;
-      stopOffset = 84;
-      *(u16 *)((u8 *)beam + stopOffset) = count;
-      {
-        /* FAKEMATCH(dead): a test combine folds, keeping the second loop's refs
-         * unweighted. */
-        s32 never = count & 0x40;
-        if (never < 0) {
-          p = stops;
-          goto afterStop;
-        }
-      }
-      if (count > 0) {
-        p = &beam->stopCount;
-      nextStop:
-        p[1] = *stops;
-      afterStop:
-        stops++;
-        i++;
-        p += 2;
-        if (i <= 3) {
-          s32 stop = *stops++;
-
-          *p = stop;
-          if (stop > 0)
-            goto nextStop;
-        }
+        beam->stops[i].kind = kind;
+        if (kind <= 0)
+          break;
+        beam->stops[i].value = *stops++;
       }
     }
   }

@@ -203,25 +203,11 @@ void LemuriaPalace_DrawMaps(void) {
   s8 mode = gLemuriaPalace_MapMode;
 
   if (mode == 1) {
-    s32 *time = &gLemuriaPalace_MapTime;
-    s32 t = *time;
-    s32 level = gLemuriaPalace_MapFadeLevels[(t >> 3) & 15];
+    s32 level =
+        gLemuriaPalace_MapFadeLevels[(gLemuriaPalace_MapTime >> 3) & 15];
 
-    {
-      s32 value = level << 8;
-      /* FAKEMATCH(dead): an empty block holds the shift first. */
-      do {
-      } while (0);
-      value |= 16 - level;
-
-      REG_BLDALPHA = value;
-    }
-    /* FAKEMATCH(dead): the step in a once-only block holds it after the store.
-     */
-    do {
-      t++;
-    } while (0);
-    *time = t;
+    Io_Write16(level << 8 | (16 - level), &REG_BLDALPHA);
+    gLemuriaPalace_MapTime++;
   } else if (mode == 2) {
     s32 *time = &gLemuriaPalace_MapTime;
     s32 step = (*time >> 2) % 28;

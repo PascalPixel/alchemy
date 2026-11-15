@@ -2467,16 +2467,12 @@ void Teleport_ArriveWhirling(void) {
 UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
   struct GabombaStatueEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
-  /* FAKEMATCH(dead): the entry jump in a once-only block. */
-  do {
-    goto test;
-  } while (0);
-  do {
-    u32 entry = *list;
+  while (*list != 0xffff) {
+    s32 entry = *list;
     s32 id = work->objectId;
 
     if (id == entry) {
-      struct Actor *object = Actor_Get(id);
+      struct Actor *object = Actor_GetById(id);
       s32 a;
       s32 flag;
 
@@ -2486,15 +2482,14 @@ UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
       if (count < 8)
         object->scaleY -= 0x1f00;
       if (mode == 1) {
-        Event_SetFlag(flag);
+        GameFlag_Set(flag);
         Actor_SetCellOpen(id, a, flag, object->layer);
         object->scaleY = Q16_ONE;
       }
       break;
     }
     list += 3;
-  test:;
-  } while (*list != 0xffff);
+  }
 }
 
 #include "shared/actor_set_cell_open.h"

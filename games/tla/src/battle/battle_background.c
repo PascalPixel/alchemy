@@ -11,8 +11,20 @@
 #include "battle/presentation.h"
 #include "system/system.h"
 
+/// The zoomed background's BG2CNT for the first 256 picture tiles: a 256 by
+/// 256 affine map in screen block 7, 256 colours, priority 2.
+#define BACKGROUND_PLANE_UPPER                                                 \
+  (BGCNT_SIZE(1) | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS |                   \
+   BGCNT_CHAR_BASE(2) | BGCNT_PRIORITY(2))
+/// The same map, reading the remaining picture tiles from character block 3.
+#define BACKGROUND_PLANE_LOWER                                                 \
+  (BGCNT_SIZE(1) | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS |                   \
+   BGCNT_CHAR_BASE(3) | BGCNT_PRIORITY(2))
 /// Lines outside the plane read the padded map in this screen block.
 #define BACKGROUND_PADDED_SCREEN 31
+#define BACKGROUND_PLANE_OFF                                                   \
+  (BGCNT_WRAP | BGCNT_SCREEN_BASE(BACKGROUND_PADDED_SCREEN) |                  \
+   BGCNT_256_COLORS | BGCNT_CHAR_BASE(3) | BGCNT_PRIORITY(2))
 /// The screen lines the plane covers, 0 to 135, above the status window.
 #define BACKGROUND_PLANE_LINES 136
 /// The plane's top lines, left off except while commands are chosen.
@@ -195,7 +207,7 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
       (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
   struct BattleAffineHdma *scanlines = Ram_HeapSlots->battleScanlines;
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
-  s32 horizon;
+  s32 panX;
   u16 wrap;
   u16 *line;
   struct BattleAffine *affine;
@@ -204,21 +216,23 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   s32 x;
   s32 y;
   u32 scanline;
-  u32 groundEndLine;
+  u32 lowerHalfLine;
 
-  horizon = 0x800;
+  // The sideways pan, 8.8 pixels: 8 when zoomed out, else 104 less three
+  // times the yaw, so the picture turns with the camera.
+  panX = 8 << 8;
   wrap = 0;
   ratio = Q16_ONE;
   if (scale >= ratio) {
     wrap = BGCNT_WRAP;
-    horizon = 0x6800 + -(s16)camera->yaw * 3;
+    panX = (104 << 8) + -(s16)camera->yaw * 3;
   }
   if (scanlines == NULL)
     return;
   if ((view->mode == BATTLE_BACKGROUND_FIXED ||
        view->secondMode == BATTLE_BACKGROUND_FIXED) &&
       view->busy == 0)
-    gBgScroll[1].x = horizon >> 8;
+    gBgScroll[1].x = panX >> 8;
   if (view->mode != BATTLE_BACKGROUND_ZOOMED)
     return;
   line = scanlines->lines[scanlines->page ^ 1];
@@ -231,23 +245,23 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   affine->pd = step;
   x = Iwram_MulQ16(ratio, Iwram_MulQ16(centerX, scale - Q16_ONE));
   y = Iwram_MulQ16(ratio, Iwram_MulQ16(centerY, scale - Q16_ONE));
-  affine->x = ((x + 0x7fff) >> 8) + offsetX + horizon;
-  affine->y = ((y + 0x7fff) >> 8) + offsetY - 0x1000;
-  groundEndLine =
-      (Iwram_RatioMulQ14((s16)affine->pd, 0x4000 - affine->y) >> 16) + 1;
+  affine->x = ((x + 0x7fff) >> 8) + offsetX + panX;
+  affine->y = ((y + 0x7fff) >> 8) + offsetY - (16 << 8);
+  lowerHalfLine =
+      (Iwram_RatioMulQ14((s16)affine->pd, (64 << 8) - affine->y) >> 16) + 1;
   scanline = 0;
   if (!GameFlag_Get(FLAG_CHOOSING_COMMANDS)) {
     for (; scanline < BACKGROUND_PLANE_HIDDEN_LINES; scanline++)
-      *line++ = 0x3f8e;
+      *line++ = BACKGROUND_PLANE_OFF;
   }
-  if (groundEndLine > BACKGROUND_PLANE_LINES)
-    groundEndLine = BACKGROUND_PLANE_LINES;
-  for (; scanline < groundEndLine; scanline++)
-    *line++ = wrap | 0x478a;
+  if (lowerHalfLine > BACKGROUND_PLANE_LINES)
+    lowerHalfLine = BACKGROUND_PLANE_LINES;
+  for (; scanline < lowerHalfLine; scanline++)
+    *line++ = wrap | BACKGROUND_PLANE_UPPER;
   for (; scanline < BACKGROUND_PLANE_LINES; scanline++)
-    *line++ = wrap | 0x478e;
+    *line++ = wrap | BACKGROUND_PLANE_LOWER;
   for (; scanline < DISPLAY_HEIGHT; scanline++)
-    *line++ = 0x3f8e;
+    *line++ = BACKGROUND_PLANE_OFF;
   scanlines->page ^= 1;
 }
 

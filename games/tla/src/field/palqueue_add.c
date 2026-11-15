@@ -1,3 +1,6 @@
+/// @file
+/// Adding a palette cycle.
+
 // The main image and overlay 674 both compile this file.
 
 /// Adds a palette cycle: count colours of background palette bank from index,

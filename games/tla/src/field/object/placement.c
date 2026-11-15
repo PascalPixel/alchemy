@@ -1,3 +1,6 @@
+/// @file
+/// The idle script and the default placements of the leader.
+
 #include "scene_tables.h"
 #include "objcmd.h"
 #include "types.h"

@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_FIELD_PSYNERGY_WORK_H
 #define ALCHEMY_FIELD_PSYNERGY_WORK_H
 
+/// @file
+/// The field Psynergy's work (FieldEffectWork) and its particle.
+
 #include "types.h"
 #include "static_assert.h"
 #include "field_particle.h"

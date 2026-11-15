@@ -1,4 +1,8 @@
+/// @file
+/// An actor script call that turns an actor toward an angle a step at a time.
+
 #include "actor.h"
+#include "fixed_math.h"
 
 /// SC_CALL routine that turns an actor toward the angle kept in its timer: the
 /// whole way when within 1/16 turn, otherwise 1/32 turn.
@@ -6,15 +10,15 @@ s32 Actor_StepAngle(struct Actor *object) {
   s32 delta = 0;
 
   if (object != NULL) {
-    s32 target_angle = (u16)object->timer;
-    s32 current_angle = object->facing;
-    delta = (s16)(target_angle - current_angle);
+    s32 targetAngle = (u16)object->timer;
+    s32 currentAngle = object->facing;
+    delta = (s16)(targetAngle - currentAngle);
     if (delta != 0) {
-      if (delta > 4096)
-        delta = 2048;
-      if (delta < -4096)
-        delta = -2048;
-      object->facing = current_angle + delta;
+      if (delta > TRIG_TURN / 16)
+        delta = TRIG_TURN / 32;
+      if (delta < -(TRIG_TURN / 16))
+        delta = -(TRIG_TURN / 32);
+      object->facing = currentAngle + delta;
     }
   }
   return delta;

@@ -1,3 +1,6 @@
+/// @file
+/// A field effect's motion and spin each frame.
+
 #include "types.h"
 #include "fixed_math.h"
 #include "system/main_routine_work.h"

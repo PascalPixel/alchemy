@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_SPRITE_H
 #define ALCHEMY_SPRITE_H
 
+/// @file
+/// Animated sprites: their layers, the sprite picture caches and the actor
+/// system's work.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"

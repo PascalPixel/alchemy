@@ -1,3 +1,6 @@
+/// @file
+/// The World Map's encounter rules by terrain and the areas' entry table.
+
 #include "types.h"
 
 // clang-format off

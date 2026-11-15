@@ -199,7 +199,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       GameFlag_Set(FLAG_ITEM_USE);
       GameFlag_Clear(FLAG_NOTHING_HAPPENS);
 
-      if (actionId == 149 && !GameFlag_Get(FLAG_RETREAT_BLOCKED)) {
+      if (actionId == ABILITY_RETREAT && !GameFlag_Get(FLAG_RETREAT_BLOCKED)) {
         MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
         FieldMessage_ShowFar((s32)&MsgUseItemQuestion, 13);
         i = FieldYesNo_Ask(1);

@@ -312,7 +312,7 @@ s32 Scene_TalkToActor(s32 id) {
         FieldMessage_ShowFar((s32)&MsgKey0de5, 1);
       if (Actor_GetSpriteShape(index)) {
         FieldMessage_ShowFar((s32)&MsgKey0e1c, 1);
-        if (Party_FindOwnerWithActionFar(136) != -1)
+        if (Party_FindOwnerWithActionFar(ABILITY_SCOOP) != -1)
           gFieldWork->fieldMenu = 1;
         goto done;
       }

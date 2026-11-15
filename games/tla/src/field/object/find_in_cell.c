@@ -1,3 +1,6 @@
+/// @file
+/// Finding the actor that stands in a cell.
+
 #include "types.h"
 #include "system/ram_buffer.h"
 #include "actor.h"

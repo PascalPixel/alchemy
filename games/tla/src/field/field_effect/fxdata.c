@@ -1,3 +1,6 @@
+/// @file
+/// The ropes' phases and the field effects' tables.
+
 #include "objcmd.h"
 #include "types.h"
 #include "module/field/field.h"

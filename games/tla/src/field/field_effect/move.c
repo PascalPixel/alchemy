@@ -1,3 +1,6 @@
+/// @file
+/// A field effect's motion, growth and spin each frame.
+
 #include "types.h"
 #include "system/field_effect.h"
 

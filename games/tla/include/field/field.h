@@ -1,6 +1,10 @@
 #ifndef FIELD_H
 #define FIELD_H
 
+/// @file
+/// The field's routines and tables other banks call, and the field Psynergy's
+/// reach.
+
 #include "types.h"
 #include "edition.h"
 #include "actor.h"

@@ -1,3 +1,6 @@
+/// @file
+/// The speaker definitions and the actors' variant scripts.
+
 #include "types.h"
 #include "macros.h"
 

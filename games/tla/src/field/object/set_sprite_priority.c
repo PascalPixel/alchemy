@@ -1,3 +1,6 @@
+/// @file
+/// Setting an actor's sprite priority by hand.
+
 #include "types.h"
 #include "field_event.h"
 

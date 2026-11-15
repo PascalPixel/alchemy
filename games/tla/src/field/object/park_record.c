@@ -1,3 +1,6 @@
+/// @file
+/// Stopping an actor where it stands.
+
 #include "types.h"
 #include "field_event.h"
 #include "macros.h"

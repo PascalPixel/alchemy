@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_PARTICLE_H
 #define ALCHEMY_PARTICLE_H
 
+/// @file
+/// A particle's position and the screen points the effects draw at.
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"

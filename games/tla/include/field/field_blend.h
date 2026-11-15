@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_FIELD_BLEND_H
 #define ALCHEMY_FIELD_BLEND_H
 
+/// @file
+/// The field's colour blend work.
+
 #include "types.h"
 #include "static_assert.h"
 

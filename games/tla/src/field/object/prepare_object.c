@@ -1,3 +1,6 @@
+/// @file
+/// Creating an actor as a black silhouette.
+
 #include "battle/battle.h"
 #include "debug.h"
 #include "field/field.h"

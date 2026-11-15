@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_FIELD_PARTICLE_H
 #define ALCHEMY_FIELD_PARTICLE_H
 
+/// @file
+/// The field effect sprites the field Psynergy keeps (FieldParticle).
+
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"

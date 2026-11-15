@@ -1,6 +1,9 @@
 #ifndef ALCHEMY_MAPCOPY_H
 #define ALCHEMY_MAPCOPY_H
 
+/// @file
+/// Copying rectangles of map cells and their pictures.
+
 #include "edition.h"
 #include "types.h"
 

@@ -130,11 +130,8 @@ UNREAD_RESULT LinkBattle_SendParty(void) {
     size = LINK_PARTY_OFFER_BYTES;
     Heap_Release(buffer);
     buffer = Heap_AllocEwram(size);
-    /* FAKEMATCH(dead): the copy in a once-only block. */
-    do {
-      Iwram_CopyWords(buffer, Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY),
-                      size);
-    } while (0);
+    IWRAM_COPY_WORDS(buffer, Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY),
+                     size);
     list = &((struct DjinnRecoveryTable *)buffer)->list;
     for (j = 0; j < list->count; j++)
       list->entries[j].unitId = battle->opponentSlots[list->entries[j].unitId];

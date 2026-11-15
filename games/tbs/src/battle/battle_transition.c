@@ -20,23 +20,21 @@
 /// Fades the screen to black over sixteen frames as every background's mosaic
 /// grows, then shows no layer.
 s32 BattleTransition_RunMosaicFadeOut(void) {
-  // DEAD: the four saved BGxCNT values live in halfwords on the stack, which
-  // nothing here needs; the ROM keeps their four strh and four ldrh.
-  volatile u16 bg0cnt;
-  volatile u16 bg1cnt;
-  volatile u16 bg2cnt;
-  volatile u16 bg3cnt;
+  u16 bg0cnt;
+  u16 bg1cnt;
+  u16 bg2cnt;
+  u16 bg3cnt;
   s32 mosaicSize;
   volatile u16 *registerCursor;
 
-  bg0cnt = REG_BG0CNT;
+  Io_Read16(&REG_BG0CNT, &bg0cnt);
   REG_BG0CNT = bg0cnt | BGCNT_MOSAIC;
   registerCursor = &REG_BG0CNT;
-  bg1cnt = *++registerCursor;
+  Io_Read16(++registerCursor, &bg1cnt);
   *registerCursor = bg1cnt | BGCNT_MOSAIC;
-  bg2cnt = *++registerCursor;
+  Io_Read16(++registerCursor, &bg2cnt);
   *registerCursor = bg2cnt | BGCNT_MOSAIC;
-  bg3cnt = *++registerCursor;
+  Io_Read16(++registerCursor, &bg3cnt);
   *registerCursor = bg3cnt | BGCNT_MOSAIC;
   // 33 halfwords on from REG_BG3CNT is REG_BLDCNT.
   registerCursor += 33;

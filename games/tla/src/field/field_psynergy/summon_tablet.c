@@ -490,13 +490,6 @@ struct MenuFlagWork {
   u8 busy;
 };
 
-struct DescriptorEntry {
-  s16 id;
-  u8 unk02[6];
-};
-
-extern struct DescriptorEntry gData_080eff28[];
-
 void BattleEffect_StartTiledCanvas(s32 mode);
 void BattleEffect_EndCanvasLayer(void);
 void BattleEffect_RunDrainMotes(void *effect, s32 mode);

@@ -9,6 +9,7 @@
 #include "edition.h"
 #include "static_assert.h"
 #include "system/ram_buffer.h"
+#include "scene_tables.h"
 
 struct ActorPlacement;
 struct Actor;
@@ -98,7 +99,9 @@ struct FieldWork {
   u16 heldKeys;
   u8 unk188[2];
   s8 mode; ///< an enum ActorSystemMode
-  s8 unk18b;
+  /// The area's graphics are to be reloaded on the World Map
+  /// (WorldMap_Freeze, WorldMap_ReloadPendingAreaGraphics).
+  s8 areaGraphicsPending;
   u8 encounterZones[8];   ///< encounter zone for each kind of ground
   s32 encounterBias;      ///< randomized distance adjustment between battles
   s32 encounterThreshold; ///< encounter steps before a battle; 16 * Q16_ONE
@@ -126,9 +129,9 @@ struct FieldWork {
   s32 speaker; ///< the actor speaking; the leader at each event
   struct Window *messageWindow; ///< the open message window, NULL for none
   struct Window *sideWindow;    ///< the speaker's portrait window
-  /// The leader's two-row actor placement table (its row and an end
-  /// row), which Actor_ResetForLeader builds through its offset.
-  u8 leaderPlacements[48];
+  /// The leader's two-row actor placement table (its row and an end row),
+  /// which Actor_ResetForLeader builds.
+  struct ActorPlacement leaderPlacements[2];
   struct Window *noticeWindow; ///< a scene's timed notice
   u16 noticeFrames;
   /// The palette a field Psynergy's tint fades back to, as a palette fade's

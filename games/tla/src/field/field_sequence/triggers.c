@@ -68,12 +68,11 @@ s32 GameFlag_IsConditionActive(s32 condition) {
 
 /// Returns the first of the scene's triggers of kind for target whose
 /// condition holds and whose push (STEP_TRIGGER_FLAG_WALKING) and facing
-/// (TRIGGER_FLAG_FACING) requirements are met, or NULL. Kinds 8 and 9 answer
-/// any target, and the facing test alone is skipped while
+/// (TRIGGER_FLAG_FACING) requirements are met, or NULL. Kinds 8 and 9, the
+/// triggers Field_RunPushCell runs for an actor pushed and for the cell pushed
+/// against, answer any target; the facing test alone is skipped while
 /// gMainRoutineWork.movementMode is 2.
 struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
-  // XXX: what kinds 8 and 9 are; the triggers of the scenes that use them
-  // would settle it.
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TriggerView *trigger = work->triggers;
   s32 flags;
@@ -141,8 +140,6 @@ struct FxGroup {
   s32 count;
 };
 
-extern struct DescriptorEntry gData_080eff28[];
-
 /// Unused: runs the loaded overlay's initialize entry; nothing calls it.
 UNUSED void Overlay_CallInitialize(void) { ((s32 (*)(void))gOverlayArea[1])(); }
 
@@ -178,8 +175,12 @@ s32 BattleEffect_GetFlags__field_sequence(s32 id) __asm__(
 #define BattleEffect_GetFlags BattleEffect_GetFlags__field_sequence
 void Actor_TurnToFaceEachOther(s32 first, s32 second, s32 mode);
 
-/// Talks to actor id: shows its event's message or calls its event function,
-/// with the actor stopped and turned as its placement says.
+/// Talks to actor id. A container (actors 64 and up, and the Scoop spot, actor
+/// 79) is checked instead: a chest gives what it holds, a Mimic starts its
+/// battle, a Psynergy Stone restores the party's PP and a stone tablet teaches
+/// its summon. Any other actor shows its event's message or calls its event
+/// function, stopped and turned as its placement says; the actor Halt has
+/// stopped answers its kind 7 trigger first.
 s32 Scene_TalkToActor(s32 id) {
   struct ActorPlacement *placement;
   s32 result;
@@ -192,7 +193,7 @@ s32 Scene_TalkToActor(s32 id) {
   struct Actor *leader;
   struct Actor *shown;
   struct ContainerRow *row;
-  struct TalkEvent *talk;
+  struct TriggerView *talk;
   s32 noHint;
   u8 *busy;
   s32 found;
@@ -231,7 +232,7 @@ s32 Scene_TalkToActor(s32 id) {
         contents = *p;
       }
     } else {
-      type = 131;
+      type = CONTAINER_BURIED;
       noHint = result;
       flag = result;
       contents = event->scoopedItem;
@@ -240,13 +241,13 @@ s32 Scene_TalkToActor(s32 id) {
     }
     if (found) {
       found = type;
-      if ((u16)(type - 128) <= 1)
+      if ((u16)(type - CONTAINER_CHEST) <= 1)
         found = 1;
-      if ((u16)(type - 130) <= 2)
+      if ((u16)(type - CONTAINER_PSYNERGY_STONE) <= 2)
         found = 5;
-      if (type == 132)
+      if (type == CONTAINER_STONE_TABLET)
         found = 26;
-      if (type == 133)
+      if (type == CONTAINER_POND)
         found = 32;
       Event_Start();
       busy = &((u8 *)object)[91];
@@ -260,15 +261,15 @@ s32 Scene_TalkToActor(s32 id) {
       }
       if (!GameFlag_IsConditionActive(flag))
         goto empty;
-      if (type == 128) {
+      if (type == CONTAINER_CHEST) {
         if (contents == 0)
           ObjectEvent_SetMode6WithCue(index);
         else
           ObjectEvent_SetMode4WithCue(index);
       }
-      if (type == 129)
+      if (type == CONTAINER_MIMIC)
         ObjectEvent_SetMode4WithCue(index);
-      if (type == 130) {
+      if (type == CONTAINER_PSYNERGY_STONE) {
         struct Actor *trap = ObjectEvent_GetObject(index);
 
         trap->update = ItemDisplay_EmitSparkles;
@@ -294,7 +295,7 @@ s32 Scene_TalkToActor(s32 id) {
           GameFlag_Set(flag);
         goto done;
       }
-      if (type == 132) {
+      if (type == CONTAINER_STONE_TABLET) {
         Event_Start();
         Event_ResolvePendingActions(0);
         SummonTablet_PlayRunes(index);
@@ -306,11 +307,11 @@ s32 Scene_TalkToActor(s32 id) {
         Event_End();
         goto done;
       }
-      if (type == 129) {
+      if (type == CONTAINER_MIMIC) {
         work = Ram_HeapSlots->fieldWork;
         ObjectEvent_Spring(index);
         if (flag != -1)
-          gMainRoutineWork.pendingDjinni = flag | 0x1000;
+          gMainRoutineWork.pendingDjinni = flag | CONDITION_FLAG_SET;
         if (contents > 7)
           work->encounter = Encounter_GetFormationAtSlot(105, contents - 8);
         else
@@ -321,7 +322,7 @@ s32 Scene_TalkToActor(s32 id) {
         FieldMessage_ShowFar((s32)&MsgKey0e1a, 1);
         goto done;
       }
-      if (type == 133)
+      if (type == CONTAINER_POND)
         FieldMessage_ShowFar((s32)&MsgKey0de5, 1);
       if (Actor_GetSpriteShape(index)) {
         FieldMessage_ShowFar((s32)&MsgKey0e1c, 1);
@@ -330,13 +331,13 @@ s32 Scene_TalkToActor(s32 id) {
         goto done;
       }
       if (contents & 0x8000) {
-        if (type == 131) {
+        if (type == CONTAINER_BURIED) {
           shown = ObjectEvent_GetObject(index);
           shown->update = ItemDisplay_EmitSparkles;
         } else {
           shown = BattleEffect_StartRandomParticleEmitter(index, 0);
           wait(30);
-          if (type == 128)
+          if (type == CONTAINER_CHEST)
             ObjectEvent_SetMode2(index);
         }
         ItemDisplay_RaiseAboveLeader(shown);
@@ -347,7 +348,7 @@ s32 Scene_TalkToActor(s32 id) {
         Party_AdjustCoinsFar(contents);
         if (flag != -1)
           GameFlag_Set(flag);
-        if (type == 131) {
+        if (type == CONTAINER_BURIED) {
           Actor_SetPositionAndResetMotionFar(shown, 0, 0, 0);
           shown->update = NULL;
         } else {
@@ -360,7 +361,7 @@ s32 Scene_TalkToActor(s32 id) {
           GameFlag_Set(flag);
         goto empty;
       }
-      if (type == 131) {
+      if (type == CONTAINER_BURIED) {
         shown = ObjectEvent_GetObject(index);
         shown->update = ItemDisplay_EmitSparkles;
       } else {
@@ -374,11 +375,11 @@ s32 Scene_TalkToActor(s32 id) {
         FieldMessage_ShowFar((s32)&MsgFoundItem + 4, 1);
         if (type != 131)
           Actor_ReleaseIfPresent(shown);
-        if (type == 128)
+        if (type == CONTAINER_CHEST)
           ObjectEvent_SetMode5WithCue(index);
         goto done;
       }
-      if (type == 128)
+      if (type == CONTAINER_CHEST)
         ObjectEvent_SetMode2(index);
       ItemDisplay_RaiseAboveLeader(shown);
       Sound_PlayFar(MUS_TREASURE_FOUND);
@@ -391,13 +392,13 @@ s32 Scene_TalkToActor(s32 id) {
       }
       if (flag != -1)
         GameFlag_Set(flag);
-      if (type == 131) {
+      if (type == CONTAINER_BURIED) {
         Actor_SetPositionAndResetMotionFar(shown, 0, 0, 0);
         shown->update = NULL;
       } else {
         Actor_ReleaseFar(shown);
       }
-      if (type == 133)
+      if (type == CONTAINER_POND)
         ObjectEvent_Remove(index);
       result = 0;
       goto done;
@@ -419,7 +420,7 @@ s32 Scene_TalkToActor(s32 id) {
       busyFlags = 1;
       if (talk == NULL)
         return result;
-      if (talk->script >= 0x10000) {
+      if (talk->result >= 0x10000) {
         Event_RunMessage(id, BattleEffect_GetFlags(id) * 2 +
                                  ((Random16() << 1) >> 16) + (s32)&MsgKey137f);
         goto resume;
@@ -432,7 +433,7 @@ s32 Scene_TalkToActor(s32 id) {
     if (talk == NULL)
       goto resume;
   }
-  if (talk->script == 0)
+  if (talk->result == 0)
     goto resume;
   if (!paused) {
     ((u8 *)object)[91] = 1;
@@ -445,12 +446,12 @@ s32 Scene_TalkToActor(s32 id) {
       Actor_TurnToFaceEachOther(id, gMainRoutineWork.leaderActorId, 0);
     }
   }
-  if (talk->script < 0x10000) {
+  if (talk->result < 0x10000) {
     Message_SetDecodeFlagsFar(busyFlags);
-    Event_RunMessage(id, talk->script);
+    Event_RunMessage(id, talk->result);
   } else {
     Leader_StopMoving();
-    ((void (*)(s32))talk->script)(id);
+    ((void (*)(s32))talk->result)(id);
   }
   if (!paused) {
     if (object->script[object->scriptCursor] == 17) {
@@ -499,21 +500,21 @@ s32 Scene_RunRaisedTrigger(s32 id) {
 /// exit (kind 1): plays the exit's sound (and effect) and records where it
 /// leads. Returns 0 when something ran, -1 when there was nothing.
 s32 Scene_RunStepTriggerOrExit(s32 value) {
-  struct TouchEvent *event;
+  struct TriggerView *event;
   s32 handled;
   struct FieldWork *work;
 
   event = Scene_FindTrigger(2, value);
   handled = -1;
   work = Ram_HeapSlots->fieldWork;
-  if (event != NULL && event->u.result != 0) {
+  if (event != NULL && event->result != 0) {
     if (event->flags & 0x200)
       work->blockedSteps = 0;
-    if (event->u.result < 0x10000) {
-      Event_RunMessage(handled, event->u.result);
+    if (event->result < 0x10000) {
+      Event_RunMessage(handled, event->result);
       handled = 0;
     } else {
-      ((void (*)(s32))event->u.result)(value);
+      ((void (*)(s32))event->result)(value);
       handled = 0;
     }
   } else {
@@ -536,7 +537,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
         Func_080d5fd4();
         break;
       }
-      work->exit = event->u.result;
+      work->exit = event->result;
       handled = 0;
     }
   }
@@ -552,7 +553,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 s32 Field_RunPushCell(s32 attributes) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 owner = gMainRoutineWork.leaderActorId;
-  struct SceneEventEntry *event;
+  struct TriggerView *event;
   s32 target;
   s32 result;
 

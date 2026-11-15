@@ -83,12 +83,12 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
   return best;
 }
 
-/// Returns the row of gData_080eff28 for an animation: its range, height
-/// and facing width. A row not found returns the -1 terminator.
-struct DescriptorEntry *Field_GetPsynergyTargetRule(s32 id) {
-  struct DescriptorEntry *entry = gData_080eff28;
+/// Returns the row of gData_080eff28 for a field Psynergy kind: its range,
+/// height and facing width. A kind not found returns the -1 terminator.
+const struct FieldPsynergyReach *Field_GetPsynergyReach(s32 id) {
+  const struct FieldPsynergyReach *entry = gData_080eff28;
 
-  while (entry->id != -1 && id != entry->id)
+  while (entry->fieldPsynergy != -1 && id != entry->fieldPsynergy)
     entry++;
   return entry;
 }
@@ -96,13 +96,13 @@ struct DescriptorEntry *Field_GetPsynergyTargetRule(s32 id) {
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 /// Returns how far the ground at position lies above or below the actor's,
-/// made positive, when that is within the id's table range (pixels), else -1.
+/// made positive, when that is within the kind's reach in height, else -1.
 s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *actor, s32 *position) {
-  struct DescriptorEntry *entry = Field_GetPsynergyTargetRule(id);
+  const struct FieldPsynergyReach *entry = Field_GetPsynergyReach(id);
   s32 height = MapGrid_GetTerrainHeightAboveFar__field_sequence(
       position[0], position[2], actor->layer, actor->groundHeight);
 
-  if (ABS(height) <= entry->range << 16)
+  if (ABS(height) <= entry->height << 16)
     return ABS(height);
   return -1;
 }
@@ -116,7 +116,7 @@ s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *actor, s32 *position) {
 s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
   struct Actor *self;
   struct Actor *other;
-  struct NearbyRule *rule;
+  const struct FieldPsynergyReach *rule;
   s32 height;
   s32 range;
   s32 dx;
@@ -133,7 +133,7 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
     return -1;
 
   // Height: within the rule's pixels above or below.
-  rule = Field_GetPsynergyTargetRule(animation);
+  rule = Field_GetPsynergyReach(animation);
   height = rule->height << 16;
   if (animation == ANIMATION_MEASURES_FOOTING) {
     if (ABS(other->groundHeight - self->groundHeight) > height)

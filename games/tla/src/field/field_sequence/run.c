@@ -41,7 +41,6 @@ s32 Leader_StepOffRope(void);
 s32 Leader_StepOntoTightrope(void);
 s32 Leader_StepOffTightrope(void);
 
-#define HAZARD (*(struct HazardView *)&gMainRoutineWork)
 #define ARRIVAL (*(struct ArrivalView *)&gMainRoutineWork)
 
 #define OVERLAY_CALL(index) ((s32 (*)(void))gOverlayArea[index])()
@@ -131,9 +130,9 @@ s32 FieldSequence_Run(void) {
   work->previousCell = gMapGridCellBuffer;
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     Scene_SetRestartPoint();
-    HAZARD.limit = 16;
-    HAZARD.mode = 0;
-    HAZARD.damage = 1;
+    gMainRoutineWork.hazardLimit = 16;
+    gMainRoutineWork.hazardMode = 0;
+    gMainRoutineWork.hazardDamage = 1;
     gMainRoutineWork.haltedActor = -1;
     gMainRoutineWork.cloaked = 0;
   }

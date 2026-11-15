@@ -211,17 +211,20 @@ s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target) {
   return 0;
 }
 
-s32 BattleEffect_HasMatchingEvent5(s32 effectId) {
-  u16 kind = effectId;
+/// Returns whether the scene has a trigger for the field Psynergy kind on what
+/// it would act on (Scene_SelectPsynergyTarget), at any stage.
+s32 BattleEffect_HasMatchingEvent5(s32 fieldPsynergy) {
+  u16 kind = fieldPsynergy;
   s32 result = (s32)Scene_FindPsynergyTrigger(0xf0000005, kind,
                                               Scene_SelectPsynergyTarget(kind));
 
   return (u32)((-result) | result) >> 31;
 }
 
-u32 BattleEffect_HasTrigger(u16 effectId) {
+/// Returns whether the scene has an event for item and what the leader faces.
+u32 BattleEffect_HasTrigger(u16 item) {
   s32 result;
 
-  result = Field_FindItemTrigger(effectId);
+  result = (s32)Field_FindItemTrigger(item);
   return (u32)((0 - result) | result) >> 31;
 }

@@ -181,8 +181,6 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   }
 }
 
-#define gPartyStep (*(struct PartyStepView *)&gMainRoutineWork)
-
 s32 DjinnRecovery_CountDownFar(void);
 void FieldEffect_SetAttached(s32 owner, s32 mode);
 
@@ -197,7 +195,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   struct Actor *leader = WorldMap_Unfreeze();
   s16 previousHp[8];
   struct MapCell *tile;
-  struct UnitStepView *unit;
+  struct BattleUnit *unit;
   s32 partyHurt;
   u32 partyCount;
   u32 i;
@@ -216,7 +214,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   partyCount = Party_CountMembersFar();
   for (i = 0; i < partyCount; i++)
     previousHp[i] =
-        ((struct UnitStepView *)Unit_Get(gPartyStep.activeOwners[i]))->hp;
+        ((struct BattleUnit *)Unit_Get(gMainRoutineWork.party[i]))->hp;
 
   if (*((s8 *)work + 0x18a) == 3) {
     tile = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) +
@@ -241,8 +239,9 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   if (attributes & 0xe2)
     work->pushCell = attributes;
 
-  if ((gPartyStep.renderMode <= 1 || gPartyStep.renderMode == 6 ||
-       gPartyStep.renderMode == 7) &&
+  if ((gMainRoutineWork.movementMode <= 1 ||
+       gMainRoutineWork.movementMode == 6 ||
+       gMainRoutineWork.movementMode == 7) &&
       leader != NULL && leader->targetX != TARGET_UNSET) {
     zone = 0;
     speed = leader->speedLimit;
@@ -271,33 +270,34 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
       partyHurt = Party_ApplyPoisonDamage();
     }
 
-    if (gPartyStep.hazardMode == 0 && (attributes & 8)) {
+    if (gMainRoutineWork.hazardMode == 0 && (attributes & 8)) {
       if (work->previousCell->attributeB & 8)
-        gPartyStep.hazardSteps += leader->speedLimit / Q16_ONE;
+        gMainRoutineWork.hazardSteps += leader->speedLimit / Q16_ONE;
       else
-        gPartyStep.hazardSteps = gPartyStep.hazardLimit / 2;
+        gMainRoutineWork.hazardSteps = gMainRoutineWork.hazardLimit / 2;
     }
 
-    if (gPartyStep.avoidDistance != 0 && gPartyStep.sceneVariant != 2) {
-      gPartyStep.avoidDistance -= leader->speedLimit;
-      if (gPartyStep.avoidDistance <= 0) {
-        gPartyStep.avoidDistance = 1;
+    if (gMainRoutineWork.avoidDistance != 0 &&
+        gMainRoutineWork.sceneType != 2) {
+      gMainRoutineWork.avoidDistance -= leader->speedLimit;
+      if (gMainRoutineWork.avoidDistance <= 0) {
+        gMainRoutineWork.avoidDistance = 1;
         if (work->psynergy == 0)
           work->psynergy = 0x2096;
       }
     }
   }
 
-  if (gPartyStep.hazardMode == 1) {
-    gPartyStep.hazardSteps++;
-    if ((s16)gPartyStep.hazardSteps == gPartyStep.hazardLimit / 2)
+  if (gMainRoutineWork.hazardMode == 1) {
+    gMainRoutineWork.hazardSteps++;
+    if ((s16)gMainRoutineWork.hazardSteps == gMainRoutineWork.hazardLimit / 2)
       FieldEffect_SetAttached(leaderId, 0x101);
-    if ((s16)gPartyStep.hazardSteps == gPartyStep.hazardLimit)
+    if ((s16)gMainRoutineWork.hazardSteps == gMainRoutineWork.hazardLimit)
       FieldEffect_SetAttached(leaderId, 0x100);
   }
-  if ((s16)gPartyStep.hazardSteps >= gPartyStep.hazardLimit) {
-    amount = gPartyStep.hazardDamage;
-    gPartyStep.hazardSteps = 0;
+  if ((s16)gMainRoutineWork.hazardSteps >= gMainRoutineWork.hazardLimit) {
+    amount = gMainRoutineWork.hazardDamage;
+    gMainRoutineWork.hazardSteps = 0;
     Party_AddHp(-(amount & 255), amount & 0x100);
     partyHurt++;
   }
@@ -307,11 +307,11 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
     work->survivorCount = 0;
     FieldEffect_SetAttached(leaderId, 0x102);
     for (i = 0; i < partyCount; i++) {
-      unit = Unit_Get(gPartyStep.activeOwners[i]);
+      unit = Unit_Get(gMainRoutineWork.party[i]);
       if (unit->hp > 0) {
         work->survivorCount++;
       } else if (previousHp[i] != 0) {
-        work->fallenOwners[work->fallenCount++] = gPartyStep.activeOwners[i];
+        work->fallenOwners[work->fallenCount++] = gMainRoutineWork.party[i];
         work->raisedTrigger = -1;
         unit->poison = 0;
       }
@@ -418,26 +418,29 @@ s32 Party_ApplyPoisonDamage(void) {
   return result;
 }
 
-/// In control mode 3, marks the event work busy, shows its object and, when a
-/// fade is pending, starts it at level 80 and waits 2 frames; then calls
-/// WorldMap_StartStillPictureFar.
+/// On the World Map, with no area graphics already pending: marks them
+/// pending, pauses the camera's actor and, when a screen transition is
+/// running, ends it at once and waits 2 frames; then shows the still picture
+/// (WorldMap_StartStillPictureFar).
 void WorldMap_Freeze(void) {
-  struct FxWork *work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50);
+  struct FieldWork *work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(*work));
 
-  if (*(u16 *)&work->state == 3) {
-    struct FadeWork *fade;
+  // The mode and areaGraphicsPending read as one halfword.
+  if (*(u16 *)&work->mode == ACTOR_SYSTEM_WORLD_MAP) {
+    struct ScreenTransitionState *transition;
     s32 zero;
 
-    work->busy = 1;
+    work->areaGraphicsPending = 1;
 
-    work->sprite->visible = 1;
+    work->camera->paused = 1;
     zero = 0;
-    fade = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, 0x540);
-    if (fade != NULL && fade->pending != 0) {
-      fade->level = 80;
-      fade->step = zero;
-      fade->active = 1;
-      fade->pending = zero;
+    transition =
+        HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*transition));
+    if (transition != NULL && transition->step != 0) {
+      transition->start = 80;
+      transition->end = zero;
+      transition->duration = 1;
+      transition->step = zero;
       wait(2);
     }
     WorldMap_StartStillPictureFar();
@@ -449,8 +452,9 @@ void WorldMap_Freeze(void) {
 void WorldMap_ReloadPendingAreaGraphics(void) {
   struct FieldWork *block = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50);
 
-  if (block->mode == 3 && block->unk18b != 0) {
-    block->unk18b = 0;
+  if (block->mode == ACTOR_SYSTEM_WORLD_MAP &&
+      block->areaGraphicsPending != 0) {
+    block->areaGraphicsPending = 0;
     block->camera->paused = 0;
     WorldMap_LoadAreaGraphicsFar();
   }

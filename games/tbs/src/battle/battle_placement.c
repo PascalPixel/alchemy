@@ -183,7 +183,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
     actor->scale = Q16_ONE * 5 / 4;
     break;
   case ENEMY_SLIME_SOL_SANCTUM:
-  case ENEMY_SLIME_2:
+  case ENEMY_SLIME_WORLD_MAP:
   case ENEMY_OOZE:
   case ENEMY_SLIME_BEAST:
   case ENEMY_THIEF:

@@ -275,7 +275,7 @@ enum AbilityId {
   ABILITY_FIRE_BLESSING = 420,
   /// Power 90: the Dread Hound's, the Chimera's and the Chimera Mage's.
   ABILITY_FIRE_BLESSING_STRONG,
-  /// Power 130: ENEMY_104's.
+  /// Power 130: ENEMY_UNUSED_CHIMERA's.
   ABILITY_FIRE_BLESSING_STRONGEST,
   /// Power 25: the Lizard Man's and the Living Statue's.
   ABILITY_WATER_BLESSING,
@@ -300,10 +300,10 @@ enum AbilityId {
   ABILITY_STORM_BLESSING,
   /// Power 220; no enemy's abilities hold it.
   ABILITY_STORM_BLESSING_STRONG,
-  /// Power 5: ENEMY_BAT_2's.
+  /// Power 5: ENEMY_BAT_WORLD_MAP's.
   ABILITY_SONIC_WAVE,
-  /// Power 45 against ENEMY_BAT_2's 5: the Rabid Bat's, the Clay Gargoyle's,
-  /// the Ant Lion's and the Roach's.
+  /// Power 45 against ENEMY_BAT_WORLD_MAP's 5: the Rabid Bat's, the Clay
+  /// Gargoyle's, the Ant Lion's and the Roach's.
   ABILITY_SONIC_WAVE_STRONG,
   ABILITY_SHRIEK,
   ABILITY_BANSHEE_HOWL,

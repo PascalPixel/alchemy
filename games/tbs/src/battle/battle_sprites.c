@@ -45,7 +45,7 @@ const struct BattleSpriteDefinition gBattleSprites[] = {
         .animation = 0,
     },
     // Unused: "???", in no formation.
-    [ENEMY_000] = {
+    [ENEMY_NONE] = {
         .animation = 0,
     },
     // Vermin
@@ -56,7 +56,7 @@ const struct BattleSpriteDefinition gBattleSprites[] = {
         .attackHop = 2,
     },
     // Vermin
-    [ENEMY_VERMIN_2] = {
+    [ENEMY_VERMIN_WORLD_MAP] = {
         .animation = SPRITE_BATTLE_VERMIN,
         .isSmall = 1,
         .attackEffect = 3,
@@ -78,7 +78,7 @@ const struct BattleSpriteDefinition gBattleSprites[] = {
         .attackHop = 6,
     },
     // Bat
-    [ENEMY_BAT_2] = {
+    [ENEMY_BAT_WORLD_MAP] = {
         .animation = SPRITE_BATTLE_BAT,
         .isSmall = 1,
         .attackEffect = 4,
@@ -99,7 +99,7 @@ const struct BattleSpriteDefinition gBattleSprites[] = {
         .attackEffect = 4,
     },
     // Wild Mushroom
-    [ENEMY_WILD_MUSHROOM_2] = {
+    [ENEMY_WILD_MUSHROOM_WORLD_MAP] = {
         .animation = SPRITE_BATTLE_WILD_MUSHROOM,
         .isSmall = 1,
         .attackEffect = 4,
@@ -119,7 +119,7 @@ const struct BattleSpriteDefinition gBattleSprites[] = {
         .palette = 1,
     },
     // Slime
-    [ENEMY_SLIME_2] = {
+    [ENEMY_SLIME_WORLD_MAP] = {
         .animation = SPRITE_BATTLE_SLIME,
         .isSmall = 1,
         .attackEffect = 1,
@@ -753,7 +753,7 @@ const struct BattleSpriteDefinition gBattleSprites[] = {
         .palette = 2,
         .defeatSound = 1,
     },
-    [ENEMY_104] = {
+    [ENEMY_UNUSED_CHIMERA] = {
         .animation = SPRITE_BATTLE_CHIMERA,
         .attackEffect = 2,
         .attackHop = 5,
@@ -783,18 +783,6 @@ const struct BattleSpriteDefinition gBattleSprites[] = {
         .animation = SPRITE_BATTLE_ZOMBIE,
         .attackEffect = 1,
         .defeatSound = 1,
-    },
-    // Unused: "?", in no formation.
-    [ENEMY_110] = {
-        .animation = 0,
-    },
-    // Unused: "?", in no formation.
-    [ENEMY_111] = {
-        .animation = 0,
-    },
-    // Unused: "?", in no formation.
-    [ENEMY_112] = {
-        .animation = 0,
     },
     // Kraken
     [ENEMY_KRAKEN] = {
@@ -941,7 +929,7 @@ const struct BattleSpriteDefinition gBattleSprites[] = {
         .defeatSound = 1,
         .effectHeight = 42,
     },
-    [ENEMY_135] = {
+    [ENEMY_UNUSED_TOADONPA] = {
         .animation = SPRITE_BATTLE_TOADONPA,
         .attackHop = 5,
         .palette = 5,

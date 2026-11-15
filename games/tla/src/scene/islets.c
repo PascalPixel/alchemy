@@ -123,13 +123,15 @@ void Actor_DisableById(s32 actor);
 /// The islets' people and animals, room by room, numbered by the rows of
 /// each room's placements.
 /// The dog's islet: the sailor's son, and the dog that trades.
-enum { ACTOR_SAILORS_SON = 9, ACTOR_DOG = 11 };
+/// The pacing sailor walks the dock beside him.
+enum { ACTOR_SAILORS_SON = 9, ACTOR_PACING_SAILOR = 10, ACTOR_DOG = 11 };
 /// The icebergs' islet: Pengus and Pengulina, the log pushed into the water
 /// and the healer.
 enum {
   ACTOR_PENGUS = 9,
   ACTOR_LOG = 10,
   ACTOR_PENGULINA = 19,
+  ACTOR_PRETTY_STONE_ICON = 20, ///< shows the Pretty Stone over the leader
   ACTOR_HEALER = 21
 };
 /// The cow's islet: the cow, and a blue orb lit in sprite colour 15.
@@ -141,11 +143,19 @@ enum {
   ACTOR_PIER_SAILOR = 9,
   ACTOR_BIRD = 10,
   ACTOR_CRATE_A = 12,
-  ACTOR_CRATE_B = 13
+  ACTOR_CRATE_B = 13,
+  ACTOR_PIER_PUDDLE
 };
 /// The turtle's islet: Lonesome George, who carries the party to the secret
 /// spot.
-enum { ACTOR_LONESOME_GEORGE = 9 };
+/// The Lil Turtle the party brought him swims beside him, and two unseen
+/// blocks keep the leader off the ledge below.
+enum {
+  ACTOR_LONESOME_GEORGE = 9,
+  ACTOR_LIL_TURTLE,
+  ACTOR_LEDGE_BLOCK_A,
+  ACTOR_LEDGE_BLOCK_B
+};
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -541,15 +551,15 @@ void Islets_TradeWithBird(void) {
    Actor_WalkToAndWait(actor, x, z), Event_Wait(1),                            \
    Actor_GetById(actor)->steeringFlags |= 1)
 
-/// Object 10 walks round and hands item 454 back over the leader's head.
+/// The cow walks round and hands the item back over the leader's head.
 #define HAND_BACK(leader, given, off)                                          \
   {                                                                            \
-    Actor_SetSpeed(10, 0.8);                                                   \
-    Actor_WalkToAndWait(10, 128, 164);                                         \
-    Actor_FaceDirectionAndRefreshById(10, FACING_WEST);                        \
+    Actor_SetSpeed(ACTOR_COW, 0.8);                                            \
+    Actor_WalkToAndWait(ACTOR_COW, 128, 164);                                  \
+    Actor_FaceDirectionAndRefreshById(ACTOR_COW, FACING_WEST);                 \
     Event_Wait(20);                                                            \
-    Actor_SetSpeed(10, 1.6);                                                   \
-    STEP(10, 108, 168);                                                        \
+    Actor_SetSpeed(ACTOR_COW, 1.6);                                            \
+    STEP(ACTOR_COW, 108, 168);                                                 \
     given = FieldActor_Create(489, leader->x.fixed, leader->y.fixed + px(24),  \
                               leader->z.fixed);                                \
     if (given != 0) {                                                          \
@@ -1087,14 +1097,14 @@ void Islets_GiveTurtle(void) {
       Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
       FieldPsynergy_RestoreMindReadPalette();
       Actor_SetSpeed(ACTOR_LONESOME_GEORGE, 0.8);
-      Actor_SetSpeed(10, 0.8);
+      Actor_SetSpeed(ACTOR_LIL_TURTLE, 0.8);
       Actor_GetById(ACTOR_LONESOME_GEORGE)->update = Actor_EmitSmoke;
       Actor_SetDestination(ACTOR_LONESOME_GEORGE, 288, 538);
       FieldEvent_Wait(40);
       FieldPsynergy_RestoreMindReadPalette();
       Islets_StopWaterShimmer();
-      Actor_GetById(10)->update = Actor_EmitSmoke;
-      Actor_WalkTo(10, 288, 538);
+      Actor_GetById(ACTOR_LIL_TURTLE)->update = Actor_EmitSmoke;
+      Actor_WalkTo(ACTOR_LIL_TURTLE, 288, 538);
       FieldEvent_Wait(20);
       gFieldWork->transition = STORED_AT_1AC;
       Event_FinishScreenTransition();
@@ -1154,15 +1164,15 @@ void Islets_RideBackToIsland(void) {
     FieldEvent_Wait(20);
     FieldPsynergy_RestoreMindReadPalette();
     Actor_SetSpeed(ACTOR_LONESOME_GEORGE, 1.6);
-    Actor_SetSpeed(10, 1.6);
+    Actor_SetSpeed(ACTOR_LIL_TURTLE, 1.6);
     update = (void (*)(void))Actor_EmitSmoke;
     done = (u8 *)object + 99;
     *done = 0;
     object->update = update;
     Actor_SetScript(ACTOR_LONESOME_GEORGE, gIslets_GeorgeWalksScript);
     FieldEvent_Wait(30);
-    Actor_Get(10)->update = update;
-    Actor_SetScript(10, gIslets_TurtleWalksScript);
+    Actor_Get(ACTOR_LIL_TURTLE)->update = update;
+    Actor_SetScript(ACTOR_LIL_TURTLE, gIslets_TurtleWalksScript);
     do {
       System_Wait(1);
     } while (*done == 0);
@@ -1203,11 +1213,11 @@ void Islets_OpenFieldMenu(void) {
 
 void Islets_SetLedgeBlocksByHeight(void) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed < px(40)) {
-    Actor_Get(11)->collisionFlags |= 8;
-    Actor_Get(12)->collisionFlags |= 8;
+    Actor_Get(ACTOR_LEDGE_BLOCK_A)->collisionFlags |= 8;
+    Actor_Get(ACTOR_LEDGE_BLOCK_B)->collisionFlags |= 8;
   } else {
-    Actor_Get(11)->collisionFlags &= ~8;
-    Actor_Get(12)->collisionFlags &= ~8;
+    Actor_Get(ACTOR_LEDGE_BLOCK_A)->collisionFlags &= ~8;
+    Actor_Get(ACTOR_LEDGE_BLOCK_B)->collisionFlags &= ~8;
   }
 }
 
@@ -1301,7 +1311,7 @@ void Islets_PengusGivesPrettyStone(void) {
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  item = Actor_GetById(20);
+  item = Actor_GetById(ACTOR_PRETTY_STONE_ICON);
   item->motionFlags = 0;
   FieldActor_SetItemIcon(item, ITEM_PRETTY_STONE);
   FieldActor_SetPositionAndResetMotion(
@@ -1310,7 +1320,7 @@ void Islets_PengusGivesPrettyStone(void) {
   FieldPsynergy_RestoreMindReadPalette();
   Party_GiveItem(ITEM_PRETTY_STONE, 0);
   FieldPsynergy_GreyMindReadPalette();
-  Actor_SetPosition(20, 0, 0);
+  Actor_SetPosition(ACTOR_PRETTY_STONE_ICON, 0, 0);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   FieldPsynergy_StopMindReadWave();
   Actor_FaceDirectionAndWait(ACTOR_PENGUS, FACING_NORTH_NORTHWEST);
@@ -1725,11 +1735,11 @@ extern u32 gIslets_TurtleTurnsScript[];
 /// Japanese edition starts no screen transition here.
 void Islets_ArriveBackAtIsland(void) {
   struct Actor *leader = OBJECT(gMainRoutineWork.leaderActorId);
-  struct Actor *guide = OBJECT(9);
+  struct Actor *guide = OBJECT(ACTOR_LONESOME_GEORGE);
   u8 *done;
 
   Actor_MoveToObject(ACTOR_LONESOME_GEORGE, gMainRoutineWork.leaderActorId);
-  Actor_SetPosition(10, 240, 540);
+  Actor_SetPosition(ACTOR_LIL_TURTLE, 240, 540);
   System_Wait(1);
   guide->facing = FACING_SOUTH;
   leader->update = Islets_RideOnLonesomeGeorge;
@@ -1744,19 +1754,19 @@ void Islets_ArriveBackAtIsland(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_SetSpeed(ACTOR_LONESOME_GEORGE, 0.8);
-  Actor_SetSpeed(10, 0.8);
-  OBJECT(10)->update = Actor_EmitSmoke;
+  Actor_SetSpeed(ACTOR_LIL_TURTLE, 0.8);
+  OBJECT(ACTOR_LIL_TURTLE)->update = Actor_EmitSmoke;
   guide->update = Actor_EmitSmoke;
   done = (u8 *)guide + 0x63;
   *done = 0;
   Actor_StartScript((s32)guide, gIslets_TurtleSwimsScript);
-  Actor_SetScript(10, gIslets_TurtleTurnsScript);
+  Actor_SetScript(ACTOR_LIL_TURTLE, gIslets_TurtleTurnsScript);
   do
     System_Wait(1);
   while (*done == 0);
   leader->update = 0;
   guide->update = 0;
-  OBJECT(10)->update = 0;
+  OBJECT(ACTOR_LIL_TURTLE)->update = 0;
   Actor_FaceDirectionAndWait(ACTOR_LONESOME_GEORGE, FACING_NORTH);
   FieldPsynergy_StartMindReadWave(gMainRoutineWork.leaderActorId, 9);
   FieldEvent_SetMessageId(MsgWellHereWe);
@@ -1801,11 +1811,11 @@ s32 Scene_Initialize(void) {
 
 void Islets_SetDockBlocksByHeight(void) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > px(8)) {
-    Actor_Get(9)->collisionFlags &= ~8;
-    Actor_Get(10)->collisionFlags &= ~8;
+    Actor_Get(ACTOR_SAILORS_SON)->collisionFlags &= ~8;
+    Actor_Get(ACTOR_PACING_SAILOR)->collisionFlags &= ~8;
   } else {
-    Actor_Get(9)->collisionFlags |= 8;
-    Actor_Get(10)->collisionFlags |= 8;
+    Actor_Get(ACTOR_SAILORS_SON)->collisionFlags |= 8;
+    Actor_Get(ACTOR_PACING_SAILOR)->collisionFlags |= 8;
   }
 }
 
@@ -1817,8 +1827,8 @@ void Islets_InitializeDog(void) {
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   map->mode = 1;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_DOG), 0);
-  Actor_SetSpeed(10, 0.8);
-  Actor_Get(10)->collisionFlags |= 0x80;
+  Actor_SetSpeed(ACTOR_PACING_SAILOR, 0.8);
+  Actor_Get(ACTOR_PACING_SAILOR)->collisionFlags |= 0x80;
   if (Event_GetFlag(0xaa1)) {
     spawned = FieldActor_Create(489, px(280), 0, px(840));
     if (spawned != 0) {
@@ -2047,8 +2057,8 @@ void Islets_InitializePier(void) {
     Islets_SetCellCollision(first->x.fixed, first->z.fixed, 3, 255);
     Islets_SetCellCollision(second->x.fixed, second->z.fixed, 3, 255);
   }
-  Actor_DisableById(14);
-  last = Actor_Get(14);
+  Actor_DisableById(ACTOR_PIER_PUDDLE);
+  last = Actor_Get(ACTOR_PIER_PUDDLE);
   {
     s32 still = 0;
 
@@ -2083,8 +2093,8 @@ void Islets_InitializeTurtle(void) {
   PaletteCycle_Add(4, 12, 5, 4);
   if (Event_GetFlag(0xaa5) &&
       (done = Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) == 0) {
-    Actor_SetPosition(10, 280, 468);
-    Actor_Get(10)->motionFlags = done;
+    Actor_SetPosition(ACTOR_LIL_TURTLE, 280, 468);
+    Actor_Get(ACTOR_LIL_TURTLE)->motionFlags = done;
     {
       s32 a1 = 0x1280000;
 
@@ -2092,8 +2102,8 @@ void Islets_InitializeTurtle(void) {
     }
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_LONESOME_GEORGE), 0);
-  Actor_SetSpriteFlags(Actor_Get(11), 0);
-  Actor_SetSpriteFlags(Actor_Get(12), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_LEDGE_BLOCK_A), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_LEDGE_BLOCK_B), 0);
   FieldTask_AddFrame(Islets_SetLedgeBlocksByHeight, TASK_PASS_VBLANK);
   if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
     Event_SetFlag(FLAG_SCENE_TEMP_17);
@@ -2103,7 +2113,7 @@ void Islets_InitializeTurtle(void) {
 
         Actor_SetPositionAndFacing(ACTOR_LONESOME_GEORGE, px(152), px(768), a3);
       }
-      Actor_SetPosition(10, 176, 777);
+      Actor_SetPosition(ACTOR_LIL_TURTLE, 176, 777);
       System_Wait(1);
     }
   }

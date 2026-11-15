@@ -3,6 +3,6 @@
 /// The digits String_FormatHex writes, one per nibble.
 const u8 gString_HexDigits[] = "0123456789ABCDEF";
 
-/// 2^32 / 10 rounded up, the reciprocal String_FormatDecimal multiplies by
-/// to divide by ten. No code refers to this copy.
-const u32 gData_08017ce4 = 0x1999999a;
+/// Unused: one tenth as a 32-bit fraction, 2^32 / 10 rounded up, the multiplier
+/// String_FormatDecimal divides by ten with; nothing reads this copy.
+const u32 gString_OneTenth = 0xffffffffU / 10 + 1;

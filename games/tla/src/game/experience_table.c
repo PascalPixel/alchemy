@@ -145,6 +145,6 @@ const u32 gCharacter_LevelExpTable[] = {
 };
 // clang-format on
 
-/// One tenth as a 32-bit fraction, the reciprocal the divide-by-ten code
-/// multiplies by; nothing found reads this copy.
-const u32 Data_080b1f28 = 0x1999999a;
+/// Unused: one tenth as a 32-bit fraction, as gString_OneTenth; nothing reads
+/// this copy.
+const u32 gExperience_OneTenth = 0xffffffffU / 10 + 1;

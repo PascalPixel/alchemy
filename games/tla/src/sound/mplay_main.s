@@ -998,6 +998,6 @@ Func_081c0c0c:
 	pop {pc}
 	bx r3
 .L_081c0c10:
-	.4byte gData_03007ff0
+	.4byte gSoundInfoPointer
 .L_081c0c14:
 	.4byte 0x68736d53

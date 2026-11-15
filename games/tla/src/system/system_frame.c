@@ -63,7 +63,7 @@ void System_WaitForFrameInterrupt(void) {
     gVBlankDone &= ~1;
     gSoundVBlankState.lastVBlank = gVBlankCount;
     gSoundVBlankState.updating = 1;
-    sound = gData_03007ff0;
+    sound = gSoundInfoPointer;
     if (sound[4] <= 1)
       gSoundVBlankState.transferCountdown = sound[11];
     else
@@ -400,7 +400,7 @@ void System_VBlankHandler(void) {
     sound = &gSoundVBlankState;
     vblankCount = *count;
     if (sound->lastVBlank != (u8)vblankCount && sound->updating == 0) {
-      sound->transferCountdown = gData_03007ff0[4];
+      sound->transferCountdown = gSoundInfoPointer[4];
       Sound_UpdateBgmRampsFar();
       if (SoundDriver_EnterVBlankUpdate() == 0) {
         void (*render)(s32) = IwramSoundRenderVBlank;

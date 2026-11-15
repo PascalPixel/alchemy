@@ -134,7 +134,12 @@ extern u16 *gDebugTextCursor;
 extern const u8 Resource_DecodeHalfwordLzCode[];
 extern u8 Resource_DecompressHalfwordsCodeSize[];
 
-extern u8 *gData_03007ff0;
+/// Where the sound driver finds its work (SOUND_INFO_PTR): a pointer to
+/// gSoundInfo, whose bytes the frame wait reads.
+// XXX: typed as struct SoundInfo *, transferCountdown's volatile read is not
+// combined and the frame wait's registers move; whether the driver's own
+// struct is right to make it volatile would settle the type.
+extern u8 *gSoundInfoPointer;
 
 s32 SoundDriver_EnterVBlankUpdate(void);
 

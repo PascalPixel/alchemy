@@ -12,8 +12,8 @@ gCartridgeResetMarker:
 	.global gBuildStamp
 gBuildStamp:
 	.space 0x000007ec
-	.global gData_03007ff0
-gData_03007ff0:
+	.global gSoundInfoPointer
+gSoundInfoPointer:
 	.space 0x0000000c
 	.global gIrqVector
 gIrqVector:

@@ -378,9 +378,6 @@ void WindowSprite_ClearList(void *work) {
     list->head = next;
     while (node != NULL) {
       next = node->next;
-      /// Frees a window sprite: returns it to the free list, releases its VRAM
-      /// cache entry unless it is a glyph, and for a portrait frees its palette
-      /// slot too.
       WindowSprite_Release(node);
       node = next;
     }
@@ -474,6 +471,8 @@ void WindowSprite_AppendToList(struct WindowSpriteList *list,
   }
 }
 
+/// Frees a window sprite: returns it to the free list, releases its VRAM cache
+/// entry unless it is a glyph, and for a portrait frees its palette slot too.
 void WindowSprite_Release(struct WindowSprite *entry) {
   WindowSprite_ReleaseFree(entry);
   if ((u8)entry->kind != 0) {

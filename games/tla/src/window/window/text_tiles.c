@@ -540,6 +540,8 @@ void Text_SetStyle(s32 value) {
 void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                                  s32 y);
 
+/// Decodes a message and draws it into a text canvas window at pixel (x, y),
+/// all at once.
 void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y) {
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u16 *counter = &canvas->textBufferEnd;

@@ -113,8 +113,6 @@ void Window_DrawZoomBorder(struct Window *window, s32 save_position) {
       Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
   height = scratch.result >> 15;
 
-  /// Draws an empty window: a border around a filled interior, at tile (x, y)
-  /// of width by height tiles, and frees the text tiles the rectangle showed.
   Window_DrawBorder(x, y, width, height);
   if (save_position != 0) {
     window->previousX = x;
@@ -136,6 +134,8 @@ u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count) {
 
 u16 *Memory_FillHalfwordsDma(u16 *destination, s32 value, s32 count);
 
+/// Draws an empty window: a border around a filled interior, at tile (x, y) of
+/// width by height tiles, and frees the text tiles the rectangle showed.
 void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u16 *cursor = &canvas->tilemap[y][x];

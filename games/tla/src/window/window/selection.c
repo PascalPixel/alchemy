@@ -532,8 +532,6 @@ void SelectionMenu_Close(void) {
     }
     node = node->next;
   }
-  /// Frees the large command icon, if it is shown. The large preview owns a
-  /// cache slot independently of the visible row icons.
   Resource_ResetPendingTransfer();
   if (state->records[0].y != 0) {
     VramCache_FreeEntry(state->records[0].slot);
@@ -1198,8 +1196,6 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   screen->records[1].kind = 0;
   screen->records[SELECTION_RECORD_HAND].kind = 0;
   screen->records[SELECTION_RECORD_HAND].scale = 0;
-  /// Frees the large icon's VRAM cache entry, if it holds one, and marks it
-  /// empty.
   Resource_ResetPendingTransfer();
   node = screen->head;
   while (node != NULL && screen->cursorIndex != cnt) {
@@ -1375,6 +1371,8 @@ void SelectionMenu_LoadLargeIcon(void) {
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
 
+/// Frees the large icon's VRAM cache entry, if it holds one, and marks it
+/// empty.
 void Resource_ResetPendingTransfer(void) {
   struct SelectionNode *transfer =
       &((struct SelectionScreen *)Ram_HeapSlots->selectionMenu)

@@ -510,7 +510,6 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->sideMember[0] = menu->sideMember[1];
         menu->selectedItems[0] &= 0x1ff;
 #if TLA_PATCH_2
-        /// Makes the item menu's message window six tiles high.
         ItemMenu_SetMessageWindowHeight6();
 #endif
         WindowSprite_RedrawSavedRectFar((struct Window *)menu->questionWindow);
@@ -2383,6 +2382,7 @@ void ItemMenu_SetMessageWindowHeight5(void) {
   Window_SetBounds(ITEM_MENU->questionWindow, 13, 0, 17, 5);
 }
 
+/// Makes the item menu's message window six tiles high.
 void ItemMenu_SetMessageWindowHeight6(void) {
   Window_SetBounds(ITEM_MENU->questionWindow, 13, 0, 17, 6);
 }

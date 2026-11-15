@@ -79,7 +79,9 @@ void BattleHighlight_SetModesFar(u16 *, s32);
 void SpriteDissolve_RunManyFar(void **, s32);
 void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
                                         s32 z);
+/// Sets the timer step of every sprite of an actor (16 is normal speed).
 void Actor_SetAnimationSpeedFar(struct Actor *object, s32 value);
+/// Sets the unit's HP, kept between 0 and its maximum, and updates its gauges.
 void Unit_SetHpFar(struct BattleUnit *, s32);
 void MessageArgument_ClearAllFar(void);
 void BattleMessage_CloseFar(void);
@@ -158,6 +160,7 @@ struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
 void FieldPsynergy_Cyclone(void);
 void BattleObject_SpawnObjectsForList(s16 *list, s32 refresh, s32 spawn);
 void BattleEffect_RunCanvasBurst(struct BattleEffectParams *effect, u32 mode);
+/// Clears the flag, returning nothing where GameFlag_SetFar returns its byte.
 void GameFlag_ClearFar(s32 flag);
 void GameFlag_SetFar(s32 flag);
 s32 SpriteDissolve_RunFar(void *object);
@@ -165,6 +168,8 @@ void Actor_ReleaseFar(struct Actor *object);
 void Actor_SnapToTerrain(void *object);
 s32 Enemy_GetAttackElement(void *state);
 #ifndef OWN_Unit_CalculateFar
+/// Works a unit's stats out again from its base stats, equipment, set Djinn,
+/// class and battle stat levels, keeping its HP and PP at the same fraction.
 void Unit_CalculateFar(s32);
 #endif
 s32 Party_CountMembersFar(void);

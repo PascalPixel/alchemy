@@ -177,6 +177,8 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   return 256;
 }
 
+/// Composes an inventory icon with the requested layers and loads it into
+/// cacheSlot. The temporary glyph block is released after the upload.
 s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
   GlyphTransfer *work;
 

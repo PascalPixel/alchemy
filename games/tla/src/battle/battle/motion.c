@@ -276,8 +276,6 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
 
   SET_POSITION(&pos, (x1 + x2) / 2, 0, (z1 + z2) / 2);
 
-  /// Does nothing; BattleMotion_ApplyPairMidpoint, its only caller, passes it a
-  /// position and a distance.
   BattleMotion_MidpointNoOp(&pos, 0x1000);
 }
 

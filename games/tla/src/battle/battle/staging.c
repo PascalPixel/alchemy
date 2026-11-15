@@ -220,10 +220,6 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       BattleStaging_RunAttack(&battle->plan, 2);
       break;
     case STAGING_SUMMON:
-      /// Plays a summon or a full-screen Psynergy: the unit glows in its
-      /// element and the other side fades out while the effect plays, then
-      /// everyone fades back in. STAGING_HIDE_ACTOR hides the unit too, as the
-      /// summons do.
       BattleStaging_HideField(&battle->plan, STAGING_HIDE_ACTOR);
       break;
     case STAGING_FULL_SCREEN:
@@ -433,6 +429,9 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   return completed;
 }
 
+/// Plays a summon or a full-screen Psynergy: the unit glows in its element and
+/// the other side fades out while the effect plays, then everyone fades back
+/// in. STAGING_HIDE_ACTOR hides the unit too, as the summons do.
 s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   u16 units[14];
   struct BattlePresentationWork work;

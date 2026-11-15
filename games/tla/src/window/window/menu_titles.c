@@ -416,6 +416,9 @@ s32 Link_CreateCountdownLabelWindow(void) {
   return win;
 }
 
+/// Decodes command icon `icon` (ResourceId_CommandIcons, 1 KB of 256-colour
+/// pixels) in a block taken from HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache
+/// entry `slotIndex` with it and returns the entry's first tile.
 s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
   GlyphTransfer *buffer =
       HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));

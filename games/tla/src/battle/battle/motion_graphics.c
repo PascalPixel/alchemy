@@ -312,6 +312,9 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
   }
 }
 
+/// Plays an attack: the attacker runs up to its first target and the blow
+/// lands. A miss makes the target hop back ("nimbly dodges the blow"); a
+/// critical hit zooms in on the pair with only the two of them shown.
 s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
   void *object;

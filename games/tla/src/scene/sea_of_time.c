@@ -1099,41 +1099,27 @@ void SeaOfTime_AnimateSea(void) {
 
     if ((gFrameCount & 3) == 0) {
       u16 color = BG_PLTT[15];
-      s32 red = RGB_RED(color);
-      s32 green = RGB_GREEN(color);
-      s32 blue = RGB_BLUE(color);
-      s32 flag = GameFlag_Get(FLAG_SCENE_TEMP_00);
-      /* FAKEMATCH(temporary): each channel shifted up after the flag test. */
-      u32 greenBits = green << 16;
-      u32 redBits = red << 16;
-      u32 blueBits = blue << 16;
+      u16 red = RGB_RED(color);
+      u16 green = RGB_GREEN(color);
+      u16 blue = RGB_BLUE(color);
 
-      if (flag == 0) {
-        u32 step = (u16)gSeaOfTime_RedPulseStep[0];
-        u32 sum = (u16)(redBits >> 16) + step;
-        red = (s16)sum;
-        if ((u16)sum < 18) {
+      if (GameFlag_Get(FLAG_SCENE_TEMP_00) == 0) {
+        red += gSeaOfTime_RedPulseStep[0];
+        if (red < 18) {
           red = 18;
           gSeaOfTime_RedPulseStep[0] = 1;
-        } else if ((u16)sum > 31) {
+        } else if (red > 31) {
           red = RGB_LEVEL_MAX;
           gSeaOfTime_RedPulseStep[0] = -1;
         }
-      } else {
-        if (gFieldWork->raisedTrigger == RAISED_START_WAVES) {
-          u16 current = redBits >> 16;
-          if (current != 0)
-            red = (s16)(u16)(current - 1);
-        } else if (gFieldWork->raisedTrigger == 201) {
-          u16 current = redBits >> 16;
-          if (current < 30)
-            red = current + 1;
-        }
+      } else if (gFieldWork->raisedTrigger == RAISED_START_WAVES) {
+        if (red != 0)
+          red--;
+      } else if (gFieldWork->raisedTrigger == RAISED_STOP_WAVES) {
+        if (red < 30)
+          red++;
       }
-      {
-        u16 last = red;
-        BG_PLTT[15] = (blueBits >> 6) | (greenBits >> 11) | (last & 31);
-      }
+      BG_PLTT[15] = RGB(red & RGB_LEVEL_MAX, green, blue);
     }
   }
 

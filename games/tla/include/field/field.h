@@ -22,8 +22,6 @@ struct Actor;
 struct ScreenPoint;
 
 extern const s32 gCamera_FixedViewMatrix[];
-extern s32 gIwram_Data1;
-extern s32 gIwram_Data2;
 extern u8 gSpriteDissolve_PixelOrder[];
 extern const s32 gActor_DefaultScript[];
 extern const u8 gWorldMap_TerrainBehaviorTable[];
@@ -162,7 +160,6 @@ struct Sprite;
 struct RenderInput;
 struct ScriptOperands;
 struct SpritePlacement;
-struct TouchOwner;
 struct TriggerView;
 
 typedef void (*DrawFn)(const void *src, void *dst, s32 param);
@@ -239,16 +236,6 @@ struct DiceSprites {
 struct DiceCamera {
   s32 eye[3];
   s32 focus[3];
-};
-
-struct TouchWork {
-  u8 unused[16]; ///< no code names it
-  struct TouchOwner *owner;
-  u8 unk14[4];
-  s16 argument0;
-  s16 argument1;
-  u8 unusedB[2]; ///< no code names it
-  s16 kind;
 };
 
 struct ScriptChannel {
@@ -702,88 +689,6 @@ struct RopeWork {
 };
 
 #define ROPE_WORK ((struct RopeWork *)Ram_HeapSlots->rope)
-
-struct LinkedEffectVisual {
-  u8 unused[9]; ///< no code names it
-  u8 flags;
-  u8 unusedAfterFlags[16]; ///< no code names it
-  u8 value26;
-};
-
-struct LinkedEffectObject {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[60];
-  struct LinkedEffectVisual *visual;
-  u8 value54;
-  u8 value55;
-  u8 unusedB[14]; ///< no code names it
-  u16 counter;
-  u16 resourceId;
-  struct LinkedEffectObject *resource;
-  void (*callback)(void);
-};
-
-struct ObjectLayerAnimation {
-  u8 unused[9]; ///< no code names it
-  u8 unused09 : 2;
-  u8 layer : 2;
-  u8 unusedAfterLayer[27]; ///< no code names it
-  u8 unused25 : 2;
-  u8 shadowLayer : 2;
-};
-
-struct ObjectAnimation {
-  u8 unused[0x18]; ///< no code names it
-  u8 unk18;
-  u8 unusedB[0x0f]; ///< no code names it
-  s16 *definition;  ///< the sprite definition, its animation id first
-};
-
-struct JumpSprite {
-  u8 unused[26]; ///< no code names it
-  u8 flags;
-};
-
-struct ClimbSprite {
-  u8 unused[26]; ///< no code names it
-  u8 flags;
-};
-
-struct GrabSave {
-  u8 unused[98]; ///< no code names it
-  u8 priority;
-};
-
-struct BattleEffectVisual {
-  u8 unused[9]; ///< no code names it
-  u8 flags;
-  u8 unusedAfterFlags[16]; ///< no code names it
-  u8 value26;
-};
-
-struct BattleEffectResource {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[60];
-  struct BattleEffectVisual *visual;
-};
-
-struct BattleEffectWatchedObject {
-  u8 unused[80]; ///< no code names it
-  struct BattleEffectVisual *visual;
-  u8 value54;
-  u8 value55;
-  u8 unusedB[14]; ///< no code names it
-  u16 counter;
-  u16 resourceId;
-  struct BattleEffectResource *resource;
-  void (*callback)(void);
-};
 
 struct AnimationGroup {
   u8 unused[0x16]; ///< no code names it

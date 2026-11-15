@@ -702,7 +702,7 @@ counted:
         difference = -FIELD_BLOCKED_TURN_MAX;
       actor->facing += difference;
     }
-    wakeTimer = (u8 *)actor + 98;
+    wakeTimer = &actor->wakeTimer;
     *wakeTimer = 0;
   } else {
     s32 speed;
@@ -714,13 +714,13 @@ counted:
     actor->velocityZ = 0;
     Vector_AddPolarOffset(speed, (u16)heading,
                           (struct FieldPosition *)&actor->velocityX);
-    wakeTimer = (u8 *)actor + 98;
+    wakeTimer = &actor->wakeTimer;
     if (*wakeTimer != 0)
       (*wakeTimer)--;
   }
   // The retest reads through the actor, not wakeTimer: that keeps its
   // zero path from skipping it.
-  if (((u8 *)actor)[98] == 0 && collision == 0) {
+  if (actor->wakeTimer == 0 && collision == 0) {
     effect = Actor_Create(0x164, actor->x.fixed, actor->y.fixed,
                           actor->z.fixed - px(2));
     if (effect != NULL) {
@@ -730,7 +730,7 @@ counted:
       effect->priorityFlags = 8;
       // Through a struct member: as a byte offset the store holds back the
       // stack read of collision after it.
-      ((struct Unk_WakeActor *)effect)->unk63 = 100;
+      effect->wakeFrames = 100;
       effect->motionFlags = 0;
       Sound_PlayFar(SE_SAND_MOVE);
       if (sprite != NULL) {

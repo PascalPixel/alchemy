@@ -158,6 +158,18 @@ struct Actor {
       /// A block's: nonzero while it blocks the cells ahead of and behind it.
       u8 riseEnabled;
     };
+    /// The ship on the World Map (FieldMoveByKeys): frames to its next wake,
+    /// and a wake's own frames.
+    struct {
+      u8 unusedBeforeWake[2]; ///< refused and frozen
+      u8 wakeTimer;           ///< frames to the ship's next wake
+      u8 wakeFrames;          ///< a wake's frames left
+    };
+    /// The leader while it crosses a rope or tightrope.
+    struct {
+      u8 unusedBeforeSavedPriority[2]; ///< refused and frozen
+      u8 savedSpritePriority; ///< its sprite's priority, given back after
+    };
   };
   /// Two halfwords whose meaning depends on what runs the actor.
   union {

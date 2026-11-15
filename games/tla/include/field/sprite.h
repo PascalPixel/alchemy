@@ -145,6 +145,26 @@ STATIC_ASSERT(offsetof(struct Sprite, shadow) == 0x1c);
 STATIC_ASSERT(sizeof(struct Sprite) == 0x38);
 STATIC_ASSERT(offsetof(struct Sprite, entries) == 0x28);
 
+/// An actor's sprite (struct Sprite) as the code that sets its image and shadow
+/// priorities reads it (the actors' freeze and placement, an actor taking the
+/// leader's layer): a byte at a time, under struct Sprite's names.
+struct PlacedSprite {
+  u8 unused[9];    ///< no code names it
+  u8 tileHigh : 2; ///< tile number bits 9..8
+  u8 priority : 2;
+  u8 palette : 4;
+  u8 unusedB[2]; ///< no code names it
+  s32 scale;     ///< 16.16 fixed point
+  u8 slot;
+  u8 retainCacheEntry;               ///< bit 0
+  u8 unusedAfterRetainCacheEntry[7]; ///< no code names it
+  u8 dirty;
+  u8 unusedAfterDirty[0x0b]; ///< no code names it
+  u8 shadowTileHigh : 2;
+  u8 shadowPriority : 2;
+  u8 shadowPalette : 4;
+};
+
 /// Animation numbers of a person's sprite, for Actor_SetAnimation. A sprite
 /// that is not a person (a bird, a dragon, a pillar) numbers its own.
 enum ActorAnimation {

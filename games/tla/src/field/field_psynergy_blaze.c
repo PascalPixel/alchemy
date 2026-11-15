@@ -33,8 +33,9 @@ struct ObjectMetadata *Resource_GetMetadataRecordFarFar__psynergy(
 #define Resource_GetMetadataRecordFarFar                                       \
   Resource_GetMetadataRecordFarFar__psynergy
 
-#define OBJECT_DEFINITION(object)                                              \
-  (((struct ObjectAnimation *)(object)->sprite)->definition)
+/// The first layer of an actor's sprite.
+#define ACTOR_FIRST_LAYER(actor)                                               \
+  (((struct Sprite *)(actor)->sprite)->entries[0])
 
 /// Blaze: a jet of flame sprays from the caster, with smoke, for up to 80
 /// frames or until B is pressed: red, or violet, yellow or blue to match the
@@ -76,7 +77,7 @@ void FieldPsynergy_Blaze(void) {
   look = 0;
   object = scene->child;
   if (Actor_GetSpriteIdFar(object) == 418) {
-    kind = ((u8 *)OBJECT_DEFINITION(object))[5];
+    kind = ACTOR_FIRST_LAYER(object)->colorMode;
     if (kind == 4)
       look = 1;
     if (kind == 1)
@@ -93,14 +94,14 @@ void FieldPsynergy_Blaze(void) {
     best = 9999;
     for (i = 0; i < 80; i++) {
       cursor.object = event->actors[i];
-      id = OBJECT_DEFINITION(cursor.object)[0];
+      id = ACTOR_FIRST_LAYER(cursor.object)->animationId;
       if (cursor.object != NULL && cursor.object->script != NULL &&
           (id == 410 || id == 304 || id == 386 || id == 418)) {
         distance = Field_MeasurePsynergyReach(scene->fieldPsynergy,
                                               scene->firstActorId, i);
         if (distance != -1 && best > distance) {
           height = Resource_GetMetadataRecordFarFar(
-                       OBJECT_DEFINITION(cursor.object)[0])
+                       ACTOR_FIRST_LAYER(cursor.object)->animationId)
                        ->height
                    << 16;
           work->mode = 1;
@@ -119,10 +120,10 @@ void FieldPsynergy_Blaze(void) {
     else
       work->mode = 3;
     if (scene->child != NULL)
-      height =
-          Resource_GetMetadataRecordFarFar(OBJECT_DEFINITION(scene->child)[0])
-              ->height
-          << 16;
+      height = Resource_GetMetadataRecordFarFar(
+                   ACTOR_FIRST_LAYER(scene->child)->animationId)
+                   ->height
+               << 16;
     else
       height = px(20);
     work->origin[0] = scene->x;

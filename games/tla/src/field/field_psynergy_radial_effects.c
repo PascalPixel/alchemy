@@ -1756,8 +1756,10 @@ void FieldPsynergy_GatherNearbyCells(void) {
   event->cycloneLiftX = -1;
   event->cycloneLiftZ = -1;
   for (i = 0; i <= 20; i++) {
-    x = owner->x.fixed + (gFieldPsynergy_NearbyCellOffsets[i * 2] << 20);
-    z = owner->z.fixed + (gFieldPsynergy_NearbyCellOffsets[i * 2 + 1] << 20);
+    x = owner->x.fixed +
+        FIELD_CELL_ORIGIN(gFieldPsynergy_NearbyCellOffsets[i * 2]);
+    z = owner->z.fixed +
+        FIELD_CELL_ORIGIN(gFieldPsynergy_NearbyCellOffsets[i * 2 + 1]);
     kind = MapGrid_GetCycloneCellKind(x, z, owner->layer);
     // position[1] is never set: only x and z reach Field_MeasurePsynergyHeight.
     position[0] = x;
@@ -1802,16 +1804,17 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 /// owner's layer, sorts the distinct ids and runs each one's event for the
 /// effect's kind.
 void FieldPsynergy_RunTouchedEvents(void) {
-  struct TouchWork *work = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
   struct TouchCell *cells = (struct TouchCell *)gFieldWork->psynergyCells;
-  struct TouchOwner *owner = work->owner;
+  struct Actor *caster = effectWork->mainActor;
   s32 count = 0;
   s16 ids[24];
   s32 i, j;
 
   for (i = 0; cells[i].x != -1; i++) {
-    s16 id = MapGrid_GetCellBehavior(cells[i].x << 20, cells[i].z << 20,
-                                     owner->layer);
+    s16 id =
+        MapGrid_GetCellBehavior(FIELD_CELL_ORIGIN(cells[i].x),
+                                FIELD_CELL_ORIGIN(cells[i].z), caster->layer);
 
     for (j = 0; j < count; j++) {
       if (ids[j] == id)
@@ -1838,10 +1841,11 @@ void FieldPsynergy_RunTouchedEvents(void) {
   for (i = 0; ids[i] != -1; i++) {
     s32 id = ids[i];
     s32 event = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS),
-                                          work->kind, id);
+                                          effectWork->fieldPsynergy, id);
 
     if (event != 0)
-      Field_RunPsynergyEvent(event, work->argument0, work->argument1);
+      Field_RunPsynergyEvent(event, effectWork->firstActorId,
+                             effectWork->secondActorId);
   }
 }
 
@@ -1875,7 +1879,9 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
 
       MapGrid_CopyCellPictureCellsRectFar(sourceX + x, sourceZ + z, 1, 1,
                                           windowX + x, windowZ + z);
-      MapGrid_GetCellAt(cell[i].x << 20, cell[i].z << 20, 2)->collisionCode = 0;
+      MapGrid_GetCellAt(FIELD_CELL_ORIGIN(cell[i].x),
+                        FIELD_CELL_ORIGIN(cell[i].z), 2)
+          ->collisionCode = 0;
       n = gTouchCopies.count;
       if (n < 64) {
         gTouchCopies.copies[n].toX = sourceX + x;
@@ -1908,6 +1914,8 @@ void TileCopies_Restore(void) {
 
     MapGrid_CopyCellPictureCellsRectFar(entry[0], entry[1], 1, 1, entry[2],
                                         entry[3]);
-    MapGrid_GetCellAt(entry[4] << 20, entry[5] << 20, 2)->collisionCode = 0;
+    MapGrid_GetCellAt(FIELD_CELL_ORIGIN(entry[4]), FIELD_CELL_ORIGIN(entry[5]),
+                      2)
+        ->collisionCode = 0;
   }
 }

@@ -60,26 +60,6 @@ struct MotionScript {
   s32 word[1];
 };
 
-/// An actor's sprite (struct Sprite) as the actors' freeze and placement
-/// read it: its image and shadow priorities, a byte at a time, under struct
-/// Sprite's names.
-struct PlacedSprite {
-  u8 unused[9];    ///< no code names it
-  u8 tileHigh : 2; ///< tile number bits 9..8
-  u8 priority : 2;
-  u8 palette : 4;
-  u8 unusedB[2]; ///< no code names it
-  s32 scale;     ///< 16.16 fixed point
-  u8 slot;
-  u8 retainCacheEntry;               ///< bit 0
-  u8 unusedAfterRetainCacheEntry[7]; ///< no code names it
-  u8 dirty;
-  u8 unusedAfterDirty[0x0b]; ///< no code names it
-  u8 shadowTileHigh : 2;
-  u8 shadowPriority : 2;
-  u8 shadowPalette : 4;
-};
-
 /// A point the fixed camera looks from or at.
 struct ActorCameraPoint {
   s32 x; ///< 16.16 fixed-point pixels
@@ -189,11 +169,6 @@ struct MapScrollWork {
   u8 enabled[3];
   u8 unusedAfterEnabled; ///< no code names it
   struct MapLayerScroll layers[3];
-};
-
-struct Unk_WakeActor {
-  u8 unused[0x63]; ///< no code names it
-  u8 unk63;
 };
 
 struct Unk_ClimbEventWork {

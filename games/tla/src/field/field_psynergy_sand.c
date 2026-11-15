@@ -120,7 +120,7 @@ void FieldPsynergy_DecodePicture(struct PictureSource *source, void *buffer,
   if (!decoderLoaded)
     HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
 }
-#undef OBJECT_DEFINITION
+#undef ACTOR_FIRST_LAYER
 #undef SCRIPT_OBJECT_COUNT
 #undef EVENT_MODE_NO_CELL_TEST
 #undef PICTURE_FORMAT_TYPE01

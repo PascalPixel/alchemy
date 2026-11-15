@@ -57,7 +57,8 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
 
       MapGrid_CopyCellPictureCellsRectFar(toX + dx, toZ + dz, 1, 1, x + dx,
                                           z + dz);
-      MapGrid_GetCellAt(cx << 20, cz << 20, 2)->collisionCode = 0;
+      MapGrid_GetCellAt(FIELD_CELL_ORIGIN(cx), FIELD_CELL_ORIGIN(cz), 2)
+          ->collisionCode = 0;
       n = gTouchCopies.count;
       if (n < 64) {
         gTouchCopies.copies[n].toX = toX + dx;
@@ -157,8 +158,8 @@ void ParticleBurst_Start(void) {
   u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = effect->mainActor;
   struct BurstCell *cell = (struct BurstCell *)(event + 0xcc0);
-  s32 dx = (cell->x << 20) - owner->x.fixed + px(8);
-  s32 dz = (cell->z << 20) - owner->z.fixed + px(8);
+  s32 dx = FIELD_CELL_ORIGIN(cell->x) - owner->x.fixed + px(8);
+  s32 dz = FIELD_CELL_ORIGIN(cell->z) - owner->z.fixed + px(8);
   s32 heading = (u16)ArcTan2(dz, dx);
   struct EffectSprite *sprite;
   struct BurstParticle *particle;

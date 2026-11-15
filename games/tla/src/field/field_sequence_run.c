@@ -678,10 +678,10 @@ s32 Field_PlaceAtEntrance(void) {
           cursor++;
           if (x >= leftEdge && x <= rightEdge && z - height >= topEdge &&
               z - height <= bottomEdge) {
-            map->minX = left << 20;
-            map->minZ = top << 20;
-            map->maxX = right << 20;
-            map->maxZ = bottom << 20;
+            map->minX = FIELD_CELL_ORIGIN(left);
+            map->minZ = FIELD_CELL_ORIGIN(top);
+            map->maxX = FIELD_CELL_ORIGIN(right);
+            map->maxZ = FIELD_CELL_ORIGIN(bottom);
             if (map->minX + px(240) > map->maxX)
               map->minX = map->maxX - px(240);
             if (map->minZ + px(160) > map->maxZ)

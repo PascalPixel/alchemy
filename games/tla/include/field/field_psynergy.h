@@ -83,11 +83,6 @@ struct PointWork {
   u16 cycloneLiftZ;
 };
 
-struct TouchOwner {
-  u8 unused[34]; ///< no code names it
-  u8 layer;
-};
-
 struct ArcWork {
   struct EffectSprite sprites[2][2];
   s16 age[2];

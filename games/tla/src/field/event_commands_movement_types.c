@@ -11,81 +11,82 @@
 
 extern const u8 gActor_WaitScript[];
 
-/// The Broken Seal's BattleEffect_ConfigureWatchedObject with this game's
-/// calls: with flags & 3 zero it destroys the object's linked effect;
-/// otherwise (mode 2, or when the linked effect is outside animation 0x108)
-/// it creates effect object 264 at the object and links it, mode 1 keeping it
-/// as the object's resource and mode 2 running gActor_WaitScript on it.
+/// The event command "actor set attached effect", by enum AttachedEffectFlag:
+/// removes the actor attached to an actor, attaches one
+/// (SPRITE_ATTACHED_EFFECT, animation 1) unless one already is, or shows a
+/// one-off one (animation 2) that ends by itself (gActor_WaitScript).
 void FieldEffect_SetAttached(s32 actorId, s32 flags) {
-  struct LinkedEffectObject *object = Actor_Lookup(actorId);
-  struct LinkedEffectObject *child;
-  struct LinkedEffectVisual *visual;
+  struct Actor *actor = Actor_Lookup(actorId);
+  struct Actor *effect;
+  struct Sprite *visual;
   s32 mode;
 
-  child = 0;
+  effect = 0;
   visual = 0;
 
-  if (object == 0)
+  if (actor == 0)
     return;
 
   if ((flags & 3) != 0) {
-    if ((flags & 3) == 2 || Actor_IsNotAttachedEffect(object->resource)) {
-      child = Actor_CreateFar(SPRITE_ATTACHED_EFFECT, object->x, object->y,
-                              object->z);
+    if ((flags & 3) == ATTACHED_EFFECT_ONCE ||
+        Actor_IsNotAttachedEffect(actor->watchedActor)) {
+      effect = Actor_CreateFar(SPRITE_ATTACHED_EFFECT, actor->x.fixed,
+                               actor->y.fixed, actor->z.fixed);
     }
   } else {
-    child = object->resource;
-    if (child == 0)
+    effect = actor->watchedActor;
+    if (effect == 0)
       return;
-    Actor_ReleaseFar(child);
-    object->resource = NULL;
+    Actor_ReleaseFar(effect);
+    actor->watchedActor = NULL;
     return;
   }
 
-  if (child == 0)
+  if (effect == 0)
     return;
 
   mode = flags & 3;
   switch (mode) {
-  case 1:
-    Actor_SelectAnimationFar(child, 1);
-    object->resource = child;
-    child->counter = 1;
+  case ATTACHED_EFFECT_ATTACH:
+    Actor_SelectAnimationFar(effect, 1);
+    actor->watchedActor = effect;
+    effect->timer = 1;
     break;
-  case 2:
-    Actor_SelectAnimationFar(child, 2);
-    Actor_StartScriptFar(child, gActor_WaitScript);
-    child->counter = 1;
+  case ATTACHED_EFFECT_ONCE:
+    Actor_SelectAnimationFar(effect, 2);
+    Actor_StartScriptFar(effect, gActor_WaitScript);
+    effect->timer = 1;
     break;
   }
 
-  child->resourceId = actorId;
-  child->value55 = 0;
-  child->callback = FieldEffect_CopyWatchedActorPosition;
-  visual = child->visual;
-  visual->value26 = 0;
-  child->resource = object;
+  effect->userValue = actorId;
+  effect->motionFlags = 0;
+  effect->update = (void (*)(void))FieldEffect_CopyWatchedActorPosition;
+  visual = effect->sprite;
+  visual->flags = 0;
+  effect->watchedActor = actor;
 
-  if (flags & 0x100) {
+  // Replace the effect's priority bits (2 and 3) with 1 or the actor's.
+  if (flags & ATTACHED_EFFECT_IN_FRONT) {
     s32 mask = 13;
-    u8 visualFlags = visual->flags;
+    u8 attr = SPRITE_ATTR2_HIGH(visual);
 
     mask = -mask;
-    mask &= visualFlags;
+    mask &= attr;
     mask |= 4;
-    visual->flags = mask;
+    SPRITE_ATTR2_HIGH(visual) = mask;
   } else {
-    s32 copiedFlags = 12;
-    u8 sourceFlags = object->visual->flags;
-    u8 destinationFlags;
-    s32 clearMask = 13;
+    s32 priority = 12;
+    u8 src = SPRITE_ATTR2_HIGH(actor->sprite);
+    u8 dst;
+    s32 mask = 13;
 
-    copiedFlags &= sourceFlags;
-    destinationFlags = visual->flags;
-    clearMask = -clearMask;
-    clearMask &= destinationFlags;
-    clearMask |= copiedFlags;
-    visual->flags = clearMask;
+    priority &= src;
+    dst = SPRITE_ATTR2_HIGH(visual);
+    mask = -mask;
+    mask &= dst;
+    mask |= priority;
+    SPRITE_ATTR2_HIGH(visual) = mask;
   }
 }
 
@@ -186,14 +187,14 @@ void Actor_WatchActor(struct Actor *object, struct Actor *target) {
 /// Gives the object the party leader's display layer.
 s32 Actor_TakeLeaderLayer(struct Actor *object) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  s32 layer = ((struct ObjectLayerAnimation *)leader->sprite)->layer;
+  s32 layer = ((struct PlacedSprite *)leader->sprite)->priority;
 
-  if ((object->spriteStorageKind & 0xf) == 1) {
-    struct ObjectLayerAnimation *animation = object->sprite;
+  if ((object->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
+    struct PlacedSprite *sprite = object->sprite;
 
-    animation->layer = layer;
-    animation->shadowLayer = layer;
-    object->priorityFlags &= 0xfe;
+    sprite->priority = layer;
+    sprite->shadowPriority = layer;
+    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   }
   return 0;
 }
@@ -303,7 +304,7 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
   }
   if (found == NULL)
     return NULL;
-  if (((struct ObjectAnimation *)found->sprite)->definition[0] != id)
+  if (((struct Sprite *)found->sprite)->entries[0]->animationId != id)
     return NULL;
   return found;
 }
@@ -430,7 +431,7 @@ again:
 
     // Crouch, then jump there.
     if (leader->spriteStorageKind == 1)
-      spriteFlags = ((struct JumpSprite *)leader->sprite)->flags;
+      spriteFlags = ((struct Sprite *)leader->sprite)->flags;
     Event_Start();
     Actor_SelectAnimationFar(leader, 6);
     wait(6);
@@ -520,7 +521,7 @@ s32 Field_ClimbDown(void) {
   gridZ = 8 + (FIELD_PIXEL(leader->z.fixed) & 0xfff0);
   Event_Start();
   if (leader->spriteStorageKind == 1)
-    spriteFlags = ((struct ClimbSprite *)leader->sprite)->flags;
+    spriteFlags = ((struct Sprite *)leader->sprite)->flags;
   if (gMainRoutineWork.movementMode == 0) {
     struct Actor *entry;
     struct MapCell *cell;
@@ -615,7 +616,7 @@ s32 Field_ClimbUp(void) {
 
   Event_Start();
   if (leader->spriteStorageKind == 1)
-    spriteFlags = ((struct ClimbSprite *)leader->sprite)->flags;
+    spriteFlags = ((struct Sprite *)leader->sprite)->flags;
   if (gMainRoutineWork.movementMode == 0) {
     struct MapCell *cell;
     struct MapCell *north;
@@ -759,7 +760,7 @@ s32 Leader_StepOntoRope(void) {
   leader->timer = leader->motionFlags;
   flags = &leader->priorityFlags;
   leader->userValue = sprite->flags;
-  ((struct GrabSave *)leader)->priority = sprite->image.priority;
+  leader->savedSpritePriority = sprite->image.priority;
   leader->priorityFlags = *flags & ~1;
   sprite->flags = 0;
   sprite->image.priority = 1;
@@ -803,7 +804,7 @@ s32 Leader_StepOffRope(void) {
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);
-  sprite->image.priority = ((u8 *)leader)[98];
+  sprite->image.priority = leader->savedSpritePriority;
   gMainRoutineWork.movementMode = 0;
   return 1;
 }
@@ -863,7 +864,7 @@ s32 Leader_StepOntoTightrope(void) {
   Actor_WaitForMoveFar(leader);
   leader->timer = leader->motionFlags;
   leader->userValue = sprite->flags;
-  ((struct GrabSave *)leader)->priority = sprite->image.priority;
+  leader->savedSpritePriority = sprite->image.priority;
   flags = &leader->priorityFlags;
   leader->priorityFlags = *flags & ~1;
   sprite->flags = 0;
@@ -907,7 +908,7 @@ s32 Leader_StepOffTightrope(void) {
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);
-  sprite->image.priority = ((u8 *)leader)[98];
+  sprite->image.priority = leader->savedSpritePriority;
   gMainRoutineWork.movementMode = 0;
   return 1;
 }

@@ -66,7 +66,7 @@ void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
   if ((flags & EFFECT_USE_PALETTE) != 0)
     Actor_SetSpriteColor((struct Actor *)effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
+    effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     sprite->priority = options->priority;
   }
   if ((flags & EFFECT_USE_START_SCALE) != 0) {

@@ -58,7 +58,7 @@ void Actor_SetSpritePriority(u32 objectId, s32 priority) {
 
     sprite->image.priority = priority;
     sprite->shadow.priority = priority;
-    object->priorityFlags &= ~1;
+    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   }
 }
 

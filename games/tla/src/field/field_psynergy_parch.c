@@ -113,7 +113,7 @@ void FieldPsynergy_Parch(void) {
   }
   if (Field_MeasurePsynergyHeight(scene->fieldPsynergy, caster, pos) == -1) {
     result = 0;
-    // DEAD: pending is already NULL; the ROM stores it again.
+    // DEAD: pending is already NULL; the ROM keeps the second store.
     pending = NULL;
   } else if (MapGrid_IsWaterCell(pos[0], pos[2], caster->layer) != 0) {
     pending = Scene_FindPsynergyTrigger(

@@ -460,7 +460,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     }
 
     collision = 0;
-    // DEAD: the debug read of the held keys is never used.
+    // DEAD: a debug read of the held keys nothing uses; the ROM keeps the load.
     if (gDebugMode != 0)
       (void)gInput.held;
     actor->speedLimit = px(1) / 2;
@@ -738,7 +738,7 @@ counted:
 
         Sprite_StartAnimation(sprite, 1);
         sprite->flags = 0;
-        // DEAD: overwritten by the next line.
+        // DEAD: overwritten by the next line; the ROM keeps the store of 2.
         sprite->priority = 2;
         sprite->priority = work->trailPriority & 3;
       }

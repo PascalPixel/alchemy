@@ -1896,19 +1896,20 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
 }
 #undef BOW_NEXT_PHASE
 
-/* VIEW(f0e2718): variable gSceneLocalState as extern u8 gSceneLocalState[]
- * under a name of its own; with the one declaration the restore's address is
- * shared with the copies above and its loop moves (29 lines in tla-en). */
-extern u8 gData_02001000__f0e2718[] __asm__("gSceneLocalState");
+/* VIEW(f0e2718): variable gSceneLocalState as u8 gTileCopies_RestoreState[];
+ * system/ram_buffer.h has u8 gSceneLocalState[]; tried as the one declaration,
+ * the restore's address is shared with the copies above and its loop moves (29
+ * lines in tla-en). */
+extern u8 gTileCopies_RestoreState[] __asm__("gSceneLocalState");
 
 /// For each entry of the event work's list at 0x174c, calls
 /// MapGrid_CopyCellPictureCellsRectFar with its bytes and clears the collision
 /// code of the cell at its position.
 void TileCopies_Restore(void) {
-  u8 *base = gData_02001000__f0e2718;
+  u8 *base = gTileCopies_RestoreState;
   s32 i;
 
-  for (i = 0; i < (s8)gData_02001000__f0e2718[0x194c]; i++) {
+  for (i = 0; i < (s8)gTileCopies_RestoreState[0x194c]; i++) {
     u8 *entry = base + 0x174c + i * 8;
 
     MapGrid_CopyCellPictureCellsRectFar(entry[0], entry[1], 1, 1, entry[2],

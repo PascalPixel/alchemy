@@ -86,7 +86,7 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
     collision |= 4;
     goto counted;
   }
-  // DEAD: collision is already 0 here.
+  // DEAD: collision is already 0 here; the ROM keeps its clearing.
   collision = 0;
   SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
   Vector_AddPolarOffset(px(8), angle, &position);
@@ -120,7 +120,7 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
         goto clear;
     }
     if (onObject && !MapGrid_CheckCollision(object, &position)) {
-      // DEAD: collision is already 0 here.
+      // DEAD: collision is already 0 here; the ROM keeps its clearing.
       collision = 0;
       goto counted;
     }
@@ -203,7 +203,7 @@ s32 Actor_UpdateWalkingControl(struct Actor *object) {
   goto blocked;
 
 clear:
-  // DEAD: collision is already 0 here.
+  // DEAD: collision is already 0 here; the ROM keeps its clearing.
   collision = 0;
   goto counted;
 

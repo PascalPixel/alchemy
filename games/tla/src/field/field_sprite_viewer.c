@@ -112,7 +112,7 @@ next:
         y++;
       SpriteViewer_BuildProbeRing(x, y, ring);
     } else {
-      // DEAD: the repeated keys are read once and the value goes unused.
+      // DEAD: a read of the repeated keys nothing uses; the ROM keeps the load.
       (void)gInput.repeat;
       if (gInput.repeat & KEY_UP)
         selectedLayer = (selectedLayer - 1) & 3;

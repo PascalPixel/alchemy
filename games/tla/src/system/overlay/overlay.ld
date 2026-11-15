@@ -9,13 +9,14 @@
    is src/scene (or src/debug). Its import table, imports.o, follows its
    code: the build writes it for each overlay from imports.inc, a stub for
    each main-image routine the overlay's code calls. Each statement names the
-   section it places, so the objects keep their order. Where its globals are
-   written in assembly, its .bss is DIR/bss/NAME.s. */
+   section it places, so the objects keep their order. Its globals follow in
+   .bss, in the order its C first declares them (BSS_DATA keeps a global out
+   of the commons). */
 
 /* Most scenes are one overlay of one shape: the entry table, the scene's
-   code, its import table, then the scene's tables; SCENE_WITH_BSS adds the
-   globals the scene's bss/NAME.s defines. A scene of another shape writes
-   its block out. */
+   code, its import table, then the scene's tables, and its globals;
+   SCENE_WITH_BSS adds those written in assembly, in src/scene/NAME_bss.s. A
+   scene of another shape writes its block out. */
 #define SCENE(name) \
 SECTIONS \
 { \
@@ -43,7 +44,8 @@ SECTIONS \
     } \
     .bss : \
     { \
-        */games/tla/src/scene/bss/name.o(.bss) \
+        */games/tla/src/scene/name.o(.bss COMMON) \
+        */games/tla/src/scene/name##_bss.o(.bss) \
     } \
 }
 

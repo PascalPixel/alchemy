@@ -182,7 +182,7 @@ struct HallColors gMarsLighthouseRoomM_HallPalette BSS_DATA;
 /// BG palette 2's first ten colours; it is saved whole, with the unlit flame
 /// colours after them.
 u16 gMarsLighthouseRoomM_HallSavedPalette[10] BSS_DATA;
-const u16 gMarsLighthouseRoomM_UnlitFlameColors[6] BSS_DATA;
+u16 gMarsLighthouseRoomM_UnlitFlameColors[6] BSS_DATA;
 s16 gMarsLighthouseRoomM_DoorwayBlend BSS_DATA;
 s16 gMarsLighthouseRoomM_DoorwayBlendTarget BSS_DATA;
 s16 gMarsLighthouseRoomM_Doorway BSS_DATA;

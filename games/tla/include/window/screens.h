@@ -10,13 +10,6 @@ struct BobPairObject;
 struct RenderInput;
 struct WindowSprite;
 
-struct Effect {
-  unsigned x : 16;
-  unsigned y : 16;
-  unsigned z : 16;
-  unsigned unk : 16;
-};
-
 struct NameCursorMotion {
   struct WindowSprite *anchor;
   u16 x;

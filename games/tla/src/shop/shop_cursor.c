@@ -235,7 +235,7 @@ void MenuCursor_SetPositionImmediate(struct MenuCursor *cursor, s32 x, s32 y) {
 }
 
 /// Starts the hand cursor's glide to (x, y) pixels inside `window` (the screen
-/// when it is NULL), over the frames shop->mode holds.
+/// when it is NULL), over the frames shop->cursorFrames holds.
 void MenuCursor_Place(struct RenderInput *window, s32 x, s32 y) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
 
@@ -245,7 +245,7 @@ void MenuCursor_Place(struct RenderInput *window, s32 x, s32 y) {
     x += (s16)window->x * 8 + 8;
     y += (s16)window->y * 8 + 8;
   }
-  MenuCursor_Set(&shop->cursor, x, y, (s8)shop->mode);
+  MenuCursor_Set(&shop->cursor, x, y, (s8)shop->cursorFrames);
 }
 
 /// Decompresses resource `resourceId` and loads its first `size` bytes into

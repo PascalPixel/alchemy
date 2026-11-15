@@ -53,17 +53,4 @@ typedef s32 (*BattleEffectDrawRectangle)(void *destination, const void *source,
 typedef BattleEffectDrawRectangle DrawRectangle;
 typedef BattleEffectDrawRectangle DrawRectangleFn;
 
-enum {
-  BATTLE_DAMAGE_PP_DIRECT = -1,
-  BATTLE_DAMAGE_HP_HEAL = 1,
-  BATTLE_DAMAGE_HP_POWER = 2,
-  BATTLE_DAMAGE_WEAPON = 3,
-  BATTLE_DAMAGE_WEAPON_SCALED = 4,
-  BATTLE_DAMAGE_HP_ADDITIVE_6 = 5,
-  BATTLE_DAMAGE_HP_ADDITIVE_7 = 6,
-  BATTLE_DAMAGE_HP_ADDITIVE_9 = 8,
-  BATTLE_DAMAGE_PP_DRAIN = 10,
-  BATTLE_DAMAGE_PP_HEAL = 11
-};
-
 #endif

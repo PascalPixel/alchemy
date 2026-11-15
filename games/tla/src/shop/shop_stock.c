@@ -43,7 +43,7 @@ void Shop_GiveGameTicket(struct RenderInput *window,
       unitId = shop->partyMemberIds[memberIndex];
       MenuCursor_Place(window,
                        (memberIndex % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
-      shop->mode = 3;
+      shop->cursorFrames = 3;
       if (redraw == 2) {
         Menu_CreateOwnerEntryObjectsFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
                                         SHOP_PARTY_PAGE_MEMBERS);

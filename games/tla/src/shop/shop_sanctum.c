@@ -230,7 +230,7 @@ s32 Sanctum_RunPartyService(void) {
 
   listWindow = Window_CreateFar(1, 12, 13, 3, WINDOW_FLAG_INSTANT);
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-  shop->mode = redraw;
+  shop->cursorFrames = redraw;
   Menu_PlaceOwnerEntryObjectsFar(listWindow, 2, 0);
 #if SANCTUM_HAS_PRICE_WINDOW
   priceWindow =
@@ -264,7 +264,7 @@ s32 Sanctum_RunPartyService(void) {
       unitId = shop->partyMemberIds[memberIndex];
       MenuCursor_Place(listWindow,
                        (memberIndex % SHOP_PARTY_PAGE_MEMBERS) * 24 - 12, 0);
-      shop->mode = 3;
+      shop->cursorFrames = 3;
       if (redraw == 2) {
         Menu_CreateOwnerEntryObjectsFar(memberIndex / SHOP_PARTY_PAGE_MEMBERS *
                                         SHOP_PARTY_PAGE_MEMBERS);

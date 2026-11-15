@@ -74,8 +74,14 @@ struct OamEntry {
 /// The title intro's state (HEAP_SLOT_TITLE_INTRO): the logo's phase, frame,
 /// timer, step and delay, and the countdowns to the fade to white and back that
 /// the lighthouse scroll starts.
+/// TitleLogoState.phase: what TitleIntro_UpdateLogo draws.
+enum TitleLogoPhase {
+  TITLE_LOGO_GULLS = 0, ///< the gulls fly by (gTitleIntro_GullPath)
+  TITLE_LOGO_ZOOM = 1   ///< the logo's three pieces zoom in and fade up
+};
+
 struct TitleLogoState {
-  s16 phase;
+  s16 phase; ///< enum TitleLogoPhase
   s16 frame; ///< index into gTitleIntro_GullFrames (5 halfwords a frame)
   s16 timer;
   s16 step; ///< index into gTitleIntro_GullPath (3 halfwords a step); the scale
@@ -579,7 +585,7 @@ void TitleIntro_UpdateLogo(void) {
 
   logo = Ram_HeapSlots->titleIntro;
   Dma_Fill32Cell(fill, 0, (void *)OAM, OAM_SIZE);
-  if (logo->phase == 0) {
+  if (logo->phase == TITLE_LOGO_GULLS) {
     if (logo->timer == 0) {
       if (gTitleIntro_GullFrames[logo->frame + 5] != -1)
         logo->frame += 5;
@@ -599,7 +605,7 @@ void TitleIntro_UpdateLogo(void) {
               (void *)OBJ_PLTT,
               (DMA_ENABLE | DMA_32BIT) << 16 | (BG_PLTT_SIZE / 4), REG_DMA3);
       LOAD_LOGO_TILES(ResourceId_Data01C);
-      logo->phase = 1;
+      logo->phase = TITLE_LOGO_ZOOM;
       logo->frame = 1;
       logo->timer = 0;
       logo->step = 160;
@@ -624,7 +630,7 @@ void TitleIntro_UpdateLogo(void) {
                 REG_DMA3);
       }
     }
-  } else if (logo->phase == 1) {
+  } else if (logo->phase == TITLE_LOGO_ZOOM) {
     pieceX = (logo->step - 256) / 4 + LOGO_LEFT_X;
     y = (logo->step - 256) / 32 + 50;
     Title_PlaceLogoPiece(0, pieceX, y);
@@ -751,7 +757,7 @@ s32 TitleIntro_ShowLighthouse(void) {
     goto stopped;
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_IntroGullSprites),
           (void *)OBJ_PLTT, DMA_COPY_WORDS(8), REG_DMA3);
-  logo->phase = 0;
+  logo->phase = TITLE_LOGO_GULLS;
   logo->frame = -5;
   logo->timer = 0;
   logo->step = -3;
@@ -761,7 +767,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   i = TitleIntro_ScrollLighthouse(&scroll);
   if (i)
     goto stopped;
-  Task_Add(TitleIntro_UpdateLogo, 0x480);
+  Task_Add(TitleIntro_UpdateLogo, TASK_PASS_VBLANK);
   scroll.limit = 160;
   scroll.step = -1;
   scroll.scroll = 0;

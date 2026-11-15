@@ -18,10 +18,11 @@ UNUSED void DebugBattle_RunForever(void) {
     Battle_Run(0);
 }
 
-/// After the scripted battles of enemy groups 74 and 75, snapshots the five
-/// units of gScriptedBattle_Units that fought (Felix, Piers and Jenna, and
-/// enemies 128 and 129) for ScriptedBattle_RestoreUnits to bring back when
-/// groups 75 and 76 begin.
+/// After the first two parts of Karst and Agatio's battle
+/// (FORMATION_KARST_AND_AGATIO_A and _B), snapshots the five units of
+/// gScriptedBattle_Units that fought (Felix, Piers and Jenna, and the first two
+/// enemies) for ScriptedBattle_RestoreUnits to bring back as the next part
+/// begins.
 void ScriptedBattle_SaveUnits(void) {
   s32 j;
   struct Snapshot *snap = &Data_0200ff58;

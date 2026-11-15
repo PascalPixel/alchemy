@@ -320,7 +320,7 @@ extern struct SnapshotCopy Data_0200ff6c[];
 /// The last two units' HP and PP within the snapshot.
 extern struct SnapshotVitals Data_0200ffec[];
 
-/// The five units the scripted battles of formations 74 to 76 carry over:
+/// The five units Karst and Agatio's battle carries over between its parts:
 /// Felix, Piers and Jenna, and the first two enemies.
 extern u8 gScriptedBattle_Units[];
 

@@ -277,7 +277,7 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(JupiterLighthouseRoom1),
-    SCENE_EXIT(1, JupiterLighthouseRoom2, 1),
+    SCENE_EXIT(1, JupiterLighthouseRoomBeam, 1),
     SCENE_EXIT(2, JupiterLighthouseEntrance, 2),
     SCENE_EXIT(3, JupiterLighthouseEntrance, 3),
     SCENE_EXIT(4, JupiterLighthouseRoom1, 5),

@@ -24,7 +24,7 @@ Field_ShamanVillageAroma:
 	.incbin "games/tla/src/map/shaman_village_aroma/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_ShamanVillageAroma_ANIMATION:
-	.incbin "games/tla/src/map/shaman_village_2/animation.script.lz"
+	.incbin "games/tla/src/map/shaman_village/animation.script.lz"
 	.balign 4, 0
 .LField_ShamanVillageAroma_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

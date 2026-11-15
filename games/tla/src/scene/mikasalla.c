@@ -1,6 +1,6 @@
 /// @file
 /// Mikasalla, the village in the far south of Osenia, and the tunnels under
-/// it, in two scenes that share this overlay (SceneId_Mikasalla1, the village,
+/// it, in two scenes that share this overlay (SceneId_Mikasalla, the village,
 /// and SceneId_Mikasalla2, the tunnels).
 ///
 /// Scoop digs up a ladder by the sheep (Mikasalla_DigUpLadder); the tunnels
@@ -79,7 +79,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_MIKASALLA_1)
+  if (scene == SCENE_MIKASALLA)
     return gMikasalla_VillagePlacements;
   return gMikasalla_TunnelPlacements;
 }
@@ -254,7 +254,7 @@ void Mikasalla_ClimbDownLadder(void) {
   s32 exit;
   s32 drop;
 
-  if (gMainRoutineWork.next == SCENE_MIKASALLA_1) {
+  if (gMainRoutineWork.next == SCENE_MIKASALLA) {
     exit = 12;
     drop = 17;
   } else {
@@ -385,24 +385,24 @@ s16 gMikasalla_TunnelRegions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(Mikasalla1),
+    SCENE_EXITS(Mikasalla),
     SCENE_EXIT_UNLESS(1, MikasallaInteriorsHouses, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, MikasallaInteriorsHouses, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, MikasallaInteriorsHouses, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, MikasallaInteriorsHouses, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, MikasallaInteriorsSanctum, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, WorldMap, 14, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, Mikasalla1, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, Mikasalla1, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, Mikasalla1, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, Mikasalla1, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, Mikasalla, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, Mikasalla, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, Mikasalla, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, Mikasalla, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, Mikasalla2, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(12, Mikasalla2, 1, EXIT_FLAG_NONE),
     SCENE_EXITS(Mikasalla2),
-    SCENE_EXIT_UNLESS(1, Mikasalla1, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, Mikasalla, 12, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, Mikasalla2, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, Mikasalla2, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Mikasalla1, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Mikasalla, 11, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

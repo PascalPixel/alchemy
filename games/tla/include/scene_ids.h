@@ -186,8 +186,8 @@ extern char SceneId_MikasallaInteriorsHouses;
 extern char SceneId_MikasallaInteriorsSanctum;
 #define SCENE_MIKASALLA_INTERIORS_SANCTUM                                      \
   ((s32)&SceneId_MikasallaInteriorsSanctum)
-extern char SceneId_Garoh1;
-#define SCENE_GAROH_1 ((s32)&SceneId_Garoh1)
+extern char SceneId_Garoh;
+#define SCENE_GAROH ((s32)&SceneId_Garoh)
 extern char SceneId_GarohHypnosSwordChest;
 #define SCENE_GAROH_HYPNOS_SWORD_CHEST ((s32)&SceneId_GarohHypnosSwordChest)
 extern char SceneId_GarohBlocks;
@@ -211,8 +211,8 @@ extern char SceneId_ChampaInteriors;
 #define SCENE_CHAMPA_INTERIORS ((s32)&SceneId_ChampaInteriors)
 extern char SceneId_ChampaSanctum;
 #define SCENE_CHAMPA_SANCTUM ((s32)&SceneId_ChampaSanctum)
-extern char SceneId_Contigo1;
-#define SCENE_CONTIGO_1 ((s32)&SceneId_Contigo1)
+extern char SceneId_Contigo;
+#define SCENE_CONTIGO ((s32)&SceneId_Contigo)
 extern char SceneId_ContigoShops;
 #define SCENE_CONTIGO_SHOPS ((s32)&SceneId_ContigoShops)
 extern char SceneId_ContigoLuckyDice;
@@ -277,8 +277,8 @@ extern char SceneId_GaiaRockInside5;
 /// Champa itself, the town's one outdoor scene.
 extern char SceneId_Champa;
 #define SCENE_CHAMPA ((s32)&SceneId_Champa)
-extern char SceneId_MagmaRock1;
-#define SCENE_MAGMA_ROCK_1 ((s32)&SceneId_MagmaRock1)
+extern char SceneId_MagmaRockSlide;
+#define SCENE_MAGMA_ROCK_SLIDE ((s32)&SceneId_MagmaRockSlide)
 extern char SceneId_MagmaRockSalamanderTailChest;
 #define SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST                                 \
   ((s32)&SceneId_MagmaRockSalamanderTailChest)
@@ -396,8 +396,8 @@ extern char SceneId_IsletCaveSerac;
 /// The Islet Cave room where the Sentinel waits.
 extern char SceneId_IsletCaveSentinel;
 #define SCENE_ISLET_CAVE_SENTINEL ((s32)&SceneId_IsletCaveSentinel)
-extern char SceneId_Yallam1;
-#define SCENE_YALLAM_1 ((s32)&SceneId_Yallam1)
+extern char SceneId_Yallam;
+#define SCENE_YALLAM ((s32)&SceneId_Yallam)
 extern char SceneId_Yallam2;
 #define SCENE_YALLAM_2 ((s32)&SceneId_Yallam2)
 extern char SceneId_ApojiiIslands1;
@@ -445,15 +445,15 @@ extern char SceneId_AquaRockInside8;
 extern char SceneId_AquaRockInsideTearStone;
 #define SCENE_AQUA_ROCK_INSIDE_TEAR_STONE                                      \
   ((s32)&SceneId_AquaRockInsideTearStone)
-extern char SceneId_AttekaInlet1;
-#define SCENE_ATTEKA_INLET_1 ((s32)&SceneId_AttekaInlet1)
+extern char SceneId_AttekaInlet;
+#define SCENE_ATTEKA_INLET ((s32)&SceneId_AttekaInlet)
 /// The Atteka Inlet scene where Cyclone uncovers Geode.
 extern char SceneId_AttekaInletGeode;
 #define SCENE_ATTEKA_INLET_GEODE ((s32)&SceneId_AttekaInletGeode)
 extern char SceneId_Prox1;
 #define SCENE_PROX_1 ((s32)&SceneId_Prox1)
-extern char SceneId_Prox2;
-#define SCENE_PROX_2 ((s32)&SceneId_Prox2)
+extern char SceneId_Prox;
+#define SCENE_PROX ((s32)&SceneId_Prox)
 extern char SceneId_ProxMold;
 #define SCENE_PROX_MOLD ((s32)&SceneId_ProxMold)
 extern char SceneId_Prox4;
@@ -550,8 +550,9 @@ extern char SceneId_GabombaCatacombsTeleporters;
 /// The Gabomba Catacombs room where Mud is fought.
 extern char SceneId_GabombaCatacombsMud;
 #define SCENE_GABOMBA_CATACOMBS_MUD ((s32)&SceneId_GabombaCatacombsMud)
-extern char SceneId_GabombaCatacombs3;
-#define SCENE_GABOMBA_CATACOMBS_3 ((s32)&SceneId_GabombaCatacombs3)
+extern char SceneId_GabombaCatacombsHiddenWall;
+#define SCENE_GABOMBA_CATACOMBS_HIDDEN_WALL                                    \
+  ((s32)&SceneId_GabombaCatacombsHiddenWall)
 extern char SceneId_GabombaCatacombsTomegathericon;
 #define SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON                                 \
   ((s32)&SceneId_GabombaCatacombsTomegathericon)
@@ -559,8 +560,8 @@ extern char SceneId_ShamanVillageCave;
 #define SCENE_SHAMAN_VILLAGE_CAVE ((s32)&SceneId_ShamanVillageCave)
 extern char SceneId_ShamanVillage1;
 #define SCENE_SHAMAN_VILLAGE_1 ((s32)&SceneId_ShamanVillage1)
-extern char SceneId_ShamanVillage2;
-#define SCENE_SHAMAN_VILLAGE_2 ((s32)&SceneId_ShamanVillage2)
+extern char SceneId_ShamanVillage;
+#define SCENE_SHAMAN_VILLAGE ((s32)&SceneId_ShamanVillage)
 extern char SceneId_ShamanVillageAroma;
 #define SCENE_SHAMAN_VILLAGE_AROMA ((s32)&SceneId_ShamanVillageAroma)
 extern char SceneId_ShamanVillageInn;
@@ -574,14 +575,14 @@ extern char SceneId_LemurianShip1;
 /// The Lemurian Ship's hold, where the Aqua Hydra is fought.
 extern char SceneId_LemurianShipAquaHydra;
 #define SCENE_LEMURIAN_SHIP_AQUA_HYDRA ((s32)&SceneId_LemurianShipAquaHydra)
-extern char SceneId_YallamInteriors1;
-#define SCENE_YALLAM_INTERIORS_1 ((s32)&SceneId_YallamInteriors1)
+extern char SceneId_YallamInteriorsInn;
+#define SCENE_YALLAM_INTERIORS_INN ((s32)&SceneId_YallamInteriorsInn)
 extern char SceneId_YallamInteriorsShops;
 #define SCENE_YALLAM_INTERIORS_SHOPS ((s32)&SceneId_YallamInteriorsShops)
 extern char SceneId_TaopoSwamp1;
 #define SCENE_TAOPO_SWAMP_1 ((s32)&SceneId_TaopoSwamp1)
-extern char SceneId_TaopoSwamp2;
-#define SCENE_TAOPO_SWAMP_2 ((s32)&SceneId_TaopoSwamp2)
+extern char SceneId_TaopoSwampMud;
+#define SCENE_TAOPO_SWAMP_MUD ((s32)&SceneId_TaopoSwampMud)
 extern char SceneId_TaopoSwampTearStones;
 #define SCENE_TAOPO_SWAMP_TEAR_STONES ((s32)&SceneId_TaopoSwampTearStones)
 /// The Taopo Swamp scene where Flower is fought.
@@ -675,8 +676,8 @@ extern char SceneId_TrialRoad1;
 #define SCENE_TRIAL_ROAD_1 ((s32)&SceneId_TrialRoad1)
 extern char SceneId_TrialRoadSummit;
 #define SCENE_TRIAL_ROAD_SUMMIT ((s32)&SceneId_TrialRoadSummit)
-extern char SceneId_TrialRoad3;
-#define SCENE_TRIAL_ROAD_3 ((s32)&SceneId_TrialRoad3)
+extern char SceneId_TrialRoadCaveRock;
+#define SCENE_TRIAL_ROAD_CAVE_ROCK ((s32)&SceneId_TrialRoadCaveRock)
 /// The Trial Road scene where Gasp is fought.
 extern char SceneId_TrialRoadGasp;
 #define SCENE_TRIAL_ROAD_GASP ((s32)&SceneId_TrialRoadGasp)
@@ -691,8 +692,9 @@ extern char SceneId_JupiterLighthouseBasement2;
   ((s32)&SceneId_JupiterLighthouseBasement2)
 extern char SceneId_JupiterLighthouseRoom1;
 #define SCENE_JUPITER_LIGHTHOUSE_ROOM_1 ((s32)&SceneId_JupiterLighthouseRoom1)
-extern char SceneId_JupiterLighthouseRoom2;
-#define SCENE_JUPITER_LIGHTHOUSE_ROOM_2 ((s32)&SceneId_JupiterLighthouseRoom2)
+extern char SceneId_JupiterLighthouseRoomBeam;
+#define SCENE_JUPITER_LIGHTHOUSE_ROOM_BEAM                                     \
+  ((s32)&SceneId_JupiterLighthouseRoomBeam)
 extern char SceneId_JupiterLighthouseRoomErinyesTunicChest;
 #define SCENE_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST                      \
   ((s32)&SceneId_JupiterLighthouseRoomErinyesTunicChest)
@@ -730,8 +732,8 @@ extern char SceneId_Settlements9;
 #define SCENE_SETTLEMENTS_9 ((s32)&SceneId_Settlements9)
 extern char SceneId_Settlements10;
 #define SCENE_SETTLEMENTS_10 ((s32)&SceneId_Settlements10)
-extern char SceneId_Mikasalla1;
-#define SCENE_MIKASALLA_1 ((s32)&SceneId_Mikasalla1)
+extern char SceneId_Mikasalla;
+#define SCENE_MIKASALLA ((s32)&SceneId_Mikasalla)
 extern char SceneId_Mikasalla2;
 #define SCENE_MIKASALLA_2 ((s32)&SceneId_Mikasalla2)
 extern char SceneId_Lemuria;
@@ -746,12 +748,12 @@ extern char SceneId_JupiterLighthouseRoomM;
 #define SCENE_JUPITER_LIGHTHOUSE_ROOM_M ((s32)&SceneId_JupiterLighthouseRoomM)
 extern char SceneId_GabombaCatacombs5;
 #define SCENE_GABOMBA_CATACOMBS_5 ((s32)&SceneId_GabombaCatacombs5)
-extern char SceneId_Islets1;
-#define SCENE_ISLETS_1 ((s32)&SceneId_Islets1)
-extern char SceneId_Islets2;
-#define SCENE_ISLETS_2 ((s32)&SceneId_Islets2)
-extern char SceneId_Islets3;
-#define SCENE_ISLETS_3 ((s32)&SceneId_Islets3)
+extern char SceneId_IsletsDog;
+#define SCENE_ISLETS_DOG ((s32)&SceneId_IsletsDog)
+extern char SceneId_IsletsPrettyStone;
+#define SCENE_ISLETS_PRETTY_STONE ((s32)&SceneId_IsletsPrettyStone)
+extern char SceneId_IsletsCow;
+#define SCENE_ISLETS_COW ((s32)&SceneId_IsletsCow)
 extern char SceneId_Islets4;
 #define SCENE_ISLETS_4 ((s32)&SceneId_Islets4)
 extern char SceneId_IsletsTurtle;

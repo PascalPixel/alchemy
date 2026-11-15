@@ -410,15 +410,15 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(MikasallaInteriorsHouses),
-    SCENE_EXIT_UNLESS(1, Mikasalla1, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Mikasalla1, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Mikasalla1, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Mikasalla1, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, Islets2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, Mikasalla, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Mikasalla, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Mikasalla, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Mikasalla, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, IsletsPrettyStone, 2, EXIT_FLAG_NONE),
     SCENE_EXITS(MikasallaInteriorsSanctum),
-    SCENE_EXIT_UNLESS(1, Mikasalla1, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, Mikasalla, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, ApojiiIslands1, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Yallam1, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Yallam, 8, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

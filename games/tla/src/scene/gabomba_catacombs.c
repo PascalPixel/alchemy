@@ -474,7 +474,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return (const struct ActorPlacement *)gGabombaCatacombs_Room1Placements;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_MUD)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room2Placements;
-  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_3)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_HIDDEN_WALL)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room3Placements;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room4Placements;
@@ -488,7 +488,7 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gGabombaCatacombs_Room1Triggers;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_MUD)
     return gGabombaCatacombs_Room2Triggers;
-  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_3)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_HIDDEN_WALL)
     return gGabombaCatacombs_Room3Triggers;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON)
     return gGabombaCatacombs_Room4Triggers;
@@ -526,7 +526,7 @@ s32 Scene_Initialize(void) {
       gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_MUD &&
       gMainRoutineWork.entrance > 2)
     Actor_DepartInRing(gMainRoutineWork.leaderActorId);
-  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_3) {
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_HIDDEN_WALL) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_00))
       MapGrid_CopyCellAttributes(6, 23, 1, 1, 8, 23);
     if (GameFlag_Get(FLAG_SCENE_TEMP_01))
@@ -592,14 +592,14 @@ u32 gSceneExits[] = {
     SCENE_EXIT(5, GabombaCatacombsMud, 5),
     SCENE_EXITS(GabombaCatacombsMud),
     SCENE_EXIT(1, GabombaCatacombsTeleporters, 2),
-    SCENE_EXIT(2, GabombaCatacombs3, 1),
-    SCENE_EXITS(GabombaCatacombs3),
+    SCENE_EXIT(2, GabombaCatacombsHiddenWall, 1),
+    SCENE_EXITS(GabombaCatacombsHiddenWall),
     SCENE_EXIT(1, GabombaCatacombsMud, 2),
     SCENE_EXIT(2, GabombaCatacombs5, 1),
     SCENE_EXITS(GabombaCatacombsTomegathericon),
     SCENE_EXIT(1, GabombaCatacombs5, 2),
     SCENE_EXITS(GabombaCatacombs5),
-    SCENE_EXIT(1, GabombaCatacombs3, 2),
+    SCENE_EXIT(1, GabombaCatacombsHiddenWall, 2),
     SCENE_EXIT(2, GabombaCatacombsTomegathericon, 1),
     SCENE_EXITS_END,
 };

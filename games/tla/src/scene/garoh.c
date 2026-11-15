@@ -1,7 +1,7 @@
 /// @file
 /// Garoh, the village under Air's Rock whose people, its protectors, say there
 /// are no werewolves while one prowls its paths at night, in five rooms and a
-/// house that share this overlay (SceneId_Garoh1 to SceneId_GarohWerewolfCave,
+/// house that share this overlay (SceneId_Garoh to SceneId_GarohWerewolfCave,
 /// SceneId_GarohInteriorsSanctum).
 #include "../field/actor_set_sprite_priority.c"
 
@@ -67,7 +67,7 @@ void Garoh_PuffAround(s32 id);
 #include "fixed_math.h"
 #include "text/msg_ids.h"
 
-/// The village's people by night and by day (SceneId_Garoh1), numbering the
+/// The village's people by night and by day (SceneId_Garoh), numbering the
 /// rows of gGaroh_Room1Placements and gGaroh_Room1DayPlacements: the five who
 /// go hooded by night show their faces by day.
 enum GarohVillageActorId {
@@ -241,7 +241,7 @@ extern struct MapGridCellAnimation gGaroh_Doors[];
 const void *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_GAROH_1) {
+  if (scene == SCENE_GAROH) {
     if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
       return gGaroh_Room1DayPlacements;
     return gGaroh_Room1Placements;
@@ -531,7 +531,7 @@ void Garoh_MeetInTheCave(void) {
 const void *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_GAROH_1) {
+  if (scene == SCENE_GAROH) {
     if (Flag_IsSet(FLAG_GAROH_SECRET_SHARED))
       return gGaroh_Room1DayTriggers;
     return gGaroh_Room1Triggers;
@@ -584,7 +584,7 @@ s32 Scene_Initialize(void) {
     }
   } else {
     gFieldWork->transition = 0;
-    if (gMainRoutineWork.next == SCENE_GAROH_1) {
+    if (gMainRoutineWork.next == SCENE_GAROH) {
       Event_SetFlag(FLAG_GAROH_REACHED_VILLAGE);
       Garoh_InitializeRoom1();
     } else if (gMainRoutineWork.next == SCENE_GAROH_HYPNOS_SWORD_CHEST) {
@@ -3058,7 +3058,7 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(Garoh1),
+    SCENE_EXITS(Garoh),
     SCENE_EXIT_UNLESS(1, GarohInteriorsHouses, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, GarohInteriorsShop, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, GarohInteriorsHouses, 3, EXIT_FLAG_NONE),
@@ -3073,25 +3073,25 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(12, GarohWerewolfCave, 1, EXIT_FLAG_NONE),
     SCENE_EXITS(GarohHypnosSwordChest),
     SCENE_EXIT_UNLESS(1, GarohBlocks, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Garoh1, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Garoh1, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Garoh, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Garoh, 11, EXIT_FLAG_NONE),
     SCENE_EXITS(GarohBlocks),
     SCENE_EXIT_UNLESS(1, WorldMap, 15, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, GarohHypnosSwordChest, 1, EXIT_FLAG_NONE),
     SCENE_EXITS(Garoh4),
-    SCENE_EXIT_UNLESS(1, Garoh1, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, Garoh, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, Garoh4, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, Garoh4, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Garoh1, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Garoh, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, GarohInteriorsShop, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, GarohInteriorsShop, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, GarohInteriorsHouses, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, GarohInteriorsHouses, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, Garoh4, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, Garoh4, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, Garoh1, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, Garoh, 9, EXIT_FLAG_NONE),
     SCENE_EXITS(GarohWerewolfCave),
-    SCENE_EXIT_UNLESS(1, Garoh1, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, Garoh, 12, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, GarohWerewolfCave, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, GarohWerewolfCave, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, GarohWerewolfCave, 2, EXIT_FLAG_NONE),

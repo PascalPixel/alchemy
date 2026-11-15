@@ -872,10 +872,9 @@ s32 Scene_PrepareMap(void) {
     extern char SceneId_MarsLighthouseRoomM3Second __asm__(
         "SceneId_MarsLighthouseRoomM3");
 
-    Map_CopyPalette(
-        gMainRoutineWork.mapId +
-            ((s32)&SceneId_MarsLighthouseRoomM3Second - SCENE_PROX_2),
-        0x5000000);
+    Map_CopyPalette(gMainRoutineWork.mapId +
+                        ((s32)&SceneId_MarsLighthouseRoomM3Second - SCENE_PROX),
+                    0x5000000);
   }
   return 0;
 }

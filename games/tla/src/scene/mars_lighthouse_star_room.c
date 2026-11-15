@@ -394,7 +394,7 @@ void Map_CopyPalette(s32 scene, s32 a1);
 s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(FLAG_MARS_LIGHTHOUSE_THAWED))
     Map_CopyPalette(gMainRoutineWork.mapId +
-                        (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX_2),
+                        (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX),
                     0x5000000);
   if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE)
     Event_SetFlag(FLAG_FLAME_DRAGONS_BEATEN);
@@ -903,7 +903,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
   Map_CopyPalette(gMainRoutineWork.mapId +
-                      (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX_2),
+                      (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX),
                   screen);
   zero = 0;
   *screen = zero;
@@ -1086,7 +1086,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 38, 87);
   MapGrid_CopyCellsLayered(76, 64, 9, 22, 102, 23);
   Map_CopyPalette(gMainRoutineWork.mapId +
-                      (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX_2),
+                      (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX),
                   screen);
   *screen = 0;
   PaletteFade_ApplyTarget(0x10000, 0);

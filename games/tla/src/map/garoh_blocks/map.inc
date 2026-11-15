@@ -24,7 +24,7 @@ Field_GarohBlocks:
 	.incbin "games/tla/src/map/garoh_blocks/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_GarohBlocks_ANIMATION:
-	.incbin "games/tla/src/map/garoh_1/animation.script.lz"
+	.incbin "games/tla/src/map/garoh/animation.script.lz"
 	.balign 4, 0
 .LField_GarohBlocks_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

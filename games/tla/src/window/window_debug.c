@@ -336,7 +336,7 @@ void DebugWarp_KaoruSpecial3(void) {
   GameFlag_Set(0x9c0);
   GameFlag_Set(0x9c1);
   GameFlag_Set(0x9c2);
-  Event_SetDestinationFar(SCENE_PROX_2, 1);
+  Event_SetDestinationFar(SCENE_PROX, 1);
 }
 
 /// Preset 7, "Kaoru Special2": to the Mars Lighthouse aerie.

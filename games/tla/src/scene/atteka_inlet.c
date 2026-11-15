@@ -1,7 +1,7 @@
 /// @file
 /// Atteka Inlet, where the party's ship lies on the southern continent, in two
 /// scenes that share this overlay: the harbour with the ship
-/// (SceneId_AttekaInlet1) and the shore beside it (SceneId_AttekaInletGeode).
+/// (SceneId_AttekaInlet) and the shore beside it (SceneId_AttekaInletGeode).
 /// Piers asks whether to set sail (AttekaInlet_AskPiersToSetSail). After
 /// Jupiter Lighthouse the shipwrights stop the party to see their handiwork fly
 /// (AttekaInlet_ShipwrightsStopTheParty), Hamma shows the ship's new wings
@@ -69,7 +69,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_ATTEKA_INLET_1) {
+  if (scene == SCENE_ATTEKA_INLET) {
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
       return gAttekaInlet_HarbourActorPlacementsOnceFlown;
     if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO))
@@ -89,7 +89,7 @@ extern struct Trigger gAttekaInlet_HarbourTriggers[];
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_ATTEKA_INLET_1)
+  if (scene == SCENE_ATTEKA_INLET)
     return gAttekaInlet_HarbourTriggers;
   if (scene == SCENE_ATTEKA_INLET_GEODE)
     return gAttekaInlet_ShoreTriggers;
@@ -521,7 +521,7 @@ void AttekaInlet_OpenDoorAndEnter(void) {
 s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_ATTEKA_INLET_1)
+  if (scene == SCENE_ATTEKA_INLET)
     AttekaInlet_SetUpTheHarbour();
   else if (scene == SCENE_ATTEKA_INLET_GEODE)
     AttekaInlet_SetUpTheShore();
@@ -531,7 +531,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_ATTEKA_INLET_1 && GameFlag_Get(FLAG_REUNITED_AT_CONTIGO)) {
+  if (scene == SCENE_ATTEKA_INLET && GameFlag_Get(FLAG_REUNITED_AT_CONTIGO)) {
     MapGrid_CopyCellPictureIndicesRect(54, 47, 4, 15, 10, 4);
     MapGrid_CopyCellPictureIndicesRect(54, 38, 73, 7, 10, 4);
     MapGrid_CopyCellPictureIndicesRect(54, 43, 21, 55, 10, 3);
@@ -610,17 +610,17 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(AttekaInlet1),
+    SCENE_EXITS(AttekaInlet),
     SCENE_EXIT(1, LemurianShip1, 1),
     SCENE_EXIT(2, AttekaInletGeode, 1),
     SCENE_EXIT(3, AttekaInletGeode, 5),
     SCENE_EXIT(4, WorldMap, 52),
     SCENE_EXITS(AttekaInletGeode),
-    SCENE_EXIT(1, AttekaInlet1, 2),
+    SCENE_EXIT(1, AttekaInlet, 2),
     SCENE_EXIT(2, WorldMap, 53),
     SCENE_EXIT(3, ContigoShops, 21),
     SCENE_EXIT(4, AttekaInletGeode, 4),
-    SCENE_EXIT(5, AttekaInlet1, 3),
+    SCENE_EXIT(5, AttekaInlet, 3),
     SCENE_EXIT(6, WorldMap, 53),
     SCENE_EXITS_END,
 };

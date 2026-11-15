@@ -1,7 +1,7 @@
 /// @file
 /// Magma Rock, outside and on its slopes, where the party climbs to the Magma
 /// Ball the diggers of Loho need for their cannon, in three rooms that share
-/// this overlay (SceneId_MagmaRock1 to SceneId_MagmaRockStatue).
+/// this overlay (SceneId_MagmaRockSlide to SceneId_MagmaRockStatue).
 #include "../field/actor_set_sprite_priority.c"
 #include "resource_ids.h"
 
@@ -262,7 +262,7 @@ void MagmaRock_UnblockMovedPillar(void) {
   u8 *event = Ram_HeapSlots->fieldWork;
   struct MagmaRockWork *work = Ram_HeapSlots->fieldEffectWork;
 
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_1) {
+  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SLIDE) {
     MapGrid_CopyCellAttributes(98, 18, 4, 3, 78, 21);
     MapGrid_CopyCellAttributes(98, 24, 4, 3, 78, 24);
     Actor_LiftTargetBlock(gMagmaRock_Room1Pillars);
@@ -298,7 +298,7 @@ s32 MagmaRock_BlockMovedPillar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_PlaceMovedBlock();
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_1) {
+  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SLIDE) {
     MapGrid_CopyCellAttributes(98, 21, 4, 3, 78, 21);
     MapGrid_CopyCellAttributes(98, 27, 4, 3, 78, 24);
     Blocks_MarkCells(gMagmaRock_Room1Pillars);
@@ -318,7 +318,7 @@ s32 MagmaRock_BlockMovedPillar(void) {
   }
   x = leader->x.fixed >> 20;
   z = leader->z.fixed >> 20;
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_1) {
+  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SLIDE) {
     if (x == 15 && z == 25)
       Event_SetFlag(0x8d6);
     else if (x == 16 && z == 22)
@@ -1044,7 +1044,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
       FieldActor_SetSpriteColor(part, 3);
     }
     id = 0;
-    if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_1) {
+    if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SLIDE) {
       id = MagmaRock_LookUpCellStatue(object->x.fixed, object->z.fixed,
                                       gMagmaRock_Room1Statues);
     } else if (gMainRoutineWork.next ==
@@ -1086,7 +1086,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
     {                                                                          \
       s32 scene = party->next;                                                 \
                                                                                \
-      if (scene == SCENE_MAGMA_ROCK_1)                                         \
+      if (scene == SCENE_MAGMA_ROCK_SLIDE)                                     \
         work->target = Actor_Get(n1);                                          \
       else if (scene == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST)                \
         work->target = Actor_Get(n2);                                          \
@@ -1622,11 +1622,11 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = 0x204;
   work = &gMainRoutineWork;
-  work->retreatScene = SCENE_MAGMA_ROCK_1;
+  work->retreatScene = SCENE_MAGMA_ROCK_SLIDE;
   work->retreatEntrance = 1;
   scene = work->next;
   zero = 0;
-  if (scene == SCENE_MAGMA_ROCK_1) {
+  if (scene == SCENE_MAGMA_ROCK_SLIDE) {
     value1 = 32;
     Actor_GetById(work->leaderActorId)->priorityFlags |= value1;
     Actor_GetById(8)->priorityFlags |= value1;
@@ -2520,7 +2520,7 @@ s16 gMagmaRock_Room3Regions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(MagmaRock1),
+    SCENE_EXITS(MagmaRockSlide),
     SCENE_EXIT(1, WorldMap, 51),
     SCENE_EXIT(2, MagmaRockInsideEmberStone, 11),
     SCENE_EXIT(3, MagmaRockSalamanderTailChest, 16),
@@ -2541,8 +2541,8 @@ u32 gSceneExits[] = {
     SCENE_EXIT(13, MagmaRockSalamanderTailChest, 11),
     SCENE_EXIT(14, MagmaRockSalamanderTailChest, 7),
     SCENE_EXIT(15, MagmaRockSalamanderTailChest, 12),
-    SCENE_EXIT(16, MagmaRock1, 3),
-    SCENE_EXIT(17, MagmaRock1, 4),
+    SCENE_EXIT(16, MagmaRockSlide, 3),
+    SCENE_EXIT(17, MagmaRockSlide, 4),
     SCENE_EXITS(MagmaRockStatue),
     SCENE_EXIT(1, MagmaRockSalamanderTailChest, 5),
     SCENE_EXIT(2, MagmaRockSalamanderTailChest, 8),

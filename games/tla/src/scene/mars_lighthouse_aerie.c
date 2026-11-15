@@ -329,7 +329,7 @@ s32 Scene_PrepareMap(void) {
       Event_GetFlag(FLAG_MARS_BEACON_LIT) == 0)
     Weather_StartRain(1);
   Map_CopyPalette(gMainRoutineWork.mapId +
-                      (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX_2),
+                      (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX),
                   0x5000000);
   return 0;
 }

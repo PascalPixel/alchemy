@@ -24,7 +24,7 @@ Field_Izumo:
 	.incbin "games/tla/src/map/izumo/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Izumo_ANIMATION:
-	.incbin "games/tla/src/map/islets_1/animation.script.lz"
+	.incbin "games/tla/src/map/islets_dog/animation.script.lz"
 	.balign 4, 0
 .LField_Izumo_BLEND:
 	.incbin "games/tla/src/map/izumo/blend.script.lz"

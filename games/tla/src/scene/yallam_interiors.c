@@ -96,7 +96,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_YALLAM_INTERIORS_1)
+  if (scene == SCENE_YALLAM_INTERIORS_INN)
     return gYallamInteriors_Room1Placements;
   if (scene == SCENE_YALLAM_INTERIORS_SHOPS)
     return gYallamInteriors_Room2Placements;
@@ -207,7 +207,7 @@ s32 YallamInteriors_MindReadItemMerchant(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_YALLAM_INTERIORS_1)
+  if (scene == SCENE_YALLAM_INTERIORS_INN)
     return gYallamInteriors_Room1Triggers;
   if (scene == SCENE_YALLAM_INTERIORS_SHOPS)
     return gYallamInteriors_Room2Triggers;
@@ -532,7 +532,7 @@ s32 Scene_Initialize(void) {
 
     scene = party->next;
   }
-  if (scene == SCENE_YALLAM_INTERIORS_1) {
+  if (scene == SCENE_YALLAM_INTERIORS_INN) {
     if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
       Actor_SetPosition(14, 600, 360);
       Actor_SetPosition(16, 632, 346);
@@ -615,15 +615,15 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(YallamInteriors1),
-    SCENE_EXIT_UNLESS(1, Yallam1, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Yallam1, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Yallam1, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Yallam1, 4, EXIT_FLAG_NONE),
+    SCENE_EXITS(YallamInteriorsInn),
+    SCENE_EXIT_UNLESS(1, Yallam, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Yallam, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Yallam, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, Yallam, 4, EXIT_FLAG_NONE),
     SCENE_EXITS(YallamInteriorsShops),
-    SCENE_EXIT_UNLESS(1, Yallam1, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Yallam1, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Yallam1, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, Yallam, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Yallam, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, Yallam, 5, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

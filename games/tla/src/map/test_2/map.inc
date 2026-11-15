@@ -15,7 +15,7 @@ Field_Test2:
 	.incbin "games/tla/src/map/map_000/cell_pictures.delta0.lz"
 	.balign 4, 0
 .LField_Test2_SHAPES:
-	.incbin "games/tla/src/map/contigo_1/shapes.table.lz"
+	.incbin "games/tla/src/map/contigo/shapes.table.lz"
 	.balign 4, 0
 .LField_Test2_GRID:
 	.incbin "games/tla/src/map/test_2/map.grid.lz"

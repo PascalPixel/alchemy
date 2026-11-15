@@ -197,7 +197,7 @@ extern struct ActorPlacement gTaopoSwamp_Room11Placements[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_TAOPO_SWAMP_2)
+  if (scene == SCENE_TAOPO_SWAMP_MUD)
     return gTaopoSwamp_Room2Placements;
   if (scene == SCENE_TAOPO_SWAMP_FLOWER)
     return gTaopoSwamp_Room4Placements;
@@ -908,7 +908,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
   if (scene == SCENE_TAOPO_SWAMP_1)
     return (const struct Trigger *)gTaopoSwamp_Room1Triggers;
-  if (scene == SCENE_TAOPO_SWAMP_2)
+  if (scene == SCENE_TAOPO_SWAMP_MUD)
     return (const struct Trigger *)gTaopoSwamp_Room2Triggers;
   if (scene == SCENE_TAOPO_SWAMP_TEAR_STONES)
     return (const struct Trigger *)gTaopoSwamp_Room3Triggers;
@@ -1203,7 +1203,7 @@ s32 Scene_Initialize(void) {
   s32 id, entrance;
 
   gFieldWork->transition = 513;
-  if (scene == SCENE_TAOPO_SWAMP_2) {
+  if (scene == SCENE_TAOPO_SWAMP_MUD) {
     gMainRoutineWork.retreatScene = SCENE_TAOPO_SWAMP_1;
     gMainRoutineWork.retreatEntrance = 1;
     TaopoSwamp_ResetMud();
@@ -1395,7 +1395,7 @@ s32 Scene_Initialize(void) {
   s32 id, entrance;
 
   *effect = 0;
-  if (scene == SCENE_TAOPO_SWAMP_2) {
+  if (scene == SCENE_TAOPO_SWAMP_MUD) {
     gMainRoutineWork.retreatScene = SCENE_TAOPO_SWAMP_1;
     gMainRoutineWork.retreatEntrance = 1;
     TaopoSwamp_ResetMud();
@@ -2021,17 +2021,17 @@ struct SceneEntrance gSceneEntrances[] = {
 u32 gSceneExits[] = {
     SCENE_EXITS(TaopoSwamp1),
     SCENE_EXIT(1, WorldMap, 35),
-    SCENE_EXIT(2, TaopoSwamp2, 1),
-    SCENE_EXIT(3, TaopoSwamp2, 2),
-    SCENE_EXITS(TaopoSwamp2),
+    SCENE_EXIT(2, TaopoSwampMud, 1),
+    SCENE_EXIT(3, TaopoSwampMud, 2),
+    SCENE_EXITS(TaopoSwampMud),
     SCENE_EXIT(1, TaopoSwamp1, 2),
     SCENE_EXIT(2, TaopoSwamp1, 3),
     SCENE_EXIT(3, TaopoSwampTearStones, 3),
     SCENE_EXIT(4, TaopoSwamp6, 4),
     SCENE_EXIT(5, TaopoSwampTearStones, 5),
     SCENE_EXITS(TaopoSwampTearStones),
-    SCENE_EXIT(3, TaopoSwamp2, 3),
-    SCENE_EXIT(5, TaopoSwamp2, 5),
+    SCENE_EXIT(3, TaopoSwampMud, 3),
+    SCENE_EXIT(5, TaopoSwampMud, 5),
     SCENE_EXIT(6, TaopoSwamp5, 2),
     SCENE_EXIT(7, TaopoSwamp5, 3),
     SCENE_EXIT(8, TaopoSwampTearStones, 9),
@@ -2053,7 +2053,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT(16, TaopoSwampFlower, 16),
     SCENE_EXITS(TaopoSwamp6),
     SCENE_EXIT(1, TaopoSwamp7, 1),
-    SCENE_EXIT(4, TaopoSwamp2, 4),
+    SCENE_EXIT(4, TaopoSwampMud, 4),
     SCENE_EXITS(TaopoSwamp7),
     SCENE_EXIT(1, TaopoSwamp6, 1),
     SCENE_EXIT(2, TaopoSwamp8, 2),

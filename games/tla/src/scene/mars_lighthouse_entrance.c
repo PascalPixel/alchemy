@@ -1267,7 +1267,7 @@ void Actor_HoldDuringEvent(void);
 s32 Scene_PrepareMap(void) {
   if (Flag_IsSet(FLAG_MARS_LIGHTHOUSE_THAWED))
     Map_CopyPalette(gMainRoutineWork.mapId +
-                        (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX_2),
+                        (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX),
                     0x5000000);
   return 0;
 }

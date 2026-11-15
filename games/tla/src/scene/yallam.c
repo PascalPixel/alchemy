@@ -218,8 +218,7 @@ extern struct ActorPlacement gYallam_Room2Placements[];
 extern struct ActorPlacement gYallam_SongGamePlacements[];
 
 const u8 *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_YALLAM_1 &&
-      gMainRoutineWork.entrance == 15)
+  if (gMainRoutineWork.next == SCENE_YALLAM && gMainRoutineWork.entrance == 15)
     return gYallam_SongGamePlacements;
   if (gMainRoutineWork.next == SCENE_YALLAM_2)
     return gYallam_Room2Placements;
@@ -329,8 +328,7 @@ extern struct Trigger gYallam_RoomTwoTriggers[];
 extern struct Trigger gYallam_EntranceFifteenTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_YALLAM_1 &&
-      gMainRoutineWork.entrance == 15)
+  if (gMainRoutineWork.next == SCENE_YALLAM && gMainRoutineWork.entrance == 15)
     return gYallam_EntranceFifteenTriggers;
   if (gMainRoutineWork.next == SCENE_YALLAM_2)
     return gYallam_RoomTwoTriggers;
@@ -1755,7 +1753,7 @@ void Yallam_PlaceFallenPillar(void) {
 }
 
 s32 Scene_Initialize(void) {
-  if (gMainRoutineWork.next == SCENE_YALLAM_1) {
+  if (gMainRoutineWork.next == SCENE_YALLAM) {
     if (gMainRoutineWork.entrance == 15)
       Yallam_StartWatchers();
     else
@@ -1765,8 +1763,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_YALLAM_1 &&
-      Event_GetFlag(FLAG_AREA_TEMP_00))
+  if (gMainRoutineWork.next == SCENE_YALLAM && Event_GetFlag(FLAG_AREA_TEMP_00))
     MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);
   return 0;
 }
@@ -1944,24 +1941,24 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(Yallam1),
-    SCENE_EXIT(1, YallamInteriors1, 1),
-    SCENE_EXIT(2, YallamInteriors1, 2),
+    SCENE_EXITS(Yallam),
+    SCENE_EXIT(1, YallamInteriorsInn, 1),
+    SCENE_EXIT(2, YallamInteriorsInn, 2),
     SCENE_EXIT(3, YallamInteriorsShops, 1),
-    SCENE_EXIT(4, YallamInteriors1, 4),
+    SCENE_EXIT(4, YallamInteriorsInn, 4),
     SCENE_EXIT(5, YallamInteriorsShops, 3),
     SCENE_EXIT(6, YallamInteriorsShops, 2),
-    SCENE_EXIT(7, YallamInteriors1, 3),
+    SCENE_EXIT(7, YallamInteriorsInn, 3),
     SCENE_EXIT(8, MikasallaInteriorsSanctum, 4),
     SCENE_EXIT(9, Yallam2, 6),
     SCENE_EXIT(10, WorldMap, 34),
     SCENE_EXIT(11, WorldMap, 33),
-    SCENE_EXIT(12, Yallam1, 15),
+    SCENE_EXIT(12, Yallam, 15),
     SCENE_EXIT(13, Yallam2, 7),
-    SCENE_EXIT(15, Yallam1, 12),
+    SCENE_EXIT(15, Yallam, 12),
     SCENE_EXITS(Yallam2),
-    SCENE_EXIT(6, Yallam1, 9),
-    SCENE_EXIT(7, Yallam1, 13),
+    SCENE_EXIT(6, Yallam, 9),
+    SCENE_EXIT(7, Yallam, 13),
     SCENE_EXITS_END,
 };
 

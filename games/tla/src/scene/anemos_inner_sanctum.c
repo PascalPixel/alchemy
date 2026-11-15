@@ -1294,7 +1294,7 @@ void AnemosInnerSanctum_TeleportOut(void) {
 
     party->value = 2;
   }
-  Event_SetDestination(SCENE_CONTIGO_1, 99);
+  Event_SetDestination(SCENE_CONTIGO, 99);
   FieldEvent_Wait(40);
   AnemosInnerSanctum_StopPaletteCycle();
 }
@@ -2087,7 +2087,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS(AnemosInnerSanctumDragonSkinChest),
     SCENE_EXIT_UNLESS(1, AnemosInnerSanctumEntrance, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AnemosInnerSanctumGuardian, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(99, Contigo1, 99, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(99, Contigo, 99, EXIT_FLAG_NONE),
     SCENE_EXITS(AnemosInnerSanctum2),
     SCENE_EXIT_UNLESS(1, AnemosInnerSanctum2, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AnemosInnerSanctum2, 12, EXIT_FLAG_NONE),

@@ -1708,7 +1708,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS(LemurianShip1),
     SCENE_EXIT_UNLESS(1, LemurianShipDeck2, 1, 0x907),
     SCENE_EXIT_UNLESS(1, LemuriaDock, 3, 0x9b4),
-    SCENE_EXIT_UNLESS(1, AttekaInlet1, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, AttekaInlet, 4, EXIT_FLAG_NONE),
     SCENE_EXIT(2, LemurianShip1, 3),
     SCENE_EXIT(3, LemurianShip1, 2),
     SCENE_EXIT(4, LemurianShip1, 6),

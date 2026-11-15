@@ -3227,7 +3227,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT(8, MagmaRockInsideEmberStone, 9),
     SCENE_EXIT(9, MagmaRockInsideEmberStone, 8),
     SCENE_EXIT(10, MagmaRockInside6, 15),
-    SCENE_EXIT(11, MagmaRock1, 2),
+    SCENE_EXIT(11, MagmaRockSlide, 2),
     SCENE_EXITS(MagmaRockInsideBlazeTablet),
     SCENE_EXIT(1, MagmaRockInsideEmberStone, 1),
     SCENE_EXITS_END,

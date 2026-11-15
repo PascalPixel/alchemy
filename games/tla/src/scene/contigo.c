@@ -456,7 +456,7 @@ extern struct ActorPlacement gContigo_Placements[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_CONTIGO_1)
+  if (scene == SCENE_CONTIGO)
     return gContigo_Room1Placements;
   if (scene == SCENE_CONTIGO_GEOGLYPH)
     return gContigo_Room4Placements;
@@ -482,7 +482,7 @@ extern struct Trigger gContigo_Room3Triggers[];
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_CONTIGO_1)
+  if (scene == SCENE_CONTIGO)
     return gContigo_Room1Triggers;
   if (scene == SCENE_CONTIGO_GEOGLYPH)
     return gContigo_Room4Triggers;
@@ -2177,7 +2177,7 @@ struct SpriteAttributes {
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_CONTIGO_1)
+  if (scene == SCENE_CONTIGO)
     Contigo_InitializeRoom1();
   else if (scene == SCENE_CONTIGO_GEOGLYPH)
     Contigo_InitializeRoom4();
@@ -2871,7 +2871,7 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(Contigo1),
+    SCENE_EXITS(Contigo),
     SCENE_EXIT(1, WorldMap, 54),
     SCENE_EXIT(2, ContigoShops, 1),
     SCENE_EXIT(3, ContigoShops, 2),
@@ -2885,23 +2885,23 @@ u32 gSceneExits[] = {
     SCENE_EXIT(11, ContigoShops, 4),
     SCENE_EXIT(12, ContigoGeoglyph, 21),
     SCENE_EXITS(ContigoGeoglyph),
-    SCENE_EXIT(21, Contigo1, 12),
+    SCENE_EXIT(21, Contigo, 12),
     SCENE_EXIT(22, AnemosInnerSanctumEntrance, 3),
     SCENE_EXIT(23, AnemosInnerSanctumEntrance, 1),
     SCENE_EXIT(24, AnemosInnerSanctumEntrance, 4),
     SCENE_EXITS(ContigoShops),
-    SCENE_EXIT(1, Contigo1, 2),
-    SCENE_EXIT(2, Contigo1, 3),
-    SCENE_EXIT(3, Contigo1, 10),
-    SCENE_EXIT(4, Contigo1, 11),
-    SCENE_EXIT(5, Contigo1, 8),
-    SCENE_EXIT(6, Contigo1, 9),
-    SCENE_EXIT(7, Contigo1, 5),
+    SCENE_EXIT(1, Contigo, 2),
+    SCENE_EXIT(2, Contigo, 3),
+    SCENE_EXIT(3, Contigo, 10),
+    SCENE_EXIT(4, Contigo, 11),
+    SCENE_EXIT(5, Contigo, 8),
+    SCENE_EXIT(6, Contigo, 9),
+    SCENE_EXIT(7, Contigo, 5),
     SCENE_EXIT(21, AttekaInletGeode, 3),
     SCENE_EXITS(ContigoLuckyDice),
-    SCENE_EXIT(8, Contigo1, 6),
-    SCENE_EXIT(9, Contigo1, 7),
-    SCENE_EXIT(10, Contigo1, 4),
+    SCENE_EXIT(8, Contigo, 6),
+    SCENE_EXIT(9, Contigo, 7),
+    SCENE_EXIT(10, Contigo, 4),
     SCENE_EXITS_END,
 };
 

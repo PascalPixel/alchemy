@@ -72,7 +72,7 @@ leads to three, one after another:
 ```c
 SCENE_EXIT_UNLESS(1, LemurianShipDeck2, 1, 0x907),
 SCENE_EXIT_UNLESS(1, LemuriaDock, 3, 0x9b4),
-SCENE_EXIT_UNLESS(1, AttekaInlet1, 4, EXIT_FLAG_NONE),
+SCENE_EXIT_UNLESS(1, AttekaInlet, 4, EXIT_FLAG_NONE),
 ```
 
 The last row's EXIT_FLAG_NONE, a flag word of -1, is new in The Lost Age: `Scene_TakeExit` takes that exit

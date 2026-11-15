@@ -399,7 +399,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
       !Event_GetFlag(FLAG_SAID_FAREWELL))
     return gProx_Room1FarewellPlacements;
   scene = gMainRoutineWork.next;
-  if (scene == SCENE_PROX_2)
+  if (scene == SCENE_PROX)
     return gProx_Room2Placements;
   if (scene == SCENE_PROX_MOLD) {
     if (Event_GetFlag(FLAG_MARS_BEACON_LIT))
@@ -443,7 +443,7 @@ const u8 *Scene_GetTriggers(void) {
 
   if (scene == SCENE_PROX_1)
     return gProx_Room1Triggers;
-  if (scene == SCENE_PROX_2)
+  if (scene == SCENE_PROX)
     return gProx_Room2Triggers;
   if (scene == SCENE_PROX_MOLD)
     return gProx_Room3Triggers;
@@ -1129,7 +1129,7 @@ void Prox_AddPuff(s32 a0, s32 a1, s32 a2) {
 void Prox_PuffFromRoofs(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_PROX_2) {
+  if (scene == SCENE_PROX) {
     if ((gFrameCount & 63) == 0)
       Prox_AddPuff(536 << 16, 40 << 16, 232 << 16);
     if (((gFrameCount + 60) & 63) == 0)
@@ -1609,7 +1609,7 @@ s32 Scene_Initialize(void) {
       TilesetAnim_Resume(6);
     }
     scene = gMainRoutineWork.next;
-    if (scene == SCENE_PROX_2) {
+    if (scene == SCENE_PROX) {
       if (!Event_GetFlag(FLAG_DIG_SPOT_SCOOPED))
         Actor_SetWideSprite(64, 1);
       Prox_InitializeRoom2();
@@ -2414,9 +2414,9 @@ struct SceneEntrance gSceneEntrances[] = {
 u32 gSceneExits[] = {
     SCENE_EXITS(Prox1),
     SCENE_EXIT(1, WorldMap, 62),
-    SCENE_EXIT(2, Prox2, 1),
+    SCENE_EXIT(2, Prox, 1),
     SCENE_EXIT(3, StaffCredit, 0),
-    SCENE_EXITS(Prox2),
+    SCENE_EXITS(Prox),
     SCENE_EXIT(1, Prox1, 2),
     SCENE_EXIT(2, Prox4, 8),
     SCENE_EXIT(3, Prox4, 1),
@@ -2429,28 +2429,28 @@ u32 gSceneExits[] = {
     SCENE_EXIT(10, Prox5, 9),
     SCENE_EXIT(11, ProxMold, 1),
     SCENE_EXITS(ProxMold),
-    SCENE_EXIT(1, Prox2, 11),
-    SCENE_EXIT(2, Prox2, 9),
+    SCENE_EXIT(1, Prox, 11),
+    SCENE_EXIT(2, Prox, 9),
     SCENE_EXIT(3, WorldMap, 63),
     SCENE_EXIT(4, Prox4, 7),
     SCENE_EXITS(Prox4),
-    SCENE_EXIT(1, Prox2, 3),
-    SCENE_EXIT(2, Prox2, 7),
+    SCENE_EXIT(1, Prox, 3),
+    SCENE_EXIT(2, Prox, 7),
     SCENE_EXIT(3, Prox5, 6),
-    SCENE_EXIT(4, Prox2, 5),
-    SCENE_EXIT(5, Prox2, 6),
+    SCENE_EXIT(4, Prox, 5),
+    SCENE_EXIT(5, Prox, 6),
     SCENE_EXIT(6, Prox5, 7),
     SCENE_EXIT(7, ProxMold, 4),
-    SCENE_EXIT(8, Prox2, 2),
+    SCENE_EXIT(8, Prox, 2),
     SCENE_EXIT(9, Prox5, 8),
-    SCENE_EXIT(10, Prox2, 4),
+    SCENE_EXIT(10, Prox, 4),
     SCENE_EXITS(Prox5),
     SCENE_EXIT(6, Prox4, 3),
     SCENE_EXIT(7, Prox4, 6),
     SCENE_EXIT(8, Prox4, 9),
-    SCENE_EXIT(9, Prox2, 10),
+    SCENE_EXIT(9, Prox, 10),
     SCENE_EXITS(Prox6),
-    SCENE_EXIT(7, Prox2, 8),
+    SCENE_EXIT(7, Prox, 8),
     SCENE_EXITS_END,
 };
 

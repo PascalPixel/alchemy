@@ -426,7 +426,7 @@ const struct MapResources gMaps[] = {
     {211, 212, {213, 214, 215}, 216}, // mikasalla_2
     {217, 218, {219, 220, 221}, 222}, // mikasalla_interiors
     {223, 224, {225, 226, 227}, 228}, // mikasalla_interiors_sanctum
-    {229, 230, {197, 209, 210}, 200}, // garoh_1
+    {229, 230, {197, 209, 210}, 200}, // garoh
     {231, 232, {197, 209, 210}, 200}, // garoh_hypnos_sword_chest
     {233, 232, {197, 209, 210}, 200}, // garoh_blocks
     {234, 235, {79, 80, 81}, 82}, // garoh_4
@@ -494,22 +494,22 @@ const struct MapResources gMaps[] = {
     {413, 414, {415, 416, 417}, 418}, // kibombo_6
     {419, 420, {421, 422, 423}, 424}, // gabomba_catacombs_teleporters
     {425, 420, {421, 422, 423}, 424}, // gabomba_catacombs_mud
-    {426, 420, {421, 422, 423}, 424}, // gabomba_catacombs_3
+    {426, 420, {421, 422, 423}, 424}, // gabomba_catacombs_hidden_wall
     {427, 420, {421, 422, 423}, 424}, // gabomba_catacombs_tomegathericon
     {428, 420, {421, 422, 423}, 424}, // gabomba_catacombs_5
     {429, 430, {431, 432, 433}, 434}, // lemurian_ship_deck
     {435, 436, {310, 311, 312}, 313}, // lemurian_ship_1
     {437, 436, {310, 311, 312}, 313}, // lemurian_ship_aqua_hydra
-    {438, 439, {440, 441, 442}, 443}, // islets_1
-    {444, 445, {197, 198, 210}, 200}, // islets_2
-    {446, 447, {45, 46, 47}, 48}, // islets_3
+    {438, 439, {440, 441, 442}, 443}, // islets_dog
+    {444, 445, {197, 198, 210}, 200}, // islets_pretty_stone
+    {446, 447, {45, 46, 47}, 48}, // islets_cow
     {448, 449, {450, 451, 452}, 453}, // islets_turtle
     {454, 455, {197, 198, 199}, 200}, // yallam
     {456, 457, {458, 459, 460}, 461}, // yallam_interiors
     {462, 463, {163, 164, 165}, 166}, // yallam_interiors_shops
     {211, 464, {213, 214, 215}, 216}, // mikasalla_2
     {465, 466, {467, 468, 469}, 470}, // taopo_swamp_1
-    {471, 472, {473, 474, 475}, 476}, // taopo_swamp_2
+    {471, 472, {473, 474, 475}, 476}, // taopo_swamp_mud
     {477, 478, {479, 480, 481}, 482}, // taopo_swamp_6
     {483, 478, {479, 480, 481}, 482}, // taopo_swamp_tear_stones
     {484, 478, {479, 480, 481}, 482}, // taopo_swamp_flower
@@ -585,7 +585,7 @@ const struct MapResources gMaps[] = {
     {675, 676, {677, 678, 679}, 680}, // settlements_4
     {681, 682, {683, 684, 685}, 686}, // settlements_7
     {687, 688, {689, 690, 691}, 692}, // settlements_8
-    {693, 694, {270, 271, 272}, 273}, // magma_rock_1
+    {693, 694, {270, 271, 272}, 273}, // magma_rock_slide
     {695, 694, {270, 271, 272}, 273}, // magma_rock_salamander_tail_chest
     {696, 694, {270, 271, 272}, 273}, // magma_rock_statue
     {697, 698, {525, 526, 527}, 528}, // magma_rock_inside_lucky_medal_chest
@@ -596,14 +596,14 @@ const struct MapResources gMaps[] = {
     {703, 698, {525, 526, 527}, 528}, // magma_rock_inside_6
     {704, 698, {525, 526, 527}, 528}, // magma_rock_inside_ember_stone
     {705, 706, {278, 279, 280}, 281}, // magma_rock_inside_blaze_tablet
-    {707, 708, {604, 605, 606}, 709}, // atteka_inlet_1
+    {707, 708, {604, 605, 606}, 709}, // atteka_inlet
     {710, 711, {712, 713, 714}, 715}, // atteka_inlet_geode
-    {716, 717, {712, 713, 714}, 718}, // contigo_1
+    {716, 717, {712, 713, 714}, 718}, // contigo
     {719, 720, {721, 722, 723}, 724}, // contigo_shops
     {719, 725, {721, 722, 723}, 724}, // contigo_shops
     {726, 727, {663, 664, 665}, 666}, // shaman_village_cave
     {728, 729, {730, 731, 732}, 733}, // shaman_village_1
-    {734, 735, {736, 737, 738}, 739}, // shaman_village_2
+    {734, 735, {736, 737, 738}, 739}, // shaman_village
     {740, 741, {736, 737, 738}, 739}, // shaman_village_aroma
     {742, 743, {744, 745, 746}, 747}, // shaman_village_inn
     {742, 748, {744, 745, 746}, 747}, // shaman_village_inn
@@ -615,14 +615,14 @@ const struct MapResources gMaps[] = {
     {756, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_guardian
     {757, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_entrance
     {758, 759, {760, 761, 762}, 763}, // trial_road_1
-    {764, 759, {760, 761, 762}, 763}, // trial_road_3
+    {764, 759, {760, 761, 762}, 763}, // trial_road_cave_rock
     {765, 766, {767, 768, 769}, 770}, // trial_road_gasp
     {771, 772, {773, 774, 775}, 776}, // trial_road_summit
     {777, 778, {779, 780, 781}, 782}, // jupiter_lighthouse_entrance
     {783, 784, {79, 80, 81}, 82}, // jupiter_lighthouse_basement_1
     {785, 291, {292, 293, 294}, 295}, // jupiter_lighthouse_basement_2
     {786, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_1
-    {792, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_2
+    {792, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_beam
     {793, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_erinyes_tunic_chest
     {794, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_locked_doors
     {795, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_red_key
@@ -636,7 +636,7 @@ const struct MapResources gMaps[] = {
     {810, 811, {812, 813, 814}, 815}, // loho_2
     {816, 817, {599, 600, 601}, 602}, // northern_reaches
     {818, 819, {820, 821, 822}, 823}, // prox_1
-    {824, 825, {820, 821, 822}, 823}, // prox_2
+    {824, 825, {820, 821, 822}, 823}, // prox
     {826, 827, {820, 821, 822}, 823}, // prox_mold
     {828, 688, {689, 690, 691}, 692}, // prox_4
     {161, 829, {163, 164, 165}, 166}, // madra_interiors_2

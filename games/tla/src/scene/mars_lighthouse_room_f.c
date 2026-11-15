@@ -1258,7 +1258,7 @@ s32 Scene_PrepareMap(void) {
   party = &gMainRoutineWork;
   if (Event_GetFlag(flag))
     Map_CopyPalette(party->mapId +
-                        (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX_2),
+                        (SCENE_MARS_LIGHTHOUSE_ROOM_M_3 - SCENE_PROX),
                     0x5000000);
   return 0;
 }

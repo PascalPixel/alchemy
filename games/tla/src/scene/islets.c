@@ -1,14 +1,14 @@
 /// @file
 /// The five islets of the Eastern Sea, one scene each in this overlay, and the
-/// trade from one to the next: West Indra Islet (SceneId_Islets1), whose dog
+/// trade from one to the next: West Indra Islet (SceneId_IsletsDog), whose dog
 /// trades the Li'l Turtle for Milk (Islets_TradeWithDog); E Tundaria Islet
-/// (Islets2), where the log pushed into the water brings Pengulina back to
-/// Pengus for a Pretty Stone (Islets_PengusGivesPrettyStone); N Osenia Islet
-/// (Islets3), whose cow trades Milk for the Red Cloth (Islets_TradeWithCow);
-/// SE Angara Islet (Islets4), whose bird trades the Red Cloth for the Pretty
-/// Stone (Islets_TradeWithBird); and the Sea of Time Islet (IsletsTurtle),
-/// where Lonesome George takes the Li'l Turtle and carries the party to his
-/// secret spot (Islets_GiveTurtle, Islets_ArriveAtSecretSpot).
+/// (IsletsPrettyStone), where the log pushed into the water brings Pengulina
+/// back to Pengus for a Pretty Stone (Islets_PengusGivesPrettyStone); N Osenia
+/// Islet (IsletsCow), whose cow trades Milk for the Red Cloth
+/// (Islets_TradeWithCow); SE Angara Islet (Islets4), whose bird trades the Red
+/// Cloth for the Pretty Stone (Islets_TradeWithBird); and the Sea of Time Islet
+/// (IsletsTurtle), where Lonesome George takes the Li'l Turtle and carries the
+/// party to his secret spot (Islets_GiveTurtle, Islets_ArriveAtSecretSpot).
 #include "system/task.h"
 #include "flags.h"
 #include "item_ids.h"
@@ -226,11 +226,11 @@ void FieldPsynergy_StopMindReadWave(void);
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_ISLETS_1)
+  if (scene == SCENE_ISLETS_DOG)
     return gIslets_Room1Placements;
-  if (scene == SCENE_ISLETS_2)
+  if (scene == SCENE_ISLETS_PRETTY_STONE)
     return gIslets_Room2Placements;
-  if (scene == SCENE_ISLETS_3)
+  if (scene == SCENE_ISLETS_COW)
     return gIslets_Room3Placements;
   if (scene == SCENE_ISLETS_4)
     return gIslets_Room4Placements;
@@ -272,11 +272,11 @@ void Islets_PushLogIntoWater(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_ISLETS_1)
+  if (scene == SCENE_ISLETS_DOG)
     return gIslets_Room1Triggers;
-  if (scene == SCENE_ISLETS_2)
+  if (scene == SCENE_ISLETS_PRETTY_STONE)
     return gIslets_Room2Triggers;
-  if (scene == SCENE_ISLETS_3)
+  if (scene == SCENE_ISLETS_COW)
     return gIslets_Room3Triggers;
   if (scene == SCENE_ISLETS_4)
     return gIslets_Room4Triggers;
@@ -1796,11 +1796,11 @@ s32 Scene_Initialize(void) {
 
   work->transition = 0x100;
   scene = gMainRoutineWork.next;
-  if (scene == SCENE_ISLETS_1)
+  if (scene == SCENE_ISLETS_DOG)
     Islets_InitializeRoom1();
-  else if (scene == SCENE_ISLETS_2)
+  else if (scene == SCENE_ISLETS_PRETTY_STONE)
     Islets_InitializeRoom2();
-  else if (scene == SCENE_ISLETS_3)
+  else if (scene == SCENE_ISLETS_COW)
     Islets_InitializeRoom3();
   else if (scene == SCENE_ISLETS_4)
     Islets_InitializeRoom4();
@@ -2934,14 +2934,14 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(Islets1),
+    SCENE_EXITS(IsletsDog),
     SCENE_EXIT(1, WorldMap, 28),
     SCENE_EXIT(2, ChampaInteriors, 9),
-    SCENE_EXITS(Islets2),
+    SCENE_EXITS(IsletsPrettyStone),
     SCENE_EXIT(1, WorldMap, 29),
     SCENE_EXIT(2, MikasallaInteriorsHouses, 5),
-    SCENE_EXIT(3, Islets2, 1),
-    SCENE_EXITS(Islets3),
+    SCENE_EXIT(3, IsletsPrettyStone, 1),
+    SCENE_EXITS(IsletsCow),
     SCENE_EXIT(1, WorldMap, 30),
     SCENE_EXIT(2, WorldMap, 80),
     SCENE_EXIT(3, DailaInteriorsHouses, 7),

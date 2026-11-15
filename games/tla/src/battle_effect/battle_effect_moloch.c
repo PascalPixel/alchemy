@@ -2465,10 +2465,10 @@ void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
           xB += dxB;
           uA += duA;
           vA += dvA;
-          /* LEFTOVER(template): edge B's steps, the upper half's loop body
-           * repeated, idle here where the upper half's are read as the lower
-           * half starts; as the loop without them, 4 of 966 instructions
-           * differ in tla-en. */
+          /* LEFTOVER(template): edge B's steps, as Render_FillMesh's lower
+           * half steps both its edges and this routine's upper half steps
+           * all six values, idle here; as the loop without them, 4 of 966
+           * instructions differ in tla-en. */
           uB += duB;
           vB += dvB;
         }

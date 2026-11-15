@@ -1618,7 +1618,7 @@ void FieldPsynergy_Ply(void) {
   wait(12);
   if (target != 0) {
     for (i = 0; i < 30; i++) {
-      /* FAKEMATCH(temporary): a redundant copy. */
+      /* FAKEMATCH(dead): target set again to object. */
       target = object;
       if (i & 3)
         Actor_SetSpriteColorModeFar(object, 9);

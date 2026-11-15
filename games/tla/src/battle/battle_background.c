@@ -35,24 +35,11 @@
 void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   struct BattleWork *screen = Ram_HeapSlots->battleWork;
   u16 *palette = screen->palette;
-  u32 ime;
-  u32 *slot;
+  volatile u32 ime;
 
-  /* FAKEMATCH(dead): the save in a once-only block loads REG_IME's address
-   * after the stack frame is made. */
+  /* FAKEMATCH(dead): the lock in a once-only block. */
   do {
-    u16 *imeReg;
-    s32 once;
-
-    /* FAKEMATCH(temporary): a pointer to ime. */
-    slot = &ime;
-    imeReg = (u16 *)&REG_IME;
-    once = 0;
-
-    do {
-      *slot = *imeReg;
-      *imeReg = (u32)imeReg;
-    } while (once);
+    Irq_Lock(&ime);
   } while (0);
 
   if (level == 0) {
@@ -64,11 +51,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
                           FIXED_ONE - level * BACKGROUND_LEVEL_STEP,
                       BATTLE_BG_PALETTE_COLORS);
   }
-  {
-    u32 saved = *slot;
-
-    REG_IME = saved;
-  }
+  Irq_Unlock(&ime);
 }
 
 /// As The Broken Seal's, with this game's heap slots, its callback

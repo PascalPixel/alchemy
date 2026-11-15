@@ -244,16 +244,10 @@ s32 Battle_Run(s32 enemyGroup) {
 
   if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
     battle->twoSided = 1;
-    /* FAKEMATCH(dead): an empty once-only block after the twoSided store. */
-    do {
-    } while (0);
-    gMainRoutineWork.battleType = BATTLE_TYPE_LINK;
+    Battle_SetType(BATTLE_TYPE_LINK);
   }
   if (battle->twoSided != 0) {
-    /* FAKEMATCH(dead): the seed's store in a once-only block. */
-    do {
-      gBattleRandomSeed = 0;
-    } while (0);
+    Battle_SetRandomSeed(0);
     for (linkWaitFrames = 0;;) {
       if ((gLinkStatus & LINK_BOTH_CONNECTED) == LINK_BOTH_CONNECTED)
         break;
@@ -514,7 +508,7 @@ finished:
   BattleParty_ResetActiveRuntimeFields();
   Battle_TurnEndNoOp();
   DjinnRecovery_CountDown();
-  gMainRoutineWork.battleType = BATTLE_TYPE_NORMAL;
+  Battle_SetType(BATTLE_TYPE_NORMAL);
   Task_Remove(BattleObject_UpdateSpritePriorities);
   BattleBackground_Free();
   return result;

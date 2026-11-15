@@ -165,7 +165,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   Vram_CopyTile(0xf019, 0x211);
 
   for (;;) {
-    /* FAKEMATCH(temporary): sprite holds &cursorStorage. */
+    /* LEFTOVER(template): sprite holds &cursorStorage, as
+     * BattlePsynergyMenu_Run's iconSprite holds its cursor. */
     sprite = &cursorStorage;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {

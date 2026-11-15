@@ -384,4 +384,13 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 /// party's for an enemy and the enemies' for a party member.
 #define TARGET_NONE_ENEMY PLACE_PARTY
 
+/// Sets the kind of battle the next one is, as every write to it does. The
+/// name is ours, as in The Broken Seal (main_routine_work.h there).
+#ifndef Battle_SetType
+#define Battle_SetType(mode)                                                   \
+  do {                                                                         \
+    gMainRoutineWork.battleType = (mode);                                      \
+  } while (0)
+#endif
+
 #endif

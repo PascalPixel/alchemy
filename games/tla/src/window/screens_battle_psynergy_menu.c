@@ -145,7 +145,6 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   Vram_CopyTile(0xf019, 0x211);
 
   for (;;) {
-    /* FAKEMATCH(temporary): iconSprite holds &cursor. */
     iconSprite = &cursor;
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;

@@ -120,4 +120,13 @@ struct PartyStatusWindow {
 /// The rows a battle list window shows.
 enum { BATTLE_LIST_ROWS = 5 };
 
+/// Gives a menu sprite its shape and clears the rest of its attributes, its
+/// tile and place still to come. The battle lists, the status screen and the
+/// command row start their sprites so; the name is ours, as The Broken Seal's.
+#define MenuSprite_Initialize(sprite, shape)                                   \
+  do {                                                                         \
+    (sprite).oam.word.attr01 = (shape);                                        \
+    (sprite).oam.word.attr23 = 0;                                              \
+  } while (0)
+
 #endif

@@ -44,15 +44,8 @@ struct RenderInput *DebugSoundTest_Open(void) {
   window = Window_Create(7, 3, 15, 9, WINDOW_FLAG_INSTANT);
   work->cursor.sprite = WindowSprite_Create(
       Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, window, 0, 0);
-  {
-    /* FAKEMATCH(pin): the cursor's address held in r0 for the barrier to read.
-     */
-    register struct WindowSprite **cursor asm("r0") = &work->cursor.sprite;
-    /* FAKEMATCH(barrier): the empty asm reads r0 and rewrites window. */
-    asm("" : "+r"(window) : "r"(cursor));
-    MenuCursor_SetPositionImmediateFar(&work->cursor, ((s16)window->x << 3) - 4,
-                                       ((s16)window->y << 3) + 12);
-  }
+  MenuCursor_SetPositionImmediateFar(&work->cursor, ((s16)window->x << 3) - 4,
+                                     ((s16)window->y << 3) + 12);
   return window;
 }
 

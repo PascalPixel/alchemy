@@ -733,8 +733,6 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           QuantityBar_Fill(SHOP_STACK_LIMIT, 14, tileBuffer);
           QuantityBar_Fill(minimum + maximum, 0, tileBuffer);
           QuantityBar_Fill(minimum + count + 1, 10, tileBuffer);
-          /* FAKEMATCH(temporary): the quantity in its own local before the last
-           * fill. */
           selected = count + 1;
           QuantityBar_Fill(minimum, 2, tileBuffer);
           VramCache_Load(resourceSlot, 8 * TILE_SIZE_4BPP, tileBuffer);

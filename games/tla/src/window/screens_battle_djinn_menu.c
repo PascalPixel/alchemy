@@ -164,7 +164,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   work->dirty = 1;
 
   for (;;) {
-    /* FAKEMATCH(temporary): sprite holds &cursorSprite. */
+    /* LEFTOVER(template): sprite holds &cursorSprite, as
+     * BattlePsynergyMenu_Run's iconSprite holds its cursor. */
     struct QueuedSprite *sprite = &cursorSprite;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow ||

@@ -394,10 +394,7 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt) {
           p++;
         } while (col != 0);
       }
-      /* FAKEMATCH(dead): the dirty-row mark in a once-only block. */
-      do {
-        tiles->dirty |= 2 << ((u32)y >> 2);
-      } while (0);
+      UiRender_MarkRow(tiles, y);
       height--;
       y++;
     } while (height != 0);

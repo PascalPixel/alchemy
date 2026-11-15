@@ -8,7 +8,6 @@
 #include "sounds.h"
 #include "macros.h"
 
-struct FxPartyList;
 struct MeshTriangle;
 struct StripQuad;
 

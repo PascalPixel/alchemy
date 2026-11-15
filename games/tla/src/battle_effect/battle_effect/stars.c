@@ -86,7 +86,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectParams *args) {
   for (frame = 0; frame != 60; frame++) {
     // The camera turns toward the caster's side, slowing from frame 40.
     if (frame <= 47) {
-      struct CameraView *view = (struct CameraView *)camera;
+      struct BattleCamera *view = (struct BattleCamera *)camera;
       s32 speed;
 
       if (frame <= 39)

@@ -130,16 +130,6 @@ struct RuinObject {
   u8 resource;
 };
 
-struct FxUnit {
-  u8 unk00[56];
-  s16 hp;
-};
-
-struct FxBgScroll {
-  u8 unk00[6];
-  u16 y;
-};
-
 // The kinds this body draws, chosen by the effect's entry.
 enum {
   QUADS_MERCURY, // over a prepared canvas, with the Mercury Djinn
@@ -169,12 +159,6 @@ enum {
   SPARKS_FIXED,     // from a fixed point, canvas at priority 1
   SPARKS_ORANGE,    // from a lower point, orange, with a palette fade
   SPARKS_FROM_ACTOR // from the caster, lightning colours, sparks rising
-};
-
-/// The camera's heading, as the camera work holds it.
-struct CameraView {
-  u8 unk00[0x36];
-  u16 yaw;
 };
 
 enum { MODE_SOOTHING_STAR, MODE_SLEEP_STAR, MODE_SLAVER };
@@ -584,7 +568,6 @@ struct AnimationEntry;
 struct BattleEffectParams;
 struct ScreenPoint;
 struct Particle;
-struct FxPartyList;
 struct MeshTriangle;
 struct PoolEntry;
 struct SpriteScale;
@@ -632,7 +615,7 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
 void BattleCamera_ApplyPhasedDelta(void);
 
 // dispatch.c
-void BattleEffect_SelectLivingTargets(struct FxPartyList *party);
+void BattleEffect_SelectLivingTargets(struct BattleEffectParams *party);
 void BattleEffect_CallDoNothing(s32 cnt);
 void BattleEffect_BuildWindowEdgeTable(void);
 

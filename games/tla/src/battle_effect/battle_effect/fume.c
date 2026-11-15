@@ -5,7 +5,6 @@
 #include "../battle_effect_internal.h"
 #include "fixed_math.h"
 
-struct FxPartyList;
 struct StripQuad;
 
 struct Corner {

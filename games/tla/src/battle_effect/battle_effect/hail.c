@@ -406,5 +406,3 @@ void Camera_ApplyVerticalShake(s32 range) {
 
 // Thor: a beam of light falls from a dusk sky, then a pillar of lightning and
 // violet bolts strike the foes.
-
-struct FxPartyList;

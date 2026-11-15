@@ -6,7 +6,6 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-struct FxPartyList;
 struct StripQuad;
 
 // On every strike after the first, the target's motion goes to this percent of

@@ -64,15 +64,6 @@ struct Model__f175f74 {
   s32 depth;
 };
 
-struct ActorPos {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x34];
-  s32 unk48;
-};
-
 /* VIEW(f175f74): tag struct SummonWork as struct SummonWork__f175f74;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:
@@ -136,18 +127,6 @@ struct SystemWork {
   struct LineScrollView *lineScroll;
   u8 unkb4[0x8];
   s32 (*blitBc)(void *, const void *, s32, s32, s32, s32);
-};
-
-struct RegisterQueueEntry {
-  u32 value;
-  u32 address;
-  u32 mode;
-};
-
-struct RegisterQueue {
-  u16 count;
-  u16 unk2;
-  struct RegisterQueueEntry entries[32];
 };
 
 #define SYSTEM_WORK ((struct SystemWork *)Ram_HeapSlots)
@@ -1357,11 +1336,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     PARTICLES[i].timer = -1;
   }
   for (i = 0; i != arg->targetCount; i++) {
-    struct ActorPos *actor = BattleObject_GetFar(arg->targets[i])->object;
+    struct Actor *actor = BattleObject_GetFar(arg->targets[i])->object;
 
-    work->homes[i].x = actor->x;
-    work->homes[i].y = actor->y;
-    work->homes[i].z = actor->z;
+    work->homes[i].x = actor->x.fixed;
+    work->homes[i].y = actor->y.fixed;
+    work->homes[i].z = actor->z.fixed;
   }
 
   width = 56;
@@ -1379,24 +1358,24 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         work->members[i].timer = -1;
       }
       for (i = 0; i != arg->targetCount; i++) {
-        struct ActorPos *actor = BattleObject_GetFar(arg->targets[i])->object;
+        struct Actor *actor = BattleObject_GetFar(arg->targets[i])->object;
 
         BattleEffect_TintBattler(arg->targets[i], SPRITE_COLOR_NORMAL,
                                  POSE_DAMAGE, TINT_KEEP, -1);
-        actor->x = -(i + 4) * px(128);
-        actor->z = 0;
-        actor->y = px(20);
-        actor->unk48 = 0;
+        actor->x.fixed = -(i + 4) * px(128);
+        actor->z.fixed = 0;
+        actor->y.fixed = px(20);
+        actor->gravity = 0;
       }
     }
     if (frame == 120) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
       ColorBuffer_ScaleFar(battle->palette, PLTT + 0x60, 0x99a0, 128);
       for (i = 0; i != arg->targetCount; i++) {
-        struct ActorPos *actor = BattleObject_GetFar(arg->targets[i])->object;
+        struct Actor *actor = BattleObject_GetFar(arg->targets[i])->object;
 
-        SET_POSITION(actor, 0, px(124), 0);
-        actor->unk48 = 0;
+        SET_ACTOR_POSITION(actor, 0, px(124), 0);
+        actor->gravity = 0;
       }
     }
     if (frame == 160) {
@@ -1432,9 +1411,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
         for (i = 0; i != arg->targetCount; i++) {
-          struct ActorPos *actor = BattleObject_GetFar(arg->targets[i])->object;
+          struct Actor *actor = BattleObject_GetFar(arg->targets[i])->object;
 
-          SET_POSITION(actor, 0, px(32), work->homes[i].z);
+          SET_ACTOR_POSITION(actor, 0, px(32), work->homes[i].z);
         }
         for (i = 0; i != arg->targetCount; i++) {
           s32 spin = Random16();
@@ -1555,18 +1534,18 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
       }
       for (i = 0; i != arg->targetCount; i++) {
-        struct ActorPos *actor = BattleObject_GetFar(arg->targets[i])->object;
+        struct Actor *actor = BattleObject_GetFar(arg->targets[i])->object;
         struct Particle__f175f74 *member = &work->members[i];
         s32 landed = 0;
 
-        if (actor->y < px(100)) {
+        if (actor->y.fixed < px(100)) {
           if (member->timer == -1) {
-            actor->x += px(10);
+            actor->x.fixed += px(10);
           } else {
-            actor->x += px(2);
+            actor->x.fixed += px(2);
           }
           if (member->timer == -1) {
-            if (actor->x > px(48)) {
+            if (actor->x.fixed > px(48)) {
               landed = 1;
             }
             if (landed == 1) {
@@ -1602,7 +1581,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
                                    TINT_KEEP, i, 32);
         }
         if (member->timer == 8) {
-          SET_POSITION(actor, 0, px(148), 0);
+          SET_ACTOR_POSITION(actor, 0, px(148), 0);
         }
       }
       if (frame >= 0) {

@@ -10,7 +10,6 @@
 
 // Vengeance: the avenger's blades.
 
-struct FxPartyList;
 struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))

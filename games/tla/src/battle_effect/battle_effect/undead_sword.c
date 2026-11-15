@@ -326,7 +326,6 @@ void BattleEffect_RunDreamtide(s32 a0) { BattleEffect_RunWaterSheet(a0, 0); }
 /// Abilities: Watery Grave (kind 391).
 void BattleEffect_RunWateryGrave(s32 a0) { BattleEffect_RunWaterSheet(a0, 1); }
 
-struct FxPartyList;
 struct StripQuad;
 
 struct WaterVertex {

@@ -6,7 +6,6 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-struct FxPartyList;
 struct MeshTriangle;
 struct StripQuad;
 

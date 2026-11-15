@@ -6,7 +6,6 @@
 #include "fixed_math.h"
 #include "sounds.h"
 
-struct FxPartyList;
 struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))
@@ -648,7 +647,6 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-struct FxPartyList;
 struct StripQuad;
 
 #define VOID_BEAM_FRAMES 88

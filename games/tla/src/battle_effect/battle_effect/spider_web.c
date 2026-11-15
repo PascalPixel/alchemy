@@ -207,7 +207,6 @@ void Ulysses_MoveLastParticle(void) {
   work->frame++;
 }
 
-struct FxPartyList;
 struct StripQuad;
 
 #define BLITTER(mode, flags) ((mode) << 4 | (flags))

@@ -510,7 +510,6 @@ void BattleEffect_RunSoulShatter(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-struct FxPartyList;
 struct ModelVertex;
 struct ProjectedVertex;
 struct StripQuad;

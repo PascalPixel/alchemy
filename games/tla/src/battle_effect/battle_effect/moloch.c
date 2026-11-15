@@ -8,7 +8,6 @@
 #include "sounds.h"
 #include "macros.h"
 
-struct FxPartyList;
 struct RenderModel;
 
 /// Moloch's frames, and the frame A or B skips to.
@@ -2394,13 +2393,6 @@ void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
     }
   }
 }
-
-/// A point of the wireframe model, 16.16 fixed point.
-struct WirePoint {
-  s32 x;
-  s32 y;
-  s32 z;
-};
 
 /// A triangle of the wireframe model: where its three corners start in the
 /// vertex buffer (in words) and the colour its edges are drawn in.

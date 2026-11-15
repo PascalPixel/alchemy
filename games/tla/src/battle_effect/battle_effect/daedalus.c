@@ -1366,8 +1366,6 @@ void BattleEffect_RunDaedalus(struct SummonArgument *arg) {
 
 #undef BLITTER
 
-struct FxPartyList;
-
 /* VIEW(f17e698): tag struct PlacementSource as struct PlacementSource__f17e698;
  * ability_effects.c has another definition; tried with the definition the rest
  * of the object has, it does not compile in tla-ja:

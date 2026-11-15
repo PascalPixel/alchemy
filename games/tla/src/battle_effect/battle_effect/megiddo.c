@@ -7,7 +7,6 @@
 #include "sounds.h"
 #include "macros.h"
 
-struct FxPartyList;
 struct StripQuad;
 
 /* VIEW(summon_effects): tag struct ModelVertex as struct

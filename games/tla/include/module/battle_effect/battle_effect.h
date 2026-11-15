@@ -12,7 +12,6 @@
 struct BattleEffectParams;
 struct ScreenPoint;
 struct Particle;
-struct FxPartyList;
 struct MeshTriangle;
 struct MeshVertex;
 struct PoolEntry;
@@ -163,7 +162,7 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void EffectPosition_ProjectBattler(s32 id, struct ScreenPoint *position);
 void BattleEffect_SpawnObjects(s32 entryCount, s32 kind, u32 variant);
 void BattleEffect_SelectLivingTargets(
-    struct FxPartyList *party); // SelectLivingTargets
+    struct BattleEffectParams *party); // SelectLivingTargets
 void BattleEffect_StartActorMotion(s32, s32, s32, s32, s32, s32);
 void BattleEffect_FetchRectangleBlitters(s32 flip, void **out);
 void BattleCamera_Shake(s32 rangeX, u32 rangeY);
@@ -534,13 +533,6 @@ struct Streak {
   s32 yaw;
   s32 roll;
   s32 unused18;
-};
-
-struct FxPartyList {
-  u8 unk00[20];
-  s32 count;
-  u8 unk18[12];
-  s16 ids[8];
 };
 
 struct FxGroupEntry {

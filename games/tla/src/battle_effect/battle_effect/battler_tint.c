@@ -9,12 +9,6 @@
 #include "module/battle_effect/battle_effect.h"
 #include "gamepak/far_call/field.h"
 
-/* VIEW(f14cca8): variable gBgScroll as extern struct FxBgScroll gBgScroll[];
- * bg_scroll.h has extern struct BgScroll gBgScroll[]; tried as the rest of the
- * object declares it, BattleEffect_SetupBlendedDisplay moves: 1 of 57
- * instructions in tla-ja. */
-extern struct FxBgScroll gBgScroll__f14cca8[] __asm__("gBgScroll");
-
 /* VIEW(f14cca8): static FillWords_ as FillWords___f14cca8; f13eb70 has static
  * __inline__ void FillWords_(void *destination, s32 size, u32 value) {
  * Iwram_FillWords(destination, size, value); }; not tried: FillWords_'s
@@ -34,7 +28,7 @@ void BattleEffect_SetupBlendedDisplay(void) {
   void *buffer = Ram_HeapSlots->battleCanvas;
 
   REG_DISPCNT = DISPCNT_MODE_1;
-  gBgScroll__f14cca8[0].y = 32;
+  gBgScroll[1].y = 32;
   BattleBackground_LoadFar(1, *(u16 *)(battle + 0x670), 24);
   /* FAKEMATCH(wrapper): both fills through FillWords_. */
   FillWords___f14cca8(buffer, 0x4000, 0);

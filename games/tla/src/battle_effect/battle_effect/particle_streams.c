@@ -37,8 +37,6 @@ void BattleEffect_StartActorMotionRandomDistance(s32 id) {
 
 // Unused: a second copy of Nereid's summon effect.
 
-struct FxPartyList;
-
 /// The map cell buffer holds the embers.
 #define EMBERS ((struct Particle *)Ram_MapCellBuffer)
 #define EMBER_COUNT 1024

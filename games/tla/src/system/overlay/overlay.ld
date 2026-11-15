@@ -108,7 +108,7 @@ SECTIONS
         "*/games/tla/src/scene/entry.o"(.text)
         "*/games/tla/src/scene/venus_lighthouse_entrance.o"(.text)
         "*/imports.o"(.text)
-        "*/games/tla/src/graphics/field/tiles64d.o"(.rodata)
+        "*/games/tla/src/graphics/field/geyser.o"(.rodata)
         "*/games/tla/src/scene/venus_lighthouse_entrance.o"(.data)
     }
 }
@@ -159,7 +159,7 @@ SECTIONS
         "*/games/tla/src/scene/yampi_desert.o"(.text)
         "*/imports.o"(.text)
         "*/games/tla/src/scene/yampi_desert.o"(.data)
-        "*/games/tla/src/graphics/field/tiles64d.o"(.rodata)
+        "*/games/tla/src/graphics/field/geyser.o"(.rodata)
         "*/games/tla/src/scene/yampi_desert.o"(.data.late)
     }
 }
@@ -190,7 +190,7 @@ SECTIONS
         "*/games/tla/src/scene/gondowan_cliffs.o"(.text)
         "*/imports.o"(.text)
         "*/games/tla/src/scene/gondowan_cliffs.o"(.data)
-        "*/games/tla/src/graphics/field/tiles64d.o"(.rodata)
+        "*/games/tla/src/graphics/field/geyser.o"(.rodata)
         "*/games/tla/src/scene/gondowan_cliffs.o"(.data.late)
     }
     .bss :
@@ -379,7 +379,7 @@ SECTIONS
         "*/games/tla/src/scene/trial_road.o"(.text)
         "*/imports.o"(.text)
         "*/games/tla/src/scene/trial_road.o"(.data)
-        "*/games/tla/src/graphics/field/tiles64d.o"(.rodata)
+        "*/games/tla/src/graphics/field/geyser.o"(.rodata)
         "*/games/tla/src/scene/trial_road.o"(.data.late)
         "*/games/tla/src/graphics/trial_road/picture.o"(.rodata)
         "*/games/tla/src/scene/trial_road.o"(.data.last)

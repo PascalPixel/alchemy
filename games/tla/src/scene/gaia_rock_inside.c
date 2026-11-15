@@ -193,22 +193,6 @@ struct CellPoint {
   s16 position[2];
 };
 
-struct GaiaRockInsideOrbit {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x30];
-  s32 centreX;
-  s32 centreZ;
-  s32 radius;
-  u8 unk50[0x12];
-  u8 phase;
-  u8 growth;
-  s16 angle;
-  s16 speed;
-};
-
 struct SwayState {
   u16 frame;
   u16 pending;
@@ -225,7 +209,8 @@ extern struct ActorPlacement gGaiaRockInside_PlatformsActorPlacements[];
 extern struct ActorPlacement gGaiaRockInside_AltarActorPlacements[];
 extern s32 gGaiaRockInside_SquashYScript[];
 
-void Cyclone_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
+void Cyclone_CopyTouchedCells(s32 x, s32 z, s32 layerIndex, s32 width,
+                              s32 height, s32 toX, s32 toZ);
 void MadPlant_LeapAtLeader(s32 a, s32 b, s32 c);
 
 extern u32 gGaiaRockInside_LeaderStepsBackScript[];
@@ -684,6 +669,14 @@ void GaiaRockInside_PlantPointsTheWay(s32 unused, u32 id) {
   System_Wait(20);
 }
 
+/// Cyclone_CopyTouchedCells, each argument passed as a word.
+static __inline__ void GaiaRockInside_CopyTouchedCells(s32 x, s32 z,
+                                                       s32 layerIndex,
+                                                       s32 width, s32 height,
+                                                       s32 toX, s32 toZ) {
+  Cyclone_CopyTouchedCells(x, z, layerIndex, width, height, toX, toZ);
+}
+
 /// Unless FieldMapGrid_GetCellBehaviorAt(2, ...) holds, copies map cell (36,
 /// 23) to (38, 25), moves a leader standing on that cell aside, and sets flag
 /// FLAG_BUSHES_STREAM_TO_SHOW, or FLAG_BUSHES_STREAM_OPEN once
@@ -691,7 +684,7 @@ void GaiaRockInside_PlantPointsTheWay(s32 unused, u32 id) {
 void GaiaRockInside_CycloneClearsHallBushes(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
-  Call7(Cyclone_CopyTouchedCells, 37, 26, 0, 3, 3, 61, 0);
+  GaiaRockInside_CopyTouchedCells(37, 26, 0, 3, 3, 61, 0);
   if (FieldMapGrid_GetCellBehaviorAt(2, px(608), px(400)) == 0) {
     MapGrid_CopyCellAttributes(36, 23, 1, 1, 38, 25);
     Event_Start();
@@ -722,12 +715,6 @@ static __inline__ void GaiaRockInside_MadPlantLeaps(s32 a, s32 b, s32 c) {
   MadPlant_LeapAtLeader(a, b, c);
 }
 
-static __inline__ void GaiaRockInside_CopyTouchedCells(s32 a, s32 b, s32 c,
-                                                       s32 d, s32 e, s32 f,
-                                                       s32 g) {
-  Cyclone_CopyTouchedCells(a, b, c, d, e, f, g);
-}
-
 void GaiaRockInside_CycloneStartsPlatforms(void) {
   GaiaRockInside_CopyTouchedCells(16, 25, 0, 5, 5, 40, 8);
   if (GameFlag_Test_(FLAG_PLATFORMS_SWAYING) == 0) {
@@ -747,7 +734,7 @@ void GaiaRockInside_CycloneMadPlant(void) {
 }
 
 void GaiaRockInside_ClearPlatformsBushes(void) {
-  Call7(Cyclone_CopyTouchedCells, 0x13, 0x18, 0, 4, 3, 0x1f, 4);
+  GaiaRockInside_CopyTouchedCells(19, 24, 0, 4, 3, 31, 4);
 }
 
 void GaiaRockInside_ClearPlatformsSmallBushes(void) {
@@ -1040,13 +1027,13 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
   Orbiter_Step(orbiter, anchor);
   if (--orbiter->countdown == 0)
     return 0;
-  if (orbiter->radius == 0x20000)
+  if (orbiter->radius == px(2))
     return 1;
   GaiaRockInside_SpawnSpark(orbiter);
-  orbiter->radius -= 0x40000;
+  orbiter->radius -= px(4);
   Orbiter_Step(orbiter, anchor);
   GaiaRockInside_SpawnSpark(orbiter);
-  orbiter->radius -= 0x40000;
+  orbiter->radius -= px(4);
   return 1;
 }
 
@@ -1068,30 +1055,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "text/msg_ids.h"
 
-struct Spark {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x0f];
-  u8 priorityFlags;
-  u8 unk24[0x0c];
-  s32 speedLimit;
-  s32 acceleration;
-  u8 unk38[0x0c];
-  s32 bounce;
-  s32 gravity;
-  s32 unk4c;
-  u8 unk50[5];
-  u8 motionFlags;
-  u8 unk56[0x0c];
-  u8 unk62;
-  u8 unk63;
-  s16 action;
-  u16 unk66;
-  struct Actor *watchedObject;
-};
-
 extern u32 gGaiaRockInside_TabletRiseScript[];
 extern u32 gGaiaRockInside_RisingSparkScript[];
 extern s32 gGaiaRockInside_CirclingSparkScript[];
@@ -1105,7 +1068,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   struct Actor *b = Actor_GetById(idB);
   s32 i;
   s16 *angle;
-  s32 kind = 0x2a0;
+  s32 kind = SPRITE_PARTICLE;
   // Unused: gives the stack frame its 12 bytes.
   UNUSED s32 unused[3];
 
@@ -1132,11 +1095,11 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   i = 0;
 first:
   {
-    struct Spark *spark =
-        ((void *)Import_ActorCreate(kind, a->x.fixed, a->y.fixed, a->z.fixed));
+    struct Actor *spark =
+        Import_ActorCreate(kind, a->x.fixed, a->y.fixed, a->z.fixed);
     Sound_Play(SE_GLITTER);
-    spark->x += px((Random16() & 31) - 16);
-    spark->y += px((Random16() & 15) - 8);
+    spark->x.fixed += px((Random16() & 31) - 16);
+    spark->y.fixed += px((Random16() & 15) - 8);
     spark->speedLimit = px(8);
     spark->acceleration = px(1) / 5;
     spark->motionFlags = 0;
@@ -1163,22 +1126,22 @@ first:
   i = 0;
 second:
   {
-    struct Spark *spark =
-        ((void *)Import_ActorCreate(kind, b->x.fixed, b->y.fixed, b->z.fixed));
+    struct Actor *spark =
+        Import_ActorCreate(kind, b->x.fixed, b->y.fixed, b->z.fixed);
     Sound_Play(SE_SPARKS);
-    angle = &spark->action;
+    angle = &spark->timer;
     *angle = (Random16() & 0x7fff) + 0x8000;
-    spark->unk66 = ((i & 1) * 2 - 1) << ((Random16() & 3) + 9);
+    spark->userValue = ((i & 1) * 2 - 1) << ((Random16() & 3) + 9);
     spark->motionFlags = 0;
-    spark->unk4c = 0x7a0000;
-    spark->watchedObject = b;
-    spark->unk62 = (16 - i) * 8 + 15;
+    spark->riseBaseY = 0x7a0000;
+    spark->watchedActor = b;
+    spark->riseCounter = (16 - i) * 8 + 15;
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
     Actor_SetBlendMode(spark, 1);
-    FieldVector_AddPolarOffsetFixed(spark->unk4c, *angle, &spark->x);
+    FieldVector_AddPolarOffsetFixed(spark->riseBaseY, *angle, &spark->x.fixed);
     Actor_StartScript(spark, gGaiaRockInside_CirclingSparkScript);
     if (i == 3) {
       Actor_SetSpriteColorById(idB, 0x100);
@@ -1200,16 +1163,16 @@ second:
   i = 2;
 third:
   {
-    struct Spark *spark = ((void *)Import_ActorCreate(
-        kind, b->x.fixed, px(i) + b->y.fixed - px(8), b->z.fixed));
-    spark->action = Random16();
-    spark->unk66 = 0x800;
-    spark->unk62 = i;
-    spark->unk63 = 1;
-    spark->bounce = spark->x;
-    spark->unk4c = 0;
-    spark->gravity = spark->z;
-    spark->watchedObject = b;
+    struct Actor *spark = Import_ActorCreate(
+        kind, b->x.fixed, px(i) + b->y.fixed - px(8), b->z.fixed);
+    spark->timer = Random16();
+    spark->userValue = 0x800;
+    spark->riseCounter = i;
+    spark->riseEnabled = 1;
+    spark->bounce = spark->x.fixed;
+    spark->riseBaseY = 0;
+    spark->gravity = spark->z.fixed;
+    spark->watchedActor = b;
     spark->motionFlags = 0;
     spark->priorityFlags = 1;
     Actor_SetSpriteColor(spark, 2);
@@ -2127,17 +2090,6 @@ void GaiaRockInside_OpenHallPassages(void) {
 #include "field/field.h"
 
 #define Test(flag) Event_GetFlag(flag)
-#define C1(f, a) Call1((void (*)())f, a)
-#define C2(f, a, b) Call2((void (*)())f, a, b)
-#define C3(f, a, b, c) Call3((void (*)())f, a, b, c)
-#define C4(f, a, b, c, d) Call4((void (*)())f, a, b, c, d)
-#define C6(f, a, b, c, d, e, g) Call6((void (*)())f, a, b, c, d, e, g)
-
-struct GaiaRockAnimation {
-  u8 unk00[18];
-  u16 angle;
-};
-
 extern u32 gGaiaRockInside_SerpentGlowScript[];
 extern u32 gGaiaRockInside_SerpentSmokeScript[];
 extern u32 gGaiaRockInside_KushinadaScript[];
@@ -2346,7 +2298,7 @@ s32 Scene_Initialize(void) {
         mask = 254;
         Actor_GetById(ACTOR_SUSA)->steeringFlags &= mask;
         Actor_WalkTo(ACTOR_SUSA, 456, 360);
-        fast = 0x40000;
+        fast = px(4);
         susa->velocityY = fast;
         Actor_SetAttachedEffect(ACTOR_SUSA, ATTACHED_EFFECT_IN_FRONT |
                                                 ATTACHED_EFFECT_ONCE);
@@ -2392,7 +2344,7 @@ s32 Scene_Initialize(void) {
         object = FieldActor_Create(SPRITE_FIREBALL, px(488), -px(16), px(345));
         Actor_SetSpriteFlags(object, 0);
         Actor_StartScript(object, gGaiaRockInside_SerpentGlowScript);
-        ((struct GaiaRockAnimation *)object->sprite)->angle = 0x2000;
+        ((struct FieldSprite *)object->sprite)->rotation = TRIG_TURN / 8;
         object->speedLimit = px(3) / 2;
         *(u8 *)&object->motionFlags = 0;
         object->targetX = px(456);

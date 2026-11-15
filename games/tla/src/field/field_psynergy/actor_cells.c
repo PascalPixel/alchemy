@@ -67,7 +67,7 @@ void Actor_PlaceBlocks(u16 *actors) {
     leader->y.fixed = leader->groundHeight = height;
 }
 
-// Only so the shape store has an alias set of its own; the grid holds bytes.
+/// Only so the shape store has an alias set of its own; the grid holds bytes.
 struct ShapeCell {
   u8 shape;
 };

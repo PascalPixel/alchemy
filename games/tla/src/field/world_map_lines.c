@@ -42,6 +42,8 @@ struct Vector3__world_map_lines {
   s32 z;
 };
 
+/// One end of a World Map line as it is scanned: its position, its step and
+/// its texture coordinates.
 struct ScanVertex {
   s32 x;
   s32 z;
@@ -51,6 +53,7 @@ struct ScanVertex {
   s16 v;
 };
 
+/// A background's affine parameters: the matrix and the reference point.
 struct BgAffine {
   s16 pa;
   s16 pb;

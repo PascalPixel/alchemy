@@ -9,11 +9,15 @@
 
 struct FadeActor;
 
+/// The fade overlay's work (heap slot fadeOverlay): its two marks and the
+/// actor they follow.
 struct FadeOverlayWork {
   struct AnimationSpritePart marks[2];
   struct FadeActor *actor;
 };
 
+/// A ground particle: an OAM entry linked by depth, its place (16.16 pixels),
+/// its delay and its frame count.
 struct GroundParticle {
   u8 unk00[4];
   u16 y : 8;

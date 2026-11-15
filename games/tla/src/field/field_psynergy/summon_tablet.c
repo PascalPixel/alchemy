@@ -55,6 +55,7 @@ void SummonTablet_CyclePictures(struct Actor *object) {
   object->timer++;
 }
 
+/// A point chasing its target on the ground, 16.16 pixels.
 struct Chase {
   s32 x;
   s32 z;
@@ -82,8 +83,8 @@ void Motion_StepTowardTarget(struct Chase *chase, s32 speed) {
   }
 }
 
-// One mote: a position chasing its target (Motion_StepTowardTarget's struct
-// Chase) and a frame count, negative before it starts.
+/// One mote: a position chasing its target (Motion_StepTowardTarget's struct
+/// Chase) and a frame count, negative before it starts.
 struct ChasingMote {
   s32 x;
   s32 z;
@@ -94,6 +95,9 @@ struct ChasingMote {
   s32 timer;
 };
 
+/// The summon tablet's work (heap slot battleEffect): the decoded mote
+/// pictures, the sparks and motes that fly between the tablet and the leader,
+/// and the circle they gather on.
 struct MoteWork {
   u8 unk0000[0x800];
   struct ChasingMote sparks[32];
@@ -439,6 +443,8 @@ void SummonTablet_PlayRunes(s32 targetId) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
+/// A flag block: its actor and the flag that says it has been moved, in a list
+/// ended by actor 0xffff (FlagBlock_PlaceAll).
 struct ActorFlag {
   u16 actor;
   s16 flag;

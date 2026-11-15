@@ -159,6 +159,8 @@ void Weather_StartRain(s32 withCue) {
 /// Weather_StopRainFar.
 void Weather_StopRain(void) { Task_Remove(Weather_UpdateRain); }
 
+/// The work of the sparkles (heap slot battleEffect): their tiles, 64
+/// sparkles and whether they have stopped.
 struct SparkleWork {
   u8 padding00[4];
   s32 tileBase;
@@ -273,6 +275,8 @@ struct DustParticle {
   u8 pad1e[2];
 };
 
+/// The work of the dust (heap slot battleEffect): its VRAM entry, tiles and
+/// 64 particles.
 struct DustWork {
   s32 vramEntry;
   s32 tileBase;

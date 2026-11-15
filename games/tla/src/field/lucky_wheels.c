@@ -354,6 +354,9 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 #define REEL_TITLE_TILE 0x370
 #endif
 
+/// Lucky Wheels' work: the five reels, the game's state, cursor, spins and
+/// bet, the keys read, the winning lines, the reel sprites, the windows and
+/// the scanline offsets that bend the reels.
 struct ReelWork {
   struct Reel reels[5];
   s32 state;

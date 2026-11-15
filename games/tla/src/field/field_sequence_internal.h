@@ -101,13 +101,15 @@ extern s32 MapGrid_GetTerrainHeightAboveFar__field_sequence(
 
 typedef void (*ItemTriggerCallback)(s32 item, s32 actor, s32 slot);
 
-// The object fields this function sets as an actor's home cell.
+/// The object fields this function sets as an actor's home cell.
 struct SpawnActor {
   u8 unk00[100];
   s16 homeX;
   s16 homeZ;
 };
 
+/// A scene region as Scene_AssignViewFlags reads it: its id, its flag and
+/// its place.
 struct SceneRegionEntry {
   s16 id;
   s16 flag;
@@ -118,6 +120,8 @@ struct SceneRegionEntry {
   u8 unk14[4];
 };
 
+/// A row of the scenes' encounter rules (gScene_EncounterRules): a scene and
+/// entrance (-1 any) and, while a flag is clear, the two values it selects.
 struct SceneMusicEntry {
   s16 scene;
   s16 entrance; // -1 any
@@ -169,8 +173,8 @@ struct ContainerRow {
   s16 contents;
 };
 
-// A box of the map in whole cells (16.16 when compared) and the value it
-// selects while its condition holds; a row with minX -1 ends the list.
+/// A box of the map in whole cells (16.16 when compared) and the value it
+/// selects while its condition holds; a row with minX -1 ends the list.
 struct MapRegion {
   s16 minX;
   s16 minY;

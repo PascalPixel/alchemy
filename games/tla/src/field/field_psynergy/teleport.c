@@ -13,7 +13,8 @@
 
 #define WHIRL_COUNT 100
 
-// Heap block 92: the decoded picture, then the sparks and their sprites.
+/// Teleport's whirl (heap slot battleEffect): the decoded spark picture,
+/// then the 100 sparks and their sprites.
 struct TeleportWhirlWork {
   u8 picture[0x400];
   struct WhirlSpark sparks[WHIRL_COUNT];
@@ -155,7 +156,8 @@ void Teleport_PlayWhirl(void) {
 
 #define SPARK_COUNT 100
 
-// Heap block 92: the decoded picture, then the sparks and their sprites.
+/// Teleport's burst of sparks (heap slot battleEffect): the decoded picture,
+/// then the sparks and their sprites.
 struct SparkWork {
   u8 picture[0x400];
   struct FieldPsynergyParticle particles[SPARK_COUNT];

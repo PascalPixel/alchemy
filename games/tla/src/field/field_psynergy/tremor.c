@@ -37,7 +37,7 @@ struct TremorWork {
   struct FieldPsynergyParticle particles[SHAKE_SPRITE_COUNT];
 };
 
-// An object's sprite; the sway shakes it sideways by its offset.
+/// An object's sprite; the sway shakes it sideways by its offset.
 struct TremorSprite {
   u8 unk00[0x12];
   u16 offsetX;

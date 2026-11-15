@@ -71,6 +71,8 @@ void FieldPsynergy_WatchSandGround(void) {
 #define PICTURE_FORMAT_COMPRESSED                                              \
   3 ///< compressed, then run through the decoder
 
+/// A sprite layer as FieldPsynergy_DecodePicture reads it: how its pictures
+/// are coded and the one shown.
 struct PictureSource {
   u8 unk00[5];
   u8 decodeMode;

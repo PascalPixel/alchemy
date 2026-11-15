@@ -349,8 +349,8 @@ void FieldPsynergy_Unnamed28(void) {
   Task_Add(FieldPsynergy_UpdateUnnamed28, 0x480);
 }
 
-// One mote: a position and a velocity (BattleEffect_IntegrateVector3's vector)
-// and a frame count, negative before it starts.
+/// One mote: a position and a velocity (BattleEffect_IntegrateVector3's vector)
+/// and a frame count, negative before it starts.
 struct BurstMote {
   s32 x;
   s32 y;
@@ -361,6 +361,8 @@ struct BurstMote {
   s32 timer;
 };
 
+/// The work of the sparkle burst field Psynergy 28 ends with (heap slot
+/// battleEffect): the sparkle picture, 64 sparkles and their motes.
 struct SparkleBurstWork {
   u8 unk0000[0x1000];
   struct EffectSprite sprites[64];
@@ -469,7 +471,7 @@ void FieldPsynergy_EndUnnamed28(void) {
 // How far the view stays from the edge it is beside, in pixels.
 #define VIEW_EDGE_MARGIN 12
 
-// A map's view bounds, in 8-pixel units.
+/// A map's view bounds, in 8-pixel units.
 struct MapBounds {
   s32 minX;
   s32 maxX;
@@ -646,6 +648,8 @@ void ViewMove_End(void) {
   }
 }
 
+/// The actors near the caster whose sprite value a view move saves and gives
+/// back (heap slot battleEffect): up to eight, with each one's value.
 struct FxGroup {
   u8 unk00[32];
   struct Actor *objects[8];

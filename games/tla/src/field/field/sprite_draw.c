@@ -69,9 +69,9 @@ void Animation_SkipToStop(struct ScriptPlayer *player) {
   }
 }
 
-// The sprite object: The Broken Seal's struct Sprite with the shadow after
-// the layer fields. Render_ApplyProjectedPlacementAtDepth writes OAM
-// attributes 0 and 1 as one word.
+/// The sprite object: The Broken Seal's struct Sprite with the shadow after
+/// the layer fields. Render_ApplyProjectedPlacementAtDepth writes OAM
+/// attributes 0 and 1 as one word.
 struct LayeredSprite {
   union {
     struct AnimationSpritePart image;

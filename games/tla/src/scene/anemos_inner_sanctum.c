@@ -150,6 +150,38 @@ extern s32 gAnemosInnerSanctum_OrbScript[];
     BG_PLTT[index] = value;                                                    \
   } while (0)
 
+/// The actors of the inner rooms the set-up and the switches move, numbering
+/// each room's placement table: stone pillars (SPRITE_STONE_PILLAR) Moved onto
+/// the floor's marks, and the statues (sprite 432) that rise when the tiles or
+/// the switches ask.
+enum AnemosInnerSanctumElevatorActorId {
+  ACTOR_ELEVATOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
+  ACTOR_ELEVATOR_STATUE,
+  ACTOR_ELEVATOR_SECOND_PILLAR
+};
+
+enum AnemosInnerSanctumSwitchesActorId {
+  ACTOR_SWITCHES_FIRST_PILLAR = ACTOR_FIRST_PLACED,
+  ACTOR_SWITCHES_BOULDER, ///< SPRITE_ROUND_BOULDER
+  ACTOR_SWITCHES_SECOND_PILLAR,
+  ACTOR_SWITCHES_PILLAR_A,
+  ACTOR_SWITCHES_PILLAR_B,
+  ACTOR_SWITCHES_THIRD_PILLAR,
+  /// The first switch, sunk into the floor until it is pressed
+  /// (AnemosInnerSanctum_PressFirstSwitch).
+  ACTOR_SWITCHES_FIRST_SWITCH
+};
+
+enum AnemosInnerSanctumOrihalconChestActorId {
+  ACTOR_ORIHALCON_CHEST_STATUE = ACTOR_FIRST_PLACED,
+  ACTOR_ORIHALCON_CHEST_FIRST_PILLAR,
+  ACTOR_ORIHALCON_CHEST_SECOND_PILLAR
+};
+
+/// The guardian room's statue (sprite 432) that rises at its entrance 12
+/// (AnemosInnerSanctum_RaiseSecondStatue).
+#define ACTOR_GUARDIAN_ROOM_STATUE (ACTOR_FIRST_PLACED + 3)
+
 void Palette_SetColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   u8 *saved = Ram_HeapSlots->paletteFade;
 
@@ -798,7 +830,7 @@ void AnemosInnerSanctum_FinishMovingBlock(void) {
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_2) {
     if (x == 37 && z == 31) {
       GameFlag_Set(0xa80);
-      Actor_SetSpritePriority(8, 2);
+      Actor_SetSpritePriority(ACTOR_ELEVATOR_FIRST_PILLAR, 2);
     }
     if (x == 55 && z == 95)
       GameFlag_Set(0xa81);
@@ -807,7 +839,7 @@ void AnemosInnerSanctum_FinishMovingBlock(void) {
       GameFlag_Set(0xa82);
     if (x == 67 && z == 45) {
       MapGrid_CopyCellsTo(50, 22, 33, 22, 1, 1);
-      Actor_SetPosition(14, 0, 0);
+      Actor_SetPosition(ACTOR_SWITCHES_FIRST_SWITCH, 0, 0);
       Event_PlaySound(SE_BUTTON_PRESS);
       FieldEvent_Wait(30);
       Event_PlaySound(SE_THUMP);
@@ -822,11 +854,13 @@ void AnemosInnerSanctum_FinishMovingBlock(void) {
       GameFlag_Set(0xa84);
     if (x == 91 && z == 59) {
       if (!Event_GetFlag(0xa84)) {
-        s32 fromX = px(FIELD_PIXEL(Actor_Get(12)->x.fixed));
+        s32 fromX =
+            px(FIELD_PIXEL(Actor_Get(ACTOR_SWITCHES_PILLAR_B)->x.fixed));
 
-        Actor_SetPositionFixed(13, fromX,
-                               FIELD_PIXEL(Actor_Get(12)->z.fixed) << 16);
-        Actor_SetPosition(12, 728, 472);
+        Actor_SetPositionFixed(
+            ACTOR_SWITCHES_THIRD_PILLAR, fromX,
+            FIELD_PIXEL(Actor_Get(ACTOR_SWITCHES_PILLAR_B)->z.fixed) << 16);
+        Actor_SetPosition(ACTOR_SWITCHES_PILLAR_B, 728, 472);
       }
       GameFlag_Set(0xa85);
     }
@@ -958,7 +992,7 @@ void AnemosInnerSanctum_PressFirstSwitch(void) {
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 536, 360);
   FieldEvent_Wait(8);
   MapGrid_CopyCellsTo(50, 22, 33, 22, 1, 1);
-  Actor_SetPosition(14, 0, 0);
+  Actor_SetPosition(ACTOR_SWITCHES_FIRST_SWITCH, 0, 0);
   Event_PlaySound(SE_BUTTON_PRESS);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_THUMP);
@@ -973,7 +1007,7 @@ void AnemosInnerSanctum_PressFirstSwitch(void) {
 void AnemosInnerSanctum_PressSecondSwitch(void) {
   struct Actor *object;
 
-  object = Actor_Get(14);
+  object = Actor_Get(ACTOR_SWITCHES_FIRST_SWITCH);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   object->x.fixed = px(536);
@@ -1277,13 +1311,13 @@ loop:
 }
 
 void AnemosInnerSanctum_RaiseFirstStatue(void) {
-  struct Actor *object = Actor_Get(9);
+  struct Actor *object = Actor_Get(ACTOR_ELEVATOR_STATUE);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_SetAnimation(9, 2);
+  Actor_SetAnimation(ACTOR_ELEVATOR_STATUE, 2);
   object->y.fixed = -px(64);
-  Actor_SetPosition(9, 728, 120);
+  Actor_SetPosition(ACTOR_ELEVATOR_STATUE, 728, 120);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 728, 120);
   Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed = -px(48);
   Event_StartScreenTransition();
@@ -1297,7 +1331,7 @@ void AnemosInnerSanctum_RaiseFirstStatue(void) {
 }
 
 void AnemosInnerSanctum_RaiseSecondStatue(void) {
-  struct Actor *object = Actor_Get(11);
+  struct Actor *object = Actor_Get(ACTOR_GUARDIAN_ROOM_STATUE);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1353,29 +1387,29 @@ s32 Scene_Initialize(void) {
       MapGrid_SetCellHeight(0x2180000, 0x880000, 0, 0);
     }
   } else if (scene == SCENE_ANEMOS_INNER_SANCTUM_2) {
-    FieldActor_SetSpritePriority(8, 1);
+    FieldActor_SetSpritePriority(ACTOR_ELEVATOR_FIRST_PILLAR, 1);
     if (Event_GetFlag(0xa80)) {
-      Actor_SetPosition(8, 296, 248);
-      FieldActor_SetSpritePriority(8, 2);
+      Actor_SetPosition(ACTOR_ELEVATOR_FIRST_PILLAR, 296, 248);
+      FieldActor_SetSpritePriority(ACTOR_ELEVATOR_FIRST_PILLAR, 2);
     }
     if (Event_GetFlag(0xa81))
-      Actor_SetPosition(10, 440, 760);
+      Actor_SetPosition(ACTOR_ELEVATOR_SECOND_PILLAR, 440, 760);
     Call1((void (*)())Actor_PlaceBlocks,
           (s32)gAnemosInnerSanctum_ElevatorBlocks);
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
-    Actor_Get(9)->motionFlags = 0;
-    Actor_Get(9)->priorityFlags |= 128;
+    Actor_Get(ACTOR_ELEVATOR_STATUE)->motionFlags = 0;
+    Actor_Get(ACTOR_ELEVATOR_STATUE)->priorityFlags |= 128;
     if (gMainRoutineWork.entrance == 17 && Event_GetFlag(FLAG_AREA_TEMP_00)) {
-      Actor_SetAnimation(9, 2);
-      Actor_SetPosition(9, 728, 120);
+      Actor_SetAnimation(ACTOR_ELEVATOR_STATUE, 2);
+      Actor_SetPosition(ACTOR_ELEVATOR_STATUE, 728, 120);
     }
     if (gMainRoutineWork.entrance == 18 && GameFlag_Get(FLAG_AREA_TEMP_00) == 0)
       AnemosInnerSanctum_RaiseFirstStatue();
     if (gMainRoutineWork.entrance == 10) {
       if (Event_GetFlag(FLAG_AREA_TEMP_00))
-        Actor_SetPosition(9, 0, 0);
+        Actor_SetPosition(ACTOR_ELEVATOR_STATUE, 0, 0);
       if (Event_GetFlag(FLAG_SCENE_TEMP_07))
-        Actor_Get(9)->motionFlags = 4;
+        Actor_Get(ACTOR_ELEVATOR_STATUE)->motionFlags = 4;
       if (Event_GetFlag(FLAG_SCENE_TEMP_00))
         MapGrid_CopyCellsTo(54, 87, 44, 86, 1, 1);
       if (Event_GetFlag(FLAG_SCENE_TEMP_01))
@@ -1393,34 +1427,36 @@ s32 Scene_Initialize(void) {
       Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
     }
   } else if (scene == SCENE_ANEMOS_INNER_SANCTUM_SWITCHES) {
-    struct Actor *lift = Actor_Get(14);
+    struct Actor *lift = Actor_Get(ACTOR_SWITCHES_FIRST_SWITCH);
 
     lift->motionFlags = 2;
     lift->groundHeight = -px(14);
     lift->y.fixed = -px(14);
     lift->priorityFlags |= 128;
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
-    Actor_Get(9)->riseCounter = 1;
+    Actor_Get(ACTOR_SWITCHES_BOULDER)->riseCounter = 1;
     if (Event_GetFlag(0xa82))
-      Actor_SetPosition(8, 56, 424);
+      Actor_SetPosition(ACTOR_SWITCHES_FIRST_PILLAR, 56, 424);
     if (Event_GetFlag(0xa83)) {
-      Actor_SetPosition(10, 536, 360);
+      Actor_SetPosition(ACTOR_SWITCHES_SECOND_PILLAR, 536, 360);
       MapGrid_CopyCellsTo(51, 20, 31, 20, 1, 2);
       MapGrid_SetCellHeight(0x1f00000, 0x1500000, 0, 0);
     }
     if (Event_GetFlag(0xa84))
-      Actor_SetPosition(13, 744, 456);
+      Actor_SetPosition(ACTOR_SWITCHES_THIRD_PILLAR, 744, 456);
     if (Event_GetFlag(0xa85)) {
       if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) && !Event_GetFlag(0xa84))
-        Actor_SetPositionFixed(13, px(Actor_Get(12)->x.part[0].pixel),
-                               px(Actor_Get(12)->z.part[0].pixel));
-      Actor_SetPosition(12, 728, 472);
+        Actor_SetPositionFixed(
+            ACTOR_SWITCHES_THIRD_PILLAR,
+            px(Actor_Get(ACTOR_SWITCHES_PILLAR_B)->x.part[0].pixel),
+            px(Actor_Get(ACTOR_SWITCHES_PILLAR_B)->z.part[0].pixel));
+      Actor_SetPosition(ACTOR_SWITCHES_PILLAR_B, 728, 472);
     }
     Call1((void (*)())Actor_PlaceBlocks,
           (s32)gAnemosInnerSanctum_SwitchesBlocks);
   } else if (scene == SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST) {
     if (Event_GetFlag(0xa86))
-      Actor_SetPosition(9, 264, 360);
+      Actor_SetPosition(ACTOR_ORIHALCON_CHEST_FIRST_PILLAR, 264, 360);
     Call1((void (*)())Actor_PlaceBlocks,
           (s32)gAnemosInnerSanctum_OrihalconChestBlocks);
     nearStairs = *(u16 *)&gMainRoutineWork.entrance;
@@ -1429,10 +1465,10 @@ s32 Scene_Initialize(void) {
       CrackedTiles_Find(33, 0x280, 0x380, 18, 68);
       if (Event_GetFlag(FLAG_AREA_TEMP_04) == 0) {
         Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
-        Actor_Get(8)->motionFlags = 0;
-        Actor_Get(8)->priorityFlags |= 128;
+        Actor_Get(ACTOR_ORIHALCON_CHEST_STATUE)->motionFlags = 0;
+        Actor_Get(ACTOR_ORIHALCON_CHEST_STATUE)->priorityFlags |= 128;
       } else {
-        Actor_SetPosition(8, 0, 0);
+        Actor_SetPosition(ACTOR_ORIHALCON_CHEST_STATUE, 0, 0);
         Event_SetFlag(FLAG_SCENE_TEMP_00);
         Event_SetFlag(FLAG_SCENE_TEMP_01);
         Event_SetFlag(FLAG_SCENE_TEMP_02);
@@ -1442,7 +1478,7 @@ s32 Scene_Initialize(void) {
         Event_SetFlag(FLAG_SCENE_TEMP_06);
       }
       if (Event_GetFlag(FLAG_SCENE_TEMP_07))
-        Actor_Get(8)->motionFlags = 4;
+        Actor_Get(ACTOR_ORIHALCON_CHEST_STATUE)->motionFlags = 4;
       if (Event_GetFlag(FLAG_SCENE_TEMP_00))
         MapGrid_CopyCellsTo(17, 71, 8, 69, 1, 1);
       if (Event_GetFlag(FLAG_SCENE_TEMP_05))
@@ -1473,18 +1509,18 @@ s32 Scene_Initialize(void) {
     switch (gMainRoutineWork.entrance) {
     case 7:
       if (Event_GetFlag(FLAG_AREA_TEMP_04) == 0)
-        Actor_SetPosition(11, 0, 0);
+        Actor_SetPosition(ACTOR_GUARDIAN_ROOM_STATUE, 0, 0);
     case 12:
       Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
-      Actor_SetAnimation(11, 2);
-      Actor_Get(11)->motionFlags = 0;
-      Actor_Get(11)->priorityFlags |= 128;
-      Actor_SetAnimation(11, 2);
+      Actor_SetAnimation(ACTOR_GUARDIAN_ROOM_STATUE, 2);
+      Actor_Get(ACTOR_GUARDIAN_ROOM_STATUE)->motionFlags = 0;
+      Actor_Get(ACTOR_GUARDIAN_ROOM_STATUE)->priorityFlags |= 128;
+      Actor_SetAnimation(ACTOR_GUARDIAN_ROOM_STATUE, 2);
       if (Event_GetFlag(FLAG_AREA_TEMP_04) == 0 &&
           gMainRoutineWork.entrance == 12)
         AnemosInnerSanctum_RaiseSecondStatue();
       else
-        Actor_Get(11)->y.fixed = -px(16);
+        Actor_Get(ACTOR_GUARDIAN_ROOM_STATUE)->y.fixed = -px(16);
       break;
     case 1:
     case 2:

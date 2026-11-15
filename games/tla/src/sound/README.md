@@ -90,6 +90,6 @@ sequence The Broken Seal holds note for note takes its name there, such as
 - The game's own layer is `Sound_Play`, `Sound_UpdateBgmRamps` and their
   neighbours: the volume ramps and the music's return.
 - The rest of this folder is the driver: its C, its handwritten routines
-  in `driver/`, and the mixer the game copies into IWRAM.
+  (the `.s` files beside it), and the mixer the game copies into IWRAM.
 - [`games/tla/sound`](../../sound) holds the songs, the samples and the
   table that gives each sound its player.

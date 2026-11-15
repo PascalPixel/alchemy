@@ -314,7 +314,7 @@ void MarsLighthouseAerie_SetUpBeacon(void) {
   object->y.fixed = px(112);
   Actor_SetSpriteColorMode(object, 5);
   Actor_SetSpriteFlags(object, 0);
-  object->priorityFlags |= 0x20;
+  object->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   FieldActor_SetSpritePriority(ACTOR_BEACON_GLOW, 2);
   object = Actor_Get(ACTOR_BEACON_GLOW);
   object->motionFlags = ACTOR_FLOATS;
@@ -323,8 +323,8 @@ void MarsLighthouseAerie_SetUpBeacon(void) {
   object->scaleY = 0x14ccc;
   Actor_SetSpriteColorMode(object, 5);
   Actor_SetSpriteFlags(object, 0);
-  object->priorityFlags |= 0x20;
-  object->priorityFlags |= 2;
+  object->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetBlendMode(object, 1);
   gMarsLighthouseAerie_BeaconFlameFrame = 0;
   FieldTask_AddFrame(MarsLighthouseAerie_SpawnBeaconFlames, TASK_PASS_VBLANK);
@@ -341,7 +341,7 @@ s32 Scene_Initialize(void) {
     register u16 alpha asm("r3") = 0xc08;
 
     REG_BLDALPHA = alpha;
-    REG_BLDCNT = 0x3f10;
+    REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     MarsLighthouseAerie_WatchGoldenSunRise();
   } else if (gMainRoutineWork.entrance == 4) {
     Event_Start();
@@ -608,7 +608,8 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 504, 320);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags |=
+      ACTOR_FACES_MOTION;
   *palette = 0x7fff;
   System_Wait(1);
   // "So, you are still intent on lighting the beacon of Mars Lighthouse?"
@@ -1014,7 +1015,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_Get(work->leaderActorId)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(work->leaderActorId, 504, 320);
   FieldEvent_Wait(1);
-  Actor_Get(work->leaderActorId)->steeringFlags |= 1;
+  Actor_Get(work->leaderActorId)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetAttachedEffect(ACTOR_PIERS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
@@ -1163,7 +1164,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_Interpolate(40);
   System_Wait(40);
   actor->gravity = px(1) / 4;
-  *motionFlags = 3;
+  *motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldEvent_Wait(30);
   Event_PlaySound(SE_BANE_ESCAPE);
   MapGrid_SetShake(2, 4, 1);
@@ -1437,16 +1438,16 @@ L_0200a47a:
   Actor_FaceDirection(ACTOR_JENNA_STAND_IN, FACING_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_JENNA_STAND_IN, FACING_NORTHEAST, 20);
   Actor_SetSpeed(ACTOR_JENNA_STAND_IN, 0.2);
-  Actor_Get(ACTOR_JENNA_STAND_IN)->steeringFlags &= 254;
+  Actor_Get(ACTOR_JENNA_STAND_IN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_JENNA_STAND_IN, 488, 300);
   FieldEvent_Wait(1);
-  Actor_Get(ACTOR_JENNA_STAND_IN)->steeringFlags |= 1;
+  Actor_Get(ACTOR_JENNA_STAND_IN)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_JENNA_STAND_IN, 2);
-  Actor_Get(ACTOR_JENNA_STAND_IN)->steeringFlags &= 254;
+  Actor_Get(ACTOR_JENNA_STAND_IN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_JENNA_STAND_IN, 486, 308);
   FieldEvent_Wait(1);
-  Actor_Get(ACTOR_JENNA_STAND_IN)->steeringFlags |= 1;
+  Actor_Get(ACTOR_JENNA_STAND_IN)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(512, 96, 320, 1);
   FieldCamera_WaitForArrival();
@@ -1532,10 +1533,10 @@ L_0200a47a:
   Actor_WalkToAndWait(ACTOR_PIERS_STAND_IN, 486, 308);
   Actor_FaceDirectionAndWait(ACTOR_PIERS_STAND_IN, FACING_NORTHWEST);
   Actor_SetSpeed(ACTOR_SHEBA_STAND_IN, 2.4);
-  Actor_Get(ACTOR_SHEBA_STAND_IN)->steeringFlags &= 254;
+  Actor_Get(ACTOR_SHEBA_STAND_IN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_SHEBA_STAND_IN, 474, 316);
   FieldEvent_Wait(1);
-  Actor_Get(ACTOR_SHEBA_STAND_IN)->steeringFlags |= 1;
+  Actor_Get(ACTOR_SHEBA_STAND_IN)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_SHEBA_STAND_IN, FACING_NORTHEAST, 0);
   Actor_WalkToAndWait(ACTOR_PIERS_STAND_IN, 462, 280);
   Actor_FaceDirectionAndWait(ACTOR_PIERS_STAND_IN, FACING_EAST);
@@ -2034,8 +2035,8 @@ void MarsLighthouseAerie_LightBeacon(void) {
   FieldCamera_MoveTo(512, 96, 312, 1);
   FieldCamera_WaitForArrival();
   System_Wait(1);
-  REG_BLDALPHA = 0xc08;
-  REG_BLDCNT = 0x3f10;
+  REG_BLDALPHA = BLEND_ALPHA(8, 12);
+  REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   MapGrid_CopyCellAttributes(18, 40, 18, 16, 23, 10);
   MarsLighthouseAerie_HoldStill(ACTOR_PIERS);
   MarsLighthouseAerie_HoldStill(ACTOR_JENNA);
@@ -2068,10 +2069,10 @@ void MarsLighthouseAerie_LightBeacon(void) {
     sprite->unk1b = zero;
     sprite->unk9_4 = 0;
     sprite->unk9_2 = 2;
-    object->priorityFlags &= 254;
+    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     object->motionFlags = zero;
     object->retainSpriteCache = 1;
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpriteFlags(created, 0);
     object->speedLimit = 0x6666;
     object->acceleration = 0xccc;
@@ -2533,7 +2534,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   ((struct Actor *)actor)->scaleY = 0xffff0000;
   ((struct Actor *)actor)->scaleX = 0x1999;
   ((struct Actor *)actor)->motionFlags = 0;
-  ((struct Actor *)actor)->priorityFlags |= 2;
+  ((struct Actor *)actor)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   FieldActor_SetPositionAndResetMotion(actor, px(512), px(64), px(204));
   i = 0;
 L_0200c66c:
@@ -2624,7 +2625,8 @@ L_0200c66c:
   Actor_SetPosition(ACTOR_BEACON_FIRE, 0, 0);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEACON_GLOW), 7);
   FieldActor_SetSpritePriority(ACTOR_BEACON_GLOW, 1);
-  ((struct Actor *)Actor_Get(ACTOR_BEACON_GLOW))->priorityFlags &= 253;
+  ((struct Actor *)Actor_Get(ACTOR_BEACON_GLOW))->priorityFlags &=
+      ~ACTOR_PRIORITY_UNDERFOOT;
   Event_PlaySound(SE_SPIN);
   MapGrid_SetShake(3, 3, 1);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12), PALETTES_ALL);
@@ -2640,10 +2642,10 @@ L_0200c66c:
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 80);
   FieldActor_Jump(ACTOR_GARET, 4, 0);
   Actor_SetSpeed(ACTOR_GARET, 3.2);
-  Actor_Get(ACTOR_GARET)->steeringFlags &= 254;
+  Actor_Get(ACTOR_GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_GARET, 542, 328);
   FieldEvent_Wait(1);
-  Actor_Get(ACTOR_GARET)->steeringFlags |= 1;
+  Actor_Get(ACTOR_GARET)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);

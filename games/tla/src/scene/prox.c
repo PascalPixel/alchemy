@@ -240,7 +240,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_PALETTE) != 0)
     FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
+    effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     Scene_SetActorSpritePriority(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;
@@ -1216,7 +1216,7 @@ void Prox_MoldHidesInSnow(void) {
                   EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
   FieldActor_SetSpritePriority(ACTOR_MOLD, 2);
   object = Actor_Get(ACTOR_MOLD);
-  object->priorityFlags |= 1;
+  object->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   MapGrid_CopyCellsTo(72, 3, 69, 3, 3, 3);
   MapGrid_CopyCellsTo(48, 36, 69, 8, 3, 2);
   MapGrid_CopyCellAttributes(72, 13, 1, 3, 70, 20);
@@ -1300,18 +1300,18 @@ void Prox_PuffFromRoofs(void) {
 
   if (scene == SCENE_PROX) {
     if ((gFrameCount & 63) == 0)
-      Prox_AddPuff(536 << 16, 40 << 16, 232 << 16);
+      Prox_AddPuff(px(536), px(40), px(232));
     if (((gFrameCount + 60) & 63) == 0)
-      Prox_AddPuff(168 << 16, 40 << 16, 296 << 16);
+      Prox_AddPuff(px(168), px(40), px(296));
     if (((gFrameCount + 20) & 63) == 0) {
-      Prox_AddPuff(280 << 16, 42 << 16, 184 << 16);
-      Prox_AddPuff(152 << 16, 48 << 16, 424 << 16);
+      Prox_AddPuff(px(280), px(42), px(184));
+      Prox_AddPuff(px(152), px(48), px(424));
     }
     if (((gFrameCount + 40) & 63) == 0)
-      Prox_AddPuff(336 << 16, 42 << 16, 362 << 16);
+      Prox_AddPuff(px(336), px(42), px(362));
   } else if (scene == SCENE_PROX_MOLD) {
     if ((gFrameCount & 63) == 0)
-      Prox_AddPuff(568 << 16, 104 << 16, 296 << 16);
+      Prox_AddPuff(px(568), px(104), px(296));
   }
 }
 
@@ -1776,7 +1776,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_STORM_RAGING)) {
       Weather_StartRain(1);
     } else {
-      REG_BLDALPHA = 0xc08;
+      REG_BLDALPHA = BLEND_ALPHA(8, 12);
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
       Task_Add(Prox_PuffFromRoofs, TASK_PASS_VBLANK);
       TilesetAnim_Pause(0);

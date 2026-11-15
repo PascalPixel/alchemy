@@ -181,8 +181,9 @@ enum { SHOP_NARIBWE_ITEMS = 16 };
 /// "No one can see the future. Absolutely no one. Except for our
 /// fortune-teller."
 void Naribwe_PraiseFortuneTeller(s32 actor) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
-            0xc000) == 0x8000) {
+  if (FACING_NEAREST_CARDINAL(
+          Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
+      FACING_WEST) {
     Shop_Run(SHOP_NARIBWE_ITEMS, actor);
     return;
   }
@@ -195,8 +196,9 @@ void Naribwe_PraiseFortuneTeller(s32 actor) {
 }
 
 void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
-            0xc000) == 0x8000) {
+  if (FACING_NEAREST_CARDINAL(
+          Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
+      FACING_WEST) {
     Shop_Run(SHOP_NARIBWE_ITEMS, actor);
     return;
   }
@@ -211,8 +213,9 @@ void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
 /// "I am but a humble pilgrim, serving the greater good in the heart of
 /// Gondowan."
 void Naribwe_TalkToPilgrim(s32 actor) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
-            0xc000) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(
+          Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
+      FACING_NORTH) {
     Sanctum_Run(actor);
     return;
   }
@@ -225,8 +228,9 @@ void Naribwe_TalkToPilgrim(s32 actor) {
 }
 
 void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
-            0xc000) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(
+          Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
+      FACING_NORTH) {
     Sanctum_Run(actor);
     return;
   }

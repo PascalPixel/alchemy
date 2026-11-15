@@ -160,9 +160,9 @@ void MikasallaInteriors_AskAreYouExplorer(void) {
 void MikasallaInteriors_TalkToMerchant(s32 actor) {
   u16 facing;
 
-  facing =
-      (Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
-  if (facing == 0xc000) {
+  facing = FACING_NEAREST_CARDINAL(
+      Actor_Get(gMainRoutineWork.leaderActorId)->facing);
+  if (facing == FACING_NORTH) {
     Shop_Run(SHOP_MIKASALLA, actor);
   } else {
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsWeOnlyHaveSmallShop);
@@ -177,9 +177,9 @@ void MikasallaInteriors_TalkToMerchant(s32 actor) {
 void MikasallaInteriors_TalkToInnkeeper(s32 actor) {
   u16 facing;
 
-  facing =
-      (Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
-  if (facing == 0xc000) {
+  facing = FACING_NEAREST_CARDINAL(
+      Actor_Get(gMainRoutineWork.leaderActorId)->facing);
+  if (facing == FACING_NORTH) {
     Inn_CheckIn(MIKASALLA_INN, actor);
   } else {
     Event_Start();
@@ -197,9 +197,9 @@ void MikasallaInteriors_TalkToInnkeeper(s32 actor) {
 void MikasallaInteriors_TalkToHealer(s32 actor) {
   u16 facing;
 
-  facing =
-      (Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
-  if (facing == 0xc000) {
+  facing = FACING_NEAREST_CARDINAL(
+      Actor_Get(gMainRoutineWork.leaderActorId)->facing);
+  if (facing == FACING_NORTH) {
     Sanctum_Run(actor);
   } else {
     Event_Start();
@@ -225,9 +225,9 @@ void MikasallaInteriors_TalkToHealer(s32 actor) {
 void MikasallaInteriors_TalkToApojiiHealer(s32 actor) {
   u16 facing;
 
-  facing =
-      (Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
-  if (facing == 0xc000) {
+  facing = FACING_NEAREST_CARDINAL(
+      Actor_Get(gMainRoutineWork.leaderActorId)->facing);
+  if (facing == FACING_NORTH) {
     Sanctum_Run(actor);
   } else {
     Event_Start();
@@ -244,9 +244,9 @@ void MikasallaInteriors_TalkToApojiiHealer(s32 actor) {
 void MikasallaInteriors_TalkToYallamHealer(s32 actor) {
   u16 facing;
 
-  facing =
-      (Actor_Get(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
-  if (facing == 0xc000) {
+  facing = FACING_NEAREST_CARDINAL(
+      Actor_Get(gMainRoutineWork.leaderActorId)->facing);
+  if (facing == FACING_NORTH) {
     Sanctum_Run(actor);
   } else {
     Event_Start();
@@ -260,7 +260,8 @@ void MikasallaInteriors_TalkToYallamHealer(s32 actor) {
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_HOUSES) {
     if (gMainRoutineWork.entrance == 5)
       Scene_FadeInAndClearFlag();

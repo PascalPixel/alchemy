@@ -491,7 +491,8 @@ s32 Scene_Initialize(void) {
   struct FieldWork *event;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_MADRA_INTERIORS_HOUSES) {
     event = Ram_HeapSlots->fieldWork;

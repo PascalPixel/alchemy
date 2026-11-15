@@ -555,7 +555,7 @@ void LemurianShip_StepOnLift(void) {
       Actor_SetSpritePriority(ACTOR_SIX_JELLY_ROOM_JELLY_A, 2);
       Actor_SetSpeed(ACTOR_SIX_JELLY_ROOM_JELLY_A, 2.4);
       ((struct Actor *)Actor_GetById(ACTOR_SIX_JELLY_ROOM_JELLY_A))
-          ->steeringFlags &= ~1;
+          ->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_WalkToAndWait(ACTOR_SIX_JELLY_ROOM_JELLY_A, 824, 88);
       Event_Wait(1);
       {
@@ -739,7 +739,7 @@ void LemurianShip_CheckPillarsOnDroplets(void) {
         if (object->z.fixed > leader->z.fixed) {
           Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
           ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
-              ->priorityFlags |= 1;
+              ->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
         }
         Event_End();
       }
@@ -775,7 +775,7 @@ void LemurianShip_CheckPillarsOnDroplets(void) {
         if (object->z.fixed > leader->z.fixed) {
           Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
           ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
-              ->priorityFlags |= 1;
+              ->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
         }
         Event_End();
       }
@@ -896,9 +896,10 @@ void LemurianShip_BeginParch(void) {
   void name(s32 id) {                                                          \
     struct Actor *object = ((struct Actor *)Actor_GetById(id));                \
                                                                                \
-    ((struct Actor *)Actor_GetById(id))->priorityFlags |= 0x20;                \
+    ((struct Actor *)Actor_GetById(id))->priorityFlags |=                      \
+        ACTOR_PRIORITY_IGNORES_RISES;                                          \
     Actor_SetSpritePriority(id, n1);                                           \
-    object->priorityFlags &= ~2;                                               \
+    object->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;                        \
     object->riseCounter = 1;                                                   \
   }
 
@@ -910,9 +911,11 @@ DEFINE_SET_UP_PUDDLE(LemurianShip_SetUpLowPuddle, 2)
 #endif
 
 void LemurianShip_KeepSixJellyRoomPuddles(void) {
-  ((struct Actor *)Actor_GetById(ACTOR_LIFT_PUDDLE))->priorityFlags |= 0x20;
+  ((struct Actor *)Actor_GetById(ACTOR_LIFT_PUDDLE))->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SetSpritePriority(ACTOR_LIFT_PUDDLE, 3);
-  ((struct Actor *)Actor_GetById(ACTOR_LIFT_PUDDLE))->priorityFlags &= ~2;
+  ((struct Actor *)Actor_GetById(ACTOR_LIFT_PUDDLE))->priorityFlags &=
+      ~ACTOR_PRIORITY_UNDERFOOT;
   LemurianShip_SetUpPuddle(16);
   LemurianShip_SetUpPuddle(17);
   LemurianShip_SetUpPuddle(18);
@@ -1290,7 +1293,8 @@ void LemurianShip_SetUpTwoJellyRoom(void) {
 void LemurianShip_SetUpRaisedJelly(s32 id) {
   struct Actor *object = ((struct Actor *)Actor_GetById(id));
 
-  ((struct Actor *)Actor_GetById(id))->priorityFlags |= 0x20;
+  ((struct Actor *)Actor_GetById(id))->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SetSpritePriority(id, 1);
   object->motionFlags = 0;
   object->y.fixed = -px(32);
@@ -1307,13 +1311,13 @@ void LemurianShip_SetUpRaisedJelly(s32 id) {
 
 void LemurianShip_SetUpSixJellyRoom(void) {
   ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
-      ->priorityFlags |= 32;
+      ->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Actor_PlaceBlocks(gLemurianShip_Crate);
   ((struct Actor *)Actor_GetById(ACTOR_SIX_JELLY_ROOM_CRATE))->priorityFlags |=
       32;
   Actor_SetSpritePriority(ACTOR_SIX_JELLY_ROOM_CRATE, 1);
   ((struct Actor *)Actor_GetById(ACTOR_SIX_JELLY_ROOM_JELLY_A))
-      ->priorityFlags |= 32;
+      ->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + 2))) {
     struct Actor *object = ((struct Actor *)Actor_GetById(ACTOR_LIFT_PUDDLE));
 
@@ -1336,7 +1340,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
       MapGrid_CopyCellAttributes(102, 16, 3, 2, 110, 4);
       MapGrid_CopyCellAttributes(50, 0, 3, 1, 50, 4);
     } else {
-      RAISE(15, 206 << 18, 144 << 15)
+      RAISE(15, px(824), px(72))
       MapGrid_CopyCellsTo(72, 68, 50, 64, 3, 3);
       MapGrid_CopyCellAttributes(106, 16, 3, 2, 110, 4);
       MapGrid_CopyCellAttributes(50, 1, 3, 1, 50, 4);
@@ -1350,7 +1354,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
     MapGrid_CopyCellAttributes(42, 0, 1, 1, 46, 5);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 45, 5);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 47, 5);
-    RAISE(16, 186 << 18, 176 << 15)
+    RAISE(16, px(744), px(88))
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 3)))
       Actor_SetPosition(ACTOR_SIX_JELLY_ROOM_JELLY_B, 0, 0);
   } else {
@@ -1365,7 +1369,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 48, 9);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 47, 10);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 47, 8);
-    RAISE(17, 190 << 18, 152 << 16)
+    RAISE(17, px(760), px(152))
     if (FIELD_CELL(block->x.fixed) == 47 && FIELD_CELL(block->z.fixed) == 8)
       Actor_PlaceBlocks(gLemurianShip_Crate);
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 4)))
@@ -1384,7 +1388,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 50, 7);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 48, 7);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 49, 8);
-    RAISE(18, 198 << 18, 240 << 15)
+    RAISE(18, px(792), px(120))
     if ((x == 48 && z == 7) || (x == 49 && z == 8))
       Actor_PlaceBlocks(gLemurianShip_Crate);
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 5)))
@@ -1394,7 +1398,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
   }
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + 6))) {
     MapGrid_CopyCellAttributes(42, 0, 1, 1, 51, 7);
-    RAISE(19, 206 << 18, 240 << 15)
+    RAISE(19, px(824), px(120))
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 6)))
       Actor_SetPosition(ACTOR_SIX_JELLY_ROOM_JELLY_E, 0, 0);
   } else {
@@ -1406,7 +1410,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 50, 9);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 52, 9);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 51, 10);
-    RAISE(20, 206 << 18, 152 << 16)
+    RAISE(20, px(824), px(152))
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 7)))
       Actor_SetPosition(ACTOR_SIX_JELLY_ROOM_JELLY_F, 0, 0);
   } else {
@@ -1458,7 +1462,8 @@ void LemurianShip_SetUpLedgeRoom(void) {
 void LemurianShip_SetUpJelly(s32 id) {
   struct Actor *object = ((struct Actor *)Actor_GetById(id));
 
-  ((struct Actor *)Actor_GetById(id))->priorityFlags |= 0x20;
+  ((struct Actor *)Actor_GetById(id))->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SetSpritePriority(id, 1);
   object->motionFlags = 0;
   object->y.fixed = 0;
@@ -1469,10 +1474,10 @@ void LemurianShip_SetUpJelly(s32 id) {
 /// cell.
 void LemurianShip_SetUpSevenJellyRoom(void) {
   ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
-      ->priorityFlags |= 32;
+      ->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Actor_PlaceBlocks(gLemurianShip_Crate);
   ((struct Actor *)Actor_GetById(ACTOR_SEVEN_JELLY_ROOM_CRATE))
-      ->priorityFlags |= 32;
+      ->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SetSpritePriority(ACTOR_SEVEN_JELLY_ROOM_CRATE, 1);
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + 8))) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 48, 32);
@@ -1582,7 +1587,7 @@ void LemurianShip_SetUpHold(void) {
   struct Actor *object;
 
   ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
-      ->priorityFlags |= 32;
+      ->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   LEMURIAN_SHIP_TASK_ADD(LemurianShip_RippleAroundLeader, 0x480);
   if (Event_GetFlag(FLAG_AQUA_HYDRA_BEATEN)) {
     object = ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR));
@@ -1627,7 +1632,7 @@ void LemurianShip_SetUpPillarRoom(void) {
   struct Actor *object;
 
   ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
-      ->priorityFlags |= 32;
+      ->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Actor_PlaceBlocks(gLemurianShip_Pillars);
   if (Event_GetFlag(FLAG_PILLAR_WAY_OPEN)) {
     MapGrid_CopyCellsTo(4, 124, 31, 64, 3, 2);

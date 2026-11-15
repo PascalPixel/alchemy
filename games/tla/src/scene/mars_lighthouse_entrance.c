@@ -288,7 +288,9 @@ void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
     FieldEffect_Spawn(object->x.fixed,
                       object->y.fixed - index * 3 * px(1) + px(16),
                       object->z.fixed, ((Random16() & 15) - 8) << 13, 0, 0,
-                      0x5a0000, &options);
+                      EFFECT_USE_ROTATION | EFFECT_USE_TYPE |
+                          EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
+                      &options);
     object->scaleY -= 0x1f00;
   }
   if (mode == 1) {
@@ -1069,11 +1071,11 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(18, 0, 0);
     } else if (Event_GetFlag(FLAG_ICE_GROUND)) {
       Event_SetFlag(FLAG_ROOM3_SHEET_CRACKED);
-      Actor_Get(18)->priorityFlags |= 2;
+      Actor_Get(18)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     } else {
       Actor_SetPosition(18, 0, 0);
     }
-    Actor_Get(20)->priorityFlags |= 2;
+    Actor_Get(20)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     FieldActor_SetSpritePriority(20, 2);
     if (Event_GetFlag(FLAG_ROOM3_SECOND_SHEET_BURST)) {
       MapGrid_CopyCellsLayered(28, 92, 8, 8, 28, 100);
@@ -1101,7 +1103,7 @@ s32 Scene_Initialize(void) {
       MapGrid_SetShake(0, 2, 1);
       Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
       Actor_SetPosition(18, 0, 0);
-      Actor_Get(18)->priorityFlags |= 2;
+      Actor_Get(18)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       object = Actor_Get(18);
@@ -1131,7 +1133,7 @@ s32 Scene_Initialize(void) {
         (s32)gMarsLighthouseEntrance_Room4IceCones);
   } else if (scene == SCENE_MARS_LIGHTHOUSE_ENTRANCE_HIDDEN_CIRCLE) {
     FieldEffect_StartBlankOverlay(0);
-    Actor_Get(12)->priorityFlags |= 2;
+    Actor_Get(12)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     if (Event_GetFlag(FLAG_ROOM5_SHEET_BURST)) {
       MapGrid_CopyCellsLayered(12, 95, 8, 6, 12, 101);
       MapGrid_CopyCellAttributes(76, 40, 8, 5, 12, 40);
@@ -1193,7 +1195,7 @@ s32 Scene_Initialize(void) {
       Actor_Get(17)->watchedActor = target;
       Actor_Get(18)->watchedActor = target;
     }
-    Actor_Get(9)->priorityFlags |= 2;
+    Actor_Get(9)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     if (Event_GetFlag(FLAG_ROOM6_STATUE_BLOCKS_FLAMES))
       Actor_SetPosition(8, 88, 696);
   } else if (scene == SCENE_MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST) {
@@ -1666,9 +1668,9 @@ int MarsLighthouseEntrance_SlideOnIce(void) {
       leader->z.fixed += ((s32 *)ride->car->unk70)[2];
     } else {
       if (((s32 *)ride->car->unk70)[0] != 0)
-        leader->x.fixed = (leader->x.fixed & 0xfff00000) + 0x80000;
+        leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
       if (((s32 *)ride->car->unk70)[2] != 0)
-        leader->z.fixed = (leader->z.fixed & 0xfff00000) + 0x80000;
+        leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
     }
     ride->active = 0;
     System_Wait(1);
@@ -1889,8 +1891,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           MapGrid_CopyCellsLayered(64, 64, 1, 1, xA, zA);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(SE_ICE_CRACK);
-          Embers_Spawn((x << 20) + 0x80000, actor->y.fixed, (z << 20) + 0x80000,
-                       actor->facing);
+          Embers_Spawn(FIELD_CELL_CENTER(x), actor->y.fixed,
+                       FIELD_CELL_CENTER(z), actor->facing);
         }
         cell = (struct MapCell *)(offset + (s32)cellsB);
         if (cell->collisionCode == 77) {
@@ -1898,8 +1900,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           MapGrid_CopyCellsLayered(64, 64, 1, 2, xB, zB);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(SE_CRUMBLE);
-          Embers_Spawn((x << 20) + 0x80000, actor->y.fixed, (z << 20) + 0x80000,
-                       actor->facing);
+          Embers_Spawn(FIELD_CELL_CENTER(x), actor->y.fixed,
+                       FIELD_CELL_CENTER(z), actor->facing);
         }
       }
     }
@@ -2061,7 +2063,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_PALETTE) != 0)
     FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
+    effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     Actor_SetSpritePriorityB(effect, options->priority);
   }
   if ((flags & EFFECT_USE_START_SCALE) != 0) {
@@ -2206,7 +2208,10 @@ next:
     velocity.x += ((u32)(Random16() * 3 << 14) >> 16) - 0x6000;
     velocity.z += ((u32)(Random16() * 3 << 13) >> 16) - 0x3000;
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-                      velocity.x, velocity.y, velocity.z, 0x1090001, &options);
+                      velocity.x, velocity.y, velocity.z,
+                      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                          EFFECT_USE_PALETTE | 1,
+                      &options);
   }
   if (++i <= 16)
     goto next;
@@ -2279,8 +2284,8 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
 
     GameFlag_SetByte(gCrackedTiles.flagByte, 0);
     GameFlag_SetByte(gCrackedTiles.flagByte + 8, 0);
-    leader->x.fixed = ((dx + x) << 20) + 0x80000;
-    leader->z.fixed = ((dz + z) << 20) + 0x80000;
+    leader->x.fixed = FIELD_CELL_CENTER(dx + x);
+    leader->z.fixed = FIELD_CELL_CENTER(dz + z);
     marker = work->camera;
     marker->x.fixed = leader->x.fixed;
     marker->z.fixed = leader->z.fixed;

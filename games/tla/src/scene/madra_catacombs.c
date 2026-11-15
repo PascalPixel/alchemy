@@ -391,7 +391,7 @@ void MadraCatacombs_ShakeBookshelf(void) {
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_CHEST_FELL) == 0) {
     object = Actor_GetById(ACTOR_SHAKEN_CHEST);
     x = object->x.fixed;
-    if (x < (186 << 16)) {
+    if (x < (px(186))) {
       Event_Start();
       Event_ResolvePendingActions(0);
       Event_PlaySound(SE_DUST_PUFF);
@@ -625,7 +625,8 @@ void MadraCatacombs_SetUpVillage(void) {
   Actor_PlaceBlocks(gMadraCatacombs_PushedPillar);
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_CLIMBABLE_PILLAR_PLACED) != 0)
     Actor_SetPosition(ACTOR_CLIMBABLE_PILLAR, 568, 280);
-  Actor_GetById(ACTOR_CLIMBABLE_PILLAR)->priorityFlags &= 0xfe;
+  Actor_GetById(ACTOR_CLIMBABLE_PILLAR)->priorityFlags &=
+      ~ACTOR_PRIORITY_AUTOMATIC;
   Pillars_Raise(gMadraCatacombs_ClimbablePillar);
   FlagBlock_PlaceAll(gMadraCatacombs_Puddles);
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_DOORWAY_OPEN) != 0) {

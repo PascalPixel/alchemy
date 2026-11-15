@@ -302,7 +302,7 @@ void KibomboMountains_TremorDropsBone(void) {
   Actor_MoveToAndWait(ACTOR_BONE_CRATE, 746, 380);
   Actor_Get(ACTOR_BONE)->velocityY = px(4);
   FieldActor_WaitForMoveById(ACTOR_BONE);
-  Actor_Get(ACTOR_BONE)->priorityFlags |= 2;
+  Actor_Get(ACTOR_BONE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   if (!Event_GetFlag(FLAG_KIBOMBO_LETS_PARTY_PASS) &&
       !Event_GetFlag(FLAG_DOG_SHUT_SOUTH)) {
     FieldActor_Stop(ACTOR_GUARD_DOG);
@@ -431,14 +431,16 @@ s32 Scene_Initialize(void) {
   s32 height;
 
   gFieldWork->transition = EVENT_WORK_VALUE;
-  Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x20;
+  Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   scene = gMainRoutineWork.next;
   if (scene == SCENE_KIBOMBO_MOUNTAINS_WAFT) {
     Actor_SetSpritePriority(ACTOR_WAFT, 1);
     Actor_SetSpritePriority(ACTOR_UNSEEN_MARKER, 1);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_UNSEEN_MARKER), 0);
     Actor_GetById(ACTOR_UNSEEN_MARKER)->collisionFlags = 0;
-    Actor_GetById(ACTOR_UNSEEN_MARKER)->priorityFlags |= 2;
+    Actor_GetById(ACTOR_UNSEEN_MARKER)->priorityFlags |=
+        ACTOR_PRIORITY_UNDERFOOT;
     Actor_GetById(ACTOR_SPROUT)->collisionFlags = 0;
     if (GameFlag_Get(FLAG_SPROUT_GROWN)) {
       Map_CopyCellAttributeRect(30, 35, 1, 1, 28, 34);
@@ -626,7 +628,7 @@ void KibomboMountains_GuardsTurnPartyBack(void) {
   FieldActor_WatchAndSetScript(ACTOR_WARRIOR_E, leader);
   FieldActor_WatchAndSetScript(ACTOR_WARRIOR_F, leader);
   FieldEvent_Wait(2);
-  Actor_Get(leader)->steeringFlags &= ~1;
+  Actor_Get(leader)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(leader, 256, 552);
   FieldEvent_Wait(1);
   Actor_Get(leader)->steeringFlags |= ACTOR_FACES_MOTION;

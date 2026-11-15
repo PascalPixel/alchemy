@@ -5,6 +5,8 @@
 /// for the path to follow.
 
 #include "flags.h"
+#include "ability_ids.h"
+#include "djinn_ids.h"
 #include "graphics/palette_buffers.h"
 #include "system/io_reg.h"
 #include "sprite_ids.h"
@@ -359,11 +361,11 @@ read:
 #if !TLA_PATCH_1
   item = unitData->items[slot];
 #else
-  item = unitData->items[slot] & 0x1ff;
+  item = unitData->items[slot] & INVENTORY_ITEM_ID_MASK;
 #endif
-  if ((u16)(item - 0x1b7) <= 2) {
+  if ((u16)(item - ITEM_RIGHT_PRONG) <= ITEM_CENTER_PRONG - ITEM_RIGHT_PRONG) {
     NaribweInteriors_ReadProng();
-  } else if ((u16)item == 326) {
+  } else if ((u16)item == ITEM_TRIDENT) {
     FieldEvent_SetMessageId(message + 29);
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     if (!Event_GetFlag(0x940)) {
@@ -554,14 +556,15 @@ s32 NaribweInteriors_FoeAhead(void) {
 }
 
 /// The first power the party still lacks, for a shining item's reading: three
-/// Psynergy (abilities 144, 139 and 138) and two items (213, 214); 8 when it
+/// Psynergy (Reveal, Sand and Parch) and two items (the Burst Brooch and the
+/// Grindstone); 8 when it
 /// has them all.
 s32 NaribweInteriors_NextPowerToGain(void) {
-  if (Party_FindOwnerWithAction(144) == -1)
+  if (Party_FindOwnerWithAction(ABILITY_REVEAL) == -1)
     return 3;
-  if (Party_FindOwnerWithAction(139) == -1)
+  if (Party_FindOwnerWithAction(ABILITY_SAND) == -1)
     return 4;
-  if (Party_FindOwnerWithAction(138) == -1)
+  if (Party_FindOwnerWithAction(ABILITY_PARCH) == -1)
     return 5;
   if (FieldPartyInventory_FindMember(ITEM_BURST_BROOCH) == -1)
     return 6;
@@ -618,37 +621,37 @@ s32 NaribweInteriors_ProngsHeld(void) {
 /// One past the last Djinni of an element group found, skipping the ones never
 /// hinted at, or -1 when none is.
 s32 NaribweInteriors_DjinniHintLimit(s32 group) {
-  s32 i = 17;
+  s32 i = DJINNI_INDEX(DJINNI_CRYSTAL);
 
 loop:
   {
-    s32 flag = group * 20 + i + 48;
+    s32 flag = FLAG_DJINNI(group * DJINN_PER_ELEMENT + i);
 
     if (group == 0) {
-      if (i == 7)
+      if (i == DJINNI_INDEX(DJINNI_ECHO))
         goto next;
     }
     if (group == 1) {
-      if (i == 9)
+      if (i == DJINNI_INDEX(DJINNI_SPRING))
         goto next;
-      if (i == 10)
+      if (i == DJINNI_INDEX(DJINNI_SHADE))
         goto next;
     }
     if (Event_GetFlag(flag))
       return i + 1;
   }
 next:
-  if (--i > 6)
+  if (--i >= TRANSFERRED_DJINN_PER_ELEMENT)
     goto loop;
   return -1;
 }
 
-/// Lists the flags still unset for a group: from 7 up to the limit, skipping 7
-/// in group 0 and 9 and 10 in group 1, each flag group * 20 + i + 48 not yet
-/// set goes to the output; returns how many.
+/// Lists the Djinn flags of an element still unset, from the first Djinni not
+/// carried over from Isaac's party up to the limit and skipping Echo, Spring
+/// and Shade, which the fortune teller never hints at; returns how many.
 s32 NaribweInteriors_ListUnfoundDjinn(s32 limit, s32 group, s32 *out) {
   s32 count = 0;
-  s32 i = 7;
+  s32 i = TRANSFERRED_DJINN_PER_ELEMENT;
 
   if (i < limit) {
     s32 *cursor = out;
@@ -656,15 +659,15 @@ s32 NaribweInteriors_ListUnfoundDjinn(s32 limit, s32 group, s32 *out) {
     do {
       s32 flag;
 
-      if (group == 0 && i == 7)
+      if (group == 0 && i == DJINNI_INDEX(DJINNI_ECHO))
         goto next;
       if (group == 1) {
-        if (i == 9)
+        if (i == DJINNI_INDEX(DJINNI_SPRING))
           goto next;
-        if (i == 10)
+        if (i == DJINNI_INDEX(DJINNI_SHADE))
           goto next;
       }
-      flag = group * 20 + i + 48;
+      flag = FLAG_DJINNI(group * DJINN_PER_ELEMENT + i);
       if (Event_GetFlag(flag) == 0) {
         *cursor++ = flag;
         count++;
@@ -702,138 +705,140 @@ u8 *NaribweInteriors_GetDjinniHint(void) {
   }
   if (count == 0) {
     for (group = 0; group <= 3; group++)
-      count += NaribweInteriors_ListUnfoundDjinn(18, group, hints + count);
+      count += NaribweInteriors_ListUnfoundDjinn(
+          DJINNI_INDEX(DJINNI_CRYSTAL) + 1, group, hints + count);
     if (count == 0) {
       HeapSlot_Release(HEAP_SLOT_DJINNI_HINTS);
       return MsgNaribweInteriorsInItemYouHavePlaced;
     }
-    NaribweInteriors_ListUnfoundDjinn(18, lowestGroup, hints);
+    NaribweInteriors_ListUnfoundDjinn(DJINNI_INDEX(DJINNI_CRYSTAL) + 1,
+                                      lowestGroup, hints);
     index = 0;
   } else {
     index = Random16() % count;
   }
   switch (hints[index]) {
-  case 56:
+  case FLAG_DJINNI(DJINNI_IRON):
     message = MsgNaribweInteriorsToEastLiesContinentMoved;
     break;
-  case 57:
+  case FLAG_DJINNI(DJINNI_STEEL):
     message = MsgNaribweInteriorsToNorthInsideSacredIcon;
     break;
-  case 58:
+  case FLAG_DJINNI(DJINNI_MUD):
     message = MsgNaribweInteriorsToNorthBeneathSacredIcon;
     break;
-  case 59:
+  case FLAG_DJINNI(DJINNI_FLOWER):
     message = MsgNaribweInteriorsHeadEastBySoutheast;
     break;
-  case 60:
+  case FLAG_DJINNI(DJINNI_MELD):
     message = MsgNaribweInteriorsHeadEastByNortheast;
     break;
-  case 61:
+  case FLAG_DJINNI(DJINNI_PETRA):
     message = MsgNaribweInteriorsHeadNorthByNorthwest;
     break;
-  case 62:
+  case FLAG_DJINNI(DJINNI_SALT):
     message = MsgNaribweInteriorsToNorthwestInRuins;
     break;
-  case 63:
+  case FLAG_DJINNI(DJINNI_GEODE):
     message = MsgNaribweInteriorsHeadWestByNorthwest;
     break;
-  case 64:
+  case FLAG_DJINNI(DJINNI_MOLD):
     message = MsgNaribweInteriorsToNorthInVillage;
     break;
-  case 65:
+  case FLAG_DJINNI(DJINNI_CRYSTAL):
     message = MsgNaribweInteriorsHeadEastBySoutheastInDesert;
     break;
-  case 75:
+  case FLAG_DJINNI(DJINNI_FOG):
     message = MsgNaribweInteriorsHeadEastByNortheastInCave;
     break;
-  case 76:
+  case FLAG_DJINNI(DJINNI_SOUR):
     message = MsgNaribweInteriorsToSoutheastInPlains;
     break;
-  case 79:
+  case FLAG_DJINNI(DJINNI_CHILL):
     message = MsgNaribweInteriorsToSouthInForestOne;
     break;
-  case 80:
+  case FLAG_DJINNI(DJINNI_STEAM):
     message = MsgNaribweInteriorsToEastBesideBoulder;
     break;
-  case 81:
+  case FLAG_DJINNI(DJINNI_RIME):
     message = MsgHeadEastByNortheastInThe;
     break;
-  case 82:
+  case FLAG_DJINNI(DJINNI_GEL):
     message = MsgNaribweInteriorsToNorthSomewhereOnSmall;
     break;
-  case 83:
+  case FLAG_DJINNI(DJINNI_EDDY):
     message = MsgNaribweInteriorsHeadNorthByNorthwestInCave;
     break;
-  case 84:
+  case FLAG_DJINNI(DJINNI_BALM):
     message = MsgNaribweInteriorsToNorthInRuinsChilled;
     break;
-  case 85:
+  case FLAG_DJINNI(DJINNI_SERAC):
     message = MsgHeadEastByNortheastInA;
     break;
-  case 95:
+  case FLAG_DJINNI(DJINNI_CANNON):
     message = MsgNaribweInteriorsToEastInMountainPaths;
     break;
-  case 96:
+  case FLAG_DJINNI(DJINNI_SPARK):
     message = MsgNaribweInteriorsToSoutheastInVillageLulled;
     break;
-  case 97:
+  case FLAG_DJINNI(DJINNI_KINDLE):
     message = MsgNaribweInteriorsHeadSouthBySoutheast;
     break;
-  case 98:
+  case FLAG_DJINNI(DJINNI_CHAR):
     message = MsgNaribweInteriorsHeadEastBySoutheastInTown;
     break;
-  case 99:
+  case FLAG_DJINNI(DJINNI_COAL):
     message = MsgNaribweInteriorsHeadEastByNortheastOnIsland;
     break;
-  case 100:
+  case FLAG_DJINNI(DJINNI_REFLUX):
     message = MsgNaribweInteriorsHeadSouthBySoutheastInRuins;
     break;
-  case 101:
+  case FLAG_DJINNI(DJINNI_CORE):
     message = MsgNaribweInteriorsToNorthwestInForest;
     break;
-  case 102:
+  case FLAG_DJINNI(DJINNI_TINDER):
     message = MsgNaribweInteriorsToNorthwestAlongCoast;
     break;
-  case 103:
+  case FLAG_DJINNI(DJINNI_SHINE):
     message = MsgNaribweInteriorsToNorthwestBesideRuins;
     break;
-  case 104:
+  case FLAG_DJINNI(DJINNI_FURY):
     message = MsgNaribweInteriorsHeadNorthByNorthwestAtGreat;
     break;
-  case 105:
+  case FLAG_DJINNI(DJINNI_FUGUE):
     message = MsgNaribweInteriorsToNorthInRuinsChilledByIcy;
     break;
-  case 115:
+  case FLAG_DJINNI(DJINNI_BREATH):
     message = MsgHeadEastByNortheastInACave;
     break;
-  case 116:
+  case FLAG_DJINNI(DJINNI_BLITZ):
     message = MsgHeadEastBySoutheastInThe;
     break;
-  case 117:
+  case FLAG_DJINNI(DJINNI_ETHER):
     message = MsgHeadEastBySoutheastInA;
     break;
-  case 118:
+  case FLAG_DJINNI(DJINNI_WAFT):
     message = MsgToTheNorthInTheMountain;
     break;
-  case 119:
+  case FLAG_DJINNI(DJINNI_HAZE):
     message = MsgNaribweInteriorsToEastSomewhereOnTiny;
     break;
-  case 120:
+  case FLAG_DJINNI(DJINNI_WHEEZE):
     message = MsgNaribweInteriorsToEastInForest;
     break;
-  case 121:
+  case FLAG_DJINNI(DJINNI_AROMA):
     message = MsgNaribweInteriorsHeadNorthByNorthwestInVillage;
     break;
-  case 122:
+  case FLAG_DJINNI(DJINNI_WHORL):
     message = MsgNaribweInteriorsInNorthwestInRuins;
     break;
-  case 123:
+  case FLAG_DJINNI(DJINNI_GASP):
     message = MsgNaribweInteriorsHeadNorthByNorthwestNear;
     break;
-  case 124:
+  case FLAG_DJINNI(DJINNI_LULL):
     message = MsgToTheNorthInTheRuins;
     break;
-  case 125:
+  case FLAG_DJINNI(DJINNI_GALE):
     message = MsgNaribweInteriorsHeadNorthByNortheast;
     break;
   default:
@@ -850,7 +855,8 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   Actor_DisableById(ACTOR_FORTUNE_TABLE);
   Actor_DisableById(ACTOR_FORTUNE_MARKER);
   FieldActor_SetSpritePriority(ACTOR_FORTUNE_TELLER, 2);
@@ -862,7 +868,8 @@ s32 Scene_Initialize(void) {
   object->motionFlags = 0;
   object->y.fixed = -px(4);
   object->groundHeight = -px(4);
-  Actor_Get(ACTOR_FORTUNE_MARKER)->priorityFlags |= 0x20;
+  Actor_Get(ACTOR_FORTUNE_MARKER)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   FieldActor_SetSpritePriority(ACTOR_FORTUNE_MARKER, 1);
   Actor_SetPosition(ACTOR_FORTUNE_MARKER, 0, 0);
 
@@ -870,7 +877,7 @@ s32 Scene_Initialize(void) {
   object->motionFlags = 0;
   object->y.fixed = px(12);
   object->groundHeight = px(12);
-  Actor_Get(ACTOR_FORTUNE_FLAME)->priorityFlags |= 0x20;
+  Actor_Get(ACTOR_FORTUNE_FLAME)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   FieldActor_SetSpritePriority(ACTOR_FORTUNE_FLAME, 1);
   Actor_SetPosition(ACTOR_FORTUNE_FLAME, 0, 0);
 
@@ -878,7 +885,7 @@ s32 Scene_Initialize(void) {
   object->motionFlags = 0;
   object->y.fixed = px(12);
   object->groundHeight = px(12);
-  Actor_Get(ACTOR_FORTUNE_SMOKE)->priorityFlags |= 0x20;
+  Actor_Get(ACTOR_FORTUNE_SMOKE)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   FieldActor_SetSpritePriority(ACTOR_FORTUNE_SMOKE, 1);
   Actor_SetPosition(ACTOR_FORTUNE_SMOKE, 0, 0);
 

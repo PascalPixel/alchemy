@@ -147,7 +147,8 @@ s32 Scene_Initialize(void) {
   s32 effect = 0x204;
 
   *screen = effect;
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ROCK), 0);
   Event_SetFlag(0x907);
   Event_ClearFlag(0x9b4);

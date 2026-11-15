@@ -95,7 +95,8 @@ struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
     object->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(object, 0);
     Actor_SetSpriteColor(object, 15);
-    object->priorityFlags |= 34;
+    object->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES | ACTOR_PRIORITY_UNDERFOOT;
     return object;
   }
   return NULL;
@@ -384,13 +385,23 @@ void SeaOfTime_RideCurrent(void) {
     py = object->y.fixed;
     pz = ends[1];
     if (flip) {
-      FieldEffect_Spawn(px + px(3), py, pz, speed, 0, 0, 0xb0000, &spark);
+      FieldEffect_Spawn(px + px(3), py, pz, speed, 0, 0,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                            EFFECT_USE_PALETTE,
+                        &spark);
       FieldEffect_Spawn(ends[2] - px(3), object->y.fixed, ends[3], -speed, 0, 0,
-                        0xb0000, &spark);
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                            EFFECT_USE_PALETTE,
+                        &spark);
     } else {
-      FieldEffect_Spawn(px - px(3), py, pz, -speed, 0, 0, 0xb0000, &spark);
+      FieldEffect_Spawn(px - px(3), py, pz, -speed, 0, 0,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                            EFFECT_USE_PALETTE,
+                        &spark);
       FieldEffect_Spawn(ends[2] + px(3), object->y.fixed, ends[3], speed, 0, 0,
-                        0xb0000, &spark);
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                            EFFECT_USE_PALETTE,
+                        &spark);
     }
   }
 }
@@ -465,13 +476,23 @@ void SeaOfTime_FollowChannel(void) {
         x0 = pos[0];
         z0 = pos[1];
         if (flip) {
-          FieldEffect_Spawn(x0 + px(4), y0, z0, 0x8000, 0, 0, 0xb0000, &spark);
-          FieldEffect_Spawn(pos[2] - px(4), actor->y.fixed, pos[3], -px(1) / 2,
-                            0, 0, 0xb0000, &spark);
+          FieldEffect_Spawn(x0 + px(4), y0, z0, 0x8000, 0, 0,
+                            EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                                EFFECT_USE_PALETTE,
+                            &spark);
+          FieldEffect_Spawn(
+              pos[2] - px(4), actor->y.fixed, pos[3], -px(1) / 2, 0, 0,
+              EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+              &spark);
         } else {
-          FieldEffect_Spawn(x0 - px(4), y0, z0, -0x8000, 0, 0, 0xb0000, &spark);
-          FieldEffect_Spawn(pos[2] + px(4), actor->y.fixed, pos[3], px(1) / 2,
-                            0, 0, 0xb0000, &spark);
+          FieldEffect_Spawn(x0 - px(4), y0, z0, -0x8000, 0, 0,
+                            EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                                EFFECT_USE_PALETTE,
+                            &spark);
+          FieldEffect_Spawn(
+              pos[2] + px(4), actor->y.fixed, pos[3], px(1) / 2, 0, 0,
+              EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+              &spark);
         }
       }
       wait(1);
@@ -565,7 +586,7 @@ void SeaOfTime_CountLaps(void) {
       z <<= 16;
       FieldEffect_Spawn(spots.spot[(u16)index].x + x, 0,
                         spots.spot[(u16)index].z + z, 0, 0x13333, phase,
-                        0x120001, p);
+                        EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | 1, p);
     }
   }
   if (gSeaOfTime_LapCount == gSeaOfTime_LapsNeeded[(u16)index]) {
@@ -816,8 +837,10 @@ void SeaOfTime_UpdateSpray(struct Actor *object) {
     spark.startScaleY = 0xb333;
     spark.palette = 7;
     spark.priority = 1;
-    FieldEffect_Spawn(object->x.fixed + dx, 0, object->z.fixed + px(16), 0,
-                      even, even, 0xb0000, &spark);
+    FieldEffect_Spawn(
+        object->x.fixed + dx, 0, object->z.fixed + px(16), 0, even, even,
+        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+        &spark);
   }
 }
 
@@ -917,7 +940,8 @@ sparks:
 
     burst.palette = 7;
     FieldEffect_Spawn(((x & mask) << 16) + px(336), 0,
-                      ((z & mask) << 16) + px(176), 0, 0, 0, 0x10000, &burst);
+                      ((z & mask) << 16) + px(176), 0, 0, 0, EFFECT_USE_PALETTE,
+                      &burst);
     wait(1);
   }
 next:
@@ -939,7 +963,9 @@ next:
       rain.palette = 7;
       rain.priority = 1;
       FieldEffect_Spawn(offsetX + px(336), 0, offsetZ + px(176), 0, px(1), 0,
-                        0xb0000, &rain);
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                            EFFECT_USE_PALETTE,
+                        &rain);
       wait(1);
     }
     i++;
@@ -1137,7 +1163,9 @@ void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   spark.startScaleY = 0x18000;
   spark.priority = 1;
   spark.type = 276;
-  FieldEffect_Spawn(px, 0, pz, 0, 0, 0, 0x1a0000, &spark);
+  FieldEffect_Spawn(
+      px, 0, pz, 0, 0, 0,
+      EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY, &spark);
   Actor_GetById(actor)->scaleY = 0x1999;
   SeaOfTime_PlaceRock(x, z, actor);
   for (i = 0; i != 10; i++) {
@@ -1205,7 +1233,9 @@ void SeaOfTime_Open(void) {
       x &= mask;
       x <<= 16;
       x += 0x1500000;
-      FieldEffect_Spawn(x, 0, ((y & mask) << 16) + px(176), 0, 0, 0, 0xb0000,
+      FieldEffect_Spawn(x, 0, ((y & mask) << 16) + px(176), 0, 0, 0,
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                            EFFECT_USE_PALETTE,
                         &params);
       wait(1);
     }
@@ -1222,7 +1252,9 @@ void SeaOfTime_Open(void) {
     x &= mask;
     x <<= 16;
     x += 0x1500000;
-    FieldEffect_Spawn(x, 0, ((y & mask) << 16) + px(176), 0, px(1), 0, 0xb0000,
+    FieldEffect_Spawn(x, 0, ((y & mask) << 16) + px(176), 0, px(1), 0,
+                      EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
+                          EFFECT_USE_PALETTE,
                       &burst);
     wait(1);
   }

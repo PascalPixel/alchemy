@@ -208,8 +208,9 @@ enum { SHOP_MADRA_WEAPONS = 4, SHOP_MADRA_ARMOR = 5, SHOP_MADRA_ITEMS = 6 };
 /// Madra's weapon merchant sells across the counter (stock row 4). Spoken to
 /// from elsewhere, she talks of the raid, then of the Kibombo's weapons.
 void Madra_TalkToWeaponMerchant(s32 arg) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
-            0xc000) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(
+          Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
+      FACING_NORTH) {
     Shop_Run(SHOP_MADRA_WEAPONS, arg);
     return;
   }
@@ -226,8 +227,9 @@ void Madra_TalkToWeaponMerchant(s32 arg) {
 /// Madra's armor merchant sells across the counter (stock row 5), and otherwise
 /// talks of the Champa and the Kibombo.
 void Madra_TalkToArmorMerchant(s32 arg) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
-            0xc000) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(
+          Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
+      FACING_NORTH) {
     Shop_Run(SHOP_MADRA_ARMOR, arg);
     return;
   }
@@ -244,8 +246,9 @@ void Madra_TalkToArmorMerchant(s32 arg) {
 /// Madra's item merchant sells across the counter (stock row 6), and otherwise
 /// talks of her sister, hurt in the Champa's attack, and of Shin.
 void Madra_TalkToItemMerchant(s32 arg) {
-  if ((u16)((Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) &
-            0xc000) == 0xc000) {
+  if (FACING_NEAREST_CARDINAL(
+          Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
+      FACING_NORTH) {
     Shop_Run(SHOP_MADRA_ITEMS, arg);
     return;
   }
@@ -729,14 +732,16 @@ void Madra_InspectPartyAtGate(void) {
   Actor_SetAnimationAndWait(ACTOR_SECOND_GATE_GUARD, ANIM_NOD);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_GATE_GUARD, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_GetById(ACTOR_SECOND_GATE_GUARD)->priorityFlags &= 0xfe;
+  Actor_GetById(ACTOR_SECOND_GATE_GUARD)->priorityFlags &=
+      ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_SECOND_GATE_GUARD, 3);
   Actor_WalkToAndWait(ACTOR_SECOND_GATE_GUARD, 457, 402);
   Actor_WalkByAndWait(ACTOR_SECOND_GATE_GUARD, 16, 0);
   Actor_WalkToAndWait(ACTOR_SECOND_GATE_GUARD, 472, 420);
   Event_Wait(30);
   Actor_WalkToAndWait(ACTOR_SECOND_GATE_GUARD, 484, 420);
-  Actor_GetById(ACTOR_SECOND_GATE_GUARD)->priorityFlags |= 1;
+  Actor_GetById(ACTOR_SECOND_GATE_GUARD)->priorityFlags |=
+      ACTOR_PRIORITY_AUTOMATIC;
   Actor_FaceDirection(ACTOR_SECOND_GATE_GUARD, FACING_SOUTH, 0);
   Event_Wait(60);
   Event_Wait(10);
@@ -755,12 +760,14 @@ void Madra_InspectPartyAtGate(void) {
   Event_Wait(5);
   // "Sorry for the delay. You may pass."
   Event_ShowMessageThenWait(ACTOR_SECOND_GATE_GUARD, 0, 2);
-  Actor_GetById(ACTOR_SECOND_GATE_GUARD)->priorityFlags &= 0xfe;
+  Actor_GetById(ACTOR_SECOND_GATE_GUARD)->priorityFlags &=
+      ~ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpritePriority(ACTOR_SECOND_GATE_GUARD, 3);
   Actor_WalkByAndWait(ACTOR_SECOND_GATE_GUARD, 0, -16);
   Actor_WalkToAndWait(ACTOR_SECOND_GATE_GUARD, 475, 400);
   Actor_WalkByAndWait(ACTOR_SECOND_GATE_GUARD, -16, 0);
-  Actor_GetById(ACTOR_SECOND_GATE_GUARD)->priorityFlags |= 1;
+  Actor_GetById(ACTOR_SECOND_GATE_GUARD)->priorityFlags |=
+      ACTOR_PRIORITY_AUTOMATIC;
   FieldCamera_MoveTo(476, CAMERA_KEEP, 396, 1);
   Actor_WalkToAndWait(ACTOR_SECOND_GATE_GUARD, 459, 416);
   Actor_FaceDirection(ACTOR_SECOND_GATE_GUARD, FACING_SOUTHEAST, 0);
@@ -1190,7 +1197,7 @@ void Madra_StopPartyAfterRaid(void) {
 /// and Karst comes in at the gate looking for Menardi.
 void Madra_MeetKarst(void) {
   struct Actor *object;
-  s32 x = 153 << 16;
+  s32 x = px(153);
   s32 z;
 
   z = 0x01030000;

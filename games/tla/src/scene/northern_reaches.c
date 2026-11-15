@@ -344,7 +344,8 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   state = &gMainRoutineWork;
-  Actor_Get(state->leaderActorId)->priorityFlags |= 32;
+  Actor_Get(state->leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   if (state->entrance == 90) {
     Event_SetFlag(FLAG_SHIP_CARRIES_CANNON);
     state->ownerOverride = 1;

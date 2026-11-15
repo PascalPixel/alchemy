@@ -151,7 +151,8 @@ s32 Scene_Initialize(void) {
   Task_AddFrame(LemuriaPalace_CycleGlowColors, TASK_PASS_FRAME);
   FieldActor_SetSpritePriority(ACTOR_GIRL_WAITING_ON_THE_KING, 3);
   if (gMainRoutineWork.entrance == 6)
-    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
   if (Event_GetFlag(0x96a)) {
     Actor_SetPosition(ACTOR_PIERS, 0, 0);
     Actor_SetPosition(ACTOR_CONSERVATO, 0, 0);

@@ -60,7 +60,8 @@ struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
     object->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(object, 0);
     FieldActor_SetSpriteColor(object, 15);
-    object->priorityFlags |= 34;
+    object->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES | ACTOR_PRIORITY_UNDERFOOT;
     return object;
   }
   return NULL;
@@ -390,9 +391,11 @@ void MagmaRock_ThrowEmbers(struct Actor *object) {
         dx = mask & Random16();
       }
       dy = Random16() & 31;
-      FieldEffect_Spawn(object->x.fixed + ((dx - 8) << 16),
-                        object->y.fixed + (dy << 16) - px(8), object->z.fixed,
-                        0, phase, phase, 0x320001, &params);
+      FieldEffect_Spawn(
+          object->x.fixed + ((dx - 8) << 16),
+          object->y.fixed + (dy << 16) - px(8), object->z.fixed, 0, phase,
+          phase, EFFECT_USE_SCRIPT | EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | 1,
+          &params);
     }
     if (gFrameCount & 4)
       FieldActor_SetSpriteColor(object, 10);
@@ -448,12 +451,13 @@ void MagmaRock_TrailEmbers(struct Actor *object) {
     config.kind = 2;
     config.data = gMagmaRock_EmberScript;
     if ((frame & 15) == 0 && !Event_GetFlag(FLAG_SCENE_TEMP_60))
-      Actor_PlaySoundInView(object, 136);
+      Actor_PlaySoundInView(object, SE_WHOOSH);
     dz = ((Random16() & 15) - 8) << 15;
     velocityZ = ((Random16() & 31) - 16) << 12;
     z = object->z.fixed;
-    FieldEffect_Spawn(object->x.fixed, object->y.fixed, z + dz, 0, 0, velocityZ,
-                      0x320001, &config);
+    FieldEffect_Spawn(
+        object->x.fixed, object->y.fixed, z + dz, 0, 0, velocityZ,
+        EFFECT_USE_SCRIPT | EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | 1, &config);
   }
 }
 
@@ -754,7 +758,10 @@ stop:
       dx = Random16() & 31;
       dz = Random16() & 31;
       FieldEffect_Spawn(position[0], position[1], position[2], (dx - 16) << 13,
-                        (dz - 16) << 13, parity, 0x1320000, &options);
+                        (dz - 16) << 13, parity,
+                        EFFECT_USE_UPDATE | EFFECT_USE_SCRIPT |
+                            EFFECT_USE_TYPE | EFFECT_USE_PRIORITY,
+                        &options);
     }
     System_Wait(1);
   }
@@ -866,12 +873,12 @@ void MagmaRock_RaiseFlamePart(struct Actor *part) {
 
   if (owner->timer > 35 && owner->timer < BYTE_AT(part, 98) * 2 + 36) {
     PART_Y(part) = owner->y.fixed + px(32);
-    PART_Y(part) += (owner->timer << 19) + (-35 << 19);
+    PART_Y(part) += (owner->timer << 19) + (px(-280));
   } else if (BYTE_AT(part, 98) * 2 + 36 < owner->timer && owner->timer < 332) {
     PART_Y(part) = owner->y.fixed + (BYTE_AT(part, 98) << 20) + 0x200000;
   } else if (owner->timer > 332 && owner->timer < BYTE_AT(part, 98) * 2 + 333) {
     PART_Y(part) = owner->y.fixed + (BYTE_AT(part, 98) << 20) + 0x200000;
-    PART_Y(part) -= (owner->timer << 19) - (332 << 19);
+    PART_Y(part) -= (owner->timer << 19) - (px(2656));
   } else if (BYTE_AT(part, 98) * 2 + 333 < owner->timer) {
     Actor_Release(part);
   }
@@ -911,7 +918,7 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
 
   if (watched->timer >= 35 && watched->timer <= 42) {
     EFFECT_Y(object) = watched->y.fixed + px(24);
-    EFFECT_Y(object) = EFFECT_Y(object) + (watched->timer << 19) + (-34 << 19);
+    EFFECT_Y(object) = EFFECT_Y(object) + (watched->timer << 19) + (px(-272));
   } else {
     if (watched->timer >= 9 && watched->timer <= 331) {
       EFFECT_Y(object) =
@@ -920,7 +927,7 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
                watched->timer < (object->effect.riseCounter << 1) + 333) {
       EFFECT_Y(object) =
           watched->y.fixed + (object->effect.riseCounter << 20) + 0x180000;
-      EFFECT_Y(object) -= (watched->timer << 19) - (332 << 19);
+      EFFECT_Y(object) -= (watched->timer << 19) - (px(2656));
     } else if ((object->effect.riseCounter << 1) + 333 < watched->timer) {
       object->effect.y = object->actor.groundHeight;
       object->effect.update = 0;
@@ -937,7 +944,10 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
     config.data = gMagmaRock_EmberScript;
     FieldEffect_Spawn(object->effect.x + px(1), object->effect.y - px(4),
                       object->effect.z, ((Random16() & mask) - 3) << 14,
-                      -0x20000, step, 0x1330000, &config);
+                      -0x20000, step,
+                      EFFECT_USE_UPDATE | EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
+                          EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
+                      &config);
   }
   MagmaRockInside_SetCellShape(watched->layer, FIELD_CELL(watched->x.fixed),
                                FIELD_CELL(watched->z.fixed),
@@ -978,7 +988,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
   s32 type = 0x15f;
 
   if ((gFrameCount & 15) == 0)
-    Actor_PlaySoundInView(object, 136);
+    Actor_PlaySoundInView(object, SE_WHOOSH);
   FieldActor_SetSpriteColor(object, 10);
   if (object->timer <= 31) {
     u32 phase = gFrameCount & 3;
@@ -997,7 +1007,10 @@ void MagmaRock_BurnStatue(struct Actor *object) {
       dz = Random16() & 15;
       FieldEffect_Spawn(object->x.fixed + px(1), object->y.fixed + px(24),
                         object->z.fixed, (dx - 8) << 14, 0, (dz - 8) << 14,
-                        0x1330000, &config);
+                        EFFECT_USE_UPDATE | EFFECT_USE_SCRIPT |
+                            EFFECT_USE_TYPE | EFFECT_USE_PRIORITY |
+                            EFFECT_USE_PALETTE,
+                        &config);
     }
   } else if (object->timer == 33) {
     struct Actor *parts[4];
@@ -1005,7 +1018,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
     s32 id;
     s32 i;
 
-    Actor_PlaySoundInView(object, 144);
+    Actor_PlaySoundInView(object, SE_CLATTER);
     parts[0] = (FieldActor_Create(type, object->x.fixed + px(1),
                                   object->y.fixed + px(32), object->z.fixed));
     for (i = 1; i != 4; i++) {
@@ -1337,7 +1350,9 @@ loop:
   position[0] = x + ((Random16() & 63) << 16) - Q16_ONE * 32;
   position[1] = (Random16() & 15) << 12;
   position[2] = z + ((Random16() & 63) << 16) - Q16_ONE * 32;
-  FieldEffect_Spawn(position[0], 0, position[2], 0, position[1], 0, 0x3a0001,
+  FieldEffect_Spawn(position[0], 0, position[2], 0, position[1], 0,
+                    EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
+                        EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY | 1,
                     &config);
   i++;
   if (i != 4)
@@ -1483,7 +1498,10 @@ loop:
   velocity[0] += ((Random16() * 3) << 14 >> 16) - 0x6000;
   velocity[2] += ((Random16() * 3) << 13 >> 16) - 0x3000;
   FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-                    velocity[0], velocity[1], velocity[2], 0x1090001, &options);
+                    velocity[0], velocity[1], velocity[2],
+                    EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                        EFFECT_USE_PALETTE | 1,
+                    &options);
   i++;
   if (i <= 16)
     goto loop;
@@ -1654,7 +1672,7 @@ s32 Scene_Initialize(void) {
     goto settle;
   } else if (scene == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
     owner = &work->leaderActorId;
-    Actor_GetById(*owner)->priorityFlags |= 32;
+    Actor_GetById(*owner)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
     entrance = &work->entrance;
     if (work->entrance <= 3) {
       s32 id;
@@ -1822,7 +1840,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellsTo(0, 96, 42, 81, width, other);
     }
     leader = &work->leaderActorId;
-    Actor_GetById(*leader)->priorityFlags |= 32;
+    Actor_GetById(*leader)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
     MagmaRockInside_RaiseActorCells(gMagmaRock_Room3Statues);
     if (work->entrance <= 2) {
       if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {

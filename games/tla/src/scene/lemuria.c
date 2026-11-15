@@ -709,8 +709,8 @@ s32 Scene_Initialize(void) {
   }
   Rope_Initialize();
   Rope_Place(0, 0x962, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
-  Actor_Get(ACTOR_ROPE_POST_A)->priorityFlags |= 32;
-  Actor_Get(ACTOR_ROPE_POST_B)->priorityFlags |= 32;
+  Actor_Get(ACTOR_ROPE_POST_A)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_Get(ACTOR_ROPE_POST_B)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   if (Event_GetFlag(FLAG_LEMURIA_ROPE_LET_DOWN)) {
     FieldActor_SetSpritePriority(ACTOR_LET_DOWN_ROPE_LOW_POST, 2);
     FieldActor_SetSpritePriority(ACTOR_LET_DOWN_ROPE_HIGH_POST, 2);
@@ -818,7 +818,7 @@ void Lemuria_AdmirePalace(s32 id) {
   FieldActor_WaitForMoveById(ACTOR_KRADEN_STAND_IN);
   Actor_SetPosition(ACTOR_KRADEN_STAND_IN, 0, 0);
   FieldEvent_Wait(10);
-  Actor_Get(ACTOR_FELIX)->priorityFlags |= 1;
+  Actor_Get(ACTOR_FELIX)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_WalkToAndWait(ACTOR_FELIX, 464, 776);
   Lemuria_RestoreGirl();
   Event_End();

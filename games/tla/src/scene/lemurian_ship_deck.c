@@ -525,7 +525,8 @@ void LemurianShipDeck_HoldOnToTiller(void) {
 /// The deck at the tiller (SCENE_LEMURIAN_SHIP_TILLER): the colour rotations,
 /// and the tiller scenes of entrances 10 and 20.
 void LemurianShipDeck_SetUpTillerDeck(void) {
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   FieldTask_AddFrame(LemurianShipDeck_RotateColors12To15, TASK_PASS_VBLANK);
   FieldTask_AddFrame(LemurianShipDeck_RotateColors4To9, TASK_PASS_VBLANK);
   if (gMainRoutineWork.entrance == 10)
@@ -542,7 +543,8 @@ s32 Scene_Initialize(void) {
     LemurianShipDeck_SetUpTillerDeck();
   } else {
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
     Actor_SetAnimation(ACTOR_PUDDLE, 1);
     FlagBlock_PlaceAll(gLemurianShipDeck_Puddles);
     FieldTask_AddFrame(LemurianShipDeck_RotateColors12To15, TASK_PASS_VBLANK);
@@ -638,7 +640,7 @@ void LemurianShipDeck_SightMenardisShip(void) {
   Actor_SetAnimation(ACTOR_KRADEN, 4);
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
-  Actor_Get(ACTOR_KRADEN)->steeringFlags &= ~1;
+  Actor_Get(ACTOR_KRADEN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_KRADEN, 288, 144);
   FieldEvent_Wait(1);
   Actor_Get(ACTOR_KRADEN)->steeringFlags |= ACTOR_FACES_MOTION;

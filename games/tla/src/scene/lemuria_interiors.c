@@ -518,7 +518,7 @@ visited:
   {
     struct Actor *other =
         (struct Actor *)((s32)Actor_GetById(ACTOR_PIERS_UNCLE));
-    other->priorityFlags |= 1;
+    other->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   }
   Event_Start();
   FieldEvent_ResolvePendingActions(0);

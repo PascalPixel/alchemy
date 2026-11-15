@@ -135,7 +135,7 @@ void MercuryLighthouse_SpawnMotes(void) {
       object->y.fixed = px(160);
       object->z.fixed = z;
       Actor_SetSpriteFlags(object, 0);
-      object->priorityFlags &= ~1;
+      object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       sprite->priority = 2;
       Actor_StartScript(object, gMercuryLighthouse_MoteScript);
       Actor_SelectAnimation(object, 1);

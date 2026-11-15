@@ -331,7 +331,7 @@ s32 Scene_Initialize(void) {
       struct Actor *other;
       s32 x;
 
-      x = (column << 20) + 0x80000;
+      x = FIELD_CELL_CENTER(column);
       leader->x.fixed = x;
       leader->z.fixed = (row << 20) - 0x1280000;
       other = work->camera;
@@ -407,7 +407,8 @@ void MarsLighthouseStarRoom_WakeFlameDragons(void) {
   MarsLighthouseStarRoom_ClearDragonIce();
   Event_PlaySound(MUS_SILENCE);
   FieldEvent_Wait(40);
-  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &= ~1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
@@ -764,7 +765,7 @@ void MarsLighthouseStarRoom_LayDownAdept(s32 id) {
   Actor_SetSpriteFlags(Actor_Get(id), 0);
   FieldActor_SetSpritePriority(id, 3);
   object->motionFlags = 0;
-  object->priorityFlags |= 2;
+  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   object->collisionFlags = 0;
   if (id == ACTOR_AGATIO) {
     Actor_SetPosition(ACTOR_AGATIO, 700, 224);
@@ -829,7 +830,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     object->motionFlags = 0;
     object->retainSpriteCache = 1;
     sprite->unk1b[0] = 0;
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Item_LoadIcon(ITEM_MARS_STAR);
     Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
@@ -954,7 +955,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
       object->motionFlags = 0;
       object->retainSpriteCache = 1;
       sprite->unk1b[0] = 0;
-      object->priorityFlags |= 2;
+      object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
       Item_LoadIcon(ITEM_MARS_STAR);
       Vram_Load(sprite->vramBlock, 128, buffer + 0x400);
@@ -1018,7 +1019,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     placedStarSprite->priority = 2;
     placedStar->motionFlags = 0;
     placedStar->retainSpriteCache = 1;
-    placedStar->priorityFlags |= 2;
+    placedStar->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     placedStarGlyphs = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Item_LoadIcon(ITEM_MARS_STAR);
     Vram_Load(placedStarSprite->vramBlock, 128, placedStarGlyphs + 0x400);
@@ -1174,7 +1175,7 @@ void MarsLighthouseStarRoom_SpawnThawSparks(void) {
     object->retainSpriteCache = 2;
     object->motionFlags = 0;
     object->timer = 0;
-    object->priorityFlags &= 0xfe;
+    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     sprite = object->sprite;
     sprite->priority = 2;
     Actor_SetSpriteFlags(object, 0);
@@ -1668,9 +1669,9 @@ s32 Fireball_CarryLeader(void) {
       leader->z.fixed += ((s32 *)ride->car->unk70)[2];
     } else {
       if (((s32 *)ride->car->unk70)[0] != 0)
-        leader->x.fixed = (leader->x.fixed & 0xfff00000) + 0x80000;
+        leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
       if (((s32 *)ride->car->unk70)[2] != 0)
-        leader->z.fixed = (leader->z.fixed & 0xfff00000) + 0x80000;
+        leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
     }
     ride->active = 0;
     System_Wait(1);
@@ -1879,8 +1880,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           MapGrid_CopyCellsLayered(64, 64, 1, 1, xA, zA);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(SE_ICE_CRACK);
-          Embers_Spawn((x << 20) + 0x80000, actor->y.fixed, (z << 20) + 0x80000,
-                       actor->facing);
+          Embers_Spawn(FIELD_CELL_CENTER(x), actor->y.fixed,
+                       FIELD_CELL_CENTER(z), actor->facing);
         }
         cell = (struct MapCell *)(offset + (s32)cellsB);
         if (cell->collisionCode == 77) {
@@ -1888,8 +1889,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           MapGrid_CopyCellsLayered(64, 64, 1, 2, xB, zB);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(SE_CRUMBLE);
-          Embers_Spawn((x << 20) + 0x80000, actor->y.fixed, (z << 20) + 0x80000,
-                       actor->facing);
+          Embers_Spawn(FIELD_CELL_CENTER(x), actor->y.fixed,
+                       FIELD_CELL_CENTER(z), actor->facing);
         }
       }
     }
@@ -2041,7 +2042,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_PALETTE) != 0)
     FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
+    effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     Scene_SetActorSpritePriority(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;
@@ -2148,8 +2149,8 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
 
     GameFlag_SetByte(gCrackedTiles.flagByte, 0);
     GameFlag_SetByte(gCrackedTiles.flagByte + 8, 0);
-    leader->x.fixed = ((dx + x) << 20) + 0x80000;
-    leader->z.fixed = ((dz + z) << 20) + 0x80000;
+    leader->x.fixed = FIELD_CELL_CENTER(dx + x);
+    leader->z.fixed = FIELD_CELL_CENTER(dz + z);
     marker = work->camera;
     marker->x.fixed = leader->x.fixed;
     marker->z.fixed = leader->z.fixed;

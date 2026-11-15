@@ -944,8 +944,8 @@ void MarsLighthouseRoomF_PushPipeOrJump(void) {
       s32 z;
       u8 *cells;
 
-      SET_VECTOR(position, (leader->x.fixed & 0xfff00000) + px(8),
-                 leader->y.fixed, (leader->z.fixed & 0xfff00000) + px(8));
+      SET_VECTOR(position, (leader->x.fixed & FIELD_CELL_MASK) + px(8),
+                 leader->y.fixed, (leader->z.fixed & FIELD_CELL_MASK) + px(8));
       FieldVector_AddPolarOffset(16, angle, position);
       x = position[0] >> 20;
       z = position[2] >> 20;
@@ -1406,7 +1406,7 @@ UNUSED void Whirlwind_CarryLeader(void) {
   actor->x.fixed = (x + facing - 1) << 19;
   actor->z.fixed = (((linked->z.fixed >> 19) & ~1) - (facing & 2) + 1) << 19;
   actor->velocityY = px(6);
-  *(u8 *)&actor->priorityFlags = 1;
+  *(u8 *)&actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   *motion = 3;
   Actor_SetSpriteFlags(actor, 1);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -1435,7 +1435,8 @@ UNUSED void Whirlwind_CarryLeader(void) {
       goto settle;
   }
   FieldActor_WaitForMove(shadow);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_AUTOMATIC;
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   work->glowHeld = 1;
   work->stepTrigger = 0;
@@ -1489,7 +1490,7 @@ void Whirlwind_Update(struct Actor *self) {
         if (near && !Event_GetFlag(260)) {
           leader->facing = self->facing;
           leader->watchedActor = self;
-          leader->priorityFlags &= ~1;
+          leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
           {
             s32 delay = 200;
             work->raisedTrigger = delay;
@@ -1539,7 +1540,7 @@ UNUSED struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   Actor_SelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->priorityFlags &= ~1;
+  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   object->angle = source->angle;
   object->unk64 = 0;
   object->unk62 = 0;
@@ -2166,9 +2167,9 @@ s32 Fireball_CarryLeader(void) {
       leader->z.fixed += ((s32 *)ride->car->unk70)[2];
     } else {
       if (((s32 *)ride->car->unk70)[0] != 0)
-        leader->x.fixed = (leader->x.fixed & 0xfff00000) + 0x80000;
+        leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
       if (((s32 *)ride->car->unk70)[2] != 0)
-        leader->z.fixed = (leader->z.fixed & 0xfff00000) + 0x80000;
+        leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
     }
     ride->active = 0;
     System_Wait(1);
@@ -2403,8 +2404,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           MapGrid_CopyCellsLayered(64, 64, 1, 1, xA, zA);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(SE_ICE_CRACK);
-          Embers_Spawn((x << 20) + 0x80000, actor->y.fixed, (z << 20) + 0x80000,
-                       actor->facing);
+          Embers_Spawn(FIELD_CELL_CENTER(x), actor->y.fixed,
+                       FIELD_CELL_CENTER(z), actor->facing);
         }
         cell = (struct MapCell *)(offset + (s32)cellsB);
         if (cell->collisionCode == 77) {
@@ -2412,8 +2413,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
           MapGrid_CopyCellsLayered(64, 64, 1, 2, xB, zB);
           MapGrid_CopyCellAttributes(64, 64, 1, 1, x, z);
           Event_PlaySound(SE_CRUMBLE);
-          Embers_Spawn((x << 20) + 0x80000, actor->y.fixed, (z << 20) + 0x80000,
-                       actor->facing);
+          Embers_Spawn(FIELD_CELL_CENTER(x), actor->y.fixed,
+                       FIELD_CELL_CENTER(z), actor->facing);
         }
       }
     }
@@ -2575,7 +2576,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_PALETTE) != 0)
     FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
+    effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     Scene_SetActorSpritePriority(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;
@@ -2696,8 +2697,8 @@ UNUSED void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 value) {
 
     GameFlag_SetByte(work->positionFlag, 0);
     GameFlag_SetByte(work->positionFlag + 8, 0);
-    object->x.fixed = ((x + dx) << 20) + 0x80000;
-    object->z.fixed = ((z + dz) << 20) + 0x80000;
+    object->x.fixed = FIELD_CELL_CENTER(x + dx);
+    object->z.fixed = FIELD_CELL_CENTER(z + dz);
     other = *(struct Actor **)(event + 460);
     other->x.fixed = object->x.fixed;
     other->z.fixed = object->z.fixed;

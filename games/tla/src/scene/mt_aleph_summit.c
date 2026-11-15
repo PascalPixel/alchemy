@@ -427,7 +427,7 @@ s32 Scene_Initialize(void) {
     Event_PlaySound(SE_POWER_UP);
     REG_BG1CNT &= 0xfffc;
     REG_BG1CNT |= 1;
-    REG_BLDCNT = 0x3f42;
+    REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, 0x1002, 0x20000);
     j = 0;
   L6:
@@ -523,7 +523,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(ACTOR_ALEX, 1);
     Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHWEST, 0);
     Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-    ACTOR(8)->steeringFlags &= ~1;
+    ACTOR(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkTo(ACTOR_ALEX, 256, 136);
     Actor_SetSpeed(ACTOR_ALEX, 0.6);
     FieldEvent_Wait(20);
@@ -560,7 +560,7 @@ s32 Scene_Initialize(void) {
     if (j & 1) {
       Actor_WalkToAndWait(ACTOR_WISE_ONE, 216, 96);
     } else {
-      ACTOR(9)->steeringFlags &= ~1;
+      ACTOR(9)->steeringFlags &= ~ACTOR_FACES_MOTION;
       Actor_WalkTo(ACTOR_WISE_ONE, 208, 88);
     }
     i = 0;
@@ -605,7 +605,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(20);
     Actor_SetSpeed(ACTOR_ALEX, 8);
     MtAlephSummit_ScatterDustRing(128, 8);
-    ACTOR(8)->steeringFlags &= ~1;
+    ACTOR(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkTo(ACTOR_ALEX, 280, 160);
     Actor_SetAnimation(ACTOR_ALEX, 17);
     Event_PlaySound(SE_HEAVY_IMPACT);

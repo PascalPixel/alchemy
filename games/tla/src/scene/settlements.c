@@ -520,7 +520,7 @@ void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
     object->retainSpriteCache = 2;
     object->motionFlags = 0;
     object->timer = 0;
-    object->priorityFlags &= 0xfe;
+    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     FieldActor_SetSpriteColor(object, 7);
     animation = object->sprite;
     animation[9] = (animation[9] & -13) | 4;
@@ -576,7 +576,7 @@ void Settlements_SetUpKaltIsland(void) {
   struct OrbitSprite *sprite;
   u8 *transfer;
 
-  REG_BLDALPHA = 0xc08;
+  REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   {
     s32 priority = 0x480;
@@ -629,7 +629,7 @@ s32 Scene_Initialize(void) {
     Actor_PlaceBlocks(gSettlements_FallsObjects);
     if (Event_GetFlag(FLAG_SCENE_TEMP_06))
       Actor_SetPosition(ACTOR_FALLS_CRATE, 0, 0);
-    Actor_GetById(ACTOR_FALLS_CRATE)->priorityFlags |= 2;
+    Actor_GetById(ACTOR_FALLS_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetAnimation(ACTOR_RIVER_STONE_H, 2);
     Actor_SetAnimation(ACTOR_RIVER_STONE_I, 2);
     Actor_SetAnimation(ACTOR_RIVER_STONE_K, 2);
@@ -795,8 +795,8 @@ void Scroll_HBlank(void) {
     REG_BLDCNT = 0;
   } else {
     Io_Write16(gSettlements_WaterfallScrollBelow, &REG_BG1HOFS);
-    REG_BLDALPHA = 0x100c;
-    REG_BLDCNT = 0x3f42;
+    REG_BLDALPHA = BLEND_ALPHA(12, 16);
+    REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   }
 }
 
@@ -818,7 +818,8 @@ void Settlements_UnblockFallsObjects(void) {
 }
 
 void Settlements_BlockFallsObject(void) {
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 2;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_UNDERFOOT;
   Actor_LiftTargetBlock(gSettlements_FallsObjects);
 }
 
@@ -1058,7 +1059,9 @@ void Settlements_SplashCrate(s32 id) {
   spawn.script = gSettlements_SmokeScript;
   Event_PlaySound(SE_CAST);
   FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0, 0, 0,
-                    0x1c0000, &spawn);
+                    EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
+                        EFFECT_SCALE_TO_TARGET,
+                    &spawn);
 }
 
 #include "../field/field_effect_advance_motion.c"
@@ -1094,7 +1097,7 @@ void Settlements_SpawnSplashRing(s32 objectId) {
     x += x / 3;
     vec.x = x;
     FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, x,
-                      vec.y, z, 0x01000001, &params);
+                      vec.y, z, EFFECT_USE_UPDATE | 1, &params);
   }
 }
 

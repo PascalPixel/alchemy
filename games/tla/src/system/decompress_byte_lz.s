@@ -924,8 +924,8 @@ ColorBuffer_DarkenPartial:
 	.balign 4
 .syntax unified
 	.thumb
-	.global Resource_DecodeHalfwordLzCode
-Resource_DecodeHalfwordLzCode:
+	.global Decompress_HalfwordLz
+Decompress_HalfwordLz:
 	.global Resource_DecodeHalfwordLz
 	.thumb_func
 Resource_DecodeHalfwordLz:
@@ -960,5 +960,5 @@ AlchemyUncreditedEnd_08001ffe:
 	subs	r2, r2, #1
 	bne	.L_08002040
 	b	.L_0800200c
-	.global Resource_DecompressHalfwordsCodeSize
-	.set Resource_DecompressHalfwordsCodeSize, . - Resource_DecodeHalfwordLzCode
+	.global Decompress_HalfwordsCodeSize
+	.set Decompress_HalfwordsCodeSize, . - Decompress_HalfwordLz

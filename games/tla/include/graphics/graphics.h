@@ -29,7 +29,7 @@ extern u8 gRomShiftedTilePair[];
 /// Transform_BuildLookAt's ARM dot product, seven words it copies onto its
 /// stack to run.
 extern const u32 RelocatedQ16DotProduct[];
-extern u8 Resource_Decode2CodeSize[];
+extern u8 Decompress_MoveToFrontLzCommandsCodeSize[];
 extern u8 Resource_DecodeByteLzCodeSize[];
 /// The Japanese status panel's PP row, "EP    /": label and slash in one
 /// string, drawn by the unit summary.
@@ -71,7 +71,7 @@ s32 BattleUnit_ListIdsFar(s32 side, s32 group);
 /// slot's palette (14 + slot), reusing the slot's VRAM cache entry.
 void Portrait_ReloadFar(s32 a, s32 b, s32 c);
 void Icon_DrawMisc(u32 index);
-s32 Icon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
+s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot);
 void Text_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y);
 void MenuArrow_Release(s32 value);
 void PartyStatus_Draw(s32 flags);
@@ -93,9 +93,9 @@ extern s16 gDisplayScroll_LastPosition;
 extern u16 gDisplayScroll_Position;
 extern u8 gNumberTextBuffer[];
 extern s32 gRenderResource_PairSourceTable[];
-extern const u8 Resource_Decode01Code[];
-extern u8 Resource_Decode01CodeSize[];
-extern const u8 Resource_Decode2Code[];
+extern const u8 Decompress_TaggedLzArmCode[];
+extern u8 Decompress_TaggedLzCodeSize[];
+extern const u8 Decompress_MoveToFrontLzCommandsCode[];
 extern const u8 Resource_DecodeByteLzCode[];
 extern const u8 Text_LookupSymbolCode[];
 extern u8 Text_LookupSymbolCodeSize[];
@@ -114,8 +114,8 @@ s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 s32 Resource_LoadByMode(u32 mode, s32 value);
 void SpriteColor_RemapPixelsFar(void *buffer, s32 size);
 void String_FormatDecimal(s32);
-void Icon_BuildCommandIconTiles(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
-                                s32 arg4);
+void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
+                                s32 *tile, s32 reuse);
 void Icon_BuildAbilityIconTiles(u32 icon, s32 with_base, s32 *slot, s32 *tile,
                                 s32 reuse);
 void Text_DrawNumberAtOffsetFar(s32 value, s32 width, s32 window, s32 x, s32 y);

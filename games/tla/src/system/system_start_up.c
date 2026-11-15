@@ -86,19 +86,28 @@ s32 System_GetLanguage(void) {
 }
 #endif
 
-/// Empty routines.
-void RuntimeDispatch_ReservedNoOpA(void) {}
+/// Unused: reserved empty export A in the System far-call table; no source
+/// caller.
+UNUSED void Stub_ReservedNoOpA(void) {}
 
-void RuntimeDispatch_ReservedNoOpB(void) {}
+/// Unused: reserved empty export B in the System far-call table; no source
+/// caller.
+UNUSED void Stub_ReservedNoOpB(void) {}
 
-void RuntimeDispatch_ReservedNoOpC(void) {}
+/// Unused: reserved empty export C in the System far-call table; no source
+/// caller.
+UNUSED void Stub_ReservedNoOpC(void) {}
 
-void RuntimeDispatch_ReservedNoOpD(void) {}
+/// Unused: reserved empty export D in the System far-call table; no source
+/// caller.
+UNUSED void Stub_ReservedNoOpD(void) {}
 
-void RuntimeDispatch_ReservedNoOpE(void) {}
+/// Unused: reserved empty export E in the System far-call table; no source
+/// caller.
+UNUSED void Stub_ReservedNoOpE(void) {}
 
 /// An exported stub that ignores its arguments and reports 0.
-s32 Stub_ReturnZero(s32 unused0, const u8 *unused1) { return 0; }
+s32 Stub_ReturnZero(s32 resourceId, const u8 *table) { return 0; }
 
 /// Copies the build stamp resource (three words) into gBuildStamp and
 /// writes the zero word that ends it. Called at power-up, before the window

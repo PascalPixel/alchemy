@@ -153,9 +153,9 @@ enum EquipEffectKind {
 /// One effect of an item while equipped: its kind (enum EquipEffectKind) and
 /// amount.
 struct EquipEffect {
-  u8 kind;          ///< enum EquipEffectKind; 0 for none
-  s8 amount;        ///< what the kind adds or scales by
-  u8 reserved02[2]; ///< 0 in every row
+  u8 kind;       ///< enum EquipEffectKind; 0 for none
+  s8 amount;     ///< what the kind adds or scales by
+  u8 padding[2]; ///< 0 in every row
 };
 
 STATIC_ASSERT(sizeof(struct EquipEffect) == 0x04);
@@ -174,15 +174,12 @@ struct ItemDefinition {
   s8 secondaryBonus;  ///< Defense added while equipped
   u8 unleashChance;   ///< in steps of 5 percent
   u8 useType;         ///< what using it costs (an ITEM_USE_ value)
-  u8 reserved0d;      ///< 0 in every row
   u16 unleashAbility; ///< the action a weapon unleashes, or 0
-
-  u8 reserved10[4]; ///< 0 in every row
-  long element;     ///< a weapon's attack element; ELEMENT_NONE for none
+  u8 padding[4];      ///< 0 in every row
+  long element;       ///< a weapon's attack element; ELEMENT_NONE for none
   struct EquipEffect
       effects[EQUIP_EFFECT_SLOTS]; ///< what it does while equipped
   u16 abilityId;                   ///< the ability used, or taught as Psynergy
-  u8 reserved2a[2];                ///< 0 in every row
 };
 
 STATIC_ASSERT(sizeof(struct ItemDefinition) == 0x2c);

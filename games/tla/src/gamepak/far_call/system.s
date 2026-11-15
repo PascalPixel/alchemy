@@ -70,11 +70,11 @@ FarCall_RuntimeTable:
 	export ScreenFade_FromWhiteFar, ScreenFade_FromWhite
 	export ScreenFade_StartFar, ScreenFade_Start
 	export ScreenFade_WaitFar, ScreenFade_Wait
-	export RuntimeDispatch_ReservedNoOpAFar, RuntimeDispatch_ReservedNoOpA
-	export RuntimeDispatch_ReservedNoOpBFar, RuntimeDispatch_ReservedNoOpB
-	export RuntimeDispatch_ReservedNoOpCFar, RuntimeDispatch_ReservedNoOpC
-	export RuntimeDispatch_ReservedNoOpDFar, RuntimeDispatch_ReservedNoOpD
-	export RuntimeDispatch_ReservedNoOpEFar, RuntimeDispatch_ReservedNoOpE
+	export Stub_ReservedNoOpAFar, Stub_ReservedNoOpA
+	export Stub_ReservedNoOpBFar, Stub_ReservedNoOpB
+	export Stub_ReservedNoOpCFar, Stub_ReservedNoOpC
+	export Stub_ReservedNoOpDFar, Stub_ReservedNoOpD
+	export Stub_ReservedNoOpEFar, Stub_ReservedNoOpE
 	export Serial_InitializeFar, Serial_Initialize
 	export Serial_PollAndTransferFar, Serial_PollAndTransfer
 	export IoWriteQueue_Store8Far, IoWriteQueue_Store8

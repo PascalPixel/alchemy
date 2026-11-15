@@ -16,7 +16,7 @@ enum CartridgeLanguage {
   CARTRIDGE_LANGUAGE_SPANISH
 };
 
-s32 Stub_ReturnZero(s32 unused0, const u8 *unused1);
+s32 Stub_ReturnZero(s32 resourceId, const u8 *table);
 
 struct IoWriteQueue;
 
@@ -83,11 +83,11 @@ s32 ArcTan2(s32 x, s32 y);
 void ScreenFade_ToBlack(s32 vblanks);
 void ScreenFade_Wait(void);
 
-void Transform_SetYaw(s32 ang);
-void Transform_ApplyPitch(s32 ang);
-void Transform_ApplyPosition(const s32 *pos);
-void Projection_Set(u32 value0, u32 value1, u32 value2);
-void Transform_ApplyTranslation(s32 x, s32 y, s32 z); // translate
+void Transform_SetYaw(s32 angle);
+void Transform_ApplyPitch(s32 angle);
+void Transform_ApplyPosition(const s32 *position);
+void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth);
+void Transform_ApplyTranslation(s32 x, s32 y, s32 z);
 void Transform_ApplyUniformScale(s32 scale);
 void Transform_ApplyAxisScale(s32 x, s32 y, s32 z);
 void Transform_ApplyRoll(s32 ang);
@@ -131,8 +131,8 @@ extern const u8 gString_HexDigits[];
 /// Where the debug text writes next on its screen in BG0.
 extern u16 *gDebugTextCursor;
 
-extern const u8 Resource_DecodeHalfwordLzCode[];
-extern u8 Resource_DecompressHalfwordsCodeSize[];
+extern const u8 Decompress_HalfwordLz[];
+extern u8 Decompress_HalfwordsCodeSize[];
 
 /// Where the sound driver finds its work (SOUND_INFO_PTR): a pointer to
 /// gSoundInfo, whose bytes the frame wait reads.

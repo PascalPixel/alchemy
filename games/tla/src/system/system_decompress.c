@@ -8,11 +8,10 @@
 /// Decompresses the halfword LZ stream at `source` to `destination`, with a
 /// copy of the ARM decoder on the stack.
 void Decompress_Halfwords(const void *source, void *destination) {
-  u8 routine[(u32)Resource_DecompressHalfwordsCodeSize];
+  u8 routine[(u32)Decompress_HalfwordsCodeSize];
 
-  Dma_Set((const void *)Resource_DecodeHalfwordLzCode, routine,
-          DMA_COPY_WORDS((u32)Resource_DecompressHalfwordsCodeSize >> 2),
-          REG_DMA3);
+  Dma_Set((const void *)Decompress_HalfwordLz, routine,
+          DMA_COPY_WORDS((u32)Decompress_HalfwordsCodeSize >> 2), REG_DMA3);
   ((void (*)(const void *, void *))routine)(source, destination);
 }
 
@@ -22,18 +21,20 @@ s32 Decompress_TaggedLz(const void *source, void *destination) {
   s32 (*routine)(const void *, void *);
   s32 result;
 
-  RamCode_Load(routine, Resource_Decode01Code, Resource_Decode01CodeSize);
+  RamCode_Load(routine, Decompress_TaggedLzArmCode,
+               Decompress_TaggedLzCodeSize);
   result = routine(source, destination);
   Heap_Release(routine);
   return result;
 }
 
-/// As Decompress_TaggedLz, with the decoder of Resource_Decode2Code.
+/// As Decompress_TaggedLz, with the move-to-front LZ decoder.
 s32 Resource_DecodeType2(const void *source, void *destination) {
   s32 (*routine)(const void *, void *);
   s32 result;
 
-  RamCode_Load(routine, Resource_Decode2Code, Resource_Decode2CodeSize);
+  RamCode_Load(routine, Decompress_MoveToFrontLzCommandsCode,
+               Decompress_MoveToFrontLzCommandsCodeSize);
   result = routine(source, destination);
   Heap_Release(routine);
   return result;

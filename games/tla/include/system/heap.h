@@ -98,26 +98,28 @@ struct HeapSlots {
   /// A second routine as ramCode, released before it: always a
   /// BattleEffect_BuildBlitter routine, the second of a pair.
   void *ramCodePaired;
-  void *unkc0;
-  void *unkc4;
+  void *unusedAfterRamCodePaired;   ///< no code allocates or reads this slot
+  void *unusedBeforeMessageDecoder; ///< no code allocates or reads this slot
   /// The message decoder routine (Text_DecodeSymbol), copied here to run for
   /// the length of one message's decoding.
   void *messageDecoder;
   void *saveWork;     ///< the save workspace, around each save or load
   void *settingsMenu; ///< the settings menu's work
-  void *unkd4;
+  void *unusedAfterSettingsMenu; ///< no code allocates or reads this slot
   void *enemyUnits; ///< each linked console's party, from Battle_Run
   /// The menu work shared by the field menu's screens and the shop; each takes
   /// it on opening and releases it on closing.
   void *menuWork;
-  void *fieldEffectWork; ///< the Psynergy effect's work
-  void *battleMenuWork;  ///< the battle menus' struct BattleMenuWork
-  void *iconMenu;        ///< a command icon menu's work
-  void *trialRoadLink;   ///< the Trial Road's link work
-  void *canvasSprite;    ///< a field Psynergy's canvas sprite
-  void *unkf4;
-  void *arcEffect; ///< a field Psynergy's arc work
-  void *unkfc;
+  void *fieldEffectWork;         ///< the Psynergy effect's work
+  void *battleMenuWork;          ///< the battle menus' struct BattleMenuWork
+  void *iconMenu;                ///< a command icon menu's work
+  void *trialRoadLink;           ///< the Trial Road's link work
+  void *canvasSprite;            ///< a field Psynergy's canvas sprite
+  void *unusedAfterCanvasSprite; ///< no code allocates or reads this slot
+  void *arcEffect;               ///< a field Psynergy's arc work
+  /// The Djinn the Naribwe fortune teller may hint at, 320 bytes, while she
+  /// picks one (naribwe_interiors.c).
+  s32 *djinniHints;
 };
 
 STATIC_ASSERT(sizeof(struct HeapSlots) == 0x100);
@@ -176,7 +178,8 @@ enum HeapSlot {
   HEAP_SLOT_ICON_MENU = offsetof(struct HeapSlots, iconMenu),
   HEAP_SLOT_TRIAL_ROAD_LINK = offsetof(struct HeapSlots, trialRoadLink),
   HEAP_SLOT_CANVAS_SPRITE = offsetof(struct HeapSlots, canvasSprite),
-  HEAP_SLOT_ARC_EFFECT = offsetof(struct HeapSlots, arcEffect)
+  HEAP_SLOT_ARC_EFFECT = offsetof(struct HeapSlots, arcEffect),
+  HEAP_SLOT_DJINNI_HINTS = offsetof(struct HeapSlots, djinniHints)
 };
 
 #define Ram_HeapSlots                                                          \

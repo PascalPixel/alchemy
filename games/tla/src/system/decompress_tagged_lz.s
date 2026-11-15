@@ -6,7 +6,7 @@
 @ relative to pc, including r11/fp as ordinary decoder state. Its Thumb
 @ entry's bx pc switches to the ARM code that follows, a mode switch inside a function;
 @ the halfword after bx pc is never run.
-@ Why Resource_DecodeType2Loop to Resource_RefillType2Bits are assembly:
+@ Why Decompress_MoveToFrontLzLoop to Resource_RefillMoveToFrontLzBits are assembly:
 @ computed add pc (add pc, r9, r8, lsl #5) enters fixed-size 32-byte decoder
 @ code slots; command execution also carries live reader register state
 @ across entry labels. push {r5, r9} saves without lr, and r11 (fp) is an
@@ -22,11 +22,11 @@
 	.balign 4
 .syntax unified
 	.thumb
-	.global Resource_Decode01Code
-Resource_Decode01Code:
-	.global Resource_Decode01
+	.global Decompress_TaggedLzArmCode
+Decompress_TaggedLzArmCode:
+	.global Decompress_TaggedLzArm
 	.thumb_func
-Resource_Decode01:
+Decompress_TaggedLzArm:
 	bx	pc
 AlchemyUncredited_080128aa:
 	.2byte	0x0200
@@ -236,18 +236,18 @@ AlchemyUncreditedEnd_080128aa:
 	ldrb	r3, [r0], #1
 	add	r3, r3, #16
 	b	.L_08012b40
-	.global Resource_Decode01CodeSize
-	.set Resource_Decode01CodeSize, . - Resource_Decode01Code
+	.global Decompress_TaggedLzCodeSize
+	.set Decompress_TaggedLzCodeSize, . - Decompress_TaggedLzArmCode
 
 	.section .text,"ax",%progbits
 	.balign 4
 .syntax unified
 	.thumb
-	.global Resource_Decode2Code
-Resource_Decode2Code:
-	.global Resource_Decode2
+	.global Decompress_MoveToFrontLzCommandsCode
+Decompress_MoveToFrontLzCommandsCode:
+	.global Decompress_MoveToFrontLzCommands
 	.thumb_func
-Resource_Decode2:
+Decompress_MoveToFrontLzCommands:
 	bx	pc
 AlchemyUncredited_08012b72:
 	.2byte	0x0200
@@ -267,8 +267,8 @@ AlchemyUncreditedEnd_08012b72:
 	lsl	r4, r2, #3
 	ldrbne	r2, [r0], #1
 	subs	r4, r4, #16
-	blmi	Resource_RefillType2Bits
-	b	Resource_DecodeType2Loop
+	blmi	Resource_RefillMoveToFrontLzBits
+	b	Decompress_MoveToFrontLzLoop
 
 .syntax unified
 	.section .rodata,"a",%progbits
@@ -293,7 +293,7 @@ AlchemyUncreditedEnd_08012b72:
 	orr	r5, r5, r8, lsl #4
 	lsr	r2, r2, #8
 	subs	r4, r4, #11
-	blmi	Resource_RefillType2Bits
+	blmi	Resource_RefillMoveToFrontLzBits
 	b	.L_08012c74
 .L_08012bf4:
 	lsrs	r2, r2, #1
@@ -310,7 +310,7 @@ AlchemyUncreditedEnd_08012b72:
 	orr	r5, r5, r8, lsl #4
 	lsr	r2, r2, #6
 	subs	r4, r4, #9
-	blmi	Resource_RefillType2Bits
+	blmi	Resource_RefillMoveToFrontLzBits
 	b	.L_08012c74
 .L_08012c34:
 	push	{r5, r9}
@@ -328,12 +328,12 @@ AlchemyUncreditedEnd_08012b72:
 	orr	r5, r5, r8, lsl #4
 	lsr	r2, r2, #4
 	subs	r4, r4, #6
-	blmi	Resource_RefillType2Bits
+	blmi	Resource_RefillMoveToFrontLzBits
 .L_08012c74:
 	strb	r5, [r1, #1]!
 	pop	{r5, r9}
-	.global Resource_DecodeType2Loop
-Resource_DecodeType2Loop:
+	.global Decompress_MoveToFrontLzLoop
+Decompress_MoveToFrontLzLoop:
 	lsrs	r2, r2, #1
 	bcs	.L_08012c34
 	lsrs	r2, r2, #1
@@ -397,19 +397,19 @@ Resource_DecodeType2Loop:
 	subs	r4, r4, #6
 	lsr	r2, r2, #5
 .L_08012d54:
-	blmi	Resource_RefillType2Bits
+	blmi	Resource_RefillMoveToFrontLzBits
 	ldrb	r7, [r1, -r6]
 	strb	r7, [r1, #1]!
 .L_08012d60:
 	ldrb	r7, [r1, -r6]
 	strb	r7, [r1, #1]!
 	subs	r5, r5, #1
-	beq	Resource_DecodeType2Loop
+	beq	Decompress_MoveToFrontLzLoop
 	ldrb	r7, [r1, -r6]
 	strb	r7, [r1, #1]!
 	subs	r5, r5, #1
 	bne	.L_08012d60
-	b	Resource_DecodeType2Loop
+	b	Decompress_MoveToFrontLzLoop
 .L_08012d84:
 	sub	r6, r1, r9
 	cmp	r6, #0x800
@@ -466,8 +466,8 @@ Resource_DecodeType2Loop:
 	b	.L_08012d54
 .L_08012e50:
 	sub	lr, pc, #0x118
-	.global Resource_RefillType2Bits
-Resource_RefillType2Bits:
+	.global Resource_RefillMoveToFrontLzBits
+Resource_RefillMoveToFrontLzBits:
 	ldrh	r3, [r0], #2
 	add	r4, r4, #16
 	orr	r2, r2, r3, lsl r4
@@ -632,8 +632,8 @@ AlchemyUncreditedEnd_08013048:
 	and	r8, ip, sl, lsr #28
 	lsl	r9, sl, #4
 	b	.L_08012f7c
-	.global Resource_Decode2End
-Resource_Decode2End:
+	.global Decompress_MoveToFrontLzCommandsEnd
+Decompress_MoveToFrontLzCommandsEnd:
 
 	.section .text.decode_2_loop,"ax",%progbits
 	.balign 4

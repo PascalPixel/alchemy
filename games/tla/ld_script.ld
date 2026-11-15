@@ -56,7 +56,7 @@
 #else
 OUTPUT_ARCH(arm)
 ENTRY(Entry)
-Resource_Decode2CodeSize = Resource_Decode2End - Resource_Decode2Code;
+Decompress_MoveToFrontLzCommandsCodeSize = Decompress_MoveToFrontLzCommandsEnd - Decompress_MoveToFrontLzCommandsCode;
 Tile_Decompress4bppCodeSize = Tile_Decompress4bppEnd - Tile_Decompress4bppCode;
 Tile_ExpandMaskedCodeSize = Tile_ExpandMaskedEnd - Tile_ExpandMaskedCode;
 Tile_ExpandOpaqueCodeSize = Tile_ExpandOpaqueEnd - Tile_ExpandOpaqueCode;

@@ -44,16 +44,17 @@ void ScreenFade_Update(void) {
       s32 level;
       s32 step;
 
-      /* FAKEMATCH(dead): level = target + (start - target) * remaining /
-       * duration: BLDY moves in a straight line and reaches the target as
-       * remaining reaches 0 The decrement in a once-only block. */
+      // level = target + (start - target) * remaining / duration: BLDY moves
+      // in a straight line and reaches the target as remaining reaches 0.
+      /* FAKEMATCH(dead): the decrement in a once-only block. */
       do {
         (*remaining)--;
       } while (0);
       level = gScreenFadeTargetLevel;
       delta = gScreenFadeStartLevel - gScreenFadeTargetLevel;
       step = *remaining;
-      // The division written as a call to __divsi3, which clobbers memory, so
+      // The division is a call to __divsi3, which may write memory, so the
+      // count is read again after it.
       level += __divsi3(delta * step, gScreenFadeVBlanks);
       REG_BLDY = level;
       /* FAKEMATCH(dead): the end test in a once-only block. */

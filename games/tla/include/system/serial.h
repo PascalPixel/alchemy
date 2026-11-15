@@ -99,7 +99,7 @@ struct SerialWork {
   /// Each console's next halfword in its incomingBuffer; -1 after an idle
   /// system_serial.c's SERIAL_IDLE_HALFWORD.
   s32 receiveIndex[2];
-  u8 reserved20[8];
+  u8 reservedAfterReceiveIndex[8];
   /// The packet being built ([0]) and the packet being sent ([1]).
   u16 *sendBuffer[2];
   /// Each console's packet being received; two are used.

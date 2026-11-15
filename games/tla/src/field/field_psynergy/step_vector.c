@@ -230,9 +230,9 @@ void BattleEffect_UploadCanvas(void) {
 // OAM attributes 0 and 1 of a 64x64 square sprite.
 #define OAM_SQUARE_64X64 0xc0000000
 
-// The canvas sprite's frame callback: places the sprite at the work's
-// position (whole pixels), scale and angle, and draws it. A sprite scaled to
-// nothing is not drawn.
+/// The canvas sprite's frame callback: places the sprite at the work's
+/// position (whole pixels), scale and angle, and draws it. A sprite scaled to
+/// nothing is not drawn.
 void BattleEffect_DrawCanvasSprite(void) {
   struct CanvasSpriteWork *work = Ram_HeapSlots->canvasSprite;
   s32 x = work->x << 16;

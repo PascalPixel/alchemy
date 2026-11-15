@@ -10,28 +10,25 @@
 #include "system/main_routine_work.h"
 #include "system/io_reg.h"
 
-struct GlowParticle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 timer;
-};
-
-struct GlowWork {
+/// Burst's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the glow disc that swells
+/// in front of the caster on the canvas sprite, the 32 sparks that fly into it,
+/// the 32 explosions round the target, and the stage of the cast.
+struct BurstWork {
   u8 tiles[0x400];
-  struct GlowParticle sparks[32];
+  struct FieldPsynergyParticle sparks[32];
   struct EffectSprite sparkSprites[32];
   struct EffectSprite burstSprites[32];
-  struct GlowParticle bursts[32];
-  s16 phase;
-  s16 timer;
+  struct FieldPsynergyParticle bursts[32];
+  s16 phase; ///< the stage of the cast; 999 once it ends
+  s16 timer; ///< frames into the stage
+  /// Passed to the target's event each frame: 2 for a small explosion, 3 for
+  /// the great one, 1 as it dies down, 0 otherwise.
   s16 shake;
-  u16 burstTile;
-  s16 nextBurst;
-  s16 newBursts;
+  u16 burstTile; ///< the explosion's first tile
+  s16 nextBurst; ///< the explosion slot used next
+  s16 newBursts; ///< explosions to start this frame
+  /// 1 cycles OBJ palette 14's greens each frame, 2 loads the explosion's
+  /// palette once.
   s8 paletteMode;
 };
 
@@ -39,14 +36,14 @@ extern const u16 Data_080f0fa0[];
 
 void Camera_WorldToScreen(s32 *position);
 
-#define GLOW_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
+#define BURST_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
 /// Task of the Burst: cycles its particles' colours and draws them.
 void FieldPsynergy_UpdateBurst(void) {
-  struct GlowWork *work = (struct GlowWork *)Ram_HeapSlots->battleEffect;
+  struct BurstWork *work = (struct BurstWork *)Ram_HeapSlots->battleEffect;
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct CanvasSpriteWork *canvas = Ram_HeapSlots->canvasSprite;
-  struct GlowParticle *particle;
+  struct FieldPsynergyParticle *particle;
   struct EffectSprite *sprite;
   volatile u16 *palette;
   s32 pos[3];
@@ -148,7 +145,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 0)
         Sound_PlayFar(SE_SPIN);
       if (work->timer == 10)
-        GLOW_NEXT_PHASE(work);
+        BURST_NEXT_PHASE(work);
       break;
     case 1:
       canvas->scaleX += 0x300;
@@ -160,7 +157,7 @@ void FieldPsynergy_UpdateBurst(void) {
       break;
     case 2:
       if (work->timer == 40)
-        GLOW_NEXT_PHASE(work);
+        BURST_NEXT_PHASE(work);
       break;
     case 3:
       if (work->timer == 0)
@@ -174,7 +171,7 @@ void FieldPsynergy_UpdateBurst(void) {
       }
       canvas->command = CANVAS_UPLOAD_AND_FADE3;
       if (work->timer == 16)
-        GLOW_NEXT_PHASE(work);
+        BURST_NEXT_PHASE(work);
       break;
     case 4:
       if ((work->timer & 15) == 0)
@@ -185,11 +182,11 @@ void FieldPsynergy_UpdateBurst(void) {
         work->shake = 2;
       }
       if (work->timer == 128)
-        GLOW_NEXT_PHASE(work);
+        BURST_NEXT_PHASE(work);
       break;
     case 5:
       if (work->timer == 35)
-        GLOW_NEXT_PHASE(work);
+        BURST_NEXT_PHASE(work);
       break;
     case 6:
       if (work->timer == 0)
@@ -267,7 +264,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if (work->timer == 0)
         Sound_PlayFar(SE_SPIN);
       if (work->timer == 10)
-        GLOW_NEXT_PHASE(work);
+        BURST_NEXT_PHASE(work);
       break;
     case 1:
       canvas->scaleX += 0x500;
@@ -279,7 +276,7 @@ void FieldPsynergy_UpdateBurst(void) {
       break;
     case 2:
       if (work->timer == 16)
-        GLOW_NEXT_PHASE(work);
+        BURST_NEXT_PHASE(work);
       break;
     case 3:
       if (work->timer == 0) {
@@ -292,7 +289,7 @@ void FieldPsynergy_UpdateBurst(void) {
       }
       canvas->command = CANVAS_UPLOAD_AND_FADE3;
       if (work->timer == 16)
-        GLOW_NEXT_PHASE(work);
+        BURST_NEXT_PHASE(work);
       break;
     case 4:
       if (work->timer == 5)
@@ -307,9 +304,9 @@ void FieldPsynergy_UpdateBurst(void) {
   work->timer++;
 }
 
-/// Runs field Psynergy animation 21 for the dispatcher's targeted path.
+/// Burst cast on a target: runs FieldPsynergy_Burst.
 void FieldPsynergy_BurstOnTarget(void) { FieldPsynergy_Burst(); }
-#undef GLOW_NEXT_PHASE
+#undef BURST_NEXT_PHASE
 
 extern const u8 gBurst_GlowTiles[];
 extern char ResourceId_FieldEffectExplosion, ResourceId_GlowDisc;
@@ -317,13 +314,18 @@ extern char ResourceId_FieldEffectExplosion, ResourceId_GlowDisc;
 void Camera_WorldToScreen(s32 *position);
 s32 FieldPsynergy_GetCanvasPriority(struct Actor *object, s32 facing);
 
+/// Burst: a glow disc swells in front of the caster as sparks fly into it, then
+/// explosions burst round the target, shaking the screen, the last and largest
+/// at 12 pixels; the target's event runs each frame with the stage (shake).
+/// Cast at nothing (FieldEffectWork.enabled still set), it is shorter: 12
+/// sparks and one small explosion.
 void FieldPsynergy_Burst(void) {
-  struct GlowWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct GlowWork));
+  struct BurstWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BurstWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct CanvasSpriteWork *canvas;
   struct EffectSprite *sprite;
-  struct GlowParticle *particle;
+  struct FieldPsynergyParticle *particle;
   void *pending;
   s32 pos[3];
   s32 sparkEntry;

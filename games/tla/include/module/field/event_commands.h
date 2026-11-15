@@ -98,7 +98,7 @@ struct BurstParticle {
   s32 delay;
 };
 
-struct BurstWork {
+struct ParticleBurstWork {
   u8 tiles[384];
   struct EffectSprite sprites[96];
   struct BurstParticle particles[96];

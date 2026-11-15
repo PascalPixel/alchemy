@@ -504,11 +504,11 @@ struct MapBounds {
 
 void Map_GetHeaderSizeFar(s32 map, struct MapBounds *bounds);
 
-// Opens the whole map to the view: keeps the view centre's position and the
-// map's view bounds for ViewMove_End to restore, notes which edges the view
-// is beside, and sets the bounds to the map's own. Where the view may not
-// move (the view is held, or the field is in control mode 3), it shakes the
-// screen along the asked direction instead.
+/// Opens the whole map to the view: keeps the view centre's position and the
+/// map's view bounds for ViewMove_End to restore, notes which edges the view
+/// is beside, and sets the bounds to the map's own. Where the view may not
+/// move (the view is held, or the field is in control mode 3), it shakes the
+/// screen along the asked direction instead.
 void ViewMove_Start(s32 direction) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *center = event->camera;
@@ -647,9 +647,9 @@ void ViewMove_Swing(s32 direction, s32 phase, s32 amplitude) {
   SET_ACTOR_POSITION(center, x, work->y, z);
 }
 
-// Ends a view move: gives the map back the view bounds ViewMove_Start kept
-// and lets the view follow the scene's first object again. Where the view
-// was held, it only stops the screen shake.
+/// Ends a view move: gives the map back the view bounds ViewMove_Start kept
+/// and lets the view follow the scene's first object again. Where the view
+/// was held, it only stops the screen shake.
 void ViewMove_End(void) {
   struct ViewMoveWork *work = Ram_HeapSlots->battleEffect;
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;

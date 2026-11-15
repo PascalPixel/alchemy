@@ -153,8 +153,8 @@ void BattleEffect_AgeAndCueAtEighty(struct TimedObject *object);
 #define TARGET_ANIMATION_A 372
 #define TARGET_ANIMATION_B 373
 
-// Animation 14: carry an orb from the caster to the scene's position over
-// ten frames, growing it from a quarter size, then play out the kind.
+/// Animation 14: carry an orb from the caster to the scene's position over
+/// ten frames, growing it from a quarter size, then play out the kind.
 void FieldPsynergy_Whirlwind(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *caster = scene->mainActor;
@@ -474,7 +474,7 @@ s32 FieldPsynergy_FilterHaltTarget(s32 id) {
   return id;
 }
 
-/// Runs field effect 13 (FieldPsynergy_Catch) for the request dispatcher.
+/// Catch cast on a target: runs FieldPsynergy_Catch.
 void FieldPsynergy_CatchOnTarget(void) { FieldPsynergy_Catch(); }
 
 static __inline__ s32 Interpolate(s32 from, s32 to, s32 step) {
@@ -1082,7 +1082,7 @@ void FieldPsynergy_ShowAvoidWoreOff(void) {
   WorldMap_ReloadPendingAreaGraphics();
 }
 
-/// Psynergy effect 16: the user spins, rains arc particles, then flashes.
+/// Avoid: the caster spins, arcs rain down round it, then it flashes.
 void FieldPsynergy_Avoid(void) {
   struct ArcScene *scene;
   struct ArcEffectObject *object;

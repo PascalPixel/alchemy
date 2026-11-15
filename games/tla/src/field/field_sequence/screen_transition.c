@@ -1801,9 +1801,9 @@ s32 PaletteFade_ClampShiftedComponent(s32 val) {
   return val;
 }
 
-// Each frame, on the two cells beside the actor
-// where the ground one or two cells south rises above the actor's floor,
-// draws a 16-pixel-wide mark at the height of that ground.
+/// Each frame, on the two cells beside the actor
+/// where the ground one or two cells south rises above the actor's floor,
+/// draws a 16-pixel-wide mark at the height of that ground.
 void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayWork *work = Ram_HeapSlots->fadeOverlay;
   s16 *camera = ((struct FadeView *)Ram_HeapSlots->mapGrid)->camera;

@@ -148,7 +148,8 @@ void Cyclone_PlotArc(s32 radius, s32 angle, u16 *offsets, u8 *pixels) {
 }
 
 void ParticleBurst_Start(void) {
-  struct BurstWork *work = (struct BurstWork *)Ram_HeapSlots->battleEffect;
+  struct ParticleBurstWork *work =
+      (struct ParticleBurstWork *)Ram_HeapSlots->battleEffect;
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = effect->mainActor;

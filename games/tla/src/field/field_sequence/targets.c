@@ -110,9 +110,9 @@ s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *actor, s32 *position) {
 // The Lift-style animation measures height by the object's footing, not y.
 #define ANIMATION_MEASURES_FOOTING 18
 
-// How far object otherId stands from object selfId, in pixels over the
-// ground, when it lies within the animation's reach in front of selfId;
-// -1 when it does not.
+/// How far object otherId stands from object selfId, in pixels over the
+/// ground, when it lies within the animation's reach in front of selfId;
+/// -1 when it does not.
 s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
   struct Actor *self;
   struct Actor *other;

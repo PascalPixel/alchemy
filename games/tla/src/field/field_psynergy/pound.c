@@ -8,67 +8,45 @@
 #include "sounds.h"
 #include "macros.h"
 
-struct ShineParticle {
-  s32 x;
-  s32 y;
-  u8 unk08[16];
-  s32 timer;
-};
-
-struct ShineSprite {
-  u8 unk00[12];
-  s32 x;
-  s32 y;
-  u8 unk14[20];
-};
-
-struct ShineWork {
-  u8 unk0000[0x1000];
-  struct ShineParticle particles[12];
-  u8 unk1150[0x230];
-  struct ShineSprite sprites[12];
-  u8 unk1560[0x348];
-  struct Actor *object;
-  s16 state;
-  s16 timer;
-  s8 sparkles;
-  u8 fading;
-};
-
-struct BlendWork {
-  u8 unk00[160];
-  u32 phase;
-  u8 unka4[12];
-  s32 scaleX;
-  s32 scaleY;
-  u8 unkb8[9];
-  u8 mode;
+/// Pound's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the star tiles, the
+/// shine's 32 sparks, the glow under the fist, the fist itself and the stage of
+/// its fall.
+struct PoundWork {
+  u8 tiles[0x1000];
+  struct FieldPsynergyParticle particles[32];
+  struct EffectSprite sprites[32];
+  struct EffectSprite glow;
+  struct Actor *object; ///< the fist, then what sinks into the ground
+  s16 state;            ///< the stage of the fall; 999 once it ends
+  s16 timer;            ///< frames into the stage
+  s8 sparkles;          ///< nonzero draws the sparks
+  s8 fading; ///< set on the frame the fist lands, passed to the event
 };
 
 /// Task of the Pound: its shine's colours and particles, each frame.
 void FieldPsynergy_UpdatePound(void) {
-  struct ShineWork *work = (struct ShineWork *)Ram_HeapSlots->battleEffect;
-  struct BlendWork *blend = Ram_HeapSlots->canvasSprite;
-  struct ShineParticle *particle;
-  struct ShineSprite *sprite;
+  struct PoundWork *work = Ram_HeapSlots->battleEffect;
+  struct CanvasSpriteWork *canvas = Ram_HeapSlots->canvasSprite;
+  struct FieldPsynergyParticle *particle;
+  struct EffectSprite *sprite;
   s32 i;
   s32 base, blue;
   s32 color;
   s32 red, green;
-  u32 *phase;
+  s32 *frames;
 
   work->fading = 0;
   if (work->state == 1) {
     i = 0;
-    /* FAKEMATCH(temporary): the phase read through a pointer kept across the
-     * loop. */
-    phase = &blend->phase;
+    /* FAKEMATCH(temporary): the frame count read through a pointer kept across
+     * the loop. */
+    frames = &canvas->drawnFrames;
     base = 9;
     base <<= 16;
     blue = 0x7c00;
   palette:
-    red = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
-    green = Trig_Sin(((((*phase >> 1) + i) << 16) + base) >> 5) * 12;
+    red = Trig_Sin((((((u32)*frames >> 1) + i) << 16) + base) >> 5) * 12;
+    green = Trig_Sin((((((u32)*frames >> 1) + i) << 16) + base) >> 5) * 12;
     red = (red >> 16) + 16;
     green = (green >> 16) + 16;
     /* FAKEMATCH(dead): the colour in a once-only block. */
@@ -96,9 +74,9 @@ void FieldPsynergy_UpdatePound(void) {
   case 0:
     work->object->y.fixed -= px(7) / 2;
     if (work->timer == 8) {
-      blend->scaleX = Q16_ONE / 8;
-      blend->scaleY = Q16_ONE / 8;
-      MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, Q16_ONE);
+      canvas->scaleX = Q16_ONE / 8;
+      canvas->scaleY = Q16_ONE / 8;
+      MapGrid_SetScreenShakeFar(px(13) / 10, px(13) / 10, Q16_ONE);
       Sound_PlayFar(SE_POUND);
       work->sparkles = 1;
       work->fading = 1;
@@ -109,17 +87,17 @@ void FieldPsynergy_UpdatePound(void) {
     }
     break;
   case 1:
-    blend->scaleX += Q16_ONE / 16;
-    blend->scaleY = blend->scaleX;
-    if (blend->scaleX > 0xcccb) {
-      blend->scaleX = 0xcccc;
-      blend->scaleY = 0xcccc;
+    canvas->scaleX += Q16_ONE / 16;
+    canvas->scaleY = canvas->scaleX;
+    if (canvas->scaleX > px(4) / 5 - 1) {
+      canvas->scaleX = px(4) / 5;
+      canvas->scaleY = px(4) / 5;
       work->state++;
       work->timer = -1;
     }
     break;
   case 2:
-    blend->mode = 3;
+    canvas->command = CANVAS_UPLOAD_AND_FADE1;
     if (work->timer == 32) {
       work->state++;
       work->timer = -1;
@@ -142,61 +120,27 @@ void FieldPsynergy_UpdatePound(void) {
   work->timer++;
 }
 
-struct RiseWork {
-  u8 unk0000[0x18a8];
-  struct Actor *object;
-  s16 done;
-  s16 timer;
-};
-
-struct AnchorWork {
-  u8 unk0000[0x1930];
-  struct Actor *anchor;
-};
-
 void Camera_WorldToScreen(s32 *position);
 
 /// Per-frame callback: until done, moves the effect object down 2.5 pixels
 /// and shrinks it by 1/64 each frame, marking done at frame 8.
 void BattleEffect_SinkAndShrinkObject(void) {
-  struct RiseWork *work = Ram_HeapSlots->battleEffect;
+  struct PoundWork *work = Ram_HeapSlots->battleEffect;
 
-  if (work->done == 0) {
+  if (work->state == 0) {
     struct Actor *object = work->object;
 
     object->y.fixed += -(px(5) / 2);
     object->scaleX += -0x400;
     object->scaleY += -0x400;
     if (work->timer == 8)
-      work->done = 999;
+      work->state = 999;
   }
   work->timer++;
 }
 
-/// Runs field effect 18 (FieldPsynergy_Pound) for the request dispatcher.
+/// Pound cast on a target: runs FieldPsynergy_Pound.
 void FieldPsynergy_PoundOnTarget(void) { FieldPsynergy_Pound(); }
-
-struct PoundParticle {
-  s32 x;
-  s32 y;
-  s32 unk08;
-  s32 velocityX;
-  s32 velocityY;
-  s32 unk14;
-  s32 timer;
-};
-
-struct PoundWork {
-  u8 tiles[0x1000];
-  struct PoundParticle particles[32];
-  struct EffectSprite sprites[32];
-  struct EffectSprite glow;
-  struct Actor *object;
-  s16 state;
-  s16 timer;
-  s8 sparkles;
-  s8 fading;
-};
 
 extern char ResourceId_GlowDisc, ResourceId_GoldStar;
 
@@ -230,7 +174,7 @@ void FieldPsynergy_Pound(void) {
   s32 angle;
   s32 frame;
   s32 j;
-  struct PoundParticle *particle;
+  struct FieldPsynergyParticle *particle;
 
   lift = 0x200000;
   if (child == NULL) {

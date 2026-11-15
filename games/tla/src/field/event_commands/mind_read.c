@@ -34,9 +34,9 @@
 
 // The parts, in ROM order.
 
-// Each frame after the delay: rewrites the 160-line wave into the other
-// page, cycles the colour every other frame, and at counts 0, 8 and 16 of
-// its 61-frame cycle sends a particle from the target back to the user.
+/// Each frame after the delay: rewrites the 160-line wave into the other
+/// page, cycles the colour every other frame, and at counts 0, 8 and 16 of
+/// its 61-frame cycle sends a particle from the target back to the user.
 void FieldPsynergy_UpdateMindReadWave(void) {
   struct WaveFxWork *work = Ram_HeapSlots->mindRead;
   struct WaveFxVector from;
@@ -723,9 +723,9 @@ extern void BattleEffect_RunBusyWaitDelay__f0dd820(s32 value) __asm__(
 #define REVEAL_EVENT_START 0x50000005 // the Reveal event, stage 5
 #define REVEAL_FRAMES 600
 
-// Reveal: open a circle of the transition on the caster, wash the screen
-// plain, run the Reveal event that matches, then show the markers nearby
-// and watch how far the leader walks.
+/// Reveal: open a circle of the transition on the caster, wash the screen
+/// plain, run the Reveal event that matches, then show the markers nearby
+/// and watch how far the leader walks.
 void FieldPsynergy_Reveal(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event;
@@ -1221,9 +1221,9 @@ void FieldPsynergy_ForceOnTarget(struct BattleEffectParams *effect) {
   Func_080de21c__f0dd820(effect);
 }
 
-// Twelve sparks burst over the user, two frames apart; a ball grows in
-// front of it and flies off with three trailing copies, and the target is
-// pushed 16 pixels away unless something blocks it.
+/// Twelve sparks burst over the user, two frames apart; a ball grows in
+/// front of it and flies off with three trailing copies, and the target is
+/// pushed 16 pixels away unless something blocks it.
 void FieldPsynergy_Force(void) {
   struct Actor *copies[4];
   struct Effect04Vector pos;

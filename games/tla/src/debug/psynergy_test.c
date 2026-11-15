@@ -166,8 +166,8 @@ done:
   Window_Close(window, 2);
 }
 
-// The shop and sanctum message browsers: talking to ACTOR_MESSAGE_BROWSER
-// from each side.
+/// The shop and sanctum message browsers: talking to ACTOR_MESSAGE_BROWSER
+/// from each side.
 void PsynergyTest_BrowseWeaponShopMessages(void) {
   PsynergyTest_BrowseMessageRange((s32)MsgWeaponShopWelcome,
                                   MsgArmorShopWelcome - MsgWeaponShopWelcome);
@@ -188,8 +188,8 @@ void PsynergyTest_BrowseSanctumMessages(void) {
                                   MsgRightWhenI - MsgWelcomeWearyWanderers);
 }
 
-// The shops: talking to ACTOR_SHOPKEEPER from each side. Each passes on the
-// keeper's actor id.
+/// The shops: talking to ACTOR_SHOPKEEPER from each side. Each passes on the
+/// keeper's actor id.
 void PsynergyTest_OpenWeaponShop(s32 keeper) { Shop_Run(1, keeper); }
 
 void PsynergyTest_OpenArmorShop(s32 keeper) { Shop_Run(2, keeper); }
@@ -287,8 +287,8 @@ void PsynergyTest_GivePartyDjinn(void) {
   Unit_Calculate(SHEBA);
 }
 
-// While Felix is Sand he reads his ground height from layer 2, and from
-// layer 0 again once Sand fades.
+/// While Felix is Sand he reads his ground height from layer 2, and from
+/// layer 0 again once Sand fades.
 void PsynergyTest_SetSandLayer(void) { Actor_GetById(FELIX)->layer = 2; }
 
 void PsynergyTest_ClearSandLayer(void) { Actor_GetById(FELIX)->layer = 0; }
@@ -408,8 +408,8 @@ void PsynergyTest_FightMadPlant(void) {
   Field_RequestBattleFromEncounterTable(14, 0);
 }
 
-// The four Scoop spots, cells 50 to 53, each run while their flag is clear.
-// Each passes on the stage of the dig.
+/// The four Scoop spots, cells 50 to 53, each run while their flag is clear.
+/// Each passes on the stage of the dig.
 void PsynergyTest_DigUpHole(s32 mode) {
   Event_SetFlag(FLAG_HOLE_DUG);
   PsynergyTest_DigCells(mode, 36, 28, 1, 1, 10, 10);

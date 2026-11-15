@@ -329,10 +329,11 @@ void Teleport_PlaySparksAndFade(void) {
   wait(10);
 }
 
-/// Field Psynergy kind 30's targeted handler.
+/// Teleport cast on a target: does nothing.
 void FieldPsynergy_TeleportOnTarget(void) {}
 
-/// Field Psynergy kind 30.
+/// Teleport: raises FIELD_RAISED_TRIGGER_TELEPORT, which shows the picture of
+/// the whole world for the player to choose where to go.
 void FieldPsynergy_Teleport(void) {
   ObjectTable_Get(Party_GetLeaderActor());
   gFieldWork->raisedTrigger = FIELD_RAISED_TRIGGER_TELEPORT;

@@ -119,18 +119,6 @@ void FieldPsynergy_DecodePicture(struct PictureSource *source, void *buffer,
 #undef PICTURE_FORMAT_TYPE01
 #undef PICTURE_FORMAT_COMPRESSED
 
-/// A particle's position and velocity (16.16), integrated each frame, and its
-/// age in frames.
-struct EffectParticle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 timer;
-};
-
 void Camera_WorldToScreen(s32 *position);
 
 /// Picture_ShiftColumnsByWave as the Sand sinks the leader into the ground:
@@ -196,8 +184,8 @@ void Sand_DrawLeaderSprite(void *sprite) { EffectSprite_Draw(sprite); }
 /// up and 2 out when the leader stands (high), else 4 out, drifting outward,
 /// drawn small just in front of the leader.
 void Sand_SpawnGrain(struct EffectSprite *sprite,
-                     struct EffectParticle *particle, s32 unused, s32 tiles,
-                     s32 high) {
+                     struct FieldPsynergyParticle *particle, s32 unused,
+                     s32 tiles, s32 high) {
   struct Actor *mainActor =
       ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
   s32 position[3];
@@ -240,7 +228,7 @@ void Camera_WorldToScreen(s32 *position);
 /// only its age counts on. Reached from FieldPsynergy_EndSand and
 /// FieldPsynergy_Sand.
 void GrowingParticle_Update(struct EffectSprite *sprite,
-                            struct EffectParticle *particle, s32 unused,
+                            struct FieldPsynergyParticle *particle, s32 unused,
                             s32 tiles) {
   s32 position[3];
   s32 scale;
@@ -403,7 +391,7 @@ void FieldPsynergy_EndSand(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-/// Psynergy effect 23 cast on a target: runs its effect.
+/// Sand cast on a target: runs FieldPsynergy_Sand.
 void FieldPsynergy_SandOnTarget(void) { FieldPsynergy_Sand(); }
 
 void FieldPsynergy_Sand(void) {

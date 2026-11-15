@@ -36,8 +36,13 @@ struct ObjectMetadata *Resource_GetMetadataRecordFarFar__psynergy(
 #define OBJECT_DEFINITION(object)                                              \
   (((struct ObjectAnimation *)(object)->sprite)->definition)
 
+/// Blaze: a jet of flame sprays from the caster, with smoke, for up to 80
+/// frames or until B is pressed: red, or violet, yellow or blue to match the
+/// torch (sprite 418) it is cast at. Each actor it reaches runs its Blaze
+/// event, and one that is lit by it ends the jet, its actor id kept in the
+/// field work. Cast at nothing, the nearest torch in reach is the target.
 void FieldPsynergy_Blaze(void) {
-  struct SprayWork *work;
+  struct BlazeWork *work;
   struct FieldWork *event;
   struct FieldEffectWork *scene;
   struct Actor *caster;
@@ -45,7 +50,7 @@ void FieldPsynergy_Blaze(void) {
   struct EffectSprite *sprite;
   union {
     struct Actor *object;
-    struct SprayParticle *particle;
+    struct FieldPsynergyParticle *particle;
   } cursor;
   void *pending;
   s32 pos[3];
@@ -64,7 +69,7 @@ void FieldPsynergy_Blaze(void) {
   s32 k;
   s32 mode;
 
-  work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct SprayWork));
+  work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct BlazeWork));
   scene = Ram_HeapSlots->fieldEffectWork;
   event = Ram_HeapSlots->fieldWork;
   caster = scene->mainActor;

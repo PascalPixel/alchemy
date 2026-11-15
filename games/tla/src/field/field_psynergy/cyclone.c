@@ -45,13 +45,13 @@ void Camera_WorldToScreen__psynergy(s32 *position) __asm__(
 /// units faster; every counter advances. The work's flash flag is set on frame
 /// 30 only, and the burst stops being active on frame 112.
 void ParticleBurst_Update(void) {
-  struct BurstWork *work;
+  struct ParticleBurstWork *work;
   struct BurstParticle *particle;
   struct EffectSprite *sprite;
   s32 position[3];
   s32 i;
 
-  work = (struct BurstWork *)Ram_HeapSlots->battleEffect;
+  work = (struct ParticleBurstWork *)Ram_HeapSlots->battleEffect;
   particle = work->particles;
 
   for (i = 0; i < 96; i++, particle++) {
@@ -88,15 +88,20 @@ void BattleEffect_EndX(void) {
   VramCache_FreeEntry(*(s16 *)(work + 0x1b00));
 }
 
-struct CarryWork {
-  u8 unk0000[0x1b0c];
-  struct Actor *follower;
-  s16 state;
-  s16 timer;
-  s32 angle;
+/// Cyclone's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the particle burst
+/// (ParticleBurstWork) at its start, then the leader's ride on the whirlwind.
+struct CycloneWork {
+  u8 particleBurst[0x1b08];
+  s16 count;
+  u8 unk1b0a[2];
+  struct Actor *follower; ///< the actor carried with the leader
+  s16 state;              ///< the stage of the ride; 999 once it ends
+  s16 timer;              ///< frames into the ride
+  s32 angle;              ///< the whirlwind's turn, 1/65536 turns
   s32 radius;
-  s32 from[3];
-  s32 to[3];
+  s32 from[3]; ///< where the ride starts, 16.16 pixels
+  s32 to[3];   ///< where it ends, 16.16 pixels
+  s8 kind;     ///< nonzero runs the particle burst with it
 };
 
 /// Task of the Cyclone: the whirlwind carries the leader over 128 frames from
@@ -104,7 +109,7 @@ struct CarryWork {
 /// and arcing up and down on the way, its follower with it.
 void Cyclone_CarryLeader(void) {
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
-  struct CarryWork *work = (struct CarryWork *)Ram_HeapSlots->battleEffect;
+  struct CycloneWork *work = Ram_HeapSlots->battleEffect;
   struct Actor *owner = effect->mainActor;
   s32 timer = work->timer;
   s32 position[3];
@@ -138,7 +143,7 @@ void Cyclone_CarryLeader(void) {
 /// pixels up, circling, without the arc.
 void Cyclone_LiftLeader(void) {
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
-  struct CarryWork *work = (struct CarryWork *)Ram_HeapSlots->battleEffect;
+  struct CycloneWork *work = Ram_HeapSlots->battleEffect;
   struct Actor *owner = effect->mainActor;
   s32 timer = work->timer;
   s32 position[3];
@@ -185,22 +190,8 @@ void BattleEffect_SpinObject(struct MotionObject *object) {
 
 void FieldPsynergy_CycloneOnTarget(void) { FieldPsynergy_Cyclone(); }
 
-struct WhirlWork {
-  u8 unk0000[0x1b08];
-  s16 count;
-  u8 unk1b0a[2];
-  struct Actor *follower;
-  s16 state;
-  s16 timer;
-  s32 angle;
-  s32 radius;
-  s32 from[3];
-  s32 to[3];
-  s8 kind;
-};
-
 void FieldPsynergy_Cyclone(void) {
-  struct WhirlWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1b38);
+  struct CycloneWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1b38);
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
   struct Actor *owner = effect->mainActor;
@@ -505,22 +496,15 @@ void Actor_ArriveInRing(s32 actor) {
 
 // The spray's drops and smoke puffs, moved and drawn each frame.
 
-struct SprayParticle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 timer;
-};
-
-struct SprayWork {
+/// Blaze's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the flame tiles, 16 flames
+/// and 16 smoke puffs with their motion, where the jet starts and where it
+/// points, and the actor it has reached.
+struct BlazeWork {
   u8 unk0000[0x1000];
   struct EffectSprite drops[16];
-  struct SprayParticle dropMotion[16];
+  struct FieldPsynergyParticle dropMotion[16];
   struct EffectSprite puffs[16];
-  struct SprayParticle puffMotion[16];
+  struct FieldPsynergyParticle puffMotion[16];
   s32 origin[3];
   u16 dropTile;
   u16 puffTile;
@@ -547,12 +531,12 @@ struct SprayWork {
 /// that rise for 32 frames. The angle then turns toward the scene's facing by
 /// at most 0x400 a frame.
 void Blaze_UpdateSpray(void) {
-  struct SprayWork *work = (struct SprayWork *)Ram_HeapSlots->battleEffect;
+  struct BlazeWork *work = (struct BlazeWork *)Ram_HeapSlots->battleEffect;
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct EffectSprite *sprite;
-  struct SprayParticle *particle;
-  struct SprayParticle *puff;
+  struct FieldPsynergyParticle *particle;
+  struct FieldPsynergyParticle *puff;
   s32 pos[3];
   s32 i;
   s32 j;
@@ -675,5 +659,5 @@ void Blaze_UpdateSpray(void) {
 
 void Teleport_PlaySparks(void);
 
-/// Effect 26 cast on a target: runs the effect, ignoring the target.
+/// Blaze cast on a target: runs FieldPsynergy_Blaze.
 void FieldPsynergy_BlazeOnTarget(void) { FieldPsynergy_Blaze(); }

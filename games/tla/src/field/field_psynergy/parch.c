@@ -11,10 +11,11 @@
 #include "window.h"
 #include "bg_scroll.h"
 
-/// Field Psynergy kind 22 on a chosen target: runs kind 22's animation.
+/// Parch cast on a target: runs FieldPsynergy_Parch.
 void FieldPsynergy_ParchOnTarget(void) { FieldPsynergy_Parch(); }
 
-struct PuffParticle {
+/// A puff of Parch's steam: its place, its sway and rise, and its age.
+struct ParchPuff {
   s32 x;
   s32 y;
   s32 z;
@@ -24,7 +25,9 @@ struct PuffParticle {
   s32 timer;
 };
 
-struct PuffWork {
+/// Parch's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the glow disc over the
+/// target and the 64 puffs of steam that rise as it dries.
+struct ParchWork {
   u8 tiles[0x1000];
   struct EffectSprite disc;
   u8 unk1028[0x28];
@@ -33,7 +36,7 @@ struct PuffWork {
   s32 discScaleX;
   s32 discScaleY;
   struct EffectSprite sprites[64];
-  struct PuffParticle particles[64];
+  struct ParchPuff particles[64];
 };
 
 extern char ResourceId_GlowDisc, ResourceId_WhitePuff;
@@ -41,7 +44,7 @@ extern char ResourceId_GlowDisc, ResourceId_WhitePuff;
 void BattleEffect_FadeToSavedPalettes(s32 frames);
 
 void FieldPsynergy_Parch(void) {
-  struct PuffWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x2160);
+  struct ParchWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x2160);
   struct HeapSlots *slots;
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct WindowWork *vramWork = (struct WindowWork *)Ram_HeapSlots->windowWork;
@@ -52,7 +55,7 @@ void FieldPsynergy_Parch(void) {
   struct EffectSprite *sprite;
   struct EffectSprite *cursor;
   struct EffectSprite *fresh;
-  struct PuffParticle *particle;
+  struct ParchPuff *particle;
   s32 screen[3];
   s32 pos[3];
   s32 phase;

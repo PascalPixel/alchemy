@@ -150,8 +150,8 @@ void Class_GetSeries(s32 value);
 void DebugBrowser_Icons(void);
 void DebugBrowser_Portraits(void);
 
-// The shop and sanctum message browsers: talking to ACTOR_SANCTUM_MESSAGES and
-// the three after it.
+/// The shop and sanctum message browsers: talking to ACTOR_SANCTUM_MESSAGES and
+/// the three after it.
 void ShopTest_BrowseWeaponShopMessages(void) {
   ShopTest_BrowseMessageRange((s32)MsgWeaponShopWelcome,
                               MsgArmorShopWelcome - MsgWeaponShopWelcome);
@@ -172,7 +172,7 @@ void ShopTest_BrowseSanctumMessages(void) {
                               MsgRightWhenI - MsgWelcomeWearyWanderers);
 }
 
-// The shops and the inn, each passed the keeper's actor id.
+/// The shops and the inn, each passed the keeper's actor id.
 void ShopTest_OpenWeaponShop(s32 keeper) { Shop_Run(1, keeper); }
 
 void ShopTest_OpenArmorShop(s32 keeper) { Shop_Run(2, keeper); }

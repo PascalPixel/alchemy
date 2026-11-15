@@ -7,20 +7,12 @@
 #include "sounds.h"
 #include "macros.h"
 
-struct SplashParticle {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 timer;
-};
-
-struct SplashWork {
+/// Grind's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the splash picture and 64
+/// splash particles.
+struct GrindWork {
   u8 unk0000[0x20];
   u8 picture[0x800];
-  struct SplashParticle particles[64];
+  struct FieldPsynergyParticle particles[64];
   struct EffectSprite sprites[64];
 };
 
@@ -47,13 +39,13 @@ struct PendingEvent__f0e92b4 {
 extern char ResourceId_WaterSplash;
 
 void FieldPsynergy_GrindOnTarget(void) {
-  struct SplashWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1920);
+  struct GrindWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 0x1920);
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *caster = scene->mainActor;
   struct Actor *child = scene->child;
   struct SplashAnimation *animation = child->sprite;
   struct EffectSprite *sprite;
-  struct SplashParticle *particle;
+  struct FieldPsynergyParticle *particle;
   void *source;
   u8 *dst;
   s32 angle;

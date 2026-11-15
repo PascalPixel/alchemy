@@ -54,9 +54,9 @@ s32 BattleEffect_GetCycledTableWord__cloak() __asm__(
 // does not stand on a tile it can hide on.
 #define CLOAK_END 0x2092
 
-// Cloak the caster: flicker it ten times, leave it half transparent, then
-// check the ground under it every frame. When it cannot hide where it
-// stands, show it again at once.
+/// Cloak the caster: flicker it ten times, leave it half transparent, then
+/// check the ground under it every frame. When it cannot hide where it
+/// stands, show it again at once.
 void FieldPsynergy_StartCloak(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct CloakCaster *caster =

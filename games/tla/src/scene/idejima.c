@@ -34,6 +34,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "macros.h"
 #include "field/field_event.h"
 #include "field/scene_tables.h"
 #include "field/actor.h"
@@ -106,11 +107,11 @@ extern u32 gIdejima_KradenToTheShoreScript[];
 extern u32 gIdejima_FelixToTheShoreScript[];
 
 /// The wave scroll's two tables of BG3 row offsets, one for each frame in turn.
-extern s16 gIdejima_WaveLines[2][160];
+s16 gIdejima_WaveLines[2][160] BSS_DATA ALIGNED(16);
 /// The frame count the wave scroll's phase follows.
-extern s32 gIdejima_WavePhase;
+s32 gIdejima_WavePhase BSS_DATA;
 /// Which of gIdejima_WaveLines the next frame computes.
-extern s16 gIdejima_WaveBuffer;
+s16 gIdejima_WaveBuffer BSS_DATA;
 
 void Idejima_ResetWaves(void);
 void Idejima_ScrollWaves(void);

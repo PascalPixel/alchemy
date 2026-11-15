@@ -67,18 +67,20 @@ void LemuriaPalace_DrawMaps(void);
 
 extern u16 gLemuriaPalace_DoorOpening[];
 
+s32 gLemuriaPalace_FirstMapVram BSS_DATA;
+s32 gLemuriaPalace_SecondMapShown BSS_DATA;
 /// The sprite each of the two maps is drawn as.
-extern s32 gLemuriaPalace_MapTime;
+struct EffectSprite gLemuriaPalace_SecondMapSprite BSS_DATA ALIGNED(16);
+s32 gLemuriaPalace_SecondMapTile BSS_DATA;
+struct EffectSprite gLemuriaPalace_FirstMapSprite BSS_DATA ALIGNED(16);
+s32 gLemuriaPalace_FirstMapTile BSS_DATA;
+s8 gLemuriaPalace_MapMode BSS_DATA;
+s32 gLemuriaPalace_FirstMapShown BSS_DATA;
+s32 gLemuriaPalace_SecondMapVram BSS_DATA;
+s32 gLemuriaPalace_MapTime BSS_DATA;
 extern u8 gLemuriaPalace_MapFadeLevels[];
-extern s32 gLemuriaPalace_FirstMapShown;
-extern s32 gLemuriaPalace_SecondMapShown;
-extern struct EffectSprite gLemuriaPalace_FirstMapSprite;
-extern struct EffectSprite gLemuriaPalace_SecondMapSprite;
 extern const u8 gLemuriaPalace_FirstMapTiles[];
 extern const u8 gLemuriaPalace_SecondMapTiles[];
-extern s32 gLemuriaPalace_SecondMapVram;
-extern s32 gLemuriaPalace_FirstMapTile;
-extern s32 gLemuriaPalace_SecondMapTile;
 
 void Event_Start();
 
@@ -194,7 +196,6 @@ void LemuriaPalace_CastMapSparks(s32 actorId) {
   FieldEvent_Wait(30);
 }
 
-extern s8 gLemuriaPalace_MapMode;
 extern u16 gLemuriaPalace_MapCrossfade[];
 
 /// A task: draws the maps the hall shows, fading between them by the map mode
@@ -245,8 +246,6 @@ void LemuriaPalace_DrawMaps(void) {
     EffectSprite_Draw(&gLemuriaPalace_SecondMapSprite);
   }
 }
-
-extern s32 gLemuriaPalace_FirstMapVram;
 
 /// Loads the two maps the council shows the party, the ancient world and
 /// Lunpa's, and starts drawing them.

@@ -9,6 +9,7 @@
 #include "field/event.h"
 #include "field/field_sequence_event.h"
 #include "scene/dehkan_plateau.h"
+#include "macros.h"
 
 #include "../field/actor_prepare.c"
 #include "types.h"
@@ -204,7 +205,7 @@ struct Actor *AnkohlRuins_CreateActor(s32 x, s32 y, s32 z, s32 type) {
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect_spawn.c"
 
-extern struct AnkohlRuinsSpriteWork gAnkohlRuins_Sand;
+struct AnkohlRuinsSpriteWork gAnkohlRuins_Sand BSS_DATA ALIGNED(16);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

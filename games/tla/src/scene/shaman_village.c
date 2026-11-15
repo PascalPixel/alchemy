@@ -12,6 +12,7 @@
 #include "scene_ids.h"
 #include "sprite_ids.h"
 #include "types.h"
+#include "macros.h"
 #include "battle/battle.h"
 #include "field/actor.h"
 #include "field/actor_script.h"
@@ -136,7 +137,25 @@ enum {
 
 struct ItemDefinition;
 
-extern s16 gShamanVillage_WaveLines[];
+s16 gShamanVillage_WaveLines[160] BSS_DATA ALIGNED(16);
+s16 gShamanVillage_LetteringScaleFrames BSS_DATA;
+s16 gShamanVillage_LetteringTileOffset BSS_DATA ALIGNED(4);
+s16 gShamanVillage_LetteringScaleFrom BSS_DATA ALIGNED(4);
+s16 gShamanVillage_LetteringSpeedFrames BSS_DATA ALIGNED(4);
+s32 gShamanVillage_LetteringX BSS_DATA;
+s16 gShamanVillage_LetteringScale BSS_DATA;
+s16 gShamanVillage_LetteringSpeedFrame BSS_DATA ALIGNED(4);
+s16 gShamanVillage_LetteringBlendFrame BSS_DATA ALIGNED(4);
+s16 gShamanVillage_LetteringMode BSS_DATA ALIGNED(4);
+s16 gShamanVillage_LetteringBlend BSS_DATA ALIGNED(4);
+s16 gShamanVillage_LetteringBlendFrom BSS_DATA ALIGNED(4);
+s16 gShamanVillage_LetteringWait BSS_DATA ALIGNED(4);
+s16 *gShamanVillage_LetteringCursor BSS_DATA;
+s16 gShamanVillage_LetteringBlendFrames BSS_DATA;
+u32 gShamanVillage_LetteringSprites[12] BSS_DATA ALIGNED(16);
+s16 gShamanVillage_LetteringSpeedFrom BSS_DATA;
+s16 gShamanVillage_LetteringSpeed BSS_DATA ALIGNED(4);
+s16 gShamanVillage_LetteringScaleFrame BSS_DATA ALIGNED(4);
 
 void ShamanVillage_WaveWhirlwindLines(void);
 
@@ -147,26 +166,7 @@ extern u32 gShamanVillage_MoapaLeavesHouseScript[];
 extern u32 gShamanVillage_OtherGuardLeavesHouseScript[];
 extern u32 gShamanVillage_RejoinLeaderAtHouseScript[];
 
-extern u32 gShamanVillage_LetteringSprites[];
-
 extern s16 gShamanVillage_LetteringVramEntry[];
-
-extern s16 gShamanVillage_LetteringWait;
-extern s16 *gShamanVillage_LetteringCursor;
-extern s32 gShamanVillage_LetteringX;
-extern s16 gShamanVillage_LetteringSpeed;
-extern s16 gShamanVillage_LetteringSpeedFrames;
-extern s16 gShamanVillage_LetteringSpeedFrame;
-extern s16 gShamanVillage_LetteringScale;
-extern s16 gShamanVillage_LetteringScaleFrom;
-extern s16 gShamanVillage_LetteringScaleFrames;
-extern s16 gShamanVillage_LetteringScaleFrame;
-extern s16 gShamanVillage_LetteringBlend;
-extern s16 gShamanVillage_LetteringBlendFrom;
-extern s16 gShamanVillage_LetteringBlendFrames;
-extern s16 gShamanVillage_LetteringBlendFrame;
-extern s16 gShamanVillage_LetteringMode;
-extern s16 gShamanVillage_LetteringTileOffset;
 
 /// The lettering scripts' commands (ShamanVillage_RunLettering): each is
 /// followed by its values; START's are the x and the speed, SPEED's, SCALE's
@@ -1837,8 +1837,6 @@ void ShamanVillage_CheckTrialEntry(void) {
 struct SpriteView {
   u32 words[3];
 };
-
-extern s16 gShamanVillage_LetteringSpeedFrom;
 
 /// The portrait mode task: reads its command script, eases the portrait's
 /// scale, blend and position, and queues its sprites.

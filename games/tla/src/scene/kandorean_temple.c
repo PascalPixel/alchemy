@@ -224,9 +224,14 @@ enum {
 
 s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 void Actor_DisableById(s32 id);
-extern s32 gKandoreanTemple_LeftVentBlowing;
-extern s32 gKandoreanTemple_RightVentBlowing;
-extern s32 gKandoreanTemple_SteamCounter;
+s32 gKandoreanTemple_SteamCounter BSS_DATA;
+s32 gKandoreanTemple_LeftVentBlowing BSS_DATA;
+s32 gKandoreanTemple_RightVentBlowing BSS_DATA;
+s32 gKandoreanTemple_LeftTimer BSS_DATA;
+s32 gKandoreanTemple_RightTimer BSS_DATA;
+u16 gKandoreanTemple_LeftBobPhase BSS_DATA;
+u16 gKandoreanTemple_RightBobPhase BSS_DATA;
+struct Actor *gKandoreanTemple_LashPebble BSS_DATA;
 extern s32 gKandoreanTemple_SteamScript[];
 extern u32 gKandoreanTemple_PuffScript[];
 extern u32 gKandoreanTemple_StreamPuffScript[];
@@ -238,7 +243,6 @@ void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
 void FieldEffect_StartBlankOverlay(s32 a);
 void KandoreanTemple_StartGate(void);
 void Actor_MoveToObject(s32 id, s32 target);
-extern struct Actor *gKandoreanTemple_LashPebble;
 extern s32 gKandoreanTemple_MeditateScript[];
 extern s32 gKandoreanTemple_LevitateScript[];
 
@@ -305,13 +309,8 @@ extern s32 gKandoreanTemple_StandStillScript[];
 
 void KandoreanTemple_ArriveOnWestLift(void);
 
-extern s32 gKandoreanTemple_LeftTimer;
-extern u16 gKandoreanTemple_LeftBobPhase;
-extern u16 gKandoreanTemple_RightBobPhase;
 void Tightrope_Initialize(void);
 void Actor_PlaceBlocks(const void *data);
-
-extern s32 gKandoreanTemple_RightTimer;
 
 /// Talking to Fog starts its battle.
 void KandoreanTemple_FightFog(void) {
@@ -2108,8 +2107,6 @@ void KandoreanTemple_StartVentRoom(void) {
 #undef EFFECT_SCRIPTS
 // The Kandorean Temple's events, from the vents' rides to Poi's test, and its
 // tables.
-
-extern s32 gKandoreanTemple_RightTimer;
 
 /// The leader drops into the vent room from above and lands in a puff of dust
 /// that shakes the screen.

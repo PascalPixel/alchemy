@@ -15,6 +15,7 @@
 #include "flags.h"
 #include "item_ids.h"
 #include "types.h"
+#include "macros.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
 #include "system/main_routine_work.h"
@@ -165,9 +166,6 @@ void Actor_PlaceMovedBlock(void);
 void Settlements_ClimbDownLadder(void);
 void Settlements_DriftSmoke(struct Actor *object);
 void Actor_Release(struct Actor *object);
-extern s32 gSettlements_WaterfallLine;
-extern u16 gSettlements_WaterfallScrollAbove;
-extern u16 gSettlements_WaterfallScrollBelow;
 void Scroll_HBlank(void);
 void Layer_TrackScroll(void);
 void Irq_SetHandler(s32 a, s32 b, void (*callback)(void));
@@ -287,8 +285,12 @@ void FieldEffect_StartBlankOverlay(s32 a);
 
 void Actor_PlaceBlocks(const void *data);
 
-extern u16 gSettlements_WaterColors[];
-extern u16 gSettlements_WaterColorsSaved[];
+u16 gSettlements_WaterColors[16] BSS_DATA;
+u16 gSettlements_WaterColorsSaved[16] BSS_DATA;
+u8 gSettlements_UnusedAfterWaterColorsSaved[64] BSS_DATA;
+s32 gSettlements_WaterfallLine BSS_DATA;
+u16 gSettlements_WaterfallScrollAbove BSS_DATA;
+u16 gSettlements_WaterfallScrollBelow BSS_DATA;
 
 void Settlements_SpawnSplashRing(s32 objectId);
 
@@ -1109,7 +1111,7 @@ s32 Field_CheckSpheresOverlap(FIXED *a, s32 aRadius, FIXED *b, s32 bRadius);
 
 #include "shared/leader_slide_on_ice.h"
 
-extern volatile s16 gSlideOnIce_Stopped;
+volatile s16 gSlideOnIce_Stopped BSS_DATA;
 
 extern s16 gSlideOnIce_AnglesByKey[];
 void Actor_SteerByPad(struct Actor *object);

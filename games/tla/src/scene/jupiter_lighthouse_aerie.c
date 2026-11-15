@@ -17,6 +17,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "macros.h"
 #include "field/scene_tables.h"
 #include "field/event_inline.h"
 #include "field/actor.h"
@@ -73,7 +74,19 @@ static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
 extern s32 gPaletteCyclePausesInEvents;
-extern u16 gPaletteCycleColors[];
+s32 gWhirlwindRiding BSS_DATA;
+u16 gPaletteCycleColors[16] BSS_DATA;
+/// Palette 13's first two colours; it is copied whole, with the unlit colours
+/// after them.
+u16 gPaletteCycleUnlitPalette[2] BSS_DATA;
+u16 gPaletteCycleUnlitColors[14] BSS_DATA;
+s16 gLightSpriteTile BSS_DATA;
+s16 gLightSpriteCount BSS_DATA;
+struct Actor *gLightSpriteActors[16] BSS_DATA;
+struct LightOam gLightSpriteOams[16] BSS_DATA;
+s16 gLightSpritesLarge BSS_DATA;
+s16 gLightSpritePriority BSS_DATA;
+struct CellTarget gCrackedTiles BSS_DATA;
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
@@ -101,12 +114,6 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
 
 void JupiterLighthouse_UpdateBeam(void);
 
-extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[16];
-extern struct LightOam gLightSpriteOams[];
-extern s16 gLightSpritesLarge;
-extern s16 gLightSpritePriority;
-
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
 extern u32 gFieldEffect_MediumScript[];
@@ -132,8 +139,6 @@ struct FieldEffect;
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void FieldCamera_WaitForArrival(void);
-extern u16 gPaletteCycleUnlitPalette[];
-extern u16 gPaletteCycleUnlitColors[];
 void Import_EffectSpriteDraw(struct EffectSprite *sprite);
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct BeamSpark *spark);
@@ -498,7 +503,6 @@ void JupiterLighthouse_RideTheBeam(void) {
 #include "shared/position_flat_distance.h"
 
 extern s32 gWhirlwindEndScript[];
-extern s32 gWhirlwindRiding;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
@@ -864,8 +868,6 @@ void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
-extern s16 gLightSpriteTile;
-
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
@@ -909,7 +911,6 @@ void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 extern s32 gPaletteCycleFrame;
 extern s32 gPaletteCyclePausesInEvents;
-extern u16 gPaletteCycleColors[];
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
@@ -933,7 +934,6 @@ void Leader_CenterInCell(void);
 #undef CELL_PUSH_SLOT_ENTRY
 extern s32 gPaletteCycleFrame;
 extern s32 gPaletteCyclePausesInEvents;
-extern u16 gPaletteCycleColors[];
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);

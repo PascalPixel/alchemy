@@ -340,7 +340,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gGondowanCliffs_Triggers;
 }
 
-extern u16 gGondowanCliffs_SavedWaterColors[];
+u16 gGondowanCliffs_SavedWaterColors[4] BSS_DATA;
 
 void GondowanCliffs_CycleWaterColors(void) {
   u16 *color = (u16 *)&BG_PLTT_COLOR(0, 12);

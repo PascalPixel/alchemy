@@ -95,10 +95,13 @@ extern s32 gAnemosInnerSanctumEntrance_StatueScript[];
 
 struct Actor;
 
-extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[];
-extern s16 gLightSpriteTile;
-extern s16 gLightSpriteLargeOam;
+s16 gLightSpriteTile BSS_DATA;
+s16 gLightSpriteCount BSS_DATA;
+struct Actor *gLightSpriteActors[16] BSS_DATA;
+struct LightOam gLightSpriteOam[16] BSS_DATA;
+s16 gLightSpriteLargeOam BSS_DATA;
+s16 gAnemosInnerSanctumEntrance_LightLevel BSS_DATA;
+s16 gAnemosInnerSanctumEntrance_LightPicture BSS_DATA;
 
 #include "text/msg_ids.h"
 
@@ -361,10 +364,6 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-extern struct LightOam gLightSpriteOam[];
-extern s16 gAnemosInnerSanctumEntrance_LightLevel;
-extern s16 gAnemosInnerSanctumEntrance_LightPicture;
 
 void LightSprites_Draw(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;

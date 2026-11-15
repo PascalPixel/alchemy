@@ -264,13 +264,24 @@ s32 MapCell_Swap(u32 layer, s32 x, s32 y, s32 value) {
 void MapGrid_SetCellHeight();
 void Teleport_PlayWhirl(void);
 void Teleport_PlaySparks(void);
-extern u16 gMarsLighthouseEntrance_HoleMaskVram;
-extern u32 gMarsLighthouseEntrance_HoleMaskSprite[3];
-extern s16 gMarsLighthouseEntrance_DragonFireTimer;
+s32 Data_02006878 BSS_DATA;
+u16 gPaletteCycle_Flash BSS_DATA;
+u16 *gPaletteCycle_Order BSS_DATA;
+u16 gPaletteCycle_Countdown BSS_DATA;
+u16 gPaletteCycle_Period BSS_DATA ALIGNED(4);
+u16 *gPaletteCycle_Slots BSS_DATA;
+u16 *gPaletteCycle_FlashColors BSS_DATA;
+u16 *gPaletteCycle_Colors BSS_DATA;
+u16 gPaletteCycle_Count BSS_DATA;
+u16 gPaletteCycle_Step BSS_DATA ALIGNED(4);
+s16 gMarsLighthouseEntrance_DragonFireTimer BSS_DATA ALIGNED(4);
+u16 gMarsLighthouseEntrance_HoleMaskVram BSS_DATA;
+u32 gMarsLighthouseEntrance_HoleMaskSprite[3] BSS_DATA;
+volatile s16 gSlideOnIce_Stopped BSS_DATA;
+struct CellTarget gCrackedTiles BSS_DATA;
 void Map_CopyPalette(s32 scene, s32 a1);
 s32 FieldEffect_StartBlankOverlay();
 s32 Weather_StartRain();
-extern s32 Data_02006878;
 
 s32 MapCell_Get();
 s32 Map_GetTerrainHeight();
@@ -1986,8 +1997,6 @@ extern struct Trigger gMarsLighthouseEntrance_BalmTriggers[];
 extern struct Trigger gMarsLighthouseEntrance_HiddenCircleTriggers[];
 extern struct Trigger gMarsLighthouseEntrance_ValkyrieTriggers[];
 extern struct Trigger gMarsLighthouseEntrance_SolBladeTriggers[];
-extern s16 gMarsLighthouseEntrance_DragonFireTimer;
-extern u16 gMarsLighthouseEntrance_HoleMaskVram;
 
 void Map_CopyPalette(s32 scene, s32 a1);
 
@@ -2035,7 +2044,6 @@ extern s16 gSlideOnIce_AnglesByKey[];
 
 #include "shared/leader_slide_on_ice.h"
 
-extern volatile s16 gSlideOnIce_Stopped;
 void Actor_SteerByPad(struct Actor *object);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
@@ -2319,9 +2327,6 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
   }
 }
 
-extern u16 *gPaletteCycle_Slots;
-extern u16 *gPaletteCycle_FlashColors;
-
 // Records the four palette lists, writes each listed palette entry from its
 // red, green and blue, then copies two palettes from block32 and starts the
 // blend.
@@ -2351,8 +2356,6 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   if (gMainRoutineWork.teleportState == 2)
     Teleport_ArriveWhirling();
 }
-
-extern u16 gPaletteCycle_Count;
 
 /// Starts the shimmer of the circle's colours as Teleport is cast.
 void Teleport_StartShimmer(void) {

@@ -84,15 +84,7 @@ void Actor_RollAndCrumble(struct Actor *actor);
 
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
-extern u16 *gPaletteCycle_Colors;
-extern u16 *gPaletteCycle_Order;
-
 void Teleport_ArriveWhirling(void);
-
-extern u16 gPaletteCycle_Flash;
-extern u16 gPaletteCycle_Countdown;
-extern u16 gPaletteCycle_Step;
-extern u16 gPaletteCycle_Period;
 
 s32 List_CountEntries(u16 *list);
 void PaletteCycle_Fade(void);

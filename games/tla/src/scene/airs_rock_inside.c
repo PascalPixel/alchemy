@@ -12,6 +12,7 @@
 #include "field/event_inline.h"
 #include "sounds.h"
 #include "types.h"
+#include "macros.h"
 #include "system/ram_buffer.h"
 #include "field/field_event.h"
 #include "system/iwram_call.h"
@@ -170,10 +171,10 @@ enum AirsRockInsideCoinsChestActorId {
 
 /// The cell stampers keep their last cell and the block they copy.
 extern s32 gAirsRockInside_StampedCell;
-extern s32 gAirsRockInside_StampedWidth;
-extern s32 gAirsRockInside_StampedHeight;
-extern s32 gAirsRockInside_StampedX;
-extern s32 gAirsRockInside_StampedZ;
+s32 gAirsRockInside_StampedWidth BSS_DATA;
+s32 gAirsRockInside_StampedHeight BSS_DATA;
+s32 gAirsRockInside_StampedX BSS_DATA;
+s32 gAirsRockInside_StampedZ BSS_DATA;
 
 #include "system/system.h"
 #include "field/actor.h"
@@ -195,7 +196,6 @@ extern s32 gAirsRockInside_StampedZ;
 #include "field/field_sequence_event.h"
 #include "system/field_effect.h"
 #include "system/vector3.h"
-#include "macros.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"

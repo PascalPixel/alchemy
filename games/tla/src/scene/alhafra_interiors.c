@@ -15,6 +15,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "macros.h"
 #include "flags.h"
 #include "field/scene_tables.h"
 #include "scene/scene.h"
@@ -34,8 +35,8 @@
 #define FLAG_GUESTS_ASKED_FOR_TEA 0x8b1
 #define FLAG_HOST_TOLD_OF_REPAIRS 0x8b8
 
-extern struct EffectSprite gAlhafraInteriors_FirstGuestSprite;
-extern struct EffectSprite gAlhafraInteriors_SecondGuestSprite;
+struct EffectSprite gAlhafraInteriors_SecondGuestSprite BSS_DATA ALIGNED(16);
+struct EffectSprite gAlhafraInteriors_FirstGuestSprite BSS_DATA ALIGNED(16);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

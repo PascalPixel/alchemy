@@ -39,8 +39,8 @@
 #include "fixed_math.h"
 #include "text/msg_ids.h"
 
-extern s32 gLemurianShipDeck_WaveScroll;
-extern s32 gLemurianShipDeck_BobPhase;
+s32 gLemurianShipDeck_BobPhase BSS_DATA;
+s32 gLemurianShipDeck_WaveScroll BSS_DATA;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

@@ -76,25 +76,28 @@ enum JupiterLighthouseBlockId {
 };
 
 void Actor_RaiseFromCell(s32 id);
-extern s16 gLightSpriteTile;
-extern s16 gLightSpriteCount;
-extern struct LightOam gLightSpriteOam[];
-extern s16 gLightSpritesLarge;
-extern s16 gLightSpritePriority;
+s32 gWhirlwindRiding BSS_DATA;
+u16 gPaletteCycleColors[16] BSS_DATA;
+/// Palette 13's first two colours; it is copied whole, with the unlit colours
+/// after them.
+u16 gPaletteCycleUnlitPalette[2] BSS_DATA;
+u16 gPaletteCycleUnlitColors[14] BSS_DATA;
+s16 gLightSpriteTile BSS_DATA;
+s16 gLightSpriteCount BSS_DATA;
+struct Actor *gLightSpriteActors[16] BSS_DATA;
+struct LightOam gLightSpriteOam[16] BSS_DATA;
+s16 gLightSpritesLarge BSS_DATA;
+s16 gLightSpritePriority BSS_DATA;
+struct CellTarget gCrackedTiles BSS_DATA;
 void JupiterLighthouse_HideThePassage(void);
 void JupiterLighthouse_LeaveByFirstCyclone(void);
 void JupiterLighthouse_LeaveBySecondCyclone(void);
 void JupiterLighthouse_TryLockedDoor(void);
 void LightSprites_InitA(void);
-extern u16 gPaletteCycleUnlitPalette[];
-extern u16 gPaletteCycleUnlitColors[];
 void MapGrid_SetCellHeight();
-extern s32 gWhirlwindRiding;
 
 void Actor_ArriveInRing(s32 id);
 void MapGrid_SetAttributeBAt();
-
-extern u16 gPaletteCycleColors[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -431,8 +434,6 @@ UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
   }
 }
 
-extern struct Actor *gLightSpriteActors[16];
-
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
@@ -644,7 +645,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 struct CellTarget;
 void Leader_CenterInCell(void);
-extern struct CellTarget gCrackedTiles;
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 extern const s32 *gFieldEffect_DurationScripts[];
@@ -681,7 +681,6 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 struct CellTarget;
 struct CellTargetEntry;
-extern struct CellTarget gCrackedTiles;
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 void JupiterLighthouse_HideThePassage(void);
 void JupiterLighthouse_LeaveByFirstCyclone(void);

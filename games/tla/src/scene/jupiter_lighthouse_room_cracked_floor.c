@@ -24,6 +24,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "macros.h"
 #include "field/scene_tables.h"
 #include "system/iwram_call.h"
 #include "field/actor.h"
@@ -61,19 +62,23 @@ enum { ACTOR_SHORTCUT_PILLAR = ACTOR_FIRST_PLACED + 4 };
 void JupiterLighthouse_OpenDoor(s32 value);
 void JupiterLighthouse_CheckBlockOnCell(void);
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
-extern s16 gLightSpriteTile;
-extern struct LightOam gLightSpriteOams[];
-extern s16 gLightSpritesLarge;
+s32 gWhirlwindRiding BSS_DATA;
+u16 gPaletteCycleColors[16] BSS_DATA;
+/// Palette 13's first two colours; it is copied whole, with the unlit colours
+/// after them.
+u16 gPaletteCycleUnlitPalette[2] BSS_DATA;
+u16 gPaletteCycleUnlitColors[14] BSS_DATA;
+s16 gLightSpriteTile BSS_DATA;
+s16 gLightSpriteCount BSS_DATA;
+struct Actor *gLightSpriteActors[16] BSS_DATA;
+struct LightOam gLightSpriteOams[16] BSS_DATA;
+s16 gLightSpritesLarge BSS_DATA;
+s16 gLightSpritePriority BSS_DATA;
+struct CellTarget gCrackedTiles BSS_DATA;
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void JupiterLighthouse_StepOffButton(void);
 void JupiterLighthouse_FinishMovingBlock(void);
-extern s16 gLightSpriteCount;
-extern s16 gLightSpritePriority;
-extern u16 gPaletteCycleColors[];
 void MapGrid_SetAttributeBAt();
-extern u16 gPaletteCycleUnlitPalette[];
-extern u16 gPaletteCycleUnlitColors[];
-extern s32 gWhirlwindRiding;
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
 void MapGrid_SetCellHeight();
@@ -264,8 +269,6 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
-extern struct Actor *gLightSpriteActors[16];
-
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
 /// sprite, or a 32 by 64 one when the big switch is set, at its animation
@@ -444,8 +447,6 @@ extern u32 gFieldEffect_LongScript[];
 void JupiterLighthouse_FinishMovingBlock(void);
 
 #include "shared/cracked_tile_drop_in.h"
-
-extern struct CellTarget gCrackedTiles;
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void CrackedTile_Crack(struct CellTarget *work, struct CellTargetEntry *entry);

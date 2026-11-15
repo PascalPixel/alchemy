@@ -54,7 +54,7 @@ struct TitleSprite {
 
 /// Frames since the lettering's reveal began; a column appears every two.
 extern s16 gTitleRevealFrame;
-/// The lettering's 18 sprites, in the overlay's BSS (scene/bss/title.s).
+/// The lettering's 18 sprites, in the overlay's BSS (scene/title_bss.s).
 extern struct TitleSprite gTitleSprites[];
 
 // The logo the title shows: an 8-bit background on BG2, its map in screen

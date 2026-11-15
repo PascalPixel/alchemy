@@ -264,8 +264,9 @@ same village twice, with different people about.
 - [`entry.s`](entry.s) is the entry table every overlay links; a scene
   whose entry routines are named otherwise has its own in
   [`entry/`](entry).
-- [`bss/`](bss) holds an overlay's globals that are still written in
-  assembly, one file a scene.
+- A scene defines its globals in its C, `BSS_DATA` in the order the ROM
+  keeps them; only the title's, which start on a halfword, are assembly,
+  [`title_bss.s`](title_bss.s).
 - An overlay's import table is not here: the build writes it from
   [`imports.inc`](../system/overlay/imports.inc), the far-call stubs the
   overlay's code calls, in the list's order.

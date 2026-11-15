@@ -140,6 +140,4 @@ void DehkanPlateau_CreatePoundCube(void);
 
 void DehkanPlateau_HideCannonActors(void);
 
-extern s32 gDehkanPlateau_CrackX;
-
 #endif

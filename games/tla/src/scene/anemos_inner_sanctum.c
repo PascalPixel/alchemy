@@ -102,18 +102,17 @@ struct AnemosInnerSanctumPicture {
   u16 b;
 };
 
-extern u16 *gPaletteSlots;
-extern u16 *gPaletteColors;
-extern u16 *gPaletteCycleColors;
-extern u16 *gPaletteCycleSlots;
+u16 gPaletteCycleBright BSS_DATA;
+u16 *gPaletteCycleSlots BSS_DATA;
+u16 gPaletteCycleTimer BSS_DATA;
+u16 gPaletteCycleDelay BSS_DATA ALIGNED(4);
+u16 *gPaletteSlots BSS_DATA;
+u16 *gPaletteColors BSS_DATA;
+u16 *gPaletteCycleColors BSS_DATA;
+u16 gPaletteCycleLength BSS_DATA;
+u16 gPaletteCycleIndex BSS_DATA ALIGNED(4);
 
 void AnemosInnerSanctum_TeleportIn(void);
-
-extern u16 gPaletteCycleBright;
-extern u16 gPaletteCycleTimer;
-extern u16 gPaletteCycleDelay;
-extern u16 gPaletteCycleLength;
-extern u16 gPaletteCycleIndex;
 
 s32 Actor_LiftTargetBlock();
 
@@ -125,7 +124,7 @@ void Teleport_PlaySparks(void);
 
 void Leader_CenterInCell(void);
 
-extern struct CellTarget gCrackedTiles;
+struct CellTarget gCrackedTiles BSS_DATA;
 
 void AnemosInnerSanctum_LightThePillar(void);
 void AnemosInnerSanctum_StepOntoCenter(void);

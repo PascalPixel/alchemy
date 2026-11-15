@@ -19,6 +19,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "macros.h"
 #include "field/scene_tables.h"
 #include "field/field_sequence_event.h"
 #include "field/event_commands.h"
@@ -52,7 +53,6 @@ void AlhafranCave_CastSand(void);
 void AlhafranCave_StartMovingCrate(void);
 void AlhafranCave_FinishMovingCrate(void);
 void FlagBlock_PlaceAllMarkingEdges(const void *data);
-extern s32 gAlhafranCave_ClearedWord;
 
 /// Set while the way down to the jail is open, as the leader stands on the
 /// ledge above it.
@@ -142,7 +142,8 @@ extern struct ActorPlacement gAlhafranCave_CaveActorPlacements[];
 extern struct ActorPlacement gAlhafranCave_JailActorPlacements[];
 extern struct Trigger gAlhafranCave_CaveTriggers[];
 extern struct Trigger gAlhafranCave_JailTriggers[];
-extern struct EffectSprite gAlhafranCave_CrateSprite;
+struct EffectSprite gAlhafranCave_CrateSprite BSS_DATA ALIGNED(16);
+s32 gAlhafranCave_ClearedWord BSS_DATA;
 
 /// Sets the behavior of the map cell under a 16.16 position.
 static __inline__ void MapGrid_SetCellBehavior_(FIXED x, FIXED z, s32 a,

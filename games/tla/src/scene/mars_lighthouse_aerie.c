@@ -34,6 +34,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "macros.h"
 #include "field/scene_tables.h"
 #include "field/actor.h"
 #include "system/main_routine_work.h"
@@ -148,28 +149,33 @@ extern u8 MsgIUnderstandYour[];
 extern struct ActorPlacement gMarsLighthouseAerie_Placements[];
 extern struct ActorPlacement gMarsLighthouseAerie_AfterBattlePlacements[];
 extern struct ActorPlacement gMarsLighthouseAerie_BeaconPlacements[];
-extern u32 gMarsLighthouseAerie_FlickerFrame;
-extern u32 gMarsLighthouseAerie_FlickerRate;
+u32 gMarsLighthouseAerie_BeaconFlameFrame BSS_DATA;
+u32 gMarsLighthouseAerie_FlickerFrame BSS_DATA;
+u32 gMarsLighthouseAerie_BeaconFireFrames BSS_DATA;
+u32 gMarsLighthouseAerie_FlickerRate BSS_DATA;
+struct SparkleWork gMarsLighthouseAerie_RisingRingsB BSS_DATA ALIGNED(16);
+struct SparkleWork gMarsLighthouseAerie_RisingRingsA BSS_DATA ALIGNED(16);
+u32 gMarsLighthouseAerie_BeaconFireFrame BSS_DATA;
+u16 gPaletteCycle_Flash BSS_DATA;
+u16 *gPaletteCycle_Order BSS_DATA;
+u16 gPaletteCycle_Countdown BSS_DATA;
+u16 gPaletteCycle_Period BSS_DATA ALIGNED(4);
+u16 *gPaletteCycle_Slots BSS_DATA;
+u16 *gPaletteCycle_FlashColors BSS_DATA;
+u16 *gPaletteCycle_Colors BSS_DATA;
+u16 gPaletteCycle_Count BSS_DATA;
+u16 gPaletteCycle_Step BSS_DATA ALIGNED(4);
 
 void MarsLighthouseAerie_HaltSpeaker(s32 spot, s32 speaker);
 
 extern u8 MsgMarsLighthouseAerieDoNotLetYourSadness[];
-extern u16 gPaletteCycle_Flash;
-extern u16 gPaletteCycle_Countdown;
-extern u16 gPaletteCycle_Period;
-extern u16 *gPaletteCycle_Slots;
-extern u16 gPaletteCycle_Count;
-extern u16 gPaletteCycle_Step;
 
 s32 List_CountEntries(u16 *list);
 
 #endif
 
-extern u32 gMarsLighthouseAerie_BeaconFlameFrame;
 void Map_CopyPalette(s32 scene, s32 a1);
 void FieldCamera_WaitForArrival();
-extern u8 gMarsLighthouseAerie_RisingRingsA[];
-extern u8 gMarsLighthouseAerie_RisingRingsB[];
 void Party_RestoreHpPp();
 void Weather_StartRain(struct Actor *object);
 
@@ -811,7 +817,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetAnimation(ACTOR_WISE_ONE, 6);
   FieldEvent_Wait(10);
   MarsLighthouseAerie_StartRisingRings(actor,
-                                       (s32)gMarsLighthouseAerie_RisingRingsA);
+                                       (s32)&gMarsLighthouseAerie_RisingRingsA);
   FieldEvent_Wait(80);
   FieldActor_SetAnimation(ACTOR_WISE_ONE, 3);
   FieldEvent_Wait(10);
@@ -1528,9 +1534,9 @@ L_0200a47a:
   Actor_FaceDirectionAndWait(ACTOR_PIERS_STAND_IN, FACING_EAST);
   FieldActor_SetSpritePriority(ACTOR_PIERS_STAND_IN, 1);
   MarsLighthouseAerie_StartRisingRings((Actor_Get(ACTOR_PIERS_STAND_IN)),
-                                       (s32)gMarsLighthouseAerie_RisingRingsA);
+                                       (s32)&gMarsLighthouseAerie_RisingRingsA);
   MarsLighthouseAerie_StartRisingRings((Actor_Get(ACTOR_MIA_STAND_IN)),
-                                       (s32)gMarsLighthouseAerie_RisingRingsB);
+                                       (s32)&gMarsLighthouseAerie_RisingRingsB);
   FieldEvent_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_KRADEN, 0);
@@ -1567,9 +1573,9 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Event_WaitTransitionFrames();
   FieldActor_SetSpritePriority(ACTOR_MIA, 1);
   MarsLighthouseAerie_StartRisingRings((s32)Actor_Get(ACTOR_PIERS),
-                                       (s32)gMarsLighthouseAerie_RisingRingsA);
+                                       (s32)&gMarsLighthouseAerie_RisingRingsA);
   MarsLighthouseAerie_StartRisingRings((s32)Actor_Get(ACTOR_MIA),
-                                       (s32)gMarsLighthouseAerie_RisingRingsB);
+                                       (s32)&gMarsLighthouseAerie_RisingRingsB);
   FieldEvent_Wait(120);
   MarsLighthouseAerie_EndRisingRings((s32)Actor_Get(ACTOR_PIERS));
   MarsLighthouseAerie_EndRisingRings((s32)Actor_Get(ACTOR_MIA));

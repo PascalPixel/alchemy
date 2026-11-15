@@ -94,8 +94,8 @@ void TileCopies_CopyTouchedCells(s32, s32, s32, s32, s32, s32, s32);
 void Message_OpenWindow(s32, s32, s32, s32);
 
 extern s32 gPsynergyTest_RingTiles[];
-extern struct SparkleWork gPsynergyTest_TargetRings;
-extern struct SparkleWork gPsynergyTest_LeaderRings;
+struct SparkleWork gPsynergyTest_LeaderRings BSS_DATA ALIGNED(16);
+struct SparkleWork gPsynergyTest_TargetRings BSS_DATA ALIGNED(16);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

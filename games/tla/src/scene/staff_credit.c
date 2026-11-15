@@ -64,17 +64,22 @@ FIXED Party_GetPpRatio(void);
 
 extern s32 gStaffCredit_BeamsLightPalette[];
 
-extern u16 gStaffCredit_BlendLevel;
-extern u16 gStaffCredit_BlendSteady;
+u16 gStaffCredit_BlendLevel BSS_DATA;
+u16 gStaffCredit_BlendSteady BSS_DATA;
+struct Actor *gWorldMap_PlacedActors[128] BSS_DATA;
+u16 gStaffCredit_PictureBlend BSS_DATA;
+s16 gGauge_Shown BSS_DATA ALIGNED(4);
+s16 gGauge_Vram BSS_DATA;
+s16 gGauge_Countdown BSS_DATA;
+u32 gGauge_Sprite[3] BSS_DATA;
+u8 gGauge_Tiles[8][32] BSS_DATA;
+u8 gGauge_SourceTiles[12][32] BSS_DATA;
 extern u8 gStaffCredit_BeaconPalettes[];
 extern u8 gStaffCredit_BeamsPalette[];
 extern u8 gStaffCredit_BeamsMaps[];
 extern u8 gStaffCredit_BeamsTiles[];
 void StaffCredit_RunCredits(s32 value);
 s32 WorldMap_GetBlockPlace(s32 *position);
-extern s16 gGauge_Vram;
-extern u8 gGauge_SourceTiles[][32];
-extern u32 gGauge_Sprite[3];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -657,8 +662,6 @@ UNUSED void StaffCredit_EndFlight(void) {
   Actor_SetFlightMode(Actor_Get(FieldParty_GetLeaderActor()), 0);
 }
 
-extern u16 gStaffCredit_PictureBlend;
-
 /// Sets the layer blend, switching its alpha every two frames.
 void StaffCredit_BlendPicture(void) {
   Scene_QueueIoWrite16((u32)&REG_BLDCNT,
@@ -875,9 +878,6 @@ void StaffCredit_SpawnGrowingPair(struct Actor *parent) {
   }
 }
 
-extern s16 gGauge_Shown;
-extern u8 gGauge_Tiles[][32];
-
 void Gauge_Draw(s32 progress) {
   s32 level = ((progress * GAUGE_LEVELS + FIXED_ONE / 2) >> 16) + 1;
   s32 kind = GAUGE_EMPTY;
@@ -958,7 +958,6 @@ done:
 }
 
 extern u32 gInput;
-extern s16 gGauge_Countdown;
 
 // The same cursor as the world map's, in this overlay: counts down while A or B
 // is held, redraws the gauge and queues its sprite over the leader.

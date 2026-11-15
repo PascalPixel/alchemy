@@ -8,6 +8,7 @@
 #include "shared/tables.h"
 #include "flags.h"
 #include "types.h"
+#include "macros.h"
 #include "system/io_write.h"
 #include "system/iwram_call.h"
 #include "field/actor.h"
@@ -569,8 +570,8 @@ void Lemuria_OfferSpringLuck(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-extern u8 gLemuria_RippleBuffer;
-extern s16 gLemuria_RippleLines[2][160];
+u8 gLemuria_RippleBuffer BSS_DATA;
+s16 gLemuria_RippleLines[2][160] BSS_DATA ALIGNED(16);
 
 /// Every fourth frame rotates colours 1-14 of background palettes 7 and 8 by
 /// one place. The loops are written with goto:

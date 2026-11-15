@@ -12,6 +12,7 @@
 /// party Pounds flat, it fights (DehkanPlateau_FightCannon).
 
 #include "types.h"
+#include "macros.h"
 #include "item_ids.h"
 #include "system/system.h"
 #include "field/actor.h"
@@ -626,7 +627,8 @@ void DehkanPlateau_RestorePoundCubeCracks(void) {
 void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
 void Actor_MoveToObject(s32 id, s32 target);
 
-extern s32 gDehkanPlateau_CrackZ;
+s32 gDehkanPlateau_CrackZ BSS_DATA;
+s32 gDehkanPlateau_CrackX BSS_DATA;
 
 #define SCENE(name) ((s32)&SceneId_##name)
 
@@ -1606,7 +1608,6 @@ void DehkanPlateau_InitializeThemisAxeChest(void) {
 }
 
 extern s16 gDehkanPlateau_TightropesRaisedPillars[];
-extern s32 gDehkanPlateau_CrackZ;
 
 void DehkanPlateau_ForgetCrackOnLeaving(void);
 

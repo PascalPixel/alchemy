@@ -14,6 +14,7 @@
 #include "resource_ids.h"
 #include "field/sprite.h"
 #include "field/actor_script.h"
+#include "macros.h"
 #include "../field/actor_set_sprite_priority.c"
 
 #include "../field/field_effect_move.c"
@@ -2386,7 +2387,7 @@ extern s16 gSlideOnIce_AnglesByKey[];
 
 #include "shared/leader_slide_on_ice.h"
 
-extern volatile s16 gSlideOnIce_Stopped;
+volatile s16 gSlideOnIce_Stopped BSS_DATA;
 
 s32 Actor_HasArrived(struct Actor *object);
 

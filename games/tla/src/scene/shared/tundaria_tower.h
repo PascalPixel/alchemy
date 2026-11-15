@@ -41,7 +41,6 @@ void Import_EventResolveAllPendingActions(void);
 void Event_ResolvePendingActions(s32 a);
 
 extern u8 MsgThereSSomething[];
-extern volatile s16 gSlideOnIce_Stopped;
 
 void Rocks_Spawn(s32 x, s32 y, s32 z, s32 frames);
 

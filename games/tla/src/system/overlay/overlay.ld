@@ -9,13 +9,14 @@
    is src/scene (or src/debug). Its import table, imports.o, follows its
    code: the build writes it for each overlay from imports.inc, a stub for
    each main-image routine the overlay's code calls. Each statement names the
-   section it places, so the objects keep their order. Where its globals are
-   written in assembly, its .bss is DIR/bss/NAME.s. */
+   section it places, so the objects keep their order. Its globals follow in
+   .bss, in the order its C first declares them (BSS_DATA keeps a global out
+   of the commons). */
 
 /* Most scenes are one overlay of one shape: the entry table, the scene's
-   code, its import table, then the scene's tables; SCENE_WITH_BSS adds the
-   globals the scene's bss/NAME.s defines. A scene of another shape writes
-   its block out. */
+   code, its import table, then the scene's tables, and its globals;
+   SCENE_WITH_BSS adds those written in assembly, in src/scene/NAME_bss.s. A
+   scene of another shape writes its block out. */
 #define SCENE(name) \
 SECTIONS \
 { \
@@ -25,6 +26,10 @@ SECTIONS \
         */games/tla/src/scene/name.o(.text) \
         */imports.o(.text) \
         */games/tla/src/scene/name.o(.data) \
+    } \
+    .bss : \
+    { \
+        */games/tla/src/scene/name.o(.bss COMMON) \
     } \
 }
 #define SCENE_WITH_BSS(name) \
@@ -39,7 +44,8 @@ SECTIONS \
     } \
     .bss : \
     { \
-        */games/tla/src/scene/bss/name.o(.bss) \
+        */games/tla/src/scene/name.o(.bss COMMON) \
+        */games/tla/src/scene/name##_bss.o(.bss) \
     } \
 }
 
@@ -59,7 +65,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/clear.o"(.bss)
+        "*/games/tla/src/scene/clear.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x64b
@@ -78,7 +84,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/world_map.o"(.bss)
+        "*/games/tla/src/scene/world_map.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x64c
@@ -97,7 +103,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/staff_credit.o"(.bss)
+        "*/games/tla/src/scene/staff_credit.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x64d
@@ -117,21 +123,21 @@ SCENE(venus_lighthouse)
 #elif OVERLAY == 0x64f
 SCENE(suhalla_gate)
 #elif OVERLAY == 0x650
-SCENE_WITH_BSS(idejima)
+SCENE(idejima)
 #elif OVERLAY == 0x651
 SCENE(daila)
 #elif OVERLAY == 0x652
 SCENE(daila_interiors)
 #elif OVERLAY == 0x653
-SCENE_WITH_BSS(kandorean_temple)
+SCENE(kandorean_temple)
 #elif OVERLAY == 0x654
-SCENE_WITH_BSS(shrine_of_the_sea_god)
+SCENE(shrine_of_the_sea_god)
 #elif OVERLAY == 0x655
-SCENE_WITH_BSS(dehkan_plateau)
+SCENE(dehkan_plateau)
 #elif OVERLAY == 0x656
 SCENE(lemurian_ship)
 #elif OVERLAY == 0x657
-SCENE_WITH_BSS(lemurian_ship_deck)
+SCENE(lemurian_ship_deck)
 #elif OVERLAY == 0x658
 SCENE(madra)
 #elif OVERLAY == 0x659
@@ -147,7 +153,7 @@ SCENE(mikasalla)
 #elif OVERLAY == 0x65e
 SCENE(mikasalla_interiors)
 #elif OVERLAY == 0x65f
-SCENE_WITH_BSS(garoh)
+SCENE(garoh)
 #elif OVERLAY == 0x660
 SCENE(garoh_interiors)
 #elif OVERLAY == 0x661
@@ -164,23 +170,23 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x662
-SCENE_WITH_BSS(yampi_desert_cave)
+SCENE(yampi_desert_cave)
 #elif OVERLAY == 0x663
-SCENE_WITH_BSS(airs_rock)
+SCENE(airs_rock)
 #elif OVERLAY == 0x664
-SCENE_WITH_BSS(airs_rock_inside)
+SCENE(airs_rock_inside)
 #elif OVERLAY == 0x665
 SCENE(alhafra)
 #elif OVERLAY == 0x666
-SCENE_WITH_BSS(alhafra_interiors)
+SCENE(alhafra_interiors)
 #elif OVERLAY == 0x667
 SCENE(alhafra_manor)
 #elif OVERLAY == 0x668
-SCENE_WITH_BSS(eastern_alhafra)
+SCENE(eastern_alhafra)
 #elif OVERLAY == 0x669
 SCENE(eastern_alhafra_ship)
 #elif OVERLAY == 0x66a
-SCENE_WITH_BSS(alhafran_cave)
+SCENE(alhafran_cave)
 #elif OVERLAY == 0x66b
 SECTIONS
 {
@@ -195,7 +201,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/gondowan_cliffs.o"(.bss)
+        "*/games/tla/src/scene/gondowan_cliffs.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x66c
@@ -207,7 +213,7 @@ SCENE(naribwe_interiors)
 #elif OVERLAY == 0x66f
 SCENE(kibombo_mountains)
 #elif OVERLAY == 0x670
-SCENE_WITH_BSS(kibombo)
+SCENE(kibombo)
 #elif OVERLAY == 0x671
 SECTIONS
 {
@@ -222,7 +228,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/gabomba_statue.o"(.bss)
+        "*/games/tla/src/scene/gabomba_statue.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x672
@@ -230,11 +236,11 @@ SCENE(gabomba_statue_chamber)
 #elif OVERLAY == 0x673
 SCENE(gabomba_catacombs)
 #elif OVERLAY == 0x674
-SCENE_WITH_BSS(islets)
+SCENE(islets)
 #elif OVERLAY == 0x675
-SCENE_WITH_BSS(islet_cave)
+SCENE(islet_cave)
 #elif OVERLAY == 0x676
-SCENE_WITH_BSS(yallam)
+SCENE(yallam)
 #elif OVERLAY == 0x677
 SCENE(yallam_interiors)
 #elif OVERLAY == 0x678
@@ -252,7 +258,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/apojii_islands.o"(.bss)
+        "*/games/tla/src/scene/apojii_islands.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x67a
@@ -272,7 +278,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/aqua_rock.o"(.bss)
+        "*/games/tla/src/scene/aqua_rock.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x67c
@@ -289,7 +295,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/aqua_rock_inside.o"(.bss)
+        "*/games/tla/src/scene/aqua_rock_inside.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x67d
@@ -301,7 +307,7 @@ SCENE(izumo_ruins)
 #elif OVERLAY == 0x680
 SCENE(gaia_rock)
 #elif OVERLAY == 0x681
-SCENE_WITH_BSS(gaia_rock_inside)
+SCENE(gaia_rock_inside)
 #elif OVERLAY == 0x682
 SCENE(champa)
 #elif OVERLAY == 0x683
@@ -322,9 +328,9 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x686
-SCENE_WITH_BSS(ankohl_ruins)
+SCENE(ankohl_ruins)
 #elif OVERLAY == 0x687
-SCENE_WITH_BSS(sea_of_time)
+SCENE(sea_of_time)
 #elif OVERLAY == 0x688
 SCENE(lemuria_entrance)
 #elif OVERLAY == 0x689
@@ -332,7 +338,7 @@ SCENE(lemuria_dock)
 #elif OVERLAY == 0x68a
 SCENE(ancient_lemuria)
 #elif OVERLAY == 0x68b
-SCENE_WITH_BSS(lemuria)
+SCENE(lemuria)
 #elif OVERLAY == 0x68c
 SCENE(lemuria_interiors)
 #elif OVERLAY == 0x68d
@@ -349,27 +355,27 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/lemuria_palace.o"(.bss)
+        "*/games/tla/src/scene/lemuria_palace.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x68e
-SCENE_WITH_BSS(lemuria_spring)
+SCENE(lemuria_spring)
 #elif OVERLAY == 0x68f
-SCENE_WITH_BSS(tundaria_tower)
+SCENE(tundaria_tower)
 #elif OVERLAY == 0x690
-SCENE_WITH_BSS(settlements)
+SCENE(settlements)
 #elif OVERLAY == 0x691
 SCENE(magma_rock)
 #elif OVERLAY == 0x692
-SCENE_WITH_BSS(magma_rock_inside)
+SCENE(magma_rock_inside)
 #elif OVERLAY == 0x693
 SCENE(atteka_inlet)
 #elif OVERLAY == 0x694
-SCENE_WITH_BSS(contigo)
+SCENE(contigo)
 #elif OVERLAY == 0x695
 SCENE(shaman_village_cave)
 #elif OVERLAY == 0x696
-SCENE_WITH_BSS(shaman_village)
+SCENE(shaman_village)
 #elif OVERLAY == 0x697
 SECTIONS
 {
@@ -386,7 +392,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/trial_road.o"(.bss)
+        "*/games/tla/src/scene/trial_road.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x698
@@ -404,7 +410,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_entrance.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_entrance.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x699
@@ -422,7 +428,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_basement.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_basement.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x69a
@@ -440,7 +446,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_gate_button.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_gate_button.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x69b
@@ -458,7 +464,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_beam.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_beam.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x69c
@@ -477,7 +483,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_erinyes_tunic_chest.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_erinyes_tunic_chest.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x69d
@@ -495,7 +501,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_locked_doors.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_locked_doors.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x69e
@@ -513,7 +519,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_red_key.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_red_key.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x69f
@@ -531,7 +537,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_cracked_floor.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_cracked_floor.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6a0
@@ -550,7 +556,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_whorl.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_whorl.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6a1
@@ -569,7 +575,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_blue_key.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_blue_key.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6a2
@@ -587,7 +593,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_phaetons_blade_chest.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_phaetons_blade_chest.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6a3
@@ -606,7 +612,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_m.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_m.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6a4
@@ -624,7 +630,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_aerie.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_aerie.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6a5
@@ -643,7 +649,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_aerie_beacon.o"(.bss)
+        "*/games/tla/src/scene/jupiter_lighthouse_aerie_beacon.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6a6
@@ -671,15 +677,15 @@ SECTIONS
     }
 }
 #elif OVERLAY == 0x6a8
-SCENE_WITH_BSS(prox)
+SCENE(prox)
 #elif OVERLAY == 0x6a9
 SCENE(caverns)
 #elif OVERLAY == 0x6aa
-SCENE_WITH_BSS(mars_lighthouse_entrance)
+SCENE(mars_lighthouse_entrance)
 #elif OVERLAY == 0x6ab
-SCENE_WITH_BSS(mars_lighthouse_star_room)
+SCENE(mars_lighthouse_star_room)
 #elif OVERLAY == 0x6ac
-SCENE_WITH_BSS(mars_lighthouse_room_m)
+SCENE(mars_lighthouse_room_m)
 #elif OVERLAY == 0x6ad
 SECTIONS
 {
@@ -696,15 +702,15 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/mars_lighthouse_room_f.o"(.bss)
+        "*/games/tla/src/scene/mars_lighthouse_room_f.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6ae
-SCENE_WITH_BSS(mars_lighthouse_aerie)
+SCENE(mars_lighthouse_aerie)
 #elif OVERLAY == 0x6af
-SCENE_WITH_BSS(treasure_isle)
+SCENE(treasure_isle)
 #elif OVERLAY == 0x6b0
-SCENE_WITH_BSS(anemos_inner_sanctum)
+SCENE(anemos_inner_sanctum)
 #elif OVERLAY == 0x6b1
 SECTIONS
 {
@@ -720,11 +726,11 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/anemos_inner_sanctum_entrance.o"(.bss)
+        "*/games/tla/src/scene/anemos_inner_sanctum_entrance.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6b2
-SCENE_WITH_BSS(mercury_lighthouse)
+SCENE(mercury_lighthouse)
 #elif OVERLAY == 0x6b3
 SECTIONS
 {
@@ -738,7 +744,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/epilogue.o"(.bss)
+        "*/games/tla/src/scene/epilogue.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6b4
@@ -755,7 +761,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/lobby.o"(.bss)
+        "*/games/tla/src/scene/lobby.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6b6
@@ -792,7 +798,7 @@ SECTIONS
     }
     .bss :
     {
-        "*/games/tla/src/debug/bss/psynergy_test.o"(.bss)
+        "*/games/tla/src/debug/psynergy_test.o"(.bss COMMON)
     }
 }
 #elif OVERLAY == 0x6b9

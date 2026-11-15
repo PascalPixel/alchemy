@@ -17,6 +17,7 @@
 /// the scene finishes his words if it is left before he has spoken.
 #define FLAG_FATHER_SEES_THE_STONE 0x95e
 #include "types.h"
+#include "macros.h"
 #include "graphics/output.h"
 #include "system/io_write.h"
 #include "system/system.h"
@@ -135,9 +136,6 @@ void GroundParticles_Draw(void);
 void ApojiiIslands_StartSparkles(void);
 void ApojiiIslands_SetSparkleAnchor(s32 id);
 
-extern s32 gApojiiIslands_SplitLine;
-extern u16 gApojiiIslands_UpperScrollX;
-extern u16 gApojiiIslands_LowerScrollX;
 struct CellMarker {
   s32 x;
   s32 y;
@@ -154,7 +152,20 @@ struct CellMarkers {
   struct CellMarker markers[128];
 };
 
-extern struct CellMarkers gApojiiIslands_CellMarkers;
+u16 gApojiiIslands_FallsColors[16] BSS_DATA ALIGNED(4);
+u16 gApojiiIslands_FallsCycled[16] BSS_DATA;
+u16 gApojiiIslands_SprayColors[16] BSS_DATA;
+u16 gApojiiIslands_SprayCycled[16] BSS_DATA;
+u16 gApojiiIslands_SeaColors[16] BSS_DATA;
+u16 gApojiiIslands_SeaCycled[16] BSS_DATA;
+u16 gApojiiIslands_ShoreColors[16] BSS_DATA;
+u16 gApojiiIslands_ShoreCycled[16] BSS_DATA;
+u16 gApojiiIslands_StoneColors[16] BSS_DATA;
+u16 gApojiiIslands_StoneCycled[16] BSS_DATA;
+s32 gApojiiIslands_SplitLine BSS_DATA;
+u16 gApojiiIslands_UpperScrollX BSS_DATA;
+u16 gApojiiIslands_LowerScrollX BSS_DATA;
+struct CellMarkers gApojiiIslands_CellMarkers BSS_DATA;
 extern u32 gApojiiIslands_SplashScript[];
 extern u32 gWaterDropScript[];
 
@@ -227,8 +238,6 @@ extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 extern s32 gApojiiIslands_PaceScript[];
 
-extern u16 gApojiiIslands_StoneColors[16];
-
 extern u8 Data_0202c001[];
 
 void ApojiiIslands_HazeJoinsParty(void) {
@@ -265,10 +274,6 @@ void ApojiiIslands_RiseFromSand(void) {
 }
 
 extern s32 gApojiiIslands_FallsCycleFrame;
-extern u16 gApojiiIslands_FallsColors[];
-extern u16 gApojiiIslands_FallsCycled[];
-extern u16 gApojiiIslands_SprayColors[];
-extern u16 gApojiiIslands_SprayCycled[];
 
 void ApojiiIslands_CycleFallsColors(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -303,10 +308,6 @@ void ApojiiIslands_CycleFallsColors(void) {
 }
 
 extern s32 gApojiiIslands_SeaCycleFrame;
-extern u16 gApojiiIslands_SeaColors[];
-extern u16 gApojiiIslands_SeaCycled[];
-extern u16 gApojiiIslands_ShoreColors[];
-extern u16 gApojiiIslands_ShoreCycled[];
 
 /// The sea's and shore's colours cycle every eighth frame.
 void ApojiiIslands_CycleSeaColors(void) {
@@ -352,8 +353,6 @@ void ApojiiIslands_ResumeSeaColors(void) {
   Task_ResumeAll(ApojiiIslands_CycleSeaColors);
   System_Wait(3);
 }
-
-extern u16 gApojiiIslands_StoneCycled[16];
 
 s32 __modsi3(s32 a, s32 b);
 

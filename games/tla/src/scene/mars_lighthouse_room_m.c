@@ -160,18 +160,33 @@ void Actor_Release(void *handle);
 void FieldCamera_MoveToActorById(s32 a, s32 b);
 void FieldCamera_WaitForArrival(void);
 void Teleport_PlaySparks(void);
-extern u16 gMarsLighthouseRoomM_LedgeSavedPalette[];
 /// The colours of BG palettes 8 and 9.
 struct HallColors {
   u16 colors[2 * PALETTE_COLORS];
 };
-extern struct HallColors gMarsLighthouseRoomM_HallFlameColors;
-extern struct HallColors gMarsLighthouseRoomM_HallPalette;
-extern const u16 gMarsLighthouseRoomM_UnlitFlameColors[];
-extern s16 gMarsLighthouseRoomM_DoorwayBlend;
-extern s16 gMarsLighthouseRoomM_DoorwayBlendTarget;
-extern s16 gMarsLighthouseRoomM_Doorway;
-extern s16 gMarsLighthouseRoomM_DoorwayStep;
+u16 gPaletteCycle_Flash BSS_DATA;
+u16 *gPaletteCycle_Order BSS_DATA;
+u16 gPaletteCycle_Countdown BSS_DATA;
+u16 gPaletteCycle_Period BSS_DATA ALIGNED(4);
+u16 *gPaletteCycle_Slots BSS_DATA;
+u16 *gPaletteCycle_FlashColors BSS_DATA;
+u16 *gPaletteCycle_Colors BSS_DATA;
+u16 gPaletteCycle_Count BSS_DATA;
+u16 gPaletteCycle_Step BSS_DATA ALIGNED(4);
+u16 gMarsLighthouseRoomM_LedgeFlameColors[2 * PALETTE_COLORS] BSS_DATA
+    ALIGNED(4);
+u16 gMarsLighthouseRoomM_LedgePalette[2 * PALETTE_COLORS] BSS_DATA;
+u16 gMarsLighthouseRoomM_LedgeSavedPalette[PALETTE_COLORS] BSS_DATA;
+struct HallColors gMarsLighthouseRoomM_HallFlameColors BSS_DATA;
+struct HallColors gMarsLighthouseRoomM_HallPalette BSS_DATA;
+/// BG palette 2's first ten colours; it is saved whole, with the unlit flame
+/// colours after them.
+u16 gMarsLighthouseRoomM_HallSavedPalette[10] BSS_DATA;
+u16 gMarsLighthouseRoomM_UnlitFlameColors[6] BSS_DATA;
+s16 gMarsLighthouseRoomM_DoorwayBlend BSS_DATA;
+s16 gMarsLighthouseRoomM_DoorwayBlendTarget BSS_DATA;
+s16 gMarsLighthouseRoomM_Doorway BSS_DATA;
+s16 gMarsLighthouseRoomM_DoorwayStep BSS_DATA;
 void Map_CopyPalette(s32 scene, s32 a1);
 void TilesetAnim_Resume(u32 no);
 
@@ -259,12 +274,6 @@ extern struct ActorPlacement gMarsLighthouseRoomM_Placements[];
 extern struct ActorPlacement gMarsLighthouseRoomM_Room6Placements[];
 extern struct ActorPlacement gMarsLighthouseRoomM_Room1Placements[];
 
-extern u16 gPaletteCycle_Flash;
-extern u16 gPaletteCycle_Countdown;
-extern u16 gPaletteCycle_Period;
-extern u16 *gPaletteCycle_Slots;
-extern u16 gPaletteCycle_Count;
-extern u16 gPaletteCycle_Step;
 extern struct Trigger gMarsLighthouseRoomM_Triggers[];
 extern struct Trigger gMarsLighthouseRoomM_Room6Triggers[];
 extern struct Trigger gMarsLighthouseRoomM_Room1Triggers[];
@@ -300,8 +309,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 extern s32 gMarsLighthouseRoomM_LedgeCycleFrame;
-extern u16 gMarsLighthouseRoomM_LedgeFlameColors[];
-extern u16 gMarsLighthouseRoomM_LedgePalette[];
 
 /// Each frame on the beacon ledge: once its flame is lit, its element's six
 /// colours turn round in the flame's palette.
@@ -415,7 +422,6 @@ void MarsLighthouseRoomM_LightFlame(void) {
 }
 
 extern s32 gMarsLighthouseRoomM_HallCycleFrame;
-extern u16 gMarsLighthouseRoomM_HallSavedPalette[];
 
 /// Each frame in the hall: the lit flames' colours turn round, and an unlit
 /// one shows the palette's unlit colours.
@@ -1025,10 +1031,6 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
   }
 }
 
-extern u16 *gPaletteCycle_FlashColors;
-extern u16 *gPaletteCycle_Colors;
-extern u16 *gPaletteCycle_Order;
-
 void Teleport_ArriveWhirling(void);
 
 /// Records the four palette lists, writes each listed palette entry from its
@@ -1098,10 +1100,6 @@ void Teleport_StopShimmer(void) {
 DEFINE_TELEPORT_START_SHIMMER(Teleport_StartFastShimmer, 2, 2)
 
 #include "shared/list_count_entries.h"
-
-extern u16 *gPaletteCycle_Order;
-extern u16 *gPaletteCycle_FlashColors;
-extern u16 *gPaletteCycle_Colors;
 
 void PaletteCycle_Fade(void) {
   s32 step;

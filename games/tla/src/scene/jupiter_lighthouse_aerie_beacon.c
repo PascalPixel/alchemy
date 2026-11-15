@@ -164,17 +164,26 @@ void JupiterLighthouse_KarstAndAgatioWait(void);
 
 void SceneActor_ParkRecord(struct Actor *actor);
 
-extern s16 gLightSpriteTile;
-extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[16];
-extern struct LightOam gLightSpriteOams[];
-extern s16 gLightSpritePriority;
-
-s32 BattleEffect_GetObjectPriority(struct Actor *actor);
-
+s32 gJupiterLighthouse_BeamLevel BSS_DATA;
+u8 gJupiterLighthouse_UnusedAfterBeamLevel[4] BSS_DATA;
+s32 gJupiterLighthouse_BeaconStage BSS_DATA;
+s32 gJupiterLighthouse_WhirlwindRiding BSS_DATA;
+u16 gPaletteCycleColors[16] BSS_DATA;
+/// Palette 13's first two colours; it is copied whole, with the unlit colours
+/// after them.
+u16 gLighthousePalette13[2] BSS_DATA;
+u16 gLighthouseUnlitColors[14] BSS_DATA;
+s16 gLightSpriteTile BSS_DATA;
+s16 gLightSpriteCount BSS_DATA;
+struct Actor *gLightSpriteActors[16] BSS_DATA;
+struct LightOam gLightSpriteOams[16] BSS_DATA;
+s16 gLightSpritesLarge BSS_DATA;
+s16 gLightSpritePriority BSS_DATA;
 /// The cells CrackedTiles_Step watches, and the cell it copies over the one the
 /// leader steps on.
-extern struct CellTarget gCrackedTiles;
+struct CellTarget gCrackedTiles BSS_DATA;
+
+s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
 void Event_End(void);
 
@@ -218,8 +227,6 @@ struct WhirlwindActor {
   void (*update)(void);
 };
 
-extern s32 gJupiterLighthouse_BeaconStage;
-
 extern s32 gJupiterLighthouse_BeaconRisesScript[];
 extern s32 gJupiterLighthouse_BeaconSparkScript[];
 
@@ -228,18 +235,10 @@ void FieldCamera_WaitForArrival(void);
 void JupiterLighthouse_LiftObjectsInBeam(s32 mode);
 void JupiterLighthouse_ScrollBeam(s32 mode);
 
-extern s32 gJupiterLighthouse_BeamLevel;
-
 s32 HangingVine_Place();
-
-extern u16 gPaletteCycleColors[];
-extern u16 gLighthousePalette13[];
-extern u16 gLighthouseUnlitColors[];
 
 void MapGrid_SetAttributeBAt();
 s32 MapGrid_GetCellBehavior();
-
-extern s32 gJupiterLighthouse_WhirlwindRiding;
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 
@@ -2554,8 +2553,6 @@ void JupiterLighthouse_EnergizeAngels(void) {
     rider->motionFlags = 4;
   }
 }
-
-extern s16 gLightSpritesLarge;
 
 // Queues the lit actors' sprites: for each listed actor with a position,
 // projects it from the map's view, skips it off screen, and writes a 16 by 16

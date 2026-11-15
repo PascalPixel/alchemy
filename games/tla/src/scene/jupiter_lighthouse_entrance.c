@@ -24,6 +24,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "macros.h"
 #include "field/scene_tables.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
@@ -54,22 +55,28 @@
 #include "system/io_write.h"
 #include "field/field_effect.h"
 
-extern u16 gLighthouseUnlitColors[];
+s32 gWhirlwindRiding BSS_DATA;
+u16 gPaletteCycleColors[16] BSS_DATA;
+/// Palette 13's first two colours; it is copied whole, with the unlit colours
+/// after them.
+u16 gPaletteCycleUnlitPalette[2] BSS_DATA;
+u16 gLighthouseUnlitColors[14] BSS_DATA;
+s16 gLightSpriteTile BSS_DATA;
+s16 gLightSpriteCount BSS_DATA;
+u32 gLightSpriteActors[16] BSS_DATA;
+struct LightOam gLightSpriteOams[16] BSS_DATA;
+s16 gLightSpritesLarge BSS_DATA;
+s16 gLightSpritePriority BSS_DATA;
+struct CellTarget gCrackedTiles BSS_DATA;
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-extern s16 gLightSpriteCount;
-extern struct LightOam gLightSpriteOams[];
-extern s16 gLightSpritesLarge;
-extern s16 gLightSpritePriority;
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 void JupiterLighthouse_CycloneSecondPatch(void);
 void JupiterLighthouse_CycloneFourthPatch(void);
 void JupiterLighthouse_CycloneFifthPatch(void);
 void JupiterLighthouse_CycloneUncoversTheSpot(void);
 void JupiterLighthouse_LeaveByCyclone(void);
-extern u16 gPaletteCycleColors[];
-extern u16 gPaletteCycleUnlitPalette[];
 
 void MapGrid_SetAttributeBAt();
 
@@ -190,7 +197,6 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
 #include "shared/position_flat_distance.h"
 
 extern s32 gWhirlwindEndScript[];
-extern s32 gWhirlwindRiding;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 void Actor_StartScript(struct Actor *object, const s32 *script);
@@ -249,9 +255,6 @@ s32 JupiterLighthouse_EmitRisingMotes(struct SceneEffectSource *object) {
 // projects it from the map's view, skips it off screen, and writes a 16 by 16
 // sprite, or a 32 by 64 one when the big switch is set, at its animation
 // picture and depth.
-
-extern s16 gLightSpriteTile;
-extern u32 gLightSpriteActors[];
 
 #include "shared/light_sprites_draw.h"
 
@@ -390,7 +393,6 @@ void MapGrid_CenterOnFollowedPoint(void);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-extern struct CellTarget gCrackedTiles;
 void JupiterLighthouse_CycloneSecondPatch(void);
 void JupiterLighthouse_CycloneFourthPatch(void);
 void JupiterLighthouse_CycloneFifthPatch(void);

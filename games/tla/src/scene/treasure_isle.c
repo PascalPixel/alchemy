@@ -6,6 +6,7 @@
 #include "flags.h"
 #include "scene_ids.h"
 #include "types.h"
+#include "macros.h"
 #include "battle/battle.h"
 #include "field/actor.h"
 #include "field/actor_script.h"
@@ -118,10 +119,10 @@ void TreasureIsle_PressRoom2Button(void);
 struct Palette {
   u16 colors[PALETTE_COLORS];
 };
-extern struct Palette gTreasureIsle_SavedBgColors;
-extern struct Palette gTreasureIsle_BgColors;
-extern struct Palette gTreasureIsle_SavedObjColors;
-extern struct Palette gTreasureIsle_ObjColors;
+struct Palette gTreasureIsle_SavedBgColors BSS_DATA;
+struct Palette gTreasureIsle_BgColors BSS_DATA;
+struct Palette gTreasureIsle_SavedObjColors BSS_DATA;
+struct Palette gTreasureIsle_ObjColors BSS_DATA;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

@@ -303,6 +303,9 @@ extern s8 gMenu_CursorBobOffsets[];
 
 struct MenuSelection;
 
+/// The selection screen's per-frame task: slides and draws the row of icons,
+/// the large icon over the chosen one, the end arrows, the icons already chosen
+/// and the pointing hand.
 void SelectionMenu_Draw(void) {
   struct SelectionScreen *state = Ram_HeapSlots->selectionMenu;
   struct SelectionSprite *cursorEntry = &state->records[14].sprite;
@@ -513,6 +516,9 @@ struct MenuSelection {
 };
 extern u8 gMenu_CursorActorTiles[], gMenu_CursorLeftActorTiles[];
 
+/// Draws the selection screen's left (index 0) or right (1) arrow, nudged
+/// outwards while it flashes after a scroll: the record's base holds the
+/// frames left of the nudge (8 after each scroll) and is the nudge in pixels.
 void SelectionMenu_DrawArrow(struct MenuSelection *state, s32 index) {
   u32 frame = (gVBlankCount >> 2) & 7;
   struct SlotEntry *entry;
@@ -864,6 +870,8 @@ UNUSED void Menu_MoveSelectionForward(struct SelectionScrollScreen *screen) {
 extern struct SelectionScrollScreen *gResQueueWork;
 extern volatile u32 gKeysRepeat;
 
+/// Moves the cursor one entry left, scrolling the row at its second place. This
+/// variant stops at the beginning; SelectionMenu_StepLeft also wraps around.
 void Menu_MoveSelectionBackward(struct SelectionScrollScreen *screen) {
   if (screen->top == 0 && screen->cursor == 0) {
     return;
@@ -1269,6 +1277,8 @@ s32 Resource_LoadByMode(u32 mode, s32 value) {
   return result;
 }
 
+/// Loads the icon of an entry of kind mode into sprite tile slot result (a free
+/// slot when -1) and returns the slot, or -1 when none was free.
 s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
   s32 output;
   s32 original = result;
@@ -1715,6 +1725,9 @@ void SelectionMenu_CreateEmpty(void) {
 
 void SelectionMenu_BuildEntries(u32);
 
+/// Runs a selection row with the cursor on entry initialIndex, cancellable, and
+/// returns the entry chosen or -1. initialIndex is a row index; cancellation
+/// returns -1 encoded as u32.
 u32 Menu_RunSelectionForValue(u32 value) {
   struct SelectionScreen *state = Ram_HeapSlots->selectionMenu;
   u32 result;

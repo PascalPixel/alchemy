@@ -6,6 +6,9 @@
 #include "../menu_internal.h"
 #include "sounds.h"
 
+/// Uses the item in memberId's inventory slot on targetId, or on every party
+/// member when its action's range is ABILITY_RANGE_ALL: applies its action at
+/// its plain power (Ability_ApplyToTargets with fixedScale 1).
 s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
   struct ItemMenuWork *menu;
   s32 useResult;
@@ -37,6 +40,9 @@ s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
 
 s32 Battle_CalculateRecoveryFar(s32 value, s32 selector, s32 multiplier);
 
+/// Applies the healing, curing, revival or lasting stat rise of action
+/// effectId, used by party member sourceId, to targetId, or to every party
+/// member when the action's range is ABILITY_RANGE_ALL.
 s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                            s32 fixedScale) {
   struct BattleAct *effect;

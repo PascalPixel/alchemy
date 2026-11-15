@@ -15,6 +15,8 @@
 #define Actor_SelectAnimationFar                                               \
   ((void (*)(struct MotionObject *, s32))Actor_SelectAnimationFar)
 
+/// Sends unitId back to its spot, landing exactly there (snapToTarget), and
+/// turns it to face the centre at once.
 void BattleMotion_ReturnToSpot(s32 slotId) {
   s32 z;
   s32 zero;
@@ -39,6 +41,8 @@ void BattleMotion_ReturnToSpot(s32 slotId) {
   object->angle = (s16)(ArcTan2(z >> 3, slot->anchorX) - TRIG_TURN / 2);
 }
 
+/// Sends unitId running off its side of the battlefield, three times as far
+/// out as its spot, with a hop, in POSE_STANDING.
 void BattleMotion_SetupEscapeObject(s32 objectId) {
   struct BattleObj *slot;
   struct MotionObject *object;
@@ -79,6 +83,7 @@ void BattleMotion_LeapToward(struct Actor **startSlot, struct Actor **endSlot,
   Actor_SelectAnimationFar(start, 2);
 }
 
+/// Sends a unit's actor back to its spot. Nothing in the source calls it.
 void BattleMotion_ReturnObjectToSpot(struct BattleObj *slot) {
   struct MotionObject *object = slot->object;
 
@@ -90,6 +95,8 @@ void BattleMotion_ReturnObjectToSpot(struct BattleObj *slot) {
   Actor_SetMoveTargetFar(object, slot->anchorX, 0, slot->anchorZ);
 }
 
+/// Sends unitId hopping out to one and a half times its spot's distance from
+/// the centre.
 void BattleMotion_HopBack(s32 objectId) {
   u32 scaledX;
   struct BattleObj *slot;
@@ -212,6 +219,8 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   Actor_SelectAnimationFar(object, 2);
 }
 
+/// Restarts unit id's motion in its leap (animation 2). Nothing in the source
+/// calls it.
 void BattleMotion_RestartLeap(s32 id) {
   struct MotionObject *object;
 
@@ -226,6 +235,8 @@ void BattleMotion_RestartLeap(s32 id) {
 
 void BattleMotion_MidpointNoOp(void *position, s32 speed) {}
 
+/// Unused: works out the point halfway between two units and hands it to a
+/// routine that does nothing.
 void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   struct BattleObj *secondSlot;
   struct MotionObject *first;
@@ -266,6 +277,8 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   BattleMotion_MidpointNoOp(&pos, 0x1000);
 }
 
+/// Plays the hit flash on unit id's sprite and waits ten frames. Only a
+/// single-sprite actor takes it. Nothing in the source calls it.
 void BattleMotion_PlayHitFlash(s32 slot) {
   struct SlotEffectEntry *entry =
       (struct SlotEffectEntry *)BattleObject_Get(slot);

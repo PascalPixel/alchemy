@@ -1279,6 +1279,8 @@ s32 FieldMenu_SelectCommand(s32 selection) {
   return ret;
 }
 
+/// Opens the field command menu and animates from start to the command's icon.
+/// Returns the final icon position after closing the menu.
 s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1) {
   PartyStatus_OpenAndWait();
   IconMenu_Open();

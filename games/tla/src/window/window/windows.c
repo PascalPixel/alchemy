@@ -285,6 +285,7 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
   return found;
 }
 
+/// Waits until a zooming window has finished opening or closing.
 void Window_WaitZoom(void *work) {
   if (!(WINDOW_FLAG_INSTANT & ((struct Window *)work)->flags) &&
       (((struct Window *)work)->duration != 0)) {
@@ -336,6 +337,8 @@ void Window_Close(struct Window *work, s32 release) {
   }
 }
 
+/// Clears a window's contents: redraws it empty and releases the render
+/// window sprites it carries. A text canvas window is left alone.
 void WindowSprite_PrepareForRedraw(struct Window *work) {
   if (!(WINDOW_FLAG_TEXT_CANVAS & work->flags)) {
     WindowSprite_RedrawSavedRect(work);
@@ -348,6 +351,8 @@ void WindowSprite_RedrawSavedRect(struct Window *window) {
                     window->height);
 }
 
+/// Releases every window sprite in a list and empties it. sprites is the list,
+/// or a window (whose sprite list comes first); NULL is ignored.
 void WindowSprite_ClearList(void *work) {
   struct WindowSpriteList *list = work;
   struct WindowSprite *node;
@@ -423,6 +428,8 @@ void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
 #define UI_PALETTE_OWNER_OFFSET 0x1160
 #endif
 
+/// Points a list's tail link back at its last sprite, after the list has been
+/// edited by hand.
 void WindowSprite_UpdateListTail(struct WindowSpriteList *list) {
   struct WindowSprite *node = list->head;
   struct WindowSprite **tail = &list->head;
@@ -583,6 +590,8 @@ void Text_FillCanvasBackground(void) {
   fill(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, TEXT_CANVAS_BACKGROUND_WORD);
 }
 
+/// Resets the pen and text style of the first idle message, clearing the canvas
+/// when the message still has a window.
 void Message_ResetIdle(void) {
   struct UiChannelSlot *slot =
       ((struct WindowWork *)Ram_HeapSlots->windowWork)->channels;

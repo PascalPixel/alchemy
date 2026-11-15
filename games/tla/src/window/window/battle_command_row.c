@@ -13,6 +13,8 @@ struct WindowTiles {
   u16 cells[32][32];
 };
 
+/// Opens a message at (x, y), waits for its text to finish, and returns its
+/// window so the caller can hold it open for a separate prompt.
 s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
   s32 result;
 

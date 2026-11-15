@@ -401,6 +401,8 @@ struct BattleTransitionEntry {
   u32 fieldc;
 };
 
+/// Unused: sets entries to the identity transform, then stores the first word's
+/// old value plus its new one in the second.
 void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
   u32 previous = entries[0].value;
 

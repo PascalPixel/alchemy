@@ -557,6 +557,7 @@ void BattleMessage_WaitForTyping(void) {
   ((s32 *)Ram_HeapSlots->battleMessage)[2] = 1;
 }
 
+/// Takes an enemy out of the battle at once, one that leaves rather than falls.
 s32 BattleObject_DestroyTemporaryObject(s32 arg0) {
   // UB: declared s32 but returns no value; no caller reads it.
   struct BattleUnit *creature;
@@ -657,6 +658,8 @@ u32 BattlePlayback_RunAll(void) {
   return BattlePlayback_Reset();
 }
 
+/// Queues one playback command with its operand, and returns the opcode.
+/// Nothing checks the queue's capacity.
 void BattlePlayback_Push(u32 opcode, u32 operand) {
   struct BattleEventQueue *queue = &Ram_HeapSlots->battleWork->events.queue;
   u32 index = queue->count;

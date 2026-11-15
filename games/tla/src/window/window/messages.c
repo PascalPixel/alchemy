@@ -110,6 +110,8 @@ s32 *Memory_ClearWordIfSet(s32 *p) {
   return p;
 }
 
+/// Closes every window: first the messages' windows, waiting until they have
+/// closed, then the windows opened directly, which it does not wait for.
 void Window_CloseAll(void) {
   struct WindowWork *state;
   struct UiChannelSlot *slot;
@@ -255,6 +257,8 @@ void MessageArgument_Push(u32 value, u32 kind) {
   } while (no != limit);
 }
 
+/// Returns the value of the first message argument of kind (MESSAGE_ARGUMENT_),
+/// or 0 when there is none.
 u32 MessageArgument_Lookup(u32 kind, u32 clear) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u32 index;
@@ -327,6 +331,7 @@ struct UiWindowState {
   s32 pendingValue;
 };
 
+/// Closes each message's window whose text has ended, then waits ten frames.
 void Message_CloseFinishedWindows(void) {
   s32 slotIndex;
   struct UiChannelSlot *slot;
@@ -353,6 +358,9 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
 s32 Message_AllTyped(void);
 s32 Window_IsClosed(struct Window *window);
 
+/// Shows a message centred across the screen and in its top 15 rows (yOffset
+/// tiles lower) and waits until it is typed out, then closes it, in the window
+/// mode `mode` gives.
 void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
   struct WindowWork *work;
   struct Window *window;
@@ -588,6 +596,9 @@ s32 Text_DrawMessageToCanvas(s32 message, u8 *canvas) {
   return 0;
 }
 
+/// Points reader at the start of message (its compressed bits and first
+/// context), running the ARM lookup routine from a RAM copy, which it frees
+/// before returning.
 void Message_Find(struct TextReader *reader, s32 message) {
   void (*routine)(struct TextReader *, s32);
 
@@ -788,6 +799,9 @@ s32 Portrait_GetForSpeaker(u32 value) {
   return result;
 }
 
+/// Opens a portrait window at tile (x, y) showing the speaker's portrait.
+/// portraitOption is passed on through Portrait_Create to Icon_LoadWithPalette,
+/// which ignores it.
 struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
                                    s32 y) {
   struct Window *win;
@@ -813,6 +827,9 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
   return win;
 }
 
+/// Closes the portrait window showing speaker entry, if one is open, at once.
+/// portraitPictures selects the portrait slot, then portraitSprites identifies
+/// its window sprite, found as the first sprite of some window.
 void Portrait_CloseWindow(s32 id) {
   struct WindowWork *state;
   struct Window *work;

@@ -10,6 +10,8 @@
 
 // XXX: what this encodes, and whether item ids here are wider than The Broken
 // Seal's 9 bits; its callers would settle it.
+/// Returns an item's rank among the spoils: an indispensable item first, then a
+/// rare one, then the higher item id; 0 for none.
 u32 BattleSpoils_RankItem(u32 value) {
   u32 bank = 0;
   u32 base = value & 0x1ff;
@@ -198,6 +200,9 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
 
 #define ACTION_ID_MASK OWNER_ACTION_ID_MASK
 
+/// Hands out the spoils after a victory: experience to each party member still
+/// standing, with every level gained, then the coins, then the items best
+/// first.
 void Battle_AwardSpoils(void) {
   struct BattleSpoils *spoils;
   s32 living;

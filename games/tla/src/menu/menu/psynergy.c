@@ -775,6 +775,8 @@ struct PsynergyEntryMenu {
   struct PsynergyEntryIcon *entryIcons[32];
 };
 
+/// Loads each listed Psynergy's icon into its icon sprite (32 entries) and
+/// hides the icons of empty entries.
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
   s32 remaining;
   struct PsynergyEntryIcon **icons;

@@ -15,6 +15,9 @@
 
 s32 GameFlag_Set(s32 flag_no);
 
+/// Resumes the overlay tasks and tileset animations when a menu closes, and
+/// clears FLAG_WEATHER_HELD and FLAG_PALETTE_BLEND_HELD: undoes
+/// Menu_SuspendFieldTasks.
 void Menu_ResumeFieldTasks(void) {
   Task_ResumeOverlayTasks();
   TilesetAnim_ResumeAllFar();
@@ -22,6 +25,10 @@ void Menu_ResumeFieldTasks(void) {
   GameFlag_Clear(FLAG_PALETTE_BLEND_HELD);
 }
 
+/// Suspends the overlay tasks and tileset animations while a menu is open, and
+/// sets FLAG_PALETTE_BLEND_HELD and FLAG_WEATHER_HELD, so that the field's
+/// palette blend and weather stand still behind it (see Menu_ResumeFieldTasks,
+/// which undoes it).
 s32 Menu_SuspendFieldTasks(void) {
   GameFlag_Set(FLAG_PALETTE_BLEND_HELD);
   GameFlag_Set(FLAG_WEATHER_HELD);
@@ -438,6 +445,9 @@ void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window) {
 s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
                                s32 variant);
 
+/// Writes Attack, Defense and Agility into a status window as they are now
+/// (before), and beside each one that changes its new value (after) with an up
+/// or down arrow: the equipment preview.
 void Text_DrawStatComparison(const struct BattleUnit *alt,
                              const struct BattleUnit *base, s32 work) {
   Text_DrawMessageAsTilesFar((s32)MsgPanelStatLabel, (struct RenderInput *)work,
@@ -475,6 +485,8 @@ void Text_DrawStatComparison(const struct BattleUnit *alt,
   }
 }
 
+/// Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
+/// into a free VRAM block.
 s32 Icon_CreateWithResource(struct RenderInput *window, s32 x, s32 y) {
   s32 slot;
   s32 icon;
@@ -596,6 +608,8 @@ void MenuCursor_Position(s32 xOffset, s32 yOffset) {
                                      yOffset + work->auxiliaryWindow->y * 8 + 8;
 }
 
+/// Slides the hand cursor from where it is to (x, y) inside the menu's top-left
+/// window over two frames, in 1/16 pixel steps.
 void MenuCursor_Slide(s32 x, s32 y) {
   struct PsynergyMenuWork *work =
       (struct PsynergyMenuWork *)Ram_HeapSlots->menuWork;
@@ -658,6 +672,8 @@ void PsynergyMenu_RefreshMemberEntriesDefault(void) {
   PsynergyMenu_RefreshMemberEntries(108, 40, 8);
 }
 
+/// Lays the menu's entry icons (up to 32) out in a grid of 16x16 cells,
+/// columns wide, from (originX, originY); empty slots keep their place.
 void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
   struct WindowSprite **slot;
   struct WindowSprite **scan;
@@ -675,6 +691,8 @@ void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
   } while (index <= 0x1F);
 }
 
+/// Places the icon in *slot at grid cell index (0 above 31) of a grid of
+/// 16x16 cells, columns wide, from (originX, originY), and shows it.
 void PsynergyMenu_PositionMemberEntry(struct WindowSprite **slot, s32 index,
                                       s32 originX, s32 originY, s32 columns) {
   struct WindowSprite *object;
@@ -703,6 +721,8 @@ void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 i, s32 x0, s32 y0,
   Icon_PrepareActor(obj);
 }
 
+/// Lays the inventory's 15 item icons out five to a row from (116, y): y is
+/// 56 for layout 1 and 40 otherwise.
 void ItemMenu_RefreshEntry(s32 layout) {
   struct WindowSprite **slot;
   struct WindowSprite **scan;
@@ -787,6 +807,9 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
 
 void Menu_CopyListOrder(s32 mode, u8 *order);
 
+/// Sorts a party member's 15 inventory slots by the list order of mode: items
+/// are grouped by the order's item types and, within a type, run from the
+/// highest item id down.
 s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
   u16 sorted[16];
   u16 items[16];
@@ -996,6 +1019,9 @@ void Palette_LightenHighlight(s32 paletteNumber) {
 #define PAGE_CAP_LEFT 0xf128
 #define PAGE_CAP_RIGHT 0xf129
 
+/// Draws a paged list's page numbers on the top border of window, ending at
+/// tile rightEdge: one digit per page between the page arrows, selectedPage in
+/// the highlight palette and the others in the window's.
 void PagedList_DrawPageNumbers(s32 window, s32 itemCount, s32 pageSize,
                                s32 selectedPage, s32 rightEdge) {
   s32 pageCount;
@@ -1073,6 +1099,9 @@ void Palette_LoadIconsIntoHighlight(void) {
           DMA_COPY_HALFWORDS(1), REG_DMA3);
 }
 
+/// Shows the icons of one page of a list, one row of 16 pixels each from (x,
+/// y): entries first to first + pageSize - 1, stopping early at an empty icon
+/// slot or the work's itemCount. Hides all the others.
 void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   struct WindowSprite *icon;
@@ -1094,6 +1123,8 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
   }
 }
 
+/// Writes the party's coins and the "Coins" label into window: the info
+/// window of the Item and Psynergy screens' party member choice.
 void Menu_DrawCoins(s32 work) {
   Text_DrawNumberAtOffsetFar(gMainRoutineWork.coins, 7, work, 8, 0);
   Text_DrawMessageAsTilesFar((s32)MsgCoinsLabel, (struct RenderInput *)work,
@@ -1103,6 +1134,7 @@ void Menu_DrawCoins(s32 work) {
 #endif
 }
 
+/// Moves and resizes a window, in tiles.
 void Window_SetBounds(struct RenderInput *window, s32 x, s32 y, s32 width,
                       s32 height) {
   if (window != NULL) {
@@ -1148,6 +1180,7 @@ void Menu_StartWatchingStart(void) {
   Task_Add((s32)Menu_UpdateCancelSound, TASK_PASS_VBLANK);
 }
 
+/// Stops watching for Start, if Start has not removed the watch already.
 void Menu_StopWatchingStart(void) {
   if (GameFlag_Get(FLAG_MENU_START_PRESSED) == 0) {
     Task_Remove((u32)((s32)Menu_UpdateCancelSound));

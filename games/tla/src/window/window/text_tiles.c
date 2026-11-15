@@ -96,6 +96,9 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
 extern char ResourceId_WindowTiles;
 extern const u8 gText_ColourPens[];
 
+/// Draws a string of 16-bit character codes with the window font into tiles of
+/// their own, starting x pixels into the first tile, and points tiles (and the
+/// same entries in mirror) at them.
 s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   // Unused: gives the stack frame its 32 extra bytes.
   UNUSED u32 reserve[8];
@@ -268,6 +271,8 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   return count;
 }
 
+/// Frees the text tiles under a tilemap rectangle (x, y, width and height in
+/// tiles) for reuse: their taken and shown bits are cleared.
 void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
   u8 *base = Ram_HeapSlots->windowWork;
   u16 *cursor = &((struct WindowWork *)base)->tilemap[y][x];
@@ -291,6 +296,8 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
   }
 }
 
+/// Marks the text tiles the tilemap shows, and frees those it no longer shows:
+/// a tile taken but not marked shown (attribute exactly 1).
 void Window_MarkVisibleTextTiles(void) {
   u8 *base = Ram_HeapSlots->windowWork;
   u32 alternate = ((struct WindowWork *)base)->extraTextTiles;
@@ -574,6 +581,8 @@ void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position,
   }
 }
 
+/// Draws a byte string into a text canvas window at pixel (x, y). The
+/// 256-halfword scratch requires at most 255 input bytes before the terminator.
 void Text_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3) {
   u16 *buffer = Heap_AllocEwram(0x200);
   u16 *output = buffer;
@@ -624,6 +633,8 @@ void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
 
 u8 *String_FormatNumber(u8 *output, s32 value, s32 width);
 
+/// Draws a byte string into a window's tilemap at pixel (x, y) of its interior,
+/// rounded down to tiles.
 void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
   u16 *buffer = Heap_AllocEwram(0x200);
   u16 *output = buffer;

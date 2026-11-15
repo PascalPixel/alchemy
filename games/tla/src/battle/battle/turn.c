@@ -51,6 +51,8 @@ void BattleCamera_SetCommandView(s32 pos) {
 
 #define Unit_CalculateFar ((void (*)(u16))Unit_CalculateFar)
 
+/// Ends every unit's guard (Defend and the like) and recalculates its stats.
+/// Clears every unit's defendLevel.
 void BattleUnit_ResetGuardLevels(void) {
   u16 ids[14];
   s32 count;
@@ -66,6 +68,10 @@ void BattleUnit_ResetGuardLevels(void) {
   }
 }
 
+/// Rolls whether the party gets away: 50 percent, 20 more for each failed
+/// attempt, and 5 for each level the party's average is above the enemies'. A
+/// party that struck first always gets away, and no one from a battle that
+/// forbids it. Returns 1 when the party gets away.
 s32 BattleFlee_CheckSuccess(void) {
   s32 escaped;
   s16 livingUnits[14];
@@ -246,6 +252,9 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
   } while (swapped != 0);
 }
 
+/// Link battle: exchanges the turn's actions with the other console and appends
+/// the opponent's, their units and targets seen from this side. Returns how
+/// many were received, or -1 when the exchange fails.
 s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 result = 0;

@@ -513,6 +513,8 @@ finished:
   return result;
 }
 
+/// Lists the party members who fight, three in a link battle, into unitIds when
+/// it is not null, and returns how many.
 s32 BattleParty_PrepareMembers(u16 *owners) {
   s32 limit;
   s32 count;
@@ -564,6 +566,7 @@ s32 BattleParty_PrepareReserveOwners(u16 *owners) {
   return count;
 }
 
+/// Lists the enemy units present and returns how many, 0 when unitIds is null.
 s32 BattleEnemy_List(s16 *unit_ids) {
   s16 *output;
   s32 count;
@@ -593,6 +596,8 @@ s32 BattleEnemy_List(s16 *unit_ids) {
   return count;
 }
 
+/// Lists the units still standing on the sides in sideMask, party first, into
+/// unitIds when it is not null, and returns how many.
 s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   u16 activeMembers[8];
   u16 *base;
@@ -724,6 +729,8 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
   return livingCount;
 }
 
+/// Lists the units in the battle on the sides in sideMask, standing or not, and
+/// returns how many.
 s32 BattleUnit_ListIds(s32 groups, u16 *dst) {
   struct BattleWork *order;
   s32 count;

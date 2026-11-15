@@ -140,6 +140,8 @@ void BattleStatusIcon_Cycle(struct BattleObj *slot) {
   }
 }
 
+/// Sets a unit's pose to match its state, held, down or standing, and sets its
+/// sway a little out of step with its neighbours'.
 void BattleObject_UpdatePose(s32 id) {
   struct BattleUnit *state;
   s32 value;
@@ -321,6 +323,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh) {
   BattleObject_SpawnObjectsForList(list, refresh, 1);
 }
 
+/// Detaches the scripts from the four sprite entries of one sprite.
 void ResetMotionRecordGroup(void *owner) {
   struct AnimationEntryGroup *object = owner;
   s32 i;
@@ -468,6 +471,8 @@ void BattleObject_UpdateSpritePriorities(void) {
   }
 }
 
+/// Detaches the scripts from every sprite of a unit's actor. Nothing in the
+/// source calls it.
 void ResetBattleObjectRecordGroups(struct MotionObject *object) {
   s32 storageKind;
   s32 remaining;
@@ -585,6 +590,8 @@ s32 BattleMotion_ProjectPosition(s32 id, s32 *projected) {
   return 0;
 }
 
+/// Returns sprite recordIndex of an actor (0 only, for a single sprite), or
+/// null when it has no such sprite.
 void *GetMotionRecord(struct MotionObject *object, s32 recordIndex) {
   s32 storageKind;
 

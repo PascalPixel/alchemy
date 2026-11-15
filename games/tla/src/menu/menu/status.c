@@ -211,6 +211,9 @@ s32 StatusScreen_RunPages(void) {
 s32 PsynergyMenu_ChooseMember(void);
 s32 PartyMemberChooser_RunRearrange(void);
 
+/// Lets the player choose a party member in slot, from the one chosen last: the
+/// party member chooser on the chooser page, else the Status menu's
+/// party row.
 s32 StatusScreen_SelectMember(s32 slot) {
   struct StatusScreenWork *menu;
   struct WindowSprite *cursor;
@@ -965,6 +968,9 @@ extern const u8 gMenu_PpString[];
 #define STAT_X 200
 #endif
 
+/// Draws the top rows of party member memberId's status page into window: name,
+/// class, level, experience, HP and PP on the left, Attack, Defense, Agility
+/// and Luck on the right.
 void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
   struct ItemMenuWork *menu;
   struct BattleUnit *unit;
@@ -1158,6 +1164,9 @@ extern u8 MsgUsableInField[];
 extern u8 MsgUsableAnywhere[];
 #endif
 
+/// Updates the Psynergy page for the row under the cursor: the Psynergy's
+/// description in the info window, where it can be used (in the field, in
+/// battle, or anywhere), and the row highlights with the range icons.
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
                                struct MenuResult *state) {
   struct PsynergyMenuWork *menu;
@@ -1503,6 +1512,9 @@ s32 PsynergyMenu_SelectAction(void) {
 #define EQUIP_SLOT_WIDTH 10
 #endif
 
+/// Updates the Status menu's equipment page for the row under the cursor: the
+/// item's plain name in the info window, the row highlights, and in the
+/// equipment window the highlight of the slot the item is worn in, if it is.
 s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
   struct ItemMenuWork *menu;
   struct ItemDefinition *item;
@@ -1799,6 +1811,9 @@ s32 ItemMenu_SelectItem(void) {
 #undef PAGE_ROWS
 #undef CURSOR_X
 
+/// Writes the four equipment slot labels (Weapon, Head, Shield and Chest, one a
+/// 16-pixel row) and the names of the items worn in them into window; mode 0
+/// also shows their icons at the right.
 void ItemMenu_DrawCategory(s32 window, s32 ownerId, s32 mode) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   u8 *items;
@@ -1862,6 +1877,8 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
   } while (i <= 0x1F);
 }
 
+/// Places icon at cell index (an index above 31 is taken as 0) of a grid of
+/// 16x16 cells, columns wide, from (originX, originY), and shows it.
 void Menu_PlaceEntryActorInGrid(struct WindowSprite *obj, s32 index,
                                 s32 originX, s32 originY, s32 phase) {
   s32 no;
@@ -1875,6 +1892,8 @@ void Menu_PlaceEntryActorInGrid(struct WindowSprite *obj, s32 index,
   Icon_PrepareActor(obj);
 }
 
+/// Places the icon of each worn weapon, armor, shield and helm at x 216, on its
+/// slot's row of ItemMenu_DrawCategory's window; the others stay off screen.
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
   struct ItemMenuWork *state;
   struct WindowSprite *icon;
@@ -1910,6 +1929,8 @@ void ItemMenu_ArrangeCategoryItemIcons(u16 *items) {
   }
 }
 
+/// Moves all 32 entry icons off screen, to (248, 168), before a screen lays
+/// them out again.
 void ItemMenu_PositionCategory(void) {
   struct ItemMenuWork *state = Ram_HeapSlots->menuWork;
   s32 x = 248;

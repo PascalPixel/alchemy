@@ -93,6 +93,9 @@ struct OptionWork {
 
 extern char ResourceId_ShopCursorPictures;
 
+/// The settings menu's per-frame task: moves the cursor and the two slider
+/// markers, animates the marker of the slider in use, and pulses the chosen
+/// setting's icon.
 void SettingsMenu_AnimateCursors(void) {
   s32 src0;
   s32 src1;
@@ -590,6 +593,8 @@ struct ScreenPageWork {
   s32 values[1];
 };
 
+/// The Pause menu's per-frame task: moves the cursor and pulses the
+/// chosen entry's icon.
 void PauseMenu_AnimateCursor(void) {
   struct ScreenPageWork *work = Ram_HeapSlots->settingsMenu;
 
@@ -630,6 +635,9 @@ extern const s8 gMenu_WorkspaceIcons[];
 
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 
+/// Opens the Pause menu's window with its entries (Save your quest, Sleep,
+/// Change settings, and the debug entries in debug mode; only Change settings
+/// while FLAG_IN_BATTLE_ARENA is set), their icons and the cursor.
 struct RenderInput *PauseMenu_Open(void) {
   struct WorkspaceScreen *work;
   s32 rows;

@@ -75,6 +75,9 @@ struct PlaybackBattleWork {
   struct PlaybackEvents events;
 };
 
+/// Plays the action's targets one at a time: resolves each with
+/// BattleAbility_ApplyToTarget, then plays what it queued over the frames that
+/// follow, without waiting.
 void BattlePlayback_Run(void) {
   u16 selection[2];
   struct AnimationRecord *records[4];
@@ -405,6 +408,8 @@ u32 BattlePlayback_Reset(void) {
   events->flags = 0;
 }
 
+/// Waits until playback has played every target, starting it if the effect
+/// never showed the damage.
 s32 BattlePlayback_WaitForReady(void) {
   s32 state;
   struct BattleEventState *events;

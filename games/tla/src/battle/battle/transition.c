@@ -137,6 +137,8 @@ void BattleTransition_UploadTileVariant(void) {
             (void *)BG_SCREEN_BLOCK(10), DMA_COPY_WORDS(8), REG_DMA3);
 }
 
+/// Advances the curtain opening by a frame: BG0 slides into place as the camera
+/// turns round to the party and zooms out.
 void BattleTransition_AdvanceTimer(void) {
   s32 scroll;
   struct BattleCamera *camera;

@@ -13,6 +13,8 @@ extern u8 *gIcon_OverlayPointerTable[];
 
 void Icon_Decode(GlyphTransfer *work, s32 layer);
 
+/// Builds a command icon (overlay overlayIcon over base baseIcon) and loads it
+/// into a sprite tile slot: *slot, or a free one when reuse is 0.
 void Icon_BuildCommandIconTiles(s32 no0, s32 no1, s32 *slot, s32 *ret,
                                 s32 flag) {
   GlyphTransfer *work;
@@ -99,6 +101,9 @@ void Icon_Decode(GlyphTransfer *work, s32 overlay);
 /// ITEM_CANNOT_UNEQUIP) when its code has INVENTORY_EQUIPPED.
 #define ICON_ARTIFACT 32
 
+/// Draws an item's icon into the glyph work buffer from its inventory code
+/// (enum InventoryEncoding) with the layers asked for (ICON_ flags): the frame,
+/// the equipped, broken and artifact marks, and the count.
 s32 ItemIcon_Compose(u32 code, u32 layers) {
   s32 overlay;
   struct ItemDefinition *item;
@@ -262,6 +267,7 @@ extern char ResourceId_Icons;
 
 void Icon_Decode(GlyphTransfer *work, s32 overlay);
 
+/// Draws one of the other icons into the glyph work buffer.
 void Icon_DrawMisc(u32 index) {
   GlyphTransfer *state = Ram_HeapSlots->glyphTransfer;
 

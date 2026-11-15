@@ -127,6 +127,9 @@ void Window_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
   }
 }
 
+/// Loads the pointing hand cursor's tiles (128 bytes) into
+/// a free VRAM slot and returns the slot, which the caller frees with
+/// VramCache_FreeEntry.
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   s32 slot;
 
@@ -167,6 +170,10 @@ s32 Text_SetString(const u8 *str) {
   return width;
 }
 
+/// Draws the name being entered, `name`, at the top left of `window`,
+/// followed in TEXT_COLOR_RED by an underscore for each of the
+/// NAME_MAX_LETTERS places still free: the loop fills the text to 7 bytes,
+/// the name and the two-byte colour code before the underscores.
 void NameEntry_DrawName(s32 output, u8 *input) {
   u8 text[20];
   s32 length = 0;

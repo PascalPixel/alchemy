@@ -250,6 +250,8 @@ s32 Message_AllTyped(void) {
   return 1;
 }
 
+/// Returns 1 when a window is fully closed (its slot free), and 0 while it is
+/// open or closing.
 s32 Window_IsClosed(struct Window *window) {
   if (window == NULL)
     return 1;
@@ -420,6 +422,11 @@ void Message_SetDecodeFlags(u32 flags) {
 
 s32 Message_Decode(s32 key, s32 mode);
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
+/// Opens a window sized to a message near tile (x, y) and starts typing the
+/// message into it. packed holds the window options in its low bits (bit 0:
+/// zoom open rather than appear at once; bit 3: a text canvas; bit 4: keep the
+/// bottom edge; bit 5: keep the left edge) and the speaker's voice sound in
+/// bits 16 to 27.
 struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   s32 entry;
   u32 height;
@@ -473,6 +480,8 @@ s32 Party_GetLeaderActorFar(void);
 s32 Actor_GetScreenPositionFar(s32 object, s32 *out);
 s32 Message_AllTyped(void);
 
+/// Shows a message in a window centred on the screen, waits until it is typed
+/// out and closes it, as its flags say.
 void FieldMessage_Show(s32 no, s32 flags) {
   u8 *base = Ram_HeapSlots->windowWork;
   s32 release;

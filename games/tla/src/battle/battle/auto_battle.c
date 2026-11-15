@@ -9,6 +9,8 @@
 #include "gamepak/far_call/battle_effect.h"
 #include "gamepak/far_call/window.h"
 
+/// Auto battle: gives every living unit a plain attack and sorts them into
+/// action order. Returns how many actions there are.
 s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries) {
   struct BattleSortedUnitEntry swap;
   u16 unitIds[14];
@@ -85,6 +87,8 @@ void BattleCamera_AdjustByShoulderKeys(void) {
   }
 }
 
+/// Auto battle: plays one action, a defeated target replaced by a living unit
+/// of its side. Returns 1 when the party got away, -1 when the unit is down.
 s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
   struct BattlePresentationTransition *transition;
   s32 unitId;
@@ -138,6 +142,7 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
   return 0;
 }
 
+/// Returns 0 for a party member's or an enemy's unit id, -1 for any other.
 s32 BattleObject_IsValidId(u32 objectId) {
   if (objectId <= ALLY_MAX) {
     return 0;
@@ -148,6 +153,8 @@ s32 BattleObject_IsValidId(u32 objectId) {
   return -1;
 }
 
+/// Auto battle: the party tries to run, and gets away 15 times in 16. Returns 1
+/// when it got away.
 s32 BattleFlee_PlayRun(struct BattleActionRecord *action) {
   s16 party_members[14];
   s32 party_size;
@@ -175,6 +182,8 @@ s32 BattleFlee_PlayRun(struct BattleActionRecord *action) {
   return 0;
 }
 
+/// Auto battle: shows that a standing unit is defending. The message is
+/// `<unit> is defending`. Returns -1 for an invalid unit id, 0 otherwise.
 s32 AutoBattle_ShowDefend(s16 *script) {
   s32 objectId;
   s32 result;
@@ -422,6 +431,8 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   return 0;
 }
 
+/// Unused auto battle damage: takes damage HP from a unit and shows it, with "A
+/// bitter blow!" or "A critical hit!" first when showMessage is set.
 void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
                             u8 *context) {
   u8 localContext[4];
@@ -476,6 +487,8 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   Actor_SelectAnimationFar((struct Actor *)slot->object, 1);
 }
 
+/// For a unit whose HP has run out: plays its falling effect to the last frame
+/// and marks its battle object for release (BattleObject_MarkForRelease).
 void BattleMotion_PlayFall(s32 unitId) {
   struct BattleObjectAnimation *animation;
   struct AnimationEntry *entry;
@@ -492,6 +505,8 @@ void BattleMotion_PlayFall(s32 unitId) {
   }
 }
 
+/// Returns the action's target, or a random living unit of its side when the
+/// target is down; 0x100 when none is left.
 s32 BattleAbility_ReplaceDefeated(const struct BattleActionRecord *action) {
   s16 livingUnits[14];
   s32 targetId;

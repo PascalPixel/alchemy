@@ -40,6 +40,8 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 flags,
   return output;
 }
 
+/// Loads resource `resource` in loading mode `mode` into a VRAM slot and shows
+/// it as a 16x16 sprite at (x, y) in `window`.
 struct WindowSprite *WindowSprite_CreateFromResource(s32 arg0, s32 arg1,
                                                      struct RenderInput *arg2,
                                                      s32 arg3, s32 arg4) {
@@ -52,6 +54,8 @@ struct WindowSprite *WindowSprite_CreateFromResource(s32 arg0, s32 arg1,
   return WindowSprite_Create(no, OUTPUT_SIZE_16X16, arg2, arg3, arg4);
 }
 
+/// Copies icon `icon` (with `layers` passed on to the copier) into a free VRAM
+/// slot and shows it as a 16x16 sprite at (x, y) in `window`.
 struct WindowSprite *WindowSprite_CreateLoaded(s32 arg0, s32 arg1,
                                                struct RenderInput *arg2,
                                                s32 arg3, s32 arg4) {
@@ -67,6 +71,8 @@ struct WindowSprite *WindowSprite_CreateLoaded(s32 arg0, s32 arg1,
   return result;
 }
 
+/// Builds a 16x16 icon from frame pattern 1 with overlay pattern `icon` drawn
+/// over it, and shows it at (x, y) in `window` on draw layer 251.
 struct WindowSprite *WindowSprite_CreateWithTransform(s32 arg0,
                                                       struct RenderInput *arg1,
                                                       s32 arg2, s32 arg3) {
@@ -192,6 +198,8 @@ void ScanlineWindow_FillSpans(void *dst) {
   }
 }
 
+/// Fills the top-left `width` x `height` tiles of WINDOW_TILEMAP_VRAM, 32 tiles
+/// wide, with the tilemap entry `value`.
 void BgScreen_FillRect(s32 unused0, s32 unused1, u32 width, u32 height,
                        s32 value) {
   u32 row = 0;

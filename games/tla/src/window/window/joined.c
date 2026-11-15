@@ -161,6 +161,8 @@ void Party_ShowJoinedMessage(s32 member) {
   }
 }
 
+/// Shows that two party members joined the party while the join jingle (sound
+/// 81) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct Window *window;

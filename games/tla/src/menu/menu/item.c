@@ -874,6 +874,9 @@ void ItemMenu_HideTradedIcons(void) {
 
 void Menu_ReleaseEntryObjects(void);
 
+/// Closes the item menu: releases the party figures, hides the icons and the
+/// status panel's portrait (the work's cursor), and closes every window the
+/// menu opened.
 void ItemMenu_Close(void) {
   u8 *menu;
   u8 *cursor;
@@ -901,6 +904,8 @@ s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
                           s32 mode);
 s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items);
 
+/// Lets the player choose a party member in side (0 or 1), starting from the
+/// party member chosen last.
 s32 ItemMenu_SelectMember(s32 pane) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 result = 0;
@@ -1239,12 +1244,14 @@ void EquipmentMenu_StopCompatibilityIndicators(void) {
   Task_Remove(EquipmentMenu_UpdateCompatibilityIndicators);
 }
 
+/// Returns 1 for the items that raise a stat for good (Apple, Hard Nut, Mint
+/// and Lucky Pepper), whose use shows the stats panel instead of HP and PP.
 s32 ItemMenu_IsStatRaisingItem(s32 itemId) {
   switch (itemId) {
-  case 193: // Apple
-  case 194: // Hard Nut
-  case 195: // Mint
-  case 196: // Lucky Pepper
+  case ITEM_APPLE:
+  case ITEM_HARD_NUT:
+  case ITEM_MINT:
+  case ITEM_LUCKY_PEPPER:
     return 1;
   }
   return 0;
@@ -1258,6 +1265,8 @@ void ItemMenu_DrawMessage(s32 unused, s32 message) {
   Text_DrawMessageAsTilesFar(message, (s32)menu->questionWindow, 0, 0);
 }
 
+/// Hides the icon of each of the 32 list entries whose item is 0. Each of the
+/// 32 icon slots must hold a sprite (Menu_SpawnIconEntries).
 void Menu_HideEmptyEntryIcons(const u16 *items) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 slot;
@@ -1324,6 +1333,10 @@ s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
   return count;
 }
 
+/// Loads each listed item's icon into its item icon sprite, the first 15
+/// entries of inventoryEntries, and hides the icons of empty entries. iconStyle
+/// 0 draws the list's icons (ICON_KIND_ITEM); any other iconStyle the
+/// equipment view's.
 void ItemMenu_DrawIcons(u16 *items, s32 style) {
   s32 remaining;
   u16 *entries;
@@ -1479,6 +1492,8 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   }
 }
 
+/// Makes room in memberId's inventory: if no slot is free, removes the whole
+/// stack in the first slot that is not equipped.
 s32 Inventory_RemoveFirstUnflagged(s32 owner) {
   struct OwnerInventoryState *state = Unit_Get(owner);
   s32 result = 0;
@@ -1827,6 +1842,7 @@ void ItemMenu_DrawCommands(const s8 *commandStates, s32 window) {
   Text_SetColorFar(TEXT_COLOR_NORMAL);
 }
 
+/// Says how memberId can use inventoryEntry from the item menu.
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
   s32 masked = itemId;
   void *itemData;
@@ -1897,6 +1913,8 @@ void ItemMenu_TryBreak(void) {
 
 void ItemMenu_DrawItemDetails(s32, s32);
 
+/// Opens the details window (top left, 13 by 10 tiles) and describes the item
+/// in side itemIndex there. Returns 1.
 s32 ItemMenu_OpenDetail(s32 itemIndex) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
@@ -2289,6 +2307,8 @@ void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count) {
 #define Text_DrawStringInWindowFar                                             \
   ((void (*)(u8 *, s32, s32, s32))Text_DrawStringInWindowFar)
 
+/// Writes a signed stat change at (x, y) of window: the number, with a plus or
+/// minus sign just before its first digit.
 void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y) {
   s32 digits;
   s32 magnitude;
@@ -2375,6 +2395,11 @@ extern const u8 gMenu_QuantityTiles[];
 
 void QuantityBar_FillFar(s32 value, s32 column, void *tiles);
 
+/// Asks how many of the selected item stack to give or drop: Left and Right
+/// choose a number from 1 to quantityRange (shown as baseQuantity + 1 up to
+/// baseQuantity + quantityRange on a dial of digit sprites), with the party
+/// member's remaining count and, when giving (dropMode 0), the receiver's new
+/// count beside their names.
 s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
                                 s32 dropMode) {
   s32 value = baseQuantity;
@@ -2600,6 +2625,8 @@ extern u8 MsgConfirmDrop[];
 
 extern u8 MsgYes[]; // the ☀️ twin's name
 
+/// After giving or trading the selected item to the party member in side 1,
+/// offers to equip it there, showing the stats it would give.
 s32 ItemMenu_ConfirmEquip(s32 unused) {
   s32 rows = 2;
   s32 selection = 0;

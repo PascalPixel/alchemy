@@ -10,6 +10,9 @@
 extern char ResourceId_ItemMenuTilesA;
 extern char ResourceId_ItemMenuTilesB;
 
+/// Loads each menu icon resource whose cache slot was acquired: the Djinn
+/// menu's up and down arrows (djinn_arrow_up and djinn_arrow_down) into the
+/// work's resourceSlots[0] and [1], for Icon_DrawVariantWithTileOffset.
 void Resource_LoadPairedBlocksIfAvailable(void) {
   s32 firstSlot;
   s32 secondSlot;
@@ -552,6 +555,8 @@ void MenuPanel_DrawEntryList(struct RenderInput *panel, s32 x, s32 y,
     Text_DrawMessageAsTilesFar((s32)MsgStatusNameNormal, panel, x, y);
 }
 
+/// Fills ailments[0..4] with party member memberId's statuses:
+/// down (only when requested is 1), poison or venom, curse and haunt.
 s32 StatusScreen_BuildAvailability(u8 *output, s32 requested, s32 id) {
   struct BattleUnit *state;
   s32 i;

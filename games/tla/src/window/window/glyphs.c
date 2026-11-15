@@ -19,6 +19,9 @@
 #define KANJI_WIDTH 10
 #endif
 
+/// Draws a character, and a second one when the code carries it in bits 8 to
+/// 15, into a 16x16-pixel cell of four 4bpp tiles at out: in the text colour
+/// over a shadow, or with an outline when WindowWork.outline is 1.
 s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   u8 pixels[GLYPH_PIXELS_SIZE];
   struct WindowWork *work;
@@ -220,6 +223,9 @@ s32 Text_GetWideStringWidth(u16 *text) {
 
 void Text_ResetStyle(void);
 
+/// Draws a zero-terminated string of 16-bit character codes into a text canvas
+/// window at pixel (x, y), running its colour, outline, line spacing and new
+/// line codes; other control codes are skipped with their arguments.
 void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                                  s32 y) {
   struct WindowWork *work;

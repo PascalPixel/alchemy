@@ -10,6 +10,7 @@
 #include "battle/battle.h"
 #include "module/window/window.h"
 #include "flags.h"
+#include "item_ids.h"
 
 #define TEXT_COLOR_NORMAL TEXT_COLOR_WHITE ///< the window text's default colour
 

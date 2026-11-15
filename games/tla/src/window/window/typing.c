@@ -30,6 +30,9 @@ s32 Message_Type(struct UiChannelSlot *channel);
 struct Window_0803cbf8;
 void Window_StepSwellEffect(struct Window_0803cbf8 *window);
 
+/// The per-frame message update: each message whose window is fully open runs
+/// its window animation or types more text, and on the text's end marks the
+/// window done (state 1) or closes it.
 void Message_UpdateAll(void) {
   u8 *channel = (u8 *)Ram_HeapSlots->windowWork + 0x6b8;
   s32 channelNo = 0;

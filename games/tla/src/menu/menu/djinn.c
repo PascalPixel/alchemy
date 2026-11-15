@@ -8,6 +8,8 @@
 
 s32 Menu_GetModuloOfSum(s32 arg0, s32 arg1) { return (arg0 + arg1) % arg1; }
 
+/// Places the four party figures over their Djinn columns, 56 pixels apart
+/// from x 32, at screen y 61 plus yOffset. Returns that y.
 s32 Menu_SetFirstActorRowCoordinates(s32 arg0) {
   u8 *current;
   s32 value;
@@ -1530,6 +1532,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 
 #define DJINN_ENTRY_SET (-0x8000)
 
+/// Lists owned Djinn by element and index, marking those that are set.
+/// For element -1, entries also encode their party member.
 s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element) {
   struct BattleUnit *unit = Unit_Get(memberId);
   s32 count = 0;

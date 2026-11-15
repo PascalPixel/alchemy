@@ -464,6 +464,8 @@ struct OutputSprite {
 };
 extern u16 gWindowSprite_BounceScales[];
 
+/// Steps a scaling sprite's animation (WINDOW_SPRITE_MOTION_SWELL to
+/// WINDOW_SPRITE_MOTION_SHRINK_HALF) and sets its affine scale for this frame.
 void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
   s32 scale = 256;
   struct OutputSprite *sprite = (struct OutputSprite *)&windowSprite->sprite;

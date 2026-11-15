@@ -31,6 +31,8 @@ s32 BattleMotion_GetSlotPalette(s32 id) {
   return BattleObject_Get(id)->palette;
 }
 
+/// Returns 1 if an enemy of the class would find room among the enemy sprite
+/// slots, two side by side for a large one.
 s32 Enemy_HasSpriteRoom(s32 arg0) {
   s32 retval;
   s32 i;
@@ -117,6 +119,8 @@ s32 EnemySprite_LoadIntoSlots(s32 unit) {
   return result.value;
 }
 
+/// Frees every enemy sprite slot unit unitId holds, unloading its sprite.
+/// Clears those BattleWork.spriteSlots.
 void BattleObject_ReleaseSpriteSlots(s32 value) {
   struct BattleSpriteSlots *work =
       (struct BattleSpriteSlots *)Ram_HeapSlots->battleWork;
@@ -130,6 +134,8 @@ void BattleObject_ReleaseSpriteSlots(s32 value) {
   }
 }
 
+/// Returns the kind of the weapon whose item id is
+/// itemId, which picks a party member's weapon sprite.
 s32 BattleUnit_GetWeaponKind(s32 key) {
   s32 index;
   u32 value;

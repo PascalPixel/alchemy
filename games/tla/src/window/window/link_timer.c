@@ -20,6 +20,11 @@
 extern struct LinkSignature
     gLinkPeerSignatures__menus[] __asm__("gLinkPeerSignatures");
 
+/// A task while the party's commands are chosen (Battle_CollectPartyCommands):
+/// eases the battle view a third of the way to BattleMenuWork.targetViewOffset
+/// each frame (a pixel at least), draws the sprites of BattleMenuWork.icons
+/// that are shown (the chosen command's and ability's icons, the party member's
+/// portrait) and slides the page arrows.
 void UpdateLinkSessionCountdown(void) {
   struct LinkCountdownState *state =
       (struct LinkCountdownState *)Ram_HeapSlots->battleMenuWork;

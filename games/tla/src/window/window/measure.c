@@ -9,6 +9,10 @@ void Text_MeasureDecoded(s32 no, u32 *pw, u32 *ph, u16 *spacing);
 
 // In the Japanese release, while the window work's mode is set, a measured
 // window is 2 tiles wider and kept off the screen's last column.
+/// Sizes a window for decoded text no and moves (*windowX, *windowY) so the
+/// window fits on the screen. flags: bit 0 measures every page
+/// (Text_MeasureAllPages) rather than the first; bit 1 takes the size in
+/// *windowWidth and *windowHeight as given, in tiles, instead of measuring.
 void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
                         u16 *spacing, u32 flags) {
 #if !TLA_PATCH_1
@@ -82,6 +86,7 @@ void Window_FitOnScreen(s32 no, s32 *px, s32 *py, u32 *pw, u32 *ph,
 
 s32 Message_Decode(s32, s32);
 
+/// Decodes message and returns its text's width and height in pixels.
 void Text_MeasureMessage(s32 no, s32 *x, s32 *y) {
   Text_MeasureDecoded(Message_Decode(no, 0), x, y, 0);
 }

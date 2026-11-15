@@ -12,6 +12,9 @@
 
 void SceneTransform_SetPosition(s32 *position);
 
+/// Runs each frame of a battle: pauses a link battle whose connection is lost,
+/// turns the camera a sixteenth of the way toward its target yaw, places it,
+/// and refreshes the background's zoom.
 void BattleCamera_Update(void) {
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
   struct BattlePresentationTransition *transition =
@@ -99,6 +102,8 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   }
 }
 
+/// Fills the battle's two unit lists: the party in its order, and the enemies
+/// left to right, or for a fixed formation out from the centre.
 void BattleUnit_Collect(void) {
   u16 buf[14];
   struct BattleWork *battle;
@@ -146,6 +151,8 @@ void BattleTransition_ClearBg0Vofs(void) {
 
 void Party_ReservedNoOp5B14(s32 value) {}
 
+/// Clears the party's battle-only states, and works their stats out again, as a
+/// battle ends.
 s32 BattleParty_ResetActiveRuntimeFields(void) {
   u16 owners[10];
   s32 count;

@@ -9,6 +9,8 @@
 #include "module/battle/presentation.h"
 #include "module/battle/presentation.h"
 
+/// Rolls whether a stat change or status with five turns or fewer left ends
+/// early, at `luck * 3 - turns * 5 + bias` percent, and returns 1 when it does.
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   struct BattleUnit *state = Unit_Get(unitId);
 
@@ -20,6 +22,8 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   return 0;
 }
 
+/// Counts down an Attack change and returns 1 when it ends; a lowered Attack
+/// may recover early.
 s32 BattleUnit_CountDownAttackStage(s32 unitId) {
   struct BattleUnit *state = Unit_Get(unitId);
 
@@ -151,6 +155,8 @@ s32 BattleUnit_CountDownSleep(s32 unitId) {
   return 0;
 }
 
+/// Counts down both seals in BattleUnit.psySeal and returns 1 when the last
+/// ends; only Bind's, once Luff's is gone, may end early.
 s32 BattleUnit_CountDownPsynergySeal(s32 id) {
   s32 next;
   s32 expired;
@@ -238,6 +244,8 @@ s32 BattleUnit_CountDownReflect(s32 id) {
   return 0;
 }
 
+/// Counts down an Agility change and returns 1 when it runs out; it never ends
+/// early.
 s32 BattleUnit_CountDownAgilityStage(s32 id) {
   struct BattleUnit *unit = Unit_Get(id);
   u8 *value = &unit->agilityTurns;
@@ -251,6 +259,8 @@ s32 BattleUnit_CountDownAgilityStage(s32 id) {
   return 0;
 }
 
+/// Brings the party's recovering Djinn one turn nearer, setting each that is
+/// ready, and returns 1 when any was set.
 s32 DjinnRecovery_CountDown(void) {
   struct PlacementList *list;
   struct DjinnRecoveryEntry *timedEntry;
@@ -294,6 +304,8 @@ s32 DjinnRecovery_CountDown(void) {
   return removed;
 }
 
+/// Runs DjinnRecovery_CountDown twenty times, which sets every recovering
+/// Djinni of a party member with HP; those on standby stay so. Returns 0.
 s32 DjinnRecovery_CountDownTwenty(void) {
   s32 turns;
 

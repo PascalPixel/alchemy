@@ -263,6 +263,8 @@ void *String_FormatPlayTime(s32 frames, u8 *out) {
   return out;
 }
 
+/// Returns the first save file whose summary shows it empty (level 0), or
+/// 999 when all three are in use. The summaries must be loaded.
 u32 Save_FindFreeFile(void) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   struct SaveSummary *p;
@@ -343,6 +345,11 @@ s32 Save_ScanFileSummaries(void) {
 extern u32 gData_02001000__screens __asm__("gSceneLocalState");
 
 // Builds the save header.
+/// Prepares the save buffer for writing: stamps the main routine's work with
+/// the time and options, then fills the file summary shown on the file menus
+/// (the leader's name, level and class, the play time, area, coins, Djinn of
+/// each element, the party, the send flag and how many of game flags 48-127 are
+/// set) and its checksum, the sum of the 968 words from gGameFlagBytes on.
 s32 Save_BuildFileSummary(void) {
   u16 owners[14];
   struct SaveSummary *summary;

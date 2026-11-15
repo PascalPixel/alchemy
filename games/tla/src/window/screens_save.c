@@ -340,12 +340,7 @@ s32 Save_ScanFileSummaries(void) {
 
 #define SAVE_GAME_WORDS ((struct SaveGameWords *)&gMainRoutineWork)
 
-/* VIEW(screens): variable gSceneLocalState as u32 gSceneLocalState;
- * scene/shared.h has s8 gSceneLocalState[]; tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/window/screens_save.c:353: `gData_02001000__screens' undeclared
- * (first use in this function). */
-extern u32 gData_02001000__screens __asm__("gSceneLocalState");
+extern s8 gSceneLocalState[];
 
 // Builds the save header.
 /// Prepares the save buffer for writing: stamps the main routine's work with
@@ -366,7 +361,8 @@ s32 Save_BuildFileSummary(void) {
   summary = (struct SaveSummary *)(gSaveBuffer - 16);
   SAVE_GAME_WORDS->buildStamp = BuildStamp_GetTimeFar(0);
   SAVE_GAME_WORDS->playTime = gPlayTimeFrames;
-  gData_02001000__screens = gPlayTimeFrames;
+  // A second copy of the play time, at the start of gSceneLocalState.
+  *(u32 *)gSceneLocalState = gPlayTimeFrames;
   gMainRoutineWork.idleSleepEnabled = gIdleSleepEnabled;
   owner = Unit_Get(gMainRoutineWork.leaderActorId);
   destination = summary->name;

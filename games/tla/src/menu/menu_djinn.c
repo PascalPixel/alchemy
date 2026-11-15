@@ -1615,37 +1615,33 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
                               s32 removePairSlot, s32 addPairSlot,
                               s32 previewMode, s32 page, s32 side);
 
-#define ALT_PARAM 4
-
 /// Draws both sides of a Djinn preview for page pageIndex: the second member
 /// in the second window and the first in the first. Mode 0 draws the pair
-/// members, both with preview mode 2; any other mode the shown members, with
-/// modes 4 and 1. Returns 1.
+/// members, both as a trade (DJINN_PREVIEW_TRADE); any other mode the shown
+/// members, the second gaining the Djinni and the first losing it. Returns 1.
 s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
-  s32 sp14;
+  s32 savedMode;
   u8 first;
   u8 owner;
   struct DjinnMenuWork *menu;
 
   menu = Ram_HeapSlots->menuWork;
   if (mode == 0) {
-    sp14 = mode;
+    savedMode = mode;
     first = menu->pairMember[1];
-    DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, first, 1, mode, 2,
-                              pageIndex, 1);
+    DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, first, 1, mode,
+                              DJINN_PREVIEW_TRADE, pageIndex, 1);
     DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairMember[0], mode, 1,
-                              2, pageIndex, mode);
+                              DJINN_PREVIEW_TRADE, pageIndex, mode);
   } else {
     owner = menu->shownMember[1];
     DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, owner, 1, 0,
-                              ALT_PARAM, pageIndex, 1);
-    DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->shownMember[0], 0, 0, 1,
-                              pageIndex, 0);
+                              DJINN_PREVIEW_ADD, pageIndex, 1);
+    DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->shownMember[0], 0, 0,
+                              DJINN_PREVIEW_UNSET, pageIndex, 0);
   }
   return 1;
 }
-
-#undef ALT_PARAM
 
 // The stat preview's columns, in pixels from x * 8: the Japanese edition draws
 // Attack, Defense and Agility with four digits from HP's column and Luck a tile

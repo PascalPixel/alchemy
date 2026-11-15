@@ -200,7 +200,7 @@ void ScanlineWindow_FillSpans(void *dst) {
 
 /// Fills the top-left `width` x `height` tiles of WINDOW_TILEMAP_VRAM, 32 tiles
 /// wide, with the tilemap entry `value`.
-void BgScreen_FillRect(s32 unused0, s32 unused1, u32 width, u32 height,
+void BgScreen_FillRect(s32 unusedA, s32 unusedB, u32 width, u32 height,
                        s32 value) {
   u32 row = 0;
   s16 *dst = (s16 *)BG_SCREEN_BLOCK(4);

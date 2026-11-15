@@ -946,10 +946,10 @@ void BattleEffect_EndElementStreaksFar(void);
 /// frames (45 frames); 1, the prepared canvas scene of the kind, centred on the
 /// unit (40 frames); 2, the ice fleck burst; 3, the gathering burst.
 void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
-  struct ScreenPoint position;
-  struct ScreenPoint position2;
-  struct BattlePresentationWork launch;
-  struct BattlePresentationWork launch2;
+  struct ScreenPoint starPosition;
+  struct ScreenPoint streakPosition;
+  struct BattlePresentationWork pillarLaunch;
+  struct BattlePresentationWork burstLaunch;
   s32 origin[2];
   struct BattleWork *session = Ram_HeapSlots->battleWork;
   volatile u16 *ime;
@@ -972,7 +972,7 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
   if (mode == 0) {
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, 0x100e);
     ElementGlow_InitializeStarField(kind);
-    for (frame = 0, pos = &position; frame <= 44; frame++) {
+    for (frame = 0, pos = &starPosition; frame <= 44; frame++) {
       brightness = &session->brightness;
       ime = &REG_IME;
       work = (struct SparkWork *)Ram_HeapSlots->battleEffect;
@@ -991,33 +991,33 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
   } else if (mode == 1) {
     BattleEffect_StartElementStreaksFar(kind);
     for (frame = 0; frame < 40; frame++) {
-      BattleMotion_ProjectScaledPosition(unit, (s32 *)&position2);
-      origin[0] = (64 - position2.x) << 8;
-      origin[1] = (64 - position2.y) << 8;
+      BattleMotion_ProjectScaledPosition(unit, (s32 *)&streakPosition);
+      origin[0] = (64 - streakPosition.x) << 8;
+      origin[1] = (64 - streakPosition.y) << 8;
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, (u32)origin, DMA_COPY_WORDS(2));
       wait(1);
     }
     BattleEffect_EndElementStreaksFar();
   } else if (mode == 2) {
-    launch.flags = 0;
-    launch.kind = kind;
-    launch.variant = variant;
-    launch.actor = unit;
-    launch.actors[0] = unit;
-    launch.firstTarget = unit;
-    launch.count = 1;
-    launch.initialValue = 1;
-    BattleEffect_RunElementPillarFar(&launch);
+    pillarLaunch.flags = 0;
+    pillarLaunch.kind = kind;
+    pillarLaunch.variant = variant;
+    pillarLaunch.actor = unit;
+    pillarLaunch.actors[0] = unit;
+    pillarLaunch.firstTarget = unit;
+    pillarLaunch.count = 1;
+    pillarLaunch.initialValue = 1;
+    BattleEffect_RunElementPillarFar(&pillarLaunch);
   } else {
-    launch2.flags = 0;
-    launch2.kind = kind;
-    launch2.variant = 0;
-    launch2.actor = unit;
-    launch2.firstTarget = unit;
-    launch2.actors[0] = unit;
-    launch2.count = 1;
-    launch2.initialValue = 1;
-    BattleEffect_RunElementBurstFar(&launch2);
+    burstLaunch.flags = 0;
+    burstLaunch.kind = kind;
+    burstLaunch.variant = 0;
+    burstLaunch.actor = unit;
+    burstLaunch.firstTarget = unit;
+    burstLaunch.actors[0] = unit;
+    burstLaunch.count = 1;
+    burstLaunch.initialValue = 1;
+    BattleEffect_RunElementBurstFar(&burstLaunch);
   }
 }
 

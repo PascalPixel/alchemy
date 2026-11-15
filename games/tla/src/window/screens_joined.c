@@ -170,15 +170,15 @@ void Party_ShowJoinedMessage(s32 member) {
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct Window *window;
-  s32 sprite2[3];
-  s32 sprite1[3];
-  s32 *entry1;
-  s32 *entry2;
-  s32 handle1, palette, handle2;
+  s32 secondSprite[3];
+  s32 firstSprite[3];
+  s32 *firstEntry;
+  s32 *secondEntry;
+  s32 firstSlot, palette, secondSlot;
   s32 *p;
 
   window = NULL;
-  entry1 = sprite1;
+  firstEntry = firstSprite;
   window = Window_Create(1, 1, 28, 5, 0);
 
   if (window != NULL) {
@@ -188,23 +188,23 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(first)), 0,
-        &handle1, &palette, 14, 0);
+        &firstSlot, &palette, PORTRAIT_PALETTE, 0);
     // The portraits as bare OAM entries, pushed at depth 250 each frame: a
     // link word, attributes 0 and 1 (32x32 at y 12, x 12 and 44) and
     // attribute 2, the tile with palette 14 or 15.
-    p = entry1;
+    p = firstEntry;
     *p++ = 0;
-    *p++ = 0x800c000c;
-    *p = palette | 0xe000;
+    *p++ = OBJ_SIZE_32X32 | OBJ_X(12) | 12;
+    *p = palette | PORTRAIT_PALETTE << 12;
 
-    entry2 = sprite2;
+    secondEntry = secondSprite;
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(second)), 0,
-        &handle2, &palette, 15, 0);
-    p = entry2;
+        &secondSlot, &palette, PORTRAIT_PALETTE + 1, 0);
+    p = secondEntry;
     *p++ = 0;
-    *p++ = 0x802c000c;
-    *p = palette | 0xf000;
+    *p++ = OBJ_SIZE_32X32 | OBJ_X(44) | 12;
+    *p = palette | (PORTRAIT_PALETTE + 1) << 12;
 
     work->speakerVoiceSound = 0;
     work->speakerVoiceCountdown = 0;
@@ -226,11 +226,11 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
       // UB: Oam_AddSpriteAtDepth returns nothing but is called as an s32
       // function; UBFIX calls it through its declared type.
 #ifdef UBFIX
-      Oam_AddSpriteAtDepth(entry1, 250);
-      Oam_AddSpriteAtDepth(entry2, 250);
+      Oam_AddSpriteAtDepth(firstEntry, 250);
+      Oam_AddSpriteAtDepth(secondEntry, 250);
 #else
-      ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(entry1, 250);
-      ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(entry2, 250);
+      ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(firstEntry, 250);
+      ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(secondEntry, 250);
 #endif
       wait(1);
     } while (Sound_GetBgmRestoreDelayFar() != 0 &&
@@ -238,8 +238,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
 
     Window_Close(window, 2);
     wait(1);
-    VramCache_FreeEntry(handle1);
-    VramCache_FreeEntry(handle2);
+    VramCache_FreeEntry(firstSlot);
+    VramCache_FreeEntry(secondSlot);
   }
 }
 

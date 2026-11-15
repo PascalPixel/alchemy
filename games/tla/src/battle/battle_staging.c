@@ -248,14 +248,14 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       u8 swap = battle->plan.targetIds[0];
 
       battle->events.unk16a = 1;
-      battle->plan.targetIds[0] = battle->plan.actorId2;
+      battle->plan.targetIds[0] = battle->plan.partnerId;
       battle->skipPlayback = 1;
       BattleStaging_RunPsynergyCast(&battle->plan, CAST_DJINNI);
       battle->skipPlayback = 0;
       battle->plan.targetIds[0] = swap;
       swap = battle->plan.unitId;
-      battle->plan.unitId = battle->plan.actorId2;
-      battle->plan.actorId2 = swap;
+      battle->plan.unitId = battle->plan.partnerId;
+      battle->plan.partnerId = swap;
       battle->plan.battleEffect = BattleUnit_GetPartyAttackEffect(
           Unit_Get(battle->plan.unitId)->enemyId);
       if (((battle->plan.unitId ^ battle->plan.targetIds[0]) >> 7) == 0) {
@@ -269,8 +269,8 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
           &battle->plan,
           battle->plan.abilityId == ABILITY_MELD ? ATTACK_WITH_PARTNER : 0);
       swap = battle->plan.unitId;
-      battle->plan.unitId = battle->plan.actorId2;
-      battle->plan.actorId2 = swap;
+      battle->plan.unitId = battle->plan.partnerId;
+      battle->plan.partnerId = swap;
       break;
     }
     case STAGING_DJINN_RECOVERY: {

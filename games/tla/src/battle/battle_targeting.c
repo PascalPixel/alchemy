@@ -858,7 +858,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
   // BUG: abilityId is tested before it is read from the plan, so this sees
   // whatever the register held.
   if (abilityId == ABILITY_MELD || abilityId == ABILITY_MOLD)
-    unitId = plan->actorId2;
+    unitId = plan->partnerId;
   else
     unitId = plan->unitId;
   targetId = plan->targetIds[slot];
@@ -1153,7 +1153,7 @@ power_end:
           if (abilityId == ABILITY_MELD || abilityId == ABILITY_MOLD) {
             attack = Unit_Get(plan->unitId)->atk;
             if (abilityId == ABILITY_MELD)
-              attack += Unit_Get(plan->actorId2)->atk / 4;
+              attack += Unit_Get(plan->partnerId)->atk / 4;
           }
           amount = Battle_CalculateAttackDamageFar(attack, defense, power,
                                                    elementBonus);

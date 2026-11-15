@@ -74,8 +74,8 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
 /// markers, animates the marker of the slider in use, and pulses the chosen
 /// setting's icon.
 void SettingsMenu_AnimateCursors(void) {
-  s32 src0;
-  s32 src1;
+  s32 firstMarkerPicture;
+  s32 secondMarkerPicture;
   s32 selection;
   struct OptionMenuWork *work;
 
@@ -86,20 +86,22 @@ void SettingsMenu_AnimateCursors(void) {
   MenuCursor_MoveTowardTargetFar(&work->marker[1]);
 
   if (selection == 0) {
-    src0 = (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorPictures;
+    firstMarkerPicture =
+        (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorPictures;
   } else {
-    src0 = (s32)&ResourceId_ShopCursorPictures;
+    firstMarkerPicture = (s32)&ResourceId_ShopCursorPictures;
   }
   VramCache_Load((u8)work->marker[0].sprite->index, 0x100,
-                 Resource_GetTableEntry(src0));
+                 Resource_GetTableEntry(firstMarkerPicture));
 
   if (selection == 1) {
-    src1 = (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorPictures;
+    secondMarkerPicture =
+        (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorPictures;
   } else {
-    src1 = (s32)&ResourceId_ShopCursorPictures;
+    secondMarkerPicture = (s32)&ResourceId_ShopCursorPictures;
   }
   VramCache_Load((u8)work->marker[1].sprite->index, 0x100,
-                 Resource_GetTableEntry(src1));
+                 Resource_GetTableEntry(secondMarkerPicture));
 
   if (selection > 1)
     WindowSprite_Pulse(

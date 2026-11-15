@@ -208,21 +208,6 @@ struct MotionRecordScale {
   s32 scale;
 };
 
-/// The form change effect's command, as Battle_PlayFormChange fills it for
-/// enemy 128.
-struct BattleFxRequest {
-  s32 field00;
-  s32 field04;
-  s32 field08;
-  s32 field0c;
-  s32 field10;
-  s32 field14;
-  s32 field18;
-  u8 unk1c[8];
-  s16 field24;
-  u8 unk26[0x32];
-};
-
 /// The packet the two consoles exchange each turn of a link battle: how many
 /// actions follow, a random check, and the random seed both sides then use.
 struct BattleLinkedActionState {
@@ -300,7 +285,7 @@ enum BattleStaging {
   STAGING_ENEMY_CAST = 8,
   STAGING_FULL_SCREEN = 9, ///< Gaia, Rockfall, Procne and their kin
   /// Meld ("Launch a powerful team strike.") and Mold: a second unit
-  /// (BattlePlan.actorId2) strikes as the Djinni is unleashed.
+  /// (BattlePlan.partnerId) strikes as the Djinni is unleashed.
   STAGING_TEAM_STRIKE = 10,
   STAGING_DJINN_RECOVERY = 11, ///< Eddy: "Speed up Djinn recovery time."
   STAGING_MEGAERA = 12,        ///< the summon, then High Impact on its side
@@ -316,7 +301,7 @@ enum BattleStaging {
 /// summons do.
 #define STAGING_HIDE_ACTOR 1
 
-/// BattleStaging_RunAttack's mode bit for Meld: BattlePlan.actorId2 runs in
+/// BattleStaging_RunAttack's mode bit for Meld: BattlePlan.partnerId runs in
 /// beside the attacker.
 #define ATTACK_WITH_PARTNER 32
 

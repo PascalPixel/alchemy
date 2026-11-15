@@ -202,7 +202,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   plan->targetCount = 0;
   plan->battleEffect = 0;
   plan->failure = ACTION_FAILURE_NONE;
-  plan->actorId2 = request->unitId;
+  plan->partnerId = request->unitId;
   plan->element = ELEMENT_NONE;
   MessageArgument_ClearAllFar();
   if (actor->hp == 0)
@@ -711,15 +711,15 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       }
     }
     if (abilityId == ABILITY_MELD) {
-      plan->actorId2 = BattleUnit_FindStrongestAlly(plan->unitId);
+      plan->partnerId = BattleUnit_FindStrongestAlly(plan->unitId);
     } else if (abilityId == ABILITY_MOLD) {
       s32 tries = 0;
 
-      plan->actorId2 = plan->targetIds[0];
+      plan->partnerId = plan->targetIds[0];
       do {
         plan->targetIds[0] = Battle_GetUnitAtPlace(
-            BattleAI_ChooseRandomTarget(plan->actorId2 <= ALLY_MAX));
-        if (plan->targetIds[0] != plan->actorId2)
+            BattleAI_ChooseRandomTarget(plan->partnerId <= ALLY_MAX));
+        if (plan->targetIds[0] != plan->partnerId)
           break;
       } while (++tries <= 9);
     }

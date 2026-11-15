@@ -378,16 +378,16 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   else
     BattleMotion_ApproachTarget(work.actor, work.actors[0], frames,
                                 BattleSprite_GetAttackHop(unit->enemyId) << 16);
-  if ((mode & 32) && plan->unitId != plan->actorId2 &&
-      plan->actorId2 != (work.actors[0] & 0x80)) {
-    object = BattleObject_Get(plan->actorId2);
+  if ((mode & 32) && plan->unitId != plan->partnerId &&
+      plan->partnerId != (work.actors[0] & 0x80)) {
+    object = BattleObject_Get(plan->partnerId);
 
     animation = GetMotionRecord(((struct BattleObject *)object)->object, 0);
     frames = SpriteAnimation_SumCommandLengthsFar(
         animation->entries[0]->animationId, 2, 1);
     BattleMotion_ApproachTarget(
-        plan->actorId2, work.actors[0], frames,
-        BattleSprite_GetAttackHop(Unit_Get(plan->actorId2)->enemyId) << 16);
+        plan->partnerId, work.actors[0], frames,
+        BattleSprite_GetAttackHop(Unit_Get(plan->partnerId)->enemyId) << 16);
     Actor_SetAnimationSpeedFar(
         (struct Actor *)((struct BattleObject *)object)->object, 16);
   }
@@ -755,7 +755,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
 }
 
 /// Flashes a unit as it is hit, white and back twice in its damage pose.
-void BattleMotion_FlashHit(s32 id, s32 unused0, s32 unused1) {
+void BattleMotion_FlashHit(s32 id, s32 unusedA, s32 unusedB) {
   u16 selection[2];
   u16 *selected;
   s32 target;

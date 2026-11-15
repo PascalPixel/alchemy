@@ -165,8 +165,8 @@ s32 Menu_BuildLocalizedPatternTiles(void) {
             mi = 0;
           }
         }
-        tile[x] = XorWord(tile[x], gMenu_BarPatternRows[mi].word0);
-        tile[x + 8] = XorWord(tile[x + 8], gMenu_BarPatternRows[mi].word1);
+        tile[x] = XorWord(tile[x], gMenu_BarPatternRows[mi].firstTile);
+        tile[x + 8] = XorWord(tile[x + 8], gMenu_BarPatternRows[mi].secondTile);
       }
     }
   }

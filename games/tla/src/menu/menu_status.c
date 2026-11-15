@@ -6,8 +6,8 @@
 #include "menu_internal.h"
 #include "sounds.h"
 
-void StatusScreen_Initialize(s32 unused0, s32 unused1, s32 unused2,
-                             s32 unused3);
+void StatusScreen_Initialize(s32 unusedA, s32 unusedB, s32 unusedC,
+                             s32 unusedD);
 
 s32 PartyMemberChooser_Run(void);
 
@@ -546,8 +546,8 @@ void Menu_PlaceOwnerEntryObjects(struct RenderInput *window, s32 originX,
                                  s32 originY);
 
 /// Its callers pass four values it does not read.
-void StatusScreen_Initialize(s32 unused0, s32 unused1, s32 unused2,
-                             s32 unused3) {
+void StatusScreen_Initialize(s32 unusedA, s32 unusedB, s32 unusedC,
+                             s32 unusedD) {
   struct StatusScreenWork *work = Ram_HeapSlots->menuWork;
 
   Menu_PlaceOwnerEntryObjects(MenuCursor_Create(work), 2, 2);

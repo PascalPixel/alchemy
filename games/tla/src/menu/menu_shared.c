@@ -1194,13 +1194,17 @@ void Menu_StopWatchingStart(void) {
 }
 
 /// Draws the next text in TEXT_COLOR_NORMAL.
-void UiPalette_SetColor15(void) { Text_SetColorFar(TEXT_COLOR_NORMAL); }
+UNUSED void UiPalette_SetNormalColor(void) {
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
+}
 
 /// Draws the next text in TEXT_COLOR_RED.
-void UiPalette_SetColor2(void) { Text_SetColorFar(TEXT_COLOR_RED); }
+UNUSED void UiPalette_SetRedColor(void) { Text_SetColorFar(TEXT_COLOR_RED); }
 
 /// Draws the next text in TEXT_COLOR_YELLOW.
-void UiPalette_SetColor4(void) { Text_SetColorFar(TEXT_COLOR_YELLOW); }
+UNUSED void UiPalette_SetYellowColor(void) {
+  Text_SetColorFar(TEXT_COLOR_YELLOW);
+}
 
 #undef DRAW_LEVEL_LABEL
 #undef STATUS_PANEL_LEARN_NOTE_Y

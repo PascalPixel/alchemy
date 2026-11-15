@@ -20,22 +20,22 @@ void Icon_Decode(GlyphTransfer *work, s32 layer);
 
 /// Builds a command icon (overlay overlayIcon over base baseIcon) and loads it
 /// into a sprite tile slot: *slot, or a free one when reuse is 0.
-void Icon_BuildCommandIconTiles(s32 no0, s32 no1, s32 *slot, s32 *ret,
-                                s32 flag) {
+void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
+                                s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
 
   work = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
-  work->encoded = gIcon_BasePointerTable[no1];
+  work->encoded = gIcon_BasePointerTable[baseIcon];
   work->width = 2;
   work->height = 2;
   Icon_Decode(work, 0);
-  work->encoded = gIcon_OverlayPointerTable[no0];
+  work->encoded = gIcon_OverlayPointerTable[overlayIcon];
   work->width = 2;
   work->height = 2;
   Icon_Decode(work, 1);
-  if (flag == 0)
+  if (reuse == 0)
     *slot = VramCache_FindFreeEntry();
-  *ret = VramCache_Load(*slot, 0x80, work->tiles);
+  *tileOut = VramCache_Load(*slot, 128, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
 

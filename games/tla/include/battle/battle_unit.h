@@ -268,6 +268,9 @@ enum CurseFlag {
 
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
 /// Djinn and ailments.
+/// Unit ids from 128 are the enemies'.
+#define FIRST_ENEMY_UNIT 128
+
 /// How many actions a unit's list holds (Unit.psynergy).
 #define PSYNERGY_SLOTS 32
 

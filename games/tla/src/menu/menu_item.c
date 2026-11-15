@@ -28,10 +28,10 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
                                 s32 dropMode);
 s32 ItemMenu_SelectMember(s32 pane);
 s32 ItemMenu_SelectTarget(s32 mode);
-void ItemMenu_SetItemWindowRow3(void);
-void ItemMenu_SetItemWindowRow5(void);
-void ItemMenu_SetMessageWindowHeight3(void);
-void ItemMenu_SetMessageWindowHeight5(void);
+void ItemMenu_PlaceItemWindowBelowQuestion(void);
+void ItemMenu_PlaceItemWindowBelowItemQuestion(void);
+void ItemMenu_FitMessageWindowToQuestion(void);
+void ItemMenu_FitMessageWindowToItemQuestion(void);
 s32 ItemMenu_ShowDetails(s32 value);
 void ItemMenu_TryBreak(void);
 s32 ItemMenu_Use(void);
@@ -212,8 +212,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
     switch (state) {
     case 0:
       menu->selectedSlots[0] = 0;
-      ItemMenu_SetMessageWindowHeight3();
-      ItemMenu_SetItemWindowRow3();
+      ItemMenu_FitMessageWindowToQuestion();
+      ItemMenu_PlaceItemWindowBelowQuestion();
       menu->selectedItemIcon->motion = ICON_HIDDEN;
       ItemMenu_DrawMessage(0, (s32)&MsgWhoseItem);
 #if TLA_PATCH_1
@@ -240,8 +240,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         state = 0;
         break;
       }
-      ItemMenu_SetMessageWindowHeight3();
-      ItemMenu_SetItemWindowRow3();
+      ItemMenu_FitMessageWindowToQuestion();
+      ItemMenu_PlaceItemWindowBelowQuestion();
       menu->selectedItemIcon->motion = ICON_HIDDEN;
       menu->sideIcons[0]->motion = ICON_SHOWN;
       ItemMenu_DrawMessage(0, (s32)&MsgWhichItem);
@@ -316,8 +316,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 
     case 2:
       ItemMenu_HideAllIcons();
-      ItemMenu_SetMessageWindowHeight5();
-      ItemMenu_SetItemWindowRow5();
+      ItemMenu_FitMessageWindowToItemQuestion();
+      ItemMenu_PlaceItemWindowBelowItemQuestion();
       WindowSprite_RedrawSavedRectFar((struct Window *)menu->questionWindow);
       ItemMenu_DrawItemHead();
       Text_DrawMessageAsTilesFar((s32)MsgUseOnWhom, menu->questionWindow, 16,
@@ -351,8 +351,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       break;
 
     case 6:
-      ItemMenu_SetMessageWindowHeight5();
-      ItemMenu_SetItemWindowRow5();
+      ItemMenu_FitMessageWindowToItemQuestion();
+      ItemMenu_PlaceItemWindowBelowItemQuestion();
       WindowSprite_RedrawSavedRectFar((struct Window *)menu->questionWindow);
       ItemMenu_DrawItemHead();
       Text_DrawMessageAsTilesFar((s32)MsgGiveToWhom, menu->questionWindow, 16,
@@ -404,7 +404,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         }
         Unit_RefreshPsynergyFar(command);
         Unit_CalculateFar(command);
-        ItemMenu_SetItemWindowRow3();
+        ItemMenu_PlaceItemWindowBelowQuestion();
         ItemMenu_RefreshMember(menu->sideMember[0], 0);
         menu->selectedItemIcon->motion = ICON_HIDDEN;
         menu->sideIcons[0]->motion = ICON_HIDDEN;
@@ -493,7 +493,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->sideMember[0] = menu->sideMember[1];
         menu->selectedItems[0] &= INVENTORY_ITEM_ID_MASK;
 #if TLA_PATCH_2
-        ItemMenu_SetMessageWindowHeight6();
+        ItemMenu_FitMessageWindowToLongItemQuestion();
 #endif
         WindowSprite_RedrawSavedRectFar((struct Window *)menu->questionWindow);
         ItemMenu_DrawItemHead();
@@ -531,8 +531,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 
     case 7:
       aborted = 0;
-      ItemMenu_SetMessageWindowHeight3();
-      ItemMenu_SetItemWindowRow3();
+      ItemMenu_FitMessageWindowToQuestion();
+      ItemMenu_PlaceItemWindowBelowQuestion();
       ItemMenu_DrawMessage(0, (s32)&MsgSwapForWhat);
       if (ItemMenu_RunList(1) == -1) {
         state = 6;
@@ -618,9 +618,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         Unit_RefreshPsynergyFar(menu->sideMember[1]);
         Unit_CalculateFar(menu->sideMember[0]);
         Unit_CalculateFar(menu->sideMember[1]);
-        ItemMenu_SetMessageWindowHeight5();
+        ItemMenu_FitMessageWindowToItemQuestion();
 #if TLA_PATCH_2
-        ItemMenu_SetMessageWindowHeight6();
+        ItemMenu_FitMessageWindowToLongItemQuestion();
         ItemMenu_HideTradedIcons();
 #endif
         WindowSprite_RedrawSavedRectFar((struct Window *)menu->questionWindow);
@@ -630,7 +630,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         result = ItemMenu_ConfirmEquip(0);
         if (GameFlag_Get(FLAG_MENU_START_PRESSED) == 0) {
           WindowSprite_ClearListFar(menu->infoWindow);
-          ItemMenu_SetItemWindowRow5();
+          ItemMenu_PlaceItemWindowBelowItemQuestion();
           ItemMenu_RefreshMember(menu->sideMember[1], 1);
           if (result == 0) {
             ItemMenu_DrawEquipPreview(menu->sideMember[1],
@@ -1574,7 +1574,7 @@ enum ItemMenuCommand {
 
 void ItemMenu_BuildCommands(s8 *commandStates);
 
-void ItemMenu_SetMessageWindowHeight7(void);
+void ItemMenu_FitMessageWindowToItemChoices(void);
 
 void ItemMenu_DrawItemHead(void);
 void ItemMenu_DrawCommands(const s8 *commandStates, s32 window);
@@ -1607,7 +1607,7 @@ s32 ItemMenu_ChooseCommand(void) {
     ItemMenu_HideAllIcons();
     WindowSprite_RedrawSavedRectFar(menu->listWindow);
     messageWindow = menu->questionWindow;
-    ItemMenu_SetMessageWindowHeight7();
+    ItemMenu_FitMessageWindowToItemChoices();
     WindowSprite_RedrawSavedRectFar(messageWindow);
     Window_DrawDividerLineFar(messageWindow, 0, 3, 16, 3);
     ItemMenu_DrawItemHead();
@@ -2377,32 +2377,34 @@ void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y) {
 #define ITEM_MENU ((struct ItemMenuWork *)Ram_HeapSlots->menuWork)
 
 /// Moves the item window to row 5 of the right-hand side.
-void ItemMenu_SetItemWindowRow5(void) {
+void ItemMenu_PlaceItemWindowBelowItemQuestion(void) {
   Window_SetBounds(ITEM_MENU->itemWindow, 13, 5, 17, 10);
 }
 
-/// Moves the item window to row 3 of the right-hand side.
-void ItemMenu_SetItemWindowRow3(void) {
+/// Moves the item window to row 3 of the right-hand side, below a one-line
+/// question.
+void ItemMenu_PlaceItemWindowBelowQuestion(void) {
   Window_SetBounds(ITEM_MENU->itemWindow, 13, 3, 17, 10);
 }
 
-/// Makes the message window, along the top right, 5 rows tall.
-void ItemMenu_SetMessageWindowHeight5(void) {
+/// Makes the message window, along the top right, 5 rows tall: the item's name
+/// and a question below it.
+void ItemMenu_FitMessageWindowToItemQuestion(void) {
   Window_SetBounds(ITEM_MENU->questionWindow, 13, 0, 17, 5);
 }
 
 /// Makes the item menu's message window six tiles high.
-void ItemMenu_SetMessageWindowHeight6(void) {
+void ItemMenu_FitMessageWindowToLongItemQuestion(void) {
   Window_SetBounds(ITEM_MENU->questionWindow, 13, 0, 17, 6);
 }
 
 /// Makes the item menu's message window seven tiles high.
-void ItemMenu_SetMessageWindowHeight7(void) {
+void ItemMenu_FitMessageWindowToItemChoices(void) {
   Window_SetBounds(ITEM_MENU->questionWindow, 13, 0, 17, 7);
 }
 
 /// Makes the item menu's message window three tiles high.
-void ItemMenu_SetMessageWindowHeight3(void) {
+void ItemMenu_FitMessageWindowToQuestion(void) {
   Window_SetBounds(ITEM_MENU->questionWindow, 13, 0, 17, 3);
 }
 
@@ -2454,7 +2456,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   s32 ownerCount;
   struct WindowSprite *arrow;
 
-  ItemMenu_SetMessageWindowHeight7();
+  ItemMenu_FitMessageWindowToItemChoices();
   WindowSprite_RedrawSavedRectFar(window);
   if (dropMode == 0)
     targetCount = ItemMenu_GetItemQuantity(
@@ -2787,7 +2789,7 @@ s32 ItemMenu_BuildPagedList(struct MenuResult *result, s32 index) {
 }
 
 /// Draws the selected item-list row's name and highlights only that row.
-s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *memberWork,
+s32 ItemMenu_DrawItemDetailPage(s32 listWindow, void *memberWork,
                                 struct MenuResult *state) {
   struct ItemMenuWork *menu;
   s32 page;

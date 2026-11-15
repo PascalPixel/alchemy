@@ -60,19 +60,8 @@
 
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 
-/* VIEW(menus): variable gLinkStatus as u16 gLinkStatus; serial.h has volatile
- * u16 gLinkStatus; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/window/screens_icon_menu.c:182:
- * `gLinkStatus__menus' undeclared (first use in this function). */
-extern u16 gLinkStatus__menus __asm__("gLinkStatus");
-/* VIEW(battle_party_commands): variable gLinkPeerSignatures as extern u16
- * gLinkPeerSignatures[][12]; countdown has extern struct LinkSignature
- * gLinkPeerSignatures[]; tried as the rest of the object declares it, it does
- * not compile in tla-ja: games/tla/src/window/screens_icon_menu.c:172:
- * `gLinkPeerSignatures__battle_party_commands' undeclared (first use in this
- * function). */
-extern u16 gLinkPeerSignatures__battle_party_commands[][12] __asm__(
-    "gLinkPeerSignatures");
+#include "system/heap_slots.h"
+#include "system/serial.h"
 
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
 /* VIEW(menus): routine BattleDjinnMenu_Run as s32 BattleDjinnMenu_Run(s32
@@ -176,15 +165,14 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       signature[7] = 'T';
       missedLinkFrames = 0;
       for (;;) {
-        u16 *peerSignature =
-            gLinkPeerSignatures__battle_party_commands[battle->linkSide ^ 1];
+        u16 *peerSignature = gLinkPeerSignatures[battle->linkSide ^ 1];
 
         if (battle->linkPaused != 0) {
           commandCount = -1;
           state->linkTimer = 0;
           break;
         }
-        if ((gLinkStatus__menus & 3) != 3) {
+        if ((gLinkStatus & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH) {
           if (++missedLinkFrames > 24) {
             commandCount = -1;
             state->linkTimer = 0;
@@ -822,14 +810,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       state->timerWindow = NULL;
     }
     for (;;) {
-      u16 *peerSignature =
-          gLinkPeerSignatures__battle_party_commands[link->linkSide ^ 1];
+      u16 *peerSignature = gLinkPeerSignatures[link->linkSide ^ 1];
 
       if (link->linkPaused != 0) {
         commandCount = -1;
         break;
       }
-      if ((gLinkStatus__menus & 3) != 3) {
+      if ((gLinkStatus & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH) {
         mode++;
         if (mode > 24) {
           commandCount = -1;

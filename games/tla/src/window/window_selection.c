@@ -902,8 +902,8 @@ void SelectionMenu_StepLeft(struct SelectionScreen *state) {
   wait(1);
 }
 
-void Icon_BuildCommandIconTiles(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
-                                s32 arg4);
+void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
+                                s32 *tileOut, s32 reuse);
 
 /// Redraws the command icon at row place rowIndex in its plain state, in its
 /// own VRAM cache entry. Other kinds of icon are left alone.
@@ -1062,8 +1062,8 @@ void SelectionMenu_Scroll(struct SelectionScreen *screen, s32 forward) {
   }
 }
 
-void Icon_BuildCommandIconTiles(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
-                                s32 arg4);
+void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
+                                s32 *tileOut, s32 reuse);
 
 s32 Resource_LoadByMode(u32 mode, s32 value) {
   s32 output;
@@ -1121,8 +1121,8 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
   return result;
 }
 
-void Icon_BuildCommandIconTiles(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3,
-                                s32 arg4);
+void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
+                                s32 *tileOut, s32 reuse);
 void Icon_BuildItemIconTiles(u32 glyph, s32 includeBase, s32 *sourceIndex,
                              s32 *result, s32 reuseSource);
 

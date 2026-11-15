@@ -38,7 +38,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind);
 s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member);
 s32 Battle_RefuseFlee(void);
 s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count);
-s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby);
+s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby);
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count);
 s32 Item_ClassifyUseAbility(s32 member, s32 item);
 s32 ItemIcon_LoadIntoSlot(s32 item, s32 slot);

@@ -97,19 +97,20 @@ void Battle_ChangeEnemyForm(s32 id) {
   BattleObject_Put();
 }
 
-/// Plays the form change effect of enemy group value (78 to 80) on enemy 128.
+/// Plays the form change effect of enemy group value (78 to 80) on the first
+/// enemy.
 void Battle_PlayFormChange(s32 value) {
-  struct BattleFxRequest request;
+  struct BattlePresentationWork request;
 
-  request.field10 = 0;
-  request.field08 = 128;
-  request.field0c = 0;
-  request.field14 = 1;
-  request.field24 = 128;
-  request.field04 = 0;
-  request.field00 = 0;
-  request.field18 = 0;
-  BattleEffect_RunFormChangeFar(&request, value);
+  request.initialValue = 0;
+  request.actor = FIRST_ENEMY_UNIT;
+  request.firstTarget = 0;
+  request.count = 1;
+  request.actors[0] = FIRST_ENEMY_UNIT;
+  request.side = 0;
+  request.kind = 0;
+  request.variant = 0;
+  BattleEffect_RunFormChangeFar((struct BattleFxRequest *)&request, value);
 }
 
 /// Returns the first of the Djinn tutorial's messages: the second set's

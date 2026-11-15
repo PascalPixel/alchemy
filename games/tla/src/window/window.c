@@ -119,17 +119,6 @@ struct BattleCommandRowWork {
   s32 commandKinds[6];
 };
 
-/// The battle menu's navigation work (heap slot 57).
-struct CommandRowWindowWork {
-  u8 unk00[3];
-  u8 dirty;
-  u8 unk04;
-  u8 flags05;
-  u8 holdTilemapUpload;
-  u8 unk07;
-  u16 tilemap[0x400];
-};
-
 /// A unit as the summary screen reads it.
 struct SummaryOam {
   u8 unk00[4];
@@ -208,8 +197,8 @@ struct BobPairObject {
 /// A row of gMenu_BarPatternRows: the two words a menu bar's tile pair is
 /// XORed with (Menu_BuildLocalizedPatternTiles).
 struct BarPatternRow {
-  u32 word0;
-  u32 word1;
+  u32 firstTile;
+  u32 secondTile;
 };
 
 /// The name entry screen's cursors: the hand on the keyboard and the caret
@@ -316,19 +305,6 @@ struct WindowLine {
 struct WindowBuffer {
   u8 unk000[4];
   struct WindowLine lines[160];
-};
-
-/// The partner console's link signature (gLinkPeerSignatures) as the timer
-/// reads it: halfwords 4 to 7 read "EDVS" once the partner has chosen its
-/// commands (Battle_CollectPartyCommands), which starts this side's
-/// countdown.
-struct LinkSignature {
-  u8 padding000[8];
-  u16 e;
-  u16 d;
-  u16 v;
-  u16 s;
-  u8 padding010[8];
 };
 
 extern u8 gWorkspace_ItemTitle[];

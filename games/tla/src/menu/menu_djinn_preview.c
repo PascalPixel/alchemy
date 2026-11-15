@@ -31,8 +31,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   s32 memberIndex;
   s32 first;
   s32 second;
-  u32 entry0;
-  u32 entry1;
+  u32 chosenEntry;
+  u32 otherEntry;
   s32 row;
 
   menu = Ram_HeapSlots->menuWork;
@@ -174,22 +174,22 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     Text_DrawMessageAsTilesFar((s32)MsgDjinnCompareConfirm, help, 128, 8);
   }
   row = 0;
-  entry0 = menu->pairEntries[0];
-  entry1 = menu->pairEntries[1];
+  chosenEntry = menu->pairEntries[0];
+  otherEntry = menu->pairEntries[1];
   if (mode == 1)
     row = 1;
-  if ((entry0 & 0x8000) == 0)
+  if ((chosenEntry & DJINN_ENTRY_IS_SET) == 0)
     Text_SetColorFar(TEXT_COLOR_RED);
-  DjinnMenu_DrawEntry(help, 40, row * 8, entry0);
+  DjinnMenu_DrawEntry(help, 40, row * 8, chosenEntry);
   if (mode == 0) {
-    if ((entry1 & 0x8000) == 0)
+    if ((otherEntry & DJINN_ENTRY_IS_SET) == 0)
       Text_SetColorFar(TEXT_COLOR_RED);
-    DjinnMenu_DrawEntry(help, 40, 16, entry1);
+    DjinnMenu_DrawEntry(help, 40, 16, otherEntry);
   } else if (mode - 2 <= 1) {
-    if ((entry0 & 0x8000) != 0)
+    if ((chosenEntry & DJINN_ENTRY_IS_SET) != 0)
       Text_SetColorFar(TEXT_COLOR_RED);
-    DjinnMenu_DrawEntry(help, 40, 16, entry0);
-    Window_SetTilemapEntryFar(help, 0xf296, 7, 1, 0);
+    DjinnMenu_DrawEntry(help, 40, 16, chosenEntry);
+    Window_SetTilemapEntryFar(help, WINDOW_TILE(662), 7, 1, 0);
   }
 
   for (;;) {

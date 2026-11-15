@@ -63,40 +63,40 @@ SoundTest_SeString:
 SoundTest_FxString:
 	.asciz "FX"
 	.balign 4, 0
-	.global DebugWarp_Name8
-DebugWarp_Name8:
+	.global DebugWarp_KaoruSpecial1Name
+DebugWarp_KaoruSpecial1Name:
 	.asciz "8:Kaoru Special1"
 	.balign 4, 0
-	.global DebugWarp_Name7
-DebugWarp_Name7:
+	.global DebugWarp_KaoruSpecial2Name
+DebugWarp_KaoruSpecial2Name:
 	.asciz "7:Kaoru Special2"
 	.balign 4, 0
-	.global DebugWarp_Name6
-DebugWarp_Name6:
+	.global DebugWarp_KaoruSpecial3Name
+DebugWarp_KaoruSpecial3Name:
 	.asciz "6:Kaoru Special3"
 	.balign 4, 0
-	.global DebugWarp_Name5
-DebugWarp_Name5:
+	.global DebugWarp_KaoruSpecial4Name
+DebugWarp_KaoruSpecial4Name:
 	.asciz "5:Kaoru Special4"
 	.balign 4, 0
-	.global DebugWarp_Name4
-DebugWarp_Name4:
+	.global DebugWarp_Champa2Name
+DebugWarp_Champa2Name:
 	.asciz "4:CHAMPA2"
 	.balign 4, 0
-	.global DebugWarp_Name3
-DebugWarp_Name3:
+	.global DebugWarp_Arafura3Name
+DebugWarp_Arafura3Name:
 	.asciz "3:Arafura3"
 	.balign 4, 0
-	.global DebugWarp_Name2
-DebugWarp_Name2:
+	.global DebugWarp_EnergySampleName
+DebugWarp_EnergySampleName:
 	.asciz "2:Energy Sample"
 	.balign 4, 0
-	.global DebugWarp_Name1
-DebugWarp_Name1:
+	.global DebugWarp_Arafura2Name
+DebugWarp_Arafura2Name:
 	.asciz "1:Arafura2"
 	.balign 4, 0
-	.global DebugWarp_Name0
-DebugWarp_Name0:
+	.global DebugWarp_JupiterName
+DebugWarp_JupiterName:
 	.asciz "0:Jupiter"
 	.balign 4, 0
 @ An empty ability's name

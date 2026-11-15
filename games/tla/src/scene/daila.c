@@ -2,16 +2,18 @@
 /// Daila, the northernmost town of Indra, where the tidal wave left salt
 /// puddles all over the streets, in two scenes that share this overlay.
 ///
-/// Daila1 and Daila2 are the same village with different people about; the
-/// getters pick each scene's tables by gMainRoutineWork.next. Doors into
-/// the houses are step triggers 1 to 6 (Daila_EnterDoor).
+/// The village is two scenes: SCENE_DAILA_FLOODED, under the standing salt
+/// water the tidal wave left, and SCENE_DAILA once Tavi is rescued and it has
+/// drained to puddles; the getters pick each scene's tables by
+/// gMainRoutineWork.next. Doors into the houses are step triggers 1 to 6
+/// (Daila_EnterDoor).
 ///
-/// In Daila2, Alex waits for the party by the inn and goes on alone to Madra
-/// (Daila_MeetAlex). Six puddles (sprite 290) lie in its streets: Parch dries
-/// one for the visit (Daila_ParchFirstPuddle to Daila_ParchSixthPuddle) and
-/// Frost freezes one into a pillar of ice to stand on (Scene_RaiseHeldActor,
-/// gDailaInteriors_PillarFrozenFlags). Scoop on one spot digs up a Psy Crystal
-/// (Daila_DigUpPsyCrystal).
+/// Once it drains, Alex waits for the party by the inn and goes on alone to
+/// Madra (Daila_MeetAlex). Six puddles (sprite 290) lie in its streets: Parch
+/// dries one for the visit (Daila_ParchFirstPuddle to Daila_ParchSixthPuddle)
+/// and Frost freezes one into a pillar of ice to stand on
+/// (Scene_RaiseHeldActor, gDailaInteriors_PillarFrozenFlags). Scoop on one spot
+/// digs up a Psy Crystal (Daila_DigUpPsyCrystal).
 
 #include "field/field_sequence_event.h"
 #include "battle/battle.h"
@@ -36,20 +38,22 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
-/// Daila2's puddles dried by Parch for this visit, one flag each, in the order
-/// of the puddles' rows, and frozen into pillars by Frost.
+/// The drained village's puddles dried by Parch for this visit, one flag each,
+/// in the order of the puddles' rows, and frozen into pillars by Frost.
 #define FLAG_DAILA_FIRST_PUDDLE_PARCHED 0x210
 #define FLAG_DAILA_SECOND_PUDDLE_PARCHED 0x211
 #define FLAG_DAILA_THIRD_PUDDLE_PARCHED 0x212
 #define FLAG_DAILA_FOURTH_PUDDLE_PARCHED 0x213
 #define FLAG_DAILA_FIFTH_PUDDLE_PARCHED 0x214
 #define FLAG_DAILA_SIXTH_PUDDLE_PARCHED 0x215
-/// The first of six flags, one for each of Daila2's puddles that Frost has
-/// frozen into a pillar for this visit, by gDailaInteriors_PillarFrozenFlags.
+/// The first of six flags, one for each of the drained village's puddles that
+/// Frost has frozen into a pillar for this visit, by
+/// gDailaInteriors_PillarFrozenFlags.
 #define FLAG_DAILA_PUDDLE_FROZEN_FIRST 0x216
 
 /// The people and puddles the events move, numbering the rows of
-/// gDaila2ActorPlacements (Daila1's rows to ACTOR_LAST_VILLAGER are alike).
+/// gDailaActorPlacements (the flooded village's rows to ACTOR_LAST_VILLAGER are
+/// alike).
 enum DailaActorId {
   ACTOR_GREETER = ACTOR_FIRST_PLACED,
   ACTOR_INDRA_MOVED_MAN,
@@ -71,12 +75,12 @@ enum DailaActorId {
 #define ACTOR_PSY_CRYSTAL 66
 
 extern struct SceneEntrance gDailaEntrances[];
-extern s32 gDaila1Exits[];
-extern s32 gDaila2Exits[];
-extern struct ActorPlacement gDaila1ActorPlacements[];
-extern struct ActorPlacement gDaila2ActorPlacements[];
-extern struct Trigger gDaila1Triggers[];
-extern struct Trigger gDaila2Triggers[];
+extern s32 gDailaFloodedExits[];
+extern s32 gDailaExits[];
+extern struct ActorPlacement gDailaFloodedActorPlacements[];
+extern struct ActorPlacement gDailaActorPlacements[];
+extern struct Trigger gDailaFloodedTriggers[];
+extern struct Trigger gDailaTriggers[];
 extern s16 gDailaInteriors_PillarFrozenFlags[];
 extern s32 gDaila_FallenOldManScript[];
 extern u32 gDaila_PuddleChildScript[];
@@ -88,23 +92,18 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gDailaEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
-static inline void ReturnHome(s32 mode, s32 actor, s32 flag) {
-  /* FAKEMATCH(wrapper): the call forwarded through the inline. */
-  Actor_ReturnHome(mode, actor, flag);
-}
-
 s32 *Scene_GetExits(void) {
   if (gMainRoutineWork.next == SCENE_DAILA_2)
-    return gDaila2Exits;
+    return gDailaExits;
   else
-    return gDaila1Exits;
+    return gDailaFloodedExits;
 }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_DAILA_2)
-    return gDaila2ActorPlacements;
+    return gDailaActorPlacements;
   else
-    return gDaila1ActorPlacements;
+    return gDailaFloodedActorPlacements;
 }
 
 /// Stepping onto one of the village's doors: the leader walks through it and
@@ -129,14 +128,14 @@ void Daila_EnterDoor(void) {
 
 /// Scoop on the puddle's cell digs up the buried Psy Crystal.
 void Daila_DigUpPsyCrystal(s32 mode) {
-  ReturnHome(mode, ACTOR_PSY_CRYSTAL, FLAG_DAILA_PSY_CRYSTAL_DUG);
+  Event_DigUpTreasure(mode, ACTOR_PSY_CRYSTAL, FLAG_DAILA_PSY_CRYSTAL_DUG);
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_DAILA_2)
-    return gDaila2Triggers;
+    return gDailaTriggers;
   else
-    return gDaila1Triggers;
+    return gDailaFloodedTriggers;
 }
 
 /// The greeter asks once whether the party has been to Daila before; after
@@ -281,7 +280,7 @@ void Daila_MeetAlex(void) {
 
   if (GameFlag_Get(FLAG_DAILA_MET_ALEX))
     return;
-  if (GameFlag_Get(0x910))
+  if (GameFlag_Get(FLAG_MADRA_GATE_INSPECTED))
     return;
   if (GameFlag_Get(FLAG_IN_PARTY(ACTOR_PIERS)))
     return;
@@ -599,7 +598,7 @@ struct SceneEntrance gDailaEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-s32 gDaila1Exits[] = {
+s32 gDailaFloodedExits[] = {
     SCENE_EXITS(Daila1),
     SCENE_EXIT_UNLESS(1, DailaInteriorsHouses, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, DailaInteriorsHouses, 2, EXIT_FLAG_NONE),
@@ -613,7 +612,7 @@ s32 gDaila1Exits[] = {
     SCENE_EXITS_END,
 };
 
-s32 gDaila2Exits[] = {
+s32 gDailaExits[] = {
     13, 0x1010100b, -1, 0x1020200b, -1, 0x1030300b,
     -1, 0x1040400b, -1, 0x1050500b, -1, 0x1060600b,
     -1, 0x1070100c, -1, 0x10802002, -1, 0x10903002,
@@ -622,7 +621,7 @@ s32 gDaila2Exits[] = {
 };
 // clang-format on
 
-struct ActorPlacement gDaila1ActorPlacements[] = {
+struct ActorPlacement gDailaFloodedActorPlacements[] = {
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 40, 0, 280,
                     FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 264, 0,
@@ -654,7 +653,7 @@ struct ActorPlacement gDaila1ActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gDaila2ActorPlacements[] = {
+struct ActorPlacement gDailaActorPlacements[] = {
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 40, 0, 280,
                     FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 264, 0,
@@ -706,7 +705,7 @@ struct ActorPlacement gDaila2ActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gDaila1Triggers[] = {
+struct Trigger gDailaFloodedTriggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
@@ -768,7 +767,7 @@ struct Trigger gDaila1Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gDaila2Triggers[] = {
+struct Trigger gDailaTriggers[] = {
     {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
     {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},

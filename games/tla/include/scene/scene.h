@@ -24,6 +24,17 @@ struct Vector3;
 
 typedef s32 (*HandlerFn)(void);
 
+#ifndef FIELD_CELL
+/// The map grid cell a 16.16 coordinate lies in, counted from 0 along its
+/// axis: a map grid cell is 16 pixels square.
+#define FIELD_CELL(coordinate) ((coordinate) >> 20)
+/// The whole pixels of a 16.16 coordinate or distance, px() undone.
+#define FIELD_PIXEL(coordinate) ((coordinate) >> 16)
+/// A 16.16 coordinate's whole cell, and its whole pixels, as masks.
+#define FIELD_CELL_MASK 0xfff00000
+#define FIELD_PIXEL_MASK 0xffff0000
+#endif
+
 /// The actor word at 84 seen as bit fields, for one store (see Func_0200095c).
 struct MotionView {
   u8 pad[84];
@@ -36,29 +47,12 @@ struct Cell {
   s32 x, z;
 };
 
-struct ObjBits {
-  u8 unk00[35];
-  u8 flags : 8;
-};
-
-struct Shot {
-  u8 unk00[0x62];
-  u8 unk62; ///< set once it has hit the leader
-  u8 unk63; ///< set with unk62, cleared when it ends
-};
-
 /// A field sprite's byte 9: the top of its first tile and its priority (OAM
 /// attribute 2), read as bit-fields.
 struct SpriteAttr2High {
   u8 unk00[9];
   u8 tileHigh : 2;
   u8 priority : 2;
-};
-
-/// An object's priority flags read as a whole-byte bit-field.
-struct ObjectPriorityByte {
-  u8 unk00[35];
-  u8 priorityFlags : 8;
 };
 
 struct GabombaStatueEffectWork {
@@ -176,27 +170,10 @@ struct AnkohlRuinsSandRow {
   u8 unused[3];
 };
 
-struct ActorTail {
-  u8 head[0x5e];
-  u16 unk5e;
-};
-
 struct MapBits {
   u8 unk00[23];
   u8 low : 2;
   u8 mode : 2;
-};
-
-struct CurrentUnit {
-  u8 unk00[0x14];
-  struct Actor *object;
-  u8 unk18[4];
-  s16 unk1c;
-};
-
-struct EventTransition {
-  u8 unk000[0x1ac];
-  s32 type;
 };
 
 /// The byte at 0x5a of an actor, as the field its bit 0 is set through.
@@ -235,45 +212,6 @@ struct FlashWork {
   struct FlashSprite sprite;
 };
 
-struct ChampaCliffCavesSprite {
-  u8 unk00[4];
-  u16 y : 8;
-  u16 affine : 2;
-  u16 blendMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 attr1;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[0x14];
-  u16 unk1e;
-  u8 unk20[8];
-};
-
-struct ChampaCliffCavesWork {
-  u8 tiles[0x1000];
-  s32 originX;
-  s32 originY;
-  s32 originZ;
-  struct ChampaCliffCavesSprite spriteA;
-  struct ChampaCliffCavesSprite spriteB;
-  u16 entryA;
-  u16 vramA;
-  u16 entryB;
-  u16 vramB;
-  // A union: the two stores below keep their place after the sprite's.
-  union {
-    s32 value;
-    u16 half;
-  } field1064, field1068;
-  s32 field106c;
-  s32 field1070;
-  u16 field1074;
-  u8 unk1076[2];
-};
-
 /// The bytes of an actor this handler uses. unk63 is the last of the four
 /// scene-owned bytes the Broken Seal's actors keep at this place.
 struct TalkActor {
@@ -281,52 +219,6 @@ struct TalkActor {
   u16 angle; ///< 1/65536 turns
   u8 unk08[0x5b];
   u8 unk63; ///< Func_020006d0 reads it
-};
-
-struct ContigoEventWork {
-  u8 unk000[0x1ac];
-  s32 value1ac;
-};
-
-struct DailaMapWork {
-  u8 unk000[0x17];
-  u8 low17 : 2;
-  u8 mode17 : 2;
-  u8 high17 : 4;
-};
-
-struct CellRecord {
-  u16 present;
-  u16 x;
-  u16 y;
-  u16 unk06[3];
-};
-
-struct EffectWork7c4 {
-  u8 unk000[0x7c4];
-  s16 active;
-  s16 timer;
-};
-
-/// The effect fields of an Actor, as field_effect.h names them.
-struct EffectView {
-  u8 unk00[0x30];
-  s32 scaleRateX;
-  s32 scaleRateY;
-  u8 unk38[0x0c];
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  struct FieldSprite *sprite;
-  u8 unk54[0x10];
-  u16 spin;
-  u8 unk66[6];
-  void (*update)(struct Actor *object);
-};
-
-struct MapCells {
-  u8 unk000[0x138];
-  u8 *cells;
 };
 
 /* FAKEMATCH(signature): one-field views of the list's terminator and shape. */
@@ -352,22 +244,6 @@ struct SpawnObject {
 struct HeapSlotWords {
   u32 slots[8];
   u32 mapWork;
-};
-
-struct Sprite020003e8 {
-  u8 unk00[18];
-  s16 rotation;
-  u8 unk14[6];
-  u8 nextFrame;
-};
-
-struct Actor020003e8 {
-  u8 unk00[0x50];
-  struct Sprite020003e8 *sprite;
-  u8 unk54;
-  u8 motionFlags;
-  u8 unk56[8];
-  s16 unk5e;
 };
 
 struct EpilogueSprite {
@@ -615,27 +491,9 @@ struct MadraPlacement {
   u16 y;
 };
 
-/// A map edit and where it applies (MapGrid_PlayMapEdit forwards
-/// to MapGrid_PlayMapEdit).
-struct CellPictureCopyEntry {
-  const s16 *steps;
-  u16 unk04;
-  u16 unk06;
-};
-
-struct EventWork154 {
-  u8 unk000[0x154];
-  s16 returnEntrance;
-};
-
 struct AnimationRecord18 {
   u8 unk00[0x12];
   u16 frame;
-};
-
-struct EventObjects {
-  u8 unk00[20];
-  struct Actor *objects[64];
 };
 
 struct StagedActor {
@@ -872,13 +730,6 @@ struct SceneEffectParams {
 };
 
 enum { ENTRANCE_ALTERNATE_PLACEMENTS = 99 };
-
-struct SparkRecord {
-  u8 unk00[100];
-  u16 delay;
-  u8 unk66[6];
-  s32 update;
-};
 
 struct GlowState {
   s32 x; ///< 16.16 pixels

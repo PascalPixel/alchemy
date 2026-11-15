@@ -21,6 +21,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "system/io_write.h"
 #include "system/io_reg.h"
 #include "item_ids.h"
 #include "flags.h"
@@ -65,38 +66,58 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #define FLAG_GOLD_COINS_FOUND 0x8b7 ///< his mother found five gold coins
 #define FLAG_LET_INTO_CAVE 0x8b9    ///< his father let the party pass
 
-/// Actors the events move; the placement tables give each id its own person.
+/// The chest Reveal shows among the six gravestones, holding a Psy Crystal.
+#define ACTOR_PSY_CRYSTAL_CHEST 64
+
+/// The Alhafrans of gAlhafra_ActorPlacements, who keep their rows, sprites and
+/// places to ACTOR_SAILOR_BUILDING_HOUSES once Briggs is caught and once the
+/// ship is stolen; what each says changes with the story.
 enum AlhafraActorId {
-  /// A Champa sailor watching the road before Briggs is caught.
-  ACTOR_LOOKOUT = ACTOR_FIRST_PLACED + 17,
-  /// The boy too hungry to move, once Briggs is caught.
-  ACTOR_HUNGRY_BOY = ACTOR_FIRST_PLACED + 19
-};
-
-/// The Alhafrans the events move once Briggs is caught
-/// (gAlhafra_ActorPlacementsOnceBriggsIsCaught).
-enum AlhafraOnceBriggsIsCaughtActorId {
-  /// "Hey! You there! Sailor boy! Get back to work!"
-  ACTOR_MAN_SCOLDING_THE_SAILOR = ACTOR_FIRST_PLACED + 11,
-  /// "What does a sailor like me know about building houses, anyway?"
-  ACTOR_SAILOR_BUILDING_HOUSES = ACTOR_FIRST_PLACED + 16,
-  /// The family on the step where the mother finds five gold coins.
+  ACTOR_WEAPON_MERCHANT = ACTOR_FIRST_PLACED,
+  ACTOR_ARMOR_MERCHANT,
+  /// The soldiers at the mayor's manor: "The mayor is in a meeting..."
   ///@{
-  ACTOR_GOLD_COIN_FINDERS_HUSBAND = ACTOR_FIRST_PLACED + 20,
-  ACTOR_GOLD_COIN_FINDER,
-  ACTOR_GOLD_COIN_FINDERS_CHILD
+  ACTOR_MANOR_GUARD,
+  ACTOR_SECOND_MANOR_GUARD,
   ///@}
-};
-
-/// Madra's mayor and his party, who arrive hunting Briggs
-/// (Alhafra_MadransArrive), on the last rows of gAlhafra_ActorPlacements.
-enum AlhafraMadransActorId {
+  /// The man at the back way into the cave under the manor, the hungry boy's
+  /// father: "No one is allowed beyond this point."
+  ACTOR_HUNGRY_BOYS_FATHER,
+  /// "Welcome to Alhafra. This is the largest town in western Osenia..."
+  ACTOR_WELCOMING_YOUNG_MAN,
+  /// "A massive tidal wave hit us and destroyed every ship in Alhafra."
+  ACTOR_WOMAN_ON_THE_LOST_SHIPS,
+  /// The fisherman who asks whether Indra moved.
+  ACTOR_FISHERMAN,
+  /// "Right after my boat got crushed, a group of men came by..."
+  ACTOR_BOY_WITH_A_CRUSHED_BOAT,
   /// "Uh... The mayor? Just keep going down this road."
-  ACTOR_ALHAFRAN_GIVING_DIRECTIONS = ACTOR_FIRST_PLACED + 9,
+  ACTOR_ALHAFRAN_GIVING_DIRECTIONS,
+  /// "Those people that just came through looked totally exhausted."
+  ACTOR_OLD_WOMAN_ON_THE_TRAVELERS,
+  /// "We've had a lot of strangers coming through here lately"; once Briggs
+  /// is caught, "Hey! You there! Sailor boy! Get back to work!"
+  ACTOR_WOMAN_SCOLDING_THE_SAILOR,
+  /// "Our port was ruined by the tidal wave, so kids aren't allowed there..."
+  ACTOR_GIRL_KEPT_FROM_THE_PORT,
+  /// "I wonder if my partner has finished up that canoe yet..."
+  ACTOR_CANOE_MAKERS_PARTNER,
+  /// The canoe maker, too busy to make one for the party.
+  ACTOR_CANOE_MAKER,
+  /// "That boat at the wharf uses a sail..."
+  ACTOR_SAILOR_IN_A_RED_BANDANA,
+  /// "Why would the mayor go and sell our boat to a bunch of foreigners?";
+  /// once Briggs is caught, "What does a sailor like me know about building
+  /// houses, anyway?"
+  ACTOR_SAILOR_BUILDING_HOUSES,
+  /// A Champa sailor watching the road before Briggs is caught.
+  ACTOR_LOOKOUT,
+  /// The three puddles of seawater Frost freezes.
+  ACTOR_FIRST_PUDDLE,
   /// Madra's elder, the mayor's father (his sprite, as in the Yampi Desert,
   /// where he calls the mayor his son): "We're here to bring in Briggs the
   /// Champa."
-  ACTOR_MADRAS_ELDER = ACTOR_FIRST_PLACED + 21,
+  ACTOR_MADRAS_ELDER = ACTOR_FIRST_PUDDLE + 3,
   /// Madra's mayor (his sprite, as Madra's ACTOR_MAYOR): "Madra's a pretty
   /// big place, but this town is huge!"
   ACTOR_MADRAS_MAYOR,
@@ -113,6 +134,42 @@ enum AlhafraMadransActorId {
   /// Who walks in beside the Madran waiting for the elder, in the sprite of
   /// the Yampi Desert's parched traveler.
   ACTOR_PARCHED_MADRAN
+};
+
+/// The families whose houses are being rebuilt, after the townsfolk once
+/// Briggs is caught and again once the ship is stolen.
+enum AlhafraOnceBriggsIsCaughtActorId {
+  /// "Once they fix the old folks' home, it'll be our turn..."
+  ACTOR_YOUNG_MAN_WAITING_AT_THE_INN = ACTOR_SAILOR_BUILDING_HOUSES + 1,
+  /// "I was afraid my house would never get repaired..."
+  ACTOR_WOMAN_WAITING_AT_THE_INN,
+  /// The boy too hungry to move.
+  ACTOR_HUNGRY_BOY,
+  /// The family on the step where the mother finds five gold coins.
+  ///@{
+  ACTOR_GOLD_COIN_FINDERS_HUSBAND,
+  ACTOR_GOLD_COIN_FINDER,
+  ACTOR_GOLD_COIN_FINDERS_CHILD,
+  ///@}
+  /// "I wonder if there's any more money hidden around here..."
+  ACTOR_BOY_HUNTING_FOR_COINS
+};
+
+/// The Alhafrans the town's setup moves once the mast is cleared, until the
+/// ship is stolen (gAlhafra_ActorPlacementsOnceTheMastIsCleared).
+enum AlhafraOnceTheMastIsClearedActorId {
+  /// "Our sailboat looks fabulous with its mast repaired!"
+  ACTOR_WOMAN_ADMIRING_THE_MAST = ACTOR_FIRST_PLACED + 2,
+  /// "I don't know why everyone's so excited about fixing the ship..."
+  ACTOR_MAN_UNMOVED_BY_THE_SHIP = ACTOR_FIRST_PLACED + 6,
+  /// "With that ship, Alhafra's going to become a big, important town..."
+  ACTOR_WOMAN_ON_ALHAFRAS_FUTURE = ACTOR_FIRST_PLACED + 8,
+  /// "I've been waiting for this day for years!"
+  ACTOR_OLD_MAN_WAITING_FOR_THIS_DAY = ACTOR_FIRST_PLACED + 11,
+  /// "The secret to harnessing the wind's power is building a small..."
+  ACTOR_OLD_MAN_ON_SAILS,
+  /// "Huge boats carry more, but we need smaller ships to catch the fish..."
+  ACTOR_OLD_WOMAN_ON_FISHING_BOATS = ACTOR_FIRST_PLACED + 16
 };
 
 extern struct ActorPlacement gAlhafra_ActorPlacements[];
@@ -170,7 +227,7 @@ void Alhafra_AskWhetherIndraMoved(s32 actor) {
   s32 msg;
 
   if (Event_GetFlag(FLAG_TOLD_INDRA_MOVED) == 0) {
-    msg = (s32)&MsgAlhafra03;
+    msg = (s32)&MsgAlhafraIHearTheTidalWave;
     Event_SetMessageId(msg);
     // "I hear the tidal wave knocked Indra into Osenia. Is that true?"
     FieldMessage_ShowAtActor(actor, 0);
@@ -182,14 +239,14 @@ void Alhafra_AskWhetherIndraMoved(s32 actor) {
     }
     Event_ShowMessageAndWait(actor, 0);
   } else {
-    Event_SetMessageId((s32)&MsgAlhafra04);
+    Event_SetMessageId((s32)&MsgAlhafraIGuessWhatThoseMen);
     // "I guess what those men told me was true... I'd figured they were..."
     Event_ShowMessageAndWait(actor, 0);
   }
 }
 
 void Alhafra_CanoeMakerBacklogged(s32 actor) {
-  s32 msg = (s32)&MsgAlhafra16;
+  s32 msg = (s32)&MsgAlhafraLetMeGuessYoureHere;
 
   Event_SetMessageId(msg);
   FieldMessage_ShowAtActor(actor, 0);
@@ -204,7 +261,7 @@ void Alhafra_CanoeMakerBacklogged(s32 actor) {
 }
 
 void Alhafra_MayorInAMeeting(s32 actor) {
-  s32 msg = (s32)&MsgAlhafra33;
+  s32 msg = (s32)&MsgAlhafraDidYouWantToSee;
 
   Event_SetMessageId(msg);
   FieldMessage_ShowAtActor(actor, 0);
@@ -242,20 +299,20 @@ void Alhafra_FreezePuddle(s32 a0, s32 a1) {
 }
 
 void Alhafra_SailorToldToWork(void) {
-  Event_SetMessageId((s32)MsgAlhafra50);
+  Event_SetMessageId((s32)MsgAlhafraWhatDoesASailorLike);
   // "What does a sailor like me know about building houses, anyway?"
   FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_BUILDING_HOUSES, 0, 10);
-  Actor_FaceDirectionById(ACTOR_MAN_SCOLDING_THE_SAILOR, -256, 0);
+  Actor_FaceDirectionById(ACTOR_WOMAN_SCOLDING_THE_SAILOR, -256, 0);
   Event_Wait(10);
-  Actor_ShowEmoteById(ACTOR_MAN_SCOLDING_THE_SAILOR,
+  Actor_ShowEmoteById(ACTOR_WOMAN_SCOLDING_THE_SAILOR,
                       EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   // "Hey! You there! Sailor boy! Get back to work!"
-  FieldEvent_ShowMessageThenWait(ACTOR_MAN_SCOLDING_THE_SAILOR, 0, 10);
-  FieldActor_StartRepeatedMotion(24, 3);
+  FieldEvent_ShowMessageThenWait(ACTOR_WOMAN_SCOLDING_THE_SAILOR, 0, 10);
+  FieldActor_StartRepeatedMotion(ACTOR_SAILOR_BUILDING_HOUSES, 3);
   FieldEffect_SetAttached(ACTOR_SAILOR_BUILDING_HOUSES,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Actor_FaceDirection(ACTOR_MAN_SCOLDING_THE_SAILOR, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_WOMAN_SCOLDING_THE_SAILOR, FACING_WEST, 0);
   // "Hey! Give me a break! I'm on it!"
   FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_BUILDING_HOUSES, 0, 0);
 }
@@ -265,7 +322,7 @@ void Alhafra_GiveBreadToHungryBoy(void) {
   PartyInventory_Remove(ITEM_LARGE_BREAD);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgAlhafra69);
+  Event_SetMessageId((s32)MsgAlhafraThanksMister);
   Event_Wait(10);
   Actor_FaceActorById(ACTOR_HUNGRY_BOY, gMainRoutineWork.leaderActorId, 0);
   Event_Wait(10);
@@ -286,15 +343,15 @@ void Alhafra_GiveBreadToHungryBoy(void) {
 void Alhafra_TalkToHungryBoy(s32 id) {
   if (!GameFlag_Get(FLAG_HUNGRY_BOY_FED)) {
     gFieldWork->fieldMenu = 1;
-    Event_SetMessageId(MsgAlhafra65);
+    Event_SetMessageId(MsgAlhafraImSoHungryICant);
     // "I'm so hungry I can't even move..."
     Event_ShowMessageAndWait(id, 0);
   } else if (Event_GetFlag(FLAG_BOY_TOLD_OF_CAVE)) {
-    Event_SetMessageId(MsgAlhafra71);
+    Event_SetMessageId(MsgAlhafraImFeelingALotBetter);
     // "I'm feeling a lot better now thanks to you, mister. If you get any..."
     Event_ShowMessageAndWait(id, 0);
   } else {
-    Event_SetMessageId(MsgAlhafra70);
+    Event_SetMessageId(MsgAlhafraGeezMisterIDontKnow);
     Event_Wait(10);
     Actor_SetAnimationAndWait(id, 3);
     // "Geez, mister, I don't know how I can repay you..."
@@ -322,7 +379,7 @@ void Alhafra_FindGoldCoins(void) {
   GameFlag_Set(FLAG_GOLD_COINS_FOUND);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgAlhafra74);
+  Event_SetMessageId((s32)MsgAlhafraWhyLookAtThis);
   FieldCamera_MoveTo(560, CAMERA_KEEP, 496, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
@@ -331,7 +388,7 @@ void Alhafra_FindGoldCoins(void) {
   // "Why, look at this!"
   FieldEvent_ShowMessageThenWait(ACTOR_GOLD_COIN_FINDER, 0, 10);
   Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_HUSBAND, FACING_EAST, 0);
-  Actor_FaceDirection(31, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_BOY_HUNTING_FOR_COINS, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_CHILD, FACING_SOUTHWEST, 0);
   Actor_SetAnimationById(ACTOR_GOLD_COIN_FINDER, 5);
   Sound_Play(MUS_LEVEL_UP);
@@ -366,15 +423,15 @@ void Alhafra_FindGoldCoins(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_GOLD_COIN_FINDER, ANIM_NOD);
   Event_Wait(20);
-  FieldActor_Jump(31, 6, 15);
-  FieldActor_Jump(31, 6, 23);
+  FieldActor_Jump(ACTOR_BOY_HUNTING_FOR_COINS, 6, 15);
+  FieldActor_Jump(ACTOR_BOY_HUNTING_FOR_COINS, 6, 23);
   // "I'm going to start looking, too!"
-  FieldEvent_ShowMessageThenWait(31, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_BOY_HUNTING_FOR_COINS, 0, 10);
   Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_CHILD, FACING_EAST, 0);
   Actor_SetAnimationAndWait(ACTOR_GOLD_COIN_FINDERS_CHILD, ANIM_NOD);
   Event_Wait(20);
-  Actor_FaceDirection(31, FACING_SOUTH, 0);
-  Actor_SetAnimation(31, 6);
+  Actor_FaceDirection(ACTOR_BOY_HUNTING_FOR_COINS, FACING_SOUTH, 0);
+  Actor_SetAnimation(ACTOR_BOY_HUNTING_FOR_COINS, 6);
   Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_CHILD, FACING_NORTH, 0);
   Actor_SetAnimation(ACTOR_GOLD_COIN_FINDERS_CHILD, 6);
   Actor_FaceDirection(ACTOR_GOLD_COIN_FINDER, FACING_SOUTH, 0);
@@ -388,7 +445,7 @@ void Alhafra_FindGoldCoins(void) {
 /// once the boy is fed he asks whether the party wants to see the cave, and a
 /// yes has him step aside for good.
 void Alhafra_FatherLetsPartyToCave(s32 actor) {
-  s32 message = (s32)MsgAlhafra92;
+  s32 message = (s32)MsgAlhafraYoureTheOneWhoGave;
 
   if (Event_GetFlag(FLAG_LET_INTO_CAVE) != 0) {
     Event_SetMessageId(message + 4);
@@ -421,10 +478,12 @@ void Alhafra_FatherLetsPartyToCave(s32 actor) {
 }
 
 void Alhafra_RevealTreasureSpot(void) {
-  TreasureSpot_SetPosition(0x40, 0xb80000, 0x2280000);
+  TreasureSpot_SetPosition(ACTOR_PSY_CRYSTAL_CHEST, px(184), px(552));
 }
 
-void Alhafra_HideTreasureSpot(void) { TreasureSpot_SetPosition(0x40, -1, -1); }
+void Alhafra_HideTreasureSpot(void) {
+  TreasureSpot_SetPosition(ACTOR_PSY_CRYSTAL_CHEST, -1, -1);
+}
 
 extern struct Trigger gAlhafra_Triggers[];
 extern struct Trigger gAlhafra_TriggersOnceBriggsIsCaught[];
@@ -446,66 +505,78 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x100;
   if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (!GameFlag_Get(FLAG_ALHAFRA_SHIP_GONE)) {
-      Actor_GetById(24)->update = (void (*)(void))Alhafra_TakeLeadersLayer;
-      Actor_GetById(19)->update = (void (*)(void))Alhafra_TakeLeadersLayer;
-      Actor_SetSpritePriority(20, 2);
-      Actor_SetSpritePriority(14, 3);
-      Actor_SetSpritePriority(16, 3);
-      Actor_SetSpritePriority(10, 1);
+      Actor_GetById(ACTOR_OLD_WOMAN_ON_FISHING_BOATS)->update =
+          (void (*)(void))Alhafra_TakeLeadersLayer;
+      Actor_GetById(ACTOR_OLD_MAN_WAITING_FOR_THIS_DAY)->update =
+          (void (*)(void))Alhafra_TakeLeadersLayer;
+      Actor_SetSpritePriority(ACTOR_OLD_MAN_ON_SAILS, 2);
+      Actor_SetSpritePriority(ACTOR_MAN_UNMOVED_BY_THE_SHIP, 3);
+      Actor_SetSpritePriority(ACTOR_WOMAN_ON_ALHAFRAS_FUTURE, 3);
+      Actor_SetSpritePriority(ACTOR_WOMAN_ADMIRING_THE_MAST, 1);
     } else {
-      Actor_Get(14)->update = (void (*)(void))Alhafra_TakeLeadersLayer;
-      Actor_GetById(20)->update = (void (*)(void))Alhafra_TakeLeadersLayer;
-      Actor_GetById(22)->update = (void (*)(void))Alhafra_TakeLeadersLayer;
-      Actor_SetSpritePriority(13, 2);
-      Actor_SetSpritePriority(19, 3);
-      Actor_SetSpritePriority(23, 2);
-      Actor_SetSpritePriority(24, 3);
-      Actor_SetSpritePriority(27, 2);
-      Actor_SetSpritePriority(28, 3);
-      Actor_SetSpritePriority(29, 1);
-      Actor_SetSpritePriority(30, 3);
-      Actor_SetSpritePriority(31, 3);
-      Actor_SetSpritePriority(12, 3);
-      Actor_SetSpritePriority(10, 3);
+      Actor_Get(ACTOR_WOMAN_ON_THE_LOST_SHIPS)->update =
+          (void (*)(void))Alhafra_TakeLeadersLayer;
+      Actor_GetById(ACTOR_GIRL_KEPT_FROM_THE_PORT)->update =
+          (void (*)(void))Alhafra_TakeLeadersLayer;
+      Actor_GetById(ACTOR_CANOE_MAKER)->update =
+          (void (*)(void))Alhafra_TakeLeadersLayer;
+      Actor_SetSpritePriority(ACTOR_WELCOMING_YOUNG_MAN, 2);
+      Actor_SetSpritePriority(ACTOR_WOMAN_SCOLDING_THE_SAILOR, 3);
+      Actor_SetSpritePriority(ACTOR_SAILOR_IN_A_RED_BANDANA, 2);
+      Actor_SetSpritePriority(ACTOR_SAILOR_BUILDING_HOUSES, 3);
+      Actor_SetSpritePriority(ACTOR_HUNGRY_BOY, 2);
+      Actor_SetSpritePriority(ACTOR_GOLD_COIN_FINDERS_HUSBAND, 3);
+      Actor_SetSpritePriority(ACTOR_GOLD_COIN_FINDER, 1);
+      Actor_SetSpritePriority(ACTOR_GOLD_COIN_FINDERS_CHILD, 3);
+      Actor_SetSpritePriority(ACTOR_BOY_HUNTING_FOR_COINS, 3);
+      Actor_SetSpritePriority(ACTOR_HUNGRY_BOYS_FATHER, 3);
+      Actor_SetSpritePriority(ACTOR_MANOR_GUARD, 3);
     }
   } else if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
-    Actor_GetById(14)->update = (void (*)(void))Alhafra_TakeLeadersLayer;
-    Actor_GetById(20)->update = (void (*)(void))Alhafra_TakeLeadersLayer;
-    Actor_SetSpritePriority(13, 2);
-    Actor_SetSpritePriority(19, 3);
-    Actor_SetSpritePriority(23, 3);
-    Actor_SetSpritePriority(24, 3);
-    Actor_SetSpritePriority(22, 2);
-    Actor_SetSpritePriority(27, 2);
-    Actor_SetSpritePriority(28, 3);
-    Actor_SetSpritePriority(29, 1);
-    Actor_SetSpritePriority(30, 3);
-    Actor_SetSpritePriority(31, 3);
-    Actor_SetSpritePriority(12, 3);
-    Actor_SetMovementType(Actor_GetById(26), 9);
+    Actor_GetById(ACTOR_WOMAN_ON_THE_LOST_SHIPS)->update =
+        (void (*)(void))Alhafra_TakeLeadersLayer;
+    Actor_GetById(ACTOR_GIRL_KEPT_FROM_THE_PORT)->update =
+        (void (*)(void))Alhafra_TakeLeadersLayer;
+    Actor_SetSpritePriority(ACTOR_WELCOMING_YOUNG_MAN, 2);
+    Actor_SetSpritePriority(ACTOR_WOMAN_SCOLDING_THE_SAILOR, 3);
+    Actor_SetSpritePriority(ACTOR_SAILOR_IN_A_RED_BANDANA, 3);
+    Actor_SetSpritePriority(ACTOR_SAILOR_BUILDING_HOUSES, 3);
+    Actor_SetSpritePriority(ACTOR_CANOE_MAKER, 2);
+    Actor_SetSpritePriority(ACTOR_HUNGRY_BOY, 2);
+    Actor_SetSpritePriority(ACTOR_GOLD_COIN_FINDERS_HUSBAND, 3);
+    Actor_SetSpritePriority(ACTOR_GOLD_COIN_FINDER, 1);
+    Actor_SetSpritePriority(ACTOR_GOLD_COIN_FINDERS_CHILD, 3);
+    Actor_SetSpritePriority(ACTOR_BOY_HUNTING_FOR_COINS, 3);
+    Actor_SetSpritePriority(ACTOR_HUNGRY_BOYS_FATHER, 3);
+    Actor_SetMovementType(Actor_GetById(ACTOR_WOMAN_WAITING_AT_THE_INN),
+                          MOVEMENT_TYPE_TAKE_LEADER_LAYER);
     if (!GameFlag_Get(FLAG_HUNGRY_BOY_FED))
-      Actor_SetAnimationById(27, 5);
+      Actor_SetAnimationById(ACTOR_HUNGRY_BOY, 5);
     if (GameFlag_Get(FLAG_GOLD_COINS_FOUND)) {
-      Actor_SetAnimationById(30, 6);
-      Actor_SetAnimationById(31, 6);
+      Actor_SetAnimationById(ACTOR_GOLD_COIN_FINDERS_CHILD, 6);
+      Actor_SetAnimationById(ACTOR_BOY_HUNTING_FOR_COINS, 6);
     }
     if (GameFlag_Get(FLAG_LET_INTO_CAVE)) {
-      Actor_SetPosition(12, 56, 328);
-      Actor_FaceDirectionById(12, FACING_EAST, 0);
+      Actor_SetPosition(ACTOR_HUNGRY_BOYS_FATHER, 56, 328);
+      Actor_FaceDirectionById(ACTOR_HUNGRY_BOYS_FATHER, FACING_EAST, 0);
     }
   } else {
-    Actor_SetSpritePriority(13, 2);
-    Actor_SetSpritePriority(23, 2);
-    Actor_SetSpritePriority(10, 3);
-    Actor_GetById(24)->update = (void (*)(void))Alhafra_TakeLeadersLayer;
+    Actor_SetSpritePriority(ACTOR_WELCOMING_YOUNG_MAN, 2);
+    Actor_SetSpritePriority(ACTOR_SAILOR_IN_A_RED_BANDANA, 2);
+    Actor_SetSpritePriority(ACTOR_MANOR_GUARD, 3);
+    Actor_GetById(ACTOR_SAILOR_BUILDING_HOUSES)->update =
+        (void (*)(void))Alhafra_TakeLeadersLayer;
     if (GameFlag_Get(FLAG_ALHAFRA_MADRANS_ARRIVED))
-      Actor_SetPosition(14, 536, 760);
+      Actor_SetPosition(ACTOR_WOMAN_ON_THE_LOST_SHIPS, 536, 760);
     if (GameFlag_Get(FLAG_LOOKOUT_LEFT))
-      Actor_SetPosition(25, 0, 0);
+      Actor_SetPosition(ACTOR_LOOKOUT, 0, 0);
     FlagBlock_PlaceAllMarkingEdges((s32)&gAlhafra_Puddles);
-    Actor_SetMovementType(Actor_GetById(26), 9);
-    Actor_SetMovementType(Actor_GetById(27), 9);
-    Actor_SetMovementType(Actor_GetById(28), 9);
+    Actor_SetMovementType(Actor_GetById(ACTOR_FIRST_PUDDLE),
+                          MOVEMENT_TYPE_TAKE_LEADER_LAYER);
+    Actor_SetMovementType(Actor_GetById(ACTOR_FIRST_PUDDLE + 1),
+                          MOVEMENT_TYPE_TAKE_LEADER_LAYER);
+    Actor_SetMovementType(Actor_GetById(ACTOR_FIRST_PUDDLE + 2),
+                          MOVEMENT_TYPE_TAKE_LEADER_LAYER);
   }
   return 0;
 }
@@ -514,24 +585,12 @@ s32 Scene_PrepareMap(void) {
   if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
     u16 *src = (u16 *)&BG_PLTT_COLOR(8, 11);
 
-    u32 c;
-
-    /* FAKEMATCH(dead): the four copies in a once-only block. */
-    do {
-      c = *src;
-      BG_PLTT_COLOR(7, 11) = c;
-      src++;
-      c = *src;
-      BG_PLTT_COLOR(7, 12) = c;
-      src++;
-      c = *src;
-      BG_PLTT_COLOR(7, 13) = c;
-      {
-        u32 last = src[1];
-
-        BG_PLTT_COLOR(7, 14) = last;
-      }
-    } while (0);
+    Io_Write16(*src, &BG_PLTT_COLOR(7, 11));
+    src++;
+    Io_Write16(*src, &BG_PLTT_COLOR(7, 12));
+    src++;
+    Io_Write16(*src, &BG_PLTT_COLOR(7, 13));
+    Io_Write16(src[1], &BG_PLTT_COLOR(7, 14));
     MapGrid_CopyCellAttributes(37, 18, 2, 2, 37, 33);
     MapGrid_CopyCellAttributes(37, 18, 2, 3, 39, 31);
     MapGrid_CopyCellAttributes(50, 80, 7, 5, 35, 95);
@@ -564,7 +623,7 @@ void Alhafra_MadransArrive(s32 a0) {
   GameFlag_Set(FLAG_ALHAFRA_MADRANS_ARRIVED);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgAlhafra10);
+  Event_SetMessageId((s32)MsgAlhafraFinallyWeMadeIt);
   Actor_SetSpeed(ACTOR_MADRAS_ELDER, 1);
   Actor_SetSpeed(ACTOR_MADRAS_MAYOR, 1);
   Actor_SetSpeed(ACTOR_FIRST_MADRAN_SOLDIER, 1);
@@ -573,7 +632,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_SetSpeed(ACTOR_WEARY_MADRAN, 1);
   Actor_SetSpeed(ACTOR_PARCHED_MADRAN, 1);
   Actor_SetSpeed(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 0.5);
-  Actor_SetSpeed(14, 0.5);
+  Actor_SetSpeed(ACTOR_WOMAN_ON_THE_LOST_SHIPS, 0.5);
   if (a0 == 0x14) {
     Actor_WalkByAndWait(ACTOR_FELIX, 0, -8);
   }
@@ -677,11 +736,12 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_SetAnimationById(ACTOR_MADRAS_MAYOR, ANIM_STAND);
   Event_Wait(1);
   Actor_SetAnimation(ACTOR_MADRAS_ELDER, 5);
-  FieldActor_WatchAndSetScript(ACTOR_FIRST_MADRAN_SOLDIER, 30);
-  FieldActor_WatchAndSetScript(ACTOR_SECOND_MADRAN_SOLDIER, 30);
-  FieldActor_WatchAndSetScript(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 30);
-  FieldActor_WatchAndSetScript(ACTOR_WEARY_MADRAN, 30);
-  Actor_WatchAndSetScript(ACTOR_PARCHED_MADRAN, 30);
+  FieldActor_WatchAndSetScript(ACTOR_FIRST_MADRAN_SOLDIER, ACTOR_MADRAS_MAYOR);
+  FieldActor_WatchAndSetScript(ACTOR_SECOND_MADRAN_SOLDIER, ACTOR_MADRAS_MAYOR);
+  FieldActor_WatchAndSetScript(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
+                               ACTOR_MADRAS_MAYOR);
+  FieldActor_WatchAndSetScript(ACTOR_WEARY_MADRAN, ACTOR_MADRAS_MAYOR);
+  Actor_WatchAndSetScript(ACTOR_PARCHED_MADRAN, ACTOR_MADRAS_MAYOR);
   Event_Wait(20);
   Actor_FaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_NORTHWEST, 0);
   Event_Wait(20);
@@ -741,7 +801,8 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_SOUTHEAST, 0);
   Event_Wait(20);
-  Actor_SetMovementTypeById(14, (s32)gAlhafra_PasserbyWalksOffScript);
+  Actor_SetMovementTypeById(ACTOR_WOMAN_ON_THE_LOST_SHIPS,
+                            (s32)gAlhafra_PasserbyWalksOffScript);
   FieldActor_Jump(ACTOR_FIRST_MADRAN_SOLDIER, 6, 15);
   FieldActor_Jump(ACTOR_FIRST_MADRAN_SOLDIER, 6, 23);
   // "We're in no shape to go present ourselves to the mayor right now!"
@@ -795,7 +856,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_FaceDirectionById(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
                           FACING_NORTH_NORTHEAST, 0);
   Event_Wait(30);
-  FieldActor_StartRepeatedMotion(33, 3);
+  FieldActor_StartRepeatedMotion(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 3);
   FieldEffect_SetAttached(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(50);
@@ -882,9 +943,11 @@ void Alhafra_MadransArrive(s32 a0) {
   FieldCamera_WaitForArrival();
   if (a0 == 0x15) {
     FieldActor_SetSpritePriority(ACTOR_MADRAS_MAYOR, 2);
-    FieldActor_WatchAndSetScript(ACTOR_FIRST_MADRAN_SOLDIER, 29);
-    FieldActor_WatchAndSetScript(ACTOR_SECOND_MADRAN_SOLDIER, 29);
-    FieldActor_WatchAndSetScript(ACTOR_WEARY_MADRAN, 29);
+    FieldActor_WatchAndSetScript(ACTOR_FIRST_MADRAN_SOLDIER,
+                                 ACTOR_MADRAS_ELDER);
+    FieldActor_WatchAndSetScript(ACTOR_SECOND_MADRAN_SOLDIER,
+                                 ACTOR_MADRAS_ELDER);
+    FieldActor_WatchAndSetScript(ACTOR_WEARY_MADRAN, ACTOR_MADRAS_ELDER);
     Actor_SetMovementTypeById(ACTOR_ALHAFRAN_GIVING_DIRECTIONS,
                               (s32)gAlhafra_PasserbyLeadsFromCell21Script);
     Actor_SetMovementTypeById(ACTOR_MADRAS_ELDER,
@@ -900,26 +963,31 @@ void Alhafra_MadransArrive(s32 a0) {
     FieldActor_SetSpritePriority(ACTOR_WEARY_MADRAN, 3);
     FieldActor_SetSpritePriority(ACTOR_PARCHED_MADRAN, 3);
     FieldActor_SetSpritePriority(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 3);
-    FieldActor_WatchAndSetScript(ACTOR_PARCHED_MADRAN, 29);
+    FieldActor_WatchAndSetScript(ACTOR_PARCHED_MADRAN, ACTOR_MADRAS_ELDER);
     Actor_SetMovementTypeById(ACTOR_MADRAS_MAYOR,
                               (s32)gAlhafra_MayorFollowsFromCell21Script);
     Event_Wait(170);
     Actor_SetMovementTypeById(
-        32, (s32)gAlhafra_SecondSoldierFollowsFromCell21Script);
+        ACTOR_SECOND_MADRAN_SOLDIER,
+        (s32)gAlhafra_SecondSoldierFollowsFromCell21Script);
     Event_Wait(10);
     Actor_SetMovementTypeById(
-        31, (s32)gAlhafra_FirstSoldierFollowsFromCell21Script);
+        ACTOR_FIRST_MADRAN_SOLDIER,
+        (s32)gAlhafra_FirstSoldierFollowsFromCell21Script);
     Actor_SetMovementTypeById(ACTOR_WEARY_MADRAN,
                               (s32)gAlhafra_ElderFollowsFromCell21Script);
     Event_Wait(60);
     Actor_SetMovementTypeById(
-        35, (s32)gAlhafra_SecondMadranFollowsFromCell21Script);
+        ACTOR_PARCHED_MADRAN,
+        (s32)gAlhafra_SecondMadranFollowsFromCell21Script);
   } else {
     FieldActor_SetSpritePriority(ACTOR_MADRAS_MAYOR, 2);
     FieldActor_WatchAndSetScript(ACTOR_MADRAS_MAYOR, 17);
-    FieldActor_WatchAndSetScript(ACTOR_FIRST_MADRAN_SOLDIER, 30);
-    FieldActor_WatchAndSetScript(ACTOR_SECOND_MADRAN_SOLDIER, 30);
-    FieldActor_WatchAndSetScript(ACTOR_WEARY_MADRAN, 30);
+    FieldActor_WatchAndSetScript(ACTOR_FIRST_MADRAN_SOLDIER,
+                                 ACTOR_MADRAS_MAYOR);
+    FieldActor_WatchAndSetScript(ACTOR_SECOND_MADRAN_SOLDIER,
+                                 ACTOR_MADRAS_MAYOR);
+    FieldActor_WatchAndSetScript(ACTOR_WEARY_MADRAN, ACTOR_MADRAS_MAYOR);
     Actor_SetMovementTypeById(ACTOR_ALHAFRAN_GIVING_DIRECTIONS,
                               (s32)gAlhafra_PasserbyLeadsFromCell20Script);
     Event_Wait(60);
@@ -928,7 +996,7 @@ void Alhafra_MadransArrive(s32 a0) {
     Actor_SetMovementTypeById(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
                               (s32)gAlhafra_FirstMadranFollowsFromCell20Script);
     Event_Wait(70);
-    FieldActor_WatchAndSetScript(ACTOR_PARCHED_MADRAN, 29);
+    FieldActor_WatchAndSetScript(ACTOR_PARCHED_MADRAN, ACTOR_MADRAS_ELDER);
     Actor_SetMovementTypeById(ACTOR_MADRAS_MAYOR,
                               (s32)gAlhafra_MayorFollowsFromCell20Script);
     FieldActor_SetSpritePriority(ACTOR_MADRAS_ELDER, 3);
@@ -944,12 +1012,15 @@ void Alhafra_MadransArrive(s32 a0) {
                               (s32)gAlhafra_ElderFollowsFromCell20Script);
     Event_Wait(40);
     Actor_SetMovementTypeById(
-        31, (s32)gAlhafra_FirstSoldierFollowsFromCell20Script);
+        ACTOR_FIRST_MADRAN_SOLDIER,
+        (s32)gAlhafra_FirstSoldierFollowsFromCell20Script);
     Actor_SetMovementTypeById(
-        35, (s32)gAlhafra_SecondMadranFollowsFromCell20Script);
+        ACTOR_PARCHED_MADRAN,
+        (s32)gAlhafra_SecondMadranFollowsFromCell20Script);
     Event_Wait(30);
     Actor_SetMovementTypeById(
-        32, (s32)gAlhafra_SecondSoldierFollowsFromCell20Script);
+        ACTOR_SECOND_MADRAN_SOLDIER,
+        (s32)gAlhafra_SecondSoldierFollowsFromCell20Script);
   }
   Event_Wait(300);
   Actor_WaitForScriptEndById(ACTOR_WEARY_MADRAN);
@@ -1021,7 +1092,7 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
   Event_SetFlag(FLAG_LOOKOUT_LEFT);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgAlhafra28);
+  FieldEvent_SetMessageId((s32)MsgAlhafraOooThisAintGood);
   if (a0 == 1) {
     FieldEvent_Wait(10);
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 168, 736);
@@ -1281,7 +1352,7 @@ struct Trigger gAlhafra_Triggers[] = {
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 97, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgAlhafra180))},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgAlhafraItLooksLikeThisWell))},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Alhafra_RevealTreasureSpot)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Alhafra_HideTreasureSpot)},
     {TALK_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Alhafra_OpenWeaponShop)},
@@ -1291,42 +1362,42 @@ struct Trigger gAlhafra_Triggers[] = {
     {TRIGGER_STEP, 20, FLAG_ALHAFRA_MADRANS_ARRIVED, EVENT(Alhafra_MadransArrive)},
     {TRIGGER_STEP, 21, FLAG_ALHAFRA_MADRANS_ARRIVED, EVENT(Alhafra_MadransArrive)},
     {TRIGGER_STEP, 22, FLAG_LOOKOUT_LEFT, EVENT(Alhafra_LookoutRunsToWarnTheCrew)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafra29)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgAlhafra30)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafra31)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgAlhafra32)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlhafra01)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAlhafra02)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafraWeWereHitByA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgAlhafraLosingAllMyMostExpensive)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraThatTidalWaveMayWell)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraItDoesntMatterHowWell)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlhafraWelcomeToAlhafraThisIs)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAlhafraAMassiveTidalWaveHit)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Alhafra_AskWhetherIndraMoved)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgAlhafra05)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgAlhafra06)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgAlhafra07)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgAlhafra08)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgAlhafra09)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAlhafra11)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAlhafra12)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAlhafra13)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgAlhafra14)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgAlhafra15)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgAlhafraRightAfterMyBoatGot)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgAlhafraThisGuysProbablyWonderingAbout)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgAlhafraLosingOurBoatsWasAwful)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgAlhafraIJustCantBelieveA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgAlhafraThoseGuysLookingForA)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAlhafraThoseMenDidntLookLike)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraThosePeopleThatJustCame)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAlhafraWeveHadALotOf)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgAlhafraOurPortWasRuinedBy)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheOnlyBoatSparedBy)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Alhafra_CanoeMakerBacklogged)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgAlhafra17)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgAlhafra18)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgAlhafra19)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgAlhafra20)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgAlhafra21)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgAlhafra22)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgAlhafra23)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgAlhafra24)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgAlhafra25)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgAlhafra26)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgAlhafra27)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgAlhafraThatBoatAtTheWharf)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhyWouldTheMayorGo)},
+    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgAlhafraSilence)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgAlhafraIfThisGuysLookingTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhoWouldComeToAlhafra)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgAlhafraThisTidalWavesActuallyBeen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgAlhafraIDontKnowWhyThey)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgAlhafraIWonderIfMyPartner)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgAlhafraWeCantRaiseTheMast)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgAlhafraIStillCantBelieveThose)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgAlhafraItMayBeNewfangledBut)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25 | TRIGGER_SUBJECT_OWN_EFFECT, CONDITION_ALWAYS, EVENT(Alhafra_ReadLookoutsMind)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Alhafra_MayorInAMeeting)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafra34)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgAlhafra35)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgAlhafra36)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlhafra37)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgAlhafra38)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraListenYouLookLikeAn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraIHateMyJobI)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraMyPartnersAlwaysInSuch)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraNoOneIsAllowedBeyond)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorSaidNoOne)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 26, FLAG_SCENE_TEMP_00, EVENT(Alhafra_FreezePuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 27, FLAG_SCENE_TEMP_01, EVENT(Alhafra_FreezePuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), 28, FLAG_SCENE_TEMP_02, EVENT(Alhafra_FreezePuddle)},
@@ -1345,68 +1416,68 @@ struct Trigger gAlhafra_TriggersOnceBriggsIsCaught[] = {
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 97, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgAlhafra180))},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgAlhafraItLooksLikeThisWell))},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Alhafra_RevealTreasureSpot)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Alhafra_HideTreasureSpot)},
     {TALK_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Alhafra_OpenWeaponShop)},
     {TALK_TRIGGER_FACING(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Alhafra_OpenArmorShop)},
     {TRIGGER_STEP, 25, FLAG_GOLD_COINS_FOUND, EVENT(Alhafra_FindGoldCoins)},
-    {TRIGGER_TALK, 18, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgAlhafra94)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgAlhafra95)},
-    {TRIGGER_TALK, 17, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgAlhafra96)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgAlhafra97)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafra82)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgAlhafra83)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafra84)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgAlhafra85)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlhafra39)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAlhafra40)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgAlhafra41)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgAlhafra42)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAlhafra43)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAlhafra44)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAlhafra45)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgAlhafra46)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgAlhafra47)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgAlhafra48)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgAlhafra49)},
+    {TRIGGER_TALK, 18, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgAlhafraItLooksLikeTheMayor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgAlhafraIGuessOurMayorDidnt)},
+    {TRIGGER_TALK, 17, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgAlhafraIHearTheMayorOf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgAlhafraHeSeemsLikeAnHonest)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhatBriggsWasTheLeader)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgAlhafraBriggsWasVeryGenerousHe)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraThatGroupFromMadraWas)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraGettingABoatForNothing)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlhafraWereAllGoingToWork)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAlhafraOnceThingsAreBackTo)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgAlhafraSoTheGuysWhoBought)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgAlhafraEveryoneIsTalkingAboutHow)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorIsTheOnly)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorOfMadraApparently)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAlhafraINeverThoughtAFine)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgAlhafraICanHelpBuildHouses)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgAlhafraWevePutOffFixingThe)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgAlhafraOnceRepairsAreDoneHere)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheyToldMeTheydHelp)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, EVENT(Alhafra_SailorToldToWork)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgAlhafra51)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgAlhafra52)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgAlhafra53)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgAlhafra54)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgAlhafra55)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgAlhafra56)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgAlhafra57)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgAlhafra58)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgAlhafra59)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgAlhafra60)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgAlhafra61)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgAlhafra62)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgAlhafra63)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgAlhafra64)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgAlhafraItsSoNiceOfEveryone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgAlhafraEveryoneInTownIsSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgAlhafraYouKnowPiratesWhoPay)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgAlhafraThosePiratesHaveTheCoolest)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgAlhafraICantBelieveTheyLeft)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraIfOurMayorThinksIm)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgAlhafraYouKnowSittingHereFixing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgAlhafraHelpingPeopleOutFeelsReally)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheFactThatMadraTook)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgAlhafraIWonderIfTheCrew)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgAlhafraItsStrangeTheQuartersDown)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgAlhafraWorkingOnDeckWithThe)},
+    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgAlhafraOnceTheyFixTheOld)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgAlhafraIWasAfraidMyHouse)},
     {TRIGGER_TALK, 27, CONDITION_ALWAYS, EVENT(Alhafra_TalkToHungryBoy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgAlhafra66)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgAlhafra67)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, FLAG_HUNGRY_BOY_FED, MSGNO(MsgAlhafra68)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgAlhafra72)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgAlhafraIfWeDontGetOut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgAlhafraYouKnowSinceWereRebuilding)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, FLAG_HUNGRY_BOY_FED, MSGNO(MsgAlhafraIWishSomeoneWouldJust)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgAlhafraIWonderIfIShould)},
     {USE_ITEM_ON_ACTOR(ITEM_LARGE_BREAD), 27, CONDITION_ALWAYS, EVENT(Alhafra_GiveBreadToHungryBoy)},
-    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgAlhafra73)},
-    {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgAlhafra75)},
-    {TRIGGER_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgAlhafra77)},
-    {TRIGGER_TALK, 31, CONDITION_ALWAYS, MSGNO(MsgAlhafra76)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgAlhafra78)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgAlhafra79)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgAlhafra81)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgAlhafra80)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafra86)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafra87)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgAlhafra88)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgAlhafra89)},
-    {TRIGGER_TALK, 12, FLAG_BOY_TOLD_OF_CAVE, MSGNO(MsgAlhafra90)},
+    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgAlhafraAllMyNeighborsAreGoing)},
+    {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhatAStrokeOfLuck)},
+    {TRIGGER_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgAlhafraMyDadLostTheDraw)},
+    {TRIGGER_TALK, 31, CONDITION_ALWAYS, MSGNO(MsgAlhafraIWonderIfTheresAny)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgAlhafraLosingTheLotteryAndBeing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgAlhafraIThoughtTheHardPart)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgAlhafraAllBecauseOfMyDads)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgAlhafraIReallyShouldntBePeeking)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraAhFelixWelcomeWelcomeListen)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraOhFelixGoOnIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraIfIdKnownBriggsWas)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorWasReallyImpressed)},
+    {TRIGGER_TALK, 12, FLAG_BOY_TOLD_OF_CAVE, MSGNO(MsgAlhafraNoOneIsAllowedBeyondThis)},
     {TRIGGER_TALK, 12, CONDITION_ALWAYS, EVENT(Alhafra_FatherLetsPartyToCave)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_LET_INTO_CAVE, MSGNO(MsgAlhafra91)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgAlhafra93)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_LET_INTO_CAVE, MSGNO(MsgAlhafraTheMayorSaidNoOneGoes)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraNotThatItMattersThe)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1422,59 +1493,59 @@ struct Trigger gAlhafra_TriggersOnceTheShipIsStolen[] = {
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 97, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgAlhafra180))},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgAlhafraItLooksLikeThisWell))},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Alhafra_RevealTreasureSpot)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Alhafra_HideTreasureSpot)},
     {TALK_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Alhafra_OpenWeaponShop)},
     {TALK_TRIGGER_FACING(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Alhafra_OpenArmorShop)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafra170)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgAlhafra171)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafra172)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgAlhafra173)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlhafra132)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAlhafra133)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgAlhafra134)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgAlhafra135)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAlhafra136)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAlhafra137)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAlhafra138)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgAlhafra139)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgAlhafra140)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgAlhafra141)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgAlhafra142)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgAlhafra143)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgAlhafra144)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgAlhafra145)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgAlhafra146)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgAlhafra147)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgAlhafra148)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgAlhafra155)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgAlhafra149)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgAlhafra150)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgAlhafra151)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgAlhafra152)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgAlhafra153)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgAlhafra154)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgAlhafra156)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgAlhafra157)},
-    {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgAlhafra158)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgAlhafra159)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgAlhafra160)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgAlhafra161)},
-    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgAlhafra162)},
-    {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgAlhafra163)},
-    {TRIGGER_TALK, 31, CONDITION_ALWAYS, MSGNO(MsgAlhafra164)},
-    {TRIGGER_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgAlhafra165)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgAlhafra166)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgAlhafra167)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgAlhafra168)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgAlhafra169)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafra174)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafra175)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgAlhafra176)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgAlhafra177)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlhafra178)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgAlhafra179)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafraEveryonesSayingThatBriggsProbably)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgAlhafraSupposedlyTheCaveUnderThe)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraSoBriggsStoleMadrasShip)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraIDontKnowINever)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlhafraAlhafraLostItsShipNow)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAlhafraEvenThoughWeLostThe)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgAlhafraAfterWeDidAllThat)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgAlhafraItWasGreatToSee)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhenTheyFindThatTheir)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraItsNotLikeTheBoat)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheRepairsAreComingAlong)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhenIsThisHouseGoing)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgAlhafraItFeltSoGreatWhen)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgAlhafraBackBeforeBriggsDestroyedThe)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgAlhafraWeFixedTheMastSo)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgAlhafraIfTheyCaughtAGood)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgAlhafraIfOnlyWeHadThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgAlhafraIHopeTradeDoesntMake)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgAlhafraItWasMadrasBoatIt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorSeemedSoHappy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorOfMadraSeems)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheresNoPointInWorrying)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgAlhafraWereAllPullingTogetherTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgAlhafraIfMomWouldStopMaking)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgAlhafraIKnowItsTimeTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgAlhafraFirstHeStealsAShip)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhyWorryAboutBriggsIts)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgAlhafraIfBriggsHadntStolenThat)},
+    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgAlhafraThatGuysHouseIsntFixed)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorsBeenHandingOut)},
+    {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgAlhafraWeHaveToStoreWhat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgAlhafraWeCouldUseSomeHelp)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgAlhafraIDontKnowWhatWill)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgAlhafraIveSeenFatherTryingTo)},
+    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgAlhafraEvenIfWeFixIt)},
+    {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgAlhafraWithEveryonesHelpWeWere)},
+    {TRIGGER_TALK, 31, CONDITION_ALWAYS, MSGNO(MsgAlhafraMomWasHappyToHear)},
+    {TRIGGER_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgAlhafraThereAreALotOf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgAlhafraThisIsJustTooMuch)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgAlhafraHesNeverGoingToGet)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 31, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheresNoWayDadCan)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgAlhafraCarryingTheseThingsAllOver)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorOfAlhafraDoes)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraYouReallyMadeAMess)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorWasSoMad)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraOneThingsForSureWere)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraBriggsCameThroughHereAnd)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraThePoorGuardWasBlindfolded)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1490,43 +1561,43 @@ struct Trigger gAlhafra_TriggersOnceTheMastIsCleared[] = {
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 97, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgAlhafra180))},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgAlhafraItLooksLikeThisWell))},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Alhafra_RevealTreasureSpot)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Alhafra_HideTreasureSpot)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafra98)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafra99)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafra100)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafra101)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlhafra102)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlhafra103)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAlhafra104)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgAlhafra105)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgAlhafra106)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAlhafra107)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAlhafra108)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAlhafra109)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgAlhafra110)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgAlhafra111)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgAlhafra112)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgAlhafra113)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgAlhafra114)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgAlhafra115)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgAlhafra116)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgAlhafra117)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgAlhafra118)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgAlhafra119)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgAlhafra120)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgAlhafra121)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgAlhafra122)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgAlhafra123)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgAlhafra124)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgAlhafra125)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgAlhafra126)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgAlhafra127)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgAlhafra128)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgAlhafra129)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgAlhafra130)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgAlhafra131)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheWholeTownIsGrateful)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraImJustStandingGuardIn)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraOurSailboatLooksFabulousWith)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraIWonderWhereBriggsAnd)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraIHeardYouMadeIt)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlhafraEverSinceWeHeardBriggs)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAlhafraIDontKnowWhyEveryones)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgAlhafraOhItsYouWhereHave)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgAlhafraWithThatShipAlhafrasGoing)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAlhafraOnceThatStoneWasTaken)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraIfBriggsIsSmartHes)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAlhafraIveBeenWaitingForThis)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheSecretToHarnessingThe)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgAlhafraImSureItsJustA)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorWasActuallySinging)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgAlhafraWeirdHaveYouEverHad)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgAlhafraHugeBoatsCarryMoreBut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgAlhafraNowThatTheBoatIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraImSupposedToBeGuarding)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhoCaresIfTheBoat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhyDoIHaveTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraIHateToTellFelix)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgAlhafraIdBetThatBriggsFled)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgAlhafraBriggsPaidALotFor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgAlhafraFelixMustHaveFoundHimself)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgAlhafraImCertainTheOnlyPerson)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgAlhafraNowThatAllTheDebris)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorSaidIHad)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgAlhafraImProbablyTooOldFor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgAlhafraSmallerShipsUseTheirSails)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgAlhafraItsBeenSoBusyAround)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorOnlyHadOne)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhatIfThePiratesWere)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgAlhafraWithoutSmallerShipsHowCan)},
     {TRIGGER_TABLE_END},
 };
 

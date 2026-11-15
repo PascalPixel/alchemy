@@ -8,6 +8,7 @@
 
 #include "../field/actor_prepare.c"
 #include "types.h"
+#include "system/io_write.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
@@ -16,6 +17,78 @@
 #include "scene_ids.h"
 #include "field/field_sprite.h"
 #include "field/event_inline.h"
+
+/// The seven stone faces of the first room Move pushes aside, one flag each
+/// from this one.
+#define FLAG_FIRST_STONE_FACE_MOVED 0x9d2
+/// The ruins' overgrowth Whirlwind clears, one flag each from this one: the
+/// first room's fourteen, the Thanatos Mace room's three, then the fourth
+/// room's seven.
+#define FLAG_FIRST_IVY_CLEARED 0x990
+/// The pillars Move has pushed into place: the first room's, the third's, and
+/// the fourth room's three.
+#define FLAG_FIRST_ROOM_PILLAR_MOVED 0x9c6
+#define FLAG_THIRD_ROOM_PILLAR_MOVED 0x9c7
+#define FLAG_FOURTH_ROOM_PILLAR_MOVED 0x9c8
+#define FLAG_FOURTH_ROOM_SECOND_PILLAR_MOVED 0x9c9
+#define FLAG_FOURTH_ROOM_THIRD_PILLAR_MOVED 0x9ca
+#define FLAG_FIFTH_ROOM_PILLAR_MOVED 0x9cb
+/// The halves of the stone face pushed into place in the fourth room, the
+/// fifth room's half pushed into its gap, the Thanatos Mace room's half, and
+/// the third room's.
+#define FLAG_LEFT_FACE_HALF_PLACED 0x9d9
+#define FLAG_RIGHT_FACE_HALF_PLACED 0x9da
+#define FLAG_FACE_HALF_PUSHED_INTO_GAP 0x9db
+#define FLAG_THANATOS_FACE_HALF_PLACED 0x9dc
+#define FLAG_GREAT_FACE_HALF_PLACED 0x9dd
+
+/// The first room (gAnkohlRuins_StoneFacesPlacements).
+enum AnkohlRuinsFirstRoomActorId {
+  ACTOR_FIRST_ROOM_PILLAR = ACTOR_FIRST_PLACED,
+  /// The seven stone faces.
+  ACTOR_FIRST_STONE_FACE = ACTOR_FIRST_PLACED + 2,
+  /// The fourteen tufts of overgrowth.
+  ACTOR_FIRST_ROOM_FIRST_IVY = ACTOR_FIRST_STONE_FACE + 7
+};
+
+/// The Thanatos Mace chest's room (gAnkohlRuins_ThanatosMaceChestPlacements).
+enum AnkohlRuinsThanatosMaceChestActorId {
+  /// The left half of a stone face, pushed into place.
+  ACTOR_THANATOS_FACE_HALF = ACTOR_FIRST_PLACED,
+  ACTOR_THANATOS_FIRST_IVY
+};
+
+/// The third room (gAnkohlRuins_GreatFacePlacements).
+enum AnkohlRuinsThirdRoomActorId {
+  ACTOR_THIRD_ROOM_PILLAR = ACTOR_FIRST_PLACED,
+  /// The great stone face the party rides down the sand.
+  ACTOR_GREAT_FACE,
+  /// The half face Move pushes beside it.
+  ACTOR_GREAT_FACE_HALF
+};
+
+/// The fourth room (gAnkohlRuins_FaceHalvesPlacements).
+enum AnkohlRuinsFourthRoomActorId {
+  ACTOR_FOURTH_ROOM_PILLAR = ACTOR_FIRST_PLACED,
+  /// The two halves of a stone face.
+  ///@{
+  ACTOR_LEFT_FACE_HALF,
+  ACTOR_RIGHT_FACE_HALF,
+  ///@}
+  ACTOR_FOURTH_ROOM_FIRST_IVY,
+  ACTOR_FOURTH_ROOM_SECOND_PILLAR = ACTOR_FOURTH_ROOM_FIRST_IVY + 7,
+  ACTOR_FOURTH_ROOM_THIRD_PILLAR
+};
+
+/// The fifth room (gAnkohlRuins_CrystalPowderChestPlacements).
+enum AnkohlRuinsFifthRoomActorId {
+  ACTOR_FIFTH_ROOM_PILLAR = ACTOR_FIRST_PLACED,
+  /// The half face pushed into the gap Reveal shows.
+  ACTOR_FACE_HALF_FOR_THE_GAP
+};
+
+/// The Left Prong's chest, raised out of the sand.
+#define ACTOR_LEFT_PRONG_CHEST 64
 
 void AnkohlRuins_SettleObject(s32 id, s32 cue);
 void AnkohlRuins_RaiseFirstSand(void);
@@ -91,14 +164,14 @@ extern s16 gAnkohlRuins_SandTime;
 extern s32 gAnkohlRuins_SandStep;
 extern s32 gAnkohlRuins_SandRoom;
 
-extern u32 gAnkohlRuins_Room1Regions[];
-extern u32 gAnkohlRuins_Room2Regions[];
+extern u32 gAnkohlRuins_StoneFacesRegions[];
+extern u32 gAnkohlRuins_ThanatosMaceChestRegions[];
 
 const struct ActorPlacement *Scene_GetExitRegions(void) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_5)
-    return (const struct ActorPlacement *)gAnkohlRuins_Room1Regions;
+    return (const struct ActorPlacement *)gAnkohlRuins_StoneFacesRegions;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_LEFT_PRONG)
-    return (const struct ActorPlacement *)gAnkohlRuins_Room2Regions;
+    return (const struct ActorPlacement *)gAnkohlRuins_ThanatosMaceChestRegions;
   return 0;
 }
 
@@ -153,8 +226,8 @@ void AnkohlRuins_LandFromFall(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = 0xa3d7;
-  options.startScaleY = 0xa3d7;
+  options.startScaleX = Q16_ONE * 16 / 25;
+  options.startScaleY = Q16_ONE * 16 / 25;
   i = 0;
 loop:
   angle = i << 12;
@@ -162,8 +235,8 @@ loop:
   velocity[1] = 0;
   velocity[2] = Math_Sin(angle);
   velocity[0] += velocity[0] >> 1;
-  velocity[0] += ((Random16() * 3) << 14 >> 16) - 0x6000;
-  velocity[2] += ((Random16() * 3) << 13 >> 16) - 0x3000;
+  velocity[0] += ((Random16() * 3) << 14 >> 16) - (px(3) / 8);
+  velocity[2] += ((Random16() * 3) << 13 >> 16) - (px(3) / 16);
   FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                     velocity[0], velocity[1], velocity[2], 0x1090001, &options);
   i++;
@@ -198,29 +271,29 @@ s32 AnkohlRuins_ClearScriptedActorSpriteFlags(struct Actor *object) {
 }
 
 extern struct ActorPlacement gAnkohlRuins_Placements[];
-extern struct ActorPlacement gAnkohlRuins_Room1Placements[];
-extern struct ActorPlacement gAnkohlRuins_Room2Placements[];
-extern struct ActorPlacement gAnkohlRuins_Room3Placements[];
-extern struct ActorPlacement gAnkohlRuins_Room4Placements[];
-extern struct ActorPlacement gAnkohlRuins_Room5Placements[];
-extern struct ActorPlacement gAnkohlRuins_Room6Placements[];
-extern struct ActorPlacement gAnkohlRuins_Room8Placements[];
+extern struct ActorPlacement gAnkohlRuins_StoneFacesPlacements[];
+extern struct ActorPlacement gAnkohlRuins_ThanatosMaceChestPlacements[];
+extern struct ActorPlacement gAnkohlRuins_GreatFacePlacements[];
+extern struct ActorPlacement gAnkohlRuins_FaceHalvesPlacements[];
+extern struct ActorPlacement gAnkohlRuins_CrystalPowderChestPlacements[];
+extern struct ActorPlacement gAnkohlRuins_SandDoorsPlacements[];
+extern struct ActorPlacement gAnkohlRuins_LeftProngPlacements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_1)
-    return gAnkohlRuins_Room1Placements;
+    return gAnkohlRuins_StoneFacesPlacements;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_THANATOS_MACE_CHEST)
-    return gAnkohlRuins_Room2Placements;
+    return gAnkohlRuins_ThanatosMaceChestPlacements;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_3)
-    return gAnkohlRuins_Room3Placements;
+    return gAnkohlRuins_GreatFacePlacements;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_4)
-    return gAnkohlRuins_Room4Placements;
+    return gAnkohlRuins_FaceHalvesPlacements;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_5)
-    return gAnkohlRuins_Room5Placements;
+    return gAnkohlRuins_CrystalPowderChestPlacements;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_SAND_DOORS)
-    return gAnkohlRuins_Room6Placements;
+    return gAnkohlRuins_SandDoorsPlacements;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_LEFT_PRONG)
-    return gAnkohlRuins_Room8Placements;
+    return gAnkohlRuins_LeftProngPlacements;
   return gAnkohlRuins_Placements;
 }
 
@@ -274,15 +347,15 @@ void AnkohlRuins_StartMovingFace(s32 unused, s32 id) {
 }
 
 /// Copies the cells the object with the given id has pushed open in rooms 1,
-/// 3, 4 and 5, and sets flags 0x9c6 to 0x9cb when it stands at the end of its
-/// track.
+/// 3, 4 and 5, and sets flags FLAG_FIRST_ROOM_PILLAR_MOVED to
+/// FLAG_FIFTH_ROOM_PILLAR_MOVED when it stands at the end of its track.
 void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (id == 8 && gMainRoutineWork.next == SCENE_ANKOHL_RUINS_1) {
-    if (object->x.fixed >> 20 == 4) {
+    if (FIELD_CELL(object->x.fixed) == 4) {
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
-      Event_SetFlag(0x9c6);
+      Event_SetFlag(FLAG_FIRST_ROOM_PILLAR_MOVED);
     }
     MapGrid_CopyCellAttributes(3, 68, 1, 1, 4, 69);
     MapGrid_CopyCellAttributes(3, 69, 1, 1, 3, 70);
@@ -290,28 +363,28 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
   if (id == 8 && gMainRoutineWork.next == SCENE_ANKOHL_RUINS_3) {
     MapGrid_CopyCellAttributes(32, 71, 1, 1, 33, 71);
     MapGrid_CopyCellAttributes(31, 70, 1, 1, 32, 70);
-    if (object->x.fixed >> 20 == 32) {
+    if (FIELD_CELL(object->x.fixed) == 32) {
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
-      Event_SetFlag(0x9c7);
+      Event_SetFlag(FLAG_THIRD_ROOM_PILLAR_MOVED);
     }
   }
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_4) {
     if (id == 8) {
       MapGrid_CopyCellAttributes(3, 114, 1, 1, 3, 113);
-      if (object->x.fixed >> 20 == 2)
-        Event_SetFlag(0x9c8);
+      if (FIELD_CELL(object->x.fixed) == 2)
+        Event_SetFlag(FLAG_FOURTH_ROOM_PILLAR_MOVED);
     }
     if (id == 18) {
       MapGrid_CopyCellAttributes(40, 94, 1, 1, 40, 93);
-      if (object->x.fixed >> 20 == 39)
-        Event_SetFlag(0x9c9);
+      if (FIELD_CELL(object->x.fixed) == 39)
+        Event_SetFlag(FLAG_FOURTH_ROOM_SECOND_PILLAR_MOVED);
     }
     if (id == 19) {
       MapGrid_CopyCellAttributes(36, 72, 1, 1, 38, 72);
       MapGrid_CopyCellAttributes(37, 74, 1, 1, 37, 73);
-      if (object->x.fixed >> 20 == 38) {
+      if (FIELD_CELL(object->x.fixed) == 38) {
         MapGrid_CopyCellAttributes(37, 70, 1, 1, 37, 71);
-        Event_SetFlag(0x9ca);
+        Event_SetFlag(FLAG_FOURTH_ROOM_THIRD_PILLAR_MOVED);
       }
     }
   }
@@ -319,9 +392,9 @@ void AnkohlRuins_FinishMovingFace(s32 unused, s32 id) {
     MapGrid_CopyCellAttributes(16, 83, 1, 1, 17, 83);
     MapGrid_CopyCellAttributes(19, 82, 1, 1, 18, 82);
     MapGrid_CopyCellAttributes(19, 82, 1, 1, 19, 83);
-    if (object->x.fixed >> 20 == 17) {
+    if (FIELD_CELL(object->x.fixed) == 17) {
       MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
-      Event_SetFlag(0x9cb);
+      Event_SetFlag(FLAG_FIFTH_ROOM_PILLAR_MOVED);
     }
   }
 }
@@ -331,7 +404,7 @@ void AnkohlRuins_DropPillar(s32 unused, s32 objectId) {
   struct Actor *object = Actor_Get(id);
   s16 frames = 60;
 
-  if (object->z.fixed >> 20 == 31) {
+  if (FIELD_CELL(object->z.fixed) == 31) {
     object->motionFlags = 3;
     Actor_SetSpritePriorityDirect(object, 3);
     Event_PlaySound(SE_DUST_PUFF);
@@ -343,19 +416,19 @@ void AnkohlRuins_DropPillar(s32 unused, s32 objectId) {
     }
     Actor_SetPosition(id, 0, 0);
     if (id == 10)
-      Event_SetFlag(0x9d2);
+      Event_SetFlag(FLAG_FIRST_STONE_FACE_MOVED);
     if (id == 11)
-      Event_SetFlag(0x9d3);
+      Event_SetFlag(FLAG_FIRST_STONE_FACE_MOVED + 1);
     if (id == 12)
-      Event_SetFlag(0x9d4);
+      Event_SetFlag(FLAG_FIRST_STONE_FACE_MOVED + 2);
     if (id == 13)
-      Event_SetFlag(0x9d5);
+      Event_SetFlag(FLAG_FIRST_STONE_FACE_MOVED + 3);
     if (id == 14)
-      Event_SetFlag(0x9d6);
+      Event_SetFlag(FLAG_FIRST_STONE_FACE_MOVED + 4);
     if (id == 15)
-      Event_SetFlag(0x9d7);
+      Event_SetFlag(FLAG_FIRST_STONE_FACE_MOVED + 5);
     if (id == 16)
-      Event_SetFlag(0x9d8);
+      Event_SetFlag(FLAG_FIRST_STONE_FACE_MOVED + 6);
   }
 }
 
@@ -404,8 +477,8 @@ void AnkohlRuins_PourSand(s32 rows, s32 frames, s32 x, s32 y, s32 startZ,
   s32 z;
 
   params.palette = 1;
-  params.startScaleX = 0xc000;
-  params.startScaleY = 0xc000;
+  params.startScaleX = Q16_ONE * 3 / 4;
+  params.startScaleY = Q16_ONE * 3 / 4;
   row = 0;
   if (row < rows) {
     z = startZ;
@@ -417,8 +490,8 @@ void AnkohlRuins_PourSand(s32 rows, s32 frames, s32 x, s32 y, s32 startZ,
         dx &= r;
       }
       dy = Random16() & 31;
-      FieldEffect_Spawn(((x + left * 16) << 16) + ((dx - 8) << 16),
-                        (y + dy) << 16, z << 16, 0, 0, 0x100, 0x80001, &params);
+      FieldEffect_Spawn(px(x + left * 16) + px(dx - 8), (y + dy) << 16, px(z),
+                        0, 0, 0x100, 0x80001, &params);
     }
     FieldEvent_Wait(frames);
     z += 2;
@@ -429,14 +502,15 @@ void AnkohlRuins_PourSand(s32 rows, s32 frames, s32 x, s32 y, s32 startZ,
 }
 
 /// When the objects with ids 9 and 10 stand on cells (12, 45) and (14, 45),
-/// each sets its flag (0x9d9, 0x9da); once both are set, shakes the screen,
-/// copies the cells of rows 2 to 6 and 13 in two columns and has
-/// AnkohlRuins_PourSand place five objects between them, as
-/// AnkohlRuins_PlaceFacePiece does for object 8.
+/// each sets its flag (FLAG_LEFT_FACE_HALF_PLACED,
+/// FLAG_RIGHT_FACE_HALF_PLACED); once both are set, shakes the screen, copies
+/// the cells of rows 2 to 6 and 13 in two columns and has AnkohlRuins_PourSand
+/// place five objects between them, as AnkohlRuins_PlaceFacePiece does for
+/// object 8.
 void AnkohlRuins_PlacePillarPair(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
-  s32 column = object->x.fixed >> 20;
-  s32 row = object->z.fixed >> 20;
+  s32 column = FIELD_CELL(object->x.fixed);
+  s32 row = FIELD_CELL(object->z.fixed);
   s32 toColumn;
   s32 lowRow;
   s32 highRow;
@@ -444,14 +518,15 @@ void AnkohlRuins_PlacePillarPair(s32 unused, s32 id) {
   s32 kind;
 
   if (id == 9 && column == 12 && row == 45) {
-    Event_SetFlag(0x9d9);
+    Event_SetFlag(FLAG_LEFT_FACE_HALF_PLACED);
     AnkohlRuins_SettleObject(9, 181);
   }
   if (id == 10 && column == 14 && row == 45) {
-    Event_SetFlag(0x9da);
+    Event_SetFlag(FLAG_RIGHT_FACE_HALF_PLACED);
     AnkohlRuins_SettleObject(10, 181);
   }
-  if (!GameFlag_Get(0x9da) || !GameFlag_Get(0x9d9))
+  if (!GameFlag_Get(FLAG_RIGHT_FACE_HALF_PLACED) ||
+      !GameFlag_Get(FLAG_LEFT_FACE_HALF_PLACED))
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -487,17 +562,18 @@ void AnkohlRuins_PlacePillarPair(s32 unused, s32 id) {
   Event_End();
 }
 
-/// When the object with id 8 stands on cell (12, 5): sets flag 0x9dc, shakes
-/// the screen, copies the cells of rows 2 to 6 and 16 in two columns and has
-/// AnkohlRuins_PourSand place four objects between them.
+/// When the object with id 8 stands on cell (12, 5): sets flag
+/// FLAG_THANATOS_FACE_HALF_PLACED, shakes the screen, copies the cells of rows
+/// 2 to 6 and 16 in two columns and has AnkohlRuins_PourSand place four objects
+/// between them.
 void AnkohlRuins_PlaceFacePiece(s32 unused, s32 id) {
   struct Actor *pillar = Actor_GetById(id);
-  s32 column = pillar->x.fixed >> 20;
-  s32 row = pillar->z.fixed >> 20;
+  s32 column = FIELD_CELL(pillar->x.fixed);
+  s32 row = FIELD_CELL(pillar->z.fixed);
 
   if (id != 8 || column != 12 || row != 5)
     return;
-  Event_SetFlag(0x9dc);
+  Event_SetFlag(FLAG_THANATOS_FACE_HALF_PLACED);
   AnkohlRuins_SettleObject(8, 181);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -531,11 +607,11 @@ void AnkohlRuins_PlaceFacePiece(s32 unused, s32 id) {
 
 void AnkohlRuins_PushRaftPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
-  s32 x = object->x.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
 
   if (id == 10 && x == 15 && z == 24) {
-    Actor_SetSpriteFlags(Actor_GetById(10), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_GREAT_FACE_HALF), 0);
     object->y.fixed -= px(2);
     FieldEvent_Wait(1);
     object->y.fixed -= px(2);
@@ -544,13 +620,13 @@ void AnkohlRuins_PushRaftPillar(s32 unused, s32 id) {
     FieldEvent_Wait(1);
     object->y.fixed -= px(8);
     FieldEvent_Wait(1);
-    Actor_SetAnimation(9, 3);
-    Actor_SetPosition(10, 0, 0);
+    Actor_SetAnimation(ACTOR_GREAT_FACE, 3);
+    Actor_SetPosition(ACTOR_GREAT_FACE_HALF, 0, 0);
     Event_PlaySound(SE_THUMP);
     FieldEvent_Wait(45);
-    Actor_SetAnimation(9, 4);
+    Actor_SetAnimation(ACTOR_GREAT_FACE, 4);
     Event_PlaySound(SE_564);
-    Event_SetFlag(0x9dd);
+    Event_SetFlag(FLAG_GREAT_FACE_HALF_PLACED);
   }
 }
 
@@ -575,7 +651,7 @@ void AnkohlRuins_FlowWithSand(void) {
     ground = map->layers[0].cells;
     upper = map->layers[2].cells;
   }
-  index = (leader->x.fixed >> 20) + ((leader->z.fixed >> 20) << 7);
+  index = FIELD_CELL(leader->x.fixed) + (FIELD_CELL(leader->z.fixed) << 7);
   ground += index;
   upper += index;
   if (((ground->attributeB & 4) | (upper->collisionCode & 232)) != 236)
@@ -587,8 +663,8 @@ void AnkohlRuins_FlowWithSand(void) {
   position[2] = leader->z.fixed + px(8);
   if (MapGrid_CheckCollision(leader, position) < 0)
     work->stepTrigger = 66;
-  leader->z.fixed += 0x8000;
-  companion->z.fixed += 0x8000;
+  leader->z.fixed += px(1) / 2;
+  companion->z.fixed += px(1) / 2;
 }
 
 void AnkohlRuins_PushedOffLedge(void) {
@@ -629,9 +705,9 @@ void AnkohlRuins_WhirlwindOnOvergrowth(s32 a, s32 id) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_1)
     Event_SetFlag(id + 0x97f);
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_THANATOS_MACE_CHEST)
-    Event_SetFlag(id + 0x995);
+    Event_SetFlag(id + FLAG_FIRST_IVY_CLEARED + 5);
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_4)
-    Event_SetFlag(id + 0x996);
+    Event_SetFlag(id + FLAG_FIRST_IVY_CLEARED + 6);
 }
 
 /// Draws eight sprites while flag 0x205 is clear and the level is below
@@ -665,7 +741,7 @@ void AnkohlRuins_DrawSand(void) {
         x -= work->level;
         y += work->level;
         if (work->level > 0x100000)
-          x = -0x100000;
+          x = -px(16);
         break;
       case 1:
         x -= work->level;
@@ -679,13 +755,13 @@ void AnkohlRuins_DrawSand(void) {
         x += work->level;
         y += work->level;
         if (work->level > 0x100000)
-          x = -0x100000;
+          x = -px(16);
         break;
       case 4:
         if (work->level < 0x100000)
           y += work->level;
         else
-          x = -0x100000;
+          x = -px(16);
         break;
       }
       x -= viewX;
@@ -732,13 +808,7 @@ fill:
   Heap_Release(tiles);
   work->unk08 = layer->offsetX;
   work->unk0c = layer->offsetY;
-  /* FAKEMATCH(dead): the once-only block builds the value after the stores
-   * before it. */
-  do {
-    s32 winout = 0x1b1f;
-
-    REG_WINOUT = winout;
-  } while (0);
+  Io_Write16(0x1b1f, &REG_WINOUT);
   REG_DISPCNT |= 0x8000;
   Task_AddFrame(AnkohlRuins_DrawSand, TASK_PASS_VBLANK);
   if (gMainRoutineWork.entrance == 1 || gMainRoutineWork.entrance == 2) {
@@ -839,7 +909,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
       FieldEvent_Wait(1);
     work->level += gAnkohlRuins_SandStep;
     cells = map->layers[2].cells;
-    cells += leader->x.fixed / 0x100000 + ((leader->z.fixed / 0x100000) << 7);
+    cells += leader->x.fixed / px(16) + ((leader->z.fixed / px(16)) << 7);
     if (cells->collisionCode == 232) {
       leader->y.fixed += gAnkohlRuins_SandStep;
       leader->groundHeight = leader->y.fixed;
@@ -921,7 +991,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
       FieldEvent_Wait(1);
     work->level += gAnkohlRuins_SandStep;
     cells = map->layers[2].cells;
-    cells += leader->x.fixed / 0x100000 + ((leader->z.fixed / 0x100000) << 7);
+    cells += leader->x.fixed / px(16) + ((leader->z.fixed / px(16)) << 7);
     if (cells->collisionCode == 232) {
       leader->y.fixed += gAnkohlRuins_SandStep;
       leader->groundHeight = leader->y.fixed;
@@ -989,7 +1059,7 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
     gAnkohlRuins_SandStepDelay = 7;
     gAnkohlRuins_SandTimer = done;
     gAnkohlRuins_SandTime = 200;
-    gAnkohlRuins_SandStep = 0x8000;
+    gAnkohlRuins_SandStep = px(1) / 2;
     gAnkohlRuins_SandRoom = 1;
     Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
     AnkohlRuins_RaiseFirstSand();
@@ -1030,7 +1100,7 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
     gAnkohlRuins_SandStepDelay = 3;
     gAnkohlRuins_SandTimer = done;
     gAnkohlRuins_SandTime = 100;
-    gAnkohlRuins_SandStep = 0x8000;
+    gAnkohlRuins_SandStep = px(1) / 2;
     gAnkohlRuins_SandRoom = 2;
     Event_SetFlag(FLAG_NO_PLACE_TO_SAVE);
     AnkohlRuins_RaiseSecondSand();
@@ -1048,7 +1118,7 @@ DEFINE_ANKOHL_RUINS_OPEN_ONCE(AnkohlRuins_OpenSecondSandDoor, 0x9e3, 2, 83, 1,
 /// 0x201.
 void AnkohlRuins_RideRaftDown(void) {
   struct Actor *rider = gFieldWork->camera;
-  struct Actor *raft = Actor_GetById(9);
+  struct Actor *raft = Actor_GetById(ACTOR_GREAT_FACE);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
   s32 column;
@@ -1056,25 +1126,21 @@ void AnkohlRuins_RideRaftDown(void) {
 
   if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) && work->stepTrigger != 40)
     return;
-  raft->z.fixed += 0xcccc;
-  column = leader->x.fixed >> 20;
+  raft->z.fixed += px(4) / 5;
+  column = FIELD_CELL(leader->x.fixed);
   if (gMainRoutineWork.movementMode != 5 && column > 12 && column <= 15) {
-    /* FAKEMATCH(temporary): a second pointer to the leader loads the raft's z
-     * before the leader's in the second test. */
-    struct Actor *player = leader;
-
-    if (raft->z.fixed + px(24) >= player->z.fixed &&
-        player->z.fixed >= raft->z.fixed) {
-      player->z.fixed = raft->z.fixed + px(24);
+    if (raft->z.fixed + px(24) >= leader->z.fixed &&
+        leader->z.fixed >= raft->z.fixed) {
+      leader->z.fixed = raft->z.fixed + px(24);
       rider->z.fixed = raft->z.fixed + px(24);
     }
-    if (raft->z.fixed >= player->z.fixed &&
-        player->z.fixed >= raft->z.fixed - px(16)) {
-      player->z.fixed = raft->z.fixed - px(16);
+    if (raft->z.fixed >= leader->z.fixed &&
+        leader->z.fixed >= raft->z.fixed - px(16)) {
+      leader->z.fixed = raft->z.fixed - px(16);
       rider->z.fixed = raft->z.fixed - px(16);
     }
   }
-  row = raft->z.fixed >> 20;
+  row = FIELD_CELL(raft->z.fixed);
   if ((u16)(row - 31) <= 4 && !AnkohlRuins_FlagCheck(0x146)) {
     MapGrid_CopyCellAttributes(35, 83, 5, 4, 12, 96);
     Event_SetFlag(0x146);
@@ -1095,9 +1161,9 @@ void AnkohlRuins_RideRaftDown(void) {
 }
 
 void AnkohlRuins_BoardRaft(void) {
-  s32 z = Actor_Get(9)->z.fixed >> 20;
+  s32 z = FIELD_CELL(Actor_Get(ACTOR_GREAT_FACE)->z.fixed);
 
-  if (Event_GetFlag(0x9dd) != 0 && z == 24) {
+  if (Event_GetFlag(FLAG_GREAT_FACE_HALF_PLACED) != 0 && z == 24) {
     s32 found = Task_Find(AnkohlRuins_RideRaftDown);
 
     if (found == -1) {
@@ -1122,9 +1188,9 @@ void AnkohlRuins_BoardRaft(void) {
 }
 
 void AnkohlRuins_BoardRaftAgain(void) {
-  s32 z = Actor_Get(9)->z.fixed >> 20;
+  s32 z = FIELD_CELL(Actor_Get(ACTOR_GREAT_FACE)->z.fixed);
 
-  if (Event_GetFlag(0x9dd) != 0 && z == 24) {
+  if (Event_GetFlag(FLAG_GREAT_FACE_HALF_PLACED) != 0 && z == 24) {
     void (*func)(void) = AnkohlRuins_RideRaftDown;
 
     if (Task_Find(func) == -1) {
@@ -1140,22 +1206,22 @@ void AnkohlRuins_BoardRaftAgain(void) {
 }
 
 extern struct Trigger gAnkohlRuins_Triggers[];
-extern struct Trigger gAnkohlRuins_Room1Triggers[];
-extern struct Trigger gAnkohlRuins_Room2Triggers[];
-extern struct Trigger gAnkohlRuins_Room3Triggers[];
-extern struct Trigger gAnkohlRuins_Room4Triggers[];
-extern struct Trigger gAnkohlRuins_Room5Triggers[];
-extern struct Trigger gAnkohlRuins_Room6Triggers[];
-extern struct Trigger gAnkohlRuins_Room8Triggers[];
+extern struct Trigger gAnkohlRuins_StoneFacesTriggers[];
+extern struct Trigger gAnkohlRuins_ThanatosMaceChestTriggers[];
+extern struct Trigger gAnkohlRuins_GreatFaceTriggers[];
+extern struct Trigger gAnkohlRuins_FaceHalvesTriggers[];
+extern struct Trigger gAnkohlRuins_CrystalPowderChestTriggers[];
+extern struct Trigger gAnkohlRuins_SandDoorsTriggers[];
+extern struct Trigger gAnkohlRuins_LeftProngTriggers[];
 
 void AnkohlRuins_PushStatueIntoGap(void) {
-  struct Actor *object = Actor_Get(9);
+  struct Actor *object = Actor_Get(ACTOR_FACE_HALF_FOR_THE_GAP);
 
-  if (object->x.fixed >> 20 == 26 && object->z.fixed >> 20 == 35) {
-    Event_SetFlag(0x9db);
+  if (FIELD_CELL(object->x.fixed) == 26 && FIELD_CELL(object->z.fixed) == 35) {
+    Event_SetFlag(FLAG_FACE_HALF_PUSHED_INTO_GAP);
     Event_PlaySound(SE_DUST_PUFF);
     AnkohlRuins_SettleObject(9, 0);
-    Actor_SetPosition(9, 0, 0);
+    Actor_SetPosition(ACTOR_FACE_HALF_FOR_THE_GAP, 0, 0);
     ObjectTable_Snapshot();
     FieldEvent_SetExitRequest(20);
   }
@@ -1186,19 +1252,19 @@ void AnkohlRuins_EndReveal(void) { GameFlag_Clear(FLAG_SCENE_TEMP_05); }
 
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_1)
-    return gAnkohlRuins_Room1Triggers;
+    return gAnkohlRuins_StoneFacesTriggers;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_THANATOS_MACE_CHEST)
-    return gAnkohlRuins_Room2Triggers;
+    return gAnkohlRuins_ThanatosMaceChestTriggers;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_3)
-    return gAnkohlRuins_Room3Triggers;
+    return gAnkohlRuins_GreatFaceTriggers;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_4)
-    return gAnkohlRuins_Room4Triggers;
+    return gAnkohlRuins_FaceHalvesTriggers;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_5)
-    return gAnkohlRuins_Room5Triggers;
+    return gAnkohlRuins_CrystalPowderChestTriggers;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_SAND_DOORS)
-    return gAnkohlRuins_Room6Triggers;
+    return gAnkohlRuins_SandDoorsTriggers;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_LEFT_PRONG)
-    return gAnkohlRuins_Room8Triggers;
+    return gAnkohlRuins_LeftProngTriggers;
   return gAnkohlRuins_Triggers;
 }
 
@@ -1216,9 +1282,9 @@ void AnkohlRuins_RaiseDust(struct Actor *object) {
     }
     dy = Random16() & 7;
     params.type = 673;
-    FieldEffect_Spawn(object->x.fixed + ((dx - 8) << 16),
-                      object->y.fixed + ((dy - 8) << 16), object->z.fixed, 0,
-                      0x8000, phase, 0x100000, &params);
+    FieldEffect_Spawn(object->x.fixed + px(dx - 8),
+                      object->y.fixed + px(dy - 8), object->z.fixed, 0,
+                      px(1) / 2, phase, 0x100000, &params);
   }
 }
 
@@ -1239,8 +1305,8 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 extern s32 gAnkohlRuins_ShrunkenSpriteScript[];
-extern u32 gAnkohlRuins_Room2Script[];
-extern u32 gAnkohlRuins_Room3Script[];
+extern u32 gAnkohlRuins_ThanatosMaceChestScript[];
+extern u32 gAnkohlRuins_GreatFaceScript[];
 
 struct AnkohlRuinsSpriteWork;
 
@@ -1267,65 +1333,65 @@ s32 Scene_Initialize(s32 a0) {
 
   if (scene == SCENE_ANKOHL_RUINS_1) {
     FieldEffect_StartBlankOverlay(0);
-    if (GameFlag_Get(0x9d2))
-      Actor_SetPosition(10, 0, 0);
-    if (GameFlag_Get(0x9d3))
-      Actor_SetPosition(11, 0, 0);
-    if (GameFlag_Get(0x9d4))
-      Actor_SetPosition(12, 0, 0);
-    if (GameFlag_Get(0x9d5))
-      Actor_SetPosition(13, 0, 0);
-    if (GameFlag_Get(0x9d6))
-      Actor_SetPosition(14, 0, 0);
-    if (GameFlag_Get(0x9d7))
-      Actor_SetPosition(15, 0, 0);
-    if (GameFlag_Get(0x9d8))
-      Actor_SetPosition(16, 0, 0);
-    if (GameFlag_Get(0x990))
-      Actor_SetPosition(17, 0, 0);
-    if (GameFlag_Get(0x991))
-      Actor_SetPosition(18, 0, 0);
-    if (GameFlag_Get(0x992))
-      Actor_SetPosition(19, 0, 0);
-    if (GameFlag_Get(0x993))
-      Actor_SetPosition(20, 0, 0);
-    if (GameFlag_Get(0x994))
-      Actor_SetPosition(21, 0, 0);
-    if (GameFlag_Get(0x995))
-      Actor_SetPosition(22, 0, 0);
-    if (GameFlag_Get(0x996))
-      Actor_SetPosition(23, 0, 0);
-    if (GameFlag_Get(0x997))
-      Actor_SetPosition(24, 0, 0);
-    if (GameFlag_Get(0x998))
-      Actor_SetPosition(25, 0, 0);
-    if (GameFlag_Get(0x999))
-      Actor_SetPosition(26, 0, 0);
-    if (GameFlag_Get(0x99a))
-      Actor_SetPosition(27, 0, 0);
-    if (GameFlag_Get(0x99b))
-      Actor_SetPosition(28, 0, 0);
-    if (GameFlag_Get(0x99c))
-      Actor_SetPosition(29, 0, 0);
-    if (GameFlag_Get(0x99d))
-      Actor_SetPosition(30, 0, 0);
-    if (GameFlag_Get(0x9c6)) {
-      Actor_SetPosition(8, 72, 88);
+    if (GameFlag_Get(FLAG_FIRST_STONE_FACE_MOVED))
+      Actor_SetPosition(ACTOR_FIRST_STONE_FACE, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_STONE_FACE_MOVED + 1))
+      Actor_SetPosition(ACTOR_FIRST_STONE_FACE + 1, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_STONE_FACE_MOVED + 2))
+      Actor_SetPosition(ACTOR_FIRST_STONE_FACE + 2, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_STONE_FACE_MOVED + 3))
+      Actor_SetPosition(ACTOR_FIRST_STONE_FACE + 3, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_STONE_FACE_MOVED + 4))
+      Actor_SetPosition(ACTOR_FIRST_STONE_FACE + 4, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_STONE_FACE_MOVED + 5))
+      Actor_SetPosition(ACTOR_FIRST_STONE_FACE + 5, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_STONE_FACE_MOVED + 6))
+      Actor_SetPosition(ACTOR_FIRST_STONE_FACE + 6, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 1))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 1, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 2))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 2, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 3))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 3, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 4))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 4, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 5))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 5, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 6))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 6, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 7))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 7, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 8))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 8, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 9))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 9, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 10))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 10, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 11))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 11, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 12))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 12, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 13))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 13, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_ROOM_PILLAR_MOVED)) {
+      Actor_SetPosition(ACTOR_FIRST_ROOM_PILLAR, 72, 88);
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_THANATOS_MACE_CHEST) {
-    if (GameFlag_Get(0x99e))
-      Actor_SetPosition(9, 0, 0);
-    if (GameFlag_Get(0x99f))
-      Actor_SetPosition(10, 0, 0);
-    if (GameFlag_Get(0x9a0))
-      Actor_SetPosition(11, 0, 0);
-    if (GameFlag_Get(0x9dc)) {
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 14))
+      Actor_SetPosition(ACTOR_THANATOS_FIRST_IVY, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 15))
+      Actor_SetPosition(ACTOR_THANATOS_FIRST_IVY + 1, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 16))
+      Actor_SetPosition(ACTOR_THANATOS_FIRST_IVY + 2, 0, 0);
+    if (GameFlag_Get(FLAG_THANATOS_FACE_HALF_PLACED)) {
       s32 width;
 
-      object = Actor_GetById(8);
+      object = Actor_GetById(ACTOR_THANATOS_FACE_HALF);
       object->motionFlags = 3;
-      Actor_SetPosition(8, 200, 88);
+      Actor_SetPosition(ACTOR_THANATOS_FACE_HALF, 200, 88);
       width = 10;
       MapGrid_CopyCells(35, 6, 7, 16, width, 7);
       MapGrid_CopyCells(35, 70, 7, 16, width, 71);
@@ -1333,13 +1399,13 @@ s32 Scene_Initialize(s32 a0) {
         Event_PlaySound(SE_575);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_3) {
-    if (GameFlag_Get(0x9c7)) {
-      Actor_SetPosition(8, 520, 104);
+    if (GameFlag_Get(FLAG_THIRD_ROOM_PILLAR_MOVED)) {
+      Actor_SetPosition(ACTOR_THIRD_ROOM_PILLAR, 520, 104);
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
     }
-    if (GameFlag_Get(0x9dd)) {
-      Actor_SetPosition(10, 0, 0);
-      Actor_SetAnimation(9, 4);
+    if (GameFlag_Get(FLAG_GREAT_FACE_HALF_PLACED)) {
+      Actor_SetPosition(ACTOR_GREAT_FACE_HALF, 0, 0);
+      Actor_SetAnimation(ACTOR_GREAT_FACE, 4);
     }
     if (GameFlag_Get(FLAG_SCENE_TEMP_01)) {
       s32 width = 13;
@@ -1349,41 +1415,43 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCellAttributes(41, 48, 3, 2, width, 41);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_4) {
-    if (GameFlag_Get(0x9a1))
-      Actor_SetPosition(11, 0, 0);
-    if (GameFlag_Get(0x9a2))
-      Actor_SetPosition(12, 0, 0);
-    if (GameFlag_Get(0x9a3))
-      Actor_SetPosition(13, 0, 0);
-    if (GameFlag_Get(0x9a4))
-      Actor_SetPosition(14, 0, 0);
-    if (GameFlag_Get(0x9a5))
-      Actor_SetPosition(15, 0, 0);
-    if (GameFlag_Get(0x9a6))
-      Actor_SetPosition(16, 0, 0);
-    if (GameFlag_Get(0x9a7))
-      Actor_SetPosition(17, 0, 0);
-    if (GameFlag_Get(0x9c8))
-      Actor_SetPosition(8, 40, 776);
-    if (GameFlag_Get(0x9c9))
-      Actor_SetPosition(18, 632, 456);
-    if (GameFlag_Get(0x9ca)) {
-      Actor_SetPosition(19, 616, 136);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 17))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_FIRST_IVY, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 18))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_FIRST_IVY + 1, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 19))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_FIRST_IVY + 2, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 20))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_FIRST_IVY + 3, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 21))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_FIRST_IVY + 4, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 22))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_FIRST_IVY + 5, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 23))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_FIRST_IVY + 6, 0, 0);
+    if (GameFlag_Get(FLAG_FOURTH_ROOM_PILLAR_MOVED))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_PILLAR, 40, 776);
+    if (GameFlag_Get(FLAG_FOURTH_ROOM_SECOND_PILLAR_MOVED))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_SECOND_PILLAR, 632, 456);
+    if (GameFlag_Get(FLAG_FOURTH_ROOM_THIRD_PILLAR_MOVED)) {
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_THIRD_PILLAR, 616, 136);
       MapGrid_CopyCells(37, 70, 1, 1, 37, 71);
     }
-    if (GameFlag_Get(0x9d9)) {
-      object = Actor_GetById(9);
+    if (GameFlag_Get(FLAG_LEFT_FACE_HALF_PLACED)) {
+      object = Actor_GetById(ACTOR_LEFT_FACE_HALF);
       object->motionFlags = 3;
-      Actor_SetPosition(9, 200, 728);
+      Actor_SetPosition(ACTOR_LEFT_FACE_HALF, 200, 728);
     }
-    if (GameFlag_Get(0x9da)) {
-      object = Actor_GetById(10);
-      Actor_SetPosition(10, 232, 728);
+    if (GameFlag_Get(FLAG_RIGHT_FACE_HALF_PLACED)) {
+      object = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
+      Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 232, 728);
       object->motionFlags = 3;
-    } else if (GameFlag_Get(0x9db) && !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      Actor_SetPosition(10, 328, 760);
+    } else if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP) &&
+               !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+      Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 328, 760);
     }
-    if (GameFlag_Get(0x9da) && GameFlag_Get(0x9d9)) {
+    if (GameFlag_Get(FLAG_RIGHT_FACE_HALF_PLACED) &&
+        GameFlag_Get(FLAG_LEFT_FACE_HALF_PLACED)) {
       s32 width;
 
       if ((u16)(gMainRoutineWork.entrance - 13) <= 4)
@@ -1409,11 +1477,11 @@ s32 Scene_Initialize(s32 a0) {
         FieldEvent_ResolvePendingActions(0);
         FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
         Actor_SetPosition(late->leaderActorId, 0, 0);
-        Actor_SetPosition(10, 0, 0);
+        Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 0, 0);
         Event_StartScreenTransition();
         FieldEvent_Wait(15);
-        object = Actor_GetById(10);
-        Actor_SetPosition(10, 328, 760);
+        object = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
+        Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 328, 760);
         object->y.fixed += px(128);
         frames = 60;
         object->motionFlags = 3;
@@ -1431,10 +1499,10 @@ s32 Scene_Initialize(s32 a0) {
     if ((u16)(gMainRoutineWork.entrance - 13) <= 3)
       goto task;
   } else if (scene == SCENE_ANKOHL_RUINS_5) {
-    if (GameFlag_Get(0x9db))
-      Actor_SetPosition(9, 0, 0);
-    if (GameFlag_Get(0x9cb)) {
-      Actor_SetPosition(8, 280, 312);
+    if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP))
+      Actor_SetPosition(ACTOR_FACE_HALF_FOR_THE_GAP, 0, 0);
+    if (GameFlag_Get(FLAG_FIFTH_ROOM_PILLAR_MOVED)) {
+      Actor_SetPosition(ACTOR_FIFTH_ROOM_PILLAR, 280, 312);
       MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
     }
     if (work->entrance == 1 || work->entrance == 12) {
@@ -1504,7 +1572,7 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CenterOnFollowedPoint();
     }
   } else if (scene == SCENE_ANKOHL_RUINS_LEFT_PRONG) {
-    object = Actor_GetById(64);
+    object = Actor_GetById(ACTOR_LEFT_PRONG_CHEST);
     if (object != NULL) {
       object->motionFlags = 0;
       object->groundHeight = px(72);
@@ -1540,65 +1608,65 @@ s32 Scene_Initialize(s32 a0) {
 
   if (scene == SCENE_ANKOHL_RUINS_1) {
     FieldEffect_StartBlankOverlay(0);
-    if (GameFlag_Get(0x9d2))
-      Actor_SetPosition(10, 0, 0);
-    if (GameFlag_Get(0x9d3))
-      Actor_SetPosition(11, 0, 0);
-    if (GameFlag_Get(0x9d4))
-      Actor_SetPosition(12, 0, 0);
-    if (GameFlag_Get(0x9d5))
-      Actor_SetPosition(13, 0, 0);
-    if (GameFlag_Get(0x9d6))
-      Actor_SetPosition(14, 0, 0);
-    if (GameFlag_Get(0x9d7))
-      Actor_SetPosition(15, 0, 0);
-    if (GameFlag_Get(0x9d8))
-      Actor_SetPosition(16, 0, 0);
-    if (GameFlag_Get(0x990))
-      Actor_SetPosition(17, 0, 0);
-    if (GameFlag_Get(0x991))
-      Actor_SetPosition(18, 0, 0);
-    if (GameFlag_Get(0x992))
-      Actor_SetPosition(19, 0, 0);
-    if (GameFlag_Get(0x993))
-      Actor_SetPosition(20, 0, 0);
-    if (GameFlag_Get(0x994))
-      Actor_SetPosition(21, 0, 0);
-    if (GameFlag_Get(0x995))
-      Actor_SetPosition(22, 0, 0);
-    if (GameFlag_Get(0x996))
-      Actor_SetPosition(23, 0, 0);
-    if (GameFlag_Get(0x997))
-      Actor_SetPosition(24, 0, 0);
-    if (GameFlag_Get(0x998))
-      Actor_SetPosition(25, 0, 0);
-    if (GameFlag_Get(0x999))
-      Actor_SetPosition(26, 0, 0);
-    if (GameFlag_Get(0x99a))
-      Actor_SetPosition(27, 0, 0);
-    if (GameFlag_Get(0x99b))
-      Actor_SetPosition(28, 0, 0);
-    if (GameFlag_Get(0x99c))
-      Actor_SetPosition(29, 0, 0);
-    if (GameFlag_Get(0x99d))
-      Actor_SetPosition(30, 0, 0);
-    if (GameFlag_Get(0x9c6)) {
-      Actor_SetPosition(8, 72, 88);
+    if (GameFlag_Get(FLAG_FIRST_STONE_FACE_MOVED))
+      Actor_SetPosition(ACTOR_FIRST_STONE_FACE, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_STONE_FACE_MOVED + 1))
+      Actor_SetPosition(ACTOR_FIRST_STONE_FACE + 1, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_STONE_FACE_MOVED + 2))
+      Actor_SetPosition(ACTOR_FIRST_STONE_FACE + 2, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_STONE_FACE_MOVED + 3))
+      Actor_SetPosition(ACTOR_FIRST_STONE_FACE + 3, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_STONE_FACE_MOVED + 4))
+      Actor_SetPosition(ACTOR_FIRST_STONE_FACE + 4, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_STONE_FACE_MOVED + 5))
+      Actor_SetPosition(ACTOR_FIRST_STONE_FACE + 5, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_STONE_FACE_MOVED + 6))
+      Actor_SetPosition(ACTOR_FIRST_STONE_FACE + 6, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 1))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 1, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 2))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 2, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 3))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 3, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 4))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 4, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 5))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 5, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 6))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 6, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 7))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 7, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 8))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 8, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 9))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 9, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 10))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 10, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 11))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 11, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 12))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 12, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 13))
+      Actor_SetPosition(ACTOR_FIRST_ROOM_FIRST_IVY + 13, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_ROOM_PILLAR_MOVED)) {
+      Actor_SetPosition(ACTOR_FIRST_ROOM_PILLAR, 72, 88);
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_THANATOS_MACE_CHEST) {
-    if (GameFlag_Get(0x99e))
-      Actor_SetPosition(9, 0, 0);
-    if (GameFlag_Get(0x99f))
-      Actor_SetPosition(10, 0, 0);
-    if (GameFlag_Get(0x9a0))
-      Actor_SetPosition(11, 0, 0);
-    if (GameFlag_Get(0x9dc)) {
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 14))
+      Actor_SetPosition(ACTOR_THANATOS_FIRST_IVY, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 15))
+      Actor_SetPosition(ACTOR_THANATOS_FIRST_IVY + 1, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 16))
+      Actor_SetPosition(ACTOR_THANATOS_FIRST_IVY + 2, 0, 0);
+    if (GameFlag_Get(FLAG_THANATOS_FACE_HALF_PLACED)) {
       s32 width;
 
-      object = Actor_GetById(8);
+      object = Actor_GetById(ACTOR_THANATOS_FACE_HALF);
       object->motionFlags = 3;
-      Actor_SetPosition(8, 200, 88);
+      Actor_SetPosition(ACTOR_THANATOS_FACE_HALF, 200, 88);
       width = 10;
       MapGrid_CopyCells(35, 6, 7, 16, width, 7);
       MapGrid_CopyCells(35, 70, 7, 16, width, 71);
@@ -1606,13 +1674,13 @@ s32 Scene_Initialize(s32 a0) {
         Event_PlaySound(SE_575);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_3) {
-    if (GameFlag_Get(0x9c7)) {
-      Actor_SetPosition(8, 520, 104);
+    if (GameFlag_Get(FLAG_THIRD_ROOM_PILLAR_MOVED)) {
+      Actor_SetPosition(ACTOR_THIRD_ROOM_PILLAR, 520, 104);
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
     }
-    if (GameFlag_Get(0x9dd)) {
-      Actor_SetPosition(10, 0, 0);
-      Actor_SetAnimation(9, 4);
+    if (GameFlag_Get(FLAG_GREAT_FACE_HALF_PLACED)) {
+      Actor_SetPosition(ACTOR_GREAT_FACE_HALF, 0, 0);
+      Actor_SetAnimation(ACTOR_GREAT_FACE, 4);
     }
     if (GameFlag_Get(FLAG_SCENE_TEMP_01)) {
       s32 width = 13;
@@ -1622,41 +1690,43 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CopyCellAttributes(41, 48, 3, 2, width, 41);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_4) {
-    if (GameFlag_Get(0x9a1))
-      Actor_SetPosition(11, 0, 0);
-    if (GameFlag_Get(0x9a2))
-      Actor_SetPosition(12, 0, 0);
-    if (GameFlag_Get(0x9a3))
-      Actor_SetPosition(13, 0, 0);
-    if (GameFlag_Get(0x9a4))
-      Actor_SetPosition(14, 0, 0);
-    if (GameFlag_Get(0x9a5))
-      Actor_SetPosition(15, 0, 0);
-    if (GameFlag_Get(0x9a6))
-      Actor_SetPosition(16, 0, 0);
-    if (GameFlag_Get(0x9a7))
-      Actor_SetPosition(17, 0, 0);
-    if (GameFlag_Get(0x9c8))
-      Actor_SetPosition(8, 40, 776);
-    if (GameFlag_Get(0x9c9))
-      Actor_SetPosition(18, 632, 456);
-    if (GameFlag_Get(0x9ca)) {
-      Actor_SetPosition(19, 616, 136);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 17))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_FIRST_IVY, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 18))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_FIRST_IVY + 1, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 19))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_FIRST_IVY + 2, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 20))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_FIRST_IVY + 3, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 21))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_FIRST_IVY + 4, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 22))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_FIRST_IVY + 5, 0, 0);
+    if (GameFlag_Get(FLAG_FIRST_IVY_CLEARED + 23))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_FIRST_IVY + 6, 0, 0);
+    if (GameFlag_Get(FLAG_FOURTH_ROOM_PILLAR_MOVED))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_PILLAR, 40, 776);
+    if (GameFlag_Get(FLAG_FOURTH_ROOM_SECOND_PILLAR_MOVED))
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_SECOND_PILLAR, 632, 456);
+    if (GameFlag_Get(FLAG_FOURTH_ROOM_THIRD_PILLAR_MOVED)) {
+      Actor_SetPosition(ACTOR_FOURTH_ROOM_THIRD_PILLAR, 616, 136);
       MapGrid_CopyCells(37, 70, 1, 1, 37, 71);
     }
-    if (GameFlag_Get(0x9d9)) {
-      object = Actor_GetById(9);
+    if (GameFlag_Get(FLAG_LEFT_FACE_HALF_PLACED)) {
+      object = Actor_GetById(ACTOR_LEFT_FACE_HALF);
       object->motionFlags = 3;
-      Actor_SetPosition(9, 200, 728);
+      Actor_SetPosition(ACTOR_LEFT_FACE_HALF, 200, 728);
     }
-    if (GameFlag_Get(0x9da)) {
-      object = Actor_GetById(10);
-      Actor_SetPosition(10, 232, 728);
+    if (GameFlag_Get(FLAG_RIGHT_FACE_HALF_PLACED)) {
+      object = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
+      Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 232, 728);
       object->motionFlags = 3;
-    } else if (GameFlag_Get(0x9db) && !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      Actor_SetPosition(10, 328, 760);
+    } else if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP) &&
+               !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+      Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 328, 760);
     }
-    if (GameFlag_Get(0x9da) && GameFlag_Get(0x9d9)) {
+    if (GameFlag_Get(FLAG_RIGHT_FACE_HALF_PLACED) &&
+        GameFlag_Get(FLAG_LEFT_FACE_HALF_PLACED)) {
       s32 width;
 
       if ((u16)(gMainRoutineWork.entrance - 13) <= 3)
@@ -1675,11 +1745,11 @@ s32 Scene_Initialize(s32 a0) {
         FieldEvent_ResolvePendingActions(0);
         FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
         Actor_SetPosition(late->leaderActorId, 0, 0);
-        Actor_SetPosition(10, 0, 0);
+        Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 0, 0);
         Event_StartScreenTransition();
         FieldEvent_Wait(15);
-        object = Actor_GetById(10);
-        Actor_SetPosition(10, 328, 760);
+        object = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
+        Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 328, 760);
         object->y.fixed += px(128);
         frames = 60;
         object->motionFlags = 3;
@@ -1697,10 +1767,10 @@ s32 Scene_Initialize(s32 a0) {
     if ((u16)(gMainRoutineWork.entrance - 13) <= 3)
       goto task;
   } else if (scene == SCENE_ANKOHL_RUINS_5) {
-    if (GameFlag_Get(0x9db))
-      Actor_SetPosition(9, 0, 0);
-    if (GameFlag_Get(0x9cb)) {
-      Actor_SetPosition(8, 280, 312);
+    if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP))
+      Actor_SetPosition(ACTOR_FACE_HALF_FOR_THE_GAP, 0, 0);
+    if (GameFlag_Get(FLAG_FIFTH_ROOM_PILLAR_MOVED)) {
+      Actor_SetPosition(ACTOR_FIFTH_ROOM_PILLAR, 280, 312);
       MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
     }
     if (work->entrance == 1 || work->entrance == 12) {
@@ -1770,7 +1840,7 @@ s32 Scene_Initialize(s32 a0) {
       MapGrid_CenterOnFollowedPoint();
     }
   } else if (scene == SCENE_ANKOHL_RUINS_LEFT_PRONG) {
-    object = Actor_GetById(64);
+    object = Actor_GetById(ACTOR_LEFT_PRONG_CHEST);
     if (object != NULL) {
       object->motionFlags = 0;
       object->groundHeight = px(72);
@@ -1846,12 +1916,12 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gAnkohlRuins_Room1Regions[] = {
+u32 gAnkohlRuins_StoneFacesRegions[] = {
     0xee0333, 0x33b0354, 0x35c00f6, 0xcffff, 0xffff, 0,
     0, 0,
 };
 
-u32 gAnkohlRuins_Room2Regions[] = {
+u32 gAnkohlRuins_ThanatosMaceChestRegions[] = {
     0xffe600b4, 0xbc00a4, 0xacffee, 0x1ffff, 0xffff, 0,
     0, 0,
 };
@@ -1975,12 +2045,12 @@ s32 gAnkohlRuins_ShrunkenSpriteScript[] = {
     17,
 };
 
-u32 gAnkohlRuins_Room2Script[] = {
+u32 gAnkohlRuins_ThanatosMaceChestScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_END,
 };
 
-u32 gAnkohlRuins_Room3Script[] = {
+u32 gAnkohlRuins_GreatFaceScript[] = {
     SC_SET(SW_COLLISION, 0),
     SC_END,
 };
@@ -1989,7 +2059,7 @@ struct ActorPlacement gAnkohlRuins_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gAnkohlRuins_Room1Placements[] = {
+struct ActorPlacement gAnkohlRuins_StoneFacesPlacements[] = {
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(392, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2016,25 +2086,25 @@ struct ActorPlacement gAnkohlRuins_Room1Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gAnkohlRuins_Room2Placements[] = {
-    ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room2Script, 120, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
+struct ActorPlacement gAnkohlRuins_ThanatosMaceChestPlacements[] = {
+    ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 120, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 472, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 520, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 600, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gAnkohlRuins_Room3Placements[] = {
+struct ActorPlacement gAnkohlRuins_GreatFacePlacements[] = {
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(390, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room3Script, 232, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room2Script, 296, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(390, CONDITION_ALWAYS, (s32)gAnkohlRuins_GreatFaceScript, 232, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 296, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gAnkohlRuins_Room4Placements[] = {
+struct ActorPlacement gAnkohlRuins_FaceHalvesPlacements[] = {
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room2Script, 104, 0, 760, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room2Script, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 104, 0, 760, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 424, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 504, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 712, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2047,17 +2117,17 @@ struct ActorPlacement gAnkohlRuins_Room4Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gAnkohlRuins_Room5Placements[] = {
+struct ActorPlacement gAnkohlRuins_CrystalPowderChestPlacements[] = {
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_Room2Script, 440, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 440, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gAnkohlRuins_Room6Placements[] = {
+struct ActorPlacement gAnkohlRuins_SandDoorsPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gAnkohlRuins_Room8Placements[] = {
+struct ActorPlacement gAnkohlRuins_LeftProngPlacements[] = {
     {SCENE_TABLE_END},
 };
 
@@ -2067,7 +2137,7 @@ s16 gAnkohlRuins_SandTimer = 0;
 
 s16 gAnkohlRuins_SandTime = 0;
 
-s32 gAnkohlRuins_SandStep = 0x8000;
+s32 gAnkohlRuins_SandStep = px(1) / 2;
 
 s32 gAnkohlRuins_SandRoom = 0;
 
@@ -2077,7 +2147,7 @@ struct Trigger gAnkohlRuins_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gAnkohlRuins_Room1Triggers[] = {
+struct Trigger gAnkohlRuins_StoneFacesTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2111,15 +2181,15 @@ struct Trigger gAnkohlRuins_Room1Triggers[] = {
     {TRIGGER_EXIT, 31, CONDITION_ALWAYS, 31},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 32, CONDITION_ALWAYS, 32},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 33, CONDITION_ALWAYS, 33},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c6, EVENT(AnkohlRuins_FinishMovingFace)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9c6, EVENT(AnkohlRuins_StartMovingFace)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9d2, EVENT(AnkohlRuins_DropPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, 0x9d3, EVENT(AnkohlRuins_DropPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, 0x9d4, EVENT(AnkohlRuins_DropPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x9d5, EVENT(AnkohlRuins_DropPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, 0x9d6, EVENT(AnkohlRuins_DropPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x9d7, EVENT(AnkohlRuins_DropPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x9d8, EVENT(AnkohlRuins_DropPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_FIRST_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingFace)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, FLAG_FIRST_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingFace)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_FIRST_STONE_FACE_MOVED, EVENT(AnkohlRuins_DropPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, FLAG_FIRST_STONE_FACE_MOVED + 1, EVENT(AnkohlRuins_DropPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, FLAG_FIRST_STONE_FACE_MOVED + 2, EVENT(AnkohlRuins_DropPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, FLAG_FIRST_STONE_FACE_MOVED + 3, EVENT(AnkohlRuins_DropPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, FLAG_FIRST_STONE_FACE_MOVED + 4, EVENT(AnkohlRuins_DropPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, FLAG_FIRST_STONE_FACE_MOVED + 5, EVENT(AnkohlRuins_DropPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, FLAG_FIRST_STONE_FACE_MOVED + 6, EVENT(AnkohlRuins_DropPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 17, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 18, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 19, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
@@ -2139,7 +2209,7 @@ struct Trigger gAnkohlRuins_Room1Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gAnkohlRuins_Room2Triggers[] = {
+struct Trigger gAnkohlRuins_ThanatosMaceChestTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
@@ -2156,8 +2226,8 @@ struct Trigger gAnkohlRuins_Room2Triggers[] = {
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_EXIT, 18, CONDITION_ALWAYS, 18},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 19, CONDITION_ALWAYS, 19},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9dc, EVENT(AnkohlRuins_PlaceFacePiece)},
-    {TRIGGER_PUSHED, 8, 0x9dc, EVENT(AnkohlRuins_PlaceFacePiece)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_THANATOS_FACE_HALF_PLACED, EVENT(AnkohlRuins_PlaceFacePiece)},
+    {TRIGGER_PUSHED, 8, FLAG_THANATOS_FACE_HALF_PLACED, EVENT(AnkohlRuins_PlaceFacePiece)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 9, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 10, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 11, CONDITION_ALWAYS, EVENT(AnkohlRuins_WhirlwindOnOvergrowth)},
@@ -2166,7 +2236,7 @@ struct Trigger gAnkohlRuins_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gAnkohlRuins_Room3Triggers[] = {
+struct Trigger gAnkohlRuins_GreatFaceTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2181,16 +2251,16 @@ struct Trigger gAnkohlRuins_Room3Triggers[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(AnkohlRuins_BoardRaft)},
     {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(AnkohlRuins_BoardRaftAgain)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9c7, EVENT(AnkohlRuins_StartMovingFace)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c7, EVENT(AnkohlRuins_FinishMovingFace)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9dd, EVENT(AnkohlRuins_PushRaftPillar)},
-    {TRIGGER_PUSHED, 10, 0x9dd, EVENT(AnkohlRuins_PushRaftPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, FLAG_THIRD_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingFace)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_THIRD_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingFace)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_GREAT_FACE_HALF_PLACED, EVENT(AnkohlRuins_PushRaftPillar)},
+    {TRIGGER_PUSHED, 10, FLAG_GREAT_FACE_HALF_PLACED, EVENT(AnkohlRuins_PushRaftPillar)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_SinkIntoSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_RiseFromSand)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gAnkohlRuins_Room4Triggers[] = {
+struct Trigger gAnkohlRuins_FaceHalvesTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2217,18 +2287,18 @@ struct Trigger gAnkohlRuins_Room4Triggers[] = {
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_FinishPushing)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT(AnkohlRuins_PlacePillarPair)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT(AnkohlRuins_PlacePillarPair)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9c8, EVENT(AnkohlRuins_StartMovingFace)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9c8, EVENT(AnkohlRuins_FinishMovingFace)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, 0x9c9, EVENT(AnkohlRuins_StartMovingFace)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, 0x9c9, EVENT(AnkohlRuins_FinishMovingFace)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, 0x9ca, EVENT(AnkohlRuins_StartMovingFace)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, 0x9ca, EVENT(AnkohlRuins_FinishMovingFace)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, FLAG_FOURTH_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingFace)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_FOURTH_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingFace)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 18, FLAG_FOURTH_ROOM_SECOND_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingFace)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, FLAG_FOURTH_ROOM_SECOND_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingFace)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 19, FLAG_FOURTH_ROOM_THIRD_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingFace)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 19, FLAG_FOURTH_ROOM_THIRD_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingFace)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_SinkIntoSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_RiseFromSand)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gAnkohlRuins_Room5Triggers[] = {
+struct Trigger gAnkohlRuins_CrystalPowderChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
@@ -2243,10 +2313,10 @@ struct Trigger gAnkohlRuins_Room5Triggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 13, CONDITION_ALWAYS, EVENT(AnkohlRuins_JumpDownLedge)},
     {TRIGGER_EXIT, 26, CONDITION_ALWAYS, 26},
     {TRIGGER_STEP, 66, CONDITION_ALWAYS, EVENT(AnkohlRuins_PushedOffLedge)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, 0x9cb, EVENT(AnkohlRuins_StartMovingFace)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, 0x9cb, EVENT(AnkohlRuins_FinishMovingFace)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, 0x9db, EVENT(AnkohlRuins_StartMovingFace)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x9db, EVENT(AnkohlRuins_PushStatueIntoGap)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, FLAG_FIFTH_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingFace)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_FIFTH_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingFace)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, FLAG_FACE_HALF_PUSHED_INTO_GAP, EVENT(AnkohlRuins_StartMovingFace)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_FACE_HALF_PUSHED_INTO_GAP, EVENT(AnkohlRuins_PushStatueIntoGap)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_RevealGap)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_HideGap)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_SinkIntoSand)},
@@ -2254,7 +2324,7 @@ struct Trigger gAnkohlRuins_Room5Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gAnkohlRuins_Room6Triggers[] = {
+struct Trigger gAnkohlRuins_SandDoorsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2274,7 +2344,7 @@ struct Trigger gAnkohlRuins_Room6Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gAnkohlRuins_Room8Triggers[] = {
+struct Trigger gAnkohlRuins_LeftProngTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 #undef EFFECT_SPAWN

@@ -18,28 +18,112 @@
 #include "system/ram_buffer.h"
 #include "field/field_sequence_event.h"
 #include "text/msg_ids.h"
+
+/// The party set out on the winged ship (as Atteka Inlet names it).
+#define FLAG_SET_OUT_WITH_WINGS 0x9b2
+/// Force has freed Shine from the ground it was stuck in.
+#define FLAG_SHINE_FREED 0x9e7
+
+/// The village's people and Djinn (gContigo_VillagePlacements).
+enum ContigoVillageActorId {
+  /// "The Anemos blood in our veins often brings about strange..."
+  ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND = ACTOR_FIRST_PLACED,
+  /// "The people of Anemos possessed power over the wind."
+  ACTOR_WOMAN_ON_THE_ANEMOS = ACTOR_FIRST_PLACED + 3,
+  /// "The Anemos geoglyphs show a boat with wings..."
+  ACTOR_OLD_WOMAN_ON_THE_GEOGLYPHS = ACTOR_FIRST_PLACED + 5,
+  /// The boy who points the way (Contigo_TalkToWanderer).
+  ACTOR_WANDERER,
+  /// The girl who talks of the ship (Contigo_TalkAboutTheShip).
+  ACTOR_GIRL_ON_THE_SHIP,
+  /// The Djinn Salt (Venus) and Shine (Mars).
+  ACTOR_SALT,
+  ACTOR_SHINE
+};
+
+/// The shops and inn before the reunion
+/// (gContigo_ShopsPlacementsBeforeReunion).
+enum ContigoShopsActorId {
+  /// "Long ago, the people of Hesperia attacked Atteka."
+  ACTOR_OLD_MAN_ON_HESPERIA = ACTOR_FIRST_PLACED + 3,
+  ACTOR_ITEM_MERCHANT = ACTOR_FIRST_PLACED + 5,
+  /// "Soon, the siblings with the power of the Anemos will return."
+  ACTOR_YOUNG_MAN_ON_THE_SIBLINGS,
+  /// "The power of the Anemos is all but gone in Contigo."
+  ACTOR_WOMAN_ON_THE_ANEMOS_POWER,
+  /// The baby whose furrowed brow brings the wind (Contigo_BabyThinks).
+  ACTOR_BABY = ACTOR_FIRST_PLACED + 9,
+  ACTOR_WEAPON_MERCHANT,
+  ACTOR_ARMOR_MERCHANT,
+  ACTOR_INNKEEPER,
+  /// The workers on the wings, resting at the inn: "I worked myself half to
+  /// death yesterday."
+  ACTOR_WORN_OUT_WORKER = ACTOR_FIRST_PLACED + 16,
+  /// "The prophecies of the Anemos tell that someday soon..."
+  ACTOR_WORKER_ON_THE_PROPHECIES,
+  /// "I'm afraid I'm too old to help in the construction..."
+  ACTOR_OLD_MAN_TOO_OLD_TO_HELP,
+  /// "When is that miracle of the Anemos gonna hurry up..."
+  ACTOR_OLD_WOMAN_AWAITING_THE_MIRACLE,
+  ACTOR_HEALER
+};
+
+/// Hama and Kraden at the reunion and after it (gContigo_ShopsPlacements,
+/// gContigo_ShopsPlacementsReunion).
+enum ContigoReunionActorId { ACTOR_HAMA = ACTOR_FIRST_PLACED, ACTOR_KRADEN };
+
+/// The dice and wheels hall (gContigo_LuckyDicePlacements).
+enum ContigoLuckyDiceActorId {
+  /// Who runs Super Lucky Dice, and who explains it beside him.
+  ///@{
+  ACTOR_SUPER_LUCKY_DICE_HOST = ACTOR_FIRST_PLACED,
+  ACTOR_SUPER_LUCKY_DICE_GUIDE,
+  ///@}
+  /// Who runs Lucky Dice, and who points to its sign.
+  ///@{
+  ACTOR_LUCKY_DICE_HOST = ACTOR_FIRST_PLACED + 6,
+  ACTOR_LUCKY_DICE_GUIDE,
+  ///@}
+  ACTOR_LUCKY_WHEELS_ATTENDANT = ACTOR_FIRST_PLACED + 10
+};
+
+/// The geoglyph, where the Wings of Anemos are built
+/// (gContigo_GeoglyphPlacements).
+enum ContigoGeoglyphActorId {
+  /// "I've come a long way to see the flying boat."
+  ACTOR_VISITOR_FROM_AFAR = ACTOR_FIRST_PLACED,
+  /// "The wings are almost done."
+  ACTOR_WOMAN_ON_THE_WINGS,
+  /// The four workers building the wings: "Which part goes where? Does this
+  /// metal feather..."
+  ACTOR_FIRST_WING_WORKER,
+  /// The four scholars in long robes studying the geoglyph.
+  ACTOR_FIRST_SCHOLAR = ACTOR_FIRST_WING_WORKER + 4,
+  /// The sign with a translation of the geoglyph's characters.
+  ACTOR_SIGN = ACTOR_FIRST_SCHOLAR + 4,
+  /// The wings' parts lying about: three frames, five metal feathers and
+  /// seven loose pieces.
+  ACTOR_FIRST_WING_FRAME,
+  ACTOR_FIRST_METAL_FEATHER = ACTOR_FIRST_WING_FRAME + 3,
+  ACTOR_FIRST_LOOSE_PART = ACTOR_FIRST_METAL_FEATHER + 5
+};
 #include "field/event_inline.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
-struct ContigoObject;
+struct Actor;
 
 void Actor_MoveToObject(s32 actor, s32 target);
 void FieldCamera_WaitForArrival(void);
 void Party_AddIsaacsParty(void);
 void Contigo_SendToLuckyWheels(s32 mode);
 void Contigo_OpenGameDoor(s32 a, s32 b, s32 c, s32 d);
-void TileCopies_CopyTouchedCells(s32 srcX, s32 srcY, s32 width, s32 height,
-                                 s32 destX, s32 destY, s32 mode);
 
-static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
-                                 s32 destX, s32 destY, s32 mode) {
-  TileCopies_CopyTouchedCells(srcX, srcY, width, height, destX, destY, mode);
-}
 #include "system/task.h"
 #include "field/actor.h"
 #include "field/scene_tables.h"
 #include "scene/scene.h"
+#include "scene/event_layer.h"
 #include "flags.h"
 #include "djinn_ids.h"
 #include "shared/tables.h"
@@ -66,15 +150,15 @@ static inline void Contigo_Tiles(s32 srcX, s32 srcY, s32 width, s32 height,
 #include "system/vector3.h"
 
 extern s32 gFieldEffect_DurationScripts[];
-extern struct ActorPlacement gContigo_Room1Placements[];
-extern struct ActorPlacement gContigo_Room4Placements[];
-extern struct ActorPlacement gContigo_Room2PlacementsBeforeReunion[];
-extern s16 gContigo_Room2PlacementsReunion[];
-extern struct ActorPlacement gContigo_Room2Placements[];
-extern struct ActorPlacement gContigo_Room3Placements[];
-extern struct Trigger gContigo_Room1Triggers[];
-extern struct Trigger gContigo_Room2Triggers[];
-extern struct Trigger gContigo_Room2ReunionTriggers[];
+extern struct ActorPlacement gContigo_VillagePlacements[];
+extern struct ActorPlacement gContigo_GeoglyphPlacements[];
+extern struct ActorPlacement gContigo_ShopsPlacementsBeforeReunion[];
+extern s16 gContigo_ShopsPlacementsReunion[];
+extern struct ActorPlacement gContigo_ShopsPlacements[];
+extern struct ActorPlacement gContigo_LuckyDicePlacements[];
+extern struct Trigger gContigo_VillageTriggers[];
+extern struct Trigger gContigo_ShopsTriggers[];
+extern struct Trigger gContigo_ShopsReunionTriggers[];
 
 void Contigo_StartSlowPaletteCycle(void);
 
@@ -83,15 +167,15 @@ void Contigo_StopPaletteCycle(void);
 extern u32 gContigo_Topics[];
 extern s32 gContigo_EnterGameDoorScript[];
 extern u32 gContigo_HostScript[];
-void Contigo_InitializeRoom1(void);
-void Contigo_InitializeRoom4(void);
-void Contigo_InitializeRoom2(void);
-void Contigo_InitializeRoom3(void);
+void Contigo_InitializeVillage(void);
+void Contigo_InitializeGeoglyph(void);
+void Contigo_InitializeShops(void);
+void Contigo_InitializeLuckyDice(void);
 extern s16 gContigo_PaletteSlots[];
 extern s16 gContigo_PaletteColors[];
 extern s16 gContigo_DimColors[];
 extern u16 gContigo_CycleSlots[];
-extern s32 gContigo_Room2WatcherScript[];
+extern s32 gContigo_ShopsWatcherScript[];
 extern s32 gContigo_SparkleTiles[];
 void Contigo_FreedDjinniJoinsParty(void);
 void Contigo_ExamineWall(void);
@@ -266,16 +350,6 @@ void Contigo_TeleportIn(void) {
 
 #include "../field/field_effect_move.c"
 
-/* VIEW(contigo): tag struct TalkActor as this part has it; the joined file has
- * another; tried with the definition the rest of the object has, it does not
- * compile in tla-ja: games/tla/src/scene/contigo.c:839: redefinition of `struct
- * TalkActor'. */
-#define TalkActor TalkActor__contigo
-/* VIEW(contigo): tag struct ContigoEventWork as this part has it; the joined
- * file has another; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/scene/contigo.c:2108: redefinition
- * of `struct ContigoEventWork'. */
-#define ContigoEventWork ContigoEventWork__contigo
 #include "text/msg_ids.h"
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
@@ -334,8 +408,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (target - effect->scaleX) / frames;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (target - 0x10000) / frames;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+      effect->scaleRateX = (target - Q16_ONE) / frames;
+      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -351,12 +425,12 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 }
 
 void Contigo_SaltJoinsParty(void) {
-  Djinn_JoinParty(16, DJINNI_SALT / DJINN_PER_ELEMENT,
+  Djinn_JoinParty(ACTOR_SALT, DJINNI_SALT / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_SALT));
 }
 
 void Contigo_FreedDjinniJoinsParty(void) {
-  Djinn_JoinParty(17, DJINNI_SHINE / DJINN_PER_ELEMENT,
+  Djinn_JoinParty(ACTOR_SHINE, DJINNI_SHINE / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_SHINE));
   GameFlag_Set(2534);
 }
@@ -394,8 +468,6 @@ s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
   return result;
 }
 
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 value);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 
@@ -416,15 +488,15 @@ s32 Contigo_FaceTalker(struct Actor *self) {
     if (effect[0x713] != 0)
       goto near;
   }
-  if (BYTE_AT(self, 99) == 1)
+  if (self->blockMarked == 1)
     goto near;
   other = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (Lemuria_Distance(&self->x.fixed, &other->x.fixed) <= 11)
     goto far;
-  if (BYTE_AT(self, 98) == 1)
-    other = Actor_GetById(15);
+  if (self->riseCounter == 1)
+    other = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
   else
-    other = Actor_GetById(14);
+    other = Actor_GetById(ACTOR_WANDERER);
   if (Actor_IsFacingNear(self, other, 18) != 0)
     goto near;
   if (Actor_IsFacingNear(self, Actor_GetById(gMainRoutineWork.leaderActorId),
@@ -441,7 +513,8 @@ near:
 }
 
 s32 Contigo_ShowSurprise(void) {
-  FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  FieldActor_ShowEmote(ACTOR_WOMAN_ON_THE_ANEMOS,
+                       EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   return 0;
 }
 
@@ -457,42 +530,42 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_CONTIGO)
-    return gContigo_Room1Placements;
+    return gContigo_VillagePlacements;
   if (scene == SCENE_CONTIGO_GEOGLYPH)
-    return gContigo_Room4Placements;
+    return gContigo_GeoglyphPlacements;
   if (scene == SCENE_CONTIGO_SHOPS) {
     if (gMainRoutineWork.entrance == 4) {
-      if (GameFlag_Get(0x9b2) != 0)
-        return gContigo_Room2Placements;
+      if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
+        return gContigo_ShopsPlacements;
       if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
           GameFlag_Get(FLAG_REUNITED_AT_CONTIGO) == 0)
-        return gContigo_Room2PlacementsReunion;
+        return gContigo_ShopsPlacementsReunion;
     }
-    return gContigo_Room2PlacementsBeforeReunion;
+    return gContigo_ShopsPlacementsBeforeReunion;
   }
   if (scene == SCENE_CONTIGO_LUCKY_DICE)
-    return gContigo_Room3Placements;
+    return gContigo_LuckyDicePlacements;
   return gContigo_Placements;
 }
 
 extern struct Trigger gContigo_Triggers[];
-extern struct Trigger gContigo_Room4Triggers[];
-extern struct Trigger gContigo_Room3Triggers[];
+extern struct Trigger gContigo_GeoglyphTriggers[];
+extern struct Trigger gContigo_LuckyDiceTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_CONTIGO)
-    return gContigo_Room1Triggers;
+    return gContigo_VillageTriggers;
   if (scene == SCENE_CONTIGO_GEOGLYPH)
-    return gContigo_Room4Triggers;
+    return gContigo_GeoglyphTriggers;
   if (scene == SCENE_CONTIGO_SHOPS) {
     if (gMainRoutineWork.entrance == 4)
-      return gContigo_Room2ReunionTriggers;
-    return gContigo_Room2Triggers;
+      return gContigo_ShopsReunionTriggers;
+    return gContigo_ShopsTriggers;
   }
   if (scene == SCENE_CONTIGO_LUCKY_DICE)
-    return gContigo_Room3Triggers;
+    return gContigo_LuckyDiceTriggers;
   return gContigo_Triggers;
 }
 
@@ -500,7 +573,7 @@ void Contigo_ExamineWall(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   // "Felix examined the wall. There are characters carved into it...."
-  FieldMessage_Show((s32)MsgContigo110, 1);
+  FieldMessage_Show((s32)MsgContigoFelixExaminedTheWallThere, 1);
   Event_End();
 }
 
@@ -508,7 +581,7 @@ void Contigo_ReadSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   // "Felix examined the sign. The characters from the wall are translated..."
-  FieldMessage_Show((s32)MsgContigo111, 1);
+  FieldMessage_Show((s32)MsgContigoFelixExaminedTheSignThe, 1);
   Event_End();
 }
 
@@ -516,7 +589,7 @@ void Contigo_ReadLuckyWheelsSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   // "Turn the slot and get a prize! The lottery slots are over here."
-  FieldMessage_Show((s32)MsgContigo112, 1);
+  FieldMessage_Show((s32)MsgContigoTurnTheSlotAndGet, 1);
   Event_End();
 }
 
@@ -524,7 +597,7 @@ void Contigo_ReadLuckyDiceSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   // "Drop some cash and double up! The hi-lo dice are over here!"
-  FieldMessage_Show((s32)MsgContigo113, 1);
+  FieldMessage_Show((s32)MsgContigoDropSomeCashAndDouble, 1);
   Event_End();
 }
 
@@ -532,7 +605,7 @@ void Contigo_ReadSuperDiceSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   // "You never know what the dice will do next! Come and give our dice a..."
-  FieldMessage_Show((s32)MsgContigo114, 1);
+  FieldMessage_Show((s32)MsgContigoYouNeverKnowWhatThe, 1);
   Event_End();
 }
 
@@ -541,7 +614,7 @@ void Contigo_ReadSuperDiceSign(void) {
 void Contigo_AskAboutWindLegend(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgContigo35);
+  Event_SetMessageId((s32)MsgContigoDoYouKnowAnythingAbout);
   // "Do you know anything about a legend about these people who could..."
   Event_AskYesNoAndShowResponse(8, 0);
   Event_End();
@@ -566,7 +639,7 @@ void Contigo_CircleGlow(struct OrbitEffect *effect) {
   s32 dx;
   s32 dz;
 
-  radius = Random16() + 0x20000;
+  radius = Random16() + px(2);
   angle = effect->angle;
   dx = Iwram_MulQ16(radius, Trig_Cos(angle));
   dz = Iwram_MulQ16(radius, Trig_Sin(angle));
@@ -585,7 +658,7 @@ void Contigo_CircleGlow(struct OrbitEffect *effect) {
 
 void Contigo_RaiseMotes(void) {
   if ((gFrameCount & 7) == 0) {
-    struct Actor *object = Actor_Spawn(308, 0x02c20000, 52428, 0x740000);
+    struct Actor *object = Actor_Spawn(308, px(706), 52428, px(116));
 
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
@@ -593,7 +666,7 @@ void Contigo_RaiseMotes(void) {
       object->motionFlags = 0;
       object->timer = -(s32)((u32)(Random16() * 16) >> 16) * 2 + 20;
       object->userValue = 0;
-      object->gravity = 0x1999;
+      object->gravity = px(1) / 10;
       object->velocityY = px(3);
       object->facing = Random16();
     }
@@ -620,30 +693,30 @@ void Contigo_BabyThinks(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (GameFlag_Get(0x9b2))
+  if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
     // "The baby's forehead is furrowed, like it's thinking."
-    FieldMessage_Show((s32)MsgContigo163, 1);
+    FieldMessage_Show((s32)MsgContigoTheBabysForeheadIsFurrowedLike, 1);
   else
     // "The baby's forehead is furrowed, like it's thinking."
-    FieldMessage_Show((s32)MsgContigo64, 1);
-  Actor_SetAnimationById(17, 3);
+    FieldMessage_Show((s32)MsgContigoTheBabysForeheadIsFurrowed, 1);
+  Actor_SetAnimationById(ACTOR_BABY, 3);
   PaletteFade_SetSource(0x10000, 0);
   PaletteFade_SetTarget(0x204084, 1);
   PaletteFade_StartInterpolation(16);
   BattleEffect_StartArcEffect();
-  BattleEffect_SetObjectUpdateMode(((struct ContigoObject *)Actor_GetById(17)),
+  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(ACTOR_BABY)),
                                    2);
   effect = ((struct ContigoGlow *)Import_ActorCreate(280, x, 0, z));
   if (effect != 0) {
     Actor_SetSpriteFlags(effect, 0);
     Actor_SelectAnimation(effect, 2);
     effect->motionFlags = 0;
-    effect->scaleX = 0x1999;
-    effect->scaleY = 0x1999;
+    effect->scaleX = Q16_ONE / 10;
+    effect->scaleY = Q16_ONE / 10;
     i = 0;
   grow:
-    effect->scaleX += 0x666;
-    effect->scaleY += 0x666;
+    effect->scaleX += Q16_ONE / 40;
+    effect->scaleY += Q16_ONE / 40;
     wait(1);
     i++;
     if (i < 28)
@@ -664,31 +737,35 @@ void Contigo_BabyThinks(void) {
       goto shrink;
     Actor_Release(effect);
   }
-  BattleEffect_SetObjectUpdateMode(((struct ContigoObject *)Actor_GetById(17)),
+  BattleEffect_SetObjectUpdateMode(((struct Actor *)Actor_GetById(ACTOR_BABY)),
                                    0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
   PaletteFade_SetTarget(0x10000, 1);
   PaletteFade_StartInterpolation(16);
-  if (GameFlag_Get(0x9b2))
-    Event_SetMessageId((s32)MsgContigo164);
+  if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
+    Event_SetMessageId((s32)MsgContigoGooGooGaaGaaWaaa);
   else
-    Event_SetMessageId((s32)MsgContigo65);
-  Actor_RunRepeatedMotion(17, 2);
+    Event_SetMessageId((s32)MsgContigoBabuBawabaBibaw);
+  Actor_RunRepeatedMotion(ACTOR_BABY, 2);
   // "Babu bawaba bibaw."
-  Event_ShowMessageAndWait(17, 0);
-  Actor_SetAnimationById(17, 1);
-  FieldActor_ShowEmote(14, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Actor_FaceDirection(14, FACING_WEST, 20);
+  Event_ShowMessageAndWait(ACTOR_BABY, 0);
+  Actor_SetAnimationById(ACTOR_BABY, 1);
+  FieldActor_ShowEmote(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS,
+                       EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Actor_FaceDirection(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, FACING_WEST, 20);
   // "It sure is drafty in this shabby old house."
-  Event_ShowMessageAndWait(14, 0);
-  Actor_FaceDirectionAndRefreshById(15, FACING_EAST);
+  Event_ShowMessageAndWait(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, 0);
+  Actor_FaceDirectionAndRefreshById(ACTOR_WOMAN_ON_THE_ANEMOS_POWER,
+                                    FACING_EAST);
   // "When the Wings of Anemos are complete, let's fix the house!"
-  Event_ShowMessageAndWait(15, 0);
-  Actor_SetAnimationById(14, 3);
-  Actor_SetAnimationAndWait(15, 3);
-  Actor_FaceDirection(15, FACING_NORTH_NORTHEAST, 0);
-  Actor_FaceDirectionAndWait(14, FACING_SOUTH_SOUTHEAST);
+  Event_ShowMessageAndWait(ACTOR_WOMAN_ON_THE_ANEMOS_POWER, 0);
+  Actor_SetAnimationById(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS, 3);
+  Actor_SetAnimationAndWait(ACTOR_WOMAN_ON_THE_ANEMOS_POWER, 3);
+  Actor_FaceDirection(ACTOR_WOMAN_ON_THE_ANEMOS_POWER, FACING_NORTH_NORTHEAST,
+                      0);
+  Actor_FaceDirectionAndWait(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS,
+                             FACING_SOUTH_SOUTHEAST);
   Event_End();
 }
 
@@ -714,12 +791,12 @@ void Contigo_TalkToItemMerchant(void) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (GameFlag_Get(0x9b2))
-      Event_SetMessageId((s32)MsgContigo176);
+    if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
+      Event_SetMessageId((s32)MsgContigoItsAlwaysSuchALetdown);
     else
-      Event_SetMessageId((s32)MsgContigo74);
+      Event_SetMessageId((s32)MsgContigoTheVillagersAreWorkingTheir);
     // "The villagers are working their hardest to complete the wings and..."
-    Event_ShowMessageAndWait(13, 0);
+    Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
     Event_End();
   }
 }
@@ -730,12 +807,12 @@ void Contigo_TalkToWeaponMerchant(void) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (GameFlag_Get(0x9b2))
-      Event_SetMessageId((s32)MsgContigo172);
+    if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
+      Event_SetMessageId((s32)MsgContigoACannonYeahIThink);
     else
-      Event_SetMessageId((s32)MsgContigo70);
+      Event_SetMessageId((s32)MsgContigoItWasALongstandingTradition);
     // "It was a longstanding tradition that people in Atteka would take a..."
-    Event_ShowMessageAndWait(18, 0);
+    Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
     Event_End();
   }
 }
@@ -746,12 +823,12 @@ void Contigo_TalkToArmorMerchant(void) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (GameFlag_Get(0x9b2))
-      Event_SetMessageId((s32)MsgContigo174);
+    if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
+      Event_SetMessageId((s32)MsgContigoNowThatTheWingsAre);
     else
-      Event_SetMessageId((s32)MsgContigo72);
+      Event_SetMessageId((s32)MsgContigoMiningMaterialsInTheRuins);
     // "Mining materials in the ruins is dangerous work, so my armor is..."
-    Event_ShowMessageAndWait(19, 0);
+    Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
     Event_End();
   }
 }
@@ -762,14 +839,14 @@ void Contigo_TalkToInnkeeper(void) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (GameFlag_Get(0x9b2))
-      Event_SetMessageId((s32)MsgContigo178);
+    if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
+      Event_SetMessageId((s32)MsgContigoAllOfOurWorkAnd);
     else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT))
-      Event_SetMessageId((s32)MsgContigo128);
+      Event_SetMessageId((s32)MsgContigoYouHaveToHurryI);
     else
-      Event_SetMessageId((s32)MsgContigo76);
+      Event_SetMessageId((s32)MsgContigoWeveHadSoManyPeople);
     // "We've had so many people coming to Contigo lately that we're full..."
-    Event_ShowMessageAndWait(20, 0);
+    Event_ShowMessageAndWait(ACTOR_INNKEEPER, 0);
     Event_End();
   }
 }
@@ -780,14 +857,14 @@ void Contigo_TalkToHealer(void) {
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
-    if (GameFlag_Get(0x9b2))
-      Event_SetMessageId((s32)MsgContigo186);
+    if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
+      Event_SetMessageId((s32)MsgContigoItWasAMiracleThat);
     else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT))
-      Event_SetMessageId((s32)MsgContigo136);
+      Event_SetMessageId((s32)MsgContigoAFlyingShipSurelyIt);
     else
-      Event_SetMessageId((s32)MsgContigo88);
+      Event_SetMessageId((s32)MsgContigoTheRealMiracleWillBe);
     // "The real miracle will be if these wings actually make a boat fly...."
-    Event_ShowMessageAndWait(28, 0);
+    Event_ShowMessageAndWait(ACTOR_HEALER, 0);
     Event_End();
   }
 }
@@ -795,7 +872,7 @@ void Contigo_TalkToHealer(void) {
 void Contigo_AskAboutSuperDice(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgContigo26);
+  Event_SetMessageId((s32)MsgContigoSoTellMePalHave);
   // "So, tell me, pal... Have you ever played Superdice before?"
   Event_AskYesNoAndShowResponse(10, 0);
   Event_End();
@@ -806,7 +883,7 @@ void Contigo_ExplainSuperDice(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  msg = (s32)MsgContigo25;
+  msg = (s32)MsgContigoSuperLuckyDiceTheRules;
   FieldMessage_Show(msg, 1);
   FieldMessage_Show(msg + 1, 1);
   FieldMessage_Show(msg + 2, 1);
@@ -824,7 +901,7 @@ void Contigo_ExplainLuckyDice(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  msg = (s32)MsgContigo06;
+  msg = (s32)MsgContigoLuckyDice;
   FieldMessage_Show(msg, 1);
   FieldMessage_Show(msg + 1, 1);
   FieldMessage_Show(msg + 2, 1);
@@ -837,7 +914,7 @@ void Contigo_ExplainLuckyDiceAgain(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  msg = (s32)MsgContigo07;
+  msg = (s32)MsgContigoLuckyDiceB;
   FieldMessage_Show(msg, 1);
   FieldMessage_Show(msg + 1, 1);
   FieldMessage_Show(msg + 2, 1);
@@ -859,7 +936,7 @@ void Contigo_ExplainLuckyWheels(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  msg = (s32)MsgContigo20;
+  msg = (s32)MsgContigoLuckyWheelsRules;
   FieldMessage_Show(msg, 1);
   FieldMessage_Show(msg + 1, 1);
   FieldMessage_Show(msg + 2, 1);
@@ -874,7 +951,7 @@ void Contigo_ListLuckyWheelsPrizes(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  msg = (s32)MsgContigo21;
+  msg = (s32)MsgContigoLuckyWheelsPrizes;
   FieldMessage_Show(msg, 1);
   FieldMessage_Show(msg + 1, 1);
   FieldMessage_Show(msg + 2, 1);
@@ -890,83 +967,69 @@ void Contigo_ListLuckyWheelsPrizes(void) {
 void Contigo_AskAboutGeoglyph(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgContigo102);
+  Event_SetMessageId((s32)MsgContigoHaveYouTakenAGood);
   // "Have you taken a good look at the Anemos geoglyph?"
   Event_AskYesNoAndShowResponse(14, 0);
   Event_End();
 }
 
-/// The bytes of an actor this handler uses. unk63 is the last of the four
-/// scene-owned bytes the Broken Seal's actors keep at this place.
-struct TalkActor {
-  u8 unk00[6];
-  u16 angle; ///< 1/65536 turns
-  u8 unk08[0x5b];
-  u8 unk63; ///< Contigo_FaceTalker reads it
-};
-
 void Contigo_TalkToWanderer(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct TalkActor *object = ((struct TalkActor *)Actor_GetById(14));
-  s16 angle = object->angle;
+  struct Actor *object = ((struct Actor *)Actor_GetById(ACTOR_WANDERER));
+  s16 angle = object->facing;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  object->unk63 = 1;
+  object->blockMarked = 1;
   if (work->psynergy == 0) {
-    Actor_FaceActorById(14, gMainRoutineWork.leaderActorId, 0);
-    if (GameFlag_Get(0x9b2) != 0)
-      Event_SetMessageId((s32)MsgContigo203);
+    Actor_FaceActorById(ACTOR_WANDERER, gMainRoutineWork.leaderActorId, 0);
+    if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
+      Event_SetMessageId((s32)MsgContigoIveSeenALotOf);
     else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0)
-      Event_SetMessageId((s32)MsgContigo199);
+      Event_SetMessageId((s32)MsgContigoThatCraterBehindTheVillage);
     else
-      Event_SetMessageId((s32)MsgContigo41);
+      Event_SetMessageId((s32)MsgContigoIfYouWantToGet);
   } else {
-    if (GameFlag_Get(0x9b2) != 0)
-      Event_SetMessageId((s32)MsgContigo205);
+    if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
+      Event_SetMessageId((s32)MsgContigoWaitTheCityOfAnemos);
     else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0)
-      Event_SetMessageId((s32)MsgContigo201);
+      Event_SetMessageId((s32)MsgContigoCitiesFlyingUpIntoThe);
     else
-      Event_SetMessageId((s32)MsgContigo49);
+      Event_SetMessageId((s32)MsgContigoTheAnemosGeoglyphsAreThe);
   }
-  Event_ShowMessageAndWait(14, 0);
+  Event_ShowMessageAndWait(ACTOR_WANDERER, 0);
   if (work->psynergy == 0)
-    object->angle = angle;
-  object->unk63 = 0;
+    object->facing = angle;
+  object->blockMarked = 0;
   Event_End();
 }
 
-struct ContigoObject {
-  u8 unk00[6];
-  u16 angle;
-  u8 unk08[0x5b];
-  u8 unk63;
-};
-
 void Contigo_TalkAboutTheShip(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct ContigoObject *object = ((struct ContigoObject *)Actor_GetById(15));
-  s16 angle = object->angle;
+  struct Actor *object =
+      ((struct Actor *)Actor_GetById(ACTOR_GIRL_ON_THE_SHIP));
+  s16 angle = object->facing;
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  object->unk63 = 1;
+  object->blockMarked = 1;
   if (event->psynergy == 0) {
-    Actor_FaceActorById(15, gMainRoutineWork.leaderActorId, 0);
-    if (GameFlag_Get(0x9b2) != 0)
-      Event_SetMessageId((s32)MsgContigo143);
+    Actor_FaceActorById(ACTOR_GIRL_ON_THE_SHIP, gMainRoutineWork.leaderActorId,
+                        0);
+    if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
+      Event_SetMessageId((s32)MsgContigoItWasntWhatIExpected);
     else
-      Event_SetMessageId((s32)MsgContigo42);
+      Event_SetMessageId((s32)MsgContigoOurPeopleHaveLaboredFor);
   } else {
-    if (GameFlag_Get(0x9b2) != 0)
-      Event_SetMessageId((s32)MsgContigo149);
+    if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
+      Event_SetMessageId((s32)MsgContigoAllOfThoseLegendsDid);
     else
-      Event_SetMessageId((s32)MsgContigo50);
+      Event_SetMessageId((s32)MsgContigoWeBuiltTheWingsOf);
   }
-  Event_ShowMessageAndWait(15, 0);
+  Event_ShowMessageAndWait(ACTOR_GIRL_ON_THE_SHIP, 0);
   if (event->psynergy == 0)
-    object->angle = angle;
-  object->unk63 = 0;
+    object->facing = angle;
+  object->blockMarked = 0;
   Event_End();
 }
 
@@ -982,9 +1045,13 @@ void Contigo_TeleportOut(void) {
   Contigo_StopPaletteCycle();
 }
 
-void Contigo_ClearFirstBushes(void) { Contigo_Tiles(3, 50, 1, 1, 8, 54, 0); }
+void Contigo_ClearFirstBushes(void) {
+  FieldTileCopies_CopyTouchedCells(3, 50, 1, 1, 8, 54, 0);
+}
 
-void Contigo_ClearSecondBushes(void) { Contigo_Tiles(4, 43, 2, 1, 2, 43, 0); }
+void Contigo_ClearSecondBushes(void) {
+  FieldTileCopies_CopyTouchedCells(4, 43, 2, 1, 2, 43, 0);
+}
 
 static __inline__ void Contigo_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d,
                                                 s32 e, s32 f, s32 g) {
@@ -997,7 +1064,8 @@ void Contigo_ClearBushesBySalt(void) {
   Contigo_CopyTouchedCells(16, 37, 1, 1, 17, 37, 0);
   if (GameFlag_Get(0xfc7) == 0) {
     Actor_SetPosition(66, 280, 664);
-    if (leader->x.fixed >> 20 == 17 && leader->z.fixed >> 20 == 41) {
+    if (FIELD_CELL(leader->x.fixed) == 17 &&
+        FIELD_CELL(leader->z.fixed) == 41) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -1010,34 +1078,44 @@ void Contigo_ClearBushesBySalt(void) {
   }
 }
 
-void Contigo_ClearFourthBushes(void) { Contigo_Tiles(29, 35, 1, 2, 23, 47, 0); }
+void Contigo_ClearFourthBushes(void) {
+  FieldTileCopies_CopyTouchedCells(29, 35, 1, 2, 23, 47, 0);
+}
 
-void Contigo_ClearFifthBushes(void) { Contigo_Tiles(32, 55, 2, 3, 29, 58, 0); }
+void Contigo_ClearFifthBushes(void) {
+  FieldTileCopies_CopyTouchedCells(32, 55, 2, 3, 29, 58, 0);
+}
 
-void Contigo_ClearSixthBushes(void) { Contigo_Tiles(3, 60, 1, 1, 3, 56, 0); }
+void Contigo_ClearSixthBushes(void) {
+  FieldTileCopies_CopyTouchedCells(3, 60, 1, 1, 3, 56, 0);
+}
 
-void Contigo_ClearSeventhBushes(void) { Contigo_Tiles(7, 62, 2, 1, 7, 58, 0); }
+void Contigo_ClearSeventhBushes(void) {
+  FieldTileCopies_CopyTouchedCells(7, 62, 2, 1, 7, 58, 0);
+}
 
-void Contigo_ClearEighthBushes(void) { Contigo_Tiles(10, 63, 2, 1, 10, 59, 0); }
+void Contigo_ClearEighthBushes(void) {
+  FieldTileCopies_CopyTouchedCells(10, 63, 2, 1, 10, 59, 0);
+}
 
 void Contigo_ClearFirstHedgeRow(void) {
-  Contigo_Tiles(32, 55, 3, 1, 40, 57, 0);
+  FieldTileCopies_CopyTouchedCells(32, 55, 3, 1, 40, 57, 0);
 }
 
 void Contigo_ClearSecondHedgeRow(void) {
-  Contigo_Tiles(32, 55, 5, 1, 39, 58, 0);
+  FieldTileCopies_CopyTouchedCells(32, 55, 5, 1, 39, 58, 0);
 }
 
 void Contigo_ClearThirdHedgeRow(void) {
-  Contigo_Tiles(32, 55, 5, 1, 39, 59, 0);
+  FieldTileCopies_CopyTouchedCells(32, 55, 5, 1, 39, 59, 0);
 }
 
 void Contigo_ClearFourthHedgeRow(void) {
-  Contigo_Tiles(32, 55, 5, 1, 39, 60, 0);
+  FieldTileCopies_CopyTouchedCells(32, 55, 5, 1, 39, 60, 0);
 }
 
 void Contigo_ClearFifthHedgeRow(void) {
-  Contigo_Tiles(32, 55, 3, 1, 40, 61, 0);
+  FieldTileCopies_CopyTouchedCells(32, 55, 3, 1, 40, 61, 0);
 }
 
 void Contigo_WidenCameraBounds(void) {
@@ -1056,9 +1134,9 @@ void Contigo_ScoopForSalt(void) {
 
     Event_Start();
     Event_ResolvePendingActions(1);
-    Actor_SetPosition(16, 664, 952);
+    Actor_SetPosition(ACTOR_SALT, 664, 952);
     wait(1);
-    Actor_FaceActorById(16, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActorById(ACTOR_SALT, gMainRoutineWork.leaderActorId, 0);
     work->raisedTrigger = 200;
     Event_End();
   }
@@ -1077,7 +1155,7 @@ void Contigo_HideSteps(void) {
 }
 
 void Contigo_ForceFreesDjinni(void) {
-  struct Actor *object = Actor_GetById(17);
+  struct Actor *object = Actor_GetById(ACTOR_SHINE);
   struct Actor *leader;
   struct EffectOptions options;
   s32 velocity[3];
@@ -1086,7 +1164,7 @@ void Contigo_ForceFreesDjinni(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetPosition(17, 56, 698);
+  Actor_SetPosition(ACTOR_SHINE, 56, 698);
   wait(1);
   options.priority = 2;
   Sound_Play(SE_THUMP);
@@ -1098,24 +1176,24 @@ void Contigo_ForceFreesDjinni(void) {
     velocity[2] = Trig_Sin(angle);
     velocity[0] += velocity[0] / 3;
     FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed,
-                      velocity[0], velocity[1] + 0x1999, velocity[2], 0x20000,
-                      &options);
+                      velocity[0], velocity[1] + (px(1) / 10), velocity[2],
+                      px(2), &options);
   }
-  Actor_SetSpriteColor(Actor_GetById(17), 0);
-  Actor_SetSpriteFlags(Actor_GetById(17), 1);
-  Actor_SetSpeed(17, 3);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_SHINE), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_SHINE), 1);
+  Actor_SetSpeed(ACTOR_SHINE, 3);
   object->velocityY = px(12);
-  Actor_MoveToAndWait(17, 40, 680);
+  Actor_MoveToAndWait(ACTOR_SHINE, 40, 680);
   Event_Wait(10);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object->x.fixed >> 20 == leader->x.fixed >> 20 &&
-      object->z.fixed >> 20 == leader->z.fixed >> 20) {
+  if (FIELD_CELL(object->x.fixed) == FIELD_CELL(leader->x.fixed) &&
+      FIELD_CELL(object->z.fixed) == FIELD_CELL(leader->z.fixed)) {
     Actor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 2);
     Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 68, 680);
   }
   MapGrid_SetShake(0, 0, 0);
-  Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, 17, 0);
+  Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, ACTOR_SHINE, 0);
   Event_Wait(10);
   GameFlag_Set(2535);
   Event_End();
@@ -1132,7 +1210,8 @@ void Contigo_OpenGamesRooms(void) {
   Map_CopyCellAttributeRect(0, 32, 1, 1, 16, 57);
 }
 
-void Contigo_PlaceStatue(s32 id) {
+/// Lays a frame or feather of the wings flat on the ground, drawn behind.
+void Contigo_PlaceWingPart(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   Actor_SetSpritePriority(id, 3);
@@ -1142,42 +1221,42 @@ void Contigo_PlaceStatue(s32 id) {
   object->y.fixed = px(64);
 }
 
-/// Sets up actors 19 to 33: their modes, Contigo_PlaceStatue for 19 to 26, and
-/// child and collision flags for 27 to 33.
-void Contigo_SetUpStatues(void) {
-  Actor_SetAnimationById(19, 0);
-  Actor_SetAnimationById(20, 1);
-  Actor_SetAnimationById(21, 2);
-  Actor_SetAnimationById(22, 0);
-  Actor_SetAnimationById(23, 1);
-  Actor_SetAnimationById(24, 2);
-  Actor_SetAnimationById(25, 3);
-  Actor_SetAnimationById(26, 4);
-  Contigo_PlaceStatue(19);
-  Contigo_PlaceStatue(20);
-  Contigo_PlaceStatue(21);
-  Contigo_PlaceStatue(22);
-  Contigo_PlaceStatue(23);
-  Contigo_PlaceStatue(24);
-  Contigo_PlaceStatue(25);
-  Contigo_PlaceStatue(26);
-  Actor_SetSpriteFlags(Actor_GetById(27), 0);
-  Actor_SetSpriteFlags(Actor_GetById(28), 0);
-  Actor_SetSpriteFlags(Actor_GetById(29), 0);
-  Actor_SetSpriteFlags(Actor_GetById(30), 0);
-  Actor_SetSpriteFlags(Actor_GetById(31), 0);
-  Actor_SetSpriteFlags(Actor_GetById(32), 0);
-  Actor_SetSpriteFlags(Actor_GetById(33), 0);
-  Actor_GetById(27)->collisionFlags |= 8;
-  Actor_GetById(28)->collisionFlags |= 8;
-  Actor_GetById(29)->collisionFlags |= 8;
-  Actor_GetById(30)->collisionFlags |= 8;
-  Actor_GetById(31)->collisionFlags |= 8;
-  Actor_GetById(32)->collisionFlags |= 8;
-  Actor_GetById(33)->collisionFlags |= 8;
-  Actor_SetAnimationById(27, 0);
-  Actor_SetAnimationById(32, 0);
-  Actor_SetAnimationById(33, 0);
+/// Lays out the wings' parts by the geoglyph: each frame and feather shows
+/// its own piece and lies flat, and the loose parts block the way.
+void Contigo_SetUpWingParts(void) {
+  Actor_SetAnimationById(ACTOR_FIRST_WING_FRAME, 0);
+  Actor_SetAnimationById(ACTOR_FIRST_WING_FRAME + 1, 1);
+  Actor_SetAnimationById(ACTOR_FIRST_WING_FRAME + 2, 2);
+  Actor_SetAnimationById(ACTOR_FIRST_METAL_FEATHER, 0);
+  Actor_SetAnimationById(ACTOR_FIRST_METAL_FEATHER + 1, 1);
+  Actor_SetAnimationById(ACTOR_FIRST_METAL_FEATHER + 2, 2);
+  Actor_SetAnimationById(ACTOR_FIRST_METAL_FEATHER + 3, 3);
+  Actor_SetAnimationById(ACTOR_FIRST_METAL_FEATHER + 4, 4);
+  Contigo_PlaceWingPart(ACTOR_FIRST_WING_FRAME);
+  Contigo_PlaceWingPart(ACTOR_FIRST_WING_FRAME + 1);
+  Contigo_PlaceWingPart(ACTOR_FIRST_WING_FRAME + 2);
+  Contigo_PlaceWingPart(ACTOR_FIRST_METAL_FEATHER);
+  Contigo_PlaceWingPart(ACTOR_FIRST_METAL_FEATHER + 1);
+  Contigo_PlaceWingPart(ACTOR_FIRST_METAL_FEATHER + 2);
+  Contigo_PlaceWingPart(ACTOR_FIRST_METAL_FEATHER + 3);
+  Contigo_PlaceWingPart(ACTOR_FIRST_METAL_FEATHER + 4);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_LOOSE_PART), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_LOOSE_PART + 1), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_LOOSE_PART + 2), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_LOOSE_PART + 3), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_LOOSE_PART + 4), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_LOOSE_PART + 5), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_LOOSE_PART + 6), 0);
+  Actor_GetById(ACTOR_FIRST_LOOSE_PART)->collisionFlags |= 8;
+  Actor_GetById(ACTOR_FIRST_LOOSE_PART + 1)->collisionFlags |= 8;
+  Actor_GetById(ACTOR_FIRST_LOOSE_PART + 2)->collisionFlags |= 8;
+  Actor_GetById(ACTOR_FIRST_LOOSE_PART + 3)->collisionFlags |= 8;
+  Actor_GetById(ACTOR_FIRST_LOOSE_PART + 4)->collisionFlags |= 8;
+  Actor_GetById(ACTOR_FIRST_LOOSE_PART + 5)->collisionFlags |= 8;
+  Actor_GetById(ACTOR_FIRST_LOOSE_PART + 6)->collisionFlags |= 8;
+  Actor_SetAnimationById(ACTOR_FIRST_LOOSE_PART, 0);
+  Actor_SetAnimationById(ACTOR_FIRST_LOOSE_PART + 5, 0);
+  Actor_SetAnimationById(ACTOR_FIRST_LOOSE_PART + 6, 0);
 }
 
 extern void MessageArgument_Push(s32 value, s32 digits);
@@ -1191,57 +1270,57 @@ void Contigo_SendToLuckyWheels(s32 spoken) {
 
   ObjectTable_Snapshot();
   if (spoken == 0) {
-    s32 message = (s32)MsgContigo10;
+    s32 message = (s32)MsgContigoStepRightUpAndTry;
 
     Event_SetMessageId(message);
-    Event_ShowMessageAndWait(18, 0);
+    Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     if (tickets == 0) {
-      Event_ShowMessageAndWait(18, 0);
+      Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
       return;
     }
     Event_SetMessageId(message + 2);
     MessageArgument_Push(tickets, MESSAGE_ARGUMENT_NUMBER);
-    FieldMessage_ShowAtActor(18, 0);
+    FieldMessage_ShowAtActor(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
         1) {
-      Event_ShowMessageAndWait(18, 0);
+      Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
       return;
     }
     room = PartyInventory_CountFreeSlots();
     if (room == 0) {
       Event_SetMessageId(message + 4);
-      FieldMessage_ShowAtActor(18, 0);
+      FieldMessage_ShowAtActor(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     } else if (room <= 6) {
       Event_SetMessageId(message + 5);
-      FieldMessage_ShowAtActor(18, 0);
+      FieldMessage_ShowAtActor(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     }
     if (room <= 6 && Event_AskYesNoWithActorAnimation(
                          gMainRoutineWork.leaderActorId, 0) == 1) {
-      Event_SetMessageId((s32)MsgContigo12);
+      Event_SetMessageId((s32)MsgContigoThenGetRidOfSome);
       // "Then get rid of some items and come again."
-      Event_ShowMessageAndWait(18, 0);
+      Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
       return;
     }
   } else {
     if (tickets == 0) {
-      Event_SetMessageId((s32)MsgContigo18);
+      Event_SetMessageId((s32)MsgContigoTooBadComeBackAfter);
       // "Too bad... Come back after you get some tickets."
-      Event_ShowMessageAndWait(18, 0);
+      Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
       return;
     }
-    Event_SetMessageId((s32)MsgContigo19);
+    Event_SetMessageId((s32)MsgContigoTooBadWouldYouLike);
     // "Too bad... Would you like to use your tickets to keep playing?"
-    FieldMessage_ShowAtActor(18, 0);
+    FieldMessage_ShowAtActor(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     if (Event_AskYesNoWithActorAnimation(0, 0) == 1) {
-      Event_SetMessageId((s32)MsgContigo17);
+      Event_SetMessageId((s32)MsgContigoComeAgain);
       // "Come again!"
-      Event_ShowMessageAndWait(18, 0);
+      Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
       return;
     }
   }
-  Event_SetMessageId((s32)MsgContigo13);
+  Event_SetMessageId((s32)MsgContigoStepRightUpAndEnjoy);
   // "Step right up and enjoy yourself."
-  Event_ShowMessageAndWait(18, 0);
+  Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   GameFlag_Set(0x9e5);
   wait(1);
@@ -1282,16 +1361,16 @@ void Contigo_SendToLuckyDice(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if ((u32)gMainRoutineWork.coins < price) {
-    Event_SetMessageId((s32)MsgContigo03);
+    Event_SetMessageId((s32)MsgContigoHeyYaDontHaveEnough);
     // "Hey! Ya don't have enough coins! Ya gotta pay to play."
-    FieldMessage_ShowAtActor(14, 0);
+    FieldMessage_ShowAtActor(ACTOR_LUCKY_DICE_HOST, 0);
     return;
   }
-  Event_SetMessageId((s32)MsgContigo01);
+  Event_SetMessageId((s32)MsgContigoHeyBuddyWannaTryYer);
   MessageArgument_Push(price, MESSAGE_ARGUMENT_NUMBER);
   // "Hey, buddy, wanna try yer luck at the dice? It's coin to play." Yes: "OK!
   // Then take the dice." No: "No? Oh, well. Who's next?"
-  FieldMessage_ShowAtActor(14, 0);
+  FieldMessage_ShowAtActor(ACTOR_LUCKY_DICE_HOST, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
     /* FAKEMATCH(pin): the scene state's address pinned to r3. */
@@ -1300,7 +1379,7 @@ void Contigo_SendToLuckyDice(void) {
     *state = gMainRoutineWork.coins;
     ObjectTable_Snapshot();
     // "OK! Then take the dice."
-    Event_ShowMessageAndWait(14, 0);
+    Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
     GameFlag_Set(0x9e5);
     wait(1);
@@ -1309,7 +1388,7 @@ void Contigo_SendToLuckyDice(void) {
   } else {
     gFieldWork->message++;
     // "No? Oh, well. Who's next?"
-    Event_ShowMessageAndWait(14, 0);
+    Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
   }
   Event_End();
 }
@@ -1321,15 +1400,15 @@ void Contigo_SendToSuperLuckyDice(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if ((u32)gMainRoutineWork.coins < price) {
-    Event_SetMessageId((s32)MsgContigo34);
+    Event_SetMessageId((s32)MsgContigoSorryPalButYouveGotta);
     // "Sorry, pal, but you've gotta have more coins to play."
-    FieldMessage_ShowAtActor(14, 0);
+    FieldMessage_ShowAtActor(ACTOR_LUCKY_DICE_HOST, 0);
     return;
   }
-  Event_SetMessageId((s32)MsgContigo23);
+  Event_SetMessageId((s32)MsgContigoWelcomeWelcomeStepRightUp);
   // "Welcome, welcome, step right up! Care for a round of Super Lucky Dice?"
   // Yes: "OK, then let 'em roll!" No: "Oh really? That's a shame!"
-  FieldMessage_ShowAtActor(8, 0);
+  FieldMessage_ShowAtActor(ACTOR_SUPER_LUCKY_DICE_HOST, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
     /* FAKEMATCH(pin): the scene state's address pinned to r3. */
@@ -1338,7 +1417,7 @@ void Contigo_SendToSuperLuckyDice(void) {
     *state = gMainRoutineWork.coins;
     ObjectTable_Snapshot();
     // "OK, then let 'em roll!"
-    Event_ShowMessageAndWait(8, 0);
+    Event_ShowMessageAndWait(ACTOR_SUPER_LUCKY_DICE_HOST, 0);
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
     GameFlag_Set(0x9e5);
     wait(1);
@@ -1347,7 +1426,7 @@ void Contigo_SendToSuperLuckyDice(void) {
   } else {
     gFieldWork->message++;
     // "Oh really? That's a shame!"
-    Event_ShowMessageAndWait(8, 0);
+    Event_ShowMessageAndWait(ACTOR_SUPER_LUCKY_DICE_HOST, 0);
   }
   Event_End();
 }
@@ -1355,8 +1434,8 @@ void Contigo_SendToSuperLuckyDice(void) {
 void Contigo_ShrinkActor(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
-  object->scaleX = 0xb333;
-  object->scaleY = 0xb333;
+  object->scaleX = Q16_ONE * 7 / 10;
+  object->scaleY = Q16_ONE * 7 / 10;
   object->radius = 8;
 }
 
@@ -1405,14 +1484,11 @@ extern const u8 gContigo_SparkleWork[];
 
 /// The reunion scene. It opens with "Glad you kept your promise".
 void Contigo_TheReunion(void) {
-  struct ContigoObject *object;
+  struct Actor *object;
   s32 answer;
-  /* FAKEMATCH(pin): the leader pinned to r5, reloaded after each yes/no prompt
-   * and copied to r0 in each branch. */
-  register s32 owner __asm__("r5");
   s32 angle;
 
-  object = ((struct ContigoObject *)Actor_GetById(8));
+  object = ((struct Actor *)Actor_GetById(ACTOR_HAMA));
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SOUND_FADE_OUT_BGM);
@@ -1422,7 +1498,7 @@ void Contigo_TheReunion(void) {
   Actor_WatchAndSetScript(ACTOR_GARET, gMainRoutineWork.leaderActorId);
   Actor_WatchAndSetScript(ACTOR_MIA, gMainRoutineWork.leaderActorId);
   Actor_WatchAndSetScript(ACTOR_IVAN, gMainRoutineWork.leaderActorId);
-  Actor_WatchAndSetScript(8, gMainRoutineWork.leaderActorId);
+  Actor_WatchAndSetScript(ACTOR_HAMA, gMainRoutineWork.leaderActorId);
   Event_Wait(10);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 160, 382);
@@ -1430,21 +1506,21 @@ void Contigo_TheReunion(void) {
   Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
   Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
   Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(9, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
   wait(1);
   Actor_SetSpeed(ACTOR_JENNA, 0.8);
   Actor_SetSpeed(ACTOR_PIERS, 0.8);
-  Actor_SetSpeed(9, 0.8);
+  Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_SetSpeed(ACTOR_SHEBA, 0.8);
   Actor_SetMovementTypeById(ACTOR_JENNA, gContigo_JennaReunionScript);
-  Actor_SetMovementTypeById(9, gContigo_KradenReunionScript);
+  Actor_SetMovementTypeById(ACTOR_KRADEN, gContigo_KradenReunionScript);
   Actor_SetMovementTypeById(ACTOR_SHEBA, gContigo_ShebaReunionScript);
   Actor_SetMovementTypeAndWaitById(ACTOR_PIERS, gContigo_PiersReunionScript);
   Actor_Stop(gMainRoutineWork.leaderActorId);
   Actor_Stop(ACTOR_GARET);
   Actor_Stop(ACTOR_MIA);
   Actor_Stop(ACTOR_IVAN);
-  Actor_Stop(8);
+  Actor_Stop(ACTOR_HAMA);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Sound_Play(MUS_WORLD_MAP_REUNITED);
   Event_Wait(20);
@@ -1476,30 +1552,30 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   // "I know that, now... But it doesn't explain why you're doing this..."
   Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
-  Actor_SetAnimationAndWait(9, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   // "Felix betrayed his hometown, Vale... That's why he hasn't been able..."
-  Event_ShowMessageAndWait(9, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(148, CAMERA_KEEP, 368, 1);
-  Actor_WalkToAndWait(9, 172, 342);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 172, 342);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
-  Actor_WalkToAndWaitById(9, 146, 342);
-  Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
-  Actor_SetAnimationById(9, 4);
+  Actor_WalkToAndWaitById(ACTOR_KRADEN, 146, 342);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
+  Actor_SetAnimationById(ACTOR_KRADEN, 4);
   // "Felix had hoped to play the villain alone, without getting Jenna or..."
-  Event_ShowMessageAndWait(9, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_Jump(ACTOR_GARET, 2, 10);
   // "He betrayed Vale? Kraden, what are you talking about?"
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_GARET, 0);
   // "He conspired to steal the Elemental Stars and fire the beacons of..."
-  Event_ShowMessageAndWait(9, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_SetAnimationById(ACTOR_MIA, ANIM_SHAKE_HEAD);
   // "That's what Saturos and Menardi were trying to do..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_MIA, 0);
@@ -1515,9 +1591,9 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   // "Parents? But...your parents died three years ago, in that storm..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
-  Actor_SetAnimationAndWait(9, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
   // "That night, Saturos and his men had raided Sol Sanctum... The storm..."
-  Event_ShowMessageAndWait(9, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_WEST);
@@ -1529,15 +1605,15 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   // "They had failed to solve the mystery of Sol Sanctum. In doing so..."
-  Event_ShowMessageAndWait(9, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   // "Everyone thought that you were killed by that boulder, Felix. I..."
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_SetAnimationById(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
-  Actor_SetAnimationById(9, 4);
+  Actor_SetAnimationById(ACTOR_KRADEN, 4);
   // "In fact, nobody was killed by the boulder that day!"
-  Event_ShowMessageAndWait(9, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
   // "So that means..."
@@ -1559,9 +1635,9 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirectionById(ACTOR_MIA, FACING_EAST, 0);
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_NORTHEAST);
-  Actor_SetAnimationAndWait(9, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   // "Yes! If Felix survived, Kyle and the others may have as well..."
-  Event_ShowMessageAndWait(9, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_FaceDirectionAndWait(ACTOR_MIA, FACING_SOUTHEAST);
   // "Why didn't you tell us? We could have worked together to save your..."
@@ -1569,31 +1645,30 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
-  owner = gMainRoutineWork.leaderActorId;
   if (answer == 0) {
-    Actor_WaitForAnimationChange(owner);
+    Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     Actor_SetAnimationById(ACTOR_IVAN, ANIM_NOD);
     Event_ShowMessageAndWait(ACTOR_IVAN, 0);
     gFieldWork->message++;
   } else {
-    Actor_WaitForAnimationChange(owner);
+    Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     gFieldWork->message++;
     Actor_SetAnimationById(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     Event_ShowMessageAndWait(ACTOR_IVAN, 0);
   }
-  Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
-  Actor_SetAnimationAndWait(9, 4);
-  Event_ShowMessageAndWait(9, 0);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Actor_FaceDirectionById(ACTOR_MIA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
-  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
-  Event_ShowMessageAndWait(9, 0);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 20);
@@ -1617,33 +1692,32 @@ void Contigo_TheReunion(void) {
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
-  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
-  Event_ShowMessageAndWait(9, 0);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
   Event_ShowMessageAndWait(ACTOR_GARET, 0);
-  Actor_SetAnimationAndWait(9, 3);
-  Event_ShowMessageThenWait(9, 0, 80);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 80);
   Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
-  Actor_SetAnimationById(9, 4);
-  Event_ShowMessageAndWait(9, 0);
-  Event_ShowMessageAndWait(9, 0);
+  Actor_SetAnimationById(ACTOR_KRADEN, 4);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTHEAST);
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 1, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
-  Actor_FaceDirection(9, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   answer = Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0);
-  owner = gMainRoutineWork.leaderActorId;
   if (answer == 0) {
-    Actor_WaitForAnimationChange(owner);
+    Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     Actor_SetAttachedEffect(ACTOR_GARET,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
     gFieldWork->message++;
   } else {
-    Actor_WaitForAnimationChange(owner);
+    Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
     gFieldWork->message++;
     Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
@@ -1652,35 +1726,36 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
-  Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
-  Actor_SetAnimationById(9, 4);
-  Event_ShowMessageAndWait(9, 0);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
+  Actor_SetAnimationById(ACTOR_KRADEN, 4);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   Sound_Play(MUS_SILENCE);
-  Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 15);
+  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_HAMA)), 15);
   angle = FACING_NORTH_NORTHWEST;
-  Actor_SetHorizontalPositionAndAngleWithTerrain(8, px(160), px(466), angle);
+  Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_HAMA, px(160), px(466),
+                                                 angle);
   wait(1);
-  Event_ShowMessageAndWait(8, 0);
-  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 8);
-  Actor_WatchAndSetScript(ACTOR_JENNA, 8);
-  Actor_WatchAndSetScript(ACTOR_PIERS, 8);
-  Actor_WatchAndSetScript(ACTOR_SHEBA, 8);
-  Actor_WatchAndSetScript(ACTOR_ISAAC, 8);
-  Actor_WatchAndSetScript(ACTOR_GARET, 8);
-  Actor_WatchAndSetScript(ACTOR_MIA, 8);
-  Actor_WatchAndSetScript(ACTOR_IVAN, 8);
-  Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 0);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, ACTOR_HAMA);
+  Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_HAMA);
+  Actor_WatchAndSetScript(ACTOR_PIERS, ACTOR_HAMA);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_HAMA);
+  Actor_WatchAndSetScript(ACTOR_ISAAC, ACTOR_HAMA);
+  Actor_WatchAndSetScript(ACTOR_GARET, ACTOR_HAMA);
+  Actor_WatchAndSetScript(ACTOR_MIA, ACTOR_HAMA);
+  Actor_WatchAndSetScript(ACTOR_IVAN, ACTOR_HAMA);
+  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_HAMA)), 0);
   FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(180, CAMERA_KEEP, 410, 1);
   FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(148, CAMERA_KEEP, 368, 1);
-  Actor_SetSpeed(8, 0.8);
-  Actor_WalkToAndWait(8, 146, 406);
+  Actor_SetSpeed(ACTOR_HAMA, 0.8);
+  Actor_WalkToAndWait(ACTOR_HAMA, 146, 406);
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_Stop(gMainRoutineWork.leaderActorId);
@@ -1692,8 +1767,8 @@ void Contigo_TheReunion(void) {
   Actor_Stop(ACTOR_MIA);
   Actor_Stop(ACTOR_IVAN);
   Sound_Play(MUS_REUNION);
-  Actor_SetAnimationAndWait(8, 3);
-  Event_ShowMessageAndWait(8, 0);
+  Actor_SetAnimationAndWait(ACTOR_HAMA, 3);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
@@ -1703,8 +1778,8 @@ void Contigo_TheReunion(void) {
   Actor_SetAnimationById(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
-  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  Event_ShowMessageAndWait(9, 0);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHEAST);
   Actor_SetAnimationById(ACTOR_ISAAC, ANIM_NOD);
   Event_Wait(10);
@@ -1725,9 +1800,9 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Actor_SetAnimationById(8, 3);
-  Event_ShowMessageAndWait(8, 0);
+  FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Actor_SetAnimationById(ACTOR_HAMA, 3);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
@@ -1735,17 +1810,17 @@ void Contigo_TheReunion(void) {
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
-  Actor_FaceDirectionAndRefreshById(8, FACING_EAST);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 8, 0);
+  FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+  Actor_FaceDirectionAndRefreshById(ACTOR_HAMA, FACING_EAST);
+  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMA, 0);
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_WalkToAndWait(ACTOR_IVAN, 130, 400);
   Actor_FaceDirectionById(ACTOR_IVAN, FACING_EAST, 0);
-  Actor_FaceDirectionAndWait(8, FACING_WEST);
-  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
+  Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_WEST);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMA, 0);
   FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
-  Actor_SetAnimationById(8, 4);
-  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | 8, 0);
+  Actor_SetAnimationById(ACTOR_HAMA, 4);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_HAMA, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
   Actor_FaceDirectionById(ACTOR_MIA, FACING_EAST, 0);
@@ -1753,8 +1828,8 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 40);
-  Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHEAST);
-  Event_ShowMessageAndWait(8, 0);
+  Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_NORTH_NORTHEAST);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHEAST, 0);
@@ -1762,23 +1837,23 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
-  Actor_SetAnimationById(8, 4);
-  Event_ShowMessageAndWait(8, 0);
+  Actor_SetAnimationById(ACTOR_HAMA, 4);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Contigo_StartSparkle(object, gContigo_SparkleWork);
   Event_Wait(80);
   Contigo_StopSparkle(object);
-  Actor_SetAnimationAndWait(8, 4);
-  Event_ShowMessageAndWait(8, 0);
+  Actor_SetAnimationAndWait(ACTOR_HAMA, 4);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Actor_SetAttachedEffect(ACTOR_PIERS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Contigo_StartSparkle(object, gContigo_SparkleWork);
   Event_Wait(80);
   Contigo_StopSparkle(object);
-  Actor_FaceDirectionAndWait(8, FACING_NORTH_NORTHEAST);
-  Actor_SetAnimationById(8, 4);
-  Event_ShowMessageAndWait(8, 0);
+  Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_NORTH_NORTHEAST);
+  Actor_SetAnimationById(ACTOR_HAMA, 4);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Actor_SetAttachedEffect(ACTOR_ISAAC,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_GARET,
@@ -1796,9 +1871,9 @@ void Contigo_TheReunion(void) {
   Actor_SetAttachedEffect(ACTOR_IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
-  Actor_FaceDirectionAndRefreshById(8, angle);
-  Actor_SetAnimationById(8, 4);
-  Event_ShowMessageAndWait(8, 0);
+  Actor_FaceDirectionAndRefreshById(ACTOR_HAMA, angle);
+  Actor_SetAnimationById(ACTOR_HAMA, 4);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Actor_FaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_GARET, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_MIA, FACING_EAST, 0);
@@ -1807,8 +1882,8 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
-  Actor_Jump(9, 4, 10);
-  Event_ShowMessageAndWait(9, 0);
+  Actor_Jump(ACTOR_KRADEN, 4, 10);
+  Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_SetAnimationById(ACTOR_ISAAC, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_MIA, ANIM_NOD);
@@ -1817,15 +1892,15 @@ void Contigo_TheReunion(void) {
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
-  Event_ShowMessageAndWait(8, 0);
-  Event_ShowMessageAndWait(8, 0);
-  Actor_SetAnimationById(8, 3);
-  Event_ShowMessageAndWait(8, 0);
+  FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+  Actor_SetAnimationById(ACTOR_HAMA, 3);
+  Event_ShowMessageAndWait(ACTOR_HAMA, 0);
   Sound_Play(SOUND_FADE_OUT_BGM);
   FieldCamera_MoveTo(180, CAMERA_KEEP, 410, 1);
-  Actor_WalkToAndWait(8, 160, 466);
-  Actor_SetPosition(8, 0, 0);
+  Actor_WalkToAndWait(ACTOR_HAMA, 160, 466);
+  Actor_SetPosition(ACTOR_HAMA, 0, 0);
   FieldCamera_SetSpeed(2.4);
   FieldCamera_MoveTo(148, CAMERA_KEEP, 368, 1);
   FieldCamera_WaitForArrival();
@@ -1863,22 +1938,22 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
-    Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHEAST);
-    Actor_SetAnimationById(9, 3);
-    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 9, 0);
+    Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
+    Actor_SetAnimationById(ACTOR_KRADEN, 3);
+    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
     gFieldWork->message++;
   } else {
-    Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHEAST);
+    Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
     gFieldWork->message++;
-    Actor_SetAnimationById(9, 4);
-    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 9, 0);
+    Actor_SetAnimationById(ACTOR_KRADEN, 4);
+    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   }
-  Actor_WalkToAndWait(9, 146, 368);
-  Actor_FaceDirection(9, FACING_WEST, 40);
-  Actor_FaceDirectionById(9, FACING_EAST, 40);
-  Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
-  Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 9,
-                           0);
+  Actor_WalkToAndWait(ACTOR_KRADEN, 146, 368);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 40);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 40);
+  Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
+  Event_ShowMessageAndWait(
+      SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   Actor_SetAnimationById(ACTOR_ISAAC, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_MIA, ANIM_NOD);
@@ -1891,7 +1966,7 @@ void Contigo_TheReunion(void) {
   Actor_SetMovementTypeById(ACTOR_GARET, gContigo_IsaacLeavesScript);
   Actor_SetMovementTypeById(ACTOR_MIA, gContigo_IsaacLeavesScript);
   Actor_SetMovementTypeById(ACTOR_IVAN, gContigo_IsaacLeavesScript);
-  Actor_SetMovementTypeById(9, gContigo_IsaacLeavesScript);
+  Actor_SetMovementTypeById(ACTOR_KRADEN, gContigo_IsaacLeavesScript);
   Actor_SetMovementTypeById(ACTOR_JENNA, gContigo_IsaacLeavesScript);
   Actor_SetMovementTypeById(ACTOR_SHEBA, gContigo_IsaacLeavesScript);
   Actor_SetMovementTypeAndWaitById(ACTOR_PIERS, gContigo_IsaacLeavesScript);
@@ -1903,32 +1978,32 @@ void Contigo_TheReunion(void) {
 extern u32 gContigo_LeaderVisitsScript[];
 
 void Contigo_ReturnToNewHome(void) {
-  if (GameFlag_Get(0x9b2)) {
+  if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldCamera_SetSpeed(0.8);
     FieldCamera_MoveTo(160, CAMERA_KEEP, 368, 1);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 158, 394);
-    Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST, 0);
     Actor_MoveToObject(ACTOR_IVAN, gMainRoutineWork.leaderActorId);
     wait(1);
     Actor_SetSpeed(ACTOR_IVAN, 0.8);
     Actor_WalkToAndWaitById(ACTOR_IVAN, 144, 374);
     Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
-    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+    FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     Event_SetMessageId((s32)MsgReturnedToMyNewHome);
     // "Ah, you've returned! What brings you to my new home?"
-    Event_ShowMessageAndWait(8, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     // "Hamma..."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
     Actor_SetAnimationById(ACTOR_IVAN, ANIM_SHAKE_HEAD);
     // "You're my sister... Why didn't you tell me sooner? Why didn't you..."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-    Actor_SetAnimationById(8, 4);
+    Actor_SetAnimationById(ACTOR_HAMA, 4);
     // "You play an important role in all this. If I'd told you, you would..."
-    Event_ShowMessageAndWait(8, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 40);
     Actor_WalkToAndWait(ACTOR_IVAN, 180, 364);
     Event_Wait(20);
@@ -1938,26 +2013,26 @@ void Contigo_ReturnToNewHome(void) {
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "This place is so familiar... I feel like I've lived here my whole life."
     Event_ShowMessageAndWait(ACTOR_IVAN, 0);
-    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
+    FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
     // "Look at me, Ivan."
-    Event_ShowMessageAndWait(8, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 40);
     // "You're too sentimental. You would have given up your quest to find..."
-    Event_ShowMessageAndWait(8, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     // "What are you saying, sister?"
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-    Actor_SetAnimationById(8, 4);
+    Actor_SetAnimationById(ACTOR_HAMA, 4);
     // "No, not sister... Do not think of me as your sister until you have..."
-    Event_ShowMessageAndWait(8, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
     Actor_SetAttachedEffect(ACTOR_IVAN,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     // "W-Why?"
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+    FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "Our world is falling into ruin..."
-    Event_ShowMessageAndWait(8, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
     Actor_MoveToObject(ACTOR_ISAAC, gMainRoutineWork.leaderActorId);
     wait(1);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1966,70 +2041,72 @@ void Contigo_ReturnToNewHome(void) {
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
     // "What? Hamma, what do you mean? What's happening?"
     Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
-    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
-    Actor_MoveToObject(9, gMainRoutineWork.leaderActorId);
+    FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHEAST, 0);
+    Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
     wait(1);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
     Actor_SetMovementTypeById(gMainRoutineWork.leaderActorId,
                               gContigo_LeaderVisitsScript);
-    Actor_SetSpeed(9, 0.8);
-    Actor_WalkToAndWait(9, 182, 378);
-    Actor_WalkToAndWaitById(9, 182, 360);
-    Actor_FaceDirectionAndWait(9, FACING_WEST);
-    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+    Actor_SetSpeed(ACTOR_KRADEN, 0.8);
+    Actor_WalkToAndWait(ACTOR_KRADEN, 182, 378);
+    Actor_WalkToAndWaitById(ACTOR_KRADEN, 182, 360);
+    Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
+    FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "Look, I don't want to interrupt your reunion or anything, but..."
-    Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
-    Actor_FaceDirectionById(8, FACING_EAST, 0);
-    Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
+    Actor_FaceDirectionById(ACTOR_HAMA, FACING_EAST, 0);
+    Actor_SetAttachedEffect(ACTOR_KRADEN,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     // "I couldn't help overhearing you say something about the world..."
-    Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
-    Actor_SetAnimationAndWait(8, 3);
+    Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
+    Actor_SetAnimationAndWait(ACTOR_HAMA, 3);
     // "Our world requires a delicate balance of elemental forces. That..."
-    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 8, 0);
-    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMA, 0);
+    FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                          EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-    Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
+    Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST);
     // "Without that balance, one element might be lost beneath the others..."
-    Event_ShowMessageAndWait(8, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
     // "You're talking about Mars Lighthouse, right?"
-    Event_ShowMessage(SPEAKER_WINDOW_BELOW | 9, 0);
-    Actor_FaceDirectionAndRefreshById(8, FACING_EAST);
-    Actor_SetAnimationAndWait(8, 3);
+    Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
+    Actor_FaceDirectionAndRefreshById(ACTOR_HAMA, FACING_EAST);
+    Actor_SetAnimationAndWait(ACTOR_HAMA, 3);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 40);
     Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
     Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHEAST);
     // "Isn't Agatio taking care of Mars Lighthouse? Everything should be..."
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-    Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 20);
+    FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+    Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST, 20);
     // "Agatio will not light Mars Lighthouse."
-    Event_ShowMessageAndWait(8, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
-    Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 40);
-    Actor_FaceDirection(9, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 40);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
     // "You don't think he can do it?"
     Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
-    Actor_SetAttachedEffect(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHEAST);
+    Actor_SetAttachedEffect(ACTOR_HAMA,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_SOUTH_SOUTHEAST);
     // "No. A great power stands ready to oppose them."
-    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | 8, 0);
+    Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMA, 0);
     FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                          EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-    Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
-    Actor_SetAnimationById(8, 4);
+    FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+    Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST);
+    Actor_SetAnimationById(ACTOR_HAMA, 4);
     // "They lack the power to resist that force, and they will fall before it."
-    Event_ShowMessageAndWait(8, 0);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
-    Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
     Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST,
                             40);
@@ -2039,42 +2116,42 @@ void Contigo_ReturnToNewHome(void) {
     // "But what will happen if Mars Lighthouse isn't lit quickly enough?"
     Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
     Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
-    Actor_FaceDirection(9, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHEAST, 0);
-    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
-    Actor_FaceDirection(8, FACING_SOUTH_SOUTHEAST, 0);
+    FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+    Actor_FaceDirection(ACTOR_HAMA, FACING_SOUTH_SOUTHEAST, 0);
     // "Our world will be plunged into ice."
-    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 8, 0);
+    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMA, 0);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
     // "But what would make that happen?"
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-    Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
+    Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST);
     // "Even I do not know the answer to that question."
-    Event_ShowMessageAndWait(8, 0);
-    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
-    Actor_FaceDirectionById(8, FACING_EAST, 80);
-    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+    Actor_FaceDirectionById(ACTOR_HAMA, FACING_EAST, 80);
+    FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                          EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
+    FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
     // "Ah... Yes, given the way that the elements interact, I see..."
-    Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 9, 0);
+    Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
     // "Kraden, you understand?"
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ISAAC, 0);
-    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
-    Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 20);
+    FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 20);
     // "Well, I'm only guessing... But I think it's a good guess."
-    Event_ShowMessageAndWait(9, 0);
+    Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     Actor_Jump(ACTOR_IVAN, 2, 10);
     // "Quit fooling around and tell me!"
     Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-    Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
-    Actor_SetAnimationAndWait(9, 3);
+    Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
     // "The earth is nurturing and warm. Many creatures are reared in this..."
-    FieldMessage_ShowAtActor(9, 0);
+    FieldMessage_ShowAtActor(ACTOR_KRADEN, 0);
     FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
@@ -2091,10 +2168,10 @@ void Contigo_ReturnToNewHome(void) {
       // "It's OK, Felix... I don't really get it either, but let's see..."
       Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
     }
-    Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
-    Actor_SetAnimationById(9, 4);
+    Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
+    Actor_SetAnimationById(ACTOR_KRADEN, 4);
     // "Now, think about the ocean. It is a cold place, is it not?"
-    FieldMessage_ShowAtActor(9, 0);
+    FieldMessage_ShowAtActor(ACTOR_KRADEN, 0);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHWEST, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
@@ -2111,35 +2188,35 @@ void Contigo_ReturnToNewHome(void) {
       // "I don't know what point he's trying to make, but I have to agree..."
       Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ISAAC, 0);
     }
-    Actor_SetAnimationAndWait(9, 3);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
     // "Both lighthouses were lit, and a balance was reached."
-    Event_ShowMessageAndWait(9, 0);
-    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
-    Actor_FaceDirectionAndWait(9, FACING_WEST);
+    Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+    FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+    Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
     // "But with only the lighthouse of wind lit, the balance has been..."
-    Event_ShowMessageAndWait(9, 0);
+    Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     Actor_SetAttachedEffect(ACTOR_IVAN,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     // "I get it... Wind cools things down, but it can't heat them up..."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_IVAN, 0);
-    Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
-    Actor_SetAnimationById(9, 3);
+    Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
+    Actor_SetAnimationById(ACTOR_KRADEN, 3);
     // "When you burn your hand on something hot, you blow on it to cool it..."
-    Event_ShowMessageAndWait(9, 0);
+    Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     Actor_SetAnimationById(ACTOR_ISAAC, ANIM_NOD);
     // "Right, yeah... I've always done that without thinking about it, but..."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ISAAC, 0);
-    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+    FieldActor_ShowEmote(ACTOR_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
     // "When Mercury Lighthouse was lit, this didn't happen, though. I..."
-    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | 8, 0);
-    Actor_FaceDirectionAndWait(9, FACING_WEST);
-    Actor_SetAnimationById(9, 3);
+    Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMA, 0);
+    Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
+    Actor_SetAnimationById(ACTOR_KRADEN, 3);
     // "Water cannot cool things as swiftly as wind, perhaps."
-    Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | 9, 0);
-    Actor_FaceDirectionAndWait(9, FACING_SOUTH_SOUTHWEST);
-    FieldActor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
+    Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
+    Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
+    FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
     // "Or maybe the combined power of water and wind is cooling things down..."
-    Event_ShowMessageAndWait(9, 0);
+    Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
     // "If what Hamma's saying is true, we'd better get moving again, Felix."
     Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
@@ -2148,21 +2225,21 @@ void Contigo_ReturnToNewHome(void) {
     Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHWEST);
     // "I got too worked up about seeing my sister... Sorry."
     Event_ShowMessageAndWait(ACTOR_IVAN, 0);
-    Actor_FaceDirectionAndWait(8, FACING_SOUTH_SOUTHWEST);
-    Actor_SetAnimationAndWait(8, 3);
+    Actor_FaceDirectionAndWait(ACTOR_HAMA, FACING_SOUTH_SOUTHWEST);
+    Actor_SetAnimationAndWait(ACTOR_HAMA, 3);
     // "It's all right. I'm happy that you cared so much..."
-    Event_ShowMessageAndWait(8, 0);
-    Actor_FaceDirectionAndWait(9, FACING_WEST);
-    Actor_SetAnimationById(9, 3);
+    Event_ShowMessageAndWait(ACTOR_HAMA, 0);
+    Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_WEST);
+    Actor_SetAnimationById(ACTOR_KRADEN, 3);
     // "All right, Felix! Let's head to Mars Lighthouse!"
-    Event_ShowMessageAndWait(9, 0);
+    Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
     Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
     Actor_SetSpeed(ACTOR_IVAN, 1.2);
     Actor_SetSpeed(ACTOR_ISAAC, 1.2);
-    Actor_SetSpeed(9, 1.2);
+    Actor_SetSpeed(ACTOR_KRADEN, 1.2);
     Actor_SetMovementTypeById(ACTOR_IVAN, gContigo_HostScript);
     Actor_SetMovementTypeById(ACTOR_ISAAC, gContigo_HostScript);
-    Actor_SetMovementTypeAndWaitById(9, gContigo_HostScript);
+    Actor_SetMovementTypeAndWaitById(ACTOR_KRADEN, gContigo_HostScript);
     GameFlag_Set(2513);
     Event_End();
   }
@@ -2178,13 +2255,13 @@ s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_CONTIGO)
-    Contigo_InitializeRoom1();
+    Contigo_InitializeVillage();
   else if (scene == SCENE_CONTIGO_GEOGLYPH)
-    Contigo_InitializeRoom4();
+    Contigo_InitializeGeoglyph();
   else if (scene == SCENE_CONTIGO_SHOPS)
-    Contigo_InitializeRoom2();
+    Contigo_InitializeShops();
   else if (scene == SCENE_CONTIGO_LUCKY_DICE)
-    Contigo_InitializeRoom3();
+    Contigo_InitializeLuckyDice();
   return 0;
 }
 
@@ -2203,37 +2280,34 @@ void MapGrid_CenterOnFollowedPoint(void);
 
 /// Schedules Contigo_KeepPriorityWithLeader and gives objects 14 and 15 their
 /// flag bytes and Contigo_FaceTalker as their update (object 15 brought in and
-/// placed while flag 0xa21 is set and 0x9b2 clear), places or hides object 17
-/// by flags 0x9e7 and 0x9e6, sets flag 0x200 on entrances 1 to 4 unless flag
-/// 0x109 is set, and while flag 0x200 is set has the camera follow the leader;
-/// it ends with Palette_SetColors.
-void Contigo_InitializeRoom1(void) {
-  struct Actor *object = Actor_GetById(14);
-  s32 zero;
+/// placed while flag 0xa21 is set and FLAG_SET_OUT_WITH_WINGS clear), places or
+/// hides object 17 by flags FLAG_SHINE_FREED and 0x9e6, sets flag 0x200 on
+/// entrances 1 to 4 unless flag 0x109 is set, and while flag 0x200 is set has
+/// the camera follow the leader; it ends with Palette_SetColors.
+void Contigo_InitializeVillage(void) {
+  struct Actor *object = Actor_GetById(ACTOR_WANDERER);
 
   Task_Add(Contigo_KeepPriorityWithLeader, TASK_PASS_VBLANK);
-  /* FAKEMATCH(temporary): the second byte's 0 built after the first byte's
-   * address. */
-  zero = 0;
-  BYTE_AT(object, 98) = 1;
-  BYTE_AT(object, 99) = zero;
-  *(void **)((u8 *)object + 108) = Contigo_FaceTalker;
-  if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 && GameFlag_Get(0x9b2) == 0) {
-    Actor_Stop(15);
-    Actor_SetPosition(15, 0, 0);
-    Actor_SetPosition(13, 0, 0);
+  object->riseCounter = 1;
+  object->blockMarked = 0;
+  object->update = Contigo_FaceTalker;
+  if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
+      GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) == 0) {
+    Actor_Stop(ACTOR_GIRL_ON_THE_SHIP);
+    Actor_SetPosition(ACTOR_GIRL_ON_THE_SHIP, 0, 0);
+    Actor_SetPosition(ACTOR_OLD_WOMAN_ON_THE_GEOGLYPHS, 0, 0);
     Contigo_OpenGamesRooms();
   } else {
-    object = Actor_GetById(15);
-    BYTE_AT(object, 98) = 0;
-    BYTE_AT(object, 99) = 0;
+    object = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
+    object->riseCounter = 0;
+    object->blockMarked = 0;
     *(void **)((u8 *)object + 108) = Contigo_FaceTalker;
   }
-  if (GameFlag_Get(0x9e7) != 0 && GameFlag_Get(0x9e6) == 0) {
-    Actor_SetPosition(17, 32, 708);
+  if (GameFlag_Get(FLAG_SHINE_FREED) != 0 && GameFlag_Get(0x9e6) == 0) {
+    Actor_SetPosition(ACTOR_SHINE, 32, 708);
   } else {
-    Actor_SetSpriteColor(Actor_GetById(17), 15);
-    Actor_SetSpriteFlags(Actor_GetById(17), 0);
+    Actor_SetSpriteColor(Actor_GetById(ACTOR_SHINE), 15);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_SHINE), 0);
   }
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     switch (gMainRoutineWork.entrance) {
@@ -2258,51 +2332,46 @@ void Contigo_InitializeRoom1(void) {
                     gContigo_DimColors, gContigo_CycleSlots);
 }
 
-void Contigo_InitializeRoom4(void) {
+void Contigo_InitializeGeoglyph(void) {
   Contigo_ShrinkActor(18);
   if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0) {
     MapGrid_CopyCellAttributes(44, 40, 8, 3, 44, 36);
-    Actor_SetPosition(19, 0, 0);
-    Actor_SetPosition(20, 0, 0);
-    Actor_SetPosition(21, 0, 0);
-    Actor_SetPosition(22, 0, 0);
-    Actor_SetPosition(23, 0, 0);
-    Actor_SetPosition(24, 0, 0);
-    Actor_SetPosition(25, 0, 0);
-    Actor_SetPosition(26, 0, 0);
-    Actor_SetPosition(27, 0, 0);
-    Actor_SetPosition(28, 0, 0);
-    Actor_SetPosition(29, 0, 0);
-    Actor_SetPosition(30, 0, 0);
-    Actor_SetPosition(31, 0, 0);
-    Actor_SetPosition(32, 0, 0);
-    Actor_SetPosition(33, 0, 0);
-    Actor_SetPosition(8, 0, 0);
-    Actor_SetPosition(9, 0, 0);
-    Actor_SetPosition(11, 0, 0);
-    Actor_SetPosition(12, 0, 0);
-    Actor_SetPosition(13, 0, 0);
-    if (GameFlag_Get(0x9b2) == 0) {
-      Actor_SetPosition(10, 0, 0);
-      Actor_SetPosition(14, 0, 0);
-      Actor_SetPosition(15, 0, 0);
-      Actor_SetPosition(16, 0, 0);
-      Actor_SetPosition(17, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_WING_FRAME, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_WING_FRAME + 1, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_WING_FRAME + 2, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_METAL_FEATHER, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_METAL_FEATHER + 1, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_METAL_FEATHER + 2, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_METAL_FEATHER + 3, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_METAL_FEATHER + 4, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_LOOSE_PART, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_LOOSE_PART + 1, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_LOOSE_PART + 2, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_LOOSE_PART + 3, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_LOOSE_PART + 4, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_LOOSE_PART + 5, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_LOOSE_PART + 6, 0, 0);
+    Actor_SetPosition(ACTOR_VISITOR_FROM_AFAR, 0, 0);
+    Actor_SetPosition(ACTOR_WOMAN_ON_THE_WINGS, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_WING_WORKER + 1, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_WING_WORKER + 2, 0, 0);
+    Actor_SetPosition(ACTOR_FIRST_WING_WORKER + 3, 0, 0);
+    if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) == 0) {
+      Actor_SetPosition(ACTOR_FIRST_WING_WORKER, 0, 0);
+      Actor_SetPosition(ACTOR_FIRST_SCHOLAR, 0, 0);
+      Actor_SetPosition(ACTOR_FIRST_SCHOLAR + 1, 0, 0);
+      Actor_SetPosition(ACTOR_FIRST_SCHOLAR + 2, 0, 0);
+      Actor_SetPosition(ACTOR_FIRST_SCHOLAR + 3, 0, 0);
     } else {
-      Actor_GetById(10)->facing = FACING_NORTH_NORTHEAST;
+      Actor_GetById(ACTOR_FIRST_WING_WORKER)->facing = FACING_NORTH_NORTHEAST;
       wait(1);
     }
   } else {
-    Contigo_SetUpStatues();
+    Contigo_SetUpWingParts();
   }
 }
 
-struct ContigoEventWork {
-  u8 unk000[0x1ac];
-  s32 value1ac;
-};
-
-void Contigo_InitializeRoom2(void) {
+void Contigo_InitializeShops(void) {
   gFieldWork->transition = 0x209;
   if (gMainRoutineWork.entrance == 4) {
     if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0 &&
@@ -2311,15 +2380,16 @@ void Contigo_InitializeRoom2(void) {
   } else if (gMainRoutineWork.entrance == 21) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   } else {
-    Actor_SetAnimationById(17, 2);
-    Actor_SetSpriteFlags(Actor_GetById(17), 0);
-    if (GameFlag_Get(0x9b2) != 0)
-      Actor_SetMovementTypeById(11, gContigo_Room2WatcherScript);
+    Actor_SetAnimationById(ACTOR_BABY, 2);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_BABY), 0);
+    if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
+      Actor_SetMovementTypeById(ACTOR_OLD_MAN_ON_HESPERIA,
+                                gContigo_ShopsWatcherScript);
     if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO) != 0) {
-      Actor_SetPosition(24, 0, 0);
-      Actor_SetPosition(25, 0, 0);
-      Actor_SetPosition(26, 0, 0);
-      Actor_SetPosition(27, 0, 0);
+      Actor_SetPosition(ACTOR_WORN_OUT_WORKER, 0, 0);
+      Actor_SetPosition(ACTOR_WORKER_ON_THE_PROPHECIES, 0, 0);
+      Actor_SetPosition(ACTOR_OLD_MAN_TOO_OLD_TO_HELP, 0, 0);
+      Actor_SetPosition(ACTOR_OLD_WOMAN_AWAITING_THE_MIRACLE, 0, 0);
     }
   }
 }
@@ -2327,21 +2397,21 @@ void Contigo_InitializeRoom2(void) {
 // The lines the prize counter speaks: the Spanish text numbers them
 // differently.
 #if (LANGUAGE == LANGUAGE_SPANISH)
-#define MSG_COINS_WON ((s32)MsgContigo03 + 1)
-#define MSG_COINS_LOST ((s32)MsgContigo03 + 2)
-#define MSG_READ_SIGN ((s32)MsgContigo04)
-#define MSG_CONGRATULATIONS ((s32)MsgContigo05)
-#define MSG_FIRST_PRIZE ((s32)MsgContigo11)
-#define MSG_NEXT_PRIZE ((s32)MsgContigo14)
-#define MSG_COME_AGAIN ((s32)MsgContigo17)
+#define MSG_COINS_WON ((s32)MsgContigoHeyYaDontHaveEnough + 1)
+#define MSG_COINS_LOST ((s32)MsgContigoHeyYaDontHaveEnough + 2)
+#define MSG_READ_SIGN ((s32)MsgContigoYaWonCoinTalkAbout)
+#define MSG_CONGRATULATIONS ((s32)MsgContigoYaLostCoinBetterLuck)
+#define MSG_FIRST_PRIZE ((s32)MsgContigoTheRulesAreListedOn)
+#define MSG_NEXT_PRIZE ((s32)MsgContigoCongratulations)
+#define MSG_COME_AGAIN ((s32)MsgContigoComeAgain)
 #else
-#define MSG_COINS_WON ((s32)MsgContigo04)
-#define MSG_COINS_LOST ((s32)MsgContigo05)
-#define MSG_READ_SIGN ((s32)MsgContigo11)
-#define MSG_CONGRATULATIONS ((s32)MsgContigo14)
-#define MSG_FIRST_PRIZE ((s32)MsgContigo15)
-#define MSG_NEXT_PRIZE ((s32)MsgContigo16)
-#define MSG_COME_AGAIN ((s32)MsgContigo17)
+#define MSG_COINS_WON ((s32)MsgContigoYaWonCoinTalkAbout)
+#define MSG_COINS_LOST ((s32)MsgContigoYaLostCoinBetterLuck)
+#define MSG_READ_SIGN ((s32)MsgContigoTheRulesAreListedOn)
+#define MSG_CONGRATULATIONS ((s32)MsgContigoCongratulations)
+#define MSG_FIRST_PRIZE ((s32)MsgContigoYouWonHereYouGo)
+#define MSG_NEXT_PRIZE ((s32)MsgContigoAndYouWonHereYou)
+#define MSG_COME_AGAIN ((s32)MsgContigoComeAgain)
 #endif
 
 struct ContigoPrizes {
@@ -2351,7 +2421,7 @@ struct ContigoPrizes {
 
 void ItemDisplay_ShowItem(s32 item, s32 count);
 
-void Contigo_InitializeRoom3(void) {
+void Contigo_InitializeLuckyDice(void) {
   s32 diff;
   s8 *list;
   s8 *prize;
@@ -2363,10 +2433,14 @@ void Contigo_InitializeRoom3(void) {
   Contigo_ShrinkActor(17);
   Contigo_ShrinkActor(19);
   Contigo_ShrinkActor(20);
-  Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(14)), 1);
-  Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(15)), 2);
-  Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(8)), 0);
-  Actor_SetSpriteColor(((struct ContigoObject *)Actor_GetById(9)), 3);
+  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_LUCKY_DICE_HOST)),
+                       1);
+  Actor_SetSpriteColor(((struct Actor *)Actor_GetById(ACTOR_LUCKY_DICE_GUIDE)),
+                       2);
+  Actor_SetSpriteColor(
+      ((struct Actor *)Actor_GetById(ACTOR_SUPER_LUCKY_DICE_HOST)), 0);
+  Actor_SetSpriteColor(
+      ((struct Actor *)Actor_GetById(ACTOR_SUPER_LUCKY_DICE_GUIDE)), 3);
   if (!Event_GetFlag(0x9e5))
     return;
   GameFlag_Clear(0x9e5);
@@ -2386,12 +2460,12 @@ void Contigo_InitializeRoom3(void) {
       Event_Wait(20);
       Event_SetMessageId(MSG_COINS_WON);
       MessageArgument_Push(diff, MESSAGE_ARGUMENT_NUMBER);
-      Event_ShowMessageAndWait(14, 0);
+      Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
       Event_SetMessageId(MSG_COINS_LOST);
       MessageArgument_Push(-diff, MESSAGE_ARGUMENT_NUMBER);
-      Event_ShowMessageAndWait(14, 0);
+      Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
     }
     Event_End();
   } else if (gMainRoutineWork.entrance == 19) {
@@ -2410,12 +2484,12 @@ void Contigo_InitializeRoom3(void) {
       Event_Wait(20);
       Event_SetMessageId(MSG_COINS_WON);
       MessageArgument_Push(diff, MESSAGE_ARGUMENT_NUMBER);
-      Event_ShowMessageAndWait(14, 0);
+      Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
       Sound_WaitForJingle();
     } else if (diff < 0) {
       Event_SetMessageId(MSG_COINS_LOST);
       MessageArgument_Push(-diff, MESSAGE_ARGUMENT_NUMBER);
-      Event_ShowMessageAndWait(14, 0);
+      Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
     }
     Event_End();
   } else if (gMainRoutineWork.entrance == 20) {
@@ -2429,10 +2503,10 @@ void Contigo_InitializeRoom3(void) {
       Contigo_SendToLuckyWheels(1);
     } else if (list[0] == -2) {
       Event_SetMessageId(MSG_READ_SIGN);
-      Event_ShowMessageAndWait(18, 0);
+      Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     } else {
       Event_SetMessageId(MSG_CONGRATULATIONS);
-      Event_ShowMessageAndWait(18, 0);
+      Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
       if (list[0] != -1) {
         prize = list;
       next:
@@ -2442,7 +2516,7 @@ void Contigo_InitializeRoom3(void) {
           Event_SetMessageId(MSG_NEXT_PRIZE);
         item = Contigo_PickTopic(*prize);
         MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
-        Event_ShowMessageAndWait(18, 0);
+        Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
         ItemDisplay_ShowItem(item, 3);
         PartyInventory_GiveItem(item, 0);
         Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
@@ -2452,7 +2526,7 @@ void Contigo_InitializeRoom3(void) {
       }
       ((struct ContigoPrizes *)&gMainRoutineWork)->list[0] = -2;
       Event_SetMessageId(MSG_COME_AGAIN);
-      Event_ShowMessageAndWait(18, 0);
+      Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     }
     Event_End();
   }
@@ -2461,22 +2535,13 @@ void Contigo_InitializeRoom3(void) {
 // The sparkle's update: raises two pairs of sprites over the object, each pair
 // starting when its counter is cleared, until both counters pass 31.
 
-struct SparkleSprite {
-  u8 unk00[12];
-  s32 unk0c;
-  s32 unk10;
-  s32 unk14;
-  s32 unk18;
-  u8 unk1c[2];
-  u16 unk1e;
-  u8 unk20[8];
-};
-
+/// The sparkle over an object: its two pairs of sprites, how far each pair has
+/// risen (from 0 to 31; 999 before it starts) and the pair to start next.
 struct SparkleWork {
-  struct SparkleSprite sprites[4];
-  s16 unka0[2];
+  struct EffectSprite sprites[4];
+  s16 heights[2];
   s16 vramEntry;
-  s16 unka6;
+  s16 nextPair;
   struct Actor *object;
 };
 
@@ -2496,19 +2561,19 @@ void Contigo_RaiseSparkle(struct Actor *object) {
   s32 i, j;
   struct SparkleWork *work = (struct SparkleWork *)object->watchedActor;
   u8 *count = (u8 *)object + 99;
-  struct SparkleSprite *sprite;
+  struct EffectSprite *sprite;
 
   if (*count & 1)
     Actor_SetSpriteColorMode(
         object, (u8)((u32)((struct CounterBits *)count)->rest % 6));
-  if (((u8 *)object)[98] == 0) {
+  if (object->riseCounter == 0) {
     if ((*count & 15) == 0) {
       Sound_Play(SE_598);
-      work->unka0[work->unka6] = 0;
-      work->unka6 ^= 1;
+      work->heights[work->nextPair] = 0;
+      work->nextPair ^= 1;
     }
-  } else if (((u8 *)object)[98] == 1) {
-    if (work->unka0[0] > 31 && work->unka0[1] > 31) {
+  } else if (object->riseCounter == 1) {
+    if (work->heights[0] > 31 && work->heights[1] > 31) {
       Actor_SetSpriteColorMode(object, 0);
       VramCache_FreeEntry(work->vramEntry);
       object->update = 0;
@@ -2517,37 +2582,36 @@ void Contigo_RaiseSparkle(struct Actor *object) {
   }
   (*count)++;
   for (i = 0; i < 2; i++) {
-    sine = Trig_Sin(work->unka0[i] << 10);
-    if (work->unka0[i] >= 0) {
-      if (work->unka0[i] <= 31) {
+    sine = Trig_Sin(work->heights[i] << 10);
+    if (work->heights[i] >= 0) {
+      if (work->heights[i] <= 31) {
         position.x = object->x.fixed;
-        position.y = object->y.fixed + (work->unka0[i] << 16);
+        position.y = object->y.fixed + px(work->heights[i]);
         position.z = object->z.fixed;
         Camera_WorldToScreen(&position);
         x = position.x;
         z = position.z;
         sprite = &work->sprites[i * 2];
         for (j = 0; j < 2; j++) {
-          sprite->unk0c = x;
-          sprite->unk10 = z;
-          sprite->unk14 = sine;
-          sprite->unk18 = sine;
+          sprite->x = x;
+          sprite->y = z;
+          sprite->scaleX = sine;
+          sprite->scaleY = sine;
           if (j == 0) {
-            sprite->unk1e = BattleEffect_GetObjectDepth(object) - 1;
+            sprite->depth = BattleEffect_GetObjectDepth(object) - 1;
           } else {
-            sprite->unk1e = BattleEffect_GetObjectDepth(object) + 1;
-            sprite->unk10 -= 0x10000;
-            sprite->unk18 = -sprite->unk18;
+            sprite->depth = BattleEffect_GetObjectDepth(object) + 1;
+            sprite->y -= px(1);
+            sprite->scaleY = -sprite->scaleY;
           }
           EffectSprite_Draw(sprite);
           sprite++;
         }
-        work->unka0[i]++;
+        work->heights[i]++;
       }
     }
   }
 }
-#undef BYTE_AT
 #undef MSG_COINS_WON
 #undef MSG_COINS_LOST
 #undef MSG_READ_SIGN
@@ -2556,81 +2620,38 @@ void Contigo_RaiseSparkle(struct Actor *object) {
 #undef MSG_NEXT_PRIZE
 #undef MSG_COME_AGAIN
 
-// The sparkle's setup, Contigo_StopSparkle, which sets byte 0x62 of an object,
-// and the overlay's data.
-
-/* VIEW(s3e54): tag struct SparkleSprite as struct SparkleSprite__s3e54;
- * contigo.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:2410: structure has no member named `blend'. */
-struct SparkleSprite__s3e54 {
-  u8 unk00[5];
-  u8 unk05_0 : 5;
-  u8 blend : 1;
-  u8 unk05_6 : 2;
-  u8 unk06[2];
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[0x1e];
-};
-
-/* VIEW(s3e54): tag struct SparkleWork as struct SparkleWork__s3e54; contigo.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja: games/tla/src/scene/contigo.c:2402:
- * incompatible types in assignment. */
-struct SparkleWork__s3e54 {
-  struct SparkleSprite__s3e54 sprites[4];
-  u16 unka0;
-  u16 unka2;
-  s16 vramEntry;
-  u16 unka6;
-  struct Actor *object;
-};
-
 /// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
 /// hands the object to its update, Contigo_RaiseSparkle.
-void Contigo_StartSparkle(struct Actor *object,
-                          struct SparkleWork__s3e54 *work) {
-  struct SparkleSprite__s3e54 *sprite;
+void Contigo_StartSparkle(struct Actor *object, struct SparkleWork *work) {
+  struct EffectSprite *sprite;
   s32 tile;
   s32 row;
   s32 col;
 
   work->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(work->vramEntry, 256, gContigo_SparkleTiles);
-  work->unka6 = 0;
-  work->unka0 = 999;
-  work->unka2 = 999;
+  work->nextPair = 0;
+  work->heights[0] = 999;
+  work->heights[1] = 999;
   work->object = object;
-  ((u8 *)object)[0x62] = 0;
-  ((u8 *)object)[0x63] = 0;
+  object->riseCounter = 0;
+  object->blockMarked = 0;
   object->update = Contigo_RaiseSparkle;
   tile = gVramCacheEntries[work->vramEntry].offset >> 5;
   object->watchedActor = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     for (col = 1, sprite = work->sprites + row + row; col >= 0; col--) {
       EffectSprite_Init(sprite, 16, 16, 0x80004000, tile);
-      sprite->blend = 0;
-      sprite->palette = 0;
-      sprite->priority = BattleEffect_GetObjectPriority(object);
+      sprite->oam.palette256 = 0;
+      sprite->oam.palette = 0;
+      sprite->oam.priority = BattleEffect_GetObjectPriority(object);
       sprite++;
     }
   }
 }
 
-/* VIEW(s3e54): tag struct ContigoObject as struct ContigoObject__s3e54;
- * contigo.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja:
- * games/tla/src/scene/contigo.c:2434: structure has no member named `unk62'. */
-struct ContigoObject__s3e54 {
-  u8 unk00[0x62];
-  u8 unk62;
-};
-
-void Contigo_StopSparkle(struct ContigoObject__s3e54 *object) {
-  object->unk62 = 1;
-}
+/// Ends the sparkle: its update finishes once both pairs have risen.
+void Contigo_StopSparkle(struct Actor *object) { object->riseCounter = 1; }
 
 // clang-format off
 s32 gContigo_SparkleTiles[] = {
@@ -2809,7 +2830,7 @@ u32 gContigo_IsaacLeavesScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gContigo_Room2WatcherScript[] = {
+s32 gContigo_ShopsWatcherScript[] = {
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x10000),
     SC_ADD(SW_SCALE_X, -Q16_ONE * 5 / 32),
@@ -2909,7 +2930,7 @@ struct ActorPlacement gContigo_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gContigo_Room1Placements[] = {
+struct ActorPlacement gContigo_VillagePlacements[] = {
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 340, 0, 936, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 88, 0, 942, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 808, FACING_EAST, TALK_FACING_PARTY, 0),
@@ -2923,7 +2944,7 @@ struct ActorPlacement gContigo_Room1Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gContigo_Room4Placements[] = {
+struct ActorPlacement gContigo_GeoglyphPlacements[] = {
     ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 846, 0, 660, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 616, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(79, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 686, 0, 756, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -2953,7 +2974,7 @@ struct ActorPlacement gContigo_Room4Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gContigo_Room2PlacementsBeforeReunion[] = {
+struct ActorPlacement gContigo_ShopsPlacementsBeforeReunion[] = {
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 84, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(107, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 88, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 112, 0, 130, FACING_SOUTH, TALK_FACING_PARTY, 0),
@@ -2978,7 +2999,7 @@ struct ActorPlacement gContigo_Room2PlacementsBeforeReunion[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gContigo_Room2PlacementsReunion[] = {
+s16 gContigo_ShopsPlacementsReunion[] = {
     59, -1, 1, 0, 0, 0, 0, 0,
     0, 0, FACING_NORTH, 2, 5, -1, 1, 0,
     0, 0, 0, 0, 0, 0, FACING_WEST, 2,
@@ -2996,7 +3017,7 @@ s16 gContigo_Room2PlacementsReunion[] = {
     0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-struct ActorPlacement gContigo_Room2Placements[] = {
+struct ActorPlacement gContigo_ShopsPlacements[] = {
     ACTOR_PLACEMENT(59, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 158, 0, 352, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(2, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(0, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3004,7 +3025,7 @@ struct ActorPlacement gContigo_Room2Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gContigo_Room3Placements[] = {
+struct ActorPlacement gContigo_LuckyDicePlacements[] = {
     ACTOR_PLACEMENT(236, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 840, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(236, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 840, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 92, 0, 902, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -3025,7 +3046,7 @@ struct Trigger gContigo_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gContigo_Room1Triggers[] = {
+struct Trigger gContigo_VillageTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 3, CONDITION_ALWAYS, 3},
@@ -3054,42 +3075,42 @@ struct Trigger gContigo_Room1Triggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 51, CONDITION_ALWAYS, EVENT(Contigo_ClearFifthHedgeRow)},
     {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Contigo_NarrowCameraBounds)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Contigo_WidenCameraBounds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), 17, 0x9e7, EVENT(Contigo_ForceFreesDjinni)},
-    {TRIGGER_TALK, 17, IF_FLAG_SET(0x9e7), EVENT(Contigo_FreedDjinniJoinsParty)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), 17, FLAG_SHINE_FREED, EVENT(Contigo_ForceFreesDjinni)},
+    {TRIGGER_TALK, 17, IF_FLAG_SET(FLAG_SHINE_FREED), EVENT(Contigo_FreedDjinniJoinsParty)},
     {TRIGGER_TALK, 8, FLAG_JUPITER_BEACON_LIT, EVENT(Contigo_AskAboutWindLegend)},
-    {TRIGGER_TALK, 8, 0x9b2, MSGNO(MsgContigo119)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigo138)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo43)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x9b2, MSGNO(MsgContigo123)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigo144)},
-    {TRIGGER_TALK, 9, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo36)},
-    {TRIGGER_TALK, 9, 0x9b2, MSGNO(MsgContigo120)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigo139)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo44)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x9b2, MSGNO(MsgContigo124)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigo145)},
-    {TRIGGER_TALK, 10, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo37)},
-    {TRIGGER_TALK, 10, 0x9b2, MSGNO(MsgContigo121)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgContigo140)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo45)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x9b2, MSGNO(MsgContigo125)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigo146)},
-    {TRIGGER_TALK, 11, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo38)},
-    {TRIGGER_TALK, 11, 0x9b2, MSGNO(MsgContigo122)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigo141)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo46)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x9b2, MSGNO(MsgContigo126)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigo147)},
-    {TRIGGER_TALK, 12, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo39)},
-    {TRIGGER_TALK, 12, 0x9b2, MSGNO(MsgContigo198)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigo202)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo47)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x9b2, MSGNO(MsgContigo200)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigo204)},
-    {TRIGGER_TALK, 13, 0x9b2, MSGNO(MsgContigo40)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgContigo142)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9b2, MSGNO(MsgContigo48)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigo148)},
+    {TRIGGER_TALK, 8, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoAreYouLookingForIsaac)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigoIGotStuckDoingChores)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoTheAnemosBloodInOur)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheyLookLikeTheyreIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigoIDidntGetToSee)},
+    {TRIGGER_TALK, 9, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoTheBeaconWithinJupiterLighthouse)},
+    {TRIGGER_TALK, 9, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoEveryonesLeftTownForThe)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigoEveryonesBeenGoingOnAbout)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoSurelySomeoneWillComeSoon)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoThePropheciesAreAllComing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigoSomePeopleWereTalkingAbout)},
+    {TRIGGER_TALK, 10, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIGuessThePeopleOf)},
+    {TRIGGER_TALK, 10, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIsThatYourBoatIt)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgContigoItMustBeSoExciting)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoThePowerOfTheWind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoItsJustLikeTheLegends)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigoICouldntFlyInThe)},
+    {TRIGGER_TALK, 11, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoThePeopleOfAnemosPossessed)},
+    {TRIGGER_TALK, 11, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoJupiterLighthouseHasBeenLit)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigoHammaWasTellingUsThat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoThereWereTwoSiblingsBorn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoWhatDoesItMeanWhen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigoIHeardThatTheWorld)},
+    {TRIGGER_TALK, 12, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoWhenThePowerOfAnemos)},
+    {TRIGGER_TALK, 12, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheLegendsTellUsThat)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigoIfAShipCanRise)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIThinkJupiterLighthouseWill)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheAncientCityOfThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigoTheCityOfTheAnemos)},
+    {TRIGGER_TALK, 13, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheAnemosGeoglyphsShowA)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgContigoISawTheShipFly)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoItsHardToBelieveBut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigoTheShipLookedLikeIt)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Contigo_TalkToWanderer)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT(Contigo_TalkToWanderer)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Contigo_TalkAboutTheShip)},
@@ -3103,41 +3124,41 @@ struct Trigger gContigo_Room1Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gContigo_Room4Triggers[] = {
+struct Trigger gContigo_GeoglyphTriggers[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 21},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(Contigo_EnterLuckyWheels)},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 14, CONDITION_ALWAYS, 23},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT(Contigo_EnterSuperLuckyDice)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigo90)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigo96)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigo91)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigo97)},
-    {TRIGGER_TALK, 10, 0x9b2, MSGNO(MsgContigo92)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgContigo188)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x9b2, MSGNO(MsgContigo98)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigo189)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigo93)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigo99)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigo94)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigo100)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgContigo95)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigo101)},
-    {TRIGGER_TALK, 14, 0x9b2, EVENT(Contigo_AskAboutGeoglyph)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgContigo190)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x9b2, MSGNO(MsgContigo106)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgContigo194)},
-    {TRIGGER_TALK, 15, 0x9b2, MSGNO(MsgContigo103)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgContigo191)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x9b2, MSGNO(MsgContigo107)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgContigo195)},
-    {TRIGGER_TALK, 16, 0x9b2, MSGNO(MsgContigo104)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgContigo192)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x9b2, MSGNO(MsgContigo108)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgContigo196)},
-    {TRIGGER_TALK, 17, 0x9b2, MSGNO(MsgContigo105)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgContigo193)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x9b2, MSGNO(MsgContigo109)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgContigo197)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigoIveComeALongWay)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigoTheGuysCarryingTheOther)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigoTheWingsAreAlmostDone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigoIveBeenReallyBusyLately)},
+    {TRIGGER_TALK, 10, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheWingsWillBeFinished)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgContigoICantBelieveThatA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoWhatDoWeDoIf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigoThatFlyingShipLookedSo)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigoWhichPartGoesWhereDoes)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigoThereAreTooManyParts)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigoYouveGottaWatchOutCause)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigoWhenIStartGettingIrritated)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgContigoJustAFewMoreTouches)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigoHowLongHaveWeBeen)},
+    {TRIGGER_TALK, 14, FLAG_SET_OUT_WITH_WINGS, EVENT(Contigo_AskAboutGeoglyph)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgContigoLookCloselyAtTheGeoglyph)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoICantEvenImagineHow)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgContigoWeAllCameTogetherAnd)},
+    {TRIGGER_TALK, 15, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoThatSignHasATranslation)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgContigoImConvincedTheresSomethingHidden)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIDontKnowIfAnyone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgContigoAllRightSoWeveFollowed)},
+    {TRIGGER_TALK, 16, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIWantToGetA)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgContigoAllTheAmazingThingsWeve)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoWouldntThatBeTerribleIf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouTapOnThe)},
+    {TRIGGER_TALK, 17, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheMerchantHammetTookThe)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgContigoHesAnOddBoyBut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoSomeoneToldMeThatHammet)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgContigoIvanWasSupposedToBe)},
     {TRIGGER_EXAMINE, 22, CONDITION_ALWAYS, EVENT(Contigo_ExamineWall)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Contigo_ReadSign)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Contigo_RevealSteps)},
@@ -3145,7 +3166,7 @@ struct Trigger gContigo_Room4Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gContigo_Room2Triggers[] = {
+struct Trigger gContigo_ShopsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3153,129 +3174,128 @@ struct Trigger gContigo_Room2Triggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 21, CONDITION_ALWAYS, 21},
-    {TRIGGER_TALK, 8, 0x9b2, MSGNO(MsgContigo51)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigo150)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x9b2, MSGNO(MsgContigo54)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigo153)},
-    {TRIGGER_TALK, 9, 0x9b2, MSGNO(MsgContigo52)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigo151)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x9b2, MSGNO(MsgContigo55)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigo154)},
-    {TRIGGER_TALK, 10, 0x9b2, MSGNO(MsgContigo53)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgContigo152)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x9b2, MSGNO(MsgContigo56)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigo155)},
-    {TRIGGER_TALK, 11, 0x9b2, MSGNO(MsgContigo57)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigo156)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x9b2, MSGNO(MsgContigo59)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigo158)},
-    {TRIGGER_TALK, 12, 0x9b2, MSGNO(MsgContigo58)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigo157)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x9b2, MSGNO(MsgContigo60)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigo159)},
+    {TRIGGER_TALK, 8, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheSiblingsWhoInheritedThe)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigoIGuessTheLighthouseWas)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheFamiliesOfChildrenWho)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigoHammaWillStayWithUs)},
+    {TRIGGER_TALK, 9, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoImSureTheYoungerBrother)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigoIvanDoesntRememberHisMother)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIvansMotherLeftHimIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigoIWonderHowIvanFeels)},
+    {TRIGGER_TALK, 10, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoMyFatherDoesntApproveOf)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgContigoFromTheLookOnIvans)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIWishICouldHave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigoSomedayImGonnaFightIvan)},
+    {TRIGGER_TALK, 11, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoLongAgoThePeopleOf)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigoBrrrBrrrItsBeenReally)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoForALongTimeNow)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigoJupiterLighthouseHasBeenCalled)},
+    {TRIGGER_TALK, 12, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoALongTimeAgoThe)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigoWinterJustEndedButIt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoEverybodyThinksThePeopleOf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigoHammaSaysThatIfIvan)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Contigo_TalkToItemMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x9b2, MSGNO(MsgContigo75)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigo177)},
-    {TRIGGER_TALK, 14, 0x9b2, MSGNO(MsgContigo61)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgContigo160)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x9b2, MSGNO(MsgContigo66)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgContigo165)},
-    {TRIGGER_TALK, 15, 0x9b2, MSGNO(MsgContigo62)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgContigo161)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x9b2, MSGNO(MsgContigo67)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgContigo166)},
-    {TRIGGER_TALK, 16, 0x9b2, MSGNO(MsgContigo63)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgContigo162)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x9b2, MSGNO(MsgContigo68)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgContigo167)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoOhHowIWantTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgContigoNowThatTheWingsAreDone)},
+    {TRIGGER_TALK, 14, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoSoonTheSiblingsWithThe)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgContigoTheLighthouseHasBeenLit)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIJustKnowIvanBecame)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgContigoIvanHasThePowerOf)},
+    {TRIGGER_TALK, 15, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoThePowerOfTheAnemos)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgContigoItsUpToThePeople)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoATerribleMisfortuneFellOn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgContigoNowThatIThinkAbout)},
+    {TRIGGER_TALK, 16, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIDontHaveAnyPowers)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgContigoMomAndDadHaveBeen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoWheneverMySisterFurrowsHer)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgContigoItsTimeToFixThose)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Contigo_BabyThinks)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x9b2, MSGNO(MsgContigo69)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgContigo168)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoBawabaItsHotIWant)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgContigoGooItsGettingColderGagoo)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Contigo_TalkToWeaponMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x9b2, MSGNO(MsgContigo71)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgContigo173)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoOfCourseTheyreHereTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgContigoIdSureLikeToSee)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Contigo_TalkToArmorMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x9b2, MSGNO(MsgContigo73)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgContigo175)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoNothingElseAroundHereIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgContigoWellIfThereArentGoing)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Contigo_TalkToInnkeeper)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo115)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x9b2, MSGNO(MsgContigo132)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgContigo182)},
-    {TRIGGER_TALK, 21, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo77)},
-    {TRIGGER_TALK, 21, 0x9b2, MSGNO(MsgContigo129)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgContigo179)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo116)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, 0x9b2, MSGNO(MsgContigo133)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgContigo183)},
-    {TRIGGER_TALK, 22, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo78)},
-    {TRIGGER_TALK, 22, 0x9b2, MSGNO(MsgContigo130)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgContigo180)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo117)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, 0x9b2, MSGNO(MsgContigo134)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgContigo184)},
-    {TRIGGER_TALK, 23, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo79)},
-    {TRIGGER_TALK, 23, 0x9b2, MSGNO(MsgContigo131)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgContigo181)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo118)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, 0x9b2, MSGNO(MsgContigo135)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgContigo185)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgContigo80)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgContigo82)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgContigo81)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgContigo83)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgContigo84)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgContigo86)},
-    {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgContigo85)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgContigo87)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoItsGoodToHaveThis)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoOnceAllOurCustomersLeave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgContigoItsGoingToBeA)},
+    {TRIGGER_TALK, 21, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoAllTheWorkOnThe)},
+    {TRIGGER_TALK, 21, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoFirstTheLighthouseIsLit)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgContigoTheInnHasBecomeSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoOnceTheWingsAreFinished)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoICantBelieveItAll)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgContigoTheInnIsBoundTo)},
+    {TRIGGER_TALK, 22, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoGottaMakeAllTheBeds)},
+    {TRIGGER_TALK, 22, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheBossSaidItWas)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgContigoGoshWeWereSoBusy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIveGotSoMuchTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoAllTheseYearsIThought)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgContigoWhatAreWeGoingTo)},
+    {TRIGGER_TALK, 23, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIfIDontMakeDinner)},
+    {TRIGGER_TALK, 23, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheyveFinishedPuttingTheWings)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgContigoNowsMyChanceToExperiment)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIMustBeTheGreatest)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoItWasKindOfImpressive)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgContigoSeeingThatShipTakeFlight)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgContigoDidYouJustArriveIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgContigoIWorkedMyselfHalfTo)},
+    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgContigoThePropheciesOfTheAnemos)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgContigoTheWingsOfAnemosAre)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgContigoImAfraidImTooOld)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgContigoIThrewMyBackOut)},
+    {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgContigoWhenIsThatMiracleOf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgContigoIWantToSeeThe)},
     {TRIGGER_TALK, 28, CONDITION_ALWAYS, EVENT(Contigo_TalkToHealer)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigo89)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, 0x9b2, MSGNO(MsgContigo137)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgContigo187)},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigo206))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigo207))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigo208))},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIfISeeTheWings)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoPerhapsIfISeeA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgContigoItWasAShockTo)},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoTheresABrightRedSoup))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoAhTheSmellOfFresh))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoContigosFamousForTheseCookies))},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gContigo_Room2ReunionTriggers[] = {
+struct Trigger gContigo_ShopsReunionTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigo170)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigo171)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgContigoNoMatterWhatHappensYou)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigoMyHeartIsWithYou)},
     {TRIGGER_STEP, 20, 0x9d1, EVENT(Contigo_ReturnToNewHome)},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigo206))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigo207))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigo208))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoTheresABrightRedSoup))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoAhTheSmellOfFresh))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoContigosFamousForTheseCookies))},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gContigo_Room3Triggers[] = {
+struct Trigger gContigo_LuckyDiceTriggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Contigo_SendToSuperLuckyDice)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigo29)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigo24)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigo30)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgContigoWhenTheyLoseTheyCall)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouWantToLearn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgContigoItsNotAToughGame)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(Contigo_ExplainSuperDice)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Contigo_AskAboutSuperDice)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigo31)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigo27)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigo32)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigo28)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigo33)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgContigoThisKidsGotUnluckyWritten)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouLoseTheHi)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgContigoItsToughToKnowWhen)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgContigoIAlmostAlwaysGetAt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgContigoICanWinICan)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(Contigo_SendToLuckyDice)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgContigo08)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgContigo02)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgContigo09)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgContigoWinningOrLosingIsPure)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgContigoReadTheSignIfYa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgContigoTheRulesForLuckyDice)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyDice)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyDiceAgain)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Contigo_TalkToWheelsAttendant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgContigo22)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgContigoHmmIWonderIfThese)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyWheels)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Contigo_ListLuckyWheelsPrizes)},
     {TRIGGER_TABLE_END},
 };
-#undef BYTE_AT
 #undef MSG_COINS_WON
 #undef MSG_COINS_LOST
 #undef MSG_READ_SIGN
@@ -3283,5 +3303,3 @@ struct Trigger gContigo_Room3Triggers[] = {
 #undef MSG_FIRST_PRIZE
 #undef MSG_NEXT_PRIZE
 #undef MSG_COME_AGAIN
-#undef ContigoEventWork
-#undef TalkActor

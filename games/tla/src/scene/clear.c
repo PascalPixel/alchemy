@@ -2,7 +2,7 @@
 /// The clear-data screen: Golden Sun's data brought over by password or link
 /// cable (Clear_EnterPassword, Clear_ReceiveByLink) and applied to Isaac's
 /// party (Clear_ApplyImportedData), with two secret button codes on its title
-/// (Clear_FollowSecretCodes).
+/// (Clear_CheckButtonCodes).
 #include "system/task.h"
 #include "flags.h"
 #include "battle/battle.h"
@@ -51,7 +51,7 @@
 #include "macros.h"
 
 /// The two secret button codes: unlocked, held and progress of each.
-extern s16 gClear_CodeEntered;
+extern s16 gClear_CodeUnlocked;
 
 extern u16 gClear_PackedKeptItems[];
 
@@ -64,13 +64,13 @@ struct Panel_02001804 {
 };
 
 extern u16 gClear_BlendFrame[];
-extern s16 gClear_SecondCodeStarted;
-extern s16 gClear_FirstCodeStep;
-extern s16 gClear_SecondCodeStep;
-extern s16 gClear_FirstCodeStarted;
-extern s16 gClear_SecondCodeDone;
-extern u16 gClear_FirstCode[];
-extern u16 gClear_SecondCode[];
+extern s16 gClear_ExtraCodeUnlocked;
+extern s16 gClear_CodeProgress;
+extern s16 gClear_ExtraCodeProgress;
+extern s16 gClear_CodeHeld;
+extern s16 gClear_ExtraCodeHeld;
+extern u16 gClear_ButtonCode[];
+extern u16 gClear_ExtraButtonCode[];
 
 s32 Clear_ReceiveByLink(void);
 
@@ -112,10 +112,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-static __inline__ void Decode_(void *source, void *destination) {
-  /* FAKEMATCH(wrapper): forwarding through the inline keeps the buffer address
-   * a constant of each call. */
-  Decompress_TaggedLz(source, destination);
+/// Decodes a tagged LZ stream (a first byte of 0 or 1) from `source` into
+/// `destination`.
+static inline s32 FieldDecompress_TaggedLz(const void *source,
+                                           void *destination) {
+  return Decompress_TaggedLz(source, destination);
 }
 
 /// The logo background, as the title's Title_LoadBackground, then the party
@@ -139,45 +140,27 @@ void Clear_LoadBackground(void) {
   res = Resource_GetTableEntry(id);
   Dma_Set(res, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   res += 0x1c0;
-  Decode_(res, Ram_MapCellBuffer);
+  FieldDecompress_TaggedLz(res, Ram_MapCellBuffer);
   Dma_Set((void *)Ram_MapCellBuffer, BG_SCREEN_BLOCK(13),
           DMA_COPY_WORDS(0x9600 / 4), REG_DMA3);
 
   map = (u16 *)0x06003000;
   tile = 0x1a0;
-  y = 0;
-row:
-  x = 0;
-column:
-  *map++ = tile++;
-  x++;
-  if (x <= 29)
-    goto column;
-  *map++ = blank;
-  *map++ = blank;
-  y++;
-  if (y <= 19)
-    goto row;
+  for (y = 0; y < 20; y++) {
+    for (x = 0; x < 30; x++)
+      *map++ = tile++;
+    *map++ = blank;
+    *map++ = blank;
+  }
   scroll = gBgScroll;
-  y = 0;
-scroll_pair:
-  scroll->y = 0;
-  scroll->x = 0;
-  scroll++;
-  y++;
-  if (y <= 3)
-    goto scroll_pair;
+  for (y = 0; y <= 3; y++) {
+    scroll->y = 0;
+    scroll->x = 0;
+    scroll++;
+  }
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   ((struct ClearWork *)Ram_HeapSlots->mapGrid)->mode = 0x1400;
-  {
-    struct Actor *leader;
-    /* FAKEMATCH(pin): the flag's zero pinned to r5 as a halfword. */
-    register u16 zero asm("r5");
-
-    leader = Actor_Get(gMainRoutineWork.leaderActorId);
-    zero = 0;
-    leader->motionFlags = zero;
-  }
+  Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
 }
 
 /// Queues an alpha blend of BG0 and the sprites over the rest whose first
@@ -205,62 +188,42 @@ void Clear_FadeInBlend(void) {
 /// Follows the two secret button codes: each held key that matches the next
 /// key of a code advances it, a wrong key starts it again, and finishing a
 /// code unlocks it with a sound.
-void Clear_FollowSecretCodes(void) {
-  if (gClear_CodeEntered == 0) {
-    /* FAKEMATCH(pin): the held keys pointer pinned to r4, with the key pinned
-     * to r3 below. */
-    register volatile u32 *held asm("r4") = &gInput.held;
-
-    if (gClear_FirstCodeStarted != 0) {
-      /* FAKEMATCH(pin): the key pinned to r3, with the pointer above. */
-      register u32 keys asm("r3") = *held;
-
-      if (keys == 0)
-        gClear_FirstCodeStarted = keys;
-    } else if (*held != 0) {
-      if (*held == gClear_FirstCode[gClear_FirstCodeStep]) {
-        gClear_FirstCodeStep++;
-        gClear_FirstCodeStarted = 1;
-        if (gClear_FirstCode[gClear_FirstCodeStep] == 0) {
-          gClear_CodeEntered = 1;
+void Clear_CheckButtonCodes(void) {
+  if (gClear_CodeUnlocked == 0) {
+    if (gClear_CodeHeld != 0) {
+      if (gInput.held == 0)
+        gClear_CodeHeld = 0;
+    } else if (gInput.held != 0) {
+      if (gInput.held == gClear_ButtonCode[gClear_CodeProgress]) {
+        gClear_CodeProgress++;
+        gClear_CodeHeld = 1;
+        if (gClear_ButtonCode[gClear_CodeProgress] == 0) {
+          gClear_CodeUnlocked = 1;
           Event_PlaySound(SE_CHIME);
         }
       } else {
-        gClear_FirstCodeStep = 0;
+        gClear_CodeProgress = 0;
       }
     }
   }
-  if (gClear_SecondCodeStarted == 0) {
-    /* FAKEMATCH(pin): the held keys pointer pinned to r4. */
-    register volatile u32 *held asm("r4") = &gInput.held;
-
-    if (gClear_SecondCodeDone != 0) {
-      /* FAKEMATCH(pin): the key pinned to r3. */
-      register u32 keys asm("r3") = *held;
-
-      if (keys == 0)
-        gClear_SecondCodeDone = keys;
-    } else if (*held != 0) {
-      if (*held == gClear_SecondCode[gClear_SecondCodeStep]) {
-        gClear_SecondCodeStep++;
-        gClear_SecondCodeDone = 1;
-        if (gClear_SecondCode[gClear_SecondCodeStep] == 0) {
-          gClear_SecondCodeStarted = 1;
+  if (gClear_ExtraCodeUnlocked == 0) {
+    if (gClear_ExtraCodeHeld != 0) {
+      if (gInput.held == 0)
+        gClear_ExtraCodeHeld = 0;
+    } else if (gInput.held != 0) {
+      if (gInput.held == gClear_ExtraButtonCode[gClear_ExtraCodeProgress]) {
+        gClear_ExtraCodeProgress++;
+        gClear_ExtraCodeHeld = 1;
+        if (gClear_ExtraButtonCode[gClear_ExtraCodeProgress] == 0) {
+          gClear_ExtraCodeUnlocked = 1;
           Event_PlaySound(SE_CHIME);
         }
       } else {
-        gClear_SecondCodeStep = 0;
+        gClear_ExtraCodeProgress = 0;
       }
     }
   }
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 s32 Clear_CanRetreat(void) {
   struct MainRoutineWork *party;
@@ -270,7 +233,7 @@ s32 Clear_CanRetreat(void) {
     return 0;
   party = &gMainRoutineWork;
 
-  if (FIELD_AT(party, s16, 0x25e) == 2)
+  if (party->sceneType == 2)
     return 0;
   mode = party->next ^ SCENE_WORLD_MAP;
   return -NONZERO(mode);
@@ -278,10 +241,6 @@ s32 Clear_CanRetreat(void) {
 
 #include "text/msg_ids.h"
 
-/* VIEW(clear): variable gData_02003860 as s16 gData_02003860; scene/shared.h
- * has u16 gData_02003860; tried as the rest of the object declares it,
- * Scene_Initialize moves: 4 of 738 instructions in tla-ja. */
-extern s16 gData_02003860__clear __asm__("gData_02003860");
 /* VIEW(clear): variable gSceneLocalState as u32 gSceneLocalState;
  * scene/shared.h has s8 gSceneLocalState[]; tried as the rest of the object
  * declares it, Scene_Initialize moves: 2 of 738 instructions in tla-ja. */
@@ -293,8 +252,6 @@ void Save_CopyFile(void);
 u32 BuildStamp_GetTime(void);
 void InventorySnapshot_Restore(void);
 void StatusScreen_Run(void);
-
-#define PARTY_WORD(party, index) FIELD_AT(party, u32, 4 * (index))
 
 #define MAP_CELL_BACKUP (Ram_MapCellBuffer + 0x3000)
 
@@ -333,7 +290,7 @@ s32 Scene_Initialize(void) {
   s32 result, i, limit, status, message, failure, recovery;
 
   Clear_LoadBackground();
-  Task_Add(Clear_FollowSecretCodes, TASK_PASS_VBLANK);
+  Task_Add(Clear_CheckButtonCodes, TASK_PASS_VBLANK);
   gFieldWork->transition = started;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -396,7 +353,7 @@ top:
       i--;
       goto open;
     }
-    if (gClear_CodeEntered != 0 || gClear_SecondCodeStarted != 0)
+    if (gClear_CodeUnlocked != 0 || gClear_ExtraCodeUnlocked != 0)
       limit = 8;
     if (++i < limit)
       goto open;
@@ -447,18 +404,18 @@ top:
       i--;
       goto close;
     }
-    if (gClear_SecondCodeStarted != 0)
+    if (gClear_ExtraCodeUnlocked != 0)
       limit = 4;
     if (++i < limit)
       goto close;
-    if (gData_02003860__clear != 0) {
+    if (gData_02003860 != 0) {
     save:
       message = (s32)MsgPlayOnEasyLevel;
       FieldMessage_Show(message, 13);
       i = YesNoMenu_Run(1, (s32)MsgYeah, YEAH_WIDTH, 0);
       Message_CloseFinishedWindows();
       if (i == 0) {
-        if (gData_02003860__clear == 0) {
+        if (gData_02003860 == 0) {
           FieldMessage_Show(message + 1, 1);
         } else {
           SAVE_CELLS();
@@ -505,7 +462,7 @@ top:
       struct MainRoutineWork *party = &gMainRoutineWork;
 
       WindowColor_Apply(party->windowHue, party->windowBrightness);
-      if (PARTY_WORD(party, 0) != BuildStamp_GetTime()) {
+      if (party->buildStamp != BuildStamp_GetTime()) {
         RETURN_TO_SAVED(party)
       } else if (mask = 0x208, (gInput.held & mask) == mask) {
         if (Clear_CanRetreat()) {
@@ -593,7 +550,7 @@ again:
       goto again;
     DataTransfer_Apply(MAP_CELL_BACKUP, 1, 1);
   }
-  if (gClear_CodeEntered != 0 || gClear_SecondCodeStarted != 0) {
+  if (gClear_CodeUnlocked != 0 || gClear_ExtraCodeUnlocked != 0) {
     i = 0;
     limit = 1;
   shut:
@@ -605,7 +562,7 @@ again:
       i--;
       goto shut;
     }
-    if (gClear_SecondCodeStarted != 0)
+    if (gClear_ExtraCodeUnlocked != 0)
       limit = 4;
     if (++i < limit)
       goto shut;
@@ -999,7 +956,7 @@ s32 Clear_EnterPassword(void) {
   s32 i;
   s32 message;
   s32 frame;
-  s32 size2;
+  s32 crcLength;
   s32 entry;
   struct WindowSprite *sprite;
   u16 *palette;
@@ -1218,13 +1175,13 @@ s32 Clear_EnterPassword(void) {
 
           action =
               Clear_ScrambleData(gClear_PasswordText, length, DECODED_PASSWORD);
-          size2 = action - 2;
-          check = Clear_Crc16(size2, DECODED_PASSWORD);
+          crcLength = action - 2;
+          check = Clear_Crc16(crcLength, DECODED_PASSWORD);
 
           state = 0;
           box = Window_Create(CHECK_WINDOW_X, 12, CHECK_WINDOW_WIDTH, 3, 2);
           crc = check;
-          if (DECODED_PASSWORD[size2] == (u16)crc >> 8 &&
+          if (DECODED_PASSWORD[crcLength] == (u16)crc >> 8 &&
               DECODED_PASSWORD[action - 1] == (u16)crc % 256) {
             Text_DrawMessageAsTiles(MSGNO(MsgFieldPasswordAccepted), box, 0, 0);
             Sound_Play(SE_MENU_CONFIRM);
@@ -1362,25 +1319,17 @@ void Clear_DrawPanel(struct Panel_02001804 *panel, const void *source) {
   offset *= 2;
   tiles = (u16 *)(offset + 0x06002000);
   shadow = (u16 *)((u8 *)shadow + offset + 8);
-  row = 0;
-next_row:
-  column = 0;
-next_column:
-  // One cell, the same tile in the map and in the shadow.
-  {
-    s16 tile = (panel->stride * row + column) | 0xf000;
+  for (row = 0; row <= 7; row++) {
+    for (column = 0; column <= 15; column++) {
+      // One cell, the same tile in the map and in the shadow.
+      s16 tile = (panel->stride * row + column) | 0xf000;
 
-    *tiles++ = tile;
-    *shadow++ = tile;
+      *tiles++ = tile;
+      *shadow++ = tile;
+    }
+    tiles += 16;
+    shadow += 16;
   }
-  column++;
-  if (column <= 15)
-    goto next_column;
-  tiles += 16;
-  shadow += 16;
-  row++;
-  if (row <= 7)
-    goto next_row;
   Heap_Release(work);
 }
 
@@ -1396,25 +1345,17 @@ void Clear_DrawLowerPanel(struct Panel_02001804 *panel) {
   offset = (panel->y * 32 + panel->x) * 2;
   tiles = (u16 *)(offset + 0x06002000);
   shadow = (u16 *)((u8 *)shadow + offset + 8);
-  row = 0;
-next_row:
-  column = 0;
-next_column:
-  // One cell, the same tile in the map and in the shadow.
-  {
-    s16 tile = (row * 16 + column + 32) | 0xf000;
+  for (row = 0; row <= 7; row++) {
+    for (column = 0; column <= 15; column++) {
+      // One cell, the same tile in the map and in the shadow.
+      s16 tile = (row * 16 + column + 32) | 0xf000;
 
-    *tiles++ = tile;
-    *shadow++ = tile;
+      *tiles++ = tile;
+      *shadow++ = tile;
+    }
+    tiles += 16;
+    shadow += 16;
   }
-  column++;
-  if (column <= 15)
-    goto next_column;
-  tiles += 16;
-  shadow += 16;
-  row++;
-  if (row <= 7)
-    goto next_row;
   Heap_Release(work);
 }
 
@@ -1742,12 +1683,12 @@ s32 Clear_PackPartyData(s32 unused, s32 mode, u8 *out) {
       out[statsOffset + 6] = stats[i * 4 + 1] >> 8;
       out[statsOffset + 7] = stats[i * 4 + 1];
       out[statsOffset + 7] |= stats[i * 4 + 2] >> 28;
-      out[statsOffset + 8] = stats[i * 4 + 2] >> 20;
+      out[statsOffset + 8] = FIELD_CELL(stats[i * 4 + 2]);
       out[statsOffset + 9] = stats[i * 4 + 2] >> 12;
       out[statsOffset + 10] = stats[i * 4 + 2] >> 4;
       out[statsOffset + 11] = stats[i * 4 + 2] << 4;
       out[statsOffset + 11] |= stats[i * 4 + 3] >> 28;
-      out[statsOffset + 12] = stats[i * 4 + 3] >> 20;
+      out[statsOffset + 12] = FIELD_CELL(stats[i * 4 + 3]);
       out[statsOffset + 13] = stats[i * 4 + 3] >> 12;
       out[statsOffset + 14] = stats[i * 4 + 3] >> 4;
       statsOffset += 15;
@@ -1756,10 +1697,10 @@ s32 Clear_PackPartyData(s32 unused, s32 mode, u8 *out) {
   out[0] = levels;
   out[1] = levels >> 8;
   out[2] = levels >> 16;
-  out[3] = ((levels >> 20) & 0xf0) | (djinn & 15);
+  out[3] = (FIELD_CELL(levels) & 0xf0) | (djinn & 15);
   out[4] = djinn >> 4;
   out[5] = djinn >> 12;
-  out[6] = djinn >> 20;
+  out[6] = FIELD_CELL(djinn);
   out[7] = flags;
   if (mode != 0)
     out[8] = found;
@@ -1851,7 +1792,7 @@ u16 Clear_Crc16(u32 length, u8 *p) {
   return ~crc;
 }
 
-u16 gClear_FirstCode[] = {
+u16 gClear_ButtonCode[] = {
     4,
     4,
     4,
@@ -1859,7 +1800,7 @@ u16 gClear_FirstCode[] = {
 };
 
 // clang-format off
-u16 gClear_SecondCode[] = {
+u16 gClear_ExtraButtonCode[] = {
     64, 128, 64, 128, 32, 16, 32, 16,
 #if (LANGUAGE == LANGUAGE_JAPANESE)
     64, 16, 128, 32, 64, 4, 0,
@@ -1925,20 +1866,18 @@ u16 gClear_BlendFrame[] = {
     0,
 };
 
-s16 gClear_CodeEntered = 0;
+s16 gClear_CodeUnlocked = 0;
 
-s16 gClear_SecondCodeStarted = 0;
+s16 gClear_ExtraCodeUnlocked = 0;
 
-s16 gClear_FirstCodeStep = 0;
+s16 gClear_CodeProgress = 0;
 
-s16 gClear_SecondCodeStep = 0;
+s16 gClear_ExtraCodeProgress = 0;
 
-s16 gClear_FirstCodeStarted = 0;
+s16 gClear_CodeHeld = 0;
 
-s16 gClear_SecondCodeDone = 0;
+s16 gClear_ExtraCodeHeld = 0;
 
-#undef FIELD_AT
-#undef PARTY_WORD
 #undef MAP_CELL_BACKUP
 #undef YEAH_WIDTH
 #undef COPY_CELLS

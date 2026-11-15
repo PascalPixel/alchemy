@@ -42,10 +42,46 @@
 /// remarks on it only then.
 #define FLAG_EOLEO_LIFTED 0x8ae
 
+/// The people and things aboard, numbering the rows of
+/// gEasternAlhafraShip_ActorPlacements whose sprites are not the party's.
+enum EasternAlhafraShipActorId {
+  ACTOR_BRIGGS = ACTOR_FIRST_PLACED,
+  /// Briggs's mate in the cabin: "He knew we needed a ship, and he knew we
+  /// went east."
+  ACTOR_BRIGGS_MATE,
+  ACTOR_CHAUCHA,
+  ACTOR_EOLEO,
+  /// The vase of flowers Eoleo lifts with Psynergy.
+  ACTOR_VASE,
+  /// The crate Move pushes out of the way (FLAG_CRATE_MOVED).
+  ACTOR_CRATE,
+  /// The stacked crates Tremor shakes the Large Bread down from.
+  ACTOR_STACKED_CRATES,
+  /// The Large Bread, an item icon.
+  ACTOR_LARGE_BREAD,
+  /// Those who come aboard after the battle, waiting off the map until then.
+  ACTOR_ALHAFRAS_MAYOR,
+  ACTOR_MADRAS_MAYOR,
+  ACTOR_MADRAS_ELDER,
+  ACTOR_MADRAN_SOLDIER,
+  /// Alhafra's soldiers.
+  ///@{
+  ACTOR_ALHAFRAN_SOLDIER,
+  ACTOR_SECOND_ALHAFRAN_SOLDIER,
+  ///@}
+  /// The rest of Briggs's crew, who come aboard with him after the battle.
+  ///@{
+  ACTOR_FIRST_PIRATE,
+  ACTOR_SECOND_PIRATE,
+  ACTOR_THIRD_PIRATE,
+  ///@}
+  ACTOR_KRADEN
+};
+
 extern struct ActorPlacement gEasternAlhafraShip_ActorPlacements[];
 void EasternAlhafraShip_BriggsIsCaught(void);
-extern u32 gEasternAlhafraShip_FirstPirateRunsScript[];
-extern s32 gEasternAlhafraShip_SecondPirateRunsScript[];
+extern u32 gEasternAlhafraShip_BriggsRunsScript[];
+extern s32 gEasternAlhafraShip_MateRunsScript[];
 
 void EasternAlhafraShip_ShakeDownTheBread(void);
 
@@ -65,8 +101,8 @@ void EasternAlhafraShip_StartMovingCrate(void) {}
 
 void EasternAlhafraShip_FinishMovingCrate(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
-  s32 x = object->x.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
 
   if (x == 24 && z == 40)
     GameFlag_Set(FLAG_CRATE_MOVED);
@@ -75,42 +111,39 @@ void EasternAlhafraShip_FinishMovingCrate(s32 unused, s32 id) {
 }
 
 void EasternAlhafraShip_ShakeDownTheBread(void) {
-  s32 v5;
-  struct Actor *object0;
-  s32 v6;
-  struct Actor *object1;
+  s32 leader;
+  s32 jump;
 
   GameFlag_Set(FLAG_BREAD_SHAKEN_DOWN);
-  v5 = &gMainRoutineWork;
-  v5 = (v5 + 0x214);
-  object0 = Actor_GetById(*(s32 *)((u8 *)v5 + 0));
-  v6 = 192;
-  v6 = (v6 << 11);
-  *(s32 *)((u8 *)object0 + 40) = v6;
-  Actor_SetSpeed(*(s32 *)((u8 *)v5 + 0), 2);
-  Actor_WalkTo(*(s32 *)((u8 *)v5 + 0), 136, 488);
+  /* FAKEMATCH(temporary): the leader's id read through its address kept as a
+   * number, so that it stays in a register. */
+  leader = (s32)&gMainRoutineWork;
+  leader += offsetof(struct MainRoutineWork, leaderActorId);
+  jump = px(6);
+  Actor_GetById(*(s32 *)leader)->velocityY = jump;
+  Actor_SetSpeed(*(s32 *)leader, 2);
+  Actor_WalkTo(*(s32 *)leader, 136, 488);
   Event_Wait(10);
-  Actor_SetDestination(15, 120, 472);
-  Actor_MoveToAndWaitById(14, 136, 475);
-  object1 = Actor_GetById(15);
-  *(s32 *)((u8 *)object1 + 40) = v6;
+  Actor_SetDestination(ACTOR_LARGE_BREAD, 120, 472);
+  Actor_MoveToAndWaitById(ACTOR_STACKED_CRATES, 136, 475);
+  Actor_GetById(ACTOR_LARGE_BREAD)->velocityY = jump;
   Sound_Play(SE_POUND);
-  Actor_WaitForMoveById(*(s32 *)((u8 *)v5 + 0));
-  Actor_SetAnimationById(*(s32 *)((u8 *)v5 + 0), 1);
-  Actor_FaceDirectionById(*(s32 *)((u8 *)v5 + 0), FACING_NORTH, 0);
+  Actor_WaitForMoveById(*(s32 *)leader);
+  Actor_SetAnimationById(*(s32 *)leader, 1);
+  Actor_FaceDirectionById(*(s32 *)leader, FACING_NORTH, 0);
   Event_Wait(20);
-  Actor_WaitForMoveById(15);
+  Actor_WaitForMoveById(ACTOR_LARGE_BREAD);
   Sound_Play(SE_DOOR_CLOSE);
   return;
 }
 
-void EasternAlhafraShip_TakeTheBread(s32 arg0) {
-  Event_PickUpItem(arg0, ITEM_LARGE_BREAD, FLAG_BREAD_TAKEN);
+void EasternAlhafraShip_TakeTheBread(s32 id) {
+  Event_PickUpItem(id, ITEM_LARGE_BREAD, FLAG_BREAD_TAKEN);
   return;
 }
 
 void EasternAlhafraShip_EoleoLifts(s32 id) {
-  struct Actor *object = Actor_GetById(12);
+  struct Actor *object = Actor_GetById(ACTOR_VASE);
   u8 *flags;
   s32 i;
 
@@ -118,7 +151,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgGooGooGa);
   // "Goo goo ga ga!"
-  Event_ShowMessageAndWait(11, 0);
+  Event_ShowMessageAndWait(ACTOR_EOLEO, 0);
   Field_StartColorTransition(8, 0x1210);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode((s32)Actor_GetById(id), 2);
@@ -127,7 +160,7 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   flags = &object->motionFlags;
   *flags = 4;
   for (i = 39; i >= 0; i--) {
-    object->y.fixed += 0x3333;
+    object->y.fixed += px(1) / 5;
     Event_Wait(1);
   }
   Event_Wait(70);
@@ -142,12 +175,12 @@ void EasternAlhafraShip_EoleoLifts(s32 id) {
   if (Event_GetFlag(FLAG_EOLEO_LIFTED) == 0) {
     GameFlag_Set(FLAG_EOLEO_LIFTED);
     Event_Wait(30);
-    Actor_FaceDirectionById(10, FACING_SOUTH_SOUTHEAST, 0);
+    Actor_FaceDirectionById(ACTOR_CHAUCHA, FACING_SOUTH_SOUTHEAST, 0);
     Event_Wait(30);
-    Actor_RunRepeatedMotion(10, 2);
+    Actor_RunRepeatedMotion(ACTOR_CHAUCHA, 2);
     Event_Wait(10);
-    Event_ShowMessageThenWait(10, 0, 10);
-    Actor_FaceDirection(10, 0xafff, 0);
+    Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
+    Actor_FaceDirection(ACTOR_CHAUCHA, 0xafff, 0);
   }
   Event_End();
 }
@@ -166,39 +199,39 @@ s32 Scene_Initialize(void) {
     EasternAlhafraShip_BriggsIsCaught();
   }
   if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED)) {
-    Actor_SetPosition(10, 0, 0);
-    Actor_SetPosition(11, 0, 0);
-    Actor_SetPosition(8, 0, 0);
-    Actor_SetPosition(9, 0, 0);
+    Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
+    Actor_SetPosition(ACTOR_EOLEO, 0, 0);
+    Actor_SetPosition(ACTOR_BRIGGS, 0, 0);
+    Actor_SetPosition(ACTOR_BRIGGS_MATE, 0, 0);
   } else if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
-    Actor_SetPosition(8, 0, 0);
-    Actor_SetPosition(9, 0, 0);
+    Actor_SetPosition(ACTOR_BRIGGS, 0, 0);
+    Actor_SetPosition(ACTOR_BRIGGS_MATE, 0, 0);
     if (!GameFlag_Get(FLAG_FAMILY_VISITED_BRIGGS)) {
-      Actor_SetPosition(10, 0, 0);
-      Actor_SetPosition(11, 0, 0);
+      Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
+      Actor_SetPosition(ACTOR_EOLEO, 0, 0);
     }
   } else {
-    Actor_SetPosition(10, 0, 0);
-    Actor_SetPosition(11, 0, 0);
+    Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
+    Actor_SetPosition(ACTOR_EOLEO, 0, 0);
   }
   if (GameFlag_Get(FLAG_CRATE_MOVED))
-    Actor_SetPosition(13, 392, 648);
-  Actor_GetById(13)->priorityFlags |= 32;
-  Actor_ShowItemIconById(15, ITEM_LARGE_BREAD);
+    Actor_SetPosition(ACTOR_CRATE, 392, 648);
+  Actor_GetById(ACTOR_CRATE)->priorityFlags |= 32;
+  Actor_ShowItemIconById(ACTOR_LARGE_BREAD, ITEM_LARGE_BREAD);
   if (!GameFlag_Get(FLAG_BREAD_SHAKEN_DOWN)) {
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      Actor_GetById(14)->priorityFlags |= 128;
-      object = Actor_GetById(15);
+      Actor_GetById(ACTOR_STACKED_CRATES)->priorityFlags |= 128;
+      object = Actor_GetById(ACTOR_LARGE_BREAD);
       object->priorityFlags |= 64;
       object->y.fixed += px(16);
       object->groundHeight += px(16);
     }
   } else {
-    Actor_SetPosition(14, 136, 475);
+    Actor_SetPosition(ACTOR_STACKED_CRATES, 136, 475);
     if (!GameFlag_Get(FLAG_BREAD_TAKEN))
-      Actor_SetPosition(15, 120, 472);
+      Actor_SetPosition(ACTOR_LARGE_BREAD, 120, 472);
     else
-      Actor_SetPosition(15, 0, 0);
+      Actor_SetPosition(ACTOR_LARGE_BREAD, 0, 0);
   }
   return 0;
 }
@@ -207,59 +240,46 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 extern u32 gEasternAlhafraShip_NoteScript[];
 
-void Actor_SelectAnimation(struct Actor020003e8 *object, s32 mode);
-void Actor_StartScript(struct Actor020003e8 *object, const void *script);
+void EasternAlhafraShip_SpawnNote(x, y, z, value, timer) s32 x, y, z;
+s16 value;
+s32 timer;
+{
+  struct Actor *object;
+  struct Sprite *sprite;
 
-void EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s16 value, s32 fifth) {
-  struct Actor020003e8 *object;
-  struct Sprite020003e8 *sprite;
-
-  object = ((struct Actor020003e8 *)Import_ActorCreate(0x1e8, x, y, z));
-  if (object != 0) {
+  object = Import_ActorCreate(0x1e8, x, y, z);
+  if (object != NULL) {
     sprite = object->sprite;
     Actor_SelectAnimation(object, 1);
     Actor_StartScript(object, gEasternAlhafraShip_NoteScript);
     object->motionFlags = 0;
-    /* FAKEMATCH(barrier): an empty asm. */
-    __asm__("");
-    object->unk5e = fifth;
-    sprite->nextFrame = 0;
+    object->wait = timer;
+    sprite->flags = 0;
     sprite->rotation = value;
   }
 }
 
-/* VIEW(s0438): routine EasternAlhafraShip_SpawnNote as s32
- * EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s32 rotation, s32 timer);
- * the definition has void EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s16
- * value, s32 fifth); tried as the definition's void
- * EasternAlhafraShip_SpawnNote(s32 x, s32 y, s32 z, s16 value, s32 fifth),
- * which the object already declares, Actor_EmitNotes moves: 2 of 79
- * instructions in tla-ja. */
-extern s32 EasternAlhafraShip_SpawnNote__s0438(
-    s32 x, s32 y, s32 z, s32 rotation,
-    s32 timer) __asm__("EasternAlhafraShip_SpawnNote");
-
 void Actor_EmitNotes(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
-  EasternAlhafraShip_SpawnNote__s0438(object->x.fixed + px(8),
-                                      object->y.fixed + px(28), object->z.fixed,
-                                      0x1000, 15);
+  EasternAlhafraShip_SpawnNote(object->x.fixed + px(8),
+                               object->y.fixed + px(28), object->z.fixed,
+                               0x1000, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  EasternAlhafraShip_SpawnNote__s0438(object->x.fixed - px(8),
-                                      object->y.fixed + px(28), object->z.fixed,
-                                      0xf000, 15);
+  EasternAlhafraShip_SpawnNote(object->x.fixed - px(8),
+                               object->y.fixed + px(28), object->z.fixed,
+                               0xf000, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  EasternAlhafraShip_SpawnNote__s0438(object->x.fixed + px(8),
-                                      object->y.fixed + px(28), object->z.fixed,
-                                      0x1000, 15);
+  EasternAlhafraShip_SpawnNote(object->x.fixed + px(8),
+                               object->y.fixed + px(28), object->z.fixed,
+                               0x1000, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
-  EasternAlhafraShip_SpawnNote__s0438(object->x.fixed - px(8),
-                                      object->y.fixed + px(28), object->z.fixed,
-                                      0xf000, 15);
+  EasternAlhafraShip_SpawnNote(object->x.fixed - px(8),
+                               object->y.fixed + px(28), object->z.fixed,
+                               0xf000, 15);
   Sound_Play(SE_LIGHT_APPEAR);
   Event_Wait(15);
 }
@@ -280,20 +300,20 @@ void EasternAlhafraShip_MayorArrives(void) {
   map->minZ = 0;
   map->maxZ = 0x4000000;
   // "The mayor of Madra? Here?"
-  Event_ShowMessageThenWait(8, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
   Actor_WalkToAndWait(ACTOR_FELIX, 456, 408);
-  FieldActor_LaunchFromLeader(25, 0, -16, FACING_SOUTH);
+  FieldActor_LaunchFromLeader(ACTOR_KRADEN, 0, -16, FACING_SOUTH);
   FieldActor_LaunchFromLeader(ACTOR_JENNA, 16, 0, FACING_SOUTH);
   FieldActor_LaunchFromLeader(ACTOR_SHEBA, 16, -16, FACING_SOUTH);
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   Event_Wait(20);
-  Actor_FaceDirectionById(25, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
   Event_Wait(40);
-  Actor_FaceDirection(25, FACING_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_SOUTHWEST, 0);
@@ -301,179 +321,185 @@ void EasternAlhafraShip_MayorArrives(void) {
   FieldCamera_MoveTo(376, CAMERA_KEEP, 416, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Actor_RunRepeatedMotion(8, 2);
+  Actor_RunRepeatedMotion(ACTOR_BRIGGS, 2);
   Event_Wait(10);
   // "You're certain?"
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_SetAnimationAndWait(9, 3);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS_MATE, 3);
   Event_Wait(20);
-  Actor_FaceDirection(8, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(30);
   // "How did he know we came to Alhafra?"
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_Jump(9, 6, 15);
-  Actor_Jump(9, 6, 23);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
+  Actor_Jump(ACTOR_BRIGGS_MATE, 6, 15);
+  Actor_Jump(ACTOR_BRIGGS_MATE, 6, 23);
   // "He knew we needed a ship, and he knew we went east. It seems pretty..."
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Actor_FaceDirection(8, FACING_SOUTH, 0);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
+  Actor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH, 0);
   Event_Wait(20);
   // "Arr... Well, yeah... When you put it that way, it does make sense..."
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_SetAnimationAndWait(9, 3);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS_MATE, 3);
   Event_Wait(10);
   // "He was looking to find the mayor of Alhafra..."
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
+  Actor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   // "He must be hoping the mayor will tell him where we are..."
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_RunRepeatedMotion(9, 2);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_BRIGGS_MATE, 2);
   Event_Wait(10);
   // "He'll probably tell the Alhafrans we're pirates, too, huh?"
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_FaceDirection(8, FACING_NORTH_NORTHWEST, 0);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(30);
   // "Pirates!? That seems a little unfair!"
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
+  Actor_ShowEmote(ACTOR_BRIGGS_MATE, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   // "What do you mean? We...are pirates, aren't we? I mean, we've taken..."
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_FaceDirection(8, FACING_SOUTH, 0);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH, 0);
   Event_Wait(20);
-  Actor_RunRepeatedMotion(8, 2);
+  Actor_RunRepeatedMotion(ACTOR_BRIGGS, 2);
   Event_Wait(10);
   // "That's only because everyone in Champa would starve otherwise! We..."
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
+  Actor_ShowEmote(ACTOR_BRIGGS_MATE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   // "Ah..."
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_SetAnimationAndWait(8, 3);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
   Event_Wait(10);
   // "And even then, it's never a lot."
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
+  Actor_ShowEmote(ACTOR_BRIGGS_MATE, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   // "Wha-What's not?"
-  Event_ShowMessageThenWait(9, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
   // "The stuff we take. We never take too much from any one town."
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_SetAnimationAndWait(9, 3);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS_MATE, 3);
   Event_Wait(10);
   // "Yeah, I guess not..."
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
+  Actor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "And why do you think that is?"
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_StartRepeatedMotion(9, 3);
-  Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
+  Actor_StartRepeatedMotion(ACTOR_BRIGGS_MATE, 3);
+  Actor_SetAttachedEffect(ACTOR_BRIGGS_MATE,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Actor_FaceDirectionById(9, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirectionById(ACTOR_BRIGGS_MATE, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(30);
   Actor_EmitNotes(9);
   Sound_Play(SE_LIGHT_APPEAR);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-  Actor_FaceDirectionById(9, FACING_NORTH_NORTHEAST, 0);
+  Actor_ShowEmote(ACTOR_BRIGGS_MATE, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
+  Actor_FaceDirectionById(ACTOR_BRIGGS_MATE, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(30);
   // "Er... Why?"
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_SetAnimationAndWait(8, 3);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
   Event_Wait(10);
   // "Because you never can tell how these wealthy towns will react. It's..."
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_RunRepeatedMotion(9, 2);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_BRIGGS_MATE, 2);
   Event_Wait(10);
   // "Hey, yeah! Which is why we didn't steal anything from Alhafra..."
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_SetAnimationAndWait(8, 3);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
   Event_Wait(10);
   // "Right! That's why we avoid the risky towns and just take what we..."
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
+  Actor_ShowEmote(ACTOR_BRIGGS_MATE, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "See? That's why you're our captain, Briggs! You've got brains coming..."
-  Event_ShowMessageThenWait(9, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   // "Hmph! There's nothing brainy about that!"
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-  Actor_FaceDirection(25, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
   Event_Wait(20);
-  Actor_StartRepeatedMotion(25, 3);
-  Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_StartRepeatedMotion(ACTOR_KRADEN, 3);
+  Actor_SetAttachedEffect(ACTOR_KRADEN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_StartRepeatedMotion(ACTOR_FELIX, 3);
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(30);
-  Actor_FaceDirectionById(8, FACING_EAST, 0);
-  Actor_FaceDirectionById(9, FACING_EAST, 0);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_BRIGGS_MATE, FACING_EAST, 0);
+  Actor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmoteById(ACTOR_BRIGGS_MATE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                      30);
   Event_Wait(20);
   // "Did you hear that? It sounded like a girl! Who's out there!?"
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_SetSpeed(8, 1.5);
-  Actor_SetSpeed(9, 1.5);
-  Actor_SetMovementTypeById(9, (s32)gEasternAlhafraShip_SecondPirateRunsScript);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
+  Actor_SetSpeed(ACTOR_BRIGGS, 1.5);
+  Actor_SetSpeed(ACTOR_BRIGGS_MATE, 1.5);
+  Actor_SetMovementTypeById(ACTOR_BRIGGS_MATE,
+                            (s32)gEasternAlhafraShip_MateRunsScript);
   Event_Wait(5);
-  Actor_SetMovementTypeById(8, (s32)gEasternAlhafraShip_FirstPirateRunsScript);
-  Actor_WaitForScriptEndById(8);
-  Actor_FaceDirection(25, FACING_SOUTH, 0);
+  Actor_SetMovementTypeById(ACTOR_BRIGGS,
+                            (s32)gEasternAlhafraShip_BriggsRunsScript);
+  Actor_WaitForScriptEndById(ACTOR_BRIGGS);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
   FieldCamera_MoveTo(448, CAMERA_KEEP, 416, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Actor_Jump(9, 6, 15);
-  Actor_Jump(9, 6, 23);
+  Actor_Jump(ACTOR_BRIGGS_MATE, 6, 15);
+  Actor_Jump(ACTOR_BRIGGS_MATE, 6, 23);
   // "What do you think you're doing?"
-  Event_ShowMessageThenWait(9, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(20);
   // "Don't you know that someone has been falsely imprisoned for your crimes?"
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "Er... What's your point?"
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(10);
   // "You have to come with us and attest to that man's innocence!"
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-  Actor_FaceDirectionById(8, FACING_EAST, 0);
-  Actor_FaceDirection(9, FACING_WEST, 0);
+  Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_BRIGGS_MATE, FACING_WEST, 0);
   Event_Wait(45);
-  Actor_FaceDirection(8, FACING_NORTH, 0);
-  Actor_FaceDirectionById(9, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_NORTH, 0);
+  Actor_FaceDirectionById(ACTOR_BRIGGS_MATE, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(20);
   // "And...why would I want to do something like that?"
-  Event_ShowMessageThenWait(8, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(10);
-  Actor_FaceDirectionById(25, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
   Event_Wait(20);
-  Actor_StartRepeatedMotion(25, 3);
-  Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_StartRepeatedMotion(ACTOR_KRADEN, 3);
+  Actor_SetAttachedEffect(ACTOR_KRADEN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(10);
-  Actor_FaceDirectionById(25, FACING_SOUTHEAST, 0);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Event_Wait(20);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   // "Oh-ho! I was hoping we could avoid any ugliness, but you leave us no..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
-  Actor_FaceDirection(25, FACING_SOUTH, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirectionById(ACTOR_SHEBA, FACING_SOUTH, 0);
   Event_Wait(20);
-  Actor_Jump(25, 6, 15);
-  Actor_Jump(25, 6, 23);
+  Actor_Jump(ACTOR_KRADEN, 6, 15);
+  Actor_Jump(ACTOR_KRADEN, 6, 23);
   // "We'll bring you in against your will if we must, but either way..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
-  Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+  Actor_ShowEmoteById(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
   Event_Wait(10);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 50);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 50);
   // "Isn't that right, Felix?"
   Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | 25, 0);
   result = FieldEvent_AskYesNoWithActorAnimation(4, 0);
@@ -492,14 +518,14 @@ void EasternAlhafraShip_MayorArrives(void) {
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   }
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
-  Actor_Jump(9, 6, 15);
-  Actor_Jump(9, 6, 23);
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_RunRepeatedMotion(8, 2);
+  Actor_Jump(ACTOR_BRIGGS_MATE, 6, 15);
+  Actor_Jump(ACTOR_BRIGGS_MATE, 6, 23);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_BRIGGS, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
-  Actor_WalkBy(8, 0, -16);
-  Actor_WalkByById(9, 0, -16);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+  Actor_WalkBy(ACTOR_BRIGGS, 0, -16);
+  Actor_WalkByById(ACTOR_BRIGGS_MATE, 0, -16);
   Event_Wait(10);
   Event_SetAfterBattleDestination(SCENE_EASTERN_ALHAFRA_SHIP, 99);
 
@@ -509,81 +535,55 @@ void EasternAlhafraShip_MayorArrives(void) {
 }
 
 void EasternAlhafraShip_BriggsIsCaught(void) {
-  struct Actor *object0;
-  struct Actor *object1;
-  struct Actor *object2;
-  struct Actor *object3;
-  struct Actor *object4;
-  struct Actor *object5;
-  s32 result6;
-  struct Actor *result7;
-  struct Actor *result8;
-  struct Actor *result9;
-  struct Actor *object10;
-  struct Actor *object11;
-  struct Actor *object12;
-  struct Actor *object13;
-  struct Actor *object14;
-  struct Actor *object15;
-  struct Actor *object16;
-  struct Actor *object17;
-  s32 result18;
-  s32 result19;
-  struct Actor *object20;
-  struct Actor *object21;
-  struct Actor *object22;
+  struct Actor *emote;
+  struct Actor *briggs;
+  struct Actor *leader;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWellThatTakes);
-  Actor_SetPosition(8, 436, 416);
-  FieldActor_SetSpriteRotationById(8, 0x4000);
-  object0 = Actor_GetById(8);
-  Actor_SetSpriteFlags((s32)object0, 0);
-  Actor_SetPosition(9, 456, 432);
-  FieldActor_SetSpriteRotationById(9, 0x8000);
-  object1 = Actor_GetById(9);
-  Actor_SetSpriteFlags((s32)object1, 0);
-  object2 = Actor_GetById(9);
-  object2->facing = FACING_SOUTH;
-  Actor_SetPosition(22, 456, 460);
-  FieldActor_SetSpriteRotationById(22, 0x8000);
-  object3 = Actor_GetById(22);
-  Actor_SetSpriteFlags((s32)object3, 0);
-  Actor_SetPosition(23, 420, 424);
-  Actor_SetSpriteRotationById(23, 0xc000);
-  object4 = Actor_GetById(23);
-  Actor_SetSpriteFlags((s32)object4, 0);
-  Actor_SetPosition(24, 388, 440);
-  Actor_SetSpriteRotationById(24, 0x4000);
-  object5 = Actor_GetById(24);
-  Actor_SetSpriteFlags((s32)object5, 0);
-  Actor_SetPosition(25, 456, 376);
+  Actor_SetPosition(ACTOR_BRIGGS, 436, 416);
+  FieldActor_SetSpriteRotationById(ACTOR_BRIGGS, 0x4000);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_BRIGGS), 0);
+  Actor_SetPosition(ACTOR_BRIGGS_MATE, 456, 432);
+  FieldActor_SetSpriteRotationById(ACTOR_BRIGGS_MATE, 0x8000);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_BRIGGS_MATE), 0);
+  Actor_GetById(ACTOR_BRIGGS_MATE)->facing = FACING_SOUTH;
+  Actor_SetPosition(ACTOR_FIRST_PIRATE, 456, 460);
+  FieldActor_SetSpriteRotationById(ACTOR_FIRST_PIRATE, 0x8000);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_FIRST_PIRATE), 0);
+  Actor_SetPosition(ACTOR_SECOND_PIRATE, 420, 424);
+  Actor_SetSpriteRotationById(ACTOR_SECOND_PIRATE, 0xc000);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_SECOND_PIRATE), 0);
+  Actor_SetPosition(ACTOR_THIRD_PIRATE, 388, 440);
+  Actor_SetSpriteRotationById(ACTOR_THIRD_PIRATE, 0x4000);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_THIRD_PIRATE), 0);
+  Actor_SetPosition(ACTOR_KRADEN, 456, 376);
   Actor_SetPosition(ACTOR_JENNA, 472, 392);
   Actor_SetPosition(ACTOR_SHEBA, 472, 376);
-  Actor_SetPosition(10, 456, 552);
-  Actor_SetPosition(21, 472, 280);
-  Actor_SetPosition(20, 440, 280);
-  Actor_SetPosition(19, 456, 296);
-  Actor_SetPosition(17, 472, 296);
-  Actor_SetPosition(18, 440, 296);
-  Actor_SetPosition(16, 456, 304);
-  Actor_SetSpeed(21, 1);
-  Actor_SetSpeed(20, 1);
-  Actor_SetSpeed(19, 1);
-  Actor_SetSpeed(17, 1);
-  Actor_SetSpeed(18, 1);
-  Actor_SetSpeed(16, 1);
+  Actor_SetPosition(ACTOR_CHAUCHA, 456, 552);
+  Actor_SetPosition(ACTOR_SECOND_ALHAFRAN_SOLDIER, 472, 280);
+  Actor_SetPosition(ACTOR_ALHAFRAN_SOLDIER, 440, 280);
+  Actor_SetPosition(ACTOR_MADRAN_SOLDIER, 456, 296);
+  Actor_SetPosition(ACTOR_MADRAS_MAYOR, 472, 296);
+  Actor_SetPosition(ACTOR_MADRAS_ELDER, 440, 296);
+  Actor_SetPosition(ACTOR_ALHAFRAS_MAYOR, 456, 304);
+  Actor_SetSpeed(ACTOR_SECOND_ALHAFRAN_SOLDIER, 1);
+  Actor_SetSpeed(ACTOR_ALHAFRAN_SOLDIER, 1);
+  Actor_SetSpeed(ACTOR_MADRAN_SOLDIER, 1);
+  Actor_SetSpeed(ACTOR_MADRAS_MAYOR, 1);
+  Actor_SetSpeed(ACTOR_MADRAS_ELDER, 1);
+  Actor_SetSpeed(ACTOR_ALHAFRAS_MAYOR, 1);
   Actor_SetSpeed(ACTOR_FELIX, 1);
-  Actor_SetSpeed(25, 1);
+  Actor_SetSpeed(ACTOR_KRADEN, 1);
   Actor_SetSpeed(ACTOR_JENNA, 1);
   Actor_SetSpeed(ACTOR_SHEBA, 1);
-  Actor_SetSpeed(10, 1);
-  Actor_SetSpeed(8, 1);
-  Actor_SetSpeed(9, 1);
-  Actor_SetSpeed(22, 1);
-  Actor_SetSpeed(23, 1);
-  Actor_SetSpeed(24, 1);
+  Actor_SetSpeed(ACTOR_CHAUCHA, 1);
+  Actor_SetSpeed(ACTOR_BRIGGS, 1);
+  Actor_SetSpeed(ACTOR_BRIGGS_MATE, 1);
+  Actor_SetSpeed(ACTOR_FIRST_PIRATE, 1);
+  Actor_SetSpeed(ACTOR_SECOND_PIRATE, 1);
+  Actor_SetSpeed(ACTOR_THIRD_PIRATE, 1);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 408, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -596,37 +596,36 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(10);
   // "And I'm willing to bet everyone Briggs has been harassing will be..."
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
-  Actor_SetAnimationAndWait(25, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   Event_Wait(10);
   // "This should set everyone in Indra at ease... They all seemed to fear..."
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
-  Actor_RunRepeatedMotion(8, 2);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_BRIGGS, 2);
   Event_Wait(10);
   // "We lost..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, 0xbfff, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, 0xc001, 0);
   Event_Wait(50);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_SOUTH, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_SOUTH, 0);
   Event_Wait(40);
-  Actor_SetAnimationAndWait(8, 4);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 4);
   // "Even pirates have honor... I'll go quietly. I won't make a scene..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
-  Actor_RunRepeatedMotion(8, 2);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_BRIGGS, 2);
   Event_Wait(10);
   // "Go on... Hand us over to Madra or Alhafra or whoever..."
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(10);
   // "Good... First off, you can tell the Madrans that the man called..."
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
   Event_Wait(10);
   // "Fine. So, what, I just have to say that Piers isn't one of my men?"
   Event_OpenMessage(8, 0);
-  result6 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (result6 == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
     Event_Wait(10);
@@ -639,265 +638,273 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
     gFieldWork->message += 1;
     Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
   }
-  Actor_RunRepeatedMotion(25, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
-  Event_ShowMessageThenWait(10, 0, 10);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  FieldCamera_FollowActor(10, 1);
+  FieldCamera_FollowActor(ACTOR_CHAUCHA, 1);
   FieldCamera_WaitForArrival();
-  Actor_WalkToAndWait(10, 456, 504);
-  Actor_WalkByAndWaitById(10, 16, 0);
-  Actor_WalkToAndWaitById(10, 472, 424);
+  Actor_WalkToAndWait(ACTOR_CHAUCHA, 456, 504);
+  Actor_WalkByAndWaitById(ACTOR_CHAUCHA, 16, 0);
+  Actor_WalkToAndWaitById(ACTOR_CHAUCHA, 472, 424);
   Event_Wait(10);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 408, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
-  Event_ShowMessageThenWait(10, 0, 10);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
-  Actor_StartRepeatedMotion(10, 3);
-  Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+  Actor_StartRepeatedMotion(ACTOR_CHAUCHA, 3);
+  Actor_SetAttachedEffect(ACTOR_CHAUCHA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Event_ShowMessageThenWait(10, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-  Actor_RunRepeatedMotion(8, 2);
+  Actor_RunRepeatedMotion(ACTOR_BRIGGS, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
-  Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-  Event_ShowMessageThenWait(10, 0, 10);
-  Actor_SetAnimationById(25, 3);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+  Actor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
+  Actor_SetAnimationById(ACTOR_KRADEN, 3);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(10, 3);
+  Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(10, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
-  Actor_SetAnimationAndWait(10, 4);
-  Event_ShowMessageThenWait(10, 0, 15);
+  Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 4);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 15);
   Actor_FaceDirection(ACTOR_FELIX, 0xbfff, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, 0xc001, 0);
   Event_Wait(50);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Event_Wait(40);
-  Actor_RunRepeatedMotion(10, 2);
+  Actor_RunRepeatedMotion(ACTOR_CHAUCHA, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(10, 0, 10);
-  Actor_SetAnimationAndWait(10, 3);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(10, 0, 10);
-  Actor_RunRepeatedMotion(8, 2);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_BRIGGS, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(10, 4);
-  Event_ShowMessageThenWait(10, 0, 10);
-  Actor_RunRepeatedMotion(25, 2);
+  Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 4);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
-  result7 = (struct Actor *)Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
-  result7->update = 0;
-  Actor_SetPositionAndResetMotion(result7, (result7->x.fixed + px(22)),
-                                  (result7->y.fixed + px(8)), result7->z.fixed);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+  emote = (struct Actor *)Actor_ShowEmote(ACTOR_BRIGGS,
+                                          EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  emote->update = 0;
+  Actor_SetPositionAndResetMotion(emote, (emote->x.fixed + px(22)),
+                                  (emote->y.fixed + px(8)), emote->z.fixed);
   Event_Wait(30);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
-  Actor_FaceDirection(10, FACING_WEST, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+  Actor_FaceDirection(ACTOR_CHAUCHA, FACING_WEST, 0);
   Event_Wait(20);
-  Event_ShowMessageThenWait(10, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-  Actor_FaceDirection(10, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
-  Actor_FaceDirectionById(25, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-  Actor_FaceDirection(25, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Event_Wait(20);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-  Actor_RunRepeatedMotion(8, 2);
+  Actor_RunRepeatedMotion(ACTOR_BRIGGS, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(10, 3);
+  Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(10, 0, 10);
-  Actor_SetAnimationAndWait(8, 4);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 20);
-  Actor_WalkByById(16, 0, 8);
-  Event_ShowMessageThenWait(17, 0, 10);
-  result8 =
-      (struct Actor *)Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  result8->update = 0;
-  Actor_SetPositionAndResetMotion(result8, (result8->x.fixed + px(22)),
-                                  (result8->y.fixed + px(8)), result8->z.fixed);
-  Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 4);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 20);
+  Actor_WalkByById(ACTOR_ALHAFRAS_MAYOR, 0, 8);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  emote = (struct Actor *)Actor_ShowEmote(
+      ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  emote->update = 0;
+  Actor_SetPositionAndResetMotion(emote, (emote->x.fixed + px(22)),
+                                  (emote->y.fixed + px(8)), emote->z.fixed);
+  Actor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
-  Actor_FaceDirection(25, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Event_Wait(20);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 304, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(30);
-  Actor_FaceDirection(16, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTHWEST, 0);
   Event_Wait(20);
-  Actor_RunRepeatedMotion(16, 2);
+  Actor_RunRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(16, 0, 10);
-  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Actor_FaceDirection(18, FACING_SOUTHEAST, 0);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
+  Actor_ShowEmote(ACTOR_MADRAS_ELDER, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_FaceDirection(ACTOR_MADRAS_ELDER, FACING_SOUTHEAST, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  Event_ShowMessageThenWait(16, 0, 10);
-  Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  Event_ShowMessageThenWait(17, 0, 10);
-  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  Event_ShowMessageThenWait(19, 0, 10);
-  Actor_FaceDirection(16, FACING_NORTH, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0,
+                                 10);
+  Actor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
+  Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_ShowEmote(ACTOR_MADRAN_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Event_ShowMessageThenWait(ACTOR_MADRAN_SOLDIER, 0, 10);
+  Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH, 0);
   Event_Wait(10);
-  Event_ShowMessageThenWait(16, 0, 10);
-  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  Event_ShowMessageThenWait(19, 0, 10);
-  Actor_SetAnimationAndWait(16, 3);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
+  Actor_ShowEmote(ACTOR_MADRAN_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Event_ShowMessageThenWait(ACTOR_MADRAN_SOLDIER, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(16, 0, 10);
-  Actor_RunRepeatedMotion(19, 2);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_MADRAN_SOLDIER, 2);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(16, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(16, 0, 10);
-  Actor_SetAnimationAndWait(19, 4);
-  Actor_RunRepeatedMotion(18, 2);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_MADRAN_SOLDIER, 4);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_ELDER, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_FaceDirection(16, FACING_NORTHWEST, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0,
+                                 10);
+  Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTHWEST, 0);
   Event_Wait(20);
-  Actor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  Event_ShowMessageThenWait(16, 0, 10);
-  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
-  Event_ShowMessageThenWait(17, 0, 10);
-  Actor_FaceDirection(16, FACING_NORTHEAST, 0);
+  Actor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
+  Actor_ShowEmote(ACTOR_MADRAS_ELDER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Actor_ShowEmote(ACTOR_MADRAN_SOLDIER, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTHEAST, 0);
   Event_Wait(20);
-  Event_ShowMessageThenWait(16, 0, 10);
-  Actor_RunRepeatedMotion(18, 2);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_ELDER, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_FaceDirection(16, FACING_NORTHWEST, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0,
+                                 10);
+  Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTHWEST, 0);
   Event_Wait(20);
-  Event_ShowMessageThenWait(16, 0, 10);
-  Actor_RunRepeatedMotion(19, 2);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_MADRAN_SOLDIER, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(19, 0, 10);
-  Actor_FaceDirection(16, FACING_NORTH, 0);
+  Event_ShowMessageThenWait(ACTOR_MADRAN_SOLDIER, 0, 10);
+  Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH, 0);
   Event_Wait(20);
-  Actor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-  Event_ShowMessageThenWait(16, 0, 10);
-  Actor_StartRepeatedMotion(18, 3);
-  Actor_SetAttachedEffect(18, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
+  Actor_StartRepeatedMotion(ACTOR_MADRAS_ELDER, 3);
+  Actor_SetAttachedEffect(ACTOR_MADRAS_ELDER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
-  Actor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Actor_FaceDirection(16, FACING_SOUTH, 0);
-  Actor_FaceDirection(17, FACING_SOUTH, 0);
-  Actor_FaceDirection(18, FACING_SOUTH, 0);
-  Actor_FaceDirection(19, FACING_SOUTH, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+  Actor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_MADRAS_ELDER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmote(ACTOR_MADRAN_SOLDIER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_ELDER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_MADRAN_SOLDIER, FACING_SOUTH, 0);
   Event_Wait(20);
   FieldCamera_MoveWithinMapBounds(px(464), -1, px(344), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(30);
-  Actor_RunRepeatedMotion(25, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
-  Actor_WalkByAndWaitById(17, 0, 16);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+  Actor_WalkByAndWaitById(ACTOR_MADRAS_MAYOR, 0, 16);
   Event_Wait(10);
-  Event_ShowMessageThenWait(17, 0, 10);
-  Actor_WalkByById(16, 0, 16);
-  Actor_WalkByAndWaitById(18, 0, 16);
-  Actor_SetAnimationById(16, 1);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_WalkByById(ACTOR_ALHAFRAS_MAYOR, 0, 16);
+  Actor_WalkByAndWaitById(ACTOR_MADRAS_ELDER, 0, 16);
+  Actor_SetAnimationById(ACTOR_ALHAFRAS_MAYOR, 1);
   Event_Wait(10);
-  FieldEvent_ShowTwoMessagesAndWait(18, 13, 1, 13, 4, 16, 17, 11, 22, 6, 0);
-  Actor_StartRepeatedMotion(16, 2);
-  Actor_RunRepeatedMotion(18, 2);
+  FieldEvent_ShowTwoMessagesAndWait(ACTOR_MADRAS_ELDER, 13, 1, 13, 4, 16, 17,
+                                    11, 22, 6, 0);
+  Actor_StartRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 2);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_ELDER, 2);
   Event_Wait(20);
-  Actor_FaceDirection(18, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(16, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_ELDER, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTHWEST, 0);
   Event_Wait(30);
-  Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Actor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 60);
-  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
-  Actor_SetAnimationAndWait(16, 4);
-  Actor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
-  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SCOWL, 70);
-  Actor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Actor_SetAnimationAndWait(16, 3);
+  Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+  Actor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 60);
+  Actor_ShowEmote(ACTOR_MADRAS_ELDER, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
+  Actor_SetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, 4);
+  Actor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
+  Actor_ShowEmote(ACTOR_MADRAS_ELDER, EMOTE_IN_FRONT | EMOTE_SCOWL, 70);
+  Actor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+  Actor_SetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, 3);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(18, 3);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_ELDER, 3);
   Event_Wait(20);
-  Actor_FaceDirection(16, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(18, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_ELDER, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(16, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(16, 0, 10);
-  Actor_SetAnimationAndWait(18, 3);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_ELDER, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_RunRepeatedMotion(19, 2);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0,
+                                 10);
+  Actor_RunRepeatedMotion(ACTOR_MADRAN_SOLDIER, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(19, 0, 10);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHWEST, 0);
+  Event_ShowMessageThenWait(ACTOR_MADRAN_SOLDIER, 0, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, 0x3fff, 0);
   Event_Wait(60);
-  Actor_FaceDirection(25, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(25, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
-  Actor_FaceDirectionById(25, 0x3fff, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+  Actor_FaceDirectionById(ACTOR_KRADEN, 0x3fff, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(20);
-  Actor_FaceDirectionById(25, FACING_NORTH, 0);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_NORTH, 0);
   Event_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(10);
@@ -905,565 +912,572 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
-  Actor_SetAnimationById(16, 3);
-  Actor_SetAnimationById(17, 3);
-  Actor_SetAnimationById(18, 3);
-  Actor_SetAnimationAndWait(19, 3);
+  Actor_SetAnimationById(ACTOR_ALHAFRAS_MAYOR, 3);
+  Actor_SetAnimationById(ACTOR_MADRAS_MAYOR, 3);
+  Actor_SetAnimationById(ACTOR_MADRAS_ELDER, 3);
+  Actor_SetAnimationAndWait(ACTOR_MADRAN_SOLDIER, 3);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(25, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
-  Actor_StartRepeatedMotion(16, 2);
-  Actor_RunRepeatedMotion(17, 2);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
+  Actor_StartRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 2);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
   Event_Wait(10);
-  FieldEvent_ShowTwoMessagesAndWait(17, 12, 1, 25, 4, 16, 9, 11, 14, 6, 0);
-  Actor_StartRepeatedMotion(17, 3);
-  Actor_SetAttachedEffect(17, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_StartRepeatedMotion(16, 3);
+  FieldEvent_ShowTwoMessagesAndWait(ACTOR_MADRAS_MAYOR, 12, 1, 25, 4, 16, 9, 11,
+                                    14, 6, 0);
+  Actor_StartRepeatedMotion(ACTOR_MADRAS_MAYOR, 3);
+  Actor_SetAttachedEffect(ACTOR_MADRAS_MAYOR,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_StartRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 3);
   FieldEffect_SetAttached(16, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Actor_FaceDirection(16, FACING_NORTHEAST, 0);
-  Actor_FaceDirectionById(17, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTHEAST, 0);
+  Actor_FaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(16, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, 3);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(17, 3);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_MAYOR, 3);
   Event_Wait(20);
-  Actor_FaceDirectionById(16, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(ACTOR_ALHAFRAS_MAYOR, FACING_SOUTH, 0);
   Event_Wait(30);
-  Actor_RunRepeatedMotion(17, 2);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(17, 0, 10);
-  Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  Event_ShowMessageThenWait(17, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 432, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  result9 =
-      (struct Actor *)Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  emote = (struct Actor *)Actor_ShowEmote(ACTOR_BRIGGS,
+                                          EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   {
-    s32 x = result9->x.fixed;
-    s32 y = result9->y.fixed;
-    result9->update = 0;
-    Actor_SetPositionAndResetMotion(result9, x + px(22), y + px(8),
-                                    result9->z.fixed);
+    s32 x = emote->x.fixed;
+    s32 y = emote->y.fixed;
+    emote->update = 0;
+    Actor_SetPositionAndResetMotion(emote, x + px(22), y + px(8),
+                                    emote->z.fixed);
   }
   Event_Wait(50);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 344, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Actor_RunRepeatedMotion(16, 2);
+  Actor_RunRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(16, 0, 10);
-  Actor_SetAnimationAndWait(16, 4);
-  Event_ShowMessageThenWait(16, 0, 10);
-  Actor_Jump(18, 6, 15);
-  Actor_Jump(18, 6, 23);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, 4);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
+  Actor_Jump(ACTOR_MADRAS_ELDER, 6, 15);
+  Actor_Jump(ACTOR_MADRAS_ELDER, 6, 23);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0,
+                                 10);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 424, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Actor_RunRepeatedMotion(8, 2);
+  Actor_RunRepeatedMotion(ACTOR_BRIGGS, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
-  Actor_FaceDirection(25, FACING_SOUTH, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   Event_Wait(30);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
-  object10 = Actor_GetById(8);
-  Actor_SetPositionFixed(8, ((*(s16 *)((u8 *)object10 + 10) << 16) + 0x140000),
-                         ((*(s16 *)((u8 *)object10 + 18) << 16) + 0x80000));
-  Actor_SetSpriteRotationById(8, 0);
-  object11 = Actor_GetById(8);
-  Actor_SetSpriteFlags((s32)object11, 1);
-  Actor_FaceDirection(8, FACING_NORTH, 0);
-  Actor_Jump(8, 6, 40);
-  Actor_SetAnimationAndWait(8, 4);
-  Actor_SetPosition(9, 456, 440);
-  Actor_SetSpriteRotationById(9, 0);
-  object12 = Actor_GetById(9);
-  Actor_SetSpriteFlags((s32)object12, 1);
-  Actor_SetPosition(22, 456, 456);
-  Actor_SetSpriteRotationById(22, 0);
-  object13 = Actor_GetById(22);
-  Actor_SetSpriteFlags((s32)object13, 1);
-  Actor_SetPosition(23, 424, 424);
-  Actor_SetSpriteRotationById(23, 0);
-  object14 = Actor_GetById(23);
-  Actor_SetSpriteFlags((s32)object14, 1);
-  Actor_SetPosition(24, 408, 440);
-  Actor_SetSpriteRotationById(24, 0);
-  object15 = Actor_GetById(24);
-  Actor_SetSpriteFlags((s32)object15, 1);
-  Actor_FaceDirection(9, FACING_NORTH, 0);
-  Actor_FaceDirection(22, FACING_NORTH, 0);
-  Actor_FaceDirection(23, FACING_NORTH, 0);
-  Actor_FaceDirection(24, FACING_NORTH, 0);
-  Actor_Jump(22, 6, 0);
-  Actor_Jump(23, 6, 0);
-  Actor_Jump(24, 6, 0);
-  Actor_Jump(9, 6, 40);
-  Actor_SetAnimationById(22, 4);
-  Actor_SetAnimationById(23, 4);
-  Actor_SetAnimationById(24, 4);
-  Actor_SetAnimationAndWait(9, 4);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+  briggs = Actor_GetById(ACTOR_BRIGGS);
+  Actor_SetPosition(ACTOR_BRIGGS, briggs->x.part[0].pixel + 20,
+                    briggs->z.part[0].pixel + 8);
+  Actor_SetSpriteRotationById(ACTOR_BRIGGS, 0);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_BRIGGS), 1);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_NORTH, 0);
+  Actor_Jump(ACTOR_BRIGGS, 6, 40);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 4);
+  Actor_SetPosition(ACTOR_BRIGGS_MATE, 456, 440);
+  Actor_SetSpriteRotationById(ACTOR_BRIGGS_MATE, 0);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_BRIGGS_MATE), 1);
+  Actor_SetPosition(ACTOR_FIRST_PIRATE, 456, 456);
+  Actor_SetSpriteRotationById(ACTOR_FIRST_PIRATE, 0);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_FIRST_PIRATE), 1);
+  Actor_SetPosition(ACTOR_SECOND_PIRATE, 424, 424);
+  Actor_SetSpriteRotationById(ACTOR_SECOND_PIRATE, 0);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_SECOND_PIRATE), 1);
+  Actor_SetPosition(ACTOR_THIRD_PIRATE, 408, 440);
+  Actor_SetSpriteRotationById(ACTOR_THIRD_PIRATE, 0);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_THIRD_PIRATE), 1);
+  Actor_FaceDirection(ACTOR_BRIGGS_MATE, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_FIRST_PIRATE, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_SECOND_PIRATE, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_THIRD_PIRATE, FACING_NORTH, 0);
+  Actor_Jump(ACTOR_FIRST_PIRATE, 6, 0);
+  Actor_Jump(ACTOR_SECOND_PIRATE, 6, 0);
+  Actor_Jump(ACTOR_THIRD_PIRATE, 6, 0);
+  Actor_Jump(ACTOR_BRIGGS_MATE, 6, 40);
+  Actor_SetAnimationById(ACTOR_FIRST_PIRATE, 4);
+  Actor_SetAnimationById(ACTOR_SECOND_PIRATE, 4);
+  Actor_SetAnimationById(ACTOR_THIRD_PIRATE, 4);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS_MATE, 4);
   Event_Wait(10);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 368, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Actor_RunRepeatedMotion(17, 2);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(17, 0, 10);
-  Actor_SetAnimationAndWait(8, 4);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
-  Actor_RunRepeatedMotion(18, 2);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 4);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_ELDER, 2);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0,
+                                 10);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 400, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Actor_RunRepeatedMotion(10, 2);
+  Actor_ShowEmoteById(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  Actor_RunRepeatedMotion(ACTOR_CHAUCHA, 2);
   Event_Wait(10);
-  Actor_FaceDirection(10, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_CHAUCHA, FACING_WEST, 0);
   Event_Wait(20);
-  Event_ShowMessageThenWait(10, 0, 10);
-  Actor_FaceDirectionById(8, FACING_EAST, 0);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
+  Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_EAST, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
-  Actor_RunRepeatedMotion(10, 2);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_CHAUCHA, 2);
   Event_Wait(20);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_HEART, 40);
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 8, 0, 10);
-  Actor_SetAnimationAndWait(10, 3);
+  Actor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_HEART, 40);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 3);
   Event_Wait(30);
-  Actor_FaceDirectionById(8, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_SOUTH, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(9, 3);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS_MATE, 3);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(22, 3);
+  Actor_SetAnimationAndWait(ACTOR_FIRST_PIRATE, 3);
   Event_Wait(10);
-  Actor_FaceDirectionById(8, FACING_SOUTHWEST, 0);
+  Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_SOUTHWEST, 0);
   Event_Wait(15);
-  Actor_SetAnimationById(23, 3);
-  Actor_SetAnimationAndWait(24, 3);
+  Actor_SetAnimationById(ACTOR_SECOND_PIRATE, 3);
+  Actor_SetAnimationAndWait(ACTOR_THIRD_PIRATE, 3);
   Event_Wait(20);
   Event_Wait(20);
-  Actor_WalkByAndWait(8, 16, -16);
-  Actor_FaceDirection(10, FACING_NORTH_NORTHWEST, 0);
-  Actor_WalkBy(9, 0, -32);
-  Actor_WalkBy(22, 0, -32);
-  Actor_WalkByById(23, 16, 0);
-  Actor_WalkByAndWait(24, 16, -16);
+  Actor_WalkByAndWait(ACTOR_BRIGGS, 16, -16);
+  Actor_FaceDirection(ACTOR_CHAUCHA, FACING_NORTH_NORTHWEST, 0);
+  Actor_WalkBy(ACTOR_BRIGGS_MATE, 0, -32);
+  Actor_WalkBy(ACTOR_FIRST_PIRATE, 0, -32);
+  Actor_WalkByById(ACTOR_SECOND_PIRATE, 16, 0);
+  Actor_WalkByAndWait(ACTOR_THIRD_PIRATE, 16, -16);
   Actor_WalkBy(ACTOR_JENNA, -16, -32);
   Actor_WalkByAndWait(ACTOR_SHEBA, -16, -32);
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_STAND);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST, 0);
-  Actor_FaceDirectionById(25, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
-  Actor_WalkByById(9, 16, 0);
-  Actor_WalkBy(22, 0, -16);
-  Actor_WalkByById(23, 16, 0);
-  Actor_WalkByById(24, 16, 0);
-  Actor_WalkByAndWait(8, 0, -16);
+  Actor_WalkByById(ACTOR_BRIGGS_MATE, 16, 0);
+  Actor_WalkBy(ACTOR_FIRST_PIRATE, 0, -16);
+  Actor_WalkByById(ACTOR_SECOND_PIRATE, 16, 0);
+  Actor_WalkByById(ACTOR_THIRD_PIRATE, 16, 0);
+  Actor_WalkByAndWait(ACTOR_BRIGGS, 0, -16);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 384, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Actor_FaceDirection(9, FACING_NORTH, 0);
-  Actor_FaceDirection(23, FACING_NORTH, 0);
-  Actor_FaceDirection(8, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_BRIGGS_MATE, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_SECOND_PIRATE, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_WEST, 0);
   Event_Wait(20);
-  Event_ShowMessageThenWait(8, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
   Actor_StartRepeatedMotion(ACTOR_FELIX, 3);
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Actor_FaceDirection(8, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_NORTH, 0);
   Event_Wait(20);
-  Actor_WalkBy(9, 0, -16);
-  Actor_WalkByById(22, 16, 0);
-  Actor_WalkBy(23, 0, -16);
-  Actor_WalkByById(24, 16, 0);
-  Actor_WalkByAndWait(8, 0, -16);
-  Actor_WalkBy(9, 0, -16);
-  Actor_WalkBy(22, 0, -16);
-  Actor_WalkByById(23, 16, 0);
-  Actor_WalkBy(24, 0, -16);
-  Actor_WalkByAndWait(8, 0, -16);
-  Actor_WalkBy(9, 0, -16);
-  Actor_WalkBy(22, 0, -16);
-  Actor_WalkBy(23, 0, -16);
-  Actor_WalkByById(24, 16, 0);
-  Actor_WalkByAndWait(8, 0, -16);
+  Actor_WalkBy(ACTOR_BRIGGS_MATE, 0, -16);
+  Actor_WalkByById(ACTOR_FIRST_PIRATE, 16, 0);
+  Actor_WalkBy(ACTOR_SECOND_PIRATE, 0, -16);
+  Actor_WalkByById(ACTOR_THIRD_PIRATE, 16, 0);
+  Actor_WalkByAndWait(ACTOR_BRIGGS, 0, -16);
+  Actor_WalkBy(ACTOR_BRIGGS_MATE, 0, -16);
+  Actor_WalkBy(ACTOR_FIRST_PIRATE, 0, -16);
+  Actor_WalkByById(ACTOR_SECOND_PIRATE, 16, 0);
+  Actor_WalkBy(ACTOR_THIRD_PIRATE, 0, -16);
+  Actor_WalkByAndWait(ACTOR_BRIGGS, 0, -16);
+  Actor_WalkBy(ACTOR_BRIGGS_MATE, 0, -16);
+  Actor_WalkBy(ACTOR_FIRST_PIRATE, 0, -16);
+  Actor_WalkBy(ACTOR_SECOND_PIRATE, 0, -16);
+  Actor_WalkByById(ACTOR_THIRD_PIRATE, 16, 0);
+  Actor_WalkByAndWait(ACTOR_BRIGGS, 0, -16);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 336, 1);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirection(25, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(20);
-  Actor_RunRepeatedMotion(17, 2);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(17, 0, 10);
-  Actor_RunRepeatedMotion(9, 2);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_BRIGGS_MATE, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  Event_ShowMessageThenWait(22, 0, 10);
-  Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS_MATE, 0, 10);
+  Actor_ShowEmote(ACTOR_FIRST_PIRATE, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Event_ShowMessageThenWait(ACTOR_FIRST_PIRATE, 0, 10);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Actor_FaceDirection(8, FACING_NORTH, 0);
+  Actor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
+  Actor_ShowEmote(ACTOR_FIRST_PIRATE, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_SECOND_PIRATE, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_THIRD_PIRATE, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Actor_ShowEmote(ACTOR_BRIGGS_MATE, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_NORTH, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_FaceDirection(8, FACING_SOUTH_SOUTHWEST, 0);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 416, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Actor_StartRepeatedMotion(10, 3);
-  Actor_SetAttachedEffect(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_StartRepeatedMotion(ACTOR_CHAUCHA, 3);
+  Actor_SetAttachedEffect(ACTOR_CHAUCHA,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(50);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 336, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Actor_FaceDirectionById(8, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(30);
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_SetAnimationAndWait(17, 3);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_MAYOR, 3);
   Event_Wait(20);
-  Actor_FaceDirectionById(17, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_EAST, 0);
   Event_Wait(10);
-  object16 = Actor_GetById(17);
-  object16->steeringFlags &= 254;
-  Actor_WalkToAndWaitById(17, 456, 312);
+  Actor_GetById(ACTOR_MADRAS_MAYOR)->steeringFlags &= 254;
+  Actor_WalkToAndWaitById(ACTOR_MADRAS_MAYOR, 456, 312);
   Event_Wait(1);
-  object17 = Actor_GetById(17);
-  object17->steeringFlags |= 1;
+  Actor_GetById(ACTOR_MADRAS_MAYOR)->steeringFlags |= 1;
   Event_Wait(20);
-  Actor_WalkBy(9, 0, -16);
-  Actor_WalkBy(22, 0, -16);
-  Actor_WalkBy(23, 0, -16);
-  Actor_WalkBy(24, 0, -16);
-  Actor_WalkByAndWait(8, 0, -16);
-  Actor_FaceDirection(8, FACING_WEST, 0);
+  Actor_WalkBy(ACTOR_BRIGGS_MATE, 0, -16);
+  Actor_WalkBy(ACTOR_FIRST_PIRATE, 0, -16);
+  Actor_WalkBy(ACTOR_SECOND_PIRATE, 0, -16);
+  Actor_WalkBy(ACTOR_THIRD_PIRATE, 0, -16);
+  Actor_WalkByAndWait(ACTOR_BRIGGS, 0, -16);
+  Actor_FaceDirection(ACTOR_BRIGGS, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_FaceDirectionById(16, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_ALHAFRAS_MAYOR, FACING_EAST, 0);
   Event_Wait(20);
-  Actor_RunRepeatedMotion(16, 2);
+  Actor_RunRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 16, 0, 10);
-  Actor_SetAnimationAndWait(18, 3);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_ALHAFRAS_MAYOR, 0,
+                            10);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_ELDER, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_FaceDirectionById(16, FACING_NORTHWEST, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0,
+                                 10);
+  Actor_FaceDirectionById(ACTOR_ALHAFRAS_MAYOR, FACING_NORTHWEST, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(16, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, 3);
   Event_Wait(30);
-  Actor_FaceDirectionById(16, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_ALHAFRAS_MAYOR, FACING_EAST, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
   Event_Wait(20);
-  Actor_WalkBy(9, 0, -32);
-  Actor_WalkBy(22, 0, -32);
-  Actor_WalkBy(23, 0, -32);
-  Actor_WalkBy(24, 0, -32);
-  Actor_WalkByAndWait(8, 0, -32);
-  Actor_FaceDirectionById(19, FACING_EAST, 0);
-  Actor_FaceDirection(16, FACING_NORTH, 0);
-  Actor_FaceDirectionById(8, FACING_WEST, 0);
+  Actor_WalkBy(ACTOR_BRIGGS_MATE, 0, -32);
+  Actor_WalkBy(ACTOR_FIRST_PIRATE, 0, -32);
+  Actor_WalkBy(ACTOR_SECOND_PIRATE, 0, -32);
+  Actor_WalkBy(ACTOR_THIRD_PIRATE, 0, -32);
+  Actor_WalkByAndWait(ACTOR_BRIGGS, 0, -32);
+  Actor_FaceDirectionById(ACTOR_MADRAN_SOLDIER, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH, 0);
+  Actor_FaceDirectionById(ACTOR_BRIGGS, FACING_WEST, 0);
   Event_Wait(20);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 296, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Actor_RunRepeatedMotion(19, 2);
+  Actor_RunRepeatedMotion(ACTOR_MADRAN_SOLDIER, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(19, 0, 10);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_FaceDirectionById(18, FACING_NORTHEAST, 0);
+  Event_ShowMessageThenWait(ACTOR_MADRAN_SOLDIER, 0, 10);
+  Actor_ShowEmote(ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Event_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
+  Actor_FaceDirectionById(ACTOR_MADRAS_ELDER, FACING_NORTHEAST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(18, 3);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_ELDER, 3);
   Event_Wait(10);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_StartRepeatedMotion(19, 3);
-  Actor_SetAttachedEffect(19, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0,
+                                 10);
+  Actor_StartRepeatedMotion(ACTOR_MADRAN_SOLDIER, 3);
+  Actor_SetAttachedEffect(ACTOR_MADRAN_SOLDIER,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Actor_FaceDirectionById(19, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirectionById(ACTOR_MADRAN_SOLDIER, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(19, 3);
+  Actor_SetAnimationAndWait(ACTOR_MADRAN_SOLDIER, 3);
   Event_Wait(20);
-  Actor_RunRepeatedMotion(18, 2);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_ELDER, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 18, 0, 10);
-  Actor_ShowEmote(19, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  Event_ShowMessageThenWait(19, 0, 10);
-  Actor_FaceDirectionById(17, FACING_NORTH, 0);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_ELDER, 0, 10);
+  Actor_ShowEmote(ACTOR_MADRAN_SOLDIER, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Event_ShowMessageThenWait(ACTOR_MADRAN_SOLDIER, 0, 10);
+  Actor_FaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_NORTH, 0);
   Event_Wait(20);
-  Actor_RunRepeatedMotion(17, 2);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(17, 0, 10);
-  Actor_SetAnimationAndWait(19, 3);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_MADRAN_SOLDIER, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(19, 0, 10);
-  Actor_SetAnimationById(17, 3);
-  Actor_SetAnimationAndWait(18, 3);
-  Actor_SetSpeed(19, 1.8);
-  Actor_WalkByAndWait(19, 0, -32);
-  Actor_WalkByAndWait(19, -16, 0);
-  Actor_SetPosition(19, 0, 0);
+  Event_ShowMessageThenWait(ACTOR_MADRAN_SOLDIER, 0, 10);
+  Actor_SetAnimationById(ACTOR_MADRAS_MAYOR, 3);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_ELDER, 3);
+  Actor_SetSpeed(ACTOR_MADRAN_SOLDIER, 1.8);
+  Actor_WalkByAndWait(ACTOR_MADRAN_SOLDIER, 0, -32);
+  Actor_WalkByAndWait(ACTOR_MADRAN_SOLDIER, -16, 0);
+  Actor_SetPosition(ACTOR_MADRAN_SOLDIER, 0, 0);
   Event_Wait(20);
-  Actor_WalkByAndWaitById(20, 16, 16);
-  Actor_FaceDirectionById(20, FACING_EAST, 0);
+  Actor_WalkByAndWaitById(ACTOR_ALHAFRAN_SOLDIER, 16, 16);
+  Actor_FaceDirectionById(ACTOR_ALHAFRAN_SOLDIER, FACING_EAST, 0);
   Event_Wait(10);
-  Actor_RunRepeatedMotion(20, 2);
+  Actor_RunRepeatedMotion(ACTOR_ALHAFRAN_SOLDIER, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(20, 0, 10);
-  Actor_SetAnimationAndWait(8, 3);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAN_SOLDIER, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_BRIGGS, 3);
   Event_Wait(20);
-  Actor_SetMovementTypeById(21, gEasternAlhafraShip_LeaveTheDeckScript);
+  Actor_SetMovementTypeById(ACTOR_SECOND_ALHAFRAN_SOLDIER,
+                            gEasternAlhafraShip_LeaveTheDeckScript);
   Event_Wait(10);
-  Actor_SetMovementTypeById(8, gEasternAlhafraShip_LeaveTheDeckScript);
+  Actor_SetMovementTypeById(ACTOR_BRIGGS,
+                            gEasternAlhafraShip_LeaveTheDeckScript);
   Event_Wait(10);
-  Actor_SetMovementTypeById(9, gEasternAlhafraShip_LeaveTheDeckScript);
+  Actor_SetMovementTypeById(ACTOR_BRIGGS_MATE,
+                            gEasternAlhafraShip_LeaveTheDeckScript);
   Event_Wait(10);
-  Actor_SetMovementTypeById(22, gEasternAlhafraShip_LeaveTheDeckScript);
+  Actor_SetMovementTypeById(ACTOR_FIRST_PIRATE,
+                            gEasternAlhafraShip_LeaveTheDeckScript);
   Event_Wait(10);
-  Actor_SetMovementTypeById(23, gEasternAlhafraShip_LeaveTheDeckScript);
+  Actor_SetMovementTypeById(ACTOR_SECOND_PIRATE,
+                            gEasternAlhafraShip_LeaveTheDeckScript);
   Event_Wait(10);
-  Actor_SetMovementTypeById(24, gEasternAlhafraShip_LeaveTheDeckScript);
+  Actor_SetMovementTypeById(ACTOR_THIRD_PIRATE,
+                            gEasternAlhafraShip_LeaveTheDeckScript);
   Event_Wait(75);
-  Actor_WalkByAndWaitById(20, 16, 0);
-  Actor_WalkByAndWait(20, 0, -32);
-  Actor_WalkByAndWait(20, -32, 0);
-  Actor_SetPosition(20, 0, 0);
+  Actor_WalkByAndWaitById(ACTOR_ALHAFRAN_SOLDIER, 16, 0);
+  Actor_WalkByAndWait(ACTOR_ALHAFRAN_SOLDIER, 0, -32);
+  Actor_WalkByAndWait(ACTOR_ALHAFRAN_SOLDIER, -32, 0);
+  Actor_SetPosition(ACTOR_ALHAFRAN_SOLDIER, 0, 0);
   Event_Wait(30);
-  Actor_FaceDirection(18, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(17, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_ELDER, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_SOUTH, 0);
   Event_Wait(30);
-  Actor_RunRepeatedMotion(16, 2);
+  Actor_RunRepeatedMotion(ACTOR_ALHAFRAS_MAYOR, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(16, 0, 10);
-  Actor_FaceDirection(16, FACING_NORTHWEST, 0);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
+  Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTHWEST, 0);
   Event_Wait(20);
-  Event_ShowMessageThenWait(16, 0, 10);
-  Actor_SetAnimationAndWait(18, 3);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_ELDER, 3);
   Event_Wait(10);
-  Actor_WalkByAndWaitById(16, 16, 0);
-  Actor_WalkBy(16, 0, -32);
-  Actor_WalkByAndWait(18, 0, -16);
-  Actor_WalkByAndWaitById(18, 16, 0);
-  Actor_FaceDirection(18, FACING_NORTH, 0);
-  Actor_FaceDirection(17, FACING_NORTH, 0);
+  Actor_WalkByAndWaitById(ACTOR_ALHAFRAS_MAYOR, 16, 0);
+  Actor_WalkBy(ACTOR_ALHAFRAS_MAYOR, 0, -32);
+  Actor_WalkByAndWait(ACTOR_MADRAS_ELDER, 0, -16);
+  Actor_WalkByAndWaitById(ACTOR_MADRAS_ELDER, 16, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_ELDER, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_NORTH, 0);
   Event_Wait(10);
-  Actor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Actor_FaceDirection(16, FACING_SOUTH, 0);
+  Actor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_SOUTH, 0);
   Event_Wait(20);
-  Event_ShowMessageThenWait(16, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 320, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  Actor_RunRepeatedMotion(25, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(10);
-  Actor_FaceDirection(17, FACING_SOUTH, 0);
-  Actor_FaceDirection(18, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_ELDER, FACING_SOUTH, 0);
   Actor_WalkByById(ACTOR_FELIX, 16, 0);
-  Actor_WalkByAndWaitById(25, 16, 0);
+  Actor_WalkByAndWaitById(ACTOR_KRADEN, 16, 0);
   Actor_WalkBy(ACTOR_FELIX, 0, -32);
-  Actor_WalkByAndWait(25, 0, -32);
+  Actor_WalkByAndWait(ACTOR_KRADEN, 0, -32);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(25, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(16, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(16, 0, 10);
-  Actor_SetAnimationAndWait(25, 3);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   Event_Wait(20);
-  Actor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  Event_ShowMessageThenWait(16, 0, 10);
-  Actor_ShowEmoteById(25, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-  Actor_SetAnimationAndWait(16, 3);
+  Actor_ShowEmote(ACTOR_ALHAFRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
+  Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
+  Actor_SetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(16, 0, 10);
-  Actor_FaceDirectionById(16, FACING_WEST, 0);
+  Event_ShowMessageThenWait(ACTOR_ALHAFRAS_MAYOR, 0, 10);
+  Actor_FaceDirectionById(ACTOR_ALHAFRAS_MAYOR, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(16, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALHAFRAS_MAYOR, 3);
   Event_Wait(20);
-  Actor_FaceDirectionById(18, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_MADRAS_ELDER, FACING_EAST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(18, 3);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_ELDER, 3);
   Event_Wait(10);
-  Actor_WalkBy(16, 0, -32);
-  Actor_WalkByAndWait(18, 0, -32);
-  Actor_WalkBy(16, -32, 0);
-  Actor_WalkByAndWait(18, -16, 0);
-  Actor_SetPosition(18, 0, 0);
-  Actor_WaitForMoveById(16);
-  Actor_SetPosition(16, 0, 0);
+  Actor_WalkBy(ACTOR_ALHAFRAS_MAYOR, 0, -32);
+  Actor_WalkByAndWait(ACTOR_MADRAS_ELDER, 0, -32);
+  Actor_WalkBy(ACTOR_ALHAFRAS_MAYOR, -32, 0);
+  Actor_WalkByAndWait(ACTOR_MADRAS_ELDER, -16, 0);
+  Actor_SetPosition(ACTOR_MADRAS_ELDER, 0, 0);
+  Actor_WaitForMoveById(ACTOR_ALHAFRAS_MAYOR);
+  Actor_SetPosition(ACTOR_ALHAFRAS_MAYOR, 0, 0);
   Event_Wait(20);
-  Actor_FaceDirection(17, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_NORTH, 0);
   Event_Wait(30);
-  Event_ShowMessageThenWait(17, 0, 10);
-  Actor_FaceDirection(17, FACING_SOUTH_SOUTHEAST, 0);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(17, 3);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_MAYOR, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(17, 0, 10);
-  Actor_SetAnimationById(25, 3);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_SetAnimationById(ACTOR_KRADEN, 3);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(30);
-  Actor_RunRepeatedMotion(17, 2);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(17, 0, 10);
-  Actor_FaceDirection(25, FACING_SOUTH_SOUTHEAST, 0);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirectionById(ACTOR_SHEBA, 0x4001, 0);
   Event_Wait(30);
-  Actor_SetAnimationById(25, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, 3);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(20);
-  Actor_FaceDirection(25, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Actor_FaceDirectionById(ACTOR_SHEBA, FACING_NORTH, 0);
   Event_Wait(40);
-  Actor_WalkByAndWaitById(17, -32, -8);
+  Actor_WalkByAndWaitById(ACTOR_MADRAS_MAYOR, -32, -8);
   Event_Wait(20);
-  Actor_FaceDirection(17, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_NORTHWEST, 0);
   Event_Wait(30);
-  Actor_FaceDirectionById(17, FACING_SOUTHWEST, 0);
+  Actor_FaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_SOUTHWEST, 0);
   Event_Wait(30);
-  Actor_FaceDirection(17, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_NORTHWEST, 0);
   Event_Wait(30);
-  Actor_WalkByAndWait(17, 24, -16);
+  Actor_WalkByAndWait(ACTOR_MADRAS_MAYOR, 24, -16);
   Event_Wait(20);
-  Actor_FaceDirection(17, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_NORTHWEST, 0);
   Event_Wait(30);
-  Actor_FaceDirectionById(17, FACING_NORTHEAST, 0);
+  Actor_FaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_NORTHEAST, 0);
   Event_Wait(30);
-  Actor_FaceDirectionById(17, FACING_NORTHWEST, 0);
+  Actor_FaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_NORTHWEST, 0);
   Event_Wait(30);
-  Actor_WalkByAndWaitById(17, 16, 16);
-  Actor_FaceDirection(17, FACING_SOUTH, 0);
+  Actor_WalkByAndWaitById(ACTOR_MADRAS_MAYOR, 16, 16);
+  Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_SOUTH, 0);
   Event_Wait(20);
-  Event_ShowMessageThenWait(17, 0, 10);
-  Actor_SetAnimationAndWait(17, 3);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_MAYOR, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(17, 0, 10);
-  Actor_RunRepeatedMotion(17, 2);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
   Event_Wait(10);
-  Event_ShowMessageThenWait(17, 0, 10);
-  Actor_FaceDirectionById(25, FACING_SOUTH, 0);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_SOUTH, 0);
   Event_Wait(20);
-  Actor_RunRepeatedMotion(25, 2);
+  Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(10);
   Event_OpenMessage(25, 0);
-  result18 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (result18 == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(30);
-    Actor_SetAnimationAndWait(25, 3);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
     Event_Wait(10);
-    Actor_FaceDirectionById(25, FACING_NORTH_NORTHWEST, 0);
+    Actor_FaceDirectionById(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(17, 4);
-    Event_ShowMessageThenWait(17, 0, 10);
+    Actor_SetAnimationAndWait(ACTOR_MADRAS_MAYOR, 4);
+    Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
     gFieldWork->message += 1;
   } else {
     Event_Wait(40);
     EasternAlhafraShip_CountAnswer();
-    Actor_FaceDirectionById(25, FACING_NORTH_NORTHWEST, 0);
+    Actor_FaceDirectionById(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(17, 3);
+    Actor_SetAnimationAndWait(ACTOR_MADRAS_MAYOR, 3);
     Event_Wait(20);
     gFieldWork->message += 1;
-    Event_ShowMessageThenWait(17, 0, 10);
+    Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
   }
-  Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
-  Event_ShowMessageThenWait(17, 0, 10);
+  Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
   Actor_EmitNotes(17);
-  Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
-  Event_ShowMessageThenWait(17, 0, 10);
-  Actor_SetAnimationAndWait(17, 3);
+  Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_MAYOR, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(17, 0, 10);
-  Actor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
-  Event_ShowMessageThenWait(17, 0, 10);
-  Actor_SetAnimationAndWait(17, 3);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_MAYOR, 3);
   Event_Wait(20);
-  Actor_SetAnimationById(25, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, 3);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(20);
-  Actor_WalkByAndWait(17, 0, -40);
-  Actor_WalkByAndWait(17, -24, 0);
-  Actor_SetPosition(17, 0, 0);
+  Actor_WalkByAndWait(ACTOR_MADRAS_MAYOR, 0, -40);
+  Actor_WalkByAndWait(ACTOR_MADRAS_MAYOR, -24, 0);
+  Actor_SetPosition(ACTOR_MADRAS_MAYOR, 0, 0);
   Event_Wait(20);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 400, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(30);
-  Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
-  Event_ShowMessageThenWait(10, 0, 10);
-  Actor_FaceDirection(25, FACING_SOUTH, 0);
+  Actor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   Event_Wait(30);
-  Actor_ShowEmoteById(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-  Actor_StartRepeatedMotion(10, 3);
+  Actor_ShowEmoteById(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
+  Actor_StartRepeatedMotion(ACTOR_CHAUCHA, 3);
   FieldEffect_SetAttached(10, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Event_ShowMessageThenWait(10, 0, 10);
-  Actor_SetAnimationAndWait(10, 3);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(10, 0, 10);
-  Actor_SetAnimationById(25, 3);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
+  Actor_SetAnimationById(ACTOR_KRADEN, 3);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(10, 3);
+  Actor_SetAnimationAndWait(ACTOR_CHAUCHA, 3);
   Event_Wait(10);
-  Event_ShowMessageThenWait(10, 0, 10);
-  Actor_WalkToAndWait(10, 472, 376);
-  FieldCamera_FollowActor(10, 1);
+  Event_ShowMessageThenWait(ACTOR_CHAUCHA, 0, 10);
+  Actor_WalkToAndWait(ACTOR_CHAUCHA, 472, 376);
+  FieldCamera_FollowActor(ACTOR_CHAUCHA, 1);
   Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
-  Actor_WalkBy(25, -16, -32);
+  Actor_WalkBy(ACTOR_KRADEN, -16, -32);
   Actor_WalkByAndWait(ACTOR_FELIX, -16, -32);
-  Actor_SetAnimationById(25, 1);
-  Actor_FaceDirectionById(25, FACING_EAST, 0);
+  Actor_SetAnimationById(ACTOR_KRADEN, 1);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
-  Actor_WalkToAndWait(10, 472, 320);
+  Actor_WalkToAndWait(ACTOR_CHAUCHA, 472, 320);
   Actor_WalkBy(ACTOR_JENNA, 16, -32);
   Actor_WalkBy(ACTOR_SHEBA, 16, -32);
-  Actor_FaceDirection(25, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
-  Actor_WalkToAndWait(10, 472, 264);
+  Actor_WalkToAndWait(ACTOR_CHAUCHA, 472, 264);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH_NORTHWEST, 0);
-  Actor_WalkToAndWait(10, 440, 264);
-  Actor_SetPosition(10, 0, 0);
+  Actor_WalkToAndWait(ACTOR_CHAUCHA, 440, 264);
+  Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
   Event_Wait(30);
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_JENNA, 2);
@@ -1473,12 +1487,12 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(25);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(10);
-  Actor_FaceDirectionById(25, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_SOUTH, 0);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
   Event_Wait(20);
-  Actor_ShowEmote(25, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
@@ -1488,17 +1502,16 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_EAST, 0);
-  Actor_FaceDirectionById(25, FACING_SOUTHEAST, 0);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Event_Wait(20);
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 25, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
   Actor_FaceDirectionById(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   Event_Wait(10);
   Event_OpenMessage(6, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
-  result19 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (result19 == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
     Event_Wait(20);
@@ -1510,44 +1523,44 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
     gFieldWork->message += 1;
     Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   }
-  Actor_SetAnimationById(25, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, 3);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(30);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_WALK);
-  object20 = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object20 != 0) {
-    Actor_SetDestinationById(ACTOR_JENNA, *(s16 *)((u8 *)object20 + 10),
-                             *(s16 *)((u8 *)object20 + 18));
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestinationById(ACTOR_JENNA, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_WALK);
-  object21 = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object21 != 0) {
-    Actor_SetDestinationById(ACTOR_SHEBA, *(s16 *)((u8 *)object21 + 10),
-                             *(s16 *)((u8 *)object21 + 18));
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestinationById(ACTOR_SHEBA, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
-  Actor_SetSpeed(25, 1.2);
-  Actor_SetAnimationById(25, 2);
-  object22 = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object22 != 0) {
-    Actor_SetDestinationById(25, *(s16 *)((u8 *)object22 + 10),
-                             *(s16 *)((u8 *)object22 + 18));
+  Actor_SetSpeed(ACTOR_KRADEN, 1.2);
+  Actor_SetAnimationById(ACTOR_KRADEN, 2);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
   }
-  Actor_WaitForMoveById(25);
-  Actor_SetPosition(25, 0, 0);
+  Actor_WaitForMoveById(ACTOR_KRADEN);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Event_End();
   return;
 }
 
 // clang-format off
-u32 gEasternAlhafraShip_FirstPirateRunsScript[] = {
+u32 gEasternAlhafraShip_BriggsRunsScript[] = {
     SC_ANIMATION(2),
     SC_MOVE_BY(32, 0, 0),
     SC_SYNC,
@@ -1565,7 +1578,7 @@ u32 gEasternAlhafraShip_FirstPirateRunsScript[] = {
     SC_END,
 };
 
-s32 gEasternAlhafraShip_SecondPirateRunsScript[] = {
+s32 gEasternAlhafraShip_MateRunsScript[] = {
     SC_ANIMATION(2),
     SC_MOVE_BY(32, 0, 0),
     SC_SYNC,

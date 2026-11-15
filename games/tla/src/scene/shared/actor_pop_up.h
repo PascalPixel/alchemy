@@ -6,7 +6,7 @@ s32 Actor_PopUp(struct Actor *object) {
     Event_PlaySound(SE_WHOOSH);
     Actor_SelectAnimation(object->watchedActor, 2);
     object->y.fixed =
-        Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) + 0x100000;
+        Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) + px(16);
     object->scaleX = frame;
     object->scaleY = frame;
     object->speedLimit = px(1);

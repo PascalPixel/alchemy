@@ -24,55 +24,37 @@
 
 extern struct Actor *gWorldMap_PlacedActors[];
 
-/// The event countdown takes before when the party leader's x is less than
-/// that of the object in slot - 100 of the overlay's table, else after.
-void WorldMap_SetCountdownByX(s32 slot, s32 before, s32 after) {
-  /* FAKEMATCH(pin): after copied to r6 on entry. */
-  register s32 elseValue asm("r6") = after;
-  struct Actor *target = gWorldMap_PlacedActors[slot - 100];
-  struct Actor *owner;
+/// Chooses a passage exit from the leader's east-west approach: exitBefore
+/// while the leader is west of the placed object in slot - 100, else exitAfter.
+void WorldMap_SetCountdownByX(s32 slot, s32 exitBefore, s32 exitAfter) {
   struct FieldWork *work;
+  struct Actor *area;
+  struct Actor *leader;
 
-  /* FAKEMATCH(barrier): ⚓️ loads gMainRoutineWork's address before it builds
-   * the currentOwner offset. */
-  asm volatile("");
-  {
-    /* FAKEMATCH(pin): before copied to r7 after the barrier, beside the call.
-     */
-    register s32 thenValue asm("r7") = before;
-
-    owner = Actor_Get(gMainRoutineWork.leaderActorId);
-    work = Ram_HeapSlots->fieldWork;
-    if (owner->x.fixed < target->x.fixed)
-      work->exit = thenValue;
-    else
-      work->exit = elseValue;
+  area = gWorldMap_PlacedActors[slot - 100];
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  work = Ram_HeapSlots->fieldWork;
+  if (leader->x.fixed < area->x.fixed) {
+    work->exit = exitBefore;
+  } else {
+    work->exit = exitAfter;
   }
   Event_PlaySound(SE_MAP_EXIT);
 }
 
-/// The same on z.
-void WorldMap_SetCountdownByZ(s32 slot, s32 before, s32 after) {
-  /* FAKEMATCH(pin): after copied to r6 on entry. */
-  register s32 elseValue asm("r6") = after;
-  struct Actor *target = gWorldMap_PlacedActors[slot - 100];
-  struct Actor *owner;
+/// Chooses a passage exit from the leader's north-south approach.
+void WorldMap_SetCountdownByZ(s32 slot, s32 exitBefore, s32 exitAfter) {
   struct FieldWork *work;
+  struct Actor *area;
+  struct Actor *leader;
 
-  /* FAKEMATCH(barrier): ⚓️ loads gMainRoutineWork's address before it builds
-   * the currentOwner offset. */
-  asm volatile("");
-  {
-    /* FAKEMATCH(pin): before copied to r7 after the barrier, beside the call.
-     */
-    register s32 thenValue asm("r7") = before;
-
-    owner = Actor_Get(gMainRoutineWork.leaderActorId);
-    work = Ram_HeapSlots->fieldWork;
-    if (owner->z.fixed < target->z.fixed)
-      work->exit = thenValue;
-    else
-      work->exit = elseValue;
+  area = gWorldMap_PlacedActors[slot - 100];
+  leader = Actor_Get(gMainRoutineWork.leaderActorId);
+  work = Ram_HeapSlots->fieldWork;
+  if (leader->z.fixed < area->z.fixed) {
+    work->exit = exitBefore;
+  } else {
+    work->exit = exitAfter;
   }
   Event_PlaySound(SE_MAP_EXIT);
 }
@@ -171,7 +153,7 @@ void WorldMap_UpdatePlacedActors(void) {
           object->facing = placement->angle;
           Import_ActorSelectAnimation(object, 1);
           sprite = object->sprite;
-          sprite->scale = Iwram_MulQ16(sprite->scale, 0xc000);
+          sprite->scale = Iwram_MulQ16(sprite->scale, Q16_ONE * 3 / 4);
           *slot = object;
         }
         if (gMainRoutineWork.ownerOverride == 0) {
@@ -237,7 +219,7 @@ s32 WorldMap_RiseFromAnchor(struct Actor *object) {
 
   if (step > 31)
     return 0;
-  scale = Iwram_MulQ16(Math_Sin(step << 10), 0x14000);
+  scale = Iwram_MulQ16(Math_Sin(step << 10), Q16_ONE * 5 / 4);
   object->scaleX = scale;
   object->scaleY = scale;
   object->x.fixed = parent->x.fixed;
@@ -256,11 +238,9 @@ void Actor_StartScript(struct Actor *object, const s32 *script);
 void WorldMap_SpawnSparkPair(struct Actor *object) {
   struct Actor *spark;
   struct FieldSprite *sprite;
-  s32 (*mulQ16)(s32 a, s32 b) = Iwram_MulQ16;
 
-  /* FAKEMATCH(temporary): the resident multiply called through a local pointer.
-   */
-  mulQ16(object->scaleX, 0x18000);
+  // DEAD: a scale multiplied and dropped; the ROM keeps the call.
+  Math_MulQ16(object->scaleX, Q16_ONE * 3 / 2);
   spark =
       FieldActor_Create(271, object->x.fixed, object->y.fixed, object->z.fixed);
   if (spark != NULL) {
@@ -300,7 +280,7 @@ void WorldMap_SpawnParticle(struct Actor *object) {
   struct Actor *particle;
   struct FieldSprite *sprite;
 
-  Iwram_MulQ16(object->scaleX, 0x18000);
+  Iwram_MulQ16(object->scaleX, Q16_ONE * 3 / 2);
   SET_VECTOR(position, object->x.fixed, object->y.fixed + px(2),
              object->z.fixed);
   angle = Random16();
@@ -311,9 +291,9 @@ void WorldMap_SpawnParticle(struct Actor *object) {
     sprite = particle->sprite;
     Actor_StartScript(particle, gWorldMap_ParticleScript);
     Sprite_StartAnimation(sprite, 2);
-    particle->gravity = 0x200;
-    particle->scaleX = 0xcccc;
-    particle->scaleY = 0xcccc;
+    particle->gravity = px(1) / 128;
+    particle->scaleX = Q16_ONE * 4 / 5;
+    particle->scaleY = Q16_ONE * 4 / 5;
     if (sprite != NULL)
       sprite->nextFrame = 0;
   }

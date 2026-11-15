@@ -22,8 +22,8 @@ void CrackedTile_DropIn(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = 0xa3d7;
-  options.startScaleY = 0xa3d7;
+  options.startScaleX = Q16_ONE * 16 / 25;
+  options.startScaleY = Q16_ONE * 16 / 25;
   i = 0;
   do {
     s32 angle;
@@ -34,8 +34,8 @@ void CrackedTile_DropIn(void) {
     velocity[1] = 0;
     velocity[2] = Math_Sin(angle);
     velocity[0] += velocity[0] >> 1;
-    velocity[0] += (Random16() * 0xc000 >> 16) - 0x6000;
-    velocity[2] += (Random16() * 0x6000 >> 16) - 0x3000;
+    velocity[0] += (Random16() * (px(3) / 4) >> 16) - (px(3) / 8);
+    velocity[2] += (Random16() * (px(3) / 8) >> 16) - (px(3) / 16);
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
                       velocity[0], velocity[1], velocity[2], 0x1090001,
                       &options);

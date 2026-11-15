@@ -7,15 +7,6 @@
 #include "types.h"
 #include "field/scene_tables.h"
 
-struct MarkedBlock {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x63 - 0x14];
-  u8 unk63;
-};
-
 struct AirsRockMapLayer {
   u8 unk00[0x30];
   u8 *cells;
@@ -29,21 +20,21 @@ struct AirsRockMapWork {
 
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y);
 
-extern s16 gAirsRock_Room1Regions[];
-extern s16 gAirsRock_Room2Regions[];
-extern struct ActorPlacement gAirsRock_Room1Placements[];
-extern struct ActorPlacement gAirsRock_Room2Placements[];
-extern struct ActorPlacement gAirsRock_Placements[];
-extern struct Trigger gAirsRock_Room1Triggers[];
-extern struct Trigger gAirsRock_Room2Triggers[];
-extern struct Trigger gAirsRock_Triggers[];
+extern s16 gAirsRock_StormBrandChestRegions[];
+extern s16 gAirsRock_EntranceRegions[];
+extern struct ActorPlacement gAirsRock_StormBrandChestPlacements[];
+extern struct ActorPlacement gAirsRock_EntrancePlacements[];
+extern struct ActorPlacement gAirsRock_FujinShieldChestPlacements[];
+extern struct Trigger gAirsRock_StormBrandChestTriggers[];
+extern struct Trigger gAirsRock_EntranceTriggers[];
+extern struct Trigger gAirsRock_FujinShieldChestTriggers[];
 
 void AirsRock_DriftFog(void);
 void AirsRock_LiftFog(void);
 
 void AirsRock_ScrollWave(void);
 
-extern s16 gAirsRock_Room2Pillars[];
+extern s16 gAirsRock_EntrancePillars[];
 extern s16 gAirsRock_FrozenPuddle[];
 
 extern s8 gAirsRock_FogAlpha;

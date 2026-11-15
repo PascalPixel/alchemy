@@ -65,6 +65,17 @@ struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 
 #include "../field/field_effect_move.c"
 
+/// The entrance room (gAnemosInnerSanctumEntrance_Room1Placements).
+enum AnemosInnerSanctumEntranceActorId {
+  /// "I am the shadow, the keeper of light."
+  ACTOR_SHADOW = ACTOR_FIRST_PLACED,
+  /// The six stone beasts set in place before the way opens.
+  ACTOR_FIRST_STATUE,
+  ACTOR_BLUE_ORB = ACTOR_FIRST_STATUE + 6,
+  /// The room's fourteen torches.
+  ACTOR_FIRST_TORCH
+};
+
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
@@ -119,7 +130,7 @@ void AnemosInnerSanctumEntrance_ShadowChallenges(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_StartRepeatedMotion(8, 2);
+  Actor_StartRepeatedMotion(ACTOR_SHADOW, 2);
   Event_Wait(20);
   PaletteFade_SetSource(0x10000, 0);
   PaletteFade_SetTarget(0x10003, 1);
@@ -134,7 +145,7 @@ void AnemosInnerSanctumEntrance_ShadowChallenges(void) {
 }
 
 void AnemosInnerSanctumEntrance_GlowRises(void) {
-  struct Actor *object = Actor_GetById(15);
+  struct Actor *object = Actor_GetById(ACTOR_BLUE_ORB);
 
   object->motionFlags = 0;
   object->scaleX = Q16_ONE / 4;
@@ -142,14 +153,15 @@ void AnemosInnerSanctumEntrance_GlowRises(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_LIGHT_APPEAR);
-  Actor_SetSpriteColor(Actor_GetById(8), 7);
-  Actor_SetSpriteColor(Actor_GetById(15), 7);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_SHADOW), 7);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_BLUE_ORB), 7);
   Event_Wait(20);
   Sound_Play(SE_WARP);
-  Actor_MoveToObject(15, 8);
+  Actor_MoveToObject(ACTOR_BLUE_ORB, 8);
   wait(1);
-  Actor_SetMovementTypeById(8, gAnemosInnerSanctumEntrance_ShadowScript);
-  Actor_SetMovementTypeAndWaitById(15,
+  Actor_SetMovementTypeById(ACTOR_SHADOW,
+                            gAnemosInnerSanctumEntrance_ShadowScript);
+  Actor_SetMovementTypeAndWaitById(ACTOR_BLUE_ORB,
                                    gAnemosInnerSanctumEntrance_GlowGrowsScript);
   Actor_SetMovementTypeAndWaitById(
       15, gAnemosInnerSanctumEntrance_GlowShrinksScript);
@@ -172,8 +184,8 @@ void AnemosInnerSanctumEntrance_PlaceStatues(void) {
 }
 
 void AnemosInnerSanctumEntrance_ShowByHeight(struct Actor *object) {
-  if ((object->groundHeight = Map_GetTerrainHeight(
-           0, object->x.fixed, object->z.fixed)) >= -0x200000)
+  if ((object->groundHeight = Map_GetTerrainHeight(0, object->x.fixed,
+                                                   object->z.fixed)) >= -px(32))
     Actor_SetSpriteFlags(object, 1);
   else
     Actor_SetSpriteFlags(object, 0);
@@ -190,14 +202,14 @@ void AnemosInnerSanctumEntrance_MoveStatue(s32 a, s32 b) {
   for (i = 9; i <= 14; i++) {
     struct Actor *object = Actor_GetById(i);
 
-    if (object->x.fixed >> 20 != *x)
+    if (FIELD_CELL(object->x.fixed) != *x)
       return;
     {
       s32 cellZ = *z;
 
       z += 2;
       x += 2;
-      if (object->z.fixed >> 20 != cellZ)
+      if (FIELD_CELL(object->z.fixed) != cellZ)
         return;
     }
   }
@@ -228,7 +240,7 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
   s32 shift = 0x1300000;
   s32 i;
 
-  if (object->z.fixed >> 20 <= 9)
+  if (FIELD_CELL(object->z.fixed) <= 9)
     shift = -shift;
   Event_ResolvePendingActions(0);
   if (!GameFlag_Get(FLAG_SCENE_TEMP_00))
@@ -238,9 +250,9 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
     return;
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
 #if TLA_PATCH_1
-  FieldActor_SetMoveTargetFixed(object, (object->x.fixed & 0xfff00000) + px(8),
-                                object->y.fixed,
-                                (object->z.fixed & 0xfff00000) + px(8));
+  FieldActor_SetMoveTargetFixed(
+      object, (object->x.fixed & FIELD_CELL_MASK) + px(8), object->y.fixed,
+      (object->z.fixed & FIELD_CELL_MASK) + px(8));
 #endif
   {
     s32 id = gMainRoutineWork.leaderActorId;
@@ -256,11 +268,11 @@ next:
   {
     object = Actor_GetById(gAnemosInnerSanctumEntrance_StatueOrder[i]);
     object->motionFlags = 0;
-    object->y.fixed += 0x8000;
+    object->y.fixed += px(1) / 2;
     object->acceleration = px(1) / 16;
     object->speedLimit = px(2);
     Actor_SetSpriteFlags(object, 1);
-    Actor_SetMoveTarget(object, object->x.fixed, 0xfff80000, object->z.fixed);
+    Actor_SetMoveTarget(object, object->x.fixed, -px(8), object->z.fixed);
     object->update = AnemosInnerSanctumEntrance_ShowByHeight;
     Sound_Play(SE_JUMP);
     wait((Random16() * 4 >> 16) + 3);
@@ -276,18 +288,18 @@ lower:
     {
       s32 z = object->z.fixed - shift;
 
-      Actor_SetMoveTarget(object, object->x.fixed, 0xfff80000, z);
+      Actor_SetMoveTarget(object, object->x.fixed, -px(8), z);
     }
   }
   if (++i <= 14)
     goto lower;
-  Actor_WaitForMove(Actor_GetById(9));
+  Actor_WaitForMove(Actor_GetById(ACTOR_FIRST_STATUE));
   wait(40);
   i = 9;
 land:
   {
     object = Actor_GetById(i);
-    object->z.fixed = (object->z.fixed & 0xfff00000) + 0x80000;
+    object->z.fixed = (object->z.fixed & FIELD_CELL_MASK) + px(8);
     object->motionFlags = 3;
     object->update = 0;
   }
@@ -321,33 +333,28 @@ static __inline__ void SetObjectValue(s32 id, s32 value) {
   LightSprites_Add(id, v);
 }
 
-/// Sets the event route to 0x204. In the first room, gives objects 9 to 14
+/// Sets the event route to 0x204. In the first room, gives the six statues
 /// their values and priority bits, and under flag 0x200 runs
 /// AnemosInnerSanctumEntrance_PlaceStatues. Under flag 0x201, runs a screen
 /// transition and AnemosInnerSanctumEntrance_GlowRises, then clears the flag.
 s32 Scene_Initialize(void) {
-  s32 *route = &gFieldWork->transition;
-  s32 value = 0x204;
-
-  /* FAKEMATCH(barrier): an empty asm after the address and the value. */
-  __asm__("");
-  *route = value;
+  gFieldWork->transition = 0x204;
   if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance) {
     AnemosInnerSanctumEntrance_StartLightSprites();
     AnemosInnerSanctumEntrance_SetLightLevel(2);
-    SetObjectValue(9, 0);
-    SetObjectValue(10, 1);
-    SetObjectValue(11, 2);
-    SetObjectValue(12, 3);
-    SetObjectValue(13, 128);
-    SetObjectValue(14, 129);
+    SetObjectValue(ACTOR_FIRST_STATUE, 0);
+    SetObjectValue(ACTOR_FIRST_STATUE + 1, 1);
+    SetObjectValue(ACTOR_FIRST_STATUE + 2, 2);
+    SetObjectValue(ACTOR_FIRST_STATUE + 3, 3);
+    SetObjectValue(ACTOR_FIRST_STATUE + 4, 128);
+    SetObjectValue(ACTOR_FIRST_STATUE + 5, 129);
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x40;
-    Actor_GetById(9)->priorityFlags |= 0xc0;
-    Actor_GetById(10)->priorityFlags |= 0x80;
-    Actor_GetById(11)->priorityFlags |= 0x80;
-    Actor_GetById(12)->priorityFlags |= 0x80;
-    Actor_GetById(13)->priorityFlags |= 0x80;
-    Actor_GetById(14)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_FIRST_STATUE)->priorityFlags |= 0xc0;
+    Actor_GetById(ACTOR_FIRST_STATUE + 1)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_FIRST_STATUE + 2)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_FIRST_STATUE + 3)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_FIRST_STATUE + 4)->priorityFlags |= 0x80;
+    Actor_GetById(ACTOR_FIRST_STATUE + 5)->priorityFlags |= 0x80;
     if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
       AnemosInnerSanctumEntrance_SetLightPicture(1);
       AnemosInnerSanctumEntrance_PlaceStatues();
@@ -388,7 +395,7 @@ void LightSprites_Draw(void) {
 
     if (actor != 0 && actor->x.fixed != 0) {
       s32 ox = actor->x.fixed - viewX;
-      s32 y = actor->y.fixed - viewY + 0x80000;
+      s32 y = actor->y.fixed - viewY + px(8);
       s32 z = actor->z.fixed - viewZ - viewY;
       s32 oy = z - y;
       s32 depth = ((y + z) >> 16) + 58;

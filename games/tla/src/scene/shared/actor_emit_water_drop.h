@@ -11,7 +11,7 @@ void Actor_EmitWaterDrop(struct Actor *object) {
 
       Actor_StartScript(child, gWaterDropScript);
       child->motionFlags = 0;
-      child->y.fixed = -0x78000;
+      child->y.fixed = -(px(15) / 2);
       child->layer = 1;
       if (sprite != 0) {
         Sprite_StartAnimation(sprite, 2);

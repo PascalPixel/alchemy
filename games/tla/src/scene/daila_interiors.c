@@ -502,14 +502,14 @@ void Actor_StartIdle(struct Actor *object);
 /// Takes the Sea God's Tear from the top of the pillars, or, when the bags are
 /// full and nothing is dropped for it, puts it back.
 void DailaInteriors_TakeSeaGodsTear(void) {
-  s32 saved48;
-  s32 saved28;
+  s32 savedGravity;
+  s32 savedVelocityY;
   s32 savedY;
   s32 item;
 
-  saved48 = Actor_GetById(ACTOR_SEA_GODS_TEAR)->gravity;
+  savedGravity = Actor_GetById(ACTOR_SEA_GODS_TEAR)->gravity;
   item = ITEM_SEA_GODS_TEAR;
-  saved28 = Actor_GetById(ACTOR_SEA_GODS_TEAR)->velocityY;
+  savedVelocityY = Actor_GetById(ACTOR_SEA_GODS_TEAR)->velocityY;
   savedY = Actor_GetById(ACTOR_SEA_GODS_TEAR)->y.fixed;
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -533,15 +533,15 @@ void DailaInteriors_TakeSeaGodsTear(void) {
     } else {
       Actor_SetPosition(ACTOR_SEA_GODS_TEAR, 0, 0);
       FieldEvent_Wait(1);
-      Actor_GetById(ACTOR_SEA_GODS_TEAR)->velocityY = saved28;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->velocityY = savedVelocityY;
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->y.fixed = savedY;
-      Actor_GetById(ACTOR_SEA_GODS_TEAR)->gravity = saved48;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->gravity = savedGravity;
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->update = NULL;
       Actor_StartIdle(Actor_GetById(ACTOR_SEA_GODS_TEAR));
       Actor_SetSpritePriority(ACTOR_SEA_GODS_TEAR, 1);
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->motionFlags = 2;
-      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleY = 0x13333;
-      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleX = 0x13333;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleY = Q16_ONE * 6 / 5;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleX = Q16_ONE * 6 / 5;
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->collisionFlags |= 4;
       Actor_SetPosition(ACTOR_SEA_GODS_TEAR, 232, 196);
     }
@@ -649,7 +649,7 @@ void FlagBlock_PlaceAll(const s16 *flags);
 /// behind his counter) or the sanctuary (the Tear on the pillars' top until it
 /// is taken, the puddles until Tavi is rescued, the frozen pillars after).
 s32 Scene_Initialize(void) {
-  struct DailaMapWork *map;
+  struct MapBits *map;
   s32 *effect = &gFieldWork->transition;
   s32 value = 0x209;
 
@@ -671,7 +671,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_ARMOR_MERCHANT)->collisionFlags |= 4;
     }
   } else if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_SANCTUM) {
-    map = (struct DailaMapWork *)Ram_HeapSlots->mapGrid;
+    map = (struct MapBits *)Ram_HeapSlots->mapGrid;
     Event_Start();
     Event_ResolvePendingActions(0);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_TEAR_SPOT), 0);
@@ -680,8 +680,8 @@ s32 Scene_Initialize(void) {
       Actor_SetItemIcon(Actor_GetById(ACTOR_SEA_GODS_TEAR), ITEM_SEA_GODS_TEAR);
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_SEA_GODS_TEAR), 0);
       Actor_SetSpritePriority(ACTOR_SEA_GODS_TEAR, 1);
-      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleY = 0x13333;
-      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleX = 0x13333;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleY = Q16_ONE * 6 / 5;
+      Actor_GetById(ACTOR_SEA_GODS_TEAR)->scaleX = Q16_ONE * 6 / 5;
       Actor_GetById(ACTOR_SEA_GODS_TEAR)->collisionFlags |= 4;
       Actor_GetById(ACTOR_TEAR_SPOT)->collisionFlags |= 4;
     } else {
@@ -692,7 +692,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_FIRST_PILLAR, 0, 0);
       Actor_SetPosition(ACTOR_SECOND_PILLAR, 0, 0);
       Actor_SetPosition(ACTOR_THIRD_PILLAR, 0, 0);
-      map->mode17 = 1;
+      map->mode = 1;
     } else {
       FlagBlock_PlaceAll(gDailaInteriors_PillarFrozenFlags);
     }
@@ -785,7 +785,7 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 // clang-format off
-/// Where the houses' doors lead, before Tavi is rescued, out into Daila1.
+/// Where the houses' doors lead, before Tavi is rescued, out into the flooded village.
 s32 gDailaInteriorsExits[] = {
     SCENE_EXITS(DailaInteriorsHouses),
     SCENE_EXIT_UNLESS(1, Daila1, 1, EXIT_FLAG_NONE),
@@ -800,7 +800,7 @@ s32 gDailaInteriorsExits[] = {
     SCENE_EXITS_END,
 };
 
-/// Where the houses' doors lead once Tavi is rescued, out into Daila2.
+/// Where the houses' doors lead once Tavi is rescued, out into the drained village.
 s32 gDailaInteriorsExitsOnceTaviIsRescued[] = {
     SCENE_EXITS(DailaInteriorsHouses),
     SCENE_EXIT_UNLESS(1, Daila2, 1, EXIT_FLAG_NONE),

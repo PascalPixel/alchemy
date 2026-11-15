@@ -12,11 +12,28 @@
 
 #define FLAG_APOJII_AQUA_STONE_DOUSED 0x95f
 #include "types.h"
+#include "system/io_write.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
 #include "system/main_routine_work.h"
 #include "field/scene_tables.h"
+
+/// The village by the Aqua Stone (gApojiiIslands_Room1Placements).
+enum ApojiiIslandsVillageActorId {
+  /// The father who wished on the rock: "What... What just happened? That
+  /// rock couldn't have heard my wishes..."
+  ACTOR_FATHER = ACTOR_FIRST_PLACED + 8,
+  /// The blue tear-shaped Aqua Stone Douse wakes.
+  ACTOR_AQUA_STONE
+};
+
+/// The houses (gApojiiIslands_Room3Placements).
+enum ApojiiIslandsHousesActorId {
+  /// His son (ApojiiIslands_TalkToSon).
+  ACTOR_SON = ACTOR_FIRST_PLACED + 1
+};
+
 #include "system/iwram_call.h"
 #include "system/io_reg.h"
 #include "field/field_sprite.h"
@@ -34,8 +51,6 @@ s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 void Field_TryJumpForward(void);
 void Rope_Initialize(void);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
-void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                 s32 g);
 void Shop_Run(s32 a, s32 b);
 void Inn_CheckIn(s32 a, s32 b);
 
@@ -48,7 +63,7 @@ void ApojiiIslands_FatherSeesTheStone(void);
 void Scroll_HBlank(void);
 void Layer_TrackScroll(void);
 void Scroll_StartHBlank(void);
-void ApojiiIslands_InitializeRoom2(void);
+void ApojiiIslands_InitializeHaze(void);
 void ApojiiIslands_LeaveQuietly(void);
 void ApojiiIslands_SpawnSplash(struct Actor *object);
 s32 Actor_EmitMist(struct Actor *object);
@@ -92,11 +107,6 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 a, s32 z, s32 b) {
   FieldCamera_MoveWithinMapBounds(x, a, z, b);
 }
 
-static __inline__ void ApojiiIslands_CopyTouchedCells(s32 a, s32 b, s32 c,
-                                                      s32 d, s32 e, s32 f,
-                                                      s32 g) {
-  TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
-}
 #include "shared/tables.h"
 #include "types.h"
 #include "system/main_routine_work.h"
@@ -116,6 +126,7 @@ static __inline__ void ApojiiIslands_CopyTouchedCells(s32 a, s32 b, s32 c,
 #include "field/field_bank.h"
 #include "field/scene_tables.h"
 #include "scene/scene.h"
+#include "scene/event_layer.h"
 #include "scene/shared.h"
 #include "system/system.h"
 #include "system/task.h"
@@ -146,13 +157,13 @@ static __inline__ void ApojiiIslands_CopyTouchedCells(s32 a, s32 b, s32 c,
 extern struct ActorPlacement gApojiiIslands_Placements[];
 extern struct ActorPlacement gApojiiIslands_Room1Placements[];
 extern struct ActorPlacement gApojiiIslands_Room3Placements[];
-extern struct ActorPlacement gApojiiIslands_Room2Placements[];
+extern struct ActorPlacement gApojiiIslands_HazePlacements[];
 extern s32 gApojiiIslands_StoneCycleFrame[];
 
 extern struct Trigger gApojiiIslands_Triggers[];
 extern struct Trigger gApojiiIslands_Room1Triggers[];
 extern struct Trigger gApojiiIslands_Room3Triggers[];
-extern struct Trigger gApojiiIslands_Room2Triggers[];
+extern struct Trigger gApojiiIslands_HazeTriggers[];
 void ApojiiIslands_SinkIntoSand(void);
 void ApojiiIslands_RiseFromSand(void);
 void ApojiiIslands_ResumeSeaColors(void);
@@ -189,7 +200,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (scene == SCENE_APOJII_ISLANDS_3)
     return gApojiiIslands_Room3Placements;
   if (scene == SCENE_APOJII_ISLANDS_HAZE)
-    return gApojiiIslands_Room2Placements;
+    return gApojiiIslands_HazePlacements;
   return gApojiiIslands_Placements;
 }
 
@@ -351,7 +362,7 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
   wait(30);
   Sound_Play(MUS_AQUA_ROCK);
   ApojiiIslands_StartSparkles();
-  ApojiiIslands_SetSparkleAnchor(17);
+  ApojiiIslands_SetSparkleAnchor(ACTOR_AQUA_STONE);
   Scene_QueueMusic(SE_170);
   i = 3;
   /* FAKEMATCH(wrapper): both flashes forwarded through ApojiiIslands_Flash. */
@@ -385,10 +396,8 @@ blend:
   GameFlag_Set(FLAG_APOJII_AQUA_STONE_DOUSED);
   GameFlag_Set(0x95e);
   FieldCamera_SetSpeed(1);
-  /* FAKEMATCH(wrapper): the camera moves forwarded through
-   * ApojiiIslands_CamMove. */
   FieldCamera_MoveTo(360, CAMERA_KEEP, 328, 1);
-  Actor_ShowEmoteById(16, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Actor_ShowEmoteById(ACTOR_FATHER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   FieldCamera_WaitForArrival();
   FieldCamera_MoveTo(440, CAMERA_KEEP, 376, 1);
   FieldCamera_WaitForArrival();
@@ -400,35 +409,36 @@ blend:
 void ApojiiIslands_FatherSeesTheStone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_Get(17)->update = (void (*)(void))ApojiiIslands_StopFlashing;
+  Actor_Get(ACTOR_AQUA_STONE)->update =
+      (void (*)(void))ApojiiIslands_StopFlashing;
   FieldEvent_SetMessageId((s32)&MsgWhatWhatJust);
   Actor_FaceActor(gMainRoutineWork.leaderActorId, 16, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_FaceDirection(16, FACING_EAST, 0);
-  Actor_SetAnimationAndWait(16, 3);
-  Actor_FaceDirection(16, FACING_WEST, 0);
-  Actor_SetAnimationAndWait(16, 3);
-  Actor_FaceDirection(16, FACING_NORTHEAST, 0);
-  Actor_SetAnimationAndWait(16, 3);
-  FieldActor_ShowEmote(16, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
+  Actor_FaceDirection(ACTOR_FATHER, FACING_EAST, 0);
+  Actor_SetAnimationAndWait(ACTOR_FATHER, 3);
+  Actor_FaceDirection(ACTOR_FATHER, FACING_WEST, 0);
+  Actor_SetAnimationAndWait(ACTOR_FATHER, 3);
+  Actor_FaceDirection(ACTOR_FATHER, FACING_NORTHEAST, 0);
+  Actor_SetAnimationAndWait(ACTOR_FATHER, 3);
+  FieldActor_ShowEmote(ACTOR_FATHER, EMOTE_IN_FRONT | EMOTE_WINCE, 20);
   // "What... What just happened?"
-  Event_ShowMessage(16, 0);
-  FieldActor_Jump(16, 2, 25);
+  Event_ShowMessage(ACTOR_FATHER, 0);
+  FieldActor_Jump(ACTOR_FATHER, 2, 25);
   // "That rock couldn't have heard my wishes... That's impossible!"
-  Event_ShowMessage(16, 0);
-  Actor_RunRepeatedMotion(16, 1);
+  Event_ShowMessage(ACTOR_FATHER, 0);
+  Actor_RunRepeatedMotion(ACTOR_FATHER, 1);
   // "It's got to be."
-  Event_ShowMessage(16, 0);
-  Actor_SetAnimationAndWait(16, 3);
+  Event_ShowMessage(ACTOR_FATHER, 0);
+  Actor_SetAnimationAndWait(ACTOR_FATHER, 3);
   // "Well, OK then... Maybe we should try putting some more of our wishes..."
-  Event_ShowMessage(16, 0);
+  Event_ShowMessage(ACTOR_FATHER, 0);
   Event_End();
   Event_ClearFlag(0x95e);
 }
 
 void ApojiiIslands_ClearFirstBush(void) {
-  ApojiiIslands_CopyTouchedCells(68, 38, 39, 24, 68, 4, 1);
+  FieldTileCopies_CopyTouchedCells(68, 38, 39, 24, 68, 4, 1);
 }
 
 #define DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(name, n1, n2, n3, n4, n5,    \
@@ -436,10 +446,11 @@ void ApojiiIslands_ClearFirstBush(void) {
   void name(void) {                                                            \
     struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);          \
                                                                                \
-    ApojiiIslands_CopyTouchedCells(n1, 38, n2, n3, n1, n4, 1);                 \
+    FieldTileCopies_CopyTouchedCells(n1, 38, n2, n3, n1, n4, 1);               \
     if (Event_GetFlag(n5) == 0) {                                              \
       Actor_SetPosition(n6, n7, n8);                                           \
-      if (leader->x.fixed >> 20 == n9 && leader->z.fixed >> 20 == n10) {       \
+      if (FIELD_CELL(leader->x.fixed) == n9 &&                                 \
+          FIELD_CELL(leader->z.fixed) == n10) {                                \
         Event_Start();                                                         \
         FieldEvent_ResolvePendingActions(0);                                   \
         Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,                \
@@ -460,7 +471,7 @@ DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearThirdBush, 68, 38,
                                           21, 4, 0xf9a, 64, 600, 408, 37, 25)
 
 void ApojiiIslands_ClearRoom3Bushes(void) {
-  ApojiiIslands_CopyTouchedCells(67, 38, 11, 6, 67, 8, 1);
+  FieldTileCopies_CopyTouchedCells(67, 38, 11, 6, 67, 8, 1);
 }
 
 DEFINE_APOJII_ISLANDS_SHIFT_CELLS_AND_HOP(ApojiiIslands_ClearRoom3SmallBush, 67,
@@ -494,11 +505,11 @@ s32 ApojiiIslands_TalkToSon(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (facing) {
-    Actor_FaceActor(9, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_SON, gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)&MsgWhyDoesMy);
     // "Why does my father keep staring at that rock every day?"
-    Event_ShowMessage(9, 0);
-    Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
+    Event_ShowMessage(ACTOR_SON, 0);
+    Actor_FaceDirection(ACTOR_SON, FACING_SOUTHEAST, 0);
   }
   Event_End();
   return 0;
@@ -514,7 +525,7 @@ s32 ApojiiIslands_MindReadSon(void) {
   if (facing) {
     FieldEvent_SetMessageId((s32)&MsgICanTEver);
     // "I can't ever tell what kind of mood Mom and Dad are in. At least..."
-    Event_ShowMessage(9, 0);
+    Event_ShowMessage(ACTOR_SON, 0);
   }
   Event_End();
   return 0;
@@ -532,7 +543,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   if (scene == SCENE_APOJII_ISLANDS_3)
     return gApojiiIslands_Room3Triggers;
   if (scene == SCENE_APOJII_ISLANDS_HAZE)
-    return gApojiiIslands_Room2Triggers;
+    return gApojiiIslands_HazeTriggers;
   return gApojiiIslands_Triggers;
 }
 
@@ -600,10 +611,7 @@ void Scroll_HBlank(void) {
     REG_BLDCNT = 0;
   } else {
     value = gApojiiIslands_LowerScrollX;
-    /* FAKEMATCH(dead): the once-only block orders this statement. */
-    do {
-      REG_BG1HOFS = value;
-    } while (0);
+    Io_Write16(value, &REG_BG1HOFS);
     REG_BLDALPHA = 0x100c;
     REG_BLDCNT = 0x3f42;
   }
@@ -611,11 +619,11 @@ void Scroll_HBlank(void) {
 
 void Layer_TrackScroll(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
-  s16 y = layer->y >> 16;
+  s16 y = FIELD_PIXEL(layer->y);
 
   gApojiiIslands_SplitLine = 1448 - y;
-  gApojiiIslands_UpperScrollX = layer->x >> 16;
-  gApojiiIslands_LowerScrollX = (s16)(layer->x >> 16) - (gFrameCount >> 2);
+  gApojiiIslands_UpperScrollX = FIELD_PIXEL(layer->x);
+  gApojiiIslands_LowerScrollX = (s16)FIELD_PIXEL(layer->x) - (gFrameCount >> 2);
 }
 
 #include "shared/scroll_start_hblank.h"
@@ -633,7 +641,7 @@ s32 Scene_Initialize(void) {
   party = &gMainRoutineWork;
   scene = party->next;
   if (scene == SCENE_APOJII_ISLANDS_HAZE) {
-    ApojiiIslands_InitializeRoom2();
+    ApojiiIslands_InitializeHaze();
   } else if (scene == SCENE_APOJII_ISLANDS_1) {
     FieldTask_AddFrame(ApojiiIslands_CycleSeaColors, TASK_PASS_VBLANK);
     if (Event_GetFlag(0x95e))
@@ -648,7 +656,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-void ApojiiIslands_InitializeRoom2(void) {
+void ApojiiIslands_InitializeHaze(void) {
   Task_AddFrame(ApojiiIslands_CycleFallsColors, TASK_PASS_VBLANK);
   Rope_Initialize();
   Rope_Place(0, 0x200, 8, 9);
@@ -727,14 +735,14 @@ void ApojiiIslands_FlowWithStream(void) {
       position[2] = leader->z.fixed + px(8);
       result = MapGrid_CheckCollision(leader, position);
       if (result <= 0) {
-        position[0] = leader->x.fixed + 0x5b333;
+        position[0] = leader->x.fixed + (px(57) / 10);
         position[1] = leader->y.fixed;
-        position[2] = leader->z.fixed + 0x5b333;
+        position[2] = leader->z.fixed + (px(57) / 10);
         result = MapGrid_CheckCollision(leader, position);
         if (result <= 0) {
-          position[0] = leader->x.fixed - 0x5b333;
+          position[0] = leader->x.fixed - (px(57) / 10);
           position[1] = leader->y.fixed;
-          position[2] = leader->z.fixed + 0x5b333;
+          position[2] = leader->z.fixed + (px(57) / 10);
           result = MapGrid_CheckCollision(leader, position);
           if (result <= 0) {
             anchor->z.fixed += px(2);
@@ -767,7 +775,7 @@ void Leader_SpinAway(s32 entrance) {
 
     if (i == 30)
       Event_FinishScreenTransition();
-    leader->y.fixed -= 0x4000;
+    leader->y.fixed -= px(1) / 4;
     angle = leader->facing;
     leader->facing = angle + 0x1000;
     if ((i & 7) == 0)
@@ -874,11 +882,11 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b) {
   s32 left = layer->offsetX + map->minX;
   s32 top = layer->offsetY + map->minZ;
   struct CellMarkers *markers = &gApojiiIslands_CellMarkers;
-  s32 width = (map->maxX - map->minX) >> 20;
-  s32 height = (map->maxZ - map->minZ) >> 20;
+  s32 width = FIELD_CELL(map->maxX - map->minX);
+  s32 height = FIELD_CELL(map->maxZ - map->minZ);
   struct CellMarker *entry = &markers->markers[markers->count];
   s32 *slot = (s32 *)(Data_0202c001 + 0x1df);
-  s32 origin = ((map->minZ >> 20) << 7) + (map->minX >> 20);
+  s32 origin = (FIELD_CELL(map->minZ) << 7) + FIELD_CELL(map->minX);
   struct MapCell *cell;
   s16 x, z;
   u32 value;
@@ -894,8 +902,8 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b) {
     inner:
       value = cell->collisionCode;
       if (value != 0 && value >= base && value < base + 4) {
-        entry->x = ((u16)x << 20) + left + 0x80000;
-        entry->z = ((u16)z << 20) + top + 0x80000;
+        entry->x = ((u16)x << 20) + left + px(8);
+        entry->z = ((u16)z << 20) + top + px(8);
         entry->rest = b << 19;
         entry->y = a << 19;
         entry->kind = value - base;
@@ -910,12 +918,12 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 a, s32 b) {
           terrain[(u16)x + ((u16)z << 7)] = 120;
         }
       }
-      x = ((x << 16) + 0x10000) >> 16;
+      x = (px(x) + px(1)) >> 16;
       cell++;
       if ((u16)x < width)
         goto inner;
     }
-    z = ((z << 16) + 0x10000) >> 16;
+    z = (px(z) + px(1)) >> 16;
     if ((u16)z < height)
       goto outer;
   }
@@ -957,7 +965,7 @@ loop:
   *(u32 *)size = 0xb400;
   p->posX = 0;
   p->posZ = 0;
-  p->posY = Map_GetTerrainHeight(0, 0, 0) << 16;
+  p->posY = px(Map_GetTerrainHeight(0, 0, 0));
   p->timer = (i & 15) + 1;
   i++;
   p++;
@@ -1146,7 +1154,7 @@ struct ActorPlacement gApojiiIslands_Room3Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gApojiiIslands_Room2Placements[] = {
+struct ActorPlacement gApojiiIslands_HazePlacements[] = {
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_HAZE), MOVEMENT_TYPE_STAND, 376, 0, 200, FACING_WEST, TALK_FACING_PARTY, 0),
@@ -1240,7 +1248,7 @@ struct Trigger gApojiiIslands_Room3Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gApojiiIslands_Room2Triggers[] = {
+struct Trigger gApojiiIslands_HazeTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Leader_SinkAway)},

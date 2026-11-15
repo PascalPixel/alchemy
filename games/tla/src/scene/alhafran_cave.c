@@ -23,6 +23,7 @@
 #include "field/field_sequence_event.h"
 #include "field/event_commands.h"
 #include "scene/scene.h"
+#include "scene/event_layer.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
 #include "system/main_routine_work.h"
@@ -37,7 +38,6 @@
 
 void Pillars_Place(const u16 *table);
 void AlhafranCave_TakeLeadersLayer(void);
-void Field_StartColorTransition(s32 frames, s32 color);
 extern s32 gAlhafranCave_GuardStepsAsideScript[];
 extern u32 gAlhafranCave_VisitorsLeaveScript[];
 void AlhafranCave_OpenWayToJail(void);
@@ -146,7 +146,6 @@ struct AlhafranCaveSwitch {
 
 void Actor_ApplyRandomChildValues(void);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
-void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void FlagBlock_ApplyFlags(const void *data);
 void Actor_TakeLeaderLayer(void);
 void BattleEffect_DrawSpriteAtWorldPosition(const void *data, s32 x, s32 y,
@@ -164,11 +163,6 @@ extern struct ActorPlacement gAlhafranCave_JailActorPlacements[];
 extern struct Trigger gAlhafranCave_CaveTriggers[];
 extern struct Trigger gAlhafranCave_JailTriggers[];
 extern u8 gAlhafranCave_CrateSprite[];
-
-/// Sets the height of the map cell under a 16.16 position.
-static __inline__ void MapGrid_SetCellHeight_(s32 x, s32 z, s32 a, s32 b) {
-  MapGrid_SetCellHeight(x, z, a, b);
-}
 
 /// Sets the behavior of the map cell under a 16.16 position.
 static __inline__ void MapGrid_SetCellBehavior_(s32 x, s32 z, s32 a, s32 b) {
@@ -223,22 +217,22 @@ void AlhafranCave_FreezePuddle(void) {
 /// level.
 void AlhafranCave_OpenWayToJail(void) {
   Event_SetFlag(FLAG_WAY_TO_JAIL_OPEN);
-  MapGrid_SetCellHeight_(px(400), px(304), 0, 4);
-  MapGrid_SetCellHeight_(px(416), px(304), 0, 4);
+  FieldMapGrid_SetCellHeight(px(400), px(304), 0, 4);
+  FieldMapGrid_SetCellHeight(px(416), px(304), 0, 4);
   MapGrid_SetCellHeight(px(432), px(304), 0, 4);
   MapGrid_SetCellBehavior_(px(384), px(288), 0, 255);
-  MapGrid_SetCellHeight_(px(288), px(384), 0, 4);
+  FieldMapGrid_SetCellHeight(px(288), px(384), 0, 4);
   MapGrid_SetCellHeight(px(336), px(384), 0, 4);
 }
 
 /// Closes the way down to the jail as the leader steps off the ledge.
 void AlhafranCave_CloseWayToJail(void) {
   Event_ClearFlag(FLAG_WAY_TO_JAIL_OPEN);
-  MapGrid_SetCellHeight_(px(400), px(304), 0, 0);
-  MapGrid_SetCellHeight_(px(416), px(304), 0, 0);
+  FieldMapGrid_SetCellHeight(px(400), px(304), 0, 0);
+  FieldMapGrid_SetCellHeight(px(416), px(304), 0, 0);
   MapGrid_SetCellHeight(px(432), px(304), 0, 0);
   MapGrid_SetCellBehavior_(px(384), px(288), 0, 0);
-  MapGrid_SetCellHeight_(px(288), px(384), 0, 0);
+  FieldMapGrid_SetCellHeight(px(288), px(384), 0, 0);
   MapGrid_SetCellHeight(px(336), px(384), 0, 0);
 }
 
@@ -366,10 +360,9 @@ void AlhafranCave_SetUpCave(void) {
   object->y.fixed = 0;
   MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 4);
   FlagBlock_PlaceAllMarkingEdges(gAlhafranCave_Puddles);
-  Actor_SetMovementType(Actor_Get(ACTOR_CAVE_PUDDLE), 9);
+  Actor_SetMovementType(Actor_Get(ACTOR_CAVE_PUDDLE),
+                        MOVEMENT_TYPE_TAKE_LEADER_LAYER);
   if (!Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
-    /* FAKEMATCH(wrapper): the three calls forwarded through
-     * MapGrid_CopyCellPictureCellsRect_. */
     MapGrid_CopyCellsLayered(0, 58, 12, 7, 13, 58);
     MapGrid_CopyCellsLayered(0, 58, 2, 9, 25, 66);
     MapGrid_CopyCellsLayered(0, 58, 10, 5, 15, 74);
@@ -483,13 +476,11 @@ void AlhafranCave_ShakeUnderEoleosPower(void);
 /// Briggs's wife Chaucha and their son Eoleo visit him in the jail, and Eoleo
 /// shows Psynergy of his own.
 void AlhafranCave_ChauchaAndEoleoVisit(void) {
-  struct Actor *actor21;
-  struct Actor *actor15;
+  struct Actor *eoleo;
+  struct Actor *jailCell;
   struct Actor *effect;
   s32 position[3];
 
-  /* FAKEMATCH(wrapper): 79 calls forwarded through call.h's Call2, Call3, Call4
-   * and Value3. */
   if (GameFlag_Get(FLAG_BRIGGS_CAUGHT) == 0)
     return;
   if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED) == 1)
@@ -567,26 +558,26 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
   Actor_FaceDirection(ACTOR_JAILER, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(20);
-  (void *)Actor_ShowEmote(ACTOR_JAILER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  Actor_ShowEmote(ACTOR_JAILER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   // "You're IN JAIL! What did you expect, gourmet cuisine?"
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
-  actor21 = Actor_Get(ACTOR_EOLEO);
-  actor15 = Actor_Get(ACTOR_JAIL_CELL_SPRITE);
-  Call2((void (*)())Field_StartColorTransition, 8, 0x1210);
+  eoleo = Actor_Get(ACTOR_EOLEO);
+  jailCell = Actor_Get(ACTOR_JAIL_CELL_SPRITE);
+  Event_StartColorTransition(8, 0x1210);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 2);
   Event_PlaySound(SE_ASCEND);
   FieldEvent_Wait(40);
-  effect = FieldEffect_SpawnMoveHand(actor21);
-  position[0] = actor15->x.fixed;
-  effect->watchedActor = actor15;
-  position[1] = actor15->y.fixed + px(16);
-  position[2] = actor15->z.fixed;
+  effect = FieldEffect_SpawnMoveHand(eoleo);
+  position[0] = jailCell->x.fixed;
+  effect->watchedActor = jailCell;
+  position[1] = jailCell->y.fixed + px(16);
+  position[2] = jailCell->z.fixed;
   FieldVector_AddPolarOffset(16, 0xc000, position);
   FieldActor_SetMoveTargetFixed(effect, position[0], position[1], position[2]);
   FieldEffect_SnapScaleToFull(effect);
   Actor_SelectAnimation(effect, 4);
-  actor15->update = AlhafranCave_ShakeUnderEoleosPower;
+  jailCell->update = AlhafranCave_ShakeUnderEoleosPower;
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_CREWMAN_ON_THE_BOAT, FACING_EAST, 0);
@@ -625,8 +616,8 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   // "Eoleo!"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 20);
   Actor_ShowEmote(ACTOR_EOLEO, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  actor15->update = 0;
-  Actor_SetSpriteColorMode(actor15, 0);
+  jailCell->update = 0;
+  Actor_SetSpriteColorMode(jailCell, 0);
   UpdateRisingParticleBurst(effect);
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 0);
   BattleEffect_WaitForArcGroups();
@@ -809,7 +800,8 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   FieldActor_Stop(ACTOR_FELIX);
   Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
   Actor_SetPosition(ACTOR_EOLEO, 0, 0);
-  Actor_SetMovementType(Actor_Get(ACTOR_JAILER), 9);
+  Actor_SetMovementType(Actor_Get(ACTOR_JAILER),
+                        MOVEMENT_TYPE_TAKE_LEADER_LAYER);
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Event_End();
 }

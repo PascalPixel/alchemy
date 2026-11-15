@@ -8,8 +8,8 @@
 
 struct Actor;
 
-/// A word of the object written through a one-member union (see the
-/// FAKEMATCH(signature) tag in ShrineOfTheSeaGod_LashRope).
+/// A word of the object written through a one-member union, the signature
+/// fake match ShrineOfTheSeaGod_LashRope keeps.
 union ObjectWord {
   s32 value;
 };

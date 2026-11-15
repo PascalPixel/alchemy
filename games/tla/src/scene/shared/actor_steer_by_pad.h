@@ -8,7 +8,7 @@ void Actor_SteerByPad(struct Actor *object) {
     object->timer--;
     return;
   }
-  *(u8 *)((u8 *)object + 0x5a) = 0;
+  object->steeringFlags = 0;
   if (Event_GetFlag(FLAG_MENU_OPEN))
     angle = -1;
   else

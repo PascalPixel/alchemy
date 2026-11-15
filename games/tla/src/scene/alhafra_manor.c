@@ -31,6 +31,31 @@
 #define FLAG_DEFENDED_THE_MAYOR 0x8bb
 #define FLAG_TOLD_OF_THE_EASTERN_SEA 0x8bc
 
+/// The household and guests of gActorPlacements, while the mast lies fallen.
+enum AlhafraManorActorId {
+  /// Jiya, the mayor's aide: "Milord, these things take time..."
+  ACTOR_JIYA = ACTOR_FIRST_PLACED,
+  /// Alhafra's mayor, who plans a sailing ship to trade across the sea.
+  ACTOR_MAYOR,
+  /// "Lookee here! Can't you see Air's Rock..." (AlhafraManor_PointOutAirsRock)
+  ACTOR_MAN_GAZING_AT_AIRS_ROCK = ACTOR_FIRST_PLACED + 6,
+  /// "I'd been saying Indra wasn't in the right place for some time now."
+  ACTOR_OLD_MAN_ON_INDRA,
+  ACTOR_MADRAS_MAYOR = ACTOR_FIRST_PLACED + 10,
+  ACTOR_MADRAS_ELDER
+};
+
+/// Who is in the manor the night Briggs escapes, once the mast is cleared
+/// (gAlhafraManor_ActorPlacementsOnceTheMastIsCleared, Jiya and the mayor
+/// first as before).
+enum AlhafraManorOnceTheMastIsClearedActorId {
+  /// "Briggs destroyed the prison and escaped with his pirates!"
+  ACTOR_JAIL_GUARD = ACTOR_FIRST_PLACED + 3,
+  /// "Mayor! The mast has been raised!"
+  ACTOR_WORKER,
+  ACTOR_KRADEN
+};
+
 void AlhafraManor_BriggsEscapes(void);
 void AlhafraManor_KeepToTheLeadersLayer(void);
 
@@ -56,7 +81,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 void AlhafraManor_AskAboutAlhafra(s32 actor) {
-  s32 msg = (s32)&MsgAlhafraManor02;
+  s32 msg = (s32)&MsgAlhafraManorWhatDoYouThinkOf;
 
   Event_SetMessageId(msg);
   FieldMessage_ShowAtActor(actor, 0);
@@ -71,7 +96,7 @@ void AlhafraManor_AskAboutAlhafra(s32 actor) {
 }
 
 void AlhafraManor_PointOutAirsRock(s32 actor) {
-  s32 msg = (s32)&MsgAlhafraManor09;
+  s32 msg = (s32)&MsgAlhafraManorLookeeHereCantYouSee;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -81,7 +106,8 @@ void AlhafraManor_PointOutAirsRock(s32 actor) {
     Event_Wait(20);
     Actor_WatchAndSetScript(actor, gMainRoutineWork.leaderActorId);
     Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 760, 320);
-    Actor_FaceDirection(14, FACING_SOUTH_SOUTHWEST, 0);
+    Actor_FaceDirection(ACTOR_MAN_GAZING_AT_AIRS_ROCK, FACING_SOUTH_SOUTHWEST,
+                        0);
     Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
     Event_Wait(10);
     Event_SetDestination(SCENE_WORLD_MAP, 67);
@@ -93,7 +119,7 @@ void AlhafraManor_PointOutAirsRock(s32 actor) {
 }
 
 void AlhafraManor_AskIfTheHeroes(s32 actor) {
-  s32 msg = (s32)&MsgAlhafraManor14;
+  s32 msg = (s32)&MsgAlhafraManorAreYouTheBraveHero;
 
   Event_SetMessageId(msg);
   FieldMessage_ShowAtActor(actor, 0);
@@ -113,20 +139,20 @@ void AlhafraManor_GrumbleAboutTheMayor(void) {
   GameFlag_Set(FLAG_GRUMBLED_ABOUT_THE_MAYOR);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)&MsgAlhafraManor18);
-  if (*(s16 *)((u8 *)work + 0x166) != 0)
-    Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Actor_FaceActorById(18, gMainRoutineWork.leaderActorId, 0);
-  Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+  Event_SetMessageId((s32)&MsgAlhafraManorDarnThatMayor);
+  if (work->psynergy != 0)
+    Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  Actor_FaceActorById(ACTOR_MADRAS_MAYOR, gMainRoutineWork.leaderActorId, 0);
+  Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
   // "Darn that mayor..."
-  Event_ShowMessageThenWait(18, 0, 10);
-  Actor_RunRepeatedMotion(18, 2);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
   Event_Wait(10);
   // "I thought he'd get that mast fixed up for us right away..."
-  Event_ShowMessageThenWait(18, 0, 10);
-  Actor_SetAnimationAndWait(18, 4);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_MAYOR, 4);
   // "I'm starting to think the mayor of Alhafra never planned on..."
-  Event_ShowMessageThenWait(18, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
   Event_End();
 }
 
@@ -136,123 +162,125 @@ void AlhafraManor_DefendTheMayor(void) {
   GameFlag_Set(FLAG_DEFENDED_THE_MAYOR);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)&MsgAlhafraManor23);
-  if (*(s16 *)((u8 *)work + 0x166) != 0)
-    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Actor_WatchAndSetScript(8, gMainRoutineWork.leaderActorId);
+  Event_SetMessageId((s32)&MsgAlhafraManorImSureTheMayorHas);
+  if (work->psynergy != 0)
+    Actor_ShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_WatchAndSetScript(ACTOR_JIYA, gMainRoutineWork.leaderActorId);
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 304, 152);
-  Actor_FaceDirectionById(8, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_JIYA, FACING_EAST, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
   Event_Wait(10);
-  Actor_RunRepeatedMotion(8, 2);
+  Actor_RunRepeatedMotion(ACTOR_JIYA, 2);
   Event_Wait(10);
   // "I'm sure the mayor has his reasons for halting repairs on the..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
-  Actor_SetAnimationAndWait(8, 3);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_JIYA, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_JIYA, 3);
   Event_Wait(10);
   // "The mayor feels that Madra should only get back what was stolen from..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
-  Actor_RunRepeatedMotion(8, 2);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_JIYA, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_JIYA, 2);
   Event_Wait(10);
   // "But now, it seems the Madrans are getting the better end of the deal..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
-  Actor_FaceDirectionById(8, FACING_NORTHEAST, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_JIYA, 0, 10);
+  Actor_FaceDirectionById(ACTOR_JIYA, FACING_NORTHEAST, 0);
   Event_Wait(50);
-  Actor_FaceDirectionById(8, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_JIYA, FACING_EAST, 0);
   Event_Wait(10);
   // "The mayor thinks it unfair that Madra should benefit while Alhafra..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
-  Actor_RunRepeatedMotion(8, 2);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_JIYA, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_JIYA, 2);
   Event_Wait(10);
   // "That's why he's keeping the pirates' money and using it to repair..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
-  Actor_SetAnimationAndWait(8, 4);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_JIYA, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_JIYA, 4);
   // "If Madra wants their boat fixed, then they can just pay us to have..."
-  Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_JIYA, 0, 10);
   Event_End();
 }
 
 void AlhafraManor_TellOfTheEasternSea(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (*(s16 *)((u8 *)work + 0x166) != 0) {
-    Actor_FaceActorById(9, gMainRoutineWork.leaderActorId, 0);
+  if (work->psynergy != 0) {
+    Actor_FaceActorById(ACTOR_MAYOR, gMainRoutineWork.leaderActorId, 0);
     Event_Wait(10);
   }
   GameFlag_Set(FLAG_TOLD_OF_THE_EASTERN_SEA);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)&MsgAlhafraManor24);
+  Event_SetMessageId((s32)&MsgAlhafraManorBriggsTellsMeThereAre);
   Event_Wait(20);
-  Actor_RunRepeatedMotion(9, 2);
+  Actor_RunRepeatedMotion(ACTOR_MAYOR, 2);
   Event_Wait(10);
   // "Briggs tells me there are huge towns on a continent that lies across..."
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_SetAnimationAndWait(9, 3);
+  Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_MAYOR, 3);
   Event_Wait(10);
   // "He tells me that, by trading with one another, all of these towns..."
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_FaceDirectionById(9, FACING_NORTH_NORTHEAST, 0);
+  Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
+  Actor_FaceDirectionById(ACTOR_MAYOR, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(30);
   // "I've made a decision... If Alhafra is to prosper, then we must..."
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_FaceActorById(9, gMainRoutineWork.leaderActorId, 0);
+  Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
+  Actor_FaceActorById(ACTOR_MAYOR, gMainRoutineWork.leaderActorId, 0);
   Event_Wait(20);
   // "I'm going to build an entire trade fleet and make lots of money!"
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
+  Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   // "Still...there must be other pirates and freebooters still roaming..."
-  Event_ShowMessageThenWait(9, 0, 20);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
+  Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 20);
+  Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   // "Felix, Briggs told me you and your friends fought with great strength."
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_SetAnimationAndWait(9, 4);
+  Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_MAYOR, 4);
   // "If you could lend me that strength, we would need not fear any pirates."
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_SetAnimationAndWait(9, 3);
+  Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_MAYOR, 3);
   Event_Wait(10);
   // "So if you'd just be willing to help us out, our town could begin..."
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_RunRepeatedMotion(9, 2);
+  Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_MAYOR, 2);
   Event_Wait(10);
   // "What do you say? Do we have a deal?" Yes: "Great! Why don't you just stay
   // here in Alhafra..." No: "Ah, such a pity that you don't see the
   // potential..."
-  FieldMessage_ShowAtActor(9, 0);
+  FieldMessage_ShowAtActor(ACTOR_MAYOR, 0);
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(20);
     // "Great! Why don't you just stay here in Alhafra until we're ready for..."
-    Event_ShowMessageThenWait(9, 0, 10);
+    Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
     gFieldWork->message++;
   } else {
     Event_Wait(30);
     gFieldWork->message++;
     // "Ah, such a pity that you don't see the potential of this..."
-    Event_ShowMessageThenWait(9, 0, 10);
+    Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
   }
   Event_End();
-  if (*(s16 *)((u8 *)work + 0x166) != 0)
-    Actor_FaceDirection(9, FACING_NORTH_NORTHEAST, 0);
+  if (work->psynergy != 0)
+    Actor_FaceDirection(ACTOR_MAYOR, FACING_NORTH_NORTHEAST, 0);
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
   s32 cameraY = -1;
-  s32 cameraZ = 160 << 17;
+  s32 cameraZ = px(320);
   s16 *entrance;
 
   gFieldWork->transition = 0x209;
-  Actor_GetById(15)->update = AlhafraManor_KeepToTheLeadersLayer;
+  Actor_GetById(ACTOR_OLD_MAN_ON_INDRA)->update =
+      AlhafraManor_KeepToTheLeadersLayer;
   if (gMainRoutineWork.entrance == 80) {
     gMainRoutineWork.entrance = gMainRoutineWork.returnEntrance = 14;
-    Actor_FaceDirectionById(14, FACING_SOUTH_SOUTHWEST, 0);
+    Actor_FaceDirectionById(ACTOR_MAN_GAZING_AT_AIRS_ROCK,
+                            FACING_SOUTH_SOUTHWEST, 0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_Wait(10);
-    Event_SetMessageId((s32)&MsgAlhafraManor10);
+    Event_SetMessageId((s32)&MsgAlhafraManorFromHereItJustLooks);
     // "From here, it just looks like a regular old rock, but from up close..."
-    Event_ShowMessageAndWait(14, 0);
+    Event_ShowMessageAndWait(ACTOR_MAN_GAZING_AT_AIRS_ROCK, 0);
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
   entrance = &gMainRoutineWork.entrance;
@@ -262,8 +290,8 @@ s32 Scene_Initialize(void) {
   }
   if (!GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED) &&
       GameFlag_Get(FLAG_GABOMBA_MESSAGE_CARRIED)) {
-    Actor_SetPosition(18, 0, 0);
-    Actor_SetPosition(19, 0, 0);
+    Actor_SetPosition(ACTOR_MADRAS_MAYOR, 0, 0);
+    Actor_SetPosition(ACTOR_MADRAS_ELDER, 0, 0);
   }
   if (gMainRoutineWork.entrance == 99) {
     FieldCamera_MoveWithinMapBounds(px(304), cameraY, cameraZ, 0);
@@ -281,8 +309,6 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-#define EVENT_WORD(offset) (*(s32 *)((u8 *)Ram_HeapSlots->fieldWork + (offset)))
 
 void AlhafraManor_CountAnswer(void);
 
@@ -307,31 +333,31 @@ void AlhafraManor_CountAnswer(void);
 void AlhafraManor_BriggsEscapes(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId(MsgAlhafraManor29);
-  Actor_SetPosition(9, 344, 96);
-  Actor_SetPosition(8, 408, 136);
-  Actor_SetPosition(13, 312, 104);
+  Event_SetMessageId(MsgAlhafraManorThankYouAgainMayorYou);
+  Actor_SetPosition(ACTOR_MAYOR, 344, 96);
+  Actor_SetPosition(ACTOR_JIYA, 408, 136);
+  Actor_SetPosition(ACTOR_KRADEN, 312, 104);
   Actor_SetPosition(ACTOR_PIERS, 296, 120);
   Actor_SetPosition(ACTOR_SHEBA, 296, 136);
   Actor_SetPosition(ACTOR_JENNA, 312, 136);
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
   Event_Wait(30);
   FieldCamera_MoveTo(344, CAMERA_KEEP, 120, 0);
-  EVENT_WORD(0x1b4) = 60;
-  EVENT_WORD(0x1ac) = 0x100;
+  gFieldWork->transitionFrames = 60;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
-  Actor_SetAnimationAndWait(13, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   Event_Wait(20);
   // "Thank you again, Mayor. You keep a fine house."
-  Event_ShowMessageThenWait(13, 0, 10);
-  Actor_SetAnimationAndWait(9, 4);
+  Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_MAYOR, 4);
   // "Don't be silly. You've done us a great deed."
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
+  Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "It was the least I could do."
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
@@ -344,11 +370,11 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_Wait(20);
   // "I agree... He's being way too nice for me not to be a little..."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 10);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Actor_FaceDirection(ACTOR_MAYOR, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
   // "I'm sorry, did you girls have something you'd like to share with us?"
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
   Actor_StartRepeatedMotion(ACTOR_SHEBA, 3);
   Actor_SetAttachedEffect(ACTOR_SHEBA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -362,42 +388,43 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(9, 3);
+  Actor_SetAnimationAndWait(ACTOR_MAYOR, 3);
   Event_Wait(20);
   // "I see!"
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
-  Actor_FaceDirection(9, FACING_WEST, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
+  Actor_FaceDirection(ACTOR_MAYOR, FACING_WEST, 0);
   Event_Wait(40);
-  EVENT_WORD(0x1ac) = 0x100;
+  gFieldWork->transition = 0x100;
   PaletteFade_ApplyTarget(0x10002, 0);
   PaletteFade_StartInterpolation(40);
   Event_WaitTransitionFrames();
-  Actor_SetAnimationAndWait(9, 3);
+  Actor_SetAnimationAndWait(ACTOR_MAYOR, 3);
   Event_Wait(20);
-  Actor_ShowEmote(13, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(13, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(50);
-  Actor_ShowEmote(13, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
-  Actor_StartRepeatedMotion(9, 3);
-  Actor_SetAttachedEffect(9, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Actor_StartRepeatedMotion(ACTOR_MAYOR, 3);
+  Actor_SetAttachedEffect(ACTOR_MAYOR,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
-  Actor_FaceDirectionById(13, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
   Event_Wait(35);
-  Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_MAYOR, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(35);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
+  Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_SMILE, 50);
   Actor_StartRepeatedMotion(ACTOR_SHEBA, 3);
   Actor_SetAttachedEffect(ACTOR_SHEBA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -405,16 +432,16 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_SetAttachedEffect(ACTOR_JENNA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
-  Actor_SetAnimationAndWait(9, 3);
+  Actor_SetAnimationAndWait(ACTOR_MAYOR, 3);
   Event_Wait(30);
-  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_HEART, 50);
+  Actor_ShowEmoteById(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_HEART, 50);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   Actor_Jump(ACTOR_FELIX, 6, 15);
   Actor_Jump(ACTOR_FELIX, 6, 23);
   Event_Wait(15);
-  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 70);
+  Actor_ShowEmoteById(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 70);
   Sound_Play(SOUND_FADE_OUT_BGM);
   PaletteFade_SetSource(0x10002, 0);
   PaletteFade_SetTarget(0, 0);
@@ -426,220 +453,220 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_WaitTransitionFrames();
   Event_Wait(20);
   Scene_PlayMusic();
-  Actor_SetSpeed(9, 0.8);
-  Actor_SetSpeed(8, 0.8);
-  Actor_SetSpeed(11, 1.6);
-  Actor_SetSpeed(12, 1.6);
-  Actor_WalkByAndWaitById(9, 16, 0);
-  Actor_FaceDirection(9, FACING_SOUTHEAST, 0);
+  Actor_SetSpeed(ACTOR_MAYOR, 0.8);
+  Actor_SetSpeed(ACTOR_JIYA, 0.8);
+  Actor_SetSpeed(ACTOR_JAIL_GUARD, 1.6);
+  Actor_SetSpeed(ACTOR_WORKER, 1.6);
+  Actor_WalkByAndWaitById(ACTOR_MAYOR, 16, 0);
+  Actor_FaceDirection(ACTOR_MAYOR, FACING_SOUTHEAST, 0);
   Event_Wait(20);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   // "Jiya, how are the repairs coming along? Things seem to be moving..."
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | 9, 0, 10);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 45);
-  Actor_WalkByAndWait(8, -16, 0);
-  Actor_FaceDirection(8, FACING_NORTHWEST, 0);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MAYOR, 0, 10);
+  Actor_ShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_WINCE, 45);
+  Actor_WalkByAndWait(ACTOR_JIYA, -16, 0);
+  Actor_FaceDirection(ACTOR_JIYA, FACING_NORTHWEST, 0);
   Event_Wait(10);
   // "Milord, these things take time..."
-  Event_ShowMessageThenWait(8, 0, 20);
+  Event_ShowMessageThenWait(ACTOR_JIYA, 0, 20);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  Actor_SetPosition(11, 344, 176);
-  Actor_WalkByAndWait(11, 0, -16);
+  Actor_SetPosition(ACTOR_JAIL_GUARD, 344, 176);
+  Actor_WalkByAndWait(ACTOR_JAIL_GUARD, 0, -16);
   // "Sir, there's a problem!"
-  Event_ShowMessageThenWait(11, 0, 10);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-  Actor_FaceDirection(13, FACING_SOUTH_SOUTHEAST, 0);
+  Event_ShowMessageThenWait(ACTOR_JAIL_GUARD, 0, 10);
+  Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(9, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(8, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_MAYOR, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_JIYA, FACING_WEST, 0);
   Event_Wait(20);
   // "Calm down, man! You're a soldier! What are you so flustered about!?"
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_SetSpeed(11, 1.8);
-  Actor_WalkByAndWait(11, 16, -24);
+  Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
+  Actor_SetSpeed(ACTOR_JAIL_GUARD, 1.8);
+  Actor_WalkByAndWait(ACTOR_JAIL_GUARD, 16, -24);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST, 0);
-  Actor_FaceDirection(11, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_JAIL_GUARD, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(20);
-  Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  Actor_ShowEmote(ACTOR_JAIL_GUARD, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   // "Briggs destroyed the prison and escaped with his pirates!"
-  Event_ShowMessageThenWait(11, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_JAIL_GUARD, 0, 10);
   Sound_Play(MUS_JENNA_BATTLE);
-  Actor_ShowEmoteById(13, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmoteById(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmoteById(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_ShowEmoteById(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_ShowEmoteById(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "What, were you asleep while this was going on?"
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_SetAnimationAndWait(11, 4);
+  Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_JAIL_GUARD, 4);
   // "Don't... Don't be silly!"
-  Event_ShowMessageThenWait(11, 0, 10);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Event_ShowMessageThenWait(ACTOR_JAIL_GUARD, 0, 10);
+  Actor_ShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   // "How could Briggs possibly break out of our prison? It's one of the..."
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_ShowEmoteById(11, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Actor_FaceDirectionById(11, FACING_EAST, 0);
+  Event_ShowMessageThenWait(ACTOR_JIYA, 0, 10);
+  Actor_ShowEmoteById(ACTOR_JAIL_GUARD, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+  Actor_FaceDirectionById(ACTOR_JAIL_GUARD, FACING_EAST, 0);
   Event_Wait(10);
   // "I don't know what happened, but before I knew it, they'd smashed a..."
-  Event_ShowMessageThenWait(11, 0, 20);
-  Actor_SetPosition(12, 344, 176);
-  Actor_WalkByAndWait(12, 0, -16);
+  Event_ShowMessageThenWait(ACTOR_JAIL_GUARD, 0, 20);
+  Actor_SetPosition(ACTOR_WORKER, 344, 176);
+  Actor_WalkByAndWait(ACTOR_WORKER, 0, -16);
   Event_Wait(10);
-  Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Actor_ShowEmoteById(ACTOR_WORKER, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "Mayor! The mast has been raised!"
-  Event_ShowMessageThenWait(12, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_WORKER, 0, 10);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
-  Actor_ShowEmote(13, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 0);
+  Actor_ShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Actor_ShowEmoteById(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  Actor_FaceDirection(ACTOR_WORKER, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(30);
-  Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_WORKER, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(30);
-  Actor_FaceDirection(12, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_WORKER, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(30);
-  Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_WORKER, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(30);
-  Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_ShowEmoteById(ACTOR_WORKER, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   // "Hey, what's up?"
-  Event_ShowMessageThenWait(12, 0, 10);
-  Actor_FaceDirection(11, FACING_SOUTH_SOUTHWEST, 0);
+  Event_ShowMessageThenWait(ACTOR_WORKER, 0, 10);
+  Actor_FaceDirection(ACTOR_JAIL_GUARD, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
-  Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-  Actor_WalkByAndWait(12, 0, -8);
+  Actor_ShowEmoteById(ACTOR_WORKER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
+  Actor_WalkByAndWait(ACTOR_WORKER, 0, -8);
   Event_Wait(10);
   // "Wait, you're supposed to be guarding the prisoners... What happened?"
-  Event_ShowMessageThenWait(12, 0, 10);
-  Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  Event_ShowMessageThenWait(ACTOR_WORKER, 0, 10);
+  Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   // "It appears that Briggs has escaped."
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_ShowEmoteById(12, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
+  Actor_ShowEmoteById(ACTOR_WORKER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   // "That's no good..."
-  Event_ShowMessageThenWait(12, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_WORKER, 0, 10);
   Event_Wait(10);
-  Actor_RunRepeatedMotion(8, 2);
+  Actor_RunRepeatedMotion(ACTOR_JIYA, 2);
   Event_Wait(10);
   // "What are you standing around for!? Search the area! Find Briggs at once!"
-  Event_ShowMessageThenWait(12, 0, 10);
-  Actor_FaceDirectionById(11, FACING_EAST, 0);
-  Actor_FaceDirectionById(12, FACING_EAST, 0);
+  Event_ShowMessageThenWait(ACTOR_WORKER, 0, 10);
+  Actor_FaceDirectionById(ACTOR_JAIL_GUARD, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_WORKER, FACING_EAST, 0);
   Event_Wait(30);
-  Actor_RunRepeatedMotion(11, 2);
+  Actor_RunRepeatedMotion(ACTOR_JAIL_GUARD, 2);
   Event_Wait(10);
   // "It...might not be quite that easy..."
-  Event_ShowMessageThenWait(11, 0, 10);
-  Actor_FaceDirection(11, FACING_SOUTH_SOUTHWEST, 0);
-  Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 0);
+  Event_ShowMessageThenWait(ACTOR_JAIL_GUARD, 0, 10);
+  Actor_FaceDirection(ACTOR_JAIL_GUARD, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_WORKER, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(35);
-  Actor_RunRepeatedMotion(12, 2);
+  Actor_RunRepeatedMotion(ACTOR_WORKER, 2);
   Event_Wait(10);
   // "He is a pirate, after all... A famous one!"
-  Event_ShowMessageThenWait(12, 0, 10);
-  Actor_SetAnimationAndWait(11, 3);
+  Event_ShowMessageThenWait(ACTOR_WORKER, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_JAIL_GUARD, 3);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(12, 3);
+  Actor_SetAnimationAndWait(ACTOR_WORKER, 3);
   Event_Wait(30);
-  Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  Actor_ShowEmoteById(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   // "Enough of that! Move it!"
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_Jump(12, 6, 0);
-  Actor_Jump(11, 6, 25);
-  Actor_WalkByById(12, 0, 24);
-  Actor_WalkByAndWait(11, -16, 16);
-  Actor_WalkByById(11, 0, 24);
-  Actor_WaitForMoveById(12);
-  Actor_SetPosition(12, 0, 0);
-  Actor_WaitForMoveById(11);
-  Actor_SetPosition(11, 0, 0);
+  Event_ShowMessageThenWait(ACTOR_JIYA, 0, 10);
+  Actor_Jump(ACTOR_WORKER, 6, 0);
+  Actor_Jump(ACTOR_JAIL_GUARD, 6, 25);
+  Actor_WalkByById(ACTOR_WORKER, 0, 24);
+  Actor_WalkByAndWait(ACTOR_JAIL_GUARD, -16, 16);
+  Actor_WalkByById(ACTOR_JAIL_GUARD, 0, 24);
+  Actor_WaitForMoveById(ACTOR_WORKER);
+  Actor_SetPosition(ACTOR_WORKER, 0, 0);
+  Actor_WaitForMoveById(ACTOR_JAIL_GUARD);
+  Actor_SetPosition(ACTOR_JAIL_GUARD, 0, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(9, 4);
+  Actor_SetAnimationAndWait(ACTOR_MAYOR, 4);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
-  Actor_FaceDirectionById(13, FACING_EAST, 0);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 0);
   Event_Wait(20);
   // "Regardless, I'm going to go inspect my boat..."
-  Event_ShowMessageThenWait(9, 0, 10);
-  Actor_SetSpeed(9, 1);
-  Actor_SetSpeed(8, 1);
-  Actor_WatchAndSetScript(ACTOR_FELIX, 9);
-  Actor_WatchAndSetScript(13, 9);
-  Actor_WatchAndSetScript(ACTOR_PIERS, 9);
-  Actor_WatchAndSetScript(ACTOR_JENNA, 9);
-  Actor_WatchAndSetScript(ACTOR_SHEBA, 9);
-  Actor_WalkByAndWaitById(9, 16, 0);
-  Actor_WalkByAndWaitById(9, 0, 50);
-  Actor_WalkByAndWait(9, -32, 4);
+  Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
+  Actor_SetSpeed(ACTOR_MAYOR, 1);
+  Actor_SetSpeed(ACTOR_JIYA, 1);
+  Actor_WatchAndSetScript(ACTOR_FELIX, ACTOR_MAYOR);
+  Actor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_MAYOR);
+  Actor_WatchAndSetScript(ACTOR_PIERS, ACTOR_MAYOR);
+  Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_MAYOR);
+  Actor_WatchAndSetScript(ACTOR_SHEBA, ACTOR_MAYOR);
+  Actor_WalkByAndWaitById(ACTOR_MAYOR, 16, 0);
+  Actor_WalkByAndWaitById(ACTOR_MAYOR, 0, 50);
+  Actor_WalkByAndWait(ACTOR_MAYOR, -32, 4);
   Event_Wait(20);
   Actor_Stop(ACTOR_FELIX);
-  Actor_Stop(13);
+  Actor_Stop(ACTOR_KRADEN);
   Actor_Stop(ACTOR_PIERS);
   Actor_Stop(ACTOR_JENNA);
   Actor_Stop(ACTOR_SHEBA);
-  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
+  Actor_ShowEmoteById(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   // "Oh, and Felix and his crew were there, too, weren't they?"
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
-  Actor_FaceDirectionById(9, FACING_NORTH_NORTHWEST, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
+  Actor_FaceDirectionById(ACTOR_MAYOR, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(20);
   // "I treated you like an honored guest in my home..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
   Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(13, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(50);
-  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Actor_ShowEmoteById(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   // "Usually, one feels a certain obligation to those who do them such a..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 0);
-  Actor_FaceDirectionById(13, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(35);
-  Actor_RunRepeatedMotion(9, 2);
+  Actor_RunRepeatedMotion(ACTOR_MAYOR, 2);
   Event_Wait(10);
   // "So, don't just stand there! Return the favor and find me Briggs!"
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
-  Actor_WalkByAndWaitById(8, -32, 0);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
+  Actor_WalkByAndWaitById(ACTOR_JIYA, -32, 0);
   Event_Wait(10);
-  Actor_Jump(8, 6, 15);
-  Actor_Jump(8, 6, 23);
+  Actor_Jump(ACTOR_JIYA, 6, 15);
+  Actor_Jump(ACTOR_JIYA, 6, 23);
   // "Come on! Hurry up! Let's go! Move it!"
-  Event_ShowMessageThenWait(8, 0, 10);
-  Actor_FaceDirectionById(9, FACING_NORTH_NORTHEAST, 0);
+  Event_ShowMessageThenWait(ACTOR_JIYA, 0, 10);
+  Actor_FaceDirectionById(ACTOR_MAYOR, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(20);
   // "Let's go see the boat."
-  Event_ShowMessageThenWait(9, 0, 10);
+  Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
   Sound_Play(SOUND_FADE_OUT_BGM);
-  Actor_FaceDirectionById(8, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirectionById(ACTOR_JIYA, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_JIYA, 3);
   Event_Wait(20);
-  Actor_WalkByById(9, 0, 24);
-  Actor_WalkByAndWait(8, -16, 16);
-  Actor_WalkByById(8, 0, 24);
-  Actor_WaitForMoveById(9);
-  Actor_SetPosition(9, 0, 0);
-  Actor_WaitForMoveById(8);
-  Actor_SetPosition(8, 0, 0);
+  Actor_WalkByById(ACTOR_MAYOR, 0, 24);
+  Actor_WalkByAndWait(ACTOR_JIYA, -16, 16);
+  Actor_WalkByById(ACTOR_JIYA, 0, 24);
+  Actor_WaitForMoveById(ACTOR_MAYOR);
+  Actor_SetPosition(ACTOR_MAYOR, 0, 0);
+  Actor_WaitForMoveById(ACTOR_JIYA);
+  Actor_SetPosition(ACTOR_JIYA, 0, 0);
   Event_Wait(30);
   Scene_PlayMusic();
   Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
@@ -653,7 +680,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
-  Actor_FaceDirectionById(13, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_FaceDirectionById(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
   // "Well, so what do we do? Do we go after Briggs?" Yes: "Don't feel like you
   // have to do them any favors!" No: "That's right! Why should we help the
@@ -674,20 +701,20 @@ void AlhafraManor_BriggsEscapes(void) {
     // "That's right! Why should we help the mayor, after the way he treated..."
     Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
   }
-  Actor_SetAnimationAndWait(13, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   Event_Wait(10);
   // "Felix can decide for himself what to do..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 13, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHEAST, 0);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(30);
-  Actor_ShowEmoteById(13, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "At the very least, I want to go see the sailing ship now that it's..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 13, 0, 10);
-  Actor_SetAnimationAndWait(13, 3);
+  FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   Event_Wait(10);
   // "Let's just go outside and take a quick look."
-  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 13, 0, 10);
+  Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
   Actor_SetAnimationById(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
@@ -699,8 +726,8 @@ void AlhafraManor_BriggsEscapes(void) {
   WALK_TO_LEADER(13);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Event_End();
-  EVENT_WORD(0x1b4) = 16;
-  EVENT_WORD(0x1ac) = 521;
+  gFieldWork->transitionFrames = 16;
+  gFieldWork->transition = 521;
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 }
 
@@ -808,43 +835,51 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_TALK, 10, IF_FLAG_SET(0x8a7), MSGNO(MsgAlhafraManor30)},
+    {TRIGGER_TALK, 10, IF_FLAG_SET(0x8a7),
+     MSGNO(MsgAlhafraManorEveryoneInTownIsTalking)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x8a7),
-     MSGNO(MsgAlhafraManor31)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor01)},
+     MSGNO(MsgAlhafraManorIDontKnowWhatThe)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorYouShouldGoToThe)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(AlhafraManor_AskAboutAlhafra)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor03)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor04)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorOurTownWasRifeWith)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorTheMountainsToTheEast)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor05)},
+     MSGNO(MsgAlhafraManorThereAreNumerousTalesAbout)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor06)},
+     MSGNO(MsgAlhafraManorWhyDoTheyAlwaysTell)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor07)},
+     MSGNO(MsgAlhafraManorThosePiratesNeverDidUs)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor08)},
+     MSGNO(MsgAlhafraManorTheresNoWayToCross)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, EVENT(AlhafraManor_PointOutAirsRock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor11)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor12)},
+     MSGNO(MsgAlhafraManorTheLongerISitHere)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorIdBeenSayingIndraWasnt)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor13)},
+     MSGNO(MsgAlhafraManorISatAndGazedAt)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(AlhafraManor_AskIfTheHeroes)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor15)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorIHeardThePiratesTalking)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor16)},
+     MSGNO(MsgAlhafraManorIWishSomeoneWouldGo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor17)},
+     MSGNO(MsgAlhafraManorIHopeTheWarriorsWho)},
     {TRIGGER_TALK, 18, FLAG_GRUMBLED_ABOUT_THE_MAYOR,
      EVENT(AlhafraManor_GrumbleAboutTheMayor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18 | TRIGGER_SUBJECT_OWN_EFFECT,
      FLAG_GRUMBLED_ABOUT_THE_MAYOR, EVENT(AlhafraManor_GrumbleAboutTheMayor)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor19)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor20)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorImStartingToThinkThe)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorHesAlreadyBeenPaidTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor21)},
+     MSGNO(MsgAlhafraManorIfWeLeaveTheBoat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor22)},
+     MSGNO(MsgAlhafraManorTheMoneyBriggsUsedTo)},
     {TRIGGER_TALK, 8, FLAG_DEFENDED_THE_MAYOR,
      EVENT(AlhafraManor_DefendTheMayor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8 | TRIGGER_SUBJECT_OWN_EFFECT,
@@ -853,13 +888,15 @@ struct Trigger gSceneEvents[] = {
      EVENT(AlhafraManor_TellOfTheEasternSea)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9 | TRIGGER_SUBJECT_OWN_EFFECT,
      FLAG_TOLD_OF_THE_EASTERN_SEA, EVENT(AlhafraManor_TellOfTheEasternSea)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor25)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafraManor26)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorIAmPlanningAGlorious)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraManorTheMayorWontHelpFix)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor27)},
+     MSGNO(MsgAlhafraManorThisIsSuchAFantastic)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraManor28)},
+     MSGNO(MsgAlhafraManorTheMayorHatesSeeingAnyone)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgAlhafraInteriors125))},
+     FIND_MESSAGE(MSGNO(MsgAlhafraInteriorsThatSeafoodStewHasAn))},
     {TRIGGER_TABLE_END},
 };

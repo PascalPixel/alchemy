@@ -406,7 +406,7 @@ void BattleObject_UpdateSpritePriorities(void) {
     }
   }
 
-  if (((u8 *)work)[0x866] != 0)
+  if (work->keepObjectPriorities != 0)
     return;
 
   if ((s16)((struct BattleCamera *)Ram_HeapSlots->cameraWork)->yaw >= 0) {

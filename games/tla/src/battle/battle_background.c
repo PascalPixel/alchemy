@@ -437,22 +437,14 @@ s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 #define DEBUG_VALUE_SELECT 544
 #endif
 
-/// The battle work as Battle_AdjustDebugValue reads it: the debug value at
-/// 0x854.
-struct DebugBattleWork {
-  u8 unk000[0x854];
-  s32 debugValue;
-};
-
 /// A debug choice of a battle value: with Start held, the d-pad and L/R step
-/// the battle work's word at 0x854 (by 1, 10 and 100) until A takes it; Select
+/// the battle work's debugValue (by 1, 10 and 100) until A takes it; Select
 /// held picks DEBUG_VALUE_SELECT and R held 399; otherwise value comes back
 /// unchanged.
 s32 Battle_AdjustDebugValue(s32 value) {
   if (gInput.held & KEY_START) {
     while (1) {
-      struct DebugBattleWork *work =
-          (struct DebugBattleWork *)Ram_HeapSlots->battleWork;
+      struct BattleWork *work = Ram_HeapSlots->battleWork;
 
       if (gInput.repeat & KEY_LEFT)
         work->debugValue--;

@@ -81,25 +81,47 @@ struct BattleWork {
   u16 palette[128]; ///< the backdrop's colours, before scaling
   s32 brightness;   ///< the backdrop's brightness, 16.16, 0x10000 full
   /// Its first halfword is the battle background passed to the palette fade.
-  u16 background; ///< the battle background's id
-  u8 unk672[4];
+  u16 background;              ///< the battle background's id
+  u8 unusedAfterBackground[4]; ///< no code names it
   u16 highlightStep; ///< stepped each frame while the units are highlighted
   u16 highlightMode; ///< nonzero while the units are highlighted
-  /// Scheduling the event playback clears its byte at 0x67d (written as
-  /// unk670[0x0d]).
-  u8 unk67a[0x6a];
+  u8 paddingAfterHighlight[2]; ///< up to the word plan starts on
+  /// The action being carried out, as BattleActionRun_Build lays it out.
+  struct BattlePlan plan;
+  s32 skipPlayback; ///< nonzero leaves the action's events unplayed
   struct BattlePlaybackWork events;
-  u8 unk854[4]; ///< not named by TLA code
+  /// A value Battle_AdjustDebugValue edits with the d-pad while Start is held.
+  s32 debugValue;
   /// The unit ready to counterattack (ABILITY_EFFECT_COUNTER) that was just
   /// struck, and the opponent that struck it.
   ///@{
   s32 counterUnitId;
   s32 counterTargetId;
   ///@}
-  u8 unk860[8]; ///< not named by TLA code
+  /// Daedalus strikes again at the end of the turns after it is summoned:
+  /// each queued strike is a bit, set when an enemy summoned it, and the next
+  /// turn's queue is gathered while this one's is played.
+  ///@{
+  u16 daedalusFromEnemies;
+  u16 nextDaedalusFromEnemies;
+  u8 daedalusStrikes;
+  u8 nextDaedalusStrikes;
+  ///@}
+  /// Nonzero leaves the battle objects' sprite priorities as they are, while
+  /// Flora's effect plays.
+  u8 keepObjectPriorities;
+  /// Nonzero keeps the backdrop's palette while a summon (Charon, Atalanta,
+  /// Neptune, Moloch) colours the screen.
+  u8 keepBackdropPalette;
   /// Poseidon's force field: 1 for an enemy of id 101 to 103 while flag 0x173
   /// is clear; until the Trident lands, MsgFieldProtects turns abilities away.
   u8 forceField;
+  /// The animation the acting unit takes as it calls up its Psynergy; 3 as
+  /// its action starts.
+  u8 actingAnimation;
+  u8 paddingAfterActingAnimation[2]; ///< up to the word aiStates starts on
+  /// Each enemy's targeting memory (a struct AIState), by AI request.
+  u32 aiStates[4];
 };
 
 STATIC_ASSERT(offsetof(struct BattleWork, partyStatus) == 0x041);
@@ -117,7 +139,13 @@ STATIC_ASSERT(offsetof(struct BattleWork, queueCount) == 0x56b);
 STATIC_ASSERT(offsetof(struct BattleWork, highlightStep) == 0x676);
 STATIC_ASSERT(offsetof(struct BattleWork, highlightMode) == 0x678);
 STATIC_ASSERT(offsetof(struct BattleWork, events) == 0x6e4);
+STATIC_ASSERT(offsetof(struct BattleWork, plan) == 0x67c);
+STATIC_ASSERT(offsetof(struct BattleWork, debugValue) == 0x854);
+STATIC_ASSERT(offsetof(struct BattleWork, daedalusFromEnemies) == 0x860);
+STATIC_ASSERT(offsetof(struct BattleWork, keepBackdropPalette) == 0x867);
 STATIC_ASSERT(offsetof(struct BattleWork, forceField) == 0x868);
+STATIC_ASSERT(offsetof(struct BattleWork, aiStates) == 0x86c);
+STATIC_ASSERT(sizeof(struct BattleWork) == 0x87c);
 
 struct LinkRuntimeState;
 

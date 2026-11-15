@@ -37,7 +37,7 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
   ev->eventIndex = 0;
   ev->timer = frames;
   ev->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
-  work->unk67a[3] = 0;
+  work->plan.targetCount = 0;
   return Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
 }
 

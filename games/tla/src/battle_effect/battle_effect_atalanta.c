@@ -62,7 +62,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   BattleEffect_SelectLivingTargets(work->args);
 
   // Atalanta: eleven sprite objects with their tiles.
-  ((u8 *)Ram_HeapSlots->battleWork)[0x867] = 1;
+  Ram_HeapSlots->battleWork->keepBackdropPalette = 1;
   picture = Resource_GetTableEntry((s32)&ResourceId_LeafWarriorTiles);
   Iwram_CopyWords(OBJ_PLTT, picture, 512);
   // Two steps: one `+= 512` reuses the size's constant across the call.

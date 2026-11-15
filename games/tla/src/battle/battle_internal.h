@@ -237,22 +237,6 @@ struct BattleFxRequest {
   u8 unk26[0x32];
 };
 
-/// The battle work past BattleWork's members, as the staging reads it: the
-/// backdrop's brightness and background, the plan of the action being played,
-/// the flag that skips its playback, and how the acting unit is shown.
-struct DispatchBattleWork {
-  u8 unk000[0x66c];
-  s32 brightness;
-  u16 background;
-  u8 unk672[0x67c - 0x672];
-  struct BattlePlan plan;
-  s32 skipPlayback;
-  u8 unk6e4[0x84e - 0x6e4];
-  u16 unk84e;
-  u8 unk850[0x869 - 0x850];
-  u8 actorMode;
-};
-
 /// The packet the two consoles exchange each turn of a link battle: how many
 /// actions follow, a random check, and the random seed both sides then use.
 struct BattleLinkedActionState {

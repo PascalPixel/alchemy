@@ -150,21 +150,21 @@ void BattleParty_ReturnAllToSpots(void) {
 s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
                                  s32 delay) {
   struct BattlePresentationTransition *view;
-  struct DispatchBattleWork *battle;
+  struct BattleWork *battle;
   struct BattleCamera *camera;
   struct Unit *unit;
   u16 actingUnit[2];
   s32 fled;
   s32 result;
 
-  battle = (struct DispatchBattleWork *)Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   fled = 0;
   if (request->unitId == BATTLE_UNIT_LIST_END)
     return 0;
   unit = Unit_Get(request->unitId);
   if (unit->hp == 0)
     return -1;
-  battle->actorMode = 3;
+  battle->actingAnimation = 3;
   if (unit->classId == CLASS_NONE)
     BattleAI_ChooseAction(request, 1);
 
@@ -247,7 +247,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     case STAGING_TEAM_STRIKE: {
       u8 swap = battle->plan.targetIds[0];
 
-      battle->unk84e = 1;
+      battle->events.unk16a = 1;
       battle->plan.targetIds[0] = battle->plan.actorId2;
       battle->skipPlayback = 1;
       BattleStaging_RunPsynergyCast(&battle->plan, CAST_DJINNI);
@@ -323,9 +323,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
   BattleParty_ReturnAllToSpots();
   request->unitId = BATTLE_UNIT_LIST_END;
 finish:
-  BattleBackground_SetMode(
-      2, ((struct DispatchBattleWork *)Ram_HeapSlots->battleWork)->background,
-      0);
+  BattleBackground_SetMode(2, (Ram_HeapSlots->battleWork)->background, 0);
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   return fled;
 }
@@ -482,7 +480,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
         BattleHighlight_SetSpriteMode(unit, 1);
     } else {
       Actor_SelectAnimationFar((struct Actor *)object,
-                               ((u8 *)Ram_HeapSlots->battleWork)[0x869]);
+                               Ram_HeapSlots->battleWork->actingAnimation);
     }
   }
   if (!(mode & 2)) {

@@ -1044,7 +1044,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   DrawRectangle draw[2];
   struct MotionObject *targetObject;
   struct MotionObject *casterObject;
-  u8 *battle;
+  struct BattleWork *battle;
   struct Particle *step;
   s32 i;
 
@@ -1061,8 +1061,8 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, 0xc80);
   targetObject = BattleObject_GetFar(args->targets[0])->object;
   casterObject = BattleObject_GetFar(args->user)->object;
-  battle = (u8 *)Ram_HeapSlots->battleWork;
-  battle[0x866] = 1;
+  battle = Ram_HeapSlots->battleWork;
+  battle->keepObjectPriorities = 1;
 
   for (frame = 0; frame != STAR_FRAMES; frame++) {
     BattleObject_SetRecordPriority(args->user, 3);
@@ -1169,7 +1169,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
   {
     s32 cleared = 0;
 
-    battle[0x866] = cleared;
+    battle->keepObjectPriorities = cleared;
   }
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);

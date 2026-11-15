@@ -700,7 +700,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   PartyStatus_DrawFar(heap->battleWork->partyStatus & ~1);
   saved = BattleMotion_CallBeast(plan, &work);
   object = BattleObject_Get(work.actor)->object;
-  Actor_SelectAnimationFar(object, ((u8 *)heap->battleWork)[0x869]);
+  Actor_SelectAnimationFar(object, heap->battleWork->actingAnimation);
   Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
   Sound_PlayFar(SE_CAST);
   if (mode & 2)

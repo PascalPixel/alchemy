@@ -67,7 +67,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   REG_WIN0H = WIN_RANGE(240, 240);
   BattleEffect_SelectLivingTargets(work->args);
   // Build the serpent: its palette, its tiles, and eight sprites.
-  ((u8 *)Ram_HeapSlots->battleWork)[0x867] = 1;
+  Ram_HeapSlots->battleWork->keepBackdropPalette = 1;
   {
     u8 *sheet = Resource_GetTableEntry((s32)&ResourceId_SeaSerpentTiles);
     Iwram_CopyWords((void *)OBJ_PLTT, sheet, 0x200);

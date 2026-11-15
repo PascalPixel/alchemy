@@ -154,14 +154,10 @@ void Epilogue_ShowLineAt(s32 message, s32 x, s32 y, s32 left, s32 line,
   window = Message_OpenWindow(gEpilogueMessage, x, y,
                               (Speaker_GetVoice(message) << 16) | 4);
   if (!wide) {
-    /* FAKEMATCH(temporary): the name window held in a temporary until after the
-     * stores. */
-    struct EpilogueWindow *opened = Portrait_OpenWindow(message, 0, left, line);
-
+    name = Portrait_OpenWindow(message, 0, left, line);
     gEpilogueNameShown = 1;
     gEpilogueNameX = left << 3;
     gEpilogueNameY = line << 3;
-    name = opened;
   }
   if (mode == 2) {
     window->unk0e++;

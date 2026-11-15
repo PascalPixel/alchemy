@@ -2560,9 +2560,7 @@ void Kibombo_PresentOrbToGabomba(void) {
 }
 
 void Kibombo_GabombaNotPleased(void) {
-  struct Actor **slot;
   struct Actor *object;
-  s32 y;
 
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   Actor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 15);
@@ -2592,24 +2590,15 @@ void Kibombo_GabombaNotPleased(void) {
   Event_SetMessageId((s32)MsgYouAreStill);
   // "You are still not pleased?"
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
-  slot = &gKibombo_BlackCrystal;
-  object = *slot;
+  object = gKibombo_BlackCrystal;
   if (object != 0) {
-    // Lowers the object 0x4000 a frame down to y 0x240000; the loop is
-    // entered at its test, which reuses the pointer read for the test above.
     object->motionFlags = 0;
-    goto test;
-    do {
+    while (object->y.fixed > px(36)) {
       Actor_FaceDirection(ACTOR_AKAFUBU, FACING_NORTH_NORTHEAST, 0);
-      slot = &gKibombo_BlackCrystal;
-      (*slot)->y.fixed += 0xffffc000;
+      gKibombo_BlackCrystal->y.fixed -= px(1) / 4;
       wait(1);
-      object = *slot;
-    test:
-      y = object->y.fixed;
-      /* FAKEMATCH(barrier): an empty asm on the height. */
-      __asm__("" : "+l"(y));
-    } while (y > 0x240000);
+      object = gKibombo_BlackCrystal;
+    }
   }
   Actor_SetAnimationAndWait(ACTOR_AKAFUBU, 4);
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
@@ -3104,7 +3093,7 @@ static __inline__ s32 Gauge(s32 value, s32 max) {
 /// Kibombo_FlickerVillageFires scheduled.
 void Kibombo_InitializeCeremony(void) {
   struct Actor *actor = Actor_GetById(11);
-  u8 *unit;
+  struct Unit *unit;
   s32 done;
 
   Event_Start();
@@ -3118,29 +3107,19 @@ void Kibombo_InitializeCeremony(void) {
     Actor_SetSpritePriority(11, 1);
     if (gMainRoutineWork.entrance == 19 &&
         GameFlag_Get(FLAG_IN_PARTY(ACTOR_PIERS))) {
-      unit = Unit_Get(7);
-      *(u16 *)(unit + 0x38) = *(u16 *)(unit + 0x34);
-      *(u16 *)(unit + 0x3a) = *(u16 *)(unit + 0x36);
-      /* FAKEMATCH(dead): both copies stored before the gauge's argument is
-       * extended. */
+      unit = Unit_Get(ACTOR_PIERS);
+      unit->hp = unit->hpMax;
+      unit->pp = unit->ppMax;
       do {
       } while (0);
-      *(u16 *)(unit + 0x14) =
-          Gauge(*(s16 *)(unit + 0x38), *(s16 *)(unit + 0x34));
-      if (*(u16 *)(unit + 0x14) == 0 && *(s16 *)(unit + 0x38) != 0) {
-        s32 one = 1;
-
-        *(s16 *)(unit + 0x14) = one;
-      }
-      *(u16 *)(unit + 0x16) =
-          Gauge(*(s16 *)(unit + 0x3a), *(s16 *)(unit + 0x36));
-      if (*(u16 *)(unit + 0x16) == 0 && *(s16 *)(unit + 0x3a) != 0) {
-        s32 one = 1;
-
-        *(s16 *)(unit + 0x16) = one;
-      }
-      unit[0x131] = 0;
-      unit[0x140] = 0;
+      unit->hpGauge = Gauge(unit->hp, unit->hpMax);
+      if (unit->hpGauge == 0 && unit->hp != 0)
+        unit->hpGauge = 1;
+      unit->ppGauge = Gauge(unit->pp, unit->ppMax);
+      if (unit->ppGauge == 0 && unit->pp != 0)
+        unit->ppGauge = 1;
+      unit->poison = 0;
+      unit->haunt = 0;
       GameFlag_Set(FLAG_KIBOMBO_PIERS_STAYED_BEHIND);
       GameFlag_Clear(FLAG_KIBOMBO_PIERS_WITH_PARTY);
       Party_RemoveMemberRestored(7);

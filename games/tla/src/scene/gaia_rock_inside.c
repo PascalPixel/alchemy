@@ -369,7 +369,6 @@ s32 GaiaRockInside_RaiseDust(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 i;
   struct EffectOptions options;
-  s32 spawn = 1;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -390,32 +389,23 @@ s32 GaiaRockInside_RaiseDust(void) {
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
   options.startScaleY = 0xa3d7;
-  i = 0;
-loop:
-  {
+  for (i = 0; i <= 16; i++) {
     s32 angle;
     s32 velocity[3];
     s32 cosine;
 
     angle = i << 12;
     cosine = Trig_Cos(angle);
-    /* FAKEMATCH(dead): spawn is always 1, a constant GCSE only folds after its
-     * partial redundancy pass. */
-    if (spawn) {
-      velocity[0] = cosine;
-      velocity[1] = 0;
-      velocity[2] = Math_Sin(angle);
-      velocity[0] += velocity[0] >> 1;
-      velocity[0] += (Random16() * 0xc000 >> 16) - 0x6000;
-      velocity[2] += (Random16() * 0x6000 >> 16) - 0x3000;
-      FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-                        velocity[0], velocity[1], velocity[2], 0x1090001,
-                        &options);
-    }
-    i++;
+    velocity[0] = cosine;
+    velocity[1] = 0;
+    velocity[2] = Math_Sin(angle);
+    velocity[0] += velocity[0] >> 1;
+    velocity[0] += (Random16() * 0xc000 >> 16) - 0x6000;
+    velocity[2] += (Random16() * 0x6000 >> 16) - 0x3000;
+    FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed,
+                      velocity[0], velocity[1], velocity[2], 0x1090001,
+                      &options);
   }
-  if (i <= 16)
-    goto loop;
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
@@ -1030,33 +1020,31 @@ void GaiaRockInside_SpawnSpark(struct Orbiter *source) {
   Actor_StartScript(t0, (s32)gGaiaRockInside_SparkScript);
 }
 
+/// Turns an orbiting object by half its speed and puts it out from its anchor,
+/// raised 8 pixels, by its radius.
+static inline void Orbiter_Step(struct Orbiter *orbiter, struct Actor *anchor) {
+  orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
+  orbiter->x = anchor->x.fixed;
+  orbiter->y = anchor->y.fixed + px(8);
+  orbiter->z = anchor->z.fixed;
+  FieldVector_AddPolarOffsetFixed(orbiter->radius, orbiter->angle, &orbiter->x);
+}
+
 /// Steps an orbiting object around its anchor: turns it by half its speed, puts
 /// it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
 /// countdown runs out returns 0, else, unless its radius is down to 2 pixels,
 /// takes a second, shrinking step. Returns 1 while it runs.
 s32 Orbiter_Spiral(struct Orbiter *orbiter) {
   struct Actor *anchor = orbiter->anchor;
-  s16 *angle;
 
-  orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
-  orbiter->x = anchor->x.fixed;
-  orbiter->y = anchor->y.fixed + px(8);
-  orbiter->z = anchor->z.fixed;
-  FieldVector_AddPolarOffsetFixed(orbiter->radius, orbiter->angle, &orbiter->x);
-  /* FAKEMATCH(temporary): the angle's address, taken after the first push,
-   * sets r2 from r8 before the second push reads it. */
-  angle = &orbiter->angle;
+  Orbiter_Step(orbiter, anchor);
   if (--orbiter->countdown == 0)
     return 0;
   if (orbiter->radius == 0x20000)
     return 1;
   GaiaRockInside_SpawnSpark(orbiter);
   orbiter->radius -= 0x40000;
-  orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
-  orbiter->x = anchor->x.fixed;
-  orbiter->y = anchor->y.fixed + px(8);
-  orbiter->z = anchor->z.fixed;
-  FieldVector_AddPolarOffsetFixed(orbiter->radius, *angle, &orbiter->x);
+  Orbiter_Step(orbiter, anchor);
   GaiaRockInside_SpawnSpark(orbiter);
   orbiter->radius -= 0x40000;
   return 1;

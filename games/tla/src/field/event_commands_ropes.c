@@ -1486,9 +1486,7 @@ void HangingVine_Update(void) {
 struct HangingVineSlot *HangingVine_FindFreeSlot(void) {
   struct HangingVineWork *work = HANGING_VINE_WORK;
   struct HangingVineSlot *found = NULL;
-  s32 index;
-  /* FAKEMATCH(dead): index set to 0 before the loop sets it again. */
-  index = 0;
+  s32 index = 0;
 
   for (index = 0; index < ROPE_SLOT_COUNT; index++) {
     if (work->slots[index].root == NULL) {
@@ -1504,9 +1502,7 @@ struct HangingVineSlot *HangingVine_FindFreeSlot(void) {
 struct HangingVineSlot *HangingVine_FindSlot(s32 id) {
   struct HangingVineWork *work = HANGING_VINE_WORK;
   struct HangingVineSlot *found = NULL;
-  s32 index;
-  /* FAKEMATCH(dead): index set to 0 before the loop sets it again. */
-  index = 0;
+  s32 index = 0;
 
   for (index = 0; index < ROPE_SLOT_COUNT; index++) {
     if (work->slots[index].id == id) {

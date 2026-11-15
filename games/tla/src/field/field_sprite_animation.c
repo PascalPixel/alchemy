@@ -198,7 +198,6 @@ s32 Sprite_ResetAnimations(struct Sprite *state) {
 /// and drawing kind, with no script running and no picture shown.
 void SpriteAnimation_Reset(struct SpriteAnimation *work) {
   s32 value;
-  s32 z;
   s32 animation;
   struct AnimationMetadata *info;
 
@@ -208,16 +207,12 @@ void SpriteAnimation_Reset(struct SpriteAnimation *work) {
       value = info->pictures;
       if (value == 0)
         value = SpritePictureCache_FindByTag(work->animationId);
-      z = 0;
       work->kind = info->drawKind;
-      work->script = (u8 *)z;
-      /* FAKEMATCH(dead): an empty once-only block. */
-      do {
-      } while (0);
+      Io_Write32(0, (u32 *)&work->script);
       animation = info->animation;
       work->pictures = (void **)value;
       work->scripts = (u8 **)animation;
-      work->scriptOffset = z;
+      work->scriptOffset = 0;
       work->mode = info->pictureCodec;
       work->picture = 0xff;
     }

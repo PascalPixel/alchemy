@@ -377,15 +377,15 @@ void Sand_JitterGrain(struct Actor *object) {
 /// flag 0x146 is clear.
 s32 Sand_CheckEndKeys(s32 arg) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  /* FAKEMATCH(pin): pressed held in r0, the register the early zero is returned
-   * in. */
-  register s32 pressed asm("r0") = 0;
+  s32 pressed = 0;
 
   if (work == NULL)
     return 0;
-  if ((gInput.pressed & gMainRoutineWork.selectKeys) ||
-      (gInput.pressed & gMainRoutineWork.aKeys) ||
-      (gInput.pressed & gMainRoutineWork.startKeys))
+  if (gInput.pressed & gMainRoutineWork.selectKeys)
+    pressed = 1;
+  else if (gInput.pressed & gMainRoutineWork.aKeys)
+    pressed = 1;
+  else if (gInput.pressed & gMainRoutineWork.startKeys)
     pressed = 1;
   if (pressed) {
     if (Actor_CheckBlockedFar(arg)) {

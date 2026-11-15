@@ -195,44 +195,30 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
         EffectPosition_ProjectScaledBattler(args->targets[member], &base);
 
         for (i = 0; i != 2; i++) {
-          s32 angle;
-          s32 radius;
-          s32 x;
-          s32 y;
-          const u8 *h;
-          const u8 *w;
+          s32 angle = Random16() & TRIG_ANGLE_MASK;
+          s32 cel = frame & 3;
+          s32 radius = (Random16() & 31) + 4;
+          s32 x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
+                  (gBattleEffect_GlintPictureWidths[cel] >> 1);
+          s32 y = base.y - FIXEDtoINT(Trig_Cos(angle) * radius) -
+                  (gBattleEffect_GlintPictureHeights[cel] >> 1);
+          u32 flip = Random16();
 
-          /* FAKEMATCH(temporary): w and h set inside statement expressions at
-           * their first reads. */
-          angle = Random16() & TRIG_ANGLE_MASK;
-          radius = (Random16() & 31) + 4;
-          x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
-              (({
-                 w = gBattleEffect_GlintPictureWidths;
-                 w;
-               })[frame & 3] >>
-               1);
-          /* FAKEMATCH(barrier): an empty asm through w hides that it holds the
-           * width table's address. */
-          __asm__("" : "=r"(w) : "0"(w));
-          y = base.y - (FIXEDtoINT(Trig_Cos(angle) * radius)) -
-              (({
-                 h = gBattleEffect_GlintPictureHeights;
-                 h;
-               })[frame & 3] >>
-               1);
-          /* FAKEMATCH(barrier): an empty asm through h, the same for the height
-           * table. */
-          __asm__("" : "=r"(h) : "0"(h));
+          /* FAKEMATCH(dead): an empty once-only loop before the blitter is
+           * built, as every glint draw keeps one; without it, 362 of 755
+           * instructions differ in tla-en. */
+          do {
+          } while (0);
           BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
-                                    COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                        gTargetMotes_GlintFlips[Random16() & 3],
+                                    gTargetMotes_GlintFlips[flip & 3] |
+                                        COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y,
                                     BLITTER_MAX);
           ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
               canvas,
-              work->sheet + gBattleEffect_GlintPictures[frame & 3] +
+              work->sheet + gBattleEffect_GlintPictures[cel] +
                   TORNADO_GLINT_SHEET,
-              x, y + 16, w[frame & 3], h[frame & 3]);
+              x, y + 16, gBattleEffect_GlintPictureWidths[cel],
+              gBattleEffect_GlintPictureHeights[cel]);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
       }

@@ -90,9 +90,9 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
 
 /// The SC_CALL routine of movement type 7: clears an actor's sprite flags and
 /// its collision flags, so nothing collides with it.
-s32 Actor_ClearChildAndCollisionFlags(struct Actor *obj) {
-  Actor_SetSpriteFlagsFar((struct Actor *)obj, 0);
-  obj->collisionFlags = 0;
+s32 Actor_ClearChildAndCollisionFlags(void *obj) {
+  Actor_SetSpriteFlagsFar(obj, 0);
+  ((struct Actor *)obj)->collisionFlags = 0;
   return 0;
 }
 
@@ -109,35 +109,38 @@ s32 Actor_SetPriorityBit5(struct ObjectFlags23 *obj) {
 }
 
 /// The SC_CALL routine of movement type 5: follows the watched actor.
-s32 Actor_MoveTowardTarget(struct Actor *object) {
+s32 Actor_MoveTowardTarget(struct Actor *actor) {
+  s32 step;
   struct Actor *target;
   s32 deltaX;
-  s32 deltaY;
-  s32 cellX;
-  s32 cellY;
+  s32 deltaZ;
+  s32 pixelsX;
+  s32 pixelsZ;
   s32 newX;
+  s32 newZ;
   s32 distance;
-  s32 step;
 
-  target = object->watchedActor;
+  target = actor->watchedActor;
   if (target != 0) {
-    deltaX = target->x.fixed - object->x.fixed;
+    // Whole pixels, rounded toward zero as a division by Q16_ONE would.
+    deltaX = target->x.fixed - actor->x.fixed;
     if (deltaX < 0)
-      deltaX += 0xffff;
-    cellX = deltaX >> 16;
-    deltaY = target->z.fixed - object->z.fixed;
-    if (deltaY < 0)
-      deltaY += 0xffff;
-    cellY = deltaY >> 16;
-    distance = Iwram_Sqrt(cellX * cellX + cellY * cellY);
-    step = object->timer;
+      deltaX += Q16_ONE - 1;
+    pixelsX = FIELD_PIXEL(deltaX);
+    deltaZ = target->z.fixed - actor->z.fixed;
+    if (deltaZ < 0)
+      deltaZ += Q16_ONE - 1;
+    pixelsZ = FIELD_PIXEL(deltaZ);
+    distance = Iwram_Sqrt(pixelsX * pixelsX + pixelsZ * pixelsZ);
+    step = actor->timer;
     if (distance >= step) {
-      newX = object->x.fixed + __divsi3(cellX << 20, step);
-      Actor_SetMoveTargetFar(object, newX, object->y.fixed,
-                             object->z.fixed + __divsi3(cellY << 20, step));
-      Actor_SelectAnimationFar(object, 2);
+      // << 20 is 16 pixels in 16.16 per pixel of distance.
+      newX = actor->x.fixed + (s32)((u32)pixelsX << 20) / step;
+      newZ = actor->z.fixed + (s32)((u32)pixelsZ << 20) / step;
+      Actor_SetMoveTargetFar(actor, newX, actor->y.fixed, newZ);
+      Actor_SelectAnimationFar(actor, ANIM_WALK);
     } else {
-      Actor_SelectAnimationFar(object, 1);
+      Actor_SelectAnimationFar(actor, ANIM_STAND);
     }
   }
   return 1;
@@ -145,27 +148,28 @@ s32 Actor_MoveTowardTarget(struct Actor *object) {
 
 // Objects: turn toward the linked target.
 
-/// Per-frame update that turns an actor toward its watched actor, if it has
-/// one, at most 1/16 turn a frame, and stops it facing where it moves.
+/// The SC_CALL routine of movement type 6: turns the actor toward its watched
+/// actor, at most 1/16 turn a frame.
 s32 Actor_TurnTowardWatchedActor(struct Actor *actor) {
-  s32 turn;
-  u16 old;
-  s32 angle;
+  s16 turnStep;
+  u16 currentAngle;
+  s32 targetAngle;
   struct Actor *target;
 
   target = actor->watchedActor;
   if (target != NULL) {
-    actor->steeringFlags = 0xfe & actor->steeringFlags;
-    angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
-                         target->x.fixed - actor->x.fixed);
-    old = actor->facing;
-    turn = (s16)(angle - old);
-    if (turn != 0) {
-      if (turn > TRIG_TURN / 16)
-        turn = TRIG_TURN / 16;
-      if (turn < -(TRIG_TURN / 16))
-        turn = -(TRIG_TURN / 16);
-      actor->facing = old + turn;
+    // Clear ACTOR_FACES_MOTION, so moving does not turn it away again.
+    actor->steeringFlags &= ~ACTOR_FACES_MOTION;
+    targetAngle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
+                               target->x.fixed - actor->x.fixed);
+    currentAngle = actor->facing;
+    turnStep = targetAngle - currentAngle;
+    if (turnStep != 0) {
+      if (turnStep > FACING_STEP)
+        turnStep = FACING_STEP;
+      if (turnStep < -FACING_STEP)
+        turnStep = -FACING_STEP;
+      actor->facing = (currentAngle + turnStep);
     }
   }
   return 1;
@@ -208,22 +212,22 @@ extern const u8 gMovementType_ClearChildScript[];
 /// the actor script to run itself.
 void Actor_SetMovementType(struct Actor *object, s32 kind) {
   switch (kind) {
-  case 1:
+  case MOVEMENT_TYPE_STAND:
     kind = (s32)gMovementType_StandScript;
     break;
-  case 2:
+  case MOVEMENT_TYPE_WANDER:
     kind = (s32)gMovementType_WanderScript;
     break;
-  case 3:
+  case MOVEMENT_TYPE_WANDER_NEAR:
     kind = (s32)gMovementType_WanderNearScript;
     break;
-  case 4:
+  case MOVEMENT_TYPE_WANDER_CLOSE:
     kind = (s32)gMovementType_WanderCloseScript;
     break;
-  case 5:
+  case MOVEMENT_TYPE_FOLLOW_WATCHED:
     kind = (s32)gMovementType_FollowWatchedScript;
     break;
-  case 6:
+  case MOVEMENT_TYPE_FACE_LEADER:
     object->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
     kind = (s32)gMovementType_FaceLeaderScript;
     break;
@@ -268,7 +272,7 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
       continue;
     if (entry == self)
       continue;
-    if (entry->spriteStorageKind != 1)
+    if (entry->spriteStorageKind != ACTOR_SPRITE_ONE)
       continue;
     dy = entry->y.fixed - self->y.fixed;
     if (dy >= 0) {

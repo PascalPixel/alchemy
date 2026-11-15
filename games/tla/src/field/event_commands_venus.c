@@ -45,16 +45,16 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
   djinni->callback = (void *)FieldEffect_ShrinkActorAndDestroyFast;
   Actor_SelectAnimationFar((struct Actor *)djinni, 3);
   wait(90);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, 0x4000, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
   Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId), 28);
   wait(30);
-  MapGrid_SetScreenShakeFar(0x19999, 0x19999, Q16_ONE);
+  MapGrid_SetScreenShakeFar(px(8) / 5, px(8) / 5, Q16_ONE);
 
   position[0] = djinni->x;
   position[1] = djinni->y;
   position[2] = djinni->z;
-  Camera_WorldToScreen(position);
+  Camera_WorldToScreen(&position);
 
   slot = (u8 *)effectSlots + 80;
   remaining = 23;
@@ -104,8 +104,8 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
       djinni->angle = (remaining << 16) / 24;
       djinni->callback = (void *)FieldEffect_UpdateDescendingOrbitActor;
       djinni->mode = 0;
-      Actor_SelectAnimationFar((struct Actor *)djinni, 7);
-      Actor_SetSpriteColorModeFar(djinni, 11);
+      Actor_SelectAnimationFar(djinni, 7);
+      Actor_SetSpriteColorModeFar(djinni, SPRITE_COLOR_GREEN_TINT);
     }
   }
 
@@ -121,8 +121,8 @@ void Djinn_RunVenusJoinEffect(s32 arg) {
                                                  position[2]);
     if (djinni == NULL)
       break;
-    djinni->scaleY = 0x9999;
-    djinni->scaleX = 0x9999;
+    djinni->scaleY = Q16_ONE * 3 / 5;
+    djinni->scaleX = Q16_ONE * 3 / 5;
     djinni->mode = 2;
     djinni->gravity = px(5);
     djinni->baseY = djinni->y;
@@ -199,9 +199,9 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
       Sound_PlayFar(SE_CRACK);
 
       if (*statePointer == 1)
-        (*statePointer)--;
+        effect->state--;
       else
-        (*statePointer)++;
+        effect->state++;
       effect->callbackDelay = 6;
     }
   } else if (state == 3) {

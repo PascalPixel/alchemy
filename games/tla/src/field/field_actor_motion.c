@@ -11,20 +11,22 @@
 /// Returns 1 when the actor has no movement target: none of its target
 /// coordinates set, or for an actor moved by the ground (any motion flag)
 /// neither its target x nor z.
-s32 Actor_IsTargetUnset(struct Actor *object) {
+s32 Actor_IsTargetUnset(struct Actor *actor) {
   s32 first;
   s32 second;
 
-  if (object->motionFlags == 0) {
-    second = object->targetX;
-    if (second != (s32)0x80000000)
+  // One compare of three values: all must equal TARGET_UNSET, or with
+  // motion flags only x and z.
+  if (actor->motionFlags == 0) {
+    second = actor->targetX;
+    if (second != TARGET_UNSET)
       return 0;
-    first = object->targetY;
+    first = actor->targetY;
   } else {
-    first = object->targetX;
-    second = (s32)0x80000000;
+    first = actor->targetX;
+    second = TARGET_UNSET;
   }
-  if (first != second || object->targetZ != first)
+  if (first != second || actor->targetZ != first)
     return 0;
   return 1;
 }
@@ -370,12 +372,12 @@ void Actor_UpdateAllThumb(void) {
           ((object->x - object->targetX) ^ (x - object->targetX)) < 0)
         arrivedAtTarget = 1;
       break;
-    case 17:
+    case ARRIVAL_AXIS_Y:
       if (y == object->targetY ||
           ((object->y - object->targetY) ^ (y - object->targetY)) < 0)
         arrivedAtTarget = 1;
       break;
-    case 18:
+    case ARRIVAL_AXIS_Z:
       if (z == object->targetZ ||
           ((object->z - object->targetZ) ^ (z - object->targetZ)) < 0)
         arrivedAtTarget = 1;
@@ -414,7 +416,7 @@ void Actor_UpdateAllThumb(void) {
 
         facingStep = (s16)(ArcTan2(z, x) - object->angle);
 
-        maximumFacingStep = TRIG_TURN / 16;
+        maximumFacingStep = FACING_STEP;
         if (facingStep > maximumFacingStep)
           facingStep = maximumFacingStep;
         maximumFacingStep = -TRIG_TURN / 16;
@@ -465,17 +467,16 @@ void Actor_MoveWithCarriers(void) {
 
 // Objects: set position and cancel motion.
 
-/// Sets the position, clears the destination and zeroes the velocity.
-/// obj: object.
-/// x, y, z: 16.16 fixed-point position.
-void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z) {
-  obj->z.fixed = z;
-  obj->targetX = TARGET_UNSET; // No destination.
-  obj->targetY = TARGET_UNSET;
-  obj->targetZ = TARGET_UNSET;
-  obj->x.fixed = x;
-  obj->y.fixed = y;
-  SET_VELOCITY(obj, 0, 0, 0);
+/// Places the actor at (x, y, z), in 16.16 pixels, clears its movement target
+/// and stops it.
+void Actor_SetPositionAndResetMotion(struct Actor *actor, s32 x, s32 y, s32 z) {
+  actor->z.fixed = z;
+  actor->targetX = TARGET_UNSET;
+  actor->targetY = TARGET_UNSET;
+  actor->targetZ = TARGET_UNSET;
+  actor->x.fixed = x;
+  actor->y.fixed = y;
+  SET_VELOCITY(actor, 0, 0, 0);
 }
 
 /// Sends an actor towards (x, y, z), in 16.16 pixels. Within a pixel it arrives
@@ -500,7 +501,7 @@ void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
     distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dy, dy) +
                          Iwram_MulQ16(dz, dz));
   }
-  if (distance < 0x10000) {
+  if (distance < Q16_ONE) {
     SET_ACTOR_POSITION(object, x, y, z);
     object->targetX = TARGET_UNSET;
     object->targetY = TARGET_UNSET;

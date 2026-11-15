@@ -99,9 +99,9 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
 
   if (mode == PALETTE_TINT_FROM_SOURCE)
     mode = *(u16 *)BG_PLTT;
-  if (half == 1) {
+  if (half == PALETTES_BG) {
     colorCount = COLOR_HALF;
-  } else if (half == 2) {
+  } else if (half == PALETTES_OBJECTS) {
     dst += COLOR_HALF * 3;
     src += COLOR_HALF;
     colorCount = COLOR_HALF;
@@ -196,7 +196,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         *dst++ = gFieldEffect_ChannelCurve[red];
       }
       break;
-    case PALETTE_TINT_MUTED: // narrow the range, G and B + 2, past the first
+    case PALETTE_TINT_MUTED: // narrow the range, G and B + 2
       for (i = 0; i < colorCount; i++) {
         color = *src++;
         red = RGB_RED(color);
@@ -388,7 +388,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   } else {
     // Copy a ready buffer: mode is its address, and the OBJ half starts 224
     // colours of three halfwords in.
-    if (half == 2)
+    if (half == PALETTES_OBJECTS)
       mode += COLOR_HALF * 3 * sizeof(u16);
     Dma_Set((const void *)mode, dst, DMA_COPY_WORDS((colorCount * 6) >> 2),
             REG_DMA3);

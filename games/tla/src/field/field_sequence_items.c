@@ -207,8 +207,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         if (i != 0)
           return 0;
 
-        gMainRoutineWork.next = *(u16 *)&gMainRoutineWork.retreatScene;
-        gMainRoutineWork.entrance = *(u16 *)&gMainRoutineWork.retreatEntrance;
+        gMainRoutineWork.next = gMainRoutineWork.retreatScene;
+        gMainRoutineWork.entrance = gMainRoutineWork.retreatEntrance;
         runtime->exit = 999;
       }
 

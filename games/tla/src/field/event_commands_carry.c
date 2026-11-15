@@ -83,13 +83,13 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
     scale = object->scaleX;
     if (scale < Q16_ONE) {
       do {
-        scale += 0x800;
+        scale += Q16_ONE / 32;
         object->scaleY = scale;
         object->scaleX = scale;
         object->facing += TRIG_TURN / 8;
         wait(1);
         scale = object->scaleX;
-      } while (scale <= 0xffff);
+      } while (scale < Q16_ONE);
     }
     object->facing = angle;
   }

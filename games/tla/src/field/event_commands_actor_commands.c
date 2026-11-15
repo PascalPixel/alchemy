@@ -27,12 +27,12 @@ void Actor_ClearDestinationAndStand(u32 objectId) {
 /// The event command "actor face direction": the actor turns toward angle
 /// (TRIG_TURN a full turn; Actor_StepAngle), then the event waits the given
 /// number of frames.
-void Actor_FaceDirectionById(s32 objectId, s32 angle, s32 frames) {
-  struct Actor *object = Actor_Lookup(objectId);
+void Actor_FaceDirectionById(s32 actorId, s32 angle, s32 frames) {
+  struct Actor *actor = Actor_Lookup(actorId);
 
-  if (object != NULL) {
-    object->timer = angle;
-    Actor_StartScriptFar(object, (u32)gActor_StepAngleScript);
+  if (actor != NULL) {
+    actor->timer = angle;
+    Actor_StartScriptFar(actor, (const s32 *)gActor_StepAngleScript);
     Event_Wait(frames);
   }
 }
@@ -65,19 +65,20 @@ void Actor_SetSpritePriority(u32 objectId, s32 priority) {
 /// Makes the target actor's sprite show the source actor's graphics (its VRAM
 /// block and tile). Neither actor is checked for NULL.
 void Actor_CopyGraphics(u32 targetId, u32 sourceId) {
-  struct FieldSprite *sprite;
-  u8 block;
+  struct Actor *actor;
+  struct Sprite *sprite;
+  u8 vramBlock;
   u32 tile;
 
-  sprite = (struct FieldSprite *)Actor_GetById(sourceId);
-  sprite = ((struct Actor *)sprite)->sprite;
-  block = sprite->vramBlock;
-  tile = sprite->tile;
+  actor = Actor_GetById(sourceId);
+  sprite = actor->sprite;
+  vramBlock = sprite->slot;
+  tile = sprite->image.tile;
 
-  sprite = (struct FieldSprite *)Actor_GetById(targetId);
-  sprite = ((struct Actor *)sprite)->sprite;
-  sprite->vramBlock = block;
-  sprite->tile = tile;
+  actor = Actor_GetById(targetId);
+  sprite = actor->sprite;
+  sprite->slot = vramBlock;
+  sprite->image.tile = tile;
 }
 
 /// Stops actor id moving and colliding and hides it.
@@ -228,11 +229,7 @@ void Actor_ShowItemIconById(s32 id, s32 resource) {
 
 /// The event command "set message": the number of the event's next message,
 /// written to work->message.
-void Event_SetMessageId(s32 message) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-
-  event->message = message;
-}
+void Event_SetMessageId(s32 message) { gFieldWork->message = message; }
 
 /// Returns the sprite (the first animation's id) of the actor in the low 12
 /// bits of actorId, or -1 if there is no such animated actor.

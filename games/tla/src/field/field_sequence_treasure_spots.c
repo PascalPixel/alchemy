@@ -9,12 +9,12 @@
 
 /// Sets an actor's y and groundHeight to the map's height at its x and z.
 void Actor_SnapToTerrain(void *object) {
-  struct Actor *state = object;
-  s32 height;
+  struct Actor *actor = object;
+  s32 groundHeight;
 
-  height = MapGrid_GetTerrainHeightFar(0, state->x.fixed, state->z.fixed);
-  state->y.fixed = height;
-  state->groundHeight = height;
+  groundHeight = MapGrid_GetTerrainHeightFar(0, actor->x.fixed, actor->z.fixed);
+  actor->y.fixed = groundHeight;
+  actor->groundHeight = groundHeight;
 }
 
 /// The current scene's rows of the scene item table (Data_080f2204): those

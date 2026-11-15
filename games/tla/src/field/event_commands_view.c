@@ -41,7 +41,7 @@ void WorldMap_StepZoom(void) {
   gScanlinePitch = *(u16 *)((u8 *)map + 0x11c) + 1;
   if (*step == *duration) {
     *duration = 0;
-    Task_Remove(WorldMap_StepZoom);
+    Task_Remove((TaskFunc)WorldMap_StepZoom);
   }
 }
 

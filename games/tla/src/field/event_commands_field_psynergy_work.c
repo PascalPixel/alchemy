@@ -56,8 +56,8 @@ void Camera_WorldToScreen(struct EffectVector *position) {
     s32 result[3];
 
     Render_ProjectPoint(position, result);
-    position->x = result[0] << 16;
-    position->z = result[1] << 16;
+    position->x = px(result[0]);
+    position->z = px(result[1]);
     position->y = 0;
   } else {
     u8 *state = (u8 *)slots->mapGrid;

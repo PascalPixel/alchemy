@@ -9,6 +9,15 @@
 #define EDITOR_MAP ((u16 *)0x0600205a)
 #define HEX_DIGIT 0xf0e0
 
+/// The swatch tiles, from tile 208 of character block 0: colour n is drawn with
+/// EDITOR_SWATCH_TILE + n.
+#define EDITOR_SWATCH_TILE 208
+/// The editor cycles through the map's 14 background palettes.
+#define EDITOR_PALETTES 14
+/// START blinks the colour every 10 frames: white, the colour, black, the
+/// colour.
+#define EDITOR_BLINK_FRAMES 10
+
 /// The debug palette editor (L on the Pause menu in debug mode). Shows colours
 /// 1 to 15 of a palette with their red, green and blue values in hex.
 void PaletteEditor_Run(void) {
@@ -76,12 +85,12 @@ redraw:
     if (gInput.repeat & KEY_L) {
       palette--;
       if (palette < 0)
-        palette = 13;
+        palette = EDITOR_PALETTES - 1;
       goto redraw;
     }
     if (gInput.repeat & KEY_R) {
       palette++;
-      if (palette > 13)
+      if (palette >= EDITOR_PALETTES)
         palette = 0;
       goto redraw;
     }
@@ -91,11 +100,11 @@ redraw:
       red = value & 31;
       green = (value >> 5) & 31;
       blue = (value >> 10) & 31;
-      if (channel == 1 && red < 31)
+      if (channel == 1 && red < RGB_LEVEL_MAX)
         red++;
-      if (channel == 2 && green < 31)
+      if (channel == 2 && green < RGB_LEVEL_MAX)
         green++;
-      if (channel == 3 && blue < 31)
+      if (channel == 3 && blue < RGB_LEVEL_MAX)
         blue++;
       *colors = (blue << 10) | (green << 5) | red;
       goto redraw;
@@ -125,13 +134,13 @@ redraw:
           break;
         if (red == 0)
           *colors = 0x7fff;
-        if (red == 10)
+        if (red == EDITOR_BLINK_FRAMES)
           *colors = value;
-        if (red == 20)
+        if (red == EDITOR_BLINK_FRAMES * 2)
           *colors = 0;
-        if (red == 30)
+        if (red == EDITOR_BLINK_FRAMES * 3)
           *colors = value;
-        if (++red >= 40)
+        if (++red >= EDITOR_BLINK_FRAMES * 4)
           red = 0;
       }
       *colors = value;

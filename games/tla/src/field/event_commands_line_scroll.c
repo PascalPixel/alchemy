@@ -208,16 +208,12 @@ void LineScroll_InitWave(s32 mode, s32 freqX, s32 stepX, s32 ampX, s32 freqY,
 
 /// Stops the line scroll: removes its two tasks and stops DMA 0.
 void LineScroll_Stop(void) {
+  volatile u16 *dma0;
+
   Task_Remove(LineScroll_ArmDma);
   Task_Remove(LineScroll_BuildPage);
-  {
-    volatile u16 *dma = REG_DMA0;
-
-    u16 control;
-
-    control = dma[5];
-    dma[5] = control & 0xc5ff; // Clear start timing and repeat.
-    dma[5] &= 0x7fff;          // Stop.
-    (void)dma[5];
-  }
+  dma0 = REG_DMA0;
+  dma0[5] = (u16)~DMA_START_TIMING_DRQ_REPEAT & dma0[5];
+  dma0[5] = (u16)~DMA_ENABLE & dma0[5];
+  (void)dma0[5];
 }

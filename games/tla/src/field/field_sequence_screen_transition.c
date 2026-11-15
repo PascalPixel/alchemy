@@ -111,7 +111,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     value = gScreenTransition_NoiseWidths[value];
     for (i = 0; i < DISPLAY_HEIGHT; i++) {
       leftEdge = (Random16() * (DISPLAY_WIDTH + 1 - value)) >> 16;
-      scanlineData[0] = (leftEdge << 8) | (leftEdge + value);
+      scanlineData[0] = ((leftEdge << 8) | (leftEdge + value));
       scanlineData += 2;
     }
     break;
@@ -414,8 +414,8 @@ void ScreenTransition_InitializeBattleEffectState(s32 mode) {
 /// Unused: suspends the window transition's two tasks. Nothing calls it,
 /// by name, far-call entry or table.
 UNUSED void ScreenTransition_SuspendCallbacks(void) {
-  Task_SuspendAll(ScreenTransition_UpdateScanlineTable);
-  Task_SuspendAll(FieldEffect_StartWindowHBlankDma);
+  Task_SuspendAll(&ScreenTransition_UpdateScanlineTable);
+  Task_SuspendAll(&FieldEffect_StartWindowHBlankDma);
 }
 
 /// Allocates the screen transition state (HEAP_SLOT_SCREEN_TRANSITION) and
@@ -491,7 +491,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
   case TRANSITION_CENTRE_LINE: {
     struct ScreenTransitionState *state;
 
-    display = (struct MapViewWork *)Ram_HeapSlots->mapGrid;
+    display = Ram_HeapSlots->mapGrid;
     state = ScreenTransition_AllocateAndClearState();
     display->windowTop = DISPLAY_HEIGHT / 2;
     display->windowBottom = DISPLAY_HEIGHT / 2;
@@ -575,14 +575,14 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     if (variant == 0) {
       Task_Add(ScreenTransition_Update, TASK_PASS_VBLANK);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
-      state->start = zero;
+      state->start = 0;
       state->end = DISPLAY_HEIGHT / 2;
       state->duration = frames;
-      state->step = zero;
+      state->step = 0;
     } else {
       Task_Add(ScreenTransition_UpdateFromCentre, TASK_PASS_VBLANK);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
-      state->start = zero;
+      state->start = 0;
       state->end = DISPLAY_HEIGHT / 2;
       state->duration = frames;
       state->step = zero;
@@ -605,9 +605,9 @@ s32 ScreenTransition_IsScanlineActive(void) {
 /// is set.
 void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
                                       s32 clearBg1) {
-  struct MapViewWork *state;
+  struct ScreenTransitionWin *state;
 
-  state = (struct MapViewWork *)Ram_HeapSlots->mapGrid;
+  state = Ram_HeapSlots->mapGrid;
   if (state != NULL) {
     if (clearBg1 != 0) {
       state->dispcnt &= ~DISPCNT_BG1_ON;
@@ -646,8 +646,8 @@ void ScreenTransition_Update(void) {
       s32 delta = state->end - state->start;
       s32 value;
 
-      (*step)++;
-      value = Iwram_SignedDivide(delta * *step, *duration);
+      state->step++;
+      value = Iwram_SignedDivide(delta * state->step, state->duration);
       state->value = state->start + value;
     }
   }
@@ -686,8 +686,8 @@ void ScreenTransition_UpdateFromCentre(void) {
       s32 delta = state->end - state->start;
       s32 edgeOffset;
 
-      (*step)++;
-      edgeOffset = Iwram_SignedDivide(delta * *step, *duration);
+      state->step++;
+      edgeOffset = Iwram_SignedDivide(delta * state->step, state->duration);
       state->value = state->start + edgeOffset;
     }
   }
@@ -722,7 +722,7 @@ enum ScreenTransitionIrqPhase {
 void ScreenTransition_UpdateScanline(void) {
   u32 scanline = REG_VCOUNT;
   struct MapViewWork *state;
-  state = (struct MapViewWork *)Ram_HeapSlots->mapGrid;
+  state = Ram_HeapSlots->mapGrid;
 
   // Keep the same VCount sample across phase changes.
 again:
@@ -818,7 +818,7 @@ void ScreenTransition_UpdateDissolve(void) {
 /// color is -1, makes tile 0 solid color.
 void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
   struct ScreenTransitionState *work = Ram_HeapSlots->screenTransition;
-  Dma_Fill32(0xf000f000, (void *)BG_SCREEN_BLOCK(4), 1280);
+  Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 1280);
   if (color != -1) {
     u32 pattern = 0;
     s32 remainingWords;
@@ -828,7 +828,7 @@ void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
     tile = work->solidTile;
     for (remainingWords = 7; remainingWords >= 0; --remainingWords)
       *tile++ = pattern;
-    Dma_Set(work->solidTile, (void *)BG_CHAR_BLOCK(0),
+    Dma_Set(work->solidTile, BG_CHAR_BLOCK(0),
             DMA_COPY_WORDS(TILE_SIZE_4BPP / 4), REG_DMA3);
   }
 }

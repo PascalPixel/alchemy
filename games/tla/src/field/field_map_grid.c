@@ -20,23 +20,16 @@
 #include "field/mapcopy.h"
 #include "game/game_flags.h"
 
+/// The map's 128 by 128 cell words.
+#define MAPGRID_CELLS ((u32 *)Ram_MapGridCellBuffer)
+
 /// Remaps byteCount bytes in place through gSpriteColorRemapTables.
-void SpriteColor_RemapPixels(u8 *buf, s32 cnt) {
-  s32 n;
-  u8 *p;
-  u8 *table;
+void SpriteColor_RemapPixels(u8 *bytes, s32 byteCount) {
+  u8 *remapTable = (u8 *)gSpriteColorRemapTables;
 
-  p = buf;
-  table = gSpriteColorRemapTables;
-  n = cnt - 1;
-  if (n != -1) {
-    do {
-      u32 index = *p;
-
-      n -= 1;
-      *p = table[index];
-      p += 1;
-    } while (n != -1);
+  while (byteCount-- != 0) {
+    *bytes = remapTable[*bytes];
+    bytes++;
   }
 }
 
@@ -467,7 +460,7 @@ void MapGrid_UpdateLayerScroll(void) {
   work = Ram_HeapSlots->mapGrid;
   origin = work->origin;
   layer = (struct MapLayerScroll *)work->layers;
-  if (origin == NULL)
+  if (origin == 0)
     return;
   baseX = *origin++ - 0x780000;
   {
@@ -534,13 +527,13 @@ void MapGrid_UpdateLayerScroll(void) {
     y = (u32)baseY >> 19;
     if ((layer->x ^ baseX) & 0x80000) {
       if (layer->x < baseX)
-        MapGrid_RenderCellPictureColumn(layerIndex, x + 30, y);
+        MapGrid_RenderCellPictureColumn(layerIndex, x + DISPLAY_WIDTH / 8, y);
       else
         MapGrid_RenderCellPictureColumn(layerIndex, x, y);
     }
-    if ((layer->y ^ baseY) & 0x100000) {
+    if ((layer->y ^ baseY) & (16 << 16)) {
       if (layer->y < baseY)
-        MapGrid_RenderCellPictureRow(layerIndex, x, y + 20);
+        MapGrid_RenderCellPictureRow(layerIndex, x, y + DISPLAY_HEIGHT / 8);
       else
         MapGrid_RenderCellPictureRow(layerIndex, x, y);
     }
@@ -599,11 +592,11 @@ void MapGrid_SetCameraCenter(s32 x, s32 y) {
 
       x = Iwram_MulQ16(work->viewX, layer->scaleX);
       y = Iwram_MulQ16(work->viewZ, layer->scaleY);
-      if (layer->speedX != 0) {
+      if (layer->speedX) {
         layer->phaseX += layer->speedX;
         x += layer->phaseX;
       }
-      if (layer->speedY != 0) {
+      if (layer->speedY) {
         layer->phaseY += layer->speedY;
         y += layer->phaseY;
       }

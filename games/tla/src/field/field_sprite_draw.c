@@ -241,7 +241,7 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
   } else if (obj->dirty != 0) {
     size = obj->width * obj->height;
     pixels = Heap_Alloc(size);
-    Iwram_ClearWordsEntry(pixels, size);
+    Iwram_ClearWords(pixels, size);
 
     drawCount = -1;
 
@@ -281,7 +281,7 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
         Decompress_TaggedLz(layer->pictures[layer->picture], pixels);
       } else if (layer->mode == 3) {
         if (layer->colorMode != 0) {
-          unpacked = Heap_Alloc(0x400);
+          unpacked = Heap_Alloc(1024);
           decodePicture(
               Decompress_Lz(layer->pictures[layer->picture], unpacked), pixels,
               layer->colorMode);
@@ -492,7 +492,7 @@ void Render_ApplyProjectedPlacement(struct LayeredSprite *object, s32 *pos,
       effect.scaleX = -effect.scaleX;
     matrix = OamMatrix_AllocFromTransform(&effect);
   }
-  if (scaleX > 0x10000 || scaleY > Q16_ONE) {
+  if (scaleX > Q16_ONE || scaleY > Q16_ONE) {
     affine = 3;
     halfWidth <<= 1;
     halfHeight <<= 1;

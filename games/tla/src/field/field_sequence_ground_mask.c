@@ -34,7 +34,7 @@ void FadeOverlay_DrawMarks(void) {
   height =
       FIELD_PIXEL(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + px(16)));
   secondHeight =
-      (FIELD_PIXEL(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + px(32)))) -
+      FIELD_PIXEL(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + px(32))) -
       16;
   if (secondHeight > height)
     height = secondHeight;
@@ -54,7 +54,7 @@ void FadeOverlay_DrawMarks(void) {
       FIELD_PIXEL(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + px(16)));
   mark = &work->marks[1];
   secondHeight =
-      (FIELD_PIXEL(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + px(32)))) -
+      FIELD_PIXEL(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + px(32))) -
       16;
   if (secondHeight > height)
     height = secondHeight;

@@ -115,9 +115,9 @@ void ItemDisplay_EmitSparkles(struct Actor *emitter) {
 
 /// Returns 1 while Reveal is active, else 0.
 s32 Field_IsRevealActive(struct Actor *interpreter) {
-  s32 revealState;
+  s16 revealState;
   u32 isActive = 0;
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = gFieldWork;
 
   if (work != NULL) {
     revealState = work->revealActive;
@@ -244,14 +244,14 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
 void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
   struct Actor *owner;
 
-  if (object != 0) {
+  if (object != NULL) {
     owner = Actor_Lookup(Party_GetLeaderActor());
     if (flags & 1) {
       Actor_SetSpriteFlagsFar(object, 0);
       Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
-      object->velocityY = px(2);
-      object->gravity = px(1) / 4;
-      object->update = ItemDisplay_EmitSparkles;
+      ((struct Actor *)object)->velocityY = px(2);
+      ((struct Actor *)object)->gravity = px(1) / 4;
+      ((struct Actor *)object)->update = ItemDisplay_EmitSparkles;
     }
     if (flags == 3)
       wait(60);

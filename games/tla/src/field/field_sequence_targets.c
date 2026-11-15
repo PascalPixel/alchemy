@@ -205,7 +205,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
   if (object != 0) {
     Sound_PlayFar(SE_CHEST_OPEN);
     Actor_SelectAnimationFar(object, 4);
-    wait(0xC);
+    wait(12);
     result = (s32)BattleEffect_StartRandomParticleEmitter(effect, mode);
   }
   return result;

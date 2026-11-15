@@ -132,7 +132,7 @@ s32 FixedPoint_Multiply8_8(s32 arg0, s32 arg1) {
 s16 Math_ScaleByRatio(s16 arg0, s16 arg1) { return (arg0 << 8) / arg1; }
 
 /// Unused: the reciprocal of an 8.8 fixed-point value.
-s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
+UNUSED s16 FixedPoint_Reciprocal(s16 value) { return Q16_ONE / value; }
 
 /// Copies count RGB555 colours from source to destination with each channel
 /// multiplied by scale (16.16: 0 is black, Q16_ONE unchanged), for fades.
@@ -343,7 +343,7 @@ void LuckyDice_Run(void) {
   u16 *spritePalette;
   struct DiceWork *diceWork;
   struct LuckyDiceSprites *sprites;
-  struct DiceCamera *camera;
+  struct BattleCamera *camera;
   s32 frame;
   s32 state;
   s32 bet;
@@ -353,17 +353,17 @@ void LuckyDice_Run(void) {
   s32 payoutTimer;
   s32 digits;
   s32 spriteCount;
-  struct DiceParticle *rollingDie;
-  struct DiceParticle *otherDie;
-  s32 resetDice;
-  struct RenderInput *window;
+  struct Particle *rollingDie;
+  struct Particle *otherDie;
+  s32 resetDice; // put the dice back at the throwing line
+  struct Window *window;
   s32 index;
   s32 otherIndex;
-  s32 rollAngle;
+  s32 rollAngle; // a die's roll angle, in DICE_ROLL_PER_TILE steps
   s32 x;
   s32 y;
   s32 halfSize;
-  s32 faceTile;
+  s32 faceTile; // which of a face's three tiles the roll shows
   s32 sortedDie;
   s32 tileX;
   s32 tileY;
@@ -382,7 +382,7 @@ void LuckyDice_Run(void) {
   spritePalette = HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 512);
   diceWork = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, 31612);
   sprites = HeapSlot_AllocEwram(HEAP_SLOT_CANVAS_MAP, 1556);
-  camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, 76);
+  camera = HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(*camera));
   Resource_ReservedNoOp((s32)&ResourceId_BattleEffectFarCalls);
   Camera_ResetViewDefaults();
   Task_ResetAll();
@@ -556,7 +556,7 @@ void LuckyDice_Run(void) {
       if (resultTimer >= DICE_RESULT_FRAMES && resultKind >= 0) {
         for (index = 0; index != gLuckyDice_LabelCounts[resultKind]; index++) {
           s32 labelX;
-          s32 labelY;
+          s32 labelY = 96;
 
           labelX = DICE_RESULT_LABEL_CENTER_X -
                    gLuckyDice_LabelCounts[resultKind] * 16 + index * 32;
@@ -617,7 +617,7 @@ void LuckyDice_Run(void) {
         Text_DrawNumberInWindowFar(0, digits, (s32)sprites->winningsWindow,
                                    DICE_WINNINGS_NUMBER_X, 0);
         Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
-                                   (s32)sprites->coinsWindow, 0, 0);
+                                   sprites->coinsWindow, 0, 0);
       }
       if (payoutTimer == DICE_PAYOUT_FRAMES) {
         state = LUCKY_DICE_AIM;
@@ -654,7 +654,7 @@ void LuckyDice_Run(void) {
       if (diceWork->particles[1].y > px(160)) {
         diceWork->particles[1].y = px(160);
       }
-      if ((u32)gMainRoutineWork.coins <
+      if (gMainRoutineWork.coins <
           (u32)(Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL)) {
         Window_CloseFar(sprites->helpWindow, 1);
         break;
@@ -669,12 +669,12 @@ void LuckyDice_Run(void) {
         Window_CloseFar(sprites->helpWindow, 1);
         state = LUCKY_DICE_ROLL;
         bet = Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL;
-        if ((u32)bet > (u32)gMainRoutineWork.coins) {
+        if ((u32)bet > gMainRoutineWork.coins) {
           bet = gMainRoutineWork.coins;
         }
         Party_AdjustCoinsFar(-bet);
         Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
-                                   (s32)sprites->coinsWindow, 0, 0);
+                                   sprites->coinsWindow, 0, 0);
         for (index = 0; index != DICE_COUNT; index++) {
           rollingDie = &diceWork->particles[index];
           if (index > 1) {
@@ -783,7 +783,7 @@ void LuckyDice_Run(void) {
         depth = screen[2];
       }
       spriteDepth[2 + index] = depth - DICE_NEAREST_DEPTH;
-      spriteDepth[2 + index] += (s16)FIELD_PIXEL(rollingDie->y);
+      spriteDepth[2 + index] += FIELD_PIXEL(diceWork->particles[index].y);
       shadowX = screen[0];
       shadowY = screen[1];
       if (shadowY + 88 > -16) {
@@ -925,7 +925,7 @@ void LuckyDice_Run(void) {
             winnings = bet * DICE_PERFECT_PAYOUT;
           }
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
-                                     (s32)sprites->coinsWindow, 0, 0);
+                                     sprites->coinsWindow, 0, 0);
           Sound_PlayFar(MUS_JINGLE_LARGE);
         } else {
           pairCount = 0;
@@ -941,13 +941,13 @@ void LuckyDice_Run(void) {
           if (pairCount == 1) {
             winnings = bet;
             Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
-                                       (s32)sprites->coinsWindow, 0, 0);
+                                       sprites->coinsWindow, 0, 0);
             resultKind = 3;
           }
           if (pairCount == 2) {
             winnings = bet * 2;
             Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
-                                       (s32)sprites->coinsWindow, 0, 0);
+                                       sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = DICE_FLASH_FRAMES;
             resultKind = 2;
             Sound_PlayFar(MUS_JINGLE_SMALL);
@@ -955,7 +955,7 @@ void LuckyDice_Run(void) {
           if (pairCount == 3) {
             winnings = bet * 3;
             Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
-                                       (s32)sprites->coinsWindow, 0, 0);
+                                       sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = DICE_FLASH_FRAMES;
             resultKind = 1;
             Sound_PlayFar(MUS_JINGLE_MEDIUM);
@@ -982,7 +982,7 @@ void LuckyDice_Run(void) {
       sprites->oam[index * 4 + 3].attr2 |= affineD << 16;
     }
 
-    Dma_Set(sprites->oam, (void *)OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
+    Dma_Set(sprites->oam, OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
     wait(1);
     frame++;
   }

@@ -25,11 +25,13 @@
 extern u32 Render_ResetTransformState__f02b998(void) __asm__("Transform_Reset");
 #endif
 
+#define WORLD_MAP_BG_PALETTE ((s16 *)BG_PLTT)
+
 /// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
 /// camera work, the projection, the per-scanline ground plane routine in RAM
 /// (Transform_UpdateVertices) and its first frame, and the per-frame view and
 /// HBlank updates.
-void WorldMap_InitializePerspective(void) {
+UNREAD_RESULT WorldMap_InitializePerspective(void) {
   struct WorldMapView *perspective;
   u8 *camera;
   u8 *affineWork;
@@ -77,13 +79,13 @@ void WorldMap_InitializePerspective(void) {
   Io_Write16(0x100, &REG_BG2PA);
   REG_BG2PB = 0;
   REG_BG2PC = 0;
-  Io_Write16(0x100, &REG_BG2PD);
+  Io_Write16(Q_8_8(1), &REG_BG2PD);
   REG_BG2X = 0;
   REG_BG2Y = 0;
-  Io_Write16(0x100, &REG_BG3PA);
+  Io_Write16(Q_8_8(1), &REG_BG3PA);
   REG_BG3PB = 0;
   REG_BG3PC = 0;
-  Io_Write16(0x100, &REG_BG3PD);
+  Io_Write16(Q_8_8(1), &REG_BG3PD);
   REG_BG3X = 0;
   Io_Write16(0, &REG_BG3Y);
 
@@ -163,7 +165,7 @@ void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
   s32 originY;
   s32 tile;
 
-  perspective = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
+  perspective = Ram_HeapSlots->mapGrid;
   originX = 0;
   originY = 0;
   position = perspective->origin;
@@ -259,8 +261,8 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
     break;
   }
   resources = gWorldMap_GraphicsResources[graphicsSet];
-  perspective->resources = (u32 *)resources;
-  backdropColor = *(s16 *)BG_PLTT;
+  perspective->resources = resources;
+  backdropColor = WORLD_MAP_BG_PALETTE[0];
   Resource_DecodeByteLzInRam(Resource_GetTableEntry(resources[0]), buffer);
   *(s16 *)buffer = backdropColor;
   Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
@@ -292,7 +294,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   for (row = 0; row < 20; row++) {
     for (column = 15; column >= 0; column--) {
       *screenTiles++ = tilePair;
-      tilePair += 0x20002;
+      tilePair += 0x00020002;
     }
   }
   tilePair = 0x01010100;
@@ -558,7 +560,7 @@ void WorldMap_UpdateCurrentTileBlock(void) {
   u32 layer;
   u32 row;
   u32 col;
-  s32 bias;
+  s32 layerTileBase;
   s32 tile;
 
   if (perspective->origin != NULL) {

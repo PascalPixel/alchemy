@@ -234,8 +234,8 @@ void LuckyWheels_TransferCanvas(void) {
         ColorBuffer_HalveNonzero(buf, (u8 *)LUCKY_WHEELS_CANVAS_TILES,
                                  LUCKY_WHEELS_CANVAS_SIZE);
       else
-        ColorBuffer_ScaleNonzeroThreeQuarters(
-            buf, (u8 *)LUCKY_WHEELS_CANVAS_TILES, Q16_ONE / 2);
+        ColorBuffer_ScaleNonzeroThreeQuarters(buf, LUCKY_WHEELS_CANVAS_TILES,
+                                              LUCKY_WHEELS_CANVAS_SIZE);
       break;
     }
     work->transferPending = 0;
@@ -1013,7 +1013,7 @@ void LuckyWheels_Update(void) {
     work->spriteCount++;
   }
 
-  for (col = 0; col != 7; col++) {
+  for (col = 0; col != LUCKY_WHEELS_PAYLINES; col++) {
     work->obj[work->spriteCount].attr01 =
         (((0x204 - ((col & 1) << 3)) & 0x1ff) << 16) | objMode |
         (col * 16 + 5) | 0x80002000;
@@ -1042,11 +1042,11 @@ void LuckyWheels_Update(void) {
   }
 
   lever = LUCKY_WHEELS_LEVER_Y;
-  if (work->state == 1) {
+  if (work->state == LUCKY_WHEELS_SPINNING) {
     if (work->timer < LUCKY_WHEELS_LEVER_PULL_FRAMES)
       lever = ((Trig_Sin(work->timer * 682) << 6) >> 16) + LUCKY_WHEELS_LEVER_Y;
     else if (work->timer < LUCKY_WHEELS_LEVER_FRAMES)
-      lever = ((Trig_Sin((work->timer << 12) - 0x30000) << 2) >> 16) +
+      lever = ((Trig_Sin((work->timer << 12) - TRIG_TURN * 3) << 2) >> 16) +
               LUCKY_WHEELS_LEVER_Y;
   }
   work->obj[work->spriteCount].attr01 = lever | objMode | 0x80d06000;
@@ -1409,7 +1409,7 @@ void LuckyWheels_Run(void) {
         LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, frame << 12, 0x100);
         LuckyWheels_ScaleRgb555(bgShade, (u16 *)BG_PLTT, frame << 12, 0x100);
       }
-      if (state->state == 3) {
+      if (state->state == LUCKY_WHEELS_SHOWING_WIN) {
         s32 phase =
             frame % (LUCKY_WHEELS_CYCLE_PALETTES * LUCKY_WHEELS_CYCLE_FRAMES);
 
@@ -1625,7 +1625,7 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
       struct LzPackWork *state;
 
       LzPack_RemoveSlotNode(slot);
-      state = *root;
+      state = gLzPackWork;
       current++;
       state->bucketBySlot[slot] = (-1);
     } while (current < count);

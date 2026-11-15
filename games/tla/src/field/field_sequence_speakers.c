@@ -42,7 +42,7 @@ s32 Speaker_GetVoice(s32 id) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   u8 value;
 
-  if (party->speech == 0 ||
+  if (gMainRoutineWork.speech == 0 ||
       (value = Speaker_FindDefinition(id)->value) == SPEAKER_VOICE_NONE)
     return 0;
   return value + SE_VOICE_FIRST;

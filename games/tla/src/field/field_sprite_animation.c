@@ -588,35 +588,35 @@ struct ResourceObject *Sprite_Create(s32 id) {
 
   // Derive OBJ shape and size bits (attributes 0 and 1) from pixel dimensions.
   switch ((u32)((metadata->width << 8) + metadata->height)) {
-  case 0x0808: // 8x8
-    shape = 0;
+  case 0x0808:
+    shape = OBJ_SIZE_8X8;
     break;
-  case 0x0810: // 8x16
-    shape = 0x8000;
+  case 0x0810:
+    shape = OBJ_SIZE_8X16;
     break;
-  case 0x1008: // 16x8
-    shape = 0x4000;
+  case 0x1008:
+    shape = OBJ_SIZE_16X8;
     break;
-  case 0x1010: // 16x16
-    shape = 0x40000000;
+  case 0x1010:
+    shape = OBJ_SIZE_16X16;
     break;
-  case 0x1020: // 16x32
-    shape = 0x80008000;
+  case 0x1020:
+    shape = OBJ_SIZE_16X32;
     break;
-  case 0x2010: // 32x16
-    shape = 0x80004000;
+  case 0x2010:
+    shape = OBJ_SIZE_32X16;
     break;
-  case 0x2020: // 32x32
-    shape = 0x80000000;
+  case 0x2020:
+    shape = OBJ_SIZE_32X32;
     break;
-  case 0x2040: // 32x64
-    shape = 0xc0008000;
+  case 0x2040:
+    shape = OBJ_SIZE_32X64;
     break;
-  case 0x4020: // 64x32
-    shape = 0xc0004000;
+  case 0x4020:
+    shape = OBJ_SIZE_64X32;
     break;
-  case 0x4040: // 64x64
-    shape = 0xc0000000;
+  case 0x4040:
+    shape = OBJ_SIZE_64X64;
     break;
   default:
     shape = 0;
@@ -637,7 +637,7 @@ struct ResourceObject *Sprite_Create(s32 id) {
     /* FAKEMATCH(dead): a store of the byte it reloads. */
     freeSprite->dirty = freeSprite->dirty;
   }
-  return (struct ResourceObject *)freeSprite;
+  return freeSprite;
 }
 
 /// Releases an object: gives back its VRAM cache entry unless flags bit 0 is

@@ -14,9 +14,19 @@
 #include "field/scene_call.h"
 #include "macros.h"
 
-/// Per-frame update: spins an object 1/8 turn a frame.
-void FieldEffect_AdvanceSpinAngle(struct MotionObject *object) {
-  object->angle += TRIG_TURN / 8;
+#define DJINNI_CLONE_MAX 8 ///< afterimages of the leaping Djinni
+/// The states of a Jupiter Djinni's light particle, in order.
+enum DjinniLightState {
+  DJINNI_LIGHT_WIDENING = 0, ///< circles as its radius grows
+  DJINNI_LIGHT_CIRCLING = 1,
+  DJINNI_LIGHT_DRIFTING = 2, ///< its centre drifts toward the leader
+  DJINNI_LIGHT_CLOSING = 3,  ///< circles as its radius shrinks
+  DJINNI_LIGHT_DONE = 4      ///< frees its slot
+};
+
+/// Per-frame update: spins an actor 1/8 turn a frame.
+void FieldEffect_AdvanceSpinAngle(struct Actor *actor) {
+  actor->facing += TRIG_TURN / 8;
 }
 
 // Objects: follow a watched object.
@@ -61,7 +71,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   s32 sprite;
   s32 tint;
   s32 i;
-  struct Actor *copies[8];
+  UNUSED struct Actor *copies[DJINNI_CLONE_MAX];
 
   djinni = Actor_GetById(djinniId);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -103,16 +113,16 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni->facing = back;
   sprite = ((struct Sprite *)djinni->sprite)->entries[0]->animationId;
   tint = 9;
-  if (sprite == 243)
+  if (sprite == SPRITE_VENUS_DJINNI)
     tint = 2;
-  if (sprite == 245)
+  if (sprite == SPRITE_MARS_DJINNI)
     tint = 10;
   // DEAD: tint is already 9 for sprite 244; the source keeps the test.
   if (sprite == 244)
     tint = 9;
   sharedSprite = NULL;
   prev = djinni;
-  for (i = 0; i < 8; i++) {
+  for (i = 0; i < DJINNI_CLONE_MAX; i++) {
     copy = Actor_CreateFar(sprite, djinni->x.fixed, djinni->y.fixed,
                            djinni->z.fixed);
     // DEAD: nothing reads copies; the source keeps the store.
@@ -121,13 +131,13 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       copy->scaleY = 0xf000;
       copy->scaleX = 0xf000;
       copy->motionFlags = 0;
-      copy->priorityFlags = 2;
-      copy->steeringFlags |= 1;
-      copy->update = (void (*)(void))Actor_MoveHalfwayTowardTarget;
+      copy->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+      copy->steeringFlags |= ACTOR_FACES_MOTION;
+      copy->update = Actor_MoveHalfwayTowardTarget;
       copy->facing = djinni->facing;
       ((struct Sprite *)copy->sprite)->image.priority = 0;
       Actor_SetSpriteColorModeFar(copy, tint);
-      Actor_SelectAnimationFar(copy, 0);
+      Actor_SelectAnimationFar(copy, ANIM_STILL);
       Actor_SetSpriteFlagsFar(copy, 0);
       sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);
       copy->watchedActor = prev;
@@ -339,7 +349,7 @@ void FieldEffect_ReleaseSlots(void) {
   struct FieldParticle *slot;
   s32 i;
 
-  Task_Remove((u32)FieldEffect_UpdateAllSlots);
+  Task_Remove(FieldEffect_UpdateAllSlots);
   for (i = 0; i < 24; i++) {
     slot = &scene->particles[i];
     if (slot->active != 0)
@@ -362,23 +372,23 @@ void BattleEffect_AdvanceSpinAngle(struct MotionObject *object) {
 /// (Camera_WorldToScreen).
 void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   struct Actor *owner;
-  struct EffectVector position;
+  struct Vector3 position;
 
   owner = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (particle->state == 0) {
+  if (particle->state == DJINNI_LIGHT_WIDENING) {
     particle->orbitRadius += 1;
     particle->orbitAngle += 1;
     if ((s16)particle->age == 60) {
       particle->age = 0;
       particle->state += 1;
     }
-  } else if (particle->state == 1) {
+  } else if (particle->state == DJINNI_LIGHT_CIRCLING) {
     particle->orbitAngle += 1;
     if ((s16)particle->age == 40) {
       particle->age = 0;
       particle->state += 1;
     }
-  } else if (particle->state == 2) {
+  } else if (particle->state == DJINNI_LIGHT_DRIFTING) {
     particle->orbitAngle += 1;
     SET_POSITION(&position, owner->x.fixed, owner->y.fixed + 20 * Q16_ONE,
                  owner->z.fixed);
@@ -389,19 +399,19 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
       particle->age = 0;
       particle->state += 1;
     }
-  } else if (particle->state == 3) {
+  } else if (particle->state == DJINNI_LIGHT_CLOSING) {
     particle->orbitRadius -= 1;
     particle->orbitAngle += 1;
     if ((s16)particle->age == 60) {
       particle->age = 0;
       particle->state += 1;
     }
-  } else if (particle->state == 4) {
+  } else if (particle->state == DJINNI_LIGHT_DONE) {
     FieldEffect_ClearOwnedSlot(particle);
   }
   position.x = particle->originX;
   position.z = particle->originZ;
-  Vector_AddPolarOffset(particle->orbitRadius << 16, particle->orbitAngle << 11,
+  Vector_AddPolarOffset(px(particle->orbitRadius), particle->orbitAngle << 11,
                         &position);
   particle->x = position.x;
   particle->z = position.z;

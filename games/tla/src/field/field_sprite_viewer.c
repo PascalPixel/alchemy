@@ -8,6 +8,16 @@
 #include "system/input.h"
 #include "graphics/render_placement.h"
 
+/// What left and right choose for L and R to change on the selected sprite
+/// animation.
+enum UiSpriteViewerEditMode {
+  UI_SPRITE_VIEWER_EDIT_ANIMATION,
+  UI_SPRITE_VIEWER_EDIT_SPRITE,
+  UI_SPRITE_VIEWER_EDIT_PRIORITY,
+  UI_SPRITE_VIEWER_EDIT_COLOR,
+  UI_SPRITE_VIEWER_EDIT_COUNT
+};
+
 /// The debug sprite viewer, in The Broken Seal's form with this game's
 /// changes; it never returns.
 void SpriteViewer_Run(void) {
@@ -340,7 +350,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       positions->y = centerY << 16;
       Vector_AddPolarOffset(px(56), (u16)angle, &positions->x);
       positions++;
-      angle = (s16)(angle + 0x2aaa);
+      angle = (s16)(angle + TRIG_TURN / 6);
     }
     for (; i < 10; i++)
       positions++;
@@ -350,8 +360,8 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   case 44:
   case 88:
     for (i = 0; i < 8; i++) {
-      angle <<= 16;
-      positions->x = centerX << 16;
+      angle = (u32)angle << 16;
+      positions->x = px(centerX);
       angle = (u32)angle >> 16;
       positions->height = 0;
       positions->y = centerY << 16;
@@ -372,7 +382,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       positions->y = centerY << 16;
       Vector_AddPolarOffset(px(56), (u16)angle, &positions->x);
       positions++;
-      angle = (s16)(angle + 0x1999);
+      angle = (s16)(angle + TRIG_TURN / 10);
     }
     break;
   case 20:
@@ -389,23 +399,23 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       Vector_AddPolarOffset(px(40), angle, &positions[0].x);
       pair[i * 2 + 1].x = centerX << 16;
       {
-        s32 *point = &positions[1].x;
+        s32 *point = SpritePlacement_Values(&positions[1]);
         pair[i * 2 + 1].height = 0;
         pair[i * 2 + 1].y = centerY << 16;
         Vector_AddPolarOffset(px(40), (u16)angle, point);
       }
-      angle = (angle + TRIG_TURN / 2) << 16;
+      angle = ((u32)angle + TRIG_TURN / 2) << 16;
       i++;
       positions += 2;
       angle >>= 16;
     }
     break;
   default:
-    angle = ((angle << 16) + 0x20000000) >> 16;
+    angle = (s32)(((u32)angle << 16) + 0x20000000) >> 16;
     for (i = 0; i < 4; i++) {
-      angle <<= 16;
+      angle = (u32)angle << 16;
       angle = (u32)angle >> 16;
-      positions->x = centerX << 16;
+      positions->x = px(centerX);
       positions->height = 0;
       positions->y = centerY << 16;
       Vector_AddPolarOffset(px(56), (u16)angle, &positions->x);
@@ -529,7 +539,7 @@ void SpriteViewer_PlaceRing(void) {
   switch (kind) {
   case 3:
     angle = 0;
-    step = 0x2aaa;
+    step = TRIG_TURN / 6;
     cnt = 6;
     break;
   case 5:
@@ -537,13 +547,13 @@ void SpriteViewer_PlaceRing(void) {
   case 44:
   case 88:
     angle = 0;
-    step = 0x2000;
+    step = TRIG_TURN / 8;
     cnt = 8;
     break;
   case 4:
   case 6:
     angle = 0;
-    step = 0x1999;
+    step = TRIG_TURN / 10;
     cnt = 10;
     break;
   case 20:
@@ -554,7 +564,7 @@ void SpriteViewer_PlaceRing(void) {
     break;
   default:
     angle = TRIG_TURN / 8;
-    step = 0x4000;
+    step = TRIG_TURN / 4;
     cnt = 4;
     break;
   }

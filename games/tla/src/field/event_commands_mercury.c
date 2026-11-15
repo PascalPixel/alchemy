@@ -58,11 +58,11 @@ struct CaptureObject__f0d8740 {
 void Djinn_RunMercuryJoinEffect(s32 arg) {
   struct CaptureObject__f0d8740 *djinni;
   struct CaptureObject__f0d8740 *copy;
-  struct CaptureObject__f0d8740 *previous;
+  struct Actor *previous;
   struct CaptureResource *resource;
   void *effectSlots;
-  struct CaptureObject__f0d8740 **cursor;
-  struct CaptureObject__f0d8740 **list;
+  struct Actor **cursor;
+  struct Actor **list;
   u8 *slot;
   s8 *slotState;
   s32 kind;
@@ -81,7 +81,7 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
 
   FieldEffect_InitializeSlots();
   effectSlots = Ram_HeapSlots->fieldEffectWork;
-  Shop_SaveAndTintFieldPaletteFar(0x204084);
+  Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(4, 4, 16));
   wait(30);
   djinni->visible = 0;
   Sound_PlayFar(SE_NOTE_LOW);
@@ -108,13 +108,13 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
       copy->scaleY = 0xf000;
       copy->scaleX = 0xf000;
       copy->mode = 0;
-      copy->priorityFlags = 2;
+      copy->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       copy->collisionFlags |= 1;
       copy->callback = (void *)Actor_MoveHalfwayTowardTargetCopy;
       copy->facing = djinni->facing;
-      Actor_SetSpriteColorModeFar((struct Actor *)copy, 9);
-      Actor_SelectAnimationFar(copy, 0);
-      Actor_SetSpriteFlagsFar((struct Actor *)copy, 0);
+      Actor_SetSpriteColorModeFar(copy, SPRITE_COLOR_BLUE_TINT);
+      Actor_SelectAnimationFar(copy, ANIM_STILL);
+      Actor_SetSpriteFlagsFar(copy, 0);
       resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
       copy->linked = previous;
       previous = copy;
@@ -131,11 +131,11 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   Actor_ReleaseFar(djinni);
   list = copies;
   for (remaining = 7; remaining >= 0; remaining--)
-    Actor_ReleaseFar(*list++);
-  if (resourceId != 96)
+    Actor_ReleaseFar((*list++));
+  if (resourceId != VRAM_CACHE_ENTRY_COUNT)
     VramCache_FreeEntry(resourceId);
   wait(10);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, 0x4000, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
   Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId), 28);
   wait(20);

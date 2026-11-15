@@ -26,6 +26,10 @@
 extern u8 gWorldMapWork__tile_animation[] __asm__("gWorldMapWork");
 #define gWorldMapWork gWorldMapWork__tile_animation
 
+// A tileset animation script's commands, a halfword each where a source tile
+// would stand (TilesetAnim_Update and TilesetAnim_StartAll).
+#define TILESET_ANIM_JUMP 0xfe00 ///< low byte: the halfword pair to jump to
+
 /// Loads the first of the 2x2 world map tiles around the player that is not
 /// shown yet (at most one a frame), without drawing it. When the region under
 /// the party picks another graphics set, reloads that set over the next 12
@@ -472,14 +476,14 @@ void BlendScript_Start(u16 *script) {
 }
 
 /// Suspends the blend script; scenes reach it through BlendScript_SuspendFar.
-void BlendScript_Suspend(void) { Task_SuspendAll((u32)BlendScript_Run); }
+void BlendScript_Suspend(void) { Task_SuspendAll(BlendScript_Run); }
 
 /// Resumes the blend script, through BlendScript_ResumeFar.
-void BlendScript_Resume(void) { Task_ResumeAll((u32)BlendScript_Run); }
+void BlendScript_Resume(void) { Task_ResumeAll(BlendScript_Run); }
 
 /// Unused: allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with
 /// its four entries cleared.
-void PaletteCycle_Initialize(void) {
+UNUSED void PaletteCycle_Initialize(void) {
   struct PaletteSnapshotWork *queue;
   struct PaletteSnapshot *entry;
   u16 i;

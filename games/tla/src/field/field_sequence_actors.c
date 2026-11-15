@@ -15,6 +15,8 @@
 #include "scene/shared.h"
 #include "macros.h"
 
+#define MAPGRID_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)
+
 /// Picks the sprite a scene placement's character id shows: character 8
 /// becomes 9 on the world map and 11 elsewhere, one more once flag 0x8df is
 /// set.
@@ -188,7 +190,7 @@ s32 ScenePoint_GetPosition(s32 id, s32 *position) {
 /// Releases the actor in slot actorIndex of the event work's table, if there
 /// is one, and empties the slot.
 void Actor_ReleaseAtIndex(u32 actorIndex) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = gFieldWork;
   struct Actor *actor = Actor_Lookup(actorIndex);
 
   if (actor != NULL) {
@@ -214,7 +216,7 @@ void Actor_ResetForLeader(s32 table) {
   s32 i;
   s32 height;
 
-  work = Ram_HeapSlots->fieldWork;
+  work = gFieldWork;
   leader = gMainRoutineWork.leaderActorId;
   entry = work->leaderPlacements;
   entry[0] = gField_DefaultPlacements[0];

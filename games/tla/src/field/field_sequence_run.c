@@ -81,11 +81,11 @@ s32 FieldSequence_Run(void) {
   if (gMainRoutineWork.mapId == SCENE_CLEAR) {
     WorldMap_InitializePerspectiveFar();
     gMainRoutineWork.perspectiveMap = 1;
-    mode = 3;
+    mode = ACTOR_SYSTEM_WORLD_MAP;
     Encounter_SelectMapZones(0);
   } else {
     MapGrid_LoadMapFar(gMainRoutineWork.mapId);
-    mode = 2;
+    mode = ACTOR_SYSTEM_MAP;
     Encounter_SelectMapZones(1);
   }
   work->mode = mode;
@@ -121,7 +121,7 @@ s32 FieldSequence_Run(void) {
   work->transitionActive = 0;
   work->walkingDistanceScale = 409;
   work->walkingDistance = 0;
-  if (gMainRoutineWork.sceneType == 2) {
+  if (gMainRoutineWork.sceneType == SCENE_TYPE_TOWN) {
     work->walkingDistanceScale = 0;
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
   }
@@ -523,7 +523,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 
   result = 0;
   leader = WorldMap_Unfreeze();
-  work = Ram_HeapSlots->fieldWork;
+  work = gFieldWork;
   mapBytes = (u8 *)Ram_HeapSlots->mapGrid;
   if (leader != 0) {
     probePosition.vector.x = leader->pos.x;

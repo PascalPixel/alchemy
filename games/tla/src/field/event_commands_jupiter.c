@@ -57,7 +57,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
     FieldParticle_SetCallback(slot, FieldEffect_RunAngledApproachPhases);
     FieldParticle_SetActorMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(slot->object, (Random16() * 7) >> 16);
-    scale = Random16() / 3 + Q16_ONE;
+    scale = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
     slot->scaleY = scale;
     slot->scaleX = scale;
     count--;
@@ -67,7 +67,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
 
   // The current owner turns to 0x4000 and takes mode 28.
   wait(60);
-  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, 0x4000, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
   Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId), 28);
   wait(40);
@@ -138,10 +138,10 @@ struct FieldEffectWork;
 /// leader, until it is freed once it arrives.
 void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
   struct EffectOwner *owner;
-  struct EffectVector position;
+  struct Vector3 position;
   s32 state;
 
-  owner = (struct EffectOwner *)Actor_GetById(gMainRoutineWork.leaderActorId);
+  owner = Actor_GetById(gMainRoutineWork.leaderActorId);
   state = effect->state;
 
   if (state == 0) {
@@ -151,7 +151,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     position.z = effect->z;
     Vector_AddPolarOffset(px(120),
                           ((Random16() * 3 << 11) >> 16) -
-                              ((Random16() * 3 << 11) >> 16) + 0xc000,
+                              ((Random16() * 3 << 11) >> 16) + FACING_NORTH,
                           &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;

@@ -30,6 +30,30 @@ enum FieldShortcutKind {
 /// A shortcut assignment's request, bits 13..0.
 #define FIELD_SHORTCUT_ID_MASK 0x3fff
 
+#define FIELD_SHORTCUT_KEYS gKeysPressed
+#define WORLD_MAP_PROBE_RADIUS px(7)
+#define FIELD_SHORTCUT_KEYS gKeysHeld
+#define WORLD_MAP_PROBE_RADIUS px(8)
+/// What stopped the leader's step this frame (Actor_UpdatePlayerControl,
+/// Actor_MoveOnWorldMap).
+enum PlayerStepBlock {
+  PLAYER_STEP_BLOCKED_BY_MAP = 1, ///< every heading tried runs into the map
+  /// A solid actor ahead, or one with no room to be pushed.
+  PLAYER_STEP_BLOCKED_BY_ACTOR = 2,
+  PLAYER_STEP_BLOCKED = 3, ///< either of the two
+  /// No step, and none counted as blocked: the pad is not held, or a climb
+  /// meets a wall.
+  PLAYER_STEP_STOPPED = 4
+};
+
+/// The footprints the leader leaves in snow and sand, and the leader's
+/// userValue that asks for the pair next.
+enum FootprintAnimation {
+  FOOTPRINT_ONE_FOOT = 1, ///< one print, fading
+  /// Two prints side by side, fading: laid first after a stop.
+  FOOTPRINT_BOTH_FEET = 2
+};
+
 /// Script command 0x24 (control mode 11): the player control at one pace,
 /// a pixel a frame whatever the keys. Unused: no code sets control mode 11.
 s32 Actor_UpdateWalkingControl(struct Actor *object) {
@@ -307,7 +331,7 @@ s32 Field_RequestShortcut(u32 assignment) {
 
   if (GameFlag_Get(FLAG_MENUS_RAISE_TRIGGER) != 0) {
     work->raisedTrigger = FIELD_RAISED_TRIGGER_MENUS;
-  } else if (work->mode == 3) {
+  } else if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (gInput.held & KEY_R)
       work->raisedTrigger = FIELD_RAISED_TRIGGER_WORLD_PICTURE;
     else if (gInput.held & KEY_L)
@@ -330,7 +354,7 @@ s32 Field_RequestShortcut(u32 assignment) {
 /// assignment (Field_RequestShortcut). While a second event is pending, any of
 /// the five requests command 0x209b instead. Returns 0 when none is pressed.
 s32 Field_CheckConfiguredKeys(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = gFieldWork;
   s32 result = 0;
 
   if (work == NULL)
@@ -668,7 +692,7 @@ counted:
     object->targetZ = TARGET_UNSET;
     object->velocityX = 0;
     object->velocityZ = 0;
-    if (collision & 3) {
+    if (collision & PLAYER_STEP_BLOCKED) {
       s32 difference;
 
       difference = (s16)((u16)angle - object->facing);
@@ -735,7 +759,7 @@ counted:
 
     effect =
         Actor_Create(0x10e, object->x.fixed, object->y.fixed, object->z.fixed);
-    if (effect != NULL) {
+    if (effect != 0) {
       struct PlayerSprite *effectSprite;
 
       effect->groundHeight = object->groundHeight;

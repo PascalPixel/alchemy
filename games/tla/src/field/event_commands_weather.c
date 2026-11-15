@@ -159,11 +159,11 @@ void Weather_UpdateLightning(void) {
   struct PaletteFade *target = Ram_HeapSlots->paletteFade;
   s16 *timer = &work->timer;
 
-  if (*timer < 0)
+  if (work->timer < 0)
     return;
   if (GameFlag_Get(FLAG_WEATHER_HELD))
     work->timer = 128;
-  switch ((*timer)--) {
+  switch (work->timer--) {
   case 0:
     if (work->enabled != 0) {
       u32 a = Random16();

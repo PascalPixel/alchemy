@@ -34,6 +34,9 @@
 
 // The parts, in ROM order.
 
+/// The hue circle, in whole degrees and in degrees as 16.16.
+#define HUE_DEGREES 360
+
 /// Each frame after the delay: rewrites the 160-line wave into the other
 /// page, cycles the colour every other frame, and at counts 0, 8 and 16 of
 /// its 61-frame cycle sends a particle from the target back to the user.
@@ -64,7 +67,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
   if (work->page != 0) {
     FieldEffect_AdvanceHueCycle();
     PaletteFade_SetTarget(
-        (work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
+        RGB(work->red, work->green, work->blue) | PALETTE_TINT_CUSTOM, 1);
     PaletteFade_StartInterpolation(1);
   }
   Actor_SetSpritePalette(Actor_GetById(work->sourceId), 0);

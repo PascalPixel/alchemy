@@ -137,8 +137,8 @@ void EasternAlhafraShip_ShakeDownTheBread(void) {
   return;
 }
 
-void EasternAlhafraShip_TakeTheBread(s32 arg0) {
-  Event_PickUpItem(arg0, ITEM_LARGE_BREAD, FLAG_BREAD_TAKEN);
+void EasternAlhafraShip_TakeTheBread(s32 id) {
+  Event_PickUpItem(id, ITEM_LARGE_BREAD, FLAG_BREAD_TAKEN);
   return;
 }
 

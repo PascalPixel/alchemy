@@ -135,8 +135,8 @@ void AnemosInnerSanctum_SinkIntoSand(void);
 void Leader_SetLayerByte(void);
 void AnemosInnerSanctum_PressFirstSwitch(void);
 void AnemosInnerSanctum_PressSecondSwitch(void);
-void AnemosInnerSanctum_LeaveByExit11(void);
-void AnemosInnerSanctum_LeaveByExit12(void);
+void AnemosInnerSanctum_FallThroughFirstCracks(void);
+void AnemosInnerSanctum_FallThroughSecondCracks(void);
 
 void AnemosInnerSanctum_StartFollower(void);
 void AnemosInnerSanctum_RaiseDust(void);
@@ -986,20 +986,18 @@ void AnemosInnerSanctum_RaisePlatform(void) {
 
 void AnemosInnerSanctum_SinkIntoSand(void) {
   struct Actor *object;
-  s32 t1;
+  s32 behavior;
 
   object = Actor_Get(gMainRoutineWork.leaderActorId);
-  t1 = FieldMapGrid_GetCellBehaviorAt(2, object->x.fixed, object->z.fixed);
-  if (t1 == 0xe8) {
+  behavior =
+      FieldMapGrid_GetCellBehaviorAt(2, object->x.fixed, object->z.fixed);
+  if (behavior == 0xe8) {
     object->layer = 2;
   }
 }
 
 void Leader_SetLayerByte(void) {
-  s32 t0;
-
-  t0 = ((s32)Actor_Get(gMainRoutineWork.leaderActorId));
-  FIELD_AT((t0 + 0x22), u8, 0) = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->layer = 0;
 }
 
 void AnemosInnerSanctum_PressFirstSwitch(void) {
@@ -1044,19 +1042,21 @@ void AnemosInnerSanctum_PressSecondSwitch(void) {
 
 s32 CrackedTiles_Step();
 
-#define DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(name, n1)                          \
+#define DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(name, exit)                        \
   void name(void) {                                                            \
-    s32 t0;                                                                    \
+    s32 fell;                                                                  \
                                                                                \
-    t0 = CrackedTiles_Step();                                                  \
-    if (t0 != 0) {                                                             \
-      FieldEvent_SetExitRequest(n1);                                           \
+    fell = CrackedTiles_Step();                                                \
+    if (fell != 0) {                                                           \
+      FieldEvent_SetExitRequest(exit);                                         \
     }                                                                          \
   }
 
-DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(AnemosInnerSanctum_LeaveByExit11, 0xb)
+DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(AnemosInnerSanctum_FallThroughFirstCracks,
+                                    11)
 
-DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(AnemosInnerSanctum_LeaveByExit12, 0xc)
+DEFINE_ANEMOS_INNER_SANCTUM_EXIT_IF(AnemosInnerSanctum_FallThroughSecondCracks,
+                                    12)
 
 extern s32 gAnemosInnerSanctum_DustScript[];
 
@@ -2189,10 +2189,10 @@ struct Trigger gAnemosInnerSanctum_OrihalconChestTriggers[] = {
     {TRIGGER_STEP, 54, FLAG_SCENE_TEMP_04, EVENT(AnemosInnerSanctum_StepOnTile)},
     {TRIGGER_STEP, 55, FLAG_SCENE_TEMP_05, EVENT(AnemosInnerSanctum_StepOnTile)},
     {TRIGGER_STEP, 56, FLAG_SCENE_TEMP_06, EVENT(AnemosInnerSanctum_StepOnTile)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_LeaveByExit11)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_LeaveByExit11)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_LeaveByExit12)},
-    {TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_LeaveByExit12)},
+    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FallThroughFirstCracks)},
+    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FallThroughFirstCracks)},
+    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FallThroughSecondCracks)},
+    {TRIGGER_STEP, 36, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FallThroughSecondCracks)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_SinkIntoSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Leader_SetLayerByte)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_StartMovingBlock)},

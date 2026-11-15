@@ -1276,7 +1276,7 @@ void AquaRock_SetMoaiFace(s32 id) {
   }
 }
 
-void AquaRock_SpinUpAndAway(s32 arg0) {
+void AquaRock_SpinUpAndAway(s32 exit) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 i;
   s32 angle;
@@ -1301,7 +1301,7 @@ void AquaRock_SpinUpAndAway(s32 arg0) {
     wait(1);
   }
   Event_End();
-  Import_EventSetExitRequest(arg0);
+  Import_EventSetExitRequest(exit);
 }
 
 // Every other frame, emits particle 7 (5 on every other such frame) from the

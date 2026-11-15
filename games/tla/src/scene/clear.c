@@ -999,7 +999,7 @@ s32 Clear_EnterPassword(void) {
   s32 i;
   s32 message;
   s32 frame;
-  s32 size2;
+  s32 crcLength;
   s32 entry;
   struct WindowSprite *sprite;
   u16 *palette;
@@ -1218,13 +1218,13 @@ s32 Clear_EnterPassword(void) {
 
           action =
               Clear_ScrambleData(gClear_PasswordText, length, DECODED_PASSWORD);
-          size2 = action - 2;
-          check = Clear_Crc16(size2, DECODED_PASSWORD);
+          crcLength = action - 2;
+          check = Clear_Crc16(crcLength, DECODED_PASSWORD);
 
           state = 0;
           box = Window_Create(CHECK_WINDOW_X, 12, CHECK_WINDOW_WIDTH, 3, 2);
           crc = check;
-          if (DECODED_PASSWORD[size2] == (u16)crc >> 8 &&
+          if (DECODED_PASSWORD[crcLength] == (u16)crc >> 8 &&
               DECODED_PASSWORD[action - 1] == (u16)crc % 256) {
             Text_DrawMessageAsTiles(MSGNO(MsgFieldPasswordAccepted), box, 0, 0);
             Sound_Play(SE_MENU_CONFIRM);

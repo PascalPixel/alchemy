@@ -2552,16 +2552,16 @@ void AquaRockInside_SetUpOutlets(const u16 *spots, const u16 *levels,
       x = *levels++;
       i = 0;
       if (x > 0) {
-      loop2:
+      nextLevel:
         work->levels[i++] = x;
         if (i > 3)
-          goto done2;
+          goto levelsDone;
         x = *levels++;
         if (x > 0)
-          goto loop2;
+          goto nextLevel;
       }
     }
-  done2:;
+  levelsDone:;
   }
   work->handler = handler;
   if (REG_BLDCNT == 0) {

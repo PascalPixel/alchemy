@@ -1357,12 +1357,12 @@ row:
   MapGrid_CopyCellsTo(52, 76, 29, 73, 9, 9);
   AirsRock_CrumbleRock(0x2280000, 0xe40000);
   i = 0;
-fade1:
+fadeFirstCrumble:
   REG_BLDALPHA = BLEND_ALPHA(16 - (i >> 1), 16);
   System_Wait(1);
   i++;
   if (i != 32)
-    goto fade1;
+    goto fadeFirstCrumble;
   gBgScroll[0].x = 0xffac;
   gBgScroll[0].y = 0;
   System_Wait(1);
@@ -1379,12 +1379,12 @@ fade1:
   MapGrid_CopyCellsTo(52, 86, 29, 73, 9, 9);
   AirsRock_CrumbleRock(0x2080000, 0xf20000);
   i = 0;
-fade2:
+fadeSecondCrumble:
   REG_BLDALPHA = BLEND_ALPHA(16 - (i >> 1), 16);
   System_Wait(1);
   i++;
   if (i != 32)
-    goto fade2;
+    goto fadeSecondCrumble;
   Event_PlaySound(SE_CRASH);
   PaletteFade_ApplySource(0x10003, 0);
   PaletteFade_ApplyTarget(0x7fff, 0);

@@ -1167,8 +1167,8 @@ void AirsRockInside_UpdateVentPuff(struct Actor *object) {
     }
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
     for (i = 0; i != 3; i++) {
-      struct Actor *other2 = Actor_GetById(i + 12);
-#define other other2
+      struct Actor *pillar = Actor_GetById(i + ACTOR_FACE_WARP_THIRD_PILLAR);
+#define other pillar
       if (Position_FlatDistance(&other->x.fixed, pos) <= 8) {
         object->speedLimit = -object->speedLimit >> 1;
         object->riseBaseY = 0;
@@ -1234,27 +1234,27 @@ void AirsRockInside_PuffVents(void) {
     if (frame & 1) {
       if (Actor_GetById(gMainRoutineWork.leaderActorId)->z.fixed >> 19 > 41) {
         if (Actor_GetById(gMainRoutineWork.leaderActorId)->x.fixed >> 19 <= 44)
-        dripA8:
+        puffWestVent:
           AirsRockInside_PuffVent(px(168), 0, px(603));
         else if (!GameFlag_Get(FLAG_SCENE_TEMP_01))
           AirsRockInside_PuffVent(px(504), 0, px(456));
         else
-          goto drip228;
+          goto puffEastVent;
       } else {
-      drip268:
+      puffNorthVent:
         AirsRockInside_PuffVent(px(616), -px(32), px(136));
       }
     } else {
       if (Actor_GetById(gMainRoutineWork.leaderActorId)->z.fixed >> 19 > 41) {
         if (Actor_GetById(gMainRoutineWork.leaderActorId)->x.fixed >> 19 > 49)
-        drip228:
+        puffEastVent:
           AirsRockInside_PuffVent(px(552), 0, px(456));
         else if (GameFlag_Get(FLAG_SCENE_TEMP_00))
-          goto dripA8;
+          goto puffWestVent;
         else
           AirsRockInside_PuffVent(px(264), 0, px(600));
       } else if (GameFlag_Get(FLAG_SCENE_TEMP_02)) {
-        goto drip268;
+        goto puffNorthVent;
       } else {
         AirsRockInside_PuffVent(px(648), -px(32), px(136));
       }

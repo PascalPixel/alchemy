@@ -283,9 +283,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         mode = COMMAND_ICON_DEFEND;
       }
       iconSprite = &gBattleMenuWork->icons[0];
-      iconSprite->oam.word.attr01 =
-          OBJ_SIZE_32X32 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-      iconSprite->oam.word.attr23 = 0;
+      MenuSprite_Initialize(*iconSprite,
+                            OBJ_SIZE_32X32 | OBJ_256_COLORS |
+                                OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
       iconSprite->oam.f.tile =
           Resource_LoadIndexedIntoBuffer(largeIconSlot, mode);
       if (mode == COMMAND_ICON_DJINN) {

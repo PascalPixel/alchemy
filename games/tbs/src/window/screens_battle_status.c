@@ -749,9 +749,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
       for (i = 0, entry = gVramCacheEntries, iconX = 112;
            i < OWNER_STATUS_ICON_PLACES; i++) {
-        statusSprite->oam.word.attr01 =
-            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-        statusSprite->oam.word.attr23 = 0;
+        MenuSprite_Initialize(*statusSprite,
+                              OBJ_SIZE_16X16 |
+                                  OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
         statusSprite->oam.f.tile = entry[*statusSlot++].offset >> 5;
         statusSprite->oam.f.x = iconX;
         statusSprite->oam.f.y = (u8)(statusWindow->y * 8 + 8);

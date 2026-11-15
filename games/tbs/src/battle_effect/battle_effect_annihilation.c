@@ -76,11 +76,15 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
                             COMPOSITE_ADDITIVE);
       blitters[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
       if (work->args->side == EFFECT_SIDE_ENEMIES)
-        blitters[0](canvas, work->sheet + (frame - 6) * (48 * 72),
-                    position.x / 2 - 24, position.y - 24, 48, 72);
+        blitters[0](canvas,
+                    work->sheet + (frame - 6) * PICTURE_BYTES(FIRE_STREAK),
+                    position.x / 2 - FIRE_STREAK_WIDTH / 2, position.y - 24,
+                    FIRE_STREAK_WIDTH, FIRE_STREAK_HEIGHT);
       else
-        blitters[0](canvas, work->sheet + (frame - 6) * (48 * 72),
-                    position.x / 2, position.y - 24, 48, 72);
+        blitters[0](canvas,
+                    work->sheet + (frame - 6) * PICTURE_BYTES(FIRE_STREAK),
+                    position.x / 2, position.y - 24, FIRE_STREAK_WIDTH,
+                    FIRE_STREAK_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
     // The fire burst over the target grows.
@@ -96,9 +100,12 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       if (work->args->variant == EFFECT_VARIANT_BASIC)
         strip = 0;
       else
-        strip = 3 * (40 * 80);
-      blitters[0](canvas, Ram_MapGridCellBuffer + strip + step * (40 * 80),
-                  origin.x / 2 - 20, origin.y - 48, 40, 80);
+        strip = 3 * PICTURE_BYTES(FIRE_BURST);
+      blitters[0](canvas,
+                  Ram_MapGridCellBuffer + strip +
+                      step * PICTURE_BYTES(FIRE_BURST),
+                  origin.x / 2 - FIRE_BURST_WIDTH / 2, origin.y - 48,
+                  FIRE_BURST_WIDTH, FIRE_BURST_HEIGHT);
       // A busy delay before the blitter is freed.
       // XXX (no evidence): why it waits; the delay changes nothing the game
       // draws or computes, so only the author's intent would say.

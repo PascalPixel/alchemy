@@ -49,15 +49,15 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     work->args = args;
     BattleEffect_StartTiledCanvas(0);
     REG_BG2PA = Q_8_8(1);
-    REG_BLDALPHA = BLEND_ALPHA(16, 16);
+    REG_BLDALPHA = EFFECT_BLEND_ADD;
 
     sheet = Resource_GetTableEntry(RESOURCE_COUNTER_REVEAL_SHEET);
-    Iwram_CopyWords(BG_PLTT, sheet, 128);
-    sheet = sheet + 128;
+    Iwram_CopyWords(BG_PLTT, sheet, SHEET_PALETTE_BYTES);
+    sheet = sheet + SHEET_PALETTE_BYTES;
     Decompress_TaggedLz(sheet, work->sheet);
     cells = Ram_MapGridCellBuffer;
     sheet = Resource_GetTableEntry(RESOURCE_RED_CRESCENT_SHEET_A);
-    sheet = sheet + 128;
+    sheet = sheet + SHEET_PALETTE_BYTES;
     Decompress_TaggedLz(sheet, cells);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_TRANSPARENT);
@@ -87,8 +87,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     s32 *scanline;
 
     spin = frame * (TRIG_TURN / 128);
-    screenX = (swayCenter[0] >> 16) + (((Trig_Sin(spin) * 16)) >> 16) + 48;
-    screenY = (swayCenter[1] >> 16) + (((Trig_Cos(spin) * 4)) >> 16) + 16;
+    screenX = Q_16_16_TO_INT(swayCenter[0]) +
+              Q_16_16_TO_INT(Trig_Sin(spin) * 16) + 48;
+    screenY =
+        Q_16_16_TO_INT(swayCenter[1]) + Q_16_16_TO_INT(Trig_Cos(spin) * 4) + 16;
     if (frame == CONDEMN_SWING_FRAME) {
       Sound_PlayFar(SE_HEAVY_IMPACT);
     }
@@ -103,7 +105,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       drawReaper = 0;
     }
     if (frame == 33) {
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       drawReaper = 1;
     }
     // The last pass, on the first target.
@@ -118,7 +120,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       drawReaper = 0;
     }
     if (frame == 65) {
-      REG_BLDALPHA = BLEND_ALPHA(16, 16);
+      REG_BLDALPHA = EFFECT_BLEND_ADD;
       drawReaper = 1;
     }
     // Each of the first two passes ripples harder as the reaper fades out.
@@ -127,12 +129,12 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     if (frame <= 31) {
       if (frame > 15) {
         ripple = (frame * 2) - 32;
-        REG_BLDALPHA = BLEND_ALPHA(31 - frame, 16);
+        REG_BLDALPHA = EFFECT_BLEND_CANVAS(31 - frame);
       }
     } else if (frame <= 63) {
       if (frame > 47) {
         ripple = (frame * 2) - 96;
-        REG_BLDALPHA = BLEND_ALPHA(63 - frame, 16);
+        REG_BLDALPHA = EFFECT_BLEND_CANVAS(63 - frame);
       }
     }
     if (ripple < 0) {
@@ -160,50 +162,52 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       if (frame <= 87) {
         draw[work->args->side](
             canvas, work->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
-            CONDEMN_PICTURE_Y(pictureRow, 0) + screenY, 57, 98);
+            CONDEMN_PICTURE_Y(pictureRow, 0) + screenY,
+            REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
       } else {
         if (frame <= 91) {
           draw[work->args->side](
               canvas, work->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
-              CONDEMN_PICTURE_Y(pictureRow, 0) + screenY, 57, 98);
+              CONDEMN_PICTURE_Y(pictureRow, 0) + screenY,
+              REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
         }
-        draw[work->args->side](canvas, work->sheet + REAPER_SHEET_SWUNG,
-                               CONDEMN_PICTURE_X(pictureColumn, 1),
-                               CONDEMN_PICTURE_Y(pictureRow, 1) + screenY, 99,
-                               69);
+        EFFECT_DRAW_PICTURE(draw[work->args->side], canvas, work->sheet,
+                            REAPER_SHEET_SWUNG,
+                            CONDEMN_PICTURE_X(pictureColumn, 1),
+                            CONDEMN_PICTURE_Y(pictureRow, 1) + screenY);
         if (frame >= 88 && frame <= 89) {
           Iwram_FillWords(canvas, CANVAS_BYTES,
                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         }
         if (frame >= 90 && frame <= 91) {
-          draw[work->args->side](canvas, work->sheet + REAPER_SHEET_CRESCENT,
-                                 CONDEMN_PICTURE_X(pictureColumn, 2),
-                                 CONDEMN_PICTURE_Y(pictureRow, 2) + screenY,
-                                 128, 91);
+          EFFECT_DRAW_PICTURE(draw[work->args->side], canvas, work->sheet,
+                              REAPER_SHEET_CRESCENT,
+                              CONDEMN_PICTURE_X(pictureColumn, 2),
+                              CONDEMN_PICTURE_Y(pictureRow, 2) + screenY);
         }
         if (frame >= 92 && frame <= 93) {
-          draw[work->args->side](
-              canvas, Ram_MapGridCellBuffer + RED_CRESCENT_FADE_1,
-              CONDEMN_PICTURE_X(pictureColumn, 3),
-              CONDEMN_PICTURE_Y(pictureRow, 3) + screenY, 128, 91);
+          EFFECT_DRAW_PICTURE(draw[work->args->side], canvas,
+                              Ram_MapGridCellBuffer, RED_CRESCENT_FADE_A,
+                              CONDEMN_PICTURE_X(pictureColumn, 3),
+                              CONDEMN_PICTURE_Y(pictureRow, 3) + screenY);
         }
         if (frame >= 94 && frame <= 95) {
-          draw[work->args->side](
-              canvas, Ram_MapGridCellBuffer + RED_CRESCENT_FADE_2,
-              CONDEMN_PICTURE_X(pictureColumn, 4),
-              CONDEMN_PICTURE_Y(pictureRow, 4) + screenY, 128, 59);
+          EFFECT_DRAW_PICTURE(draw[work->args->side], canvas,
+                              Ram_MapGridCellBuffer, RED_CRESCENT_FADE_B,
+                              CONDEMN_PICTURE_X(pictureColumn, 4),
+                              CONDEMN_PICTURE_Y(pictureRow, 4) + screenY);
         }
         if (frame >= 96 && frame <= 97) {
-          draw[work->args->side](
-              canvas, Ram_MapGridCellBuffer + RED_CRESCENT_FADE_3,
-              CONDEMN_PICTURE_X(pictureColumn, 5),
-              CONDEMN_PICTURE_Y(pictureRow, 5) + screenY, 122, 29);
+          EFFECT_DRAW_PICTURE(draw[work->args->side], canvas,
+                              Ram_MapGridCellBuffer, RED_CRESCENT_FADE_C,
+                              CONDEMN_PICTURE_X(pictureColumn, 5),
+                              CONDEMN_PICTURE_Y(pictureRow, 5) + screenY);
         }
         if (frame >= 98 && frame <= 99) {
-          draw[work->args->side](
-              canvas, Ram_MapGridCellBuffer + RED_CRESCENT_FADE_4,
-              CONDEMN_PICTURE_X(pictureColumn, 6),
-              CONDEMN_PICTURE_Y(pictureRow, 6) + screenY, 76, 25);
+          EFFECT_DRAW_PICTURE(draw[work->args->side], canvas,
+                              Ram_MapGridCellBuffer, RED_CRESCENT_FADE_D,
+                              CONDEMN_PICTURE_X(pictureColumn, 6),
+                              CONDEMN_PICTURE_Y(pictureRow, 6) + screenY);
         }
       }
     }

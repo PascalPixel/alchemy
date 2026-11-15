@@ -11,6 +11,10 @@ enum {
   FROST_FRAME   ///< the frame the motes burst
 };
 
+/// The ice mounds' pictures in IceChipSheet are all as wide; their heights are
+/// gFrost_MoundHeights.
+#define FROST_MOUND_WIDTH 32
+
 /// Motes of ice spiral down and in while mounds of ice spring up; at the burst
 /// the motes spread and rise, chips fly up and sparkles rise.
 ///
@@ -41,12 +45,12 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
     seed->x = Random16() & TRIG_ANGLE_MASK;
     seed->z = (Random16() & 63) + 56;
-    seed->y = ((Random16() & 31) - 64) << 16;
+    seed->y = px((Random16() & 31) - 64);
   }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   if (work->args->side == EFFECT_SIDE_PARTY)
-    REG_BG2X = -(112 << 8);
+    REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
 
   for (frame = 0;
        frame != gFrost_Timings[work->args->variant][FROST_FRAME] + 75;
@@ -140,28 +144,28 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
             height = gFrost_MoundHeights[picture];
             pair[1](canvas, work->sheet + gFrost_MoundPictures[picture],
                     gFrost_MoundSpots[i][FROST_MOUND_X],
-                    gFrost_MoundSpots[i][FROST_MOUND_FOOT] - height, 32,
-                    height);
+                    gFrost_MoundSpots[i][FROST_MOUND_FOOT] - height,
+                    FROST_MOUND_WIDTH, height);
 #else
             pair[1](canvas, work->sheet + gFrost_MoundPictures[picture],
                     gFrost_MoundSpots[i][FROST_MOUND_X],
                     gFrost_MoundSpots[i][FROST_MOUND_FOOT] -
                         (height = gFrost_MoundHeights[picture]),
-                    32, height);
+                    FROST_MOUND_WIDTH, height);
 #endif
           } else {
 #ifdef UBFIX
             height = gFrost_MoundHeights[picture];
             pair[0](canvas, work->sheet + gFrost_MoundPictures[picture],
                     gFrost_MoundSpots[i][FROST_MOUND_X],
-                    gFrost_MoundSpots[i][FROST_MOUND_FOOT] - height, 32,
-                    height);
+                    gFrost_MoundSpots[i][FROST_MOUND_FOOT] - height,
+                    FROST_MOUND_WIDTH, height);
 #else
             pair[0](canvas, work->sheet + gFrost_MoundPictures[picture],
                     gFrost_MoundSpots[i][FROST_MOUND_X],
                     gFrost_MoundSpots[i][FROST_MOUND_FOOT] -
                         (height = gFrost_MoundHeights[picture]),
-                    32, height);
+                    FROST_MOUND_WIDTH, height);
 #endif
           }
         }
@@ -177,8 +181,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
       for (i = 0; i != 32; i++) {
         struct Particle *chip = &PARTICLES[i];
 
-        SET_POSITION(chip, (Random16() & 127) << 16,
-                     ((Random16() & 15) + 80) << 16,
+        SET_POSITION(chip, px(Random16() & 127), px((Random16() & 15) + 80),
                      ((Random16() & 63) - 32) << 12);
 #ifdef BUGFIX
         chip->velocityX = 0;
@@ -207,8 +210,8 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           highest = chip->y;
       }
     }
-    lowest >>= 16;
-    highest >>= 16;
+    lowest = Q_16_16_TO_INT(lowest);
+    highest = Q_16_16_TO_INT(highest);
     if (highest <= lowest)
       highest = lowest + 1;
 
@@ -217,11 +220,11 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
       for (i = 0; i != 32; i++) {
         struct Particle *sparkle = &work->particles[i];
 
-        sparkle->velocityX = (Random16() & 127) << 16;
+        sparkle->velocityX = px(Random16() & 127);
         if (highest == lowest)
           sparkle->velocityY = px(lowest);
         else
-          sparkle->velocityY = (Random16() % (highest - lowest) + lowest) << 16;
+          sparkle->velocityY = px(Random16() % (highest - lowest) + lowest);
         sparkle->variant = (Random16() & 15) + 20;
       }
     }
@@ -253,8 +256,8 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
         if ((sparkle->variant == -1 || sparkle->variant == 17) &&
             frame < gFrost_Timings[work->args->variant][FROST_FRAME] + 35) {
           sparkle->variant = 17;
-          sparkle->velocityX = (Random16() & 127) << 16;
-          sparkle->velocityY = (Random16() % (highest - lowest) + lowest) << 16;
+          sparkle->velocityX = px(Random16() & 127);
+          sparkle->velocityY = px(Random16() % (highest - lowest) + lowest);
         }
       }
     }

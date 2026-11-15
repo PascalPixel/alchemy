@@ -29,6 +29,10 @@ void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
   BattleEffect_RunDragonFire(args, DRAGON_FIRE_TIAMAT);
 }
 #define DRAGON_FIRE_FRAMES 208
+/// The breath of fire, then the flash that ends it.
+#define DRAGON_FIRE_BREATH_FRAME 128
+#define DRAGON_FIRE_FLASH_FRAME 160
+#define DRAGON_FIRE_FLASH_END_FRAME 176
 #define DRAGON_FIRE_FIREBALLS 16      ///< falling fireballs
 #define DRAGON_FIRE_FIRST_FIREBALL 24 ///< the first in work->particles
 #define DRAGON_FIRE_FIRST_SPARK 40    ///< the first spark in work->particles
@@ -60,7 +64,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -71,17 +75,18 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
 
   palette = Resource_GetTableEntry(RESOURCE_FLASH_BURST_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  palette += 128;
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry(RESOURCE_EMBER_STREAK_SHEET);
-  palette += 128;
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet + DRAGON_FIRE_FLAME_PICTURES);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       sheet);
   if (mode == DRAGON_FIRE_DRAGON_DRIVER)
     Iwram_CopyWords(BG_PLTT,
-                    Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET), 128);
+                    Resource_GetTableEntry(RESOURCE_LIGHTNING_BOLT_SHEET),
+                    SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   if (mode == DRAGON_FIRE_TIAMAT)
@@ -124,9 +129,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
   }
 
   for (frame = 0; frame != DRAGON_FIRE_FRAMES; frame++) {
-    // A or B skips to frame 160.
-    if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 48 && frame <= 159) {
-      // Tiamat's open mouth of frame 128 and the targets' reel of frame 138.
+    // A or B skips to the flash.
+    if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 48 &&
+        frame < DRAGON_FIRE_FLASH_FRAME) {
+      // Tiamat's open mouth of the breath and the targets' reel of frame 138.
       if (mode == DRAGON_FIRE_TIAMAT) {
         Sprite_StartAnimationFar(work->sprites[0], 8);
         Sprite_StartAnimationFar(work->sprites[1], 9);
@@ -138,19 +144,20 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                                  POSE_DAMAGE, TINT_KEEP, 0);
         BattleMotion_ApplyKnockbackFar(work->args->targets[i], KNOCKBACK_HURL);
       }
-      frame = 160;
+      frame = DRAGON_FIRE_FLASH_FRAME;
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == 178)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
-    if (frame == 128)
+    if (frame == DRAGON_FIRE_BREATH_FRAME)
       work->transferValue = CANVAS_FADE_HALF;
-    if (frame == 176) {
+    if (frame == DRAGON_FIRE_FLASH_END_FRAME) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
       palette = Resource_GetTableEntry(RESOURCE_EMBER_STREAK_SHEET);
-      Iwram_CopyWords(BG_PLTT, palette, 128);
-    } else if (frame >= 160 && frame <= 175) {
+      Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+    } else if (frame >= DRAGON_FIRE_FLASH_FRAME &&
+               frame < DRAGON_FIRE_FLASH_END_FRAME) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
       if (frame > 173)
         work->transferValue = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
@@ -158,7 +165,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     }
 
     // Embers rise from the ground.
-    if (frame >= 33 && frame <= 175) {
+    if (frame >= 33 && frame < DRAGON_FIRE_FLASH_END_FRAME) {
       s32 spawned = 0;
       s32 limit = 1;
 
@@ -168,7 +175,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
         struct Particle *ember = &PARTICLES[i];
 
         if (ember->variant == -1) {
-          ember->x = ((Random16() & 255) - 32) << 16;
+          ember->x = px((Random16() & 255) - 32);
           ember->y = px(112);
           ember->velocityX = ((Random16() & 127) + gTiamat_EmberSpeeds[i & 3])
                              << 9;
@@ -182,7 +189,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       }
     }
     // Sparks fly up from Tiamat's head.
-    if (frame >= 41 && frame <= 127) {
+    if (frame >= 41 && frame < DRAGON_FIRE_BREATH_FRAME) {
       s32 spawned = 0;
 
       if (frame & 1) {
@@ -195,10 +202,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
             s32 angle = (Random16() & 0x1fff) + 20000;
 
             if (mode == DRAGON_FIRE_TIAMAT) {
-              spark->x = ((Random16() & 7) + 78) << 16;
+              spark->x = px((Random16() & 7) + 78);
               spark->y = px(70);
             } else {
-              spark->x = ((Random16() & 7) + origin.x - 8) << 16;
+              spark->x = px((Random16() & 7) + origin.x - 8);
               spark->y = px(origin.y);
             }
             spark->velocityX = speed * Trig_Sin(angle) >> 9;
@@ -213,10 +220,11 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     }
     if (frame == 48)
       Sound_PlayFar(SE_RUMBLE);
-    if (frame == 128)
+    if (frame == DRAGON_FIRE_BREATH_FRAME)
       Sound_PlayFar(SE_CRASH);
     // Breath: puffs of fire thrown across the targets.
-    if (frame >= 129 && frame <= 175) {
+    if (frame > DRAGON_FIRE_BREATH_FRAME &&
+        frame < DRAGON_FIRE_FLASH_END_FRAME) {
       s32 spawned = 0;
 
       for (i = 0; i != DRAGON_FIRE_BREATH; i++) {
@@ -243,14 +251,15 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    if (frame <= 175) {
+    if (frame < DRAGON_FIRE_FLASH_END_FRAME) {
       for (i = 0; i != DRAGON_FIRE_BREATH; i++) {
         struct Particle *puff = &work->particles[i];
 
         if (puff->variant >= 0) {
           draw[0](canvas, work->sheet + ((puff->variant >> 2) << 11),
-                  Q_16_16_TO_INT(puff->x) - 16, Q_16_16_TO_INT(puff->y) - 32,
-                  32, 64);
+                  Q_16_16_TO_INT(puff->x) - FLASH_BURST_WIDTH / 2,
+                  Q_16_16_TO_INT(puff->y) - FLASH_BURST_HEIGHT / 2,
+                  FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           puff->x += puff->velocityX * dir;
           puff->y += puff->velocityY;
           puff->variant++;
@@ -278,7 +287,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     }
 
     // Embers rise, then curve away.
-    if (frame <= 175) {
+    if (frame < DRAGON_FIRE_FLASH_END_FRAME) {
       for (i = 0; i != DRAGON_FIRE_EMBERS; i++) {
         struct Particle *ember = &PARTICLES[i];
 
@@ -290,7 +299,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
                   Q_16_16_TO_INT(ember->y) - size, size, size * 2);
           ember->x += ember->velocityX * dir;
           ember->y += ember->velocityY;
-          if (frame > 128) {
+          if (frame > DRAGON_FIRE_BREATH_FRAME) {
             if (i & 1)
               ember->velocityX += -px(1) / 2;
             else
@@ -305,7 +314,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    if (frame == 128)
+    if (frame == DRAGON_FIRE_BREATH_FRAME)
       work->shakeFrames = 48;
     if (mode == DRAGON_FIRE_TIAMAT && frame == 48)
       work->shakeFrames = 8;
@@ -316,13 +325,13 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       focus.y += px(16);
     }
     if (mode == DRAGON_FIRE_TIAMAT) {
-      if (frame == 128) {
+      if (frame == DRAGON_FIRE_BREATH_FRAME) {
         Sprite_StartAnimationFar(work->sprites[0], 8);
         Sprite_StartAnimationFar(work->sprites[1], 9);
         Sprite_StartAnimationFar(work->sprites[3], 10);
         Sprite_StartAnimationFar(work->sprites[4], 11);
       }
-      if (frame == 176) {
+      if (frame == DRAGON_FIRE_FLASH_END_FRAME) {
         Sprite_StartAnimationFar(work->sprites[0], 0);
         Sprite_StartAnimationFar(work->sprites[1], 1);
         Sprite_StartAnimationFar(work->sprites[3], 3);
@@ -339,7 +348,7 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    if (frame <= 175) {
+    if (frame < DRAGON_FIRE_FLASH_END_FRAME) {
       for (i = 0; i != DRAGON_FIRE_FIREBALLS; i++) {
         struct Particle *fireball =
             &work->particles[DRAGON_FIRE_FIRST_FIREBALL + i];
@@ -389,6 +398,9 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 }
 
 #undef DRAGON_FIRE_FRAMES
+#undef DRAGON_FIRE_BREATH_FRAME
+#undef DRAGON_FIRE_FLASH_FRAME
+#undef DRAGON_FIRE_FLASH_END_FRAME
 #undef DRAGON_FIRE_FIREBALLS
 #undef DRAGON_FIRE_FIRST_FIREBALL
 #undef DRAGON_FIRE_FIRST_SPARK

@@ -238,6 +238,8 @@ typedef struct {
 /// PARTICLES as particles. The effects use these two, not gMapGridCellBuffer
 /// itself.
 #define PARTICLES ((struct Particle *)Ram_MapGridCellBuffer)
+/// The particles PARTICLES holds.
+#define PARTICLE_POOL_COUNT 1024
 
 /// Clips overflow on all four sides.
 #define EFFECT_CLIP_BOUNDS (BLITTER_CLIP_X | BLITTER_CLIP_Y)

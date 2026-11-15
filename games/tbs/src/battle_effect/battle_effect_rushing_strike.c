@@ -7,13 +7,13 @@
 /// Packs a picture to half width, keeping every second byte.
 void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
   s32 row = 0;
-  s32 rows = 288;
+  s32 rows = YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT;
   s32 offset = 0;
 
   do {
     s32 x;
 
-    for (x = 0; x != 40; x++) {
+    for (x = 0; x != YELLOW_ORB_WIDTH; x++) {
       dst[offset / 2 + x / 2] = src[offset + x];
     }
     offset += stride;
@@ -22,7 +22,8 @@ void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
 }
 
 #define RUSHING_STRIKE_SPARK_COUNT 64
-#define RUSHING_STRIKE_RING_BYTES (20 * 48) ///< one 20x48 ring picture
+#define RUSHING_STRIKE_RING_BYTES                                              \
+  PICTURE_BYTES(YELLOW_ORB_PACKED) ///< one ring picture
 
 /// The rushing strike's sparks' palettes (BattleEffect_RunRushingStrike), each
 /// named for the effect that plays it.
@@ -107,7 +108,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
 
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, work->sheet, 1, 0);
-  BattleEffect_PackTileRows(work->sheet, (u8 *)cells, 40, 288);
+  BattleEffect_PackTileRows(work->sheet, (u8 *)cells, YELLOW_ORB_WIDTH,
+                            YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT);
   Resource_LoadAndDecompress(RESOURCE_BLUE_BURST_SHEET, work->sheet, 1, 1);
   switch (mode) {
   case RUSHING_STRIKE_BONE_CHARGE:
@@ -123,7 +125,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     paletteId = RESOURCE_BLAST_SHEET;
     break;
   }
-  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(paletteId), 128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(paletteId),
+                  SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Send the user in, and ready the sparks at the target.
@@ -162,7 +165,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     if (ringFrame >= 0 && ringFrame <= 11) {
       s32 ring = ringFrame / 2;
       draw[0](canvas, cells + ring * RUSHING_STRIKE_RING_BYTES,
-              origin.x / 2 - 16, screen.y - 40, 20, 48);
+              origin.x / 2 - 16, screen.y - 40, YELLOW_ORB_PACKED_WIDTH,
+              YELLOW_ORB_PACKED_HEIGHT);
     }
     // The sparks fly and shrink.
     if (ringFrame >= 0 && ringFrame <= 55) {

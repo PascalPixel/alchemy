@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define MIRRORED_WALL_FRAMES 48 ///< frames of the wall
+
 /// The mirrored wall's modes (BattleEffect_RunMirroredWall), each named for the
 /// effect that plays it.
 enum MirroredWallMode {
@@ -69,24 +71,24 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_StartCanvasLayer(0);
 
   palette = Resource_GetTableEntry(RESOURCE_EARTH_WALL_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  palette += 128;
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   palette = Resource_GetTableEntry(RESOURCE_MARS_DJINN_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   if (mode == MIRRORED_WALL_RECOVERY) {
     palette = Resource_GetTableEntry(RESOURCE_FIREBALL_SHEET);
-    Iwram_CopyWords(BG_PLTT, palette, 128);
+    Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   }
 
   Projection_Unit(work->args->targets[0], &screenPosition);
   if (mode == MIRRORED_WALL_SPASM) {
     REG_BG2PA = Q_8_8(1);
-    x = 64 - screenPosition.x;
+    x = CANVAS_SIZE / 2 - screenPosition.x;
     REG_BG2X = x << 8;
   } else {
     REG_BG2PA = Q_8_8(0.8);
-    x = (-screenPosition.x * 4) / 5 + 64;
+    x = (-screenPosition.x * 4) / 5 + CANVAS_SIZE / 2;
     REG_BG2X = x << 8;
   }
 
@@ -108,7 +110,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
     work->shakeFrames = 32;
   }
 
-  for (frame = 0; frame != 48; frame++) {
+  for (frame = 0; frame != MIRRORED_WALL_FRAMES; frame++) {
     if (frame == 0) {
       if (mode == MIRRORED_WALL_RECOVERY)
         BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,

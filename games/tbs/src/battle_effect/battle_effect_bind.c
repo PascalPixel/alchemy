@@ -4,6 +4,16 @@
 
 #include "battle_effect_internal.h"
 
+/// Bind's sheet: the rune, the flare pictures, then the Djinni.
+#define BIND_FLARE_PICTURES 4096
+#define BIND_DJINNI_PICTURE 8192
+/// The particles each target's triangle keeps, and the flares along each edge.
+#define BIND_SLOTS_PER_TARGET 32
+#define BIND_EDGE_FLARES 24
+/// The frames the triangle of flares shrinks and turns before the rune shows,
+/// with the damage.
+#define BIND_RUNE_FRAME 64
+
 // Bind and Luff spin a shrinking triangle onto the first target and stand a
 // rune there. The triangle's corners are projected onto the canvas and each
 // edge is stamped with flares.
@@ -26,7 +36,7 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   end = 0;
   speed = 16;
   Iwram_CopyWords(BLUE_RAMP_PIXELS, BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES);
-  for (x = 0; x != 256; x++) {
+  for (x = 0; x != BATTLE_BACKGROUND_WIDTH; x++) {
     delays[x] = Random16() & 63;
   }
   row = 0;
@@ -34,16 +44,16 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
     end += speed / 4;
     speed++;
     while (row != end) {
-      for (x = 0; x != 256; x++) {
+      for (x = 0; x != BATTLE_BACKGROUND_WIDTH; x++) {
         y = row - delays[x];
         if (y >= 0) {
-          if (y <= 119) {
+          if (y < BATTLE_BACKGROUND_HEIGHT) {
             pixel = BLUE_RAMP_PIXELS + ((x & 7) + ((x / 8) << 6) +
                                         ((y & 7) << 3) + ((y / 8) << 11));
             color = ((s16 *)BG_PLTT)[*pixel];
-            red = color & 31;
-            green = (color >> 5) & 31;
-            blue = (color >> 10) & 31;
+            red = RGB_RED(color);
+            green = RGB_GREEN(color);
+            blue = RGB_BLUE(color);
             if (red < green)
               red = green;
             if (red < blue)
@@ -115,24 +125,24 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
   REG_BG2PA = Q_8_8(1);
 
   palette = Resource_GetTableEntry(RESOURCE_RUNE_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  palette += 128;
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       graphics);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_D),
-                      work->sheet + 4096);
+                      work->sheet + BIND_FLARE_PICTURES);
   palette = Resource_GetTableEntry(RESOURCE_JUPITER_DJINN_SHEET);
-  palette += 128;
-  Decompress_TaggedLz(palette, work->sheet + 8192);
+  palette += SHEET_PALETTE_BYTES;
+  Decompress_TaggedLz(palette, work->sheet + BIND_DJINNI_PICTURE);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   Projection_ScaledUnit(work->args->targets[0], &anchor);
-  shift = 64 - anchor.x;
+  shift = CANVAS_SIZE / 2 - anchor.x;
   REG_BG2X = shift << 8;
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != work->args->targetCount * 20 + 72; frame++) {
-    if (frame == 64)
+    if (frame == BIND_RUNE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
     // The colours cycle through the hues.
     BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - TRIG_TURN / 3,
@@ -143,14 +153,16 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
       s32 x;
       s32 y;
 
-      x = ((Trig_Sin(frame << 11) * 20) >> 16) + originX + shift - 20;
-      y = (((Trig_Cos(frame << 11) * 4)) >> 16) + originY - 24;
+      x = Q_16_16_TO_INT(Trig_Sin(frame << 11) * 20) + originX + shift - 20;
+      y = Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4) + originY - 24;
       BattleEffect_FetchRectangleBlitters(work->args->side, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
-      draw[0](canvas, work->sheet + 8192, x, y, 40, 40);
+      draw[0](canvas, work->sheet + BIND_DJINNI_PICTURE, x, y, DJINNI_WIDTH,
+              DJINNI_HEIGHT);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + 8192, x, y, 40, 40);
+        draw[1](canvas, work->sheet + BIND_DJINNI_PICTURE, x, y, DJINNI_WIDTH,
+                DJINNI_HEIGHT);
       EFFECT_RELEASE_BLITTERS();
     }
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -176,15 +188,15 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
         // The triangle.
         if (memberFrame <= 67) {
           for (j = 0; j != 3; j++) {
-            point = &work->particles[member * 32 + j];
+            point = &work->particles[member * BIND_SLOTS_PER_TARGET + j];
             Transform_Reset();
-            if (memberFrame <= 63) {
+            if (memberFrame < BIND_RUNE_FRAME) {
               scale.x = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
               scale.y = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
               scale.z = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
               Transform_ApplyScale(Vector3_Coordinates(&scale));
-              Transform_ApplyRoll((64 - memberFrame) << 9);
-              Transform_ApplyYaw((64 - memberFrame) << 9);
+              Transform_ApplyRoll((BIND_RUNE_FRAME - memberFrame) << 9);
+              Transform_ApplyYaw((BIND_RUNE_FRAME - memberFrame) << 9);
             }
             Transform_ApplyRoll(j * (TRIG_TURN / 3));
             Projection_Point(gBind_Vertex, &corner);
@@ -192,25 +204,31 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
             point->velocityY = corner.y + screen.y + 16;
           }
           for (j = 0; j != 3; j++) {
-            struct Particle *from = &work->particles[j + member * 32];
-            struct Particle *to = &work->particles[(j + 1) % 3 + member * 32];
+            struct Particle *from =
+                &work->particles[j + member * BIND_SLOTS_PER_TARGET];
+            struct Particle *to =
+                &work->particles[(j + 1) % 3 + member * BIND_SLOTS_PER_TARGET];
 
             size = 5 - memberFrame / 16;
-            for (k = 0; k != 24; k++) {
-              s32 x =
-                  from->velocityX + k * (to->velocityX - from->velocityX) / 24;
-              s32 y =
-                  from->velocityY + k * (to->velocityY - from->velocityY) / 24;
+            for (k = 0; k != BIND_EDGE_FLARES; k++) {
+              s32 x = from->velocityX +
+                      k * (to->velocityX - from->velocityX) / BIND_EDGE_FLARES;
+              s32 y = from->velocityY +
+                      k * (to->velocityY - from->velocityY) / BIND_EDGE_FLARES;
 
-              EFFECT_DRAW_FLARE(draw[0], canvas, work->sheet + 4096, x, y,
-                                size);
+              EFFECT_DRAW_FLARE(draw[0], canvas,
+                                work->sheet + BIND_FLARE_PICTURES, x, y, size);
             }
           }
         }
         // Then the rune, in two mirrored halves.
-        if (memberFrame > 63) {
-          draw[0](canvas, work->sheet, screen.x - 24, screen.y - 24, 24, 48);
-          draw[1](canvas, work->sheet, screen.x, screen.y - 24, 24, 48);
+        if (memberFrame >= BIND_RUNE_FRAME) {
+          draw[0](canvas, work->sheet, screen.x - RUNE_HALF_WIDTH,
+                  screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
+                  RUNE_HALF_HEIGHT);
+          draw[1](canvas, work->sheet, screen.x,
+                  screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
+                  RUNE_HALF_HEIGHT);
         }
       }
     }
@@ -257,21 +275,21 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   EFFECT_START_NARROW_CANVAS(0);
 
   palette = Resource_GetTableEntry(RESOURCE_RUNE_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  palette += 128;
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       graphics);
   palette = Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_D);
-  Decompress_TaggedLz(palette, work->sheet + 4096);
+  Decompress_TaggedLz(palette, work->sheet + BIND_FLARE_PICTURES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   Projection_ScaledUnit(work->args->targets[0], &anchor);
-  shift = 64 - anchor.x;
+  shift = CANVAS_SIZE / 2 - anchor.x;
   REG_BG2X = shift << 8;
   Sound_PlayFar(SE_SWIRL);
 
   for (frame = 0; frame != work->args->targetCount * 20 + 72; frame++) {
-    if (frame == 64)
+    if (frame == BIND_RUNE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
     // The user sets off towards the target.
     if (frame == 46)
@@ -301,15 +319,15 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
         screen.y -= 24;
         if (memberFrame <= 67) {
           for (j = 0; j != 3; j++) {
-            point = &work->particles[member * 32 + j];
+            point = &work->particles[member * BIND_SLOTS_PER_TARGET + j];
             Transform_Reset();
-            if (memberFrame <= 63) {
+            if (memberFrame < BIND_RUNE_FRAME) {
               scale.x = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
               scale.y = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
               scale.z = Q16_ONE * 21 / 8 - (memberFrame * 3 << 9);
               Transform_ApplyScale(Vector3_Coordinates(&scale));
-              Transform_ApplyRoll((64 - memberFrame) << 9);
-              Transform_ApplyYaw((64 - memberFrame) << 9);
+              Transform_ApplyRoll((BIND_RUNE_FRAME - memberFrame) << 9);
+              Transform_ApplyYaw((BIND_RUNE_FRAME - memberFrame) << 9);
             }
             Transform_ApplyRoll(j * (TRIG_TURN / 3));
             Projection_Point(gBind_TriangleStrikeVertex, &corner);
@@ -317,25 +335,31 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
             point->velocityY = corner.y + screen.y + 16;
           }
           for (j = 0; j != 3; j++) {
-            struct Particle *from = &work->particles[j + member * 32];
-            struct Particle *to = &work->particles[(j + 1) % 3 + member * 32];
+            struct Particle *from =
+                &work->particles[j + member * BIND_SLOTS_PER_TARGET];
+            struct Particle *to =
+                &work->particles[(j + 1) % 3 + member * BIND_SLOTS_PER_TARGET];
 
             size = 5 - memberFrame / 16;
-            for (k = 0; k != 24; k++) {
-              s32 x =
-                  from->velocityX + k * (to->velocityX - from->velocityX) / 24;
-              s32 y =
-                  from->velocityY + k * (to->velocityY - from->velocityY) / 24;
+            for (k = 0; k != BIND_EDGE_FLARES; k++) {
+              s32 x = from->velocityX +
+                      k * (to->velocityX - from->velocityX) / BIND_EDGE_FLARES;
+              s32 y = from->velocityY +
+                      k * (to->velocityY - from->velocityY) / BIND_EDGE_FLARES;
 
-              EFFECT_DRAW_FLARE(draw[0], canvas, work->sheet + 4096, x, y,
-                                size);
+              EFFECT_DRAW_FLARE(draw[0], canvas,
+                                work->sheet + BIND_FLARE_PICTURES, x, y, size);
             }
           }
         }
         // Then the rune, in two mirrored halves.
-        if (memberFrame > 63) {
-          draw[0](canvas, work->sheet, screen.x - 24, screen.y - 24, 24, 48);
-          draw[1](canvas, work->sheet, screen.x, screen.y - 24, 24, 48);
+        if (memberFrame >= BIND_RUNE_FRAME) {
+          draw[0](canvas, work->sheet, screen.x - RUNE_HALF_WIDTH,
+                  screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
+                  RUNE_HALF_HEIGHT);
+          draw[1](canvas, work->sheet, screen.x,
+                  screen.y - RUNE_HALF_HEIGHT / 2, RUNE_HALF_WIDTH,
+                  RUNE_HALF_HEIGHT);
         }
       }
     }

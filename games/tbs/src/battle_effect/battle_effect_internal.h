@@ -59,6 +59,16 @@
 #include "system/transform.h"
 #include "window/menu_list.h"
 
+/// A blend weight's whole: REG_BLDALPHA's two weights and REG_BLDY's level
+/// run from 0 to 16.
+#define BLEND_WEIGHT_MAX 16
+/// The canvas added to the battle under it: both blend weights whole.
+#define EFFECT_BLEND_ADD BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX)
+/// The canvas at `level` sixteenths over the whole battle under it.
+#define EFFECT_BLEND_CANVAS(level) BLEND_ALPHA(level, BLEND_WEIGHT_MAX)
+/// The brightest colour, every channel at its highest level.
+#define RGB_WHITE RGB(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX)
+
 // Display, palette and per-line work (README.md, "Around the canvas").
 // The tasks read the current effect's work block, so the runner that
 // adds them must remove them before that block is released.
@@ -114,7 +124,49 @@ static inline void Dma_Stop(volatile u16 *channel) {
 
 /// The canvas: 128x128 pixels, one byte each, in its heap slot and in VRAM at
 /// BG_CHAR_BLOCK(1).
-#define CANVAS_BYTES (128 * 128)
+#define CANVAS_SIZE 128
+#define CANVAS_BYTES (CANVAS_SIZE * CANVAS_SIZE)
+/// The canvas's rows and columns of 8x8 tiles.
+#define CANVAS_TILES (CANVAS_SIZE / 8)
+/// The byte of canvas pixel (x, y): the canvas is laid out in 8x8 tiles, row
+/// by row, each tile 64 bytes row by row.
+#define CANVAS_PIXEL_OFFSET(x, y)                                              \
+  ((((y) / 8 * CANVAS_TILES + (x) / 8) * 8 + ((y) & 7)) * 8 + ((x) & 7))
+
+/// The battle view, under the top window and over the menus: screen lines 16
+/// to 135.
+#define BATTLE_VIEW_TOP 16
+#define BATTLE_VIEW_HEIGHT 120
+#define BATTLE_VIEW_BOTTOM (BATTLE_VIEW_TOP + BATTLE_VIEW_HEIGHT)
+
+/// How far right the narrow canvas is set to show over the party: against the
+/// screen's right edge.
+#define NARROW_CANVAS_PARTY_X (DISPLAY_WIDTH - CANVAS_SIZE)
+
+/// BG1's vertical scroll that sets the battle background in the battle view.
+#define BATTLE_BACKGROUND_SCROLL_Y 32
+
+/// Where the battle's projection (gProjection) centres on the screen, and
+/// where Atalanta and Boreas centre it while their formations fly, lower.
+#define BATTLE_PROJECTION_CENTER_X (DISPLAY_WIDTH / 2)
+#define BATTLE_PROJECTION_CENTER_Y 120
+#define SUMMON_PROJECTION_CENTER_Y 240
+
+/// The frames the battle background darkens behind an effect's canvas
+/// (work->fadeFrames, Palette_StepFadeTransfer).
+#define BACKGROUND_DARKEN_FRAMES 24
+
+/// A sheet resource opens with its 64 colours, ahead of its compressed
+/// pictures.
+#define SHEET_PALETTE_COLORS 64
+#define SHEET_PALETTE_BYTES (SHEET_PALETTE_COLORS * 2)
+
+/// A damping is a fraction of a speed kept each frame, out of DAMPING_SCALE:
+/// speed * damping / DAMPING_SCALE.
+#define DAMPING_SCALE 64
+/// Particle_AdvanceWithGravity3D's and 2D's damping that keeps a particle's
+/// whole speed.
+#define PARTICLE_DAMPING_NONE DAMPING_SCALE
 
 /// Opens the canvas layer at the canvas's own width.
 #define EFFECT_START_NARROW_CANVAS(bgControl)                                  \
@@ -160,6 +212,14 @@ static inline void Dma_Stop(volatile u16 *channel) {
   (Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer),                   \
    HeapSlot_Release(HEAP_SLOT_RAM_CODE), BattleEffect_EndCanvasLayer())
 
+/// The bytes of a sheet picture, one byte a pixel, from its name's _WIDTH and
+/// _HEIGHT.
+#define PICTURE_BYTES(name) (name##_WIDTH * name##_HEIGHT)
+
+/// Draws picture `name` of `sheet` at its own size, its top left at (x, y).
+#define EFFECT_DRAW_PICTURE(draw, canvas, sheet, name, x, y)                   \
+  (draw)(canvas, (sheet) + (name), x, y, name##_WIDTH, name##_HEIGHT)
+
 /// The bytes of one set of the ten mote pictures: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770
 
@@ -195,16 +255,27 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// colour added over what lies under it.
 #define EFFECT_SHOW_WIDE_CANVAS(top)                                           \
   (REG_DISPCNT = EFFECT_DISPCNT, REG_BG2PA = Q_8_8(0.5),                       \
-   REG_BLDALPHA = BLEND_ALPHA(top, 16),                                        \
+   REG_BLDALPHA = EFFECT_BLEND_CANVAS(top),                                    \
    REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
 /// A WIN0H value whose left edge is past its right edge, written only on lines
 /// outside window 0.
 #define WINDOW_SPAN_INVERTED WIN_RANGE(1, 0)
 
-/// The battle background's picture as BG1 shows it from BG character block 2:
-/// 256x120 pixels, one byte each.
-#define BATTLE_BACKGROUND_BYTES (256 * 120)
+/// The battle background's picture as BG1 shows it from BG character block 2,
+/// one byte a pixel.
+#define BATTLE_BACKGROUND_WIDTH 256
+#define BATTLE_BACKGROUND_HEIGHT 120
+#define BATTLE_BACKGROUND_BYTES                                                \
+  (BATTLE_BACKGROUND_WIDTH * BATTLE_BACKGROUND_HEIGHT)
+
+/// Ram_MapGridCellBuffer as BattleEffect_BuildWindowEdgeTable reads it: window
+/// 0's right edge, how far each of its lines is set in from that edge, and the
+/// right edge it builds for every screen line.
+#define WINDOW_EDGE_RIGHT ((u16 *)Ram_MapGridCellBuffer)
+#define WINDOW_EDGE_INSETS (Ram_MapGridCellBuffer + 2)
+#define WINDOW_EDGE_INSET_LINES 128
+#define WINDOW_EDGE_LINES (WINDOW_EDGE_INSETS + WINDOW_EDGE_INSET_LINES)
 
 /// Ram_MapGridCellBuffer as the unused blue ramp uses it: a working copy of the
 /// battle background's picture.
@@ -222,41 +293,151 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// The reaper in CounterRevealSheet, which Condemn and Mortal Danger decode:
 /// the reaper with its scythe raised, then swung, then the red crescent the
 /// swing leaves.
+#define REAPER_SHEET_RAISED_WIDTH 57
+#define REAPER_SHEET_RAISED_HEIGHT 98
+#define REAPER_SHEET_SWUNG_WIDTH 99
+#define REAPER_SHEET_SWUNG_HEIGHT 69
+#define REAPER_SHEET_CRESCENT_WIDTH 128
+#define REAPER_SHEET_CRESCENT_HEIGHT 91
 enum ReaperSheetPicture {
-  /// 57x98
   REAPER_SHEET_RAISED = 0,
-  /// 99x69
-  REAPER_SHEET_SWUNG = REAPER_SHEET_RAISED + 57 * 98,
-  /// 128x91
-  REAPER_SHEET_CRESCENT = REAPER_SHEET_SWUNG + 99 * 69
+  REAPER_SHEET_SWUNG = REAPER_SHEET_RAISED + PICTURE_BYTES(REAPER_SHEET_RAISED),
+  REAPER_SHEET_CRESCENT = REAPER_SHEET_SWUNG + PICTURE_BYTES(REAPER_SHEET_SWUNG)
 };
 
 /// RedCrescentSheetA: the swing's crescent fading in four pictures.
+#define RED_CRESCENT_FADE_A_WIDTH 128
+#define RED_CRESCENT_FADE_A_HEIGHT 91
+#define RED_CRESCENT_FADE_B_WIDTH 128
+#define RED_CRESCENT_FADE_B_HEIGHT 59
+#define RED_CRESCENT_FADE_C_WIDTH 122
+#define RED_CRESCENT_FADE_C_HEIGHT 29
+#define RED_CRESCENT_FADE_D_WIDTH 76
+#define RED_CRESCENT_FADE_D_HEIGHT 25
 enum RedCrescentPicture {
-  /// 128x91
-  RED_CRESCENT_FADE_1 = 0,
-  /// 128x59
-  RED_CRESCENT_FADE_2 = RED_CRESCENT_FADE_1 + 128 * 91,
-  /// 122x29
-  RED_CRESCENT_FADE_3 = RED_CRESCENT_FADE_2 + 128 * 59,
-  /// 76x25
-  RED_CRESCENT_FADE_4 = RED_CRESCENT_FADE_3 + 122 * 29
+  RED_CRESCENT_FADE_A = 0,
+  RED_CRESCENT_FADE_B = RED_CRESCENT_FADE_A +
+      PICTURE_BYTES(RED_CRESCENT_FADE_A),
+  RED_CRESCENT_FADE_C = RED_CRESCENT_FADE_B +
+      PICTURE_BYTES(RED_CRESCENT_FADE_B),
+  RED_CRESCENT_FADE_D = RED_CRESCENT_FADE_C + PICTURE_BYTES(RED_CRESCENT_FADE_C)
 };
 
 /// Closing bolts and lightning columns use the same 24x120 pictures.
-#define LIGHTNING_BOLT_PICTURE_BYTES 2880
+#define LIGHTNING_BOLT_WIDTH 24
+#define LIGHTNING_BOLT_HEIGHT 120
+#define LIGHTNING_BOLT_PICTURE_BYTES PICTURE_BYTES(LIGHTNING_BOLT)
+
+/// BlueFlameSheet: the column of flame, then the flame that splashes from it,
+/// twice its width.
+#define BLUE_FLAME_COLUMN_WIDTH 17
+#define BLUE_FLAME_COLUMN_HEIGHT 104
+#define BLUE_FLAME_SPLASH_WIDTH 34
+#define BLUE_FLAME_SPLASH_HEIGHT 65
+/// WaveSheet's six pictures, BlueArcSheetA and B's six, and YellowOrbSheet's.
+#define WAVE_WIDTH 48
+#define WAVE_HEIGHT 16
+#define BLUE_ARC_WIDTH 48
+#define BLUE_ARC_HEIGHT 72
+#define YELLOW_ORB_WIDTH 40
+#define YELLOW_ORB_HEIGHT 48
+/// The yellow orb as BattleEffect_PackTileRows packs it, every second byte.
+#define YELLOW_ORB_PACKED_WIDTH (YELLOW_ORB_WIDTH / 2)
+#define YELLOW_ORB_PACKED_HEIGHT YELLOW_ORB_HEIGHT
+#define YELLOW_ORB_PICTURES 6
+/// The slash pictures as wide and tall as the canvas's view: StarBurstSheet's,
+/// CrescentSheet's and the reveal masks.
+#define SLASH_PICTURE_SIZE 120
+
+/// FireStreakSheet's six pictures and FireBurstSheet's.
+#define FIRE_STREAK_WIDTH 48
+#define FIRE_STREAK_HEIGHT 72
+#define FIRE_BURST_WIDTH 40
+#define FIRE_BURST_HEIGHT 80
+/// The small Djinn sheets' pictures are SMALL_DJINNI_WIDTH wide; Mercury's and
+/// Venus's are shorter than SMALL_DJINNI_HEIGHT.
+#define MERCURY_SMALL_DJINNI_HEIGHT 34
+#define VENUS_SMALL_DJINNI_HEIGHT 38
+/// FireBlobSheet's blobs and CrystalSheet's crystal.
+#define FIRE_BLOB_WIDTH 48
+#define FIRE_BLOB_HEIGHT 32
+#define CRYSTAL_WIDTH 32
+#define CRYSTAL_HEIGHT 64
+
+/// LightningPillarSheet's pillar, in two pictures.
+#define LIGHTNING_PILLAR_WIDTH 48
+#define LIGHTNING_PILLAR_HEIGHT 112
+/// FirePillarSheetA: the pillar of fire, then two flames.
+#define FIRE_PILLAR_WIDTH 34
+#define FIRE_PILLAR_HEIGHT 104
+#define FIRE_PILLAR_FLAME_WIDTH 20
+#define FIRE_PILLAR_FLAME_HEIGHT 37
+/// SpiralSheet's pictures.
+#define SPIRAL_WIDTH 32
+#define SPIRAL_HEIGHT 32
+
+/// FlameballSheet and FireballSheet's pictures.
+#define FLAMEBALL_WIDTH 40
+#define FLAMEBALL_HEIGHT 64
+
+/// Each half of RuneSheet's rune, the second drawn mirrored.
+#define RUNE_HALF_WIDTH 24
+#define RUNE_HALF_HEIGHT 48
+
+/// A Djinni's picture: each frame of the full Djinn sheets (VenusDjinnSheet
+/// and its kind), and the one picture of the small sheets.
+#define DJINNI_WIDTH 40
+#define DJINNI_HEIGHT 40
+#define SMALL_DJINNI_WIDTH 20
+#define SMALL_DJINNI_HEIGHT 40
+
+/// The pictures of the sheets several effects share, each sheet's pictures
+/// all one size: SmokeSheet's puffs, FlashBurstSheet's bursts, SkullSheet's
+/// skulls and the tornado strips after TornadoSheet's glints.
+#define SMOKE_PUFF_WIDTH 24
+#define SMOKE_PUFF_HEIGHT 48
+#define FLASH_BURST_WIDTH 32
+#define FLASH_BURST_HEIGHT 64
+#define SKULL_WIDTH 24
+#define SKULL_HEIGHT 24
+#define TORNADO_STRIP_WIDTH 40
+#define TORNADO_STRIP_HEIGHT 32
+/// The pictures of DaggerSheet, ShieldSheet, GlowOrbSheet, VioletStreakSheet
+/// and WispSheet.
+#define DAGGER_WIDTH 24
+#define DAGGER_HEIGHT 40
+#define SHIELD_WIDTH 40
+#define SHIELD_HEIGHT 40
+#define GLOW_ORB_WIDTH 40
+#define GLOW_ORB_HEIGHT 40
+#define VIOLET_STREAK_WIDTH 32
+#define VIOLET_STREAK_HEIGHT 64
+#define WISP_WIDTH 64
+#define WISP_HEIGHT 32
+/// VortexSheet's six pictures and HeartSheet's heart.
+#define VORTEX_WIDTH 24
+#define VORTEX_HEIGHT 48
+#define HEART_WIDTH 22
+#define HEART_HEIGHT 42
+/// WaterSpraySheet: the wave, then the splash's pictures.
+#define WATER_WAVE_WIDTH 32
+#define WATER_WAVE_HEIGHT 32
+#define WATER_SPLASH_WIDTH 48
+#define WATER_SPLASH_HEIGHT 48
 
 /// Windows 0 and 1 both cover the battle view: the full width, lines 16 to
 /// 135.
 #define EFFECT_SET_BATTLE_WINDOWS()                                            \
-  (REG_WIN0H = WIN_RANGE(0, 240), REG_WIN0V = WIN_RANGE(16, 136),              \
-   REG_WIN1H = WIN_RANGE(0, 240), REG_WIN1V = WIN_RANGE(16, 136))
+  (REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH),                                    \
+   REG_WIN0V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM),                 \
+   REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH),                                    \
+   REG_WIN1V = WIN_RANGE(BATTLE_VIEW_TOP, BATTLE_VIEW_BOTTOM))
 
 /// BG2 shows the canvas from screen line 16 down (BG2Y is -16.0), stretched to
 /// twice its width: the 128x128 canvas across the battle view.
 #define EFFECT_SET_CANVAS_AFFINE()                                             \
-  (REG_BG2X = 0, REG_BG2Y = -(16 << 8), REG_BG2PA = Q_8_8(0.5), REG_BG2PB = 0, \
-   REG_BG2PC = 0, REG_BG2PD = Q_8_8(1))
+  (REG_BG2X = 0, REG_BG2Y = -(BATTLE_VIEW_TOP << 8), REG_BG2PA = Q_8_8(0.5),   \
+   REG_BG2PB = 0, REG_BG2PC = 0, REG_BG2PD = Q_8_8(1))
 
 /// Writes one row of BG2's map for the canvas, two tiles at a time.
 #define EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset)                       \

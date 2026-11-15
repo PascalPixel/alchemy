@@ -142,7 +142,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     Resource_LoadAndDecompress(RESOURCE_VORTEX_SHEET, work->sheet, 1, 0);
     palette = Resource_GetTableEntry(RESOURCE_VORTEX_SHEET);
   }
-  Iwram_CopyWords(BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   if (mode == TARGET_MOTES_HEARTRENDER)
     Resource_LoadAndDecompress(RESOURCE_HEART_SHEET, work->sheet, 1, 1);
   if (mode == TARGET_MOTES_PARALYZE)
@@ -191,9 +191,9 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     }
     row = work->bg2xLines;
     for (i = 0; i != DISPLAY_HEIGHT; i++)
-      *row++ = ((4 << 16) -
-                ((Trig_Sin((frame << 12) + i * (TRIG_TURN / 32)) * 4))) >>
-               10;
+      *row++ =
+          (px(4) - ((Trig_Sin((frame << 12) + i * (TRIG_TURN / 32)) * 4))) >>
+          10;
 
     EFFECT_FOR_EACH_TARGET(member, work->args) {
       struct Actor *actor =
@@ -213,7 +213,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
           radius = (Random16() & 31) + 4;
           x = base.x / 2 + ((Trig_Sin(angle) * radius) >> 17) -
               (gBattleEffect_GlintPictureWidths[frame & 3] >> 1);
-          y = base.y - ((Trig_Cos(angle) * radius) >> 16) -
+          y = base.y - Q_16_16_TO_INT(Trig_Cos(angle) * radius) -
               (gBattleEffect_GlintPictureHeights[frame & 3] >> 1);
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               EFFECT_CLIP_BOUNDS |
@@ -235,7 +235,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                           COMPOSITE_LIGHTEN);
       draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
       EFFECT_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(point, actor->x.fixed, 160 << 13, actor->z.fixed);
+      SET_VECTOR(point, actor->x.fixed, px(20), actor->z.fixed);
       Transform_ApplyPosition(point);
       if (frame > member * 8) {
         Transform_ApplyYaw(frame << 9);
@@ -258,17 +258,21 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
               screen.x >>= 1;
               if (mode == TARGET_MOTES_MYSTIC_FLAME ||
                   mode == TARGET_MOTES_DEMON_FIRE)
-                draw[1](canvas, work->sheet + picture * (40 * 40),
-                        screen.x - 20, screen.y - 20, 40, 40);
+                draw[1](canvas, work->sheet + picture * PICTURE_BYTES(GLOW_ORB),
+                        screen.x - GLOW_ORB_WIDTH / 2,
+                        screen.y - GLOW_ORB_HEIGHT / 2, GLOW_ORB_WIDTH,
+                        GLOW_ORB_HEIGHT);
               else if (mode == TARGET_MOTES_DROWN)
                 draw[1](canvas, work->sheet + 3072, screen.x - 6, screen.y - 12,
                         12, 24);
               else if (mode == TARGET_MOTES_HEARTRENDER)
-                draw[1](canvas, work->sheet, screen.x - 11, screen.y - 21, 22,
-                        42);
+                draw[1](canvas, work->sheet, screen.x - HEART_WIDTH / 2,
+                        screen.y - HEART_HEIGHT / 2, HEART_WIDTH, HEART_HEIGHT);
               else
-                draw[(i & 3) != 0](canvas, work->sheet + picture * (24 * 48),
-                                   screen.x - 12, screen.y - 24, 24, 48);
+                draw[(i & 3) != 0](
+                    canvas, work->sheet + picture * PICTURE_BYTES(VORTEX),
+                    screen.x - VORTEX_WIDTH / 2, screen.y - VORTEX_HEIGHT / 2,
+                    VORTEX_WIDTH, VORTEX_HEIGHT);
               if (TARGET_MOTES_CLOSE_IN(mode)) {
                 mote->x -= mote->x / distance;
                 mote->y -= mote->y / distance;
@@ -314,6 +318,9 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 #define SLEEP_FRAMES 148
 #define SLEEP_SEEDED 32 ///< particles cleared at the start
 #define SLEEP_SHEEP 12  ///< sheep dropped
+/// SheepSheet: four pictures, then the four drawn flipped.
+#define SHEEP_WIDTH 32
+#define SHEEP_HEIGHT 32
 
 /// Twelve sheep drop onto the targets' side, tumbling, and each target falls
 /// asleep in turn.
@@ -347,14 +354,14 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
 
   for (particleIndex = 0; particleIndex != SLEEP_SEEDED; particleIndex++) {
     current = &sheep[particleIndex];
-    current->x = ((Random16() & 63) + 32) << 16;
+    current->x = px((Random16() & 63) + 32);
     current->y = -px(32);
     current->velocityY = Random16() & 0;
     current->z = Random16() & 3;
     current->variant = Random16() & 255;
   }
   if (work->args->side == EFFECT_SIDE_PARTY)
-    REG_BG2X = -(112 << 8);
+    REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   Sound_PlayFar(SE_SWIRL);
   for (frame = 0; frame != SLEEP_FRAMES; frame++) {
@@ -367,7 +374,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
 
       target = GetBattleObjectSlotFar(work->args->targets[targetIndex])->actor;
       EFFECT_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(anchor, target->x.fixed, 160 << 14, target->z.fixed);
+      SET_VECTOR(anchor, target->x.fixed, px(40), target->z.fixed);
       Transform_ApplyPosition(anchor);
       if (frame == targetIndex * 16 + 64)
         BattleEffect_TintBattler(work->args->targets[targetIndex],
@@ -382,10 +389,14 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
         picture = (current->variant / 16) & 7;
         if (picture < 4)
           drawUpright(canvas, work->sheet + (picture << 10),
-                      (current->x >> 16) - 16, (current->y >> 16) - 16, 32, 32);
+                      Q_16_16_TO_INT(current->x) - SHEEP_WIDTH / 2,
+                      Q_16_16_TO_INT(current->y) - SHEEP_HEIGHT / 2,
+                      SHEEP_WIDTH, SHEEP_HEIGHT);
         else
           drawFlipped(canvas, work->sheet + (picture << 10) - 4096,
-                      (current->x >> 16) - 16, (current->y >> 16) - 16, 32, 32);
+                      Q_16_16_TO_INT(current->x) - SHEEP_WIDTH / 2,
+                      Q_16_16_TO_INT(current->y) - SHEEP_HEIGHT / 2,
+                      SHEEP_WIDTH, SHEEP_HEIGHT);
         current->y += current->velocityY;
         current->velocityY += px(1) / 8;
         current->variant += current->z;
@@ -410,7 +421,13 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#define CURSE_MARKER_PICTURE 1728 ///< the marker picture in the sheet
+/// FlameColumnSheet: the flame's nine pictures, then the marker at the
+/// target's feet.
+#define CURSE_FLAME_WIDTH 16
+#define CURSE_FLAME_HEIGHT 12
+#define CURSE_MARKER_PICTURE_WIDTH 16
+#define CURSE_MARKER_PICTURE_HEIGHT 20
+#define CURSE_MARKER_PICTURE (9 * PICTURE_BYTES(CURSE_FLAME))
 
 /// A small flame burns above each target in turn, over a marker at its feet.
 ///
@@ -435,7 +452,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress(RESOURCE_FLAME_COLUMN_SHEET, work->sheet, 1, 1);
   if (work->args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -(112 << 8);
+    REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
@@ -461,16 +478,20 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
         if (frame >= start && frame < start + 72) {
           Projection_ScaledUnit(work->args->targets[i], &screenPosition);
           if (work->args->side == EFFECT_SIDE_PARTY) {
-            screenPosition.x -= 112;
+            screenPosition.x -= NARROW_CANVAS_PARTY_X;
           }
           y = screenPosition.y;
           screenPosition.y = y - 16;
           draw[0](canvas, work->sheet + CURSE_MARKER_PICTURE,
-                  screenPosition.x - 8, y - 20, 16, 20);
+                  screenPosition.x - CURSE_MARKER_PICTURE_WIDTH / 2,
+                  y - CURSE_MARKER_PICTURE_HEIGHT, CURSE_MARKER_PICTURE_WIDTH,
+                  CURSE_MARKER_PICTURE_HEIGHT);
           if (frame >= start) {
             picture = ((frame - start) + marker->variant) / 6 % 9;
-            draw[0](canvas, work->sheet + picture * (16 * 12),
-                    screenPosition.x - 8, screenPosition.y - 16, 16, 12);
+            draw[0](canvas, work->sheet + picture * PICTURE_BYTES(CURSE_FLAME),
+                    screenPosition.x - CURSE_FLAME_WIDTH / 2,
+                    screenPosition.y - 16, CURSE_FLAME_WIDTH,
+                    CURSE_FLAME_HEIGHT);
           }
         }
         marker++;

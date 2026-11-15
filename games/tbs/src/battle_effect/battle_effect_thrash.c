@@ -4,8 +4,10 @@
 
 #include "battle_effect_internal.h"
 
+#define FLASHING_STRIKE_FRAMES 21 ///< frames of the flashing strike
+
 /// One 120x120 picture of a flashing strike.
-#define FLASHING_STRIKE_PICTURE_BYTES (120 * 120)
+#define FLASHING_STRIKE_PICTURE_BYTES (SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE)
 
 /// The flashing strike's modes (BattleEffect_RunFlashingStrike): which two
 /// RevealMask resources it shows.
@@ -95,17 +97,19 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_COPY);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Sound_PlayFar(SE_POWER_UP);
-  for (frame = 0; frame != 21; frame++) {
+  for (frame = 0; frame != FLASHING_STRIKE_FRAMES; frame++) {
     if (frame <= 3)
-      draw[0](canvas, work->imageStorage, 0, 0, 120, 120);
+      draw[0](canvas, work->imageStorage, 0, 0, SLASH_PICTURE_SIZE,
+              SLASH_PICTURE_SIZE);
     else if (frame <= 7)
       draw[0](canvas, work->imageStorage + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
-              120, 120);
+              SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
     else if (frame <= 11)
-      draw[0](canvas, Ram_MapGridCellBuffer, 0, 0, 120, 120);
+      draw[0](canvas, Ram_MapGridCellBuffer, 0, 0, SLASH_PICTURE_SIZE,
+              SLASH_PICTURE_SIZE);
     else if (frame <= 15)
       draw[0](canvas, Ram_MapGridCellBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0,
-              0, 120, 120);
+              0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
     if (frame >= 16 && frame <= 19)
       Iwram_FillWords(canvas, CANVAS_BYTES,
                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));

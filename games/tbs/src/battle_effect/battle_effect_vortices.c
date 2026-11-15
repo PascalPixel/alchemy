@@ -4,12 +4,18 @@
 
 #include "battle_effect_internal.h"
 
-/// The bubble picture, after the three 16x64 vortex halves.
-#define FROTH_BUBBLE_PICTURE (3 * 16 * 64)
+#define WHIRLWIND_FRAMES 80 ///< frames of the tornadoes
+
+/// The vortex's three halves, then the bubble picture.
+#define FROTH_VORTEX_HALF_WIDTH 16
+#define FROTH_VORTEX_HALF_HEIGHT 64
+#define FROTH_BUBBLE_PICTURE_WIDTH 12
+#define FROTH_BUBBLE_PICTURE_HEIGHT 24
+#define FROTH_BUBBLE_PICTURE (3 * PICTURE_BYTES(FROTH_VORTEX_HALF))
 
 /// The tornado pictures, after the six glint pictures in the sheet.
 #define WHIRLWIND_TORNADO_PICTURES GLINT_SET_BYTES
-#define WHIRLWIND_SECTION_BYTES (40 * 32)
+#define WHIRLWIND_SECTION_BYTES PICTURE_BYTES(TORNADO_STRIP)
 
 /// Bubbles fly out of the top of the user, hang, and home in on the targets;
 /// each that lands bursts into a swirling vortex, knocking back its target,
@@ -40,8 +46,8 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   palette = Resource_GetTableEntry(RESOURCE_VORTEX_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  palette += 128;
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
@@ -55,9 +61,9 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
   for (i = 0; i != 30; i++) {
     point = &work->particles[i];
     SET_POSITION(point, source->x.fixed, y, source->z.fixed);
-    SET_VELOCITY(point, ((s32)((Random16() & 255) - 127) << 16) >> 5,
-                 ((s32)((Random16() & 127) - 16) << 16) >> 6,
-                 ((s32)((Random16() & 255) - 127) << 16) >> 5);
+    SET_VELOCITY(point, px((s32)((Random16() & 255) - 127)) >> 5,
+                 px((s32)((Random16() & 127) - 16)) >> 6,
+                 px((s32)((Random16() & 255) - 127)) >> 5);
     point->variant = -1;
     flags[i] = 0;
   }
@@ -90,7 +96,9 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
         screenPosition.x >>= 1;
         CLAMP(screenPosition.depth, 160, 799);
         draw[0](canvas, work->sheet + FROTH_BUBBLE_PICTURE,
-                screenPosition.x - 6, screenPosition.y - 12, 12, 24);
+                screenPosition.x - FROTH_BUBBLE_PICTURE_WIDTH / 2,
+                screenPosition.y - FROTH_BUBBLE_PICTURE_HEIGHT / 2,
+                FROTH_BUBBLE_PICTURE_WIDTH, FROTH_BUBBLE_PICTURE_HEIGHT);
         point->x += point->velocityX;
         point->y += point->velocityY;
         point->z += point->velocityZ;
@@ -101,8 +109,9 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
         point->velocityY += (target->y - point->y) >> 9;
         point->velocityZ += (target->z - point->z) >> 9;
         if (frame < i * 2 + 85) {
-          SET_VELOCITY(point, point->velocityX * 60 / 64,
-                       point->velocityY * 60 / 64, point->velocityZ * 60 / 64);
+          SET_VELOCITY(point, point->velocityX * 60 / DAMPING_SCALE,
+                       point->velocityY * 60 / DAMPING_SCALE,
+                       point->velocityZ * 60 / DAMPING_SCALE);
         }
         // On the ground it strikes.
         if (point->y < 0) {
@@ -122,10 +131,16 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
       }
       // The vortex where a bubble landed.
       if (point->variant >= 0 && point->variant < 16) {
-        draw[0](canvas, work->sheet + (point->variant / 2) % 3 * (16 * 64),
-                point->x - 16, point->y - 56, 16, 64);
-        draw[1](canvas, work->sheet + (point->variant / 2) % 3 * (16 * 64),
-                point->x, point->y - 56, 16, 64);
+        draw[0](canvas,
+                work->sheet +
+                    (point->variant / 2) % 3 * PICTURE_BYTES(FROTH_VORTEX_HALF),
+                point->x - FROTH_VORTEX_HALF_WIDTH, point->y - 56,
+                FROTH_VORTEX_HALF_WIDTH, FROTH_VORTEX_HALF_HEIGHT);
+        draw[1](canvas,
+                work->sheet +
+                    (point->variant / 2) % 3 * PICTURE_BYTES(FROTH_VORTEX_HALF),
+                point->x, point->y - 56, FROTH_VORTEX_HALF_WIDTH,
+                FROTH_VORTEX_HALF_HEIGHT);
         point->variant++;
       }
     }
@@ -163,10 +178,10 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->args = args;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   palette = Resource_GetTableEntry(RESOURCE_TORNADO_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  palette += 128;
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  palette += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(palette, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
@@ -182,11 +197,11 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     point->variant = -(Random16() & 15);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-  REG_BLDALPHA = BLEND_ALPHA(0, 16); // invisible to start with
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(0); // invisible to start with
   wait(1);
   Sound_PlayFar(SE_RUMBLE);
 
-  for (frame = 0; frame != 80; frame++) {
+  for (frame = 0; frame != WHIRLWIND_FRAMES; frame++) {
     wave = (Trig_Sin(frame << 10) * 16);
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
@@ -201,30 +216,29 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
     else
       wave -= px(32);
     if (frame <= 16)
-      REG_BLDALPHA = BLEND_ALPHA(frame, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(frame);
     if (frame > 63)
-      REG_BLDALPHA = BLEND_ALPHA(79 - frame, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(79 - frame);
     for (i = 0; i != gVortices_Shapes[work->args->variant][WHIRLWIND_TORNADOES];
          i++) {
-      x = ((gVortices_Shapes[work->args->variant][WHIRLWIND_SWAY] *
-                Trig_Sin((frame << 11) + i * (TRIG_TURN / 4)) +
-            wave) >>
-           16) +
+      x = Q_16_16_TO_INT(gVortices_Shapes[work->args->variant][WHIRLWIND_SWAY] *
+                             Trig_Sin((frame << 11) + i * (TRIG_TURN / 4)) +
+                         wave) +
           40;
-      y = (Trig_Cos((frame << 11) + i * (TRIG_TURN / 4)) * 2) >> 16;
+      y = Q_16_16_TO_INT(Trig_Cos((frame << 11) + i * (TRIG_TURN / 4)) * 2);
       segment = (frame / 2) % 3;
       draw[0](canvas,
               work->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +
                   WHIRLWIND_TORNADO_PICTURES,
-              x, y + 16, 40, 32);
+              x, y + 16, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
       draw[0](canvas,
               work->sheet + segment * WHIRLWIND_SECTION_BYTES +
                   (WHIRLWIND_TORNADO_PICTURES + 6 * WHIRLWIND_SECTION_BYTES),
-              x, y + 48, 40, 32);
+              x, y + 48, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
       draw[0](canvas,
               work->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +
                   (WHIRLWIND_TORNADO_PICTURES + WHIRLWIND_SECTION_BYTES),
-              x, y + 80, 40, 32);
+              x, y + 80, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
       for (j = 0; j != 4; j++) {
         point = &work->particles[i * 4 + j];
         if (point->variant >= 0) {

@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define FLARE_FRAMES 80 ///< frames of the flare
+
 #define FLARE_ARC_COUNT 9 ///< flames on the arc
 
 /// Nine flames rise one after another along half an ellipse.
@@ -28,7 +30,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
@@ -46,8 +48,9 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
     s32 angle = i * (TRIG_TURN / 16) - TRIG_TURN / 4;
 
     arcFlame = &work->particles[i];
-    arcFlame->x = ((direction * ((Trig_Sin(angle) * 32) >> 16)) + originX) + 20;
-    arcFlame->y = ((Trig_Cos(angle) * 16) >> 16) + 40;
+    arcFlame->x =
+        ((direction * Q_16_16_TO_INT(Trig_Sin(angle) * 32)) + originX) + 20;
+    arcFlame->y = Q_16_16_TO_INT(Trig_Cos(angle) * 16) + 40;
     arcFlame->variant = -i * 4;
   }
 
@@ -59,7 +62,7 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   Sound_PlayFar(SE_WHOOSH);
-  for (frame = 0; frame != 80; frame++) {
+  for (frame = 0; frame != FLARE_FRAMES; frame++) {
     if (frame == 24) {
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }

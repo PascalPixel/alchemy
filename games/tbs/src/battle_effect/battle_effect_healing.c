@@ -4,6 +4,8 @@
 
 #include "battle_effect_internal.h"
 
+#define HEALING_SPARKS 512 ///< sparks in PARTICLES
+
 // Healing sparkles come in seven modes of one runner, the wrappers naming the
 // mode of each effect. Each mote keeps its place relative to its target, so the
 // swirl is one turn of the whole group.
@@ -122,7 +124,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
   if (mode == HEALING_MODE_PLY) {
     Projection_ScaledUnit(work->args->targets[0], &base);
-    canvasShiftX = 64 - base.x;
+    canvasShiftX = CANVAS_SIZE / 2 - base.x;
     REG_BG2X = canvasShiftX << 8;
     REG_BG2PA = Q_8_8(1);
     doubleWidth = 0;
@@ -143,7 +145,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
   } else {
     resource = Resource_GetTableEntry(RESOURCE_BLAST_SHEET);
   }
-  Iwram_CopyWords(BG_PLTT, resource, 128);
+  Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
 
   if (doubleWidth == 0) {
     if (mode == HEALING_MODE_PSY_CRYSTAL)
@@ -156,13 +158,13 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     else
       resource = Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SMALL_SHEET);
   }
-  resource += 128;
+  resource += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(resource, work->sheet + HEALING_DJINNI_PICTURE);
   BattleEffect_FetchRectangleBlitters(work->args->side, blit);
 
   // Scatter the motes around each target's centre.
   if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL) {
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
 
       SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -172,7 +174,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     }
     frameCount = work->args->targetCount * 8 + 88;
   } else if (mode == HEALING_MODE_WISH) {
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
 
       SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -182,7 +184,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     }
     frameCount = work->args->targetCount * 8 + 88;
   } else if (mode == HEALING_MODE_CURE) {
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
       s32 heading = Random16() & TRIG_ANGLE_MASK;
       s32 radius = (Random16() & 63) + 32;
@@ -194,7 +196,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     }
     frameCount = work->args->targetCount * 8 + 88;
   } else if (mode == HEALING_MODE_CURE_POISON) {
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
 
       SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -204,7 +206,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     }
     frameCount = work->args->targetCount * 8 + 72;
   } else {
-    for (i = 0; i != 512; i++) {
+    for (i = 0; i != HEALING_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[i];
 
       SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -233,24 +235,28 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
     // The Djinni sways, then rises away.
     if (work->args->prelude == 1) {
       if (doubleWidth == 0) {
-        s32 x =
-            ((Trig_Sin(frame << 11) * 20) >> 16) + originX + canvasShiftX - 20;
-        s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + originY - 24;
+        s32 x = Q_16_16_TO_INT(Trig_Sin(frame << 11) * 20) + originX +
+                canvasShiftX - 20;
+        s32 y = Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4) + originY - 24;
 
         if (frame > 32)
           y = y - frame * 2 + 64;
-        blit[0](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y, 40, 40);
+        blit[0](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y,
+                DJINNI_WIDTH, DJINNI_HEIGHT);
         if (frame <= 3)
-          blit[1](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y, 40, 40);
+          blit[1](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y,
+                  DJINNI_WIDTH, DJINNI_HEIGHT);
       } else {
-        s32 x = ((Trig_Sin(frame << 11) * 10) >> 16) + originX / 2 - 10;
-        s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + originY - 24;
+        s32 x = Q_16_16_TO_INT(Trig_Sin(frame << 11) * 10) + originX / 2 - 10;
+        s32 y = Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4) + originY - 24;
 
         if (frame > 32)
           y = y - frame * 2 + 64;
-        blit[0](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y, 20, 40);
+        blit[0](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y,
+                SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         if (frame <= 3)
-          blit[1](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y, 20, 40);
+          blit[1](canvas, work->sheet + HEALING_DJINNI_PICTURE, x, y,
+                  SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
       }
     }
 

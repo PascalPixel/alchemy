@@ -66,6 +66,11 @@ UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
   BattleEffect_RunStreakVolley(args, STREAKS_STYLE_LIME);
 }
 
+/// FiveModeImage's streaks: three animation frames, each six pictures that
+/// grow; the lower half is the upper drawn flipped.
+#define STREAK_WIDTH 20
+#define STREAK_HEIGHT 40
+#define STREAK_FRAME_BYTES (6 * PICTURE_BYTES(STREAK))
 #define STREAKS_SPACING 6       ///< frames between streaks
 #define STREAKS_FLIGHT 24       ///< frames from user to target
 #define STREAKS_TARGET_DELAY 32 ///< frames between targets
@@ -131,7 +136,8 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
     resource = RESOURCE_CYAN_PALETTE;
     break;
   }
-  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(resource),
+                  SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   source = GetBattleObjectSlotFar(work->args->user)->actor;
@@ -161,9 +167,9 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
       // A sine wave of BG2X offsets for the wave HBlank DMA, which nothing arms
       // here, so the canvas does not ripple.
       for (k = 0; k != DISPLAY_HEIGHT; k++)
-        *row++ = ((8 << 16) - Trig_Sin((frame + k) << 12) * 2) >> 10;
+        *row++ = (px(8) - Trig_Sin((frame + k) << 12) * 2) >> 10;
       if (frame > totalFrames - 16)
-        REG_BLDALPHA = BLEND_ALPHA(totalFrames - frame, 16);
+        REG_BLDALPHA = EFFECT_BLEND_CANVAS(totalFrames - frame);
       EFFECT_VIEW_FROM_CAMERA(camera);
       EFFECT_FOR_EACH_TARGET(k, work->args) {
         if (frame >= k * STREAKS_TARGET_DELAY) {
@@ -180,19 +186,25 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
               if (step > 5)
                 step = 5;
               if (STREAKS_VALUE(mode, STREAKS_ANIMATE)) {
-                u8 *picture = &work->sheet[step * 800 + frame / 2 % 3 * 4800];
+                u8 *picture = &work->sheet[step * PICTURE_BYTES(STREAK) +
+                                           frame / 2 % 3 * STREAK_FRAME_BYTES];
 
-                drawUpper(canvas, picture, position.x - 10, position.y - 40, 20,
-                          40);
-                drawLower(canvas, picture, position.x - 10, position.y, 20, 40);
+                drawUpper(canvas, picture, position.x - STREAK_WIDTH / 2,
+                          position.y - STREAK_HEIGHT, STREAK_WIDTH,
+                          STREAK_HEIGHT);
+                drawLower(canvas, picture, position.x - STREAK_WIDTH / 2,
+                          position.y, STREAK_WIDTH, STREAK_HEIGHT);
               } else {
-                u8 *picture = &work->sheet[step * 800 + 2 * 4800];
+                u8 *picture = &work->sheet[step * PICTURE_BYTES(STREAK) +
+                                           2 * STREAK_FRAME_BYTES];
 
-                drawUpper(canvas, picture, position.x - 10, position.y - 40, 20,
-                          40);
-                drawLower(canvas, picture, position.x - 10, position.y, 20, 40);
+                drawUpper(canvas, picture, position.x - STREAK_WIDTH / 2,
+                          position.y - STREAK_HEIGHT, STREAK_WIDTH,
+                          STREAK_HEIGHT);
+                drawLower(canvas, picture, position.x - STREAK_WIDTH / 2,
+                          position.y, STREAK_WIDTH, STREAK_HEIGHT);
               }
-              Particle_AdvanceWithGravity3D(streak, 64, 0);
+              Particle_AdvanceWithGravity3D(streak, PARTICLE_DAMPING_NONE, 0);
               streak->variant++;
             }
           }
@@ -303,7 +315,8 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     resource = RESOURCE_ORANGE_PALETTE_A;
   else
     resource = RESOURCE_EARTH_WALL_SHEET;
-  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(resource), 128);
+  Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(resource),
+                  SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   source = GetBattleObjectSlotFar(work->args->user)->actor;

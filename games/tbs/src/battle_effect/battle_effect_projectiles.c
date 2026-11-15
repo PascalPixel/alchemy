@@ -31,7 +31,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
-  work->fadeFrames = 24;
+  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
   if (element > ELEMENT_JUPITER) {
     element -= DJINNI_ENTRANCE_LONG;
@@ -54,8 +54,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     break;
   }
   palette = Resource_GetTableEntry(sheetId);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
-  Decompress_TaggedLz(palette + 128, work->sheet);
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
+  Decompress_TaggedLz(palette + SHEET_PALETTE_BYTES, work->sheet);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   if (side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
@@ -109,7 +109,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
     struct BattleCamera *camera = gBattleCamera;
 
     if (frame > 75)
-      REG_BLDALPHA = BLEND_ALPHA(168 - frame * 2, 16);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(168 - frame * 2);
     if (frame == 8)
       Sound_PlayFar(SE_POWER_UP);
     EFFECT_VIEW_FROM_CAMERA(camera);
@@ -162,8 +162,9 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
           spark->velocityX += pullX;
           spark->velocityY += pullY;
           spark->velocityZ += pullZ;
-          SET_VELOCITY(spark, spark->velocityX * 62 / 64,
-                       spark->velocityY * 62 / 64, spark->velocityZ * 62 / 64);
+          SET_VELOCITY(spark, spark->velocityX * 62 / DAMPING_SCALE,
+                       spark->velocityY * 62 / DAMPING_SCALE,
+                       spark->velocityZ * 62 / DAMPING_SCALE);
           if ((pullX > -2048 && pullX < 2048) &&
               (pullZ > -2048 && pullZ < 2048))
             spark->variant = -1;
@@ -177,7 +178,9 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
       *outX = position.x;
       *outY = position.y;
       position.x >>= 1;
-      draw[0](canvas, work->sheet, position.x - 10, position.y - 20, 20, 40);
+      draw[0](canvas, work->sheet, position.x - SMALL_DJINNI_WIDTH / 2,
+              position.y - SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
+              SMALL_DJINNI_HEIGHT);
     }
     // The long version's Djinni bursts into motes.
     if (frame == 64) {
@@ -214,7 +217,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
   Task_Remove(Palette_StepFadeTransfer);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   Iwram_ClearWords(canvas, CANVAS_BYTES);
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
 }
 
 #define PROJECTILE_VOLLEY_ANIMATION_STEP_FAST                                  \
@@ -307,7 +310,7 @@ void BattleEffect_RunBlizzard(struct BattleEffectParams *args) {
   BattleEffect_RunVolleyWithAction(args, PROJECTILE_VOLLEY_BLIZZARD);
 }
 
-#define PROJECTILE_VOLLEY_PARTICLE_COUNT 1024
+#define PROJECTILE_VOLLEY_PARTICLE_COUNT PARTICLE_POOL_COUNT
 
 /// The bytes of a gProjectileVolley_Modes row.
 enum VolleyField {
@@ -323,10 +326,24 @@ enum VolleyField {
 /// The hit flashes turned on their side, after the upright ones.
 #define PROJECTILE_VOLLEY_FLASH_TURNED                                         \
   (12 * 10 + 18 * 15 + 24 * 18 + 30 * 22 + 36 * 27 + 39 * 28 + 40 * 30)
-/// The yellow spark sheet: the small spark (12x8) first, then the medium one
-/// (18x13), then the large one.
-#define PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE (12 * 8)
-#define PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE (12 * 8 + 18 * 13)
+/// The yellow spark sheet: the small spark first, then the medium one, then
+/// the large one.
+#define PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE_WIDTH 12
+#define PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE_HEIGHT 8
+#define PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE_WIDTH 18
+#define PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE_HEIGHT 13
+#define PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE_WIDTH 29
+#define PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE_HEIGHT 23
+#define PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE 0
+#define PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE                                 \
+  PICTURE_BYTES(PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE)
+#define PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE                                  \
+  (PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE +                                    \
+   PICTURE_BYTES(PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE))
+/// The comets' width, and the shuriken's six pictures.
+#define PROJECTILE_VOLLEY_COMET_WIDTH 32
+#define SHURIKEN_WIDTH 32
+#define SHURIKEN_HEIGHT 24
 #define PROJECTILE_VOLLEY_DJINNI_PICTURE 26048 ///< the small Mercury Djinni
 #define PROJECTILE_VOLLEY_FIRST_SPARK 100      ///< the first spark in PARTICLES
 #define PROJECTILE_VOLLEY_FIRST_TRAIL 512      ///< the first trail in PARTICLES
@@ -413,14 +430,14 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                  1, 1);
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       const void *pal = Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET);
-      Iwram_CopyWords(BG_PLTT, pal, 128);
+      Iwram_CopyWords(BG_PLTT, pal, SHEET_PALETTE_BYTES);
     }
     Resource_LoadAndDecompress(RESOURCE_WIND_STREAK_SHEET,
                                work->sheet + PROJECTILE_VOLLEY_STREAK_PICTURES,
                                1, 0);
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       const void *pal = Resource_GetTableEntry(RESOURCE_ICE_BLOCK_SHEET);
-      Iwram_CopyWords(BG_PLTT, pal, 128);
+      Iwram_CopyWords(BG_PLTT, pal, SHEET_PALETTE_BYTES);
     }
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
@@ -429,7 +446,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   } else if (mode == PROJECTILE_VOLLEY_CRAZY_VOICE) {
     Iwram_CopyWords(BG_PLTT, Resource_GetTableEntry(RESOURCE_COMET_SHEET_A),
-                    128);
+                    SHEET_PALETTE_BYTES);
     Resource_LoadAndDecompress(RESOURCE_PROJECTILE_VOLLEY_IMAGE, work->sheet, 0,
                                0);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -551,9 +568,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
       // The prelude's small Djinni circles, then rises away.
       if (work->args->prelude == 1) {
-        s32 x = ((-Trig_Sin(frame * (TRIG_TURN / 32)) * 4) >> 16) +
+        s32 x = Q_16_16_TO_INT(-Trig_Sin(frame * (TRIG_TURN / 32)) * 4) +
                 screenX / 2 - 10;
-        s32 y = ((Trig_Cos(frame * (TRIG_TURN / 32)) * 2) >> 16) + screenY - 24;
+        s32 y = Q_16_16_TO_INT(Trig_Cos(frame * (TRIG_TURN / 32)) * 2) +
+                screenY - 24;
 
         if (frame > 69)
           y = y - frame * 2 + 138;
@@ -567,9 +585,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         draw[1] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2);
         if (frame <= 3)
           draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE, x, y,
-                  20, 40);
+                  SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         draw[1](canvas, work->sheet + PROJECTILE_VOLLEY_DJINNI_PICTURE, x, y,
-                20, 40);
+                SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
       }
 
@@ -706,8 +724,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                     COMPOSITE_LIGHTEN);
               EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
-                  position.x - 16,
-                  position.y - gProjectileVolley_CometHeights[comet], 32,
+                  position.x - PROJECTILE_VOLLEY_COMET_WIDTH / 2,
+                  position.y - gProjectileVolley_CometHeights[comet],
+                  PROJECTILE_VOLLEY_COMET_WIDTH,
                   gProjectileVolley_CometHeights[comet]);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
               if (work->args->side == EFFECT_SIDE_PARTY)
@@ -720,13 +739,17 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                     COMPOSITE_LIGHTEN);
               EFFECT_BLITTER(HEAP_SLOT_RAM_CODE_2)(
                   canvas, work->sheet + PROJECTILE_VOLLEY_COMET_PICTURES,
-                  position.x - 16, position.y, 32,
+                  position.x - PROJECTILE_VOLLEY_COMET_WIDTH / 2, position.y,
+                  PROJECTILE_VOLLEY_COMET_WIDTH,
                   gProjectileVolley_CometHeights[comet]);
               HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
             } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
               if (ABS(shot->x) <= ABS(target->x.fixed))
-                draw[0](canvas, work->sheet + frame % 6 * (32 * 24),
-                        position.x - 16, position.y - 12, 32, 24);
+                draw[0](canvas,
+                        work->sheet + frame % 6 * PICTURE_BYTES(SHURIKEN),
+                        position.x - SHURIKEN_WIDTH / 2,
+                        position.y - SHURIKEN_HEIGHT / 2, SHURIKEN_WIDTH,
+                        SHURIKEN_HEIGHT);
             } else if (mode == PROJECTILE_VOLLEY_SLEET ||
                        mode == PROJECTILE_VOLLEY_BLIZZARD ||
                        mode == PROJECTILE_VOLLEY_ICE_BLESSING) {
@@ -738,19 +761,21 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               draw[0](canvas, work->sheet + j % 6 * (8 * 16), position.x - 4,
                       position.y - 8, 8, 16);
             } else if (mode == PROJECTILE_VOLLEY_WING_FLUTTER) {
-              draw[0](canvas,
-                      work->sheet + PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE,
-                      position.x - 9, position.y - 7, 18, 13);
+              EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                                  PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE,
+                                  position.x - 9, position.y - 7);
             } else if (mode == PROJECTILE_VOLLEY_WING_BEAT) {
-              draw[0](canvas, work->sheet, position.x - 6, position.y - 4, 12,
-                      8);
+              EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                                  PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE,
+                                  position.x - 6, position.y - 4);
             } else if (mode == PROJECTILE_VOLLEY_WING_STROKE) {
-              draw[0](canvas,
-                      work->sheet + PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE,
-                      position.x - 15, position.y - 12, 29, 23);
+              EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
+                                  PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE,
+                                  position.x - 15, position.y - 12);
             } else {
-              draw[0](canvas, work->sheet, position.x - 20, position.y - 32, 40,
-                      64);
+              draw[0](canvas, work->sheet, position.x - FLAMEBALL_WIDTH / 2,
+                      position.y - FLAMEBALL_HEIGHT / 2, FLAMEBALL_WIDTH,
+                      FLAMEBALL_HEIGHT);
             }
           }
         }

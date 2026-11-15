@@ -97,7 +97,8 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
                    ((height = gSpire_ShardHeights[picture]) >> 1),
                width, height);
 #endif
-          Particle_AdvanceWithGravity2D(shard, 64, px(1) / 4);
+          Particle_AdvanceWithGravity2D(shard, PARTICLE_DAMPING_NONE,
+                                        px(1) / 4);
           shard->variant += shard->z;
           if (shard->z > 1 && (frame & 1))
             shard->z--;

@@ -4,6 +4,11 @@
 
 #include "battle_effect_internal.h"
 
+#define PROCNE_FRAMES 400 ///< frames of Procne
+/// Procne appears in the violet sky, and the targets it lifted drop.
+#define PROCNE_ARRIVAL_FRAME 160
+#define PROCNE_DROP_FRAME 395
+
 /// The whirlwind sheet: three whirlwind pictures, then the dust.
 #define PROCNE_DUST (3 * (48 * 64))
 #define PROCNE_COMETS 13824
@@ -68,8 +73,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                                           HEAP_SLOT_RAM_CODE_2);
 
   resource = Resource_GetTableEntry(RESOURCE_WHIRLWIND_SHEET);
-  Iwram_CopyWords(BG_PLTT, resource, 128);
-  resource += 128;
+  Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
+  resource += SHEET_PALETTE_BYTES;
   Decompress_TaggedLz(resource, work->sheet);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_PARTICLE_SPRITES_A),
                       graphics);
@@ -105,12 +110,12 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     point->velocityX = 0;
     point->variant = Random16() & 63;
   }
-  for (frame = 0; frame != 400; frame++) {
+  for (frame = 0; frame != PROCNE_FRAMES; frame++) {
     if ((gKeysRepeat & (KEY_A | KEY_B)) != 0) {
-      if (frame <= 159)
-        frame = 160;
-      else if (frame <= 394)
-        frame = 395;
+      if (frame < PROCNE_ARRIVAL_FRAME)
+        frame = PROCNE_ARRIVAL_FRAME;
+      else if (frame < PROCNE_DROP_FRAME)
+        frame = PROCNE_DROP_FRAME;
     }
 
     EFFECT_VIEW_FROM_CAMERA(camera);
@@ -135,7 +140,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
         actor->x.fixed = (radius[index] * Trig_Sin(heading[index])) >> 1;
         actor->z.fixed = (radius[index] * Trig_Cos(heading[index])) >> 1;
 
-        if (frame <= 159) {
+        if (frame < PROCNE_ARRIVAL_FRAME) {
           if (frame > index * 16 + 16)
             spin[index] += 48;
           if (radius[index] <= 31)
@@ -153,7 +158,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           actor->facing += spin[index] / 4;
         }
 
-        if (frame == 395)
+        if (frame == PROCNE_DROP_FRAME)
           actor->gravity = BATTLE_UNIT_GRAVITY;
 
         for (slot = 0; slot != 4; slot++) {
@@ -169,7 +174,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       }
     }
 
-    if (frame >= 16 && frame <= 159) {
+    if (frame >= 16 && frame < PROCNE_ARRIVAL_FRAME) {
       size = frame * 2 - 32;
       if (size > 48)
         size = 48;
@@ -178,7 +183,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               112 - size, width, size);
     }
 
-    if (frame >= 48 && frame <= 159) {
+    if (frame >= 48 && frame < PROCNE_ARRIVAL_FRAME) {
       size = frame * 2 - 96;
       if (size > 64)
         size = 64;
@@ -187,14 +192,14 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               64 - size, width, size);
     }
 
-    if (frame >= 160 && frame <= 399) {
+    if (frame >= PROCNE_ARRIVAL_FRAME && frame < PROCNE_FRAMES) {
       image = work->sheet + frame / 4 % 3 * (48 * 64);
       draw[0](canvas, image, 8, 0, width, 64);
       draw[0](canvas, image, 8, 64, width, 64);
     }
 
     // The dust spirals in and up.
-    if (frame <= 159) {
+    if (frame < PROCNE_ARRIVAL_FRAME) {
       point = work->particles;
       for (index = 0; index != 24; index++) {
         if (point[index].variant == 0) {
@@ -212,8 +217,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           if (point[index].z > 24)
             point[index].z -= 4;
           point[index].velocityY += point[index].velocityX * 2;
-          if (point[index].velocityY > 65536)
-            point[index].velocityY -= 65536;
+          if (point[index].velocityY > TRIG_TURN)
+            point[index].velocityY -= TRIG_TURN;
           point[index].velocityX += 50;
           if (point[index].velocityX > 4096)
             point[index].velocityX = 4096;
@@ -231,7 +236,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       }
     }
 
-    if (frame == 160) {
+    if (frame == PROCNE_ARRIVAL_FRAME) {
       s32 speed;
       s32 angle;
 
@@ -243,8 +248,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       BattleEffect_SpawnObjects(9, SPRITE_PROCNE, 2);
 
       resource = Resource_GetTableEntry(RESOURCE_VIOLET_COMET_SHEET);
-      Iwram_CopyWords(BG_PLTT, resource, 128);
-      resource += 128;
+      Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
+      resource += SHEET_PALETTE_BYTES;
       Decompress_TaggedLz(resource, work->sheet + PROCNE_COMETS);
 
       for (index = 0; index != 512; index++) {
@@ -275,14 +280,14 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     }
 
     // Procne sways, pushed by each comet.
-    if (frame > 159) {
+    if (frame >= PROCNE_ARRIVAL_FRAME) {
       scale = unitScale;
       size = 16;
-      if (frame - 160 <= 64)
+      if (frame - PROCNE_ARRIVAL_FRAME <= 64)
         size = 32;
 
-      wave.x -= (Trig_Sin((frame - 160) << 7) * 32) >> 6;
-      wave.y += (Trig_Sin((frame - 160) << 9) * size) >> 6;
+      wave.x -= (Trig_Sin((frame - PROCNE_ARRIVAL_FRAME) << 7) * 32) >> 6;
+      wave.y += (Trig_Sin((frame - PROCNE_ARRIVAL_FRAME) << 9) * size) >> 6;
       wave.x += drift.x;
       wave.y += drift.y;
       drift.x /= 2;
@@ -325,8 +330,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
             if (dist != 0) {
               Projection_Point(&point->x, &screen);
               screen.x = (screen.x >> 17) + (wave.x >> 17) + 32;
-              screen.y = (screen.y >> 16) + (wave.y >> 16) - 4;
-              screen.depth >>= 16;
+              screen.y = Q_16_16_TO_INT(screen.y) + Q_16_16_TO_INT(wave.y) - 4;
+              screen.depth = Q_16_16_TO_INT(screen.depth);
               if (screen.depth <= 169)
                 screen.depth = 170;
               if (screen.depth > 350)
@@ -345,8 +350,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           if (alive > 0) {
             span = alive / 10 + 1;
             draw[1](canvas, graphics + gBattleEffect_MotePictures[span - 1],
-                    (wave.x >> 17) - span / 2 + 32, (wave.y >> 16) - span - 4,
-                    span, span * 2);
+                    (wave.x >> 17) - span / 2 + 32,
+                    Q_16_16_TO_INT(wave.y) - span - 4, span, span * 2);
           }
         }
 
@@ -374,8 +379,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
               if (spark[index].variant > 0) {
                 Projection_Point(&spark[index].x, &screen);
                 screen.x = (screen.x >> 17) + 32;
-                screen.y = (screen.y >> 16) + 56;
-                screen.depth >>= 16;
+                screen.y = Q_16_16_TO_INT(screen.y) + 56;
+                screen.depth = Q_16_16_TO_INT(screen.depth);
                 if (screen.depth <= 169)
                   screen.depth = 170;
                 if (screen.depth > 350)
@@ -398,9 +403,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           threshold = index * 12 + 330;
           if (frame == threshold) {
             mark->x = (wave.x >> 17) + 32;
-            mark->y = (wave.y >> 16) - 4;
+            mark->y = Q_16_16_TO_INT(wave.y) - 4;
             mark->velocityX = (wave.x >> 17) + 32;
-            mark->velocityY = (wave.y >> 16) - 4;
+            mark->velocityY = Q_16_16_TO_INT(wave.y) - 4;
 
             for (slot = 0; slot != 28; slot++) {
               work->particles[slot + 32].variant = 4;
@@ -440,9 +445,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
                 Projection_Point(&world.x, &screen);
                 screen.x =
                     (screen.x >> 17) + work->particles[index + 60].velocityX;
-                screen.y =
-                    (screen.y >> 16) + work->particles[index + 60].velocityY;
-                screen.depth >>= 16;
+                screen.y = Q_16_16_TO_INT(screen.y) +
+                           work->particles[index + 60].velocityY;
+                screen.depth = Q_16_16_TO_INT(screen.depth);
                 if (screen.depth <= 169)
                   screen.depth = 170;
                 if (screen.depth > 350)
@@ -473,7 +478,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     actor->facing = baseAngle[index];
   }
 
-  gProjection.centerX = 120;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
 
   BattleEffect_SetupBlendedDisplay();
 

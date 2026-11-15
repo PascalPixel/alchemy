@@ -9,6 +9,8 @@
 
 #define SWIRLING_STARS_FRAMES 160
 #define SWIRLING_STARS_COUNT 64 ///< stars that swirl
+/// The angle star `i` turns each frame about its axis: each later star faster.
+#define SWIRLING_STAR_SPIN(i) (((i) + 32) * 8)
 
 /// Swirling stars: stars spin about a point above the field, each on its own
 /// axis, then are drawn back towards it.
@@ -30,14 +32,13 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(work->args->side ^ 1, draw);
   for (i = 0; i != 256; i++) {
     star = &PARTICLES[i];
-    SET_POSITION(star, ((Random16() & 0xff) - 127) << 16,
-                 ((Random16() & 0xff) - 127) << 16,
-                 ((Random16() & 0xff) - 127) << 16);
+    SET_POSITION(star, px((Random16() & 0xff) - 127),
+                 px((Random16() & 0xff) - 127), px((Random16() & 0xff) - 127));
     SET_VELOCITY(star, 0, 0, 0);
     star->variant = 0;
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  SET_VECTOR(center, 0, 160 << 15, 0);
+  SET_VECTOR(center, 0, px(80), 0);
   for (frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
     struct BattleCamera *camera = gBattleCamera;
 
@@ -51,17 +52,17 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectParams *args) {
         Transform_Push();
         switch (i & 3) {
         case SPIN_YAW:
-          Transform_ApplyYaw(frame * (i + 32) * 8);
+          Transform_ApplyYaw(frame * SWIRLING_STAR_SPIN(i));
           break;
         case SPIN_PITCH:
-          Transform_ApplyPitch(-frame * (i + 32) * 8);
+          Transform_ApplyPitch(-frame * SWIRLING_STAR_SPIN(i));
           break;
         case SPIN_ROLL:
-          Transform_ApplyRoll(-frame * (i + 32) * 8);
+          Transform_ApplyRoll(-frame * SWIRLING_STAR_SPIN(i));
           break;
         case SPIN_PITCH_AND_ROLL:
-          Transform_ApplyPitch(-frame * (i + 32) * 8);
-          Transform_ApplyRoll(-frame * (i + 32) * 8);
+          Transform_ApplyPitch(-frame * SWIRLING_STAR_SPIN(i));
+          Transform_ApplyRoll(-frame * SWIRLING_STAR_SPIN(i));
           break;
         }
         Projection_Point(star, &screen);
@@ -111,10 +112,10 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
-  REG_BLDALPHA = BLEND_ALPHA(16, 16);
+  REG_BLDALPHA = EFFECT_BLEND_ADD;
   skulls = Resource_GetTableEntry(RESOURCE_SKULL_SHEET);
-  Iwram_CopyWords(BG_PLTT, skulls, 128);
-  Decompress_TaggedLz(skulls + 128, work->sheet);
+  Iwram_CopyWords(BG_PLTT, skulls, SHEET_PALETTE_BYTES);
+  Decompress_TaggedLz(skulls + SHEET_PALETTE_BYTES, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
@@ -124,7 +125,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   if (work->args->side == EFFECT_SIDE_ENEMIES)
     xOffset = 0;
   else
-    xOffset = -112;
+    xOffset = -NARROW_CANVAS_PARTY_X;
   /* FAKEMATCH(dead): the scroll's store in a once-only block. */
   do {
     REG_BG2X = xOffset << 8;
@@ -164,11 +165,14 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
           s32 y;
 
           x = screen.x +
-              (((Trig_Sin(spark->velocityX + i * (TRIG_TURN / 3)) * 8)) >> 16);
+              Q_16_16_TO_INT(
+                  (Trig_Sin(spark->velocityX + i * (TRIG_TURN / 3)) * 8));
           y = screen.y +
-              (((Trig_Cos(spark->velocityX + i * (TRIG_TURN / 3)) * 8)) >> 16);
+              Q_16_16_TO_INT(
+                  (Trig_Cos(spark->velocityX + i * (TRIG_TURN / 3)) * 8));
           spark->velocityX += TRIG_TURN / 128;
-          draw[0](canvas, work->sheet + i * (24 * 24), x - 12, y - 28, 24, 24);
+          draw[0](canvas, work->sheet + i * PICTURE_BYTES(SKULL),
+                  x - SKULL_WIDTH / 2, y - 28, SKULL_WIDTH, SKULL_HEIGHT);
         }
       }
     }
@@ -178,7 +182,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
 }
 
 /// The burst's six pictures in the sheet, after the smoke's six.
-#define TARGET_BURST_PICTURES (6 * (24 * 48))
+#define TARGET_BURST_PICTURES (6 * PICTURE_BYTES(SMOKE_PUFF))
 
 #define TARGET_BURSTS_FRAMES 96
 
@@ -204,7 +208,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_TARGET_BURST_IMAGE,
                              work->sheet + TARGET_BURST_PICTURES, 0, 0);
   palette = Resource_GetTableEntry(RESOURCE_PINK_BURST_SHEET);
-  Iwram_CopyWords(BG_PLTT, palette, 128);
+  Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   drawBurst = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
@@ -242,7 +246,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
 
       args = GetBattleObjectSlotFar(work->args->targets[member])->actor;
       EFFECT_VIEW_FROM_CAMERA(camera);
-      SET_VECTOR(point, args->x.fixed, 160 << 13, args->z.fixed);
+      SET_VECTOR(point, args->x.fixed, px(20), args->z.fixed);
       Transform_ApplyPosition(point);
       if (frame >= member * 8 && frame < member * 8 + 40) {
         struct Particle *puff;
@@ -259,12 +263,15 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
           if (i == 5) {
             Particle_AdvanceWithGravity3D(puff, 62, px(1) / 32);
             drawBurst(canvas,
-                      work->sheet + picture * (24 * 48) + TARGET_BURST_PICTURES,
-                      screen.x - 12, screen.y - 36, 24, 48);
+                      work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF) +
+                          TARGET_BURST_PICTURES,
+                      screen.x - SMOKE_PUFF_WIDTH / 2, screen.y - 36,
+                      SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           } else {
             Particle_AdvanceWithGravity3D(puff, 60, px(1) / 128);
-            drawSmoke(canvas, work->sheet + picture * (24 * 48), screen.x - 12,
-                      screen.y - 36, 24, 48);
+            drawSmoke(canvas, work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF),
+                      screen.x - SMOKE_PUFF_WIDTH / 2, screen.y - 36,
+                      SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           }
           puff->variant++;
         }

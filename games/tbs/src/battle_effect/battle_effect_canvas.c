@@ -12,14 +12,14 @@
 void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
   struct BattleEffectWork *work;
   u8 *canvas;
-  u8 delay[128];
+  u8 delay[CANVAS_SIZE];
   s32 x;
   s32 y;
   s32 wipePosition;
 
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  for (x = 0; x != 128; x++)
+  for (x = 0; x != CANVAS_SIZE; x++)
     delay[x] = Random16() & 0x3f;
 
   if (direction == CANVAS_WIPE_ACROSS) {
@@ -33,12 +33,11 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
       front += speed;
       speed++;
       for (; x != front; x++) {
-        for (y = 0; y != 128; y++) {
+        for (y = 0; y != CANVAS_SIZE; y++) {
           wipePosition = x - delay[y];
           if (wipePosition >= 0)
-            if (wipePosition <= 127)
-              canvas[(((y / 8) * 16 + wipePosition / 8) * 8 + (y & 7)) * 8 +
-                     (wipePosition & 7)] = 1 - fill;
+            if (wipePosition < CANVAS_SIZE)
+              canvas[CANVAS_PIXEL_OFFSET(wipePosition, y)] = 1 - fill;
         }
       }
       EFFECT_PRESENT_CANVAS(work);
@@ -54,14 +53,11 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
       front += speed / 2;
       speed += 4;
       for (; y != front; y++) {
-        for (x = 0; x != 128; x++) {
+        for (x = 0; x != CANVAS_SIZE; x++) {
           wipePosition = y - delay[x];
           if (wipePosition >= 0)
-            if (wipePosition <= 127)
-              canvas[(((wipePosition / 8) * 16 + x / 8) * 8 +
-                      (wipePosition & 7)) *
-                         8 +
-                     (x & 7)] = 1 - fill;
+            if (wipePosition < CANVAS_SIZE)
+              canvas[CANVAS_PIXEL_OFFSET(x, wipePosition)] = 1 - fill;
         }
       }
       EFFECT_PRESENT_CANVAS(work);
@@ -238,7 +234,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   wait(1);
   REG_BLDCNT = 0;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_16);
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   wait(1);
 
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
@@ -264,7 +260,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   display->secondMode = BATTLE_BACKGROUND_NONE;
   wait(1);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   EFFECT_SET_CANVAS_AFFINE();
   EFFECT_SET_BATTLE_WINDOWS();
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
@@ -275,7 +271,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
   {
     s32 offset = 0;
 
-    for (row = 0; row != 16; row++) {
+    for (row = 0; row != CANVAS_TILES; row++) {
       EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
     }
 
@@ -307,11 +303,11 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
                       IO_WRITE_16);
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   wait(1);
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background,
                               BATTLE_BACKGROUND_FADE_RESTORE);
-  work->fadeFrames = 24;
+  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
   Task_Add(Palette_StepFadeTransfer, TASK_PASS_FRAME);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -330,7 +326,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   wait(1);
 
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   EFFECT_SET_CANVAS_AFFINE();
   EFFECT_SET_BATTLE_WINDOWS();
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
@@ -342,7 +338,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   {
     s32 offset = 0;
 
-    for (row = 0; row != 16; row++) {
+    for (row = 0; row != CANVAS_TILES; row++) {
       EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
     }
 
@@ -362,7 +358,7 @@ void BattleEffect_StartTiledCanvas(s32 bgControl) {
   REG_BG2CNT = bgControl | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP | BGCNT_SIZE(1);
   offset = 0;
-  for (row = 0; row != 16; row++) {
+  for (row = 0; row != CANVAS_TILES; row++) {
     EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset);
     for (column = 0; column != 8; column++, offset += 2) {
       *(volatile u16 *)((u8 *)BG_CANVAS_MAP + offset) = 0;
@@ -379,14 +375,14 @@ void BattleEffect_EndCanvasLayer(void) {
   Sound_PlayFar(SOUND_FADE_OUT_ACTION_SE);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
-  gProjection.centerX = 120;
-  gProjection.centerY = 120;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   Task_Remove(Palette_StepFadeTransfer);
   // This overwrites the saved y restored above, so BG1 is always left at y 32.
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
@@ -449,20 +445,20 @@ void BattleEffect_SetupCanvasTileMap(void) {
 
   BattleEffect_ClearActorTimers();
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, screen->background, 0);
-  gBgScroll[1].y = 32;
+  gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   layer->secondMode = BATTLE_BACKGROUND_NONE;
   // Blank tile 255, then rows that show nothing.
   Iwram_ClearWords(BG_CHAR_BLOCK(0) + 255 * 64, 64);
   Iwram_FillWords(BG_SCREEN_BLOCK(31) + 4 * 64, 8 * 64, -1);
   // The canvas's tiles, then blank tile 255 across the rest of each row.
   byteOffset = 0;
-  for (row = 0; row != 16; row++) {
+  for (row = 0; row != CANVAS_TILES; row++) {
     for (column = 0; column != 32; column++, byteOffset += 2) {
-      if (column > 15)
+      if (column >= CANVAS_TILES)
         *(volatile u16 *)(BG_SCREEN_BLOCK(31) + 12 * 64 + byteOffset) = 255;
       else
         *(volatile u16 *)(BG_SCREEN_BLOCK(31) + 12 * 64 + byteOffset) =
-            row * 16 + 256 + column;
+            row * CANVAS_TILES + 256 + column;
     }
   }
   REG_DISPCNT = EFFECT_DISPCNT;
@@ -473,7 +469,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
   REG_WINOUT = EFFECT_WINOUT;
-  REG_BLDALPHA = BLEND_ALPHA(14, 16);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
   Iwram_ClearWords(canvas, CANVAS_BYTES);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   wait(1);

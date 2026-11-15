@@ -70,7 +70,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_CLEAR);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, work->sheet, 1, 1);
-  EFFECT_SHOW_WIDE_CANVAS(16);
+  EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   base.x = px(188);
   base.y = px(92);
@@ -79,7 +79,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   for (i = 0; i != RAMSES_ROCKS; i++) {
     struct Particle *rock = &work->particles[i];
 
-    rock->x = (Random16() & 127) << 16;
+    rock->x = px(Random16() & 127);
     rock->y = i * -px(16);
     rock->velocityX = 0;
     rock->velocityY = 0;
@@ -87,8 +87,8 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   }
   for (i = 0; i != 58; i++)
     work->particles[RAMSES_FIRST_PUFF + i].variant = 24;
-  EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
-  work->fadeFrames = 24;
+  EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
+  work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
 
   for (frame = 0; frame != RAMSES_FRAMES && !(gKeysRepeat & (KEY_A | KEY_B));

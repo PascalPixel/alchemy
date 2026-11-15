@@ -53,8 +53,8 @@ void JupiterLighthouse_PlaceRaisedActors(void) {
 
       lid->y.fixed += step;
     }
-    leftAngel->motionFlags = 4;
-    rightAngel->motionFlags = 4;
-    lid->motionFlags = 4;
+    leftAngel->motionFlags = ACTOR_FLOATS;
+    rightAngel->motionFlags = ACTOR_FLOATS;
+    lid->motionFlags = ACTOR_FLOATS;
   }
 }

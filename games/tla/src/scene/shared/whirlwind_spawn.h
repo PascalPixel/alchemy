@@ -12,7 +12,7 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   Actor_SelectAnimation(object, 2);
   Actor_SetSpriteFlags(object, 0);
   object->motionFlags = 0;
-  object->priorityFlags &= ~1;
+  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   object->angle = source->angle;
   object->unk64 = 0;
   object->unk62 = 0;

@@ -158,7 +158,7 @@ void AncientLemuria_CycloneRevealsRime(void) {
   Event_Wait(8);
   Actor_Jump(ACTOR_RIME, 9, 0);
   Actor_WalkToAndWaitById(ACTOR_RIME, 120, 200);
-  Actor_GetById(ACTOR_RIME)->priorityFlags |= 1;
+  Actor_GetById(ACTOR_RIME)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_WalkToAndWaitById(ACTOR_RIME, 136, 200);
   Event_Wait(3);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
@@ -850,8 +850,8 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(289, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 584,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    152, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(157, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 504,
                     0x3000, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(157, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 504,
@@ -860,8 +860,8 @@ struct ActorPlacement gActorPlacements[] = {
     {7, CONDITION_ALWAYS, 1, -px(56), 0, -px(56), FACING_NORTH, 2, 0},
     {SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_RIME), 1, -px(56), 0, -px(56),
      FACING_SOUTH, 0, 0},
-    ACTOR_PLACEMENT(289, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 184,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    264, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

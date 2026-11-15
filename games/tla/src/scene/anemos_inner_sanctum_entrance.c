@@ -299,7 +299,7 @@ land:
   {
     object = Actor_GetById(i);
     object->z.fixed = (object->z.fixed & FIELD_CELL_MASK) + px(8);
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     object->update = 0;
   }
   if (++i <= 14)
@@ -604,8 +604,8 @@ LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[] = {
 
 LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Room1Placements[] =
     {
-        ACTOR_PLACEMENT(180, 0xa9f, MOVEMENT_TYPE_STAND, 200, 0, 104,
-                        FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+        ACTOR_PLACEMENT(SPRITE_DULLAHAN, 0xa9f, MOVEMENT_TYPE_STAND, 200, 0,
+                        104, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
         ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 424,
                         FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
         ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 456,
@@ -618,8 +618,8 @@ LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Room1Placements[] =
                         FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
         ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 472,
                         FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-        ACTOR_PLACEMENT(303, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH,
-                        TALK_FACING_KEEP, 0),
+        ACTOR_PLACEMENT(SPRITE_BLUE_ORB, CONDITION_ALWAYS, 7, 0, 0, 0,
+                        FACING_SOUTH, TALK_FACING_KEEP, 0),
         ACTOR_PLACEMENT(429, CONDITION_ALWAYS,
                         (s32)gAnemosInnerSanctumEntrance_StatueScript, 152, 0,
                         168, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),

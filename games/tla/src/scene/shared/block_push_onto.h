@@ -25,14 +25,14 @@ void MagmaRockInside_PushBlockOnto(void) {
   step <<= 16;
   dst.z = next->z.fixed + step;
   blocker = Actor_FindInCell(&dst, next);
-  if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
+  if (blocker != 0 && (blocker->collisionFlags & ACTOR_SOLID) != 0)
     return;
 
   dst.x = next->x.fixed;
   dst.y = next->y.fixed + px(16);
   dst.z = next->z.fixed;
   blocker = Actor_FindInCell(&dst, next);
-  if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
+  if (blocker != 0 && (blocker->collisionFlags & ACTOR_SOLID) != 0)
     return;
 
   next->transitionMode = 2;

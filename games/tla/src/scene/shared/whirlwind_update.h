@@ -43,7 +43,7 @@ void Whirlwind_Update(struct Actor *self) {
         if (near && !Event_GetFlag(260)) {
           leader->facing = self->facing;
           leader->watchedActor = self;
-          leader->priorityFlags &= ~1;
+          leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
           {
             s32 delay = 200;
             work->raisedTrigger = delay;

@@ -149,7 +149,7 @@ void WorldMap_UpdatePlacedActors(void) {
             goto next;
           Actor_StartScript(object, gWorldMap_PlacedActorScript);
           object->motionFlags = 0;
-          object->collisionFlags = 1;
+          object->collisionFlags = ACTOR_SOLID;
           object->facing = placement->angle;
           Import_ActorSelectAnimation(object, 1);
           sprite = object->sprite;

@@ -55,7 +55,7 @@ next:
         wait(4);
         MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
         wait(8);
-        leader->motionFlags = 3;
+        leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
         wait(5);
         Actor_SetPositionAndResetMotion(trap, 0, 0, 0);
         wait(2);

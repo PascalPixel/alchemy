@@ -126,7 +126,7 @@ blocked:
   System_Wait(10);
 done:
   actor->update = NULL;
-  actor->steeringFlags |= 1;
+  actor->steeringFlags |= ACTOR_FACES_MOTION;
   actor->acceleration = px(1) / 4;
   Actor_SelectAnimation(actor, 1);
 }

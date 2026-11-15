@@ -238,7 +238,7 @@ void ChampaCliffCaves_OpenDoorAndEnter(const struct DoorEdit *edit, s32 door,
   Event_ResolvePendingActions(0);
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(edit->frames, edit->x, edit->z);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 2;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = ACTOR_FALLS;
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
   id = gMainRoutineWork.leaderActorId;
@@ -374,7 +374,8 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
 #endif
   if (party->next != SCENE_CHAMPA_CLIFF_CAVES_BRIGGS)
-    Actor_GetById(party->leaderActorId)->priorityFlags |= 32;
+    Actor_GetById(party->leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
   FieldEffect_StartBlankOverlay(0);
   if (party->next == SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER) {
     if (party->entrance == 98)
@@ -388,7 +389,7 @@ s32 Scene_Initialize(void) {
         !GameFlag_Get(FLAG_TRIDENT_TAKEN)) {
       FieldActor_ShowItemIconById(ACTOR_HELD_ITEM, ITEM_TRIDENT);
       Actor_SetPosition(ACTOR_HELD_ITEM, 664, 232);
-      Actor_GetById(ACTOR_HELD_ITEM)->motionFlags = 4;
+      Actor_GetById(ACTOR_HELD_ITEM)->motionFlags = ACTOR_FLOATS;
     }
     if (GameFlag_Get(FLAG_TRIDENT_FORGED))
       Actor_SetPosition(ACTOR_OBABA, 664, 200);
@@ -412,10 +413,12 @@ void ChampaCliffCaves_HandPieceToObaba(s32 actor) {
   Event_Wait(7);
   Actor_ShowItemIconById(ACTOR_HELD_ITEM, actor);
   Actor_SetPosition(ACTOR_HELD_ITEM, 648, 196);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &= ~1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWaitById(gMainRoutineWork.leaderActorId, -16, -8);
   Event_Wait(1);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |=
+      ACTOR_FACES_MOTION;
   Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
                                     FACING_EAST);
   Event_Wait(10);
@@ -423,10 +426,10 @@ void ChampaCliffCaves_HandPieceToObaba(s32 actor) {
 
 void ChampaCliffCaves_ObabaStepsForward(s32 value) {
   Actor_SetSpeed(ACTOR_OBABA, 0.8);
-  Actor_GetById(ACTOR_OBABA)->steeringFlags &= 0xfe;
+  Actor_GetById(ACTOR_OBABA)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWaitById(ACTOR_OBABA, 0, 6);
   Event_Wait(1);
-  Actor_GetById(ACTOR_OBABA)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_OBABA)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(10);
   Actor_SetAnimationById(ACTOR_OBABA, 8);
   Event_Wait(15);
@@ -435,10 +438,10 @@ void ChampaCliffCaves_ObabaStepsForward(s32 value) {
   Actor_SetAnimationById(ACTOR_OBABA, 1);
   Event_Wait(15);
   if (value == 0) {
-    Actor_GetById(ACTOR_OBABA)->steeringFlags &= 0xfe;
+    Actor_GetById(ACTOR_OBABA)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkByAndWait(ACTOR_OBABA, 0, -6);
     Event_Wait(1);
-    Actor_GetById(ACTOR_OBABA)->steeringFlags |= 1;
+    Actor_GetById(ACTOR_OBABA)->steeringFlags |= ACTOR_FACES_MOTION;
     Event_Wait(10);
   }
 }
@@ -655,10 +658,11 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
     Event_Wait(10);
   }
   object = Actor_GetById(gMainRoutineWork.leaderActorId);
-  object->steeringFlags &= ~1;
+  object->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWaitById(gMainRoutineWork.leaderActorId, 12, 12);
   Event_Wait(1);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |=
+      ACTOR_FACES_MOTION;
   Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
                                     FACING_SOUTHEAST);
   Event_Wait(10);
@@ -683,10 +687,10 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Actor_SetAnimationById(ACTOR_OBABA, 1);
   Actor_Jump(ACTOR_FELIX, 6, 0);
   Sound_Play(SE_TABLET_RISE);
-  Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~1;
+  Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(ACTOR_FELIX, -12, -12);
   Event_Wait(1);
-  Actor_GetById(ACTOR_FELIX)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_FELIX)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(10);
   Actor_StartRepeatedMotion(ACTOR_OBABA, 3);
   FieldEffect_SetAttached(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -706,7 +710,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   FieldActor_ShowItemIconById(ACTOR_HELD_ITEM, 0x146);
   Actor_SetPosition(ACTOR_HELD_ITEM, 664, 232);
   Actor_SetSpritePriority(ACTOR_HELD_ITEM, 1);
-  thrown->motionFlags = 2;
+  thrown->motionFlags = ACTOR_FALLS;
   thrown->y.fixed = px(24);
   thrown->update = ChampaCliffCaves_GrowThrown;
   thrown->groundHeight = 0;
@@ -720,7 +724,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
     wait(1);
   thrown->gravity = px(1);
   thrown->y.fixed = 0;
-  thrown->motionFlags = 4;
+  thrown->motionFlags = ACTOR_FLOATS;
   Scene_PlayMusic();
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_OBABA, 2);
@@ -955,7 +959,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     FieldMapGrid_SetCellHeight(px(656), px(240), 0, -4);
     FieldMapGrid_SetCellHeight(px(656), px(256), 0, -4);
     object->gravity = px(1) / 4;
-    object->motionFlags = 2;
+    object->motionFlags = ACTOR_FALLS;
     object->groundHeight = -px(999);
     Actor_Jump(ACTOR_SALAMANDER, 10, 0);
     Sound_Play(SE_ENEMY_CRY);
@@ -991,7 +995,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     Sound_Play(SE_BEAST_CRY);
     Actor_SetPosition(ACTOR_AVIMANDER, 664, 248);
     object->gravity = px(1);
-    object->motionFlags = 2;
+    object->motionFlags = ACTOR_FALLS;
     object->groundHeight = 0;
     object->y.fixed = px(32);
     object->scaleX = Q16_ONE / 4;
@@ -1567,7 +1571,7 @@ void ChampaCliffCaves_BriggsMournsSalamander(void) {
   Actor_FaceDirectionAndRefreshById(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
   Event_Wait(20);
   Actor_SetSpritePriority(ACTOR_FELIX, 2);
-  Actor_GetById(ACTOR_FELIX)->priorityFlags |= 1;
+  Actor_GetById(ACTOR_FELIX)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_WALK);
   party = (u8 *)&gMainRoutineWork;
@@ -2074,39 +2078,45 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_BriggsPlacements[] = {
 };
 
 LATE_DATA struct ActorPlacement gChampaCliffCaves_HousesPlacements[] = {
-    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 184,
-                    FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 192, 0, 184, FACING_SOUTH_SOUTHEAST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 216,
                     FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 248,
-                    FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(138, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 248,
-                    FACING_NORTH_NORTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 568, 0, 248, FACING_WEST,
+                    TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 488, 0, 248, FACING_NORTH_NORTHEAST,
+                    TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 LATE_DATA struct ActorPlacement gChampaCliffCaves_ObabaPlacements[] = {
     ACTOR_PLACEMENT(36, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56,
                     FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 424,
-                    FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 200, 0, 424, FACING_SOUTH_SOUTHWEST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
 LATE_DATA struct ActorPlacement gChampaCliffCaves_AvimanderPlacements[] = {
     ACTOR_PLACEMENT(36, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56,
                     FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 216,
-                    FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 616, 0, 216, FACING_SOUTH_SOUTHEAST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
 LATE_DATA struct ActorPlacement gChampaCliffCaves_BriggsPlacementsBriggsHome[] =
     {
-        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 552,
-                        FACING_WEST, TALK_FACING_PARTY_THEN_WATCH, 0),
-        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, 8, 344, 0, 568, FACING_WEST,
-                        TALK_FACING_PARTY, 0),
+        ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS,
+                        MOVEMENT_TYPE_STAND, 344, 0, 552, FACING_WEST,
+                        TALK_FACING_PARTY_THEN_WATCH, 0),
+        ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, 8, 344, 0, 568,
+                        FACING_WEST, TALK_FACING_PARTY, 0),
         ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 504,
                         FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH,
                         0),
@@ -2115,15 +2125,17 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_BriggsPlacementsBriggsHome[] =
 
 LATE_DATA struct ActorPlacement gChampaCliffCaves_HousesPlacementsBriggsHome[] =
     {
-        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 728,
-                        FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH,
-                        0),
-        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 728,
-                        FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH,
-                        0),
-        ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 248,
-                        FACING_WEST, TALK_FACING_PARTY_THEN_WATCH, 0),
-        ACTOR_PLACEMENT(138, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 248,
+        ACTOR_PLACEMENT(
+            SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312,
+            0, 728, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+        ACTOR_PLACEMENT(
+            SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328,
+            0, 728, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+        ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS,
+                        MOVEMENT_TYPE_STAND, 568, 0, 248, FACING_WEST,
+                        TALK_FACING_PARTY_THEN_WATCH, 0),
+        ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS,
+                        MOVEMENT_TYPE_STAND, 488, 0, 248,
                         FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH,
                         0),
         {SCENE_TABLE_END},
@@ -2131,12 +2143,12 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_HousesPlacementsBriggsHome[] =
 
 LATE_DATA struct ActorPlacement gChampaCliffCaves_ObabaPlacementsBriggsHome[] =
     {
-        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 392,
-                        FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH,
-                        0),
-        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 424,
-                        FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH,
-                        0),
+        ACTOR_PLACEMENT(
+            SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520,
+            0, 392, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+        ACTOR_PLACEMENT(
+            SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184,
+            0, 424, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
         {SCENE_TABLE_END},
 };
 
@@ -2294,40 +2306,49 @@ LATE_DATA struct ActorPlacement
                         0),
         ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 216, 0,
                         224, FACING_SOUTH, TALK_FACING_PARTY, 0),
-        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 208,
+        ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS,
+                        MOVEMENT_TYPE_STAND, 488, 0, 208,
                         FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 216,
+        ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS,
+                        MOVEMENT_TYPE_STAND, 600, 0, 216,
                         FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 576, 0, 248,
-                        FACING_SOUTH, TALK_FACING_PARTY, 0),
-        ACTOR_PLACEMENT(39, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 264,
-                        FACING_EAST, TALK_FACING_PARTY, 0),
+        ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS,
+                        MOVEMENT_TYPE_WANDER, 576, 0, 248, FACING_SOUTH,
+                        TALK_FACING_PARTY, 0),
+        ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS,
+                        MOVEMENT_TYPE_STAND, 504, 0, 264, FACING_EAST,
+                        TALK_FACING_PARTY, 0),
         {SCENE_TABLE_END},
 };
 
 LATE_DATA struct ActorPlacement
     gChampaCliffCaves_HousesPlacementsAfterAvimander[] = {
-        ACTOR_PLACEMENT(115, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 184,
+        ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
+                        MOVEMENT_TYPE_STAND, 192, 0, 184,
                         FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
         ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 216,
                         FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
-        ACTOR_PLACEMENT(136, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 248,
-                        FACING_WEST, TALK_FACING_PARTY, 0),
-        ACTOR_PLACEMENT(138, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 248,
-                        FACING_EAST, TALK_FACING_PARTY, 0),
+        ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS,
+                        MOVEMENT_TYPE_STAND, 568, 0, 248, FACING_WEST,
+                        TALK_FACING_PARTY, 0),
+        ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS,
+                        MOVEMENT_TYPE_STAND, 488, 0, 248, FACING_EAST,
+                        TALK_FACING_PARTY, 0),
         {SCENE_TABLE_END},
 };
 
 LATE_DATA struct ActorPlacement
     gChampaCliffCaves_ObabaPlacementsAfterAvimander[] = {
-        ACTOR_PLACEMENT(16, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 704,
-                        FACING_SOUTH, TALK_FACING_KEEP, 0),
+        ACTOR_PLACEMENT(SPRITE_BRIGGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                        560, 0, 704, FACING_SOUTH, TALK_FACING_KEEP, 0),
         ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
                         FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-        ACTOR_PLACEMENT(38, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 480, 0, 704,
-                        FACING_EAST, TALK_FACING_PARTY_THEN_WATCH, 0),
-        ACTOR_PLACEMENT(37, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 712,
-                        FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+        ACTOR_PLACEMENT(SPRITE_EOLEO, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                        480, 0, 704, FACING_EAST, TALK_FACING_PARTY_THEN_WATCH,
+                        0),
+        ACTOR_PLACEMENT(SPRITE_CHAUCHA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                        504, 0, 712, FACING_WEST, TALK_FACING_PARTY_AND_BACK,
+                        0),
         {SCENE_TABLE_END},
 };
 

@@ -357,7 +357,7 @@ void AirsRock_ClimbLedge(void) {
   System_Wait(10);
   Actor_SelectAnimation(leader, 1);
   Actor_SetSpriteFlags(leader, 0);
-  leader->motionFlags |= 2;
+  leader->motionFlags |= ACTOR_FALLS;
   leader->velocityY = px(4);
   FieldActor_SetMoveTargetFixed(leader, leader->x.fixed, leader->y.fixed,
                                 z + px(12));
@@ -371,7 +371,7 @@ void AirsRock_ClimbLedge(void) {
     leader->targetY = leader->y.fixed;
     System_Wait(1);
   }
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   leader->velocityY = px(3);
   FieldActor_SetMoveTargetFixed(leader, leader->x.fixed, leader->y.fixed,
                                 z + px(16));
@@ -491,7 +491,7 @@ void AirsRock_BlowGust(void) {
     if ((gFrameCount & 3) == 0) {
       spark = (struct Actor *)Import_ActorCreate(0x2a0, effect->child->x.fixed,
                                                  0, effect->child->z.fixed);
-      spark->priorityFlags |= 1;
+      spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
       spark->gravity = px(4) / 5;
@@ -734,7 +734,7 @@ row:
         cell = spark->sprite;
         ((struct SpriteParts *)cell)->part = priority >> 2;
       }
-      spark->priorityFlags |= 1;
+      spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
       spark->gravity = px(3) / 2;
@@ -834,8 +834,8 @@ fade:
   {
     s32 *ownerId = &work->leaderActorId;
 
-    Actor_Get(*ownerId)->priorityFlags &= ~32;
-    Actor_Get(*ownerId)->priorityFlags |= 1;
+    Actor_Get(*ownerId)->priorityFlags &= ~ACTOR_PRIORITY_IGNORES_RISES;
+    Actor_Get(*ownerId)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
     {
       u8 *flags = &Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->priorityFlags;
       u8 v = *flags | 1;
@@ -886,7 +886,7 @@ void AirsRock_RideWhirlwind(void) {
     rider = ride->watchedActor;
     dx = 0;
     dz = 0;
-    leader->priorityFlags = 4;
+    leader->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
     leader->x.fixed = (((leader->x.fixed >> 19) & ~1) + 1) << 19;
     i = 0;
     leader->y.fixed = (((ride->y.fixed >> 19) & ~1) + 3) << 19;
@@ -953,7 +953,7 @@ void AirsRock_RideWhirlwind(void) {
     leader->acceleration = px(1) / 2;
     leader->velocityY = px(4);
     *motion = 2;
-    leader->priorityFlags = 1;
+    leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     leader->layer = rider->riseCounter;
     FieldActor_SetMoveTargetFixed(leader, leader->x.fixed + dx, leader->y.fixed,
                                   leader->z.fixed + dz);
@@ -968,7 +968,7 @@ void AirsRock_RideWhirlwind(void) {
     still = 0;
     Actor_SetSpriteFlags(leader, 1);
     leader->velocityY = px(6);
-    leader->priorityFlags = 1;
+    leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     *motion = 3;
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     dust = FieldCamera_GetActor();
@@ -982,8 +982,10 @@ void AirsRock_RideWhirlwind(void) {
     OverlayObject_WaitUntilIdle(leader);
     FieldActor_WaitForMove(dust);
   }
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_AUTOMATIC;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   Event_ClearFlag(FLAG_RIDING_WHIRLWIND);
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
@@ -1049,7 +1051,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
     if (i && !GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
       leader->facing = shot->facing;
       leader->watchedActor = shot;
-      leader->priorityFlags &= ~1;
+      leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
       work->raisedTrigger = 200;
@@ -1146,7 +1148,7 @@ void AirsRock_PlacePillar(void) {
   if (Map_GetTerrainHeight(2, object->x.fixed, object->z.fixed) !=
       object->y.fixed) {
     object->layer = 2;
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     OverlayObject_WaitUntilIdle(object);
     OverlayObject_WaitUntilIdle(object);
     Event_PlaySound(SE_THUMP);
@@ -1285,7 +1287,7 @@ row:
           ((struct FieldSprite *)Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)
                ->sprite)
               ->priority;
-      spark->priorityFlags |= 1;
+      spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
       spark->gravity = px(3) / 2;
@@ -1518,7 +1520,7 @@ void AirsRock_WhirlwindClearsFog(void) {
         cell = spark->sprite;
         ((struct SpriteParts *)cell)->part = priority >> 2;
       }
-      spark->priorityFlags |= 1;
+      spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
       spark->gravity = px(3) / 2;
@@ -1596,9 +1598,12 @@ void AirsRock_WhirlwindClearsFog(void) {
                          gMainRoutineWork.windowBrightness);
   REG_BG1CNT &= ~3;
   REG_BG1CNT |= 1;
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags &= ~32;
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
-  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->priorityFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags &=
+      ~ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_AUTOMATIC;
+  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->priorityFlags |=
+      ACTOR_PRIORITY_AUTOMATIC;
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_SetFlag(FLAG_AIRS_ROCK_FOG_CLEARED);
@@ -1613,7 +1618,7 @@ void AirsRock_SetLedgeCellsByLevel(void) {
   struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
   s32 level;
 
-  actor->priorityFlags |= 32;
+  actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   level = ((actor->y.fixed + px(32)) >> 16) / 112;
   if (gAirsRock_LeaderLevel != level) {
     switch (level) {
@@ -1659,7 +1664,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gMainRoutineWork.retreatScene = SCENE_AIRS_ROCK_STORM_BRAND_CHEST;
   gMainRoutineWork.retreatEntrance = 1;
-  LEADER()->priorityFlags |= 32;
+  LEADER()->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_STORM_BRAND_CHEST) {
     switch (gMainRoutineWork.entrance) {
     case 2:
@@ -1773,7 +1778,8 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_BREATHING_STATUE)->motionFlags = 0;
       Actor_GetById(ACTOR_BREATHING_STATUE)->y.fixed = -px(144);
       Actor_SetSpritePriority(ACTOR_BREATHING_STATUE, 2);
-      Actor_GetById(ACTOR_BREATHING_STATUE)->priorityFlags |= 2;
+      Actor_GetById(ACTOR_BREATHING_STATUE)->priorityFlags |=
+          ACTOR_PRIORITY_UNDERFOOT;
       Actor_GetById(ACTOR_BREATHING_STATUE)->timer = 180;
       Actor_GetById(ACTOR_BREATHING_STATUE)->riseCounter = 1;
       Actor_GetById(ACTOR_BREATHING_STATUE)->update =
@@ -1855,7 +1861,8 @@ s32 Scene_Initialize(void) {
       REG_BG2CNT |= 2;
       REG_BG3CNT &= ~3;
       REG_BG3CNT |= 3;
-      Actor_GetById(ACTOR_TWISTER_ROCK_IN_THE_FOG)->priorityFlags |= 2;
+      Actor_GetById(ACTOR_TWISTER_ROCK_IN_THE_FOG)->priorityFlags |=
+          ACTOR_PRIORITY_UNDERFOOT;
       FieldEffect_StartBlankOverlay(0);
       if (GameFlag_Get(FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED))
         Actor_SetPosition(ACTOR_THIRD_PILLAR, 184, 280);
@@ -2110,11 +2117,11 @@ u32 gSceneExits[] = {
 
 struct ActorPlacement gAirsRock_StormBrandChestPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TWISTER_ROCK, CONDITION_ALWAYS, 7, 328, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(325, CONDITION_ALWAYS, (s32)gAirsRock_WindStoneScript, 920, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(325, CONDITION_ALWAYS, (s32)gAirsRock_WindStoneScript, 104, 0, 760, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(325, CONDITION_ALWAYS, (s32)gAirsRock_WindStoneScript, 376, 0, 808, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(325, CONDITION_ALWAYS, (s32)gAirsRock_WindStoneScript, 632, 0, 888, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(325, CONDITION_ALWAYS, (s32)gAirsRock_WindStoneScript, 872, 0, 856, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TURNING_ROCK, CONDITION_ALWAYS, (s32)gAirsRock_WindStoneScript, 920, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TURNING_ROCK, CONDITION_ALWAYS, (s32)gAirsRock_WindStoneScript, 104, 0, 760, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TURNING_ROCK, CONDITION_ALWAYS, (s32)gAirsRock_WindStoneScript, 376, 0, 808, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TURNING_ROCK, CONDITION_ALWAYS, (s32)gAirsRock_WindStoneScript, 632, 0, 888, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TURNING_ROCK, CONDITION_ALWAYS, (s32)gAirsRock_WindStoneScript, 872, 0, 856, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -2140,10 +2147,10 @@ struct ActorPlacement gAirsRock_EntrancePlacements[] = {
 struct ActorPlacement gAirsRock_FujinShieldChestPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 536, 0, 904, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 712, 0, 904, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 872, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 872, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 872, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 872, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_TWISTER_ROCK, CONDITION_ALWAYS, 7, 152, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TWISTER_ROCK, CONDITION_ALWAYS, 7, 536, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };

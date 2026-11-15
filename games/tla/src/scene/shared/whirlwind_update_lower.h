@@ -38,7 +38,7 @@ void Whirlwind_UpdateLower(struct Actor *self) {
         if (near && !Event_GetFlag(260)) {
           leader->facing = self->facing;
           leader->watchedActor = self;
-          leader->priorityFlags &= ~1;
+          leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
           work->raisedTrigger = 200;
           gMainRoutineWork.movementMode = 0;
           self->riseCounter = 1;

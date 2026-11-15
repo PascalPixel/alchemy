@@ -148,7 +148,7 @@ changed:
   System_Wait(10);
 end:
   object->update = NULL;
-  object->steeringFlags |= 1;
+  object->steeringFlags |= ACTOR_FACES_MOTION;
   object->acceleration = px(1) / 4;
   Actor_SelectAnimation(object, 1);
 }

@@ -14,7 +14,7 @@ void Whirlwind_CarryLeader(void) {
   i = 0;
   work->glowHeld = i;
 
-  actor->motionFlags = 4;
+  actor->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlags(actor, 0);
 
   while (*((u8 *)linked + 0x63) != 0) {
@@ -35,8 +35,8 @@ void Whirlwind_CarryLeader(void) {
   actor->z.fixed = (((linked->z.fixed >> 19) & ~1) - ((angle >> 13) & 2) + 1)
                    << 19;
   actor->velocityY = px(6);
-  actor->priorityFlags = 1;
-  actor->motionFlags = 3;
+  actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_SetSpriteFlags(actor, 1);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   shadow = EventCamera_GetActor();
@@ -66,7 +66,8 @@ void Whirlwind_CarryLeader(void) {
     } while (actor->velocityY != 0);
   }
   FieldActor_WaitForMove(shadow);
-  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_AUTOMATIC;
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   work->glowHeld = 1;
   work->stepTrigger = 0;

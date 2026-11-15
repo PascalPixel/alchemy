@@ -2,9 +2,6 @@
 /// The cave of the Apojii Islands: four patches of overgrowth on its walls,
 /// each blown away for good by Whirlwind. The third hides the passage to the
 /// Djinni Haze, exit 1, which opens once that patch is gone.
-///
-/// XXX: what the four sprite 307 actors look like, which Telago's guide calls
-/// "overgrowth foliage"; a render of the cave would settle it.
 
 #include "shared/tables.h"
 #include "field/field_sequence_event.h"
@@ -26,7 +23,9 @@
 
 extern u32 gApojiiIslandsCave_FoliageScript[];
 
-/// The four patches of overgrowth, numbering the rows of gActorPlacements.
+/// The four patches of ivy on the walls, stood four pixels up and drawn half
+/// again as tall by gApojiiIslandsCave_FoliageScript, numbering the rows of
+/// gActorPlacements.
 enum ApojiiIslandsCaveActorId {
   ACTOR_FIRST_FOLIAGE = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_FOLIAGE,
@@ -61,9 +60,9 @@ s32 Scene_PrepareMap(void) { return 0; }
 // clang-format off
 u32 gApojiiIslandsCave_FoliageScript[] = {
     SC_SET(SW_MOTION, 0),
-    SC_SET(SW_GROUND, 0x40000),
+    SC_SET(SW_GROUND, px(4)),
     SC_SET(SW_Y, px(3)),
-    SC_SET(SW_SCALE_Y, 0x18000),
+    SC_SET(SW_SCALE_Y, Q16_ONE * 3 / 2),
     SC_END,
 };
 // clang-format on
@@ -84,16 +83,20 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FIRST_FOLIAGE),
+    ACTOR_PLACEMENT(SPRITE_IVY,
+                    FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FIRST_FOLIAGE),
                     (s32)gApojiiIslandsCave_FoliageScript, 120, 0, 608,
                     FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_SECOND_FOLIAGE),
+    ACTOR_PLACEMENT(SPRITE_IVY,
+                    FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_SECOND_FOLIAGE),
                     (s32)gApojiiIslandsCave_FoliageScript, 184, 0, 592,
                     FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_PASSAGE_FOLIAGE),
+    ACTOR_PLACEMENT(SPRITE_IVY,
+                    FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_PASSAGE_FOLIAGE),
                     (s32)gApojiiIslandsCave_FoliageScript, 216, 0, 592,
                     FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FOURTH_FOLIAGE),
+    ACTOR_PLACEMENT(SPRITE_IVY,
+                    FLAG_APOJII_CAVE_FOLIAGE_BLOWN(ACTOR_FOURTH_FOLIAGE),
                     (s32)gApojiiIslandsCave_FoliageScript, 280, 0, 640,
                     FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},

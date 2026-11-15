@@ -3,7 +3,7 @@ s32 Actor_Bob(struct Actor *object) {
   s32 step = object->riseCounter & 63;
   struct FieldSprite *sprite = object->sprite;
 
-  object->motionFlags = 3;
+  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (step == 0)
     object->velocityY = px(3);
   if (step == 16)

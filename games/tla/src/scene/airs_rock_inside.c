@@ -368,7 +368,7 @@ next:
     s32 kind = entry[1];
     s32 flag = entry[2];
 
-    object->collisionFlags &= ~1;
+    object->collisionFlags &= ~ACTOR_SOLID;
     Actor_SetSpriteFlags(object, 0);
     Actor_SetCellOpen(id, (u16)kind, (u16)flag, object->layer);
     entry += 3;
@@ -546,7 +546,7 @@ void AirsRockInside_SetConeCells(struct Actor *object) {
       height -= 4;
     // Through the field: through flags the byte, not the 2, would take the
     // result register.
-    object->priorityFlags |= 2;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Scene_SetActorSpritePriority(object, 3);
   } else {
     cell |= 0xff00;
@@ -641,7 +641,7 @@ void AirsRockInside_PlaceCones(u16 *list) {
     }
     Actor_SelectAnimation(object, base);
     object->motionFlags = 0;
-    object->collisionFlags &= ~1;
+    object->collisionFlags &= ~ACTOR_SOLID;
     object->timer = flag;
     AirsRockInside_SetConeCells(object);
     entry += 3;
@@ -793,7 +793,8 @@ void AirsRockInside_RideWhirlwind(void) {
     Actor_WaitForMove(dust);
     break;
   }
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_AUTOMATIC;
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   GameFlag_Clear(FLAG_SCENE_TEMP_50);
@@ -868,7 +869,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
     if (near && !GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
       leader->facing = shot->facing;
       leader->watchedActor = shot;
-      leader->priorityFlags &= ~1;
+      leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
       work->raisedTrigger = 200;
@@ -995,7 +996,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
     if (near && !GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
       leader->facing = shot->facing;
       leader->watchedActor = shot;
-      leader->priorityFlags &= ~1;
+      leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
       work->raisedTrigger = 200;
@@ -1055,7 +1056,7 @@ void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *object) {
     Actor_SelectAnimation(shot, 2);
     Actor_SetSpriteFlags(shot, 0);
     ((struct FieldSprite *)shot->sprite)->priority = 1;
-    shot->priorityFlags |= 32;
+    shot->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
     shot->motionFlags = 0;
     shot->riseCounter = 0;
     shot->riseEnabled = 0;
@@ -1240,7 +1241,7 @@ void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
     (object)->watchedActor = gust;                                             \
     (object)->update = AirsRockInside_FollowGust;                              \
     (object)->motionFlags = 0;                                                 \
-    (object)->priorityFlags &= ~1;                                             \
+    (object)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;                      \
     Actor_SetSpriteFlags(object, 0);                                           \
     ((struct FieldSprite *)(object)->sprite)->priority =                       \
         ((struct FieldSprite *)gust->sprite)->priority;                        \
@@ -1294,7 +1295,7 @@ void AirsRockInside_BlowGust(void) {
       spark = (struct Actor *)Import_ActorCreate(0x2a0, TARGET(effect)->x.fixed,
                                                  TARGET(effect)->y.fixed,
                                                  TARGET(effect)->z.fixed);
-      spark->priorityFlags |= 1;
+      spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       spark->motionFlags = 0;
       spark->groundHeight =
           Map_GetTerrainHeight(0, spark->x.fixed, spark->z.fixed);
@@ -1399,9 +1400,10 @@ void AirsRockInside_BlowGust(void) {
     object->z.fixed = carried << 19;
     object->velocityY = px(8);
     object->update = 0;
-    object->motionFlags = 2;
-    object->priorityFlags |= 1;
-    object->priorityFlags &= ~6;
+    object->motionFlags = ACTOR_FALLS;
+    object->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+    object->priorityFlags &=
+        ~(ACTOR_PRIORITY_UNDERFOOT | ACTOR_PRIORITY_OVERHEAD);
     Actor_SetSpriteFlags(object, 1);
     Scene_SetActorSpritePriority(object, 2);
     if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
@@ -1550,7 +1552,8 @@ shrink:
         wait(30);
         SHAKE();
         MapGrid_CopyCellsTo(0x40, 0x40, 0x20, 79, 5, 7);
-        Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->priorityFlags |= 1;
+        Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->priorityFlags |=
+            ACTOR_PRIORITY_AUTOMATIC;
       } else {
         FieldEvent_Wait(30);
         SHAKE();
@@ -1914,7 +1917,7 @@ row:
       ((struct FieldSprite *)spark->sprite)->priority =
           ((struct FieldSprite *)Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->sprite)
               ->priority;
-      spark->priorityFlags |= 1;
+      spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
       spark->gravity = px(3) / 2;
@@ -2079,7 +2082,7 @@ void AirsRockInside_FinishPushingPillar(void) {
   if (Map_GetTerrainHeight(2, pushed->x.fixed, pushed->z.fixed) !=
       pushed->y.fixed) {
     pushed->layer = 2;
-    pushed->motionFlags = 3;
+    pushed->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     OverlayObject_WaitUntilIdle(pushed);
     Sound_Play(SE_THUMP);
     OverlayObject_WaitUntilIdle(pushed);
@@ -2217,7 +2220,7 @@ row:
           ((struct FieldSprite *)Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)
                ->sprite)
               ->priority;
-      spark->priorityFlags |= 1;
+      spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
       spark->gravity = px(3) / 2;
@@ -2322,7 +2325,8 @@ void AirsRockInside_StepOffRide(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &= ~1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
   Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, px(4), px(2));
   Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, 376, 668);
   flags = &Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags;
@@ -2616,7 +2620,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
     spark->gravity = spark->z.fixed;
     spark->watchedActor = b;
     spark->motionFlags = 0;
-    spark->priorityFlags = 1;
+    spark->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     Actor_SetSpriteColor(spark, 2);
     Actor_SelectAnimation(spark, 7);
     Actor_SetSpriteFlags(spark, 0);
@@ -2839,7 +2843,7 @@ step:
   i++;
   if (i != 8)
     goto step;
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   first->scaleY = Q16_ONE;
   second->y.fixed = second->groundHeight;
   GameFlag_Set(first->timer);
@@ -2868,7 +2872,8 @@ void AirsRockInside_RideFaceWarp(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &= ~1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
   Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, px(4), px(2));
   switch (*warp) {
   case 50:
@@ -2902,7 +2907,8 @@ void AirsRockInside_RideFaceWarp(void) {
     break;
   }
   Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, x, z);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |= 1;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->steeringFlags |=
+      ACTOR_FACES_MOTION;
   Event_End();
 }
 
@@ -2998,8 +3004,8 @@ void AirsRockInside_RiseOnLift(void) {
   leader->speedLimit = px(2);
   leader->acceleration = px(1) / 2;
   leader->velocityY = px(4);
-  leader->motionFlags = 2;
-  leader->priorityFlags = 1;
+  leader->motionFlags = ACTOR_FALLS;
+  leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetMoveTarget(leader, leader->x.fixed, leader->y.fixed,
                       leader->z.fixed - px(16));
   OverlayObject_WaitUntilIdle(leader);
@@ -3008,7 +3014,7 @@ void AirsRockInside_RiseOnLift(void) {
   Actor_SelectAnimation(lift, 5);
   wait(12);
   Actor_Release(lift);
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   leader->groundHeight = leader->y.fixed;
   Actor_SetSpriteFlags(leader, 1);
 #if TLA_PATCH_1
@@ -3059,7 +3065,7 @@ void AirsRockInside_SetLedgeCellsByLevel(void) {
   struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
   s32 level;
 
-  actor->priorityFlags |= 32;
+  actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   if (actor->y.fixed + px(32) >= px(312))
     level = 2;
   else if (actor->y.fixed + px(32) >= px(216))
@@ -3133,7 +3139,7 @@ void AirsRockInside_LandInHall(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_DUST_PUFF);
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
@@ -3185,7 +3191,8 @@ s32 Scene_Initialize(void) {
   /* FAKEMATCH(wrapper): MapCell_SetAttributes called through call.h's Call4. */
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+  Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
   GameFlag_Set(FLAG_AREA_TEMP_00);
   GameFlag_Set(FLAG_AIRS_ROCK_ELIXIR_CHEST_PILLAR_MOVED);
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_HALL) {
@@ -3211,7 +3218,8 @@ s32 Scene_Initialize(void) {
     }
     Actor_GetById(ACTOR_HALL_TWISTER_STATUE)->motionFlags = 0;
     Actor_GetById(ACTOR_HALL_TWISTER_STATUE)->y.fixed = 0;
-    Actor_GetById(ACTOR_HALL_TWISTER_STATUE)->priorityFlags = 2;
+    Actor_GetById(ACTOR_HALL_TWISTER_STATUE)->priorityFlags =
+        ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpritePriority(ACTOR_HALL_TWISTER_STATUE, 3);
     if (!GameFlag_Get(FLAG_AIRS_ROCK_HALL_STATUE_WOKEN)) {
       Actor_SetSpriteColor(Actor_GetById(ACTOR_HALL_TWISTER_STATUE), 6);
@@ -3366,7 +3374,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_AIRS_ROCK_ELIXIR_CHEST_PILLAR_MOVED)) {
       Actor_SetPositionFixed(ACTOR_ELIXIR_CHEST_PILLAR, px(312), px(296));
       Actor_SetSpritePriority(ACTOR_ELIXIR_CHEST_PILLAR, 2);
-      Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->motionFlags = 2;
+      Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->motionFlags = ACTOR_FALLS;
       Actor_GetById(ACTOR_ELIXIR_CHEST_PILLAR)->groundHeight = -px(32);
       MapGrid_CopyCellAttributes(19, 16, 1, 1, 19, 18);
     }
@@ -3703,9 +3711,9 @@ struct ActorPlacement gAirsRockInside_HallPlacements[] = {
     {377, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
     ACTOR_PLACEMENT(SPRITE_TWISTER_ROCK, CONDITION_ALWAYS, 7, 312, 0, 808, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {377, CONDITION_ALWAYS, 7, 0x5, 0, 0, FACING_SOUTH, 2, 2},
-    ACTOR_PLACEMENT(280, CONDITION_ALWAYS, 7, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(280, CONDITION_ALWAYS, 7, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(280, CONDITION_ALWAYS, 7, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHIRLWIND, CONDITION_ALWAYS, 7, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHIRLWIND, CONDITION_ALWAYS, 7, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHIRLWIND, CONDITION_ALWAYS, 7, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3746,7 +3754,7 @@ struct ActorPlacement gAirsRockInside_TightropesPlacements[] = {
 
 struct ActorPlacement gAirsRockInside_RevealTabletPlacements[] = {
     {323, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_SOUTH, 2, 2},
-    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_WEST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

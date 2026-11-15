@@ -165,10 +165,11 @@ struct Actor *AquaRock_CreateActor(s32 x, s32 y, s32 z, s32 kind) {
   if (object != 0) {
     Scene_SetActorSpritePriority(object, 1);
     object->motionFlags = 0;
-    object->collisionFlags = 8;
+    object->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(object, 0);
     Actor_SetSpriteColor(object, 15);
-    object->priorityFlags |= 0x22;
+    object->priorityFlags |=
+        ACTOR_PRIORITY_UNDERFOOT | ACTOR_PRIORITY_IGNORES_RISES;
     return object;
   }
   return 0;
@@ -743,7 +744,7 @@ void AquaRock_DropDownFalls(void) {
   FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Actor_SelectAnimation(object, 40);
-  object->motionFlags = 3;
+  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   for (i = 0; i < 180; i++) {
     wait(1);
     if (object->y.fixed <= object->groundHeight)
@@ -832,7 +833,7 @@ void AquaRock_DouseDryMoai(s32 unused, s32 id) {
   Actor_SetPosition(ACTOR_STREAM_SOURCE, 264, 792);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_STREAM_SOURCE), 0);
   Actor_GetById(ACTOR_STREAM_SOURCE)->collisionFlags = 0;
-  Actor_GetById(ACTOR_STREAM_SOURCE)->priorityFlags |= 2;
+  Actor_GetById(ACTOR_STREAM_SOURCE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   Actor_GetById(ACTOR_STREAM_SOURCE)->update =
       (void (*)(void))Actor_EmitWaterDrop;
   Event_Wait(30);
@@ -865,7 +866,7 @@ void AquaRock_KeepLeaderPriority(void) {
     priority = gMainRoutineWork.movementMode == 2 ? 2 : 1;
     sprite->priority = priority;
     sprite->partPriority = priority;
-    object->priorityFlags &= 0xfe;
+    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   }
 }
 
@@ -1068,7 +1069,8 @@ s32 Scene_Initialize(void) {
     if (z != 0)
       Actor_SetHorizontalPositionWithTerrain(
           ACTOR_FIRST_PILLAR, (x << 20) + px(8), (z << 20) + px(8));
-    Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
+    Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
+        ACTOR_PRIORITY_IGNORES_RISES;
     Task_Add(AquaRock_KeepLeaderPriority, TASK_PASS_VBLANK);
     Actor_SetSpritePriority(28, 1);
     Value2((s32 (*)())Actor_SetSpritePriority, 24, 1);
@@ -1147,7 +1149,8 @@ s32 Scene_Initialize(void) {
         Actor_SetPosition(ACTOR_STREAM_SOURCE, 264, 792);
         Actor_SetSpriteFlags(Actor_GetById(ACTOR_STREAM_SOURCE), 0);
         Actor_GetById(ACTOR_STREAM_SOURCE)->collisionFlags = 0;
-        Actor_GetById(ACTOR_STREAM_SOURCE)->priorityFlags |= 2;
+        Actor_GetById(ACTOR_STREAM_SOURCE)->priorityFlags |=
+            ACTOR_PRIORITY_UNDERFOOT;
         Actor_GetById(ACTOR_STREAM_SOURCE)->update = Actor_EmitWaterDrop;
         Map_CopyCellAttributeRect(15, 48, 1, 1, 16, 48);
         Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
@@ -1272,7 +1275,7 @@ void AquaRock_SpinUpAndAway(s32 exit) {
   Event_ResolvePendingActions(0);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   object->motionFlags = 0;
-  object->priorityFlags |= 0x20;
+  object->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Sound_Play(SE_SPLASH_SMALL);
   Actor_SelectAnimation(object, 18);
   Sound_Play(SE_SPIN_AWAY);
@@ -1344,7 +1347,7 @@ void AquaRock_ArriveFromPassage(void) {
     ((struct FieldSprite *)leader->sprite)->priority = 1;
     offset = 10;
     Actor_WalkByAndWaitById(*owner, 0, offset);
-    leader->motionFlags = 3;
+    leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     leader->update = (void (*)(void))flag;
     Event_NoOp();
     Event_WaitTransitionFrames();
@@ -1748,8 +1751,8 @@ LATE_DATA struct ActorPlacement gAquaRock_SlopesPlacements[] = {
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 879, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 847, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 959, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(383, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 600, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(401, CONDITION_ALWAYS, (s32)gAquaRock_DriftScript, 376, 0, 960, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(401, CONDITION_ALWAYS, (s32)gAquaRock_DriftScript, 136, 0, 904, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1759,9 +1762,9 @@ LATE_DATA struct ActorPlacement gAquaRock_SlopesPlacements[] = {
 
 LATE_DATA struct ActorPlacement gAquaRock_MistSabreChestPlacements[] = {
     ACTOR_PLACEMENT(383, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 712, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 712, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(292, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 840, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(292, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 936, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 936, FACING_SOUTH, TALK_FACING_KEEP, 0),

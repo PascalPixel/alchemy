@@ -18,7 +18,7 @@ void CrackedTile_DropIn(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
-  actor->motionFlags = 3;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;

@@ -18,7 +18,7 @@ void Actors_SetCellsOpen(const u16 *list) {
     object = Actor_Get(id);
     mode = spec[1];
     flag = spec[2];
-    object->collisionFlags &= 0xfe;
+    object->collisionFlags &= ~ACTOR_SOLID;
     Actor_SetSpriteFlags(object, 0);
     Actor_SetCellOpen(id, (u16)mode, (u16)flag, object->layer);
     limit = 0xff;

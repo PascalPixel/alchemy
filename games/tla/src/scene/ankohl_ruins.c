@@ -134,10 +134,11 @@ struct Actor *AnkohlRuins_CreateActor(s32 x, s32 y, s32 z, s32 type) {
   if (object != NULL) {
     Scene_SetActorSpritePriority(object, 1);
     object->motionFlags = 0;
-    object->collisionFlags = 8;
+    object->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(object, 0);
     FieldActor_SetSpriteColor(object, 15);
-    object->priorityFlags |= 0x22;
+    object->priorityFlags |=
+        ACTOR_PRIORITY_UNDERFOOT | ACTOR_PRIORITY_IGNORES_RISES;
     return object;
   }
   return NULL;
@@ -221,7 +222,7 @@ void AnkohlRuins_LandFromFall(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
@@ -263,7 +264,7 @@ loop:
 s32 AnkohlRuins_ClearScriptedActorSpriteFlags(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
   ((struct FieldSprite *)object->sprite)->priority = 2;
-  object->priorityFlags &= 0xfe;
+  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   object->motionFlags = 0;
   object->y.fixed -= px(4);
   return 0;
@@ -405,7 +406,7 @@ void AnkohlRuins_DropPillar(s32 unused, s32 objectId) {
   s16 frames = 60;
 
   if (FIELD_CELL(object->z.fixed) == 31) {
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     Actor_SetSpritePriorityDirect(object, 3);
     Event_PlaySound(SE_DUST_PUFF);
     while (frames != 0) {
@@ -690,7 +691,7 @@ void AnkohlRuins_PushedOffLedge(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Event_PlaySound(SE_DUST_PUFF);
   AnkohlRuins_SettleObject(gMainRoutineWork.leaderActorId, 188);
-  object->steeringFlags = 1;
+  object->steeringFlags = ACTOR_FACES_MOTION;
   Event_End();
 }
 
@@ -925,7 +926,7 @@ void AnkohlRuins_RaiseFirstSand(void) {
   }
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldEvent_Wait(5);
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (work->level < 0x200000) {
     gAnkohlRuins_SandTimer = 0;
     Task_AddFrame(AnkohlRuins_CountSandTime, TASK_PASS_VBLANK);
@@ -1007,7 +1008,7 @@ void AnkohlRuins_RaiseSecondSand(void) {
   }
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldEvent_Wait(5);
-  leader->motionFlags = 3;
+  leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   if (work->level < 0x200000) {
     gAnkohlRuins_SandTimer = 0;
     Task_AddFrame(AnkohlRuins_CountSandTime, TASK_PASS_VBLANK);
@@ -1390,7 +1391,7 @@ s32 Scene_Initialize(s32 a0) {
       s32 width;
 
       object = Actor_GetById(ACTOR_THANATOS_FACE_HALF);
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       Actor_SetPosition(ACTOR_THANATOS_FACE_HALF, 200, 88);
       width = 10;
       MapGrid_CopyCells(35, 6, 7, 16, width, 7);
@@ -1439,13 +1440,13 @@ s32 Scene_Initialize(s32 a0) {
     }
     if (GameFlag_Get(FLAG_LEFT_FACE_HALF_PLACED)) {
       object = Actor_GetById(ACTOR_LEFT_FACE_HALF);
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       Actor_SetPosition(ACTOR_LEFT_FACE_HALF, 200, 728);
     }
     if (GameFlag_Get(FLAG_RIGHT_FACE_HALF_PLACED)) {
       object = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
       Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 232, 728);
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     } else if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP) &&
                !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 328, 760);
@@ -1484,7 +1485,7 @@ s32 Scene_Initialize(s32 a0) {
         Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 328, 760);
         object->y.fixed += px(128);
         frames = 60;
-        object->motionFlags = 3;
+        object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
         for (; frames != 0; frames--) {
           System_Wait(1);
           if (object->velocityY > -1)
@@ -1665,7 +1666,7 @@ s32 Scene_Initialize(s32 a0) {
       s32 width;
 
       object = Actor_GetById(ACTOR_THANATOS_FACE_HALF);
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       Actor_SetPosition(ACTOR_THANATOS_FACE_HALF, 200, 88);
       width = 10;
       MapGrid_CopyCells(35, 6, 7, 16, width, 7);
@@ -1714,13 +1715,13 @@ s32 Scene_Initialize(s32 a0) {
     }
     if (GameFlag_Get(FLAG_LEFT_FACE_HALF_PLACED)) {
       object = Actor_GetById(ACTOR_LEFT_FACE_HALF);
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       Actor_SetPosition(ACTOR_LEFT_FACE_HALF, 200, 728);
     }
     if (GameFlag_Get(FLAG_RIGHT_FACE_HALF_PLACED)) {
       object = Actor_GetById(ACTOR_RIGHT_FACE_HALF);
       Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 232, 728);
-      object->motionFlags = 3;
+      object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     } else if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP) &&
                !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 328, 760);
@@ -1752,7 +1753,7 @@ s32 Scene_Initialize(s32 a0) {
         Actor_SetPosition(ACTOR_RIGHT_FACE_HALF, 328, 760);
         object->y.fixed += px(128);
         frames = 60;
-        object->motionFlags = 3;
+        object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
         for (; frames != 0; frames--) {
           System_Wait(1);
           if (object->velocityY > -1)
@@ -2060,7 +2061,7 @@ struct ActorPlacement gAnkohlRuins_Placements[] = {
 };
 
 struct ActorPlacement gAnkohlRuins_StoneFacesPlacements[] = {
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(392, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(392, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2069,56 +2070,56 @@ struct ActorPlacement gAnkohlRuins_StoneFacesPlacements[] = {
     ACTOR_PLACEMENT(392, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(392, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(392, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 456, 0, 840, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 696, 0, 840, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 536, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 568, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 600, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 648, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 584, 0, 56, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 168, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 264, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 296, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 184, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 840, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 936, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 856, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 456, 0, 840, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 696, 0, 840, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 536, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 568, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 600, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 648, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 584, 0, 56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 168, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 264, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 296, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 184, 0, 744, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 840, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 936, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 856, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAnkohlRuins_ThanatosMaceChestPlacements[] = {
     ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 120, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 472, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 520, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 600, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 472, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 520, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 600, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAnkohlRuins_GreatFacePlacements[] = {
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(390, CONDITION_ALWAYS, (s32)gAnkohlRuins_GreatFaceScript, 232, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_FACE, CONDITION_ALWAYS, (s32)gAnkohlRuins_GreatFaceScript, 232, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 296, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAnkohlRuins_FaceHalvesPlacements[] = {
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(391, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 104, 0, 760, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 424, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 504, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 712, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 792, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 648, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 728, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 808, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 136, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 424, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 504, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 712, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 792, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 648, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 728, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_ShrunkenSpriteScript, 808, 0, 920, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 136, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gAnkohlRuins_CrystalPowderChestPlacements[] = {
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(393, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 440, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };

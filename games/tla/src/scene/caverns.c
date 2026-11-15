@@ -357,12 +357,12 @@ void Caverns_FinishMovingAngaraBlock(void) {
   if (Map_GetTerrainHeight(0, object->x.fixed, object->z.fixed) !=
       object->y.fixed) {
     object->layer = 2;
-    object->motionFlags = 3;
+    object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     object->bounce = 0;
     wait(1);
     kind = MapGrid_GetCellBehaviorAt(2, object->x.fixed, object->z.fixed);
     if (kind != 0) {
-      object->priorityFlags |= 2;
+      object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       REG_BLDALPHA = 0x1000;
       blendControl = (u16 *)&REG_BLDCNT;
       *blendControl = 0x3f10;
@@ -478,7 +478,7 @@ void Caverns_InitializeIndra(void) {
   struct Actor *object;
   s32 arg;
 
-  Actor_GetById(ACTOR_FELIX)->priorityFlags |= 0x20;
+  Actor_GetById(ACTOR_FELIX)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Rope_Initialize();
   Rope_Place(0, 0x200, ACTOR_ROPE_POST, ACTOR_SECOND_ROPE_POST);
   object = Actor_GetById(ACTOR_PILLAR);
@@ -571,7 +571,7 @@ void Caverns_WalkIntoPassage(void) {
     Actor_SetPosition(8, 224, 224);
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
-  Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~1;
+  Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
   MapGrid_CopyCellsTo(96, 14, 72, 14, 2, 1);
   Actor_SetDestinationOffsetById(ACTOR_FELIX, 0, 4);
   Actor_WaitForMoveById(ACTOR_FELIX);
@@ -658,10 +658,12 @@ enum CavernsAngaraActorId {
 
 void Caverns_InitializeAngara(void) {
   Caverns_PlaceAngaraBlocks(gCaverns_AngaraBlocks);
-  Actor_GetById(ACTOR_FIRST_BLOCK)->priorityFlags |= 0x20;
-  Actor_GetById(ACTOR_SECOND_BLOCK)->priorityFlags |= 0x20;
-  Actor_GetById(ACTOR_WEST_OF_TABLET)->collisionFlags |= 8;
-  Actor_GetById(ACTOR_EAST_OF_TABLET)->collisionFlags |= 8;
+  Actor_GetById(ACTOR_FIRST_BLOCK)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_GetById(ACTOR_SECOND_BLOCK)->priorityFlags |=
+      ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_GetById(ACTOR_WEST_OF_TABLET)->collisionFlags |= ACTOR_NOT_TARGETED;
+  Actor_GetById(ACTOR_EAST_OF_TABLET)->collisionFlags |= ACTOR_NOT_TARGETED;
 }
 
 /// Walking into Angara Cavern's door opens it and leaves by exit 8.
@@ -761,15 +763,15 @@ struct ActorPlacement gCaverns_Placements[] = {
 struct ActorPlacement gCaverns_IndraPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 168, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gCaverns_AngaraPlacements[] = {
-    ACTOR_PLACEMENT(315, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(315, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 536, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 512, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(386, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 512, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 536, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LIT_CANDLESTICK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 512, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LIT_CANDLESTICK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 512, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

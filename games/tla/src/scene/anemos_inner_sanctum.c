@@ -308,7 +308,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_PALETTE) != 0)
     FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
+    effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     // Read as its low byte: (u8)options->priority orders the loads apart.
     sprite->priority = *(u8 *)&options->priority;
     Scene_SetActorSpritePriority(effect, options->priority);
@@ -537,7 +537,7 @@ s16 part;
   struct Actor *object;
 
   object = FieldActor_Create(SPRITE_PARTICLE, px(x), px(z + 3), px(152));
-  object->motionFlags = 4;
+  object->motionFlags = ACTOR_FLOATS;
   FieldActor_SetSpriteColor(object, (u16)part);
   Scene_SetActorSpritePriority(object, 2);
   Actor_SelectAnimation(object, 7);
@@ -895,7 +895,7 @@ void AnemosInnerSanctum_StepOnTile(void) {
   Event_PlaySound(SE_DRIP);
   object = FieldActor_Create(0x15d, (FIELD_CELL(leader->x.fixed) << 20) + px(8),
                              0, (FIELD_CELL(leader->z.fixed) << 20) + px(8));
-  object->priorityFlags |= 2;
+  object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   object->motionFlags = 0;
   FieldActor_SetSpriteColor(object, 4);
   object->scaleY = Q16_ONE * 11 / 8;
@@ -922,7 +922,7 @@ void AnemosInnerSanctum_StepOnTile(void) {
     Event_PlaySound(SE_582);
     Actor_SetAnimation(id, 2);
     Event_SetFlag(FLAG_SCENE_TEMP_07);
-    Actor_Get(id)->motionFlags = 4;
+    Actor_Get(id)->motionFlags = ACTOR_FLOATS;
     FieldEvent_Wait(80);
     Event_End();
   }
@@ -1169,7 +1169,7 @@ void AnemosInnerSanctum_RaiseDust(void) {
                WINOUT_WINOBJ_BG2 | WINOUT_WINOBJ_BG3 | WINOUT_WINOBJ_CLR;
   REG_DISPCNT |= DISPCNT_OBJWIN_ON;
   Event_PlaySound(SE_DUST_PUFF);
-  object->motionFlags = 3;
+  object->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   OverlayObject_WaitUntilIdle(object);
   object->x.fixed = 0;
   object->y.fixed = 0;
@@ -1409,7 +1409,7 @@ s32 Scene_Initialize(void) {
       if (Event_GetFlag(FLAG_AREA_TEMP_00))
         Actor_SetPosition(ACTOR_ELEVATOR_STATUE, 0, 0);
       if (Event_GetFlag(FLAG_SCENE_TEMP_07))
-        Actor_Get(ACTOR_ELEVATOR_STATUE)->motionFlags = 4;
+        Actor_Get(ACTOR_ELEVATOR_STATUE)->motionFlags = ACTOR_FLOATS;
       if (Event_GetFlag(FLAG_SCENE_TEMP_00))
         MapGrid_CopyCellsTo(54, 87, 44, 86, 1, 1);
       if (Event_GetFlag(FLAG_SCENE_TEMP_01))
@@ -1424,12 +1424,13 @@ s32 Scene_Initialize(void) {
         MapGrid_CopyCellsTo(54, 87, 44, 88, 1, 1);
       if (Event_GetFlag(FLAG_SCENE_TEMP_06))
         MapGrid_CopyCellsTo(54, 87, 46, 88, 1, 1);
-      Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
+      Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
+          ACTOR_PRIORITY_IGNORES_RISES;
     }
   } else if (scene == SCENE_ANEMOS_INNER_SANCTUM_SWITCHES) {
     struct Actor *lift = Actor_Get(ACTOR_SWITCHES_FIRST_SWITCH);
 
-    lift->motionFlags = 2;
+    lift->motionFlags = ACTOR_FALLS;
     lift->groundHeight = -px(14);
     lift->y.fixed = -px(14);
     lift->priorityFlags |= 128;
@@ -1478,7 +1479,7 @@ s32 Scene_Initialize(void) {
         Event_SetFlag(FLAG_SCENE_TEMP_06);
       }
       if (Event_GetFlag(FLAG_SCENE_TEMP_07))
-        Actor_Get(ACTOR_ORIHALCON_CHEST_STATUE)->motionFlags = 4;
+        Actor_Get(ACTOR_ORIHALCON_CHEST_STATUE)->motionFlags = ACTOR_FLOATS;
       if (Event_GetFlag(FLAG_SCENE_TEMP_00))
         MapGrid_CopyCellsTo(17, 71, 8, 69, 1, 1);
       if (Event_GetFlag(FLAG_SCENE_TEMP_05))
@@ -1620,7 +1621,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_PALETTE) != 0)
     FieldActor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
+    effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     Actor_SetSpritePriorityB(effect, options->priority);
   }
   start = flags & EFFECT_USE_START_SCALE;
@@ -1694,7 +1695,7 @@ void CrackedTile_DropIn(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_PlaySound(SE_DUST_PUFF);
-  actor->motionFlags = 3;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;

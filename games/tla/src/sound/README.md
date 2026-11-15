@@ -87,8 +87,10 @@ sounding note together.
 The songs and samples are ordinary files you can open, in
 [`games/tla/sound`](../../sound): each song is a MIDI file in `songs/`,
 such as `mus_madra.mid`, and each sample a WAV in `direct_sound_samples/`. A
-sequence The Broken Seal holds note for note takes its name there, such as
-`se_jump.mid`; the rest keep their row in `gSongTable`.
+sequence takes its sound's name, such as `se_jump.mid`; those nothing
+names keep their row in `gSongTable`. A music sample is named for the
+instrument General MIDI gives its voice slot (slot 47, `timpani.pcm8.wav`),
+an effect's sample for the sounds that play it (`rumble.pcm8.wav`).
 
 ## Where the code is
 

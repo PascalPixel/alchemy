@@ -484,8 +484,8 @@ void AlhafranCave_ShakeUnderEoleosPower(void);
 /// Briggs's wife Chaucha and their son Eoleo visit him in the jail, and Eoleo
 /// shows Psynergy of his own.
 void AlhafranCave_ChauchaAndEoleoVisit(void) {
-  struct Actor *actor21;
-  struct Actor *actor15;
+  struct Actor *eoleo;
+  struct Actor *jailCell;
   struct Actor *effect;
   s32 position[3];
 
@@ -571,23 +571,23 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   (void *)Actor_ShowEmote(ACTOR_JAILER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   // "You're IN JAIL! What did you expect, gourmet cuisine?"
   FieldEvent_ShowMessageThenWait(ACTOR_JAILER, 0, 10);
-  actor21 = Actor_Get(ACTOR_EOLEO);
-  actor15 = Actor_Get(ACTOR_JAIL_CELL_SPRITE);
+  eoleo = Actor_Get(ACTOR_EOLEO);
+  jailCell = Actor_Get(ACTOR_JAIL_CELL_SPRITE);
   Call2((void (*)())Field_StartColorTransition, 8, 0x1210);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 2);
   Event_PlaySound(SE_ASCEND);
   FieldEvent_Wait(40);
-  effect = FieldEffect_SpawnMoveHand(actor21);
-  position[0] = actor15->x.fixed;
-  effect->watchedActor = actor15;
-  position[1] = actor15->y.fixed + px(16);
-  position[2] = actor15->z.fixed;
+  effect = FieldEffect_SpawnMoveHand(eoleo);
+  position[0] = jailCell->x.fixed;
+  effect->watchedActor = jailCell;
+  position[1] = jailCell->y.fixed + px(16);
+  position[2] = jailCell->z.fixed;
   FieldVector_AddPolarOffset(16, 0xc000, position);
   FieldActor_SetMoveTargetFixed(effect, position[0], position[1], position[2]);
   FieldEffect_SnapScaleToFull(effect);
   Actor_SelectAnimation(effect, 4);
-  actor15->update = AlhafranCave_ShakeUnderEoleosPower;
+  jailCell->update = AlhafranCave_ShakeUnderEoleosPower;
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHWEST, 0);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_CREWMAN_ON_THE_BOAT, FACING_EAST, 0);
@@ -626,8 +626,8 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   // "Eoleo!"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 20);
   Actor_ShowEmote(ACTOR_EOLEO, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  actor15->update = 0;
-  Actor_SetSpriteColorMode(actor15, 0);
+  jailCell->update = 0;
+  Actor_SetSpriteColorMode(jailCell, 0);
   UpdateRisingParticleBurst(effect);
   BattleEffect_SetObjectUpdateMode(Actor_Get(ACTOR_EOLEO), 0);
   BattleEffect_WaitForArcGroups();

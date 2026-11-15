@@ -4,6 +4,7 @@
 /// (AnemosInnerSanctum_StepOnTile), pillars of light
 /// (AnemosInnerSanctum_LightThePillar) and Sand, up to the guardian summoned at
 /// the end (AnemosInnerSanctum_SummonTheGuardian).
+#include "field/map_grid.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "field/event_inline.h"
@@ -404,7 +405,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gAnemosInnerSanctum_Placements[];
 extern struct ActorPlacement gAnemosInnerSanctum_DragonSkinChestPlacements[];
-extern struct ActorPlacement gAnemosInnerSanctum_Room2Placements[];
+extern struct ActorPlacement gAnemosInnerSanctum_ElevatorPlacements[];
 extern struct ActorPlacement gAnemosInnerSanctum_SwitchesPlacements[];
 extern s32 gAnemosInnerSanctum_OrihalconChestPlacements[];
 extern struct ActorPlacement gAnemosInnerSanctum_GuardianPlacements[];
@@ -413,7 +414,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST)
     return gAnemosInnerSanctum_DragonSkinChestPlacements;
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_2)
-    return gAnemosInnerSanctum_Room2Placements;
+    return gAnemosInnerSanctum_ElevatorPlacements;
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_SWITCHES)
     return gAnemosInnerSanctum_SwitchesPlacements;
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST)
@@ -791,13 +792,13 @@ void AnemosInnerSanctum_StepOntoCenter(void) {
   GameFlag_Clear(FLAG_SCENE_TEMP_00);
 }
 
-extern s16 gAnemosInnerSanctum_Room2Blocks[];
+extern s16 gAnemosInnerSanctum_ElevatorBlocks[];
 extern s16 gAnemosInnerSanctum_SwitchesBlocks[];
 extern s16 gAnemosInnerSanctum_OrihalconChestBlocks[];
 
 void AnemosInnerSanctum_StartMovingBlock(void) {
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_2) {
-    Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_Room2Blocks);
+    Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_ElevatorBlocks);
   } else {
     if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_SWITCHES) {
       Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_SwitchesBlocks);
@@ -1140,7 +1141,7 @@ void AnemosInnerSanctum_StartFollower(void) {
     object = Actor_Get(9);
   else
     object = Actor_Get(10);
-  if (*(s16 *)((u8 *)Actor_Get(gMainRoutineWork.leaderActorId) + 18) <= 247) {
+  if (Actor_Get(gMainRoutineWork.leaderActorId)->z.part[0].pixel <= 247) {
     object->motionFlags = 0;
     object->update = AnemosInnerSanctum_FollowLeader;
     object->riseBaseY = Actor_Get(gMainRoutineWork.leaderActorId)->x.fixed;
@@ -1261,7 +1262,7 @@ void AnemosInnerSanctum_SummonTheGuardian(void) {
 
 extern struct Trigger gAnemosInnerSanctum_Triggers[];
 extern struct Trigger gAnemosInnerSanctum_DragonSkinChestTriggers[];
-extern struct Trigger gAnemosInnerSanctum_Room2Triggers[];
+extern struct Trigger gAnemosInnerSanctum_ElevatorTriggers[];
 extern struct Trigger gAnemosInnerSanctum_SwitchesTriggers[];
 extern struct Trigger gAnemosInnerSanctum_OrihalconChestTriggers[];
 extern struct Trigger gAnemosInnerSanctum_GuardianTriggers[];
@@ -1270,7 +1271,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST)
     return gAnemosInnerSanctum_DragonSkinChestTriggers;
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_2)
-    return gAnemosInnerSanctum_Room2Triggers;
+    return gAnemosInnerSanctum_ElevatorTriggers;
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_SWITCHES)
     return gAnemosInnerSanctum_SwitchesTriggers;
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST)
@@ -1386,23 +1387,13 @@ extern s16 gAnemosInnerSanctum_DimColors[];
 extern u16 gAnemosInnerSanctum_CycleSlots[];
 
 s32 Scene_Initialize(void) {
-  s32 v_r1, v_r6, v_r7, v_r2, v_r5, v_r3, v_r0;
-  struct Actor *t94;
-  struct Actor *t95;
-  struct Actor *t60;
-  struct Actor *t92;
-  struct Actor *t42;
-  struct Actor *t106;
-  s32 t78, t80;
-  s32 t91;
-  s32 v_two;
+  s32 scene;
+  s32 nearStairs;
+  s32 entrance;
 
-  v_r2 = (s32)Ram_HeapSlots;
-  v_r7 = 0x204;
-  v_r6 = (s32)&gMainRoutineWork;
-  FIELD_AT(FIELD_AT(v_r2, s32, 108), s32, 428) = v_r7;
-  v_r1 = gMainRoutineWork.next;
-  if (v_r1 == SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST) {
+  gFieldWork->transition = 0x204;
+  scene = gMainRoutineWork.next;
+  if (scene == SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST) {
     Palette_SetColors((s32)gAnemosInnerSanctum_PaletteSlots,
                       (s32)gAnemosInnerSanctum_PaletteColors,
                       (s32)gAnemosInnerSanctum_DimColors,
@@ -1423,279 +1414,178 @@ s32 Scene_Initialize(void) {
       AnemosInnerSanctum_DropSpark(0x238, 40, 2);
       MapGrid_CopyCellsTo(101, 46, 101, 20, 9, 8);
     }
-    if (!Event_GetFlag(0xa8b))
-      goto done;
-    MapGrid_CopyCellsTo(54, 7, 33, 7, 1, 2);
-    MapGrid_SetCellHeight(0x2180000, 0x880000, 0, 0);
-    goto done;
-  }
-  if (v_r1 != SCENE_ANEMOS_INNER_SANCTUM_2)
-    goto L_0200a1b4;
-  FieldActor_SetSpritePriority(8, 1);
-  if ((Event_GetFlag(0xa80)) != 0) {
-    Actor_SetPosition(8, 296, 248);
-    FieldActor_SetSpritePriority(8, 2);
-  }
-  if ((Event_GetFlag(0xa81)) != 0) {
-    Actor_SetPosition(10, 440, 760);
-  }
-  Call1((void (*)())Actor_PlaceBlocks, (s32)gAnemosInnerSanctum_Room2Blocks);
-  FIELD_AT(((s32)Actor_Get((FIELD_AT(v_r6, s32, 532)))), u8, 35) |= 64;
-  FIELD_AT(((s32)Actor_Get(9)), u8, 85) = 0;
-  FIELD_AT(((s32)Actor_Get(9)), u8, 35) |= 128;
-  if ((FIELD_AT(v_r6, s16, 482)) != 17)
-    goto L_0200a03c;
-  if ((Event_GetFlag(FLAG_AREA_TEMP_00)) == 0)
-    goto L_0200a03c;
-  Actor_SetAnimation(9, 2);
-  Actor_SetPosition(9, 728, 120);
-L_0200a03c:
-  if (gMainRoutineWork.entrance == 18 && GameFlag_Get(FLAG_AREA_TEMP_00) == 0)
-    AnemosInnerSanctum_RaiseFirstStatue();
-  {
-    struct MainRoutineWork *work = &gMainRoutineWork;
-    if (work->entrance != 10)
-      goto done;
-    if ((Event_GetFlag(FLAG_AREA_TEMP_00)) != 0) {
-      Actor_SetPosition(9, 0, 0);
+    if (Event_GetFlag(0xa8b)) {
+      MapGrid_CopyCellsTo(54, 7, 33, 7, 1, 2);
+      MapGrid_SetCellHeight(0x2180000, 0x880000, 0, 0);
     }
-    if ((Event_GetFlag(FLAG_SCENE_TEMP_07)) != 0) {
-      t42 = Actor_Get(9);
-      t42->motionFlags = 4;
+  } else if (scene == SCENE_ANEMOS_INNER_SANCTUM_2) {
+    FieldActor_SetSpritePriority(8, 1);
+    if (Event_GetFlag(0xa80)) {
+      Actor_SetPosition(8, 296, 248);
+      FieldActor_SetSpritePriority(8, 2);
     }
-    if ((Event_GetFlag(FLAG_SCENE_TEMP_00)) != 0) {
-      MapGrid_CopyCellsTo(54, 87, 44, 86, 1, 1);
+    if (Event_GetFlag(0xa81))
+      Actor_SetPosition(10, 440, 760);
+    Call1((void (*)())Actor_PlaceBlocks,
+          (s32)gAnemosInnerSanctum_ElevatorBlocks);
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+    Actor_Get(9)->motionFlags = 0;
+    Actor_Get(9)->priorityFlags |= 128;
+    if (gMainRoutineWork.entrance == 17 && Event_GetFlag(FLAG_AREA_TEMP_00)) {
+      Actor_SetAnimation(9, 2);
+      Actor_SetPosition(9, 728, 120);
     }
-    if ((Event_GetFlag(FLAG_SCENE_TEMP_01)) != 0) {
-      MapGrid_CopyCellsTo(54, 87, 46, 86, 1, 1);
+    if (gMainRoutineWork.entrance == 18 && GameFlag_Get(FLAG_AREA_TEMP_00) == 0)
+      AnemosInnerSanctum_RaiseFirstStatue();
+    if (gMainRoutineWork.entrance == 10) {
+      if (Event_GetFlag(FLAG_AREA_TEMP_00))
+        Actor_SetPosition(9, 0, 0);
+      if (Event_GetFlag(FLAG_SCENE_TEMP_07))
+        Actor_Get(9)->motionFlags = 4;
+      if (Event_GetFlag(FLAG_SCENE_TEMP_00))
+        MapGrid_CopyCellsTo(54, 87, 44, 86, 1, 1);
+      if (Event_GetFlag(FLAG_SCENE_TEMP_01))
+        MapGrid_CopyCellsTo(54, 87, 46, 86, 1, 1);
+      if (Event_GetFlag(FLAG_SCENE_TEMP_02))
+        MapGrid_CopyCellsTo(54, 87, 43, 87, 1, 1);
+      if (Event_GetFlag(FLAG_SCENE_TEMP_03))
+        MapGrid_CopyCellsTo(54, 87, 45, 87, 1, 1);
+      if (Event_GetFlag(FLAG_SCENE_TEMP_04))
+        MapGrid_CopyCellsTo(54, 87, 47, 87, 1, 1);
+      if (Event_GetFlag(FLAG_SCENE_TEMP_05))
+        MapGrid_CopyCellsTo(54, 87, 44, 88, 1, 1);
+      if (Event_GetFlag(FLAG_SCENE_TEMP_06))
+        MapGrid_CopyCellsTo(54, 87, 46, 88, 1, 1);
+      Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
     }
-    if ((Event_GetFlag(FLAG_SCENE_TEMP_02)) != 0) {
-      MapGrid_CopyCellsTo(54, 87, 43, 87, 1, 1);
+  } else if (scene == SCENE_ANEMOS_INNER_SANCTUM_SWITCHES) {
+    struct Actor *lift = Actor_Get(14);
+
+    lift->motionFlags = 2;
+    lift->groundHeight = -px(14);
+    lift->y.fixed = -px(14);
+    lift->priorityFlags |= 128;
+    Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+    Actor_Get(9)->riseCounter = 1;
+    if (Event_GetFlag(0xa82))
+      Actor_SetPosition(8, 56, 424);
+    if (Event_GetFlag(0xa83)) {
+      Actor_SetPosition(10, 536, 360);
+      MapGrid_CopyCellsTo(51, 20, 31, 20, 1, 2);
+      MapGrid_SetCellHeight(0x1f00000, 0x1500000, 0, 0);
     }
-    if ((Event_GetFlag(FLAG_SCENE_TEMP_03)) != 0) {
-      MapGrid_CopyCellsTo(54, 87, 45, 87, 1, 1);
+    if (Event_GetFlag(0xa84))
+      Actor_SetPosition(13, 744, 456);
+    if (Event_GetFlag(0xa85)) {
+      if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) && !Event_GetFlag(0xa84))
+        Actor_SetPositionFixed(13, px(Actor_Get(12)->x.part[0].pixel),
+                               px(Actor_Get(12)->z.part[0].pixel));
+      Actor_SetPosition(12, 728, 472);
     }
-    if ((Event_GetFlag(FLAG_SCENE_TEMP_04)) != 0) {
-      MapGrid_CopyCellsTo(54, 87, 47, 87, 1, 1);
+    Call1((void (*)())Actor_PlaceBlocks,
+          (s32)gAnemosInnerSanctum_SwitchesBlocks);
+  } else if (scene == SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST) {
+    if (Event_GetFlag(0xa86))
+      Actor_SetPosition(9, 264, 360);
+    Call1((void (*)())Actor_PlaceBlocks,
+          (s32)gAnemosInnerSanctum_OrihalconChestBlocks);
+    nearStairs = *(u16 *)&gMainRoutineWork.entrance;
+    entrance = gMainRoutineWork.entrance;
+    if (entrance == 1) {
+      CrackedTiles_Find(33, 0x280, 0x380, 18, 68);
+      if (Event_GetFlag(FLAG_AREA_TEMP_04) == 0) {
+        Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+        Actor_Get(8)->motionFlags = 0;
+        Actor_Get(8)->priorityFlags |= 128;
+      } else {
+        Actor_SetPosition(8, 0, 0);
+        Event_SetFlag(FLAG_SCENE_TEMP_00);
+        Event_SetFlag(FLAG_SCENE_TEMP_01);
+        Event_SetFlag(FLAG_SCENE_TEMP_02);
+        Event_SetFlag(FLAG_SCENE_TEMP_03);
+        Event_SetFlag(FLAG_SCENE_TEMP_04);
+        Event_SetFlag(FLAG_SCENE_TEMP_05);
+        Event_SetFlag(FLAG_SCENE_TEMP_06);
+      }
+      if (Event_GetFlag(FLAG_SCENE_TEMP_07))
+        Actor_Get(8)->motionFlags = 4;
+      if (Event_GetFlag(FLAG_SCENE_TEMP_00))
+        MapGrid_CopyCellsTo(17, 71, 8, 69, 1, 1);
+      if (Event_GetFlag(FLAG_SCENE_TEMP_05))
+        MapGrid_CopyCellsTo(17, 71, 6, 71, 1, 1);
+      if (Event_GetFlag(FLAG_SCENE_TEMP_01))
+        MapGrid_CopyCellsTo(17, 71, 5, 75, 1, 1);
+      if (Event_GetFlag(FLAG_SCENE_TEMP_02))
+        MapGrid_CopyCellsTo(17, 71, 8, 75, 1, 1);
+      if (Event_GetFlag(FLAG_SCENE_TEMP_03))
+        MapGrid_CopyCellsTo(17, 71, 11, 75, 1, 1);
+      if (Event_GetFlag(FLAG_SCENE_TEMP_04))
+        MapGrid_CopyCellsTo(17, 71, 8, 73, 1, 1);
+      if (Event_GetFlag(FLAG_SCENE_TEMP_06))
+        MapGrid_CopyCellsTo(17, 71, 10, 71, 1, 1);
+    } else if (entrance == 11) {
+      CrackedTiles_Find(33, 0x280, 0x380, 18, 68);
+      CrackedTile_PlaceLanding(22, 0, FLAG_SCENE_TEMP_04);
+    } else if (entrance == 12) {
+      CrackedTiles_Find(35, 0x280, 0x380, 18, 68);
+      if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
+        CrackedTile_PlaceLanding(36, -36, FLAG_SCENE_TEMP_04);
+    } else if ((u32)((nearStairs - 4) << 16) <= 0x10000) {
+      CrackedTiles_Find(35, 0x280, 0x380, 18, 68);
     }
-    if ((Event_GetFlag(FLAG_SCENE_TEMP_05)) != 0) {
-      MapGrid_CopyCellsTo(54, 87, 44, 88, 1, 1);
+  } else if (scene == SCENE_ANEMOS_INNER_SANCTUM_GUARDIAN) {
+    struct MapWork *map = Ram_HeapSlots->mapGrid;
+
+    switch (gMainRoutineWork.entrance) {
+    case 7:
+      if (Event_GetFlag(FLAG_AREA_TEMP_04) == 0)
+        Actor_SetPosition(11, 0, 0);
+    case 12:
+      Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
+      Actor_SetAnimation(11, 2);
+      Actor_Get(11)->motionFlags = 0;
+      Actor_Get(11)->priorityFlags |= 128;
+      Actor_SetAnimation(11, 2);
+      if (Event_GetFlag(FLAG_AREA_TEMP_04) == 0 &&
+          gMainRoutineWork.entrance == 12)
+        AnemosInnerSanctum_RaiseSecondStatue();
+      else
+        Actor_Get(11)->y.fixed = -px(16);
+      break;
+    case 1:
+    case 2:
+      if (Event_GetFlag(FLAG_AREA_TEMP_01)) {
+        Actor_SetPosition(8, 120, 120);
+        Event_SetFlag(FLAG_SCENE_TEMP_00);
+      } else {
+        MapGrid_CopyCellsTo(18, 1, 11, 4, 1, 2);
+        MapGrid_SetCellHeight(px(184), px(88), 0, 2);
+      }
+      break;
+    case 3:
+    case 4:
+      if (Event_GetFlag(FLAG_AREA_TEMP_02)) {
+        Actor_SetPosition(9, 552, 120);
+        Event_SetFlag(FLAG_SCENE_TEMP_00);
+      } else {
+        MapGrid_CopyCellsTo(18, 1, 26, 4, 1, 2);
+        MapGrid_SetCellHeight(px(424), px(88), 0, 2);
+      }
+      break;
+    case 5:
+    case 6:
+      if (Event_GetFlag(FLAG_AREA_TEMP_03)) {
+        Actor_SetPosition(10, 792, 120);
+        Event_SetFlag(FLAG_SCENE_TEMP_00);
+      } else {
+        MapGrid_CopyCellsTo(18, 1, 53, 4, 1, 2);
+        MapGrid_SetCellHeight(px(856), px(88), 0, 2);
+      }
+      map->minX += px(8);
+      map->maxX += px(8);
+      break;
     }
-    if ((Event_GetFlag(FLAG_SCENE_TEMP_06)) != 0) {
-      MapGrid_CopyCellsTo(54, 87, 46, 88, 1, 1);
-    }
-    FIELD_AT(((s32)Actor_Get((work->leaderActorId))), u8, 35) |= 32;
   }
-  goto done;
-L_0200a1b4:
-  if (v_r1 != SCENE_ANEMOS_INNER_SANCTUM_SWITCHES)
-    goto L_0200a2ce;
-  t60 = Actor_Get(14);
-  v_two = 2;
-  v_r5 = 1;
-  t60->motionFlags = v_two;
-  t60->groundHeight = -px(14);
-  t60->y.fixed = -px(14);
-  t60->priorityFlags |= 128;
-  FIELD_AT(((s32)Actor_Get((FIELD_AT(v_r6, s32, 532)))), u8, 35) |= 64;
-  FIELD_AT(((s32)Actor_Get(9)), u8, 98) = v_r5;
-  if ((Event_GetFlag(0xa82)) != 0) {
-    Actor_SetPosition(8, 56, 424);
-  }
-  if ((Event_GetFlag(0xa83)) != 0) {
-    Actor_SetPosition(10, 536, 360);
-    MapGrid_CopyCellsTo(51, 20, 31, 20, v_r5, v_two);
-    MapGrid_SetCellHeight(0x1f00000, 0x1500000, 0, 0);
-  }
-  if ((Event_GetFlag(0xa84)) != 0) {
-    Actor_SetPosition(13, 744, 456);
-  }
-  if ((Event_GetFlag(0xa85)) == 0)
-    goto L_0200a2c6;
-  if ((Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) != 0)
-    goto L_0200a2b8;
-  if ((Event_GetFlag(0xa84)) != 0)
-    goto L_0200a2b8;
-  t78 = FIELD_AT(((s32)Actor_Get(12)), s16, 10);
-  t80 = FIELD_AT(((s32)Actor_Get(12)), s16, 18);
-  v_r5 = px(t78);
-  Actor_SetPositionFixed(13, v_r5, px(t80));
-L_0200a2b8:
-  Actor_SetPosition(12, 728, 472);
-L_0200a2c6:
-  Call1((void (*)())Actor_PlaceBlocks, (s32)gAnemosInnerSanctum_SwitchesBlocks);
-  goto done;
-L_0200a2ce:
-  if (v_r1 != SCENE_ANEMOS_INNER_SANCTUM_ORIHALCON_CHEST)
-    goto L_0200a52c;
-  if ((Event_GetFlag(0xa86)) != 0) {
-    Actor_SetPosition(9, 264, 360);
-  }
-  Call1((void (*)())Actor_PlaceBlocks,
-        (s32)gAnemosInnerSanctum_OrihalconChestBlocks);
-  v_r3 = (FIELD_AT(v_r6, u16, 482));
-  v_r2 = (FIELD_AT(v_r6, s16, 482));
-  if (v_r2 != 1)
-    goto L_0200a4a2;
-  CrackedTiles_Find(33, 0x280, 0x380, 18, 68);
-  v_r5 = (Event_GetFlag(FLAG_AREA_TEMP_04));
-  if (v_r5 == 0) {
-    t91 = FIELD_AT(v_r6, s32, 532);
-    t92 = Actor_Get(t91);
-    t92->priorityFlags |= 64;
-    t94 = Actor_Get(8);
-    t94->motionFlags = v_r5;
-    t95 = Actor_Get(8);
-    t95->priorityFlags |= 128;
-    goto L_0200a3a8;
-  }
-  Actor_SetPosition(8, 0, 0);
-  Event_SetFlag(FLAG_SCENE_TEMP_00);
-  Event_SetFlag(FLAG_SCENE_TEMP_01);
-  Event_SetFlag(FLAG_SCENE_TEMP_02);
-  Event_SetFlag(FLAG_SCENE_TEMP_03);
-  Event_SetFlag(v_r7);
-  Event_SetFlag(FLAG_SCENE_TEMP_05);
-  Event_SetFlag(FLAG_SCENE_TEMP_06);
-L_0200a3a8:
-  if ((Event_GetFlag(FLAG_SCENE_TEMP_07)) != 0) {
-    t106 = Actor_Get(8);
-    t106->motionFlags = 4;
-  }
-  if ((Event_GetFlag(FLAG_SCENE_TEMP_00)) != 0) {
-    MapGrid_CopyCellsTo(17, 71, 8, 69, 1, 1);
-  }
-  if ((Event_GetFlag(FLAG_SCENE_TEMP_05)) != 0) {
-    MapGrid_CopyCellsTo(17, 71, 6, 71, 1, 1);
-  }
-  if ((Event_GetFlag(FLAG_SCENE_TEMP_01)) != 0) {
-    MapGrid_CopyCellsTo(17, 71, 5, 75, 1, 1);
-  }
-  if ((Event_GetFlag(FLAG_SCENE_TEMP_02)) != 0) {
-    MapGrid_CopyCellsTo(17, 71, 8, 75, 1, 1);
-  }
-  if ((Event_GetFlag(FLAG_SCENE_TEMP_03)) != 0) {
-    MapGrid_CopyCellsTo(17, 71, 11, 75, 1, 1);
-  }
-  if ((Event_GetFlag(FLAG_SCENE_TEMP_04)) != 0) {
-    MapGrid_CopyCellsTo(17, 71, 8, 73, 1, 1);
-  }
-  if ((Event_GetFlag(FLAG_SCENE_TEMP_06)) == 0)
-    goto done;
-  MapGrid_CopyCellsTo(17, 71, 10, 71, 1, 1);
-  goto done;
-L_0200a4a2:
-  if (v_r2 == 11) {
-    CrackedTiles_Find(33, 0x280, 0x380, 18, 68);
-    CrackedTile_PlaceLanding(22, 0, v_r7);
-    goto done;
-  }
-  if (v_r2 != 12)
-    goto L_0200a4f4;
-  CrackedTiles_Find(35, 0x280, 0x380, 18, 68);
-  if ((Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) != 0)
-    goto done;
-  CrackedTile_PlaceLanding(36, -36, v_r7);
-  goto done;
-L_0200a4f4:
-  if ((u32)px(v_r3 - 4) > (u32)0x10000)
-    goto done;
-  CrackedTiles_Find(35, 0x280, 0x380, 18, 68);
-  goto done;
-L_0200a52c:
-  if (v_r1 != SCENE_ANEMOS_INNER_SANCTUM_GUARDIAN)
-    goto done;
-  v_r5 = FIELD_AT(v_r2, s32, 32);
-  v_r3 = ((FIELD_AT(v_r6, s16, 482)) - 1);
-  if ((u32)v_r3 > (u32)11)
-    goto done;
-  switch (v_r3) {
-  case 0:
-    goto L_0200a606;
-  case 1:
-    goto L_0200a606;
-  case 2:
-    goto L_0200a63a;
-  case 3:
-    goto L_0200a63a;
-  case 4:
-    goto L_0200a686;
-  case 5:
-    goto L_0200a686;
-  case 6:
-    goto L_0200a580;
-  case 7:
-    goto done;
-  case 8:
-    goto done;
-  case 9:
-    goto done;
-  case 10:
-    goto done;
-  case 11:
-    goto L_0200a596;
-  }
-L_0200a580:
-  if ((Event_GetFlag(FLAG_AREA_TEMP_04)) != 0)
-    goto L_0200a596;
-  Actor_SetPosition(11, 0, 0);
-L_0200a596:
-  FIELD_AT(((s32)Actor_Get((gMainRoutineWork.leaderActorId))), u8, 35) |= 64;
-  Actor_SetAnimation(11, 2);
-  FIELD_AT(((s32)Actor_Get(11)), u8, 85) = 0;
-  FIELD_AT(((s32)Actor_Get(11)), u8, 35) |= 128;
-  Actor_SetAnimation(11, 2);
-  /* FAKEMATCH(dead): v_r6 set again to the address it already holds. */
-  v_r6 = (s32)&gMainRoutineWork;
-  if ((Event_GetFlag(FLAG_AREA_TEMP_04)) != 0)
-    goto L_0200a5fa;
-  if ((FIELD_AT(v_r6, s16, 482)) != 12)
-    goto L_0200a5fa;
-  AnemosInnerSanctum_RaiseSecondStatue();
-  goto done;
-L_0200a5fa:
-  FIELD_AT(((s32)Actor_Get(11)), s32, 12) = 0xfff00000;
-  goto done;
-L_0200a606:
-  if ((Event_GetFlag(FLAG_AREA_TEMP_01)) != 0) {
-    v_r2 = 240;
-    v_r0 = 8;
-    v_r1 = 0x780000;
-    goto L_0200a650;
-  }
-  MapGrid_CopyCellsTo(18, 1, 11, 4, 1, 2);
-  v_r1 = 176;
-  v_r0 = 0xb80000;
-  goto L_0200a67a;
-L_0200a63a:
-  if ((Event_GetFlag(FLAG_AREA_TEMP_02)) == 0)
-    goto L_0200a660;
-  v_r2 = 240;
-  v_r0 = 9;
-  v_r1 = 0x2280000;
-L_0200a650:
-  Actor_SetPositionFixed(v_r0, v_r1, (v_r2 << 15));
-  Event_SetFlag(FLAG_SCENE_TEMP_00);
-  goto done;
-L_0200a660:
-  MapGrid_CopyCellsTo(18, 1, 26, 4, 1, 2);
-  v_r1 = 176;
-  v_r0 = 0x1a80000;
-L_0200a67a:
-  MapGrid_SetCellHeight(v_r0, (v_r1 << 15), 0, 2);
-  goto done;
-L_0200a686:
-  if ((Event_GetFlag(FLAG_AREA_TEMP_03)) != 0) {
-    Actor_SetPosition(10, 792, 120);
-    Event_SetFlag(FLAG_SCENE_TEMP_00);
-    goto L_0200a6d0;
-  }
-  MapGrid_CopyCellsTo(18, 1, 53, 4, 1, 2);
-  MapGrid_SetCellHeight(0x3580000, 0x580000, 0, 2);
-L_0200a6d0:
-  FIELD_AT(v_r5, s32, 236) = ((FIELD_AT(v_r5, s32, 236)) + 0x80000);
-  FIELD_AT(v_r5, s32, 244) = ((FIELD_AT(v_r5, s32, 244)) + 0x80000);
-done:
   return 0;
 }
 
@@ -1994,7 +1884,7 @@ s32 gAnemosInnerSanctum_SparkScript[] = {
     SC_END,
 };
 
-s16 gAnemosInnerSanctum_Room2Blocks[] = {
+s16 gAnemosInnerSanctum_ElevatorBlocks[] = {
     8, 10, -1,
 };
 
@@ -2157,7 +2047,7 @@ struct ActorPlacement gAnemosInnerSanctum_DragonSkinChestPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gAnemosInnerSanctum_Room2Placements[] = {
+struct ActorPlacement gAnemosInnerSanctum_ElevatorPlacements[] = {
     {272, CONDITION_ALWAYS, 7, 0x1, 0, 0, FACING_NORTH, 2, 2},
     {432, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 0x2, 0, 0, FACING_NORTH, 2, 2},
     {272, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
@@ -2208,7 +2098,7 @@ struct Trigger gAnemosInnerSanctum_DragonSkinChestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gAnemosInnerSanctum_Room2Triggers[] = {
+struct Trigger gAnemosInnerSanctum_ElevatorTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

@@ -140,7 +140,7 @@ void AlhafraManor_GrumbleAboutTheMayor(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAlhafraManorDarnThatMayor);
-  if (*(s16 *)((u8 *)work + 0x166) != 0)
+  if (work->psynergy != 0)
     Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceActorById(ACTOR_MADRAS_MAYOR, gMainRoutineWork.leaderActorId, 0);
   Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
@@ -163,7 +163,7 @@ void AlhafraManor_DefendTheMayor(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAlhafraManorImSureTheMayorHas);
-  if (*(s16 *)((u8 *)work + 0x166) != 0)
+  if (work->psynergy != 0)
     Actor_ShowEmote(ACTOR_JIYA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_WatchAndSetScript(ACTOR_JIYA, gMainRoutineWork.leaderActorId);
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 304, 152);
@@ -201,7 +201,7 @@ void AlhafraManor_DefendTheMayor(void) {
 void AlhafraManor_TellOfTheEasternSea(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  if (*(s16 *)((u8 *)work + 0x166) != 0) {
+  if (work->psynergy != 0) {
     Actor_FaceActorById(ACTOR_MAYOR, gMainRoutineWork.leaderActorId, 0);
     Event_Wait(10);
   }
@@ -257,7 +257,7 @@ void AlhafraManor_TellOfTheEasternSea(void) {
     Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
   }
   Event_End();
-  if (*(s16 *)((u8 *)work + 0x166) != 0)
+  if (work->psynergy != 0)
     Actor_FaceDirection(ACTOR_MAYOR, FACING_NORTH_NORTHEAST, 0);
 }
 
@@ -310,8 +310,6 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#define EVENT_WORD(offset) (*(s32 *)((u8 *)Ram_HeapSlots->fieldWork + (offset)))
-
 void AlhafraManor_CountAnswer(void);
 
 /// Walks actor `id` to the controlled character's cell, when it has one.
@@ -345,8 +343,8 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
   Event_Wait(30);
   FieldCamera_MoveTo(344, CAMERA_KEEP, 120, 0);
-  EVENT_WORD(0x1b4) = 60;
-  EVENT_WORD(0x1ac) = 0x100;
+  gFieldWork->transitionFrames = 60;
+  gFieldWork->transition = 0x100;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
@@ -396,7 +394,7 @@ void AlhafraManor_BriggsEscapes(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_MAYOR, 0, 10);
   Actor_FaceDirection(ACTOR_MAYOR, FACING_WEST, 0);
   Event_Wait(40);
-  EVENT_WORD(0x1ac) = 0x100;
+  gFieldWork->transition = 0x100;
   PaletteFade_ApplyTarget(0x10002, 0);
   PaletteFade_StartInterpolation(40);
   Event_WaitTransitionFrames();
@@ -728,8 +726,8 @@ void AlhafraManor_BriggsEscapes(void) {
   WALK_TO_LEADER(13);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Event_End();
-  EVENT_WORD(0x1b4) = 16;
-  EVENT_WORD(0x1ac) = 521;
+  gFieldWork->transitionFrames = 16;
+  gFieldWork->transition = 521;
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
 }
 

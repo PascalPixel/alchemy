@@ -111,29 +111,26 @@ void EasternAlhafraShip_FinishMovingCrate(s32 unused, s32 id) {
 }
 
 void EasternAlhafraShip_ShakeDownTheBread(void) {
-  s32 v5;
-  struct Actor *object0;
-  s32 v6;
-  struct Actor *object1;
+  s32 leader;
+  s32 jump;
 
   GameFlag_Set(FLAG_BREAD_SHAKEN_DOWN);
-  v5 = &gMainRoutineWork;
-  v5 = (v5 + 0x214);
-  object0 = Actor_GetById(*(s32 *)((u8 *)v5 + 0));
-  v6 = 192;
-  v6 = (v6 << 11);
-  object0->velocityY = v6;
-  Actor_SetSpeed(*(s32 *)((u8 *)v5 + 0), 2);
-  Actor_WalkTo(*(s32 *)((u8 *)v5 + 0), 136, 488);
+  /* FAKEMATCH(temporary): the leader's id read through its address kept as a
+   * number, so that it stays in a register. */
+  leader = (s32)&gMainRoutineWork;
+  leader += offsetof(struct MainRoutineWork, leaderActorId);
+  jump = px(6);
+  Actor_GetById(*(s32 *)leader)->velocityY = jump;
+  Actor_SetSpeed(*(s32 *)leader, 2);
+  Actor_WalkTo(*(s32 *)leader, 136, 488);
   Event_Wait(10);
   Actor_SetDestination(ACTOR_LARGE_BREAD, 120, 472);
   Actor_MoveToAndWaitById(ACTOR_STACKED_CRATES, 136, 475);
-  object1 = Actor_GetById(ACTOR_LARGE_BREAD);
-  object1->velocityY = v6;
+  Actor_GetById(ACTOR_LARGE_BREAD)->velocityY = jump;
   Sound_Play(SE_POUND);
-  Actor_WaitForMoveById(*(s32 *)((u8 *)v5 + 0));
-  Actor_SetAnimationById(*(s32 *)((u8 *)v5 + 0), 1);
-  Actor_FaceDirectionById(*(s32 *)((u8 *)v5 + 0), FACING_NORTH, 0);
+  Actor_WaitForMoveById(*(s32 *)leader);
+  Actor_SetAnimationById(*(s32 *)leader, 1);
+  Actor_FaceDirectionById(*(s32 *)leader, FACING_NORTH, 0);
   Event_Wait(20);
   Actor_WaitForMoveById(ACTOR_LARGE_BREAD);
   Sound_Play(SE_DOOR_CLOSE);
@@ -551,55 +548,29 @@ void EasternAlhafraShip_MayorArrives(void) {
 }
 
 void EasternAlhafraShip_BriggsIsCaught(void) {
-  struct Actor *object0;
-  struct Actor *object1;
-  struct Actor *object2;
-  struct Actor *object3;
-  struct Actor *object4;
-  struct Actor *object5;
-  s32 result6;
-  struct Actor *result7;
-  struct Actor *result8;
-  struct Actor *result9;
-  struct Actor *object10;
-  struct Actor *object11;
-  struct Actor *object12;
-  struct Actor *object13;
-  struct Actor *object14;
-  struct Actor *object15;
-  struct Actor *object16;
-  struct Actor *object17;
-  s32 result18;
-  s32 result19;
-  struct Actor *object20;
-  struct Actor *object21;
-  struct Actor *object22;
+  struct Actor *emote;
+  struct Actor *briggs;
+  struct Actor *leader;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgWellThatTakes);
   Actor_SetPosition(ACTOR_BRIGGS, 436, 416);
   FieldActor_SetSpriteRotationById(ACTOR_BRIGGS, 0x4000);
-  object0 = Actor_GetById(ACTOR_BRIGGS);
-  Actor_SetSpriteFlags((s32)object0, 0);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_BRIGGS), 0);
   Actor_SetPosition(ACTOR_BRIGGS_MATE, 456, 432);
   FieldActor_SetSpriteRotationById(ACTOR_BRIGGS_MATE, 0x8000);
-  object1 = Actor_GetById(ACTOR_BRIGGS_MATE);
-  Actor_SetSpriteFlags((s32)object1, 0);
-  object2 = Actor_GetById(ACTOR_BRIGGS_MATE);
-  object2->facing = FACING_SOUTH;
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_BRIGGS_MATE), 0);
+  Actor_GetById(ACTOR_BRIGGS_MATE)->facing = FACING_SOUTH;
   Actor_SetPosition(ACTOR_FIRST_PIRATE, 456, 460);
   FieldActor_SetSpriteRotationById(ACTOR_FIRST_PIRATE, 0x8000);
-  object3 = Actor_GetById(ACTOR_FIRST_PIRATE);
-  Actor_SetSpriteFlags((s32)object3, 0);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_FIRST_PIRATE), 0);
   Actor_SetPosition(ACTOR_SECOND_PIRATE, 420, 424);
   Actor_SetSpriteRotationById(ACTOR_SECOND_PIRATE, 0xc000);
-  object4 = Actor_GetById(ACTOR_SECOND_PIRATE);
-  Actor_SetSpriteFlags((s32)object4, 0);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_SECOND_PIRATE), 0);
   Actor_SetPosition(ACTOR_THIRD_PIRATE, 388, 440);
   Actor_SetSpriteRotationById(ACTOR_THIRD_PIRATE, 0x4000);
-  object5 = Actor_GetById(ACTOR_THIRD_PIRATE);
-  Actor_SetSpriteFlags((s32)object5, 0);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_THIRD_PIRATE), 0);
   Actor_SetPosition(ACTOR_KRADEN, 456, 376);
   Actor_SetPosition(ACTOR_JENNA, 472, 392);
   Actor_SetPosition(ACTOR_SHEBA, 472, 376);
@@ -667,8 +638,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(10);
   // "Fine. So, what, I just have to say that Piers isn't one of my men?"
   Event_OpenMessage(8, 0);
-  result6 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (result6 == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
     Event_Wait(10);
@@ -750,11 +720,11 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0, 10);
-  result7 = (struct Actor *)Actor_ShowEmote(ACTOR_BRIGGS,
-                                            EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
-  result7->update = 0;
-  Actor_SetPositionAndResetMotion(result7, (result7->x.fixed + px(22)),
-                                  (result7->y.fixed + px(8)), result7->z.fixed);
+  emote = (struct Actor *)Actor_ShowEmote(ACTOR_BRIGGS,
+                                          EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  emote->update = 0;
+  Actor_SetPositionAndResetMotion(emote, (emote->x.fixed + px(22)),
+                                  (emote->y.fixed + px(8)), emote->z.fixed);
   Event_Wait(30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_WEST, 0);
@@ -797,11 +767,11 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 20);
   Actor_WalkByById(ACTOR_ALHAFRAS_MAYOR, 0, 8);
   Event_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
-  result8 = (struct Actor *)Actor_ShowEmote(
+  emote = (struct Actor *)Actor_ShowEmote(
       ACTOR_BRIGGS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  result8->update = 0;
-  Actor_SetPositionAndResetMotion(result8, (result8->x.fixed + px(22)),
-                                  (result8->y.fixed + px(8)), result8->z.fixed);
+  emote->update = 0;
+  Actor_SetPositionAndResetMotion(emote, (emote->x.fixed + px(22)),
+                                  (emote->y.fixed + px(8)), emote->z.fixed);
   Actor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -992,14 +962,14 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   FieldCamera_WaitForArrival();
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_CHAUCHA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  result9 = (struct Actor *)Actor_ShowEmote(ACTOR_BRIGGS,
-                                            EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  emote = (struct Actor *)Actor_ShowEmote(ACTOR_BRIGGS,
+                                          EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   {
-    s32 x = result9->x.fixed;
-    s32 y = result9->y.fixed;
-    result9->update = 0;
-    Actor_SetPositionAndResetMotion(result9, x + px(22), y + px(8),
-                                    result9->z.fixed);
+    s32 x = emote->x.fixed;
+    s32 y = emote->y.fixed;
+    emote->update = 0;
+    Actor_SetPositionAndResetMotion(emote, x + px(22), y + px(8),
+                                    emote->z.fixed);
   }
   Event_Wait(50);
   FieldCamera_MoveTo(464, CAMERA_KEEP, 344, 1);
@@ -1026,32 +996,26 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   Event_Wait(30);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_BRIGGS, 0, 10);
-  object10 = Actor_GetById(ACTOR_BRIGGS);
-  Actor_SetPositionFixed(ACTOR_BRIGGS,
-                         ((*(s16 *)((u8 *)object10 + 10) << 16) + 0x140000),
-                         ((*(s16 *)((u8 *)object10 + 18) << 16) + 0x80000));
+  briggs = Actor_GetById(ACTOR_BRIGGS);
+  Actor_SetPosition(ACTOR_BRIGGS, briggs->x.part[0].pixel + 20,
+                    briggs->z.part[0].pixel + 8);
   Actor_SetSpriteRotationById(ACTOR_BRIGGS, 0);
-  object11 = Actor_GetById(ACTOR_BRIGGS);
-  Actor_SetSpriteFlags((s32)object11, 1);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_BRIGGS), 1);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_NORTH, 0);
   Actor_Jump(ACTOR_BRIGGS, 6, 40);
   Actor_SetAnimationAndWait(ACTOR_BRIGGS, 4);
   Actor_SetPosition(ACTOR_BRIGGS_MATE, 456, 440);
   Actor_SetSpriteRotationById(ACTOR_BRIGGS_MATE, 0);
-  object12 = Actor_GetById(ACTOR_BRIGGS_MATE);
-  Actor_SetSpriteFlags((s32)object12, 1);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_BRIGGS_MATE), 1);
   Actor_SetPosition(ACTOR_FIRST_PIRATE, 456, 456);
   Actor_SetSpriteRotationById(ACTOR_FIRST_PIRATE, 0);
-  object13 = Actor_GetById(ACTOR_FIRST_PIRATE);
-  Actor_SetSpriteFlags((s32)object13, 1);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_FIRST_PIRATE), 1);
   Actor_SetPosition(ACTOR_SECOND_PIRATE, 424, 424);
   Actor_SetSpriteRotationById(ACTOR_SECOND_PIRATE, 0);
-  object14 = Actor_GetById(ACTOR_SECOND_PIRATE);
-  Actor_SetSpriteFlags((s32)object14, 1);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_SECOND_PIRATE), 1);
   Actor_SetPosition(ACTOR_THIRD_PIRATE, 408, 440);
   Actor_SetSpriteRotationById(ACTOR_THIRD_PIRATE, 0);
-  object15 = Actor_GetById(ACTOR_THIRD_PIRATE);
-  Actor_SetSpriteFlags((s32)object15, 1);
+  Actor_SetSpriteFlags((s32)Actor_GetById(ACTOR_THIRD_PIRATE), 1);
   Actor_FaceDirection(ACTOR_BRIGGS_MATE, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_FIRST_PIRATE, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_SECOND_PIRATE, FACING_NORTH, 0);
@@ -1206,12 +1170,10 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(20);
   Actor_FaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_EAST, 0);
   Event_Wait(10);
-  object16 = Actor_GetById(ACTOR_MADRAS_MAYOR);
-  object16->steeringFlags &= 254;
+  Actor_GetById(ACTOR_MADRAS_MAYOR)->steeringFlags &= 254;
   Actor_WalkToAndWaitById(ACTOR_MADRAS_MAYOR, 456, 312);
   Event_Wait(1);
-  object17 = Actor_GetById(ACTOR_MADRAS_MAYOR);
-  object17->steeringFlags |= 1;
+  Actor_GetById(ACTOR_MADRAS_MAYOR)->steeringFlags |= 1;
   Event_Wait(20);
   Actor_WalkBy(ACTOR_BRIGGS_MATE, 0, -16);
   Actor_WalkBy(ACTOR_FIRST_PIRATE, 0, -16);
@@ -1443,8 +1405,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(10);
   Event_OpenMessage(25, 0);
-  result18 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (result18 == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
     Event_Wait(10);
@@ -1563,8 +1524,7 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(10);
   Event_OpenMessage(6, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
-  result19 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (result19 == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
     Event_Wait(20);
@@ -1582,28 +1542,28 @@ void EasternAlhafraShip_BriggsIsCaught(void) {
   Event_Wait(30);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_WALK);
-  object20 = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object20 != 0) {
-    Actor_SetDestinationById(ACTOR_JENNA, *(s16 *)((u8 *)object20 + 10),
-                             *(s16 *)((u8 *)object20 + 18));
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestinationById(ACTOR_JENNA, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_WALK);
-  object21 = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object21 != 0) {
-    Actor_SetDestinationById(ACTOR_SHEBA, *(s16 *)((u8 *)object21 + 10),
-                             *(s16 *)((u8 *)object21 + 18));
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestinationById(ACTOR_SHEBA, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimationById(ACTOR_KRADEN, 2);
-  object22 = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (object22 != 0) {
-    Actor_SetDestinationById(ACTOR_KRADEN, *(s16 *)((u8 *)object22 + 10),
-                             *(s16 *)((u8 *)object22 + 18));
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (leader != 0) {
+    Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].pixel,
+                             leader->z.part[0].pixel);
   }
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);

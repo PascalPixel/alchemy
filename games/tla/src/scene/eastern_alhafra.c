@@ -431,13 +431,13 @@ void EasternAlhafra_OverhearWorkers(void);
 extern void PushTarget_Push__log(struct PushSlide) __asm__("PushTarget_Push");
 
 void EasternAlhafra_RollLog(void) {
-  struct Actor *actor15;
+  struct Actor *log;
   struct Actor *lastRock;
   struct PushSlide unk;
   s32 facing;
   s32 i;
 
-  actor15 = Actor_GetById(ACTOR_LOG);
+  log = Actor_GetById(ACTOR_LOG);
   lastRock = Actor_GetById(ACTOR_LAST_ROCK);
   facing =
       (Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
@@ -452,26 +452,23 @@ void EasternAlhafra_RollLog(void) {
       FieldEvent_ResolvePendingActions(0);
       FieldCamera_MoveTo(336, CAMERA_KEEP, 560, 1);
       PushTarget_Push__log(unk);
-      MapGrid_SetCellBehavior(actor15->x.fixed - px(24), actor15->z.fixed, 0,
-                              0);
-      MapGrid_SetCellBehavior(actor15->x.fixed + px(8), actor15->z.fixed, 0, 0);
-      MapGrid_SetCellBehavior(actor15->x.fixed - px(24), actor15->z.fixed, 2,
-                              0);
-      MapGrid_SetCellBehavior(actor15->x.fixed - px(8), actor15->z.fixed, 2, 0);
-      MapGrid_SetCellBehavior(actor15->x.fixed + px(8), actor15->z.fixed, 2, 0);
-      MapGrid_SetCellBehavior(actor15->x.fixed + px(24), actor15->z.fixed, 2,
-                              0);
+      MapGrid_SetCellBehavior(log->x.fixed - px(24), log->z.fixed, 0, 0);
+      MapGrid_SetCellBehavior(log->x.fixed + px(8), log->z.fixed, 0, 0);
+      MapGrid_SetCellBehavior(log->x.fixed - px(24), log->z.fixed, 2, 0);
+      MapGrid_SetCellBehavior(log->x.fixed - px(8), log->z.fixed, 2, 0);
+      MapGrid_SetCellBehavior(log->x.fixed + px(8), log->z.fixed, 2, 0);
+      MapGrid_SetCellBehavior(log->x.fixed + px(24), log->z.fixed, 2, 0);
       Actor_SetAnimation(ACTOR_LOG, 3);
       Actor_SetDestinationOffset(ACTOR_LOG, 0, 16);
       FieldEvent_Wait(20);
-      actor15->gravity = 0xccc;
-      actor15->motionFlags = 3;
+      log->gravity = 0xccc;
+      log->motionFlags = 3;
       i = 0;
-      if (actor15->y.fixed > 0) {
+      if (log->y.fixed > 0) {
         do {
           System_Wait(1);
           i++;
-        } while (i <= 59 && actor15->y.fixed > 0);
+        } while (i <= 59 && log->y.fixed > 0);
       }
       EasternAlhafra_PlaceClearedDebris();
       Event_PlaySound(SE_LOG_FALL);
@@ -1016,18 +1013,12 @@ void EasternAlhafra_OverhearWorkers(void) {
 }
 
 void EasternAlhafra_AskToHelpWithMast(void) {
-  s32 result0;
-  s32 result1;
-  s32 result2;
-  s32 result3;
   struct Actor *leader;
 
-  result0 = Event_GetFlag(FLAG_BRIGGS_CAUGHT);
-  if (result0 == 0) {
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) == 0) {
     goto L_020097dc;
   }
-  result1 = Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED);
-  if (result1 != 0) {
+  if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) != 0) {
     goto L_020097dc;
   }
   Event_Start();
@@ -1038,8 +1029,7 @@ void EasternAlhafra_AskToHelpWithMast(void) {
   FieldActor_LaunchFromLeader(ACTOR_KRADEN, 0, -16, FACING_SOUTH);
   FieldActor_LaunchFromLeader(ACTOR_JENNA, 16, 0, FACING_WEST);
   FieldActor_LaunchFromLeader(ACTOR_SHEBA, 16, -16, FACING_SOUTHWEST);
-  result2 = Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS));
-  if (result2 != 0) {
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)) != 0) {
     FieldActor_LaunchFromLeader(ACTOR_PIERS, 8, 16, FACING_NORTH);
   }
   FieldActor_WaitForMoveById(ACTOR_SHEBA);
@@ -1069,8 +1059,7 @@ void EasternAlhafra_AskToHelpWithMast(void) {
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   // "Well then, we'd better get right to it, hadn't we?"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
-  result3 = Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS));
-  if (result3 != 0) {
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)) != 0) {
     Actor_SetSpeed(ACTOR_PIERS, 1.2);
     Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -1114,10 +1103,6 @@ L_020097dc:
 }
 
 void EasternAlhafra_AskIfFinished(void) {
-  s32 result0;
-  s32 result1;
-  s32 result2;
-  s32 result3;
   struct Actor *leader;
 
   Event_Start();
@@ -1127,8 +1112,7 @@ void EasternAlhafra_AskIfFinished(void) {
   FieldActor_LaunchFromLeader(ACTOR_KRADEN, 0, -16, FACING_SOUTH);
   FieldActor_LaunchFromLeader(ACTOR_JENNA, 16, 0, FACING_WEST);
   FieldActor_LaunchFromLeader(ACTOR_SHEBA, 16, -16, FACING_SOUTHWEST);
-  result0 = Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS));
-  if (result0 != 0) {
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)) != 0) {
     FieldActor_LaunchFromLeader(ACTOR_PIERS, 8, 16, FACING_NORTH);
   }
   FieldActor_WaitForMoveById(ACTOR_SHEBA);
@@ -1138,8 +1122,7 @@ void EasternAlhafra_AskIfFinished(void) {
   FieldEvent_Wait(10);
   // "Are you finished here, Felix?"
   Event_OpenMessage(26, 0);
-  result1 = FieldEvent_AskYesNoWithActorAnimation(4, 0);
-  if (result1 == 0) {
+  if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
     FieldEvent_Wait(20);
     Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
@@ -1159,8 +1142,7 @@ void EasternAlhafra_AskIfFinished(void) {
     Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
     FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   }
-  result2 = ((s32 (*)())GameFlag_Get)(7);
-  if (result2 != 0) {
+  if (((s32 (*)())GameFlag_Get)(7) != 0) {
     Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
     Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
@@ -1196,8 +1178,7 @@ void EasternAlhafra_AskIfFinished(void) {
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(10);
-  result3 = Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS));
-  if (result3 != 0) {
+  if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS)) != 0) {
     Actor_SetSpeed(ACTOR_PIERS, 1.2);
     Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);

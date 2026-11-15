@@ -296,11 +296,11 @@ extern struct ActorPlacement gAquaRockInside_Placements[];
 extern struct ActorPlacement gAquaRockInside_WaterOfLifeChestPlacements[];
 extern struct ActorPlacement gAquaRockInside_SteamPlacements[];
 extern struct ActorPlacement gAquaRockInside_AquariusStonePlacements[];
-extern struct ActorPlacement gAquaRockInside_Room4Placements[];
-extern struct ActorPlacement gAquaRockInside_Room5Placements[];
-extern struct ActorPlacement gAquaRockInside_Room6Placements[];
+extern struct ActorPlacement gAquaRockInside_RustySwordChestPlacements[];
+extern struct ActorPlacement gAquaRockInside_CrystalPowderChestPlacements[];
+extern struct ActorPlacement gAquaRockInside_VialChestPlacements[];
 extern struct ActorPlacement gAquaRockInside_PsynergyStonePlacements[];
-extern struct ActorPlacement gAquaRockInside_Room8Placements[];
+extern struct ActorPlacement gAquaRockInside_TightropePlacements[];
 extern struct ActorPlacement gAquaRockInside_TearStonePlacements[];
 extern struct ActorPlacement gAquaRockInside_ParchTabletPlacements[];
 
@@ -314,15 +314,15 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (scene == SCENE_AQUA_ROCK_INSIDE_AQUARIUS_STONE)
     return gAquaRockInside_AquariusStonePlacements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_4)
-    return gAquaRockInside_Room4Placements;
+    return gAquaRockInside_RustySwordChestPlacements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_5)
-    return gAquaRockInside_Room5Placements;
+    return gAquaRockInside_CrystalPowderChestPlacements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_6)
-    return gAquaRockInside_Room6Placements;
+    return gAquaRockInside_VialChestPlacements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_PSYNERGY_STONE)
     return gAquaRockInside_PsynergyStonePlacements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_8)
-    return gAquaRockInside_Room8Placements;
+    return gAquaRockInside_TightropePlacements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_TEAR_STONE)
     return gAquaRockInside_TearStonePlacements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_PARCH_TABLET)
@@ -853,7 +853,7 @@ void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
   place:
     object = Actor_GetById(i);
     object->x.fixed = object->timer << 16;
-    object->z.fixed = *(s16 *)((u8 *)object + 102) << 16;
+    object->z.fixed = px(object->userValue);
     object->motionFlags = 0;
     object->groundHeight = -px(32);
     object->y.fixed = -px(32);
@@ -1382,11 +1382,11 @@ extern struct Trigger gAquaRockInside_Triggers[];
 extern struct Trigger gAquaRockInside_WaterOfLifeChestTriggers[];
 extern struct Trigger gAquaRockInside_SteamTriggers[];
 extern struct Trigger gAquaRockInside_AquariusStoneTriggers[];
-extern struct Trigger gAquaRockInside_Room4Triggers[];
-extern struct Trigger gAquaRockInside_Room5Triggers[];
-extern struct Trigger gAquaRockInside_Room6Triggers[];
+extern struct Trigger gAquaRockInside_RustySwordChestTriggers[];
+extern struct Trigger gAquaRockInside_CrystalPowderChestTriggers[];
+extern struct Trigger gAquaRockInside_VialChestTriggers[];
 extern struct Trigger gAquaRockInside_PsynergyStoneTriggers[];
-extern s16 gAquaRockInside_Room8Triggers[];
+extern s16 gAquaRockInside_TightropeTriggers[];
 extern struct Trigger gAquaRockInside_TearStoneTriggers[];
 extern struct Trigger gAquaRockInside_ParchTabletTriggers[];
 
@@ -1400,15 +1400,15 @@ const u8 *Scene_GetTriggers(void) {
   if (scene == SCENE_AQUA_ROCK_INSIDE_AQUARIUS_STONE)
     return gAquaRockInside_AquariusStoneTriggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_4)
-    return gAquaRockInside_Room4Triggers;
+    return gAquaRockInside_RustySwordChestTriggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_5)
-    return gAquaRockInside_Room5Triggers;
+    return gAquaRockInside_CrystalPowderChestTriggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_6)
-    return gAquaRockInside_Room6Triggers;
+    return gAquaRockInside_VialChestTriggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_PSYNERGY_STONE)
     return gAquaRockInside_PsynergyStoneTriggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_8)
-    return gAquaRockInside_Room8Triggers;
+    return gAquaRockInside_TightropeTriggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_TEAR_STONE)
     return gAquaRockInside_TearStoneTriggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_PARCH_TABLET)
@@ -2797,7 +2797,7 @@ LATE_DATA struct ActorPlacement gAquaRockInside_AquariusStonePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gAquaRockInside_Room4Placements[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_RustySwordChestPlacements[] = {
     ACTOR_PLACEMENT(383, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 680, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 647, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 87, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2808,13 +2808,13 @@ LATE_DATA struct ActorPlacement gAquaRockInside_Room4Placements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gAquaRockInside_Room5Placements[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_CrystalPowderChestPlacements[] = {
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(383, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gAquaRockInside_Room6Placements[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_VialChestPlacements[] = {
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 648, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(380, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 792, 0, 631, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2830,7 +2830,7 @@ LATE_DATA struct ActorPlacement gAquaRockInside_PsynergyStonePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gAquaRockInside_Room8Placements[] = {
+LATE_DATA struct ActorPlacement gAquaRockInside_TightropePlacements[] = {
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
@@ -2930,7 +2930,7 @@ LATE_DATA struct Trigger gAquaRockInside_AquariusStoneTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gAquaRockInside_Room4Triggers[] = {
+LATE_DATA struct Trigger gAquaRockInside_RustySwordChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {0x51, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
@@ -2951,7 +2951,7 @@ LATE_DATA struct Trigger gAquaRockInside_Room4Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gAquaRockInside_Room5Triggers[] = {
+LATE_DATA struct Trigger gAquaRockInside_CrystalPowderChestTriggers[] = {
     {0x51, 1, CONDITION_ALWAYS, 1},
     {0x51, 2, CONDITION_ALWAYS, 2},
     {0x51, 3, CONDITION_ALWAYS, 3},
@@ -2971,7 +2971,7 @@ LATE_DATA struct Trigger gAquaRockInside_Room5Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA struct Trigger gAquaRockInside_Room6Triggers[] = {
+LATE_DATA struct Trigger gAquaRockInside_VialChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3009,7 +3009,7 @@ LATE_DATA struct Trigger gAquaRockInside_PsynergyStoneTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA s16 gAquaRockInside_Room8Triggers[] = {
+LATE_DATA s16 gAquaRockInside_TightropeTriggers[] = {
     49, 0, 1, -1, 1, 0, 49, 0,
     2, -1, 2, 0, 49, 0, 3, -1,
     3, 0, 33, 0, 4, -1, 4, 0,

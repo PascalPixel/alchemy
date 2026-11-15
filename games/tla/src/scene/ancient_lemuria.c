@@ -277,8 +277,8 @@ void AncientLemuria_HeadForTheDock(void) {
     Actor_SetAnimationById(ACTOR_KRADEN, 2);
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (object != NULL)
-      Actor_SetDestinationById(ACTOR_KRADEN, *(s16 *)((u8 *)object + 10),
-                               *(s16 *)((u8 *)object + 18));
+      Actor_SetDestinationById(ACTOR_KRADEN, object->x.part[0].pixel,
+                               object->z.part[0].pixel);
     Actor_WaitForMoveById(ACTOR_KRADEN);
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     Actor_WalkToAndWait(ACTOR_FELIX, 168, 832);

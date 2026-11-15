@@ -6,6 +6,7 @@
 /// Serpent, Susa rejoices here that Kushinada is safe.
 
 #include "shared/tables.h"
+#include "scene/event_layer.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -217,7 +218,7 @@ void GaiaRock_FinishPushingBlock(void) {
 }
 
 void GaiaRock_CycloneClearsWall(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 110, 64, 14, 12, 110, 47, 1);
+  FieldTileCopies_CopyTouchedCells(110, 64, 14, 12, 110, 47, 1);
 }
 
 void GaiaRock_RevealIdol(void) {

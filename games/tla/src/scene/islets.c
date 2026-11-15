@@ -11,6 +11,7 @@
 /// carries the party to his secret spot (Islets_GiveTurtle,
 /// Islets_ArriveAtSecretSpot).
 #include "system/task.h"
+#include "scene/event_layer.h"
 #include "flags.h"
 #include "item_ids.h"
 
@@ -1588,32 +1589,32 @@ void Islets_EndReveal(void) {
 // The following six are from patch 1.
 #if TLA_PATCH_1
 void Islets_ClearFirstPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 4, 4, 65, 10, 1);
+  FieldTileCopies_CopyTouchedCells(65, 0, 4, 4, 65, 10, 1);
   return;
 }
 
 void Islets_ClearSecondPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 2, 2, 71, 10, 1);
+  FieldTileCopies_CopyTouchedCells(65, 0, 2, 2, 71, 10, 1);
   return;
 }
 
 void Islets_ClearThirdPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 1, 1, 68, 15, 1);
+  FieldTileCopies_CopyTouchedCells(65, 0, 1, 1, 68, 15, 1);
   return;
 }
 
 void Islets_ClearFourthPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 2, 3, 75, 20, 1);
+  FieldTileCopies_CopyTouchedCells(65, 0, 2, 3, 75, 20, 1);
   return;
 }
 
 void Islets_ClearFifthPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 4, 1, 78, 22, 1);
+  FieldTileCopies_CopyTouchedCells(65, 0, 4, 1, 78, 22, 1);
   return;
 }
 
 void Islets_ClearSixthPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 65, 0, 1, 1, 79, 23, 1);
+  FieldTileCopies_CopyTouchedCells(65, 0, 1, 1, 79, 23, 1);
   return;
 }
 #endif

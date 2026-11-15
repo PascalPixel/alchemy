@@ -1725,7 +1725,7 @@ void Garoh_WerewolvesRevealThemselves(void) {
   }
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
-  Call2(FieldMessage_ShowAtActor, ACTOR_MAHA, 0);
+  FieldMessage_ShowAtActor(ACTOR_MAHA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);

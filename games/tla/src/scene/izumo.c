@@ -11,6 +11,7 @@
 /// (Izumo_StopThePartyToThankThem).
 
 #include "shared/tables.h"
+#include "scene/event_layer.h"
 #include "field/emote.h"
 #include "sounds.h"
 #include "field/field_sequence_event.h"
@@ -188,13 +189,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 void Izumo_CycloneFirstPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 53, 5, 8, 9, 23, 30, 0);
+  FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
 }
 
 void Izumo_CycloneSecondPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  Call7((void (*)())TileCopies_CopyTouchedCells, 53, 5, 8, 9, 23, 30, 0);
+  FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(3999)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 64, px(456),
           px(584));
@@ -215,7 +216,7 @@ void Izumo_CycloneSecondPatch(void) {
 void Izumo_CycloneThirdPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  Call7((void (*)())TileCopies_CopyTouchedCells, 53, 5, 8, 9, 23, 30, 0);
+  FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
   if (!GameFlag_Get(4000)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 65, px(472),
           px(552));
@@ -235,21 +236,21 @@ void Izumo_CycloneThirdPatch(void) {
 }
 
 void Izumo_CycloneFourthPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 44, 5, 8, 5, 7, 32, 0);
+  FieldTileCopies_CopyTouchedCells(44, 5, 8, 5, 7, 32, 0);
 }
 
 void Izumo_CycloneFifthPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 55, 0, 4, 2, 16, 23, 0);
+  FieldTileCopies_CopyTouchedCells(55, 0, 4, 2, 16, 23, 0);
 }
 
 void Izumo_CycloneSixthPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 42, 0, 6, 2, 9, 18, 0);
+  FieldTileCopies_CopyTouchedCells(42, 0, 6, 2, 9, 18, 0);
 }
 
 void Izumo_CycloneSeventhPatch(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  Call7((void (*)())TileCopies_CopyTouchedCells, 42, 0, 6, 2, 9, 18, 0);
+  FieldTileCopies_CopyTouchedCells(42, 0, 6, 2, 9, 18, 0);
   if (!GameFlag_Get(4001)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 66, px(168),
           px(328));
@@ -268,11 +269,11 @@ void Izumo_CycloneSeventhPatch(void) {
 }
 
 void Izumo_CycloneEighthPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 49, 0, 5, 4, 24, 16, 0);
+  FieldTileCopies_CopyTouchedCells(49, 0, 5, 4, 24, 16, 0);
 }
 
 void Izumo_CycloneNinthPatch(void) {
-  Call7((void (*)())TileCopies_CopyTouchedCells, 36, 0, 5, 3, 16, 9, 0);
+  FieldTileCopies_CopyTouchedCells(36, 0, 5, 3, 16, 9, 0);
 }
 
 void Izumo_EnterDoor(void) {

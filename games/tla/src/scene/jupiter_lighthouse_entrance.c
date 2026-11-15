@@ -12,6 +12,7 @@
 /// link between.
 
 #include "shared/tables.h"
+#include "scene/event_layer.h"
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -81,32 +82,30 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-s32 TileCopies_CopyTouchedCells();
-
 void JupiterLighthouse_CycloneFirstPatch(void) {
-  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 4, 2, 0x46, 0x13, 1);
+  FieldTileCopies_CopyTouchedCells(56, 0, 4, 2, 70, 19, 1);
 }
 
 void JupiterLighthouse_CycloneSecondPatch(void) {
-  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 4, 2, 0x45, 0x16, 1);
+  FieldTileCopies_CopyTouchedCells(56, 0, 4, 2, 69, 22, 1);
 }
 
 void JupiterLighthouse_CycloneThirdPatch(void) {
-  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 3, 3, 0x4f, 0x19, 1);
+  FieldTileCopies_CopyTouchedCells(56, 0, 3, 3, 79, 25, 1);
 }
 
 void JupiterLighthouse_CycloneFourthPatch(void) {
-  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 5, 3, 0x55, 0x1a, 1);
+  FieldTileCopies_CopyTouchedCells(56, 0, 5, 3, 85, 26, 1);
 }
 
 void JupiterLighthouse_CycloneFifthPatch(void) {
-  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 5, 3, 0x5e, 0x1a, 1);
+  FieldTileCopies_CopyTouchedCells(56, 0, 5, 3, 94, 26, 1);
 }
 
 void JupiterLighthouse_CycloneUncoversTheSpot(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
-  Call7(TileCopies_CopyTouchedCells, 0x38, 0, 3, 3, 0x4f, 0x19, 1);
+  FieldTileCopies_CopyTouchedCells(56, 0, 3, 3, 79, 25, 1);
   if (!Event_GetFlag(0xfe2)) {
     Actor_SetPosition(FIELD_TREASURE_ACTOR, 280, 440);
     if (FIELD_CELL(leader->x.fixed) == 17 &&

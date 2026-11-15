@@ -15,6 +15,7 @@
 /// Mercury Djinni (KandoreanTemple_FightFog).
 
 #include "field/actor.h"
+#include "scene/event_layer.h"
 #include "field/actor_view.h"
 #include "djinn_ids.h"
 #include "field/field_sprite.h"
@@ -1861,27 +1862,27 @@ void KandoreanTemple_FightChestbeaters(void) {
 
 /// Cyclone blows away the first of five patches by the gate.
 void KandoreanTemple_CycloneFirstPatch(void) {
-  Call7(TileCopies_CopyTouchedCells, 76, 0, 2, 2, 73, 14, 1);
+  FieldTileCopies_CopyTouchedCells(76, 0, 2, 2, 73, 14, 1);
 }
 
 /// Cyclone blows away the second of five patches by the gate.
 void KandoreanTemple_CycloneSecondPatch(void) {
-  Call7(TileCopies_CopyTouchedCells, 76, 0, 1, 1, 75, 16, 1);
+  FieldTileCopies_CopyTouchedCells(76, 0, 1, 1, 75, 16, 1);
 }
 
 /// Cyclone blows away the third of five patches by the gate.
 void KandoreanTemple_CycloneThirdPatch(void) {
-  Call7(TileCopies_CopyTouchedCells, 76, 0, 1, 1, 74, 18, 1);
+  FieldTileCopies_CopyTouchedCells(76, 0, 1, 1, 74, 18, 1);
 }
 
 /// Cyclone blows away the fourth of five patches by the gate.
 void KandoreanTemple_CycloneFourthPatch(void) {
-  Call7(TileCopies_CopyTouchedCells, 76, 0, 1, 1, 80, 18, 1);
+  FieldTileCopies_CopyTouchedCells(76, 0, 1, 1, 80, 18, 1);
 }
 
 /// Cyclone blows away the fifth of five patches by the gate.
 void KandoreanTemple_CycloneFifthPatch(void) {
-  Call7(TileCopies_CopyTouchedCells, 76, 0, 1, 1, 87, 15, 1);
+  FieldTileCopies_CopyTouchedCells(76, 0, 1, 1, 87, 15, 1);
 }
 
 /// Sets up the room being entered.

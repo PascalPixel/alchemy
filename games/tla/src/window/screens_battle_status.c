@@ -669,7 +669,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
           iconSprites[j].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[j]);
         }
         /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the
-         * fill loop's test. */
+         * fill loop's test; without it, 2 of 3111 instructions differ in
+         * tla-en.
+         */
         asm("");
         for (; j <= 3; j++)
           iconSprites[j].oam.f.tile =
@@ -755,7 +757,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             Window_DrawThreeTileColumn(statusWindow, 16, j * 2 + 8, range, 0);
           }
           /* FAKEMATCH(barrier): an empty asm keeps the list loop's exit on the
-           * fill loop's test. */
+           * fill loop's test; without it, 2 of 3111 instructions differ in
+           * tla-en.
+           */
           asm("");
           for (; j <= 3; j++)
             iconSprites[j].oam.f.tile =

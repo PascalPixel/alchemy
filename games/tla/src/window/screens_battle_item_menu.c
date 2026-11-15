@@ -167,7 +167,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
 
   for (;;) {
     /* LEFTOVER(template): sprite holds &cursorStorage, as
-     * BattlePsynergyMenu_Run's iconSprite holds its cursor. */
+     * BattlePsynergyMenu_Run's iconSprite holds its cursor; without this store,
+     * 312 of 790 instructions differ in tla-en. */
     sprite = &cursorStorage;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {

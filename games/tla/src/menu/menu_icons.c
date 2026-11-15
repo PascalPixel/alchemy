@@ -524,7 +524,8 @@ void MenuIcon_LoadSlots(void) {
     if (entry < VRAM_CACHE_ENTRY_COUNT) {
       u32 *attributes;
 
-      /* FAKEMATCH(temporary): the table read at a byte offset of its own. */
+      /* FAKEMATCH(temporary): the table read at a byte offset of its own; as
+       * ids[i], 49 of 83 instructions differ in tla-en. */
       Resource_LoadByModeIntoSlotFar(ICON_KIND_PATTERN,
                                      *(u16 *)(offset + (u32)ids), entry, 0);
       attributes = (u32 *)&slot->attr;

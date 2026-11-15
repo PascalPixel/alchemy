@@ -1717,7 +1717,8 @@ power_end:
       } else if (ability->effect == ABILITY_EFFECT_CRYSTAL) {
         maxu = (u16)target->hpMax;
         heal += (s16)maxu / 2;
-        /* FAKEMATCH(barrier): an empty asm on maxu. */
+        /* FAKEMATCH(barrier): an empty asm on maxu; without it, 45 of 3451
+         * instructions differ in tla-en. */
         asm("" : "+r"(maxu));
       } else {
 #ifdef UBFIX
@@ -2085,7 +2086,8 @@ power_end:
     case ABILITY_EFFECT_DRAIN_HALF_HP:
       power = damageDealt;
       amount = actor->hp;
-      /* FAKEMATCH(barrier): an empty asm on dmg. */
+      /* FAKEMATCH(barrier): an empty asm on amount, the user's hit points;
+       * without it, 2 of 3451 instructions differ in tla-en. */
       __asm__("" : "=r"(amount) : "0"(amount));
       if (ability->effect == ABILITY_EFFECT_DRAIN_HALF_HP)
         power /= 2;

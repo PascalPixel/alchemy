@@ -171,7 +171,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
 
   for (;;) {
     /* LEFTOVER(template): sprite holds &cursorSprite, as
-     * BattlePsynergyMenu_Run's iconSprite holds its cursor. */
+     * BattlePsynergyMenu_Run's iconSprite holds its cursor; as &cursorSprite at
+     * each use, 423 of 1246 instructions differ in tla-en. */
     struct QueuedSprite *sprite = &cursorSprite;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow ||

@@ -244,7 +244,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                              WINDOW_FLAG_OUTLINED_TEXT);
 
   for (;;) {
-    /* FAKEMATCH(dead): a once-only block. */
+    /* FAKEMATCH(dead): a once-only block; as its body alone, 6 of 1647
+     * instructions differ in tla-en. */
     do {
       /* FAKEMATCH(temporary): firstSprite holds &cursorSprites[0]. */
       firstSprite = cursorSprites;

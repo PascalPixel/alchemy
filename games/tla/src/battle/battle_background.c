@@ -808,7 +808,8 @@ void ElementGlow_UpdateStarField(void) {
     phase = 3 - ring->age / 8;
     if (phase >= 0) {
       ring->age++;
-      /* FAKEMATCH(dead): an empty once-only block after the age's store. */
+      /* FAKEMATCH(dead): an empty once-only block after the age's store; as
+       * the store alone, 2 of 267 instructions differ in tla-en. */
       do {
       } while (0);
       draw(dest, (u8 *)work + gElementGlow_RingPictures[phase],
@@ -931,7 +932,8 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   Io_Write16(Q_8_8(1), &REG_BG2PD);
   /* LEFTOVER(frame): the twin's five-argument BattleEffect_BuildBlitterFar,
    * never taken here: of the 8 bytes the ROM's frame reserves (sub sp, #8),
-   * no instruction addresses sp+0 to sp+3, the call's fifth argument. */
+   * no instruction addresses sp+0 to sp+3, the call's fifth argument; as the
+   * call left out, 10 of 255 instructions differ in tla-en. */
   if (0)
     BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
   BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE, 0x03);

@@ -4,18 +4,8 @@
 /// its travelers, the scorpion in its way, the stakes Pound sinks and the sand
 /// slides Sand slips under, and its tables of entrances, placements and
 /// triggers by room.
-#include "../field/actor_set_sprite_priority.c"
+#include "sprite_ids.h"
 #include "field/actor_script.h"
-
-#include "../field/field_effect_move.c"
-
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
-#define EFFECT_SET_MODE Actor_SelectAnimation
-#define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
-#include "../field/field_effect_spawn.c"
-
 #include "types.h"
 #include "item_ids.h"
 #include "system/io_reg.h"
@@ -26,6 +16,46 @@
 #include "field/field_event.h"
 #include "scene_ids.h"
 #include "system/frame.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "system/math_table.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/scene_tables.h"
+#include "djinn_ids.h"
+#include "field/actor.h"
+#include "field/map_grid.h"
+#include "system/field_effect.h"
+#include "field/field_sequence_event.h"
+#include "field/flag_call.h"
+#include "system/heap_release.h"
+#include "window/item_icon.h"
+#include "field/event.h"
+#include "field/event_commands.h"
+#include "field/field_effect.h"
+#include "scene/scene.h"
+#include "graphics/resource.h"
+#include "field/call.h"
+#include "system/input.h"
+#include "fixed_math.h"
+#include "version.h"
+#include "system/iwram_call.h"
+#include "macros.h"
+#include "text/msg_ids.h"
+
+#include "../field/actor_set_sprite_priority.c"
+
+#include "../field/field_effect_move.c"
+
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../field/field_effect_spawn.c"
 
 /// Set as Pound on the first screen's wooden column stirs the King Scorpion
 /// out of the sand, and it flees to the next screen.
@@ -87,14 +117,7 @@ enum YampiDesertCellCode {
   CELL_WALL = 255
 };
 
-struct Actor *Actor_GetById(u32 objectId);
-s32 GameFlag_Get(s32 flag);
-void GameFlag_Set(s32 flag);
-void GameFlag_Clear(s32 flag);
-void FieldMessage_Show(s32 message, s32 position);
-void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
 void Actor_SetWideSprite(s32 actor, s32 value);
-void FieldPsynergy_RunHandler(s32 type);
 
 void YampiDesert_StepOntoStakeTops(void);
 void YampiDesert_OpenLadderPit(void);
@@ -111,47 +134,17 @@ void YampiDesert_ClimbOut(struct Actor *object, s32 x, s32 z, s32 mode);
 void YampiDesert_MatchStakePriority(void);
 void YampiDesert_PlaceStakes(const void *script);
 void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
-void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
-                                        s32 f);
-void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
-                                                    s32 angle);
-s32 Event_AskYesNoAndShowResponse(s32 speaker, s32 flags);
 void Actor_DisableById(s32 actor);
-void Field_RequestDjinnBattle(s32 a, s32 b);
 void FieldEffect_StartBlankOverlay(s32 value);
-void FieldPsynergy_LoadResources(s32 a, s32 b);
-void FieldPsynergy_SetupActorPair(s32 a, s32 b);
-void BattleEffect_StopMainActor(void);
-void FieldPsynergy_End(void);
-void Scene_QueueMusic(s32 cue);
 void Rope_Initialize(void);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
-s32 Actor_GetCellIndex(struct Actor *object);
 void YampiDesert_ElderRefusesToQuit(void);
 void YampiDesert_BlockPoundedStakes(u16 *list);
 void YampiDesert_UnblockStakes(u16 *list);
-void Actor_FaceActorById(s32 id, s32 target, s32 flags);
-void Actor_FaceDirectionById(s32 id, s32 angle, s32 flags);
-void FieldCamera_FollowActor(s32 id, s32 mode);
-void Actor_WatchAndSetScript(s32 id, s32 target);
 void FieldEvent_Wait(s32 frames);
 struct Actor *YampiDesert_CreateScoopGem(void);
 void Actor_Release(struct Actor *object);
-void Sound_Play(s32 cue);
 extern struct Actor *gYampiDesert_SandRipple;
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
-void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
-void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
-void Actor_WaitForMove(struct Actor *object);
-void Actor_FaceDirectionAndRefreshById(s32 actor, s32 angle);
-void Import_EventSetExitRequest(s32 mode);
-void Camera_SetSpeedParameters(s32 a, s32 b);
-void FieldCamera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
-void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
-void Actor_Stop(s32 id);
 void YampiDesert_ClearRaisedEvent(void);
 void YampiDesert_PlayScorpionRumble(void);
 void YampiDesert_SetUpPsynergyStoneScorpion(void);
@@ -171,7 +164,7 @@ static inline void Scene_ArmCallback(s32 id, s32 angle, s32 flags) {
   Actor_FaceDirectionById(id, angle, flags);
 }
 
-/// Places an actor at (x, z) on the ground, facing angle.
+/// Places an actor at (x, z) on the ground, facing a direction.
 static inline void YampiDesert_SetPositionAndFacing(s32 actorId, s32 x, s32 z,
                                                     s32 facing) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(actorId, x, z, facing);
@@ -187,18 +180,6 @@ static inline void YampiDesert_PlaceRope(s32 rope, s32 a, s32 b, s32 c) {
 static inline void YampiDesert_ReturnHome(s32 mode, s32 actorId, s32 flag) {
   Actor_ReturnHome(mode, actorId, flag);
 }
-
-#include "types.h"
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/scene_tables.h"
-#include "djinn_ids.h"
 
 /// The stakes Pound sinks, the first rows of the rooms that have them (the
 /// Guardian Ring chest's, Blitz's, the Psynergy Stone's, the King Scorpion's
@@ -277,27 +258,6 @@ enum YampiDesertBlowMaceChestActorId {
   ACTOR_MACE_CHEST_ROOM_FIRST_SLIDE = STAKE(1),
   ACTOR_MACE_CHEST_ROOM_LAST_SLIDE = ACTOR_MACE_CHEST_ROOM_FIRST_SLIDE + 6
 };
-#include "system/ram_buffer.h"
-#include "field/actor.h"
-#include "system/main_routine_work.h"
-#include "field/map_grid.h"
-#include "system/field_effect.h"
-#include "field/field_sequence_event.h"
-#include "field/flag_call.h"
-#include "system/heap_release.h"
-#include "window/item_icon.h"
-#include "field/event_commands.h"
-#include "field/field_effect.h"
-#include "scene/scene.h"
-#include "graphics/resource.h"
-#include "field/call.h"
-#include "system/input.h"
-#include "system/frame.h"
-#include "system/task.h"
-#include "fixed_math.h"
-#include "version.h"
-#include "system/iwram_call.h"
-#include "macros.h"
 
 void YampiDesert_RippleFollowsScorpion(void);
 
@@ -361,13 +321,8 @@ extern u32 gYampiDesert_TravelerLooksAround[];
 extern u32 gYampiDesert_OtherTravelerLooksAround[];
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 void YampiDesert_StartRisingSand(s32 unused, s32 value);
-
-void Icon_DrawItem(s32 item);
-void FieldEffect_SetAttached(s32 actor, s32 a);
-void FieldCamera_WaitForArrival();
 
 extern struct SceneEntrance gYampiDesert_Entrances[];
 extern struct SceneEntrance gYampiDesertOasisCaveEntrances[];
@@ -397,8 +352,6 @@ const u8 *Scene_GetExitRegions(void) {
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-#include "text/msg_ids.h"
 
 extern struct ActorPlacement gYampiDesert_Placements[];
 extern struct ActorPlacement gYampiDesertGuardianRingChestActorPlacements[];
@@ -791,12 +744,9 @@ void YampiDesert_WatchScorpionStop(void) {
 // have the sand slides, and Reveal shows the rocks' hints and a hidden Lucky
 // Medal.
 
-#include "text/msg_ids.h"
-
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-s32 Trig_Sin(s32 angle);
 
 /// A burst of sand at (x, y, z), sixteen grains flying outward.
 void YampiDesert_BurstSand(s32 x, s32 y, s32 z) {
@@ -930,7 +880,8 @@ void YampiDesert_RaiseSandCloud(void) {
     for (i = 0; i <= 14; i++) {
       s32 x = *cell++ + ((Random16() << 2) >> 16);
       s32 z = *cell++ + ((Random16() << 2) >> 16);
-      struct Actor *object = Import_ActorCreate(285, px(x - 2), 0, px(z - 2));
+      struct Actor *object =
+          Import_ActorCreate(SPRITE_DUST_CLOUD, px(x - 2), 0, px(z - 2));
 
       if (object != NULL) {
         object->speedLimit = px(9) / 8;
@@ -1351,36 +1302,34 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Actor_SetPosition(ACTOR_ELDER, 0, 0);
   Actor_SetPosition(ACTOR_MAYOR, 0, 0);
   angle = FACING_NORTH_NORTHWEST;
-  Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain,
-        ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, px(520), px(242), angle);
+  YampiDesert_SetPositionAndFacing(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES,
+                                   px(520), px(242), angle);
   {
     s32 facing = FACING_WEST;
 
-    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain,
-          ACTOR_TRAVELER_SEEKING_EVIDENCE, px(533), px(271), facing);
+    YampiDesert_SetPositionAndFacing(ACTOR_TRAVELER_SEEKING_EVIDENCE, px(533),
+                                     px(271), facing);
   }
   {
     s32 facing = FACING_SOUTH_SOUTHEAST;
 
-    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain,
-          ACTOR_DIZZY_TRAVELER, px(435), px(232), facing);
+    YampiDesert_SetPositionAndFacing(ACTOR_DIZZY_TRAVELER, px(435), px(232),
+                                     facing);
   }
   {
     s32 facing = FACING_SOUTH_SOUTHWEST;
 
-    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain,
-          ACTOR_PARCHED_TRAVELER, px(467), px(248), facing);
+    YampiDesert_SetPositionAndFacing(ACTOR_PARCHED_TRAVELER, px(467), px(248),
+                                     facing);
   }
   {
     s32 facing = FACING_NORTH_NORTHEAST;
 
-    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain,
-          ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, px(462), px(340), facing);
-    Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain,
-          ACTOR_ELDER, px(482), px(340), facing);
+    YampiDesert_SetPositionAndFacing(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK,
+                                     px(462), px(340), facing);
+    YampiDesert_SetPositionAndFacing(ACTOR_ELDER, px(482), px(340), facing);
   }
-  Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, ACTOR_MAYOR,
-        px(489), px(320), angle);
+  YampiDesert_SetPositionAndFacing(ACTOR_MAYOR, px(489), px(320), angle);
   Actor_SetAnimationById(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 1);
   Actor_SetAnimationById(ACTOR_TRAVELER_SEEKING_EVIDENCE, 1);
   Actor_SetAnimationById(ACTOR_DIZZY_TRAVELER, 1);
@@ -1478,9 +1427,7 @@ void YampiDesert_RippleFollowsScorpion(void) {
 #undef OBJ
 #undef MOVE_LEADER_TO
 
-struct Actor *Actor_GetById(u32 objectId);
 void Actor_StartScript(struct Actor *object, const void *script);
-s32 Trig_Sin(s32 angle);
 
 /// Slides the leader down a sand slide by (dx, dz), throwing up dust every
 /// other frame.
@@ -1491,8 +1438,8 @@ void YampiDesert_SlideLeader(struct Actor *object, s32 dx, s32 dz) {
 
     if (odd == 0) {
       struct Actor *dust = (struct Actor *)Value4(
-          (s32 (*)())Import_ActorCreate, 285, object->x.fixed, object->y.fixed,
-          object->z.fixed);
+          (s32 (*)())Import_ActorCreate, SPRITE_DUST_CLOUD, object->x.fixed,
+          object->y.fixed, object->z.fixed);
 
       if (dust != NULL) {
         struct Sprite *sprite;
@@ -2139,7 +2086,6 @@ void YampiDesert_ClimbOutOfOasisCave(void) {
                        2);
 }
 
-void Event_SetAfterBattleDestination(s32 scene, s32 entrance);
 void YampiDesert_BurstSand(s32 x, s32 y, s32 z);
 
 /// Dropping into the scorpion pit, the leader lands before the King Scorpion,
@@ -2165,8 +2111,8 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   {
     s32 angle = FACING_SOUTH;
 
-    Call4(Actor_SetHorizontalPositionAndAngleWithTerrain, ACTOR_KING_SCORPION,
-          px(232), px(148), angle);
+    YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION, px(232), px(148),
+                                     angle);
   }
   actor8->motionFlags = 0;
   actor8->y.fixed = px(130);
@@ -2547,8 +2493,6 @@ struct RideWork {
   void *block;
 };
 
-s32 Trig_Sin(s32 angle);
-
 /// The rising platforms callback: for each of the 16 entries it raises or
 /// lowers the platform on its timer, writes its height to the collision and
 /// cell maps, and carries its rider with a bob.
@@ -2825,8 +2769,6 @@ u32 gYampiDesert_SlideDust[] = {
 
 // The Yampi Desert's data: its effect and travelers' scripts, stake lists,
 // rooms' tables and triggers.
-
-#include "text/msg_ids.h"
 
 void YampiDesert_FightBlitz(void);
 void YampiDesert_TalkToTraveler(void);

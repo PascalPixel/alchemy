@@ -3,7 +3,6 @@
 /// circle round the village to the words of the songs of the moon, the stars
 /// and the sun, the Scoop spots that hide its treasure, and the pillar Force
 /// pushes down to reach the Masamune.
-
 #include "types.h"
 #include "flags.h"
 #include "text/msg_ids.h"
@@ -25,10 +24,11 @@
 #include "field/field_sequence_event.h"
 #include "system/task.h"
 #include "macros.h"
-#include "shared/tables.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "sprite_ids.h"
+
+#include "shared/tables.h"
 
 /// Yallam's actors, numbering the rows of gYallam_Placements.
 enum YallamActorId {
@@ -120,7 +120,6 @@ s32 Yallam_HideSprite(struct Actor *object) {
 
 void Yallam_RunSongPath(s32 id);
 void Yallam_ShowSongGame(void);
-void Event_End(void);
 
 struct YallamSaved {
   s32 action;
@@ -139,9 +138,6 @@ extern struct YallamSaved gYallam_SavedSongGame[5];
 extern struct MapGridCellAnimation gYallam_Doors[];
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b);
-s32 ArcTan2(s32 y, s32 x);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 s32 Yallam_FaceIfNear(struct Actor *object, struct Actor *target, s32 range,
                       s32 force);
 void Yallam_UpdateSongGame(void);
@@ -1876,7 +1872,6 @@ void Yallam_StartWatchers(void) {
 #undef BYTE_AT
 #undef EVENT_WORK
 #undef FIELD_AT
-#include "text/msg_ids.h"
 
 void Yallam_EnterDoor(void);
 void Yallam_DigThirdHole(void);
@@ -2044,7 +2039,6 @@ struct ActorPlacement gYallam_Placements[] = {
                     TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
-
 
 struct ActorPlacement gYallam_CavePlacements[] = {
     {SCENE_TABLE_END},

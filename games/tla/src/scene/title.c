@@ -2,7 +2,6 @@
 /// The title: the Nintendo and Camelot logos, the intro, the title screen with
 /// its row of sprites revealed under the logo, and the starts it leads to, the
 /// prologue with Jenna or the game with Felix; entrance 8 plays the credits.
-
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"

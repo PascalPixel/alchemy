@@ -39,10 +39,14 @@
 #include "field/call.h"
 #include "system/task.h"
 #include "macros.h"
-#include "shared/tables.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "window/window.h"
+
+void Party_DrainPp(s32 count);
+s32 Party_GetPpRatio(void);
+
+#include "shared/tables.h"
 
 /// The beacon's work buffer: the glow's or the beams' tiles, then from
 /// BEACON_MAPS their maps.
@@ -65,7 +69,6 @@ extern u8 gStaffCredit_BeaconPalettes[];
 extern u8 gStaffCredit_BeamsPalette[];
 extern u8 gStaffCredit_BeamsMaps[];
 extern u8 gStaffCredit_BeamsTiles[];
-void WorldMap_ReloadPendingAreaGraphics(void);
 void StaffCredit_RunCredits(s32 value);
 s32 WorldMap_GetBlockPlace(s32 *position);
 extern s16 gGauge_Vram;
@@ -530,8 +533,6 @@ void StaffCredit_ShowBeacon(s32 stage) {
   IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
-
-void WorldMap_StartPlacedActors(void);
 
 /// The staff credits' entrances, each a stretch of the credits: the summit
 /// enters the first two, and each beacon's stretch enters the next.

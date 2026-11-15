@@ -12,18 +12,8 @@
 /// and the fallen pillars (the pillar hole and the pillars), the party reaches
 /// the island, whose Sea God's Tear raises the water to the statue room, and
 /// climbs the ladders to the Right Prong.
-#include "../field/actor_set_sprite_priority.c"
 #include "field/actor_script.h"
 #include "fixed_math.h"
-
-#include "../field/field_effect_move.c"
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
-#define EFFECT_SET_MODE Actor_SelectAnimation
-#define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
-#include "../field/field_effect_spawn.c"
-
 #include "types.h"
 #include "item_ids.h"
 #include "field/emote.h"
@@ -35,6 +25,39 @@
 #include "system/ram_buffer.h"
 #include "field/map_grid.h"
 #include "field/event_inline.h"
+#include "field/field_sequence_event.h"
+#include "scene/scene.h"
+#include "scene/shrine_of_the_sea_god.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "system/math_table.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/scene_tables.h"
+#include "scene_ids.h"
+#include "system/io_reg.h"
+#include "system/io_write.h"
+#include "field/call.h"
+#include "macros.h"
+#include "system/frame.h"
+#include "field/field_effect.h"
+#include "field/field.h"
+#include "text/msg_ids.h"
+
+void Rope_Initialize(void);
+void FieldEffect_StartBlankOverlay(s32 object);
+
+#include "../field/actor_set_sprite_priority.c"
+
+#include "../field/field_effect_move.c"
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Actor_SelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../field/field_effect_spawn.c"
 
 #define FLAG_CROSSROADS_PILLAR_MOVED                                           \
   0x84c                              ///< Move pushed the great hall's pillar
@@ -80,53 +103,11 @@ struct MapWorkGroundEffects {
 #define Map_SetUpperLevelWading(map)                                           \
   (((struct MapWorkGroundEffects *)(map))->wading = MAP_WADING_UPPER_LEVEL)
 
-void Event_Wait(s32 frames);
-s32 GameFlag_Get(s32 flag);
-void GameFlag_Set(s32 flag);
-void GameFlag_Clear(s32 flag);
-void FieldMessage_Show(s32 message, s32 position);
-void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
-void Actor_FaceDirectionById(s32 actor, s32 angle, s32 frames);
-void Actor_Jump(s32 actor, s32 speed, s32 frames);
-void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z);
-void Actor_SetAnimationById(u32 actorId, s32 animation);
-void Event_Start(void);
-void Event_End(void);
-void Event_ResolvePendingActions(s32 skip);
 void Actor_DisableById(s32 actor);
-void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 width,
-                                        s32 height, s32 destX, s32 destY);
-void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Field_RequestDjinnBattle(s32 actor, s32 value);
 void Actor_LiftTargetBlock(const void *script);
 void Actor_PlaceMovedBlock(void);
-void Sound_Play(s32 cue);
 void ShrineOfTheSeaGod_SetSlideActorsShown(s32 show);
 void ShrineOfTheSeaGod_KeepWithLeader(struct Actor *object);
-
-void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z);
-void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
-                                                    s32 angle);
-void Event_SetMessageId(s32 message);
-void Event_ShowMessageThenWait(s32 actor, s32 a, s32 b);
-void Event_ShowMessageAndWait(s32 speaker, s32 flags);
-
-void FieldEffect_SetAttached(s32 actor, s32 emote);
-void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
-void FieldCamera_WaitForArrival(void);
-struct Actor *FieldCamera_GetActor(void);
-void Actor_SetDestinationById(u32 objectId, s32 x, s32 z);
-void Actor_WaitForMoveById(s32 actor);
-void Actor_Stop(s32 actor);
-void Actor_SetMovementTypeById(s32 actor, const void *callback);
-void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
-void Actor_WatchAndSetScript(s32 actor, s32 target);
-void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
-void Actor_SetAnimationAndWait(s32 actor, s32 mode);
-void Actor_RunRepeatedMotion(u32 objectId, s32 variant);
-void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
-void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
 static inline void ShrineOfTheSeaGod_ObjSetPos(struct Actor *object, s32 x,
                                                s32 y, s32 z) {
@@ -138,25 +119,6 @@ static inline void ShrineOfTheSeaGod_ObjPlaceTurn(s32 actor, s32 x, s32 z,
                                                   u16 angle) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(actor, x, z, angle);
 }
-#include "field/field_sequence_event.h"
-#include "scene/scene.h"
-#include "scene/shrine_of_the_sea_god.h"
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "types.h"
-#include "field/scene_tables.h"
-#include "scene_ids.h"
-#include "system/io_reg.h"
-#include "system/io_write.h"
-#include "field/call.h"
-#include "macros.h"
-#include "system/frame.h"
-#include "field/field_effect.h"
 #include "shared/tables.h"
 
 /// The entrance hall's actors (SceneId_ShrineOfTheSeaGodRope), numbering the
@@ -298,7 +260,6 @@ void ShrineOfTheSeaGod_FightBreath(void) {
 }
 
 struct Actor;
-#include "field/field.h"
 
 extern u32 gShrineOfTheSeaGodStatueExitRegions[];
 extern s16 gShrineOfTheSeaGodLaddersExitRegions[];
@@ -397,8 +358,6 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gShrineOfTheSeaGod_Triggers;
 }
 
-#include "text/msg_ids.h"
-
 extern u32 gShrineOfTheSeaGod_RikiLooksAround[];
 
 /// Examining the statue on the island: it looks like the one in Daila's
@@ -493,7 +452,6 @@ void ShrineOfTheSeaGod_RaiseWaterBand(s32 x, s32 y) {
 }
 
 void BlendScript_Suspend(void);
-void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
 
 /// The Sea God's Tear (item 458) used on the statue on the island, actor 10,
 /// makes the water rise.
@@ -610,8 +568,6 @@ loop:
   if (i <= 15)
     goto loop;
 }
-
-void MapGrid_WaitForShakeToSettle(void);
 
 /// Back on the island after the second Tear, the water sinks to where it was.
 void ShrineOfTheSeaGod_LowerWater(void) {
@@ -1010,7 +966,6 @@ void ShrineOfTheSeaGod_DrawLeaderBehind(void) {
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
-#include "text/msg_ids.h"
 
 extern u32 gShrineOfTheSeaGod_PillarOffset[];
 
@@ -1068,9 +1023,6 @@ void ShrineOfTheSeaGod_KeepCrossroadsPillarWithLeader(void) {
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
-void MapGrid_WaitForShakeToSettle(void);
-s32 Trig_Sin(s32 angle);
 
 /// The leader rocks the great hall's pillar until it topples into the water,
 /// riding it down.
@@ -1333,11 +1285,6 @@ void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
 }
 
 extern u32 gShrineOfTheSeaGod_BoysGoHome[];
-
-void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-void Actor_FaceDirectionAndRefreshById(s32 actor, s32 angle);
-
-void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
 
 /// Lash ties the boys' rope, Tavi climbs down and both meet the party.
 void ShrineOfTheSeaGod_LashRope(void) {
@@ -2267,7 +2214,6 @@ s32 Scene_PrepareMap(void) {
 #undef DEFINE_DJINNI_WALK_AND_JUMP
 #undef DEFINE_DJINNI_DASH_AROUND
 #undef DEFINE_DJINNI_JUMP
-#include "text/msg_ids.h"
 
 void ShrineOfTheSeaGod_FightBreath(void);
 void ShrineOfTheSeaGod_ExamineStatue(void);

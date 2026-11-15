@@ -4,7 +4,6 @@
 /// sinks stakes with Pound, bursts pillars, slips under walls with Sand,
 /// Scoops up the Venus Djinni Crystal racing through the sand, and meets
 /// Valukar, the guardian of fire.
-
 #include "flags.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -31,10 +30,14 @@
 #include "system/system.h"
 #include "field/scene_tables.h"
 #include "version.h"
-#include "shared/tables.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "djinn_ids.h"
+#include "text/msg_ids.h"
+
+s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
+
+#include "shared/tables.h"
 
 /// Set once Burst has broken the pillar in the Water of Life chest's room.
 #define FLAG_YAMPI_DESERT_CAVE_CHEST_ROOM_PILLAR_BURST FLAG_AREA_TEMP_00
@@ -131,8 +134,6 @@ void YampiDesertCave_CastSand(void);
 void YampiDesertCave_EndSand(void);
 
 extern u32 gYampiDesertCave_Settle[];
-
-void Teleport_PlayWhirl(void);
 
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 extern u16 *gYampiDesertCave_MarkColors;
@@ -275,8 +276,6 @@ s32 YampiDesertCave_FindLogSlide(s32 *position) {
     return 0;
   }
 }
-
-#include "text/msg_ids.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXEL_PART(v) (((s16 *)&(v))[1])
@@ -650,8 +649,6 @@ loop:
 // Finds the current target's table row and shrinks it.
 #include "shared/pound_sink_target.h"
 
-s32 Actor_GetCellIndex(struct Actor *object);
-
 #include "shared/actor_set_cell_open.h"
 
 /// Talking to Crystal, the Venus Djinni Scoop dug up, starts its battle
@@ -661,8 +658,6 @@ void YampiDesertCave_FightCrystal(void) {
   Event_RequestDjinnBattle(ACTOR_CRYSTAL, DJINNI_CRYSTAL);
   return;
 }
-
-void Event_End();
 
 /// Talking to the ripple racing through the sand only puzzles the leader.
 void YampiDesertCave_WonderAtRipple(void) {

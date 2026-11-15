@@ -17,7 +17,6 @@
 /// Every battle sends the party back to its room's ENTRANCE_AFTER_BATTLE, and
 /// a lost one to the Venus Lighthouse's entrance. Back from each, its flag set,
 /// the beaten Ruffians lie where they fell.
-
 #include "flags.h"
 #include "types.h"
 #include "field/actor.h"
@@ -85,18 +84,11 @@ enum GatewayCaveActorId {
   ACTOR_CAVE_KRADEN
 };
 
-extern u32 gSceneExits[];
-
-void Actor_SetMovementType(struct Actor *object, s32 a);
 void SuhallaGate_AfterPunchAntBattle(void);
 void Actor_FallOverById(s32 id, s32 a);
 void Actor_FallOverWithAnimationById(s32 id, s32 a, s32 b);
-void Event_End(void);
-void FieldCamera_WaitForArrival(void);
 /// The Punch Ant hops at the leader and its battle begins.
 void SuhallaGate_FightPunchAnt(void);
-void Event_StartScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
 extern struct SceneEntrance gSuhallaGate_RoadEntrances[];
 extern struct SceneEntrance gSuhallaGate_CliffsEntrances[];

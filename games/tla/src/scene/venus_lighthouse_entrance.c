@@ -12,7 +12,6 @@
 ///   (VenusLighthouseEntrance_RuffianWaitsForBackup). A lost battle in the
 ///   prologue wakes them by the door, with Alex come back for them
 ///   (VenusLighthouseEntrance_WakeUp).
-
 #include "system/task.h"
 #include "battle/battle.h"
 #include "debug/debug.h"
@@ -44,6 +43,12 @@
 #include "text/msg_ids.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+
+void Field_StartColorTransition(s32 frames, s32 color);
+void VenusLighthouseEntrance_BlastActorSkyward(s32 id);
+void Party_RestoreHpPp(s32 cureConditions);
+s32 BattleEffect_GetObjectPriority(struct Actor *object);
+void Actor_Release(struct Actor *actor);
 
 /// Set as Tolbi's soldiers ambush the party; the soldiers and workmen are gone
 /// from then on.
@@ -249,7 +254,6 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 s32 Actor_StartScript();
-void FieldCamera_WaitForArrival(void);
 
 /// The two birds fly down and land below the door as the party first comes out
 /// of the lighthouse.

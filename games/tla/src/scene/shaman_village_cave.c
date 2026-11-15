@@ -2,7 +2,6 @@
 /// The cave by the Shaman Village: overgrowth Whirlwind clears, a pillar Move
 /// pushes into a gap, rocks Lift raises, Eddy the Mercury Djinni who runs from
 /// the party, and in a linked game the three gladiators from Colosso.
-
 #include "battle/battle.h"
 #include "flags.h"
 #include "item_ids.h"
@@ -31,6 +30,8 @@
 #include "fixed_math.h"
 #include "djinn_ids.h"
 #include "sprite_ids.h"
+
+void Message_CloseFinishedWindows(void);
 
 /// The cave's actors, numbering the rows of gActorPlacements.
 enum ShamanVillageCaveActorId {
@@ -68,9 +69,6 @@ void Field_TryJumpForward();
 extern s32 gShamanVillageCave_OvergrowthRests[];
 extern u32 gShamanVillageCave_Settle[];
 
-void FieldCamera_WaitForArrival();
-
-void WorldMap_SetReturnLeavingScene();
 s32 Event_PickUpItem();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -94,8 +92,6 @@ notFirst:
 done:
   return;
 }
-
-void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 
 void ShamanVillageCave_DropPillarIntoGap(s32 id);
 
@@ -146,8 +142,6 @@ void ShamanVillageCave_FreezePuddle(void) {
   object->priorityFlags = 0;
   MapGrid_CopyCellAttributes(8, 42, 1, 1, 6, 42);
 }
-
-void FieldCamera_MoveToActorById();
 
 /// Eddy, the Mercury Djinni (actor 17), runs from the leader, unless the two
 /// stand on opposite sides of the boundary between 8-pixel columns 36 and 37.
@@ -436,8 +430,6 @@ void ShamanVillageCave_FightGladiators(void) {
   Event_SetDefeatDestination(SCENE_SHAMAN_VILLAGE_CAVE, 21);
   Field_RequestBattleFromEncounterTable(102, 2);
 }
-
-void Event_SetDestination();
 
 void ShamanVillageCave_LoseToColossoFans(void) {
   s32 angle = FACING_NORTHWEST;

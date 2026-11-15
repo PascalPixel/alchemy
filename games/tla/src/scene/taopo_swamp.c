@@ -3,7 +3,6 @@
 /// ground, vents whose gusts throw it about, puddles Douse fills and Frost
 /// freezes, lava rocks to cool and push, drops falling in the dark rooms, the
 /// Mad Plant in its bush and Flower, the Venus Djinni.
-
 #include "system/task.h"
 #include "flags.h"
 #include "types.h"
@@ -28,6 +27,9 @@
 #include "fixed_math.h"
 #include "system/io_write.h"
 #include "djinn_ids.h"
+
+void Rope_Initialize(void);
+s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 
 struct SwingWork {
   u32 unk00;
@@ -108,20 +110,12 @@ enum TaopoSwampStarDustActorId {
 /// Set once the Mad Plant hiding in the bush has been beaten.
 #define FLAG_TAOPO_SWAMP_MAD_PLANT_BEATEN 0x9b6
 
-extern u32 gSceneExits[];
-
 void GameFlag_SetByte(s32 flag, s32 value);
 void Vent_SetGust(s32 id, s32 a);
 void Vents_SetId(s32 a, s32 b);
-void Event_End(void);
-void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
-void FieldCamera_WaitForArrival(void);
-void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                  s32 g);
-void MadPlant_LeapAtLeader(s32 a, s32 b, s32 c);
 void Actor_StartScript(struct Actor *object, const void *data);
-void Actor_SetBlendMode(struct Actor *object, u32 value);
 
 extern s32 gTaopoSwamp_SteamPuffs;
 extern s32 gTaopoSwamp_PassageRows;
@@ -136,7 +130,6 @@ s32 Vents_GetCounter(void);
 void Vent_SetActive(s32 index, s32 active);
 #endif
 s32 Vents_AdvanceCounter(s32 a);
-void Scene_QueueMusic(s32 a);
 
 struct SpriteWork {
   u8 unk00[17];
@@ -185,12 +178,9 @@ extern u8 gInventorySnapshot[];
 #define VENT_WORK ((struct VentWork *)(gInventorySnapshot + 0x188))
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 
-s32 Trig_Cos(s32 angle);
 void Vent_Bounce(struct Actor *object);
 extern u32 gTaopoSwamp_PuffRises[];
 extern s32 gTaopoSwamp_SparkleFrame;
-extern u8 gMapShapeGrid[];
-void MapGrid_CenterOnFollowedPoint(void);
 void BlendScript_Suspend(void);
 void TaopoSwamp_TwinkleStarDust(void);
 void TaopoSwamp_FocusMapOn(s32 x, s32 z);

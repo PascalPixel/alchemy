@@ -10,12 +10,58 @@
 /// Reflux waits at the end of one sliding puzzle (room 4). Beyond the room of
 /// pillars (room 6), Reveal opens an icy wall and Burst a brown one outside;
 /// Burst on the dead end by the chests (room 7) brings its rocks down.
-#include "../field/actor_set_sprite_priority.c"
 #include "system/task.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "field/effect_sprite.h"
 #include "scene/falling_rocks.h"
+#include "types.h"
+#include "flags.h"
+#include "djinn_ids.h"
+#include "item_ids.h"
+#include "field/event_inline.h"
+#include "system/ram_buffer.h"
+#include "field/map_grid.h"
+#include "field/field.h"
+#include "field/map.h"
+#include "scene/magma_rock.h"
+#include "field/flag_call.h"
+#include "field/field_event.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "system/math_table.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/scene_tables.h"
+#include "scene_ids.h"
+#include "system/iwram_call.h"
+#include "field/actor.h"
+#include "system/main_routine_work.h"
+#include "field/call.h"
+#include "system/field_effect.h"
+#include "system/io_reg.h"
+#include "field/field_sequence_event.h"
+#include "system/frame.h"
+#include "field/event.h"
+#include "scene/scene.h"
+#include "field/field_effect.h"
+#include "system/input.h"
+#include "version.h"
+#include "field/object.h"
+#include "field/field_sprite.h"
+#include "gamepak/far_call/system.h"
+#include "field/particle.h"
+#include "text/msg_ids.h"
+
+void Leader_SlideOnIce(void);
+void Actor_LiftTargetBlock(u16 *actors);
+void Actor_PlaceMovedBlock(void);
+void Actor_DisableById(u32 id);
+void Actor_SetCellShape(s32 level, s32 layer, s32 owner);
+
+#include "../field/actor_set_sprite_priority.c"
 
 void TundariaTower_StartEffectScript(struct FieldEffect *effect,
                                      const s32 *script);
@@ -43,46 +89,8 @@ void TundariaTower_StartEffectScript(struct FieldEffect *effect,
 
 #undef EFFECT_SET_SCRIPT
 
-#include "types.h"
-#include "flags.h"
-#include "djinn_ids.h"
-#include "item_ids.h"
-#include "field/event_inline.h"
-#include "system/ram_buffer.h"
-#include "field/map_grid.h"
-#include "field/field.h"
-#include "field/map.h"
-#include "scene/magma_rock.h"
-#include "field/flag_call.h"
 #include "shared/tundaria_tower.h"
-#include "field/field_event.h"
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/scene_tables.h"
-#include "scene_ids.h"
-#include "system/iwram_call.h"
-#include "field/actor.h"
-#include "system/main_routine_work.h"
-#include "field/call.h"
-#include "system/field_effect.h"
-#include "system/io_reg.h"
-#include "field/field_sequence_event.h"
-#include "system/frame.h"
-#include "field/event.h"
-#include "scene/scene.h"
-#include "field/field_effect.h"
-#include "system/input.h"
-#include "version.h"
-#include "field/object.h"
 #include "shared/tables.h"
-#include "field/field_sprite.h"
-#include "gamepak/far_call/system.h"
-#include "field/particle.h"
 
 #define FLAG_LEFT_WATER_PARCHED 0x942
 #define FLAG_RIGHT_WATER_PARCHED 0x943
@@ -147,7 +155,6 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value) {
   return old;
 }
 
-s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 terrain, s32 height);
 
 /// Sets the cell under the object by the flag its action names: with the flag
@@ -262,8 +269,6 @@ void TundariaTower_ParchRightWater(void) {
   GameFlag_Set(FLAG_RIGHT_WATER_PARCHED);
   Event_End();
 }
-
-#include "text/msg_ids.h"
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -759,14 +764,9 @@ union FieldObject;
 
 void Leader_StopIfPending(void);
 
-s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
-
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
-s32 Actor_GetCellIndex(struct Actor *object);
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
-s32 Field_TryJumpForward(void);
-struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
 void TundariaTower_SpawnRubble(s32 spread);
 void TundariaTower_SetLeaderCellShape(s32 a, s32 b);
@@ -774,7 +774,6 @@ void TundariaTower_SetLeaderCellShape(s32 a, s32 b);
 void TundariaTower_SpawnDustRing(void);
 
 void Actor_MoveToObject(s32 id, s32 target);
-void MapGrid_CenterOnFollowedPoint(void);
 
 extern union FieldObject *gTundariaTower_Reflection;
 
@@ -802,10 +801,6 @@ void TundariaTower_EndRevealIcyWall(void);
 void TundariaTower_RevealIcyWall(void);
 void TundariaTower_StopSliding(void);
 void TundariaTower_ResolveBeforePsynergy(void);
-
-extern u32 gFieldEffect_ShortScript[];
-extern u32 gFieldEffect_MediumScript[];
-extern u32 gFieldEffect_LongScript[];
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -1025,13 +1020,9 @@ s32 Scene_PrepareMap(void) { return 0; }
 extern s16 gSlideOnIce_AnglesByKey[];
 void Actor_SteerByPad(struct Actor *object);
 void Leader_StopIfPending(void);
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Actor_HasArrived(struct Actor *object);
-s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 
 #include "shared/slide_on_ice_from_edge.c"
-
-s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
@@ -1433,10 +1424,6 @@ UNUSED void TundariaTower_StepOnTrap(const u16 *table) {
 }
 
 #include "../field/field_effect_advance_motion_priority.c"
-
-s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
-
-void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
 void TundariaTower_SpawnRubble(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);

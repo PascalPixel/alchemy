@@ -3,11 +3,53 @@
 /// the Shaman's Rod, sends the party to Trial Road, where Sheba's Whirlwind
 /// clears the sand before the race to the summit; its houses, inn, shop and
 /// sanctum, Aroma the Djinni, and the lettering that counts the race down.
-#include "../field/actor_set_sprite_priority.c"
+#include "sprite_ids.h"
 #include "resource_ids.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "system/io_write.h"
+#include "djinn_ids.h"
+#include "flags.h"
+#include "item_ids.h"
+#include "types.h"
+#include "system/field_effect.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "field/event.h"
+#include "scene/scene.h"
+#include "graphics/resource.h"
+#include "window/window.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "system/math_table.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/scene_tables.h"
+#include "system/iwram_call.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "field/field_event.h"
+#include "system/frame.h"
+#include "field/actor.h"
+#include "field/field_sprite.h"
+#include "game/item.h"
+#include "window/item_icon.h"
+#include "system/task.h"
+#include "system/affine.h"
+#include "graphics/vram_tab.h"
+#include "system/io_write_queue.h"
+#include "edition.h"
+#include "system/heap_release.h"
+#include "system/input.h"
+#include "system/ram_buffer.h"
+#include "scene_ids.h"
+#include "text/msg_ids.h"
+#include "field/field_sequence_event.h"
+#include "field/field.h"
+
+#include "../field/actor_set_sprite_priority.c"
 
 /// The trial grounds' actors (SceneId_ShamanVillageTrialGrounds), numbering the
 /// rows of gShamanVillageTrialGroundsActorPlacements; Moapa, his guards and
@@ -66,7 +108,6 @@ enum {
 #define ACTOR_FORTUNE_TELLERS_FLAME (ACTOR_FIRST_PLACED + 8)
 #define ACTOR_FORTUNE_TELLER (ACTOR_FIRST_PLACED + 9)
 #define ACTOR_AROMA (ACTOR_FIRST_PLACED + 10)
-#include "djinn_ids.h"
 
 /// Set once Sheba has cast Whirlwind on the purple rock for Moapa's first test
 /// and blown the sand away.
@@ -92,41 +133,6 @@ enum {
 
 #include "../field/field_effect_move.c"
 
-#include "flags.h"
-#include "item_ids.h"
-#include "types.h"
-#include "system/field_effect.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "field/event.h"
-#include "scene/scene.h"
-#include "graphics/resource.h"
-#include "window/window.h"
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/scene_tables.h"
-#include "system/iwram_call.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "field/field_event.h"
-#include "system/frame.h"
-#include "field/actor.h"
-#include "field/field_sprite.h"
-#include "game/item.h"
-#include "window/item_icon.h"
-#include "system/task.h"
-#include "system/affine.h"
-#include "graphics/vram_tab.h"
-#include "system/io_write_queue.h"
-#include "edition.h"
-#include "system/heap_release.h"
-#include "system/input.h"
-
 struct ItemDefinition;
 
 extern s16 gShamanVillage_WaveLines[];
@@ -139,8 +145,6 @@ extern u32 gShamanVillage_ShebaStandsByRodScript[];
 extern u32 gShamanVillage_MoapaLeavesHouseScript[];
 extern u32 gShamanVillage_OtherGuardLeavesHouseScript[];
 extern u32 gShamanVillage_RejoinLeaderAtHouseScript[];
-
-struct ItemDefinition *Item_GetDirect(s32 item);
 
 extern u32 gShamanVillage_LetteringSprites[];
 
@@ -240,8 +244,6 @@ void ShamanVillage_TalkToInnkeeper(void);
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-void Actor_SetSpriteFlags(struct Actor *object, u32 value);
-
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
@@ -253,7 +255,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = (struct FieldEffect *)Import_ActorCreate(options->type, x, y, z);
   else
-    effect = (struct FieldEffect *)Import_ActorCreate(285, x, y, z);
+    effect =
+        (struct FieldEffect *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z);
   if (effect == 0)
     return;
 
@@ -316,42 +319,16 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #ifndef TLA_SHAMAN_VILLAGE_H
 #define TLA_SHAMAN_VILLAGE_H
 
-#include "types.h"
-#include "system/system.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "scene_ids.h"
-#include "text/msg_ids.h"
-#include "field/field_sprite.h"
-#include "field/event_inline.h"
-#include "system/frame.h"
-#include "field/scene_tables.h"
-#include "field/field_sequence_event.h"
-
-void Event_End(void);
 void Shop_Run(s32 shop, s32 keeper);
 void Sanctum_Run(s32 keeper);
 void Inn_CheckIn(s32 shop, s32 keeper);
-void Import_ActorSetMode(struct Actor *object, s32 mode);
 void Actor_Release(struct Actor *object);
-void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
-void Actor_SetBlendMode(struct Actor *object, u32 value);
-void FieldPsynergy_RunHandler(s32 type);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
-void FieldCamera_WaitForArrival(void);
 
 void Rope_Initialize(void);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
-void Event_StartScreenTransition(void);
 
 void Actor_MoveToObject(s32 actor, s32 target);
 
-void BattleEffect_StartArcEffect(void);
-void BattleEffect_EndArcEffect(void);
-void BattleEffect_WaitForArcGroups(void);
-void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 value);
-void Scene_PlayMusic(void);
 void InventorySnapshot_Save(void);
 
 // ---- this overlay
@@ -389,8 +366,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
     return gShamanVillageSanctumEntrances;
   return gShamanVillage_Entrances;
 }
-
-#include "field/field.h"
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
@@ -2777,7 +2752,8 @@ void ShamanVillage_DriftSmoke(struct Actor *object) {
 }
 
 void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
-  struct Actor *object = ((struct Actor *)Import_ActorCreate(285, x, y, z));
+  struct Actor *object =
+      ((struct Actor *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z));
 
   if (object != NULL) {
     object->retainSpriteCache = 2;
@@ -3289,8 +3265,6 @@ s16 gShamanVillage_LetteringGoScript[] = {
     LETTERING_END,
 };
 // clang-format on
-
-#include "text/msg_ids.h"
 
 void ShamanVillage_MeetAroma(void);
 void Scene_ShowEntranceLocked(void);

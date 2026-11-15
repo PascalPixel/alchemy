@@ -7,6 +7,7 @@
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
 #include "version.h"
+#include "field/map_grid.h"
 #include "field/event_inline.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -41,9 +42,13 @@
 #include "field/sprite.h"
 #include "graphics/vram_tab.h"
 #include "macros.h"
-#include "shared/tables.h"
 #include "text/msg_ids.h"
 #include "field/actor_script.h"
+
+void Actor_StartScript(struct Actor *actor, const s32 *script);
+void WorldMap_LoadTidalWave(void);
+
+#include "shared/tables.h"
 
 struct Actor;
 
@@ -197,15 +202,12 @@ void WorldMap_WatchVenusLighthouseCollapse(void);
 
 s32 Event_PickUpItem(s32 a, s32 b, s32 c);
 void Actor_StartRenderModeScript(void);
-void WorldMap_Freeze(void);
-void WorldMap_ReloadPendingAreaGraphics(void);
 s32 Field_FindNearbyTalkTarget(s32 owner);
 s32 WorldMap_IsWalkable(struct Actor *object, s32 *position);
 void Party_GivePiersDjinn(void);
 void Event_WaitForZoomTransition(void);
 void DjinnMenu_Run(void);
 void Party_RestoreHpPp(s32 value);
-void FieldCamera_WaitForArrival(void);
 extern s32 gWorldMap_HiddenMembers[8];
 
 // Once the party has walked nine tenths of the encounter threshold, a coin
@@ -1930,7 +1932,12 @@ void WorldMap_DriftNorthOfContinent(void) {
   Actor_SetSpeed(ACTOR_IDEJIMA_KRADEN, 1);
   Actor_WalkTo(ACTOR_IDEJIMA_KRADEN, 3608, 7695);
   Event_PlaySound(SE_163);
-  WorldMap_LoadTidalWave(0);
+#ifdef UBFIX
+  WorldMap_LoadTidalWave();
+#else
+  // UB: WorldMap_LoadTidalWave takes no argument, but this call passes 0.
+  ((void (*)(s32))WorldMap_LoadTidalWave)(0);
+#endif
   FieldEvent_SetExitRequest(WORLD_MAP_EXIT_IDEJIMA);
 }
 

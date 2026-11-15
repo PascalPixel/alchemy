@@ -1,12 +1,10 @@
 /// @file
 /// Treasure Isle's first object: the shared actor helpers it links first.
-
 #include "flags.h"
 #include "djinn_ids.h"
 #include "types.h"
 #include "field/actor.h"
 #include "field/event_inline.h"
-#include "shared/tables.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -30,9 +28,12 @@
 #include "system/io_write_queue.h"
 #include "system/task.h"
 #include "edition.h"
-#include "../field/actor_set_sprite_priority.c"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "text/msg_ids.h"
+
+#include "shared/tables.h"
+#include "../field/actor_set_sprite_priority.c"
 
 #include "../field/actor_prepare.c"
 
@@ -70,7 +71,6 @@ extern u32 gTreasureIsle_RockDust[];
 
 /// Import stubs: Event_Start and Event_End, and the pending
 /// actions' resolution.
-void Event_Start(void);
 
 extern struct TreasureIsleCell gTreasureIsle_Room2SpikyRocks[];
 extern struct TreasureIsleCell gTreasureIsle_Room3SpikyRocks[];
@@ -112,10 +112,6 @@ extern u32 gTreasureIsle_PostStill[];
 extern u32 gTreasureIsle_LiftRockScale[];
 
 void TreasureIsle_PressRoom2Button(void);
-
-void FieldCamera_WaitForArrival(void);
-
-#include "text/msg_ids.h"
 
 extern u16 gTreasureIsle_SavedBgColors[];
 extern volatile u16 gTreasureIsle_SavedObjColors[];
@@ -589,8 +585,6 @@ s32 Scene_PrepareMap(void) { return 0; }
        ->v)
 
 void TreasureIsle_JumpForward(void) { Field_TryJumpForward(); }
-
-#include "text/msg_ids.h"
 
 // The Rusty Sword's name; the Japanese edition holds message 0 in its place.
 #if LANGUAGE == LANGUAGE_JAPANESE

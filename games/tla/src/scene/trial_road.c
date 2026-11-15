@@ -4,8 +4,7 @@
 /// right path through each, the blue chests that open each stage's door for
 /// the weight of the party's equipment, and the battle at the peak; after the
 /// race, the summit's cave and pools and Gasp the Djinni.
-
-#include "shared/trial_road.h"
+#include "sprite_ids.h"
 #include "flags.h"
 #include "djinn_ids.h"
 #include "item_ids.h"
@@ -46,6 +45,9 @@
 #include "graphics/vram_tab.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "text/msg_ids.h"
+
+#include "shared/trial_road.h"
 
 /// The actors every stage room places first, numbering the rows of each
 /// stage's table: Moapa, the four blue chests (two on the left path, two on
@@ -235,13 +237,22 @@ s32 TrialRoad_RivalIsAhead(s32 fallback) {
   return fallback;
 }
 
+s32 TrialRoad_OfferToGiveUp(void);
+void Actor_SetSpriteColorMode(struct Actor *object, u32 mode);
+
 void TrialRoad_TakeStairs(s32 direction) {
   struct TrialRoadState *state = gTrialRoadState;
 
   if ((u32)(direction - 1) <= 1) {
     if (state->stage[0] <= 0) {
       if (Event_GetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT)) {
-        if (TrialRoad_OfferToGiveUp(0) == 0)
+#ifdef UBFIX
+        if (TrialRoad_OfferToGiveUp() == 0)
+#else
+        // UB: TrialRoad_OfferToGiveUp takes no argument, but this call passes
+        // 0.
+        if (((s32 (*)(s32))TrialRoad_OfferToGiveUp)(0) == 0)
+#endif
           Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, -16);
         return;
       }
@@ -273,8 +284,6 @@ void TrialRoad_TakeStairs(s32 direction) {
 
 /// Trial Road's stage puzzles: the stairs, chests and doors, and the pillars,
 /// torches, logs, spouts and sand the eight rooms are built from.
-
-#include "text/msg_ids.h"
 
 struct Actor;
 struct FieldSprite;
@@ -486,8 +495,6 @@ void TrialRoad_ShowProgress(s32 leaderId, s32 rivalId);
 
 void TrialRoad_OpenLeaderDoor(s32 side, s32 phase);
 
-void FieldCamera_WaitForArrival(void);
-
 extern u32 gTrialRoad_LeftKnightEntersScript[];
 
 extern u32 gTrialRoad_RightKnightEntersScript[];
@@ -497,10 +504,8 @@ extern u32 gTrialRoad_RightKnightToChestsScript[];
 
 extern u32 gTrialRoad_RightKnightLeavesScript[];
 
-s32 Actor_GetCellIndex(struct Actor *object);
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
 void Actor_DisableById(s32 id);
-s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
 void MagmaRockInside_SpawnRubble(s32 value);
@@ -1319,8 +1324,6 @@ void TrialRoad_RevealVine(void) {
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-void Actor_SetSpriteFlags(struct Actor *object, u32 value);
-
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
@@ -1332,7 +1335,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
   else
-    effect = ((struct FieldEffect *)Import_ActorCreate(285, x, y, z));
+    effect =
+        ((struct FieldEffect *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z));
   if (effect == 0)
     return;
 
@@ -1629,6 +1633,8 @@ void TrialRoad_SetUpPoundStage(void) {
   }
 }
 
+void MagmaRockInside_RestoreCrumblingPillars(const u16 *table);
+
 void TrialRoad_SetUpCrumblingStage(void) {
   MagmaRockInside_RestoreCrumblingPillars(gTrialRoad_CrumblingPillars);
 }
@@ -1847,8 +1853,6 @@ void TrialRoad_StartPaletteCycle(s32 mode) {
   }
 }
 
-#include "text/msg_ids.h"
-
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
      u8 pad[off];                                                              \
@@ -1887,6 +1891,7 @@ void TrialRoad_SetUpPeak(void) {
 }
 
 /// Each stage pattern's set-up, by the pattern's low three bits.
+
 extern void (*gTrialRoad_StageSetUps[])(void);
 
 s32 Scene_Initialize(void) {
@@ -2034,7 +2039,6 @@ extern s16 gTrialRoad_StageMapCells[][2];
 extern s8 gTrialRoad_DemoSceneryStages[];
 extern s8 gTrialRoad_SceneryStages[];
 
-struct Unit *Unit_Get(u32 unitId);
 void TrialRoad_StartRival(s32 mirrored);
 
 /// Places `layer` `column` cells into the map: its offset (column << 20), its

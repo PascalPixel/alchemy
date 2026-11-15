@@ -160,10 +160,12 @@ struct PlacedSprite {
   u8 unusedB[2]; ///< no code names it
   s32 scale;     ///< 16.16 fixed point
   u8 slot;
-  u8 retainCacheEntry;               ///< bit 0
-  u8 unusedAfterRetainCacheEntry[7]; ///< no code names it
+  u8 retainCacheEntry; ///< bit 0
+  u16 rotation;
+  u8 unusedAfterRotation[5]; ///< no code names it
   u8 dirty;
-  u8 unusedAfterDirty[0x0b]; ///< no code names it
+  u8 flags;
+  u8 unusedAfterFlags[0x0a]; ///< no code names it
   u8 shadowTileHigh : 2;
   u8 shadowPriority : 2;
   u8 shadowPalette : 4;

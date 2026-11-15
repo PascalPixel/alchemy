@@ -70,15 +70,6 @@ struct WhirlSpark {
   s32 age;
 };
 
-/// The states of a particle that flies out and back: Halt's and Force's
-/// (FieldEffect_UpdateHaltParticle, FieldEffect_UpdateRadialBurst).
-enum OutAndBackState {
-  OUT_AND_BACK_AIM_OUT = 0,    ///< picks the point it flies out to
-  OUT_AND_BACK_FLYING_OUT = 1, ///< waits to arrive there
-  OUT_AND_BACK_AIM_BACK = 2,   ///< picks the point it comes back to
-  OUT_AND_BACK_FLYING_BACK = 3 ///< frees its slot once it arrives
-};
-
 /// Per-frame update: sets every part of an actor's sprite to colour mode
 /// frame % 6, which cycles its colours.
 void Actor_ApplyRandomChildValues(struct Actor *actor);

@@ -210,7 +210,7 @@ void Actor_SetSpritePalette(void *object, s32 value) {
 /// when none or a diagonal is held.
 s32 Input_GetDpadAngle(u32 unused) {
   // Indexed by the right, left, up and down bits.
-  return gFieldEffect_CyclePatternWords[(gInput.held >> 4) & 15];
+  return gFieldEffect_CyclePatternWords[DPAD_INDEX(gInput.held)];
 }
 
 /// Returns the entry of gBattleEffect_EightWayHeadingWords for the direction
@@ -687,7 +687,7 @@ void FieldPsynergy_WatchLeaderDistance(void) {
     // Raise Reveal as a Psynergy request that pays no PP (ACT_PACKED
     // | ABILITY_REVEAL), which runs its ending events.
     u16 *slot = (u16 *)&work->psynergy;
-    u32 request = 0x2000 | ABILITY_REVEAL;
+    u32 request = ABILITY_REVEAL | ACT_PACKED;
 
     *slot = request;
   }
@@ -713,7 +713,7 @@ void FieldPsynergy_Reveal(void) {
   caster = scene->mainActor;
   transition->centreX = caster->x.fixed;
   transition->centreY = caster->z.fixed - caster->y.fixed;
-  PaletteFade_SetSource(0x10000, 0);
+  PaletteFade_SetSource(Q16_ONE, 0);
   PaletteFade_SetTarget(0x10001, 1);
   PaletteFade_StartInterpolation(1);
   event->revealActive = 0;
@@ -755,10 +755,10 @@ void FieldPsynergy_EndReveal(void) {
     event->revealActive = 0;
     event->revealFrames = 0;
     Actor_SetRevealSpriteColor(0);
-    PaletteFade_SetTarget(0x10000, 1);
+    PaletteFade_SetTarget(Q16_ONE, 1);
     PaletteFade_StartInterpolation(1);
     PaletteFade_SetSource(0, 0);
-    PaletteFade_SetTarget(0x10000, 0);
+    PaletteFade_SetTarget(Q16_ONE, 0);
     PaletteFade_StartInterpolation(30);
     wait(1);
     pending = Scene_FindPsynergyTrigger(
@@ -917,8 +917,8 @@ void FieldEffect_SpawnBurstParticleField(void) {
     child->attributes.bytes.palette = visual->attributes.bytes.palette;
 
     if (obj != 0) {
-      ((s32 *)obj)[7] = 0xb333;
-      ((s32 *)obj)[6] = 0xb333;
+      obj->scaleY = 0xb333;
+      obj->scaleX = 0xb333;
       obj->acceleration = px(3) / 2;
       obj->speedLimit = px(3) / 2;
       obj->motionFlags = 0;
@@ -1669,7 +1669,7 @@ void FieldEffect_CheckCloakTile(void) {
   struct Actor *leader = Actor_Lookup(Party_GetLeaderActor());
 
   if (MapGrid_IsCloakCell(leader->x.fixed, leader->z.fixed, leader->layer) == 0)
-    event->psynergy = 0x2092;
+    event->psynergy = ABILITY_CLOAK | ACT_PACKED;
 }
 
 /// Show the Cloaked caster again: stop checking the ground under it, then

@@ -27,7 +27,7 @@ void Whirlwind_UpdateLower(struct Actor *self) {
     if (distance < -0x200000)
       goto stop;
     {
-      if (*((u8 *)self + 0x62) == 0) {
+      if (self->riseCounter == 0) {
         distance = leader->y.fixed - self->y.fixed;
         if (distance < 0)
           distance = self->y.fixed - leader->y.fixed;
@@ -41,8 +41,8 @@ void Whirlwind_UpdateLower(struct Actor *self) {
           leader->priorityFlags &= ~1;
           work->raisedTrigger = 200;
           gMainRoutineWork.movementMode = 0;
-          *((u8 *)self + 0x62) = 1;
-          *((u8 *)self + 0x63) = 1;
+          self->riseCounter = 1;
+          self->blockMarked = 1;
         }
       }
       /* IwramMulQ16 reached from IwramIrqMain rather than at its fixed
@@ -58,14 +58,8 @@ void Whirlwind_UpdateLower(struct Actor *self) {
     }
   }
 stop:
-  {
-    s32 zero = 0;
-
-    /* FAKEMATCH(temporary): one word zero clears the ride byte, then the
-     * update. */
-    *((u8 *)self + 0x63) = zero;
-    self->update = (void *)zero;
-  }
+  self->blockMarked = 0;
+  self->update = NULL;
   Actor_StartScript(self, gWhirlwindEndScript);
   Event_PlaySound(SE_SPARKLING_PASSAGE);
   gWhirlwindRiding = 0;

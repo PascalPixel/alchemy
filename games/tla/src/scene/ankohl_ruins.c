@@ -1129,18 +1129,14 @@ void AnkohlRuins_RideRaftDown(void) {
   raft->z.fixed += px(4) / 5;
   column = FIELD_CELL(leader->x.fixed);
   if (gMainRoutineWork.movementMode != 5 && column > 12 && column <= 15) {
-    /* FAKEMATCH(temporary): a second pointer to the leader loads the raft's z
-     * before the leader's in the second test. */
-    struct Actor *player = leader;
-
-    if (raft->z.fixed + px(24) >= player->z.fixed &&
-        player->z.fixed >= raft->z.fixed) {
-      player->z.fixed = raft->z.fixed + px(24);
+    if (raft->z.fixed + px(24) >= leader->z.fixed &&
+        leader->z.fixed >= raft->z.fixed) {
+      leader->z.fixed = raft->z.fixed + px(24);
       rider->z.fixed = raft->z.fixed + px(24);
     }
-    if (raft->z.fixed >= player->z.fixed &&
-        player->z.fixed >= raft->z.fixed - px(16)) {
-      player->z.fixed = raft->z.fixed - px(16);
+    if (raft->z.fixed >= leader->z.fixed &&
+        leader->z.fixed >= raft->z.fixed - px(16)) {
+      leader->z.fixed = raft->z.fixed - px(16);
       rider->z.fixed = raft->z.fixed - px(16);
     }
   }

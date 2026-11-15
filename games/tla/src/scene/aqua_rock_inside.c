@@ -427,17 +427,15 @@ void AquaRockInside_PlacePillarOverVent(s32 unused, s32 id) {
 void AquaRockInside_JumpForward(void) { Field_TryJumpForward(); }
 
 void AquaRockInside_DouseFirstMoai(s32 unused, s32 id) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
-  s32 *layer;
+  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
   s32 i;
   s32 column;
   s32 objectId = id;
 
-  layer = (s32 *)(map + 0x140);
   FieldActor_SetSpriteColor(Actor_Get(objectId), 0);
   AquaRockInside_SetMoaiFace(objectId);
   Actor_SetAnimation(objectId, 3);
-  layer[3] -= 0x200000;
+  layer->offsetY -= px(32);
   Map_LoadCellsAndShapes();
   MapGrid_CenterOnFollowedPoint();
   column = FIELD_CELL(Actor_Get(12)->x.fixed) - 42;
@@ -453,7 +451,7 @@ void AquaRockInside_DouseFirstMoai(s32 unused, s32 id) {
 
       AquaRockInside_SetPillarHeight(column, height);
     }
-    layer[3] += 0x10000;
+    layer->offsetY += px(1);
     System_Wait(4);
   }
   if (Event_GetFlag(FLAG_SCENE_TEMP_50))

@@ -32,7 +32,7 @@ void Whirlwind_Update(struct Actor *self) {
     if (distance < -0x200000)
       goto stop;
     {
-      if (*((u8 *)self + 0x62) == 0) {
+      if (self->riseCounter == 0) {
         distance = leader->y.fixed - self->y.fixed;
         if (distance < 0)
           distance = self->y.fixed - leader->y.fixed;
@@ -49,8 +49,8 @@ void Whirlwind_Update(struct Actor *self) {
             work->raisedTrigger = delay;
           }
           gMainRoutineWork.movementMode = 0;
-          *((u8 *)self + 0x62) = 1;
-          *((u8 *)self + 0x63) = 1;
+          self->riseCounter = 1;
+          self->blockMarked = 1;
         }
       }
       {
@@ -69,12 +69,9 @@ void Whirlwind_Update(struct Actor *self) {
     }
   }
 stop:
-  {
-    s32 zero = 0;
-    *((u8 *)self + 0x63) = zero;
-    self->update = zero;
-    Actor_StartScript(self, gWhirlwindEndScript);
-    Event_PlaySound(SE_SPARKLING_PASSAGE);
-    gWhirlwindRiding = zero;
-  }
+  self->blockMarked = 0;
+  self->update = NULL;
+  Actor_StartScript(self, gWhirlwindEndScript);
+  Event_PlaySound(SE_SPARKLING_PASSAGE);
+  gWhirlwindRiding = 0;
 }

@@ -112,16 +112,9 @@ void Unit_Calculate(s32 unitId) {
   stats->actionCount = unit->baseActionCount & 15;
   stats->hpRegen = unit->baseHpRegen;
   stats->ppRegen = unit->basePpRegen;
-  {
-    s16 *base = &unit->baseElement[0].power;
-    s32 *total = &stats->element[0].power;
-
-    for (index = 0; index < ELEMENT_COUNT; index++) {
-      total[0] = base[0];
-      total[1] = base[1];
-      base += 2;
-      total += 2;
-    }
+  for (index = 0; index < ELEMENT_COUNT; index++) {
+    stats->element[index].power = unit->baseElement[index].power;
+    stats->element[index].resistance = unit->baseElement[index].resistance;
   }
 
   // HP and PP keep their share of the maximum; gauges that no longer match are
@@ -163,7 +156,7 @@ void Unit_Calculate(s32 unitId) {
         effectAmount = stats->item->effects[effectIndex].amount;
         stats->kind = effectKind;
         stats->amount = effectAmount;
-        switch (stats->kind) {
+        switch (effectKind) {
         case EQUIP_EFFECT_NONE:
           break;
         case EQUIP_EFFECT_ADD_HP:
@@ -225,13 +218,12 @@ void Unit_Calculate(s32 unitId) {
 
     // Only set Djinn contribute their stat bonuses.
     for (elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++) {
-      u32 setDjinn = unit->djinnSet[elementIndex];
+      u32 activeDjinn = unit->djinnSet[elementIndex];
 
       for (index = 0; index < DJINN_PER_ELEMENT; index++) {
-        if (setDjinn & (1 << index)) {
+        if (activeDjinn & (1 << index)) {
           const struct DjinnDefinition *djinn =
-              (const struct DjinnDefinition *)Djinn_GetDefinition(elementIndex,
-                                                                  index);
+              Djinn_GetDefinition(elementIndex, index);
 
           stats->hp += djinn->hp;
           stats->pp += djinn->pp;
@@ -243,7 +235,7 @@ void Unit_Calculate(s32 unitId) {
       }
     }
 
-    // The class's multipliers are in tenths (STAT_SCALE_ONE keeps a stat).
+    // The class's multipliers are in tenths (STAT_SCALE_ONE keeps a stat)
     {
       /* FAKEMATCH(signature): the class read through ClassScaleView, which has
        * no word member, so the multipliers load ahead of the stores. */
@@ -629,11 +621,12 @@ void MainRoutineWork_InitializeDefaults(void) {
   gMainRoutineWork.unk13d[13] = 64;
   gMainRoutineWork.unk13d[14] = 64;
 
-  // XXX: what reads these two tables of the scene state, 32 rows of eight
-  // random numbers 0 to 4 (12 bytes apart) and a copy of Data_080b1f2c; a
-  // search of the scenes for gSceneLocalState + 0x11b8 and + 0x1338
-  // (gRareItemStock + 0x12c and + 0x2ac as ewram.s labels them) would settle
-  // it.
+  // Two tables in the space after gRareItemStock's ITEM_COUNTER_COUNT
+  // counters: 32 rows of eight random numbers 0 to 4, 12 bytes apart, and a
+  // copy of Data_080b1f2c.
+  // XXX: what reads them. No object of the main image or of any overlay holds
+  // their addresses or reads gSceneLocalState or gRareItemStock that far in; a
+  // watchpoint on 0x020021b8 and 0x02002338 in a played game would settle it.
   for (i = 0; i < 32; i++) {
     for (j = 0; j < 8; j++)
       gSceneLocalState[0x11b8 + i * 12 + j] = (Random16() * 5) >> 16;

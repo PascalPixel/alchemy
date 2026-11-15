@@ -7,14 +7,12 @@
 
 /// Returns the definition of Djinni `index` of element `group`; anything out of
 /// range gives DJINNI_FLINT's.
-const u16 *Djinn_GetDefinition(u32 group, u32 index) {
-  s32 entry;
+const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
+  s32 entry = 0;
 
-  entry = 0;
-  if (group < ELEMENT_COUNT && index < DJINN_PER_ELEMENT) {
+  if (group < ELEMENT_COUNT && index < DJINN_PER_ELEMENT)
     entry = group * DJINN_PER_ELEMENT + index;
-  }
-  return (const u16 *)&gDjinn_DefinitionTable[entry];
+  return &gDjinn_DefinitionTable[entry];
 }
 
 /// Gives a newly found Djinni to the party member holding the fewest Djinn who
@@ -236,10 +234,9 @@ s32 DjinnRecovery_CountStandby(u8 *counts) {
   return standbyCount;
 }
 
-/// Returns the first halfword of the definition of Djinni `index` of element
-/// `group`.
-u16 Djinn_GetDefinitionHeader(u32 group, u32 index) {
-  return *Djinn_GetDefinition(group, index);
+/// Returns the ability ID used when the Djinni is unleashed.
+u16 Djinn_GetAbilityId(u32 group, u32 index) {
+  return Djinn_GetDefinition(group, index)->abilityId;
 }
 
 /// Returns how many Djinn of element `index` the unit holds, or of every

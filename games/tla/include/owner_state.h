@@ -130,8 +130,8 @@ void Unit_UpdateClass(s32 owner);
 struct ClassDefinition *Class_GetDefinition(s32 classId);
 s32 Owner_SumDjinnCounts(s32 owner, s32 element);
 
-const u16 *Djinn_GetDefinition(u32 element, u32 djinn);
-u16 Djinn_GetDefinitionHeader(u32 element, u32 djinn);
+const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index);
+u16 Djinn_GetAbilityId(u32 element, u32 djinn);
 s32 Djinn_Give(s32 owner, s32 element, s32 djinn);
 s32 Djinn_GiveToParty(s32 element, s32 djinn);
 u32 Djinn_IsSet(s32 owner, s32 element, s32 djinn);

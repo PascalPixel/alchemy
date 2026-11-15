@@ -90,7 +90,8 @@ such as `mus_madra.mid`, and each sample a WAV in `direct_sound_samples/`. A
 sequence takes its sound's name, such as `se_jump.mid`; those nothing
 names keep their row in `gSongTable`. A music sample is named for the
 instrument General MIDI gives its voice slot (slot 47, `timpani.pcm8.wav`),
-an effect's sample for the sounds that play it (`rumble.pcm8.wav`).
+an effect's sample for the sounds that play it (`rumble.pcm8.wav`), and a
+drum for the key General MIDI gives its row of the drum kit (`side_stick.pcm8.wav`).
 
 ## Where the code is
 

@@ -108,39 +108,39 @@ Sound_WaveSteelDrums:
 	.global Sound_WaveTaikoDrum
 Sound_WaveTaikoDrum:
 	.incbin "games/tla/sound/direct_sound_samples/taiko_drum.pcm8.bin"
-	.global Sound_Wave25
-Sound_Wave25:
-	.incbin "games/tla/sound/direct_sound_samples/wave_25.pcm8.bin"
-	.global Sound_Wave26
-Sound_Wave26:
-	.incbin "games/tla/sound/direct_sound_samples/wave_26.pcm8.bin"
-	.global Sound_Wave27
-Sound_Wave27:
-	.incbin "games/tla/sound/direct_sound_samples/wave_27.pcm8.bin"
-	.global Sound_Wave28
-Sound_Wave28:
-	.incbin "games/tla/sound/direct_sound_samples/wave_28.pcm8.bin"
-	.global Sound_Wave29
-Sound_Wave29:
-	.incbin "games/tla/sound/direct_sound_samples/wave_29.pcm8.bin"
-	.global Sound_Wave30
-Sound_Wave30:
-	.incbin "games/tla/sound/direct_sound_samples/wave_30.pcm8.bin"
-	.global Sound_Wave31
-Sound_Wave31:
-	.incbin "games/tla/sound/direct_sound_samples/wave_31.pcm8.bin"
-	.global Sound_Wave32
-Sound_Wave32:
-	.incbin "games/tla/sound/direct_sound_samples/wave_32.pcm8.bin"
-	.global Sound_Wave33
-Sound_Wave33:
-	.incbin "games/tla/sound/direct_sound_samples/wave_33.pcm8.bin"
-	.global Sound_Wave34
-Sound_Wave34:
-	.incbin "games/tla/sound/direct_sound_samples/wave_34.pcm8.bin"
-	.global Sound_Wave35
-Sound_Wave35:
-	.incbin "games/tla/sound/direct_sound_samples/wave_35.pcm8.bin"
+	.global Sound_WaveAcousticBassDrum
+Sound_WaveAcousticBassDrum:
+	.incbin "games/tla/sound/direct_sound_samples/acoustic_bass_drum.pcm8.bin"
+	.global Sound_WaveBassDrum
+Sound_WaveBassDrum:
+	.incbin "games/tla/sound/direct_sound_samples/bass_drum.pcm8.bin"
+	.global Sound_WaveSideStick
+Sound_WaveSideStick:
+	.incbin "games/tla/sound/direct_sound_samples/side_stick.pcm8.bin"
+	.global Sound_WaveAcousticSnare
+Sound_WaveAcousticSnare:
+	.incbin "games/tla/sound/direct_sound_samples/acoustic_snare.pcm8.bin"
+	.global Sound_WaveHandClap
+Sound_WaveHandClap:
+	.incbin "games/tla/sound/direct_sound_samples/hand_clap.pcm8.bin"
+	.global Sound_WaveElectricSnare
+Sound_WaveElectricSnare:
+	.incbin "games/tla/sound/direct_sound_samples/electric_snare.pcm8.bin"
+	.global Sound_WaveTom
+Sound_WaveTom:
+	.incbin "games/tla/sound/direct_sound_samples/tom.pcm8.bin"
+	.global Sound_WaveClosedHiHat
+Sound_WaveClosedHiHat:
+	.incbin "games/tla/sound/direct_sound_samples/closed_hi_hat.pcm8.bin"
+	.global Sound_WaveOpenHiHat
+Sound_WaveOpenHiHat:
+	.incbin "games/tla/sound/direct_sound_samples/open_hi_hat.pcm8.bin"
+	.global Sound_WaveCrashCymbal
+Sound_WaveCrashCymbal:
+	.incbin "games/tla/sound/direct_sound_samples/crash_cymbal.pcm8.bin"
+	.global Sound_WaveRideCymbal
+Sound_WaveRideCymbal:
+	.incbin "games/tla/sound/direct_sound_samples/ride_cymbal.pcm8.bin"
 	.global Sound_WaveSwitch
 Sound_WaveSwitch:
 	.incbin "games/tla/sound/direct_sound_samples/switch.pcm8.bin"
@@ -177,12 +177,12 @@ Sound_WaveDrip:
 	.global Sound_WaveChime
 Sound_WaveChime:
 	.incbin "games/tla/sound/direct_sound_samples/chime.pcm8.bin"
-	.global Sound_Wave48
-Sound_Wave48:
-	.incbin "games/tla/sound/direct_sound_samples/wave_48.pcm8.bin"
-	.global Sound_Wave49
-Sound_Wave49:
-	.incbin "games/tla/sound/direct_sound_samples/wave_49.pcm8.bin"
+	.global Sound_WaveColossoLettering
+Sound_WaveColossoLettering:
+	.incbin "games/tla/sound/direct_sound_samples/colosso_lettering.pcm8.bin"
+	.global Sound_WaveEyesGlow
+Sound_WaveEyesGlow:
+	.incbin "games/tla/sound/direct_sound_samples/eyes_glow.pcm8.bin"
 	.global Sound_Wave50
 Sound_Wave50:
 	.incbin "games/tla/sound/direct_sound_samples/wave_50.pcm8.bin"
@@ -198,9 +198,9 @@ Sound_Wave53:
 	.global Sound_WavePound
 Sound_WavePound:
 	.incbin "games/tla/sound/direct_sound_samples/pound.pcm8.bin"
-	.global Sound_Wave55
-Sound_Wave55:
-	.incbin "games/tla/sound/direct_sound_samples/wave_55.pcm8.bin"
+	.global Sound_WaveSeaOfTimeOpens
+Sound_WaveSeaOfTimeOpens:
+	.incbin "games/tla/sound/direct_sound_samples/sea_of_time_opens.pcm8.bin"
 	.global Sound_Wave56
 Sound_Wave56:
 	.incbin "games/tla/sound/direct_sound_samples/wave_56.pcm8.bin"
@@ -210,18 +210,18 @@ Sound_Wave57:
 	.global Sound_WaveHowl
 Sound_WaveHowl:
 	.incbin "games/tla/sound/direct_sound_samples/howl.pcm8.bin"
-	.global Sound_Wave59
-Sound_Wave59:
-	.incbin "games/tla/sound/direct_sound_samples/wave_59.pcm8.bin"
+	.global Sound_WaveJawsOpen
+Sound_WaveJawsOpen:
+	.incbin "games/tla/sound/direct_sound_samples/jaws_open.pcm8.bin"
 	.global Sound_Wave60
 Sound_Wave60:
 	.incbin "games/tla/sound/direct_sound_samples/wave_60.pcm8.bin"
 	.global Sound_WaveIceCrack
 Sound_WaveIceCrack:
 	.incbin "games/tla/sound/direct_sound_samples/ice_crack.pcm8.bin"
-	.global Sound_Wave62
-Sound_Wave62:
-	.incbin "games/tla/sound/direct_sound_samples/wave_62.pcm8.bin"
+	.global Sound_WaveStatueStirs
+Sound_WaveStatueStirs:
+	.incbin "games/tla/sound/direct_sound_samples/statue_stirs.pcm8.bin"
 	.global Sound_WaveCurrent
 Sound_WaveCurrent:
 	.incbin "games/tla/sound/direct_sound_samples/current.pcm8.bin"
@@ -234,9 +234,9 @@ Sound_Wave65:
 	.global Sound_Wave66
 Sound_Wave66:
 	.incbin "games/tla/sound/direct_sound_samples/wave_66.pcm8.bin"
-	.global Sound_Wave67
-Sound_Wave67:
-	.incbin "games/tla/sound/direct_sound_samples/wave_67.pcm8.bin"
+	.global Sound_WaveStatueRise
+Sound_WaveStatueRise:
+	.incbin "games/tla/sound/direct_sound_samples/statue_rise.pcm8.bin"
 	.global Sound_WaveSpinAway
 Sound_WaveSpinAway:
 	.incbin "games/tla/sound/direct_sound_samples/spin_away.pcm8.bin"

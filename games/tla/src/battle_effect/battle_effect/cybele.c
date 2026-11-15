@@ -18,14 +18,6 @@ struct MenuFlagWork {
   u8 busy;
 };
 
-/// A row of gFieldPsynergy_Reach, as Cybele reads its id.
-struct DescriptorEntry {
-  s16 id;
-  u8 unk02[6];
-};
-
-extern struct DescriptorEntry gFieldPsynergy_Reach[];
-
 /// Writes the canvas's tile map for BG2, then closes the canvas layer.
 void BattleEffect_InitializeTilemapAndFlushQueue(void) {
   BattleEffect_StartTiledCanvas(1);

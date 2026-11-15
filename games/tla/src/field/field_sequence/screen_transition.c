@@ -2078,7 +2078,7 @@ s32 Speaker_GetVoice(s32 id) {
 /// Scene_TalkToActor gives it while Halted, or 0xff when Halt passes it over
 /// (FieldPsynergy_FilterHaltTarget).
 s32 Speaker_GetHaltedLines(s32 id) {
-  return Speaker_FindDefinition(Speaker_GetActorSprite(id))->flags;
+  return Speaker_FindDefinition(Speaker_GetActorSprite(id))->haltedLines;
 }
 
 extern const s32 gPairTable[];

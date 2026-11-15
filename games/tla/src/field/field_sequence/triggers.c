@@ -408,7 +408,7 @@ s32 Scene_TalkToActor(s32 id) {
         return result;
       if (talk->result >= 0x10000) {
         Event_RunMessage(id, Speaker_GetHaltedLines(id) * 2 +
-                                 ((Random16() << 1) >> 16) + (s32)&MsgKey137f);
+                                 ((Random16() << 1) >> 16) + (s32)&MsgPonderEllipsis);
         goto resume;
       }
       goto check;

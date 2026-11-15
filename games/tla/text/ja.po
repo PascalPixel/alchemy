@@ -20606,7 +20606,7 @@ msgctxt "message"
 msgid "04976"
 msgstr "やど おかみ 茶{end_wait}"
 
-msgctxt "MsgKey137f"
+msgctxt "MsgPonderEllipsis"
 msgid "04977"
 msgstr ""
 "・{pause_20_skippable}・{pause_20_skippable}・{pause_20_skippable}。{end_wait}"

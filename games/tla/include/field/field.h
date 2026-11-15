@@ -122,6 +122,8 @@ struct FieldPsynergyReach {
   s16 width;         ///< either side of the caster's facing, 1/65536 turns
 };
 
+extern const struct FieldPsynergyReach gFieldPsynergy_Reach[];
+
 extern u8 gWorldMapPackedTiles[];
 extern u8 gWorldMapPackedPictures[];
 extern u8 gWorldMapPalettes[];

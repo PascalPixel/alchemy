@@ -22573,7 +22573,7 @@ msgctxt "message"
 msgid "05450"
 msgstr "Locandiere{end_wait}"
 
-msgctxt "MsgKey137f"
+msgctxt "MsgPonderEllipsis"
 msgid "05451"
 msgstr ""
 ".{pause_20_skippable}.{pause_20_skippable}.{pause_20_skippable}{end_wait}"

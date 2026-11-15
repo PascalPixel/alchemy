@@ -143,16 +143,7 @@ SCENE_WITH_BSS(idejima)
 #elif OVERLAY == 0x651
 SCENE(daila)
 #elif OVERLAY == 0x652
-SECTIONS
-{
-    .text 0x2008000 :
-    {
-        "*/games/tla/src/scene/entry/daila_interiors.o"(.text)
-        "*/games/tla/src/scene/daila_interiors.o"(.text)
-        "*/imports.o"(.text)
-        "*/games/tla/src/scene/daila_interiors.o"(.data)
-    }
-}
+SCENE(daila_interiors)
 #elif OVERLAY == 0x653
 SCENE_WITH_BSS(kandorean_temple)
 #elif OVERLAY == 0x654

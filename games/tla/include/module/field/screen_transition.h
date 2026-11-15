@@ -10,10 +10,16 @@
 
 struct ObjectAnimationState;
 
+/// A row of gSpeakerDefinitions, as The Broken Seal's: a sprite's voice and
+/// the lines it says while Halted.
 struct SpeakerDefinition {
-  u16 id;
+  u16 id; ///< the sprite id
+  /// The voice: a message plays SE_VOICE_FIRST + value as it types
+  /// (Speaker_GetVoice).
   u8 value;
-  u8 flags;
+  /// The pair of lines from MsgPonderEllipsis it says when talked to while
+  /// Halted with no event for that (Speaker_GetHaltedLines).
+  u8 haltedLines;
 };
 
 struct BattleRenderObject {

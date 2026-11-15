@@ -16,6 +16,7 @@
 #include "../field/actor_prepare.c"
 
 #include "types.h"
+#include "graphics/output.h"
 #include "system/system.h"
 #include "system/task.h"
 #include "system/ram_buffer.h"

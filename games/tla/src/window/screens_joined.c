@@ -83,13 +83,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     Sound_PlayFar(MUS_JOINED);
 
     do {
-      // UB: Oam_AddSpriteAtDepth returns nothing but is called as an s32
-      // function; UBFIX calls it through its declared type.
-#ifdef UBFIX
       Oam_AddSpriteAtDepth(entry, OAM_DEPTH_FRONT - 5);
-#else
-      ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(entry, 250);
-#endif
       wait(1);
     } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
@@ -141,13 +135,7 @@ void Party_ShowJoinedMessage(s32 member) {
 #endif
     Sound_PlayFar(MUS_JOINED);
     do {
-      // UB: Oam_AddSpriteAtDepth returns nothing but is called as an s32
-      // function; UBFIX calls it through its declared type.
-#ifdef UBFIX
       Oam_AddSpriteAtDepth(entry, OAM_DEPTH_FRONT - 5);
-#else
-      ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(entry, 250);
-#endif
       wait(1);
     } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
@@ -215,16 +203,8 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     Sound_PlayFar(MUS_JOINED);
 
     do {
-      // UB: Oam_AddSpriteAtDepth returns nothing but is called as an s32
-      // function; UBFIX calls it through its declared type.
-#ifdef UBFIX
       Oam_AddSpriteAtDepth(firstEntry, OAM_DEPTH_FRONT - 5);
       Oam_AddSpriteAtDepth(secondEntry, OAM_DEPTH_FRONT - 5);
-#else
-      ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(firstEntry, 250);
-      ((s32 (*)(void *, s32))Oam_AddSpriteAtDepth)(secondEntry,
-                                                   OAM_DEPTH_FRONT - 5);
-#endif
       wait(1);
     } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gInput.pressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);

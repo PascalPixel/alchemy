@@ -33,21 +33,6 @@ extern const u8 gOwnerStatus_PvString[];
 s32 System_GetLanguage(void);
 #endif
 
-/* VIEW(menus): routine Oam_AddSpriteAtDepth as s32 Oam_AddSpriteAtDepth(void
- * *sprite, s32 depth); task.h has void Oam_AddSpriteAtDepth(void *entry, s32
- * priority); tried as the definition's void Oam_AddSpriteAtDepth(void *entry,
- * s32 slot), BattleTarget_RunSelection moves: 2 of 1647 instructions in tla-ja.
- */
-// UB: Oam_AddSpriteAtDepth returns nothing; the target screen calls it as
-// returning s32.
-#ifdef UBFIX
-#define Oam_AddSpriteAtDepth__menus Oam_AddSpriteAtDepth
-#else
-extern s32
-Oam_AddSpriteAtDepth__menus(void *sprite,
-                            s32 depth) __asm__("Oam_AddSpriteAtDepth");
-#endif
-
 // The help window's column beside the aimed member, kept on screen.
 #define TARGET_HELP_COLUMN(back, width, last)                                  \
   {                                                                            \
@@ -285,7 +270,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     }
     firstSprite->x = selectedPosition.x - 8;
     firstSprite->y = selectedPosition.y - 16;
-    Oam_AddSpriteAtDepth__menus(firstSprite, OAM_DEPTH_WINDOW);
+    Oam_AddSpriteAtDepth(firstSprite, OAM_DEPTH_WINDOW);
     if (spread == ABILITY_RANGE_ALL) {
       effect.scaleX = Q_8_8(1);
       effect.scaleY = Q_8_8(1);
@@ -615,7 +600,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         else
           marker->affine = 1;
         marker->matrix = matrix;
-        Oam_AddSpriteAtDepth__menus(marker, OAM_DEPTH_WINDOW);
+        Oam_AddSpriteAtDepth(marker, OAM_DEPTH_WINDOW);
       }
     }
 

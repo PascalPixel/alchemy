@@ -17,6 +17,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "sprite_ids.h"
 #include "field/scene_tables.h"
 #include "system/input.h"
 #include "system/io_reg.h"
@@ -600,7 +601,7 @@ void PsynergyTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 row, s32 column) {
     }
   }
   if (mode == 2) {
-    object = (FieldActor_Create(252, px(x), 0, px(z)));
+    object = (FieldActor_Create(SPRITE_WINGED_STATUE, px(x), 0, px(z)));
     if (object != NULL) {
       s32 scale;
 

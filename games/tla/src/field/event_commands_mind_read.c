@@ -104,7 +104,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
         to.x -= px(6);
         to.y -= px(12);
       }
-      object = Actor_CreateFar(677, to.x, to.y, to.z);
+      object = Actor_CreateFar(SPRITE_CRESCENT, to.x, to.y, to.z);
       if (object != NULL) {
         sprite = object->sprite;
         object->motionFlags = 0;
@@ -565,8 +565,8 @@ void *FieldEffect_SpawnMoveHand(void *object) {
   u32 jitter;
 
   angle = (source->facing + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
-  parent = Actor_Spawn(278, source->x.fixed, source->y.fixed + px(16),
-                       source->z.fixed);
+  parent = Actor_Spawn(SPRITE_MOVE_HAND, source->x.fixed,
+                       source->y.fixed + px(16), source->z.fixed);
   if (parent == 0)
     return 0;
   parent->scaleY = Q16_ONE / 4;
@@ -579,8 +579,8 @@ void *FieldEffect_SpawnMoveHand(void *object) {
   Actor_SetTargetPositionFromMagnitudeAngle(parent, px(16), angle);
 
   for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
-    child = Actor_Spawn(673, source->x.fixed, source->y.fixed + px(16),
-                        source->z.fixed);
+    child = Actor_Spawn(SPRITE_SPARKLE, source->x.fixed,
+                        source->y.fixed + px(16), source->z.fixed);
     if (child != 0) {
       Actor_StartScriptFar(child, gFieldEffect_FragmentScript);
       speed = Random16() + Q16_ONE;
@@ -638,7 +638,8 @@ void UpdateRisingParticleBurst(void *object) {
     wait(1);
   }
   for (i = 7; i >= 0; i--) {
-    child = Actor_Spawn(673, src->x.fixed, src->y.fixed, src->z.fixed);
+    child =
+        Actor_Spawn(SPRITE_SPARKLE, src->x.fixed, src->y.fixed, src->z.fixed);
     if (child != 0) {
       s32 speed;
       // One 1.0 for both uses, set before the block's calls; a literal at
@@ -1051,7 +1052,7 @@ void FieldPsynergy_Lift(void) {
   Sound_PlayFar(SE_HEAVY_IMPACT);
   for (n = 0; n < 24; n++) {
     SET_POSITION(&pos, work->x, work->y + px(16), work->z);
-    obj = Actor_Spawn(673, pos.x, pos.y, pos.z);
+    obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (obj != 0) {
       Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);
       obj->speedLimit = Random16() + px(2);
@@ -1074,7 +1075,7 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
   s32 scale;
 
   Sound_PlayFar(SE_ITEM_BREAK);
-  object = Actor_Spawn(278, x, y, z);
+  object = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
   if (object != NULL) {
     object->scaleX = object->scaleY = Q16_ONE / 4;
     object->acceleration = object->speedLimit = px(3);
@@ -1163,7 +1164,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *src) {
 
   Sound_PlayFar(SE_HEAVY_IMPACT);
   SET_POSITION(&pos, src->x.fixed, src->y.fixed, src->z.fixed);
-  obj = Actor_Spawn(671, pos.x, pos.y - px(32), pos.z);
+  obj = Actor_Spawn(SPRITE_STAR_BURST, pos.x, pos.y - px(32), pos.z);
   if (obj != NULL) {
     obj->motionFlags = 0;
     obj->wait = 20;
@@ -1171,7 +1172,7 @@ s32 SpawnHeavyImpactEffect(struct Actor *src) {
   }
 
   for (i = 0; i < 12; i++) {
-    frag = Actor_Spawn(673, pos.x, pos.y, pos.z);
+    frag = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (frag != NULL) {
       Actor_StartScriptFar(frag, gFieldEffect_FragmentScript);
       frag->speedLimit = Random16() + px(1);
@@ -1228,7 +1229,7 @@ void FieldPsynergy_Force(void) {
   SET_POSITION(&pos, source->x.fixed, source->y.fixed + px(16),
                source->z.fixed);
   Vector_AddPolarOffset(px(8), scene->angle, &pos);
-  object = Actor_Spawn(278, pos.x, pos.y, pos.z);
+  object = Actor_Spawn(SPRITE_MOVE_HAND, pos.x, pos.y, pos.z);
   if (object == NULL) {
     FieldPsynergy_FadeFromCastColor();
     return;
@@ -1255,8 +1256,8 @@ void FieldPsynergy_Force(void) {
 
   resource = NULL;
   for (i = 2; i >= 0; i--) {
-    copy = copies[i] =
-        Actor_Spawn(278, object->x.fixed, object->y.fixed, object->z.fixed);
+    copy = copies[i] = Actor_Spawn(SPRITE_MOVE_HAND, object->x.fixed,
+                                   object->y.fixed, object->z.fixed);
     if (copy != NULL) {
       copy->scaleY = AFTERIMAGE_SCALE;
       copy->scaleX = AFTERIMAGE_SCALE;
@@ -1422,7 +1423,7 @@ void FieldPsynergy_Frost(void) {
   p = &pos;
   cnt = 15;
   do {
-    particle = Actor_Spawn(681, 0, 0, 0);
+    particle = Actor_Spawn(SPRITE_SNOWFLAKE, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
       s32 dist;
@@ -1553,7 +1554,7 @@ void FieldEffect_RunSparkEmitter(struct SparkObject *obj) {
     pos[1] = obj->y + px(2);
     pos[2] = obj->z;
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
-    spark = Actor_Spawn(673, pos[0], pos[1], pos[2]);
+    spark = Actor_Spawn(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
     if (spark != 0) {
       spark->update = FieldEffect_SwayParticle;
       spark->scaleX = spark->scaleY = 0x9999;
@@ -1589,8 +1590,8 @@ void FieldPsynergy_Ply(void) {
 
   last = 0;
   for (i = 0; i < 8; i++) {
-    object = Actor_Spawn(296, target->x.fixed, target->y.fixed + px(32),
-                         target->z.fixed);
+    object = Actor_Spawn(SPRITE_WINGED_FIGURE, target->x.fixed,
+                         target->y.fixed + px(32), target->z.fixed);
     if (object != 0) {
       object->scaleY = 0xb333;
       object->scaleX = 0xb333;
@@ -1607,7 +1608,7 @@ void FieldPsynergy_Ply(void) {
   Sound_PlayFar(SE_PSYNERGY_START);
   wait(110);
 
-  target = Actor_Spawn(296, 0, 0, 0);
+  target = Actor_Spawn(SPRITE_WINGED_FIGURE, 0, 0, 0);
   object = target;
   if (target != 0) {
     target->scaleY = 0xb333;

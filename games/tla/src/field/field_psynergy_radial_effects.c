@@ -370,7 +370,7 @@ void FieldPsynergy_Halt(void) {
   s32 i;
 
   scene->y = user->y.fixed;
-  obj = Actor_Spawn(309, 0, 0, 0);
+  obj = Actor_Spawn(SPRITE_STOPWATCH, 0, 0, 0);
   step = 0;
   Actor_SelectAnimationFar(obj, 0);
   if (obj == 0)
@@ -515,7 +515,7 @@ void FieldPsynergy_Catch(void) {
     SET_POSITION(&target, scene->x, scene->y + px(32), scene->z);
   }
   SET_POSITION(&spawn, scene->x, scene->y + px(32), scene->z);
-  object = Actor_Spawn(278, spawn.x, spawn.y, spawn.z);
+  object = Actor_Spawn(SPRITE_MOVE_HAND, spawn.x, spawn.y, spawn.z);
   if (object == 0)
     return;
   FieldPsynergy_FadeToCastColor();
@@ -1028,7 +1028,8 @@ void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
   u8 zero;
 
   for (i = 0; i <= 1; i++) {
-    object = Actor_CreateFar(271, source->x, source->y + px(64), source->z);
+    object = Actor_CreateFar(SPRITE_GOLDEN_RINGS, source->x, source->y + px(64),
+                             source->z);
     objects[i] = object;
     if (object == NULL)
       continue;

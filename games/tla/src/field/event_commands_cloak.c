@@ -135,7 +135,7 @@ void FieldPsynergy_Douse(void) {
   struct Actor *mote;
   struct PendingEvent *ev;
 
-  orb = Actor_Spawn(300, i = raised = 0, 0, 0);
+  orb = Actor_Spawn(SPRITE_RAIN_CLOUD, i = raised = 0, 0, 0);
   if (orb == 0)
     return;
   FieldPsynergy_FadeToCastColor();
@@ -199,7 +199,7 @@ void FieldPsynergy_Douse(void) {
         wait(20);
         SET_POSITION(&pos, orb->x.fixed, orb->y.fixed, orb->z.fixed);
       }
-      mote = Actor_Spawn(301, pos.x, pos.y, pos.z);
+      mote = Actor_Spawn(SPRITE_DROPLET, pos.x, pos.y, pos.z);
       if (mote != 0) {
         struct Actor *ground = work->child;
 
@@ -292,7 +292,7 @@ void FieldEffect_SpawnFallingParticles(void) {
   dist = Random16() * 3;
   Vector_AddPolarOffset(dist * 16, Random16(), &pos);
 
-  obj = Actor_Spawn(673, pos.x, pos.y, pos.z);
+  obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
   if (obj != 0) {
     obj->motionFlags = 2;
     obj->gravity = 0x1999;

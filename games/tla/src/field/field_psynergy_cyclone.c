@@ -251,8 +251,8 @@ void FieldPsynergy_Cyclone(void) {
   canvas->sprite.oam.palette = 0;
   offsets = Ram_HeapSlots->canvasMap;
   pixels = Ram_HeapSlots->battleCanvas;
-  ring =
-      Actor_Spawn(280, owner->x.fixed, owner->y.fixed - px(6), owner->z.fixed);
+  ring = Actor_Spawn(SPRITE_WHIRLWIND, owner->x.fixed, owner->y.fixed - px(6),
+                     owner->z.fixed);
   Actor_SelectAnimationFar(ring, 2);
   ring->scaleX = Q16_ONE * 3 / 2;
   ring->scaleY = 0;
@@ -426,7 +426,8 @@ void Actor_DepartInRing(s32 actor) {
   FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
   object->motionFlags = 0;
   object->update = BattleEffect_SpinObject;
-  ring = Actor_Spawn(280, object->x.fixed, object->y.fixed, object->z.fixed);
+  ring = Actor_Spawn(SPRITE_WHIRLWIND, object->x.fixed, object->y.fixed,
+                     object->z.fixed);
   Actor_SelectAnimationFar(ring, 2);
   ring->scaleX = Q16_ONE * 3 / 2;
   ring->scaleY = Q16_ONE;
@@ -479,7 +480,8 @@ void Actor_ArriveInRing(s32 actor) {
   Actor_SetSpriteFlagsFar(Actor_GetById(actor), 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  ring = Actor_Spawn(280, object->x.fixed, object->y.fixed, object->z.fixed);
+  ring = Actor_Spawn(SPRITE_WHIRLWIND, object->x.fixed, object->y.fixed,
+                     object->z.fixed);
   Actor_SelectAnimationFar(ring, 2);
   ring->scaleX = Q16_ONE / 2;
   ring->scaleY = Q16_ONE * 3 / 4;

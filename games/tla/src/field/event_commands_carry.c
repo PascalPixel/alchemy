@@ -49,7 +49,7 @@ void FieldPsynergy_Carry(void) {
   Sound_PlayFar(SE_HEAVY_IMPACT);
   for (n = 0; n < 24; n++) {
     SET_POSITION(&pos, work->x, work->y + px(16), work->z);
-    obj = Actor_Spawn(673, pos.x, pos.y, pos.z);
+    obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (obj != 0) {
       Actor_StartScriptFar(obj, gFieldEffect_FragmentScript);
       obj->speedLimit = Random16() + px(2);
@@ -72,7 +72,7 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
   s32 scale;
 
   Sound_PlayFar(SE_ITEM_BREAK);
-  object = Actor_Spawn(278, x, y, z);
+  object = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
   if (object != NULL) {
     object->scaleY = Q16_ONE / 4;
     object->scaleX = Q16_ONE / 4;

@@ -30,7 +30,8 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
 
   if ((flags & 3) != 0) {
     if ((flags & 3) == 2 || Actor_IsNotAttachedEffect(object->resource)) {
-      child = Actor_CreateFar(264, object->x, object->y, object->z);
+      child = Actor_CreateFar(SPRITE_ATTACHED_EFFECT, object->x, object->y,
+                              object->z);
     }
   } else {
     child = object->resource;

@@ -27,6 +27,9 @@ struct JudgmentWork {
 
 #define JUDGMENT_GATHER_FRAMES 160 ///< frames of the gathering
 #define JUDGMENT_SWEEP_FRAMES 320
+/// The gathering's crash: the canvas fills, then the beams fall from the next
+/// frame.
+#define JUDGMENT_BEAM_FRAME 144
 #define JUDGMENT_FORMATION_OBJECTS 16 ///< sprites in the formation, 4x4
 #define JUDGMENT_DEBRIS_OBJECTS 16    ///< debris sprites of the sweep
 /// The pink burst's beam picture, at the sheet's start.
@@ -207,7 +210,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                   (frame <= 4 || !(gKeysRepeat & (KEY_A | KEY_B)));
        frame++) {
     blitters = EFFECT_BLITTERS;
-    if (frame == 143) {
+    if (frame == JUDGMENT_BEAM_FRAME - 1) {
       Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(42));
       Sound_PlayFar(SE_CRASH);
     }
@@ -306,7 +309,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     if (frame > 32) {
       zoom = zoom * 60 / 64;
     }
-    if (frame == 144) {
+    if (frame == JUDGMENT_BEAM_FRAME) {
       zoom = -px(8);
     }
     if (frame == 146) {
@@ -324,7 +327,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
-    if (frame >= 116 && frame < 144) {
+    if (frame >= 116 && frame < JUDGMENT_BEAM_FRAME) {
       s32 high;
       s32 picture;
       s32 n = (frame - 116) / 4;
@@ -372,7 +375,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
 
-    if (frame > 143) {
+    if (frame >= JUDGMENT_BEAM_FRAME) {
       s32 top = (frame << 4) - 2272;
       s32 n;
       s32 r;
@@ -388,7 +391,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                                      JUDGMENT_BEAM_WIDTH, JUDGMENT_BEAM_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
 
-      n = (frame - 144) / 2;
+      n = (frame - JUDGMENT_BEAM_FRAME) / 2;
       r = frame * 10 - 1424;
       work->transferValue = CANVAS_FADE_THREE_QUARTERS;
       if (n <= 6) {

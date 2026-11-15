@@ -10,6 +10,8 @@
                        TITAN_BLADE_DUST * sizeof(struct Particle)))
 
 #define TITAN_BLADE_FRAMES 102
+/// The sword strikes: the crash, the damage and the canvas filled bright.
+#define TITAN_BLADE_STRIKE_FRAME 60
 #define TITAN_BLADE_SWORD_PICTURE 20000 ///< the sword picture in the sheet
 #define TITAN_BLADE_FLASHES 32          ///< flashes scattered
 #define TITAN_BLADE_RING 16             ///< of which drawn as the ring
@@ -117,7 +119,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     if (frame == 48) {
       work->shakeFrames = 8;
     }
-    if (frame == 60) {
+    if (frame == TITAN_BLADE_STRIKE_FRAME) {
       work->shakeFrames = 16;
     }
 
@@ -127,7 +129,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     if (frame == 32) {
       Sound_PlayFar(SE_SCATTER);
     }
-    if (frame == 60) {
+    if (frame == TITAN_BLADE_STRIKE_FRAME) {
       Sound_PlayFar(SE_CRASH);
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
@@ -252,7 +254,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 
       x = canvasCenterX - 18;
       high = 120;
-      if (frame > 60) {
+      if (frame > TITAN_BLADE_STRIKE_FRAME) {
         top = frame * 8 - 450;
       } else if (frame > 32) {
         top = step / 2 + 16;
@@ -318,7 +320,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
       Iwram_FillWords(canvas, CANVAS_BYTES,
                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
-    if (frame == 60) {
+    if (frame == TITAN_BLADE_STRIKE_FRAME) {
       Iwram_FillWords(canvas, CANVAS_BYTES,
                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }

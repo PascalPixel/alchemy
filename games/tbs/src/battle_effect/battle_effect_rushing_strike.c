@@ -165,7 +165,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     if (ringFrame >= 0 && ringFrame <= 11) {
       s32 ring = ringFrame / 2;
       draw[0](canvas, cells + ring * RUSHING_STRIKE_RING_BYTES,
-              origin.x / 2 - 16, screen.y - 40, 20, 48);
+              origin.x / 2 - 16, screen.y - 40, YELLOW_ORB_PACKED_WIDTH,
+              YELLOW_ORB_PACKED_HEIGHT);
     }
     // The sparks fly and shrink.
     if (ringFrame >= 0 && ringFrame <= 55) {

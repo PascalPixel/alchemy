@@ -12,6 +12,9 @@
 // canvas and sheet.
 
 #define DEATH_PLUNGE_FRAMES 96
+/// The plunge strikes: the target flashes, the user flashes and the damage
+/// shows.
+#define DEATH_PLUNGE_STRIKE_FRAME 54
 
 /// The user runs at the first target, both leap and turn upside down, and on
 /// the hit they bounce apart while a ball of fire swells over them.
@@ -87,7 +90,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
 
     // The target flashes and both bounce; the user heads back towards the
     // middle of the field.
-    if (frame == 54) {
+    if (frame == DEATH_PLUNGE_STRIKE_FRAME) {
       BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 10);
       target->velocityY = px(8);
@@ -106,7 +109,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     screen.x >>= 1;
 
     // One big flash on the user.
-    if (frame == 54 || frame == 55)
+    if (frame == DEATH_PLUNGE_STRIKE_FRAME ||
+        frame == DEATH_PLUNGE_STRIKE_FRAME + 1)
       draw[0](canvas, work->sheet, screen.x - FLASH_BURST_WIDTH / 2,
               screen.y - 16, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
     if (frame >= 56 && frame <= 67) {
@@ -135,7 +139,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       target->y.fixed -= targetHeight;
       Actor_SelectAnimationFar(user, 0);
     }
-    if (frame == 54)
+    if (frame == DEATH_PLUNGE_STRIKE_FRAME)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 0) {
       Sound_PlayFar(SE_WHOOSH);

@@ -5,6 +5,9 @@
 #include "battle_effect_internal.h"
 
 #define CYBELE_FRAMES 366 ///< frames of Cybele's whole run
+/// The first target lands on its spreading ring, sixteen frames after it is
+/// dropped; the others follow.
+#define CYBELE_LANDING_FRAME 302
 
 #define CYBELE_BLAST_PICTURES                                                  \
   5760                        ///< the blast pictures, after the yellow ring
@@ -386,14 +389,14 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     }
     // The targets drop.
     EFFECT_FOR_EACH_TARGET(i, work->args) {
-      if (frame == i * 5 + 286) {
+      if (frame == i * 5 + CYBELE_LANDING_FRAME - 16) {
         struct Actor *actor =
             GetBattleObjectSlotFar(work->args->targets[i])->actor;
 
         actor->y.fixed = px(96);
         actor->gravity = BATTLE_UNIT_GRAVITY;
       }
-      if (frame == i * 5 + 302) {
+      if (frame == i * 5 + CYBELE_LANDING_FRAME) {
         BattleEffect_TintBattler(work->args->targets[i], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, i, 8);
         Sound_PlayFar(SE_HEAVY_IMPACT);
@@ -401,7 +404,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       }
     }
 
-    if (frame == 302) {
+    if (frame == CYBELE_LANDING_FRAME) {
       EFFECT_RELEASE_BLITTERS();
       Resource_LoadAndDecompress(RESOURCE_YELLOW_RING_SHEET, work->sheet, 1, 0);
       Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET,
@@ -435,11 +438,11 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       }
     }
     // Each target lands on a spreading ring.
-    if (frame > 301) {
+    if (frame >= CYBELE_LANDING_FRAME) {
       EFFECT_FOR_EACH_TARGET(i, work->args) {
-        s32 start = i * 4 + 302;
+        s32 start = i * 4 + CYBELE_LANDING_FRAME;
 
-        if (frame >= start && frame < i * 4 + 314) {
+        if (frame >= start && frame < i * 4 + CYBELE_LANDING_FRAME + 12) {
           s32 pictureIndex = (frame - start) / 2;
           struct Actor *actor =
               GetBattleObjectSlotFar(work->args->targets[i])->actor;
@@ -480,7 +483,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
     if (frame <= 127)
       BattleCamera_Shake(4, 16);
-    else if (frame <= 301)
+    else if (frame < CYBELE_LANDING_FRAME)
       BattleCamera_Shake(2, 2);
     else
       BattleCamera_Shake(4, 8);

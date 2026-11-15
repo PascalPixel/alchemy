@@ -5,6 +5,10 @@
 #include "battle_effect_internal.h"
 
 #define GAIA_FRAMES 192 ///< frames of Gaia
+/// The wall stands once it has risen, and sinks away a row every three
+/// frames.
+#define GAIA_WALL_STAND_FRAME 88
+#define GAIA_WALL_SINK_FRAME 160
 
 #define GAIA_ROCKS 11 ///< rock sprites tumbling up through the wall
 #define GAIA_DUST 256 ///< dust in PARTICLES
@@ -189,7 +193,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     }
 
     // The rising wall widens a row at a time.
-    if (frame >= 12 && frame <= 87) {
+    if (frame >= 12 && frame < GAIA_WALL_STAND_FRAME) {
       s32 row = (frame - 64) / 3;
 
       CLAMP(row, 0, 7);
@@ -204,8 +208,8 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     }
 
     // The wall sinks away.
-    if (frame >= 160 && frame <= 183) {
-      s32 row = 7 - (frame - 160) / 3;
+    if (frame >= GAIA_WALL_SINK_FRAME && frame < GAIA_WALL_SINK_FRAME + 24) {
+      s32 row = 7 - (frame - GAIA_WALL_SINK_FRAME) / 3;
 
       CLAMP(row, 0, 7);
       for (i = 0; i != 4; i++) {
@@ -219,7 +223,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     }
 
     // The standing wall.
-    if (frame >= 88 && frame <= 159) {
+    if (frame >= GAIA_WALL_STAND_FRAME && frame < GAIA_WALL_SINK_FRAME) {
       s32 width = GAIA_WALL_TOP_WIDTH;
 
       draw[0](canvas, &work->sheet[GAIA_WALL_TOP], wallX + 16, 0, width,
@@ -233,7 +237,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     }
 
     // Dust keeps rising up the wall.
-    if (frame > 87) {
+    if (frame >= GAIA_WALL_STAND_FRAME) {
       for (i = 0; i != 64; i++) {
         struct Particle *dust = &PARTICLES[i];
 
@@ -243,7 +247,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
           EFFECT_DRAW_MOTE(draw[0], canvas, sprites, Q_16_16_TO_INT(dust->x),
                            Q_16_16_TO_INT(dust->y), size);
           dust->y -= dust->velocityY;
-          if (dust->y < 0 && frame <= 159)
+          if (dust->y < 0 && frame < GAIA_WALL_SINK_FRAME)
             dust->y = px(96);
         } else {
           dust->variant--;
@@ -287,10 +291,10 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
           if (rock->velocityX > 12)
             rock->velocityX -= 12;
           if (rock->y < 0) {
-            if (frame > 159) {
+            if (frame >= GAIA_WALL_SINK_FRAME) {
               rock->variant = -1;
             } else {
-              if (frame > 87) {
+              if (frame >= GAIA_WALL_STAND_FRAME) {
                 rock->z = (Random16() & 7) + 8;
                 if (work->args->variant == EFFECT_VARIANT_BASIC)
                   rock->x = Random16() % 96 + 42;

@@ -17,6 +17,9 @@ void BattleEffect_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
   }
 }
 
+/// The frame each Djinni's attack shows its damage.
+#define DJINN_ATTACK_DAMAGE_FRAME 56
+
 #define MERCURY_FRAMES 96
 /// The blue flame sheet's flame, after its shaft; Mercury turns both on their
 /// side, and Venus draws the flame as its rising columns.
@@ -80,7 +83,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
   Sound_PlayFar(SE_WAVE);
   for (frame = 0; frame != MERCURY_FRAMES; frame++) {
-    if (frame == 56)
+    if (frame == DJINN_ATTACK_DAMAGE_FRAME)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // Flames fly left and burst on their 5th frame.
@@ -205,7 +208,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
     s32 angle = TRIG_TURN / 2;
 
     do {
-      if (frame == 56)
+      if (frame == DJINN_ATTACK_DAMAGE_FRAME)
         EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
       if (frame <= 95) {
@@ -343,7 +346,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
       draw[1](canvas, work->sheet, x + 22, y + 29, SMALL_DJINNI_WIDTH,
               VENUS_SMALL_DJINNI_HEIGHT);
     }
-    if (frame == 56)
+    if (frame == DJINN_ATTACK_DAMAGE_FRAME)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     // Ten flame columns rise, one every 4 frames.
     for (i = 0; i != VENUS_COLUMNS; i++) {
@@ -460,7 +463,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
 
   Sound_PlayFar(SE_WHOOSH);
   for (frame = 0; frame != MARS_FRAMES; frame++) {
-    if (frame == 56)
+    if (frame == DJINN_ATTACK_DAMAGE_FRAME)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     // A glowing orb flares, then the Djinni shows in it and dives down to the
     // left.

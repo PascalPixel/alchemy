@@ -1211,7 +1211,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   FieldActor_StartRepeatedMotion(ACTOR_ISAAC, 2);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   FieldEvent_Wait(5);
-  FieldActor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  FieldActor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   // "What's this? He's still alive!? Even after that blow?"
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
   Actor_FaceDirectionAndWait(ACTOR_KARST, FACING_NORTHEAST);
@@ -1277,10 +1277,10 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   EventCamera_FollowActor(ACTOR_FELIX, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  FieldActor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  FieldActor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   // "Felix? What's going on?"
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
-  FieldActor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   // "Be grateful! We just did you a favor!"
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
   Actor_FaceDirectionAndWait(ACTOR_AGATIO, FACING_NORTH);
@@ -1340,7 +1340,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Actor_FaceEachOther(ACTOR_AGATIO, 0x1b, 0);
   FieldActor_WaitForScriptEndById(ACTOR_AGATIO);
   FieldActor_WaitForScriptEndById(ACTOR_KARST);
-  FieldActor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  FieldActor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   Actor_FaceActor(ACTOR_KRADEN, ACTOR_KARST, 0);
   Actor_AnimateThenWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD, 33);
@@ -1356,9 +1356,9 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
   Actor_AnimateThenWait(ACTOR_KARST, ANIM_SHAKE_HEAD, 33);
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
-  FieldActor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  FieldActor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
-  FieldActor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_AGATIO, 2);
@@ -1417,8 +1417,8 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Actor_FaceEachOther(ACTOR_AGATIO, 0x1b, 0);
   FieldActor_WaitForScriptEndById(ACTOR_AGATIO);
   FieldActor_WaitForScriptEndById(ACTOR_KARST);
-  FieldActor_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
-  FieldActor_ShowEmote(26, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
+  FieldActor_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Actor_FaceActor(ACTOR_AGATIO, ACTOR_FELIX, 0);
   Actor_FaceActor(ACTOR_FELIX, ACTOR_KARST, 0);
   Actor_WalkToAndWait(ACTOR_KARST, 699, 202);

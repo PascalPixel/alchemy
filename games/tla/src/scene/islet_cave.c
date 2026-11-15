@@ -236,8 +236,15 @@ void IsletCave_FightMeld(void) {
   return;
 }
 
-/// Serac, the Djinni waiting in this room.
-enum { ACTOR_SERAC = 9 };
+/// Serac, the Djinni waiting in this room, and the winged statue Tremor shakes
+/// him out of.
+enum { ACTOR_WINGED_STATUE = 8, ACTOR_SERAC = 9 };
+
+/// The Sentinel and the first of the ten fires around it.
+enum { ACTOR_SENTINEL = 8, ACTOR_FIRST_FIRE = 9 };
+
+/// Set once the Sentinel is beaten, as the party comes back to its room.
+#define FLAG_SENTINEL_DEFEATED 0x9cf
 
 void IsletCave_FightSerac(void) {
   Field_RequestDjinnBattle(ACTOR_SERAC, DJINNI_SERAC);
@@ -430,18 +437,19 @@ s32 Scene_Initialize(void) {
     Palette_SetColors(gIsletCave_PaletteSlots, gIsletCave_PaletteColors,
                       gIsletCave_DimColors, gIsletCave_CycleSlots);
   } else if (scene == SCENE_ISLET_CAVE_SENTINEL) {
-    Actor_SetSpriteFlags(Actor_GetById(9), 0);
+    Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIRE), 0);
     if (gMainRoutineWork.entrance == 2) {
-      Actor_SetPosition(8, 0, 0);
-      GameFlag_Set(0x9cf);
+      Actor_SetPosition(ACTOR_SENTINEL, 0, 0);
+      GameFlag_Set(FLAG_SENTINEL_DEFEATED);
     }
   } else if (scene == SCENE_ISLET_CAVE_SERAC) {
     if (GameFlag_Get(FLAG_DJINNI(DJINNI_SERAC)) ||
         GameFlag_Get(FLAG_DJINNI_HIDING(DJINNI_SERAC))) {
       GameFlag_Set(FLAG_SCENE_TEMP_30);
     } else if (!GameFlag_Get(FLAG_SCENE_TEMP_30)) {
-      Actor_SetPosition(9, 0, 0);
-      Actor_SetMovementTypeById(8, gIsletCave_TremorTargetScript);
+      Actor_SetPosition(ACTOR_SERAC, 0, 0);
+      Actor_SetMovementTypeById(ACTOR_WINGED_STATUE,
+                                gIsletCave_TremorTargetScript);
     }
   } else {
     goto other;
@@ -727,7 +735,7 @@ void IsletCave_SentinelAwaits(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_StartRepeatedMotion(8, 2);
+  Actor_StartRepeatedMotion(ACTOR_SENTINEL, 2);
   Event_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_SetTarget(0x10003, 1);
@@ -739,8 +747,8 @@ void IsletCave_SentinelAwaits(void) {
   Event_Wait(60);
   object = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (object != 0) {
-    Actor_SetDestinationById(8, FIELD_AT((u8 *)object, s16, 10),
-                             FIELD_AT((u8 *)object, s16, 18));
+    Actor_SetDestinationById(ACTOR_SENTINEL, object->x.part[0].pixel,
+                             object->z.part[0].pixel);
   }
   Event_Wait(20);
   FieldEvent_SetAfterBattleDestination(SCENE_ISLET_CAVE_SENTINEL, 2);
@@ -752,15 +760,15 @@ void IsletCave_SentinelAwaits(void) {
 /// Tremor on the shaking spot: Serac drops out.
 void IsletCave_TremorRevealsSerac(void) {
   if (!Event_GetFlag(FLAG_SCENE_TEMP_30)) {
-    struct Actor *object = Actor_GetById(9);
+    struct Actor *object = Actor_GetById(ACTOR_SERAC);
     struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
 
     Event_SetFlag(FLAG_SCENE_TEMP_30);
-    Actor_SetPosition(9, 296, 160);
+    Actor_SetPosition(ACTOR_SERAC, 296, 160);
     object->speedLimit = px(3) / 2;
     object->velocityY = px(15);
-    Actor_MoveToAndWait(9, 344, ((owner->z.fixed >> 19) << 3) + 24);
-    Actor_Stop(8);
+    Actor_MoveToAndWait(ACTOR_SERAC, 344, ((owner->z.fixed >> 19) << 3) + 24);
+    Actor_Stop(ACTOR_WINGED_STATUE);
     object->speedLimit = px(1);
     Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, 9, 0);
   }
@@ -839,7 +847,7 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gIsletCave_Placements[] = {
-    ACTOR_PLACEMENT(170, 0x9cf, (s32)gIsletCave_SentinelScript, 184, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(170, FLAG_SENTINEL_DEFEATED, (s32)gIsletCave_SentinelScript, 184, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 152, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 216, 0, 144, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 176, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),

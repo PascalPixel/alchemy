@@ -5,6 +5,7 @@
 /// What games/tla/src/field/actor_*.c declare for the files that use it,
 /// written once.
 
+#include "fixed_math.h"
 #include "types.h"
 #include "resource_ids.h"
 #include "field/scene_tables.h"
@@ -142,7 +143,7 @@ void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
                                 s32 frames);
 
 extern const s32 gActorSprite_FullScale[2];
-extern const s32 gCamera_FixedViewMatrix[12];
+extern const FIXED gCamera_FixedViewMatrix[12];
 extern const s32 gActor_FootprintScript[];
 extern const s32 gWorldMap_KeyYaws[16];
 

@@ -756,7 +756,7 @@ extern s32 gWhirlwindEndScript[];
 extern s32 gWhirlwindRiding;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
-s32 Trig_Cos(s32 angle);
+FIXED Trig_Cos(s32 angle);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 #include "shared/whirlwind_update.h"

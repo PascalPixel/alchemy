@@ -7,6 +7,7 @@
 /// other routines, as The Broken Seal's system.h.
 
 #include "edition.h"
+#include "fixed_math.h"
 #include "types.h"
 #include "system/heap_release.h"
 
@@ -193,11 +194,11 @@ void ScreenFade_Wait(void);
 
 void Matrix_SetRotateY(s32 angle);
 void Matrix_RotateX(s32 angle);
-void Matrix_TranslateVector(const s32 *position);
+void Matrix_TranslateVector(const FIXED *position);
 void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth);
-void Matrix_Translate(s32 x, s32 y, s32 z);
-void Matrix_ScaleUniform(s32 scale);
-void Matrix_Scale(s32 x, s32 y, s32 z);
+void Matrix_Translate(FIXED x, FIXED y, FIXED z);
+void Matrix_ScaleUniform(FIXED scale);
+void Matrix_Scale(FIXED x, FIXED y, FIXED z);
 void Matrix_RotateZ(s32 ang);
 void Matrix_Pop(void);
 

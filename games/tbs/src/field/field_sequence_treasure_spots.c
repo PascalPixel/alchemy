@@ -267,7 +267,7 @@ void TreasureSpot_Hide(s32 id) {
 
 /// Moves the actor of treasure spot id to (x, z) on the ground; -1 keeps the
 /// centre of its cell on that axis. Positions are 16.16.
-void TreasureSpot_SetActorPosition(s32 id, s32 x, s32 z) {
+void TreasureSpot_SetActorPosition(s32 id, FIXED x, FIXED z) {
   s32 slotIndex;
   s32 groundHeight;
   s32 spotX;

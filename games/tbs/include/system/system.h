@@ -6,6 +6,7 @@
 /// numbers and sleep.
 
 #include "edition.h"
+#include "fixed_math.h"
 #include "types.h"
 #include "gamepak/far_call.h"
 #include "system/heap.h"
@@ -179,7 +180,7 @@ u32 Random16(void);
 void Vector_AddPolarOffset(s32 radius, s32 angle, void *position);
 s32 Trig_Atan(s32 x, s32 y);
 s32 Math_IntegerSqrt(s32 value);
-s32 Math_SqrtFX(s32 value);
+FIXED Math_SqrtFX(FIXED value);
 
 const u8 *Palette_GetBasicSpriteColors(void);
 void String_FormatHex(u32 value);
@@ -212,14 +213,15 @@ void Matrix_Rotate(s32 *angles);
 void Matrix_RotateX(s32 angle);
 void Matrix_RotateY(s32 angle);
 void Matrix_RotateZ(s32 angle);
-void Matrix_TranslateVector(const s32 *position);
-void Matrix_ScaleVector(const s32 *scale);
-void Matrix_RotateTranslate(s32 *angles, s32 *position);
-void Matrix_RotateTranslateScale(s32 *angles, s32 *position, s32 *scale);
-void Matrix_BuildLookAt(s32 *eye, s32 *target, s32 *out);
-void Matrix_SetLookAt(s32 *eye, s32 *target);
-void Matrix_LookAt(s32 *eye, s32 *target);
-void Projection_SetFieldOfView(u32 fieldOfView, s32 nearDepth, s32 farDepth);
+void Matrix_TranslateVector(const FIXED *position);
+void Matrix_ScaleVector(const FIXED *scale);
+void Matrix_RotateTranslate(s32 *angles, FIXED *position);
+void Matrix_RotateTranslateScale(s32 *angles, FIXED *position, FIXED *scale);
+void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out);
+void Matrix_SetLookAt(FIXED *eye, FIXED *target);
+void Matrix_LookAt(FIXED *eye, FIXED *target);
+void Projection_SetFieldOfView(u32 fieldOfView, FIXED nearDepth,
+                               FIXED farDepth);
 void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth);
 s32 Matrix_ProjectPoint(const void *point, s32 *screen);
 

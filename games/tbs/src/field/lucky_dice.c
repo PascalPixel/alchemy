@@ -241,7 +241,7 @@ enum LuckyDiceState {
 
 /// Copies count RGB555 colours from source to destination with each channel
 /// multiplied by scale (16.16: 0 is black, FIXED_ONE unchanged), for fades.
-s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
+s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
                                 s32 count) {
   s32 remaining;
   u32 pixel;

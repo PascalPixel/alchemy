@@ -229,7 +229,8 @@ typedef char Actor_size[sizeof(struct Actor) == 0x80 ? 1 : -1];
 typedef char Actor_collision_flags_offset
     [(u32)&((struct Actor *)0)->collisionFlags == 0x59 ? 1 : -1];
 
-void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_SetPositionAndResetMotion(struct Actor *object, FIXED x, FIXED y,
+                                     FIXED z);
 void Actor_MoveHalfwayTowardTarget(struct Actor *object);
 void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object);
 

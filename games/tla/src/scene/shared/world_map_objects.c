@@ -211,7 +211,7 @@ void WorldMap_StartPlacedActors(void) {
 }
 
 /// The cell index of a point in 16.16 pixels.
-s32 WorldMap_GetCellIndex(s32 x, s32 z) {
+s32 WorldMap_GetCellIndex(FIXED x, FIXED z) {
   return x / 0x100000 + (z / 0x100000) * 128;
 }
 

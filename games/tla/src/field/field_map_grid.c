@@ -573,7 +573,7 @@ static __inline__ void CopyCellPictureToScreen(u32 *cell, u8 *screenMap,
 
 /// Centres the view on (x, y) in 16.16 pixels, clamped to the map's bounds, and
 /// redraws every enabled layer's BG map around it.
-void MapGrid_SetCameraCenter(s32 x, s32 y) {
+void MapGrid_SetCameraCenter(FIXED x, FIXED y) {
   u32 layerIndex;
   u8 *screenMap;
   u32 *cells;

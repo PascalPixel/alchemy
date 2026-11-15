@@ -283,7 +283,7 @@ s32 ElementGlow_End(s32 unused) {
 
 /// Copies count colours from source to destination, each channel scaled by
 /// scale (16.16, at most 1), and returns 0.
-s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
+s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, FIXED scale,
                                 s32 count) {
   s32 i;
 

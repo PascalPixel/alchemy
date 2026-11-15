@@ -46,7 +46,7 @@ s32 LuckyWheels_Start(void) {
 
 /// Writes count RGB555 colours from src to dst scaled by scale (16.16,
 /// FIXED_ONE keeps them). Returns 0.
-s32 LuckyWheels_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count) {
+s32 LuckyWheels_ScaleRgb555(u16 *src, u16 *dst, FIXED scale, s32 count) {
   s32 remaining;
   u32 color;
   u32 red;

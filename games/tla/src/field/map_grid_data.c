@@ -21,17 +21,17 @@
 /// leaves them unspecified.
 typedef s32 (*TerrainHeightFn)();
 
-s32 Terrain_GetStepDifferenceDiagonalHeight();
-s32 Terrain_GetBendSumDiagonalHeight();
-s32 Terrain_GetBendDifferenceDiagonalHeight();
-s32 Terrain_GetRoundedSquareHeight();
-s32 Terrain_GetStepXHeight();
-s32 Terrain_GetStepYHeight();
-s32 Terrain_GetSampleTableTransposedHeight();
-s32 Terrain_GetSampleTableTransposedMirroredHeight();
-s32 Terrain_GetSampleTableMirroredHeight();
-s32 Terrain_GetSplitTopStepHeight();
-s32 Terrain_GetSplitBottomStepHeight();
+FIXED Terrain_GetStepDifferenceDiagonalHeight();
+FIXED Terrain_GetBendSumDiagonalHeight();
+FIXED Terrain_GetBendDifferenceDiagonalHeight();
+FIXED Terrain_GetRoundedSquareHeight();
+FIXED Terrain_GetStepXHeight();
+FIXED Terrain_GetStepYHeight();
+FIXED Terrain_GetSampleTableTransposedHeight();
+FIXED Terrain_GetSampleTableTransposedMirroredHeight();
+FIXED Terrain_GetSampleTableMirroredHeight();
+FIXED Terrain_GetSplitTopStepHeight();
+FIXED Terrain_GetSplitBottomStepHeight();
 
 /// Ground height functions, by enum TerrainKind, called with (the remaining
 /// samples, x within the cell, y within the cell). Each reads only the

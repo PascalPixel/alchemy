@@ -298,7 +298,7 @@ void Madra_KarstAsksAboutMenardi(void) {
 struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetDestinationOffsetById(s32 id, s32 dx, s32 dz);
 void Actor_WaitForMoveById(s32 id);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetSpeedParameters(s32 id, FIXED speed, FIXED acceleration);
 void Actor_WalkToAndWaitById(s32 id, s32 x, s32 z);
 void Actor_SetAnimationAndWait(s32 id, s32 mode);
 void MapGrid_PlayMapEdit(const void *data, s32 a, s32 b);
@@ -672,7 +672,7 @@ void Madra_AskAboutJenna(void) {
 
 struct Actor *Actor_GetById(u32 objectId);
 void Actor_WaitForMoveById(s32 id);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetSpeedParameters(s32 id, FIXED speed, FIXED acceleration);
 void Actor_WalkToAndWaitById(s32 id, s32 x, s32 z);
 void Actor_SetAnimationAndWait(s32 id, s32 mode);
 void Actor_WalkToById(s32 id, s32 x, s32 z);

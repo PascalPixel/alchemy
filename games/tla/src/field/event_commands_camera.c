@@ -10,8 +10,8 @@
 /// 16.16 pixels (-1 keeps that axis), kept far enough inside the map that the
 /// screen never shows past its edge. With useSetter 0 the camera jumps there
 /// at once; otherwise it travels at its own speed.
-void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
-                                     s32 requestedZ, s32 useSetter) {
+void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
+                                     FIXED requestedZ, s32 useSetter) {
   s32 shouldUseSetter;
   struct FieldWork *runtimeBlock;
   s32 minimumX;

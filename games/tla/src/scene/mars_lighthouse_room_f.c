@@ -209,7 +209,7 @@ void ObjectTable_Snapshot(void);
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 void Leader_PushObjectAhead(void);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
-s32 Trig_Cos(s32 angle);
+FIXED Trig_Cos(s32 angle);
 
 void MarsLighthouseRoomF_MoveVenusStatueIntoFlames(s32 unused, s32 id);
 void Actor_SetupScriptedPart(struct Actor *object, s32 part);

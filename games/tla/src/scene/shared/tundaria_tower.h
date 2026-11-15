@@ -1,6 +1,7 @@
 #ifndef TLA_TUNDARIA_TOWER_H
 #define TLA_TUNDARIA_TOWER_H
 
+#include "fixed_math.h"
 #include "types.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
@@ -44,7 +45,7 @@ extern volatile s16 gSlideOnIce_Stopped;
 
 void Rocks_Spawn(s32 x, s32 y, s32 z, s32 frames);
 
-void MapGrid_SetScreenShake(s32 a, s32 b, s32 c);
+void MapGrid_SetScreenShake(FIXED a, FIXED b, FIXED c);
 void PaletteFade_SetTarget(s32 color, s32 b);
 void PaletteFade_SetSource(s32 color, s32 b);
 

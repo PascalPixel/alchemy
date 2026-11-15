@@ -51,7 +51,8 @@
 
 void GameFlag_Set(s32 flag);
 void GameFlag_Clear(s32 flag);
-void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_SetPositionAndResetMotion(struct Actor *object, FIXED x, FIXED y,
+                                     FIXED z);
 void Actor_SetSpriteColor(struct Actor *object, s32 value);
 void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void Actor_FaceDirectionById(s32 actor, s32 angle, s32 frames);
@@ -83,13 +84,13 @@ void FieldEffect_StartBlankOverlay(s32 a);
 void Rope_Initialize(void);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 void FlagBlock_PlaceAll(const void *script);
-void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_SetMoveTarget(struct Actor *object, FIXED x, FIXED y, FIXED z);
 void Actor_WaitForMove(struct Actor *object);
 
-void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 mode);
+void FieldCamera_MoveWithinMapBounds(FIXED x, FIXED y, FIXED z, s32 mode);
 struct Actor *FieldCamera_GetActor(void);
-void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
-void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void Camera_SetSpeedParameters(FIXED speed, FIXED acceleration);
+void Actor_SetSpeedParameters(s32 actor, FIXED speed, FIXED acceleration);
 void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
 void Actor_MoveToObject(s32 actor, s32 target);
 void Actor_SetMovementTypeById(s32 actor, const void *callback);

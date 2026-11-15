@@ -385,7 +385,8 @@ void Actor_UpdateAllThumb(void) {
 
 /// Places the actor at (x, y, z), in 16.16 pixels, clears its movement target
 /// and stops it.
-void Actor_SetPositionAndResetMotion(struct Actor *actor, s32 x, s32 y, s32 z) {
+void Actor_SetPositionAndResetMotion(struct Actor *actor, FIXED x, FIXED y,
+                                     FIXED z) {
   actor->z.fixed = z;
   actor->targetX = TARGET_UNSET;
   actor->targetY = TARGET_UNSET;
@@ -397,7 +398,7 @@ void Actor_SetPositionAndResetMotion(struct Actor *actor, s32 x, s32 y, s32 z) {
 
 /// Sends an actor towards (x, y, z), in 16.16 pixels. Within a pixel it arrives
 /// at once.
-void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z) {
+void Actor_SetMoveTarget(struct Actor *actor, FIXED x, FIXED y, FIXED z) {
   s32 dx;
   s32 distance;
   s32 dz;

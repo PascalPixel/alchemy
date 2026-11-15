@@ -56,7 +56,7 @@ u8 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
 
 /// Changes the shake without restarting an axis whose argument is negative.
 /// Amplitudes are 16.16 pixels and decay is a 16.16 multiplier per frame.
-void MapGrid_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay) {
+void MapGrid_SetScreenShake(FIXED shakeX, FIXED shakeY, FIXED shakeDecay) {
   struct MapWork *grid;
 
   // A negative argument leaves that value alone, so an event can change the

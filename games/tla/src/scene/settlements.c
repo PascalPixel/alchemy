@@ -140,7 +140,7 @@ enum AttekaIsletHousesActorId {
   ACTOR_ISLANDER_ON_THE_WEST = ACTOR_FIRST_PLACED
 };
 
-s32 Trig_Cos(s32 angle);
+FIXED Trig_Cos(s32 angle);
 
 extern u8 MsgSettlementsDontTellMeYoureHere[];
 
@@ -1105,7 +1105,7 @@ extern s16 gSlideOnIce_SteerAngles[];
 #include "shared/leader_stop_if_pending.h"
 
 extern s16 gSlideOnIce_AnglesByKey[];
-s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+s32 Field_CheckSpheresOverlap(FIXED *a, s32 aRadius, FIXED *b, s32 bRadius);
 
 #include "shared/leader_slide_on_ice.h"
 
@@ -1116,7 +1116,7 @@ void Actor_SteerByPad(struct Actor *object);
 void Leader_StopIfPending(void);
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 s32 Actor_HasArrived(struct Actor *object);
-s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
+s32 Field_CheckSpheresOverlap(FIXED *a, s32 aRadius, FIXED *b, s32 bRadius);
 
 #include "shared/slide_on_ice_from_edge.c"
 

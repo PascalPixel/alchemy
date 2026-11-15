@@ -9,7 +9,7 @@
 /// in 16.16, where the two item actors stand. Unless the party returns
 /// to where it was, the opponent is put opposite Isaac across x = finishX.
 void Colosso_StartRaceGauge(s32 playerActorId, s32 opponentActorId,
-                            s32 segments, s32 finishX, s32 finishZ,
+                            s32 segments, FIXED finishX, FIXED finishZ,
                             s32 finishItemActorIdA, s32 finishItemActorIdB) {
   struct ColossoRaceWork *work;
   struct Actor *player;

@@ -54,7 +54,7 @@ extern struct MapCell gMapGridCellBuffer[];
 
 void Scene_SetActorSpritePriority(struct Actor *object, s32 priority);
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
-s32 Trig_Cos(s32 angle);
+FIXED Trig_Cos(s32 angle);
 void Event_End(void);
 void FieldCamera_WaitForArrival(void);
 
@@ -63,7 +63,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        const struct EffectOptions *options);
 s32 SeaOfTime_GetCellCode(u32 layer, s32 x, s32 y);
 s32 SeaOfTime_SetCellCode(u32 layer, s32 x, s32 y, s32 value);
-s32 Position_FlatDistance(s32 *a, s32 *b);
+s32 Position_FlatDistance(FIXED *a, FIXED *b);
 void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor);
 void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor);
 

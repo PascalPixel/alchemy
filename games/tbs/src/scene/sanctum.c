@@ -183,7 +183,8 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep);
 #define SANCTUM_SPARKLE_ORBIT_STEP (TRIG_TURN * 9 / 128)
 static s32 Sanctum_ChooseRestartOption(void);
 static void Sanctum_ReenactSolSanctum(void);
-static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY, s32 fixedZ);
+static void Sanctum_RaiseItemIcon(s32 item, FIXED fixedX, FIXED fixedY,
+                                  FIXED fixedZ);
 static void Sanctum_SpawnActorSpark(s32 id);
 static void Sanctum_RestoreQuestFloor(void);
 
@@ -1884,8 +1885,8 @@ static void Sanctum_ReenactSolSanctum(void) {
 }
 
 /// Shows an item icon rising from the supplied fixed-point position.
-static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
-                                  s32 fixedZ) {
+static void Sanctum_RaiseItemIcon(s32 item, FIXED fixedX, FIXED fixedY,
+                                  FIXED fixedZ) {
   struct Actor *icon;
   struct Sprite *sprite;
   GlyphTransfer *glyph;

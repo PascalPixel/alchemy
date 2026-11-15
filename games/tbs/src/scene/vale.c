@@ -2906,7 +2906,7 @@ static void Vale_CycleThirdBoardPalette(void) {
 
 /// The distance in whole pixels between two positions of 16.16 fixed-point x,
 /// y and z.
-static s32 Vale_DistanceInPixels(s32 *first, s32 *second) {
+static s32 Vale_DistanceInPixels(FIXED *first, FIXED *second) {
   s32 dx = FIXEDtoINT(*first++ - *second++);
   s32 dy = FIXEDtoINT(*first++ - *second++);
   s32 dz = FIXEDtoINT(*first - *second);

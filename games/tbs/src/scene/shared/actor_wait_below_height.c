@@ -2,7 +2,7 @@
 // Goma Cave Entrance and Goma Cave, and the Lamakan Desert.
 
 /// Waits until the actor has come down to height (16.16), a second at most.
-static void Actor_WaitBelowHeight(struct Actor *actor, s32 height) {
+static void Actor_WaitBelowHeight(struct Actor *actor, FIXED height) {
   s32 frames = 60;
 
   while (frames != 0) {

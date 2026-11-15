@@ -45,7 +45,7 @@
 #include "window/window.h"
 
 void Party_DrainPp(s32 count);
-s32 Party_GetPpRatio(void);
+FIXED Party_GetPpRatio(void);
 
 #include "shared/tables.h"
 

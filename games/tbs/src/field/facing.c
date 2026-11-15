@@ -77,7 +77,7 @@ const u16 gSpriteDissolve_PixelOrderTail = 0x01ff;
 
 /// The fixed camera's view matrix (16.16): identity with a -0.8 shear of y by x.
 /// ActorSystem_ProjectSprites applies it while battle commands are chosen.
-const s32 gCamera_FixedViewMatrix[12] = {
+const FIXED gCamera_FixedViewMatrix[12] = {
     FIXED_ONE, 0, 0,
     -(FIXED_ONE * 4 / 5), FIXED_ONE, 0,
     0, 0, FIXED_ONE,

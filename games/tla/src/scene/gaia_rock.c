@@ -310,7 +310,7 @@ struct OrbitEffect {
   void (*update)(struct OrbitEffect *);
 };
 
-s32 Trig_Cos(s32 angle);
+FIXED Trig_Cos(s32 angle);
 
 void GaiaRock_CircleLeaf(struct OrbitEffect *effect) {
   s32 radius;

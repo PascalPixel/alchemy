@@ -196,7 +196,7 @@ void FieldEffect_AdvanceHueCycle(void) {
 
 /// Works out red, green and blue (0 to 31 each, 16.16) for a hue in degrees
 /// (16.16).
-void FieldEffect_CalculateHueChannels(s32 hue, s32 *r, s32 *g, s32 *b) {
+void FieldEffect_CalculateHueChannels(FIXED hue, FIXED *r, FIXED *g, FIXED *b) {
   *r = FieldEffect_HueChannelRamp(hue + HUE_CIRCLE / 3, 0,
                                   FIXED_ONE * RGB_LEVEL_MAX);
   *g = FieldEffect_HueChannelRamp(hue, 0, FIXED_ONE * RGB_LEVEL_MAX);
@@ -219,7 +219,7 @@ s32 FieldEffect_HueChannelRamp(s32 angle, s32 low, s32 high) {
 }
 
 /// The 16.16 remainder of value divided by divisor (0 for a zero divisor).
-s32 FixedPoint_Remainder(s32 value, s32 divisor) {
+FIXED FixedPoint_Remainder(FIXED value, FIXED divisor) {
   s32 quot;
 
   if (divisor == 0)

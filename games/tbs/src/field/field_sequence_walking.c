@@ -115,7 +115,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 /// position (x, y, z), in 16.16 pixels, and whose condition holds: records the
 /// region's exit value for FieldSequence_Run, plays the exit sound and starts
 /// leaving the scene.
-void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
+void Field_CheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ) {
   s32 exitValue;
   struct FieldWork *work;
   s32 fixedZ;

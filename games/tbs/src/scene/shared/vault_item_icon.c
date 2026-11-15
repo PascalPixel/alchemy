@@ -7,7 +7,8 @@
 /// 16-colour, palette 0), the actor stays put (motionFlags 0) and keeps its
 /// VRAM, and the icon's tiles, decoded into heap block 17, are loaded into
 /// the sprite's VRAM block.
-void Vault_PlaceItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z) {
+void Vault_PlaceItemIcon(s32 item, FIXED fixed_x, FIXED fixed_y,
+                         FIXED fixed_z) {
   struct Actor *actor;
   struct Sprite *sprite;
   GlyphTransfer *icon;

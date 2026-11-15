@@ -461,7 +461,7 @@ u32 ElementGlow_UploadStarField(void);
 #endif
 s32 ElementGlow_InitializeStarField(s32 mode);
 s32 ElementGlow_End(s32 unused);
-s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
+s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, FIXED scale,
                                 s32 count);
 // The native implicit-int declaration disagrees with the later void definition.
 // A plain prototype keeps EN size but changes its first caller at .text+0x4c62.

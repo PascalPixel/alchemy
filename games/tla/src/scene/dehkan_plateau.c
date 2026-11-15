@@ -990,7 +990,7 @@ void DehkanPlateau_JoltCamera(void) {
 #undef SCENE
 
 /// Places an actor on the ground at a 16.16 position, facing a heading.
-static __inline__ void Actor_PlaceFacing(s32 id, s32 x, s32 z, u16 angle) {
+static __inline__ void Actor_PlaceFacing(s32 id, FIXED x, FIXED z, u16 angle) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
 }
 

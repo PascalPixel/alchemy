@@ -397,7 +397,7 @@ UNUSED void Battle_BrightenAllLayers(void) {
 }
 
 /// Returns the 16.16 product of a and b.
-s32 Battle_MulFX(s32 a, s32 b) { return Iwram_MulFX(a, b); }
+FIXED Battle_MulFX(FIXED a, FIXED b) { return Iwram_MulFX(a, b); }
 
 /// A transform as BattleTransition_InitializeEntries reads its first two words.
 struct BattleTransitionEntry {

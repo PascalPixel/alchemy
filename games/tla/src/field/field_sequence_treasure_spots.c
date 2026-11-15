@@ -306,7 +306,7 @@ void ObjectEvent_Remove(u32 objectId) { Actor_ReleaseAtIndex(objectId); }
 
 /// Moves the actor to (x, z) on the ground, 16.16 pixels; -1 keeps its home
 /// (homeX, homeZ) on that axis.
-void TreasureSpot_SetActorPosition(u32 objectId, s32 x, s32 z) {
+void TreasureSpot_SetActorPosition(u32 objectId, FIXED x, FIXED z) {
   struct Actor *object;
 
   object = Actor_Lookup(objectId);

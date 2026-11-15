@@ -206,7 +206,7 @@ static void AltinPeak_RestoreSpritzRoom(void);
 static void AltinPeak_RestoreFallingRocksRoom(void);
 static void AltinPeak_RestoreHydrosStatueRoom(void);
 static void AltinPeak_RestoreWestExitRoom(void);
-static void AltinPeak_StartSpittingFX(s32 x, s32 y, s32 z, s32 facing);
+static void AltinPeak_StartSpittingFX(FIXED x, FIXED y, FIXED z, s32 facing);
 /// AltinPeak_StartSpittingFX from a point in whole pixels.
 #define AltinPeak_StartSpitting(x, y, z, facing)                               \
   AltinPeak_StartSpittingFX(toFIXED(x), toFIXED(y), toFIXED(z), facing)
@@ -1834,7 +1834,7 @@ static void AltinPeak_SpawnSpray(void) {
 /// A water beast starts spitting water from (x, y, z), in 16.16 fixed point,
 /// toward facing
 /// (FACING_EAST or FACING_WEST), with its sound (SE_AMBIENT_WATER).
-static void AltinPeak_StartSpittingFX(s32 x, s32 y, s32 z, s32 facing) {
+static void AltinPeak_StartSpittingFX(FIXED x, FIXED y, FIXED z, s32 facing) {
   SET_VECTOR(gAltinPeak_SprayOrigin, x, y, z);
   gAltinPeak_SprayDirection = facing;
 

@@ -155,7 +155,7 @@ void Matrix_RotateY(s32 angle) {
 
 /// Makes the current matrix a rotation about the Y axis.
 void Matrix_SetRotateY(s32 angle) {
-  s32 *matrix = gCurrentMatrix;
+  FIXED *matrix = gCurrentMatrix;
   s32 sine, cosine;
 
   CAMELOT_ASM("the fixed-register unit matrix store above")
@@ -185,7 +185,7 @@ void Matrix_RotateZ(s32 angle) {
 }
 
 /// Applies a translation by position, X, Y and Z in 16.16.
-void Matrix_TranslateVector(const s32 *position) {
+void Matrix_TranslateVector(const FIXED *position) {
   MATRIX matrix;
 
   CAMELOT_ASM("the fixed-register unit matrix store above")
@@ -197,7 +197,7 @@ void Matrix_TranslateVector(const s32 *position) {
 }
 
 /// Applies a translation by x, y and z in 16.16.
-void Matrix_Translate(s32 x, s32 y, s32 z) {
+void Matrix_Translate(FIXED x, FIXED y, FIXED z) {
   MATRIX matrix;
 
   CAMELOT_ASM("the fixed-register unit matrix store above")
@@ -209,14 +209,14 @@ void Matrix_Translate(s32 x, s32 y, s32 z) {
 }
 
 /// Sets the current matrix's translation to position.
-void Matrix_SetTranslation(const s32 *position) {
+void Matrix_SetTranslation(const FIXED *position) {
   gCurrentMatrix[MATRIX_TRANSLATION_X] = position[0];
   gCurrentMatrix[MATRIX_TRANSLATION_Y] = position[1];
   gCurrentMatrix[MATRIX_TRANSLATION_Z] = position[2];
 }
 
 /// Applies a scale by scale's X, Y and Z factors in 16.16.
-void Matrix_ScaleVector(const s32 *scale) {
+void Matrix_ScaleVector(const FIXED *scale) {
   MATRIX matrix;
 
   CAMELOT_ASM("the fixed-register unit matrix store above")
@@ -228,7 +228,7 @@ void Matrix_ScaleVector(const s32 *scale) {
 }
 
 /// Applies a scale by x, y and z in 16.16.
-void Matrix_Scale(s32 x, s32 y, s32 z) {
+void Matrix_Scale(FIXED x, FIXED y, FIXED z) {
   MATRIX matrix;
 
   CAMELOT_ASM("the fixed-register unit matrix store above")
@@ -240,7 +240,7 @@ void Matrix_Scale(s32 x, s32 y, s32 z) {
 }
 
 /// Applies the same scale on all three axes.
-void Matrix_ScaleUniform(s32 scale) {
+void Matrix_ScaleUniform(FIXED scale) {
   MATRIX matrix;
 
   CAMELOT_ASM("the fixed-register unit matrix store above")
@@ -252,7 +252,7 @@ void Matrix_ScaleUniform(s32 scale) {
 }
 /// Rotates gCurrentMatrix by `angles` and translates it by `position` in one
 /// matrix. Reached through the far-call table.
-void Matrix_RotateTranslate(s32 *angles, s32 *position) {
+void Matrix_RotateTranslate(s32 *angles, FIXED *position) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
   MATRIX matrix;
 
@@ -282,7 +282,7 @@ void Matrix_RotateTranslate(s32 *angles, s32 *position) {
 
 /// Applies rotation, scaling by row and translation together.
 /// scale: scale factors for rows 1-3 of the rotation matrix.
-void Matrix_RotateTranslateScale(s32 *angles, s32 *position, s32 *scale) {
+void Matrix_RotateTranslateScale(s32 *angles, FIXED *position, FIXED *scale) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
   s32 axisScale;
   MATRIX matrix;
@@ -333,7 +333,7 @@ void Matrix_RotateTranslateScale(s32 *angles, s32 *position, s32 *scale) {
 
 /// Builds in `out` the camera matrix of an eye at `eye` looking at `target`.
 /// The camera's sideways axis is kept level (no Y component).
-void Matrix_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
+void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   /* FAKEMATCH(pin): dot held in r10. */
   register Dot3Fn dot asm("r10");
   u32 code[8];
@@ -416,12 +416,12 @@ void Matrix_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
 }
 
 /// Makes the camera at `eye` looking at `target` the whole of gCurrentMatrix.
-void Matrix_SetLookAt(s32 *eye, s32 *target) {
+void Matrix_SetLookAt(FIXED *eye, FIXED *target) {
   Matrix_BuildLookAt(eye, target, gCurrentMatrix);
 }
 
 /// Multiplies the camera at `eye` looking at `target` into gCurrentMatrix.
-void Matrix_LookAt(s32 *eye, s32 *target) {
+void Matrix_LookAt(FIXED *eye, FIXED *target) {
   MATRIX work;
 
   Matrix_BuildLookAt(eye, target, work);
@@ -431,7 +431,8 @@ void Matrix_LookAt(s32 *eye, s32 *target) {
 /// Sets the projection from a vertical field of view (1/65536 turns): the focal
 /// length, in 16.16 pixels, is 80 (half the screen height) over the tangent of
 /// half the angle.
-void Projection_SetFieldOfView(s32 fieldOfView, s32 nearDepth, s32 farDepth) {
+void Projection_SetFieldOfView(s32 fieldOfView, FIXED nearDepth,
+                               FIXED farDepth) {
   s32 halfAngle;
   s32 sine;
   s32 focal;
@@ -456,7 +457,7 @@ void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth) {
 }
 
 /// Transforms `vector` by gCurrentMatrix into `result`.
-static inline void Render_TransformVector(const void *vector, s32 *result) {
+static inline void Render_TransformVector(const void *vector, FIXED *result) {
   Iwram_TransformVectorEntry(vector, result);
 }
 

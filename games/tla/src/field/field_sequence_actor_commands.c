@@ -20,7 +20,8 @@ struct Actor *Actor_GetById(u32 actorId) {
 
 /// The event command "set actor speed": its top speed and acceleration, 16.16
 /// pixels per frame. Writes the actor's speedLimit and acceleration.
-void Actor_SetSpeedParameters(s32 actorId, s32 speedLimit, s32 acceleration) {
+void Actor_SetSpeedParameters(s32 actorId, FIXED speedLimit,
+                              FIXED acceleration) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
@@ -260,7 +261,7 @@ void Actor_WaitForMoveById(s32 actorId) {
 /// The event command "set actor position": puts the actor at (x, z), 16.16
 /// pixels, at rest; an actor that follows the ground keeps its height above
 /// it.
-void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z) {
+void Actor_SetHorizontalPositionWithTerrain(u32 actorId, FIXED x, FIXED z) {
   struct Actor *actor = Actor_Lookup(actorId);
   s32 terrainHeight;
 
@@ -308,7 +309,7 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(actorId, x, z, angle)
 /// Puts the actor at (x, y, z), 16.16 pixels, at rest; an actor that follows
 /// the ground is raised by the ground height there, as
 /// Actor_SetHorizontalPositionWithTerrain raises it.
-void Actor_SetPositionWithTerrain(u32 actorId, s32 x, s32 y, s32 z) {
+void Actor_SetPositionWithTerrain(u32 actorId, FIXED x, FIXED y, FIXED z) {
   struct Actor *actor = Actor_Lookup(actorId);
   s32 terrainHeight;
 

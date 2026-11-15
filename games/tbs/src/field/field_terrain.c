@@ -10,7 +10,7 @@
 /// The ground height functions (gMapGrid_TerrainHeightFunctions): each takes a
 /// cell's height samples after its kind byte and a pixel (x, y) within the
 /// 16x16 cell, and returns the ground height there in 16.16 pixels.
-s32 Terrain_GetFlatHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+FIXED Terrain_GetFlatHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
 }
@@ -39,7 +39,7 @@ TERRAIN_DEFINE_SLOPE(Terrain_GetSlopeYHeight, pixelY)
 
 /// A step across the diagonal x + y = 15: sample 0 before it, sample 1 after
 /// it and the higher of the two on it.
-s32 Terrain_GetStepSumDiagonalHeight(const u8 *heightBytes, s32 x, s32 y) {
+FIXED Terrain_GetStepSumDiagonalHeight(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
   s32 secondHeight;
@@ -65,8 +65,8 @@ s32 Terrain_GetStepSumDiagonalHeight(const u8 *heightBytes, s32 x, s32 y) {
 
 /// A step across the diagonal x = y: sample 0 where y < x, sample 1 where
 /// y > x and the higher of the two on it.
-s32 Terrain_GetStepDifferenceDiagonalHeight(const u8 *heightBytes, s32 x,
-                                            s32 y) {
+FIXED Terrain_GetStepDifferenceDiagonalHeight(const u8 *heightBytes, s32 x,
+                                              s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
   s32 secondHeight;
@@ -95,7 +95,7 @@ s32 Terrain_GetStepDifferenceDiagonalHeight(const u8 *heightBytes, s32 x,
 
 /// A slope that bends on the diagonal x + y = 15: from sample 0 at the top
 /// left corner to sample 1 on the diagonal to sample 2 at the bottom right.
-s32 Terrain_GetBendSumDiagonalHeight(const u8 *heightBytes, s32 x, s32 y) {
+FIXED Terrain_GetBendSumDiagonalHeight(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
   s32 middleHeight;
@@ -123,8 +123,8 @@ s32 Terrain_GetBendSumDiagonalHeight(const u8 *heightBytes, s32 x, s32 y) {
 
 /// A slope that bends on the diagonal x = y: from sample 0 at the top right
 /// corner to sample 1 on the diagonal to sample 2 at the bottom left.
-s32 Terrain_GetBendDifferenceDiagonalHeight(const u8 *heightBytes, s32 x,
-                                            s32 y) {
+FIXED Terrain_GetBendDifferenceDiagonalHeight(const u8 *heightBytes, s32 x,
+                                              s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
   s32 middleHeight;
@@ -162,7 +162,7 @@ s32 Terrain_GetBendDifferenceDiagonalHeight(const u8 *heightBytes, s32 x,
 
 /// A raised or sunken rounded square: sample 1 where gTerrain_LerpWeightTable
 /// is 1, sample 0 in the corners.
-s32 Terrain_GetRoundedSquareHeight(const u8 *heightBytes, s32 x, s32 y) {
+FIXED Terrain_GetRoundedSquareHeight(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 startHeight;
 
@@ -193,7 +193,7 @@ TERRAIN_DEFINE_STEP(Terrain_GetStepYHeight, pixelY)
 
 /// A slope along x that bends at the middle: sample 0 at x = 0, sample 1 at
 /// x = 8, towards sample 2 at x = 16.
-s32 Terrain_GetBendXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+FIXED Terrain_GetBendXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   u32 cellX = pixelX;
   s32 endpointHeight;
@@ -228,7 +228,7 @@ s32 Terrain_GetBendXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 }
 
 /// A slope along y that bends at the middle, as TERRAIN_BEND_X does along x.
-s32 Terrain_GetBendYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+FIXED Terrain_GetBendYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const u8 *samples = heightBytes;
   u32 cellY = pixelY;
   s32 endpointHeight;
@@ -260,8 +260,8 @@ s32 Terrain_GetBendYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 }
 
 /// The sample gTerrain_SampleIndexTable picks for (x, y).
-s32 Terrain_GetSampleTableHeight(const u8 *heightBytes, s32 pixelX,
-                                 s32 pixelY) {
+FIXED Terrain_GetSampleTableHeight(const u8 *heightBytes, s32 pixelX,
+                                   s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   // The table holds a byte per pixel of the cell, row by row.
   return CURVE_HEIGHT_FIXED(
@@ -269,8 +269,8 @@ s32 Terrain_GetSampleTableHeight(const u8 *heightBytes, s32 pixelX,
 }
 
 /// The same, with the table mirrored left to right.
-s32 Terrain_GetSampleTableMirroredHeight(const u8 *heightBytes, s32 pixelX,
-                                         s32 pixelY) {
+FIXED Terrain_GetSampleTableMirroredHeight(const u8 *heightBytes, s32 pixelX,
+                                           s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   // Row y read from its right end: (y << 4) + 15 - x.
   return CURVE_HEIGHT_FIXED(
@@ -279,13 +279,13 @@ s32 Terrain_GetSampleTableMirroredHeight(const u8 *heightBytes, s32 pixelX,
 }
 
 /// Flat, as Terrain_GetFlatHeight.
-s32 Terrain_GetFlatBHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+FIXED Terrain_GetFlatBHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
 }
 
 /// Flat, as Terrain_GetFlatHeight.
-s32 Terrain_GetFlatCHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
+FIXED Terrain_GetFlatCHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
 }
@@ -297,7 +297,7 @@ s32 Terrain_GetFlatCHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 /// Returns the ground height of a layer at (x, y) in 16.16 pixels: the
 /// height function of the cell's terrain kind applied to its samples.
 /// y is the map's down axis, an actor's z.
-s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
+FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED y) {
   struct MapGridScrollWork *work = gMapGridWork[0];
   struct MapGridCell *cell;
   u8 *heightBytes;
@@ -331,7 +331,7 @@ s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
 
 /// Returns the terrain kind of a layer's cell at (x, y) in 16.16 pixels: the
 /// low four bits of the first byte of the cell's shape.
-s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
+s32 MapGrid_GetCellAttributeLowNibble(s32 layer, FIXED x, FIXED y) {
   struct MapGridScrollWork *gridState = gMapGridWork[0];
   struct MapGridCell *cells;
   s32 cellX;
@@ -355,7 +355,7 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
 
 /// Returns the cell behavior of a layer's cell at (x, y) in 16.16 pixels. The
 /// shift by 20 takes 16.16 pixels straight to 16-pixel cells.
-s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
+s32 MapGrid_GetCellBehaviorAt(s32 layer, FIXED x, FIXED y) {
   struct MapGridScrollWork *gridState;
   struct MapGridCell *cell;
 
@@ -373,7 +373,7 @@ s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
 
 /// Sets the cell behavior of a layer's cell at (x, y) in 16.16 pixels. Writes
 /// the cell in the map's grid; does nothing before the map is set up.
-void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior) {
+void MapGrid_SetCellBehaviorAt(u32 layer, FIXED x, FIXED y, u32 behavior) {
   struct MapGridScrollWork *gridState = gMapGridWork[0];
 
   x = FIELD_CELL(x);

@@ -136,7 +136,7 @@ s32 Math_IntegerSqrt(s32 value) {
 
 /// Square root of a 16.16 fixed-point value, in 16.16. The square root of
 /// the raw value is the result in 8.8, so the low eight bits are always 0.
-s32 Math_SqrtFX(s32 value) { return Iwram_Sqrt(value) << 8; }
+FIXED Math_SqrtFX(FIXED value) { return Iwram_Sqrt(value) << 8; }
 
 /// Returns the basic sprite palettes (gSystem_BasicColorPalette).
 s32 Palette_GetBasicSpriteColors(void) {

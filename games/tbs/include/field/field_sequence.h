@@ -88,7 +88,7 @@ enum EncounterZoneId {
 
 void Encounter_SelectMapZones(s32 useRules);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos);
-s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps);
+s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps);
 s32 Encounter_RollMapStep(u32 terrain, s32 steps);
 s32 Encounter_RollWorldMap(s32 pos, s32 steps);
 u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot);
@@ -177,7 +177,7 @@ void Actor_Restore(void);
 void Field_ClearRequests(void);
 s32 Field_CountRequests(void);
 s32 Field_GetCollisionAheadOfLeader(void);
-void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ);
+void Field_CheckExitRegions(FIXED positionX, FIXED positionY, FIXED positionZ);
 void Field_UpdateWalking(s32 layer, s32 x, s32 y, s32 z);
 void Party_AddPp(s32 amount, s32 unused);
 void Party_AddHp(s32 amount, s32 percent);
@@ -225,7 +225,7 @@ void TreasureSpot_OpenChest(s32 id);
 void TreasureSpot_ShowOpened(s32 id);
 struct Actor *TreasureSpot_GetActor(s32 id);
 void TreasureSpot_Hide(s32 id);
-void TreasureSpot_SetActorPosition(s32 id, s32 x, s32 z);
+void TreasureSpot_SetActorPosition(s32 id, FIXED x, FIXED z);
 
 void TreasureSpot_MoveLeaderAway(void);
 void ItemDisplay_EmitSparkles(struct Actor *actor);

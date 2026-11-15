@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_COLOSSO_SETUP_H
 #define ALCHEMY_COLOSSO_SETUP_H
 
+#include "fixed_math.h"
 #include "types.h"
 
 /// PathRecorder.mode: what the opponent's path does
@@ -15,7 +16,7 @@ enum PathRecorderMode {
 // function returning int.
 #ifdef UBFIX
 void Colosso_StartRaceGauge(s32 playerActorId, s32 opponentActorId,
-                            s32 segments, s32 finishX, s32 finishZ,
+                            s32 segments, FIXED finishX, FIXED finishZ,
                             s32 finishItemActorIdA, s32 finishItemActorIdB);
 #endif
 void Colosso_StartOpponent(s32 resource);

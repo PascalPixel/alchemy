@@ -416,7 +416,7 @@ void GameFlag_RefreshLureCap(void) {
 }
 
 /// Returns the unit's PP over its maximum PP, in 16.16; 0 with no maximum.
-static __inline__ s32 Owner_GetPpRatio(s32 owner) {
+static __inline__ FIXED Owner_GetPpRatio(s32 owner) {
   struct Unit *unit = Unit_Get(owner);
 
   if (unit->ppMax <= 0)
@@ -425,7 +425,7 @@ static __inline__ s32 Owner_GetPpRatio(s32 owner) {
 }
 
 /// Returns the party's PP over its maximum PP, in 16.16; 0 with no members.
-s32 Party_GetPpRatio(void) {
+FIXED Party_GetPpRatio(void) {
   s32 pp = 0;
   s32 max = 0;
   s32 count = Party_CountMembers();

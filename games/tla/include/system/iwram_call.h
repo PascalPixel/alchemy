@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_IWRAM_CALL_H
 #define ALCHEMY_IWRAM_CALL_H
 
+#include "fixed_math.h"
 #include "types.h"
 
 /// Fixed addresses of the routines resident in IWRAM.
@@ -15,7 +16,7 @@
 #define Iwram_MulFX                                                            \
   FIXED_ADDRESS((s32 (*)(s32 a, s32 b)), 0x0300021c, IwramMulFX)
 /// The 16.16 product of two 16.16 numbers (Iwram_MulFX), written as a call.
-static inline s32 Math_MulFX(s32 a, s32 b) { return Iwram_MulFX(a, b); }
+static inline FIXED Math_MulFX(FIXED a, FIXED b) { return Iwram_MulFX(a, b); }
 #define Iwram_RatioMulQ14Entry                                                 \
   FIXED_ADDRESS((s32 (*)(s32 divisor, s32 value)), 0x03000230, IwramRatioMulQ14)
 #define Iwram_SqrtEntry                                                        \
@@ -24,7 +25,8 @@ static inline s32 Math_MulFX(s32 a, s32 b) { return Iwram_MulFX(a, b); }
   FIXED_ADDRESS((s32 (*)(const void *bits, void *destination, s32 value)),     \
                 0x03000314, IwramExpandBitRuns)
 #define Iwram_MultiplyMatrixEntry                                              \
-  FIXED_ADDRESS((void (*)(const s32 *matrix)), 0x030003c8, IwramMultiplyMatrix)
+  FIXED_ADDRESS((void (*)(const FIXED *matrix)), 0x030003c8,                   \
+                IwramMultiplyMatrix)
 /// Reads all three word-aligned coordinates before writing the result. Input
 /// may be an array or a record's coordinate prefix; output may overlap it.
 #define Iwram_TransformVectorEntry                                             \
@@ -44,7 +46,7 @@ static inline s32 Math_MulFX(s32 a, s32 b) { return Iwram_MulFX(a, b); }
                 0x03000730, IwramCopyWords)
 
 /// value * FIXED_ONE / divisor: the 16.16 ratio of two 16.16 numbers.
-static inline s32 Iwram_RatioMulQ14(s32 divisor, s32 value) {
+static inline FIXED Iwram_RatioMulQ14(FIXED divisor, FIXED value) {
   return Iwram_RatioMulQ14Entry(divisor, value);
 }
 
@@ -54,7 +56,7 @@ static inline s32 Iwram_Sqrt(s32 value) { return Iwram_SqrtEntry(value); }
 
 /// Multiplies matrix, a 3 by 3 matrix and a translation in 16.16 fixed point,
 /// into the current transform.
-static inline void Iwram_MultiplyMatrix(const s32 *matrix) {
+static inline void Iwram_MultiplyMatrix(const FIXED *matrix) {
   Iwram_MultiplyMatrixEntry(matrix);
 }
 
@@ -120,6 +122,6 @@ static inline s32 Iwram_CopyWords(void *destination, const void *source,
 /// from the linked IWRAM code rather than at its fixed address.
 #define Iwram_MulFXOffset FIXED_OFFSET(0x11c, IwramMulFX, IwramIrqMain)
 
-s32 IwramMulFX(s32 a, s32 b) __attribute__((long_call));
+FIXED IwramMulFX(FIXED a, FIXED b) __attribute__((long_call));
 
 #endif

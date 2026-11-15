@@ -2,6 +2,7 @@
 #define ALCHEMY_MATRIX_H
 
 #include "edition.h"
+#include "fixed_math.h"
 #include "types.h"
 
 /// A transform's twelve 16.16 words: a 3x3 rotation, then the translation's
@@ -15,7 +16,7 @@ enum {
 
 /// A matrix, as SGL types one: twelve 16.16 words, the rotation's nine and
 /// then the translation's three.
-typedef s32 MATRIX[MATRIX_WORDS];
+typedef FIXED MATRIX[MATRIX_WORDS];
 
 /// The current 3D transform. Iwram_MultiplyMatrix multiplies the matrix it is
 /// given into it.
@@ -31,9 +32,9 @@ void Matrix_RewindStack(void);
 void Matrix_Push(void);
 void Matrix_Get(void *destination);
 void Matrix_Load(const void *source);
-void Matrix_BuildLookAt(s32 *eye, s32 *target, s32 *out);
-void Matrix_SetLookAt(s32 *eye, s32 *target);
-void Matrix_LookAt(s32 *eye, s32 *target);
+void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out);
+void Matrix_SetLookAt(FIXED *eye, FIXED *target);
+void Matrix_LookAt(FIXED *eye, FIXED *target);
 
 /// Sets a twelve-word matrix to the unit matrix: FIXED_ONE (1.0) on the
 /// rotation's diagonal, the rest 0.

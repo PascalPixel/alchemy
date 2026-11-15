@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_FACING_H
 #define ALCHEMY_FACING_H
 
+#include "fixed_math.h"
 #include "types.h"
 
 extern const u8 gAnimationFacing_OnePicture[16];
@@ -15,7 +16,7 @@ extern const u8 gAnimationFacing_SixPictures[64];
 
 extern const u8 gSpriteDissolve_PixelOrder[64];
 extern const u16 gSpriteDissolve_PixelOrderTail;
-extern const s32 gCamera_FixedViewMatrix[12];
+extern const FIXED gCamera_FixedViewMatrix[12];
 extern const s32 gActorScript_CycleTable[32];
 extern const s32 gActorScript_EndScript[1];
 extern const s16 gActorScript_EndScriptTail[8];

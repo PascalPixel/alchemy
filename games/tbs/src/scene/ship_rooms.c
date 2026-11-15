@@ -424,7 +424,7 @@ static void ShipRooms_InstallRowingDeckActors(u32 action);
 static void ShipRooms_Say(s32 speaker);
 static void ShipRooms_Turn(s32 actorId, u16 facing);
 static void ShipRooms_PlaceActor(s32 actorId, s32 x, s32 z, s32 facing);
-static void ShipRooms_MoveCameraAndWaitFX(s32 x, s32 y, s32 z, u32 flags);
+static void ShipRooms_MoveCameraAndWaitFX(FIXED x, FIXED y, FIXED z, u32 flags);
 /// Moves the camera to a point in whole pixels, CAMERA_KEEP keeping an axis,
 /// then waits as its flags say (ShipRooms_MoveCameraAndWaitFX).
 #define ShipRooms_MoveCameraAndWait(x, y, z, flags)                            \
@@ -3062,7 +3062,8 @@ static void ShipRooms_PlaceActor(s32 actorId, s32 x, s32 z, s32 facing) {
 }
 
 /// Moves the camera, optionally waits or redraws, then honors the packed delay.
-static void ShipRooms_MoveCameraAndWaitFX(s32 x, s32 y, s32 z, u32 flags) {
+static void ShipRooms_MoveCameraAndWaitFX(FIXED x, FIXED y, FIXED z,
+                                          u32 flags) {
   u32 selected;
 
   FieldCamera_MoveWithinMapBounds(x, y, z, ~flags & SHIP_CAMERA_JUMP);

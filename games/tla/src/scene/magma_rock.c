@@ -524,7 +524,7 @@ void MagmaRock_TrailEmbers(struct Actor *object) {
   }
 }
 
-s32 Trig_Cos(s32 angle);
+FIXED Trig_Cos(s32 angle);
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define HALF_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
@@ -732,7 +732,7 @@ void MagmaRock_DriftAndSlow(struct Actor *object) {
   object->riseBaseY -= object->riseBaseY >> 3;
 }
 
-s32 Position_FlatDistance(s32 *a, s32 *b);
+s32 Position_FlatDistance(FIXED *a, FIXED *b);
 void Actor_Release(struct Actor *object);
 s32 MagmaRock_EndEvent(void);
 void FieldCamera_WaitForArrival(void);
@@ -1487,7 +1487,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 // Magma Rock's rooms set up, the leader launched and landed, and the
 // crumbling pillars and traps.
 
-s32 Trig_Cos(s32 angle);
+FIXED Trig_Cos(s32 angle);
 void FieldEffect_AdvanceMotion();
 void MapGrid_CenterOnFollowedPoint(void);
 

@@ -271,7 +271,7 @@ s32 MapCell_Get(u32 layer, s32 x, s32 y);
 
 s32 MagmaRockInside_FindStatue(u16 *table);
 
-s32 Position_FlatDistance(s32 *from, s32 *to);
+s32 Position_FlatDistance(FIXED *from, FIXED *to);
 
 void MagmaRockInside_TrailEmbers(struct Actor *object);
 void MagmaRockInside_RaiseLava(void);

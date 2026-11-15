@@ -111,7 +111,7 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
 }
 
 /// The pixel half of a 16.16 fixed-point value.
-static inline s16 *Fixed_Halves(s32 *value) {
+static inline s16 *Fixed_Halves(FIXED *value) {
   /* FAKEMATCH(wrapper): the halves read through this inline. */
   return (s16 *)value;
 }

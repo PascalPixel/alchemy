@@ -11,7 +11,7 @@ UNUSED static void SetEffectRecordMode(struct Actor *work, s32 mode) {
 
 /// A still, translucent effect in palette 14, at sprite priority 0, at a 16.16
 /// position.
-UNUSED static void *Actor_PrepareFX(s32 x, s32 y, s32 z, s32 type) {
+UNUSED static void *Actor_PrepareFX(FIXED x, FIXED y, FIXED z, s32 type) {
   struct Actor *actor = FieldActor_Create(type, x, y, z);
 
   if (actor != NULL) {
@@ -33,7 +33,8 @@ UNUSED static void *Actor_PrepareFX(s32 x, s32 y, s32 z, s32 type) {
 
 /// A still effect in palette 15, at sprite priority 1, drawn under the
 /// actors, at a 16.16 position.
-UNUSED static void *Actor_CreateConfiguredFX(s32 x, s32 y, s32 z, s32 type) {
+UNUSED static void *Actor_CreateConfiguredFX(FIXED x, FIXED y, FIXED z,
+                                             s32 type) {
   struct Actor *actor = FieldActor_Create(type, x, y, z);
 
   if (actor != NULL) {

@@ -105,8 +105,8 @@ UNUSED void WindowColor_WritePalette(struct OptionMenuWork *work) {
 
 /// Returns the window tint with each channel scaled (16.16 fixed point) and
 /// clamped to 0 to 31, as a BGR555 colour.
-u16 WindowColor_ScaleTint(struct OptionMenuWork *work, s32 redScale,
-                          s32 greenScale, s32 blueScale) {
+u16 WindowColor_ScaleTint(struct OptionMenuWork *work, FIXED redScale,
+                          FIXED greenScale, FIXED blueScale) {
   s32 red;
   s32 green;
   s32 blue;
@@ -132,8 +132,8 @@ u16 WindowColor_ScaleTint(struct OptionMenuWork *work, s32 redScale,
 /// Returns rgb with each channel scaled (16.16 fixed point) and clamped to 0 to
 /// 31, as a BGR555 colour.
 /// rgb holds three components, not an already packed palette word.
-u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
-                          s32 blueScale) {
+u16 Color_ScaleComponents(s16 *rgb, FIXED redScale, FIXED greenScale,
+                          FIXED blueScale) {
   s32 red;
   s32 green;
   s32 blue;

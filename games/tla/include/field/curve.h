@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_CURVE_H
 #define ALCHEMY_CURVE_H
 
+#include "fixed_math.h"
 #include "types.h"
 
 extern u8 gTerrain_LerpWeightTable[];
@@ -15,10 +16,10 @@ enum {
   CURVE_FULL_STEPS = 16, ///< pixels across a cell
 };
 
-s32 Terrain_GetFlatHeight(const s8 *samples);
-s32 Terrain_GetSlopeXHeight(const s8 *samples, s32 position);
-s32 Terrain_GetSlopeYHeight(const s8 *samples, s32 unused, s32 position);
-s32 Terrain_GetStepSumDiagonalHeight(const s8 *samples, s32 start, s32 end);
-s32 Terrain_GetSampleTableHeight(const s8 *samples, u32 position, u32 row);
+FIXED Terrain_GetFlatHeight(const s8 *samples);
+FIXED Terrain_GetSlopeXHeight(const s8 *samples, s32 position);
+FIXED Terrain_GetSlopeYHeight(const s8 *samples, s32 unused, s32 position);
+FIXED Terrain_GetStepSumDiagonalHeight(const s8 *samples, s32 start, s32 end);
+FIXED Terrain_GetSampleTableHeight(const s8 *samples, u32 position, u32 row);
 
 #endif

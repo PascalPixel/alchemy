@@ -92,8 +92,8 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void);
 static void SolSanctumElementalStarRoom_LineUpCaptors(void);
 static void SolSanctumElementalStarRoom_ShowMessageAndWait(s32 speaker,
                                                            s32 frames);
-static s32 SolSanctumElementalStarRoom_PresentStarFX(s32 item, s32 x, s32 y,
-                                                     s32 z);
+static s32 SolSanctumElementalStarRoom_PresentStarFX(s32 item, FIXED x, FIXED y,
+                                                     FIXED z);
 /// SolSanctumElementalStarRoom_PresentStarFX at a point in whole pixels.
 #define SolSanctumElementalStarRoom_PresentStar(item, x, y, z)                 \
   SolSanctumElementalStarRoom_PresentStarFX(item, toFIXED(x), toFIXED(y),      \
@@ -2074,8 +2074,8 @@ static void SolSanctumElementalStarRoom_ShowMessageAndWait(s32 speaker,
 }
 
 /// Animates a star's icon and replaces its owner's mythril bag with the star.
-static s32 SolSanctumElementalStarRoom_PresentStarFX(s32 item, s32 x, s32 y,
-                                                     s32 z) {
+static s32 SolSanctumElementalStarRoom_PresentStarFX(s32 item, FIXED x, FIXED y,
+                                                     FIXED z) {
   GlyphTransfer *glyph;
   struct Actor *actor;
   struct Sprite *sprite;

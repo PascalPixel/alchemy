@@ -253,8 +253,8 @@ static __inline__ void Actor_SetSingleChildFlags_(struct Actor *object,
 }
 
 /// Creates an actor of the given sprite at a 16.16 position.
-static __inline__ struct Actor *KandoreanTemple_CreateActor(s32 type, s32 x,
-                                                            s32 y, s32 z) {
+static __inline__ struct Actor *KandoreanTemple_CreateActor(s32 type, FIXED x,
+                                                            FIXED y, FIXED z) {
   return ((struct Actor *)Import_ActorCreate(type, x, y, z));
 }
 

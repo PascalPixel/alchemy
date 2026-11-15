@@ -290,7 +290,7 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
 
 #include "shared/whirlwind_carry_leader_lower.h"
 
-s32 Position_FlatDistance(s32 *a, s32 *b) {
+s32 Position_FlatDistance(FIXED *a, FIXED *b) {
   s32 dx = FIXEDtoINT(a[0] - b[0]);
   s32 dz = FIXEDtoINT(a[2] - b[2]);
   s32 dxsq = dx * dx;

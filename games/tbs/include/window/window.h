@@ -6,6 +6,7 @@
 /// work.
 
 #include "window/window.h"
+#include "fixed_math.h"
 #include "static_assert.h"
 #include "tbs_edition.h"
 #include "types.h"
@@ -751,10 +752,10 @@ void SettingsMenu_ReservedNoOpC9C4(void);
 void SettingsMenu_ResetEntries(struct OptionMenuWork *work);
 void WindowColor_CalculateTint(struct OptionMenuWork *work);
 void WindowColor_WritePalette(struct OptionMenuWork *work);
-u16 WindowColor_ScaleTint(struct OptionMenuWork *work, s32 scale_r, s32 scale_g,
-                          s32 scale_b);
-u16 Color_ScaleComponents(s16 *rgb, s32 red_scale, s32 green_scale,
-                          s32 blue_scale);
+u16 WindowColor_ScaleTint(struct OptionMenuWork *work, FIXED scale_r,
+                          FIXED scale_g, FIXED scale_b);
+u16 Color_ScaleComponents(s16 *rgb, FIXED red_scale, FIXED green_scale,
+                          FIXED blue_scale);
 void WindowColor_Apply(s32 phase, s32 brightness);
 void SettingsMenu_PreviousRow(struct OptionMenuWork *work);
 void SettingsMenu_NextRow(struct OptionMenuWork *work);

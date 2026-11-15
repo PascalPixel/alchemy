@@ -35,10 +35,10 @@ typedef s32 FIXED;
 
 /// The sine of `angle`, a whole turn being TRIG_TURN, in 16.16, read from
 /// Trig_SineTable, 256 entries for the first quarter turn.
-s32 Trig_Sin(s32 angle);
+FIXED Trig_Sin(s32 angle);
 /// The cosine of `angle`, a whole turn being TRIG_TURN, in 16.16; it falls
 /// through into Trig_Sin a quarter turn on.
-s32 Trig_Cos(s32 angle);
+FIXED Trig_Cos(s32 angle);
 
 s32 __divsi3(s32 numerator, s32 denominator);
 s32 __modsi3(s32 numerator, s32 denominator);

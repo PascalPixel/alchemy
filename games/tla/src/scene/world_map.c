@@ -199,7 +199,7 @@ extern s16 gGauge_Countdown;
 extern u32 gGauge_Sprite[3];
 
 void Party_DrainPp(s32 value);
-s32 Party_GetPpRatio(void);
+FIXED Party_GetPpRatio(void);
 
 void WorldMap_WatchVenusLighthouseCollapse(void);
 

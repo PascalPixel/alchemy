@@ -8,11 +8,12 @@
 // of The Lost Age's system headers declares each, as The Broken Seal's do,
 // would settle where they go.
 
+#include "fixed_math.h"
 #include "types.h"
 #include "edition.h"
 
 extern const u16 gMath_ArcTanTable[];
 extern const u8 gSystem_BasicColorPalette[];
-s32 Math_SqrtFX(s32 value);
+FIXED Math_SqrtFX(FIXED value);
 
 #endif

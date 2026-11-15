@@ -145,7 +145,8 @@ extern struct Trigger gAlhafranCave_JailTriggers[];
 extern struct EffectSprite gAlhafranCave_CrateSprite;
 
 /// Sets the behavior of the map cell under a 16.16 position.
-static __inline__ void MapGrid_SetCellBehavior_(s32 x, s32 z, s32 a, s32 b) {
+static __inline__ void MapGrid_SetCellBehavior_(FIXED x, FIXED z, s32 a,
+                                                s32 b) {
   MapGrid_SetCellBehavior(x, z, a, b);
 }
 

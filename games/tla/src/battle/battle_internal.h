@@ -360,7 +360,7 @@ extern const s32 gBattleKnockback_DistancePercent[]; ///< distance, in percent
 
 /// The tilt the battle camera adds while commands are chosen
 /// (BattleCamera_ApplyTransform).
-extern const s32 gBattleCamera_CommandMatrix[];
+extern const FIXED gBattleCamera_CommandMatrix[];
 
 /// The script a battle object starts with: none.
 extern const s32 gBattleObject_EmptyScript[];

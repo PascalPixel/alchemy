@@ -5,6 +5,7 @@
 /// The 3D transform and its stack.
 
 #include "edition.h"
+#include "fixed_math.h"
 #include "types.h"
 
 /// A transform's twelve 16.16 words: a 3x3 rotation, then the translation's
@@ -18,7 +19,7 @@ enum {
 
 /// A matrix, as SGL types one: twelve 16.16 words, the rotation's nine and
 /// then the translation's three.
-typedef s32 MATRIX[MATRIX_WORDS];
+typedef FIXED MATRIX[MATRIX_WORDS];
 
 /// The current 3D transform. Iwram_MultiplyMatrix multiplies the matrix it is
 /// given into it.

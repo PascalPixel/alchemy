@@ -410,8 +410,8 @@ s32 Field_CheckConfiguredKeys(void) {
 
 /// Returns 0 when two spheres overlap: at positions a and b (16.16 pixels) with
 /// radii radius_a and radius_b (pixels); -1 otherwise.
-s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
-                              s32 *secondPosition, s32 radiusB) {
+s32 Field_CheckSpheresOverlap(FIXED *firstPosition, s32 radiusA,
+                              FIXED *secondPosition, s32 radiusB) {
   const struct FieldPosition *firstPoint =
       (const struct FieldPosition *)firstPosition;
   const struct FieldPosition *secondPoint =

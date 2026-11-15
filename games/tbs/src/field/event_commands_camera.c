@@ -34,7 +34,7 @@ void FieldCamera_FollowActor(s32 actorId, s32 keepPosition) {
 
 /// The event command "camera set speed": the camera's top speed and
 /// acceleration, 16.16 pixels per frame.
-void FieldCamera_SetSpeedParameters(s32 speedLimit, s32 acceleration) {
+void FieldCamera_SetSpeedParameters(FIXED speedLimit, FIXED acceleration) {
   struct FieldWork *owner =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   owner->camera->speedLimit = speedLimit;
@@ -44,8 +44,8 @@ void FieldCamera_SetSpeedParameters(s32 speedLimit, s32 acceleration) {
 /// The event command "camera move to": sends the camera to the requested axes,
 /// 16.16 pixels (CAMERA_KEEP keeps that axis), kept far enough inside the map
 /// that the screen never shows past its edge.
-void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
-                                     s32 requestedZ, s32 glide) {
+void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
+                                     FIXED requestedZ, s32 glide) {
   s32 shouldGlide;
   struct FieldWork *runtimeBlock;
   s32 minimumX;

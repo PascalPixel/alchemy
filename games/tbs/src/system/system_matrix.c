@@ -134,7 +134,7 @@ void Matrix_RotateZ(s32 angle) {
 }
 
 /// Translates gCurrentMatrix by `position` (x, y, z in 16.16).
-void Matrix_TranslateVector(const s32 *position) {
+void Matrix_TranslateVector(const FIXED *position) {
   MATRIX matrix;
 
   CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
@@ -146,7 +146,7 @@ void Matrix_TranslateVector(const s32 *position) {
 }
 
 /// Scales gCurrentMatrix by `scale` (x, y, z factors in 16.16).
-void Matrix_ScaleVector(const s32 *scale) {
+void Matrix_ScaleVector(const FIXED *scale) {
   MATRIX matrix;
 
   CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
@@ -159,7 +159,7 @@ void Matrix_ScaleVector(const s32 *scale) {
 
 /// Rotates gCurrentMatrix by `angles` and translates it by `position` in one
 /// matrix. Reached through the far-call table.
-void Matrix_RotateTranslate(s32 *angles, s32 *position) {
+void Matrix_RotateTranslate(s32 *angles, FIXED *position) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
   MATRIX matrix;
 
@@ -190,7 +190,7 @@ void Matrix_RotateTranslate(s32 *angles, s32 *position) {
 
 /// Rotates by `angles`, scales each rotation row by `scale` and translates by
 /// `position`, in one matrix.
-void Matrix_RotateTranslateScale(s32 *angles, s32 *position, s32 *scale) {
+void Matrix_RotateTranslateScale(s32 *angles, FIXED *position, FIXED *scale) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
   s32 axisScale;
   MATRIX matrix;
@@ -229,7 +229,7 @@ void Matrix_RotateTranslateScale(s32 *angles, s32 *position, s32 *scale) {
 
 /// Builds in `out` the camera matrix of an eye at `eye` looking at `target`.
 /// The camera's sideways axis is kept level (no Y component).
-void Matrix_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
+void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   u32 code[7];
   s32 dx, dy, dz;
   s32 ux;
@@ -301,12 +301,12 @@ void Matrix_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
 }
 
 /// Makes the camera at `eye` looking at `target` the whole of gCurrentMatrix.
-void Matrix_SetLookAt(s32 *eye, s32 *target) {
+void Matrix_SetLookAt(FIXED *eye, FIXED *target) {
   Matrix_BuildLookAt(eye, target, gCurrentMatrix);
 }
 
 /// Multiplies the camera at `eye` looking at `target` into gCurrentMatrix.
-void Matrix_LookAt(s32 *eye, s32 *target) {
+void Matrix_LookAt(FIXED *eye, FIXED *target) {
   MATRIX work;
 
   Matrix_BuildLookAt(eye, target, work);
@@ -316,7 +316,8 @@ void Matrix_LookAt(s32 *eye, s32 *target) {
 /// Sets gProjection from a vertical field of view (1/65536 turns): the focal
 /// length, in 16.16 pixels, is 80 (half the screen height) over the tangent of
 /// half the angle.
-void Projection_SetFieldOfView(u32 fieldOfView, s32 nearDepth, s32 farDepth) {
+void Projection_SetFieldOfView(u32 fieldOfView, FIXED nearDepth,
+                               FIXED farDepth) {
   s32 halfAngle;
   s32 sine;
   s32 focal;

@@ -149,7 +149,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 
 /// Arranges work->effects in a formation; x and z are its origin in 16.16
 /// pixels.
-void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
+void BattleEffect_PlaceFormationObjects(s32 formation, FIXED x, FIXED z) {
   static struct SpriteScale normalScale = {{{FIXED_ONE, FIXED_ONE}}};
   static struct SpriteScale largeScale = {
       {{FIXED_ONE * 5 / 4, FIXED_ONE * 5 / 4}}};

@@ -1,6 +1,7 @@
 #ifndef TLA_MARS_LIGHTHOUSE_ENTRANCE_ROOM_H
 #define TLA_MARS_LIGHTHOUSE_ENTRANCE_ROOM_H
 
+#include "fixed_math.h"
 #include "types.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
@@ -30,7 +31,7 @@ s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);
 s32 Ride_GetEntryFlags(s32 index);
 void Actor_StartScript(struct Actor *object, const void *script);
 void ObjectTable_Snapshot(void);
-s32 Trig_Cos(s32 angle);
+FIXED Trig_Cos(s32 angle);
 
 static inline void Map_CopyCellAttributeRect_(s32 a0, s32 a1, s32 a2, s32 a3,
                                               s32 a4, s32 a5) {

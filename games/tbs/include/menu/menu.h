@@ -4,6 +4,7 @@
 /// @file
 /// The menus' list orders, sign strings and routines.
 
+#include "fixed_math.h"
 #include "types.h"
 #include "edition.h"
 #include "gamepak/far_call.h"
@@ -427,7 +428,7 @@ void DjinnFigures_UpdateAllPositions(void);
 void DjinnFigures_UpdateBottomRow(void);
 void DjinnFigures_InitializeBottomRow(s32 window, s32 unused);
 s32 DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative);
-s32 DjinnFigures_SetSlotPhase(s32 index, s32 phase);
+s32 DjinnFigures_SetSlotPhase(s32 index, FIXED phase);
 s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 animation);
 void Menu_StartPartyFiguresStanding(void);
 

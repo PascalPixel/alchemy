@@ -280,7 +280,8 @@ static s32 MogallForest_ClearActorSpriteFlags(struct Actor *actor) {
 /// Hops an actor to a destination in whole pixels with a vertical speed in
 /// 16.16 fixed point; scenes call it through MogallForest_HopActorTo.
 static void MogallForest_HopActorToWithSpeedFX(s32 actorId, s32 targetX,
-                                               s32 targetZ, s32 verticalSpeed) {
+                                               s32 targetZ,
+                                               FIXED verticalSpeed) {
   struct Actor *actor;
 
   actor = Actor_Get(actorId);

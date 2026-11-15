@@ -84,7 +84,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 /// Advances the encounter counter for zone and returns the formation to fight
 /// (a row of formations.c), or 0 for no battle. steps (16.16) scales how far
 /// the counter moves; a battle starts once it reaches encounterThreshold.
-s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
+s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
   struct FieldWork *work;
   struct EncounterZone *entry;
   s32 rate;

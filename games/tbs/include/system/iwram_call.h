@@ -9,6 +9,7 @@
 /// Code writes `Iwram_Sqrt(value)` or `Iwram_SignedDivide(dividend, divisor)`,
 /// and the inline calls the routine at its fixed address.
 
+#include "fixed_math.h"
 #include "types.h"
 
 // Fixed addresses of IWRAM-resident routines.
@@ -31,7 +32,8 @@
   FIXED_ADDRESS((s32 (*)(const void *vector, s32 *result)), 0x03000250,        \
                 IwramTransformVector)
 #define Iwram_MultiplyMatrixEntry                                              \
-  FIXED_ADDRESS((void (*)(const s32 *matrix)), 0x030002c0, IwramMultiplyMatrix)
+  FIXED_ADDRESS((void (*)(const FIXED *matrix)), 0x030002c0,                   \
+                IwramMultiplyMatrix)
 #define Iwram_SignedDivideEntry                                                \
   FIXED_ADDRESS((s32 (*)(s32 dividend, s32 divisor)), 0x03000380,              \
                 IwramSignedDivide)
@@ -46,7 +48,7 @@
                 0x03001388, IwramCopyWords)
 
 /// value * FIXED_ONE / divisor: the 16.16 ratio of two 16.16 numbers.
-static inline s32 Iwram_RatioMulQ14(s32 divisor, s32 value) {
+static inline FIXED Iwram_RatioMulQ14(FIXED divisor, FIXED value) {
   return Iwram_RatioMulQ14Entry(divisor, value);
 }
 
@@ -71,7 +73,7 @@ static inline s32 Iwram_TransformVector(const void *vector, s32 *result) {
 
 /// Multiplies matrix, a 3 by 3 matrix and a translation in 16.16 fixed point,
 /// into the current transform, gCurrentMatrix.
-static inline void Iwram_MultiplyMatrix(const s32 *matrix) {
+static inline void Iwram_MultiplyMatrix(const FIXED *matrix) {
   Iwram_MultiplyMatrixEntry(matrix);
 }
 

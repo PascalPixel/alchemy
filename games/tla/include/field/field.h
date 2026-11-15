@@ -22,7 +22,7 @@
 struct Actor;
 struct ScreenPoint;
 
-extern const s32 gCamera_FixedViewMatrix[];
+extern const FIXED gCamera_FixedViewMatrix[];
 extern u8 gSpriteDissolve_PixelOrder[];
 extern const s32 gActor_DefaultScript[];
 extern const u8 gWorldMap_TerrainBehaviorTable[];
@@ -42,7 +42,7 @@ void BattleMotion_ProjectPositionFar(s32, s32 *);
 s32 Unit_KnowsPsynergyFar(s32 group, s32 entry);
 s32 Party_ShowJoinedMessageFar(s32 event_id, s32 value);
 s32 Party_ShowPairJoinedMessageFar(s32 first, s32 second);
-s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
+s32 Field_CheckSpheresOverlap(FIXED *a, s32 radius_a, FIXED *b, s32 radius_b);
 
 struct Sprite;
 struct ScreenPoint;
@@ -107,7 +107,7 @@ void Actor_WalkByAndWaitById(u32 objectId, s32 x_offset, s32 z_offset);
 void Actor_WalkByById(u32 objectId, s32 x_offset, s32 z_offset);
 void Actor_SetDestinationById(u32 objectId, s32 x, s32 z);
 void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
-void Actor_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z);
+void Actor_SetPositionWithTerrain(u32 objectId, FIXED x, FIXED y, FIXED z);
 void Actor_StartRepeatedMotion(u32 objectId, s32 variant);
 void ActorSystem_Configure(s32 mode);
 s32 Party_AddMemberFar(s32 event_id);
@@ -597,7 +597,7 @@ void Party_ClearUnusableShortcuts(void);
 
 void BattleBackground_SelectForMap(void);
 
-s32 ScenePoint_GetPosition(s32 id, s32 *position);
+s32 ScenePoint_GetPosition(s32 id, FIXED *position);
 void ObjectTable_Clear(void);
 
 void Party_AddPp(s32 amount, s32 unused);
@@ -636,7 +636,7 @@ struct Actor *TreasureSpot_GetActor(u32 objectId);
 void ObjectEvent_Remove(u32 objectId);
 
 void Camera_ResetViewDefaults(void);
-s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
+s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
                                 s32 count);
 
 void ColorBuffer_HalveNonzero(u8 *source, u8 *destination, s32 size);
@@ -816,12 +816,12 @@ extern const s32 gActor_FlyScript[];
 extern const s32 gActor_SandOnWorldMapScript[];
 extern const s32 gActor_ApproachWatchedScript[];
 
-s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 z);
+FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED z);
 
 s32 ActorScript_CheckOverlap(struct Actor *object, s32 *values);
 
 void Actor_SelectAnimation(struct Actor *object, s32 argument);
-struct Actor *Actor_Create(s32 kind, s32 x, s32 y, s32 z);
+struct Actor *Actor_Create(s32 kind, FIXED x, FIXED y, FIXED z);
 
 void Actor_SpawnWaterSplash(struct Actor *object, s32 kind);
 s32 Field_CheckConfiguredKeys(void);
@@ -834,7 +834,7 @@ void MapGrid_UpdateLayerScroll(void);
 void WorldMap_UpdateView(void);
 void WorldMap_ApplyAffinePage(void);
 
-void MapGrid_SetCameraCenter(s32 x, s32 y);
+void MapGrid_SetCameraCenter(FIXED x, FIXED y);
 u32 Map_ReadEditU16(u8 **cursor);
 void Map_ApplyFlagEdits(s32 flag, s32 attributes);
 

@@ -14,6 +14,7 @@
 /// place of a Field the routine's name already has (EventCamera_GetActor).
 
 #include "event.h"
+#include "fixed_math.h"
 #include "system/system_call.h"
 
 /// Turns two actors toward each other, as a conversation between them
@@ -49,7 +50,7 @@ static inline void PaletteFade_Interpolate(s32 frames) {
 static inline void Item_LoadIcon(s32 item) { Icon_DrawItem(item); }
 
 /// The sine of an angle, a full turn being TRIG_TURN, in 16.16.
-static inline s32 Math_Sin(s32 angle) { return Trig_Sin(angle); }
+static inline FIXED Math_Sin(s32 angle) { return Trig_Sin(angle); }
 
 /// Shows a message in the middle of the screen rather than in a speech window.
 static inline void Message_ShowCentered(s32 message, s32 flags) {
@@ -77,8 +78,8 @@ static inline void FieldActor_LaunchFromLeader(s32 actorId, s32 dx, s32 dz,
 
 /// Moves a point radius, in 16.16 fixed point, along a heading on the ground
 /// plane (Vector_AddPolarOffset).
-static inline void FieldVector_AddPolarOffsetFX(s32 radius, s32 heading,
-                                                s32 *probe) {
+static inline void FieldVector_AddPolarOffsetFX(FIXED radius, s32 heading,
+                                                FIXED *probe) {
   Vector_AddPolarOffset(radius, heading, probe);
 }
 
@@ -89,7 +90,7 @@ static inline void FieldVector_AddPolarOffsetFX(s32 radius, s32 heading,
 
 /// Changes the cell behavior of the cell at (x, y), in 16.16 pixels,
 /// opening or closing the way (MapGrid_SetCellBehaviorAt).
-static inline void Field_SetCellBehaviorAt(s32 layer, s32 x, s32 y,
+static inline void Field_SetCellBehaviorAt(s32 layer, FIXED x, FIXED y,
                                            s32 behavior) {
   MapGrid_SetCellBehaviorAt(layer, x, y, behavior);
 }

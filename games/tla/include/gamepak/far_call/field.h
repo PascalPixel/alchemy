@@ -4,6 +4,7 @@
 /// @file
 /// The far calls into the field bank, as the other banks' code calls them.
 
+#include "fixed_math.h"
 #include "types.h"
 
 /// Loads the world map's palette and tiles for the area at (x, z).
@@ -13,7 +14,7 @@ void ActorSystem_InitializeFar(s32 mode);
 s32 Sprite_StartAnimationFar(void *, s32);
 /// The height of the ground at (px, pz) (16.16 pixels) on the given layer, less
 /// base.
-s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer, s32 base);
+FIXED MapGrid_GetTerrainHeightAboveFar(FIXED x, FIXED z, s32 layer, FIXED base);
 struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 s32 SpritePictureCache_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 void SpriteAnimation_StartFar(void *work, s32 no);

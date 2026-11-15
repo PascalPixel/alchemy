@@ -973,7 +973,7 @@ void Tightrope_WobbleBetween(s32 index, s32 from, s32 to, s32 mode) {
                        b->x.fixed, b->y.fixed + toFIXED(8), b->z.fixed, mode);
 }
 
-s32 IwramMulFX(s32 a, s32 b) __attribute__((long_call));
+FIXED IwramMulFX(FIXED a, FIXED b) __attribute__((long_call));
 
 s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
                        s32 toZ, s32 height) {

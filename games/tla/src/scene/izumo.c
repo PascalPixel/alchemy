@@ -104,11 +104,11 @@ void Actor_WaitForMoveById(s32 id);
 void Actor_WalkToById(s32 id, s32 x, s32 z);
 void Actor_FaceActorById(s32 id, s32 target, s32 frames);
 void Actor_FaceDirectionById(s32 id, s32 angle, s32 flags);
-void Actor_SetSpeedParameters(s32 id, s32 speed, s32 acceleration);
+void Actor_SetSpeedParameters(s32 id, FIXED speed, FIXED acceleration);
 void MapGrid_CopyCellPictureIndicesRect(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f);
 void Map_CopyCellAttributeRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
-void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z);
+void Actor_SetHorizontalPositionWithTerrain(u32 actorId, FIXED x, FIXED z);
 s32 Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
 void FieldEffect_SetAttached(s32 id, s32 a);
 void FieldCamera_WaitForArrival(void);

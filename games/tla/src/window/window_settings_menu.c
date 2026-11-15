@@ -11,7 +11,8 @@
 /// Returns rgb with each channel scaled (16.16 fixed point) and clamped to 0 to
 /// 31, as a BGR555 colour. rgb holds three components, not an already packed
 /// palette word.
-u16 Color_ScaleComponents(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b) {
+u16 Color_ScaleComponents(s16 *rgb, FIXED scale_r, FIXED scale_g,
+                          FIXED scale_b) {
   s32 r = rgb[0] * scale_r >> 16;
   s32 g = rgb[1] * scale_g >> 16;
   s32 b = rgb[2] * scale_b >> 16;
@@ -25,7 +26,8 @@ u16 Color_ScaleComponents(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b) {
 
 extern const u8 gPaletteGlow_WaveTable[];
 
-u16 Color_ScaleComponents(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b);
+u16 Color_ScaleComponents(s16 *rgb, FIXED scale_r, FIXED scale_g,
+                          FIXED scale_b);
 
 #define GLOW_COLOR_SET(index, value)                                           \
   do {                                                                         \

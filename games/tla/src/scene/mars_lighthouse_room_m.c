@@ -283,7 +283,7 @@ void MarsLighthouseRoomM_SpawnRubble(s32 x, s32 z, s32 kind);
 void Actor_HoldDuringEvent(struct Actor *object);
 void Event_End(void);
 void Teleport_PlayWhirl(void);
-s32 Trig_Cos(s32 angle);
+FIXED Trig_Cos(s32 angle);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 

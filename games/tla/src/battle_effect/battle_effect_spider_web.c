@@ -52,7 +52,7 @@ void Graphics_LoadGreyRamp(void) {
   } while (i != 63);
 }
 
-void BattleEffect_DrawShadedCircles(u8 *map, s32 size, s32 scale) {
+void BattleEffect_DrawShadedCircles(u8 *map, s32 size, FIXED scale) {
   s32 half = size / 2;
   s32 center = half - 1;
   s32 last = size - 1;

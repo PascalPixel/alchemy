@@ -2,6 +2,7 @@
 #define ALCHEMY_BATTLE_EFFECT_H
 
 #include "edition.h"
+#include "fixed_math.h"
 #include "types.h"
 
 struct BattleEffectParams;
@@ -24,7 +25,7 @@ s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused);
 
 /// Fills a size by size/2 byte map with circles of growing radius, each
 /// shaded by the cosine of its radius (0 to 63) times scale (16.16).
-void BattleEffect_DrawShadedCircles(u8 *map, s32 size, s32 scale);
+void BattleEffect_DrawShadedCircles(u8 *map, s32 size, FIXED scale);
 /// BattleEffect_DrawShadedCircles for a size by size map, each circle drawn in
 /// all four quarters.
 void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale);

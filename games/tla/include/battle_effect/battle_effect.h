@@ -4,6 +4,7 @@
 /// @file
 /// What the battle_effect object defines for the code outside it.
 
+#include "fixed_math.h"
 #include "types.h"
 #include "resource_ids.h"
 #include "field/particle.h"
@@ -156,7 +157,7 @@ s32 BattleEffect_LoadBlitter(s32 slot,
                              s32 modeAndFlags); // BattleEffect_BuildBlitter
 void BattleEffect_TintBattler(s32 actor, s32 palette, s32 pose, s32 timerSlot,
                               s32 timerFrames);
-void BattleEffect_DrawShadedCircles(u8 *map, s32 size, s32 scale);
+void BattleEffect_DrawShadedCircles(u8 *map, s32 size, FIXED scale);
 void Picture_MirrorIntoQuadrants(u8 *src, u8 *dst, s32 width, s32 height);
 void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *effect,
                                     u32 packed, s32 *screen, s32 *world);

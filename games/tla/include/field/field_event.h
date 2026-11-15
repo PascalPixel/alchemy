@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_FIELD_EVENT_H
 #define ALCHEMY_FIELD_EVENT_H
 
+#include "fixed_math.h"
 #include "types.h"
 #include "field/field_sprite.h"
 #include "field/field_sequence_event.h"
@@ -21,7 +22,7 @@ struct FieldActor {
 };
 
 void Task_Wait(s32 frames);
-struct Actor *Actor_Create(s32 type, s32 x, s32 y, s32 z);
+struct Actor *Actor_Create(s32 type, FIXED x, FIXED y, FIXED z);
 void Sound_PlayFar(s32 cue);
 
 void Import_EventStart(void);

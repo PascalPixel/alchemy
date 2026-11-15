@@ -1,6 +1,7 @@
 #ifndef ALCHEMY_EVENT_COMMANDS_H
 #define ALCHEMY_EVENT_COMMANDS_H
 
+#include "fixed_math.h"
 #include "types.h"
 #include "field/field_particle.h"
 #include "field/field_sequence.h"
@@ -92,7 +93,8 @@ void Scene_QueueMusic(s32 soundId);
 void Scene_PlayQueuedMusic(void);
 
 struct Actor *Actor_GetById(s32 actorId);
-void Actor_SetSpeedParameters(u32 actorId, s32 speedLimit, s32 acceleration);
+void Actor_SetSpeedParameters(u32 actorId, FIXED speedLimit,
+                              FIXED acceleration);
 
 void Actor_SetMovementTypeById(u32 actorId, s32 action);
 void Actor_Stop(u32 actorId);
@@ -109,8 +111,8 @@ void Actor_WalkByById(u32 actorId, s32 xOffset, s32 zOffset);
 void Actor_WalkByAndWaitById(u32 actorId, s32 xOffset, s32 zOffset);
 void Actor_LaunchFromLeader(u32 actorId, s32 xOffset, s32 zOffset, s32 action);
 void Actor_WaitForMoveById(u32 actorId);
-void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z);
-void Actor_SetPositionWithTerrain(u32 actorId, s32 x, s32 y, s32 z);
+void Actor_SetHorizontalPositionWithTerrain(u32 actorId, FIXED x, FIXED z);
+void Actor_SetPositionWithTerrain(u32 actorId, FIXED x, FIXED y, FIXED z);
 void Actor_SetAnimationById(u32 actorId, s32 animation);
 void Actor_SetAnimationSpeedById(u32 actorId, s32 steps);
 void Actor_WaitForAnimationChange(u32 actorId);
@@ -159,18 +161,18 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
 void Message_SetVoiceFromActor(s32 actorId);
 
 void FieldCamera_FollowActor(s32 actorId, s32 keepPosition);
-void FieldCamera_SetSpeedParameters(s32 speedLimit, s32 acceleration);
+void FieldCamera_SetSpeedParameters(FIXED speedLimit, FIXED acceleration);
 /// A camera move's axis that stays where the camera is.
 #define CAMERA_KEEP (-1)
-void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
-                                     s32 requestedZ, s32 glide);
+void FieldCamera_MoveWithinMapBounds(FIXED requestedX, FIXED requestedY,
+                                     FIXED requestedZ, s32 glide);
 void FieldCamera_MoveToActorById(s32 actorId, s32 glide);
 void FieldCamera_WaitForArrival(void);
 struct Actor *FieldCamera_GetActor(void);
 void FieldCamera_Follow(struct Actor *target, s32 keepCurrentPosition);
 void MapGrid_SetCameraBounds(s32 minX, s32 minY, s32 maxX, s32 maxY);
 UNREAD_RESULT WorldMap_StepZoom(void);
-void WorldMap_StartZoom(s32 zoom, s32 frames);
+void WorldMap_StartZoom(FIXED zoom, s32 frames);
 void Event_WaitForZoomTransition(void);
 UNREAD_RESULT FieldEffect_CopyWatchedActorPosition(struct Actor *actor);
 void Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
@@ -300,9 +302,9 @@ void FieldPsynergy_StopMindReadWave(void);
 void FieldPsynergy_UpdateMindReadWave(void);
 void FieldEffect_ArmBg0HBlankDma(void);
 void FieldEffect_AdvanceHueCycle(void);
-void FieldEffect_CalculateHueChannels(s32 hue, s32 *r, s32 *g, s32 *b);
+void FieldEffect_CalculateHueChannels(FIXED hue, FIXED *r, FIXED *g, FIXED *b);
 s32 FieldEffect_HueChannelRamp(s32 angle, s32 low, s32 high);
-s32 FixedPoint_Remainder(s32 value, s32 divisor);
+FIXED FixedPoint_Remainder(FIXED value, FIXED divisor);
 void FieldEffect_ReleaseOnArrival(struct Actor *actor);
 void FieldPsynergy_GreyMindReadPalette(void);
 void FieldPsynergy_RestoreMindReadPalette(void);

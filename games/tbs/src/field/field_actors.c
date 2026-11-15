@@ -205,7 +205,7 @@ void Actor_Release(struct Actor *actor) {
 /// Creates an actor at (x, y, z), in 16.16 pixels, or returns 0 when every slot
 /// is in use. id / 4096 is its enum ActorCreateKind and the low 12 bits the
 /// sprite's animation id.
-struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z) {
+struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z) {
   struct Actor *actor;
   struct Sprite *sprite;
   s32 spriteStorageKind;

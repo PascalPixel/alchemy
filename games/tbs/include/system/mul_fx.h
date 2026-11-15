@@ -4,6 +4,7 @@
 /// @file
 /// MulFX, the 16.16 fixed-point multiply.
 
+#include "fixed_math.h"
 #include "types.h"
 
 /// Multiplies 16.16 fixed-point values, returning the middle 32 product bits.
@@ -15,7 +16,7 @@ CAMELOT_ASM("smull with RdLo and RdHi in any two registers, even over its "
             "RdLo; its orr takes a fresh output reload register beside two "
             "dying inputs and "
             "nothing is scheduled across it, as only asm statements do")
-static __inline__ s32 MulFX(s32 left, s32 right) {
+static __inline__ FIXED MulFX(FIXED left, FIXED right) {
   u32 low;
   s32 high;
   s32 result;

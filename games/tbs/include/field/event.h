@@ -160,7 +160,7 @@ static inline struct Actor *Actor_Get(s32 actorId) {
 
 /// Places an actor at a point at once, without walking it there; `x` and `z`
 /// are 16.16 fixed-point pixels, as a stored position holds them.
-static inline void Actor_SetPositionFX(s32 actorId, s32 x, s32 z) {
+static inline void Actor_SetPositionFX(s32 actorId, FIXED x, FIXED z) {
   Import_ActorSetPosition(actorId, x, z);
 }
 
@@ -171,7 +171,8 @@ static inline void Actor_SetPositionFX(s32 actorId, s32 x, s32 z) {
 
 /// Sets how fast an actor moves, and how quickly it gets up to speed, for the
 /// event's next moves; both are 16.16 fixed point, as stored values hold them.
-static inline void Actor_SetSpeedFX(s32 actorId, s32 speed, s32 acceleration) {
+static inline void Actor_SetSpeedFX(s32 actorId, FIXED speed,
+                                    FIXED acceleration) {
   Actor_SetSpeedParameters(actorId, speed, acceleration);
 }
 
@@ -234,7 +235,7 @@ static inline void Actor_SetAttachedEffect(s32 actorId, s32 effect) {
 
 /// Sets how fast the camera pans for the event's next camera moves, and how
 /// quickly it gets up to speed, both in 16.16 fixed point.
-static inline void FieldCamera_SetSpeedFX(s32 speed, s32 acceleration) {
+static inline void FieldCamera_SetSpeedFX(FIXED speed, FIXED acceleration) {
   FieldCamera_SetSpeedParameters(speed, acceleration);
 }
 
@@ -252,7 +253,7 @@ static inline void FieldCamera_SetSpeedFX(s32 speed, s32 acceleration) {
 
 /// Pans the camera to a point in the room, or cuts there when pan is 0; the
 /// axes are 16.16 fixed-point pixels, or CAMERA_KEEP.
-static inline void FieldCamera_MoveToFX(s32 x, s32 y, s32 z, s32 pan) {
+static inline void FieldCamera_MoveToFX(FIXED x, FIXED y, FIXED z, s32 pan) {
   FieldCamera_MoveWithinMapBounds(x, y, z, pan);
 }
 
@@ -288,7 +289,8 @@ static inline void MapGrid_CopyCellAttributes(s32 sourceX, s32 sourceY,
 
 /// Sets shake amplitudes in 16.16 fixed-point pixels and the per-frame decay
 /// factor in 16.16; SHAKE_KEEP keeps that component, FIXED_ONE keeps the shake.
-static inline void MapGrid_SetShakeFX(s32 horizontal, s32 vertical, s32 decay) {
+static inline void MapGrid_SetShakeFX(FIXED horizontal, FIXED vertical,
+                                      FIXED decay) {
   MapGrid_SetScreenShake(horizontal, vertical, decay);
 }
 
@@ -335,8 +337,8 @@ static inline s32 Math_Divide(s32 dividend, s32 divisor) {
 
 /// Sends an actor toward a point in 16.16 fixed point, where it coasts to a
 /// stop.
-static inline void FieldActor_SetMoveTargetFX(struct Actor *actor, s32 x, s32 y,
-                                              s32 z) {
+static inline void FieldActor_SetMoveTargetFX(struct Actor *actor, FIXED x,
+                                              FIXED y, FIXED z) {
   Actor_SetMoveTarget(actor, x, y, z);
 }
 

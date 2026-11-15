@@ -47,7 +47,7 @@ const s8 gBattlePlacement_StepPairs[] = {
     0, 0,
 };
 
-const s32 gBattleCamera_CommandMatrix[] = {
+const FIXED gBattleCamera_CommandMatrix[] = {
     1 << 16, 0, 0, -(4 << 16) / 5,
     1 << 16, 0, 0, 0,
     1 << 16, 0, 0, 0,

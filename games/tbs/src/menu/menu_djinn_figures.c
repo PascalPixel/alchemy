@@ -180,7 +180,7 @@ s32 DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
 
 /// Sets figure index's scale phase (16.16): negative for a fixed scale of
 /// -phase, otherwise the scale it grows from toward full size.
-s32 DjinnFigures_SetSlotPhase(s32 index, s32 phase) {
+s32 DjinnFigures_SetSlotPhase(s32 index, FIXED phase) {
   ((struct ItemMenuWork *)gMenuWork)->figureScales[index] = phase;
 #ifdef UBFIX
   return 0;

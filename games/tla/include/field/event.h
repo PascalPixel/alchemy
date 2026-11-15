@@ -54,8 +54,8 @@ void Event_SetMessageId(s32 message);
 s32 FieldMessage_ShowAtActor(s32 speaker, s32 flags);
 s32 Event_AskYesNoAndShowResponse(s32 speaker, s32 flags);
 struct Actor *Actor_GetById(u32 objectId);
-void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z);
-void Actor_SetSpeedParameters(s32 actorId, s32 speed, s32 acceleration);
+void Actor_SetHorizontalPositionWithTerrain(u32 actorId, FIXED x, FIXED z);
+void Actor_SetSpeedParameters(s32 actorId, FIXED speed, FIXED acceleration);
 void Actor_SetDestinationById(u32 objectId, s32 x, s32 z);
 void Actor_SetDestinationOffsetById(s32 actorId, s32 dx, s32 dz);
 void Actor_WalkToById(s32 actorId, s32 x, s32 z);
@@ -64,23 +64,23 @@ void Actor_FaceDirectionById(s32 actorId, s32 angle, s32 frames);
 void Actor_FaceActorById(s32 actorId, s32 target, s32 frames);
 struct Actor *Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
 void FieldEffect_SetAttached(s32 actorId, s32 effect);
-void Camera_SetSpeedParameters(s32 speed, s32 acceleration);
-void FieldCamera_MoveWithinMapBounds(s32 x, s32 y, s32 z, s32 pan);
+void Camera_SetSpeedParameters(FIXED speed, FIXED acceleration);
+void FieldCamera_MoveWithinMapBounds(FIXED x, FIXED y, FIXED z, s32 pan);
 void FieldCamera_MoveToActorById(s32 actorId, s32 glide);
 void FieldCamera_WaitForArrival(void);
 void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dst_x,
                        s32 dst_y);
 void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                s32 dst_x, s32 dst_y);
-void MapGrid_SetScreenShake(s32 horizontal, s32 vertical, s32 decay);
+void MapGrid_SetScreenShake(FIXED horizontal, FIXED vertical, FIXED decay);
 s32 GameFlag_Get(s32 flag);
 void GameFlag_Set(s32 flag);
 void GameFlag_Clear(s32 flag);
 void Sound_Play(s32 sound);
-void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
+void Actor_SetMoveTarget(struct Actor *actor, FIXED x, FIXED y, FIXED z);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void MapGrid_PlayMapEdit(const void *steps, s32 x, s32 y);
-void TreasureSpot_SetActorPosition(u32 actorId, s32 x, s32 z);
+void TreasureSpot_SetActorPosition(u32 actorId, FIXED x, FIXED z);
 void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
 void Actor_WalkByAndWaitById(u32 objectId, s32 x_offset, s32 z_offset);
 void Event_ShowMessageThenWait(s32 speaker, s32 flags, s32 frames);
@@ -104,13 +104,13 @@ void Actor_SetAnimationById(u32 actorId, s32 animation);
 void Actor_ReturnHome(s32 mode, u32 actorId, s32 flag);
 void PaletteFade_StartInterpolation(s32 frames);
 void Icon_DrawItem(s32 item);
-s32 Trig_Sin(s32 angle);
+FIXED Trig_Sin(s32 angle);
 void FieldMessage_Show(s32 message, s32 flags);
 s32 PartyInventory_GiveItem(s32 item, s32 flags);
 s32 VramCache_Load(u32 slot, u32 size, const void *source);
 void Actor_LaunchFromLeader(s32 actorId, s32 dx, s32 dz, s32 facing);
 void Vector_AddPolarOffset(s32 radius, s32 heading, s32 *probe);
-void MapGrid_SetCellBehaviorAt(s32 layer, s32 x, s32 y, s32 behavior);
+void MapGrid_SetCellBehaviorAt(s32 layer, FIXED x, FIXED y, s32 behavior);
 void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py);
 void Message_DecodeRawUnbounded(s32 message, u16 *buffer);
 void MapGrid_SetCameraBounds(s32 minX, s32 minY, s32 maxX, s32 maxY);
@@ -129,7 +129,8 @@ void Actor_StartRepeatedMotion(u32 objectId, s32 variant);
 void Actor_WatchAndSetScript(s32 actorId, s32 watchedActorId);
 void Actor_WaitForMoveById(s32 actorId);
 void FieldCamera_FollowActor(s32 id, s32 flag);
-void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
+void Actor_SetPositionAndResetMotion(struct Actor *object, FIXED x, FIXED y,
+                                     FIXED z);
 void Actor_WaitForScriptEndById(u32 actorId);
 void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
 void Actor_Stop(s32 actorId);
@@ -144,12 +145,12 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn);
 void FieldPsynergy_StartMindReadWave(s32 x, s32 y);
 struct Actor *FieldCamera_GetActor(void);
 s32 FieldYesNo_Ask(s32 atBottom);
-void WorldMap_StartZoom(s32 zoom, s32 frames);
+void WorldMap_StartZoom(FIXED zoom, s32 frames);
 void WindowColor_Apply(s32 phase, s32 brightness);
 void Field_RequestDjinnBattle(u32 flags, u32 djinn);
 void Event_AddPartyMember(s32 unit, s32 announce);
 void MapGrid_WaitForShakeToSettle(void);
-s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y);
+s32 MapGrid_GetCellBehaviorAt(s32 layer, FIXED x, FIXED y);
 void Actor_SetAnimationSpeedById(s32 actorId, s32 steps);
 void Actor_ShowItemIconById(s32 actorId, s32 item);
 void Actor_SetItemIcon(struct Actor *actor, s32 item);
@@ -184,7 +185,7 @@ static inline struct Actor *Actor_Get(s32 actorId) {
 
 /// Places an actor at a point at once, without walking it there; `x` and `z`
 /// are 16.16 fixed-point pixels, as a stored position holds them.
-static inline void Actor_SetPositionFX(s32 actorId, s32 x, s32 z) {
+static inline void Actor_SetPositionFX(s32 actorId, FIXED x, FIXED z) {
   Actor_SetHorizontalPositionWithTerrain(actorId, x, z);
 }
 
@@ -195,7 +196,8 @@ static inline void Actor_SetPositionFX(s32 actorId, s32 x, s32 z) {
 
 /// Sets how fast an actor moves, and how quickly it gets up to speed, for the
 /// event's next moves; both are 16.16 fixed point, as stored values hold them.
-static inline void Actor_SetSpeedFX(s32 actorId, s32 speed, s32 acceleration) {
+static inline void Actor_SetSpeedFX(s32 actorId, FIXED speed,
+                                    FIXED acceleration) {
   Actor_SetSpeedParameters(actorId, speed, acceleration);
 }
 
@@ -262,7 +264,7 @@ static inline void Actor_SetAttachedEffect(s32 actorId, s32 effect) {
 
 /// Sets how fast the camera pans for the event's next camera moves, and how
 /// quickly it gets up to speed, both in 16.16 fixed point.
-static inline void FieldCamera_SetSpeedFX(s32 speed, s32 acceleration) {
+static inline void FieldCamera_SetSpeedFX(FIXED speed, FIXED acceleration) {
   Camera_SetSpeedParameters(speed, acceleration);
 }
 
@@ -283,7 +285,7 @@ static inline void FieldCamera_SetSpeedFX(s32 speed, s32 acceleration) {
 
 /// Pans the camera to a point in the room, or cuts there when pan is 0; the
 /// axes are 16.16 fixed-point pixels, or CAMERA_KEEP.
-static inline void FieldCamera_MoveToFX(s32 x, s32 y, s32 z, s32 pan) {
+static inline void FieldCamera_MoveToFX(FIXED x, FIXED y, FIXED z, s32 pan) {
   FieldCamera_MoveWithinMapBounds(x, y, z, pan);
 }
 
@@ -322,7 +324,8 @@ static inline void MapGrid_CopyCellAttributes(s32 sourceX, s32 sourceY,
 
 /// Sets shake amplitudes in 16.16 fixed-point pixels and the per-frame decay
 /// factor in 16.16; SHAKE_KEEP keeps that component, FIXED_ONE keeps the shake.
-static inline void MapGrid_SetShakeFX(s32 horizontal, s32 vertical, s32 decay) {
+static inline void MapGrid_SetShakeFX(FIXED horizontal, FIXED vertical,
+                                      FIXED decay) {
   MapGrid_SetScreenShake(horizontal, vertical, decay);
 }
 
@@ -359,8 +362,8 @@ static inline s32 Math_Divide(s32 dividend, s32 divisor) {
 
 /// Sends an actor toward a point in 16.16 fixed-point pixels, where it coasts
 /// to a stop.
-static inline void FieldActor_SetMoveTargetFX(struct Actor *actor, s32 x, s32 y,
-                                              s32 z) {
+static inline void FieldActor_SetMoveTargetFX(struct Actor *actor, FIXED x,
+                                              FIXED y, FIXED z) {
   Actor_SetMoveTarget(actor, x, y, z);
 }
 

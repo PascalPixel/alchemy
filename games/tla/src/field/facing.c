@@ -77,7 +77,7 @@ const s32 gActorSprite_FullScale[2] = {
 };
 
 /// The fixed view matrix (16.16), as The Broken Seal's.
-const s32 gCamera_FixedViewMatrix[12] = {
+const FIXED gCamera_FixedViewMatrix[12] = {
     0x10000, 0, 0,
     -0xcccc, 0x10000, 0,
     0, 0, 0x10000,

@@ -11,6 +11,7 @@
 /// name, the routine keeps it and the inline takes the FieldActor_ prefix, as
 /// FieldActor_JumpDownLedge does.
 
+#include "fixed_math.h"
 #include "field/event.h"
 #include "field/event_commands.h"
 #include "field/field.h"
@@ -110,7 +111,7 @@ static inline void FieldActor_WatchAndStartScript(s32 object, s32 target,
 
 /// Moves a point radius, in 16.16 fixed point, along a heading on the ground
 /// plane (Vector_AddPolarOffset).
-static inline void FieldVector_AddPolarOffsetFX(s32 radius, s32 heading,
+static inline void FieldVector_AddPolarOffsetFX(FIXED radius, s32 heading,
                                                 struct FieldPosition *probe) {
   Vector_AddPolarOffset(radius, heading, probe);
 }

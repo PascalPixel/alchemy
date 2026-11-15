@@ -10,7 +10,7 @@
 #include "system/matrix.h"
 #include "macros.h"
 
-void Matrix_SetTranslation(s32 *position);
+void Matrix_SetTranslation(FIXED *position);
 
 /// Runs each frame of a battle: pauses a link battle whose connection is lost,
 /// turns the camera a sixteenth of the way toward its target yaw, places it,

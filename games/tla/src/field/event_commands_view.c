@@ -52,7 +52,7 @@ void WorldMap_StepZoom(void) {
 }
 
 /// Starts a zoom to zoom (16.16) over frames frames, on the World Map only.
-void WorldMap_StartZoom(s32 zoom, s32 frames) {
+void WorldMap_StartZoom(FIXED zoom, s32 frames) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 result;
 

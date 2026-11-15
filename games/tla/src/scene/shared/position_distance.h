@@ -1,5 +1,5 @@
 /// The distance in whole pixels between two 16.16 positions of x, y and z.
-s32 Position_Distance(s32 *a, s32 *b) {
+s32 Position_Distance(FIXED *a, FIXED *b) {
   s32 dx = (*a++ - *b++) >> 16;
   s32 dy = (*a++ - *b++) >> 16;
   s32 dz = (*a - *b) >> 16;

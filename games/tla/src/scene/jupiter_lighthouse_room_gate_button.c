@@ -209,7 +209,7 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
 
 extern s32 gWhirlwindEndScript[];
 
-s32 Position_FlatDistance(s32 *from, s32 *to);
+s32 Position_FlatDistance(FIXED *from, FIXED *to);
 void Actor_StartScript(struct Actor *object, const s32 *script);
 
 #include "shared/whirlwind_update_lower.h"

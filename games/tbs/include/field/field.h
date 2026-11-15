@@ -5,6 +5,7 @@
 /// The field's shared routines, globals and actor scripts.
 
 #include "edition.h"
+#include "fixed_math.h"
 #include "types.h"
 #include "field/actor.h"
 #include "field/scene.h"
@@ -365,7 +366,7 @@ enum Collision {
 u8 *Decompress_Lz(const u8 *source, u8 *destination);
 s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir);
 void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
-                                s32 screenY, s32 groundHeight, s32 *scale);
+                                s32 screenY, s32 groundHeight, FIXED *scale);
 void Render_ApplyProjectedPlacement(struct Sprite *sprite,
                                     const struct SpritePlacement *position,
                                     const struct SpriteScale *scale,
@@ -480,7 +481,7 @@ void ActorSystem_ReservedNoOpA(void);
 void ActorSystem_ReservedNoOpB(void);
 void *Actor_FindFree(void);
 void Actor_Release(struct Actor *actor);
-struct Actor *Actor_Create(s32 encodedSprite, s32 x, s32 y, s32 z);
+struct Actor *Actor_Create(s32 encodedSprite, FIXED x, FIXED y, FIXED z);
 void Actor_StartScript(struct Actor *actor, const s32 *script);
 void Actor_SetAnimationAndSpeed(struct Actor *actor, s32 animation, s32 step);
 void Actor_SetSpriteRotation(struct Actor *actor, u32 rotation);
@@ -511,8 +512,9 @@ s32 ActorScript_ShowSprite(struct Actor *interpreter);
 void Actor_WaitForMove(void *actor);
 s32 Actor_IsTargetUnset(struct Actor *actor);
 void Actor_UpdateAllThumb(void);
-void Actor_SetPositionAndResetMotion(struct Actor *actor, s32 x, s32 y, s32 z);
-void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
+void Actor_SetPositionAndResetMotion(struct Actor *actor, FIXED x, FIXED y,
+                                     FIXED z);
+void Actor_SetMoveTarget(struct Actor *actor, FIXED x, FIXED y, FIXED z);
 void Actor_RunUpdateAllFromHeap(void);
 void Actor_UpdateAllMotion(void);
 s32 ActorScript_Wait(struct Actor *interpreter);
@@ -557,8 +559,8 @@ s32 ActorScript_ApplyOperandCompare(struct Actor *interpreter);
 void Actor_SetUpdateValue(void *rawActor, s32 value);
 u32 Field_RequestShortcut(u32 encodedAssignment);
 s32 Field_CheckConfiguredKeys(void);
-s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
-                              s32 *secondPosition, s32 radiusB);
+s32 Field_CheckSpheresOverlap(FIXED *firstPosition, s32 radiusA,
+                              FIXED *secondPosition, s32 radiusB);
 s32 Actor_UpdatePlayerControl(struct Actor *interpreter);
 s32 Actor_MoveOnWorldMap(struct Actor *interpreter);
 s32 Field_CheckConfiguredKeysAndCount(struct Actor *interpreter);
@@ -573,7 +575,7 @@ void MapGrid_CenterOnFollowedPoint(void);
 void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY);
 void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY);
 void MapGrid_UpdateLayerScroll(void);
-void MapGrid_SetCameraCenter(s32 x, s32 y);
+void MapGrid_SetCameraCenter(FIXED x, FIXED y);
 void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
                                         u32 dstY, u32 width, u32 height);
 void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY);
@@ -618,30 +620,31 @@ void PaletteCycle_Stop(void);
 void PaletteCycle_Start(void);
 void PaletteCycle_Step(void);
 
-s32 Terrain_GetFlatHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+FIXED Terrain_GetFlatHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
 s32 Terrain_GetSlopeXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
 s32 Terrain_GetSlopeYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Terrain_GetStepSumDiagonalHeight(const u8 *heightBytes, s32 x, s32 y);
-s32 Terrain_GetStepDifferenceDiagonalHeight(const u8 *heightBytes, s32 x,
-                                            s32 y);
-s32 Terrain_GetBendSumDiagonalHeight(const u8 *heightBytes, s32 x, s32 y);
-s32 Terrain_GetBendDifferenceDiagonalHeight(const u8 *heightBytes, s32 x,
-                                            s32 y);
-s32 Terrain_GetRoundedSquareHeight(const u8 *heightBytes, s32 x, s32 y);
+FIXED Terrain_GetStepSumDiagonalHeight(const u8 *heightBytes, s32 x, s32 y);
+FIXED Terrain_GetStepDifferenceDiagonalHeight(const u8 *heightBytes, s32 x,
+                                              s32 y);
+FIXED Terrain_GetBendSumDiagonalHeight(const u8 *heightBytes, s32 x, s32 y);
+FIXED Terrain_GetBendDifferenceDiagonalHeight(const u8 *heightBytes, s32 x,
+                                              s32 y);
+FIXED Terrain_GetRoundedSquareHeight(const u8 *heightBytes, s32 x, s32 y);
 s32 Terrain_GetStepXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
 s32 Terrain_GetStepYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Terrain_GetBendXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Terrain_GetBendYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Terrain_GetSampleTableHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Terrain_GetSampleTableMirroredHeight(const u8 *heightBytes, s32 pixelX,
-                                         s32 pixelY);
-s32 Terrain_GetFlatBHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
-s32 Terrain_GetFlatCHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+FIXED Terrain_GetBendXHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+FIXED Terrain_GetBendYHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+FIXED Terrain_GetSampleTableHeight(const u8 *heightBytes, s32 pixelX,
+                                   s32 pixelY);
+FIXED Terrain_GetSampleTableMirroredHeight(const u8 *heightBytes, s32 pixelX,
+                                           s32 pixelY);
+FIXED Terrain_GetFlatBHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
+FIXED Terrain_GetFlatCHeight(const u8 *heightBytes, s32 pixelX, s32 pixelY);
 
-s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y);
-s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y);
-s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y);
-void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 behavior);
+FIXED MapGrid_GetTerrainHeight(s32 layer, FIXED x, FIXED y);
+s32 MapGrid_GetCellAttributeLowNibble(s32 layer, FIXED x, FIXED y);
+s32 MapGrid_GetCellBehaviorAt(s32 layer, FIXED x, FIXED y);
+void MapGrid_SetCellBehaviorAt(u32 layer, FIXED x, FIXED y, u32 behavior);
 s32 MapGrid_GetCellHighFlags(s32 x, s32 y);
 s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 s32 MapGrid_IsWallAt(struct WorldPosition *position);
@@ -651,7 +654,7 @@ s32 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
                                   s32 *terrainKind);
 /// A screen shake's component left as it is; any negative value does.
 #define SHAKE_KEEP (-1)
-void MapGrid_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay);
+void MapGrid_SetScreenShake(FIXED shakeX, FIXED shakeY, FIXED shakeDecay);
 void MapGrid_WaitForShakeToSettle(void);
 void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
                              u8 *pixels);

@@ -85,7 +85,7 @@ extern s32 gWhirlwindRiding;
 
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
-s32 Position_FlatDistance(s32 *a, s32 *b);
+s32 Position_FlatDistance(FIXED *a, FIXED *b);
 
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;

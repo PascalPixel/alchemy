@@ -436,7 +436,7 @@ void FieldCamera_FollowActor(s32 id, s32 flag) {
 
 /// The event command "camera set speed": the camera's top speed and
 /// acceleration, 16.16 pixels per frame.
-void Camera_SetSpeedParameters(s32 first, s32 second) {
+void Camera_SetSpeedParameters(FIXED first, FIXED second) {
   struct FieldWork *work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, 0xd50);
 
   work->camera->speedLimit = first;

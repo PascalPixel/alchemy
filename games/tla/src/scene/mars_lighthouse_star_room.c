@@ -155,7 +155,7 @@ void MarsLighthouseStarRoom_EndBlazeOnStatue(void) {}
 
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 
-s32 Trig_Cos(s32 angle);
+FIXED Trig_Cos(s32 angle);
 void Actor_SetupScriptedPart(struct Actor *object, s32 priority);
 
 static __inline__ struct Actor *ObjectCreate_(s32 kind, s32 x, s32 y, s32 z) {

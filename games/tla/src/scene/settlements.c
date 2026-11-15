@@ -26,6 +26,8 @@
 
 /// The apple, taken.
 #define FLAG_APPLE_TAKEN 0xf5d
+/// Kalt Island's rope, tied by Lash, for this visit.
+#define FLAG_KALT_ROPE_TIED FLAG_SCENE_TEMP_03
 
 /// The bush on the Gondowan Settlement's stairs is cut.
 #define FLAG_STAIRS_BUSH_CUT 0xa60
@@ -233,43 +235,43 @@ extern s32 gSettlements_BobScript[];
 extern u32 gSettlements_CrateBobScript[];
 
 struct OrbitSprite {
-  u8 unk00[5];
+  u8 beforeFlags05[5];
   u8 flags05Low : 5;
   u8 flags05Bit5 : 1;
   u8 flags05High : 2;
-  u8 unk06[3];
+  u8 beforeFlags09[3];
   u8 flags09Low : 2;
   u8 flags09Mode : 2;
   u8 flags09High : 4;
-  u8 unk0a[6];
+  u8 beforePalette[6];
   u8 palette;
-  u8 unk11[10];
+  u8 beforeState[10];
   u8 state;
 };
 
 struct OrbitObject {
-  u8 unk00[8];
+  u8 beforeX[8];
   s32 x;
   s32 y;
   s32 z;
-  u8 unk14[15];
+  u8 beforePriorityFlags[15];
   u8 priorityFlags;
-  u8 unk24[12];
+  u8 beforeOrbitAngle[12];
   s32 orbitAngle;
-  u8 unk34[4];
+  u8 beforeOrbitCenter[4];
   s32 orbitCenterX;
   s32 orbitCenterY;
   s32 orbitCenterZ;
-  u8 unk44[12];
+  u8 beforeSprite[12];
   struct OrbitSprite *sprite;
-  u8 unk54;
+  u8 beforeMode;
   u8 mode;
   u8 state;
-  u8 unk57[5];
+  u8 beforeActive[5];
   u8 active;
-  u8 unk5d[4];
+  u8 beforeVisible[4];
   u8 visible;
-  u8 unk62[10];
+  u8 beforeCallback[10];
   u32 callback;
 };
 
@@ -277,19 +279,6 @@ struct SettlementsVector {
   s32 x;
   s32 y;
   s32 z;
-};
-
-struct SettlementsSpawn {
-  s32 unk00;
-  s32 unk04;
-  s32 scaleX;
-  s32 scaleY;
-  s32 speed;
-  s32 acceleration;
-  u16 kind;
-  const u8 *script;
-  s32 unk20;
-  void *update;
 };
 
 void Rope_Initialize(void);
@@ -573,8 +562,12 @@ s32 Settlements_CircleCentre(s32 *p) {
 
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 
-static __inline__ void Settlements_Func_02002180(s32 a, s32 b, s32 c, s32 d) {
-  Rope_Place(a, b, c, d);
+static __inline__ void Settlements_PlaceRope(s32 index, s32 flag, s32 post,
+                                             s32 otherPost) {
+  /* FAKEMATCH(wrapper): Rope_Place called through an inline; as
+   * Rope_Place(1, FLAG_ROPE_TIED, ...) direct, 2 of 120 instructions differ in
+   * tla-en. */
+  Rope_Place(index, flag, post, otherPost);
 }
 
 void Settlements_SetUpKaltIsland(void) {
@@ -591,7 +584,8 @@ void Settlements_SetUpKaltIsland(void) {
   }
   Rope_Initialize();
   Rope_Initialize();
-  Settlements_Func_02002180(1, 0x203, 8, 9);
+  Settlements_PlaceRope(1, FLAG_KALT_ROPE_TIED, ACTOR_ROPE_POST_A,
+                        ACTOR_ROPE_POST_B);
   if (Event_GetFlag(FLAG_APPLE_TAKEN)) {
     Actor_SetPosition(ACTOR_APPLE, 0, 0);
     return;
@@ -737,8 +731,8 @@ loop:
 }
 
 void Settlements_LashRope(void) {
-  Rope_Lash(1, 8, 9);
-  Event_SetFlag(FLAG_SCENE_TEMP_03);
+  Rope_Lash(1, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
+  Event_SetFlag(FLAG_KALT_ROPE_TIED);
 }
 
 extern s32 gSettlements_WaterColorFrame;
@@ -1054,15 +1048,15 @@ void Settlements_SplashCrate(s32 id) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches: of the 68 bytes it reserves. */
   UNUSED struct SettlementsVector velocity;
-  struct SettlementsSpawn spawn;
+  struct EffectOptions spawn;
   struct Actor *object = Actor_Get(id);
 
-  spawn.kind = 0x115;
-  spawn.scaleX = Q16_ONE * 4 / 5;
-  spawn.scaleY = Q16_ONE * 4 / 5;
-  spawn.speed = px(1);
-  spawn.acceleration = px(1);
-  spawn.script = gSettlements_SmokeScript;
+  spawn.type = SPRITE_WATER_SPRAY;
+  spawn.startScaleX = Q16_ONE * 4 / 5;
+  spawn.startScaleY = Q16_ONE * 4 / 5;
+  spawn.targetScaleX = Q16_ONE;
+  spawn.targetScaleY = Q16_ONE;
+  spawn.script = (const s32 *)gSettlements_SmokeScript;
   Event_PlaySound(SE_CAST);
   FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, 0, 0, 0,
                     EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
@@ -1445,7 +1439,7 @@ struct Trigger gSettlements_KaltIslandTriggers[] = {
     {TRIGGER_STEP, ACTOR_APPLE, CONDITION_ALWAYS,
      EVENT(Settlements_StepOffIce)},
     {TRIGGER_STEP, 20, 0x201, EVENT(Settlements_StepOnIceSlide)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, 0x203,
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_KALT_ROPE_TIED,
      EVENT(Settlements_LashRope)},
     {TRIGGER_TALK, ACTOR_GEL, CONDITION_ALWAYS, EVENT(Settlements_MeetGel)},
     {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_APPLE, FLAG_APPLE_TAKEN,

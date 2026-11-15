@@ -1760,8 +1760,10 @@ s32 MarsLighthouseEntrance_SlideIfRiding(void) {
 
 s32 Ride_IsActive(void) { return RIDE_WORK->active; }
 
+/// A sprite as the crumbs copy it from the flame's: its OAM attributes, scale,
+/// VRAM block, size and layer count, and its animation record.
 struct SpriteView {
-  u8 unk00[4];
+  u8 beforeOam[4];
   u16 y : 8;
   u16 affine : 2;
   u16 blendMode : 2;
@@ -1773,16 +1775,16 @@ struct SpriteView {
   u16 size : 2;
   u16 tile : 10;
   u16 attr2Rest : 6;
-  u8 unk0a[2];
+  u8 afterOam[2];
   s32 scale; ///< 16.16, as FieldSprite (field_sprite.h) has it
   u8 vramBlock;
   u8 keepEntry : 1;
-  u8 unk11 : 7;
+  u8 otherFlags : 7;
   u16 rotation;
-  u8 unk14[2];
-  u8 unk16[5];
-  u8 unk1b;
-  u8 unk1c[12];
+  u8 dimensions[2]; ///< width and height
+  u8 beforeLayerCount[5];
+  u8 layerCount;
+  u8 beforeRecord[12];
   void *record;
 };
 
@@ -1847,9 +1849,9 @@ void MarsLighthouseEntrance_ScatterCrumbs(struct Actor *actor) {
       sprite->vramBlock = work->vramBlock;
       SpriteAnimation_Clear(sprite->record);
       sprite->record = NULL;
-      sprite->unk1b = 0;
-      sprite->unk14[0] = source->unk14[0];
-      sprite->unk14[1] = source->unk14[1];
+      sprite->layerCount = 0;
+      sprite->dimensions[0] = source->dimensions[0];
+      sprite->dimensions[1] = source->dimensions[1];
       sprite->shape = source->shape;
       sprite->size = source->size;
       sprite->tile = source->tile;

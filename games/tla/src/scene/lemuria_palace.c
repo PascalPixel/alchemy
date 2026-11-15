@@ -202,7 +202,7 @@ void LemuriaPalace_CastMapSparks(s32 actorId) {
 }
 
 extern s8 gLemuriaPalace_MapMode;
-extern u32 gLemuriaPalace_MapCrossfade[];
+extern u16 gLemuriaPalace_MapCrossfade[];
 
 /// A task: draws the maps the hall shows, fading between them by the map mode
 /// (1, the fade level by frame; 2, the cross-fade that flickers between them).
@@ -221,13 +221,9 @@ void LemuriaPalace_DrawMaps(void) {
     s32 step = (*time >> 2) % 28;
 
     {
-      u16 *table = (u16 *)gLemuriaPalace_MapCrossfade;
-      /* FAKEMATCH(temporary): the offset in a local puts the table first in the
-       * load. */
-      s32 at = step * 2;
-      s32 value = *(u16 *)((u8 *)table + at);
+      s32 alpha = gLemuriaPalace_MapCrossfade[step];
 
-      REG_BLDALPHA = value;
+      REG_BLDALPHA = alpha;
     }
     if (step == 0) {
       gLemuriaPalace_FirstMapShown = 1;
@@ -1318,10 +1314,15 @@ s16 gLemuriaPalace_GlowColors[] = {
 
 #undef BLEND_SET_ALPHA
 
-// clang-format off
-LATE_DATA u32 gLemuriaPalace_MapCrossfade[] = {
-    0xc040e02, 0x8080a06, 0x40c060a, 0x100010, 0x60a040c, 0xa060808,
-    0xe020c04, 0xc040e02, 0x8080a06, 0x40c060a, 0x100010, 0x60a040c,
-    0xa060808, 0xe020c04,
+LATE_DATA ALIGNED(4) u16 gLemuriaPalace_MapCrossfade[] = {
+    BLEND_ALPHA(2, 14), BLEND_ALPHA(4, 12), BLEND_ALPHA(6, 10),
+    BLEND_ALPHA(8, 8),  BLEND_ALPHA(10, 6), BLEND_ALPHA(12, 4),
+    BLEND_ALPHA(16, 0), BLEND_ALPHA(16, 0), BLEND_ALPHA(12, 4),
+    BLEND_ALPHA(10, 6), BLEND_ALPHA(8, 8),  BLEND_ALPHA(6, 10),
+    BLEND_ALPHA(4, 12), BLEND_ALPHA(2, 14), BLEND_ALPHA(2, 14),
+    BLEND_ALPHA(4, 12), BLEND_ALPHA(6, 10), BLEND_ALPHA(8, 8),
+    BLEND_ALPHA(10, 6), BLEND_ALPHA(12, 4), BLEND_ALPHA(16, 0),
+    BLEND_ALPHA(16, 0), BLEND_ALPHA(12, 4), BLEND_ALPHA(10, 6),
+    BLEND_ALPHA(8, 8),  BLEND_ALPHA(6, 10), BLEND_ALPHA(4, 12),
+    BLEND_ALPHA(2, 14),
 };
-// clang-format on

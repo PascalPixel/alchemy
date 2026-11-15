@@ -3,9 +3,9 @@
 Field_DefaultMapCells:
 	.incbin "games/tla/src/map/default/cells.table.lz"
 	.byte 0x86, 0xb2, 0xb7	@ PACKER: left in the buffer by Ending_VillagersPictureA+0x93c1
-	.global Resource_Data199
-Resource_Data199:
-	.incbin "games/tla/src/map/default/table_199.table.lz"
+	.global Field_DefaultMapEntrances
+Field_DefaultMapEntrances:
+	.incbin "games/tla/src/map/default/entrances.table.lz"
 	.section .rodata.a
 	.global Field_DefaultMapAnimation
 Field_DefaultMapAnimation:

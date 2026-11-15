@@ -34,7 +34,7 @@ Resource_DirectoryTable:
 	resource ClockDigits, Field_ClockDigits
 	resource TitleScreenPicture, Title_ScreenPicture
 	resource , Title_IntroGraphicsC
-	resource Data018, Resource_Data018
+	resource Data018, Title_IntroClouds
 	resource IntroLighthousePicture, Title_IntroLighthousePicture
 	resource IntroGullSprites, Title_IntroGullSprites
 	resource Data01B, Resource_Data01B
@@ -45,8 +45,8 @@ Resource_DirectoryTable:
 	resource NintendoLogo, Title_NintendoLogo
 	resource CamelotLogo, Title_CamelotLogo
 	resource LogoOnBlack, Title_LogoOnBlackPicture
-	resource Data023, Resource_Data023
-	resource Data024, Resource_Data024
+	resource Data023, Title_WorldMapPicture
+	resource Data024, Title_WorldMapPictureLarge
 	resource IntroTilesB, Resource_Data025
 	resource Headings, Ui_Headings
 	resource , Battle_PurpleMoonBackdrop
@@ -145,7 +145,7 @@ Resource_DirectoryTable:
 	resource LuckyDiceBoard, LuckyDice_Board
 	resource SlotsDomePicture, Slots_DomePicture
 	resource LuckyDiceSprites, LuckyDice_Sprites
-	resource Data087, Resource_Data087
+	resource Data087, LuckyDice_DiceFaces
 	resource SlotsYouWinBanner, Slots_YouWinBanner
 	resource SlotsYouLoseBanner, Slots_YouLoseBanner
 	resource SlotsHigherBanner, Slots_HigherBanner
@@ -194,8 +194,8 @@ Resource_DirectoryTable:
 	resource Data0B5, Resource_Data0B5
 	resource CharmRingSheet, BattleEffect_CharmRingSheet
 	resource WhirlBeamSheet, BattleEffect_WhirlBeamSheet
-	resource EffectPalette00, BattleEffect_EffectPalette00
-	resource EffectPalette01, BattleEffect_EffectPalette01
+	resource EffectPalette00, BattleEffect_MagentaPalette
+	resource EffectPalette01, BattleEffect_SlatePalette
 	resource Data0BA, Resource_Data0BA
 	resource Data0BB, Resource_Data0BB
 	resource , BattleEffect_ThinBoltSheet
@@ -267,10 +267,10 @@ Resource_DirectoryTable:
 	resource ArcFragmentsSheet, BattleEffect_ArcFragmentsSheet
 	resource Data0FF, Resource_Data0FF
 	resource AxeSheet, BattleEffect_AxeSheet
-	resource Data101, Resource_Data101
-	resource Data102, Resource_Data102
-	resource Data103, Resource_Data103
-	resource Data104, Resource_Data104
+	resource Data101, BattleEffect_LongSwordSheet
+	resource Data102, BattleEffect_GlowingSwordSheet
+	resource Data103, BattleEffect_FireStreakSheetB
+	resource Data104, BattleEffect_PinkBarSheet
 	resource CloudPuffSheet, BattleEffect_CloudPuffSheet
 	resource TileAnimationMask, BattleEffect_TileAnimationMask
 	resource CyanSparkSheet, BattleEffect_CyanSparkSheet
@@ -319,7 +319,7 @@ Resource_DirectoryTable:
 	resource MagentaSwirlSheet, BattleEffect_MagentaSwirlSheet
 	resource MagentaTailSheet, BattleEffect_MagentaTailSheet
 	resource ParticleSpritesA, BattleEffect_ParticleSpritesA
-	resource Data135, Resource_Data135
+	resource Data135, BattleEffect_ParticleSpritesB
 	resource ParticleSpritesC, BattleEffect_ParticleSpritesC
 	resource ParticleSpritesD, BattleEffect_ParticleSpritesD
 	resource GreenPalette, BattleEffect_GreenPalette
@@ -339,8 +339,8 @@ Resource_DirectoryTable:
 	resource FirePillarSheetA, BattleEffect_FirePillarSheetA
 	resource RedPaletteB, BattleEffect_RedPaletteB
 	resource OrangePaletteB, BattleEffect_OrangePaletteB
-	resource EffectPalette02, BattleEffect_EffectPalette02
-	resource EffectPalette03, BattleEffect_EffectPalette03
+	resource EffectPalette02, BattleEffect_IndigoPalette
+	resource EffectPalette03, BattleEffect_OrangePalette
 	resource VioletCometSheet, BattleEffect_VioletCometSheet
 	resource FlameballSheet, BattleEffect_FlameballSheet
 	resource BoulderSheet, BattleEffect_BoulderSheet
@@ -370,8 +370,8 @@ Resource_DirectoryTable:
 	resource VioletPaletteC, BattleEffect_VioletPaletteC
 	resource CyanPalette, BattleEffect_CyanPalette
 	resource TanPalette, BattleEffect_TanPalette
-	resource , BattleEffect_EffectPalette04
-	resource EffectPalette05, BattleEffect_EffectPalette05
+	resource , BattleEffect_GreyPalette
+	resource EffectPalette05, BattleEffect_VioletPalette
 	resource WispSheet, BattleEffect_WispSheet
 	resource GreenVineSheet, BattleEffect_GreenVineSheet
 	resource PortalSheet, BattleEffect_PortalSheet
@@ -395,7 +395,7 @@ Resource_DirectoryTable:
 	resource SparkleDots, BattleEffect_SparkleDots
 	resource PinkBurstSheet, BattleEffect_PinkBurstSheet
 	resource LightFanSheet, BattleEffect_LightFanSheet
-	resource Data181, Resource_Data181
+	resource Data181, BattleEffect_FlamePlumeSheet
 	resource DustPuffSheet, BattleEffect_DustPuffSheet
 	resource GoldShellSheet, BattleEffect_GoldShellSheet
 	resource BlastSheet, BattleEffect_BlastSheet
@@ -419,7 +419,7 @@ Resource_DirectoryTable:
 	resource DualStreamPath, BattleEffect_DualStreamPath
 	resource PerspectiveDataA, Field_PerspectiveDataA
 	resource DefaultMapCells, Field_DefaultMapCells
-	resource Data199, Resource_Data199
+	resource Data199, Field_DefaultMapEntrances
 	resource WorldMapPaletteA, WorldMap_PaletteA
 	resource DefaultMapAnimation, Field_DefaultMapAnimation
 	resource DefaultCellPictureAttributes, Field_DefaultCellPictureAttributes

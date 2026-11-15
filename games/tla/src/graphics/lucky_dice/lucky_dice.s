@@ -68,7 +68,7 @@ LuckyDice_Sprites:
 	.endif
 	.endif
 @ Nineteen dice frames.
-	.global Resource_Data087
-Resource_Data087:
-	.incbin "games/tla/src/graphics/lucky_dice/dice.gbapal"
-	.incbin "games/tla/src/graphics/lucky_dice/dice.8bpp.lz"
+	.global LuckyDice_DiceFaces
+LuckyDice_DiceFaces:
+	.incbin "games/tla/src/graphics/lucky_dice/dice_faces.gbapal"
+	.incbin "games/tla/src/graphics/lucky_dice/dice_faces.8bpp.lz"

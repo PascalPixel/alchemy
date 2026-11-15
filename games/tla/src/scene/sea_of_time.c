@@ -9,6 +9,7 @@
 
 #include "../field/actor_set_sprite_priority.c"
 #include "sprite_ids.h"
+#include "graphics/palette_buffers.h"
 #include "system/task.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
@@ -1160,7 +1161,7 @@ void SeaOfTime_AnimateSea(void) {
 
   Dma_Set((const void *)BG_PLTT, Ram_HeapSlots->paletteFade,
           DMA_COPY_WORDS(112), REG_DMA3);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   *(s32 *)((u8 *)layer + 0x1c) = 0;
   for (i = 0; i != 160; i++)
     *line++ =
@@ -1394,7 +1395,7 @@ s32 Scene_Initialize(void) {
           BG_PLTT_COLOR(0, 15) &= 0xffe0;
           Dma_Set((const void *)BG_PLTT, block, DMA_COPY_WORDS(112), REG_DMA3);
         }
-        PaletteFade_SetTarget(0x10000, 0);
+        PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
       }
       if (gMainRoutineWork.entrance == 4 &&
           !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
@@ -1416,7 +1417,7 @@ s32 Scene_PrepareMap(void) {
   void *block = Ram_HeapSlots->paletteFade;
 
   Dma_Fill32(-1, block, 0x1c0);
-  PaletteFade_SetSource(0x10000, 0);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
   return 0;
 }
 

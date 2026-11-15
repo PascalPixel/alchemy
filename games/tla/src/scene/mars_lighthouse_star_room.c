@@ -1795,7 +1795,7 @@ extern u32 gEmbers_Script[];
 
 /// An attached actor holds still while an event runs.
 void Actor_HoldDuringEvent(struct Actor *object) {
-  object->paused = Event_GetFlag(260);
+  object->paused = Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS);
 }
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
@@ -1841,9 +1841,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     FieldVector_AddPolarOffset(8, actor->facing, &position);
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, position.x, position.z) ==
         7) {
-      actor->targetZ = 0x80000000;
-      actor->targetY = 0x80000000;
-      actor->targetX = 0x80000000;
+      actor->targetZ = TARGET_UNSET;
+      actor->targetY = TARGET_UNSET;
+      actor->targetX = TARGET_UNSET;
       actor->acceleration = px(1) / 4;
       actor->timer = 1;
       Event_PlaySound(SE_CRASH);

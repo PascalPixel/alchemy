@@ -1797,7 +1797,7 @@ s32 Scene_Initialize(void) {
       Prox_InitializeMold();
     }
     if (Event_GetFlag(FLAG_STORM_RAGING)) {
-      PaletteFade_SetTarget(0x10004, 1);
+      PaletteFade_SetTarget(PALETTE_TINT_MUTED, 1);
       PaletteFade_StartInterpolation(16);
       wait(16);
     }
@@ -2007,7 +2007,7 @@ void Prox_SayFarewell(void) {
     Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTH_SOUTHEAST, 20);
     // "Don't worry, Son. I'm sure Dora's doing fine. She's a strong woman."
     FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_KYLE, 0, 20);
-    if (Event_GetFlag(0x824) != 0) {
+    if (Event_GetFlag(FLAG_TRANSFERRED_VISITED_SICK_DORA) != 0) {
       Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
       Actor_SetAnimation(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
       Event_ShowMessage(ACTOR_ISAAC, 0);

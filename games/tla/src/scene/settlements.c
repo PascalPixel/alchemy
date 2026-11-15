@@ -23,6 +23,12 @@
 #undef EFFECT_SPAWN
 
 #include "flags.h"
+
+/// The apple, taken.
+#define FLAG_APPLE_TAKEN 0xf5d
+
+/// The bush on the Gondowan Settlement's stairs is cut.
+#define FLAG_STAIRS_BUSH_CUT 0xa60
 #include "item_ids.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -376,7 +382,7 @@ void Settlements_CatchApple(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(ACTOR_APPLE, 0, 0);
-  Event_SetFlag(0xf5d);
+  Event_SetFlag(FLAG_APPLE_TAKEN);
   ItemDisplay_ShowItem(ITEM_APPLE, 3);
   mode = 0;
   Party_GiveItem(ITEM_APPLE, mode);
@@ -413,7 +419,7 @@ void Settlements_CutStairsBush(void) {
   TileCopies_CopyTouchedCells(5, 70, 9, 7, 5, 43, 1);
   MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
   MapGrid_CopyCellAttributes(4, 25, 1, 1, 5, 17);
-  Event_SetFlag(0xa60);
+  Event_SetFlag(FLAG_STAIRS_BUSH_CUT);
 }
 
 void Settlements_ClimbDownLadder(void) {
@@ -586,7 +592,7 @@ void Settlements_SetUpKaltIsland(void) {
   Rope_Initialize();
   Rope_Initialize();
   Settlements_Func_02002180(1, 0x203, 8, 9);
-  if (Event_GetFlag(0xf5d)) {
+  if (Event_GetFlag(FLAG_APPLE_TAKEN)) {
     Actor_SetPosition(ACTOR_APPLE, 0, 0);
     return;
   }
@@ -684,7 +690,7 @@ s32 Scene_PrepareMap(void) {
 #endif
   }
   if (gMainRoutineWork.next == SCENE_GONDOWAN_SETTLEMENT) {
-    if (Event_GetFlag(0xa60)) {
+    if (Event_GetFlag(FLAG_STAIRS_BUSH_CUT)) {
       MapGrid_CopyCellsTo(5, 46, 5, 47, 1, 1);
       MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
       MapGrid_CopyCellAttributes(4, 25, 1, 1, 5, 17);
@@ -1442,7 +1448,7 @@ struct Trigger gSettlements_KaltIslandTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, 0x203,
      EVENT(Settlements_LashRope)},
     {TRIGGER_TALK, ACTOR_GEL, CONDITION_ALWAYS, EVENT(Settlements_MeetGel)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_APPLE, 0xf5d,
+    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_APPLE, FLAG_APPLE_TAKEN,
      EVENT(Settlements_CatchApple)},
     {TRIGGER_TABLE_END},
 };

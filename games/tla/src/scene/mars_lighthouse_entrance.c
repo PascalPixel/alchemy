@@ -502,7 +502,7 @@ void MarsLighthouseEntrance_TeleportFromLapis(void) {
 }
 
 /// Burst on the cracked ice sheet: a flash, the sheet gone, chips
-/// flying (flag FLAG_LAPIS_SHEET_BURST).
+/// flying (FLAG_LAPIS_SHEET_BURST).
 void MarsLighthouseEntrance_BurstIceSheet(s32 state, s32 frame) {
   if (state == 1) {
     Event_PlaySound(SE_574);
@@ -530,7 +530,7 @@ void MarsLighthouseEntrance_BlazeRoom3Statue(void) {
 void MarsLighthouseEntrance_WatchFireballCrackIce(void) {
   gFieldWork->psynergy = 0;
   Flag_Clear(FLAG_MENU_OPEN);
-  Flag_Clear(0x104);
+  Flag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(1);
@@ -590,7 +590,7 @@ DEFINE_BURST_ICE_SHEET(MarsLighthouseEntrance_BurstLapisIceSheet, 28, 92, 8,
                        FLAG_LAPIS_SECOND_SHEET_BURST)
 
 /// Move on the dragon statue to cell x 20: it blocks the last flame thrower
-/// (flag FLAG_LAPIS_STATUE_BLOCKS_FLAMES).
+/// (FLAG_LAPIS_STATUE_BLOCKS_FLAMES).
 void MarsLighthouseEntrance_PushStatueIntoFlames(s32 unused, s32 id) {
   if (id == ACTOR_PUSHED_STATUE) {
     struct Actor *object = Actor_Get(ACTOR_PUSHED_STATUE);
@@ -643,7 +643,7 @@ void MarsLighthouseEntrance_BlazeRoom5WestStatue(void) {
 void MarsLighthouseEntrance_WatchFireballCrackRoom5Ice(void) {
   gFieldWork->psynergy = 0;
   Flag_Clear(FLAG_MENU_OPEN);
-  Flag_Clear(0x104);
+  Flag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_WaitForArrival();
@@ -670,7 +670,7 @@ void MarsLighthouseEntrance_BlazeRoom5EastStatue(void) {
 void MarsLighthouseEntrance_WatchFireballMeltIce(void) {
   gFieldWork->psynergy = 0;
   Flag_Clear(FLAG_MENU_OPEN);
-  Flag_Clear(0x104);
+  Flag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(1);
@@ -1270,7 +1270,7 @@ s32 Scene_Initialize(void) {
   }
   if (scene == SCENE_MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST &&
       entrance == 13)
-    Event_ClearFlag(0x104);
+    Event_ClearFlag(FLAG_FIELD_HANDLING_REQUESTS);
   Palette_SetColorsFade((s32)gMarsLighthouseEntrance_FadeSlots,
                         (s32)gMarsLighthouseEntrance_FadeColorsFrom,
                         (s32)gMarsLighthouseEntrance_FadeColorsTo,
@@ -1629,7 +1629,7 @@ UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 UNUSED s32 Ride_StepCounter(s32 limit) {
   struct FlameHitWork *work = RIDE_WORK;
 
-  if (!Event_GetFlag(260)) {
+  if (!Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
     if (++work->counter >= limit)
       work->counter = 0;
   }
@@ -1861,7 +1861,7 @@ extern u32 gEmbers_Script[];
 #include "shared/embers_spawn.h"
 
 void Actor_HoldDuringEvent(struct Actor *object) {
-  object->paused = Event_GetFlag(260);
+  object->paused = Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS);
 }
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
@@ -1921,9 +1921,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     FieldVector_AddPolarOffset(8, actor->facing, &position);
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, position.x, position.z) ==
         7) {
-      actor->targetZ = 0x80000000;
-      actor->targetY = 0x80000000;
-      actor->targetX = 0x80000000;
+      actor->targetZ = TARGET_UNSET;
+      actor->targetY = TARGET_UNSET;
+      actor->targetX = TARGET_UNSET;
       actor->acceleration = px(1) / 4;
       actor->timer = 1;
       Event_PlaySound(SE_CRASH);

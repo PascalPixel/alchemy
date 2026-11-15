@@ -739,7 +739,7 @@ void MarsLighthouseRoomF_ScatterRubble(s32 id) {
 void MarsLighthouseRoomF_WatchFireballCrackWall(void) {
   gFieldWork->psynergy = 0;
   Event_ClearFlag(FLAG_MENU_OPEN);
-  Event_ClearFlag(0x104);
+  Event_ClearFlag(FLAG_FIELD_HANDLING_REQUESTS);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_SetSpeed(2);
@@ -922,7 +922,7 @@ void MarsLighthouseRoomF_WatchFlameThrower(void) {
   FieldEvent_ResolvePendingActions(0);
   work->psynergy = 0;
   Flag_Clear(FLAG_MENU_OPEN);
-  Flag_Clear(0x104);
+  Flag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
   FieldEvent_Wait(60);
   FieldCamera_SetSpeed(3);
   FieldCamera_MoveTo(184, CAMERA_KEEP, 744, 1);
@@ -1526,7 +1526,7 @@ void Whirlwind_Update(struct Actor *self) {
         if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
             distance < 0xc0000)
           near = 1;
-        if (near && !Event_GetFlag(260)) {
+        if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
           leader->facing = self->facing;
           leader->watchedActor = self;
           leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -2328,7 +2328,7 @@ extern u32 gEmbers_Script[];
 
 /// An attached actor holds still while an event runs.
 void Actor_HoldDuringEvent(struct Actor *object) {
-  object->paused = Event_GetFlag(260);
+  object->paused = Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS);
 }
 #undef position
 #undef WORK
@@ -2399,9 +2399,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     FieldVector_AddPolarOffset(8, actor->facing, &position);
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, position.x, position.z) ==
         7) {
-      actor->targetZ = 0x80000000;
-      actor->targetY = 0x80000000;
-      actor->targetX = 0x80000000;
+      actor->targetZ = TARGET_UNSET;
+      actor->targetY = TARGET_UNSET;
+      actor->targetX = TARGET_UNSET;
       actor->acceleration = px(1) / 4;
       actor->timer = 1;
       Event_PlaySound(SE_CRASH);

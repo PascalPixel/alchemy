@@ -420,7 +420,7 @@ static inline void Madra_PlaceFacing(s32 actorId, s32 x, s32 z, u16 facing) {
 /// until the gate inspection is over (flag 0x910); afterwards the hole leads
 /// down into the catacombs.
 void Madra_WorkerBlocksHole(void) {
-  if (Event_GetFlag(0x910)) {
+  if (Event_GetFlag(FLAG_MADRA_GATE_INSPECTED)) {
     Event_PlaySound(SE_MAP_EXIT);
     Import_EventSetExitRequest(16);
   } else if (!Event_GetFlag(FLAG_MADRA_WORKER_SEEN_AT_HOLE)) {
@@ -505,12 +505,13 @@ s32 Scene_Initialize(void) {
       if (Event_GetFlag(FLAG_MADRA_WORKER_SEEN_AT_HOLE) == 0)
         Actor_SetPosition(ACTOR_HOLE_WORKER, 0, 0);
     } else if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) != 0 ||
-               Event_GetFlag(0x910) != 0 ||
+               Event_GetFlag(FLAG_MADRA_GATE_INSPECTED) != 0 ||
                Event_GetFlag(FLAG_MADRA_WORKER_SEEN_AT_HOLE) == 0) {
       Actor_SetPosition(ACTOR_HOLE_WORKER, 0, 0);
     }
   }
-  if (gMainRoutineWork.entrance == 9 && Event_GetFlag(0x913) == 0)
+  if (gMainRoutineWork.entrance == 9 &&
+      Event_GetFlag(FLAG_OSENIA_PASSAGE_GRANTED) == 0)
     Madra_GrantPassageToOsenia();
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) != 0 &&
       Event_GetFlag(0x989) != 0) {
@@ -829,7 +830,7 @@ void Madra_InspectPartyAtGate(void) {
                          object->z.part[0].pixel);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  Event_SetFlag(0x910);
+  Event_SetFlag(FLAG_MADRA_GATE_INSPECTED);
   Actor_SetPosition(ACTOR_HOLE_WORKER, 0, 0);
   Event_End();
 }
@@ -839,7 +840,7 @@ void Madra_InspectPartyAtGate(void) {
 /// the party is going to Osenia and grants it passage over the drawbridge
 /// (flag 0x913).
 void Madra_GrantPassageToOsenia(void) {
-  if (!GameFlag_Get(0x911))
+  if (!GameFlag_Get(FLAG_PIERS_INTERROGATED))
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1010,7 +1011,7 @@ void Madra_GrantPassageToOsenia(void) {
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_LADY, ANIM_NOD);
   Event_Wait(20);
-  GameFlag_Set(0x913);
+  GameFlag_Set(FLAG_OSENIA_PASSAGE_GRANTED);
   Actor_WalkByAndWaitById(ACTOR_LADY, 30, 0);
   Actor_WalkToAndWait(ACTOR_LADY, 164, 316);
   Event_Wait(20);
@@ -1729,7 +1730,7 @@ void Madra_MeetKarst(void) {
 
 /// Stepping past the gate once the party has been let in: the inspection is not
 /// run again.
-void Madra_SkipGateInspection(void) { GameFlag_Set(0x910); }
+void Madra_SkipGateInspection(void) { GameFlag_Set(FLAG_MADRA_GATE_INSPECTED); }
 
 /// Stepping past the gate guards once they have questioned the party after the
 /// raid.

@@ -6,6 +6,7 @@
 
 #include "../field/actor_set_sprite_priority.c"
 #include "sprite_ids.h"
+#include "graphics/palette_buffers.h"
 #include "djinn_ids.h"
 #include "scene/falling_rocks.h"
 
@@ -2046,8 +2047,8 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
                           first->z.part[0].pixel << 16, 1);
   Event_PlaySound(SE_RUMBLE);
   MapGrid_SetShake(2, 2, 1);
-  PaletteFade_SetSource(0x10000, 0);
-  PaletteFade_SetTarget(0x10003, 1);
+  PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_WARM, 1);
   PaletteFade_StartInterpolation(60);
   first->motionFlags = 0;
   first->acceleration = 0x3333;
@@ -2142,14 +2143,14 @@ column:
     goto column;
   Event_PlaySound(SE_SHIMMER);
   wait(50);
-  PaletteFade_SetTarget(0x7fff, 0);
+  PaletteFade_SetTarget(RGB_WHITE, 0);
   PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
   Actor_SetSpriteColorById(a, 0);
   Actor_SetSpriteColorById(b, 0);
   Event_PlaySound(SE_574);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(80);
   Actor_SetScript(a, gMagmaRockInside_BlazeCasterReturnScript);
   Actor_SetScript(b, gMagmaRockInside_BlazeWatcherReturnScript);

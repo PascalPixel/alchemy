@@ -58,6 +58,9 @@ extern s32 gLemuriaEntrance_ShipAtRest[];
 
 #include "text/msg_ids.h"
 
+/// Grind has broken up the rock in the way.
+#define FLAG_ROCK_GROUND_AWAY 0x909
+
 void Text_GetMessageSize(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
 void Message_OpenWindow(s32 id, s32 x, s32 y, u32 flags);
 s32 Portrait_OpenWindow(s32 a, s32 b, s32 c, s32 d);
@@ -106,9 +109,9 @@ void LemuriaEntrance_LeaveByExit5(s32 arg) {
   FieldEvent_SetExitRequest(arg);
 }
 
-/// Grind breaks up the rock in the way, for good (flag 0x909).
+/// Grind breaks up the rock in the way, for good (FLAG_ROCK_GROUND_AWAY).
 void LemuriaEntrance_GrindRock(void) {
-  Event_SetFlag(0x909);
+  Event_SetFlag(FLAG_ROCK_GROUND_AWAY);
   Actor_SetPosition(ACTOR_ROCK, 0, 0);
 }
 
@@ -152,7 +155,7 @@ s32 Scene_Initialize(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ROCK), 0);
   Event_SetFlag(0x907);
   Event_ClearFlag(0x9b4);
-  if (Event_GetFlag(0x909))
+  if (Event_GetFlag(FLAG_ROCK_GROUND_AWAY))
     Actor_SetPosition(ACTOR_ROCK, 0, 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_BOAT_A), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_MOORED_BOAT_B), 0);

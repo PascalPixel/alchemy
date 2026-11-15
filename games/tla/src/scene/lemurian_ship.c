@@ -9,6 +9,7 @@
 /// tiles and open the way to the engine room, where Piers sets the Black
 /// Crystal and the ship sails.
 #include "system/task.h"
+#include "graphics/palette_buffers.h"
 #include "sprite_ids.h"
 #include "shared/tables.h"
 #include "field/field_work.h"
@@ -888,7 +889,7 @@ void LemurianShip_ParchHold(void) {
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   Event_SetFlag(FLAG_HOLD_PARCHED);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   Event_End();
 }
 

@@ -32,6 +32,15 @@
 #include "text/msg_ids.h"
 #include "field/actor_script.h"
 
+/// The Magma Ball has shattered the ice wall.
+#define FLAG_ICE_WALL_SHATTERED 0x90e
+
+/// Piers has said the ship is at a safe distance.
+#define FLAG_SAFE_DISTANCE_TOLD 0x90d
+
+/// The crew has talked the ice wall over.
+#define FLAG_ICE_WALL_DISCUSSED 0x90c
+
 /// The Northern Reaches, by the rows of gActorPlacements; the rows for
 /// Jenna, Sheba and Piers go to their party slots.
 enum NorthernReachesActorId {
@@ -98,7 +107,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// Draws the ice wall gone: its pictures and its cells, as the Magma Ball
-/// leaves it and on every later visit (flag 0x90e).
+/// leaves it and on every later visit (FLAG_ICE_WALL_SHATTERED).
 void NorthernReaches_ClearIceWall(void) {
   MapGrid_CopyCellsLayered(47, 9, 9, 4, 25, 9);
   MapGrid_CopyCellsLayered(47, 69, 9, 10, 25, 69);
@@ -129,12 +138,13 @@ done:
   return;
 }
 
-/// The crew gathers at the bow to talk the ice wall over, once (flag 0x90c).
+/// The crew gathers at the bow to talk the ice wall over, once
+/// (FLAG_ICE_WALL_DISCUSSED).
 void NorthernReaches_DiscussIceWall(void) {
 
-  if (Event_GetFlag(0x90c) != 0)
+  if (Event_GetFlag(FLAG_ICE_WALL_DISCUSSED) != 0)
     goto done;
-  Event_SetFlag(0x90c);
+  Event_SetFlag(FLAG_ICE_WALL_DISCUSSED);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgShipIceWallCrewReposition);
@@ -172,7 +182,7 @@ s32 Actor_SetSpriteColorMode();
 
 /// At a safe distance the crew asks Felix to fire the Magma Ball at the ice
 /// wall; if he is ready the ship backs off, fires, and the wall shatters (flag
-/// 0x90e).
+/// FLAG_ICE_WALL_SHATTERED).
 /// "We should be safe if we fire from this distance."
 void NorthernReaches_FireMagmaBall(void) {
   s32 from[3];
@@ -190,7 +200,7 @@ void NorthernReaches_FireMagmaBall(void) {
   t0 = Actor_Get(ACTOR_MAGMA_BALL_SHOT);
   t1 = Actor_Get(ACTOR_BLAST);
   t2 = Actor_Get(ACTOR_SHIP);
-  t3 = Event_GetFlag(0x90e);
+  t3 = Event_GetFlag(FLAG_ICE_WALL_SHATTERED);
   v_r7 = t2;
   v_r6 = t0;
   v_r8 = t1;
@@ -217,11 +227,11 @@ fire:
   Actor_SetPosition(ACTOR_PIERS, 464, 216);
   Actor_SetPosition(ACTOR_JENNA, 464, 216);
   Actor_SetPosition(ACTOR_SHEBA, 464, 216);
-  t26 = Event_GetFlag(0x90d);
+  t26 = Event_GetFlag(FLAG_SAFE_DISTANCE_TOLD);
   v_r10 = (s32)MsgShipSafeFiringDistance;
   if (t26 != 0)
     goto ask;
-  Event_SetFlag(0x90d);
+  Event_SetFlag(FLAG_SAFE_DISTANCE_TOLD);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_PIERS, 0, 5);
 ask:
   FieldEvent_SetMessageId((v_r10 + 1));
@@ -325,7 +335,7 @@ settle:
   v_r7->scaleY = 0;
   v_r7->scaleX = 0;
   FieldEvent_Wait(10);
-  Event_SetFlag(0x90e);
+  Event_SetFlag(FLAG_ICE_WALL_SHATTERED);
   FieldEvent_SetExitRequest(4);
 putAway:
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -358,7 +368,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.entrance == 3)
     NorthernReaches_ClearIceWall();
-  if (Event_GetFlag(0x90e))
+  if (Event_GetFlag(FLAG_ICE_WALL_SHATTERED))
     NorthernReaches_ClearIceWall();
   return 0;
 }
@@ -431,7 +441,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
       Event_PlaySound(SE_CRASH);
     }
     if (frame == 60) {
-      PaletteFade_SetTarget(0x7fff, 0);
+      PaletteFade_SetTarget(RGB_WHITE, 0);
       PaletteFade_StartInterpolation(90);
       Event_PlaySound(SE_RUMBLE);
     }

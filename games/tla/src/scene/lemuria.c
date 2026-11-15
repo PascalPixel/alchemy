@@ -109,6 +109,12 @@ extern s16 gLemuria_WideDoorOpening[];
 
 #include "shared/position_distance.h"
 
+/// The fifth spot's treasure, dug up.
+#define FLAG_FIFTH_SPOT_DUG 0xfbb
+
+/// The rope Lash ties to the posts, kept tied (Rope_Place).
+#define FLAG_ROPE_TIED 0x962
+
 s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
   s32 result = 0;
   s32 *to;
@@ -345,7 +351,7 @@ void Lemuria_DigFifthSpot(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   TileCopies_CopyTouchedCells_(59, 64, 4, 3, 49, 71, 2);
-  if (Event_GetFlag(0xfbb) == 0) {
+  if (Event_GetFlag(FLAG_FIFTH_SPOT_DUG) == 0) {
     Actor_SetPosition(FIELD_TREASURE_ACTOR + 5, 808, 1176);
     if (FIELD_CELL(leader->x.fixed) == 50 &&
         FIELD_CELL(leader->z.fixed) == 73) {
@@ -482,7 +488,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN_STAND_IN, 0, 10);
   FieldCamera_MoveTo(872, CAMERA_KEEP, 928, 1);
   FieldCamera_WaitForArrival();
-  if (Party_FindOwnerWithAction(133) != -1 || Event_GetFlag(0x962))
+  if (Party_FindOwnerWithAction(133) != -1 || Event_GetFlag(FLAG_ROPE_TIED))
     goto done;
   FieldEvent_SetMessageId((s32)&MsgLemuriaWhatsMatterCantYouClimb);
   FieldEvent_Wait(20);
@@ -708,7 +714,7 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(ACTOR_PIERS, 9);
   }
   Rope_Initialize();
-  Rope_Place(0, 0x962, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
+  Rope_Place(0, FLAG_ROPE_TIED, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
   Actor_Get(ACTOR_ROPE_POST_A)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Actor_Get(ACTOR_ROPE_POST_B)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   if (Event_GetFlag(FLAG_LEMURIA_ROPE_LET_DOWN)) {
@@ -1402,7 +1408,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXAMINE, ACTOR_EAST_PALACE_GUARD, CONDITION_ALWAYS,
      EVENT(Lemuria_DrinkFromSpring)},
     {TRIGGER_EXAMINE, 40, CONDITION_ALWAYS, EVENT(Lemuria_KnockAtBrokenDoor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, 0x962, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_ROPE_TIED, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_LEMURIA_VINE_GROWN,
      EVENT(Lemuria_GrowVine)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,

@@ -265,7 +265,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_HOUSES) {
     if (gMainRoutineWork.entrance == 5)
       Scene_FadeInAndClearFlag();
-    else if (!Event_GetFlag(0x821) ||
+    else if (!Event_GetFlag(FLAG_TRANSFERRED_WON_COLOSSO) ||
              (Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET) &&
               !Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET_THIS_VISIT)) ||
              Event_GetFlag(34))

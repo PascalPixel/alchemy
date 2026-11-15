@@ -892,14 +892,14 @@ void MarsLighthouseRoomM_ReadEarthInscription(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
-  PaletteFade_SetTarget(0x10003, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_WARM, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
   EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMMankindWithPowerOfWisdom,
                             0, 0);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   Event_End();
@@ -912,14 +912,14 @@ void MarsLighthouseRoomM_ReadWaterInscription(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
-  PaletteFade_SetTarget(0x10003, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_WARM, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
   EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMFishWithColdCourageThey,
                             0, 0);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   Event_End();
@@ -932,14 +932,14 @@ void MarsLighthouseRoomM_ReadFireInscription(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
-  PaletteFade_SetTarget(0x10003, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_WARM, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
   EventMessage_ShowCentered(
       (s32)MsgMarsLighthouseRoomMDragonsBurningWithMightThey, 0, 0);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   Event_End();
@@ -952,14 +952,14 @@ void MarsLighthouseRoomM_ReadWindInscription(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
-  PaletteFade_SetTarget(0x10003, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_WARM, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   *color = 0x7fff;
   wait(1);
   EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMBirdOnWingsOfTruth, 0,
                             0);
-  PaletteFade_SetTarget(0x10000, 0);
+  PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
   Event_End();
@@ -1019,14 +1019,14 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
       FieldCamera_WaitForArrival();
       FieldEvent_Wait(20);
       PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
-      PaletteFade_SetTarget(0x10003, 0);
+      PaletteFade_SetTarget(PALETTE_TINT_WARM, 0);
       PaletteFade_StartInterpolation(20);
       wait(20);
       *color = 0x7fff;
       wait(1);
       EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMIfYouDoNotHold, 0,
                                 4);
-      PaletteFade_SetTarget(0x10000, 0);
+      PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
       PaletteFade_StartInterpolation(20);
       wait(20);
       Event_SetFlag(FLAG_TOLD_TO_BEGONE);
@@ -1047,7 +1047,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(20);
     PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
-    PaletteFade_SetTarget(0x10003, 0);
+    PaletteFade_SetTarget(PALETTE_TINT_WARM, 0);
     PaletteFade_StartInterpolation(20);
     wait(20);
     *color = 0x7fff;
@@ -1063,7 +1063,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     Event_PlaySound(SE_MARS_LIGHTHOUSE_DOORWAY);
     MarsLighthouseRoomM_FlashDoorways();
     FieldEvent_Wait(20);
-    PaletteFade_SetTarget(0x10000, 0);
+    PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
     PaletteFade_StartInterpolation(20);
     wait(40);
     Event_SetFlag(FLAG_TOLD_TO_LIGHT_FLAMES);
@@ -1755,7 +1755,7 @@ void MarsLighthouseRoomM_ScatterCrumbs(struct Actor *actor) {
 #include "shared/embers_spawn.h"
 
 void Actor_HoldDuringEvent(struct Actor *object) {
-  object->paused = Event_GetFlag(260);
+  object->paused = Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS);
 }
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
@@ -1817,9 +1817,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     FieldVector_AddPolarOffset(8, actor->facing, &position);
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, position.x, position.z) ==
         7) {
-      actor->targetZ = 0x80000000;
-      actor->targetY = 0x80000000;
-      actor->targetX = 0x80000000;
+      actor->targetZ = TARGET_UNSET;
+      actor->targetY = TARGET_UNSET;
+      actor->targetX = TARGET_UNSET;
       actor->acceleration = px(1) / 4;
       actor->timer = 1;
       Event_PlaySound(SE_CRASH);

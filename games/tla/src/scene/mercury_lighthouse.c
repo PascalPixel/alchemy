@@ -4,6 +4,7 @@
 /// heroes, motes of light drifting round them.
 
 #include "types.h"
+#include "graphics/palette_buffers.h"
 #include "sprite_ids.h"
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
@@ -272,7 +273,7 @@ s32 Scene_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_PlaySound(SE_ASCEND);
-    PaletteFade_SetTarget(0x7fff, 0);
+    PaletteFade_SetTarget(RGB_WHITE, 0);
     PaletteFade_StartInterpolation(20);
     wait(20);
     Import_EventSetExitRequest(9);

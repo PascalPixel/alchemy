@@ -73,6 +73,9 @@ enum LohoInteriorsActorId {
 };
 #include "djinn_ids.h"
 
+/// The Golem Core under the rock, dug up.
+#define FLAG_GOLEM_CORE_DUG 0xff7
+
 extern u32 gLoho_VillagerMovesNorth[];
 extern u32 gLoho_VillagerMovesWest[];
 
@@ -625,11 +628,11 @@ DEFINE_SCOOP_TREASURE(Loho_ScoopSecondTreasure, 65, 1)
 DEFINE_SCOOP_TREASURE(Loho_ScoopThirdTreasure, 66, 2)
 
 /// Lift raises the rock (flag 0x201), and the Golem Core under it shows until
-/// it is dug up (flag 0xff7).
+/// it is dug up (FLAG_GOLEM_CORE_DUG).
 void Loho_LiftRock(void) {
   Event_SetFlag(FLAG_SCENE_TEMP_01);
   Actor_GetById(ACTOR_BOULDER)->collisionFlags &= ~ACTOR_SOLID;
-  if (Event_GetFlag(0xff7) == 0)
+  if (Event_GetFlag(FLAG_GOLEM_CORE_DUG) == 0)
     Actor_SetPosition(FIELD_TREASURE_ACTOR + 2, 520, 136);
 }
 

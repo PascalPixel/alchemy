@@ -25,6 +25,9 @@
 #include "text/msg_ids.h"
 #include "field/sprite.h"
 
+/// The guards have let the permitted party over the bridge.
+#define FLAG_DRAWBRIDGE_GUARDS_GREETED 0x916
+
 /// What games/tla/src/field/map_*.c declare for the files that use it, written
 /// once.
 
@@ -132,7 +135,7 @@ void MadraDrawbridge_GreetPermittedParty(void) {
   Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, ANIM_NOD);
   // "Alhafra is up along the northeast of Osenia... You'll see it eventually."
   Event_ShowMessage(ACTOR_WEST_GUARD, 0);
-  Event_SetFlag(0x916);
+  Event_SetFlag(FLAG_DRAWBRIDGE_GUARDS_GREETED);
   Event_End();
 }
 
@@ -168,7 +171,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 10, 0x913, EVENT(MadraDrawbridge_BlockBridge)},
-    {TRIGGER_STEP, 10, 0x916, EVENT(MadraDrawbridge_GreetPermittedParty)},
+    {TRIGGER_STEP, 10, FLAG_DRAWBRIDGE_GUARDS_GREETED,
+     EVENT(MadraDrawbridge_GreetPermittedParty)},
     {TRIGGER_TALK, ACTOR_EAST_GUARD, 0x913,
      EVENT(MadraDrawbridge_AskGoingToOsenia)},
     {TRIGGER_TALK, ACTOR_EAST_GUARD, CONDITION_ALWAYS,

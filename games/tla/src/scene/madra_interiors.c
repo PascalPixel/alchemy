@@ -457,7 +457,7 @@ static inline void MadraInteriors_PlaceFacing(s32 actorId, s32 x, s32 z,
 void MadraInteriors_SetUpJail(void) {
   if (!Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     gFieldWork->unkd4c = 3;
-    if (!Event_GetFlag(0x911)) {
+    if (!Event_GetFlag(FLAG_PIERS_INTERROGATED)) {
       MadraInteriors_InterrogatePiers();
     } else {
       Actor_SetPosition(ACTOR_STERN_INTERROGATOR, 0, 0);
@@ -497,7 +497,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_MADRA_INTERIORS_HOUSES) {
     event = Ram_HeapSlots->fieldWork;
     event->unkd4c = 3;
-    if (!Event_GetFlag(0x821)) {
+    if (!Event_GetFlag(FLAG_TRANSFERRED_WON_COLOSSO)) {
       Actor_SetPosition(ACTOR_MORGAN, 0, 0);
       Actor_SetPosition(ACTOR_DEKKA, 0, 0);
     } else {
@@ -793,7 +793,7 @@ answered:
 piersLeft:
   FieldActor_WaitForMoveById(ACTOR_JAIL_KRADEN);
   Actor_SetPosition(ACTOR_JAIL_KRADEN, 0, 0);
-  Event_SetFlag(0x911);
+  Event_SetFlag(FLAG_PIERS_INTERROGATED);
   Event_End();
   return;
 }

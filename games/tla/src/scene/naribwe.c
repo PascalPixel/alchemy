@@ -7,6 +7,12 @@
 #include "sprite_ids.h"
 #include "field/field_work.h"
 #include "flags.h"
+
+/// The villager has asked where the party comes from.
+#define FLAG_ASKED_WHERE_FROM 0x85e
+
+/// The villager has asked about the Kibombo expedition.
+#define FLAG_ASKED_ABOUT_EXPEDITION 0x85d
 #include "text/msg_ids.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
@@ -112,19 +118,19 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// "The Kibombo went on an expedition to the east, but they've already
-/// returned." Asked once (flag 0x85d); afterwards the villager talks of
-/// Akafubu.
+/// returned." Asked once (FLAG_ASKED_ABOUT_EXPEDITION); afterwards the villager
+/// talks of Akafubu.
 void Naribwe_AskAboutKibomboExpedition(void) {
   s32 msg;
 
-  if (Event_GetFlag(0x85d) == 0) {
+  if (Event_GetFlag(FLAG_ASKED_ABOUT_EXPEDITION) == 0) {
     msg = (s32)MsgNaribweKibomboWentOnExpedition;
     Event_SetMessageId(msg);
     // "The Kibombo went on an expedition to the east, but they've already..."
     Event_OpenMessage(ACTOR_WOMAN_ON_THE_KIBOMBO_EXPEDITION, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_SetMessageId(msg + 1);
-      Event_SetFlag(0x85d);
+      Event_SetFlag(FLAG_ASKED_ABOUT_EXPEDITION);
     } else {
       Event_SetMessageId(msg + 2);
     }
@@ -136,18 +142,19 @@ void Naribwe_AskAboutKibomboExpedition(void) {
   }
 }
 
-/// "Can you tell me where you have come from?" Asked once (flag 0x85e).
+/// "Can you tell me where you have come from?" Asked once
+/// (FLAG_ASKED_WHERE_FROM).
 void Naribwe_AskWhereFrom(void) {
   s32 msg;
 
-  if (Event_GetFlag(0x85e) == 0) {
+  if (Event_GetFlag(FLAG_ASKED_WHERE_FROM) == 0) {
     msg = (s32)MsgNaribweCanYouTellMeWhere;
     Event_SetMessageId(msg);
     // "Can you tell me where you have come from?"
     Event_OpenMessage(ACTOR_WOMAN_ASKING_WHERE_FROM, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_SetMessageId(msg + 1);
-      Event_SetFlag(0x85d);
+      Event_SetFlag(FLAG_ASKED_ABOUT_EXPEDITION);
     } else {
       Event_SetMessageId(msg + 2);
     }

@@ -773,7 +773,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
       if (answer == 0) {
         GameFlag_SetByte(1000, 0);
         Event_SetFlag(FLAG_MONSTER_BATTLE);
-        Event_ClearFlag(0x172);
+        Event_ClearFlag(FLAG_LINK_BATTLE_ARRANGED);
         Event_ClearFlag(FLAG_LINK_BATTLE);
         Event_SetFlag(FLAG_SCENE_TEMP_02);
         line = msg + 7;
@@ -821,7 +821,7 @@ s32 LinkLobby_ChooseBattleMode(void) {
       if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
         if (LinkLobby_PeerSlotMatches(0)) {
           Event_SetFlag(FLAG_LINK_BATTLE);
-          Event_SetFlag(0x172);
+          Event_SetFlag(FLAG_LINK_BATTLE_ARRANGED);
           if (Event_GetFlag(FLAG_SCENE_TEMP_01))
             Event_SetMessageId(msg + 3);
           else
@@ -966,13 +966,13 @@ void LinkLobby_OpenSanctum(s32 value) {
 }
 
 /// Whether owner is one of the first three active owners, or the first four
-/// while flag 370 is clear; an 0xff entry ends the list.
+/// while FLAG_LINK_BATTLE_ARRANGED is clear; an 0xff entry ends the list.
 s32 LinkLobby_PartyContains(s32 owner) {
   s32 count = Party_CountMembers();
   s32 limit = 3;
   s32 i;
 
-  if (!Event_GetFlag(370))
+  if (!Event_GetFlag(FLAG_LINK_BATTLE_ARRANGED))
     limit = 4;
   if (count > limit)
     count = limit;
@@ -1453,7 +1453,7 @@ s32 LinkLobby_Initialize(void) {
     Event_End();
   } else {
     Serial_Initialize();
-    Event_ClearFlag(0x172);
+    Event_ClearFlag(FLAG_LINK_BATTLE_ARRANGED);
     GameFlag_SetByte(0x3f8, -1);
     if (gMainRoutineWork.idleSleepEnabled != 0) {
       Event_Start();

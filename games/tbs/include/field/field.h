@@ -15,6 +15,16 @@
 
 struct Actor;
 
+/// The screen in 8-pixel tiles, 30 across and 20 down, and a text background's
+/// map, 32 tiles across.
+#define SCREEN_COLUMNS (DISPLAY_WIDTH / 8)
+#define SCREEN_ROWS (DISPLAY_HEIGHT / 8)
+#define BG_MAP_COLUMNS 32
+
+/// Each half of palette RAM, the background's and the sprites', holds 256
+/// colours.
+#define PALETTE_HALF_COLORS (BG_PLTT_SIZE / sizeof(u16))
+
 /// An IWRAM word the scrolling camera's setup clears; nothing in the tree
 /// reads it.
 extern s32 gCamera_UnreadWord1;

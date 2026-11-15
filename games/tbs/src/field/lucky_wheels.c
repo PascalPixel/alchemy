@@ -325,6 +325,18 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 /// The symbol that matches any other on a payline
 /// (gLuckyWheels_SymbolPrizes).
 #define LUCKY_WHEELS_WILD_SYMBOL 5
+
+/// The machine fades in and out over 16 frames, a sixteenth of full brightness
+/// a frame; the win flashes the screen darker over as many.
+#define LUCKY_WHEELS_FADE_FRAMES 16
+
+/// The win cycles the background through five palettes, 16 frames each.
+#define LUCKY_WHEELS_CYCLE_FRAMES 16
+#define LUCKY_WHEELS_CYCLE_PALETTES 5
+
+/// The jackpot sparks: four bursts of 256 in turn, one every eight frames.
+#define LUCKY_WHEELS_BURST_SPARKS 256
+#define LUCKY_WHEELS_SPARK_COUNT (4 * LUCKY_WHEELS_BURST_SPARKS)
 /// A held direction moves the cursor once, waits 12 frames, then moves it
 /// again with 4 frames between each move.
 #define LUCKY_WHEELS_REPEAT_DELAY 12
@@ -415,11 +427,14 @@ const u8 gLuckyWheels_TitleLetterTiles[LUCKY_WHEELS_TITLE_LETTERS] = {
 #endif
 };
 
-/// The positions of the machine's fourteen sprites, in screen pixels.
-const u8 gLuckyWheels_MachineSpriteX[] = {2,   0,  232, 232, 32,  32,  200,
-                                          200, 28, 28,  208, 208, 219, 219};
-const u8 gLuckyWheels_MachineSpriteY[] = {2,   152, 0,   152, 8,   104, 8,
-                                          104, 118, 140, 118, 140, 6,   108};
+/// The positions of the machine's lights, in screen pixels: its four corners
+/// first, then the lights along its frame.
+#define LUCKY_WHEELS_MACHINE_LIGHTS 14
+#define LUCKY_WHEELS_CORNER_LIGHTS 4
+const u8 gLuckyWheels_MachineSpriteX[LUCKY_WHEELS_MACHINE_LIGHTS] = {
+    2, 0, 232, 232, 32, 32, 200, 200, 28, 28, 208, 208, 219, 219};
+const u8 gLuckyWheels_MachineSpriteY[LUCKY_WHEELS_MACHINE_LIGHTS] = {
+    2, 152, 0, 152, 8, 104, 8, 104, 118, 140, 118, 140, 6, 108};
 
 /// The advance of each title letter, in pixels, from LUCKY_WHEELS_TITLE_X. The
 /// last letter's advance is never used; Japanese leaves it out (0).
@@ -910,11 +925,11 @@ void LuckyWheels_Update(void) {
     }
   }
 
-  for (k = 0; k != 14; k++) {
+  for (k = 0; k != LUCKY_WHEELS_MACHINE_LIGHTS; k++) {
     work->oam[sprite].attr01 = (gLuckyWheels_MachineSpriteX[k] << 16) |
                                objMode | gLuckyWheels_MachineSpriteY[k] |
                                OBJ_SIZE_32X16 | OBJ_256_COLORS;
-    if (k <= 3)
+    if (k < LUCKY_WHEELS_CORNER_LIGHTS)
       work->oam[sprite].attr2 =
           OBJ_PRIORITY(1) | LUCKY_WHEELS_CORNER_LIGHT_TILES;
     else
@@ -1126,11 +1141,11 @@ void LuckyWheels_Run(void) {
 
   count = 0;
   j = 0;
-  for (k = 0; k != 20; k++) {
-    for (i = 0; i != 32; i++, j += 2) {
+  for (k = 0; k != SCREEN_ROWS; k++) {
+    for (i = 0; i != BG_MAP_COLUMNS; i++, j += 2) {
       if (i >= 5 && i <= 24 && k > 2 && k <= 13) {
         *(volatile u16 *)(BG_SCREEN_BLOCK(5) + j) = 0xa1a6;
-      } else if (i > 29) {
+      } else if (i >= SCREEN_COLUMNS) {
         *(volatile u16 *)(BG_SCREEN_BLOCK(5) + j) = 0;
       } else {
         *(volatile u16 *)(BG_SCREEN_BLOCK(5) + j) = 0xa1a8 + count;
@@ -1145,24 +1160,25 @@ void LuckyWheels_Run(void) {
   entry += 32;
   Decompress_TaggedLz(entry, tiles);
   j = 0;
-  for (k = 0; k != 20; k++) {
-    for (i = 0; i != 30; i++) {
+  for (k = 0; k != SCREEN_ROWS; k++) {
+    for (i = 0; i != SCREEN_COLUMNS; i++) {
       if (!(i >= 5 && i <= 24 && k > 2 && k <= 13)) {
-        Dma_Set(tiles + (k * 30 + i) * 32,
+        Dma_Set(tiles + (k * SCREEN_COLUMNS + i) * TILE_SIZE_4BPP,
                 (void *)(BG_CHAR_BLOCK(2) + 0x3500 + j), DMA_COPY_WORDS(8),
                 REG_DMA3);
-        j += 32;
+        j += TILE_SIZE_4BPP;
       }
     }
   }
   Iwram_ClearWords(BG_SCREEN_BLOCK(5) + 0x500, 768);
   j = 0;
-  for (k = 0; k != 20; k++) {
-    for (i = 0; i != 32; i++, j += 2) {
+  for (k = 0; k != SCREEN_ROWS; k++) {
+    for (i = 0; i != BG_MAP_COLUMNS; i++, j += 2) {
       if (k < 2 || k > 16)
         *(volatile u16 *)(BG_SCREEN_BLOCK(6) + j) = 191;
       else
-        *(volatile u16 *)(BG_SCREEN_BLOCK(6) + j) = k * 32 + i + 148;
+        *(volatile u16 *)(BG_SCREEN_BLOCK(6) + j) =
+            k * BG_MAP_COLUMNS + i + 148;
     }
   }
   REG_BG1CNT = BGCNT_SCREEN_BASE(5) | BGCNT_CHAR_BASE(2) | BGCNT_PRIORITY(1);
@@ -1260,13 +1276,12 @@ void LuckyWheels_Run(void) {
     Iwram_FillWords(canvas, size, 0);
     Dma_Set(canvas, (void *)LUCKY_WHEELS_CANVAS_TILES,
             DMA_COPY_WORDS(LUCKY_WHEELS_CANVAS_SIZE / 4), REG_DMA3);
-    // Each palette RAM half: 256 colours of two bytes, counted in words.
-    Dma_Set((void *)BG_PLTT, work, DMA_COPY_WORDS(256 * sizeof(u16) / 4),
+    Dma_Set((void *)BG_PLTT, work, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
+    Dma_Set((void *)OBJ_PLTT, shade, DMA_COPY_WORDS(BG_PLTT_SIZE / 4),
             REG_DMA3);
-    Dma_Set((void *)OBJ_PLTT, shade, DMA_COPY_WORDS(256 * sizeof(u16) / 4),
-            REG_DMA3);
-    LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, 256);
-    LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0, 256);
+    LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, PALETTE_HALF_COLORS);
+    LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0,
+                            PALETTE_HALF_COLORS);
     REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                   DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
     if (PartyInventory_CountItemFar(ITEM_GAME_TICKET) == 1) {
@@ -1289,31 +1304,37 @@ void LuckyWheels_Run(void) {
     Task_Add(LuckyWheels_TransferCanvas, TASK_PASS_VBLANK);
 
     for (frame = 0; state->state != LUCKY_WHEELS_DONE; frame++) {
-      if (frame <= 16) {
-        LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, frame << 12, 256);
-        LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, frame << 12, 256);
+      if (frame <= LUCKY_WHEELS_FADE_FRAMES) {
+        LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT,
+                                frame * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES),
+                                PALETTE_HALF_COLORS);
+        LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT,
+                                frame * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES),
+                                PALETTE_HALF_COLORS);
       }
       if (state->state == LUCKY_WHEELS_SHOWING_WIN) {
-        s32 phase = frame % 80;
+        s32 phase =
+            frame % (LUCKY_WHEELS_CYCLE_PALETTES * LUCKY_WHEELS_CYCLE_FRAMES);
 
-        if (phase <= 15)
+        if (phase < LUCKY_WHEELS_CYCLE_FRAMES)
           Palette_StepTowardResource(RESOURCE_MERCURY_DJINN_SHEET);
-        else if (phase <= 31)
+        else if (phase < LUCKY_WHEELS_CYCLE_FRAMES * 2)
           Palette_StepTowardResource(RESOURCE_VENUS_DJINN_SHEET);
-        else if (phase <= 47)
+        else if (phase < LUCKY_WHEELS_CYCLE_FRAMES * 3)
           Palette_StepTowardResource(RESOURCE_EMBER_STREAK_SHEET);
-        else if (phase <= 63)
+        else if (phase < LUCKY_WHEELS_CYCLE_FRAMES * 4)
           Palette_StepTowardResource(RESOURCE_LIME_PALETTE);
         else
           Palette_StepTowardResource(RESOURCE_JUPITER_DJINN_SHEET);
-        if (state->timer <= 15)
+        if (state->timer < LUCKY_WHEELS_FADE_FRAMES)
           Palette_DarkenScreenStep();
-        if (state->timer > 16 && (frame & 7) == 0) {
+        if (state->timer > LUCKY_WHEELS_FADE_FRAMES && (frame & 7) == 0) {
           s32 x = (Random16() & 127) + 56;
           s32 y = (Random16() & 31) + 48;
-          struct Particle *spark = &LUCKY_WHEELS_SPARKS[(frame / 8 & 3) * 256];
+          struct Particle *spark =
+              &LUCKY_WHEELS_SPARKS[(frame / 8 & 3) * LUCKY_WHEELS_BURST_SPARKS];
 
-          for (j = 0; j != 256; j++) {
+          for (j = 0; j != LUCKY_WHEELS_BURST_SPARKS; j++) {
             s32 speed;
             s32 angle;
 
@@ -1327,7 +1348,7 @@ void LuckyWheels_Run(void) {
             spark++;
           }
         }
-        for (j = 0; j != 1024; j++) {
+        for (j = 0; j != LUCKY_WHEELS_SPARK_COUNT; j++) {
           struct Particle *spark = &LUCKY_WHEELS_SPARKS[j];
 
           if (spark->variant > 0) {
@@ -1359,24 +1380,24 @@ void LuckyWheels_Run(void) {
       }
       if (state->state == LUCKY_WHEELS_BETTING ||
           state->state == LUCKY_WHEELS_WON) {
-        for (j = 0; j != 7; j++)
+        for (j = 0; j != LUCKY_WHEELS_PAYLINES; j++)
           litLines[j] = 0;
         if (state->state == LUCKY_WHEELS_BETTING) {
-          litLines[3] = 1;
+          litLines[LUCKY_WHEELS_MIDDLE_LINE] = 1;
           if (state->bet > 1) {
-            litLines[4] = 1;
-            litLines[2] = 1;
+            litLines[LUCKY_WHEELS_MIDDLE_LINE + 1] = 1;
+            litLines[LUCKY_WHEELS_MIDDLE_LINE - 1] = 1;
           }
           if (state->bet > 2) {
-            litLines[5] = 1;
-            litLines[1] = 1;
+            litLines[LUCKY_WHEELS_MIDDLE_LINE + 2] = 1;
+            litLines[LUCKY_WHEELS_MIDDLE_LINE - 2] = 1;
           }
           if (state->bet > 3) {
-            litLines[6] = 1;
-            litLines[0] = 1;
+            litLines[LUCKY_WHEELS_MIDDLE_LINE + 3] = 1;
+            litLines[LUCKY_WHEELS_MIDDLE_LINE - 3] = 1;
           }
         } else if ((frame & 7) <= 3) {
-          for (j = 0; j != 7; j++)
+          for (j = 0; j != LUCKY_WHEELS_PAYLINES; j++)
             litLines[j] = state->winningLines[j];
         }
         for (j = 0; j != 3; j++) {
@@ -1403,10 +1424,15 @@ void LuckyWheels_Run(void) {
       wait(1);
     }
 
-    for (j = 0; j != 17; j++) {
-      LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, Q16_ONE - (j << 12), 256);
-      LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, Q16_ONE - (j << 12),
-                              256);
+    for (j = 0; j != LUCKY_WHEELS_FADE_FRAMES + 1; j++) {
+      LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT,
+                              Q16_ONE -
+                                  j * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES),
+                              PALETTE_HALF_COLORS);
+      LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT,
+                              Q16_ONE -
+                                  j * (Q16_ONE / LUCKY_WHEELS_FADE_FRAMES),
+                              PALETTE_HALF_COLORS);
       wait(1);
     }
     HeapSlot_Release(HEAP_SLOT_RAM_CODE_2);
@@ -1420,20 +1446,22 @@ void LuckyWheels_Run(void) {
   }
 }
 
-// The LZ packer: a window of 1024 bytes, matches of up to PACK_MATCH_MAX
-// bytes at most PACK_DISTANCE_MAX back, and PACK_LOOKAHEAD bytes read ahead.
-#define PACK_WINDOW_MASK 0x3ff
+// The LZ packer: a window of PACK_WINDOW_SIZE bytes, matches of up to
+// PACK_MATCH_MAX bytes at most PACK_DISTANCE_MAX back, and PACK_LOOKAHEAD bytes
+// read ahead.
+#define PACK_WINDOW_SIZE 1024
+#define PACK_WINDOW_MASK (PACK_WINDOW_SIZE - 1)
 #define PACK_MATCH_MAX 272
 #define PACK_DISTANCE_MAX 63
 #define PACK_LOOKAHEAD 672
 
 /// The LZ packer below: empties its 256 hash chains (one per byte value) and
-/// numbers its 1024 window nodes.
+/// numbers its window nodes.
 void LzPack_ResetSlotBuckets(void) {
   s32 index;
   struct LzPackNode **bucket;
 
-  for (index = 0; index < 1024; index++) {
+  for (index = 0; index < PACK_WINDOW_SIZE; index++) {
     gLzPackWork->nodes[index].slot = index;
     gLzPackWork->nodes[index].previous = NULL;
   }

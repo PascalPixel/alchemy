@@ -4,10 +4,6 @@
 
 #include "event_commands_internal.h"
 
-/// The screen in 8-pixel tiles, as windows and portraits are placed.
-#define SCREEN_COLUMNS (DISPLAY_WIDTH / 8)
-#define SCREEN_ROWS (DISPLAY_HEIGHT / 8)
-
 /// The event command "open message": opens the event's current message in a
 /// speech window next to the speaking actor, with the speaker's portrait beside
 /// it when it has one, and moves on to the next message.

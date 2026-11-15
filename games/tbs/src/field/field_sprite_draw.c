@@ -97,14 +97,8 @@ s32 Sprite_ComposePicture(struct Sprite *animation, u16 dir) {
         animation->count--;
         goto select_direction;
       // Unused commands, skipped. 251 is not among them: it shows as a picture.
-      case 242:
-      case 243:
-      case 244:
-      case 246:
-      case 247:
-      case 248:
-      case 249:
-      case 250:
+      case ANIMCMD_HOLD + 1 ... ANIMCMD_WAIT - 1:
+      case ANIMCMD_WAIT + 1 ... 250:
       case 252:
         break;
       default:

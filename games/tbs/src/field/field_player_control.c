@@ -53,8 +53,10 @@ enum PlayerStepBlock {
   PLAYER_STEP_BLOCKED_BY_MAP = 1, ///< every heading tried runs into the map
   /// A solid actor ahead, or one with no room to be pushed.
   PLAYER_STEP_BLOCKED_BY_ACTOR = 2,
-  PLAYER_STEP_BLOCKED = 3,     ///< either of the two
-  PLAYER_STEP_NO_DIRECTION = 4 ///< the direction pad is not held
+  PLAYER_STEP_BLOCKED = 3, ///< either of the two
+  /// No step, and none counted as blocked: the pad is not held, or a climb
+  /// meets a wall.
+  PLAYER_STEP_STOPPED = 4
 };
 
 /// The footprints left in snow such as Imil's (FIELD_SPRITE_FOOTPRINT,
@@ -239,7 +241,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
   // walls); otherwise try headings up to 67.5 degrees off.
   angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
   if ((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
-    collision |= PLAYER_STEP_NO_DIRECTION;
+    collision |= PLAYER_STEP_STOPPED;
   } else {
     collision = 0;
     position.x = actor->x.fixed;
@@ -568,7 +570,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *actor) {
   angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
   direction = angle;
   if (direction == WORLD_MAP_KEY_HEADING_NONE) {
-    collision |= PLAYER_STEP_NO_DIRECTION;
+    collision |= PLAYER_STEP_STOPPED;
   } else {
     collision = 0;
     position.x = actor->x.fixed;
@@ -849,7 +851,7 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
   animation = ANIM_LEADER_CLING;
   angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
   if (angle == WORLD_MAP_KEY_HEADING_NONE) {
-    collisionFlags = PLAYER_STEP_NO_DIRECTION;
+    collisionFlags = PLAYER_STEP_STOPPED;
   } else {
     // The animation by the pad's heading: climbing east for headings below a
     // sixteenth of a turn, west for the sixteenth from a half turn on, up or
@@ -890,8 +892,7 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
                                          MAPGRID_SIZE];
     if (MapGrid_IsWallAt((struct WorldPosition *)&position) != 0 ||
         sourceCell->behavior != destinationCell->behavior) {
-      // Stopped, but not counted among the blocked steps.
-      collisionFlags = PLAYER_STEP_NO_DIRECTION;
+      collisionFlags = PLAYER_STEP_STOPPED;
       animation = ANIM_LEADER_CLING;
     } else if (gKeysHeld & KEY_UP) {
       // Climbing needs the ground a cell further up to stand at least 16

@@ -185,6 +185,18 @@ const s16 gLuckyDice_FaceHeights[] = {147, 80, 15, -42, -95, -32767};
 #define DICE_PAYOUT_FRAMES 15
 /// The coins are drawn with six digits.
 #define DICE_COIN_DIGITS 6
+
+/// The board fades in and out over 16 frames, a sixteenth of full brightness a
+/// frame.
+#define DICE_FADE_FRAMES 16
+
+/// The depths from the camera a die is drawn between: nearer or further is
+/// drawn as at the limit, and the nearer, the larger.
+#define DICE_NEAREST_DEPTH 350
+#define DICE_FARTHEST_DEPTH 650
+
+/// Two dice whose centres come closer than this push each other apart.
+#define DICE_TOUCH_DISTANCE 50
 /// Where each picture's sprite tiles start, in OAM's 32-byte steps (two to a
 /// 256-colour tile): the rolling die's views from 0, its shadow, the big
 /// numbers (the result's lettering counted on from them), the aiming hand,
@@ -265,7 +277,7 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
 /// Runs the Lucky Dice minigame until the player quits or cannot afford a
 /// throw. Each throw costs ten coins per level of the party's average.
 void LuckyDice_Run(void) {
-  u16 bgPalette[256];
+  u16 bgPalette[PALETTE_HALF_COLORS];
   s32 spriteDepth[DICE_RESULT_COUNT]; // the two dice, then their shadows
   // The two faces, then the two rows the dice stopped in.
   s32 numbers[DICE_RESULT_COUNT];
@@ -347,9 +359,10 @@ void LuckyDice_Run(void) {
   // Fill BG1's map (screen block 6) with a 30-tile-wide picture, then load
   // the board and dice graphics with their palettes faded to black.
   index = 0;
-  for (tileY = 0; tileY != 20; tileY++) {
-    for (tileX = 0; tileX != 32; tileX++) {
-      *(volatile u16 *)(BG_SCREEN_BLOCK(6) + index) = tileX + tileY * 30;
+  for (tileY = 0; tileY != SCREEN_ROWS; tileY++) {
+    for (tileX = 0; tileX != BG_MAP_COLUMNS; tileX++) {
+      *(volatile u16 *)(BG_SCREEN_BLOCK(6) + index) =
+          tileX + tileY * SCREEN_COLUMNS;
       index += 2;
     }
   }
@@ -449,11 +462,14 @@ void LuckyDice_Run(void) {
   frame = 0;
   for (;;) {
     resetDice = 0;
-    // Fade in over the first 16 frames.
-    if (frame <= 16) {
-      LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, frame << 12,
-                                  256);
-      LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, frame << 12, 256);
+    // Fade in.
+    if (frame <= DICE_FADE_FRAMES) {
+      LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT,
+                                  frame * (Q16_ONE / DICE_FADE_FRAMES),
+                                  PALETTE_HALF_COLORS);
+      LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT,
+                                  frame * (Q16_ONE / DICE_FADE_FRAMES),
+                                  PALETTE_HALF_COLORS);
     }
     Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
@@ -692,14 +708,13 @@ void LuckyDice_Run(void) {
       rollingDie = &diceWork->particles[drawOrder[index]];
       // Projection reads the die's three coordinate words directly.
       Transform_ProjectPoint(rollingDie, screen);
-      // Depth is clamped to 350..650; the nearer, the larger the die.
-      if (screen[2] < 350) {
-        screen[2] = 350;
+      if (screen[2] < DICE_NEAREST_DEPTH) {
+        screen[2] = DICE_NEAREST_DEPTH;
       }
-      if (screen[2] > 650) {
-        screen[2] = 650;
+      if (screen[2] > DICE_FARTHEST_DEPTH) {
+        screen[2] = DICE_FARTHEST_DEPTH;
       }
-      spriteDepth[drawOrder[index]] = screen[2] - 350;
+      spriteDepth[drawOrder[index]] = screen[2] - DICE_NEAREST_DEPTH;
       halfSize = 2048 / (spriteDepth[drawOrder[index]] / 2 + 128);
       dieX = screen[0] - halfSize;
       dieY = screen[1] - halfSize;
@@ -745,13 +760,13 @@ void LuckyDice_Run(void) {
                  diceWork->particles[index].z);
       Transform_ProjectPoint(groundPoint, screen);
       // A shadow shrinks as its die rises.
-      if (screen[2] < 350) {
-        screen[2] = 350;
+      if (screen[2] < DICE_NEAREST_DEPTH) {
+        screen[2] = DICE_NEAREST_DEPTH;
       }
-      if (screen[2] > 650) {
-        screen[2] = 650;
+      if (screen[2] > DICE_FARTHEST_DEPTH) {
+        screen[2] = DICE_FARTHEST_DEPTH;
       }
-      spriteDepth[2 + index] = screen[2] - 350;
+      spriteDepth[2 + index] = screen[2] - DICE_NEAREST_DEPTH;
       spriteDepth[2 + index] += FIELD_PIXEL(diceWork->particles[index].y);
       shadowX = screen[0];
       shadowY = screen[1];
@@ -784,7 +799,7 @@ void LuckyDice_Run(void) {
             separationZ = FIELD_PIXEL(rollingDie->z - otherDie->z);
             if (separationX * separationX + separationY * separationY +
                     separationZ * separationZ <=
-                50 * 50 - 1) {
+                DICE_TOUCH_DISTANCE * DICE_TOUCH_DISTANCE - 1) {
               separation = Iwram_Sqrt(separationX * separationX +
                                       separationY * separationY +
                                       separationZ * separationZ);
@@ -982,11 +997,13 @@ void LuckyDice_Run(void) {
     frame++;
   }
 
-  // Fade out over 17 frames and free the work blocks.
-  for (index = 0; index != 17; index++) {
-    scale = Q16_ONE - (index << 12);
-    LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, scale, 256);
-    LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale, 256);
+  // Fade out and free the work blocks.
+  for (index = 0; index != DICE_FADE_FRAMES + 1; index++) {
+    scale = Q16_ONE - index * (Q16_ONE / DICE_FADE_FRAMES);
+    LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, scale,
+                                PALETTE_HALF_COLORS);
+    LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale,
+                                PALETTE_HALF_COLORS);
     wait(1);
   }
   HeapSlot_Release(HEAP_SLOT_CAMERA);

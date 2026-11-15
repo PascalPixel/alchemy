@@ -283,9 +283,8 @@ void TundariaTower_OpenDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s16 *choice;
   s32 x = 37;
-  s32 *owner;
+  struct MainRoutineWork *state;
   s32 one;
-  s32 height;
   s32 cell;
 
   Event_Start();
@@ -295,28 +294,26 @@ void TundariaTower_OpenDoor(void) {
     x = 25;
   Event_PlaySound(SE_DOOR_OPEN);
   one = 1;
-  height = 2;
-  MapGrid_CopyCellsTo(30, 38, x, 49, one, height);
+  MapGrid_CopyCellsTo(30, 38, x, 49, one, 2);
   FieldEvent_Wait(10);
-  MapGrid_CopyCellsTo(32, 38, x, 49, one, height);
+  MapGrid_CopyCellsTo(32, 38, x, 49, one, 2);
   FieldEvent_Wait(10);
-  /* FAKEMATCH(temporary): the leader's id read through a word pointer into
-   * the work. */
-  owner = (s32 *)&gMainRoutineWork;
-  owner += offsetof(struct MainRoutineWork, leaderActorId) / sizeof(s32);
-  Actor_SetSpeed(*owner, 0.5);
-  ((struct Actor *)((s32)Actor_GetById(*owner)))->motionFlags = 0;
-  cell = (((struct Actor *)((s32)Actor_GetById(*owner)))->x.fixed >> 19) | one;
-  Actor_WalkToAndWait(*owner, cell << 3,
-                      *(s16 *)((u8 *)((s32)Actor_GetById(*owner)) + 18) | one);
+  state = &gMainRoutineWork;
+  Actor_SetSpeed(state->leaderActorId, 0.5);
+  Actor_GetById(state->leaderActorId)->motionFlags = 0;
+  cell = (Actor_GetById(state->leaderActorId)->x.fixed >> 19) | one;
+  Actor_WalkToAndWait(state->leaderActorId, cell << 3,
+                      Actor_GetById(state->leaderActorId)->z.part[0].pixel |
+                          one);
   Event_PlaySound(SE_MAP_EXIT);
-  cell = ((struct Actor *)((s32)Actor_GetById(*owner)))->x.fixed;
-  Actor_WalkTo(*owner, (cell >> 19) << 3,
-               (*(s16 *)((u8 *)((s32)Actor_GetById(*owner)) + 18) | one) - 16);
+  cell = Actor_GetById(state->leaderActorId)->x.fixed;
+  Actor_WalkTo(state->leaderActorId, (cell >> 19) << 3,
+               (Actor_GetById(state->leaderActorId)->z.part[0].pixel | one) -
+                   16);
   FieldEvent_Wait(5);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_WaitForMoveById(*owner);
+  Actor_WaitForMoveById(state->leaderActorId);
   Import_EventSetExitRequest(*choice);
   Event_End();
 }

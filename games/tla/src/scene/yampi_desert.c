@@ -1180,7 +1180,7 @@ extern u32 gYampiDesert_LastTravelersFollow[];
 /// From the ledge, the party sees the travelers by the oasis below find their
 /// way through.
 void YampiDesert_SeeTravelersAbove(s32 p0) {
-  s32 *owner;
+  struct MainRoutineWork *state;
   s32 angle;
 
   Call1((void (*)())Event_Start, p0);
@@ -1202,12 +1202,10 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
                       FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_ELDER, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_MAYOR, FACING_NORTH_NORTHEAST, 0);
-  /* FAKEMATCH(temporary): the leader's id read through a word pointer into
-   * the work. */
-  owner = (s32 *)&gMainRoutineWork;
-  owner += offsetof(struct MainRoutineWork, leaderActorId) / sizeof(s32);
-  FieldActor_ShowEmote(*owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_FaceDirection(*owner, FACING_WEST, 0);
+  state = &gMainRoutineWork;
+  FieldActor_ShowEmote(state->leaderActorId, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                       0);
+  Actor_FaceDirection(state->leaderActorId, FACING_WEST, 0);
   ((struct Actor *)FieldCamera_GetActor())->motionFlags = 0;
   FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveTo(212, 0, 212, 1);
@@ -1283,7 +1281,7 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Actor_SetSpeed(ACTOR_PARCHED_TRAVELER, 1.6);
   Actor_SetSpeed(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 1.6);
   Actor_SetSpeed(ACTOR_ELDER, 1.6);
-  Actor_WatchAndSetScript(*owner, ACTOR_ELDER);
+  Actor_WatchAndSetScript(state->leaderActorId, ACTOR_ELDER);
   {
     s32 path = (s32)gYampiDesert_TravelersFollow;
 
@@ -1303,7 +1301,7 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
     FieldEvent_Wait(20);
     Actor_SetMovementTypeAndWaitById(ACTOR_PARCHED_TRAVELER, path);
   }
-  Actor_Stop(*owner);
+  Actor_Stop(state->leaderActorId);
   wait(1);
   Actor_SetPosition(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 0, 0);
   Actor_SetPosition(ACTOR_TRAVELER_SEEKING_EVIDENCE, 0, 0);

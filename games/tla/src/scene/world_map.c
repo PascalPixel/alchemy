@@ -2326,23 +2326,17 @@ void WorldMap_EndFlight(void) {
   Actor_SetFlightMode(Actor_GetById(Party_GetLeaderActor()), 0);
 }
 
-static inline void QueueBlend(u32 address, u32 value) {
-  /* FAKEMATCH(wrapper): forwarding through the inline sets the arguments up in
-   * their own order: the native finishes the value's orr before the register
-   * address's add. */
-  IoWriteQueue_Store16(address, value);
-}
-
 /// Run each frame of the lighthouse transition: every other two frames the
 /// blend alternates between two strengths.
 void WorldMap_UpdateTransitionBlend(void) {
 
-  IoWriteQueue_Store16((u32)&REG_BLDCNT,
+  Scene_QueueIoWrite16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   if (gFrameCount & 2)
-    QueueBlend((u32)&REG_BLDALPHA, gWorldMapBlend | (BLEND_WEIGHT_MAX - 4));
+    Scene_QueueIoWrite16((u32)&REG_BLDALPHA,
+                         gWorldMapBlend | (BLEND_WEIGHT_MAX - 4));
   else
-    QueueBlend((u32)&REG_BLDALPHA, gWorldMapBlend | BLEND_WEIGHT_MAX);
+    Scene_QueueIoWrite16((u32)&REG_BLDALPHA, gWorldMapBlend | BLEND_WEIGHT_MAX);
 }
 
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
@@ -2360,7 +2354,6 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 
 void WorldMap_PlayLighthouseTransition(s32 mode) {
   u8 *buffer;
-  u32 blend;
 
   System_Wait(1);
   Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
@@ -2438,11 +2431,8 @@ void WorldMap_PlayLighthouseTransition(s32 mode) {
     FieldEvent_Wait(45);
     FieldTask_Remove(WorldMap_UpdateTransitionBlend);
     DebugText_Clear();
-    /* FAKEMATCH(temporary): the blend read into blend before each of the two
-     * IoWriteQueue_Store16 calls. */
-    blend = gWorldMapBlend;
-    IoWriteQueue_Store16((u32)&REG_BLDALPHA, blend);
-    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
+    Scene_QueueIoWrite16((u32)&REG_BLDALPHA, gWorldMapBlend);
+    Scene_QueueIoWrite16((u32)&REG_BLDCNT, 0);
   } else {
     gWorldMapBlend = BLEND_ALPHA(0, 13);
     FieldEvent_Wait(4);
@@ -2454,9 +2444,8 @@ void WorldMap_PlayLighthouseTransition(s32 mode) {
     FieldEvent_Wait(45);
     FieldTask_Remove(WorldMap_UpdateTransitionBlend);
     DebugText_Clear();
-    blend = gWorldMapBlend;
-    IoWriteQueue_Store16((u32)&REG_BLDALPHA, blend);
-    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
+    Scene_QueueIoWrite16((u32)&REG_BLDALPHA, gWorldMapBlend);
+    Scene_QueueIoWrite16((u32)&REG_BLDCNT, 0);
   }
   Heap_Release(buffer);
   Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
@@ -2465,7 +2454,8 @@ void WorldMap_PlayLighthouseTransition(s32 mode) {
 void WorldMap_LoadTidalWave(void) {
   u8 *buffer = Heap_AllocEwram(0x4000);
   u8 *frames;
-  s32 x, y, i, t, scrollX;
+  u32 x;
+  s32 y, i, scrollX;
   u16 scrollY;
   s32 mode;
 
@@ -2479,8 +2469,8 @@ void WorldMap_LoadTidalWave(void) {
                       DMA_COPY_WORDS(PICTURE_FIRST_TILE * TILE_SIZE_4BPP / 4));
   IO_WRITE_QUEUE_PUSH(PICTURE_TILES, (u32)frames,
                       DMA_COPY_WORDS(256 * TILE_SIZE_4BPP / 4));
-  IoWriteQueue_Store16((u32)&REG_BLDCNT, 0x3f41);
-  IoWriteQueue_Store16((u32)&REG_BLDALPHA,
+  Scene_QueueIoWrite16((u32)&REG_BLDCNT, 0x3f41);
+  Scene_QueueIoWrite16((u32)&REG_BLDALPHA,
                        BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX));
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 352;
@@ -2488,9 +2478,7 @@ void WorldMap_LoadTidalWave(void) {
   y = 0x2d60;
   x = 561;
   for (i = 95; i >= 0; i--) {
-    /* FAKEMATCH(temporary): x * 16 held in t before the divide. */
-    t = x * 16;
-    scrollX = t / 128;
+    scrollX = (s32)(x * 16) / 128;
     scrollY = -y / 128 + 352;
     gBgScroll[0].x = scrollX;
     gBgScroll[0].y = scrollY;
@@ -2506,7 +2494,7 @@ void WorldMap_LoadTidalWave(void) {
   mode = 0;
   PaletteFade_ApplyTarget(RGB_WHITE, mode);
   PaletteFade_Interpolate(1);
-  IoWriteQueue_Store16((u32)&REG_BLDALPHA, BLEND_ALPHA(0, BLEND_WEIGHT_MAX));
+  Scene_QueueIoWrite16((u32)&REG_BLDALPHA, BLEND_ALPHA(0, BLEND_WEIGHT_MAX));
   System_Wait(1);
   PaletteFade_ApplyTarget(0, 0);
   PaletteFade_Interpolate(60);

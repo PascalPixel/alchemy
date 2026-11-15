@@ -90,15 +90,14 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// Sets the layer blend, switching its alpha every two frames unless
 /// gStaffCredit_BlendSteady is set.
 void StaffCredit_BlendBeacon(void) {
-  u32 alphaReg = (u32)&REG_BLDALPHA;
-
-  IoWriteQueue_Store16((u32)&REG_BLDCNT,
+  Scene_QueueIoWrite16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   if ((gFrameCount & 2) && gStaffCredit_BlendSteady == 0) {
-    IoWriteQueue_Store16(alphaReg,
+    Scene_QueueIoWrite16((u32)&REG_BLDALPHA,
                          gStaffCredit_BlendLevel | (BLEND_WEIGHT_MAX - 1));
   } else {
-    IoWriteQueue_Store16(alphaReg, gStaffCredit_BlendLevel | BLEND_WEIGHT_MAX);
+    Scene_QueueIoWrite16((u32)&REG_BLDALPHA,
+                         gStaffCredit_BlendLevel | BLEND_WEIGHT_MAX);
   }
 }
 
@@ -529,8 +528,8 @@ void StaffCredit_ShowBeacon(s32 stage) {
   }
   Heap_Release(buffer);
   DebugText_Clear();
-  IoWriteQueue_Store16((u32)&REG_BLDALPHA, gStaffCredit_BlendLevel);
-  IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
+  Scene_QueueIoWrite16((u32)&REG_BLDALPHA, gStaffCredit_BlendLevel);
+  Scene_QueueIoWrite16((u32)&REG_BLDCNT, 0);
   Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
@@ -659,15 +658,13 @@ extern u16 gStaffCredit_PictureBlend;
 
 /// Sets the layer blend, switching its alpha every two frames.
 void StaffCredit_BlendPicture(void) {
-  u32 alphaRegister = (u32)&REG_BLDALPHA;
-
-  IoWriteQueue_Store16((u32)&REG_BLDCNT,
+  Scene_QueueIoWrite16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   if (gFrameCount & 2) {
-    IoWriteQueue_Store16(alphaRegister,
+    Scene_QueueIoWrite16((u32)&REG_BLDALPHA,
                          gStaffCredit_PictureBlend | (BLEND_WEIGHT_MAX - 4));
   } else {
-    IoWriteQueue_Store16(alphaRegister,
+    Scene_QueueIoWrite16((u32)&REG_BLDALPHA,
                          gStaffCredit_PictureBlend | BLEND_WEIGHT_MAX);
   }
 }
@@ -687,10 +684,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 
 UNUSED void StaffCredit_ShowPicture(s32 mode) {
   u8 *buffer;
-  u32 level;
 
-  /* FAKEMATCH(temporary): the blend level is read into level, a u32 local,
-   * before each IoWriteQueue_Store16 call. */
   System_Wait(1);
   Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
   gFieldWork->transition = 0;
@@ -782,9 +776,8 @@ UNUSED void StaffCredit_ShowPicture(s32 mode) {
     FieldEvent_Wait(45);
     FieldTask_Remove(StaffCredit_BlendPicture);
     DebugText_Clear();
-    level = gStaffCredit_PictureBlend;
-    IoWriteQueue_Store16((u32)&REG_BLDALPHA, level);
-    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
+    Scene_QueueIoWrite16((u32)&REG_BLDALPHA, gStaffCredit_PictureBlend);
+    Scene_QueueIoWrite16((u32)&REG_BLDCNT, 0);
   } else {
     gStaffCredit_PictureBlend = BLEND_ALPHA(0, 13);
     FieldEvent_Wait(4);
@@ -796,9 +789,8 @@ UNUSED void StaffCredit_ShowPicture(s32 mode) {
     FieldEvent_Wait(45);
     FieldTask_Remove(StaffCredit_BlendPicture);
     DebugText_Clear();
-    level = gStaffCredit_PictureBlend;
-    IoWriteQueue_Store16((u32)&REG_BLDALPHA, level);
-    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
+    Scene_QueueIoWrite16((u32)&REG_BLDALPHA, gStaffCredit_PictureBlend);
+    Scene_QueueIoWrite16((u32)&REG_BLDCNT, 0);
   }
   Heap_Release(buffer);
   Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);

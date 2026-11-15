@@ -7,8 +7,15 @@
 
 #include "types.h"
 #include "system/io_reg.h"
+#include "system/io_write_queue.h"
 
 struct Actor;
+
+/// Queues a halfword register write for the next VBlank: the picture layer's
+/// own call of IoWriteQueue_Store16, an inline over it as event.h's are.
+static inline void Scene_QueueIoWrite16(u32 address, u32 value) {
+  IoWriteQueue_Store16(address, value);
+}
 
 /// The picture layer drawn over the map on background 0: its tiles start at
 /// tile 128 of character block 0, its map is screen block 4, and it takes

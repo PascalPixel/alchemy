@@ -1904,30 +1904,28 @@ void MagmaRockInside_SpawnSpark(struct Actor *source) {
   Actor_StartScript(object, gMagmaRockInside_FlameScript);
 }
 
-/* VIEW(magma_rock_inside): tag struct Orbiter as struct
- * Orbiter__magma_rock_inside; scene/scene.h has another definition; tried with
- * the definition the rest of the object has, it does not compile in tla-ja
- * (magma_rock_inside.c): games/tla/src/scene/magma_rock_inside.c:1757:
- * structure has no member named `parent'. */
-struct Orbiter__magma_rock_inside {
-  u8 unk00[8];
+/// A spark circling Jenna as she learns Blaze, as its script reads the actor:
+/// its place, the radius it circles at, the steps it has left, its angle and
+/// speed, and the actor it circles.
+struct SparkOrbiter {
+  u8 beforeX[8];
   s32 x;
   s32 y;
   s32 z;
-  u8 unk14[0x38];
+  u8 beforeRadius[0x38];
   s32 radius;
-  u8 unk50[0x12];
+  u8 beforeTimer[0x12];
   u8 timer;
-  u8 unk63;
+  u8 afterTimer;
   u16 angle;
   u16 speed;
-  struct Orbiter__magma_rock_inside *parent;
+  struct SparkOrbiter *parent;
 };
 
-s32 MagmaRockInside_OrbitParent(struct Orbiter__magma_rock_inside *object) {
+s32 MagmaRockInside_OrbitParent(struct SparkOrbiter *object) {
   u16 *angle = &object->angle;
   u16 *speed = &object->speed;
-  struct Orbiter__magma_rock_inside *parent = object->parent;
+  struct SparkOrbiter *parent = object->parent;
   s32 *position;
   s16 heading;
 

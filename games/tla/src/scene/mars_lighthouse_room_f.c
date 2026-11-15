@@ -1397,16 +1397,6 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
 
 #include "shared/actor_raise_from_cell.h"
 
-/* VIEW(s167c): tag struct FieldWork as struct EventWork__s167c; event_work.h
- * has another definition; not tried: struct FieldWork__s167c was not found. */
-struct EventWork__s167c {
-  u8 unk_00[0x154];
-  u16 unk_154;
-  u8 unk_156[0xd44 - 0x156];
-  u16 unk_d44;
-  u16 unk_d46;
-};
-
 /// Unused here: the Jupiter Lighthouse's whirlwind carries the leader up.
 UNUSED void Whirlwind_CarryLeader(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;

@@ -1491,10 +1491,9 @@ void Actor_Release(struct Actor *object);
 
 void Ride_SetMode(s16 value) { RIDE_WORK->value0e = value; }
 
-/* VIEW(ride_handle): tag struct MarsLighthouseBeam as struct
- * MarsLighthouseBeam__ride_handle; scene/scene.h has another definition; not
- * tried: struct MarsLighthouseBeam__ride_handle was not found. */
-struct MarsLighthouseBeam__ride_handle {
+/// The ride work as FlameThrowers_Start fills it: the hit trigger and the stop
+/// callback, then the flame throwers and their stops.
+struct FlameThrowerBeam {
   u8 beforeHitTrigger[10];
   u16 hitTrigger; ///< the step trigger a flame that hits the leader raises
   u8 beforeOnStopped[4];
@@ -1508,8 +1507,7 @@ struct MarsLighthouseBeam__ride_handle {
 
 void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onStopped,
                          s32 hitTrigger) {
-  struct MarsLighthouseBeam__ride_handle *beam =
-      (struct MarsLighthouseBeam__ride_handle *)RIDE_WORK;
+  struct FlameThrowerBeam *beam = (struct FlameThrowerBeam *)RIDE_WORK;
   struct MarsLighthouseBeamTarget *target = beam->targets;
   s32 id;
   s32 i;

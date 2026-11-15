@@ -385,7 +385,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
                            gBattleEffect_MarkerParticleScript);
       Actor_SetSpriteFlagsFar((struct Actor *)object, 0);
       Actor_SelectAnimationFar(object, 1);
-      ((struct FieldSprite *)object->sprite)->priority = 1;
+      ((struct Sprite *)object->sprite)->image.priority = 1;
     }
   }
 }

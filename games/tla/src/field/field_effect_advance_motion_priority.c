@@ -37,7 +37,7 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
   s32 velocityX = effect->velocity.x;
   s32 velocityZ;
   struct MainRoutineWork *party;
-  struct FieldSprite *sprite;
+  struct Sprite *sprite;
   struct Actor *leader;
   struct EffectSpriteAttributes__advance_motion_priority *to;
   struct EffectSpriteAttributes__advance_motion_priority *from;

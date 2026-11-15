@@ -370,7 +370,7 @@ void ObjectTable_Snapshot(void) {
   u8 *priorities = frames + 64;
   u32 count = 0;
   struct Actor *object;
-  struct FieldSprite *sprite;
+  struct Sprite *sprite;
   s32 i;
   u32 frame;
   u32 next;
@@ -385,9 +385,9 @@ void ObjectTable_Snapshot(void) {
     Dma_Set(object, copy, DMA_COPY_WORDS(sizeof(struct Actor) / 4), REG_DMA3);
     if (object->spriteStorageKind == 1) {
       sprite = object->sprite;
-      frame = sprite->frame;
-      next = sprite->nextFrame;
-      priority = sprite->priority;
+      frame = sprite->lastNo;
+      next = sprite->flags;
+      priority = sprite->image.priority;
     } else {
       frame = 0;
       next = 0;
@@ -415,7 +415,7 @@ void Actor_Restore(void) {
   u8 *priorities = frames + 64;
   s32 count;
   struct Actor *object;
-  struct FieldSprite *sprite;
+  struct Sprite *sprite;
   s32 *view;
   struct Actor *camera;
   s32 index;
@@ -433,8 +433,8 @@ void Actor_Restore(void) {
       Actor_SelectAnimationFar(object, *frames);
       Actor_SetSpriteFlagsFar(object, *nextFrames);
       priority = *priorities;
-      sprite->priority = priority;
-      sprite->partPriority = priority;
+      sprite->image.priority = priority;
+      sprite->shadow.priority = priority;
       if (index == Party_GetLeaderActor()) {
         camera = gFieldWork->camera;
         view = Ram_HeapSlots->mapGrid->origin;

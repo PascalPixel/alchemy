@@ -1089,7 +1089,7 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
   if (object != NULL) {
     object->scaleX = object->scaleY = Q16_ONE / 4;
     object->acceleration = object->speedLimit = px(3);
-    ((struct FieldSprite *)object->sprite)->priority = 0;
+    ((struct Sprite *)object->sprite)->image.priority = 0;
     Actor_SelectAnimationFar(object, 3);
     scale = object->scaleX;
     if (scale < Q16_ONE) {

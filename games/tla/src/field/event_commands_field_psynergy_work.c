@@ -293,7 +293,8 @@ void FieldPsynergy_End(void) {
   map->shakeDecay = work->savedShakeDecay;
   if (owner != NULL) {
     owner->priorityFlags = work->savedPriorityFlags;
-    ((struct FieldSprite *)owner->sprite)->priority = work->savedSpritePriority;
+    ((struct Sprite *)owner->sprite)->image.priority =
+        work->savedSpritePriority;
   }
   if (work->fieldPsynergy != 8)
     event->effectTimerRunning = 1;

@@ -629,14 +629,14 @@ void FieldParticle_SetCallback(struct FieldParticle *effect,
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               s32 z) {
   s32 unit;
-  struct FieldSprite *object;
+  struct Sprite *object;
   volatile u32 zero;
 
   Dma_Fill32Cell(zero, 0, effect, sizeof *effect);
-  object = (struct FieldSprite *)Sprite_CreateFar(kind);
+  object = (struct Sprite *)Sprite_CreateFar(kind);
   effect->object = object;
   if (object != NULL)
-    object->priority = 0;
+    object->image.priority = 0;
   FieldParticle_SetPosition(effect, x, z);
   unit = 0x10000;
   effect->maxSpeed = px(2);
@@ -644,7 +644,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   effect->originX = x;
   effect->originZ = z;
   // The sprite flags (nextFrame), through a byte pointer: as a field of
-  // struct FieldSprite the origin stores move after it.
+  // struct Sprite the origin stores move after it.
   ((s8 *)effect->object)[26] = 0;
   effect->stopAtTarget = 1;
   effect->limitTurnStep = 1;

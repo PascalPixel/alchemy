@@ -6,6 +6,7 @@
 #include "system/field_effect.h"
 #include "field/objdisp.h"
 #include "gamepak/far_call/field.h"
+#include "field/sprite.h"
 
 /// The effect's sprite as the projection draft lays it out: FieldSprite with
 /// bytes 0x0c to 0x0f its 16.16 scale.
@@ -55,7 +56,7 @@ void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
   effect->velocity.z = velocityZ;
-  sprite->priority = ((struct FieldSprite *)party->sprite)->priority;
+  sprite->priority = ((struct Sprite *)party->sprite)->image.priority;
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   effect->spin = 0;

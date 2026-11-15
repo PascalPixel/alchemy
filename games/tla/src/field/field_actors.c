@@ -569,15 +569,15 @@ void Actor_SetSpriteColorMode(struct Actor *object, u32 value) {
 /// Fixes the priority of a one-sprite actor's sprite and its shadow, which
 /// then no longer follow its depth (clears priorityFlags bit 0).
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority) {
-  struct FieldSprite *sprite;
+  struct Sprite *sprite;
 
   if (object == NULL || object->spriteStorageKind != ACTOR_SPRITE_ONE) {
     return;
   }
-  sprite = ((struct FieldSprite *)object->sprite);
-  sprite->priority = priority;
-  sprite->partPriority = priority;
-  object->priorityFlags &= ~1;
+  sprite = object->sprite;
+  sprite->image.priority = priority;
+  sprite->shadow.priority = priority;
+  object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 }
 
 /* VIEW(resource_slot): tag struct IconSprite as struct

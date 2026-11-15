@@ -740,7 +740,7 @@ struct RopeNode *Rope_FindNodeNear(s32 *position) {
 /// mode 3); returns 0 when none is in reach.
 s32 Leader_StepOntoRope(void) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  struct FieldSprite *sprite = leader->sprite;
+  struct Sprite *sprite = leader->sprite;
   struct RopeNode *node = Rope_FindNodeNear(&leader->x.fixed);
   u8 *flags;
 
@@ -757,11 +757,11 @@ s32 Leader_StepOntoRope(void) {
   Actor_WaitForMoveFar(leader);
   leader->timer = leader->motionFlags;
   flags = &leader->priorityFlags;
-  leader->userValue = sprite->nextFrame;
-  ((struct GrabSave *)leader)->priority = sprite->priority;
+  leader->userValue = sprite->flags;
+  ((struct GrabSave *)leader)->priority = sprite->image.priority;
   leader->priorityFlags = *flags & ~1;
-  sprite->nextFrame = 0;
-  sprite->priority = 1;
+  sprite->flags = 0;
+  sprite->image.priority = 1;
   gMainRoutineWork.movementMode = 3;
   return 1;
 }
@@ -770,7 +770,7 @@ s32 Leader_StepOntoRope(void) {
 /// when that cell is open; returns 0 otherwise.
 s32 Leader_StepOffRope(void) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  struct FieldSprite *sprite = leader->sprite;
+  struct Sprite *sprite = leader->sprite;
   s32 position[3];
   u32 angle;
 
@@ -793,7 +793,7 @@ s32 Leader_StepOffRope(void) {
   leader->priorityFlags |= 1;
   leader->motionFlags = leader->timer;
   leader->scaleX = Q16_ONE;
-  sprite->nextFrame = leader->userValue;
+  sprite->flags = leader->userValue;
   sprite->rotation = 0;
   Sound_PlayFar(SE_JUMP);
   leader->speedLimit = px(2);
@@ -802,7 +802,7 @@ s32 Leader_StepOffRope(void) {
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);
-  sprite->priority = ((u8 *)leader)[98];
+  sprite->image.priority = ((u8 *)leader)[98];
   gMainRoutineWork.movementMode = 0;
   return 1;
 }
@@ -845,7 +845,7 @@ struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
 s32 Leader_StepOntoTightrope(void) {
   struct MainRoutineWork *work = &gMainRoutineWork;
   struct Actor *leader = Actor_Lookup(work->leaderActorId);
-  struct FieldSprite *sprite = leader->sprite;
+  struct Sprite *sprite = leader->sprite;
   struct TightropeNode *node = Tightrope_FindNodeNear(&leader->x.fixed);
   u8 *flags;
 
@@ -861,12 +861,12 @@ s32 Leader_StepOntoTightrope(void) {
   Actor_SetMoveTargetFar(leader, node->x, node->y, node->z);
   Actor_WaitForMoveFar(leader);
   leader->timer = leader->motionFlags;
-  leader->userValue = sprite->nextFrame;
-  ((struct GrabSave *)leader)->priority = sprite->priority;
+  leader->userValue = sprite->flags;
+  ((struct GrabSave *)leader)->priority = sprite->image.priority;
   flags = &leader->priorityFlags;
   leader->priorityFlags = *flags & ~1;
-  sprite->nextFrame = 0;
-  sprite->priority = 1;
+  sprite->flags = 0;
+  sprite->image.priority = 1;
   work->movementMode = 4;
   return 1;
 }
@@ -875,7 +875,7 @@ s32 Leader_StepOntoTightrope(void) {
 /// that cell is open; returns 0 otherwise.
 s32 Leader_StepOffTightrope(void) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  struct FieldSprite *sprite = leader->sprite;
+  struct Sprite *sprite = leader->sprite;
   s32 position[3];
   u32 angle;
 
@@ -897,7 +897,7 @@ s32 Leader_StepOffTightrope(void) {
   leader->facing = angle;
   leader->priorityFlags |= 1;
   leader->motionFlags = leader->timer;
-  sprite->nextFrame = leader->userValue;
+  sprite->flags = leader->userValue;
   sprite->rotation = 0;
   Sound_PlayFar(SE_JUMP);
   leader->acceleration = px(1);
@@ -906,7 +906,7 @@ s32 Leader_StepOffTightrope(void) {
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);
-  sprite->priority = ((u8 *)leader)[98];
+  sprite->image.priority = ((u8 *)leader)[98];
   gMainRoutineWork.movementMode = 0;
   return 1;
 }

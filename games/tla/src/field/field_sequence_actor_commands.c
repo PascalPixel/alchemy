@@ -508,7 +508,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
 
   if (actor == NULL)
     return;
-  spriteFlags = ((struct FieldSprite *)actor->sprite)->nextFrame;
+  spriteFlags = ((struct Sprite *)actor->sprite)->flags;
   Actor_SelectAnimationFar(actor, pose);
   wait(10);
 

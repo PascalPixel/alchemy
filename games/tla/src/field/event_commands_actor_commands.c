@@ -54,10 +54,10 @@ void Actor_SetSpritePriority(u32 objectId, s32 priority) {
   struct Actor *object = Actor_Lookup(objectId);
 
   if (object != NULL && (object->spriteStorageKind & 0xF) == 1) {
-    struct FieldSprite *sprite = object->sprite;
+    struct Sprite *sprite = object->sprite;
 
-    sprite->priority = priority;
-    sprite->partPriority = priority;
+    sprite->image.priority = priority;
+    sprite->shadow.priority = priority;
     object->priorityFlags &= ~1;
   }
 }
@@ -93,7 +93,7 @@ void Actor_DisableById(u32 id) {
 /// Turns actor id's sprite to rotation (1/65536 turns).
 void Actor_SetSpriteRotationById(s32 id, s32 rotation) {
   struct Actor *object = Actor_GetById(id);
-  struct FieldSprite *sprite = object->sprite;
+  struct Sprite *sprite = object->sprite;
 
   if (object != NULL && sprite != NULL)
     sprite->rotation = rotation;
@@ -151,7 +151,7 @@ void Actor_FallOverById(u32 id, u32 angle) {
 /// moving the actor itself half a cell the way it falls.
 void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
   struct Actor *object = Actor_GetById(id);
-  struct FieldSprite *sprite = object->sprite;
+  struct Sprite *sprite = object->sprite;
   s32 position[3];
 
   if (object == NULL || sprite == NULL)
@@ -168,26 +168,26 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
   case 0:
     object->x.fixed += px(8);
     object->z.fixed += px(1);
-    ((s8 *)sprite->unk14)[2] -= 4;
-    ((s8 *)sprite->unk14)[3] += 15;
+    sprite->offsetX -= 4;
+    sprite->offsetY += 15;
     break;
   case 0x8000:
     object->x.fixed -= px(8);
     object->z.fixed += px(1);
-    ((s8 *)sprite->unk14)[2] += 3;
-    ((s8 *)sprite->unk14)[3] += 16;
+    sprite->offsetX += 3;
+    sprite->offsetY += 16;
     break;
   case 0xc000:
-    ((s8 *)sprite->unk14)[3] += 1;
+    sprite->offsetY += 1;
     break;
   case 0x4000:
     object->z.fixed += px(8);
-    ((s8 *)sprite->unk14)[3] += 13;
+    sprite->offsetY += 13;
     break;
   }
   object->collisionFlags = 0;
   object->priorityFlags |= 2;
-  sprite->nextFrame = 0;
+  sprite->flags = 0;
   sprite->rotation = angle + TRIG_TURN / 4;
 }
 
@@ -196,7 +196,7 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
 /// into the sprite's VRAM block as its tile.
 void Actor_ShowItemIconById(s32 id, s32 resource) {
   struct Actor *object = Actor_GetById(id);
-  struct FieldSprite *sprite;
+  struct Sprite *sprite;
   u8 *buffer;
   s32 zero;
   s32 tile;
@@ -213,16 +213,16 @@ void Actor_ShowItemIconById(s32 id, s32 resource) {
       buffer += 0x400;
       Dma_Fill32(zero, buffer, 0x80);
       Func_08038248__event_commands(resource, buffer);
-      tile = VramCache_Load(sprite->vramBlock, 0x80, buffer);
+      tile = VramCache_Load(sprite->slot, 0x80, buffer);
       HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       object->retainSpriteCache = kind;
-      SpriteAnimation_ClearFar(sprite->record);
-      sprite->record = NULL;
-      sprite->unk1b[0] = zero;
-      sprite->fullColor = zero;
-      sprite->tile = tile;
-      sprite->unk19 = zero;
-      sprite->nextFrame = zero;
+      SpriteAnimation_ClearFar(sprite->entries[0]);
+      sprite->entries[0] = NULL;
+      sprite->count = zero;
+      sprite->image.fullColor = zero;
+      sprite->image.tile = tile;
+      sprite->dirty = zero;
+      sprite->flags = zero;
     }
   }
 }

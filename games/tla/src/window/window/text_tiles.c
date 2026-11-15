@@ -540,17 +540,17 @@ void Text_SetStyle(s32 value) {
 void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                                  s32 y);
 
-void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y) {
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u16 *counter = &canvas->textBufferEnd;
   s32 zero = 0;
 
   *counter = zero;
-  Message_Decode(arg0, 1);
+  Message_Decode(message, 1);
   canvas->textBuffer[*counter] = zero;
   *counter = (*counter + 1) & (UI_TEXT_ENTRY_COUNT - 1);
-  Text_DrawWideStringAtOffset(canvas->textBuffer, (struct Window *)arg1, arg2,
-                              arg3);
+  Text_DrawWideStringAtOffset(canvas->textBuffer, (struct Window *)window, x,
+                              y);
 }
 
 /// Decodes a message and draws it as tiles in a window at pixel (offsetX,
@@ -590,7 +590,7 @@ void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position,
 
 /// Draws a byte string into a text canvas window at pixel (x, y). The
 /// 256-halfword scratch requires at most 255 input bytes before the terminator.
-void Text_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3) {
+void Text_DrawString(u8 *text, s32 window, s32 x, s32 y) {
   u16 *buffer = Heap_AllocEwram(0x200);
   u16 *output = buffer;
 
@@ -600,7 +600,7 @@ void Text_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3) {
     output++;
   }
   *output = 0;
-  Text_DrawWideStringAtOffset(buffer, (struct Window *)arg1, arg2, arg3);
+  Text_DrawWideStringAtOffset(buffer, (struct Window *)window, x, y);
   Heap_Release(buffer);
 }
 
@@ -644,7 +644,7 @@ u8 *String_FormatNumber(u8 *output, s32 value, s32 width);
 
 /// Draws a byte string into a window's tilemap at pixel (x, y) of its interior,
 /// rounded down to tiles.
-void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
+void Text_DrawStringInWindow(u8 *text, s32 window, u32 x, u32 y) {
   u16 *buffer = Heap_AllocEwram(0x200);
   u16 *output = buffer;
 
@@ -656,7 +656,7 @@ void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
   x >>= 3;
   *output = 0;
   y >>= 3;
-  Text_DrawWideStringInWindow((s16 *)buffer, (struct Window *)arg1, x, y);
+  Text_DrawWideStringInWindow((s16 *)buffer, (struct Window *)window, x, y);
   Heap_Release(buffer);
 }
 

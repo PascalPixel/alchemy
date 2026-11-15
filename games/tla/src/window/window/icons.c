@@ -177,12 +177,12 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   return 256;
 }
 
-s32 Icon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2) {
+s32 Icon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
   GlyphTransfer *work;
 
   work = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
-  ItemIcon_Compose(arg0, arg1);
-  VramCache_Load(arg2, 0x80, work->tiles);
+  ItemIcon_Compose(inventoryCode, layers);
+  VramCache_Load(cacheSlot, 0x80, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return 1;
 }

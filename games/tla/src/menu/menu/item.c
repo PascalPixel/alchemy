@@ -2779,7 +2779,7 @@ s32 ItemMenu_BuildPagedList(struct MenuResult *result, s32 index) {
 }
 
 /// Draws the selected item-list row's name and highlights only that row.
-s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1,
+s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *memberWork,
                                 struct MenuResult *state) {
   struct ItemMenuWork *menu;
   s32 page;

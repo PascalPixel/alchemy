@@ -12,22 +12,22 @@ s32 Menu_GetModuloOfSum(s32 arg0, s32 arg1) { return (arg0 + arg1) % arg1; }
 
 /// Places the four party figures over their Djinn columns, 56 pixels apart
 /// from x 32, at screen y 61 plus yOffset. Returns that y.
-s32 Menu_SetFirstActorRowCoordinates(s32 arg0) {
+s32 Menu_SetFirstActorRowCoordinates(s32 yOffset) {
   u8 *current;
   s32 value;
   s32 count;
   current = (u8 *)Ram_HeapSlots->menuWork + 0x118;
-  arg0 += 0x3D;
+  yOffset += 0x3D;
   value = 0x20;
   count = 3;
   do {
     count--;
     *(s16 *)current = value;
-    *(s16 *)(current + 0x10) = arg0;
+    *(s16 *)(current + 0x10) = yOffset;
     value += 0x38;
     current += 2;
   } while (count >= 0);
-  return arg0;
+  return yOffset;
 }
 
 /// Returns the Djinn tutorial's message on giving a Djinni: the second set's

@@ -34,12 +34,12 @@ s32 BattleMotion_GetSlotPalette(s32 id) {
 
 /// Returns 1 if an enemy of the class would find room among the enemy sprite
 /// slots, two side by side for a large one.
-s32 Enemy_HasSpriteRoom(s32 arg0) {
+s32 Enemy_HasSpriteRoom(s32 classId) {
   s32 retval;
   s32 i;
   struct BattleWork *battle;
 
-  retval = BattleSprite_IsSmall(arg0);
+  retval = BattleSprite_IsSmall(classId);
   battle = Ram_HeapSlots->battleWork;
   i = 0;
   for (; i < 6; i++) {

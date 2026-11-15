@@ -89,17 +89,17 @@ void CommandIcon_Load(s32 index, s32 value, s32 flag) {
 /// 256-colour sprite at (x, y) in `window`, on draw layer 251. Returns NULL
 /// when no VRAM slot is free. The settings menu's icons come through here
 /// (window/settings_menu.c).
-struct WindowSprite *CommandIcon_Create(s32 arg0, s32 arg1,
-                                        struct RenderInput *arg2, s32 arg3,
-                                        s32 arg4) {
+struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
+                                        struct RenderInput *window, s32 x,
+                                        s32 y) {
   s32 index;
   struct WindowSprite *entity;
 
   index = VramCache_FindFreeEntry();
   entity = NULL;
   if (index != 0x60) {
-    CommandIcon_Load(arg0, index, arg1);
-    entity = WindowSprite_Create(index, OUTPUT_SIZE_32X32, arg2, arg3, arg4);
+    CommandIcon_Load(icon, index, remap);
+    entity = WindowSprite_Create(index, OUTPUT_SIZE_32X32, window, x, y);
     entity->sprite.oam.palette256 = 1;
     entity->sentinel = 0xfb;
   }
@@ -175,19 +175,19 @@ s32 Menu_BuildLocalizedPatternTiles(void) {
 // UB: it is declared to return int but returns no value, and no caller reads
 // one; UBFIX makes it void.
 #ifdef UBFIX
-void Window_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3,
+void Window_DrawThreeTileColumn(s32 window, s32 x, s32 y, s32 pattern,
                                 s32 unused) {
 #else
-int Window_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3,
+int Window_DrawThreeTileColumn(s32 window, s32 x, s32 y, s32 pattern,
                                s32 unused) {
 #endif
-  s32 tile_offset = arg3 * 2;
+  s32 tile_offset = pattern * 2;
   s32 tile = tile_offset + 0xF315;
 
-  Window_SetTilemapEntry((struct Window *)arg0, 0x400 | tile, arg1, arg2, 0);
-  Window_SetTilemapEntry((struct Window *)arg0, tile_offset + 0xF314, arg1 + 1,
-                         arg2, 0);
-  Window_SetTilemapEntry((struct Window *)arg0, tile, arg1 + 2, arg2, 0);
+  Window_SetTilemapEntry((struct Window *)window, 0x400 | tile, x, y, 0);
+  Window_SetTilemapEntry((struct Window *)window, tile_offset + 0xF314, x + 1,
+                         y, 0);
+  Window_SetTilemapEntry((struct Window *)window, tile, x + 2, y, 0);
 }
 
 /// Merges two 8x8 4bpp tiles row by row into `output`: `second` moved `shift`
@@ -416,17 +416,17 @@ s32 Link_CreateCountdownLabelWindow(void) {
   return win;
 }
 
-s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1) {
+s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
   GlyphTransfer *buffer =
       HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
   u8 **slot = &buffer->encoded;
-  void *target = (void *)((u32)base + base[arg1]);
+  void *target = (void *)((u32)base + base[icon]);
   s32 ret;
 
   *slot = target;
   Resource_DecodeByteLzInRam(target, buffer);
-  ret = VramCache_Reload(arg0, (s32)buffer);
+  ret = VramCache_Reload(slotIndex, (s32)buffer);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return ret;
 }

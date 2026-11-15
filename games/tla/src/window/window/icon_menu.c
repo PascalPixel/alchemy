@@ -1283,7 +1283,7 @@ s32 FieldMenu_SelectCommand(s32 selection) {
 
 /// Opens the field command menu and animates from start to the command's icon.
 /// Returns the final icon position after closing the menu.
-s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1) {
+s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   PartyStatus_OpenAndWait();
   IconMenu_Open();
   IconMenu_AddIcon(1);
@@ -1294,10 +1294,10 @@ s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1) {
 #if LANGUAGE == LANGUAGE_JAPANESE
   IconMenu_Center(17, SELECT_MENU_WIDTH, 0);
 #endif
-  arg1 = IconMenu_AnimateTo(arg0, arg1 - 1);
+  command = IconMenu_AnimateTo(start, command - 1);
   IconMenu_Close();
   PartyStatus_CloseWithMenu();
-  return arg1;
+  return command;
 }
 
 /// Offers the actions the files allow (plus two optional entries

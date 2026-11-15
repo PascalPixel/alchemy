@@ -559,17 +559,17 @@ void BattleMessage_WaitForTyping(void) {
 }
 
 /// Takes an enemy out of the battle at once, one that leaves rather than falls.
-s32 BattleObject_DestroyTemporaryObject(s32 arg0) {
+s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
   // UB: declared s32 but returns no value; no caller reads it.
   struct BattleUnit *creature;
   struct BattleObj *runtime;
 
-  creature = Unit_Get(arg0);
+  creature = Unit_Get(unitId);
   if (creature->side == 1) {
     Unit_SetHpFar(creature, 0);
-    BattleObject_RemoveFromLists(arg0);
-    BattleObject_MarkForRelease(arg0);
-    runtime = BattleObject_Get(arg0);
+    BattleObject_RemoveFromLists(unitId);
+    BattleObject_MarkForRelease(unitId);
+    runtime = BattleObject_Get(unitId);
     Actor_ReleaseFar((struct Actor *)runtime->object);
     runtime->object = 0;
     runtime->active = 0;

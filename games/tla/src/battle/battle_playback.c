@@ -62,12 +62,12 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 /// follow, without waiting.
 void BattlePlayback_Run(void) {
   u16 selection[2];
-  struct AnimationRecord *records[4];
+  struct Sprite *records[4];
   struct BattleMessageWork *display;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   struct BattlePlaybackWork *events = &battle->events;
 
-  void BattleSprite_ClearTiles(struct AnimationRecord * record, s32 unused) {
+  void BattleSprite_ClearTiles(struct Sprite * record, s32 unused) {
     u8 *tiles = (u8 *)OBJ_VRAM + gVramCacheEntries[record->slot].offset;
 
     Iwram_ClearWordsEntry(tiles, record->width * record->height);
@@ -304,25 +304,25 @@ void BattlePlayback_Run(void) {
         if (events->timer >= FELLED_FLASH)
           colorMode = (events->timer - FELLED_FLASH) / 8 % 5 + SPRITE_COLOR_GRB;
         if (colorMode == SPRITE_COLOR_GREY || (events->timer & 7) == 0) {
-          struct MotionRecord *record;
+          struct Sprite *record;
           s32 recordIndex;
-          struct MotionRecord **slot;
+          struct Sprite **slot;
           s32 lastFrameMask;
 
-          for (recordIndex = 0, slot = (struct MotionRecord **)records,
+          for (recordIndex = 0, slot = (struct Sprite **)records,
               lastFrameMask = 0xff;
                (record =
                     GetMotionRecord(BattleObject_Get(events->unitId)->object,
                                     recordIndex)) != 0;
                recordIndex++) {
-            struct ChildEntry *child;
+            struct SpriteAnimation *child;
             u8 previousFrame;
 
             *slot++ = record;
             child = record->entries[0];
-            previousFrame = child->frame;
+            previousFrame = child->picture;
             child->colorMode = colorMode;
-            child->frame = previousFrame | lastFrameMask;
+            child->picture = previousFrame | lastFrameMask;
           }
         }
         events->timer++;

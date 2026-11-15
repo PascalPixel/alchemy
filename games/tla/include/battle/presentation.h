@@ -73,52 +73,6 @@ struct SavedBattleObj {
   u16 classId;
 };
 
-struct Work0811e7dc {
-  u8 unk00[0x2c];
-  void *buffer;
-  u8 objectId;
-};
-
-struct Record0811e7dc {
-  u8 unk00[26];
-  u8 flags;
-};
-
-struct AttackAnimationEntry {
-  s16 animationId;
-};
-
-struct AttackAnimation {
-  u8 unk00[40];
-  struct AttackAnimationEntry *entries[1];
-};
-
-struct ItemAnimationEntry {
-  u8 unk00[5];
-  u8 param;
-};
-
-struct ItemAnimation {
-  u8 unk00[27];
-  u8 count;
-  u8 unk1c[12];
-  struct ItemAnimationEntry *entries[1];
-};
-
-struct RecordChild {
-  u8 unk00[5];
-  u8 param;
-  u8 unk06[0x10];
-  u8 frame;
-};
-
-struct ChildRecord {
-  u8 unk00[0x1b];
-  u8 count;
-  u8 unk1c[0xc];
-  struct RecordChild *entries[4];
-};
-
 /// One kept formation: its record and its average level, -1 while empty.
 struct FormationCandidate {
   s16 recordId;
@@ -145,26 +99,6 @@ struct BattleActorDefinition {
   u8 unavailable;
   u8 unk12a[0x20];
   u16 classId;
-};
-
-struct AnimationRecord {
-  u8 unk00[0x10];
-  u8 slot;
-  u8 unk11[3];
-  u8 width;
-  u8 height;
-};
-
-struct ChildEntry {
-  u8 unk00[5];
-  u8 colorMode;
-  u8 unk06[16];
-  u8 frame;
-};
-
-struct MotionRecord {
-  u8 unk00[40];
-  struct ChildEntry *entries[1];
 };
 
 struct AIState {

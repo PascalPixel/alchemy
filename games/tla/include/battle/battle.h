@@ -218,18 +218,6 @@ struct BattlePlan;
 struct BattlePresentationWork;
 struct BattleActionRecord;
 
-struct CastAnimationEntry {
-  u8 unk00[5];
-  u8 param;
-};
-
-struct CastAnimation {
-  u8 unk00[27];
-  u8 count;
-  u8 unk1c[12];
-  struct CastAnimationEntry *entries[1];
-};
-
 s32 AutoBattle_ShowDefend(s16 *);
 s32 BattleStaging_RunUnitAction(s16 *);
 s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action);

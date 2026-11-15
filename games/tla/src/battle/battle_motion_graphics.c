@@ -229,16 +229,16 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
 }
 
 /// Frees the borrowed buffer and releases the motion graphics slot.
-void BattleMotion_ReleaseBuffer(struct Work0811e7dc *work) {
-  struct MotionObject *object = BattleObject_Get(work->objectId)->object;
+void BattleMotion_ReleaseBuffer(struct SavedBattleObj *saved) {
+  struct MotionObject *object = BattleObject_Get(saved->unitId)->object;
 
-  if (work->buffer != NULL) {
+  if (saved->buffer != NULL) {
     Animation_SkipToStopFar(GetMotionRecord(object, 0));
     wait(1);
-    Heap_Release(work->buffer);
-    work->buffer = NULL;
+    Heap_Release(saved->buffer);
+    saved->buffer = NULL;
     {
-      struct Record0811e7dc *record = GetMotionRecord(object, 0);
+      struct Sprite *record = GetMotionRecord(object, 0);
 
       record->flags = 0x20 | record->flags;
     }
@@ -318,7 +318,7 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
 s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
   void *object;
-  struct AttackAnimation *animation;
+  struct Sprite *animation;
   struct Unit *unit;
   s16 criticalPair[3];
   s32 critical;
@@ -527,13 +527,13 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
 
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.count;
        targetOrFadeIndex++) {
-    struct ItemAnimation *animation = GetMotionRecord(
+    struct Sprite *animation = GetMotionRecord(
         BattleObject_Get(work.actors[targetOrFadeIndex])->object, 0);
     s32 entryIndex;
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
       work.params[targetOrFadeIndex][entryIndex] =
-          animation->entries[entryIndex]->param;
+          animation->entries[entryIndex]->colorMode;
   }
 
   Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
@@ -613,23 +613,23 @@ void BattleObject_SetColorMode(struct MotionObject *object, s32 value) {
   s32 index = 0;
   s32 child_index;
   s32 count;
-  struct ChildRecord *record;
-  struct RecordChild *child;
-  struct RecordChild **children;
+  struct Sprite *record;
+  struct SpriteAnimation *child;
+  struct SpriteAnimation **children;
   u8 mask = 0xff;
   u8 frame;
 
   while ((record = GetMotionRecord(object, index)) != NULL) {
     children = &record->entries[1];
     child = record->entries[0];
-    frame = child->frame;
+    frame = child->picture;
     count = record->count;
-    child->param = value;
-    child->frame = frame | mask;
+    child->colorMode = value;
+    child->picture = frame | mask;
     for (child_index = 1; child_index < count; child_index++) {
       child = *children++;
-      child->param = 0;
-      child->frame |= 0xff;
+      child->colorMode = 0;
+      child->picture |= 0xff;
     }
     index++;
   }
@@ -712,13 +712,13 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     work.side = EFFECT_SIDE_ENEMIES;
 
   for (targetIndex = 0; targetIndex != work.count; targetIndex++) {
-    struct CastAnimation *animation =
+    struct Sprite *animation =
         GetMotionRecord(BattleObject_Get(work.actors[targetIndex])->object, 0);
     s32 entryIndex;
 
     for (entryIndex = 0; entryIndex != animation->count - 1; entryIndex++)
       work.params[targetIndex][entryIndex] =
-          animation->entries[entryIndex]->param;
+          animation->entries[entryIndex]->colorMode;
   }
   if (plan->failure != ACTION_FAILURE_NONE) {
     if (plan->failure == ACTION_FAILURE_SEALED) {

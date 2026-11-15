@@ -522,12 +522,12 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       units[i] = plan->targetIds[i];
     units[i] = BATTLE_UNIT_LIST_END;
     for (i = 0; i != work.count; i++) {
-      struct CastAnimation *animation =
+      struct Sprite *animation =
           GetMotionRecord(BattleObject_Get(work.actors[i])->object, 0);
       u32 child;
 
       for (child = 0; child != animation->count - 1; child++)
-        work.params[i][child] = animation->entries[child]->param;
+        work.params[i][child] = animation->entries[child]->colorMode;
     }
     if (plan->battleEffect & EFFECT_SUMMON) {
       if (target <= ALLY_MAX)

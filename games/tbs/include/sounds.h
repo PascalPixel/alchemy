@@ -4,22 +4,23 @@
 /// @file
 /// Sound ids, one for each row of gSongTable (sound/song_table.s) in order:
 /// MUS_ ids are music and jingles, SE_ ids sound effects, as their sequences
-/// in sound/songs are named. A row nothing plays by name yet keeps its number
-/// as its placeholder. Unused: every such row is a dummy (dummy_song_header,
-/// which plays nothing) or a sequence no code or table in the game plays, by
-/// name or by number; only the sound test (SoundTest_Run), which nothing calls,
-/// can start one, so none is heard where a name could come from. The named
-/// ones are the code's own, the field music
-/// gScene_MusicRules and gEncounter_BattleMusic choose, and the
-/// voices and defeat sounds reached by adding to a first id. Three rows are
-/// controls no sound plays from. They are named as pret names its sounds:
-/// music by the place or moment the player knows it from, or by what it sounds
-/// like where it marks many moments (MUS_OMINOUS), a sound effect by what it
-/// sounds like or the moment it marks, from its comment and its uses.
-/// Sound_Play tests the controls SOUND_FADE_OUT_BGM and
-/// SOUND_FADE_OUT_ACTION_SE first, then the ranges: from SOUND_SE_FIRST on the
-/// player its gSongTable row names, from SOUND_JINGLE_FIRST jingles, below
-/// that music, where SOUND_KEEP_BGM is also a control (sound_driver_symbols.h).
+/// in sound/songs are named. A row of the empty song (dummy_song_header), which
+/// plays nothing, has no name, and the next named row's number is written
+/// after it. A sequence nothing plays by name yet keeps its number as its
+/// placeholder. Unused: every such sequence is one no code or table in the game
+/// plays, by name or by number; only the sound test (SoundTest_Run), which
+/// nothing calls, can start one, so none is heard where a name could come from.
+/// The named ones are the code's own, the field music gScene_MusicRules and
+/// gEncounter_BattleMusic choose, and the voices and defeat sounds reached by
+/// adding to a first id. Three rows are controls no sound plays from. They are
+/// named as pret names its sounds: music by the place or moment the player
+/// knows it from, or by what it sounds like where it marks many moments
+/// (MUS_OMINOUS), a sound effect by what it sounds like or the moment it marks,
+/// from its comment and its uses. Sound_Play tests the controls
+/// SOUND_FADE_OUT_BGM and SOUND_FADE_OUT_ACTION_SE first, then the ranges: from
+/// SOUND_SE_FIRST on the player its gSongTable row names, from
+/// SOUND_JINGLE_FIRST jingles, below that music, where SOUND_KEEP_BGM is also a
+/// control (sound_driver_symbols.h).
 
 enum SoundId {
   /// Field music of Vale, of Vault, and of Altin once
@@ -58,14 +59,8 @@ enum SoundId {
   MUS_DJINN_LESSON,
   /// Field music of Tolbi before the Colosso; afterwards Tolbi plays MUS_TOWN.
   MUS_TOLBI,
-  MUS_011,
-  MUS_012,
-  MUS_013,
-  MUS_014,
-  MUS_015,
-  MUS_016,
   /// Not a sound: fades the music out over 112 VBlanks, once.
-  SOUND_FADE_OUT_BGM,
+  SOUND_FADE_OUT_BGM = 17,
   /// Not a sound: keeps the music that is playing.
   SOUND_KEEP_BGM,
   /// a sound with no tracks: silence
@@ -113,18 +108,9 @@ enum SoundId {
   /// of Venus Lighthouse's aerie once its first battle has begun
   /// (FLAG_AERIE_FIRST_BATTLE_BEGUN in venus_lighthouse_aerie.c).
   MUS_BABI,
-  MUS_031,
-  MUS_032,
-  MUS_033,
-  MUS_034,
-  MUS_035,
-  MUS_036,
-  MUS_037,
-  MUS_038,
-  MUS_039,
   /// Unused: nothing in the game plays it; TRACKS_ALL names it among the
   /// songs of nine or more tracks.
-  MUS_UNUSED,
+  MUS_UNUSED = 40,
   /// Field music of the Tolbi-bound ship, and of the world map reached from
   /// seven of its entrances.
   MUS_TOLBI_BOUND_SHIP,
@@ -134,14 +120,8 @@ enum SoundId {
   MUS_WORLD_MAP,
   /// Field music of Venus Lighthouse, but for its entry and its aerie.
   MUS_VENUS_LIGHTHOUSE,
-  MUS_044,
-  MUS_045,
-  MUS_046,
-  MUS_047,
-  MUS_048,
-  MUS_049,
   /// The music of every battle gEncounter_BattleMusic lists no other music for.
-  MUS_BATTLE,
+  MUS_BATTLE = 50,
   /// Battle music gEncounter_BattleMusic gives the Mystery Man and Mystery
   /// Woman who catch Isaac in Vale's plaza (ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT,
   /// slot 4) and Saturos at Mercury Lighthouse's aerie
@@ -165,11 +145,9 @@ enum SoundId {
   /// Plays as the boulder chases the party down Altin Peak, and after a link
   /// battle's own music (Battle_Run).
   MUS_BOULDER_CHASE,
-  MUS_056,
-  MUS_057,
   /// Plays when a battle is won (Battle_Run), except during the Djinn lesson
   /// (FLAG_DJINN_LESSON).
-  MUS_VICTORY,
+  MUS_VICTORY = 58,
   /// Plays when the whole party falls: defeated in battle, before "goes down in
   /// defeat" or "party has been defeated", or felled on the field by poison or
   /// hazardous ground.
@@ -195,16 +173,12 @@ enum SoundId {
   /// the prologue and before Vale three years later (the title's
   /// Scene_Initialize).
   MUS_TITLE_AFTER_PROLOGUE,
-  MUS_065,
-  MUS_066,
   /// The ending's music: the Lemurian ship sailing away (LemurianShip_SetSail)
   /// and the staff credits that follow (the title's Scene_Initialize).
-  MUS_ENDING,
-  MUS_068,
-  MUS_069,
+  MUS_ENDING = 67,
   /// The title intro's music at power-on, when a save file exists, with its
   /// "Press Start" prompt (the title's Scene_Initialize).
-  MUS_TITLE,
+  MUS_TITLE = 70,
   /// A row of the song table that holds the empty song (dummy_song_header), so
   /// nothing plays; only the debug battle message viewer starts it, to silence
   /// the music.
@@ -213,9 +187,8 @@ enum SoundId {
   /// the party watches and resolves to escape
   /// (VenusLighthouseAerie_PlayShebasFall).
   MUS_FELIX_LEAPS_AFTER_SHEBA,
-  MUS_073,
   /// The File Screen's music, and the field music of the Sanctum.
-  MUS_FILE_SCREEN,
+  MUS_FILE_SCREEN = 74,
   /// The music of the Golden Sun logo shown after Jenna and Kraden's closing
   /// event on the world map, until a key is pressed (the title's entrance 10).
   MUS_ENDING_LOGO,
@@ -223,13 +196,10 @@ enum SoundId {
   /// finals' matches (ENCOUNTER_ZONE_COLOSSO); Battle_Run plays it after
   /// MUS_SATUROS_BATTLE for a battle with no music of its own.
   MUS_COLOSSO_BATTLE,
-  MUS_077,
-  MUS_078,
-  MUS_079,
   /// The jingle as a puzzle is solved: Altmiller Cave's rock turned, the
   /// Lemurian ship raised, the Vault Cave switches, and the West Lunpa Cave
   /// gate frozen open.
-  MUS_PUZZLE_SOLVED,
+  MUS_PUZZLE_SOLVED = 80,
   /// The jingle as a Djinni or a new party member joins the party, Flint
   /// included.
   MUS_JOINED,
@@ -253,15 +223,13 @@ enum SoundId {
   /// The jingle as a party member levels up after a battle, and as a Colosso
   /// round begins.
   MUS_LEVEL_UP,
-  /// A dummy row: the Colosso's result jingle is chosen as 90 plus the match's
-  /// result (Colosso_ShowMatchResult), which lands here, playing nothing, for a
-  /// result of 0.
-  MUS_090,
   /// The smallest prize jingle: two pairs in Lucky Dice, a Tolbi Spring prize
   /// under 5,000 coins, and one level from the debug level editor; also an item
   /// or Psynergy used from the menu whose effect has no jingle of its own, such
   /// as the stat items (Ability_PlayUseAnimation).
-  MUS_JINGLE_SMALL,
+  /// The row before it is the empty song: Colosso_ShowMatchResult plays this
+  /// one minus 1 plus the match's result, which lands there for a result of 0.
+  MUS_JINGLE_SMALL = 91,
   /// The middle prize jingle: three pairs in Lucky Dice, a Tolbi Spring prize
   /// of 5,000 coins or more, and a cleared Colosseum trial.
   MUS_JINGLE_MEDIUM,
@@ -269,14 +237,9 @@ enum SoundId {
   /// win, a Tolbi Spring prize over 19,999 coins, and five levels from the
   /// debug level editor.
   MUS_JINGLE_LARGE,
-  MUS_094,
-  MUS_095,
-  MUS_096,
-  MUS_097,
-  MUS_098,
-  MUS_099,
+  MUS_095 = 95,
   /// The Vault bell rung, and three times as a shop repairs an item.
-  SE_BELL,
+  SE_BELL = 100,
   /// An item bought in a shop, artifacts included.
   SE_SHOP_PURCHASE,
   /// An item sold to a shop (Shop_SellItem).
@@ -592,9 +555,8 @@ enum SoundId {
   /// Kolima and Kolima Forest cursed as the party watches, and a cocoon stepped
   /// on in the Tret Tree.
   SE_CURSE_FALL,
-  SE_207,
   /// Played as Bane gets away a second time on Crossbone Isle.
-  SE_BANE_ESCAPE,
+  SE_BANE_ESCAPE = 208,
   /// Mercury Lighthouse's door opening, as the light turns white after Mia
   /// casts Ply on it.
   SE_MERCURY_LIGHTHOUSE_DOOR_OPEN,
@@ -711,58 +673,56 @@ enum SoundId {
   /// A Colosso warrior fading in (Colosso_FadeInWarrior).
   SE_COLOSSO_WARRIOR_APPEAR,
   SE_253,
-  SE_254,
-  SE_255,
-  /// The first voice blip of a message: an actor's voice is 256 plus its
+  /// The voice blips of a message: an actor's voice is SE_VOICE_FIRST plus its
   /// sprite's value (Speaker_GetVoice), and every few letters typed play it
   /// plus the letter code's low two bits (Message_Type), so a voice is four
-  /// blips. gSpeakerDefinitions gives each sprite one of eight voices; this
-  /// first one is the animals': the dog, the cat, the bird and the pink winged
-  /// monster.
-  SE_VOICE_FIRST,
-  SE_VOICE_ANIMAL_2,
-  SE_VOICE_ANIMAL_3,
-  SE_VOICE_ANIMAL_4,
+  /// blips, _A to _D, each a little lower. gSpeakerDefinitions gives each
+  /// sprite one of eight voices; the first is the animals': the dog, the cat,
+  /// the bird and the pink winged monster.
+  SE_VOICE_ANIMAL_A = 256,
+  SE_VOICE_ANIMAL_B,
+  SE_VOICE_ANIMAL_C,
+  SE_VOICE_ANIMAL_D,
   /// The girls' voice: Jenna as a child and the girls of the towns.
-  SE_VOICE_GIRL_1,
-  SE_VOICE_GIRL_2,
-  SE_VOICE_GIRL_3,
-  SE_VOICE_GIRL_4,
+  SE_VOICE_GIRL_A,
+  SE_VOICE_GIRL_B,
+  SE_VOICE_GIRL_C,
+  SE_VOICE_GIRL_D,
   /// The boys' voice: Isaac and Garet as children and the boys of the towns.
-  SE_VOICE_BOY_1,
-  SE_VOICE_BOY_2,
-  SE_VOICE_BOY_3,
-  SE_VOICE_BOY_4,
+  SE_VOICE_BOY_A,
+  SE_VOICE_BOY_B,
+  SE_VOICE_BOY_C,
+  SE_VOICE_BOY_D,
   /// The young women's voice: Mia, Jenna, Sheba, Feizhi and the young women of
   /// the towns.
-  SE_VOICE_YOUNG_WOMAN_1,
-  SE_VOICE_YOUNG_WOMAN_2,
-  SE_VOICE_YOUNG_WOMAN_3,
-  SE_VOICE_YOUNG_WOMAN_4,
+  SE_VOICE_YOUNG_WOMAN_A,
+  SE_VOICE_YOUNG_WOMAN_B,
+  SE_VOICE_YOUNG_WOMAN_C,
+  SE_VOICE_YOUNG_WOMAN_D,
   /// The young men's voice: Isaac, Garet and Ivan, Felix as a child, Hsu, the
   /// Djinn and the young men of the towns.
-  SE_VOICE_YOUNG_MAN_1,
-  SE_VOICE_YOUNG_MAN_2,
-  SE_VOICE_YOUNG_MAN_3,
-  SE_VOICE_YOUNG_MAN_4,
+  SE_VOICE_YOUNG_MAN_A,
+  SE_VOICE_YOUNG_MAN_B,
+  SE_VOICE_YOUNG_MAN_C,
+  SE_VOICE_YOUNG_MAN_D,
   /// The women's voice: Dora, Menardi, Layana, Laurel, Hama and the women and
   /// old women of the towns.
-  SE_VOICE_WOMAN_1,
-  SE_VOICE_WOMAN_2,
-  SE_VOICE_WOMAN_3,
-  SE_VOICE_WOMAN_4,
+  SE_VOICE_WOMAN_A,
+  SE_VOICE_WOMAN_B,
+  SE_VOICE_WOMAN_C,
+  SE_VOICE_WOMAN_D,
   /// The old men's voice: Kraden, Hammet, Nyunpa, Tret, Bunza, the Kraken and
   /// the old men of the towns.
-  SE_VOICE_OLD_MAN_1,
-  SE_VOICE_OLD_MAN_2,
-  SE_VOICE_OLD_MAN_3,
-  SE_VOICE_OLD_MAN_4,
+  SE_VOICE_OLD_MAN_A,
+  SE_VOICE_OLD_MAN_B,
+  SE_VOICE_OLD_MAN_C,
+  SE_VOICE_OLD_MAN_D,
   /// The men's voice: Felix, Saturos, Alex, Donpa, Kaja, Dodonpa, Babi, Kyle,
   /// Iodem, McCoy, the soldiers and the men of the towns.
-  SE_VOICE_MAN_1,
-  SE_VOICE_MAN_2,
-  SE_VOICE_MAN_3,
-  SE_VOICE_MAN_4,
+  SE_VOICE_MAN_A,
+  SE_VOICE_MAN_B,
+  SE_VOICE_MAN_C,
+  SE_VOICE_MAN_D,
   /// A sound with no tracks on player 3, which stops the loop playing there:
   /// every scene change (unless FLAG_SKIP_SCENE_CHANGE_SOUND), a rolling log or
   /// cart stopping, a battle starting on the field.
@@ -776,17 +736,13 @@ enum SoundId {
   /// (SolSanctumEruption_SpawnEffectPair).
   SE_ERUPTION_COLUMNS,
   SE_293,
-  SE_294,
-  SE_295,
-  SE_296,
-  SE_297,
-  /// A sound with no tracks on player 5, which stops what plays there; played
-  /// before each queued scene sound (Scene_QueueMusic).
-  SE_STOP_MUSIC_PLAYER_5,
-  SE_299,
+  /// A sound with no tracks on player 5, which stops what plays there, as a
+  /// map's exit and stairs sounds do; played before each queued scene sound
+  /// (Scene_QueueMusic).
+  SE_STOP_EXIT_SE = 298,
   /// Tolbi Spring: a coin or medal on its way, 50 frames into the toss
   /// (TolbiSpring_RunToss).
-  SE_TOLBI_SPRING_TOSS,
+  SE_TOLBI_SPRING_TOSS = 300,
   /// Tolbi Spring: a tossed coin meeting one of the moving obstacles.
   SE_TOLBI_SPRING_OBSTACLE_HIT,
   /// Lucky Dice: the dice thrown with A.
@@ -811,5 +767,8 @@ enum SoundId {
   SE_310,
   SE_311
 };
+
+/// The first voice: the first blip of the animals'.
+#define SE_VOICE_FIRST SE_VOICE_ANIMAL_A
 
 #endif

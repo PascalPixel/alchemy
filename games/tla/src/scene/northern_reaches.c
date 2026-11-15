@@ -3,6 +3,7 @@
 /// Felix fires the Magma Ball at it from a safe distance.
 
 #include "shared/tables.h"
+#include "sprite_ids.h"
 #include "flags.h"
 #include "system/io_reg.h"
 #include "battle/battle.h"
@@ -527,8 +528,9 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gNorthernReaches_ShipAtRest, 120,
-                    0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS,
+                    (s32)gNorthernReaches_ShipAtRest, 120, 0, 280, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
     {263, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_SOUTH, 2, 0},
     {285, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_SOUTH, 2, 0},
     {56, CONDITION_ALWAYS, 1, -0x380000, 0, -0x380000, FACING_EAST, 2, 0},

@@ -6,6 +6,7 @@
 /// party ties the second with Lash (OseniaCliffs_LashRope).
 
 #include "system/task.h"
+#include "sprite_ids.h"
 #include "shared/tables.h"
 #include "field/field_work.h"
 #include "battle/battle.h"
@@ -152,12 +153,13 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(192, 0x8ff, MOVEMENT_TYPE_STAND, 200, 0, 226, FACING_EAST,
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x8ff,
+                    MOVEMENT_TYPE_STAND, 200, 0, 226, FACING_EAST,
                     TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(187, 0x8ff, MOVEMENT_TYPE_STAND, 259, 0, 312, FACING_NORTH,
-                    TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(190, 0x8ff, MOVEMENT_TYPE_STAND, 242, 0, 313, FACING_NORTH,
-                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, 0x8ff, MOVEMENT_TYPE_STAND, 259, 0, 312,
+                    FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, 0x8ff, MOVEMENT_TYPE_STAND,
+                    242, 0, 313, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 240, 0, 184,
                     FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 184,

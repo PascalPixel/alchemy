@@ -4,6 +4,7 @@
 /// the quay.
 
 #include "system/task.h"
+#include "sprite_ids.h"
 #include "battle/battle.h"
 #include "field/field_work.h"
 #include "flags.h"
@@ -259,7 +260,7 @@ s32 gLemuriaDock_ExitsWithFlag960[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
 #if TLA_PATCH_1
     ACTOR_PLACEMENT(420, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 384, 0, 392, FACING_EAST, TALK_FACING_KEEP, 0),
 #endif

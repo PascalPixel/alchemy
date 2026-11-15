@@ -5,6 +5,7 @@
 /// the tablet where Jenna learns Blaze and the flames Blaze moves.
 
 #include "../field/actor_set_sprite_priority.c"
+#include "sprite_ids.h"
 #include "djinn_ids.h"
 
 #include "../field/actor_prepare.c"
@@ -3248,7 +3249,7 @@ struct ActorPlacement gMagmaRockInside_Room2Placements[] = {
     {334, CONDITION_ALWAYS, 7, 7, 0, 0, FACING_NORTH, 2, 3},
     {312, CONDITION_ALWAYS, 7, 8, 0, 0, FACING_NORTH, 2, 2},
     {489, CONDITION_ALWAYS, 7, 9, 0, 0, FACING_NORTH, 2, 2},
-    ACTOR_PLACEMENT(245, 0x6b, MOVEMENT_TYPE_STAND, 296, 0, 504, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, 0x6b, MOVEMENT_TYPE_STAND, 296, 0, 504, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3260,7 +3261,7 @@ struct ActorPlacement gMagmaRockInside_Room3Placements[] = {
     {319, CONDITION_ALWAYS, 7, 5, 0, 0, FACING_NORTH, 2, 2},
     {407, CONDITION_ALWAYS, 1, 6, 0, 0, FACING_SOUTH, 2, 2},
     {407, CONDITION_ALWAYS, 1, 7, 0, 0, FACING_SOUTH, 2, 3},
-    ACTOR_PLACEMENT(245, 0x68, MOVEMENT_TYPE_STAND, 456, 0, 600, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, 0x68, MOVEMENT_TYPE_STAND, 456, 0, 600, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3329,7 +3330,7 @@ struct ActorPlacement gMagmaRockInside_Room8Placements[] = {
     {312, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_NORTH, 2, 2},
     {365, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_NORTH, 2, 2},
     {365, CONDITION_ALWAYS, 1, 4, 0, 0, FACING_NORTH, 2, 2},
-    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_WEST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on

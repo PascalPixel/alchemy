@@ -8,6 +8,7 @@
 /// (SeaOfTime_CrossToLemuria).
 
 #include "../field/actor_set_sprite_priority.c"
+#include "sprite_ids.h"
 #include "system/task.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
@@ -1400,14 +1401,14 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gSeaOfTime_Placements[] = {
-    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gSeaOfTime_ShipRests, 120, 0, 280,
-                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, (s32)gSeaOfTime_ShipRests,
+                    120, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSeaOfTime_Room2Placements[] = {
-    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gSeaOfTime_ShipRests, 120, 0, 280,
-                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, (s32)gSeaOfTime_ShipRests,
+                    120, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH,
                     TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_NORTH,

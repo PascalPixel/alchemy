@@ -4,6 +4,7 @@
 /// sail out.
 
 #include "types.h"
+#include "sprite_ids.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
 #include "system/main_routine_work.h"
@@ -305,8 +306,9 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gLemuriaEntrance_ShipAtRest, 14,
-                    0, 4, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS,
+                    (s32)gLemuriaEntrance_ShipAtRest, 14, 0, 4, FACING_NORTH,
+                    TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(342, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 636, 0, 112,
                     FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(342, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 668, 0, 112,

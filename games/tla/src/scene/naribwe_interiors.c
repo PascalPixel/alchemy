@@ -5,6 +5,7 @@
 /// for the path to follow.
 
 #include "flags.h"
+#include "sprite_ids.h"
 #include "window/message_argument.h"
 #include "shared/tables.h"
 #include "field/field.h"
@@ -899,8 +900,9 @@ struct ActorPlacement gActorPlacements[] = {
                     FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 672, 0, 104,
                     FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(262, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 672, 0, 104,
-                    FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_FLAME_AND_SMOKE, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 672, 0, 104, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(285, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 672, 0, 104,
                     FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},

@@ -1326,7 +1326,7 @@ void Champa_MeetAlex(void) {
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
-  Actor_FaceDirectionAndWait(ACTOR_SHEBA, 1);
+  Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_EAST + 1);
   FieldEvent_Wait(25);
   Champa_JennaAndShebaGlare(5, 6);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);

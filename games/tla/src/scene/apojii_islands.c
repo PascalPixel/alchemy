@@ -944,9 +944,9 @@ extern s16 gGroundParticleFrames[];
 /// decoded into VRAM, and GroundParticles_Draw scheduled at priority 0x480 to
 /// move them; the overlay's copy of FieldEffect_InitializeSparkles.
 void ApojiiIslands_StartSparkles(void) {
-  struct DustWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct DustWork));
-  struct DustParticle *p = work->particles;
+  struct GroundParticleWork *work =
+      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct GroundParticleWork));
+  struct GroundParticle *p = work->particles;
   u8 *buf;
   u32 i;
   u32 size;
@@ -955,13 +955,15 @@ void ApojiiIslands_StartSparkles(void) {
   size = 0;
   zero = size;
   Dma_Set((const void *)&zero, work,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 517, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
+              sizeof(struct GroundParticleWork) / 4,
+          REG_DMA3);
   buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Decompress_ByteLz(gField_Tiles679, buf);
-  work->vramEntry = VramCache_FindFreeEntry();
-  work->tileBase = Vram_Load(work->vramEntry, 0x300, buf);
+  work->entry = VramCache_FindFreeEntry();
+  work->tileBase = Vram_Load(work->entry, 0x300, buf);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
-  work->field808 = size;
+  work->leader = (s32 *)size;
   i = 0;
 loop:
   size = (u32)p;
@@ -982,13 +984,12 @@ loop:
 }
 
 void ApojiiIslands_SetSparkleAnchor(s32 id) {
-  u8 *work = Ram_HeapSlots->weather;
+  struct GroundParticleWork *work = Ram_HeapSlots->weather;
   struct Actor *object = Actor_Get(id);
-  s32 *slot = (s32 *)(work + 0x808);
 
-  *slot = 0;
+  work->leader = NULL;
   if (id != 0 && object != 0)
-    *slot = (s32)&object->x.fixed;
+    work->leader = &object->x.fixed;
 }
 
 #include "text/msg_ids.h"

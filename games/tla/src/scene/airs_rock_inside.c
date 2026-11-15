@@ -767,7 +767,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
     shot->riseEnabled = 0;
     shot->update = 0;
     Call2((void (*)())Actor_PlaySoundInView, (s32)shot, 539);
-    if (shot->facing == 0xc000)
+    if (shot->facing == FACING_NORTH)
       Actor_StartScript(shot, gAirsRockInside_WhirlwindFadesScript);
     else
       Actor_StartScript(shot, gAirsRockInside_WhirlwindRisesScript);
@@ -798,7 +798,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
       shot->riseEnabled = 1;
     }
   }
-  if (shot->facing == 0xc000) {
+  if (shot->facing == FACING_NORTH) {
     shot->x.fixed += Iwram_MulQ16(Trig_Cos(shot->facing), speed);
     shot->y.fixed -= Iwram_MulQ16(Trig_Sin(shot->facing), speed);
   } else {
@@ -823,7 +823,7 @@ void AirsRockInside_StatueBreathesWhirlwind(struct Actor *object) {
   if (object->timer == 240) {
     if (!GameFlag_Get(FLAG_SCENE_TEMP_50))
       Actor_PlaySoundInView(object, SE_FLAME_FLARE);
-    if (object->facing == 0xc000) {
+    if (object->facing == FACING_NORTH) {
       position.x = object->x.fixed;
       position.z = object->z.fixed;
     } else {
@@ -921,7 +921,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
       shot->riseEnabled = 1;
     }
   }
-  if (shot->facing == 0xc000) {
+  if (shot->facing == FACING_NORTH) {
     shot->x.fixed += Iwram_MulQ16(Trig_Cos(shot->facing), speed);
     shot->y.fixed -= Iwram_MulQ16(Trig_Sin(shot->facing), speed);
   } else {
@@ -952,7 +952,7 @@ void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *object) {
     shot = 0;
     if (!GameFlag_Get(FLAG_SCENE_TEMP_50))
       Actor_PlaySoundInView(object, SE_FLAME_FLARE);
-    if (object->facing == 0xc000) {
+    if (object->facing == FACING_NORTH) {
       position.x = object->x.fixed;
       position.z = object->z.fixed;
     } else {
@@ -1815,7 +1815,7 @@ row:
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
       spark = Import_ActorCreate(
-          0x2a0, Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->x.fixed,
+          SPRITE_PARTICLE, Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->x.fixed,
           Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->y.fixed,
           Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->z.fixed);
       ((struct FieldSprite *)spark->sprite)->priority =
@@ -2115,7 +2115,8 @@ row:
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
       spark = Import_ActorCreate(
-          0x2a0, Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->x.fixed,
+          SPRITE_PARTICLE,
+          Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->x.fixed,
           Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->y.fixed,
           Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->z.fixed);
       ((struct FieldSprite *)spark->sprite)->priority =
@@ -2502,8 +2503,9 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
   Sound_Play(SE_SHIMMER);
   wait(16);
   for (i = 2; i != 32; i += 2) {
-    struct Actor *spark = FieldActor_Create(
-        0x2a0, b->x.fixed, b->y.fixed + i * 65536 - px(8), b->z.fixed);
+    struct Actor *spark =
+        FieldActor_Create(SPRITE_PARTICLE, b->x.fixed,
+                          b->y.fixed + i * 65536 - px(8), b->z.fixed);
     spark->timer = Random16();
     spark->userValue = 0x800;
     spark->riseCounter = i;

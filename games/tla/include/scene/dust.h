@@ -7,31 +7,18 @@
 #include "types.h"
 #include "field/ground_mask.h"
 
-struct DustParticle {
-  u32 link;
-  u32 attr01;
-  u32 attr2;
-  s32 posX;
-  s32 posY;
-  s32 posZ;
-  u8 pad18[4];
-  u16 timer;
-  u8 pad1e[2];
-};
-
-struct DustWork {
-  s32 vramEntry;
-  s32 tileBase;
-  struct DustParticle particles[64];
-  u32 field808;
-  u8 pad80c[8];
-};
-
+/// The heap slot weather while the scenes' sparkles run (GroundParticles_Draw):
+/// The Broken Seal's WeatherWork, grown to 64 particles, with the place the
+/// particles gather around.
 struct GroundParticleWork {
-  s32 entry;
-  s32 tileBase;
+  s32 entry;    ///< the VRAM cache entry holding the particles' tiles
+  s32 tileBase; ///< their first tile in VRAM
   struct GroundParticle particles[64];
+  /// The 16.16 position (x, height, z) new particles appear around; NULL
+  /// keeps them where they fall.
   s32 *leader;
+  u8 unused[4]; ///< no code reads it
+  s32 stopped;  ///< nonzero stops new sparkle bursts, as in WeatherWork
 };
 
 #endif

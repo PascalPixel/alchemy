@@ -31,6 +31,10 @@
 #define FLAG_DEFENDED_THE_MAYOR 0x8bb
 #define FLAG_TOLD_OF_THE_EASTERN_SEA 0x8bc
 
+/// Where Eastern Alhafra sends the party to see Briggs escape from the
+/// manor (AlhafraManor_BriggsEscapes).
+enum { ENTRANCE_BRIGGS_ESCAPES = 81 };
+
 /// The household and guests of gActorPlacements, while the mast lies fallen.
 enum AlhafraManorActorId {
   /// Jiya, the mayor's aide: "Milord, these things take time..."
@@ -284,7 +288,7 @@ s32 Scene_Initialize(void) {
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   }
   entrance = &gMainRoutineWork.entrance;
-  if (*entrance == 81) {
+  if (*entrance == ENTRANCE_BRIGGS_ESCAPES) {
     gMainRoutineWork.entrance = gMainRoutineWork.returnEntrance = 8;
     AlhafraManor_BriggsEscapes();
   }

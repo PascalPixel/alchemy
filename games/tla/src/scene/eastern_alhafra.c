@@ -53,7 +53,11 @@
 #define FLAG_SECOND_CRATE_SUNK 0x8a1 ///< ACTOR_SECOND_CRATE
 #define FLAG_CONE_POUNDED 0x8a2
 #define FLAG_ROPE_LASHED 0x8a3
-#define FLAG_LAST_ROCK_SUNK 0x8a4  ///< ACTOR_LAST_ROCK
+#define FLAG_LAST_ROCK_SUNK 0x8a4 ///< ACTOR_LAST_ROCK
+
+/// Where the party is brought back to the docks once Briggs has taken the
+/// ship (EasternAlhafra_BriggsStealsShip), the workers knocked down.
+enum { ENTRANCE_AFTER_SHIP_STOLEN = 99 };
 #define FLAG_FIRST_ROCK_SUNK 0x8a5 ///< ACTOR_FIRST_ROCK
 #define FLAG_LOG_ROLLED 0x8a6
 #define FLAG_TALKED_TO_SAILOR 0x8a8
@@ -445,7 +449,7 @@ void EasternAlhafra_RollLog(void) {
   if (lastRock != NULL && Event_GetFlag(FLAG_LAST_ROCK_SUNK) == 0)
     MapGrid_SetCellBehavior(lastRock->x.fixed, lastRock->z.fixed, 2, 255);
   if (PushTarget_FindSlide(&unk) != 0) {
-    if (Event_GetFlag(FLAG_LAST_ROCK_SUNK) == 0 || facing == 0xc000) {
+    if (Event_GetFlag(FLAG_LAST_ROCK_SUNK) == 0 || facing == FACING_NORTH) {
       PushTarget_Push__log(unk);
     } else {
       Event_SetFlag(FLAG_LOG_ROLLED);
@@ -702,11 +706,11 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_JIYA, 176, 408);
       Actor_SetPosition(ACTOR_SECOND_WORKER, 152, 376);
       Actor_FaceDirection(ACTOR_SECOND_WORKER, FACING_SOUTH, 0);
-      FieldActor_SetSpriteRotationById(ACTOR_ALHAFRAS_MAYOR, 0x4000);
+      FieldActor_SetSpriteRotationById(ACTOR_ALHAFRAS_MAYOR, TRIG_TURN / 4);
       Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_ALHAFRAS_MAYOR), 0);
-      FieldActor_SetSpriteRotationById(ACTOR_JIYA, 0xc000);
+      FieldActor_SetSpriteRotationById(ACTOR_JIYA, TRIG_TURN * 3 / 4);
       Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_JIYA), 0);
-      FieldActor_SetSpriteRotationById(ACTOR_SECOND_WORKER, 0x4000);
+      FieldActor_SetSpriteRotationById(ACTOR_SECOND_WORKER, TRIG_TURN / 4);
       Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_SECOND_WORKER), 0);
       Actor_SetAnimation(ACTOR_ALHAFRAS_MAYOR, 13);
       Actor_SetAnimation(ACTOR_JIYA, 13);
@@ -723,7 +727,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_LOG, 0, 0);
     }
   }
-  if (gMainRoutineWork.entrance == 99) {
+  if (gMainRoutineWork.entrance == ENTRANCE_AFTER_SHIP_STOLEN) {
     gMainRoutineWork.returnEntrance = 1;
     gMainRoutineWork.entrance = 1;
     Actor_SetPosition(ACTOR_FELIX, 136, 552);
@@ -731,11 +735,12 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 184, 616);
     Actor_SetPosition(ACTOR_MAN_KNOCKED_DOWN, 136, 600);
     Actor_SetPosition(ACTOR_FIRST_WORKER, 160, 584);
-    FieldActor_SetSpriteRotationById(ACTOR_YOUNG_MAN_KNOCKED_DOWN, 0x4000);
+    FieldActor_SetSpriteRotationById(ACTOR_YOUNG_MAN_KNOCKED_DOWN,
+                                     TRIG_TURN / 4);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_YOUNG_MAN_KNOCKED_DOWN), 0);
-    FieldActor_SetSpriteRotationById(ACTOR_MAN_KNOCKED_DOWN, 0xc000);
+    FieldActor_SetSpriteRotationById(ACTOR_MAN_KNOCKED_DOWN, TRIG_TURN * 3 / 4);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_MAN_KNOCKED_DOWN), 0);
-    FieldActor_SetSpriteRotationById(ACTOR_FIRST_WORKER, 0x4000);
+    FieldActor_SetSpriteRotationById(ACTOR_FIRST_WORKER, TRIG_TURN / 4);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_WORKER), 0);
     FieldActor_SetSpritePriority(ACTOR_JIYA, 2);
     FieldActor_SetSpritePriority(ACTOR_ALHAFRAS_MAYOR, 2);
@@ -743,9 +748,9 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_ALHAFRAS_MAYOR, 160, 392);
     Actor_SetPosition(ACTOR_JIYA, 176, 408);
     Actor_SetPosition(ACTOR_SECOND_WORKER, 152, 376);
-    FieldActor_SetSpriteRotationById(ACTOR_JIYA, 0xc000);
+    FieldActor_SetSpriteRotationById(ACTOR_JIYA, TRIG_TURN * 3 / 4);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_JIYA), 0);
-    FieldActor_SetSpriteRotationById(ACTOR_SECOND_WORKER, 0x4000);
+    FieldActor_SetSpriteRotationById(ACTOR_SECOND_WORKER, TRIG_TURN / 4);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_WORKER), 0);
     Actor_FaceDirection(ACTOR_ALHAFRAS_MAYOR, FACING_NORTH_NORTHEAST, 0);
     Actor_FaceDirection(ACTOR_SECOND_WORKER, FACING_SOUTH, 0);
@@ -1958,7 +1963,7 @@ scroll:
   FieldEvent_Wait(30);
   Event_End();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Event_SetDestination(SCENE_EASTERN_ALHAFRA, 99);
+  Event_SetDestination(SCENE_EASTERN_ALHAFRA, ENTRANCE_AFTER_SHIP_STOLEN);
 }
 
 /// The scene that opens with MsgWhatYouLet; either answer to each of its two
@@ -2681,7 +2686,7 @@ struct SceneEntrance gSceneEntrances[] = {
     {10, CONDITION_ALWAYS, 520, 0, 520, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {11, CONDITION_ALWAYS, 264, 0, 424, FACING_EAST, 0, -1, -1, -1, -1, 0},
     {12, CONDITION_ALWAYS, 440, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {99, CONDITION_ALWAYS, 136, 0, 568, FACING_NORTH, 0, 32, 0, 608, 704, 0},
+    {ENTRANCE_AFTER_SHIP_STOLEN, CONDITION_ALWAYS, 136, 0, 568, FACING_NORTH, 0, 32, 0, 608, 704, 0},
     {SCENE_TABLE_END},
 };
 

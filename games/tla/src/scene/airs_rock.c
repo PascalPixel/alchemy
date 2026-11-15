@@ -691,7 +691,7 @@ row:
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
       spark = FieldActor_Create(
-          0x2a0, Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->x.fixed,
+          SPRITE_PARTICLE, Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->x.fixed,
           Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->y.fixed,
           Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->z.fixed);
       {
@@ -850,7 +850,7 @@ void AirsRock_RideWhirlwind(void) {
   }
   Sound_Play(SE_STOP_ACTION_SE);
   facing = ride->facing;
-  if (facing == 0xc000) {
+  if (facing == FACING_NORTH) {
     rider = ride->watchedActor;
     dx = 0;
     dz = 0;
@@ -995,7 +995,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
     Actor_PlaySoundInView(shot, cue);
     shot->riseEnabled = 0;
     shot->update = 0;
-    if (shot->facing == 0xc000)
+    if (shot->facing == FACING_NORTH)
       Actor_StartScript(shot, gAirsRock_WhirlwindRisesScript);
     else
       Actor_StartScript(shot, gAirsRock_WhirlwindFadesScript);
@@ -1042,7 +1042,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
       }
     }
   }
-  if (shot->facing == 0xc000) {
+  if (shot->facing == FACING_NORTH) {
     shot->x.fixed += Iwram_MulQ16(Trig_Cos(shot->facing), speed);
     shot->y.fixed -= Iwram_MulQ16(Math_Sin(shot->facing), speed);
   } else {
@@ -1067,7 +1067,7 @@ void AirsRock_StatueBreathesWhirlwind(struct Actor *object) {
   if (object->timer == 240) {
     if (!Event_GetFlag(FLAG_RIDING_WHIRLWIND))
       Actor_PlaySoundInView(object, SE_FLAME_FLARE);
-    if (object->facing == 0xc000) {
+    if (object->facing == FACING_NORTH) {
       position.x = object->x.fixed;
       position.z = object->z.fixed;
     } else {
@@ -1249,7 +1249,7 @@ row:
   for (i = 0; i != 45; i++) {
     if ((gFrameCount & 3) == 0) {
       spark = (FieldActor_Create(
-          0x2a0, Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->x.fixed,
+          SPRITE_PARTICLE, Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->x.fixed,
           Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->y.fixed,
           Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->z.fixed));
       ((struct FieldSprite *)spark->sprite)->priority =
@@ -1362,7 +1362,7 @@ fadeSecondCrumble:
 /// The top's fog: its blend breathes between 4 and 8 sixteenths while its lines
 /// ripple.
 void AirsRock_DriftFog(void) {
-  s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x178);
+  s32 *scroll = &Ram_HeapSlots->mapGrid->layers[2].x;
   s16 *line = gAirsRock_WaveLines;
   s32 i;
   volatile u16 *channel;
@@ -1389,7 +1389,7 @@ void AirsRock_DriftFog(void) {
 }
 
 void AirsRock_LiftFog(void) {
-  s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x178);
+  s32 *scroll = &Ram_HeapSlots->mapGrid->layers[2].x;
   s16 *line = gAirsRock_WaveLines;
   s32 i, wave, spread, value;
   s16 *table;
@@ -1431,7 +1431,7 @@ void AirsRock_LiftFog(void) {
 /// stays clear.
 void AirsRock_WhirlwindClearsFog(void) {
   u16 *buffer = Heap_Alloc(0x680);
-  s32 *beam = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x178);
+  s32 *beam = &Ram_HeapSlots->mapGrid->layers[2].x;
   u16 *cell;
   struct Actor *spark;
   s32 i;
@@ -1479,7 +1479,7 @@ void AirsRock_WhirlwindClearsFog(void) {
 
     if (low == 0) {
       spark = (FieldActor_Create(
-          0x2a0, Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->x.fixed,
+          SPRITE_PARTICLE, Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->x.fixed,
           Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->y.fixed,
           Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->z.fixed));
       {
@@ -1611,7 +1611,7 @@ void AirsRock_SetLedgeCellsByLevel(void) {
 #include "shared/leader_lift.h"
 
 #define LEADER() Actor_GetById(gMainRoutineWork.leaderActorId)
-#define BEAM ((s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0x178))
+#define BEAM (&Ram_HeapSlots->mapGrid->layers[2].x)
 
 /// A statue that breathes whirlwinds (AirsRock_StatueBreathesWhirlwind), from
 /// the given count of frames.

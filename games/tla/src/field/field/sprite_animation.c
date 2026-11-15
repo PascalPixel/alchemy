@@ -227,6 +227,8 @@ s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state) {
   return 0;
 }
 
+/// Resets a sprite animation from its metadata: its pictures, scripts, codec
+/// and drawing kind, with no script running and no picture shown.
 void SpriteAnimation_Reset(struct AnimationEntry *work) {
   s32 value;
   s32 z;
@@ -440,6 +442,8 @@ struct ChildGroup {
   struct ChildObject *children[1];
 };
 
+/// Sets each playing sprite animation's timer to the given duration in frames.
+/// Returns 0.
 s32 Sprite_SetAnimationTimers(struct ChildGroup *group, s32 value) {
   s32 i;
 

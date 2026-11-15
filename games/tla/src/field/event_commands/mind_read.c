@@ -193,6 +193,8 @@ void BattleEffect_SetCallbackWhenTargetUnset(struct Actor *target) {
   }
 }
 
+/// Gives every part of an actor's sprite (but those at palette 15) palette - 1,
+/// or for palette 0 the next palette of a cycle that changes every 2 frames.
 void Actor_SetSpritePalette(void *object, s32 value) {
   s32 child = value - 1;
 
@@ -297,6 +299,9 @@ void Actor_ApplyRandomChildValues__mind_read(void) __asm__(
 
 #define MOVE_CELL_MASK 0xfff00000 ///< a 16-pixel cell
 
+/// When Move is cast on a target, the pushing hand appears beside it and pushes
+/// it 16 pixels the way the d-pad points, for as long as the player pushes; A,
+/// B, L or R end it.
 void FieldPsynergy_SteerPushedTarget(void) {
   struct Vec3 position;
   struct Vec3 beyond;
@@ -773,6 +778,8 @@ void FieldPsynergy_Reveal(void) {
     Task_Add(FieldPsynergy_WatchLeaderDistance, 0x480);
 }
 
+/// Ends Reveal if it is running: stops its watch, brings the colours back from
+/// black over 30 frames and runs the scene's PSYNERGY_PHASE_FADES event.
 void FieldPsynergy_EndReveal(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct ScreenTransitionState *transition = Ram_HeapSlots->screenTransition;
@@ -902,6 +909,8 @@ void FieldPsynergy_Growth(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
+/// Sends 24 particles, one every 2 frames, from in front of the caster to
+/// points round the Psynergy's position.
 void FieldEffect_SpawnBurstParticleField(void) {
   struct FieldEffectWork *work;
   struct Actor *user;
@@ -1129,6 +1138,10 @@ struct EffectWork {
   struct EffectTarget *target;
 };
 
+/// Field effect sprite callback of a particle that scatters 25 pixels from its
+/// origin in a random direction, then gathers beside the main actor and is
+/// freed. Set on Force's 12 flashes by FieldPsynergy_Force in
+/// event_commands_force.c.
 void FieldEffect_UpdateRadialBurst(struct RadialBurstEffect *effect) {
   struct EffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct ScreenPoint value;
@@ -1564,6 +1577,9 @@ void FieldEffect_UpdateShrinkingOrbitActor(struct Actor *object) {
   }
 }
 
+/// Per-frame update: sways 6 pixels either side (a 64-frame cycle) 16 pixels
+/// above the Psynergy's position, and every 3 frames sheds a spark that sways
+/// as it slowly falls.
 void FieldEffect_RunSparkEmitter(struct SparkObject *obj) {
   struct FieldEffectWork *scene;
   s16 *phase;
@@ -1763,6 +1779,8 @@ void FieldPsynergy_EndCloak(void) {
   gMainRoutineWork.cloaked = 0;
 }
 
+/// Starts the Cloak cell check if the leader is hidden. FieldSequence_Run calls
+/// it as a scene loads, since gMainRoutineWork.cloaked outlives the scene.
 void FieldPsynergy_ResumeCloakCheck(void) {
   if (gMainRoutineWork.cloaked != 0)
     Task_Add(FieldEffect_CheckCloakTile, 0x480);

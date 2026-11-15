@@ -62,6 +62,8 @@ void Actor_SetSpritePriority(u32 objectId, s32 priority) {
   }
 }
 
+/// Makes the target actor's sprite show the source actor's graphics (its VRAM
+/// block and tile). Neither actor is checked for NULL.
 void Actor_CopyGraphics(u32 targetId, u32 sourceId) {
   struct FieldSprite *sprite;
   u8 block;
@@ -223,6 +225,8 @@ void Actor_ShowItemIconById(s32 id, s32 resource) {
   }
 }
 
+/// The event command "set message": the number of the event's next message,
+/// written to work->message.
 void Event_SetMessageId(s32 message) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 

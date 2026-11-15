@@ -46,6 +46,8 @@ s32 LuckyWheels_Start(void) {
   return 0;
 }
 
+/// Writes count RGB555 colours from src to dst scaled by scale (16.16, Q16_ONE
+/// keeps them). Returns 0.
 s32 LuckyWheels_ScaleRgb555(u16 *source, u16 *destination, s32 scale,
                             s32 count) {
   s32 remaining;
@@ -387,6 +389,11 @@ extern char MsgSlotsStart[];
 extern char MsgSlotsAllHeld[];
 extern char MsgSlotsCannotPull[];
 
+/// Lucky Wheels' VBlank task: reads the keys, runs the game's state
+/// (betting, spinning and stopping the wheels, scoring the paylines, choosing
+/// wheels to hold, showing a win) and builds all 128 sprites: the cursor, the
+/// title letters of a win, the frame, the hold lamps, the spin counter, the
+/// paylines, the wheel symbols, the lever and the bottom bar.
 void LuckyWheels_Update(void) {
   struct ReelEffectWork *fx;
   s32 objMode;
@@ -1050,6 +1057,11 @@ typedef void (*DrawRectangle)(void *canvas, const u8 *source, s32 x, s32 y,
 extern char MsgSlotsChangeBet[];
 extern char MsgSlotsControls[];
 
+/// Lucky Wheels: loads its backgrounds, sprites and palettes, fills each of
+/// the five wheels with 21 random symbols (with eight placed symbols of rank 0
+/// to 5), then runs until the player leaves: fading in, drawing the paylines
+/// on the canvas while betting or winning, and the jackpot's sparks and
+/// colour cycle while showing a win. Then fades out and frees its memory.
 void LuckyWheels_Run(void) {
   s32 picks[8];
   s32 litLines[7];
@@ -1409,6 +1421,9 @@ void LzPack_RemoveSlotNode(s32 slot) {
   }
 }
 
+/// Reads count more input bytes into the window from position start, dropping
+/// the bytes they replace from their chains; past the end of the input the
+/// positions are marked empty (-1).
 void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
   s32 limit = count;
   s32 current = 0;
@@ -1461,6 +1476,8 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
   }
 }
 
+/// Appends the finished group (a flag byte and up to eight items) to the
+/// output.
 void LzPack_CopyBufferedBytes(u8 *destination) {
   struct LzPackWork *work = gLzPackWork;
   s32 index;
@@ -1476,6 +1493,9 @@ void LzPack_CopyBufferedBytes(u8 *destination) {
 #define PACK_DISTANCE_MAX 63
 #define PACK_LOOKAHEAD 672
 
+/// Finds the longest earlier match (up to PACK_MATCH_MAX bytes, at most
+/// PACK_DISTANCE_MAX back) for the bytes at window position start; matchLength
+/// stays 1 for none.
 static __inline__ void LzPack_FindWindowMatch(s32 start) {
   struct LzPackNode *node;
   s32 len;

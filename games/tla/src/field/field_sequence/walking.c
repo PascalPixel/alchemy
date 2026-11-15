@@ -69,6 +69,8 @@ void Field_UpdateHoverReady(void) {
     work->hoverReady = 0;
 }
 
+/// Returns the cell behavior of the map cell 16 pixels ahead of the party
+/// leader (a World Map cell picture on the World Map), or 0 without a leader.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *block = Ram_HeapSlots->fieldWork;
   struct Actor *object = WorldMap_Unfreeze();
@@ -129,6 +131,10 @@ s32 Field_GetCollisionUnderLeader(void) {
 
 // The overlay's entry table; entry 11 returns the map's region list.
 
+/// Takes the exit of the first of the scene's exit regions that contains the
+/// position (x, y, z), in 16.16 pixels, and whose condition holds: records the
+/// region's exit value for FieldSequence_Run, plays the exit sound and starts
+/// leaving the scene.
 void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   s32 selectedValue;
   struct FieldWork *runtime;
@@ -180,6 +186,10 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 s32 DjinnRecovery_CountDownFar(void);
 void FieldEffect_SetAttached(s32 owner, s32 mode);
 
+/// Handles one frame of the party leader's walking onto the cell at (x, y, z)
+/// of map grid layer: records step triggers and push cells, takes exits, and
+/// while walking advances the encounter counter, regenerates PP, hurts the
+/// party with poison and hazardous ground, and wears Avoid off.
 void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -446,6 +456,8 @@ void WorldMap_ReloadPendingAreaGraphics(void) {
   }
 }
 
+/// Ends what WorldMap_Freeze started: on the World Map, reloads
+/// the area's graphics and sets the camera's movement state back to 0.
 void *WorldMap_Unfreeze(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   void **event;

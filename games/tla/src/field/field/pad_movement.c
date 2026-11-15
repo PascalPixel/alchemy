@@ -18,6 +18,8 @@ s32 WorldMap_IsWalkable__resource_slot(
     struct Actor *object,
     struct FieldPosition *position) __asm__("WorldMap_IsWalkable");
 
+/// SC_WORLD: moves the player on the world map by the direction pad, as
+/// SC_PLAYER does on the field, and turns the world map camera with the pad.
 s32 Actor_MoveOnWorldMap(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition leftPosition;

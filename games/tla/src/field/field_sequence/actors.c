@@ -283,6 +283,8 @@ void Actor_ResetForLeader(s32 table) {
   work->camera = camera;
 }
 
+/// Returns the slot after the last placed actor (8 when there is none), or -1
+/// when the last slot is occupied.
 s32 Actor_FindLastActiveId(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 last = 7;
@@ -384,6 +386,8 @@ void ObjectTable_Snapshot(void) {
     *indices++ = 255;
 }
 
+/// Puts back the actors the snapshot saved, and moves the camera to the party
+/// leader's height.
 void Actor_Restore(void) {
   struct Actor *copy = gSnapshotObjects;
   u8 *indices = (u8 *)gSnapshotObjects - 32;

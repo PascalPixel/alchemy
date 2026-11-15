@@ -1,6 +1,7 @@
 #include "types.h"
 #include "system/field_effect.h"
 
+/// Integrates linear motion, scale changes and rotation once per effect frame.
 void FieldEffect_UpdateMotionScaleAndSpin(union FieldObject *object) {
   s32 x;
   s32 velocityX;

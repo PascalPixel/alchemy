@@ -507,6 +507,9 @@ void FieldParticle_Update(struct FieldParticle *effect) {
   }
 }
 
+/// Draws a field effect sprite at its screen position and scale, when it is
+/// near the screen: x from -32 to 272 pixels and z from -32 to 224, both
+/// exclusive.
 void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
   struct ScaledSprite *sprite;
   s32 offset;
@@ -526,6 +529,9 @@ void FieldEffect_DrawScaledActor(struct FieldParticle *object) {
     Render_ApplyProjectedPlacementFar(sprite, position, scale, 0);
 }
 
+/// Moves a field effect sprite toward its target, turning at most turnStepMax
+/// a frame when turnStepLimited is set and speeding up by acceleration to
+/// speedMax. One that stops at its target lands on it once within 8 pixels.
 void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
   s32 dx;
   s32 dz;
@@ -599,10 +605,12 @@ void FieldParticle_SetPosition(struct FieldParticle *effect, s32 x, s32 z) {
   effect->speed = 0;
 }
 
+/// Sets the animation of a field effect sprite.
 void FieldParticle_SetActorMode(struct FieldParticle *effect, s32 mode) {
   Animation_ApplyChildArgumentFar(effect->object, mode);
 }
 
+/// Gives a field effect sprite its per-frame callback, starting at state 0.
 void FieldParticle_SetCallback(struct FieldParticle *effect,
                                EffectCallback callback) {
   effect->callback = callback;
@@ -645,6 +653,7 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
   FieldParticle_SetActorMode(effect, 1);
 }
 
+/// Frees a field effect sprite and its sprite, clearing it to zero (inactive).
 void FieldEffect_ClearOwnedSlot(struct FieldParticle *slot) {
   if (slot->object)
     Sprite_DestroyFar((struct ResourceObjectWork *)slot->object);

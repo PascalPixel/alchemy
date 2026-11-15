@@ -294,6 +294,8 @@ s32 ResourceTable_CountFreeBlocks(void) {
   return freeCount;
 }
 
+/// Makes sourceSprite share sharedSprite's VRAM block, releasing its own; with
+/// no sharedSprite it keeps its block.
 void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
   void *ret;
   struct ResourceSprite *obj;
@@ -317,6 +319,8 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
 #define Actor_SetAnimationSpeedFar                                             \
   ((void (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
+/// Creates an actor for a field Psynergy, at the caster's ground height, with
+/// sprite priority 0 and animation 1.
 struct Actor *Actor_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *object;

@@ -8,6 +8,7 @@
 #include "module/field/event_commands.h"
 #include "module/field/object.h"
 
+/// Sets up a battle with the formation in slot of encounter table zone.
 void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
@@ -34,6 +35,8 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
 void Field_RequestDjinnBattle__event_commands(u32 flags, u32 djinn) __asm__(
     "Field_RequestDjinnBattle");
 #define Field_RequestDjinnBattle Field_RequestDjinnBattle__event_commands
+/// Sets up the battle with Djinni number `no`. The low 8 bits of flag are the
+/// Djinni's actor, which hops first unless DJINN_NO_HOP is set.
 void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 noPrepare = flags & 0x800;
@@ -99,6 +102,7 @@ void Scene_QueueMusic(s32 soundId) {
 
 void Event_NoOp(void) {}
 
+/// Plays the sound Scene_QueueMusic remembered, if any.
 void Scene_PlayQueuedMusic(void) {
   u8 *work = Ram_HeapSlots->fieldWork;
 

@@ -11,6 +11,8 @@
   (MessageArgument_PushFar((user), 1), MessageArgument_PushFar((ability), 4),  \
    FieldMessage_ShowFar((s32)&(message), 1))
 
+/// Uses Psynergy on the field. code holds the Psynergy (bits 0 to 9) and its
+/// user (bits 10 to 13; 15 for the first party member).
 s32 Field_UsePsynergy(u32 code) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 abilityId = code & 0x3ff;

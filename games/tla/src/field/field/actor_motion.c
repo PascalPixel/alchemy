@@ -8,6 +8,9 @@
 #include "module/tla.h"
 #include "macros.h"
 
+/// Returns 1 when the actor has no movement target: none of its target
+/// coordinates set, or for an actor moved by the ground (any motion flag)
+/// neither its target x nor z.
 s32 Actor_IsTargetUnset(struct Actor *object) {
   s32 first;
   s32 second;
@@ -84,6 +87,9 @@ extern const s32 gActorScript_CycleTable[];
 /// A whole-pixel distance squared.
 static __inline__ s32 Object_Square(s32 value) { return value * value; }
 
+/// Advances all 64 actors by one frame: their scripts and their motion, with
+/// free flight in 3D, following the ground, floating, and solid actors that
+/// refuse to overlap.
 void Actor_UpdateAllThumb(void) {
   struct MotionObject *object;
   s32 objectsRemaining;
@@ -472,6 +478,8 @@ void Actor_SetPositionAndResetMotion(struct Actor *obj, s32 x, s32 y, s32 z) {
   SET_VELOCITY(obj, 0, 0, 0);
 }
 
+/// Sends an actor towards (x, y, z), in 16.16 pixels. Within a pixel it arrives
+/// at once.
 void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   s32 dx;
   s32 distance;

@@ -1,6 +1,8 @@
-/// Queues a palette cycle: copies count colours of a background palette for
-/// PaletteCycle_Step.
 // The main image and overlay 674 both compile this file.
+
+/// Adds a palette cycle: count colours of background palette bank from index,
+/// rotated by one every delay + 1 frames (PaletteCycle_Step). Returns 0, or -1
+/// when all four cycles are taken.
 s32 PaletteCycle_Add(s16 bank, s16 index, s16 delay, s16 count) {
   struct PaletteSnapshotWork *work;
   struct PaletteSnapshot *entry;

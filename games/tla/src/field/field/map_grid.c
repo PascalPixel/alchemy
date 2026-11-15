@@ -20,6 +20,7 @@
 #include "field/mapcopy.h"
 #include "game/game_flags.h"
 
+/// Remaps byteCount bytes in place through gSpriteColorRemapTables.
 void SpriteColor_RemapPixels(u8 *buf, s32 cnt) {
   s32 n;
   u8 *p;
@@ -284,6 +285,8 @@ s32 MapGrid_LoadMap(s32 index) {
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
+/// Centres the camera on the point the map follows (origin: x, height, z), or
+/// on (0, 0) when there is none, and scrolls the layers there.
 void MapGrid_CenterOnFollowedPoint(void) {
   struct MapWork *work = Ram_HeapSlots->mapGrid;
   s32 x = 0;
@@ -445,6 +448,11 @@ void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
   }
 }
 
+/// Each frame on a layered map: centres the view on the point the map follows
+/// (origin), clamped to the map's bounds and shaken by any decaying screen
+/// shake; then scrolls each of the three layers by its parallax scale and
+/// automatic scroll (wrapping at its period), draws the cell picture column or
+/// row that scrolls into view, and sets its BG scroll.
 void MapGrid_UpdateLayerScroll(void) {
   struct MapWork *work;
   struct MapLayerScroll *layer;
@@ -557,6 +565,8 @@ static __inline__ void CopyCellPictureToScreen(u32 *cell, u8 *screenMap,
   *(u32 *)(screenTile + 64) = *cellPictureRows;
 }
 
+/// Centres the view on (x, y) in 16.16 pixels, clamped to the map's bounds, and
+/// redraws every enabled layer's BG map around it.
 void MapGrid_SetCameraCenter(s32 x, s32 y) {
   u32 layerIndex;
   u8 *screenMap;
@@ -810,6 +820,8 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
+/// Copies a rectangle of cells (16x16 pixels each) as they are, from (sourceX,
+/// sourceY) to (dstX, dstY), width by height cells.
 void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                       s32 dstX, s32 dstY) {
   s32 y;
@@ -918,6 +930,8 @@ void Map_CopyRawCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
   }
 }
 
+/// Sets which of BG1-BG3 the map shows (bits 9-11 of its display flags, as in
+/// REG_DISPCNT) from layerFlags, keeping its other flags.
 void MapGrid_SetShownLayers(u32 v) {
   struct MapWork *state = Ram_HeapSlots->mapGrid;
   u32 mask = v & 0xe00;
@@ -1033,6 +1047,9 @@ void Map_LoadCellsAndShapes(void) {
   Decompress_TaggedLz(source, gMapShapeGrid);
 }
 
+/// Loads world map tile `tile` into quarter (x & 1, y & 1) of a layer's cell
+/// picture buffer, decompressing it from the area's graphics, and with update
+/// set also draws it into the layer's BG map.
 s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   struct WorldMapView *perspective =
       (struct WorldMapView *)Ram_HeapSlots->mapGrid;

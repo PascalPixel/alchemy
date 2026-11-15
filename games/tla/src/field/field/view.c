@@ -85,6 +85,8 @@ void MapGrid_WaitForShakeToSettle(void) {
   work[3] = 0;
 }
 
+/// Draws the current affine page into the world map's still-picture pixels.
+/// WorldMap_StartStillPicture supplies 160 pairs and a 240 by 160 byte output.
 void TileMap_DrawRowsFromRam(s32 arg0, s32 arg1) {
   void (*routine)(s32, s32, u8 *, u8 *);
   u8 *tiles = gDecodeBuffer;
@@ -94,6 +96,7 @@ void TileMap_DrawRowsFromRam(s32 arg0, s32 arg1) {
   Heap_Release(routine);
 }
 
+/// Rebuilds the ground plane's scanline terms when the world map pitch changes.
 void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
                                  struct ScanlineRow *row) {
   s32 vector[3];

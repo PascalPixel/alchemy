@@ -150,6 +150,10 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #define WORLD_MAP_HIGH(value) (((s16 *)&(value))[1])
 #define WORLD_MAP_SCALE(value) ((value) * 300 / 640)
 
+/// Task of the World Map screen: shows a marker at each
+/// area whose flag is set, moves the cursor with the d-pad (to the current
+/// area while L or R is held) and shows the name of the marker nearest
+/// the cursor.
 void WorldPicture_UpdateMarkers(void) {
   struct WorldMapWork *work;
   struct WorldMapMarker *marker;
@@ -709,6 +713,8 @@ extern s32 gWorldPicture_ScrollY;
 
 void WorldMap_SetReturnForScene(s32 scene, s32 entrance);
 
+/// Borrows the map-cell buffer for the still map until A or B closes it.
+/// FieldSequence_Run reaches this for raised trigger -888 in World Map mode.
 s32 WorldPicture_Show(s32 mode) {
   s32 savedDelay;
   u8 savedFlags[16];

@@ -90,6 +90,8 @@ void BattleEffect_SetObjectAlternatingWords(u8 *object) {
   ((struct MotionObject *)object)->scaleY = value;
 }
 
+/// Per-frame update: spins an actor ever faster, from 1/16 turn a frame up to
+/// just over 1/8 (TRIG_TURN / 8 + 64), 80 more each frame for 52 frames.
 void FieldEffect_AdvanceAngleWithRamp(void *obj) {
   u32 step;
 

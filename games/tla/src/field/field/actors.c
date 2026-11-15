@@ -259,6 +259,9 @@ void Actor_Release(struct Actor *obj) {
   }
 }
 
+/// Creates an actor at (x, y, z), in 16.16 pixels, or returns 0 when every slot
+/// is in use. id / 4096 is the kind of actor and the low 12 bits the sprite's
+/// animation id.
 struct Actor *Actor_Create(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *object;
   void *sprite;
@@ -507,6 +510,7 @@ void Actor_StartRenderModeScript(struct Actor *object) {
   Actor_StartScript(object, script);
 }
 
+/// Starts an actor on the idle script (a lone SC_END).
 void Actor_StartIdle(struct Actor *object) {
   Actor_StartScript(object, gActorScript_EndScript);
 }
@@ -538,6 +542,7 @@ void Actor_WaitForCommandEnd(struct Actor *object) {
   }
 }
 
+/// Sets the flags of a one-sprite actor's sprite (bit 0: draw its shadow).
 void Actor_SetSpriteFlags(struct Actor *object, u32 value) {
   if (object != NULL && (object->spriteStorageKind & 0xf) == 1)
     ((struct ActorSpriteView *)object->sprite)->value1a = value;
@@ -554,6 +559,8 @@ void Animation_SetDisplayFlag(struct Actor *object, u32 value) {
     ((struct ActorSpriteView *)object->sprite)->displayFlag = value;
 }
 
+/// Sets the colour mode (SpriteColorMode) of a one-sprite actor's sprite
+/// animations, except those drawn hidden.
 void Actor_SetSpriteColorMode(struct Actor *object, u32 value) {
   if (object != NULL && object->spriteStorageKind == 1)
     Animation_ApplyChildValuesToRecord(
@@ -664,6 +671,7 @@ void ActorSystem_ResumeProjectionAndHideLayers(void) {
   REG_DISPCNT = dispcnt & 0xe1ff;
 }
 
+/// Unused: returns 1.
 s32 Actor_ReturnTrue(void) { return 1; }
 
 #define Render_ApplyProjectedPlacementAtDepth                                  \
@@ -677,6 +685,8 @@ s32 Actor_ReturnTrue(void) { return 1; }
 #define CELL_LAYER(cells, x, z)                                                \
   (((cells)[(((z) >> 20) << 7) + ((x) >> 20)] << 18) >> 30)
 
+/// Each frame, with the scrolling camera: places every actor's sprite on the
+/// screen.
 void ActorSystem_PlaceSprites(void) {
   // Unused: gives the stack frame its 36 bytes, as The Broken Seal's.
   struct CameraPoint unusedPoints[3];
@@ -899,6 +909,7 @@ void ActorSystem_PlaceSprites(void) {
 // by the angle from the eye to the target, each object in a function of its
 // own.
 
+/// Unused: returns 1.
 s32 ActorCamera_ReturnTrue(void) { return 1; }
 
 /// Places an object's sprite (kind 1, unless flag 0x10 hides it) or each of its

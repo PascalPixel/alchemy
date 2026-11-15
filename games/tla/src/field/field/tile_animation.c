@@ -370,11 +370,15 @@ void TilesetAnim_StartAll(const u16 *script) {
     Task_Add(TilesetAnim_Update, TASK_PASS_VBLANK);
 }
 
+/// Suspends the tileset animations, unless the world map's still picture is
+/// shown.
 void TilesetAnim_SuspendAll(void) {
   if (((struct WorldMapView *)Ram_HeapSlots->mapGrid)->animationActive == 0)
     Task_SuspendAll(TilesetAnim_Update);
 }
 
+/// Resumes the tileset animations, unless the world map's still picture is
+/// shown.
 void TilesetAnim_ResumeAll(void) {
   if (((struct WorldMapView *)Ram_HeapSlots->mapGrid)->animationActive == 0)
     Task_ResumeAll(TilesetAnim_Update);
@@ -436,6 +440,8 @@ count_down:
   state->delay = value + 0xffff;
 }
 
+/// Starts a map's blend script, unless it is empty. Clears the map work's
+/// three-word blend state first, then adds BlendScript_Run as a task.
 void BlendScript_Start(u16 *script) {
   struct BlendScriptState *state;
   s32 started;
@@ -459,8 +465,10 @@ void BlendScript_Start(u16 *script) {
     Task_Add((s32)(BlendScript_Run), TASK_PASS_VBLANK);
 }
 
+/// Suspends the blend script; scenes reach it through BlendScript_SuspendFar.
 void BlendScript_Suspend(void) { Task_SuspendAll((u32)BlendScript_Run); }
 
+/// Resumes the blend script, through BlendScript_ResumeFar.
 void BlendScript_Resume(void) { Task_ResumeAll((u32)BlendScript_Run); }
 
 /// Unused: allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with
@@ -595,6 +603,9 @@ void WorldMap_UpdateRegionTint(s32 region, s32 gradual) {
   }
 }
 
+/// The ground height functions (gMapGrid_TerrainHeightFunctions): each takes a
+/// cell's height samples after its kind byte and a pixel (x, y) within the
+/// 16x16 cell, and returns the ground height there in 16.16 pixels.
 s32 Terrain_GetFlatHeight(const s8 *samples) {
   return samples[0] << CURVE_VALUE_SHIFT;
 }
@@ -647,6 +658,8 @@ s32 Terrain_GetStepSumDiagonalHeight(const s8 *samples, s32 start, s32 end) {
   return second;
 }
 
+/// A step across the diagonal x = y: sample 0 where y < x, sample 1 where
+/// y > x and the higher of the two on it.
 s32 Terrain_GetStepDifferenceDiagonalHeight(const s8 *samples, s32 start,
                                             s32 end) {
   s32 first;
@@ -731,6 +744,8 @@ s32 Terrain_GetBendDifferenceDiagonalHeight(const s8 *samples, s32 start,
   }
 }
 
+/// A raised or sunken rounded square: sample 1 where gTerrain_LerpWeightTable
+/// is 1, sample 0 in the corners.
 s32 Terrain_GetRoundedSquareHeight(const s8 *samples, s32 position, s32 row) {
   s32 start;
   s32 end;
@@ -944,6 +959,8 @@ s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z) {
   return Ram_MapCollision[grid[x / 16 + ((z / 16) << 7)] * 4] & 15;
 }
 
+/// Returns the cell behavior of a layer's cell at (x, y) in 16.16 pixels. The
+/// shift by 20 takes 16.16 pixels straight to 16-pixel cells.
 u8 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
   struct MapWork *state;
   struct MapCell *cells;
@@ -959,6 +976,8 @@ u8 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
   return cells->collisionCode;
 }
 
+/// Sets the cell behavior of a layer's cell at (x, y) in 16.16 pixels. Writes
+/// the cell in the map's grid; does nothing before the map is set up.
 void MapGrid_SetCellBehaviorAt(u32 layer, s32 x, s32 y, u32 collisionCode) {
   struct MapWork *state = Ram_HeapSlots->mapGrid;
 

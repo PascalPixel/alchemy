@@ -173,6 +173,8 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
   return distance;
 }
 
+/// Returns the actor nearest in front of actor id that a field Psynergy of the
+/// given kind can reach, or -1.
 s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect) {
   s32 nearest = 9999;
   s32 found = -1;
@@ -191,6 +193,8 @@ s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect) {
   return found;
 }
 
+/// If actor target exists, plays SE_CHEST_OPEN, gives it animation 4 and, 12
+/// frames later, shows itemId in front of actor with sparkles.
 s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
                                                s32 mode) {
   s32 object;

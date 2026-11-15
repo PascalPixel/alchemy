@@ -46,6 +46,11 @@ s32 Leader_StepOffTightrope(void);
 
 #define OVERLAY_CALL(index) ((s32 (*)(void))gOverlayArea[index])()
 
+/// The field sequence: runs the current scene, which the party entered by
+/// entrance, until it leaves; returns the exit kind it left by, for
+/// Scene_TakeExit, or EXIT_KEEP_DESTINATION when the next scene is already in
+/// gMainRoutineWork: a random battle, a party that fell outside battle, Retreat
+/// or an event's destination.
 s32 FieldSequence_Run(void) {
   struct FieldWork *work;
   struct MainRoutineWork *party;
@@ -503,6 +508,10 @@ struct Object__field_sequence {
   u8 kind;
 };
 
+/// Returns the cell behavior of the map cell 16 pixels ahead of the party
+/// leader when there is something to search there: a fixed search spot whose
+/// ground is level with the leader or up to 64 pixels above it, or a behavior
+/// the scene has an examine trigger for. Returns 0 otherwise.
 s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   struct FieldWork *work;
   u8 *mapBytes;

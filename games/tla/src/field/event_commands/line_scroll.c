@@ -44,6 +44,9 @@ void LineScroll_ArmDma(void) {
       REG_DMA0);
 }
 
+/// Task for the line scroll: fills the hidden page with each scanline's BG3,
+/// BG2 and BG1 offsets, the scroll plus a sine wave for x and for y (an axis
+/// with no step stays flat), then shows that page.
 void LineScroll_BuildPage(void) {
   struct DisplayScrollWork *work = Ram_HeapSlots->lineScroll;
   u8 mode = work->mode;

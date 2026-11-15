@@ -47,6 +47,9 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *obj) {
 #define LEAP_SOUND 136
 #endif
 
+/// A Djinni's battle start: the Djinni (actor id) bounces twice, turns to face
+/// the leader, hops back 16 pixels three times, then leaps 64 pixels at the
+/// party trailing eight afterimages tinted for its element.
 void Djinn_RunBattleStartHop(s32 djinniId) {
   struct Actor *djinni;
   struct Actor *leader;
@@ -303,6 +306,7 @@ void Djinn_ResolvePending(s32 shown) {
   gMainRoutineWork.pendingDjinni = 0;
 }
 
+/// Task: updates the 24 field effect sprites.
 void FieldEffect_UpdateAllSlots(void) {
   struct FieldEffectWork *scene;
   struct FieldParticle *slot;
@@ -318,6 +322,8 @@ void FieldEffect_UpdateAllSlots(void) {
   } while (remainingSlots >= 0);
 }
 
+/// Allocates and clears the field effect sprites (HEAP_SLOT_FIELD_EFFECT) and
+/// starts their update task.
 void FieldEffect_InitializeSlots(void) {
   void *work;
 
@@ -326,6 +332,8 @@ void FieldEffect_InitializeSlots(void) {
   Task_Add((s32)FieldEffect_UpdateAllSlots, TASK_PASS_VBLANK);
 }
 
+/// Stops the field effect sprites: removes their task, frees every slot still
+/// in use and releases their heap block, the field Psynergy's work with it.
 void FieldEffect_ReleaseSlots(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldParticle *slot;

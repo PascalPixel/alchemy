@@ -71,9 +71,9 @@ s32 GameFlag_IsConditionActive(s32 condition) {
 /// (TRIGGER_FLAG_FACING) requirements are met, or NULL. Kinds 8 and 9 answer
 /// any target, and the facing test alone is skipped while
 /// gMainRoutineWork.movementMode is 2.
-// XXX: what kinds 8 and 9 are; the triggers of the scenes that use them would
-// settle it.
 struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
+  // XXX: what kinds 8 and 9 are; the triggers of the scenes that use them
+  // would settle it.
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TriggerView *trigger = work->triggers;
   s32 flags;
@@ -178,6 +178,8 @@ s32 BattleEffect_GetFlags__field_sequence(s32 id) __asm__(
 #define BattleEffect_GetFlags BattleEffect_GetFlags__field_sequence
 void Actor_TurnToFaceEachOther(s32 first, s32 second, s32 mode);
 
+/// Talks to actor id: shows its event's message or calls its event function,
+/// with the actor stopped and turned as its placement says.
 s32 Scene_TalkToActor(s32 id) {
   struct ActorPlacement *placement;
   s32 result;
@@ -473,6 +475,8 @@ resume:
   return result;
 }
 
+/// Runs the scene's raised trigger (TRIGGER_RAISED) for value: its message or
+/// its function. Returns 0 when an event ran, -1 when there was none.
 s32 Scene_RunRaisedTrigger(s32 id) {
   u8 *descriptor = (u8 *)Scene_FindTrigger(6, id);
   s32 result = -1;

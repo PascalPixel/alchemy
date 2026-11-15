@@ -167,6 +167,7 @@ struct SparkleWork {
   s32 stopped;
 };
 
+/// Task: the sparkles.
 void FieldEffect_UpdateSparkles(void) {
   struct SparkleWork *work;
   u32 spawned;
@@ -279,6 +280,8 @@ struct DustWork {
   u8 pad808[12];
 };
 
+/// Starts the sparkles (FieldEffect_UpdateSparkles): loads their tiles and
+/// clears the 32 sparkles.
 void FieldEffect_InitializeSparkles(void) {
   u32 size = sizeof(struct DustWork);
   struct DustWork *work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, size);
@@ -331,6 +334,9 @@ void FieldEffect_InitializeSparkles(void) {
   Task_Add(FieldEffect_UpdateSparkles, TASK_PASS_VBLANK);
 }
 
+/// Starts the storm's lightning (Weather_UpdateLightning): builds the dark
+/// (PALETTE_TINT_WARM) and lit (PALETTE_TINT_PALE) BG colours and their 12-step
+/// fade, and arms the first burst to end in 600 frames, repeating.
 void Weather_StartLightning(void) {
   struct FieldBlendWork *work;
   struct PaletteFade *buffers;
@@ -378,6 +384,9 @@ void Weather_ResumeLightning(void) {
   state->enabled = 1;
 }
 
+/// Flashes the palette with the storm's task: one burst of three flashes of
+/// palette to, each fading back to palette from (PaletteFade_Build modes) on
+/// the BG colours, ending 120 frames from now, and no more after.
 void Weather_StartLightningFlash(s32 from, s32 to) {
   struct FieldBlendWork *work;
   struct PaletteFade *buffers;

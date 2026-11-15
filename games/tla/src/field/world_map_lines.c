@@ -66,6 +66,11 @@ extern u32 gScanlineAngle;
 
 s32 Transform_CallInThumb(s32 x, s32 y);
 
+/// Builds the world map's per-scanline affine table for one frame: the ground
+/// plane seen from eye towards target. line points at the 160 scanlines' ground
+/// terms, whose rotation terms stay cached while the yaw (gScanlineAngle) is
+/// unchanged; affine receives each line's parameters twice, for BG2 and then
+/// BG3, as the HBlank DMA writes both.
 void Transform_UpdateVertices(struct Vector3__world_map_lines *eye,
                               struct Vector3__world_map_lines *target,
                               struct ScanVertex *line,

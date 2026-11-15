@@ -349,6 +349,10 @@ struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
   return NULL;
 }
 
+/// Runs the scene's events for Psynergy without paying its PP or showing its
+/// usual effect (PSYNERGY_PHASE_BEFORE_END and PSYNERGY_PHASE_AFTER_END, around
+/// the kind's ending), as for a Psynergy that ends by itself: packed holds the
+/// Psynergy (bits 0 to 9) and its user (bits 10 to 13).
 s32 Field_RunPsynergyEndEvents(u32 packed) {
   s32 action, mode, kind, selector, target;
   struct PendingEvent *first, *second;

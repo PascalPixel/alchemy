@@ -42,8 +42,13 @@ void BattleEffect_FadeToSavedPalettes(s32 frames) {
   Field_StartPaletteTransition(frames);
 }
 
+/// Fades the palettes back from a cast's colours to the saved ones over 8
+/// frames; while Reveal is active the BG half fades to Reveal's grey
+/// instead (PALETTE_TINT_GRAYSCALE).
 void FieldPsynergy_FadeFromCastColor(void) { Field_StartPaletteTransition(8); }
 
+/// Converts a world position (16.16 pixels) to the screen: x and z receive the
+/// screen's x and y and y becomes 0.
 void Camera_WorldToScreen(struct EffectVector *position) {
   struct HeapSlots *slots = Ram_HeapSlots;
 
@@ -143,6 +148,7 @@ void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   Task_Add(BattleEffect_UpdateAllEffectSlots, 0x480);
 }
 
+/// Records the caster and the target of a field Psynergy.
 void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   struct Actor *user;
   struct Actor *target;
@@ -336,6 +342,8 @@ void FieldPsynergy_StartMindReadWave(s32 id, s32 value) {
   Task_Add((TaskFunc)FieldPsynergy_UpdateMindReadWave, TASK_PASS_VBLANK);
 }
 
+/// Stops the wave effect: restores the caster's colours and the palettes and
+/// releases the Psynergy's work.
 void FieldPsynergy_StopMindReadWave(void) {
   u8 *work = Ram_HeapSlots->mindRead;
 

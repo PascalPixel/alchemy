@@ -9,6 +9,9 @@
 #include "field/world_map.h"
 #include "version.h"
 
+/// Sets up the World Map screen: the marker tiles and their OAM entries, the
+/// cursor where the leader is on the map (or mid-screen when the area is
+/// not on it), and the name window.
 void WorldPicture_Initialize(void) {
   u32 *markerTiles;
   struct WorldMapWork *work = Ram_WorldMapWork;

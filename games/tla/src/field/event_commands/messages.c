@@ -222,15 +222,23 @@ void FieldMessage_ShowAtActorAndWait(s32 object, s32 message) {
   wait(1);
 }
 
+/// The event command "show message and wait": shows the message, then waits the
+/// given number of frames.
 void Event_ShowMessageThenWait(s32 object, s32 message, s32 frames) {
   FieldMessage_ShowAtActorAndWait(object, message);
   Event_Wait(frames);
 }
 
+/// The event command "show message": opens the current message at actorId
+/// (FieldMessage_ShowAtActor) and waits until it has been read and its window
+/// has closed; the speaker's portrait is closed once the text is typed out.
 void Event_ShowMessageAndWait(s32 object, s32 message) {
   FieldMessage_ShowAtActorAndWait(object, message);
 }
 
+/// The event command "ask yes or no": opens the question at actorId, lets the
+/// leader answer, then shows the next message for yes or the one after it for
+/// no.
 s32 Event_AskYesNoAndShowResponse(s32 object, s32 message) {
   s32 result;
 
@@ -246,6 +254,7 @@ s32 Event_AskYesNoAndShowResponse(s32 object, s32 message) {
   return result;
 }
 
+/// An empty hook; it does nothing in the released game.
 void Event_NoOpUpdate(void) {}
 
 /// Opens the next message for the speaker and waits until its window is idle.
@@ -387,6 +396,8 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
 
 extern const u8 gMessageSpeed_VoiceRates[];
 
+/// Sets the voice of the messages that follow to that of actorId's sprite, at
+/// the rate the message speed option picks (gMessageSpeed_VoiceRates).
 void Message_SetVoiceFromActor(s32 key) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u8 value;
@@ -403,6 +414,8 @@ void Message_SetVoiceFromActor(s32 key) {
   }
 }
 
+/// The event command "camera follow actor": the camera (the event's view
+/// centre) follows actorId.
 void FieldCamera_FollowActor(s32 id, s32 flag) {
   struct Actor *obj;
   struct Actor *target;

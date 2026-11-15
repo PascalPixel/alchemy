@@ -41,6 +41,9 @@ s32 FlagEntries_GetValue(s32 flag) {
   return 1;
 }
 
+/// Chooses the current scene's encounter zones, one for each kind of ground the
+/// party can stand on (gFieldWork->encounterZones), from the first rule
+/// matching the scene and entrance.
 void Encounter_SelectMapZones(s32 search) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 scene = gMainRoutineWork.next;

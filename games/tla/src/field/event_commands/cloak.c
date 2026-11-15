@@ -116,12 +116,14 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *object) {
   }
 }
 
+/// Runs Douse cast on a target, through FieldPsynergy_Douse.
 void FieldPsynergy_DouseOnTarget(void) { FieldPsynergy_Douse(); }
 
 static __inline__ s32 Lerp10(s32 start, s32 end, s32 step) {
   return start + step * (end - start) / 10;
 }
 
+/// Runs Douse cast on a target, through FieldPsynergy_Douse.
 void FieldPsynergy_Douse(void) {
   struct EffectVector pos;
   struct EffectVector start;

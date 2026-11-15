@@ -53,6 +53,10 @@ s32 SceneItem_FindPosition(s32 value, s32 *out) {
 
 void Actor_ShowItemIconById(s32 id, s32 item);
 
+/// Places an actor at each of the map's treasure spots (ids 100 to 239) that
+/// the scene has an event for, up to ten: a chest for a chest event, shown open
+/// once its flag is set and gone once its mimic was beaten, and a Psynergy
+/// Stone for an examine trigger giving one, until it is taken.
 void Field_PlaceTreasureSpots(void) {
   s16 *rows = SceneItem_GetRows();
   struct FieldWork *work = Ram_HeapSlots->fieldWork;

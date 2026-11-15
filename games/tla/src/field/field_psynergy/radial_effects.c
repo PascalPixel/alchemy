@@ -68,6 +68,9 @@ void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
   } while (i <= 16);
 }
 
+/// Per-frame update: wanders away from the anchor, 2 to 3 pixels a frame, now
+/// and then turning sharply; after 101 frames it hands over to the shared
+/// particle script.
 void FieldEffect_WanderAroundAnchor(struct OrbitEffect *effect) {
   s32 radius;
   s32 angle;
@@ -347,6 +350,8 @@ void FieldPsynergy_HaltOnTarget(void) {
   FieldPsynergy_Halt();
 }
 
+/// Throws an actor from the caster to the Psynergy's position over 10 frames
+/// and scatters it into 16 particles.
 void FieldPsynergy_Halt(void) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *user = scene->mainActor;
@@ -790,6 +795,9 @@ void FieldPsynergy_Lash(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
+/// Per-frame update: spins by FACING_STEP + timer * 80 a frame, speeding up
+/// (timer counts up) until timer * 80 reaches FACING_STEP: from 1/16 turn a
+/// frame to just over 1/8 in 52 frames, as FieldEffect_AdvanceAngleWithRamp.
 void FieldEffect_UpdateSpinAngle(struct Actor *object) {
   u32 step;
 
@@ -817,6 +825,10 @@ void FieldEffect_UpdateRetreatCaster(struct Actor *obj) {
   }
 }
 
+/// Field effect sprite callback: a particle flies 120 pixels from the main
+/// actor's screen position (8 pixels lower) in a direction within 1/8 turn of
+/// up the screen, at up to 5 pixels a frame, and starts again from the main
+/// actor on arrival until it takes its last flight.
 void FieldEffect_UpdateRadialLaunch(struct FieldParticle *slot) {
   struct LaunchVector pos;
   struct LaunchObject *src;
@@ -874,6 +886,7 @@ struct SpinScene {
 
 void Actor_ApplyRandomChildValues(struct SpinObject *owner);
 
+/// Spins the main actor and shrinks it while 24 particles fly out, one a frame.
 void FieldPsynergy_Retreat(void) {
   struct SpinScene *scene = Ram_HeapSlots->fieldEffectWork;
   struct SpinObject *obj = scene->mainActor;
@@ -942,6 +955,10 @@ void FieldPsynergy_Retreat(void) {
   wait(10);
 }
 
+/// Per-frame update of a falling arc: grows toward full size (3/64 a frame)
+/// as it falls 2 pixels a frame on the actor it follows, 9 pixels in front
+/// of it and up to 5 pixels further while small; released 10 pixels above
+/// the ground (4 on the World Map).
 void FieldEffect_UpdateDescendingParticlePositiveArc(struct Actor *particle) {
   struct Actor *source;
   s32 y;
@@ -998,6 +1015,8 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(struct Actor *particle) {
                      source->z.fixed - ((Q16_ONE - scale) * 5) + 0x100000);
 }
 
+/// Spawns a pair of falling arcs (one upside down) on arc, 64 pixels above it,
+/// at 0.4 of full size, drawn with the tiles in effectWork->arcTileSlot.
 void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
   u8 *work = Ram_HeapSlots->fieldEffectWork;
   struct ArcObject *leader = *(struct ArcObject **)(work + 16);

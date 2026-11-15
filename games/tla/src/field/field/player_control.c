@@ -416,6 +416,9 @@ extern struct MapCell gMapGridCellBuffer[];
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
 
+/// SC_PLAYER: moves the player on the field by the direction pad: walking or
+/// running, sliding around walls, pushing movable actors, turning, playing the
+/// matching animation and leaving footprints.
 s32 Actor_UpdatePlayerControl(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition testPosition;

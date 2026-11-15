@@ -226,6 +226,7 @@ struct Actor *BattleEffect_StartRandomParticleEmitter(s32 actor, s32 item) {
   return picture;
 }
 
+/// Releases object unless it is NULL.
 void Actor_ReleaseIfPresent(struct Actor *object) {
   if (object != 0)
     Actor_ReleaseFar(object);
@@ -301,6 +302,8 @@ struct EffectVisual__rising {
   u8 value1b;
 };
 
+/// Shows the picture of item 36 pixels above the party leader for 80 frames;
+/// flags bit 0 adds sparkles and bit 1 raises it as a found item.
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *owner = ObjectTable_Get(Party_GetLeaderActor());
   u8 *buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
@@ -503,6 +506,10 @@ void FieldEffect_StartWindowHBlankDma(void) {
       (volatile u32 *)channel);
 }
 
+/// Each frame of a window transition: advances its value toward its end (and at
+/// the end turns the windows off, or moves to the next mode), then builds the
+/// next page of window edges, WININ and WINOUT first and then a (left << 8 |
+/// right) pair for each of the 160 lines.
 void ScreenTransition_UpdateScanlineTable(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct ScreenTransitionState *state = Ram_HeapSlots->screenTransition;
@@ -856,6 +863,8 @@ void ScreenTransition_UpdateScanlineTable(void) {
   state->page ^= 1;
 }
 
+/// Starts window transition mode at value 0, with no duration: the caller moves
+/// it.
 void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   struct ScreenTransitionState *state =
       HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
@@ -1286,6 +1295,7 @@ void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
   }
 }
 
+/// Starts a dissolve of the given mode and waits 120 frames.
 void ScreenTransition_InitializeState(s32 value) {
   struct ScreenTransitionState *state;
 
@@ -1687,6 +1697,8 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   }
 }
 
+/// Sets up the palette fade from the BG and OBJ palettes and starts updating
+/// the palettes from it each frame.
 void PaletteFade_Initialize(void) {
   volatile s32 zero;
   struct PaletteFade *buffer;
@@ -1704,6 +1716,7 @@ void PaletteFade_Initialize(void) {
   Task_Add((s32)PaletteFade_Update, TASK_PASS_VBLANK + 15);
 }
 
+/// Stops the palette fade and frees it.
 void PaletteFade_Release(void) {
   Task_Remove((s32)&PaletteFade_Update);
   HeapSlot_Release(HEAP_SLOT_PALETTE_FADE);
@@ -1719,6 +1732,7 @@ void PaletteFade_SetTarget(s32 value, s32 mode) {
   }
 }
 
+/// Sets the colours the buffer shows now (see PaletteFade_Build).
 void PaletteFade_SetSource(s32 value, s32 mode) {
   struct PaletteFade *buffers = Ram_HeapSlots->paletteFade;
 

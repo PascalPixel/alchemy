@@ -43,6 +43,7 @@ void WorldMap_StepZoom(void) {
   }
 }
 
+/// Starts a zoom to zoom (16.16) over frames frames, on the World Map only.
 void WorldMap_StartZoom(s32 zoom, s32 frames) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 result;
@@ -61,6 +62,8 @@ void WorldMap_StartZoom(s32 zoom, s32 frames) {
   Task_Add(WorldMap_StepZoom, TASK_PASS_VBLANK + 20);
 }
 
+/// Waits for a zoom transition to end (on the World Map only, at most 300
+/// frames).
 void Event_WaitForZoomTransition(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 frames;
@@ -116,6 +119,8 @@ struct BattleEffectWatchedObject *
 Actor_ShowEmoteById__event_commands(s32 resourceId, s32 flags,
                                     s32 state) __asm__("Actor_ShowEmoteById");
 #define Actor_ShowEmoteById Actor_ShowEmoteById__event_commands
+/// The event command "actor show emote": shows an emote bubble (sprite 21) over
+/// an actor, then waits the given number of frames.
 struct BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags,
                                                       s32 state) {
   struct BattleEffectResource *resource;

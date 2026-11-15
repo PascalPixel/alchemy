@@ -132,7 +132,8 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       // half the line spacing below y and half the letter spacing right of x,
       // in screen pixels. 0x4000 in attribute 1 is size 1, with the square
       // shape a 16x16 sprite.
-      Dma_Set(tiles, (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * 32),
+      Dma_Set(tiles,
+              (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * TILE_SIZE_4BPP),
               DMA_COPY_WORDS(32), REG_DMA3);
       ((u16 *)&windowSprite->oam)[0] =
           y + (spacingY >> 1) + window->y * 8 + GLYPH_SPRITE_Y_OFFSET;
@@ -234,7 +235,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     // Past the border's top-left tile, and only inside the tilemap.
     x++;
     y++;
-    pos = (win->y + y) * 32 + (win->x + x);
+    pos = (win->y + y) * BG_SCREEN_WIDTH + (win->x + x);
     if (pos < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT)
       ((struct WindowWork *)work)->tilemap[pos] = WINDOW_TILE(tile);
   }
@@ -295,7 +296,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
       // A kana mark goes in the tile above the character before it.
       u32 line;
 
-      line = (win->y + y) * 32;
+      line = (win->y + y) * BG_SCREEN_WIDTH;
       switch (*(((struct WindowWork *)base)->tilemap + (line + (win->x + x)))) {
       case WINDOW_TILE_BORDER_TOP:
         tile -= 192;
@@ -308,7 +309,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
       x++;
       y++;
     }
-    pos = (win->y + y) * 32 + (win->x + x);
+    pos = (win->y + y) * BG_SCREEN_WIDTH + (win->x + x);
     if (pos < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT)
       ((struct WindowWork *)work)->tilemap[pos] = WINDOW_TILE(tile);
   }

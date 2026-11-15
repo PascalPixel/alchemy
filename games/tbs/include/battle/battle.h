@@ -433,6 +433,8 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom);
 #else
 void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y);
 #endif
+/// BattleCamera_SetView's zoom, in percent, for the battle's usual view.
+#define BATTLE_ZOOM_NORMAL 100
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom);
 void BattleCamera_SetViewAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
                                         s32 zoom);

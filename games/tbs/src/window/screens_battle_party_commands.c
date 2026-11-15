@@ -355,7 +355,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
               count++;
             }
             k++;
-            if (k == 32) {
+            if (k == PSYNERGY_SLOTS) {
               break;
             }
             entryValue = unit->psynergy[k].encodedAction & ACTION_ID_MASK;

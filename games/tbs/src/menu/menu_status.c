@@ -1484,7 +1484,7 @@ s32 PsynergyMenu_SelectAction(void) {
     s32 priority = 245;
     struct WindowSprite **icons = menu->entryIcons;
 
-    for (iconIndex = 0; iconIndex < 32; iconIndex++) {
+    for (iconIndex = 0; iconIndex < MENU_ENTRY_ICONS; iconIndex++) {
       struct WindowSprite *icon = *icons++;
 
       if (icon != 0)
@@ -1761,7 +1761,7 @@ s32 ItemMenu_SelectItem(void) {
                         10, 2);
   ItemMenu_PositionCategory();
 
-  for (iconIndex = 0; iconIndex < 32; iconIndex++) {
+  for (iconIndex = 0; iconIndex < MENU_ENTRY_ICONS; iconIndex++) {
     struct WindowSprite *icon = menu->entryIcons[iconIndex];
 
     if (icon != 0)
@@ -2000,7 +2000,7 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
   struct WindowSprite **icons;
 
   for (entryIndex = 0, icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
-       entryIndex <= 31; entryIndex++) {
+       entryIndex <= MENU_ENTRY_ICONS - 1; entryIndex++) {
     icon = *icons++;
     if (icon != NULL) {
       Menu_PlaceEntryActorInGrid(icon, entryIndex, originX, originY, columns);
@@ -2015,7 +2015,7 @@ void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
   s32 entryIndex;
 
   entryIndex = index;
-  if (entryIndex > 31) {
+  if (entryIndex > MENU_ENTRY_ICONS - 1) {
     entryIndex = 0;
   }
   icon->y = (entryIndex / columns * 16) + originY;

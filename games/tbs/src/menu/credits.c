@@ -945,7 +945,7 @@ void Credits_UpdateTextSprites(void) {
 
     for (column = 0; column < CREDITS_COLUMNS; column++) {
       *oamWords++ = (row * 8 + 16 - scrollWithinTile) |
-                    ((column * 32 + 24) << 16) | OBJ_SIZE_32X8;
+                    OBJ_X(column * 32 + 24) | OBJ_SIZE_32X8;
       *oamWords++ = tileIndex;
       tileIndex += 4;
       if (tileIndex == CREDITS_RING_TILES)
@@ -1018,13 +1018,13 @@ void Credits_InitTextSprites(void) {
   for (row = 0; row < CREDITS_VISIBLE_ROWS; row++) {
     for (column = 0; column < CREDITS_COLUMNS; column++) {
       u32 tileIndex = (row * 3) * 8 + column * 4;
-      *oamWords++ = (row * 8 + 16) | ((column * 32 + 24) << 16) | OBJ_SIZE_32X8;
+      *oamWords++ = (row * 8 + 16) | OBJ_X(column * 32 + 24) | OBJ_SIZE_32X8;
       *oamWords++ = tileIndex;
     }
   }
   // The last eight entries are parked off screen.
   for (row = 0; row < 8; row++) {
-    *oamWords++ = (192 << 16) | 192;
+    *oamWords++ = OBJ_X(192) | 192;
     *oamWords++ = CREDITS_RING_TILES;
   }
   gCreditsScrollPosition = 0;

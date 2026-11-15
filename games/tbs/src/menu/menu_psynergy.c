@@ -797,7 +797,7 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
 
   icons = ((struct PsynergyMenuWork *)gMenuWork)->entryIcons;
   p = psynergies;
-  for (i = 0; i < 32; i++) {
+  for (i = 0; i < PSYNERGY_SLOTS; i++) {
     psynergyId = *p++;
     if (psynergyId != 0) {
       Resource_LoadByModeIntoSlotFar(ICON_KIND_ABILITY, psynergyId,

@@ -357,7 +357,7 @@ s32 BattleStaging_HideField(struct BattleActionRun *plan, s32 mode) {
   }
   for (i = 0; i != count; i++)
     BattleHighlight_SetSpriteMode(units[i], SPRITE_OPAQUE);
-  BattleCamera_SetView(0, 0, 0, 100);
+  BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
   wait(1);
   return 0;
 }
@@ -528,7 +528,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
     if (critical != 0) {
       view->flag = 0;
       BattleUnit_ListAllAndSubmit();
-      BattleCamera_SetView(0, 0, 0, 100);
+      BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
     }
     BattleMotion_ReturnToSpot(work.effect.targets[0]);
   }

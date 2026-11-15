@@ -32,7 +32,7 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
 #endif
   x = *windowX;
   y = *windowY;
-  rightLimit = 30;
+  rightLimit = DISPLAY_TILE_WIDTH;
 
   if (!(flags & 2)) {
     if (flags & 1)
@@ -53,12 +53,13 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
 #if !defined(FIT_FIXED_LIMIT)
     if (((struct WindowWork *)base)->mindRead != 0) {
       *windowWidth += 2;
-      rightLimit = 29;
+      rightLimit = DISPLAY_TILE_WIDTH - 1;
     }
 #endif
   }
 
-  // Slide the window back onto the screen, rightLimit columns by 20 rows.
+  // Slide the window back onto the screen, rightLimit columns by
+  // DISPLAY_TILE_HEIGHT rows.
   right = x + *windowWidth;
   if (right > rightLimit) {
     overflow = right - rightLimit;
@@ -69,8 +70,8 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
       x = 0;
   }
   bottom = y + *windowHeight;
-  if (bottom > 20) {
-    overflow = bottom - 20;
+  if (bottom > DISPLAY_TILE_HEIGHT) {
+    overflow = bottom - DISPLAY_TILE_HEIGHT;
     fittedPosition = y - overflow;
     if (fittedPosition >= 0)
       y = fittedPosition;
@@ -83,8 +84,8 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
     y = 0;
   if (x > rightLimit - *windowWidth)
     x = rightLimit - *windowWidth;
-  if (y > 20 - *windowHeight)
-    y = 20 - *windowHeight;
+  if (y > DISPLAY_TILE_HEIGHT - *windowHeight)
+    y = DISPLAY_TILE_HEIGHT - *windowHeight;
   *windowX = x;
   *windowY = y;
 }
@@ -98,7 +99,8 @@ DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSize, 0)
 DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSizeAlt, 1)
 
 /// Measures decoded text from entryIndex to its first page's end: returns the
-/// width of the longest line and the height (15 pixels a line) in pixels.
+/// width of the longest line and the height (TEXT_LINE_HEIGHT a line) in
+/// pixels.
 void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                          u16 *spacing) {
   struct WindowWork *work;
@@ -123,7 +125,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   trailing = 0;
 #endif
   width = 0;
-  height = 15;
+  height = TEXT_LINE_HEIGHT;
   lines = 0;
   lineWidth = 0;
   count = 0;
@@ -193,7 +195,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
         lines++;
       count = 0;
       lineWidth = 0;
-      height += 15;
+      height += TEXT_LINE_HEIGHT;
       break;
 #if TBS_PATCH_3
     case TEXT_PAGE:
@@ -294,23 +296,23 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
   trailing = 0;
 #endif
   work = WINDOW_WORK;
-  pageHeights[0] = 15;
-  pageHeights[1] = 15;
-  pageHeights[2] = 15;
-  pageHeights[3] = 15;
-  pageHeights[4] = 15;
-  pageHeights[5] = 15;
-  pageHeights[6] = 15;
-  pageHeights[7] = 15;
-  pageHeights[8] = 15;
-  pageHeights[9] = 15;
-  pageHeights[10] = 15;
-  pageHeights[11] = 15;
-  pageHeights[12] = 15;
+  pageHeights[0] = TEXT_LINE_HEIGHT;
+  pageHeights[1] = TEXT_LINE_HEIGHT;
+  pageHeights[2] = TEXT_LINE_HEIGHT;
+  pageHeights[3] = TEXT_LINE_HEIGHT;
+  pageHeights[4] = TEXT_LINE_HEIGHT;
+  pageHeights[5] = TEXT_LINE_HEIGHT;
+  pageHeights[6] = TEXT_LINE_HEIGHT;
+  pageHeights[7] = TEXT_LINE_HEIGHT;
+  pageHeights[8] = TEXT_LINE_HEIGHT;
+  pageHeights[9] = TEXT_LINE_HEIGHT;
+  pageHeights[10] = TEXT_LINE_HEIGHT;
+  pageHeights[11] = TEXT_LINE_HEIGHT;
+  pageHeights[12] = TEXT_LINE_HEIGHT;
   maxWidth = 0;
-  pageHeights[13] = 15;
-  pageHeights[14] = 15;
-  pageHeights[15] = 15;
+  pageHeights[13] = TEXT_LINE_HEIGHT;
+  pageHeights[14] = TEXT_LINE_HEIGHT;
+  pageHeights[15] = TEXT_LINE_HEIGHT;
   line = 0;
   width = 0;
   count = 0;
@@ -372,7 +374,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
         line++;
       count = 0;
       width = 0;
-      pageHeights[page] += 15;
+      pageHeights[page] += TEXT_LINE_HEIGHT;
       break;
     case TEXT_END:
 #if LANGUAGE != LANGUAGE_JAPANESE

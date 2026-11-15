@@ -76,6 +76,8 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 #define TEXT_DEFAULT_COLOR                                                     \
   TEXT_COLOR_WHITE                   ///< a message's text colour at start
 #define TEXT_DEFAULT_LINE_SPACING 10 ///< a message's line spacing at start
+/// The pixels a line of text takes in a window fitted to it.
+#define TEXT_LINE_HEIGHT 15
 
 // Window animation lengths.
 #define WINDOW_OPEN_FRAMES 8

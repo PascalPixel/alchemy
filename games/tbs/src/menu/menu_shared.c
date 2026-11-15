@@ -219,7 +219,7 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
 
     // Whether the party member already knows it, from any of the 32 action
     // slots.
-    for (i = 0; i < 32; i++) {
+    for (i = 0; i < PSYNERGY_SLOTS; i++) {
       if ((unit->psynergy[i].encodedAction & PSYNERGY_ABILITY_MASK) ==
           psynergy) {
         known = 1;
@@ -666,7 +666,7 @@ void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
     }
     index++;
     slot++;
-  } while (index < 32);
+  } while (index < MENU_ENTRY_ICONS);
 }
 
 /// Places the icon in *slot at grid cell index (0 above 31) of a grid of
@@ -675,7 +675,7 @@ void PsynergyMenu_PositionMemberEntry(struct WindowSprite **slot, s32 index,
                                       s32 originX, s32 originY, s32 columns) {
   struct WindowSprite *icon;
 
-  if (index > 31) {
+  if (index > MENU_ENTRY_ICONS - 1) {
     index = 0;
   }
   icon = *slot;
@@ -1098,7 +1098,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, struct Window *window, s32 x,
   struct WindowSprite *icon;
   s32 i;
 
-  for (i = 0; i < 32; i++) {
+  for (i = 0; i < MENU_ENTRY_ICONS; i++) {
     icon = menu->entryIcons[i];
     if (icon != NULL)
       icon->motion = ICON_HIDDEN;

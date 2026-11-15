@@ -298,7 +298,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
         break;
       case TEXT_NEWLINE:
         x = lineStartX;
-        y += 15;
+        y += TEXT_LINE_HEIGHT;
         break;
       case 14:
       case TEXT_WINDOW_STATE:

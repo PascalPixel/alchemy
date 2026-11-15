@@ -47,7 +47,7 @@ s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
       return 1;
     }
     index++;
-  } while (index <= 31);
+  } while (index <= PSYNERGY_SLOTS - 1);
   return 0;
 }
 

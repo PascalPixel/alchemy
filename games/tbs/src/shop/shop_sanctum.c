@@ -77,7 +77,8 @@ void Sanctum_ShowKeeperMessage(s32 messageId) {
       Speaker_GetVoiceFar(((struct ShopWork *)gMenuWork)->keeperGraphics);
   Message_CloseFinishedWindowsFar();
   messageId = Sanctum_GetServiceMessage(messageId);
-  Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
+  Message_OpenWindowFar(messageId, 5, 0,
+                        MESSAGE_WINDOW_VOICE(portraitResource) | 0x22);
   while (Message_AllTypedFar() == 0) {
     wait(1);
   }
@@ -93,7 +94,8 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
   messageId = Sanctum_GetServiceMessage(messageId);
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
-  Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
+  Message_OpenWindowFar(messageId, 5, 0,
+                        MESSAGE_WINDOW_VOICE(portraitResource) | 0x22);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);

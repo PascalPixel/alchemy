@@ -12,6 +12,9 @@
 #define DEBUG_SELECT_VALUE 480
 #endif
 
+/// The projection's centre on screen, x and y alike.
+#define BATTLE_PROJECTION_CENTER 120
+
 /// The zoomed background's BG2CNT for the first 256 picture tiles: a 256 by
 /// 256 affine map in screen block 7, 256 colours, priority 2.
 #define BACKGROUND_PLANE_UPPER                                                 \
@@ -21,10 +24,11 @@
 #define BACKGROUND_PLANE_LOWER                                                 \
   (BGCNT_SIZE(1) | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS |                   \
    BGCNT_CHAR_BASE(3) | BGCNT_PRIORITY(2))
-/// Lines outside the plane read the padded map in screen block 31.
+/// Lines outside the plane read the padded map in this screen block.
+#define BACKGROUND_PADDED_SCREEN 31
 #define BACKGROUND_PLANE_OFF                                                   \
-  (BGCNT_WRAP | BGCNT_SCREEN_BASE(31) | BGCNT_256_COLORS |                     \
-   BGCNT_CHAR_BASE(3) | BGCNT_PRIORITY(2))
+  (BGCNT_WRAP | BGCNT_SCREEN_BASE(BACKGROUND_PADDED_SCREEN) |                  \
+   BGCNT_256_COLORS | BGCNT_CHAR_BASE(3) | BGCNT_PRIORITY(2))
 
 /// The screen lines the plane covers, 0 to 135, above the status window.
 #define BACKGROUND_PLANE_LINES 136
@@ -113,7 +117,7 @@ void BattleBackground_SetMode(s32 mode, s32 unusedResource, s32 fade) {
   }
 
   Graphics_BuildSequentialTileTable(BG_SCREEN_BLOCK(7));
-  BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(31));
+  BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
 }
 
 /// Allocates the zoomed background's scanline work.
@@ -161,9 +165,10 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   Graphics_BuildSequentialTileTable(BG_SCREEN_BLOCK(7));
-  BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(31));
+  BattleTransition_BuildTilemap(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
   // BG1's last row is left clear.
-  Iwram_ClearWords((BG_SCREEN_BLOCK(31) + BG_SCREEN_SIZE - 64), 64);
+  Iwram_ClearWords(
+      (BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN) + BG_SCREEN_SIZE - 64), 64);
   if (view->mode == BATTLE_BACKGROUND_NONE)
     Task_Add(BattleBackground_ShowZoomedPage, TASK_PASS_VBLANK + 127);
   view->mode = mode;
@@ -283,14 +288,16 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   renderBounds[1] = 0;
   renderBounds[2] = camera->distance;
   Iwram_TransformVector(renderBounds, (s32 *)camera);
-  gProjection.centerX = 120;
-  gProjection.centerY = 120;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER;
   Transform_Reset();
   Transform_SetLookAt(camera->eye, focus);
   Transform_ProjectPoint(sourceBounds, measuredBounds);
 
-  BattleCamera_SetRange(px(120), px(120), (120 - measuredBounds[0]) << 8,
-                        (120 - measuredBounds[1]) << 8, scale);
+  BattleCamera_SetRange(
+      px(BATTLE_PROJECTION_CENTER), px(BATTLE_PROJECTION_CENTER),
+      (BATTLE_PROJECTION_CENTER - measuredBounds[0]) << 8,
+      (BATTLE_PROJECTION_CENTER - measuredBounds[1]) << 8, scale);
   half = scale * 255;
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
@@ -330,14 +337,16 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   renderBounds[2] = span;
   Iwram_TransformVector(renderBounds, (s32 *)camera);
   // Where the battlefield's origin falls on the screen moves the plane as much.
-  gProjection.centerX = 120;
-  gProjection.centerY = 120;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER;
   Transform_Reset();
   Transform_SetLookAt(camera->eye, focus);
   Transform_ProjectPoint(sourceBounds, measuredBounds);
 
-  BattleCamera_SetRange(px(120), px(120), (120 - measuredBounds[0]) << 8,
-                        (120 - measuredBounds[1]) << 8, scale);
+  BattleCamera_SetRange(
+      px(BATTLE_PROJECTION_CENTER), px(BATTLE_PROJECTION_CENTER),
+      (BATTLE_PROJECTION_CENTER - measuredBounds[0]) << 8,
+      (BATTLE_PROJECTION_CENTER - measuredBounds[1]) << 8, scale);
   // The zoom scales the focal length and the far depth.
   half = scale * 255;
   width = half * 2;

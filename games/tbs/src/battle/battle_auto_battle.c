@@ -298,7 +298,7 @@ s32 AutoBattle_RunPsynergy(struct BattleAction *action) {
   for (index = 0; index != sideCount; index++) {
     BattleHighlight_SetSpriteMode(index + sideStart, SPRITE_OPAQUE);
   }
-  BattleCamera_SetView(0, 0, 0, 100);
+  BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
   wait(3);
   return 0;
 }

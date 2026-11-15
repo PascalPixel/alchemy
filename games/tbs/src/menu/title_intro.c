@@ -118,15 +118,15 @@ const u8 gTitle_PromptBlendLevels[PROMPT_PULSE_FRAMES] = {
 /// Writes OAM entries i to i + 3: four sprites of `size` pixels, mirrored into
 /// the four quarters of one picture at (x, y)
 #define MIRRORED_QUAD(i, size, shape, tile)                                    \
-  INTRO_OBJ(i).attr01 = ((x + 4) << 16) | y | (shape) |                        \
+  INTRO_OBJ(i).attr01 = OBJ_X(x + 4) | y | (shape) |                           \
                         OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) | OBJ_256_COLORS;  \
-  INTRO_OBJ((i) + 1).attr01 = ((x + 4 + (size)) << 16) | y | (shape) |         \
+  INTRO_OBJ((i) + 1).attr01 = OBJ_X(x + 4 + (size)) | y | (shape) |            \
                               OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) |            \
                               OBJ_256_COLORS | OBJ_HFLIP;                      \
-  INTRO_OBJ((i) + 2).attr01 = ((x + 4) << 16) | (u8)(y + (size)) | (shape) |   \
+  INTRO_OBJ((i) + 2).attr01 = OBJ_X(x + 4) | (u8)(y + (size)) | (shape) |      \
                               OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) |            \
                               OBJ_256_COLORS | OBJ_VFLIP;                      \
-  INTRO_OBJ((i) + 3).attr01 = ((x + 4 + (size)) << 16) | (u8)(y + (size)) |    \
+  INTRO_OBJ((i) + 3).attr01 = OBJ_X(x + 4 + (size)) | (u8)(y + (size)) |       \
                               (shape) | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) |  \
                               OBJ_256_COLORS | OBJ_HFLIP | OBJ_VFLIP;          \
   INTRO_OBJ(i).attr2 = (tile);                                                 \
@@ -165,7 +165,7 @@ void Title_UpdateIntroSprites(void) {
       MIRRORED_QUAD(spriteCount, 16, OBJ_SIZE_16X16, 232);
       spriteCount += 4;
       PLACE_ON_SLOPE(2, 16);
-      INTRO_OBJ(spriteCount).attr01 = ((x + 4) << 16) | y | OBJ_SIZE_32X32 |
+      INTRO_OBJ(spriteCount).attr01 = OBJ_X(x + 4) | y | OBJ_SIZE_32X32 |
                                       OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT) |
                                       OBJ_256_COLORS;
       INTRO_OBJ(spriteCount).attr2 = 128;
@@ -195,7 +195,7 @@ void Title_UpdateIntroSprites(void) {
   // beyond the 120-entry list; it reuses a hidden shadow-buffer entry.
   stripY = 32 - gBgScroll[1].y;
   WRAP_TO_BYTE(stripY);
-  INTRO_OBJ(12).attr01 = stripY | (92 << 16) | OBJ_SIZE_64X64 | OBJ_256_COLORS;
+  INTRO_OBJ(12).attr01 = stripY | OBJ_X(92) | OBJ_SIZE_64X64 | OBJ_256_COLORS;
   INTRO_OBJ(12).attr2 = OBJ_PRIORITY(2);
   Dma_Set(&INTRO_OBJ(12), (u8 *)OAM + spriteCount * 8, DMA_COPY_WORDS(2),
           REG_DMA3);
@@ -416,7 +416,7 @@ s32 Title_ShowIntro(s32 prompt) {
                     INTRO_FRONT_TILE(315) +
                         (DISPLAY_HEIGHT - work->frontRows * 8) %
                             DISPLAY_HEIGHT * DISPLAY_WIDTH,
-                    (DMA_ENABLE | DMA_SRC_FIXED) << 16 | 960, REG_DMA3);
+                    DMA_FILL_HALFWORDS(960), REG_DMA3);
             tilemap = (u16 *)BG_SCREEN_BLOCK(INTRO_FRONT_SCREEN) +
                       27 * BG_SCREEN_WIDTH;
             for (i = 0; i < 5; i++) {

@@ -16,8 +16,10 @@ struct Spark {
 #define STAR_FIELD_SPARKS 16
 #define STAR_FIELD_RINGS 3
 #define STAR_FIELD_SPAWN_FRAMES 25
-#define STAR_FIELD_CENTER 64
+#define STAR_FIELD_SIZE 128 ///< the canvas's width and height in pixels
+#define STAR_FIELD_CENTER (STAR_FIELD_SIZE / 2)
 #define STAR_FIELD_RING_SIZE 32
+#define STAR_FIELD_FRAMES 45 ///< the frames a cast's glow lasts
 
 /// The star field's work, for the 45 frames of a cast's glow.
 struct SparkWork {
@@ -192,7 +194,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
 
   gBattleBackgroundWork->mode = BATTLE_BACKGROUND_FIXED;
   work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
-  HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, 128 * 128);
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, STAR_FIELD_SIZE * STAR_FIELD_SIZE);
   /* FAKEMATCH(dead): an empty once-only loop. */
   do {
   } while (0);
@@ -231,7 +233,8 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   work->frames = 0;
   work->ready = 0;
   work->canvasOrigin.queued = 0;
-  Iwram_ClearWords(gHeapSlots[HEAP_SLOT_BATTLE_CANVAS], 128 * 128);
+  Iwram_ClearWords(gHeapSlots[HEAP_SLOT_BATTLE_CANVAS],
+                   STAR_FIELD_SIZE * STAR_FIELD_SIZE);
   // The sheet's 128 bytes of colours, then its pictures; then the
   // element's own colours over them.
   graphics = Resource_GetTableEntry(RESOURCE_BLUE_RING_SHEET);
@@ -349,7 +352,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
     // The star field for 45 frames, the background darkening for the first 25.
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, BLEND_ALPHA(14, BLEND_WEIGHT_MAX));
     ElementGlow_InitializeStarField(element);
-    for (frame = 0; frame <= 44; frame++) {
+    for (frame = 0; frame < STAR_FIELD_FRAMES; frame++) {
       brightness = &battle->brightness;
       ime = &REG_IME;
       work = gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
@@ -360,8 +363,10 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
                                     BATTLE_BG_PALETTE_COLORS);
       BattleMotion_ProjectScaledPosition(
           unitId, ScreenPoint_Coordinates(&starFieldPosition));
-      work->canvasOrigin.x = (64U - (u32)starFieldPosition.x) << 8;
-      work->canvasOrigin.y = (64U - (u32)starFieldPosition.y) << 8;
+      work->canvasOrigin.x = (STAR_FIELD_CENTER - (u32)starFieldPosition.x)
+                             << 8;
+      work->canvasOrigin.y = (STAR_FIELD_CENTER - (u32)starFieldPosition.y)
+                             << 8;
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, (u32)&work->canvasOrigin.x,
                               DMA_COPY_WORDS(2));
       work->canvasOrigin.queued = 1;
@@ -378,8 +383,10 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
       effectWork = gHeapSlots[HEAP_SLOT_BATTLE_EFFECT];
       BattleMotion_ProjectScaledPosition(
           unitId, ScreenPoint_Coordinates(&streakPosition));
-      effectWork->trackedCanvas.origin.x = (64U - (u32)streakPosition.x) << 8;
-      effectWork->trackedCanvas.origin.y = (64U - (u32)streakPosition.y) << 8;
+      effectWork->trackedCanvas.origin.x =
+          (STAR_FIELD_CENTER - (u32)streakPosition.x) << 8;
+      effectWork->trackedCanvas.origin.y =
+          (STAR_FIELD_CENTER - (u32)streakPosition.y) << 8;
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X,
                           (u32)&effectWork->trackedCanvas.origin.x,
                           DMA_COPY_WORDS(2));

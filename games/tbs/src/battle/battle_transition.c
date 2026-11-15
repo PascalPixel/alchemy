@@ -147,9 +147,10 @@ void BattleTransition_AdvanceTimer(void) {
     camera->yaw = frame * 360 + 44928;
   frame = ++*timer;
   if (frame <= TRANSITION_OPEN_FRAMES)
-    BattleCamera_SetView(0, 0, 0, 180 - frame);
+    BattleCamera_SetView(0, 0, 0,
+                         BATTLE_ZOOM_NORMAL + TRANSITION_OPEN_FRAMES - frame);
   else
-    BattleCamera_SetView(0, 0, 0, 100);
+    BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
 }
 
 /// Draws the curtain opening from the middle of the screen, one row up and one
@@ -265,7 +266,8 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
                                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
       // The opening runs from the tasks while the status window opens
       // and the encounter is announced.
-      BattleCamera_SetView(0, 0, 0, 180);
+      BattleCamera_SetView(0, 0, 0,
+                           BATTLE_ZOOM_NORMAL + TRANSITION_OPEN_FRAMES);
       *timer = start;
       Task_Add(BattleTransition_AdvanceTimer, TASK_PASS_FRAME);
       Task_Add(BattleTransition_DrawRows, TASK_PASS_VBLANK);
@@ -313,7 +315,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
       work.effect.targets[work.effect.targetCount] = BATTLE_UNIT_LIST_END;
       BattleObject_SpawnObjectsForList(work.effect.targets, 0);
       BattleEffect_RunShatteringOpeningFar(&work.effect);
-      BattleCamera_SetView(0, 0, 0, 100);
+      BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
       *timer = start;
     }
     Irq_SetHandler(IRQ_VCOUNT, 32, BattleTransition_ClearBg0Vofs);

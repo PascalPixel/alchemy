@@ -18,6 +18,10 @@
 /// No backup memory. "Unable to detect backup memory."
 #define SAVE_ERROR_NO_MEMORY -9
 
+/// The play time shown stops at PLAY_TIME_HOURS_MAX hours and 59 minutes.
+#define PLAY_TIME_HOURS_MAX 999
+#define MINUTES_PER_HOUR 60
+
 /// Writes the play time `frames` (at 60 frames a second) into `out` as hours
 /// and minutes, "hhh:mm" with the hours right-aligned in three characters, and
 /// returns `out`. The time stops at 999:59.
@@ -30,11 +34,13 @@ void *String_FormatPlayTime(s32 frames, u8 *out) {
   u8 *textCursor;
 
   totalMinutes = (u32)frames / (60 * 60);
-  if (totalMinutes > 999 * 60 + 59)
-    totalMinutes = 999 * 60 + 59;
+  if (totalMinutes >
+      PLAY_TIME_HOURS_MAX * MINUTES_PER_HOUR + MINUTES_PER_HOUR - 1)
+    totalMinutes =
+        PLAY_TIME_HOURS_MAX * MINUTES_PER_HOUR + MINUTES_PER_HOUR - 1;
 
-  hours = totalMinutes / 60;
-  minutes = totalMinutes % 60;
+  hours = totalMinutes / MINUTES_PER_HOUR;
+  minutes = totalMinutes % MINUTES_PER_HOUR;
 
   digitsCursor = String_FormatNumber(digits, hours, 3);
   *out = *digitsCursor;

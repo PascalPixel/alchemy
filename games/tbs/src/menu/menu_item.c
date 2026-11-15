@@ -606,11 +606,11 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       targetCopy = Heap_Alloc(BATTLE_UNIT_SIZE);
       ITEM_IWRAM_COPY_WORDS(sourceCopy, sourceUnit, BATTLE_UNIT_SIZE);
       ITEM_IWRAM_COPY_WORDS(targetCopy, targetUnit, BATTLE_UNIT_SIZE);
-      // Take both whole stacks out, one item at a time (at most a stack of 30):
-      // Inventory_RemoveFar returns INVENTORY_REMOVE_LAST for the last one and
-      // INVENTORY_REMOVE_EMPTY_SLOT for an empty slot.
+      // Take both whole stacks out, one item at a time (at most
+      // INVENTORY_STACK_MAX): Inventory_RemoveFar returns INVENTORY_REMOVE_LAST
+      // for the last one and INVENTORY_REMOVE_EMPTY_SLOT for an empty slot.
       sourceQuantity = 0;
-      while (sourceQuantity <= 29) {
+      while (sourceQuantity <= INVENTORY_STACK_MAX - 1) {
         result =
             Inventory_RemoveFar(menu->sideMember[0], menu->selectedSlots[0]);
         if (result == INVENTORY_REMOVE_LAST) {
@@ -624,7 +624,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       }
       sourceQuantity++;
       targetQuantity = 0;
-      while (targetQuantity <= 29) {
+      while (targetQuantity <= INVENTORY_STACK_MAX - 1) {
         // The receiver cannot trade away a worn item that will not come off.
         if ((menu->selectedItems[1] & INVENTORY_EQUIPPED) != 0) {
           item = Item_GetDirectFar(menu->selectedItems[1] &
@@ -794,7 +794,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
     // Unused: not reached from any command. Chooses a quantity and keeps it in
     // heldCount, which nothing reads.
     case ITEM_STEP_QUANTITY:
-      result = ItemMenu_SelectGiveQuantity(0, 30, 0);
+      result = ItemMenu_SelectGiveQuantity(0, INVENTORY_STACK_MAX, 0);
       if (result != -1) {
         // Unused: the quantity chosen, which nothing reads.
         heldCount = result;
@@ -910,16 +910,16 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
       *remainingIcons++ = WindowSprite_CreateFromResourceFar(
           ICON_KIND_ITEM, remainingSlot, window, 256, y);
       remainingSlot++;
-    } while (remainingSlot <= 31);
+    } while (remainingSlot <= MENU_ENTRY_ICONS - 1);
   }
 }
 
-/// Hides all 32 item icons.
+/// Hides all the item icons.
 void ItemMenu_HideAllIcons(void) {
   struct WindowSprite **icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
   s32 slot;
 
-  for (slot = 0; slot < 32; slot++) {
+  for (slot = 0; slot < MENU_ENTRY_ICONS; slot++) {
     struct WindowSprite *icon = *icons++;
     if (icon != 0) {
       icon->motion = ICON_HIDDEN;
@@ -941,7 +941,7 @@ void ItemMenu_HidePageIcons(void) {
     if (icon != NULL && slot % MENU_ITEM_GRID_COLUMNS == 0)
       icon->motion = hidden;
     slot++;
-  } while (slot <= 31);
+  } while (slot <= MENU_ENTRY_ICONS - 1);
 }
 #endif
 
@@ -1328,7 +1328,7 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 slot;
 
-  for (slot = 0; slot < 32; slot++) {
+  for (slot = 0; slot < MENU_ENTRY_ICONS; slot++) {
     if (items[slot] == 0) {
       Icon_PrepareActor(menu->entryIcons[slot]);
       menu->entryIcons[slot]->motion = ICON_HIDDEN;
@@ -1385,7 +1385,7 @@ s32 ItemMenu_CollectItems(struct Unit *unit, u16 *items, s32 mode) {
   s32 itemCount;
   s32 slotIndex;
 
-  for (slotIndex = 0; slotIndex < 32; slotIndex++) {
+  for (slotIndex = 0; slotIndex < MENU_ENTRY_ICONS; slotIndex++) {
     items[slotIndex] = 0;
   }
   itemCount = 0;
@@ -2384,7 +2384,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
         Text_DrawMessageAsTilesFar(MsgGiveHowMany, window, ITEM_GIVE_ASK_X,
                                    ITEM_GIVE_ASK_Y);
         Dma_Set(gMenu_QuantityTiles, tiles, DMA_COPY_WORDS(64), REG_DMA3);
-        QuantityBar_FillFar(30, 14, tiles);
+        QuantityBar_FillFar(INVENTORY_STACK_MAX, 14, tiles);
         QuantityBar_FillFar(quantityRange + baseQuantity, 0, tiles);
         QuantityBar_FillFar(baseQuantity + quantity + 1, 10, tiles);
         QuantityBar_FillFar(baseQuantity, 2, tiles);

@@ -235,9 +235,9 @@ s32 Message_Type(struct Message *message) {
         // The French, Spanish and Italian releases also start each page in the
         // default style.
 #if TBS_PATCH_3
-        message->colour = 15;
+        message->colour = TEXT_DEFAULT_COLOR;
         message->outline = TEXT_STYLE_PLAIN;
-        message->lineSpacing = 10;
+        message->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
         Message_ApplyStyle(message);
 #endif
         VramCache_FreeEntry(work->glyphResource);
@@ -292,9 +292,9 @@ s32 Message_Type(struct Message *message) {
         break;
 
       case TEXT_COLORS_RESET:
-        message->colour = 15;
+        message->colour = TEXT_DEFAULT_COLOR;
         message->outline = TEXT_STYLE_PLAIN;
-        message->lineSpacing = 10;
+        message->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
         Message_ApplyStyle(message);
         break;
 

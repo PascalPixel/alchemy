@@ -137,7 +137,8 @@ void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
   u16 *cursor = (u16 *)((y * BG_SCREEN_WIDTH + x) * 2 + (u32)canvas->tilemap);
   u32 row;
 
-  if (width <= 1 || height <= 1 || width > 30 || height > 30)
+  if (width <= 1 || height <= 1 || width > DISPLAY_TILE_WIDTH ||
+      height > DISPLAY_TILE_WIDTH)
     return;
   Window_ClearTextTilesInRect(x, y, width, height);
   // The top edge.
@@ -184,12 +185,13 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
   u32 row;
   u32 col;
 
-  if (width <= 1 || height <= 1 || width > 30 || height > 30)
+  if (width <= 1 || height <= 1 || width > DISPLAY_TILE_WIDTH ||
+      height > DISPLAY_TILE_WIDTH)
     return;
   // Canvas tiles run down each column of the interior: the tile at interior
   // row r (from 1) of column c (from 0) is TEXT_CANVAS_FIRST_TILE - 1 + r plus
   // c columns of height - 2 tiles.
-  cursor += 32;
+  cursor += BG_SCREEN_WIDTH;
   if (fullWidth == 0) {
     for (row = 1; row < height - 1; row++) {
       cursor++;
@@ -244,8 +246,8 @@ s32 Window_IsClosed(struct Window *window) {
 void Text_ResetStyle(void) {
   struct WindowWork *state = WINDOW_WORK;
 
-  state->colour = 15;
-  state->lineSpacing = 10;
+  state->colour = TEXT_DEFAULT_COLOR;
+  state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->letterSpacing = 9;
   state->outline = TEXT_STYLE_PLAIN;
   state->unusedAfterLineSpacing = 1;
@@ -261,9 +263,9 @@ void WindowSystem_StartFieldUpdate(void) {
   // tiles, the four of a 16x16 glyph for each of the 64 window sprites.
   state->glyphTiles = VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, 128 << 6, 0);
   state->letterSpacing = 9;
-  state->lineSpacing = 10;
+  state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
-  state->colour = 15;
+  state->colour = TEXT_DEFAULT_COLOR;
   state->textBufferEnd = 0;
   Task_Add(WindowSystem_Update, TASK_PASS_FRAME);
 }
@@ -279,9 +281,9 @@ void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles) {
     state->glyphTiles =
         VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, 128 << 6, 0);
   state->letterSpacing = 9;
-  state->lineSpacing = 10;
+  state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
-  state->colour = 15;
+  state->colour = TEXT_DEFAULT_COLOR;
   state->textBufferEnd = 0;
   Task_Add(WindowSystem_Update, TASK_PASS_FRAME);
 }

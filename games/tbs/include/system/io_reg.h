@@ -314,6 +314,7 @@ enum DisplayControl {
 // every line (a scanline table that drives a window edge, a scroll or an affine
 // register).
 #define DMA_COPY_WORDS(n) ((DMA_ENABLE | DMA_32BIT) << 16 | (n))
+#define DMA_FILL_HALFWORDS(n) ((DMA_ENABLE | DMA_SRC_FIXED) << 16 | (n))
 #define DMA_FILL_WORDS(n) ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (n))
 #define DMA_COPY_HALFWORDS(n) (DMA_ENABLE << 16 | (n))
 /// A halfword each HBlank, as for a scroll or a window edge.
@@ -365,6 +366,9 @@ enum ObjMode {
 /// behind, and its 16-colour palette.
 #define OBJ_PRIORITY(n) ((n) << 10)
 #define OBJ_PALETTE(n) ((n) << 12)
+/// A sprite's x in the attr01 word of an OamWords entry, whose attribute 1 is
+/// its high half.
+#define OBJ_X(x) ((x) << 16)
 
 /// The keys' bits as REG_KEYINPUT and REG_KEYCNT lay them out; the game's
 /// key state (gKeysHeld and the rest) holds them set for a pressed key.

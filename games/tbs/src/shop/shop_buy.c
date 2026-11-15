@@ -629,8 +629,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           redraw = 0;
           quantityIndex = (quantityIndex + maximum) % maximum;
           Dma_Set(gShop_QuantityTiles, tileBuffer,
-                  (DMA_ENABLE | DMA_32BIT) << 16 | 8 * TILE_SIZE_4BPP / 4,
-                  REG_DMA3);
+                  DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4), REG_DMA3);
           // Paint capacity, available stock, selection and carried items in
           // that order; each shorter prefix overwrites the previous colour.
           QuantityBar_Fill(SHOP_STACK_LIMIT, 14, tileBuffer);

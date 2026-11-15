@@ -183,7 +183,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
     chance = elementPower - target->element[plan->element].resistance;
     chance += 30;
     // Percent to a fraction of the 16-bit random range.
-    chance *= 65536 / 100;
+    chance *= Q16_ONE / 100;
     if (chance > (Battle_RandomFar() & 0xffff))
       BattlePlayback_Push(PLAYBACK_DJINN_BONUS, 5);
   }

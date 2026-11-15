@@ -108,11 +108,11 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   // pens maps a font pixel, 1 or 3 (the font's two shades), to a colour; 0
   // leaves the background.
   if (paletteBits == BG_TILE_PALETTE(WINDOW_PALETTE)) {
-    pens[1] = gFont_ColorPens[work->colour & 15];
+    pens[1] = gFont_ColorPens[work->colour & (PALETTE_COLORS - 1)];
     pens[3] = 3;
     Iwram_FillWords(canvas, 2048, PIXELS_8BPP(WINDOW_BACKGROUND_COLOR));
   } else {
-    pens[1] = (u8)work->colour & 15;
+    pens[1] = (u8)work->colour & (PALETTE_COLORS - 1);
     pens[3] = 1;
     Iwram_FillWords(canvas, 2048, PIXELS_8BPP(TEXT_BACKGROUND_COLOR));
   }
@@ -127,7 +127,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         switch (glyphCode) {
         case TEXT_COLOR:
           work->colour = *text++;
-          pens[1] = gFont_ColorPens[work->colour & 15];
+          pens[1] = gFont_ColorPens[work->colour & (PALETTE_COLORS - 1)];
           break;
         // TEXT_COLORS_RESET, TEXT_OUTLINE and TEXT_LINE_SPACING all reset the
         // colour here, and the last two leave their operand to be read as the
@@ -135,7 +135,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         case TEXT_COLORS_RESET:
         case TEXT_OUTLINE:
         case TEXT_LINE_SPACING:
-          work->colour = 15;
+          work->colour = TEXT_DEFAULT_COLOR;
           pens[1] = gFont_ColorPens[work->colour];
           break;
         case TEXT_NEWLINE:
@@ -243,25 +243,26 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
 
   // Reuse private text tiles, allocate any new ones, then upload each tile.
   for (index = 0; index < tileCount; index++) {
-    u32 mask = 127;
+    u32 mask = TEXT_TILES - 1;
     u32 tile;
     u32 *vramTile;
 
     if (work->extraTextTiles != 0)
-      mask = 255;
+      mask = 2 * TEXT_TILES - 1;
     // Attribute n is text tile 128 + n, and with alt set 128 to 255 are
     // tiles 512 to 639.
     tile = *tiles & TILE_NUMBER_MASK;
-    if ((tile < 128 || tile > 255) &&
-        (work->extraTextTiles == 0 || tile < 512 || tile > 639)) {
+    if ((tile < TEXT_TILE_FIRST || tile > TEXT_TILE_FIRST + TEXT_TILES - 1) &&
+        (work->extraTextTiles == 0 || tile < TEXT_EXTRA_TILE_FIRST ||
+         tile > TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
       tile = work->nextTextTile & mask;
       for (column = 0; column <= mask && work->textTileState[tile] != 0;
            column++)
         tile = (tile + 1) & mask;
       work->nextTextTile = (tile + 1) & mask;
       work->textTileState[tile] = 1;
-      if (tile > 127)
-        tile += 384;
+      if (tile > TEXT_TILES - 1)
+        tile += TEXT_EXTRA_TILE_FIRST - TEXT_TILES;
       else
         tile |= 0x80;
       *tiles = paletteBits | tile;
@@ -297,8 +298,9 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
     for (column = 0; column < width; column++) {
       u32 tileId = *cursor++ & TILE_NUMBER_MASK;
 
-      if ((tileId - 128) <= 127 ||
-          (alternateTiles != 0 && tileId > 511 && tileId <= 639)) {
+      if ((tileId - TEXT_TILE_FIRST) <= TEXT_TILES - 1 ||
+          (alternateTiles != 0 && tileId > TEXT_EXTRA_TILE_FIRST - 1 &&
+           tileId <= TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
         u32 attributeIndex = ((tileId & 0xFF) ^ 0x80);
         ((struct WindowWork *)base)->textTileState[attributeIndex] &= 0xFC;
       }
@@ -312,7 +314,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
 void Window_MarkVisibleTextTiles(void) {
   u8 *base = gWindowWork[0];
   u16 *cursor = (u16 *)base;
-  s32 width = 30;
+  s32 width = DISPLAY_TILE_WIDTH;
   u32 alternateTiles = ((struct WindowWork *)base)->extraTextTiles;
   s32 row;
   s32 x;
@@ -320,12 +322,13 @@ void Window_MarkVisibleTextTiles(void) {
   // The cursor never skips the two hidden columns that end each 32-entry
   // row, so the scan covers the tilemap's first 600 entries in order: row 18
   // from column 24 on and row 19 are never marked shown.
-  for (row = 20; row != 0; row--) {
+  for (row = DISPLAY_TILE_HEIGHT; row != 0; row--) {
     for (x = 0; x < width; x++) {
       u32 tileId = *cursor++ & TILE_NUMBER_MASK;
 
-      if ((tileId - 128) <= 127 ||
-          (alternateTiles != 0 && tileId > 511 && tileId <= 639)) {
+      if ((tileId - TEXT_TILE_FIRST) <= TEXT_TILES - 1 ||
+          (alternateTiles != 0 && tileId > TEXT_EXTRA_TILE_FIRST - 1 &&
+           tileId <= TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
         u32 attributeIndex = ((tileId & 0xff) ^ 0x80);
 
         ((struct WindowWork *)base)->textTileState[attributeIndex] |= 2;
@@ -333,7 +336,7 @@ void Window_MarkVisibleTextTiles(void) {
     }
   }
 
-  for (row = 0; row < 256; row++, base++) {
+  for (row = 0; row < 2 * TEXT_TILES; row++, base++) {
     if (((struct WindowWork *)base)->textTileState[0] == 1)
       ((struct WindowWork *)base)->textTileState[0] = 0;
   }
@@ -353,9 +356,10 @@ void Text_UseExtraTiles(s32 allowAlternateTiles) {
   if (allowAlternateTiles != 0) {
     ((struct WindowWork *)work)->extraTextTiles = 1;
     allowAlternateTiles = 0;
-    for (i = 128,
-        attributes = (s8 *)((struct WindowWork *)work)->textTileState + 128;
-         i <= 255; i += 1) {
+    for (i = TEXT_TILES,
+        attributes =
+             (s8 *)((struct WindowWork *)work)->textTileState + TEXT_TILES;
+         i <= 2 * TEXT_TILES - 1; i += 1) {
       *attributes = allowAlternateTiles;
       attributes += 1;
     }
@@ -363,8 +367,9 @@ void Text_UseExtraTiles(s32 allowAlternateTiles) {
   }
   ((struct WindowWork *)work)->extraTextTiles = 0;
   allowAlternateTiles = 0;
-  tileAttributes = (s8 *)((struct WindowWork *)work)->textTileState + 128;
-  j = 127;
+  tileAttributes =
+      (s8 *)((struct WindowWork *)work)->textTileState + TEXT_TILES;
+  j = TEXT_TILES - 1;
   do {
     j -= 1;
     *tileAttributes = allowAlternateTiles;
@@ -539,7 +544,7 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
 void Text_SetColor(s32 param) {
   struct WindowWork *work = WINDOW_WORK;
 
-  work->colour = param & 15;
+  work->colour = param & (PALETTE_COLORS - 1);
 }
 
 /// Sets the text style (WindowWork.outline) of drawn text: 1 outlined, 2 to

@@ -102,6 +102,12 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 
 /// The window system's work: the windows' tilemap, the windows, the three text
 /// messages, the 64 window sprites, and the decoded message and its arguments.
+/// The window tiles text is drawn into: TEXT_TILES from TEXT_TILE_FIRST, and
+/// with WindowWork.extraTextTiles as many more from TEXT_EXTRA_TILE_FIRST.
+#define TEXT_TILE_FIRST 128
+#define TEXT_TILES 128
+#define TEXT_EXTRA_TILE_FIRST 512
+
 struct WindowWork {
   u16 tilemap[640]; ///< the windows' BG tilemap, 32 by 20 tiles
   struct Window windows[WINDOW_COUNT]; ///< 12 in Japanese, 8 in the others
@@ -110,7 +116,7 @@ struct WindowWork {
   struct WindowSpriteList freeSprites; ///< the sprites not in any window
   /// Per text tile (tiles 128 to 255, then 512 to 639): bit 0 once allocated,
   /// bit 1 while the tilemap shows it, 0 when free.
-  u8 textTileState[256];
+  u8 textTileState[2 * TEXT_TILES];
   u16 nextTextTile;  ///< the text tile the next search for a free one starts at
   u8 extraTextTiles; ///< 1 lets text use 256 tiles, adding tiles 512 to 639
   /// The tilemap's 4-row bands to upload: bit 0 for all, bit n + 1 for band n.
@@ -544,6 +550,9 @@ void BattleMessage_ShowAndWait(s32 argument);
 s32 Message_OpenDecoded(struct Window *window, s32 argument);
 void Message_SetDecodeFlags(s32 flags);
 struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
+/// Message_OpenWindow's packed argument: the speaker's voice in bits 16 to 27,
+/// above the window options.
+#define MESSAGE_WINDOW_VOICE(voice) ((voice) << 16)
 void FieldMessage_Show(s32 no, s32 flags);
 void WindowSystem_Update(void);
 #if LANGUAGE != LANGUAGE_JAPANESE

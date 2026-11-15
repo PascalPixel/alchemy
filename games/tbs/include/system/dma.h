@@ -23,7 +23,7 @@ struct DmaRegisters {
   {                                                                            \
     volatile u16 fill_ = (value);                                              \
     Dma_Set((const void *)&fill_, (destination),                               \
-            (DMA_ENABLE | DMA_SRC_FIXED) << 16 | ((size) / 2), REG_DMA3);      \
+            DMA_FILL_HALFWORDS((size) / 2), REG_DMA3);                         \
   }
 
 /// Fills `size` bytes at `destination` with the word `value` by DMA3.

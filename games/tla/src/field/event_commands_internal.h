@@ -111,4 +111,11 @@ enum MarsSparkState {
 /// smaller than what they follow.
 #define AFTERIMAGE_SCALE (Q16_ONE * 15 / 16)
 
+/// gMainRoutineWork.pendingDjinni's parts, as Djinn_ResolvePending reads them,
+/// as The Broken Seal's. bits: 15..12 kind | 11..0 event or flag.
+#define DJINN_PENDING_KIND_MASK 0xf000
+#define DJINN_PENDING_EVENT_MASK 0xfff
+/// A Djinni battle's event without DJINN_NO_HOP.
+#define DJINN_PENDING_BATTLE_EVENT_MASK 0x7ff
+
 #endif // ALCHEMY_EVENT_COMMANDS_INTERNAL_H

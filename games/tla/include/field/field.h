@@ -347,20 +347,6 @@ enum TerrainKind {
   TERRAIN_KIND_COUNT = 16
 };
 
-struct ActorDescriptor {
-  s16 action;
-  s16 scene;
-  u8 unusedAfterScene[4]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct MapActor {
-  s16 id;
-  s16 event;
-};
-
 /// One node of a tightrope (Tightrope_Initialize's work): a point on the rope,
 /// and the sprite Tightrope_Draw puts between it and the next node.
 struct TightropeNode {

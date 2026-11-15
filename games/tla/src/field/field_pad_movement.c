@@ -162,10 +162,10 @@ update_object:
     terrainCollision =
         WorldMap_GetCollision((struct WorldPosition *)&object->x.fixed);
     if (terrainCollision == 9) {
-      playerSprite->entry[6] = 1;
+      playerSprite->secondLayer->priority = 1;
       playerSprite->flags = 0;
     } else {
-      playerSprite->entry[6] = 9;
+      playerSprite->secondLayer->priority = 9;
       playerSprite->flags = 1;
     }
     if (terrainCollision == 6 && object->timer == 0 && collision == 0) {

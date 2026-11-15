@@ -143,8 +143,9 @@ void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
 }
 
 /// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
-/// gColorBuffer_FadeStep1Map: step 1 of the canvas's fade.
-void ColorBuffer_MapToFadeStep1(u8 *buffer, s32 count) {
+/// gColorBuffer_FadeStep1Map, one level darker down the ramp of colours
+/// 0xe0 to 0xfe.
+void ColorBuffer_DarkenOneLevel(u8 *buffer, s32 count) {
   if (count > 0) {
     const u8 *table = gColorBuffer_FadeStep1Map;
 
@@ -158,8 +159,8 @@ void ColorBuffer_MapToFadeStep1(u8 *buffer, s32 count) {
 }
 
 /// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
-/// gColorBuffer_FadeStep2Map: step 2 of the canvas's fade.
-void ColorBuffer_MapToFadeStep2(u8 *buffer, s32 count) {
+/// gColorBuffer_FadeStep2Map, two levels darker.
+void ColorBuffer_DarkenTwoLevels(u8 *buffer, s32 count) {
   if (count > 0) {
     const u8 *table = gColorBuffer_FadeStep2Map;
 
@@ -173,8 +174,8 @@ void ColorBuffer_MapToFadeStep2(u8 *buffer, s32 count) {
 }
 
 /// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
-/// gColorBuffer_FadeStep3Map: step 3 of the canvas's fade.
-void ColorBuffer_MapToFadeStep3(u8 *buffer, s32 count) {
+/// gColorBuffer_FadeStep3Map, four levels darker.
+void ColorBuffer_DarkenFourLevels(u8 *buffer, s32 count) {
   if (count > 0) {
     const u8 *table = gColorBuffer_FadeStep3Map;
 
@@ -212,17 +213,17 @@ void BattleEffect_UploadCanvas(void) {
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
     Iwram_FillWords(canvas, CANVAS_SIZE, 0);
     break;
-  case CANVAS_UPLOAD_AND_FADE1:
+  case CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL:
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
-    ColorBuffer_MapToFadeStep1(canvas, CANVAS_SIZE);
+    ColorBuffer_DarkenOneLevel(canvas, CANVAS_SIZE);
     break;
-  case CANVAS_UPLOAD_AND_FADE2:
+  case CANVAS_UPLOAD_AND_DARKEN_TWO_LEVELS:
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
-    ColorBuffer_MapToFadeStep2(canvas, CANVAS_SIZE);
+    ColorBuffer_DarkenTwoLevels(canvas, CANVAS_SIZE);
     break;
-  case CANVAS_UPLOAD_AND_FADE3:
+  case CANVAS_UPLOAD_AND_DARKEN_FOUR_LEVELS:
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
-    ColorBuffer_MapToFadeStep3(canvas, CANVAS_SIZE);
+    ColorBuffer_DarkenFourLevels(canvas, CANVAS_SIZE);
     break;
   case CANVAS_UPLOAD_TO_BG:
     Dma_Set(canvas, BG_VRAM, DMA_COPY_WORDS(CANVAS_SIZE * 2 / 4), REG_DMA3);

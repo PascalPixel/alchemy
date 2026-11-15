@@ -60,11 +60,14 @@ struct MotionScript {
   s32 word[1];
 };
 
+/// An actor's sprite (struct Sprite) as the actors' freeze and placement
+/// read it: its image and shadow priorities, a byte at a time, under struct
+/// Sprite's names.
 struct PlacedSprite {
-  u8 unused[9]; ///< no code names it
-  u8 low09 : 2;
+  u8 unused[9];    ///< no code names it
+  u8 tileHigh : 2; ///< tile number bits 9..8
   u8 priority : 2;
-  u8 high09 : 4;
+  u8 palette : 4;
   u8 unusedB[2]; ///< no code names it
   s32 scale;     ///< 16.16 fixed point
   u8 slot;
@@ -72,9 +75,9 @@ struct PlacedSprite {
   u8 unusedAfterRetainCacheEntry[7]; ///< no code names it
   u8 dirty;
   u8 unusedAfterDirty[0x0b]; ///< no code names it
-  u8 low25 : 2;
+  u8 shadowTileHigh : 2;
   u8 shadowPriority : 2;
-  u8 high25 : 4;
+  u8 shadowPalette : 4;
 };
 
 /// A point the fixed camera looks from or at.
@@ -99,23 +102,28 @@ struct ActorCameraFixed {
   struct ActorCameraPoint *followPosition; ///< when set, used as the target
 };
 
+/// The leader's sprite, or a ripple's (struct Sprite), as the player's
+/// movement sets them, a byte at a time, under struct Sprite's names.
 struct PlayerSprite {
   u8 unused[5]; ///< no code names it
-  u8 low05 : 2;
+  u8 affine : 2;
   u8 objectMode : 2;
-  u8 high05 : 4;
-  u8 unusedB[3]; ///< no code names it
-  u8 low09 : 2;
+  u8 mosaic : 1;
+  u8 fullColor : 1;
+  u8 shape : 2;
+  u8 unusedB[3];   ///< no code names it
+  u8 tileHigh : 2; ///< tile number bits 9..8
   u8 priority : 2;
-  u8 high09 : 4;
-  u8 unusedC[7]; ///< no code names it
-  u8 shape11;
+  u8 palette : 4;
+  u8 unusedC[7];     ///< no code names it
+  u8 cacheFlags : 2; ///< retainCacheEntry and useOwnScale
+  u8 sunkRows : 6; ///< rows the picture is sunk (flags bit 3) or shaded (bit 2)
   u16 rotation;
-  u8 unk14[5];
+  u8 unusedD[5]; ///< no code names it
   u8 dirty;
   u8 flags;
-  u8 unk1b[0x11];
-  u8 *entry;
+  u8 unusedE[0x11];                    ///< no code names it
+  struct SpriteAnimation *secondLayer; ///< entries[1]; above priority 3 hidden
 };
 
 struct MapFlagsWork {
@@ -229,13 +237,15 @@ struct MapGridCellAnimationStep {
   s16 y, width, height, delay;
 } __attribute__((packed, aligned(2)));
 
+/// A sprite (struct Sprite) whose image priority, its layer, is copied a
+/// byte at a time, under struct Sprite's names.
 struct Child {
-  u8 unused[9]; ///< no code names it
-  u8 low9 : 2;
+  u8 unused[9];    ///< no code names it
+  u8 tileHigh : 2; ///< tile number bits 9..8
   u8 layer : 2;
-  u8 high9 : 4;
+  u8 palette : 4;
   u8 unusedB[0x10]; ///< no code names it
-  u8 value1a;
+  u8 flags;
 };
 
 /// The actor as SC_SYNC clears it when it gives up waiting: its target, arrival

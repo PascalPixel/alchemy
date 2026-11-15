@@ -161,7 +161,7 @@ void FieldPsynergy_UpdateBurst(void) {
         work->newBursts = 1;
         work->shake = 2;
       }
-      canvas->command = CANVAS_UPLOAD_AND_FADE3;
+      canvas->command = CANVAS_UPLOAD_AND_DARKEN_FOUR_LEVELS;
       if (work->timer == 16)
         BURST_NEXT_PHASE(work);
       break;
@@ -279,7 +279,7 @@ void FieldPsynergy_UpdateBurst(void) {
           Sound_PlayFar(SE_CLATTER);
         }
       }
-      canvas->command = CANVAS_UPLOAD_AND_FADE3;
+      canvas->command = CANVAS_UPLOAD_AND_DARKEN_FOUR_LEVELS;
       if (work->timer == 16)
         BURST_NEXT_PHASE(work);
       break;

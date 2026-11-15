@@ -901,9 +901,9 @@ update_object:
     terrainCollision =
         WorldMap_GetCollision((struct WorldPosition *)&object->x.fixed);
     if (terrainCollision == 9)
-      playerSprite->entry[6] = 1;
+      playerSprite->secondLayer->priority = 1;
     else
-      playerSprite->entry[6] = 9;
+      playerSprite->secondLayer->priority = 9;
   }
   if (*timer == 0 && collision == 0) {
     ripple = Actor_Create(0x164, object->x.fixed, object->y.fixed,

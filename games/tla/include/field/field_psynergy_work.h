@@ -12,20 +12,6 @@
 struct Sprite;
 union FieldObject;
 
-/// A field object as an arc effect's caster: its facing, its animation records
-/// and the phase and frame count of its per-frame callback.
-struct ArcEffectObject {
-  u8 unused[6];              ///< no code names it
-  u16 angle;                 ///< 1/65536 turns
-  u8 unusedAfterAngle[0x48]; ///< no code names it
-  struct Sprite *records;
-  u8 unusedAfterRecords[0x10]; ///< no code names it
-  s16 phase;                   ///< 1 spins the caster
-  s16 step;                    ///< frames since the arcs started
-  struct Actor *watchedObject;
-  void (*callback)(union FieldObject *object); ///< run each frame
-};
-
 /// A particle of a field Psynergy's effect: its place and velocity, in 16.16
 /// pixels on the field or on the screen, and the frames since it began
 /// (negative before it starts, or while it is free).

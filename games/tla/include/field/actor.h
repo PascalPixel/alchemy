@@ -174,6 +174,11 @@ struct Actor {
       s16 homeX;
       s16 homeZ;
     };
+    /// Avoid's caster (FieldEffect_UpdateAvoidCaster).
+    struct {
+      s16 arcPhase;  ///< 1 spins the caster 3/64 turn a frame
+      s16 arcFrames; ///< frames since the arcs started
+    };
     /// A Venus Djinni's falling motes
     /// (FieldEffect_UpdateDescendingOrbitActor).
     struct {

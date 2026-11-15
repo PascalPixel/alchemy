@@ -422,7 +422,7 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
     created->motionFlags = 0;
     if (child != NULL) {
       Sprite_StartAnimation((struct Sprite *)child, 1);
-      child->value1a = 0;
+      child->flags = 0;
       child->layer = sprite->layer;
       if (mode == 2) {
         Animation_ApplyChildValuesToRecord((struct Sprite *)child, 13);
@@ -737,7 +737,7 @@ counted:
     oldFlags = sprite->flags;
     if (attribute & 16) {
       if (!(oldFlags & 8)) {
-        sprite->shape11 = (sprite->shape11 & 3) | 16;
+        sprite->sunkRows = 4;
         sprite->flags = ((u8)oldFlags | 4) & ~1;
       }
       if (object->timer == 0 && collision == 0 && !onObject) {

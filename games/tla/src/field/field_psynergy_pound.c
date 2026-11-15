@@ -95,7 +95,7 @@ void FieldPsynergy_UpdatePound(void) {
     }
     break;
   case 2:
-    canvas->command = CANVAS_UPLOAD_AND_FADE1;
+    canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
     if (work->timer == 32) {
       work->state++;
       work->timer = -1;

@@ -70,6 +70,30 @@ struct WhirlSpark {
   s32 age;
 };
 
+/// The states of a particle that flies out and back: Halt's and Force's
+/// (FieldEffect_UpdateHaltParticle, FieldEffect_UpdateRadialBurst).
+enum OutAndBackState {
+  OUT_AND_BACK_AIM_OUT = 0,    ///< picks the point it flies out to
+  OUT_AND_BACK_FLYING_OUT = 1, ///< waits to arrive there
+  OUT_AND_BACK_AIM_BACK = 2,   ///< picks the point it comes back to
+  OUT_AND_BACK_FLYING_BACK = 3 ///< frees its slot once it arrives
+};
+
+/// Per-frame update: sets every part of an actor's sprite to colour mode
+/// frame % 6, which cycles its colours.
+void Actor_ApplyRandomChildValues(struct Actor *actor);
+
+/// The effect sprites a field Psynergy has (FieldEffectWork.particles).
+#define PSYNERGY_EFFECT_SLOT_COUNT 24
+
+/// The states of a Retreat particle (FieldEffect_UpdateRadialLaunch).
+enum RetreatParticleState {
+  RETREAT_PARTICLE_AIM = 0,    ///< placed on the main actor and aimed
+  RETREAT_PARTICLE_FLYING = 1, ///< back to RETREAT_PARTICLE_AIM on arrival
+  /// Set by FieldPsynergy_Retreat: freed on arrival.
+  RETREAT_PARTICLE_LAST_FLIGHT = 2
+};
+
 /// The phase or state a field Psynergy's work is left in when it has
 /// finished, which the cast waits for.
 #define FIELD_PSYNERGY_FINISHED 999

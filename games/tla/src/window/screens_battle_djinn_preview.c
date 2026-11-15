@@ -8,6 +8,10 @@
 #include "window/screens.h"
 #include "window/window.h"
 
+/// Where a stat's digits start in its formatted text: the last seven of its
+/// fourteen characters.
+#define DJINN_PREVIEW_STAT_DIGIT_OFFSET 7
+
 /// Formats value as decimal text and copies its 14 characters, one a halfword,
 /// into out.
 s32 String_FormatNumberToHalfwords(s16 *out, s32 value) {
@@ -198,7 +202,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
 
     if (output) {
       output->motion = WINDOW_SPRITE_MOTION_STILL;
-      output->kind = 1;
+      output->kind = WINDOW_SPRITE_ICON;
       output->index = VramCache_AllocEntry(128);
       entry = (struct ArrowSprite *)&output->sprite;
       output->sentinel = OAM_DEPTH_WINDOW;
@@ -262,13 +266,16 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
 
     oldHp = savedUnit->hp;
     String_FormatNumberToHalfwords(numberText, oldHp);
-    Text_DrawWideStringInWindow(numberText + 7, window, OLD_VALUE_X, 1);
+    Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
+                                window, OLD_VALUE_X, 1);
     oldPp = savedUnit->pp;
     String_FormatNumberToHalfwords(numberText, oldPp);
-    Text_DrawWideStringInWindow(numberText + 7, window, OLD_VALUE_X, 2);
+    Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
+                                window, OLD_VALUE_X, 2);
     oldAtk = savedUnit->atk;
     String_FormatNumberToHalfwords(numberText, oldAtk);
-    Text_DrawWideStringInWindow(numberText + 7, window, OLD_VALUE_X, 3);
+    Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
+                                window, OLD_VALUE_X, 3);
     oldDef = savedUnit->def;
     String_FormatNumberToHalfwords(numberText, oldDef);
     Text_DrawWideStringInWindow(numberText + OLD_DEFENSE_AGILITY_TEXT, window,
@@ -355,7 +362,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       Window_SetTilemapEntry(window, 0xf729, 9, 0, page);
 
     String_FormatNumberToHalfwords(numberText, unit->hp);
-    Text_DrawWideStringInWindow(numberText + 7, window, 11, 1);
+    Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
+                                window, 11, 1);
     if (unit->hp != oldHp) {
       rising = 0;
       if (unit->hp > oldHp)
@@ -363,7 +371,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, 14, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->pp);
-    Text_DrawWideStringInWindow(numberText + 7, window, 11, 2);
+    Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
+                                window, 11, 2);
     if (unit->pp != oldPp) {
       rising = 0;
       if (unit->pp > oldPp)
@@ -371,7 +380,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, 22, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->atk);
-    Text_DrawWideStringInWindow(numberText + 7, window, 11, 3);
+    Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
+                                window, 11, 3);
     if (unit->atk != oldAtk) {
       rising = 0;
       if (unit->atk > oldAtk)
@@ -379,7 +389,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, 30, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->def);
-    Text_DrawWideStringInWindow(numberText + 7, window, 11, 4);
+    Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
+                                window, 11, 4);
     if (unit->def != oldDef) {
       rising = 0;
       if (unit->def > oldDef)
@@ -387,7 +398,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       DjinnMenu_DrawStatArrow(PREVIEW_STAT_ARROW_X, 38, rising);
     }
     String_FormatNumberToHalfwords(numberText, unit->agi);
-    Text_DrawWideStringInWindow(numberText + 7, window, 11, 5);
+    Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
+                                window, 11, 5);
     if (unit->agi != oldAgi) {
       rising = 0;
       if (unit->agi > oldAgi)

@@ -506,7 +506,7 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
 
     if (owners != 0)
       *owners++ = owner;
-    Unit_Get(owner)->side = 2;
+    Unit_Get(owner)->side = BATTLE_UNIT_PARTY;
   }
 
   if (owners != 0)
@@ -534,7 +534,7 @@ s32 BattleParty_PrepareReserveOwners(u16 *owners) {
 
     if (owners != 0)
       *owners++ = owner;
-    Unit_Get(owner)->side = 2;
+    Unit_Get(owner)->side = BATTLE_UNIT_PARTY;
   }
 
   if (owners != 0)
@@ -560,7 +560,7 @@ s32 BattleEnemy_List(s16 *unit_ids) {
     id = 0x80;
     limit += 0x80;
     for (; id < limit; id++) {
-      if (Unit_Get(id)->side != 0) {
+      if (Unit_Get(id)->side != BATTLE_UNIT_ABSENT) {
         *output = id;
         listed++;
         output++;
@@ -621,7 +621,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
     if (remaining < enemyLimit) {
       do {
         unit = Unit_Get(remaining);
-        if (unit->side != 0 && unit->hp > 0) {
+        if (unit->side != BATTLE_UNIT_ABSENT && unit->hp > 0) {
           if (output != NULL) {
             *output = remaining;
             output += 1;
@@ -688,7 +688,7 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
     if (remaining < enemyLimit) {
       do {
         unit = Unit_Get(remaining);
-        if (unit->side != 0 && unit->hp > 0) {
+        if (unit->side != BATTLE_UNIT_ABSENT && unit->hp > 0) {
           if (output != NULL) {
             *output = remaining;
             output += 1;

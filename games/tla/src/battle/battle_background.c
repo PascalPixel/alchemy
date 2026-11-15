@@ -251,7 +251,7 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
 #else
 void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #endif
-  s32 span = 0x01fe0000;
+  s32 span = BATTLE_CAMERA_DISTANCE;
   // UB: zoom is uninitialized; reads entry r4 directly (lsls r0, r4, #16).
 #ifndef UBFIX
   s32 zoom;
@@ -312,7 +312,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   s32 renderBounds[3];
   s32 measuredBounds[3];
   s32 sourceBounds[3];
-  s32 span = 0x01fe0000;
+  s32 span = BATTLE_CAMERA_DISTANCE;
   s32 alpha;
   s32 half;
   s32 width;
@@ -450,11 +450,13 @@ s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 #else
 #define DEBUG_VALUE_SELECT 544
 #endif
+/// What R picks, in every release.
+#define DEBUG_VALUE_R 399
 
 /// A debug choice of a battle value: with Start held, the d-pad and L/R step
 /// the battle work's debugValue (by 1, 10 and 100) until A takes it; Select
-/// held picks DEBUG_VALUE_SELECT and R held 399; otherwise value comes back
-/// unchanged.
+/// held picks DEBUG_VALUE_SELECT and R held DEBUG_VALUE_R; otherwise value
+/// comes back unchanged.
 s32 Battle_AdjustDebugValue(s32 value) {
   if (gInput.held & KEY_START) {
     while (1) {
@@ -482,7 +484,7 @@ s32 Battle_AdjustDebugValue(s32 value) {
   if (gInput.held & KEY_SELECT)
     value = DEBUG_VALUE_SELECT;
   if (gInput.held & KEY_R)
-    value = 399;
+    value = DEBUG_VALUE_R;
   return value;
 }
 

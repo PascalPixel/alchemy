@@ -415,7 +415,7 @@ s32 Save_BuildFileSummary(void) {
     if (GameFlag_Get(i))
       summary->flagCount++;
   }
-  summary->reunited = GameFlag_Get(34) != 0;
+  summary->reunited = GameFlag_Get(FLAG_REUNITED) != 0;
   {
     s32 n;
     u32 frames;

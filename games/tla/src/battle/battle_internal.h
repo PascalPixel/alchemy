@@ -220,6 +220,11 @@ struct BattleLinkedActionState {
 /// The battle camera's distance from its focus in the default view.
 #define BATTLE_CAMERA_DISTANCE px(510)
 
+/// The gravity a battle unit falls under, about 0.67 pixels a frame per frame
+/// in 16.16: BattleMotion_ReturnToSpot sets it whenever a unit goes back to its
+/// spot.
+#define BATTLE_UNIT_GRAVITY (px(67) / 100)
+
 /// Inventory_GetEquippedItemFar's slot for the weapon.
 #define EQUIP_WEAPON 1
 

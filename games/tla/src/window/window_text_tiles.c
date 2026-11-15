@@ -147,7 +147,7 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
         case TEXT_COLORS_RESET:
         case TEXT_OUTLINE:
         case TEXT_LINE_SPACING:
-          work->colour = 15;
+          work->colour = TEXT_COLOR_WHITE;
           pens[1] = gText_ColourPens[work->colour];
           break;
         case TEXT_NEWLINE:

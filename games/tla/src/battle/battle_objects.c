@@ -70,6 +70,11 @@ void BattleUnit_BuildStatusFlags(s32 id, struct BattleObject *output) {
 /// The frames each status icon shows before the next one's turn.
 #define ICON_CYCLE_FRAMES 80
 
+/// The icons' first animations, for units 32 pixels wide and for the rest:
+/// each adds the icon's bit number.
+#define ICON_ANIMATION_NARROW SPRITE_STATUS_POISON
+#define ICON_ANIMATION_WIDE SPRITE_STATUS_WIDE_POISON
+
 /// Cycles the status icon over the slot's conditions every 80 frames, and
 /// switches at once when the shown condition ends.
 void BattleStatusIcon_Cycle(struct BattleObject *slot) {
@@ -112,9 +117,9 @@ void BattleStatusIcon_Cycle(struct BattleObject *slot) {
     if (rec != 0) {
       if (anim >= 0) {
         if (rec->width == 32)
-          anim += 702;
+          anim += ICON_ANIMATION_NARROW;
         else
-          anim += 688;
+          anim += ICON_ANIMATION_WIDE;
       }
 
       if (slot->animationEntry != 0 && changed != 0) {
@@ -153,7 +158,7 @@ void BattleObject_UpdatePose(s32 id) {
   value = POSE_STANDING;
   if (state->hp != 0) {
     if (state->sleep != 0 || state->stun != 0 || state->immobile != 0)
-      value = (state->side != 1) * 4;
+      value = (state->side != BATTLE_UNIT_ENEMY) * 4;
   } else {
     s32 changed = state->side ^ value;
     value = NONZERO(changed);

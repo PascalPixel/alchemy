@@ -31,7 +31,7 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 flags,
   output->y = (s16)y;
   output->next = NULL;
   output->index = (s8)slot;
-  output->kind = 1;
+  output->kind = WINDOW_SPRITE_ICON;
   output->motion = 1;
   WindowSprite_AppendToList((struct WindowSpriteList *)input, output);
   /* FAKEMATCH(dead): an empty once-only block after the call. */
@@ -124,7 +124,7 @@ struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
                                (struct RenderInput *)window, x, y);
   if (object != 0) {
     object->sprite.oam.palette = slot;
-    object->kind = 2;
+    object->kind = WINDOW_SPRITE_PORTRAIT;
   }
 
   state->resourceIds[side] = id;

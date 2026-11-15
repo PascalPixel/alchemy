@@ -170,12 +170,12 @@ void BattlePlayback_Run(void) {
                                        BattleObject_Get(events->unitId)->object,
                                        recordIndex)) != 0;
                  recordIndex++) {
-              if (unit->side != 1)
+              if (unit->side != BATTLE_UNIT_ENEMY)
                 Sprite_StartAnimationFar(record, POSE_PARTY_HELD);
               else
                 Sprite_StartAnimationFar(record, POSE_ENEMY_DOWN);
             }
-            if (unit->side == 1) {
+            if (unit->side == BATTLE_UNIT_ENEMY) {
               events->phase = PLAY_FELLED;
               events->timer = 0;
             }

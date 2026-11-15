@@ -28,7 +28,7 @@ void BattleMotion_ReturnToSpot(s32 slotId) {
   zero = 0;
   object->acceleration = px(2);
   object->speedLimit = px(8);
-  object->verticalMotionStrength = 0xab85;
+  object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
   object->velocityY = zero;
   object->verticalMotionPhase = zero;
   object->autoFaceMotion = zero;
@@ -76,7 +76,7 @@ void BattleMotion_LeapToward(struct Actor **startSlot, struct Actor **endSlot,
   start->acceleration = px(2);
   start->speedLimit = px(8);
   start->velocityY = px(4);
-  start->gravity = 0xab85;
+  start->gravity = BATTLE_UNIT_GRAVITY;
   start->bounce = 0;
   start->steeringFlags = 1;
   Actor_SetMoveTargetFar(start, x, 0, z);
@@ -89,7 +89,7 @@ void BattleMotion_ReturnObjectToSpot(struct BattleObject *slot) {
 
   object->acceleration = px(2);
   object->speedLimit = px(8);
-  object->verticalMotionStrength = 0xab85;
+  object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   Actor_SetMoveTargetFar(object, slot->anchorX, 0, slot->anchorZ);
@@ -211,7 +211,7 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   if (object->motionFlags & ACTOR_FLOATS)
     object->velocityY = initialVelocityY;
   object->velocityY = initialVelocityY;
-  object->verticalMotionStrength = 0xab85;
+  object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
   object->autoFaceMotion = 1;
   Actor_StartIdleFar(object);
   if (dist != 0)

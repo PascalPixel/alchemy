@@ -843,7 +843,7 @@ void Portrait_CloseWindow(s32 id) {
 
   for (i = 0; i != UI_WINDOW_COUNT; i++, work++) {
     entity = work->sprites.head;
-    if ((u8)entity->kind == 2 && (u8)entity->index == id) {
+    if ((u8)entity->kind == WINDOW_SPRITE_PORTRAIT && (u8)entity->index == id) {
       Window_Close(work, 2);
       return;
     }

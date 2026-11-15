@@ -271,7 +271,7 @@ s32 Window_IsClosed(struct Window *window) {
 void Text_ResetStyle(void) {
   struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
-  state->colour = 15;
+  state->colour = TEXT_COLOR_WHITE;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->glyphSpacing = 9;
   state->outline = TEXT_STYLE_PLAIN;
@@ -290,7 +290,7 @@ void WindowSystem_StartFieldUpdate(void) {
   state->glyphSpacing = 9;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
-  state->colour = 15;
+  state->colour = TEXT_COLOR_WHITE;
   state->textBufferEnd = 0;
   Task_Add(WindowSystem_Update, TASK_PASS_VBLANK);
 }
@@ -309,7 +309,7 @@ void WindowSystem_StartBattleUpdate(s32 initialize) {
   state->glyphSpacing = 9;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
-  state->colour = 15;
+  state->colour = TEXT_COLOR_WHITE;
   state->textBufferEnd = 0;
   if (initialize != 0)
     Task_Add(WindowSystem_Update, TASK_PASS_VBLANK);

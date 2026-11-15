@@ -31,6 +31,12 @@
 #define DJINN_MESSAGE_COPY Message_DecodeRaw
 #endif
 
+/// The two BG tiles of the Djinn menu's arrow: DJINN_MENU_ARROW_TILE blinks,
+/// the one after it stays.
+#define DJINN_MENU_ARROW_TILE 808
+#define DJINN_MENU_ARROW_VRAM                                                  \
+  (BG_CHAR_BLOCK(0) + DJINN_MENU_ARROW_TILE * TILE_SIZE_4BPP)
+
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 
 // Reads the menu's page, row and preferred row.
@@ -335,10 +341,10 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
                                listWindow->width - 2, -1, 0);
       } else {
         Window_SetTilemapEntry(
-            listWindow, 0xf011,
+            listWindow, WINDOW_TILE_BORDER_TOP,
             listWindow->width - (djinnCount + 4) / BATTLE_LIST_ROWS - 3, -1, 0);
-        Window_SetTilemapEntry(listWindow, 0xf012, listWindow->width - 2, -1,
-                               0);
+        Window_SetTilemapEntry(listWindow, WINDOW_TILE_BORDER_TOP_RIGHT,
+                               listWindow->width - 2, -1, 0);
       }
       work->dirty |= 2 << ((u32)((s16)listWindow->y - 1) >> 2);
     }
@@ -522,11 +528,15 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       }
     }
     if (gFrameCount & 4) {
-      Iwram_CopyWordsEntry((void *)0x06006500, gDjinnMenu_BlinkTile, 32);
-      Iwram_CopyWordsEntry((void *)0x06006520, gDjinnMenu_BlinkTile, 32);
+      Iwram_CopyWordsEntry((void *)DJINN_MENU_ARROW_VRAM, gDjinnMenu_BlinkTile,
+                           TILE_SIZE_4BPP);
+      Iwram_CopyWordsEntry((void *)(DJINN_MENU_ARROW_VRAM + TILE_SIZE_4BPP),
+                           gDjinnMenu_BlinkTile, TILE_SIZE_4BPP);
     } else {
-      Iwram_FillWordsEntry((void *)0x06006500, 32, TEXT_CANVAS_BACKGROUND_WORD);
-      Iwram_CopyWordsEntry((void *)0x06006520, gDjinnMenu_BlinkTile, 32);
+      Iwram_FillWordsEntry((void *)DJINN_MENU_ARROW_VRAM, TILE_SIZE_4BPP,
+                           TEXT_CANVAS_BACKGROUND_WORD);
+      Iwram_CopyWordsEntry((void *)(DJINN_MENU_ARROW_VRAM + TILE_SIZE_4BPP),
+                           gDjinnMenu_BlinkTile, TILE_SIZE_4BPP);
     }
     wait(1);
   }

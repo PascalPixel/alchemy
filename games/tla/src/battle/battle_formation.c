@@ -521,8 +521,8 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
       memberOrder[memberOrEnemyIndex] = memberOrEnemyIndex;
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 9;
          memberOrEnemyIndex++) {
-      s32 first = Random_Below(5);
-      s32 second = Random_Below(5);
+      s32 first = Random_Below(FORMATION_MEMBERS);
+      s32 second = Random_Below(FORMATION_MEMBERS);
       s32 swap = memberOrder[first];
 
       memberOrder[first] = memberOrder[second];
@@ -616,26 +616,29 @@ assigned:
 /// Returns the class's defeat-sound kind, 0 to 4, or -1 for none; a fallen
 /// enemy's sound is SE_ENEMY_CRY plus it. Reads any index unchecked.
 u32 BattleSprite_GetDefeatSound(s32 index) {
-  u32 kind = gSummon_EntryTable[index].defeatSound;
+  u32 kind = gBattleSprites[index].defeatSound;
 
   if ((s32)kind > 4)
     kind = -1U;
   return kind;
 }
 
+/// The last enemy with a row in gBattleSprites (battle_tables.s).
+#define ENEMY_CLASS_LAST 386
+
 /// Returns the class's battle sprite, row 0's for a class out of range.
 s32 BattleSprite_GetSprite(s32 index) {
-  if ((u32)index > 386)
-    return gSummon_EntryTable[0].animation;
-  return gSummon_EntryTable[index].animation;
+  if ((u32)index > ENEMY_CLASS_LAST)
+    return gBattleSprites[0].animation;
+  return gBattleSprites[index].animation;
 }
 
 /// Returns the class's sprite palette. For a class out of range it returns row
 /// 0's sprite, not a palette.
 s32 BattleSprite_GetPalette(s32 index) {
-  if ((u32)index > 386)
-    return gSummon_EntryTable[0].animation;
-  return gSummon_EntryTable[index].palette;
+  if ((u32)index > ENEMY_CLASS_LAST)
+    return gBattleSprites[0].animation;
+  return gBattleSprites[index].palette;
 }
 
 /// Returns 1 for a small class, which takes one enemy sprite slot instead of
@@ -645,10 +648,10 @@ s32 BattleSprite_IsSmall(s32 index) {
   s32 result;
   u32 flags;
 
-  if ((u32)index > 386)
+  if ((u32)index > ENEMY_CLASS_LAST)
     return 0;
   result = 0;
-  flags = gSummon_EntryTable[index].isSmall;
+  flags = gBattleSprites[index].isSmall;
   if (flags)
     result = 1;
   return result;
@@ -659,9 +662,9 @@ s32 BattleSprite_IsSmall(s32 index) {
 u32 BattleSprite_GetAttackEffect(u32 index) {
   u16 value;
 
-  if (index > 386)
+  if (index > ENEMY_CLASS_LAST)
     return 1;
-  value = gSummon_EntryTable[index].attackEffect;
+  value = gBattleSprites[index].attackEffect;
   return value ? value : 1;
 }
 
@@ -670,18 +673,18 @@ u32 BattleSprite_GetAttackEffect(u32 index) {
 u32 BattleSprite_GetAttackHop(u32 index) {
   u16 value;
 
-  if (index > 386)
+  if (index > ENEMY_CLASS_LAST)
     return 0;
-  value = gSummon_EntryTable[index].attackHop;
+  value = gBattleSprites[index].attackHop;
   return value ? value : 0;
 }
 
 /// Returns 1 for a class whose blow lands with a heavier impact; 0 out of
 /// range.
 s32 BattleSprite_HasHeavyImpact(s32 index) {
-  if ((u32)index > 386)
+  if ((u32)index > ENEMY_CLASS_LAST)
     return 0;
-  return gSummon_EntryTable[index].heavyImpact;
+  return gBattleSprites[index].heavyImpact;
 }
 
 /// Returns the height an animation is drawn at over a class, in pixels, or 0
@@ -690,9 +693,9 @@ u32 BattleSprite_GetEffectHeight(u32 index) {
   u8 *table;
   u32 offset;
 
-  if (index > 386)
+  if (index > ENEMY_CLASS_LAST)
     return 0;
-  table = (u8 *)gSummon_EntryTable;
+  table = (u8 *)gBattleSprites;
   offset = index * 8;
   offset += 4;
   return table[offset];

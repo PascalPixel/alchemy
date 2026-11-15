@@ -568,7 +568,7 @@ s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
   struct BattleObject *runtime;
 
   creature = Unit_Get(unitId);
-  if (creature->side == 1) {
+  if (creature->side == BATTLE_UNIT_ENEMY) {
     Unit_SetHpFar(creature, 0);
     BattleObject_RemoveFromLists(unitId);
     BattleObject_MarkForRelease(unitId);

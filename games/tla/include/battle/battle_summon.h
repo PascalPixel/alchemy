@@ -28,7 +28,8 @@ struct BattleSpriteDefinition {
 };
 
 STATIC_ASSERT(sizeof(struct BattleSpriteDefinition) == 8);
-extern struct BattleSpriteDefinition gSummon_EntryTable[];
+/// Each enemy's battle sprite and how it attacks and falls, by enemy id.
+extern struct BattleSpriteDefinition gBattleSprites[];
 
 /// A summon: its name and the Djinn of each element it needs.
 struct SummonDefinition {

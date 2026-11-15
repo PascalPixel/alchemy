@@ -241,7 +241,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         channel->x = channel->startX;
         channel->y = 0;
         channel->line = 0;
-        channel->colour = 15;
+        channel->colour = TEXT_COLOR_WHITE;
         channel->outline = TEXT_STYLE_PLAIN;
         channel->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
         Message_ApplyStyle(channel);
@@ -298,7 +298,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         break;
 
       case TEXT_COLORS_RESET:
-        channel->colour = 15;
+        channel->colour = TEXT_COLOR_WHITE;
         channel->outline = TEXT_STYLE_PLAIN;
         channel->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
         Message_ApplyStyle(channel);

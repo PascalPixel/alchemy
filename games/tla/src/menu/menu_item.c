@@ -31,6 +31,11 @@ s32 ItemMenu_RunList(s32 pane);
 s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
                                 s32 dropMode);
 s32 ItemMenu_SelectMember(s32 pane);
+/// Whom ItemMenu_SelectTarget chooses.
+enum ItemTargetMode {
+  ITEM_TARGET_USE = 0, ///< the party member to use the item on
+  ITEM_TARGET_GIVE = 1 ///< the party member to give it to
+};
 s32 ItemMenu_SelectTarget(s32 mode);
 void ItemMenu_PlaceItemWindowBelowQuestion(void);
 void ItemMenu_PlaceItemWindowBelowItemQuestion(void);
@@ -354,7 +359,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_DrawItemHead();
       Text_DrawMessageAsTilesFar((s32)MsgUseOnWhom, menu->questionWindow, 16,
                                  16);
-      if (ItemMenu_SelectTarget(0) != -1) {
+      if (ItemMenu_SelectTarget(ITEM_TARGET_USE) != -1) {
         command = 0;
         if (ItemMenu_IsStatRaisingItem(menu->selectedItems[0] &
                                        INVENTORY_ITEM_ID_MASK) != 0) {
@@ -389,7 +394,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_DrawItemHead();
       Text_DrawMessageAsTilesFar((s32)MsgGiveToWhom, menu->questionWindow, 16,
                                  16);
-      n = ItemMenu_SelectTarget(1);
+      n = ItemMenu_SelectTarget(ITEM_TARGET_GIVE);
       state = ITEM_STEP_GIVE;
       if (n == -1) {
         ItemMenu_DrawEquipPreview(menu->sideMember[0], menu->selectedSlots[0],
@@ -475,8 +480,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           do {
             amount = stack;
           } while (0);
-          if (qty + amount > 30) {
-            amount = 30 - qty;
+          if (qty + amount > INVENTORY_STACK_MAX) {
+            amount = INVENTORY_STACK_MAX - qty;
           }
           if (stack > 1) {
             result = ItemMenu_SelectGiveQuantity(0, amount, 0);

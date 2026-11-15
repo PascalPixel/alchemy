@@ -183,7 +183,7 @@ extern const struct SceneAreaNameRule gScene_AreaNameRules[];
 
 extern const s16 gParty_PairResolveRules[];
 
-extern s32 gScene_BattleBackgroundRules[];
+extern const s32 gScene_BattleBackgroundRules[];
 
 /// The battle music table: each song as 0x8000 | song, followed by the
 /// encounters that use it as (zone << 4) + slot, ended by 0.

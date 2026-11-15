@@ -368,7 +368,7 @@ s16 BattleBackground_GetSelected(void) {
 /// hall backdrop becomes the first.
 void BattleBackground_SelectForMap(void) {
   s32 target = gMainRoutineWork.next;
-  s32 *table = gScene_BattleBackgroundRules;
+  const s32 *table = gScene_BattleBackgroundRules;
   s32 entry = *table++;
   s32 result; // not initialised: with no marked row before the scene it keeps
               // whatever it held

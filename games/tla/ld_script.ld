@@ -220,7 +220,7 @@ SECTIONS
         "*/games/tla/src/field/encounter_rules.o"(.rodata)
         "*/games/tla/src/field/cue_rules.o"(.rodata)
         "*/games/tla/src/field/area_name_rules.o"(.rodata)
-        "*/games/tla/src/field/pair_rules.o"(.rodata)
+        "*/games/tla/src/field/scene_rules.o"(.rodata)
         "*/games/tla/src/graphics/palette_editor/swatch.o"(.rodata)
         "*/games/tla/src/field/field_sequence_tables.o"(.rodata)
         "*/games/tla/src/field/psynergy_reach.o"(.rodata)

@@ -185,8 +185,8 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 /// The Japanese catalog does not name these yet.
-extern u8 MsgWhatWillYou[], MsgLemuriaSpringCoins[], MsgLemuriaSpringToss[],
-    MsgYouWonCoin[];
+extern u8 MsgLemuriaSpringWhatWillYouThrow[], MsgLemuriaSpringCoins[],
+    MsgLemuriaSpringToss[], MsgLemuriaSpringYouWonCoin[];
 s32 Menu_SelectCoinsOrMedals();
 
 // French draws the count window two tiles wider, its numbers 16 pixels further
@@ -244,7 +244,7 @@ s32 LemuriaSpring_RunSpringGame(void) {
 prompt:
   coins = gMainRoutineWork.coins;
   medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
-  message = (s32)MsgWhatWillYou;
+  message = (s32)MsgLemuriaSpringWhatWillYouThrow;
   Event_SetMessageId(message);
   // "What will you throw?"
   Event_OpenMessage(-1, 0);
@@ -314,7 +314,7 @@ toss:
   for (;;) {
     coins = gMainRoutineWork.coins;
     medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
-    message = (s32)MsgWhatWillYou;
+    message = (s32)MsgLemuriaSpringWhatWillYouThrow;
     Event_SetMessageId(message);
     // "What will you throw?"
     Event_OpenMessage(-1, 0);
@@ -395,7 +395,7 @@ toss:
         Event_PlaySound(MUS_JINGLE_SMALL);
         MessageArgument_Push(gLemuriaSpring_CoinPrizes[result],
                              MESSAGE_ARGUMENT_NUMBER);
-        Event_SetMessageId((s32)MsgYouWonCoin);
+        Event_SetMessageId((s32)MsgLemuriaSpringYouWonCoin);
         // "You won ... coin!"
         Event_ShowMessage((s32)minusOne, 0);
       } else {
@@ -1156,10 +1156,10 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgReadTheSign)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgReadTheSignThe)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgIfYouFace)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgIDLove)},
-    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgIRememberAn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgHeHadSuch)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgLemuriaSpringIfYouFaceAway)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgLemuriaSpringIdLoveToTest)},
+    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgLemuriaSpringIRememberOutsiderWhoCame)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgLemuriaSpringHeHadSuchGoodTime)},
     {TRIGGER_EXAMINE, 25, 0x200, EVENT(LemuriaSpring_DrinkFromSpring)},
     {TRIGGER_EXAMINE, 80, CONDITION_ALWAYS, EVENT(LemuriaSpring_TossCoin)},
     {TRIGGER_TABLE_END},

@@ -196,7 +196,7 @@ void Lemuria_EnterDoor(s32 door) {
   s32 mode = 0;
 
   if (door == 3 && Event_GetFlag(0x96a)) {
-    FieldEvent_SetMessageId((s32)&MsgTheDoorIs);
+    FieldEvent_SetMessageId((s32)&MsgLemuriaDoorIsLockedItSounds);
     // "The door is locked... It sounds as if there's a raucous caucus going..."
     Event_ShowMessage(-1, 0);
     return;
@@ -244,10 +244,10 @@ void Lemuria_TalkToSpoiledChild(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (work->psynergy == 0) {
-    FieldEvent_SetMessageId((s32)&MsgItHasBeen);
+    FieldEvent_SetMessageId((s32)&MsgLemuriaItHasBeenManyMany);
     Actor_FaceEachOther(18, gMainRoutineWork.leaderActorId, 2);
   } else {
-    FieldEvent_SetMessageId((s32)&MsgEveryoneSpoilsMe);
+    FieldEvent_SetMessageId((s32)&MsgLemuriaEveryoneSpoilsMeSoMuch);
   }
   Actor_SetAnimation(18, 0);
   // "Everyone spoils me so much... I don't ever want to grow up! But in..."
@@ -268,10 +268,10 @@ void Lemuria_TalkToLonelyChild(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (work->psynergy == 0) {
-    FieldEvent_SetMessageId((s32)&MsgWeAreThe);
+    FieldEvent_SetMessageId((s32)&MsgLemuriaWeAreOnlyChildren);
     Actor_FaceEachOther(19, gMainRoutineWork.leaderActorId, 2);
   } else {
-    FieldEvent_SetMessageId((s32)&MsgAreThereOther);
+    FieldEvent_SetMessageId((s32)&MsgLemuriaAreThereOtherChildren);
   }
   Actor_SetAnimation(19, 0);
   // "Are there other children in the lands beyond the Sea of Time? Are..."
@@ -411,7 +411,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
   }
   if (!Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE) ||
       Event_GetFlag(FLAG_LEMURIA_TOLD_DOOR_IS_BROKEN)) {
-    FieldEvent_SetMessageId((s32)&MsgTheDoorDoesn);
+    FieldEvent_SetMessageId((s32)&MsgLemuriaDoorDoesntWantToOpen);
     // "The door doesn't want to open."
     Event_ShowMessage(-1, 0);
     return;
@@ -419,7 +419,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
   Event_SetFlag(FLAG_LEMURIA_TOLD_DOOR_IS_BROKEN);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)&MsgAreYouKids);
+  FieldEvent_SetMessageId((s32)&MsgLemuriaAreYouKidsPierssTraveling);
   Actor_SetPosition(12, 872, 880);
   object = Actor_Get(12);
   Actor_SetFirstSpriteAnimation(object, 43);
@@ -445,7 +445,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
   FieldCamera_WaitForArrival();
   if (Party_FindOwnerWithAction(133) != -1 || Event_GetFlag(0x962))
     goto done;
-  FieldEvent_SetMessageId((s32)&MsgWhatSThe);
+  FieldEvent_SetMessageId((s32)&MsgLemuriaWhatsMatterCantYouClimb);
   FieldEvent_Wait(20);
   Actor_WalkToAndWait(ACTOR_FELIX, 856, 952);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_NORTH);
@@ -507,7 +507,7 @@ void Lemuria_OfferSpringLuck(void) {
   if (Event_GetFlag(FLAG_LEMURIA_SPRING_LUCK_TRIED)) {
     Actor_FaceActor(30, gMainRoutineWork.leaderActorId, 0);
     FieldActor_WaitForScriptEndById(30);
-    FieldEvent_SetMessageId((s32)MsgYouLookLike);
+    FieldEvent_SetMessageId((s32)MsgLemuriaYouLookLikeYoure);
     // "You look like you're in for a spell of good luck. After all, your..."
     Event_ShowMessage(30, 0);
     Actor_FaceDirectionAndWait(30, FACING_NORTH_NORTHEAST);
@@ -515,7 +515,7 @@ void Lemuria_OfferSpringLuck(void) {
   }
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgDoYouWish);
+  FieldEvent_SetMessageId((s32)MsgLemuriaDoYouWishToTest);
   Actor_ShowEmote(30, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceActor(30, gMainRoutineWork.leaderActorId, 0);
   FieldActor_WaitForScriptEndById(30);
@@ -785,7 +785,7 @@ void Lemuria_KeepLookingAround(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgWhereAreYou);
+  FieldEvent_SetMessageId((s32)MsgLemuriaWhereAreYouGoingFelix);
   Actor_SetFirstSpriteAnimation((s32)Actor_Get(12), 56);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
   FieldActor_SetSpritePriority(12, 1);
@@ -817,7 +817,7 @@ void Lemuria_MarvelAtCity(void) {
   Event_SetFlag(FLAG_LEMURIA_CITY_ADMIRED);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgThisPlaceIs);
+  FieldEvent_SetMessageId((s32)MsgLemuriaThisPlaceIsRemarkableTruly);
   Actor_SetSpeed(24, 1);
   Actor_SetSpeed(25, 1);
   Actor_SetFirstSpriteAnimation((s32)Actor_Get(12), 56);
@@ -1248,12 +1248,14 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, 22, FLAG_LEMURIA_CITY_ADMIRED, EVENT(Lemuria_AdmirePalace)},
     {TRIGGER_STEP, 23, FLAG_LEMURIA_CITY_ADMIRED,
      EVENT(Lemuria_KeepLookingAround)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgICannotRemember)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaICannotRememberLastTime)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgLemuriaHasNo)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgInLemuriaWe)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLifeNeverChanges)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgIOughtTo)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgHowOldAm)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgLemuriaInLemuriaWeDoNot)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLemuriaLifeNeverChangesHere)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaIOughtToFeelSurprised)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgLemuriaHowOldAmIAgain)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Lemuria_TalkToSpoiledChild)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Lemuria_TalkToLonelyChild)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgLemuriaMeowMrrrfle)},
@@ -1262,59 +1264,65 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgLemuriaBukbukbuk)},
     {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgLemuriaSilence)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
-     MSGNO(MsgMoreOfThe)},
+     MSGNO(MsgLemuriaMoreOfSameToday)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-     MSGNO(MsgIHavenT)},
+     MSGNO(MsgLemuriaIHaventBeenSurprised)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-     MSGNO(MsgIVeAged)},
+     MSGNO(MsgLemuriaIveAgedSoSlowly)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
-     MSGNO(MsgSometimesIThink)},
+     MSGNO(MsgLemuriaSometimesIThinkBuildingsFall)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
-     MSGNO(MsgLongAgoA)},
+     MSGNO(MsgLemuriaLongAgoManNamedLunpa)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
-     MSGNO(MsgKingHydrosIs)},
+     MSGNO(MsgLemuriaKingHydrosIsFarOlder)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
      EVENT(Lemuria_TalkToSpoiledChild)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
      EVENT(Lemuria_TalkToLonelyChild)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
-     MSGNO(MsgNoOneIn)},
+     MSGNO(MsgLemuriaNoOneInLemuriaFeels)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
-     MSGNO(MsgThereSSo)},
+     MSGNO(MsgLemuriaTheresSoMuchTreasureBuried)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
      MSGNO(MsgLemuriansAreSo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
-     MSGNO(MsgIfItWeren)},
+     MSGNO(MsgLemuriaIfItWerentForPeople)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 7, CONDITION_ALWAYS,
-     MSGNO(MsgMotherWhyHave)},
-    {TRIGGER_TALK, 24, 0x196a, MSGNO(MsgIVeNever)},
-    {TRIGGER_TALK, 25, 0x196a, MSGNO(MsgLordConservatoHas)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x196a, MSGNO(MsgIMSureThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x196a, MSGNO(MsgHowCouldLord)},
-    {TRIGGER_TALK, 24, 0x1969, MSGNO(MsgKingHydrosAwaits)},
-    {TRIGGER_TALK, 25, 0x1969, MSGNO(MsgHisHighnessThe)},
+     MSGNO(MsgLemuriaMotherWhyHaveYouLeft)},
+    {TRIGGER_TALK, 24, 0x196a, MSGNO(MsgLemuriaIveNeverSeenLordConservato)},
+    {TRIGGER_TALK, 25, 0x196a, MSGNO(MsgLemuriaLordConservatoHasOrderedUs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x196a,
+     MSGNO(MsgLemuriaImSureSenateHasSomething)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x196a,
+     MSGNO(MsgLemuriaHowCouldLordConservatoExpect)},
+    {TRIGGER_TALK, 24, 0x1969, MSGNO(MsgLemuriaKingHydrosAwaits)},
+    {TRIGGER_TALK, 25, 0x1969, MSGNO(MsgLemuriaHisHighnessKingHasInstructed)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x1969,
-     MSGNO(MsgTheyAreClearly)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x1969, MSGNO(MsgWhatDoesHis)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgTheKingIs)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgTheKingWill)},
+     MSGNO(MsgLemuriaTheyAreClearlyUsingPsynergy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x1969,
+     MSGNO(MsgLemuriaWhatDoesHisHighnessHave)},
+    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgLemuriaKingIsHoldingCounsel)},
+    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgLemuriaKingWillBeThrilled)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
-     MSGNO(MsgHowMuchLongerWill)},
+     MSGNO(MsgLemuriaHowMuchLongerWillConservato)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
-     MSGNO(MsgIHadHeard)},
-    {TRIGGER_TALK, 26, 0x196a, MSGNO(MsgIfYouAnd)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, 0x196a, MSGNO(MsgIKnowWhy)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgTheSenateHolds)},
+     MSGNO(MsgLemuriaIHadHeardPiers)},
+    {TRIGGER_TALK, 26, 0x196a, MSGNO(MsgLemuriaIfYouAndLunpa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, 0x196a,
+     MSGNO(MsgLemuriaIKnowWhyLemuriaEnded)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaSenateHoldsKingHydros)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
-     MSGNO(MsgITrustThe)},
+     MSGNO(MsgLemuriaITrustKingIfHis)},
     {TALK_TRIGGER_FACING(FACING_NORTH), 11, CONDITION_ALWAYS,
-     MSGNO(MsgHouseOfThe)},
-    {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgDrinkingFromThis)},
+     MSGNO(MsgLemuriaHouseOfSenate)},
+    {TRIGGER_TALK, 29, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaDrinkingFromThisSpringRestores)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS,
-     MSGNO(MsgTheseTurtlesHave)},
+     MSGNO(MsgLemuriaTheseTurtlesHaveLived)},
     {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(Lemuria_OfferSpringLuck)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS,
-     MSGNO(MsgNoOneIs)},
+     MSGNO(MsgLemuriaNoOneIsLuckierThan)},
     {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(Lemuria_DrinkFromSpring)},
     {TRIGGER_EXAMINE, 25, CONDITION_ALWAYS, EVENT(Lemuria_DrinkFromSpring)},
     {TRIGGER_EXAMINE, 40, CONDITION_ALWAYS, EVENT(Lemuria_KnockAtBrokenDoor)},

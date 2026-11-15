@@ -384,9 +384,9 @@ step:
 
 void MarsLighthouseEntrance_CheckIce(void) {
   // "Felix checked the ice."
-  FieldMessage_Show((s32)MsgCheckedTheIce, 1);
+  FieldMessage_Show((s32)MsgMarsLighthouseEntranceCheckedIce, 1);
   // "A shaft of ice is poking up through the floor."
-  FieldMessage_Show((s32)MsgCheckedTheIce + 1, 1);
+  FieldMessage_Show((s32)MsgMarsLighthouseEntranceCheckedIce + 1, 1);
   gFieldWork->fieldMenu = 1;
 }
 

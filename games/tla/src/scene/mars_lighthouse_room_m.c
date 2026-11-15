@@ -721,7 +721,8 @@ s32 Scene_Initialize(void) {
         entrance = 0x500021e;
         *(u16 *)entrance = 0x7fff;
         System_Wait(1);
-        EventMessage_ShowCentered((s32)MsgYouHaveProven, 0, 4);
+        EventMessage_ShowCentered(
+            (s32)MsgMarsLighthouseRoomMYouHaveProvenYourWorth, 0, 4);
         PaletteFade_ApplyTarget(0x10000, 0);
         PaletteFade_Interpolate(20);
         System_Wait(20);
@@ -892,7 +893,8 @@ void MarsLighthouseRoomM_ReadEarthInscription(void) {
   wait(20);
   *color = 0x7fff;
   wait(1);
-  EventMessage_ShowCentered((s32)MsgMankindWithThe, 0, 0);
+  EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMMankindWithPowerOfWisdom,
+                            0, 0);
   PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
@@ -911,7 +913,8 @@ void MarsLighthouseRoomM_ReadWaterInscription(void) {
   wait(20);
   *color = 0x7fff;
   wait(1);
-  EventMessage_ShowCentered((s32)MsgFishWithCold, 0, 0);
+  EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMFishWithColdCourageThey,
+                            0, 0);
   PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
@@ -930,7 +933,8 @@ void MarsLighthouseRoomM_ReadFireInscription(void) {
   wait(20);
   *color = 0x7fff;
   wait(1);
-  EventMessage_ShowCentered((s32)MsgDragonsBurningWith, 0, 0);
+  EventMessage_ShowCentered(
+      (s32)MsgMarsLighthouseRoomMDragonsBurningWithMightThey, 0, 0);
   PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
@@ -949,7 +953,8 @@ void MarsLighthouseRoomM_ReadWindInscription(void) {
   wait(20);
   *color = 0x7fff;
   wait(1);
-  EventMessage_ShowCentered((s32)MsgBirdOnThe, 0, 0);
+  EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMBirdOnWingsOfTruth, 0,
+                            0);
   PaletteFade_SetTarget(0x10000, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
@@ -1018,7 +1023,8 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
       wait(20);
       *color = 0x7fff;
       wait(1);
-      EventMessage_ShowCentered((s32)MsgIfYouDo, 0, 4);
+      EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMIfYouDoNotHold, 0,
+                                4);
       PaletteFade_SetTarget(0x10000, 0);
       PaletteFade_StartInterpolation(20);
       wait(20);
@@ -1045,9 +1051,11 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     wait(20);
     *color = 0x7fff;
     wait(1);
-    EventMessage_ShowCentered((s32)MsgYouWhoHold, 0, 4);
+    EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMYouWhoHoldStarOpen, 0,
+                              4);
     wait(10);
-    EventMessage_ShowCentered((s32)MsgYouWhoHold + 1, 0, 3);
+    EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMYouWhoHoldStarOpen + 1,
+                              0, 3);
     FieldCamera_MoveTo(224, 88, 216, 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(20);

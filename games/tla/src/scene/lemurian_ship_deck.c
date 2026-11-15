@@ -109,7 +109,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 void LemurianShipDeck_TryHeldDoor(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Message_ShowCentered(MsgTheDoorIsHeld, 1);
+  Message_ShowCentered(MsgLemurianShipDeckDoorIsHeldClosed, 1);
   Event_End();
 }
 
@@ -407,7 +407,7 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(458, 48, 408, 0);
-  FieldEvent_SetMessageId(MsgHoldOnTo);
+  FieldEvent_SetMessageId(MsgLemurianShipDeckHoldOnToThatTiller);
   Actor_SetPositionAndFacing(ACTOR_FELIX, px(470), px(392), FACING_EAST);
   FieldActor_LaunchFromLeader(ACTOR_SHEBA, 0, -24, FACING_SOUTH);
   FieldActor_LaunchFromLeader(ACTOR_JENNA, -16, -16, FACING_SOUTHEAST);
@@ -589,7 +589,7 @@ void LemurianShipDeck_SightMenardisShip(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetSpeed(ACTOR_FELIX, 0.8);
   Actor_WalkToAndWait(ACTOR_FELIX, 264, 136);
-  FieldEvent_SetMessageId(MsgLookItS);
+  FieldEvent_SetMessageId(MsgLemurianShipDeckLookItsMenardisShip);
   FieldActor_LaunchFromLeader(ACTOR_JENNA, 16, -16, FACING_SOUTH);
   FieldActor_LaunchFromLeader(9, 32, -16, FACING_SOUTH);
   FieldActor_LaunchFromLeader(ACTOR_SHEBA, -16, -16, FACING_SOUTH);
@@ -637,7 +637,8 @@ void LemurianShipDeck_SightMenardisShip(void) {
     gFieldWork->message++;
   } else {
     Actor_WaitForAnimationChange(owner);
-    FieldEvent_SetMessageId(MsgLookItS + 5); // the fifth message after it
+    FieldEvent_SetMessageId(MsgLemurianShipDeckLookItsMenardisShip +
+                            5); // the fifth message after it
     // "How else could it have come to be here, Felix?"
     Event_ShowMessage(9, 0);
   }
@@ -711,7 +712,7 @@ void LemurianShipDeck_LeaveToFindCrew(void) {
     Actor_SetSpeed(9, 0.8);
     Actor_WalkToAndWait(9, 416, 428);
     Actor_FaceDirectionAndWait(9, FACING_WEST);
-    FieldEvent_SetMessageId(MsgWellThereS);
+    FieldEvent_SetMessageId(MsgLemurianShipDeckWellTheresNoPoint);
     // "Well, there's no point in hanging around here all day. Let's go see..."
     Event_ShowMessage(9, 0);
     Actor_SetAnimation(9, 2);
@@ -801,7 +802,7 @@ void LemurianShipDeck_ReturnToShip(void) {
   Actor_SetSpeed(ACTOR_PIERS, 1.6);
   Actor_WalkToAndWait(ACTOR_PIERS, 412, 424);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTHWEST);
-  FieldEvent_SetMessageId((s32)MsgAtLastI);
+  FieldEvent_SetMessageId((s32)MsgLemurianShipDeckAtLastImBack);
   FieldActor_Jump(ACTOR_PIERS, 4, 10);
   // "At last, I'm back on my ship."
   Event_ShowMessage(ACTOR_PIERS, 0);
@@ -870,7 +871,7 @@ void LemurianShipDeck_ReachPiersShip(void) {
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId(MsgMyShipAt);
+  FieldEvent_SetMessageId(MsgLemurianShipDeckMyShipAtLongLast);
   Actor_WalkTo(ACTOR_FELIX, 264, 176);
   FieldActor_WaitForMoveById(ACTOR_FELIX);
   FieldActor_LaunchFromLeader(ACTOR_PIERS, 16, 8, FACING_SOUTH);
@@ -1159,7 +1160,7 @@ void LemurianShipDeck_SetOutForMadra(void) {
     FieldActor_LaunchFromLeader(ACTOR_PIERS, 16, 0, FACING_WEST);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PIERS), 0);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
-    FieldEvent_SetMessageId(MsgThenLetS);
+    FieldEvent_SetMessageId(MsgLemurianShipDeckThenLetsWasteNoTime);
     FieldActor_WaitForMoveById(ACTOR_PIERS);
     Actor_Get(ACTOR_PIERS)->update = 0;
     // "Then let's waste no time! We should set out for Madra at once!"

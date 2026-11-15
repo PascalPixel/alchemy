@@ -101,7 +101,7 @@ extern u32 gMarsLighthouseAerie_FlickerRate;
 
 void MarsLighthouseAerie_HaltParent(s32 from, s32 to);
 
-extern u8 MsgDoNotLet[];
+extern u8 MsgMarsLighthouseAerieDoNotLetYourSadness[];
 extern u16 gPaletteCycle_Flash;
 extern u16 gPaletteCycle_Countdown;
 extern u16 gPaletteCycle_Period;
@@ -471,7 +471,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   FieldActor_SetSpritePriority(ACTOR_IVAN, 1);
   FieldActor_SetSpritePriority(ACTOR_MIA, 1);
   Event_PlaySound(MUS_SILENCE);
-  FieldEvent_SetMessageId((s32)MsgBetrayersYouHave);
+  FieldEvent_SetMessageId((s32)MsgMarsLighthouseAerieBetrayersYouHaveArrived);
   // "Betrayers, you have arrived!"
   Event_ShowMessage(18, 0);
   t16 = gMainRoutineWork.leaderActorId;
@@ -1404,7 +1404,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   PaletteFade_ApplyTarget(0x10000, 1);
   PaletteFade_Interpolate(40);
   System_Wait(80);
-  FieldEvent_SetMessageId((s32)MsgWhoAreThey);
+  FieldEvent_SetMessageId((s32)MsgMarsLighthouseAerieWhoAreThey);
   Actor_FaceDirectionAndWait(26, FACING_WEST);
   // "...Who are they?"
   Event_ShowMessage(26, 0);
@@ -1610,8 +1610,8 @@ void MarsLighthouseAerie_StandAside(s32 id) {
   FieldActor_SetSpritePriority(id, 1);
 }
 
-/// The scene that opens with MsgWhatSTheMatter; either answer to its prompt
-/// steps the event's message number.
+/// The scene that opens with MsgMarsLighthouseAerieWhatsMatterPiersWhyDid;
+/// either answer to its prompt steps the event's message number.
 void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1632,7 +1632,7 @@ void MarsLighthouseAerie_UrgeOnToBeacon(void) {
   FieldEvent_Wait(40);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_NORTH);
-  FieldEvent_SetMessageId(MsgWhatSTheMatter);
+  FieldEvent_SetMessageId(MsgMarsLighthouseAerieWhatsMatterPiersWhyDid);
   // "What's the matter, Piers? Why did you stop? Jenna's parents need you..."
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirectionAndWait(ACTOR_IVAN, FACING_NORTHWEST);
@@ -2277,7 +2277,7 @@ L_0200bcea:
   Event_PlaySound(MUS_MERCURY_LIGHTHOUSE);
   FieldEvent_Wait(120);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
-  FieldEvent_SetMessageId((s32)MsgTheBeaconIs);
+  FieldEvent_SetMessageId((s32)MsgMarsLighthouseAerieBeaconIsLit);
   // "The beacon is lit!"
   Event_ShowMessage(ACTOR_MIA, 0);
   FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
@@ -2323,11 +2323,11 @@ L_0200bcea:
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   FieldPsynergy_StartMindReadWave(23, 24);
-  Message_ShowCentered(((s32)MsgTheBeaconIs + 6), 1);
+  Message_ShowCentered(((s32)MsgMarsLighthouseAerieBeaconIsLit + 6), 1);
   FieldPsynergy_StopMindReadWave();
   FieldEvent_Wait(20);
   FieldPsynergy_StartMindReadWave(23, 24);
-  Message_ShowCentered(((s32)MsgTheBeaconIs + 7), 1);
+  Message_ShowCentered(((s32)MsgMarsLighthouseAerieBeaconIsLit + 7), 1);
   FieldPsynergy_StopMindReadWave();
   work = Ram_HeapSlots->fieldWork;
   work->step.value = work->stepRead + 2;
@@ -2345,7 +2345,7 @@ L_0200bcea:
   FieldEvent_ShowMessageThenWait(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | 0, 0, 10);
   FieldPsynergy_StartMindReadWave(23, 24);
-  message = ((s32)MsgTheBeaconIs + 9);
+  message = ((s32)MsgMarsLighthouseAerieBeaconIsLit + 9);
   Message_ShowCentered(message, 1);
   FieldPsynergy_StopMindReadWave();
   MarsLighthouseAerie_StopLookingAround(3);
@@ -2440,7 +2440,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 40);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_NORTHEAST);
-  FieldEvent_SetMessageId((s32)MsgWhatCouldHe);
+  FieldEvent_SetMessageId((s32)MsgMarsLighthouseAerieWhatCouldHeBeDoing);
   // "What could he be doing?"
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 20);
@@ -2791,7 +2791,7 @@ void MarsLighthouseAerie_HoldBackFromParents(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
-  FieldEvent_SetMessageId(MsgDoNotLet);
+  FieldEvent_SetMessageId(MsgMarsLighthouseAerieDoNotLetYourSadness);
   // "Do not let your sadness overwhelm you, Felix! Go! Once the beacon..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
@@ -2804,7 +2804,7 @@ void MarsLighthouseAerie_HoldBackFromParentsAgain(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
-  FieldEvent_SetMessageId(MsgDoNotLet);
+  FieldEvent_SetMessageId(MsgMarsLighthouseAerieDoNotLetYourSadness);
   // "Do not let your sadness overwhelm you, Felix! Go! Once the beacon..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 0);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
@@ -2818,7 +2818,7 @@ void MarsLighthouseAerie_OfferToCastMarsStar(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(ACTOR_VOICE, 512, 232);
   System_Wait(1);
-  FieldEvent_SetMessageId(MsgWillYouCast);
+  FieldEvent_SetMessageId(MsgMarsLighthouseAerieWillYouCastInMars);
   // "Will you cast in the Mars Star?"
   Event_OpenMessage(ACTOR_VOICE, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
@@ -3645,13 +3645,13 @@ struct ActorPlacement gMarsLighthouseAerie_BeaconPlacements[] = {
 struct Trigger gSceneEvents[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 1, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit)},
     {TRIGGER_STEP, 10, FLAG_MARS_BEACON_LIT, EVENT(MarsLighthouseAerie_FaceDoomDragon)},
-    {TRIGGER_TALK, 0, CONDITION_ALWAYS, MSGNO(MsgOurQuestIs)},
-    {TRIGGER_TALK, 1, CONDITION_ALWAYS, MSGNO(MsgIWishICould)},
-    {TRIGGER_TALK, 3, CONDITION_ALWAYS, MSGNO(MsgIfAlexSet)},
-    {TRIGGER_TALK, 5, CONDITION_ALWAYS, MSGNO(MsgIThoughtID)},
-    {TRIGGER_TALK, 6, CONDITION_ALWAYS, MSGNO(MsgIDonTKnowMy)},
-    {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgIMSorryThings)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgBothKyleAnd)},
+    {TRIGGER_TALK, 0, CONDITION_ALWAYS, MSGNO(MsgMarsLighthouseAerieOurQuestIsAlmostOver)},
+    {TRIGGER_TALK, 1, CONDITION_ALWAYS, MSGNO(MsgMarsLighthouseAerieIWishICouldConsole)},
+    {TRIGGER_TALK, 3, CONDITION_ALWAYS, MSGNO(MsgMarsLighthouseAerieIfAlexSetThisAll)},
+    {TRIGGER_TALK, 5, CONDITION_ALWAYS, MSGNO(MsgMarsLighthouseAerieIThoughtIdGet)},
+    {TRIGGER_TALK, 6, CONDITION_ALWAYS, MSGNO(MsgMarsLighthouseAerieIDontKnowMyParents)},
+    {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgMarsLighthouseAerieImSorryThingsHad)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgMarsLighthouseAerieBothKyleAndYourParents)},
     {TALK_TRIGGER_FACING(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToConsoler)},
     {TALK_TRIGGER_FACING(FACING_SOUTH), 17, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToBlindedParent)},
     {TALK_TRIGGER_FACING(FACING_SOUTHWEST), 17, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_TalkToBlindedParent)},

@@ -519,7 +519,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 void KibomboMountains_GuardsReport(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId(MsgIsTheWay);
+  FieldEvent_SetMessageId(MsgKibomboMountainsIsWayClear);
   Actor_SetPosition(ACTOR_WARRIOR_E, 312, 304);
   // "Is the way clear?"
   Event_ShowMessage(ACTOR_WARRIOR_E, 0);
@@ -600,7 +600,7 @@ void KibomboMountains_GuardsTurnPartyBack(void) {
   KibomboMountains_WalkSlowly(ACTOR_WARRIOR_F);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetMessageId(MsgHereTheIntruder);
+  FieldEvent_SetMessageId(MsgKibomboMountainsHereIntruderIsHere);
   Actor_ShowEmote(ACTOR_WARRIOR_E, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   // "Here! The intruder is here!"
   Event_ShowMessage(ACTOR_WARRIOR_E, 0);
@@ -678,7 +678,7 @@ void KibomboMountains_GuardSpotsParty(s32 id) {
   Actor_ResetTargetsAndVelocity(id);
   Actor_ShowEmote(id, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceActor(id, leader, 20);
-  FieldEvent_SetMessageId(MsgGuardsAnIntruder);
+  FieldEvent_SetMessageId(MsgKibomboMountainsGuardsIntruder);
   // "Guards! An intruder!"
   Event_ShowMessage(id, 0);
   Actor_SetAttachedEffect(leader,
@@ -702,7 +702,7 @@ void KibomboMountains_DogSpotsParty(s32 id) {
   FieldActor_Stop(id);
   Actor_ShowEmote(id, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceActor(id, leader, 20);
-  FieldEvent_SetMessageId(MsgGrrrrrRrrruffRrufff);
+  FieldEvent_SetMessageId(MsgKibomboMountainsGrrrrrRrrruffRrufff);
   // "Grrrrr! Rrrruff! Rrufff!"
   Event_ShowMessage(id, 0);
   Actor_SetAttachedEffect(leader,
@@ -1052,11 +1052,11 @@ struct Trigger gKibomboMountains_WaftTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 33, CONDITION_ALWAYS, EVENT(KibomboMountains_JumpForward)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_StartPushingCrate)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_DropCrate)},
-    {TRIGGER_TALK, ACTOR_GUARD_DOG, IF_FLAG_SET(FLAG_DOG_EATING_BONE), MSGNO(MsgSniffSniffLick)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD_DOG, IF_FLAG_SET(FLAG_DOG_EATING_BONE), MSGNO(MsgABoneThat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD_DOG, CONDITION_ALWAYS, MSGNO(MsgThisRockIs)},
-    {TRIGGER_TALK, ACTOR_GUARD_CRATE, IF_FLAG_SET(FLAG_GUARD_KNOCKED_OUT), MSGNO(MsgHeyWhoS)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD_CRATE, IF_FLAG_SET(FLAG_GUARD_KNOCKED_OUT), MSGNO(MsgItSDark)},
+    {TRIGGER_TALK, ACTOR_GUARD_DOG, IF_FLAG_SET(FLAG_DOG_EATING_BONE), MSGNO(MsgKibomboMountainsSniffSniffLickLickLick)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD_DOG, IF_FLAG_SET(FLAG_DOG_EATING_BONE), MSGNO(MsgKibomboMountainsBoneThatsMyFavruffLick)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD_DOG, CONDITION_ALWAYS, MSGNO(MsgKibomboMountainsThisRock)},
+    {TRIGGER_TALK, ACTOR_GUARD_CRATE, IF_FLAG_SET(FLAG_GUARD_KNOCKED_OUT), MSGNO(MsgKibomboMountainsHeyWhosThereGetMe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD_CRATE, IF_FLAG_SET(FLAG_GUARD_KNOCKED_OUT), MSGNO(MsgKibomboMountainsItsDarkItsCrampedSomebody)},
     {TRIGGER_TALK, ACTOR_WAFT, CONDITION_ALWAYS, EVENT(KibomboMountains_FightWaft)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT(Pillar_SetMoved)},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_SPROUT_GROWN, EVENT(KibomboMountains_GrowVine)},

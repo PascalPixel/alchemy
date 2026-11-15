@@ -11,7 +11,7 @@
 
 #define PLASMA_SPACING 8 ///< frames between pillars
 /// The second picture in the sheet, after the first 48x112 one.
-#define PLASMA_SECOND_PICTURE (48 * 112)
+#define PLASMA_SECOND_PICTURE PICTURE_BYTES(LIGHTNING_PILLAR)
 
 /// gPlasma_Columns has seven pillars for each side.
 #define PLASMA_COLUMN_X(side, pillar) gPlasma_Columns[(side)][(pillar)]
@@ -91,10 +91,14 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
       if (frame >= start && frame < start + 9) {
         if (frame >= start + 1 && frame < start + 2)
           draw[0](canvas, work->sheet,
-                  PLASMA_COLUMN_X(work->args->side, i) - 24, 0, 48, 112);
+                  PLASMA_COLUMN_X(work->args->side, i) -
+                      LIGHTNING_PILLAR_WIDTH / 2,
+                  0, LIGHTNING_PILLAR_WIDTH, LIGHTNING_PILLAR_HEIGHT);
         if (frame >= start + 2 && frame < start + 4)
           draw[0](canvas, work->sheet + PLASMA_SECOND_PICTURE,
-                  PLASMA_COLUMN_X(work->args->side, i) - 24, 0, 48, 112);
+                  PLASMA_COLUMN_X(work->args->side, i) -
+                      LIGHTNING_PILLAR_WIDTH / 2,
+                  0, LIGHTNING_PILLAR_WIDTH, LIGHTNING_PILLAR_HEIGHT);
 
         // Sparks fly up from the pillar's foot, and the screen shakes.
         if (frame == start + 2) {
@@ -315,14 +319,16 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
               originX -
                   gPlasma_Shapes[work->args->variant][SPARK_GROUPS_OFFSET + i] +
                   12,
-              originY - 32, 32, 64);
+              originY - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
+              FLASH_BURST_HEIGHT);
         else
           draw[0](
               canvas, work->sheet,
               originX +
                   gPlasma_Shapes[work->args->variant][SPARK_GROUPS_OFFSET + i] -
                   44,
-              originY - 32, 32, 64);
+              originY - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
+              FLASH_BURST_HEIGHT);
       }
       if (frame >= start) {
         for (j = 0; j != SPARK_GROUPS_RING; j++) {
@@ -343,7 +349,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
             draw[0](canvas,
                     work->sheet +
                         (gPlasma_FlashPictures[point->variant / 3] << 11),
-                    x - 16, y - 32, 32, 64);
+                    x - FLASH_BURST_WIDTH / 2, y - FLASH_BURST_HEIGHT / 2,
+                    FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           if (point->variant > 0)
             point->variant--;
           else

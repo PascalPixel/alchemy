@@ -258,17 +258,21 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
               screen.x >>= 1;
               if (mode == TARGET_MOTES_MYSTIC_FLAME ||
                   mode == TARGET_MOTES_DEMON_FIRE)
-                draw[1](canvas, work->sheet + picture * (40 * 40),
-                        screen.x - 20, screen.y - 20, 40, 40);
+                draw[1](canvas, work->sheet + picture * PICTURE_BYTES(GLOW_ORB),
+                        screen.x - GLOW_ORB_WIDTH / 2,
+                        screen.y - GLOW_ORB_HEIGHT / 2, GLOW_ORB_WIDTH,
+                        GLOW_ORB_HEIGHT);
               else if (mode == TARGET_MOTES_DROWN)
                 draw[1](canvas, work->sheet + 3072, screen.x - 6, screen.y - 12,
                         12, 24);
               else if (mode == TARGET_MOTES_HEARTRENDER)
-                draw[1](canvas, work->sheet, screen.x - 11, screen.y - 21, 22,
-                        42);
+                draw[1](canvas, work->sheet, screen.x - HEART_WIDTH / 2,
+                        screen.y - HEART_HEIGHT / 2, HEART_WIDTH, HEART_HEIGHT);
               else
-                draw[(i & 3) != 0](canvas, work->sheet + picture * (24 * 48),
-                                   screen.x - 12, screen.y - 24, 24, 48);
+                draw[(i & 3) != 0](
+                    canvas, work->sheet + picture * PICTURE_BYTES(VORTEX),
+                    screen.x - VORTEX_WIDTH / 2, screen.y - VORTEX_HEIGHT / 2,
+                    VORTEX_WIDTH, VORTEX_HEIGHT);
               if (TARGET_MOTES_CLOSE_IN(mode)) {
                 mote->x -= mote->x / distance;
                 mote->y -= mote->y / distance;
@@ -314,6 +318,9 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 #define SLEEP_FRAMES 148
 #define SLEEP_SEEDED 32 ///< particles cleared at the start
 #define SLEEP_SHEEP 12  ///< sheep dropped
+/// SheepSheet: four pictures, then the four drawn flipped.
+#define SHEEP_WIDTH 32
+#define SHEEP_HEIGHT 32
 
 /// Twelve sheep drop onto the targets' side, tumbling, and each target falls
 /// asleep in turn.
@@ -382,12 +389,14 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
         picture = (current->variant / 16) & 7;
         if (picture < 4)
           drawUpright(canvas, work->sheet + (picture << 10),
-                      Q_16_16_TO_INT(current->x) - 16,
-                      Q_16_16_TO_INT(current->y) - 16, 32, 32);
+                      Q_16_16_TO_INT(current->x) - SHEEP_WIDTH / 2,
+                      Q_16_16_TO_INT(current->y) - SHEEP_HEIGHT / 2,
+                      SHEEP_WIDTH, SHEEP_HEIGHT);
         else
           drawFlipped(canvas, work->sheet + (picture << 10) - 4096,
-                      Q_16_16_TO_INT(current->x) - 16,
-                      Q_16_16_TO_INT(current->y) - 16, 32, 32);
+                      Q_16_16_TO_INT(current->x) - SHEEP_WIDTH / 2,
+                      Q_16_16_TO_INT(current->y) - SHEEP_HEIGHT / 2,
+                      SHEEP_WIDTH, SHEEP_HEIGHT);
         current->y += current->velocityY;
         current->velocityY += px(1) / 8;
         current->variant += current->z;
@@ -412,7 +421,13 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#define CURSE_MARKER_PICTURE 1728 ///< the marker picture in the sheet
+/// FlameColumnSheet: the flame's nine pictures, then the marker at the
+/// target's feet.
+#define CURSE_FLAME_WIDTH 16
+#define CURSE_FLAME_HEIGHT 12
+#define CURSE_MARKER_PICTURE_WIDTH 16
+#define CURSE_MARKER_PICTURE_HEIGHT 20
+#define CURSE_MARKER_PICTURE (9 * PICTURE_BYTES(CURSE_FLAME))
 
 /// A small flame burns above each target in turn, over a marker at its feet.
 ///
@@ -468,11 +483,15 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
           y = screenPosition.y;
           screenPosition.y = y - 16;
           draw[0](canvas, work->sheet + CURSE_MARKER_PICTURE,
-                  screenPosition.x - 8, y - 20, 16, 20);
+                  screenPosition.x - CURSE_MARKER_PICTURE_WIDTH / 2,
+                  y - CURSE_MARKER_PICTURE_HEIGHT, CURSE_MARKER_PICTURE_WIDTH,
+                  CURSE_MARKER_PICTURE_HEIGHT);
           if (frame >= start) {
             picture = ((frame - start) + marker->variant) / 6 % 9;
-            draw[0](canvas, work->sheet + picture * (16 * 12),
-                    screenPosition.x - 8, screenPosition.y - 16, 16, 12);
+            draw[0](canvas, work->sheet + picture * PICTURE_BYTES(CURSE_FLAME),
+                    screenPosition.x - CURSE_FLAME_WIDTH / 2,
+                    screenPosition.y - 16, CURSE_FLAME_WIDTH,
+                    CURSE_FLAME_HEIGHT);
           }
         }
         marker++;

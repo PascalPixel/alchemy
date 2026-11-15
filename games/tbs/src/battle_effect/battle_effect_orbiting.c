@@ -113,7 +113,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   skulls = Resource_GetTableEntry(RESOURCE_SKULL_SHEET);
   Iwram_CopyWords(BG_PLTT, skulls, SHEET_PALETTE_BYTES);
-  Decompress_TaggedLz(skulls + 128, work->sheet);
+  Decompress_TaggedLz(skulls + SHEET_PALETTE_BYTES, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);

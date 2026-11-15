@@ -22,8 +22,6 @@
 #define THOR_LIGHT_FAN_HEIGHT 96
 /// The second part's sheet: the pillar of lightning in two pictures, then
 /// the bolts.
-#define THOR_PILLAR_WIDTH 48
-#define THOR_PILLAR_HEIGHT 112
 #define THOR_BOLT_WIDTH 72
 #define THOR_BOLT_HEIGHT 72
 
@@ -335,7 +333,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     s32 thorSpeedX;
     s32 thorSpeedY;
     s32 pillarX = 60;
-    s32 pillarY = THOR_PILLAR_HEIGHT;
+    s32 pillarY = LIGHTNING_PILLAR_HEIGHT;
 
     thorX = px(80);
     thorY = px(64);
@@ -376,11 +374,12 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         s32 start = j * 128 + 8;
         if (frame >= start && frame < j * 128 + 17) {
           if (frame >= j * 128 + 9 && frame < j * 128 + 12) {
-            blit[0](canvas, work->sheet, 36, 0, THOR_PILLAR_WIDTH, pillarY);
+            blit[0](canvas, work->sheet, 36, 0, LIGHTNING_PILLAR_WIDTH,
+                    pillarY);
           }
           if (frame >= j * 128 + 12 && frame < start + 8) {
-            blit[0](canvas, work->sheet + PICTURE_BYTES(THOR_PILLAR), 36, 0,
-                    THOR_PILLAR_WIDTH, THOR_PILLAR_HEIGHT);
+            blit[0](canvas, work->sheet + PICTURE_BYTES(LIGHTNING_PILLAR), 36,
+                    0, LIGHTNING_PILLAR_WIDTH, LIGHTNING_PILLAR_HEIGHT);
           }
           if (frame == start + 2) {
             THOR_LAUNCH_SPARKS(spark, i, px(pillarX), px(pillarY),

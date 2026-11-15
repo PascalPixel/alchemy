@@ -13,9 +13,9 @@ void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 
 #define NEPTUNE_FLARE_SHEET 20000 ///< the flare pictures, after the spray
 /// The splash where the beam meets the head, growing and curling.
-#define NEPTUNE_SPLASH (32 * 32)
-/// A water column's 34x65 head, after its 17x104 shaft.
-#define NEPTUNE_COLUMN_HEAD (17 * 104)
+#define NEPTUNE_SPLASH PICTURE_BYTES(WATER_WAVE)
+/// A water column's head, after its shaft: BlueFlameSheet's pictures.
+#define NEPTUNE_COLUMN_HEAD PICTURE_BYTES(BLUE_FLAME_COLUMN)
 
 /// Under storm clouds Neptune leaps out of the sea in a burst of spray, light
 /// gathers at its head and a beam of light joins its head to the sky, with a
@@ -362,17 +362,20 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       if (z > 2) {
         z = 2;
       }
-      blit[1](canvas, work->sheet + NEPTUNE_SPLASH + z * (48 * 48), 63, 18, 48,
-              48);
+      blit[1](canvas,
+              work->sheet + NEPTUNE_SPLASH + z * PICTURE_BYTES(WATER_SPLASH),
+              63, 18, WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
     }
     if (frame > 221) {
       s32 z;
       z = (frame - 222) / 2 % 4 + 3;
-      blit[0](canvas, work->sheet + NEPTUNE_SPLASH + z * (48 * 48), 72, 30, 48,
-              48);
+      blit[0](canvas,
+              work->sheet + NEPTUNE_SPLASH + z * PICTURE_BYTES(WATER_SPLASH),
+              72, 30, WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
       if (z == 5) {
-        blit[0](canvas, work->sheet + NEPTUNE_SPLASH + 2 * (48 * 48), 66, 22,
-                48, 48);
+        blit[0](canvas,
+                work->sheet + NEPTUNE_SPLASH + 2 * PICTURE_BYTES(WATER_SPLASH),
+                66, 22, WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
       }
     }
 
@@ -397,8 +400,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     }
     for (i = 0; i != 5; i++) {
       // The sea scrolls along the bottom.
-      blit[1](canvas, work->sheet, i * 32 + ((frame / 4) & 31) - 32, 88, 32,
-              32);
+      blit[1](canvas, work->sheet,
+              i * WATER_WAVE_WIDTH + ((frame / 4) & 31) - WATER_WAVE_WIDTH, 88,
+              WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
     }
     EFFECT_PRESENT_CANVAS(work);
   }
@@ -439,13 +443,15 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       }
       // A column falls.
       if (frame >= i * 16 && column->variant <= 31) {
-        s32 wobble = frame * 16 % 104;
+        s32 wobble = frame * 16 % BLUE_FLAME_COLUMN_HEIGHT;
         blit[1](canvas, work->sheet, column->x - 8, column->y + wobble - 216,
-                17, 104);
+                BLUE_FLAME_COLUMN_WIDTH, BLUE_FLAME_COLUMN_HEIGHT);
         blit[1](canvas, work->sheet, column->x - 8, column->y + wobble - 112,
-                17, 104 - wobble);
-        blit[1](canvas, work->sheet + NEPTUNE_COLUMN_HEAD, column->x - 17,
-                column->y - 65, 34, 65);
+                BLUE_FLAME_COLUMN_WIDTH, BLUE_FLAME_COLUMN_HEIGHT - wobble);
+        blit[1](canvas, work->sheet + NEPTUNE_COLUMN_HEAD,
+                column->x - BLUE_FLAME_SPLASH_WIDTH / 2,
+                column->y - BLUE_FLAME_SPLASH_HEIGHT, BLUE_FLAME_SPLASH_WIDTH,
+                BLUE_FLAME_SPLASH_HEIGHT);
         if (column->y <= 111) {
           column->y += 16;
         } else {

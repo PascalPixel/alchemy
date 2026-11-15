@@ -275,8 +275,10 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
             if (dist != 0) {
               Projection_Point(skull, &screenPosition);
               screenPosition.x >>= 1;
-              draw[0](canvas, work->sheet + i % 3 * (24 * 24),
-                      screenPosition.x - 12, screenPosition.y - 12, 24, 24);
+              draw[0](canvas, work->sheet + i % 3 * PICTURE_BYTES(SKULL),
+                      screenPosition.x - SKULL_WIDTH / 2,
+                      screenPosition.y - SKULL_HEIGHT / 2, SKULL_WIDTH,
+                      SKULL_HEIGHT);
               skull->x -= skull->x / dist;
               skull->y -= skull->y / dist;
               skull->z -= skull->z / dist;
@@ -323,7 +325,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   EFFECT_START_NARROW_CANVAS(0);
   palette = Resource_GetTableEntry(RESOURCE_SPIRAL_SHEET);
   Iwram_CopyWords(BG_PLTT, palette, SHEET_PALETTE_BYTES);
-  Decompress_TaggedLz((u8 *)palette + 128, work->sheet);
+  Decompress_TaggedLz((u8 *)palette + SHEET_PALETTE_BYTES, work->sheet);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_LIGHTEN);
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
@@ -380,8 +382,10 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
           y = screen.y + Q_16_16_TO_INT(Trig_Cos(spin) * 16);
           half = frame / 16;
           draw[half & 1](canvas,
-                         work->sheet + (frame / 4 - half * 4) * (32 * 32),
-                         x - 16, y - 16, 32, 32);
+                         work->sheet +
+                             (frame / 4 - half * 4) * PICTURE_BYTES(SPIRAL),
+                         x - SPIRAL_WIDTH / 2, y - SPIRAL_HEIGHT / 2,
+                         SPIRAL_WIDTH, SPIRAL_HEIGHT);
         }
       }
     }

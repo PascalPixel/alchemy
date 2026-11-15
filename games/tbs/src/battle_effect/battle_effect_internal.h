@@ -309,6 +309,18 @@ enum RedCrescentPicture {
 #define BLUE_FLAME_COLUMN_HEIGHT 104
 #define BLUE_FLAME_SPLASH_WIDTH 34
 #define BLUE_FLAME_SPLASH_HEIGHT 65
+/// LightningPillarSheet's pillar, in two pictures.
+#define LIGHTNING_PILLAR_WIDTH 48
+#define LIGHTNING_PILLAR_HEIGHT 112
+/// FirePillarSheetA: the pillar of fire, then two flames.
+#define FIRE_PILLAR_WIDTH 34
+#define FIRE_PILLAR_HEIGHT 104
+#define FIRE_PILLAR_FLAME_WIDTH 20
+#define FIRE_PILLAR_FLAME_HEIGHT 37
+/// SpiralSheet's pictures.
+#define SPIRAL_WIDTH 32
+#define SPIRAL_HEIGHT 32
+
 /// FlameballSheet and FireballSheet's pictures.
 #define FLAMEBALL_WIDTH 40
 #define FLAMEBALL_HEIGHT 64
@@ -347,6 +359,16 @@ enum RedCrescentPicture {
 #define VIOLET_STREAK_HEIGHT 64
 #define WISP_WIDTH 64
 #define WISP_HEIGHT 32
+/// VortexSheet's six pictures and HeartSheet's heart.
+#define VORTEX_WIDTH 24
+#define VORTEX_HEIGHT 48
+#define HEART_WIDTH 22
+#define HEART_HEIGHT 42
+/// WaterSpraySheet: the wave, then the splash's pictures.
+#define WATER_WAVE_WIDTH 32
+#define WATER_WAVE_HEIGHT 32
+#define WATER_SPLASH_WIDTH 48
+#define WATER_SPLASH_HEIGHT 48
 
 /// Windows 0 and 1 both cover the battle view: the full width, lines 16 to
 /// 135.

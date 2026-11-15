@@ -6,11 +6,15 @@
 
 /// The pictures Gaia rebuilds from the earth wall sheet: the rising wall's
 /// rows, the standing wall's top and foot, then the flames.
+#define GAIA_ROW_HEIGHT 32
+/// The standing wall's top, stretched from a 48x32 row, and its foot.
+#define GAIA_WALL_TOP_WIDTH 48
+#define GAIA_WALL_TOP_HEIGHT 96
+#define GAIA_WALL_FOOT_WIDTH 48
+#define GAIA_WALL_FOOT_HEIGHT 21
 enum EarthWallSheetPicture {
-  /// 48x96, stretched from 48x32
-  GAIA_WALL_TOP = 32 * (5 + 6 + 9 + 12 + 15 + 18 + 21 + 32 + 40),
-  /// 48x21
-  GAIA_WALL_FOOT = GAIA_WALL_TOP + 48 * 96
+  GAIA_WALL_TOP = GAIA_ROW_HEIGHT * (5 + 6 + 9 + 12 + 15 + 18 + 21 + 32 + 40),
+  GAIA_WALL_FOOT = GAIA_WALL_TOP + PICTURE_BYTES(GAIA_WALL_TOP)
 };
 
 /// Flames flicker at the targets' feet under a narrow shaft of orange light,
@@ -186,10 +190,11 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
       CLAMP(row, 0, 7);
       for (i = 0; i != 4; i++) {
         draw[0](canvas, work->sheet + gGaia_RowPictures[row],
-                wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
-                gGaia_RowWidths[row], 32);
+                wallX - gGaia_RowWidths[row] + 64, i * GAIA_ROW_HEIGHT - 12,
+                gGaia_RowWidths[row], GAIA_ROW_HEIGHT);
         draw[1](canvas, work->sheet + gGaia_RowPictures[row], wallX + 64,
-                i * 32 - 12, gGaia_RowWidths[row], 32);
+                i * GAIA_ROW_HEIGHT - 12, gGaia_RowWidths[row],
+                GAIA_ROW_HEIGHT);
       }
     }
 
@@ -200,21 +205,26 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
       CLAMP(row, 0, 7);
       for (i = 0; i != 4; i++) {
         draw[0](canvas, work->sheet + gGaia_RowPictures[row],
-                wallX - gGaia_RowWidths[row] + 64, i * 32 - 12,
-                gGaia_RowWidths[row], 32);
+                wallX - gGaia_RowWidths[row] + 64, i * GAIA_ROW_HEIGHT - 12,
+                gGaia_RowWidths[row], GAIA_ROW_HEIGHT);
         draw[1](canvas, work->sheet + gGaia_RowPictures[row], wallX + 64,
-                i * 32 - 12, gGaia_RowWidths[row], 32);
+                i * GAIA_ROW_HEIGHT - 12, gGaia_RowWidths[row],
+                GAIA_ROW_HEIGHT);
       }
     }
 
     // The standing wall.
     if (frame >= 88 && frame <= 159) {
-      s32 width = 48;
+      s32 width = GAIA_WALL_TOP_WIDTH;
 
-      draw[0](canvas, &work->sheet[GAIA_WALL_TOP], wallX + 16, 0, width, 96);
-      draw[1](canvas, &work->sheet[GAIA_WALL_TOP], wallX + 64, 0, width, 96);
-      draw[0](canvas, &work->sheet[GAIA_WALL_FOOT], wallX + 16, 96, width, 21);
-      draw[1](canvas, &work->sheet[GAIA_WALL_FOOT], wallX + 64, 96, width, 21);
+      draw[0](canvas, &work->sheet[GAIA_WALL_TOP], wallX + 16, 0, width,
+              GAIA_WALL_TOP_HEIGHT);
+      draw[1](canvas, &work->sheet[GAIA_WALL_TOP], wallX + 64, 0, width,
+              GAIA_WALL_TOP_HEIGHT);
+      draw[0](canvas, &work->sheet[GAIA_WALL_FOOT], wallX + 16,
+              GAIA_WALL_TOP_HEIGHT, width, GAIA_WALL_FOOT_HEIGHT);
+      draw[1](canvas, &work->sheet[GAIA_WALL_FOOT], wallX + 64,
+              GAIA_WALL_TOP_HEIGHT, width, GAIA_WALL_FOOT_HEIGHT);
     }
 
     // Dust keeps rising up the wall.

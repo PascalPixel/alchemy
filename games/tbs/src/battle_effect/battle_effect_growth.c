@@ -12,8 +12,12 @@
 #define GROWING_COLUMNS_VINE_DUST_PICTURES 7769
 /// The dust pictures in the pillar sheet, after the pillars.
 #define GROWING_COLUMNS_PILLAR_DUST_PICTURES 2815
-/// The small thorn in the thorn sheet, after the 48x80 big one.
-#define THORN_SMALL_PICTURE (48 * 80)
+/// ThornSheet: the big thorn, then the small one.
+#define THORN_BIG_WIDTH 48
+#define THORN_BIG_HEIGHT 80
+#define THORN_SMALL_PICTURE_WIDTH 32
+#define THORN_SMALL_PICTURE_HEIGHT 64
+#define THORN_SMALL_PICTURE PICTURE_BYTES(THORN_BIG)
 
 /// What the growing columns grow (BattleEffect_RunGrowingColumns).
 enum GrowingColumnsMode {
@@ -387,34 +391,35 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
         if (gGrowth_Kinds[i] < THORN_SMALL) {
           height = age * 16;
           lean = age * 6;
-          if (height > 80) {
-            height = 80;
+          if (height > THORN_BIG_HEIGHT) {
+            height = THORN_BIG_HEIGHT;
           }
           if (lean > 30) {
             lean = 30;
           }
           if (gGrowth_Kinds[i] & THORN_MIRRORED) {
-            drawFlip(canvas, work->sheet, gGrowth_X[i] - lean, 108 - height, 48,
-                     height);
+            drawFlip(canvas, work->sheet, gGrowth_X[i] - lean, 108 - height,
+                     THORN_BIG_WIDTH, height);
           } else {
-            draw(canvas, work->sheet, gGrowth_X[i] + lean, 108 - height, 48,
-                 height);
+            draw(canvas, work->sheet, gGrowth_X[i] + lean, 108 - height,
+                 THORN_BIG_WIDTH, height);
           }
         } else {
           height = age * 8;
           lean = age;
-          if (height > 64) {
-            height = 64;
+          if (height > THORN_SMALL_PICTURE_HEIGHT) {
+            height = THORN_SMALL_PICTURE_HEIGHT;
           }
           if (age > 8) {
             lean = 8;
           }
           if (gGrowth_Kinds[i] & THORN_MIRRORED) {
             drawFlip(canvas, work->sheet + THORN_SMALL_PICTURE,
-                     gGrowth_X[i] - lean, 108 - height, 32, height);
+                     gGrowth_X[i] - lean, 108 - height,
+                     THORN_SMALL_PICTURE_WIDTH, height);
           } else {
             draw(canvas, work->sheet + THORN_SMALL_PICTURE, gGrowth_X[i] + lean,
-                 108 - height, 32, height);
+                 108 - height, THORN_SMALL_PICTURE_WIDTH, height);
           }
         }
         if (frame == start + 1) {

@@ -4,8 +4,12 @@
 
 #include "battle_effect_internal.h"
 
-#define HAIL_CHIP_PICTURES (32 * 32) ///< the ice chips, after the 32x32 wave
-#define HAIL_DJINNI_PICTURE 26048    ///< the small Mercury Djinni
+#define HAIL_CHIP_PICTURES                                                     \
+  PICTURE_BYTES(WATER_WAVE) ///< the ice chips, after the wave
+/// PortalSheet's portal.
+#define PORTAL_WIDTH 24
+#define PORTAL_HEIGHT 48
+#define HAIL_DJINNI_PICTURE 26048 ///< the small Mercury Djinni
 
 /// After a Mercury Djinni enters, ice chips burst out of the first target and
 /// waves of water rise along the bottom of the screen.
@@ -121,16 +125,17 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 
     // Waves rise along the bottom, drifting away from the user.
     rise = frame * 4;
-    if (rise > 32)
-      rise = 32;
+    if (rise > WATER_WAVE_HEIGHT)
+      rise = WATER_WAVE_HEIGHT;
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != 5; i++)
         draw[0](canvas, work->sheet, (i << 5) - (frame / 4 & 31), 120 - rise,
-                32, 32);
+                WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
     } else {
       for (i = 0; i != 5; i++)
-        draw[0](canvas, work->sheet, ((i << 5) + (frame / 4 & 31)) - 32,
-                120 - rise, 32, 32);
+        draw[0](canvas, work->sheet,
+                ((i << 5) + (frame / 4 & 31)) - WATER_WAVE_WIDTH, 120 - rise,
+                WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
     }
 
     BattleCamera_Shake(4, 8);
@@ -241,9 +246,9 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
 
           Projection_Point(&portal->x, &position);
           position.x >>= 1;
-          x = position.x - 12;
-          y = position.y - 24;
-          draw[0](canvas, work->sheet, x, y, 24, 48);
+          x = position.x - PORTAL_WIDTH / 2;
+          y = position.y - PORTAL_HEIGHT / 2;
+          draw[0](canvas, work->sheet, x, y, PORTAL_WIDTH, PORTAL_HEIGHT);
           if ((frame & 3) <= 1)
             draw[0](canvas, work->sheet + gHail_PortalPictures[1],
                     x + gHail_PortalX[1], y + gHail_PortalY[1],

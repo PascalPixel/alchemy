@@ -4,12 +4,16 @@
 
 #include "battle_effect_internal.h"
 
-/// The bubble picture, after the three 16x64 vortex halves.
-#define FROTH_BUBBLE_PICTURE (3 * 16 * 64)
+/// The vortex's three halves, then the bubble picture.
+#define FROTH_VORTEX_HALF_WIDTH 16
+#define FROTH_VORTEX_HALF_HEIGHT 64
+#define FROTH_BUBBLE_PICTURE_WIDTH 12
+#define FROTH_BUBBLE_PICTURE_HEIGHT 24
+#define FROTH_BUBBLE_PICTURE (3 * PICTURE_BYTES(FROTH_VORTEX_HALF))
 
 /// The tornado pictures, after the six glint pictures in the sheet.
 #define WHIRLWIND_TORNADO_PICTURES GLINT_SET_BYTES
-#define WHIRLWIND_SECTION_BYTES (40 * 32)
+#define WHIRLWIND_SECTION_BYTES PICTURE_BYTES(TORNADO_STRIP)
 
 /// Bubbles fly out of the top of the user, hang, and home in on the targets;
 /// each that lands bursts into a swirling vortex, knocking back its target,
@@ -90,7 +94,9 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
         screenPosition.x >>= 1;
         CLAMP(screenPosition.depth, 160, 799);
         draw[0](canvas, work->sheet + FROTH_BUBBLE_PICTURE,
-                screenPosition.x - 6, screenPosition.y - 12, 12, 24);
+                screenPosition.x - FROTH_BUBBLE_PICTURE_WIDTH / 2,
+                screenPosition.y - FROTH_BUBBLE_PICTURE_HEIGHT / 2,
+                FROTH_BUBBLE_PICTURE_WIDTH, FROTH_BUBBLE_PICTURE_HEIGHT);
         point->x += point->velocityX;
         point->y += point->velocityY;
         point->z += point->velocityZ;
@@ -122,10 +128,16 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
       }
       // The vortex where a bubble landed.
       if (point->variant >= 0 && point->variant < 16) {
-        draw[0](canvas, work->sheet + (point->variant / 2) % 3 * (16 * 64),
-                point->x - 16, point->y - 56, 16, 64);
-        draw[1](canvas, work->sheet + (point->variant / 2) % 3 * (16 * 64),
-                point->x, point->y - 56, 16, 64);
+        draw[0](canvas,
+                work->sheet +
+                    (point->variant / 2) % 3 * PICTURE_BYTES(FROTH_VORTEX_HALF),
+                point->x - FROTH_VORTEX_HALF_WIDTH, point->y - 56,
+                FROTH_VORTEX_HALF_WIDTH, FROTH_VORTEX_HALF_HEIGHT);
+        draw[1](canvas,
+                work->sheet +
+                    (point->variant / 2) % 3 * PICTURE_BYTES(FROTH_VORTEX_HALF),
+                point->x, point->y - 56, FROTH_VORTEX_HALF_WIDTH,
+                FROTH_VORTEX_HALF_HEIGHT);
         point->variant++;
       }
     }
@@ -215,15 +227,15 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
       draw[0](canvas,
               work->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +
                   WHIRLWIND_TORNADO_PICTURES,
-              x, y + 16, 40, 32);
+              x, y + 16, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
       draw[0](canvas,
               work->sheet + segment * WHIRLWIND_SECTION_BYTES +
                   (WHIRLWIND_TORNADO_PICTURES + 6 * WHIRLWIND_SECTION_BYTES),
-              x, y + 48, 40, 32);
+              x, y + 48, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
       draw[0](canvas,
               work->sheet + segment * (2 * WHIRLWIND_SECTION_BYTES) +
                   (WHIRLWIND_TORNADO_PICTURES + WHIRLWIND_SECTION_BYTES),
-              x, y + 80, 40, 32);
+              x, y + 80, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
       for (j = 0; j != 4; j++) {
         point = &work->particles[i * 4 + j];
         if (point->variant >= 0) {

@@ -13,8 +13,9 @@
 #define VOLCANO_TRICKLE 4       ///< and each frame after
 #define VOLCANO_SPARK_POOL 1024 ///< sparks in PARTICLES
 /// The flame on odd frames, then on even frames, after the 34x104 column.
-#define VOLCANO_FLAME_PICTURE_ODD (34 * 104)
-#define VOLCANO_FLAME_PICTURE_EVEN (VOLCANO_FLAME_PICTURE_ODD + 20 * 37)
+#define VOLCANO_FLAME_PICTURE_ODD PICTURE_BYTES(FIRE_PILLAR)
+#define VOLCANO_FLAME_PICTURE_EVEN                                             \
+  (VOLCANO_FLAME_PICTURE_ODD + PICTURE_BYTES(FIRE_PILLAR_FLAME))
 
 /// One, two or four columns of fire rise among the targets, each erupting in a
 /// fountain of sparks and knocking the targets back.
@@ -104,12 +105,14 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
             draw[0](canvas, work->sheet + VOLCANO_FLAME_PICTURE_ODD,
                     screen.x - 20, screen.y - 24, 20, 37);
             draw[1](canvas, work->sheet + VOLCANO_FLAME_PICTURE_ODD, screen.x,
-                    screen.y - 24, 20, 37);
+                    screen.y - 24, FIRE_PILLAR_FLAME_WIDTH,
+                    FIRE_PILLAR_FLAME_HEIGHT);
           } else {
             draw[0](canvas, work->sheet + VOLCANO_FLAME_PICTURE_EVEN,
                     screen.x - 20, screen.y - 24, 20, 37);
             draw[1](canvas, work->sheet + VOLCANO_FLAME_PICTURE_EVEN, screen.x,
-                    screen.y - 24, 20, 37);
+                    screen.y - 24, FIRE_PILLAR_FLAME_WIDTH,
+                    FIRE_PILLAR_FLAME_HEIGHT);
           }
         }
         // Sparks: a fountain at the start, then a few a frame.

@@ -2535,7 +2535,7 @@ u32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -2545,7 +2545,7 @@ u32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -2555,7 +2555,7 @@ u32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -2563,14 +2563,14 @@ u8 gAquaRockInside_SpringLevelCells[] = {67, 66, 75, 66, 83, 66, 91, 66, 99, 66,
 
 u32 gAquaRockInside_SparkScript[] = {
     SC_WAIT(6),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
 u32 gAquaRockInside_TabletGlowScript[] = {
     SC_MOVE_BY(0, px(160), 0),
     SC_SYNC,
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -2618,7 +2618,7 @@ s32 gAquaRockInside_PiersSettleScript[] = {
 u32 gAquaRockInside_SplashScript[] = {
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u16 gAquaRockInside_FirstOutletSpots[] = {
@@ -2639,14 +2639,14 @@ u32 gAquaRockInside_SecondOutletLevels[] = {
 
 u32 gAquaRockInside_StreamSplashScript[] = {
     SC_WAIT(20),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u32 gWaterDropScript[] = {
     SC_ADD(SW_Y, 0x4000),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
-    SC_FREE,
+    SC_RELEASE,
 };
 // clang-format on
 

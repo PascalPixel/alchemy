@@ -4175,21 +4175,21 @@ extern u32 gGaiaRockInside_RockScript[];
 u32 gFieldEffect_ShortScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
 u32 gFieldEffect_MediumScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
 u32 gFieldEffect_LongScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
@@ -4198,7 +4198,7 @@ u32 gGaiaRockInside_SprayScript[] = {
     SC_SET(SW_HOOK, 0),
     SC_CMD_03,
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u32 gGaiaRockInside_FlameScript[] = {
@@ -4206,7 +4206,7 @@ u32 gGaiaRockInside_FlameScript[] = {
     SC_SET(SW_HOOK, 0),
     SC_CMD_03,
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gGaiaRockInside_AltarShakesScript[] = {                                                               
@@ -4246,25 +4246,25 @@ u16 gGaiaRockInside_CobwebCells[] = {
 
 u32 gGaiaRockInside_SparkScript[] = {
     SC_WAIT(6),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
 u32 gGaiaRockInside_RisingSparkScript[] = {                                                               
       SC_MOVE_BY(0, px(160), 0),                                           
       SC_SYNC,                                                                 
-      SC_FREE,                                                                 
+      SC_RELEASE,                                                                 
       SC_END,                                                                  
   };
 
 s32 gGaiaRockInside_CirclingSparkScript[] = {
     SC_CALL(Orbiter_Spiral),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
 s32 gGaiaRockInside_FallingSparkScript[] = {                                                               
-      SC_CALL(Orbit_Update), SC_CALL(Actor_AimAtWatched), SC_CALL(Actor_StepToWatched), SC_FREE, SC_END,         
+      SC_CALL(Orbit_Update), SC_CALL(Actor_AimAtWatched), SC_CALL(Actor_StepToWatched), SC_RELEASE, SC_END,         
   };
 
 u32 gGaiaRockInside_TabletRiseScript[] = {                                                               
@@ -4307,7 +4307,7 @@ u32 gGaiaRockInside_SerpentGlowScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -4317,7 +4317,7 @@ u32 gGaiaRockInside_SerpentSmokeScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -4454,7 +4454,7 @@ s32 gGaiaRockInside_SerpentSettleScript[] = {
     SC_CALL(GaiaRockInside_SerpentRears),
     SC_WAIT(2),
     SC_LOOP(8, SC_TO(1)),
-    SC_CALL_WITH(197),
+    SC_SE_IN_VIEW(197),
     SC_CALL(GaiaRockInside_SerpentSpits),
     SC_WAIT(240),
     SC_LABEL(2),

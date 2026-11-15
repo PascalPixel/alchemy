@@ -78,15 +78,6 @@ extern const struct FieldPsynergyReach gFieldPsynergy_Reach[];
 // Outside routines and data the parts had declared each in its own way, with
 // the one type they share.
 struct Actor *Actor_GetById(u32 objectId);
-/* VIEW(field_sequence): routine MapGrid_GetTerrainHeightAboveFar as s32
- * MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer, s32 height);
- * module/tla.h has s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32
- * layer); tried as the rest of the object declares it, it does not compile in
- * tla-ja: games/tla/src/field/field_sequence/targets.c:102: too many arguments
- * to function `MapGrid_GetTerrainHeightAboveFar'. */
-extern s32 MapGrid_GetTerrainHeightAboveFar__field_sequence(
-    s32 x, s32 z, s32 layer,
-    s32 height) __asm__("MapGrid_GetTerrainHeightAboveFar");
 
 #include "field/encounter_zone.h"
 #include "module/field/field.h"
@@ -94,10 +85,6 @@ extern s32 MapGrid_GetTerrainHeightAboveFar__field_sequence(
 #include "inventory.h"
 #include "graphics/uiwindow.h"
 #include "actor_view.h"
-
-/// Trigger.subject of an item trigger: the event shows its own message in
-/// place of the "uses" message (MsgActorUsesItem).
-#define TRIGGER_SUBJECT_OWN_EFFECT 0x400
 
 typedef void (*ItemTriggerCallback)(s32 item, s32 actor, s32 slot);
 

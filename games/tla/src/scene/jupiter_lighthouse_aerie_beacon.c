@@ -2846,14 +2846,14 @@ s32 gJupiterLighthouse_BeamRiders[] = {
 LATE_DATA u32 gFieldEffect_ShortScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
 LATE_DATA u32 gFieldEffect_MediumScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
@@ -2863,7 +2863,7 @@ LATE_DATA s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
     SC_WAIT(5),
     SC_ADD(SW_FACING, 0x1200),
@@ -3033,7 +3033,7 @@ LATE_DATA s32 gJupiterLighthouse_BeaconSparkScript[] = {
     SC_LOOP(16, SC_TO(1)),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {

@@ -505,9 +505,9 @@ s32 Inn_RoomPrice(s32 innId);
 void Shop_ReleaseWork(void);
 
 /// Sets attribute bit 0x80 (raised) on the cell at (x, z) where no ground lies
-/// above it.
-void MapGrid_MarkRaisedIfOpen(s32 x, s32 z, s32 layer) {
-  if (MapGrid_GetTerrainHeightAboveFar(x, z, layer) == 0)
+/// above height base.
+void MapGrid_MarkRaisedIfOpen(s32 x, s32 z, s32 layer, s32 base) {
+  if (MapGrid_GetTerrainHeightAboveFar(x, z, layer, base) == 0)
     MapGrid_SetAttributeBAt(x, z, layer,
                             MapGrid_GetAttributeBAt(x, z, layer) | 0x80);
 }

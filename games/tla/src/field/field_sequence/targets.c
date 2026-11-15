@@ -99,7 +99,7 @@ const struct FieldPsynergyReach *Field_GetPsynergyReach(s32 id) {
 /// made positive, when that is within the kind's reach in height, else -1.
 s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *actor, s32 *position) {
   const struct FieldPsynergyReach *entry = Field_GetPsynergyReach(id);
-  s32 height = MapGrid_GetTerrainHeightAboveFar__field_sequence(
+  s32 height = MapGrid_GetTerrainHeightAboveFar(
       position[0], position[2], actor->layer, actor->groundHeight);
 
   if (ABS(height) <= entry->height << 16)

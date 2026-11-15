@@ -3286,7 +3286,7 @@ u32 gKibombo_EmberScript[] = {
     SC_WAIT(1),
     SC_CMD_03,
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gKibombo_EnterDoorScript[] = {                                                               
@@ -3331,7 +3331,7 @@ s32 gKibombo_ShebaMeetsPiersScript[] = {
     SC_CALL(Kibombo_SpinSprite),
     SC_WAIT(1),
     SC_LOOP(24, SC_TO(1)),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u32 gKibombo_PartyGathersScript[] = {

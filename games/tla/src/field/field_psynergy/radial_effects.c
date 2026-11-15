@@ -143,7 +143,7 @@ void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *object) {
 
 /// Runs Whirlwind cast on a target, using the target already stored in the
 /// field effect.
-void FieldPsynergy_WhirlwindOnTarget(void) { FieldPsynergy_Whirlwind(); }
+void FieldPsynergy_WhirlwindOnTarget(s32 unused) { FieldPsynergy_Whirlwind(); }
 #undef Actor_SetPositionAndResetMotionFar
 
 // An orbiting mote: field_psynergy.c's OrbitEffect.

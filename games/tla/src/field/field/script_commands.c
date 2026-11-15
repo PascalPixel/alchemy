@@ -382,7 +382,7 @@ s32 ActorScript_SetAnimation(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_FREE: releases the actor through Actor_Release, which releases its
+/// SC_RELEASE: releases the actor through Actor_Release, which releases its
 /// sprites and zeroes its slot.
 s32 ActorScript_Release(void *actor) {
   Actor_Release(actor);
@@ -402,7 +402,7 @@ s32 ActorScript_PlaySound(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_CALL_WITH(n): plays sound n when the actor is in view of the camera
+/// SC_SE_IN_VIEW(n): plays sound n when the actor is in view of the camera
 /// (Actor_PlaySoundInView).
 s32 ActorScript_PlaySoundInView(struct Actor *interpreter) {
   Actor_PlaySoundInViewFar(interpreter,

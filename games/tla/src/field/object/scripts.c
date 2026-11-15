@@ -110,14 +110,14 @@ const s32 gFieldEffect_WatchedActorScript[] = {
     SC_ADD(SW_SCALE_Y, -0x400),
     SC_WAIT(2),
     SC_WAIT(30),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 /// The Broken Seal's gActor_WaitScript: waits 40 frames, then releases the
 /// actor.
 const s32 gActor_WaitScript[] = {
     SC_WAIT(40),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 /// Action kind 2: wanders near home, pausing between steps.

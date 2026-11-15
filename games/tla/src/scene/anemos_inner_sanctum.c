@@ -1906,7 +1906,7 @@ u32 gAnemosInnerSanctum_ShortScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -1916,7 +1916,7 @@ u32 gAnemosInnerSanctum_MediumScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -1926,13 +1926,13 @@ u32 gAnemosInnerSanctum_LongScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
 s32 gAnemosInnerSanctum_TileGlowScript[] = {
     SC_WAIT(20),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -1949,7 +1949,7 @@ s32 gAnemosInnerSanctum_DustScript[] = {
     SC_ADD(SW_SCALE_Y, -6553),
     SC_WAIT(1),
     SC_LOOP(8, SC_TO(1)),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -1979,7 +1979,7 @@ s32 gAnemosInnerSanctum_PillarSparkScript[] = {
 
 u32 gAnemosInnerSanctum_MoteScript[] = {
     SC_WAIT(3),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -1993,7 +1993,7 @@ s32 gAnemosInnerSanctum_SparkScript[] = {
     SC_LOOP(10, SC_TO(1)),
     SC_CALL((s32)AnemosInnerSanctum_SpiralMover),
     SC_CALL((s32)AnemosInnerSanctum_SpawnOrbitSparks),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -2021,7 +2021,7 @@ u32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -2031,7 +2031,7 @@ u32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -2041,7 +2041,7 @@ u32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 

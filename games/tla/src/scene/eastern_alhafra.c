@@ -2717,7 +2717,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(EasternAlhafra_EnterCabin)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(EasternAlhafra_TalkToSailor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1046, FLAG_TALKED_TO_SAILOR, EVENT(EasternAlhafra_TalkToSailor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22 | TRIGGER_SUBJECT_OWN_EFFECT, FLAG_TALKED_TO_SAILOR, EVENT(EasternAlhafra_TalkToSailor)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgWePaidBig)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgWeSentMy)},
     {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgIfWeCould)},
@@ -2840,5 +2840,5 @@ s32 gEasternAlhafra_RunOffScript[] = {
 // clang-format on
 
 u32 gEasternAlhafra_PuffScript[] = {
-    SC_FREE,
+    SC_RELEASE,
 };

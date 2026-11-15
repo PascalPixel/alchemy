@@ -7,7 +7,7 @@
 /// expands to the words of one command. An unknown command keeps its number
 /// as its name.
 // The Lost Age numbers its commands as The Broken Seal does, with SC_CMD_03
-// added before SC_MOVE, eleven more commands after SC_PLAYER, SC_CALL_WITH
+// added before SC_MOVE, eleven more commands after SC_PLAYER, SC_SE_IN_VIEW
 // after SC_SE and SC_MOVE_XZ after SC_CAMERA_IN_BOUNDS.
 
 #include "types.h"
@@ -61,11 +61,11 @@
 #define SC_HOVER 0x23
 #define SC_WALK 0x24
 #define SC_KEY_COUNT 0x25 ///< Check the configured keys.
-#define SC_FREE 0x26      ///< release the object
+#define SC_RELEASE 0x26   ///< release the object
 #define SC_ANIMATION(v) 0x27, (v)
 #define SC_NOP(v) 0x28, (v) ///< Skip its operand.
 #define SC_SE(n) 0x29, (n)  ///< a sound effect
-#define SC_CALL_WITH(v) 0x2a, (v)
+#define SC_SE_IN_VIEW(n) 0x2a, (n) ///< sound n, if the actor is in view
 #define SC_GOTO(script) 0x2b, (s32)(script) ///< continue in another script
 #define SC_HIDE_SPRITES 0x2c ///< Hide the sprites (ACTOR_SPRITE_NONE).
 #define SC_SHOW_SPRITE 0x2d  ///< Show one sprite (ACTOR_SPRITE_ONE).

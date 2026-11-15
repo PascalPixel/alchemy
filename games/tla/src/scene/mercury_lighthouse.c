@@ -281,7 +281,7 @@ s32 gMercuryLighthouse_MoteScript[] = {
     SC_CALL(MercuryLighthouse_FlickerMote),
     SC_WAIT(1),
     SC_LOOP(40, SC_TO(1)),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 struct SceneEntrance gSceneEntrances[] = {

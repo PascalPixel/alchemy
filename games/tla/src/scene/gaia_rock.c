@@ -828,7 +828,7 @@ struct Trigger gGaiaRock_Triggers[] = {
 };
 
 u32 gGaiaRock_LeafScript[] = {
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gGaiaRock_WindScript[] = {
@@ -854,7 +854,7 @@ s32 gGaiaRock_WindScript[] = {
     SC_LOOP(14, SC_TO(2)),
     SC_CALL(GaiaRock_SwingVineHarder),
     SC_WAIT(10),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u32 gGaiaRock_DustScript[] = {

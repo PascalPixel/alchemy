@@ -2377,21 +2377,21 @@ void MagmaRock_UnblockMovedPillar(void);
 u32 gFieldEffect_ShortScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
 u32 gFieldEffect_MediumScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
 u32 gFieldEffect_LongScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
@@ -2409,7 +2409,7 @@ u32 gMagmaRock_EmberScript[] = {
     SC_WAIT(18),
     SC_CMD_03,
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -2418,7 +2418,7 @@ u32 gMagmaRock_FlameEmberScript[] = {
     SC_WAIT(23),
     SC_CMD_03,
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -2473,12 +2473,12 @@ s16 gMagmaRock_Room3Statues[] = {
 
 u32 gMagmaRock_RubbleScript[] = {                                                               
       SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
-      SC_FREE,                                                                 
+      SC_RELEASE,                                                                 
   };
 
 u32 gMagmaRock_DustScript[] = {                                                               
       SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
-      SC_FREE,                                                                 
+      SC_RELEASE,                                                                 
   };
 
 const s32 *gFieldEffect_DurationScripts[] = {

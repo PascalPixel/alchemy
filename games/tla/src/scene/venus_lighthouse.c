@@ -1178,7 +1178,7 @@ u32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u32 gFieldEffect_MediumScript[] = {
@@ -1187,7 +1187,7 @@ u32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u32 gFieldEffect_LongScript[] = {
@@ -1196,7 +1196,7 @@ u32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gPushLeaderSteps[] = {                                                               

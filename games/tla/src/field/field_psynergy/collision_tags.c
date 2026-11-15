@@ -4,26 +4,6 @@
 
 #include "../field_psynergy_internal.h"
 
-/* VIEW(f0ea8d4): routine MapGrid_MarkRaisedIfOpen as void
- * MapGrid_MarkRaisedIfOpen(s32 x, s32 z, s32 layer, s32 height); the definition
- * has void MapGrid_MarkRaisedIfOpen(s32 x, s32 z, s32 layer); tried as the
- * definition's void MapGrid_MarkRaisedIfOpen(s32 x, s32 z, s32 layer), it does
- * not compile in tla-ja:
- * games/tla/src/field/field_psynergy/collision_tags.c:42: too many arguments to
- * function `MapGrid_MarkRaisedIfOpen'. */
-extern void
-Func_080ea8a8__f0ea8d4(s32 x, s32 z, s32 layer,
-                       s32 height) __asm__("MapGrid_MarkRaisedIfOpen");
-/* VIEW(f0ea8d4): routine MapGrid_GetTerrainHeightAboveFar as s32
- * MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer, s32 height);
- * f0ea14c has s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer);
- * tried as the rest of the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/field_psynergy/collision_tags.c:59: too many arguments to
- * function `MapGrid_GetTerrainHeightAboveFar'. */
-extern s32
-Func_08020310__f0ea8d4(s32 x, s32 z, s32 layer,
-                       s32 height) __asm__("MapGrid_GetTerrainHeightAboveFar");
-
 /// FlagBlock_PlaceAll that also marks the four cells beside each block raised
 /// where they are open (MapGrid_MarkRaisedIfOpen), as Alhafra and its cave
 /// need.
@@ -42,13 +22,13 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
     object->collisionFlags &= ~1;
     Actor_SetSpriteFlagsFar(object, 0);
     cell->collisionCode = 0xff;
-    Func_080ea8a8__f0ea8d4(object->x.fixed + 0x100000, object->z.fixed,
+    MapGrid_MarkRaisedIfOpen(object->x.fixed + 0x100000, object->z.fixed,
                            object->layer, object->groundHeight);
-    Func_080ea8a8__f0ea8d4(object->x.fixed - 0x100000, object->z.fixed,
+    MapGrid_MarkRaisedIfOpen(object->x.fixed - 0x100000, object->z.fixed,
                            object->layer, object->groundHeight);
-    Func_080ea8a8__f0ea8d4(object->x.fixed, object->z.fixed + 0x100000,
+    MapGrid_MarkRaisedIfOpen(object->x.fixed, object->z.fixed + 0x100000,
                            object->layer, object->groundHeight);
-    Func_080ea8a8__f0ea8d4(object->x.fixed, object->z.fixed - 0x100000,
+    MapGrid_MarkRaisedIfOpen(object->x.fixed, object->z.fixed - 0x100000,
                            object->layer, object->groundHeight);
     if (GameFlag_Get(flag)) {
       Actor_SelectAnimationFar(object, 0);
@@ -59,7 +39,7 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
   }
   FlagBlock_ApplyFlags(first);
   owner = Actor_GetById(Party_GetLeaderActor());
-  if (Func_08020310__f0ea8d4(owner->x.fixed, owner->z.fixed, owner->layer,
+  if (MapGrid_GetTerrainHeightAboveFar(owner->x.fixed, owner->z.fixed, owner->layer,
                              owner->groundHeight))
     owner->groundHeight = owner->y.fixed = MapGrid_GetTerrainHeightFar(
         owner->layer, owner->x.fixed, owner->z.fixed);

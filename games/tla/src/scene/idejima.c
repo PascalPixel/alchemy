@@ -1893,5 +1893,5 @@ struct Trigger gIdejimaEventsWake[] = {
 
 u32 gDriftScene_SpawnScript[] = {
     SC_WAIT(46),
-    SC_FREE,
+    SC_RELEASE,
 };

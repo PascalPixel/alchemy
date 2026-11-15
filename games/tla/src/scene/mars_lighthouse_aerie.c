@@ -3531,7 +3531,7 @@ s32 gMarsLighthouseAerie_BeaconSparkScript[] = {
     SC_LOOP(16, SC_TO(1)),
     SC_CMD_03,
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gMarsLighthouseAerie_WatchGoldenSunRiseScript[] = {
@@ -3692,7 +3692,7 @@ u32 gMarsLighthouseAerie_BeaconFlameScript[] = {
     SC_SET(SW_SCALE_X, 0x16666),
     SC_ANIMATION(4),
     SC_WAIT(30),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u32 gOrbs_RisingScript[] = {                                                               
@@ -3705,6 +3705,6 @@ u32 gOrbs_RisingScript[] = {
       SC_LOOP(16, SC_TO(1)),                                                   
       SC_POSITION(0, 0, 0),                                                    
       SC_WAIT(1),                                                              
-      SC_FREE,                                                                 
+      SC_RELEASE,                                                                 
   };
 // clang-format on

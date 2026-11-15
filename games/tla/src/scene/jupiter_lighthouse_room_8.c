@@ -666,21 +666,21 @@ void JupiterLighthouse_StartMovingBlock(void);
 LATE_DATA u32 gFieldEffect_ShortScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
 LATE_DATA u32 gFieldEffect_MediumScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
 LATE_DATA u32 gFieldEffect_LongScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 

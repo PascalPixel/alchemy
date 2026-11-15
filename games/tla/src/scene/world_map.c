@@ -2708,7 +2708,7 @@ s32 gData_02004f70[] = {
 
 s32 gWorldMap_SparkScript[] = {
     SC_CALL((s32)WorldMap_RiseFromAnchor),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u32 gWorldMap_ParticleScript[] = {
@@ -2716,7 +2716,7 @@ u32 gWorldMap_ParticleScript[] = {
     SC_SET(SW_X, 0),
     SC_SET(SW_Z, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u32 gData_02004fc8[] = {

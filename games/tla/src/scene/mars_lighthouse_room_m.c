@@ -1972,7 +1972,7 @@ s32 gMarsLighthouseRoomM_StatueScript[] = {
 // clang-format off
 u32 gScriptedPart_Script[] = {                                                               
       SC_WAIT(30), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
-      SC_FREE,                                                                 
+      SC_RELEASE,                                                                 
   };
 
 u32 gMarsLighthouseRoomM_CrumbScript[] = {
@@ -2145,14 +2145,14 @@ s32 gMarsLighthouseRoomM_RubbleBounceScript[] = {
     SC_LOOP(12, SC_TO(1)),
     SC_CMD_03,
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u32 gMarsLighthouseRoomM_RubbleFallScript[] = {
     SC_WAIT(20),
     SC_CMD_03,
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 // clang-format on
 

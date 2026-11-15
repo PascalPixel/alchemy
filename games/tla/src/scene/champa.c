@@ -1617,5 +1617,5 @@ struct Trigger gChampa_TriggersOnceBriggsSailed[] = {
 };
 
 u32 gChampa_GlareSparkScript[] = {
-    SC_FREE,
+    SC_RELEASE,
 };

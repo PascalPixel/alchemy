@@ -2895,21 +2895,21 @@ extern u32 gFieldEffect_LongScript[];
 u32 gFieldEffect_ShortScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
 u32 gFieldEffect_MediumScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
 u32 gFieldEffect_LongScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
@@ -2927,7 +2927,7 @@ u32 gMagmaRockInside_EmberScript[] = {
     SC_WAIT(18),
     SC_CMD_03,
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -2936,7 +2936,7 @@ u32 gMagmaRockInside_FlameEmberScript[] = {
     SC_WAIT(23),
     SC_CMD_03,
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -3061,27 +3061,27 @@ s16 gMagmaRockInside_Room7Pillars[] = {
 
 u32 gMagmaRockInside_FlameScript[] = {
     SC_WAIT(6),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
 u32 gMagmaRockInside_TorchScript[] = {                                                               
       SC_MOVE_BY(0, px(160), 0),                                           
       SC_SYNC,                                                                 
-      SC_FREE,                                                                 
+      SC_RELEASE,                                                                 
       SC_END,                                                                  
   };
 
 s32 gMagmaRockInside_SparkScript[] = {
     SC_CALL(MagmaRockInside_OrbitParent),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
 s32 MagmaRockInside_DriftForSteps(struct Actor *object);
 
 s32 gMagmaRockInside_OrbitScript[] = {                                                               
-      SC_CALL(Orbit_Update), SC_CALL(Actor_AimAtWatched), SC_CALL(MagmaRockInside_DriftForSteps), SC_FREE, SC_END,         
+      SC_CALL(Orbit_Update), SC_CALL(Actor_AimAtWatched), SC_CALL(MagmaRockInside_DriftForSteps), SC_RELEASE, SC_END,         
   };
 
 u32 gMagmaRockInside_BlazeCasterScript[] = {                                                               
@@ -3116,12 +3116,12 @@ s32 gMagmaRockInside_BlazeWatcherReturnScript[] = {
 
 u32 gMagmaRockInside_RubbleScript[] = {                                                               
       SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
-      SC_FREE,                                                                 
+      SC_RELEASE,                                                                 
   };
 
 u32 gMagmaRockInside_DustScript[] = {                                                               
       SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),       
-      SC_FREE,                                                                 
+      SC_RELEASE,                                                                 
   };
 
 const s32 *gFieldEffect_DurationScripts[] = {

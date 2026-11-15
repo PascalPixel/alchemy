@@ -28,7 +28,7 @@ const u32 gFieldEffect_TargetColors[8] = {
 // clang-format on
 
 const s32 gBattleEffect_UntargetedObjectScript[] = {
-    SC_FREE,
+    SC_RELEASE,
 };
 
 const s32 *const gFieldEffect_DurationScripts[3] = {

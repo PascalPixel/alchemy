@@ -2025,21 +2025,21 @@ extern s32 gJupiterLighthouse_ShowGustScript[];
 LATE_DATA u32 gFieldEffect_ShortScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
 LATE_DATA u32 gFieldEffect_MediumScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
 LATE_DATA u32 gFieldEffect_LongScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
@@ -2330,7 +2330,7 @@ LATE_DATA u32 gJupiterLighthouse_KarstLeavesScript[] = {
 LATE_DATA u32 gJupiterLighthouse_KarstFliesOffScript[] = {
     SC_MOVE_XZ(px(664), px(80)),
     SC_SYNC,
-    SC_FREE,
+    SC_RELEASE,
 };
 
 LATE_DATA s32 gPaletteCycleFrame = -1;

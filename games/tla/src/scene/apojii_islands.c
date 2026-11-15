@@ -995,7 +995,7 @@ u32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -1005,7 +1005,7 @@ u32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -1015,20 +1015,20 @@ u32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
 u32 gApojiiIslands_SplashScript[] = {
     SC_WAIT(20),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u32 gWaterDropScript[] = {
     SC_ADD(SW_Y, 0x4000),
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s16 gGroundParticleFrames[] = {                                                               

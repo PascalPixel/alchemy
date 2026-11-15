@@ -790,7 +790,7 @@ u32 gShamanVillageCave_GladiatorLeaves[] = {
     SC_SYNC,
     SC_MOVE_XZ(px(217), px(334)),
     SC_SYNC,
-    SC_FREE,
+    SC_RELEASE,
 };
 // clang-format on
 

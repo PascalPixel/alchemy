@@ -2987,21 +2987,21 @@ extern u32 gFieldEffect_MediumScript[];
 u32 gFieldEffect_ShortScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
 u32 gFieldEffect_MediumScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
 u32 gFieldEffect_LongScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
@@ -3313,7 +3313,7 @@ struct Trigger gGaroh_Room1DayTriggers[] = {
      MSGNO(MsgGaroh25)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
      MSGNO(MsgGaroh26)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1037, FLAG_LITTLE_WEREWOLF_THANKED,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13 | TRIGGER_SUBJECT_OWN_EFFECT, FLAG_LITTLE_WEREWOLF_THANKED,
      EVENT(Garoh_LittleWerewolfThanks)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
      MSGNO(MsgGaroh27)},
@@ -3400,7 +3400,7 @@ struct Trigger gGaroh_Room5Triggers[] = {
 s32 gGaroh_HowlCounter = 0;
 
 u32 gGaroh_PuffScript[] = {
-    SC_FREE,
+    SC_RELEASE,
 };
 #undef ACTOR_MODE_THEN_WAIT
 #undef FOLLOW_LEADER

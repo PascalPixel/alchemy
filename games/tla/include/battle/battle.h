@@ -123,7 +123,7 @@ struct ActionDescriptor *Scene_FindActorPlacement(s32 id);
 s32 BattleObject_RemoveFromLists(s32);
 void PaletteFade_SetSource(s32 value, s32 mode);
 void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half);
-void FieldPsynergy_WhirlwindOnTarget(void);
+void FieldPsynergy_WhirlwindOnTarget(s32 unused);
 u16 Encounter_GetFormationAtSlot(s32 arg0, s32 arg1);
 s32 Scene_HasPsynergyTrigger(s32 effectId);
 void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity);

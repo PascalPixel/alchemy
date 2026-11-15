@@ -1589,7 +1589,7 @@ u32 gEasternAlhafraShip_LeaveTheDeckScript[] = {
     SC_SYNC,
     SC_MOVE(px(440), 0, px(264)),
     SC_SYNC,
-    SC_FREE,
+    SC_RELEASE,
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -1662,5 +1662,5 @@ struct Trigger gSceneEvents[] = {
 };
 
 u32 gEasternAlhafraShip_NoteScript[] = {
-    SC_FREE,
+    SC_RELEASE,
 };

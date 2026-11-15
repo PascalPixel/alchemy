@@ -13,7 +13,7 @@ void ActorSystem_InitializeFar(s32 mode);
 void Sprite_StartAnimationFar(void *, s32);
 /// The height of the ground at (px, pz) (16.16 pixels) on the given layer, less
 /// base.
-s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer);
+s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer, s32 base);
 struct Actor *Actor_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 s32 SpritePictureCache_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 void SpriteAnimation_StartFar(void *work, s32 no);

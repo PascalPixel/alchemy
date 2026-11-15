@@ -1753,6 +1753,6 @@ u32 gVenusLighthouseEntrance_BirdLands[] = {
 u32 gVenusLighthouseEntrance_BirdFlies[] = {
     SC_SYNC,
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 // clang-format on

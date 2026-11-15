@@ -2877,7 +2877,7 @@ u32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -2887,7 +2887,7 @@ u32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -2897,7 +2897,7 @@ u32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -3380,7 +3380,7 @@ struct Trigger gShamanVillage_Room1Triggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST),
      526, FLAG_SHAMAN_VILLAGE_SAND_CLEARED,
      EVENT(ShamanVillage_ShebaClearsSand)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 1038,
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 14 | TRIGGER_SUBJECT_OWN_EFFECT,
      FLAG_SHAMAN_VILLAGE_SAND_CLEARED, 0},
     {TRIGGER_STEP, 10, FLAG_SHAMAN_VILLAGE_TRIAL_RULES_HEARD,
      EVENT(ShamanVillage_ExplainTrialRules)},
@@ -3687,7 +3687,7 @@ struct Trigger gShamanVillage_Room6Triggers[] = {
 
 u32 gDriftScene_SpawnScript[] = {
     SC_WAIT(46),
-    SC_FREE,
+    SC_RELEASE,
 };
 #undef TLA_SHAMAN_VILLAGE_H
 #undef SHAMAN_VILLAGE_EMOTE

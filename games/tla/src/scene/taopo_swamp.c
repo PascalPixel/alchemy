@@ -1965,7 +1965,7 @@ u32 gTaopoSwamp_PuffSteamScript[] = {
     SC_ADD(SW_Y, px(1)),
     SC_WAIT(1),
     SC_LOOP(30, SC_TO(1)),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u32 gTaopoSwamp_TremorPillarScript[] = {
@@ -1980,12 +1980,12 @@ u32 gTaopoSwamp_SparkFades[] = {
 
 s32 gTaopoSwamp_DripAtRandomScript[] = {
     SC_CALL((s32)TaopoSwamp_LandDrop),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gTaopoSwamp_DripFromCeilingScript[] = {
     SC_CALL((s32)TaopoSwamp_LandDrip),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gTaopoSwamp_DropFalls[] = {

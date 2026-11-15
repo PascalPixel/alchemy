@@ -2863,7 +2863,7 @@ u32 gSmokeScript[] = {
     SC_WAIT(15),
     SC_CMD_03,
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u32 gIslets_TurtleSwimsScript[] = {                                                               

@@ -1944,7 +1944,7 @@ u32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -1954,7 +1954,7 @@ u32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -1964,7 +1964,7 @@ u32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -1988,14 +1988,14 @@ s32 gAirsRock_WindStoneScript[] = {
 u32 gAirsRock_WhirlwindFadesScript[] = {
     SC_ANIMATION(5),
     SC_WAIT(12),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u32 gAirsRock_WhirlwindRisesScript[] = {
     SC_WAIT(60),
     SC_ANIMATION(5),
     SC_WAIT(12),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s32 gAirsRock_RubbleScript[] = {
@@ -2006,7 +2006,7 @@ s32 gAirsRock_RubbleScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s16 gAirsRock_FrozenPuddle[] = {

@@ -112,17 +112,17 @@ const u16 gWorldMap_KeyHeadings[16] = {
 // As The Broken Seal's gWorldMap_FootprintActions do.
 const s32 gActor_FootprintScript[] = {
     SC_WAIT(120),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 const s32 gActor_SplashScript[] = {
     SC_WAIT(20),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 const s32 gActor_RippleScript[] = {
     SC_WAIT(32),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 /// The turn for each direction pad state.
@@ -144,12 +144,12 @@ const s32 gActor_WakeScript[] = {
     SC_LOOP(13, SC_TO(1)),
     SC_SET(SW_SCALE_X, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 const s32 gSand_GrainScript[] = {
     SC_WAIT(60),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 //--------------------------------------------------------------------------

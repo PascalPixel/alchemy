@@ -175,6 +175,12 @@ struct Trigger {
   u32 value;     ///< a message (FIND_MESSAGE) or an event (EVENT)
 };
 
+/// Trigger.subject bit 10, as The Broken Seal's: a Psynergy trigger runs in
+/// place of its field Psynergy, as Mind Read on someone who notices it does;
+/// an item trigger's event shows its own message in place of the "uses"
+/// message (MsgActorUsesItem); an examine trigger shows no checking message.
+#define TRIGGER_SUBJECT_OWN_EFFECT 0x400
+
 /// What a search finds, an examine trigger's value, as The Broken Seal's: an
 /// item, coins or a message.
 #define FIND_ITEM(item) (0x00100000 | (item))
@@ -236,7 +242,7 @@ enum ExitStyle {
 /// What an examine trigger is on, EXAMINE_TRIGGER()'s control bits 8..4,
 /// as The Broken Seal's, with the pond added. Target n shows message
 /// MsgTileChecked + n, "<leader> checked the ...", as the leader checks it, unless
-/// the trigger has subject bit 10; target 0 shows nothing.
+/// the trigger has TRIGGER_SUBJECT_OWN_EFFECT; target 0 shows nothing.
 enum ExamineTarget {
   EXAMINE_SILENT = 0,
   EXAMINE_CHEST = 1,

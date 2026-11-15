@@ -280,7 +280,7 @@ struct Trigger gSceneEvents[] = {
      EVENT(LemuriaDock_EnterHouse)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(LemuriaDock_MovePiers)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(LemuriaDock_AskSettingOff)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1032, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8 | TRIGGER_SUBJECT_OWN_EFFECT, CONDITION_ALWAYS,
      EVENT(LemuriaDock_AskSettingOff)},
     {TRIGGER_TABLE_END},
 };

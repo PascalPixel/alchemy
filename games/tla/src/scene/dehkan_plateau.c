@@ -1995,12 +1995,12 @@ extern u32 gFieldEffect_LongScript[];
 // clang-format off
 u32 gRubble_SprayScript[] = {
     SC_WAIT(33), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u32 gRubble_BurstScript[] = {
     SC_WAIT(44), SC_SET(SW_HOOK, 0), SC_POSITION(0, 0, 0), SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u32 gFieldEffect_ShortScript[] = {
@@ -2009,7 +2009,7 @@ u32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -2019,7 +2019,7 @@ u32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -2029,7 +2029,7 @@ u32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -2039,7 +2039,7 @@ u32 gDehkanPlateau_DustScript[] = {
     SC_SET(SW_HOOK, 0),
     SC_CMD_03,
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {

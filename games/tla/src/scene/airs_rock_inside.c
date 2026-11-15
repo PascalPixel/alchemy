@@ -3464,7 +3464,7 @@ u32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -3474,7 +3474,7 @@ u32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -3484,7 +3484,7 @@ u32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -3518,14 +3518,14 @@ s16 gAirsRockInside_Room9Pillars[] = {
 
 u32 gAirsRockInside_OrbitSparkScript[] = {
     SC_WAIT(6),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
 u32 gAirsRockInside_RisingSparkScript[] = {
     SC_MOVE_BY(0, px(160), 0),
     SC_SYNC,
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -3579,7 +3579,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 u32 gAirsRockInside_WhirlwindRisesScript[] = {
     SC_ANIMATION(5),
     SC_WAIT(12),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 
@@ -3587,7 +3587,7 @@ u32 gAirsRockInside_WhirlwindFadesScript[] = {
     SC_WAIT(60),
     SC_ANIMATION(5),
     SC_WAIT(12),
-    SC_FREE,
+    SC_RELEASE,
     SC_END,
 };
 

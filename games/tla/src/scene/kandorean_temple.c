@@ -3287,21 +3287,21 @@ extern u32 gFieldEffect_LongScript[];
 u32 gFieldEffect_ShortScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(22, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
 u32 gFieldEffect_MediumScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(44, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
 u32 gFieldEffect_LongScript[] = {                                                               
       SC_WAIT(1), SC_LOOP(126, SC_TOP),                                     
       SC_WAIT(1), SC_POSITION(0, 0, 0),                                        
-      SC_WAIT(1), SC_FREE,                                                     
+      SC_WAIT(1), SC_RELEASE,                                                     
       SC_END,                                                                  
   };
 
@@ -3310,12 +3310,12 @@ s32 gKandoreanTemple_SteamScript[] = {
     SC_SET(SW_HOOK, 0),
     SC_CMD_03,
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
     SC_CALL((s32)KandoreanTemple_CountDownSteam),
     SC_SET(SW_HOOK, 0),
     SC_CMD_03,
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 s16 gKandoreanTemple_BlockActors[] = {
@@ -3328,14 +3328,14 @@ s16 gKandoreanTemple_PillarActors[] = {
 
 u32 gKandoreanTemple_PuffScript[] = {
     SC_WAIT(24),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 u32 gKandoreanTemple_StreamPuffScript[] = {
     SC_WAIT(15),
     SC_CMD_03,
     SC_WAIT(1),
-    SC_FREE,
+    SC_RELEASE,
 };
 
 const s32 *gFieldEffect_DurationScripts[] = {
@@ -3671,11 +3671,11 @@ struct Trigger gKandoreanTemple_GateEvents[] = {
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(KandoreanTemple_AskAboutPoi)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_TellOfTheMeditation)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1033, FLAG_ASKED_ABOUT_POI,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9 | TRIGGER_SUBJECT_OWN_EFFECT, FLAG_ASKED_ABOUT_POI,
      EVENT(KandoreanTemple_ReadTheGateStudent)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
      MSGNO(MsgFieldIDoNotUnderstandMasterPoi)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1034, FLAG_TOLD_OF_THE_MEDITATION,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10 | TRIGGER_SUBJECT_OWN_EFFECT, FLAG_TOLD_OF_THE_MEDITATION,
      EVENT(KandoreanTemple_ReadTheGuard)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgFieldIWasHopingToHearMaster)},

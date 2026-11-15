@@ -54,53 +54,55 @@ const s32 gActor_IdleScript[] = {
     SC_END,
 };
 
-/// The handler for each script command number; 36 onwards act as SC_END.
+/// The handler for each script command number; the numbers from
+/// SCRIPT_CMD_COUNT on act as SC_END.
 const ScriptCommand gActorScript_CommandTable[47] = {
-    ActorScript_Wait,                      // 0 SC_WAIT
-    ActorScript_WaitForArrival,            // 1 SC_SYNC
-    ActorScript_SetPositionAndResetMotion, // 2 SC_POSITION
-    ActorScript_ApplyAbsolutePosition,     // 3 SC_MOVE
-    ActorScript_ApplyRelativePosition,     // 4 SC_MOVE_BY
-    ActorScript_StoreAngleToWatchedActor,  // 5 SC_FACE_WATCHED
-    ActorScript_ApplyWatchedActorPosition, // 6 SC_MOVE_TO_WATCHED
-    ActorScript_ApplyLocalOffsetPosition,  // 7 SC_MOVE_LOCAL
-    Actor_Wander,                          // 8 SC_WANDER
-    ActorScript_WanderNearHome,            // 9 SC_WANDER_HOME
-    Actor_ApproachWatchedActor,            // 10 SC_APPROACH_WATCHED
-    FieldCamera_FollowLeaderInBounds,      // 11 SC_CAMERA
-    ActorScript_RepeatOrJump,              // 12 SC_LOOP
-    ActorScript_JumpToLabel,               // 13 SC_JUMP
-    ActorScript_JumpIfTrue,                // 14 SC_IF
-    ActorScript_JumpIfFalse,               // 15 SC_IFNOT
-    ActorScript_End,                       // 16 SC_END
-    ActorScript_TestFlag,                  // 17 SC_FLAG_CHECK
-    ActorScript_SetFlagAndTest,            // 18 SC_FLAG_ON
-    ActorScript_ClearFlagAndTest,          // 19 SC_FLAG_OFF
-    ActorScript_ToggleFlagAndTest,         // 20 SC_FLAG_REV
-    ActorScript_ApplyOperandSet,           // 21 SC_SET
-    ActorScript_ApplyOperandAdd,           // 22 SC_ADD
-    ActorScript_ApplyOperandCompare,       // 23 SC_CMP
-    Actor_UpdatePlayerControl,             // 24 SC_PLAYER
-    Actor_MoveByKeys,                      // 25 SC_KEYS
-    Actor_MoveOnWorldMap,                  // 26 SC_WORLD
-    ActorScript_Release,                   // 27 SC_RELEASE
-    ActorScript_SetAnimation,              // 28 SC_ANIMATION
-    ActorScript_Nop,                       // 29 SC_NOP
-    ActorScript_PlaySound,                 // 30 SC_SE
-    ActorScript_SetBase,                   // 31 SC_BASE
-    ActorScript_HideSprites,               // 32 SC_HIDE_SPRITES
-    ActorScript_ShowSprite,                // 33 SC_SHOW_SPRITE
-    ActorScript_InvokeCallback,            // 34 SC_CALL
-    Field_CheckConfiguredKeysAndCount,     // 35 SC_KEY_COUNT
-    ActorScript_End,                       // 36
-    ActorScript_End,                       // 37
-    ActorScript_End,                       // 38
-    ActorScript_End,                       // 39
-    ActorScript_End,                       // 40
-    ActorScript_End,                       // 41
-    ActorScript_End,                       // 42
-    ActorScript_End,                       // 43
-    ActorScript_End,                       // 44
-    ActorScript_End,                       // 45
-    ActorScript_End,                       // 46
+    [SCRIPT_CMD_WAIT] = ActorScript_Wait,
+    [SCRIPT_CMD_SYNC] = ActorScript_WaitForArrival,
+    [SCRIPT_CMD_POSITION] = ActorScript_SetPositionAndResetMotion,
+    [SCRIPT_CMD_MOVE] = ActorScript_ApplyAbsolutePosition,
+    [SCRIPT_CMD_MOVE_BY] = ActorScript_ApplyRelativePosition,
+    [SCRIPT_CMD_FACE_WATCHED] = ActorScript_StoreAngleToWatchedActor,
+    [SCRIPT_CMD_MOVE_TO_WATCHED] = ActorScript_ApplyWatchedActorPosition,
+    [SCRIPT_CMD_MOVE_LOCAL] = ActorScript_ApplyLocalOffsetPosition,
+    [SCRIPT_CMD_WANDER] = Actor_Wander,
+    [SCRIPT_CMD_WANDER_HOME] = ActorScript_WanderNearHome,
+    [SCRIPT_CMD_APPROACH_WATCHED] = Actor_ApproachWatchedActor,
+    [SCRIPT_CMD_CAMERA] = FieldCamera_FollowLeaderInBounds,
+    [SCRIPT_CMD_LOOP] = ActorScript_RepeatOrJump,
+    [SCRIPT_CMD_JUMP] = ActorScript_JumpToLabel,
+    [SCRIPT_CMD_IF] = ActorScript_JumpIfTrue,
+    [SCRIPT_CMD_IFNOT] = ActorScript_JumpIfFalse,
+    [SCRIPT_CMD_END] = ActorScript_End,
+    [SCRIPT_CMD_FLAG_CHECK] = ActorScript_TestFlag,
+    [SCRIPT_CMD_FLAG_ON] = ActorScript_SetFlagAndTest,
+    [SCRIPT_CMD_FLAG_OFF] = ActorScript_ClearFlagAndTest,
+    [SCRIPT_CMD_FLAG_REV] = ActorScript_ToggleFlagAndTest,
+    [SCRIPT_CMD_SET] = ActorScript_ApplyOperandSet,
+    [SCRIPT_CMD_ADD] = ActorScript_ApplyOperandAdd,
+    [SCRIPT_CMD_CMP] = ActorScript_ApplyOperandCompare,
+    [SCRIPT_CMD_PLAYER] = Actor_UpdatePlayerControl,
+    [SCRIPT_CMD_KEYS] = Actor_MoveByKeys,
+    [SCRIPT_CMD_WORLD] = Actor_MoveOnWorldMap,
+    [SCRIPT_CMD_RELEASE] = ActorScript_Release,
+    [SCRIPT_CMD_ANIMATION] = ActorScript_SetAnimation,
+    [SCRIPT_CMD_NOP] = ActorScript_Nop,
+    [SCRIPT_CMD_SE] = ActorScript_PlaySound,
+    [SCRIPT_CMD_BASE] = ActorScript_SetBase,
+    [SCRIPT_CMD_HIDE_SPRITES] = ActorScript_HideSprites,
+    [SCRIPT_CMD_SHOW_SPRITE] = ActorScript_ShowSprite,
+    [SCRIPT_CMD_CALL] = ActorScript_InvokeCallback,
+    [SCRIPT_CMD_KEY_COUNT] = Field_CheckConfiguredKeysAndCount,
+    // SCRIPT_CMD_COUNT onwards.
+    ActorScript_End,
+    ActorScript_End,
+    ActorScript_End,
+    ActorScript_End,
+    ActorScript_End,
+    ActorScript_End,
+    ActorScript_End,
+    ActorScript_End,
+    ActorScript_End,
+    ActorScript_End,
+    ActorScript_End,
 };

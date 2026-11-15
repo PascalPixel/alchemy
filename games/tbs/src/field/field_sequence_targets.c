@@ -169,12 +169,12 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
     // The distance in whole pixels, rounded toward 0.
     dx = candidate->x.fixed - source->x.fixed;
     if (dx < 0)
-      dx += 0xffff;
+      dx += Q16_ONE - 1;
     dx = FIELD_PIXEL(dx);
 
     dz = candidate->z.fixed - source->z.fixed;
     if (dz < 0)
-      dz += 0xffff;
+      dz += Q16_ONE - 1;
     pixelZ = FIELD_PIXEL(dz);
 
     distance = Iwram_Sqrt(dx * dx + pixelZ * pixelZ);

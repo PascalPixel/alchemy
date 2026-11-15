@@ -281,7 +281,7 @@ struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
         fragment->facing += TRIG_TURN / 8;
         wait(1);
         scale = fragment->scaleX;
-      } while (scale <= 0xffff);
+      } while (scale < Q16_ONE);
     }
     fragment->facing = angle;
   }

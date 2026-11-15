@@ -969,8 +969,9 @@ void LuckyWheels_Update(void) {
     sprite++;
   }
 
-  while (sprite != 128) {
-    work->oam[sprite].attr01 = (240 << 16) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+  while (sprite != OAM_SIZE / sizeof(struct OamWords)) {
+    work->oam[sprite].attr01 =
+        (DISPLAY_WIDTH << 16) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
     work->oam[sprite].attr2 = 0;
     sprite++;
   }
@@ -1135,8 +1136,8 @@ void LuckyWheels_Run(void) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG1HOFS = 0;
   REG_BG2HOFS = 0;
-  REG_BG1VOFS = -160;
-  REG_BG2VOFS = -160;
+  REG_BG1VOFS = -DISPLAY_HEIGHT;
+  REG_BG2VOFS = -DISPLAY_HEIGHT;
   REG_WIN0H = WIN_RANGE(40, 200);
   REG_WIN0V = WIN_RANGE(24, 120);
   REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);

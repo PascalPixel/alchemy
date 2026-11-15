@@ -80,7 +80,7 @@ void FieldPsynergy_Force(void) {
       projectile->scaleX = scale;
       wait(1);
       scale = projectile->scaleX;
-    } while (scale <= 0xffff);
+    } while (scale < Q16_ONE);
   }
   wait(3);
 

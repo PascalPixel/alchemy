@@ -369,9 +369,9 @@ void LuckyDice_Run(void) {
   gBgScroll[1].x = 0;
   gBgScroll[1].y = 0;
   REG_BG1HOFS = 0;
-  REG_BG1VOFS = -160;
+  REG_BG1VOFS = -DISPLAY_HEIGHT;
   REG_BG2HOFS = 0;
-  REG_BG2VOFS = -160;
+  REG_BG2VOFS = -DISPLAY_HEIGHT;
   REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
   REG_WIN0V = WIN_RANGE(0, DISPLAY_HEIGHT);
   REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
@@ -924,9 +924,9 @@ void LuckyDice_Run(void) {
 
     // Hide the unused sprites, write the four affine matrices (one per die and
     // shadow, scaled by depth) and copy the sprites to OAM.
-    for (; spriteCount != 128; spriteCount++) {
+    for (; spriteCount != OAM_SIZE / sizeof(struct OamWords); spriteCount++) {
       sprites->oam[spriteCount].attr01 =
-          (240 << 16) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+          (DISPLAY_WIDTH << 16) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
       sprites->oam[spriteCount].attr2 = 0;
     }
 

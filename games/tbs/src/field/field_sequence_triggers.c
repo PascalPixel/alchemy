@@ -5,6 +5,10 @@
 
 #include "field_sequence_internal.h"
 
+/// The frames the leader pushes against a step trigger, a ledge, a gap or a
+/// wall before it runs, jumps or climbs.
+#define FIELD_PUSH_FRAMES 12
+
 /// Returns the actor placement of actor id in the scene's
 /// actor placement tables, or NULL: for a party character (0 to 7) the row with
 /// its sprite, and for a placed actor (8 on) the row it was created
@@ -108,7 +112,7 @@ const struct Trigger *Scene_FindTrigger(s32 kind, s32 target) {
          (GameFlag_IsConditionActive(trigger->condition) != 0 &&
           (flags = trigger->kind, 1)))) {
       s32 matches = 0;
-      s32 minimumPushFrames = 12;
+      s32 minimumPushFrames = FIELD_PUSH_FRAMES;
       s32 touchRequirements;
 
       if ((flags & STEP_TRIGGER_FLAG_QUICK) != 0)
@@ -358,20 +362,20 @@ s32 Field_RunPushCell(s32 behavior) {
 
   switch (behavior) {
   case CELL_BEHAVIOR_LEDGE:
-    if (work->blockedSteps > 12 && (gKeysHeld & KEY_DOWN)) {
+    if (work->blockedSteps > FIELD_PUSH_FRAMES && (gKeysHeld & KEY_DOWN)) {
       Actor_JumpDownLedge(leader, ANIM_LEADER_SPRING, 0);
       work->blockedSteps = 0;
     }
     break;
   case CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED:
   case CELL_BEHAVIOR_JUMP_FORWARD:
-    if (work->blockedSteps > 12) {
+    if (work->blockedSteps > FIELD_PUSH_FRAMES) {
       Field_TryJumpForward();
       work->blockedSteps = 0;
     }
     break;
   case CELL_BEHAVIOR_CLIMB:
-    if (work->blockedSteps > 12) {
+    if (work->blockedSteps > FIELD_PUSH_FRAMES) {
       if (gKeysHeld & KEY_DOWN) {
         Field_ClimbDown();
       } else if (gKeysHeld & KEY_UP) {
@@ -597,3 +601,5 @@ s32 Field_ExamineCell(s32 tile) {
   }
   return 0;
 }
+
+#undef FIELD_PUSH_FRAMES

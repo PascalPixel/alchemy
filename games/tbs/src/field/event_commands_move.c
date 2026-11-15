@@ -365,11 +365,11 @@ void FieldEffect_SnapScaleToFull(struct Actor *actor) {
 
   if (actor != NULL) {
     scale = actor->scaleX;
-    if (scale <= 0xffff) {
+    if (scale < Q16_ONE) {
       do {
         next = scale + Q16_ONE / 16;
         scale = next;
-      } while (next <= 0xffff);
+      } while (next < Q16_ONE);
       actor->scaleX = next;
       actor->scaleY = next;
     }

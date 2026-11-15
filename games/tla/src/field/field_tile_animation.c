@@ -1212,12 +1212,6 @@ s32 MapGrid_IsWallAt(s32 *position) {
   return (cell->collisionCode != CELL_BEHAVIOR_WALL) - 1;
 }
 
-/* VIEW(f02c58c): variable gCellPictures as struct WorldMapBlock
- * gWorldMapBlocks[] under a name of its own; system/ram_buffer.h has u32
- * gCellPictures[]; read through it with a cast, the field object shares the
- * address with the other reads and the block read moves (4 lines in tla-en). */
-extern struct WorldMapBlock gWorldMapBlocks[] __asm__("gCellPictures");
-
 /// The place of the world map block under position (blocks 32 pixels square on
 /// a 32 by 32 grid), WORLD_MAP_NO_PLACE where the map has none.
 // XXX: what the byte numbers besides 255; the world map scene's events of
@@ -1232,7 +1226,7 @@ s32 WorldMap_GetBlockPlace(struct WorldPosition *position) {
   if (z < 0)
     z += 0x1fffff;
   z = z >> 21 & 31;
-  return gWorldMapBlocks[x + z * 32].place;
+  return ((struct WorldMapBlocks *)gCellPictures)->blocks[x + z * 32].place;
 }
 
 /// Returns the world map's collision value (1-15) at position: from the upper

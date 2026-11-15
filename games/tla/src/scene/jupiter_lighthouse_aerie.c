@@ -128,15 +128,14 @@ void CrackedTile_Fall(struct CellTarget *work, struct CellTargetEntry *entry);
 void CrackedTile_DropIn(void);
 
 struct BeamSpark;
-struct BeamSprite;
 struct FieldEffect;
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 void FieldCamera_WaitForArrival(void);
 extern u16 gPaletteCycleUnlitPalette[];
 extern u16 gPaletteCycleUnlitColors[];
-void Import_EffectSpriteDraw(struct BeamSprite *sprite);
-void EffectSprite_DrawAtWorldPosition(struct BeamSprite *sprite,
+void Import_EffectSpriteDraw(struct EffectSprite *sprite);
+void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       struct BeamSpark *spark);
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 
@@ -590,9 +589,9 @@ void JupiterLighthouse_StopBeamFlicker(struct Actor *object) {
 
 struct BeamWork {
   u8 tiles[0x200];
-  struct BeamSprite sprites[32];
+  struct EffectSprite sprites[32];
   struct BeamSpark sparks[32];
-  struct BeamSprite large;
+  struct EffectSprite large;
   u8 unkaa8[0x1c];
   s32 from[3];
   s32 to[3];
@@ -601,8 +600,8 @@ struct BeamWork {
   s32 pointB[3];
   s16 step;
   s16 frame;
-  s16 largeEntry;
-  u16 tile;
+  u16 largeTile;
+  u16 smallTile;
   s8 duration;
   s8 loop;
   s8 still;
@@ -624,8 +623,8 @@ void JupiterLighthouse_UpdateBeam(void) {
   s32 scale;
   s32 *pos;
   struct BeamSpark *spark;
-  struct BeamSprite *sprite;
-  struct BeamSprite *large;
+  struct EffectSprite *sprite;
+  struct EffectSprite *large;
   s32 i;
 
   switch (work->step) {
@@ -737,7 +736,7 @@ void JupiterLighthouse_UpdateBeam(void) {
   pos[2] = work->carried[2];
   Camera_WorldToScreen(pos);
   large->x = pos[0];
-  large->z = pos[2];
+  large->y = pos[2];
   Import_EffectSpriteDraw(large);
   for (i = 0, spark = work->sparks, sprite = work->sprites; i <= 7;
        i++, sprite++, spark++) {
@@ -761,7 +760,7 @@ void JupiterLighthouse_UpdateBeam(void) {
       }
     }
     if (spark->age <= 15) {
-      sprite->tile = work->tile + (spark->age & 3) * 2;
+      sprite->oam.index = work->smallTile + (spark->age & 3) * 2;
       EffectSprite_DrawAtWorldPosition(sprite, spark);
       spark->position[1] -= spark->drift;
     }
@@ -773,39 +772,11 @@ void JupiterLighthouse_UpdateBeam(void) {
 }
 #undef LERP
 
-/* VIEW(s17a8): tag struct BeamWork as struct BeamWork__s17a8;
- * games/tla/src/scene/jupiter_lighthouse_aerie/s0d08 has another definition;
- * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_aerie.c:845: structure has no
- * member named `smallTile'. */
-struct BeamWork__s17a8 {
-  u8 tiles[0x200];
-  struct EffectSprite sprites[32];
-  struct BeamSpark sparks[32];
-  struct EffectSprite large;
-  u8 unkaa8[0x1c];
-  s32 from[3];
-  s32 to[3];
-  s32 carried[3];
-  s32 pointA[3];
-  s32 pointB[3];
-  s16 step;
-  s16 frame;
-  u16 largeTile;
-  u16 smallTile;
-  u8 duration;
-  u8 loop;
-  u8 still;
-  u8 side;
-  struct Actor *first;
-  struct Actor *second;
-};
-
 void Actor_StartIdle(struct Actor *object);
 
 void JupiterLighthouse_StartBeam(s32 a, s32 b, s32 side) {
-  struct BeamWork__s17a8 *work =
-      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct BeamWork__s17a8));
+  struct BeamWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct BeamWork));
   struct Actor *carrier = gFieldWork->camera;
   struct EffectSprite *sprite;
   struct EffectSprite *large;

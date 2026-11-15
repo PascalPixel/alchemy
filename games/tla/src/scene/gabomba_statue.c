@@ -243,12 +243,9 @@ s32 GabombaStatue_FlashCog(struct Actor *actor) {
   return 1;
 }
 
-/* VIEW(gabomba_statue): tag struct Orbiter as struct Orbiter__gabomba_statue;
- * scene/scene.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:216: structure has no member named
- * `phase'. */
-struct Orbiter__gabomba_statue {
+/// An actor as this scene's cogs, teeth, rope posts and charges use it: the
+/// scene's own bytes from phase on.
+struct GabombaActor {
   u8 unk00[6];
   u16 facing;
   s32 x;
@@ -256,9 +253,13 @@ struct Orbiter__gabomba_statue {
   s32 z;
   u8 unk14[15];
   u8 priorityFlags;
-  u8 unk24[62];
+  u8 unk24[44];
+  void **animation;
+  u8 kind;
+  u8 motionFlags;
+  u8 unk56[12];
   u8 phase;
-  u8 unk63;
+  u8 slot;
   s16 centerX;
   s16 centerZ;
   void *link;
@@ -276,8 +277,8 @@ enum {
 extern s32 gGabombaStatue_CogDirection;
 s32 __divsi3(s32 numerator, s32 denominator);
 
-void GabombaStatue_GetToothPosition(struct Orbiter__gabomba_statue *actor,
-                                    s32 *x, s32 *z) {
+void GabombaStatue_GetToothPosition(struct GabombaActor *actor, s32 *x,
+                                    s32 *z) {
   s32 position[3];
   s32 angle = actor->phase * TRIG_TURN / COG_TOOTH_STEPS;
   s32 turn;
@@ -292,7 +293,7 @@ void GabombaStatue_GetToothPosition(struct Orbiter__gabomba_statue *actor,
 
 /// A cog tooth's update: it turns about the cog's centre by the cogs'
 /// direction.
-s32 GabombaStatue_TurnTooth(struct Orbiter__gabomba_statue *actor) {
+s32 GabombaStatue_TurnTooth(struct GabombaActor *actor) {
   u8 *phase = &actor->phase;
   s32 angle = *phase * TRIG_TURN / COG_TOOTH_STEPS;
   s32 next;
@@ -396,39 +397,14 @@ const u8 *Scene_GetActorPlacements(void) {
 #undef REG_BLDALPHA
 #undef OBJECT_BYTE
 
-/* VIEW(find_near): tag struct Orbiter as struct Orbiter__find_near;
- * gabomba_statue.c has another definition; tried with the definition the rest
- * of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/gabomba_statue.c:357: structure has no member named
- * `phase'. */
-struct Orbiter__find_near {
-  u8 unk00[6];
-  u16 facing;
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[15];
-  u8 priorityFlags;
-  u8 unk24[44];
-  void **animation;
-  u8 kind;
-  u8 motionFlags;
-  u8 unk56[12];
-  u8 phase;
-  u8 slot;
-  s16 centerX;
-  s16 centerZ;
-  struct Orbiter__find_near *link;
-};
-
 extern s8 gGabombaStatue_RopeStopSteps[];
 
 #define DIFF_WITHIN(a, b, limit)                                               \
   ((a) - (b) >= 0 ? (a) - (b) <= (limit) : (b) - (a) <= (limit))
 
 void GabombaStatue_LashRope(void) {
-  struct Orbiter__find_near *actor =
-      ((struct Orbiter__find_near *)Actor_Get(ACTOR_FIRST_ROPE_POST_B));
+  struct GabombaActor *actor =
+      ((struct GabombaActor *)Actor_Get(ACTOR_FIRST_ROPE_POST_B));
   s32 direction;
   s32 i;
 
@@ -445,13 +421,12 @@ void GabombaStatue_LashRope(void) {
   }
 }
 
-struct Orbiter__find_near *
-GabombaStatue_FindCogUnder(struct Orbiter__find_near *origin, s32 id) {
+struct GabombaActor *GabombaStatue_FindCogUnder(struct GabombaActor *origin,
+                                                s32 id) {
   s32 i;
 
   for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
-    struct Orbiter__find_near *object =
-        ((struct Orbiter__find_near *)Actor_Get(i));
+    struct GabombaActor *object = ((struct GabombaActor *)Actor_Get(i));
 
     if (object != NULL && object->kind == 1 && object->animation[10] != NULL &&
         *(s16 *)object->animation[10] == id) {
@@ -465,8 +440,8 @@ GabombaStatue_FindCogUnder(struct Orbiter__find_near *origin, s32 id) {
 
 /// As GabombaStatue_FindCogUnder, but around the point 16 pixels ahead of
 /// origin in its facing.
-struct Orbiter__find_near *
-GabombaStatue_FindCogAhead(struct Orbiter__find_near *origin, s32 id) {
+struct GabombaActor *GabombaStatue_FindCogAhead(struct GabombaActor *origin,
+                                                s32 id) {
   s32 position[3];
   s32 i;
 
@@ -474,8 +449,7 @@ GabombaStatue_FindCogAhead(struct Orbiter__find_near *origin, s32 id) {
   position[2] = origin->z;
   FieldVector_AddPolarOffset(16, origin->facing, position);
   for (i = ACTOR_FIRST_PLACED; i < FIELD_TREASURE_ACTOR; i++) {
-    struct Orbiter__find_near *object =
-        ((struct Orbiter__find_near *)Actor_Get(i));
+    struct GabombaActor *object = ((struct GabombaActor *)Actor_Get(i));
 
     if (object != NULL && object->kind == 1 && object->animation[10] != NULL &&
         *(s16 *)object->animation[10] == id) {
@@ -1518,14 +1492,12 @@ void GabombaStatue_TurnCogs(s32 direction) {
 
 extern s32 gGabombaStatue_ChargeScript[];
 
-void Actor_SetSpriteColorMode(struct Orbiter__find_near *object, s32 value);
+void Actor_SetSpriteColorMode(struct GabombaActor *object, s32 value);
 
 /// Starts a charge from its cell toward the target at the angle given.
 void GabombaStatue_SendCharge(s32 slot, s32 value, s32 targetId, s32 angle) {
-  struct Orbiter__find_near *object =
-      ((struct Orbiter__find_near *)Actor_Get(slot));
-  struct Orbiter__find_near *target =
-      ((struct Orbiter__find_near *)Actor_Get(targetId));
+  struct GabombaActor *object = ((struct GabombaActor *)Actor_Get(slot));
+  struct GabombaActor *target = ((struct GabombaActor *)Actor_Get(targetId));
 
   Actor_SelectAnimation(object, 0);
   Actor_StartScript(object, gGabombaStatue_ChargeScript);

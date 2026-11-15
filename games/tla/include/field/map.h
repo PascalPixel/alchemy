@@ -30,6 +30,12 @@ struct WorldMapBlock {
                        ///< (WorldMap_GetBattleEnvironment)
 };
 
+/// The world map's blocks, a row of 32 for each z, in the cell picture buffer
+/// (gCellPictures) while the world map is shown.
+struct WorldMapBlocks {
+  struct WorldMapBlock blocks[32 * 32];
+};
+
 /// WorldMapBlock.place where the world map has no block: nothing may go there.
 #define WORLD_MAP_NO_PLACE 255
 

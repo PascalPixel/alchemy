@@ -411,9 +411,7 @@ won_scripted:
         Sound_PlayFar(MUS_VICTORY);
         if (battle->defeatState <= DEFEAT_SEVERAL) {
           BattleUnit_SetFar(FIRST_ENEMY_UNIT,
-                            ((struct BattleKindsView *)battle)
-                                ->enemyKinds[battle->firstDefeated],
-                            26);
+                            battle->enemyKinds[battle->firstDefeated], 26);
           MessageArgument_ClearAllFar();
           MessageArgument_PushFar(FIRST_ENEMY_UNIT, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(battle->defeatState + (s32)MsgDowned);

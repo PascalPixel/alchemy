@@ -1898,19 +1898,13 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
 }
 #undef BOW_NEXT_PHASE
 
-/* VIEW(f0e2718): variable gSceneLocalState as struct TouchCopies
- * gTileCopies_RestoreState; system/ram_buffer.h has u8 gSceneLocalState[];
- * tried as the one declaration, the restore's address is shared with the copies
- * above and its loop moves (29 lines in tla-en). */
-extern struct TouchCopies gTileCopies_RestoreState __asm__("gSceneLocalState");
-
 /// Makes again each copy TileCopies_CopyTouchedCells recorded: copies the cell
 /// picture back and opens the cell on layer 2.
 void TileCopies_Restore(void) {
-  struct TouchCopies *base = &gTileCopies_RestoreState;
+  struct TouchCopies *base = &gTouchCopies;
   s32 i;
 
-  for (i = 0; i < gTileCopies_RestoreState.count; i++) {
+  for (i = 0; i < gTouchCopies.count; i++) {
     struct TouchCopy *entry = &base->copies[i];
 
     MapGrid_CopyCellPictureCellsRectFar(entry->toX, entry->toZ, 1, 1,

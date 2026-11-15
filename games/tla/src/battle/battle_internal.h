@@ -411,20 +411,4 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 /// party's for an enemy and the enemies' for a party member.
 #define TARGET_NONE_ENEMY PLACE_PARTY
 
-/* VIEW(battle_kinds): tag struct BattleWork as struct BattleKindsView;
- * battle/battle_work.h has u8 enemyKindBytes[12] where The Broken Seal has u16
- * enemyKinds[6]; tried as u16 enemyKinds[6], BattleParty_ChooseReserve moves:
- * 363 bytes in tla-en. */
-struct BattleKindsView {
-  s32 formation;
-  s16 spriteSlots[6];
-  u16 enemyKinds[6];      ///< the kinds of enemy in the formation
-  u32 nameLetterMasks[6]; ///< for each kind, the name letters already given
-  s8 lastNameLetter[6];   ///< for each kind, the last name letter given
-  u8 unusedAfterChannels[2];
-  u16 firstDefeated;
-  u16 defeatState;
-  u8 enemyKindCount; ///< kinds of enemy listed, at most 5
-};
-
 #endif

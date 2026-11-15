@@ -6,6 +6,8 @@
 #include "../field/actor_set_sprite_priority.c"
 
 #include "../field/field_effect_move.c"
+#include "field/actor_view.h"
+#include "field/field.h"
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation

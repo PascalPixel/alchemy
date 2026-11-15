@@ -68872,7 +68872,7 @@ msgstr ""
 "limitless power... So why can't\n"
 "I call up a simple storm?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoldenSunWhoAreYou"
 msgid "12100"
 msgstr "Wh-Who are you?{end_wait}"
 

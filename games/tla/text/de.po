@@ -75223,7 +75223,7 @@ msgstr ""
 "Warum will mir dann der\n"
 "Sturm nicht gehorchen?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGoldenSunWhoAreYou"
 msgid "12594"
 msgstr "W-Wer bist du?{end_wait}"
 

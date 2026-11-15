@@ -123,7 +123,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   stripEnd = 0x3a08;
   for (frame = 0; frame != AZUL_FRAMES; frame++) {
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 15 && frame <= 185) {
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       EFFECT_PRESENT_CANVAS(work);
       frame = 186;
       REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -683,7 +684,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     }
     if (frame == 186) {
       BattleBackground_LoadFar(1, battle->background, 24);
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
       for (i = 0; i != args->targetCount; i++) {
         EFFECT_STRIKE_TARGET(args, i, 16, KNOCKBACK_HURL);

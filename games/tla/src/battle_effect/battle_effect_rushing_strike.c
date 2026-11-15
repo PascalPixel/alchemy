@@ -384,7 +384,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     }
 
     if (frame == 59) {
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame == 60) {
       u16 *color;
@@ -430,7 +431,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     }
     if (frame == 134) {
       Sound_PlayFar(SE_CRASH);
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame > 59) {
       s32 scroll = gBgScroll[1].y;
@@ -473,7 +475,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     if ((u32)(frame - 152) <= 15) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(32));
       if (frame > 162) {
-        work->transferValue = CANVAS_FILL_WORD(63);
+        work->transferValue = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
       }
       Palette_BrightenBgEntries(2, 2, 2);
     }

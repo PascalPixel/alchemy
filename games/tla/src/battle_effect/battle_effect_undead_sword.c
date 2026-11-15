@@ -158,6 +158,9 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
 
 #define PLUME_EDGE_FRAMES 80
 
+/// Where BillowTexture is decoded in the effect's pictures.
+#define PLUME_EDGE_BILLOW 0x4710
+
 /// Plume Edge: the user dashes at the target, which a fan of white flashes
 /// throws back; a pillar of light scrolls up through it for half a second and
 /// then bursts into 256 sparks with a white flash of the whole canvas.
@@ -190,8 +193,8 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(args->targets[0])->object;
   pillarY = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4710, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA,
+                             work->sheet + PLUME_EDGE_BILLOW, 0, 0);
   Iwram_CopyWordsEntry(
       (void *)BG_PLTT,
       Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet), 128);
@@ -248,7 +251,8 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
                                POSE_DAMAGE, 0, 16);
       work->shakeFrames = 8;
       EFFECT_SHOW_DAMAGE(SE_CRASH);
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
 
     // The target is pushed down 2 pixels a frame for the first 24 frames,
@@ -371,6 +375,15 @@ struct WaterTriangle {
 /// The water's mesh as triangles, two to a quad.
 #define WATER_MESH ((struct WaterTriangle *)(Ram_MapCellBuffer + 0x4000))
 
+/// Where SwirlTexture is decoded in the effect's pictures.
+#define WATER_SHEET_SWIRL 0x2000
+
+/// Where SmokeSheet is decoded in the effect's pictures.
+#define WATER_SHEET_SMOKE_PUFFS 0x3000
+
+/// Where the 32x32 picture at the sheet's start is mirrored into a 64x64 one.
+#define WATER_SHEET_MIRRORED 0x400
+
 /// The body of Dreamtide (mode 0) and Watery Grave (mode 1): a sheet of
 /// water (a 16 by 8 grid of vertices, its mesh built here) rolls in under
 /// the targets in waves while the camera turns; Dreamtide strikes the first
@@ -413,16 +426,18 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
   savedYaw = (s16)camera->yaw;
   Resource_LoadAndDecompress((s32)&ResourceId_CrackedTextureSheet, work->sheet,
                              1, 1);
-  Picture_MirrorIntoQuadrants(work->sheet, work->sheet + 0x400, 32, 32);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0B4, work->sheet + 0x2000, 0,
-                             0);
+  Picture_MirrorIntoQuadrants(work->sheet, work->sheet + WATER_SHEET_MIRRORED,
+                              32, 32);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0B4,
+                             work->sheet + WATER_SHEET_SWIRL, 0, 0);
   if (mode == WATER_SHEET_WATERY_GRAVE) {
     u8 *pixel;
 
     /* FAKEMATCH(temporary): pixel set inside the call that takes the sheet's
      * address. */
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
-                               pixel = work->sheet + 0x3000, 1, 0);
+                               pixel = work->sheet + WATER_SHEET_SMOKE_PUFFS, 1,
+                               0);
     for (i = 0; i != 0x1b00; i++, pixel++) {
       if (*pixel != 0) {
         *pixel += 8;
@@ -614,7 +629,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
 
     texture.logWidth = 6;
     texture.logHeight = 6;
-    texture.pixels = work->sheet + 0x400;
+    texture.pixels = work->sheet + WATER_SHEET_MIRRORED;
     Transform_Reset();
     if (mode != WATER_SHEET_DREAMTIDE) {
       Transform_ApplyPitch(4000);
@@ -675,7 +690,8 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
           y = Q_16_16_UPPER_HALF(position->y);
           position->y = y + 64;
           blit[0](canvas,
-                  work->sheet + 0x3000 + picture * PICTURE_BYTES(SMOKE_PUFF),
+                  work->sheet + WATER_SHEET_SMOKE_PUFFS +
+                      picture * PICTURE_BYTES(SMOKE_PUFF),
                   x + 52, y + 40, SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           BattleEffectKernels_IntegrateVector3(step, 62, -px(1) / 8);
         }
@@ -698,7 +714,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
         if (t < 0) {
           continue;
         }
-        texture.pixels = work->sheet + 0x2000;
+        texture.pixels = work->sheet + WATER_SHEET_SWIRL;
         if (t > 7) {
           shade = (8 - t) * 4;
         }
@@ -1015,6 +1031,9 @@ struct RenderModel__undead_sword {
 /// Where CrystalBitmapSheet is decoded in the effect's pictures.
 #define DIAMOND_BERG_CRYSTAL_BITMAP_PICTURES 20000
 
+/// Where FireRingTexture is decoded in the effect's pictures.
+#define DIAMOND_BERG_FIRE_RING 0x3080
+
 /// An iceberg drops onto the target and is driven down in eight blows (every
 /// eighth frame from 31), each throwing eight shards; the last shatters it
 /// into a burst of light. Ripples of frost spread over the ground beneath.
@@ -1055,8 +1074,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, cells, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, cells + 0x1000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet + 0x3080, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+                             work->sheet + DIAMOND_BERG_FIRE_RING, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // DEAD: frame 0 sets top to -104 before anything reads it.
   top = -128;
@@ -1101,7 +1120,8 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
           } else {
             BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
             EFFECT_SHOW_DAMAGE(SE_CLATTER);
-            Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+            Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                                 CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           }
           BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, 0, 6);
@@ -1230,7 +1250,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
       // A flash at each blow, at the target.
       texture.logWidth = 7;
       texture.logHeight = 7;
-      texture.pixels = work->sheet + 0x3080;
+      texture.pixels = work->sheet + DIAMOND_BERG_FIRE_RING;
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->scrollU = 0;
       model->scrollV = 0;

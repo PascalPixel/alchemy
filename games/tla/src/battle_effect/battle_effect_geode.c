@@ -15,6 +15,9 @@ struct MeshTriangle;
 
 #define GEODE_FRAMES 74
 
+/// Where BillowTexture is decoded in the effect's pictures.
+#define GEODE_BILLOW 0x4710
+
 /// The Venus Djinni tears up the battlefield itself: the screen is copied
 /// into a texture and peeled up into a spinning dome over the target as the
 /// palette fades, the Djinni flies across to it, and at frame 48 the dome
@@ -103,8 +106,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + GEODE_VENUS_DJINN_SMALL_PICTURES, 1,
                              1);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4710, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA,
+                             work->sheet + GEODE_BILLOW, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        SHEET_PALETTE_BYTES);
@@ -302,7 +305,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
     }
     if (frame == 48) {
       Sound_PlayFar(SE_CRASH);
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame == 64) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -315,7 +319,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       rings = Render_AllocateModelList(1);
       dust.logWidth = 6;
       dust.logHeight = 6;
-      dust.pixels = work->sheet + 0x4710;
+      dust.pixels = work->sheet + GEODE_BILLOW;
       rings->kind = 7;
       rings->texture = &dust;
       rings->mesh = gBattleEffect_RingMesh;

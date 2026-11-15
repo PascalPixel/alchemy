@@ -16,6 +16,15 @@
 /// Where TornadoSheet is decoded in the effect's pictures.
 #define ECLIPSE_TORNADO_PICTURES 0x2000
 
+/// Where GlowBandTextureA is decoded in the effect's pictures.
+#define ECLIPSE_GLOW_BAND_A 0x4000
+
+/// Where GlowBandTextureB is decoded in the effect's pictures.
+#define ECLIPSE_GLOW_BAND_B 0x3840
+
+/// Where FlameBandTexture is decoded in the effect's pictures.
+#define ECLIPSE_FLAME_BAND 0x400
+
 /// Eclipse: after a flash the golden dragon (thirty-two sprites, its head one
 /// of them) looms over a blue sky while shafts of light fall about it; it
 /// breathes a blast of light that whites out the field, and the blast lands
@@ -278,7 +287,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
                                      work->sheet + ECLIPSE_TORNADO_PICTURES, 1,
                                      0);
           Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
-                                     work->sheet + 0x4000, 0, 0);
+                                     work->sheet + ECLIPSE_GLOW_BAND_A, 0, 0);
         }
         verts = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
@@ -286,7 +295,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         model->shade = modelShade;
         texture.logWidth = 5;
         texture.logHeight = 2;
-        texture.pixels = work->sheet + 0x4000;
+        texture.pixels = work->sheet + ECLIPSE_GLOW_BAND_A;
         model->kind = 6;
         model->mesh = gBattleEffect_SmallSquareMesh;
         model->texture = &texture;
@@ -421,12 +430,13 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   REG_DISPCNT = EFFECT_DISPCNT;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
-  Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+  Iwram_FillWords(canvas, CANVAS_BYTES,
+                  CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   args->targets[args->targetCount] = 0xff;
   BattleActor_SpawnObjectsForListFar(args->targets, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0CA, work->sheet + 0x3840, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0CA,
+                             work->sheet + ECLIPSE_GLOW_BAND_B, 0, 0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   for (i = 0; i != 120; i++) {
     s32 v = i / 2;
@@ -450,7 +460,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
     if (frame == 18) {
       work->shakeFrames = 90;
       Sound_PlayFar(SE_CRASH);
-      Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWords(canvas, CANVAS_BYTES,
+                      CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       for (i = 0; i != args->targetCount; i++) {
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, i, 4);
@@ -465,7 +476,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       model = Render_AllocateModelList(1);
       breathTexture.logWidth = 5;
       breathTexture.logHeight = 2;
-      breathTexture.pixels = work->sheet + 0x3840;
+      breathTexture.pixels = work->sheet + ECLIPSE_GLOW_BAND_B;
       model->mesh = gBattleEffect_SmallSquareMesh;
       model->shade = fade;
       model->texture = &breathTexture;
@@ -522,10 +533,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet + 0x400, 0,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0CA, work->sheet + 0x3840, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1,
+                             work->sheet + ECLIPSE_FLAME_BAND, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0CA,
+                             work->sheet + ECLIPSE_GLOW_BAND_B, 0, 0);
   {
     s32 *v = &FLASHES[0].variant;
     s32 c = -1;
@@ -613,7 +624,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         }
         landingTexture.logWidth = 5;
         landingTexture.logHeight = 2;
-        landingTexture.pixels = work->sheet + 0x3840;
+        landingTexture.pixels = work->sheet + ECLIPSE_GLOW_BAND_B;
         model->mesh = gBattleEffect_SmallSquareMesh;
         model->shade = shade;
         model->vertices = gMapGridCellBuffer;
@@ -679,7 +690,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       }
       landingTexture.logHeight = 5;
       landingTexture.logWidth = 7;
-      landingTexture.pixels = work->sheet + 0x400;
+      landingTexture.pixels = work->sheet + ECLIPSE_FLAME_BAND;
       model->texture = &landingTexture;
       model->kind = 7;
       model->mesh = bandMesh;
@@ -747,6 +758,9 @@ void BattleEffect_ReservedNoOpB(void) {}
 
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
+/// Where GlowBandTextureA is decoded in the effect's pictures.
+#define FORM_CHANGE_GLOW_BAND 0x3000
+
 /// A glow on the canvas map widens over the user for 56 frames while 16
 /// spinning rings rise around it, four abreast. From frame 48 the screen
 /// shakes, flashes burst upward and four crystals grow out of the ground one
@@ -774,8 +788,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x3000, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
+                             work->sheet + FORM_CHANGE_GLOW_BAND, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, Data_02012000, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
@@ -931,7 +945,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
       bias = 0;
       model->shade = bias;
       texture.logHeight = 2;
-      texture.pixels = work->sheet + 0x3000;
+      texture.pixels = work->sheet + FORM_CHANGE_GLOW_BAND;
       model->kind = 7;
       model->texture = &texture;
       model->mesh = gBattleEffect_SmallSquareMesh;

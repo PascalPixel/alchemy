@@ -312,7 +312,7 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
       } else if ((u32)(frame - 256) <= 15) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
         if (frame > 269)
-          work->transferValue = CANVAS_FILL_WORD(63);
+          work->transferValue = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
         Palette_BrightenBgEntries(2, 2, 2);
       }
 
@@ -992,7 +992,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         frame = 176;
       } else if ((u32)(frame - 177) <= 268) {
         REG_BLDALPHA = EFFECT_BLEND_ADD;
-        Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        Iwram_FillWords(canvas, CANVAS_BYTES,
+                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         EFFECT_PRESENT_CANVAS(work);
         if (frame <= 386) {
           for (i = 0; i != 16; i++)
@@ -1005,7 +1006,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         }
         frame = 446;
       } else {
-        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         EFFECT_PRESENT_CANVAS(work);
         break;
       }
@@ -1145,7 +1147,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       if (frame == 175) {
         REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                      BGCNT_SCREEN_BASE(7);
-        Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        Iwram_FillWords(canvas, CANVAS_BYTES,
+                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         Iwram_FillWords(FADE_PLTT, 0x100, 0x7fff7fff);
       }
     }
@@ -1155,7 +1158,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       u8 *colors;
       struct VramCacheEntry *table;
 
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       EFFECT_PRESENT_CANVAS(work);
       battle[0x867] = 1;
       BattleBackground_LoadFar(1, (s32)&ResourceId_SunsetBackdrop, 0);
@@ -1573,7 +1577,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 
     // The fountain: the second backdrop, the motes and the light shafts.
     if (frame == 446) {
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Transform_Reset();
       BattleBackground_LoadFar(1, (s32)&ResourceId_StarfieldFlareBackdrop, 0);
       off = 0x302;
@@ -1845,7 +1850,8 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
     }
     if ((u32)(frame - 755) <= 2 || frame == 781)
-      Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWords(canvas, CANVAS_BYTES,
+                      CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     if (frame == 754) {
       s32 white;
       BattleEffect_BuildSteepShadeRampWave(work->sheet + 0x5810, 16, 32,

@@ -21,6 +21,18 @@ extern const struct Scale gTrident_UnitScale;
 #define TRIDENT_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x2964))
 #define TRIDENT_SPARK_COUNT 128
 
+/// Where JaggedStreakSheet is decoded in the effect's pictures.
+#define TRIDENT_JAGGED_STREAKS 0xc56
+
+/// Where FlameZigzagTexture is decoded in the map cell buffer.
+#define TRIDENT_FLAME_ZIGZAG 0x1000
+
+/// Where BillowTexture is decoded in the map cell buffer.
+#define TRIDENT_BILLOW 0x1400
+
+/// Where FlashBurstSheet is decoded in the map cell buffer.
+#define TRIDENT_FLASH_BURST 0x5000
+
 /// Poseidon (four objects) rises behind the targets as rings of foam
 /// spread across the water; seven spinning tridents fly in from frame 18,
 /// spray bursts up around them, and at 64 the waters strike every target.
@@ -74,8 +86,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   // offset first holds the cell buffer's address, for the FlashBurst load.
   offset = (s32)gMapGridCellBuffer;
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0F8, work->sheet + 0xc56, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0F8,
+                             work->sheet + TRIDENT_JAGGED_STREAKS, 0, 0);
   orange = orangeBase + 4;
   size = 2;
   /* FAKEMATCH(dead): a test on the blitter. */
@@ -86,7 +98,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
     palette = paletteBase + 4;
   }
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             (u8 *)offset + 0x5000, 1, 0);
+                             (u8 *)offset + TRIDENT_FLASH_BURST, 1, 0);
   offset = 0x2400;
   // Twelve shaded droplets, 2 to 24 wide.
   for (i = 0; i != 12; i++) {
@@ -97,9 +109,9 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, (u8 *)cells, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FA,
-                             Ram_MapCellBuffer + 0x1000, 0, 0);
+                             Ram_MapCellBuffer + TRIDENT_FLAME_ZIGZAG, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA,
-                             Ram_MapCellBuffer + 0x1400, 0, 0);
+                             Ram_MapCellBuffer + TRIDENT_BILLOW, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_VioletPaletteF),
@@ -318,7 +330,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           } else {
             model->shade = -16;
           }
-          texture.pixels = work->sheet + (x << 12) + 0xc56;
+          texture.pixels = work->sheet + (x << 12) + TRIDENT_JAGGED_STREAKS;
           Transform_Reset();
           Transform_ApplyTranslation(px(centerX - 64), px(32), 0);
           Transform_ApplyRoll(spinner->z);
@@ -373,7 +385,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
       for (i = 0, drawn = work->particles; i != 32; i++, drawn++) {
         if ((u32)drawn->variant <= 23) {
           blit[0](canvas,
-                  Ram_MapCellBuffer + 0x5000 + ((drawn->variant / 4) << 11),
+                  Ram_MapCellBuffer + TRIDENT_FLASH_BURST +
+                      ((drawn->variant / 4) << 11),
                   Q_16_16_UPPER_HALF(drawn->x) - 16,
                   Q_16_16_UPPER_HALF(drawn->y) - 32, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
@@ -450,6 +463,16 @@ void BattleEffect_RunPlanetary(struct BattleEffectParams *args) {
 #define LEAP_FRAMES 88
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x6000))
 
+/// Where FlameballSheet (Planet Diver) or ClawSlashSheet (Planetary) is decoded
+/// in the effect's pictures.
+#define LEAPING_STRIKE_PICTURES 0x3000
+
+/// Where BillowTexture is decoded in the effect's pictures.
+#define LEAPING_STRIKE_BILLOW 0x4000
+
+/// Where FlameBandTexture is decoded in the effect's pictures.
+#define LEAPING_STRIKE_FLAME_BAND 0x5000
+
 /// The caster flashes and sixteen flames ring it (frames 2-15), leaps up at
 /// frame 4 and comes down on the target at frame 16, sliding to it over the
 /// frames after; on landing 256 sparks burst from it. For Planet Diver the
@@ -485,14 +508,14 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
                              0);
   if (mode == LEAPING_STRIKE_PLANET_DIVER) {
     Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet,
-                               work->sheet + 0x3000, 1, 0);
+                               work->sheet + LEAPING_STRIKE_PICTURES, 1, 0);
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
-                               work->sheet + 0x3000, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4000,
-                               0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet + 0x5000,
-                               0, 0);
+                               work->sheet + LEAPING_STRIKE_PICTURES, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0DA,
+                               work->sheet + LEAPING_STRIKE_BILLOW, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0C1,
+                               work->sheet + LEAPING_STRIKE_FLAME_BAND, 0, 0);
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
@@ -629,8 +652,8 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
       if (mode == LEAPING_STRIKE_PLANET_DIVER) {
         // The fireball over the caster while it is in the air.
         if (caster->y > 0)
-          draw[0](canvas, work->sheet + 0x3000, pos.x - 20, pos.y - 52,
-                  FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
+          draw[0](canvas, work->sheet + LEAPING_STRIKE_PICTURES, pos.x - 20,
+                  pos.y - 52, FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
       } else {
         struct RenderModel *model;
         void *projected;
@@ -648,7 +671,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
         kind = 6;
         texture.logWidth = 6;
         texture.logHeight = 6;
-        texture.pixels = work->sheet + 0x3000;
+        texture.pixels = work->sheet + LEAPING_STRIKE_PICTURES;
         model->kind = kind;
         model->mesh = gBattleEffect_SquareMesh;
         model->texture = &texture;
@@ -672,7 +695,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
         // Three rings, each from its own frame, spinning as they spread.
         texture.logWidth = 6;
         texture.logHeight = 6;
-        texture.pixels = work->sheet + 0x4000;
+        texture.pixels = work->sheet + LEAPING_STRIKE_BILLOW;
         model->kind = 7;
         model->mesh = gBattleEffect_RingMesh;
         for (i = 0; i != 3; i++) {
@@ -710,7 +733,7 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
         // Two pillars where the caster landed, from their own frames.
         model->scrollV = 0;
         model->mesh = gBattleEffect_CylinderMesh;
-        texture.pixels = work->sheet + 0x5000;
+        texture.pixels = work->sheet + LEAPING_STRIKE_FLAME_BAND;
         texture.logWidth = 7;
         texture.logHeight = 7;
         for (i = 0; i != 2; i++) {

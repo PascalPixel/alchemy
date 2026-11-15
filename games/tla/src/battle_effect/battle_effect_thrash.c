@@ -215,7 +215,8 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
 
     // The flood: four frames of the canvas filled with colour 0x3f.
     if ((u32)(frame - FLOOD_FRAME) <= 3)
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     if (frame == RESULTS_FRAME)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == HIT_FRAME) {

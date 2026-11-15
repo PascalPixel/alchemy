@@ -46,6 +46,9 @@
 #define JUDGMENT_EXPLOSION_PICTURE_BYTES PICTURE_BYTES(JUDGMENT_EXPLOSION)
 #define JUDGMENT_WAVE_SIZE 120 ///< the wave picture is 120x120
 
+/// Where FireRingTexture is decoded in the map cell buffer.
+#define JUDGMENT_FIRE_RING 0x4000
+
 /// The battle wipes away to a violet sky where Judgment flies forward while
 /// motes gather into it; it bursts in a flash, and the blast falls on the land
 /// below and spreads in rings of light.
@@ -116,7 +119,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
                              work->sheet + JUDGMENT_TORNADO_PICTURES, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
-                             Ram_MapCellBuffer + 0x4000, 0, 0);
+                             Ram_MapCellBuffer + JUDGMENT_FIRE_RING, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   pal = Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet);
   Iwram_CopyWordsEntry((void *)BG_PLTT, pal, SHEET_PALETTE_BYTES);
@@ -341,7 +344,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       s = (frame << 13) - 0x11e000;
       texture.logWidth = 7;
       texture.logHeight = 7;
-      texture.pixels = Ram_MapCellBuffer + 0x4000;
+      texture.pixels = Ram_MapCellBuffer + JUDGMENT_FIRE_RING;
       model->texture = &texture;
       model->kind = 7;
       model->mesh = gBattleEffect_LargeSquareMesh;
@@ -454,7 +457,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       }
     }
     if (frame == 318) {
-      IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
+                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame == 319) {
       Graphics_LoadGreyRamp();
@@ -630,7 +634,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       s = (frame << 13) - 0x8f800;
       glare.logWidth = 7;
       glare.logHeight = 7;
-      glare.pixels = Ram_MapCellBuffer + 0x4000;
+      glare.pixels = Ram_MapCellBuffer + JUDGMENT_FIRE_RING;
       shade = 0;
       model->kind = 7;
       model->texture = &glare;

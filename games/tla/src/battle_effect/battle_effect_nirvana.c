@@ -524,6 +524,9 @@ struct ProjectedPoint {
 
 #define SERAC_FRAMES 88
 
+/// Where CloudPuffSheet is decoded in the effect's pictures.
+#define SERAC_CLOUD_PUFFS 0x400
+
 /// The Mercury Djinni drops onto the target, dust bursting where it lands;
 /// a spire of ice (a cone of 8 rings of 8 vertices, its mesh built on the
 /// first frame) grows up around the target in rings of mist while the
@@ -562,8 +565,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   mistSheet = gData_02014000;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, mistSheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0CF, work->sheet + 0x400, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0CF,
+                             work->sheet + SERAC_CLOUD_PUFFS, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
                              work->sheet + SERAC_MERCURY_DJINN_PICTURES, 1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -727,8 +730,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
           BattleEffectKernels_IntegrateVector3(p, 60, px(1) / 8);
           x = point.x - 16;
           y = point.y - 16;
-          blitters[0](canvas, work->sheet + 0x400 + (picture << 10), x, y, 32,
-                      32);
+          blitters[0](canvas, work->sheet + SERAC_CLOUD_PUFFS + (picture << 10),
+                      x, y, 32, 32);
         }
       }
       // The Djinni falls.
@@ -803,7 +806,8 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
 
       if (frame > 63) {
         if (frame == 64) {
-          Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+          Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                               CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
             struct Particle *p = &work->particles[i];
             s32 angle = (i & 7) << 13;

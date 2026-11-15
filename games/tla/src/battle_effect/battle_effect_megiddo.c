@@ -27,6 +27,15 @@ struct RenderModel__megiddo {
 
 #define MEGIDDO_FRAMES 188
 
+/// Where FireRingTexture is decoded in the map cell buffer.
+#define MEGIDDO_FIRE_RING 0x4000
+
+/// Where GlowBandTextureA is decoded in the effect's pictures.
+#define MEGIDDO_GLOW_BAND 0x800
+
+/// Where FireStripesTexture is decoded in the effect's pictures.
+#define MEGIDDO_FIRE_STRIPES 0x1000
+
 /// Megiddo: the caster rises in a column of light, a winged figure gathers
 /// above and dives in a storm of feathers and rings onto the target.
 ///
@@ -53,7 +62,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   s32 scale;
   u8 *transformed;
   u8 *strip;
-  u8 *scratchSheet;
+  u8 *fireRing;
   s32 i;
   s32 j;
   s32 m;
@@ -78,7 +87,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   ring = gMapGridCellBuffer;
   transformed = Ram_MapCellBuffer + 0x1000;
   strip = Ram_MapCellBuffer + 0x2000;
-  scratchSheet = Ram_MapCellBuffer + 0x4000;
+  fireRing = Ram_MapCellBuffer + MEGIDDO_FIRE_RING;
   BattleMotion_ApproachTargetFar(args->user, args->user, 150, px(5));
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -138,12 +147,12 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
-                                 Ram_MapCellBuffer + 0x4000, 0, 0);
+                                 Ram_MapCellBuffer + MEGIDDO_FIRE_RING, 0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, work->sheet, 0, 0);
-      Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x800,
-                                 0, 0);
+      Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
+                                 work->sheet + MEGIDDO_GLOW_BAND, 0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_FireStripesTexture,
-                                 work->sheet + 0x1000, 1, 1);
+                                 work->sheet + MEGIDDO_FIRE_STRIPES, 1, 1);
       Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
                                  work->sheet + MEGIDDO_DUST_BLOB_PICTURES, 1,
                                  0);
@@ -386,7 +395,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       asm("" : "+m"(*t));
       /* FAKEMATCH(dead): a once-only block. */
       do {
-        t->pixels = work->sheet + 0x1000 + ((frame / 2) % 5) * 0x400;
+        t->pixels =
+            work->sheet + MEGIDDO_FIRE_STRIPES + ((frame / 2) % 5) * 0x400;
       } while (0);
       model->mesh = strip;
       {
@@ -507,7 +517,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     model = Render_AllocateModelList(1);
     scratchTexture.logWidth = 7;
     scratchTexture.logHeight = 7;
-    scratchTexture.pixels = scratchSheet;
+    scratchTexture.pixels = fireRing;
     model->kind = 7;
     model->mesh = gBattleEffect_LargeSquareMesh;
     model->texture = &scratchTexture;

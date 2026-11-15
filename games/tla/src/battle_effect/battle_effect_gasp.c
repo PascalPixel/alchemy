@@ -40,6 +40,9 @@ struct StripQuad;
 /// Where CornerGlowSheet is decoded in the effect's pictures.
 #define GASP_FAMILY_CORNER_GLOW_PICTURES 0x4000
 
+/// Where FireRingTexture is decoded in the effect's pictures.
+#define GASP_FIRE_RING 0x3080
+
 /// The shared body of sixteen abilities' effects, named for the first (its
 /// wrappers are in rime.c): Gasp (mode 0), Reflux (2), Djinn Counter (3), Mold
 /// and Meld (4), Shine (5), Lull (6), Counter-rush (7), Demon Eye (8), Emu and
@@ -204,8 +207,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
 
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet + 0x3080,
-                               0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+                               work->sheet + GASP_FIRE_RING, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 0);
     for (i = 0, p = work->sheet; i != 0x1b00; i++, p++) {
       *p <<= 1;
@@ -844,7 +847,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
           texture.logHeight = 7;
           model->mesh = gBattleEffect_LargeSquareMesh;
           model->kind = 7;
-          texture.pixels = work->sheet + 0x3080;
+          texture.pixels = work->sheet + GASP_FIRE_RING;
           Transform_Reset();
           Transform_ApplyTranslation(px(ball->x / 2 - 64), px(ball->y - 48), 0);
           Transform_ApplyAxisScale(scale / 4, scale, scale / 2);
@@ -980,7 +983,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         EFFECT_SHOW_DAMAGE(SE_CLATTER);
         work->shakeFrames = 8;
         EFFECT_STRIKE_TARGET(args, 0, 12, KNOCKBACK_HURL);
-        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       }
       if (frame > 27) {
         struct Particle *q;
@@ -1110,7 +1114,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       if (frame == 8) {
         Sound_PlayFar(SE_POWER_UP);
         work->shakeFrames = 8;
-        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         for (i = 0; i != args->targetCount; i++)
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, i, 7);

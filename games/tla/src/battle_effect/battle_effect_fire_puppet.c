@@ -36,6 +36,9 @@ struct PuppetTarget {
 #define FIRE_PUPPET_FRAMES 103
 #define PUPPET_SEGMENTS 33
 
+/// Where GhostSkullTexture is decoded in the effect's pictures.
+#define FIRE_PUPPET_GHOST_SKULL 0x4000
+
 /// From the caster rises a flaming arm (33 segments of two vertices each, a
 /// scrolling textured strip) that reaches up and over to 1424 units, with a
 /// hand at its end; at frame 54 it strikes, hitting every target, and from
@@ -83,8 +86,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   work->particles[63].velocityY = target->unk1c;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0D3, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0F2, work->sheet + 0x4000, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0F2,
+                             work->sheet + FIRE_PUPPET_GHOST_SKULL, 0, 0);
   Iwram_CopyWordsEntry(
       (void *)BG_PLTT,
       Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet), 128);
@@ -106,7 +109,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
                                0, -1);
     }
     if (frame == 54) {
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Sound_PlayFar(SE_POWER_UP);
       EFFECT_SHOW_DAMAGE(SE_POWER_UP);
       work->shakeFrames = 8;
@@ -196,7 +200,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       model->vertices = projected;
       model->scrollU = 0;
       model->scrollV = 0;
-      texture.pixels = work->sheet + 0x4000;
+      texture.pixels = work->sheet + FIRE_PUPPET_GHOST_SKULL;
       model->shade = 0;
       Transform_ApplyTranslation(px(endX), px(endY), 0);
       Transform_ApplyRoll(22384 - (length << 5));

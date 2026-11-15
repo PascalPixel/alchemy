@@ -14,6 +14,9 @@
 
 #define EFFECT_PICTURES (Ram_MapCellBuffer + 0x4000)
 
+/// Where GlowBandTextureA is decoded in the effect's pictures.
+#define LIQUIFIER_GLOW_BAND 0x1000
+
 /// 111 frames. Sparks gather at the caster (frames 0-15)
 /// and burst from it toward the target (16-110); eight flat flashes turn about
 /// the caster; sixteen textured shards fly from the target (54-101), each
@@ -44,8 +47,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, EFFECT_PICTURES,
                              1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CB, work->sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x1000, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
+                             work->sheet + LIQUIFIER_GLOW_BAND, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -219,7 +222,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       // The shards: each from frame 54 + 2i for 16 frames, shrinking.
       texture.logWidth = 5;
       texture.logHeight = 2;
-      texture.pixels = work->sheet + 0x1000;
+      texture.pixels = work->sheet + LIQUIFIER_GLOW_BAND;
       model->mesh = gBattleEffect_SmallSquareMesh;
       model->kind = 7;
       for (i = 0; i != 16; i++) {

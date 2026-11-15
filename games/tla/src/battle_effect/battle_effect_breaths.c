@@ -440,7 +440,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         }
         work->shakeFrames = 8;
         EFFECT_SHOW_DAMAGE(SE_CLATTER);
-        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       }
       BattleCamera_Shake(8, 8);
       EFFECT_END_FRAME(work);

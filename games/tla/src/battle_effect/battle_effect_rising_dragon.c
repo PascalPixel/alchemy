@@ -122,7 +122,8 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           spark->velocityY = (Trig_Cos(angle) * speed) >> 6;
           spark->variant = (Random16() & 15) + 16;
         }
-        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         work->shakeFrames = 8;
         if (frame == 28) {
           if (args->variant == EFFECT_VARIANT_BASIC) {
@@ -478,7 +479,8 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
                                POSE_DAMAGE, 0, 16);
     }
     if (frame == FIGURE_SWING_FRAME) {
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       work->shakeFrames = 3;
       Sound_PlayFar(SE_POWER_UP);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,

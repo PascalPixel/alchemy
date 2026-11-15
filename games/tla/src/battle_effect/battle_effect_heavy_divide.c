@@ -437,6 +437,13 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
 #define WYRD_FRAMES 120
 #define WYRD_DROPS 16
 
+/// Where BurningSkullSheet is decoded in the effect's pictures.
+#define WYRD_CURSE_BURNING_SKULLS 0x4000
+
+/// Where the 32x32 glow is mirrored from its shaded disc in the effect's
+/// pictures.
+#define WYRD_CURSE_GLOW 0x1000
+
 /// Abilities: Wyrd Curse.
 ///
 /// A 32x32 glow is mirrored from a shaded disc, and BG palette 0 becomes a
@@ -496,7 +503,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
 
     size = width / 2;
     half = size / 2;
-    clear(work->sheet + 0x1000, 0x800);
+    clear(work->sheet + WYRD_CURSE_GLOW, 0x800);
     BattleEffect_DrawShadedCircles(work->sheet, size, Q16_ONE);
     y = 0;
     offset = 0;
@@ -509,16 +516,16 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
         s32 row;
 
         row = y * 32;
-        work->sheet[0x1000 + row + x * 2] = v;
-        work->sheet[0x1000 + row + x + x + 1] = v;
-        work->sheet[0x1000 + (offset + (size - x - 1)) * 2] = v;
-        work->sheet[0x1000 + (offset + (size - x - 1)) * 2 + 1] = v;
+        work->sheet[WYRD_CURSE_GLOW + row + x * 2] = v;
+        work->sheet[WYRD_CURSE_GLOW + row + x + x + 1] = v;
+        work->sheet[WYRD_CURSE_GLOW + (offset + (size - x - 1)) * 2] = v;
+        work->sheet[WYRD_CURSE_GLOW + (offset + (size - x - 1)) * 2 + 1] = v;
         mirrorRow = (32 - y) * 32;
         mirrorRow -= 32;
-        work->sheet[0x1000 + mirrorRow + x * 2] = v;
-        work->sheet[0x1000 + mirrorRow + x * 2 + 1] = v;
-        work->sheet[0x1000 + mirrorRow + (size - x - 1) * 2] = v;
-        work->sheet[0x1000 + mirrorRow + (size - x - 1) * 2 + 1] = v;
+        work->sheet[WYRD_CURSE_GLOW + mirrorRow + x * 2] = v;
+        work->sheet[WYRD_CURSE_GLOW + mirrorRow + x * 2 + 1] = v;
+        work->sheet[WYRD_CURSE_GLOW + mirrorRow + (size - x - 1) * 2] = v;
+        work->sheet[WYRD_CURSE_GLOW + mirrorRow + (size - x - 1) * 2 + 1] = v;
       }
     }
     y++;
@@ -528,8 +535,8 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     }
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0D8, work->sheet + 0x4000, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0D8,
+                             work->sheet + WYRD_CURSE_BURNING_SKULLS, 0, 0);
 
   zero = 0;
   for (frame = 0; frame != WYRD_FRAMES; frame++) {
@@ -589,7 +596,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     model = Render_AllocateModelList(1);
     texture.logWidth = 5;
     texture.logHeight = 5;
-    texture.pixels = work->sheet + 0x1000;
+    texture.pixels = work->sheet + WYRD_CURSE_GLOW;
     model->kind = 6;
     model->mesh = gBattleEffect_SmallSquareMeshReversed;
     model->texture = &texture;
@@ -640,7 +647,8 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
   nextSplash:
     if (frame > i * 4 + 64) {
       model->shade = zero;
-      texture.pixels = work->sheet + 0x4000 + ((i % 2) << 10);
+      texture.pixels =
+          work->sheet + WYRD_CURSE_BURNING_SKULLS + ((i % 2) << 10);
       Transform_Reset();
       Transform_ApplyTranslation(drop->x - px(64), drop->y - px(48), 0);
       Transform_ApplyAxisScale(splash >> 1, splash, splash >> 1);
@@ -688,6 +696,9 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
 
 #define RADIANT_FIRE_FRAMES 66
 
+/// Where FireRingTexture is decoded in the effect's pictures.
+#define RADIANT_FIRE_FIRE_RING 0x1000
+
 /// Radiant Fire: eight bursts of fire bloom one after another around the
 /// target, each a shaded disc that swells and shrinks under a spinning
 /// square of flame, with a white flash of the canvas as the first lands.
@@ -726,8 +737,8 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, work->sheet + 0x1000, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C2,
+                             work->sheet + RADIANT_FIRE_FIRE_RING, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        SHEET_PALETTE_BYTES);
@@ -824,7 +835,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
       model = Render_AllocateModelList(1);
       texture.logWidth = 7;
       texture.logHeight = 7;
-      texture.pixels = work->sheet + 0x1000;
+      texture.pixels = work->sheet + RADIANT_FIRE_FIRE_RING;
       model->kind = 6;
       model->vertices = vertices;
       model->mesh = gBattleEffect_LargeSquareMesh;

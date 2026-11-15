@@ -15,6 +15,9 @@ struct StripQuad;
 /// Where JupiterDjinnSmallSheet is decoded in the effect's pictures.
 #define WATER_COLUMN_JUPITER_DJINN_SMALL_PICTURES 0x2000
 
+/// Where FlashBurstSheet is decoded in the map cell buffer.
+#define WATER_COLUMN_FLASH_BURST 0x5000
+
 /// The water-column scene shared by Whorl (0), Gale (1), Lethe Albion (2),
 /// Poison Flow (3) and Raging Flood (4): a twisting funnel of water (or wind)
 /// rises around the target, with spray, bubbles and a burst.
@@ -91,7 +94,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
     pos[1] = caster->y;
     pos[2] = caster->z;
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                               Ram_MapCellBuffer + 0x5000, 1, 0);
+                               Ram_MapCellBuffer + WATER_COLUMN_FLASH_BURST, 1,
+                               0);
     frames = 52;
   } else {
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -405,7 +409,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             for (i = 0; i != 8; i++, q++) {
               if (q->variant <= 23) {
                 blit[0](canvas,
-                        (Ram_MapCellBuffer + 0x5000) + ((q->variant / 4) << 11),
+                        (Ram_MapCellBuffer + WATER_COLUMN_FLASH_BURST) +
+                            ((q->variant / 4) << 11),
                         (s16)(Q_16_16_TO_INT(q->x)) - 16,
                         (s16)(Q_16_16_TO_INT(q->y)) - 32, FLASH_BURST_WIDTH,
                         FLASH_BURST_HEIGHT);

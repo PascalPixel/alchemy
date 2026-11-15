@@ -533,7 +533,8 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
       work->shakeFrames = 12;
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 8);
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
     }
     timer = work->particles[0].variant;
@@ -1237,6 +1238,9 @@ struct MeshVertex;
     }                                                                          \
   } while (0)
 
+/// Where ScaleTexture is decoded in the effect's pictures.
+#define COATLICUE_SCALES 0x4000
+
 /// Coatlicue: under water among rising bubbles a ring of light spins and
 /// crosses a second; they settle into a ripple and burst in a froth of
 /// bubbles, Coatlicue rises among them, and a wash of light heals the party.
@@ -1326,8 +1330,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   Graphics_LoadGreyRamp();
   Resource_LoadAndDecompress((s32)&ResourceId_Data0FB, cellBuffer, 0, 0);
   Picture_MirrorIntoQuadrants(cellBuffer, work->sheet, 64, 64);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0FC, work->sheet + 0x4000, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0FC,
+                             work->sheet + COATLICUE_SCALES, 0, 0);
   {
     u8 *src = work->sheet + 0x4800;
 
@@ -1954,7 +1958,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
       }
       texture.logWidth = 7;
       texture.logHeight = 4;
-      texture.pixels = work->sheet + 0x4000;
+      texture.pixels = work->sheet + COATLICUE_SCALES;
       model->kind = 7;
       model->mesh = coilMesh;
       model->vertices = verts;
@@ -2064,7 +2068,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                        SHEET_PALETTE_BYTES);
-  Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+  Iwram_FillWords(canvas, CANVAS_BYTES,
+                  CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
   Palette_BrightenSavedBattleBg(0, 0, 11);
   frame = 0;
   for (; frame != 60; frame++) {

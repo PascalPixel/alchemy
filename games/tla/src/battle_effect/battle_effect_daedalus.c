@@ -227,6 +227,12 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 /// Where FlashBurstSheet is decoded in the effect's pictures.
 #define DAEDALUS_FLASH_BURST_PICTURES 0x6c0
 
+/// Where BirdFlockSheet is decoded in the effect's frames.
+#define DAEDALUS_BIRD_FLOCK 0x36c0
+
+/// Where RocketFlameSheet is decoded in the effect's frames.
+#define DAEDALUS_ROCKET_FLAMES 0x3000
+
 /// Daedalus: over a forest the great machine rises into the sky among birds,
 /// turns and fires its rockets, and they fall on the foes in bursts of fire;
 /// then the second scene (BattleEffect_RunDaedalusAlt) plays.
@@ -500,8 +506,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
                                work->frames + DAEDALUS_FLASH_BURST_PICTURES, 1,
                                0);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0BB, work->frames + 0x36c0,
-                               0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0BB,
+                               work->frames + DAEDALUS_BIRD_FLOCK, 0, 0);
     pixels = DECODE_BUFFER;
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, pixels, 0, 0);
     Iwram_CopyWords(
@@ -650,7 +656,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
               dest,
               &work->frames[(gDaedalus_DriftPictures[(p->variant / 4) % 12]
                              << 8) +
-                            0x36c0],
+                            DAEDALUS_BIRD_FLOCK],
               Q_16_16_TO_INT(p->x), Q_16_16_TO_INT(p->y), 16, 16);
           p->x += p->velocityX;
           p->y += p->velocityY;
@@ -1217,8 +1223,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     }
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->frames,
                                1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0BA, work->frames + 0x3000,
-                               0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0BA,
+                               work->frames + DAEDALUS_ROCKET_FLAMES, 0, 0);
     {
       const void *colors =
           (const void *)Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
@@ -1321,9 +1327,10 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 
           v = q->variant - 2;
           if (v >= 0)
-            ((BlitFunc)blits[1])(dest, &work->frames[v * 288 + 0x3000],
-                                 (Q_16_16_TO_INT(q->x)) - 6,
-                                 (Q_16_16_TO_INT(q->y)) - 12, 12, 24);
+            ((BlitFunc)blits[1])(
+                dest, &work->frames[v * 288 + DAEDALUS_ROCKET_FLAMES],
+                (Q_16_16_TO_INT(q->x)) - 6, (Q_16_16_TO_INT(q->y)) - 12, 12,
+                24);
           q->variant++;
         }
       }
@@ -1370,6 +1377,9 @@ struct SummonObject {
   u8 offsetX;
   u8 offsetY;
 };
+
+/// Where GlowBandTextureA is decoded in the effect's pictures.
+#define DAEDALUS_ALT_GLOW_BAND 0x4000
 
 /// The summoned object glides in from the right and down over 92 frames
 /// while, from frame 56, a shaded disc swells at the centre and six rings of
@@ -1561,7 +1571,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
           delay -= 4;
         }
         Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
-                                   work->sheet + 0x4000, 0, 0);
+                                   work->sheet + DAEDALUS_ALT_GLOW_BAND, 0, 0);
       }
       vertices = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
@@ -1569,7 +1579,7 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
       texture.logWidth = 5;
       texture.logHeight = 2;
       model->vertices = vertices;
-      texture.pixels = work->sheet + 0x4000;
+      texture.pixels = work->sheet + DAEDALUS_ALT_GLOW_BAND;
       model->kind = 7;
       model->texture = &texture;
       model->mesh = gBattleEffect_SmallSquareMesh;

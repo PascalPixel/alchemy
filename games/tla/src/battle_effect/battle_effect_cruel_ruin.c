@@ -932,7 +932,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
                                         Q_16_16_TO_INT(fb));
         }
         if (frame == 124) {
-          Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+          Iwram_FillWords(canvas, CANVAS_BYTES,
+                          CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         }
         if (frame <= 123) {
           s32 size = 140;
@@ -1188,7 +1189,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
       }
     }
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
-    Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+    Iwram_FillWords(canvas, CANVAS_BYTES,
+                    CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     EFFECT_PRESENT_CANVAS(work);
     Iwram_FillWords(canvas, CANVAS_BYTES, 0);
     REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -1322,7 +1324,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
               Sound_PlayFar(SE_CLATTER);
             }
             work->shakeFrames = 8;
-            Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+            Iwram_FillWords(canvas, CANVAS_BYTES,
+                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
           }
           if ((u32)d <= 15) {
             s32 r =
@@ -1567,7 +1570,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
-  Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+  Iwram_FillWords(canvas, CANVAS_BYTES,
+                  CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   args->targets[args->targetCount] = 0xff;
   BattleActor_SpawnObjectsForListFar(args->targets, 0);
@@ -1602,7 +1606,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
       if (frame == 107) {
-        Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        Iwram_FillWords(canvas, CANVAS_BYTES,
+                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       }
       if (frame > 107) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));

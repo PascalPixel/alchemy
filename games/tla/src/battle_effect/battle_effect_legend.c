@@ -15,6 +15,9 @@
 /// Where BladeSheet is decoded in the effect's pictures.
 #define LEGEND_BLADE_PICTURES 0x4000
 
+/// Where FlameGradientTexture is decoded in the effect's pictures.
+#define LEGEND_FLAME_GRADIENT 0x5000
+
 /// Legend: a fan of eight blades opens over the target for
 /// 50 frames while a rune, mirrored from one corner, rises and turns behind
 /// it. Then one sword for each step of the variant (variant + 1 in all, 16
@@ -60,8 +63,8 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BladeSheet,
                              work->sheet + LEGEND_BLADE_PICTURES, 1, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, work->sheet + 0x5000, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0E9,
+                             work->sheet + LEGEND_FLAME_GRADIENT, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
@@ -236,7 +239,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
       if (frame <= 49) {
         texture.logWidth = 5;
         texture.logHeight = 6;
-        texture.pixels = work->sheet + 0x5000;
+        texture.pixels = work->sheet + LEGEND_FLAME_GRADIENT;
         model->mesh = gBattleEffect_TallMesh;
         for (i = 0; i != 8; i++) {
           model->shade = 0;
@@ -287,6 +290,10 @@ void BattleEffect_RunThunderCard(struct BattleEffectParams *args) {
   BattleEffect_RunElementCards(args, CARD_THUNDER);
 }
 
+/// Where the card's element pictures are decoded in the effect's pictures:
+/// CrystalSheet, FlashBurstSheet, SmokeSheet or JaggedStreakSheet.
+#define ELEMENT_CARDS_PICTURES 0x800
+
 /// The four cards (Bramble, Frost, Flame and Thunder Card): a card rises from
 /// the user, spinning and growing, for 48 frames, then shows its picture.
 /// From frame 48 the background takes the card's colours; the Frost and
@@ -330,19 +337,19 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_DragonCardSheet, work->sheet, 1,
                                1);
     Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet,
-                               work->sheet + 0x800, 1, 0);
+                               work->sheet + ELEMENT_CARDS_PICTURES, 1, 0);
   } else if (mode == CARD_FLAME) {
     Resource_LoadAndDecompress((s32)&ResourceId_SunCardSheet, work->sheet, 1,
                                1);
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                               work->sheet + 0x800, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet + 0x800,
-                               1, 0);
+                               work->sheet + ELEMENT_CARDS_PICTURES, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
+                               work->sheet + ELEMENT_CARDS_PICTURES, 1, 0);
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_BoltCardSheet, work->sheet, 1,
                                1);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0F8, work->sheet + 0x800, 0,
-                               0);
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0F8,
+                               work->sheet + ELEMENT_CARDS_PICTURES, 0, 0);
   }
   REG_BLDCNT = 0;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
@@ -455,7 +462,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           if (step->variant >= 0) {
             if (step->variant > 1)
               draw[0](canvas,
-                      work->sheet + 0x800 +
+                      work->sheet + ELEMENT_CARDS_PICTURES +
                           step->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
                       Q_16_16_UPPER_HALF(step->x) - 12,
                       Q_16_16_UPPER_HALF(step->y) - 24, SMOKE_PUFF_WIDTH,

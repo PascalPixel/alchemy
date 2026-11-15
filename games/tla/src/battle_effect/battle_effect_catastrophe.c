@@ -720,7 +720,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
     }
     if (frame == 602) {
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame == 630) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(31));
@@ -1014,7 +1015,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         if (frame > 139) {
           work->transferMode = CANVAS_COPY_AND_CLEAR;
           if (frame > 153) {
-            work->transferValue = CANVAS_FILL_WORD(63);
+            work->transferValue = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
           } else {
             work->transferValue = CANVAS_FILL_WORD(16);
           }
@@ -1030,7 +1031,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         if (frame == 82) {
           work->shakeFrames = 8;
           Sound_PlayFar(SE_BANE_ESCAPE);
-          IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+          IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         }
         if (frame == 96) {
           Sound_PlayFar(SE_104);
@@ -1309,7 +1311,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     bolts = Ram_MapCellBuffer + 0x4000;
     slide = 0;
     slideStep = 0;
-    Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+    Iwram_FillWords(canvas, CANVAS_BYTES,
+                    CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     EFFECT_PRESENT_CANVAS(work);
     gBgScroll[1].x = savedScroll;
     BattleBackground_LoadFar(1, battle->background, 24);
@@ -1333,7 +1336,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         frame = 88;
       }
       if (frame == 88) {
-        Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
         gBgScroll[1].x = savedScroll;
         gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
@@ -1341,7 +1345,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
       if (frame == 0) {
-        IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+        IWRAM_FILL_WORDS(canvas, CANVAS_BYTES,
+                         CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         work->scrollStepX = -16;
         gProjection.centerX = -968;
         gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;

@@ -38,6 +38,12 @@ struct RenderModel__meteor_blow {
 
 #define METEOR_BLOW_FRAMES 50
 
+/// Where BillowTexture is decoded in the effect's pictures.
+#define METEOR_BLOW_BILLOW 0x4000
+
+/// Where FlameBandTexture is decoded in the effect's pictures.
+#define METEOR_BLOW_FLAME_BAND 0x5000
+
 /// Meteor Blow.
 void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   u8 *canvas;
@@ -421,10 +427,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4000, 0,
-                             0);
-  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet + 0x5000, 0,
-                             0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0DA,
+                             work->sheet + METEOR_BLOW_BILLOW, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_Data0C1,
+                             work->sheet + METEOR_BLOW_FLAME_BAND, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                        SHEET_PALETTE_BYTES);
@@ -511,7 +517,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     model->shade = shade;
     waveTexture.logWidth = 6;
     waveTexture.logHeight = 6;
-    waveTexture.pixels = work->sheet + 0x4000;
+    waveTexture.pixels = work->sheet + METEOR_BLOW_BILLOW;
     model->kind = 7;
     model->mesh = gBattleEffect_RingMesh;
     x0 = hx / 2 - 60;
@@ -547,7 +553,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       }
     }
     model->mesh = gBattleEffect_CylinderMesh;
-    waveTexture.pixels = work->sheet + 0x5000;
+    waveTexture.pixels = work->sheet + METEOR_BLOW_FLAME_BAND;
     waveTexture.logWidth = 7;
     waveTexture.logHeight = 7;
     half = ((hx + (s32)((u32)hx >> 31)) >> 1) - 64;

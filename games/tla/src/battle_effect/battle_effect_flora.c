@@ -250,7 +250,8 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     }
     if (u <= 7) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
-                           CANVAS_FILL_WORD(63) - u * 0x01010101 * 8);
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST) -
+                               u * 0x01010101 * 8);
     }
     req = gFlora_UnitScale;
     dy = 0;

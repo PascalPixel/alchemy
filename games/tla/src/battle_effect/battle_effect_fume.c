@@ -85,7 +85,8 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
       }
     }
     if (frame == 22) {
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       EFFECT_SHOW_DAMAGE(SE_CLATTER);
       work->shakeFrames = 8;
       BattleEffect_StartActorMotion(args->targets[0], 1, px(2), px(4), px(2),

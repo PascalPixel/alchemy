@@ -33,6 +33,12 @@ struct RenderModel__f190b74 {
 /// Where DustBlobSheet is decoded in the effect's pictures.
 #define ODYSSEY_DUST_BLOB_PICTURES 0x2f10
 
+/// Where FlameGradientTexture is decoded in the map cell buffer.
+#define ODYSSEY_FLAME_GRADIENT 0x4000
+
+/// Where GiantSwordBladeSheet is decoded in the effect's pictures.
+#define ODYSSEY_SWORD_BLADE 0xc80
+
 /// 114 frames. The screen turns to a scrolling red haze
 /// with only the caster and the target on it (frame 2); two textured flashes
 /// rise from the caster, two claws strike the target from above and below
@@ -96,7 +102,8 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gMapGridCellBuffer,
                                  0, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_Data0E9,
-                                 Ram_MapCellBuffer + 0x4000, 0, 0);
+                                 Ram_MapCellBuffer + ODYSSEY_FLAME_GRADIENT, 0,
+                                 0);
       Graphics_LoadGreyRamp();
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       EFFECT_FREE_PARTICLES(i, work->particles, 64);
@@ -149,7 +156,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
     }
     if (frame == 86)
       Resource_LoadAndDecompress((s32)&ResourceId_GiantSwordBladeSheet,
-                                 work->sheet + 0xc80, 1, 1);
+                                 work->sheet + ODYSSEY_SWORD_BLADE, 1, 1);
 
     // Frame 84: the caster charges at the target.
     if (frame == 84) {
@@ -200,7 +207,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         if (x > 0)
           x = 0;
       }
-      draw[0](canvas, work->sheet + 0xc80, x, 8, 158, 56);
+      draw[0](canvas, work->sheet + ODYSSEY_SWORD_BLADE, x, 8, 158, 56);
       if (args->side == EFFECT_SIDE_ENEMIES)
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
@@ -208,7 +215,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
       draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-      draw[1](canvas, work->sheet + 0xc80, x, 64, 158, 56);
+      draw[1](canvas, work->sheet + ODYSSEY_SWORD_BLADE, x, 64, 158, 56);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
 

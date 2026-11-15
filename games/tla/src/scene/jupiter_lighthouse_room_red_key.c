@@ -107,7 +107,7 @@ void JupiterLighthouse_InitSparkSprite(struct EffectSprite *sprite, s32 pivotX,
 
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[];
+extern struct Actor *gLightSpriteActors[16];
 extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
 

@@ -100,7 +100,7 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
 void JupiterLighthouse_UpdateBeam(void);
 
 extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[];
+extern struct Actor *gLightSpriteActors[16];
 extern struct LightOam gLightSpriteOams[];
 extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;

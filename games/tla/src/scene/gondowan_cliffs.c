@@ -611,7 +611,7 @@ void Geysers_Draw(void) {
 
   scrollX = view[0];
   scrollX &= 0xffff0000;
-  scrollZ = view[1] & 0xffff0000;
+  scrollZ = view[1] & FIELD_PIXEL_MASK;
   lift = map->origin[1];
   for (k = 15; k >= 0; k--, swing++) {
     if (swing->id == 0 || swing->height == 0)

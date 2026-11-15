@@ -65,7 +65,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[];
+extern struct Actor *gLightSpriteActors[16];
 extern struct LightOam gLightSpriteOam[];
 void Import_MapGridSetCellHeight();
 
@@ -363,8 +363,8 @@ void LightSprites_Draw(void) {
   s32 viewX, viewZ, tile, viewY;
   struct LightOam *oam;
   s32 i;
-  viewX = view[0] & 0xffff0000;
-  viewZ = view[1] & 0xffff0000;
+  viewX = view[0] & FIELD_PIXEL_MASK;
+  viewZ = view[1] & FIELD_PIXEL_MASK;
   tile = gVramCacheEntries[gLightSpriteTile].offset >> 5;
   viewY = map->origin[1];
   oam = gLightSpriteOam;
@@ -434,7 +434,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 void LightSprites_InitA(void) {
   u8 *buffer = BumpAlloc(0xc00);
 
-  Iwram_ClearWordsEntry(gLightSpriteActors, 64);
+  Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesA, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
   VramCache_Load(gLightSpriteTile, 0xc00, buffer);
@@ -448,7 +448,7 @@ void LightSprites_InitA(void) {
 void LightSprites_InitB(void) {
   u8 *buffer = Heap_Alloc(0xc00);
 
-  Iwram_ClearWordsEntry(gLightSpriteActors, 64);
+  Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesB, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
   Vram_Load(gLightSpriteTile, 0x800, buffer);
@@ -462,7 +462,7 @@ void LightSprites_InitB(void) {
 void LightSprites_InitC(void) {
   u8 *buffer = BumpAlloc(0x800);
 
-  Iwram_ClearWordsEntry(gLightSpriteActors, 64);
+  Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesC, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
   Vram_Load(gLightSpriteTile, 0x800, buffer);

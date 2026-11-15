@@ -60,7 +60,7 @@ struct LightOam;
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 void JupiterLighthouse_LoadPalettes(s32 mode);
 extern s16 gLightSpriteTile;
-extern struct Actor *gLightSpriteActors[];
+extern struct Actor *gLightSpriteActors[16];
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void JupiterLighthouse_StopHovering(void);
 void Whirlwind_CarryLeader(void);

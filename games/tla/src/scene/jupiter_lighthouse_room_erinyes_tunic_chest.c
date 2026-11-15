@@ -68,9 +68,16 @@ enum {
   ACTOR_SECOND_LOG,
   ACTOR_LEDGE_LOG,
   ACTOR_FOURTH_LOG,
+  /// The two seedlings the vines hang from (SPRITE_SEEDLING, at x 360 and 488).
+  ACTOR_WEST_VINE,
+  ACTOR_EAST_VINE,
   ACTOR_LEFT_PILLAR = ACTOR_FIRST_PLACED + 6,
   ACTOR_RIGHT_PILLAR
 };
+
+/// The entrances at (152, 840) and (696, 840), where the leader arrives in a
+/// ring (Actor_DepartInRing).
+enum { ENTRANCE_WEST_RING = 12, ENTRANCE_EAST_RING = 13 };
 
 void Scene_SetArrivalFlags(s32 a);
 void Actor_SetSpritePriorityDirect(struct Actor *object, s32 a);
@@ -96,7 +103,7 @@ struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 s32 MapGrid_CheckCollision(struct Actor *object, s32 *position);
 extern u16 gPushKinds[];
 extern s16 gLightSpriteCount;
-extern struct Actor *gLightSpriteActors[];
+extern struct Actor *gLightSpriteActors[16];
 extern struct LightOam gLightSpriteOams[];
 extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
@@ -191,13 +198,13 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  HangingVine_Place(12, 1);
-  HangingVine_Place(13, 1);
+  HangingVine_Place(ACTOR_WEST_VINE, 1);
+  HangingVine_Place(ACTOR_EAST_VINE, 1);
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
-      gMainRoutineWork.entrance == 12)
+      gMainRoutineWork.entrance == ENTRANCE_WEST_RING)
     Actor_DepartInRing(gMainRoutineWork.leaderActorId);
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
-      gMainRoutineWork.entrance == 13)
+      gMainRoutineWork.entrance == ENTRANCE_EAST_RING)
     Actor_DepartInRing(gMainRoutineWork.leaderActorId);
   return 0;
 }
@@ -238,9 +245,9 @@ s32 Scene_PrepareMap(void) {
   Actor_DisableById(ACTOR_LEDGE_LOG);
   Actor_DisableById(ACTOR_FOURTH_LOG);
   PushTarget_FillFootprint(ACTOR_FIRST_LOG);
-  PushTarget_FillFootprint(9);
-  PushTarget_FillFootprint(10);
-  PushTarget_FillFootprint(11);
+  PushTarget_FillFootprint(ACTOR_SECOND_LOG);
+  PushTarget_FillFootprint(ACTOR_LEDGE_LOG);
+  PushTarget_FillFootprint(ACTOR_FOURTH_LOG);
   if (Event_GetFlag(FLAG_LOG_OFF_LEDGE)) {
     for (i = 0, x = px(176); i <= 3; i++, x += px(16)) {
       Lift_(0x1000000, x, 0, 0);

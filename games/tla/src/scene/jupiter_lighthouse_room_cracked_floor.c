@@ -263,7 +263,7 @@ struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
-extern struct Actor *gLightSpriteActors[];
+extern struct Actor *gLightSpriteActors[16];
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16

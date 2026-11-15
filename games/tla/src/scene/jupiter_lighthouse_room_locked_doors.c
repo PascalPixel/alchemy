@@ -507,7 +507,7 @@ UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
   }
 }
 
-extern struct Actor *gLightSpriteActors[];
+extern struct Actor *gLightSpriteActors[16];
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 

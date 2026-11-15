@@ -479,7 +479,7 @@ void PushTarget_UpdatePusher(struct Actor *object) {
 }
 
 extern s16 gLightSpriteTile;
-extern struct Actor *gLightSpriteActors[];
+extern struct Actor *gLightSpriteActors[16];
 extern struct LightOam gLightSpriteOams[];
 
 /// Queues the lit actors' sprites: for each listed actor with a position,

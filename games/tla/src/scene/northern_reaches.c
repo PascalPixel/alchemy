@@ -3,6 +3,7 @@
 /// Felix fires the Magma Ball at it from a safe distance.
 
 #include "shared/tables.h"
+#include "field/field_sprite.h"
 #include "graphics/palette_buffers.h"
 #include "sprite_ids.h"
 #include "flags.h"
@@ -86,9 +87,10 @@ struct IceWallWork {
   struct IceShard particles[54];
 };
 
-s32 NorthernReaches_ResetAnimationFrame(s32 arg0) {
-  *(u8 *)((u8 *)*(s32 *)((u8 *)arg0 + 80) + 26) = 0;
-  *(u8 *)((u8 *)(arg0 + 34) + 0) = 1;
+/// Starts an actor's animation from its first frame, on map layer 1.
+s32 NorthernReaches_ResetAnimationFrame(struct Actor *object) {
+  ((struct FieldSprite *)object->sprite)->nextFrame = 0;
+  object->layer = 1;
   return 1;
 }
 

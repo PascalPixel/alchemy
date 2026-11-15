@@ -255,7 +255,6 @@ struct Actor;
 struct FieldSprite;
 struct Particle;
 struct ParticleSprite;
-struct RockSprite__s4b18;
 
 struct MagmaRockInsideSparkWork {
   u8 unk0000[0x1604];
@@ -315,7 +314,7 @@ extern u32 gMagmaRockInside_RubbleScript[];
 extern u32 gMagmaRockInside_DustScript[];
 
 void MagmaRockInside_DecompressTaggedLz(void *entry, void *destination);
-void MagmaRockInside_InitRockSprite(struct RockSprite__s4b18 *sprite, s32 width,
+void MagmaRockInside_InitRockSprite(struct RockSprite *sprite, s32 width,
                                     s32 height, u32 attributes, s32 tile);
 
 void Particles_UpdateFalling(void);

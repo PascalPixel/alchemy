@@ -4,6 +4,7 @@
 /// sail out.
 
 #include "types.h"
+#include "field/field_sprite.h"
 #include "sprite_ids.h"
 #include "system/ram_buffer.h"
 #include "field/actor.h"
@@ -67,7 +68,7 @@ s32 Portrait_OpenWindow(s32 a, s32 b, s32 c, s32 d);
 
 /// Starts an actor's animation from its first frame.
 s32 LemuriaEntrance_ResetAnimationFrame(struct Actor *object) {
-  ((struct AnimationRecord26 *)object->sprite)->frame = 0;
+  ((struct FieldSprite *)object->sprite)->nextFrame = 0;
   return 1;
 }
 

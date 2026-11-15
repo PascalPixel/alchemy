@@ -1032,9 +1032,9 @@ void MarsLighthouseEntrance_FlickerDragonFace(struct Actor *object) {
 
 /// An ice cone the dragon face reaches spins and flies off.
 void MarsLighthouseEntrance_FlingIceCone(struct Actor *actor) {
-  struct Sprite020012e4 *sprite = actor->sprite;
+  struct FieldSprite *sprite = actor->sprite;
 
-  sprite->unk12 += 0x800;
+  sprite->rotation += TRIG_TURN / 32;
   if (++actor->timer == 8)
     actor->velocityY = px(4);
   if (actor->timer > 9) {

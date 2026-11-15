@@ -324,8 +324,8 @@ void FieldEffect_SpawnRevealMarkers(void) {
   s16 *entry = SceneItem_GetRows();
   u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   s32 *origin = (s32 *)(map + 228);
-  s32 originX = origin[0] & 0xffff0000;
-  s32 originZ = origin[1] & 0xffff0000;
+  s32 originX = origin[0] & FIELD_PIXEL_MASK;
+  s32 originZ = origin[1] & FIELD_PIXEL_MASK;
   s32 result[3];
   /* FAKEMATCH(volatile): headerWord lives at sp+4, stored once. */
   volatile s32 headerWord;

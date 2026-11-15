@@ -55,8 +55,8 @@ void Rope_Draw(void) {
   s32 started = 0;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
-  s32 viewX = view[0] & 0xffff0000;
-  s32 viewZ = view[1] & 0xffff0000;
+  s32 viewX = view[0] & FIELD_PIXEL_MASK;
+  s32 viewZ = view[1] & FIELD_PIXEL_MASK;
   s32 originY = map->origin[1];
   struct AffineTransform transform;
   struct RopeNode *node;
@@ -766,8 +766,8 @@ void Tightrope_Draw(void) {
   u32 tile = gVramCacheEntries[work->vramEntry].offset >> 5;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
-  s32 viewX = view[0] & 0xffff0000;
-  s32 viewZ = view[1] & 0xffff0000;
+  s32 viewX = view[0] & FIELD_PIXEL_MASK;
+  s32 viewZ = view[1] & FIELD_PIXEL_MASK;
   s32 originY = map->origin[1];
   struct AffineTransform transform;
 
@@ -1349,8 +1349,8 @@ void HangingVine_Draw(void) {
   s32 prevZ = 0;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
-  s32 viewX = view[0] & 0xffff0000;
-  s32 viewZ = view[1] & 0xffff0000;
+  s32 viewX = view[0] & FIELD_PIXEL_MASK;
+  s32 viewZ = view[1] & FIELD_PIXEL_MASK;
   s32 height = map->origin[1];
   struct AffineTransform transform;
   struct HangingVineLink *link;

@@ -212,8 +212,8 @@ void FieldPsynergy_Scoop(void) {
   s32 i;
 
   if (event->mode != ACTOR_SYSTEM_WORLD_MAP) {
-    SET_POSITION(scene, (caster->x.fixed & 0xfff00000) + 0x80000,
-                 caster->y.fixed, (caster->z.fixed & 0xfff00000) + 0x80000);
+    SET_POSITION(scene, (caster->x.fixed & FIELD_CELL_MASK) + 0x80000,
+                 caster->y.fixed, (caster->z.fixed & FIELD_CELL_MASK) + 0x80000);
     Vector_AddPolarOffset(px(16), scene->angle, &scene->x);
   }
   FieldPsynergy_FadeToCastColor();

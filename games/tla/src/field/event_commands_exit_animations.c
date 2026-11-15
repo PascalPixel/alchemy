@@ -107,8 +107,8 @@ void Exit_PrepareActorAnimation(s32 id, s32 side) {
   *&context->flags = zero;
   kind = 15;
   effect->param = kind;
-  object->x.fixed = (object->x.fixed & 0xfff00000) + px(8);
-  object->z.fixed = (object->z.fixed & 0xfff00000) + px(16);
+  object->x.fixed = (object->x.fixed & FIELD_CELL_MASK) + px(8);
+  object->z.fixed = (object->z.fixed & FIELD_CELL_MASK) + px(16);
   object->velocityX = zero;
   object->velocityZ = zero;
   object->targetX = TARGET_UNSET;
@@ -178,7 +178,7 @@ void Entrance_EndArrivalAnimation(s32 mode) {
   zero = 0;
   ctx->flags = zero;
   eff->param = 15;
-  obj->x.fixed = (obj->x.fixed & 0xfff00000) + px(8);
+  obj->x.fixed = (obj->x.fixed & FIELD_CELL_MASK) + px(8);
   obj->z.fixed &= 0xfff00000;
   Actor_SelectAnimationFar(obj, mode);
   wait(30);

@@ -502,7 +502,7 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
 void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   struct Actor *actor = Actor_GetById(actorId);
   s32 startZ = actor->z.fixed;
-  s32 x = (actor->x.fixed & 0xfff00000) + px(8);
+  s32 x = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
   s32 spriteFlags;
   u32 i;
 

@@ -1157,7 +1157,7 @@ s32 MapGrid_CheckCollisionAbove(struct Actor *actor,
 /// map work exists.
 s32 MapGrid_IsWallAt(s32 *position) {
   s32 x = position[0] / 65536;
-  s32 z = (u32)((position[2] & 0xfff00000) - position[1]) >> 16;
+  s32 z = (u32)((position[2] & FIELD_CELL_MASK) - position[1]) >> 16;
   u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
   u8 *cell;
 

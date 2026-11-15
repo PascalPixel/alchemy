@@ -352,15 +352,15 @@ s32 Field_TryJumpForward(void) {
   positionWords = position;
 again:
   // The middle of the tile in front, then of the tile beyond.
-  position[0] = (leader->x.fixed & 0xfff00000) + 0x80000;
+  position[0] = (leader->x.fixed & FIELD_CELL_MASK) + 0x80000;
   position[1] = leader->y.fixed;
-  position[2] = (leader->z.fixed & 0xfff00000) + 0x80000;
+  position[2] = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
   Vector_AddPolarOffset(px(16), angle, position);
   if (MapGrid_CheckCollisionFar(leader, position) == 1)
     return -1;
-  position[0] = (leader->x.fixed & 0xfff00000) + 0x80000;
+  position[0] = (leader->x.fixed & FIELD_CELL_MASK) + 0x80000;
   position[1] = leader->y.fixed;
-  position[2] = (leader->z.fixed & 0xfff00000) + 0x80000;
+  position[2] = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
   Vector_AddPolarOffset(px(32), angle, position);
   canJump = 0;
   if (MapGrid_BlocksJump(leader, position) == 0 &&
@@ -574,7 +574,7 @@ s32 Field_ClimbDown(void) {
                            (gridZ << 16) + 0x100000);
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     gMainRoutineWork.movementMode = 2;
-    leader->z.fixed = (leader->z.fixed & 0xfff00000) + 0x80000;
+    leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
   } else {
     // Let go of the wall and fall.
     Actor_SelectAnimationFar(leader, 10);
@@ -659,7 +659,7 @@ s32 Field_ClimbUp(void) {
     gMainRoutineWork.movementMode = 2;
     leader->steeringFlags = 1;
     wait(8);
-    leader->z.fixed = (leader->z.fixed & 0xfff00000) + 0x80000;
+    leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
   } else {
     struct Actor *entry;
     s32 radius = leader->radius - 2;
@@ -777,8 +777,8 @@ s32 Leader_StepOffRope(void) {
   angle = gRope_KeyHeadings[(gInput.held >> 4) & 15];
   if (angle == 0xffff)
     return 0;
-  leader->x.fixed = (leader->x.fixed & 0xfff00000) + 0x80000;
-  leader->z.fixed = (leader->z.fixed & 0xfff00000) + 0x80000;
+  leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + 0x80000;
+  leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
@@ -882,8 +882,8 @@ s32 Leader_StepOffTightrope(void) {
   angle = gRope_KeyHeadings[(gInput.held >> 4) & 15];
   if (angle == 0xffff)
     return 0;
-  leader->x.fixed = (leader->x.fixed & 0xfff00000) + 0x80000;
-  leader->z.fixed = (leader->z.fixed & 0xfff00000) + 0x80000;
+  leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + 0x80000;
+  leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;

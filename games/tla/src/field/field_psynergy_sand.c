@@ -51,8 +51,8 @@ void FieldPsynergy_WatchSandGround(void) {
 
     if (MapGrid_IsClimbableCell(object->x.fixed, object->z.fixed, 2) == 0)
       reason = 3;
-    x = object->x.fixed & 0xfff00000;
-    z = object->z.fixed & 0xfff00000;
+    x = object->x.fixed & FIELD_CELL_MASK;
+    z = object->z.fixed & FIELD_CELL_MASK;
     back = -0x80000;
     /* FAKEMATCH(barrier): back through an empty asm. */
     asm("" : "+l"(back));

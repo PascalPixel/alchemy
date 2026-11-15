@@ -152,8 +152,8 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
   s32 x;
   s32 y;
 
-  viewX = view[0] & 0xffff0000;
-  viewZ = view[1] & 0xffff0000;
+  viewX = view[0] & FIELD_PIXEL_MASK;
+  viewZ = view[1] & FIELD_PIXEL_MASK;
   x = actor->x.fixed - viewX;
   y = actor->z.fixed - viewZ;
   // Across, from 32 pixels left of the screen to 32 past its 240; down,
@@ -734,8 +734,8 @@ void ActorSystem_PlaceSprites(void) {
 
   map = Ram_HeapSlots->mapGrid;
   view = &map->viewX;
-  viewX = view[0] & 0xffff0000;
-  viewZ = view[1] & 0xffff0000;
+  viewX = view[0] & FIELD_PIXEL_MASK;
+  viewZ = view[1] & FIELD_PIXEL_MASK;
   system = Ram_HeapSlots->actorSystem;
   originY = map->origin[1];
   /* FAKEMATCH(dead): the decoder's copy in a once-only block. */

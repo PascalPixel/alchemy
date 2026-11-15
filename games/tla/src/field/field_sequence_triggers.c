@@ -236,14 +236,14 @@ s32 Scene_TalkToActor(s32 id) {
       if (type == CONTAINER_POND)
         found = 32;
       Event_Start();
-      busy = &((u8 *)object)[91];
+      busy = &object->paused;
       *busy = 1;
       if (silent == 0)
-        FieldMessage_ShowFar(found + (s32)&MsgTileChecked, 1);
+        FieldMessage_ShowFar(found + (s32)&MsgTileChecked, FIELD_MESSAGE_ZOOM);
       if (gMainRoutineWork.next == SCENE_VENUS_LIGHTHOUSE && noHint == 0 &&
           !GameFlag_Get(flag)) {
         MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_ITEM);
-        FieldMessage_ShowFar((s32)&MsgChestAlreadyOpen, 1);
+        FieldMessage_ShowFar((s32)&MsgChestAlreadyOpen, FIELD_MESSAGE_ZOOM);
       }
       if (!GameFlag_IsConditionActive(flag))
         goto empty;
@@ -262,20 +262,25 @@ s32 Scene_TalkToActor(s32 id) {
         ItemDisplay_RaiseAboveLeader(trap);
         Sound_PlayFar(MUS_TREASURE_FOUND);
         MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_NUMBER);
-        FieldMessage_ShowFar((s32)&MsgGotPsynergyStone, 3);
+        FieldMessage_ShowFar((s32)&MsgGotPsynergyStone,
+                             FIELD_MESSAGE_ZOOM |
+                                 FIELD_MESSAGE_WAITING_FOR_SOUND);
         Party_AddPp(1999, 0);
         PartyStatus_CreateWindowFar(1);
         Sound_PlayFar(SE_RECOVERY);
         if (Party_CountMembersFar() == 1)
-          FieldMessage_ShowFar((s32)&MsgGotPsynergyStone + 6, 1);
+          FieldMessage_ShowFar((s32)&MsgGotPsynergyStone + 6,
+                               FIELD_MESSAGE_ZOOM);
         else
-          FieldMessage_ShowFar((s32)&MsgGotPsynergyStone + 1, 1);
+          FieldMessage_ShowFar((s32)&MsgGotPsynergyStone + 1,
+                               FIELD_MESSAGE_ZOOM);
         PartyStatus_CloseFar();
         trap->update = NULL;
         Actor_SelectAnimationFar(trap, 2);
         Sound_PlayFar(SE_GLITTER);
         Event_Wait(30);
-        FieldMessage_ShowFar((s32)&MsgPsynergyStoneDisappeared, 1);
+        FieldMessage_ShowFar((s32)&MsgPsynergyStoneDisappeared,
+                             FIELD_MESSAGE_ZOOM);
         ObjectEvent_Remove(index);
         if (flag != -1)
           GameFlag_Set(flag);
@@ -305,13 +310,14 @@ s32 Scene_TalkToActor(s32 id) {
         gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
         BattleEffect_SelectBattleCue(104, contents);
         Sound_PlayFar(gMainRoutineWork.battleMusic);
-        FieldMessage_ShowFar((s32)&MsgChestWasMimic, 1);
+        FieldMessage_ShowFar((s32)&MsgChestWasMimic, FIELD_MESSAGE_ZOOM);
         goto done;
       }
       if (type == CONTAINER_POND)
-        FieldMessage_ShowFar((s32)&MsgSomethingInTheShallows, 1);
+        FieldMessage_ShowFar((s32)&MsgSomethingInTheShallows,
+                             FIELD_MESSAGE_ZOOM);
       if (Actor_GetSpriteShape(index)) {
-        FieldMessage_ShowFar((s32)&MsgSomethingBuriedHere, 1);
+        FieldMessage_ShowFar((s32)&MsgSomethingBuriedHere, FIELD_MESSAGE_ZOOM);
         if (Party_FindOwnerWithActionFar(ABILITY_SCOOP) != -1)
           gFieldWork->fieldMenu = 1;
         goto done;
@@ -330,7 +336,9 @@ s32 Scene_TalkToActor(s32 id) {
         Sound_PlayFar(MUS_TREASURE_FOUND);
         contents &= 0x7fff;
         MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_NUMBER);
-        FieldMessage_ShowFar((s32)&MsgKey0e10, 3);
+        FieldMessage_ShowFar((s32)&MsgKey0e10,
+                             FIELD_MESSAGE_ZOOM |
+                                 FIELD_MESSAGE_WAITING_FOR_SOUND);
         Party_AdjustCoinsFar(contents);
         if (flag != -1)
           GameFlag_Set(flag);
@@ -357,8 +365,8 @@ s32 Scene_TalkToActor(s32 id) {
       slot = PartyInventory_AddFar(contents);
       if (slot == -1) {
         MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_ITEM);
-        FieldMessage_ShowFar((s32)&MsgFoundItem, 1);
-        FieldMessage_ShowFar((s32)&MsgFoundItem + 4, 1);
+        FieldMessage_ShowFar((s32)&MsgFoundItem, FIELD_MESSAGE_ZOOM);
+        FieldMessage_ShowFar((s32)&MsgFoundItem + 4, FIELD_MESSAGE_ZOOM);
         if (type != 131)
           Actor_ReleaseIfPresent(shown);
         if (type == CONTAINER_CHEST)
@@ -371,10 +379,14 @@ s32 Scene_TalkToActor(s32 id) {
       Sound_PlayFar(MUS_TREASURE_FOUND);
       MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_ITEM);
       if (slot == gMainRoutineWork.leaderActorId) {
-        FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
+        FieldMessage_ShowFar((s32)&MsgItemReceived,
+                             FIELD_MESSAGE_ZOOM |
+                                 FIELD_MESSAGE_WAITING_FOR_SOUND);
       } else {
         MessageArgument_PushFar(slot, MESSAGE_ARGUMENT_ACTOR);
-        FieldMessage_ShowFar((s32)&MsgItemGiven, 3);
+        FieldMessage_ShowFar((s32)&MsgItemGiven,
+                             FIELD_MESSAGE_ZOOM |
+                                 FIELD_MESSAGE_WAITING_FOR_SOUND);
       }
       if (flag != -1)
         GameFlag_Set(flag);
@@ -389,7 +401,7 @@ s32 Scene_TalkToActor(s32 id) {
       result = 0;
       goto done;
     empty:
-      FieldMessage_ShowFar(found + (s32)&MsgTileResult, 1);
+      FieldMessage_ShowFar(found + (s32)&MsgTileResult, FIELD_MESSAGE_ZOOM);
     done:
       *busy = 0;
       Event_End();
@@ -423,7 +435,7 @@ s32 Scene_TalkToActor(s32 id) {
   if (talk->result == 0)
     goto resume;
   if (!paused) {
-    ((u8 *)object)[91] = 1;
+    object->paused = 1;
     Actor_SetAnimationSpeedFar(object, 0);
     savedAngle = object->facing;
     if ((u8)placement->talkFacing <= 1 || (s8)placement->talkFacing == 3) {
@@ -451,7 +463,7 @@ s32 Scene_TalkToActor(s32 id) {
         Actor_StartScriptFar(object, gActor_StepAngleScript);
       }
     }
-    ((u8 *)object)[91] = 0;
+    object->paused = 0;
     Actor_SetAnimationSpeedFar(object, 16);
   }
   result = 0;
@@ -519,9 +531,9 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
         Sound_PlayFar(SE_STAIRS_DOWN);
         Exit_StartStairsDown();
         break;
-      case 80:
+      case EXIT_STYLE_HIDDEN_LAYER:
         Sound_PlayFar(SE_MAP_EXIT);
-        Func_080d5fd4();
+        Exit_AddHiddenLeaderLayer();
         break;
       }
       work->exit = event->result;
@@ -622,8 +634,8 @@ s32 Field_ExamineCell(s32 id) {
     Leader_StopMoving();
     // id, no longer needed, holds the pair's message number.
     id = gField_ExamineTriggerMessageOffsets[index];
-    FieldMessage_ShowFar(id + (s32)&MsgTileChecked, 1);
-    FieldMessage_ShowFar(id + (s32)&MsgTileResult, 1);
+    FieldMessage_ShowFar(id + (s32)&MsgTileChecked, FIELD_MESSAGE_ZOOM);
+    FieldMessage_ShowFar(id + (s32)&MsgTileResult, FIELD_MESSAGE_ZOOM);
     return 0;
   }
   event = Scene_FindTrigger(3, id);
@@ -634,7 +646,7 @@ s32 Field_ExamineCell(s32 id) {
     kind = (flags >> 4) & 31;
     if (!(event->subject & 0x400) && kind != 0) {
       Leader_StopMoving();
-      FieldMessage_ShowFar(kind + (s32)&MsgTileChecked, 1);
+      FieldMessage_ShowFar(kind + (s32)&MsgTileChecked, FIELD_MESSAGE_ZOOM);
       GameFlag_Set(FLAG_NOTHING_HAPPENS);
     } else {
       GameFlag_Clear(FLAG_NOTHING_HAPPENS);
@@ -648,16 +660,16 @@ s32 Field_ExamineCell(s32 id) {
     if (GameFlag_IsConditionActive(condition))
       ((void (*)(s32))event->value)(gMainRoutineWork.leaderActorId);
     if (GameFlag_Get(FLAG_NOTHING_HAPPENS))
-      FieldMessage_ShowFar(kind + (s32)&MsgTileResult, 1);
+      FieldMessage_ShowFar(kind + (s32)&MsgTileResult, FIELD_MESSAGE_ZOOM);
     goto done;
   message:
     if (GameFlag_IsConditionActive(condition))
-      FieldMessage_ShowFar((u16)event->value, 1);
+      FieldMessage_ShowFar((u16)event->value, FIELD_MESSAGE_ZOOM);
     else
-      FieldMessage_ShowFar((s32)&MsgButFoundNothing, 1);
+      FieldMessage_ShowFar((s32)&MsgButFoundNothing, FIELD_MESSAGE_ZOOM);
   } else {
-    FieldMessage_ShowFar((s32)&MsgTileChecked + 5, 1);
-    FieldMessage_ShowFar((s32)&MsgTileResult + 5, 1);
+    FieldMessage_ShowFar((s32)&MsgTileChecked + 5, FIELD_MESSAGE_ZOOM);
+    FieldMessage_ShowFar((s32)&MsgTileResult + 5, FIELD_MESSAGE_ZOOM);
   }
 done:
   GameFlag_Clear(FLAG_NOTHING_HAPPENS);

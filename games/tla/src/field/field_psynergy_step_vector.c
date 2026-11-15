@@ -143,8 +143,9 @@ void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
 }
 
 /// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
-/// gColorBuffer_FadeStep1Map: step 1 of the canvas's fade.
-void ColorBuffer_MapToFadeStep1(u8 *buffer, s32 count) {
+/// gColorBuffer_FadeStep1Map, one level darker down the ramp of colours
+/// 0xe0 to 0xfe.
+void ColorBuffer_DarkenOneLevel(u8 *buffer, s32 count) {
   if (count > 0) {
     const u8 *table = gColorBuffer_FadeStep1Map;
 
@@ -158,8 +159,8 @@ void ColorBuffer_MapToFadeStep1(u8 *buffer, s32 count) {
 }
 
 /// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
-/// gColorBuffer_FadeStep2Map: step 2 of the canvas's fade.
-void ColorBuffer_MapToFadeStep2(u8 *buffer, s32 count) {
+/// gColorBuffer_FadeStep2Map, two levels darker.
+void ColorBuffer_DarkenTwoLevels(u8 *buffer, s32 count) {
   if (count > 0) {
     const u8 *table = gColorBuffer_FadeStep2Map;
 
@@ -173,8 +174,8 @@ void ColorBuffer_MapToFadeStep2(u8 *buffer, s32 count) {
 }
 
 /// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
-/// gColorBuffer_FadeStep3Map: step 3 of the canvas's fade.
-void ColorBuffer_MapToFadeStep3(u8 *buffer, s32 count) {
+/// gColorBuffer_FadeStep3Map, four levels darker.
+void ColorBuffer_DarkenFourLevels(u8 *buffer, s32 count) {
   if (count > 0) {
     const u8 *table = gColorBuffer_FadeStep3Map;
 
@@ -212,17 +213,17 @@ void BattleEffect_UploadCanvas(void) {
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
     Iwram_FillWords(canvas, CANVAS_SIZE, 0);
     break;
-  case CANVAS_UPLOAD_AND_FADE1:
+  case CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL:
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
-    ColorBuffer_MapToFadeStep1(canvas, CANVAS_SIZE);
+    ColorBuffer_DarkenOneLevel(canvas, CANVAS_SIZE);
     break;
-  case CANVAS_UPLOAD_AND_FADE2:
+  case CANVAS_UPLOAD_AND_DARKEN_TWO_LEVELS:
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
-    ColorBuffer_MapToFadeStep2(canvas, CANVAS_SIZE);
+    ColorBuffer_DarkenTwoLevels(canvas, CANVAS_SIZE);
     break;
-  case CANVAS_UPLOAD_AND_FADE3:
+  case CANVAS_UPLOAD_AND_DARKEN_FOUR_LEVELS:
     Dma_Set(canvas, tiles, CANVAS_DMA, REG_DMA3);
-    ColorBuffer_MapToFadeStep3(canvas, CANVAS_SIZE);
+    ColorBuffer_DarkenFourLevels(canvas, CANVAS_SIZE);
     break;
   case CANVAS_UPLOAD_TO_BG:
     Dma_Set(canvas, BG_VRAM, DMA_COPY_WORDS(CANVAS_SIZE * 2 / 4), REG_DMA3);
@@ -545,7 +546,7 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
   if (effect->stopAtTarget != 0) {
     ix = dx / Q16_ONE;
     iz = dz / Q16_ONE;
-    distance = Iwram_Sqrt(ix * ix + iz * iz) << 16;
+    distance = px(Iwram_Sqrt(ix * ix + iz * iz));
     if (distance < 0x800000)
       distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
     if (distance <= px(8)) {
@@ -619,24 +620,27 @@ void FieldParticle_SetCallback(struct FieldParticle *effect,
 /// stopping on arrival, with a random value and z lifting the sprite.
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               s32 z) {
-  s32 unit;
-  struct Sprite *object;
-  volatile u32 zero;
+  struct Sprite *animation;
 
-  Dma_Fill32Cell(zero, 0, effect, sizeof *effect);
-  object = (struct Sprite *)Sprite_CreateFar(kind);
-  effect->object = object;
-  if (object != NULL)
-    object->image.priority = 0;
+  Dma_Fill32(0, effect, sizeof *effect);
+  animation = Sprite_CreateFar(kind);
+  effect->object = animation;
+  if (animation != NULL)
+    animation->image.priority = 0;
   FieldParticle_SetPosition(effect, x, z);
-  unit = 0x10000;
+  effect->scaleX = Q16_ONE;
   effect->maxSpeed = px(2);
-  effect->acceleration = effect->scaleY = effect->scaleX = unit;
+  effect->scaleY = Q16_ONE;
+  effect->acceleration = Q16_ONE;
   effect->originX = x;
   effect->originZ = z;
-  // The sprite flags (nextFrame), through a byte pointer: as a field of
-  // struct Sprite the origin stores move after it.
-  ((s8 *)effect->object)[26] = 0;
+  // BUG: Sprite_CreateFar can return NULL, but this and the animation
+  // setup below still require a sprite. Callers also immediately use it, so
+  // guarding this store alone would not establish allocation-failure recovery.
+  {
+    struct Sprite *sprite = effect->object;
+    sprite->flags = 0;
+  }
   effect->stopAtTarget = 1;
   effect->limitTurnStep = 1;
   effect->updateMotion = 1;
@@ -648,8 +652,8 @@ void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
 }
 
 /// Frees a field effect sprite and its sprite, clearing it to zero (inactive).
-void FieldEffect_ClearOwnedSlot(struct FieldParticle *slot) {
-  if (slot->object)
-    Sprite_DestroyFar((struct ResourceObjectWork *)slot->object);
-  Dma_Fill32(0, slot, sizeof *slot);
+void FieldEffect_ClearOwnedSlot(struct FieldParticle *effect) {
+  if (effect->object)
+    Sprite_DestroyFar(effect->object);
+  Dma_Fill32(0, effect, sizeof *effect);
 }

@@ -12,15 +12,15 @@ struct Actor *Actor_GetById(u32 objectId);
 
 /// Clears an actor's destination, puts it under script control and
 /// stands it still.
-void Actor_ClearDestinationAndStand(u32 objectId) {
-  struct Actor *object = Actor_Lookup(objectId);
+void Actor_ClearDestinationAndStand(u32 actorId) {
+  struct Actor *actor = Actor_Lookup(actorId);
 
-  if (object != NULL) {
-    object->targetX = TARGET_UNSET;
-    object->targetY = TARGET_UNSET;
-    object->targetZ = TARGET_UNSET;
-    Actor_StartIdleFar(object);
-    Actor_SelectAnimationFar(object, 1);
+  if (actor != NULL) {
+    actor->targetX = TARGET_UNSET;
+    actor->targetY = TARGET_UNSET;
+    actor->targetZ = TARGET_UNSET;
+    Actor_StartIdleFar(actor);
+    Actor_SelectAnimationFar(actor, ANIM_STAND);
   }
 }
 
@@ -58,7 +58,7 @@ void Actor_SetSpritePriority(u32 objectId, s32 priority) {
 
     sprite->image.priority = priority;
     sprite->shadow.priority = priority;
-    object->priorityFlags &= ~1;
+    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   }
 }
 
@@ -99,25 +99,16 @@ void Actor_SetSpriteRotationById(s32 id, s32 rotation) {
     sprite->rotation = rotation;
 }
 
-/* VIEW(event_commands): routine Icon_DrawItemFar as void Icon_DrawItemFar(s32
- * resource, u8 *buffer); field/field.h has void Icon_DrawItemFar(s32 item);
- * tried as the rest of the object declares it, it does not compile in tla-ja:
- * games/tla/src/field/event_commands_actor_commands.c:207: too many arguments
- * to function `Icon_DrawItemFar'. */
-extern void
-Func_08038248__event_commands(s32 resource,
-                              u8 *buffer) __asm__("Icon_DrawItemFar");
-
 /// Lays actor id down along angle, a quarter turn rounded: shows its first
 /// frame turned, shifted by the side it falls to, and blocks its cell and the
 /// cell beyond it.
 void Actor_FallOverById(u32 id, u32 angle) {
   s32 position[3];
   struct Actor *object = Actor_GetById(id);
-  struct ObjectSprite *sprite = object->sprite;
+  struct Sprite *sprite = object->sprite;
 
   if (object != NULL && sprite != NULL) {
-    Actor_SelectAnimationFar(object, 0);
+    Actor_SelectAnimationFar(object, ANIM_STILL);
     angle = (angle + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
     position[0] = object->x.fixed;
     position[2] = object->z.fixed;
@@ -125,24 +116,24 @@ void Actor_FallOverById(u32 id, u32 angle) {
     Vector_AddPolarOffset(px(16), angle, position);
     MapGrid_SetCellBehaviorAtFar(object->layer, position[0], position[2], 255);
     switch (angle) {
-    case 0:
+    case FACING_EAST:
       sprite->offsetX -= 3;
       sprite->offsetY += 5;
       break;
-    case 0x8000:
+    case FACING_WEST:
       sprite->offsetX += 2;
       sprite->offsetY += 4;
       break;
-    case 0xc000:
+    case FACING_NORTH:
       sprite->offsetY += 1;
       break;
-    case 0x4000:
+    case FACING_SOUTH:
       sprite->offsetY += 5;
       break;
     }
     object->collisionFlags = 0;
-    object->priorityFlags |= 2;
-    sprite->nextFrame = 0;
+    object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    sprite->flags = 0;
     sprite->rotation = angle + TRIG_TURN / 4;
   }
 }
@@ -212,7 +203,12 @@ void Actor_ShowItemIconById(s32 id, s32 resource) {
       zero = 0;
       buffer += 0x400;
       Dma_Fill32(zero, buffer, 0x80);
-      Func_08038248__event_commands(resource, buffer);
+#ifdef UBFIX
+      Icon_DrawItemFar(resource);
+#else
+      // UB: Icon_DrawItem takes the item alone; the call passes the buffer too.
+      ((void (*)(s32, u8 *))Icon_DrawItemFar)(resource, buffer);
+#endif
       tile = VramCache_Load(sprite->slot, 0x80, buffer);
       HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       object->retainSpriteCache = kind;

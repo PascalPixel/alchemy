@@ -23,13 +23,30 @@ struct MapAnimation {
   u16 paused;
 };
 
-/// One cell of a map layer: its cell picture and flags, its collision
-/// code and a second attribute byte.
 /// The map grid: 128 by 128 cells, each 16 pixels square, wrapping at its
 /// edges.
 #define MAPGRID_SIZE 128
 #define MAPGRID_CELL_PIXELS 16
+/// A layer window's row mask (MapLayer.maskY) over the whole grid, which wraps
+/// there rather than at a window of its own.
+#define MAPGRID_ROW_MASK ((MAPGRID_SIZE - 1) * MAPGRID_SIZE)
+/// The bytes between one layer's BG map and the next, from screen block 5.
+#define MAPGRID_LAYER_SCREEN_BYTES 2048
 
+/// A layout's three layers, by what they hold, as The Broken Seal's. Most
+/// layouts give them priorities 3, 2 and 1.
+enum MapGridLayerIndex {
+  MAPGRID_LAYER_GROUND = 0,   ///< `BG3`: the ground, at the back
+  MAPGRID_LAYER_MIDDLE = 1,   ///< `BG2`: walls and edges, under the actors
+  MAPGRID_LAYER_OVERHEAD = 2, ///< `BG1`: roofs and tree tops, over the actors
+};
+
+/// A cell's collision code that blocks whatever the heights, as The Broken
+/// Seal's CELL_BEHAVIOR_WALL.
+#define CELL_BEHAVIOR_WALL 255
+
+/// One cell of a map layer: its cell picture and flags, its collision
+/// code and a second attribute byte.
 struct MapCell {
   u16 cellPictureAndFlags;
   u8 collisionCode;
@@ -110,6 +127,10 @@ struct MapWork {
   s16 zoomStep;
 };
 
+/// The bytes of MapWork a field map uses: up to its third layer, the last the
+/// field scrolls.
+#define MAPGRID_FIELD_WORK_SIZE offsetof(struct MapWork, layers[3])
+
 /// A view of the map work as the screen transitions read it: the display
 /// control bits, the window edges and interrupt lines of a transition, and
 /// the map's resources.
@@ -138,6 +159,26 @@ struct WorldPosition {
   s32 x;
   u8 unusedAfterX[4]; ///< no code names it
   s32 y;
+};
+
+/// The world map's collision values (WorldMap_GetCollision), 1 to 15, as The
+/// Broken Seal's, with the sea this game sails.
+enum WorldMapCollision {
+  /// The ship sails on WORLD_MAP_COLLISION_SEA_FIRST to
+  /// WORLD_MAP_COLLISION_SEA_LAST and on shallow water (WorldMap_IsSailable).
+  WORLD_MAP_COLLISION_SEA_FIRST = 1,
+  WORLD_MAP_COLLISION_SEA_LAST = 4,
+  /// The party walks only on WORLD_MAP_COLLISION_WALKABLE_FIRST to
+  /// WORLD_MAP_COLLISION_WALKABLE_LAST (WorldMap_IsWalkable).
+  WORLD_MAP_COLLISION_WALKABLE_FIRST = 5,
+  /// Shallow water: a ripple follows the leader as it walks, and the ship
+  /// sails there too.
+  WORLD_MAP_COLLISION_SHALLOW_WATER = 6,
+  /// Where neither collision layer has a value.
+  WORLD_MAP_COLLISION_DEFAULT = 7,
+  /// Forest: the leader's sprite shows its second layer and no shadow.
+  WORLD_MAP_COLLISION_FOREST = 9,
+  WORLD_MAP_COLLISION_WALKABLE_LAST = 12
 };
 
 s32 WorldMap_GetCollision(struct WorldPosition *position);

@@ -34,9 +34,6 @@
 
 /// The end of Cloak, and Douse.
 
-// The caster's palette while it flickers.
-#define CLOAK_FLICKER_PALETTE 7
-
 // What the ground check (FieldEffect_CheckCloakTile) requests when the caster
 // does not stand on a tile it can hide on.
 #define CLOAK_END 0x2092
@@ -46,31 +43,31 @@
 /// stands, show it again at once.
 void FieldPsynergy_StartCloak(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct CloakCaster *caster =
+  struct Actor *caster =
       ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
-  struct CloakSprite *sprite = caster->sprite;
+  struct Sprite *sprite = caster->sprite;
   struct SpriteAnimation *entry = sprite->entries[0];
   u32 n;
   void (*check)(void);
   s32 order;
 
   Sound_PlayFar(SE_PSYNERGY_START);
-  Actor_SelectAnimationFar((struct Actor *)caster, 0);
-  caster->hook = 0;
+  Actor_SelectAnimationFar(caster, ANIM_STILL);
+  caster->update = 0;
 
   for (n = 0; n < 10; n++) {
-    entry->colorMode = CLOAK_FLICKER_PALETTE;
+    entry->colorMode = SPRITE_COLOR_WHITE;
     sprite->dirty = 1;
-    sprite->blend = 2;
+    sprite->flags = SPRITE_FLAG_OUTLINED;
     wait(2);
     sprite->dirty = 1;
-    sprite->blend = 0;
+    sprite->flags = 0;
     wait(2);
   }
 
   order = TASK_PASS_VBLANK;
-  sprite->blend = 2;
-  entry->colorMode = 0;
+  sprite->flags = SPRITE_FLAG_OUTLINED;
+  entry->colorMode = SPRITE_COLOR_NORMAL;
   sprite->dirty = 1;
   check = FieldEffect_CheckCloakTile;
   Task_Add(check, order);
@@ -94,14 +91,14 @@ void BattleEffect_LandFallingObject(struct FallingObject *object) {
 
 /// Per-frame update: drifts from side to side, up to a pixel a frame, as it
 /// falls 0.3 pixels a frame, and is released on reaching its ground height.
-void FieldEffect_UpdateDriftingFallActor(struct Actor *object) {
-  s32 r;
+void FieldEffect_UpdateDriftingFallActor(struct Actor *particle) {
+  s32 drift;
 
-  object->y.fixed -= px(3) / 10;
-  r = Random16();
-  object->x.fixed += r - Random16();
-  if (object->y.fixed <= object->groundHeight) {
-    Actor_StartScriptFar(object, (u32)gBattleEffect_SharedParticleScript);
+  particle->y.fixed -= px(3) / 10;
+  drift = Random16();
+  particle->x.fixed += drift - Random16();
+  if (particle->y.fixed <= particle->groundHeight) {
+    Actor_StartScriptFar(particle, gBattleEffect_SharedParticleScript);
   }
 }
 
@@ -109,7 +106,7 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *object) {
 void FieldPsynergy_DouseOnTarget(s32 unused) { FieldPsynergy_Douse(); }
 
 /// The value step tenths of the way from start to end.
-static __inline__ s32 Lerp10(s32 start, s32 end, s32 step) {
+static __inline__ s32 InterpolateTenths(s32 start, s32 end, s32 step) {
   return start + step * (end - start) / 10;
 }
 
@@ -179,7 +176,7 @@ void FieldPsynergy_Douse(void) {
       t += (e - t) * i / 10;
       orb->z.fixed = t;
     }
-    scale = Lerp10(Q16_ONE / 4, Q16_ONE, i);
+    scale = InterpolateTenths(Q16_ONE / 4, Q16_ONE, i);
     orb->scaleX = scale;
     orb->scaleY = scale;
     wait(1);
@@ -234,9 +231,9 @@ void FieldPsynergy_Douse(void) {
       if (mote != 0) {
         mote->update = (void (*)(void))FieldEffect_UpdateDriftingFallActor;
         mote->motionFlags = 0;
-        ((struct Effect05Sprite *)mote->sprite)->mode = 2;
+        ((struct Sprite *)mote->sprite)->image.priority = 2;
         Actor_SelectAnimationFar(mote, 8);
-        Actor_SetSpriteColorModeFar((struct Actor *)mote, 7);
+        Actor_SetSpriteColorModeFar((struct Actor *)mote, SPRITE_COLOR_WHITE);
       }
       wait(6);
     }
@@ -265,7 +262,7 @@ void FieldPsynergy_Douse(void) {
       t += (e - t) * i / 10;
       orb->z.fixed = t;
     }
-    scale = Lerp10(Q16_ONE, Q16_ONE / 4, i);
+    scale = InterpolateTenths(Q16_ONE, Q16_ONE / 4, i);
     orb->scaleX = scale;
     orb->scaleY = scale;
     wait(1);
@@ -275,30 +272,26 @@ void FieldPsynergy_Douse(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-/// Each frame: one falling particle 8 to 24 pixels above the lifted object,
-/// 0 to 48 pixels out in a random direction.
+/// Task while Carry holds its target: drops one particle a frame round the
+/// lifted actor, 8 to 24 pixels above it and 0 to 48 pixels away in a random
+/// direction (FieldEffect_InitializeFallingFragment).
 void FieldEffect_SpawnFallingParticles(void) {
-  struct Actor *src;
-  struct FallVector pos;
-  struct Actor *obj;
-  u32 dist;
+  struct Actor *liftedActor;
+  struct Vector3 position;
+  struct Actor *fragment;
+  u32 radius;
 
-  src = ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->child;
-  SET_POSITION(&pos, src->x.fixed, src->y.fixed - Random16() * 16 + px(24),
-               src->z.fixed);
+  liftedActor =
+      ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->child;
+  position.x = liftedActor->x.fixed;
+  position.y = liftedActor->y.fixed - Random16() * 16 + px(24);
+  position.z = liftedActor->z.fixed;
 
-  dist = Random16() * 3;
-  Vector_AddPolarOffset(dist * 16, Random16(), &pos);
+  radius = Random16() * 3;
+  Vector_AddPolarOffset(radius * 16, Random16(), &position);
 
-  obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
-  if (obj != 0) {
-    obj->motionFlags = 2;
-    obj->gravity = 0x1999;
-    Actor_SelectAnimationFar(obj, 0);
-    obj->wait = 12;
-    Actor_StartScriptFar((struct Actor *)obj,
-                         gBattleEffect_SharedParticleScript);
-  }
+  fragment = Actor_Spawn(SPRITE_SPARKLE, position.x, position.y, position.z);
+  FieldEffect_InitializeFallingFragment(fragment);
 }
 
 void FieldEffect_SpawnRadialParticleRing(struct Actor *object);
@@ -375,11 +368,11 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     }
   }
   anchors[0]->speedLimit = px(4);
-  anchors[0]->acceleration = 0x8000;
+  anchors[0]->acceleration = px(1) / 2;
   anchors[1]->speedLimit = px(4);
-  anchors[1]->acceleration = 0x8000;
-  target->speedLimit = 0x6666;
-  target->acceleration = 0x3333;
+  anchors[1]->acceleration = px(1) / 2;
+  target->speedLimit = px(2) / 5;
+  target->acceleration = px(1) / 5;
   target->steeringFlags = 0;
   target->layer = 2;
   for (;;) {
@@ -434,14 +427,14 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       Actor_SelectAnimationFar(anchors[1], 4);
       wait(15);
       target->paused = i;
-      target->speedLimit = 0x3333;
-      target->acceleration = 0x3333;
+      target->speedLimit = px(1) / 5;
+      target->acceleration = px(1) / 5;
       Actor_SetMoveTargetFar(target, p->x, p->y, p->z);
-      anchors[0]->speedLimit = 0x3333;
-      anchors[0]->acceleration = 0x3333;
+      anchors[0]->speedLimit = px(1) / 5;
+      anchors[0]->acceleration = px(1) / 5;
       second = anchors[1];
-      second->speedLimit = 0x3333;
-      second->acceleration = 0x3333;
+      second->speedLimit = px(1) / 5;
+      second->acceleration = px(1) / 5;
       Actor_SetMoveTargetFar(anchors[0], p->x + px(16), p->y, p->z);
       Actor_SetMoveTargetFar(second, p->x - px(16), p->y, p->z);
       Actor_WaitForMoveFar(target);
@@ -470,7 +463,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
       if (object != NULL) {
         Actor_StartScriptFar(object, (u32)gFieldEffect_FragmentScript);
         object->speedLimit = Random16() + px(2);
-        object->acceleration = 0x20000;
+        object->acceleration = px(2);
         object->motionFlags = 0;
         magnitude = Random16() * 24 + 0x80000;
         Actor_SetTargetPositionFromMagnitudeAngle(object, magnitude,
@@ -489,7 +482,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   target->bounce = px(1) / 5;
   target->layer = 0;
   source->update = NULL;
-  Actor_SetSpriteColorModeFar(source, 0);
+  Actor_SetSpriteColorModeFar(source, SPRITE_COLOR_NORMAL);
   if ((s8)work->childOption != 0) {
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
       wait(1);

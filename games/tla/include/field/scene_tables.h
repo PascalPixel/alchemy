@@ -187,6 +187,14 @@ struct Trigger {
 /// an item trigger's event shows its own message in place of the "uses"
 /// message (MsgActorUsesItem); an examine trigger shows no checking message.
 #define TRIGGER_SUBJECT_OWN_EFFECT 0x400
+/// An item trigger's subject, as The Broken Seal's: the heading it needs in
+/// bits 15..12, whether it needs one, and its target, an actor or a cell
+/// behavior.
+#define TRIGGER_SUBJECT_FACING 0xf000
+#define TRIGGER_SUBJECT_NEEDS_FACING 0x0800
+#define TRIGGER_SUBJECT_TARGET 0xff
+/// A trigger's value below this is a message, from it an event.
+#define TRIGGER_RESULT_MESSAGE_END 65536
 
 /// What a search finds, an examine trigger's value, as The Broken Seal's: an
 /// item, coins or a message.
@@ -236,13 +244,15 @@ struct TriggerView {
   (TRIGGER_TALK | TRIGGER_FLAG_FACING | (facing))
 
 /// An exit trigger's control bits 6..4: how the leader leaves
-/// (Scene_RunStepTriggerOrExit). Style 0x50 plays the plain exit sound and
-/// runs Func_080d5fd4 on the leader as it goes.
+/// (Scene_RunStepTriggerOrExit).
 enum ExitStyle {
   EXIT_STYLE_NORMAL = 0x00, ///< with SE_MAP_EXIT
   EXIT_STYLE_SILENT = 0x10,
   EXIT_STYLE_STAIRS_UP = 0x20,   ///< with the stairs-up sound and walk
   EXIT_STYLE_STAIRS_DOWN = 0x30, ///< with the stairs-down sound and walk
+  /// With SE_MAP_EXIT and a hidden layer on the leader's sprite
+  /// (Exit_AddHiddenLeaderLayer).
+  EXIT_STYLE_HIDDEN_LAYER = 0x50,
   EXIT_STYLE_MASK = 0x70
 };
 
@@ -341,6 +351,8 @@ enum PsynergyPhase {
 /// The control word of a Psynergy trigger (TRIGGER_PSYNERGY) in the given
 /// phase, as Scene_FindPsynergyTrigger compares it (bits 31..28 phase
 /// | 3..0 kind).
+/// A Psynergy trigger's phase bits, 31..28.
+#define PSYNERGY_PHASE_MASK (15u << 28)
 #define PSYNERGY_TRIGGER(phase) ((u32)(phase) << 28 | TRIGGER_PSYNERGY)
 #define PSYNERGY_TRIGGER_ANY PSYNERGY_TRIGGER(PSYNERGY_PHASE_ANY)
 

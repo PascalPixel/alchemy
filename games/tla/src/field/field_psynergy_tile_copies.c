@@ -57,7 +57,8 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
 
       MapGrid_CopyCellPictureCellsRectFar(toX + dx, toZ + dz, 1, 1, x + dx,
                                           z + dz);
-      MapGrid_GetCellAt(cx << 20, cz << 20, 2)->collisionCode = 0;
+      MapGrid_GetCellAt(FIELD_CELL_ORIGIN(cx), FIELD_CELL_ORIGIN(cz), 2)
+          ->collisionCode = 0;
       n = gTouchCopies.count;
       if (n < 64) {
         gTouchCopies.copies[n].toX = toX + dx;
@@ -90,7 +91,7 @@ void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
   Actor_SetSpriteFlagsFar(object, 0);
   object->gravity = 0x5999;
   object->velocityY = px(5);
-  object->scaleY = object->scaleX = 0x6666;
+  object->scaleY = object->scaleX = Q16_ONE * 2 / 5;
   do {
     wait(1);
     object->scaleY = object->scaleX = object->scaleX + 0x3d7;
@@ -157,8 +158,8 @@ void ParticleBurst_Start(void) {
   u8 *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = effect->mainActor;
   struct BurstCell *cell = (struct BurstCell *)(event + 0xcc0);
-  s32 dx = (cell->x << 20) - owner->x.fixed + px(8);
-  s32 dz = (cell->z << 20) - owner->z.fixed + px(8);
+  s32 dx = FIELD_CELL_ORIGIN(cell->x) - owner->x.fixed + px(8);
+  s32 dz = FIELD_CELL_ORIGIN(cell->z) - owner->z.fixed + px(8);
   s32 heading = (u16)ArcTan2(dz, dx);
   struct EffectSprite *sprite;
   struct BurstParticle *particle;
@@ -171,8 +172,8 @@ void ParticleBurst_Start(void) {
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_Leaves), work);
   resource = VramCache_FindFreeEntry();
   vram = VramCache_Load(resource, 384, work);
-  work->resource = resource;
-  work->vram = vram;
+  work->cacheEntry = resource;
+  work->tile = vram;
 
   for (i = 0, particle = work->particles; i < 96; i++, particle++) {
     sprite = &work->sprites[i];

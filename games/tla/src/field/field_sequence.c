@@ -27,8 +27,6 @@
 #include "field_sequence_psynergy.c"
 #include "field_sequence_treasure_spots.c"
 
-#undef PartyInventory_GiveItem
-
 #include "field_sequence_item_display.c"
 #include "field_sequence_screen_transition.c"
 #include "field_sequence_palette_fade.c"

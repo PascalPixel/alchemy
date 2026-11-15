@@ -6,19 +6,19 @@
 
 /// SC_CALL routine that turns an actor toward the angle kept in its timer: the
 /// whole way when within 1/16 turn, otherwise 1/32 turn.
-s32 Actor_StepAngle(struct Actor *object) {
+s32 Actor_StepAngle(struct Actor *actor) {
   s32 delta = 0;
 
-  if (object != NULL) {
-    s32 targetAngle = (u16)object->timer;
-    s32 currentAngle = object->facing;
+  if (actor != NULL) {
+    s32 targetAngle = (u16)actor->timer;
+    s32 currentAngle = actor->facing;
     delta = (s16)(targetAngle - currentAngle);
     if (delta != 0) {
-      if (delta > TRIG_TURN / 16)
-        delta = TRIG_TURN / 32;
-      if (delta < -(TRIG_TURN / 16))
-        delta = -(TRIG_TURN / 32);
-      object->facing = currentAngle + delta;
+      if (delta > 4096)
+        delta = 2048;
+      if (delta < -4096)
+        delta = -2048;
+      actor->facing = currentAngle + delta;
     }
   }
   return delta;

@@ -8,84 +8,86 @@
 #include "field/field.h"
 #include "system/system.h"
 #include "field/scene_call.h"
+#include "field/field_sequence.h"
 
 extern const u8 gActor_WaitScript[];
 
-/// The Broken Seal's BattleEffect_ConfigureWatchedObject with this game's
-/// calls: with flags & 3 zero it destroys the object's linked effect;
-/// otherwise (mode 2, or when the linked effect is outside animation 0x108)
-/// it creates effect object 264 at the object and links it, mode 1 keeping it
-/// as the object's resource and mode 2 running gActor_WaitScript on it.
+/// The event command "actor set attached effect", by enum AttachedEffectFlag:
+/// removes the actor attached to an actor, attaches one
+/// (SPRITE_ATTACHED_EFFECT, animation 1) unless one already is, or shows a
+/// one-off one (animation 2) that ends by itself (gActor_WaitScript).
 void FieldEffect_SetAttached(s32 actorId, s32 flags) {
-  struct LinkedEffectObject *object = Actor_Lookup(actorId);
-  struct LinkedEffectObject *child;
-  struct LinkedEffectVisual *visual;
+  struct Actor *actor = Actor_Lookup(actorId);
+  struct Actor *effect;
+  struct Sprite *visual;
   s32 mode;
 
-  child = 0;
+  effect = 0;
   visual = 0;
 
-  if (object == 0)
+  if (actor == 0)
     return;
 
   if ((flags & 3) != 0) {
-    if ((flags & 3) == 2 || Actor_IsNotAttachedEffect(object->resource)) {
-      child = Actor_CreateFar(SPRITE_ATTACHED_EFFECT, object->x, object->y,
-                              object->z);
+    if ((flags & 3) == ATTACHED_EFFECT_ONCE ||
+        Actor_IsNotAttachedEffect(actor->watchedActor)) {
+      effect = Actor_CreateFar(SPRITE_ATTACHED_EFFECT, actor->x.fixed,
+                               actor->y.fixed, actor->z.fixed);
     }
   } else {
-    child = object->resource;
-    if (child == 0)
+    effect = actor->watchedActor;
+    if (effect == 0)
       return;
-    Actor_ReleaseFar(child);
-    object->resource = NULL;
+    Actor_ReleaseFar(effect);
+    actor->watchedActor = NULL;
     return;
   }
 
-  if (child == 0)
+  if (effect == 0)
     return;
 
   mode = flags & 3;
   switch (mode) {
-  case 1:
-    Actor_SelectAnimationFar(child, 1);
-    object->resource = child;
-    child->counter = 1;
+  case ATTACHED_EFFECT_ATTACH:
+    Actor_SelectAnimationFar(effect, 1);
+    actor->watchedActor = effect;
+    effect->timer = 1;
     break;
-  case 2:
-    Actor_SelectAnimationFar(child, 2);
-    Actor_StartScriptFar(child, gActor_WaitScript);
-    child->counter = 1;
+  case ATTACHED_EFFECT_ONCE:
+    Actor_SelectAnimationFar(effect, 2);
+    Actor_StartScriptFar(effect, gActor_WaitScript);
+    effect->timer = 1;
     break;
   }
 
-  child->resourceId = actorId;
-  child->value55 = 0;
-  child->callback = FieldEffect_CopyWatchedActorPosition;
-  visual = child->visual;
-  visual->value26 = 0;
-  child->resource = object;
+  effect->userValue = actorId;
+  effect->motionFlags = 0;
+  effect->update = (void (*)(void))FieldEffect_CopyWatchedActorPosition;
+  visual = effect->sprite;
+  visual->flags = 0;
+  effect->watchedActor = actor;
 
-  if (flags & 0x100) {
+  // Replace the effect's priority bits (2 and 3) with 1 or the actor's.
+  if (flags & ATTACHED_EFFECT_IN_FRONT) {
     s32 mask = 13;
-    u8 visualFlags = visual->flags;
+    u8 attr = SPRITE_ATTR2_HIGH(visual);
 
     mask = -mask;
-    mask &= visualFlags;
+    mask &= attr;
     mask |= 4;
-    visual->flags = mask;
+    SPRITE_ATTR2_HIGH(visual) = mask;
   } else {
-    s32 copiedFlags = 12;
-    u8 sourceFlags = object->visual->flags;
-    u8 destinationFlags;
-    s32 clearMask = 13;
+    s32 priority = 12;
+    u8 src = SPRITE_ATTR2_HIGH(actor->sprite);
+    u8 dst;
+    s32 mask = 13;
 
-    copiedFlags &= sourceFlags;
-    destinationFlags = visual->flags;
-    clearMask = -clearMask;
-    clearMask &= destinationFlags;
-    clearMask |= copiedFlags;
-    visual->flags = clearMask;
+    priority &= src;
+    dst = SPRITE_ATTR2_HIGH(visual);
+    mask = -mask;
+    mask &= dst;
+    mask |= priority;
+    SPRITE_ATTR2_HIGH(visual) = mask;
   }
 }
 
@@ -186,14 +188,14 @@ void Actor_WatchActor(struct Actor *object, struct Actor *target) {
 /// Gives the object the party leader's display layer.
 s32 Actor_TakeLeaderLayer(struct Actor *object) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  s32 layer = ((struct ObjectLayerAnimation *)leader->sprite)->layer;
+  s32 layer = ((struct PlacedSprite *)leader->sprite)->priority;
 
-  if ((object->spriteStorageKind & 0xf) == 1) {
-    struct ObjectLayerAnimation *animation = object->sprite;
+  if ((object->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
+    struct PlacedSprite *sprite = object->sprite;
 
-    animation->layer = layer;
-    animation->shadowLayer = layer;
-    object->priorityFlags &= 0xfe;
+    sprite->priority = layer;
+    sprite->shadowPriority = layer;
+    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   }
   return 0;
 }
@@ -303,7 +305,7 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 id) {
   }
   if (found == NULL)
     return NULL;
-  if (((struct ObjectAnimation *)found->sprite)->definition[0] != id)
+  if (((struct Sprite *)found->sprite)->entries[0]->animationId != id)
     return NULL;
   return found;
 }
@@ -344,9 +346,9 @@ s32 Field_TryJumpForward(void) {
   s32 canJump;
   s32 i;
 
-  if (gMainRoutineWork.movementMode == 2)
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS)
     return result;
-  if (gMainRoutineWork.movementMode == 3)
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_ROPE)
     return result;
   if ((angle + FACING_STEP) & TRIG_TURN / 8) // not facing a quarter turn
     return result;
@@ -354,15 +356,15 @@ s32 Field_TryJumpForward(void) {
   positionWords = position;
 again:
   // The middle of the tile in front, then of the tile beyond.
-  position[0] = (leader->x.fixed & FIELD_CELL_MASK) + 0x80000;
+  position[0] = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
   position[1] = leader->y.fixed;
-  position[2] = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
+  position[2] = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
   Vector_AddPolarOffset(px(16), angle, position);
   if (MapGrid_CheckCollisionFar(leader, position) == 1)
     return -1;
-  position[0] = (leader->x.fixed & FIELD_CELL_MASK) + 0x80000;
+  position[0] = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
   position[1] = leader->y.fixed;
-  position[2] = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
+  position[2] = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
   Vector_AddPolarOffset(px(32), angle, position);
   canJump = 0;
   if (MapGrid_BlocksJump(leader, position) == 0 &&
@@ -370,7 +372,7 @@ again:
     canJump = 1;
 
   // A platform 16 pixels below the landing makes it a jump spot.
-  if (leader->priorityFlags & 0x40) {
+  if (leader->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
     entry = Ram_HeapSlots->actors;
     for (i = 0; i < 64; i++, entry++) {
       s32 bound = 0x7ffff;
@@ -379,7 +381,7 @@ again:
 
       if (entry->script == NULL)
         continue;
-      if (!(entry->priorityFlags & 0x80))
+      if (!(entry->priorityFlags & ACTOR_PRIORITY_PLATFORM))
         continue;
       if (entry->arrivalAxis != 0)
         continue;
@@ -408,16 +410,17 @@ again:
   // A solid object at the landing blocks it.
   entry = Ram_HeapSlots->actors;
   for (i = 0; i < 64; i++, entry++) {
-    if (entry->script != NULL && !(entry->priorityFlags & 0x80) &&
-        entry != leader && entry->collisionFlags != 0 &&
+    if (entry->script != NULL &&
+        !(entry->priorityFlags & ACTOR_PRIORITY_PLATFORM) && entry != leader &&
+        entry->collisionFlags != 0 &&
         FIELD_CELL(position[0] - entry->x.fixed + px(8)) == 0 &&
         FIELD_CELL(position[2] - entry->z.fixed + px(8)) == 0) {
       s32 d = position[1] - entry->y.fixed;
       if (d >= 0) {
         if (d <= 0x7ffff)
-          goto hit2;
+          goto blocked;
       } else if (entry->y.fixed - position[1] <= 0x7ffff) {
-      hit2:
+      blocked:
         canJump = 0;
         break;
       }
@@ -430,21 +433,21 @@ again:
 
     // Crouch, then jump there.
     if (leader->spriteStorageKind == 1)
-      spriteFlags = ((struct JumpSprite *)leader->sprite)->flags;
+      spriteFlags = ((struct Sprite *)leader->sprite)->flags;
     Event_Start();
-    Actor_SelectAnimationFar(leader, 6);
+    Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
     wait(6);
     Sound_PlayFar(SE_JUMP);
-    Actor_SelectAnimationFar(leader, 7);
+    Actor_SelectAnimationFar(leader, ANIM_LEADER_LEAP);
     leader->speedLimit = px(3);
     leader->acceleration = px(2);
     leader->velocityY = px(4);
-    *flags &= 0x7e;
-    Actor_SetSpriteFlagsFar(leader, spriteFlags & 0xfe);
+    *flags &= ACTOR_JUMP_KEEPS_MOTION;
+    Actor_SetSpriteFlagsFar(leader, spriteFlags & (u8)~SPRITE_FLAG_SHADOW);
     Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId,
                             ((s16 *)positionWords)[1],
                             ((s16 *)positionWords)[5]);
-    Actor_SelectAnimationFar(leader, 6);
+    Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
 
     map = Ram_HeapSlots->mapGrid;
@@ -463,10 +466,12 @@ again:
         Actor_SpawnWaterSplashFar(leader, (u32)(attr << 28) >> 30);
     }
 
-    // A platform underfoot dips 2 pixels with the leader and comes back up.
-    if (((platform = Actor_FindNearestFacingTarget(leader, 258)) != NULL ||
-         (platform = Actor_FindNearestFacingTarget(leader, 259)) != NULL) &&
-        (platform->priorityFlags & 2)) {
+    // A log underfoot dips 2 pixels with the leader and comes back up.
+    if (((platform = Actor_FindNearestFacingTarget(
+              leader, SPRITE_LOG_WEST_EAST)) != NULL ||
+         (platform = Actor_FindNearestFacingTarget(
+              leader, SPRITE_LOG_NORTH_SOUTH)) != NULL) &&
+        (platform->priorityFlags & ACTOR_PRIORITY_UNDERFOOT)) {
       Actor_SelectAnimationFar(platform, 7);
       leader->y.fixed -= px(1);
       leader->groundHeight -= px(1);
@@ -485,11 +490,10 @@ again:
     *flags = saved;
     Event_End();
     if (work != NULL)
-      work->walkingDistance +=
-          Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
+      work->walkingDistance += Iwram_MulQ16(work->walkingDistanceScale, px(32));
     if (MapGrid_GetCellBehaviorAtFar(leader->layer, position[0], position[2]) ==
         254) {
-      Actor_SelectAnimationFar(leader, 1);
+      Actor_SelectAnimationFar(leader, ANIM_STAND);
       wait(6);
       goto again;
     }
@@ -520,8 +524,8 @@ s32 Field_ClimbDown(void) {
   gridZ = 8 + (FIELD_PIXEL(leader->z.fixed) & 0xfff0);
   Event_Start();
   if (leader->spriteStorageKind == 1)
-    spriteFlags = ((struct ClimbSprite *)leader->sprite)->flags;
-  if (gMainRoutineWork.movementMode == 0) {
+    spriteFlags = ((struct Sprite *)leader->sprite)->flags;
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
     struct Actor *entry;
     struct MapCell *cell;
     struct MapCell *south;
@@ -538,11 +542,10 @@ s32 Field_ClimbDown(void) {
       goto failure;
     cell = &map->layers[2].cells[cellX + (cellZ - cellY) * 128];
     south = cell + 128;
-    if (south->collisionCode == 255)
+    if (south->collisionCode == CELL_BEHAVIOR_WALL)
       goto failure;
     if (MapGrid_GetTerrainHeightFar(leader->layer, px(gridX), px(gridZ)) <=
-        MapGrid_GetTerrainHeightFar(leader->layer, px(gridX),
-                                    (gridZ + 16) << 16))
+        MapGrid_GetTerrainHeightFar(leader->layer, px(gridX), px(gridZ + 16)))
       goto failure;
     position[0] = leader->x.fixed;
     position[1] = leader->y.fixed - px(16);
@@ -565,28 +568,28 @@ s32 Field_ClimbDown(void) {
     // Step to the middle of the tile, face north and climb down a tile.
     Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, gridX, gridZ);
     leader->speedLimit = px(1);
-    Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, 0xc000, 0);
+    Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
     Actor_WaitForScriptEndById(gMainRoutineWork.leaderActorId);
     leader->steeringFlags = 1;
     leader->motionFlags = 0;
-    spriteFlags &= 0xfe;
+    spriteFlags &= (u8)~SPRITE_FLAG_SHADOW;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
-    Actor_SelectAnimationFar(leader, 13);
+    Actor_SelectAnimationFar(leader, ANIM_LEADER_CLIMB_DOWN_FROM_TOP);
     Actor_SetMoveTargetFar(leader, px(gridX), leader->y.fixed - px(16),
-                           px(gridZ) + 0x100000);
+                           px(gridZ) + px(16));
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-    gMainRoutineWork.movementMode = 2;
-    leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
+    leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
   } else {
     // Let go of the wall and fall.
-    Actor_SelectAnimationFar(leader, 10);
+    Actor_SelectAnimationFar(leader, ANIM_LEADER_CLIMB);
     leader->motionFlags = 3;
     leader->velocityY = px(4);
     leader->groundHeight = leader->y.fixed;
-    spriteFlags |= 1;
+    spriteFlags |= SPRITE_FLAG_SHADOW;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Event_Wait(6);
-    gMainRoutineWork.movementMode = 0;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
     leader->steeringFlags = 1;
     leader->facing = TRIG_TURN * 3 / 4;
     leader->timer = 0;
@@ -615,8 +618,8 @@ s32 Field_ClimbUp(void) {
 
   Event_Start();
   if (leader->spriteStorageKind == 1)
-    spriteFlags = ((struct ClimbSprite *)leader->sprite)->flags;
-  if (gMainRoutineWork.movementMode == 0) {
+    spriteFlags = ((struct Sprite *)leader->sprite)->flags;
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
     struct MapCell *cell;
     struct MapCell *north;
     s32 cellX = gridX >> 4;
@@ -630,11 +633,10 @@ s32 Field_ClimbUp(void) {
       goto failure;
     cell = &map->layers[2].cells[cellX + (cellZ - cellY) * 128];
     north = cell - 128;
-    if (north->collisionCode == 255)
+    if (north->collisionCode == CELL_BEHAVIOR_WALL)
       goto failure;
     if (MapGrid_GetTerrainHeightFar(leader->layer, px(gridX), px(gridZ)) >=
-        MapGrid_GetTerrainHeightFar(leader->layer, px(gridX),
-                                    (gridZ - 16) << 16))
+        MapGrid_GetTerrainHeightFar(leader->layer, px(gridX), px(gridZ - 16)))
       goto failure;
     position[0] = leader->x.fixed;
     position[1] = leader->y.fixed;
@@ -652,16 +654,16 @@ s32 Field_ClimbUp(void) {
     leader->velocityY = px(4);
     wait(4);
     leader->motionFlags = result;
-    spriteFlags &= 0xfe;
+    spriteFlags &= (u8)~SPRITE_FLAG_SHADOW;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
     leader->speedLimit = px(1);
     leader->velocityY = result;
-    Actor_SelectAnimationFar(leader, 12);
+    Actor_SelectAnimationFar(leader, ANIM_LEADER_CLING);
     wait(4);
-    gMainRoutineWork.movementMode = 2;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
     leader->steeringFlags = 1;
     wait(8);
-    leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
+    leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
   } else {
     struct Actor *entry;
     s32 radius = leader->radius - 2;
@@ -682,16 +684,16 @@ s32 Field_ClimbUp(void) {
 
     // Climb over the top: up 8 pixels and a tile north.
     leader->motionFlags = 0;
-    Actor_SelectAnimationFar(leader, 11);
+    Actor_SelectAnimationFar(leader, ANIM_LEADER_CLIMB_OVER_TOP);
     Actor_SetMoveTargetFar(leader, px(gridX), leader->y.fixed + px(8),
-                           px(gridZ) - 0x100000);
+                           px(gridZ) - px(16));
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     leader->motionFlags = 3;
     leader->groundHeight = leader->y.fixed;
-    spriteFlags |= 1;
+    spriteFlags |= SPRITE_FLAG_SHADOW;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Event_Wait(4);
-    gMainRoutineWork.movementMode = 0;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
     leader->steeringFlags = 1;
     leader->timer = 0;
     leader->userValue = 0;
@@ -759,11 +761,11 @@ s32 Leader_StepOntoRope(void) {
   leader->timer = leader->motionFlags;
   flags = &leader->priorityFlags;
   leader->userValue = sprite->flags;
-  ((struct GrabSave *)leader)->priority = sprite->image.priority;
+  leader->savedSpritePriority = sprite->image.priority;
   leader->priorityFlags = *flags & ~1;
   sprite->flags = 0;
   sprite->image.priority = 1;
-  gMainRoutineWork.movementMode = 3;
+  gMainRoutineWork.movementMode = LEADER_MOVEMENT_ROPE;
   return 1;
 }
 
@@ -776,11 +778,11 @@ s32 Leader_StepOffRope(void) {
   u32 angle;
 
   gFieldWork->blockedSteps = 0;
-  angle = gRope_KeyHeadings[(gInput.held >> 4) & 15];
+  angle = gRope_KeyHeadings[DPAD_INDEX(gInput.held)];
   if (angle == 0xffff)
     return 0;
-  leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + 0x80000;
-  leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
+  leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
+  leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
@@ -803,8 +805,8 @@ s32 Leader_StepOffRope(void) {
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);
-  sprite->image.priority = ((u8 *)leader)[98];
-  gMainRoutineWork.movementMode = 0;
+  sprite->image.priority = leader->savedSpritePriority;
+  gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
   return 1;
 }
 
@@ -863,12 +865,12 @@ s32 Leader_StepOntoTightrope(void) {
   Actor_WaitForMoveFar(leader);
   leader->timer = leader->motionFlags;
   leader->userValue = sprite->flags;
-  ((struct GrabSave *)leader)->priority = sprite->image.priority;
+  leader->savedSpritePriority = sprite->image.priority;
   flags = &leader->priorityFlags;
   leader->priorityFlags = *flags & ~1;
   sprite->flags = 0;
   sprite->image.priority = 1;
-  work->movementMode = 4;
+  work->movementMode = LEADER_MOVEMENT_TIGHTROPE;
   return 1;
 }
 
@@ -881,11 +883,11 @@ s32 Leader_StepOffTightrope(void) {
   u32 angle;
 
   gFieldWork->blockedSteps = 0;
-  angle = gRope_KeyHeadings[(gInput.held >> 4) & 15];
+  angle = gRope_KeyHeadings[DPAD_INDEX(gInput.held)];
   if (angle == 0xffff)
     return 0;
-  leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + 0x80000;
-  leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
+  leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
+  leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + px(8);
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
@@ -907,7 +909,7 @@ s32 Leader_StepOffTightrope(void) {
   Actor_SelectAnimationFar(leader, 2);
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);
-  sprite->image.priority = ((u8 *)leader)[98];
-  gMainRoutineWork.movementMode = 0;
+  sprite->image.priority = leader->savedSpritePriority;
+  gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
   return 1;
 }

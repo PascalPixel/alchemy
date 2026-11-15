@@ -23,9 +23,9 @@
 /// What BattleEffect_UploadCanvas does with the canvas in the next frame.
 #define CANVAS_UPLOAD_AND_CLEAR 1
 #define CANVAS_UPLOAD 2
-#define CANVAS_UPLOAD_AND_FADE1 3
-#define CANVAS_UPLOAD_AND_FADE2 4
-#define CANVAS_UPLOAD_AND_FADE3 5
+#define CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL 3
+#define CANVAS_UPLOAD_AND_DARKEN_TWO_LEVELS 4
+#define CANVAS_UPLOAD_AND_DARKEN_FOUR_LEVELS 5
 #define CANVAS_UPLOAD_TO_BG 11
 
 /// A field Psynergy's canvas sprite: its effect sprite, the frame it is on and

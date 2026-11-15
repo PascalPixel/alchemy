@@ -14,27 +14,13 @@
 
 #include "sprite_ids.h"
 
-struct ObjectMetadata {
-  u8 unused[8]; ///< no code names it
-  s8 height;
-};
-
-extern const s32 Data_080f0f90[];
+extern const s32 gBlaze_TintColors[];
 
 void Field_StartColorTransition(s32 frames, s32 color);
-/* VIEW(psynergy): routine Resource_GetMetadataRecordFarFar as struct
- * ObjectMetadata *Resource_GetMetadataRecordFarFar(s32 id);
- * system/sprite_metadata.h has struct AnimationMetadata
- * *Resource_GetMetadataRecordFarFar(u32 number); tried as the rest of the
- * object declares it, FieldPsynergy_Blaze moves: 4 of 609 instructions in
- * tla-ja. */
-struct ObjectMetadata *Resource_GetMetadataRecordFarFar__psynergy(
-    s32 id) __asm__("Resource_GetMetadataRecordFarFar");
-#define Resource_GetMetadataRecordFarFar                                       \
-  Resource_GetMetadataRecordFarFar__psynergy
 
-#define OBJECT_DEFINITION(object)                                              \
-  (((struct ObjectAnimation *)(object)->sprite)->definition)
+/// The first layer of an actor's sprite.
+#define ACTOR_FIRST_LAYER(actor)                                               \
+  (((struct Sprite *)(actor)->sprite)->entries[0])
 
 /// Blaze: a jet of flame sprays from the caster, with smoke, for up to 80
 /// frames or until B is pressed: red, or violet, yellow or blue to match the
@@ -76,7 +62,7 @@ void FieldPsynergy_Blaze(void) {
   look = 0;
   object = scene->child;
   if (Actor_GetSpriteIdFar(object) == 418) {
-    kind = ((u8 *)OBJECT_DEFINITION(object))[5];
+    kind = ACTOR_FIRST_LAYER(object)->colorMode;
     if (kind == 4)
       look = 1;
     if (kind == 1)
@@ -84,25 +70,24 @@ void FieldPsynergy_Blaze(void) {
     if (kind == 3)
       look = 3;
   }
-  Field_StartColorTransition(8, Data_080f0f90[look]);
+  Field_StartColorTransition(8, gBlaze_TintColors[look]);
   work->mode = 0;
   if (scene->enabled != 0) {
     work->origin[0] = scene->x;
     work->origin[1] = scene->y + px(16);
     work->origin[2] = scene->z;
     best = 9999;
-    for (i = 0; i < 80; i++) {
+    for (i = 0; i < FIELD_ACTOR_COUNT; i++) {
       cursor.object = event->actors[i];
-      id = OBJECT_DEFINITION(cursor.object)[0];
+      id = ACTOR_FIRST_LAYER(cursor.object)->animationId;
       if (cursor.object != NULL && cursor.object->script != NULL &&
           (id == 410 || id == 304 || id == 386 || id == 418)) {
         distance = Field_MeasurePsynergyReach(scene->fieldPsynergy,
                                               scene->firstActorId, i);
         if (distance != -1 && best > distance) {
-          height = Resource_GetMetadataRecordFarFar(
-                       OBJECT_DEFINITION(cursor.object)[0])
-                       ->height
-                   << 16;
+          height = px((s8)Resource_GetMetadataRecordFarFar(
+                          ACTOR_FIRST_LAYER(cursor.object)->animationId)
+                          ->boxX);
           work->mode = 1;
           work->origin[0] = cursor.object->x.fixed;
           work->origin[1] = cursor.object->y.fixed + height;
@@ -119,10 +104,9 @@ void FieldPsynergy_Blaze(void) {
     else
       work->mode = 3;
     if (scene->child != NULL)
-      height =
-          Resource_GetMetadataRecordFarFar(OBJECT_DEFINITION(scene->child)[0])
-              ->height
-          << 16;
+      height = px((s8)Resource_GetMetadataRecordFarFar(
+                      ACTOR_FIRST_LAYER(scene->child)->animationId)
+                      ->boxX);
     else
       height = px(20);
     work->origin[0] = scene->x;
@@ -138,7 +122,7 @@ void FieldPsynergy_Blaze(void) {
     object = Actor_Spawn(SPRITE_BLAZE_FLAME, pos[0], pos[1], pos[2]);
     if (object == NULL)
       goto end;
-    ((u8 *)object)[85] = 0;
+    object->motionFlags = 0;
     object->scaleX = Q16_ONE * 5 / 4;
     object->scaleY = Q16_ONE * 5 / 4;
     Actor_SelectAnimationFar(object, 2);
@@ -155,7 +139,7 @@ void FieldPsynergy_Blaze(void) {
     object = Actor_Spawn(SPRITE_BLAZE_FLICKER, pos[0], pos[1], pos[2]);
     if (object == NULL)
       goto end;
-    ((u8 *)object)[85] = mode;
+    object->motionFlags = mode;
     Actor_SelectAnimationFar(object, 2);
     Sound_PlayFar(SE_SOL_SANCTUM_LIGHT_UP);
     wait(45);
@@ -221,7 +205,7 @@ void FieldPsynergy_Blaze(void) {
   wait(1);
   work->emitting = 1;
   Task_Add(Blaze_UpdateSpray, TASK_PASS_VBLANK);
-  for (k = 0; k < 80; k++) {
+  for (k = 0; k < FIELD_ACTOR_COUNT; k++) {
     wait(1);
     if (work->hit != 0) {
       pending = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_HITS),

@@ -57,7 +57,12 @@ enum ShopTestActorId {
   ACTOR_ITEM_SELECTOR,
   ACTOR_EQUIPMENT,
   ACTOR_DJINN,
-  ACTOR_AFFLICTIONS ///< then four more who do nothing
+  ACTOR_AFFLICTIONS,
+  /// Four more, who do nothing when talked to (ShopTest_NoOp).
+  ACTOR_IDLE_A,
+  ACTOR_IDLE_B,
+  ACTOR_IDLE_C,
+  ACTOR_IDLE_D
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -86,13 +91,15 @@ void ShopTest_BrowseMessageRange(s32 message, s32 count) {
   void *window;
   s32 typed;
 
-  window = Portrait_OpenWindow(206, 0, 0, 0);
+  window = Portrait_OpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
   i = 0;
   if (i >= count)
     goto done;
 loop:
-  MessageArgument_Push(1, MESSAGE_ARGUMENT_ACTOR);
-  MessageArgument_Push(5, MESSAGE_ARGUMENT_ITEM);
+  // Sample name, item and number substitutions before each message: Garet,
+  // the Shamshir and 123456.
+  MessageArgument_Push(GARET, MESSAGE_ARGUMENT_ACTOR);
+  MessageArgument_Push(ITEM_SHAMSHIR, MESSAGE_ARGUMENT_ITEM);
   MessageArgument_Push(123456, MESSAGE_ARGUMENT_NUMBER);
   Message_CloseFinishedWindows();
   Message_OpenWindow(message, 5, 0, 0x22);
@@ -462,10 +469,10 @@ struct Trigger gSceneEvents[] = {
      EVENT(ShopTest_GiveEquipmentTestStock)},
     {TRIGGER_TALK, ACTOR_DJINN, CONDITION_ALWAYS,
      EVENT(ShopTest_GivePartyDjinn)},
-    {TRIGGER_TALK, 30, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
-    {TRIGGER_TALK, 31, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
-    {TRIGGER_TALK, 32, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
-    {TRIGGER_TALK, 33, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
+    {TRIGGER_TALK, ACTOR_IDLE_A, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
+    {TRIGGER_TALK, ACTOR_IDLE_B, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
+    {TRIGGER_TALK, ACTOR_IDLE_C, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
+    {TRIGGER_TALK, ACTOR_IDLE_D, CONDITION_ALWAYS, EVENT(ShopTest_NoOp)},
     {TRIGGER_TABLE_END},
 };
 
@@ -496,7 +503,7 @@ void ShopTest_DamageAndAfflictParty(void) {
   unit->curse = 1;
   unit->poison = 2;
   unit = Unit_Get(FELIX);
-  for (i = 0; i <= 14; i++) {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     item = Item_GetDirect(unit->inventory[i]);
     if (unit->inventory[i] == 0)
       break;
@@ -506,7 +513,7 @@ void ShopTest_DamageAndAfflictParty(void) {
     }
   }
   unit = Unit_Get(JENNA);
-  for (i = 0; i <= 14; i++) {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     item = Item_GetDirect(unit->inventory[i]);
     if (unit->inventory[i] == 0)
       break;
@@ -520,7 +527,7 @@ void ShopTest_DamageAndAfflictParty(void) {
 
 /// Gives an owner one Djinni, marks it found and sets it if `activate` is 1.
 void ShopTest_GiveDjinni(s32 owner, s32 element, s32 djinn, s32 activate) {
-  GameFlag_Set(element * 20 + djinn + 48);
+  GameFlag_Set(FLAG_DJINNI(element * DJINN_PER_ELEMENT + djinn));
   Djinn_Give(owner, element, djinn);
   if (activate == 1)
     Djinn_Set(owner, element, djinn);
@@ -558,7 +565,7 @@ void ShopTest_GivePartyDjinn(void) {
 }
 #endif
 
-/// The event for talking to actors 30 to 33.
+/// The event for talking to ACTOR_IDLE_A to ACTOR_IDLE_D.
 void ShopTest_NoOp(void) {}
 
 /// Gives a Muramasa, then announces and unlocks summon 22. Talking to
@@ -587,10 +594,10 @@ s32 Scene_Initialize(void) {
   Actor_SetAnimationById(ACTOR_WEAPON_SHOP_MESSAGES, 5);
   Actor_SetAnimationById(ACTOR_ARMOR_SHOP_MESSAGES, 5);
   Actor_SetAnimationById(ACTOR_ITEM_SHOP_MESSAGES, 5);
-  Actor_SetAnimationById(30, 6);
-  Actor_SetAnimationById(31, 6);
-  Actor_SetAnimationById(32, 6);
-  Actor_SetAnimationById(33, 6);
+  Actor_SetAnimationById(ACTOR_IDLE_A, 6);
+  Actor_SetAnimationById(ACTOR_IDLE_B, 6);
+  Actor_SetAnimationById(ACTOR_IDLE_C, 6);
+  Actor_SetAnimationById(ACTOR_IDLE_D, 6);
   if (party->entrance == 99)
     Party_AddIsaacsParty();
   return 0;
@@ -838,21 +845,22 @@ UNUSED void ShopTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 scene,
   struct Actor *object;
 
   if (mode == 1) {
-    object = FieldActor_Create(354, px(x), 0, px(z));
+    object = FieldActor_Create(SPRITE_BROWN_BOULDER, px(x), 0, px(z));
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
       object->priorityFlags = 2;
     }
   }
   if (mode == 2) {
-    object = ((struct Actor *)Import_ActorCreate(252, px(x), 0, px(z)));
+    object = ((struct Actor *)Import_ActorCreate(SPRITE_WINGED_STATUE, px(x), 0,
+                                                 px(z)));
     if (object != NULL) {
       s32 scale;
 
       Actor_SetSpriteFlags(object, 0);
       object->velocityY = px(6);
-      object->scaleX = 0x6666;
-      object->scaleY = 0x6666;
+      object->scaleX = Q16_ONE * 2 / 5;
+      object->scaleY = Q16_ONE * 2 / 5;
       while (object->scaleX < Q16_ONE) {
         wait(1);
         scale = object->scaleX + 0x51e;

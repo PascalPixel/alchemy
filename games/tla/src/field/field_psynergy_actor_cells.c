@@ -196,7 +196,7 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 checkY) {
 }
 
 /// The width and height of each OAM shape and size, in pixels.
-extern const u8 gData_080f3bc4[][2];
+extern const u8 gOam_ShapeSizes[][2];
 
 /// Fills an effect sprite: OAM attributes 0 and 1 as given (no affine matrix,
 /// 256 colours), the tiles, unscaled and unrotated at depth 255, and the
@@ -215,8 +215,8 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
   sprite->pivotX = pivotX;
   sprite->pivotY = pivotY;
   shape = ((attributes >> 30) | (attributes >> 12)) & 15;
-  sprite->width = gData_080f3bc4[shape][0];
-  sprite->height = gData_080f3bc4[shape][1];
+  sprite->width = gOam_ShapeSizes[shape][0];
+  sprite->height = gOam_ShapeSizes[shape][1];
   words = (u32 *)&sprite->oam;
   *words++ = attributes;
   *words = 0;

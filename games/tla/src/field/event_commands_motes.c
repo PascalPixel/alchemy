@@ -37,8 +37,8 @@ void FieldMotes_Start(void) {
   for (; i < 64; i++) {
     struct MapWork *view = slots->mapGrid;
     s32 *pos;
-    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and the
-     * height's x. */
+    // p walks the sprite's attribute words, then holds the x, as size carries
+    // the fill's 0 above.
     u32 p;
     s32 z;
 
@@ -65,11 +65,11 @@ void FieldMotes_Start(void) {
 
 #undef Decompress_ByteLz
 
-/// Starts Weather_UpdateRain's particles: allocates and clears heap slot 0x74,
-/// decodes the particle tiles into VRAM, sets each of the 64 particles' sprite
-/// words and places it on the ground at the map's focus with a timer of
-/// (i & 11) + 1, turns on alpha blending of all layers at 16/16, schedules the
-/// update and, when asked, plays SE_KIRIN (Scene_QueueMusic).
+/// Starts Weather_UpdateRain's particles: allocates and clears
+/// HEAP_SLOT_WEATHER, decodes the particle tiles into VRAM, sets each of the 64
+/// particles' sprite words and places it on the ground at the map's focus with
+/// a timer of (i & 11) + 1, turns on alpha blending of all layers at 16/16,
+/// schedules the update and, when asked, plays SE_KIRIN (Scene_QueueMusic).
 void Weather_StartRain(s32 withCue) {
   struct WeatherWork *work;
   struct GroundParticle *particle;
@@ -94,8 +94,8 @@ void Weather_StartRain(s32 withCue) {
   for (; i < 64; i++, particle++) {
     struct MapWork *view = slots->mapGrid;
     s32 *focus;
-    /* FAKEMATCH(temporary): one integer cursor for the attribute stores and the
-     * height's x. */
+    // p walks the sprite's attribute words, then holds the x, as size carries
+    // the fill's 0 above.
     u32 p;
     s32 z;
 
@@ -249,7 +249,7 @@ void FieldEffect_InitializeSparkles(void) {
   do {
     struct MapWork *view = slots->mapGrid;
     s32 *leader;
-    /* FAKEMATCH(temporary): one integer cursor for the stores and the x. */
+    // attr walks the sprite's attribute words, then holds the x.
     u32 attr;
     s32 z;
 
@@ -300,7 +300,7 @@ void Weather_StartLightning(void) {
 void Weather_StopLightning(void) {
   struct FieldBlendWork *state =
       HeapSlot_AllocEwram(HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
-  state->timer = 0x7fff;
+  state->timer = 0x7FFF;
   state->enabled = 0;
 }
 

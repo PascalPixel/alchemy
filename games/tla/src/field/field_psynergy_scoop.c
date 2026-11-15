@@ -213,9 +213,8 @@ void FieldPsynergy_Scoop(void) {
   s32 i;
 
   if (event->mode != ACTOR_SYSTEM_WORLD_MAP) {
-    SET_POSITION(scene, (caster->x.fixed & FIELD_CELL_MASK) + 0x80000,
-                 caster->y.fixed,
-                 (caster->z.fixed & FIELD_CELL_MASK) + 0x80000);
+    SET_POSITION(scene, (caster->x.fixed & FIELD_CELL_MASK) + px(8),
+                 caster->y.fixed, (caster->z.fixed & FIELD_CELL_MASK) + px(8));
     Vector_AddPolarOffset(px(16), scene->angle, &scene->x);
   }
   FieldPsynergy_FadeToCastColor();
@@ -236,7 +235,7 @@ void FieldPsynergy_Scoop(void) {
   Actor_SelectAnimationFar(object, 0);
   alternate = &scene->lit;
   if (*alternate != 0)
-    Actor_SetSpriteColorModeFar(object, 6);
+    Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_GREY);
   if (*alternate == 0)
     other = Actor_Spawn(354, scene->x, scene->y, scene->z);
   else
@@ -249,7 +248,7 @@ void FieldPsynergy_Scoop(void) {
   other->priorityFlags = 1;
   other->scaleX = 0;
   if (!(event->unkd4c & 1))
-    Func_080dba5c();
+    FieldPsynergy_StartSceneSprite();
   Sound_PlayFar(SE_ITEM_BREAK);
   FieldPsynergy_GrowFromCaster(object, scene->x, scene->y + px(32), scene->z);
   wait(10);
@@ -263,18 +262,21 @@ void FieldPsynergy_Scoop(void) {
   Sound_PlayFar(SE_WATER);
 
   failed = 0;
-  for (i = 0; i < 80; i++) {
+  for (i = 0; i < FIELD_ACTOR_COUNT; i++) {
     target = event->actors[i];
     if (target != NULL && target->script != NULL &&
-        (Actor_GetSpriteIdFar(target) == 406 || (target->collisionFlags & 1)) &&
-        target != scene->mainActor && ((u8 *)target->sprite)[27] != 0 &&
+        (Actor_GetSpriteIdFar(target) == SPRITE_STAKE ||
+         (target->collisionFlags & ACTOR_SOLID)) &&
+        target != scene->mainActor &&
+        ((struct Sprite *)target->sprite)->count != 0 &&
         FieldPsynergy_CheckOverlap(&scene->x, 4, &target->x.fixed,
                                    target->radius - 2) >= 0) {
       failed = 1;
       break;
     }
   }
-  if (MapGrid_GetCellBehavior(scene->x, scene->z, caster->layer) == 255)
+  if (MapGrid_GetCellBehavior(scene->x, scene->z, caster->layer) ==
+      CELL_BEHAVIOR_WALL)
     failed = 4;
   if (Field_MeasurePsynergyHeight(scene->fieldPsynergy, caster, &scene->x) ==
       -1)
@@ -317,7 +319,7 @@ void FieldPsynergy_Scoop(void) {
       sprite->oam.palette = 0;
       sprite->oam.priority = BattleEffect_GetObjectPriority(other);
       sprite->depth = BattleEffect_GetObjectDepth(other) + 1;
-      sprite->scaleY = sprite->scaleX = 0x3333;
+      sprite->scaleY = sprite->scaleX = Q16_ONE / 5;
       SET_POSITION(particle, scene->x, scene->y, scene->z);
       Vector_AddPolarOffset(px(2), Random16(), &particle->x);
       particle->velocityX = 0;
@@ -475,10 +477,10 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
 }
 
 struct Unit *Unit_Get(u32 unitId);
-extern const u16 gData_080f0fc0[];
+extern const u16 gScoop_DugItems[];
 
 /// Object 79 at the anchor, fetched or spawned (kind 489), takes a random item
-/// id from gData_080f0fc0's sixteen (0x8001 when PartyInventory_FindRoomFar
+/// id from gScoop_DugItems's sixteen (0x8001 when PartyInventory_FindRoomFar
 /// finds no room) or, past 0xc000 of the roll, a 0x8000-flagged value scaled
 /// by the unit's level, and is handed to BattleEffect_DropObjectAtAnchor.
 void Scoop_DigUpItem(void) {
@@ -503,7 +505,7 @@ void Scoop_DigUpItem(void) {
     event->actors[id] = object;
   }
   if (Random16() < 0xc000) {
-    item = gData_080f0fc0[(Random16() * 16) >> 16];
+    item = gScoop_DugItems[(Random16() * 16) >> 16];
     if (PartyInventory_FindRoomFar(item) == -1)
       item = 0x8001;
   } else {

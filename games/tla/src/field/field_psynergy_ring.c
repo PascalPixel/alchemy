@@ -72,22 +72,18 @@ void FieldPsynergy_UpdateRing(void) {
     red = 28;
   cycle:
     {
-      /* FAKEMATCH(pin): green pinned to r5. */
+      /* FAKEMATCH(pin): green pinned to r5, so the call's result is shifted
+       * straight into it; as a plain local, 17 of 272 instructions differ in
+       * tla-en. */
       register s32 green asm("r5") = Trig_Sin(((*phase >> 1) + i) << 11) * 8;
       s32 blue;
-      s32 color;
 
       blue = Trig_Sin((((*phase >> 2) + i) << 11) + 0x4800) * 10;
       green = (green >> 16) + 23;
       blue = ((blue >> 16) + 12) << 10;
       green <<= 5;
-      /* FAKEMATCH(dead): an empty once-only loop. */
-      do {
-      } while (0);
-      color = blue | green | red;
-
-      ((u16 *)&BG_PLTT_COLOR(15, 0))[i] = color;
-      ((u16 *)&OBJ_PLTT_COLOR(15, 0))[i] = color;
+      Io_Write16(blue | green | red, &((u16 *)&BG_PLTT_COLOR(15, 0))[i]);
+      ((u16 *)&OBJ_PLTT_COLOR(15, 0))[i] = ((u16 *)&BG_PLTT_COLOR(15, 0))[i];
     }
     if (++i < 16)
       goto cycle;
@@ -125,7 +121,7 @@ void FieldPsynergy_UpdateRing(void) {
   if (event->ringTimerRunning != 0 && event->ringFrames != 0)
     event->ringFrames--;
   if (event->ringFrames == 0)
-    event->psynergy = 0x209b;
+    event->psynergy = ABILITY_155 | ACT_PACKED;
 }
 #undef NEXT_PHASE
 #undef WHIRL_COUNT
@@ -190,7 +186,7 @@ void FieldPsynergy_Ring(void) {
 
     wait(1);
     Dma_Set(picture, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
-    Io_Write16(0x480, &REG_BG0CNT);
+    Io_Write16(BGCNT_SCREEN_BASE(4) | BGCNT_256_COLORS, &REG_BG0CNT);
     Decompress_TaggedLz(
         Resource_GetTableEntry((s32)&ResourceId_StarSparkleFade), work);
     entry = VramCache_FindFreeEntry();
@@ -347,8 +343,8 @@ struct SparkleBurstWork {
 };
 
 /// The burst of 64 sparkles that FieldPsynergy_UpdateRing's effect ends
-/// with: once the event work asks for it, it plays sound 167, fills the tiles
-/// at 0x06002000, reloads the window graphics, loads the sparkle picture
+/// with: once the event work asks for it, it plays sound 167, clears screen
+/// block 4, reloads the window graphics, loads the sparkle picture
 /// (FieldEffect_SparkleFade) and scatters the sparkles around the current
 /// owner, starting a quarter of them a frame later than the last, then moves
 /// and animates them for 40 frames before releasing the effect.
@@ -374,7 +370,7 @@ void FieldPsynergy_EndRing(void) {
   Sound_PlayFar(SE_MAP_TRANSITION);
   IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 0x500, 0xf000f000);
   Window_LoadGraphics();
-  Io_Write16(0x400, &REG_BG0CNT);
+  Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
   gCpuLoadDisplayEnabled = 1;
@@ -409,7 +405,9 @@ void FieldPsynergy_EndRing(void) {
     mote = work->motes;
     spark = work->sprites;
     for (i = 63; i >= 0; i--, spark++, mote++) {
-      /* FAKEMATCH(barrier): an empty asm that opens the loop's body. */
+      /* FAKEMATCH(barrier): an empty asm that opens the loop's body, keeping
+       * the index's mask loaded inside the loop; as the loop without it, 36 of
+       * 226 instructions differ in tla-en. */
       asm("");
       if (mote->timer >= 0) {
         spark->oam.index = tile + (mote->timer & 3) * 2;
@@ -517,10 +515,10 @@ void ViewMove_Start(s32 direction) {
   work->savedMaxX = map->maxX;
   work->savedMinZ = map->minZ;
   work->savedMaxZ = map->maxZ;
-  map->minX = minX << 19;
-  map->maxX = maxX << 19;
-  map->minZ = minZ << 19;
-  map->maxZ = maxZ << 19;
+  map->minX = px(minX * 8);
+  map->maxX = px(maxX * 8);
+  map->minZ = px(minZ * 8);
+  map->maxZ = px(maxZ * 8);
   Actor_StartIdleFar(center);
 }
 
@@ -626,7 +624,7 @@ void ViewMove_SaveNearbySprites(void) {
 
   group->count = 0;
   objects = work->actors;
-  for (i = 0; i < 80; i++) {
+  for (i = 0; i < FIELD_ACTOR_COUNT; i++) {
     obj = *objects++;
     if (obj == NULL || obj->script == NULL || obj == scene->mainActor)
       continue;

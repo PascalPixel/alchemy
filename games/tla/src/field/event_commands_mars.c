@@ -16,18 +16,17 @@
 
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of 24 sparks
-/// (FieldEffect_UpdateMarsSpark). The leader turns to the camera
-/// and plays animation 28, the sparks swarm the leader, who pulses for 100
-/// frames, and the sparks vanish.
+/// (FieldEffect_UpdateMarsSpark). The leader turns to the camera and raises
+/// its arms, the sparks swarm it while it pulses for 100 frames, and the
+/// sparks vanish.
 void Djinn_RunMarsJoinEffect(s32 djinniId) {
-  s8 *objectPointer;
   struct Vector3 position;
-  s32 value;
+  s32 scale;
   s32 remaining;
-  struct DjinniObject *djinni;
-  void *effectSlots;
+  struct Actor *djinni;
+  struct FieldEffectWork *effectWork;
   struct Actor *leader;
-  void *slot;
+  struct FieldParticle *effect;
   s8 *slotState;
 
   djinni = Actor_GetById(djinniId);
@@ -36,10 +35,14 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     return;
 
   FieldEffect_InitializeSlots();
-  effectSlots = Ram_HeapSlots->fieldEffectWork;
-  Shop_SaveAndTintFieldPaletteFar(0x201090);
+  effectWork = Ram_HeapSlots->fieldEffectWork;
+  // Tint the screen red: PALETTE_TINT_CUSTOM | RGB(16, 4, 4), the form
+  // event_commands_mercury.c spells out for its blue.
+  Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(16, 4, 4));
   wait(30);
-  Actor_FaceDirectionById(djinniId, 0x4000, 0);
+  // Turn to face the camera (FACING_SOUTH), then bounce three times, a rising
+  // note on each.
+  Actor_FaceDirectionById(djinniId, FACING_SOUTH, 0);
   wait(20);
   Sound_PlayFar(SE_NOTE_LOW);
   Actor_RunRepeatedMotion(djinniId, 1);
@@ -47,91 +50,66 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlayFar(SE_NOTE_HIGH);
   Actor_RunRepeatedMotion(djinniId, 1);
+  // Spin up for 80 frames, then spin and shrink away.
   wait(20);
   Sound_PlayFar(SE_SPIN);
-  djinni->update = FieldEffect_AdvanceAngleWithRamp;
+  djinni->update = (void (*)(void))FieldEffect_AdvanceAngleWithRamp;
   djinni->timer = 0;
   wait(80);
-  djinni->update = FieldEffect_ShrinkActorAndDestroySlow;
+  djinni->update = (void (*)(void))FieldEffect_ShrinkActorAndDestroySlow;
   Actor_SelectAnimationFar(djinni, 3);
 
   // The sparks start where the Djinni is on screen.
-  position.x = djinni->x;
-  {
-    void *p = &position;
-    s32 y;
+  position.x = djinni->x.fixed;
+  position.y = djinni->y.fixed;
+  position.z = djinni->z.fixed;
+  Camera_WorldToScreen(&position);
 
-    y = djinni->y;
-    remaining = 23;
-    position.y = y;
-    position.z = djinni->z;
-    Camera_WorldToScreen(p);
-  }
-
-  slot = (u8 *)effectSlots + 80;
+  // One spark a frame into each of the 24 field effect sprites.
+  effect = effectWork->particles;
+  remaining = 23;
   do {
-    FieldParticle_Initialize(slot, SPRITE_PARTICLE, position.x, position.z);
-    FieldParticle_SetCallback(slot, FieldEffect_UpdateMarsSpark);
-    FieldParticle_SetActorMode(slot, 7);
-    objectPointer = slot;
-    value = *(s32 *)objectPointer;
-    Animation_ApplyChildValuesToRecordFar(value, 10);
-    value = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
-    ((struct FieldParticle *)slot)->scaleY = value;
-    ((struct FieldParticle *)slot)->scaleX = value;
+    FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
+    FieldParticle_SetCallback(effect, FieldEffect_UpdateMarsSpark);
+    FieldParticle_SetActorMode(effect, 7);
+    Animation_ApplyChildValuesToRecordFar(effect->object,
+                                          SPRITE_COLOR_RED_TINT);
+    scale = Random16() / 3 + Q16_ONE; // 1.0 to 1.33
+    effect->scaleY = scale;
+    effect->scaleX = scale;
     remaining--;
     wait(1);
-    slot = (u8 *)slot + sizeof(struct FieldParticle);
+    effect++;
   } while (remaining >= 0);
 
   wait(60);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
-  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId), 28);
+  Actor_SelectAnimationFar(Actor_GetById(gMainRoutineWork.leaderActorId),
+                           ANIM_LEADER_ARMS_RAISED);
 
-  // Every spark still in use stops its fountain (state 2). The cursor walks
-  // the slots' state bytes; a slot's active flag is 5 bytes after its state.
-  {
-    s32 nextState;
+  // Every spark still in use stops its fountain.
+  wait(20);
+  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectWork, particles,
+                                   MARS_SPARK_STOPPING);
 
-    wait(20);
-    nextState = 2;
-    slotState = effectSlots;
-    slotState += 144;
-    remaining = 23;
-    do {
-      if (slotState[5] != 0)
-        slotState[0] = nextState;
-      remaining--;
-      slotState += sizeof(struct FieldParticle);
-    } while (remaining >= 0);
-  }
-
+  // The leader pulses while the sparks swarm it.
   wait(60);
-  leader->update = FieldEffect_PulseActorScale;
+  leader->update = (void (*)(void))FieldEffect_PulseActorScale;
   wait(100);
 
-  // Every spark still in use goes (state 5).
-  {
-    s32 nextState;
+  // Every spark still in use goes.
+  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectWork, particles,
+                                   MARS_SPARK_LEAVING);
 
-    slotState = effectSlots;
-    nextState = 5;
-    slotState += 144;
-    remaining = 23;
-    do {
-      if (slotState[5] != 0)
-        slotState[0] = nextState;
-      remaining--;
-      slotState += sizeof(struct FieldParticle);
-    } while (remaining >= 0);
-  }
-
+  // The leader stops pulsing.
   wait(10);
-  slot = NULL;
-  leader->update = slot;
+  // effect, done with the sparks, carries the NULL.
+  effect = NULL;
+  leader->update = (void *)effect;
   leader->scaleX = Q16_ONE;
   leader->scaleY = Q16_ONE;
+  // Fade the palette back from the tint and free the field effect sprites.
   wait(30);
   Shop_RestoreFieldPaletteFar();
   FieldEffect_ReleaseSlots();
@@ -167,28 +145,27 @@ struct FieldEffectWork;
 /// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
 /// pixel a frame, and is released 20 pixels above the leader's feet. Set by
 /// Djinn_RunVenusJoinEffect, the Venus Djinni's effect.
-void FieldEffect_UpdateDescendingOrbitActor(
-    struct DescendingOrbitObject *actor) {
-  struct OrbitPosition local;
-  struct DescendingOrbitObject *other;
-  s32 raw;
-  s16 value;
+void FieldEffect_UpdateDescendingOrbitActor(struct Actor *mote) {
+  struct Vector3 position;
+  struct Actor *leader;
+  s32 timer;
+  s16 frames;
   s32 y;
 
-  other = (struct DescendingOrbitObject *)Actor_GetById(
-      gMainRoutineWork.leaderActorId);
-  raw = actor->timer - 1;
-  actor->timer = raw;
-  value = actor->timer;
-  local.x = other->x;
-  local.z = other->z;
-  Vector_AddPolarOffset(value * 0x6666, (value << 11) + actor->angle, &local);
-  actor->x = local.x;
-  actor->z = local.z;
-  y = actor->y + 0xFFFF0000;
-  actor->y = y;
-  if (y < other->y + px(20))
-    Actor_ReleaseFar(actor);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  timer = mote->orbitFrames - 1;
+  mote->orbitFrames = timer;
+  frames = mote->orbitFrames;
+  position.x = leader->x.fixed;
+  position.z = leader->z.fixed;
+  Vector_AddPolarOffset(frames * (px(2) / 5), (frames << 11) + mote->orbitAngle,
+                        &position);
+  mote->x.fixed = position.x;
+  mote->z.fixed = position.z;
+  y = mote->y.fixed - px(1);
+  mote->y.fixed = y;
+  if (y < leader->y.fixed + px(20))
+    Actor_ReleaseFar(mote);
 }
 
 /// Places a spark at random around the current owner and sends it 120 pixels
@@ -199,24 +176,20 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
   struct Actor *source;
   s32 state;
   u32 random;
-  s32 x;
-  s32 magnitude;
-  s32 angle;
 
   source = Actor_GetById(gMainRoutineWork.leaderActorId);
   state = effect->state;
 
-  if (state == 0) {
-    SET_POSITION(&position, source->x.fixed, source->y.fixed, source->z.fixed);
+  if (state == VENUS_PARTICLE_AIM) {
+    position.x = source->x.fixed;
+    position.y = source->y.fixed;
+    position.z = source->z.fixed;
 
     random = Random16() * 10 + px(10);
     Vector_AddPolarOffset(random, Random16(), &position);
     Camera_WorldToScreen(&position);
 
-    x = position.x;
-    magnitude = 240;
-    effect->originX = x;
-    angle = 192;
+    effect->originX = position.x;
     effect->originZ = position.z;
     effect->x = position.x;
     effect->z = position.z;
@@ -233,10 +206,10 @@ void FieldEffect_UpdateRadialSpread(struct FieldParticle *effect) {
 
     if ((gVBlankCount & 1) != 0)
       Sound_PlayFar(SE_CLATTER);
-  } else if (state == 1) {
+  } else if (state == VENUS_PARTICLE_RISING) {
     if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;
-  } else if (state == 2) {
+  } else if (state == VENUS_PARTICLE_LAST_RISE) {
     if (FieldParticle_HasPendingTarget(effect) == 0)
       FieldEffect_ClearOwnedSlot(effect);
   }

@@ -74,7 +74,7 @@ enum IncreaseItemAndLevelActorId {
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 /// The region at Tret's foot that leads into the Tret Tree.
-const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
+const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 

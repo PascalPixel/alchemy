@@ -95,11 +95,11 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     Actor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
 #ifdef EFFECT_SPRITE_PRIORITY
-    effect->priorityFlags &= ~1;
+    effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     // Read as its low byte: (u8)options->priority orders the loads apart.
     sprite->priority = *(u8 *)&options->priority;
 #else
-    effect->priorityFlags &= ~1;
+    effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 #endif
     Scene_SetActorSpritePriority(effect, options->priority);
   }

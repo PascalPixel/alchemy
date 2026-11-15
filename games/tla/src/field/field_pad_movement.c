@@ -12,12 +12,6 @@
 #include "macros.h"
 #include "field/resource_slot.h"
 
-// The heading of each direction-pad combination, -1 for none.
-
-s32 WorldMap_IsWalkable__resource_slot(
-    struct Actor *object,
-    struct FieldPosition *position) __asm__("WorldMap_IsWalkable");
-
 /// SC_WORLD: moves the player on the world map by the direction pad, as
 /// SC_PLAYER does on the field, and turns the world map camera with the pad.
 s32 Actor_MoveOnWorldMap(struct Actor *object) {
@@ -35,41 +29,43 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
   s32 terrainCollision;
   s32 speed;
   s32 targetCameraYaw;
-  struct WorldCamera *camera;
+  struct WorldMapView *camera;
   s32 yawStep;
   struct PlayerSprite *playerSprite;
   struct Actor *ripple;
   struct PlayerSprite *rippleSprite;
   struct FieldWork *work;
 
-  movementAnimation = 2;
+  movementAnimation = ANIM_WALK;
   collision = 0;
   count = 0;
   if (gInput.held & gMainRoutineWork.dashKeys) {
-    object->speedLimit = px(1);
-    object->acceleration = px(1) / 2;
-    movementAnimation = 5;
+    object->speedLimit = WORLD_MAP_RUN_SPEED;
+    object->acceleration = WORLD_MAP_RUN_ACCELERATION;
+    movementAnimation = ANIM_LEADER_RUN;
   } else {
-    object->speedLimit = px(1) / 2;
-    object->acceleration = px(1) / 4;
+    object->speedLimit = WORLD_MAP_WALK_SPEED;
+    object->acceleration = WORLD_MAP_ACCELERATION;
   }
 
-  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
   direction = angle;
-  if (direction == 0xffff) {
-    collision |= 4;
+  if (direction == WORLD_MAP_KEY_HEADING_NONE) {
+    collision |= PLAYER_STEP_STOPPED;
   } else {
     collision = 0;
     SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
-    Vector_AddPolarOffset(px(8), direction, &position);
+    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
     if (gDebugMode == 0 || ((gInput.held & KEY_L) == 0 &&
                             GameFlag_Get(FLAG_DEBUG_STEPS_OFF) == 0)) {
       SET_POSITION(&leftPosition, object->x.fixed, object->y.fixed,
                    object->z.fixed);
-      Vector_AddPolarOffset(px(8), direction + TRIG_TURN / 12, &leftPosition);
+      Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + TRIG_TURN / 12,
+                            &leftPosition);
       SET_POSITION(&rightPosition, object->x.fixed, object->y.fixed,
                    object->z.fixed);
-      Vector_AddPolarOffset(px(8), direction - TRIG_TURN / 12, &rightPosition);
+      Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - TRIG_TURN / 12,
+                            &rightPosition);
       if ((WorldMap_IsWalkable(object, &position) |
            WorldMap_IsWalkable(object, &leftPosition) |
            WorldMap_IsWalkable(object, &rightPosition)) != 0) {
@@ -83,15 +79,15 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
           direction = angleOffsets[angleIndex];
           SET_POSITION(&position, object->x.fixed, object->y.fixed,
                        object->z.fixed);
-          Vector_AddPolarOffset(px(8), direction, &position);
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
           SET_POSITION(&leftPosition, object->x.fixed, object->y.fixed,
                        object->z.fixed);
-          Vector_AddPolarOffset(px(8), direction + TRIG_TURN / 12,
-                                &leftPosition);
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                direction + TRIG_TURN / 12, &leftPosition);
           SET_POSITION(&rightPosition, object->x.fixed, object->y.fixed,
                        object->z.fixed);
-          Vector_AddPolarOffset(px(8), direction - TRIG_TURN / 12,
-                                &rightPosition);
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                direction - TRIG_TURN / 12, &rightPosition);
           if ((WorldMap_IsWalkable(object, &position) |
                WorldMap_IsWalkable(object, &leftPosition) |
                WorldMap_IsWalkable(object, &rightPosition)) != 0)
@@ -113,7 +109,7 @@ update_object:
       work->blockedSteps = 0;
   }
   if (collision != 0)
-    Actor_SelectAnimation(object, 9);
+    Actor_SelectAnimation(object, ANIM_LEADER_LOOK_AROUND);
   else
     Actor_SelectAnimation(object, movementAnimation);
 
@@ -133,7 +129,7 @@ update_object:
       object->facing += difference;
     }
     object->timer = 0;
-    object->userValue = 2;
+    object->userValue = FOOTPRINT_BOTH_FEET;
   } else {
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
@@ -146,31 +142,32 @@ update_object:
       object->timer--;
   }
 
-  camera = (struct WorldCamera *)Ram_HeapSlots->mapGrid;
-  targetCameraYaw = gWorldMap_KeyYaws[(gInput.held >> 4) & 15];
+  camera = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
+  targetCameraYaw = gWorldMap_KeyYaws[DPAD_INDEX(gInput.held)];
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
-  if (yawStep > 0x200)
-    yawStep = 0x200;
-  if (yawStep < -0x200)
-    yawStep = -0x200;
+  if (yawStep > WORLD_MAP_YAW_STEP_MAX)
+    yawStep = WORLD_MAP_YAW_STEP_MAX;
+  if (yawStep < -WORLD_MAP_YAW_STEP_MAX)
+    yawStep = -WORLD_MAP_YAW_STEP_MAX;
   if (yawStep > -16 && yawStep < 16)
     yawStep = targetCameraYaw - camera->yaw;
   camera->yaw += yawStep;
 
-  if (object->spriteStorageKind == 1) {
+  if (object->spriteStorageKind == ACTOR_SPRITE_ONE) {
     playerSprite = object->sprite;
     terrainCollision =
         WorldMap_GetCollision((struct WorldPosition *)&object->x.fixed);
-    if (terrainCollision == 9) {
-      playerSprite->entry[6] = 1;
+    if (terrainCollision == WORLD_MAP_COLLISION_FOREST) {
+      playerSprite->secondLayer->priority = 1;
       playerSprite->flags = 0;
     } else {
-      playerSprite->entry[6] = 9;
-      playerSprite->flags = 1;
+      playerSprite->secondLayer->priority = 9;
+      playerSprite->flags = SPRITE_FLAG_SHADOW;
     }
-    if (terrainCollision == 6 && object->timer == 0 && collision == 0) {
-      ripple = Actor_Create(0x10d, object->x.fixed, object->y.fixed,
-                            object->z.fixed);
+    if (terrainCollision == WORLD_MAP_COLLISION_SHALLOW_WATER &&
+        object->timer == 0 && collision == 0) {
+      ripple = Actor_Create(WORLD_MAP_SPRITE_RIPPLE, object->x.fixed,
+                            object->y.fixed, object->z.fixed);
       if (ripple != 0) {
         rippleSprite = ripple->sprite;
         Actor_StartScript(ripple, gActor_RippleScript);
@@ -188,18 +185,23 @@ update_object:
   }
   Field_CheckConfiguredKeys();
   if (gInput.pressed & gMainRoutineWork.aKeys)
-    gFieldWork->raisedTrigger = 251;
+    gFieldWork->raisedTrigger = WORLD_MAP_RAISED_BOARD_SHIP;
   object->scriptCursor++;
   return 1;
 }
 
 /// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys) and
 /// steps the script on. Returns 1.
-s32 Field_CheckConfiguredKeysAndCount(struct Actor *interpreter) {
+s32 Field_CheckConfiguredKeysAndCount(struct Actor *actor) {
+
   Field_CheckConfiguredKeys();
-  interpreter->scriptCursor++;
+  actor->scriptCursor++;
   return 1;
 }
+
+/// The ship turns toward the pad by this much a frame, once the turn left is
+/// wider than FIELD_BLOCKED_TURN_MAX; a narrower one it makes at once.
+#define SHIP_TURN_STEP (TRIG_TURN / 64)
 
 // Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
 #define SAME_CELL(a, b) ((((a) - (b) + 0x80000) >> 20) == 0)
@@ -233,7 +235,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
   if (gDebugMode != 0) {
     s32 delayKeyMask;
 
-    delayKeyMask = 0x200;
+    delayKeyMask = KEY_L;
     if (gInput.held & delayKeyMask) {
       s32 delayIterations;
 
@@ -259,22 +261,22 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
         goto wait_d;
     }
   }
-  object->speedLimit = px(1);
-  object->acceleration = px(1) / 4;
+  object->speedLimit = FIELD_WALK_SPEED;
+  object->acceleration = FIELD_ACCELERATION;
   if (GameFlag_Get(FLAG_FAST_WALK) != 0 && (gInput.held & KEY_B)) {
-    object->speedLimit = px(4);
-    object->acceleration = px(1);
+    object->speedLimit = FIELD_FAST_WALK_SPEED;
+    object->acceleration = FIELD_FAST_WALK_ACCELERATION;
   }
 
-  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
-  if ((u16)angle == 0xffff) {
-    collision |= 4;
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
+  if ((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
+    collision |= PLAYER_STEP_STOPPED;
     goto counted;
   }
   collision = 0;
   SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
   Vector_AddPolarOffset(px(19), (u16)angle, &position);
-  if (object->priorityFlags & 0x40) {
+  if (object->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
     onObject = 0;
     other = (struct Actor *)Ram_HeapSlots->actors;
     for (angleIndex = 0; angleIndex < 64; angleIndex++, other++) {
@@ -282,7 +284,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
 
       if (other->script == NULL)
         continue;
-      if (!(other->priorityFlags & 0x80))
+      if (!(other->priorityFlags & ACTOR_PRIORITY_PLATFORM))
         continue;
       if (other == object)
         continue;
@@ -456,8 +458,8 @@ counted:
     Actor_SelectAnimation(object, 2);
 
   if (gInput.pressed & gMainRoutineWork.aKeys) {
-    gFieldWork->raisedTrigger = 252;
-    collision |= 4;
+    gFieldWork->raisedTrigger = WORLD_MAP_RAISED_LEAVE_SHIP;
+    collision |= PLAYER_STEP_STOPPED;
   }
 
   if (collision != 0) {
@@ -469,13 +471,13 @@ counted:
     if (collision & PLAYER_STEP_BLOCKED) {
       difference = (s16)((u16)angle - object->facing);
       if (difference > FIELD_BLOCKED_TURN_MAX)
-        difference = 0x400;
+        difference = SHIP_TURN_STEP;
       if (difference < -FIELD_BLOCKED_TURN_MAX)
-        difference = -0x400;
+        difference = -SHIP_TURN_STEP;
       object->facing += difference;
     }
     object->timer = 0;
-    object->userValue = 2;
+    object->userValue = FOOTPRINT_BOTH_FEET;
   } else {
     s32 speed;
 
@@ -491,12 +493,12 @@ counted:
     object->steeringFlags &= ~1;
     difference = (s16)((u16)angle - object->facing);
     if (difference > FIELD_BLOCKED_TURN_MAX)
-      difference = 0x400;
+      difference = SHIP_TURN_STEP;
     if (difference < -FIELD_BLOCKED_TURN_MAX)
-      difference = -0x400;
+      difference = -SHIP_TURN_STEP;
     object->facing += difference;
   }
-  if (object->spriteStorageKind == 1)
+  if (object->spriteStorageKind == ACTOR_SPRITE_ONE)
     WorldMap_GetCollision((struct WorldPosition *)&object->x.fixed);
   Field_CheckConfiguredKeys();
   object->scriptCursor++;
@@ -504,15 +506,12 @@ counted:
 }
 #undef SAME_CELL
 
-// The heading of each direction-pad combination, -1 for none.
-
-/// Script command 0x20 (control mode 7): the ship sailing the world map, a
-/// sibling of Actor_MoveOnWorldMap in The Broken Seal's
-/// later Actor_MoveOnWorldMap layout (one probe ahead, then four probes 22.5
-/// and 45 degrees off it; six retry headings). Records the kind of ground under
-/// the object in the event work (byte 0xd3a), moves at a run, and lets the
-/// shortcut keys post requests 252 and, while byte 0xd39 is set, clear flag
-/// 0x147 and post 253; turns at most 0x400 a step while moving.
+/// Script command 0x20 (control mode 7): the ship sailing the world map, laid
+/// out as The Broken Seal's later Actor_MoveOnWorldMap (one probe ahead, then
+/// four 22.5 and 45 degrees off it; six headings to retry). It keeps the kind
+/// of water under the ship in FieldWork.terrainKind, sails at a run, and turns
+/// at most 22.5 degrees a step; A goes ashore, and a dash key takes off once
+/// the ship has its wings (FieldWork.hoverReady).
 s32 Actor_SailOnWorldMap(struct Actor *object) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
@@ -526,7 +525,7 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
   s32 terrain;
   s32 speed;
   s32 targetCameraYaw;
-  struct WorldCamera *camera;
+  struct WorldMapView *camera;
   s32 yawStep;
   struct Actor *ripple;
   struct PlayerSprite *rippleSprite;
@@ -549,32 +548,33 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
   collision = 0;
   object->speedLimit = px(5) / 4;
   object->acceleration = px(1) / 2;
-  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
   direction = angle;
-  if (direction == 0xffff) {
-    collision |= 4;
+  if (direction == WORLD_MAP_KEY_HEADING_NONE) {
+    collision |= PLAYER_STEP_STOPPED;
   } else {
     SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
-    Vector_AddPolarOffset(px(8), direction, &position);
+    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
     if (gDebugMode == 0 || (gInput.held & KEY_L) == 0) {
       if (WorldMap_IsSailable(object, &position) == 0) {
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
-        Vector_AddPolarOffset(px(8), direction + FIELD_PROBE_ANGLE,
-                              &testPosition);
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                              direction + FIELD_PROBE_ANGLE, &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) == 0) {
           SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                        object->z.fixed);
-          Vector_AddPolarOffset(px(8), direction - FIELD_PROBE_ANGLE,
-                                &testPosition);
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                                direction - FIELD_PROBE_ANGLE, &testPosition);
           if (WorldMap_IsSailable(object, &testPosition) == 0) {
             SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                          object->z.fixed);
-            Vector_AddPolarOffset(OBJ_X(8), direction + 0x2000, &testPosition);
+            Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x2000,
+                                  &testPosition);
             if (WorldMap_IsSailable(object, &testPosition) == 0) {
               SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                            object->z.fixed);
-              Vector_AddPolarOffset(OBJ_X(8), direction - 0x2000,
+              Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x2000,
                                     &testPosition);
               if (WorldMap_IsSailable(object, &testPosition) == 0)
                 goto update_object;
@@ -592,29 +592,31 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
         direction = angleOffsets[angleIndex];
         SET_POSITION(&position, object->x.fixed, object->y.fixed,
                      object->z.fixed);
-        Vector_AddPolarOffset(px(8), direction, &position);
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
         if (WorldMap_IsSailable(object, &position) != 0)
           continue;
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
-        Vector_AddPolarOffset(px(8), direction + FIELD_PROBE_ANGLE,
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                              direction + FIELD_PROBE_ANGLE, &testPosition);
+        if (WorldMap_IsSailable(object, &testPosition) != 0)
+          continue;
+        SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                     object->z.fixed);
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                              direction - FIELD_PROBE_ANGLE, &testPosition);
+        if (WorldMap_IsSailable(object, &testPosition) != 0)
+          continue;
+        SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
+                     object->z.fixed);
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x2000,
                               &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
-        Vector_AddPolarOffset(px(8), direction - FIELD_PROBE_ANGLE,
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x2000,
                               &testPosition);
-        if (WorldMap_IsSailable(object, &testPosition) != 0)
-          continue;
-        SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
-                     object->z.fixed);
-        Vector_AddPolarOffset(OBJ_X(8), direction + 0x2000, &testPosition);
-        if (WorldMap_IsSailable(object, &testPosition) != 0)
-          continue;
-        SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
-                     object->z.fixed);
-        Vector_AddPolarOffset(OBJ_X(8), direction - 0x2000, &testPosition);
         if (WorldMap_IsSailable(object, &testPosition) != 0)
           continue;
         angle = (s16)direction;
@@ -639,14 +641,14 @@ update_object:
     Actor_SelectAnimation(object, 2);
 
   if (gInput.pressed & gMainRoutineWork.aKeys) {
-    gFieldWork->raisedTrigger = 252;
-    collision |= 4;
+    gFieldWork->raisedTrigger = WORLD_MAP_RAISED_LEAVE_SHIP;
+    collision |= PLAYER_STEP_STOPPED;
   }
   if (gInput.pressed & gMainRoutineWork.dashKeys) {
     struct FieldWork *keyWork = Ram_HeapSlots->fieldWork;
     if (keyWork->hoverReady != 0) {
       GameFlag_Clear(0x147);
-      ((struct FieldWork *)keyWork)->raisedTrigger = 253;
+      ((struct FieldWork *)keyWork)->raisedTrigger = WORLD_MAP_RAISED_TAKE_OFF;
     }
   }
 
@@ -666,7 +668,7 @@ update_object:
       object->facing += difference;
     }
     object->timer = 0;
-    object->userValue = 2;
+    object->userValue = FOOTPRINT_BOTH_FEET;
   } else {
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
@@ -681,19 +683,19 @@ update_object:
     object->steeringFlags &= ~1;
     difference = (s16)(direction - object->facing);
     if (difference > FIELD_BLOCKED_TURN_MAX)
-      difference = 0x400;
+      difference = SHIP_TURN_STEP;
     if (difference < -FIELD_BLOCKED_TURN_MAX)
-      difference = -0x400;
+      difference = -SHIP_TURN_STEP;
     object->facing += difference;
   }
 
-  camera = (struct WorldCamera *)Ram_HeapSlots->mapGrid;
-  targetCameraYaw = gWorldMap_KeyYaws[(gInput.held >> 4) & 15];
+  camera = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
+  targetCameraYaw = gWorldMap_KeyYaws[DPAD_INDEX(gInput.held)];
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
-  if (yawStep > 0x200)
-    yawStep = 0x200;
-  if (yawStep < -0x200)
-    yawStep = -0x200;
+  if (yawStep > WORLD_MAP_YAW_STEP_MAX)
+    yawStep = WORLD_MAP_YAW_STEP_MAX;
+  if (yawStep < -WORLD_MAP_YAW_STEP_MAX)
+    yawStep = -WORLD_MAP_YAW_STEP_MAX;
   if (yawStep > -16 && yawStep < 16)
     yawStep = targetCameraYaw - camera->yaw;
   camera->yaw += yawStep;
@@ -702,8 +704,8 @@ update_object:
   if (kind == 1) {
     WorldMap_GetCollision((struct WorldPosition *)&object->x.fixed);
     if (object->timer == 0 && collision == 0) {
-      ripple = Actor_Create(0x10d, object->x.fixed, object->y.fixed,
-                            object->z.fixed);
+      ripple = Actor_Create(WORLD_MAP_SPRITE_RIPPLE, object->x.fixed,
+                            object->y.fixed, object->z.fixed);
       if (ripple != 0) {
         rippleSprite = ripple->sprite;
         Actor_StartScript(ripple, gActor_RippleScript);
@@ -724,8 +726,6 @@ update_object:
   return 1;
 }
 
-// The heading of each direction-pad combination, -1 for none.
-
 /// Script command 0x21 (control mode 8): the ship with its wings on the world
 /// map, flying over the ground the sea alone would stop (WorldMap_IsFlyable).
 s32 Actor_FlyOnWorldMap(struct Actor *object) {
@@ -741,7 +741,7 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
   s32 terrain;
   s32 speed;
   s32 targetCameraYaw;
-  struct WorldCamera *camera;
+  struct WorldMapView *camera;
   s32 yawStep;
   struct Actor *ripple;
   struct PlayerSprite *rippleSprite;
@@ -767,33 +767,36 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
   collision = 0;
   object->speedLimit = object->y.fixed / 16 + 0x14000;
   object->acceleration = px(1) / 2;
-  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
   direction = angle;
-  if (direction == 0xffff) {
-    collision |= 4;
+  if (direction == WORLD_MAP_KEY_HEADING_NONE) {
+    collision |= PLAYER_STEP_STOPPED;
     goto update_object;
   }
   SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
-  Vector_AddPolarOffset(px(8), direction, &position);
+  Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
   if (gDebugMode != 0 && (gInput.held & KEY_L) != 0)
     goto update_object;
   if (WorldMap_IsFlyable(object, &position) == 0) {
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), direction + FIELD_PROBE_ANGLE, &testPosition);
+    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + FIELD_PROBE_ANGLE,
+                          &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) == 0) {
       SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                    object->z.fixed);
-      Vector_AddPolarOffset(px(8), direction - FIELD_PROBE_ANGLE,
-                            &testPosition);
+      Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS,
+                            direction - FIELD_PROBE_ANGLE, &testPosition);
       if (WorldMap_IsFlyable(object, &testPosition) == 0) {
         SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                      object->z.fixed);
-        Vector_AddPolarOffset(OBJ_X(8), direction + 0x2000, &testPosition);
+        Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x2000,
+                              &testPosition);
         if (WorldMap_IsFlyable(object, &testPosition) == 0) {
           SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                        object->z.fixed);
-          Vector_AddPolarOffset(OBJ_X(8), direction - 0x2000, &testPosition);
+          Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x2000,
+                                &testPosition);
           if (WorldMap_IsFlyable(object, &testPosition) == 0)
             goto check_objects;
         }
@@ -809,27 +812,31 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
   for (angleIndex = 0; angleIndex < count; angleIndex++) {
     direction = angleOffsets[angleIndex];
     SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
-    Vector_AddPolarOffset(px(8), direction, &position);
+    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
     if (WorldMap_IsFlyable(object, &position) != 0)
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), direction + FIELD_PROBE_ANGLE, &testPosition);
+    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + FIELD_PROBE_ANGLE,
+                          &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(px(8), direction - FIELD_PROBE_ANGLE, &testPosition);
+    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - FIELD_PROBE_ANGLE,
+                          &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(OBJ_X(8), direction + 0x2000, &testPosition);
+    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction + 0x2000,
+                          &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     SET_POSITION(&testPosition, object->x.fixed, object->y.fixed,
                  object->z.fixed);
-    Vector_AddPolarOffset(OBJ_X(8), direction - 0x2000, &testPosition);
+    Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction - 0x2000,
+                          &testPosition);
     if (WorldMap_IsFlyable(object, &testPosition) != 0)
       continue;
     angle = (s16)direction;
@@ -879,7 +886,7 @@ update_object:
       object->facing += difference;
     }
     object->timer = 0;
-    object->userValue = 2;
+    object->userValue = FOOTPRINT_BOTH_FEET;
   } else {
     Actor_SetMoveTarget(object, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +
@@ -894,14 +901,14 @@ update_object:
     object->steeringFlags &= ~1;
     difference = (s16)(direction - object->facing);
     if (difference > FIELD_BLOCKED_TURN_MAX)
-      difference = 0x400;
+      difference = SHIP_TURN_STEP;
     if (difference < -FIELD_BLOCKED_TURN_MAX)
-      difference = -0x400;
+      difference = -SHIP_TURN_STEP;
     object->facing += difference;
   }
 
-  camera = (struct WorldCamera *)Ram_HeapSlots->mapGrid;
-  targetCameraYaw = Iwram_MulQ16(gWorldMap_KeyYaws[(gInput.held >> 4) & 15],
+  camera = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
+  targetCameraYaw = Iwram_MulQ16(gWorldMap_KeyYaws[DPAD_INDEX(gInput.held)],
                                  object->y.fixed / 4 + 0x10000);
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
   if (yawStep > 32)
@@ -916,7 +923,8 @@ update_object:
   if (kind == 1) {
     if (object->y.fixed < px(4)) {
       if (object->timer == 0 && collision == 0) {
-        ripple = Actor_Create(0x10d, object->x.fixed, 0, object->z.fixed);
+        ripple = Actor_Create(WORLD_MAP_SPRITE_RIPPLE, object->x.fixed, 0,
+                              object->z.fixed);
         if (ripple != 0) {
           rippleSprite = ripple->sprite;
           Actor_StartScript(ripple, gActor_RippleScript);
@@ -946,7 +954,7 @@ update_object:
   if (Party_GetPpRatioFar() == 0)
     object->y.fixed -= px(1) / 4;
   if (object->y.fixed <= 0 && flightWork->climbing != 0)
-    ((struct FieldWork *)flightWork)->raisedTrigger = 254;
+    ((struct FieldWork *)flightWork)->raisedTrigger = WORLD_MAP_RAISED_LAND;
   if (object->y.fixed >= px(12))
     object->y.fixed = px(12);
   if (object->y.fixed <= 0)

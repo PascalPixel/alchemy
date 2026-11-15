@@ -60,23 +60,6 @@ struct MotionScript {
   s32 word[1];
 };
 
-struct PlacedSprite {
-  u8 unused[9]; ///< no code names it
-  u8 low09 : 2;
-  u8 priority : 2;
-  u8 high09 : 4;
-  u8 unusedB[2]; ///< no code names it
-  s32 scale;     ///< 16.16 fixed point
-  u8 slot;
-  u8 retainCacheEntry;               ///< bit 0
-  u8 unusedAfterRetainCacheEntry[7]; ///< no code names it
-  u8 dirty;
-  u8 unusedAfterDirty[0x0b]; ///< no code names it
-  u8 low25 : 2;
-  u8 shadowPriority : 2;
-  u8 high25 : 4;
-};
-
 /// A point the fixed camera looks from or at.
 struct ActorCameraPoint {
   s32 x; ///< 16.16 fixed-point pixels
@@ -99,23 +82,28 @@ struct ActorCameraFixed {
   struct ActorCameraPoint *followPosition; ///< when set, used as the target
 };
 
+/// The leader's sprite, or a ripple's (struct Sprite), as the player's
+/// movement sets them, a byte at a time, under struct Sprite's names.
 struct PlayerSprite {
   u8 unused[5]; ///< no code names it
-  u8 low05 : 2;
+  u8 affine : 2;
   u8 objectMode : 2;
-  u8 high05 : 4;
-  u8 unusedB[3]; ///< no code names it
-  u8 low09 : 2;
+  u8 mosaic : 1;
+  u8 fullColor : 1;
+  u8 shape : 2;
+  u8 unusedB[3];   ///< no code names it
+  u8 tileHigh : 2; ///< tile number bits 9..8
   u8 priority : 2;
-  u8 high09 : 4;
-  u8 unusedC[7]; ///< no code names it
-  u8 shape11;
+  u8 palette : 4;
+  u8 unusedC[7];     ///< no code names it
+  u8 cacheFlags : 2; ///< retainCacheEntry and useOwnScale
+  u8 sunkRows : 6; ///< rows the picture is sunk (flags bit 3) or shaded (bit 2)
   u16 rotation;
-  u8 unk14[5];
+  u8 unusedD[5]; ///< no code names it
   u8 dirty;
   u8 flags;
-  u8 unk1b[0x11];
-  u8 *entry;
+  u8 unusedE[0x11];                    ///< no code names it
+  struct SpriteAnimation *secondLayer; ///< entries[1]; above priority 3 hidden
 };
 
 struct MapFlagsWork {
@@ -135,6 +123,11 @@ struct MapHeaderLayer {
   u8 periodX; ///< 8-pixel tiles
   u8 periodY; ///< 8-pixel tiles
 };
+
+/// Where a layout's tileset animation and blend scripts are decoded, in the
+/// map collision buffer after the collision, as The Broken Seal's.
+#define MAPGRID_ANIMATION_SCRIPT (Ram_MapCollision + 0x1000)
+#define MAPGRID_BLEND_SCRIPT (Ram_MapCollision + 0x1e00)
 
 /// A layout's header: the camera's bounds, the layers' priorities, tile
 /// bases and setup, and the offsets, from the header's start, of its packed
@@ -157,66 +150,15 @@ struct MapHeader {
   s32 script;       ///< into Ram_MapCollision + 0x2000
 };
 
-struct MapLayerScroll {
-  s32 x, y;
-  s32 offsetX, offsetY;
-  s32 scaleX, scaleY;
-  s32 speedX, speedY;
-  s32 phaseX, phaseY;
-  u16 maskX, maskY;
-  u16 cellX, cellY;
-  struct MapCell *cells;
-  u8 *shapes;
-};
-
-struct MapScrollWork {
-  u8 unused[0x14]; ///< no code names it
-  u16 flags;
-  u8 unusedAfterFlags[0xe4 - 0x16]; ///< no code names it
-  s32 viewX, viewY;
-  s32 minX, minY, maxX, maxY;
-  u8 unusedAfterUnusedAfterFlags[5]; ///< no code names it
-  u8 unk101;
-  u8 unusedB[2]; ///< no code names it
-  u8 enabled[3];
-  u8 unusedAfterEnabled; ///< no code names it
-  struct MapLayerScroll layers[3];
-};
-
-struct Unk_WakeActor {
-  u8 unused[0x63]; ///< no code names it
-  u8 unk63;
-};
-
-struct Unk_ClimbEventWork {
-  u8 unused[0xd4a]; ///< no code names it
-  /* FAKEMATCH(signature): read as the low byte of a halfword. */
-  u16 unkd4a : 8;
-  u16 unkd4b : 8;
-};
-
-struct Unk0802a124Actor {
-  u8 unused[0x62]; ///< no code names it
-  u8 unk62;
-  u8 unk63;
-};
-
-/// A map layer as its renderers read it: its scroll, then the window over
-/// the map's cells (masks and origins that wrap the source cells).
-struct MapLayerWindow {
-  s32 x, y;
-  s32 offsetX, offsetY;
-  s32 scaleX, scaleY;
-  s32 speedX, speedY;
-  s32 phaseX, phaseY;
-  u16 maskX, maskY;
-  u16 originX, originY;
-  struct MapCell *cells;
-  u8 *terrainIds;
+/// FieldWork as the sand trail reads its priority (FieldWork.unkd4a).
+struct SandTrailWork {
+  u8 unused[0xd4a];      ///< no code names it
+  u16 trailPriority : 8; ///< read as the low byte of FieldWork.unkd4a
+  u16 unusedHigh : 8;    ///< no code names it
 };
 
 /// A map layer's scroll position in whole 16-pixel cells.
-struct TilePos {
+struct MapGridTilePosition {
   s32 x, y;
 };
 
@@ -229,13 +171,15 @@ struct MapGridCellAnimationStep {
   s16 y, width, height, delay;
 } __attribute__((packed, aligned(2)));
 
+/// A sprite (struct Sprite) whose image priority, its layer, is copied a
+/// byte at a time, under struct Sprite's names.
 struct Child {
-  u8 unused[9]; ///< no code names it
-  u8 low9 : 2;
+  u8 unused[9];    ///< no code names it
+  u8 tileHigh : 2; ///< tile number bits 9..8
   u8 layer : 2;
-  u8 high9 : 4;
+  u8 palette : 4;
   u8 unusedB[0x10]; ///< no code names it
-  u8 value1a;
+  u8 flags;
 };
 
 /// The actor as SC_SYNC clears it when it gives up waiting: its target, arrival
@@ -251,11 +195,78 @@ struct WaitingActor {
   u8 refused;
 };
 
-/// The field's pool sizes.
+/// Animation script commands.
+/// SpriteAnimation.kind: the facing table a sprite animation's pictures follow
+/// (Sprite_ComposePicture), as The Broken Seal names them; this game's six
+/// pictures are kind 5.
+enum AnimationFacingKind {
+  ANIM_FACING_NONE = 0,        ///< the script's own picture whatever the facing
+  ANIM_FACING_ONE_PICTURE = 1, ///< 8 sectors: one picture, mirrored to the left
+  ANIM_FACING_FRONT_BACK = 2,  ///< 8 sectors: a front and a back picture
+  ANIM_FACING_THREE_PICTURES = 3, ///< 16 sectors: front, side and back
+  ANIM_FACING_SIX_PICTURES = 5,   ///< 64 sectors
+  /// 8 sectors centred on the compass directions, a picture for each.
+  ANIM_FACING_EIGHT_PICTURES = 8,
+  /// ANIM_FACING_FRONT_BACK's table for a sprite drawn in two parts, the
+  /// second the next sprite id (the sprite viewer).
+  ANIM_FACING_TWO_PART = 20,
+  /// As ANIM_FACING_FRONT_BACK, with the front picture mirrored the other way.
+  ANIM_FACING_FRONT_BACK_SWAPPED = 22
+};
+
+enum AnimationCommand {
+  ANIMCMD_END = 239,      ///< blank the layer and stop its script
+  ANIMCMD_SET_KIND = 240, ///< use facing table `arg`
+  ANIMCMD_HOLD = 241,     ///< stay on this command and frame for good
+  ANIMCMD_OFFSET_Y = 242, ///< set the sprite's offsetY to `arg`
+  ANIMCMD_OFFSET_X = 243, ///< set the sprite's offsetX to `arg`
+  ANIMCMD_WAIT = 245,     ///< keep the current frame `arg` frames longer
+  ANIMCMD_SOUND = 252,    ///< play sound `arg`
+  ANIMCMD_JUMP = 253,     ///< continue at script position `arg`
+  ANIMCMD_PLAY = 254,     ///< switch to animation `arg`
+  ANIMCMD_BLANK = 255     ///< show nothing for `arg`
+};
+
+/// The field's pool sizes, and a sprite animation's timer step at normal speed.
 enum {
   RESOURCE_SLOT_COUNT = 8, ///< ActorSystemWork.pictureCaches
+  ACTOR_COUNT = 64,        ///< Ram_HeapSlots->actors
   ANIM_OBJECT_COUNT = 64,  ///< sprites and sprite animations
-  ANIM_LAYER_COUNT = 4     ///< Sprite.entries
+  ANIM_LAYER_COUNT = 4,    ///< Sprite.entries
+  /// Sixteenths of a frame taken off a sprite animation's timer each frame: one
+  /// frame.
+  SPRITE_ANIMATION_NORMAL_STEP = 16
+};
+
+/// Layered-map viewport distances in 16.16 pixels. The followed point is below
+/// the vertical centre; scroll bounds and camera following share this origin.
+enum {
+  FIELD_VIEW_FOCUS_X = px(120), ///< followed point from the left edge
+  FIELD_VIEW_FOCUS_Y = px(96),  ///< followed point from the top edge
+  FIELD_VIEW_WIDTH = px(240),   ///< the screen's width
+  FIELD_VIEW_HEIGHT = px(160)   ///< the screen's height
+};
+
+/// Sprite ids the field's own code creates actors of.
+enum {
+  FIELD_SPRITE_RIPPLE = 24, ///< the ripple behind the leader in shallow water
+  FIELD_SPRITE_FOOTPRINT = 25, ///< a footprint, on maps that show them
+  /// The ripple behind the leader or the ship in the world map's shallow
+  /// water, rings that widen and fade (spr_269.png).
+  WORLD_MAP_SPRITE_RIPPLE = 269,
+  /// The puffs the ship leaves behind it as it sails or flies low, on
+  /// gActor_WakeScript (spr_356.png).
+  WORLD_MAP_SPRITE_WAKE = 356
+};
+
+/// How a layout's cell picture data is packed: the method byte
+/// TileMap_DecodeStagedBuffer reads before the halfwords.
+enum CellPicturePacking {
+  CELL_PICTURE_PACKING_RAW = 0, ///< copied as it is
+  /// All the high bytes, then all the low bytes; each value is XORed with
+  /// the one before.
+  CELL_PICTURE_PACKING_SPLIT_DELTA = 1,
+  CELL_PICTURE_PACKING_DELTA = 2 ///< each value is XORed with the one before
 };
 
 /// A row of gResourceSlot_NumberTable: the resource holding the pictures of
@@ -281,15 +292,6 @@ extern const u8 gActor_ShadowTiles[];
 extern u8 Render_CopyStridedCode[];
 
 extern u8 Render_CopyStridedCodeSize[];
-
-struct IconOwner {
-  u8 unused[80]; ///< no code names it
-  struct IconSprite__resource_slot *sprite;
-  u8 unusedAfterSprite[8]; ///< no code names it
-  u8 unk5c;
-  u8 unusedB[5]; ///< no code names it
-  u8 iconId;
-};
 
 /// Copies Render_DecodePicture into the frame scratch slot, the block sized for
 /// the routine and the colour tables it keeps after its code; the copy stops at

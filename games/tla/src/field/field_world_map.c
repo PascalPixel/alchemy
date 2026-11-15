@@ -258,23 +258,24 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
   PaletteFade_LoadPaletteFar(buffer);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[1]),
-                      Ram_MapCollision + 0x1000);
-  TilesetAnim_StartAll((const u16 *)(Ram_MapCollision + 0x1000));
+                      MAPGRID_ANIMATION_SCRIPT);
+  TilesetAnim_StartAll((const u16 *)MAPGRID_ANIMATION_SCRIPT);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[2]), Ram_MapCollision);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer);
-  Dma_Set(Ram_BgTileBuffer, BG_CHAR_BLOCK(2), DMA_COPY_WORDS(2048), REG_DMA3);
+  Dma_Set(Ram_BgTileBuffer, BG_CHAR_BLOCK(2),
+          DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[4]),
-                      Ram_BgTileBuffer + 0x2000);
-  Dma_Set(Ram_BgTileBuffer + 0x2000, BG_CHAR_BLOCK(2) + 0x2000,
-          DMA_COPY_WORDS(2048), REG_DMA3);
+                      WORLD_MAP_TILE_SET(1));
+  Dma_Set(WORLD_MAP_TILE_SET(1), BG_CHAR_BLOCK(2) + WORLD_MAP_TILE_SET_BYTES,
+          DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[5]),
-                      Ram_BgTileBuffer + 0x4000);
-  Dma_Set(Ram_BgTileBuffer + 0x4000, BG_CHAR_BLOCK(3), DMA_COPY_WORDS(2048),
-          REG_DMA3);
+                      WORLD_MAP_TILE_SET(2));
+  Dma_Set(WORLD_MAP_TILE_SET(2), BG_CHAR_BLOCK(3),
+          DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[6]),
-                      Ram_BgTileBuffer + 0x6000);
-  Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000,
-          DMA_COPY_WORDS(2048), REG_DMA3);
+                      WORLD_MAP_TILE_SET(3));
+  Dma_Set(WORLD_MAP_TILE_SET(3), BG_CHAR_BLOCK(3) + WORLD_MAP_TILE_SET_BYTES,
+          DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gData_02028000);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
   Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5), 1536);
@@ -408,10 +409,6 @@ void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
     sourceCell += 128;
   } while (cellsCopied <= 63);
 }
-
-void WorldMap_BuildScanlineTable__resource_slot(
-    s32 ratio, s32 *position,
-    void *affineWork) __asm__("WorldMap_BuildScanlineTable");
 
 /// Each frame: follows the followed point with the screen shake, draws the rows
 /// and columns that came into view, and recomputes the projection and the

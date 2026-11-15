@@ -36,7 +36,7 @@ s32 Party_GetCharacterSprite(s32 character) {
 }
 
 /// Does nothing; nothing calls Actor_ReservedNoOpFar.
-void Actor_ReservedNoOp(void) {}
+UNUSED void Actor_ReservedNoOp(void) {}
 
 /// Creates the actors of a scene's actor placement table (ended by sprite -1),
 /// and records the table among the scene's tables.
@@ -178,8 +178,8 @@ s32 ScenePoint_GetPosition(s32 id, s32 *position) {
   key = *cursor++;
   while (key != -1) {
     if (key == id) {
-      position[0] = Stream_ReadU16(&cursor) << 16;
-      position[2] = Stream_ReadU16(&cursor) << 16;
+      position[0] = px(Stream_ReadU16(&cursor));
+      position[2] = px(Stream_ReadU16(&cursor));
       return 0;
     }
     cursor += 4;
@@ -245,15 +245,15 @@ void Actor_ResetForLeader(s32 table) {
   object->layer = gMainRoutineWork.layer;
   object->timer = 0;
   object->userValue = 0;
-  if (work->mode == 3) {
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (gMainRoutineWork.ownerOverride != 0)
-      gMainRoutineWork.movementMode = 7;
+      gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP;
     else
-      gMainRoutineWork.movementMode = 1;
+      gMainRoutineWork.movementMode = LEADER_MOVEMENT_WORLD_MAP;
   } else if (gMainRoutineWork.ownerOverride != 0) {
-    gMainRoutineWork.movementMode = 6;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP_ON_MAP;
   } else {
-    gMainRoutineWork.movementMode = 0;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
     /* FAKEMATCH(barrier): an empty asm after the store. */
     asm("");
     cell = Ram_HeapSlots->mapGrid->layers[object->layer].cells +
@@ -261,7 +261,7 @@ void Actor_ResetForLeader(s32 table) {
     above = cell - 128;
     if (gMainRoutineWork.y != 0 && (cell->attributeB & 0x40) &&
         (above->attributeB & 0x40)) {
-      gMainRoutineWork.movementMode = 2;
+      gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
       height = MapGrid_GetTerrainHeightFar(0, object->x.fixed,
                                            object->z.fixed - px(16)) -
                0x200000;
@@ -289,7 +289,7 @@ void Actor_ResetForLeader(s32 table) {
                            object->z.fixed);
   camera->groundHeight = object->groundHeight;
   Actor_StartCameraFar(camera, object);
-  if (work->mode == 3) {
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     u8 *effect = Sprite_AddAnimationFar(object->sprite, 266);
 
     effect[5] = 15;
@@ -348,7 +348,7 @@ void ObjectTable_Clear(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 i;
 
-  for (i = 0; i < 80; i++)
+  for (i = 0; i < FIELD_ACTOR_COUNT; i++)
     work->actors[i] = NULL;
 }
 

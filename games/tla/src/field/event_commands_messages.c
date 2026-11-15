@@ -59,7 +59,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   found = 0;
   if (work->fastForward == 0) {
     if (object != 0) {
-      if (work->mode == 3) {
+      if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
         Render_ProjectPoint((u8 *)object + 8, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
@@ -182,7 +182,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
       wait(1);
   }
   work->messageWindow = (s32)handle;
-  *(s32 *)((u8 *)work + 0x1e8) = portrait;
+  work->sideWindow = (struct Window *)portrait;
   work->message++;
   return handle;
 }
@@ -428,7 +428,7 @@ void FieldCamera_FollowActor(s32 id, s32 flag) {
     if (flag == 0) {
       SET_ACTOR_POSITION(target, obj->x.fixed, obj->y.fixed, obj->z.fixed);
       wait(1);
-      if (work->mode != 3)
+      if (work->mode != ACTOR_SYSTEM_WORLD_MAP)
         MapGrid_CenterOnFollowedPointFar();
     }
   }

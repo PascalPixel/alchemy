@@ -24,10 +24,14 @@ struct ReflectionAnimation {
 };
 
 struct WorldMapBlock {
-  u8 unused[2]; ///< no code names it
-  u8 unk2;
-  u8 unusedB; ///< no code names it
+  u8 unused[2];        ///< no code names it
+  u8 place;            ///< WORLD_MAP_NO_PLACE where the map has no block
+  u8 unusedAfterPlace; ///< the terrain kind and flags
+                       ///< (WorldMap_GetBattleEnvironment)
 };
+
+/// WorldMapBlock.place where the world map has no block: nothing may go there.
+#define WORLD_MAP_NO_PLACE 255
 
 struct WorldMover {
   u8 unused[12]; ///< no code names it
@@ -39,7 +43,7 @@ struct ScanlineRow {
   s32 depth;
   s32 offsetX;
   s32 offsetY;
-  s32 unk10;
+  s32 unusedAfterOffsetY; ///< no code names it
 };
 
 struct SpriteViewerLayer {
@@ -53,7 +57,7 @@ struct SpriteViewerLayer {
 struct ViewerSprite {
   u8 unused[0x1a]; ///< no code names it
   u8 flags;
-  u8 unk1b[0x1d];
+  u8 unusedAfterFlags[0x1d]; ///< no code names it
 };
 
 struct ProbeShape {
@@ -66,28 +70,6 @@ struct ProbeObjects {
   struct ProbeShape *shape;
 };
 
-struct UiGridEntry {
-  s16 no;
-  u16 x;
-  u8 value04;
-  u8 unused[7]; ///< no code names it
-  s32 *table0c;
-  s32 value10;
-  u8 value14;
-  u8 value15;
-  u8 value16;
-  u8 value17;
-};
-
-struct BattleCells {
-  u8 *actors;
-  u8 *unk04;
-  u8 *unk08;
-  u8 *unk0c;
-  u8 *unk10;
-  u8 *work;
-};
-
 struct Vec2 {
   s32 x;
   s32 y;
@@ -95,13 +77,13 @@ struct Vec2 {
 
 struct Actor *Actor_FindAtCell(s32 *position, s32 check_y);
 
-void Func_0200189c(void);
-
-extern u8 Data_0202d000[];
 extern u8 gBgTileBuffer[];
-extern u8 gData_0203a000[];
-extern u8 gData_0203c000[];
-extern u8 gData_0203e000[];
+/// The world map area's four tile sets, decoded one after another into
+/// gBgTileBuffer and copied to the two halves of BG char blocks 2 and 3, as
+/// The Broken Seal's.
+#define WORLD_MAP_TILE_SET_BYTES 0x2000
+#define WORLD_MAP_TILE_SET(n)                                                  \
+  (Ram_BgTileBuffer + (n) * WORLD_MAP_TILE_SET_BYTES)
 extern u8 gMapGridShapes[];
 
 void WorldMap_UpdateRegionTint(s32 region, s32 gradual);

@@ -5,30 +5,7 @@
 #include "system/field_effect.h"
 #include "system/main_routine_work.h"
 #include "field/event.h"
-
-/* VIEW(advance_motion_priority): tag struct EffectSpriteBits as struct
- * EffectSpriteBits__advance_motion_priority; scene/trial_road.h has another
- * definition; tried with the definition the rest of the object has, it does not
- * compile in tla-ja (dehkan_plateau.c):
- * games/tla/src/field/field_effect_advance_motion_priority.c:18: field `bits'
- * has incomplete type. */
-/// The sprite's priority bits, read as the byte that holds them.
-struct EffectSpriteBits__advance_motion_priority {
-  u8 unk0 : 2;
-  u8 priority : 2;
-} __attribute__((packed));
-
-/* VIEW(advance_motion_priority): tag struct EffectSpriteAttributes as struct
- * EffectSpriteAttributes__advance_motion_priority; scene/trial_road.h has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja (dehkan_plateau.c):
- * games/tla/src/field/field_effect_advance_motion_priority.c:50: dereferencing
- * pointer to incomplete type. */
-/// A sprite's attribute 2, as the byte bits view reaches it.
-struct EffectSpriteAttributes__advance_motion_priority {
-  u8 unused[9]; ///< no code names it
-  struct EffectSpriteBits__advance_motion_priority bits;
-};
+#include "field/sprite.h"
 
 /// FieldEffect_AdvanceMotion, then gives the effect's sprite the leader's
 /// sprite priority, so the effect is drawn at the leader's depth.
@@ -39,10 +16,8 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
   struct MainRoutineWork *party;
   struct Sprite *sprite;
   struct Actor *leader;
-  struct EffectSpriteAttributes__advance_motion_priority *to;
-  struct EffectSpriteAttributes__advance_motion_priority *from;
-  struct EffectSpriteBits__advance_motion_priority source;
-  struct EffectSpriteBits__advance_motion_priority bits;
+  struct PlacedSprite *to;
+  struct PlacedSprite *from;
 
   effect->x += velocityX;
   effect->y += effect->velocity.y;
@@ -58,11 +33,7 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
   party = &gMainRoutineWork;
 
   leader = Actor_GetById(party->leaderActorId);
-  to = (struct EffectSpriteAttributes__advance_motion_priority *)effect->sprite;
-  from =
-      (struct EffectSpriteAttributes__advance_motion_priority *)leader->sprite;
-  source = from->bits;
-  bits = to->bits;
-  bits.priority = source.priority;
-  to->bits = bits;
+  to = (struct PlacedSprite *)effect->sprite;
+  from = (struct PlacedSprite *)leader->sprite;
+  to->priority = from->priority;
 }

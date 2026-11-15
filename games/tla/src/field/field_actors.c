@@ -26,6 +26,7 @@
 #include "field/sprite.h"
 #include "field/field.h"
 #include "field/script_operands.h"
+#include "field/field_sequence.h"
 
 /// Waits, at most 90 frames, for a sprite's animation to change or for its
 /// first layer's script to reach code 241.
@@ -205,19 +206,19 @@ UNUSED void ActorSystem_ReservedNoOpB(void) {}
 /// Returns an unused object (one without a script) from the 64 slots, or 0
 /// if none is free.
 void *Actor_FindFree(void) {
-  struct Actor *obj = Ram_HeapSlots->actors;
-  void *ret = 0;
-  s32 n = 0;
+  struct Actor *actor = ((struct Actor *)Ram_HeapSlots->actors);
+  void *freeActor = 0;
+  s32 actorIndex = 0;
 
-  while (n <= 63) {
-    if (obj->script == 0) {
-      ret = obj;
+  while (actorIndex <= ACTOR_COUNT - 1) {
+    if (actor->script == 0) {
+      freeActor = actor;
       break;
     }
-    n++;
-    obj++;
+    actorIndex++;
+    actor++;
   }
-  return ret;
+  return freeActor;
 }
 
 /// Releases an actor's sprites and zeroes it, releasing its slot. Clearing the
@@ -447,50 +448,50 @@ void Actor_StartApproachWatched(struct Actor *actor, s32 watchedActorHandle) {
 }
 
 /// Starts the dispatch script for gMainRoutineWork's render mode, waiting a
-/// frame first in mode 9.
+/// frame first for sand on the World Map.
 void Actor_StartRenderModeScript(struct Actor *object) {
   const s32 *script;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   switch (party->movementMode) {
-  case 0:
+  case LEADER_MOVEMENT_WALK:
     script = gActor_PlayerScript;
     break;
-  case 1:
+  case LEADER_MOVEMENT_WORLD_MAP:
     script = gActor_WorldMapScript;
     break;
-  case 2:
+  case LEADER_MOVEMENT_KEYS:
     script = gActor_KeysScript;
     break;
-  case 3:
+  case LEADER_MOVEMENT_ROPE:
     script = gActor_RopeScript;
     break;
-  case 4:
+  case LEADER_MOVEMENT_TIGHTROPE:
     script = gActor_TightropeScript;
     break;
-  case 5:
+  case LEADER_MOVEMENT_SAND:
     script = gActor_SandScript;
     break;
-  case 6:
+  case LEADER_MOVEMENT_SHIP_ON_MAP:
     script = gActor_SailOnMapScript;
     break;
-  case 7:
+  case LEADER_MOVEMENT_SHIP:
     script = gActor_SailScript;
     break;
-  case 8:
+  case LEADER_MOVEMENT_FLYING_SHIP:
     script = gActor_FlyScript;
     break;
-  case 9:
+  case LEADER_MOVEMENT_WORLD_SAND:
     wait(1);
     script = gActor_SandOnWorldMapScript;
     break;
-  case 10:
+  case LEADER_MOVEMENT_HOVER:
     script = gActor_HoverScript;
     break;
-  case 11:
+  case LEADER_MOVEMENT_WALKING:
     script = gActor_WalkingScript;
     break;
-  case 12:
+  case LEADER_MOVEMENT_NONE:
     script = gActorScript_EndScript;
     break;
   default:
@@ -579,56 +580,35 @@ void Actor_SetSpritePriorityDirect(struct Actor *object, s32 priority) {
   object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 }
 
-/* VIEW(resource_slot): tag struct IconSprite as struct
- * IconSprite__resource_slot; item_icon.h has another definition; tried with the
- * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/field_actors.c:613: dereferencing pointer to incomplete
- * type. */
-struct IconSprite__resource_slot {
-  u8 unused[4]; ///< no code names it
-  struct RenderOam oam;
-  s32 scale;
-  u8 vramSlot;
-  u8 unusedAfterVramSlot[3]; ///< no code names it
-  u8 width;
-  u8 height;
-  u8 unk16;
-  s8 unk17;
-  u8 unk18;
-  u8 unk19;
-  u8 unk1a;
-  u8 unk1b;
-};
-
 /// Shows icon id on its owner's 16 by 16 sprite: Icon_DrawItemFar prepares the
 /// icon in heap slot 68, whose tiles at +0x400 go to the sprite's VRAM cache
 /// slot, and the sprite is reset to scale 1.0, 16-colour palette 0.
-void Actor_SetItemIcon(struct IconOwner *owner, s32 id) {
-  struct IconSprite__resource_slot *sprite;
+void Actor_SetItemIcon(struct Actor *owner, s32 id) {
+  struct Sprite *sprite;
   u8 *buffer;
   s32 tile;
 
   if (owner == 0)
     return;
-  owner->unk5c = 1;
-  owner->iconId = id;
+  owner->retainSpriteCache = 1;
+  owner->iconItem = id;
   sprite = owner->sprite;
   if (sprite == 0)
     return;
   buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   Icon_DrawItemFar(id);
-  tile = VramCache_Load(sprite->vramSlot, 128, buffer + 0x400);
+  tile = VramCache_Load(sprite->slot, 128, buffer + 0x400);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
-  sprite->unk1b = 0;
-  sprite->unk19 = 0;
+  sprite->count = 0;
+  sprite->dirty = 0;
   sprite->width = 16;
   sprite->height = 16;
-  sprite->unk16 = 0;
-  sprite->unk17 = 4;
+  sprite->offsetX = 0;
+  sprite->offsetY = 4;
   sprite->scale = Q16_ONE;
-  sprite->oam.index = tile;
-  sprite->oam.fullColor = 0;
-  sprite->oam.palette = 0;
+  sprite->image.tile = tile;
+  sprite->image.fullColor = 0;
+  sprite->image.palette = 0;
 }
 
 /// The sprite id an actor is drawn with (the first halfword of its sprite's
@@ -654,11 +634,13 @@ void ActorSystem_SuspendProjectionAndShowSprites(void) {
 
   Task_SuspendAll(ActorSystem_PlaceSprites);
   Task_SuspendAll(ActorSystem_ProjectSprites);
-  PaletteFade_SetTargetFar(0x10000, 1);
+  PaletteFade_SetTargetFar(Q16_ONE, 1);
   PaletteFade_StartInterpolationFar(1);
   wait(1);
   dispcnt = REG_DISPCNT;
-  REG_DISPCNT = (dispcnt & 0xf1ff) | DISPCNT_OBJ_ON;
+  REG_DISPCNT =
+      (dispcnt & (u16)~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON)) |
+      DISPCNT_OBJ_ON;
 }
 
 /// Resumes the actor camera updates and hides BG1-3 and the sprites.
@@ -750,8 +732,8 @@ void ActorSystem_PlaceSprites(void) {
       dx = object->x.fixed - viewX;
       dz = object->z.fixed - viewZ;
       screenTop = dz - object->y.fixed;
-      if (dx > -px(32) && dx < 0x1100000 && screenTop > -px(32) &&
-          screenTop < 0xe00000 &&
+      if (dx > -px(32) && dx < px(272) && screenTop > -px(32) &&
+          screenTop < px(224) &&
           (priorityFlags = &object->priorityFlags,
            !(*priorityFlags & ACTOR_PRIORITY_NOT_DRAWN))) {
         terrainId = &object->layer;
@@ -859,7 +841,7 @@ void ActorSystem_PlaceSprites(void) {
         if (*priorityFlags & ACTOR_PRIORITY_OWN_DEPTH)
           Render_ApplyProjectedPlacementAtDepth(sprite, &point, scale.values,
                                                 object->facing,
-                                                ((u8 *)object)[0x63]);
+                                                object->riseEnabled);
         else
           Render_ApplyProjectedPlacement(sprite, SpritePlacement_Values(&point),
                                          scale.values, object->facing);
@@ -893,7 +875,7 @@ void ActorSystem_PlaceSprites(void) {
 // own.
 
 /// Unused: returns 1.
-s32 ActorCamera_ReturnTrue(void) { return 1; }
+UNUSED s32 ActorCamera_ReturnTrue(void) { return 1; }
 
 /// Places an object's sprite (kind 1, unless flag 0x10 hides it) or each of its
 /// group's four sprites (kind 2), turned by angle. While battle commands are
@@ -955,7 +937,7 @@ void ActorSystem_ProjectSprites(void) {
   system->used = 0;
   if (GameFlag_Get(FLAG_CHOOSING_COMMANDS)) {
     Transform_Reset();
-    angle += 0xffffe000;
+    angle -= TRIG_TURN / 8;
     Iwram_TransformMatrixEntry(gCamera_FixedViewMatrix);
     Transform_ApplyLookAt((s32 *)eye, (s32 *)target);
   } else {
@@ -983,24 +965,24 @@ s32 ActorScript_Goto(struct Actor *interpreter) {
 /// SC_HIDE_SPRITES: clears spriteStorageKind, hiding the sprites, and moves on
 /// to the next command.
 s32 ActorScript_HideSprites(struct Actor *interpreter) {
-  interpreter->spriteStorageKind = 0;
+  interpreter->spriteStorageKind = ACTOR_SPRITE_NONE;
   interpreter->scriptCursor++;
   return 1;
 }
 
 /// Shows one sprite (spriteStorageKind 1) and advances to the next command.
 s32 ActorScript_ShowSprite(struct Actor *interpreter) {
-  interpreter->spriteStorageKind = 1;
+  interpreter->spriteStorageKind = ACTOR_SPRITE_ONE;
   interpreter->scriptCursor++;
   return 1;
 }
 
 /// Waits up to 600 frames for a field object's movement target to be unset.
-void Actor_WaitForMove(void *fieldObject) {
+void Actor_WaitForMove(void *actor) {
   s32 waitedFrames;
 
   waitedFrames = 0;
-  while (waitedFrames < 600 && Actor_IsTargetUnset(fieldObject) == 0) {
+  while (waitedFrames < 600 && Actor_IsTargetUnset(actor) == 0) {
     wait(1);
     waitedFrames++;
   }

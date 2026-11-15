@@ -3,6 +3,8 @@
 
 #include "types.h"
 #include "macros.h"
+#include "fixed_math.h"
+#include "field/actor_script.h"
 
 /// clang-format off
 /// Word-aligned, as an array of structures is: the two bytes before it are
@@ -45,21 +47,34 @@ const s16 gSpeakerDefinitions[][2] ALIGNED(4) = {
     {57, 16},  {58, 28},  {246, 16}, {243, 16}, {245, 16}, {244, 16}, {487, -1},
     {255, -1}, {450, -1}, {325, -1}, {489, -1}, {421, -1}, {0, 16},
 };
-// Three 128-byte actions for Actor_StartRepeatedMotion, plus a final word.
+// Three bounces for Actor_StartRepeatedMotion, each squashing the actor
+// (wider, then shorter) and stretching it back over 12 frames; it starts
+// count bounces from the end. Each is 128 bytes, 32 words.
+#define VARIANT_BOUNCE                                                         \
+  SC_ADD(SW_SCALE_X, -Q16_ONE / 4), SC_ADD(SW_SCALE_Y, Q16_ONE / 8),           \
+      SC_WAIT(2), SC_ADD(SW_SCALE_X, Q16_ONE / 8),                             \
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 16), SC_WAIT(2),                           \
+      SC_ADD(SW_SCALE_X, Q16_ONE / 16), SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),     \
+      SC_WAIT(2), SC_ADD(SW_SCALE_X, Q16_ONE / 16),                            \
+      SC_ADD(SW_SCALE_Y, -Q16_ONE / 32), SC_WAIT(4)
 const s32 gActor_VariantScripts[] = {
-    23, 9, -16384, 23, 10, 8192,  0, 2, 23, 9, 8192, 23, 10, -4096, 0, 2,
-    23, 9, 4096,   23, 10, -2048, 0, 2, 23, 9, 4096, 23, 10, -2048, 0, 4,
-    23, 9, -16384, 23, 10, 8192,  0, 2, 23, 9, 8192, 23, 10, -4096, 0, 2,
-    23, 9, 4096,   23, 10, -2048, 0, 2, 23, 9, 4096, 23, 10, -2048, 0, 4,
-    23, 9, -16384, 23, 10, 8192,  0, 2, 23, 9, 8192, 23, 10, -4096, 0, 2,
-    23, 9, 4096,   23, 10, -2048, 0, 2, 23, 9, 4096, 23, 10, -2048, 0, 4,
-    17,
+    VARIANT_BOUNCE,
+    VARIANT_BOUNCE,
+    VARIANT_BOUNCE,
+    SC_END,
 };
-const u32 Data_080f085c[] = {
-    0, 1, 13, 38, 0, 38,
+#undef VARIANT_BOUNCE
+/// A dust puff's scripts (FieldEffect_SpawnDustPuff): it lasts 38 frames, or
+/// 18, and is released.
+const u32 gDustPuff_LongScript[] = {
+    SC_WAIT(1),
+    SC_LOOP(38, SC_TOP),
+    SC_RELEASE,
 };
-const u32 Data_080f0874[] = {
-    0, 1, 13, 18, 0, 38,
+const u32 gDustPuff_ShortScript[] = {
+    SC_WAIT(1),
+    SC_LOOP(18, SC_TOP),
+    SC_RELEASE,
 };
 const u8 gActor_BlinkSpriteColors[] = {
     7,

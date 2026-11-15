@@ -32,6 +32,9 @@ enum SpriteColorMode {
   SPRITE_COLOR_HIDDEN = 15      ///< solid colour 0, transparent
 };
 
+/// SpriteAnimation.picture and pictureBase when no picture is shown.
+#define SPRITE_PICTURE_NONE 0xff
+
 /// One animation layer of a sprite: its animation id, pictures, running script
 /// and timer.
 struct SpriteAnimation {
@@ -108,6 +111,10 @@ enum SpriteFlag {
   SPRITE_FLAG_OUTLINED = 1 << 1
 };
 
+/// The VRAM cache entry of the actors' shared shadow (gActor_ShadowTiles),
+/// each sprite's part 1.
+#define VRAM_CACHE_ENTRY_ACTOR_SHADOW 93
+
 /// An animated sprite: its image, scale, rotation, size, its shadow and up to
 /// four sprite animations.
 struct Sprite {
@@ -145,6 +152,28 @@ STATIC_ASSERT(offsetof(struct Sprite, shadow) == 0x1c);
 STATIC_ASSERT(sizeof(struct Sprite) == 0x38);
 STATIC_ASSERT(offsetof(struct Sprite, entries) == 0x28);
 
+/// An actor's sprite (struct Sprite) as the code that sets its image and shadow
+/// priorities reads it (the actors' freeze and placement, an actor taking the
+/// leader's layer): a byte at a time, under struct Sprite's names.
+struct PlacedSprite {
+  u8 unused[9];    ///< no code names it
+  u8 tileHigh : 2; ///< tile number bits 9..8
+  u8 priority : 2;
+  u8 palette : 4;
+  u8 unusedB[2]; ///< no code names it
+  s32 scale;     ///< 16.16 fixed point
+  u8 slot;
+  u8 retainCacheEntry; ///< bit 0
+  u16 rotation;
+  u8 unusedAfterRotation[5]; ///< no code names it
+  u8 dirty;
+  u8 flags;
+  u8 unusedAfterFlags[0x0a]; ///< no code names it
+  u8 shadowTileHigh : 2;
+  u8 shadowPriority : 2;
+  u8 shadowPalette : 4;
+};
+
 /// Animation numbers of a person's sprite, for Actor_SetAnimation. A sprite
 /// that is not a person (a bird, a dragon, a pillar) numbers its own.
 enum ActorAnimation {
@@ -155,6 +184,26 @@ enum ActorAnimation {
   ANIM_WALK = 2,
   ANIM_NOD = 3,
   ANIM_SHAKE_HEAD = 4,
+  /// Running, leaning forward, four frames a step to the walk's six. This and
+  /// the leader's other poses below are as the leader's sprite draws them, as
+  /// The Broken Seal numbers them.
+  ANIM_LEADER_RUN = 5,
+  ANIM_LEADER_SPRING = 6, ///< leaning back for a moment before a jump
+  ANIM_LEADER_LEAP = 7,   ///< in mid-stride, leaning forward
+  /// The leader leaning into what it pushes, as when it walks into a pushable
+  /// actor (Actor_UpdatePlayerControl).
+  ANIM_PUSH = 8,
+  /// ANIM_STAND's idle with more glances to each side, as when the leader's
+  /// step is blocked.
+  ANIM_LEADER_LOOK_AROUND = 9,
+  ANIM_LEADER_CLIMB = 10, ///< climbing a wall, seen from behind
+  /// Stepping off the top of a ladder onto the ground above.
+  ANIM_LEADER_CLIMB_OVER_TOP = 11,
+  ANIM_LEADER_CLING = 12, ///< still on a wall, seen from behind
+  /// ANIM_LEADER_CLIMB_OVER_TOP played backwards: stepping from the top of a
+  /// ladder onto its rungs.
+  ANIM_LEADER_CLIMB_DOWN_FROM_TOP = 13,
+  ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
   /// The arrivals and leavings of the animated exits, each four frames of the
   /// leader turning: an arrival grows from a small figure seen side-on to full
   /// size facing the player, a leaving turns from his back to side-on as he

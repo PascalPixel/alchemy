@@ -61,7 +61,7 @@ void Field_StartEncounterTransition(s32 unused) {
   Sound_PlayFar(gMainRoutineWork.battleMusic);
   Sound_PlayFar(SE_STOP_MUSIC_PLAYER_5);
   Sound_PlayFar(SE_BEAST_CRY);
-  if (work->mode == 3) {
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
     ScreenTransition_Finish(0x401, 16);
     work->transitionActive = 0;
@@ -141,6 +141,7 @@ void Exit_PrepareAnimation(s32 animation) {
     doorway->colorMode = hidden;
     // Keep the cell and put the leader at its middle in x and its south edge in
     // z.
+    // Each coordinate read and written as the word it is.
     actor->x.fixed = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
     actor->z.fixed = (actor->z.fixed & FIELD_CELL_MASK) + px(16);
     actor->velocityX = cleared;
@@ -241,9 +242,9 @@ s32 Entrance_PlayArrival(void) {
 
 /// The exit of kind 0x50: gives the leader's sprite a layer of sprite 268,
 /// drawn transparent (SPRITE_COLOR_HIDDEN).
-void Func_080d5fd4(void) {
+void Exit_AddHiddenLeaderLayer(void) {
   struct Actor *object = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  u8 *metadata = Sprite_AddAnimationFar(*(void **)((u8 *)object + 0x50), 268);
+  struct SpriteAnimation *layer = Sprite_AddAnimationFar(object->sprite, 268);
 
-  metadata[5] = 15;
+  layer->colorMode = SPRITE_COLOR_HIDDEN;
 }

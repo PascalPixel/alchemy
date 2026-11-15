@@ -42,7 +42,12 @@ enum ActorPriorityFlag {
   ACTOR_PRIORITY_NOT_DRAWN = 0x10, ///< placed nowhere, as if off screen
   /// With ACTOR_PRIORITY_AUTOMATIC, takes the priority of the cells under it
   /// even where the ground in front rises, which would put it behind.
-  ACTOR_PRIORITY_IGNORES_RISES = 0x20
+  ACTOR_PRIORITY_IGNORES_RISES = 0x20,
+  /// The actor steps up onto platform actors a cell below it, as the leader
+  /// does onto pushed blocks and statues.
+  ACTOR_PRIORITY_WALKS_ON_PLATFORMS = 0x40,
+  /// Others with ACTOR_PRIORITY_WALKS_ON_PLATFORMS may stand on it.
+  ACTOR_PRIORITY_PLATFORM = 0x80
 };
 
 /// Actor.motionFlags bits.
@@ -158,6 +163,23 @@ struct Actor {
       /// A block's: nonzero while it blocks the cells ahead of and behind it.
       u8 riseEnabled;
     };
+    /// The ship on the World Map (FieldMoveByKeys): frames to its next wake,
+    /// and a wake's own frames.
+    struct {
+      u8 unusedBeforeWake[2]; ///< refused and frozen
+      u8 wakeTimer;           ///< frames to the ship's next wake
+      u8 wakeFrames;          ///< a wake's frames left
+    };
+    /// An actor showing an item (Actor_SetItemIcon).
+    struct {
+      u8 unusedBeforeIconItem[2]; ///< refused and frozen
+      u8 iconItem;                ///< the item whose icon its sprite shows
+    };
+    /// The leader while it crosses a rope or tightrope.
+    struct {
+      u8 unusedBeforeSavedPriority[2]; ///< refused and frozen
+      u8 savedSpritePriority; ///< its sprite's priority, given back after
+    };
   };
   /// Two halfwords whose meaning depends on what runs the actor.
   union {
@@ -173,6 +195,11 @@ struct Actor {
     struct {
       s16 homeX;
       s16 homeZ;
+    };
+    /// Avoid's caster (FieldEffect_UpdateAvoidCaster).
+    struct {
+      s16 arcPhase;  ///< 1 spins the caster 3/64 turn a frame
+      s16 arcFrames; ///< frames since the arcs started
     };
     /// A Venus Djinni's falling motes
     /// (FieldEffect_UpdateDescendingOrbitActor).

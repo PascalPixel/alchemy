@@ -2,8 +2,8 @@
 @ Three 8x8 glints that FieldPsynergy_UpdateArrow draws into its 64x64 canvas, the
 @ first two in turn; drawn in the basic colour palette and the ramp from
 @ blue to white that FieldPsynergy_Arrow writes to OBJ colours 0xe0 to 0xef
-	.global Data_080eda0c
-Data_080eda0c:
+	.global gArrow_GlintPixels
+gArrow_GlintPixels:
 	.incbin "games/tla/src/field/glint.8bpp"
 @ 110 enemy encounter groups.
 	.global gEncounter_EnemyGroupTable
@@ -292,25 +292,25 @@ gRope_Tiles:
 @ sprite it unpacks twice
 	.global gHangingVine_VineTopPicture
 gHangingVine_VineTopPicture:
-	.incbin "games/tla/src/field/vine_0.8bpp16x16.lz"
+	.incbin "games/tla/src/field/vine_top.8bpp16x16.lz"
 	.global gHangingVine_VineUpperPicture
 gHangingVine_VineUpperPicture:
-	.incbin "games/tla/src/field/vine_1.8bpp16x16.lz"
+	.incbin "games/tla/src/field/vine_upper.8bpp16x16.lz"
 	.global gHangingVine_VineLowerPicture
 gHangingVine_VineLowerPicture:
-	.incbin "games/tla/src/field/vine_2.8bpp16x16.lz"
+	.incbin "games/tla/src/field/vine_lower.8bpp16x16.lz"
 	.global gHangingVine_VineBottomPicture
 gHangingVine_VineBottomPicture:
-	.incbin "games/tla/src/field/vine_3.8bpp16x16.lz"
+	.incbin "games/tla/src/field/vine_bottom.8bpp16x16.lz"
 	.global gHangingVine_ChainTopPicture
 gHangingVine_ChainTopPicture:
-	.incbin "games/tla/src/field/chain_0.8bpp16x16.lz"
+	.incbin "games/tla/src/field/chain_top.8bpp16x16.lz"
 	.global gHangingVine_ChainMiddlePicture
 gHangingVine_ChainMiddlePicture:
-	.incbin "games/tla/src/field/chain_1.8bpp16x16.lz"
+	.incbin "games/tla/src/field/chain_middle.8bpp16x16.lz"
 	.global gHangingVine_ChainBottomPicture
 gHangingVine_ChainBottomPicture:
-	.incbin "games/tla/src/field/chain_2.8bpp16x16.lz"
+	.incbin "games/tla/src/field/chain_bottom.8bpp16x16.lz"
 	.balign 4
 
 @ One word, 0x11, which no code names
@@ -321,8 +321,6 @@ gHangingVine_ChainBottomPicture:
 	.global gBattleEffect_SharedParticleScript
 gBattleEffect_SharedParticleScript:
 	.4byte 0x26
-	.global gData_080f0e58
-gData_080f0e58:
 	.4byte 0x01
 	.4byte 0x26
 
@@ -363,8 +361,8 @@ gFieldEffect_CyclePatternWords:
 gBurst_GlowTiles:
 	.incbin "games/tla/src/field/glow_spark.8bpp"
 @ 256 tile index permutations.
-	.global gData_080f39c4
-gData_080f39c4:
+	.global gParch_PictureTiles
+gParch_PictureTiles:
 	.2byte 0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007
 	.2byte 0x0040, 0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047
 	.2byte 0x0008, 0x0009, 0x000a, 0x000b, 0x000c, 0x000d, 0x000e, 0x000f
@@ -398,8 +396,8 @@ gData_080f39c4:
 	.2byte 0x0800, 0x0801, 0x0802, 0x0803, 0x0804, 0x0805, 0x0806, 0x0807
 	.2byte 0x0840, 0x0841, 0x0842, 0x0843, 0x0844, 0x0845, 0x0846, 0x0847
 @ 12 width/height pairs.
-	.global gData_080f3bc4
-gData_080f3bc4:
+	.global gOam_ShapeSizes
+gOam_ShapeSizes:
 	.byte 8, 8
 	.byte 16, 16
 	.byte 32, 32

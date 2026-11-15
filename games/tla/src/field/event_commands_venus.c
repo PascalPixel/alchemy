@@ -14,12 +14,12 @@ struct FieldEffectWork;
 void Djinn_RunVenusJoinEffect(s32 djinniId) {
   struct Actor *leader;
   struct Actor *djinni;
-  void *effectSlots;
-  u8 *slot;
+  struct FieldEffectWork *effectWork;
+  struct FieldParticle *effect;
   s8 *slotState;
   s32 remaining;
   s32 scale;
-  s32 position[3];
+  struct Vector3 position;
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   djinni = Actor_GetById(djinniId);
@@ -27,22 +27,27 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
     return;
 
   FieldEffect_InitializeSlots();
-  effectSlots = gEffectWork;
+  effectWork = Ram_HeapSlots->fieldEffectWork;
+  // Tint the screen green: PALETTE_TINT_CUSTOM | RGB(4, 16, 4), the form
+  // event_commands_mercury.c spells out for its blue.
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(4, 16, 4));
   wait(30);
+  // Unpause the Djinni (its paused flag).
   djinni->paused = 0;
   Sound_PlayFar(SE_JUMP);
   Actor_Jump(djinniId, 4, 15);
   Sound_PlayFar(SE_JUMP);
   Actor_Jump(djinniId, 4, 15);
+  // Spin and leap, then shrink away while the screen shakes (1.3 pixels).
   wait(30);
-  djinni->update = (void (*)(void))BattleEffect_AdvanceSpinAngle;
+  djinni->update = (void (*)(void))Djinn_AdvanceSpinAngle;
   Sound_PlayFar(SE_HIGH_JUMP);
   Actor_Jump(djinniId, 8, 22);
   Sound_PlayFar(SE_SPIN);
   MapGrid_SetScreenShakeFar(px(13) / 10, px(13) / 10, Q16_ONE);
   djinni->update = (void (*)(void))FieldEffect_ShrinkActorAndDestroyFast;
   Actor_SelectAnimationFar(djinni, 3);
+  // The leader turns to face the camera (FACING_SOUTH).
   wait(90);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   wait(20);
@@ -51,51 +56,43 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   wait(30);
   MapGrid_SetScreenShakeFar(px(8) / 5, px(8) / 5, Q16_ONE);
 
-  position[0] = djinni->x.fixed;
-  position[1] = djinni->y.fixed;
-  position[2] = djinni->z.fixed;
+  position.x = djinni->x.fixed;
+  position.y = djinni->y.fixed;
+  position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
 
-  slot = (u8 *)effectSlots + 80;
+  // One rising particle a frame into each of the 24 field effect sprites.
+  effect = effectWork->particles;
   remaining = 23;
   do {
-    FieldParticle_Initialize(slot, SPRITE_PARTICLE, position[0], position[2]);
-    FieldParticle_SetCallback(slot, (void *)FieldEffect_UpdateRadialSpread);
-    FieldParticle_SetActorMode(slot, 7);
-    Actor_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
-    ((struct FieldParticle *)slot)->scaleX = Q16_ONE / 2;
-    ((struct FieldParticle *)slot)->scaleY = Random16() + Q16_ONE * 3 / 2;
+    FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
+    FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialSpread);
+    FieldParticle_SetActorMode(effect, 7);
+    Animation_ApplyChildValuesToRecordFar(effect->object,
+                                          SPRITE_COLOR_GREEN_TINT);
+    effect->scaleX = Q16_ONE / 2;
+    effect->scaleY = Random16() + Q16_ONE * 3 / 2;
     remaining--;
     wait(1);
-    slot += 72;
+    effect++;
   } while (remaining >= 0);
 
+  // After 140 frames every particle still in use stops rising.
   wait(140);
-  {
-    s32 nextState;
+  FIELD_PARTICLES_SET_ACTIVE_STATE(slotState, remaining, effectWork, particles,
+                                   VENUS_PARTICLE_LAST_RISE);
 
-    nextState = 2;
-    slotState = effectSlots;
-    slotState += 144;
-    remaining = 23;
-    do {
-      if (slotState[5] != 0)
-        slotState[0] = nextState;
-      remaining--;
-      slotState += 72;
-    } while (remaining >= 0);
-  }
-
+  // A shake of 1/65536 pixel: in effect the shake stops.
   wait(20);
   MapGrid_SetScreenShakeFar(1, 1, 1);
   wait(30);
 
+  // 24 motes, evenly spread round a circle, 120 pixels above the leader.
   for (remaining = 0; remaining <= 23; remaining++) {
-    position[0] = leader->x.fixed;
-    position[1] = leader->y.fixed + px(120);
-    position[2] = leader->z.fixed;
-    djinni =
-        Actor_Spawn(SPRITE_PARTICLE, position[0], position[1], position[2]);
+    position.x = leader->x.fixed;
+    position.y = leader->y.fixed + px(120);
+    position.z = leader->z.fixed;
+    djinni = Actor_Spawn(SPRITE_PARTICLE, position.x, position.y, position.z);
     if (djinni != NULL) {
       scale = Random16() / 3 + Q16_ONE;
       djinni->scaleY = scale;
@@ -113,17 +110,20 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   Sound_PlayFar(SE_STOP_MUSIC_PLAYER_5);
   wait(1);
   Sound_PlayFar(SE_LIGHT_APPEAR);
-  position[0] = leader->x.fixed;
-  position[1] = leader->y.fixed + px(18);
-  position[2] = leader->z.fixed;
+  position.x = leader->x.fixed;
+  position.y = leader->y.fixed + px(18);
+  position.z = leader->z.fixed;
+  // 8 sparks from 18 pixels above the leader, each thrown 32 pixels in a
+  // random direction at 1.4 to 2.4 pixels a frame and 5 up (gravity is
+  // Actor.velocityY), falling, and released after 8 frames; stop at the
+  // first that cannot be spawned.
   for (remaining = 0; remaining <= 7; remaining++) {
-    djinni =
-        Actor_Spawn(SPRITE_PARTICLE, position[0], position[1], position[2]);
+    djinni = Actor_Spawn(SPRITE_PARTICLE, position.x, position.y, position.z);
     if (djinni == NULL)
       break;
     djinni->scaleY = Q16_ONE * 3 / 5;
     djinni->scaleX = Q16_ONE * 3 / 5;
-    djinni->motionFlags = 2;
+    djinni->motionFlags = ACTOR_FALLS;
     djinni->velocityY = px(5);
     djinni->groundHeight = djinni->y.fixed;
     djinni->speedLimit = Random16() + px(7) / 5;
@@ -149,40 +149,31 @@ struct FieldEffectWork;
 void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
   struct Actor *source;
   struct Vector3 position;
-  s8 *statePointer;
   s32 state;
 
   source = Actor_GetById(gMainRoutineWork.leaderActorId);
-  statePointer = &effect->state;
-  state = *statePointer;
+  state = effect->state;
 
-  if (state == 0) {
+  if (state == MERCURY_DROPLET_AIM) {
     position.x = source->x.fixed;
     position.y = source->y.fixed + Random16() * 5 + px(15);
-    {
-      struct Vector3 *p = &position;
-
-      position.z = source->z.fixed;
-      Camera_WorldToScreen(p);
-    }
+    position.z = source->z.fixed;
+    Camera_WorldToScreen(&position);
     Vector_AddPolarOffset(Random16() * 6 + px(2), Random16(), &position);
 
-    {
-      s32 accel = 0x30000;
-
-      effect->targetX = position.x;
-      effect->targetZ = position.z;
-      effect->x = position.x;
-      effect->z = position.z - px(100);
-      effect->acceleration = accel;
-    }
+    effect->targetX = position.x;
+    effect->targetZ = position.z;
+    effect->x = position.x;
+    effect->z = position.z - px(100);
+    effect->acceleration = px(3);
     effect->maxSpeed = Random16() * 3 + px(3);
     effect->scaleX = Q16_ONE;
     effect->scaleY = Q16_ONE;
     effect->limitTurnStep = state;
     effect->stopAtTarget = 1;
-    (*statePointer)++;
-  } else if ((u8)(effect->state - 1) <= 1) {
+    effect->state++;
+  } else if ((u8)(effect->state - MERCURY_DROPLET_FALLING) <=
+             MERCURY_DROPLET_LAST_FALL - MERCURY_DROPLET_FALLING) {
     if (FieldParticle_HasPendingTarget(effect) == 0) {
       position.x = effect->x;
       position.z = effect->z;
@@ -192,18 +183,18 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
       effect->stopAtTarget = 0;
       effect->speed = Q16_ONE;
       effect->acceleration = 0;
-      effect->maxSpeed = Random16() + 0x23333;
+      effect->maxSpeed = Random16() + px(11) / 5;
       effect->scaleX = Q16_ONE / 2;
       effect->scaleY = Q16_ONE / 2;
       Sound_PlayFar(SE_CRACK);
 
-      if (*statePointer == 1)
+      if (effect->state == MERCURY_DROPLET_FALLING)
         effect->state--;
       else
         effect->state++;
       effect->callbackDelay = 6;
     }
-  } else if (state == 3) {
+  } else if (state == MERCURY_DROPLET_DONE) {
     FieldEffect_ClearOwnedSlot(effect);
   }
 }

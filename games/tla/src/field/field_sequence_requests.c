@@ -82,12 +82,11 @@ void Event_SetDefeatDestination(s32 sceneId, s32 entrance) {
 /// Makes the event leave for entrance entrance of scene sceneId: sets
 /// gMainRoutineWork.next and entrance and raises the exit request
 /// EXIT_KEEP_DESTINATION (999), so the field sequence leaves on its next pass.
-void Event_LeaveFor(s16 scene, s16 entrance) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-
-  gMainRoutineWork.next = scene;
+void Event_LeaveFor(u16 sceneId, u16 entrance) {
+  struct FieldWork *work = gFieldWork;
+  gMainRoutineWork.next = sceneId;
   gMainRoutineWork.entrance = entrance;
-  event->exit = EXIT_KEEP_DESTINATION;
+  work->exit = EXIT_KEEP_DESTINATION;
 }
 
 /// Plays SE_STOP_MUSIC_PLAYER_5, then soundId (SOUND_FADE_OUT_ACTION_SE for
@@ -123,7 +122,7 @@ void Scene_PlayQueuedMusic(void) {
 void Event_ShowMessageAndOfferScoop(s32 message) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  FieldMessage_ShowFar(message, 1);
+  FieldMessage_ShowFar(message, FIELD_MESSAGE_ZOOM);
   GameFlag_Clear(FLAG_NOTHING_HAPPENS);
   Event_End();
   if (Party_FindOwnerWithActionFar(ABILITY_SCOOP) != -1)

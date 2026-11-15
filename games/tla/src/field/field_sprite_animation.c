@@ -19,6 +19,13 @@
 #include "graphics/vram_tab.h"
 #include "system/scene.h"
 
+enum {
+  ANIM_SHADOW_TILE_BYTES = 16 * 8, ///< 16x8 pixels, 256 colours
+  /// Priority 2, the field's for its sprites: in front of a map layer at 3, or
+  /// at 2 since a sprite wins a tie, and behind one at 1.
+  ANIM_OAM_FIELD_PRIORITY = OBJ_PRIORITY(2)
+};
+
 struct ChildObject {
   u8 unused[2]; ///< no code names it
   u16 value;
@@ -191,7 +198,6 @@ s32 Sprite_ResetAnimations(struct Sprite *state) {
 /// and drawing kind, with no script running and no picture shown.
 void SpriteAnimation_Reset(struct SpriteAnimation *work) {
   s32 value;
-  s32 z;
   s32 animation;
   struct AnimationMetadata *info;
 
@@ -201,16 +207,12 @@ void SpriteAnimation_Reset(struct SpriteAnimation *work) {
       value = info->pictures;
       if (value == 0)
         value = SpritePictureCache_FindByTag(work->animationId);
-      z = 0;
       work->kind = info->drawKind;
-      work->script = (u8 *)z;
-      /* FAKEMATCH(dead): an empty once-only block. */
-      do {
-      } while (0);
+      Io_Write32(0, (u32 *)&work->script);
       animation = info->animation;
       work->pictures = (void **)value;
       work->scripts = (u8 **)animation;
-      work->scriptOffset = z;
+      work->scriptOffset = 0;
       work->mode = info->pictureCodec;
       work->picture = 0xff;
     }
@@ -260,49 +262,51 @@ s32 Sprite_AddAnimation(struct Sprite *sprite, s32 id) {
 
 /// Removes the sprite animation handle from a sprite and clears it, trimming
 /// the sprite's animation count when no later sprite animation remains.
-void Sprite_RemoveAnimation(struct MetadataSlotState *state, s32 handle) {
-  s32 count;
-  u32 slot;
+void Sprite_RemoveAnimation(struct Sprite *sprite, s32 layer) {
+  s32 laterLayers;
+  u32 index;
   u32 i;
 
-  if (state != NULL && handle != 0) {
-    SpriteAnimation_Clear((void *)handle);
-    for (slot = 0; slot <= 3; slot++) {
-      if (handle == state->slots[slot])
+  if (sprite != NULL && layer != 0) {
+    SpriteAnimation_Clear((struct SpriteAnimation *)layer);
+    // Locate the handle, then trim only empty slots at the end of the list.
+    for (index = 0; index < ANIM_LAYER_COUNT; index++) {
+      if (layer == (s32)sprite->entries[index])
         break;
     }
-    if (slot != 4) {
-      state->slots[slot] = 0;
-      count = 0;
-      for (i = slot + 1; i <= 3; i++) {
-        if (state->slots[i] != 0)
-          count++;
+    if (index != ANIM_LAYER_COUNT) {
+      sprite->entries[index] = 0;
+      laterLayers = 0;
+      for (i = index + 1; i < ANIM_LAYER_COUNT; i++) {
+        if (sprite->entries[i] != 0)
+          laterLayers++;
       }
-      if (count == 0)
-        state->count = slot;
+      if (laterLayers == 0)
+        sprite->count = index;
     }
   }
 }
 
 /// Removes and clears a sprite's animation number no (0-3), trimming the
 /// sprite's animation count when no later sprite animation remains.
-void Sprite_RemoveAnimationAt(struct MetadataSlotState *state, u32 no) {
-  s32 slot;
-  s32 count;
+void Sprite_RemoveAnimationAt(struct Sprite *sprite, u32 index) {
+  struct SpriteAnimation *layer;
+  s32 laterLayers;
   u32 i;
 
-  if (state != NULL && no <= 3) {
-    slot = state->slots[no];
-    if (slot != 0) {
-      SpriteAnimation_Clear((void *)slot);
-      state->slots[no] = 0;
-      count = 0;
-      for (i = no + 1; i <= 3; i++) {
-        if (state->slots[i] != 0)
-          count++;
+  if (sprite != NULL && index < ANIM_LAYER_COUNT) {
+    layer = sprite->entries[index];
+    if (layer != NULL) {
+      SpriteAnimation_Clear(layer);
+      sprite->entries[index] = NULL;
+      laterLayers = 0;
+      // Interior holes stay available; only trailing holes reduce the count.
+      for (i = index + 1; i < ANIM_LAYER_COUNT; i++) {
+        if (sprite->entries[i] != NULL)
+          laterLayers++;
       }
-      if (count == 0)
-        state->count = no;
+      if (laterLayers == 0)
+        sprite->count = index;
     }
   }
 }
@@ -419,7 +423,8 @@ void Sprite_SetAnimationSpeed(struct Sprite *sprite, s32 step) {
 
 /// Takes the sprite and layer pools (from the fixed heap blocks in mode 3,
 /// the heap otherwise) and clears them, loads the shadow tiles into VRAM cache
-/// entry 93 and copies the strided tile copier into RAM.
+/// entry VRAM_CACHE_ENTRY_ACTOR_SHADOW and copies the strided tile copier into
+/// RAM.
 void ActorSystem_Configure(s32 mode) {
   void *sprites;
   void *layers;
@@ -441,20 +446,23 @@ void ActorSystem_Configure(s32 mode) {
   Dma_Fill32Cell(zero, 0, sprites, ANIM_OBJECT_COUNT * sizeof(struct Sprite));
   Dma_Fill32Cell(zero, 0, layers,
                  ANIM_OBJECT_COUNT * sizeof(struct SpriteAnimation));
-  VramCache_Load(93, 128, gActor_ShadowTiles);
+  VramCache_Load(VRAM_CACHE_ENTRY_ACTOR_SHADOW, ANIM_SHADOW_TILE_BYTES,
+                 gActor_ShadowTiles);
   RamCode_LoadSlot(HEAP_SLOT_PICTURE_UPLOADER, Render_CopyStridedCode,
                    Render_CopyStridedCodeSize);
 }
 
-/// Frees VRAM cache entry 93, the actors' shadow tiles.
-void VramBlock_Reset93(void) { VramCache_FreeEntry(93); }
+/// Frees the actors' shadow tiles (VRAM_CACHE_ENTRY_ACTOR_SHADOW).
+void VramBlock_Reset93(void) {
+  VramCache_FreeEntry(VRAM_CACHE_ENTRY_ACTOR_SHADOW);
+}
 
-/// Loads the actors' shadow tiles into VRAM cache entry 93.
+/// Loads the actors' shadow tiles into VRAM_CACHE_ENTRY_ACTOR_SHADOW.
 void VramBlock_Load93(void) {
   const u8 *data = gActor_ShadowTiles;
-  s32 size = 128;
+  s32 size = ANIM_SHADOW_TILE_BYTES;
 
-  VramCache_Load(93, size, data);
+  VramCache_Load(VRAM_CACHE_ENTRY_ACTOR_SHADOW, size, data);
 }
 
 /// Takes a free sprite animation and starts it on animation id's first
@@ -600,16 +608,16 @@ struct ResourceObject *Sprite_Create(s32 id) {
     break;
   }
 
-  // Part 0: 256 colors, priority 2.
-  // Part 1: 16x8, 256 colors, tiles from VRAM cache 93, priority 2.
+  // Part 0 is the image; its shadow is part 1, from the shared shadow tiles.
   attribute = (u32 *)freeSprite;
   *attribute++ = 0;
-  *attribute++ = shape | 0x2000;
-  *attribute = tile | 0x800;
+  *attribute++ = shape | OBJ_256_COLORS;
+  *attribute = tile | ANIM_OAM_FIELD_PRIORITY;
   attribute = freeSprite->shadowAttributes;
   *attribute++ = 0;
-  *attribute++ = 0x6000;
-  *attribute = (gVramCacheEntries[93].offset >> 5) | 0x800;
+  *attribute++ = OBJ_SIZE_16X8 | OBJ_256_COLORS;
+  *attribute = (gVramCacheEntries[VRAM_CACHE_ENTRY_ACTOR_SHADOW].offset >> 5) |
+               ANIM_OAM_FIELD_PRIORITY;
   if (Sprite_AddAnimation(sprite, id) == -1) {
     /* FAKEMATCH(dead): a store of the byte it reloads. */
     freeSprite->dirty = freeSprite->dirty;
@@ -643,32 +651,35 @@ void Sprite_Destroy(struct ResourceObjectWork *work) {
 /// Sums the first cnt frame durations of animation id's entry number `no`.
 /// Commands are two bytes (command, value); 254, 241, 253 and 239 end the
 /// list, and the values of commands 245, 255 and those up to 238 count.
-s32 SpriteAnimation_SumCommandLengths(s32 id, u32 no, s32 cnt) {
-  struct AnimationMetadata *info;
-  u8 *p;
-  u8 op;
-  u8 val;
-  s32 sum = 0;
+s32 SpriteAnimation_SumCommandLengths(s32 id, u32 animation, s32 timedCount) {
+  struct AnimationMetadata *metadata;
+  u8 *script;
+  u8 command;
+  u8 duration;
+  s32 durationSum = 0;
 
-  info = Resource_GetMetadataRecordFar(id);
-  if (no >= info->animationCount) {
+  metadata = Resource_GetMetadataRecordFar(id);
+  if (animation >= metadata->animationCount) {
     return 0;
   }
-  p = ((u8 **)info->animation)[no];
+  script = ((u8 **)metadata->animation)[animation];
+  // Only timed commands count; control-flow commands terminate this scan.
   for (;;) {
-    op = p[0];
-    val = p[1];
-    p += 2;
-    if (op == 254 || op == 241 || op == 253 || op == 239) {
+    command = script[0];
+    duration = script[1];
+    script += 2;
+    if (command == ANIMCMD_PLAY || command == ANIMCMD_HOLD ||
+        command == ANIMCMD_JUMP || command == ANIMCMD_END) {
       break;
     }
-    if (op == 245 || op == 255 || op <= 238) {
-      sum += val;
-      cnt--;
-      if (cnt == 0) {
+    if (command == ANIMCMD_WAIT || command == ANIMCMD_BLANK ||
+        command < ANIMCMD_END) {
+      durationSum += duration;
+      timedCount--;
+      if (timedCount == 0) {
         break;
       }
     }
   }
-  return sum;
+  return durationSum;
 }

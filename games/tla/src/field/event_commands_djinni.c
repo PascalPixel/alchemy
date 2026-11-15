@@ -117,7 +117,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
     tint = 2;
   if (sprite == SPRITE_MARS_DJINNI)
     tint = 10;
-  // DEAD: tint is already 9 for sprite 244; the source keeps the test.
+  // DEAD: tint is already 9 for sprite 244; the ROM keeps the test and the
+  // store.
   if (sprite == 244)
     tint = 9;
   sharedSprite = NULL;
@@ -125,7 +126,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   for (i = 0; i < DJINNI_CLONE_MAX; i++) {
     copy = Actor_CreateFar(sprite, djinni->x.fixed, djinni->y.fixed,
                            djinni->z.fixed);
-    // DEAD: nothing reads copies; the source keeps the store.
+    // DEAD: nothing reads copies; the ROM keeps the store and its slot.
     copies[i] = copy;
     if (copy != NULL) {
       copy->scaleY = AFTERIMAGE_SCALE;
@@ -190,7 +191,7 @@ void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
   }
   if (GameFlag_Get(FLAG_DJINN_LESSON)) {
     owner = gMainRoutineWork.leaderActorId;
-    GameFlag_Set(element * 20 + djinni + 48);
+    GameFlag_Set(FLAG_DJINNI(element * DJINN_PER_ELEMENT + djinni));
   } else {
     owner = Djinn_GiveToPartyFar(element, djinni);
   }
@@ -228,29 +229,34 @@ void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
 void Djinn_RestoreActorAfterBattle(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   u32 raw = (u16)party->pendingDjinni;
-  s32 flags = party->pendingDjinni & 0xf000;
-  u32 scene = 0xfff;
+  s32 flags = party->pendingDjinni & DJINN_PENDING_KIND_MASK;
+  u32 scene = DJINN_PENDING_EVENT_MASK;
   s32 id;
 
   scene &= raw;
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0 && flags == 0) {
-    flags = scene & 0x800;
-    scene &= 0x7ff;
-    if (scene - 300 <= 80 && party->sequenceResult > 0) {
+    flags = scene & DJINN_NO_HOP;
+    scene &= DJINN_PENDING_BATTLE_EVENT_MASK;
+    if (scene - DJINNI_BATTLE_EVENT_FIRST <=
+            ELEMENT_COUNT * DJINN_PER_ELEMENT &&
+        party->sequenceResult > 0) {
       s32 *owner;
 
-      for (id = 8, owner = &party->leaderActorId; id <= 79; id++) {
-        struct ActorDescriptor *desc = Scene_FindActorPlacement(id);
+      for (id = ACTOR_FIRST_PLACED, owner = &party->leaderActorId;
+           id <= FIELD_ACTOR_COUNT - 1; id++) {
+        struct ActorPlacement *desc =
+            (struct ActorPlacement *)Scene_FindActorPlacement(id);
         struct Actor *obj;
 
-        if (desc == NULL || desc->scene - 48 != scene - 300)
+        if (desc == NULL || desc->condition - FLAG_DJINN_FIRST !=
+                                scene - DJINNI_BATTLE_EVENT_FIRST)
           continue;
         obj = Actor_Lookup(id);
         if (obj == NULL)
           continue;
         if (flags == 0) {
           obj->groundHeight = flags;
-          obj->motionFlags = 3;
+          obj->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
           Actor_SetPositionAndResetMotionFar(obj, desc->x, desc->y, desc->z);
         } else {
           struct Actor *selection = Actor_Lookup(*owner);
@@ -259,50 +265,56 @@ void Djinn_RestoreActorAfterBattle(void) {
                                              selection->y.fixed,
                                              selection->z.fixed - px(32));
         }
-        Actor_SelectAnimationFar(obj, 1);
+        Actor_SelectAnimationFar(obj, ANIM_STAND);
       }
     }
   }
 }
 
-/// The Broken Seal's Djinn_ResolvePendingEvent, with this game's actors up to
-/// 79, the plain flag calls, the event at gMainRoutineWork's 0x254 and its
-/// 0x1000 kind tested like the first, falling into the common clear.
+/// Settles a pending Djinni battle as a scene loads, from the battle's result
+/// in sequenceResult (the enemies defeated, 999 when the party fled, -1 when it
+/// lost), as The Broken Seal's; a mimic chest's event (CONDITION_FLAG_SET)
+/// falls through to the clear.
 void Djinn_ResolvePending(s32 shown) {
   struct MainRoutineWork *st = &gMainRoutineWork;
   s16 *pending = &st->pendingDjinni;
-  s32 kind = *pending & 0xf000;
-  s32 flag = *pending & 0xfff;
+  s32 kind = *pending & DJINN_PENDING_KIND_MASK;
+  s32 flag = *pending & DJINN_PENDING_EVENT_MASK;
 
   if (shown == 0) {
     if (kind == 0) {
-      flag &= 0x7ff;
-      if (flag < 300 || flag > 380)
+      flag &= DJINN_PENDING_BATTLE_EVENT_MASK;
+      if (flag < DJINNI_BATTLE_EVENT_FIRST ||
+          flag > DJINNI_BATTLE_EVENT_FIRST + ELEMENT_COUNT * DJINN_PER_ELEMENT)
         return;
       if (st->sequenceResult > 0 && st->sequenceResult != 999)
         return;
-      GameFlag_Set(flag - 172);
+      GameFlag_Set(flag -
+                   (DJINNI_BATTLE_EVENT_FIRST - FLAG_DJINN_HIDING_FIRST));
       *pending = kind;
       return;
-    } else if (kind == 0x1000) {
+    } else if (kind == CONDITION_FLAG_SET) {
       if (st->sequenceResult > 0 && st->sequenceResult != 999)
         GameFlag_Set(flag);
     } else
       return;
   } else if (kind == 0) {
-    flag &= 0x7ff;
-    if (flag >= 300 && flag <= 380) {
-      flag &= 0x7ff;
+    flag &= DJINN_PENDING_BATTLE_EVENT_MASK;
+    if (flag >= DJINNI_BATTLE_EVENT_FIRST &&
+        flag <= DJINNI_BATTLE_EVENT_FIRST + ELEMENT_COUNT * DJINN_PER_ELEMENT) {
+      flag &= DJINN_PENDING_BATTLE_EVENT_MASK;
       if (st->sequenceResult > 0) {
-        s32 djinn = flag - 300;
-        s32 element = djinn / 20;
-        s32 index = djinn % 20;
+        s32 djinn = flag - DJINNI_BATTLE_EVENT_FIRST;
+        s32 element = djinn / DJINN_PER_ELEMENT;
+        s32 index = djinn % DJINN_PER_ELEMENT;
         s32 actor;
 
-        for (actor = 8; actor <= 79; actor++) {
-          struct MapActor *found =
-              (struct MapActor *)Scene_FindActorPlacement(actor);
-          if (found != 0 && found->event - 48 == flag - 300) {
+        for (actor = ACTOR_FIRST_PLACED; actor <= FIELD_ACTOR_COUNT - 1;
+             actor++) {
+          struct ActorPlacement *found =
+              (struct ActorPlacement *)Scene_FindActorPlacement(actor);
+          if (found != 0 && found->condition - FLAG_DJINN_FIRST ==
+                                flag - DJINNI_BATTLE_EVENT_FIRST) {
             wait(40);
             Djinn_JoinParty(actor, element, index);
             break;
@@ -357,9 +369,10 @@ void FieldEffect_ReleaseSlots(void) {
   wait(1);
 }
 
-/// Per-frame update: spins the actor an eighth of a turn.
-void BattleEffect_AdvanceSpinAngle(struct MotionObject *object) {
-  object->angle += TRIG_TURN / 8;
+/// Per-frame update of a joining Venus or Jupiter Djinni: spins it an eighth of
+/// a turn, as FieldEffect_AdvanceSpinAngle does.
+void Djinn_AdvanceSpinAngle(struct Actor *djinni) {
+  djinni->facing += TRIG_TURN / 8;
 }
 
 /// Field effect sprite callback of a Jupiter Djinni's light particles: each

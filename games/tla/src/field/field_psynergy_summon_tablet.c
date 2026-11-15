@@ -188,7 +188,7 @@ void SummonTablet_UpdateMotes(void) {
 }
 
 extern const s32 gFieldEffect_TargetColors[];
-extern const u8 Data_080f1040[];
+extern const u8 gSummonTablet_SquashScript[];
 extern const u8 gMovementType_SquashScript[];
 
 /// Plays a summon tablet's reading (a treasure of type 132, "examined the
@@ -282,7 +282,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   target->update = SummonTablet_CyclePictures;
   Sound_PlayFar(SE_SWIRL);
   Event_Wait(80);
-  Actor_StartScriptFar(target, Data_080f1040);
+  Actor_StartScriptFar(target, gSummonTablet_SquashScript);
   work->moving = 0;
   Task_Add(SummonTablet_UpdateMotes, TASK_PASS_VBLANK);
   state = 0;
@@ -335,7 +335,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
       break;
     case 2:
       if (timer == 0) {
-        Actor_FaceDirectionById(ownerId, 0x4000, 0);
+        Actor_FaceDirectionById(ownerId, FACING_SOUTH, 0);
         break;
       }
       if (owner->script[owner->scriptCursor] == 17) {

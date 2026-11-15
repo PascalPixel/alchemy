@@ -33,7 +33,7 @@ struct BurstWork {
   s8 paletteMode;
 };
 
-extern const u16 Data_080f0fa0[];
+extern const u16 gBurst_SparkPalette[];
 
 #define BURST_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
@@ -68,7 +68,7 @@ void FieldPsynergy_UpdateBurst(void) {
       Io_Write16(green | blue | red, palette++);
     }
   } else if (work->paletteMode == 2) {
-    Dma_Set(Data_080f0fa0, (void *)&OBJ_PLTT_COLOR(15, 0),
+    Dma_Set(gBurst_SparkPalette, (void *)&OBJ_PLTT_COLOR(15, 0),
             DMA_COPY_HALFWORDS(16), REG_DMA3);
     work->paletteMode = 0;
   }
@@ -161,7 +161,7 @@ void FieldPsynergy_UpdateBurst(void) {
         work->newBursts = 1;
         work->shake = 2;
       }
-      canvas->command = CANVAS_UPLOAD_AND_FADE3;
+      canvas->command = CANVAS_UPLOAD_AND_DARKEN_FOUR_LEVELS;
       if (work->timer == 16)
         BURST_NEXT_PHASE(work);
       break;
@@ -279,7 +279,7 @@ void FieldPsynergy_UpdateBurst(void) {
           Sound_PlayFar(SE_CLATTER);
         }
       }
-      canvas->command = CANVAS_UPLOAD_AND_FADE3;
+      canvas->command = CANVAS_UPLOAD_AND_DARKEN_FOUR_LEVELS;
       if (work->timer == 16)
         BURST_NEXT_PHASE(work);
       break;

@@ -15,6 +15,7 @@
 #include "field/field_sequence_event.h"
 #include "field/field_psynergy_work.h"
 #include "system/main_routine_work.h"
+#include "field/field_sequence.h"
 
 /// Sand's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the leader's picture and
 /// the copy it sinks into the ground, the grains of sand thrown up round it and
@@ -43,7 +44,7 @@ void FieldPsynergy_WatchSandGround(void) {
     reason = 1;
   if (MapGrid_IsSandCell(object->x.fixed, object->z.fixed, object->layer) == 0)
     reason = 2;
-  if (party->movementMode == 5 && object->userValue != 0 &&
+  if (party->movementMode == LEADER_MOVEMENT_SAND && object->userValue != 0 &&
       object->timer == 0) {
     s32 x;
     s32 z;
@@ -60,17 +61,17 @@ void FieldPsynergy_WatchSandGround(void) {
 }
 
 // How a picture is stored.
-#define PICTURE_FORMAT_TYPE01 1 ///< one type-01 stream
+#define PICTURE_FORMAT_TAGGED_LZ 1 ///< one tagged LZ stream
 #define PICTURE_FORMAT_COMPRESSED                                              \
   3 ///< compressed, then run through the decoder
 
-/// A sprite layer as FieldPsynergy_DecodePicture reads it: how its pictures
-/// are coded and the one shown.
+/// A sprite layer (struct SpriteAnimation) as FieldPsynergy_DecodePicture
+/// reads it: how its pictures are coded and the one shown.
 struct PictureSource {
-  u8 unused[5]; ///< no code names it
-  u8 decodeMode;
-  u8 unk06;
-  u8 format;
+  u8 unused[5];  ///< no code names it
+  u8 decodeMode; ///< its colorMode
+  u8 priority;   ///< no code here names it
+  u8 format;     ///< its mode
   const void **pictures;
   u8 unusedAfterPictures[10]; ///< no code names it
   u8 picture;
@@ -105,7 +106,7 @@ void FieldPsynergy_DecodePicture(struct PictureSource *source, void *buffer,
   }
 
   Iwram_ClearWordsEntry(buffer, size);
-  if (source->format == PICTURE_FORMAT_TYPE01) {
+  if (source->format == PICTURE_FORMAT_TAGGED_LZ) {
     Decompress_TaggedLz(source->pictures[source->picture], buffer);
   } else if (source->format == PICTURE_FORMAT_COMPRESSED) {
     const void *stream =
@@ -120,10 +121,10 @@ void FieldPsynergy_DecodePicture(struct PictureSource *source, void *buffer,
   if (!decoderLoaded)
     HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
 }
-#undef OBJECT_DEFINITION
+#undef ACTOR_FIRST_LAYER
 #undef SCRIPT_OBJECT_COUNT
 #undef EVENT_MODE_NO_CELL_TEST
-#undef PICTURE_FORMAT_TYPE01
+#undef PICTURE_FORMAT_TAGGED_LZ
 #undef PICTURE_FORMAT_COMPRESSED
 
 /// Picture_ShiftColumnsByWave as the Sand sinks the leader into the ground:
@@ -216,8 +217,8 @@ void Sand_SpawnGrain(struct EffectSprite *sprite,
   particle->velocityY = 0;
   particle->velocityZ = position[2];
   EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tiles);
-  sprite->scaleX = 0x3333;
-  sprite->scaleY = 0x3333;
+  sprite->scaleX = Q16_ONE / 5;
+  sprite->scaleY = Q16_ONE / 5;
   sprite->oam.priority = BattleEffect_GetObjectPriority(mainActor);
   sprite->depth = BattleEffect_GetObjectDepth(mainActor) + 2;
   sprite->oam.fullColor = 1;
@@ -360,10 +361,10 @@ void FieldPsynergy_EndSand(void) {
       FieldCamera_FollowActor(effect->firstActorId, 1);
       Sound_PlayFar(SE_SAND_EMERGE);
       if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
-        gMainRoutineWork.movementMode = 1;
+        gMainRoutineWork.movementMode = LEADER_MOVEMENT_WORLD_MAP;
         *motionFlags = 2;
       } else {
-        gMainRoutineWork.movementMode = 0;
+        gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
         *motionFlags = 3;
       }
       if (event->standing == 0)
@@ -497,9 +498,9 @@ void FieldPsynergy_Sand(void) {
     wait(1);
   }
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
-    gMainRoutineWork.movementMode = 9;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_WORLD_SAND;
   else
-    gMainRoutineWork.movementMode = 5;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_SAND;
   owner->timer = 0;
   owner->userValue = 0;
   event->unkd4a = 3;

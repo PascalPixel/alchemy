@@ -13,12 +13,12 @@
 /// If the scene's sprite is active, stops its update callback
 /// (BattleEffect_DrawSceneSprite) and frees its VRAM cache entry.
 void FieldPsynergy_ReleaseSceneSprite(void) {
-  struct DepthScene *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
 
-  if (scene->active != 0) {
-    scene->active = 0;
+  if (effectWork->spriteActive != 0) {
+    effectWork->spriteActive = 0;
     Task_Remove(BattleEffect_DrawSceneSprite);
-    VramCache_FreeEntry(scene->vramSlot);
+    VramCache_FreeEntry(effectWork->spriteVramSlot);
   }
 }
 
@@ -45,7 +45,7 @@ struct MapCell *MapGrid_GetCellAt(s32 x, s32 z, s32 layer) {
 
 /// Whether the Scoop can dig at (x, z): on the world map, sand; elsewhere not
 /// on a Cyclone cell, water or raised ground, and then on sand, or where
-/// attribute bit 1 is set (clear, when the event work's byte 0xd36 is set).
+/// attribute bit 1 is set (clear, when FieldWork.sceneAttributeLow is set).
 s32 MapGrid_CanScoop(s32 x, s32 z, s32 layer) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
@@ -75,8 +75,8 @@ s32 MapGrid_IsHoverCell(s32 x, s32 z, s32 layer) {
 }
 
 /// Whether the leader can move as sand on the cell at (x, z): layer 2's
-/// collision code 232, or on the world map collision 5 or 6; the event work's
-/// byte 0xd37 turns the answer round.
+/// collision code 232, or on the world map collision 5 or 6;
+/// FieldWork.sceneAttributeHigh turns the answer round.
 s32 MapGrid_IsSandCell(s32 x, s32 z, s32 layer) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 column = x;
@@ -254,7 +254,7 @@ struct Actor *BattleEffect_SpawnScatterParticle(s32 x, s32 y, s32 z) {
     object->speedLimit = Random16() + Q16_ONE;
     object->acceleration = Q16_ONE;
     object->motionFlags = 2;
-    object->gravity = 0xa3d;
+    object->gravity = px(1) / 25;
     magnitude = Random16();
     magnitude -= Random16();
     object->velocityY = magnitude;
@@ -297,11 +297,11 @@ void *Sprite_ShareVramCacheEntry(void *src, void *alt) {
   ret = NULL;
   if (obj != NULL) {
     if (alt == NULL) {
-      *((u8 *)obj + 0x11) = (u8)(*((u8 *)obj + 0x11) | 1);
+      ((struct Sprite *)obj)->retainCacheEntry = 1;
     } else {
       VramCache_FreeEntry(obj->vramBlock);
       obj->vramBlock = ((struct ResourceSprite *)alt)->vramBlock;
-      *((u8 *)obj + 0x11) = (u8)(*((u8 *)obj + 0x11) | 1);
+      ((struct Sprite *)obj)->retainCacheEntry = 1;
       obj = alt;
     }
     ret = obj;

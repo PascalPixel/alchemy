@@ -134,7 +134,7 @@ void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY) {
   s32 z;
 
   GameFlag_Clear(0x11e);
-  if (state->mode == 3) {
+  if (state->mode == ACTOR_SYSTEM_WORLD_MAP) {
     object = Actor_Lookup(leader);
     if (object == 0)
       return;
@@ -165,10 +165,10 @@ void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY) {
   }
 }
 
-/// Returns a World Map place's marker: its entry's second byte's high nibble
-/// when gData_0202a642 is set, else its low nibble (0 and 15 show none).
-u32 WorldMapPlace_GetMarker(u8 *entry) {
+/// Returns a World Map place's marker: the high nibble of its value when
+/// gData_0202a642 is set, else the low nibble (0 and 15 show none).
+u32 WorldMapPlace_GetMarker(const struct FlagEntry *place) {
   if (gData_0202a642 != 0)
-    return entry[1] >> 4;
-  return entry[1] & 15;
+    return place->value >> 4;
+  return place->value & 15;
 }

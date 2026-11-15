@@ -25,16 +25,6 @@ s16 Field_GetSceneAttributes(s32 scene);
 #else
 s32 Field_GetSceneAttributes(s32 scene);
 #endif
-/* VIEW(field_sequence): routine PartyInventory_GiveItem as s32
- * PartyInventory_GiveItem(s32 item); field/event.h has s32
- * PartyInventory_GiveItem(s32 item, s32 flags); tried as the definition's s32
- * PartyInventory_GiveItem(s32 item, s32 unused), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence_run.c:214: `PartyInventory_GiveItem'
- * undeclared (first use in this function). */
-s32 PartyInventory_GiveItem__field_sequence(s32 item) __asm__(
-    "PartyInventory_GiveItem");
-#define PartyInventory_GiveItem PartyInventory_GiveItem__field_sequence
 s32 Leader_StepOntoRope(void);
 s32 Leader_StepOffRope(void);
 s32 Leader_StepOntoTightrope(void);
@@ -216,13 +206,7 @@ s32 FieldSequence_Run(void) {
     if (gMainRoutineWork.pendingItem != 0) {
       WorldMap_Freeze();
       if (Party_CheckItemLimit(gMainRoutineWork.pendingItem) == 0) {
-        // UB: called with a second argument (0) its definition does not take.
-#ifdef UBFIX
-        PartyInventory_GiveItem(gMainRoutineWork.pendingItem);
-#else
-        ((s32 (*)(s32, s32))PartyInventory_GiveItem)(
-            gMainRoutineWork.pendingItem, 0);
-#endif
+        PartyInventory_GiveItem(gMainRoutineWork.pendingItem, 0);
       }
       WorldMap_ReloadPendingAreaGraphics();
       gMainRoutineWork.pendingItem = 0;
@@ -256,7 +240,8 @@ s32 FieldSequence_Run(void) {
             Actor_SelectAnimationFar(leader, 22);
             MessageArgument_PushFar(work->fallenOwners[value],
                                     MESSAGE_ARGUMENT_ACTOR);
-            FieldMessage_ShowFar((s32)MsgFieldStrengthExhausted, 1);
+            FieldMessage_ShowFar((s32)MsgFieldStrengthExhausted,
+                                 FIELD_MESSAGE_ZOOM);
           }
           if (work->survivorCount == 0) {
             if (*leaderId == 4)
@@ -264,7 +249,8 @@ s32 FieldSequence_Run(void) {
             else
               Actor_SelectAnimationFar(leader, 19);
             Sound_PlayFar(MUS_DEFEAT);
-            FieldMessage_ShowFar((s32)MsgFieldPartyAnnihilated, 1);
+            FieldMessage_ShowFar((s32)MsgFieldPartyAnnihilated,
+                                 FIELD_MESSAGE_ZOOM);
             unit = Unit_Get(*leaderId);
             unit->hp = 1;
             Unit_UpdateGauges(unit);
@@ -410,7 +396,7 @@ s32 FieldSequence_Run(void) {
         WorldMap_ReloadPendingAreaGraphics();
         work->examineCell = 0;
       } else if (work->psynergy != 0) {
-        packed = work->psynergy & 0x2000;
+        packed = work->psynergy & ACT_PACKED;
         AreaNameWindow_HideFar();
         if (packed == 0) {
           WorldMap_Freeze();
@@ -458,7 +444,8 @@ s32 FieldSequence_Run(void) {
             PauseMenu_RunFar(0);
             *(u16 *)(objects + 4) = 0;
           } else {
-            FieldMessage_ShowFar((s32)MsgFieldPauseUnavailable, 1);
+            FieldMessage_ShowFar((s32)MsgFieldPauseUnavailable,
+                                 FIELD_MESSAGE_ZOOM);
           }
         }
         WorldMap_ReloadPendingAreaGraphics();
@@ -520,7 +507,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 
       Vector_AddPolarOffset(px(16), leader->facing, position);
     }
-    if (work->mode == 3) {
+    if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
       s32 x, z;
 
       x = probePosition.vector.x;
@@ -546,7 +533,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     } else if (Scene_FindTrigger(3, collisionCode) != 0) {
       result = collisionCode;
     }
-    if (result == 0 && work->mode == 3) {
+    if (result == 0 && work->mode == ACTOR_SYSTEM_WORLD_MAP) {
       if (gMainRoutineWork.ownerOverride != 0 &&
           WorldMap_GetCollisionFar(probePosition.coordinates) == 3)
         result = 99;
@@ -678,10 +665,10 @@ s32 Field_PlaceAtEntrance(void) {
           cursor++;
           if (x >= leftEdge && x <= rightEdge && z - height >= topEdge &&
               z - height <= bottomEdge) {
-            map->minX = left << 20;
-            map->minZ = top << 20;
-            map->maxX = right << 20;
-            map->maxZ = bottom << 20;
+            map->minX = FIELD_CELL_ORIGIN(left);
+            map->minZ = FIELD_CELL_ORIGIN(top);
+            map->maxX = FIELD_CELL_ORIGIN(right);
+            map->maxZ = FIELD_CELL_ORIGIN(bottom);
             if (map->minX + px(240) > map->maxX)
               map->minX = map->maxX - px(240);
             if (map->minZ + px(160) > map->maxZ)

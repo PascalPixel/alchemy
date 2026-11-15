@@ -12,7 +12,27 @@
 
 struct Actor;
 
-/// A window transition's shape: SCENE_TRANSITION(TRANSITION_WINDOW, mode)'s
+/// How the leader moves (MainRoutineWork.movementMode): which actor script
+/// Actor_StartRenderModeScript runs for it.
+enum LeaderMovementMode {
+  /// Walking: the pad moves the leader on a layered map.
+  LEADER_MOVEMENT_WALK = 0,
+  LEADER_MOVEMENT_WORLD_MAP = 1, ///< walking on the World Map
+  /// Only the configured keys are checked; the leader is moved by others.
+  LEADER_MOVEMENT_KEYS = 2,
+  LEADER_MOVEMENT_ROPE = 3,        ///< crossing a tied rope
+  LEADER_MOVEMENT_TIGHTROPE = 4,   ///< crossing a tightrope
+  LEADER_MOVEMENT_SAND = 5,        ///< as sand, by Sand, on a layered map
+  LEADER_MOVEMENT_SHIP_ON_MAP = 6, ///< the ship on a layered map
+  LEADER_MOVEMENT_SHIP = 7,        ///< the ship on the World Map
+  LEADER_MOVEMENT_FLYING_SHIP = 8, ///< the winged ship on the World Map
+  LEADER_MOVEMENT_WORLD_SAND = 9,  ///< as sand on the World Map
+  LEADER_MOVEMENT_HOVER = 10,      ///< hovering, by Hover
+  LEADER_MOVEMENT_WALKING = 11,    ///< gActor_WalkingScript's
+  LEADER_MOVEMENT_NONE = 12        ///< the idle script: it does not move
+};
+
+/// A window transition's shape): SCENE_TRANSITION(TRANSITION_WINDOW, mode)'s
 /// low byte, which ScreenTransition_UpdateScanlineTable draws.
 enum WindowTransitionMode {
   WINDOW_TRANSITION_BARS = 0,   ///< a bar on each line, at random
@@ -93,5 +113,13 @@ void Actor_ReleaseIfPresent(struct Actor *object);
 void ItemDisplay_RaiseAboveLeader(struct Actor *actor);
 void FieldPsynergy_Lift(void);
 s32 Speaker_GetVoice(s32 id);
+
+// A field Psynergy or item use, packed into one value, as FieldWork.psynergy
+// and FieldWork.item hold it, as The Broken Seal's. bits: 13..10 the user (13
+// is ACT_PACKED) | 9..0 the Psynergy or item.
+#define ABILITY_ID(c) ((c) & 0x3ff) ///< the Psynergy
+#define ACT_ITEM_ID(c) ((c) & 0x3ff)
+#define ACT_UNIT(c) (((c) >> 10) & 15) ///< who uses it
+#define ACT_PACKED 0x2000              ///< use it without paying PP
 
 #endif

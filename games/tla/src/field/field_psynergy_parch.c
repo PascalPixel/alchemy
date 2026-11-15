@@ -53,7 +53,7 @@ void FieldPsynergy_Parch(void) {
   s32 offset; // byte offset of the event work's 80 object pointers
   struct Actor *caster;
   struct Actor *object;
-  struct ObjectAnimation *animation;
+  struct Sprite *actorSprite;
   struct EffectSprite *sprite;
   struct EffectSprite *cursor;
   struct EffectSprite *fresh;
@@ -99,9 +99,10 @@ void FieldPsynergy_Parch(void) {
   slots = Ram_HeapSlots;
   for (offset = 20; i < 80; i++, offset += 4) {
     object = *(struct Actor **)((u8 *)slots->fieldWork + offset);
-    animation = object->sprite;
-    if (object->script != NULL && animation->definition[0] == kind &&
-        animation->unk18 == 1 &&
+    actorSprite = object->sprite;
+    if (object->script != NULL &&
+        actorSprite->entries[0]->animationId == kind &&
+        actorSprite->lastNo == 1 &&
         FieldPsynergy_CheckOverlap(pos, 4, &object->x.fixed,
                                    object->radius - 2) >= 0) {
       result = 2;
@@ -112,7 +113,7 @@ void FieldPsynergy_Parch(void) {
   }
   if (Field_MeasurePsynergyHeight(scene->fieldPsynergy, caster, pos) == -1) {
     result = 0;
-    // DEAD: pending is already NULL; the ROM stores it again.
+    // DEAD: pending is already NULL; the ROM keeps the second store.
     pending = NULL;
   } else if (MapGrid_IsWaterCell(pos[0], pos[2], caster->layer) != 0) {
     pending = Scene_FindPsynergyTrigger(
@@ -164,8 +165,8 @@ loaded:
     for (i = spawn; i != 0; i--) {
       s32 slot = next & 63;
       sprite = &work->sprites[slot];
-      sprite->scaleX = 0x3333;
-      sprite->scaleY = 0x3333;
+      sprite->scaleX = Q16_ONE / 5;
+      sprite->scaleY = Q16_ONE / 5;
       particle = &work->particles[slot];
       SET_POSITION(particle, pos[0], pos[1], pos[2]);
       Vector_AddPolarOffset(Random16() * 12 + px(9), Random16(), &particle->x);
@@ -375,12 +376,12 @@ void Canvas_PlotPolarPixel(s32 unused, s32 radius, s32 angle, s32 color) {
       63 - FIELD_PIXEL(Iwram_MulQ16(Trig_Sin(angle), radius)), color);
 }
 
-extern const u16 gData_080f39c4[];
+extern const u16 gParch_PictureTiles[];
 
 /// Copy a 16x16 image to the BG map, clipping cells outside the 30x20-tile
 /// screen.
 void BgMap_DrawClipped16x16(s32 x, s32 y) {
-  const u16 *tiles = gData_080f39c4;
+  const u16 *tiles = gParch_PictureTiles;
   s32 row;
   s32 column;
   s32 sx;

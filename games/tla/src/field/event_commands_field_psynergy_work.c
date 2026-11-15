@@ -51,7 +51,7 @@ void FieldPsynergy_FadeFromCastColor(void) { Field_StartPaletteTransition(8); }
 void Camera_WorldToScreen(struct Vector3 *position) {
   struct HeapSlots *slots = Ram_HeapSlots;
 
-  if (((struct FieldWork *)slots->fieldWork)->mode == 3) {
+  if (((struct FieldWork *)slots->fieldWork)->mode == ACTOR_SYSTEM_WORLD_MAP) {
     s32 result[3];
 
     Render_ProjectPoint(position, result);
@@ -170,7 +170,8 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
     terrain = user->priorityFlags;
 
     scene->savedPriorityFlags = terrain;
-    scene->savedSpritePriority = (u32)(((u8 *)user->sprite)[9] << 28) >> 30;
+    scene->savedSpritePriority =
+        ((struct Sprite *)user->sprite)->image.priority;
   }
   if (target != NULL) {
     // Save target motion and colors for later restoration.
@@ -300,42 +301,24 @@ void FieldPsynergy_MarkWorldMapTilesUsed(void) {
     ((struct WorldMapView *)slots->mapGrid)->tileBufferUsed = mode;
 }
 
-/* VIEW(scene): tag struct WaveFxWork as struct WaveFxWork__scene;
- * field/event_commands.h has another definition; tried with the definition the
- * rest of the object has, it does not compile in tla-ja:
- * games/tla/src/field/event_commands_field_psynergy_work.c:327: structure has
- * no member named `id'. */
-struct WaveFxWork__scene {
-  u8 unused[0x28b]; ///< no code names it
-  s8 red;
-  s8 green;
-  s8 blue;
-  u16 phase;
-  u16 id;
-  u16 value;
-  u8 steps;
-  u8 unk295;
-  u8 unusedB[2]; ///< no code names it
-};
-
 /// Starts the wave effect's work in heap slot HEAP_SLOT_MIND_READ: a phase
 /// taken from the frame count, id and value, then the shared scene, the first
 /// hue step and its colour fade, with FieldPsynergy_UpdateMindReadWave run each
 /// frame.
 void FieldPsynergy_StartMindReadWave(s32 id, s32 value) {
-  struct WaveFxWork__scene *work;
+  struct MindReadWork *work;
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
-  work->phase = (gFrameCount * 2) % 360;
-  work->id = id;
-  work->value = value;
-  work->steps = 8;
-  work->unk295 = 0;
+  work->hue = (gFrameCount * 2) % HUE_DEGREES;
+  work->sourceId = id;
+  work->targetId = value;
+  work->delay = 8;
+  work->counter = 0;
   FieldPsynergy_FadeToCastColor();
   FieldEffect_AdvanceHueCycle();
   PaletteFade_SetTarget(
-      (work->blue << 10) | (work->green << 5) | work->red | 0x200000, 1);
+      RGB(work->red, work->green, work->blue) | PALETTE_TINT_CUSTOM, 1);
   PaletteFade_StartInterpolation(8);
   FieldPsynergy_GreyMindReadPalette();
   Task_Add((TaskFunc)FieldPsynergy_UpdateMindReadWave, TASK_PASS_VBLANK);
@@ -344,11 +327,11 @@ void FieldPsynergy_StartMindReadWave(s32 id, s32 value) {
 /// Stops the wave effect: restores the caster's colours and the palettes and
 /// releases the Psynergy's work.
 void FieldPsynergy_StopMindReadWave(void) {
-  u8 *work = Ram_HeapSlots->mindRead;
+  struct MindReadWork *work = Ram_HeapSlots->mindRead;
 
   FieldPsynergy_RestoreMindReadPalette();
-  Task_Remove((TaskFunc)FieldPsynergy_UpdateMindReadWave);
-  Actor_SetSpritePalette(Actor_GetById(*(u16 *)(work + 0x290)), 1);
+  Task_Remove(FieldPsynergy_UpdateMindReadWave);
+  Actor_SetSpritePalette(Actor_GetById(work->sourceId), 1);
   FieldPsynergy_FadeFromCastColor();
   HeapSlot_Release(HEAP_SLOT_MIND_READ);
 }

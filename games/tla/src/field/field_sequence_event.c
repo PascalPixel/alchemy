@@ -12,18 +12,20 @@
 #include "field/event_commands.h"
 #include "field/field.h"
 #include "field/object.h"
+#include "window/window.h"
+#include "field/field_sequence.h"
 
 /// Debug only: while debug mode is on, R makes every event wait (Event_Wait)
 /// end at once and L restores normal waits.
 void Event_UpdateDebugSkip(void) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
+  struct FieldWork *runtime = gFieldWork;
 
   if (gDebugMode != 0) {
-    if (((struct InputState *)&gInput)->pressed & KEY_L) {
-      work->fastForward = 0;
+    if (gInput.pressed & KEY_L) {
+      runtime->fastForward = 0;
     }
-    if (((volatile struct InputState *)&gInput)->pressed & KEY_R) {
-      work->fastForward = -1;
+    if (gInput.pressed & KEY_R) {
+      runtime->fastForward = -1;
     }
   }
 }
@@ -31,9 +33,9 @@ void Event_UpdateDebugSkip(void) {
 /// Waits the requested frames through wait(), unless debug fast-forward
 /// (Event_UpdateDebugSkip) is on: the wait events use.
 void Event_Wait(s32 frames) {
-  struct FieldWork *state = Ram_HeapSlots->fieldWork;
-  if (state->fastForward == 0 && frames != 0)
+  if (gFieldWork->fastForward == 0 && frames != 0) {
     wait(frames);
+  }
 }
 
 /// Stops the leader where it stands: no horizontal velocity, the normal walking
@@ -47,7 +49,7 @@ void Leader_StopMoving(void) {
   object->targetZ = TARGET_UNSET;
   object->velocityX = 0;
   object->velocityZ = 0;
-  if (gMainRoutineWork.movementMode == 2)
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS)
     Actor_SelectAnimationFar(object, 12);
   else
     Actor_SelectAnimationFar(object, 1);
@@ -155,9 +157,9 @@ s32 Party_CheckShortcut(u32 packed_id) {
 /// Clears each button shortcut whose Psynergy can no longer be cast: zeroes
 /// gMainRoutineWork.firstShortcut or secondShortcut.
 void Party_ClearUnusableShortcuts(void) {
-  if (Party_CheckShortcut(gMainRoutineWork.firstShortcut))
+  if (Party_CheckShortcut(gMainRoutineWork.firstShortcut) != 0)
     gMainRoutineWork.firstShortcut = 0;
-  if (Party_CheckShortcut(gMainRoutineWork.secondShortcut))
+  if (Party_CheckShortcut(gMainRoutineWork.secondShortcut) != 0)
     gMainRoutineWork.secondShortcut = 0;
 }
 
@@ -197,9 +199,9 @@ s32 Party_CheckItemLimit(s32 item) {
   Party_CountMembersFar();
   if (PartyInventory_FindRoomFar(item) < 0) {
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-    FieldMessage_ShowFar((s32)MsgPartyCannotCarry, 1);
+    FieldMessage_ShowFar((s32)MsgPartyCannotCarry, FIELD_MESSAGE_ZOOM);
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-    FieldMessage_ShowFar((s32)MsgPartyCannotCarry + 1, 1);
+    FieldMessage_ShowFar((s32)MsgPartyCannotCarry + 1, FIELD_MESSAGE_ZOOM);
     return -1;
   }
   return 0;
@@ -228,27 +230,28 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   owner = PartyInventory_AddFar(item);
   if (owner == -1) {
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-    FieldMessage_ShowFar((s32)&MsgItemReceived, 1);
-    FieldMessage_ShowFar((s32)&MsgItemCannotCarry, 1);
+    FieldMessage_ShowFar((s32)&MsgItemReceived, FIELD_MESSAGE_ZOOM);
+    FieldMessage_ShowFar((s32)&MsgItemCannotCarry, FIELD_MESSAGE_ZOOM);
   retry:
     {
-      FieldMessage_ShowFar((s32)&MsgItemDropPrompt, 1);
+      FieldMessage_ShowFar((s32)&MsgItemDropPrompt, FIELD_MESSAGE_ZOOM);
       result = ItemPicker_RunToDropFar(&member, &slot);
       if (result == -1) {
         if (((struct ItemHead *)Item_GetDirectFar(item))->flags & 8) {
           MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-          FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 4, 1);
+          FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 4, FIELD_MESSAGE_ZOOM);
           goto retry;
         }
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 1, 5);
+        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 1,
+                             FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN);
         result = FieldYesNo_Ask(1);
         Message_CloseFinishedWindowsFar();
         if (result != 0)
           goto retry;
         Item_AdjustCounterFar(item, 1);
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 2, 1);
+        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 2, FIELD_MESSAGE_ZOOM);
         goto done;
       }
       Unit_Get(member);
@@ -256,7 +259,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       if (Inventory_CountItemFar(member, item) > 29) {
         MessageArgument_PushFar(member, MESSAGE_ARGUMENT_ACTOR);
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 7, 1);
+        FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 7, FIELD_MESSAGE_ZOOM);
         goto retry;
       }
       for (i = 0; i < count; i++)
@@ -267,7 +270,9 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       Sound_PlayFar(MUS_TREASURE_FOUND);
       if (owner == gMainRoutineWork.leaderActorId) {
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-        FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
+        FieldMessage_ShowFar((s32)&MsgItemReceived,
+                             FIELD_MESSAGE_ZOOM |
+                                 FIELD_MESSAGE_WAITING_FOR_SOUND);
       } else {
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
         MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
@@ -282,11 +287,12 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   }
   Sound_PlayFar(MUS_TREASURE_FOUND);
   MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-  FieldMessage_ShowFar((s32)&MsgItemReceived, 3);
+  FieldMessage_ShowFar((s32)&MsgItemReceived,
+                       FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
   if (owner != gMainRoutineWork.leaderActorId) {
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
     MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
-    FieldMessage_ShowFar((s32)&MsgItemReceived + 1, 1);
+    FieldMessage_ShowFar((s32)&MsgItemReceived + 1, FIELD_MESSAGE_ZOOM);
   }
   work->message = saved;
   return owner;
@@ -298,9 +304,9 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
 /// inventory is full.
 /// item: item ID.
 /// owner: recipient character ID.
-s32 Inventory_TryAddAndReturnMember(s32 item, s32 unused, s32 owner) {
-  if (Inventory_AddItemFar(owner, item) >= 0)
-    return owner;
+s32 Inventory_TryAddAndReturnMember(s32 item, s32 unused, s32 unit) {
+  if (Inventory_AddItemFar(unit, item) >= 0)
+    return unit;
   return -1;
 }
 
@@ -384,7 +390,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
 
 /// Asks yes or no at the top of the screen, or at the bottom with atBottom set.
 /// Returns 0 for yes, 1 for no.
-s32 FieldYesNo_Ask(s32 a) { return YesNoMenu_RunFar(a, 0, 0, 0); }
+s32 FieldYesNo_Ask(s32 atBottom) { return YesNoMenu_RunFar(atBottom, 0, 0, 0); }
 
 /// Gives the party item from actor: with no room it shows the item, says it
 /// was found and left behind and returns -1; otherwise it adds the item, sets
@@ -394,9 +400,9 @@ s32 Event_PickUpItem(s32 actor, s32 item, s32 flag) {
     Actor_GetById(actor)->scaleX = 0;
     ItemDisplay_ShowItem(item, 3);
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
-    FieldMessage_ShowFar((s32)&MsgFoundItem, 1);
+    FieldMessage_ShowFar((s32)&MsgFoundItem, FIELD_MESSAGE_ZOOM);
     // Four messages on: "But <protagonist>'s party can't carry any more".
-    FieldMessage_ShowFar((s32)&MsgFoundItem + 4, 1);
+    FieldMessage_ShowFar((s32)&MsgFoundItem + 4, FIELD_MESSAGE_ZOOM);
     Actor_GetById(actor)->scaleX = Q16_ONE;
     Actor_FaceActorById(gMainRoutineWork.leaderActorId, actor, 0);
     Event_Wait(20);
@@ -412,63 +418,47 @@ s32 Event_PickUpItem(s32 actor, s32 item, s32 flag) {
 
 // Messages: teach an ability and display the learning message.
 
-/* VIEW(event_commands): routine Unit_LearnPsynergyFar as void
- * Unit_LearnPsynergyFar(void); gamepak/far_call/game.h has void
- * Unit_LearnPsynergyFar(s32 owner, s32 action); tried as the rest of the object
- * declares it, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence_event.c:421: too few arguments to function
- * `Unit_LearnPsynergyFar'. */
-extern void
-Unit_LearnPsynergyFar__event_commands(void) __asm__("Unit_LearnPsynergyFar");
-
 /// Teaches the ability, plays a sound, shows a message and waits for it to
 /// advance.
 /// unit: character ID (message name 1).
 /// ability: ability ID (message ability 4).
 void Party_LearnAbility(s32 unit, s32 ability) {
-  Unit_LearnPsynergyFar__event_commands();
+  Unit_LearnPsynergyFar(unit, ability);
   Sound_PlayFar(MUS_TREASURE_FOUND);
   MessageArgument_PushFar(unit, MESSAGE_ARGUMENT_ACTOR);
   MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
-  FieldMessage_ShowFar(MsgAbilityLearned, 3);
+  FieldMessage_ShowFar(MsgAbilityLearned,
+                       FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
 }
 
 /// The event command "open screen": starts the event's screen transition and
 /// sets transitionActive.
 void Event_StartScreenTransition(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *runtime = gFieldWork;
 
-  ScreenTransition_Start(event->transition, event->transitionFrames);
-  event->transitionActive = 1;
+  ScreenTransition_Start(runtime->transition, runtime->transitionFrames);
+  runtime->transitionActive = 1;
 }
 
 /// The event command "close screen": finishes the event's screen transition
 /// and clears transitionActive.
 void Event_FinishScreenTransition(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *runtime = gFieldWork;
 
-  ScreenTransition_Finish(event->transition, event->transitionFrames);
-  event->transitionActive = 0;
+  ScreenTransition_Finish(runtime->transition, runtime->transitionFrames);
+  runtime->transitionActive = 0;
 }
 
 /// The event command "wait for screen": waits as long as the transition runs
 /// (transitionFrames).
-void Event_WaitTransitionFrames(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-
-  wait(event->transitionFrames);
-}
+void Event_WaitTransitionFrames(void) { wait(gFieldWork->transitionFrames); }
 
 /// Makes the event leave for the given entrance of the given scene: raises the
 /// exit request 999 and writes gMainRoutineWork.next and entrance.
-void Event_SetDestination(s32 scene, s32 entrance) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct MainRoutineWork *party;
-
-  event->exit = EXIT_KEEP_DESTINATION;
-  party = &gMainRoutineWork;
-  party->next = scene;
-  party->entrance = entrance;
+void Event_SetDestination(s32 sceneId, s32 entrance) {
+  gFieldWork->exit = EXIT_KEEP_DESTINATION;
+  gMainRoutineWork.next = sceneId;
+  gMainRoutineWork.entrance = entrance;
 }
 
 /// Makes the event leave and records scene and entrance as the restart point.
@@ -484,8 +474,7 @@ void Event_SetRestartPoint(s32 scene, s32 entrance) {
 
 /// The event command "request exit": sets the field's exit request (999 leaves
 /// for gMainRoutineWork's next and entrance).
-void Event_SetExitRequest(u16 frames) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
-
-  event->exit = frames;
+void Event_SetExitRequest(u16 request) {
+  struct FieldWork *state = gFieldWork;
+  state->exit = request;
 }

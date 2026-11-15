@@ -22,8 +22,6 @@ struct Actor;
 struct ScreenPoint;
 
 extern const s32 gCamera_FixedViewMatrix[];
-extern s32 gIwram_Data1;
-extern s32 gIwram_Data2;
 extern u8 gSpriteDissolve_PixelOrder[];
 extern const s32 gActor_DefaultScript[];
 extern const u8 gWorldMap_TerrainBehaviorTable[];
@@ -162,7 +160,6 @@ struct Sprite;
 struct RenderInput;
 struct ScriptOperands;
 struct SpritePlacement;
-struct TouchOwner;
 struct TriggerView;
 
 typedef void (*DrawFn)(const void *src, void *dst, s32 param);
@@ -178,13 +175,18 @@ typedef s32 (*ScriptCommandFn)();
 
 typedef void (*TargetHook)(struct Actor *, s32 *, s32 *);
 
-/// A sprite's attribute words. They are volatile, as LuckyWheels_Update keeps
-/// its OAM shadow in both games; as plain words, the two offset
-/// counters, the multiply on each pass and the stack slots all differ.
-struct ReelSprite {
-  volatile u32 attr01;
-  volatile u32 attr2;
+/// One sprite's two OAM words.
+// volatile: the words are built in place for the DMA to copy to OAM.
+struct OamWords {
+  volatile u32 attr01; ///< attr0 | attr1 << 16
+  volatile u32 attr2;  ///< attr2 | affine value << 16
 };
+
+/// A sprite's place in its attr01 word: x in attribute 1's nine bits and y in
+/// attribute 0's eight, each wrapped as the screen wraps them.
+#define OBJ_POSITION(x, y) (OBJ_X((x) & 0x1ff) | ((y) & 0xff))
+/// An affine sprite's matrix, of the 32, in its attr01 word.
+#define OBJ_AFFINE_MATRIX(n) ((n) << 25)
 
 // The casino's four-dice game, built
 // like LuckyDice_Run (four dice in a round dome, Slots_DomePicture): A throws
@@ -219,17 +221,11 @@ struct DiceWork {
 /// io_reg.h writes it, for the field's minigames.
 #define OBJ_PALETTE(n) ((n) << 12)
 
-/// An OAM entry's attributes 0 and 1, then 2, as the dice games write them.
-struct DiceOam {
-  volatile u32 attr01;
-  volatile u32 attr2;
-};
-
 /// The dice game's work as its drawing reads it: 128 OAM entries and its
 /// coins, bet and help windows.
 struct DiceSprites {
   u8 filler[196];
-  struct DiceOam oam[128];
+  struct OamWords oam[128];
   struct RenderInput *coinsWindow;
   struct RenderInput *betWindow;
   struct RenderInput *helpWindow;
@@ -239,39 +235,6 @@ struct DiceSprites {
 struct DiceCamera {
   s32 eye[3];
   s32 focus[3];
-};
-
-struct TouchWork {
-  u8 unused[16]; ///< no code names it
-  struct TouchOwner *owner;
-  u8 unk14[4];
-  s16 argument0;
-  s16 argument1;
-  u8 unusedB[2]; ///< no code names it
-  s16 kind;
-};
-
-struct ScriptChannel {
-  u8 unused[2]; ///< no code names it
-  u16 unk02;
-  u8 unk04;
-  u8 unusedB[11]; ///< no code names it
-  u8 *script;
-  u8 position;
-  u8 unusedAfterPosition[2]; ///< no code names it
-  u8 unk17;
-};
-
-struct ScriptPlayer {
-  u8 unused[22]; ///< no code names it
-  u8 unk16;
-  u8 unk17;
-  u8 unk18;
-  u8 unk19;
-  u8 unk1a;
-  u8 channelCount;
-  u8 unusedAfterChannelCount[12]; ///< no code names it
-  struct ScriptChannel *channels[1];
 };
 
 struct ObjectSystemColours {
@@ -297,7 +260,7 @@ struct FieldUnit {
 /// winnings and help windows.
 struct LuckyDiceSprites {
   u8 filler[196];
-  struct DiceOam oam[128];
+  struct OamWords oam[128];
   struct RenderInput *coinsWindow;
   struct RenderInput *winningsWindow;
   struct RenderInput *helpWindow;
@@ -325,7 +288,8 @@ struct Reel {
 /// shades, and its transfer to the screen.
 struct ReelEffectWork {
   struct Particle particles[REEL_TITLE_LETTERS];
-  u8 unkAfterParticles[0x700 - REEL_TITLE_LETTERS * sizeof(struct Particle)];
+  /// No code names it.
+  u8 unusedAfterParticles[0x700 - REEL_TITLE_LETTERS * sizeof(struct Particle)];
   u16 bgShade[0x100];
   u16 objShade[0x100];
   u8 unusedAfterObjShade[0x7780 - 0xb00]; ///< no code names it
@@ -349,7 +313,7 @@ struct WorldMapCell {
   u32 tile : 24; ///< low halfword: the cell picture
   /// Passed to WorldMap_UpdateRegionTint; region / 10 picks the graphics set.
   u32 region : 6;
-  u32 unk1e : 2;
+  u32 unusedHigh : 2; ///< no code names them
 };
 
 /// A map cell's terrain kind, as The Broken Seal's enum TerrainKind: the low
@@ -383,47 +347,6 @@ enum TerrainKind {
   TERRAIN_KIND_COUNT = 16
 };
 
-struct ObjectSprite {
-  u8 unused[4]; ///< no code names it
-  u16 y : 8;
-  u16 affineMode : 2;
-  u16 objectMode : 2;
-  u16 mosaic : 1;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u8 unusedAfterShape[2]; ///< no code names it
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unusedAfterPalette[6]; ///< no code names it
-  u8 vramBlock;
-  u8 unk11;
-  u16 rotation;
-  u8 unk14[2];
-  s8 offsetX;
-  s8 offsetY;
-  u8 frame;
-  u8 frameTimer;
-  u8 nextFrame;
-  u8 unk1b;
-  u8 unusedB[0xc]; ///< no code names it
-  void *record;
-};
-
-struct ActorDescriptor {
-  s16 action;
-  s16 scene;
-  u8 unusedAfterScene[4]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct MapActor {
-  s16 id;
-  s16 event;
-};
-
 /// One node of a tightrope (Tightrope_Initialize's work): a point on the rope,
 /// and the sprite Tightrope_Draw puts between it and the next node.
 struct TightropeNode {
@@ -449,49 +372,22 @@ struct TightropeSlot {
   struct TightropeNode *head;
 };
 
+/// The ropes', tightropes' and hanging vines' works each keep eight slots,
+/// each a chain of nodes from one pool of 128.
+#define ROPE_SLOT_COUNT 8
+#define ROPE_NODE_COUNT 128
+
 /// The tightropes' work, heap slot 160.
 struct TightropeWork {
   struct Actor
       *recoilFrom; ///< the posts Tightrope_Untie gives Tightrope_Recoil
   struct Actor *recoilTo;
   s32 vramEntry; ///< the nodes' picture
-  struct TightropeSlot slots[8];
-  struct TightropeNode nodes[128];
+  struct TightropeSlot slots[ROPE_SLOT_COUNT];
+  struct TightropeNode nodes[ROPE_NODE_COUNT];
 };
 
 #define TIGHTROPE_WORK ((struct TightropeWork *)Ram_HeapSlots->tightrope)
-
-struct ChainObject {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[0x3c];
-  struct {
-    u8 unused[0x28]; ///< no code names it
-    s16 *entries[4];
-  } *sprite;
-  u8 unusedB; ///< no code names it
-  u8 motionFlags;
-  u8 unusedAfterMotionFlags[3]; ///< no code names it
-  u8 collisionFlags;
-};
-
-struct Unk_080db0b0Sprite {
-  u8 unused[18]; ///< no code names it
-  u16 unk12;
-};
-
-struct CompositeAnimation {
-  u8 unused[0x11]; ///< no code names it
-  u8 displayFlags;
-  u8 unusedAfterDisplayFlags[7]; ///< no code names it
-  u8 dirty;
-  u8 unk1a;
-  u8 count;
-  u8 unusedAfterCount[0x0c]; ///< no code names it
-  struct SpriteAnimation *entries[4];
-};
 
 /// unk26a from main_routine_work.h.
 struct PartyPauseView {
@@ -499,58 +395,24 @@ struct PartyPauseView {
   s16 pausedObject;
 };
 
-struct DepthPart {
-  u8 unused[9]; ///< no code names it
-  u8 unk09_0 : 2;
-  u8 priority : 2;
-  u8 unk09_4 : 4;
+/// The point the map view follows (MapWork.origin), as the depth sort reads it.
+struct DepthOrigin {
+  s32 x;
+  s32 y; ///< its height, 16.16 fixed-point pixels
 };
 
-struct DepthMapBase {
-  u8 unused[4]; ///< no code names it
-  s32 base;
-};
-
+/// The map view's place (MapWork.viewX and viewZ), read as a pair.
 struct DepthScroll {
-  s32 unk00;
-  s32 offset;
+  s32 x;
+  s32 z;
 };
 
+/// MapWork as BattleEffect_GetObjectDepth reads it: its followed point and its
+/// view, through a pointer to the pair.
 struct DepthMap {
-  struct DepthMapBase *base;
-  u8 unusedAfterBase[0xe0]; ///< no code names it
-  struct DepthScroll scroll;
-};
-
-struct DepthSprite {
-  u8 unused[5]; ///< no code names it
-  u8 unk05_0 : 5;
-  u8 hidden : 1;
-  u8 unk05_6 : 2;
-  u8 unusedB[3]; ///< no code names it
-  u8 unk09_0 : 2;
-  u8 priority : 2;
-  u8 layer : 4;
-  u8 unusedAfterLayer[2]; ///< no code names it
-  s32 x;
-  s32 y;
-  u8 unk14[4];
-  s32 scale;
-  u8 unusedAfterScale[2]; ///< no code names it
-  u16 frame;
-  u8 unusedAfterFrame[8]; ///< no code names it
-};
-
-struct DepthScene {
-  u16 mode;
-  u8 unusedAfterMode[2]; ///< no code names it
-  s32 x;
-  u8 unusedAfterX[8]; ///< no code names it
-  struct Actor *mainActor;
-  u8 unk14[0x7b4];
-  struct DepthSprite sprite;
-  s16 vramSlot;
-  s16 active;
+  struct DepthOrigin *origin;
+  u8 unusedAfterOrigin[0xe0]; ///< no code names it
+  struct DepthScroll view;
 };
 
 /// One rising particle: its sprite, world position, drift and frames left.
@@ -592,10 +454,12 @@ struct RisingParticleWork {
   struct RisingParticle particles[64];
 };
 
+/// An actor (struct Actor) as the Mars Djinni's sparks read the leader: its
+/// position and its sprite, typed.
 struct EffectOwner {
   u8 unused[8]; ///< no code names it
   struct Vector3 position;
-  u8 unk14[0x3c];
+  u8 unusedAfterPosition[0x3c]; ///< no code names it
   struct Sprite *sprite;
 };
 
@@ -605,26 +469,7 @@ struct OrbitPosition {
   s32 z;
 };
 
-struct DescendingOrbitObject {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[80];
-  u16 timer;
-  s16 angle;
-};
-
-struct DmaFxPage {
-  u32 lines[0x1e0];
-};
-
-struct DmaFxPages {
-  struct DmaFxPage pages[2];
-  u8 page;
-};
-
-struct DisplayScrollWork {
+struct LineScrollWork {
   struct BgScroll rows[2][160][3];
   u8 page;
   u8 mode;
@@ -636,32 +481,6 @@ struct DisplayScrollWork {
   s32 stepY;
   s32 ampX;
   s32 ampY;
-};
-
-struct DmaFxWork {
-  u8 unused[0xf01]; ///< no code names it
-  u8 kind;
-  u8 unusedAfterKind[6]; ///< no code names it
-  s32 unkf08;
-  s32 unkf0c;
-  s32 unkf10;
-  s32 unkf14;
-  s32 unkf18;
-  s32 unkf1c;
-};
-
-struct DjinniObject {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[4];
-  s32 scaleX;
-  s32 scaleY;
-  u8 unusedAfterScaleY[68]; ///< no code names it
-  u16 timer;
-  u8 unusedAfterTimer[6]; ///< no code names it
-  void *update;
 };
 
 /// One node of a rope Lash throws and ties (Rope_Initialize's work): a point on
@@ -697,93 +516,11 @@ struct RopeWork {
   struct Actor *recoilFrom; ///< the posts Rope_Untie gives Rope_Recoil
   struct Actor *recoilTo;
   s32 vramEntry; ///< the nodes' picture
-  struct RopeSlot slots[8];
-  struct RopeNode nodes[128];
+  struct RopeSlot slots[ROPE_SLOT_COUNT];
+  struct RopeNode nodes[ROPE_NODE_COUNT];
 };
 
 #define ROPE_WORK ((struct RopeWork *)Ram_HeapSlots->rope)
-
-struct LinkedEffectVisual {
-  u8 unused[9]; ///< no code names it
-  u8 flags;
-  u8 unusedAfterFlags[16]; ///< no code names it
-  u8 value26;
-};
-
-struct LinkedEffectObject {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[60];
-  struct LinkedEffectVisual *visual;
-  u8 value54;
-  u8 value55;
-  u8 unusedB[14]; ///< no code names it
-  u16 counter;
-  u16 resourceId;
-  struct LinkedEffectObject *resource;
-  void (*callback)(void);
-};
-
-struct ObjectLayerAnimation {
-  u8 unused[9]; ///< no code names it
-  u8 unused09 : 2;
-  u8 layer : 2;
-  u8 unusedAfterLayer[27]; ///< no code names it
-  u8 unused25 : 2;
-  u8 shadowLayer : 2;
-};
-
-struct ObjectAnimation {
-  u8 unused[0x18]; ///< no code names it
-  u8 unk18;
-  u8 unusedB[0x0f]; ///< no code names it
-  s16 *definition;  ///< the sprite definition, its animation id first
-};
-
-struct JumpSprite {
-  u8 unused[26]; ///< no code names it
-  u8 flags;
-};
-
-struct ClimbSprite {
-  u8 unused[26]; ///< no code names it
-  u8 flags;
-};
-
-struct GrabSave {
-  u8 unused[98]; ///< no code names it
-  u8 priority;
-};
-
-struct BattleEffectVisual {
-  u8 unused[9]; ///< no code names it
-  u8 flags;
-  u8 unusedAfterFlags[16]; ///< no code names it
-  u8 value26;
-};
-
-struct BattleEffectResource {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[60];
-  struct BattleEffectVisual *visual;
-};
-
-struct BattleEffectWatchedObject {
-  u8 unused[80]; ///< no code names it
-  struct BattleEffectVisual *visual;
-  u8 value54;
-  u8 value55;
-  u8 unusedB[14]; ///< no code names it
-  u16 counter;
-  u16 resourceId;
-  struct BattleEffectResource *resource;
-  void (*callback)(void);
-};
 
 struct AnimationGroup {
   u8 unused[0x16]; ///< no code names it
@@ -1035,9 +772,6 @@ extern const u8 gFieldEffect_GroundParticleTiles[];
 extern const u8 gFieldEffect_MoteTiles[];
 
 extern u32 gBattleEffect_PulseScales[];
-
-void BattleEffect_UpdateDescendingOrbitObject(
-    struct DescendingOrbitObject *arg);
 
 extern const s16 gLineScroll_WaveSine[];
 

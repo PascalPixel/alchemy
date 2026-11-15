@@ -95,7 +95,7 @@ void FieldPsynergy_UpdatePound(void) {
     }
     break;
   case 2:
-    canvas->command = CANVAS_UPLOAD_AND_FADE1;
+    canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
     if (work->timer == 32) {
       work->state++;
       work->timer = -1;
@@ -138,7 +138,7 @@ void BattleEffect_SinkAndShrinkObject(void) {
 /// Pound cast on a target: runs FieldPsynergy_Pound.
 void FieldPsynergy_PoundOnTarget(void) { FieldPsynergy_Pound(); }
 
-void Func_080dba5c(void);
+void FieldPsynergy_StartSceneSprite(void);
 void FieldPsynergy_ShrinkToCaster(struct Actor *object, s32 x, s32 y, s32 z);
 
 /// Pound ("Drive objects into the ground."): a giant fist forms over the spot
@@ -201,7 +201,7 @@ void FieldPsynergy_Pound(void) {
     }
   } else {
     inReach = 1;
-    if (child != NULL && ((u8 *)child)[99] != 0) {
+    if (child != NULL && child->riseEnabled != 0) {
     outOfReach:
       inReach = 0;
     }
@@ -214,18 +214,18 @@ void FieldPsynergy_Pound(void) {
   if (shine == NULL)
     goto end;
   shine->motionFlags = 0;
-  if (*(u16 *)((u8 *)event + 0xd4c) & 2) {
+  if (event->unkd4c & 2) {
     if ((shine->spriteStorageKind & 15) == 1) {
       ((struct EffectSprite *)shine->sprite)->oam.priority = 1;
-      ((u8 *)shine)[35] &= 254;
+      shine->priorityFlags &= 254;
     }
   } else {
-    ((u8 *)shine)[35] = 1;
+    shine->priorityFlags = 1;
   }
   shine->facing = caster->facing;
   Actor_SelectAnimationFar(shine, 2);
-  if (!(*(u16 *)((u8 *)event + 0xd4c) & 1))
-    Func_080dba5c();
+  if (!(event->unkd4c & 1))
+    FieldPsynergy_StartSceneSprite();
 
   BattleEffect_StartCanvasSprite();
   canvas = Ram_HeapSlots->canvasSprite;
@@ -253,7 +253,7 @@ void FieldPsynergy_Pound(void) {
   glow->oam.fullColor = 0;
   glow->oam.palette = 0;
   glow->depth = 0;
-  glow->scaleY = glow->scaleX = 0xcccc;
+  glow->scaleY = glow->scaleX = Q16_ONE * 4 / 5;
   pos[0] = scene->x;
   pos[1] = scene->y;
   pos[2] = scene->z;
@@ -284,7 +284,7 @@ void FieldPsynergy_Pound(void) {
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = 240;
-    sprite->scaleY = sprite->scaleX = 0xcccc;
+    sprite->scaleY = sprite->scaleX = Q16_ONE * 4 / 5;
   }
   wait(1);
   FieldPsynergy_GrowFromCaster(shine, scene->x, scene->y + lift, scene->z);
@@ -320,7 +320,7 @@ void FieldPsynergy_Pound(void) {
       wait(1);
       scene->stage = work->fading;
       scene->frame = frame;
-      if (((s8 *)event)[394] != 3 && !(*(u16 *)((u8 *)event + 0xd4c) & 1)) {
+      if (event->mode != ACTOR_SYSTEM_WORLD_MAP && !(event->unkd4c & 1)) {
         glow = &work->glow;
         EffectSprite_Draw(glow);
       }

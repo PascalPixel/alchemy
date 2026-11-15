@@ -10,19 +10,19 @@
 #include "gamepak/far_call/field.h"
 #include "resource_ids.h"
 
-/// Marks the world map place the party has just entered as visited: sets game
-/// flag 0x180 + flag of the first place whose scene is `id` and whose entrance
-/// is `variant` (or any, for -1). The main routine calls it at every scene
-/// entry; WorldPicture_Show offers the marked places.
+/// Marks the world map place the party has just entered as visited: sets
+/// FLAG_PLACE_VISITED of the first place whose visitScene is `id` and whose
+/// visitEntrance is `variant` (or any, for -1). The main routine calls it at
+/// every scene entry; WorldPicture_Show offers the marked places.
 void WorldMap_MarkPlaceVisited(s32 id, s32 variant) {
   const struct FlagEntry *entry = FlagEntries_GetTable();
 
   for (; entry->flag != 0; entry++) {
-    if (entry->id != id)
+    if (entry->visitScene != id)
       continue;
-    if (entry->variant != -1 && variant != entry->variant)
+    if (entry->visitEntrance != -1 && variant != entry->visitEntrance)
       continue;
-    GameFlag_Set(entry->flag + 0x180);
+    GameFlag_Set(FLAG_PLACE_VISITED(entry->flag));
     break;
   }
 }
@@ -80,16 +80,16 @@ void Encounter_SelectMapZones(s32 search) {
 /// encounters in render mode 8, render mode 7 reads the second rule table,
 /// and a rule's flag must be set for it to apply.
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
-  struct TerrainRule *rule = gData_080eedbc;
+  struct TerrainRule *rule = gWorldMap_EncounterRules;
   s32 behavior;
   u32 kind;
   s32 zone;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  if (party->movementMode == 8)
+  if (party->movementMode == LEADER_MOVEMENT_FLYING_SHIP)
     return 0;
-  if (party->movementMode == 7)
-    rule = gData_080eef34;
+  if (party->movementMode == LEADER_MOVEMENT_SHIP)
+    rule = gWorldMap_ShipEncounterRules;
   behavior = WorldMap_GetBattleEnvironmentFar(position, (s32 *)&kind);
   kind %= 20;
   zone = 0;
@@ -327,8 +327,8 @@ void WorldMap_SetReturnForScene(s32 scene, s32 entrance) {
   while (rule[0] != -1) {
     if (rule[0] == scene &&
         (rule[1] == -1 || entrance == -1 || rule[1] == entrance)) {
-      gMainRoutineWork.shipX = rule[4] << 16;
-      gMainRoutineWork.shipZ = rule[5] << 16;
+      gMainRoutineWork.shipX = px(rule[4]);
+      gMainRoutineWork.shipZ = px(rule[5]);
       gMainRoutineWork.shipFacing = rule[6];
       return;
     }
@@ -348,8 +348,8 @@ void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance) {
   while (rule[0] != -1) {
     if (rule[2] == scene &&
         (rule[3] == -1 || entrance == -1 || rule[3] == entrance)) {
-      gMainRoutineWork.shipX = rule[4] << 16;
-      gMainRoutineWork.shipZ = rule[5] << 16;
+      gMainRoutineWork.shipX = px(rule[4]);
+      gMainRoutineWork.shipZ = px(rule[5]);
       gMainRoutineWork.shipFacing = rule[6];
       return;
     }

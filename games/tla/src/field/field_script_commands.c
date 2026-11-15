@@ -412,15 +412,14 @@ s32 ActorScript_PlaySoundInView(struct Actor *interpreter) {
 /// Returns -1 when an actor at position values would overlap a solid actor,
 /// each radius less 2 pixels; otherwise 0.
 s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
-  s32 index;
-  u8 *flags;
-  struct Actor *entry = Ram_HeapSlots->actors;
+  s32 actorIndex;
+  struct Actor *candidate = ((struct Actor *)Ram_HeapSlots->actors);
 
-  flags = &entry->collisionFlags;
-  for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
-    if (entry->script != NULL && (1 & *flags) && entry != actor) {
-      if (Field_CheckSpheresOverlap(&entry->x.fixed, entry->radius - 2, values,
-                                    actor->radius - 2) >= 0)
+  for (actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, candidate++) {
+    if (candidate->script != NULL &&
+        (candidate->collisionFlags & ACTOR_SOLID) && candidate != actor) {
+      if (Field_CheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
+                                    values, actor->radius - 2) >= 0)
         return -1;
     }
   }
@@ -431,16 +430,15 @@ s32 ActorScript_CheckOverlap(struct Actor *actor, s32 *values) {
 /// overlap, as ActorScript_CheckOverlap tests, or NULL.
 struct Actor *ActorScript_FindOverlappingEntry(struct Actor *actor,
                                                s32 *values) {
-  s32 index;
-  u8 *flags;
-  struct Actor *entry = Ram_HeapSlots->actors;
+  s32 actorIndex;
+  struct Actor *candidate = ((struct Actor *)Ram_HeapSlots->actors);
 
-  flags = &entry->collisionFlags;
-  for (index = 0; index < 64; index++, entry++, flags += sizeof(*entry)) {
-    if (entry->script != NULL && (1 & *flags) && entry != actor) {
-      if (Field_CheckSpheresOverlap(&entry->x.fixed, entry->radius - 2, values,
-                                    actor->radius - 2) >= 0)
-        return entry;
+  for (actorIndex = 0; actorIndex < ACTOR_COUNT; actorIndex++, candidate++) {
+    if (candidate->script != NULL &&
+        (candidate->collisionFlags & ACTOR_SOLID) && candidate != actor) {
+      if (Field_CheckSpheresOverlap(&candidate->x.fixed, candidate->radius - 2,
+                                    values, actor->radius - 2) >= 0)
+        return candidate;
     }
   }
   return NULL;
@@ -635,7 +633,10 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
     } else {
       dx = (x - camera->x.fixed) / Q16_ONE;
       /* LEFTOVER(template): this whole-pixel dy, overwritten below and not used
-       * for the distance. */
+       * for the distance; Camelot's template: the sibling routine
+       * Actor_SetMoveTarget (field_actor_motion.c) computes the same three
+       * whole-pixel deltas and uses y's in its distance; as the line removed,
+       * 129 of 345 instructions differ in tla-en. */
       dy = (y - camera->y.fixed) / Q16_ONE;
       dz = (z - camera->z.fixed) / Q16_ONE;
       distance = px(Iwram_Sqrt(dx * dx + dz * dz));
@@ -713,7 +714,10 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *camera) {
     } else {
       dx = (x - camera->x.fixed) / Q16_ONE;
       /* LEFTOVER(template): this whole-pixel dy, overwritten below and not used
-       * for the distance. */
+       * for the distance; Camelot's template: the sibling routine
+       * Actor_SetMoveTarget (field_actor_motion.c) computes the same three
+       * whole-pixel deltas and uses y's in its distance; as the line removed,
+       * 54 of 228 instructions differ in tla-en. */
       dy = (y - camera->y.fixed) / Q16_ONE;
       dz = (z - camera->z.fixed) / Q16_ONE;
       distance = px(Iwram_Sqrt(dx * dx + dz * dz));
@@ -837,7 +841,8 @@ retry:
         travelDistance, heading - SCRIPT_WANDER_DIAGONAL_ANGLE, &probePosition);
     if (MapGrid_CheckCollision(actor, &probePosition) != 0)
       goto retry;
-    /* FAKEMATCH(dead): the offsets in both arms of a test of actor. */
+    /* FAKEMATCH(dead): the offsets in both arms of a test of actor; as the two
+     * lines alone, 16 of 188 instructions differ in tla-en. */
     if (actor != 0) {
       dx = candidatePosition.x / Q16_ONE - actor->homeX;
       dz = candidatePosition.z / Q16_ONE - actor->homeZ;

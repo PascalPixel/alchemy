@@ -70,8 +70,41 @@ struct WhirlSpark {
   s32 age;
 };
 
+/// Per-frame update: sets every part of an actor's sprite to colour mode
+/// frame % 6, which cycles its colours.
+void Actor_ApplyRandomChildValues(struct Actor *actor);
+
+/// The effect sprites a field Psynergy has (FieldEffectWork.particles).
+#define PSYNERGY_EFFECT_SLOT_COUNT 24
+
+/// The states of a Retreat particle (FieldEffect_UpdateRadialLaunch).
+enum RetreatParticleState {
+  RETREAT_PARTICLE_AIM = 0,    ///< placed on the main actor and aimed
+  RETREAT_PARTICLE_FLYING = 1, ///< back to RETREAT_PARTICLE_AIM on arrival
+  /// Set by FieldPsynergy_Retreat: freed on arrival.
+  RETREAT_PARTICLE_LAST_FLIGHT = 2
+};
+
 /// The phase or state a field Psynergy's work is left in when it has
 /// finished, which the cast waits for.
 #define FIELD_PSYNERGY_FINISHED 999
+
+/// Cyclone's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the particle burst
+/// (ParticleBurstWork) at its start, then the leader's ride on the whirlwind.
+struct CycloneWork {
+  u8 particleBurst[0x1b08];
+  s16 count;
+  u8 unusedAfterCount[2]; ///< no code names it
+  struct Actor *follower; ///< the actor carried with the leader
+  s16 state;              ///< the stage of the ride; 999 once it ends
+  s16 timer;              ///< frames into the ride
+  s32 angle;              ///< the whirlwind's turn, 1/65536 turns
+  s32 radius;
+  s32 from[3]; ///< where the ride starts, 16.16 pixels
+  s32 to[3];   ///< where it ends, 16.16 pixels
+  /// Nonzero runs the particle burst with it: a nearby cell of kind 1
+  /// (FieldPsynergy_GatherNearbyCells).
+  s8 kind;
+};
 
 #endif // ALCHEMY_FIELD_PSYNERGY_INTERNAL_H

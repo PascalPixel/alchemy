@@ -13,6 +13,9 @@
 #include "system/ram_code.h"
 #include "field/resource_slot.h"
 
+#define MAPGRID_SHAKE_SETTLE_FRAMES 300
+#define MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE (px(1) / 256 - 1)
+
 /// Returns the world map's battle environment at position from
 /// gWorldMap_TerrainBehaviorTable, by its collision value and its block's
 /// terrain, and stores the block's terrain kind in terrainKind.
@@ -53,44 +56,51 @@ u8 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
 
 /// Changes the shake without restarting an axis whose argument is negative.
 /// Amplitudes are 16.16 pixels and decay is a 16.16 multiplier per frame.
-void MapGrid_SetScreenShake(s32 value0, s32 value1, s32 value2) {
-  struct MapWork *work;
+void MapGrid_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay) {
+  struct MapWork *grid;
 
-  work = Ram_HeapSlots->mapGrid;
-  if (value0 >= 0) {
-    work->shakeX = value0;
+  // A negative argument leaves that value alone, so an event can change the
+  // decay without restarting the shake, or start one axis only.
+  grid = Ram_HeapSlots->mapGrid;
+  if (shakeX >= 0) {
+    grid->shakeX = shakeX;
   }
-  if (value1 >= 0) {
-    work->shakeY = value1;
+  if (shakeY >= 0) {
+    grid->shakeY = shakeY;
   }
-  if (value2 >= 0) {
-    work->shakeDecay = value2;
+  if (shakeDecay >= 0) {
+    grid->shakeDecay = shakeDecay;
   }
 }
 
 /// Waits until both shake amplitudes are below 1/256 pixel, with a 300-frame
 /// limit for a shake whose decay never settles.
 void MapGrid_WaitForShakeToSettle(void) {
-  s32 *work;
-  s32 cnt;
+  struct MapWork *grid;
+  s32 waitedFrames;
 
-  work = (s32 *)Ram_HeapSlots->mapGrid;
-  cnt = 0;
-  while (cnt < 300 && (work[1] > 255 || work[2] > 255)) {
+  grid = Ram_HeapSlots->mapGrid;
+  waitedFrames = 0;
+  // 300 frames is five seconds; 255 in 16.16 is just under 1/256 pixel.
+  // A decay of 1.0 or more never settles, so the limit ends the wait.
+  while (waitedFrames < MAPGRID_SHAKE_SETTLE_FRAMES &&
+         (grid->shakeX > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE ||
+          grid->shakeY > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE)) {
     wait(1);
-    cnt++;
+    waitedFrames++;
   }
-  work[3] = 0;
+  // A zero decay makes the next view update's shake its last.
+  grid->shakeDecay = 0;
 }
 
 /// Draws the current affine page into the world map's still-picture pixels.
 /// WorldMap_StartStillPicture supplies 160 pairs and a 240 by 160 byte output.
-void TileMap_DrawRowsFromRam(s32 arg0, s32 arg1) {
+void TileMap_DrawRowsFromRam(s32 lines, s32 pixels) {
   void (*routine)(s32, s32, u8 *, u8 *);
   u8 *tiles = gDecodeBuffer;
 
   RamCode_Load(routine, Render_DrawMapCode, Render_DrawMapCodeSize);
-  routine(arg0, arg1, gData_0203c000, tiles + 0x1000);
+  routine(lines, pixels, WORLD_MAP_TILE_SET(2), tiles + 0x1000);
   Heap_Release(routine);
 }
 

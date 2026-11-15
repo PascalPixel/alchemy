@@ -471,8 +471,8 @@ void PaletteFade_StartInterpolation(s32 frames) {
   if (work != NULL) {
     work->duration = frames;
     work->step = 0;
-    PaletteFade_CalculateSteps((s16 *)work->current, (s16 *)work->target,
-                               (s16 *)work->delta, frames);
+    PaletteFade_CalculateSteps(work->current, work->target, work->delta,
+                               frames);
   }
 }
 

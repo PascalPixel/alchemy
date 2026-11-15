@@ -14,7 +14,6 @@
 
 struct Actor;
 struct SpriteAnimation;
-struct Effect04Vector;
 struct Vector3;
 
 struct ItemHead {
@@ -22,7 +21,13 @@ struct ItemHead {
   u8 flags;
 };
 
-struct WaveFxWork {
+/// A hue's degrees, a full turn of the colour wheel.
+#define HUE_DEGREES 360
+
+/// Mind Read's wave (heap slot HEAP_SLOT_MIND_READ): each scanline's BG0
+/// scroll on two pages, the hue it tints the screen with, its caster and
+/// target, and its delay and particle cycle.
+struct MindReadWork {
   u16 lines[2][162];
   u16 phase;
   u8 page;
@@ -40,22 +45,6 @@ struct ScatterPosition {
   s32 x;
   s32 y;
   s32 z;
-};
-
-/// A composite sprite, as field.h's CompositeAnimation.
-struct CloakSprite {
-  u8 unused[0x19]; ///< no code names it
-  u8 dirty;        // redraw the parts
-  u8 blend;        // 2 draws the caster half transparent, 1 shows it plainly
-  u8 unk1b[0x0d];
-  struct SpriteAnimation *entries[4];
-};
-
-struct CloakCaster {
-  u8 unused[0x50]; ///< no code names it
-  struct CloakSprite *sprite;
-  u8 unusedAfterSprite[0x18]; ///< no code names it
-  void (*hook)(void);
 };
 
 struct TouchCell {
@@ -85,8 +74,10 @@ struct TouchCopy {
   u8 unusedAfterCellZ[2]; ///< no code names it
 };
 
+/// The copies of cells Cyclone blew away, kept after the scene's own state so
+/// that TileCopies_Restore makes them again.
 struct TouchCopies {
-  struct TouchCell unk0000[1491];
+  struct TouchCell sceneState[1491]; ///< the scene's own state, not read here
   struct TouchCopy copies[64];
   s8 count;
 };
@@ -112,9 +103,9 @@ struct ParticleBurstWork {
   u8 tiles[384];
   struct EffectSprite sprites[96];
   struct BurstParticle particles[96];
-  s16 resource;
-  s16 vram;
-  s16 flash; ///< set on frame 30 only
+  s16 cacheEntry; ///< the VRAM cache entry holding the leaves' tiles
+  s16 tile;       ///< their first tile in OBJ VRAM
+  s16 flash;      ///< set on frame 30 only
   s16 frame;
   s16 active;
 };
@@ -135,10 +126,8 @@ struct SparklePicture {
   u16 tile;
 };
 
-void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3);
-
-extern const s32 Data_080f085c[];
-extern const s32 Data_080f0874[];
+extern const s32 gDustPuff_LongScript[];
+extern const s32 gDustPuff_ShortScript[];
 
 s32 PartyInventory_FindRoomFar(s32 item);
 
@@ -151,8 +140,7 @@ void Actor_SetSpritePalette(void *object, s32 value);
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
                               s32 z);
 
-s32 ActorScript_CheckOverlapFar(struct Actor *object,
-                                struct Effect04Vector *position);
+s32 ActorScript_CheckOverlapFar(struct Actor *object, struct Vector3 *position);
 
 void FieldPsynergy_WatchLeaderDistance(void);
 
@@ -334,37 +322,10 @@ struct FallingObject {
   void *update;
 };
 
-struct Effect05Sprite {
-  u32 unused[2]; ///< no code names it
-  u8 unk08;
-  u32 unk09_0 : 2;
-  u32 mode : 2;
-  u32 unk09_4 : 4;
-};
-
-struct FallVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
 struct FxPosition {
   s32 x;
   s32 y;
   s32 z;
-};
-
-// A flag entry as the world map reads it: its world position.
-struct WorldMapPlace {
-  u8 flag;
-  u8 value;
-  s16 unk02;
-  s16 x;
-  s16 z;
-  u8 unusedAfterZ[4];            ///< no code names it
-  s16 name;                      ///< the place name's message
-  s16 nameEntrance;              ///< the name's message for the entrance
-  u8 unusedAfterNameEntrance[4]; ///< no code names it
 };
 
 // A halfword typed beside a word, for the FAKEMATCH that reads the name box's
@@ -403,53 +364,9 @@ void FieldEffect_ArmBg0HBlankDma(void);
 struct Actor;
 struct Vec3;
 
-struct WaveFxSprite {
-  u32 unused[2]; ///< no code names it
-  u8 unk08;
-  u32 unk09_0 : 2;
-  u32 mode : 2;
-  u32 unk09_4 : 4;
-  u8 unusedB[8]; ///< no code names it
-  u16 orientation;
-  u8 unk14[6];
-  u8 palette;
-};
-
-struct WaveFxVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct WaveFxDescriptor {
-  s16 sprite;
-};
-
-struct WaveFxMetadata {
-  u8 unused[8]; ///< no code names it
-  s8 boxX;
-};
-
 struct ResourceEntry {
   u8 unused[0x10]; ///< no code names it
   u8 vramBlock;
-};
-
-struct Effect04Vector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct OrbitingParticleVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct OrbitingParticleChild {
-  u8 unused[35]; ///< no code names them
-  u8 flags;
 };
 
 struct BurstParticleVector {
@@ -484,15 +401,6 @@ struct BurstParticleVisualGroup {
   struct BurstParticleVisual child;
 };
 
-struct BattleEffectScene {
-  u8 unused[4]; ///< no code names them
-  s32 x;
-  s32 y;
-  s32 z;
-  void *mainActor;
-  void *child;
-};
-
 struct EffectChild {
   u8 unused[12]; ///< no code names them
   s32 y;
@@ -502,126 +410,8 @@ struct EffectChild {
   void (*callback)(void);
 };
 
-struct EffectTarget {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct RadialBurstEffect {
-  u8 unused[12]; ///< no code names it
-  s32 x;
-  s32 z;
-  s32 sourceX;
-  s32 sourceZ;
-  u8 unusedAfterSourceZ[4]; ///< no code names it
-  s32 velocityX;
-  s32 velocityZ;
-  u8 unusedAfterVelocityZ[10]; ///< no code names it
-  u16 scale;
-  u8 unusedAfterScale[12]; ///< no code names it
-  s8 state;
-  u8 unusedAfterState; ///< no code names it
-  u8 enabled;
-};
-
-struct ImpactVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct WaveFxScroll {
-  u16 lines[2][162];
-  u8 unused[2]; ///< no code names it
-  u8 page;
-  u8 unusedAfterPage[9]; ///< no code names it
-  u8 delay;
-};
-
-struct ItemBreakFragmentPosition {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct ItemBreakFragmentSource {
-  u8 unused[6]; ///< no code names them
-  u16 angle;    ///< Facing angle (0x10000 is one turn).
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unusedAfterZ[70]; ///< no code names them
-  u8 flag5a;
-  u8 unusedB[13];                         ///< no code names them
-  struct ItemBreakFragmentSource *target; ///< Facing target.
-};
-
-struct ItemBreakFragmentObject {
-  u8 unused[72]; ///< no code names them
-  s32 field48;   ///< Gravity (same offset as gravity).
-  u8 unusedB[9]; ///< no code names them
-  u8 mode55;     ///< Same offset as motionFlags.
-  u8 unusedC[8]; ///< no code names them
-  u16 field5e;
-};
-
-struct Output_08097f80 {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct SwayObject {
-  u8 unused[8]; ///< no code names it
-  s32 y;
-  u8 unusedAfterY[44]; ///< no code names it
-  s32 baseY;
-  u8 unusedAfterBaseY[40]; ///< no code names it
-  s16 phase;
-};
-
-struct OrbitVector {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-struct SparkObject {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 unk14[4];
-  s32 scaleX;
-  s32 scaleY;
-  u8 unusedAfterScaleY[24]; ///< no code names it
-  s32 anchorX;
-  u8 unusedAfterAnchorX[12]; ///< no code names it
-  s32 gravity;
-  u8 unusedAfterGravity[9]; ///< no code names it
-  u8 motionFlags;
-  u8 unusedAfterMotionFlags[8]; ///< no code names it
-  u16 unk5e;
-  u8 unusedB[4]; ///< no code names it
-  s16 phase;
-  u8 unusedAfterPhase[6]; ///< no code names it
-  void (*update)(struct SparkObject *);
-};
-
-struct OwnerObject {
-  u8 unused[8]; ///< no code names it
-  s32 x;
-  u8 unusedAfterX[4]; ///< no code names it
-  s32 z;
-  u8 unk14[14];
-  u8 layer;
-};
-
 extern const u8 gBattleEffect_HeavyImpactScript[];
 
-extern const u8 gData_080f0e58[];
 extern u8 gAnim_ChildPaletteCycle[];
 
 struct Actor *ActorScript_FindOverlappingEntryFar(struct Actor *object,

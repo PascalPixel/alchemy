@@ -60,7 +60,7 @@ void PaletteFade_Initialize(void);
 s32 Entrance_PlayArrival(void);
 void Exit_StartStairsDown(void);
 void Exit_StartStairsUp(void);
-void Func_080d5fd4(void);
+void Exit_AddHiddenLeaderLayer(void);
 
 s32 Field_TryJumpForward(void);
 s32 Field_ClimbDown(void);
@@ -122,7 +122,7 @@ void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor);
 void FieldEffect_ShrinkActorAndDestroySlow(void *obj);
 void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect);
 
-void BattleEffect_AdvanceSpinAngle();
+void Djinn_AdvanceSpinAngle();
 
 void Rope_Draw(void);
 void Rope_Update(void);
@@ -132,7 +132,7 @@ s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 to_x, s32 to_y, s32 to_z,
                   s32 mode);
 
 void Message_SetVoiceFromActor(s32 key);
-void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
+void Event_ShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x, s32 y);
 
 void FieldMotes_Update(void);
 
@@ -145,6 +145,15 @@ extern const s32 gActorSprite_FullScale[2];
 extern const s32 gCamera_FixedViewMatrix[12];
 extern const s32 gActor_FootprintScript[];
 extern const s32 gWorldMap_KeyYaws[16];
+
+/// The direction pad's four keys (Up, Down, Left, Right) as an index of
+/// gWorldMap_KeyHeadings and gWorldMap_KeyYaws.
+#define DPAD_INDEX(keys) (((keys) >> 4) & 15)
+/// gWorldMap_KeyHeadings' entry when no direction is held, or only an
+/// opposite pair: no heading, since every real one is a multiple of an eighth
+/// turn.
+#define WORLD_MAP_KEY_HEADING_NONE 0xffff
+
 extern const s32 gActor_RippleScript[];
 extern const s32 gSand_GrainScript[];
 extern const s32 gActor_WakeScript[];

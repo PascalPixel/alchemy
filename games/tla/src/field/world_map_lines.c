@@ -17,7 +17,7 @@ struct FarCallVeneer {
   u32 target;
 };
 
-struct FarCallAtan2Veneer {
+struct FarCallArcTanVeneer {
   u32 stub;
   s32 (*target)(s32 x, s32 y);
 };
@@ -29,7 +29,7 @@ struct FarCallTrigVeneer {
 
 struct FarCallRuntimeTrigView {
   struct FarCallVeneer preceding[8];
-  struct FarCallAtan2Veneer atan2;
+  struct FarCallArcTanVeneer arcTan2;
   struct FarCallVeneer squareRoots[2];
   struct FarCallTrigVeneer sin;
   struct FarCallTrigVeneer cos;
@@ -94,7 +94,7 @@ void Transform_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
       s32 y = depth >> 4;
       // Transform_CallInThumb jumps to the target it finds in ip; the asm
       // keeps ip set for the call, which C cannot say.
-      register void *entry __asm__("ip") = table->atan2.target;
+      register void *entry __asm__("ip") = table->arcTan2.target;
 
       __asm__("" : : "r"(entry));
       angle = (u16)Transform_CallInThumb(x, y);

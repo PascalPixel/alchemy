@@ -49,7 +49,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
 
     angle = *(const u16 *)((const u8 *)table + (((keys >> 4) & 15) << 1));
   }
-  if (angle == 0xffff) {
+  if (angle == WORLD_MAP_KEY_HEADING_NONE) {
     collisionFlags = 4;
   } else {
     animation = 14;
@@ -144,8 +144,8 @@ s32 Actor_CrossRope(struct Actor *object) {
   object->speedLimit = px(1) / 2;
   object->acceleration = px(1) / 2;
   object->motionFlags = 0;
-  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
-  if (angle == 0xffff) {
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
+  if (angle == WORLD_MAP_KEY_HEADING_NONE) {
     best = (struct RopeNode *)object->watchedActor;
     value = 0;
   } else {
@@ -181,8 +181,8 @@ s32 Actor_CrossRope(struct Actor *object) {
     }
   }
   if (best == NULL) {
-    // DEAD: collisionFlags is still 0 here, so the OR reads nothing; the source
-    // keeps it.
+    // DEAD: collisionFlags is still 0 here, so the OR changes nothing; the ROM
+    // keeps its load, OR and store.
     collisionFlags |= 1;
   } else {
     slot = &rope->slots[best->slot - 1];
@@ -269,8 +269,8 @@ s32 Actor_CrossTightrope(struct Actor *object) {
   object->speedLimit = px(1) / 2;
   object->acceleration = px(1) / 2;
   object->motionFlags = 0;
-  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
-  if (angle == 0xffff) {
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
+  if (angle == WORLD_MAP_KEY_HEADING_NONE) {
     collisionFlags = 4;
     best = (struct TightropeNode *)object->watchedActor;
     SET_POSITION(&position, object->x.fixed, best->y, object->z.fixed);
@@ -377,21 +377,21 @@ void Sand_JitterGrain(struct Actor *object) {
 /// flag 0x146 is clear.
 s32 Sand_CheckEndKeys(s32 arg) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  /* FAKEMATCH(pin): pressed held in r0, the register the early zero is returned
-   * in. */
-  register s32 pressed asm("r0") = 0;
+  s32 pressed = 0;
 
   if (work == NULL)
     return 0;
-  if ((gInput.pressed & gMainRoutineWork.selectKeys) ||
-      (gInput.pressed & gMainRoutineWork.aKeys) ||
-      (gInput.pressed & gMainRoutineWork.startKeys))
+  if (gInput.pressed & gMainRoutineWork.selectKeys)
+    pressed = 1;
+  else if (gInput.pressed & gMainRoutineWork.aKeys)
+    pressed = 1;
+  else if (gInput.pressed & gMainRoutineWork.startKeys)
     pressed = 1;
   if (pressed) {
     if (Actor_CheckBlockedFar(arg)) {
       Sound_PlayFar(SE_MENU_CANCEL);
     } else if (!GameFlag_Get(0x146)) {
-      work->psynergy = 0x208b;
+      work->psynergy = ABILITY_SAND | ACT_PACKED;
       return 1;
     }
   }
@@ -431,7 +431,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   y = actor->y.fixed;
   terrainId = &actor->layer;
   groundHere = MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ);
-  groundAhead = MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ + 0xfff00000);
+  groundAhead = MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ - px(16));
   if (actor->timer != 0) {
     if (actor->targetX != TARGET_UNSET)
       goto done;
@@ -440,7 +440,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   }
   if ((s16)actor->userValue != 0) {
     if (groundAhead < y) {
-      s32 topZ = cellZ + 0xfff80000;
+      s32 topZ = cellZ - px(8);
 
       if (MapGrid_CheckCollisionAt(actor->x.fixed, topZ, *terrainId,
                                    actor->groundHeight) == 2) {
@@ -460,13 +460,13 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     }
 
     collision = 0;
-    // DEAD: the debug read of the held keys is never used.
+    // DEAD: a debug read of the held keys nothing uses; the ROM keeps the load.
     if (gDebugMode != 0)
       (void)gInput.held;
     actor->speedLimit = px(1) / 2;
     actor->acceleration = px(1) / 4;
-    angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
-    if ((u16)angle == 0xffff) {
+    angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
+    if ((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
       collision = 4;
     } else {
       SET_POSITION(&position, actor->x.fixed, 0, 0);
@@ -535,7 +535,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     if ((gFrameCount & 15) == 0) {
       SET_POSITION(&spawn, actor->x.fixed - Random16() * 6 + px(3),
                    actor->y.fixed, actor->z.fixed);
-      effect = Actor_Create(0x11d, spawn.x, spawn.y, spawn.z);
+      effect = Actor_Create(SPRITE_DUST_CLOUD, spawn.x, spawn.y, spawn.z);
       if (effect != NULL) {
         effect->groundHeight = actor->groundHeight;
         sprite = effect->sprite;
@@ -544,7 +544,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         effect->motionFlags = 2;
         if (collision == 0)
           Sound_PlayFar(SE_SAND_MOVE);
-        effect->gravity = 0xa3d;
+        effect->gravity = px(1) / 25;
         effect->velocityY = 0;
         effect->scaleX = 0x4ccc;
         effect->scaleY = 0x4ccc;
@@ -563,8 +563,8 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   collision = 0;
   actor->speedLimit = px(1);
   actor->acceleration = px(1) / 4;
-  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
-  if ((u16)angle == 0xffff) {
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
+  if ((u16)angle == WORLD_MAP_KEY_HEADING_NONE) {
     collision = 4;
     goto counted;
   }
@@ -638,8 +638,8 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   collision |= PLAYER_STEP_BLOCKED_BY_MAP;
   // Up against a face more than 8 pixels high: start climbing it.
   if ((gInput.held & KEY_UP) && groundAhead > y + px(8)) {
-    cellX = (position.x & FIELD_CELL_MASK) + 0x80000;
-    cellZ = (position.z & FIELD_CELL_MASK) + 0xfff80000;
+    cellX = (position.x & FIELD_CELL_MASK) + px(8);
+    cellZ = (position.z & FIELD_CELL_MASK) - px(8);
 
     if (MapGrid_IsClimbableCellFar(cellX, cellZ, 2)) {
       actor->motionFlags = 0;
@@ -654,14 +654,13 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   }
   // Down at a drop: climb down the face south of the cell.
   if (gInput.held & KEY_DOWN) {
-    cellX = (actor->x.fixed & FIELD_CELL_MASK) + 0x80000;
-    cellZ = (actor->z.fixed & FIELD_CELL_MASK) + 0x180000;
+    cellX = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
+    cellZ = (actor->z.fixed & FIELD_CELL_MASK) + px(24);
 
     if (MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ) < y &&
         MapGrid_IsClimbableCellFar(cellX, cellZ, 2)) {
       actor->motionFlags = 0;
-      Actor_SetMoveTarget(actor, actor->x.fixed, groundHere + 0xfffe0000,
-                          cellZ);
+      Actor_SetMoveTarget(actor, actor->x.fixed, groundHere - px(2), cellZ);
       actor->timer = 1;
       actor->userValue = 1;
       actor->velocityX = 0;
@@ -702,7 +701,7 @@ counted:
         difference = -FIELD_BLOCKED_TURN_MAX;
       actor->facing += difference;
     }
-    wakeTimer = (u8 *)actor + 98;
+    wakeTimer = &actor->wakeTimer;
     *wakeTimer = 0;
   } else {
     s32 speed;
@@ -714,14 +713,14 @@ counted:
     actor->velocityZ = 0;
     Vector_AddPolarOffset(speed, (u16)heading,
                           (struct FieldPosition *)&actor->velocityX);
-    wakeTimer = (u8 *)actor + 98;
+    wakeTimer = &actor->wakeTimer;
     if (*wakeTimer != 0)
       (*wakeTimer)--;
   }
   // The retest reads through the actor, not wakeTimer: that keeps its
   // zero path from skipping it.
-  if (((u8 *)actor)[98] == 0 && collision == 0) {
-    effect = Actor_Create(0x164, actor->x.fixed, actor->y.fixed,
+  if (actor->wakeTimer == 0 && collision == 0) {
+    effect = Actor_Create(WORLD_MAP_SPRITE_WAKE, actor->x.fixed, actor->y.fixed,
                           actor->z.fixed - px(2));
     if (effect != NULL) {
       effect->groundHeight = actor->groundHeight;
@@ -730,17 +729,20 @@ counted:
       effect->priorityFlags = 8;
       // Through a struct member: as a byte offset the store holds back the
       // stack read of collision after it.
-      ((struct Unk_WakeActor *)effect)->unk63 = 100;
+      effect->wakeFrames = 100;
       effect->motionFlags = 0;
       Sound_PlayFar(SE_SAND_MOVE);
       if (sprite != NULL) {
-        struct Unk_ClimbEventWork *work = Ram_HeapSlots->fieldWork;
+        /* FAKEMATCH(signature): the field work read through SandTrailWork,
+         * whose priority is the low byte of a halfword; as struct FieldWork *
+         * and work->unkd4a & 3, 8 of 965 instructions differ in tla-en. */
+        struct SandTrailWork *work = Ram_HeapSlots->fieldWork;
 
         Sprite_StartAnimation(sprite, 1);
         sprite->flags = 0;
-        // DEAD: overwritten by the next line.
+        // DEAD: overwritten by the next line; the ROM keeps the store of 2.
         sprite->priority = 2;
-        sprite->priority = work->unkd4a & 3;
+        sprite->priority = work->trailPriority & 3;
       }
       *wakeTimer = 5;
     }
@@ -773,7 +775,7 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
   s32 terrainCollision;
   s32 speed;
   s32 targetCameraYaw;
-  struct WorldCamera *camera;
+  struct WorldMapView *camera;
   s32 yawStep;
   struct PlayerSprite *playerSprite;
   struct Actor *ripple;
@@ -790,9 +792,9 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
   if (gInput.repeat & KEY_L)
     object->speedLimit = px(4);
 
-  angle = gWorldMap_KeyHeadings[(gInput.held >> 4) & 15];
+  angle = gWorldMap_KeyHeadings[DPAD_INDEX(gInput.held)];
   direction = angle;
-  if (direction == 0xffff) {
+  if (direction == WORLD_MAP_KEY_HEADING_NONE) {
     collision |= 4;
   } else {
     SET_POSITION(&position, object->x.fixed, object->y.fixed, object->z.fixed);
@@ -885,13 +887,13 @@ update_object:
       (*timer)--;
   }
 
-  camera = (struct WorldCamera *)Ram_HeapSlots->mapGrid;
-  targetCameraYaw = gWorldMap_KeyYaws[(gInput.held >> 4) & 15];
+  camera = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
+  targetCameraYaw = gWorldMap_KeyYaws[DPAD_INDEX(gInput.held)];
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
-  if (yawStep > 0x200)
-    yawStep = 0x200;
-  if (yawStep < -0x200)
-    yawStep = -0x200;
+  if (yawStep > WORLD_MAP_YAW_STEP_MAX)
+    yawStep = WORLD_MAP_YAW_STEP_MAX;
+  if (yawStep < -WORLD_MAP_YAW_STEP_MAX)
+    yawStep = -WORLD_MAP_YAW_STEP_MAX;
   if (yawStep > -16 && yawStep < 16)
     yawStep = targetCameraYaw - camera->yaw;
   camera->yaw += yawStep;
@@ -901,19 +903,19 @@ update_object:
     terrainCollision =
         WorldMap_GetCollision((struct WorldPosition *)&object->x.fixed);
     if (terrainCollision == 9)
-      playerSprite->entry[6] = 1;
+      playerSprite->secondLayer->priority = 1;
     else
-      playerSprite->entry[6] = 9;
+      playerSprite->secondLayer->priority = 9;
   }
   if (*timer == 0 && collision == 0) {
-    ripple = Actor_Create(0x164, object->x.fixed, object->y.fixed,
-                          object->z.fixed - px(2));
+    ripple = Actor_Create(WORLD_MAP_SPRITE_WAKE, object->x.fixed,
+                          object->y.fixed, object->z.fixed - px(2));
     if (ripple != 0) {
       ripple->groundHeight = object->groundHeight;
       rippleSprite = ripple->sprite;
       Actor_StartScript(ripple, gActor_WakeScript);
       ripple->priorityFlags = 8;
-      ((struct Unk0802a124Actor *)ripple)->unk63 = 100;
+      ripple->wakeFrames = 100;
       ripple->motionFlags = collision;
       if (rippleSprite != 0) {
         Sprite_StartAnimation(rippleSprite, 1);

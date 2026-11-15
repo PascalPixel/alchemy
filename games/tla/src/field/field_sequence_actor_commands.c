@@ -413,11 +413,12 @@ void Actor_StartRepeatedMotion(u32 actorId, s32 count) {
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL && count > 0) {
-    if (count > 3)
+    if (count > 3) {
       count = 3;
+    }
     // Each count is 32 words of the script; start that many from its end.
-    Actor_StartScriptFar(actor,
-                         (u32)(gActor_VariantScripts + ((3 - count) << 7)));
+    Actor_StartScriptFar(
+        actor, (const s32 *)(gActor_VariantScripts + ((3 - count) << 7)));
   }
 }
 
@@ -458,11 +459,11 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
     switch (Random16() & 1) {
     case 1:
       Actor_SelectAnimationFar(actor, 2);
-      Actor_StartScriptFar(actor, Data_080f085c);
+      Actor_StartScriptFar(actor, gDustPuff_LongScript);
       break;
     default:
       Actor_SelectAnimationFar(actor, 1);
-      Actor_StartScriptFar(actor, Data_080f0874);
+      Actor_StartScriptFar(actor, gDustPuff_ShortScript);
       break;
     }
 
@@ -597,20 +598,20 @@ void Actor_TurnPairToFaceEachOther(struct Actor *first, struct Actor *second) {
     actorsTurning = 2;
     angleDifference = (s16)(firstTargetAngle - first->facing);
     if (angleDifference != 0) {
-      if (angleDifference > TRIG_TURN / 16)
-        angleDifference = TRIG_TURN / 16;
-      if (angleDifference < -(TRIG_TURN / 16))
-        angleDifference = -(TRIG_TURN / 16);
+      if (angleDifference > FACING_STEP)
+        angleDifference = FACING_STEP;
+      if (angleDifference < -FACING_STEP)
+        angleDifference = -FACING_STEP;
       first->facing += angleDifference;
     } else {
       actorsTurning = 1;
     }
     angleDifference = (s16)(secondTargetAngle - second->facing);
     if (angleDifference != 0) {
-      if (angleDifference > TRIG_TURN / 16)
-        angleDifference = TRIG_TURN / 16;
-      if (angleDifference < -(TRIG_TURN / 16))
-        angleDifference = -(TRIG_TURN / 16);
+      if (angleDifference > FACING_STEP)
+        angleDifference = FACING_STEP;
+      if (angleDifference < -FACING_STEP)
+        angleDifference = -FACING_STEP;
       second->facing += angleDifference;
     } else {
       actorsTurning--;

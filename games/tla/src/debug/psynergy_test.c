@@ -138,10 +138,12 @@ void PsynergyTest_BrowseMessageRange(s32 message, s32 count) {
   s32 i;
   void *window;
 
-  window = Portrait_OpenWindow(206, 0, 0, 0);
+  window = Portrait_OpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
   for (i = 0; i < count; i++) {
-    MessageArgument_Push(1, MESSAGE_ARGUMENT_ACTOR);
-    MessageArgument_Push(5, MESSAGE_ARGUMENT_ITEM);
+    // Sample name, item and number substitutions before each message: Garet,
+    // the Shamshir and 123456.
+    MessageArgument_Push(GARET, MESSAGE_ARGUMENT_ACTOR);
+    MessageArgument_Push(ITEM_SHAMSHIR, MESSAGE_ARGUMENT_ITEM);
     MessageArgument_Push(123456, MESSAGE_ARGUMENT_NUMBER);
     PsynergyTest_ShowMessageAndWait(message);
     goto check;
@@ -261,7 +263,7 @@ void PsynergyTest_DamageAndAfflictParty(void) {
 /// Gives owner a Djinni and sets its flag; with activate 1 the Djinni is also
 /// set.
 void PsynergyTest_GiveDjinni(s32 owner, s32 element, s32 djinn, s32 activate) {
-  Event_SetFlag(element * 20 + djinn + 48);
+  Event_SetFlag(FLAG_DJINNI(element * DJINN_PER_ELEMENT + djinn));
   Djinn_Give(owner, element, djinn);
   if (activate == 1)
     Djinn_Set(owner, element, djinn);
@@ -445,7 +447,7 @@ void PsynergyTest_DigUpMonster(s32 mode) {
 
 /// Talking to the actor that fell takes the item it holds (its icon).
 void PsynergyTest_PickUpItem(void) {
-  Event_PickUpItem(ACTOR_FALLING, ((u8 *)Actor_Get(ACTOR_FALLING))[0x62],
+  Event_PickUpItem(ACTOR_FALLING, Actor_Get(ACTOR_FALLING)->iconItem,
                    FLAG_ITEM_TAKEN);
 }
 
@@ -593,7 +595,7 @@ void PsynergyTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 row, s32 column) {
   struct Actor *object;
 
   if (mode == 1) {
-    object = FieldActor_Create(354, px(x), 0, px(z));
+    object = FieldActor_Create(SPRITE_BROWN_BOULDER, px(x), 0, px(z));
     if (object != NULL) {
       Actor_SetSpriteFlags(object, 0);
       object->priorityFlags = 2;
@@ -606,8 +608,8 @@ void PsynergyTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 row, s32 column) {
 
       Actor_SetSpriteFlags(object, 0);
       object->velocityY = px(6);
-      object->scaleX = 0x6666;
-      object->scaleY = 0x6666;
+      object->scaleX = Q16_ONE * 2 / 5;
+      object->scaleY = Q16_ONE * 2 / 5;
       while (object->scaleX < Q16_ONE) {
         System_Wait(1);
         scale = object->scaleX + 0x51e;
@@ -646,7 +648,7 @@ void PsynergyTest_UpdateRings(struct Actor *object) {
     }
   } else if (((u8 *)object)[98] == 1) {
     if (work->heights[0] > 31 && work->heights[1] > 31) {
-      Actor_SetSpriteColorMode(object, 0);
+      Actor_SetSpriteColorMode(object, SPRITE_COLOR_NORMAL);
       VramCache_FreeEntry(work->vramEntry);
       object->update = 0;
       return;
@@ -659,8 +661,7 @@ void PsynergyTest_UpdateRings(struct Actor *object) {
       if (work->heights[i] <= 31) {
         struct Vector3 *p = &position;
 
-        SET_POSITION(p, object->x.fixed,
-                     object->y.fixed + (work->heights[i] << 16),
+        SET_POSITION(p, object->x.fixed, object->y.fixed + px(work->heights[i]),
                      object->z.fixed);
         Camera_WorldToScreen(p);
         x = p->x;
@@ -920,8 +921,8 @@ void PsynergyTest_StartRings(struct Actor *object, struct SparkleWork *work) {
   work->heights[0] = 999;
   work->heights[1] = 999;
   work->object = object;
-  ((u8 *)object)[0x62] = 0;
-  ((u8 *)object)[0x63] = 0;
+  object->riseCounter = 0;
+  object->riseEnabled = 0;
   object->update = PsynergyTest_UpdateRings;
   tile = gVramCacheEntries[work->vramEntry].offset >> 5;
   object->watchedActor = (struct Actor *)work;

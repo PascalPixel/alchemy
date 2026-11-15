@@ -60,7 +60,7 @@ struct MotionObject {
   s32 targetZ;
   s32 bounce;
   s32 gravity;
-  s32 unk4c;
+  s32 riseBaseY;
   void *animation;
   u8 animationKind;
   u8 motionFlags;
@@ -211,7 +211,7 @@ void Actor_UpdateAllThumb(void) {
         if (object->targetX != TARGET_UNSET) {
           dx = (object->targetX - x) / 65536;
           dz = (object->targetZ - z) / 65536;
-          distance = Iwram_Sqrt(Object_Square(dx) + Object_Square(dz)) << 16;
+          distance = px(Iwram_Sqrt(Object_Square(dx) + Object_Square(dz)));
           if (distance <= 0x00ffffff) {
             dx = object->targetX - x;
             dz = object->targetZ - z;
@@ -257,7 +257,7 @@ void Actor_UpdateAllThumb(void) {
           velocityZ = z + object->velocityZ;
           standing = 0;
           object->standingOn = NULL;
-          if (object->priorityFlags & 0x40) {
+          if (object->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
             struct MotionObject *other = Ram_HeapSlots->actors;
             s32 i;
 
@@ -266,7 +266,7 @@ void Actor_UpdateAllThumb(void) {
 
               if (other->script == NULL)
                 continue;
-              if (!(other->priorityFlags & 0x80))
+              if (!(other->priorityFlags & ACTOR_PRIORITY_PLATFORM))
                 continue;
               if (other == object)
                 continue;
@@ -491,7 +491,7 @@ void Actor_SetMoveTarget(struct Actor *object, s32 x, s32 y, s32 z) {
   dy = (y - object->y.fixed) / Q16_ONE;
   dz = (z - object->z.fixed) / Q16_ONE;
   squaredZ = dz * dz;
-  distance = Iwram_Sqrt(dx * dx + dy * dy + squaredZ) << 16;
+  distance = px(Iwram_Sqrt(dx * dx + dy * dy + squaredZ));
   if (distance < px(16)) {
     dx = x - object->x.fixed;
     dy = y - object->y.fixed;

@@ -90,13 +90,13 @@ static inline void Actor_InitializeSparkle(struct Actor *actor) {
 /// Each frame of a found item's picture: one time in ten, a sparkle appears
 /// within 16 pixels of it.
 void ItemDisplay_EmitSparkles(struct Actor *emitter) {
-  struct ParticlePosition position;
+  union PolarOffsetPosition position;
   struct Actor *object;
   u32 randomRadius;
 
   // Once the picture's rise has all but stopped (under 1/256 pixel a frame),
-  // clearing its motion flags ends gravity, so it hangs at the top of its
-  // rise.
+  // clearing its motion flags (ACTOR_FALLS and ACTOR_FOLLOWS_TERRAIN)
+  // ends gravity, so it hangs at the top of its rise.
   if (emitter->velocityY >= -255 && emitter->velocityY <= 255)
     emitter->motionFlags = 0;
 
@@ -104,10 +104,13 @@ void ItemDisplay_EmitSparkles(struct Actor *emitter) {
   if ((100 * Random16() >> 16) > 9)
     return;
 
-  SET_POSITION(&position, emitter->x.fixed, emitter->y.fixed, emitter->z.fixed);
+  position.vector.x = emitter->x.fixed;
+  position.vector.y = emitter->y.fixed;
+  position.vector.z = emitter->z.fixed;
   randomRadius = Random16();
-  Vector_AddPolarOffset(randomRadius << 4, Random16(), &position);
-  object = Actor_Spawn(SPRITE_SPARKLE, position.x, position.y, position.z);
+  Vector_AddPolarOffset(randomRadius << 4, Random16(), position.coordinates);
+  object = Actor_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
+                       position.vector.z);
   Actor_InitializeSparkle(object);
 }
 
@@ -295,18 +298,22 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
 
 /// Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
 /// pixels of it.
-void Reveal_EmitSparkles(struct Actor *source) {
-  struct ParticlePosition position;
+void Reveal_EmitSparkles(struct Actor *actor) {
+  const struct Actor *source = (const struct Actor *)actor;
+  union PolarOffsetPosition position;
   struct Actor *object;
   u32 randomRadius;
 
   if ((100 * Random16() >> 16) > 9)
     return;
 
-  SET_POSITION(&position, source->x.fixed, source->y.fixed, source->z.fixed);
+  position.vector.x = source->x.fixed;
+  position.vector.y = source->y.fixed;
+  position.vector.z = source->z.fixed;
   randomRadius = Random16();
-  Vector_AddPolarOffset(randomRadius << 4, Random16(), &position);
-  object = Actor_Spawn(SPRITE_SPARKLE, position.x, position.y, position.z);
+  Vector_AddPolarOffset(randomRadius << 4, Random16(), position.coordinates);
+  object = Actor_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
+                       position.vector.z);
   Actor_InitializeSparkle(object);
 }
 
@@ -356,8 +363,8 @@ void FieldEffect_SpawnRevealMarkers(void) {
       continue;
     // A tile event's object holds its map cell, marked by this value.
     if (object->riseBaseY == 0x31415927) {
-      x = object->timer << 16;
-      z = (s16)object->userValue << 16;
+      x = px(object->timer);
+      z = px((s16)object->userValue);
       y = MapGrid_GetTerrainHeightFar(0, x, z);
     } else {
       if ((u16)(type - 128) <= 1)

@@ -632,6 +632,10 @@ void MainRoutineWork_InitializeDefaults(void) {
   gMainRoutineWork.unk13d[13] = 64;
   gMainRoutineWork.unk13d[14] = 64;
 
+  // XXX: what reads these two tables of the scene state, 32 rows of eight
+  // random numbers 0 to 4 (12 bytes apart) and a copy of Data_080b1f2c; a
+  // search of the scenes for gSceneLocalState + 0x11b8 and + 0x1338
+  // (gItemCounters + 0x12c and + 0x2ac as ewram.s labels them) would settle it.
   for (i = 0; i < 32; i++) {
     for (j = 0; j < 8; j++)
       gSceneLocalState[0x11b8 + i * 12 + j] = (Random16() * 5) >> 16;

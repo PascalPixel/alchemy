@@ -154,8 +154,9 @@ s32 Owner_UpdateClassActions(s32 owner) {
   return 0;
 }
 
-/// Teaches unit `stateIndex` the Psynergy `value` for good, then rebuilds its
-/// list; returns the slot it lands in, or -1 when the list is full.
+/// Teaches a character action `value` for good (or makes a class action
+/// permanent by clearing its marks), then rebuilds its list. Returns the
+/// action's place in the list, or -1 when the list is full.
 s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   struct BattleUnit *state = Unit_Get(stateIndex);
   s32 key = value & OWNER_ACTION_ID_MASK;

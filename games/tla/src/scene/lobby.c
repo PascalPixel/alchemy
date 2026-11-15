@@ -65,11 +65,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 /// The lobby's people, by the rows of gActorPlacements, as The Broken Seal's
 /// Battle Arena keeps them where it has the same ones; the party's rows go to
 /// their party slots.
-// Byte flags, as The Broken Seal names them: the party members the linked
-// opponent sent, and the Monster Battles won in a row (-1 after the series
-// ends).
-#define FLAG_LINK_PARTY_COUNT 0x3f0
-#define FLAG_MONSTER_BATTLE_WINS 0x3f8
 
 enum LinkLobbyActorId {
   ACTOR_ATTENDANT = ACTOR_FIRST_PLACED, ///< arranges every battle

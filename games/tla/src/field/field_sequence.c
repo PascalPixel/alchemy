@@ -46,6 +46,5 @@ void Actor_MoveToObject(u32 objectId, u32 otherId);
 #include "field_sequence_requests.c"
 #include "field_sequence_actor_commands.c"
 
-#undef Field_RequestDjinnBattle
 #undef GameFlag_GetByte
 #undef Actor_SetHorizontalPositionWithTerrain

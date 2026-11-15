@@ -146,7 +146,7 @@ struct Actor *FieldCamera_GetActor(void);
 s32 FieldYesNo_Ask(s32 atBottom);
 void WorldMap_StartZoom(s32 zoom, s32 frames);
 void WindowColor_Apply(s32 phase, s32 brightness);
-void Field_RequestDjinnBattle(s32 actorId, s32 djinni);
+void Field_RequestDjinnBattle(u32 flags, u32 djinn);
 void Event_AddPartyMember(s32 unit, s32 announce);
 void MapGrid_WaitForShakeToSettle(void);
 s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y);

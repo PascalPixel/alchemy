@@ -9,39 +9,9 @@
 struct Actor;
 struct ResourceEntry;
 
-struct MagmaRockEffectOptions {
-  s32 kind;
-  s32 palette;
-  s32 scaleX;
-  s32 scaleY;
-  u8 unk10[8];
-  u16 id;
-  u8 unk1a[2];
-  const void *data;
-  s32 unk20;
-  void (*update)();
-};
-
 struct MagmaRockCrumblingPillar {
   u16 id;
   u16 flag;
-};
-
-struct Entry {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 unk18;
-};
-
-struct EntryWork {
-  u8 unk0[0x500];
-  struct Entry entries[64];
-  u8 unkc00[0xa00];
-  s16 unk1600;
 };
 
 struct MagmaRockSparkWork {

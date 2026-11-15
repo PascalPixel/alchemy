@@ -213,6 +213,12 @@
 /// so the scenes name them.
 #define FLAG_AREA_TEMP_FIRST 0x300
 #define FLAG_AREA_TEMP_LAST 0x3ff ///< the last of the area's 256 flags
+// Byte flags, read and written eight at a time, as The Broken Seal names them.
+/// The party members the linked opponent sent (the link lobby).
+#define FLAG_LINK_PARTY_COUNT 0x3f0
+/// Monster Battles won in a row, added to the monsters' level; -1 after the
+/// series ends.
+#define FLAG_MONSTER_BATTLE_WINS 0x3f8
 
 /// Set as Madra's gate guards let the party through (Madra_InspectPartyAtGate,
 /// "You there! Hold your ground!"); then the worker no longer blocks the hole

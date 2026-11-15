@@ -373,10 +373,6 @@ struct SpawnedActor {
   u16 timer;
 };
 
-struct Half {
-  u16 v;
-};
-
 struct SpringTossMotion {
   u8 unused[2];
   s16 launchFrame;
@@ -468,16 +464,6 @@ struct MagmaRockInsideWork {
   s32 z;
   s32 unk10;
   struct Actor *target;
-};
-
-struct EffectConfig {
-  s32 kind;
-  s32 variant;
-  u8 unk08[16];
-  u16 id;
-  u8 unk1a[2];
-  const u8 *data;
-  u8 unk20[8];
 };
 
 struct MarsLighthouseAerieSprite {

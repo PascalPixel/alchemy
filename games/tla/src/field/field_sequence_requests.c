@@ -26,18 +26,8 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
 /// prepared first; the pending event is 300 + the Djinni id with that flag,
 /// the enemy group is chosen, and on the world map the zone and backdrop come
 /// from the leader's position.
-/* VIEW(event_commands): routine Field_RequestDjinnBattle as void
- * Field_RequestDjinnBattle(u32 flags, u32 djinn); field/event.h has void
- * Field_RequestDjinnBattle(s32 flag, s32 no); tried as the definition's void
- * Field_RequestDjinnBattle(u32 flags, u32 djinn), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sequence_requests.c:25: conflicting types for
- * `Field_RequestDjinnBattle'. */
-void Field_RequestDjinnBattle__event_commands(u32 flags, u32 djinn) __asm__(
-    "Field_RequestDjinnBattle");
-#define Field_RequestDjinnBattle Field_RequestDjinnBattle__event_commands
-/// Sets up the battle with Djinni number `no`. The low 8 bits of flag are the
-/// Djinni's actor, which hops first unless DJINN_NO_HOP is set.
+/// The low 8 bits of flags are the Djinni's actor, which hops first unless
+/// DJINN_NO_HOP is set.
 void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 noPrepare = flags & 0x800;

@@ -724,7 +724,7 @@ extern s32 gPaletteCycleFrame;
 static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
-extern u32 gPaletteCycleColors[];
+extern u16 gPaletteCycleColors[];
 
 #include "shared/palette_cycle_step.h"
 

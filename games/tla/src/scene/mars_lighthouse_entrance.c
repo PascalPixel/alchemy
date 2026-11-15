@@ -1277,17 +1277,6 @@ extern struct Trigger gMarsLighthouseEntrance_HiddenCircleTriggers[];
 extern struct Trigger gMarsLighthouseEntrance_ValkyrieTriggers[];
 extern struct Trigger gMarsLighthouseEntrance_SolBladeTriggers[];
 
-/* VIEW(s1930): routine Actor_Attach as s32 Actor_Attach(s32 id, s32 a1, s32 a2,
- * s32 a3, const void *script); s1344 has void Actor_Attach(s32 id, s32 a1, s32
- * a2, s32 a3, const void *script); tried as the definition's void
- * Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script),
- * MarsLighthouseEntrance_ShootValkyrieUpperFireball moves: 1 of 11
- * instructions, MarsLighthouseEntrance_ShootValkyrieLowerFireball moves: 1 of 11
- * instructions, MarsLighthouseEntrance_ShootBalmFireball moves: 1 of 12
- * instructions, 3 more in tla-ja. */
-extern s32 Actor_Attach__s1930(s32 id, s32 a1, s32 a2, s32 a3,
-                               const void *script) __asm__("Actor_Attach");
-
 s32 Scene_PrepareMap(void) {
   if (Flag_IsSet(FLAG_MARS_LIGHTHOUSE_THAWED))
     Map_CopyPalette(gMainRoutineWork.mapId +
@@ -1297,32 +1286,32 @@ s32 Scene_PrepareMap(void) {
 }
 
 void MarsLighthouseEntrance_ShootValkyrieUpperFireball(void) {
-  Actor_Attach__s1930(10, 19, 20, 0,
+  Actor_Attach(10, 19, 20, 0,
                       gMarsLighthouseEntrance_ValkyrieUpperFireballPath);
 }
 
 void MarsLighthouseEntrance_ShootValkyrieLowerFireball(void) {
-  Actor_Attach__s1930(12, 19, 20, 0,
+  Actor_Attach(12, 19, 20, 0,
                       gMarsLighthouseEntrance_ValkyrieLowerFireballPath);
 }
 
 void MarsLighthouseEntrance_ShootBalmFireball(void) {
-  Actor_Attach__s1930(9, 18, 20, 0x4000,
+  Actor_Attach(9, 18, 20, 0x4000,
                       gMarsLighthouseEntrance_BalmFireballPath);
 }
 
 void MarsLighthouseEntrance_ShootFireballAtHiddenCircleIceSheet(void) {
-  Actor_Attach__s1930(9, 13, 14, 0,
+  Actor_Attach(9, 13, 14, 0,
                       gMarsLighthouseEntrance_FireballToHiddenCircleIceSheet);
 }
 
 void MarsLighthouseEntrance_ShootFireballThroughIce(void) {
-  Actor_Attach__s1930(11, 13, 14, 0x4000,
+  Actor_Attach(11, 13, 14, 0x4000,
                       gMarsLighthouseEntrance_FireballThroughIce);
 }
 
 void MarsLighthouseEntrance_ShootFireballAtLapisIceSheet(void) {
-  Actor_Attach__s1930(13, 21, 22, 0,
+  Actor_Attach(13, 21, 22, 0,
                       gMarsLighthouseEntrance_FireballToLapisIceSheet);
 }
 
@@ -2011,8 +2000,9 @@ extern u16 gMarsLighthouseEntrance_HoleMaskVram;
 
 void Map_CopyPalette(s32 scene, s32 a1);
 
-/// Attaches an actor to another with a script and an update.
-void Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
+/// Attaches an actor to another with a script and an update. Its callers take
+/// it as returning a word; it returns none.
+s32 Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   struct Actor *source = Actor_Get(id);
   struct Actor *object = Actor_Get(target);
 
@@ -2027,6 +2017,10 @@ void Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   object->userValue = a3;
   BYTE_AT(object, 98) = kind;
   object->update = (void (*)(void))Actor_HoldDuringEvent;
+  // UB: no value is returned, though the callers take one.
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 #include "shared/actor_launch_ahead.h"

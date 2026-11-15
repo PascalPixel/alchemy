@@ -54,7 +54,7 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell);
 
 void MarsLighthouseEntrance_FlingIceCone(struct Actor *object);
 
-void Actor_Attach(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
+s32 Actor_Attach(s32 id, s32 a1, s32 a2, s32 a3, const void *script);
 
 void Leader_SlideOnIceFromEdge(void);
 

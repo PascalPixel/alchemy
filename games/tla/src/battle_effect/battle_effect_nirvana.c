@@ -727,7 +727,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
         point.depth = target->z + (Trig_Sin(frame << 9) << 5);
         Render_ProjectPoint(&point, &dropScreen);
         blitters[1](canvas, work->sheet + 0x4000, dropScreen.x - 20,
-                    dropScreen.y - 30, 40, 40);
+                    dropScreen.y - 30, DJINNI_WIDTH, DJINNI_HEIGHT);
       }
       if (frame == 4) {
         Sound_PlayFar(SE_SWITCH_MECHANISM);

@@ -130,7 +130,8 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
               draw[0](canvas,
                       work->sheet + 0x4000 + ((particle->variant / 4) << 11),
                       Q_16_16_UPPER_HALF(particle->x) - 16,
-                      Q_16_16_UPPER_HALF(particle->y) - 32, 32, 64);
+                      Q_16_16_UPPER_HALF(particle->y) - 32, FLASH_BURST_WIDTH,
+                      FLASH_BURST_HEIGHT);
             }
             BattleEffectKernels_IntegrateVector2(particle, 60, -px(1) / 16);
           }

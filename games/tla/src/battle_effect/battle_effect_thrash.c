@@ -68,11 +68,10 @@ void BattleEffect_RunTwinShear(struct BattleEffectParams *args) {
 
 #undef RESULTS_FRAME
 
-/// Each of the four pictures is PICTURE_SIZE pixels square; the reflected
-/// variant's are half as tall.
-#define PICTURE_SIZE 120
-#define PICTURE_BYTES (PICTURE_SIZE * PICTURE_SIZE)
-#define HALF_PICTURE_BYTES (PICTURE_SIZE * PICTURE_SIZE / 2)
+/// One 120x120 picture of a flashing strike; the reflected variant's are half
+/// as tall.
+#define FLASHING_STRIKE_PICTURE_BYTES (SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE)
+#define FLASHING_STRIKE_HALF_BYTES (SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE / 2)
 
 #define REVEAL_FRAMES 21
 #define FLOOD_FRAME 16 ///< the pictures end and the canvas floods
@@ -176,37 +175,42 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
     if (variant == 5) {
       // Half the picture, then its reflection below it.
       if (frame <= 3) {
-        draw[0](canvas, Ram_MapCellBuffer, 0, 0, PICTURE_SIZE,
-                PICTURE_SIZE / 2);
-        draw[1](canvas, Ram_MapCellBuffer, 0, PICTURE_SIZE / 2, PICTURE_SIZE,
-                PICTURE_SIZE / 2);
+        draw[0](canvas, Ram_MapCellBuffer, 0, 0, SLASH_PICTURE_SIZE,
+                SLASH_PICTURE_SIZE / 2);
+        draw[1](canvas, Ram_MapCellBuffer, 0, SLASH_PICTURE_SIZE / 2,
+                SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
       } else if (frame <= 7) {
-        draw[0](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES, 0, 0,
-                PICTURE_SIZE, PICTURE_SIZE / 2);
-        draw[1](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES, 0,
-                PICTURE_SIZE / 2, PICTURE_SIZE, PICTURE_SIZE / 2);
+        draw[0](canvas, Ram_MapCellBuffer + FLASHING_STRIKE_HALF_BYTES, 0, 0,
+                SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
+        draw[1](canvas, Ram_MapCellBuffer + FLASHING_STRIKE_HALF_BYTES, 0,
+                SLASH_PICTURE_SIZE / 2, SLASH_PICTURE_SIZE,
+                SLASH_PICTURE_SIZE / 2);
       } else if (frame <= 11) {
-        draw[0](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 2, 0, 0,
-                PICTURE_SIZE, PICTURE_SIZE / 2);
-        draw[1](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 2, 0,
-                PICTURE_SIZE / 2, PICTURE_SIZE, PICTURE_SIZE / 2);
+        draw[0](canvas, Ram_MapCellBuffer + FLASHING_STRIKE_HALF_BYTES * 2, 0,
+                0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
+        draw[1](canvas, Ram_MapCellBuffer + FLASHING_STRIKE_HALF_BYTES * 2, 0,
+                SLASH_PICTURE_SIZE / 2, SLASH_PICTURE_SIZE,
+                SLASH_PICTURE_SIZE / 2);
       } else if (frame <= 15) {
-        draw[0](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 3, 0, 0,
-                PICTURE_SIZE, PICTURE_SIZE / 2);
-        draw[1](canvas, Ram_MapCellBuffer + HALF_PICTURE_BYTES * 3, 0,
-                PICTURE_SIZE / 2, PICTURE_SIZE, PICTURE_SIZE / 2);
+        draw[0](canvas, Ram_MapCellBuffer + FLASHING_STRIKE_HALF_BYTES * 3, 0,
+                0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE / 2);
+        draw[1](canvas, Ram_MapCellBuffer + FLASHING_STRIKE_HALF_BYTES * 3, 0,
+                SLASH_PICTURE_SIZE / 2, SLASH_PICTURE_SIZE,
+                SLASH_PICTURE_SIZE / 2);
       }
     } else {
       if (frame <= 3)
-        draw[0](canvas, work->sheet, 0, 0, PICTURE_SIZE, PICTURE_SIZE);
+        draw[0](canvas, work->sheet, 0, 0, SLASH_PICTURE_SIZE,
+                SLASH_PICTURE_SIZE);
       else if (frame <= 7)
-        draw[0](canvas, work->sheet + PICTURE_BYTES, 0, 0, PICTURE_SIZE,
-                PICTURE_SIZE);
+        draw[0](canvas, work->sheet + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
+                SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
       else if (frame <= 11)
-        draw[0](canvas, Ram_MapCellBuffer, 0, 0, PICTURE_SIZE, PICTURE_SIZE);
+        draw[0](canvas, Ram_MapCellBuffer, 0, 0, SLASH_PICTURE_SIZE,
+                SLASH_PICTURE_SIZE);
       else if (frame <= 15)
-        draw[0](canvas, Ram_MapCellBuffer + PICTURE_BYTES, 0, 0, PICTURE_SIZE,
-                PICTURE_SIZE);
+        draw[0](canvas, Ram_MapCellBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
+                SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
     }
 
     // The flood: four frames of the canvas filled with colour 0x3f.
@@ -237,3 +241,6 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
     BattleEffect_EndCanvasLayer();
   }
 }
+
+#undef FLASHING_STRIKE_PICTURE_BYTES
+#undef FLASHING_STRIKE_HALF_BYTES

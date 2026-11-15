@@ -150,7 +150,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
       }
 
       if (frame > 15) {
-        struct StripVertex *strip0 = (struct StripVertex *)gMapGridCellBuffer;
+        struct StripVertex *stripA = (struct StripVertex *)gMapGridCellBuffer;
         s32 scale = 20768;
         const u8 *stripMesh = Data_02012000;
 
@@ -197,7 +197,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           width = width * scale / (Q16_ONE);
           start = -(width / 2);
           for (i = 0; i != 2; i++) {
-            struct StripVertex *corner = strip0 + (j * 2 + i);
+            struct StripVertex *corner = stripA + (j * 2 + i);
 
             corner->x = (Q_16_16_TO_INT(Trig_Cos(angle) *
                                         (distance + start + i * width))) -
@@ -229,9 +229,9 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           width = width * scale / (Q16_ONE);
           start = -(width / 2);
           for (i = 0; i != 2; i++) {
-            struct StripVertex *strip1 =
+            struct StripVertex *stripB =
                 (struct StripVertex *)Ram_MapCellBuffer + 66;
-            struct StripVertex *corner = strip1 + (j * 2 + i);
+            struct StripVertex *corner = stripB + (j * 2 + i);
 
             corner->x = (Q_16_16_TO_INT(Trig_Cos(angle) *
                                         (distance + start + i * width))) -
@@ -276,7 +276,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           }
           Transform_ApplyRoll(i * 14192 - TRIG_TURN / 16);
           Transform_ApplyUniformScale(Q16_ONE * 4);
-          Render_TransformVertices(strip0 + i * 66, vertices, 66);
+          Render_TransformVertices(stripA + i * 66, vertices, 66);
           Render_DrawModelList(model);
           if (frame < i * 16 + 40) {
             texture.logWidth = 6;

@@ -1087,7 +1087,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame < 132) {
-      s32 scale112;
+      s32 risingScale;
       s32 depth;
       s32 rise = -52576;
       s32 base;
@@ -1101,9 +1101,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       quarter = frame * 381;
       depth = twice - 64;
       base = quarter * 4;
-      scale112 = 115536 - base;
+      risingScale = 115536 - base;
       if (frame > 55) {
-        scale112 = base + rise;
+        risingScale = base + rise;
       }
       if (depth >= -8) {
         depth = -8;
@@ -1123,7 +1123,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         model->shade = depth;
         Transform_Reset();
         Transform_ApplyTranslation(px(4), 0, 0);
-        Transform_ApplyAxisScale(scale112, scale112, scale112);
+        Transform_ApplyAxisScale(risingScale, risingScale, risingScale);
         Transform_ApplyPitch(TRIG_TURN / 8);
         if (frame > 55) {
           Transform_ApplyYaw(frame << 10);
@@ -1377,7 +1377,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 
           row += (s32)buffer;
           buffer = (u8 *)row;
-          routine[0](canvas, buffer, x, (Q_16_16_TO_INT(p->y)) - 32, 32, 64);
+          routine[0](canvas, buffer, x, (Q_16_16_TO_INT(p->y)) - 32,
+                     FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           BattleEffectKernels_IntegrateVector2(p, 60, -px(1) / 8);
         }
         p->variant++;

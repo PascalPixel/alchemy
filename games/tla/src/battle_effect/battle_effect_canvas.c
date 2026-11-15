@@ -52,8 +52,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   s32 place[4];
   struct Scale req;
   struct ModelTexture texture;
-  struct ModelTexture texture2;
-  struct ModelTexture texture3;
+  struct ModelTexture breathTexture;
+  struct ModelTexture landingTexture;
   struct RenderModel *model;
   struct Particle *p;
   struct EclipseObject *obj;
@@ -464,12 +464,12 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
 
       verts = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
-      texture2.logWidth = 5;
-      texture2.logHeight = 2;
-      texture2.pixels = work->sheet + 0x3840;
+      breathTexture.logWidth = 5;
+      breathTexture.logHeight = 2;
+      breathTexture.pixels = work->sheet + 0x3840;
       model->mesh = gBattleEffect_SmallSquareMesh;
       model->shade = fade;
-      model->texture = &texture2;
+      model->texture = &breathTexture;
       model->vertices = verts;
       model->kind = 6;
       if (frame > 15) {
@@ -541,7 +541,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
   {
     const void *mesh = Data_02011000;
     void *vertices = gMapGridCellBuffer;
-    const void *mesh2 = Data_02012800;
+    const void *bandMesh = Data_02012800;
 
     for (frame = 0; frame != 26; frame++) {
       if ((gInput.repeat & (KEY_A | KEY_B)) && count == -1) {
@@ -612,14 +612,14 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         if (frame > 15) {
           s += 0x10000 - (frame << 12);
         }
-        texture3.logWidth = 5;
-        texture3.logHeight = 2;
-        texture3.pixels = work->sheet + 0x3840;
+        landingTexture.logWidth = 5;
+        landingTexture.logHeight = 2;
+        landingTexture.pixels = work->sheet + 0x3840;
         model->mesh = gBattleEffect_SmallSquareMesh;
         model->shade = shade;
         model->vertices = gMapGridCellBuffer;
         model->kind = 6;
-        model->texture = &texture3;
+        model->texture = &landingTexture;
         Transform_Reset();
         Transform_ApplyTranslation(-px(2), px(16), 0);
         Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
@@ -651,14 +651,14 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         }
         Mesh_BuildCylinderBand(Data_02012000, Data_02012800, 32);
       }
-      texture3.logWidth = 5;
-      texture3.logHeight = 5;
-      texture3.pixels = work->sheet;
+      landingTexture.logWidth = 5;
+      landingTexture.logHeight = 5;
+      landingTexture.pixels = work->sheet;
       {
         model->kind = 6;
         model->mesh = mesh;
         model->vertices = vertices;
-        model->texture = &texture3;
+        model->texture = &landingTexture;
         model->shade = shade;
         model->flags = 3;
       }
@@ -676,12 +676,12 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         Render_TransformVertices(Data_02010800, vertices, 128);
         Render_DrawModelList(model);
       }
-      texture3.logHeight = 5;
-      texture3.logWidth = 7;
-      texture3.pixels = work->sheet + 0x400;
-      model->texture = &texture3;
+      landingTexture.logHeight = 5;
+      landingTexture.logWidth = 7;
+      landingTexture.pixels = work->sheet + 0x400;
+      model->texture = &landingTexture;
       model->kind = 7;
-      model->mesh = mesh2;
+      model->mesh = bandMesh;
       model->flags = shade;
       model->vertices = vertices;
       model->scrollU = shade;
@@ -881,7 +881,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
           if (flash->variant >= 0 && flash->variant <= 17) {
             draw[0](canvas, work->sheet + (flash->variant / 3 << 11),
                     Q_16_16_UPPER_HALF(flash->x) - 16,
-                    Q_16_16_UPPER_HALF(flash->y) - 48, 32, 64);
+                    Q_16_16_UPPER_HALF(flash->y) - 48, FLASH_BURST_WIDTH,
+                    FLASH_BURST_HEIGHT);
             BattleEffectKernels_IntegrateVector2(flash, 62, -px(1) / 32);
             flash->variant++;
           }

@@ -451,9 +451,12 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
 
           if (step->variant >= 0) {
             if (step->variant > 1)
-              draw[0](canvas, work->sheet + 0x800 + step->variant / 4 * 0x480,
+              draw[0](canvas,
+                      work->sheet + 0x800 +
+                          step->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
                       Q_16_16_UPPER_HALF(step->x) - 12,
-                      Q_16_16_UPPER_HALF(step->y) - 24, 24, 48);
+                      Q_16_16_UPPER_HALF(step->y) - 24, SMOKE_PUFF_WIDTH,
+                      SMOKE_PUFF_HEIGHT);
             step->x += step->velocityX;
             step->y += step->velocityY;
             if (step->y > px(96)) {

@@ -636,8 +636,9 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
         if (draw && (u32)(step->variant - 64) <= 11) {
           s32 k = ((step->variant - 64) / 2) % 6;
 
-          blit[1](canvas, work->sheet + 0x1e97 + k * 0x780, anchor->x - 20,
-                  anchor->y - 24, 40, 48);
+          blit[1](canvas, work->sheet + 0x1e97 + k * PICTURE_BYTES(YELLOW_ORB),
+                  anchor->x - 20, anchor->y - 24, YELLOW_ORB_WIDTH,
+                  YELLOW_ORB_HEIGHT);
         }
       }
       for (i = 0; i != 96; i++) {

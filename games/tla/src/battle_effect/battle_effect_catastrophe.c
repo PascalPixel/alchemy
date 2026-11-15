@@ -59,7 +59,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   struct Particle *p3;
   struct Particle *p4;
   struct Particle *q2;
-  u16 *src2;
+  u16 *backdropColor;
   u8 *e;
   s32 zero;
   u8 *cellBuffer = Ram_MapCellBuffer;
@@ -319,12 +319,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       }
       if (level >= 0) {
         u16 *dst = (u16 *)(BG_PLTT + 0x60);
-        src2 = battle->palette;
+        backdropColor = battle->palette;
 
         for (i = 0; i != 128; i++) {
-          s32 r = RGB_RED(*src2);
-          s32 g = RGB_GREEN(*src2);
-          s32 b = RGB_BLUE(*src2) + level;
+          s32 r = RGB_RED(*backdropColor);
+          s32 g = RGB_GREEN(*backdropColor);
+          s32 b = RGB_BLUE(*backdropColor) + level;
 
           if (r > 31) {
             r = 31;
@@ -335,7 +335,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           if (b > 31) {
             b = 31;
           }
-          src2++;
+          backdropColor++;
           *dst++ = RGB(r, g, b);
         }
       }
@@ -973,8 +973,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   {
     s32 rise;
     s32 top;
-    void *verts2;
-    s32 sh2;
+    void *aerialVertices;
+    s32 aerialShade;
     s32 r;
     s32 ry;
 
@@ -1090,7 +1090,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             }
           }
         }
-        verts2 = Heap_AllocEwram(512);
+        aerialVertices = Heap_AllocEwram(512);
         aerialModel = Render_AllocateModelList(1);
         if (frame <= 127) {
           s32 s = 85536;
@@ -1099,20 +1099,20 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           if (frame > 71) {
             s = (frame << 11) + -0xf1e0;
           }
-          sh2 = -16;
+          aerialShade = -16;
           if (frame > 119) {
-            sh2 = 944 - frame * 8;
+            aerialShade = 944 - frame * 8;
           }
           if (s > 0x22538) {
             s = 0x22538;
           }
           aerialTexture.logWidth = 6;
           aerialTexture.logHeight = 6;
-          aerialModel->shade = sh2;
+          aerialModel->shade = aerialShade;
           aerialModel->kind = 6;
           aerialModel->texture = &aerialTexture;
           aerialModel->mesh = gBattleEffect_SquareMesh;
-          aerialModel->vertices = verts2;
+          aerialModel->vertices = aerialVertices;
           aerialTexture.pixels = Data_02011000;
           Transform_Reset();
           Transform_ApplyTranslation(-px(2), rise, 0);
@@ -1122,13 +1122,15 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           Transform_ApplyRoll(a);
           Transform_ApplyUniformScale(s);
           Transform_ApplyTranslation(0, -px(15), 0);
-          Render_TransformVertices(gBattleEffect_SquareCorners, verts2, 4);
+          Render_TransformVertices(gBattleEffect_SquareCorners, aerialVertices,
+                                   4);
           Transform_ApplyTranslation(0, px(15), 0);
           Render_DrawModelList(aerialModel);
           aerialTexture.pixels = cellBuffer;
           for (i = 0; i != 3; i++) {
             s32 k = i * 21845 + 10922;
-            s32 tone = sh2 + (Q_16_16_TO_INT(Trig_Cos(a + k) << 3)) - 16;
+            s32 tone =
+                aerialShade + (Q_16_16_TO_INT(Trig_Cos(a + k) << 3)) - 16;
             s32 v;
 
             Transform_Push();
@@ -1144,7 +1146,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             }
             Transform_ApplyPitch(-v);
             Render_TransformVertices(gBattleEffect_StandingSquareCorners,
-                                     verts2, 4);
+                                     aerialVertices, 4);
             Render_DrawModelList(aerialModel);
             Transform_Pop();
           }
@@ -1161,20 +1163,20 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
               if (frame < start) {
                 continue;
               }
-              sh2 = 0;
+              aerialShade = 0;
               if (i == 0) {
                 s = (t - start * 3) * 127 * 32 + 0x2000;
                 if (frame >= d + 96) {
-                  sh2 = (start - frame) * 8 + 128;
+                  aerialShade = (start - frame) * 8 + 128;
                 }
               } else {
                 s = (t - start * 3) * 127 * 16 + 0x2000;
                 if (frame >= d + 112) {
-                  sh2 = (start - frame) * 8 + 256;
+                  aerialShade = (start - frame) * 8 + 256;
                 }
               }
-              if (sh2 > -64) {
-                aerialModel->shade = sh2;
+              if (aerialShade > -64) {
+                aerialModel->shade = aerialShade;
                 aerialModel->mesh = gBattleEffect_LargeSquareMesh;
                 aerialModel->kind = 6;
                 aerialTexture.pixels = Data_02012000;
@@ -1185,8 +1187,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                 Transform_ApplyAxisScale(Q16_ONE, 32000, Q16_ONE);
                 Transform_ApplyRoll(frame << 10);
                 Transform_ApplyUniformScale(s);
-                Render_TransformVertices(gBattleEffect_SquareCorners, verts2,
-                                         4);
+                Render_TransformVertices(gBattleEffect_SquareCorners,
+                                         aerialVertices, 4);
                 Render_DrawModelList(aerialModel);
               }
             }
@@ -1228,13 +1230,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             Transform_ApplyRoll(p->z);
             p->z += p->velocityZ;
             Transform_ApplyAxisScale(s << 2, s, Q16_ONE);
-            Render_TransformVertices(gBattleEffect_TaperedBeamCorners, verts2,
-                                     4);
+            Render_TransformVertices(gBattleEffect_TaperedBeamCorners,
+                                     aerialVertices, 4);
             Render_DrawModelList(aerialModel);
           }
         }
         Heap_Release(aerialModel);
-        Heap_Release(verts2);
+        Heap_Release(aerialVertices);
         if (frame > 133) {
           if (frame == 134) {
             struct Particle *p;
@@ -1410,7 +1412,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           if ((u32)q2->variant <= 11) {
             blit[0](canvas, work->sheet + 0x1800 + (q2->variant / 2 << 11),
                     Q_16_16_UPPER_HALF(q2->x) - 16,
-                    Q_16_16_UPPER_HALF(q2->y) - 32, 32, 64);
+                    Q_16_16_UPPER_HALF(q2->y) - 32, FLASH_BURST_WIDTH,
+                    FLASH_BURST_HEIGHT);
             BattleEffectKernels_IntegrateVector2(q2, 63, 0);
             q2->variant++;
           }
@@ -1551,8 +1554,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
               if (frame >= lim && frame < lim + 8) {
                 u8 *src = gData_02014000;
 
-                blit[0](canvas, ((p2->variant / 2) & 3) * 2880 + src,
-                        p2->x - 12, 0, 24, 120);
+                blit[0](
+                    canvas,
+                    ((p2->variant / 2) & 3) * PICTURE_BYTES(LIGHTNING_BOLT) +
+                        src,
+                    p2->x - 12, 0, LIGHTNING_BOLT_WIDTH, LIGHTNING_BOLT_HEIGHT);
                 p2->variant++;
               }
             }

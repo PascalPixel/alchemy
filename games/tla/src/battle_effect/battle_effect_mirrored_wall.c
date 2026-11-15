@@ -167,9 +167,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
       BattleEffect_FetchRectangleBlitters(args->side ^ prelude, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
-      draw[1](canvas, work->sheet + PIC_DJINN, x, y, 40, 40);
+      draw[1](canvas, work->sheet + PIC_DJINN, x, y, DJINNI_WIDTH,
+              DJINNI_HEIGHT);
       if (frame <= 3)
-        draw[1](canvas, work->sheet + PIC_DJINN, x, y, 40, 40);
+        draw[1](canvas, work->sheet + PIC_DJINN, x, y, DJINNI_WIDTH,
+                DJINNI_HEIGHT);
       EFFECT_RELEASE_BLITTERS();
     }
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
@@ -520,8 +522,11 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
         EffectPosition_ProjectPoint((s32 *)burst, &position);
         position.x >>= 1;
         if (gLobbedShells_Styles[mode * 4 + RECORD_SHARDS] == 0) {
-          draw[1](canvas, work->sheet + burst->variant / 8 * 1152 + SMOKE_SHEET,
-                  position.x - 12, position.y - 24, 24, 48);
+          draw[1](canvas,
+                  work->sheet + burst->variant / 8 * PICTURE_BYTES(SMOKE_PUFF) +
+                      SMOKE_SHEET,
+                  position.x - 12, position.y - 24, SMOKE_PUFF_WIDTH,
+                  SMOKE_PUFF_HEIGHT);
         } else {
           s32 picture = burst->variant / 5;
           s32 flip;

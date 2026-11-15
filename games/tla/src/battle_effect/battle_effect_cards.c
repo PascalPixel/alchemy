@@ -327,8 +327,8 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 
       // The dagger swings for 24 frames.
       if (time <= 23)
-        draw[0](canvas, work->sheet + time / 4 % 6 * 960, overflow + 52, 44, 24,
-                40);
+        draw[0](canvas, work->sheet + time / 4 % 6 * PICTURE_BYTES(DAGGER),
+                overflow + 52, 44, DAGGER_WIDTH, DAGGER_HEIGHT);
 
       // Frame 72: it strikes; the screen flashes and 64 shards burst.
       if (time == 24) {

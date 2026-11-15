@@ -287,19 +287,25 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
             gFlurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS) {
           // The arc: six 48x72 cels.
           if (args->side == EFFECT_SIDE_ENEMIES)
-            draw[i & 1](canvas, work->sheet + 0xc80 + step * 3456,
-                        targetPos.x / 2 - 16, targetPos.y - 40, 48, 72);
+            draw[i & 1](canvas,
+                        work->sheet + 0xc80 + step * PICTURE_BYTES(BLUE_ARC),
+                        targetPos.x / 2 - 16, targetPos.y - 40, BLUE_ARC_WIDTH,
+                        BLUE_ARC_HEIGHT);
           else
-            draw[i & 1](canvas, work->sheet + 0xc80 + step * 3456,
-                        targetPos.x / 2 - 32, targetPos.y - 40, 48, 72);
+            draw[i & 1](canvas,
+                        work->sheet + 0xc80 + step * PICTURE_BYTES(BLUE_ARC),
+                        targetPos.x / 2 - 32, targetPos.y - 40, BLUE_ARC_WIDTH,
+                        BLUE_ARC_HEIGHT);
         } else {
           // The wave: six 48x16 cels.
           if (args->side == EFFECT_SIDE_ENEMIES)
-            draw[i & 1](canvas, FLURRY_WAVE_PICTURES + step * 768,
-                        targetPos.x / 2 - 16, actorPos.y - 8, 48, 16);
+            draw[i & 1](
+                canvas, FLURRY_WAVE_PICTURES + step * PICTURE_BYTES(WAVE),
+                targetPos.x / 2 - 16, actorPos.y - 8, WAVE_WIDTH, WAVE_HEIGHT);
           else
-            draw[i & 1](canvas, FLURRY_WAVE_PICTURES + step * 768,
-                        targetPos.x / 2 - 32, actorPos.y - 8, 48, 16);
+            draw[i & 1](
+                canvas, FLURRY_WAVE_PICTURES + step * PICTURE_BYTES(WAVE),
+                targetPos.x / 2 - 32, actorPos.y - 8, WAVE_WIDTH, WAVE_HEIGHT);
         }
       }
       // The hit; the last strike knocks the target back.
@@ -400,9 +406,12 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
           struct Particle *puff = &work->particles[i];
 
           if ((u32)puff->variant <= 23) {
-            draw[0](canvas, FLURRY_SMOKE_PICTURES + (puff->variant / 4) * 0x480,
+            draw[0](canvas,
+                    FLURRY_SMOKE_PICTURES +
+                        (puff->variant / 4) * PICTURE_BYTES(SMOKE_PUFF),
                     Q_16_16_UPPER_HALF(puff->x) - 12,
-                    Q_16_16_UPPER_HALF(puff->y) - 24, 24, 48);
+                    Q_16_16_UPPER_HALF(puff->y) - 24, SMOKE_PUFF_WIDTH,
+                    SMOKE_PUFF_HEIGHT);
             BattleEffectKernels_IntegrateVector2(puff, 62, -px(1) / 16);
           }
           puff->variant++;

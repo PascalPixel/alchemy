@@ -47,7 +47,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   u8 *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
-  DrawRectangle blit2;
+  DrawRectangle alternateBlit;
   DrawRectangle blit;
   s32 frame;
   struct BattleWork *battle;
@@ -573,7 +573,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             BLITTER_ADDITIVE);
-        blit2 = Ram_HeapSlots->ramCodePaired;
+        alternateBlit = Ram_HeapSlots->ramCodePaired;
         i = 0;
         y = (Q_16_16_TO_INT(base.y)) - 32;
         width = 16;
@@ -583,7 +583,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           u8 *cells = work->sheet + 0x2f18 + (f % 6 << 10);
 
           blit(canvas, cells, 30, y, width, height);
-          blit2(canvas, cells, 46, y, width, height);
+          alternateBlit(canvas, cells, 46, y, width, height);
         }
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }

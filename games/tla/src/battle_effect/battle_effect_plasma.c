@@ -92,10 +92,11 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
       if (frame >= start && frame < start + 9) {
         if (frame >= start + 1 && frame < start + 2)
           draw[0](canvas, work->sheet, gPlasma_Columns[i + args->side * 7] - 24,
-                  0, 48, 112);
+                  0, LIGHTNING_PILLAR_WIDTH, LIGHTNING_PILLAR_HEIGHT);
         if (frame >= start + 2 && frame < start + 4)
           draw[0](canvas, work->sheet + 0x1500,
-                  gPlasma_Columns[i + args->side * 7] - 24, 0, 48, 112);
+                  gPlasma_Columns[i + args->side * 7] - 24, 0,
+                  LIGHTNING_PILLAR_WIDTH, LIGHTNING_PILLAR_HEIGHT);
 
         // Throw sparks up from the pillar's base, within 90 degrees of
         // straight up, and shake the camera.
@@ -323,10 +324,10 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
       if (frame >= start && frame < start + 2) {
         if (args->side == EFFECT_SIDE_PARTY)
           draw[0](canvas, work->sheet, originX - GROUP_X(i) + 12, originY - 32,
-                  32, 64);
+                  FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
         else
           draw[0](canvas, work->sheet, originX + GROUP_X(i) - 44, originY - 32,
-                  32, 64);
+                  FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
       }
 
       // The ring of small flashes, each counting down through six cels.
@@ -346,7 +347,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 kind) {
             draw[0](canvas,
                     work->sheet +
                         (gPlasma_FlashPictures[point->variant / 3] << 11),
-                    x - 16, y - 32, 32, 64);
+                    x - 16, y - 32, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           if (point->variant > 0)
             point->variant--;
           else

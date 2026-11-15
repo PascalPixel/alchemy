@@ -618,7 +618,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
             draw[0](canvas,
                     work->sheet + 0x800 +
                         (gCanvasBurst_FlamePictures[flame->variant / 3] << 11),
-                    x - 16, y - 32, 32, 64);
+                    x - 16, y - 32, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           if (flame->variant > 0)
             flame->variant = flame->variant - 1;
           else

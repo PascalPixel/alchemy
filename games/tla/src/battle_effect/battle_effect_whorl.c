@@ -198,7 +198,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           pos[2] = point[2];
           EffectPosition_ProjectPoint(pos, (struct ScreenPoint *)out);
           blit[0](canvas, work->sheet + 0x2000, out[0] / 2 - 10, out[1] - 20,
-                  20, 40);
+                  SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         }
       }
       if (frame > 7) {
@@ -401,7 +401,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
                 blit[0](canvas,
                         (Ram_MapCellBuffer + 0x5000) + ((q->variant / 4) << 11),
                         (s16)(Q_16_16_TO_INT(q->x)) - 16,
-                        (s16)(Q_16_16_TO_INT(q->y)) - 32, 32, 64);
+                        (s16)(Q_16_16_TO_INT(q->y)) - 32, FLASH_BURST_WIDTH,
+                        FLASH_BURST_HEIGHT);
                 BattleEffectKernels_IntegrateVector2(q, 60, -px(1) / 8);
                 q->variant++;
               }

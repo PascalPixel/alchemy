@@ -108,11 +108,13 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
         if (args->variant == EFFECT_VARIANT_BASIC)
           draw[0](canvas,
                   work->sheet + (Random16() & 3) * BOLT_SIZE + BOLT_SHEET,
-                  xOffset + x + (Random16() & 7) - 16, y, 24, 120);
+                  xOffset + x + (Random16() & 7) - 16, y, LIGHTNING_BOLT_WIDTH,
+                  LIGHTNING_BOLT_HEIGHT);
         else
           draw[bolt & 1](
               canvas, work->sheet + (Random16() & 3) * BOLT_SIZE + BOLT_SHEET,
-              xOffset + x + (Random16() & 7) - 16, y, 24, 120);
+              xOffset + x + (Random16() & 7) - 16, y, LIGHTNING_BOLT_WIDTH,
+              LIGHTNING_BOLT_HEIGHT);
 
         // Throw sparks from the bolt's foot.
         for (i = 0; i != SPARK_COUNT; i++) {

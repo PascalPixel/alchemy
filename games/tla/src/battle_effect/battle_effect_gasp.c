@@ -322,8 +322,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         head = from.x + gGaspFamily_StreakSteps[n] * dx / 16;
         tail = from.x + gGaspFamily_StreakSteps[n - 1] * dx / 16;
         for (i = 0, step = head - tail, acc = 0; i != 4; i++, acc += step)
-          draw[0](canvas, FIGURE(work), tail + acc / 3 - 10, from.y - 20, 20,
-                  40);
+          draw[0](canvas, FIGURE(work), tail + acc / 3 - 10, from.y - 20,
+                  SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
       }
       if (frame > 37) {
         if (frame == 38) {
@@ -370,7 +370,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         twice = frame * 2;
         y = y - twice + 88;
       }
-      draw[0](canvas, FIGURE(work), x, y, 20, 40);
+      draw[0](canvas, FIGURE(work), x, y, SMALL_DJINNI_WIDTH,
+              SMALL_DJINNI_HEIGHT);
       BattleEffect_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     } else if (mode == GASP_MODE_REFLUX || mode == GASP_MODE_COUNTER_RUSH) {
       struct ScreenPoint target;
@@ -386,7 +387,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         x -= Q_16_16_TO_INT(Trig_Sin(a) * r * 2);
         y -= (Q_16_16_TO_INT(Trig_Cos(a) * r)) - r;
         if (frame <= 61)
-          draw[0](canvas, FIGURE(work), x, y, 20, 40);
+          draw[0](canvas, FIGURE(work), x, y, SMALL_DJINNI_WIDTH,
+                  SMALL_DJINNI_HEIGHT);
       }
       if (frame == 0)
         Sound_PlayFar(SE_SWIRL);
@@ -462,7 +464,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
       ball->x = x;
       y = pos.y;
       ball->y = y;
-      draw[0](canvas, FIGURE(work), x - 10, y - 20, 20, 40);
+      draw[0](canvas, FIGURE(work), x - 10, y - 20, SMALL_DJINNI_WIDTH,
+              SMALL_DJINNI_HEIGHT);
       if (frame == 0)
         Sound_PlayFar(SE_SPIN);
       if (frame == 55) {
@@ -489,7 +492,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         y = y - twice + 96;
       }
       if (y > -40)
-        draw[0](canvas, FIGURE(work), x, y, 20, 40);
+        draw[0](canvas, FIGURE(work), x, y, SMALL_DJINNI_WIDTH,
+                SMALL_DJINNI_HEIGHT);
     }
 
     // The model layer.
@@ -786,9 +790,10 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         p = &work->particles[i];
 
         if ((u32)p->variant <= 23) {
-          draw[0](canvas, work->sheet + p->variant / 4 * 1152,
+          draw[0](canvas,
+                  work->sheet + p->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
                   Q_16_16_UPPER_HALF(p->x) - 12, Q_16_16_UPPER_HALF(p->y) - 24,
-                  24, 48);
+                  SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           BattleEffectKernels_IntegrateVector2(p, 60, -px(1) / 16);
           p->variant++;
         }

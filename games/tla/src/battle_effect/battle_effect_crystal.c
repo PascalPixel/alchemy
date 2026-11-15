@@ -105,9 +105,11 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
 
         y += frame * 3;
 
-        draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+        draw[0](canvas, work->sheet + 0x65c0, x, y, SMALL_DJINNI_WIDTH,
+                SMALL_DJINNI_HEIGHT);
         if (frame <= 3) {
-          draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+          draw[0](canvas, work->sheet + 0x65c0, x, y, SMALL_DJINNI_WIDTH,
+                  SMALL_DJINNI_HEIGHT);
         }
       }
 

@@ -238,14 +238,17 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
       if (mode == DJINNI_CHARGE_CORE) {
         if (frame <= 73) {
           blit[0](canvas, work->sheet + 0x1000, screen.x / 2 - 10,
-                  screen.y - 20, 20, 40);
+                  screen.y - 20, SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         } else if (frame <= 93) {
-          blit[0](canvas, work->sheet + 0x2000 + ((frame - 74) / 4) * 1600,
-                  screen.x / 2 - 20, screen.y - 20, 40, 40);
+          blit[0](canvas,
+                  work->sheet + 0x2000 +
+                      ((frame - 74) / 4) * PICTURE_BYTES(GLOW_ORB),
+                  screen.x / 2 - 20, screen.y - 20, GLOW_ORB_WIDTH,
+                  GLOW_ORB_HEIGHT);
         }
       } else if (frame <= 22) {
         blit[0](canvas, work->sheet + 0x1000, screen.x / 2 - 10, screen.y - 20,
-                20, 40);
+                SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         if (mode == DJINNI_CHARGE_CANNON && frame > 1) {
           s32 picture = (frame / 4) & 3;
           s32 x;
@@ -297,7 +300,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           picture = 5 - p->variant / 6;
           EffectPosition_ProjectPoint(p, &debris);
           blit[0](canvas, work->sheet + 0x2000 + (picture << 11),
-                  debris.x / 2 - 16, debris.y - 32, 32, 64);
+                  debris.x / 2 - 16, debris.y - 32, FLASH_BURST_WIDTH,
+                  FLASH_BURST_HEIGHT);
           BattleEffectKernels_IntegrateVector3(p, 62, -px(1) / 64);
           p->variant--;
         }

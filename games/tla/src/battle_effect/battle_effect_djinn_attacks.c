@@ -241,15 +241,16 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
       s32 x = (Trig_Sin(angle) * (64 - frame * 2)) >> 17;
       s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * (64 - frame * 2));
 
-      blit[0](canvas, work->sheet, x + 86, y + 28, 20, 40);
+      blit[0](canvas, work->sheet, x + 86, y + 28, SMALL_DJINNI_WIDTH,
+              SMALL_DJINNI_HEIGHT);
     }
 
     // Ball i drops from frame 8 + 4i until it passes y 95 and bursts.
     for (i = 0; i != BALL_COUNT; i++) {
       ball = &work->particles[i];
       if (frame >= i * 4 + 8 && ball->y <= 95) {
-        blit[0](canvas, work->sheet + 0x320, ball->x - 20, ball->y - 32, 40,
-                64);
+        blit[0](canvas, work->sheet + 0x320, ball->x - 20, ball->y - 32,
+                FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
         ball->x -= 6;
         ball->y += 12;
         if (ball->y > 95) {
@@ -388,8 +389,8 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
     for (i = 0, start = 16; i != COLUMN_COUNT; start += 4, i++) {
       column = &work->particles[i];
       if (frame >= start) {
-        draw[0](canvas, work->sheet + 0x9e0, column->x - 17, column->y - 32, 34,
-                65);
+        draw[0](canvas, work->sheet + 0x9e0, column->x - 17, column->y - 32,
+                BLUE_FLAME_SPLASH_WIDTH, BLUE_FLAME_SPLASH_HEIGHT);
         if (frame == start) {
           // The burst: sixteen dots sprayed upward from the column's foot.
           for (j = 0; j != 16; j++) {
@@ -515,8 +516,9 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
 
     // The orb swells, a cel every four frames.
     if (frame <= 23)
-      blit[0](canvas, work->sheet + 0x320 + (frame / 4) * 0x640, 40, 20, 40,
-              40);
+      blit[0](canvas,
+              work->sheet + 0x320 + (frame / 4) * PICTURE_BYTES(GLOW_ORB), 40,
+              20, GLOW_ORB_WIDTH, GLOW_ORB_HEIGHT);
     // The Djinn appears in the orb, then dives down to the left.
     if (frame == 20)
       Iwram_CopyWordsEntry(
@@ -524,9 +526,11 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
           Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
     if (frame >= 20 && frame <= 31) {
       if (frame > 23)
-        draw[1](canvas, work->sheet, 146 - frame * 4, diveY, 20, 40);
+        draw[1](canvas, work->sheet, 146 - frame * 4, diveY, SMALL_DJINNI_WIDTH,
+                SMALL_DJINNI_HEIGHT);
       else
-        blit[0](canvas, work->sheet, 50, 20, 20, 40);
+        blit[0](canvas, work->sheet, 50, 20, SMALL_DJINNI_WIDTH,
+                SMALL_DJINNI_HEIGHT);
     }
     // It lands: the ember sheet replaces the Djinn's.
     if (frame == 32) {

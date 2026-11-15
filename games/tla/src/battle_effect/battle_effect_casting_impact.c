@@ -45,7 +45,7 @@ void BattleEffect_StepPaletteToResource(s32 resourceId) {
 struct SummonWork {
   struct Particle particle[64];
   u8 frames[0x5100];
-  u8 frames2[0x1880];
+  u8 orbPictures[0x1880];
   s32 wave[160];
   u8 unk7300[0x480];
   s32 transferMode;
@@ -1094,11 +1094,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         if (action->side == EFFECT_SIDE_ENEMIES)
           drawFuncs.draw[0](
               screen, work->frames + frame / 2 * PICTURE_BYTES(FIRE_STREAK),
-              base[0] - 28, base[1] - 40, 48, 72);
+              base[0] - 28, base[1] - 40, FIRE_STREAK_WIDTH,
+              FIRE_STREAK_HEIGHT);
         else
           drawFuncs.draw[0](
               screen, work->frames + frame / 2 * PICTURE_BYTES(FIRE_STREAK),
-              base[0] - 20, base[1] - 40, 48, 72);
+              base[0] - 20, base[1] - 40, FIRE_STREAK_WIDTH,
+              FIRE_STREAK_HEIGHT);
       }
       if (kind != CASTING_IMPACT_IMPACT_MORTAL_DANGER &&
           kind != CASTING_IMPACT_IMPACT_TERRA_STRIKE &&
@@ -1251,8 +1253,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           if (frame >= i + 4 && p->variant <= 23) {
             EffectPosition_ProjectPoint(p, point);
             point[0] = point[0] / 2;
-            drawFuncs.draw[0](screen, buffer, point[0] - 20, point[1] - 32, 40,
-                              64);
+            drawFuncs.draw[0](screen, buffer, point[0] - 20, point[1] - 32,
+                              FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
             BattleEffectKernels_IntegrateVector3(p, 64, 0);
             p->variant++;
           }
@@ -1465,7 +1467,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           {
             u8 *o0;
             o0 = buffer + 0x1156 + o1;
-            drawFuncs.draw[0](screen, o0, x, 80, 40, 32);
+            drawFuncs.draw[0](screen, o0, x, 80, TORNADO_STRIP_WIDTH,
+                              TORNADO_STRIP_HEIGHT);
           }
         }
       } else if (kind == CASTING_IMPACT_IMPACT_SCORCH ||

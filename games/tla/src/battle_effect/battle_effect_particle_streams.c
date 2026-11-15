@@ -206,7 +206,8 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
 
           draw[0](canvas, work->sheet + PILLAR_SHEET,
                   gNereidCopy_Columns[k * 2] - 17,
-                  gNereidCopy_Columns[k * 2 + 1] - span - 104, 34, 104);
+                  gNereidCopy_Columns[k * 2 + 1] - span - 104,
+                  FIRE_PILLAR_WIDTH, FIRE_PILLAR_HEIGHT);
           draw[0](canvas, work->sheet + PILLAR_SHEET,
                   gNereidCopy_Columns[k * 2] - 17,
                   gNereidCopy_Columns[k * 2 + 1] - span, 34, span);
@@ -217,7 +218,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
       if (frame <= 95) {
         for (k = 0; k != 5; k++)
           draw[0](canvas, work->sheet, k * 32 + ((frame / 4) & 31) - 32,
-                  120 - rise, 32, 32);
+                  120 - rise, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
       }
 
       // The embers: bigger when falling and toward the end, pulled down by
@@ -1020,7 +1021,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         if (mote->variant >= 0) {
           draw(Ram_MapCellBuffer, work->sheet + (mote->variant << 10),
                Q_16_16_UPPER_HALF(mote->x) - 16,
-               Q_16_16_UPPER_HALF(mote->y) - 16, 32, 32);
+               Q_16_16_UPPER_HALF(mote->y) - 16, WATER_WAVE_WIDTH,
+               WATER_WAVE_HEIGHT);
           mote->x -= direction * 0x14000;
           mote->y -= px(5);
           mote->variant++;

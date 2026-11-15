@@ -229,21 +229,22 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
       // The wave: six cels, two frames each, played backwards.
       if (frame <= 11) {
         if (args->side == EFFECT_SIDE_ENEMIES)
-          draw[0](canvas, work->sheet + (5 - frame / 2) * 0x300,
-                  pos.x + shake - 48, pos.y - 8, 48, 16);
+          draw[0](canvas, work->sheet + (5 - frame / 2) * PICTURE_BYTES(WAVE),
+                  pos.x + shake - 48, pos.y - 8, WAVE_WIDTH, WAVE_HEIGHT);
         else
-          draw[0](canvas, work->sheet + (5 - frame / 2) * 0x300, pos.x + shake,
-                  pos.y - 8, 48, 16);
+          draw[0](canvas, work->sheet + (5 - frame / 2) * PICTURE_BYTES(WAVE),
+                  pos.x + shake, pos.y - 8, WAVE_WIDTH, WAVE_HEIGHT);
       }
     } else if ((u32)kind <= 2 || kind == 5 || kind == 6) {
       // The arc: six cels, two frames each.
       if (frame <= 11) {
         if (args->side == EFFECT_SIDE_ENEMIES)
-          draw[0](canvas, work->sheet + frame / 2 * 0xd80, pos.x + shake - 48,
-                  pos.y - 40, 48, 72);
+          draw[0](canvas, work->sheet + frame / 2 * PICTURE_BYTES(BLUE_ARC),
+                  pos.x + shake - 48, pos.y - 40, BLUE_ARC_WIDTH,
+                  BLUE_ARC_HEIGHT);
         else
-          draw[0](canvas, work->sheet + frame / 2 * 0xd80, pos.x + shake,
-                  pos.y - 40, 48, 72);
+          draw[0](canvas, work->sheet + frame / 2 * PICTURE_BYTES(BLUE_ARC),
+                  pos.x + shake, pos.y - 40, BLUE_ARC_WIDTH, BLUE_ARC_HEIGHT);
       }
     } else if (kind == 3) {
       // The strike: six cels, three frames each, each reaching further.
@@ -266,8 +267,10 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
 
     // The orb flashes on the target, six cels, two frames each.
     if (frame >= 4 && frame <= 15)
-      draw[0](canvas, Ram_MapCellBuffer + (frame - 4) / 2 * 0x780,
-              anchor.x - 16, anchor.y - 24, 40, 48);
+      draw[0](canvas,
+              Ram_MapCellBuffer + (frame - 4) / 2 * PICTURE_BYTES(YELLOW_ORB),
+              anchor.x - 16, anchor.y - 24, YELLOW_ORB_WIDTH,
+              YELLOW_ORB_HEIGHT);
     Transform_Reset();
     Transform_SetLookAt(camera, camera + 3);
     // From frame 4 the sparks fly, two to each particle, through the two

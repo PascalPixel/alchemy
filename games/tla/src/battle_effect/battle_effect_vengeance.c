@@ -1241,7 +1241,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   struct Scale req;
   struct ScreenPoint pos;
   struct ModelTexture texture;
-  struct ModelTexture texture2;
+  struct ModelTexture washTexture;
   struct SpriteView *obj;
   struct Particle *p;
 
@@ -2041,8 +2041,8 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   for (; frame != 60; frame++) {
     s32 s;
     s32 lift;
-    struct RenderModel *model2;
-    void *verts2;
+    struct RenderModel *washModel;
+    void *washVertices;
     s32 d;
 
     if (frame == 16) {
@@ -2093,28 +2093,28 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
         }
       }
     }
-    verts2 = Heap_AllocEwram(512);
-    model2 = Render_AllocateModelList(1);
-    model2->texture = &texture2;
-    texture2.logWidth = 7;
-    texture2.logHeight = 7;
-    model2->mesh = gBattleEffect_LargeSquareMesh;
-    model2->vertices = verts2;
-    model2->kind = 6;
-    texture2.pixels = work->sheet;
+    washVertices = Heap_AllocEwram(512);
+    washModel = Render_AllocateModelList(1);
+    washModel->texture = &washTexture;
+    washTexture.logWidth = 7;
+    washTexture.logHeight = 7;
+    washModel->mesh = gBattleEffect_LargeSquareMesh;
+    washModel->vertices = washVertices;
+    washModel->kind = 6;
+    washTexture.pixels = work->sheet;
     i = 0;
     lift = frame * 8 - 128;
     s = (frame << 13) + -0x20000;
     d = frame - 16;
     for (; i != 3; lift -= 64, s += -0x10000, i++, d -= 8) {
       if (d >= 0) {
-        s32 sh2 = 0;
+        s32 washShade = 0;
 
         if (d > 15) {
-          sh2 = (16 - d) << 3;
+          washShade = (16 - d) << 3;
         }
-        model2->shade = sh2;
-        if (sh2 > -64) {
+        washModel->shade = washShade;
+        if (washShade > -64) {
           Transform_Reset();
           Transform_ApplyTranslation(0, px(112 - lift), 0);
           Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
@@ -2122,14 +2122,14 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
           Transform_ApplyRoll((i << 14) + TRIG_TURN / 8);
           Transform_ApplyPitch(-TRIG_TURN / 16);
           Transform_ApplyYaw(frame << 10);
-          Render_TransformVertices(gBattleEffect_GroundSquareCorners, verts2,
-                                   4);
-          Render_DrawModelList(model2);
+          Render_TransformVertices(gBattleEffect_GroundSquareCorners,
+                                   washVertices, 4);
+          Render_DrawModelList(washModel);
         }
       }
     }
-    Heap_Release(model2);
-    Heap_Release(verts2);
+    Heap_Release(washModel);
+    Heap_Release(washVertices);
     EFFECT_END_FRAME(work);
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);

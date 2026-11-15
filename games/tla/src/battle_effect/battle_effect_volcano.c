@@ -102,19 +102,20 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
           s32 scroll = (frame * 16 + pillar * 25) % 104;
 
           draw[pillar & 1](canvas, work->sheet, screen.x - 17,
-                           screen.y - scroll - 104, 34, 104);
+                           screen.y - scroll - 104, FIRE_PILLAR_WIDTH,
+                           FIRE_PILLAR_HEIGHT);
           draw[pillar & 1](canvas, work->sheet, screen.x - 17,
                            screen.y - scroll, 34, scroll);
           if (frame & 1) {
             draw[0](canvas, work->sheet + 0xdd0, screen.x - 20, screen.y - 24,
-                    20, 37);
-            draw[1](canvas, work->sheet + 0xdd0, screen.x, screen.y - 24, 20,
-                    37);
+                    FIRE_PILLAR_FLAME_WIDTH, FIRE_PILLAR_FLAME_HEIGHT);
+            draw[1](canvas, work->sheet + 0xdd0, screen.x, screen.y - 24,
+                    FIRE_PILLAR_FLAME_WIDTH, FIRE_PILLAR_FLAME_HEIGHT);
           } else {
             draw[0](canvas, work->sheet + 0x10b4, screen.x - 20, screen.y - 24,
-                    20, 37);
-            draw[1](canvas, work->sheet + 0x10b4, screen.x, screen.y - 24, 20,
-                    37);
+                    FIRE_PILLAR_FLAME_WIDTH, FIRE_PILLAR_FLAME_HEIGHT);
+            draw[1](canvas, work->sheet + 0x10b4, screen.x, screen.y - 24,
+                    FIRE_PILLAR_FLAME_WIDTH, FIRE_PILLAR_FLAME_HEIGHT);
           }
         }
 

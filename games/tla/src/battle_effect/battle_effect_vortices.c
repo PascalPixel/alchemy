@@ -226,11 +226,13 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
           40;
       y = Q_16_16_TO_INT(Trig_Cos((frame << 11) + i * (TRIG_TURN / 4)) * 2);
       segment = (frame / 2) % 3;
-      draw[0](canvas, work->sheet + segment * 0xa00 + 0xc56, x, y + 16, 40, 32);
-      draw[0](canvas, work->sheet + segment * 0x500 + 0x2a56, x, y + 48, 40,
-              32);
-      draw[0](canvas, work->sheet + segment * 0xa00 + 0x1156, x, y + 80, 40,
-              32);
+      draw[0](canvas, work->sheet + segment * 0xa00 + 0xc56, x, y + 16,
+              TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
+      draw[0](canvas,
+              work->sheet + segment * PICTURE_BYTES(TORNADO_STRIP) + 0x2a56, x,
+              y + 48, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
+      draw[0](canvas, work->sheet + segment * 0xa00 + 0x1156, x, y + 80,
+              TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
 
       // Its four glints, the second of each pair mirrored; each restarts at
       // a new place when its cels run out.

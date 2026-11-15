@@ -22,13 +22,13 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   s32 frame;
   s32 i;
   /* FAKEMATCH(dead): seven locals nothing uses. */
-  s32 unused1;
-  s32 unused2;
-  s32 unused3;
-  s32 unused4;
-  s32 unused5;
-  s32 unused6;
-  s32 unused7;
+  s32 unusedA;
+  s32 unusedB;
+  s32 unusedC;
+  s32 unusedD;
+  s32 unusedE;
+  s32 unusedF;
+  s32 unusedG;
   struct BattleCamera *camera;
   s16 savedYaw;
   struct Actor *target;

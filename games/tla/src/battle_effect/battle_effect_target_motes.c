@@ -276,8 +276,8 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
                 draw[1](canvas, work->sheet + 0xc00, screen.x - 6,
                         screen.y - 12, 12, 24);
               else if (mode == TARGET_MOTES_HEARTRENDER)
-                draw[1](canvas, work->sheet, screen.x - 11, screen.y - 21, 22,
-                        42);
+                draw[1](canvas, work->sheet, screen.x - 11, screen.y - 21,
+                        HEART_WIDTH, HEART_HEIGHT);
               else
                 draw[(i & 3) != 0](canvas, work->sheet + cel * 1152,
                                    screen.x - 12, screen.y - 24, 24, 48);

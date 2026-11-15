@@ -292,7 +292,7 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
       s32 scroll = (frame * 8) % 104;
 
       draw[0](canvas, work->sheet, position.x / 2 - 17, pillarY - scroll - 96,
-              34, 104);
+              FIRE_PILLAR_WIDTH, FIRE_PILLAR_HEIGHT);
       draw[0](canvas, work->sheet, position.x / 2 - 17, pillarY - scroll + 8,
               34, scroll);
     }
@@ -668,8 +668,9 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
           position->x = x + 64;
           y = Q_16_16_UPPER_HALF(position->y);
           position->y = y + 64;
-          blit[0](canvas, work->sheet + 0x3000 + picture * 0x480, x + 52,
-                  y + 40, 24, 48);
+          blit[0](canvas,
+                  work->sheet + 0x3000 + picture * PICTURE_BYTES(SMOKE_PUFF),
+                  x + 52, y + 40, SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
           BattleEffectKernels_IntegrateVector3(step, 62, -px(1) / 8);
         }
         if (++step->variant == 6) {
@@ -853,7 +854,8 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
       if (frame > 7) {
         y = y - frame * 4 + 32;
       }
-      blit[0](canvas, work->sheet + 0x2000, x, y, 20, 40);
+      blit[0](canvas, work->sheet + 0x2000, x, y, SMALL_DJINNI_WIDTH,
+              SMALL_DJINNI_HEIGHT);
     }
 
     // The funnel's tail trails its head.

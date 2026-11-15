@@ -514,7 +514,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 
     frame = 0;
     if (!(gInput.held & KEY_B) && !(gInput.repeat & KEY_A)) {
-    phase2:
+    secondPhase:
       if (frame == 0) {
         REG_BG2PA = Q_8_8(1);
         *pal = 0x190b;
@@ -1179,7 +1179,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       EFFECT_END_FRAME(work);
       frame++;
       if (frame != 800 && !(gInput.held & KEY_B) && !(gInput.repeat & KEY_A))
-        goto phase2;
+        goto secondPhase;
     }
 
     Task_Remove(BattleEffect_AdvanceScrollOnInterval);
@@ -1484,7 +1484,8 @@ void BattleEffect_RunDaedalusAlt(struct BattleEffectParams *args) {
           if ((u32)mote->variant <= 17) {
             draw[0](canvas, work->sheet + ((mote->variant / 3) << 11),
                     Q_16_16_UPPER_HALF(mote->x) - 16,
-                    Q_16_16_UPPER_HALF(mote->y) - 48, 32, 64);
+                    Q_16_16_UPPER_HALF(mote->y) - 48, FLASH_BURST_WIDTH,
+                    FLASH_BURST_HEIGHT);
             BattleEffectKernels_IntegrateVector2(mote, 62, -px(1) / 32);
             mote->variant++;
           }

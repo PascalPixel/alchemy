@@ -356,15 +356,18 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
       z = (frame - 214) / 4;
       if (z > 2)
         z = 2;
-      draw[1](canvas, work->sheet + z * 9 * 256 + 0x400, 63, 18, 48, 48);
+      draw[1](canvas, work->sheet + z * 9 * 256 + 0x400, 63, 18,
+              WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
     }
     if (frame > 221) {
       s32 z;
 
       z = (frame - 222) / 2 % 4 + 3;
-      draw[0](canvas, work->sheet + z * 9 * 256 + 0x400, 72, 30, 48, 48);
+      draw[0](canvas, work->sheet + z * 9 * 256 + 0x400, 72, 30,
+              WATER_SPLASH_WIDTH, WATER_SPLASH_HEIGHT);
       if (z == 5)
-        draw[0](canvas, work->sheet + 0x1600, 66, 22, 48, 48);
+        draw[0](canvas, work->sheet + 0x1600, 66, 22, WATER_SPLASH_WIDTH,
+                WATER_SPLASH_HEIGHT);
     }
 
     // The spray, rising and falling back into the sea.
@@ -392,8 +395,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 
     // The sea rolls along the bottom.
     for (i = 0; i != 5; i++)
-      draw[1](canvas, work->sheet, i * 32 + ((frame / 4) & 31) - 32, 88, 32,
-              32);
+      draw[1](canvas, work->sheet, i * 32 + ((frame / 4) & 31) - 32, 88,
+              WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
     EFFECT_PRESENT_CANVAS(work);
   } while (++frame != 244 &&
            (frame <= 16 || !(gInput.repeat & (KEY_A | KEY_B))));
@@ -441,11 +444,11 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         s32 wobble = frame * 16 % 104;
 
         draw[1](canvas, work->sheet, pillar->x - 8, pillar->y + wobble - 216,
-                17, 104);
+                BLUE_FLAME_COLUMN_WIDTH, BLUE_FLAME_COLUMN_HEIGHT);
         draw[1](canvas, work->sheet, pillar->x - 8, pillar->y + wobble - 112,
                 17, 104 - wobble);
-        draw[1](canvas, work->sheet + 0x6e8, pillar->x - 17, pillar->y - 65, 34,
-                65);
+        draw[1](canvas, work->sheet + 0x6e8, pillar->x - 17, pillar->y - 65,
+                BLUE_FLAME_SPLASH_WIDTH, BLUE_FLAME_SPLASH_HEIGHT);
         if (pillar->y <= 111)
           pillar->y += 16;
         else

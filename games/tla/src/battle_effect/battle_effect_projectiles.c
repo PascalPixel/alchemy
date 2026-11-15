@@ -278,7 +278,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
       screen[0] = position.x;
       screen[1] = position.y;
       position.x >>= 1;
-      draw[0](canvas, work->sheet, position.x - 10, position.y - 20, 20, 40);
+      draw[0](canvas, work->sheet, position.x - 10, position.y - 20,
+              SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
     }
 
     // At frame 64 it bursts into 64 motes that fall away.
@@ -834,8 +835,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                               BLITTER_ADDITIVE);
         draw[1] = DRAW_ALTERNATE;
         if (frame <= 3)
-          draw[1](canvas, work->sheet + 0x65c0, djinnX, djinnY, 20, 40);
-        draw[1](canvas, work->sheet + 0x65c0, djinnX, djinnY, 20, 40);
+          draw[1](canvas, work->sheet + 0x65c0, djinnX, djinnY,
+                  SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
+        draw[1](canvas, work->sheet + 0x65c0, djinnX, djinnY,
+                SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         RELEASE_DRAW_BLITTER();
       }
 
@@ -1056,7 +1059,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
             draw[0](canvas, work->sheet + 330, pos->x - 15, pos->y - 12, 29,
                     23);
           } else {
-            draw[0](canvas, work->sheet, pos->x - 20, pos->y - 32, 40, 64);
+            draw[0](canvas, work->sheet, pos->x - 20, pos->y - 32,
+                    FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
           }
         }
       }
@@ -1183,9 +1187,11 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           struct Particle *p = &PARTICLES[PTCL_STREAKS + i];
 
           if ((u32)p->variant <= 23) {
-            draw[0](canvas, work->sheet + 0x22 + p->variant / 4 * 1152,
-                    Q_16_16_UPPER_HALF(p->x) - 12,
-                    Q_16_16_UPPER_HALF(p->y) - 24, 24, 48);
+            draw[0](
+                canvas,
+                work->sheet + 0x22 + p->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
+                Q_16_16_UPPER_HALF(p->x) - 12, Q_16_16_UPPER_HALF(p->y) - 24,
+                SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
             BattleEffectKernels_IntegrateVector2(p, 62, -px(1) / 64);
             p->variant++;
           }

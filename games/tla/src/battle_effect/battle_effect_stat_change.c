@@ -426,8 +426,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           s32 cel = (frame - member * 8 - 80) / 4 % 7;
 
           LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
-          draw[0](canvas, work->sheet + cel * 960 + SERIES_B_PICTURE,
-                  screen.x - 12, screen.y - 20, 24, 40);
+          draw[0](canvas,
+                  work->sheet + cel * PICTURE_BYTES(DAGGER) + SERIES_B_PICTURE,
+                  screen.x - 12, screen.y - 20, DAGGER_WIDTH, DAGGER_HEIGHT);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       } else if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH ||
@@ -437,8 +438,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           s32 cel = (frame - member * 8 - 80) / 4 % 6;
 
           LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
-          draw[0](canvas, work->sheet + cel * 2048 + SERIES_B_PICTURE,
-                  screen.x - 16, screen.y - 32, 32, 64);
+          draw[0](canvas,
+                  work->sheet + cel * PICTURE_BYTES(VIOLET_STREAK) +
+                      SERIES_B_PICTURE,
+                  screen.x - 16, screen.y - 32, VIOLET_STREAK_WIDTH,
+                  VIOLET_STREAK_HEIGHT);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       } else if (mode == STAT_BOOST_ZEPHYR || mode == STAT_BOOST_COAL) {
@@ -456,8 +460,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
                                     BLITTER_MAX);
           picture = work->sheet + cel * 2048 + SERIES_B_PICTURE;
           draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-          draw[0](canvas, picture, screen.x - 32, screen.y - 24, 64, 32);
-          draw[1](canvas, picture, screen.x - 32, screen.y + 8, 64, 32);
+          draw[0](canvas, picture, screen.x - 32, screen.y - 24, WISP_WIDTH,
+                  WISP_HEIGHT);
+          draw[1](canvas, picture, screen.x - 32, screen.y + 8, WISP_WIDTH,
+                  WISP_HEIGHT);
           EFFECT_RELEASE_BLITTERS();
         }
       } else {

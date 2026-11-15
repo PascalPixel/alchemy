@@ -155,8 +155,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
             draw[0](canvas, work->sheet + 0x3e80 + (((frame + i) / 4 % 6) << 8),
                     sx - 8, sy - 8, 16, 16);
           else
-            draw[0](canvas, work->sheet + 0x3e80 + i % 3 * 576, sx - 12,
-                    sy - 12, 24, 24);
+            draw[0](canvas, work->sheet + 0x3e80 + i % 3 * PICTURE_BYTES(SKULL),
+                    sx - 12, sy - 12, SKULL_WIDTH, SKULL_HEIGHT);
         }
       }
     }

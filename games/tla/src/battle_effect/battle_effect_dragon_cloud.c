@@ -302,7 +302,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
               cell = step->variant / 4;
             if (cell <= 5) {
               draw[args->variant](canvas, Ram_MapCellBuffer + (cell << 11),
-                                  position.x - 16, position.y - 40, 32, 64);
+                                  position.x - 16, position.y - 40,
+                                  FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
               step->variant++;
               BattleEffectKernels_IntegrateVector3(step, 62, px(1) / 8);
             }

@@ -79,9 +79,11 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       // Never true in 64 frames.
       if (frame > 69)
         y = (y - frame * 2) + 138;
-      blit[1](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+      blit[1](canvas, work->sheet + 0x65c0, x, y, SMALL_DJINNI_WIDTH,
+              SMALL_DJINNI_HEIGHT);
       if (frame <= 3)
-        blit[1](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+        blit[1](canvas, work->sheet + 0x65c0, x, y, SMALL_DJINNI_WIDTH,
+                SMALL_DJINNI_HEIGHT);
     }
 
     // Chip i flies from frame 4 + i / 4, through the two blitters in turn.
@@ -118,11 +120,11 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
     if (args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != 5; i++)
         blit[0](canvas, work->sheet, (i << 5) - (frame / 4 & 31), 120 - rise,
-                32, 32);
+                WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
     } else {
       for (i = 0; i != 5; i++)
         blit[0](canvas, work->sheet, ((i << 5) + (frame / 4 & 31)) - 32,
-                120 - rise, 32, 32);
+                120 - rise, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
     }
 
     BattleCamera_Shake(4, 8);
@@ -239,7 +241,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
           ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
               canvas, work->sheet + 0x65c0, x, y, 20, 40);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-        draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+        draw[0](canvas, work->sheet + 0x65c0, x, y, SMALL_DJINNI_WIDTH,
+                SMALL_DJINNI_HEIGHT);
       }
 
       // Every other frame each chip takes a new shape (3 to 8) and flip.

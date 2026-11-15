@@ -375,9 +375,11 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
         if (frame > 32)
           y = y - frame * 2 + 64;
-        blit[0](canvas, work->sheet + DJINNI_SHEET, x, y, 40, 40);
+        blit[0](canvas, work->sheet + DJINNI_SHEET, x, y, DJINNI_WIDTH,
+                DJINNI_HEIGHT);
         if (frame <= 3)
-          draw[1](canvas, work->sheet + DJINNI_SHEET, x, y, 40, 40);
+          draw[1](canvas, work->sheet + DJINNI_SHEET, x, y, DJINNI_WIDTH,
+                  DJINNI_HEIGHT);
       } else {
         s32 x =
             (Q_16_16_TO_INT(Trig_Sin(frame << 11) * 10)) + origin[0] / 2 - 10;
@@ -385,9 +387,11 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
         if (frame > 32)
           y = y - frame * 2 + 64;
-        blit[0](canvas, work->sheet + DJINNI_SHEET, x, y, 20, 40);
+        blit[0](canvas, work->sheet + DJINNI_SHEET, x, y, SMALL_DJINNI_WIDTH,
+                SMALL_DJINNI_HEIGHT);
         if (frame <= 3)
-          draw[1](canvas, work->sheet + DJINNI_SHEET, x, y, 20, 40);
+          draw[1](canvas, work->sheet + DJINNI_SHEET, x, y, SMALL_DJINNI_WIDTH,
+                  SMALL_DJINNI_HEIGHT);
       }
     }
 

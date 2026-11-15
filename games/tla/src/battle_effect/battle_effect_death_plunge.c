@@ -121,7 +121,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       EffectPosition_ProjectPoint(point, &screen);
       screen.x >>= 1;
       if (frame == 54 || frame == 55)
-        draw[0](canvas, work->sheet, screen.x - 16, screen.y - 16, 32, 64);
+        draw[0](canvas, work->sheet, screen.x - 16, screen.y - 16,
+                FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
       if (frame >= 56 && frame <= 67) {
         for (i = 0; i != 16; i++) {
           s32 angle = i << 12;
@@ -160,7 +161,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
         if (spark->variant >= 0 && spark->variant <= 23) {
           draw[0](canvas, work->sheet + ((spark->variant / 4) << 11),
                   Q_16_16_UPPER_HALF(spark->x) - 16,
-                  Q_16_16_UPPER_HALF(spark->y) - 32, 32, 64);
+                  Q_16_16_UPPER_HALF(spark->y) - 32, FLASH_BURST_WIDTH,
+                  FLASH_BURST_HEIGHT);
           BattleEffectKernels_IntegrateVector2(spark, 62, -px(1) / 8);
         }
         spark->variant++;

@@ -7,16 +7,10 @@
 
 struct StripQuad;
 
-/// Two corners of a wing, each signed x, y and z.
+/// Two corners of a wing: its upper edge, then its lower.
 struct WingVertex {
-  s8 x;
-  s8 y;
-  s8 z;
-  s8 unused;
-  s8 x2;
-  s8 y2;
-  s8 z2;
-  s8 unused2;
+  struct ModelVertex upper;
+  struct ModelVertex lower;
 };
 
 #define SCRATCH (Ram_MapCellBuffer + 0x4000)
@@ -257,13 +251,13 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           p->variant = 0;
         }
         for (i = 0; i != 32; i++) {
-          Data_020104f0[i].x = Q_16_16_TO_INT(-(Trig_Cos(i * 992) << 6));
-          Data_020104f0[i].y = Q_16_16_TO_INT(-(Trig_Sin(i * 992) * 18));
-          Data_020104f0[i].x2 = i * 4 - 64;
-          Data_020104f0[i].z = 0;
-          Data_020104f0[i].x2 = Q_16_16_TO_INT(-(Trig_Cos(i * 992) << 6));
-          Data_020104f0[i].y2 = (u32)(Trig_Sin(i * 992) * 9) >> 15;
-          Data_020104f0[i].z2 = 0;
+          Data_020104f0[i].upper.x = Q_16_16_TO_INT(-(Trig_Cos(i * 992) << 6));
+          Data_020104f0[i].upper.y = Q_16_16_TO_INT(-(Trig_Sin(i * 992) * 18));
+          Data_020104f0[i].lower.x = i * 4 - 64;
+          Data_020104f0[i].upper.z = 0;
+          Data_020104f0[i].lower.x = Q_16_16_TO_INT(-(Trig_Cos(i * 992) << 6));
+          Data_020104f0[i].lower.y = (u32)(Trig_Sin(i * 992) * 9) >> 15;
+          Data_020104f0[i].lower.z = 0;
         }
       }
       if ((u32)frame <= 31) {
@@ -399,14 +393,14 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               morph = next;
             }
             for (i = 0; i != 32; i++) {
-              wing[i].y = -(gHaures_WingShapes[i + a * 32] +
-                            n *
-                                (gHaures_WingShapes[i + b * 32] -
-                                 gHaures_WingShapes[i + a * 32]) /
-                                gHaures_WingMorphSteps[a]);
+              wing[i].upper.y = -(gHaures_WingShapes[i + a * 32] +
+                                  n *
+                                      (gHaures_WingShapes[i + b * 32] -
+                                       gHaures_WingShapes[i + a * 32]) /
+                                      gHaures_WingMorphSteps[a]);
             }
             for (i = 0; i != 32; i++) {
-              Data_020104f0[i].x = i * 4 - 64;
+              Data_020104f0[i].upper.x = i * 4 - 64;
             }
           }
           model->flags = 0;

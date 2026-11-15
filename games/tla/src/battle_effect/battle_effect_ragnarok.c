@@ -167,7 +167,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
         if (frame < start + 2)
           draw[0](canvas, work->sheet + FLASH_SHEET,
                   gRagnarok_StrikeColumns[col + args->side * 3] + baseX - 16,
-                  56, 32, 64);
+                  56, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
         i = 0;
         do {
           struct Particle *flash =
@@ -184,7 +184,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
             draw[0](canvas,
                     work->sheet + (gRagnarok_FlashPictures[life / 3] << 11) +
                         FLASH_SHEET,
-                    x - 16, y + 56, 32, 64);
+                    x - 16, y + 56, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           life = flash->variant;
           flash->variant = life > 0 ? life - 1 : -1;
           i++;
@@ -419,7 +419,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           draw[0](canvas,
                   work->sheet + (gTitanBlade_FlashPictures[life / 3] << 11) +
                       FLASH_SHEET,
-                  x - 16, y + 48, 32, 64);
+                  x - 16, y + 48, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
         life = flash->variant;
         flash->variant = life > 0 ? life - 1 : -1;
         i++;

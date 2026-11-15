@@ -167,7 +167,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       if (frame <= 95) {
         for (k = 0; k != 5; k++)
           draw[0](canvas, work->sheet, k * 32 + ((frame / 4) & 31) - 32,
-                  120 - rise, 32, 32);
+                  120 - rise, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
       }
 
       // Drops swell as they clear: they fall under gravity until frame 80, then

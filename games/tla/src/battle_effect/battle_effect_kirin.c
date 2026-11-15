@@ -204,7 +204,7 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
       y = 0;
       do {
         blit(canvas, work->sheet + (Random16() & 3) * KIRIN_BLOB_BYTES,
-             120 - slide, y, 48, 32);
+             120 - slide, y, FIRE_BLOB_WIDTH, FIRE_BLOB_HEIGHT);
         i++;
         y += 18;
       } while (i != 6);
@@ -333,7 +333,8 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
         y = -8;
         do {
           blit(canvas, work->sheet + (Random16() & 3) * KIRIN_BLOB_BYTES,
-               jitterRow[i] - slide + 120, y, 48, 32);
+               jitterRow[i] - slide + 120, y, FIRE_BLOB_WIDTH,
+               FIRE_BLOB_HEIGHT);
           i++;
           y += 8;
         } while (i != 16);

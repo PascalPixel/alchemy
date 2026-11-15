@@ -1085,9 +1085,11 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
 
       for (i = 0, puff = work->particles; i != 24; i++, puff++) {
         if (frame >= i / 8 && puff->variant <= 23) {
-          draw[0](canvas, work->sheet + (puff->variant / 4) * 0x480,
+          draw[0](canvas,
+                  work->sheet + (puff->variant / 4) * PICTURE_BYTES(SMOKE_PUFF),
                   Q_16_16_UPPER_HALF(puff->x) - 12,
-                  Q_16_16_UPPER_HALF(puff->y) - 24, 24, 48);
+                  Q_16_16_UPPER_HALF(puff->y) - 24, SMOKE_PUFF_WIDTH,
+                  SMOKE_PUFF_HEIGHT);
           BattleEffectKernels_IntegrateVector2(puff, 48, -px(1) / 8);
           puff->variant++;
         }

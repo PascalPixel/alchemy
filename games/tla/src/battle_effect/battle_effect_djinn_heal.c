@@ -130,9 +130,11 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
       y = (Q_16_16_TO_INT(Trig_Cos(frame << 11) * 4)) + anchor[1] - 24;
       if (frame > 32)
         y = y - frame * 4 + 128;
-      draws[0](canvas, work->sheet + SHEET_DJINN, x, y, 40, 40);
+      draws[0](canvas, work->sheet + SHEET_DJINN, x, y, DJINNI_WIDTH,
+               DJINNI_HEIGHT);
       if (frame <= 3)
-        draws[0](canvas, work->sheet + SHEET_DJINN, x, y, 40, 40);
+        draws[0](canvas, work->sheet + SHEET_DJINN, x, y, DJINNI_WIDTH,
+                 DJINNI_HEIGHT);
       // DEAD: frame never passes 63 here; the source keeps the test.
       if (frame <= 79) {
         s32 angle;

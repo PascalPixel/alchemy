@@ -212,8 +212,10 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       } else {
         x = x / 2 - 20;
       }
-      blit[0](canvas, work->sheet + 0x65c0, x - 10, y - 48, 20, 40);
-      blit[0](canvas, work->sheet + 0x65c0, x - 10, y - 48, 20, 40);
+      blit[0](canvas, work->sheet + 0x65c0, x - 10, y - 48, SMALL_DJINNI_WIDTH,
+              SMALL_DJINNI_HEIGHT);
+      blit[0](canvas, work->sheet + 0x65c0, x - 10, y - 48, SMALL_DJINNI_WIDTH,
+              SMALL_DJINNI_HEIGHT);
     }
 
     // The battlefield peels up into a dome.

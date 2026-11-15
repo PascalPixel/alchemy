@@ -368,7 +368,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
           blit[0](canvas,
                   Ram_MapCellBuffer + 0x5000 + ((drawn->variant / 4) << 11),
                   Q_16_16_UPPER_HALF(drawn->x) - 16,
-                  Q_16_16_UPPER_HALF(drawn->y) - 32, 32, 64);
+                  Q_16_16_UPPER_HALF(drawn->y) - 32, FLASH_BURST_WIDTH,
+                  FLASH_BURST_HEIGHT);
           BattleEffectKernels_IntegrateVector2(drawn, 62, -px(1) / 4);
         }
         drawn->variant++;
@@ -525,14 +526,15 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
 
     // Frames 2-15: a flash, then sixteen flames ringing the caster.
     if ((u32)(frame - 2) <= 1)
-      draw[0](canvas, work->sheet, pos.x - 16, pos.y - 64, 32, 64);
+      draw[0](canvas, work->sheet, pos.x - 16, pos.y - 64, FLASH_BURST_WIDTH,
+              FLASH_BURST_HEIGHT);
     if ((u32)(frame - 4) <= 11) {
       for (i = 0; i != 16; i++) {
         s32 x = pos.x + (Q_16_16_TO_INT(frame * Trig_Sin(i << 12)));
         s32 y = pos.y + (Q_16_16_TO_INT(frame * Trig_Cos(i << 12))) - frame;
 
         draw[0](canvas, work->sheet + ((frame - 4) / 2 << 11), x - 16, y - 64,
-                32, 64);
+                FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
       }
     }
 
@@ -620,7 +622,8 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
       if (mode == LEAPING_STRIKE_PLANET_DIVER) {
         // The fireball over the caster while it is in the air.
         if (caster->y > 0)
-          draw[0](canvas, work->sheet + 0x3000, pos.x - 20, pos.y - 52, 40, 64);
+          draw[0](canvas, work->sheet + 0x3000, pos.x - 20, pos.y - 52,
+                  FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
       } else {
         struct RenderModel *model;
         void *projected;

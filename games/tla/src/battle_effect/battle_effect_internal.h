@@ -103,11 +103,11 @@ struct StreakPoint {
 struct Streak {
   s32 head;
   s32 tail;
-  s32 unused08;
+  s32 unusedA;
   s32 pitch;
   s32 yaw;
   s32 roll;
-  s32 unused18;
+  s32 unusedB;
 };
 
 /// The backdrop's work, in place of the battle effect work.
@@ -323,6 +323,10 @@ enum RedCrescentPicture {
       PICTURE_BYTES(RED_CRESCENT_FADE_B),
   RED_CRESCENT_FADE_D = RED_CRESCENT_FADE_C + PICTURE_BYTES(RED_CRESCENT_FADE_C)
 };
+
+/// The slash pictures as wide and tall as the canvas's view: StarBurstSheet's,
+/// CrescentSheet's and the reveal masks.
+#define SLASH_PICTURE_SIZE 120
 
 /// Closing bolts and lightning columns use the same 24x120 pictures.
 #define LIGHTNING_BOLT_WIDTH 24

@@ -226,7 +226,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
             EffectPosition_ProjectPoint(&burst->x, &screen);
             screen.x >>= 1;
             draw[0](canvas, work->sheet + 0x800 + (cel << 11), screen.x - 16,
-                    screen.y - 32, 32, 64);
+                    screen.y - 32, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
             BattleEffectKernels_IntegrateVector3(burst, 60, px(1) / 8);
             burst->variant++;
           }

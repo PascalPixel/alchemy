@@ -959,7 +959,8 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
         blit[0](canvas,
                 work->sheet + SPLASH_OFFSET + splash->variant / 4 * SPLASH_SIZE,
                 Q_16_16_UPPER_HALF(splash->x) - 12,
-                Q_16_16_UPPER_HALF(splash->y) - 32, 24, 48);
+                Q_16_16_UPPER_HALF(splash->y) - 32, SMOKE_PUFF_WIDTH,
+                SMOKE_PUFF_HEIGHT);
         BattleEffectKernels_IntegrateVector2(splash, 56, -px(1) / 4);
         splash->variant++;
       }

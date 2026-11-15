@@ -350,7 +350,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             blit[0](canvas, work->sheet, 36, 0, 48, pillarY);
           }
           if (frame >= j * 128 + 12 && frame < start + 8) {
-            blit[0](canvas, work->sheet + 0x1500, 36, 0, 48, 112);
+            blit[0](canvas, work->sheet + 0x1500, 36, 0, LIGHTNING_PILLAR_WIDTH,
+                    LIGHTNING_PILLAR_HEIGHT);
           }
           if (frame == start + 2) {
             spawned = 0;

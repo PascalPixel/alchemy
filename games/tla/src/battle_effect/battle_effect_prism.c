@@ -107,7 +107,8 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
         } else if (frame >= cry->variant) {
           // A falling crystal (32x64), until it reaches the ground.
           draw[i & 1](canvas, work->sheet, Q_16_16_UPPER_HALF(cry->x) - 16,
-                      Q_16_16_UPPER_HALF(cry->y), 32, 64);
+                      Q_16_16_UPPER_HALF(cry->y), CRYSTAL_WIDTH,
+                      CRYSTAL_HEIGHT);
           BattleEffectKernels_IntegrateVector2(cry, 64, px(1));
           if (cry->y > GROUND_Y) {
             cry->z = SHATTERED;

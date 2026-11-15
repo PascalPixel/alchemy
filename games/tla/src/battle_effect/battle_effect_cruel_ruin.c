@@ -58,7 +58,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   s32 py;
   s32 x1;
   s32 left;
-  s32 left2;
+  s32 spanLeft;
   s32 y1;
   s32 x2;
   s32 y2;
@@ -248,7 +248,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 
           x2 = py + cx;
           x1 = cx - py;
-          left2 = x1;
+          spanLeft = x1;
           y2 = px + cy;
           y1 = cy - px;
           if (x1 < 0)
@@ -263,7 +263,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
           PLOT(x2, y1);
           PLOT(x1, y2);
           PLOT(x1, y1);
-          x1 = left2 + 1;
+          x1 = spanLeft + 1;
           x2 = py + 97;
           if (x1 < 0)
             x1 = 0;
@@ -732,9 +732,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   struct ScreenPoint pos;
   s32 place[4];
   struct ModelTexture texture;
-  struct ModelTexture texture2;
+  struct ModelTexture blastTexture;
   struct Scale req;
-  struct ModelTexture texture3;
+  struct ModelTexture burstTexture;
   u8 *canvas;
   struct BattleEffectWork *work;
   DrawRectangle draw[2];
@@ -1306,12 +1306,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
       model = Render_AllocateModelList(1);
       {
         s32 zero = 0;
-        texture2.logWidth = 5;
-        texture2.logHeight = 2;
-        texture2.pixels = work->sheet + 0x3648;
+        blastTexture.logWidth = 5;
+        blastTexture.logHeight = 2;
+        blastTexture.pixels = work->sheet + 0x3648;
         model->shade = zero;
         model->mesh = gBattleEffect_SmallSquareMesh;
-        model->texture = &texture2;
+        model->texture = &blastTexture;
         model->vertices = verts;
         model->kind = 6;
         for (i = zero; i != 6; i++) {
@@ -1396,9 +1396,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
       }
       {
         s32 six = 6;
-        texture2.logWidth = six;
-        texture2.logHeight = 5;
-        texture2.pixels = work->sheet + 0x36c8;
+        blastTexture.logWidth = six;
+        blastTexture.logHeight = 5;
+        blastTexture.pixels = work->sheet + 0x36c8;
         Render_BuildQuadStrip(strip, 2, 32, 32);
         model->mesh = strip;
         model->kind = six;
@@ -1655,12 +1655,12 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         model = Render_AllocateModelList(1);
         {
           s32 zero = 0;
-          texture3.logWidth = 5;
-          texture3.logHeight = 2;
-          texture3.pixels = work->sheet + 0x3840;
+          burstTexture.logWidth = 5;
+          burstTexture.logHeight = 2;
+          burstTexture.pixels = work->sheet + 0x3840;
           model->shade = zero;
           model->mesh = gBattleEffect_SmallSquareMesh;
-          model->texture = &texture3;
+          model->texture = &burstTexture;
           model->vertices = verts;
           model->kind = 6;
         }

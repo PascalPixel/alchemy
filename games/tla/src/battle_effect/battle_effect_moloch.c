@@ -178,10 +178,12 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
           flame = &work->particles[i];
           if (flame->velocityZ != 2) {
             if ((u32)flame->variant <= 23) {
-              draw[flame->velocityZ](canvas,
-                                     work->sheet + (flame->variant >> 2) * 2048,
-                                     Q_16_16_UPPER_HALF(flame->x),
-                                     Q_16_16_UPPER_HALF(flame->y), 32, 64);
+              draw[flame->velocityZ](
+                  canvas,
+                  work->sheet +
+                      (flame->variant >> 2) * PICTURE_BYTES(FLASH_BURST),
+                  Q_16_16_UPPER_HALF(flame->x), Q_16_16_UPPER_HALF(flame->y),
+                  FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
               flame->x += flame->velocityX;
               flame->y += flame->velocityY;
             }
@@ -212,9 +214,12 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
           for (i = 0; i != 16; i++) {
             flame = &work->particles[24 + i];
             if ((u32)flame->variant <= 23) {
-              draw[0](canvas, work->sheet + (flame->variant >> 2) * 2048,
+              draw[0](canvas,
+                      work->sheet +
+                          (flame->variant >> 2) * PICTURE_BYTES(FLASH_BURST),
                       Q_16_16_UPPER_HALF(flame->x),
-                      Q_16_16_UPPER_HALF(flame->y), 32, 64);
+                      Q_16_16_UPPER_HALF(flame->y), FLASH_BURST_WIDTH,
+                      FLASH_BURST_HEIGHT);
               flame->x += flame->velocityX;
               flame->y += flame->velocityY;
             }
@@ -598,7 +603,7 @@ extern const struct FourSpans gIris_RightStripSpans;
     Iwram_FillWords(dest, size, value);                                        \
   } while (0)
 
-#define DECODE_01(src, dest)                                                   \
+#define DECOMPRESS_IN_BLOCK(src, dest)                                         \
   do {                                                                         \
     Decompress_TaggedLz(src, dest);                                            \
   } while (0)
@@ -915,7 +920,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   struct Scale scale;
   struct Scale shrink;
   struct ModelTexture texture;
-  struct ModelTexture texture2;
+  struct ModelTexture coneTexture;
   s32 lift;
   s32 i;
   s32 j;
@@ -1192,7 +1197,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       colors = Resource_GetTableEntry((s32)&ResourceId_PinkPetalsTiles);
       Iwram_FillWords((void *)(PLTT + 0x3e0), 32, -1);
       colors += 32;
-      DECODE_01(colors, work->sheet);
+      DECOMPRESS_IN_BLOCK(colors, work->sheet);
       table = gVramCacheEntries;
       for (i = 0; i != 15; i++) {
         struct IrisSprite *obj =
@@ -1940,9 +1945,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       s32 grow[3];
       s32 s;
 
-      texture2.logWidth = 5;
-      texture2.logHeight = 5;
-      texture2.pixels = work->sheet + 0x5810;
+      coneTexture.logWidth = 5;
+      coneTexture.logHeight = 5;
+      coneTexture.pixels = work->sheet + 0x5810;
       Transform_ResetMatrix();
       place[0] = px(32);
       place[1] = -px(24);
@@ -1957,7 +1962,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       Transform_ApplyScale(grow);
       model->kind = 4;
       model->mesh = gIris_ConeMesh;
-      model->texture = &texture2;
+      model->texture = &coneTexture;
       model->vertices = verts;
       Render_TransformVertices(gIris_ConeCorners, verts, 8);
       Render_DrawModelList(model);
@@ -2827,11 +2832,11 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 
 /// Copies the ARM kernel at Data_081380ac into a heap block (DMA 3, words),
 /// runs it there with the caller's two arguments and frees the block.
-void RamCode_RunKernel0(s32 arg0, s32 arg1) {
+void RamCode_RunKernel0(s32 first, s32 second) {
   void (*routine)(s32, s32);
 
   RamCode_Load(routine, Data_081380ac, Data_081380acCodeSize);
-  routine(arg0, arg1);
+  routine(first, second);
   Heap_Release(routine);
 }
 
@@ -3034,7 +3039,7 @@ void Render_DrawModelList(struct RenderModel *model) {
 #undef PLTT
 #undef STREAK
 #undef FADE_PLTT
-#undef DECODE_01
+#undef DECOMPRESS_IN_BLOCK
 #undef XOR_SWAP
 #undef FILL_SPAN
 #undef DIFF_ABS

@@ -865,8 +865,8 @@ void ApojiiIslands_DrawCellMarkers(void) {
   s32 *view = &map->viewX;
   s32 viewX = view[0] & 0xffff0000;
   s32 viewZ = view[1] & 0xffff0000;
-  // DEAD: viewY is subtracted from both height and z and cancels in dy; the
-  // source keeps its load and a store to the stack that nothing reads.
+  // DEAD: viewY, subtracted from both height and z, cancels in dy; the ROM
+  // keeps its load and its store to the stack.
   s32 viewY = map->origin[1];
   struct CellMarkers *table = &gApojiiIslands_CellMarkers;
   struct VramCacheEntry *entry = &gVramCacheEntries[table->block];

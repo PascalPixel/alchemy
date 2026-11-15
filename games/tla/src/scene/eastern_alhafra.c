@@ -143,22 +143,20 @@ struct Actor;
 struct RockSprite;
 struct Vector3;
 
-struct PushSlide {
-  s32 value[6];
+/// A push: where the pushed actor ends up, which footprint it has and which
+/// actor it is.
+struct PushTarget {
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y;
+  s32 z;
+  s32 footprint; ///< index into the footprint table
+  s32 id;
+  void (*callback)(void);
 };
 
 struct EasternAlhafraSparkWork {
   u8 unk0000[0x1604];
   s16 resource;
-};
-
-struct PushState {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 kind;
-  s32 number;
-  s32 unk14;
 };
 
 void EasternAlhafra_PlaceClearedDebris(void);
@@ -428,17 +426,12 @@ void EasternAlhafra_FinishPushingLastRock(s32 mode, s32 id) {
 }
 
 void EasternAlhafra_OverhearWorkers(void);
-/* VIEW(s0514): routine PushTarget_Push as void PushTarget_Push(struct
- * PushSlide); eastern_alhafra has void PushTarget_Push(struct DoorPlan); tried
- * as the definition's void PushTarget_Push(struct PushTarget target), which the
- * object already declares, EasternAlhafra_RollLog moves: 1 of 198 instructions
- * in tla-ja. */
-extern void PushTarget_Push__log(struct PushSlide) __asm__("PushTarget_Push");
+void PushTarget_Push(struct PushTarget target);
 
 void EasternAlhafra_RollLog(void) {
   struct Actor *log;
   struct Actor *lastRock;
-  struct PushSlide unk;
+  struct PushTarget slide;
   s32 facing;
   s32 i;
 
@@ -448,15 +441,15 @@ void EasternAlhafra_RollLog(void) {
       (Actor_GetById(gMainRoutineWork.leaderActorId)->facing + 0x2000) & 0xc000;
   if (lastRock != NULL && Event_GetFlag(FLAG_LAST_ROCK_SUNK) == 0)
     MapGrid_SetCellBehavior(lastRock->x.fixed, lastRock->z.fixed, 2, 255);
-  if (PushTarget_FindSlide(&unk) != 0) {
+  if (PushTarget_FindSlide(&slide) != 0) {
     if (Event_GetFlag(FLAG_LAST_ROCK_SUNK) == 0 || facing == FACING_NORTH) {
-      PushTarget_Push__log(unk);
+      PushTarget_Push(slide);
     } else {
       Event_SetFlag(FLAG_LOG_ROLLED);
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       FieldCamera_MoveTo(336, CAMERA_KEEP, 560, 1);
-      PushTarget_Push__log(unk);
+      PushTarget_Push(slide);
       MapGrid_SetCellBehavior(log->x.fixed - px(24), log->z.fixed, 0, 0);
       MapGrid_SetCellBehavior(log->x.fixed + px(8), log->z.fixed, 0, 0);
       MapGrid_SetCellBehavior(log->x.fixed - px(24), log->z.fixed, 2, 0);
@@ -2460,15 +2453,15 @@ FieldActor_CheckMovementCollision(struct Actor *actor,
 /// until a cell of it is blocked (MapGrid_CheckCollision returns 2); with at
 /// least one free step it records the end position in the push state and
 /// returns 1, else 0. The actor stays on layer 2 while it is measured.
-s32 PushTarget_FindSlide(struct PushState *push) {
+s32 PushTarget_FindSlide(struct PushTarget *push) {
   struct Actor *actor;
   struct FieldPosition cell;
   s32 direction, kind, width, height, dx, dz, steps, i, j, offset;
   u8 *layer;
 
-  actor = PushTarget_FindAhead(&direction, &push->number, &push->kind);
+  actor = PushTarget_FindAhead(&direction, &push->id, &push->footprint);
   if (actor != 0) {
-    kind = push->kind;
+    kind = push->footprint;
     width =
         (Abs(gPushFootprints[kind][0]) + Abs(gPushFootprints[kind][2])) >> 4;
     height =
@@ -2476,7 +2469,7 @@ s32 PushTarget_FindSlide(struct PushState *push) {
     offset = gPushLeaderSteps[direction];
     dx = offset & FIELD_PIXEL_MASK;
     dz = px(offset);
-    push->unk14 = 0;
+    push->callback = 0;
     steps = 0;
     layer = &actor->layer;
     *layer = 2;
@@ -2518,15 +2511,6 @@ s32 PushTarget_FindSlide(struct PushState *push) {
 #define PIXEL_PART(v) (((s16 *)&(v))[1])
 
 #include "shared/push_target_find_ahead.h"
-
-struct PushTarget {
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y;
-  s32 z;
-  s32 footprint; ///< index into the footprint table
-  s32 id;
-  void (*callback)(void);
-};
 
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 

@@ -160,6 +160,10 @@ struct Actor {
       u16 orbitFrames; ///< frames left of the spiral, 100 at the start
       s16 orbitAngle;  ///< its start on the circle, 1/65536 turns
     };
+    /// A spin that speeds up (FieldEffect_AdvanceAngleWithRamp).
+    struct {
+      s16 spinRampFrames; ///< frames the spin has been speeding up for
+    };
   };
   /// The object its action script follows or faces.
   struct Actor *watchedActor;

@@ -397,7 +397,6 @@ s32 Sand_CheckEndKeys(s32 arg) {
   }
   return 0;
 }
-#undef gInput.held
 #undef CHAIN_WORK
 #undef HALF_AT
 

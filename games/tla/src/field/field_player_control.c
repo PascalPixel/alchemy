@@ -30,8 +30,6 @@ enum FieldShortcutKind {
 /// A shortcut assignment's request, bits 13..0.
 #define FIELD_SHORTCUT_ID_MASK 0x3fff
 
-#define FIELD_SHORTCUT_KEYS gKeysPressed
-#define WORLD_MAP_PROBE_RADIUS px(7)
 #define FIELD_SHORTCUT_KEYS gKeysHeld
 #define WORLD_MAP_PROBE_RADIUS px(8)
 /// What stopped the leader's step this frame (Actor_UpdatePlayerControl,

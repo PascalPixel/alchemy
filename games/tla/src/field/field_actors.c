@@ -203,19 +203,6 @@ UNUSED void ActorSystem_ReservedNoOpB(void) {}
 
 // Objects: create and release field objects, and render them each frame.
 
-struct ActorSpriteView;
-#define Sprite_StartAnimation Sprite_StartAnimation
-struct ActorSpriteView;
-#define Sprite_SetAnimationSpeed Sprite_SetAnimationSpeed
-struct ActorSpriteView;
-#define Sprite_ResetAnimations Sprite_ResetAnimations
-struct ActorSpriteView;
-#define Sprite_AddAnimation Sprite_AddAnimation
-#undef Sprite_AddAnimation
-#undef Sprite_ResetAnimations
-#undef Sprite_SetAnimationSpeed
-#undef Sprite_StartAnimation
-
 /// Returns an unused object (one without a script) from the 64 slots, or 0
 /// if none is free.
 void *Actor_FindFree(void) {

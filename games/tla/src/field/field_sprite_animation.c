@@ -219,52 +219,45 @@ void SpriteAnimation_Reset(struct SpriteAnimation *work) {
   }
 }
 
-/* VIEW(resource_slot): routine Sprite_AddAnimation as s32
- * Sprite_AddAnimation(struct MetadataSlotState *state, s32 id); actor_view.h
- * has s32 Sprite_AddAnimation(struct ActorSpriteView *, s32); tried as the
- * definition's s32 Sprite_AddAnimation(struct MetadataSlotState *state, s32
- * id), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sprite_animation.c:225: conflicting types for
- * `Sprite_AddAnimation'. */
-s32 ResourceMetadata_Register__resource_slot(
-    struct MetadataSlotState *state, s32 id) __asm__("Sprite_AddAnimation");
-#define Sprite_AddAnimation ResourceMetadata_Register__resource_slot
 /// Adds a sprite animation of animation id to a sprite, in the first of its
 /// four slots that is free; returns it, 0 when none could be taken, or -1 when
 /// all four are in use.
-s32 Sprite_AddAnimation(struct MetadataSlotState *state, s32 id) {
-  s32 value = state->slots[0];
-  s32 index = 0;
-  s32 *slot;
+s32 Sprite_AddAnimation(struct Sprite *sprite, s32 id) {
+  s32 layerHandle = (s32)sprite->entries[0];
+  s32 freeIndex = 0;
+  struct SpriteAnimation **entry;
   struct AnimationMetadata *metadata;
 
-  if (value != 0) {
-    slot = &state->slots[0];
+  // Find an unused sprite animation slot before reserving a sprite animation.
+  if (layerHandle != 0) {
+    entry = &sprite->entries[0];
     do {
-      index++;
-      if (index > 3)
+      freeIndex++;
+      if (freeIndex >= ANIM_LAYER_COUNT)
         break;
-      slot++;
-      value = *slot;
-    } while (value != 0);
+      entry++;
+      layerHandle = (s32)*entry;
+    } while (layerHandle != 0);
   }
-  if (index == 4)
+  if (freeIndex == ANIM_LAYER_COUNT)
     return -1;
-  value = SpriteAnimation_Alloc(id);
-  if (value == 0)
+  layerHandle = (s32)SpriteAnimation_Alloc(id);
+  if (layerHandle == 0)
     return 0;
-  state->slots[index] = value;
+  sprite->entries[freeIndex] = (struct SpriteAnimation *)layerHandle;
   metadata = Resource_GetMetadataRecordFar(id);
-  if (state->count == 0) {
-    state->width = metadata->width;
-    state->height = metadata->height;
-    state->scale = metadata->scale << 8;
-    state->offsetY = metadata->adjustY;
-    state->offsetX = metadata->adjustX;
+  // Only the first registered sprite animation establishes the sprite's
+  // geometry.
+  if (sprite->count == 0) {
+    sprite->width = metadata->width;
+    sprite->height = metadata->height;
+    sprite->scale = metadata->scale << 8;
+    sprite->offsetY = metadata->adjustY;
+    sprite->offsetX = metadata->adjustX;
   }
-  if (index == state->count)
-    state->count = index + 1;
-  return value;
+  if (freeIndex == sprite->count)
+    sprite->count = freeIndex + 1;
+  return layerHandle;
 }
 
 /// Removes the sprite animation handle from a sprite and clears it, trimming
@@ -413,30 +406,18 @@ s32 Sprite_SetAnimationTimers(struct ChildGroup *group, s32 value) {
   return 0;
 }
 
-/* VIEW(resource_slot): routine Sprite_SetAnimationSpeed as void
- * Sprite_SetAnimationSpeed(struct ChildGroup *group, s32 value); actor_view.h
- * has void Sprite_SetAnimationSpeed(struct ActorSpriteView *, s32); tried as
- * the definition's void Sprite_SetAnimationSpeed(struct ChildGroup *group, s32
- * value), which the object already declares, it does not compile in tla-ja:
- * games/tla/src/field/field_sprite_animation.c:418: conflicting types for
- * `Sprite_SetAnimationSpeed'. */
-void Animation_ApplyChildValue__resource_slot(
-    struct ChildGroup *group, s32 value) __asm__("Sprite_SetAnimationSpeed");
-#define Sprite_SetAnimationSpeed Animation_ApplyChildValue__resource_slot
 /// Sets the timer step, the animation speed, of each playing sprite animation
 /// of a sprite (16 is normal speed).
-void Sprite_SetAnimationSpeed(struct ChildGroup *group, s32 value) {
+void Sprite_SetAnimationSpeed(struct Sprite *sprite, s32 step) {
   s32 i;
 
-  for (i = 0; i < group->count; i++) {
-    struct ChildObject *child = group->children[i];
+  for (i = 0; i < sprite->count; i++) {
+    struct SpriteAnimation *layer = sprite->entries[i];
 
-    if (child != NULL && child->active != 0)
-      *((u8 *)child + 21) = value;
+    if (layer != NULL && layer->scripts != NULL)
+      layer->step = step;
   }
 }
-
-#define ANIMATION_OBJECT_COUNT 64
 
 /// Takes the sprite and layer pools (from the fixed heap blocks in mode 3,
 /// the heap otherwise) and clears them, loads the shadow tiles into VRAM cache
@@ -447,23 +428,21 @@ void ActorSystem_Configure(s32 mode) {
   volatile u32 zero;
 
   if (mode == 3) {
-    sprites = HeapSlot_AllocEwram(HEAP_SLOT_SPRITES, ANIMATION_OBJECT_COUNT *
-                                                         sizeof(struct Sprite));
-    layers = HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS,
-                                 ANIMATION_OBJECT_COUNT *
-                                     sizeof(struct SpriteAnimation));
+    sprites = HeapSlot_AllocEwram(HEAP_SLOT_SPRITES,
+                                  ANIM_OBJECT_COUNT * sizeof(struct Sprite));
+    layers =
+        HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS,
+                            ANIM_OBJECT_COUNT * sizeof(struct SpriteAnimation));
   } else {
     sprites = HeapSlot_Alloc(HEAP_SLOT_SPRITES,
-                             ANIMATION_OBJECT_COUNT * sizeof(struct Sprite));
-    layers =
-        HeapSlot_Alloc(HEAP_SLOT_SPRITE_ANIMATIONS,
-                       ANIMATION_OBJECT_COUNT * sizeof(struct SpriteAnimation));
+                             ANIM_OBJECT_COUNT * sizeof(struct Sprite));
+    layers = HeapSlot_Alloc(HEAP_SLOT_SPRITE_ANIMATIONS,
+                            ANIM_OBJECT_COUNT * sizeof(struct SpriteAnimation));
   }
   Palette_LoadBasicSpriteColors();
-  Dma_Fill32Cell(zero, 0, sprites,
-                 ANIMATION_OBJECT_COUNT * sizeof(struct Sprite));
+  Dma_Fill32Cell(zero, 0, sprites, ANIM_OBJECT_COUNT * sizeof(struct Sprite));
   Dma_Fill32Cell(zero, 0, layers,
-                 ANIMATION_OBJECT_COUNT * sizeof(struct SpriteAnimation));
+                 ANIM_OBJECT_COUNT * sizeof(struct SpriteAnimation));
   VramCache_Load(93, 128, gActor_ShadowTiles);
   RamCode_LoadSlot(HEAP_SLOT_PICTURE_UPLOADER, Render_CopyStridedCode,
                    Render_CopyStridedCodeSize);
@@ -497,7 +476,7 @@ struct SpriteAnimation *SpriteAnimation_Alloc(s32 id) {
   object = NULL;
 
   if (metadata->width != 0) {
-    for (i = 0; i < ANIMATION_OBJECT_COUNT; i++, entry++) {
+    for (i = 0; i < ANIM_OBJECT_COUNT; i++, entry++) {
       if (entry->kind == 0) {
         found = entry;
         break;
@@ -695,4 +674,3 @@ s32 SpriteAnimation_SumCommandLengths(s32 id, u32 no, s32 cnt) {
   }
   return sum;
 }
-#undef ANIMATION_OBJECT_COUNT

@@ -248,7 +248,12 @@ struct WaitingActor {
   u8 refused;
 };
 
-enum { RESOURCE_SLOT_COUNT = 8 };
+/// The field's pool sizes.
+enum {
+  RESOURCE_SLOT_COUNT = 8, ///< ActorSystemWork.pictureCaches
+  ANIM_OBJECT_COUNT = 64,  ///< sprites and sprite animations
+  ANIM_LAYER_COUNT = 4     ///< Sprite.entries
+};
 
 /// A row of gResourceSlot_NumberTable: the resource holding the pictures of
 /// sprite animation number, which SpritePictureCache_Load decodes into a

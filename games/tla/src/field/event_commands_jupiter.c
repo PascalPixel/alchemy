@@ -12,8 +12,6 @@
 #include "battle/object_effect_scripts.h"
 #include "macros.h"
 
-#define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-
 /// Ends a heavy impact: object id spins, leaps and vanishes in 24 sparks that
 /// circle and then close on the current owner, which turns and takes mode 28.
 void Djinn_RunJupiterJoinEffect(s32 id) {
@@ -94,15 +92,13 @@ void FieldEffect_PulseActorScale(u8 *object) {
 
 /// Per-frame update: spins an actor ever faster, from 1/16 turn a frame up to
 /// just over 1/8 (TRIG_TURN / 8 + 64), 80 more each frame for 52 frames.
-void FieldEffect_AdvanceAngleWithRamp(void *obj) {
+void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor) {
   u32 step;
 
-  step = FIELD_AT_OFFSET(obj, s16 *, 0x64) * 0x50;
-  FIELD_AT_OFFSET(obj, u16 *, 6) =
-      (u16)(FIELD_AT_OFFSET(obj, u16 *, 6) + step + 0x1000);
-  if (step < 0x1000U) {
-    FIELD_AT_OFFSET(obj, s16 *, 0x64) =
-        (s16)((u16)FIELD_AT_OFFSET(obj, s16 *, 0x64) + 1);
+  step = actor->spinRampFrames * 80;
+  actor->facing = actor->facing + step + FACING_STEP;
+  if (step < FACING_STEP) {
+    actor->spinRampFrames = actor->spinRampFrames + 1;
   }
 }
 

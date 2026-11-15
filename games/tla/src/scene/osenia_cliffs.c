@@ -93,15 +93,10 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Task_Add(OseniaCliffs_CyclePalette, TASK_PASS_VBLANK);
   {
-    u8 *flags =
-        (u8 *)((void *)Actor_GetById(gMainRoutineWork.leaderActorId)) + 35;
-    u32 value = *flags;
-    u32 bit = 32;
+    struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-    /* FAKEMATCH(barrier): the asm on the bit builds it in the register it ORs
-     * into. */
-    __asm__("" : "+l"(bit));
-    *flags = bit | value;
+    leader->priorityFlags =
+        ACTOR_PRIORITY_IGNORES_RISES | leader->priorityFlags;
   }
   Rope_Initialize();
   Rope_Tie(0, ACTOR_SECOND_ROPE_POST, ACTOR_FIRST_ROPE_POST);

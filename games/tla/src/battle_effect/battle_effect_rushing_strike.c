@@ -504,13 +504,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
     model->texture = tex;
     tex->pixels = work->sheet;
     model->mesh = strip;
-    {
-      s32 u = frame << 2;
-
-      /* FAKEMATCH(barrier): an empty asm that claims to read frame. */
-      asm("" : "+l"(u) : "l"(frame));
-      model->scrollU = 127 & ~u;
-    }
+    model->scrollU = 127 & ~(frame << 2);
     Transform_Reset();
     Transform_ApplyAxisScale(Q16_ONE / 2, Q16_ONE, Q16_ONE / 2);
     Transform_Push();

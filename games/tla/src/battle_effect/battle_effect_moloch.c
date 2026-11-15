@@ -1127,8 +1127,6 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
               if (b < 15)
                 b++;
               {
-                /* FAKEMATCH(temporary): the colour copied into a u16 before its
-                 * store. */
                 u16 v = RGB(r, g, b);
 
                 *fade++ = v;
@@ -1458,7 +1456,6 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(8);
     }
     if ((u32)(frame - 414) <= 7) {
-      /* FAKEMATCH(temporary): the blend level copied into alpha. */
       s32 alpha = frame - 406;
       REG_BLDALPHA = BLEND_ALPHA(alpha, BLEND_WEIGHT_MAX);
     }
@@ -2007,8 +2004,6 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
           if (b <= 30)
             b++;
           {
-            /* FAKEMATCH(temporary): the colour copied into a u16 before its
-             * store. */
             u16 v = RGB(r, g, b);
 
             *fade++ = v;

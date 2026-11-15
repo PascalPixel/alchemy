@@ -844,7 +844,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     }
     HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     if (frame > 63) {
-      /* FAKEMATCH(temporary): the scroll value through a local. */
       s32 y = Random16() % 4 + 30;
 
       gBgScroll[1].y = y;

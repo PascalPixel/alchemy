@@ -907,8 +907,6 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(args->targets[0], &position);
   {
-    /* FAKEMATCH(temporary): x computed before the register's address is built.
-     */
     s32 x = 64 - position.x;
 
     REG_BG2X = x << 8;

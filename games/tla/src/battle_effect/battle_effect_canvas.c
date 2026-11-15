@@ -254,8 +254,6 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           }
         }
         {
-          /* FAKEMATCH(temporary): the variant copied into size in a block of
-           * its own. */
           s32 size = work->particles[16].variant;
 
           Canvas_BlitAtFoot(work->sheet, Q_16_16_TO_INT(cx), Q_16_16_TO_INT(cy),
@@ -1220,18 +1218,9 @@ void BattleEffect_ApplyWindowBlendRegisters(void) {
 
 /// Writes background 2's scale (BG2PA and BG2PD) and its reference point.
 void Display_ApplyBg2Affine(void) {
-  /* FAKEMATCH(pin): the work pointer kept in r2. */
-  register struct BattleEffectWork *work asm("r2") =
-      Ram_HeapSlots->battleEffect;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
 
-  {
-    u32 value = work->bg2pa;
-
-    /* FAKEMATCH(barrier): an empty asm through the first value loads it before
-     * the register's address is built. */
-    __asm__ volatile("" : "+l"(value));
-    REG_BG2PA = value;
-  }
+  REG_BG2PA = work->bg2pa;
   REG_BG2PD = work->bg2pd;
   /* FAKEMATCH(barrier): an empty asm. */
   __asm__ volatile("");
@@ -1241,19 +1230,9 @@ void Display_ApplyBg2Affine(void) {
 
 /// Writes background 2's reference point.
 void Display_ApplyBg2Reference(void) {
-  /* FAKEMATCH(pin): the work pointer kept in r2. */
-  register struct BattleEffectWork *work asm("r2") =
-      Ram_HeapSlots->battleEffect;
-  u32 hold;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
 
-  {
-    u32 value = work->bg2x;
-
-    /* FAKEMATCH(barrier): an empty asm through the first value loads it before
-     * the register's address is built. */
-    __asm__ volatile("" : "+l"(value) : "l"(hold));
-    REG_BG2X = value;
-  }
+  REG_BG2X = work->bg2x;
   REG_BG2Y = work->bg2y;
 }
 

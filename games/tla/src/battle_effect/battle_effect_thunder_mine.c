@@ -268,7 +268,6 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
         if (frame == i) {
           shade = -16;
         } else if (frame >= i + 4) {
-          /* FAKEMATCH(temporary): the fade negated through a local. */
           s32 fade = (frame - i) * 16 - 64;
 
           shade = -fade;

@@ -620,10 +620,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           scratchTexture.pixels = Ram_MapCellBuffer + 0x4000;
           scratchTexture.logWidth = 7;
           model->mesh = gBattleEffect_LargeSquareMesh;
-          /* FAKEMATCH(dead): a once-only block. */
-          do {
-            scratchTexture.logHeight = 7;
-          } while (0);
+          scratchTexture.logHeight = 7;
           model->shade = shade;
           Transform_Reset();
           Transform_ApplyTranslation(px(44), 0, 0);

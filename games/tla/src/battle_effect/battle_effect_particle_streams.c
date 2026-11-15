@@ -856,10 +856,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     s32 savedY = gBgScroll[1].y;
     struct BattlePresentationTransition *transition =
         Ram_HeapSlots->battleBackground;
-    s32 transferMode = 3;
+    s32 transferMode = CANVAS_COPY_AND_DARKEN;
 
-    /* FAKEMATCH(temporary): the transfer mode's 3 set in transferMode before
-     * the blitter build. */
     gBgScroll[1].x = 0;
     gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
     BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7,

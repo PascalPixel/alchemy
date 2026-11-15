@@ -1176,14 +1176,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   wait(1);
   battle->keepBackdropPalette = 0;
   BattleBackground_LoadFar(1, battle->background, 24);
-  /* FAKEMATCH(dead): an empty once-only loop before the canvas fill. */
-  do {
-  } while (0);
-  Iwram_FillWords(canvas, CANVAS_BYTES, 0);
-  /* FAKEMATCH(dead): an empty once-only loop before the BG fill. */
-  do {
-  } while (0);
-  Iwram_FillWords((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES, 0);
+  IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
+  IWRAM_FILL_WORDS((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES, 0);
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   camera = Ram_HeapSlots->cameraWork;
   shake = 0;

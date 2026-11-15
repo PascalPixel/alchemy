@@ -134,15 +134,6 @@ void String_FormatHexDigits(u32 value, u32 count, u8 *out) {
     *out++ = digits[i];
 }
 
-/* VIEW(handle_selection_row_input): routine WindowSprite_PrepareForRedraw as
- * void WindowSprite_PrepareForRedraw(void); resource_work has void
- * WindowSprite_PrepareForRedraw(struct Window *); tried as the definition's
- * void WindowSprite_PrepareForRedraw(struct Window *work), it does not compile
- * in tla-ja: games/tla/src/window/screens_debug_flags.c:148: too few arguments
- * to function `WindowSprite_PrepareForRedraw'. */
-extern void WindowSprite_PrepareForRedraw__handle_selection_row_input(
-    void) __asm__("WindowSprite_PrepareForRedraw");
-
 /// Draws one page of 256 flags as sixteen rows of hexadecimal labels and bits.
 /// Each row: its first flag's number in three hex digits, then its 16 flags
 /// as 0 or 1, lowest first, under a heading of hex digits.
@@ -153,7 +144,13 @@ void DebugFlagEditor_DrawTable(s32 window, s32 startFlag) {
   u8 label[5];
   char bits[17];
 
-  WindowSprite_PrepareForRedraw__handle_selection_row_input();
+  // UB: called with no argument; r0 still holds window, the window it
+  // redraws.
+#ifdef UBFIX
+  WindowSprite_PrepareForRedraw(window);
+#else
+  WindowSprite_PrepareForRedraw();
+#endif
   Text_DrawStringInWindow((s32)gMenu_HexDigitsString, window, 48, 0);
 
   flag = startFlag << 8;

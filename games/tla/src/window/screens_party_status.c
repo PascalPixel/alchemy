@@ -197,15 +197,6 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
 
 #define PARTY_STATUS_DJINN_WIDTH 5
 
-/* VIEW(screens): routine BattleDjinn_CountStandbyFar as s32
- * BattleDjinn_CountStandbyFar(s32 a, u8 *counts); window/window.h has void
- * BattleDjinn_CountStandbyFar(s32 kind, u8 *counts); tried as the rest of the
- * object declares it, PartyStatus_Draw moves: 2 of 495 instructions,
- * BattleCommandRow_Run moves: 1 of 1120 instructions in tla-ja. */
-extern s32
-Func_08118130__screens(s32 a,
-                       u8 *counts) __asm__("BattleDjinn_CountStandbyFar");
-
 #define DJINN_COUNT_TILE(n) ((n) > 9 ? (n) + 0xf196 : ((n) + '0') | 0xf000)
 
 /// Draws the party status window with `flags` (see PARTY_STATUS_*): each party
@@ -245,7 +236,8 @@ void PartyStatus_Draw(s32 flags) {
     flags = layout->flags;
   if (!(flags & PARTY_STATUS_SHOW_PP))
     flags &= ~PARTY_STATUS_SHOW_DJINN;
-  if (work->battleMode == WINDOW_FIELD || Func_08118130__screens(0, 0) == 0)
+  if (work->battleMode == WINDOW_FIELD ||
+      BattleDjinn_CountStandbyFar(0, 0) == 0)
     flags &= ~PARTY_STATUS_SHOW_DJINN;
   if (flags == PARTY_STATUS_CLOSED) {
     Window_EraseBorderRect(layout->x, layout->y, layout->width, layout->height);
@@ -326,7 +318,7 @@ void PartyStatus_Draw(s32 flags) {
     i = 0;
     if (flags & PARTY_STATUS_SHOW_PP)
       row++;
-    Func_08118130__screens(0, standbyDjinn);
+    BattleDjinn_CountStandbyFar(0, standbyDjinn);
     Window_SetTilemapEntry(window, 0x5001, 0, row, 0);
     Window_SetTilemapEntry(window, 0x5002, 2, row, 0);
     Window_SetTilemapEntry(window, 0x5003, 0, row + 1, 0);

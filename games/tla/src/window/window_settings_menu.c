@@ -188,18 +188,9 @@ extern s8 gOptionMenu_SleepIcons[];
 extern u8 MsgSpeechLabel[];
 extern u8 MsgAutoSleepLabel[];
 
-/* VIEW(window): routine CommandIcon_Create as void *CommandIcon_Create(s32
- * frame, s32 flags, struct RenderInput *input, s32 offsetX, s32 offsetY);
- * window/screens has struct WindowSprite *CommandIcon_Create(s32 arg0, s32
- * arg1, struct RenderInput *arg2, s32 arg3, s32 arg4) {; tried as the
- * definition's struct WindowSprite *CommandIcon_Create(s32 arg0, s32 arg1,
- * struct RenderInput *arg2, s32 arg3, s32 arg4), it does not compile in tla-ja
- * (make modern): games/tla/include/system/task.h:53:23: note: expected
- * 'TaskFunc' {aka 'void (*)(void)'} but argument is of type 'int'. */
-void *CommandIcon_Create__window(s32 frame, s32 flags,
-                                 struct RenderInput *input, s32 offsetX,
-                                 s32 offsetY) __asm__("CommandIcon_Create");
-#define CommandIcon_Create CommandIcon_Create__window
+struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
+                                        struct RenderInput *window, s32 x,
+                                        s32 y);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 void MenuCursor_SetPositionImmediateFar(void *object, s32 x, s32 y);
 

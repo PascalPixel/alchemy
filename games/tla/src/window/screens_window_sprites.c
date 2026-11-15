@@ -34,9 +34,6 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 flags,
   output->kind = 1;
   output->motion = 1;
   WindowSprite_AppendToList((struct WindowSpriteList *)input, output);
-  /* FAKEMATCH(dead): an empty once-only block after the call. */
-  do {
-  } while (0);
   return output;
 }
 

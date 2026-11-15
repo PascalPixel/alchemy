@@ -14,7 +14,7 @@
 #include "window/message_speed.h"
 #include "edition.h"
 #include "graphics/oam.h"
-#include "graphics/output.h"
+#include "graphics/render_input.h"
 #include "graphics/uiflow.h"
 #include "static_assert.h"
 
@@ -394,13 +394,11 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
 
 s32 BattleParty_ChooseReserve(s32 slot);
 
-void BattleDjinn_CountStandbyFar(s32 kind, u8 *counts);
+s32 BattleDjinn_CountStandbyFar(u32 unitId, u8 *counts);
 
 void Window_MarkVisibleTextTiles(void);
 
 s32 Djinn_GetGiveTutorialMessage(void);
-
-void WindowSprite_PrepareForRedraw(struct Window *);
 
 extern s16 gTitleBattleOptionEnabled;
 extern s16 gTitleUpdateOptionEnabled;

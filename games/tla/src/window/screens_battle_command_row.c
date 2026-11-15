@@ -102,7 +102,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     selectionUi->commandKinds[memberCount++] = COMMAND_ICON_ATTACK;
     selectionUi->commandKinds[memberCount++] = COMMAND_ICON_PSYNERGY;
     if (*(s32 *)Djinn_GetRecoveryTableFar(0) != 0) {
-      Func_08118130__screens(0, party);
+      BattleDjinn_CountStandbyFar(0, party);
       for (i = 0; i <= 3; i++)
         tradeCount += party[i];
       selectionUi->commandKinds[memberCount++] = COMMAND_ICON_DJINN;

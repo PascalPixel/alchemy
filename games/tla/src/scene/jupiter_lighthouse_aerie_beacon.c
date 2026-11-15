@@ -61,6 +61,14 @@
 /// characters' numbers; the rest count on from 8 (a render of the beacon with
 /// FLAG_ISAAC_AND_IVAN_FELL set shows Agatio's sheet at 27, Karst's at 28).
 enum {
+  /// The angels either side of the lid over the well, the archer statues that
+  /// energize them, and the lid (two rows sharing the stone basin sheet).
+  ACTOR_LEFT_ANGEL = 9,
+  ACTOR_RIGHT_ANGEL,
+  ACTOR_LEFT_ARCHER,
+  ACTOR_RIGHT_ARCHER,
+  ACTOR_LID_A = 23,
+  ACTOR_LID_B,
   /// The six platforms floating over the well, west to east.
   ACTOR_FLOATING_PLATFORM_A = 17,
   ACTOR_FLOATING_PLATFORM_B = 18,
@@ -108,7 +116,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 #include "../field/actor_park_record.c"
 
 void JupiterLighthouse_CircleBeacon(struct Actor *self) {
-  struct Actor *centre = Actor_Get(31);
+  struct Actor *centre = Actor_Get(ACTOR_BEAM_A);
   u16 angle = self->timer;
   s32 sine;
   s32 x;
@@ -395,7 +403,7 @@ void JupiterLighthouse_SpawnBeaconParticle(void) {
 
   if (Event_GetFlag(FLAG_SCENE_TEMP_01) == 0 && gFrameCount % 3 != 0)
     return;
-  center = Actor_Get(31);
+  center = Actor_Get(ACTOR_BEAM_A);
   if (Event_GetFlag(FLAG_SCENE_TEMP_01) != 0) {
     u32 random;
 
@@ -649,10 +657,10 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       Actor_SetScript(ACTOR_BEAM_B, gJupiterLighthouse_StarFallsScript);
       Task_AddFrame((s32)JupiterLighthouse_SpawnBeaconParticle,
                     TASK_PASS_VBLANK);
-      Actor_SetPosition(9, 0, 0);
-      Actor_SetPosition(10, 0, 0);
-      Actor_SetPosition(23, 0, 0);
-      Actor_SetPosition(24, 0, 0);
+      Actor_SetPosition(ACTOR_LEFT_ANGEL, 0, 0);
+      Actor_SetPosition(ACTOR_RIGHT_ANGEL, 0, 0);
+      Actor_SetPosition(ACTOR_LID_A, 0, 0);
+      Actor_SetPosition(ACTOR_LID_B, 0, 0);
       Event_PlaySound(SE_CRASH);
       MapGrid_SetShake(6, 6, 1);
       PaletteFade_ApplyTarget(0x4063ff, 0);
@@ -822,14 +830,14 @@ void JupiterLighthouse_BeaconIsLit(void) {
   Actor_WalkByAndWait(ACTOR_AGATIO, -24, -8);
   Actor_Get(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestinationOffset(ACTOR_FELIX, 0, -8);
-  JupiterLighthouse_ShowEmote(28, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  JupiterLighthouse_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 0);
   FieldActor_WaitForMoveById(ACTOR_FELIX);
   Actor_Get(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
   ((void *)Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30));
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_WEST);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 0);
-  JupiterLighthouse_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  JupiterLighthouse_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Actor_FaceDirection(ACTOR_AGATIO, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_ShowMessageThenWait(8219, 0, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTH);
@@ -854,7 +862,8 @@ void JupiterLighthouse_BeaconIsLit(void) {
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   FieldEvent_Wait_(5);
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 0);
-  JupiterLighthouse_ShowEmote(27, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  JupiterLighthouse_ShowEmote(ACTOR_AGATIO, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP,
+                              30);
   Actor_FaceDirection(ACTOR_AGATIO, FACING_NORTH_NORTHEAST, 0);
   FieldEvent_ShowMessageThenWait(8219, 0, 0);
   ((void *)Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_SMILE, 30));
@@ -2233,28 +2242,21 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Call2(HangingVine_Place, 0xf, 1);
   HangingVine_Place(16, 1);
-  t2 = Actor_Get(gMainRoutineWork.leaderActorId);
-  FIELD_AT((t2 + 0x23), u8, 0) = (0x40 | FIELD_AT((t2 + 0x23), u8, 0));
-  t3 = Actor_Get(ACTOR_FLOATING_PLATFORM_A);
-  FIELD_AT((t3 + 0x23), u8, 0) = (FIELD_AT((t3 + 0x23), u8, 0) | 0x80);
-  t4 = Actor_Get(ACTOR_FLOATING_PLATFORM_B);
-  FIELD_AT((t4 + 0x23), u8, 0) = (FIELD_AT((t4 + 0x23), u8, 0) | 0x80);
-  t5 = Actor_Get(ACTOR_FLOATING_PLATFORM_C);
-  FIELD_AT((t5 + 0x23), u8, 0) = (FIELD_AT((t5 + 0x23), u8, 0) | 0x80);
-  t6 = Actor_Get(ACTOR_FLOATING_PLATFORM_D);
-  FIELD_AT((t6 + 0x23), u8, 0) = (FIELD_AT((t6 + 0x23), u8, 0) | 0x80);
-  t7 = Actor_Get(ACTOR_FLOATING_PLATFORM_E);
-  FIELD_AT((t7 + 0x23), u8, 0) = (FIELD_AT((t7 + 0x23), u8, 0) | 0x80);
-  t8 = Actor_Get(ACTOR_FLOATING_PLATFORM_F);
-  FIELD_AT((t8 + 0x23), u8, 0) = (0x80 | FIELD_AT((t8 + 0x23), u8, 0));
+  Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x40;
+  Actor_Get(ACTOR_FLOATING_PLATFORM_A)->priorityFlags |= 0x80;
+  Actor_Get(ACTOR_FLOATING_PLATFORM_B)->priorityFlags |= 0x80;
+  Actor_Get(ACTOR_FLOATING_PLATFORM_C)->priorityFlags |= 0x80;
+  Actor_Get(ACTOR_FLOATING_PLATFORM_D)->priorityFlags |= 0x80;
+  Actor_Get(ACTOR_FLOATING_PLATFORM_E)->priorityFlags |= 0x80;
+  Actor_Get(ACTOR_FLOATING_PLATFORM_F)->priorityFlags |= 0x80;
   if (!Event_GetFlag(FLAG_JUPITER_BEACON_LIT)) {
     JupiterLighthouse_EnergizeAngels();
   } else {
-    t11 = Actor_Get(24);
+    t11 = Actor_Get(ACTOR_LID_B);
     FIELD_AT(t11, s32, 24) = 0;
   }
   if ((u32)((FIELD_AT(&gMainRoutineWork, u16, 482) - 1) << 16) > 0x10000) {
-    Actor_SetPosition(24, 0, 0);
+    Actor_SetPosition(ACTOR_LID_B, 0, 0);
   }
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEACON_ORB), 0);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_BEACON_ORB), 0);
@@ -2506,39 +2508,40 @@ void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
 void JupiterLighthouse_EnergizeAngels(void) {
-  struct Actor *left = Actor_GetById(9);
-  struct Actor *right = Actor_GetById(10);
-  struct Actor *rider = Actor_GetById(23);
+  struct Actor *left = Actor_GetById(ACTOR_LEFT_ANGEL);
+  struct Actor *right = Actor_GetById(ACTOR_RIGHT_ANGEL);
+  struct Actor *rider = Actor_GetById(ACTOR_LID_A);
   struct FieldSprite *sprite = rider->sprite;
 
-  Actor_SetPosition(24, 512, 248);
-  Actor_SetPosition(23, 512, 248);
-  Actor_SetPosition(9, 472, 256);
-  Actor_SetPosition(10, 552, 256);
-  Actor_GetById(24)->scaleX = 0;
+  Actor_SetPosition(ACTOR_LID_B, 512, 248);
+  Actor_SetPosition(ACTOR_LID_A, 512, 248);
+  Actor_SetPosition(ACTOR_LEFT_ANGEL, 472, 256);
+  Actor_SetPosition(ACTOR_RIGHT_ANGEL, 552, 256);
+  Actor_GetById(ACTOR_LID_B)->scaleX = 0;
   rider->motionFlags = 0;
   rider->y.fixed = rider->groundHeight;
   left->motionFlags = 0;
   left->y.fixed = left->groundHeight;
   right->motionFlags = 0;
   right->y.fixed = right->groundHeight;
-  if (GameFlag_Test_(0xa0a)) {
+  if (GameFlag_Test_(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
     left->y.fixed += 0x66640;
     rider->y.fixed += 0x1eb80;
     rider->x.fixed += -0x28f40;
     sprite->rotation += 0x800;
-    Actor_SetSpriteColorMode(Actor_GetById(9), 4);
-    Actor_SetSpriteColorMode(Actor_GetById(11), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ANGEL), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ARCHER), 4);
   }
-  if (GameFlag_Test_(0xa0b)) {
+  if (GameFlag_Test_(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
     right->y.fixed += 0x66640;
     rider->y.fixed += 0x1eb80;
     rider->x.fixed += 0x28f40;
     sprite->rotation -= 0x800;
-    Actor_SetSpriteColorMode(Actor_GetById(10), 4);
-    Actor_SetSpriteColorMode(Actor_GetById(12), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ANGEL), 4);
+    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ARCHER), 4);
   }
-  if (GameFlag_Test_(0xa0a) && GameFlag_Test_(0xa0b)) {
+  if (GameFlag_Test_(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
+      GameFlag_Test_(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
     left->y.fixed += 0x199900;
     right->y.fixed += 0x199900;
     rider->y.fixed += 0x1b8480;

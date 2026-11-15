@@ -1575,7 +1575,7 @@ void Kibombo_CarryBlackCrystal(void) {
   }
 }
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 #undef DEFINE_KIBOMBO_WOBBLE
 #undef Actor_SetSpriteFlags

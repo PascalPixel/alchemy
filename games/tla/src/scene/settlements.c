@@ -4,20 +4,20 @@
 /// Settlement (4 to 6), with its vine, crate and Tinder; Kalt Island (7 and 8),
 /// with its apple, frozen river and Gel; and SW Atteka Islet (9 and 10), whose
 /// pillar and crate go over the falls, and its boulder and Jupiter Djinni.
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 #include "system/task.h"
 #include "objcmd.h"
 #include "fixed_math.h"
 #include "djinn_ids.h"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 #undef EFFECT_SPAWN
 
@@ -987,7 +987,7 @@ void Settlements_SplashCrate(s32 id) {
                     0x1c0000, &spawn);
 }
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE

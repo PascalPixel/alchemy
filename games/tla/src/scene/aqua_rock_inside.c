@@ -203,13 +203,13 @@ static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "graphics/vram_tab.h"
 #include "macros.h"
 #include "shared/tables.h"
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/object/prepare_object.c"
+#include "../field/actor_prepare.c"
 
 #include "shared/scene_create_actor.h"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -217,7 +217,7 @@ static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 struct Actor;
 
@@ -2409,7 +2409,7 @@ s32 AquaRockInside_AdvanceStreams(s32 first, s32 target) {
 
 #define VENT_TOUCHING Vent_IsTouching
 #define VENT_BOUNCE Vent_Bounce
-#include "../field/object/vent_bounce.c"
+#include "../field/actor_vent_bounce.c"
 
 #include "shared/actor_start_scripted.h"
 

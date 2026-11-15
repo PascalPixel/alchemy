@@ -7,12 +7,12 @@
 /// SeaOfTime_GrindLastRock) until it crosses to Lemuria
 /// (SeaOfTime_CrossToLemuria).
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 #include "system/task.h"
 #include "objcmd.h"
 #include "fixed_math.h"
 
-#include "../field/object/prepare_object.c"
+#include "../field/actor_prepare.c"
 #include "flags.h"
 #include "types.h"
 #include "system/system.h"
@@ -100,7 +100,7 @@ struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
   return NULL;
 }
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -108,7 +108,7 @@ struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 // The Sea of Time, east of Lemuria: currents and swirls that carry the ship
 // round and sweep it back to the entrance, the laps and waves Yepp's songs

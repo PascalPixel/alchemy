@@ -17,17 +17,17 @@
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
 // parts").
-#include "battle/debug.c"
-#include "battle/setup.c"
-#include "battle/link.c"
-#include "battle/run.c"
-#include "battle/sprite_slots.c"
-#include "battle/placement.c"
-#include "battle/objects.c"
-#include "battle/motion.c"
-#include "battle/auto_battle.c"
-#include "battle/turn.c"
-#include "battle/staging.c"
+#include "battle_debug.c"
+#include "battle_setup.c"
+#include "battle_link.c"
+#include "battle_run.c"
+#include "battle_sprite_slots.c"
+#include "battle_placement.c"
+#include "battle_objects.c"
+#include "battle_motion.c"
+#include "battle_auto_battle.c"
+#include "battle_turn.c"
+#include "battle_staging.c"
 
 // The views the parts above keep end here; the parts below see the names as
 // their headers declare them.
@@ -36,16 +36,16 @@
 #undef GameFlag_GetByte
 #undef Unit_CalculateFar
 
-#include "battle/motion_graphics.c"
-#include "battle/strongest_unit.c"
-#include "battle/targeting.c"
-#include "battle/playback.c"
-#include "battle/action.c"
-#include "battle/turn_end.c"
-#include "battle/transition.c"
-#include "battle/background.c"
-#include "battle/formation.c"
-#include "battle/spoils.c"
+#include "battle_motion_graphics.c"
+#include "battle_strongest_unit.c"
+#include "battle_targeting.c"
+#include "battle_playback.c"
+#include "battle_action.c"
+#include "battle_turn_end.c"
+#include "battle_transition.c"
+#include "battle_background.c"
+#include "battle_formation.c"
+#include "battle_spoils.c"
 
 #undef BattleObject_Reset
 #undef Battle_GetUnitAtPlace

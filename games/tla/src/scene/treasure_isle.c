@@ -29,15 +29,15 @@
 #include "system/io_write_queue.h"
 #include "system/task.h"
 #include "edition.h"
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 #include "objcmd.h"
 #include "fixed_math.h"
 
-#include "../field/object/prepare_object.c"
+#include "../field/actor_prepare.c"
 
 #include "shared/scene_create_actor.h"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 // Treasure Isle's copy of the field effect spawner.
 
@@ -47,7 +47,7 @@
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 #undef EFFECT_SPAWN
 

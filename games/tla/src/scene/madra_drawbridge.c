@@ -25,7 +25,7 @@
 #include "text/msg_ids.h"
 #include "field/sprite.h"
 
-/// What games/tla/src/field/map/ declares for the files that use it, written
+/// What games/tla/src/field/map_*.c declare for the files that use it, written
 /// once.
 
 void FieldCamera_WaitForArrival(void);

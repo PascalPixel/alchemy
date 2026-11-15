@@ -9,11 +9,11 @@
 /// parents and meets Puelle. After the ending the storm is over, the children
 /// play tag, the people give thanks for the beacon and the party says its
 /// farewell at the south gate before the credits.
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 #include "field/sprite.h"
 #include "objcmd.h"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 #include "types.h"
 #include "flags.h"
 #include "djinn_ids.h"

@@ -8,9 +8,9 @@
 /// two magical charges to the statue in the middle at once
 /// (GabombaStatue_FocusEnergies to GabombaStatue_FixTheChannel).
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #include "flags.h"
 #include "djinn_ids.h"
@@ -1503,7 +1503,7 @@ void GabombaStatue_SendCharge(s32 slot, s32 value, s32 targetId, s32 angle) {
 #undef MARK
 #undef REG_BLDALPHA
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 #undef DIFF_WITHIN
 #undef DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD

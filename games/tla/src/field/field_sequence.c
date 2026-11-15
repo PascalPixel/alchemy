@@ -16,20 +16,20 @@
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
 // parts").
-#include "field_sequence/encounter.c"
-#include "field_sequence/actors.c"
-#include "field_sequence/walking.c"
-#include "field_sequence/run.c"
-#include "field_sequence/palette_editor.c"
-#include "field_sequence/triggers.c"
-#include "field_sequence/targets.c"
-#include "field_sequence/items.c"
-#include "field_sequence/psynergy.c"
-#include "field_sequence/treasure_spots.c"
+#include "field_sequence_encounter.c"
+#include "field_sequence_actors.c"
+#include "field_sequence_walking.c"
+#include "field_sequence_run.c"
+#include "field_sequence_palette_editor.c"
+#include "field_sequence_triggers.c"
+#include "field_sequence_targets.c"
+#include "field_sequence_items.c"
+#include "field_sequence_psynergy.c"
+#include "field_sequence_treasure_spots.c"
 
 #undef PartyInventory_GiveItem
 
-#include "field_sequence/screen_transition.c"
+#include "field_sequence_screen_transition.c"
 
 /* VIEW(event_commands): routine GameFlag_GetByte as u8 GameFlag_GetByte(s32
  * flag); field/event.h has s32 GameFlag_GetByte(s32 flag); tried as the
@@ -48,9 +48,9 @@ void Actor_MoveToObject(u32 objectId, u32 otherId);
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
 // parts").
-#include "field_sequence/event.c"
-#include "field_sequence/requests.c"
-#include "field_sequence/actor_commands.c"
+#include "field_sequence_event.c"
+#include "field_sequence_requests.c"
+#include "field_sequence_actor_commands.c"
 
 #undef Field_RequestDjinnBattle
 #undef EventWork1cc

@@ -72,7 +72,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-#include "../field/object/park_record.c"
+#include "../field/actor_park_record.c"
 
 void JupiterLighthouse_CircleBeacon(struct Actor *self) {
   struct Actor *centre = Actor_Get(31);
@@ -109,7 +109,7 @@ void JupiterLighthouse_CircleBeaconWide(struct Actor *self) {
   self->timer += -0x800;
 }
 
-#include "../field/object/step_angle.c"
+#include "../field/actor_step_angle.c"
 
 #undef BYTE_AT
 #include "text/msg_ids.h"
@@ -2702,9 +2702,9 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #undef BYTE_AT
 #undef FIELD_AT
@@ -2788,7 +2788,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 }
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
-#include "../field/map/cell_sprite.c"
+#include "../field/map_cell_sprite.c"
 
 void CrackedTiles_Update(void);
 
@@ -2804,7 +2804,7 @@ void CrackedTiles_Update(void);
 
 #include "shared/cracked_tile_fall.h"
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

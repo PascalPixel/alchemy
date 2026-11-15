@@ -3,15 +3,15 @@
 /// are no werewolves while one prowls its paths at night, in five rooms and a
 /// house that share this overlay (SceneId_Garoh1 to SceneId_Garoh5,
 /// SceneId_GarohInteriors3).
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 #include "system/task.h"
 #include "types.h"
@@ -857,7 +857,7 @@ void Garoh_CrossRoom3East(void) {
   }
 }
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE

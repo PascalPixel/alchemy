@@ -45,13 +45,13 @@
 #include "shared/tables.h"
 #include "system/task.h"
 #include "objcmd.h"
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/object/prepare_object.c"
+#include "../field/actor_prepare.c"
 
 #include "shared/scene_create_actor.h"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -59,7 +59,7 @@
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 #undef EFFECT_SPAWN
 
@@ -268,7 +268,7 @@ void GaiaRockInside_JumpDownByAltar(void) {
 // Neither it nor its caller GaiaRockInside_RaiseDust exists in the Japanese
 // scene.
 #if TLA_PATCH_1
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 #endif
 
 /* VIEW(gaia_rock_inside): routine Event_End as s32 Event_End(void);
@@ -464,7 +464,7 @@ s32 GaiaRockInside_SerpentSettles(void) {
   return 0;
 }
 
-#include "../field/field_effect/advance_motion_priority.c"
+#include "../field/field_effect_advance_motion_priority.c"
 
 #undef FIELD_AT
 

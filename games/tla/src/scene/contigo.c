@@ -262,9 +262,9 @@ void Contigo_TeleportIn(void) {
   work->transition = saved;
 }
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 /* VIEW(contigo): tag struct TalkActor as this part has it; the joined file has
  * another; tried with the definition the rest of the object has, it does not

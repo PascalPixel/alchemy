@@ -133,7 +133,7 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   return 1;
 }
 
-#include "../field/map/cellfill.c"
+#include "../field/map_cell_fill.c"
 
 extern s32 gPushLeaderSteps[];
 

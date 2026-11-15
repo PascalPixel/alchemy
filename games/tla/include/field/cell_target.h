@@ -3,7 +3,7 @@
 
 /// @file
 /// The table of watched cells that the Jupiter and Mars Lighthouse overlays and
-/// overlay 6B0 keep, and field/map/cell_sprite.c's sprite reads.
+/// overlay 6B0 keep, and field/map_cell_sprite.c's sprite reads.
 
 #include "types.h"
 

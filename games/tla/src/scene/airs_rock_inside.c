@@ -326,13 +326,13 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
 
 #include "shared/actor_set_cell_open.h"
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/object/prepare_object.c"
+#include "../field/actor_prepare.c"
 
 #include "shared/scene_create_imported_actor.h"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -340,7 +340,7 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 extern struct ActorPlacement gAirsRockInside_Room4Placements[];
 extern struct ActorPlacement gAirsRockInside_Room6Placements[];
@@ -438,7 +438,7 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
-#include "../field/object/wait_until_idle.c"
+#include "../field/actor_wait_until_idle.c"
 
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y) {
   struct AirsRockInsideMapWork *map =
@@ -3110,7 +3110,7 @@ void AirsRockInside_SetLedgeCellsByLevel(void) {
 #undef EVENT_WORK
 #undef FIELD_AT
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 #undef EVENT_WORK
 #undef DEFINE_AIRS_ROCK_INSIDE_SET_DOORS

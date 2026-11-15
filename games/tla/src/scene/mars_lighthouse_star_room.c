@@ -1686,7 +1686,7 @@ struct Unit *Unit_Get__ride_handle(s32 owner) __asm__("Unit_Get");
 
 #include "shared/party_take_fall_damage.h"
 
-#include "../field/field_effect/advance_spin.c"
+#include "../field/field_effect_advance_spin.c"
 
 #include "shared/actor_blink.h"
 
@@ -2080,9 +2080,9 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #include "shared/leader_slide_on_ice_ahead.h"
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #undef TLA_MARS_LIGHTHOUSE_STAR_ROOM_H
 #undef DIFF
@@ -2176,7 +2176,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 }
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepth
-#include "../field/map/cell_sprite.c"
+#include "../field/map_cell_sprite.c"
 
 #include "shared/cracked_tiles_find.h"
 
@@ -2193,7 +2193,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "system/io_write.h"
 #include "shared/cracked_tile_fall.h"
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {

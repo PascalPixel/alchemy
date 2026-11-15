@@ -2,7 +2,7 @@
 #define ALCHEMY_MODULE_BATTLE_PRESENTATION_H
 
 /// @file
-/// What the battle object's later parts (games/tla/src/battle/battle/, from
+/// What the battle object's later parts (games/tla/src/battle/battle_*.c, from
 /// motion_graphics.c to spoils.c) declare for the files that use them,
 /// written once.
 

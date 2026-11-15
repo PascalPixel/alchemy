@@ -355,7 +355,7 @@ s32 PushTarget_FillFootprint(s32 id) {
   return 1;
 }
 
-#include "../field/map/cellfill.c"
+#include "../field/map_cell_fill.c"
 
 extern s32 gPushLeaderSteps[];
 
@@ -530,7 +530,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
 // clang-format off
 u16 gPushKinds[] = {
@@ -552,7 +552,7 @@ s32 gPushLeaderSteps[] = {
   };
 // clang-format on
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #undef FLAG_LOG_OFF_LEDGE
 #undef FLAG_LEFT_PILLAR_IN_GAP
@@ -642,7 +642,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 }
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
-#include "../field/map/cell_sprite.c"
+#include "../field/map_cell_sprite.c"
 
 #include "shared/cracked_tiles_find_lower.h"
 
@@ -656,7 +656,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/cracked_tile_fall.h"
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
 // The room of gaps and logs in Jupiter Lighthouse: the cracked tiles' steps

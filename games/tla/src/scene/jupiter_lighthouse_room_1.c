@@ -243,7 +243,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
 void JupiterLighthouse_LeaveByCyclone(void);
 void JupiterLighthouse_FinishMovingBlock(void);
@@ -323,7 +323,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #undef FLAG_GATES_BUTTON_HELD
 // Jupiter Lighthouse's ground floor: its copy of the effect spawner, and the
@@ -404,7 +404,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 /// The cells CrackedTiles_Step watches, and the cell it copies over the one the
 /// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
-#include "../field/map/cell_sprite.c"
+#include "../field/map_cell_sprite.c"
 
 #include "shared/cracked_tiles_find_lower.h"
 
@@ -420,7 +420,7 @@ struct CellTargetEntry;
 
 #include "shared/cracked_tile_fall.h"
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
 // Jupiter Lighthouse's ground floor: the cracked tiles' steps and landings.

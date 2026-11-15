@@ -66,13 +66,13 @@
 #include "field/field_sequence_event.h"
 #include "call.h"
 #include "bg_scroll.h"
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/object/prepare_object.c"
+#include "../field/actor_prepare.c"
 
 #include "shared/scene_create_actor.h"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -80,7 +80,7 @@
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 s32 AirsRock_ClearScriptedActorSpriteFlags(s32 a0) {
   Actor_SetSpriteFlags(a0, 0);
@@ -123,7 +123,7 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
-#include "../field/object/wait_until_idle.c"
+#include "../field/actor_wait_until_idle.c"
 
 #undef EFFECT_SET_SCRIPT
 
@@ -603,7 +603,7 @@ void AirsRock_BlowGust(void) {
 /// The scroll of the swirling sand, by HBlank lines.
 #define WAVE_SCROLL AirsRock_ScrollWave
 #define WAVE_SCROLL_LINES gAirsRock_WaveLines
-#include "../field/field_effect/wave_scroll.c"
+#include "../field/field_effect_wave_scroll.c"
 
 /// Moves the object: left of x 320 it speeds up rightward and grows, past it
 /// it speeds up leftward and shrinks; its priority follows its direction and

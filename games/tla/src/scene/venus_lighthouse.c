@@ -3,7 +3,7 @@
 /// with Psynergy and goes on alone, and Jenna and Kraden, doubting they should
 /// leave, meet Alex and set off for Idejima (SceneId_VenusLighthouse).
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 #include "battle/battle.h"
 #include "flags.h"
 #include "debug.h"
@@ -95,7 +95,7 @@ struct Actor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z,
   return 0;
 }
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #undef Actor_SetSpriteFlags
 
@@ -178,7 +178,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/distance.c"
 
-#include "../field/object/find_in_cell.c"
+#include "../field/actor_find_in_cell.c"
 
 extern s32 gPushLeaderSteps[];
 
@@ -263,7 +263,7 @@ void VenusLighthouse_PushBlockOnto(void) {
   Import_ActorSelectAnimation(lead, 1);
 }
 
-#include "../field/map/cell_fill_byte.c"
+#include "../field/map_cell_fill_byte.c"
 
 /// Unused: does nothing; nothing calls it.
 UNUSED void VenusLighthouse_Nothing(void) {}

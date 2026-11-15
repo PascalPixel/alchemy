@@ -2,9 +2,9 @@
 /// Magma Rock, outside and on its slopes, where the party climbs to the Magma
 /// Ball the diggers of Loho need for their cannon, in three rooms that share
 /// this overlay (SceneId_MagmaRock1 to SceneId_MagmaRock3).
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/object/prepare_object.c"
+#include "../field/actor_prepare.c"
 
 #include "types.h"
 #include "flags.h"
@@ -66,7 +66,7 @@ struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
   return NULL;
 }
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -74,11 +74,11 @@ struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 #include "shared/distance.c"
 
-#include "../field/object/find_in_cell.c"
+#include "../field/actor_find_in_cell.c"
 
 #undef EFFECT_SPAWN
 
@@ -86,7 +86,7 @@ extern s32 gPushLeaderSteps[];
 
 #include "shared/block_push_onto.h"
 
-#include "../field/map/cell_fill_byte.c"
+#include "../field/map_cell_fill_byte.c"
 
 // Magma Rock's outside, the volcano north of Loho the party climbs to its
 // summit: the Moai statues Burst wakes, which fire magma rocks or lift the
@@ -106,7 +106,7 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 #include "shared/map_cell_set_shape.h"
 
-#include "../field/map/cell_get.c"
+#include "../field/map_cell_get.c"
 
 #include "shared/actors_raise_cells.h"
 
@@ -1428,7 +1428,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 #undef MagmaRockEffectConfig
 #undef Position
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 #undef BYTE_AT
 #undef PART_Y
@@ -2129,7 +2129,7 @@ test:
     goto body;
 }
 
-#include "../field/field_effect/advance_motion_priority.c"
+#include "../field/field_effect_advance_motion_priority.c"
 
 // Magma Rock's rubble and falling rocks, and its tables.
 

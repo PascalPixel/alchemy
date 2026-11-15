@@ -265,7 +265,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {                                                               
@@ -341,7 +341,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 // The grounds before Jupiter Lighthouse's gates: its copy of the effect
 // spawner, and the cracked tiles, found, cracked and fallen through.
@@ -421,7 +421,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 }
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
-#include "../field/map/cell_sprite.c"
+#include "../field/map_cell_sprite.c"
 
 #include "shared/cracked_tiles_find_lower.h"
 
@@ -439,7 +439,7 @@ struct CellTargetEntry;
 
 #include "shared/cracked_tile_fall.h"
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
 // The grounds before Jupiter Lighthouse's gates: the cracked tiles' steps and

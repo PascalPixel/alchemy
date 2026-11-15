@@ -102,10 +102,11 @@ of them, each adding something of its own.
 ## Where the code is
 
 - The bank's C is one object, as The Broken Seal's is:
-  [`battle_effect.c`](battle_effect.c) includes its parts from
-  [`battle_effect/`](battle_effect) in ROM order, each named for the first
-  ability it draws (`cybele.c`, `bolt.c`, `meteor_blow.c`), with the
-  includes they share in `battle_effect_internal.h`.
+  [`battle_effect.c`](battle_effect.c) includes its parts, the files beside
+  it named `battle_effect_*.c`, in ROM order, each named for the first
+  ability it draws (`battle_effect_cybele.c`, `battle_effect_bolt.c`,
+  `battle_effect_meteor_blow.c`), with the includes they
+  share in `battle_effect_internal.h`.
 - [`effect_table.c`](effect_table.c) is the tables they read: which
   pictures, where and how many, and the handler for each effect kind.
 - The blitters are assembly fragments, put together as an effect needs

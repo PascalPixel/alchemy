@@ -3,17 +3,17 @@
 /// (SceneId_YampiDesert1 to SceneId_YampiDesert12): its travelers, the
 /// scorpion in its way, the stakes Pound sinks and the sand slides Sand slips
 /// under, and its tables of entrances, placements and triggers by room.
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 #include "objcmd.h"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 /* VIEW(placements): routine PartyInventory_GiveItem as yampi_desert/scene.h
  * declared it; the joined file declares it otherwise. */
@@ -756,7 +756,7 @@ void YampiDesert_WatchScorpionStop(void) {
 }
 
 #undef PartyInventory_GiveItem
-#include "../field/field_effect/advance_motion_priority.c"
+#include "../field/field_effect_advance_motion_priority.c"
 
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE

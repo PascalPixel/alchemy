@@ -1160,9 +1160,9 @@ void TrialRoad_RevealVine(void) {
   Event_SetFlag(FLAG_AREA_TEMP_74);
 }
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #undef DEFINE_TRIAL_ROAD_OPEN_DOOR
 #undef FIELD_AT
@@ -1245,7 +1245,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-#include "../field/field_effect/advance_motion_priority.c"
+#include "../field/field_effect_advance_motion_priority.c"
 
 void TrialRoad_DriftWithStream(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);

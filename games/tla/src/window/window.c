@@ -28,20 +28,20 @@
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
 // parts").
-#include "window/windows.c"
-#include "window/typing.c"
-#include "window/borders.c"
-#include "window/glyphs.c"
-#include "window/decode.c"
-#include "window/measure.c"
-#include "window/sprites.c"
-#include "window/messages.c"
-#include "window/icons.c"
-#include "window/selection.c"
-#include "window/shortcuts.c"
-#include "window/settings_menu.c"
-#include "window/debug.c"
-#include "window/text_tiles.c"
+#include "window_windows.c"
+#include "window_typing.c"
+#include "window_borders.c"
+#include "window_glyphs.c"
+#include "window_decode.c"
+#include "window_measure.c"
+#include "window_sprites.c"
+#include "window_messages.c"
+#include "window_icons.c"
+#include "window_selection.c"
+#include "window_shortcuts.c"
+#include "window_settings_menu.c"
+#include "window_debug.c"
+#include "window_text_tiles.c"
 
 #undef Ability_Get
 #undef Portrait_Create
@@ -268,19 +268,19 @@ extern u8 Tile_BuildCellPicturesCode[];
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
 // parts").
-#include "window/window_sprites.c"
-#include "window/party_status.c"
-#include "window/save.c"
-#include "window/name_entry.c"
-#include "window/joined.c"
-#include "window/menu_titles.c"
-#include "window/battle_command_row.c"
-#include "window/battle_djinn_preview.c"
-#include "window/battle_status.c"
-#include "window/battle_djinn_menu.c"
-#include "window/battle_summon_menu.c"
-#include "window/battle_item_menu.c"
-#include "window/battle_psynergy_menu.c"
+#include "screens_window_sprites.c"
+#include "screens_party_status.c"
+#include "screens_save.c"
+#include "screens_name_entry.c"
+#include "screens_joined.c"
+#include "screens_menu_titles.c"
+#include "screens_battle_command_row.c"
+#include "screens_battle_djinn_preview.c"
+#include "screens_battle_status.c"
+#include "screens_battle_djinn_menu.c"
+#include "screens_battle_summon_menu.c"
+#include "screens_battle_item_menu.c"
+#include "screens_battle_psynergy_menu.c"
 
 #undef MenuCursor_SetPositionImmediateFar
 #undef Message_Start
@@ -340,12 +340,12 @@ extern u8 gWorkspace_RangeDash[];
 extern s8 gMenu_SaveSlotActionByPosition[];
 
 // The parts, in ROM order.
-#include "window/battle_targets.c"
-#include "window/link_timer.c"
-#include "window/battle_party_commands.c"
-#include "window/icon_menu.c"
-#include "window/debug_destinations.c"
-#include "window/debug_flags.c"
-#include "window/pause_menu.c"
+#include "screens_battle_targets.c"
+#include "screens_link_timer.c"
+#include "screens_battle_party_commands.c"
+#include "screens_icon_menu.c"
+#include "screens_debug_destinations.c"
+#include "screens_debug_flags.c"
+#include "screens_pause_menu.c"
 
 #undef BattleDjinnMenu_Run

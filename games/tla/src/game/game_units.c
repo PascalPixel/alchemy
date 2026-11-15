@@ -1,0 +1,1160 @@
+/// @file
+/// The party's units and their stats, a new game, the prologue, HP and PP.
+// Part of game.c.
+
+#include "game_internal.h"
+#include "flags.h"
+#include "macros.h"
+#include "flag_call.h"
+#include "gamepak/far_call/field_sequence.h"
+#include "module/game/game.h"
+#include "gamepak/far_call/window.h"
+#include "system/ram_buffer.h"
+#include "resource_ids.h"
+#include "system/save.h"
+
+extern u16 gData_02003860;
+
+extern s16 gSaveSlot;
+
+/// Starts a new game: clears the main routine's work and restarts at the
+/// opening.
+void Game_RestartQuest(void) {
+  MainRoutineWork_InitializeDefaults();
+  MainRoutine_RunFar(0);
+}
+
+/// Returns the party's Djinn recovery bank, the standby Djinn and their turns
+/// to recover, or for the enemy side a battle unit read as one.
+struct DjinnRecoveryTable *Djinn_GetRecoveryTable(s32 enemySide) {
+  if (enemySide != 0)
+    return (struct DjinnRecoveryTable *)Unit_Get(FIRST_ENEMY_UNIT + 3);
+  return (struct DjinnRecoveryTable *)&gMainRoutineWork.summonMask;
+}
+
+/// Returns the average level of the party members, rounded down (0 with no
+/// party members).
+u32 Party_GetAverageLevel(void) {
+  s32 totalLevels = 0;
+  s32 partySize = Party_CountMembers();
+  s32 i;
+
+  if (partySize == 0)
+    return 0;
+  for (i = 0; i < partySize; i++)
+    totalLevels += ((struct Unit *)Unit_Get(gMainRoutineWork.party[i]))->level;
+  totalLevels /= partySize;
+  return totalLevels;
+}
+
+/// Returns the definition of enemy selector; enemy ids start past the eight
+/// characters', so that one id names any unit.
+const struct EnemyDefinition *Enemy_GetDefinition(s32 selector) {
+  u32 recordIndex;
+
+  recordIndex = selector - ENEMY_ID_FIRST;
+  // BUG: the table has ENEMY_COUNT rows, but only rows past 999 are refused, so
+  // the rows from ENEMY_COUNT read the tables after it.
+#ifdef BUGFIX
+  if (recordIndex > ENEMY_COUNT - 1U)
+#else
+  if (recordIndex > 999U)
+#endif
+    recordIndex = 0;
+  return &gEnemy_Definitions[recordIndex];
+}
+
+/// Copies `count` bytes from `first` to `second` when `direction` is set, and
+/// from `second` to `first` otherwise.
+void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
+                                 s32 direction) {
+  s32 i;
+
+  if (direction != 0) {
+    for (i = 0; i < count; i++)
+      *second++ = *first++;
+  } else {
+    for (i = 0; i < count; i++)
+      *first++ = *second++;
+  }
+}
+
+/// The distance between `a` and `b`, |a - b|.
+#define UNIT_STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
+
+/// A scaling effect's number among the eight, from EQUIP_EFFECT_SCALE_HP.
+#define SCALE_EFFECT(kind) ((kind) - EQUIP_EFFECT_SCALE_HP)
+
+/// Works out a unit's stats from its base stats, equipment, set Djinn, class
+/// and battle stat levels; its HP and PP keep their share of a new maximum.
+void Unit_Calculate(s32 unitId) {
+  struct StatWork *stats;
+  struct Unit *unit;
+  s32 index, effectIndex, elementIndex;
+  s32 value;
+  s32 lighthouse;
+  s32 effectKind;
+  s32 effectAmount;
+  s32 hpLimit;
+  s32 ppLimit;
+  s16 previousMaximum;
+
+  // Start with the unit's base stats and elemental power/resistance.
+  stats = Heap_AllocEwram(sizeof(struct StatWork));
+  unit = Unit_Get(unitId);
+  stats->hp = unit->baseHp;
+  stats->pp = unit->basePp;
+  stats->atk = unit->baseAttack;
+  stats->def = unit->baseDefense;
+  stats->agi = unit->baseAgility;
+  stats->luck = unit->baseLuck;
+  stats->actionCount = unit->baseActionCount & 15;
+  stats->hpRegen = unit->baseHpRegen;
+  stats->ppRegen = unit->basePpRegen;
+  for (index = 0; index < ELEMENT_COUNT; index++) {
+    stats->element[index].power = unit->baseElement[index].power;
+    stats->element[index].resistance = unit->baseElement[index].resistance;
+  }
+
+  // HP and PP keep their share of the maximum; gauges that no longer match are
+  // reset to full first.
+  if (UNIT_STAT_DIFF(unit->hpMax * unit->hpGauge / UNIT_GAUGE_FULL, unit->hp) >
+          1 ||
+      UNIT_STAT_DIFF(unit->ppMax * unit->ppGauge / UNIT_GAUGE_FULL, unit->pp) >
+          1) {
+    unit->hpGauge = UNIT_GAUGE_FULL;
+    unit->ppGauge = UNIT_GAUGE_FULL;
+    unit->hp = unit->hpMax;
+    unit->pp = unit->ppMax;
+  }
+
+  // CURSE_KEEP_BOUND keeps CURSE_BOUND, and CURSE_REMOVABLE clears both again
+  // below.
+  unit->curse &= ~(CURSE_BOUND | CURSE_ITEM);
+  if (unit->curse & CURSE_KEEP_BOUND)
+    unit->curse |= CURSE_BOUND;
+  if (unit->ready)
+    stats->actionCount++;
+  unit->equipBonus[0] = 0;
+
+  // Apply additive equipment and set-Djinn bonuses before class scaling.
+  // An enemy (CLASS_NONE) skips equipment, Djinn and class entirely.
+  if (unit->classId != CLASS_NONE) {
+    for (index = 0; index < INVENTORY_SLOTS; index++) {
+      if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
+        continue;
+      stats->item = Item_GetDirect(unit->inventory[index]);
+      if (stats->item->flags & ITEM_CURSED)
+        unit->curse |= CURSE_BOUND | CURSE_ITEM;
+      stats->atk += stats->item->primaryBonus;
+      /* FAKEMATCH(barrier): an empty asm after the Attack bonus. */
+      asm("");
+      stats->def += stats->item->secondaryBonus;
+      for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
+        effectKind = stats->item->effects[effectIndex].kind;
+        effectAmount = stats->item->effects[effectIndex].amount;
+        stats->kind = effectKind;
+        stats->amount = effectAmount;
+        switch (effectKind) {
+        case EQUIP_EFFECT_NONE:
+          break;
+        case EQUIP_EFFECT_ADD_HP:
+          stats->hp += stats->amount;
+          break;
+        case EQUIP_EFFECT_ADD_HP_REGEN:
+          stats->hpRegen += stats->amount;
+          break;
+        case EQUIP_EFFECT_ADD_PP:
+          stats->pp += stats->amount;
+          break;
+        case EQUIP_EFFECT_ADD_PP_REGEN:
+          stats->ppRegen += stats->amount;
+          break;
+        case EQUIP_EFFECT_ADD_AGILITY:
+          stats->agi += stats->amount;
+          break;
+        case EQUIP_EFFECT_ADD_LUCK:
+          stats->luck += stats->amount;
+          break;
+        case EQUIP_EFFECT_ADD_VENUS_POWER:
+          stats->element[ELEMENT_VENUS].power += stats->amount;
+          break;
+        case EQUIP_EFFECT_ADD_MERCURY_POWER:
+          stats->element[ELEMENT_MERCURY].power += stats->amount;
+          break;
+        case EQUIP_EFFECT_ADD_MARS_POWER:
+          stats->element[ELEMENT_MARS].power += stats->amount;
+          break;
+        case EQUIP_EFFECT_ADD_JUPITER_POWER:
+          stats->element[ELEMENT_JUPITER].power += stats->amount;
+          break;
+        case EQUIP_EFFECT_ADD_VENUS_RESIST:
+          stats->element[ELEMENT_VENUS].resistance += stats->amount;
+          break;
+        case EQUIP_EFFECT_ADD_MERCURY_RESIST:
+          stats->element[ELEMENT_MERCURY].resistance += stats->amount;
+          break;
+        case EQUIP_EFFECT_ADD_MARS_RESIST:
+          stats->element[ELEMENT_MARS].resistance += stats->amount;
+          break;
+        case EQUIP_EFFECT_ADD_JUPITER_RESIST:
+          stats->element[ELEMENT_JUPITER].resistance += stats->amount;
+          break;
+        case EQUIP_EFFECT_ADD_UNLEASH_CHANCE:
+          unit->equipBonus[0] += stats->amount;
+          break;
+        case EQUIP_EFFECT_CURSE_REMOVABLE:
+          unit->curse |= CURSE_REMOVABLE;
+          break;
+        case EQUIP_EFFECT_ADD_ACTIONS:
+          stats->actionCount += stats->amount;
+          break;
+        }
+      }
+    }
+    if (unit->curse & CURSE_REMOVABLE)
+      unit->curse &= ~(CURSE_REMOVABLE | CURSE_BOUND);
+
+    // Only set Djinn contribute their stat bonuses.
+    for (elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++) {
+      u32 activeDjinn = unit->djinnSet[elementIndex];
+
+      for (index = 0; index < DJINN_PER_ELEMENT; index++) {
+        if (activeDjinn & (1 << index)) {
+          const struct DjinnDefinition *djinn =
+              Djinn_GetDefinition(elementIndex, index);
+
+          stats->hp += djinn->hp;
+          stats->pp += djinn->pp;
+          stats->atk += djinn->atk;
+          stats->def += djinn->def;
+          stats->agi += djinn->agi;
+          stats->luck += djinn->luck;
+        }
+      }
+    }
+
+    // The class's multipliers are in tenths (STAT_SCALE_ONE keeps a stat)
+    {
+      /* FAKEMATCH(signature): the class read through ClassScaleView, which has
+       * no word member, so the multipliers load ahead of the stores. */
+      struct ClassScaleView *scale =
+          (struct ClassScaleView *)Class_GetDefinition(unit->classId);
+
+      stats->hp = stats->hp * scale->hp / STAT_SCALE_ONE;
+      stats->pp = stats->pp * scale->pp / STAT_SCALE_ONE;
+      stats->atk = stats->atk * scale->atk / STAT_SCALE_ONE;
+      stats->def = stats->def * scale->def / STAT_SCALE_ONE;
+      stats->agi = stats->agi * scale->agi / STAT_SCALE_ONE;
+      stats->luck = stats->luck * scale->luck / STAT_SCALE_ONE;
+    }
+
+    // Then the equipment's multiplying effects, EQUIP_EFFECT_SCALE_HP to
+    // EQUIP_EFFECT_SCALE_LUCK, also in tenths, applied after the class.
+    for (index = 0; index < INVENTORY_SLOTS; index++) {
+      if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
+        continue;
+      stats->item = Item_GetDirect(unit->inventory[index]);
+      for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
+        effectKind = stats->item->effects[effectIndex].kind;
+        effectAmount = stats->item->effects[effectIndex].amount;
+        stats->kind = effectKind;
+        effectKind = SCALE_EFFECT(effectKind);
+        stats->amount = effectAmount;
+        switch (effectKind) {
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_HP):
+          stats->hp = stats->hp * stats->amount / STAT_SCALE_ONE;
+          break;
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_HP_REGEN):
+          stats->hpRegen = stats->hpRegen * stats->amount / STAT_SCALE_ONE;
+          break;
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_PP):
+          stats->pp = stats->pp * stats->amount / STAT_SCALE_ONE;
+          break;
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_PP_REGEN):
+          stats->ppRegen = stats->ppRegen * stats->amount / STAT_SCALE_ONE;
+          break;
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_ATTACK):
+          stats->atk = stats->atk * stats->amount / STAT_SCALE_ONE;
+          break;
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_DEFENSE):
+          stats->def = stats->def * stats->amount / STAT_SCALE_ONE;
+          break;
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_AGILITY):
+          stats->agi = stats->agi * stats->amount / STAT_SCALE_ONE;
+          break;
+        case SCALE_EFFECT(EQUIP_EFFECT_SCALE_LUCK):
+          stats->luck = stats->luck * stats->amount / STAT_SCALE_ONE;
+          break;
+        }
+      }
+    }
+  }
+
+  // Then the battle's changes apply: the Attack, Defense and Agility stages,
+  // a summon's boost to each element's power, and the Resistance stage.
+  stats->atk = stats->atk * (unit->attackStage + 8) / 8;
+  stats->def = stats->def * (unit->defenseStage + 8) / 8;
+  stats->agi = stats->agi * (unit->agilityStage + 8) / 8;
+  for (index = 0; index < ELEMENT_COUNT; index++)
+    stats->element[index].power +=
+        (unit->summonBoost[index] * unit->summonBoost[index] +
+         unit->summonBoost[index]) *
+        5;
+  for (index = 0; index < ELEMENT_COUNT; index++)
+    stats->element[index].resistance += unit->resistanceStage * 20;
+
+  if (unit->classId != CLASS_NONE) {
+    lighthouse = 0;
+    // Faster PP recovery inside the lighthouse of the character's own element.
+    switch (unit->enemyId) {
+    case GARET:
+      lighthouse = GameFlag_Get(FLAG_IN_MARS_LIGHTHOUSE);
+      break;
+    case MIA:
+      lighthouse = GameFlag_Get(FLAG_IN_MERCURY_LIGHTHOUSE);
+      break;
+    case JENNA:
+      lighthouse = GameFlag_Get(FLAG_IN_MARS_LIGHTHOUSE);
+      break;
+    case ISAAC:
+    case FELIX:
+      lighthouse = GameFlag_Get(FLAG_IN_VENUS_LIGHTHOUSE);
+      break;
+    case IVAN:
+    case SHEBA:
+      lighthouse = GameFlag_Get(FLAG_IN_JUPITER_LIGHTHOUSE);
+      break;
+    case PIERS:
+      lighthouse = GameFlag_Get(FLAG_IN_MERCURY_LIGHTHOUSE);
+      break;
+    }
+    if (lighthouse)
+      stats->ppRegen += 4;
+  }
+
+  CLAMP(stats->atk, 0, UNIT_STAT_MAX);
+  CLAMP(stats->def, 0, UNIT_STAT_MAX);
+  CLAMP(stats->agi, 0, UNIT_STAT_MAX);
+  CLAMP(stats->luck, 0, UNIT_LUCK_MAX);
+  // An enemy may act up to four times a turn, a character twice.
+  if (unit->classId == CLASS_NONE) {
+    CLAMP(stats->actionCount, 0, 4);
+  } else {
+    CLAMP(stats->actionCount, 0, 2);
+  }
+  CLAMP(stats->hpRegen, 0, UNIT_HP_REGEN_MAX);
+  CLAMP(stats->ppRegen, 0, UNIT_PP_REGEN_MAX);
+  for (index = 0; index < ELEMENT_COUNT; index++) {
+    CLAMP(stats->element[index].power, 0, UNIT_ELEMENT_MAX);
+    CLAMP(stats->element[index].resistance, 0, UNIT_ELEMENT_MAX);
+  }
+
+  unit->atk = stats->atk;
+  unit->def = stats->def;
+  unit->agi = stats->agi;
+  unit->luck = stats->luck;
+  unit->actionsPerTurn = stats->actionCount;
+  unit->hpRegen = stats->hpRegen;
+  unit->ppRegen = stats->ppRegen;
+  for (index = 0; index < ELEMENT_COUNT; index++) {
+    unit->element[index].power = stats->element[index].power;
+    unit->element[index].resistance = stats->element[index].resistance;
+  }
+
+  if (unit->classId == CLASS_NONE) {
+    hpLimit = UNIT_ENEMY_HP_MAX;
+    ppLimit = UNIT_ENEMY_PP_MAX;
+  } else {
+    hpLimit = ppLimit = UNIT_CHARACTER_HP_MAX;
+  }
+
+  previousMaximum = unit->hpMax;
+  CLAMP(stats->hp, 0, hpLimit);
+  unit->hpMax = stats->hp;
+  if (previousMaximum != unit->hpMax) {
+    value = stats->hp * unit->hpGauge / UNIT_GAUGE_FULL;
+    CLAMP(value, 0, hpLimit);
+    if (unit->hp != 0 && value == 0)
+      value = 1;
+    unit->hp = value;
+  }
+
+  previousMaximum = unit->ppMax;
+  CLAMP(stats->pp, 0, ppLimit);
+  unit->ppMax = stats->pp;
+  if (previousMaximum != unit->ppMax) {
+    value = stats->pp * unit->ppGauge / UNIT_GAUGE_FULL;
+    CLAMP(value, 0, ppLimit);
+    if (unit->pp != 0 && value == 0)
+      value = 1;
+    unit->pp = value;
+  }
+
+  Heap_Release(stats);
+}
+
+/// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item with
+/// EQUIP_EFFECT_LURE) equipped, and clears it otherwise.
+void GameFlag_RefreshLureCap(void) {
+  s32 partySize;
+  s32 member;
+
+  GameFlag_Clear(FLAG_LURE_CAP);
+  partySize = Party_CountMembers();
+  for (member = 0; member < partySize; member++) {
+    struct Unit *unit = Unit_Get(gMainRoutineWork.party[member]);
+    s32 slot;
+
+    for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
+      const struct ItemDefinition *item;
+      s32 effect;
+
+      if (!(unit->inventory[slot] & INVENTORY_EQUIPPED))
+        continue;
+      item = Item_GetDirect(unit->inventory[slot]);
+      for (effect = 0; effect < EQUIP_EFFECT_SLOTS; effect++) {
+        if (item->effects[effect].kind == EQUIP_EFFECT_LURE)
+          GameFlag_Set(FLAG_LURE_CAP);
+      }
+    }
+  }
+}
+
+/// Returns the unit's PP over its maximum PP, in 16.16; 0 with no maximum.
+static __inline__ s32 Owner_GetPpRatio(s32 owner) {
+  struct Unit *unit = Unit_Get(owner);
+
+  if (unit->ppMax <= 0)
+    return 0;
+  return (unit->pp << 16) / unit->ppMax;
+}
+
+/// Returns the party's PP over its maximum PP, in 16.16; 0 with no members.
+s32 Party_GetPpRatio(void) {
+  s32 pp = 0;
+  s32 max = 0;
+  s32 count = Party_CountMembers();
+  s32 i;
+
+  if (count == 0)
+    return 0;
+  for (i = 0; i < count; i++) {
+    struct Unit *unit = Unit_Get(gMainRoutineWork.party[i]);
+
+    pp += unit->pp;
+    max += unit->ppMax;
+  }
+  if (max == 0)
+    return 0;
+  return (pp << 16) / max;
+}
+
+/// Takes 1 PP from the member whose PP is fullest for its maximum.
+s32 Party_DrainPpFromFullest(void) {
+  s32 best = 0;
+  s32 bestOwner = -1;
+  s32 count = Party_CountMembers();
+  s32 i;
+
+  if (count == 0)
+    return 0;
+  for (i = 0; i < count; i++) {
+    s32 ratio = Owner_GetPpRatio(gMainRoutineWork.party[i]);
+
+    if (ratio > best) {
+      best = ratio;
+      bestOwner = gMainRoutineWork.party[i];
+    }
+  }
+  if (bestOwner == -1)
+    return 0;
+  // Its result taken as a whole word, where the definition returns s16.
+  return ((s32 (*)(s32, s32))Unit_AddPp)(bestOwner, -1);
+}
+
+/// Takes count PP from the party, one at a time from the fullest member.
+void Party_DrainPp(s32 count) {
+  s32 i;
+
+  for (i = 0; i < count; i++)
+    Party_DrainPpFromFullest();
+  Party_GetPpRatio();
+}
+
+/// Encodes the build stamp's time, which a new game takes as its start stamp
+/// and the file list compares saves with.
+u32 BuildStamp_GetTime(void) {
+  // The stamp is six ASCII digits, hhmmss.
+  const u8 *digits = Resource_GetTableEntry(RESOURCE_BUILD_STAMP);
+  s32 hours;
+  s32 minutes;
+  s32 seconds;
+  s16 time;
+  s32 stamp;
+
+  hours = (*digits++ - '0') * 10;
+  hours += *digits++ - '0';
+  minutes = (*digits++ - '0') * 10;
+  minutes += *digits++ - '0';
+  seconds = (digits[0] - '0') * 10;
+  seconds += digits[1] - '0';
+  time = (hours * 16 + minutes) * 64 + seconds;
+  time |= 0x1000;
+  stamp = time;
+
+  if (gDebugMode != 0)
+    stamp |= 0xFFFF8000;
+  return (u16)stamp;
+}
+
+/// DMA3, the channel the game copies with, as its three registers.
+#define DMA3 ((volatile struct DmaRegisters *)&REG_DMA3SAD)
+/// DMA 3's enable bit in its count and control word, which the hardware
+/// clears when the transfer is done.
+#define DMA3_BUSY (DMA_ENABLE << 16)
+
+/// Waits until the DMA channel's transfer is done.
+static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
+  while ((channel->control & DMA3_BUSY) != 0) {
+  }
+}
+
+extern s8 gSceneLocalState[];
+#ifndef MODERN
+// A current GCC refuses the volatile redeclaration and reads frame.h's.
+extern volatile u8 gIdleSleepEnabled;
+#endif
+
+/// Starts a new game's state: clears gMainRoutineWork, the work block, the
+/// flags and the owners by DMA, builds the characters, sets the defaults (the
+/// button layout, Felix and Jenna in the party, their first Psynergy, 200
+/// coins, the message settings and the play time clock) and fills the work
+/// block's random tables.
+void MainRoutineWork_InitializeDefaults(void) {
+  volatile s32 zero;
+  s32 i;
+  s32 j;
+
+  // Clear the state up to the characters, the scene state with its snapshots,
+  // and the flags.
+  Dma_Fill32Cell(zero, 0, &gMainRoutineWork, sizeof(gMainRoutineWork));
+#if TLA_PATCH_1
+  Dma_Fill32Cell(zero, 0, gSceneLocalState, 1992 * 4);
+  WaitDma(DMA3);
+#else
+  zero = 0;
+  {
+    /* FAKEMATCH(pin): the channel kept in r3 through the transfer and copied
+     * from there for the wait. */
+    register u32 held asm("r3") = (u32)DMA3;
+    struct DmaRegisters volatile *channel;
+
+    Dma_Set((const void *)&zero, gSceneLocalState,
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 1992,
+            (volatile u32 *)held);
+    channel = (struct DmaRegisters volatile *)held;
+    held = DMA3_BUSY;
+    while ((channel->control & held) != 0) {
+    }
+  }
+#endif
+  Dma_Fill32Cell(zero, 0, gGameFlagBytes, 128 * 4);
+  gSceneLocalState[4] = 0xff;
+  Dma_Fill32Cell(zero, 0, gCharacterUnits, (PIERS + 1) * sizeof(struct Unit));
+  Party_InitializeCharacters();
+  gMainRoutineWork.aKeys = KEY_A;
+  gMainRoutineWork.bKeys = KEY_B;
+  gMainRoutineWork.selectKeys = KEY_SELECT;
+  gMainRoutineWork.startKeys = KEY_START;
+  gMainRoutineWork.firstShortcutKeys = KEY_L;
+  gMainRoutineWork.secondShortcutKeys = KEY_R;
+  gMainRoutineWork.dashKeys = KEY_B;
+  gMainRoutineWork.firstShortcut = 0;
+  gMainRoutineWork.secondShortcut = 0;
+  gMainRoutineWork.leaderActorId = FELIX;
+  Party_AddMember(FELIX);
+  Party_AddMember(JENNA);
+  Unit_LearnPsynergy(FELIX, ABILITY_RETREAT);
+  Unit_LearnPsynergy(FELIX, ABILITY_MOVE);
+  Unit_LearnPsynergy(SHEBA, ABILITY_MIND_READ);
+  Unit_LearnPsynergy(PIERS, ABILITY_DOUSE);
+  Unit_LearnPsynergy(ISAAC, ABILITY_RETREAT);
+  Unit_LearnPsynergy(ISAAC, ABILITY_MOVE);
+  Unit_LearnPsynergy(GARET, ABILITY_MOVE);
+  Unit_LearnPsynergy(IVAN, ABILITY_MIND_READ);
+  Unit_LearnPsynergy(IVAN, ABILITY_REVEAL);
+  gMainRoutineWork.coins = 200;
+  gMainRoutineWork.transferredCoins = 0;
+  gMainRoutineWork.forgeItem = 0;
+  gMainRoutineWork.countedAnswers = 0;
+  gMainRoutineWork.messageSpeed = 1;
+  gMainRoutineWork.speech = 1;
+  gMainRoutineWork.unusedAfterSpeech = 1;
+  gMainRoutineWork.windowHue = 0;
+  gMainRoutineWork.windowBrightness = 8;
+  gMainRoutineWork.buildStamp = 0;
+  gMainRoutineWork.startStamp = BuildStamp_GetTime();
+  gPlayTimeFrames = 0;
+  gIdleSleepEnabled = 0;
+  gMainRoutineWork.playTime = 0;
+  /* FAKEMATCH(volatile): the auto-sleep flag. */
+  gMainRoutineWork.idleSleepEnabled = gIdleSleepEnabled;
+  gIdleFrames = 0;
+  gSaveSlot = -1;
+  gMainRoutineWork.unk284[2] = gData_02003860;
+  gMainRoutineWork.prizeWeights[0] = 4;
+  gMainRoutineWork.prizeWeights[1] = 4;
+  gMainRoutineWork.prizeWeights[2] = 4;
+  gMainRoutineWork.prizeWeights[3] = 8;
+  gMainRoutineWork.prizeWeights[4] = 8;
+  gMainRoutineWork.prizeWeights[5] = 8;
+  gMainRoutineWork.prizeWeights[6] = 16;
+  gMainRoutineWork.prizeWeights[7] = 16;
+  gMainRoutineWork.prizeWeights[8] = 16;
+  gMainRoutineWork.prizeWeights[9] = 32;
+  gMainRoutineWork.prizeWeights[10] = 32;
+  gMainRoutineWork.prizeWeights[11] = 32;
+  gMainRoutineWork.prizeWeights[12] = 64;
+  gMainRoutineWork.prizeWeights[13] = 64;
+  gMainRoutineWork.prizeWeights[14] = 64;
+
+  // Two tables in the space after gRareItemStock's ITEM_COUNTER_COUNT
+  // counters: 32 rows of eight random numbers 0 to 4, 12 bytes apart, and a
+  // copy of Data_080b1f2c.
+  // XXX: what reads them. No object of the main image or of any overlay holds
+  // their addresses or reads gSceneLocalState or gRareItemStock that far in; a
+  // watchpoint on 0x020021b8 and 0x02002338 in a played game would settle it.
+  for (i = 0; i < 32; i++) {
+    for (j = 0; j < 8; j++)
+      gSceneLocalState[0x11b8 + i * 12 + j] = (Random16() * 5) >> 16;
+  }
+  for (i = 0; i < 4; i++) {
+    for (j = 0; j < 5; j++)
+      gSceneLocalState[0x1338 + i * 5 + j] = Data_080b1f2c[i][j];
+  }
+}
+
+/// Makes Jenna the leader.
+void Party_SetLeaderJenna(void) { gMainRoutineWork.leaderActorId = JENNA; }
+
+/// Makes Felix the leader, with Jenna and Sheba out of the party.
+void Party_SetLeaderFelix(void) {
+  gMainRoutineWork.leaderActorId = FELIX;
+  Party_AddMember(FELIX);
+  Party_RemoveMember(JENNA);
+  Party_RemoveMember(SHEBA);
+}
+
+/// Gives Piers his two Mercury Djinn, Spring and Shade (Mercury 9 and 10),
+/// set, then evens out the party's Djinn and recalculates its members.
+/// Kibombo calls it when Piers joins.
+void Party_GivePiersDjinn(void) {
+  s32 i;
+  s32 count;
+
+  for (i = 10; i < 12; i++) {
+    GameFlag_Set(FLAG_DJINNI(ELEMENT_MERCURY * DJINN_PER_ELEMENT + i - 1));
+    Djinn_Give(PIERS, ELEMENT_MERCURY, i - 1);
+    Djinn_Set(PIERS, ELEMENT_MERCURY, i - 1);
+  }
+  // Called with an argument it does not take.
+  ((void (*)(s32))Party_BalanceDjinn)(0);
+  count = Party_CountMembers();
+  for (i = 0; i < count; i++)
+    Unit_Calculate(gMainRoutineWork.party[i]);
+}
+
+/// Restores every party member's HP and PP; with `cureConditions` 1 it also
+/// cures poison and haunting.
+void Party_RestoreHpPp(s32 cureConditions) {
+  s32 partySize;
+  s32 partyIndex;
+  struct Unit *unit;
+
+  partySize = Party_CountMembers();
+  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
+    unit = Unit_Get(gMainRoutineWork.party[partyIndex]);
+
+    unit->hp = unit->hpMax;
+    unit->pp = unit->ppMax;
+    Unit_UpdateGauges(unit);
+
+    if (cureConditions == 1) {
+      unit->poison = 0;
+      unit->haunt = 0;
+    }
+  }
+}
+
+/// Restores the PP of each party member whose element group's lighthouse
+/// the party is inside: Venus or Mars for group 0, Mercury or Jupiter for the
+/// others. Nothing calls it or its far-call export.
+void Party_RestorePpOfLitElements(void) {
+  s32 partySize;
+  s32 partyIndex;
+  u8 unitId;
+  s32 elementGroup;
+  s32 restorePp;
+  struct Unit *unit;
+
+  partySize = Party_CountMembers();
+  for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
+    unitId = gMainRoutineWork.party[partyIndex];
+    elementGroup = gCharacter_ElementGroupTable[unitId];
+    restorePp = 0;
+    if (elementGroup == 0) {
+      if (GameFlag_Get(FLAG_IN_VENUS_LIGHTHOUSE) ||
+          GameFlag_Get(FLAG_IN_MARS_LIGHTHOUSE)) {
+        restorePp = 1;
+      }
+    } else {
+      if (GameFlag_Get(FLAG_IN_MERCURY_LIGHTHOUSE) ||
+          GameFlag_Get(FLAG_IN_JUPITER_LIGHTHOUSE)) {
+        restorePp = 1;
+      }
+    }
+
+    if (restorePp == 0) {
+      continue;
+    }
+
+    unit = Unit_Get(unitId);
+    unit->pp = unit->ppMax;
+    Unit_UpdateGauges(unit);
+  }
+}
+
+/// Writes the element and index of unit's last Djinni and returns 0, or
+/// returns -1 when it has none.
+s32 Unit_FindLastDjinn(s32 unit, s32 *element_out, s32 *index_out) {
+  u32 *sets = ((struct Unit *)Unit_Get(unit))->djinnHeld;
+  s32 element = -1;
+  s32 index = -1;
+  s32 i;
+  s32 j;
+
+  for (i = 0; i < DJINN_PER_ELEMENT; i++) {
+    for (j = 0; j < ELEMENT_COUNT; j++) {
+      if (sets[j] & (1 << i)) {
+        element = j;
+        index = i;
+      }
+    }
+  }
+  if (element == -1)
+    return element;
+  *element_out = element;
+  *index_out = index;
+  return 0;
+}
+
+/// Until the Djinn counts of the active owners are within one, moves the last
+/// Djinni of the owner holding most to the one holding least.
+void Party_BalanceDjinn(void) {
+  s32 count = Party_CountMembers();
+
+  for (;;) {
+    s32 lowNo = 0;
+    s32 high = 0;
+    s32 low = 999;
+    s32 highNo = 0;
+    s32 i;
+    s32 sum;
+    s32 element;
+    s32 index;
+
+    for (i = 0; i < count; i++) {
+      s32 owner = gMainRoutineWork.party[i];
+      struct Unit *unit = Unit_Get(owner);
+      u8 *counts;
+      s32 j;
+
+      sum = 0;
+      counts = unit->djinnOwnedCounts;
+      j = 3;
+      do {
+        u8 value = *counts;
+        counts++;
+        sum += value;
+        j--;
+      } while (j >= 0);
+      if (sum > high) {
+        high = sum;
+        highNo = owner;
+      }
+      if (sum < low) {
+        low = sum;
+        lowNo = owner;
+      }
+    }
+    if (high - low <= 1)
+      break;
+    sum = Unit_FindLastDjinn(highNo, &element, &index);
+    if (sum != 0)
+      break;
+    Djinn_Transfer(highNo, element, index, lowNo);
+  }
+}
+
+/// Returns flag `flag` of flag bytes laid out as gGameFlagBytes: another save's
+/// flags, as DataTransfer_Apply reads them.
+s32 FlagBits_Test(u8 *bytes, s32 flag) {
+  s32 bit;
+  u32 index;
+
+  bit = flag & 7;
+  index = (u32)flag << 20;
+  flag = index >> 23;
+  return (bytes[flag] >> bit) & 1;
+}
+
+/// The data transfer from Golden Sun ("Transfer data from Golden Sun",
+/// MsgTransferDataFromGoldenSun): copies a The Broken Seal save's Djinn, six of
+/// its flags, its coins, its options (when it came by link rather than by
+/// password) and its four units into this game's state.
+void DataTransfer_Apply(u8 *save, s32 byPassword) {
+  u8 *flags = save + SAVE_IMAGE_GAME_FLAGS;
+  struct MainRoutineWork *party =
+      (struct MainRoutineWork *)(save + SAVE_IMAGE_MAIN_ROUTINE_WORK);
+  struct Unit *units = (struct Unit *)(save + SAVE_IMAGE_UNITS);
+  struct MainRoutineWork *state;
+  u8 name[16];
+  s32 i;
+  s32 k;
+  s32 slot;
+  s32 count;
+  s32 j;
+
+  // Each element's first seven Djinn, The Broken Seal's, become the transferred
+  // Djinn flags.
+  for (i = 0, k = 0; i < ELEMENT_COUNT;
+       i++, k += TRANSFERRED_DJINN_PER_ELEMENT) {
+
+    for (j = 0; j < TRANSFERRED_DJINN_PER_ELEMENT; j++) {
+      s32 flag = FLAG_TRANSFERRED_DJINN_FIRST + k + j;
+
+      if (FlagBits_Test(flags, FLAG_DJINNI(i * DJINN_PER_ELEMENT + j)))
+        GameFlag_Set(flag);
+      else
+        GameFlag_Clear(flag);
+      /* FAKEMATCH(barrier): an empty asm reading j. */
+      asm("" : : "r"(j));
+    }
+  }
+  for (i = 0; i < TRANSFERRED_FLAG_COUNT; i++) {
+    if (FlagBits_Test(flags, gDataTransfer_Flags[i]))
+      GameFlag_Set(FLAG_TRANSFERRED_DODONPA_LOCKED_UP + i);
+    else
+      GameFlag_Clear(FLAG_TRANSFERRED_DODONPA_LOCKED_UP + i);
+  }
+  if (GameFlag_Get(FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY))
+    GameFlag_Clear(FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY);
+  else
+    GameFlag_Set(FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY);
+
+  state = &gMainRoutineWork;
+  state->transferredCoins = party->coins;
+  if (byPassword == 0) {
+    state->windowHue = party->windowHue;
+    state->windowBrightness = party->windowBrightness;
+    state->messageSpeed = party->messageSpeed;
+    state->speech = party->speech;
+    state->idleSleepEnabled = party->idleSleepEnabled;
+    WindowColor_ApplyFar(state->windowHue, state->windowBrightness);
+  }
+
+  j = MIA +
+      1; // A local reused for a second value: Isaac's party, the units moved.
+  for (i = 0; i < (s32)j; i++) {
+    struct Unit *unit = Unit_Get(i);
+
+    memcpy(name, &units[i], sizeof(units->name));
+    Iwram_CopyWordsEntry(unit, &units[i], sizeof(struct Unit));
+    memcpy(unit, name, sizeof(units->name));
+    if (byPassword == 0)
+      unit->enemyId = unit->id;
+    for (slot = INVENTORY_SLOTS - 1; slot >= 0; slot--) {
+      s32 item = unit->inventory[slot];
+
+      if (item != 0 && (Item_GetDirect(item)->flags & ITEM_NOT_TRANSFERRED)) {
+        while (Inventory_Remove(i, slot) == 1)
+          ;
+      }
+    }
+    Unit_Calculate(i);
+  }
+  Djinn_ActivateOfferedForParty();
+  Party_RestoreHpPp(1);
+  GameFlag_Set((byPassword & 1) + FLAG_TRANSFERRED_BY_LINK);
+  GameFlag_Set(FLAG_DATA_TRANSFERRED);
+  gPlayTimeFrames = gMainRoutineWork.playTime;
+}
+
+/// Carries Clear Data over to a new quest: the options, coins and each unit's
+/// base stats, level and experience.
+void ClearData_Apply(u8 *save) {
+  struct MainRoutineWork *party =
+      (struct MainRoutineWork *)(save + SAVE_IMAGE_MAIN_ROUTINE_WORK);
+  struct Unit *units = (struct Unit *)(save + SAVE_IMAGE_UNITS);
+  u8 unused[16]; // Unused: gives the stack frame its 16 bytes.
+  s32 i;
+  s32 count;
+
+  gMainRoutineWork.windowHue = party->windowHue;
+  gMainRoutineWork.windowBrightness = party->windowBrightness;
+  gMainRoutineWork.messageSpeed = party->messageSpeed;
+  gMainRoutineWork.speech = party->speech;
+  gMainRoutineWork.idleSleepEnabled = party->idleSleepEnabled;
+  WindowColor_ApplyFar(gMainRoutineWork.windowHue,
+                       gMainRoutineWork.windowBrightness);
+  count = PIERS + 1;
+  for (i = 0; i < count; i++) {
+    struct Unit *unit = Unit_Get(i);
+    struct Unit *saved = &units[i];
+
+    unit->baseHp = saved->baseHp;
+    unit->basePp = saved->basePp;
+    unit->hpGauge = unit->baseHp;
+    unit->ppGauge = unit->basePp;
+    unit->baseAttack = saved->baseAttack;
+    unit->baseDefense = saved->baseDefense;
+    unit->baseAgility = saved->baseAgility;
+    unit->baseLuck = saved->baseLuck;
+    unit->level = saved->level;
+    unit->experience = saved->experience;
+    Unit_Calculate(i);
+  }
+  gMainRoutineWork.coins = party->coins;
+}
+
+/// Gives owner item unless a party member already has it.
+void Party_GiveItemIfMissing(s32 item, s32 owner) {
+  if (PartyInventory_FindMember(item) == -1)
+    Inventory_AddItem(owner, item);
+}
+
+/// Isaac's party joins: the transferred Djinn flags move to their places,
+/// Isaac, Garet, Ivan and Mia join with their Djinn evened out and restored,
+/// a missing Djinni of each element is picked, and the transferred items and
+/// coins are given. Contigo calls it.
+void Party_AddIsaacsParty(void) {
+  s32 i;
+  s32 djinni;
+  s8 missing[8];
+  s32 count;
+  s32 k;
+
+  for (i = 0, k = 0; i < ELEMENT_COUNT;
+       i++, k += TRANSFERRED_DJINN_PER_ELEMENT) {
+    s32 j;
+
+    for (j = 0; j < TRANSFERRED_DJINN_PER_ELEMENT; j++) {
+      if (GameFlag_Get(FLAG_TRANSFERRED_DJINN_FIRST + k + j))
+        GameFlag_Set(FLAG_DJINNI(i * DJINN_PER_ELEMENT + j));
+      /* FAKEMATCH(barrier): an empty asm reading j. */
+      asm("" : : "r"(j));
+    }
+    /* FAKEMATCH(barrier): an empty asm on i. */
+    asm("" : "+r"(i));
+  }
+  PartyInventory_Remove(ITEM_MYTHRIL_BAG_MARS_STAR);
+  Party_AddMember(ISAAC);
+  Party_AddMember(GARET);
+  Party_AddMember(IVAN);
+  Party_AddMember(MIA);
+  // Called with an argument it does not take.
+  ((void (*)(s32))Party_BalanceDjinn)(0);
+  Djinn_ActivateOfferedForParty();
+  for (i = 0; i <= PIERS; i++)
+    Unit_Calculate(i);
+  Party_RestoreHpPp(1);
+  GameFlag_Set(FLAG_REUNITED);
+
+  // One of The Broken Seal's Djinn of each element the party lacks, picked at
+  // random, plus one; 0 when it has them all.
+  for (i = 0; i < ELEMENT_COUNT; i++) {
+    count = 0;
+    for (djinni = 0; djinni < TRANSFERRED_DJINN_PER_ELEMENT; djinni++) {
+      if (!GameFlag_Get(FLAG_DJINNI(i * DJINN_PER_ELEMENT + djinni)))
+        missing[count++] = djinni;
+    }
+    if (count != 0)
+      djinni = missing[(Random16() * count) >> 16] + 1;
+    else
+      djinni = 0;
+    gSceneLocalState[0x1950 + i] = djinni;
+  }
+  // The Psynergy items Isaac's party carried in The Broken Seal.
+  Party_GiveItemIfMissing(ITEM_FROST_JEWEL, MIA);
+  Party_GiveItemIfMissing(ITEM_DOUSE_DROP, MIA);
+  Party_GiveItemIfMissing(ITEM_LIFTING_GEM, GARET);
+  Party_GiveItemIfMissing(ITEM_CARRY_STONE, ISAAC);
+  Party_GiveItemIfMissing(ITEM_CATCH_BEADS, IVAN);
+  gMainRoutineWork.coins += gMainRoutineWork.transferredCoins;
+#if TLA_PATCH_4
+  if ((u32)gMainRoutineWork.coins > COINS_MAX)
+    gMainRoutineWork.coins = COINS_MAX;
+#endif
+}
+
+/// Does nothing; nothing calls Unit_ReservedNoOpFar.
+void Unit_ReservedNoOp(void) {}
+
+/// Gives `owner` a Djinni on standby and sets its found flag, as if met in the
+/// field.
+void Djinn_AddFoundToOwner(s32 owner, s32 element, s32 djinn) {
+  s32 flag = element * DJINN_PER_ELEMENT + djinn;
+
+  Djinn_Give(owner, element, djinn);
+  flag += FLAG_DJINN_FIRST;
+  DjinnRecovery_AddStandby(owner, element, djinn);
+  GameFlag_Set(flag);
+}
+
+/// Stands in for transferred data when the player transfers none: unless the
+/// transferred Djinn are already set, sets the party aside, makes Isaac's
+/// party the party, gives it Flint and Fizz, then hands out 16 random Djinn of
+/// The Broken Seal's still unowned, keeping the elements' counts within one,
+/// each with its chance in gDataTransfer_DjinnChances; then moves the Djinn
+/// flags to the transferred ones and puts the party back.
+void DataTransfer_GiveDefaultDjinn(void) {
+  s8 saved[8];
+  s8 counts[4];
+  s32 count;
+  s32 remaining;
+  s32 element;
+  s32 djinn;
+  s32 i;
+  s32 k;
+
+  if (GameFlag_Get(FLAG_TRANSFERRED_DJINN_FIRST))
+    return;
+
+  count = Party_CountMembers();
+  for (i = 0; i < count; i++)
+    saved[i] = gMainRoutineWork.party[i];
+  for (i = 0; i < count; i++)
+    Party_RemoveMember(saved[i]);
+  for (i = ISAAC; i <= MIA; i++)
+    Party_AddMember(i);
+  // Isaac's Flint and Mia's Fizz, which The Broken Seal gives at its start.
+  Djinn_AddFoundToOwner(ISAAC, ELEMENT_VENUS, 0);
+  Djinn_AddFoundToOwner(MIA, ELEMENT_MERCURY, 0);
+
+  counts[0] = 1;
+  counts[1] = 1;
+  counts[2] = 0;
+  counts[3] = 0;
+  remaining = 16;
+  do {
+    element = (Random16() * ELEMENT_COUNT) >> 16;
+    djinn = (Random16() * TRANSFERRED_DJINN_PER_ELEMENT) >> 16;
+    if (!GameFlag_Get(FLAG_DJINNI(element * DJINN_PER_ELEMENT + djinn))) {
+      s8 low;
+      s8 high;
+
+      counts[element]++;
+      low = 9;
+      high = 0;
+      for (i = 0; i < 4; i++) {
+        if (low > counts[i])
+          low = counts[i];
+        if (high < counts[i])
+          high = counts[i];
+      }
+      counts[element]--;
+      if (high - low <= 1 && ((Random16() * 100) >> 16) <
+                                 gDataTransfer_DjinnChances[element][djinn]) {
+        Djinn_GiveToParty(element, djinn);
+        counts[element]++;
+        remaining--;
+      }
+    }
+  } while (remaining != 0);
+  Djinn_ActivateOfferedForParty();
+
+  for (i = 0, k = 0; i < ELEMENT_COUNT;
+       i++, k += TRANSFERRED_DJINN_PER_ELEMENT) {
+    s32 j;
+    s32 flag;
+
+    for (j = 0; j < TRANSFERRED_DJINN_PER_ELEMENT; j++) {
+      /* FAKEMATCH(temporary): the flag number held in a local. */
+      flag = FLAG_TRANSFERRED_DJINN_FIRST + k + j;
+      // element carries the flag to read after the one to set.
+      element = FLAG_DJINNI(i * DJINN_PER_ELEMENT + j);
+      if (GameFlag_Get(element))
+        GameFlag_Set(flag);
+      GameFlag_Clear(element);
+    }
+  }
+  for (i = ISAAC; i <= MIA; i++)
+    Party_RemoveMember(i);
+  for (i = 0; i < count; i++)
+    Party_AddMember(saved[i]);
+}
+
+/// Recomputes the HP and PP gauges of `unitId` from its current HP and PP, so
+/// that Unit_Calculate keeps the same fractions.
+void Unit_RecalculateGauges(s32 unitId) {
+  struct Unit *unit;
+
+  unit = Unit_Get(unitId);
+  Unit_UpdateGauges(unit);
+}
+
+/// Clamps a new HP or PP value to 0 and the maximum.
+static inline s32 Unit_ClampGaugeValue(s32 value, s32 maximum) {
+  s32 result;
+
+  if (value > maximum)
+    result = maximum;
+  else {
+    result = 0;
+    if (value >= 0)
+      result = value;
+  }
+  return result;
+}
+
+/// Each sets the unit's HP or PP, clamped to 0 and its maximum, and recomputes
+/// its HP and PP gauges.
+#define UNIT_DEFINE_SET(name, field, maximum)                                  \
+  void name(struct Unit *unit, s32 value) {                                    \
+    s32 clamped;                                                               \
+                                                                               \
+    clamped = Unit_ClampGaugeValue(value, unit->maximum);                      \
+    unit->field = clamped;                                                     \
+    Unit_UpdateGauges(unit);                                                   \
+  }
+
+UNIT_DEFINE_SET(Unit_SetHp, hp, hpMax)
+UNIT_DEFINE_SET(Unit_SetPp, pp, ppMax)
+
+/// Each adds delta to the HP or PP of unit unitId, clamped to 0 and its
+/// maximum, recomputes its gauges and returns the new value, as `type`.
+#define UNIT_DEFINE_ADD(type, name, field, maximum)                            \
+  type name(s32 unitId, s32 delta) {                                           \
+    struct Unit *unit = Unit_Get(unitId);                                      \
+    s32 current = unit->field;                                                 \
+    s32 limit = unit->maximum;                                                 \
+    s32 value = current + delta;                                               \
+    s32 result;                                                                \
+                                                                               \
+    result = Unit_ClampGaugeValue(value, limit);                               \
+    unit->field = result;                                                      \
+    Unit_RecalculateGauges(unitId);                                            \
+    return unit->field;                                                        \
+  }
+
+UNIT_DEFINE_ADD(s32, Unit_AddHp, hp, hpMax)
+UNIT_DEFINE_ADD(s16, Unit_AddPp, pp, ppMax)
+
+#undef UNIT_DEFINE_SET
+#undef UNIT_DEFINE_ADD
+
+#undef UNIT_STAT_DIFF
+#undef SCALE_EFFECT
+#undef DMA3
+#undef DMA3_BUSY

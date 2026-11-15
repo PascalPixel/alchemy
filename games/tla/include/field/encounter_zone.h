@@ -2,8 +2,8 @@
 #define ALCHEMY_ENCOUNTER_ZONE_H
 
 /// @file
-/// What games/tla/src/field/field_sequence/ declares for the files that use it,
-/// written once.
+/// What games/tla/src/field/field_sequence_*.c declare for the files that use
+/// it, written once.
 
 #include "types.h"
 

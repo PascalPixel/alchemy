@@ -101,16 +101,16 @@ choices.
 
 ### Saving
 
-The Save command and the File Screen's list are in `window/` (`save.c`). Each file
-carries a short summary, so the list is drawn without reading any file
-whole. What a save holds, and how it is written safely, is in
-[System code](../system/README.md#saving).
+The Save command and the File Screen's list are in `screens_save.c`. Each
+file carries a short summary, so the list is drawn without reading any file
+whole. What a save holds, and how it is written safely, is in [System
+code](../system/README.md#saving).
 
 ## Windows the rest of the game borrows
 
-The later parts of `window/` hold the windows other parts of the game ask for:
-a battle's command row, its Psynergy, Djinn, item and summon menus, the
-preview of what setting a Djinni changes, the target cursor, the choice of
-a reserve member for a party slot, the party status panel, the Status
-screen, the name entry screen, the link battle's timer, and the debug
-windows.
+The later parts of `window.c`, the `screens_*.c` files, hold the windows
+other parts of the game ask for: a battle's command row, its Psynergy,
+Djinn, item and summon menus, the preview of what setting a Djinni changes,
+the target cursor, the choice of a reserve member for a party slot, the
+party status panel, the Status screen, the name entry screen, the link
+battle's timer, and the debug windows.

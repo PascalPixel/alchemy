@@ -2,11 +2,11 @@
 /// The entrance to the Anemos Inner Sanctum, sealed under Contigo, which the
 /// party reaches with Teleport once it has all seventy-two Djinn
 /// (SceneId_AnemosInnerSanctumEntrance).
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 #include "objcmd.h"
 #include "fixed_math.h"
 
-#include "../field/object/prepare_object.c"
+#include "../field/actor_prepare.c"
 #include "flags.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -63,7 +63,7 @@ struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 
 #include "shared/scene_create_imported_actor.h"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -71,7 +71,7 @@ struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 extern s32 gAnemosInnerSanctumEntrance_GlowGrowsScript[];
 extern s32 gAnemosInnerSanctumEntrance_GlowShrinksScript[];

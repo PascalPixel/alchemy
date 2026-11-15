@@ -174,7 +174,7 @@ void Actor_StartScript(struct Actor *object, const void *script);
 
 #include "shared/crumbling_pillars.h"
 
-#include "../field/field_effect/advance_motion_priority.c"
+#include "../field/field_effect_advance_motion_priority.c"
 
 #include "shared/rubble.h"
 
@@ -190,16 +190,16 @@ void Actor_StartScript(struct Actor *object, const void *script);
 
 #include "shared/held_actor_raise_cell.h"
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 #undef EFFECT_SET_SCRIPT
 
@@ -1154,7 +1154,7 @@ void DehkanPlateau_CannonCastsPound(void) {
   FieldPsynergy_End();
 }
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 #undef DEFINE_DEHKAN_PLATEAU_RESTORE_CELLS
 #undef SCENE

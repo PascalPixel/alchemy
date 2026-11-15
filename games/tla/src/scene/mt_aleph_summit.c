@@ -2,9 +2,9 @@
 /// The summit of Mt. Aleph, at the end of the game: the Golden Sun forms over
 /// the mountain, Alex claims its power, and the scene's colours and dust follow
 /// what happens.
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #include "system/task.h"
 #include "shared/tables.h"
@@ -290,7 +290,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 // The summit's events: the Golden Sun's formation and what follows it.
 

@@ -194,9 +194,10 @@ The objects are then laid end to end to make the cartridge. The word has
 nothing to do with the people and things in a scene, which are
 [actors](#actor).
 
-A very long file is written as several smaller parts in a folder of its own
-name, and still makes one object. The shops are one: `src/shop/shop.c`
-gathers the inn, buying, selling and the forge from `src/shop/shop/`.
+A very long file is written as several smaller parts beside it, each named
+for the file and the part, and still makes one object. The shops are one:
+`src/shop/shop.c` gathers the inn, buying, selling and the forge from
+`src/shop/shop_*.c`.
 
 Evidence: plain English; the GNU tools' "object file".
 

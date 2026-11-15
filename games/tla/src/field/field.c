@@ -13,20 +13,20 @@
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
 // parts").
-#include "field/decompress.c"
-#include "field/sprite_draw.c"
+#include "field_decompress.c"
+#include "field_sprite_draw.c"
 
 #undef Render_ApplyProjectedPlacement
 
-#include "field/sprite_animation.c"
-#include "field/actors.c"
-#include "field/actor_motion.c"
-#include "field/script_commands.c"
-#include "field/player_control.c"
-#include "field/pad_movement.c"
-#include "field/move_by_keys.c"
-#include "field/map_grid.c"
-#include "field/world_map.c"
+#include "field_sprite_animation.c"
+#include "field_actors.c"
+#include "field_actor_motion.c"
+#include "field_script_commands.c"
+#include "field_player_control.c"
+#include "field_pad_movement.c"
+#include "field_move_by_keys.c"
+#include "field_map_grid.c"
+#include "field_world_map.c"
 
 #undef Sprite_ResetAnimations
 #undef Sprite_AddAnimation
@@ -34,10 +34,10 @@
 #undef Sprite_SetAnimationSpeed
 #undef Render_ApplyProjectedPlacementAtDepth
 
-#include "field/tile_animation.c"
+#include "field_tile_animation.c"
 
 #undef gWorldMapWork
 
-#include "field/view.c"
+#include "field_view.c"
 
-#include "field/sprite_viewer.c"
+#include "field_sprite_viewer.c"

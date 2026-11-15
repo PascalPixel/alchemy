@@ -87,13 +87,13 @@ s32 Caverns_JumpAcross(struct Actor *object, s16 *position);
 #include "macros.h"
 #include "system/main_routine_work.h"
 #include "field/field_sequence_event.h"
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/object/prepare_object.c"
+#include "../field/actor_prepare.c"
 
 #include "shared/scene_create_imported_actor.h"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -101,7 +101,7 @@ s32 Caverns_JumpAcross(struct Actor *object, s16 *position);
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 struct Actor;
 
@@ -168,7 +168,7 @@ s32 MapCell_SetAttributes(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
-#include "../field/object/wait_until_idle.c"
+#include "../field/actor_wait_until_idle.c"
 
 #include "text/msg_ids.h"
 

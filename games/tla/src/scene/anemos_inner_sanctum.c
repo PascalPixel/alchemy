@@ -239,11 +239,11 @@ void AnemosInnerSanctum_TeleportIn(void) {
   work->transition = saved;
 }
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/object/prepare_object.c"
+#include "../field/actor_prepare.c"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #undef BG_PLTT_SET_RGB
 void Actor_SelectAnimation(struct Actor *, s32);
@@ -395,7 +395,7 @@ s32 AnemosInnerSanctum_SpawnOrbitSparks(struct Actor *object) {
   return 0;
 }
 
-#include "../field/object/wait_until_idle.c"
+#include "../field/actor_wait_until_idle.c"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -1704,7 +1704,7 @@ L_0200a6e6:
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-#include "../field/object/set_sprite_priority_b.c"
+#include "../field/actor_set_sprite_priority_b.c"
 
 void Effect_MoveLocal(union FieldObject *object) {
   s32 x;
@@ -1799,7 +1799,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 }
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepth
-#include "../field/map/cell_sprite.c"
+#include "../field/map_cell_sprite.c"
 
 #include "shared/cracked_tiles_find.h"
 
@@ -1815,7 +1815,7 @@ void FieldEffect_SpawnLocal(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/cracked_tile_fall.h"
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 #undef BYTE_AT
 #undef FIELD_AT

@@ -5,11 +5,11 @@
 /// Frost, and the tear-shaped rock whose Douse opens the way inside
 /// (aqua_rock_inside.c).
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 #include "objcmd.h"
 #include "fixed_math.h"
 
-#include "../field/object/prepare_object.c"
+#include "../field/actor_prepare.c"
 
 #include "types.h"
 #include "system/system.h"
@@ -143,7 +143,7 @@ struct Actor *AquaRock_CreateActor(s32 x, s32 y, s32 z, s32 kind) {
   return 0;
 }
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -151,7 +151,7 @@ struct Actor *AquaRock_CreateActor(s32 x, s32 y, s32 z, s32 kind) {
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 #undef EFFECT_SPAWN
 

@@ -1924,7 +1924,7 @@ void Orbs_SpawnRising(void) {
   }
 }
 
-#include "../field/object/park_record.c"
+#include "../field/actor_park_record.c"
 
 #undef FIELD_AT
 

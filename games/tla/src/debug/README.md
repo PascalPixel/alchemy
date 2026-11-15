@@ -70,6 +70,6 @@ battle.
   `shop_test.c` are the five overlays. Each opens with the entry table every
   scene links, `../scene/entry.s`, its routines named `Scene_Initialize` to
   `Scene_PrepareMap`.
-- The scene selector and the flag editor are in `window/window/`
+- The scene selector and the flag editor are in `window/window_*.c`
   (`DebugSceneSelect_Run`, `DebugFlagEditor_Run`), and the palette editor
-  is `PaletteEditor_Run` in `field/field_sequence/`.
+  is `PaletteEditor_Run` in `field/field_sequence_*.c`.

@@ -11,11 +11,11 @@
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
 // parts").
-#include "menu/shared.c"
-#include "menu/item.c"
-#include "menu/psynergy.c"
-#include "menu/status.c"
-#include "menu/use.c"
-#include "menu/djinn.c"
-#include "menu/djinn_preview.c"
-#include "menu/icons.c"
+#include "menu_shared.c"
+#include "menu_item.c"
+#include "menu_psynergy.c"
+#include "menu_status.c"
+#include "menu_use.c"
+#include "menu_djinn.c"
+#include "menu_djinn_preview.c"
+#include "menu_icons.c"

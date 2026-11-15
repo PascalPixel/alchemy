@@ -3,7 +3,7 @@
 /// the Shaman's Rod, sends the party to Trial Road, where Sheba's Whirlwind
 /// clears the sand before the race to the summit; its houses, inn, shop and
 /// sanctum, Aroma the Djinni, and the lettering that counts the race down.
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 #include "objcmd.h"
 #include "fixed_math.h"
 #include "djinn_ids.h"
@@ -30,7 +30,7 @@
 /// Set once the fortune-teller has read the party's fortune, for this visit.
 #define FLAG_SHAMAN_VILLAGE_FORTUNE_TOLD FLAG_AREA_TEMP_01
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #include "flags.h"
 #include "item_ids.h"

@@ -53,16 +53,16 @@
 #include "system/task.h"
 #include "text/msg_ids.h"
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 /// The Kandorean Temple's rooms: their tables' getters, the steam, vents and
 /// lifts.
@@ -2130,7 +2130,7 @@ void KandoreanTemple_StartVentRoom(void) {
   FieldEffect_StartBlankOverlay(0);
 }
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 #undef DEFINE_KANDOREAN_TEMPLE_VENT
 #undef BOB

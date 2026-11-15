@@ -1811,7 +1811,7 @@ void TaopoSwamp_SaveFirmGround(void) {
 
 #define VENT_TOUCHING Vent_IsTouching
 #define VENT_BOUNCE Vent_Bounce
-#include "../field/object/vent_bounce.c"
+#include "../field/actor_vent_bounce.c"
 
 #include "shared/actor_start_scripted.h"
 

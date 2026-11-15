@@ -76,6 +76,6 @@ what cannot be taken off.
 ## Where the code is
 
 `Shop_Run` is the visit's loop, with buying, selling and repairing as its
-three trades in `shop/`, beside the sanctum, the inn, the forge and the
+three trades in `shop_*.c`, beside the sanctum, the inn, the forge and the
 item picker. [`shop_tables.c`](shop_tables.c) holds the stock table and
 the forge's recipes.

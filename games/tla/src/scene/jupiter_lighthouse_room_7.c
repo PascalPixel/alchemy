@@ -1042,9 +1042,9 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 void LightSprites_SetPriority(u16 value) { gLightSpritePriority = value; }
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #undef FIELD_AT
 extern const s32 *gFieldEffect_DurationScripts[];
@@ -1127,12 +1127,12 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
  * it; the joined file has another; tried as the definition's void
  * Oam_AddSpriteAtDepthClamped(void *entry, s32 slot), which the object already
  * declares, it does not compile in tla-ja:
- * games/tla/src/field/map/cell_sprite.c:20: conflicting types for
+ * games/tla/src/field/map_cell_sprite.c:20: conflicting types for
  * `Oam_AddSpriteAtDepthClamped'. */
 void Oam_AddSpriteAtDepthClamped__s1f74(void *entry, s32 priority) __asm__(
     "Oam_AddSpriteAtDepthClamped");
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped__s1f74
-#include "../field/map/cell_sprite.c"
+#include "../field/map_cell_sprite.c"
 
 #include "shared/cracked_tiles_find.h"
 
@@ -1148,7 +1148,7 @@ struct CellTargetEntry;
 
 #include "shared/cracked_tile_fall.h"
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

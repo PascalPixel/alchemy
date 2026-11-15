@@ -11,17 +11,17 @@
 /// puddles, Lash and the fallen pillars (rooms 6 and 7), the party reaches the
 /// statue on the island (room 8), whose Sea God's Tear raises the water up to
 /// the Right Prong (rooms 9 to 11).
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 #include "objcmd.h"
 #include "fixed_math.h"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 #include "types.h"
 #include "item_ids.h"
@@ -1102,7 +1102,7 @@ void ShrineOfTheSeaGod_DrawLeaderBehind(void) {
   GameFlag_Clear(FLAG_LEADER_IN_FRONT);
 }
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE

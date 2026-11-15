@@ -47,7 +47,7 @@ the one before it.
   order, and the first four are the ones who fight.
 
 The questions of all four draw on the same helpers, kept in one shared
-part of `menu/`.
+part, `menu_shared.c`.
 
 ### The preview is the real thing
 
@@ -92,7 +92,7 @@ frame.
 
 ## Where the code is
 
-- `menu/` has a part for each screen: Psynergy, Item, Djinn with its
+- `menu.c` has a part for each screen: Psynergy, Item, Djinn with its
   preview, and Status, with one for what using something does, one for the
   icons the screens load, and one for what they share.
 - The menu's tables sit beside it, and the title intro and the credits are

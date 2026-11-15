@@ -1980,7 +1980,7 @@ struct Unit *Unit_Get__ride(s32 owner) __asm__("Unit_Get");
 
 #include "shared/party_take_fall_damage.h"
 
-#include "../field/field_effect/advance_spin.c"
+#include "../field/field_effect_advance_spin.c"
 
 #undef Ride_SetEntry
 
@@ -2545,9 +2545,9 @@ s32 Actor_Park(struct Actor *object) {
   return 0;
 }
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #undef DEFINE_BURST_WALL
 #undef DEFINE_FROST_PUDDLE
@@ -2638,7 +2638,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 extern struct CellTarget gCrackedTiles;
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
-#include "../field/map/cell_sprite.c"
+#include "../field/map_cell_sprite.c"
 
 #include "shared/cracked_tiles_find.h"
 
@@ -2655,7 +2655,7 @@ extern struct CellTarget gCrackedTiles;
 #include "system/io_write.h"
 #include "shared/cracked_tile_fall.h"
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
 #include "field/event_inline.h"

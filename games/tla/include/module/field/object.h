@@ -2,8 +2,8 @@
 #define ALCHEMY_MODULE_FIELD_OBJECT_H
 
 /// @file
-/// What games/tla/src/field/object/ declares for the files that use it, written
-/// once.
+/// What games/tla/src/field/actor_*.c declare for the files that use it,
+/// written once.
 
 #include "types.h"
 #include "scene_tables.h"

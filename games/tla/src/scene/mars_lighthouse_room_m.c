@@ -1581,7 +1581,7 @@ struct Unit *Unit_Get__s2118(s32 owner) __asm__("Unit_Get");
 
 #include "shared/party_take_fall_damage.h"
 
-#include "../field/field_effect/advance_spin.c"
+#include "../field/field_effect_advance_spin.c"
 
 #include "shared/actor_blink.h"
 

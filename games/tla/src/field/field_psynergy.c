@@ -11,37 +11,37 @@
 #include "field_psynergy_internal.h"
 
 // The parts, in ROM order.
-#include "field_psynergy/radial_effects.c"
+#include "field_psynergy_radial_effects.c"
 
 #undef Actor_CreateFar
 #undef EffectSprite_DrawAtWorldPosition
 
-#include "field_psynergy/tile_copies.c"
+#include "field_psynergy_tile_copies.c"
 
-#include "field_psynergy/cyclone.c"
-#include "field_psynergy/blaze.c"
-#include "field_psynergy/sand.c"
-#include "field_psynergy/burst.c"
-#include "field_psynergy/pound.c"
-#include "field_psynergy/growing_sprite.c"
-#include "field_psynergy/scoop.c"
-#include "field_psynergy/teleport.c"
-#include "field_psynergy/parch.c"
-#include "field_psynergy/unnamed_28.c"
-#include "field_psynergy/tremor.c"
-#include "field_psynergy/grind.c"
-#include "field_psynergy/hover.c"
-#include "field_psynergy/summon_tablet.c"
-#include "field_psynergy/collision_tags.c"
+#include "field_psynergy_cyclone.c"
+#include "field_psynergy_blaze.c"
+#include "field_psynergy_sand.c"
+#include "field_psynergy_burst.c"
+#include "field_psynergy_pound.c"
+#include "field_psynergy_growing_sprite.c"
+#include "field_psynergy_scoop.c"
+#include "field_psynergy_teleport.c"
+#include "field_psynergy_parch.c"
+#include "field_psynergy_unnamed_28.c"
+#include "field_psynergy_tremor.c"
+#include "field_psynergy_grind.c"
+#include "field_psynergy_hover.c"
+#include "field_psynergy_summon_tablet.c"
+#include "field_psynergy_collision_tags.c"
 
 #undef Camera_WorldToScreen
 #undef EffectSprite_DrawAtWorldPosition
 #undef Resource_GetMetadataRecordFarFar
 
-#include "field_psynergy/actor_cells.c"
-#include "field_psynergy/step_vector.c"
+#include "field_psynergy_actor_cells.c"
+#include "field_psynergy_step_vector.c"
 
 #undef BG_VRAM
 
-#include "field_psynergy/world_picture.c"
-#include "field_psynergy/world_map_picture.c"
+#include "field_psynergy_world_picture.c"
+#include "field_psynergy_world_map_picture.c"

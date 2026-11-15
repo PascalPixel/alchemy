@@ -160,9 +160,9 @@ both screens roll the same.
 ## Where the code is
 
 - The tables are C arrays at their places in the ROM, parts of the game
-  object after its code (`game/item_table.c` and the rest); the item, ability
-  and enemy tables are parts of one object with each item's rare item
-  counter.
+  object after its code (`item_table.c` and the rest, named as The Broken
+  Seal names its own); the item, ability and enemy tables are parts of one
+  object with each item's rare item counter.
 - The game object is written as parts cut where The Broken Seal's are:
   `Unit_Calculate` works a unit's stats out, `Class_Determine` its class,
   and the rest go by subject, Djinn, levels, items and the party.

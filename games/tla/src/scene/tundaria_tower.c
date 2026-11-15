@@ -9,18 +9,18 @@
 /// Reflux waits at the end of one sliding puzzle (room 4). Beyond the room of
 /// pillars (room 6), Reveal opens an icy wall and Burst a brown one outside;
 /// Burst on the dead end by the chests (room 7) brings its rocks down.
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 #include "system/task.h"
 #include "objcmd.h"
 #include "fixed_math.h"
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT TundariaTower_StartEffectScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 #undef EFFECT_SET_SCRIPT
 
@@ -106,9 +106,9 @@ void TundariaTower_FightReflux(void) {
   Event_RequestDjinnBattle(8, 52);
 }
 
-#include "../field/object/wait_until_idle.c"
+#include "../field/actor_wait_until_idle.c"
 
-#include "../field/map/cell_get.c"
+#include "../field/map_cell_get.c"
 
 extern u8 gMapGridCellBuffer[];
 
@@ -733,7 +733,7 @@ void TundariaTower_ReflectLeader(struct Actor *object) {
 }
 #undef FIELD_AT
 
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 
 struct Actor;
 struct Particle;
@@ -1418,7 +1418,7 @@ UNUSED void TundariaTower_StepOnTrap(const u16 *table) {
   }
 }
 
-#include "../field/field_effect/advance_motion_priority.c"
+#include "../field/field_effect_advance_motion_priority.c"
 
 s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 void *Sprite_ShareVramCacheEntry(void *src, void *alt);

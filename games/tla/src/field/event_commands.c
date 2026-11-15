@@ -7,31 +7,31 @@
 #include "event_commands_internal.h"
 
 // The parts, in ROM order.
-#include "event_commands/actor_commands.c"
-#include "event_commands/messages.c"
-#include "event_commands/camera.c"
-#include "event_commands/view.c"
-#include "event_commands/movement_types.c"
-#include "event_commands/exit_animations.c"
-#include "event_commands/line_scroll.c"
-#include "event_commands/weather.c"
-#include "event_commands/ground_particles.c"
-#include "event_commands/motes.c"
-#include "event_commands/djinni.c"
-#include "event_commands/jupiter.c"
-#include "event_commands/mars.c"
-#include "event_commands/venus.c"
-#include "event_commands/mercury.c"
-#include "event_commands/ropes.c"
-#include "event_commands/psynergy_dispatch.c"
-#include "event_commands/field_psynergy.c"
+#include "event_commands_actor_commands.c"
+#include "event_commands_messages.c"
+#include "event_commands_camera.c"
+#include "event_commands_view.c"
+#include "event_commands_movement_types.c"
+#include "event_commands_exit_animations.c"
+#include "event_commands_line_scroll.c"
+#include "event_commands_weather.c"
+#include "event_commands_ground_particles.c"
+#include "event_commands_motes.c"
+#include "event_commands_djinni.c"
+#include "event_commands_jupiter.c"
+#include "event_commands_mars.c"
+#include "event_commands_venus.c"
+#include "event_commands_mercury.c"
+#include "event_commands_ropes.c"
+#include "event_commands_psynergy_dispatch.c"
+#include "event_commands_field_psynergy.c"
 
 #undef Actor_ShowEmoteById
 #undef PaletteFade_SetTarget
 #undef Actor_ReleaseFar
 
-#include "event_commands/field_psynergy_work.c"
-#include "event_commands/mind_read.c"
+#include "event_commands_field_psynergy_work.c"
+#include "event_commands_mind_read.c"
 
 #undef CLOAK_FLICKER_PALETTE
 
@@ -39,6 +39,6 @@
 #undef ScreenPoint
 #undef EffectWork
 
-#include "event_commands/cloak.c"
+#include "event_commands_cloak.c"
 
-#include "event_commands/carry.c"
+#include "event_commands_carry.c"

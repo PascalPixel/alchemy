@@ -4,10 +4,10 @@
 /// that drain it, the pillars pushed into it, Fury the Djinni, and deep inside
 /// the tablet where Jenna learns Blaze and the flames Blaze moves.
 
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 #include "djinn_ids.h"
 
-#include "../field/object/prepare_object.c"
+#include "../field/actor_prepare.c"
 
 #include "types.h"
 #include "item_ids.h"
@@ -100,7 +100,7 @@ struct Actor *MagmaRockInside_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
   return NULL;
 }
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -108,11 +108,11 @@ struct Actor *MagmaRockInside_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 #include "shared/position_distance.h"
 
-#include "../field/object/find_in_cell.c"
+#include "../field/actor_find_in_cell.c"
 
 // Magma Rock's inside: the lava floods and drains, its platforms, statues and
 // pillars, the Blaze tablet and the flames and torches it opens the way with.
@@ -2679,7 +2679,7 @@ test:
     goto next;
 }
 
-#include "../field/field_effect/advance_motion_priority.c"
+#include "../field/field_effect_advance_motion_priority.c"
 
 #undef CLOSED_BLEND
 // Magma Rock's inside: its falling rocks and rubble, and its tables.

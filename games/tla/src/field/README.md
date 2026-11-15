@@ -206,37 +206,39 @@ those few routines into the console's fast memory and runs them there.
 ## Where the code is
 
 - [`field.c`](field.c) is the field object, as The Broken Seal's is: its
-  parts in [`field/`](field), in ROM order, are decompression and sprite
-  drawing, the actors' motion and scripts, the player's control orders, the
-  map grid and layers, the World Map on screen, the tile animation (with
-  the ground heights and collision still in the same part), the view and
-  the debug sprite viewer.
+  parts, the files beside it named `field_*.c`, in ROM order, are
+  decompression and sprite drawing, the actors' motion and scripts, the
+  player's control orders, the map grid and layers, the World Map on
+  screen, the tile animation (with the ground heights and collision still
+  in the same part), the view and the debug sprite viewer.
 - [`field_sequence.c`](field_sequence.c) is the sequence itself, its parts
-  in [`field_sequence/`](field_sequence): set-up, the walk, requests, the
-  screen transitions, the event commands, triggers, encounters and the
-  treasure spots.
+  `field_sequence_*.c`: set-up, the walk, requests, the screen
+  transitions, the event commands, triggers, encounters and the treasure
+  spots.
 - [`event_commands.c`](event_commands.c) is the actors' stock behaviours
-  and field Psynergy, its parts in
-  [`event_commands/`](event_commands), beside the event commands' tables:
-  the ropes, tightropes and hanging vines (`ropes.c`), each element's casts
-  and the choice of which plays (`psynergy_dispatch.c`). `object/` holds the
-  placement, its scripts and tables.
+  and field Psynergy, its parts `event_commands_*.c`, beside the event
+  commands' tables: the ropes, tightropes and hanging vines
+  (`event_commands_ropes.c`), each element's casts and the choice of which
+  plays (`event_commands_psynergy_dispatch.c`). The `actor_*.c` files hold
+  the placement, its scripts and tables, and [`facing.c`](facing.c) the
+  pictures a sprite shows for each facing.
 - A scene's work is one struct, `FieldWork`, in
   [`field_work.h`](../../include/field/field_work.h): The Broken Seal's,
   with the Psynergy state the sequel adds at its end. The field sequence,
   the event commands and every scene read it through
   `Ram_HeapSlots->fieldWork` or `gFieldWork`.
 - [`field_psynergy.c`](field_psynergy.c) is most of the Psynergy the sequel
-  adds, its parts in [`field_psynergy/`](field_psynergy). The parts share
-  the field Psynergy's work, `FieldEffectWork` in
+  adds, its parts `field_psynergy_*.c`. The parts share the field
+  Psynergy's work, `FieldEffectWork` in
   [`field_psynergy_work.h`](../../include/field/field_psynergy_work.h): the
-  caster, the target and where the Psynergy takes place. Each part is one Psynergy
-  or one family of its helpers, named for it.
-- `field_effect/` is the field's small effects: particles, sparkles and
-  the like.
+  caster, the target and where the Psynergy takes place. Each part is one
+  Psynergy or one family of its helpers, named for it.
+- The `field_effect_*.c` files are the field's small effects: particles,
+  sparkles and the like.
 - Some small field routines are compiled again into each scene that uses
   them, as the ROM keeps a copy in each overlay: the scenes include them
-  from `field_effect/`, `object/` and `map/` (`map/cell_get.c`,
-  `object/set_sprite_priority.c`), and `map/` holds nothing else.
+  from `field_effect_*.c`, `actor_*.c` and `map_*.c`
+  (`map_cell_get.c`, `actor_set_sprite_priority.c`), and the `map_*.c`
+  files are only that.
 - The three games of chance, the map table `gMaps` (`map_grid_data.c`) and
   the scene table `gScenes` (`scenes.s`) sit in this folder itself.

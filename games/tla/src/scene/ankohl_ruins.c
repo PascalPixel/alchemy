@@ -2,11 +2,11 @@
 /// The Ankohl Ruins, whose old ruins hold the Left Prong behind the Sand
 /// puzzles, in seven rooms that share this overlay (SceneId_AnkohlRuins1 to
 /// SceneId_AnkohlRuins8).
-#include "../field/object/set_sprite_priority.c"
+#include "../field/actor_set_sprite_priority.c"
 #include "objcmd.h"
 #include "fixed_math.h"
 
-#include "../field/object/prepare_object.c"
+#include "../field/actor_prepare.c"
 #include "types.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
@@ -71,7 +71,7 @@ struct Actor *AnkohlRuins_CreateActor(s32 x, s32 y, s32 z, s32 type) {
   return NULL;
 }
 
-#include "../field/field_effect/move.c"
+#include "../field/field_effect_move.c"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -79,7 +79,7 @@ struct Actor *AnkohlRuins_CreateActor(s32 x, s32 y, s32 z, s32 type) {
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
-#include "../field/field_effect/spawn.c"
+#include "../field/field_effect_spawn.c"
 
 extern struct AnkohlRuinsSpriteWork gAnkohlRuins_Sand;
 
@@ -120,7 +120,7 @@ void AnkohlRuins_JumpDownLedge(void) {
 // Neither it nor its caller AnkohlRuins_LandFromFall exists in the Japanese
 // scene.
 #if TLA_PATCH_1
-#include "../field/field_effect/advance_motion.c"
+#include "../field/field_effect_advance_motion.c"
 #endif
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

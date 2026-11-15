@@ -1,0 +1,408 @@
+/// @file
+/// A Djinni joining the party, and the field effect sprites.
+// Part of event_commands.c.
+
+#include "event_commands_internal.h"
+#include "flags.h"
+#include "fixed_math.h"
+#include "sounds.h"
+#include "gamepak/far_call/game.h"
+#include "module/field/event_commands.h"
+#include "module/field/field.h"
+#include "module/field/object.h"
+#include "module/system/system.h"
+#include "scene_call.h"
+#include "macros.h"
+
+/// Per-frame update: spins an object 1/8 turn a frame.
+void FieldEffect_AdvanceSpinAngle(struct MotionObject *object) {
+  object->angle += TRIG_TURN / 8;
+}
+
+// Objects: follow a watched object.
+
+/// Halves the distance to the watched object along x, y and z.
+/// obj: object to move.
+void Actor_MoveHalfwayTowardTarget(struct Actor *obj) {
+  struct Actor *target = obj->watchedActor;
+
+  obj->x.fixed += (target->x.fixed - obj->x.fixed) / 2;
+  {
+    s32 position = obj->y.fixed;
+
+    position += (target->y.fixed - position) / 2;
+    obj->y.fixed = position;
+  }
+  {
+    s32 position = obj->z.fixed;
+
+    position += (target->z.fixed - position) / 2;
+    obj->z.fixed = position;
+  }
+}
+
+#if TLA_PATCH_1
+#define LEAP_SOUND 153
+#else
+#define LEAP_SOUND 136
+#endif
+
+/// A Djinni's battle start: the Djinni (actor id) bounces twice, turns to face
+/// the leader, hops back 16 pixels three times, then leaps 64 pixels at the
+/// party trailing eight afterimages tinted for its element.
+void Djinn_RunBattleStartHop(s32 djinniId) {
+  struct Actor *djinni;
+  struct Actor *leader;
+  struct Actor *copy;
+  struct Actor *prev;
+  void *sharedSprite;
+  s32 dir;
+  s32 back;
+  s32 sprite;
+  s32 tint;
+  s32 i;
+  struct Actor *copies[8];
+
+  djinni = Actor_GetById(djinniId);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  dir = (leader->facing + TRIG_TURN / 8) & TRIG_TURN * 3 / 4;
+  Event_Start();
+  wait(10);
+  Sound_PlayFar(SE_NOTE_LOW);
+  Actor_RunRepeatedMotion(djinniId, 1);
+  Sound_PlayFar(SE_NOTE_HIGH);
+  Actor_RunRepeatedMotion(djinniId, 1);
+  wait(10);
+  back = dir + 0x8000;
+  Actor_FaceDirectionById(djinniId, back, 0);
+  wait(10);
+  djinni->facing = back;
+  Actor_ShowEmoteById(djinniId, 0x103, 50);
+  Actor_GetById(djinniId)->steeringFlags &= ~1;
+  djinni->motionFlags = 2;
+  djinni->update = (void (*)(void))FieldEffect_AdvanceSpinAngle;
+#if TLA_PATCH_1
+  Sound_PlayFar(SE_JUMP);
+#endif
+  djinni->gravity = px(1) / 4;
+  djinni->velocityY = px(9) / 2;
+  wait(33);
+  ((struct Sprite *)djinni->sprite)->image.priority = 0;
+#if TLA_PATCH_1
+  Sound_PlayFar(SE_JUMP);
+#endif
+  djinni->velocityY = 0x4cccc;
+  wait(35);
+#if TLA_PATCH_1
+  Sound_PlayFar(SE_JUMP);
+#endif
+  djinni->velocityY = 0x4e666;
+  wait(38);
+
+  djinni->update = NULL;
+  djinni->facing = back;
+  sprite = ((struct Sprite *)djinni->sprite)->entries[0]->animationId;
+  tint = 9;
+  if (sprite == 243)
+    tint = 2;
+  if (sprite == 245)
+    tint = 10;
+  // DEAD: tint is already 9 for sprite 244; the source keeps the test.
+  if (sprite == 244)
+    tint = 9;
+  sharedSprite = NULL;
+  prev = djinni;
+  for (i = 0; i < 8; i++) {
+    copy = Actor_CreateFar(sprite, djinni->x.fixed, djinni->y.fixed,
+                           djinni->z.fixed);
+    // DEAD: nothing reads copies; the source keeps the store.
+    copies[i] = copy;
+    if (copy != NULL) {
+      copy->scaleY = 0xf000;
+      copy->scaleX = 0xf000;
+      copy->motionFlags = 0;
+      copy->priorityFlags = 2;
+      copy->steeringFlags |= 1;
+      copy->update = (void (*)(void))Actor_MoveHalfwayTowardTarget;
+      copy->facing = djinni->facing;
+      ((struct Sprite *)copy->sprite)->image.priority = 0;
+      Actor_SetSpriteColorModeFar(copy, tint);
+      Actor_SelectAnimationFar(copy, 0);
+      Actor_SetSpriteFlagsFar(copy, 0);
+      sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);
+      copy->watchedActor = prev;
+      prev = copy;
+    }
+  }
+
+  djinni->speedLimit = 0x4ccc;
+  djinni->acceleration = 0x4ccc;
+  Actor_SetTargetPositionFromMagnitudeAngle(djinni, px(16),
+                                            dir + TRIG_TURN / 2);
+  Sound_PlayFar(LEAP_SOUND);
+  Actor_Jump(djinniId, 6, 5);
+  wait(24);
+  for (i = 0; i < 120; i++) {
+    if (ABS(djinni->y.fixed - leader->y.fixed) < 0x140000)
+      break;
+    wait(1);
+  }
+  djinni->motionFlags = 0;
+  djinni->velocityX = 0;
+  djinni->velocityZ = 0;
+  djinni->velocityY = 0;
+  djinni->targetX = TARGET_UNSET;
+  djinni->targetZ = TARGET_UNSET;
+  djinni->targetY = TARGET_UNSET;
+  Actor_SelectAnimationFar(djinni, 0);
+  ((struct Sprite *)djinni->sprite)->image.priority = 2;
+#if TLA_PATCH_1
+  djinni->gravity = px(1);
+#endif
+  Event_End();
+}
+
+extern s8 gSceneLocalState[];
+
+/// A Djinni joins. Djinni 19 means the one recorded for the element in the
+/// save (none: nothing happens). With flag 366 set it joins the current owner
+/// by its flag (48 + element * 20 + djinni), otherwise the least loaded owner;
+/// if it found one, the element's join effect plays at the actor (none for
+/// actor -1), the Djinni is added, and the actor's event slot is cleared
+/// (from patch 1; the Japanese release leaves it set).
+void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
+  s32 owner;
+
+  if (djinni == 19) {
+    s32 recorded = gSceneLocalState[element + 0x1950];
+
+    if (recorded == 0)
+      return;
+    djinni = recorded - 1;
+  }
+  if (GameFlag_Get(FLAG_DJINN_LESSON)) {
+    owner = gMainRoutineWork.leaderActorId;
+    GameFlag_Set(element * 20 + djinni + 48);
+  } else {
+    owner = Djinn_GiveToPartyFar(element, djinni);
+  }
+  if (owner < 0)
+    return;
+  Event_Start();
+  if (actor != -1) {
+    if (element == 0)
+      Djinn_RunVenusJoinEffect(actor);
+    else if (element == 1)
+      Djinn_RunMercuryJoinEffect(actor);
+    else if (element == 2)
+      Djinn_RunMarsJoinEffect(actor);
+    else if (element == 3)
+      Djinn_RunJupiterJoinEffect(actor);
+  }
+  WorldMap_Freeze();
+  Djinn_ShowJoinedMessageFar(owner, element, djinni);
+  WorldMap_ReloadPendingAreaGraphics();
+#if TLA_PATCH_1
+  gFieldWork->actors[actor] = NULL;
+#endif
+  Event_End();
+}
+
+/// Puts a Djinni's actor back where its battle started from: for a
+/// pending Djinni battle (pendingDjinni 300 to 380,
+/// FLAG_KEEP_PARTY_POSITION set, the battle over) the scene's actor placed
+/// for that Djinni (condition = its flag) goes back to its placement's
+/// position, or 32 pixels north of the leader when the event has DJINN_NO_HOP
+/// set, and stands (animation 1). FieldSequence_Run calls it as it
+/// rebuilds the scene, only while an event is still pending after
+/// Djinn_ResolvePending's first call, that is after a won battle; the second
+/// call then makes this actor join the party.
+void Djinn_RestoreActorAfterBattle(void) {
+  struct MainRoutineWork *party = &gMainRoutineWork;
+  u32 raw = (u16)party->pendingDjinni;
+  s32 flags = party->pendingDjinni & 0xf000;
+  u32 scene = 0xfff;
+  s32 id;
+
+  scene &= raw;
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0 && flags == 0) {
+    flags = scene & 0x800;
+    scene &= 0x7ff;
+    if (scene - 300 <= 80 && party->sequenceResult > 0) {
+      s32 *owner;
+
+      for (id = 8, owner = &party->leaderActorId; id <= 79; id++) {
+        struct ActorDescriptor *desc = Scene_FindActorPlacement(id);
+        struct Actor *obj;
+
+        if (desc == NULL || desc->scene - 48 != scene - 300)
+          continue;
+        obj = Actor_Lookup(id);
+        if (obj == NULL)
+          continue;
+        if (flags == 0) {
+          obj->groundHeight = flags;
+          obj->motionFlags = 3;
+          Actor_SetPositionAndResetMotionFar(obj, desc->x, desc->y, desc->z);
+        } else {
+          struct Actor *selection = Actor_Lookup(*owner);
+
+          Actor_SetPositionAndResetMotionFar(obj, selection->x.fixed,
+                                             selection->y.fixed,
+                                             selection->z.fixed - px(32));
+        }
+        Actor_SelectAnimationFar(obj, 1);
+      }
+    }
+  }
+}
+
+/// The Broken Seal's Djinn_ResolvePendingEvent, with this game's actors up to
+/// 79, the plain flag calls, the event at gMainRoutineWork's 0x254 and its
+/// 0x1000 kind tested like the first, falling into the common clear.
+void Djinn_ResolvePending(s32 shown) {
+  struct MainRoutineWork *st = &gMainRoutineWork;
+  s16 *pending = &st->pendingDjinni;
+  s32 kind = *pending & 0xf000;
+  s32 flag = *pending & 0xfff;
+
+  if (shown == 0) {
+    if (kind == 0) {
+      flag &= 0x7ff;
+      if (flag < 300 || flag > 380)
+        return;
+      if (st->sequenceResult > 0 && st->sequenceResult != 999)
+        return;
+      GameFlag_Set(flag - 172);
+      *pending = kind;
+      return;
+    } else if (kind == 0x1000) {
+      if (st->sequenceResult > 0 && st->sequenceResult != 999)
+        GameFlag_Set(flag);
+    } else
+      return;
+  } else if (kind == 0) {
+    flag &= 0x7ff;
+    if (flag >= 300 && flag <= 380) {
+      flag &= 0x7ff;
+      if (st->sequenceResult > 0) {
+        s32 djinn = flag - 300;
+        s32 element = djinn / 20;
+        s32 index = djinn % 20;
+        s32 actor;
+
+        for (actor = 8; actor <= 79; actor++) {
+          struct MapActor *found =
+              (struct MapActor *)Scene_FindActorPlacement(actor);
+          if (found != 0 && found->event - 48 == flag - 300) {
+            wait(40);
+            Djinn_JoinParty(actor, element, index);
+            break;
+          }
+        }
+      }
+    }
+  }
+  gMainRoutineWork.pendingDjinni = 0;
+}
+
+/// Task: updates the 24 field effect sprites.
+void FieldEffect_UpdateAllSlots(void) {
+  struct FieldEffectWork *scene;
+  struct FieldParticle *slot;
+  s32 remainingSlots;
+
+  scene = Ram_HeapSlots->fieldEffectWork;
+  remainingSlots = 0x17;
+  slot = scene->particles;
+  do {
+    remainingSlots -= 1;
+    FieldParticle_Update(slot);
+    slot++;
+  } while (remainingSlots >= 0);
+}
+
+/// Allocates and clears the field effect sprites (HEAP_SLOT_FIELD_EFFECT) and
+/// starts their update task.
+void FieldEffect_InitializeSlots(void) {
+  void *work;
+
+  work = HeapSlot_Alloc(HEAP_SLOT_FIELD_EFFECT, sizeof(struct FieldEffectWork));
+  Dma_Fill32(0, work, sizeof(struct FieldEffectWork));
+  Task_Add((s32)FieldEffect_UpdateAllSlots, TASK_PASS_VBLANK);
+}
+
+/// Stops the field effect sprites: removes their task, frees every slot still
+/// in use and releases their heap block, the field Psynergy's work with it.
+void FieldEffect_ReleaseSlots(void) {
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
+  struct FieldParticle *slot;
+  s32 i;
+
+  Task_Remove((u32)FieldEffect_UpdateAllSlots);
+  for (i = 0; i < 24; i++) {
+    slot = &scene->particles[i];
+    if (slot->active != 0)
+      FieldEffect_ClearOwnedSlot(slot);
+  }
+  HeapSlot_Release(HEAP_SLOT_FIELD_EFFECT);
+  wait(1);
+}
+
+/// Per-frame update: spins the actor an eighth of a turn.
+void BattleEffect_AdvanceSpinAngle(struct MotionObject *object) {
+  object->angle += TRIG_TURN / 8;
+}
+
+/// Field effect sprite callback of a Jupiter Djinni's light particles: each
+/// circles its centre while it widens for 60 frames, circles 40, drifts toward
+/// a point 20 pixels over the leader for 40, closes in for 60 and is freed. It
+/// turns 1/32 turn a frame throughout, and its radius grows, then shrinks, by 1
+/// pixel a frame. The slot's origin is the centre, in screen coordinates
+/// (Camera_WorldToScreen).
+void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
+  struct Actor *owner;
+  struct EffectVector position;
+
+  owner = Actor_GetById(gMainRoutineWork.leaderActorId);
+  if (particle->state == 0) {
+    particle->orbitRadius += 1;
+    particle->orbitAngle += 1;
+    if ((s16)particle->age == 60) {
+      particle->age = 0;
+      particle->state += 1;
+    }
+  } else if (particle->state == 1) {
+    particle->orbitAngle += 1;
+    if ((s16)particle->age == 40) {
+      particle->age = 0;
+      particle->state += 1;
+    }
+  } else if (particle->state == 2) {
+    particle->orbitAngle += 1;
+    SET_POSITION(&position, owner->x.fixed, owner->y.fixed + 20 * Q16_ONE,
+                 owner->z.fixed);
+    Camera_WorldToScreen(&position);
+    particle->originX += (position.x - particle->originX) / 8;
+    particle->originZ += (position.z - particle->originZ) / 8;
+    if ((s16)particle->age == 40) {
+      particle->age = 0;
+      particle->state += 1;
+    }
+  } else if (particle->state == 3) {
+    particle->orbitRadius -= 1;
+    particle->orbitAngle += 1;
+    if ((s16)particle->age == 60) {
+      particle->age = 0;
+      particle->state += 1;
+    }
+  } else if (particle->state == 4) {
+    FieldEffect_ClearOwnedSlot(particle);
+  }
+  position.x = particle->originX;
+  position.z = particle->originZ;
+  Vector_AddPolarOffset(particle->orbitRadius << 16, particle->orbitAngle << 11,
+                        &position);
+  particle->x = position.x;
+  particle->z = position.z;
+}

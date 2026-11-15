@@ -844,7 +844,7 @@ void Madra_GrantPassageToOsenia(void) {
   Event_StartScreenTransition();
   Actor_SetPosition(ACTOR_LADY, 172, 332);
   Actor_SetPosition(ACTOR_LADYS_GUARD, 172, 324);
-  Event_SetMessageId(MsgHasEscaped2);
+  Event_SetMessageId(MsgMadraHasPiersEscaped);
   Event_WaitTransitionFrames();
   // "Has Piers escaped!?"
   Event_ShowMessageThenWait(ACTOR_LADY, 0, 10);
@@ -1194,7 +1194,7 @@ void Madra_MeetKarst(void) {
   Event_StartScreenTransition();
   if (GameFlag_Get(0x825) || GameFlag_Get(0x826))
     GameFlag_Set(0xa76);
-  Event_SetMessageId(MsgWait3);
+  Event_SetMessageId(MsgMadraFelixWait);
   // "Felix, wait!"
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
   Actor_WalkToAndWait(ACTOR_FELIX, 150, 280);
@@ -2225,7 +2225,7 @@ struct Trigger gMadra_TriggersOnReturn[] = {
     {TRIGGER_TALK, ACTOR_GUARD_ON_HIS_FRIEND, CONDITION_ALWAYS,
      MSGNO(MsgWhenAndHis)},
     {TRIGGER_TALK, ACTOR_GUARD_ON_HIS_PARTNER, CONDITION_ALWAYS,
-     MSGNO(MsgUhhhnnnUhhhnnn2)},
+     MSGNO(MsgMadraUhhhnnnUhhhnnn)},
     {TRIGGER_TALK, ACTOR_GATE_GUARD, CONDITION_ALWAYS,
      MSGNO(MsgTheMayorFinally)},
     {TRIGGER_TALK, ACTOR_SECOND_GATE_GUARD, CONDITION_ALWAYS, MSGNO(MsgHeyItS)},

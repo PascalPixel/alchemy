@@ -638,7 +638,7 @@ s32 LinkLobby_EnterBattle(void) {
     TilesetAnim_Pause(5);
     if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
       Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
-      Event_SetMessageId((s32)MsgGoodLuck2);
+      Event_SetMessageId((s32)MsgLobbyGoodLuck);
       // "Good luck!"
       Event_OpenMessage(8, 0);
       wait(45);

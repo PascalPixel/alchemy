@@ -67,7 +67,7 @@ void LemuriaInteriors_TalkToPiersUncle(s32 arg0) {
   result0 = Event_GetFlag(0x966);
   if (result0 == 0)
     goto notMourning;
-  Event_SetMessageId((s32)MsgLemuriaInteriors11);
+  Event_SetMessageId((s32)MsgLemuriaInteriorsGoToLunpasTowerHe);
   // "Go to Lunpa's tower. He will see you."
   Event_ShowMessage(arg0, 0);
   Actor_WatchAndSetScript(10, 4);
@@ -78,14 +78,14 @@ notMourning:
     goto notVisited;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgLemuriaInteriors08);
+  Event_SetMessageId((s32)MsgLemuriaInteriorsIAmSoRelieved);
   // "I am so relieved that Piers has returned to me alive. He is the last..."
   Event_ShowMessage(arg0, 0);
   Actor_FaceDirection(arg0, FACING_SOUTH_SOUTHEAST, 0);
   Event_End();
   goto done;
 notVisited:
-  Event_SetMessageId((s32)MsgLemuriaInteriors05);
+  Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouTravelersThatCame);
   // "Are you the travelers that came here with Piers?"
   Event_OpenMessage(arg0, 0);
   result2 = FieldParty_GetLeaderActor();
@@ -104,15 +104,15 @@ done:
 
 void LemuriaInteriors_MindReadPiersUncle(s32 unused, s32 id) {
   if (Event_GetFlag(0x966)) {
-    Event_SetMessageId((s32)MsgLemuriaInteriors12);
+    Event_SetMessageId((s32)MsgLemuriaInteriorsLunpaHasGivenKingTremendous);
     // "Lunpa has given the king tremendous aid on this matter. He will have..."
     Event_ShowMessage(id, 0);
   } else if (Event_GetFlag(0x965)) {
-    Event_SetMessageId((s32)MsgLemuriaInteriors09);
+    Event_SetMessageId((s32)MsgLemuriaInteriorsPoorPiersBeingBorn);
     // "Poor Piers... Being born in Lemuria and gifted with long life......"
     Event_ShowMessage(id, 0);
   } else {
-    Event_SetMessageId((s32)MsgLemuriaInteriors06);
+    Event_SetMessageId((s32)MsgLemuriaInteriorsIWaswhatIsWordSurprised);
     // "I was°what is the word?° surprised when I heard Piers had..."
     Event_ShowMessage(id, 0);
   }
@@ -123,7 +123,7 @@ void LemuriaInteriors_AskFromBeyondSeaOfTime(s32 arg0) {
   s32 result0;
   s32 result1;
 
-  Event_SetMessageId((s32)MsgLemuriaInteriors13);
+  Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouWarriorsFromBeyond);
   // "Are you the warriors from beyond the Sea of Time who returned with..."
   Event_OpenMessage(arg0, 0);
   result0 = FieldParty_GetLeaderActor();
@@ -131,11 +131,11 @@ void LemuriaInteriors_AskFromBeyondSeaOfTime(s32 arg0) {
   if (result1 != 0)
     goto answeredNo;
   Event_Wait(10);
-  Event_SetMessageId((s32)MsgLemuriaInteriors13 + 1);
+  Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouWarriorsFromBeyond + 1);
   goto answered;
 answeredNo:
   Event_Wait(20);
-  Event_SetMessageId((s32)MsgLemuriaInteriors13 + 2);
+  Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouWarriorsFromBeyond + 2);
 answered:
   Event_ShowMessage(arg0, 0);
   return;
@@ -147,7 +147,7 @@ void LemuriaInteriors_AskAboutDraughts(s32 arg0) {
   s32 result0;
   s32 result1;
 
-  Event_SetMessageId((s32)MsgLemuriaInteriors18);
+  Event_SetMessageId((s32)MsgLemuriaInteriorsDoYouSeekToKnow);
   // "Do you seek to know more about the draughts that provide us with..."
   Event_OpenMessage(arg0, 0);
   result0 = FieldParty_GetLeaderActor();
@@ -155,11 +155,11 @@ void LemuriaInteriors_AskAboutDraughts(s32 arg0) {
   if (result1 != 0)
     goto answeredNo;
   Event_Wait(10);
-  Event_SetMessageId((s32)MsgLemuriaInteriors18 + 1);
+  Event_SetMessageId((s32)MsgLemuriaInteriorsDoYouSeekToKnow + 1);
   goto answered;
 answeredNo:
   Event_Wait(20);
-  Event_SetMessageId((s32)MsgLemuriaInteriors18 + 2);
+  Event_SetMessageId((s32)MsgLemuriaInteriorsDoYouSeekToKnow + 2);
 answered:
   Event_ShowMessage(arg0, 0);
   return;
@@ -179,7 +179,7 @@ void LemuriaInteriors_ScoffAtMindRead(s32 arg0, s32 arg1) {
   Event_ResolvePendingActions(0);
   Actor_ShowEmote(arg1, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
   Actor_FaceActor(arg1, ACTOR_FELIX, 20);
-  Event_SetMessageId((s32)MsgLemuriaInteriors19);
+  Event_SetMessageId((s32)MsgLemuriaInteriorsWasThatSomeForm);
   // "Was that some form of Psynergy?"
   Event_OpenMessage(arg1, 0);
   result2 = FieldParty_GetLeaderActor();
@@ -187,11 +187,11 @@ void LemuriaInteriors_ScoffAtMindRead(s32 arg0, s32 arg1) {
   if (result3 != 0)
     goto answeredNo;
   Event_Wait(10);
-  Event_SetMessageId((s32)MsgLemuriaInteriors19 + 1);
+  Event_SetMessageId((s32)MsgLemuriaInteriorsWasThatSomeForm + 1);
   goto answered;
 answeredNo:
   Event_Wait(20);
-  Event_SetMessageId((s32)MsgLemuriaInteriors19 + 2);
+  Event_SetMessageId((s32)MsgLemuriaInteriorsWasThatSomeForm + 2);
 answered:
   Event_ShowMessage(arg1, 0);
   Actor_FaceDirection(arg1, value1, 0);
@@ -245,7 +245,7 @@ void LemuriaInteriors_PiersVisitsUncle(void) {
   Party_RemoveMember(7);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgLemuriaInteriors07);
+  Event_SetMessageId((s32)MsgLemuriaInteriorsIAmSorryItHas);
   Event_Wait(20);
   Actor_FaceDirection(10, FACING_SOUTH_SOUTHEAST, 0);
   Actor_WalkToAndWait(ACTOR_FELIX, 112, 128);
@@ -504,7 +504,7 @@ visited:
   }
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgLemuriaInteriors10);
+  Event_SetMessageId((s32)MsgLemuriaInteriorsWait);
   Actor_SetSpeed(10, 0.8);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   // "Wait..."
@@ -798,7 +798,7 @@ void LemuriaInteriors_AskWherePiersIs(void) {
   Event_SetFlag(0x969);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgLemuriaInteriors26);
+  Event_SetMessageId((s32)MsgLemuriaInteriorsHonestlyImAmazedThatAnyone);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   Actor_SetSpeed(18, 1);
   Actor_WalkByAndWait(18, 32, 0);
@@ -1417,22 +1417,28 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_STEP, 30, 0x966, EVENT(LemuriaInteriors_LeavePiersToMourn)},
     {TRIGGER_STEP, 31, 0x969, EVENT(LemuriaInteriors_AskWherePiersIs)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors01)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors02)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaInteriorsIHaveNeverBeenOutside)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaInteriorsNowThatPiersHasReturned)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaInteriors03)},
+     MSGNO(MsgLemuriaInteriorsWhoKnowsWhatWondersLie)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaInteriors04)},
+     MSGNO(MsgLemuriaInteriorsSenatePassedLawThatProhibits)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS,
      EVENT(LemuriaInteriors_TalkToPiersUncle)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      EVENT(LemuriaInteriors_MindReadPiersUncle)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS,
      EVENT(LemuriaInteriors_AskFromBeyondSeaOfTime)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors14)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors15)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors16)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgLemuriaInteriors17)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaInteriorsLongAgoPowerOfAlchemy)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaInteriorsAndNowRumorsAbound)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaInteriorsComeWhatMayICannot)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS,
+     MSGNO(MsgLemuriaInteriorsHasLemuriaFallenIntoDecay)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS,
      EVENT(LemuriaInteriors_AskAboutDraughts)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13 | TRIGGER_SUBJECT_OWN_EFFECT,
@@ -1448,35 +1454,36 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19 | TRIGGER_SUBJECT_OWN_EFFECT,
      0x967, EVENT(LemuriaInteriors_ScoffAtMindRead)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaInteriors20)},
+     MSGNO(MsgLemuriaInteriorsWhatDoesHydrosThinkWill)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaInteriors21)},
+     MSGNO(MsgLemuriaInteriorsEverSinceAlchemyWasSealed)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaInteriors22)},
+     MSGNO(MsgLemuriaInteriorsIfAlchemyWereLoosedUpon)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaInteriors23)},
+     MSGNO(MsgLemuriaInteriorsAllOfMembersOfSenate)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaInteriors24)},
+     MSGNO(MsgLemuriaInteriorsCertainlyLemuriaHasLostSome)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
-     MSGNO(MsgLemuriaInteriors25)},
+     MSGNO(MsgLemuriaInteriorsEvenThoughWeNoLonger)},
     {EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 200, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgLemuriaInteriors27))},
+     FIND_MESSAGE(MSGNO(MsgLemuriaInteriorsTheresBookCalledGreatAdventures))},
     {EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 201, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgLemuriaInteriors28))},
+     FIND_MESSAGE(MSGNO(MsgLemuriaInteriorsIFoundLetterFromBabi))},
     {EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 202, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgLemuriaInteriors29))},
+     FIND_MESSAGE(MSGNO(MsgLemuriaInteriorsHeresBookCalledHistory))},
     {EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 203, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgLemuriaInteriors30))},
+     FIND_MESSAGE(
+         MSGNO(MsgLemuriaInteriorsHeresBookCalledElementalLighthouses))},
     {EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 204, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgLemuriaInteriors31))},
+     FIND_MESSAGE(MSGNO(MsgLemuriaInteriorsHeresBookCalledGreatLemurian))},
     {EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 205, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgLemuriaInteriors32))},
+     FIND_MESSAGE(MSGNO(MsgLemuriaInteriorsHeresBookCalledAlchemy))},
     {EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 206, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgLemuriaInteriors33))},
+     FIND_MESSAGE(MSGNO(MsgLemuriaInteriorsHeresBookCalledAlchemyAndAncient))},
     {EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 207, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgLemuriaInteriors34))},
+     FIND_MESSAGE(MSGNO(MsgLemuriaInteriorsHeresBookCalledDiary))},
     {EXAMINE_TRIGGER(EXAMINE_WARDROBE), 208, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgLemuriaInteriors35))},
+     FIND_MESSAGE(MSGNO(MsgLemuriaInteriorsWhatInWhatsWithAll))},
     {TRIGGER_TABLE_END},
 };
 

@@ -87,7 +87,7 @@ void Naribwe_AskAboutKibomboExpedition(void) {
   s32 msg;
 
   if (Event_GetFlag(0x85d) == 0) {
-    msg = (s32)MsgNaribwe02;
+    msg = (s32)MsgNaribweKibomboWentOnExpedition;
     Event_SetMessageId(msg);
     // "The Kibombo went on an expedition to the east, but they've already..."
     Event_OpenMessage(14, 0);
@@ -99,7 +99,7 @@ void Naribwe_AskAboutKibomboExpedition(void) {
     }
     Event_ShowMessage(14, 0);
   } else {
-    Event_SetMessageId((s32)MsgNaribwe03);
+    Event_SetMessageId((s32)MsgNaribweKibomboNeverMoveInSuch);
     // "The Kibombo never move in such large numbers without orders from..."
     Event_ShowMessage(14, 0);
   }
@@ -110,7 +110,7 @@ void Naribwe_AskWhereFrom(void) {
   s32 msg;
 
   if (Event_GetFlag(0x85e) == 0) {
-    msg = (s32)MsgNaribwe07;
+    msg = (s32)MsgNaribweCanYouTellMeWhere;
     Event_SetMessageId(msg);
     // "Can you tell me where you have come from?"
     Event_OpenMessage(18, 0);
@@ -122,7 +122,7 @@ void Naribwe_AskWhereFrom(void) {
     }
     Event_ShowMessage(18, 0);
   } else {
-    Event_SetMessageId((s32)MsgNaribwe08);
+    Event_SetMessageId((s32)MsgNaribweItsAlwaysHotHere);
     // "It's always hot here in Naribwe. It doesn't matter if it's summer..."
     Event_ShowMessage(14, 0);
   }
@@ -130,7 +130,7 @@ void Naribwe_AskWhereFrom(void) {
 
 /// "You don't plan on going to Kibombo, do you, mister?"
 void Naribwe_AskGoingToKibombo(void) {
-  s32 msg = (s32)MsgNaribwe09;
+  s32 msg = (s32)MsgNaribweYouDontPlanOnGoing;
 
   Event_SetMessageId(msg);
   Event_OpenMessage(19, 0);
@@ -157,7 +157,7 @@ void Naribwe_PraiseFortuneTeller(s32 actor) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgNaribwe21);
+  Event_SetMessageId((s32)MsgNaribweNoOneCanSeeFuture);
   // "No one can see the future. Absolutely no one. Except for our..."
   Event_ShowMessage(actor, 0);
   Event_End();
@@ -171,7 +171,7 @@ void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgNaribwe43);
+  Event_SetMessageId((s32)MsgNaribweStrangersToOurTownWould);
   // "Strangers to our town would do well to visit the fortune-teller's hut."
   Event_ShowMessage(actor, 0);
   Event_End();
@@ -187,7 +187,7 @@ void Naribwe_TalkToPilgrim(s32 actor) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgNaribwe23);
+  Event_SetMessageId((s32)MsgNaribweIAmButHumblePilgrim);
   // "I am but a humble pilgrim, serving the greater good in the heart of..."
   Event_ShowMessage(26, 0);
   Event_End();
@@ -201,7 +201,7 @@ void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgNaribwe45);
+  Event_SetMessageId((s32)MsgNaribweItsStrangeAsHot);
   // "It's strange. As hot as it is here in Gondowan, if you head south..."
   Event_ShowMessage(26, 0);
   Event_End();
@@ -440,42 +440,46 @@ struct Trigger gNaribwe_Triggers[] = {
      EVENT(Naribwe_EnterDoor)},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgNaribwe01)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS,
+     MSGNO(MsgNaribweWelcomeToNaribweItsReally)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS,
      EVENT(Naribwe_AskAboutKibomboExpedition)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgNaribwe04)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgNaribwe05)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgNaribwe06)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgNaribweIWouldNotVentureFar)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS,
+     MSGNO(MsgNaribweItsBeenDangerousOutEver)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS,
+     MSGNO(MsgNaribweWhenOeiaWasTheirWitch)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Naribwe_AskWhereFrom)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Naribwe_AskGoingToKibombo)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgNaribwe10)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgNaribwe19)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgNaribweOnFarSideOfRiver)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS,
+     MSGNO(MsgNaribweWhenIClimbedKibomboMountains)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Naribwe_PraiseFortuneTeller)},
     {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(Naribwe_TalkToPilgrim)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe11)},
+     MSGNO(MsgNaribweICanHardlyStandHeat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe12)},
+     MSGNO(MsgNaribweAkafubuIsAlmostCertainlyLooking)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe13)},
+     MSGNO(MsgNaribweItIsAwfulToNorth)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe14)},
+     MSGNO(MsgNaribweThatWasDayWindBlew)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe15)},
+     MSGNO(MsgNaribweKibomboMagicWasOnceWidely)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe16)},
+     MSGNO(MsgNaribweWarriorWhoPassedThroughHere)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe17)},
+     MSGNO(MsgNaribweToGetToKibombo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe18)},
+     MSGNO(MsgNaribweSometimesYouCanHearExplosions)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe20)},
+     MSGNO(MsgNaribweIRememberWhenIFound)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe22)},
+     MSGNO(MsgNaribweEvenIfIWanted)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe24)},
+     MSGNO(MsgNaribweAnywhereICanDoSome)},
     {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgNaribwe47))},
+     FIND_MESSAGE(MSGNO(MsgNaribweTheresOnlyLittleBit))},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8,
      CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 23, 0x201,
@@ -498,42 +502,46 @@ struct Trigger gNaribwe_TriggersOnReturn[] = {
      EVENT(Naribwe_EnterDoor)},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgNaribwe25)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgNaribwe26)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgNaribwe27)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgNaribwe28)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgNaribwe29)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgNaribwe30)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgNaribwe31)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgNaribwe32)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgNaribwe41)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgNaribweDontTellMeYouJust)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgNaribweIDidntSeeAnyKibombo)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgNaribweISawSmokeRising)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS,
+     MSGNO(MsgNaribweSomeSoldiersCameThroughHere)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS,
+     MSGNO(MsgNaribweSmokeComingFromKibomboMountains)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS,
+     MSGNO(MsgNaribweFortuneTellerPredictedThatKibombo)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS,
+     MSGNO(MsgNaribweManCameThroughWhileAgo)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgNaribweIMentionedMagmaRock)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgNaribweOuchSomeBigBruteCame)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS,
      EVENT(Naribwe_PraiseFortuneTellerOnReturn)},
     {TRIGGER_TALK, 26, CONDITION_ALWAYS, EVENT(Naribwe_TalkToPilgrimOnReturn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe33)},
+     MSGNO(MsgNaribweWhoWouldTravelToKibombo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe34)},
+     MSGNO(MsgNaribweImSoGladKibomboArent)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe35)},
+     MSGNO(MsgNaribweThatSmokesBeenRising)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe36)},
+     MSGNO(MsgNaribweWhatKindOfName)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe37)},
+     MSGNO(MsgNaribweSignalsSaySomethingHasEnded)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe38)},
+     MSGNO(MsgNaribweFortuneTellerHasNeverBeen)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe39)},
+     MSGNO(MsgNaribweIfManTheyWereLooking)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe40)},
+     MSGNO(MsgNaribweIDontThinkAnyoneCan)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe42)},
+     MSGNO(MsgNaribweWhatHasGoneWrong)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe44)},
+     MSGNO(MsgNaribweThoseWhoBecomeLostShould)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
-     MSGNO(MsgNaribwe46)},
+     MSGNO(MsgNaribweColdOfTundariaStiflesVirtually)},
     {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgNaribwe47))},
+     FIND_MESSAGE(MSGNO(MsgNaribweTheresOnlyLittleBit))},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8,
      CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 23, 0x201,

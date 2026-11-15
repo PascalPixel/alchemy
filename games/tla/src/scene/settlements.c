@@ -34,7 +34,7 @@
 
 s32 Trig_Cos(s32 angle);
 
-extern u8 MsgSettlements01[];
+extern u8 MsgSettlementsDontTellMeYoureHere[];
 
 #include "system/frame.h"
 
@@ -310,7 +310,7 @@ void Settlements_CatchApple(void) {
 }
 
 void Settlements_WarnOfRiddleOfRock(s32 actor) {
-  s32 msg = (s32)MsgSettlements01;
+  s32 msg = (s32)MsgSettlementsDontTellMeYoureHere;
 
   FieldEvent_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
@@ -1288,11 +1288,12 @@ struct Trigger gSettlements_Room1Triggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 4, CONDITION_ALWAYS,
      EVENT(Settlements_EnterDoor4)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Settlements_WarnOfRiddleOfRock)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSettlements03)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsThereWasGiantExplosion)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements04)},
+     MSGNO(MsgSettlementsMountainIsCalledMagmaRock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements06)},
+     MSGNO(MsgSettlementsExplosionsWithinMagmaRock)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 10,
      CONDITION_ALWAYS, EVENT(Settlements_CutLeftBush)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 11,
@@ -1302,9 +1303,10 @@ struct Trigger gSettlements_Room1Triggers[] = {
 
 struct Trigger gSettlements_Room2Triggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 1},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements02)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsIHearKibomboHasFinally)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements05)},
+     MSGNO(MsgSettlementsWereLuckyRiverFloodsOver)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1321,9 +1323,10 @@ struct Trigger gSettlements_Room4Triggers[] = {
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_STEP, 34, 0x220, EVENT(Settlements_StepOntoWall)},
     {TRIGGER_STEP, 35, 0x1220, EVENT(Settlements_StepOffWall)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements07)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsYouMustBeVeryBrave)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements10)},
+     MSGNO(MsgSettlementsForContinentAsDesolate)},
     {TRIGGER_TALK, 11, CONDITION_ALWAYS, EVENT(Settlements_MeetTinder)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 10,
      CONDITION_ALWAYS, EVENT(Settlements_UnblockCrate)},
@@ -1339,12 +1342,14 @@ struct Trigger gSettlements_Room5Triggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 13, CONDITION_ALWAYS, 13},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements08)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSettlements09)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsTheresPlaceCalledShamanVillage)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsPeopleOfShamanVillage)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements11)},
+     MSGNO(MsgSettlementsIThinkTheresCaveDown)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements12)},
+     MSGNO(MsgSettlementsLongAgoShamanWasRavaged)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1364,25 +1369,26 @@ struct Trigger gSettlements_Room7Triggers[] = {
 
 struct Trigger gSettlements_Room8Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements13)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSettlements14)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlementsIfYouWantToCross)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSettlementsLongTimeAgoWeUsed)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements15)},
+     MSGNO(MsgSettlementsPeopleOfLohoHaveLegendary)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements16)},
+     MSGNO(MsgSettlementsNorthernSeaIsThick)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
-     FIND_MESSAGE(MSGNO(MsgSettlements21))},
+     FIND_MESSAGE(MSGNO(MsgSettlementsTheresKalticStewMade))},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gSettlements_Room9Triggers[] = {
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements18)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsSeaWestOfHereSpills)},
     {TRIGGER_TALK, 23, CONDITION_ALWAYS,
      EVENT(Settlements_MeetLostJupiterDjinni)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements20)},
+     MSGNO(MsgSettlementsMyBuddyThinksImNuts)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9,
      0x204, EVENT(Settlements_UnblockFallsObjects)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x204, EVENT(Settlements_MovePillar)},
@@ -1398,9 +1404,10 @@ struct Trigger gSettlements_Room9Triggers[] = {
 
 struct Trigger gSettlements_Room10Triggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 1},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSettlements17)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS,
+     MSGNO(MsgSettlementsTheresNothingToWest)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgSettlements19)},
+     MSGNO(MsgSettlementsCurrentsAreSoStrongNear)},
     {TRIGGER_TABLE_END},
 };
 

@@ -184,7 +184,8 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 /// The Japanese catalog does not name these yet.
-extern u8 MsgWhatWillYou[], MsgCoins2[], MsgToss2[], MsgYouWonCoin[];
+extern u8 MsgWhatWillYou[], MsgLemuriaSpringCoins[], MsgLemuriaSpringToss[],
+    MsgYouWonCoin[];
 s32 Menu_SelectCoinsOrMedals();
 
 // French draws the count window two tiles wider, its numbers 16 pixels further
@@ -247,7 +248,7 @@ prompt:
   // "What will you throw?"
   Event_OpenMessage(-1, 0);
   window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
-  result = (s32)MsgCoins2;
+  result = (s32)MsgLemuriaSpringCoins;
   Text_DrawMessageAsTiles(result, window, 0, 0);
   Text_DrawNumberInWindow(coins, 6, window, COUNT_NUMBER_X, 0);
   Text_DrawMessageAsTiles(result + 1, window, 0, 8);
@@ -282,7 +283,7 @@ full:
   }
 toss:
   window = Window_Create(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
-  result = (s32)MsgToss2;
+  result = (s32)MsgLemuriaSpringToss;
   Text_DrawMessageAsTiles(result, window, 0, 0);
   Text_DrawMessageAsTiles(result + 1, window, 0, 8);
   wait(5);
@@ -317,7 +318,7 @@ toss:
     // "What will you throw?"
     Event_OpenMessage(-1, 0);
     window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
-    text = (s32)MsgCoins2;
+    text = (s32)MsgLemuriaSpringCoins;
     Text_DrawMessageAsTiles(text, window, 0, 0);
     Text_DrawNumberInWindow(coins, 6, window, COUNT_NUMBER_X, 0);
     Text_DrawMessageAsTiles(text + 2, window, 104, 0);
@@ -356,7 +357,7 @@ toss:
       }
     }
     window = Window_Create(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
-    result = (s32)MsgToss2;
+    result = (s32)MsgLemuriaSpringToss;
     Text_DrawMessageAsTiles(result, window, 0, 0);
     Text_DrawMessageAsTiles(result + 1, window, 0, 8);
     wait(5);

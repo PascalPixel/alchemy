@@ -711,7 +711,7 @@ void Lemuria_AdmirePalace(s32 id) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgOh2);
+  FieldEvent_SetMessageId((s32)MsgLemuriaOh);
   Actor_SetFirstSpriteAnimation((s32)Actor_Get(12), 56);
   if (id == 21) {
     Actor_WalkToAndWait(ACTOR_FELIX, 376, 968);
@@ -1251,11 +1251,11 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgHowOldAm)},
     {TRIGGER_TALK, 18, CONDITION_ALWAYS, EVENT(Lemuria_TalkToSpoiledChild)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Lemuria_TalkToLonelyChild)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgMeowMrrrfle2)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgWoofRrrrrroof2)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgMoo2)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgBukbukbuk2)},
-    {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgBlank4)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgLemuriaMeowMrrrfle)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgLemuriaWoofRrrrrroof)},
+    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgLemuriaMoo)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgLemuriaBukbukbuk)},
+    {TRIGGER_TALK, 7, CONDITION_ALWAYS, MSGNO(MsgLemuriaSilence)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
      MSGNO(MsgMoreOfThe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,

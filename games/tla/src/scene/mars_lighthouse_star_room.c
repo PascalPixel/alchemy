@@ -456,7 +456,7 @@ void MarsLighthouseStarRoom_WakeFlameDragons(void) {
 void Event_End();
 void Actor_MoveToObject();
 void Scene_PlayMusic();
-extern u8 MsgMarsStar01[];
+extern u8 MsgMarsLighthouseStarRoomWhyWhyAmILying[];
 extern s32 gMarsLighthouseStarRoom_LightRiseScript[];
 extern s32 gMarsLighthouseStarRoom_LightSinkScript[];
 extern s32 gMarsLighthouseStarRoom_AgatioDragonShrinkScript[];
@@ -546,7 +546,7 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   Actor_RunRepeatedMotion(ACTOR_AGATIO, 2);
   Actor_SetAnimation(ACTOR_AGATIO, 5);
   FieldEvent_Wait(20);
-  FieldEvent_SetMessageId((s32)&MsgMarsStar01);
+  FieldEvent_SetMessageId((s32)&MsgMarsLighthouseStarRoomWhyWhyAmILying);
   // "Why... Why am I lying here?"
   FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 80);
   Actor_RunRepeatedMotion(ACTOR_AGATIO, 1);
@@ -696,7 +696,7 @@ void MarsLighthouseStarRoom_HoldWarmHand(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_SetAnimation(ACTOR_KARST, 5);
-  FieldEvent_SetMessageId((s32)MsgMarsStar03);
+  FieldEvent_SetMessageId((s32)MsgMarsLighthouseStarRoomYourHandSoWarmPeople);
   // "Your hand...so warm... People have such warm hands... I had forgotten..."
   Event_ShowMessage(ACTOR_KARST, 0);
   Actor_SetAnimation(ACTOR_KARST, 9);
@@ -721,7 +721,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetAnimation(ACTOR_AGATIO, 5);
-  Event_SetMessageId((s32)MsgMarsStar02);
+  Event_SetMessageId((s32)MsgMarsLighthouseStarRoomItsTooLateForUs);
   // "It's too late for us now... Hurry, light the beacon."
   Event_ShowMessage(ACTOR_AGATIO, 0);
   Actor_SetAnimation(ACTOR_AGATIO, 10);
@@ -740,7 +740,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
     PartyInventory_Remove(ITEM_MYTHRIL_BAG);
     Inventory_AddItem(4, ITEM_MYTHRIL_BAG_MARS_STAR);
     // "Felix got the Mars Star!"
-    Message_ShowCentered((s32)MsgMarsStar08, 1);
+    Message_ShowCentered((s32)MsgMarsLighthouseStarRoomFelixGotMarsStar, 1);
     i = 0;
     offset = 216;
     for (; i <= 14; offset += 2, i++) {
@@ -774,7 +774,8 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
       OBJ_PLTT_COLOR(0, 15) = white.value;
     }
     System_Wait(1);
-    FieldMessage_ShowCentered((s32)MsgMarsStar06, 0, 0);
+    FieldMessage_ShowCentered((s32)MsgMarsLighthouseStarRoomYouWhoHoldStarOpen,
+                              0, 0);
     PaletteFade_ApplyTarget(0x10000, 0);
     PaletteFade_Interpolate(20);
     System_Wait(20);
@@ -822,7 +823,7 @@ void MarsLighthouseStarRoom_ExamineStatue(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   // "There's a space for you to place something."
-  Message_ShowCentered((s32)MsgMarsStar07, 1);
+  Message_ShowCentered((s32)MsgMarsLighthouseStarRoomTheresSpace, 1);
   ((struct EventNote *)work)->unk15a = 1;
   Event_End();
 }
@@ -846,7 +847,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   // "Felix used the Mars Star!"
-  Message_ShowCentered((s32)MsgMarsStar09, 1);
+  Message_ShowCentered((s32)MsgMarsLighthouseStarRoomFelixUsedMarsStar, 1);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   System_Wait(1);
   Event_PlaySound(SE_GEM_SET);
@@ -966,7 +967,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     // "Felix used the Mars Star!"
-    Message_ShowCentered((s32)MsgMarsStar09, 1);
+    Message_ShowCentered((s32)MsgMarsLighthouseStarRoomFelixUsedMarsStar, 1);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
     System_Wait(1);
     Event_PlaySound(SE_GEM_SET);
@@ -1029,7 +1030,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   // "Felix used the Mars Star!"
-  Message_ShowCentered((s32)MsgMarsStar09, 1);
+  Message_ShowCentered((s32)MsgMarsLighthouseStarRoomFelixUsedMarsStar, 1);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   System_Wait(1);
   Event_PlaySound(SE_GEM_SET);
@@ -2606,11 +2607,11 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TALK, 14, CONDITION_ALWAYS,
      EVENT(MarsLighthouseStarRoom_HoldWarmHand)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-     MSGNO(MsgMarsStar05)},
+     MSGNO(MsgMarsLighthouseStarRoomImSoColdColderThan)},
     {TRIGGER_TALK, 13, CONDITION_ALWAYS,
      EVENT(MarsLighthouseStarRoom_TakeMarsStar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-     MSGNO(MsgMarsStar04)},
+     MSGNO(MsgMarsLighthouseStarRoomImSoTiredFog)},
     {TRIGGER_EXAMINE, 21, CONDITION_ALWAYS,
      EVENT(MarsLighthouseStarRoom_ExamineStatue)},
     {USE_ITEM(ITEM_MYTHRIL_BAG_MARS_STAR), 1045, CONDITION_ALWAYS,

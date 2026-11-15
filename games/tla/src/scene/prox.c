@@ -461,7 +461,7 @@ s32 Prox_EndEvent();
 void Prox_AskAboutIgloos(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldEvent_SetMessageId((s32)MsgProx33);
+  FieldEvent_SetMessageId((s32)MsgProxFelixYouLikeIgloosRight);
   Event_AskYesNo(15, 0);
   Prox_EndEvent();
 }
@@ -482,9 +482,9 @@ void Prox_TalkAboutParents(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     if (Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
-      FieldEvent_SetMessageId((s32)MsgProx135);
+      FieldEvent_SetMessageId((s32)MsgProxWeHadNoIdeaThere);
     } else {
-      FieldEvent_SetMessageId((s32)MsgProx56);
+      FieldEvent_SetMessageId((s32)MsgProxFelixYourParentsHaveGone);
     }
     Event_ShowMessage(22, 0);
     Prox_EndEvent();
@@ -501,9 +501,9 @@ void Prox_PraiseReturnedWarrior(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     if (Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
-      FieldEvent_SetMessageId((s32)MsgProx132);
+      FieldEvent_SetMessageId((s32)MsgProxYourFosterGrandmotherKnew);
     } else {
-      FieldEvent_SetMessageId((s32)MsgProx53);
+      FieldEvent_SetMessageId((s32)MsgProxYouGoAwayForLittle);
     }
     Event_ShowMessage(10, 0);
     Prox_EndEvent();
@@ -520,9 +520,9 @@ void Prox_FearForWeyard(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     if (Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
-      FieldEvent_SetMessageId((s32)MsgProx139);
+      FieldEvent_SetMessageId((s32)MsgProxNowThatLighthouseHasBeen);
     } else {
-      FieldEvent_SetMessageId((s32)MsgProx60);
+      FieldEvent_SetMessageId((s32)MsgProxIHearAgatioAndKarst);
     }
     Event_ShowMessage(8, 0);
     Prox_EndEvent();
@@ -548,9 +548,9 @@ void Prox_TalkToPlayingChild(void) {
   object->unk63 = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(16, gMainRoutineWork.leaderActorId, 0);
-    FieldEvent_SetMessageId((s32)MsgProx113);
+    FieldEvent_SetMessageId((s32)MsgProxWeeeeWhatFunNow);
   } else {
-    FieldEvent_SetMessageId((s32)MsgProx117);
+    FieldEvent_SetMessageId((s32)MsgProxNowThatLighthouseIsLit);
   }
   // "Now that the lighthouse is lit, we don't have to play in that stupid..."
   Event_ShowMessage(16, 0);
@@ -570,9 +570,9 @@ void Prox_TalkToRestlessChild(void) {
   object->unk63 = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(17, gMainRoutineWork.leaderActorId, 0);
-    FieldEvent_SetMessageId((s32)MsgProx114);
+    FieldEvent_SetMessageId((s32)MsgProxIMissRunningAroundOutside);
   } else {
-    FieldEvent_SetMessageId((s32)MsgProx118);
+    FieldEvent_SetMessageId((s32)MsgProxThatBlizzardWasUnreal);
   }
   // "That blizzard was unreal, but it's gone now, and the weather's..."
   Event_ShowMessage(17, 0);
@@ -592,9 +592,9 @@ void Prox_TalkToTrainingChild(void) {
   object->unk63 = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(18, gMainRoutineWork.leaderActorId, 0);
-    FieldEvent_SetMessageId((s32)MsgProx115);
+    FieldEvent_SetMessageId((s32)MsgProxIfImGoing);
   } else {
-    FieldEvent_SetMessageId((s32)MsgProx119);
+    FieldEvent_SetMessageId((s32)MsgProxYouGetMoreExerciseRunning);
   }
   // "You get more exercise running in the snow, because it's a lot harder..."
   Event_ShowMessage(18, 0);
@@ -632,7 +632,7 @@ void Prox_SearchForParents(void) {
     Actor_WalkToAndWait(8, 540, 388);
     Actor_FaceDirectionAndWait(8, FACING_EAST);
     Actor_SetAnimation(8, 4);
-    FieldEvent_SetMessageId((s32)MsgProx47);
+    FieldEvent_SetMessageId((s32)MsgProxTheyreNotHere);
     // "They're not here..."
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 8, 0);
     Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -678,7 +678,7 @@ void Prox_DecideToGoToLighthouse(void) {
   FieldEvent_Wait(40);
   Actor_RunRepeatedMotion(10, 1);
   Actor_FaceDirectionAndWait(10, FACING_NORTH_NORTHWEST);
-  FieldEvent_SetMessageId((s32)MsgProx62);
+  FieldEvent_SetMessageId((s32)MsgProxWeCantWaitForAgatio);
   // "We can't wait for Agatio and his men any longer..."
   Event_ShowMessage(10, 0);
   Actor_SetAttachedEffect(12, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -780,7 +780,7 @@ void Prox_MeetPuelle(void) {
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
   FieldActor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirectionAndWait(11, FACING_SOUTH_SOUTHWEST);
-  FieldEvent_SetMessageId((s32)MsgProx75);
+  FieldEvent_SetMessageId((s32)MsgProxYouFelix);
   // "You... Felix, it's you..."
   Event_ShowMessage(11, 0);
   Actor_ShowEmote(10, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1298,7 +1298,7 @@ void Prox_GiveThanksForBeacon(void) {
   FieldCamera_MoveTo(184, CAMERA_KEEP, 448, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(20);
-  FieldEvent_SetMessageId((s32)MsgProx80);
+  FieldEvent_SetMessageId((s32)MsgProxThankYouFelix);
   // "Thank you, Felix. And you, too, Isaac and Kraden."
   Event_ShowMessage(26, 0);
   Actor_SetAnimation(ACTOR_ISAAC, ANIM_NOD);
@@ -1761,7 +1761,7 @@ void Prox_SayFarewell(void) {
     Event_PlaySound(SOUND_FADE_OUT_BGM);
     FieldActor_Jump(ACTOR_JENNA, 2, 10);
     FieldActor_Jump(ACTOR_JENNA, 4, 10);
-    FieldEvent_SetMessageId((s32)MsgProx153);
+    FieldEvent_SetMessageId((s32)MsgProxWhatTookYouSoLong);
     // "What took you so long? Mom and Dad are tired of waiting for you..."
     Event_ShowMessage(ACTOR_JENNA, 0);
     FieldCamera_SetSpeed(3.2);
@@ -2634,38 +2634,38 @@ struct Trigger gProx_Room2Triggers[] = {
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Prox_OpenDoor10)},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_TALK, 8, 0xa3d, MSGNO(MsgProx01)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgProx81)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa3d, MSGNO(MsgProx09)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgProx89)},
-    {TRIGGER_TALK, 9, 0xa3d, MSGNO(MsgProx02)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgProx82)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0xa3d, MSGNO(MsgProx10)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgProx90)},
-    {TRIGGER_TALK, 10, 0xa3d, MSGNO(MsgProx03)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgProx83)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0xa3d, MSGNO(MsgProx11)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgProx91)},
-    {TRIGGER_TALK, 11, 0xa3d, MSGNO(MsgProx04)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgProx84)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0xa3d, MSGNO(MsgProx12)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgProx92)},
-    {TRIGGER_TALK, 12, 0xa3d, MSGNO(MsgProx05)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgProx85)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0xa3d, MSGNO(MsgProx13)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgProx93)},
-    {TRIGGER_TALK, 13, 0xa3d, MSGNO(MsgProx06)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgProx86)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0xa3d, MSGNO(MsgProx14)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgProx94)},
-    {TRIGGER_TALK, 14, 0xa3d, MSGNO(MsgProx07)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgProx87)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0xa3d, MSGNO(MsgProx15)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgProx95)},
-    {TRIGGER_TALK, 15, 0xa3d, MSGNO(MsgProx08)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgProx88)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0xa3d, MSGNO(MsgProx16)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgProx96)},
+    {TRIGGER_TALK, 8, 0xa3d, MSGNO(MsgProxFelixWelcomeBackToProx)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgProxThankYouForLightingFires)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa3d, MSGNO(MsgProxAgatioAndKarstToldMe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgProxFelixHasProvenHimself)},
+    {TRIGGER_TALK, 9, 0xa3d, MSGNO(MsgProxAgatioAndKarstLeft)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgProxItsTooBadAboutAgatio)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0xa3d, MSGNO(MsgProxAgatioAndKarstAreStrongest)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgProxIHeardKarstAndAgatio)},
+    {TRIGGER_TALK, 10, 0xa3d, MSGNO(MsgProxImGladYouMade)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgProxIDontRememberLastTime)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0xa3d, MSGNO(MsgProxEverSinceAgatioReturned)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgProxBlizzardsFinallyOver)},
+    {TRIGGER_TALK, 11, 0xa3d, MSGNO(MsgProxWereUsedToColdUp)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgProxWinterInProxCan)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0xa3d, MSGNO(MsgProxItGetsColdAroundHere)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgProxNowThatOurWeather)},
+    {TRIGGER_TALK, 12, 0xa3d, MSGNO(MsgProxIveBeenKeepingCloseEye)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgProxIWasSoMovedWhen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0xa3d, MSGNO(MsgProxEverythingIsSupposedToReturn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgProxIWasFirstPerson)},
+    {TRIGGER_TALK, 13, 0xa3d, MSGNO(MsgProxHaveYouSeenSaturos)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgProxLighthousesHaveAllBeenLit)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0xa3d, MSGNO(MsgProxICantBelieveAnyoneCould)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgProxTheyHadNoChoiceThey)},
+    {TRIGGER_TALK, 14, 0xa3d, MSGNO(MsgProxFelixYoureBack)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgProxYouDidAmazingJob)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0xa3d, MSGNO(MsgProxIfFelixCouldBecomeAdept)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgProxWhenFelixLeftTownHe)},
+    {TRIGGER_TALK, 15, 0xa3d, MSGNO(MsgProxOnceFinalLighthouseIsLit)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgProxWillYouBeGoingBack)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0xa3d, MSGNO(MsgProxIfThisWeatherContinuesMuch)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgProxIBetFelixAndHis)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, EVENT(Prox_TalkToPlayingChild)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT(Prox_TalkToPlayingChild)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Prox_TalkToRestlessChild)},
@@ -2691,38 +2691,38 @@ struct Trigger gProx_Room3Triggers[] = {
     {TRIGGER_STEP, 11, FLAG_HEARD_OF_PARENTS, EVENT(Prox_SearchForParents)},
     {TRIGGER_STEP, 12, FLAG_CLAN_SPOKE_OF_LIGHTHOUSE, EVENT(Prox_DecideToGoToLighthouse)},
     {TRIGGER_STEP, 13, FLAG_MET_PUELLE, EVENT(Prox_MeetPuelle)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgProx48)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgProx50)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgProx49)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgProx51)},
-    {TRIGGER_TALK, 12, 0xa3d, MSGNO(MsgProx63)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgProx141)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0xa3d, MSGNO(MsgProx69)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgProx147)},
-    {TRIGGER_TALK, 13, 0xa3d, MSGNO(MsgProx64)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgProx142)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0xa3d, MSGNO(MsgProx70)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgProx148)},
-    {TRIGGER_TALK, 14, 0xa3d, MSGNO(MsgProx65)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgProx143)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0xa3d, MSGNO(MsgProx71)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgProx149)},
-    {TRIGGER_TALK, 15, 0xa3d, MSGNO(MsgProx66)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgProx144)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0xa3d, MSGNO(MsgProx72)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgProx150)},
-    {TRIGGER_TALK, 16, 0xa3d, MSGNO(MsgProx67)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgProx145)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0xa3d, MSGNO(MsgProx73)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgProx151)},
-    {TRIGGER_TALK, 17, 0xa3d, MSGNO(MsgProx68)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgProx146)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0xa3d, MSGNO(MsgProx74)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgProx152)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgProx76)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgProx78)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgProx77)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgProx79)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgProxPuelleOrderedMeToSet)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgProxPuelleWantedToSetFelixs)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgProxFelixTookTroubleOfComing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgProxICantThinkOfAnywhere)},
+    {TRIGGER_TALK, 12, 0xa3d, MSGNO(MsgProxIsThatYouFelixWhen)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgProxSorryFelixButThisRoad)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0xa3d, MSGNO(MsgProxIfLighthouseIsntLitSoon)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgProxRoadToLighthouse)},
+    {TRIGGER_TALK, 13, 0xa3d, MSGNO(MsgProxIfWeWereBetterAdepts)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgProxIfYoureWorriedAboutLighthouse)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0xa3d, MSGNO(MsgProxNeitherOurElderNorPuelle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgProxEldersWereSayingThatLighthouse)},
+    {TRIGGER_TALK, 14, 0xa3d, MSGNO(MsgProxIFeelSoHelplessAgatio)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgProxIJustDontThink)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0xa3d, MSGNO(MsgProxPuelleIsStrongerThanAny)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgProxOnOtherHandNow)},
+    {TRIGGER_TALK, 15, 0xa3d, MSGNO(MsgProxAllWeCanDoNow)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgProxFelixTaughtMeLotAbout)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0xa3d, MSGNO(MsgProxIfTheyDidntLightBeacon)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgProxMaybeIfITrainHard)},
+    {TRIGGER_TALK, 16, 0xa3d, MSGNO(MsgProxOurPsynergyFeelsWeak)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgProxEvenJustStandingOutsideLighthouse)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0xa3d, MSGNO(MsgProxIfOnlyMyFirePsynergy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgProxIfLightOfBeaconKeeps)},
+    {TRIGGER_TALK, 17, 0xa3d, MSGNO(MsgProxPuellePromisedThatHeWould)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgProxWellYouLookLikeYoure)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0xa3d, MSGNO(MsgProxPuelleNeverIntendedToTake)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgProxWhenFelixLeftProx)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgProxYouMustFindKarstGet)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgProxIfThisDoesntWork)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgProxFelixYouAreOnlyHope)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgProxIfTheyWereStrongEnough)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2737,70 +2737,70 @@ struct Trigger gProx_Room4Triggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_TALK, 8, 0xa3d, MSGNO(MsgProx17)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgProx97)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa3d, MSGNO(MsgProx20)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgProx100)},
-    {TRIGGER_TALK, 9, 0xa3d, MSGNO(MsgProx18)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgProx98)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0xa3d, MSGNO(MsgProx21)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgProx101)},
-    {TRIGGER_TALK, 10, 0xa3d, MSGNO(MsgProx19)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgProx99)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0xa3d, MSGNO(MsgProx22)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgProx102)},
-    {TRIGGER_TALK, 11, 0xa3d, MSGNO(MsgProx24)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgProx104)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0xa3d, MSGNO(MsgProx27)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgProx107)},
-    {TRIGGER_TALK, 12, 0xa3d, MSGNO(MsgProx25)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgProx105)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0xa3d, MSGNO(MsgProx28)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgProx108)},
-    {TRIGGER_TALK, 13, 0xa3d, MSGNO(MsgProx29)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgProx109)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0xa3d, MSGNO(MsgProx31)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgProx111)},
-    {TRIGGER_TALK, 14, 0xa3d, MSGNO(MsgProx30)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgProx110)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0xa3d, MSGNO(MsgProx32)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgProx112)},
+    {TRIGGER_TALK, 8, 0xa3d, MSGNO(MsgProxRiftAtMarsLighthouseGets)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgProxIThinkRiftToNorth)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa3d, MSGNO(MsgProxIThoughtProxWould)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgProxIWasAfraidFalls)},
+    {TRIGGER_TALK, 9, 0xa3d, MSGNO(MsgProxOurChieftainToldMe)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgProxIWonderIfThatHole)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0xa3d, MSGNO(MsgProxNobodyBelievedThatRiftWould)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgProxWhatDoWeDo)},
+    {TRIGGER_TALK, 10, 0xa3d, MSGNO(MsgProxNotTooLongAgo)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgProxLighthouseWasSoBeautifulWhen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0xa3d, MSGNO(MsgProxNorthernRiftHasGotten)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgProxAllLightsJoinedUpTogether)},
+    {TRIGGER_TALK, 11, 0xa3d, MSGNO(MsgProxNoOneThoughtAboutOur)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgProxIGuessFourLighthouses)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0xa3d, MSGNO(MsgProxToThinkThatWeAll)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgProxNowThatAlchemyIsFree)},
+    {TRIGGER_TALK, 12, 0xa3d, MSGNO(MsgProxIfMarsLighthousesFires)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgProxPeopleOfProxWontForget)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0xa3d, MSGNO(MsgProxIThinkItsTooLate)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgProxFelixAndHisAlliesSaved)},
+    {TRIGGER_TALK, 13, 0xa3d, MSGNO(MsgProxWeSentEmissariesToVale)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgProxFelixTakeSomeAdvice)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0xa3d, MSGNO(MsgProxAtLeastJourneyWasnt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgProxIfTheyFoundOutFelix)},
+    {TRIGGER_TALK, 14, 0xa3d, MSGNO(MsgProxValesEldersWereStubbornThey)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgProxIsaacAndHisFriendsLeft)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0xa3d, MSGNO(MsgProxThreeYearsAgoWeSent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgProxMayorAndEldersInVale)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(Prox_AskAboutIgloos)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgProx37)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgProx34)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgProx38)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgProx35)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgProx39)},
-    {TRIGGER_TALK, 18, 0xa3d, MSGNO(MsgProx36)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgProx116)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0xa3d, MSGNO(MsgProx40)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgProx120)},
-    {TRIGGER_TALK, 19, 0xa3d, MSGNO(MsgProx41)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgProx123)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0xa3d, MSGNO(MsgProx44)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgProx128)},
-    {TRIGGER_TALK, 20, 0xa3d, MSGNO(MsgProx42)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgProx124)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0xa3d, MSGNO(MsgProx45)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgProx129)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgProx43)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgProx46)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgProx121)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgProx126)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgProx122)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgProx127)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgProxIHateIgloos)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgProxWindIsSoCold)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgProxMamaAndPapaHaveBeen)},
+    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgProxMyParentsToldMe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgProxIAlwaysCatchColdWhen)},
+    {TRIGGER_TALK, 18, 0xa3d, MSGNO(MsgProxThosePoorChildrenTheyDont)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgProxICanHearSound)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0xa3d, MSGNO(MsgProxICantBringMyself)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgProxItsBeenSoLongSince)},
+    {TRIGGER_TALK, 19, 0xa3d, MSGNO(MsgProxPuelleOurChieftainGrewWorried)},
+    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgProxTheresNoTellingWhatCould)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0xa3d, MSGNO(MsgProxNowThatSaturosAndHis)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgProxWeveLostSoManySoldiers)},
+    {TRIGGER_TALK, 20, 0xa3d, MSGNO(MsgProxPeopleSaturosRescuedFromStorm)},
+    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgProxFelixIAlwaysThought)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0xa3d, MSGNO(MsgProxMarsIsLastLighthouse)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgProxWhoKnewThatPoorInjured)},
+    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgProxDontForgetFelixYourMother)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgProxSaturosUsedFelixsParents)},
+    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgProxIHaveMuchToDo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgProxWeMayHaveUnderestimatedPower)},
+    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgProxYourBodyHasAbsorbedGreat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgProxPowerToReviveDead)},
     {TRIGGER_TALK, 22, CONDITION_ALWAYS, EVENT(Prox_TalkAboutParents)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, 0xa3d, MSGNO(MsgProx58)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgProx137)},
-    {TRIGGER_TALK, 23, 0xa3d, MSGNO(MsgProx57)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgProx136)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, 0xa3d, MSGNO(MsgProx59)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgProx138)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, 0xa3d, MSGNO(MsgProxFelixsParentsWereWorriedAbout)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgProxWellNeverBeAble)},
+    {TRIGGER_TALK, 23, 0xa3d, MSGNO(MsgProxYourMotherKnowsThatYoure)},
+    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgProxAfterThatEarthquakeIFeel)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, 0xa3d, MSGNO(MsgProxFelixsParentsWereSoWorried)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgProxWhenEarthquakeHitFelix)},
     {TRIGGER_TALK, 24, CONDITION_ALWAYS, EVENT(Prox_MercuryDjinniJoins)},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProx154))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProx155))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProx156))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProx157))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProxThoseBoilingVegetablesLookLike))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProxTheresCheeseInThisStew))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProxThereIsSomeStrangeDish))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProxTheyveGotSomeStrangeMeat))},
     {TRIGGER_TABLE_END},
 };
 
@@ -2809,31 +2809,31 @@ struct Trigger gProx_Room5Triggers[] = {
     {0xca02, 7, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
     {0xca02, 8, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_TALK, 8, 0xa3d, MSGNO(MsgProx23)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgProx103)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa3d, MSGNO(MsgProx26)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgProx106)},
-    {TRIGGER_TALK, 9, 0xa3d, MSGNO(MsgProx52)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgProx131)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0xa3d, MSGNO(MsgProx54)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgProx133)},
+    {TRIGGER_TALK, 8, 0xa3d, MSGNO(MsgProxProxOriginallyFlourishedBecauseConcerned)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgProxIveBeenToldThatLighting)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa3d, MSGNO(MsgProxWhenLighthousesWereAllExtinguished)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgProxAlchemyHasBeenFreed)},
+    {TRIGGER_TALK, 9, 0xa3d, MSGNO(MsgProxWhenYouLeftProx)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgProxThankYouSoMuchFelix)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0xa3d, MSGNO(MsgProxWhatHasHeGoneThrough)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgProxINeverImaginedThatLittle)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Prox_PraiseReturnedWarrior)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0xa3d, MSGNO(MsgProx55)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgProx134)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgProx125)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgProx130)},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProx154))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProx155))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProx156))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProx157))},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0xa3d, MSGNO(MsgProxFelixLooksSoConfident)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgProxItsTooBadFelixCant)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgProxThinkOfYourOldGrandmas)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgProxImSoSadFelixDoesnt)},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProxThoseBoilingVegetablesLookLike))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProxTheresCheeseInThisStew))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProxThereIsSomeStrangeDish))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProxTheyveGotSomeStrangeMeat))},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gProx_Room6Triggers[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Prox_FearForWeyard)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa3d, MSGNO(MsgProx61)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgProx140)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa3d, MSGNO(MsgProxTheseCatastrophesAreResult)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgProxLighthousesAreGoingToRestore)},
     {TRIGGER_TABLE_END},
 };
 

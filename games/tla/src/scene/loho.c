@@ -117,7 +117,7 @@ void Loho_DrawBrokenWall(void) {
 
 /// "Did you want this cannon?"
 void Loho_AskWantCannon(s32 actor) {
-  s32 msg = (s32)MsgLoho23;
+  s32 msg = (s32)MsgLohoDidYouWantThisCannon;
 
   Event_SetMessageId(msg);
   Event_OpenMessage(actor, 0);
@@ -134,7 +134,7 @@ void Loho_AskWantCannon(s32 actor) {
 /// "It looks like it's empty."
 void Loho_ExamineCannon(void) {
   // "It looks like it's empty."
-  FieldMessage_Show((s32)MsgLoho27, 1);
+  FieldMessage_Show((s32)MsgLohoItLooksLikeItsEmpty, 1);
   gFieldWork->fieldMenu = 1;
 }
 
@@ -314,7 +314,7 @@ nextSpark:
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_Wait(180);
   ScreenFade_FromWhite(120);
-  Event_SetMessageId((s32)MsgLoho28);
+  Event_SetMessageId((s32)MsgLohoIsEveryoneAllRight);
   Event_Wait(120);
   Actor_RunRepeatedMotion(18, 2);
   Actor_FaceDirectionAndWait(18, FACING_WEST);
@@ -531,18 +531,18 @@ crewLeaves:
 /// work!"
 void Loho_TalkAboutBreachedWall(void) {
   if (Event_GetFlag(0x90a))
-    Event_SetMessageId((s32)MsgLoho32);
+    Event_SetMessageId((s32)MsgLohoNowThatWallsBeenBreached);
   else
-    Event_SetMessageId((s32)MsgLoho55);
+    Event_SetMessageId((s32)MsgLohoISawSomeOfVillage);
   // "I saw some of the village men carrying the cannon out of town..."
   Event_ShowMessage(11, 0);
 }
 
 void Loho_MindReadMiner(void) {
   if (Event_GetFlag(0x90a))
-    Event_SetMessageId((s32)MsgLoho36);
+    Event_SetMessageId((s32)MsgLohoWeDontHaveAnything);
   else
-    Event_SetMessageId((s32)MsgLoho56);
+    Event_SetMessageId((s32)MsgLohoIDontKnowWhereThey);
   // "I don't know where they were taking it, but I'm glad the cannon's..."
   Event_ShowMessage(11, 0);
 }
@@ -582,7 +582,7 @@ void Loho_ReadInnSign(void) {
 
   if (facing == FACING_NORTH)
     // "Felix checked the sign It reads "People staying at the inn can..."
-    FieldMessage_Show((s32)MsgLoho57, 1);
+    FieldMessage_Show((s32)MsgLohoCheckedSignItReadsPeople, 1);
 }
 
 /// Loho's shops, as Shop_Run numbers them.
@@ -606,9 +606,9 @@ void Loho_TalkAboutCommerce(void) {
     Shop_Run(SHOP_LOHO, 8);
   } else {
     if (Event_GetFlag(0xa5f))
-      Event_SetMessageId((s32)MsgLoho51);
+      Event_SetMessageId((s32)MsgLohoIHearYouTookOur);
     else
-      Event_SetMessageId((s32)MsgLoho17);
+      Event_SetMessageId((s32)MsgLohoCommerceReallyTookOffWhen);
     // "Commerce really took off when we started this mining colony in Loho...."
     Event_ShowMessage(8, 0);
   }
@@ -624,9 +624,9 @@ void Loho_TalkAboutCannon(s32 actor) {
     Sanctum_Run(actor);
   } else {
     if (Event_GetFlag(0xa5f))
-      Event_SetMessageId((s32)MsgLoho53);
+      Event_SetMessageId((s32)MsgLohoYouveAcquiredSplendidCannonJust);
     else
-      Event_SetMessageId((s32)MsgLoho19);
+      Event_SetMessageId((s32)MsgLohoIfYoureOnlyHere);
     // "If you're only here for the cannon, you can forget about it."
     Event_ShowMessage(actor, 0);
   }
@@ -1018,52 +1018,52 @@ struct Trigger gLoho_Room1Triggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 8, CONDITION_ALWAYS, EVENT(Loho_StepOntoLadderFacingWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 9, CONDITION_ALWAYS, EVENT(Loho_StepOntoLadderFacingEast)},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_TALK, 8, 0x1a5f, MSGNO(MsgLoho29)},
-    {TRIGGER_TALK, 9, 0x1a5f, MSGNO(MsgLoho30)},
-    {TRIGGER_TALK, 10, 0x1a5f, MSGNO(MsgLoho31)},
+    {TRIGGER_TALK, 8, 0x1a5f, MSGNO(MsgLohoWasThatYouThatFired)},
+    {TRIGGER_TALK, 9, 0x1a5f, MSGNO(MsgLohoThatCannonSureGivesOff)},
+    {TRIGGER_TALK, 10, 0x1a5f, MSGNO(MsgLohoWhenWeFoundThatCannon)},
     {TRIGGER_TALK, 11, 0x1a5f, EVENT(Loho_TalkAboutBreachedWall)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x1a5f, MSGNO(MsgLoho33)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x1a5f, MSGNO(MsgLoho34)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x1a5f, MSGNO(MsgLoho35)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x1a5f, MSGNO(MsgLohoThatCannonCanShatterAny)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x1a5f, MSGNO(MsgLohoThatCannonWasReallyLoud)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x1a5f, MSGNO(MsgLohoIDontThinkWeShould)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x1a5f, EVENT(Loho_MindReadMiner)},
-    {TRIGGER_TALK, 12, 0x1a5f, MSGNO(MsgLoho37)},
-    {TRIGGER_TALK, 13, 0x1a5f, MSGNO(MsgLoho38)},
-    {TRIGGER_TALK, 14, 0x1a5f, MSGNO(MsgLoho39)},
-    {TRIGGER_TALK, 15, 0x1a5f, MSGNO(MsgLoho40)},
-    {TRIGGER_TALK, 16, 0x1a5f, MSGNO(MsgLoho41)},
-    {TRIGGER_TALK, 18, 0x1a5f, MSGNO(MsgLoho42)},
-    {TRIGGER_TALK, 17, 0x1a5f, MSGNO(MsgLoho43)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x1a5f, MSGNO(MsgLoho44)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x1a5f, MSGNO(MsgLoho45)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x1a5f, MSGNO(MsgLoho46)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x1a5f, MSGNO(MsgLoho47)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x1a5f, MSGNO(MsgLoho48)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x1a5f, MSGNO(MsgLoho49)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x1a5f, MSGNO(MsgLoho50)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgLoho01)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgLoho02)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgLoho03)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgLoho04)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgLoho09)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgLoho10)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgLoho11)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLoho12)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgLoho21)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgLoho22)},
+    {TRIGGER_TALK, 12, 0x1a5f, MSGNO(MsgLohoIveGottaGoStakeMyself)},
+    {TRIGGER_TALK, 13, 0x1a5f, MSGNO(MsgLohoYouProbablyOnlyWantCannon)},
+    {TRIGGER_TALK, 14, 0x1a5f, MSGNO(MsgLohoAhSoYouHaveQuest)},
+    {TRIGGER_TALK, 15, 0x1a5f, MSGNO(MsgLohoIThinkWeveDugUp)},
+    {TRIGGER_TALK, 16, 0x1a5f, MSGNO(MsgLohoThanksForOpeningUpWall)},
+    {TRIGGER_TALK, 18, 0x1a5f, MSGNO(MsgLohoIKeepDiggingUpLittle)},
+    {TRIGGER_TALK, 17, 0x1a5f, MSGNO(MsgLohoHaHaHaIveGot)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x1a5f, MSGNO(MsgLohoIJustNeedToStick)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x1a5f, MSGNO(MsgLohoTheseGuysMustBeReally)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x1a5f, MSGNO(MsgLohoWhenTheyGetWhereverTheyre)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x1a5f, MSGNO(MsgLohoEvenAtMyAge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, 0x1a5f, MSGNO(MsgLohoIOnlyJustStartedDigging)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x1a5f, MSGNO(MsgLohoIveHitMotherLode)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, 0x1a5f, MSGNO(MsgLohoItDoesntMatterHowOld)},
+    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgLohoWelcomeToLohoWeveBeen)},
+    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgLohoWeHaveLotOfImportant)},
+    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgLohoSomeOfMinersFoundAncient)},
+    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgLohoThatWallSeemsIndestructibleWeve)},
+    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgLohoOnceWeCanGetThrough)},
+    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgLohoIfYouWant)},
+    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgLohoThisIsSpotGoodHole)},
+    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgLohoIHaventFoundAnythingWorth)},
+    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgLohoWeBroughtCannonUpHere)},
+    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgLohoYouCanPutMetalBalls)},
     {TRIGGER_TALK, 17, CONDITION_ALWAYS, EVENT(Loho_AskWantCannon)},
     {TRIGGER_TALK, 20, CONDITION_ALWAYS, EVENT(Loho_ExamineCannon)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgLoho05)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgLoho06)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgLoho07)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgLoho08)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgLoho13)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgLoho14)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgLoho15)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgLoho16)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgLoho24)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgLoho25)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgLoho26)},
-    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLoho58))},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgLohoWeOnlySettledHereShort)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgLohoEveryoneInLohoSureLoves)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgLohoAllWeNeedIsWay)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgLohoIfWeCantGetThrough)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgLohoIfYouLiveInLoho)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgLohoRealExpertsCanFindBest)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgLohoOnceYouveBeenMining)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgLohoIThinkImStarting)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgLohoCannonsAreSoHeavyWhy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgLohoWhatIdiotSaidThatWed)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgLohoAllRightWeFiguredOut)},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLohoThisWellLooksReallyOld))},
     {USE_ITEM_ON_ACTOR(ITEM_MAGMA_BALL), 20, CONDITION_ALWAYS, EVENT(Loho_FireCannon)},
     {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Loho_MeetLull)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 101, 0x300, EVENT(Loho_ScoopFirstTreasure)},
@@ -1089,12 +1089,12 @@ struct Trigger gLoho_Room2Triggers[] = {
     {TRIGGER_STEP, 21, 0x1320, EVENT(Loho_VillagerStepsBack)},
     {TRIGGER_STEP, 23, 0x1320, EVENT(Loho_VillagerStepsBack)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Loho_TalkAboutCommerce)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa5f, MSGNO(MsgLoho18)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x1a5f, MSGNO(MsgLoho52)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0xa5f, MSGNO(MsgLohoWheneverSomeoneStrikesGold)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x1a5f, MSGNO(MsgLohoNowWeDontHaveSymbol)},
     {TRIGGER_TALK, 9, 0x1320, EVENT(Loho_TalkToInnkeeper)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Loho_TalkAboutCannon)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0xa5f, MSGNO(MsgLoho20)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x1a5f, MSGNO(MsgLoho54)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0xa5f, MSGNO(MsgLohoIfCannonIsTruly)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x1a5f, MSGNO(MsgLohoItWorriesMeToNo)},
     {TRIGGER_EXAMINE, 20, CONDITION_ALWAYS, EVENT(Loho_TalkToInnkeeper)},
     {TRIGGER_EXAMINE, 30, CONDITION_ALWAYS, EVENT(Loho_ReadInnSign)},
     {TRIGGER_TABLE_END},

@@ -376,7 +376,7 @@ void LemurianShip_ExamineLiftSwitch(void) {
     }
   } else {
     // "There's no reaction... It doesn't seem to be running."
-    FieldMessage_Show((s32)MsgLemurianShip02, 1);
+    FieldMessage_Show((s32)MsgLemurianShipTheresNoReactionItDoesnt, 1);
   }
   Event_End();
 }
@@ -924,7 +924,7 @@ void LemurianShip_DrawLightToOrb(void) {
 void LemurianShip_SetBlackCrystal(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId((s32)MsgLemurianShip01);
+  Event_SetMessageId((s32)MsgLemurianShipHowDidAllTheseMonsters);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1891,8 +1891,8 @@ struct Trigger gLemurianShip_CabinTriggers[] = {
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 14, CONDITION_ALWAYS, EVENT(LemurianShip_OpenDoor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS, EVENT(LemurianShip_OpenDoor)},
-    {EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLemurianShip03))},
-    {EXAMINE_TRIGGER(EXAMINE_WARDROBE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLemurianShip04))},
+    {EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLemurianShipItLooksLikeTheresCaptains))},
+    {EXAMINE_TRIGGER(EXAMINE_WARDROBE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLemurianShipItsPleasantlyCool))},
     {TRIGGER_TABLE_END},
 };
 

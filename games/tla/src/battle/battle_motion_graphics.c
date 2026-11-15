@@ -163,7 +163,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   actor = BattleObject_Get(plan->unitId)->object;
   Actor_SelectAnimationFar(actor, 3);
   Actor_SetAnimationSpeedFar((struct Actor *)actor, 16);
-  IoWriteQueue_Store16((u32)&REG_BLDCNT, 0x3f40);
+  IoWriteQueue_Store16((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND);
   Sound_PlayFar(SE_CAST);
   wait(10);
   if (single) {
@@ -173,8 +173,8 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
     for (i = 0; i < count; i++)
       BattleHighlight_SetSpriteMode(ids[i], 1);
   }
-  for (i = 0; i != 16; i++) {
-    REG_BLDALPHA = (i << 8) | (16 - i);
+  for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
+    REG_BLDALPHA = (i << 8) | (BLEND_WEIGHT_MAX - i);
     wait(1);
   }
 
@@ -189,7 +189,8 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
       BattleObject_ReleaseSpriteSlots(ids[i]);
     }
   }
-  Iwram_CopyWordsEntry(saved, BattleObject_Get(saved->unitId), 44);
+  Iwram_CopyWordsEntry(saved, BattleObject_Get(saved->unitId),
+                       sizeof(struct BattleObject));
   BattleObject_Reset(BattleObject_Get(saved->unitId), single);
   BattleObject_Get(saved->unitId)->scale = Q16_ONE * 6 / 5;
   if (single)
@@ -219,8 +220,8 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
     object->y = (29 - i) * 3 << 16;
     object->velocityY = 0;
     object->angle += 0x2222;
-    if (i <= 15)
-      REG_BLDALPHA = ((16 - i) << 8) | i;
+    if (i < BLEND_WEIGHT_MAX)
+      REG_BLDALPHA = ((BLEND_WEIGHT_MAX - i) << 8) | i;
     wait(1);
   }
   BattleHighlight_SetSpriteMode(saved->unitId, 0);
@@ -256,7 +257,7 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
 
   unitId = saved->unitId;
   object = BattleObject_Get(unitId)->object;
-  IoWriteQueue_Store16((u32)&REG_BLDCNT, 0x3f40);
+  IoWriteQueue_Store16((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND);
   BattleHighlight_SetSpriteMode(unitId, 1);
   for (i = 0; i != 16; i++) {
     s32 fade;
@@ -266,12 +267,13 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
     fade = i * 2 - 16;
     if (fade < 0)
       fade = 0;
-    if (fade <= 15)
-      *(volatile u16 *)0x04000052 = (fade << 8) | (16 - fade);
+    if (fade < BLEND_WEIGHT_MAX)
+      REG_BLDALPHA = (fade << 8) | (BLEND_WEIGHT_MAX - fade);
     wait(1);
   }
   ReleaseBattleObjectRecords(unitId);
-  Iwram_CopyWordsEntry(BattleObject_Get(saved->unitId), saved, 44);
+  Iwram_CopyWordsEntry(BattleObject_Get(saved->unitId), saved,
+                       sizeof(struct BattleObject));
   if (saved->reactivate) {
     BattleObject_MarkForRelease(unitId);
     BattleMotion_DestroyAllSlotObjects();
@@ -296,9 +298,9 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
   }
   BattleMotion_ReturnToSpot(unitId);
   SET_POSITION(object, object->targetX, object->targetY, object->targetZ);
-  for (i = 0; i <= 15; i++) {
+  for (i = 0; i < BLEND_WEIGHT_MAX; i++) {
     object->y = 0;
-    *(volatile u16 *)0x04000052 = ((16 - i) << 8) | i;
+    REG_BLDALPHA = ((BLEND_WEIGHT_MAX - i) << 8) | i;
     wait(1);
   }
   if (saved->single) {
@@ -514,7 +516,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
     u8 *mode;
 
     battle = Ram_HeapSlots->battleWork;
-    mode = (u8 *)battle + 0x869;
+    mode = &battle->actingAnimation;
     object = slot->object;
     Actor_SelectAnimationFar(object, *mode);
   }
@@ -729,6 +731,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     BattlePlayback_RunAll();
     BattleBackground_RestorePalette();
   } else {
+    // The word after the plan in BattleWork is skipPlayback.
     if (((s32 *)plan)[25] == 0)
       Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
     if (work.kind) {

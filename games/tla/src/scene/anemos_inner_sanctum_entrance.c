@@ -30,8 +30,6 @@ void AnemosInnerSanctumEntrance_SetLightPicture(u16 value);
 void Actor_MoveToObject(s32 id, s32 a);
 void Field_TryJumpForward(void);
 #include "field/field.h"
-#include "types.h"
-#include "field/actor.h"
 #include "field/event_inline.h"
 #include "field/event.h"
 #include "field/field_sequence_event.h"
@@ -45,9 +43,7 @@ void Field_TryJumpForward(void);
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
-#include "field/scene_tables.h"
 #include "version.h"
-#include "system/ram_buffer.h"
 #include "field/map_grid.h"
 #include "field/field_event.h"
 #include "graphics/vram_tab.h"

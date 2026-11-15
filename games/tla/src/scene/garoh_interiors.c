@@ -13,6 +13,7 @@
 /// rooms take their morning tables.
 
 #include "battle/battle.h"
+#include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -475,7 +476,6 @@ void GarohInteriors_WakeAtInn(void) {
   Event_End();
 }
 
-#include "text/msg_ids.h"
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

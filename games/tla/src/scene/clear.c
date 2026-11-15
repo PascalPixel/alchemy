@@ -38,8 +38,6 @@
 #include "version.h"
 #include "system/iwram_call.h"
 #include "field/call.h"
-#include "field/field_sequence_event.h"
-#include "window/window.h"
 #include "graphics/uiwindow.h"
 #include "graphics/oam.h"
 #include "fixed_math.h"

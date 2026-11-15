@@ -14,6 +14,7 @@
 #include "shared/tables.h"
 #include "flags.h"
 #include "battle/battle.h"
+#include "field/field_sequence.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"

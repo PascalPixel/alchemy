@@ -41,8 +41,6 @@
 #include "field/actor.h"
 #include "macros.h"
 
-#include "field/particle.h"
-#include "battle/battle_effect.h"
 #include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"

@@ -40,7 +40,7 @@ void Whirlwind_Update(struct Actor *self) {
           leader->watchedActor = self;
           leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
           work->raisedTrigger = 200;
-          gMainRoutineWork.movementMode = 0;
+          gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
           self->riseCounter = 1;
           self->riseEnabled = 1;
         }

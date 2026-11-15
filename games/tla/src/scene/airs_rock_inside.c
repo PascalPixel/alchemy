@@ -5,6 +5,7 @@
 /// walked to by AirsRockInside_WalkToRevealTablet), and a Psynergy Stone
 /// restores the party's PP (AirsRockInside_CheckPsynergyStone).
 
+#include "field/field_sequence.h"
 #include "field/emote.h"
 #include "field/field_psynergy_work.h"
 #include "field/event.h"
@@ -203,7 +204,6 @@ extern s32 gAirsRockInside_StampedZ;
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/task.h"
-#include "field/field_sequence_event.h"
 #include "field/flag_call.h"
 #include "field/event_commands.h"
 #include "field/object.h"
@@ -803,7 +803,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
       work->raisedTrigger = 200;
-      gMainRoutineWork.movementMode = 0;
+      gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
       shot->riseCounter = 1;
       shot->riseEnabled = 1;
     }
@@ -926,7 +926,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
       work->raisedTrigger = 200;
-      gMainRoutineWork.movementMode = 0;
+      gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
       shot->riseCounter = 1;
       shot->riseEnabled = 1;
     }

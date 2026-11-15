@@ -8,6 +8,7 @@
 /// (shared/crumbling_pillars.h), and Parch dries the pool before the room of
 /// the stone tablet (IzumoRuins_ParchThePool).
 #include "system/iwram_call.h"
+#include "field/field_sequence.h"
 #include "field/actor.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
@@ -16,13 +17,8 @@
 #include "field/field.h"
 #include "field/object.h"
 #include "scene/scene.h"
-#include "types.h"
-#include "field/actor.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
 #include "system/input.h"
 #include "text/msg_ids.h"
-#include "field/event_inline.h"
 #include "system/frame.h"
 #include "field/scene_tables.h"
 #include "sprite_ids.h"
@@ -80,11 +76,9 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 #include "system/math_table.h"
 #include "menu/menu.h"
 #include "sound/sound.h"
-#include "field/scene_tables.h"
 #include "field/field_sequence_event.h"
 #include "field/call.h"
 #include "field/actor_script.h"
-#include "text/msg_ids.h"
 
 struct Actor;
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);

@@ -33,6 +33,7 @@ enum {
   ACTOR_WITCH_DOCTOR = 14
 };
 #include "battle/battle.h"
+#include "field/field_sequence.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/palette_buffers.h"
@@ -45,15 +46,12 @@ enum {
 #include "field/scene_tables.h"
 #include "gamepak/far_call/system.h"
 #include "scene/scene.h"
-#include "types.h"
-#include "system/system.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 #include "scene_ids.h"
 #include "text/msg_ids.h"
 #include "field/field_sprite.h"
 #include "field/event_inline.h"
-#include "field/field.h"
 #include "system/frame.h"
 
 void FieldPsynergy_RunHandler(s32 type);
@@ -74,19 +72,12 @@ extern struct Trigger gGabombaStatueChamber_Triggers[];
 extern u32 gGabombaStatueChamber_IdolExitRegions[];
 
 #include "system/io_reg.h"
-#include "field/event_inline.h"
-#include "system/ram_buffer.h"
 #include "field/actor.h"
-#include "system/main_routine_work.h"
-#include "scene_ids.h"
 #include "system/input.h"
-#include "field/field_sprite.h"
-#include "system/io_reg.h"
 #include "version.h"
 #include "shared/tables.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
-#include "text/msg_ids.h"
 
 void GabombaStatueChamber_OpenTheLap(void);
 

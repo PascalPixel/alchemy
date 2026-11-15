@@ -4,6 +4,7 @@
 /// (ChampaCliffCaves_ObabaAsksForBriggs), the party fights Briggs' Avimander
 /// (ChampaCliffCaves_FightAvimander) and Briggs surrenders, and Obaba forges
 /// the three prongs into the Trident (ChampaCliffCaves_ObabaForgesTrident).
+#include "field/field_sequence.h"
 #include "field/event_inline.h"
 #include "resource_ids.h"
 #include "types.h"
@@ -58,7 +59,6 @@ enum ChampaCliffCavesBriggsHomeActorId {
 #include "system/heap_release.h"
 #include "window/item_icon.h"
 #include "field/event_commands.h"
-#include "field/scene_tables.h"
 #include "scene/scene.h"
 #include "scene/event_layer.h"
 #include "graphics/resource.h"

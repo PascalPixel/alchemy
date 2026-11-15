@@ -8,6 +8,7 @@
 #include "types.h"
 #include "item_ids.h"
 #include "flags.h"
+#include "field/field_sequence.h"
 #include "field/event_inline.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -2467,7 +2468,7 @@ void Whirlwind_Update(struct WhirlwindActor *object) {
             flags = &leader->priorityFlags;
             *flags &= ~1;
             work->raisedTrigger = 200;
-            gMainRoutineWork.movementMode = 0;
+            gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
             object->riding = 1;
             object->carrying = 1;
           }

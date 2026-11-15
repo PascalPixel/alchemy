@@ -9,6 +9,7 @@
 #include "game/character_ids.h"
 #include "types.h"
 #include "battle/battle.h"
+#include "field/field_sequence.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/palette_buffers.h"
@@ -21,9 +22,7 @@
 #include "system/main_routine_work.h"
 #include "field/field_event.h"
 #include "field/event_inline.h"
-#include "types.h"
 #include "system/ram_buffer.h"
-#include "system/main_routine_work.h"
 #include "field/actor.h"
 #include "item_ids.h"
 
@@ -41,8 +40,6 @@ void Leader_CenterInCell(void);
 #include "graphics/resource.h"
 #include "scene_ids.h"
 #include "version.h"
-#include "system/ram_buffer.h"
-#include "field/actor.h"
 #include "shared/jupiter_lighthouse_aerie.h"
 #include "system/iwram_call.h"
 #include "system/field_effect.h"
@@ -205,7 +202,7 @@ void JupiterLighthouse_RideWhirlwind(void) {
     if (party->movementMode == 10) {
       struct Actor *object = Actor_Get(party->leaderActorId);
 
-      party->movementMode = 12;
+      party->movementMode = LEADER_MOVEMENT_NONE;
       WORD_AT(object, 48) = 0;
       WORD_AT(object, 52) = 0;
       Whirlwind_SpawnUpper(

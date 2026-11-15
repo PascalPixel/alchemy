@@ -18,6 +18,7 @@
 #include "shared/tables.h"
 #include "types.h"
 #include "system/ram_buffer.h"
+#include "field/field_sequence.h"
 #include "field/actor.h"
 #include "system/main_routine_work.h"
 #include "field/scene_tables.h"

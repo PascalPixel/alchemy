@@ -54,7 +54,6 @@
 #include "field/field_particle.h"
 #include "graphics/vram_tab.h"
 #include "system/affine.h"
-#include "graphics/vram_tab.h"
 #include "field/field_psynergy_work.h"
 #include "field/scene_tables.h"
 

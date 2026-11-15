@@ -6,7 +6,6 @@
 #include "battle_internal.h"
 #include "sounds.h"
 #include "battle/presentation.h"
-#include "battle/presentation.h"
 #include "gamepak/far_call/field.h"
 #include "window/screens.h"
 

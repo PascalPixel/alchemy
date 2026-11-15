@@ -4,6 +4,7 @@
 /// Burst breaks a wall, a rope is coiled, and one step starts a battle.
 
 #include "battle/battle.h"
+#include "field/field_sequence.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -27,7 +28,6 @@
 #include "field/particle.h"
 
 #include "scene/kibombo.h"
-#include "field/particle.h"
 #include "graphics/resource.h"
 #include "gamepak/far_call/system.h"
 #include "system/task.h"

@@ -68,8 +68,6 @@
 #include "system/irq.h"
 #include "system/frame.h"
 #include "graphics/palette_buffers.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
 #include "field/sprite.h"
 #include "graphics/resource.h"
 #include "graphics/vram_tab.h"

@@ -66,7 +66,6 @@
 #include "system/irq_lock.h"
 #include "battle/battle_event.h"
 #include "battle/first_strike.h"
-#include "battle/battle.h"
 #include "system/io_write_queue.h"
 #include "game/item.h"
 #include "field/field_event.h"

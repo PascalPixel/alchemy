@@ -9,6 +9,7 @@
 #include "types.h"
 #include "version.h"
 #include "battle/battle.h"
+#include "field/field_sequence.h"
 #include "field/actor.h"
 #include "field/actor_script.h"
 #include "field/call.h"
@@ -432,7 +433,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 void WorldMap_SetUpFlyingShip(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  gMainRoutineWork.movementMode = 8;
+  gMainRoutineWork.movementMode = LEADER_MOVEMENT_FLYING_SHIP;
   if (Event_GetFlag(0x147)) {
     WorldMap_Freeze();
     MessageArgument_Push(ABILITY_HOVER, MESSAGE_ARGUMENT_ABILITY);
@@ -465,7 +466,7 @@ void WorldMap_SetUpShip(void) {
   s32 pp;
   s32 i;
 
-  gMainRoutineWork.movementMode = 7;
+  gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP;
   WorldMap_EndFlight();
   Gauge_End();
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHIP), 0);
@@ -505,7 +506,7 @@ void WorldMap_BoardShip(void) {
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  gMainRoutineWork.movementMode = 7;
+  gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP;
   gMainRoutineWork.ownerOverride = 1;
   Event_SetFlag(FLAG_SAILING);
   gMainRoutineWork.shipX = ship->x.fixed;
@@ -585,7 +586,7 @@ void WorldMap_LeaveShip(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEffect_ScheduleRatioTransition(Q16_ONE, 10);
-    gMainRoutineWork.movementMode = 1;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_WORLD_MAP;
     gMainRoutineWork.ownerOverride = 0;
     Event_ClearFlag(FLAG_SAILING);
     gMainRoutineWork.shipX = ship->x.fixed;
@@ -2045,7 +2046,7 @@ void WorldMap_TakeTheTiller(void) {
     // "To the open sea, Felix!"
     FieldEvent_ShowMessageThenWait(ACTOR_VOYAGE_KRADEN, 0, 10);
     Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
-    gMainRoutineWork.movementMode = 7;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP;
     gMainRoutineWork.ownerOverride = 1;
     WorldMap_ReloadPendingAreaGraphics();
     Event_SetFlag(FLAG_SHIP_SAILABLE);

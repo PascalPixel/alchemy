@@ -13,7 +13,6 @@
 #include "window/menu_list.h"
 #include "battle/battle.h"
 #include "battle/presentation.h"
-#include "battle/presentation.h"
 #include "system/mul_q16.h"
 #include "graphics/resource.h"
 #include "game/game_flags.h"

@@ -5,6 +5,7 @@
 
 #include "flags.h"
 #include "types.h"
+#include "field/field_sequence.h"
 #include "field/field_sprite.h"
 #include "sprite_ids.h"
 #include "system/ram_buffer.h"
@@ -134,7 +135,7 @@ UNUSED void LemuriaEntrance_BoardShip(void) {
     {
       struct MainRoutineWork *state = &gMainRoutineWork;
 
-      state->movementMode = 6;
+      state->movementMode = LEADER_MOVEMENT_SHIP_ON_MAP;
       state->ownerOverride = 1;
     }
     Actor_SetAnimation(ACTOR_SHIP, 7);
@@ -143,7 +144,7 @@ UNUSED void LemuriaEntrance_BoardShip(void) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
     party->leaderActorId = ACTOR_FELIX;
-    party->movementMode = 0;
+    party->movementMode = LEADER_MOVEMENT_WALK;
     party->ownerOverride = 0;
   }
 }

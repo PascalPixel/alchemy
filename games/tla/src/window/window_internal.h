@@ -70,7 +70,6 @@
 #include "battle/battle_system.h"
 #include "field/event.h"
 #include "window/screens.h"
-#include "window/window.h"
 #include "field/actor.h"
 #include "battle/battle_action.h"
 #include "window/icon_menu.h"

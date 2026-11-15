@@ -9,6 +9,7 @@
 #include "sprite_ids.h"
 #include "flags.h"
 #include "item_ids.h"
+#include "field/field_sequence.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -369,7 +370,7 @@ void LemurianShipDeck_TakeTheTiller(void) {
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  gMainRoutineWork.movementMode = 7;
+  gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP;
   gMainRoutineWork.ownerOverride = 1;
   Event_SetFlag(FLAG_SHIP_SAILABLE);
   FieldEvent_SetExitRequest(10);

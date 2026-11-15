@@ -11,6 +11,7 @@
 #include "djinn_ids.h"
 #include "types.h"
 #include "system/iwram_call.h"
+#include "field/field_sequence.h"
 #include "field/actor.h"
 #include "field/event_inline.h"
 #include "battle/battle.h"
@@ -23,8 +24,6 @@
 #include "system/system.h"
 #include "field/scene_tables.h"
 #include "field/field_sequence_event.h"
-#include "types.h"
-#include "field/actor.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 #include "system/input.h"
@@ -36,14 +35,11 @@ extern s16 gJupiterLighthouse_WestPathCells[][2];
 void JupiterLighthouse_LightWestPath(s32 mode);
 void JupiterLighthouse_ThrowOutBlock(s32 id, s32 x, s32 z, s32 dx, s32 dz);
 void Leader_CenterInCell(void);
-#include "system/main_routine_work.h"
 #include "field/call.h"
-#include "system/ram_buffer.h"
 #include "shared/jupiter_lighthouse_aerie.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "field/field_event.h"
-#include "system/frame.h"
 #include "field/field_sprite.h"
 #include "system/field_effect.h"
 #include "field/field_coordinate.h"

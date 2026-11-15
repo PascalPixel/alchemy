@@ -10,6 +10,7 @@
 
 #include "types.h"
 #include "item_ids.h"
+#include "field/field_sequence.h"
 #include "field/actor.h"
 #include "field/event_inline.h"
 #include "battle/battle.h"
@@ -883,7 +884,6 @@ void GaiaRockInside_RestoreSusa(void) {
   Actor_SetAnimationSpeed(object, gGaiaRockInside_SavedSusaAnimation);
 }
 
-#include "text/msg_ids.h"
 
 /// Stepping near Susa the first time: he turns on the party ("Who are you? How
 /// did you get here?"), tells them to stand aside while the camera looks at the
@@ -3325,7 +3325,7 @@ void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
   Actor_SelectAnimation(leader, ANIM_STAND);
   leader->velocityY = px(4);
   System_Wait(20);
-  gMainRoutineWork.movementMode = 0;
+  gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
   Event_End();
   Event_SetFlag(flag);
 }

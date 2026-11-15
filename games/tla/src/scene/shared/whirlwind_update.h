@@ -48,7 +48,7 @@ void Whirlwind_Update(struct Actor *self) {
             s32 delay = 200;
             work->raisedTrigger = delay;
           }
-          gMainRoutineWork.movementMode = 0;
+          gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
           self->riseCounter = 1;
           self->riseEnabled = 1;
         }

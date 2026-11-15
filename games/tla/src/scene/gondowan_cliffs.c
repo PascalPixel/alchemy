@@ -17,6 +17,7 @@
 #include "shared/tables.h"
 #include "types.h"
 #include "system/ram_buffer.h"
+#include "field/field_sequence.h"
 #include "field/actor.h"
 #include "system/main_routine_work.h"
 #include "scene_ids.h"
@@ -357,7 +358,7 @@ void GondowanCliffs_CycleWaterColors(void) {
 
 void GondowanCliffs_SetUpPass(void) {
   if (gMainRoutineWork.entrance == 99) {
-    gMainRoutineWork.movementMode = 7;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP;
     gMainRoutineWork.ownerOverride = 1;
     Event_SetDestination(SCENE_GONDOWAN_CLIFFS_PASS, 1);
   }

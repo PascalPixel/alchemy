@@ -4,6 +4,7 @@
 /// (AnemosInnerSanctum_StepOnTile), pillars of light
 /// (AnemosInnerSanctum_LightThePillar) and Sand, up to the guardian summoned at
 /// the end (AnemosInnerSanctum_SummonTheGuardian).
+#include "field/field_sequence.h"
 #include "field/map_grid.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
@@ -31,7 +32,6 @@
 #include "field/scene_tables.h"
 #include "scene_ids.h"
 #include "system/iwram_call.h"
-#include "field/field_sequence_event.h"
 #include "system/frame.h"
 #include "flags.h"
 #include "field/object.h"

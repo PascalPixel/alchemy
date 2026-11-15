@@ -5,13 +5,13 @@
 #include "window_internal.h"
 #include "sounds.h"
 #include "game/item.h"
+#include "field/field_sequence.h"
 #include "field/actor.h"
 
 /// @file
 /// Items: summon-selection menu and battle item-use eligibility.
 
 #include "battle/battle_system.h"
-#include "game/item.h"
 #include "types.h"
 #include "system/scene.h"
 #include "edition.h"

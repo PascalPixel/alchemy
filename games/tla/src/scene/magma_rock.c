@@ -11,6 +11,7 @@
 #include "flags.h"
 #include "system/ram_buffer.h"
 #include "system/iwram_call.h"
+#include "field/field_sequence.h"
 #include "field/actor.h"
 #include "field/event_inline.h"
 #include "scene/scene.h"
@@ -34,7 +35,6 @@
 #include "field/event.h"
 #include "field/field_sequence_event.h"
 #include "field/flag_call.h"
-#include "field/field_sequence_event.h"
 #include "system/field_effect.h"
 #include "macros.h"
 #include "field/call.h"
@@ -1240,7 +1240,7 @@ first:
   if (i != 8)
     goto first;
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  gMainRoutineWork.movementMode = 0;
+  gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   leader->gravity = px(4) / 5;
   leader->bounce = 0;

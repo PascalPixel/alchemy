@@ -4,6 +4,7 @@
 /// climb, and the way into the rock itself (airs_rock_inside.c).
 
 #include "system/task.h"
+#include "field/field_sequence.h"
 #include "field/field_psynergy_work.h"
 #include "types.h"
 #include "field/actor.h"
@@ -1027,7 +1028,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
       work->raisedTrigger = 200;
-      gMainRoutineWork.movementMode = 0;
+      gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
       shot->riseCounter = 1;
       shot->riseEnabled = 1;
     }

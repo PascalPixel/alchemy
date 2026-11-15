@@ -6,6 +6,7 @@
 /// (aqua_rock_inside.c).
 
 #include "../field/actor_set_sprite_priority.c"
+#include "field/field_sequence.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "scene/dust.h"
@@ -672,7 +673,7 @@ void AquaRock_RideStreamUp(void) {
       Event_ResolvePendingActions(0);
       leader->motionFlags = 0;
       Actor_SetSpriteFlags(leader, 0);
-      gMainRoutineWork.movementMode = 2;
+      gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
       AquaRock_SpawnSplash(leader);
       Event_Wait(5);
       for (i = 59; i >= 0; i--) {
@@ -682,7 +683,7 @@ void AquaRock_RideStreamUp(void) {
           AquaRock_SpawnSplash(leader);
         wait(1);
       }
-      gMainRoutineWork.movementMode = 0;
+      gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
       Event_End();
       Import_EventSetExitRequest(6);
       return;
@@ -761,7 +762,7 @@ void AquaRock_DropDownFalls(void) {
   FieldEffect_SetAttached(state->leaderActorId, ATTACHED_EFFECT_REMOVE);
   Actor_SetSpriteFlags(object, 1);
   Actor_SelectAnimation(object, 1);
-  state->movementMode = 0;
+  state->movementMode = LEADER_MOVEMENT_WALK;
   Event_End();
 }
 

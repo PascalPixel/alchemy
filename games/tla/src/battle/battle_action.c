@@ -6,10 +6,10 @@
 #include "battle_internal.h"
 #include "flags.h"
 #include "sounds.h"
+#include "field/field_sequence.h"
 #include "field/flag_call.h"
 #include "gamepak/far_call/game.h"
 #include "battle/battle.h"
-#include "battle/presentation.h"
 #include "battle/presentation.h"
 
 // Battle: test whether a unit is in a battle formation.

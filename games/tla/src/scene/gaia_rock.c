@@ -8,6 +8,7 @@
 #include "shared/tables.h"
 #include "scene/event_layer.h"
 #include "battle/battle.h"
+#include "field/field_sequence.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -34,7 +35,6 @@
 #include "system/iwram_call.h"
 #include "field/hanging_vine.h"
 #include "system/frame.h"
-#include "field/field_sequence_event.h"
 #include "field/map_grid.h"
 #include "system/task.h"
 #include "field/actor_view.h"
@@ -659,7 +659,7 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   Actor_SelectAnimation(leader, ANIM_STAND);
   leader->velocityY = px(4);
   System_Wait(20);
-  gMainRoutineWork.movementMode = 0;
+  gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
   Event_End();
   Event_SetFlag(flag);
 }

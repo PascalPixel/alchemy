@@ -6,6 +6,7 @@
 #include "../field/actor_set_sprite_priority.c"
 #include "battle/battle.h"
 #include "flags.h"
+#include "game/character_ids.h"
 #include "debug/debug.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -29,6 +30,7 @@
 #include "shared/tables.h"
 #include "system/ram_buffer.h"
 #include "field/field_sequence_event.h"
+#include "field/field_psynergy_work.h"
 #include "field/event.h"
 #include "field/flag_call.h"
 #include "field/event_commands.h"
@@ -39,23 +41,52 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
-/// The scene's placed actors. At ENTRANCE_OPENING Felix and Jenna are placed as
-/// the first two rows of gActorPlacementsEntrance99 and keep their own ids.
 /// Set once the statue Felix moved has sunk into the floor; the statue by it no
 /// longer throws the leader back.
 #define FLAG_VENUS_LIGHTHOUSE_STATUE_SUNK FLAG_SCENE_TEMP_00
 /// Set while the leader stands on the floor switch, pressed down.
 #define FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED FLAG_SCENE_TEMP_01
 
+/// The scene's actors, numbering the rows of gActorPlacements: The Broken
+/// Seal's ground floor's, with Kraden and Alex in place of Garet and its three
+/// scholars set aside in the corner. At ENTRANCE_OPENING Felix and Jenna are
+/// placed as the first two rows of gVenusLighthouseOpeningActorPlacements and
+/// keep their own ids.
+/// The entrance the prologue opens on (gVenusLighthouseOpeningActorPlacements).
+enum { ENTRANCE_OPENING = 99 };
+
 enum VenusLighthouseActorId {
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
   ACTOR_ALEX,
   /// The statue Felix moves aside with Move; it sinks into the floor.
   ACTOR_MOVED_STATUE,
-  /// The first of the nine statues that glow (gVenusLighthouse_StatueGlows),
-  /// tinted as the party walks in.
-  ACTOR_FIRST_GLOWING_STATUE = ACTOR_FIRST_PLACED + 9
+  /// The Broken Seal's three scholars of this floor (SPRITE_OLD_MAN_IN_BLUE_CAP
+  /// and SPRITE_MAN_WITH_GLASSES), kept at (8, 8) out of sight.
+  ///@{
+  ACTOR_SCHOLAR_A,
+  ACTOR_SCHOLAR_B,
+  ACTOR_SCHOLAR_C,
+  ///@}
+  /// The two spiral pillars by the north stairs.
+  ///@{
+  ACTOR_SPIRAL_PILLAR_A,
+  ACTOR_SPIRAL_PILLAR_B,
+  ///@}
+  /// The small model of the lighthouse (gVenusMiniatureLighthouseScript).
+  ACTOR_MINIATURE_LIGHTHOUSE,
+  /// The first of the nine lady statues drawn grey (gVenusGreyStatueScript),
+  /// in the two rooms by the entrance.
+  ACTOR_FIRST_GREY_STATUE
 };
+
+/// An actor's timer as gVenusGreyStatueScript sets it. It holds a tag in the
+/// upper bits and a colour mode (enum SpriteColorMode) in the low four.
+#define VENUS_COLOR_MARK(mode) (VENUS_COLOR_MARK_TAG << 4 | (mode))
+enum { VENUS_COLOR_MARK_TAG = 0x212 };
+
+/// The scene's name for the byte Actor keeps for scene code. A statue with
+/// SW_VENUS_IMMOVABLE set cannot be pushed.
+enum { SW_VENUS_IMMOVABLE = SW_RISE_COUNTER };
 
 #define Actor_SetSpriteFlags                                                   \
   ((void (*)(struct Actor *, s32))Actor_SetSpriteFlags)
@@ -63,34 +94,43 @@ enum VenusLighthouseActorId {
 #define Actor_SetSpriteColor                                                   \
   ((void (*)(struct Actor *, s32))Actor_SetSpriteColor)
 
-void ConfigureOverlayObject(struct Actor *object, s32 parameter) {
-  object->motionFlags = 0;
-  object->collisionFlags = 8;
-  Actor_SetSpriteFlags(object, 0);
-  FieldActor_SetSpriteColor(object, parameter);
+/// Sets up a passage effect's motion, collision and colour mode.
+void VenusLighthouse_ConfigurePassageEffect(struct Actor *actor,
+                                            s32 colorMode) {
+  actor->motionFlags = 0;
+  actor->collisionFlags = ACTOR_NOT_TARGETED;
+  Actor_SetSpriteFlags(actor, 0);
+  FieldActor_SetSpriteColor(actor, colorMode);
 }
 
-struct Actor *OverlayObject_SpawnWithMode14(s32 x, s32 y, s32 z, s32 kind) {
-  struct Actor *object = FieldActor_Create(kind, x, y, z);
+/// Unused: creates a mask over a hole, an actor of sprite type drawn solid
+/// black and translucent, as The Broken Seal's Venus Lighthouse drops the
+/// leader or a pillar through its floor; nothing here calls it.
+UNUSED struct Actor *
+VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
+  struct Actor *effect = FieldActor_Create(type, x, y, z);
 
-  if (object != 0) {
-    Scene_SetActorSpritePriority(object, 0);
-    ConfigureOverlayObject(object, 14);
-    Actor_SetBlendMode(object, 1);
-    return object;
+  if (effect != 0) {
+    Scene_SetActorSpritePriority(effect, 0);
+    VenusLighthouse_ConfigurePassageEffect(effect, SPRITE_COLOR_BLACK);
+    Actor_SetBlendMode(effect, 1);
+    return effect;
   }
   return 0;
 }
 
-struct Actor *OverlayObject_PrepareObjectWithCommand15(s32 x, s32 y, s32 z,
-                                                       s32 kind) {
-  struct Actor *object = FieldActor_Create(kind, x, y, z);
+/// Unused: creates an actor drawn hidden that keeps the leader on screen
+/// while a pillar sinks by him, as The Broken Seal's Venus Lighthouse does;
+/// nothing here calls it.
+UNUSED struct Actor *
+VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
+  struct Actor *actor = FieldActor_Create(type, x, y, z);
 
-  if (object != 0) {
-    Scene_SetActorSpritePriority(object, 1);
-    ConfigureOverlayObject(object, 15);
-    object->priorityFlags |= 2;
-    return object;
+  if (actor != 0) {
+    Scene_SetActorSpritePriority(actor, 1);
+    VenusLighthouse_ConfigurePassageEffect(actor, SPRITE_COLOR_HIDDEN);
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    return actor;
   }
   return 0;
 }
@@ -160,8 +200,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
       effect->scaleRateX = (targetX - effect->scaleX) / count;
       effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
     } else {
-      effect->scaleRateX = (targetX - 0x10000) / count;
-      effect->scaleRateY = (options->targetScaleY - 0x10000) / script[3];
+      effect->scaleRateX = (targetX - Q16_ONE) / count;
+      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -180,87 +220,88 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "../field/actor_find_in_cell.c"
 
-extern s32 gPushLeaderSteps[];
+extern u32 gPushedActor_DirectionSteps[];
 
-s32 MapGrid_CheckCollision(struct StagedActor *object,
-                           struct FieldPosition *position);
+s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 
-void VenusLighthouse_PushBlockOnto(void) {
-  struct FieldPosition dst;
-  struct StagedActor *lead;
-  struct StagedActor *next;
-  struct StagedActor *blocker;
-  s32 dir;
+/// Unused: pushing a pillar moves the pillar ahead of the leader one cell on
+/// with him, leaning into it, as The Broken Seal's Venus Lighthouse does;
+/// nothing here calls it.
+UNUSED void VenusLighthouse_PushAdjacentPillar(void) {
+  struct FieldPosition targetPosition;
+  struct Actor *leader;
+  struct Actor *pillar;
+  struct Actor *blockingActor;
+  s32 directionIndex;
   u32 step;
-  s32 rate;
+  s32 moveRate;
+  s32 transitionBusy;
 
-  lead = (struct StagedActor *)Actor_GetById(gMainRoutineWork.leaderActorId);
-  dir = lead->facing >> 12;
-  step = gPushLeaderSteps[dir];
-  dst.x = lead->x.fixed + (step & 0xffff0000);
-  dst.y = lead->y.fixed;
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
+  directionIndex = leader->facing >> 12;
+  step = gPushedActor_DirectionSteps[directionIndex];
+  targetPosition.x = leader->x.fixed + (step & 0xffff0000);
+  targetPosition.y = leader->y.fixed;
   step <<= 16;
-  dst.z = lead->z.fixed + step;
-  next = Actor_FindInCell(&dst, lead);
-  if (next == 0)
+  targetPosition.z = leader->z.fixed + step;
+  pillar = Actor_FindInCell((s32 *)&targetPosition, leader);
+  if (pillar == 0)
     return;
 
-  step = gPushLeaderSteps[dir];
-  dst.x = next->x.fixed + (step & 0xffff0000);
-  dst.y = next->y.fixed;
+  step = gPushedActor_DirectionSteps[directionIndex];
+  targetPosition.x = pillar->x.fixed + (step & 0xffff0000);
+  targetPosition.y = pillar->y.fixed;
   step <<= 16;
-  dst.z = next->z.fixed + step;
-  blocker = Actor_FindInCell(&dst, next);
-  if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
+  targetPosition.z = pillar->z.fixed + step;
+  blockingActor = Actor_FindInCell((s32 *)&targetPosition, pillar);
+  if (blockingActor != 0 && (blockingActor->collisionFlags & ACTOR_SOLID) != 0)
     return;
 
-  dst.x = next->x.fixed;
-  dst.y = next->y.fixed + px(16);
-  dst.z = next->z.fixed;
-  blocker = Actor_FindInCell(&dst, next);
-  if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
+  targetPosition.x = pillar->x.fixed;
+  targetPosition.y = pillar->y.fixed + px(16);
+  targetPosition.z = pillar->z.fixed;
+  blockingActor = Actor_FindInCell((s32 *)&targetPosition, pillar);
+  if (blockingActor != 0 && (blockingActor->collisionFlags & ACTOR_SOLID) != 0)
     return;
 
-  next->transitionMode = 2;
-  step = gPushLeaderSteps[dir];
-  dst.x = next->x.fixed + (step & 0xffff0000);
-  dst.y = next->y.fixed;
+  pillar->layer = 2;
+  step = gPushedActor_DirectionSteps[directionIndex];
+  targetPosition.x = pillar->x.fixed + (step & 0xffff0000);
+  targetPosition.y = pillar->y.fixed;
   step <<= 16;
-  dst.z = next->z.fixed + step;
-  if (MapGrid_CheckCollision(next, &dst) > 0)
+  targetPosition.z = pillar->z.fixed + step;
+  if (MapGrid_CheckCollision(pillar, &targetPosition) > 0)
     return;
 
-  if (next->transitionBusy != 0)
+  transitionBusy = pillar->riseCounter;
+  if (transitionBusy != 0)
     return;
 
-  Import_ActorSelectAnimation(lead, 8);
-  rate = 0x3333;
+  Import_ActorSelectAnimation(leader, 8);
+  moveRate = px(1) / 5;
   System_Wait(15);
   Event_PlaySound(SE_PUSH);
-  next->moveRateX = rate;
-  next->moveRateZ = rate;
-  FieldActor_SetMoveTargetFixed(next, dst.x, dst.y, dst.z);
-  lead->moveRateX = rate;
-  lead->moveRateZ = rate;
-  FieldActor_SetMoveTargetFixed(lead, dst.x, dst.y, dst.z);
-  FieldActor_WaitForMove(next);
+  pillar->speedLimit = moveRate;
+  pillar->acceleration = moveRate;
+  FieldActor_SetMoveTargetFixed(pillar, targetPosition.x, targetPosition.y,
+                                targetPosition.z);
+  leader->speedLimit = moveRate;
+  leader->acceleration = moveRate;
+  FieldActor_SetMoveTargetFixed(leader, targetPosition.x, targetPosition.y,
+                                targetPosition.z);
+  FieldActor_WaitForMove(pillar);
   Event_NoOp();
-  next->x.fixed = dst.x;
-  {
-    /* FAKEMATCH(temporary): z read ahead of velocityX's store. */
-    s32 z = dst.z;
-
-    next->velocityX = 0;
-    next->z.fixed = z;
-    next->velocityZ = 0;
-  }
-  lead->targetX = 0x80000000;
-  lead->targetZ = 0x80000000;
-  lead->velocityX = 0;
-  lead->velocityZ = 0;
-  lead->x.fixed = lead->x.part[0].pixel << 16;
-  lead->z.fixed = lead->z.part[0].pixel << 16;
-  Import_ActorSelectAnimation(lead, 1);
+  pillar->x.fixed = targetPosition.x;
+  pillar->z.fixed = targetPosition.z;
+  pillar->velocityX = transitionBusy;
+  pillar->velocityZ = transitionBusy;
+  leader->targetX = TARGET_UNSET;
+  leader->targetZ = TARGET_UNSET;
+  leader->velocityX = transitionBusy;
+  leader->velocityZ = transitionBusy;
+  leader->x.fixed = px(leader->x.part[0].pixel);
+  leader->z.fixed = px(leader->z.part[0].pixel);
+  Import_ActorSelectAnimation(leader, ANIM_STAND);
 }
 
 #include "../field/map_cell_fill_byte.c"
@@ -270,11 +311,13 @@ UNUSED void VenusLighthouse_Nothing(void) {}
 
 #define FieldActor_SetSpriteColor ((void (*)(void *, s32))Actor_SetSpriteColor)
 
-s32 OverlayObject_UpdateEveryFourFrames(void *obj) {
+/// Flashes the leader white every fourth frame, with the sound of a breaking
+/// item every eighth.
+s32 VenusLighthouse_PulseChildEffect(void *actor) {
   if ((gFrameCount & 3) == 0)
-    FieldActor_SetSpriteColor(obj, 7);
+    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
   else
-    FieldActor_SetSpriteColor(obj, 0);
+    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
 
   if ((gFrameCount & 7) == 0)
     Event_PlaySound(SE_ITEM_BREAK);
@@ -282,28 +325,29 @@ s32 OverlayObject_UpdateEveryFourFrames(void *obj) {
 }
 
 /// Emits a rising particle near the actor every eight frames.
-s32 VenusLighthouse_EmitRisingParticles(struct SceneEffectSource *actor) {
-  struct SceneEffectParams options;
+s32 VenusLighthouse_EmitRisingParticles(struct Actor *actor) {
+  struct EffectOptions options;
   s32 framePhase, particleX, particleY, riseSpeed;
   framePhase = gFrameCount & 7;
-  if (framePhase != 0)
-    goto done;
-  options.priority = 3 - (s32)((u32)(Random16() * 2) >> 16);
-  options.startScaleX = 0x6666;
-  options.startScaleY = 0x6666;
-  options.palette = 14;
-  particleX = actor->x + (((s32)((u32)(Random16() * 9) >> 16) - 4) << 16);
-  particleY = actor->y + ((32 - (s32)((u32)(Random16() * 32) >> 16)) << 16);
-  riseSpeed = ((((s32)((u32)(Random16() * 5) >> 16)) << 16) + 0x00050000) / 10;
-  FieldEffect_Spawn(particleX, particleY, actor->z, 0, riseSpeed, framePhase,
-                    0xb0000, &options);
-done:
+  if (framePhase == 0) {
+    options.priority = 3 - (s32)((u32)(Random16() * 2) >> 16);
+    options.startScaleX = 2 * Q16_ONE / 5;
+    options.startScaleY = 2 * Q16_ONE / 5;
+    options.palette = SPRITE_COLOR_BLACK;
+    particleX = actor->x.fixed + px((s32)((u32)(Random16() * 9) >> 16) - 4);
+    particleY = actor->y.fixed + px(32 - (s32)((u32)(Random16() * 32) >> 16));
+    riseSpeed = (px((s32)((u32)(Random16() * 5) >> 16)) + px(5)) / 10;
+    FieldEffect_Spawn(
+        particleX, particleY, actor->z.fixed, 0, riseSpeed, framePhase,
+        EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY | EFFECT_USE_START_SCALE,
+        &options);
+  }
   return 0;
 }
 
 #define Actor_SetSpriteFlags ((void (*)(void *, s32))Actor_SetSpriteFlags)
 
-extern struct ActorPlacement gActorPlacementsEntrance99[];
+extern struct ActorPlacement gVenusLighthouseOpeningActorPlacements[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -311,19 +355,19 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-s32 SceneActor_ApplyCounterLowBitsAsMode(struct Actor *actor) {
+s32 VenusLighthouse_UpdateChildFromTimer(struct Actor *actor) {
   FieldActor_SetSpriteColor(actor, actor->timer & 15);
   return 0;
 }
 
-s32 SceneActor_ClearSingleChildField(void *actor) {
+s32 VenusLighthouse_ClearScriptedSpriteFlags(void *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.entrance == ENTRANCE_ALTERNATE_PLACEMENTS)
-    return gActorPlacementsEntrance99;
+  if (gMainRoutineWork.entrance == ENTRANCE_OPENING)
+    return gVenusLighthouseOpeningActorPlacements;
   return gActorPlacements;
 }
 
@@ -333,18 +377,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 // leaving Jenna and Kraden, their talk of leaving, the floor switch, the
 // statue that repels the leader, the reliefs and the paths Reveal shows.
 
-enum { ENTRANCE_OPENING = 99 };
-
-struct SetupWork {
-  u8 unk00[0x24];
-  s32 (*idle)(void);
-};
-
-extern s32 gPushLeaderSteps[];
-
 void VenusLighthouse_FelixLeaves(void);
-
-void Actor_VanishInSparks(s32 actor);
 
 void VenusLighthouse_RepelLeader(void);
 
@@ -352,31 +385,16 @@ void VenusLighthouse_StepOnFloorSwitch(void);
 
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
-extern s32 gVenusLighthouse_StatueGlows[];
-extern s32 gVenusLighthouse_ShrinkAndHide[];
+extern s32 gVenusGreyStatueScript[];
+extern s32 gVenusMiniatureLighthouseScript[];
 
-void Exit_PrepareActorAnimation(s32 actor, s32 value);
-
-extern s32 gVenusLighthouse_LeaderFlashes[];
+extern s32 gVenusLeaderDazedScript[];
 
 void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
                                         s32 destY, s32 width, s32 height);
-void Actor_SetMovementTypeById(s32 actor, const void *callback);
-void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
-void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
-void Actor_SetAnimationAndWait(s32 actor, s32 mode);
-void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
-void Actor_WaitForMove(struct Actor *actor);
-/* VIEW(floor): routine Actor_ShowEmoteById as void Actor_ShowEmoteById(s32
- * actor, s32 height, s32 frames); event.h has s32 Actor_ShowEmoteById(s32
- * actorId, s32 emote, s32 frames); tried as the definition's struct
- * BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags, s32
- * state), it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse.c:388: conflicting types for
- * `Actor_ShowEmoteById'. */
-extern void
-Actor_ShowEmoteById__floor(s32 actor, s32 emote,
-                           s32 frames) __asm__("Actor_ShowEmoteById");
+
+/// Sets bits in a byte of flags.
+static inline void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
 
 /// Until the statue has sunk, stepping by it throws the leader
 /// back in a flash of sparks.
@@ -387,32 +405,28 @@ void VenusLighthouse_RepelLeader(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetMovementTypeById(leader, gVenusLighthouse_LeaderFlashes);
+  Actor_SetMovementTypeById(leader, gVenusLeaderDazedScript);
   Actor_WaitForScriptEndById(leader);
-  Actor_SetSpriteColor(Actor_GetById(leader), 6);
+  Actor_SetSpriteColor(Actor_GetById(leader), SPRITE_COLOR_GREY);
   actor->velocityY = px(4);
   Actor_SetSpeed(leader, 4);
   if (actor->z.fixed >> 20 <= 54) {
-    Actor_GetById(leader)->steeringFlags &= ~1;
+    Actor_GetById(leader)->steeringFlags &= ~ACTOR_FACES_MOTION;
     z = 210;
   } else {
-    Actor_GetById(leader)->steeringFlags &= ~1;
+    Actor_GetById(leader)->steeringFlags &= ~ACTOR_FACES_MOTION;
     z = 238;
   }
   Actor_WalkToAndWaitById(leader, actor->x.part[0].pixel, z * 4);
   Event_Wait(1);
-  Actor_GetById(leader)->steeringFlags |= 1;
+  SetFlagBits(&Actor_GetById(leader)->steeringFlags, ACTOR_FACES_MOTION);
   Event_Wait(20);
   Actor_SetSpriteColor(actor, 0);
   actor->update = VenusLighthouse_EmitRisingParticles;
-  Actor_ShowEmoteById__floor(leader, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  FieldActor_ShowEmote(leader, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   Actor_SetAnimationAndWait(leader, 4);
   Actor_SetSpriteColor(Actor_GetById(leader), 0);
   Actor_SetAnimationAndWait(leader, 4);
-
-  /* FAKEMATCH(dead): an empty once-only block. */
-  do {
-  } while (0);
 
   actor->update = 0;
   Event_End();
@@ -542,9 +556,9 @@ s32 VenusLighthouse_Idle(void) { return 0; }
 /// Felix casts Move on the statue.
 void VenusLighthouse_FelixMovesStatue(void) {
   FieldPsynergy_LoadResources(ABILITY_MOVE, 1);
-  FieldPsynergy_SetupActorPair(4, ACTOR_MOVED_STATUE);
-  ((struct SetupWork *)Ram_HeapSlots->fieldEffectWork)->idle =
-      VenusLighthouse_Idle;
+  FieldPsynergy_SetupActorPair(ACTOR_FELIX, ACTOR_MOVED_STATUE);
+  ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->finishCallback =
+      (void (*)(void))VenusLighthouse_Idle;
   FieldPsynergy_StartCast();
   FieldEvent_Wait(10);
   FieldPsynergy_RunHandler(1);
@@ -555,7 +569,7 @@ void VenusLighthouse_FelixMovesStatue(void) {
 // The Japanese form; from patch 1, the form below also saves this scene and
 // entrance 22.
 #if !TLA_PATCH_1
-s32 VenusLighthouse_Start(void) {
+s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x204;
   if (gMainRoutineWork.entrance == ENTRANCE_OPENING) {
     Event_Start();
@@ -564,16 +578,25 @@ s32 VenusLighthouse_Start(void) {
     VenusLighthouse_DoubtLeaving();
     Event_End();
   } else {
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_MOVED_STATUE), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 1), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 2), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 3), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 4), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 5), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 6), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 7), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 8), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_MOVED_STATUE), SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE),
+                              SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 1),
+                              SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 2),
+                              SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 3),
+                              SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 4),
+                              SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 5),
+                              SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 6),
+                              SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 7),
+                              SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 8),
+                              SPRITE_COLOR_GREY);
   }
   return 0;
 }
@@ -583,7 +606,7 @@ void VenusLighthouse_DoubtLeaving(void);
 
 // The Japanese edition has no form of this function here.
 #if TLA_PATCH_1
-s32 VenusLighthouse_Start(void) {
+s32 Scene_Initialize(void) {
   struct MainRoutineWork *routine;
 
   routine = &gMainRoutineWork;
@@ -598,16 +621,25 @@ s32 VenusLighthouse_Start(void) {
     VenusLighthouse_DoubtLeaving();
     Event_End();
   } else {
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_MOVED_STATUE), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 1), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 2), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 3), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 4), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 5), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 6), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 7), 6);
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GLOWING_STATUE + 8), 6);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_MOVED_STATUE), SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE),
+                              SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 1),
+                              SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 2),
+                              SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 3),
+                              SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 4),
+                              SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 5),
+                              SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 6),
+                              SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 7),
+                              SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 8),
+                              SPRITE_COLOR_GREY);
   }
   return 0;
 }
@@ -671,7 +703,7 @@ void VenusLighthouse_FelixLeaves(void) {
   Actor_WalkToAndWait(ACTOR_FELIX, 744, 816);
   Actor_WalkToAndWait(ACTOR_FELIX, 744, 780);
   Event_PlaySound(SE_STAIRS_DOWN);
-  Exit_PrepareActorAnimation(4, -1);
+  Exit_PrepareActorAnimation(ACTOR_FELIX, -1);
   FieldEvent_Wait(50);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
@@ -1151,15 +1183,15 @@ void VenusLighthouse_DoubtLeaving(void) {
   Actor_WalkToAndWait(ACTOR_JENNA, 728, 928);
   Actor_SetPosition(ACTOR_JENNA, 728, 912);
   Event_PlaySound(SE_STAIRS_DOWN);
-  Venus_ObjEffectSet(5, -1);
+  Venus_ObjEffectSet(ACTOR_JENNA, -1);
   FieldEvent_Wait(40);
   MapGrid_CopyCellsTo(53, 50, 42, 49, 1, 1);
   MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
   Event_ClearFlag(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED);
   Actor_SetPosition(ACTOR_MOVED_STATUE, 664, 792);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  gMainRoutineWork.leaderActorId = 5;
-  Party_RemoveMember(4);
+  gMainRoutineWork.leaderActorId = ACTOR_JENNA;
+  Party_RemoveMember(FELIX);
   FieldEvent_Wait(50);
   work = Ram_HeapSlots->fieldWork;
   work->transitionFrames = 60;
@@ -1199,7 +1231,9 @@ u32 gFieldEffect_LongScript[] = {
     SC_RELEASE,
 };
 
-s32 gPushLeaderSteps[] = {                                                               
+/// The cell ahead for each of sixteen headings, 16 pixels east-west in the
+/// upper halfword and north-south in the lower (PUSH_STEP).
+u32 gPushedActor_DirectionSteps[] = {
       PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),                  
       PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),                  
       PUSH_STEP(0, 16),  PUSH_STEP(-16, 0), PUSH_STEP(-16, 0),                 
@@ -1215,39 +1249,23 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-s32 gVenusLighthouse_LeaderFlashes[] = {
-    39,
-    12,
-    22,
-    38,
-    (s32)OverlayObject_UpdateEveryFourFrames,
-    (s32)0x80010000,
-    22,
-    9,
-    0x11999,
-    22,
-    10,
-    0x11999,
-    0,
-    2,
-    22,
-    9,
-    0xe666,
-    22,
-    10,
-    0xe666,
-    0,
-    2,
-    13,
-    10,
-    (s32)0xc0010000,
-    22,
-    9,
-    0x10000,
-    22,
-    10,
-    0x10000,
-    17,
+/// The leader's actor script as the statue throws him back
+/// (VenusLighthouse_RepelLeader). He swells and shrinks ten times, flashing
+/// (VenusLighthouse_PulseChildEffect).
+s32 gVenusLeaderDazedScript[] = {
+    SC_ANIMATION(12),
+    SC_SET(SW_HOOK, (s32)VenusLighthouse_PulseChildEffect),
+    SC_LABEL(1),
+    SC_SET(SW_SCALE_X, 11 * Q16_ONE / 10),
+    SC_SET(SW_SCALE_Y, 11 * Q16_ONE / 10),
+    SC_WAIT(2),
+    SC_SET(SW_SCALE_X, 9 * Q16_ONE / 10),
+    SC_SET(SW_SCALE_Y, 9 * Q16_ONE / 10),
+    SC_WAIT(2),
+    SC_LOOP(10, SC_TO(1)),
+    SC_SET(SW_SCALE_X, Q16_ONE),
+    SC_SET(SW_SCALE_Y, Q16_ONE),
+    SC_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -1309,70 +1327,91 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-s32 gVenusLighthouse_StatueGlows[] = {
-    22, 35, 0x2126, 22, 39, 1, 46, (s32)SceneActor_ApplyCounterLowBitsAsMode,
-    17,
+/// The statues' actor script. They are drawn grey (VENUS_COLOR_MARK), and
+/// never pushed (SW_VENUS_IMMOVABLE).
+s32 gVenusGreyStatueScript[] = {
+    SC_SET(SW_TIMER, VENUS_COLOR_MARK(SPRITE_COLOR_GREY)),
+    SC_SET(SW_VENUS_IMMOVABLE, 1),
+    SC_CALL(VenusLighthouse_UpdateChildFromTimer),
+    SC_END,
 };
 
-s32 gVenusLighthouse_ShrinkAndHide[] = {
-    SC_SET(SW_SCALE_X, 0x9999),
-    SC_SET(SW_SCALE_Y, 0x9999),
+/// The actor script of the World Map's picture of Venus Lighthouse, placed
+/// at three fifths of its size, with no collision.
+s32 gVenusMiniatureLighthouseScript[] = {
+    SC_SET(SW_SCALE_X, 3 * Q16_ONE / 5),
+    SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 5),
     SC_SET(SW_COLLISION, 0),
-    SC_CALL((s32)SceneActor_ClearSingleChildField),
+    SC_CALL(VenusLighthouse_ClearScriptedSpriteFlags),
     SC_END,
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
-                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0,
+                    8, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
                     FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
-                    664, 0, 792, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(229, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 12,
+    ACTOR_PLACEMENT(SPRITE_LADY_STATUE, CONDITION_ALWAYS,
+                    (s32)gVenusGreyStatueScript, 664, 0, 792, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 8, 0, 12, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_GLASSES, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 8, 0, 12, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_BLUE_CAP, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_EAST,
+                    TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    872, 0, 120, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPIRAL_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    840, 0, 104, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_WORLD_MAP_VENUS_LIGHTHOUSE, CONDITION_ALWAYS,
+                    (s32)gVenusMiniatureLighthouseScript, 488, 0, 536,
                     FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(230, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 12,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(229, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
-                    FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(315, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 872, 0, 120,
-                    FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(315, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 104,
-                    FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(452, CONDITION_ALWAYS, (s32)gVenusLighthouse_ShrinkAndHide,
-                    488, 0, 536, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
-                    72, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
-                    72, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
-                    168, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
-                    168, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
-                    72, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
-                    104, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
-                    136, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
-                    168, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
-                    200, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_LADY_STATUE, CONDITION_ALWAYS,
+                    (s32)gVenusGreyStatueScript, 72, 0, 104, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LADY_STATUE, CONDITION_ALWAYS,
+                    (s32)gVenusGreyStatueScript, 72, 0, 168, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_LADY_STATUE, CONDITION_ALWAYS,
+                    (s32)gVenusGreyStatueScript, 168, 0, 104, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_LADY_STATUE, CONDITION_ALWAYS,
+                    (s32)gVenusGreyStatueScript, 168, 0, 168, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_LADY_STATUE, CONDITION_ALWAYS,
+                    (s32)gVenusGreyStatueScript, 72, 0, 344, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LADY_STATUE, CONDITION_ALWAYS,
+                    (s32)gVenusGreyStatueScript, 104, 0, 344, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_LADY_STATUE, CONDITION_ALWAYS,
+                    (s32)gVenusGreyStatueScript, 136, 0, 344, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_LADY_STATUE, CONDITION_ALWAYS,
+                    (s32)gVenusGreyStatueScript, 168, 0, 344, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_LADY_STATUE, CONDITION_ALWAYS,
+                    (s32)gVenusGreyStatueScript, 200, 0, 344, FACING_SOUTH,
+                    TALK_FACING_KEEP, 1),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gActorPlacementsEntrance99[] = {
-    ACTOR_PLACEMENT(4, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
+struct ActorPlacement gVenusLighthouseOpeningActorPlacements[] = {
+    ACTOR_PLACEMENT(ACTOR_FELIX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
                     FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
+    ACTOR_PLACEMENT(ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
                     FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
-                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0,
+                    8, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
                     FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(336, CONDITION_ALWAYS, (s32)gVenusLighthouse_StatueGlows,
-                    664, 0, 792, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LADY_STATUE, CONDITION_ALWAYS,
+                    (s32)gVenusGreyStatueScript, 664, 0, 792, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

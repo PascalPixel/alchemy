@@ -1,5 +1,7 @@
 /// @file
 #include "flags.h"
+#include "djinn_ids.h"
+#include "sprite_ids.h"
 #include "item_ids.h"
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -61,14 +63,73 @@ struct WorldMapOam {
   u16 size : 2;
 };
 
-void Func_020048f4(void);
+/// The World Map's own actors, numbered in the order of
+/// gWorldMapActorPlacements from ACTOR_FIRST_PLACED; a placement wearing a
+/// party member's sprite is that member, and takes no number.
+enum WorldMapActorId {
+  /// Piers's ship, drawn from the map's tiles (gWorldMap_TileSpriteScript).
+  ACTOR_SHIP = ACTOR_FIRST_PLACED,
+  /// The Venus Djinni Echo, circling south of Daila until the party meets him.
+  ACTOR_ECHO,
+  ACTOR_IRON,
+  ACTOR_SOUR,
+  ACTOR_CHILL,
+  ACTOR_WHEEZE,
+  ACTOR_PETRA,
+  ACTOR_CORE,
+  /// The men from Loho who bring the cannon to the ship; the first speaks.
+  ACTOR_LOHO_WORKER_A,
+  ACTOR_LOHO_WORKER_B,
+  ACTOR_LOHO_WORKER_C,
+  /// Where the Golden Boots lie once they are shown (WorldMap_ShowGoldenBoots).
+  ACTOR_GOLDEN_BOOTS,
+  /// The bandit and the two thieves from Vault, after a linked game.
+  ACTOR_BANDIT,
+  ACTOR_THIEF_A,
+  ACTOR_THIEF_B,
+  ACTOR_KRADEN
+};
+
+/// gWorldMap_CollapsePlacements' and gWorldMap_DriftPlacements' actors: Kraden
+/// and Alex on Idejima, and the piece of Idejima that splits away, then the
+/// island itself.
+enum { ACTOR_IDEJIMA_KRADEN = ACTOR_FIRST_PLACED, ACTOR_ALEX, ACTOR_IDEJIMA };
+
+/// gWorldMap_FirstVoyagePlacements' actors.
+enum { ACTOR_VOYAGE_SHIP = ACTOR_FIRST_PLACED, ACTOR_VOYAGE_KRADEN };
+
+/// gWorldMap_DriftingIdejimaPlacements' one actor.
+enum { ACTOR_DRIFTING_IDEJIMA = ACTOR_FIRST_PLACED };
+
+/// The World Map's own cell behaviors, which the map's cells carry: the ground
+/// around each Djinni met on the map.
+enum WorldMapCellBehavior {
+  CELL_BEHAVIOR_WORLD_MAP_IRON = 92,
+  CELL_BEHAVIOR_WORLD_MAP_SOUR,
+  CELL_BEHAVIOR_WORLD_MAP_CHILL,
+  CELL_BEHAVIOR_WORLD_MAP_WHEEZE,
+  CELL_BEHAVIOR_WORLD_MAP_PETRA,
+  CELL_BEHAVIOR_WORLD_MAP_CORE
+};
+
+/// The base of the cell behaviors an area's placed actor raises when touched
+/// (gWorldMap_PlacedActors), as The Broken Seal's; the areas with two ways in
+/// choose one by the leader's approach.
+enum { STEP_TRIGGER_AREA_BASE = 100 };
+#define STEP_TRIGGER_AREA(area) (STEP_TRIGGER_AREA_BASE + (area))
+enum { AREA_DAILA = 0, AREA_YALLAM = 25, AREA_PROX = 50 };
+
+/// Field_RequestDjinnBattle's actor bit: the Djinni does not hop first.
+#define DJINN_NO_HOP 0x800
+
+void Gauge_Update(void);
 
 void WorldMap_SetCountdownByZ(s32 a, s32 b, s32 c);
 
 void Actor_SetFlightMode(struct Actor *object, s32 mode);
 
 void Gauge_Init(void);
-void Func_02003c3c(void);
+void WorldMap_EndFlight(void);
 void Gauge_End(void);
 
 void Import_ActorSelectAnimation(struct Actor *object, s32 mode);
@@ -79,62 +140,62 @@ void WorldMap_DeliverLohoCannon(void);
 
 void WorldMap_MeetEcho(void);
 
-void Func_020029a4(void);
+void WorldMap_ShowIdejimaDrifting(void);
 
 void WorldMap_DriftNorthOfContinent(void);
 
-void Func_02002e00(void);
+void WorldMap_PanToAlhafraManor(void);
 
 void WorldMap_TakeTheTiller(void);
-void Func_0200310c(void);
-void Func_02003490(void);
+void WorldMap_SailToShipDeck(void);
+void WorldMap_CarryPartyToAquaRock(void);
 
-void Func_02003d44(s32 mode);
+void WorldMap_PlayLighthouseTransition(s32 mode);
 
-void Func_0200009c(void);
+void WorldMap_MeetSour(void);
 
-void Func_02000100(void);
+void WorldMap_MeetChill(void);
 
-void Func_02000164(void);
+void WorldMap_MeetWheeze(void);
 
-void Func_020001c8(void);
+void WorldMap_MeetPetra(void);
 
-void Func_0200022c(void);
+void WorldMap_MeetCore(void);
 
 void WorldMap_SetUpFlyingShip(void);
 
 void WorldMap_SetUpShip(void);
-void Func_02000918(void);
+void WorldMap_GoAboard(void);
 
 void WorldMap_RefuseToRunAway(void);
 
 void WorldMap_GazeIntoPond(void);
 
-void Func_02000d1c(void);
+void WorldMap_PickUpGoldenBoots(void);
 
 void WorldMap_TakeOff(void);
 
-extern s32 gData_02006320[];
-extern s32 gData_02006578[];
-extern s32 gData_02006584[];
+extern s32 gWorldMap_TileSpriteScript[];
+extern s32 gWorldMap_IslandScript[];
+extern s32 gWorldMap_TidalWaveScript[];
 
-extern u32 gData_02004fc8[];
+extern u32 gWorldMap_GlowColorModes[];
 
 s32 WorldMap_GetBlockPlace(s32 *position);
 
-extern u16 gData_02006e08;
+extern u16 gWorldMapBlend;
 
 extern u8 gWorldMapPackedTilesB[];
 extern u8 gWorldMapPackedPicturesB[];
 extern u8 gWorldMapPalettesB[];
 
-void Func_02004634(struct Actor *object);
+void WorldMap_SpawnTwinSparks(struct Actor *object);
 
 void Actor_Release(struct Actor *object);
 
-extern u8 Data_02006e20[][32];
-extern s16 gData_02006e10;
-extern u32 Data_02006e14[3];
+extern u8 gGauge_Tiles[][32];
+extern s16 gGauge_Countdown;
+extern u32 gGauge_Sprite[3];
 
 void Party_DrainPp(s32 value);
 s32 Party_GetPpRatio(void);
@@ -152,7 +213,7 @@ void Event_WaitForZoomTransition(void);
 void DjinnMenu_Run(void);
 void Party_RestoreHpPp(s32 value);
 void FieldCamera_WaitForArrival(void);
-extern s32 Data_02006be8[8];
+extern s32 gWorldMap_HiddenMembers[8];
 
 // Once the party has walked nine tenths of the encounter threshold, a coin
 // toss either requests the event's battle now or makes the party walk the
@@ -195,17 +256,29 @@ extern s32 Data_02006be8[8];
   }
 #endif
 
-void Func_02000038(void) { WORLD_MAP_TRY_ENCOUNTER(0x80a, 8) }
+void WorldMap_MeetIron(void) {
+  WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_IRON, DJINNI_IRON)
+}
 
-void Func_0200009c(void) { WORLD_MAP_TRY_ENCOUNTER(0x80b, 28) }
+void WorldMap_MeetSour(void) {
+  WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_SOUR, DJINNI_SOUR)
+}
 
-void Func_02000100(void) { WORLD_MAP_TRY_ENCOUNTER(0x80c, 31) }
+void WorldMap_MeetChill(void) {
+  WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_CHILL, DJINNI_CHILL)
+}
 
-void Func_02000164(void) { WORLD_MAP_TRY_ENCOUNTER(0x80d, 72) }
+void WorldMap_MeetWheeze(void) {
+  WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_WHEEZE, DJINNI_WHEEZE)
+}
 
-void Func_020001c8(void) { WORLD_MAP_TRY_ENCOUNTER(0x80e, 13) }
+void WorldMap_MeetPetra(void) {
+  WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_PETRA, DJINNI_PETRA)
+}
 
-void Func_0200022c(void) { WORLD_MAP_TRY_ENCOUNTER(0x80f, 53) }
+void WorldMap_MeetCore(void) {
+  WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_CORE, DJINNI_CORE)
+}
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -225,15 +298,9 @@ u32 __umodsi3(u32 a, u32 b);
 
 #include "shared/tile_sprite_reset.h"
 
-static __inline__ s32 MulQ16(s32 a, s32 b) {
-  /* FAKEMATCH(wrapper): through the inline the multiply's address loads between
-   * the halves of 0x40000. */
-  return Iwram_MulQ16(a, b);
-}
-
 /// The marker blinks and bobs up and down on a circle.
-// As The Broken Seal's WorldMap_UpdateBobbingMarker.
-void WorldMap_UpdateBobbingMarker(struct BobbingMarker *marker) {
+// As The Broken Seal's WorldMap_CircleEcho.
+void WorldMap_CircleEcho(struct BobbingMarker *marker) {
   s16 *angle;
   s32 y;
   s32 z;
@@ -247,7 +314,7 @@ void WorldMap_UpdateBobbingMarker(struct BobbingMarker *marker) {
   if (marker->stopped == 0) {
     angle = &marker->angle;
     marker->x.fixed = px(10120);
-    y = MulQ16(Math_Sin(*angle << 3), 0x40000);
+    y = Math_MulQ16(Math_Sin(*angle << 3), 0x40000);
     z = 0x20a40000;
 
     rise = 0x100000;
@@ -255,19 +322,19 @@ void WorldMap_UpdateBobbingMarker(struct BobbingMarker *marker) {
     marker->z.fixed = z;
     radius = rise;
     FieldVector_AddPolarOffsetFixed(radius, *angle, &marker->x);
-    marker->facing = *angle + 0x4000;
+    marker->facing = *angle + TRIG_TURN / 4;
     *angle += 0x400;
   }
 }
 
-s32 StoryActor_Initialize(struct Actor *actor) {
-  if (Event_GetFlag(0x37) != 0) {
+s32 WorldMap_SetUpEcho(struct Actor *actor) {
+  if (Event_GetFlag(FLAG_DJINNI(DJINNI_ECHO)) != 0) {
     return 0;
   }
   if (Event_GetFlag(FLAG_DJINN_LESSON) != 0) {
     return 0;
   }
-  actor->update = (void (*)(void))WorldMap_UpdateBobbingMarker;
+  actor->update = (void (*)(void))WorldMap_CircleEcho;
   actor->motionFlags = 0;
   actor->timer = 0;
   actor->userValue = 0;
@@ -276,7 +343,7 @@ s32 StoryActor_Initialize(struct Actor *actor) {
   return 0;
 }
 
-s32 Func_02000388(struct Actor *object) {
+s32 WorldMap_SetIslandTile(struct Actor *object) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapGrid + 286);
   struct TileSprite *sprite = object->sprite;
 
@@ -285,14 +352,14 @@ s32 Func_02000388(struct Actor *object) {
   return 1;
 }
 
-s32 Func_020003a8(struct Actor *object) {
+s32 WorldMap_SetUpWave(struct Actor *object) {
   Actor_SetSpriteFlags(object, 0);
   return 0;
 }
 
 /// With flag 0x200 set the object is released, takes acceleration and speed
 /// limit 0x1000 and is sent to an offset of its position.
-s32 Func_020003b4(struct Actor *object) {
+s32 WorldMap_SendWaveIn(struct Actor *object) {
   s32 x, z;
 
   if (!Event_GetFlag(FLAG_SCENE_TEMP_00))
@@ -306,27 +373,27 @@ s32 Func_020003b4(struct Actor *object) {
   return 0;
 }
 
-extern struct ActorPlacement gData_02006338[];
-extern struct ActorPlacement gData_02006500[];
-extern struct ActorPlacement gData_02006598[];
-extern struct ActorPlacement gData_02006700[];
-extern struct ActorPlacement gData_02006790[];
+extern struct ActorPlacement gWorldMapActorPlacements[];
+extern struct ActorPlacement gWorldMap_CollapsePlacements[];
+extern struct ActorPlacement gWorldMap_DriftPlacements[];
+extern struct ActorPlacement gWorldMap_FirstVoyagePlacements[];
+extern struct ActorPlacement gWorldMap_DriftingIdejimaPlacements[];
 
 void Leader_Search(void);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   switch (gMainRoutineWork.entrance) {
   case 64:
-    return gData_02006500;
+    return gWorldMap_CollapsePlacements;
   case 65:
-    return gData_02006598;
+    return gWorldMap_DriftPlacements;
   case 68:
     if (!Event_GetFlag(FLAG_SHIP_SAILABLE))
-      return gData_02006700;
+      return gWorldMap_FirstVoyagePlacements;
   case 77:
-    return gData_02006790;
+    return gWorldMap_DriftingIdejimaPlacements;
   default:
-    return gData_02006338;
+    return gWorldMapActorPlacements;
   }
 }
 
@@ -369,9 +436,9 @@ void WorldMap_SetUpShip(void) {
   s32 i;
 
   gMainRoutineWork.movementMode = 7;
-  Func_02003c3c();
+  WorldMap_EndFlight();
   Gauge_End();
-  Actor_SetSpriteFlags(Actor_Get(8), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SHIP), 0);
   count = Party_CountMembers();
   pp = 0;
   i = 0;
@@ -400,7 +467,7 @@ void WorldMap_BoardShip(void) {
     return;
   kind = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  ship = Actor_Get(8);
+  ship = Actor_Get(ACTOR_SHIP);
   dx = (leader->x.fixed - ship->x.fixed) >> 16;
   dz = (leader->z.fixed - ship->z.fixed) >> 16;
   distance = dx * dx + dz * dz;
@@ -444,7 +511,7 @@ void WorldMap_BoardShip(void) {
 /// The leader jumps ashore from the ship, where the shore ahead lets them land.
 void WorldMap_LeaveShip(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct Actor *ship = Actor_GetById(8);
+  struct Actor *ship = Actor_GetById(ACTOR_SHIP);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 cell = WorldMap_GetCollision(&ship->x.fixed);
   s32 position[3];
@@ -522,10 +589,11 @@ void WorldMap_LeaveShip(void) {
 
 void Actor_MoveToObject(s32 actor, s32 target);
 
-/// Back to the map: actor 8's position is kept in gMainRoutineWork.
-void Func_02000918(void) {
+/// Going aboard from the map: the ship's position is kept in gMainRoutineWork
+/// for the way back.
+void WorldMap_GoAboard(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(8);
+  struct Actor *leader = Actor_Get(ACTOR_SHIP);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -583,7 +651,7 @@ void WorldMap_RefuseToRunAway(void) {
       // "We shouldn't run from Isaac anymore, Felix."
       Event_ShowMessage(ACTOR_JENNA, 0);
       WorldMap_ReloadPendingAreaGraphics();
-      Actor_JoinLeader(5);
+      Actor_JoinLeader(ACTOR_JENNA);
       System_Wait(1);
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 7312, 8192);
       FieldEffect_ScheduleRatioTransition(0x10000, 6);
@@ -620,7 +688,7 @@ void WorldMap_RefuseToRunAway(void) {
       // "They're waiting for us. Let's go to Contigo."
       Event_ShowMessage(ACTOR_JENNA, 0);
       WorldMap_ReloadPendingAreaGraphics();
-      Actor_JoinLeader(5);
+      Actor_JoinLeader(ACTOR_JENNA);
       System_Wait(1);
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 7312, 8192);
       Event_SetFlag(0x9b3);
@@ -638,6 +706,9 @@ void WorldMap_RefuseToRunAway(void) {
   }
 }
 
+/// The actor slot the pond's coins take when they show (WorldMap_GazeIntoPond).
+enum { ACTOR_POND_COINS = 79 };
+
 void WorldMap_GazeIntoPond(void) {
   u32 roll = (Random16() << 4) >> 16;
 
@@ -647,10 +718,10 @@ void WorldMap_GazeIntoPond(void) {
   Message_ShowCentered((s32)MsgGazedIntoThe, 1);
   if (roll == 0) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
-    s32 slot = 79;
+    s32 slot = ACTOR_POND_COINS;
     struct Actor *leader = Actor_Get(FieldParty_GetLeaderActor());
-    u8 *unit = Unit_Get(gMainRoutineWork.leaderActorId);
-    s32 amount = (((unit[15] * Random16()) << 1) >> 16) + 0x8001;
+    struct Unit *unit = Unit_Get(gMainRoutineWork.leaderActorId);
+    s32 amount = (((unit->level * Random16()) << 1) >> 16) + 0x8001;
     s32 position[3];
     s32 x;
     /* FAKEMATCH(pin): object in r6, which leaves r7 to the amount. */
@@ -662,7 +733,7 @@ void WorldMap_GazeIntoPond(void) {
     position[1] = leader->y.fixed;
     position[2] = leader->z.fixed;
     FieldVector_AddPolarOffset(16, leader->facing, position);
-    object = Actor_Get(79);
+    object = Actor_Get(ACTOR_POND_COINS);
     x = position[0];
     if (object == NULL) {
       object = FieldActor_Create(0x1e9, x, position[1], position[2]);
@@ -674,10 +745,10 @@ void WorldMap_GazeIntoPond(void) {
       object->y.fixed = position[1];
       object->z.fixed = position[2];
     }
-    FieldActor_ShowItemIconById(79, amount);
+    FieldActor_ShowItemIconById(ACTOR_POND_COINS, amount);
     /* FAKEMATCH(dead): the store and the call in a once-only block. */
     do {
-      *(u16 *)((u8 *)work + 0xd34) = amount;
+      work->scoopedItem = amount;
       Scene_TalkToActor(0x1000 | slot);
     } while (0);
   } else if (roll == 1) {
@@ -692,39 +763,39 @@ void WorldMap_GazeIntoPond(void) {
   Event_End();
 }
 
-void Func_02000d1c(void) {
+void WorldMap_PickUpGoldenBoots(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (Value3((s32 (*)())Event_PickUpItem, 19, 0x198, -1) == 0)
+  if (Value3((s32 (*)())Event_PickUpItem, ACTOR_GOLDEN_BOOTS, 0x198, -1) == 0)
     Event_ClearFlag(0xa77);
   Event_End();
 }
 
-void Func_02000d4c(void) {
+void WorldMap_ShowGoldenBoots(void) {
   struct Actor *object;
   u8 *animation;
   s32 a, id;
 
-  FieldActor_ShowItemIconById(19, ITEM_GOLDEN_BOOTS);
-  object = Actor_Get(19);
+  FieldActor_ShowItemIconById(ACTOR_GOLDEN_BOOTS, ITEM_GOLDEN_BOOTS);
+  object = Actor_Get(ACTOR_GOLDEN_BOOTS);
   animation = object->sprite;
   animation[17] |= 1;
-  Actor_SetSpriteFlags(Actor_Get(19), 0);
-  a = 0x4000;
-  id = 19;
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_GOLDEN_BOOTS), 0);
+  a = FACING_SOUTH;
+  id = ACTOR_GOLDEN_BOOTS;
   Actor_SetPositionAndFacing(id, px(10168), px(9648), a);
   Event_SetFlag(0xa77);
 }
 
-void Func_02000d98(s32 id) { WorldMap_SetCountdownByZ(id, 63, 62); }
+void WorldMap_EnterProx(s32 id) { WorldMap_SetCountdownByZ(id, 63, 62); }
 
-void Func_02000da4(s32 id) { WorldMap_SetCountdownByZ(id, 34, 33); }
+void WorldMap_EnterYallam(s32 id) { WorldMap_SetCountdownByZ(id, 34, 33); }
 
-void Func_02000db0(s32 id) { WorldMap_SetCountdownByZ(id, 3, 2); }
+void WorldMap_EnterDaila(s32 id) { WorldMap_SetCountdownByZ(id, 3, 2); }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-extern s32 gData_0200632c[];
+extern s32 gWorldMap_EchoScript[];
 
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
@@ -732,7 +803,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 &&
       GameFlag_Get(FLAG_SHIP_SAILABLE) != 0 &&
       gMainRoutineWork.ownerOverride == 0 && gMainRoutineWork.savedX != 0) {
-    struct Actor *ship = Actor_GetById(8);
+    struct Actor *ship = Actor_GetById(ACTOR_SHIP);
 
     ship->x.fixed = gMainRoutineWork.savedX;
     ship->z.fixed = gMainRoutineWork.savedZ;
@@ -757,7 +828,7 @@ s32 Scene_Initialize(void) {
     Field_SetWorldMapWindowCellTile(16, 224, 224, 256);
   }
   if (GameFlag_Get(0xa77))
-    Func_02000d4c();
+    WorldMap_ShowGoldenBoots();
   switch (gMainRoutineWork.entrance) {
   case 39:
     if (GameFlag_Get(FLAG_SERPENT_SLAIN))
@@ -770,10 +841,10 @@ s32 Scene_Initialize(void) {
       WorldMap_FightBanditAndThieves(gMainRoutineWork.entrance);
     break;
   case 77:
-    Func_020029a4();
+    WorldMap_ShowIdejimaDrifting();
     break;
   case 78:
-    Func_02003490();
+    WorldMap_CarryPartyToAquaRock();
     break;
   case 59:
     if (!Event_GetFlag(0x90a) && GameFlag_Get(0xa5f) != 0) {
@@ -791,22 +862,22 @@ s32 Scene_Initialize(void) {
     Party_GivePiersDjinn();
     break;
   case 2:
-    if (GameFlag_Get(55) == 0) {
-      Actor_SetScript(9, gData_0200632c);
+    if (GameFlag_Get(FLAG_DJINNI(DJINNI_ECHO)) == 0) {
+      Actor_SetScript(ACTOR_ECHO, gWorldMap_EchoScript);
       WorldMap_MeetEcho();
     }
     break;
   case 67:
-    Func_02002e00();
+    WorldMap_PanToAlhafraManor();
     break;
   case 68:
     WorldMap_TakeTheTiller();
     break;
   case 69:
-    Func_0200310c();
+    WorldMap_SailToShipDeck();
     break;
   case 72:
-    Func_02003d44(2);
+    WorldMap_PlayLighthouseTransition(2);
     FieldActor_SetSpriteColor(Actor_GetById(ACTOR_PIERS), 15);
     Actor_SetPosition(ACTOR_PIERS, 7277, 7300);
     wait(1);
@@ -818,7 +889,7 @@ s32 Scene_Initialize(void) {
     Event_ShowMessage(ACTOR_PIERS, 0);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    Event_SetDestination((s32)&SceneId_JupiterLighthouseAerieBeacon, 9);
+    Event_SetDestination(SCENE_JUPITER_LIGHTHOUSE_AERIE_BEACON, 9);
     break;
   case 98:
     gMainRoutineWork.ownerOverride = 1;
@@ -848,18 +919,18 @@ void WorldMap_ExplainGivingDjinn(void) {
   FieldEffect_ScheduleRatioTransition(0x10000, 6);
   Event_WaitForZoomTransition();
   WorldMap_Freeze();
-  Actor_RunRepeatedMotion(9, 2);
+  Actor_RunRepeatedMotion(ACTOR_ECHO, 2);
   FieldEvent_SetMessageId(Event_GetFlag(0x175) * ((s32)MsgDjinnGiveTutorialB -
                                                   (s32)MsgDjinnGiveTutorialA) +
                           (s32)MsgAfterBringingA);
-  Event_ShowMessage(9, 0);
+  Event_ShowMessage(ACTOR_ECHO, 0);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
   Event_ClearFlag(FLAG_DJINN_LESSON_PART_A);
   Event_ClearFlag(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Run();
-  FieldActor_Jump(9, 4, 30);
+  FieldActor_Jump(ACTOR_ECHO, 4, 30);
   {
     s32 flag = Event_GetFlag(0x175);
     s32 base = (s32)MsgNextILl;
@@ -868,7 +939,7 @@ void WorldMap_ExplainGivingDjinn(void) {
         flag * ((s32)MsgDjinnGiveTutorialB - (s32)MsgDjinnGiveTutorialA) +
         base);
   }
-  Event_ShowMessage(9, 0);
+  Event_ShowMessage(ACTOR_ECHO, 0);
   Event_ClearFlag(FLAG_DJINN_LESSON_PART_A);
   Event_SetFlag(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Run();
@@ -876,159 +947,128 @@ void WorldMap_ExplainGivingDjinn(void) {
   Field_RequestBattleFromEncounterTable(9, 5);
 }
 
-#define ARM_WEST(id)                                                           \
-  do {                                                                         \
-    /* FAKEMATCH(barrier): the native copies the angle before it loads the     \
-     * actor id. */                                                            \
-    s32 a1 = west;                                                             \
-                                                                               \
-    asm volatile("" : "+l"(a1));                                               \
-    Actor_FaceDirection(id, a1, 0);                                            \
-  } while (0)
-
 /// The bandit and the thieves from Vault, after a linked game, want Isaac.
 void WorldMap_FightBanditAndThieves(s32 entrance) {
-  s32 east, west, east74, eastB, westB;
+  s32 south, north, facingSouth, southB, northB;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   if (entrance == 9) {
-    west = 0xc000;
-    Actor_SetPositionAndFacing(20, px(10168), px(9000), west);
+    north = FACING_NORTH;
+    Actor_SetPositionAndFacing(ACTOR_BANDIT, px(10168), px(9000), north);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     WorldMap_Freeze();
     Event_SetMessageId((s32)MsgHeyWaitA);
     // "Hey! Wait a minute!"
-    FieldEvent_ShowMessageThenWait(20, 0, 5);
+    FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
     WorldMap_ReloadPendingAreaGraphics();
     FieldEffect_ScheduleRatioTransition(0x18ccc, 16);
     Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Actor_WalkByAndWait(ACTOR_FELIX, 0, 32);
-    Actor_FaceDirection(ACTOR_FELIX, west, 0);
+    Actor_FaceDirection(ACTOR_FELIX, north, 0);
     Event_WaitForZoomTransition();
     Actor_WaitForMoveById(ACTOR_FELIX);
     WorldMap_Freeze();
-    {
-      /* FAKEMATCH(barrier): the native copies the angle before the other
-       * arguments. */
-      s32 a3 = west;
-
-      asm volatile("" : "+l"(a3));
-      Actor_LaunchFromLeader(23, 16, 0, a3);
-    }
-    Actor_WaitForScriptEndById(23);
-    Actor_FaceDirectionAndWait(23, west);
-    east = 0x4000;
+    Actor_LaunchFromLeader(ACTOR_KRADEN, 16, 0, north);
+    Actor_WaitForScriptEndById(ACTOR_KRADEN);
+    Actor_FaceDirectionAndWait(ACTOR_KRADEN, north);
+    south = FACING_SOUTH;
     Event_Wait(10);
-    Actor_SetPositionAndFacing(20, px(10168), px(9600), east);
-    Actor_SetPositionAndFacing(21, px(10168), px(9600), east);
-    Actor_SetPositionAndFacing(22, px(10168), px(9600), east);
-    Actor_WalkBy(20, 0, 16);
-    Actor_WalkBy(21, -16, 16);
-    Actor_WalkByAndWait(22, 16, 16);
-    Actor_FaceDirection(20, FACING_SOUTH_SOUTHEAST, 0);
-    Actor_FaceDirection(21, FACING_SOUTH_SOUTHEAST, 0);
-    Actor_FaceDirection(22, FACING_SOUTH_SOUTHEAST, 0);
-    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-    Actor_WaitForMoveById(20);
-    Actor_WaitForMoveById(21);
-    Actor_WaitForMoveById(22);
+    Actor_SetPositionAndFacing(ACTOR_BANDIT, px(10168), px(9600), south);
+    Actor_SetPositionAndFacing(ACTOR_THIEF_A, px(10168), px(9600), south);
+    Actor_SetPositionAndFacing(ACTOR_THIEF_B, px(10168), px(9600), south);
+    Actor_WalkBy(ACTOR_BANDIT, 0, 16);
+    Actor_WalkBy(ACTOR_THIEF_A, -16, 16);
+    Actor_WalkByAndWait(ACTOR_THIEF_B, 16, 16);
+    Actor_FaceDirection(ACTOR_BANDIT, FACING_SOUTH_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_THIEF_A, FACING_SOUTH_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_THIEF_B, FACING_SOUTH_SOUTHEAST, 0);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+    Actor_WaitForMoveById(ACTOR_BANDIT);
+    Actor_WaitForMoveById(ACTOR_THIEF_A);
+    Actor_WaitForMoveById(ACTOR_THIEF_B);
     WorldMap_Freeze();
     // "Who are you?"
-    FieldEvent_ShowMessageThenWait(23, 0, 5);
-    Actor_RunRepeatedMotion(20, 2);
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
+    Actor_RunRepeatedMotion(ACTOR_BANDIT, 2);
     Event_Wait(5);
     // "You were talking about Isaac, weren't you?"
-    FieldEvent_ShowMessageThenWait(20, 0, 5);
-    Actor_TurnToFaceEachOther(ACTOR_FELIX, 23, 0);
+    FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
+    Actor_TurnToFaceEachOther(ACTOR_FELIX, ACTOR_KRADEN, 0);
     Event_Wait(30);
     Event_Wait(10);
-    Actor_RunRepeatedMotion(21, 2);
-    ARM_WEST(4);
-    {
-      /* FAKEMATCH(barrier): the native copies the angle, loads the 0 and then
-       * the actor. */
-      s32 a1 = west, a2;
-
-      asm volatile("" : "+l"(a1));
-      a2 = 0;
-      Actor_FaceDirectionById(23, a1, a2);
-    }
+    Actor_RunRepeatedMotion(ACTOR_THIEF_A, 2);
+    Actor_FaceDirection(ACTOR_FELIX, north, 0);
+    Actor_FaceDirection(ACTOR_KRADEN, north, 0);
     Event_Wait(5);
     // "Don't play dumb... We all heard you."
-    FieldEvent_ShowMessageThenWait(21, 0, 5);
-    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_THIEF_A, 0, 5);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     // "Yes, we know Isaac. What about him?"
-    FieldEvent_ShowMessageThenWait(23, 0, 5);
-    Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
+    Actor_ShowEmote(ACTOR_THIEF_B, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     // "Well, why don't you tell us where we can find him?"
-    FieldEvent_ShowMessageThenWait(22, 0, 5);
-    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_THIEF_B, 0, 5);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     // "Why should we tell you anything?"
-    FieldEvent_ShowMessageThenWait(23, 0, 5);
-    Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
+    Actor_ShowEmote(ACTOR_BANDIT, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     // "Isaac took good care of us when we were in Vault, and we'd like to..."
-    FieldEvent_ShowMessageThenWait(20, 0, 5);
-    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     // "Ah, yes... Well... I'm afraid we don't know where you can find Isaac..."
-    FieldEvent_ShowMessageThenWait(23, 0, 5);
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
     // "Oh, is that so? Well, I guess we'll just have to give you the reward..."
-    FieldEvent_ShowMessageThenWait(21, 0, 5);
-    Actor_TurnToFaceEachOther(ACTOR_FELIX, 23, 0);
+    FieldEvent_ShowMessageThenWait(ACTOR_THIEF_A, 0, 5);
+    Actor_TurnToFaceEachOther(ACTOR_FELIX, ACTOR_KRADEN, 0);
     Event_Wait(30);
     // "You've got a grudge against Isaac, and you're going to take it out..."
-    FieldEvent_ShowMessageThenWait(23, 0, 5);
-    Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-    ARM_WEST(4);
-    ARM_WEST(23);
-    // "Oh yeah, you could call it a grudge... A serious grudge."
-    FieldEvent_ShowMessageThenWait(22, 0, 5);
-    Actor_WalkBy(ACTOR_FELIX, 8, -8);
-    Actor_WalkBy(23, -8, 8);
-    Actor_WaitForMoveById(ACTOR_FELIX);
-    Actor_WaitForMoveById(23);
-    ARM_WEST(4);
-    ARM_WEST(23);
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
+    Actor_ShowEmote(ACTOR_THIEF_B, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
     {
-      /* FAKEMATCH(barrier): the native starts 0x102, loads the 30, shifts, and
-       * loads the actor last. */
-      s32 a1 = 129, a2;
+      s32 facing = FACING_NORTH;
 
-      asm volatile("" : "+l"(a1));
-      a2 = 30;
-      /* FAKEMATCH(barrier): the asm on the 30, the same call's second. */
-      asm volatile("" : "+l"(a2));
-      a1 <<= 1;
-      Actor_ShowEmote(ACTOR_FELIX, a1, a2);
+      Actor_FaceDirection(ACTOR_FELIX, facing, 0);
+      Actor_FaceDirection(ACTOR_KRADEN, facing, 0);
     }
-    Actor_SetAnimationAndWait(20, 3);
+    // "Oh yeah, you could call it a grudge... A serious grudge."
+    FieldEvent_ShowMessageThenWait(ACTOR_THIEF_B, 0, 5);
+    Actor_WalkBy(ACTOR_FELIX, 8, -8);
+    Actor_WalkBy(ACTOR_KRADEN, -8, 8);
+    Actor_WaitForMoveById(ACTOR_FELIX);
+    Actor_WaitForMoveById(ACTOR_KRADEN);
+    {
+      s32 facing = FACING_NORTH;
+
+      Actor_FaceDirection(ACTOR_FELIX, facing, 0);
+      Actor_FaceDirection(ACTOR_KRADEN, facing, 0);
+    }
+    {
+      s32 emote = EMOTE_IN_FRONT | EMOTE_WINCE;
+
+      Actor_ShowEmote(ACTOR_FELIX, emote, 30);
+    }
+    Actor_SetAnimationAndWait(ACTOR_BANDIT, 3);
     Event_Wait(10);
     // "But don't worry... We're just going to give you a little sample of..."
-    FieldEvent_ShowMessageThenWait(20, 0, 5);
-    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-    /* FAKEMATCH(dead): the native loads the scene's id after this store. */
-    do {
-    } while (0);
-    {
-      s32 worldMap = SCENE_WORLD_MAP;
-
-      FieldEvent_SetAfterBattleDestination(worldMap, 73);
-      Event_SetDefeatDestination(worldMap, 74);
-    }
+    FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
+    Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
+    FieldEvent_SetAfterBattleDestination(SCENE_WORLD_MAP, 73);
+    Event_SetDefeatDestination(SCENE_WORLD_MAP, 74);
     WorldMap_ReloadPendingAreaGraphics();
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     Field_RequestBattleFromEncounterTable(102, 3);
   } else if (entrance == 74) {
     Event_ClearFlag(0xa76);
-    east74 = 0x4000;
-    Actor_SetPositionAndFacing(20, px(10168), px(9616), east74);
-    Actor_SetPositionAndFacing(21, px(10152), px(9616), east74);
-    Actor_SetPositionAndFacing(22, px(10184), px(9616), east74);
+    facingSouth = FACING_SOUTH;
+    Actor_SetPositionAndFacing(ACTOR_BANDIT, px(10168), px(9616), facingSouth);
+    Actor_SetPositionAndFacing(ACTOR_THIEF_A, px(10152), px(9616), facingSouth);
+    Actor_SetPositionAndFacing(ACTOR_THIEF_B, px(10184), px(9616), facingSouth);
     {
       s32 a3 = 0xe000;
 
-      Actor_SetPositionAndFacing(23, px(10152), px(9664), a3);
+      Actor_SetPositionAndFacing(ACTOR_KRADEN, px(10152), px(9664), a3);
     }
     Actor_SetPositionAndFacing(ACTOR_FELIX, px(10168), px(9648),
                                FACING_NORTHWEST);
@@ -1042,39 +1082,39 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_SetMessageId((s32)MsgItLooksLike);
     Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
     Event_Wait(5);
-    Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    Actor_ShowEmote(ACTOR_BANDIT, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     // "It looks like Isaac runs with a pretty feeble crowd..."
-    FieldEvent_ShowMessageThenWait(20, 0, 5);
-    Actor_FaceDirectionAndWait(21, east74);
+    FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
+    Actor_FaceDirectionAndWait(ACTOR_THIEF_A, facingSouth);
     Event_Wait(10);
     // "Well, we have been working out. Maybe Isaac won't be so tough this..."
-    FieldEvent_ShowMessageThenWait(21, 0, 5);
-    Actor_FaceDirectionAndWait(22, east74);
+    FieldEvent_ShowMessageThenWait(ACTOR_THIEF_A, 0, 5);
+    Actor_FaceDirectionAndWait(ACTOR_THIEF_B, facingSouth);
     Event_Wait(10);
-    Actor_RunRepeatedMotion(22, 2);
+    Actor_RunRepeatedMotion(ACTOR_THIEF_B, 2);
     Event_Wait(5);
     // "So you think we just got a lot stronger?"
-    FieldEvent_ShowMessageThenWait(22, 0, 5);
-    Actor_SetAnimationAndWait(21, 3);
+    FieldEvent_ShowMessageThenWait(ACTOR_THIEF_B, 0, 5);
+    Actor_SetAnimationAndWait(ACTOR_THIEF_A, 3);
     Event_Wait(10);
-    Actor_FaceDirectionAndWait(20, east74);
+    Actor_FaceDirectionAndWait(ACTOR_BANDIT, facingSouth);
     Event_Wait(10);
-    Actor_RunRepeatedMotion(20, 2);
+    Actor_RunRepeatedMotion(ACTOR_BANDIT, 2);
     Event_Wait(5);
     // "You let Isaac know we're looking for him!"
-    FieldEvent_ShowMessageThenWait(20, 0, 5);
-    Actor_SetAnimationAndWait(20, 3);
+    FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
+    Actor_SetAnimationAndWait(ACTOR_BANDIT, 3);
     Event_Wait(10);
     // "The band of thieves he busted in Vault are coming to repay the favor!"
-    FieldEvent_ShowMessageThenWait(20, 0, 5);
-    Actor_SetAnimationAndWait(21, 3);
+    FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
+    Actor_SetAnimationAndWait(ACTOR_THIEF_A, 3);
     Event_Wait(10);
     // "And we're not messing around!"
-    FieldEvent_ShowMessageThenWait(21, 0, 5);
-    Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_THIEF_A, 0, 5);
+    Actor_ShowEmote(ACTOR_THIEF_B, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     // "Be sure you tell him! And send him this way!"
-    FieldEvent_ShowMessageThenWait(22, 0, 5);
-    Actor_SetAnimationAndWait(20, 3);
+    FieldEvent_ShowMessageThenWait(ACTOR_THIEF_B, 0, 5);
+    Actor_SetAnimationAndWait(ACTOR_BANDIT, 3);
     Event_Wait(10);
     Event_Wait(40);
     Event_SetDestination(
@@ -1083,217 +1123,216 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     gFieldWork->transition = 0;
   } else {
     Event_ClearFlag(0xa76);
-    eastB = 0x4000;
-    Actor_SetPositionAndFacing(20, px(10168), px(9632), eastB);
-    westB = 0xc000;
-    Actor_SetPositionAndFacing(21, px(10152), px(9632), eastB);
-    Actor_SetPositionAndFacing(22, px(10184), px(9632), eastB);
-    Actor_SetPositionAndFacing(23, px(10160), px(9680), westB);
-    Actor_SetPositionAndFacing(ACTOR_FELIX, px(10176), px(9680), westB);
+    southB = FACING_SOUTH;
+    Actor_SetPositionAndFacing(ACTOR_BANDIT, px(10168), px(9632), southB);
+    northB = FACING_NORTH;
+    Actor_SetPositionAndFacing(ACTOR_THIEF_A, px(10152), px(9632), southB);
+    Actor_SetPositionAndFacing(ACTOR_THIEF_B, px(10184), px(9632), southB);
+    Actor_SetPositionAndFacing(ACTOR_KRADEN, px(10160), px(9680), northB);
+    Actor_SetPositionAndFacing(ACTOR_FELIX, px(10176), px(9680), northB);
     EventCamera_FollowActor(ACTOR_FELIX, 0);
     FieldEffect_ScheduleRatioTransition(0x18000, 1);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     WorldMap_Freeze();
     Event_SetMessageId((s32)MsgWeLostAgain);
-    Actor_RunRepeatedMotion(20, 2);
+    Actor_RunRepeatedMotion(ACTOR_BANDIT, 2);
     Event_Wait(5);
-    Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    Actor_ShowEmote(ACTOR_BANDIT, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     // "We lost again..."
-    FieldEvent_ShowMessageThenWait(20, 0, 5);
-    Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
+    Actor_ShowEmote(ACTOR_THIEF_A, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     // "So, boss... You, uh... You think maybe it was a mistake going after..."
-    FieldEvent_ShowMessageThenWait(21, 0, 5);
-    Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_THIEF_A, 0, 5);
+    Actor_ShowEmote(ACTOR_THIEF_B, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     // "This means we're going to jail again, doesn't it?"
-    FieldEvent_ShowMessageThenWait(22, 0, 5);
-    Actor_RunRepeatedMotion(20, 2);
+    FieldEvent_ShowMessageThenWait(ACTOR_THIEF_B, 0, 5);
+    Actor_RunRepeatedMotion(ACTOR_BANDIT, 2);
     Event_Wait(5);
     // "Aw... Why do we have to go back to jail. I hate it there..."
-    FieldEvent_ShowMessageThenWait(20, 0, 5);
-    Actor_FaceDirectionAndWait(21, FACING_EAST);
+    FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
+    Actor_FaceDirectionAndWait(ACTOR_THIEF_A, FACING_EAST);
     Event_Wait(10);
-    Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    Actor_ShowEmote(ACTOR_THIEF_A, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     // "It's not like we really hurt anyone... After all, we lost!"
-    FieldEvent_ShowMessageThenWait(21, 0, 5);
-    Actor_FaceDirectionAndWait(20, FACING_WEST);
-    Actor_SetAnimationAndWait(20, 3);
+    FieldEvent_ShowMessageThenWait(ACTOR_THIEF_A, 0, 5);
+    Actor_FaceDirectionAndWait(ACTOR_BANDIT, FACING_WEST);
+    Actor_SetAnimationAndWait(ACTOR_BANDIT, 3);
     Event_Wait(10);
     // "Yeah... And it's not like we stole anything...this time..."
-    FieldEvent_ShowMessageThenWait(20, 0, 5);
-    Actor_FaceDirectionAndWait(22, FACING_WEST);
+    FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
+    Actor_FaceDirectionAndWait(ACTOR_THIEF_B, FACING_WEST);
     Event_Wait(10);
-    Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    Actor_ShowEmote(ACTOR_THIEF_B, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     // "We're not gonna have to go to jail, are we?"
-    FieldEvent_ShowMessageThenWait(22, 0, 5);
-    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
-    Actor_FaceDirection(20, eastB, 0);
-    Actor_FaceDirection(21, eastB, 0);
-    Actor_FaceDirection(22, eastB, 0);
+    FieldEvent_ShowMessageThenWait(ACTOR_THIEF_B, 0, 5);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    Actor_FaceDirection(ACTOR_BANDIT, southB, 0);
+    Actor_FaceDirection(ACTOR_THIEF_A, southB, 0);
+    Actor_FaceDirection(ACTOR_THIEF_B, southB, 0);
     // "You're thieves!"
-    FieldEvent_ShowMessageThenWait(23, 0, 5);
-    Actor_SetAnimation(20, 3);
-    Actor_SetAnimation(21, 3);
-    Actor_SetAnimationAndWait(22, 3);
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
+    Actor_SetAnimation(ACTOR_BANDIT, 3);
+    Actor_SetAnimation(ACTOR_THIEF_A, 3);
+    Actor_SetAnimationAndWait(ACTOR_THIEF_B, 3);
     Event_Wait(10);
-    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     // "If we asked around, we could probably find a dozen reasons to have..."
-    FieldEvent_ShowMessageThenWait(23, 0, 5);
-    Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    Actor_ShowEmote(21, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-    Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
+    Actor_ShowEmote(ACTOR_BANDIT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(ACTOR_THIEF_A, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+    Actor_ShowEmote(ACTOR_THIEF_B, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     Event_Wait(40);
-    Actor_TurnToFaceEachOther(20, 21, 0);
-    Actor_FaceDirection(22, FACING_WEST, 0);
-    Actor_ShowEmote(22, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
-    Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-    Actor_FaceDirectionAndWait(20, eastB);
+    Actor_TurnToFaceEachOther(ACTOR_BANDIT, ACTOR_THIEF_A, 0);
+    Actor_FaceDirection(ACTOR_THIEF_B, FACING_WEST, 0);
+    Actor_ShowEmote(ACTOR_THIEF_B, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
+    Actor_ShowEmote(ACTOR_BANDIT, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+    Actor_FaceDirectionAndWait(ACTOR_BANDIT, southB);
     Event_Wait(20);
     // "Are you guys, like, wandering sheriffs or something?"
     Event_OpenMessage(20, 0);
-    if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
-      Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
+      Actor_ShowEmote(ACTOR_BANDIT, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       // "Because we could be really useful to you if you are. We know all..."
-      FieldEvent_ShowMessageThenWait(20, 0, 5);
+      FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
       (gFieldWork->message)++;
     } else {
-      Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+      Actor_ShowEmote(ACTOR_BANDIT, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       (gFieldWork->message)++;
       // "And even if you're not, we could be really useful to you......"
-      FieldEvent_ShowMessageThenWait(20, 0, 5);
+      FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
     }
-    Actor_TurnToFaceEachOther(ACTOR_FELIX, 23, 0);
+    Actor_TurnToFaceEachOther(ACTOR_FELIX, ACTOR_KRADEN, 0);
     Event_Wait(40);
     Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
-    Actor_FaceDirection(23, FACING_NORTH, 0);
-    Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
+    Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     // "You can't honestly believe we would let you join us!"
-    FieldEvent_ShowMessageThenWait(23, 0, 5);
-    Actor_RunRepeatedMotion(21, 2);
-    Actor_FaceDirection(21, FACING_SOUTH_SOUTHEAST, 0);
-    Actor_FaceDirection(22, FACING_SOUTH_SOUTHWEST, 0);
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
+    Actor_RunRepeatedMotion(ACTOR_THIEF_A, 2);
+    Actor_FaceDirection(ACTOR_THIEF_A, FACING_SOUTH_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_THIEF_B, FACING_SOUTH_SOUTHWEST, 0);
     Event_Wait(5);
     // "Hey, come on! We haven't done anything wrong, really! Not yet..."
-    FieldEvent_ShowMessageThenWait(21, 0, 5);
-    Actor_SetAnimationAndWait(22, 4);
+    FieldEvent_ShowMessageThenWait(ACTOR_THIEF_A, 0, 5);
+    Actor_SetAnimationAndWait(ACTOR_THIEF_B, 4);
     // "Yeah! We didn't have enough time to do anything bad before we ran..."
-    FieldEvent_ShowMessageThenWait(22, 0, 5);
-    Actor_RunRepeatedMotion(20, 2);
-    Func_02000d4c();
+    FieldEvent_ShowMessageThenWait(ACTOR_THIEF_B, 0, 5);
+    Actor_RunRepeatedMotion(ACTOR_BANDIT, 2);
+    WorldMap_ShowGoldenBoots();
     Event_Wait(5);
-    Actor_ShowEmote(20, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    Actor_ShowEmote(ACTOR_BANDIT, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     // "Yeah, so give us a break!"
-    FieldEvent_ShowMessageThenWait(20, 0, 5);
-    Actor_TurnToFaceEachOther(20, 21, 0);
+    FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
+    Actor_TurnToFaceEachOther(ACTOR_BANDIT, ACTOR_THIEF_A, 0);
     Event_Wait(40);
-    Actor_SetAnimation(21, 3);
-    Actor_SetAnimationAndWait(20, 3);
+    Actor_SetAnimation(ACTOR_THIEF_A, 3);
+    Actor_SetAnimationAndWait(ACTOR_BANDIT, 3);
     Event_Wait(10);
-    Actor_TurnToFaceEachOther(20, 22, 0);
+    Actor_TurnToFaceEachOther(ACTOR_BANDIT, ACTOR_THIEF_B, 0);
     Event_Wait(40);
-    Actor_SetAnimation(22, 3);
-    Actor_SetAnimationAndWait(20, 3);
+    Actor_SetAnimation(ACTOR_THIEF_B, 3);
+    Actor_SetAnimationAndWait(ACTOR_BANDIT, 3);
     Event_Wait(10);
-    Actor_RunRepeatedMotion(20, 2);
-    Actor_FaceDirection(21, FACING_SOUTH, 0);
-    Actor_FaceDirection(22, FACING_SOUTH, 0);
-    Actor_FaceDirectionAndWait(20, FACING_SOUTH);
+    Actor_RunRepeatedMotion(ACTOR_BANDIT, 2);
+    Actor_FaceDirection(ACTOR_THIEF_A, FACING_SOUTH, 0);
+    Actor_FaceDirection(ACTOR_THIEF_B, FACING_SOUTH, 0);
+    Actor_FaceDirectionAndWait(ACTOR_BANDIT, FACING_SOUTH);
     Event_Wait(5);
     // "So, uh... Bye! See you later!"
-    FieldEvent_ShowMessageThenWait(20, 0, 5);
-    Actor_WalkBy(20, -32, 0);
-    Actor_WalkBy(21, -32, 0);
-    Actor_WalkByAndWait(22, -32, 0);
-    Actor_WalkBy(20, -64, -64);
-    Actor_WalkBy(21, -64, -64);
-    Actor_WalkByAndWait(22, -64, -64);
-    Actor_SetPosition(20, 0, 0);
-    Actor_SetPosition(21, 0, 0);
-    Actor_SetPosition(22, 0, 0);
+    FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
+    Actor_WalkBy(ACTOR_BANDIT, -32, 0);
+    Actor_WalkBy(ACTOR_THIEF_A, -32, 0);
+    Actor_WalkByAndWait(ACTOR_THIEF_B, -32, 0);
+    Actor_WalkBy(ACTOR_BANDIT, -64, -64);
+    Actor_WalkBy(ACTOR_THIEF_A, -64, -64);
+    Actor_WalkByAndWait(ACTOR_THIEF_B, -64, -64);
+    Actor_SetPosition(ACTOR_BANDIT, 0, 0);
+    Actor_SetPosition(ACTOR_THIEF_A, 0, 0);
+    Actor_SetPosition(ACTOR_THIEF_B, 0, 0);
     Event_Wait(10);
-    Actor_FaceDirectionAndWait(20, FACING_SOUTH);
+    Actor_FaceDirectionAndWait(ACTOR_BANDIT, FACING_SOUTH);
     Event_Wait(10);
-    Actor_FaceDirectionAndWait(23, FACING_EAST);
+    Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
     Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_WEST);
-    Actor_SetAnimationAndWait(23, 3);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
     Event_Wait(10);
     // "Will you promise to stop following Isaac and trying to get revenge..."
-    FieldEvent_ShowMessageThenWait(23, 0, 5);
+    FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 5);
     Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
-    Actor_SetAnimationAndWait(23, 3);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
     Event_Wait(10);
-    Actor_SetSpeed(23, 1.2);
-    Actor_SetAnimation(23, 2);
+    Actor_SetSpeed(ACTOR_KRADEN, 1.2);
+    Actor_SetAnimation(ACTOR_KRADEN, 2);
     {
       struct Actor *object = Actor_Get(ACTOR_FELIX);
 
       if (object != NULL)
-        Actor_SetDestination(23, *(s16 *)((u8 *)object + 10),
+        Actor_SetDestination(ACTOR_KRADEN, *(s16 *)((u8 *)object + 10),
                              *(s16 *)((u8 *)object + 18));
     }
-    Actor_WaitForMoveById(23);
-    Actor_SetPosition(23, 0, 0);
+    Actor_WaitForMoveById(ACTOR_KRADEN);
+    Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     WorldMap_ReloadPendingAreaGraphics();
     FieldEffect_ScheduleRatioTransition(0x10000, 15);
     Event_End();
   }
 }
 
-extern u32 gData_02004e38[];
-extern u32 gData_02004e58[];
-extern u32 gData_02004e88[];
+extern u32 gWorldMap_LohoWorkerLeaveScriptA[];
+extern u32 gWorldMap_LohoWorkerLeaveScriptB[];
+extern u32 gWorldMap_LohoWorkerLeaveScriptC[];
 
 void WorldMap_DeliverLohoCannon(void) {
-  s32 angle;
-
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_Get(16)->motionFlags = 2;
-  Actor_Get(17)->motionFlags = 2;
-  Actor_Get(18)->motionFlags = 2;
-  /* FAKEMATCH(temporary): the facing angle held in a local is built once and
-   * shared by the three placements. */
-  angle = FACING_NORTHEAST;
-  Actor_SetPositionAndFacing(16, px(8913), px(5853), angle);
-  Actor_SetPositionAndFacing(17, px(8929), px(5869), angle);
-  Actor_SetPositionAndFacing(18, px(8929), px(5885), angle);
+  Actor_Get(ACTOR_LOHO_WORKER_A)->motionFlags = 2;
+  Actor_Get(ACTOR_LOHO_WORKER_B)->motionFlags = 2;
+  Actor_Get(ACTOR_LOHO_WORKER_C)->motionFlags = 2;
+  {
+    s32 facing = FACING_NORTHEAST;
+
+    Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_A, px(8913), px(5853), facing);
+    Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_B, px(8929), px(5869), facing);
+    Actor_SetPositionAndFacing(ACTOR_LOHO_WORKER_C, px(8929), px(5885), facing);
+  }
   Event_StartScreenTransition();
-  Actor_SetSpeed(16, 0.2);
-  Actor_SetSpeed(17, 0.2);
-  Actor_SetSpeed(18, 0.2);
-  Actor_WalkBy(16, 10, 0);
-  Actor_WalkBy(17, 10, 0);
-  Actor_WalkBy(18, 10, 0);
+  Actor_SetSpeed(ACTOR_LOHO_WORKER_A, 0.2);
+  Actor_SetSpeed(ACTOR_LOHO_WORKER_B, 0.2);
+  Actor_SetSpeed(ACTOR_LOHO_WORKER_C, 0.2);
+  Actor_WalkBy(ACTOR_LOHO_WORKER_A, 10, 0);
+  Actor_WalkBy(ACTOR_LOHO_WORKER_B, 10, 0);
+  Actor_WalkBy(ACTOR_LOHO_WORKER_C, 10, 0);
   Event_WaitTransitionFrames();
   FieldEffect_ScheduleRatioTransition(0x13333, 6);
   Event_WaitForZoomTransition();
   WorldMap_Freeze();
-  FieldActor_WaitForMoveById(16);
+  FieldActor_WaitForMoveById(ACTOR_LOHO_WORKER_A);
   FieldEvent_Wait(40);
-  Actor_SetAnimation(16, 3);
+  Actor_SetAnimation(ACTOR_LOHO_WORKER_A, 3);
   FieldEvent_SetMessageId((s32)MsgYouDonT);
-  Actor_FaceDirection(17, FACING_NORTH_NORTHEAST, 0);
-  Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_LOHO_WORKER_B, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_LOHO_WORKER_C, FACING_NORTH_NORTHEAST, 0);
   // "You don't have anything to worry about. We got the cannon onto your..."
-  Event_ShowMessage(16, 0);
+  Event_ShowMessage(ACTOR_LOHO_WORKER_A, 0);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(30);
   // "Now, we're going to start excavating the ground north of the wall..."
-  Event_ShowMessage(16, 0);
-  Actor_SetAnimation(16, 3);
+  Event_ShowMessage(ACTOR_LOHO_WORKER_A, 0);
+  Actor_SetAnimation(ACTOR_LOHO_WORKER_A, 3);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(60);
-  FieldActor_WatchAndSetScript(ACTOR_FELIX, 18);
-  Actor_SetSpeed(16, 0.4);
-  Actor_SetSpeed(17, 0.4);
-  Actor_SetSpeed(18, 0.4);
-  Actor_SetScript(16, gData_02004e38);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_LOHO_WORKER_C);
+  Actor_SetSpeed(ACTOR_LOHO_WORKER_A, 0.4);
+  Actor_SetSpeed(ACTOR_LOHO_WORKER_B, 0.4);
+  Actor_SetSpeed(ACTOR_LOHO_WORKER_C, 0.4);
+  Actor_SetScript(ACTOR_LOHO_WORKER_A, gWorldMap_LohoWorkerLeaveScriptA);
   FieldEvent_Wait(40);
-  Actor_SetScript(17, gData_02004e58);
-  Actor_SetScript(18, gData_02004e88);
-  FieldActor_WaitForScriptEndById(16);
-  FieldActor_WaitForScriptEndById(17);
-  FieldActor_WaitForScriptEndById(18);
+  Actor_SetScript(ACTOR_LOHO_WORKER_B, gWorldMap_LohoWorkerLeaveScriptB);
+  Actor_SetScript(ACTOR_LOHO_WORKER_C, gWorldMap_LohoWorkerLeaveScriptC);
+  FieldActor_WaitForScriptEndById(ACTOR_LOHO_WORKER_A);
+  FieldActor_WaitForScriptEndById(ACTOR_LOHO_WORKER_B);
+  FieldActor_WaitForScriptEndById(ACTOR_LOHO_WORKER_C);
   WorldMap_ReloadPendingAreaGraphics();
   FieldEvent_Wait(30);
   FieldEffect_ScheduleRatioTransition(0x10000, 6);
@@ -1322,14 +1361,11 @@ void WorldMap_MeetEcho(void) {
   // Holds 0 for its whole life; see its one use.
   s32 zero = 0;
 
-  djinni = Actor_GetById(9);
+  djinni = Actor_GetById(ACTOR_ECHO);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   x = (leader->x.fixed - px(10120)) / 2 + 0x27880000;
   z = (leader->z.fixed - px(8356)) / 2 + 0x20a40000;
-  /* FAKEMATCH(temporary): flag holds the id 0x16e, then the test's result, then
-   * flag 0x175's result for MsgHey2. */
-  flag = 0x16e;
-  flag = GameFlag_Get(flag);
+  flag = Event_GetFlag(0x16e);
   if (flag == 0) {
     if (gInput.held & KEY_UP)
       Event_SetFlag(0x175);
@@ -1356,19 +1392,19 @@ void WorldMap_MeetEcho(void) {
     Djinn_Give(owner, 0, 7);
     DjinnRecovery_AddStandby(owner, 0, 7);
     WorldMap_Freeze();
-    Actor_FaceActorById(owner, 9, 0);
+    Actor_FaceActorById(owner, ACTOR_ECHO, 0);
     Event_Wait(10);
     FieldActor_ShowEmote(owner, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     {
       s32 one = 1;
       *(u16 *)&djinni->userValue = one;
     }
-    Actor_FaceActorById(9, owner, 0);
+    Actor_FaceActorById(ACTOR_ECHO, owner, 0);
     wait(16);
     flag = Event_GetFlag(0x175);
     Event_SetMessageId(TUTORIAL_SET_MESSAGE(flag, MsgHey2));
     i = 15;
-    Event_ShowMessageAndWait(9, 0);
+    Event_ShowMessageAndWait(ACTOR_ECHO, 0);
     WorldMap_ReloadPendingAreaGraphics();
     FieldEffect_ScheduleRatioTransition(0x13333, 6);
     Event_WaitForZoomTransition();
@@ -1388,43 +1424,43 @@ void WorldMap_MeetEcho(void) {
       wait(1);
       i--;
     }
-    Actor_FaceActorById(9, owner, 0);
-    Actor_FaceActorById(owner, 9, 0);
+    Actor_FaceActorById(ACTOR_ECHO, owner, 0);
+    Actor_FaceActorById(owner, ACTOR_ECHO, 0);
     wait(16);
     djinni->update = 0;
     Actor_SetSpriteColorMode(djinni, 0);
     djinni->gravity = px(1);
-    FieldMessage_ShowAtActor(9, 0);
+    FieldMessage_ShowAtActor(ACTOR_ECHO, 0);
     if (Event_AskYesNoWithActorAnimation(owner, 0) == 1) {
-      Actor_Jump(9, 2, 20);
-      Actor_Jump(9, 2, 20);
+      Actor_Jump(ACTOR_ECHO, 2, 20);
+      Actor_Jump(ACTOR_ECHO, 2, 20);
       Event_SetMessageId(TUTORIAL_MESSAGE(MsgWellYouWeren));
-      FieldMessage_ShowAtActor(9, 0);
+      FieldMessage_ShowAtActor(ACTOR_ECHO, 0);
       if (Event_AskYesNoWithActorAnimation(owner, 0) == 1) {
         Event_SetMessageId(TUTORIAL_MESSAGE(MsgWellYouWeren + 1));
-        Event_ShowMessageAndWait(9, 0);
+        Event_ShowMessageAndWait(ACTOR_ECHO, 0);
       } else {
         Event_SetMessageId(TUTORIAL_MESSAGE(MsgWellYouWeren + 2));
-        Event_ShowMessageAndWait(9, 0);
+        Event_ShowMessageAndWait(ACTOR_ECHO, 0);
       }
     } else {
       Event_SetMessageId(TUTORIAL_MESSAGE(MsgSeeYouKnow));
-      Event_ShowMessageAndWait(9, 0);
+      Event_ShowMessageAndWait(ACTOR_ECHO, 0);
     }
     FieldActor_ShowEmote(owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-    Actor_Jump(9, 2, 20);
-    Actor_Jump(9, 2, 20);
+    Actor_Jump(ACTOR_ECHO, 2, 20);
+    Actor_Jump(ACTOR_ECHO, 2, 20);
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgEvenIKnow));
     i = 15;
-    Event_ShowMessageAndWait(9, 0);
+    Event_ShowMessageAndWait(ACTOR_ECHO, 0);
     FieldActor_ShowEmote(owner, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-    Event_ShowMessageAndWait(9, 0);
+    Event_ShowMessageAndWait(ACTOR_ECHO, 0);
     FieldActor_ShowEmote(owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-    Event_ShowMessageAndWait(9, 0);
+    Event_ShowMessageAndWait(ACTOR_ECHO, 0);
     Actor_RunRepeatedMotion(owner, 2);
-    Event_ShowMessageAndWait(9, 0);
-    Actor_Jump(9, 2, 30);
-    Event_ShowMessageAndWait(9, 0);
+    Event_ShowMessageAndWait(ACTOR_ECHO, 0);
+    Actor_Jump(ACTOR_ECHO, 2, 30);
+    Event_ShowMessageAndWait(ACTOR_ECHO, 0);
     djinni->motionFlags = 0;
     FieldActor_SetMoveTargetFixed(djinni, x, px(16), z);
     while (i >= 0) {
@@ -1433,7 +1469,7 @@ void WorldMap_MeetEcho(void) {
       i--;
     }
     Actor_SetAnimationById(owner, 1);
-    Event_ShowMessageAndWait(9, 0);
+    Event_ShowMessageAndWait(ACTOR_ECHO, 0);
     djinni->motionFlags = 2;
     djinni->velocityY = 0;
     djinni->groundHeight = 0;
@@ -1444,13 +1480,13 @@ void WorldMap_MeetEcho(void) {
       i--;
     }
     Actor_SetAnimationById(owner, 22);
-    Event_ShowMessageAndWait(9, 0);
-    Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-    Actor_FaceActorById(9, owner, 0);
-    Actor_RunRepeatedMotion(9, 2);
-    Event_ShowMessageAndWait(9, 0);
-    Actor_Jump(9, 2, 30);
-    FieldMessage_ShowAtActor(9, 0);
+    Event_ShowMessageAndWait(ACTOR_ECHO, 0);
+    Actor_ShowEmoteById(ACTOR_ECHO, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    Actor_FaceActorById(ACTOR_ECHO, owner, 0);
+    Actor_RunRepeatedMotion(ACTOR_ECHO, 2);
+    Event_ShowMessageAndWait(ACTOR_ECHO, 0);
+    Actor_Jump(ACTOR_ECHO, 2, 30);
+    FieldMessage_ShowAtActor(ACTOR_ECHO, 0);
     count = 0;
   plead:
     {
@@ -1458,33 +1494,33 @@ void WorldMap_MeetEcho(void) {
 
       if (count == 7) {
         if (i == 0) {
-          Actor_Jump(9, 2, 20);
-          Actor_Jump(9, 2, 20);
+          Actor_Jump(ACTOR_ECHO, 2, 20);
+          Actor_Jump(ACTOR_ECHO, 2, 20);
           Event_SetMessageId(TUTORIAL_MESSAGE(MsgOhAllRight));
-          Event_ShowMessageAndWait(9, 0);
+          Event_ShowMessageAndWait(ACTOR_ECHO, 0);
           goto joined;
         }
       } else if (i == 1) {
-        Actor_Jump(9, 2, 20);
-        Actor_Jump(9, 2, 20);
+        Actor_Jump(ACTOR_ECHO, 2, 20);
+        Actor_Jump(ACTOR_ECHO, 2, 20);
         Event_SetMessageId(count + TUTORIAL_MESSAGE(MsgOhComeOn));
-        FieldMessage_ShowAtActor(9, 0);
+        FieldMessage_ShowAtActor(ACTOR_ECHO, 0);
         count++;
         goto plead;
       }
     }
     Actor_SetAnimationById(owner, 22);
-    Actor_Jump(9, 2, 20);
-    Actor_Jump(9, 4, 20);
+    Actor_Jump(ACTOR_ECHO, 2, 20);
+    Actor_Jump(ACTOR_ECHO, 4, 20);
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgIMSo));
-    Event_ShowMessageAndWait(9, 0);
+    Event_ShowMessageAndWait(ACTOR_ECHO, 0);
   joined:
     MessageArgument_Push(0x133, MESSAGE_ARGUMENT_ABILITY);
     Sound_Play(MUS_JOINED);
     FieldMessage_Show(TUTORIAL_MESSAGE(MsgTheVenusDjinni), 3);
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgTheVenusDjinni + 1));
-    Actor_Jump(9, 2, 20);
-    FieldMessage_ShowAtActor(9, 0);
+    Actor_Jump(ACTOR_ECHO, 2, 20);
+    FieldMessage_ShowAtActor(ACTOR_ECHO, 0);
     if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
       goto refused;
     if (Event_GetFlag(0x175))
@@ -1497,20 +1533,20 @@ void WorldMap_MeetEcho(void) {
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_MoveToObject(9, owner);
+  Actor_MoveToObject(ACTOR_ECHO, owner);
   djinni->velocityY = px(10);
   FieldActor_SetMoveTargetFixed(djinni, x, 0, z);
   Event_Wait(30);
   WorldMap_Freeze();
-  Actor_FaceActorById(9, owner, 0);
-  Actor_FaceActorById(owner, 9, 0);
+  Actor_FaceActorById(ACTOR_ECHO, owner, 0);
+  Actor_FaceActorById(owner, ACTOR_ECHO, 0);
   Actor_SetAnimationById(owner, 22);
   Event_SetMessageId(TUTORIAL_MESSAGE(MsgSeeWeDjinn));
-  Actor_Jump(9, 2, 20);
-  Actor_Jump(9, 2, 20);
-  Event_ShowMessageAndWait(9, 0);
-  Actor_RunRepeatedMotion(9, 2);
-  Event_ShowMessageAndWait(9, 0);
+  Actor_Jump(ACTOR_ECHO, 2, 20);
+  Actor_Jump(ACTOR_ECHO, 2, 20);
+  Event_ShowMessageAndWait(ACTOR_ECHO, 0);
+  Actor_RunRepeatedMotion(ACTOR_ECHO, 2);
+  Event_ShowMessageAndWait(ACTOR_ECHO, 0);
   Sound_Play(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
   Event_SetFlag(FLAG_DJINN_LESSON_PART_A);
@@ -1519,20 +1555,20 @@ void WorldMap_MeetEcho(void) {
   Event_SetMessageId(TUTORIAL_MESSAGE(MsgSoWeGo));
   FieldActor_SetMoveTarget(djinni, 10120, 0, 8356);
   Event_Wait(30);
-  Event_ShowMessageAndWait(9, 0);
-  Actor_FaceActorById(9, owner, 0);
-  Event_ShowMessageAndWait(9, 0);
-  FieldMessage_ShowAtActor(9, 0);
+  Event_ShowMessageAndWait(ACTOR_ECHO, 0);
+  Actor_FaceActorById(ACTOR_ECHO, owner, 0);
+  Event_ShowMessageAndWait(ACTOR_ECHO, 0);
+  FieldMessage_ShowAtActor(ACTOR_ECHO, 0);
   if (Event_AskYesNoWithActorAnimation(owner, 0) != 1)
     goto refused;
   Actor_SetAnimationById(owner, 22);
-  Actor_RunRepeatedMotion(9, 2);
+  Actor_RunRepeatedMotion(ACTOR_ECHO, 2);
   Event_SetMessageId(TUTORIAL_MESSAGE(MsgHmmmmDoYou));
-  FieldMessage_ShowAtActor(9, 0);
+  FieldMessage_ShowAtActor(ACTOR_ECHO, 0);
   if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
     goto refused;
-  Event_ShowMessageAndWait(9, 0);
-  Actor_WalkToAndWait(9, x >> 16, z >> 16);
+  Event_ShowMessageAndWait(ACTOR_ECHO, 0);
+  Actor_WalkToAndWait(ACTOR_ECHO, x >> 16, z >> 16);
 tutorial:
   WorldMap_ExplainGivingDjinn();
   WorldMap_ReloadPendingAreaGraphics();
@@ -1540,16 +1576,16 @@ tutorial:
 refused:
   Actor_SetAnimationById(owner, 22);
   Event_SetMessageId(TUTORIAL_MESSAGE(MsgWellThatS));
-  Actor_Jump(9, 2, 20);
-  Actor_Jump(9, 2, 20);
-  Event_ShowMessageAndWait(9, 0);
-  Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Event_ShowMessageAndWait(9, 0);
+  Actor_Jump(ACTOR_ECHO, 2, 20);
+  Actor_Jump(ACTOR_ECHO, 2, 20);
+  Event_ShowMessageAndWait(ACTOR_ECHO, 0);
+  Actor_ShowEmoteById(ACTOR_ECHO, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Event_ShowMessageAndWait(ACTOR_ECHO, 0);
   Event_SetFlag(FLAG_DJINN_LESSON_PART_A);
   Event_SetFlag(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Run();
-  Actor_Jump(9, 2, 20);
-  Event_ShowMessageAndWait(9, 0);
+  Actor_Jump(ACTOR_ECHO, 2, 20);
+  Event_ShowMessageAndWait(ACTOR_ECHO, 0);
   WorldMap_ReloadPendingAreaGraphics();
   FieldDjinn_JoinParty(9, zero, 7);
   Scene_PlayMusic();
@@ -1559,11 +1595,11 @@ refused:
   Event_ClearFlag(FLAG_DJINN_LESSON_PART_B);
 }
 
-extern u32 gData_02006bc8[];
+extern u32 gWorldMap_CollapseDustScript[];
 
 /// Spawns object 285 at a random spot with a random scale and starts its
 /// script.
-void Func_02002594(void) {
+void WorldMap_SpawnCollapseDust(void) {
   struct Actor *obj;
   struct FieldSprite *sprite;
   u8 *motionFlags;
@@ -1584,7 +1620,7 @@ void Func_02002594(void) {
     obj->scaleX = scale;
     obj->scaleY = scale;
     Import_ActorSelectAnimation(obj, 1);
-    Actor_StartScript(obj, gData_02006bc8);
+    Actor_StartScript(obj, gWorldMap_CollapseDustScript);
   }
 }
 
@@ -1592,7 +1628,7 @@ static __inline__ void PosSet(s32 id, s32 x, s32 z) {
   Actor_SetPosition(id, x, z);
 }
 
-void Func_02002618(s32 id, s32 dx, s32 dz) {
+void WorldMap_ShiftActor(s32 id, s32 dx, s32 dz) {
   struct Actor *object = Actor_Get(id);
 
   if (object != NULL)
@@ -1600,20 +1636,20 @@ void Func_02002618(s32 id, s32 dx, s32 dz) {
            *(s16 *)((u8 *)object + 18) + dz);
 }
 
-void Func_02002640(s32 a, s32 b, s32 dx, s32 dz) {
+void WorldMap_SplitIdejima(s32 a, s32 b, s32 dx, s32 dz) {
   FieldWorldMap_SetWindowCellTileAndDraw(a, b, 48, 224);
-  Func_02002618(5, dx, dz);
-  Func_02002618(8, dx, dz);
-  Func_02002618(9, dx, dz);
-  Func_02002618(10, dx, dz);
+  WorldMap_ShiftActor(ACTOR_JENNA, dx, dz);
+  WorldMap_ShiftActor(ACTOR_IDEJIMA_KRADEN, dx, dz);
+  WorldMap_ShiftActor(ACTOR_ALEX, dx, dz);
+  WorldMap_ShiftActor(ACTOR_IDEJIMA, dx, dz);
   FieldWorldMap_SetWindowCellTileAndDraw(a + 16, b, 64, 224);
 }
 
 void WorldMap_WatchVenusLighthouseCollapse(void) {
-  Func_02003d44(1);
+  WorldMap_PlayLighthouseTransition(1);
   FieldEvent_SetMessageId((s32)MsgTheyVeDone);
   // "They've done it, Jenna! They've lit the beacon!"
-  Event_ShowMessage(8, 0);
+  Event_ShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
   MapGrid_SetShake(4, 4, 1);
   FieldEvent_Wait(30);
   // "What's happening, Kraden!? Why won't the ground stop shaking?"
@@ -1623,7 +1659,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   PaletteFade_ApplySource(0x7fff, 0);
   PaletteFade_ApplyTarget(0x10000, 0);
   PaletteFade_Interpolate(60);
-  Task_AddFrame(Func_02002594, TASK_PASS_VBLANK);
+  Task_AddFrame(WorldMap_SpawnCollapseDust, TASK_PASS_VBLANK);
   MapGrid_SetShake(5, 5, 1);
   FieldEvent_Wait(30);
   MapGrid_SetShake(7, 6, 1);
@@ -1631,7 +1667,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   WorldMap_Freeze();
   MapGrid_SetShake(3, 3, 1);
   // "Strange... I think it might actually be getting worse!"
-  Event_ShowMessage(9, 0);
+  Event_ShowMessage(ACTOR_ALEX, 0);
   WorldMap_ReloadPendingAreaGraphics();
   MapGrid_SetShake(7, 7, 1);
   FieldCamera_MoveTo(1988, CAMERA_KEEP, 7553, 1);
@@ -1642,39 +1678,39 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   // "I think the lighthouse is collapsing! Look! The ground around it is..."
   Event_ShowMessage(ACTOR_JENNA, 0);
   // "Mercury Lighthouse didn't react this way... What makes Venus different?"
-  Event_ShowMessage(8, 0);
+  Event_ShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
   WorldMap_ReloadPendingAreaGraphics();
   Event_PlaySound(SE_CRASH);
-  Func_02002640(0, 128, 0, 0);
+  WorldMap_SplitIdejima(0, 128, 0, 0);
   Actor_SetAnimation(ACTOR_JENNA, 19);
-  Actor_SetAnimation(8, 5);
-  Actor_SetAnimation(9, 7);
+  Actor_SetAnimation(ACTOR_IDEJIMA_KRADEN, 5);
+  Actor_SetAnimation(ACTOR_ALEX, 7);
   System_Wait(4);
   Event_PlaySound(SE_CRASH);
-  Func_02002640(32, 128, 32, 0);
+  WorldMap_SplitIdejima(32, 128, 32, 0);
   System_Wait(4);
-  Func_02002640(64, 128, 32, 0);
+  WorldMap_SplitIdejima(64, 128, 32, 0);
   System_Wait(4);
   FieldCamera_MoveTo(2052, CAMERA_KEEP, 7553, 1);
   FieldCamera_WaitForArrival();
   WorldMap_Freeze();
   MapGrid_SetShake(3, 3, 1);
   // "That last tremor tore a rift in the Suhalla Range!"
-  Event_ShowMessage(9, 0);
+  Event_ShowMessage(ACTOR_ALEX, 0);
   // "How are we going to get back to Gondowan now!?"
   Event_ShowMessage(ACTOR_JENNA, 0);
   WorldMap_ReloadPendingAreaGraphics();
   MapGrid_SetShake(3, 3, 1);
-  Func_02002640(96, 128, 32, 0);
+  WorldMap_SplitIdejima(96, 128, 32, 0);
   System_Wait(20);
-  Func_02002640(0, 160, 32, 0);
+  WorldMap_SplitIdejima(0, 160, 32, 0);
   System_Wait(20);
-  Func_02002640(32, 160, 32, 0);
+  WorldMap_SplitIdejima(32, 160, 32, 0);
   FieldCamera_MoveTo(2148, CAMERA_KEEP, 7553, 1);
   FieldCamera_WaitForArrival();
   WorldMap_Freeze();
   // "Idejima... It's drifting away from the mainland!"
-  Event_ShowMessage(8, 0);
+  Event_ShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
   // "But...what will happen to us?"
   Event_ShowMessage(ACTOR_JENNA, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -1685,9 +1721,9 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   FieldEvent_Wait(120);
 }
 
-extern s32 gData_02004f10[];
+extern s32 gWorldMap_IdejimaWakeScript[];
 
-void Func_020028cc(void) {
+void WorldMap_SpawnIdejimaWake(void) {
   struct Actor *leader;
   struct Actor *obj;
   struct FieldSprite *spr;
@@ -1695,7 +1731,7 @@ void Func_020028cc(void) {
 
   if ((gFrameCount & 15) != 0)
     return;
-  leader = Actor_Get(8);
+  leader = Actor_Get(ACTOR_DRIFTING_IDEJIMA);
   obj = FieldActor_Create(285, leader->x.fixed - px(32), leader->y.fixed,
                           leader->z.fixed - px(16));
   if (obj == NULL)
@@ -1720,30 +1756,30 @@ void Func_020028cc(void) {
   obj->motionFlags = leader->motionFlags;
   FieldActor_SetSpriteColor(obj, 9);
   Import_ActorSelectAnimation(obj, 2);
-  Actor_StartScript(obj, gData_02004f10);
+  Actor_StartScript(obj, gWorldMap_IdejimaWakeScript);
 }
 
-extern u32 gData_02004eb8[];
+extern u32 gWorldMap_IdejimaDriftScript[];
 
-void Func_020029a4(void) {
+void WorldMap_ShowIdejimaDrifting(void) {
   struct Actor *actor;
 
-  actor = Actor_Get(8);
+  actor = Actor_Get(ACTOR_DRIFTING_IDEJIMA);
   FieldEvent_Wait(60);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEffect_ScheduleRatioTransition(39321, 1);
   actor->scaleX = 0x13333;
   actor->scaleY = 0x13333;
-  EventCamera_FollowActor(8, 1);
+  EventCamera_FollowActor(ACTOR_DRIFTING_IDEJIMA, 1);
   System_Wait(1);
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
-  Actor_SetSpriteFlags(Actor_Get(8), 0);
-  Actor_SetSpeed(8, 0.4);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_DRIFTING_IDEJIMA), 0);
+  Actor_SetSpeed(ACTOR_DRIFTING_IDEJIMA, 0.4);
   actor->timer = 0;
-  Actor_SetScript(8, gData_02004eb8);
-  Task_AddFrame(Func_020028cc, TASK_PASS_VBLANK);
+  Actor_SetScript(ACTOR_DRIFTING_IDEJIMA, gWorldMap_IdejimaDriftScript);
+  Task_AddFrame(WorldMap_SpawnIdejimaWake, TASK_PASS_VBLANK);
   gFieldWork->transition = 0x100;
   PaletteFade_ApplyTarget(0x10003, 1);
   gFieldWork->transitionFrames = 32;
@@ -1759,7 +1795,7 @@ void Func_020029a4(void) {
 }
 
 void WorldMap_DriftNorthOfContinent(void) {
-  struct Actor *boat = Actor_Get(10);
+  struct Actor *boat = Actor_Get(ACTOR_IDEJIMA);
   struct RescueMap *map = (struct RescueMap *)Ram_HeapSlots->mapGrid;
   s32 i;
 
@@ -1773,8 +1809,8 @@ void WorldMap_DriftNorthOfContinent(void) {
   System_Wait(1);
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
-  Actor_SetSpriteFlags(Actor_Get(10), 0);
-  Actor_SetSpeed(10, 0.4);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_IDEJIMA), 0);
+  Actor_SetSpeed(ACTOR_IDEJIMA, 0.4);
   boat->timer = 0;
   boat->acceleration = px(1) / 8;
   boat->speedLimit = px(1) / 8;
@@ -1786,7 +1822,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   // "We're saved!"
   Event_ShowMessage(ACTOR_JENNA, 0);
   // "So it would seem..."
-  Event_ShowMessage(8, 0);
+  Event_ShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
   FieldActor_SetMoveTargetFixed(boat, px(10255), boat->y.fixed, px(7868));
   // "Wait..."
   Event_ShowMessage(ACTOR_SHEBA, 0);
@@ -1795,7 +1831,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   // "We're going to pass north of the continent..."
   Event_ShowMessage(ACTOR_SHEBA, 0);
   // "She's right!"
-  Event_ShowMessage(8, 0);
+  Event_ShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
   // "I don't think we're going to make it!"
   Event_ShowMessage(ACTOR_SHEBA, 0);
   // "Oh, Kraden... Felix... What are we going to do?"
@@ -1805,7 +1841,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   // "???"
   Event_ShowMessage(gMainRoutineWork.leaderActorId, 0);
   // "Oh... This can't be good."
-  Event_ShowMessage(8, 0);
+  Event_ShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
   Event_PlaySound(MUS_061);
   WorldMap_ReloadPendingAreaGraphics();
   FieldCamera_SetSpeed(4);
@@ -1813,7 +1849,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   for (i = 31; i >= 0; i--) {
     map->unk11e += 0xff80;
     map->unk11c += 128;
-    Actor_Get(10)->scaleY += -0x300;
+    Actor_Get(ACTOR_IDEJIMA)->scaleY += -0x300;
     System_Wait(1);
   }
   WorldMap_Freeze();
@@ -1827,7 +1863,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   // "The earthquake must have caused it!"
   Event_ShowMessage(ACTOR_SHEBA, 0);
   // "Oh... Oh my... It's coming right at us!"
-  Event_ShowMessage(8, 0);
+  Event_ShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
   MapGrid_SetShake(1, 2, 1);
   WorldMap_ReloadPendingAreaGraphics();
   FieldEffect_ScheduleRatioTransition(39321, 1);
@@ -1836,8 +1872,8 @@ void WorldMap_DriftNorthOfContinent(void) {
   System_Wait(1);
   FieldCamera_MoveTo(3655, CAMERA_KEEP, 7632, 0);
   WorldMap_UpdateCurrentTileBlock();
-  Actor_SetPosition(8, 3690, 7616);
-  Actor_SetPosition(9, 3646, 7679);
+  Actor_SetPosition(ACTOR_IDEJIMA_KRADEN, 3690, 7616);
+  Actor_SetPosition(ACTOR_ALEX, 3646, 7679);
   Actor_SetPosition(ACTOR_FELIX, 3669, 7664);
   Actor_SetPosition(ACTOR_JENNA, 3657, 7621);
   Actor_SetPosition(ACTOR_SHEBA, 3703, 7651);
@@ -1850,27 +1886,28 @@ void WorldMap_DriftNorthOfContinent(void) {
   FieldEvent_Wait(20);
   // "Alex... How can you stay so calm at a time like this?"
   Event_ShowMessage(ACTOR_JENNA, 0);
-  Actor_SetAnimationAndWait(9, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
   // "At times like this, where would be the good in panicking?"
-  Event_ShowMessage(9, 0);
+  Event_ShowMessage(ACTOR_ALEX, 0);
   FieldActor_Jump(ACTOR_SHEBA, 6, 15);
   FieldActor_Jump(ACTOR_SHEBA, 6, 23);
   Actor_FaceActor(ACTOR_SHEBA, ACTOR_FELIX, 0);
   // "We'll be washed away!"
   Event_ShowMessage(ACTOR_SHEBA, 0);
-  Actor_SetAttachedEffect(8, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+  Actor_SetAttachedEffect(ACTOR_IDEJIMA_KRADEN,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   // "Help!!!"
-  Event_ShowMessage(8, 0);
-  Actor_SetSpeed(8, 1);
-  Actor_WalkTo(8, 3608, 7695);
+  Event_ShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
+  Actor_SetSpeed(ACTOR_IDEJIMA_KRADEN, 1);
+  Actor_WalkTo(ACTOR_IDEJIMA_KRADEN, 3608, 7695);
   Event_PlaySound(SE_163);
-  Func_020042e0(0);
+  WorldMap_LoadTidalWave(0);
   FieldEvent_SetExitRequest(65);
 }
 
 /// The leader is hidden and released, the screen fades and the camera moves;
 /// once a key is held the scene changes to SceneId_AlhafraManor.
-void Func_02002e00(void) {
+void WorldMap_PanToAlhafraManor(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->scaleX = 0;
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   Event_StartScreenTransition();
@@ -1900,65 +1937,67 @@ void WorldMap_TakeTheTiller(void) {
     Event_Wait(40);
     // "Take the tiller, Felix!"
     FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+    Actor_ShowEmote(ACTOR_VOYAGE_SHIP, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     // "?!?"
     FieldEvent_ShowMessageThenWait(ACTOR_FELIX, 0, 10);
     // "If you hope to reach Lemuria, you'll have to learn a few things..."
     FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    Actor_ShowEmote(ACTOR_VOYAGE_SHIP, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     // "Kraden, shouldn't we be heading straight for Lemuria?"
     FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
     // "Well, I suppose if we have to learn to sail, it's better to do it..."
-    FieldEvent_ShowMessageThenWait(9, 0, 10);
-    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_VOYAGE_KRADEN, 0, 10);
+    Actor_ShowEmote(ACTOR_VOYAGE_SHIP, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     // "Then I want to go to Lalivero! And Tolbi! Oh! And Vale! Can we go to..."
     FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
     // "I'd love to see your hometown, Jenna! Shall we? Let's do it! To Vale..."
     FieldMessage_ShowAtActor(ACTOR_PIERS, 0);
-    if (FieldEvent_AskYesNoWithActorAnimation(4, 0) == 0) {
-      Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
+      Actor_ShowEmote(ACTOR_VOYAGE_SHIP, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       // "I don't think that's a good idea."
-      FieldEvent_ShowMessageThenWait(9, 0, 10);
+      FieldEvent_ShowMessageThenWait(ACTOR_VOYAGE_KRADEN, 0, 10);
       gFieldWork->message++;
     } else {
-      Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+      Actor_ShowEmote(ACTOR_VOYAGE_SHIP, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       gFieldWork->message++;
       // "I'm with Felix. I don't think that would be a wise course of action."
-      FieldEvent_ShowMessageThenWait(9, 0, 10);
+      FieldEvent_ShowMessageThenWait(ACTOR_VOYAGE_KRADEN, 0, 10);
     }
-    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+    FieldActor_ShowEmote(ACTOR_VOYAGE_SHIP, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                         30);
     // "Come, now! Why not?"
     FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
     // "Think about the roads we have traveled to get where we are..."
-    FieldEvent_ShowMessageThenWait(9, 0, 10);
-    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_VOYAGE_KRADEN, 0, 10);
+    FieldActor_ShowEmote(ACTOR_VOYAGE_SHIP, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                         30);
     // "I can't... I was never any good at geography."
     FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
     // "Then allow me to explain... The coastline of Angara, the continent..."
-    FieldEvent_ShowMessageThenWait(9, 0, 10);
-    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_VOYAGE_KRADEN, 0, 10);
+    Actor_ShowEmote(ACTOR_VOYAGE_SHIP, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     // "Oh... You don't think Piers's boat could land there?"
     FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
     // "And as for Gondowan, I would guess the people from Lalivero..."
-    FieldEvent_ShowMessageThenWait(9, 0, 10);
+    FieldEvent_ShowMessageThenWait(ACTOR_VOYAGE_KRADEN, 0, 10);
     // "He's right. Saturos and Menardi went a little wild in Lalivero, and..."
     FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
-    FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    FieldActor_ShowEmote(ACTOR_VOYAGE_SHIP, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     // "Oh... But Sheba can explain the situation for us. Faran and the..."
     FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+    Actor_ShowEmote(ACTOR_VOYAGE_SHIP, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     // "And then they'd make me stay in Lalivero! Would you just leave me..."
     FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
     // "Oh yeah... Maybe that wouldn't be such a good idea after all..."
     FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
     // "Then it's decided!"
-    FieldEvent_ShowMessageThenWait(9, 0, 10);
-    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+    FieldEvent_ShowMessageThenWait(ACTOR_VOYAGE_KRADEN, 0, 10);
+    Actor_ShowEmote(ACTOR_VOYAGE_SHIP, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
     // "What's decided?"
     FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-    Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+    Actor_ShowEmote(ACTOR_VOYAGE_SHIP, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     // "The sea is vast... We can go wherever we please! So, let's explore a..."
-    FieldEvent_ShowMessageThenWait(9, 0, 10);
+    FieldEvent_ShowMessageThenWait(ACTOR_VOYAGE_KRADEN, 0, 10);
     // "That's a great idea! We've already met werewolves and discovered new..."
     FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
     // "Wow! This is going to be great!"
@@ -1966,7 +2005,7 @@ void WorldMap_TakeTheTiller(void) {
     // "Hmm... The seas can be quite dangerous. It won't be my fault if..."
     FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
     // "To the open sea, Felix!"
-    FieldEvent_ShowMessageThenWait(9, 0, 10);
+    FieldEvent_ShowMessageThenWait(ACTOR_VOYAGE_KRADEN, 0, 10);
     Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
     gMainRoutineWork.movementMode = 7;
     gMainRoutineWork.ownerOverride = 1;
@@ -1974,19 +2013,19 @@ void WorldMap_TakeTheTiller(void) {
     Event_SetFlag(FLAG_SHIP_SAILABLE);
     Actor_SetPosition(ACTOR_PIERS, 0, 0);
     Actor_SetPosition(ACTOR_SHEBA, 0, 0);
-    Actor_SetPosition(9, 0, 0);
+    Actor_SetPosition(ACTOR_VOYAGE_KRADEN, 0, 0);
     Actor_SetPosition(ACTOR_JENNA, 0, 0);
     Actor_GetById(gMainRoutineWork.leaderActorId)->scaleX = scale;
     Event_End();
   }
 }
 
-void Func_0200310c(void) {
+void WorldMap_SailToShipDeck(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_MoveToAndWait(8, 10720, 9075);
+  Actor_MoveToAndWait(ACTOR_SHIP, 10720, 9075);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_SetExitRequest(66);
@@ -2001,33 +2040,33 @@ void WorldMap_TakeOff(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_SetFlag(0xa78);
-  Actor_MoveToAndWait(8, 7158, 8532);
+  Actor_MoveToAndWait(ACTOR_SHIP, 7158, 8532);
   WorldMap_SetUpShip();
-  x = Actor_Get(8)->x.fixed / 0x10000;
-  z = Actor_Get(8)->z.fixed / 0x10000;
+  x = Actor_Get(ACTOR_SHIP)->x.fixed / 0x10000;
+  z = Actor_Get(ACTOR_SHIP)->z.fixed / 0x10000;
   i = 0;
   {
     do {
       if (Actor_Get(i) != NULL) {
-        Data_02006be8[i] = i;
+        gWorldMap_HiddenMembers[i] = i;
         Actor_Get(i)->scaleX = 0;
         Actor_SetSpriteFlags(Actor_Get(i), 0);
         Actor_SetPosition(i, x, z);
       } else {
-        Data_02006be8[i] = -1;
+        gWorldMap_HiddenMembers[i] = -1;
       }
       i++;
     } while (i <= 7);
   }
-  Actor_Get(23)->scaleX = 0;
-  Actor_SetSpriteFlags(Actor_Get(23), 0);
-  Actor_SetPosition(23, x, z);
+  Actor_Get(ACTOR_KRADEN)->scaleX = 0;
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_KRADEN), 0);
+  Actor_SetPosition(ACTOR_KRADEN, x, z);
   WorldMap_Freeze();
   FieldEvent_SetMessageId((s32)MsgWeDidIt);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   // "We did it! The ship took off without a hitch!"
   Event_ShowMessage(ACTOR_IVAN, 0);
-  Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Actor_ShowEmote(ACTOR_SHIP, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   // "Yeah, but...shouldn't it be flying a little higher than this?"
   Event_ShowMessage(ACTOR_GARET, 0);
   // "Hamma told us that we wouldn't be able to fly very high until we..."
@@ -2040,7 +2079,7 @@ void WorldMap_TakeOff(void) {
   // "Do you remember on Idejima, when I told you I had my own reasons for..."
   Event_ShowMessage(ACTOR_SHEBA, 0);
   // "You were so secretive! Are you going to tell us now?"
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   FieldEvent_Wait(50);
   // "... ..."
@@ -2084,65 +2123,65 @@ void WorldMap_TakeOff(void) {
   Event_ShowMessage(ACTOR_GARET, 0);
   FieldEvent_Wait(40);
   // "Sheba, you may not know this, but you and I are very similar..."
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   // "What do you mean?"
   Event_ShowMessage(ACTOR_SHEBA, 0);
   // "Well, it's not exactly the same situation, but..."
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldEvent_Wait(20);
   // "I was born in a poor village. My memories are hazy, but I still..."
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldEvent_Wait(20);
   // "I was only four when Babi took me under his wing."
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldEvent_Wait(20);
   // "You see, even though I was young, I was quite intelligent. Babi had..."
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   // "And Babi took you to Tolbi to further your education, to raise you..."
   Event_ShowMessage(ACTOR_ISAAC, 0);
   FieldEvent_Wait(20);
   // "I was separated from my parents so early in life... I've never known..."
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   // "Faran has always been like a father to me... I must have been very..."
   Event_ShowMessage(ACTOR_SHEBA, 0);
   // "I should say so."
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldEvent_Wait(60);
   // "Thank you, Kraden... I feel better now..."
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   // "I'm glad I could help."
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldEvent_Wait(40);
   // "Well, we should be going... Let's hurry on, Felix!"
-  Event_ShowMessage(23, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Scene_PlayMusic();
   WorldMap_ReloadPendingAreaGraphics();
   i = 0;
   {
   restore:
-    if (Data_02006be8[i] >= 0) {
-      Actor_SetSpriteFlags(Actor_Get(Data_02006be8[i]), 1);
-      Actor_Get(Data_02006be8[i])->scaleX = Q16_ONE;
-      Actor_SetPosition(Data_02006be8[i], 0, 0);
+    if (gWorldMap_HiddenMembers[i] >= 0) {
+      Actor_SetSpriteFlags(Actor_Get(gWorldMap_HiddenMembers[i]), 1);
+      Actor_Get(gWorldMap_HiddenMembers[i])->scaleX = Q16_ONE;
+      Actor_SetPosition(gWorldMap_HiddenMembers[i], 0, 0);
     }
     i++;
     if (i <= 7)
       goto restore;
   }
-  Actor_SetPosition(23, 0, 0);
+  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Event_End();
 }
 
-s32 Func_02003418(struct Actor *object) {
+s32 WorldMap_TwinkleTrail(struct Actor *object) {
   if (Random16() < 0x4000)
     Actor_SetSpriteColorMode(object, Random16() * 8 >> 16);
   return 0;
 }
 
-extern s32 gData_02004f70[];
+extern s32 gWorldMap_AquaRockTrailScript[];
 
-void Func_0200343c(struct Actor *parent) {
+void WorldMap_SpawnAquaRockTrail(struct Actor *parent) {
   if ((gFrameCount & 7) == 0) {
     s32 x = parent->x.fixed;
     s32 y = parent->y.fixed;
@@ -2150,7 +2189,7 @@ void Func_0200343c(struct Actor *parent) {
     struct Actor *object = (FieldActor_Create(673, x, y, z));
 
     if (object != NULL) {
-      Actor_StartScript(object, gData_02004f70);
+      Actor_StartScript(object, gWorldMap_AquaRockTrailScript);
       Import_ActorSelectAnimation(object, 1);
       Actor_SetSpriteFlags(object, 0);
       object->motionFlags = 0;
@@ -2160,12 +2199,13 @@ void Func_0200343c(struct Actor *parent) {
   }
 }
 
-void Func_02003490(void) {
+void WorldMap_CarryPartyToAquaRock(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId), 15);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
-  Actor_Get(gMainRoutineWork.leaderActorId)->update = Func_0200343c;
+  Actor_Get(gMainRoutineWork.leaderActorId)->update =
+      WorldMap_SpawnAquaRockTrail;
   Actor_Get(gMainRoutineWork.leaderActorId)->acceleration = px(1) / 8;
   Actor_Get(gMainRoutineWork.leaderActorId)->speedLimit = px(2);
   System_Wait(5);
@@ -2189,7 +2229,7 @@ void Func_02003490(void) {
   FieldEvent_SetExitRequest(78);
 }
 
-s32 Func_020035e0(struct Actor *object) {
+s32 WorldMap_SetPlacedActorTile(struct Actor *object) {
   u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapGrid + 286);
   struct TileSprite *sprite = object->sprite;
 
@@ -2201,8 +2241,8 @@ s32 Func_020035e0(struct Actor *object) {
 #undef Actor_SetSpriteColorMode
 #include "shared/world_map_objects.c"
 
-/// Flickers an actor, running WorldMap_SpawnSparkPair every sixteenth frame.
-void Func_02003b38(struct Actor *object) {
+/// The ship's flicker and its sparks while it powers up (flight mode 1).
+void WorldMap_FlashPoweringUp(struct Actor *object) {
   if ((gFrameCount & 2) != 0) {
     Actor_SetSpriteColorMode(object, 7);
   } else {
@@ -2213,43 +2253,39 @@ void Func_02003b38(struct Actor *object) {
   }
 }
 
-/* VIEW(s3b38): routine gData_02006be4 as this part declared it; the joined file
- * has another; tried as the definition's extern LATE_DATA u32 gData_02006be4[],
- * it does not compile in tla-ja:
- * games/tla/src/scene/shared/actor_cycle_child_values.h:5: `gData_02006be4'
- * undeclared (first use in this function). */
-extern s32 gData_02006be4__s3b38 __asm__("gData_02006be4");
-#define gData_02006be4 gData_02006be4__s3b38
+/// The step through gWorldMap_GlowColorModes, every other frame.
+extern s32 gWorldMap_GlowColorStep;
 
-/// Cycles an actor's child values, running WorldMap_SpawnParticle every fourth
-/// frame.
-void Actor_CycleChildValues(struct Actor *object) {
+/// The ship's glow and its trail in flight (flight mode 2): the colour cycles
+/// every other frame, and a particle every fourth.
+void WorldMap_GlowInFlight(struct Actor *object) {
   if (gFrameCount & 1) {
-    Actor_SetSpriteColorMode(object, gData_02004fc8[gData_02006be4]);
-    gData_02006be4 = (gData_02006be4 + 1) & 3;
+    Actor_SetSpriteColorMode(object,
+                             gWorldMap_GlowColorModes[gWorldMap_GlowColorStep]);
+    gWorldMap_GlowColorStep = (gWorldMap_GlowColorStep + 1) & 3;
   }
   if (!(gFrameCount & 3)) {
     WorldMap_SpawnParticle(object);
   }
 }
 
-/// Sets an actor's update by mode.
+/// Sets the ship's look by flight mode: 0 plain, 1 powering up, 2 in flight.
 void Actor_SetFlightMode(struct Actor *object, s32 mode) {
   if (mode == 0) {
     object->update = 0;
     Actor_SetSpriteColorMode(object, 0);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   } else if (mode == 1) {
-    object->update = (void (*)(void))Func_02003b38;
+    object->update = (void (*)(void))WorldMap_FlashPoweringUp;
   } else {
-    object->update = (void (*)(void))Actor_CycleChildValues;
+    object->update = (void (*)(void))WorldMap_GlowInFlight;
     Event_PlaySound(SE_TAKE_FLIGHT);
   }
 }
 
 #include "shared/leader_search.h"
 
-void Func_02003c3c(void) {
+void WorldMap_EndFlight(void) {
   Actor_SetFlightMode(Actor_GetById(Party_GetLeaderActor()), 0);
 }
 
@@ -2260,16 +2296,16 @@ static inline void QueueBlend(u32 address, u32 value) {
   IoWriteQueue_Store16(address, value);
 }
 
-/// Every other two frames the world map's blend alternates between two
-/// strengths.
-void Func_02003c50(void) {
+/// Run each frame of the lighthouse transition: every other two frames the
+/// blend alternates between two strengths.
+void WorldMap_UpdateTransitionBlend(void) {
 
   IoWriteQueue_Store16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   if (gFrameCount & 2)
-    QueueBlend((u32)&REG_BLDALPHA, gData_02006e08 | 12);
+    QueueBlend((u32)&REG_BLDALPHA, gWorldMapBlend | 12);
   else
-    QueueBlend((u32)&REG_BLDALPHA, gData_02006e08 | 16);
+    QueueBlend((u32)&REG_BLDALPHA, gWorldMapBlend | 16);
 }
 
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
@@ -2282,7 +2318,7 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 #define PUSH_PICTURE(offset)                                                   \
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)
 
-void Func_02003d44(s32 mode) {
+void WorldMap_PlayLighthouseTransition(s32 mode) {
   u8 *buffer;
   u32 blend;
 
@@ -2304,29 +2340,29 @@ void Func_02003d44(s32 mode) {
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0),
                       (u32)(gWorldMapPalettes + mode * 32), 0x80000010);
   IO_WRITE_QUEUE_PUSH(0x06001000, (u32)buffer, 0x84000400);
-  Task_AddFrame(Func_02003c50, TASK_PASS_VBLANK);
+  Task_AddFrame(WorldMap_UpdateTransitionBlend, TASK_PASS_VBLANK);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_GLITTER);
-  gData_02006e08 = 0xe00;
+  gWorldMapBlend = 0xe00;
   PUSH_PICTURE(0x3480);
   FieldEvent_Wait(2);
-  gData_02006e08 = 0xd00;
+  gWorldMapBlend = 0xd00;
   PUSH_PICTURE(0x2e80);
   FieldEvent_Wait(2);
-  gData_02006e08 = 0xc00;
+  gWorldMapBlend = 0xc00;
   PUSH_PICTURE(0x2880);
   FieldEvent_Wait(2);
-  gData_02006e08 = 0xb00;
+  gWorldMapBlend = 0xb00;
   PUSH_PICTURE(0x2280);
   FieldEvent_Wait(2);
-  gData_02006e08 = 0xa00;
+  gWorldMapBlend = 0xa00;
   PUSH_PICTURE(0x1c80);
   FieldEvent_Wait(2);
-  gData_02006e08 = 0x900;
+  gWorldMapBlend = 0x900;
   PUSH_PICTURE(0x1680);
   FieldEvent_Wait(2);
-  gData_02006e08 = 0x800;
+  gWorldMapBlend = 0x800;
   PUSH_PICTURE(0x1080);
   FieldEvent_Wait(140);
   PUSH_PICTURE(0x1680);
@@ -2335,47 +2371,47 @@ void Func_02003d44(s32 mode) {
   FieldEvent_Wait(4);
   PUSH_PICTURE(0x2280);
   FieldEvent_Wait(4);
-  gData_02006e08 = 0x900;
+  gWorldMapBlend = 0x900;
   PUSH_PICTURE(0x2880);
   FieldEvent_Wait(4);
-  gData_02006e08 = 0xa00;
+  gWorldMapBlend = 0xa00;
   PUSH_PICTURE(0x2e80);
   FieldEvent_Wait(4);
-  gData_02006e08 = 0xb00;
+  gWorldMapBlend = 0xb00;
   PUSH_PICTURE(0x3480);
   FieldEvent_Wait(4);
-  gData_02006e08 = 0xc00;
+  gWorldMapBlend = 0xc00;
   PUSH_PICTURE(0x3a80);
   if (mode == 1) {
     MapGrid_SetShake(2, 2, 1);
     Event_PlaySound(SE_RUMBLE);
-    gData_02006e08 = 0xd00;
+    gWorldMapBlend = 0xd00;
     FieldEvent_Wait(4);
-    gData_02006e08 = 0xe00;
+    gWorldMapBlend = 0xe00;
     FieldEvent_Wait(4);
-    gData_02006e08 = 0xf00;
+    gWorldMapBlend = 0xf00;
     FieldEvent_Wait(4);
-    gData_02006e08 = 0x1000;
+    gWorldMapBlend = 0x1000;
     FieldEvent_Wait(45);
-    FieldTask_Remove(Func_02003c50);
+    FieldTask_Remove(WorldMap_UpdateTransitionBlend);
     DebugText_Clear();
     /* FAKEMATCH(temporary): the blend read into blend before each of the two
      * IoWriteQueue_Store16 calls. */
-    blend = gData_02006e08;
+    blend = gWorldMapBlend;
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, blend);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   } else {
-    gData_02006e08 = 0xd00;
+    gWorldMapBlend = 0xd00;
     FieldEvent_Wait(4);
-    gData_02006e08 = 0xe00;
+    gWorldMapBlend = 0xe00;
     FieldEvent_Wait(4);
-    gData_02006e08 = 0xf00;
+    gWorldMapBlend = 0xf00;
     FieldEvent_Wait(4);
-    gData_02006e08 = 0x1000;
+    gWorldMapBlend = 0x1000;
     FieldEvent_Wait(45);
-    FieldTask_Remove(Func_02003c50);
+    FieldTask_Remove(WorldMap_UpdateTransitionBlend);
     DebugText_Clear();
-    blend = gData_02006e08;
+    blend = gWorldMapBlend;
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, blend);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   }
@@ -2383,7 +2419,7 @@ void Func_02003d44(s32 mode) {
   Event_SetFlag(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
-void Func_020042e0(void) {
+void WorldMap_LoadTidalWave(void) {
   u8 *buffer = Heap_AllocEwram(0x4000);
   u8 *frames;
   s32 x, y, i, t, scrollX;
@@ -2441,25 +2477,25 @@ void Func_020042e0(void) {
   gBgScroll[0].y = 0;
 }
 
-void Func_02004500(struct Actor *object) {
+void WorldMap_FlashWithSparks(struct Actor *object) {
   if ((gFrameCount & 2) != 0) {
     Actor_SetSpriteColorMode(object, 7);
   } else {
     Actor_SetSpriteColorMode(object, 0);
   }
   if ((gFrameCount & 15) == 0) {
-    Func_02004634(object);
+    WorldMap_SpawnTwinSparks(object);
   }
 }
 
-/// Animates an actor, running Func_02004634 every sixteenth frame.
+/// Animates an actor, running WorldMap_SpawnTwinSparks every sixteenth frame.
 void Actor_AnimateAndEmit(struct Actor *object) {
   u32 frame = gFrameCount;
 
   if (frame & 1)
     Actor_SetSpriteColorMode(object, (frame >> 1) % 6);
   if ((gFrameCount & 15) == 0)
-    Func_02004634(object);
+    WorldMap_SpawnTwinSparks(object);
 }
 
 #include "shared/actor_animate.h"
@@ -2468,7 +2504,7 @@ void Actor_AnimateAndEmit(struct Actor *object) {
 
 #include "shared/actor_grow_down.h"
 
-void Func_02004634(struct Actor *parent) {
+void WorldMap_SpawnTwinSparks(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
   struct FieldSprite *sprite;
@@ -2517,9 +2553,9 @@ void Func_02004634(struct Actor *parent) {
   }
 }
 
-extern s16 gData_02006e0c;
-extern s16 gData_02006e0e;
-extern u8 gData_02006f20[][32];
+extern s16 gGauge_Shown;
+extern s16 gGauge_Vram;
+extern u8 gGauge_SourceTiles[][32];
 
 /// Redraws the gauge for `progress`.
 void Gauge_Draw(s32 progress) {
@@ -2533,103 +2569,86 @@ void Gauge_Draw(s32 progress) {
     kind = 200;
   if (level <= 7 && (gFrameCount & 7) <= 1)
     kind = 200;
-  if (kind + level == gData_02006e0c)
+  if (kind + level == gGauge_Shown)
     return;
-  gData_02006e0c = kind + level;
-  Call2((void (*)())Iwram_ClearWordsEntry, (s32)(Data_02006e20), (s32)(0x100));
+  gGauge_Shown = kind + level;
+  Iwram_ClearWords((s32)(gGauge_Tiles), (s32)(0x100));
   {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
     if (kind == 0) {
-      copy(Data_02006e20, gData_02006f20[8], 0x80);
+      copy(gGauge_Tiles, gGauge_SourceTiles[8], 0x80);
       goto done;
     }
     if (kind == 100)
-      copy(Data_02006e20, gData_02006f20[4], 0x80);
+      copy(gGauge_Tiles, gGauge_SourceTiles[4], 0x80);
     else
-      copy(Data_02006e20, gData_02006f20[8], 0x80);
+      copy(gGauge_Tiles, gGauge_SourceTiles[8], 0x80);
   }
   base = 0;
   count = level;
   if (count > 7) {
-    Iwram_CopyWordsEntry(Data_02006e20, gData_02006f20, 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles, gGauge_SourceTiles, 32);
     base = 8;
     count -= 8;
   }
   if (level > 15) {
-    Iwram_CopyWordsEntry(Data_02006e20[1], gData_02006f20[1], 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles[1], gGauge_SourceTiles[1], 32);
     count = level;
     base = 16;
     count -= 16;
   }
   if (level > 23) {
-    Iwram_CopyWordsEntry(Data_02006e20[2], gData_02006f20[2], 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles[2], gGauge_SourceTiles[2], 32);
     count = level;
     base = 24;
     count -= 24;
   }
   if (level > 30) {
-    Iwram_CopyWordsEntry(Data_02006e20[3], gData_02006f20[3], 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles[3], gGauge_SourceTiles[3], 32);
     base = 0;
     count = 0;
   }
   if (count != 0) {
-    i = 0;
-    if (i >= count)
-      goto done;
-  loop:
-    {
+    for (i = 0; i < count; i++) {
+      u8 *source = &gGauge_SourceTiles[base / 8][4] + i / 2;
+      u8 *dest = &gGauge_Tiles[base / 8][4] + i / 2;
       s32 j;
-      u8 *source = &gData_02006f20[base / 8][4] + i / 2;
-      u8 *dest = &Data_02006e20[base / 8][4] + i / 2;
-      /* FAKEMATCH(barrier): the empty asm on dest changes its allocation
-       * rank. */
-      asm("" : "=r"(dest) : "0"(dest));
 
-      j = 2;
       if ((i & 1) == 0) {
-        j = 1;
-      even:
-        *dest = (*dest & 240) | (*source & 15);
-        j++;
-        source += 4;
-        dest += 4;
-        if (j > 3)
-          goto next;
-        goto even;
+        for (j = 1; j <= 3; j++) {
+          *dest = (*dest & 240) | (*source & 15);
+          source += 4;
+          dest += 4;
+        }
       } else {
-      oddLoop:
-        *dest = (*dest & 15) | (*source & 240);
-        j--;
-        source += 4;
-        dest += 4;
-        if (j >= 0)
-          goto oddLoop;
+        for (j = 2; j >= 0; j--) {
+          *dest = (*dest & 15) | (*source & 240);
+          source += 4;
+          dest += 4;
+        }
       }
     }
-  next:
-    i++;
-    if (i < count)
-      goto loop;
   }
 done:
-  Vram_Load(gData_02006e0e, 0x100, Data_02006e20);
+  Vram_Load(gGauge_Vram, 0x100, gGauge_Tiles);
 }
 
-/// The world map cursor: counts down while A or B is held, redraws the gauge
-/// and queues its sprite over the leader.
-void Func_020048f4(void) {
-  u32 *oam = Data_02006e14;
-  s32 tile = gVramCacheEntries[gData_02006e0e].offset >> 5;
+/// The Psynergy gauge over the leader as the ship flies: while A or B is held
+/// aloft it drains a PP every ten frames, then redraws the gauge and queues its
+/// sprite.
+void Gauge_Update(void) {
+  u32 *oam = gGauge_Sprite;
+  s32 tile = gVramCacheEntries[gGauge_Vram].offset >> 5;
   struct Actor *leader = Actor_Get(FieldParty_GetLeaderActor());
   s32 screen[3];
   u32 attributes;
 
   if ((gInput.held & (KEY_A | KEY_B)) != 0 &&
       Event_GetFlag(FLAG_MENU_OPEN) == 0 && leader->y.fixed > px(4)) {
-    if (--gData_02006e10 <= 0) {
+    if (--gGauge_Countdown <= 0) {
       Party_DrainPp(1);
-      gData_02006e10 = 10;
+      gGauge_Countdown = 10;
     }
   }
   Gauge_Draw(Party_GetPpRatio());
@@ -2644,60 +2663,60 @@ void Func_020048f4(void) {
     *oam++ = (y | (x << 16)) | attributes;
   }
   *oam = tile | 0x400;
-  Oam_AddSpriteAtDepthClamped(Data_02006e14, 255);
+  Oam_AddSpriteAtDepthClamped(gGauge_Sprite, 255);
 }
 
 /// Sets up the gauge.
 void Gauge_Init(void) {
-  Decompress_TaggedLz(gWorldMapPackedTilesC, gData_02006f20);
-  gData_02006e0e = VramCache_FindFreeEntry();
-  Vram_Load(gData_02006e0e, 0x100, 0);
-  gData_02006e0c = -1;
-  gData_02006e10 = 10;
-  Task_AddFrame(Func_020048f4, TASK_PASS_VBLANK - 10);
+  Decompress_TaggedLz(gWorldMapPackedTilesC, gGauge_SourceTiles);
+  gGauge_Vram = VramCache_FindFreeEntry();
+  Vram_Load(gGauge_Vram, 0x100, 0);
+  gGauge_Shown = -1;
+  gGauge_Countdown = 10;
+  Task_AddFrame(Gauge_Update, TASK_PASS_VBLANK - 10);
 }
 
 /// Takes the gauge down.
 void Gauge_End(void) {
-  Decompress_TaggedLz(gWorldMapPackedTilesC, gData_02006f20);
-  VramCache_FreeEntry(gData_02006e0e);
-  gData_02006e0c = -1;
-  FieldTask_Remove(Func_020048f4);
+  Decompress_TaggedLz(gWorldMapPackedTilesC, gGauge_SourceTiles);
+  VramCache_FreeEntry(gGauge_Vram);
+  gGauge_Shown = -1;
+  FieldTask_Remove(Gauge_Update);
 }
 
 // clang-format off
-u32 gData_02004e38[] = {
+u32 gWorldMap_LohoWorkerLeaveScriptA[] = {
     39, 2, 48, 0x23010000, 0x16cd0000, 1,
     3, 17,
 };
 
-u32 gData_02004e58[] = {
+u32 gWorldMap_LohoWorkerLeaveScriptB[] = {
     39, 2, 48, 0x22f10000, 0x16dd0000, 1,
     48, 0x23010000, 0x16cd0000, 1, 3, 17,
 };
 
-u32 gData_02004e88[] = {
+u32 gWorldMap_LohoWorkerLeaveScriptC[] = {
     39, 2, 48, 0x22f10000, 0x16dd0000, 1,
     48, 0x23010000, 0x16cd0000, 1, 3, 17,
 };
 
-u32 gData_02004eb8[] = {
+u32 gWorldMap_IdejimaDriftScript[] = {
     5, 0x180000, 0, 0, 1, 13,
     10, 0, 22, 35, 1, 5,
     0x180000, 0, 0, 1, 5, 0x180000,
     0, 0, 1, 17,
 };
 
-s32 gData_02004f10[] = {
+s32 gWorldMap_IdejimaWakeScript[] = {
     23, 5, (s32)0xffffe667, 23, 7, 0x1999,
     23, 9, 0xe00, 23, 10, -384,
     0, 1, 13, 48, 0, 2,
     0, 0, 0, 0, 1, 38,
 };
 
-s32 gData_02004f70[] = {
+s32 gWorldMap_AquaRockTrailScript[] = {
     46,
-    (s32)Func_02003418,
+    (s32)WorldMap_TwinkleTrail,
     0,
     1,
     13,
@@ -2719,20 +2738,18 @@ u32 gWorldMap_ParticleScript[] = {
     SC_RELEASE,
 };
 
-u32 gData_02004fc8[] = {
+u32 gWorldMap_GlowColorModes[] = {
     0, 9, 0, 6,
 };
 // clang-format on
 
 #undef PUSH_PICTURE
 #undef WORLD_MAP_TRY_ENCOUNTER
-#undef ARM_WEST
 #undef TUTORIAL_SET_MESSAGE
 #undef TUTORIAL_MESSAGE
 #undef Actor_SetSpriteColorMode
-#undef gData_02006be4
 
-void Func_02000038(void);
+void WorldMap_MeetIron(void);
 void WorldMap_BoardShip(void);
 void WorldMap_LeaveShip(void);
 
@@ -2910,39 +2927,47 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-LATE_DATA s32 gData_02006320[] = {
+LATE_DATA s32 gWorldMap_TileSpriteScript[] = {
     46,
     (s32)TileSprite_Reset,
     17,
 };
 
-LATE_DATA s32 gData_0200632c[] = {
+LATE_DATA s32 gWorldMap_EchoScript[] = {
     46,
-    (s32)StoryActor_Initialize,
+    (s32)WorldMap_SetUpEcho,
     17,
 };
 
-LATE_DATA struct ActorPlacement gData_02006338[] = {
-    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gData_02006320, 10640, 0, 9075,
+LATE_DATA struct ActorPlacement gWorldMapActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS,
+                    (s32)gWorldMap_TileSpriteScript, 10640, 0, 9075,
                     FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(243, 0x37, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
+    ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_ECHO),
+                    MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(243, 0x38, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
+    ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_IRON),
+                    MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(244, 0x4c, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
+    ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_SOUR),
+                    MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(244, 0x4f, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
+    ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_CHILL),
+                    MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(246, 0x78, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
+    ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_WHEEZE),
+                    MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(243, 0x3d, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
+    ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_PETRA),
+                    MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(245, 0x65, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_CORE),
+                    MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH,
                     TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0,
+                    0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0,
+                    0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(221, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
                     FACING_NORTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(154, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
@@ -2951,88 +2976,95 @@ LATE_DATA struct ActorPlacement gData_02006338[] = {
                     FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
                     FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(240, IF_FLAG_SET(0xa76), MOVEMENT_TYPE_STAND, 0, 0, 0,
-                    FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(241, IF_FLAG_SET(0xa76), MOVEMENT_TYPE_STAND, 0, 0, 0,
-                    FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(241, IF_FLAG_SET(0xa76), MOVEMENT_TYPE_STAND, 0, 0, 0,
-                    FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_LONG_DARK_HAIR, IF_FLAG_SET(0xa76),
+                    MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PERSON_IN_PURPLE, IF_FLAG_SET(0xa76),
+                    MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PERSON_IN_PURPLE, IF_FLAG_SET(0xa76),
+                    MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0,
+                    0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02006500[] = {
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1968, 0, 7488,
-                    FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1936, 0, 7472,
-                    FACING_NORTH, TALK_FACING_KEEP, 0),
+LATE_DATA struct ActorPlacement gWorldMap_CollapsePlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1968,
+                    0, 7488, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1936,
+                    0, 7472, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1904, 0, 7488,
                     FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gData_02006320, 1946, 0, 7557,
-                    FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS,
+                    (s32)gWorldMap_TileSpriteScript, 1946, 0, 7557, FACING_EAST,
+                    TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-LATE_DATA s32 gData_02006578[] = {
+LATE_DATA s32 gWorldMap_IslandScript[] = {
     46,
-    (s32)Func_02000388,
+    (s32)WorldMap_SetIslandTile,
     17,
 };
 
-LATE_DATA s32 gData_02006584[] = {
-    46, (s32)Func_020003a8, 46, (s32)Func_020003b4, 17,
+LATE_DATA s32 gWorldMap_TidalWaveScript[] = {
+    46, (s32)WorldMap_SetUpWave, 46, (s32)WorldMap_SendWaveIn, 17,
 };
 
-LATE_DATA struct ActorPlacement gData_02006598[] = {
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 11000, 0, 7500,
-                    FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10000, 0, 7500,
-                    FACING_EAST, TALK_FACING_KEEP, 0),
+LATE_DATA struct ActorPlacement gWorldMap_DriftPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 11000,
+                    0, 7500, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10000,
+                    0, 7500, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10000, 0, 8000,
                     FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 11000, 0, 8000,
-                    FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(433, CONDITION_ALWAYS, (s32)gData_02006578, 10207, 0, 7900,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gData_02006584, 10524, 0, 7450,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gData_02006584, 10532, 0, 7480,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gData_02006584, 10540, 0, 7510,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gData_02006584, 10548, 0, 7540,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gData_02006584, 10556, 0, 7570,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gData_02006584, 10564, 0, 7600,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gData_02006584, 10572, 0, 7630,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gData_02006584, 10580, 0, 7660,
-                    FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(8, CONDITION_ALWAYS, (s32)gData_02006320, 3515, 0, 7621,
-                    FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 11000,
+                    0, 8000, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WORLD_MAP_ISLAND, CONDITION_ALWAYS,
+                    (s32)gWorldMap_IslandScript, 10207, 0, 7900, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gWorldMap_TidalWaveScript,
+                    10524, 0, 7450, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gWorldMap_TidalWaveScript,
+                    10532, 0, 7480, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gWorldMap_TidalWaveScript,
+                    10540, 0, 7510, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gWorldMap_TidalWaveScript,
+                    10548, 0, 7540, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gWorldMap_TidalWaveScript,
+                    10556, 0, 7570, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gWorldMap_TidalWaveScript,
+                    10564, 0, 7600, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gWorldMap_TidalWaveScript,
+                    10572, 0, 7630, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(277, CONDITION_ALWAYS, (s32)gWorldMap_TidalWaveScript,
+                    10580, 0, 7660, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS,
+                    (s32)gWorldMap_TileSpriteScript, 3515, 0, 7621, FACING_EAST,
+                    TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02006700[] = {
-    ACTOR_PLACEMENT(9, CONDITION_ALWAYS, (s32)gData_02006320, 10640, 0, 9075,
-                    FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10550, 0, 8682,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10550, 0, 9282,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10850, 0, 8682,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10850, 0, 9282,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+LATE_DATA struct ActorPlacement gWorldMap_FirstVoyagePlacements[] = {
+    ACTOR_PLACEMENT(9, CONDITION_ALWAYS, (s32)gWorldMap_TileSpriteScript, 10640,
+                    0, 9075, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10550,
+                    0, 8682, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10550,
+                    0, 9282, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10850,
+                    0, 8682, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10850,
+                    0, 9282, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-LATE_DATA struct ActorPlacement gData_02006790[] = {
-    ACTOR_PLACEMENT(433, CONDITION_ALWAYS, (s32)gData_02006578, 12096, 0, 8325,
-                    FACING_SOUTH, TALK_FACING_KEEP, 0),
+LATE_DATA struct ActorPlacement gWorldMap_DriftingIdejimaPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_WORLD_MAP_ISLAND, CONDITION_ALWAYS,
+                    (s32)gWorldMap_IslandScript, 12096, 0, 8325, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3041,14 +3073,21 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_RAISED, 252, CONDITION_ALWAYS, EVENT(WorldMap_LeaveShip)},
     {TRIGGER_RAISED, 253, CONDITION_ALWAYS, EVENT(WorldMap_SetUpFlyingShip)},
     {TRIGGER_RAISED, 254, CONDITION_ALWAYS, EVENT(WorldMap_SetUpShip)},
-    {TRIGGER_STEP, 92, 0x38, EVENT(Func_02000038)},
-    {TRIGGER_STEP, 93, 0x4c, EVENT(Func_0200009c)},
-    {TRIGGER_STEP, 94, 0x4f, EVENT(Func_02000100)},
-    {TRIGGER_STEP, 95, 0x78, EVENT(Func_02000164)},
-    {TRIGGER_STEP, 96, 0x3d, EVENT(Func_020001c8)},
-    {TRIGGER_STEP, 97, 0x65, EVENT(Func_0200022c)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_IRON, FLAG_DJINNI(DJINNI_IRON),
+     EVENT(WorldMap_MeetIron)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_SOUR, FLAG_DJINNI(DJINNI_SOUR),
+     EVENT(WorldMap_MeetSour)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_CHILL, FLAG_DJINNI(DJINNI_CHILL),
+     EVENT(WorldMap_MeetChill)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_WHEEZE, FLAG_DJINNI(DJINNI_WHEEZE),
+     EVENT(WorldMap_MeetWheeze)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_PETRA, FLAG_DJINNI(DJINNI_PETRA),
+     EVENT(WorldMap_MeetPetra)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_CORE, FLAG_DJINNI(DJINNI_CORE),
+     EVENT(WorldMap_MeetCore)},
     {TRIGGER_EXAMINE, 1123, CONDITION_ALWAYS, EVENT(WorldMap_GazeIntoPond)},
-    {TRIGGER_STEP, 100, CONDITION_ALWAYS, EVENT(Func_02000db0)},
+    {TRIGGER_STEP, STEP_TRIGGER_AREA(AREA_DAILA), CONDITION_ALWAYS,
+     EVENT(WorldMap_EnterDaila)},
     {TRIGGER_EXIT, 101, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 102, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 103, CONDITION_ALWAYS, 6},
@@ -3073,7 +3112,8 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 122, CONDITION_ALWAYS, 30},
     {TRIGGER_EXIT, 123, CONDITION_ALWAYS, 31},
     {TRIGGER_EXIT, 124, CONDITION_ALWAYS, 32},
-    {TRIGGER_STEP, 125, CONDITION_ALWAYS, EVENT(Func_02000da4)},
+    {TRIGGER_STEP, STEP_TRIGGER_AREA(AREA_YALLAM), CONDITION_ALWAYS,
+     EVENT(WorldMap_EnterYallam)},
     {TRIGGER_EXIT, 126, CONDITION_ALWAYS, 35},
     {TRIGGER_EXIT, 127, CONDITION_ALWAYS, 36},
     {TRIGGER_EXIT, 128, CONDITION_ALWAYS, 37},
@@ -3096,7 +3136,8 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 146, CONDITION_ALWAYS, 57},
     {TRIGGER_EXIT, 147, CONDITION_ALWAYS, 58},
     {TRIGGER_EXIT, 148, CONDITION_ALWAYS, 59},
-    {TRIGGER_STEP, 150, CONDITION_ALWAYS, EVENT(Func_02000d98)},
+    {TRIGGER_STEP, STEP_TRIGGER_AREA(AREA_PROX), CONDITION_ALWAYS,
+     EVENT(WorldMap_EnterProx)},
     {TRIGGER_EXIT, 151, CONDITION_ALWAYS, 82},
     {TRIGGER_EXIT, 152, CONDITION_ALWAYS, 83},
     {TRIGGER_EXIT, 153, CONDITION_ALWAYS, 84},
@@ -3114,18 +3155,19 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 43, CONDITION_ALWAYS, 43},
     {TRIGGER_EXIT, 44, CONDITION_ALWAYS, 44},
     {TRIGGER_EXIT, 45, CONDITION_ALWAYS, 45},
-    {TRIGGER_STEP, 52, CONDITION_ALWAYS, EVENT(Func_02000918)},
+    {TRIGGER_STEP, 52, CONDITION_ALWAYS, EVENT(WorldMap_GoAboard)},
     {TRIGGER_STEP, 53, CONDITION_ALWAYS, EVENT(WorldMap_RefuseToRunAway)},
     {TRIGGER_STEP, 40, 0xa78, EVENT(WorldMap_TakeOff)},
     {TRIGGER_EXIT, 60, CONDITION_ALWAYS, 60},
     {TRIGGER_EXIT, 61, CONDITION_ALWAYS, 61},
     {TRIGGER_EXIT, 85, CONDITION_ALWAYS, 85},
     {TRIGGER_EXIT, 86, CONDITION_ALWAYS, 86},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, EVENT(Func_02000d1c)},
+    {TRIGGER_TALK, ACTOR_GOLDEN_BOOTS, CONDITION_ALWAYS,
+     EVENT(WorldMap_PickUpGoldenBoots)},
     {TRIGGER_TABLE_END},
 };
 
-LATE_DATA u32 gData_02006bc8[] = {
+LATE_DATA u32 gWorldMap_CollapseDustScript[] = {
     0,
     16,
     38,
@@ -3133,11 +3175,9 @@ LATE_DATA u32 gData_02006bc8[] = {
 
 LATE_DATA s32 gWorldMap_PlacedActorScript[] = {
     46,
-    (s32)Func_020035e0,
+    (s32)WorldMap_SetPlacedActorTile,
     17,
     0,
 };
 
-LATE_DATA u32 gData_02006be4[] = {
-    0,
-};
+LATE_DATA s32 gWorldMap_GlowColorStep = 0;

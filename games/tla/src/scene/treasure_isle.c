@@ -2,6 +2,7 @@
 /// Treasure Isle's first object: the shared actor helpers it links first.
 
 #include "flags.h"
+#include "djinn_ids.h"
 #include "types.h"
 #include "field/actor.h"
 #include "field/event_inline.h"
@@ -356,6 +357,35 @@ void TreasureIsle_GrindSpikyRock(s32 unused, s32 frame, s32 id) {
 }
 
 /// Lift raises one of Room4's rocks out of the way for good (flag n2).
+/// The first room's three pillars, set where Move pushed them.
+enum {
+  ACTOR_PUSHED_PILLAR_A = ACTOR_FIRST_PLACED,
+  ACTOR_PUSHED_PILLAR_B,
+  ACTOR_PUSHED_PILLAR_C
+};
+
+/// The second and third rooms' tightrope posts and the stone pillar Move
+/// pushes.
+enum { ACTOR_POST_A = ACTOR_FIRST_PLACED, ACTOR_POST_B, ACTOR_STONE_PILLAR };
+
+/// Gale's room (gTreasureIsle_Room4Placements): its stone pillar, the eight
+/// boulders Lift raises, the posts of its three tightropes, and Gale.
+enum TreasureIsleGaleRoomActorId {
+  ACTOR_GALE_ROOM_PILLAR = ACTOR_FIRST_PLACED,
+  ACTOR_FIRST_BOULDER,
+  ACTOR_LAST_BOULDER = ACTOR_FIRST_BOULDER + 7,
+  ACTOR_GALE_ROOM_POST_A,
+  ACTOR_GALE_ROOM_POST_B,
+  ACTOR_GALE_ROOM_POST_C,
+  ACTOR_GALE_ROOM_POST_D,
+  ACTOR_GALE_ROOM_POST_E,
+  ACTOR_GALE_ROOM_POST_F,
+  ACTOR_GALE
+};
+
+/// The guardian of water, in the last room.
+enum { ACTOR_WATER_GUARDIAN = ACTOR_FIRST_PLACED };
+
 #define DEFINE_LIFT_ROCK(name, n1, n2)                                         \
   void name(void) {                                                            \
     s32 t0;                                                                    \
@@ -367,21 +397,21 @@ void TreasureIsle_GrindSpikyRock(s32 unused, s32 frame, s32 id) {
     Event_SetFlag(n2);                                                         \
   }
 
-DEFINE_LIFT_ROCK(TreasureIsle_LiftFirstRock, 9, 0x200)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftFirstRock, ACTOR_FIRST_BOULDER, 0x200)
 
-DEFINE_LIFT_ROCK(TreasureIsle_LiftSecondRock, 10, 0x201)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftSecondRock, ACTOR_FIRST_BOULDER + 1, 0x201)
 
-DEFINE_LIFT_ROCK(TreasureIsle_LiftThirdRock, 11, 0x202)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftThirdRock, ACTOR_FIRST_BOULDER + 2, 0x202)
 
-DEFINE_LIFT_ROCK(TreasureIsle_LiftFourthRock, 12, 0x203)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftFourthRock, ACTOR_FIRST_BOULDER + 3, 0x203)
 
-DEFINE_LIFT_ROCK(TreasureIsle_LiftFifthRock, 13, 0x204)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftFifthRock, ACTOR_FIRST_BOULDER + 4, 0x204)
 
-DEFINE_LIFT_ROCK(TreasureIsle_LiftSixthRock, 14, 0x205)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftSixthRock, ACTOR_FIRST_BOULDER + 5, 0x205)
 
-DEFINE_LIFT_ROCK(TreasureIsle_LiftSeventhRock, 15, 0x206)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftSeventhRock, ACTOR_FIRST_BOULDER + 6, 0x206)
 
-DEFINE_LIFT_ROCK(TreasureIsle_LiftEighthRock, 16, 0x207)
+DEFINE_LIFT_ROCK(TreasureIsle_LiftEighthRock, ACTOR_FIRST_BOULDER + 7, 0x207)
 
 /// The guardian of water challenges the party to prove its worth.
 /// "I am the guardian of water. If you would claim my power, you must prove
@@ -391,7 +421,7 @@ void TreasureIsle_MeetWaterGuardian(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  FieldActor_StartRepeatedMotion(8, 2);
+  FieldActor_StartRepeatedMotion(ACTOR_WATER_GUARDIAN, 2);
   FieldEvent_Wait(20);
   PaletteFade_ApplySource(0x10000, 0);
   PaletteFade_ApplyTarget(0x10003, 1);
@@ -403,11 +433,12 @@ void TreasureIsle_MeetWaterGuardian(void) {
   FieldEvent_Wait(60);
   t12 = Actor_Get(gMainRoutineWork.leaderActorId);
   if (t12 != 0) {
-    Actor_SetDestination(8, FIELD_AT(t12, s16, 10), FIELD_AT(t12, s16, 18));
+    Actor_SetDestination(ACTOR_WATER_GUARDIAN, FIELD_AT(t12, s16, 10),
+                         FIELD_AT(t12, s16, 18));
   }
   FieldEvent_Wait(20);
   gMainRoutineWork.pendingDjinni = 0x19bb;
-  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Field_RequestBattleFromEncounterTable(0x67, 0);
 }
 
@@ -488,17 +519,17 @@ s32 Scene_Initialize(void) {
     Event_SetFlag(FLAG_AREA_TEMP_01);
     Event_SetFlag(FLAG_AREA_TEMP_02);
     if (Event_GetFlag(FLAG_AREA_TEMP_00))
-      Actor_SetPosition(8, 264, 440);
+      Actor_SetPosition(ACTOR_PUSHED_PILLAR_A, 264, 440);
     if (Event_GetFlag(FLAG_AREA_TEMP_01))
-      Actor_SetPosition(9, 328, 440);
+      Actor_SetPosition(ACTOR_PUSHED_PILLAR_B, 328, 440);
     if (Event_GetFlag(FLAG_AREA_TEMP_02))
-      Actor_SetPosition(10, 440, 344);
+      Actor_SetPosition(ACTOR_PUSHED_PILLAR_C, 440, 344);
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_2) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
-    Tightrope_Place(0, 8, 9);
+    Tightrope_Place(0, ACTOR_POST_A, ACTOR_POST_B);
     if (Event_GetFlag(FLAG_AREA_TEMP_08))
-      Actor_SetPosition(10, 264, 184);
+      Actor_SetPosition(ACTOR_STONE_PILLAR, 264, 184);
     if (Event_GetFlag(FLAG_AREA_TEMP_03))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 0);
     if (Event_GetFlag(FLAG_AREA_TEMP_04))
@@ -512,9 +543,9 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
-    Tightrope_Place(0, 8, 9);
+    Tightrope_Place(0, ACTOR_POST_A, ACTOR_POST_B);
     if (Event_GetFlag(FLAG_AREA_TEMP_09))
-      Actor_SetPosition(10, 664, 248);
+      Actor_SetPosition(ACTOR_STONE_PILLAR, 664, 248);
     if (Event_GetFlag(FLAG_AREA_TEMP_0A))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room3SpikyRocks, 0);
     if (Event_GetFlag(FLAG_AREA_TEMP_0B))
@@ -524,14 +555,14 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_GALE) {
     if (Event_GetFlag(FLAG_AREA_TEMP_0D))
-      Actor_SetPosition(8, 696, 600);
-    Tightrope_Place(0, 17, 18);
-    Tightrope_Place(1, 19, 20);
-    Tightrope_Place(2, 21, 22);
+      Actor_SetPosition(ACTOR_GALE_ROOM_PILLAR, 696, 600);
+    Tightrope_Place(0, ACTOR_GALE_ROOM_POST_A, ACTOR_GALE_ROOM_POST_B);
+    Tightrope_Place(1, ACTOR_GALE_ROOM_POST_C, ACTOR_GALE_ROOM_POST_D);
+    Tightrope_Place(2, ACTOR_GALE_ROOM_POST_E, ACTOR_GALE_ROOM_POST_F);
     i = 0;
   next:
     {
-      u8 *flags = (u8 *)Actor_Get(i + 9)->sprite + 37;
+      u8 *flags = (u8 *)Actor_Get(i + ACTOR_FIRST_BOULDER)->sprite + 37;
 
       *flags |= 12;
     }
@@ -681,8 +712,8 @@ struct ActorPlacement gTreasureIsle_Placements[] = {
 struct ActorPlacement gTreasureIsle_Room2Placements[] = {
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, 600, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, 680, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 664, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 664, 0, 664, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(424, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -694,7 +725,7 @@ struct ActorPlacement gTreasureIsle_Room2Placements[] = {
 struct ActorPlacement gTreasureIsle_Room3Placements[] = {
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, 824, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, 824, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -706,28 +737,28 @@ u32 gTreasureIsle_LiftRockScale[] = {
 };
 
 struct ActorPlacement gTreasureIsle_Room4Placements[] = {
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 600, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, 328, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, 216, 0, 312, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, 104, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, 312, 0, 216, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, 216, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, 120, 0, 216, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, 744, 0, 728, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, 424, 0, 680, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 600, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, 328, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, 216, 0, 312, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, 104, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, 312, 0, 216, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, 216, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, 120, 0, 216, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, 744, 0, 728, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, (s32)gTreasureIsle_LiftRockScale, 424, 0, 680, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, 360, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, 360, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, 152, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, 152, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, 72, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, (s32)gTreasureIsle_PostStill, 72, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(246, 0x7d, MOVEMENT_TYPE_STAND, 88, 0, 328, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_GALE), MOVEMENT_TYPE_STAND, 88, 0, 328, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gTreasureIsle_Room5Placements[] = {
     ACTOR_PLACEMENT(169, 0x9bb, MOVEMENT_TYPE_STAND, 792, 0, 136, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(243, 0x43, MOVEMENT_TYPE_STAND, 200, 0, 136, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_19), MOVEMENT_TYPE_STAND, 200, 0, 136, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on

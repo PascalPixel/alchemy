@@ -183,6 +183,9 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
 
 /// Flies the camera to a lit lighthouse and shows its beacon's glow, then flies
 /// back; stage 4 is the four beams meeting over Mt. Aleph.
+/// The staff credits' one placed actor: the beacon atop Mars Lighthouse.
+enum { ACTOR_BEACON = ACTOR_FIRST_PLACED };
+
 void StaffCredit_ShowBeacon(s32 stage) {
   struct WorldCamera *map = (struct WorldCamera *)Ram_HeapSlots->mapGrid;
   s32 palette;
@@ -193,14 +196,14 @@ void StaffCredit_ShowBeacon(s32 stage) {
   s32 i;
   s32 frame;
 
-  Actor_SetPosition(8, 0, 0);
+  Actor_SetPosition(ACTOR_BEACON, 0, 0);
   gStaffCredit_BlendSteady = 0;
   wait(1);
   Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
   gFieldWork->transition = 0;
   palette = stage;
   buffer = Heap_AllocEwram(0x6000);
-  Actor_SetSpriteFlags(Actor_GetById(8), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_BEACON), 0);
   if (stage == 4)
     palette = 0;
   gBgScroll[0].y = 0;
@@ -312,19 +315,20 @@ void StaffCredit_ShowBeacon(s32 stage) {
         z = -0x1e0000;
         x0 = -0x320000;
 
-        Actor_SetPositionFixed(8, (top << 16) + x0, (left << 16) + z);
+        Actor_SetPositionFixed(ACTOR_BEACON, (top << 16) + x0,
+                               (left << 16) + z);
       }
-      Actor_SetBlendMode(Actor_GetById(8), 1);
-      Actor_SetAnimation(8, 0);
-      Actor_GetById(8)->scaleX = zero;
-      Actor_GetById(8)->scaleY = zero;
+      Actor_SetBlendMode(Actor_GetById(ACTOR_BEACON), 1);
+      Actor_SetAnimation(ACTOR_BEACON, 0);
+      Actor_GetById(ACTOR_BEACON)->scaleX = zero;
+      Actor_GetById(ACTOR_BEACON)->scaleY = zero;
       if (frame > 22) {
         s32 scale = (frame << 10) - 0x5400;
 
         if (scale > 0x10000)
           scale = 0x10000;
-        Actor_GetById(8)->scaleX = scale;
-        Actor_GetById(8)->scaleY = scale;
+        Actor_GetById(ACTOR_BEACON)->scaleX = scale;
+        Actor_GetById(ACTOR_BEACON)->scaleY = scale;
       }
       if (frame <= 31) {
         s32 step = frame / 4;
@@ -545,8 +549,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 #include "shared/world_map_objects.c"
 
-/// The flying ship's flicker and its sparks, in flight mode 1.
-void StaffCredit_FlashInFlight(struct Actor *object) {
+/// The ship's flicker and its sparks while it powers up (flight mode 1).
+void StaffCredit_FlashPoweringUp(struct Actor *object) {
   if ((gFrameCount & 2) != 0) {
     Actor_SetSpriteColorMode(object, 7);
   } else {
@@ -557,19 +561,15 @@ void StaffCredit_FlashInFlight(struct Actor *object) {
   }
 }
 
-/* VIEW(first): routine gStaffCredit_ColorStep as this part declared it; the
- * joined file has another; tried as the definition's extern LATE_DATA u32
- * gStaffCredit_ColorStep[], it does not compile in tla-ja:
- * games/tla/src/scene/staff_credit.c:540: `gStaffCredit_ColorStep' undeclared
- * (first use in this function). */
-extern s32 gStaffCredit_ColorStep__first __asm__("gStaffCredit_ColorStep");
-#define gStaffCredit_ColorStep gStaffCredit_ColorStep__first
+/// The step through gStaffCredit_GlowColorModes, every other frame.
+extern s32 gStaffCredit_GlowColorStep;
 
-void Actor_CycleChildValues(struct Actor *object) {
+/// The ship's glow and its trail in flight (flight mode 2).
+void StaffCredit_GlowInFlight(struct Actor *object) {
   if (gFrameCount & 1) {
-    Actor_SetSpriteColorMode(object,
-                             gStaffCredit_ColorModes[gStaffCredit_ColorStep]);
-    gStaffCredit_ColorStep = (gStaffCredit_ColorStep + 1) & 3;
+    Actor_SetSpriteColorMode(
+        object, gStaffCredit_GlowColorModes[gStaffCredit_GlowColorStep]);
+    gStaffCredit_GlowColorStep = (gStaffCredit_GlowColorStep + 1) & 3;
   }
   if (!(gFrameCount & 3)) {
     WorldMap_SpawnParticle(object);
@@ -582,9 +582,9 @@ void Actor_SetFlightMode(struct Actor *object, s32 mode) {
     Actor_SetSpriteColorMode(object, 0);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   } else if (mode == 1) {
-    object->update = (void (*)(void))StaffCredit_FlashInFlight;
+    object->update = (void (*)(void))StaffCredit_FlashPoweringUp;
   } else {
-    object->update = (void (*)(void))Actor_CycleChildValues;
+    object->update = (void (*)(void))StaffCredit_GlowInFlight;
     Event_PlaySound(SE_TAKE_FLIGHT);
   }
 }
@@ -767,7 +767,7 @@ void Actor_AnimateAndEmit(struct Actor *object) {
 void StaffCredit_SpawnGrowingPair(struct Actor *parent) {
   struct Actor *pair[2];
   struct Actor *child;
-  struct FieldSprite *sprite;
+  struct Sprite *sprite;
   struct LinkedEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   s32 i;
 
@@ -782,18 +782,17 @@ void StaffCredit_SpawnGrowingPair(struct Actor *parent) {
       child->timer = 0;
       child->watchedActor = parent;
       if (sprite != NULL) {
-        Sprite_StartAnimation((struct ActorSpriteView *)sprite, 0);
-        sprite->nextFrame = 0;
-        VramCache_FreeEntry(sprite->vramBlock);
-        sprite->vramBlock = work->vramBlock;
-        /* FAKEMATCH(signature): the sprite written through LinkedSpriteView. */
-        ((struct LinkedSpriteView *)sprite)->retainCacheEntry = 1;
-        sprite->tile =
-            (gVramCacheEntries[sprite->vramBlock].offset >> 5) & 0x3ff;
-        sprite->fullColor = 0;
-        sprite->shape = 1;
-        ((struct LinkedSpriteView *)sprite)->size = 2;
-        ((struct LinkedDetail *)sprite->record)->field16 = 0;
+        Sprite_StartAnimation(sprite, 0);
+        sprite->flags = 0;
+        VramCache_FreeEntry(sprite->slot);
+        sprite->slot = work->vramBlock;
+        sprite->retainCacheEntry = 1;
+        sprite->image.tile =
+            (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
+        sprite->image.fullColor = 0;
+        sprite->image.shape = 1;
+        sprite->image.size = 2;
+        ((struct LinkedDetail *)sprite->entries[0])->field16 = 0;
       }
     }
   }
@@ -869,43 +868,25 @@ void Gauge_Draw(s32 progress) {
     count = 0;
   }
   if (count != 0) {
-    i = 0;
-    if (i >= count)
-      goto done;
-  loop:
-    {
-      s32 j;
+    for (i = 0; i < count; i++) {
       u8 *source = &gGauge_SourceTiles[base / 8][4] + i / 2;
       u8 *dest = &gGauge_Tiles[base / 8][4] + i / 2;
-      /* FAKEMATCH(barrier): the empty asm on dest changes its allocation
-       * rank. */
-      asm("" : "=r"(dest) : "0"(dest));
+      s32 j;
 
-      j = 2;
       if ((i & 1) == 0) {
-        j = 1;
-      even:
-        *dest = (*dest & 240) | (*source & 15);
-        j++;
-        source += 4;
-        dest += 4;
-        if (j > 3)
-          goto next;
-        goto even;
+        for (j = 1; j <= 3; j++) {
+          *dest = (*dest & 240) | (*source & 15);
+          source += 4;
+          dest += 4;
+        }
       } else {
-      oddLoop:
-        *dest = (*dest & 15) | (*source & 240);
-        j--;
-        source += 4;
-        dest += 4;
-        if (j >= 0)
-          goto oddLoop;
+        for (j = 2; j >= 0; j--) {
+          *dest = (*dest & 15) | (*source & 240);
+          source += 4;
+          dest += 4;
+        }
       }
     }
-  next:
-    i++;
-    if (i < count)
-      goto loop;
   }
 done:
   Vram_Load(gGauge_Vram, 0x100, gGauge_Tiles);
@@ -976,13 +957,12 @@ u32 gWorldMap_ParticleScript[] = {
     SC_RELEASE,
 };
 
-u32 gStaffCredit_ColorModes[] = {
+u32 gStaffCredit_GlowColorModes[] = {
     0, 9, 0, 6,
 };
 // clang-format on
 
 #undef PUSH_PICTURE
-#undef gStaffCredit_ColorStep
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 9850, 0, 9748, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -1134,6 +1114,4 @@ LATE_DATA s32 gWorldMap_PlacedActorScript[] = {
     0,
 };
 
-LATE_DATA u32 gStaffCredit_ColorStep[] = {
-    0,
-};
+LATE_DATA s32 gStaffCredit_GlowColorStep = 0;

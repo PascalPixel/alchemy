@@ -14,6 +14,20 @@
 #include "system/task.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "field/effect_sprite.h"
+
+/// The Center Prong frozen in the crystal (SceneId_TundariaTowerCenterProng),
+/// an item icon (ITEM_CENTER_PRONG) until the crystal breaks.
+#define ACTOR_FROZEN_CENTER_PRONG ACTOR_FIRST_PLACED
+/// The Center Prong where it falls when the crystal breaks, glinting
+/// (TundariaTower_SparkleCenterProng).
+#define ACTOR_FALLEN_CENTER_PRONG 68
+/// Reflux, the Mercury Djinni (SceneId_TundariaTowerReflux).
+#define ACTOR_REFLUX ACTOR_FIRST_PLACED
+/// The two pillars Lift sets on the ledge (SceneId_TundariaTower6), the second
+/// first in the table.
+#define ACTOR_SECOND_LEDGE_PILLAR (ACTOR_FIRST_PLACED + 4)
+#define ACTOR_FIRST_LEDGE_PILLAR (ACTOR_FIRST_PLACED + 5)
 
 #include "../field/field_effect_move.c"
 #define EFFECT_SPAWN FieldEffect_Spawn
@@ -91,15 +105,15 @@ void TundariaTower_StartFallingRocks(void);
 void TundariaTower_EndFallingRocks(void);
 void TundariaTower_UpdateLedgeCell(void);
 void TundariaTower_SparkleCenterProng(struct Actor *object);
-extern s16 gTundariaTower_Room6Pillars[];
-extern s16 gTundariaTower_Room7Pillar[];
-extern struct Trigger gTundariaTower_Room1Triggers[];
-extern struct Trigger gTundariaTower_Room2Triggers[];
-extern struct Trigger gTundariaTower_Room3Triggers[];
-extern struct Trigger gTundariaTower_Room4Triggers[];
-extern struct Trigger gTundariaTower_Room5Triggers[];
-extern struct Trigger gTundariaTower_Room6Triggers[];
-extern struct Trigger gTundariaTower_Room7Triggers[];
+extern s16 gTundariaTowerLiftPillarsPillars[];
+extern s16 gTundariaTowerBurstBroochPillar[];
+extern struct Trigger gTundariaTowerEntranceTriggers[];
+extern struct Trigger gTundariaTowerCenterProngTriggers[];
+extern struct Trigger gTundariaTowerIceSlideTriggers[];
+extern struct Trigger gTundariaTowerRefluxTriggers[];
+extern struct Trigger gTundariaTowerIceColumnsTriggers[];
+extern struct Trigger gTundariaTowerLiftPillarsTriggers[];
+extern struct Trigger gTundariaTowerBurstBroochTriggers[];
 
 /// Talking to Reflux starts its battle.
 void TundariaTower_FightReflux(void) {
@@ -196,40 +210,40 @@ loop:
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-extern u32 gTundariaTower_Room6Regions[];
-extern u32 gTundariaTower_Room7Regions[];
+extern u32 gTundariaTowerLiftPillarsExitRegions[];
+extern u32 gTundariaTowerBurstBroochExitRegions[];
 
 const struct ActorPlacement *Scene_GetExitRegions(void) {
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_6)
-    return (const struct ActorPlacement *)gTundariaTower_Room6Regions;
+    return (const struct ActorPlacement *)gTundariaTowerLiftPillarsExitRegions;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_BURST_BROOCH)
-    return (const struct ActorPlacement *)gTundariaTower_Room7Regions;
+    return (const struct ActorPlacement *)gTundariaTowerBurstBroochExitRegions;
   return 0;
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct ActorPlacement gTundariaTower_Room2Placements[];
-extern struct ActorPlacement gTundariaTower_Room3Placements[];
-extern struct ActorPlacement gTundariaTower_Room4Placements[];
-extern struct ActorPlacement gTundariaTower_Room5Placements[];
-extern struct ActorPlacement gTundariaTower_Room6Placements[];
-extern struct ActorPlacement gTundariaTower_Room7Placements[];
+extern struct ActorPlacement gTundariaTowerCenterProngActorPlacements[];
+extern struct ActorPlacement gTundariaTowerIceSlideActorPlacements[];
+extern struct ActorPlacement gTundariaTowerRefluxActorPlacements[];
+extern struct ActorPlacement gTundariaTowerIceColumnsActorPlacements[];
+extern struct ActorPlacement gTundariaTowerLiftPillarsActorPlacements[];
+extern struct ActorPlacement gTundariaTowerBurstBroochActorPlacements[];
 
 const struct Trigger *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_CENTER_PRONG)
-    return (const struct Trigger *)gTundariaTower_Room2Placements;
+    return (const struct Trigger *)gTundariaTowerCenterProngActorPlacements;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_3)
-    return (const struct Trigger *)gTundariaTower_Room3Placements;
+    return (const struct Trigger *)gTundariaTowerIceSlideActorPlacements;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_REFLUX)
-    return (const struct Trigger *)gTundariaTower_Room4Placements;
+    return (const struct Trigger *)gTundariaTowerRefluxActorPlacements;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_5)
-    return (const struct Trigger *)gTundariaTower_Room5Placements;
+    return (const struct Trigger *)gTundariaTowerIceColumnsActorPlacements;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_6)
-    return (const struct Trigger *)gTundariaTower_Room6Placements;
+    return (const struct Trigger *)gTundariaTowerLiftPillarsActorPlacements;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_BURST_BROOCH)
-    return (const struct Trigger *)gTundariaTower_Room7Placements;
-  return (const struct Trigger *)gTundariaTower_Room2Placements;
+    return (const struct Trigger *)gTundariaTowerBurstBroochActorPlacements;
+  return (const struct Trigger *)gTundariaTowerCenterProngActorPlacements;
 }
 
 /// Parch dries the water left of the first hall's doors.
@@ -320,7 +334,7 @@ void TundariaTower_ScatterIceShards(struct TundariaTowerPosition *position,
   s32 x;
 
   options.priority = 1;
-  options.type = 279;
+  options.type = SPRITE_BLUE_CRYSTAL;
   options.targetScaleY = 0xcccc;
   options.targetScaleX = 0xcccc;
   options.startScaleY = scale;
@@ -381,7 +395,7 @@ void TundariaTower_SparkleCenterProng(struct Actor *object) {
       dx = mask & Random16();
     }
     dy = Random16() & 7;
-    params.type = 673;
+    params.type = SPRITE_SPARKLE;
     FieldEffect_Spawn(object->x.fixed + ((dx - 8) << 16),
                       object->y.fixed + ((dy - 8) << 16), object->z.fixed, 0,
                       0x8000, phase, 0x100000, &params);
@@ -390,7 +404,7 @@ void TundariaTower_SparkleCenterProng(struct Actor *object) {
 
 /// The crystal breaks and the Center Prong drops to the floor, glinting.
 void TundariaTower_FreeCenterProng(void) {
-  struct Actor *object = Actor_GetById(8);
+  struct Actor *object = Actor_GetById(ACTOR_FROZEN_CENTER_PRONG);
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -399,9 +413,10 @@ void TundariaTower_FreeCenterProng(void) {
   object->gravity = px(1) / 2;
   object->motionFlags = 3;
   OverlayObject_WaitUntilIdle(object);
-  Actor_SetPosition(8, 0, 0);
-  Actor_SetPosition(68, 344, 372);
-  Actor_GetById(68)->update = (void (*)(void))TundariaTower_SparkleCenterProng;
+  Actor_SetPosition(ACTOR_FROZEN_CENTER_PRONG, 0, 0);
+  Actor_SetPosition(ACTOR_FALLEN_CENTER_PRONG, 344, 372);
+  Actor_GetById(ACTOR_FALLEN_CENTER_PRONG)->update =
+      (void (*)(void))TundariaTower_SparkleCenterProng;
   Event_End();
 }
 
@@ -425,7 +440,7 @@ extern u32 gTundariaTower_RefluxHops[];
 /// Reflux appears in a flash and a splash, hops down before the party and
 /// waits.
 void TundariaTower_RefluxAppears(void) {
-  struct Actor *object = Actor_GetById(8);
+  struct Actor *object = Actor_GetById(ACTOR_REFLUX);
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -440,38 +455,40 @@ void TundariaTower_RefluxAppears(void) {
   PaletteFade_StartInterpolation(2);
   object->steeringFlags = 0;
   object->update = 0;
-  Actor_SetDestination(8, 424, 536);
+  Actor_SetDestination(ACTOR_REFLUX, 424, 536);
   TundariaTower_StartEffectScript(object, gTundariaTower_RefluxHops);
-  Actor_WaitForMoveById(8);
+  Actor_WaitForMoveById(ACTOR_REFLUX);
   GameFlag_Set(FLAG_REFLUX_APPEARED);
-  Actor_WatchAndSetScript(8, gMainRoutineWork.leaderActorId);
+  Actor_WatchAndSetScript(ACTOR_REFLUX, gMainRoutineWork.leaderActorId);
   MapCell_SetAttributes(0, 21, 33, 0x3200);
   MapCell_SetAttributes(0, 22, 33, 0x3200);
   MapCell_SetAttributes(0, 26, 33, 0xff00);
   Event_End();
 }
 
-void TundariaTower_ShrinkIceColumn(s32 arg0, s32 arg1) {
+void TundariaTower_ShrinkIceColumn(s32 phase, s32 step) {
   struct EffectOptions options;
   s16 *effectWork = Ram_HeapSlots->fieldEffectWork;
   struct Actor *object = Actor_GetById(effectWork[13]);
   s32 velocityX;
 
-  if (arg1 < 8) {
-    options.type = 279;
-    options.startScaleY = 0x10000;
-    options.startScaleX = 0x10000;
+  if (step < 8) {
+    options.type = SPRITE_BLUE_CRYSTAL;
+    options.startScaleY = Q16_ONE;
+    options.startScaleX = Q16_ONE;
     options.priority = 0;
-    options.targetScaleY = 0x8000;
-    options.targetScaleX = 0x8000;
+    options.targetScaleY = Q16_ONE / 2;
+    options.targetScaleX = Q16_ONE / 2;
     options.rotation = (Random16() & 15) << 12;
     velocityX = ((Random16() & 15) - 8) << 13;
-    FieldEffect_Spawn(object->x.fixed,
-                      object->y.fixed - ((arg1 * 3) << 16) + px(16),
-                      object->z.fixed, velocityX, 0, 0, 0x5a0000, &options);
+    FieldEffect_Spawn(object->x.fixed, object->y.fixed - px(step * 3) + px(16),
+                      object->z.fixed, velocityX, 0, 0,
+                      EFFECT_USE_ROTATION | EFFECT_USE_TYPE |
+                          EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY,
+                      &options);
     object->scaleY -= 7936;
   }
-  if (arg0 == 1) {
+  if (phase == 1) {
     object->scaleY = Q16_ONE;
     GameFlag_Set(object->timer);
     TundariaTower_SetColumnCell(Actor_GetById(effectWork[13]));
@@ -484,8 +501,8 @@ void TundariaTower_ShrinkIceColumn(s32 arg0, s32 arg1) {
 }
 
 /// Pound flattens an ice column into the floor.
-void TundariaTower_PoundIceColumn(s32 arg0, s32 arg1) {
-  TundariaTower_ShrinkIceColumn(arg0, arg1);
+void TundariaTower_PoundIceColumn(s32 phase, s32 step) {
+  TundariaTower_ShrinkIceColumn(phase, step);
 }
 
 /// The leader jumps onto the black ice slide and goes down it to the room
@@ -522,12 +539,12 @@ void TundariaTower_LiftPillar(void) {
   if (party->next == SCENE_TUNDARIA_TOWER_6) {
     struct Actor *object;
 
-    Actor_LiftTargetBlock(gTundariaTower_Room6Pillars);
+    Actor_LiftTargetBlock(gTundariaTowerLiftPillarsPillars);
     object = *(struct Actor **)((u8 *)work + 0xcbc);
     object->timer =
         ((object->x.fixed >> 20) << 8) | ((object->z.fixed >> 20) & 0xff);
   } else if (party->next == SCENE_TUNDARIA_TOWER_BURST_BROOCH) {
-    Actor_LiftTargetBlock(gTundariaTower_Room7Pillar);
+    Actor_LiftTargetBlock(gTundariaTowerBurstBroochPillar);
   }
 }
 
@@ -587,12 +604,10 @@ void TundariaTower_SetDownPillar(void) {
   }
   Actor_PlaceMovedBlock();
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_6) {
-    /* FAKEMATCH(temporary): the copy makes each column test reload X. */
-    struct Actor *o = object;
-
-    if (o->x.fixed >> 19 == 27)
+    if (object->x.fixed >> 19 == 27)
       GameFlag_Set(FLAG_FIRST_LEDGE_PILLAR_SET);
-    if (o->x.fixed >> 19 == 25 && GameFlag_Get(FLAG_FIRST_LEDGE_PILLAR_SET))
+    if (object->x.fixed >> 19 == 25 &&
+        GameFlag_Get(FLAG_FIRST_LEDGE_PILLAR_SET))
       GameFlag_Set(FLAG_SECOND_LEDGE_PILLAR_SET);
   }
   Event_End();
@@ -683,20 +698,20 @@ void TundariaTower_BurstIcyWall(s32 mode, s32 cue) {
 
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_1)
-    return gTundariaTower_Room1Triggers;
+    return gTundariaTowerEntranceTriggers;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_CENTER_PRONG)
-    return gTundariaTower_Room2Triggers;
+    return gTundariaTowerCenterProngTriggers;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_3)
-    return gTundariaTower_Room3Triggers;
+    return gTundariaTowerIceSlideTriggers;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_REFLUX)
-    return gTundariaTower_Room4Triggers;
+    return gTundariaTowerRefluxTriggers;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_5)
-    return gTundariaTower_Room5Triggers;
+    return gTundariaTowerIceColumnsTriggers;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_6)
-    return gTundariaTower_Room6Triggers;
+    return gTundariaTowerLiftPillarsTriggers;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_BURST_BROOCH)
-    return gTundariaTower_Room7Triggers;
-  return gTundariaTower_Room2Triggers;
+    return gTundariaTowerBurstBroochTriggers;
+  return gTundariaTowerCenterProngTriggers;
 }
 
 /// The leader's reflection in the ice, mirrored across the room's line.
@@ -779,7 +794,7 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
 void TundariaTower_ExamineCrystal(void);
 void TundariaTower_SlideOnIce(void);
 void TundariaTower_RefluxAppears(void);
-void TundariaTower_PoundIceColumn(s32 arg0, s32 arg1);
+void TundariaTower_PoundIceColumn(s32 phase, s32 step);
 void TundariaTower_SetDownPillar(void);
 void TundariaTower_EndRevealIcyWall(void);
 void TundariaTower_RevealIcyWall(void);
@@ -858,8 +873,8 @@ void TundariaTower_UpdateLedgeCell(void) {
     MapCell_SetAttributes(0, 14, 17, 0x3200);
 }
 
-extern s16 gTundariaTower_Room5Columns[];
-extern s16 gTundariaTower_Room6Columns[];
+extern s16 gTundariaTowerIceColumnsColumns[];
+extern s16 gTundariaTowerLiftPillarsColumns[];
 void Actor_PlaceBlocks(const s16 *data);
 
 s32 Scene_Initialize(void) {
@@ -884,8 +899,8 @@ s32 Scene_Initialize(void) {
     case 11:
       flag = GameFlag_Get(FLAG_CENTER_PRONG_TAKEN);
       if (flag == 0) {
-        object = Actor_GetById(8);
-        Actor_SetSpriteFlags(Actor_GetById(8), 0);
+        object = Actor_GetById(ACTOR_FROZEN_CENTER_PRONG);
+        Actor_SetSpriteFlags(Actor_GetById(ACTOR_FROZEN_CENTER_PRONG), 0);
         object->collisionFlags = 0;
         object->motionFlags = 0;
         object->groundHeight = px(8);
@@ -894,15 +909,15 @@ s32 Scene_Initialize(void) {
         if (GameFlag_Get(FLAG_CRYSTAL_BROKEN)) {
           MapGrid_CopyCellsTo(31, 85, 20, 85, 3, 4);
           MapGrid_CopyCellAttributes(11, 22, 3, 2, 20, 22);
-          Actor_SetPosition(68, 344, 372);
-          Actor_GetById(68)->update =
+          Actor_SetPosition(ACTOR_FALLEN_CENTER_PRONG, 344, 372);
+          Actor_GetById(ACTOR_FALLEN_CENTER_PRONG)->update =
               (void (*)(void))TundariaTower_SparkleCenterProng;
-          Actor_SetPosition(8, 0, 0);
+          Actor_SetPosition(ACTOR_FROZEN_CENTER_PRONG, 0, 0);
         }
       } else if (GameFlag_Get(FLAG_CRYSTAL_BROKEN)) {
         MapGrid_CopyCellsTo(31, 85, 20, 85, 3, 4);
         MapGrid_CopyCellAttributes(11, 22, 3, 2, 20, 22);
-        Actor_SetPosition(8, 0, 0);
+        Actor_SetPosition(ACTOR_FROZEN_CENTER_PRONG, 0, 0);
       }
       break;
     }
@@ -912,13 +927,13 @@ s32 Scene_Initialize(void) {
     case 7:
       if (!GameFlag_Get(FLAG_DJINNI(DJINNI_REFLUX))) {
         if (!GameFlag_Get(FLAG_REFLUX_APPEARED)) {
-          Actor_SetPosition(8, 344, 536);
+          Actor_SetPosition(ACTOR_REFLUX, 344, 536);
           MapCell_SetAttributes(0, 21, 33, 0x3300);
           MapCell_SetAttributes(0, 22, 33, 0xff00);
         } else if (!GameFlag_Get(FLAG_FIGHTING_REFLUX)) {
           MapCell_SetAttributes(0, 26, 33, 0xff00);
         }
-        Actor_WatchAndSetScript(8, gMainRoutineWork.leaderActorId);
+        Actor_WatchAndSetScript(ACTOR_REFLUX, gMainRoutineWork.leaderActorId);
       }
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
           gMainRoutineWork.entrance == 7)
@@ -926,7 +941,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   } else if (scene == SCENE_TUNDARIA_TOWER_5) {
-    TundariaTower_SetUpIceColumns(gTundariaTower_Room5Columns);
+    TundariaTower_SetUpIceColumns(gTundariaTowerIceColumnsColumns);
   } else if (scene == SCENE_TUNDARIA_TOWER_6) {
     switch (gMainRoutineWork.entrance) {
     case 3:
@@ -941,14 +956,14 @@ s32 Scene_Initialize(void) {
       break;
     case 1:
     case 2:
-      TundariaTower_SetUpIceColumns(gTundariaTower_Room6Columns);
+      TundariaTower_SetUpIceColumns(gTundariaTowerLiftPillarsColumns);
       if (GameFlag_Get(FLAG_FIRST_LEDGE_PILLAR_SET)) {
-        Actor_SetPosition(13, 216, 136);
+        Actor_SetPosition(ACTOR_FIRST_LEDGE_PILLAR, 216, 136);
         if (GameFlag_Get(FLAG_SECOND_LEDGE_PILLAR_SET))
-          Actor_SetPosition(12, 200, 136);
+          Actor_SetPosition(ACTOR_SECOND_LEDGE_PILLAR, 200, 136);
       }
-      Actor_PlaceBlocks(gTundariaTower_Room6Pillars);
-      Actor_SetSpritePriority(12, 2);
+      Actor_PlaceBlocks(gTundariaTowerLiftPillarsPillars);
+      Actor_SetSpritePriority(ACTOR_SECOND_LEDGE_PILLAR, 2);
       break;
     case 4:
     case 5:
@@ -961,7 +976,7 @@ s32 Scene_Initialize(void) {
         union FieldObject **slot = &gTundariaTower_Reflection;
         struct Actor *effect = ((struct Actor *)Import_ActorCreate(4, 0, 0, 0));
 
-        effect->riseBaseY = 144 << 18;
+        effect->riseBaseY = px(576);
         effect->update = TundariaTower_ReflectLeader;
         *slot = (union FieldObject *)effect;
         effect->motionFlags = 0;
@@ -973,7 +988,7 @@ s32 Scene_Initialize(void) {
       union FieldObject **slot = &gTundariaTower_Reflection;
       struct Actor *effect = ((struct Actor *)Import_ActorCreate(4, 0, 0, 0));
 
-      effect->riseBaseY = 156 << 18;
+      effect->riseBaseY = px(624);
       effect->update = TundariaTower_ReflectLeader;
       *slot = (union FieldObject *)effect;
       effect->motionFlags = 0;
@@ -992,7 +1007,7 @@ s32 Scene_Initialize(void) {
     } else {
       Task_Add(TundariaTower_UpdateLedgeCell, TASK_PASS_VBLANK);
     }
-    Actor_PlaceBlocks(gTundariaTower_Room7Pillar);
+    Actor_PlaceBlocks(gTundariaTowerBurstBroochPillar);
   }
   return 0;
 }
@@ -1258,7 +1273,8 @@ test:
     goto loop;
 }
 
-void TundariaTower_SetPillarMode3(s32 id) {
+/// Keeps the pillar's sprite cached and stops it.
+void TundariaTower_FreezePillar(s32 id) {
   Actor_GetById(id)->retainSpriteCache = 3;
   Actor_DisableById(id);
 }
@@ -1283,9 +1299,9 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
   Actor_MoveToObject(9, gMainRoutineWork.leaderActorId);
   Actor_MoveToObject(10, gMainRoutineWork.leaderActorId);
   wait(1);
-  TundariaTower_SetPillarMode3(8);
-  TundariaTower_SetPillarMode3(9);
-  TundariaTower_SetPillarMode3(10);
+  TundariaTower_FreezePillar(8);
+  TundariaTower_FreezePillar(9);
+  TundariaTower_FreezePillar(10);
   Actor_SetAnimationById(9, 0);
   wait(1);
   Actor_SetPosition(8, 0, 0);
@@ -1434,7 +1450,7 @@ void TundariaTower_SpawnRubble(s32 spread) {
 
   do {
     {
-      /* FAKEMATCH(temporary): y held in a local. */
+      // Each piece starts 0 to 13 pixels lower than the leader.
       s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
@@ -1539,32 +1555,12 @@ next:
     goto next;
 }
 
-// A falling rock's sprite.
-/* VIEW(s29d0): tag struct RockSprite as struct RockSprite__s29d0;
- * scene/shared.h has another definition; tried with the definition the rest of
- * the object has, it does not compile in tla-ja (tundaria_tower.c):
- * games/tla/src/scene/tundaria_tower.c:1544: structure has no member named
- * `blend'. */
-struct RockSprite__s29d0 {
-  u8 unk00[5];
-  u8 unk05_0 : 5;
-  u8 blend : 1;
-  u8 unk05_6 : 2;
-  u8 unk06[2];
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[0x14];
-  u16 unk1e;
-  u8 unk20[8];
-};
-
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
 struct RockWork {
   u8 tiles[0x500];
   struct Rock rocks[64];
-  struct RockSprite__s29d0 sprites[64];
+  struct EffectSprite sprites[64];
   s16 next;
   u16 tileBase;
   s16 resource;
@@ -1582,7 +1578,7 @@ void TundariaTower_StartFallingRocks(void) {
   s32 resource;
   s32 tile;
   struct Rock *rock;
-  struct RockSprite__s29d0 *sprite;
+  struct EffectSprite *sprite;
   s32 i;
 
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock),
@@ -1595,10 +1591,10 @@ void TundariaTower_StartFallingRocks(void) {
   sprite = work->sprites;
   for (i = 63; i >= 0; i--) {
     EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
-    sprite->blend = 1;
-    sprite->palette = 0;
-    sprite->priority = 0;
-    sprite->unk1e = 240;
+    sprite->oam.palette256 = 1;
+    sprite->oam.palette = 0;
+    sprite->oam.priority = 0;
+    sprite->depth = 240;
     rock->timer = -1;
     sprite++;
     rock++;
@@ -1612,7 +1608,7 @@ void TundariaTower_StartFallingRocks(void) {
 }
 
 void TundariaTower_EndFallingRocks(void) {
-  struct TundariaTowerSparkWork *work = Ram_HeapSlots->menuWork;
+  struct RockWork *work = Ram_HeapSlots->menuWork;
 
   Task_Remove(TundariaTower_UpdateFallingRocks);
   VramCache_FreeEntry(work->resource);
@@ -1656,11 +1652,11 @@ u32 gFieldEffect_LongScript[] = {
     SC_END,
 };
 
-s16 gTundariaTower_Room6Pillars[] = {
+s16 gTundariaTowerLiftPillarsPillars[] = {
     11, 12, 13, 14, -1,
 };
 
-s16 gTundariaTower_Room7Pillar[] = {
+s16 gTundariaTowerBurstBroochPillar[] = {
     8, -1,
 };
 
@@ -1699,12 +1695,12 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-s16 gTundariaTower_Room5Columns[] = {
+s16 gTundariaTowerIceColumnsColumns[] = {
     8, 7, FLAG_ICE_COLUMN_POUNDED, 9, 7, FLAG_ICE_COLUMN_POUNDED + 1, 10, 7,
     FLAG_ICE_COLUMN_POUNDED + 2, 11, 7, FLAG_ICE_COLUMN_POUNDED + 3, -1,
 };
 
-s16 gTundariaTower_Room6Columns[] = {
+s16 gTundariaTowerLiftPillarsColumns[] = {
     8, 7, FLAG_ICE_COLUMN_POUNDED, 9, 7, FLAG_ICE_COLUMN_POUNDED + 1, 10, 7,
     FLAG_ICE_COLUMN_POUNDED + 2, -1, 0,
 };
@@ -1719,12 +1715,12 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gTundariaTower_Room6Regions[] = {
+u32 gTundariaTowerLiftPillarsExitRegions[] = {
     0x500330, 0x3400210, 0x2200060, 0x6ffff, 0xffff, 0,
     0, 0,
 };
 
-u32 gTundariaTower_Room7Regions[] = {
+u32 gTundariaTowerBurstBroochExitRegions[] = {
     0xf00b0, 0xc000c0, 0xd00021, 0x1ffff, 0xffff, 0,
     0, 0,
 };
@@ -1801,21 +1797,21 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gTundariaTower_Room2Placements[] = {
+struct ActorPlacement gTundariaTowerCenterProngActorPlacements[] = {
     {489, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_EAST, 2, 2},
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gTundariaTower_Room3Placements[] = {
+struct ActorPlacement gTundariaTowerIceSlideActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gTundariaTower_Room4Placements[] = {
-    ACTOR_PLACEMENT(245, FLAG_DJINNI(DJINNI_REFLUX), 7, 424, 0, 536, FACING_WEST, TALK_FACING_PARTY, 0),
+struct ActorPlacement gTundariaTowerRefluxActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_REFLUX), 7, 424, 0, 536, FACING_WEST, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gTundariaTower_Room5Placements[] = {                                             
+struct ActorPlacement gTundariaTowerIceColumnsActorPlacements[] = {                                             
       {406, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},                
       {406, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_SOUTH, 2, 2},                
       {406, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_SOUTH, 2, 2},                
@@ -1823,7 +1819,7 @@ struct ActorPlacement gTundariaTower_Room5Placements[] = {
       {SCENE_TABLE_END},                                                       
   };
 
-struct ActorPlacement gTundariaTower_Room6Placements[] = {                                             
+struct ActorPlacement gTundariaTowerLiftPillarsActorPlacements[] = {                                             
       {406, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},                
       {406, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_SOUTH, 2, 2},                
       {406, CONDITION_ALWAYS, 1, 3, 0, 0, FACING_SOUTH, 2, 2},                
@@ -1834,19 +1830,19 @@ struct ActorPlacement gTundariaTower_Room6Placements[] = {
       {SCENE_TABLE_END},                                                       
   };
 
-struct ActorPlacement gTundariaTower_Room7Placements[] = {
+struct ActorPlacement gTundariaTowerBurstBroochActorPlacements[] = {
     {272, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_SOUTH, 2, 2},
     {SCENE_TABLE_END},
 };
 
-struct Trigger gTundariaTower_Room1Triggers[] = {
+struct Trigger gTundariaTowerEntranceTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_TABLE_END},
 };
 // clang-format on
 
-struct Trigger gTundariaTower_Room2Triggers[] = {
+struct Trigger gTundariaTowerCenterProngTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
@@ -1880,7 +1876,7 @@ struct Trigger gTundariaTower_Room2Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gTundariaTower_Room3Triggers[] = {
+struct Trigger gTundariaTowerIceSlideTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1897,7 +1893,7 @@ struct Trigger gTundariaTower_Room3Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gTundariaTower_Room4Triggers[] = {
+struct Trigger gTundariaTowerRefluxTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
@@ -1911,7 +1907,7 @@ struct Trigger gTundariaTower_Room4Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gTundariaTower_Room5Triggers[] = {
+struct Trigger gTundariaTowerIceColumnsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1935,7 +1931,7 @@ struct Trigger gTundariaTower_Room5Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gTundariaTower_Room6Triggers[] = {
+struct Trigger gTundariaTowerLiftPillarsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1985,7 +1981,7 @@ struct Trigger gTundariaTower_Room6Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gTundariaTower_Room7Triggers[] = {
+struct Trigger gTundariaTowerBurstBroochTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8,
      CONDITION_ALWAYS, EVENT(TundariaTower_LiftPillar)},

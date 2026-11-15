@@ -42,6 +42,7 @@
 #include "system/iwram_call.h"
 #include "system/heap_release.h"
 #include "field/field_sprite.h"
+#include "field/effect_sprite.h"
 #include "text/msg_ids.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
@@ -74,9 +75,7 @@ enum VenusLighthouseEntranceEntrance {
 enum VenusLighthouseEntranceActorId {
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
   ACTOR_ALEX,
-  /// The two birds by the door.
-  // XXX: birds, read from their flight and landing; a render of entrance 9
-  // would settle it.
+  /// The two birds that land by the door and fly off.
   ACTOR_WEST_BIRD,
   ACTOR_EAST_BIRD,
   /// Tolbi's soldiers: the two Alex hurls skyward, the two who flee before
@@ -98,8 +97,6 @@ enum VenusLighthouseEntranceActorId {
 };
 
 struct Actor;
-struct GlowSprite;
-struct GlowState;
 
 void VenusLighthouseEntrance_EmitDust(struct Actor *object, s32 x, s32 y,
                                       s32 z);
@@ -107,8 +104,8 @@ void VenusLighthouseEntrance_StartDust(void);
 void VenusLighthouseEntrance_StopDust(void);
 extern u32 gVenusLighthouseEntrance_BirdLands[];
 
-void EffectSprite_DrawAtWorldPosition(struct GlowSprite *sprite,
-                                      struct GlowState *state);
+void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
+                                      s32 *position);
 
 void VenusLighthouseEntrance_UpdateBlastColumn(void);
 void VenusLighthouseEntrance_UpdateDust(void);
@@ -121,31 +118,19 @@ void VenusLighthouseEntrance_RuffianWaitsForBackup(void);
 
 void VenusLighthouseEntrance_PointToMeetingSpot(void);
 
-/// The dust puffs' work, kept in Ram_HeapSlots' menu runtime while they play.
-struct DustPuffState {
-  u8 unk00[24];
-  s32 frame;
-};
-
-struct DustPuffSprite {
-  u8 unk00[8];
-  u16 tile : 10;
-  u16 attributes : 6;
-  u8 unk0a[30];
-};
-
+/// The dust puffs' work, kept in Ram_HeapSlots' menu runtime while they play:
+/// their pictures, ninety-six puffs each with its place and sprite, and the
+/// next to emit.
 struct DustPuffWork {
-  u8 unk0000[0x800];
-  struct DustPuffState states[96];
-  struct DustPuffSprite sprites[96];
-  u16 unk2180;
-  u16 unk2182;
+  u8 pictures[0x800]; ///< decompressed, then loaded into the VRAM cache
+  struct SparkState particles[96];
+  struct EffectSprite sprites[96];
+  s16 next;     ///< the next puff to emit, taken in turn
+  u16 tileBase; ///< the pictures' first tile
+  s16 resource; ///< their VRAM cache entry
 };
 
 s32 Actor_FallOverWithAnimationById();
-void VenusLighthouseEntrance_InitGlowSprite(struct GlowSprite *sprite,
-                                            s32 width, s32 height, s32 attr,
-                                            s32 tile);
 void Actor_SelectAnimation(struct Actor *actor, s32 mode);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -184,22 +169,8 @@ void VenusLighthouseEntrance_RunWithDustTrail(s32 actor) {
   VenusLighthouseEntrance_StartDust();
   object->update = VenusLighthouseEntrance_TrailDust;
   object->priorityFlags = 0;
-  {
-    s32 a = actor;
-    /* FAKEMATCH(pin): the 96 pinned to r1. */
-    register s32 dx asm("r1") = 96;
-    /* FAKEMATCH(pin): the -96 pinned to r2, the same call's second. */
-    register s32 dz asm("r2") = -96;
-
-    Actor_WalkByAndWaitById(a, dx, dz);
-  }
-  {
-    /* FAKEMATCH(pin): the arguments pinned in order. */
-    register s32 a asm("r0") = actor;
-    s32 dx = -96;
-
-    Actor_WalkByAndWaitById(a, dx, 96);
-  }
+  Actor_WalkByAndWait(actor, 96, -96);
+  Actor_WalkByAndWait(actor, -96, 96);
   object->update = 0;
   object->priorityFlags = 1;
   FieldEvent_Wait(30);
@@ -934,13 +905,13 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   FieldEvent_Wait(10);
   FieldActor_SetSpritePriority(ACTOR_DOUBTING_SOLDIER, 3);
   Actor_SetSpeed(ACTOR_DOUBTING_SOLDIER, 2);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) &= 254;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_DOUBTING_SOLDIER, 456, 424);
   FieldEvent_Wait(1);
   /* FAKEMATCH(dead): an empty once-only block ends CSE's block. */
   do {
   } while (0);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) |= 1;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_DOUBTING_SOLDIER, FACING_SOUTHWEST, 0);
   Actor_SetSpeed(ACTOR_DOUBTING_SOLDIER, 1);
   FieldEvent_Wait(20);
@@ -954,10 +925,10 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Actor_SetSpeed(ACTOR_SOLDIER_CAPTAIN, 1);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_SOLDIER_CAPTAIN)) + 90) &= 254;
+  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_SOLDIER_CAPTAIN, 456, 440);
   FieldEvent_Wait(1);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_SOLDIER_CAPTAIN)) + 90) |= 1;
+  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "Let's go meet them together, shall we?"
@@ -976,14 +947,14 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_DOUBTING_SOLDIER, 0.5);
   Actor_SetSpeed(ACTOR_SOLDIER_CAPTAIN, 0.5);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) &= 254;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_DOUBTING_SOLDIER, 488, 424);
   FieldEvent_Wait(1);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) |= 1;
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_SOLDIER_CAPTAIN)) + 90) &= 254;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_SOLDIER_CAPTAIN, 488, 440);
   FieldEvent_Wait(1);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_SOLDIER_CAPTAIN)) + 90) |= 1;
+  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_ALEX, 456, 432);
   Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 0);
   FieldEvent_Wait(10);
@@ -998,12 +969,12 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_SetAttachedEffect(ACTOR_SOLDIER_CAPTAIN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) &= 254;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_DOUBTING_SOLDIER, 504, 424);
   FieldEvent_Wait(1);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) |= 1;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetPosition(ACTOR_DOUBTING_SOLDIER, 0, 0);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_SOLDIER_CAPTAIN)) + 90) &= 254;
+  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_SOLDIER_CAPTAIN, 504, 440);
   FieldEvent_Wait(1);
   {
@@ -1142,7 +1113,7 @@ void VenusLighthouseEntrance_RuffianWaitsForBackup(void) {
   Actor_SetAnimation(ACTOR_WAITING_RUFFIAN, ANIM_STAND);
   FieldEvent_SetAfterBattleDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE, 99);
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE, 98);
-  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Field_RequestBattleFromEncounterTable(9, 0);
   Event_End();
 }
@@ -1292,10 +1263,13 @@ void VenusLighthouseEntrance_WakeUp(void) {
   Event_End();
 }
 
-struct GlowWork {
-  u8 unk000[0x400];
-  struct GlowSprite sprites[16];
-  struct GlowState states[16];
+/// The rising column's work, kept in Ram_HeapSlots' menu runtime while it
+/// plays: its pictures, sixteen pieces of earth, the actor it lifts and the
+/// blast's effect actor.
+struct BlastColumnWork {
+  u8 pictures[0x400]; ///< decompressed, then loaded into the VRAM cache
+  struct EffectSprite sprites[16];
+  struct SparkState states[16];
   struct Actor *object;
   struct Actor *effect;
   s32 x;
@@ -1310,15 +1284,15 @@ struct GlowWork {
 };
 
 void VenusLighthouseEntrance_UpdateBlastColumn(void) {
-  struct GlowWork *work = Ram_HeapSlots->menuWork;
+  struct BlastColumnWork *work = Ram_HeapSlots->menuWork;
   struct Actor *object = work->object;
   struct Actor *effect = work->effect;
   s32 i, y;
   s32 scale;
   s32 frameStep;
   s32 mask;
-  struct GlowState *state;
-  struct GlowSprite *sprite;
+  struct SparkState *state;
+  struct EffectSprite *sprite;
 
   switch (work->stage) {
   case 0:
@@ -1423,8 +1397,8 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
       state->frame++;
       frameStep = state->frame >> 2;
       mask = 3;
-      sprite->tile = work->tileTop + (frameStep & mask) * 8;
-      EffectSprite_DrawAtWorldPosition(sprite, state);
+      sprite->oam.index = work->tileTop + (frameStep & mask) * 8;
+      EffectSprite_DrawAtWorldPosition(sprite, &state->x);
     }
     if (i <= 15) {
       state = &work->states[i];
@@ -1435,8 +1409,8 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
       state->y +=
           Math_MulQ16(0xfffe0000, Math_Sin(state->frame << 12)) + 0xfffe0000;
       sprite = &work->sprites[i];
-      sprite->tile = work->tile + ((state->frame >> 2) & 3) * 8;
-      EffectSprite_DrawAtWorldPosition(sprite, state);
+      sprite->oam.index = work->tile + ((state->frame >> 2) & 3) * 8;
+      EffectSprite_DrawAtWorldPosition(sprite, &state->x);
       if (work->follow != 0)
         object->y.fixed = state->y;
     }
@@ -1451,11 +1425,11 @@ s32 BattleEffect_GetObjectDepth(struct Actor *actor);
 /// A column of rising earth lifts an actor, holds it, then hurls it off the
 /// top of the screen, and the ground shakes as the column sinks.
 void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
-  struct GlowWork *work = HeapSlot_Alloc(HEAP_SLOT_MENU, 0x860);
+  struct BlastColumnWork *work = HeapSlot_Alloc(HEAP_SLOT_MENU, 0x860);
   struct Actor *actor = Actor_Get(id);
   struct Actor *effect;
-  struct GlowSprite *sprite;
-  struct GlowState *state;
+  struct EffectSprite *sprite;
+  struct SparkState *state;
   s32 resource, tile, i;
   u8 zero = 0; // Holds 0 for its whole life.
 
@@ -1472,11 +1446,11 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   state = work->states;
   sprite = work->sprites;
   for (i = 15; i >= 0;) {
-    VenusLighthouseEntrance_InitGlowSprite(sprite, 8, 8, 0x40000000, tile);
-    sprite->unk1e = BattleEffect_GetObjectDepth(actor) - 2;
-    sprite->priority = BattleEffect_GetObjectPriority(actor);
-    sprite->fullColor = 1;
-    sprite->palette = 0;
+    EffectSprite_Init(sprite, 8, 8, 0x40000000, tile);
+    sprite->depth = BattleEffect_GetObjectDepth(actor) - 2;
+    sprite->oam.priority = BattleEffect_GetObjectPriority(actor);
+    sprite->oam.palette256 = 1;
+    sprite->oam.palette = 0;
     state->frame = -1;
     i--;
     sprite++;
@@ -1489,7 +1463,7 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   Actor_SetSpriteFlags(effect, 0);
   effect->priorityFlags = 2;
   Actor_SetSpriteFlags(actor, 0);
-  ((struct GlowAnimation *)actor->sprite)->angle = 0x4000;
+  ((struct Sprite *)actor->sprite)->rotation = 0x4000;
   actor->x.fixed += -px(12);
   actor->motionFlags = 0;
   work->stage = 0;
@@ -1510,59 +1484,36 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
-void BattleEffect_StepVector3(struct DustPuffState *state, s32 a, s32 b);
+void BattleEffect_StepVector3(struct SparkState *state, s32 a, s32 b);
 
 void VenusLighthouseEntrance_UpdateDust(void) {
   struct DustPuffWork *work = Ram_HeapSlots->menuWork;
-  struct DustPuffState *state = work->states;
-  struct DustPuffSprite *sprite = work->sprites;
+  struct SparkState *state = work->particles;
+  struct EffectSprite *sprite = work->sprites;
   s32 value;
   s32 i;
 
   for (i = 0; i < 96; i++, sprite++, state++) {
     value = state->frame;
     if ((u32)value < 16) {
-      sprite->tile = work->unk2182 + ((value >> 1) & 7) * 8;
-      EffectSprite_DrawAtWorldPosition(sprite, state);
+      sprite->oam.index = work->tileBase + ((value >> 1) & 7) * 8;
+      EffectSprite_DrawAtWorldPosition(sprite, &state->x);
       BattleEffect_StepVector3(state, 64, 0);
       state->frame++;
     }
   }
 }
 
-/* VIEW(venus_lighthouse_entrance): tag struct SparkSprite as struct
- * SparkSprite__venus_lighthouse_entrance; scene/shared.h has another
- * definition; tried with the definition the rest of the object has, it does not
- * compile in tla-ja: games/tla/src/scene/venus_lighthouse_entrance.c:1407:
- * structure has no member named `unk1e'. */
-struct SparkSprite__venus_lighthouse_entrance {
-  u8 unk00[8];
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[20];
-  u16 unk1e;
-  u8 unk20[8];
-};
-
-struct SparkWork {
-  u8 unk0000[0x800];
-  struct SparkState states[96];
-  struct SparkSprite__venus_lighthouse_entrance sprites[96];
-  s16 next;
-  u16 tileBase;
-};
-
 void VenusLighthouseEntrance_EmitDust(struct Actor *source, s32 x, s32 y,
                                       s32 z) {
-  struct SparkWork *work = Ram_HeapSlots->menuWork;
+  struct DustPuffWork *work = Ram_HeapSlots->menuWork;
   s32 angle = Random16();
   s16 *next = &work->next;
-  struct SparkSprite__venus_lighthouse_entrance *sprite = &work->sprites[*next];
-  struct SparkState *state = &work->states[*next];
+  struct EffectSprite *sprite = &work->sprites[*next];
+  struct SparkState *state = &work->particles[*next];
 
-  sprite->priority = BattleEffect_GetObjectPriority(source);
-  sprite->unk1e = BattleEffect_GetObjectDepth(source);
+  sprite->oam.priority = BattleEffect_GetObjectPriority(source);
+  sprite->depth = BattleEffect_GetObjectDepth(source);
   state->frame = 0;
   state->x = x;
   state->y = y;
@@ -1576,85 +1527,41 @@ void VenusLighthouseEntrance_EmitDust(struct Actor *source, s32 x, s32 y,
   *next = *next % 96;
 }
 
-/* VIEW(s26f4): tag struct SparkSprite as struct SparkSprite__s26f4;
- * venus_lighthouse_entrance.c has another definition; tried with the definition
- * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse_entrance.c:1470: structure has no member
- * named `unk1e'. */
-struct SparkSprite__s26f4 {
-  u8 unk00[4];
-  u16 attr0 : 13;
-  u16 fullColor : 1;
-  u16 shape : 2;
-  u16 attr1;
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[20];
-  u16 unk1e;
-  u8 unk20[8];
-};
-
-/* VIEW(s26f4): tag struct SparkWork as struct SparkWork__s26f4;
- * venus_lighthouse_entrance.c has another definition; tried with the definition
- * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse_entrance.c:1467: structure has no member
- * named `resource'. */
-struct SparkWork__s26f4 {
-  u8 unk0000[0x800];
-  struct SparkState states[96];
-  struct SparkSprite__s26f4 sprites[96];
-  u16 unk2180;
-  u16 tileBase;
-  u16 resource;
-};
-
 void VenusLighthouseEntrance_StartDust(void) {
-  struct SparkWork__s26f4 *work = HeapSlot_Alloc(HEAP_SLOT_MENU, 0x2188);
+  struct DustPuffWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct DustPuffWork));
   s32 resource;
   s32 tileBase;
   s32 i;
   struct SparkState *state;
-  struct SparkSprite__s26f4 *sprite;
+  struct EffectSprite *sprite;
 
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_DustPuffA), work);
   resource = VramCache_FindFreeEntry();
   tileBase = Vram_Load(resource, 0x800, work);
   work->tileBase = tileBase;
   work->resource = resource;
-  state = work->states;
+  state = work->particles;
   sprite = work->sprites;
   for (i = 95; i >= 0; i--) {
-    VenusLighthouseEntrance_InitGlowSprite(sprite, 8, 8, 0x40000000, tileBase);
-    sprite->fullColor = 1;
-    sprite->palette = 0;
-    sprite->priority = 0;
-    sprite->unk1e = 240;
+    EffectSprite_Init(sprite, 8, 8, 0x40000000, tileBase);
+    sprite->oam.palette256 = 1;
+    sprite->oam.palette = 0;
+    sprite->oam.priority = 0;
+    sprite->depth = 240;
     state->frame = -1;
     state++;
     sprite++;
   }
   {
     s32 zero = 0;
-    work->unk2180 = zero;
+    work->next = zero;
   }
   Task_AddFrame(VenusLighthouseEntrance_UpdateDust, (s32)(0x480));
 }
 
-/* VIEW(sparks): tag struct SparkWork as struct SparkWork__sparks;
- * venus_lighthouse_entrance.c has another definition; tried with the definition
- * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/venus_lighthouse_entrance.c:1505: structure has no member
- * named `resource'. */
-struct SparkWork__sparks {
-  u8 unk0000[0x2102];
-  u16 tileBase;
-  u8 unk2104[0x80];
-  s16 resource;
-};
-
 void VenusLighthouseEntrance_StopDust(void) {
-  struct SparkWork__sparks *work = Ram_HeapSlots->menuWork;
+  struct DustPuffWork *work = Ram_HeapSlots->menuWork;
 
   FieldTask_Remove(VenusLighthouseEntrance_UpdateDust);
   VramCache_FreeEntry(work->resource);
@@ -1685,34 +1592,36 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gActorPlacements[] = {
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
-                    FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0,
+                    8, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8,
                     FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(92, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 176,
                     FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(92, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 416, 0, 152,
                     FACING_WEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(232, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 408,
-                    FACING_NORTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(232, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 408,
-                    FACING_NORTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(232, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 424,
-                    FACING_NORTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(232, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 440,
-                    FACING_NORTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(232, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 408,
-                    FACING_NORTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 408,
-                    FACING_NORTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(195, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 408,
-                    FACING_NORTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 424,
-                    FACING_NORTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(195, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 440,
-                    FACING_NORTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(187, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 408,
-                    FACING_NORTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424,
+                    0, 408, FACING_NORTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440,
+                    0, 408, FACING_NORTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424,
+                    0, 424, FACING_NORTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440,
+                    0, 440, FACING_NORTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456,
+                    0, 408, FACING_NORTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    328, 0, 408, FACING_NORTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 312, 0, 408, FACING_NORTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    328, 0, 424, FACING_NORTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 312, 0, 440, FACING_NORTHEAST,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    296, 0, 408, FACING_NORTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(93, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 24, 0, 264,
                     FACING_WEST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
@@ -1744,7 +1653,7 @@ u32 gVenusLighthouseEntrance_BirdLands[] = {
     SC_WAIT(1),
     SC_ANIMATION(2),
     SC_WAIT(4),
-    SC_SET(SW_MOTION, 3),
+    SC_SET(SW_MOTION, ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS),
     SC_SET(SW_VELOCITY_Y, 0),
     SC_WAIT(1),
     SC_END,

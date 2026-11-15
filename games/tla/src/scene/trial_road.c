@@ -7,6 +7,7 @@
 
 #include "shared/trial_road.h"
 #include "flags.h"
+#include "djinn_ids.h"
 #include "item_ids.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -48,7 +49,84 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
-void TrialRoad_FightGasp(void) { Field_RequestDjinnBattle(8, 75); }
+/// The actors every stage room places first, numbering the rows of each
+/// stage's table: Moapa, the four blue chests (two on the left path, two on
+/// the right, inner and outer) and Moapa's two guards. A stage's own puzzle
+/// pieces follow from ACTOR_FIRST_STAGE_PIECE.
+enum TrialRoadStageActorId {
+  ACTOR_MOAPA = ACTOR_FIRST_PLACED,
+  ACTOR_LEFT_INNER_CHEST,
+  ACTOR_LEFT_OUTER_CHEST,
+  ACTOR_RIGHT_INNER_CHEST,
+  ACTOR_RIGHT_OUTER_CHEST,
+  ACTOR_WEST_GUARD,
+  ACTOR_EAST_GUARD,
+  ACTOR_FIRST_STAGE_PIECE
+};
+
+/// The log stage's three logs (gTrialRoad_LogStagePlacements): two rolling
+/// east and west, upper and lower, and one rolling north and south east of
+/// them. Kraden, at the summit (gTrialRoad_Room2Placements), after Moapa.
+#define ACTOR_KRADEN (ACTOR_MOAPA + 1)
+
+enum TrialRoadLogStageActorId {
+  ACTOR_UPPER_LOG = ACTOR_FIRST_STAGE_PIECE + 1,
+  ACTOR_LOWER_LOG,
+  ACTOR_EAST_LOG
+};
+
+/// The Pound stage's four pillars (gTrialRoad_PoundStagePlacements), west to
+/// east, in two seesaw pairs: pounding one raises its partner.
+enum TrialRoadPoundStageActorId {
+  ACTOR_WEST_PILLAR = ACTOR_FIRST_STAGE_PIECE + 3,
+  ACTOR_INNER_WEST_PILLAR,
+  ACTOR_INNER_EAST_PILLAR,
+  ACTOR_EAST_PILLAR
+};
+
+/// The crumbling stage's two pillars (gTrialRoad_CrumblingStagePlacements).
+enum TrialRoadCrumblingStageActorId {
+  ACTOR_WEST_CRUMBLING_PILLAR = ACTOR_FIRST_STAGE_PIECE,
+  ACTOR_EAST_CRUMBLING_PILLAR
+};
+
+/// The pillars most stages stand from ACTOR_FIRST_STAGE_PIECE: five, or six
+/// where the torch stage's carry torches; the log stage has one, the block.
+enum TrialRoadPillarActorId {
+  ACTOR_PILLAR_A = ACTOR_FIRST_STAGE_PIECE,
+  ACTOR_PILLAR_B,
+  ACTOR_PILLAR_C,
+  ACTOR_PILLAR_D,
+  ACTOR_PILLAR_E,
+  ACTOR_PILLAR_F
+};
+
+/// The bushes after the pillars: on pillar C in the pillar stage, on pillars A
+/// and B in the bush stage.
+enum { ACTOR_BUSH_A = ACTOR_FIRST_STAGE_PIECE + 5, ACTOR_BUSH_B };
+
+/// The bush on pillar B in the Pound stage, after its four pillars.
+enum { ACTOR_POUND_STAGE_BUSH = ACTOR_EAST_PILLAR + 1 };
+
+/// The bush in the sand stage, after its two sand pieces.
+enum { ACTOR_SAND_STAGE_BUSH = ACTOR_FIRST_STAGE_PIECE + 2 };
+
+/// The pillar at the summit (gTrialRoad_Room2Placements), after Kraden.
+#define ACTOR_PEAK_PILLAR (ACTOR_KRADEN + 1)
+
+/// Gasp, alone in his room (gTrialRoad_Room4Placements).
+enum { ACTOR_GASP = ACTOR_FIRST_PLACED };
+
+/// The fountain stage's three spouts (gTrialRoad_FountainStagePlacements).
+enum TrialRoadFountainStageActorId {
+  ACTOR_WEST_SPOUT = ACTOR_FIRST_STAGE_PIECE + 1,
+  ACTOR_MIDDLE_SPOUT,
+  ACTOR_EAST_SPOUT
+};
+
+void TrialRoad_FightGasp(void) {
+  Field_RequestDjinnBattle(ACTOR_GASP, DJINNI_GASP);
+}
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -104,7 +182,6 @@ s32 TrialRoad_RivalIsAhead(s32 fallback) {
 
 void TrialRoad_TakeStairs(s32 direction) {
   struct TrialRoadState *state = gTrialRoadState;
-  s16 *order = (s16 *)state;
 
   if ((u32)(direction - 1) <= 1) {
     if (state->stage[0] <= 0) {
@@ -135,12 +212,7 @@ void TrialRoad_TakeStairs(s32 direction) {
     if (state->stage[0] > state->leaderBest)
       state->leaderBest = state->stage[0];
   }
-  {
-    /* FAKEMATCH(temporary): the byte offset kept in a local. */
-    s32 offset = (state->stage[0] * 2 + state->mirrored) * 2;
-
-    state->pattern = *(s16 *)((u8 *)order + offset);
-  }
+  state->pattern = state->order[state->stage[0] * 2 + state->mirrored];
 }
 
 /// Trial Road's stage puzzles: the stairs, chests and doors, and the pillars,
@@ -152,14 +224,15 @@ struct Actor;
 struct FieldSprite;
 union FieldObject;
 
-/// A view of the map work's byte 23.
-struct MapWorkByte23 {
+/// The map work's ground effects byte (MapWork.groundEffects), read as its
+/// bits.
+struct MapGroundEffectsView {
   u8 unk00[0x17];
-  u8 bits0 : 2;
+  u8 lowBits : 2;
   // XXX: what bits 2 and 3 select; the map code that reads them would settle
   // it.
-  u8 bits2 : 2;
-  u8 bits4 : 4;
+  u8 middleBits : 2;
+  u8 highBits : 4;
 };
 
 /// The sprite's priority bits, read as the byte that holds them.
@@ -174,24 +247,23 @@ struct EffectSpriteAttributes {
   struct EffectSpriteBits bits;
 };
 
-struct TrialRoadReplay {
-  s16 mode;
-  s16 mirrored;
-  s16 id;
-  s16 point;
-  s16 still;
-  s16 resource;
+/// What the rival does each frame (TrialRoad_MoveRival).
+enum TrialRoadRivalMode {
+  RIVAL_REPLAY = 1,  ///< walks the recorded path
+  RIVAL_RECORD = 2,  ///< records the actor's path
+  RIVAL_LINKED = 3,  ///< stands where the linked player's record puts it
+  RIVAL_MIRROR = 4,  ///< follows the leader mirrored across the course
+  RIVAL_WAITING = 9, ///< the path is done
 };
 
-struct TrialRoadLinkWork {
-  u8 unk00[0xe4];
-  u16 rival;
-  u16 unke6;
-  u16 linkAngle;
-  s16 resource;
-  s32 linkX;
-  s32 linkZ;
-  s16 path[0x1c20];
+/// The rival's state in gSceneState.
+struct TrialRoadReplay {
+  s16 mode; ///< enum TrialRoadRivalMode
+  s16 mirrored;
+  s16 id;       ///< the rival's actor
+  s16 point;    ///< the next x, z pair of the path
+  s16 still;    ///< frames the rival has not moved
+  s16 resource; ///< the recording's resource
 };
 
 /// One queued sprite: the three words Oam_AddSpriteAtDepth adds to OAM.
@@ -199,26 +271,24 @@ struct TrialRoadSprite {
   u32 words[3];
 };
 
-struct TrialRoadLink {
-  u8 unk00[0xd8];
+/// The heap slot TrialRoad_ShowProgress takes for the two parties' progress
+/// display and the rival's recorded path.
+struct TrialRoadLinkWork {
+  struct TrialRoadSprite sprites[18]; ///< the display's queued sprites
   s16 vramEntry;
-  u16 unkda;
-  u8 unkdc[4];
-  u16 unke0;
-  u16 a;
-  u16 b;
-  u8 unke6[6];
-  s32 height;
-  s32 unkf0;
-};
-
-struct TrialRoadControl {
-  s16 state;
-  s16 field02;
-  s16 field04;
-  s16 field06;
-  s16 field08;
-  s16 field0a;
+  s16 fade; ///< 0 hidden to 2 shown, a step a frame
+  s16 scrollX;
+  s16 scrollY;
+  s16 holdFade; ///< nonzero holds the fade at 2
+  s16 leaderId; ///< the actor the first marker follows
+  s16 rivalId;  ///< the second marker's, which the recording replays
+  /// The rival's timer in the link race, beside the far and the near side;
+  /// nothing in the overlay writes them.
+  u16 rivalTimers[2];
+  s16 resource; ///< the recorded path's resource, once decoded
+  s32 originX;  ///< the course's corner the markers measure from
+  s32 originZ;
+  s16 path[0x1c20]; ///< x, z pairs in pixels, 0, 0 ending them
 };
 
 s32 TrialRoad_IsMirrored(void);
@@ -245,31 +315,31 @@ void TrialRoad_JumpAcrossGap(void);
 
 void TrialRoad_JumpMeltedPuddle(void);
 
-void TrialRoad_StepOnPillar18(void);
+void TrialRoad_StepOnWestPillar(void);
 
-void TrialRoad_StepOnPillar19(void);
+void TrialRoad_StepOnInnerWestPillar(void);
 
-void TrialRoad_StepOnPillar20(void);
+void TrialRoad_StepOnInnerEastPillar(void);
 
-void TrialRoad_StepOnPillar21(void);
+void TrialRoad_StepOnEastPillar(void);
 
 void TrialRoad_LandOnPillar(void);
 
 void TrialRoad_CheckCrumblingPillars(void);
 
-void TrialRoad_PushLog16West(void);
+void TrialRoad_PushUpperLogWest(void);
 
-void TrialRoad_PushLog16East(void);
+void TrialRoad_PushUpperLogEast(void);
 
-void TrialRoad_PushLog17West(void);
+void TrialRoad_PushLowerLogWest(void);
 
-void TrialRoad_PushLog17East(void);
+void TrialRoad_PushLowerLogEast(void);
 
-void TrialRoad_PushLog18North(void);
+void TrialRoad_PushEastLogNorth(void);
 
-void TrialRoad_PushLog18South(void);
+void TrialRoad_PushEastLogSouth(void);
 
-void TrialRoad_PushLog18SouthFromRow52(void);
+void TrialRoad_PushEastLogSouthOrClimbDown(void);
 
 void TrialRoad_StartSand(void);
 
@@ -351,12 +421,12 @@ void TrialRoad_SetUpPoolRoom(void);
 
 extern u32 gTrialRoad_RivalRecordings[];
 s32 TrialRoad_RivalIsWaiting(void);
-void TrialRoad_PlayRivalRecording(s32 a);
+void TrialRoad_PlayRivalRecording(s32 resource);
 void TrialRoad_DealStageOrder(u32 seed);
 
 void Map_CopyRawCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
-void TrialRoad_ShowProgress(s32 a, s32 b);
+void TrialRoad_ShowProgress(s32 leaderId, s32 rivalId);
 
 void TrialRoad_OpenLeaderDoor(s32 side, s32 phase);
 
@@ -487,17 +557,17 @@ void TrialRoad_OpenChests(void) {
     Event_SetFlag(state->stage[0] + 897);
   Event_PlaySound(SE_CHEST_OPEN);
   if (state->mirrored == 0) {
-    Actor_SetAnimation(9, 6);
+    Actor_SetAnimation(ACTOR_LEFT_INNER_CHEST, 6);
     Event_SetFlag(FLAG_SCENE_TEMP_85);
     if (found != 0) {
-      Actor_SetAnimation(10, 6);
+      Actor_SetAnimation(ACTOR_LEFT_OUTER_CHEST, 6);
       Event_SetFlag(FLAG_SCENE_TEMP_86);
     }
   } else {
-    Actor_SetAnimation(11, 6);
+    Actor_SetAnimation(ACTOR_RIGHT_INNER_CHEST, 6);
     Event_SetFlag(FLAG_SCENE_TEMP_85);
     if (found != 0) {
-      Actor_SetAnimation(12, 6);
+      Actor_SetAnimation(ACTOR_RIGHT_OUTER_CHEST, 6);
       Event_SetFlag(FLAG_SCENE_TEMP_86);
     }
   }
@@ -636,7 +706,7 @@ void TrialRoad_SetPillarTopLift(s32 id, s32 value) {
 
 /// While the party's render mode is 0, clears the map cell flag under the
 /// object.
-#define DEFINE_TRIAL_ROAD_ON_FOOT(name, call1)                                 \
+#define DEFINE_TRIAL_ROAD_ON_FOOT(name, onFoot)                                \
   void name(s32 a, s32 id) {                                                   \
     struct MainRoutineWork *party = &gMainRoutineWork;                         \
     u8 mode;                                                                   \
@@ -644,7 +714,7 @@ void TrialRoad_SetPillarTopLift(s32 id, s32 value) {
     mode = party->movementMode;                                                \
                                                                                \
     if (mode == 0)                                                             \
-      call1(id);                                                               \
+      onFoot(id);                                                              \
   }
 
 DEFINE_TRIAL_ROAD_ON_FOOT(TrialRoad_UnblockMovedPillar,
@@ -654,7 +724,7 @@ DEFINE_TRIAL_ROAD_ON_FOOT(TrialRoad_UnblockMovedPillar,
 DEFINE_TRIAL_ROAD_ON_FOOT(TrialRoad_BlockMovedPillar, TrialRoad_BlockCellUnder)
 
 void TrialRoad_BlowBushOffLonePillar(void) {
-  OBJECT_BYTE(Actor_GetById(17), 98) = 0;
+  OBJECT_BYTE(Actor_GetById(ACTOR_PILLAR_C), 98) = 0;
   Event_SetFlag(FLAG_AREA_TEMP_07);
 }
 
@@ -678,7 +748,7 @@ void TrialRoad_TrackLeaderOnPillars(void) {
 }
 
 void TrialRoad_JumpAcrossGap(void) {
-  if (Actor_GetById(16)->z.fixed >> 20 == 23)
+  if (Actor_GetById(ACTOR_PILLAR_B)->z.fixed >> 20 == 23)
     Field_TryJumpForward();
   else
     Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0);
@@ -765,18 +835,13 @@ void TrialRoad_RaisePillar(s32 id) {
 }
 
 void TrialRoad_BlowBushOffPoundPillar(void) {
-  OBJECT_BYTE(Actor_GetById(16), 98) = 0;
+  OBJECT_BYTE(Actor_GetById(ACTOR_PILLAR_B), 98) = 0;
   Event_SetFlag(FLAG_AREA_TEMP_39);
 }
 
-/* VIEW(s0218): routine gTrialRoad_PoundPartners as this part declared it; the
- * joined file has another; tried as the definition's extern u32
- * gTrialRoad_PoundPartners[], it does not compile in tla-ja (trial_road.c):
- * games/tla/src/scene/trial_road.c:768: `gTrialRoad_PoundPartners' undeclared
- * (first use in this function). */
-extern const s8
-    gTrialRoad_PoundPartners__s0218[4] __asm__("gTrialRoad_PoundPartners");
-#define gTrialRoad_PoundPartners gTrialRoad_PoundPartners__s0218
+/// The pillar each of the pound stage's four pillars, 18 to 21, raises when
+/// it is pounded down: they go in pairs.
+extern s8 gTrialRoad_PoundPartners[4];
 
 void TrialRoad_CheckPoundedPillarsCovered(s32 a, s32 b) {
   s32 id;
@@ -788,7 +853,8 @@ next:
     s32 x = object->x.fixed >> 20;
     s32 z = object->z.fixed >> 20;
     u8 *covered = &OBJECT_BYTE(
-        Actor_GetById(gTrialRoad_PoundPartners[(id - 18) & 3]), 99);
+        Actor_GetById(gTrialRoad_PoundPartners[(id - ACTOR_WEST_PILLAR) & 3]),
+        99);
     s32 other;
 
     other = 15;
@@ -812,7 +878,7 @@ next:
 }
 
 void TrialRoad_PoundPillar(s32 id, s32 mode, s32 frame) {
-  s32 other = gTrialRoad_PoundPartners[(id - 18) & 3];
+  s32 other = gTrialRoad_PoundPartners[(id - ACTOR_WEST_PILLAR) & 3];
   struct Actor *object = Actor_GetById(id);
   struct Actor *partner = Actor_GetById(other);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -855,13 +921,21 @@ void TrialRoad_PoundPillar(s32 id, s32 mode, s32 frame) {
     partner->scaleY = Q16_ONE;
 }
 
-void TrialRoad_PoundPillar18(s32 a, s32 b) { TrialRoad_PoundPillar(18, a, b); }
+void TrialRoad_PoundWestPillar(s32 a, s32 b) {
+  TrialRoad_PoundPillar(ACTOR_WEST_PILLAR, a, b);
+}
 
-void TrialRoad_PoundPillar19(s32 a, s32 b) { TrialRoad_PoundPillar(19, a, b); }
+void TrialRoad_PoundInnerWestPillar(s32 a, s32 b) {
+  TrialRoad_PoundPillar(ACTOR_INNER_WEST_PILLAR, a, b);
+}
 
-void TrialRoad_PoundPillar20(s32 a, s32 b) { TrialRoad_PoundPillar(20, a, b); }
+void TrialRoad_PoundInnerEastPillar(s32 a, s32 b) {
+  TrialRoad_PoundPillar(ACTOR_INNER_EAST_PILLAR, a, b);
+}
 
-void TrialRoad_PoundPillar21(s32 a, s32 b) { TrialRoad_PoundPillar(21, a, b); }
+void TrialRoad_PoundEastPillar(s32 a, s32 b) {
+  TrialRoad_PoundPillar(ACTOR_EAST_PILLAR, a, b);
+}
 
 void TrialRoad_StepOnSeesawPillar(s32 id, s32 other, s32 flag, s32 side) {
   struct Actor *object = Actor_GetById(id);
@@ -894,20 +968,24 @@ grow:
   Event_End();
 }
 
-void TrialRoad_StepOnPillar18(void) {
-  TrialRoad_StepOnSeesawPillar(18, 19, 0x335, 1);
+void TrialRoad_StepOnWestPillar(void) {
+  TrialRoad_StepOnSeesawPillar(ACTOR_WEST_PILLAR, ACTOR_INNER_WEST_PILLAR,
+                               0x335, 1);
 }
 
-void TrialRoad_StepOnPillar19(void) {
-  TrialRoad_StepOnSeesawPillar(19, 18, 0x335, 0);
+void TrialRoad_StepOnInnerWestPillar(void) {
+  TrialRoad_StepOnSeesawPillar(ACTOR_INNER_WEST_PILLAR, ACTOR_WEST_PILLAR,
+                               0x335, 0);
 }
 
-void TrialRoad_StepOnPillar20(void) {
-  TrialRoad_StepOnSeesawPillar(20, 21, 0x337, 1);
+void TrialRoad_StepOnInnerEastPillar(void) {
+  TrialRoad_StepOnSeesawPillar(ACTOR_INNER_EAST_PILLAR, ACTOR_EAST_PILLAR,
+                               0x337, 1);
 }
 
-void TrialRoad_StepOnPillar21(void) {
-  TrialRoad_StepOnSeesawPillar(21, 20, 0x337, 0);
+void TrialRoad_StepOnEastPillar(void) {
+  TrialRoad_StepOnSeesawPillar(ACTOR_EAST_PILLAR, ACTOR_INNER_EAST_PILLAR,
+                               0x337, 0);
 }
 
 void TrialRoad_LandOnPillar(void) {
@@ -925,14 +1003,16 @@ void TrialRoad_CheckCrumblingPillars(void) {
   MagmaRockInside_CheckCrumblingStep(gTrialRoad_CrumblingPillars);
 }
 
-void TrialRoad_CrumblePillar15(s32 phase) {
+void TrialRoad_CrumbleWestPillar(s32 phase) {
   if (phase == 3)
-    TrialRoad_CrumblePillar(gTrialRoad_CrumblingPillars, 15);
+    TrialRoad_CrumblePillar(gTrialRoad_CrumblingPillars,
+                            ACTOR_WEST_CRUMBLING_PILLAR);
 }
 
-void TrialRoad_CrumblePillar16(s32 phase) {
+void TrialRoad_CrumbleEastPillar(s32 phase) {
   if (phase == 3)
-    TrialRoad_CrumblePillar(gTrialRoad_CrumblingPillars, 16);
+    TrialRoad_CrumblePillar(gTrialRoad_CrumblingPillars,
+                            ACTOR_EAST_CRUMBLING_PILLAR);
 }
 
 // Blocks the three cells through an object's cell on layers 0 and 2 (collision
@@ -984,7 +1064,7 @@ void TrialRoad_BlockLogs(void) {
 }
 
 s32 TrialRoad_IsLogBlocked(s32 x, s32 z) {
-  struct Actor *object = Actor_GetById(15);
+  struct Actor *object = Actor_GetById(ACTOR_PILLAR_A);
   struct TrialRoadMapWork *map =
       (struct TrialRoadMapWork *)Ram_HeapSlots->mapGrid;
   u8 *cells;
@@ -1086,25 +1166,37 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   TrialRoad_BlockLogs();
 }
 
-void TrialRoad_PushLog16West(void) { TrialRoad_PushLog(16, -1, 0, 0); }
+void TrialRoad_PushUpperLogWest(void) {
+  TrialRoad_PushLog(ACTOR_UPPER_LOG, -1, 0, 0);
+}
 
-void TrialRoad_PushLog16East(void) { TrialRoad_PushLog(16, 1, 0, 0); }
+void TrialRoad_PushUpperLogEast(void) {
+  TrialRoad_PushLog(ACTOR_UPPER_LOG, 1, 0, 0);
+}
 
-void TrialRoad_PushLog17West(void) { TrialRoad_PushLog(17, -1, 0, 0); }
+void TrialRoad_PushLowerLogWest(void) {
+  TrialRoad_PushLog(ACTOR_LOWER_LOG, -1, 0, 0);
+}
 
-void TrialRoad_PushLog17East(void) { TrialRoad_PushLog(17, 1, 0, 0); }
+void TrialRoad_PushLowerLogEast(void) {
+  TrialRoad_PushLog(ACTOR_LOWER_LOG, 1, 0, 0);
+}
 
-void TrialRoad_PushLog18North(void) { TrialRoad_PushLog(18, 0, -1, 1); }
+void TrialRoad_PushEastLogNorth(void) {
+  TrialRoad_PushLog(ACTOR_EAST_LOG, 0, -1, 1);
+}
 
-void TrialRoad_PushLog18South(void) { TrialRoad_PushLog(18, 0, 1, 1); }
+void TrialRoad_PushEastLogSouth(void) {
+  TrialRoad_PushLog(ACTOR_EAST_LOG, 0, 1, 1);
+}
 
-void TrialRoad_PushLog18SouthFromRow52(void) {
+void TrialRoad_PushEastLogSouthOrClimbDown(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->movementMode == 2)
     Field_ClimbDown();
   else
-    TrialRoad_PushLog(18, 0, 1, 1);
+    TrialRoad_PushLog(ACTOR_EAST_LOG, 0, 1, 1);
 }
 
 void TrialRoad_UncoverSpout(s32 id, s32 a, s32 frame) {
@@ -1122,21 +1214,21 @@ void TrialRoad_UncoverSpout(s32 id, s32 a, s32 frame) {
   }
 }
 
-void TrialRoad_UncoverSpout16(s32 a, s32 b) {
-  TrialRoad_UncoverSpout(16, a, b);
+void TrialRoad_UncoverWestSpout(s32 a, s32 b) {
+  TrialRoad_UncoverSpout(ACTOR_WEST_SPOUT, a, b);
 }
 
-void TrialRoad_UncoverSpout17(s32 a, s32 b) {
-  TrialRoad_UncoverSpout(17, a, b);
+void TrialRoad_UncoverMiddleSpout(s32 a, s32 b) {
+  TrialRoad_UncoverSpout(ACTOR_MIDDLE_SPOUT, a, b);
 }
 
-void TrialRoad_UncoverSpout18(s32 a, s32 b) {
-  TrialRoad_UncoverSpout(18, a, b);
+void TrialRoad_UncoverEastSpout(s32 a, s32 b) {
+  TrialRoad_UncoverSpout(ACTOR_EAST_SPOUT, a, b);
 }
 
 void TrialRoad_StandOnBlock(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct Actor *block = Actor_GetById(15);
+  struct Actor *block = Actor_GetById(ACTOR_PILLAR_A);
 
   if (block->x.fixed >> 20 == leader->x.fixed >> 20 &&
       block->z.fixed >> 20 == leader->z.fixed >> 20) {
@@ -1167,7 +1259,6 @@ void TrialRoad_RevealVine(void) {
 #undef DEFINE_TRIAL_ROAD_OPEN_DOOR
 #undef FIELD_AT
 #undef DEFINE_TRIAL_ROAD_ON_FOOT
-#undef gTrialRoad_PoundPartners
 // Trial Road's effect spawner and the sand stage's stream.
 
 extern const s32 *gFieldEffect_DurationScripts[];
@@ -1284,8 +1375,8 @@ void TrialRoad_CutMadPlantBushes(void) {
   Cyclone_CopyTouchedCells_(68, 6, 1, 21, 13, 64, 64);
   if (!Event_GetFlag(0x9b9)) {
     Import_MadPlantLeapAtLeader(249, 72, 152);
-    ((struct MainRoutineWork254 *)&gMainRoutineWork)->value = 0x19b9;
-    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+    gMainRoutineWork.pendingDjinni = IF_FLAG_SET(0x9b9);
+    Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     Field_RequestBattleFromEncounterTable(106, 4);
   }
 }
@@ -1338,7 +1429,7 @@ void TrialRoad_ChallengeMoapa(void) {
   } while (0);
   Event_SetAfterBattleDestination(SCENE_TRIAL_ROAD_SUMMIT, 4);
   Event_SetDefeatDestination(SCENE_TRIAL_ROAD_SUMMIT, 5);
-  Field_RequestBattleFromEncounterTable(13, 4 - count);
+  Field_RequestBattleFromEncounterTable(ACTOR_WEST_GUARD, 4 - count);
 }
 
 /// When the object stands in column 8, sets flag 0x9fc, stops its motion and
@@ -1375,96 +1466,96 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 void TrialRoad_SetUpPillarStage(void) {
   if (!Event_GetFlag(FLAG_AREA_TEMP_07))
-    OBJECT_BYTE(Actor_GetById(17), 98) = 1;
+    OBJECT_BYTE(Actor_GetById(ACTOR_PILLAR_C), 98) = 1;
   else
-    Actor_SetPosition(20, 0, 0);
-  TrialRoad_AddPillarTop(15);
-  TrialRoad_AddPillarTop(16);
-  TrialRoad_AddPillarTop(17);
-  TrialRoad_AddPillarTop(18);
-  TrialRoad_AddPillarTop(19);
-  TrialRoad_BlockCellUnder(16);
-  TrialRoad_BlockCellUnder(17);
-  TrialRoad_BlockCellUnder(18);
-  TrialRoad_BlockCellUnder(19);
+    Actor_SetPosition(ACTOR_BUSH_A, 0, 0);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_A);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_B);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_C);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_D);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_E);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_B);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_C);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_D);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_E);
   Task_Add(TrialRoad_TrackLeaderOnPillars, TASK_PASS_VBLANK);
 }
 
 void TrialRoad_SetUpTorchStage(void) {
-  TrialRoad_AddPillarTop(15);
-  TrialRoad_AddPillarTop(16);
-  TrialRoad_AddPillarTop(17);
-  TrialRoad_AddPillarTop(18);
-  TrialRoad_AddPillarTop(19);
-  TrialRoad_AddPillarTop(20);
-  TrialRoad_BlockCellUnder(15);
-  TrialRoad_BlockCellUnder(16);
-  TrialRoad_BlockCellUnder(17);
-  TrialRoad_BlockCellUnder(18);
-  TrialRoad_BlockCellUnder(19);
-  TrialRoad_BlockCellUnder(20);
-  OBJECT_BYTE(Actor_GetById(17), 98) = 1;
-  OBJECT_BYTE(Actor_GetById(18), 98) = 1;
-  OBJECT_BYTE(Actor_GetById(19), 98) = 1;
-  OBJECT_BYTE(Actor_GetById(20), 98) = 1;
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_A);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_B);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_C);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_D);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_E);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_F);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_A);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_B);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_C);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_D);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_E);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_F);
+  OBJECT_BYTE(Actor_GetById(ACTOR_PILLAR_C), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(ACTOR_PILLAR_D), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(ACTOR_PILLAR_E), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(ACTOR_PILLAR_F), 98) = 1;
   if (!Event_GetFlag(FLAG_SCENE_TEMP_14))
-    Actor_SetAnimation(17, 5);
+    Actor_SetAnimation(ACTOR_PILLAR_C, 5);
   else
-    TrialRoad_SetPillarTopLift(17, -16);
+    TrialRoad_SetPillarTopLift(ACTOR_PILLAR_C, -16);
   if (!Event_GetFlag(FLAG_SCENE_TEMP_15))
-    Actor_SetAnimation(18, 5);
+    Actor_SetAnimation(ACTOR_PILLAR_D, 5);
   else
-    TrialRoad_SetPillarTopLift(18, -16);
+    TrialRoad_SetPillarTopLift(ACTOR_PILLAR_D, -16);
   if (!Event_GetFlag(FLAG_SCENE_TEMP_16))
-    Actor_SetAnimation(19, 5);
+    Actor_SetAnimation(ACTOR_PILLAR_E, 5);
   else
-    TrialRoad_SetPillarTopLift(19, -16);
+    TrialRoad_SetPillarTopLift(ACTOR_PILLAR_E, -16);
   if (!Event_GetFlag(FLAG_SCENE_TEMP_17))
-    Actor_SetAnimation(20, 5);
+    Actor_SetAnimation(ACTOR_PILLAR_F, 5);
   else
-    TrialRoad_SetPillarTopLift(20, -16);
+    TrialRoad_SetPillarTopLift(ACTOR_PILLAR_F, -16);
 }
 
 void TrialRoad_SetUpBushPillarStage(void) {
   if (!Event_GetFlag(FLAG_AREA_TEMP_27))
-    OBJECT_BYTE(Actor_GetById(15), 98) = 1;
+    OBJECT_BYTE(Actor_GetById(ACTOR_PILLAR_A), 98) = 1;
   else
-    Actor_SetPosition(20, 0, 0);
+    Actor_SetPosition(ACTOR_BUSH_A, 0, 0);
   if (!Event_GetFlag(FLAG_AREA_TEMP_28))
-    OBJECT_BYTE(Actor_GetById(16), 98) = 1;
+    OBJECT_BYTE(Actor_GetById(ACTOR_PILLAR_B), 98) = 1;
   else
-    Actor_SetPosition(21, 0, 0);
-  TrialRoad_AddPillarTop(15);
-  TrialRoad_AddPillarTop(16);
-  TrialRoad_AddPillarTop(17);
-  TrialRoad_AddPillarTop(18);
-  TrialRoad_AddPillarTop(19);
-  TrialRoad_BlockCellUnder(15);
-  TrialRoad_BlockCellUnder(16);
-  TrialRoad_BlockCellUnder(17);
-  TrialRoad_BlockCellUnder(18);
-  TrialRoad_BlockCellUnder(19);
+    Actor_SetPosition(ACTOR_BUSH_B, 0, 0);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_A);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_B);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_C);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_D);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_E);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_A);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_B);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_C);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_D);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_E);
 }
 
 void TrialRoad_SetUpPoundStage(void) {
-  OBJECT_BYTE(Actor_GetById(18), 98) = 1;
-  OBJECT_BYTE(Actor_GetById(19), 98) = 1;
-  OBJECT_BYTE(Actor_GetById(20), 98) = 1;
-  OBJECT_BYTE(Actor_GetById(21), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(ACTOR_WEST_PILLAR), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(ACTOR_INNER_WEST_PILLAR), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(ACTOR_INNER_EAST_PILLAR), 98) = 1;
+  OBJECT_BYTE(Actor_GetById(ACTOR_EAST_PILLAR), 98) = 1;
   if (!Event_GetFlag(FLAG_AREA_TEMP_39))
-    OBJECT_BYTE(Actor_GetById(16), 98) = 1;
+    OBJECT_BYTE(Actor_GetById(ACTOR_PILLAR_B), 98) = 1;
   else
-    Actor_SetPosition(22, 0, 0);
-  TrialRoad_AddPillarTop(15);
-  TrialRoad_AddPillarTop(16);
-  TrialRoad_AddPillarTop(17);
-  TrialRoad_AddPillarTop(18);
-  TrialRoad_AddPillarTop(19);
-  TrialRoad_AddPillarTop(20);
+    Actor_SetPosition(ACTOR_POUND_STAGE_BUSH, 0, 0);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_A);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_B);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_C);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_D);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_E);
+  TrialRoad_AddPillarTop(ACTOR_PILLAR_F);
   TrialRoad_AddPillarTop(21);
-  TrialRoad_BlockCellUnder(15);
-  TrialRoad_BlockCellUnder(16);
-  TrialRoad_BlockCellUnder(17);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_A);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_B);
+  TrialRoad_BlockCellUnder(ACTOR_PILLAR_C);
   if (!Event_GetFlag(FLAG_AREA_TEMP_35)) {
     TrialRoad_RaisePillar(18);
     TrialRoad_LowerPillar(19);
@@ -1491,17 +1582,12 @@ void TrialRoad_SetUpCrumblingStage(void) {
 void TrialRoad_SetUpLogStage(void) {
   MapGrid_CopyCellAttributes(11, 22, 11, 8, 11, 64);
   MapGrid_CopyCellAttributes(79, 22, 11, 8, 79, 64);
-  OBJECT_BYTE(Actor_GetById(16), 98) = 1;
-  OBJECT_BYTE(Actor_GetById(17), 98) = 1;
-  OBJECT_BYTE(Actor_GetById(18), 98) = 1;
-  {
-    /* FAKEMATCH(pin): the zero pinned to r6. */
-    register s32 clear asm("r6") = 0;
-
-    Actor_GetById(16)->collisionFlags = clear;
-    Actor_GetById(17)->collisionFlags = clear;
-    Actor_GetById(18)->collisionFlags = clear;
-  }
+  Actor_GetById(ACTOR_UPPER_LOG)->riseCounter = 1;
+  Actor_GetById(ACTOR_LOWER_LOG)->riseCounter = 1;
+  Actor_GetById(ACTOR_EAST_LOG)->riseCounter = 1;
+  Actor_GetById(ACTOR_UPPER_LOG)->collisionFlags = 0;
+  Actor_GetById(ACTOR_LOWER_LOG)->collisionFlags = 0;
+  Actor_GetById(ACTOR_EAST_LOG)->collisionFlags = 0;
   TrialRoad_BlockLogs();
   TrialRoad_AddPillarTop(15);
   TrialRoad_BlockCellUnder(15);
@@ -1565,18 +1651,18 @@ void TrialRoad_SetUpFountainStage(void) {
   fountain->riseAt = 120;
   fountain->fallAt = 150;
   if (!Event_GetFlag(FLAG_AREA_TEMP_63))
-    Actor_SetPosition(16, 0, 0);
+    Actor_SetPosition(ACTOR_WEST_SPOUT, 0, 0);
   else
     TrialRoad_OpenSpoutCell(16);
   if (!Event_GetFlag(FLAG_AREA_TEMP_64))
-    Actor_SetPosition(17, 0, 0);
+    Actor_SetPosition(ACTOR_MIDDLE_SPOUT, 0, 0);
   else
     TrialRoad_OpenSpoutCell(17);
   if (!Event_GetFlag(FLAG_AREA_TEMP_65))
-    Actor_SetPosition(18, 0, 0);
+    Actor_SetPosition(ACTOR_EAST_SPOUT, 0, 0);
   else
     TrialRoad_OpenSpoutCell(18);
-  ((struct MapWorkByte23 *)Ram_HeapSlots->mapGrid)->bits2 = 1;
+  ((struct MapGroundEffectsView *)Ram_HeapSlots->mapGrid)->middleBits = 1;
   TrialRoad_AddPillarTop(15);
   TrialRoad_BlockCellUnder(15);
 }
@@ -1587,13 +1673,13 @@ void TrialRoad_SetUpSandStage(void) {
   if (!Event_GetFlag(FLAG_AREA_TEMP_74))
     MapGrid_CopyCellAttributes(18, 21, 1, 1, 19, 21);
   else
-    Actor_SetPosition(17, 0, 0);
+    Actor_SetPosition(ACTOR_SAND_STAGE_BUSH, 0, 0);
 }
 
 void TrialRoad_SetUpCave(void) {}
 
 void TrialRoad_GaspFlees(void) {
-  struct Actor *partner = Actor_GetById(8);
+  struct Actor *partner = Actor_GetById(ACTOR_GASP);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 dx;
   s32 dz;
@@ -1622,27 +1708,21 @@ void TrialRoad_GaspFlees(void) {
   partner->groundHeight = 0;
   partner->collisionFlags = 1;
   partner->velocityY = px(10);
-  Actor_SetScript(8, gTrialRoad_GaspHopScript);
+  Actor_SetScript(ACTOR_GASP, gTrialRoad_GaspHopScript);
   y = partner->y.fixed;
   Actor_SetMoveTarget(partner, px(344), y, px(264));
   Event_SetFlag(FLAG_SCENE_TEMP_88);
 }
 
-/* VIEW(s15a8): routine gTrialRoad_PaletteCycleRunning as this part declared it;
- * the joined file has another; tried as the definition's extern LAST_DATA u32
- * gTrialRoad_PaletteCycleRunning[], it does not compile in tla-ja
- * (trial_road.c): games/tla/src/scene/trial_road.c:1637:
- * `gTrialRoad_PaletteCycleRunning' undeclared (first use in this function). */
-extern s32 gTrialRoad_PaletteCycleRunning__s15a8 __asm__(
-    "gTrialRoad_PaletteCycleRunning");
-#define gTrialRoad_PaletteCycleRunning gTrialRoad_PaletteCycleRunning__s15a8
+/// Whether the palette cycle runs; the frame it has reached.
+extern s32 gTrialRoad_PaletteCycleRunning;
 
-/// Unless flag 123 is set, readies object 8: before flag 0x288 it raises it
-/// 0x88000 with motion 5, after it grounds it with motion 3; then schedules
+/// Unless Gasp is caught, readies him: before FLAG_SCENE_TEMP_88 he hovers 8.5
+/// pixels up with motion 5, after it he stands with motion 3; then schedules
 /// TrialRoad_GaspFlees.
 void TrialRoad_SetUpPoolRoom(void) {
-  if (!Event_GetFlag(123)) {
-    struct Actor *object = Actor_GetById(8);
+  if (!Event_GetFlag(FLAG_DJINNI(DJINNI_GASP))) {
+    struct Actor *object = Actor_GetById(ACTOR_GASP);
     s32 started = Event_GetFlag(FLAG_SCENE_TEMP_88);
     u8 *flags = &object->motionFlags;
 
@@ -1661,14 +1741,7 @@ void TrialRoad_SetPaletteCycleRunning(s32 value) {
   gTrialRoad_PaletteCycleRunning = value;
 }
 
-/* VIEW(s15a8): routine gTrialRoad_PaletteCycleFrame as this part declared it;
- * the joined file has another; tried as the definition's extern LAST_DATA s32
- * gTrialRoad_PaletteCycleFrame[], it does not compile in tla-ja (trial_road.c):
- * games/tla/src/scene/trial_road.c:1651: `gTrialRoad_PaletteCycleFrame'
- * undeclared (first use in this function). */
-extern s32
-    gTrialRoad_PaletteCycleFrame__s15a8 __asm__("gTrialRoad_PaletteCycleFrame");
-#define gTrialRoad_PaletteCycleFrame gTrialRoad_PaletteCycleFrame__s15a8
+extern s32 gTrialRoad_PaletteCycleFrame;
 
 void PaletteCycle_StepAt(void) {
   u16 colors[16];
@@ -1753,20 +1826,13 @@ void TrialRoad_SetUpPeak(void) {
   }
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
   TrialRoad_StartPaletteCycle(1);
-  TrialRoad_AddPillarTop(10);
+  TrialRoad_AddPillarTop(ACTOR_PEAK_PILLAR);
   if (Event_GetFlag(0x9fc))
-    Actor_SetPosition(10, 136, 328);
+    Actor_SetPosition(ACTOR_PEAK_PILLAR, 136, 328);
 }
 
-/* VIEW(s1fc4): variable gTrialRoad_StageSetUps as extern s32 (*const
- * gTrialRoad_StageSetUps[])(void); the definition has void
- * (*gTrialRoad_StageSetUps[])(void); called through the void type, the call's
- * result register moves 2 of 84 instructions of Scene_Initialize in tla-en;
- * tried as the rest of the object declares it, it does not compile in tla-ja
- * (trial_road.c): games/tla/src/scene/trial_road.c:1757:
- * `gTrialRoad_StageSetUps' undeclared (first use in this function). */
-extern s32 (*const gTrialRoad_StageSetUps__s1fc4[])(void) __asm__(
-    "gTrialRoad_StageSetUps");
+/// Each stage pattern's set-up, by the pattern's low three bits.
+extern void (*gTrialRoad_StageSetUps[])(void);
 
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
@@ -1779,7 +1845,8 @@ s32 Scene_Initialize(void) {
     if (entrance <= 7) {
       Event_SetFlag(FLAG_RETREAT_BLOCKED);
       Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 64;
-      gTrialRoad_StageSetUps__s1fc4[pattern & 7]();
+      /* FAKEMATCH(signature): the set-up called as returning s32. */
+      ((s32 (*)(void))gTrialRoad_StageSetUps[pattern & 7])();
     } else if (entrance == 55) {
       TrialRoad_ShowTraps();
     }
@@ -1844,16 +1911,16 @@ void TrialRoad_UpdateRival(void) {
             state->order[state->stage[1] * 2 + (s16)(state->mirrored ^ 1)];
 
         TrialRoad_PlayRivalRecording(gTrialRoad_RivalRecordings[pattern & 7]);
-        Actor_GetById(8)->groundHeight = 0;
-        Actor_GetById(8)->y.fixed = 0;
+        Actor_GetById(ACTOR_MOAPA)->groundHeight = 0;
+        Actor_GetById(ACTOR_MOAPA)->y.fixed = 0;
       } else {
-        Actor_SetPosition(8, 0, 0);
+        Actor_SetPosition(ACTOR_MOAPA, 0, 0);
       }
       state->rivalTimer = 0;
     }
   }
   {
-    u8 *kind = &Actor_GetById(8)->spriteStorageKind;
+    u8 *kind = &Actor_GetById(ACTOR_MOAPA)->spriteStorageKind;
 
     if (state->stage[0] == state->stage[1])
       *kind = 1;
@@ -1870,33 +1937,33 @@ void TrialRoad_UpdateRival(void) {
     case 601:
       Sound_Play(SE_CHEST_OPEN);
       if (state->mirrored != 0) {
-        Actor_SetAnimationById(9, 6);
+        Actor_SetAnimationById(ACTOR_LEFT_INNER_CHEST, 6);
         if (state->rivalTimer > 600)
-          Actor_SetAnimationById(10, 6);
+          Actor_SetAnimationById(ACTOR_LEFT_OUTER_CHEST, 6);
       } else {
-        Actor_SetAnimationById(11, 6);
+        Actor_SetAnimationById(ACTOR_RIGHT_INNER_CHEST, 6);
         if (state->rivalTimer > 600)
-          Actor_SetAnimationById(12, 6);
+          Actor_SetAnimationById(ACTOR_RIGHT_OUTER_CHEST, 6);
       }
       break;
     case 655:
       Sound_Play(SE_CHEST_CLOSE);
       if (state->mirrored != 0)
-        Actor_SetAnimationById(10, 5);
+        Actor_SetAnimationById(ACTOR_LEFT_OUTER_CHEST, 5);
       else
-        Actor_SetAnimationById(12, 5);
+        Actor_SetAnimationById(ACTOR_RIGHT_OUTER_CHEST, 5);
       break;
     case 653:
     case 708:
-      Actor_GetById(8)->facing = FACING_NORTH;
+      Actor_GetById(ACTOR_MOAPA)->facing = FACING_NORTH;
       break;
     case 50:
     case 710:
       Sound_Play(SE_CHEST_CLOSE);
       if (state->mirrored != 0)
-        Actor_SetAnimationById(9, 5);
+        Actor_SetAnimationById(ACTOR_LEFT_INNER_CHEST, 5);
       else
-        Actor_SetAnimationById(11, 5);
+        Actor_SetAnimationById(ACTOR_RIGHT_INNER_CHEST, 5);
       break;
     case 70:
     case 730:
@@ -1913,7 +1980,7 @@ extern s8 gTrialRoad_DemoSceneryStages[];
 extern s8 gTrialRoad_SceneryStages[];
 
 struct Unit *Unit_Get(u32 unitId);
-void TrialRoad_StartRival(s32 a);
+void TrialRoad_StartRival(s32 mirrored);
 
 /// Places `layer` `column` cells into the map: its offset (column << 20), its
 /// cells and terrain from that column on, and its position from the view.
@@ -1972,7 +2039,6 @@ s32 Scene_PrepareMap(void) {
         GameFlag_Set(FLAG_AREA_TEMP_80);
       }
       {
-        /* FAKEMATCH(temporary): side, for both the store and its flip. */
         s16 side = (entrance - 1) & 1;
 
         state->mirrored = side;
@@ -1980,12 +2046,11 @@ s32 Scene_PrepareMap(void) {
         state->stage[1] = 3;
         state->leaderBest = 4;
         state->rivalBest = 4;
-        side ^= 1;
         {
-          /* FAKEMATCH(temporary): index. */
-          s32 index = side + 6;
+          // The rival runs stage 3 on the other side of the course.
+          s32 rivalSlot = 3 * 2 + (side ^ 1);
 
-          value = state->order[index];
+          value = state->order[rivalSlot];
         }
       }
       TrialRoad_PlayRivalRecording((s32)gTrialRoad_RivalRecordings[value & 7]);
@@ -2022,10 +2087,10 @@ s32 Scene_PrepareMap(void) {
         SET_LAYER(34, x1);
         layer = &map->layers[2];
         SET_LAYER(68, x2);
-        Actor_SetSpriteColor(Actor_GetById(9), 3);
-        Actor_SetSpriteColor(Actor_GetById(10), 3);
-        Actor_SetSpriteColor(Actor_GetById(11), 3);
-        Actor_SetSpriteColor(Actor_GetById(12), 3);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_LEFT_INNER_CHEST), 3);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_LEFT_OUTER_CHEST), 3);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_RIGHT_INNER_CHEST), 3);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_RIGHT_OUTER_CHEST), 3);
         Map_CopyRawCellsRect(0, 12, 1, 21, 0, 13);
         Map_CopyRawCellsRect(x1, 12, 1, 21, x1, 13);
         Map_CopyRawCellsRect(x2, 12, 1, 21, x2, 13);
@@ -2039,12 +2104,12 @@ s32 Scene_PrepareMap(void) {
         Map_CopyRawCellsRect(px + 42, row, 13, 21, x1 + 1, 13);
         Map_CopyRawCellsRect(px + 84, row, 13, 21, x2 + 1, 13);
         i = 0;
-      hideUnused55:
+      hide_unused:
         if (gTrialRoad_DemoSceneryStages[i] != value)
           Actor_SetPosition(i + 64, 0, 0);
         i++;
         if (i <= 9)
-          goto hideUnused55;
+          goto hide_unused;
         MapGrid_CenterOnFollowedPoint();
       } else {
         s32 x1;
@@ -2077,15 +2142,15 @@ s32 Scene_PrepareMap(void) {
           Map_CopyRawCellsRect(24, 33, 10, 10, 24, 34);
           Map_CopyRawCellsRect(58, 33, 10, 10, 58, 34);
           Map_CopyRawCellsRect(92, 33, 10, 10, 92, 34);
-          Actor_SetPosition(9, 40, 152);
-          Actor_SetPosition(10, 24, 152);
-          Actor_SetPosition(11, 184, 152);
-          Actor_SetPosition(12, 200, 152);
+          Actor_SetPosition(ACTOR_LEFT_INNER_CHEST, 40, 152);
+          Actor_SetPosition(ACTOR_LEFT_OUTER_CHEST, 24, 152);
+          Actor_SetPosition(ACTOR_RIGHT_INNER_CHEST, 184, 152);
+          Actor_SetPosition(ACTOR_RIGHT_OUTER_CHEST, 200, 152);
         }
-        Actor_SetSpriteColor(Actor_GetById(9), 3);
-        Actor_SetSpriteColor(Actor_GetById(10), 3);
-        Actor_SetSpriteColor(Actor_GetById(11), 3);
-        Actor_SetSpriteColor(Actor_GetById(12), 3);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_LEFT_INNER_CHEST), 3);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_LEFT_OUTER_CHEST), 3);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_RIGHT_INNER_CHEST), 3);
+        Actor_SetSpriteColor(Actor_GetById(ACTOR_RIGHT_OUTER_CHEST), 3);
         destinationY = 13;
         value = state->pattern;
         px = gTrialRoad_StageMapCells[value][0];
@@ -2267,7 +2332,7 @@ void TrialRoad_ReachPeakFirst(void) {
   Event_PlaySound(SE_ITEM_BREAK);
   wait(20);
   TrialRoad_PlaceActor(8, 344, 296, 0xc000);
-  object = Actor_GetById(8);
+  object = Actor_GetById(ACTOR_MOAPA);
   object->speedLimit = px(1);
   object->acceleration = px(1) / 2;
   object->motionFlags = 0;
@@ -2299,30 +2364,30 @@ void TrialRoad_ReachPeakFirst(void) {
                       px(264));
   FieldActor_WaitForMove(object);
   wait(6);
-  Actor_MoveToObject(13, 8);
-  Actor_MoveToObject(14, 8);
-  Actor_SetSpeed(8, 1);
-  Actor_SetSpeed(13, 1);
-  Actor_SetSpeed(14, 1);
-  Actor_WalkTo(8, TrialRoad_MirrorCellX(36), 264);
-  Actor_WalkTo(13, TrialRoad_MirrorCellX(37), 248);
-  Actor_WalkTo(14, TrialRoad_MirrorCellX(37), 280);
-  Actor_WaitForMoveById(8);
-  Actor_FaceDirection(8, TrialRoad_MirrorAngle(0x8000), 0);
-  Actor_WaitForMoveById(13);
-  Actor_FaceDirection(13, TrialRoad_MirrorAngle(0x8000), 0);
-  Actor_WaitForMoveById(14);
-  Actor_FaceDirection(14, TrialRoad_MirrorAngle(0x8000), 0);
+  Actor_MoveToObject(ACTOR_WEST_GUARD, 8);
+  Actor_MoveToObject(ACTOR_EAST_GUARD, 8);
+  Actor_SetSpeed(ACTOR_MOAPA, 1);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 1);
+  Actor_SetSpeed(ACTOR_EAST_GUARD, 1);
+  Actor_WalkTo(ACTOR_MOAPA, TrialRoad_MirrorCellX(36), 264);
+  Actor_WalkTo(ACTOR_WEST_GUARD, TrialRoad_MirrorCellX(37), 248);
+  Actor_WalkTo(ACTOR_EAST_GUARD, TrialRoad_MirrorCellX(37), 280);
+  Actor_WaitForMoveById(ACTOR_MOAPA);
+  Actor_FaceDirection(ACTOR_MOAPA, TrialRoad_MirrorAngle(FACING_WEST), 0);
+  Actor_WaitForMoveById(ACTOR_WEST_GUARD);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, TrialRoad_MirrorAngle(FACING_WEST), 0);
+  Actor_WaitForMoveById(ACTOR_EAST_GUARD);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, TrialRoad_MirrorAngle(FACING_WEST), 0);
   Event_SetMessageId((s32)MsgTrialRoadSwiftChallenge);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
+  FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   // "You were quite swift! You may prove a challenge yet!"
-  Event_ShowMessage(8, 0);
-  Actor_SetAnimationAndWait(8, 3);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
+  Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
   // "However, just because you're fast doesn't mean you're strong...."
-  Event_ShowMessage(8, 0);
-  Actor_RunRepeatedMotion(8, 2);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
+  Actor_RunRepeatedMotion(ACTOR_MOAPA, 2);
   // "Let the battle begin!"
-  Event_ShowMessage(8, 0);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
@@ -2332,17 +2397,17 @@ void TrialRoad_ReachPeakFirst(void) {
   Actor_SetSpeed(ACTOR_JENNA, 1.9);
   Actor_SetSpeed(ACTOR_SHEBA, 1.7);
   Actor_SetSpeed(ACTOR_PIERS, 1.8);
-  Actor_SetSpeed(8, 2);
-  Actor_SetSpeed(13, 1.9);
-  Actor_SetSpeed(14, 1.7);
+  Actor_SetSpeed(ACTOR_MOAPA, 2);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 1.9);
+  Actor_SetSpeed(ACTOR_EAST_GUARD, 1.7);
   Actor_WalkBy(ACTOR_FELIX, TrialRoad_MirrorOffset(3), 0);
-  Actor_WalkBy(8, TrialRoad_MirrorOffset(-3), 0);
+  Actor_WalkBy(ACTOR_MOAPA, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
   Actor_WalkBy(ACTOR_JENNA, TrialRoad_MirrorOffset(3), 0);
-  Actor_WalkBy(13, TrialRoad_MirrorOffset(-3), 0);
+  Actor_WalkBy(ACTOR_WEST_GUARD, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
   Actor_WalkBy(ACTOR_PIERS, TrialRoad_MirrorOffset(3), 0);
-  Actor_WalkBy(14, TrialRoad_MirrorOffset(-3), 0);
+  Actor_WalkBy(ACTOR_EAST_GUARD, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
   Actor_WalkBy(ACTOR_SHEBA, TrialRoad_MirrorOffset(3), 0);
   wait(1);
@@ -2375,15 +2440,15 @@ void TrialRoad_ReachPeakSecond(void) {
   Actor_FaceDirection(ACTOR_SHEBA, TrialRoad_MirrorAngle(0), 0);
   FieldCamera_WaitForArrival();
   Event_SetMessageId((s32)MsgTrialRoadSlowArrival);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
+  FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 10);
   // "You may have been slow, but you made it through Trial Road to the..."
-  Event_ShowMessage(8, 0);
-  Actor_SetAnimationAndWait(8, 3);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
+  Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
   // "Well, then... The time is nigh for us to decide who is stronger!"
-  Event_ShowMessage(8, 0);
-  Actor_RunRepeatedMotion(8, 2);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
+  Actor_RunRepeatedMotion(ACTOR_MOAPA, 2);
   // "Let the battle begin!"
-  Event_ShowMessage(8, 0);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
@@ -2393,17 +2458,17 @@ void TrialRoad_ReachPeakSecond(void) {
   Actor_SetSpeed(ACTOR_JENNA, 1.9);
   Actor_SetSpeed(ACTOR_SHEBA, 1.7);
   Actor_SetSpeed(ACTOR_PIERS, 1.8);
-  Actor_SetSpeed(8, 2);
-  Actor_SetSpeed(13, 1.9);
-  Actor_SetSpeed(14, 1.7);
+  Actor_SetSpeed(ACTOR_MOAPA, 2);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 1.9);
+  Actor_SetSpeed(ACTOR_EAST_GUARD, 1.7);
   Actor_WalkBy(ACTOR_FELIX, TrialRoad_MirrorOffset(3), 0);
-  Actor_WalkBy(8, TrialRoad_MirrorOffset(-3), 0);
+  Actor_WalkBy(ACTOR_MOAPA, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
   Actor_WalkBy(ACTOR_JENNA, TrialRoad_MirrorOffset(3), 0);
-  Actor_WalkBy(13, TrialRoad_MirrorOffset(-3), 0);
+  Actor_WalkBy(ACTOR_WEST_GUARD, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
   Actor_WalkBy(ACTOR_PIERS, TrialRoad_MirrorOffset(3), 0);
-  Actor_WalkBy(14, TrialRoad_MirrorOffset(-3), 0);
+  Actor_WalkBy(ACTOR_EAST_GUARD, TrialRoad_MirrorOffset(-3), 0);
   wait(1);
   Actor_WalkBy(ACTOR_SHEBA, TrialRoad_MirrorOffset(3), 0);
   wait(1);
@@ -2424,45 +2489,45 @@ void TrialRoad_BeatMoapa(void) {
   TrialRoad_PlaceActor(8, 272, 264, 0x4000);
   TrialRoad_PlaceActor(13, 288, 248, 0x4000);
   TrialRoad_PlaceActor(14, 288, 280, 0x4000);
-  Actor_SetAnimation(8, 6);
-  Actor_SetAnimation(13, 6);
-  Actor_SetAnimation(14, 6);
+  Actor_SetAnimation(ACTOR_MOAPA, 6);
+  Actor_SetAnimation(ACTOR_WEST_GUARD, 6);
+  Actor_SetAnimation(ACTOR_EAST_GUARD, 6);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(30);
   Event_SetMessageId((s32)MsgTrialRoadHeroesProven);
-  Actor_StartRepeatedMotion(13, 2);
+  Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 2);
   wait(4);
-  Actor_StartRepeatedMotion(14, 2);
+  Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 2);
   wait(10);
-  Actor_RunRepeatedMotion(8, 2);
+  Actor_RunRepeatedMotion(ACTOR_MOAPA, 2);
   // "All right, all right. You've proven your strength, and you are..."
-  Event_ShowMessage(8, 0);
-  Actor_SetAnimation(8, 7);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
+  Actor_SetAnimation(ACTOR_MOAPA, 7);
   Event_Wait(15);
-  Actor_SetAnimation(13, 7);
+  Actor_SetAnimation(ACTOR_WEST_GUARD, 7);
   Event_Wait(10);
-  Actor_SetAnimation(14, 7);
+  Actor_SetAnimation(ACTOR_EAST_GUARD, 7);
   Event_Wait(5);
-  Actor_SetAnimation(8, 1);
+  Actor_SetAnimation(ACTOR_MOAPA, 1);
   Event_Wait(15);
-  Actor_FaceDirection(8, TrialRoad_MirrorAngle(0x8000), 0);
-  Actor_SetAnimation(13, 1);
+  Actor_FaceDirection(ACTOR_MOAPA, TrialRoad_MirrorAngle(FACING_WEST), 0);
+  Actor_SetAnimation(ACTOR_WEST_GUARD, 1);
   Event_Wait(10);
-  Actor_FaceDirection(13, TrialRoad_MirrorAngle(0x8000), 0);
-  Actor_SetAnimation(14, 1);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, TrialRoad_MirrorAngle(FACING_WEST), 0);
+  Actor_SetAnimation(ACTOR_EAST_GUARD, 1);
   Event_Wait(5);
-  Actor_FaceDirection(14, TrialRoad_MirrorAngle(0x8000), 0);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, TrialRoad_MirrorAngle(FACING_WEST), 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
   // "As we promised, you will receive the Hover Jade, and we will take..."
-  Event_ShowMessage(8, 0);
-  Actor_SetSpeed(8, 1);
-  Actor_WalkTo(8, TrialRoad_MirrorCellX(32), 264);
-  Actor_FaceEachOther(9, ACTOR_PIERS, 0);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
+  Actor_SetSpeed(ACTOR_MOAPA, 1);
+  Actor_WalkTo(ACTOR_MOAPA, TrialRoad_MirrorCellX(32), 264);
+  Actor_FaceEachOther(ACTOR_KRADEN, ACTOR_PIERS, 0);
   Actor_FaceEachOther(ACTOR_JENNA, ACTOR_SHEBA, 0);
-  Actor_WaitForMoveById(8);
-  Actor_FaceActor(9, ACTOR_FELIX, 0);
+  Actor_WaitForMoveById(ACTOR_MOAPA);
+  Actor_FaceActor(ACTOR_KRADEN, ACTOR_FELIX, 0);
   Actor_FaceActor(ACTOR_PIERS, ACTOR_FELIX, 0);
   Actor_FaceActor(ACTOR_SHEBA, ACTOR_FELIX, 0);
   Actor_FaceActor(ACTOR_JENNA, ACTOR_FELIX, 0);
@@ -2470,30 +2535,29 @@ void TrialRoad_BeatMoapa(void) {
   PartyInventory_Discard(65);
   Party_GiveItem(ITEM_HOVER_JADE, 0);
   Actor_FaceActor(ACTOR_FELIX, 8, 0);
-  OBJECT_BYTE(Actor_GetById(8), 0x5a) &= ~1;
-  Actor_WalkToAndWait(8, TrialRoad_MirrorCellX(35), 264);
+  Actor_GetById(ACTOR_MOAPA)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkToAndWait(ACTOR_MOAPA, TrialRoad_MirrorCellX(35), 264);
   Event_Wait(1);
-  /* FAKEMATCH(signature): the byte typed as a whole-byte bit-field. */
-  ((struct ActorSolid *)Actor_GetById(8))->solid |= 1;
+  Actor_GetById(ACTOR_MOAPA)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(20);
-  FieldActor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 10);
+  FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 10);
   // "After many years, the vow that Hoabna made to Yegelos has at last..."
-  Event_ShowMessage(8, 0);
-  Actor_FaceDirectionAndWait(8, TrialRoad_MirrorAngle(0));
-  Actor_FaceActor(13, 8, 0);
-  Actor_FaceActor(14, 8, 0);
-  Actor_SetAnimationAndWait(8, 3);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
+  Actor_FaceDirectionAndWait(ACTOR_MOAPA, TrialRoad_MirrorAngle(0));
+  Actor_FaceActor(ACTOR_WEST_GUARD, 8, 0);
+  Actor_FaceActor(ACTOR_EAST_GUARD, 8, 0);
+  Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
   // "I'm tired now. I'll be back in the Shaman Village resting."
-  Event_ShowMessage(8, 0);
-  Actor_SetAnimation(13, 3);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
+  Actor_SetAnimation(ACTOR_WEST_GUARD, 3);
   wait(3);
-  Actor_SetAnimationAndWait(14, 3);
+  Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
   Actor_FaceActor(ACTOR_FELIX, 9, 0);
   Actor_FaceActor(ACTOR_PIERS, 9, 0);
   Actor_FaceActor(ACTOR_JENNA, 9, 0);
   Actor_FaceActor(ACTOR_SHEBA, 9, 0);
   // "I'm sure you must be exhausted as well. Let's go back to the village..."
-  Event_ShowMessage(9, 0);
+  Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_SetAnimation(ACTOR_FELIX, ANIM_NOD);
   wait(2);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
@@ -2527,9 +2591,9 @@ void TrialRoad_LoseToMoapa(void) {
   Event_WaitTransitionFrames();
   Event_Wait(30);
   Event_SetMessageId((s32)MsgTrialRoadLeaveVillage);
-  Actor_SetAnimationAndWait(8, 3);
+  Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
   // "You've lost. Now leave Shaman village."
-  Event_ShowMessage(8, 0);
+  Event_ShowMessage(ACTOR_MOAPA, 0);
   Actor_StartRepeatedMotion(ACTOR_FELIX, 2);
   wait(1);
   Actor_StartRepeatedMotion(ACTOR_SHEBA, 2);
@@ -2549,7 +2613,7 @@ void TrialRoad_ShowTraps(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 1016);
-  Actor_SetPosition(8, 1016, 1016);
+  Actor_SetPosition(ACTOR_MOAPA, 1016, 1016);
   for (i = 9; i < 80; i++) {
     struct Actor *object = Actor_GetById(i);
 
@@ -2557,8 +2621,10 @@ void TrialRoad_ShowTraps(void) {
       object->x.fixed -= px(144);
   }
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightEntersScript);
-  Actor_SetMovementTypeById(14, gTrialRoad_RightKnightEntersScript);
+  Actor_SetMovementTypeById(ACTOR_WEST_GUARD,
+                            gTrialRoad_LeftKnightEntersScript);
+  Actor_SetMovementTypeById(ACTOR_EAST_GUARD,
+                            gTrialRoad_RightKnightEntersScript);
   Event_StartScreenTransition();
   Event_Wait(20);
   FieldCamera_SetSpeed(2);
@@ -2571,114 +2637,118 @@ void TrialRoad_ShowTraps(void) {
   FieldCamera_MoveTo(120, CAMERA_KEEP, 120, 1);
   Event_SetMessageId((s32)MsgTrialRoadTrapInstructions);
   // "The room is filled with traps and snares. Use the power of Contigo..."
-  Event_ShowMessageAndWait(8, 0);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
   FieldCamera_WaitForArrival();
   FieldCamera_MoveTo(216, CAMERA_KEEP, 120, 1);
   FieldCamera_WaitForArrival();
   // "This road has four doors. To open them, you will need to place items..."
-  Event_ShowMessageAndWait(8, 0);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
   // "Why?"
   Event_ShowMessageAndWait(ACTOR_FELIX, 0);
-  Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightToChestScript);
-  Actor_WaitForScriptEndById(13);
-  Actor_SetAnimationById(13, 1);
+  Actor_SetMovementTypeById(ACTOR_WEST_GUARD,
+                            gTrialRoad_LeftKnightToChestScript);
+  Actor_WaitForScriptEndById(ACTOR_WEST_GUARD);
+  Actor_SetAnimationById(ACTOR_WEST_GUARD, 1);
   Event_Wait(10);
-  Actor_SetSpeed(13, 0.25);
-  OBJECT_BYTE(Actor_GetById(13), 0x5a) &= ~1;
-  Actor_WalkByAndWaitById(13, 0, 8);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 0.25);
+  Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkByAndWaitById(ACTOR_WEST_GUARD, 0, 8);
   Event_Wait(1);
-  OBJECT_BYTE(Actor_GetById(13), 0x5a) |= 1;
+  Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(20);
-  Actor_SetSpeed(13, 2);
-  Actor_SetAnimationById(13, 5);
-  Actor_SetDestinationOffset(13, 0, -40);
-  Actor_WaitForMoveById(13);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 2);
+  Actor_SetAnimationById(ACTOR_WEST_GUARD, 5);
+  Actor_SetDestinationOffset(ACTOR_WEST_GUARD, 0, -40);
+  Actor_WaitForMoveById(ACTOR_WEST_GUARD);
   Sound_Play(SE_CURSE);
   MapGrid_SetShake(2, 4, 1);
-  Actor_GetById(13)->velocityY = px(4);
+  Actor_GetById(ACTOR_WEST_GUARD)->velocityY = px(4);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  OBJECT_BYTE(Actor_GetById(13), 0x5a) &= ~1;
-  Actor_WalkByAndWaitById(13, 0, 16);
+  Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkByAndWaitById(ACTOR_WEST_GUARD, 0, 16);
   Event_Wait(1);
-  ((struct ActorSolid *)Actor_GetById(13))->solid |= 1;
+  Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(60);
-  Actor_FaceDirectionById(13, FACING_SOUTH, 0);
+  Actor_FaceDirectionById(ACTOR_WEST_GUARD, FACING_SOUTH, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(13, 4);
+  Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, 4);
   // "The door is triggered only when the treasure chests are filled to..."
-  Event_ShowMessageAndWait(8, 0);
-  Actor_FaceDirection(13, FACING_NORTHWEST, 0);
-  Actor_SetAnimationAndWait(13, 3);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTHWEST, 0);
+  Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, 3);
   Event_Wait(10);
-  Actor_SetSpeed(13, 1);
-  Actor_WalkByAndWait(13, -16, -16);
-  Actor_FaceDirection(13, FACING_WEST, 0);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 1);
+  Actor_WalkByAndWait(ACTOR_WEST_GUARD, -16, -16);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_WEST, 0);
   Sound_Play(SE_CHEST_OPEN);
-  Actor_SetAnimationById(9, 6);
+  Actor_SetAnimationById(ACTOR_LEFT_INNER_CHEST, 6);
   Event_Wait(30);
   // "Try putting heavier items, like weapons and tools, into the chests..."
-  Event_ShowMessageAndWait(8, 0);
-  Actor_WalkToAndWaitById(13, 200, 168);
-  Actor_FaceDirection(13, FACING_NORTH, 0);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
+  Actor_WalkToAndWaitById(ACTOR_WEST_GUARD, 200, 168);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTH, 0);
   Event_Wait(40);
   Sound_Play(SE_CHEST_CLOSE);
-  Actor_SetAnimationById(9, 5);
+  Actor_SetAnimationById(ACTOR_LEFT_INNER_CHEST, 5);
   Event_Wait(20);
   Sound_Play(SE_ITEM_BREAK);
   MapGrid_CopyCellsLayered(127, 3, 1, 2, 48, 3);
   Map_CopyCellAttributeRect(0, 127, 1, 1, 14, 8);
   Event_Wait(20);
-  Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightLeavesScript);
-  Actor_WaitForScriptEndById(13);
+  Actor_SetMovementTypeById(ACTOR_WEST_GUARD,
+                            gTrialRoad_LeftKnightLeavesScript);
+  Actor_WaitForScriptEndById(ACTOR_WEST_GUARD);
   Sound_Play(SE_MAP_EXIT);
   // "If you reach the door after your opponents do, you will be at a..."
-  Event_ShowMessageAndWait(8, 0);
-  Actor_SetMovementTypeById(14, gTrialRoad_RightKnightToChestsScript);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
+  Actor_SetMovementTypeById(ACTOR_EAST_GUARD,
+                            gTrialRoad_RightKnightToChestsScript);
   FieldCamera_MoveTo(328, CAMERA_KEEP, 120, 1);
   FieldCamera_WaitForArrival();
   // "You see, it will take twice the weight to open the doors."
-  Event_ShowMessageAndWait(8, 0);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
   // "Stand on the switch, and the number of chests you need to fill will..."
-  Event_ShowMessageAndWait(8, 0);
-  Actor_FaceDirection(14, FACING_NORTHEAST, 0);
-  Actor_SetAnimationAndWait(14, 3);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_NORTHEAST, 0);
+  Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
   Event_Wait(10);
-  Actor_SetSpeed(14, 1);
-  Actor_WalkByAndWait(14, 16, -16);
-  Actor_FaceDirectionById(14, FACING_EAST, 0);
+  Actor_SetSpeed(ACTOR_EAST_GUARD, 1);
+  Actor_WalkByAndWait(ACTOR_EAST_GUARD, 16, -16);
+  Actor_FaceDirectionById(ACTOR_EAST_GUARD, FACING_EAST, 0);
   Sound_Play(SE_CHEST_OPEN);
-  Actor_SetAnimationById(11, 6);
-  Actor_SetAnimationById(12, 6);
+  Actor_SetAnimationById(ACTOR_RIGHT_INNER_CHEST, 6);
+  Actor_SetAnimationById(ACTOR_RIGHT_OUTER_CHEST, 6);
   Event_Wait(30);
-  Actor_WalkToAndWait(14, 350, 168);
-  Actor_FaceDirection(14, FACING_NORTH, 0);
+  Actor_WalkToAndWait(ACTOR_EAST_GUARD, 350, 168);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_NORTH, 0);
   Event_Wait(40);
   Sound_Play(SE_CHEST_CLOSE);
-  Actor_SetAnimationById(11, 5);
+  Actor_SetAnimationById(ACTOR_RIGHT_INNER_CHEST, 5);
   Event_Wait(40);
-  Actor_WalkToAndWait(14, 364, 168);
-  Actor_FaceDirectionById(14, FACING_NORTH, 0);
+  Actor_WalkToAndWait(ACTOR_EAST_GUARD, 364, 168);
+  Actor_FaceDirectionById(ACTOR_EAST_GUARD, FACING_NORTH, 0);
   Event_Wait(40);
   Sound_Play(SE_CHEST_CLOSE);
-  Actor_SetAnimationById(12, 5);
+  Actor_SetAnimationById(ACTOR_RIGHT_OUTER_CHEST, 5);
   Event_Wait(20);
   Sound_Play(SE_ITEM_BREAK);
   MapGrid_CopyCellsLayered(127, 3, 1, 2, 53, 3);
   Map_CopyCellAttributeRect(0, 127, 1, 1, 19, 8);
   Event_Wait(30);
-  Actor_FaceDirectionById(14, FACING_NORTHWEST, 0);
+  Actor_FaceDirectionById(ACTOR_EAST_GUARD, FACING_NORTHWEST, 0);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(14, 3);
+  Actor_SetAnimationAndWait(ACTOR_EAST_GUARD, 3);
   // "If you are last to each of the four doors, you will lose eight items..."
-  Event_ShowMessageAndWait(8, 0);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
   FieldCamera_MoveTo(408, CAMERA_KEEP, 120, 1);
   FieldCamera_WaitForArrival();
   // "If Trial Road proves too much for you, press this button."
-  Event_ShowMessageAndWait(8, 0);
-  Actor_SetMovementTypeById(14, gTrialRoad_RightKnightLeavesScript);
-  Actor_WaitForScriptEndById(14);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
+  Actor_SetMovementTypeById(ACTOR_EAST_GUARD,
+                            gTrialRoad_RightKnightLeavesScript);
+  Actor_WaitForScriptEndById(ACTOR_EAST_GUARD);
   // "This ends the battle, though. A true hero would not surrender so easily."
-  Event_ShowMessageAndWait(8, 0);
+  Event_ShowMessageAndWait(ACTOR_MOAPA, 0);
   Import_EventSetExitRequest(10);
 }
 
@@ -3021,7 +3091,7 @@ void TrialRoad_StepOnTrap(const u16 *table) {
   if (Field_TryJumpForward() != 0)
     return;
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  partner = Actor_GetById(8);
+  partner = Actor_GetById(ACTOR_MOAPA);
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
@@ -3041,15 +3111,15 @@ void TrialRoad_StepOnTrap(const u16 *table) {
       TrialRoad_TakePlaceOf(partner, trap);
       wait(1);
       Sound_Play(SE_CHEST_CLOSE);
-      Actor_SetSpriteColor(Actor_GetById(8), 7);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 7);
       wait(2);
       Actor_SelectAnimation(partner, 0);
       Actor_CopyGraphics(id, 9);
-      Actor_SetSpriteColor(Actor_GetById(8), 0);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 0);
       wait(2);
-      Actor_SetSpriteColor(Actor_GetById(8), 7);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 7);
       wait(4);
-      Actor_SetSpriteColor(Actor_GetById(8), 0);
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_MOAPA), 0);
       MagmaRockInside_SpawnRubble(0);
       TrialRoad_TakePlaceOf(trap, partner);
       wait(1);
@@ -3113,10 +3183,7 @@ void TrialRoad_DriftRubble(union FieldObject *object) {
   effect->velocity.x = velocityX - velocityX / 18;
   effect->velocity.z = velocityZ - velocityZ / 16;
   {
-    /* FAKEMATCH(temporary): the x scale rate read into a block temporary. */
-    s32 rate = effect->scaleRateX;
-
-    effect->scaleX += rate;
+    effect->scaleX += effect->scaleRateX;
   }
   sprite = effect->sprite;
   effect->scaleY += effect->scaleRateY;
@@ -3143,7 +3210,7 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
 
   do {
     {
-      /* FAKEMATCH(temporary): y held in a local. */
+      // Each piece starts 0 to 13 pixels lower than the leader.
       s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
 
       effect = (struct FieldEffect *)Import_ActorCreate(
@@ -3282,7 +3349,7 @@ void TrialRoad_WaitForBalanceState(void) {
 void TrialRoad_MoveRival(void) {
   struct TrialRoadLinkWork *work =
       (struct TrialRoadLinkWork *)Ram_HeapSlots->trialRoadLink;
-  struct TrialRoadReplay *state = &gSceneState;
+  struct TrialRoadReplay *state = (struct TrialRoadReplay *)gSceneState;
   struct Actor *rival = Actor_GetById(state->id);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 x, z, turn, dx, dz;
@@ -3290,7 +3357,7 @@ void TrialRoad_MoveRival(void) {
 
   if (rival == 0)
     return;
-  if (state->mode == 4) {
+  if (state->mode == RIVAL_MIRROR) {
     x = leader->x.fixed;
     z = leader->z.fixed;
     if ((u32)(z - 0x1000000) > 0x1300000)
@@ -3316,7 +3383,7 @@ void TrialRoad_MoveRival(void) {
       Actor_SelectAnimation(rival, 1);
     else
       Actor_SelectAnimation(rival, 5);
-  } else if (state->mode == 3) {
+  } else if (state->mode == RIVAL_LINKED) {
     s32 player;
     s16 *signature;
     s32 angle, link, ok, partner;
@@ -3333,18 +3400,18 @@ void TrialRoad_MoveRival(void) {
     link = st >> 8;
     ok = st & 0xff;
     if (GameFlag_Get(dz = 529) && link != 0) {
-      state->mode = 9;
+      state->mode = RIVAL_WAITING;
       Actor_SelectAnimation(rival, 1);
-      if (work->linkX < rival->x.fixed)
-        x = work->linkX + 0xc0000;
+      if (work->originX < rival->x.fixed)
+        x = work->originX + 0xc0000;
       else
-        x = work->linkX - 0xc0000;
+        x = work->originX - 0xc0000;
       if (!GameFlag_Get(FLAG_SCENE_TEMP_12)) {
-        z = work->linkZ + 0x100000;
-        rival->timer = work->linkAngle;
+        z = work->originZ + 0x100000;
+        rival->timer = work->rivalTimers[1];
       } else {
-        z = work->linkZ - 0x100000;
-        rival->timer = work->unke6;
+        z = work->originZ - 0x100000;
+        rival->timer = work->rivalTimers[0];
       }
       rival->acceleration = px(1) / 4;
       rival->speedLimit = px(1);
@@ -3372,7 +3439,7 @@ void TrialRoad_MoveRival(void) {
     rival->facing = angle;
     rival->z.fixed = z << 16;
     Actor_SelectAnimation(rival, ok);
-  } else if (state->mode == 1) {
+  } else if (state->mode == RIVAL_REPLAY) {
     if (state->resource != work->resource) {
       Decompress_TaggedLz(Resource_GetTableEntry(state->resource), work->path);
       work->resource = state->resource;
@@ -3382,7 +3449,7 @@ void TrialRoad_MoveRival(void) {
     if (!GameFlag_Get(260))
       state->point += 2;
     if (x == 0 && z == 0) {
-      state->mode = 9;
+      state->mode = RIVAL_WAITING;
       return;
     }
     x <<= 16;
@@ -3413,7 +3480,7 @@ void TrialRoad_MoveRival(void) {
       Actor_SelectAnimation(rival, 1);
     else
       Actor_SelectAnimation(rival, 5);
-  } else if (state->mode == 2) {
+  } else if (state->mode == RIVAL_RECORD) {
     x = rival->x.fixed >> 16;
     z = rival->z.fixed >> 16;
     work->path[state->point] = x;
@@ -3425,33 +3492,14 @@ void TrialRoad_MoveRival(void) {
 
       work->path[state->point] = 0;
       work->path[(s16)next] = 0;
-      state->id = work->rival;
+      state->id = work->rivalId;
       state->point = 0;
-      state->mode = 1;
+      state->mode = RIVAL_REPLAY;
     }
   }
 }
 
 // next object the overlay links, and the overlay's data.
-
-/* VIEW(s51a0): tag struct TrialRoadLinkWork as struct TrialRoadLinkWork__s51a0;
- * s15a8.c has another definition; tried with the definition the rest of the
- * object has, it does not compile in tla-ja (trial_road.c):
- * games/tla/src/scene/trial_road.c:3447: structure has no member named
- * `vramEntry'. */
-struct TrialRoadLinkWork__s51a0 {
-  u32 oam[54];
-  s16 vramEntry;
-  s16 fade;
-  s16 scrollX;
-  s16 scrollY;
-  s16 unke0;
-  s16 a;
-  s16 b;
-  u8 unke6[6];
-  s32 originX;
-  s32 originZ;
-};
 
 extern const u8 gTrialRoad_ProgressPicture[];
 
@@ -3503,7 +3551,7 @@ static inline void *TrialRoadLink_AllocPicture(void) {
 /// the two watched actors, projected at 1/16 scale from their positions and the
 /// course side.
 void TrialRoad_DrawProgress(void) {
-  struct TrialRoadLinkWork__s51a0 *work = Ram_HeapSlots->trialRoadLink;
+  struct TrialRoadLinkWork *work = Ram_HeapSlots->trialRoadLink;
   u32 *cursor = (u32 *)work;
   struct TrialRoadSprite *entry = (struct TrialRoadSprite *)work;
   s16 *vramEntry = &work->vramEntry;
@@ -3517,7 +3565,7 @@ void TrialRoad_DrawProgress(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor;
 
-  if (work->unke0 != 0) {
+  if (work->holdFade != 0) {
     work->fade = 2;
   } else if (GameFlag_Get(FLAG_MENU_OPEN) || event->psynergy != 0) {
     if (work->fade > 0)
@@ -3564,12 +3612,12 @@ void TrialRoad_DrawProgress(void) {
   }
   if ((gFrameCount & 15) < 5)
     return;
-  actor = Actor_Lookup(work->a);
+  actor = Actor_Lookup(work->leaderId);
   if (actor != NULL) {
     MARKER(+work->fade * 6 + work->scrollX - 19,
            -work->fade * 6 - work->scrollX + 232, 0, 10);
   }
-  actor = Actor_Lookup(work->b);
+  actor = Actor_Lookup(work->rivalId);
   if (actor == NULL || actor->x.fixed == 0)
     return;
   {
@@ -3581,38 +3629,38 @@ void TrialRoad_DrawProgress(void) {
   }
 }
 
-void TrialRoad_ShowProgress(s32 a, s32 b) {
-  struct TrialRoadLink *link =
-      HeapSlot_AllocEwram(HEAP_SLOT_TRIAL_ROAD_LINK, 0x3934);
+void TrialRoad_ShowProgress(s32 leaderId, s32 rivalId) {
+  struct TrialRoadLinkWork *link = HeapSlot_AllocEwram(
+      HEAP_SLOT_TRIAL_ROAD_LINK, sizeof(struct TrialRoadLinkWork));
   void *buffer = Heap_AllocEwram(576);
   s32 zero;
   s32 owner;
-  u16 *unkda;
-  u16 *unke0;
-  s32 *height;
-  s32 *unkf0;
+  s16 *fade;
+  s16 *holdFade;
+  s32 *originX;
+  s32 *originZ;
   s16 *vramEntry;
 
-  link->a = a;
-  link->b = b;
+  link->leaderId = leaderId;
+  link->rivalId = rivalId;
   owner = gMainRoutineWork.leaderActorId;
-  height = &link->height;
-  unkf0 = &link->unkf0;
-  unkda = &link->unkda;
-  unke0 = &link->unke0;
+  originX = &link->originX;
+  originZ = &link->originZ;
+  fade = &link->fade;
+  holdFade = &link->holdFade;
   vramEntry = &link->vramEntry;
-  if (a == owner) {
-    *height = 0xa00000;
-    *unkf0 = 0xf9a00000;
+  if (leaderId == owner) {
+    *originX = px(160);
+    *originZ = px(-1632);
   } else {
-    *height = 0x700000;
-    *unkf0 = 0xf9a00000;
+    *originX = px(112);
+    *originZ = px(-1632);
   }
-  Actor_GetById(a);
-  Actor_GetById(b);
+  Actor_GetById(leaderId);
+  Actor_GetById(rivalId);
   zero = 0;
-  *unkda = zero;
-  *unke0 = zero;
+  *fade = zero;
+  *holdFade = zero;
   Decompress_TaggedLz(gTrialRoad_ProgressPicture, buffer);
   *vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(*vramEntry, 576, buffer);
@@ -3620,37 +3668,33 @@ void TrialRoad_ShowProgress(s32 a, s32 b) {
   Heap_Release(buffer);
 }
 
-void TrialRoad_StartRival(s32 a) {
-  u8 *work = Ram_HeapSlots->trialRoadLink;
-  struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
+void TrialRoad_StartRival(s32 mirrored) {
+  struct TrialRoadLinkWork *work = Ram_HeapSlots->trialRoadLink;
+  struct TrialRoadReplay *state = (struct TrialRoadReplay *)gSceneState;
 
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
-    /* FAKEMATCH(temporary): a local reads the work value before the three
-     * stores. */
-    s32 value = *(u16 *)(work + 228);
-
-    control->field02 = a;
-    control->field04 = value;
-    control->field08 = 0;
+    state->mirrored = mirrored;
+    state->id = work->rivalId;
+    state->still = 0;
   }
   Task_Add(TrialRoad_MoveRival, TASK_PASS_VBLANK + 5);
 }
 
-void TrialRoad_PlayRivalRecording(s32 a) {
-  struct TrialRoadControl *control = (struct TrialRoadControl *)gSceneState;
+void TrialRoad_PlayRivalRecording(s32 resource) {
+  struct TrialRoadReplay *state = (struct TrialRoadReplay *)gSceneState;
   s32 zero = 0;
 
-  *(u16 *)((Ram_HeapSlots->trialRoadLink) + 234) = zero;
-  control->field0a = a;
-  control->field06 = zero;
-  control->state = 1;
+  ((struct TrialRoadLinkWork *)Ram_HeapSlots->trialRoadLink)->resource = zero;
+  state->resource = resource;
+  state->point = zero;
+  state->mode = RIVAL_REPLAY;
   TrialRoad_MoveRival();
 }
 
 s32 TrialRoad_RivalIsWaiting(void) {
-  s32 state = *(s16 *)gSceneState;
+  s32 mode = ((struct TrialRoadReplay *)gSceneState)->mode;
 
-  return IsZero(state ^ 9);
+  return IsZero(mode ^ RIVAL_WAITING);
 }
 
 void TrialRoad_DoNothing(void) {}
@@ -3665,9 +3709,9 @@ s32 gTrialRoad_PillarTopScript[] = {
     SC_END,
 };
 
-u32 gTrialRoad_PoundPartners[] = {
-    0x14151213,
-};
+s8 gTrialRoad_PoundPartners[4] ALIGNED(4) = {
+    ACTOR_INNER_WEST_PILLAR, ACTOR_WEST_PILLAR, ACTOR_EAST_PILLAR,
+    ACTOR_INNER_EAST_PILLAR};
 
 // clang-format off
 u32 gFieldEffect_ShortScript[] = {
@@ -3862,8 +3906,6 @@ u32 gTrialRoad_RightKnightLeavesScript[] = {
 #undef FIELD_AT
 #undef SET_LAYER
 #undef MARKER
-#undef gTrialRoad_PaletteCycleRunning
-#undef gTrialRoad_PaletteCycleFrame
 
 // clang-format off
 LATE_DATA s32 gTrialRoad_RubbleScript[] = {
@@ -3930,10 +3972,10 @@ LAST_DATA struct ActorPlacement gTrialRoad_Placements[] = {
 
 LAST_DATA struct ActorPlacement gTrialRoad_PillarStagePlacements[] = {
     ACTOR_PLACEMENT(41, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(40, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(40, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 344, FACING_EAST, TALK_FACING_KEEP, 0),
@@ -3941,24 +3983,24 @@ LAST_DATA struct ActorPlacement gTrialRoad_PillarStagePlacements[] = {
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 392, FACING_EAST, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 456, FACING_EAST, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 392, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 248, 0, 400, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 248, 0, 400, FACING_EAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 LAST_DATA struct ActorPlacement gTrialRoad_TorchStagePlacements[] = {
     ACTOR_PLACEMENT(41, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(40, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(40, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 424, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 424, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 440, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 440, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 440, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 440, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(304, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 456, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(304, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 456, FACING_EAST, TALK_FACING_KEEP, 1),
     {SCENE_TABLE_END},
@@ -3966,10 +4008,10 @@ LAST_DATA struct ActorPlacement gTrialRoad_TorchStagePlacements[] = {
 
 LAST_DATA struct ActorPlacement gTrialRoad_BushPillarStagePlacements[] = {
     ACTOR_PLACEMENT(41, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(40, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(40, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 424, FACING_EAST, TALK_FACING_KEEP, 0),
@@ -3977,17 +4019,17 @@ LAST_DATA struct ActorPlacement gTrialRoad_BushPillarStagePlacements[] = {
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 440, FACING_EAST, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 456, FACING_EAST, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 456, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 232, 0, 432, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 296, 0, 432, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 232, 0, 432, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 296, 0, 432, FACING_EAST, TALK_FACING_KEEP, 1),
     {SCENE_TABLE_END},
 };
 
 LAST_DATA struct ActorPlacement gTrialRoad_PoundStagePlacements[] = {
     ACTOR_PLACEMENT(41, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(40, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(40, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 456, FACING_EAST, TALK_FACING_KEEP, 0),
@@ -3997,16 +4039,16 @@ LAST_DATA struct ActorPlacement gTrialRoad_PoundStagePlacements[] = {
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 424, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 424, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 424, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 264, 0, 464, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 264, 0, 464, FACING_EAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 LAST_DATA struct ActorPlacement gTrialRoad_CrumblingStagePlacements[] = {
     ACTOR_PLACEMENT(41, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(40, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(40, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(404, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 440, FACING_EAST, TALK_FACING_KEEP, 0),
@@ -4016,10 +4058,10 @@ LAST_DATA struct ActorPlacement gTrialRoad_CrumblingStagePlacements[] = {
 
 LAST_DATA struct ActorPlacement gTrialRoad_LogStagePlacements[] = {
     ACTOR_PLACEMENT(41, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(40, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(40, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 392, FACING_EAST, TALK_FACING_KEEP, 0),
@@ -4031,10 +4073,10 @@ LAST_DATA struct ActorPlacement gTrialRoad_LogStagePlacements[] = {
 
 LAST_DATA struct ActorPlacement gTrialRoad_FountainStagePlacements[] = {
     ACTOR_PLACEMENT(41, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(40, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(40, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 472, FACING_EAST, TALK_FACING_KEEP, 0),
@@ -4048,36 +4090,36 @@ LAST_DATA struct ActorPlacement gTrialRoad_FountainStagePlacements[] = {
 
 LAST_DATA struct ActorPlacement gTrialRoad_SandStagePlacements[] = {
     ACTOR_PLACEMENT(41, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(487, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(40, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(40, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 408, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 408, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(307, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 312, 0, 336, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gTrialRoad_SettleScript, 312, 0, 336, FACING_EAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 LAST_DATA struct ActorPlacement gTrialRoad_Room3Placements[] = {
-    ACTOR_PLACEMENT(329, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 LAST_DATA struct ActorPlacement gTrialRoad_Room4Placements[] = {
-    ACTOR_PLACEMENT(246, 0x7b, MOVEMENT_TYPE_STAND, 344, 0, 264, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_GASP), MOVEMENT_TYPE_STAND, 344, 0, 264, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
 LAST_DATA struct ActorPlacement gTrialRoad_Room2Placements[] = {
-    ACTOR_PLACEMENT(4, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(5, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(6, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(7, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FELIX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(41, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 328, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 328, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(40, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),
@@ -4243,19 +4285,19 @@ LAST_DATA struct Trigger gTrialRoad_PoundStageTriggers[] = {
     {STEP_TRIGGER_WALKING, 51, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
     {STEP_TRIGGER_WALKING, 52, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
     {STEP_TRIGGER_WALKING, 53, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
-    {TRIGGER_STEP, 50, 0x335, EVENT(TrialRoad_StepOnPillar18)},
-    {TRIGGER_STEP, 51, IF_FLAG_SET(0x335), EVENT(TrialRoad_StepOnPillar19)},
-    {TRIGGER_STEP, 52, 0x337, EVENT(TrialRoad_StepOnPillar20)},
-    {TRIGGER_STEP, 53, IF_FLAG_SET(0x337), EVENT(TrialRoad_StepOnPillar21)},
+    {TRIGGER_STEP, 50, 0x335, EVENT(TrialRoad_StepOnWestPillar)},
+    {TRIGGER_STEP, 51, IF_FLAG_SET(0x335), EVENT(TrialRoad_StepOnInnerWestPillar)},
+    {TRIGGER_STEP, 52, 0x337, EVENT(TrialRoad_StepOnInnerEastPillar)},
+    {TRIGGER_STEP, 53, IF_FLAG_SET(0x337), EVENT(TrialRoad_StepOnEastPillar)},
     {STEP_TRIGGER_WALKING, 60, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(TrialRoad_CheckPoundedPillarsCovered)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, IF_FLAG_SET(0x339), EVENT(TrialRoad_CheckPoundedPillarsCovered)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT(TrialRoad_CheckPoundedPillarsCovered)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 22, 0x339, EVENT(TrialRoad_BlowBushOffPoundPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, 0x335, EVENT(TrialRoad_PoundPillar18)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 19, IF_FLAG_SET(0x335), EVENT(TrialRoad_PoundPillar19)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 20, 0x337, EVENT(TrialRoad_PoundPillar20)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 21, IF_FLAG_SET(0x337), EVENT(TrialRoad_PoundPillar21)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 18, 0x335, EVENT(TrialRoad_PoundWestPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 19, IF_FLAG_SET(0x335), EVENT(TrialRoad_PoundInnerWestPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 20, 0x337, EVENT(TrialRoad_PoundInnerEastPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 21, IF_FLAG_SET(0x337), EVENT(TrialRoad_PoundEastPillar)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4302,9 +4344,9 @@ LAST_DATA struct Trigger gTrialRoad_CrumblingStageTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 34, CONDITION_ALWAYS,
      EVENT(TrialRoad_CheckCrumblingPillars)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50, 0x343,
-     EVENT(TrialRoad_CrumblePillar15)},
+     EVENT(TrialRoad_CrumbleWestPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 51, 0x345,
-     EVENT(TrialRoad_CrumblePillar16)},
+     EVENT(TrialRoad_CrumbleEastPillar)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4336,29 +4378,29 @@ LAST_DATA struct Trigger gTrialRoad_LogStageTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 33, CONDITION_ALWAYS,
      EVENT(TrialRoad_JumpForward)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 50, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog16West)},
+     EVENT(TrialRoad_PushUpperLogWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 50, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog16East)},
+     EVENT(TrialRoad_PushUpperLogEast)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 51, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog17West)},
+     EVENT(TrialRoad_PushLowerLogWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 51, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog17East)},
+     EVENT(TrialRoad_PushLowerLogEast)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 50, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog18North)},
+     EVENT(TrialRoad_PushEastLogNorth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog18South)},
+     EVENT(TrialRoad_PushEastLogSouth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 51, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog18North)},
+     EVENT(TrialRoad_PushEastLogNorth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 51, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog18South)},
+     EVENT(TrialRoad_PushEastLogSouth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 52, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog18North)},
+     EVENT(TrialRoad_PushEastLogNorth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 52, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog18SouthFromRow52)},
+     EVENT(TrialRoad_PushEastLogSouthOrClimbDown)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog18North)},
+     EVENT(TrialRoad_PushEastLogNorth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 53, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLog18South)},
+     EVENT(TrialRoad_PushEastLogSouth)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15,
      CONDITION_ALWAYS, EVENT(TrialRoad_UnblockMovedPillar)},
@@ -4401,11 +4443,11 @@ LAST_DATA struct Trigger gTrialRoad_FountainStageTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS,
      EVENT(TrialRoad_BlockMovedPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50, 0x363,
-     EVENT(TrialRoad_UncoverSpout16)},
+     EVENT(TrialRoad_UncoverWestSpout)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 51, 0x364,
-     EVENT(TrialRoad_UncoverSpout17)},
+     EVENT(TrialRoad_UncoverMiddleSpout)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 52, 0x365,
-     EVENT(TrialRoad_UncoverSpout18)},
+     EVENT(TrialRoad_UncoverEastSpout)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4495,10 +4537,6 @@ LAST_DATA s32 gTrialRoad_Room1Triggers[] = {
     (s32)gTrialRoad_FountainStageTriggers,   (s32)gTrialRoad_SandStageTriggers,
 };
 
-LAST_DATA s32 gTrialRoad_PaletteCycleFrame[] = {
-    -1,
-};
+LAST_DATA s32 gTrialRoad_PaletteCycleFrame = -1;
 
-LAST_DATA u32 gTrialRoad_PaletteCycleRunning[] = {
-    1,
-};
+LAST_DATA s32 gTrialRoad_PaletteCycleRunning = 1;

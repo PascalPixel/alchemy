@@ -8,28 +8,11 @@
 
 struct Actor;
 
-/// A word of the object written through a one-member union, the signature
-/// fake match ShrineOfTheSeaGod_LashRope keeps.
-union ObjectWord {
-  s32 value;
-};
-
 struct ShrineOfTheSeaGodSpot {
   s32 x;
   s32 z;
   s32 scaleX;
   s32 rotation;
-};
-
-struct ShrineOfTheSeaGodEffectParams {
-  u8 unk00[0x18];
-  u16 kind;
-  u8 unk1a[0xe];
-};
-
-struct ShrineOfTheSeaGodPartyExtra {
-  u8 unk000[0x256];
-  s16 value;
 };
 
 void ShrineOfTheSeaGod_DjinniRunsWest(void);
@@ -86,28 +69,28 @@ void ShrineOfTheSeaGod_KeepSecondPillarWithLeader(void);
 
 void ShrineOfTheSeaGod_HideSlideActors(void);
 void ShrineOfTheSeaGod_TrackUpperLevel(void);
-void ShrineOfTheSeaGod_LayerRoom3Props(void);
+void ShrineOfTheSeaGod_LayerCrossroadsProps(void);
 
 void ShrineOfTheSeaGod_KeepFlameOnTorch(void);
 
 void ShrineOfTheSeaGod_SetUpPuddle(s32 actor);
 
-void ShrineOfTheSeaGod_InitializeRoom1(void);
-void ShrineOfTheSeaGod_InitializeRoom2(void);
+void ShrineOfTheSeaGod_InitializeRope(void);
+void ShrineOfTheSeaGod_InitializePlankBridge(void);
 
-void ShrineOfTheSeaGod_InitializeRoom3(void);
+void ShrineOfTheSeaGod_InitializeCrossroads(void);
 
-void ShrineOfTheSeaGod_InitializeRoom4(void);
-void ShrineOfTheSeaGod_InitializeRoom5(void);
+void ShrineOfTheSeaGod_InitializeFootprints(void);
+void ShrineOfTheSeaGod_InitializeBreath(void);
 
-void ShrineOfTheSeaGod_InitializeRoom6(void);
+void ShrineOfTheSeaGod_InitializePillarHole(void);
 
-void ShrineOfTheSeaGod_InitializeRoom7(void);
-void ShrineOfTheSeaGod_InitializeRoom8(void);
+void ShrineOfTheSeaGod_InitializePillars(void);
+void ShrineOfTheSeaGod_InitializeSeaGodsTear(void);
 
-void ShrineOfTheSeaGod_InitializeRoom9(void);
+void ShrineOfTheSeaGod_InitializeStatue(void);
 
-void ShrineOfTheSeaGod_InitializeRoom11(void);
+void ShrineOfTheSeaGod_InitializeRightProng(void);
 
 void ShrineOfTheSeaGod_LowerWater(void);
 

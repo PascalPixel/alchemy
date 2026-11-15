@@ -3,15 +3,15 @@
 /// overlay (SceneId_ShrineOfTheSeaGodRope to
 /// SceneId_ShrineOfTheSeaGodRightProng).
 ///
-/// On the first visit Tavi is stuck on a ledge in the entrance hall (room 1)
-/// and Riki cannot throw him the rope; Riki goes off to the side room (room 2)
-/// and Lash ties the rope so Tavi climbs down. Past the great hall (room 3),
-/// where the Djinni Breath is first seen, its footprints cross the room below
-/// (room 4) and it is chased around a ledge (room 5) until the torch pushed
-/// against the north wall traps it. On the second visit, with Frost on the
-/// puddles, Lash and the fallen pillars (rooms 6 and 7), the party reaches the
-/// statue on the island (room 8), whose Sea God's Tear raises the water up to
-/// the Right Prong (rooms 9 to 11).
+/// On the first visit Tavi is stuck on a ledge in the entrance hall (the rope
+/// room) and Riki cannot throw him the rope; Riki goes off by the plank bridge
+/// and Lash ties the rope so Tavi climbs down. Past the crossroads, where the
+/// Djinni Breath is first seen, its footprints cross the room below and it is
+/// chased around a ledge (Breath's room) until the torch pushed against the
+/// north wall traps it. On the second visit, with Frost on the puddles, Lash
+/// and the fallen pillars (the pillar hole and the pillars), the party reaches
+/// the island, whose Sea God's Tear raises the water to the statue room, and
+/// climbs the ladders to the Right Prong.
 #include "../field/actor_set_sprite_priority.c"
 #include "field/actor_script.h"
 #include "fixed_math.h"
@@ -33,14 +33,17 @@
 #include "sounds.h"
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
+#include "field/map_grid.h"
+#include "field/event_inline.h"
 
-#define FLAG_ROOM3_PILLAR_MOVED 0x84c ///< Move pushed the great hall's pillar
-#define FLAG_RIKI_GAVE_UP 0x872       ///< Riki missed with the rope, went off
-#define FLAG_DJINNI_FLED_EAST 0x874   ///< the Djinni ran from the great hall
-#define FLAG_DJINNI_FLED_SOUTH 0x875  ///< and ran on, out of it
-#define FLAG_DJINNI_RAN_PAST 0x876    ///< its footprints are gone
-#define FLAG_DJINNI_BY_LEDGE 0x877    ///< it waits by the ledge
-#define FLAG_DJINNI_ON_LEDGE 0x87c    ///< it hopped up onto the ledge
+#define FLAG_CROSSROADS_PILLAR_MOVED                                           \
+  0x84c                              ///< Move pushed the great hall's pillar
+#define FLAG_RIKI_GAVE_UP 0x872      ///< Riki missed with the rope, went off
+#define FLAG_DJINNI_FLED_EAST 0x874  ///< the Djinni ran from the great hall
+#define FLAG_DJINNI_FLED_SOUTH 0x875 ///< and ran on, out of it
+#define FLAG_DJINNI_RAN_PAST 0x876   ///< its footprints are gone
+#define FLAG_DJINNI_BY_LEDGE 0x877   ///< it waits by the ledge
+#define FLAG_DJINNI_ON_LEDGE 0x87c   ///< it hopped up onto the ledge
 #define FLAG_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 #define FLAG_SECOND_PUDDLE_FROZEN FLAG_SCENE_TEMP_01
 #define FLAG_THIRD_PUDDLE_FROZEN FLAG_SCENE_TEMP_02
@@ -51,7 +54,7 @@
 #define FLAG_TORCH_AT_NORTH_WALL FLAG_SCENE_TEMP_07
 #define FLAG_SLIDES_SHOWN FLAG_SCENE_TEMP_08
 #define FLAG_LEADER_IN_FRONT FLAG_SCENE_TEMP_0A
-#define FLAG_ROOM3_PILLAR_TOPPLED FLAG_SCENE_TEMP_30
+#define FLAG_CROSSROADS_PILLAR_TOPPLED FLAG_SCENE_TEMP_30
 #define FLAG_FIRST_PILLAR_TOPPLED FLAG_SCENE_TEMP_31
 #define FLAG_SECOND_PILLAR_TOPPLED FLAG_SCENE_TEMP_32
 #define FLAG_PILLAR_IN_HOLE FLAG_AREA_TEMP_01
@@ -61,23 +64,22 @@
 #define FLAG_BREATH_TRAPPED_EAST FLAG_AREA_TEMP_41
 #define FLAG_BREATH_TRAPPED_WEST FLAG_AREA_TEMP_42
 
-struct ShrineOfTheSeaGodMapLayer {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  u8 unk10[0x28];
+enum { MAP_WADING_UPPER_LEVEL = 1 };
+
+/// MapWork as far as groundEffects, read through its bits, the footprints and
+/// the kind of wading; map_grid.h keeps the byte whole. A room with a second
+/// level sets wading to MAP_WADING_UPPER_LEVEL.
+struct MapWorkGroundEffects {
+  u8 before[offsetof(struct MapWork, groundEffects)];
+  u8 footprints : 2;
+  u8 wading : 2;
+  u8 unused : 4;
 };
 
-struct ShrineOfTheSeaGodMapWork {
-  u8 unk000[0x17];
-  u8 low17 : 2;
-  u8 mode17 : 2;
-  u8 high17 : 4;
-  u8 unk018[0xf0];
-  struct ShrineOfTheSeaGodMapLayer layers[3];
-};
+/// Sets the map's kind of wading to that of a room with a second level.
+#define Map_SetUpperLevelWading(map)                                           \
+  (((struct MapWorkGroundEffects *)(map))->wading = MAP_WADING_UPPER_LEVEL)
 
-struct Actor *Actor_GetById(s32 id);
 void Event_Wait(s32 frames);
 s32 GameFlag_Get(s32 flag);
 void GameFlag_Set(s32 flag);
@@ -104,22 +106,6 @@ void Sound_Play(s32 cue);
 void ShrineOfTheSeaGod_SetSlideActorsShown(s32 show);
 void ShrineOfTheSeaGod_KeepWithLeader(struct Actor *object);
 
-/// Copies a rectangle of the map's cell pictures.
-static inline void ShrineOfTheSeaGod_CopyRect(s32 sx, s32 sy, s32 w, s32 h,
-                                              s32 dx, s32 dy) {
-  /* FAKEMATCH(wrapper): the rectangle copy reaches the main image through one
-   * inline layer. */
-  MapGrid_CopyCellPictureIndicesRect(sx, sy, w, h, dx, dy);
-}
-
-/// Copies a rectangle of the map's cell attributes.
-static inline void ShrineOfTheSeaGod_BlendStart(s32 a, s32 b, s32 c, s32 d,
-                                                s32 e, s32 f) {
-  /* FAKEMATCH(wrapper): the blend start reaches the main image through one
-   * inline layer. */
-  Map_CopyCellAttributeRect(a, b, c, d, e, f);
-}
-
 void Actor_SetHorizontalPositionWithTerrain(u32 actorId, s32 x, s32 z);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actor, s32 x, s32 z,
                                                     s32 angle);
@@ -143,86 +129,9 @@ void Actor_RunRepeatedMotion(u32 objectId, s32 variant);
 void Actor_MoveToAndWaitById(u32 objectId, s32 x, s32 z);
 void Actor_SetSpriteFlags(struct Actor *object, u32 flags);
 
-/// Shows an emote over an actor for the given frames.
-static inline void ShrineOfTheSeaGod_ShowEmote(s32 actor, s32 emote,
-                                               s32 frames) {
-  Actor_ShowEmoteById(actor, emote, frames);
-}
-
-/// Sets an actor's speed and acceleration.
-static inline void ShrineOfTheSeaGod_ObjSpeed(s32 actor, s32 speed,
-                                              s32 acceleration) {
-  Actor_SetSpeedParameters(actor, speed, acceleration);
-}
-
-/// Walks an actor to (x, z) and waits until it arrives.
-static inline void ShrineOfTheSeaGod_ObjWalk(s32 actor, s32 x, s32 z) {
-  Actor_WalkToAndWaitById(actor, x, z);
-}
-
-/// Moves an actor to (x, z), facing as it goes, and waits until it arrives.
-static inline void ShrineOfTheSeaGod_ObjCommit(s32 actor, s32 x, s32 z) {
-  Actor_MoveToAndWaitById(actor, x, z);
-}
-
-/// Turns an actor to an angle over the given frames.
-static inline void ShrineOfTheSeaGod_ObjTurn(s32 actor, s32 angle, s32 frames) {
-  Actor_FaceDirectionById(actor, angle, frames);
-}
-
-/// Places an actor at (x, z) on the ground.
-static inline void ShrineOfTheSeaGod_ObjPlace(s32 actor, s32 x, s32 z) {
-  Actor_SetHorizontalPositionWithTerrain(actor, x, z);
-}
-
 static inline void ShrineOfTheSeaGod_ObjSetPos(struct Actor *object, s32 x,
                                                s32 y, s32 z) {
   Actor_SetPositionAndResetMotion(object, x, y, z);
-}
-
-/// Sets the camera's speed and acceleration.
-static inline void ShrineOfTheSeaGod_CamSpeed(s32 speed, s32 acceleration) {
-  Camera_SetSpeedParameters(speed, acceleration);
-}
-
-/// Moves the camera to a point within the map's bounds.
-static inline void ShrineOfTheSeaGod_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  FieldCamera_MoveWithinMapBounds(x, y, z, mode);
-}
-
-/// Shows the next message from a speaker and waits for it.
-static inline void ShrineOfTheSeaGod_MessagePut(s32 speaker, s32 flags) {
-  Event_ShowMessageAndWait(speaker, flags);
-}
-
-/// Attaches a field effect to an actor.
-static inline void ShrineOfTheSeaGod_ObjEmote(s32 actor, s32 emote) {
-  FieldEffect_SetAttached(actor, emote);
-}
-
-void Task_Add(void (*func)(void), s32 priority);
-
-/// Adds a task.
-static inline void ShrineOfTheSeaGod_TaskAdd(void (*func)(void), s32 priority) {
-  Task_Add(func, priority);
-}
-
-#define SHRINE_OF_THE_SEA_GOD_TASK_ADD_LATE(func, priority)                    \
-  do {                                                                         \
-    s32 priority_;                                                             \
-    priority_ = (priority);                                                    \
-    Task_Add((func), priority_);                                               \
-  } while (0)
-
-/// Reads a game flag.
-static inline s32 ShrineOfTheSeaGod_FlagCheck(s32 flag) {
-  return GameFlag_Get(flag);
-}
-
-/// Places an actor at (x, z) on the ground, facing angle.
-static inline void ShrineOfTheSeaGod_ObjPlaceAt(s32 actor, s32 x, s32 z,
-                                                s32 angle) {
-  Actor_SetHorizontalPositionAndAngleWithTerrain(actor, x, z, angle);
 }
 
 /// Places an actor at (x, z) on the ground, facing angle.
@@ -252,7 +161,7 @@ static inline void ShrineOfTheSeaGod_ObjPlaceTurn(s32 actor, s32 x, s32 z,
 #include "shared/tables.h"
 
 /// The entrance hall's actors (SceneId_ShrineOfTheSeaGodRope), numbering the
-/// rows of gShrineOfTheSeaGod_Room1Placements.
+/// rows of gShrineOfTheSeaGodRopeActorPlacements.
 enum ShrineOfTheSeaGodHallActorId {
   /// Two logs floating on the hall's water.
   ACTOR_HALL_FIRST_LOG = ACTOR_FIRST_PLACED,
@@ -283,12 +192,13 @@ enum ShrineOfTheSeaGodSideRoomActorId {
 };
 
 /// The great hall's actors (SceneId_ShrineOfTheSeaGod3), numbering the rows of
-/// gShrineOfTheSeaGod_Room3Placements.
+/// gShrineOfTheSeaGodCrossroadsActorPlacements.
 enum ShrineOfTheSeaGodGreatHallActorId {
   /// The block Move pushes aside.
   ACTOR_GREAT_HALL_PUSHED_PILLAR = ACTOR_FIRST_PLACED,
   /// The hall's pillars, the first a broader one, drawn in front of or behind
-  /// the leader by the level it stands on (ShrineOfTheSeaGod_LayerRoom3Props).
+  /// the leader by the level it stands on
+  /// (ShrineOfTheSeaGod_LayerCrossroadsProps).
   ACTOR_GREAT_HALL_FIRST_PILLAR,
   ACTOR_GREAT_HALL_SECOND_PILLAR,
   ACTOR_GREAT_HALL_THIRD_PILLAR,
@@ -330,7 +240,7 @@ enum ShrineOfTheSeaGodHoleRoomActorId {
 };
 
 /// The pillar room's actors (SceneId_ShrineOfTheSeaGodPillars), numbering the
-/// rows of gShrineOfTheSeaGod_Room7Placements.
+/// rows of gShrineOfTheSeaGodPillarsActorPlacements.
 enum ShrineOfTheSeaGodPillarRoomActorId {
   /// The room's standing pillars, the fifth a broader one.
   ACTOR_PILLAR_ROOM_FIRST_PILLAR = ACTOR_FIRST_PLACED,
@@ -384,16 +294,16 @@ void ShrineOfTheSeaGod_FightBreath(void) {
       GameFlag_Set(FLAG_BREATH_TRAPPED_EAST);
     else if (*state == 5)
       GameFlag_Set(FLAG_BREATH_TRAPPED_WEST);
-    Field_RequestDjinnBattle(14, 67);
+    Field_RequestDjinnBattle(ACTOR_BREATH, DJINNI_BREATH);
   }
 }
 
 struct Actor;
 #include "field/field.h"
 
-extern u32 gShrineOfTheSeaGod_Room9Regions[];
-extern s16 gShrineOfTheSeaGod_Room10Regions[];
-extern u32 gShrineOfTheSeaGod_Room11Regions[];
+extern u32 gShrineOfTheSeaGodStatueExitRegions[];
+extern s16 gShrineOfTheSeaGodLaddersExitRegions[];
+extern u32 gShrineOfTheSeaGodRightProngExitRegions[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -403,33 +313,33 @@ const struct SceneRegion *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_9)
-    return (const struct SceneRegion *)gShrineOfTheSeaGod_Room9Regions;
+    return (const struct SceneRegion *)gShrineOfTheSeaGodStatueExitRegions;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_10)
-    return (const struct SceneRegion *)gShrineOfTheSeaGod_Room10Regions;
+    return (const struct SceneRegion *)gShrineOfTheSeaGodLaddersExitRegions;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_RIGHT_PRONG)
-    return (const struct SceneRegion *)gShrineOfTheSeaGod_Room11Regions;
+    return (const struct SceneRegion *)gShrineOfTheSeaGodRightProngExitRegions;
   return 0;
 }
 
 extern struct ActorPlacement gShrineOfTheSeaGod_Placements[];
-extern struct ActorPlacement gShrineOfTheSeaGod_Room1Placements[];
-extern struct ActorPlacement gShrineOfTheSeaGod_Room2Placements[];
-extern struct ActorPlacement gShrineOfTheSeaGod_Room3Placements[];
-extern struct ActorPlacement gShrineOfTheSeaGod_Room4Placements[];
-extern struct ActorPlacement gShrineOfTheSeaGod_Room5Placements[];
-extern struct ActorPlacement gShrineOfTheSeaGod_Room6Placements[];
-extern struct ActorPlacement gShrineOfTheSeaGod_Room7Placements[];
-extern struct ActorPlacement gShrineOfTheSeaGod_Room8Placements[];
+extern struct ActorPlacement gShrineOfTheSeaGodRopeActorPlacements[];
+extern struct ActorPlacement gShrineOfTheSeaGodPlankBridgeActorPlacements[];
+extern struct ActorPlacement gShrineOfTheSeaGodCrossroadsActorPlacements[];
+extern struct ActorPlacement gShrineOfTheSeaGodFootprintsActorPlacements[];
+extern struct ActorPlacement gShrineOfTheSeaGodBreathActorPlacements[];
+extern struct ActorPlacement gShrineOfTheSeaGodPillarHoleActorPlacements[];
+extern struct ActorPlacement gShrineOfTheSeaGodPillarsActorPlacements[];
+extern struct ActorPlacement gShrineOfTheSeaGodSeaGodsTearActorPlacements[];
 extern struct Trigger gShrineOfTheSeaGod_Triggers[];
-extern struct Trigger gShrineOfTheSeaGod_Room1Triggers[];
-extern struct Trigger gShrineOfTheSeaGod_Room2Triggers[];
-extern struct Trigger gShrineOfTheSeaGod_Room3Triggers[];
-extern struct Trigger gShrineOfTheSeaGod_Room4Triggers[];
-extern struct Trigger gShrineOfTheSeaGod_Room5Triggers[];
-extern struct Trigger gShrineOfTheSeaGod_Room6Triggers[];
-extern struct Trigger gShrineOfTheSeaGod_Room7Triggers[];
-extern struct Trigger gShrineOfTheSeaGod_Room8Triggers[];
-extern struct Trigger gShrineOfTheSeaGod_Room9Triggers[];
+extern struct Trigger gShrineOfTheSeaGodRopeTriggers[];
+extern struct Trigger gShrineOfTheSeaGodPlankBridgeTriggers[];
+extern struct Trigger gShrineOfTheSeaGodCrossroadsTriggers[];
+extern struct Trigger gShrineOfTheSeaGodFootprintsTriggers[];
+extern struct Trigger gShrineOfTheSeaGodBreathTriggers[];
+extern struct Trigger gShrineOfTheSeaGodPillarHoleTriggers[];
+extern struct Trigger gShrineOfTheSeaGodPillarsTriggers[];
+extern struct Trigger gShrineOfTheSeaGodSeaGodsTearTriggers[];
+extern struct Trigger gShrineOfTheSeaGodStatueTriggers[];
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
@@ -438,21 +348,28 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_ROPE)
-    return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room1Placements;
+    return (const struct ActorPlacement *)gShrineOfTheSeaGodRopeActorPlacements;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_2)
-    return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room2Placements;
+    return (const struct ActorPlacement *)
+        gShrineOfTheSeaGodPlankBridgeActorPlacements;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_3)
-    return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room3Placements;
+    return (const struct ActorPlacement *)
+        gShrineOfTheSeaGodCrossroadsActorPlacements;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_4)
-    return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room4Placements;
+    return (const struct ActorPlacement *)
+        gShrineOfTheSeaGodFootprintsActorPlacements;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_BREATH)
-    return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room5Placements;
+    return (
+        const struct ActorPlacement *)gShrineOfTheSeaGodBreathActorPlacements;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_6)
-    return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room6Placements;
+    return (const struct ActorPlacement *)
+        gShrineOfTheSeaGodPillarHoleActorPlacements;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_PILLARS)
-    return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room7Placements;
+    return (
+        const struct ActorPlacement *)gShrineOfTheSeaGodPillarsActorPlacements;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_SEA_GODS_TEAR)
-    return (const struct ActorPlacement *)gShrineOfTheSeaGod_Room8Placements;
+    return (const struct ActorPlacement *)
+        gShrineOfTheSeaGodSeaGodsTearActorPlacements;
   return (const struct ActorPlacement *)gShrineOfTheSeaGod_Placements;
 }
 
@@ -461,23 +378,23 @@ const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_ROPE)
-    return gShrineOfTheSeaGod_Room1Triggers;
+    return gShrineOfTheSeaGodRopeTriggers;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_2)
-    return gShrineOfTheSeaGod_Room2Triggers;
+    return gShrineOfTheSeaGodPlankBridgeTriggers;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_3)
-    return gShrineOfTheSeaGod_Room3Triggers;
+    return gShrineOfTheSeaGodCrossroadsTriggers;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_4)
-    return gShrineOfTheSeaGod_Room4Triggers;
+    return gShrineOfTheSeaGodFootprintsTriggers;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_BREATH)
-    return gShrineOfTheSeaGod_Room5Triggers;
+    return gShrineOfTheSeaGodBreathTriggers;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_6)
-    return gShrineOfTheSeaGod_Room6Triggers;
+    return gShrineOfTheSeaGodPillarHoleTriggers;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_PILLARS)
-    return gShrineOfTheSeaGod_Room7Triggers;
+    return gShrineOfTheSeaGodPillarsTriggers;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_SEA_GODS_TEAR)
-    return gShrineOfTheSeaGod_Room8Triggers;
+    return gShrineOfTheSeaGodSeaGodsTearTriggers;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_9)
-    return gShrineOfTheSeaGod_Room9Triggers;
+    return gShrineOfTheSeaGodStatueTriggers;
   return gShrineOfTheSeaGod_Triggers;
 }
 
@@ -504,8 +421,8 @@ void ShrineOfTheSeaGod_StartleRiki(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_Stop(ACTOR_SIDE_ROOM_RIKI);
-  ShrineOfTheSeaGod_ShowEmote(ACTOR_SIDE_ROOM_RIKI,
-                              EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  FieldActor_ShowEmote(ACTOR_SIDE_ROOM_RIKI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                       20);
   Actor_FaceActorById(ACTOR_SIDE_ROOM_RIKI, gMainRoutineWork.leaderActorId, 0);
   Event_SetMessageId((s32)MsgFieldStartledCompanion);
   // "Wah! You scared me!"
@@ -530,51 +447,48 @@ void ShrineOfTheSeaGod_OpenFieldMenu(void) {
 /// The island room's water rises a step, lifting the leader, the camera and the
 /// floating logs with it.
 void ShrineOfTheSeaGod_LiftWithWater(void) {
-  struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
-  struct ShrineOfTheSeaGodMapLayer *layer0 = &map->layers[0];
-  struct ShrineOfTheSeaGodMapLayer *layer1 = &map->layers[1];
-  struct ShrineOfTheSeaGodMapLayer *layer2 = &map->layers[2];
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapLayer *water = &map->layers[0];
+  struct MapLayer *ground = &map->layers[1];
+  struct MapLayer *groundTop = &map->layers[2];
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *camera = FieldCamera_GetActor();
-  struct Actor *object8 = Actor_GetById(ACTOR_ISLAND_FIRST_LOG);
-  struct Actor *object9 = Actor_GetById(ACTOR_ISLAND_SECOND_LOG);
-  struct Actor *object10 = Actor_GetById(ACTOR_ISLAND_THIRD_LOG);
+  struct Actor *firstLog = Actor_GetById(ACTOR_ISLAND_FIRST_LOG);
+  struct Actor *secondLog = Actor_GetById(ACTOR_ISLAND_SECOND_LOG);
+  struct Actor *thirdLog = Actor_GetById(ACTOR_ISLAND_THIRD_LOG);
 
-  layer0->y += -0x8000;
-  layer1->y += 0x8000;
-  layer2->y += 0x8000;
+  water->offsetY += -0x8000;
+  ground->offsetY += 0x8000;
+  groundTop->offsetY += 0x8000;
   leader->z.fixed += -0x8000;
   camera->y.fixed += -0x8000;
-  object8->z.fixed += -0x8000;
-  object9->z.fixed += -0x8000;
-  object10->z.fixed += -0x8000;
+  firstLog->z.fixed += -0x8000;
+  secondLog->z.fixed += -0x8000;
+  thirdLog->z.fixed += -0x8000;
   wait(4);
 }
 
 /// Scrolls the water's layer up a pixel, then waits four frames.
 void ShrineOfTheSeaGod_ScrollWaterUp(void) {
-  struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
-  struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[0];
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapLayer *layer = &map->layers[0];
 
-  layer->y += -px(1);
+  layer->offsetY += -px(1);
   wait(4);
 }
 
 /// Copies a 6 by 56 rectangle of cells from (x, y) to (18, 6), then
 /// moves the first two layers' y by -0x2000 a frame for 16 frames.
 void ShrineOfTheSeaGod_RaiseWaterBand(s32 x, s32 y) {
-  struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
-  struct ShrineOfTheSeaGodMapLayer *layer0 = &map->layers[0];
-  struct ShrineOfTheSeaGodMapLayer *layer1 = &map->layers[1];
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapLayer *water = &map->layers[0];
+  struct MapLayer *ground = &map->layers[1];
   u8 i;
 
-  ShrineOfTheSeaGod_CopyRect(x, y, 6, 56, 18, 6);
+  MapGrid_CopyCellsTo(x, y, 6, 56, 18, 6);
   for (i = 0; i < 16; i++) {
-    layer0->y += -0x2000;
-    layer1->y += -0x2000;
+    water->offsetY += -0x2000;
+    ground->offsetY += -0x2000;
     wait(1);
   }
 }
@@ -602,16 +516,16 @@ void ShrineOfTheSeaGod_UseSeaGodsTear(void) {
   wait(10);
   Io_Write16(BLEND_ALPHA(4, 16), &REG_BLDALPHA);
   wait(10);
-  Call3((void (*)())MapGrid_SetScreenShake, 0, 0x10000, 0x10000);
-  ShrineOfTheSeaGod_CopyRect(59, 124, 9, 12, 12, 3);
+  MapGrid_SetShakeFixed(0, px(1), Q16_ONE);
+  MapGrid_CopyCellsTo(59, 124, 9, 12, 12, 3);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   Actor_SetSpritePriority(ACTOR_ISLAND_FIRST_LOG, 1);
   Actor_SetSpritePriority(ACTOR_ISLAND_SECOND_LOG, 1);
   Actor_SetSpritePriority(ACTOR_ISLAND_THIRD_LOG, 1);
-  ShrineOfTheSeaGod_CopyRect(46, 51, 6, 56, 18, 25);
+  MapGrid_CopyCellsTo(46, 51, 6, 56, 18, 25);
   wait(10);
-  Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
+  MapGrid_SetShakeFixed(px(1), px(1), Q16_ONE);
   ShrineOfTheSeaGod_RaiseWaterBand(65, 51);
   ShrineOfTheSeaGod_RaiseWaterBand(65, 58);
   Io_Write16(BLEND_ALPHA(5, 15), &REG_BLDALPHA);
@@ -649,52 +563,49 @@ void ShrineOfTheSeaGod_UseSeaGodsTear(void) {
 /// The island room's water falls a step, lowering the leader, the camera and
 /// the floating logs with it.
 void ShrineOfTheSeaGod_LowerWithWater(void) {
-  struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
-  struct ShrineOfTheSeaGodMapLayer *layer0 = &map->layers[0];
-  struct ShrineOfTheSeaGodMapLayer *layer1 = &map->layers[1];
-  struct ShrineOfTheSeaGodMapLayer *layer2 = &map->layers[2];
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapLayer *water = &map->layers[0];
+  struct MapLayer *ground = &map->layers[1];
+  struct MapLayer *groundTop = &map->layers[2];
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *camera = FieldCamera_GetActor();
-  struct Actor *object8 = Actor_GetById(ACTOR_ISLAND_FIRST_LOG);
-  struct Actor *object9 = Actor_GetById(ACTOR_ISLAND_SECOND_LOG);
-  struct Actor *object10 = Actor_GetById(ACTOR_ISLAND_THIRD_LOG);
+  struct Actor *firstLog = Actor_GetById(ACTOR_ISLAND_FIRST_LOG);
+  struct Actor *secondLog = Actor_GetById(ACTOR_ISLAND_SECOND_LOG);
+  struct Actor *thirdLog = Actor_GetById(ACTOR_ISLAND_THIRD_LOG);
 
-  layer0->y += 0x8000;
-  layer1->y += -0x8000;
-  layer2->y += -0x8000;
+  water->offsetY += 0x8000;
+  ground->offsetY += -0x8000;
+  groundTop->offsetY += -0x8000;
   leader->z.fixed += 0x8000;
   camera->y.fixed += 0x8000;
-  object8->z.fixed += 0x8000;
-  object9->z.fixed += 0x8000;
-  object10->z.fixed += 0x8000;
+  firstLog->z.fixed += 0x8000;
+  secondLog->z.fixed += 0x8000;
+  thirdLog->z.fixed += 0x8000;
   wait(4);
 }
 
 /// Scrolls the water's layer down a pixel, then waits four frames.
 void ShrineOfTheSeaGod_ScrollWaterDown(void) {
-  struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
-  struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[0];
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapLayer *layer = &map->layers[0];
 
-  layer->y += px(1);
+  layer->offsetY += px(1);
   wait(4);
 }
 
 /// Copies a rectangle of cells from (x, y), then raises map layers 0 and 1 by
 /// 0x2000 a frame for 16 frames.
 void ShrineOfTheSeaGod_LowerWaterBand(s32 x, s32 y) {
-  struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
-  struct ShrineOfTheSeaGodMapLayer *layer0 = &map->layers[0];
-  struct ShrineOfTheSeaGodMapLayer *layer1 = &map->layers[1];
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapLayer *water = &map->layers[0];
+  struct MapLayer *ground = &map->layers[1];
   u8 i;
 
-  ShrineOfTheSeaGod_CopyRect(x, y, 6, 56, 18, 6);
+  MapGrid_CopyCellsTo(x, y, 6, 56, 18, 6);
   i = 0;
 loop:
-  layer0->y += 0x2000;
-  layer1->y += 0x2000;
+  water->offsetY += 0x2000;
+  ground->offsetY += 0x2000;
   wait(1);
   i++;
   if (i <= 15)
@@ -705,11 +616,10 @@ void MapGrid_WaitForShakeToSettle(void);
 
 /// Back on the island after the second Tear, the water sinks to where it was.
 void ShrineOfTheSeaGod_LowerWater(void) {
-  struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
-  struct ShrineOfTheSeaGodMapLayer *layer0 = &map->layers[0];
-  struct ShrineOfTheSeaGodMapLayer *layer1 = &map->layers[1];
-  struct ShrineOfTheSeaGodMapLayer *layer2 = &map->layers[2];
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapLayer *water = &map->layers[0];
+  struct MapLayer *ground = &map->layers[1];
+  struct MapLayer *groundTop = &map->layers[2];
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *ride = FieldCamera_GetActor();
   struct Actor *a = Actor_GetById(ACTOR_ISLAND_FIRST_LOG);
@@ -719,7 +629,7 @@ void ShrineOfTheSeaGod_LowerWater(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   Actor_SetSpritePriority(ACTOR_ISLAND_FIRST_LOG, 1);
@@ -727,14 +637,14 @@ void ShrineOfTheSeaGod_LowerWater(void) {
   Actor_SetSpritePriority(ACTOR_ISLAND_THIRD_LOG, 1);
   BlendScript_Suspend();
   wait(1);
-  ShrineOfTheSeaGod_CopyRect(46, 51, 6, 56, 18, 25);
-  ShrineOfTheSeaGod_CopyRect(84, 100, 6, 56, 18, 6);
-  ShrineOfTheSeaGod_CopyRect(59, 124, 9, 12, 12, 3);
+  MapGrid_CopyCellsTo(46, 51, 6, 56, 18, 25);
+  MapGrid_CopyCellsTo(84, 100, 6, 56, 18, 6);
+  MapGrid_CopyCellsTo(59, 124, 9, 12, 12, 3);
   Io_Write16(0x80c, &REG_BLDALPHA);
   wait(1);
-  layer0->y += -px(68);
-  layer1->y += -px(20);
-  layer2->y += px(12);
+  water->offsetY += -px(68);
+  ground->offsetY += -px(20);
+  groundTop->offsetY += px(12);
   leader->z.fixed += -px(12);
   ride->y.fixed += -px(12);
   a->z.fixed += -px(12);
@@ -745,7 +655,7 @@ void ShrineOfTheSeaGod_LowerWater(void) {
   gFieldWork->transition = 0x209;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
+  MapGrid_SetShakeFixed(px(1), px(1), Q16_ONE);
   Sound_Play(SE_245);
   i = 0;
   do {
@@ -779,11 +689,11 @@ void ShrineOfTheSeaGod_LowerWater(void) {
   ShrineOfTheSeaGod_LowerWaterBand(65, 58);
   Io_Write16(0xf05, &REG_BLDALPHA);
   ShrineOfTheSeaGod_LowerWaterBand(65, 51);
-  Call3((void (*)())MapGrid_SetScreenShake, 0, 0x10000, 0x10000);
+  MapGrid_SetShakeFixed(0, px(1), Q16_ONE);
   Io_Write16(0x1004, &REG_BLDALPHA);
   wait(10);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
-  Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
+  MapGrid_SetShakeFixed(-1, -1, 9 * Q16_ONE / 10);
   Io_Write16(0x1003, &REG_BLDALPHA);
   wait(10);
   Io_Write16(0x1002, &REG_BLDALPHA);
@@ -791,8 +701,8 @@ void ShrineOfTheSeaGod_LowerWater(void) {
   Io_Write16(0x1001, &REG_BLDALPHA);
   wait(10);
   Io_Write16(0x1000, &REG_BLDALPHA);
-  ShrineOfTheSeaGod_CopyRect(103, 51, 6, 56, 18, 25);
-  ShrineOfTheSeaGod_CopyRect(46, 108, 9, 12, 12, 3);
+  MapGrid_CopyCellsTo(103, 51, 6, 56, 18, 25);
+  MapGrid_CopyCellsTo(46, 108, 9, 12, 12, 3);
   wait(10);
   MapGrid_WaitForShakeToSettle();
   gFieldWork->transition = 0x204;
@@ -808,15 +718,13 @@ void ShrineOfTheSeaGod_LowerWater(void) {
 
 extern s16 gShrineOfTheSeaGod_MovableActors[];
 
-/// The leader is placed at y -50 and map layer 1 moved by -50; then both move
-/// by 0x8000 in y a frame for 100 frames as a screen transition starts.
+/// The leader is placed 50 pixels down and map layer 1 with it; then both rise
+/// half a pixel every two frames, 100 times, as a screen transition starts.
 void ShrineOfTheSeaGod_RiseOnWater(void) {
-  struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
-  struct ShrineOfTheSeaGodMapLayer *layer;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapLayer *layer;
   struct Actor *leader;
   u32 i;
-  s32 frames;
 
   layer = &map->layers[1];
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -824,40 +732,32 @@ void ShrineOfTheSeaGod_RiseOnWater(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_SANDSTORM);
-  ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_MoveWithinMapBounds(px(344), -1, px(248), 0);
-  ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
+  MapGrid_CopyCellsTo(62, 77, 62, 18, 19, 6);
   wait(1);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
   leader->motionFlags = 0;
-  leader->y.fixed = -50 << 16;
-  leader->groundHeight = -50 << 16;
-  layer->y += -50 << 16;
+  leader->y.fixed = px(-50);
+  leader->groundHeight = px(-50);
+  layer->offsetY += px(-50);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   gFieldWork->transition = 515;
   Event_StartScreenTransition();
-  Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
-  i = 0;
-loop:
-  leader->y.fixed += 0x8000;
-  frames = 2;
-  leader->groundHeight += 0x8000;
-  /* FAKEMATCH(barrier): wait()'s argument is set before the count. */
-  asm volatile("" : "+l"(frames));
-  i++;
-  /* FAKEMATCH(barrier): the layer is read after the count. */
-  asm("" : "+l"(layer) : "l"(i));
-  layer->y += 0x8000;
-  wait(frames);
-  if (i <= 99)
-    goto loop;
+  MapGrid_SetShakeFixed(px(1), px(1), Q16_ONE);
+  for (i = 0; i < 100; i++) {
+    leader->y.fixed += px(1) / 2;
+    leader->groundHeight += px(1) / 2;
+    layer->offsetY += px(1) / 2;
+    wait(2);
+  }
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   MapGrid_SetScreenShake(0, 0, 0);
   gFieldWork->transition = 521;
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 1;
-  ShrineOfTheSeaGod_CopyRect(62, 69, 62, 18, 19, 6);
+  MapGrid_CopyCellsTo(62, 69, 62, 18, 19, 6);
   wait(1);
   Event_End();
 }
@@ -865,9 +765,8 @@ loop:
 /// The leader turns, then moves with map layer 1 by -0x8000 in y a frame for
 /// 100 frames; at frame 90 the screen transition finishes.
 void ShrineOfTheSeaGod_SinkWithWater(void) {
-  struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
-  struct ShrineOfTheSeaGodMapLayer *layer;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapLayer *layer;
   struct Actor *object;
   u32 i;
 
@@ -876,19 +775,19 @@ void ShrineOfTheSeaGod_SinkWithWater(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   FieldCamera_MoveWithinMapBounds(px(344), -1, px(248), 1);
-  ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
+  MapGrid_CopyCellsTo(62, 77, 62, 18, 19, 6);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 20);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
   object->motionFlags = 0;
   Sound_Play(SE_245);
-  Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x10000, 0x10000);
+  MapGrid_SetShakeFixed(px(1), px(1), Q16_ONE);
   i = 0;
 loop:
   object->y.fixed -= 0x8000;
   object->groundHeight -= 0x8000;
-  layer->y -= 0x8000;
+  layer->offsetY -= px(1) / 2;
   wait(2);
   if (i == 90) {
     gFieldWork->transition = 0x203;
@@ -908,19 +807,19 @@ void ShrineOfTheSeaGod_SetUpPuddle(s32 actor) {
 
 /// Frost on the first puddle turns it to an ice pillar.
 void ShrineOfTheSeaGod_FreezeFirstPuddle(void) {
-  ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 8, 18);
+  MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 18);
   GameFlag_Set(FLAG_FIRST_PUDDLE_FROZEN);
 }
 
 /// Frost on the second puddle turns it to an ice pillar.
 void ShrineOfTheSeaGod_FreezeSecondPuddle(void) {
-  ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 18);
+  MapGrid_CopyCellAttributes(0, 0, 1, 1, 10, 18);
   GameFlag_Set(FLAG_SECOND_PUDDLE_FROZEN);
 }
 
 /// Frost on the third puddle turns it to an ice pillar.
 void ShrineOfTheSeaGod_FreezeThirdPuddle(void) {
-  ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 17);
+  MapGrid_CopyCellAttributes(0, 0, 1, 1, 10, 17);
   GameFlag_Set(FLAG_THIRD_PUDDLE_FROZEN);
 }
 
@@ -949,7 +848,7 @@ void ShrineOfTheSeaGod_MovePillar(void) {
 
   Actor_PlaceMovedBlock();
   if (object->x.fixed >> 20 == 12)
-    GameFlag_Set(FLAG_ROOM3_PILLAR_MOVED);
+    GameFlag_Set(FLAG_CROSSROADS_PILLAR_MOVED);
 }
 
 /// Lets a pillar fall to the ground with a thump.
@@ -981,7 +880,7 @@ void ShrineOfTheSeaGod_PushPillarIntoHole(void) {
 
 /// The great hall's task: its pillars are drawn behind the leader on the upper
 /// level, in front of it below.
-void ShrineOfTheSeaGod_LayerRoom3Props(void) {
+void ShrineOfTheSeaGod_LayerCrossroadsProps(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   u32 id;
 
@@ -1045,12 +944,12 @@ void ShrineOfTheSeaGod_KeepFlameOnTorch(void) {
 
 // XXX: what priority flag 0x20 does to the leader, which the slide room sets on
 // arrival; a render of the slide room with and without it would settle it.
-UNUSED void ShrineOfTheSeaGod_ClearLeaderFlag20(void) {
+UNUSED void ShrineOfTheSeaGod_ClearLeaderPriorityBit(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags &= ~0x20;
 }
 
-/// Sets the leader's priority flag 0x20.
-UNUSED void ShrineOfTheSeaGod_SetLeaderFlag20(void) {
+/// Sets the leader's priority bit 0x20.
+UNUSED void ShrineOfTheSeaGod_SetLeaderPriorityBit(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
 }
 
@@ -1160,7 +1059,7 @@ void ShrineOfTheSeaGod_KeepWithLeader(struct Actor *object) {
 
 /// The task that carries the great hall's toppling pillar along with the
 /// leader.
-void ShrineOfTheSeaGod_KeepRoom3PillarWithLeader(void) {
+void ShrineOfTheSeaGod_KeepCrossroadsPillarWithLeader(void) {
   ShrineOfTheSeaGod_KeepWithLeader(
       Actor_GetById(ACTOR_GREAT_HALL_TOPPLING_PILLAR));
 }
@@ -1180,24 +1079,23 @@ void ShrineOfTheSeaGod_TopplePillarIntoWater(void) {
   struct FieldSprite *sprite = stone->sprite;
   struct EffectOptions options;
   u32 i;
-  s32 spin;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 408, 328);
   ShrineOfTheSeaGod_RockPillar(leader, stone);
-  ShrineOfTheSeaGod_BlendStart(0, 50, 3, 1, 24, 70);
-  GameFlag_Set(FLAG_ROOM3_PILLAR_TOPPLED);
+  MapGrid_CopyCellAttributes(0, 50, 3, 1, 24, 70);
+  GameFlag_Set(FLAG_CROSSROADS_PILLAR_TOPPLED);
   wait(1);
   leader->motionFlags = 3;
   Actor_SetSpritePriority(ACTOR_GREAT_HALL_TOPPLING_PILLAR, 3);
   stone->priorityFlags |= 2;
-  Task_Add(ShrineOfTheSeaGod_KeepRoom3PillarWithLeader, 0x480);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepCrossroadsPillarWithLeader, 0x480);
   do
     wait(1);
   while (leader->velocityY != 0);
   Sound_Play(SE_TOPPLE);
-  Call3((void (*)())MapGrid_SetScreenShake, 0x10000, 0x20000, 0x10000);
+  MapGrid_SetShakeFixed(px(1), px(2), Q16_ONE);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = 0xa3d7;
@@ -1219,16 +1117,11 @@ void ShrineOfTheSeaGod_TopplePillarIntoWater(void) {
   }
   leader->velocityY = 0x40000;
   wait(2);
-  Call3((void (*)())MapGrid_SetScreenShake, -1, -1, 0xe666);
-  Task_Remove(ShrineOfTheSeaGod_KeepRoom3PillarWithLeader);
-  spin = 0x200;
-  for (i = 0; i <= 7;) {
-    sprite->rotation += spin;
-    /* FAKEMATCH(dead): an empty once-only block after the rotation's store. */
-    do {
-    } while (0);
+  MapGrid_SetShakeFixed(-1, -1, 9 * Q16_ONE / 10);
+  Task_Remove(ShrineOfTheSeaGod_KeepCrossroadsPillarWithLeader);
+  for (i = 0; i < 8; i++) {
+    sprite->rotation += 0x200;
     stone->z.fixed += px(1);
-    i++;
     wait(1);
   }
   MapGrid_WaitForShakeToSettle();
@@ -1278,7 +1171,7 @@ void ShrineOfTheSeaGod_ToppleFirstPillar(void) {
   leader->motionFlags = 3;
   Actor_SetSpritePriority(ACTOR_FIRST_TOPPLING_PILLAR, 3);
   pillar->priorityFlags |= 2;
-  Task_Add(ShrineOfTheSeaGod_KeepFirstPillarWithLeader, 0x480);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepFirstPillarWithLeader, 0x480);
   ShrineOfTheSeaGod_LandPillarAsLogs(leader, 0);
   Actor_SetSpritePriority(ACTOR_PILLAR_ROOM_SECOND_PILLAR, 1);
   Actor_GetById(ACTOR_PILLAR_ROOM_SECOND_PILLAR)->priorityFlags &= ~2;
@@ -1288,12 +1181,12 @@ void ShrineOfTheSeaGod_ToppleFirstPillar(void) {
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 1);
   Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, 0x9999, 0x1999);
   Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, 328, 224);
-  ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.leaderActorId, 321, 256);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 321, 256);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_FIRST_PILLAR_LOG, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_FIRST_PILLAR_OTHER_LOG, 0, 0);
-  ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.leaderActorId, 321, 320);
-  ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.leaderActorId, 321, 400);
-  ShrineOfTheSeaGod_ObjCommit(gMainRoutineWork.leaderActorId, 321, 480);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 321, 320);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 321, 400);
+  Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 321, 480);
   Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, 321, 536);
   Sound_Play(SE_RATTLE);
   Actor_SetSpritePriority(ACTOR_PILLAR_ROOM_SECOND_PILLAR, 2);
@@ -1321,7 +1214,7 @@ void ShrineOfTheSeaGod_ToppleSecondPillar(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  ShrineOfTheSeaGod_ObjWalk(gMainRoutineWork.leaderActorId, 408, 360);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 408, 360);
   ShrineOfTheSeaGod_RockPillar(leader, pillar);
   Map_CopyCellAttributeRect(0, 0, 3, 1, 24, 22);
   Map_CopyCellAttributeRect(40, 0, 2, 1, 24, 24);
@@ -1329,7 +1222,7 @@ void ShrineOfTheSeaGod_ToppleSecondPillar(void) {
   leader->motionFlags = 3;
   Actor_SetSpritePriority(ACTOR_SECOND_TOPPLING_PILLAR, 3);
   pillar->priorityFlags |= 2;
-  Task_Add(ShrineOfTheSeaGod_KeepSecondPillarWithLeader, 0x480);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepSecondPillarWithLeader, 0x480);
   ShrineOfTheSeaGod_LandPillarAsLogs(leader, 2);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 1);
   Actor_SetSpeedParameters(gMainRoutineWork.leaderActorId, 0x9999, 0x1999);
@@ -1346,14 +1239,14 @@ void ShrineOfTheSeaGod_ToppleSecondPillar(void) {
 
 /// Reveal shows the seventh stepping stone in the hexagon of rocks.
 void ShrineOfTheSeaGod_RevealStone(void) {
-  ShrineOfTheSeaGod_CopyRect(42, 1, 15, 14, 1, 2);
-  ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 15, 14);
+  MapGrid_CopyCellsTo(42, 1, 15, 14, 1, 2);
+  MapGrid_CopyCellAttributes(0, 0, 1, 1, 15, 14);
 }
 
 /// As Reveal fades, the seventh stone is hidden again.
 void ShrineOfTheSeaGod_HideStone(void) {
-  ShrineOfTheSeaGod_CopyRect(15, 9, 15, 14, 1, 2);
-  ShrineOfTheSeaGod_BlendStart(14, 14, 1, 1, 15, 14);
+  MapGrid_CopyCellsTo(15, 9, 15, 14, 1, 2);
+  MapGrid_CopyCellAttributes(14, 14, 1, 1, 15, 14);
 }
 
 /// Back in the entrance hall, Riki tries to throw the rope up to Tavi again.
@@ -1365,35 +1258,34 @@ void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
   Event_SetMessageId((s32)MsgFieldRopeThrownAgain);
   // "All right! I'm gonna throw the rope again!"
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_RIKI, 0);
-  ShrineOfTheSeaGod_ObjSpeed(gMainRoutineWork.leaderActorId, 0xcccc, 0x6666);
-  ShrineOfTheSeaGod_ObjSpeed(14, 0xcccc, 0x6666);
-  ShrineOfTheSeaGod_ObjWalk(gMainRoutineWork.leaderActorId, 272, 336);
-  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
+  Actor_SetSpeedFixed(gMainRoutineWork.leaderActorId, 0xcccc, 0x6666);
+  Actor_SetSpeedFixed(14, 0xcccc, 0x6666);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 272, 336);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_HALL_KRADEN, px(272), px(336));
   wait(1);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_HALL_KRADEN, 256, 336);
+  Actor_WalkToAndWait(ACTOR_HALL_KRADEN, 256, 336);
   Actor_FaceDirectionById(ACTOR_HALL_KRADEN, FACING_EAST, 0);
-  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.leaderActorId, FACING_WEST, 40);
-  ShrineOfTheSeaGod_ObjTurn(ACTOR_HALL_KRADEN, 0xd000, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 40);
+  Actor_FaceDirection(ACTOR_HALL_KRADEN, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
-  ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
-  ShrineOfTheSeaGod_CamSpeed(0x4cccc, 0x9999);
-  ShrineOfTheSeaGod_CamMove(288 << 16, -1, 126 << 16, 1);
+  FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+  FieldCamera_SetSpeedFixed(0x4cccc, 0x9999);
+  FieldCamera_MoveTo(288, CAMERA_KEEP, 126, 1);
   FieldCamera_WaitForArrival();
   Actor_Jump(ACTOR_TAVI, 4, 20);
-  ShrineOfTheSeaGod_MessagePut(0x800d, 0);
+  Event_ShowMessage(0x800d, 0);
   Actor_SetAnimationAndWait(ACTOR_RIKI, 3);
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_RIKI, 2);
   Actor_Jump(ACTOR_RIKI, 6, 80);
-  ShrineOfTheSeaGod_MessagePut(0x800d, 0);
+  Event_ShowMessage(0x800d, 0);
   Actor_SetAnimationById(ACTOR_RIKI, 4);
-  ShrineOfTheSeaGod_MessagePut(0x400c, 0);
-  ShrineOfTheSeaGod_ObjTurn(ACTOR_TAVI, 0x3000, 0);
-  ShrineOfTheSeaGod_ShowEmote(ACTOR_TAVI, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP,
-                              20);
-  ShrineOfTheSeaGod_MessagePut(0x800d, 0);
-  ShrineOfTheSeaGod_MessagePut(0x400c, 0);
+  Event_ShowMessage(0x400c, 0);
+  Actor_FaceDirection(ACTOR_TAVI, FACING_SOUTH_SOUTHEAST, 0);
+  FieldActor_ShowEmote(ACTOR_TAVI, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  Event_ShowMessage(0x800d, 0);
+  Event_ShowMessage(0x400c, 0);
   Actor_FaceDirectionById(ACTOR_TAVI, FACING_EAST, 0);
   FieldEffect_SetAttached(13, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
@@ -1401,16 +1293,16 @@ void ShrineOfTheSeaGod_ThrowRopeAgain(void) {
   Actor_SetAnimationAndWait(ACTOR_RIKI, 3);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_RIKI, 0);
   Camera_SetSpeedParameters(0x33333, 0x6666);
-  ShrineOfTheSeaGod_CamMove(420 << 16, -1, 200 << 16, 1);
-  ShrineOfTheSeaGod_ObjSpeed(12, 0x19999, 0xcccc);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_RIKI, 346, 186);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_RIKI, 374, 192);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_RIKI, 392, 224);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_RIKI, 394, 246);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_RIKI, 420, 268);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_RIKI, 456, 268);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_RIKI, 488, 240);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_RIKI, 488, 226);
+  FieldCamera_MoveTo(420, CAMERA_KEEP, 200, 1);
+  Actor_SetSpeedFixed(12, 0x19999, 0xcccc);
+  Actor_WalkToAndWait(ACTOR_RIKI, 346, 186);
+  Actor_WalkToAndWait(ACTOR_RIKI, 374, 192);
+  Actor_WalkToAndWait(ACTOR_RIKI, 392, 224);
+  Actor_WalkToAndWait(ACTOR_RIKI, 394, 246);
+  Actor_WalkToAndWait(ACTOR_RIKI, 420, 268);
+  Actor_WalkToAndWait(ACTOR_RIKI, 456, 268);
+  Actor_WalkToAndWait(ACTOR_RIKI, 488, 240);
+  Actor_WalkToAndWait(ACTOR_RIKI, 488, 226);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_RIKI, 0, 0);
   Camera_SetSpeedParameters(0x4cccc, 0x9999);
   FieldCamera_MoveWithinMapBounds(px(264), -1, px(320), 1);
@@ -1436,10 +1328,6 @@ extern u32 gShrineOfTheSeaGod_BoysGoHome[];
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Actor_FaceDirectionAndRefreshById(s32 actor, s32 angle);
 
-/// Turns an actor to an angle at once.
-static inline void ShrineOfTheSeaGod_ObjAngle(s32 actor, s32 angle) {
-  Actor_FaceDirectionAndRefreshById(actor, angle);
-}
 void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
 
 /// Lash ties the boys' rope, Tavi climbs down and both meet the party.
@@ -1447,154 +1335,139 @@ void ShrineOfTheSeaGod_LashRope(void) {
   struct Actor *object;
   struct Actor *leader;
   struct FieldSprite *sprite;
-  u8 *motionFlags;
   const void *callback;
 
-  if (ShrineOfTheSeaGod_FlagCheck(FLAG_TAVI_RESCUED))
+  if (Event_GetFlag(FLAG_TAVI_RESCUED))
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
   FieldCamera_GetActor()->motionFlags = 0;
-  ShrineOfTheSeaGod_CamMove(170 << 17, -1, 176 << 16, 1);
-  ShrineOfTheSeaGod_ObjSpeed(gMainRoutineWork.leaderActorId, 0xcccc, 0x6666);
-  ShrineOfTheSeaGod_ObjSpeed(14, 0xcccc, 0x6666);
-  ShrineOfTheSeaGod_ObjWalk(gMainRoutineWork.leaderActorId, 344, 184);
-  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.leaderActorId, 0x2000, 0);
-  ShrineOfTheSeaGod_ObjPlace(ACTOR_HALL_KRADEN, 344 << 16, 184 << 16);
+  FieldCamera_MoveTo(340, CAMERA_KEEP, 176, 1);
+  Actor_SetSpeedFixed(gMainRoutineWork.leaderActorId, 0xcccc, 0x6666);
+  Actor_SetSpeedFixed(14, 0xcccc, 0x6666);
+  Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 344, 184);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
+  Actor_SetPosition(ACTOR_HALL_KRADEN, 344, 184);
   wait(1);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_HALL_KRADEN, 356, 196);
-  /* FAKEMATCH(wrapper): Actor_FaceDirectionAndRefreshById called through the
-   * inline ShrineOfTheSeaGod_ObjAngle, here and below. */
-  ShrineOfTheSeaGod_ObjAngle(ACTOR_HALL_KRADEN, 0xb000);
+  Actor_WalkToAndWait(ACTOR_HALL_KRADEN, 356, 196);
+  Actor_FaceDirectionAndWait(ACTOR_HALL_KRADEN, 0xb000);
   Event_SetMessageId((s32)MsgFieldPraiseRopeWork);
-  ShrineOfTheSeaGod_MessagePut(ACTOR_HALL_KRADEN, 0);
+  Event_ShowMessage(ACTOR_HALL_KRADEN, 0);
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
-  ShrineOfTheSeaGod_MessagePut(ACTOR_TAVI, 0);
-  ShrineOfTheSeaGod_ObjPlace(ACTOR_TAVI, 184 << 16, 168 << 16);
-  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.leaderActorId, 0x8000, 0);
-  ShrineOfTheSeaGod_ObjTurn(ACTOR_HALL_KRADEN, 0x8000, 0);
-  ShrineOfTheSeaGod_CamSpeed(0x4cccc, 0x9999);
-  ShrineOfTheSeaGod_CamMove(232 << 16, 64 << 16, 176 << 16, 1);
-  ShrineOfTheSeaGod_ObjSpeed(13, 0x19999, 0xcccc);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_TAVI, 232, 168);
+  Event_ShowMessage(ACTOR_TAVI, 0);
+  Actor_SetPosition(ACTOR_TAVI, 184, 168);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_HALL_KRADEN, FACING_WEST, 0);
+  FieldCamera_SetSpeedFixed(0x4cccc, 0x9999);
+  FieldCamera_MoveTo(232, 64, 176, 1);
+  Actor_SetSpeedFixed(13, 0x19999, 0xcccc);
+  Actor_WalkToAndWait(ACTOR_TAVI, 232, 168);
   Event_Wait(20);
-  ShrineOfTheSeaGod_MessagePut(ACTOR_TAVI, 0);
-  ShrineOfTheSeaGod_CamSpeed(0x13333, 0x2666);
-  ShrineOfTheSeaGod_CamMove(174 << 17, -1, 216 << 16, 1);
+  Event_ShowMessage(ACTOR_TAVI, 0);
+  FieldCamera_SetSpeedFixed(0x13333, 0x2666);
+  FieldCamera_MoveTo(348, CAMERA_KEEP, 216, 1);
   object = Actor_GetById(ACTOR_TAVI);
   sprite = object->sprite;
   Actor_SetSpritePriority(ACTOR_TAVI, 1);
-  ShrineOfTheSeaGod_ObjSpeed(13, 0x19999, 0xcccc);
+  Actor_SetSpeedFixed(13, 0x19999, 0xcccc);
   Actor_Jump(ACTOR_TAVI, 4, 0);
-  ShrineOfTheSeaGod_ObjCommit(ACTOR_TAVI, 248, 168);
+  Actor_MoveToAndWait(ACTOR_TAVI, 248, 168);
   Actor_SetAnimationById(ACTOR_TAVI, 6);
-  /* FAKEMATCH(temporary): the first motion flags store written through a byte
-   * pointer. */
-  motionFlags = &object->motionFlags;
-  /* FAKEMATCH(signature): scaleX written through a one-member union. */
-  ((union ObjectWord *)&object->scaleX)->value = -0x10000;
+  object->scaleX = -0x10000;
   sprite->rotation = 0xd000;
-  *motionFlags = 0;
+  object->motionFlags = 0;
   object->y.fixed += px(6);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TAVI), 0);
-  ShrineOfTheSeaGod_ObjSpeed(13, 0x6666, 0x3333);
-  /* FAKEMATCH(wrapper): Actor_SetMoveTarget called through Call4. */
-  Call4((void (*)())Actor_SetMoveTarget, (s32)object, 164 << 17, 152 << 14,
-        168 << 16);
+  Actor_SetSpeedFixed(13, 0x6666, 0x3333);
+  FieldActor_SetMoveTarget(object, 328, 38, 168);
   do {
     Actor_WaitForMoveById(ACTOR_TAVI);
   } while (0);
   object->motionFlags = 3;
   object->groundHeight = 0x200000;
-  ((union ObjectWord *)&object->scaleX)->value = 0x10000;
+  object->scaleX = 0x10000;
   sprite->rotation = 0;
   Actor_SetAnimationById(ACTOR_TAVI, 1);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TAVI), 1);
-  ShrineOfTheSeaGod_ObjSpeed(13, 0x19999, 0xcccc);
+  Actor_SetSpeedFixed(13, 0x19999, 0xcccc);
   Actor_Jump(ACTOR_TAVI, 4, 0);
-  ShrineOfTheSeaGod_ObjCommit(ACTOR_TAVI, 328, 184);
-  ShrineOfTheSeaGod_ObjTurn(ACTOR_TAVI, 0, 20);
-  ShrineOfTheSeaGod_ShowEmote(ACTOR_TAVI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                              40);
+  Actor_MoveToAndWait(ACTOR_TAVI, 328, 184);
+  Actor_FaceDirection(ACTOR_TAVI, 0, 20);
+  FieldActor_ShowEmote(ACTOR_TAVI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetSpritePriority(ACTOR_TAVI, 2);
-  ShrineOfTheSeaGod_MessagePut(0x400d, 0);
-  ShrineOfTheSeaGod_MessagePut(0x200e, 0);
-  ShrineOfTheSeaGod_ShowEmote(ACTOR_TAVI, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
-  ShrineOfTheSeaGod_MessagePut(0x400d, 0);
-  ShrineOfTheSeaGod_ObjTurn(ACTOR_HALL_KRADEN, 0xb000, 40);
-  ShrineOfTheSeaGod_ObjTurn(ACTOR_HALL_KRADEN, 0x8000, 0);
+  Event_ShowMessage(0x400d, 0);
+  Event_ShowMessage(0x200e, 0);
+  FieldActor_ShowEmote(ACTOR_TAVI, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  Event_ShowMessage(0x400d, 0);
+  Actor_FaceDirection(ACTOR_HALL_KRADEN, FACING_NORTH_NORTHWEST, 40);
+  Actor_FaceDirection(ACTOR_HALL_KRADEN, FACING_WEST, 0);
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_HALL_KRADEN, 0, 60);
-  ShrineOfTheSeaGod_MessagePut(0x400d, 0);
+  Event_ShowMessage(0x400d, 0);
   Actor_SetAnimationById(ACTOR_TAVI, 3);
-  ShrineOfTheSeaGod_ObjPlace(ACTOR_RIKI, 394 << 16, 286 << 16);
+  Actor_SetPosition(ACTOR_RIKI, 394, 286);
   wait(1);
-  ShrineOfTheSeaGod_ObjSpeed(12, 0x19999, 0xcccc);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_RIKI, 394, 248);
-  ShrineOfTheSeaGod_ObjTurn(ACTOR_RIKI, 0xb000, 0);
+  Actor_SetSpeedFixed(12, 0x19999, 0xcccc);
+  Actor_WalkToAndWait(ACTOR_RIKI, 394, 248);
+  Actor_FaceDirection(ACTOR_RIKI, FACING_NORTH_NORTHWEST, 0);
   Actor_Jump(ACTOR_RIKI, 4, 20);
-  ShrineOfTheSeaGod_MessagePut(0x400c, 0);
-  ShrineOfTheSeaGod_ShowEmote(ACTOR_TAVI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                              0);
-  ShrineOfTheSeaGod_ObjTurn(ACTOR_TAVI, 0x3000, 0);
-  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.leaderActorId, 0x2000, 0);
-  ShrineOfTheSeaGod_ObjTurn(ACTOR_HALL_KRADEN, 0x3000, 0);
-  ShrineOfTheSeaGod_CamSpeed(0x4cccc, 0x9999);
-  ShrineOfTheSeaGod_CamMove(188 << 17, -1, 264 << 16, 1);
+  Event_ShowMessage(0x400c, 0);
+  FieldActor_ShowEmote(ACTOR_TAVI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_FaceDirection(ACTOR_TAVI, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_HALL_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
+  FieldCamera_SetSpeedFixed(0x4cccc, 0x9999);
+  FieldCamera_MoveTo(376, CAMERA_KEEP, 264, 1);
   FieldCamera_WaitForArrival();
-  ShrineOfTheSeaGod_MessagePut(ACTOR_RIKI, 0);
-  ShrineOfTheSeaGod_CamSpeed(0x26666, 0x4ccc);
-  ShrineOfTheSeaGod_CamMove(174 << 17, -1, 216 << 16, 1);
+  Event_ShowMessage(ACTOR_RIKI, 0);
+  FieldCamera_SetSpeedFixed(0x26666, 0x4ccc);
+  FieldCamera_MoveTo(348, CAMERA_KEEP, 216, 1);
   Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 12);
   Actor_WatchAndSetScript(ACTOR_HALL_KRADEN, 12);
   Actor_WatchAndSetScript(ACTOR_TAVI, 12);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_RIKI, 394, 220);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_RIKI, 370, 198);
-  ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);
-  ShrineOfTheSeaGod_ObjCommit(ACTOR_HALL_KRADEN, 368, 180);
+  Actor_WalkToAndWait(ACTOR_RIKI, 394, 220);
+  Actor_WalkToAndWait(ACTOR_RIKI, 370, 198);
+  Actor_SetSpeedFixed(14, 0x19999, 0xcccc);
+  Actor_MoveToAndWait(ACTOR_HALL_KRADEN, 368, 180);
   Actor_WatchAndSetScript(ACTOR_HALL_KRADEN, 12);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_RIKI, 336, 198);
-  ShrineOfTheSeaGod_ObjTurn(ACTOR_RIKI, 0xb000, 0);
+  Actor_WalkToAndWait(ACTOR_RIKI, 336, 198);
+  Actor_FaceDirection(ACTOR_RIKI, FACING_NORTH_NORTHWEST, 0);
   Actor_Stop(ACTOR_TAVI);
-  ShrineOfTheSeaGod_MessagePut(0x400d, 0);
+  Event_ShowMessage(0x400d, 0);
   Actor_FaceDirectionById(ACTOR_RIKI, FACING_NORTH_NORTHEAST, 0);
-  ShrineOfTheSeaGod_MessagePut(ACTOR_RIKI, 0);
-  ShrineOfTheSeaGod_ObjAngle(ACTOR_RIKI, 0xb000);
+  Event_ShowMessage(ACTOR_RIKI, 0);
+  Actor_FaceDirectionAndWait(ACTOR_RIKI, 0xb000);
   Actor_Jump(ACTOR_RIKI, 4, 20);
   Event_ShowMessageThenWait(ACTOR_RIKI, 0, 20);
-  ShrineOfTheSeaGod_ShowEmote(ACTOR_TAVI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  ShrineOfTheSeaGod_ShowEmote(ACTOR_RIKI, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  ShrineOfTheSeaGod_MessagePut(ACTOR_RIKI, 0);
+  FieldActor_ShowEmote(ACTOR_TAVI, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
+  FieldActor_ShowEmote(ACTOR_RIKI, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Event_ShowMessage(ACTOR_RIKI, 0);
   Actor_SetAnimationById(ACTOR_TAVI, 4);
-  ShrineOfTheSeaGod_MessagePut(0x400d, 0);
-  ShrineOfTheSeaGod_ShowEmote(ACTOR_RIKI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                              20);
-  ShrineOfTheSeaGod_MessagePut(ACTOR_RIKI, 0);
-  ShrineOfTheSeaGod_ObjTurn(ACTOR_TAVI, 0x8000, 20);
-  ShrineOfTheSeaGod_MessagePut(0x400d, 0);
-  ShrineOfTheSeaGod_ObjTurn(ACTOR_RIKI, 0x8000, 0);
-  ShrineOfTheSeaGod_MessagePut(ACTOR_RIKI, 0);
+  Event_ShowMessage(0x400d, 0);
+  FieldActor_ShowEmote(ACTOR_RIKI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Event_ShowMessage(ACTOR_RIKI, 0);
+  Actor_FaceDirection(ACTOR_TAVI, FACING_WEST, 20);
+  Event_ShowMessage(0x400d, 0);
+  Actor_FaceDirection(ACTOR_RIKI, FACING_WEST, 0);
+  Event_ShowMessage(ACTOR_RIKI, 0);
   Actor_SetAnimationAndWait(ACTOR_TAVI, 4);
-  ShrineOfTheSeaGod_MessagePut(0x400d, 0);
-  ShrineOfTheSeaGod_ShowEmote(ACTOR_RIKI, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP,
-                              40);
-  ShrineOfTheSeaGod_MessagePut(ACTOR_RIKI, 0);
-  ShrineOfTheSeaGod_ShowEmote(ACTOR_RIKI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                              0);
-  ShrineOfTheSeaGod_ShowEmote(ACTOR_TAVI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                              0);
-  ShrineOfTheSeaGod_ObjTurn(ACTOR_RIKI, 0xb000, 0);
-  ShrineOfTheSeaGod_ObjTurn(ACTOR_TAVI, 0x3000, 40);
+  Event_ShowMessage(0x400d, 0);
+  FieldActor_ShowEmote(ACTOR_RIKI, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  Event_ShowMessage(ACTOR_RIKI, 0);
+  FieldActor_ShowEmote(ACTOR_RIKI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldActor_ShowEmote(ACTOR_TAVI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Actor_FaceDirection(ACTOR_RIKI, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_TAVI, FACING_SOUTH_SOUTHEAST, 40);
   Actor_Jump(ACTOR_TAVI, 4, 40);
-  ShrineOfTheSeaGod_MessagePut(0x400d, 0);
+  Event_ShowMessage(0x400d, 0);
   Actor_SetAnimationById(ACTOR_RIKI, 3);
-  ShrineOfTheSeaGod_MessagePut(ACTOR_RIKI, 0);
+  Event_ShowMessage(ACTOR_RIKI, 0);
   Actor_SetAnimationAndWait(ACTOR_TAVI, 3);
-  ShrineOfTheSeaGod_MessagePut(0x400d, 0);
-  ShrineOfTheSeaGod_MessagePut(ACTOR_RIKI, 0);
+  Event_ShowMessage(0x400d, 0);
+  Event_ShowMessage(ACTOR_RIKI, 0);
   Actor_SetAnimationById(ACTOR_RIKI, 3);
   Actor_SetAnimationAndWait(ACTOR_TAVI, 3);
-  ShrineOfTheSeaGod_ObjSpeed(12, 0x13333, 0x9999);
-  ShrineOfTheSeaGod_ObjSpeed(13, 0x13333, 0x9999);
+  Actor_SetSpeedFixed(12, 0x13333, 0x9999);
+  Actor_SetSpeedFixed(13, 0x13333, 0x9999);
   callback = gShrineOfTheSeaGod_BoysGoHome;
   Actor_SetMovementTypeById(ACTOR_RIKI, callback);
   Event_Wait(10);
@@ -1604,19 +1477,19 @@ void ShrineOfTheSeaGod_LashRope(void) {
   Actor_Stop(ACTOR_HALL_KRADEN);
   wait(1);
   Event_ShowMessageThenWait(ACTOR_HALL_KRADEN, 0, 40);
-  ShrineOfTheSeaGod_ObjPlace(ACTOR_TAVI, 0, 0);
-  ShrineOfTheSeaGod_ObjPlace(ACTOR_RIKI, 0, 0);
-  ShrineOfTheSeaGod_MessagePut(ACTOR_HALL_KRADEN, 0);
-  ShrineOfTheSeaGod_ObjTurn(gMainRoutineWork.leaderActorId, 0, 0);
-  ShrineOfTheSeaGod_ObjTurn(ACTOR_HALL_KRADEN, 0x8000, 20);
-  ShrineOfTheSeaGod_MessagePut(ACTOR_HALL_KRADEN, 0);
+  Actor_SetPositionFixed(ACTOR_TAVI, 0, 0);
+  Actor_SetPositionFixed(ACTOR_RIKI, 0, 0);
+  Event_ShowMessage(ACTOR_HALL_KRADEN, 0);
+  Actor_FaceDirection(gMainRoutineWork.leaderActorId, 0, 0);
+  Actor_FaceDirection(ACTOR_HALL_KRADEN, FACING_WEST, 20);
+  Event_ShowMessage(ACTOR_HALL_KRADEN, 0);
   Actor_SetAnimationById(ACTOR_HALL_KRADEN, 2);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != NULL)
     Actor_SetDestinationById(ACTOR_HALL_KRADEN, leader->x.fixed >> 16,
                              leader->z.fixed >> 16);
   Actor_WaitForMoveById(ACTOR_HALL_KRADEN);
-  ShrineOfTheSeaGod_ObjPlace(ACTOR_HALL_KRADEN, 0, 0);
+  Actor_SetPositionFixed(ACTOR_HALL_KRADEN, 0, 0);
   GameFlag_Set(FLAG_TAVI_RESCUED);
   Event_End();
 }
@@ -1636,9 +1509,9 @@ void ShrineOfTheSeaGod_DjinniFleesEast(void) {
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetSpritePriority(ACTOR_GREAT_HALL_BREATH, 1);
   Actor_GetById(ACTOR_GREAT_HALL_BREATH)->motionFlags = off;
-  ShrineOfTheSeaGod_ObjSpeed(15, 0x19999, 0xcccc);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_GREAT_HALL_BREATH, 500, 344);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_GREAT_HALL_BREATH, 580, 344);
+  Actor_SetSpeedFixed(15, 0x19999, 0xcccc);
+  Actor_WalkToAndWait(ACTOR_GREAT_HALL_BREATH, 500, 344);
+  Actor_WalkToAndWait(ACTOR_GREAT_HALL_BREATH, 580, 344);
   Actor_WatchAndSetScript(ACTOR_GREAT_HALL_BREATH,
                           gMainRoutineWork.leaderActorId);
   Event_Wait(20);
@@ -1662,9 +1535,9 @@ void ShrineOfTheSeaGod_DjinniFleesSouth(void) {
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetSpritePriority(ACTOR_GREAT_HALL_BREATH, 1);
   Actor_GetById(ACTOR_GREAT_HALL_BREATH)->motionFlags = off;
-  ShrineOfTheSeaGod_ObjSpeed(15, 0x19999, 0xcccc);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_GREAT_HALL_BREATH, 616, 376);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_GREAT_HALL_BREATH, 616, 460);
+  Actor_SetSpeedFixed(15, 0x19999, 0xcccc);
+  Actor_WalkToAndWait(ACTOR_GREAT_HALL_BREATH, 616, 376);
+  Actor_WalkToAndWait(ACTOR_GREAT_HALL_BREATH, 616, 460);
   Actor_SetHorizontalPositionWithTerrain(ACTOR_GREAT_HALL_BREATH, 0, 0);
   Event_Wait(20);
   GameFlag_Set(FLAG_DJINNI_FLED_SOUTH);
@@ -1681,21 +1554,21 @@ void ShrineOfTheSeaGod_DjinniRunsNorth(void) {
   Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldCamera_GetActor()->motionFlags = 0;
-  ShrineOfTheSeaGod_CamMove(328 << 16, 32 << 16, 552 << 16, 1);
+  FieldCamera_MoveTo(328, 32, 552, 1);
   FieldCamera_WaitForArrival();
-  ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_BREATH, 328 << 16, 624 << 16, 0xc000);
+  ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_BREATH, px(328), px(624), FACING_NORTH);
   wait(1);
   Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 14);
   object->priorityFlags &= ~2;
   Actor_SetSpritePriority(ACTOR_BREATH, 3);
-  ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_BREATH, 328, 568);
-  ShrineOfTheSeaGod_ObjWalk(ACTOR_BREATH, 328, 496);
+  Actor_SetSpeedFixed(14, 0x19999, 0xcccc);
+  Actor_WalkToAndWait(ACTOR_BREATH, 328, 568);
+  Actor_WalkToAndWait(ACTOR_BREATH, 328, 496);
   Actor_WalkToAndWaitById(ACTOR_BREATH, 280, 432);
   Actor_Stop(gMainRoutineWork.leaderActorId);
   wait(1);
   angle = FACING_SOUTH;
-  ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_BREATH, 280 << 16, 328 << 16, angle);
+  ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_BREATH, px(280), px(328), angle);
   Actor_SetSpritePriority(ACTOR_BREATH, 2);
   Actor_GetById(ACTOR_BREATH)->priorityFlags |= 1;
   object->priorityFlags |= 2;
@@ -1707,7 +1580,7 @@ void ShrineOfTheSeaGod_DjinniRunsNorth(void) {
 
 /// In the ledge room, Breath runs west past the leader.
 void ShrineOfTheSeaGod_DjinniRunsWest(void) {
-  s32 done = ShrineOfTheSeaGod_FlagCheck(FLAG_DJINNI_RAN_PAST);
+  s32 done = Event_GetFlag(FLAG_DJINNI_RAN_PAST);
 
   if (done == 0) {
     Event_Start();
@@ -1718,13 +1591,13 @@ void ShrineOfTheSeaGod_DjinniRunsWest(void) {
     FieldCamera_MoveWithinMapBounds(px(328), px(48), px(552), 1);
     FieldCamera_WaitForArrival();
     done = 0x4000;
-    ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_BREATH, 424 << 16, 520 << 16, done);
+    ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_BREATH, px(424), px(520), done);
     wait(1);
     Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 14);
     Actor_SetSpritePriority(ACTOR_BREATH, 1);
-    ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);
-    ShrineOfTheSeaGod_ObjWalk(ACTOR_BREATH, 380, 552);
-    ShrineOfTheSeaGod_ObjWalk(ACTOR_BREATH, 264, 552);
+    Actor_SetSpeedFixed(14, 0x19999, 0xcccc);
+    Actor_WalkToAndWait(ACTOR_BREATH, 380, 552);
+    Actor_WalkToAndWait(ACTOR_BREATH, 264, 552);
     Actor_WalkToAndWaitById(ACTOR_BREATH, 264, 540);
     Actor_Stop(gMainRoutineWork.leaderActorId);
     wait(1);
@@ -1747,11 +1620,10 @@ void ShrineOfTheSeaGod_DjinniHopsOntoLedge(void) {
     off = 0;
     FieldCamera_GetActor()->motionFlags = off;
     FieldCamera_MoveWithinMapBounds(px(320), -1, px(300), 1);
-    ShrineOfTheSeaGod_ShowEmote(ACTOR_BREATH,
-                                EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-    ShrineOfTheSeaGod_ObjSpeed(14, 0x13333, 0x9999);
-    ShrineOfTheSeaGod_ObjWalk(ACTOR_BREATH, 345, 296);
-    ShrineOfTheSeaGod_ObjWalk(ACTOR_BREATH, 392, 296);
+    FieldActor_ShowEmote(ACTOR_BREATH, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+    Actor_SetSpeedFixed(14, 0x13333, 0x9999);
+    Actor_WalkToAndWait(ACTOR_BREATH, 345, 296);
+    Actor_WalkToAndWait(ACTOR_BREATH, 392, 296);
     Actor_WatchAndSetScript(ACTOR_BREATH, gMainRoutineWork.leaderActorId);
     Actor_GetById(ACTOR_BREATH)->riseCounter = off;
     wait(10);
@@ -1768,7 +1640,7 @@ void ShrineOfTheSeaGod_StartDjinniDash(void) {
   FieldCamera_GetActor()->motionFlags = 0;
   Actor_Stop(ACTOR_BREATH);
   wait(1);
-  ShrineOfTheSeaGod_ObjSpeed(14, 0x26666, 0x13333);
+  Actor_SetSpeedFixed(14, 0x26666, 0x13333);
 }
 
 /// Ends one of Breath's dashes: Breath watches the leader again.
@@ -1781,7 +1653,7 @@ void ShrineOfTheSeaGod_EndDjinniDash(void) {
 #define DEFINE_DJINNI_DASH(name, n1, n2, n3)                                   \
   void name(void) {                                                            \
     ShrineOfTheSeaGod_StartDjinniDash();                                       \
-    FieldCamera_MoveWithinMapBounds(n1 << 16, px(16), n2 << 16, 1);            \
+    FieldCamera_MoveWithinMapBounds(px(n1), px(16), px(n2), 1);                \
     Actor_WalkToAndWaitById(ACTOR_BREATH, n1, n2);                             \
     Actor_GetById(ACTOR_BREATH)->riseCounter = n3;                             \
     ShrineOfTheSeaGod_EndDjinniDash();                                         \
@@ -1796,28 +1668,28 @@ DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniSouthEastToNorthEast, 392, 216, 1)
     s32 flag;                                                                  \
                                                                                \
     ShrineOfTheSeaGod_StartDjinniDash();                                       \
-    ShrineOfTheSeaGod_CamMove(n1 << 16, 16 << 16, 216 << 16, 1);               \
-    ShrineOfTheSeaGod_ObjWalk(ACTOR_BREATH, n1, 216);                          \
+    FieldCamera_MoveToFixed(px(n1), px(16), px(216), 1);                       \
+    Actor_WalkToAndWait(ACTOR_BREATH, n1, 216);                                \
     flag = GameFlag_Get(FLAG_TORCH_AT_NORTH_WALL);                             \
     state = &block->riseCounter;                                               \
     if (flag) {                                                                \
       block->facing = n2;                                                      \
-      ShrineOfTheSeaGod_ObjEmote(ACTOR_BREATH, 258);                           \
+      Actor_SetAttachedEffect(ACTOR_BREATH, 258);                              \
       Event_Wait(20);                                                          \
       *state = n3;                                                             \
       GameFlag_Set(FLAG_DJINNI_TRAPPED);                                       \
     } else {                                                                   \
       Event_Wait(5);                                                           \
-      FieldCamera_MoveWithinMapBounds(n4 << 16, px(16), px(216), 1);           \
+      FieldCamera_MoveWithinMapBounds(px(n4), px(16), px(216), 1);             \
       Sound_Play(SE_HIGH_JUMP);                                                \
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_BREATH), 0);                    \
-      ShrineOfTheSeaGod_ObjSpeed(14, 0x4cccc, 0x26666);                        \
+      Actor_SetSpeedFixed(14, 0x4cccc, 0x26666);                               \
       block->velocityY = 0x80000;                                              \
       Actor_MoveToAndWaitById(ACTOR_BREATH, n5, 216);                          \
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_BREATH), 1);                    \
       Event_Wait(10);                                                          \
-      ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);                         \
-      ShrineOfTheSeaGod_ObjWalk(ACTOR_BREATH, n4, 216);                        \
+      Actor_SetSpeedFixed(14, 0x19999, 0xcccc);                                \
+      Actor_WalkToAndWait(ACTOR_BREATH, n4, 216);                              \
       *state = n6;                                                             \
     }                                                                          \
     ShrineOfTheSeaGod_EndDjinniDash();                                         \
@@ -1829,9 +1701,9 @@ DEFINE_DJINNI_WALK_AND_JUMP(ShrineOfTheSeaGod_DjinniNorthEastJumpsWest, 360,
 #define DEFINE_DJINNI_DASH_AROUND(name, n1, n2, n3, n4)                        \
   void name(void) {                                                            \
     ShrineOfTheSeaGod_StartDjinniDash();                                       \
-    FieldCamera_MoveWithinMapBounds(n1 << 16, px(16), n2 << 16, 1);            \
-    ShrineOfTheSeaGod_ObjWalk(ACTOR_BREATH, n3, 248);                          \
-    ShrineOfTheSeaGod_ObjWalk(ACTOR_BREATH, n1, 248);                          \
+    FieldCamera_MoveWithinMapBounds(px(n1), px(16), px(n2), 1);                \
+    Actor_WalkToAndWait(ACTOR_BREATH, n3, 248);                                \
+    Actor_WalkToAndWait(ACTOR_BREATH, n1, 248);                                \
     Actor_WalkToAndWaitById(ACTOR_BREATH, n1, n2);                             \
     Actor_GetById(ACTOR_BREATH)->riseCounter = n4;                             \
     ShrineOfTheSeaGod_EndDjinniDash();                                         \
@@ -1863,21 +1735,21 @@ DEFINE_DJINNI_DASH(ShrineOfTheSeaGod_DjinniNorthEastToSouthEast, 392, 296, 0)
     state = &block->riseCounter;                                               \
     if (flag) {                                                                \
       block->facing = n1;                                                      \
-      ShrineOfTheSeaGod_ObjEmote(ACTOR_BREATH, 258);                           \
+      Actor_SetAttachedEffect(ACTOR_BREATH, 258);                              \
       Event_Wait(20);                                                          \
       *state = n2;                                                             \
       GameFlag_Set(FLAG_DJINNI_TRAPPED);                                       \
     } else {                                                                   \
-      FieldCamera_MoveWithinMapBounds(n3 << 16, px(16), px(216), 1);           \
+      FieldCamera_MoveWithinMapBounds(px(n3), px(16), px(216), 1);             \
       Sound_Play(SE_HIGH_JUMP);                                                \
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_BREATH), 0);                    \
-      ShrineOfTheSeaGod_ObjSpeed(14, 0x4cccc, 0x26666);                        \
+      Actor_SetSpeedFixed(14, 0x4cccc, 0x26666);                               \
       block->velocityY = 0x80000;                                              \
       Actor_MoveToAndWaitById(ACTOR_BREATH, n4, 216);                          \
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_BREATH), 1);                    \
       Event_Wait(10);                                                          \
-      ShrineOfTheSeaGod_ObjSpeed(14, 0x19999, 0xcccc);                         \
-      ShrineOfTheSeaGod_ObjWalk(ACTOR_BREATH, n3, 216);                        \
+      Actor_SetSpeedFixed(14, 0x19999, 0xcccc);                                \
+      Actor_WalkToAndWait(ACTOR_BREATH, n3, 216);                              \
       *state = n5;                                                             \
     }                                                                          \
     ShrineOfTheSeaGod_EndDjinniDash();                                         \
@@ -1990,25 +1862,25 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x204;
   scene = gMainRoutineWork.next;
   if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_ROPE)
-    ShrineOfTheSeaGod_InitializeRoom1();
+    ShrineOfTheSeaGod_InitializeRope();
   else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_2)
-    ShrineOfTheSeaGod_InitializeRoom2();
+    ShrineOfTheSeaGod_InitializePlankBridge();
   else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_3)
-    ShrineOfTheSeaGod_InitializeRoom3();
+    ShrineOfTheSeaGod_InitializeCrossroads();
   else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_4)
-    ShrineOfTheSeaGod_InitializeRoom4();
+    ShrineOfTheSeaGod_InitializeFootprints();
   else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_BREATH)
-    ShrineOfTheSeaGod_InitializeRoom5();
+    ShrineOfTheSeaGod_InitializeBreath();
   else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_6)
-    ShrineOfTheSeaGod_InitializeRoom6();
+    ShrineOfTheSeaGod_InitializePillarHole();
   else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_PILLARS)
-    ShrineOfTheSeaGod_InitializeRoom7();
+    ShrineOfTheSeaGod_InitializePillars();
   else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_SEA_GODS_TEAR)
-    ShrineOfTheSeaGod_InitializeRoom8();
+    ShrineOfTheSeaGod_InitializeSeaGodsTear();
   else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_9)
-    ShrineOfTheSeaGod_InitializeRoom9();
+    ShrineOfTheSeaGod_InitializeStatue();
   else if (scene == SCENE_SHRINE_OF_THE_SEA_GOD_RIGHT_PRONG)
-    ShrineOfTheSeaGod_InitializeRoom11();
+    ShrineOfTheSeaGod_InitializeRightProng();
   return 0;
 }
 
@@ -2070,19 +1942,13 @@ void ShrineOfTheSeaGod_PlaceFootprints(void) {
 
 /// Sets up the entrance hall: its floating logs, the rope, and Riki and Tavi
 /// gone once Riki has given up.
-void ShrineOfTheSeaGod_InitializeRoom1(void) {
-  struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
+void ShrineOfTheSeaGod_InitializeRope(void) {
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
 
   ShrineOfTheSeaGod_SetUpFlatProp(ACTOR_HALL_FIRST_LOG);
   ShrineOfTheSeaGod_SetUpFlatProp(ACTOR_HALL_SECOND_LOG);
-  {
-    s32 priority;
-
-    map->mode17 = 1;
-    priority = 0x480;
-    Task_Add(ShrineOfTheSeaGod_TrackUpperLevel, priority);
-  }
+  Map_SetUpperLevelWading(map);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_TrackUpperLevel, 0x480);
   Rope_Initialize();
   Rope_Place(0, FLAG_ROPE_TIED, 10, 11);
   if (GameFlag_Get(FLAG_RIKI_GAVE_UP)) {
@@ -2107,21 +1973,21 @@ void ShrineOfTheSeaGod_TrackRikiSide(void) {
 
 /// Sets up the side room: the sunken pillar, the torch and its flame, and Riki
 /// looking around once he has given up on the rope.
-void ShrineOfTheSeaGod_InitializeRoom2(void) {
+void ShrineOfTheSeaGod_InitializePlankBridge(void) {
 
   ShrineOfTheSeaGod_SetUpUnderfoot(ACTOR_SIDE_ROOM_PILLAR)->y.fixed = -px(16);
   Actor_SetSpritePriority(ACTOR_SIDE_ROOM_PILLAR, 3);
   Actor_PlaceBlocks(gShrineOfTheSeaGod_MovableActors);
   ShrineOfTheSeaGod_LightTorch();
-  ShrineOfTheSeaGod_TaskAdd(ShrineOfTheSeaGod_KeepFlameOnTorch, 0x480);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepFlameOnTorch, 0x480);
   Actor_DisableById(ACTOR_SIDE_ROOM_RIKI);
   Actor_DisableById(12);
   Actor_GetById(12)->motionFlags = 0;
-  ShrineOfTheSeaGod_BlendStart(3, 15, 1, 1, 6, 15);
+  MapGrid_CopyCellAttributes(3, 15, 1, 1, 6, 15);
   if (GameFlag_Get(FLAG_TAVI_RESCUED)) {
     Actor_SetHorizontalPositionWithTerrain(ACTOR_SIDE_ROOM_RIKI, 0, 0);
   } else if (GameFlag_Get(FLAG_RIKI_GAVE_UP)) {
-    ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_SIDE_ROOM_RIKI, 328 << 16, 200 << 16,
+    ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_SIDE_ROOM_RIKI, px(328), px(200),
                                    0x8000);
     wait(1);
     Actor_SetMovementTypeById(ACTOR_SIDE_ROOM_RIKI,
@@ -2129,14 +1995,12 @@ void ShrineOfTheSeaGod_InitializeRoom2(void) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_SIDE_ROOM_RIKI), 1);
     Actor_GetById(ACTOR_SIDE_ROOM_RIKI)->collisionFlags = 1;
   }
-  /* FAKEMATCH(temporary): SHRINE_OF_THE_SEA_GOD_TASK_ADD_LATE's local holding
-   * the priority builds it before the task function loads. */
-  SHRINE_OF_THE_SEA_GOD_TASK_ADD_LATE(ShrineOfTheSeaGod_TrackRikiSide, 0x480);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_TrackRikiSide, 0x480);
 }
 
 /// Sets up the great hall: its pillars, the toppled one in the water, the
 /// pushed pillar, and Breath where it fled.
-void ShrineOfTheSeaGod_InitializeRoom3(void) {
+void ShrineOfTheSeaGod_InitializeCrossroads(void) {
   struct Actor *block;
 
   ShrineOfTheSeaGod_SetUpUnderfoot(ACTOR_GREAT_HALL_FIRST_PILLAR);
@@ -2154,73 +2018,64 @@ void ShrineOfTheSeaGod_InitializeRoom3(void) {
   Actor_SetSpritePriority(ACTOR_GREAT_HALL_FOURTH_PILLAR, 1);
   Actor_SetSpritePriority(ACTOR_GREAT_HALL_PILLAR_STUMP, 1);
   Actor_SetSpritePriority(ACTOR_GREAT_HALL_TOPPLING_PILLAR, 1);
-  ShrineOfTheSeaGod_TaskAdd(ShrineOfTheSeaGod_LayerRoom3Props, 0x480);
-  if (GameFlag_Get(FLAG_ROOM3_PILLAR_TOPPLED)) {
-    ShrineOfTheSeaGod_ObjSetPos(block, 408 << 16, -(13 << 16), 336 << 16);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_LayerCrossroadsProps, 0x480);
+  if (GameFlag_Get(FLAG_CROSSROADS_PILLAR_TOPPLED)) {
+    ShrineOfTheSeaGod_ObjSetPos(block, px(408), -(px(13)), px(336));
     ((struct FieldSprite *)block->sprite)->rotation = 0x1000;
     Actor_SetSpritePriority(ACTOR_GREAT_HALL_TOPPLING_PILLAR, 3);
     block->priorityFlags |= 2;
-    ShrineOfTheSeaGod_BlendStart(0, 50, 3, 1, 24, 70);
+    MapGrid_CopyCellAttributes(0, 50, 3, 1, 24, 70);
   }
-  if (GameFlag_Get(FLAG_ROOM3_PILLAR_MOVED))
+  if (GameFlag_Get(FLAG_CROSSROADS_PILLAR_MOVED))
     ShrineOfTheSeaGod_ObjSetPos(Actor_GetById(ACTOR_GREAT_HALL_PUSHED_PILLAR),
-                                200 << 16, 0, 296 << 16);
+                                px(200), 0, px(296));
   Actor_PlaceBlocks(gShrineOfTheSeaGod_MovableActors);
   if (GameFlag_Get(FLAG_DJINNI_FLED_SOUTH))
     Actor_SetHorizontalPositionWithTerrain(ACTOR_GREAT_HALL_BREATH, 0, 0);
   else if (GameFlag_Get(FLAG_DJINNI_FLED_EAST)) {
-    ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_GREAT_HALL_BREATH, 580 << 16,
-                                   344 << 16, 0x4000);
+    ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_GREAT_HALL_BREATH, px(580), px(344),
+                                   0x4000);
   }
   FieldEffect_StartBlankOverlay(0);
   wait(1);
 }
 
 /// Sets up the room below: Breath's footprints until it has run past.
-void ShrineOfTheSeaGod_InitializeRoom4(void) {
-  struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
+void ShrineOfTheSeaGod_InitializeFootprints(void) {
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
 
   if (GameFlag_Get(FLAG_DJINNI_RAN_PAST) == 0)
     ShrineOfTheSeaGod_PlaceFootprints();
-  {
-    s32 priority;
-
-    map->mode17 = 1;
-    priority = 0x480;
-    Task_Add(ShrineOfTheSeaGod_TrackUpperLevel, priority);
-  }
+  Map_SetUpperLevelWading(map);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_TrackUpperLevel, 0x480);
 }
 
 /// Sets up the ledge room: the pillar, the puddles, frozen or not, the torch,
 /// and Breath where the chase left it.
-void ShrineOfTheSeaGod_InitializeRoom5(void) {
+void ShrineOfTheSeaGod_InitializeBreath(void) {
   struct Actor *object =
       ShrineOfTheSeaGod_SetUpUnderfoot(ACTOR_LEDGE_ROOM_PILLAR);
-  u8 *flags = &object->priorityFlags;
 
   if ((u16)(gMainRoutineWork.entrance - 2) <= 1) {
     Actor_SetSpritePriority(ACTOR_LEDGE_ROOM_PILLAR, 3);
-    /* FAKEMATCH(dead): the cancelling update ties the flag or to the constant's
-     * register. */
-    *flags = *flags + 2 - (*flags & 2);
+    object->priorityFlags |= 2;
   } else {
     Actor_SetSpritePriority(ACTOR_LEDGE_ROOM_PILLAR, 1);
-    *flags &= ~2;
+    object->priorityFlags &= ~2;
   }
   ShrineOfTheSeaGod_SetUpPuddle(ACTOR_FIRST_PUDDLE);
   ShrineOfTheSeaGod_SetUpPuddle(ACTOR_SECOND_PUDDLE);
   ShrineOfTheSeaGod_SetUpPuddle(ACTOR_THIRD_PUDDLE);
   if (GameFlag_Get(FLAG_FIRST_PUDDLE_FROZEN))
-    ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 8, 18);
+    MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 18);
   if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
-    ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 18);
+    MapGrid_CopyCellAttributes(0, 0, 1, 1, 10, 18);
   if (GameFlag_Get(FLAG_THIRD_PUDDLE_FROZEN))
-    ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 10, 17);
-  ShrineOfTheSeaGod_TaskAdd(ShrineOfTheSeaGod_LayerPuddles, 0x480);
+    MapGrid_CopyCellAttributes(0, 0, 1, 1, 10, 17);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_LayerPuddles, 0x480);
   Actor_PlaceBlocks(gShrineOfTheSeaGod_MovableActors);
   ShrineOfTheSeaGod_LightTorch();
-  ShrineOfTheSeaGod_TaskAdd(ShrineOfTheSeaGod_KeepFlameOnTorch, 0x480);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepFlameOnTorch, 0x480);
   if (GameFlag_Get(FLAG_DJINNI(DJINNI_BREATH)) ||
       GameFlag_Get(FLAG_FIGHTING_BREATH)) {
     GameFlag_Set(FLAG_DJINNI_CHASE_OVER);
@@ -2230,27 +2085,28 @@ void ShrineOfTheSeaGod_InitializeRoom5(void) {
 
     if (moved == 0) {
       block->riseCounter = moved;
-      ShrineOfTheSeaGod_ObjPlace(ACTOR_BREATH, 392 << 16, 296 << 16);
+      Actor_SetPosition(ACTOR_BREATH, 392, 296);
     }
     Actor_WatchAndSetScript(ACTOR_BREATH, gMainRoutineWork.leaderActorId);
   } else if (GameFlag_Get(FLAG_DJINNI_BY_LEDGE)) {
-    ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_BREATH, 280 << 16, 328 << 16, 0x4000);
+    ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_BREATH, px(280), px(328),
+                                   FACING_SOUTH);
   }
 }
 
 /// Sets up the hole room: the pillar, in its hole once pushed there, and the
 /// slides hidden.
-void ShrineOfTheSeaGod_InitializeRoom6(void) {
+void ShrineOfTheSeaGod_InitializePillarHole(void) {
   s32 open;
 
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_HOLE_ROOM_PILLAR), 0);
   open = GameFlag_Get(FLAG_PILLAR_IN_HOLE);
   if (open) {
-    ShrineOfTheSeaGod_ObjPlace(ACTOR_HOLE_ROOM_PILLAR, 248 << 16, 264 << 16);
+    Actor_SetPosition(ACTOR_HOLE_ROOM_PILLAR, 248, 264);
     Actor_SetSpritePriority(ACTOR_HOLE_ROOM_PILLAR, 3);
     Actor_GetById(ACTOR_HOLE_ROOM_PILLAR)->motionFlags = 0;
-    ShrineOfTheSeaGod_BlendStart(0, 0, 1, 1, 15, 16);
+    MapGrid_CopyCellAttributes(0, 0, 1, 1, 15, 16);
     Actor_DisableById(ACTOR_HOLE_ROOM_PILLAR);
   } else {
     Actor_SetSpritePriority(ACTOR_HOLE_ROOM_PILLAR, 1);
@@ -2260,11 +2116,11 @@ void ShrineOfTheSeaGod_InitializeRoom6(void) {
 }
 
 /// Lays out the two pillars, fallen or standing, and the room's two ropes.
-void ShrineOfTheSeaGod_InitializeRoom7(void) {
-  struct Actor *object;
-  struct Actor *lastObject;
+void ShrineOfTheSeaGod_InitializePillars(void) {
+  struct Actor *firstLog;
+  struct Actor *secondLog;
 
-  ((struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid)->mode17 = 1;
+  Map_SetUpperLevelWading((struct MapWork *)Ram_HeapSlots->mapGrid);
   ShrineOfTheSeaGod_SetUpUnderfoot(ACTOR_PILLAR_ROOM_FIRST_PILLAR);
   ShrineOfTheSeaGod_SetUpUnderfoot(ACTOR_PILLAR_ROOM_SECOND_PILLAR);
   ShrineOfTheSeaGod_SetUpUnderfoot(ACTOR_PILLAR_ROOM_THIRD_PILLAR);
@@ -2297,23 +2153,21 @@ void ShrineOfTheSeaGod_InitializeRoom7(void) {
   Rope_Place(1, FLAG_SECOND_ROPE_TIED, 19, 20);
   Actor_DisableById(ACTOR_FIRST_PILLAR_LOG);
   Actor_GetById(ACTOR_FIRST_PILLAR_LOG)->motionFlags = 0;
-  object = Actor_GetById(ACTOR_FIRST_PILLAR_OTHER_LOG);
+  firstLog = Actor_GetById(ACTOR_FIRST_PILLAR_OTHER_LOG);
   Actor_DisableById(ACTOR_FIRST_PILLAR_OTHER_LOG);
-  object->priorityFlags |= 2;
-  object->motionFlags = 0;
+  firstLog->priorityFlags |= 2;
+  firstLog->motionFlags = 0;
   Actor_DisableById(ACTOR_SECOND_PILLAR_LOG);
   Actor_GetById(ACTOR_SECOND_PILLAR_LOG)->motionFlags = 0;
-  /* FAKEMATCH(temporary): actor 24 fetched into its own variable. */
-  lastObject = Actor_GetById(ACTOR_SECOND_PILLAR_OTHER_LOG);
-  object = lastObject;
+  secondLog = Actor_GetById(ACTOR_SECOND_PILLAR_OTHER_LOG);
   Actor_DisableById(ACTOR_SECOND_PILLAR_OTHER_LOG);
-  object->priorityFlags |= 2;
-  object->motionFlags = 0;
+  secondLog->priorityFlags |= 2;
+  secondLog->motionFlags = 0;
 }
 
 /// Sets up the island room: its floating logs, and the water falling when the
 /// party comes down from above.
-void ShrineOfTheSeaGod_InitializeRoom8(void) {
+void ShrineOfTheSeaGod_InitializeSeaGodsTear(void) {
   ShrineOfTheSeaGod_SetUpFlatProp(8);
   ShrineOfTheSeaGod_SetUpFlatProp(9);
   ShrineOfTheSeaGod_SetUpFlatProp(10);
@@ -2324,7 +2178,7 @@ void ShrineOfTheSeaGod_InitializeRoom8(void) {
 
 /// Sets up the ninth room: the party rises on the water when it comes up from
 /// the island.
-void ShrineOfTheSeaGod_InitializeRoom9(void) {
+void ShrineOfTheSeaGod_InitializeStatue(void) {
   if (gMainRoutineWork.entrance == 1 &&
       GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
     ShrineOfTheSeaGod_RiseOnWater();
@@ -2332,7 +2186,7 @@ void ShrineOfTheSeaGod_InitializeRoom9(void) {
 
 /// The Right Prong floats above the last room, shedding sparkles.
 void ShrineOfTheSeaGod_SparkleRightProng(struct Actor *object) {
-  struct ShrineOfTheSeaGodEffectParams params;
+  struct EffectOptions options;
   u32 phase = gFrameCount & 7;
   s32 dx;
   s32 dy;
@@ -2344,21 +2198,20 @@ void ShrineOfTheSeaGod_SparkleRightProng(struct Actor *object) {
       dx = mask & Random16();
     }
     dy = Random16() & 7;
-    params.kind = 673;
-    FieldEffect_Spawn(object->x.fixed + ((dx - 8) << 16),
-                      object->y.fixed + ((dy - 8) << 16), object->z.fixed, 0,
-                      0x8000, phase, 0x100000, &params);
+    options.type = SPRITE_SPARKLE;
+    FieldEffect_Spawn(object->x.fixed + px(dx - 8),
+                      object->y.fixed + px(dy - 8), object->z.fixed, 0,
+                      px(1) / 2, phase, EFFECT_USE_TYPE, &options);
   }
 }
 
 /// Sets up the top room: the Right Prong sparkles above its place.
-void ShrineOfTheSeaGod_InitializeRoom11(void) {
+void ShrineOfTheSeaGod_InitializeRightProng(void) {
   struct Actor *object = Actor_GetById(64);
-  struct ShrineOfTheSeaGodMapWork *map =
-      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapGrid;
-  struct ShrineOfTheSeaGodMapLayer *layer = &map->layers[2];
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  struct MapLayer *layer = &map->layers[2];
 
-  layer->x += px(128);
+  layer->offsetX += px(128);
   MapGrid_CenterOnFollowedPoint();
   wait(1);
   if (object != NULL) {
@@ -2384,14 +2237,12 @@ void ShrineOfTheSeaGod_SetUpFlatProp(s32 id) {
 s32 Scene_PrepareMap(void) {
 
   if (GameFlag_Get(FLAG_FIGHTING_BREATH)) {
-    struct ShrineOfTheSeaGodPartyExtra *party =
-        (struct ShrineOfTheSeaGodPartyExtra *)&gMainRoutineWork;
-
-    if (party->value == 1) {
+    if (gMainRoutineWork.sequenceResult == 1) {
       if (GameFlag_Get(FLAG_BREATH_TRAPPED_EAST))
-        ShrineOfTheSeaGod_ObjPlaceAt(14, 360 << 16, 216 << 16, 0);
+        Actor_SetPositionAndFacing(ACTOR_BREATH, px(360), px(216), 0);
       else if (GameFlag_Get(FLAG_BREATH_TRAPPED_WEST)) {
-        ShrineOfTheSeaGod_ObjPlaceTurn(14, 328 << 16, 216 << 16, 0x8000);
+        ShrineOfTheSeaGod_ObjPlaceTurn(ACTOR_BREATH, px(328), px(216),
+                                       FACING_WEST);
       }
     }
     GameFlag_Clear(FLAG_FIGHTING_BREATH);
@@ -2496,18 +2347,18 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gShrineOfTheSeaGod_Room9Regions[] = {
+u32 gShrineOfTheSeaGodStatueExitRegions[] = {
     0x200100, 0x11000c0, 0xd00030, 0x2ffff, 0xffff, 0,
     0, 0,
 };
 
-s16 gShrineOfTheSeaGod_Room10Regions[] = {
+s16 gShrineOfTheSeaGodLaddersExitRegions[] = {
     720, -38, 238, 736, -22, 254, -1, 1,
     864, 32, 208, 880, 48, 224, -1, 2,
     -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-u32 gShrineOfTheSeaGod_Room11Regions[] = {
+u32 gShrineOfTheSeaGodRightProngExitRegions[] = {
     0xffda0310, 0x32000a0, 0xb0ffea, 0x1ffff, 0xffff, 0,
     0, 0,
 };
@@ -2560,38 +2411,38 @@ struct ActorPlacement gShrineOfTheSeaGod_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gShrineOfTheSeaGod_Room1Placements[] = {
-    ACTOR_PLACEMENT(297, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 224, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(297, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 256, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 1),
+struct ActorPlacement gShrineOfTheSeaGodRopeActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 224, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 256, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(18, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 340, 0, 168, FACING_WEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(17, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 168, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(56, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_RIKI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 340, 0, 168, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TAVI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 168, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gShrineOfTheSeaGod_Room2Placements[] = {
-    ACTOR_PLACEMENT(335, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+struct ActorPlacement gShrineOfTheSeaGodPlankBridgeActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_FLAME_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(410, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(369, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 272, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(18, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_RIKI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gShrineOfTheSeaGod_Room3Placements[] = {
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
+struct ActorPlacement gShrineOfTheSeaGodCrossroadsActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(370, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(369, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(369, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(369, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 344, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(369, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(369, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(246, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gShrineOfTheSeaGod_Room4Placements[] = {
+struct ActorPlacement gShrineOfTheSeaGodFootprintsActorPlacements[] = {
     ACTOR_PLACEMENT(270, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(270, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(270, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
@@ -2611,26 +2462,26 @@ struct ActorPlacement gShrineOfTheSeaGod_Room4Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gShrineOfTheSeaGod_Room5Placements[] = {
-    ACTOR_PLACEMENT(335, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
+struct ActorPlacement gShrineOfTheSeaGodBreathActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_FLAME_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(410, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(290, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(369, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(246, FLAG_DJINNI(DJINNI_BREATH), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_JUPITER_DJINNI, FLAG_DJINNI(DJINNI_BREATH), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gShrineOfTheSeaGod_Room6Placements[] = {
-    ACTOR_PLACEMENT(272, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
+struct ActorPlacement gShrineOfTheSeaGodPillarHoleActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(337, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(337, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(337, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 1),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gShrineOfTheSeaGod_Room7Placements[] = {
+struct ActorPlacement gShrineOfTheSeaGodPillarsActorPlacements[] = {
     ACTOR_PLACEMENT(369, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(369, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(369, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 1),
@@ -2644,17 +2495,17 @@ struct ActorPlacement gShrineOfTheSeaGod_Room7Placements[] = {
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(276, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(276, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(276, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(276, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_SPLASH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPLASH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_SPLASH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SPLASH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 448, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 464, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 456, 0, 240, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gShrineOfTheSeaGod_Room8Placements[] = {                                             
+struct ActorPlacement gShrineOfTheSeaGodSeaGodsTearActorPlacements[] = {                                             
       {297, CONDITION_ALWAYS, 1, px(160), 0, px(202), FACING_SOUTH, 2,    
        0},                                                                     
       {297, CONDITION_ALWAYS, 1, px(176), 0, px(298), FACING_SOUTH, 2,    
@@ -2668,7 +2519,7 @@ struct Trigger gShrineOfTheSeaGod_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gShrineOfTheSeaGod_Room1Triggers[] = {
+struct Trigger gShrineOfTheSeaGodRopeTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -2679,30 +2530,30 @@ struct Trigger gShrineOfTheSeaGod_Room1Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gShrineOfTheSeaGod_Room2Triggers[] = {
+struct Trigger gShrineOfTheSeaGodPlankBridgeTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TALK_TRIGGER_FACING(FACING_WEST), ACTOR_SIDE_ROOM_RIKI, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_StartleRiki)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SIDE_ROOM_RIKI, CONDITION_ALWAYS, MSGNO(MsgFieldICantFindAnythingAroundHere)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gShrineOfTheSeaGod_Room3Triggers[] = {
+struct Trigger gShrineOfTheSeaGodCrossroadsTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_GREAT_HALL_PUSHED_PILLAR, FLAG_ROOM3_PILLAR_MOVED, EVENT(ShrineOfTheSeaGod_LiftBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GREAT_HALL_PUSHED_PILLAR, FLAG_ROOM3_PILLAR_MOVED, EVENT(ShrineOfTheSeaGod_MovePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_GREAT_HALL_PUSHED_PILLAR, FLAG_CROSSROADS_PILLAR_MOVED, EVENT(ShrineOfTheSeaGod_LiftBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GREAT_HALL_PUSHED_PILLAR, FLAG_CROSSROADS_PILLAR_MOVED, EVENT(ShrineOfTheSeaGod_MovePillar)},
     {TRIGGER_STEP, 10, FLAG_LEADER_IN_FRONT, EVENT(ShrineOfTheSeaGod_DrawLeaderInFront)},
     {TRIGGER_STEP, 11, IF_FLAG_SET(FLAG_LEADER_IN_FRONT), EVENT(ShrineOfTheSeaGod_DrawLeaderBehind)},
-    {TRIGGER_STEP, 15, FLAG_ROOM3_PILLAR_TOPPLED, EVENT(ShrineOfTheSeaGod_TopplePillarIntoWater)},
+    {TRIGGER_STEP, 15, FLAG_CROSSROADS_PILLAR_TOPPLED, EVENT(ShrineOfTheSeaGod_TopplePillarIntoWater)},
     {TRIGGER_STEP, 11, FLAG_DJINNI_FLED_EAST, EVENT(ShrineOfTheSeaGod_DjinniFleesEast)},
     {TRIGGER_STEP, 12, FLAG_DJINNI_FLED_SOUTH, EVENT(ShrineOfTheSeaGod_DjinniFleesSouth)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gShrineOfTheSeaGod_Room4Triggers[] = {
+struct Trigger gShrineOfTheSeaGodFootprintsTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
@@ -2711,7 +2562,7 @@ struct Trigger gShrineOfTheSeaGod_Room4Triggers[] = {
 };
 // clang-format on
 
-struct Trigger gShrineOfTheSeaGod_Room5Triggers[] = {
+struct Trigger gShrineOfTheSeaGodBreathTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
@@ -2756,7 +2607,7 @@ struct Trigger gShrineOfTheSeaGod_Room5Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gShrineOfTheSeaGod_Room6Triggers[] = {
+struct Trigger gShrineOfTheSeaGodPillarHoleTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_PUSHED, 0, FLAG_PILLAR_IN_HOLE,
@@ -2766,7 +2617,7 @@ struct Trigger gShrineOfTheSeaGod_Room6Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gShrineOfTheSeaGod_Room7Triggers[] = {
+struct Trigger gShrineOfTheSeaGodPillarsTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_FIRST_ROPE_POLE, FLAG_ROPE_TIED, 0},
@@ -2785,7 +2636,7 @@ struct Trigger gShrineOfTheSeaGod_Room7Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gShrineOfTheSeaGod_Room8Triggers[] = {
+struct Trigger gShrineOfTheSeaGodSeaGodsTearTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS,
@@ -2799,7 +2650,7 @@ struct Trigger gShrineOfTheSeaGod_Room8Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gShrineOfTheSeaGod_Room9Triggers[] = {
+struct Trigger gShrineOfTheSeaGodStatueTriggers[] = {
     {TRIGGER_EXAMINE, 1, CONDITION_ALWAYS,
      EVENT(ShrineOfTheSeaGod_ExamineStatue)},
     {USE_ITEM(ITEM_SEA_GODS_TEAR), 1, CONDITION_ALWAYS,

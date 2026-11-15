@@ -9,6 +9,9 @@
 
 struct FadeActor;
 
+/// The VRAM cache entry holding the ground mask's solid sprite tiles.
+#define VRAM_CACHE_ENTRY_FADE_OVERLAY 94
+
 /// The fade overlay's work (heap slot fadeOverlay): its two marks and the
 /// actor they follow.
 struct FadeOverlayWork {

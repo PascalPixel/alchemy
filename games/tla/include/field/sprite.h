@@ -156,8 +156,9 @@ enum ActorAnimation {
   ANIM_LEADER_ARRIVE_ALTERNATE = 23,
   ANIM_LEADER_ARRIVE = 24,
   ANIM_LEADER_LEAVE_ALTERNATE = 25,
-  ANIM_LEADER_LEAVE = 26
+  ANIM_LEADER_LEAVE = 26,
   ///@}
+  ANIM_LEADER_ARMS_RAISED = 28 ///< both arms raised over his head
 };
 
 #endif

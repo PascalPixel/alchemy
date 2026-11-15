@@ -29,7 +29,12 @@
 
 #undef PartyInventory_GiveItem
 
+#include "field_sequence_item_display.c"
 #include "field_sequence_screen_transition.c"
+#include "field_sequence_palette_fade.c"
+#include "field_sequence_ground_mask.c"
+#include "field_sequence_speakers.c"
+#include "field_sequence_heading.c"
 
 /* VIEW(event_commands): routine GameFlag_GetByte as u8 GameFlag_GetByte(s32
  * flag); field/event.h has s32 GameFlag_GetByte(s32 flag); tried as the

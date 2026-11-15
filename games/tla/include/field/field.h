@@ -124,6 +124,27 @@ struct FieldPsynergyReach {
 
 extern const struct FieldPsynergyReach gFieldPsynergy_Reach[];
 
+/// Actor.spriteStorageKind, its low four bits: what the actor's sprite
+/// pointer holds.
+enum ActorSpriteKind {
+  ACTOR_SPRITE_NONE = 0, ///< nothing drawn
+  ACTOR_SPRITE_ONE = 1,
+  ACTOR_SPRITE_GROUP = 2 ///< a list of up to four sprites, empty ones null
+};
+
+/// Actor.spriteStorageKind's low four bits, its enum ActorSpriteKind.
+#define ACTOR_SPRITE_KIND_MASK 15
+
+/// Actor_Create's id / 4096: what sprites the actor is made with.
+enum ActorCreateKind {
+  ACTOR_CREATE_ONE_SPRITE = 0, ///< the id's sprite (ACTOR_SPRITE_ONE)
+  /// The sprites of the id and id + 1 (ACTOR_SPRITE_GROUP).
+  ACTOR_CREATE_GROUP = 2,
+  /// No sprite: any kind but the two above, and the one the camera actor
+  /// takes.
+  ACTOR_CREATE_NO_SPRITE = 8
+};
+
 extern u8 gWorldMapPackedTiles[];
 extern u8 gWorldMapPackedPictures[];
 extern u8 gWorldMapPalettes[];

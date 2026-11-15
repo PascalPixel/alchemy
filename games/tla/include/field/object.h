@@ -66,7 +66,7 @@ s32 Field_TryJumpForward(void);
 s32 Field_ClimbDown(void);
 s32 Field_ClimbUp(void);
 
-void ItemDisplay_EmitSparkles(struct ParticleEmitter *emitter);
+void ItemDisplay_EmitSparkles(struct Actor *emitter);
 
 extern const u32 gWorldMap_GraphicsResources[4][9];
 

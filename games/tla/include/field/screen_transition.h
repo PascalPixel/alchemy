@@ -29,33 +29,6 @@ struct BattleRenderObject {
   u8 kind;
 };
 
-struct ParticleEmitter {
-  u8 padding[8];
-  struct ParticlePosition position;
-  u8 padding2[20];
-  s32 travelOffset;
-  u8 padding3[41];
-  u8 active;
-};
-
-struct EffectVisual {
-  u8 unk00[5];
-  u8 flags05;
-  u8 unk06[2];
-  u16 tile : 10;
-  u16 attributes : 6;
-  u8 unk0a[6];
-  u8 tileSlot;
-  u8 unk11[9];
-  u8 value1a;
-  u8 value1b;
-};
-
-struct ParticleSource {
-  u8 padding[8];
-  struct ParticlePosition position;
-};
-
 struct FadeActor {
   u8 unk00[8];
   s32 x;
@@ -91,6 +64,9 @@ struct MapLayerFlags {
   u8 unk00[0x14];
   u16 flags;
 };
+
+/// SpeakerDefinition.value of a sprite that makes no sound as it speaks.
+#define SPEAKER_VOICE_NONE 0xff
 
 extern struct SpeakerDefinition gSpeakerDefinitions[];
 

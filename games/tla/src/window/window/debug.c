@@ -7,24 +7,21 @@
 #include "flags.h"
 #include "sounds.h"
 #include "scene_ids.h"
-
-struct ScreenWork {
-  u8 unk000[0x5a4];
-  u8 panel[0x84]; ///< the cursor's panel
-};
+#include "window/settings_menu.h"
 
 /// The sound test's per-frame task: moves the cursor.
 void DebugSoundTest_StepCursor(void) {
-  struct ScreenWork *work = Ram_HeapSlots->settingsMenu;
+  struct OptionMenuWork *work = Ram_HeapSlots->settingsMenu;
 
-  MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
+  MenuCursor_AdvanceFar(&work->cursor);
 }
 
 /// Allocates the sound test's work block and starts its cursor task.
 void DebugSoundTest_Initialize(void) {
-  void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
+  void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
+                                   sizeof(struct OptionMenuWork));
 
-  Dma_Fill32(0, work, 0x628);
+  Dma_Fill32(0, work, sizeof(struct OptionMenuWork));
   Task_Add(DebugSoundTest_StepCursor, TASK_PASS_VBLANK);
 }
 
@@ -34,26 +31,21 @@ void DebugSoundTest_Release(void) {
   HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
-struct ScreenCursorWork {
-  u8 unk000[0x5a4];
-  struct WindowSprite *cursor;
-};
-
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
 
 /// Opens the sound test's window and places the cursor on its first row.
 struct RenderInput *DebugSoundTest_Open(void) {
-  struct ScreenCursorWork *work = Ram_HeapSlots->settingsMenu;
+  struct OptionMenuWork *work = Ram_HeapSlots->settingsMenu;
   struct RenderInput *window;
 
   window = Window_Create(7, 3, 15, 9, WINDOW_FLAG_INSTANT);
-  work->cursor = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
-                                     OUTPUT_SIZE_16X16, window, 0, 0);
+  work->cursor.sprite = WindowSprite_Create(
+      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, window, 0, 0);
   {
     /* FAKEMATCH(pin): the cursor's address held in r0 for the barrier to read.
      */
-    register struct WindowSprite **cursor asm("r0") = &work->cursor;
+    register struct WindowSprite **cursor asm("r0") = &work->cursor.sprite;
     /* FAKEMATCH(barrier): the empty asm reads r0 and rewrites window. */
     asm("" : "+r"(window) : "r"(cursor));
     MenuCursor_SetPositionImmediateFar(&work->cursor, ((s16)window->x << 3) - 4,
@@ -157,16 +149,17 @@ UNUSED s32 DebugSoundTest_Run(void) {
 
 /// The debug menu's per-frame task: moves the cursor.
 void DebugMenu_StepCursor(void) {
-  struct ScreenWork *work = Ram_HeapSlots->settingsMenu;
+  struct OptionMenuWork *work = Ram_HeapSlots->settingsMenu;
 
-  MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
+  MenuCursor_AdvanceFar(&work->cursor);
 }
 
 /// Allocates the debug menu's work block and starts its cursor task.
 void DebugMenu_Initialize(void) {
-  void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
+  void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
+                                   sizeof(struct OptionMenuWork));
 
-  Dma_Fill32(0, work, 0x628);
+  Dma_Fill32(0, work, sizeof(struct OptionMenuWork));
   Task_Add(DebugMenu_StepCursor, TASK_PASS_VBLANK);
 }
 
@@ -204,7 +197,7 @@ struct Window *DebugMenu_Open(void) {
 /// index, lets Up and Down move it (wrapping), and returns the row A chooses,
 /// or -1 for B.
 UNUSED s32 DebugMenu_Run(s32 index) {
-  struct ScreenWork *work;
+  struct OptionMenuWork *work;
   struct Window *window;
   s32 moved;
 
@@ -223,9 +216,9 @@ UNUSED s32 DebugMenu_Run(s32 index) {
       y = (s16)window->y;
       y = (index * 3 + y) * 8 + 16;
       if (moved == -1)
-        MenuCursor_SetPositionImmediateFar(work->panel, x, y);
+        MenuCursor_SetPositionImmediateFar(&work->cursor, x, y);
       else
-        MenuCursor_SetFar(work->panel, x, y, 3);
+        MenuCursor_SetFar(&work->cursor, x, y, 3);
       moved = 0;
     }
     wait(1);
@@ -345,16 +338,17 @@ void DebugWarp_KaoruSpecial1(void) {
 
 /// The debug warp menu's per-frame task: moves the cursor.
 void DebugWarp_StepCursor(void) {
-  struct ScreenWork *work = Ram_HeapSlots->settingsMenu;
+  struct OptionMenuWork *work = Ram_HeapSlots->settingsMenu;
 
-  MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
+  MenuCursor_AdvanceFar(&work->cursor);
 }
 
 /// Allocates the debug warp menu's work block and starts its cursor task.
 void DebugWarp_Initialize(void) {
-  void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
+  void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
+                                   sizeof(struct OptionMenuWork));
 
-  Dma_Fill32(0, work, 0x628);
+  Dma_Fill32(0, work, sizeof(struct OptionMenuWork));
   Task_Add(DebugWarp_StepCursor, TASK_PASS_VBLANK);
 }
 
@@ -381,7 +375,7 @@ extern const struct DebugWarpPreset gDebugWarp_Presets[];
 /// Opens the debug warp menu's window: nine preset names 16 pixels apart,
 /// with a divider under each but the last.
 struct RenderInput *DebugWarp_Open(void) {
-  struct ScreenCursorWork *work = Ram_HeapSlots->settingsMenu;
+  struct OptionMenuWork *work = Ram_HeapSlots->settingsMenu;
   struct RenderInput *window;
   const struct DebugWarpPreset *line;
   s32 i;
@@ -403,8 +397,8 @@ struct RenderInput *DebugWarp_Open(void) {
     row += 2;
     i++;
   }
-  work->cursor = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
-                                     OUTPUT_SIZE_16X16, window, 0, 0);
+  work->cursor.sprite = WindowSprite_Create(
+      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, window, 0, 0);
   return window;
 }
 
@@ -412,7 +406,7 @@ struct RenderInput *DebugWarp_Open(void) {
 /// on row index, lets Up and Down move it (wrapping), and returns the row A
 /// chooses after running its handler, or -1 for B.
 UNUSED s32 DebugWarp_Run(s32 index) {
-  struct ScreenWork *work;
+  struct OptionMenuWork *work;
   struct Window *window;
   s32 moved;
   u32 down;
@@ -432,9 +426,9 @@ UNUSED s32 DebugWarp_Run(s32 index) {
       x = (s16)window->x * 8 - 4;
       y = ((s16)window->y << 3) + (index << 4) + 12;
       if (moved == -1)
-        MenuCursor_SetPositionImmediateFar(work->panel, x, y);
+        MenuCursor_SetPositionImmediateFar(&work->cursor, x, y);
       else
-        MenuCursor_SetFar(work->panel, x, y, 3);
+        MenuCursor_SetFar(&work->cursor, x, y, 3);
       moved = 0;
     }
     wait(1);
@@ -470,16 +464,17 @@ done:
 
 /// The ability grid's per-frame task: moves the cursor.
 void DebugShortcut_StepCursor(void) {
-  struct ScreenWork *work = Ram_HeapSlots->settingsMenu;
+  struct OptionMenuWork *work = Ram_HeapSlots->settingsMenu;
 
-  MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
+  MenuCursor_AdvanceFar(&work->cursor);
 }
 
 /// Allocates the ability grid's work block and starts its cursor task.
 void DebugShortcut_Initialize(void) {
-  void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
+  void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
+                                   sizeof(struct OptionMenuWork));
 
-  Dma_Fill32(0, work, 0x628);
+  Dma_Fill32(0, work, sizeof(struct OptionMenuWork));
   Task_Add(DebugShortcut_StepCursor, TASK_PASS_VBLANK);
 }
 

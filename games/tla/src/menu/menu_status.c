@@ -358,15 +358,15 @@ s32 PartyMemberChooser_RunRearrange(void) {
     menu->rowY[rowIndex] = 128;
   }
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
-  Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_ENABLE << 16 | 16, REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)BG_PLTT, DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(0, TEXT_BACKGROUND_COLOR),
-          DMA_ENABLE << 16 | 1, REG_DMA3);
-  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0), DMA_ENABLE << 16 | 16,
-          REG_DMA3);
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(1, 0),
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
           (void *)&BG_PLTT_COLOR(1, TEXT_BACKGROUND_COLOR),
-          DMA_ENABLE << 16 | 1, REG_DMA3);
+          DMA_COPY_HALFWORDS(1), REG_DMA3);
   while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       WindowSprite_RedrawSavedRectFar(menu->selectorWindow);

@@ -105,7 +105,7 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
 /// Fills the battle's two unit lists: the party in its order, and the enemies
 /// left to right, or for a fixed formation out from the centre.
 void BattleUnit_Collect(void) {
-  u16 buf[14];
+  u16 buf[UNIT_MAX];
   struct BattleWork *battle;
   s32 count;
   s32 i;

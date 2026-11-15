@@ -70,7 +70,8 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
     *entry = slot | 0xf000;
     *mirror = slot | 0xf000;
   }
-  Dma_Set(pixels, (void *)(0x06000000 + slot * 32), 0x84000008, REG_DMA3);
+  Dma_Set(pixels, (void *)(0x06000000 + slot * 32), DMA_COPY_WORDS(8),
+          REG_DMA3);
 }
 
 // The Japanese font: control code 3 advances a fixed 8 pixels, codes 222 and

@@ -35,7 +35,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   s32 single;
   struct BattleObject *battleObject;
   struct SavedBattleObj *saved;
-  u16 ids[14];
+  u16 ids[UNIT_MAX];
   struct MotionObject *object;
   struct MotionObject *actor;
   s32 classId;
@@ -164,7 +164,7 @@ BattleMotion_CallBeast(struct BattlePlan *plan,
   actor = BattleObject_Get(plan->unitId)->object;
   Actor_SelectAnimationFar(actor, 3);
   Actor_SetAnimationSpeedFar((struct Actor *)actor, 16);
-  IoWriteQueue_Store16(0x04000050, 0x3f40);
+  IoWriteQueue_Store16((u32)&REG_BLDCNT, 0x3f40);
   Sound_PlayFar(SE_CAST);
   wait(10);
   if (single) {
@@ -249,7 +249,7 @@ void BattleMotion_ReleaseBuffer(struct Work0811e7dc *work) {
 /// Sends the called beast away and puts back the battle object
 /// BattleMotion_CallBeast saved, then frees the save.
 void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
-  u16 ids[14];
+  u16 ids[UNIT_MAX];
   struct MotionObject *object;
   s32 unitId;
   s32 count;
@@ -257,7 +257,7 @@ void BattleMotion_DismissBeast(struct SavedBattleObj *saved) {
 
   unitId = saved->unitId;
   object = BattleObject_Get(unitId)->object;
-  IoWriteQueue_Store16(0x04000050, 0x3f40);
+  IoWriteQueue_Store16((u32)&REG_BLDCNT, 0x3f40);
   BattleHighlight_SetSpriteMode(unitId, 1);
   for (i = 0; i != 16; i++) {
     s32 fade;

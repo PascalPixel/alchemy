@@ -60,7 +60,7 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
 void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
   Dma_Set(BG_CHAR_BLOCK(0) + (sourceTile & 0x3ff) * TILE_SIZE_4BPP,
           BG_CHAR_BLOCK(0) + (destinationTile & 0x3ff) * TILE_SIZE_4BPP,
-          0x84000008, REG_DMA3);
+          DMA_COPY_WORDS(8), REG_DMA3);
 }
 
 // How much of the line under the cursor is copied: more outside Japanese.
@@ -151,7 +151,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     do {
     } while (0);
     iconSprite = &sprites[i];
-    sprites[i].oam.word.attr01 = 0x40000000;
+    sprites[i].oam.word.attr01 = OBJ_SIZE_16X16;
     sprites[i].oam.word.attr23 = t;
     iconSprite->oam.f.x = (s16)window->x * 8 + 8;
     t = (s16)window->y;

@@ -154,7 +154,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       u16 *attr;
 
       Dma_Set(tiles, (void *)(0x06010000 + (work->glyphTiles + index) * 32),
-              0x84000020, (volatile u32 *)0x040000d4);
+              DMA_COPY_WORDS(32), (volatile u32 *)0x040000d4);
       attr = (u16 *)&output->sprite.oam;
       if (work->battleMode & 4)
         *attr++ = (y + (spacingY >> 1) + window->y * 8 + GLYPH_Y) | 0x400;
@@ -219,7 +219,7 @@ s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
   output->kind = 0;
   width = Text_DrawGlyphPair(character, tiles);
   Dma_Set(tiles, (void *)(0x06010000 + (work->glyphTiles + index) * 32),
-          0x84000020, REG_DMA3);
+          DMA_COPY_WORDS(32), REG_DMA3);
   ((u16 *)&output->sprite.oam)[0] =
       y + (spacingY >> 1) + window->y * 8 + GLYPH_SPRITE_OFFSET_Y;
   ((u16 *)&output->sprite.oam)[1] =

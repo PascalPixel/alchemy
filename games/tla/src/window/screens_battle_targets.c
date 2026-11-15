@@ -99,7 +99,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct SelectionSprite cursorSprites[6];
   struct TargetTrack cursorTracks[6];
   struct TargetPoint actorPosition;
-  u16 spreadActorIds[14];
+  u16 spreadActorIds[UNIT_MAX];
   u8 spreadTrackIndices[8];
   struct TargetPoint selectedPosition;
   u16 targetName[15];

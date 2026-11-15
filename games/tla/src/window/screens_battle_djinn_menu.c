@@ -493,7 +493,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
 
     cursorPos.x = (s16)listWindow->x * 8 - 2;
     cursorPos.y = (selectedRow * 2 + (s16)listWindow->y) * 8 + 20;
-    ((struct MenuSprite *)sprite)->oam.word.attr01 = 0x40000000;
+    ((struct MenuSprite *)sprite)->oam.word.attr01 = OBJ_SIZE_16X16;
     ((struct MenuSprite *)sprite)->oam.word.attr23 = 0;
     // Once-only: keeps cursorSlot's load before the tiles address.
     do {

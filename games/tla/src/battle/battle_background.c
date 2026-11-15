@@ -40,7 +40,7 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
     Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0), DMA_COPY_HALFWORDS(128),
             REG_DMA3);
   } else {
-    ColorBuffer_Scale(palette, (u16 *)(BG_PLTT + 6 * 16),
+    ColorBuffer_Scale(palette, (u16 *)&BG_PLTT_COLOR(6, 0),
                       screen->brightness = 0x10000 - level * 1092, 128);
   }
   {
@@ -87,12 +87,12 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
 
     work = Ram_HeapSlots->battleWork;
     source = work->palette;
-    destination = (u16 *)(BG_PLTT + 6 * 16);
+    destination = (u16 *)&BG_PLTT_COLOR(6, 0);
 
-    for (i = 0; i != 128; i++) {
-      s32 red = source[i] & 31;
-      s32 green = (source[i] >> 5) & 31;
-      s32 blue = (source[i] >> 10) & 31;
+    for (i = 0; i != BG_PLTT_COLORS / 2; i++) {
+      s32 red = RGB_RED(source[i]);
+      s32 green = RGB_GREEN(source[i]);
+      s32 blue = RGB_BLUE(source[i]);
 
       if (red > fade)
         red -= fade;
@@ -156,12 +156,13 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   }
   Heap_Release(decode);
   palette = session->palette;
-  Dma_Set(data, palette, 0x84000040, REG_DMA3);
+  Dma_Set(data, palette, DMA_COPY_WORDS(64), REG_DMA3);
   if (level >= 0)
-    ColorBuffer_Scale(palette, (u16 *)(BG_PLTT + 6 * 16),
+    ColorBuffer_Scale(palette, (u16 *)&BG_PLTT_COLOR(6, 0),
                       session->brightness = 0x10000 - level * 1092, 128);
   if (session->keepBackdropPalette == 0) {
-    Dma_Set((void *)OBJ_PLTT, (void *)(BG_PLTT + 5 * 16), 0x80000010, REG_DMA3);
+    Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+            DMA_COPY_HALFWORDS(16), REG_DMA3);
     *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
   }
   Graphics_BuildSequentialTileTable((void *)BG_SCREEN_BLOCK(7));
@@ -532,7 +533,7 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
 /// Makes every unit's graphics but except's translucent (OBJ mode 1).
 /// except: unit ID to leave unchanged.
 void BattleHighlight_SetOtherSpriteModes(s32 except) {
-  s16 list[14];
+  s16 list[UNIT_MAX];
   s32 cnt = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, list);
   s32 i;
 
@@ -544,7 +545,7 @@ void BattleHighlight_SetOtherSpriteModes(s32 except) {
 
 /// Restores normal rendering (OBJ mode 0) for all units.
 void BattleHighlight_ClearAllSpriteModes(void) {
-  s16 list[14];
+  s16 list[UNIT_MAX];
   s32 cnt = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, list);
   s32 i;
 
@@ -567,31 +568,34 @@ void BattleBackground_StepHighlightBlend(void) {
     if (battle->highlightMode == HIGHLIGHT_FADE_IN) {
       u32 level = battle->highlightStep >> 1;
 
-      if (level > 16)
-        level = 16;
+      if (level > BLEND_WEIGHT_MAX)
+        level = BLEND_WEIGHT_MAX;
       REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
-      REG_BLDALPHA = ((0x10 - level) << 8) | level;
+      REG_BLDALPHA = ((BLEND_WEIGHT_MAX - level) << 8) | level;
       battle->highlightStep++;
     } else if (battle->highlightMode == HIGHLIGHT_FADE_OUT) {
       u32 level = battle->highlightStep >> 1;
 
-      if (level > 16)
-        level = 16;
+      if (level > BLEND_WEIGHT_MAX)
+        level = BLEND_WEIGHT_MAX;
       REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
-      REG_BLDALPHA = (level << 8) | (0x10 - level);
+      REG_BLDALPHA = (level << 8) | (BLEND_WEIGHT_MAX - level);
       battle->highlightStep++;
     } else if (battle->highlightMode == HIGHLIGHT_PULSE) {
       REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
       REG_BLDALPHA = (gBattleHighlight_BlendRamp[battle->highlightStep] << 8) |
-                     (0x10 - gBattleHighlight_BlendRamp[battle->highlightStep]);
-      battle->highlightStep = ((battle->highlightStep + 1) & 0xf) |
-                              (battle->highlightStep > 14 ? 0x10 : 0);
+                     (BLEND_WEIGHT_MAX -
+                      gBattleHighlight_BlendRamp[battle->highlightStep]);
+      battle->highlightStep =
+          ((battle->highlightStep + 1) & 0xf) |
+          (battle->highlightStep > 14 ? BLEND_WEIGHT_MAX : 0);
     } else if (battle->highlightMode != HIGHLIGHT_OFF) {
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
       REG_BLDALPHA = BLEND_ALPHA(16, 0);
       REG_BLDY = gBattleHighlight_BlendRamp[battle->highlightStep];
-      battle->highlightStep = ((battle->highlightStep + 1) & 0xf) |
-                              (battle->highlightStep > 14 ? 0x10 : 0);
+      battle->highlightStep =
+          ((battle->highlightStep + 1) & 0xf) |
+          (battle->highlightStep > 14 ? BLEND_WEIGHT_MAX : 0);
     }
   }
 }
@@ -600,7 +604,7 @@ void BattleBackground_StepHighlightBlend(void) {
 /// the others taking the other blend, or with HIGHLIGHT_OFF stops the
 /// highlight.
 void BattleHighlight_SetModes(u16 *actors, s32 mode) {
-  s16 activeActors[14];
+  s16 activeActors[UNIT_MAX];
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   u32 count;
   u32 i;
@@ -893,7 +897,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     data = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteD);
     break;
   }
-  Dma_Set(data, (void *)BG_PLTT, 0x84000000 | 32, REG_DMA3);
+  Dma_Set(data, (void *)BG_PLTT, DMA_COPY_WORDS(32), REG_DMA3);
   /* FAKEMATCH(dead): a once-only block. */
   do {
     zero = 0;
@@ -957,28 +961,29 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
   wait(1);
   BattleBackground_SetMode(1, session->background, 0);
   Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), 0x4000);
-  IoWriteQueue_Store16(0x04000000, 0x3741);
-  IoWriteQueue_Store16(0x0400000c, 0x784);
-  IoWriteQueue_Store16(0x04000050, 0x3f44);
+  IoWriteQueue_Store16((u32)&REG_DISPCNT, 0x3741);
+  IoWriteQueue_Store16((u32)&REG_BG2CNT, 0x784);
+  IoWriteQueue_Store16((u32)&REG_BLDCNT, 0x3f44);
   wait(1);
-  Io_Write16(240, &REG_WIN0H);
+  Io_Write16(DISPLAY_WIDTH, &REG_WIN0H);
   Io_Write16(0x1088, &REG_WIN0V);
   Io_Write16(WININ_WIN0_ALL, &REG_WININ);
   Io_Write16(WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ, &REG_WINOUT);
   if (mode == 0) {
-    IoWriteQueue_Store16(0x04000052, 0x100e);
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA, 0x100e);
     ElementGlow_InitializeStarField(kind);
     for (frame = 0, pos = &position; frame <= 44; frame++) {
       brightness = &session->brightness;
       ime = &REG_IME;
       work = (struct SparkWork *)Ram_HeapSlots->battleEffect;
       if (frame <= 24)
-        ColorBuffer_Scale(session->palette, (u16 *)(BG_PLTT + 6 * 16),
+        ColorBuffer_Scale(session->palette, (u16 *)&BG_PLTT_COLOR(6, 0),
                           *brightness = 0x10000 - frame * 1092, 128);
       BattleMotion_ProjectScaledPosition(unit, (s32 *)pos);
       work->originX = (64 - pos->x) << 8;
       work->originY = (64 - pos->y) << 8;
-      IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000028, (u32)&work->originX, 0x84000002);
+      IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, (u32)&work->originX,
+                              DMA_COPY_WORDS(2));
       work->originPending = 1;
       wait(1);
     }
@@ -989,7 +994,7 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
       BattleMotion_ProjectScaledPosition(unit, (s32 *)&position2);
       origin[0] = (64 - position2.x) << 8;
       origin[1] = (64 - position2.y) << 8;
-      IO_WRITE_QUEUE_PUSH(0x04000028, (u32)origin, 0x84000002);
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, (u32)origin, DMA_COPY_WORDS(2));
       wait(1);
     }
     BattleEffect_EndElementStreaksFar();

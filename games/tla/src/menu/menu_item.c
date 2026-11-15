@@ -2475,8 +2475,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
         WindowSprite_RedrawSavedRectFar(window);
         Text_DrawMessageAsTilesFar(MSG_HOW_MANY, window, HOW_MANY_X,
                                    HOW_MANY_Y);
-        Dma_Set(gMenu_QuantityTiles, tiles, (DMA_ENABLE | DMA_32BIT) << 16 | 64,
-                REG_DMA3);
+        Dma_Set(gMenu_QuantityTiles, tiles, DMA_COPY_WORDS(64), REG_DMA3);
         QuantityBar_FillFar(30, 14, tiles);
         QuantityBar_FillFar(baseQuantity + quantityRange, 0, tiles);
         QuantityBar_FillFar(baseQuantity + value + 1, 10, tiles);

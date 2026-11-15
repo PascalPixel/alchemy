@@ -358,7 +358,7 @@ static inline struct BattleObject *BattleObject_GetInline(s32 unitId) {
 /// front.
 void BattleObject_UpdateSpritePriorities(void) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
-  u16 unitIds[14];
+  u16 unitIds[UNIT_MAX];
   struct MotionObject *objects[14];
   s32 partyCount;
   s32 enemyCount;

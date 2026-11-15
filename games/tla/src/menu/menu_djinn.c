@@ -487,11 +487,11 @@ void Menu_OpenBackdropScreen(void) {
   Graphics_ExpandVramTilesByColorTableFar(BG_CHAR_BLOCK(1) + 0x1000);
   Iwram_CopyWords(BG_CHAR_BLOCK(1) + 150 * 32, gMenu_BackdropBorderTile, 32);
   Dma_Set(Palette_GetBasicSpriteColors(), (void *)&BG_PLTT_COLOR(5, 0),
-          DMA_ENABLE << 16 | 16, REG_DMA3);
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
       BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   Dma_Set((void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0),
-          (void *)&BG_PLTT_COLOR(7, 0), DMA_ENABLE << 16 | 16, REG_DMA3);
+          (void *)&BG_PLTT_COLOR(7, 0), DMA_COPY_HALFWORDS(16), REG_DMA3);
   DjinnMenu_AdjustPalettes(8);
   BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);

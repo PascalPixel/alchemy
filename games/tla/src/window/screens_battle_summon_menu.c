@@ -95,7 +95,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     do {
     } while (0);
     sprite = &sprites[index];
-    sprites[index].oam.word.attr01 = 0x40000000;
+    sprites[index].oam.word.attr01 = OBJ_SIZE_16X16;
     sprites[index].oam.word.attr23 = t;
     sprite->oam.f.x = (s16)window->x * 8 + 8;
     t = (s16)window->y;

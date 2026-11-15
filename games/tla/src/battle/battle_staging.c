@@ -135,7 +135,7 @@ void BattleStaging_PlanAuroraField(struct BattlePlan *plan) {
 
 /// Sends every battler back to its spot.
 void BattleParty_ReturnAllToSpots(void) {
-  u16 ids[14];
+  u16 ids[UNIT_MAX];
   s32 count = BattleUnit_ListIds(3, ids);
   s32 i;
 
@@ -394,7 +394,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
       BattleMessage_ShowAndWaitFar((s32)MsgNoEscape);
       BattleMessage_WaitForAdvance();
     } else {
-      s16 unitIds[14];
+      s16 unitIds[UNIT_MAX];
       s32 index = BattleUnit_ListLiving(1, (u16 *)unitIds) - 1;
 
       while (index != -1) {
@@ -430,7 +430,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
 /// the other side fades out while the effect plays, then everyone fades back
 /// in. STAGING_HIDE_ACTOR hides the unit too, as the summons do.
 s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
-  u16 units[14];
+  u16 units[UNIT_MAX];
   struct BattlePresentationWork work;
   u32 actor;
   u32 target;

@@ -197,7 +197,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
       output->sentinel = 240;
       output->x = 120;
       output->y = 120;
-      entry->attributes.word = 0x40000400;
+      entry->attributes.word =
+          OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
       entry->tile.value = 0;
       entry->attributes.bits.x = (s16)window->x * 8 + x;
       entry->attributes.bits.y = (s16)window->y * 8 + y;

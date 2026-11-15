@@ -556,8 +556,7 @@ extern s16 gTitleIntro_GullPath[];
   {                                                                            \
     u8 *buffer = Data_02026800;                                                \
     Resource_DecodeByteLzInRam(Resource_GetTableEntry((s32)&(id)), buffer);    \
-    Dma_Set(buffer, (void *)OBJ_VRAM0, (DMA_ENABLE | DMA_32BIT) << 16 | 0xc00, \
-            REG_DMA3);                                                         \
+    Dma_Set(buffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(3072), REG_DMA3);        \
   }
 
 /// The logo's per-frame task while the lighthouse scrolls: places its pieces
@@ -622,8 +621,8 @@ void TitleIntro_UpdateLogo(void) {
         sprite.tile = tile + column + row * 8;
         sprite.x = left + column * 8;
         sprite.y = top + row * 8;
-        Dma_Set(&sprite, (u8 *)OAM + (row * 8 + column) * 8,
-                (DMA_ENABLE | DMA_32BIT) << 16 | 2, REG_DMA3);
+        Dma_Set(&sprite, (u8 *)OAM + (row * 8 + column) * 8, DMA_COPY_WORDS(2),
+                REG_DMA3);
       }
     }
   } else if (logo->phase == 1) {
@@ -687,8 +686,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   buffer = gMapGridCellBuffer;
   source += 32;
   Resource_DecodeByteLzInRam(source, buffer);
-  Dma_Set(buffer, (void *)OBJ_VRAM0, (DMA_ENABLE | DMA_32BIT) << 16 | 0x1b00,
-          REG_DMA3);
+  Dma_Set(buffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(6912), REG_DMA3);
   wait(1);
   source = Resource_GetTableEntry((s32)&ResourceId_IntroLighthousePicture);
   Dma_Set(source, (void *)BG_PLTT,
@@ -697,8 +695,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   wait(1);
   source += BG_PLTT_SIZE;
   Resource_DecodeByteLzInRam(source, buffer);
-  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0),
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
+  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(9600), REG_DMA3);
   wait(1);
 
   map = (u16 *)BG_SCREEN_BLOCK(31);
@@ -754,7 +751,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   if (map)
     goto stopped;
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_IntroGullSprites),
-          (void *)OBJ_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+          (void *)OBJ_PLTT, DMA_COPY_WORDS(8), REG_DMA3);
   logo->phase = 0;
   logo->frame = -5;
   logo->timer = 0;

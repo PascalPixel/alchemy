@@ -303,7 +303,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
       command = selectionUi->commandKinds[0];
       break;
     }
-    IoWriteQueue_Store16(0x04000000, 0x1741);
+    IoWriteQueue_Store16((u32)&REG_DISPCNT, 0x1741);
     work->holdTilemapUpload = 0;
     wait(1);
   }
@@ -332,7 +332,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   wait(1);
   Task_Remove(CommandRow_PutBg1Behind);
   Irq_SetHandler(2, 0, 0);
-  IO_WRITE_QUEUE_PUSH(0x04000000, 0x1541, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x1541, 0x20000);
   Heap_Release(selectionUi);
   work->holdTilemapUpload = 0;
   wait(1);

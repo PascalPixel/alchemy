@@ -12,7 +12,7 @@
 /// Readies every unit's battle graphics, releasing those of departed units,
 /// and resets everyone's display mode and motion.
 void BattleObject_Put(void) {
-  s16 list[14];
+  s16 list[UNIT_MAX];
 
   BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, list);
   BattleActor_SpawnObjectsForList(list, 1);
@@ -21,7 +21,7 @@ void BattleObject_Put(void) {
 /// Readies every unit's battle graphics, releasing those of departed units,
 /// and keeps their display modes and motions.
 void BattleUnit_ListAllAndSubmit(void) {
-  s16 list[14];
+  s16 list[UNIT_MAX];
 
   BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, list);
   BattleActor_SpawnObjectsForList(list, 0);

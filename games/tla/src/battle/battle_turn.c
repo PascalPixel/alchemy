@@ -54,7 +54,7 @@ void BattleCamera_SetCommandView(s32 pos) {
 /// Ends every unit's guard (Defend and the like) and recalculates its stats.
 /// Clears every unit's defendLevel.
 void BattleUnit_ResetGuardLevels(void) {
-  u16 ids[14];
+  u16 ids[UNIT_MAX];
   s32 count;
   s32 index;
 
@@ -128,7 +128,7 @@ s32 Battle_BuildUnitActions(struct BattleActionRecord *entries) {
 /// The enemies' actions for the turn, in a shuffled order; none act when the
 /// party struck first. Returns how many there are.
 s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
-  u16 unitIds[14];
+  u16 unitIds[UNIT_MAX];
   s32 entryCount = 0;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 unitCount;

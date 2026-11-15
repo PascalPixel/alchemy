@@ -431,7 +431,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   s32 freeSpriteSlots;
   s32 enemyCount;
   s32 levelAdjustment;
-  u16 listBuffer[14];
+  u16 listBuffer[UNIT_MAX];
   s32 extraCounts[5];
   s32 memberCounts[5];
   s32 memberOrder[5];

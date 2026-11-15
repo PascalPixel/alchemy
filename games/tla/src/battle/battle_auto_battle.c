@@ -164,7 +164,7 @@ s32 BattleObject_IsValidId(u32 objectId) {
 /// Auto battle: the party tries to run, and gets away 15 times in 16. Returns 1
 /// when it got away.
 s32 BattleFlee_PlayRun(struct BattleActionRecord *action) {
-  s16 party_members[14];
+  s16 party_members[UNIT_MAX];
   s32 party_size;
   s32 animated;
   s32 member_slot;
@@ -220,7 +220,7 @@ s32 AutoBattle_ShowDefend(s16 *script) {
 /// REG_BLDCNT and REG_BLDALPHA and the actors' colour modes, and leaves the
 /// battle objects readied again.
 s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
-  u16 visibleUnits[14];
+  u16 visibleUnits[UNIT_MAX];
   struct BattlePresentationWork context;
   s32 actorId;
   s32 targetId;
@@ -516,7 +516,7 @@ void BattleMotion_PlayFall(s32 unitId) {
 /// Returns the action's target, or a random living unit of its side when the
 /// target is down; 0x100 when none is left.
 s32 BattleAbility_ReplaceDefeated(const struct BattleActionRecord *action) {
-  s16 livingUnits[14];
+  s16 livingUnits[UNIT_MAX];
   s32 targetId;
   s32 livingCount;
 

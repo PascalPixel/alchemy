@@ -223,8 +223,8 @@ void BattleTransition_ResetBg0Scroll(void) {
 /// Serpent's stars.
 void BattleTransition_Run(s32 arg, s32 kind) {
   struct BattlePresentationWork work;
-  u16 owners[14];
-  u16 shown[14];
+  u16 owners[UNIT_MAX];
+  u16 shown[UNIT_MAX];
   s32 *timer;
   struct BattleWork *battle;
   struct BattleBackgroundView *view;
@@ -240,20 +240,20 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     s32 y;
     s32 zero;
 
-    Dma_Set(gBattleTransition_CurtainTiles, (void *)0x06005020, 0x84000008,
-            DMA3);
-    Dma_Set(gBattleTransition_CurtainTiles + 32, (void *)0x06005040, 0x84000008,
-            DMA3);
-    Dma_Set(gBattleTransition_CurtainTiles + 64, (void *)0x06005060, 0x84000008,
-            DMA3);
-    Dma_Set(gBattleTransition_CurtainTiles + 96, (void *)0x06005080, 0x84000008,
-            DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles, (void *)0x06005020,
+            DMA_COPY_WORDS(8), DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 32, (void *)0x06005040,
+            DMA_COPY_WORDS(8), DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 64, (void *)0x06005060,
+            DMA_COPY_WORDS(8), DMA3);
+    Dma_Set(gBattleTransition_CurtainTiles + 96, (void *)0x06005080,
+            DMA_COPY_WORDS(8), DMA3);
     Dma_Set(gBattleTransition_CurtainTiles + 128, (void *)0x060050a0,
-            0x84000008, DMA3);
+            DMA_COPY_WORDS(8), DMA3);
     Dma_Set(gBattleTransition_CurtainTiles + 160, (void *)0x060050c0,
-            0x84000008, DMA3);
+            DMA_COPY_WORDS(8), DMA3);
     Dma_Set(gBattleTransition_CurtainTiles + 192, (void *)0x060050e0,
-            0x84000008, DMA3);
+            DMA_COPY_WORDS(8), DMA3);
     view->secondMode = 1;
     view->busy = 0;
     view->mode = 1;
@@ -297,7 +297,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
                 WININ_WIN0_OBJ | WININ_WIN0_CLR | WININ_WIN1_BG0 |
                 WININ_WIN1_BG2 | WININ_WIN1_OBJ | WININ_WIN1_CLR;
     REG_WINOUT = WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL;
-    IoWriteQueue_Store16(0x04000000, 0x7741);
+    IoWriteQueue_Store16((u32)&REG_DISPCNT, 0x7741);
     BattleCamera_SetView(0, 0, 0, 180);
     *timer = zero;
     Task_Add(BattleTransition_AdvanceTimer, TASK_PASS_VBLANK);
@@ -307,8 +307,8 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     wait(1);
     PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
     wait(20);
-    IoWriteQueue_ClearBits16(0x04000008, 2);
-    IoWriteQueue_SetBits16(0x04000008, 0);
+    IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, 2);
+    IoWriteQueue_SetBits16((u32)&REG_BG0CNT, 0);
     if ((u32)(kind - 74) <= 2 || kind == 638)
       wait(60);
     else
@@ -334,7 +334,7 @@ void BattleTransition_Run(s32 arg, s32 kind) {
           enemyId != ENEMY_DOOM_DRAGON_5 && enemyId != ENEMY_DOOM_DRAGON_8)
         battleObject->scale = Q16_ONE * 7 / 10;
     }
-    IO_WRITE_QUEUE_PUSH(0x04000000, 0x6041, 0x20000);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0x6041, 0x20000);
     wait(1);
     {
       s32 background = (s32)&ResourceId_SerpentStarsBackdrop;
@@ -353,8 +353,8 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     wait(1);
     wait(20);
     PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
-    IoWriteQueue_ClearBits16(0x04000008, 2);
-    IoWriteQueue_SetBits16(0x04000008, 0);
+    IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, 2);
+    IoWriteQueue_SetBits16((u32)&REG_BG0CNT, 0);
     REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
     count = BattleUnit_ListIds(3, shown);
     shown[count] = 255;

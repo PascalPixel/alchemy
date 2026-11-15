@@ -128,7 +128,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     do {
     } while (0);
     iconSprite = &sprites[i];
-    sprites[i].oam.word.attr01 = 0x40000000;
+    sprites[i].oam.word.attr01 = OBJ_SIZE_16X16;
     sprites[i].oam.word.attr23 = t;
     iconSprite->oam.f.x = (s16)window->x * 8 + 8;
     t = (s16)window->y;

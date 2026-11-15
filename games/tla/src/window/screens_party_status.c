@@ -151,7 +151,7 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
 
   if (canvas->battleMode == 0) {
     Dma_Set((const void *)Palette_GetBasicSpriteColors(),
-            (void *)&BG_PLTT_COLOR(14, 0), 0x80000010, REG_DMA3);
+            (void *)&BG_PLTT_COLOR(14, 0), DMA_COPY_HALFWORDS(16), REG_DMA3);
     BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR) =
         BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   }
@@ -159,12 +159,12 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
   y += (s16)window->y;
   for (i = 0; i < 5; i++, x++) {
     id = canvas->tilemap[0][y * 32 + x];
-    light = 0x22222222;
-    dark = 0xcccccccc;
+    light = PIXELS_4BPP(2);
+    dark = PIXELS_4BPP(12);
     id &= 0x3ff;
     if (value > 7) {
-      light = 0x88888888;
-      dark = 0xdddddddd;
+      light = PIXELS_4BPP(8);
+      dark = PIXELS_4BPP(13);
     } else if (value >= 0) {
       light <<= value * 4;
       light |= 0x88888888U >> (32 - value * 4);
@@ -334,7 +334,7 @@ void PartyStatus_Draw(s32 flags) {
     Window_SetTilemapEntry(window, 0x5004, 2, row + 1, 0);
     if (standbyDjinn[0] > 9 || standbyDjinn[1] > 9 || standbyDjinn[2] > 9 ||
         standbyDjinn[3] > 9)
-      Dma_Set(Data_080aa1b8, (void *)0x06003400, 0x84000048, REG_DMA3);
+      Dma_Set(Data_080aa1b8, (void *)0x06003400, DMA_COPY_WORDS(72), REG_DMA3);
     Window_SetTilemapEntry(window, DJINN_COUNT_TILE(standbyDjinn[0]), 1, row,
                            0);
     Window_SetTilemapEntry(window, DJINN_COUNT_TILE(standbyDjinn[1]), 3, row,

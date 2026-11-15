@@ -256,8 +256,8 @@ void BattlePlayback_Run(void) {
       if (events->arrowResource == -1)
         events->arrowResource = battle->arrowTiles;
       MessageArgument_ClearAllFar();
-      IoWriteQueue_ClearBits16(0x0400004a, 4);
-      IoWriteQueue_SetBits16(0x0400004a, 16);
+      IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
+      IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
       ((u32 *)prompt)[1] = 0xa000;
       ((u32 *)prompt)[2] = x;
       /* FAKEMATCH(barrier): an empty asm after x is stored. */

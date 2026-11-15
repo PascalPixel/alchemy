@@ -184,7 +184,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     BattleStatus_DrawPageArrows(0x060066c0);
     if (redraw != 0)
       Portrait_Load(member, portraitSlot);
-    sprite->oam.word.attr01 = 0x80000400;
+    sprite->oam.word.attr01 =
+        OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     /* FAKEMATCH(dead): an empty once-only block. */
     do {
     } while (0);
@@ -465,7 +466,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     {
       struct SummaryOam *face = BattleObject_GetFar(member)->object->records;
 
-      portraitSprite.oam.word.attr01 = 0xc0002400;
+      portraitSprite.oam.word.attr01 =
+          OBJ_SIZE_64X64 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
       portraitSprite.oam.word.attr23 = 0;
       if (face != NULL) {
         portraitSprite.oam.f.tile = face->oam.f.tile;
@@ -477,7 +479,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       }
     }
 
-    cursorSprite.oam.word.attr01 = 0x40000400;
+    cursorSprite.oam.word.attr01 =
+        OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     cursorSprite.oam.word.attr23 = 0;
     /* FAKEMATCH(barrier): an empty asm stores the sprite words straight after
      * their load. */
@@ -1070,7 +1073,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       sprite = statusSprites;
       slot = statusSlots;
       for (i = 0, entry = gVramCacheEntries, iconX = 112; i <= 10; i++) {
-        sprite->oam.word.attr01 = 0x40000400;
+        sprite->oam.word.attr01 =
+            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         /* FAKEMATCH(dead): an empty once-only block. */
         do {
         } while (0);
@@ -1090,7 +1094,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         for (i = 0, iconEntry = gVramCacheEntries, sprite = iconSprites,
             iconRow = 0;
              i <= 3; i++) {
-          sprite->oam.word.attr01 = 0x40000400;
+          sprite->oam.word.attr01 =
+              OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
           /* FAKEMATCH(dead): an empty once-only block. */
           do {
           } while (0);

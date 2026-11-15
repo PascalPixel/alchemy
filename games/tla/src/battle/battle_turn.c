@@ -551,14 +551,13 @@ finish:
   return cnt;
 }
 
-/// Returns the unit ID at a formation position.
-/// slot: low 4 bits are the position; 0x80 selects the enemy formation.
-s16 Battle_GetUnitAtPlace(s32 slot) {
-  struct BattleWork *work = Ram_HeapSlots->battleWork;
+/// Returns the unit id at a list place, 0x80 set for the enemies' list.
+s32 Battle_GetUnitAtPlace(s32 taggedPlace) {
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
 
-  if ((slot & 0x80) != 0)
-    return work->enemyIds[slot & 0xf];
-  return work->partyUnits[slot & 0xf];
+  if ((taggedPlace & 0x80) != 0)
+    return battle->enemyIds[taggedPlace & 0xf];
+  return battle->partyUnits[taggedPlace & 0xf];
 }
 
 /// Returns a unit's formation position, or -1 if absent.

@@ -323,5 +323,3 @@ extern s8 gMenu_SaveSlotActionByPosition[];
 #include "screens_debug_destinations.c"
 #include "screens_debug_flags.c"
 #include "screens_pause_menu.c"
-
-#undef BattleDjinnMenu_Run

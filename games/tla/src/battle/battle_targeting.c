@@ -472,14 +472,14 @@ void BattleUnit_ClearStatuses(s32 unitId) {
 /// cursor sound. The Broken Seal's BattleMessage_WaitForAdvance, with the
 /// message window read from its heap slot.
 void BattleMessage_WaitForAdvance(void) {
-  struct AdvanceSprite *prompt;
-  struct AdvanceSprite promptStorage;
+  struct AdvanceArrowSprite *prompt;
+  struct AdvanceArrowSprite promptStorage;
   s32 frame;
   s32 tileSlot;
   s32 pictureTiles;
   s32 sheet;
-  struct AdvanceWindow *window;
-  struct AdvanceOffset *offset;
+  struct Window *window;
+  struct BattleMessageOffset *offset;
 
   while (!Message_AllTypedFar())
     wait(1);
@@ -490,17 +490,17 @@ void BattleMessage_WaitForAdvance(void) {
   for (frame = 0;; frame++) {
     // Cycle the eight pictures, one every four frames.
     pictureTiles = ((gFrameCount >> 2) & 7) * 128 + sheet;
-    window = ((struct AdvanceDisplay *)Ram_HeapSlots->battleMessage)->window;
-    offset = ((struct AdvanceDisplay *)Ram_HeapSlots->battleMessage)->offset;
+    window = ((struct BattleMessageWork *)Ram_HeapSlots->battleMessage)->window;
+    offset = ((struct BattleMessageWork *)Ram_HeapSlots->battleMessage)->offset;
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
     Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
     ((u32 *)prompt)[1] = 0xa400;
     ((u32 *)prompt)[2] = 0;
     prompt->tile = VramCache_Reload(tileSlot, pictureTiles);
-    prompt->x = window->x * 8 + (offset->x >> 8) + 4;
+    prompt->x = (s16)window->x * 8 + (offset->x >> 8) + 4;
     // Bob up and down by up to 2 pixels, once every 16 frames.
-    prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
+    prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + (s16)window->y * 8 +
                 (offset->y >> 8) + 6;
     Oam_AddSpriteAtDepth(prompt, OAM_DEPTH_WINDOW);
     // A held advance key counts only after 16 frames, so one still held from
@@ -576,7 +576,7 @@ s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
 }
 
 /// Grants the Djinn bonus for the rest of the action.
-void BattlePlayback_GrantDjinnBonus(struct BattleEventFlagWork *runtime,
+void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackWork *runtime,
                                     u32 operand) {
   runtime->flags |= 1;
 }
@@ -617,7 +617,7 @@ u32 BattlePlayback_RunAll(void) {
                                 MESSAGE_ARGUMENT_ABILITY);
         break;
       case PLAYBACK_MARK:
-        ((struct BattleDisplayFlags *)Ram_HeapSlots->battleMessage)->marked = 1;
+        ((struct BattleMessageWork *)Ram_HeapSlots->battleMessage)->marked = 1;
         break;
       case PLAYBACK_CLEAR_ARGUMENTS:
         MessageArgument_ClearAllFar();
@@ -1002,9 +1002,9 @@ power_end:
       else
         classId = ENEMY_SEA_FIGHTER;
     } else if (ability->effect == ABILITY_EFFECT_CALL_QUEUED) {
-      if (battle->queueCount != 0) {
-        classId = battle->queuedSummons[battle->queueHead];
-        suffix = battle->queuedCharges[battle->queueHead];
+      if (battle->spoils.queueCount != 0) {
+        classId = battle->spoils.queuedSummons[battle->spoils.queueHead];
+        suffix = battle->spoils.queuedLetters[battle->spoils.queueHead];
       } else
         hit = 0;
     }
@@ -1018,8 +1018,8 @@ power_end:
       }
       BattleUnit_SetFar(newUnitId, classId, suffix & ENEMY_LETTER_MASK);
       if (ability->effect == ABILITY_EFFECT_CALL_QUEUED) {
-        battle->queueCount--;
-        battle->queueHead = (battle->queueHead + 1) % 2;
+        battle->spoils.queueCount--;
+        battle->spoils.queueHead = (battle->spoils.queueHead + 1) % 2;
       }
       // A Star Magician's ball takes the place nearest the middle; any other
       // newcomer fills a removed enemy's place, or is appended.
@@ -2604,9 +2604,10 @@ select_again:
         break;
       battle = (struct BattleWork *)Ram_HeapSlots->battleWork;
       if (ability->effect == ABILITY_EFFECT_CALL_QUEUED) {
-        if (battle->queueCount == 0)
+        if (battle->spoils.queueCount == 0)
           break;
-        if (!Enemy_HasSpriteRoom(battle->queuedSummons[battle->queueHead]))
+        if (!Enemy_HasSpriteRoom(
+                battle->spoils.queuedSummons[battle->spoils.queueHead]))
           break;
       }
       request->target = Battle_FindUnitPlace(request->unitId);

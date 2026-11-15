@@ -48,4 +48,3 @@
 #include "battle_spoils.c"
 
 #undef BattleObject_Reset
-#undef Battle_GetUnitAtPlace

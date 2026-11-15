@@ -117,8 +117,8 @@ static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct Unit *unit,
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   struct Unit *unit;
   const struct EnemyDefinition *enemy;
-  struct DefeatBattleWork *battle;
-  struct DefeatSpoils *spoils;
+  struct BattleWork *battle;
+  struct BattleSpoils *spoils;
   s32 itemOrClassIndex;
   s32 dropShift;
   s32 classSlot;
@@ -129,24 +129,25 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   s32 classIndex;
 
   unit = Unit_Get(unitId);
-  battle = (struct DefeatBattleWork *)Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   spoils = &battle->spoils;
   if (unitId >= 0 && unitId < 8)
     return -1;
   if (unit->classId != CLASS_NONE)
     return -2;
-  slot = spoils->lastSlot = (spoils->lastSlot + 1) % 2;
-  spoils->lastEnemyIds[slot] = unit->enemyId;
-  spoils->lastDigits[slot] = String_FindFirstDigit((u8 *)unit);
-  if (spoils->lastCount <= 1)
-    spoils->lastCount++;
+  // Queued for Regen Dance: the name letter is the first digit of the name.
+  slot = spoils->queueHead = (spoils->queueHead + 1) % 2;
+  spoils->queuedSummons[slot] = unit->enemyId;
+  spoils->queuedLetters[slot] = String_FindFirstDigit((u8 *)unit);
+  if (spoils->queueCount <= 1)
+    spoils->queueCount++;
   classSlot = 0;
   classIndex = 0;
-  if (battle->enemyClasses[0] != unit->enemyId) {
+  if (((u16 *)battle->unk010)[0] != unit->enemyId) {
     do {
       if (++classIndex > (ENEMY_BATTLE_SIZE - 1))
         break;
-    } while (battle->enemyClasses[classIndex] != unit->enemyId);
+    } while (((u16 *)battle->unk010)[classIndex] != unit->enemyId);
   }
   if (classIndex != ENEMY_BATTLE_SIZE)
     classSlot = classIndex;

@@ -64,15 +64,6 @@
 #include "system/serial.h"
 
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
-/* VIEW(menus): routine BattleDjinnMenu_Run as s32 BattleDjinnMenu_Run(s32
- * member, s32 unused); window/screens has s32 BattleDjinnMenu_Run(s32 member)
- * {; tried as the definition's s32 BattleDjinnMenu_Run(s32 member), it does not
- * compile in tla-ja: games/tla/src/window/screens_icon_menu.c:588: too many
- * arguments to function `BattleDjinnMenu_Run'. */
-s32 BattleDjinnMenu_Run__menus(s32 member,
-                               s32 unused) __asm__("BattleDjinnMenu_Run");
-#define BattleDjinnMenu_Run BattleDjinnMenu_Run__menus
-
 #define SET_CURSOR(page_, row_, preferred_)                                    \
   do {                                                                         \
     NAVIGATION->page = (page_);                                                \

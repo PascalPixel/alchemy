@@ -58,7 +58,8 @@
 /// cursor described above the list with its change preview beside it
 /// (BattleDjinnMenu_ShowChangePreview; holding R shows the Psynergy pages, Left
 /// and Right turn them).
-s32 BattleDjinnMenu_Run(s32 member) {
+/// The battle commands pass 1 as unused, which no code reads.
+s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   struct QueuedSprite cursorSprite;
   u16 messageText[64];
   struct WindowWork *work;

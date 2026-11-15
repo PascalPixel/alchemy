@@ -155,24 +155,6 @@ struct AnimationRecord {
   u8 height;
 };
 
-struct MessageWindow {
-  u8 unk00[0x0c];
-  s16 x;
-  s16 y;
-};
-
-struct MessageOffset {
-  u8 unk00[4];
-  u16 x;
-  u16 y;
-};
-
-struct BattleMessageDisplay {
-  struct MessageWindow *window;
-  struct MessageOffset *offset;
-  s32 marked;
-};
-
 struct ChildEntry {
   u8 unk00[5];
   u8 colorMode;
@@ -183,66 +165,6 @@ struct ChildEntry {
 struct MotionRecord {
   u8 unk00[40];
   struct ChildEntry *entries[1];
-};
-
-struct DefeatSpoils {
-  s32 coins;
-  s32 experience;
-  s32 defeated;
-  u16 items[4];
-  u16 lastEnemyIds[2];
-  u8 lastDigits[2];
-  s8 lastSlot;
-  s8 lastCount;
-};
-
-struct DefeatBattleWork {
-  u8 unk00[0x10];
-  u16 enemyClasses[6];
-  u8 unk1c[0x20];
-  u16 firstDefeated;
-  u16 defeatState;
-  u8 unk40[0x510];
-  struct DefeatSpoils spoils;
-};
-
-struct AdvanceSprite {
-  struct AdvanceSprite *next;
-  u16 y : 8;
-  u16 flags : 8;
-  u16 x : 9;
-  u16 size : 7;
-  u16 tile : 10;
-  u16 palette : 6;
-  u16 affineParam;
-};
-
-struct AdvanceWindow {
-  u8 unk00[0xc];
-  s16 x; ///< tiles
-  s16 y; ///< tiles
-};
-
-struct AdvanceOffset {
-  u8 unk00[4];
-  u16 x; ///< 1/256 pixels
-  u16 y; ///< 1/256 pixels
-};
-
-/// The battle message window and its scroll offset, in heap slot 0x94.
-struct AdvanceDisplay {
-  struct AdvanceWindow *window;
-  struct AdvanceOffset *offset;
-};
-
-struct BattleEventFlagWork {
-  u8 unk00[0x16c];
-  u32 flags;
-};
-
-struct BattleDisplayFlags {
-  u8 unk00[8];
-  s32 marked;
 };
 
 struct AIState {

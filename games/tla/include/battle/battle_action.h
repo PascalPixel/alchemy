@@ -74,6 +74,15 @@ struct BattleSpoils {
   s32 experience;
   s32 defeated; ///< enemies defeated
   u16 items[4];
+  /// The two enemies last felled (BattleEnemy_RecordDefeat), which Regen Dance
+  /// (ABILITY_EFFECT_CALL_QUEUED) calls back: their enemy ids and name letters,
+  /// the place of the last felled and how many there are.
+  ///@{
+  u16 queuedSummons[2];
+  u8 queuedLetters[2];
+  s8 queueHead;
+  s8 queueCount;
+  ///@}
 };
 
 STATIC_ASSERT(sizeof(struct BattleObject) == 0x2c);
@@ -87,7 +96,7 @@ STATIC_ASSERT(offsetof(struct BattleActionRecord, priority) == 0x04);
 STATIC_ASSERT(offsetof(struct BattleActionRecord, command) == 0x06);
 STATIC_ASSERT(offsetof(struct BattleActionRecord, parameter) == 0x08);
 STATIC_ASSERT(offsetof(struct BattleActionRecord, target) == 0x0a);
-STATIC_ASSERT(sizeof(struct BattleSpoils) == 0x14);
+STATIC_ASSERT(sizeof(struct BattleSpoils) == 0x1c);
 
 /// A unit's chosen action as the party's command menus write it: the
 /// BattleActionRecord, read with its fields unsigned.

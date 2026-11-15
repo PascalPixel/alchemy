@@ -82,15 +82,6 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
 /// names each list's fourteenth entry apart.
 #define TARGET_MAX 14
 
-/* VIEW(presentation): routine Battle_GetUnitAtPlace as s32
- * Battle_GetUnitAtPlace(s32 tag); battle/battle has s16
- * Battle_GetUnitAtPlace(s32 slot) {; tried as the definition's s16
- * Battle_GetUnitAtPlace(s32 slot), BattleActionRun_Build moves: 4 of 1601
- * instructions in tla-ja. */
-s32 Battle_GetUnitAtPlace__presentation(s32 tag) __asm__(
-    "Battle_GetUnitAtPlace");
-#define Battle_GetUnitAtPlace Battle_GetUnitAtPlace__presentation
-
 /// Announces the action and builds it for its targets, paying its PP or Djinn.
 /// Returns 0 to stage it, ACTION_REPORTED when it failed with its message
 /// shown, or ACTION_NOTHING_TO_SHOW.

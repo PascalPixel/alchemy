@@ -294,9 +294,7 @@ void MadraCatacombs_UnlockWithRuinKey(void) {
   Event_PlaySound(SE_STONE_RUMBLE);
   for (i = 0; i < 120; i++) {
     left->x.fixed += -(px(1) / 10);
-    /* FAKEMATCH(signature): read and written as long, another alias set than
-     * the left door's int store. */
-    *(long *)&right->x.fixed += px(1) / 10;
+    right->x.fixed += px(1) / 10;
     wait(1);
   }
   FieldCamera_SetSpeed(3.2);

@@ -382,21 +382,14 @@ void Lemuria_LeaveForAncientLemuria(void) {
 void Lemuria_GrowVine(void) {
   s32 x;
   s32 z;
-  s32 flag;
   s32 value;
-  s32 old;
 
-  flag = 0x900;
-  /* FAKEMATCH(barrier): the empty asm on flag. */
-  asm volatile("" : "+l"(flag));
+  Event_SetFlag(FLAG_LEMURIA_VINE_GROWN);
   x = px(856);
   z = px(1016);
-  Event_SetFlag(flag + 0x63);
   value = MapGrid_GetAttributeBAt(x, z, 0);
-  /* FAKEMATCH(temporary): the first z copied to old. */
-  old = z;
+  MapGrid_SetAttributeBAt(x, z, 0, value | 64);
   z = px(1032);
-  MapGrid_SetAttributeBAt(x, old, 0, value | 64);
   MapGrid_SetAttributeBAt(x, z, 0, MapGrid_GetAttributeBAt(x, z, 0) | 64);
 }
 

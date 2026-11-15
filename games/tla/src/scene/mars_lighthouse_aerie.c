@@ -327,11 +327,7 @@ s32 Scene_Initialize(void) {
   MarsLighthouseAerie_SetUpBeacon();
   Event_SetFlag(FLAG_IN_MARS_LIGHTHOUSE);
   if (gMainRoutineWork.entrance == 5) {
-    /* FAKEMATCH(pin): the blend word pinned to r3 as a halfword loads from the
-     * pool before the register address. */
-    register u16 alpha asm("r3") = 0xc08;
-
-    REG_BLDALPHA = alpha;
+    REG_BLDALPHA = BLEND_ALPHA(8, 12);
     REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
     MarsLighthouseAerie_WatchGoldenSunRise();
   } else if (gMainRoutineWork.entrance == 4) {

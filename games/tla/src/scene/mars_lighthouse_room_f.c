@@ -344,6 +344,13 @@ s32 Import_FieldCheckSpheresOverlap(s32 *a, s32 radiusA, struct Position *b,
 
 extern volatile s16 gSlideOnIce_Stopped;
 
+/// Whether two spheres overlap (Field_CheckSpheresOverlap), from an event.
+static inline s32 Event_CheckSpheresOverlap(s32 *a, s32 radiusA, s32 *b,
+                                            s32 radiusB) {
+  return Import_FieldCheckSpheresOverlap(a, radiusA, (struct Position *)b,
+                                         radiusB);
+}
+
 s32 Actor_HasArrived(struct Actor *object);
 
 void Leader_StopIfPending(void);
@@ -1949,24 +1956,6 @@ s32 Ride_GetEntryFlags(s32 index) {
 
 #include "shared/actor_blink.h"
 
-/* VIEW(flash): routine MapGrid_CheckCollision as s32
- * MapGrid_CheckCollision(struct Actor *object); the definition has s32
- * MapGrid_CheckCollision(struct Actor *object, s32 *position); this part passes
- * only the actor, and the bytes set no second argument; not tried:
- * MapGrid_CheckCollision's bound declaration was not found. */
-extern s32 MapGrid_CheckCollisionOfActor(struct Actor *actor) __asm__(
-    "MapGrid_CheckCollision");
-
-/// The ride work as the knock-back reads it: whether a hit is under way, and
-/// the way the flame went along x and z, 1, -1 or 0.
-struct RideKnockView {
-  u8 beforeActive[4];
-  u16 active;
-  u8 beforeDirection[0x68 - 6];
-  s16 directionX;
-  s16 directionZ;
-};
-
 /// Hit by the flames: the leader, hurt and blinking, is thrown back the way the
 /// flame went until he meets a wall or drops from a ledge.
 #if TLA_PATCH_1
@@ -1975,17 +1964,8 @@ void MarsLighthouseRoomF_KnockBack(void) {
 s32 MarsLighthouseRoomF_KnockBack(void) {
 #endif
   struct MainRoutineWork *main = &gMainRoutineWork;
-  struct RideKnockView *work;
-#if TLA_PATCH_1
+  struct FlameHitWork *work;
   struct Vector3 position;
-#else
-  /* FAKEMATCH(temporary): the position held in a union beside a halfword. */
-  union {
-    struct Vector3 v;
-    s16 h;
-  } positionU;
-#define position positionU.v
-#endif
 
   if (main->movementMode == 0) {
     struct Actor *actor;
@@ -1998,7 +1978,7 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
     ((s32 (*)(s32, s32))Party_TakeFallDamage)(-10, 0);
 #endif
     actor = Actor_Get(main->leaderActorId);
-    work = (struct RideKnockView *)RIDE_WORK;
+    work = RIDE_WORK;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     actor->update = Actor_Blink;
@@ -2009,19 +1989,14 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
                                                   actor->z.fixed) == 7) {
         s32 i;
 
-        /* FAKEMATCH(temporary): velocityX stored through a union. */
-        ((union {
-           s32 value;
-           u16 half;
-         } *)&actor->velocityX)
-            ->value = work->directionX << 17;
-        actor->velocityZ = work->directionZ << 17;
+        actor->velocityX = (s16)work->direction.x << 17;
+        actor->velocityZ = (s16)work->direction.z << 17;
         actor->acceleration = Q16_ONE / 16;
         for (i = 0; i <= 9; i++) {
-          position.x = actor->x.fixed + (work->directionX << 19);
+          position.x = actor->x.fixed + ((s16)work->direction.x << 19);
           position.y = actor->y.fixed;
-          position.z = actor->z.fixed + (work->directionZ << 19);
-          if (MapGrid_CheckCollisionOfActor(actor) != 0) {
+          position.z = actor->z.fixed + ((s16)work->direction.z << 19);
+          if (MapGrid_CheckCollision(actor, (s32 *)&position) != 0) {
             actor->velocityX = 0;
             actor->velocityZ = 0;
             break;
@@ -2038,13 +2013,13 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
         s32 x, z, off;
         s32 i;
 #else
-        s32 x, z, off, oldZ;
+        s32 x, z, off;
 #endif
 
-        position.x = actor->x.fixed + (work->directionX << 19);
+        position.x = actor->x.fixed + ((s16)work->direction.x << 19);
         position.y = actor->y.fixed;
-        position.z = actor->z.fixed + (work->directionZ << 19);
-        result = MapGrid_CheckCollisionOfActor(actor);
+        position.z = actor->z.fixed + ((s16)work->direction.z << 19);
+        result = MapGrid_CheckCollision(actor, (s32 *)&position);
         if (result > 0)
           break;
         if (result < 0) {
@@ -2057,28 +2032,17 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
         other = Ram_HeapSlots->actors;
         flags = &other->collisionFlags;
         for (i = 0; i <= 63; i++, flags += 128, other++) {
-          /* FAKEMATCH(wrapper): Import_FieldCheckSpheresOverlap forwarded
-           * through Value4. */
           if (other->script != 0 && (*flags & 1) && other != actor &&
-              Value4((s32 (*)())Import_FieldCheckSpheresOverlap,
-                     (s32)&other->x.fixed, radius, (s32)&position,
-                     other->radius - 2) >= 0) {
+              Event_CheckSpheresOverlap(&other->x.fixed, radius,
+                                        (s32 *)&position,
+                                        other->radius - 2) >= 0) {
             System_Wait(1);
             goto done;
           }
         }
 #endif
-        do {
-          x = actor->x.fixed += work->directionX << 17;
-        } while (0);
-#if TLA_PATCH_1
-        z = actor->z.fixed + (work->directionZ << 17);
-#else
-        do {
-          oldZ = actor->z.fixed;
-        } while (0);
-        z = oldZ + (work->directionZ << 17);
-#endif
+        x = actor->x.fixed += (s16)work->direction.x << 17;
+        z = actor->z.fixed + ((s16)work->direction.z << 17);
         actor->z.fixed = z;
         off = (x & 0xfffff) + 0xfff80000;
         if (off > Q16_ONE)
@@ -2107,10 +2071,6 @@ s32 MarsLighthouseRoomF_KnockBack(void) {
   return 0;
 #endif
 }
-#if !TLA_PATCH_1
-#undef position
-#endif
-
 /// Hit by the flames, the leader is knocked back.
 void MarsLighthouseRoomF_KnockBackIfHit(void) {
   if (RIDE_WORK->active)

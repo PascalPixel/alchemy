@@ -130,15 +130,15 @@ enum AbilityEffect {
   ABILITY_EFFECT_HALVE_DEFENSE = 35,     ///< Torch
   /// A 1 in 64 to 1 in 4 chance of an ability's critical hit, rolled by
   /// BattleCommand_BuildPlan.
-  ABILITY_EFFECT_CRITICAL_1_IN_64 = 36,
-  ABILITY_EFFECT_CRITICAL_1_IN_32 = 37,
-  ABILITY_EFFECT_CRITICAL_1_IN_16 = 38,
-  ABILITY_EFFECT_CRITICAL_1_IN_8 = 39,
-  ABILITY_EFFECT_CRITICAL_1_IN_4 = 40,
+  ABILITY_EFFECT_CRITICAL_A = 36,
+  ABILITY_EFFECT_CRITICAL_B = 37,
+  ABILITY_EFFECT_CRITICAL_C = 38,
+  ABILITY_EFFECT_CRITICAL_D = 39,
+  ABILITY_EFFECT_CRITICAL_E = 40,
   /// A chance of a double or triple blow, rolled by BattleCommand_BuildPlan.
-  ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 = 41,
+  ABILITY_EFFECT_DOUBLE_BLOW_RARE = 41,
   ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4 = 42, ///< Double Fang, Twin Beaks
-  ABILITY_EFFECT_TRIPLE_BLOW_1_IN_8 = 43,
+  ABILITY_EFFECT_TRIPLE_BLOW_RARE = 43,
   ABILITY_EFFECT_TRIPLE_BLOW_1_IN_4 = 44, ///< Swift Strike
   ABILITY_EFFECT_THREATEN = 45,           ///< Contain, Threaten, Tremble
   ABILITY_EFFECT_DEFEND = 46,             ///< Defend, Granite

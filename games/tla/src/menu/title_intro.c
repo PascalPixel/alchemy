@@ -60,7 +60,7 @@ struct OamEntry {
   u32 affine : 2;
   u32 mode : 2;
   u32 mosaic : 1;
-  u32 colors256 : 1;
+  u32 fullColor : 1;
   u32 shape : 2;
   u32 x : 9;
   u32 matrix : 5;
@@ -523,7 +523,7 @@ void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y) {
   Dma_Fill32(0, &oam, sizeof(oam));
   oam.shape = 0;
   oam.size = 3;
-  oam.colors256 = 1;
+  oam.fullColor = 1;
   oam.mode = 1;
   oam.affine = 3;
   oam.tile = tile;

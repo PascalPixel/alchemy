@@ -614,9 +614,9 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     plan->element = ability->element;
     plan->battleEffect = 0;
     if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
-        ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
+        ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
         ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4 ||
-        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_1_IN_8 ||
+        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_RARE ||
         ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_1_IN_4 ||
         ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_60 ||
         ability->effect == 89) {
@@ -636,13 +636,13 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
             ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_60)
           chance = 153;
-        else if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
-                 ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_1_IN_8)
+        else if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
+                 ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_RARE)
           chance = 32;
         else
           chance = 64;
         if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
-            ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
+            ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
             ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4)
           amount = 1;
         else
@@ -652,24 +652,24 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
             plan->targetMultiplier[index] += amount;
         }
       }
-    } else if (ability->effect >= ABILITY_EFFECT_CRITICAL_1_IN_64 &&
-               ability->effect <= ABILITY_EFFECT_CRITICAL_1_IN_4) {
+    } else if (ability->effect >= ABILITY_EFFECT_CRITICAL_A &&
+               ability->effect <= ABILITY_EFFECT_CRITICAL_E) {
       s32 mask;
 
       switch (ability->effect) {
-      case ABILITY_EFFECT_CRITICAL_1_IN_64:
+      case ABILITY_EFFECT_CRITICAL_A:
         mask = 63;
         break;
-      case ABILITY_EFFECT_CRITICAL_1_IN_32:
+      case ABILITY_EFFECT_CRITICAL_B:
         mask = 31;
         break;
-      case ABILITY_EFFECT_CRITICAL_1_IN_16:
+      case ABILITY_EFFECT_CRITICAL_C:
         mask = 15;
         break;
-      case ABILITY_EFFECT_CRITICAL_1_IN_8:
+      case ABILITY_EFFECT_CRITICAL_D:
         mask = 7;
         break;
-      case ABILITY_EFFECT_CRITICAL_1_IN_4:
+      case ABILITY_EFFECT_CRITICAL_E:
       default:
         mask = 3;
         break;

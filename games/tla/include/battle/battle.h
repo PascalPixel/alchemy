@@ -134,7 +134,7 @@ struct ParticlePosition {
 };
 extern const u8 gBattleEffect_ArcTiles[];
 extern u16 gBattleEffect_EightWayHeadingWords[];
-extern const u8 gBattleEffect_ParticleScript[];
+extern const s32 gBattleEffect_ParticleScript[];
 extern const u8 gBattleEffect_UntargetedObjectScript[];
 extern const u8 gColorBuffer_DarkenOneLevelMap[32];
 extern const u8 gColorBuffer_DarkenTwoLevelsMap[32];

@@ -62,11 +62,11 @@ struct MapLayerFlags {
 
 extern struct SpeakerDefinition gSpeakerDefinitions[];
 
-extern const u8 gFieldEffect_ParticleEmitterScript[];
+extern const s32 gFieldEffect_ParticleEmitterScript[];
 
 extern const u8 gBattleEffect_MarkerParticleScript[];
 
-extern const u8 gFieldEffect_RisingPulseScript[];
+extern const s32 gFieldEffect_RisingPulseScript[];
 
 extern u16 gFieldEffect_ChannelCurve[];
 

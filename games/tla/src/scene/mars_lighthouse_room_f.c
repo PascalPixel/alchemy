@@ -388,7 +388,7 @@ extern u16 gPaletteCycleUnlitPalette[];
 extern u16 gPaletteCycleUnlitColors[];
 void MapGrid_SetCellHeight();
 void MapGrid_SetAttributeBAt();
-extern s32 gWhirlwind_Active;
+extern s32 gWhirlwindRiding;
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -1093,11 +1093,6 @@ s32 Scene_Initialize(void) {
   s32 entrance = work->entrance;
   struct HeapSlots *heap = Ram_HeapSlots;
   s32 value;
-  u8 *flags;
-  s32 bits;
-  s32 other;
-
-  /* FAKEMATCH(temporary): the first flag update through other. */
 
   ((struct FieldWork *)heap->fieldWork)->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -1174,14 +1169,10 @@ s32 Scene_Initialize(void) {
     PushTarget_FillFootprint(ACTOR_MERCURY_PIPE_A);
     PushTarget_FillFootprint(ACTOR_MERCURY_PIPE_B);
     PushTarget_FillFootprint(ACTOR_MERCURY_PIPE_C);
-    flags = &Actor_GetById(ACTOR_UPPER_PUDDLE)->priorityFlags;
-    bits = 2;
-    other = *flags;
-    other |= bits;
-    *flags = other;
-    flags = &Actor_GetById(ACTOR_CENTER_PUDDLE)->priorityFlags;
-    bits |= *flags;
-    *flags = bits;
+    Actor_GetById(ACTOR_UPPER_PUDDLE)->priorityFlags |=
+        ACTOR_PRIORITY_UNDERFOOT;
+    Actor_GetById(ACTOR_CENTER_PUDDLE)->priorityFlags |=
+        ACTOR_PRIORITY_UNDERFOOT;
     if (Flag_IsSet(FLAG_UPPER_PUDDLE_FROZEN))
       MarsLighthouseRoomF_FreezePuddle(ACTOR_UPPER_PUDDLE);
     if (Flag_IsSet(FLAG_CENTER_PUDDLE_FROZEN))
@@ -1316,45 +1307,15 @@ UNUSED void PaletteCycle_SetPausesInEvents(s32 value) {
 }
 
 extern s32 gPaletteCycleFrame;
+
+/// Sets the counter, its value built as a word.
+static inline void PaletteCycle_SetFrame(s32 value) {
+  gPaletteCycleFrame = value;
+}
+
 extern u16 gPaletteCycleColors[];
 
-void PaletteCycle_Step(void) {
-  u16 colors[16];
-  s32 phase = (gPaletteCycleFrame / 4) % 5;
-  s32 i;
-  s32 offset;
-  u16 *p;
-
-  if (gPaletteCyclePausesInEvents != 0) {
-    struct FieldWork *work = Ram_HeapSlots->fieldWork;
-    s16 *state = &work->psynergy;
-
-    if (*state != 0 && (*state & 0x3ff) != ABILITY_HOVER)
-      return;
-    if (work->revealActive != 0)
-      return;
-    if (work->pauseMenu != 0)
-      return;
-  }
-  i = 0;
-  offset = 4;
-next:
-  p = colors;
-  {
-    /* FAKEMATCH(temporary): the slot and the table address held in locals.
-     */
-    s32 slot = (phase + i) % 5;
-    u8 *table = (u8 *)gPaletteCycleColors;
-
-    colors[slot] = *(u16 *)(table + offset);
-  }
-  i++;
-  offset += 2;
-  if (i <= 4)
-    goto next;
-  Dma_Set(p, (void *)&BG_PLTT_COLOR(12, 2), DMA_COPY_WORDS(2), REG_DMA3);
-  gPaletteCycleFrame++;
-}
+#include "shared/palette_cycle_step.h"
 
 void JupiterLighthouse_LoadPalettesZero(s32 mode) {
   gPaletteCyclePausesInEvents = 1;
@@ -1365,10 +1326,7 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
                          (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
-    /* FAKEMATCH(temporary): a local holding 0. */
-    s32 zero = 0;
-
-    gPaletteCycleFrame = zero;
+    PaletteCycle_SetFrame(0);
     Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK);
   } else {
     Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
@@ -1455,86 +1413,9 @@ UNUSED void Whirlwind_CarryLeader(void) {
 
 #include "shared/position_flat_distance.h"
 
-extern s32 gWhirlwind_VanishScript[];
+extern s32 gWhirlwindEndScript[];
 
-void Whirlwind_Update(struct Actor *self) {
-  struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 position[3];
-  s32 distance;
-  s32 near;
-
-  if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
-      work->item != 0) {
-    Actor_SetAnimationSpeed(self, 0);
-    return;
-  }
-  Actor_SetAnimationSpeed(self, 16);
-  if ((++*(u16 *)&self->timer & 31) == 31)
-    Event_PlaySound(SE_WATER_LEVEL);
-  {
-    s8 *to = self->sprite;
-    s8 *from = leader->sprite;
-    u32 a = from[9] & 12;
-    to[9] = (s8)((to[9] & ~12) | a);
-  }
-  if (MapGrid_GetCellBehavior(self->x.fixed, self->z.fixed, 2) != 255) {
-    position[0] = self->x.fixed;
-    position[1] = self->y.fixed;
-    position[2] = self->z.fixed;
-    Camera_WorldToScreen(position);
-    distance = position[0];
-    if (distance > px(272))
-      goto stop;
-    if (distance < -px(32))
-      goto stop;
-    {
-      if (*((u8 *)self + 0x62) == 0) {
-        distance = leader->y.fixed - self->y.fixed;
-        if (distance < 0)
-          distance = self->y.fixed - leader->y.fixed;
-        near = 0;
-        if (Position_FlatDistance(&leader->x.fixed, &self->x.fixed) <= 12 &&
-            distance < px(12))
-          near = 1;
-        if (near && !Event_GetFlag(FLAG_FIELD_HANDLING_REQUESTS)) {
-          leader->facing = self->facing;
-          leader->watchedActor = self;
-          leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-          {
-            s32 delay = 200;
-            work->raisedTrigger = delay;
-          }
-          gMainRoutineWork.movementMode = 0;
-          *((u8 *)self + 0x62) = 1;
-          *((u8 *)self + 0x63) = 1;
-        }
-      }
-      {
-        s32 (*multiply)(s32, s32);
-        s32 cosine = Trig_Cos(self->facing);
-        s32 speed = self->speedLimit;
-        /* FAKEMATCH(dead): the routine address taken inside a once-only
-         * block. */
-        do {
-          multiply = Iwram_MulQ16;
-        } while (0);
-        self->x.fixed += multiply(cosine, speed);
-      }
-      self->z.fixed += Iwram_MulQ16(Math_Sin(self->facing), self->speedLimit);
-      return;
-    }
-  }
-stop:
-  {
-    s32 zero = 0;
-    *((u8 *)self + 0x63) = zero;
-    self->update = zero;
-    Actor_StartScript(self, gWhirlwind_VanishScript);
-    Event_PlaySound(SE_SPARKLING_PASSAGE);
-    gWhirlwind_Active = zero;
-  }
-}
+#include "shared/whirlwind_update.h"
 
 /// Unused here: a whirlwind starts from a gust.
 UNUSED struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
@@ -3596,7 +3477,7 @@ LATE_DATA s32 gPaletteCycleFrame = -1;
 
 LATE_DATA s32 gPaletteCyclePausesInEvents = 1;
 
-LATE_DATA s32 gWhirlwind_VanishScript[] = {
+LATE_DATA s32 gWhirlwindEndScript[] = {
     39, 5, 0, 12, 38,
 };
 // clang-format on

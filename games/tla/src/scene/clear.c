@@ -1319,25 +1319,17 @@ void Clear_DrawPanel(struct Panel_02001804 *panel, const void *source) {
   offset *= 2;
   tiles = (u16 *)(offset + 0x06002000);
   shadow = (u16 *)((u8 *)shadow + offset + 8);
-  row = 0;
-next_row:
-  column = 0;
-next_column:
-  // One cell, the same tile in the map and in the shadow.
-  {
-    s16 tile = (panel->stride * row + column) | 0xf000;
+  for (row = 0; row <= 7; row++) {
+    for (column = 0; column <= 15; column++) {
+      // One cell, the same tile in the map and in the shadow.
+      s16 tile = (panel->stride * row + column) | 0xf000;
 
-    *tiles++ = tile;
-    *shadow++ = tile;
+      *tiles++ = tile;
+      *shadow++ = tile;
+    }
+    tiles += 16;
+    shadow += 16;
   }
-  column++;
-  if (column <= 15)
-    goto next_column;
-  tiles += 16;
-  shadow += 16;
-  row++;
-  if (row <= 7)
-    goto next_row;
   Heap_Release(work);
 }
 
@@ -1353,25 +1345,17 @@ void Clear_DrawLowerPanel(struct Panel_02001804 *panel) {
   offset = (panel->y * 32 + panel->x) * 2;
   tiles = (u16 *)(offset + 0x06002000);
   shadow = (u16 *)((u8 *)shadow + offset + 8);
-  row = 0;
-next_row:
-  column = 0;
-next_column:
-  // One cell, the same tile in the map and in the shadow.
-  {
-    s16 tile = (row * 16 + column + 32) | 0xf000;
+  for (row = 0; row <= 7; row++) {
+    for (column = 0; column <= 15; column++) {
+      // One cell, the same tile in the map and in the shadow.
+      s16 tile = (row * 16 + column + 32) | 0xf000;
 
-    *tiles++ = tile;
-    *shadow++ = tile;
+      *tiles++ = tile;
+      *shadow++ = tile;
+    }
+    tiles += 16;
+    shadow += 16;
   }
-  column++;
-  if (column <= 15)
-    goto next_column;
-  tiles += 16;
-  shadow += 16;
-  row++;
-  if (row <= 7)
-    goto next_row;
   Heap_Release(work);
 }
 

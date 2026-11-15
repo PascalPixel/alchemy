@@ -1096,22 +1096,17 @@ void AquaRockInside_SpawnSpark(struct Actor *object) {
 // Steps an orbiting object around its anchor: turns it by half its speed, puts
 // it on the anchor (raised 8 pixels) and pushes it out by its radius; when its
 // countdown runs out returns 0, else, unless its radius is down to 2 pixels,
-// takes a second, shrinking step. Returns 1 while it runs. The first push goes
-// through Call3 (directly, its offset pointer is set after the angle's load).
+// takes a second, shrinking step. Returns 1 while it runs.
 
 /// Moves an orbiter two steps inward round its anchor.
 s32 Orbiter_Spiral(struct Orbiter *orbiter) {
   struct Actor *anchor = orbiter->anchor;
-  s16 *angle;
 
   orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + px(8);
   orbiter->z = anchor->z.fixed;
   FieldVector_AddPolarOffsetFixed(orbiter->radius, orbiter->angle, &orbiter->x);
-  /* FAKEMATCH(temporary): the angle's address, taken after the first push,
-   * sets r2 from r8 before the second push reads it. */
-  angle = &orbiter->angle;
   if (--orbiter->countdown == 0)
     return 0;
   if (orbiter->radius == px(2))
@@ -1122,7 +1117,7 @@ s32 Orbiter_Spiral(struct Orbiter *orbiter) {
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + px(8);
   orbiter->z = anchor->z.fixed;
-  FieldVector_AddPolarOffsetFixed(orbiter->radius, *angle, &orbiter->x);
+  FieldVector_AddPolarOffsetFixed(orbiter->radius, orbiter->angle, &orbiter->x);
   AquaRockInside_SpawnSpark(orbiter);
   orbiter->radius -= px(4);
   return 1;
@@ -2459,8 +2454,6 @@ void Vent_Puff(s32 *position, s32 base) {
                               (Q16_ONE * 3 / 16));
     object->gravity = (u16)Random16();
     object->riseBaseY = (u16)(Random16() << 1) + base;
-    /* FAKEMATCH(temporary): the s32 local keeps the zero extension and the pool
-     * word 0xffff8000. */
     angle = (u16)Random16() - 0x8000;
     object->timer = angle;
     Actor_StartScripted(object, 3);

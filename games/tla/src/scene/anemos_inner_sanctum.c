@@ -1680,7 +1680,6 @@ void CrackedTile_DropIn(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 i;
   struct EffectOptions options;
-  s32 spawn = 1;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1701,32 +1700,23 @@ void CrackedTile_DropIn(void) {
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = Q16_ONE * 16 / 25;
   options.startScaleY = Q16_ONE * 16 / 25;
-  i = 0;
-loop:
-  {
+  for (i = 0; i <= 16; i++) {
     s32 angle;
     s32 velocity[3];
     s32 cosine;
 
     angle = i << 12;
     cosine = Trig_Cos(angle);
-    /* FAKEMATCH(dead): spawn is always 1, a constant GCSE only folds after its
-     * partial redundancy pass. */
-    if (spawn) {
-      velocity[0] = cosine;
-      velocity[1] = 0;
-      velocity[2] = Math_Sin(angle);
-      velocity[0] += velocity[0] >> 1;
-      velocity[0] += (Random16() * (px(3) / 4) >> 16) - (px(3) / 8);
-      velocity[2] += (Random16() * (px(3) / 8) >> 16) - (px(3) / 16);
-      FieldEffect_SpawnLocal(actor->x.fixed, actor->y.fixed, actor->z.fixed,
-                             velocity[0], velocity[1], velocity[2], 0x1090001,
-                             &options);
-    }
-    i++;
+    velocity[0] = cosine;
+    velocity[1] = 0;
+    velocity[2] = Math_Sin(angle);
+    velocity[0] += velocity[0] >> 1;
+    velocity[0] += (Random16() * (px(3) / 4) >> 16) - (px(3) / 8);
+    velocity[2] += (Random16() * (px(3) / 8) >> 16) - (px(3) / 16);
+    FieldEffect_SpawnLocal(actor->x.fixed, actor->y.fixed, actor->z.fixed,
+                           velocity[0], velocity[1], velocity[2], 0x1090001,
+                           &options);
   }
-  if (i <= 16)
-    goto loop;
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);

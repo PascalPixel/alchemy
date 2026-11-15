@@ -481,38 +481,24 @@ void AquaRock_SetUpStreams(void) {
     GameFlag_Set(FLAG_SCENE_TEMP_01);
   else
     GameFlag_Clear(FLAG_SCENE_TEMP_01);
-  /* FAKEMATCH(temporary): each copy's five varying arguments held in locals of
-   * their own scope. */
   if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
     struct AquaRockStream *opened = &gAquaRock_Streams[0];
-    {
-      s32 srcX = opened->pictureSourceX + 3, srcY = opened->pictureSourceY,
-          height = opened->height, destX = opened->pictureX,
-          destY = opened->pictureY;
-      MapGrid_CopyCellPictureCellsRect(srcX, srcY, 3, height, destX, destY);
-    }
-    {
-      s32 srcX = opened->cellSourceX + 3, srcY = opened->cellSourceY,
-          height = opened->height, destX = opened->cellX, destY = opened->cellY;
-      Map_CopyCellsRect(srcX, srcY, 3, height, destX, destY);
-    }
+    MapGrid_CopyCellsLayered(opened->pictureSourceX + 3, opened->pictureSourceY,
+                             3, opened->height, opened->pictureX,
+                             opened->pictureY);
+    MapGrid_CopyCells(opened->cellSourceX + 3, opened->cellSourceY, 3,
+                      opened->height, opened->cellX, opened->cellY);
     opened->waveRow[1] = 9999;
     opened->waveRow[0] = 9999;
     opened->shown = 1;
   }
   if (GameFlag_Get(FLAG_SCENE_TEMP_01)) {
     struct AquaRockStream *opened = &gAquaRock_Streams[1];
-    {
-      s32 srcX = opened->pictureSourceX + 3, srcY = opened->pictureSourceY,
-          height = opened->height, destX = opened->pictureX,
-          destY = opened->pictureY;
-      MapGrid_CopyCellPictureCellsRect(srcX, srcY, 3, height, destX, destY);
-    }
-    {
-      s32 srcX = opened->cellSourceX + 3, srcY = opened->cellSourceY,
-          height = opened->height, destX = opened->cellX, destY = opened->cellY;
-      Map_CopyCellsRect(srcX, srcY, 3, height, destX, destY);
-    }
+    MapGrid_CopyCellsLayered(opened->pictureSourceX + 3, opened->pictureSourceY,
+                             3, opened->height, opened->pictureX,
+                             opened->pictureY);
+    MapGrid_CopyCells(opened->cellSourceX + 3, opened->cellSourceY, 3,
+                      opened->height, opened->cellX, opened->cellY);
     opened->waveRow[1] = 9999;
     opened->waveRow[0] = 9999;
     opened->shown = 1;

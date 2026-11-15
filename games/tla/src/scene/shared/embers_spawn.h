@@ -20,8 +20,6 @@ next:
       size = Random16();
       Actor_StartScript(object, gEmbers_Script);
       Actor_SetSpriteFlags(object, 0);
-      /* FAKEMATCH(temporary): the scale is taken before the velocity
-       * stores. */
       scale = (size >> 1) + (Q16_ONE / 4);
       object->velocityY = rise + (px(5) / 4);
       object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));

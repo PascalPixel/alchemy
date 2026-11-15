@@ -552,7 +552,6 @@ loop:
     const u16 *cell = &cracks[0][0];                                           \
     s32 flag = 0x240;                                                          \
     u32 i;                                                                     \
-    const u16 *dest;                                                           \
                                                                                \
     for (i = 0; i <= last; i++) {                                              \
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {                       \
@@ -563,10 +562,8 @@ loop:
           cell = &cracks[i][1];                                                \
           x = *cell++;                                                         \
           y = *cell++;                                                         \
-          /* FAKEMATCH(temporary): the destination table through a local set   \
-           * here. */                                                          \
-          dest = pictures;                                                     \
-          MapGrid_CopyCellPictureIndicesRect(dest[0], dest[1], x, y, 1, 1);    \
+          MapGrid_CopyCellPictureIndicesRect(pictures[0], pictures[1], x, y,   \
+                                             1, 1);                            \
         }                                                                      \
       } else {                                                                 \
         if (*cell != 0)                                                        \

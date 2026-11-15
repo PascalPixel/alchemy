@@ -213,7 +213,7 @@ struct BattleLinkedActionState {
   s32 count;
   s32 check;
   s32 seed;
-  u8 unk0c[28];
+  u8 unused[28]; ///< no code names it
 };
 
 /// The camera's yaw while a party member acts, and while an enemy does, in

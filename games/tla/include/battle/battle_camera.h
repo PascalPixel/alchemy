@@ -60,7 +60,7 @@ struct BattlePresentationWork {
   s32 count;        ///< targets in actors
   s32 variant;      ///< the ability's size, from 0
   s32 flags;        ///< BattleEffectParams's prelude, at the same offset
-  u8 unk20[4];      ///< not named by TLA code
+  u8 unused[4];     ///< no code names it
   s16 actors[9];    ///< the targets' unit ids, count of them
   u8 params[8][4];  ///< each target's animation entries' param, kept
 };
@@ -107,8 +107,8 @@ struct BattleAffine {
 /// The battle background's scanline work: two pages of per-line values,
 /// swapped each frame, and the affine parameters.
 struct BattleAffineHdma {
-  u32 page;     ///< the page of lines shown
-  u8 unk04[12]; ///< not named by TLA code
+  u32 page;      ///< the page of lines shown
+  u8 unused[12]; ///< no code names it
   struct BattleAffine affine;
   u16 lines[2][160];
 };

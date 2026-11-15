@@ -59,7 +59,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   slot = (u8 *)effectSlots + 80;
   remaining = 23;
   do {
-    FieldParticle_Initialize(slot, 672, position[0], position[2]);
+    FieldParticle_Initialize(slot, SPRITE_PARTICLE, position[0], position[2]);
     FieldParticle_SetCallback(slot, (void *)FieldEffect_UpdateRadialSpread);
     FieldParticle_SetActorMode(slot, 7);
     Actor_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
@@ -94,7 +94,8 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
     position[0] = leader->x.fixed;
     position[1] = leader->y.fixed + px(120);
     position[2] = leader->z.fixed;
-    djinni = Actor_Spawn(672, position[0], position[1], position[2]);
+    djinni =
+        Actor_Spawn(SPRITE_PARTICLE, position[0], position[1], position[2]);
     if (djinni != NULL) {
       scale = Random16() / 3 + Q16_ONE;
       djinni->scaleY = scale;
@@ -116,7 +117,8 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   position[1] = leader->y.fixed + px(18);
   position[2] = leader->z.fixed;
   for (remaining = 0; remaining <= 7; remaining++) {
-    djinni = Actor_Spawn(672, position[0], position[1], position[2]);
+    djinni =
+        Actor_Spawn(SPRITE_PARTICLE, position[0], position[1], position[2]);
     if (djinni == NULL)
       break;
     djinni->scaleY = Q16_ONE * 3 / 5;

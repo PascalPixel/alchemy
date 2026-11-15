@@ -1863,8 +1863,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     }
 
     map = Ram_HeapSlots->mapGrid;
-    tileX = actor->x.fixed >> 20;
-    tileZ = actor->z.fixed >> 20;
+    tileX = FIELD_CELL(actor->x.fixed);
+    tileZ = FIELD_CELL(actor->z.fixed);
     cellsA = &map->layers[1].cells[tileX + (tileZ << 7)];
     cellsB = &map->layers[2].cells[tileX + (tileZ << 7)];
     widthA = map->layers[1].offsetX >> 20;
@@ -2118,8 +2118,8 @@ void GameFlag_SetByte(s32 flag, s32 value);
 
 s32 CrackedTiles_Step(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 x = object->x.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
   struct CellTarget *work = &gCrackedTiles;
   struct CellTargetEntry *entry = work->entries;
   s32 i;

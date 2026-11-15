@@ -230,14 +230,14 @@ void KibomboMountains_DropCrate(s32 unused, s32 id) {
     s32 cell;
 
     if (!Event_GetFlag(FLAG_DOG_PILLAR_DROPPED) &&
-        (x = pillar->x.fixed >> 20) == 47 &&
-        (z = pillar->z.fixed >> 20) == 28) {
+        (x = FIELD_CELL(pillar->x.fixed)) == 47 &&
+        (z = FIELD_CELL(pillar->z.fixed)) == 28) {
       Actor_WaitToLand(ACTOR_DOG_PILLAR);
       MapGrid_CopyCellAttributes(49, 28, 1, 1, x, z);
       Event_SetFlag(FLAG_DOG_PILLAR_DROPPED);
       Actor_SetSpritePriority(ACTOR_DOG_PILLAR, 2);
       dog = Actor_GetById(ACTOR_GUARD_DOG);
-      cell = dog->z.fixed >> 20;
+      cell = FIELD_CELL(dog->z.fixed);
       if (cell == 27) {
         Sound_Play(SE_VOICE_ANIMAL_B);
         dog->z.fixed = px(440);
@@ -258,7 +258,7 @@ void KibomboMountains_DropCrate(s32 unused, s32 id) {
     struct Actor *guard;
 
     if (!Event_GetFlag(FLAG_GUARD_CRATE_DROPPED) &&
-        crate->x.fixed >> 20 == 53 && crate->z.fixed >> 20 == 36) {
+        FIELD_CELL(crate->x.fixed) == 53 && FIELD_CELL(crate->z.fixed) == 36) {
       s32 dx;
 
       Actor_WaitToLand(ACTOR_GUARD_CRATE);
@@ -352,8 +352,8 @@ void KibomboMountains_StartPushingChestRoomCrate(s32 unused, s32 cell) {
 
 void KibomboMountains_SetCrateCell(s32 id, s32 a, s32 b) {
   struct Actor *object = Actor_Get(id);
-  s32 x = object->x.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
 
   MapGrid_CopyCellAttributes(a, b, 1, 1, x, z);
 }
@@ -363,7 +363,7 @@ void KibomboMountains_FinishPushingChestRoomCrate(s32 unused, s32 cell) {
     struct Actor *object = Actor_Get(ACTOR_FIRST_DROPPED_PILLAR);
 
     if (!Event_GetFlag(FLAG_KIBOMBO_FIRST_PILLAR_DROPPED)) {
-      s32 x = object->x.fixed >> 20;
+      s32 x = FIELD_CELL(object->x.fixed);
 
       if (x == 4) {
         Actor_WaitToLand(ACTOR_FIRST_DROPPED_PILLAR);
@@ -376,10 +376,10 @@ void KibomboMountains_FinishPushingChestRoomCrate(s32 unused, s32 cell) {
     struct Actor *object = Actor_Get(ACTOR_SECOND_DROPPED_PILLAR);
 
     if (!Event_GetFlag(FLAG_KIBOMBO_SECOND_PILLAR_DROPPED)) {
-      s32 x = object->x.fixed >> 20;
+      s32 x = FIELD_CELL(object->x.fixed);
 
       if (x == 28) {
-        s32 z = object->z.fixed >> 20;
+        s32 z = FIELD_CELL(object->z.fixed);
 
         if (z == 30) {
           Actor_WaitToLand(ACTOR_SECOND_DROPPED_PILLAR);
@@ -943,7 +943,7 @@ u32 gKibomboMountains_DogPatrolScript[] = {
 struct ActorPlacement gKibomboMountains_WaftPlacements[] = {
     ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, (s32)gKibomboMountains_PatrolScript, 616, 0, 328, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, (s32)gKibomboMountains_LowerGuardPatrolScript, 824, 0, 584, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(189, FLAG_KIBOMBO_LETS_PARTY_PASS, (s32)gKibomboMountains_DogPatrolScript, 760, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_DOG, FLAG_KIBOMBO_LETS_PARTY_PASS, (s32)gKibomboMountains_DogPatrolScript, 760, 0, 488, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 520, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 544, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 320, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -1007,21 +1007,21 @@ u32 gKibomboMountains_SecondLookoutScript[] = {
   };
 
 struct ActorPlacement gKibomboMountains_DiskAxeChestPlacements[] = {
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, (s32)gKibomboMountains_FirstLookoutScript, 200, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, (s32)gKibomboMountains_SecondLookoutScript, 248, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(83, FLAG_KIBOMBO_LETS_PARTY_PASS, (s32)gKibomboMountains_PatrolScript, 424, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(250, CONDITION_ALWAYS, (s32)gKibomboMountains_CrateScript, 456, 0, 472, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gKibomboMountains_CrateScript, 136, 0, 296, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gKibomboMountains_CrateScript, 312, 0, 248, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gKibomboMountains_CrateScript, 328, 0, 552, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gKibomboMountains_CrateScript, 440, 0, 536, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gKibomboMountains_CrateScript, 312, 0, 248, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gKibomboMountains_CrateScript, 328, 0, 552, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(287, CONDITION_ALWAYS, (s32)gKibomboMountains_CrateScript, 440, 0, 536, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 264, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 488, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, (s32)gKibomboMountains_CrateScript, 88, 0, 456, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, (s32)gKibomboMountains_RaisedPillarScript, 232, 0, 536, FACING_WEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, (s32)gKibomboMountains_RaisedPillarScript, 280, 0, 536, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, (s32)gKibomboMountains_RaisedPillarScript, 280, 0, 536, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(83, CONDITION_ALWAYS, (s32)gKibomboMountains_PatrolScript, 0, 0, 0, 0x3f00, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(83, CONDITION_ALWAYS, (s32)gKibomboMountains_LowerGuardPatrolScript, 0, 0, 0, 0x4100, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(83, CONDITION_ALWAYS, (s32)gKibomboMountains_PatrolScript, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, 0),

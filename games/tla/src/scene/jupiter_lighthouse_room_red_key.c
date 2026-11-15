@@ -61,7 +61,7 @@
 /// have fallen.
 #define FLAG_ALEX_WAITING 0xa22
 
-enum JupiterLighthouseRoom5ActorId {
+enum JupiterLighthouseRoomRedKeyActorId {
   /// The three grey blocks at the west end, the middle one Moved into the gap
   /// between the others to rise with them.
   ACTOR_WEST_GREY_BLOCK = ACTOR_FIRST_PLACED + 2,
@@ -128,7 +128,7 @@ extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
 struct FieldEffect;
-struct SparkSprite__jupiter_lighthouse_room_5;
+struct SparkSprite__jupiter_lighthouse_room_red_key;
 
 void Actor_PlaceMovedBlock(void);
 extern u16 gPaletteCycleColors[];
@@ -137,7 +137,7 @@ extern u16 gPaletteCycleUnlitColors[];
 void MapGrid_SetAttributeBAt();
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
 void JupiterLighthouse_DrawSparkSprite(
-    struct SparkSprite__jupiter_lighthouse_room_5 *sprite);
+    struct SparkSprite__jupiter_lighthouse_room_red_key *sprite);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -164,7 +164,7 @@ void JupiterLighthouse_PlacePushedBlock(s32 unused, s32 id) {
   object = Actor_Get(id);
   if (id == ACTOR_MOVED_GREY_BLOCK) {
     if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) ||
-        object->x.fixed >> 20 != 13 || object->z.fixed >> 20 != 34)
+        FIELD_CELL(object->x.fixed) != 13 || FIELD_CELL(object->z.fixed) != 34)
       return;
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
@@ -299,7 +299,7 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   s32 to[3];
   s32 i;
 
-  if (leader->x.fixed >> 20 != 42 || leader->z.fixed >> 20 != 41)
+  if (FIELD_CELL(leader->x.fixed) != 42 || FIELD_CELL(leader->z.fixed) != 41)
     return;
   Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED);
   FieldEvent_ResolvePendingActions(0);
@@ -811,12 +811,12 @@ struct Spark {
   s32 age;
 };
 
-/* VIEW(jupiter_lighthouse_room_5): tag struct SparkSprite as struct
- * SparkSprite__jupiter_lighthouse_room_5; scene/shared.h has another
+/* VIEW(jupiter_lighthouse_room_red_key): tag struct SparkSprite as struct
+ * SparkSprite__jupiter_lighthouse_room_red_key; scene/shared.h has another
  * definition; tried with the definition the rest of the object has, it does not
- * compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:794:
+ * compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_red_key.c:794:
  * structure has no member named `x'. */
-struct SparkSprite__jupiter_lighthouse_room_5 {
+struct SparkSprite__jupiter_lighthouse_room_red_key {
   u8 unk00[0x0c];
   s32 x;
   s32 z;
@@ -824,14 +824,14 @@ struct SparkSprite__jupiter_lighthouse_room_5 {
 };
 
 /* VIEW(s1230): tag struct SparkWork as struct SparkWork__s1230;
- * jupiter_lighthouse_room_5.c has another definition; tried with the definition
- * the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_5.c:769: structure has no member
- * named `sparks'. */
+ * jupiter_lighthouse_room_red_key.c has another definition; tried with the
+ * definition the rest of the object has, it does not compile in tla-ja:
+ * games/tla/src/scene/jupiter_lighthouse_room_red_key.c:769: structure has no
+ * member named `sparks'. */
 struct SparkWork__s1230 {
   u8 unk0000[0x400];
   struct Spark sparks[96];
-  struct SparkSprite__jupiter_lighthouse_room_5 sprites[96];
+  struct SparkSprite__jupiter_lighthouse_room_red_key sprites[96];
   s32 from[3];
   s32 to[3];
   s16 next;
@@ -840,7 +840,7 @@ struct SparkWork__s1230 {
 void JupiterLighthouse_UpdateSparkRing(void) {
   struct SparkWork__s1230 *work = Ram_HeapSlots->menuWork;
   struct Spark *spark = work->sparks;
-  struct SparkSprite__jupiter_lighthouse_room_5 *sprite = work->sprites;
+  struct SparkSprite__jupiter_lighthouse_room_red_key *sprite = work->sprites;
   s32 position[3];
   s32 duration;
   s32 i;
@@ -871,10 +871,10 @@ void JupiterLighthouse_UpdateSparkRing(void) {
 }
 
 /* VIEW(s1650): tag struct SparkWork as struct SparkWork__s1650;
- * games/tla/src/scene/jupiter_lighthouse_room_5 has another definition; tried
- * with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_5.c:830: structure has no
- * member named `sparks'. */
+ * games/tla/src/scene/jupiter_lighthouse_room_red_key has another definition;
+ * tried with the definition the rest of the object has, it does not compile in
+ * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_red_key.c:830: structure
+ * has no member named `sparks'. */
 struct SparkWork__s1650 {
   u8 tiles[0x400];
   struct Spark sparks[96];
@@ -1161,25 +1161,25 @@ u32 gSceneExits[] = {
 
 struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 608, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 608, FACING_SOUTHEAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 608, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 552, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 600, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 552, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 600, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 552, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 664, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 664, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 664, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 664, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 664, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 712, 0, 664, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 664, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 328, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 328, FACING_SOUTHEAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 328, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(57, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_PIPE_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     {SCENE_TABLE_END},
 };
 

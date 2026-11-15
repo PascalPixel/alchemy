@@ -13,7 +13,7 @@
 
 s32 GameFlag_Get();
 u32 GameFlag_Toggle(s32 flag);
-u8 GameFlag_GetByte(s32 flag);
+s32 GameFlag_GetByte(s32 flag);
 u32 GameFlag_SetByte(u32 flag, u8 value);
 u8 GameFlag_IncrementByte(s32 flag);
 u8 GameFlag_DecrementByte(s32 flag);

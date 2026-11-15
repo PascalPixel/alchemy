@@ -2444,7 +2444,7 @@ DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(AirsRockInside_HideRevealedDoors, 26, 90)
 DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(AirsRockInside_RevealDoors, 25, 89)
 
 void AirsRockInside_SpawnOrbitSpark(struct Actor *source) {
-  struct Actor *object = FieldActor_Create(0x2a0, source->x.fixed,
+  struct Actor *object = FieldActor_Create(SPRITE_PARTICLE, source->x.fixed,
                                            source->y.fixed, source->z.fixed);
 
   object->scaleY = Q16_ONE * 2 / 5;
@@ -2581,7 +2581,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
   wait(30);
   for (i = 0; i != 16; i++) {
     struct Actor *spark =
-        FieldActor_Create(0x2a0, b->x.fixed, b->y.fixed, b->z.fixed);
+        FieldActor_Create(SPRITE_PARTICLE, b->x.fixed, b->y.fixed, b->z.fixed);
     Sound_Play(SE_SPARKS);
     angle = &spark->timer;
     *angle = (Random16() & 0x7fff) + 0x8000;
@@ -3706,7 +3706,7 @@ struct ActorPlacement gAirsRockInside_HallPlacements[] = {
     {377, CONDITION_ALWAYS, 1, 0x1, 0, 0, FACING_EAST, 2, 2},
     {377, CONDITION_ALWAYS, 1, 0x2, 0, 0, FACING_WEST, 2, 2},
     {377, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
-    ACTOR_PLACEMENT(382, CONDITION_ALWAYS, 7, 312, 0, 808, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TWISTER_ROCK, CONDITION_ALWAYS, 7, 312, 0, 808, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {377, CONDITION_ALWAYS, 7, 0x5, 0, 0, FACING_SOUTH, 2, 2},
     ACTOR_PLACEMENT(280, CONDITION_ALWAYS, 7, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(280, CONDITION_ALWAYS, 7, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),

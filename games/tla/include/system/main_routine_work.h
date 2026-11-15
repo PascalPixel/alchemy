@@ -166,10 +166,10 @@ struct MainRoutineWork {
   u8 countedAnswers;
   /// Nonzero makes actor 8, not leaderActorId, the one events control.
   s16 ownerOverride;
-  s32 savedX;      ///< the ship's x on the world map, where it is moored
-  s32 savedZ;      ///< the ship's z on the world map
-  s32 savedFacing; ///< the ship's facing on the world map
-  u8 unk284[3];    ///< not named by ⚓️ code; [2] is set from gAnyFileCleared
+  s32 shipX;      ///< the ship's x on the world map, where it is moored
+  s32 shipZ;      ///< the ship's z on the world map
+  s32 shipFacing; ///< the ship's facing on the world map
+  u8 unk284[3];   ///< not named by ⚓️ code; [2] is set from gAnyFileCleared
   /// The level chosen on starting again from a cleared game: 1 Easy, 2 Hard,
   /// 0 Normal.
   u8 difficulty;

@@ -22,9 +22,10 @@ struct SaveSummary {
   u8 windowHue;        ///< gMainRoutineWork.windowHue
   u8 windowBrightness; ///< gMainRoutineWork.windowBrightness
   u16 frames;          ///< low half of the build stamp saved with the game
-  /// Filled on reading, from the part's next sector (offset 0x10, or 0x110
-  /// for the extra summary).
-  u8 unk38[4];
+  /// The play time saved at the start of the file's next sector (offset 0x10,
+  /// or 0x110 for the extra summary), filled on reading; a file whose
+  /// playTime differs from it was not written whole.
+  u32 secondPartPlayTime;
   u32 checksum; ///< the sum of the 968 words from gGameFlagBytes
 };
 

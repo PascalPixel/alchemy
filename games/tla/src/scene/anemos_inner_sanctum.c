@@ -368,7 +368,7 @@ s32 AnemosInnerSanctum_CircleOrb(struct Actor *object) {
 extern u32 gAnemosInnerSanctum_MoteScript[];
 
 void AnemosInnerSanctum_SpawnMote(struct Actor *source) {
-  struct Actor *object = (FieldActor_Create(672, source->x.fixed,
+  struct Actor *object = (FieldActor_Create(SPRITE_PARTICLE, source->x.fixed,
                                             source->y.fixed, source->z.fixed));
 
   object->motionFlags = 0;
@@ -476,7 +476,8 @@ s16 part;
   struct Work *actor;
   s32 x, z, distance;
 
-  actor = ((struct Work *)FieldActor_Create(0x2a0, from->x, from->y, from->z));
+  actor = ((struct Work *)FieldActor_Create(SPRITE_PARTICLE, from->x, from->y,
+                                            from->z));
   x = (from->x - to->x) >> 16;
   z = (from->z - to->z) >> 16;
   actor->unk64 = ArcTan2(from->z - to->z, from->x - to->x);
@@ -508,7 +509,7 @@ s16 a3;
   s32 i;
 
   for (i = 0; i != 16;) {
-    struct Actor *object = (FieldActor_Create(0x2a0, x, y, px(152)));
+    struct Actor *object = (FieldActor_Create(SPRITE_PARTICLE, x, y, px(152)));
     s32 angle = i << 12;
 
     FieldVector_AddPolarOffset(32, angle, &object->x.fixed);
@@ -536,7 +537,7 @@ s16 part;
 {
   struct Actor *object;
 
-  object = FieldActor_Create(0x2a0, px(x), px(z + 3), px(152));
+  object = FieldActor_Create(SPRITE_PARTICLE, px(x), px(z + 3), px(152));
   object->motionFlags = 4;
   FieldActor_SetSpriteColor(object, (u16)part);
   Scene_SetActorSpritePriority(object, 2);
@@ -1070,8 +1071,8 @@ void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
   ahead[2] = next[1] = self->z.fixed + (leader->z.fixed - self->acceleration);
   if (self->riseBaseY != leader->x.fixed ||
       self->acceleration != leader->z.fixed) {
-    dust =
-        (FieldActor_Create(0x2a0, self->x.fixed, self->y.fixed, self->z.fixed));
+    dust = (FieldActor_Create(SPRITE_PARTICLE, self->x.fixed, self->y.fixed,
+                              self->z.fixed));
     dust->x.fixed += px((Random16() & 15) - 8);
     dust->y.fixed += px((Random16() & 31) - 4);
     dust->motionFlags = 0;
@@ -2031,9 +2032,9 @@ struct ActorPlacement gAnemosInnerSanctum_GuardianPlacements[] = {
     {431, CONDITION_ALWAYS, 7, 0x3, 0, 0, FACING_NORTH, 2, 2},
     {432, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 0x4, 0, 0, FACING_NORTH, 2, 2},
     ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 584, 0, 582, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 584, 0, 630, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 1),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 680, 0, 582, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
-    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 680, 0, 630, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 584, 0, 630, FACING_WEST, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 680, 0, 582, FACING_EAST, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(429, CONDITION_ALWAYS, (s32)gAnemosInnerSanctum_StatueScript, 680, 0, 630, FACING_EAST, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     {SCENE_TABLE_END},
 };
 

@@ -487,7 +487,7 @@ void ShamanVillage_SwirlSandGrain(struct Actor *object) {
   object->x.fixed += object->bounce;
   object->y.fixed += object->gravity;
   object->z.fixed += *(s32 *)((u8 *)object + 76);
-  if (object->x.fixed >> 16 < 168) {
+  if (FIELD_PIXEL(object->x.fixed) < 168) {
     object->bounce += Q16_ONE * 3 / 2;
     object->scaleY = object->scaleX += 0xccc;
   } else {
@@ -1393,7 +1393,7 @@ void ShamanVillage_DropPillar(void) {
   struct Actor *object =
       ((struct Actor *)Actor_GetById(ACTOR_AROMA_ROOM_PILLAR));
 
-  if (object->x.fixed >> 20 == 32 && object->z.fixed >> 20 == 11) {
+  if (FIELD_CELL(object->x.fixed) == 32 && FIELD_CELL(object->z.fixed) == 11) {
     Event_Start();
     Event_ResolvePendingActions(0);
     object->motionFlags = 3;
@@ -2508,7 +2508,7 @@ void ShamanVillage_EnterDoor(s32 a, s32 b, s32 c, s32 d, s32 mode, s32 f) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   if (mode == 1) {
     object = ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
-    cell = object->x.fixed >> 16;
+    cell = FIELD_PIXEL(object->x.fixed);
     Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x.fixed,
                         object->y.fixed, object->z.fixed);
     FieldActor_WaitForMove(object);
@@ -3370,8 +3370,8 @@ struct ActorPlacement gShamanVillageVillageActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, 7, 40, 0, 288, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };

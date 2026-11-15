@@ -283,8 +283,8 @@ void WorldPicture_UpdateMarkers(void) {
         name = -2;
         tile = 2;
         always = 0;
-        placeX = FIELD_PIXEL(gMainRoutineWork.savedX) * 853 / 16384 - 269;
-        placeY = FIELD_PIXEL(gMainRoutineWork.savedZ) * 640 / 16384 - 112;
+        placeX = FIELD_PIXEL(gMainRoutineWork.shipX) * 853 / 16384 - 269;
+        placeY = FIELD_PIXEL(gMainRoutineWork.shipZ) * 640 / 16384 - 112;
       } else {
         if (!GameFlag_Get(flag))
           continue;

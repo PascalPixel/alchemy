@@ -1427,7 +1427,7 @@ Resource_DirectoryTable:
 	resource , Field_JupiterLighthouseRoomLockedDoors
 	resource , Field_JupiterLighthouseRoomRedKey
 	resource , Field_JupiterLighthouseRoomCrackedFloor
-	resource , Field_JupiterLighthouseRoom7
+	resource , Field_JupiterLighthouseWhorl
 	resource , Field_JupiterLighthouseRoomBlueKey
 	resource , Field_JupiterLighthouseRoomPhaetonsBladeChest
 	resource , Field_JupiterLighthouseRoomM

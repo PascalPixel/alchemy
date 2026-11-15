@@ -27,12 +27,12 @@ inner:
     if (left <= x && x < right && top <= z && z < bottom) {
       *kind = k;
       if (k & 1) {
-        if (left != leader->x.fixed >> 20) {
+        if (left != FIELD_CELL(leader->x.fixed)) {
           *slot = i;
           return object;
         }
       } else {
-        if (top != leader->z.fixed >> 20) {
+        if (top != FIELD_CELL(leader->z.fixed)) {
           *slot = i;
           return object;
         }

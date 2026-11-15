@@ -4,8 +4,8 @@ void CrackedTile_Fall(struct CellTargetHead *table,
                       struct CellTargetEntry *entry) {
   /* FAKEMATCH(signature): the table typed as its head. */
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 x = (leader->x.fixed >> 20) | (s16)(table->x & 64);
-  s32 z = (leader->z.fixed >> 20) | (s16)(table->z & 64);
+  s32 x = (FIELD_CELL(leader->x.fixed)) | (s16)(table->x & 64);
+  s32 z = (FIELD_CELL(leader->z.fixed)) | (s16)(table->z & 64);
 
   Leader_CenterInCell();
   Event_PlaySound(SE_SPLASH);

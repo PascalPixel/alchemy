@@ -455,7 +455,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
       // ramCodePaired, reached from the slot before it.
-      draw[1] = (DrawRectangle) * (&Ram_HeapSlots->unkb8 + 1);
+      draw[1] = (DrawRectangle) * (&Ram_HeapSlots->unusedAfterCanvasMap + 1);
       REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND |
                    BLDCNT_TGT2_ALL;
       REG_BG2PA = Q_8_8(0.5);

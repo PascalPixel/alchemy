@@ -5,8 +5,8 @@ void CrackedTile_Crack(struct CellTarget *table,
   s32 x;
   s32 z;
 
-  x = (leader->x.fixed >> 20) | (s16)(table->x & 64);
-  z = (leader->z.fixed >> 20) | (s16)(table->z & 64);
+  x = (FIELD_CELL(leader->x.fixed)) | (s16)(table->x & 64);
+  z = (FIELD_CELL(leader->z.fixed)) | (s16)(table->z & 64);
   Leader_CenterInCell();
   Event_PlaySound(SE_RATTLE);
   MapGrid_CopyCells(table->x, table->z + 1, 1, 1, x, z);

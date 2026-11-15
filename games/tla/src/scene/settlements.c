@@ -407,8 +407,8 @@ void Settlements_CutLeftBush(void) { Window(5, 70, 9, 7, 5, 43, 1); }
 
 void Settlements_CutStairsBush(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 x = object->x.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
 
   if (x == 5 && z == 17) {
     FieldActor_Jump(gMainRoutineWork.leaderActorId, 2, 0);
@@ -830,8 +830,8 @@ void Settlements_SplashCrate(s32 id);
 
 void Settlements_SinkPillar(void) {
   struct Actor *object = Actor_GetById(ACTOR_PILLAR);
-  s32 column = object->x.fixed >> 20;
-  s32 row = object->z.fixed >> 20;
+  s32 column = FIELD_CELL(object->x.fixed);
+  s32 row = FIELD_CELL(object->z.fixed);
   s32 i;
 
   if (!Event_GetFlag(FLAG_SCENE_TEMP_04) && column == 11 && row == 12) {
@@ -852,8 +852,8 @@ void Settlements_SinkPillar(void) {
 
 void Settlements_SlideCrateDownFalls(void) {
   struct Actor *object = Actor_GetById(ACTOR_FALLS_CRATE);
-  s32 column = object->x.fixed >> 20;
-  s32 row = object->z.fixed >> 20;
+  s32 column = FIELD_CELL(object->x.fixed);
+  s32 row = FIELD_CELL(object->z.fixed);
   s32 i;
   u8 *flags;
 
@@ -958,8 +958,8 @@ void Settlements_StepOffWall(void) {
 
 void Settlements_UnblockCrate(void) {
   struct Actor *object = Actor_Get(ACTOR_WALL_CRATE);
-  s32 x = object->x.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
 
   Settlements_SaveWallCells();
   Actor_LiftTargetBlock(gSettlements_WallCrate);
@@ -997,8 +997,8 @@ void Settlements_DropCrate(void) {
   FieldEvent_ResolvePendingActions(0);
   EventCamera_FollowActor(ACTOR_WALL_CRATE, 1);
   object = Actor_Get(ACTOR_WALL_CRATE);
-  column = object->x.fixed >> 20;
-  row = object->z.fixed >> 20;
+  column = FIELD_CELL(object->x.fixed);
+  row = FIELD_CELL(object->z.fixed);
   if (column == 12 && row == 15) {
     Event_SetFlag(FLAG_SCENE_TEMP_21);
     object->motionFlags = 0;
@@ -1313,14 +1313,14 @@ struct ActorPlacement gSettlements_AttekaIsletPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 200, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(288, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 168, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 120, 0, 72, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 72, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 1),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 88, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 1),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 120, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 1),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 72, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 1),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 104, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 1),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 104, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 72, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 88, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 120, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 72, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 104, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 104, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 120, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 152, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 1),
+    ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 152, 0, 184, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 152, 0, 152, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(274, CONDITION_ALWAYS, (s32)gSettlements_BobScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_ROUND_BOULDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 92, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1334,8 +1334,8 @@ struct ActorPlacement gSettlements_AttekaIsletHousesPlacements[] = {
 };
 
 struct ActorPlacement gSettlements_KaltIslandPlacements[] = {
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, 0x52, MOVEMENT_TYPE_STAND, 312, 0, 296, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 88, 0, 336, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},

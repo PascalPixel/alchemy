@@ -144,14 +144,15 @@ void Blocks_MarkCells(u16 *ids) {
     object = Actor_Get(*ids);
     blocked = &object->riseEnabled;
     *blocked = 0;
-    if (MapCell_GetAttributes(0, object->x.fixed >> 20, object->z.fixed >> 20) &
+    if (MapCell_GetAttributes(0, FIELD_CELL(object->x.fixed),
+                              FIELD_CELL(object->z.fixed)) &
         0x40) {
       map = Ram_HeapSlots->mapGrid;
       if (map == NULL)
         return;
       cells = &map->layers[2].cells;
       z = (object->z.fixed - object->y.fixed) >> 20;
-      x = object->x.fixed >> 20;
+      x = FIELD_CELL(object->x.fixed);
       cell = *cells;
       cell += x + ((z + 1) << 7);
       cell->collisionCode = 255;
@@ -189,23 +190,26 @@ void MagmaRock_SettleBlocks(u16 *ids) {
     struct MapCell *cell;
     s32 x, z;
 
-    object->riseBaseY = 255 & MapCell_GetAttributes(0, object->x.fixed >> 20,
-                                                    object->z.fixed >> 20);
+    object->riseBaseY =
+        255 & MapCell_GetAttributes(0, FIELD_CELL(object->x.fixed),
+                                    FIELD_CELL(object->z.fixed));
     object->motionFlags = 0;
     object->collisionFlags = 0;
     Actor_SetSpriteFlags(object, 0);
-    MagmaRockInside_SetCellShape(*terrainId, object->x.fixed >> 20,
-                                 object->z.fixed >> 20, (height >> 19) + 4);
+    MagmaRockInside_SetCellShape(*terrainId, FIELD_CELL(object->x.fixed),
+                                 FIELD_CELL(object->z.fixed),
+                                 (height >> 19) + 4);
     blocked = (u8 *)object + 99;
     *blocked = 0;
-    if (MapCell_GetAttributes(0, object->x.fixed >> 20, object->z.fixed >> 20) &
+    if (MapCell_GetAttributes(0, FIELD_CELL(object->x.fixed),
+                              FIELD_CELL(object->z.fixed)) &
         64) {
       map = Ram_HeapSlots->mapGrid;
       if (map == NULL)
         return;
       cells = &map->layers[2].cells;
       z = (object->z.fixed - object->y.fixed) >> 20;
-      x = object->x.fixed >> 20;
+      x = FIELD_CELL(object->x.fixed);
       cell = *cells;
       cell += x + ((z + 1) << 7);
       cell->collisionCode = 255;
@@ -316,8 +320,8 @@ s32 MagmaRock_BlockMovedPillar(void) {
       Blocks_MarkCells(gMagmaRock_Room2TopPillars);
     }
   }
-  x = leader->x.fixed >> 20;
-  z = leader->z.fixed >> 20;
+  x = FIELD_CELL(leader->x.fixed);
+  z = FIELD_CELL(leader->z.fixed);
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SLIDE) {
     if (x == 15 && z == 25)
       Event_SetFlag(0x8d6);
@@ -482,7 +486,7 @@ void MagmaRock_RollMagmaRock(struct Actor *object) {
     object->z.fixed = 0;
   }
   if (Position_FlatDistance(&object->x.fixed, &partner->x.fixed) <= 8 &&
-      object->y.fixed >> 20 == partner->y.fixed >> 20) {
+      FIELD_CELL(object->y.fixed) == FIELD_CELL(partner->y.fixed)) {
     object->x.fixed = 0;
     object->update = NULL;
     object->facing ^= 0x9000;
@@ -713,13 +717,13 @@ s32 MagmaRock_FireFromStatue(struct Actor *source) {
       other = gFieldWork->actors[i];
       if (other->script == NULL)
         continue;
-      if (source->x.fixed >> 20 == other->x.fixed >> 20 &&
-          source->y.fixed >> 20 == other->y.fixed >> 20 &&
-          source->z.fixed >> 20 == other->z.fixed >> 20)
+      if (FIELD_CELL(source->x.fixed) == FIELD_CELL(other->x.fixed) &&
+          FIELD_CELL(source->y.fixed) == FIELD_CELL(other->y.fixed) &&
+          FIELD_CELL(source->z.fixed) == FIELD_CELL(other->z.fixed))
         continue;
       if (Position_FlatDistance(&other->x.fixed, position) > 8)
         continue;
-      if (other->y.fixed >> 20 != position[1] >> 20)
+      if (FIELD_CELL(other->y.fixed) != position[1] >> 20)
         continue;
       if (*((struct ObjectAnimationState *)other->sprite)->value28 == 0x110)
         goto stop;
@@ -912,13 +916,13 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
   } else {
     if (watched->timer >= 9 && watched->timer <= 331) {
       EFFECT_Y(object) =
-          watched->y.fixed + (object->effect.unk5a[8] << 20) + 0x180000;
+          watched->y.fixed + (object->effect.riseCounter << 20) + 0x180000;
     } else if (watched->timer > 332 &&
-               watched->timer < (object->effect.unk5a[8] << 1) + 333) {
+               watched->timer < (object->effect.riseCounter << 1) + 333) {
       EFFECT_Y(object) =
-          watched->y.fixed + (object->effect.unk5a[8] << 20) + 0x180000;
+          watched->y.fixed + (object->effect.riseCounter << 20) + 0x180000;
       EFFECT_Y(object) -= (watched->timer << 19) - (332 << 19);
-    } else if ((object->effect.unk5a[8] << 1) + 333 < watched->timer) {
+    } else if ((object->effect.riseCounter << 1) + 333 < watched->timer) {
       object->effect.y = object->actor.groundHeight;
       object->effect.update = 0;
     }
@@ -936,8 +940,8 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
                       object->effect.z, ((Random16() & mask) - 3) << 14,
                       -0x20000, step, 0x1330000, &config);
   }
-  MagmaRockInside_SetCellShape(watched->layer, watched->x.fixed >> 20,
-                               watched->z.fixed >> 20,
+  MagmaRockInside_SetCellShape(watched->layer, FIELD_CELL(watched->x.fixed),
+                               FIELD_CELL(watched->z.fixed),
                                (object->effect.y >> 19) + 1);
 }
 #undef BYTE_AT
@@ -1251,20 +1255,20 @@ void MagmaRock_PushPillarEast(void) {
   object = Actor_FindInCell(cell, leader);
   MagmaRockInside_ClearBlockCells(object);
   terrainId = &object->layer;
-  x = object->x.fixed >> 20;
-  z = object->z.fixed >> 20;
+  x = FIELD_CELL(object->x.fixed);
+  z = FIELD_CELL(object->z.fixed);
   height = object->groundHeight >> 19;
   MagmaRockInside_SetCellShape(*terrainId, x, z, height);
   MapGrid_CopyCellAttributes(79, 46, 2, 1, 79, 36);
   MagmaRockInside_PushBlockOnto();
   *terrainId = 0;
   MapGrid_CopyCellAttributes(79, 37, 2, 1, 79, 36);
-  MagmaRockInside_SetCellShape(*terrainId, object->x.fixed >> 20,
-                               object->z.fixed >> 20,
+  MagmaRockInside_SetCellShape(*terrainId, FIELD_CELL(object->x.fixed),
+                               FIELD_CELL(object->z.fixed),
                                (object->groundHeight >> 19) + 4);
   Blocks_MarkCells(gMagmaRock_Room2UpperPillars);
-  cell[0] = object->x.fixed >> 20;
-  cell[2] = object->z.fixed >> 20;
+  cell[0] = FIELD_CELL(object->x.fixed);
+  cell[2] = FIELD_CELL(object->z.fixed);
   if (cell[0] == 16 && cell[2] == 36)
     Event_SetFlag(0x8d9);
 }
@@ -1284,20 +1288,20 @@ void MagmaRock_PushPillarWest(void) {
   object = Actor_FindInCell(position, leader);
   MagmaRockInside_ClearBlockCells(object);
   terrainId = &object->layer;
-  x = object->x.fixed >> 20;
-  z = object->z.fixed >> 20;
+  x = FIELD_CELL(object->x.fixed);
+  z = FIELD_CELL(object->z.fixed);
   height = object->groundHeight >> 19;
   MagmaRockInside_SetCellShape(*terrainId, x, z, height);
   MapGrid_CopyCellAttributes(94, 44, 5, 1, 99, 38);
   MagmaRockInside_PushBlockOnto();
   *terrainId = 0;
   MapGrid_CopyCellAttributes(99, 42, 5, 1, 99, 38);
-  MagmaRockInside_SetCellShape(*terrainId, object->x.fixed >> 20,
-                               object->z.fixed >> 20,
+  MagmaRockInside_SetCellShape(*terrainId, FIELD_CELL(object->x.fixed),
+                               FIELD_CELL(object->z.fixed),
                                (object->groundHeight >> 19) + 4);
   Blocks_MarkCells(gMagmaRock_Room2TopPillars);
-  position[0] = object->x.fixed >> 20;
-  position[2] = object->z.fixed >> 20;
+  position[0] = FIELD_CELL(object->x.fixed);
+  position[2] = FIELD_CELL(object->z.fixed);
   if (position[0] == 35 && position[2] == 38)
     Event_SetFlag(0x8db);
 }

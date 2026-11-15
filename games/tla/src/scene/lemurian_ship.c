@@ -481,7 +481,7 @@ void LemurianShip_PushCrateOffLedge(void) {
 
   Actor_PlaceMovedBlock();
   object = ((struct Actor *)Actor_GetById(ACTOR_LEDGE_CRATE));
-  x = object->x.fixed >> 20;
+  x = FIELD_CELL(object->x.fixed);
   if (x == 16) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -713,9 +713,9 @@ void LemurianShip_CheckPillarsOnDroplets(void) {
   done = Event_GetFlag(FLAG_RIGHT_PILLAR_SUNK);
   if (!done && Event_GetFlag(FLAG_RIGHT_PILLAR_FULL)) {
     object = ((struct Actor *)Actor_GetById(ACTOR_RIGHT_PILLAR));
-    column = object->x.fixed >> 20;
+    column = FIELD_CELL(object->x.fixed);
     if (column == 35) {
-      row = object->z.fixed >> 20;
+      row = FIELD_CELL(object->z.fixed);
       if (row == 9) {
         leader =
             ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
@@ -749,9 +749,9 @@ void LemurianShip_CheckPillarsOnDroplets(void) {
   done = Event_GetFlag(FLAG_LEFT_PILLAR_SUNK);
   if (!done && Event_GetFlag(FLAG_LEFT_PILLAR_FULL)) {
     object = ((struct Actor *)Actor_GetById(ACTOR_LEFT_PILLAR));
-    column = object->x.fixed >> 20;
+    column = FIELD_CELL(object->x.fixed);
     if (column == 29) {
-      row = object->z.fixed >> 20;
+      row = FIELD_CELL(object->z.fixed);
       if (row == 9) {
         leader =
             ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
@@ -943,8 +943,8 @@ void LemurianShip_KeepPillarRoomPuddles(void) {
 void LemurianShip_RippleAroundLeader(void) {
   struct Actor *leader =
       ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
-  s32 x = leader->x.fixed >> 20;
-  s32 z = leader->z.fixed >> 20;
+  s32 x = FIELD_CELL(leader->x.fixed);
+  s32 z = FIELD_CELL(leader->z.fixed);
 
   MapGrid_CopyCellsTo(74, 105, 4, 85, 8, 6);
   if (z == 25) {
@@ -1367,7 +1367,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 47, 10);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 47, 8);
     RAISE(17, 190 << 18, 152 << 16)
-    if (block->x.fixed >> 20 == 47 && block->z.fixed >> 20 == 8)
+    if (FIELD_CELL(block->x.fixed) == 47 && FIELD_CELL(block->z.fixed) == 8)
       Actor_PlaceBlocks(gLemurianShip_Crate);
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 4)))
       Actor_SetPosition(ACTOR_SIX_JELLY_ROOM_JELLY_C, 0, 0);
@@ -1377,8 +1377,8 @@ void LemurianShip_SetUpSixJellyRoom(void) {
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + 5))) {
     struct Actor *block =
         ((struct Actor *)Actor_GetById(ACTOR_SIX_JELLY_ROOM_CRATE));
-    s32 x = block->x.fixed >> 20;
-    s32 z = block->z.fixed >> 20;
+    s32 x = FIELD_CELL(block->x.fixed);
+    s32 z = FIELD_CELL(block->z.fixed);
 
     MapGrid_CopyCellAttributes(42, 0, 1, 1, 49, 7);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 49, 6);
@@ -1937,11 +1937,11 @@ struct ActorPlacement gLemurianShip_SevenJellyRoomPlacements[] = {
 
 struct ActorPlacement gLemurianShip_HoldPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 120, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 88, FACING_SOUTH, TALK_FACING_PARTY, 1),
-    ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 120, FACING_SOUTH, TALK_FACING_PARTY, 1),
-    ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 152, FACING_SOUTH, TALK_FACING_PARTY, 1),
-    ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 88, FACING_SOUTH, TALK_FACING_PARTY, 1),
-    ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 152, FACING_SOUTH, TALK_FACING_PARTY, 1),
+    ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 88, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 120, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 152, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 88, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_JELLYFISH_MONSTER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 152, FACING_SOUTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_PIERS, 0x0, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };

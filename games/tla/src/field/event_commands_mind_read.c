@@ -921,7 +921,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
       Vector_AddPolarOffset(px(10), *(u16 *)&work->angle, pos);
     }
 
-    obj = Actor_Spawn(672, pos[0], pos[1], pos[2]);
+    obj = Actor_Spawn(SPRITE_PARTICLE, pos[0], pos[1], pos[2]);
     visual = &((struct BurstParticleVisualGroup *)obj->sprite)->primary;
     child = &((struct BurstParticleVisualGroup *)obj->sprite)->child;
     child->flip = visual->flip;

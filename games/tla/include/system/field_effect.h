@@ -53,7 +53,17 @@ struct FieldEffect {
   ///@}
   u8 collisionFlags; ///< Actor's collisionFlags; not named by this view
   /// Actor's steeringFlags to riseEnabled; not named by this view.
-  u8 unk5a[0x0a];
+  ///@{
+  u8 steeringFlags;
+  u8 paused;
+  u8 retainSpriteCache;
+  u8 repeatCount;
+  s16 wait;
+  u8 refused;
+  u8 frozen;
+  u8 riseCounter;
+  u8 riseEnabled;
+  ///@}
   /// Added to the sprite's rotation each frame by the update hooks, in
   /// 1/65536 turns per frame; zeroed by the spawner.
   u16 spin;

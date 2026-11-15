@@ -8,7 +8,8 @@ void MagmaRockInside_RaiseActorCells(u16 *list) {
     object->motionFlags = 0;
     object->collisionFlags = 0;
     Actor_SetSpriteFlags(object, 0);
-    MagmaRockInside_SetCellShape(object->layer, object->x.fixed >> 20,
-                                 object->z.fixed >> 20, (height >> 19) + 4);
+    MagmaRockInside_SetCellShape(object->layer, FIELD_CELL(object->x.fixed),
+                                 FIELD_CELL(object->z.fixed),
+                                 (height >> 19) + 4);
   }
 }

@@ -3,8 +3,8 @@
 /// through it; 1 when it falls.
 s32 CrackedTiles_Step(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 x = object->x.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
   struct CellTarget *work = &gCrackedTiles;
   struct CellTargetEntry *entry = work->entries;
   s32 i;

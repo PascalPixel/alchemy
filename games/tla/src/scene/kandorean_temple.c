@@ -1327,8 +1327,8 @@ void KandoreanTemple_WatchVentPlatforms(void) {
   s32 cellX, cellZ, onCell;
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  cellX = leader->x.fixed >> 20;
-  cellZ = leader->z.fixed >> 20;
+  cellX = FIELD_CELL(leader->x.fixed);
+  cellZ = FIELD_CELL(leader->z.fixed);
   onCell = 0;
   if (cellX == 13 && cellZ == 13) {
     Event_SetFlag(FLAG_ON_WEST_LIFT);
@@ -1521,8 +1521,8 @@ void KandoreanTemple_ReadTheGuard(void) {
 /// Climbs down the well by the gate, when the leader pushes toward it.
 void KandoreanTemple_ClimbDownTheWell(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 x = leader->x.fixed >> 20;
-  s32 z = leader->z.fixed >> 20;
+  s32 x = FIELD_CELL(leader->x.fixed);
+  s32 z = FIELD_CELL(leader->z.fixed);
 
   if (z == 5) {
     if (x == 9 && (gInput.held & KEY_RIGHT) == 0)
@@ -1617,7 +1617,7 @@ void KandoreanTemple_StartMovingBlock(void) {
 /// Sets the lift room's pillar down, and notes whether it blocks the shaft of
 /// steam.
 void KandoreanTemple_FinishMovingBlock(void) {
-  s32 x = Actor_GetById(ACTOR_LIFT_ROOM_PILLAR)->x.fixed >> 20;
+  s32 x = FIELD_CELL(Actor_GetById(ACTOR_LIFT_ROOM_PILLAR)->x.fixed);
 
   Actor_PlaceMovedBlock();
   if (x == 43)
@@ -1630,7 +1630,8 @@ void KandoreanTemple_FinishMovingBlock(void) {
 
 /// Move lifts the vent room's pillar, noting whether it leaves a platform.
 void KandoreanTemple_StartMovingPillar(void) {
-  if ((u32)((Actor_GetById(ACTOR_VENT_ROOM_PILLAR)->x.fixed >> 20) - 15) > 6)
+  if ((u32)((FIELD_CELL(Actor_GetById(ACTOR_VENT_ROOM_PILLAR)->x.fixed)) - 15) >
+      6)
     GameFlag_Set(FLAG_PILLAR_LIFTED_OFF_PLATFORM);
   GameFlag_Set(FLAG_PILLAR_MOVING);
   Actor_LiftTargetBlock(gKandoreanTemple_PillarActors);
@@ -1640,8 +1641,8 @@ void KandoreanTemple_StartMovingPillar(void) {
 /// weighs down.
 void KandoreanTemple_FinishMovingPillar(void) {
   struct Actor *object = Actor_GetById(ACTOR_VENT_ROOM_PILLAR);
-  s32 x = object->x.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
 
   Actor_PlaceMovedBlock();
   if (x == 13 && z == 13)
@@ -1666,7 +1667,7 @@ void KandoreanTemple_StartMovingPot(void) {
 /// Sets the pot down; chucked to the west or east of its place, it is out of
 /// the way and the floor it covered cools.
 void KandoreanTemple_FinishMovingPot(void) {
-  s32 x = Actor_GetById(ACTOR_BOILING_POT)->x.fixed >> 20;
+  s32 x = FIELD_CELL(Actor_GetById(ACTOR_BOILING_POT)->x.fixed);
 
   Actor_PlaceMovedBlock();
   if (x == 19) {
@@ -3484,10 +3485,10 @@ struct ActorPlacement gKandoreanTemple_GatePlacements[] = {
 };
 
 struct ActorPlacement gKandoreanTemple_PoisHallPlacements[] = {
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 676, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 676, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 676, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 676, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(21, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 664, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 696, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(91, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 696, FACING_SOUTH, TALK_FACING_KEEP, 0),

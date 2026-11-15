@@ -320,12 +320,12 @@ inner:
     if (left <= x && x < right && top <= z && z < bottom) {
       *kind = k;
       if (k & 1) {
-        if (left != leader->x.fixed >> 20) {
+        if (left != FIELD_CELL(leader->x.fixed)) {
           *slot = i;
           return object;
         }
       } else {
-        if (top != leader->z.fixed >> 20) {
+        if (top != FIELD_CELL(leader->z.fixed)) {
           *slot = i;
           return object;
         }
@@ -753,8 +753,8 @@ void YampiDesertCave_StartMovingPillar(s32 unused, s32 id) {
     if (id == ACTOR_WEST_PILLAR) {
       struct Actor *object = Actor_GetById(ACTOR_WEST_PILLAR);
 
-      s32 column = object->x.fixed >> 20;
-      s32 row = object->z.fixed >> 20;
+      s32 column = FIELD_CELL(object->x.fixed);
+      s32 row = FIELD_CELL(object->z.fixed);
 
       MapGrid_CopyCellAttributes(7, 10, 1, 1, column, row);
     }
@@ -767,7 +767,7 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_GUARDIAN) {
-    s32 row = object->z.fixed >> 20;
+    s32 row = FIELD_CELL(object->z.fixed);
 
     if (row == 13) {
       object->motionFlags = 0;
@@ -785,7 +785,7 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
       s32 column;
 
       MapGrid_CopyCellAttributes(103, 16, 1, 1, 103, 15);
-      column = object->x.fixed >> 20;
+      column = FIELD_CELL(object->x.fixed);
       if (column == 38) {
         Event_SetFlag(FLAG_YAMPI_DESERT_CAVE_EAST_PILLAR_MOVED);
         MapGrid_CopyCellAttributes(38, 15, 1, 1, column, 16);
@@ -794,10 +794,11 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
       }
     }
     if (id == ACTOR_WEST_PILLAR) {
-      if (object->x.fixed >> 20 == 10 && object->z.fixed >> 20 == 11)
+      if (FIELD_CELL(object->x.fixed) == 10 &&
+          FIELD_CELL(object->z.fixed) == 11)
         Event_SetFlag(FLAG_YAMPI_DESERT_CAVE_WEST_PILLAR_MOVED);
-      MapGrid_CopyCellAttributes(12, 11, 1, 1, object->x.fixed >> 20,
-                                 object->z.fixed >> 20);
+      MapGrid_CopyCellAttributes(12, 11, 1, 1, FIELD_CELL(object->x.fixed),
+                                 FIELD_CELL(object->z.fixed));
     }
   }
 }
@@ -880,8 +881,8 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
   s32 x = 0, z = 0;
 
   if (tracked != NULL) {
-    x = tracked->x.fixed >> 20;
-    z = tracked->z.fixed >> 20;
+    x = FIELD_CELL(tracked->x.fixed);
+    z = FIELD_CELL(tracked->z.fixed);
   }
   if (px / 16 != x || pz / 16 != z)
     return;
@@ -1044,8 +1045,8 @@ s32 Scene_Initialize(void) {
 #if TLA_PATCH_1
       struct Actor *actor = Actor_GetById(ACTOR_WEST_PILLAR);
 
-      MapGrid_CopyCellAttributes(12, 11, 1, 1, actor->x.fixed >> 20,
-                                 actor->z.fixed >> 20);
+      MapGrid_CopyCellAttributes(12, 11, 1, 1, FIELD_CELL(actor->x.fixed),
+                                 FIELD_CELL(actor->z.fixed));
 #else
       MapGrid_CopyCellAttributes(12, 11, 1, 1, 8, 10);
 #endif

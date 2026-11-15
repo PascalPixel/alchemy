@@ -232,7 +232,7 @@ void FieldPsynergy_Douse(void) {
     for (n = 0; n < count; n++) {
       SET_POSITION(&pos, orb->x.fixed, orb->y.fixed, orb->z.fixed);
       Vector_AddPolarOffset(Random16() * 5 + px(3), Random16(), &pos);
-      mote = Actor_Spawn(672, pos.x, pos.y, pos.z);
+      mote = Actor_Spawn(SPRITE_PARTICLE, pos.x, pos.y, pos.z);
       if (mote != 0) {
         mote->update = (void (*)(void))FieldEffect_UpdateDriftingFallActor;
         mote->motionFlags = 0;

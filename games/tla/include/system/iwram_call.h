@@ -28,7 +28,7 @@ static inline s32 Math_MulQ16(s32 a, s32 b) { return Iwram_MulQ16(a, b); }
 /// Reads all three word-aligned coordinates before writing the result. Input
 /// may be an array or a record's coordinate prefix; output may overlap it.
 #define Iwram_TransformVectorEntry                                             \
-  FIXED_ADDRESS((void (*)(const void *vector, s32 *result)), 0x03000354,       \
+  FIXED_ADDRESS((s32 (*)(const void *vector, s32 *result)), 0x03000354,        \
                 IwramTransformVector)
 #define Iwram_SignedDivideEntry                                                \
   FIXED_ADDRESS((s32 (*)(s32 dividend, s32 divisor)), 0x03000528,              \
@@ -58,8 +58,8 @@ static inline void Iwram_TransformMatrix(const s32 *matrix) {
   Iwram_TransformMatrixEntry(matrix);
 }
 
-static inline void Iwram_TransformVector(const void *vector, s32 *result) {
-  Iwram_TransformVectorEntry(vector, result);
+static inline s32 Iwram_TransformVector(const void *vector, s32 *result) {
+  return Iwram_TransformVectorEntry(vector, result);
 }
 
 /// The quotient, rounded toward zero.

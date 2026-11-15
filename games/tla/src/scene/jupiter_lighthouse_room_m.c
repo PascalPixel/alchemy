@@ -311,7 +311,7 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   s32 x;
   s32 i;
 
-  if (object->x.fixed >> 20 == 63 && object->z.fixed >> 20 == 15) {
+  if (FIELD_CELL(object->x.fixed) == 63 && FIELD_CELL(object->z.fixed) == 15) {
     Event_SetFlag(FLAG_ENERGY_BLOCK_IN_GAP);
     object->motionFlags = 3;
     System_Wait(2);
@@ -332,7 +332,7 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
     FieldCamera_MoveTo(1016, CAMERA_KEEP, 232, 1);
     FieldCamera_WaitForArrival();
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1);
-    x = leader->x.fixed >> 20;
+    x = FIELD_CELL(leader->x.fixed);
     if (x == 64) {
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 1032, 232);
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 1000, 232);
@@ -413,7 +413,7 @@ void JupiterLighthouse_OpenFloor(void) {
   MapGrid_CopyCellsLayered(49, 103, 4, 3, 49, 76);
   Event_Wait(6);
   MapGrid_CopyCellsLayered(49, 106, 4, 3, 49, 76);
-  x = object->x.fixed >> 20;
+  x = FIELD_CELL(object->x.fixed);
   if (x == 49)
     spot = 1;
   if (x == 50)
@@ -1984,12 +1984,12 @@ LATE_DATA struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(373, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1464, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(373, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1608, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(317, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 648, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(317, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 680, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(317, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 936, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(317, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 952, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(317, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 680, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(317, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 936, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(317, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 952, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(428, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 968, 0, 248, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 1144, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 1064, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 1144, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 1064, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 200, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 200, 0, 152, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, (s32)gJupiterLighthouse_ShowGustScript, 1016, 0, 168, FACING_EAST, TALK_FACING_KEEP, 0),

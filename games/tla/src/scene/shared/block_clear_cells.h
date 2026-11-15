@@ -13,7 +13,7 @@ void MagmaRockInside_ClearBlockCells(struct Actor *object) {
     return;
   cells = &map->layers[2].cells;
   cell = *cells;
-  x = object->x.fixed >> 20;
+  x = FIELD_CELL(object->x.fixed);
   z = (object->z.fixed - object->y.fixed) >> 20;
   cell += x + ((z + 1) << 7);
   cell->collisionCode = 0;

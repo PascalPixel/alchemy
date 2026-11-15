@@ -70,7 +70,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   slot = (u8 *)effectSlots + 80;
   do {
-    FieldParticle_Initialize(slot, 672, position.x, position.z);
+    FieldParticle_Initialize(slot, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(slot, FieldEffect_UpdateMarsSpark);
     FieldParticle_SetActorMode(slot, 7);
     objectPointer = slot;

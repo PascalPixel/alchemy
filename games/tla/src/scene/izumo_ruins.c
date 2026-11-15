@@ -201,8 +201,8 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 /// are written back and MapGrid_SetCellHeight is given the cell's position and
 /// height.
 void IzumoRuins_ShowPillarState(struct Actor *object) {
-  s32 column = object->x.fixed >> 20;
-  s32 row = object->z.fixed >> 20;
+  s32 column = FIELD_CELL(object->x.fixed);
+  s32 row = FIELD_CELL(object->z.fixed);
   s32 lower = MapGrid_GetCellWord(0, column, row);
   s32 upper = MapGrid_GetCellWord(2, column, row);
   s32 height =
@@ -301,8 +301,8 @@ void IzumoRuins_FreezePuddle(void) {
 
 void IzumoRuins_SinkIntoSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 cell =
-      MapGrid_GetCellWord(2, leader->x.fixed >> 20, leader->z.fixed >> 20);
+  s32 cell = MapGrid_GetCellWord(2, FIELD_CELL(leader->x.fixed),
+                                 FIELD_CELL(leader->z.fixed));
 
   if (cell >> 8 == 232)
     leader->layer = 2;

@@ -1053,7 +1053,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
       Text_DrawMessage((s32)MsgSaveNoData, (s32)fileList, 10, i * 16);
     } else if (save->summary[i].frames < buildStamp) {
       Text_DrawMessage((s32)MsgSaveContinue, (s32)fileList, 10, i * 16);
-    } else if (save->summary[i].playTime != *(u32 *)save->summary[i].unk38) {
+    } else if (save->summary[i].playTime !=
+               save->summary[i].secondPartPlayTime) {
       Text_DrawMessage((s32)MsgSaveCorrupted, (s32)fileList, 10, i * 16);
     } else if (menuMode == FILE_LIST_CLEARED &&
                save->summary[i].sendFlag == 0) {

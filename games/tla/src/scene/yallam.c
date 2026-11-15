@@ -327,7 +327,8 @@ void Yallam_DigThirdHole(void) {
   Yallam_EditMap(26, 95, 2, 1, 26, 76, 2);
   if (Event_GetFlag(0xf62) == 0) {
     Actor_SetPosition(66, 424, 232);
-    if (leader->x.fixed >> 20 == 26 && leader->z.fixed >> 20 == 14) {
+    if (FIELD_CELL(leader->x.fixed) == 26 &&
+        FIELD_CELL(leader->z.fixed) == 14) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
@@ -348,7 +349,8 @@ void Yallam_DigFifthHole(void) {
   Yallam_EditMap(67, 25, 3, 3, 106, 20, 1);
   if (Event_GetFlag(0xf60) == 0) {
     Actor_SetPosition(64, 680, 344);
-    if (leader->x.fixed >> 20 == 42 && leader->z.fixed >> 20 == 21) {
+    if (FIELD_CELL(leader->x.fixed) == 42 &&
+        FIELD_CELL(leader->z.fixed) == 21) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,

@@ -413,8 +413,8 @@ void SeaOfTime_FollowChannel(void) {
   angle = (work->stepTrigger - 45) << 14;
   Event_Start();
   Event_ResolvePendingActions(0);
-  x = actor->x.fixed >> 20;
-  z = actor->z.fixed >> 20;
+  x = FIELD_CELL(actor->x.fixed);
+  z = FIELD_CELL(actor->z.fixed);
   dx = Trig_Cos(angle) >> 16;
   dz = Trig_Sin(angle) >> 16;
   actor->speedLimit = px(4);
@@ -503,10 +503,10 @@ void SeaOfTime_CountLaps(void) {
   u32 *frame;
   u32 *stamp;
 
-  index =
-      (SeaOfTime_GetCellCode(0, actor->x.fixed >> 20, actor->z.fixed >> 20) >>
-       8) -
-      1;
+  index = (SeaOfTime_GetCellCode(0, FIELD_CELL(actor->x.fixed),
+                                 FIELD_CELL(actor->z.fixed)) >>
+           8) -
+          1;
   frame = &gFrameCount;
   stamp = &gSeaOfTime_LapStamp;
 

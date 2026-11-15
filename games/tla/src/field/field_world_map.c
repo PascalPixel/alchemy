@@ -16,19 +16,6 @@
 #include "battle/battle_camera.h"
 #include "field/world_map.h"
 
-/* VIEW(f02b998): routine Transform_Reset as u32 Transform_Reset(void);
- * graphics.h has void Transform_Reset(void); tried as the definition's void
- * Transform_Reset(void), which the object already declares,
- * WorldMap_InitializePerspective moves: 1 of 372 instructions in tla-ja.
- * With Iwram_TransformVector returning s32, as The Broken Seal's does, the
- * plain void call matches and the view can go. */
-// UB: Transform_Reset returns nothing; this object calls it as returning u32.
-#ifdef UBFIX
-#define Render_ResetTransformState__f02b998 Transform_Reset
-#else
-extern u32 Render_ResetTransformState__f02b998(void) __asm__("Transform_Reset");
-#endif
-
 #define WORLD_MAP_BG_PALETTE ((s16 *)BG_PLTT)
 
 /// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
@@ -111,7 +98,7 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   gProjection.centerY = 96;
   Projection_Set(farPlane, farPlane >> 1, farPlane << 1);
   SET_VECTOR(cameraPosition, 0, 0, 0);
-  Render_ResetTransformState__f02b998();
+  Transform_Reset();
   Transform_ApplyPosition(cameraPosition);
   Transform_ApplyYaw(perspective->yaw);
   Transform_ApplyPitch(perspective->pitch);
@@ -121,7 +108,7 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
 
     SET_POSITION(&eyeOffset, 0, 0, farPlane);
     Iwram_TransformVector(&eyeOffset, camera->eye);
-    Render_ResetTransformState__f02b998();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, cameraPosition);
     RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, Transform_UpdateVerticesCode,
                      Transform_UpdateVerticesCodeSize);
@@ -136,10 +123,10 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
     // Then the world map's own view: pitch TRIG_TURN * 7 / 8 (minus an eighth
     // of a turn) and yaw 0, with the eye one pixel beyond the distance.
     SET_VECTOR(cameraPosition, 0, 0, 0);
-    Render_ResetTransformState__f02b998();
+    Transform_Reset();
     perspective->pitch = TRIG_TURN * 7 / 8;
     perspective->yaw = 0;
-    Render_ResetTransformState__f02b998();
+    Transform_Reset();
     Transform_ApplyPosition(cameraPosition);
     Transform_ApplyYaw(perspective->yaw);
     Transform_ApplyPitch(perspective->pitch);

@@ -127,7 +127,8 @@ void GabombaCatacombs_ClearBushesByTheStatue(void) {
   GabombaCatacombs_ClearBushes(22, 15, 0, 5, 5, 63, 52);
   if (GameFlag_Get(0xf53) == 0) {
     Actor_SetPosition(64, 392, 344);
-    if (leader->x.fixed >> 20 == 24 && leader->z.fixed >> 20 == 21) {
+    if (FIELD_CELL(leader->x.fixed) == 24 &&
+        FIELD_CELL(leader->z.fixed) == 21) {
       LEADER_HOP();
       Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);
       leader->velocityY = px(6);
@@ -160,7 +161,8 @@ void GabombaCatacombs_TakeThirdTeleporter(void) {
                                                                                \
     GabombaCatacombs_ClearBushes(n1, n2, 0, n3, 3, 56, n4);                    \
     Actor_SetPosition(n5, n6, n7);                                             \
-    if (leader->x.fixed >> 20 == n8 && leader->z.fixed >> 20 == n9) {          \
+    if (FIELD_CELL(leader->x.fixed) == n8 &&                                   \
+        FIELD_CELL(leader->z.fixed) == n9) {                                   \
       LEADER_HOP();                                                            \
       Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, 16, 0);   \
       leader->velocityY = px(6);                                               \
@@ -180,7 +182,7 @@ void GabombaCatacombs_UncoverThirdPuddle(void) {
 
   GabombaCatacombs_ClearBushes(5, 13, 0, 5, 3, 56, 52);
   Actor_SetPosition(10, 152, 264);
-  if (leader->x.fixed >> 20 == 9 && leader->z.fixed >> 20 == 16) {
+  if (FIELD_CELL(leader->x.fixed) == 9 && FIELD_CELL(leader->z.fixed) == 16) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -209,7 +211,7 @@ void GabombaCatacombs_UncoverStreamPuddle(void) {
 
   GabombaCatacombs_ClearBushes(16, 13, 0, 4, 8, 61, 52);
   Actor_SetPosition(8, 280, 296);
-  if (leader->x.fixed >> 20 == 17 && leader->z.fixed >> 20 == 18) {
+  if (FIELD_CELL(leader->x.fixed) == 17 && FIELD_CELL(leader->z.fixed) == 18) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,

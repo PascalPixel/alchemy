@@ -249,7 +249,7 @@
 	.include "games/tla/src/map/jupiter_lighthouse_room_locked_doors/map.inc"
 	.include "games/tla/src/map/jupiter_lighthouse_room_red_key/map.inc"
 	.include "games/tla/src/map/jupiter_lighthouse_room_cracked_floor/map.inc"
-	.include "games/tla/src/map/jupiter_lighthouse_room_7/map.inc"
+	.include "games/tla/src/map/jupiter_lighthouse_whorl/map.inc"
 	.include "games/tla/src/map/jupiter_lighthouse_room_blue_key/map.inc"
 	.include "games/tla/src/map/jupiter_lighthouse_room_phaetons_blade_chest/map.inc"
 	.include "games/tla/src/map/jupiter_lighthouse_room_m/map.inc"

@@ -871,7 +871,7 @@ s32 SceneEvent_FindActiveRecord(s32 mode, s32 value);
 
 extern const u8 gWorldMapPackedTilesC[];
 
-struct SparkSprite__jupiter_lighthouse_room_5;
+struct SparkSprite__jupiter_lighthouse_room_red_key;
 struct Vector3;
 struct Window;
 

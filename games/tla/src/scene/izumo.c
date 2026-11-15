@@ -113,8 +113,8 @@ void Izumo_StartMovingStone(void) {
 
 void Izumo_FinishMovingStone(void) {
   struct Actor *actor = Actor_GetById(12);
-  s32 x = actor->x.fixed >> 20;
-  s32 z = actor->z.fixed >> 20;
+  s32 x = FIELD_CELL(actor->x.fixed);
+  s32 z = FIELD_CELL(actor->z.fixed);
 
   Actor_PlaceMovedBlock();
   Sound_Play(SE_WATER);
@@ -179,7 +179,8 @@ void Izumo_CycloneSecondPatch(void) {
   if (!GameFlag_Get(3999)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 64, px(456),
           px(584));
-    if (object->x.fixed >> 20 == 28 && object->z.fixed >> 20 == 36) {
+    if (FIELD_CELL(object->x.fixed) == 28 &&
+        FIELD_CELL(object->z.fixed) == 36) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -199,7 +200,8 @@ void Izumo_CycloneThirdPatch(void) {
   if (!GameFlag_Get(4000)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 65, px(472),
           px(552));
-    if (object->x.fixed >> 20 == 29 && object->z.fixed >> 20 == 34) {
+    if (FIELD_CELL(object->x.fixed) == 29 &&
+        FIELD_CELL(object->z.fixed) == 34) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -232,7 +234,8 @@ void Izumo_CycloneSeventhPatch(void) {
   if (!GameFlag_Get(4001)) {
     Call3((void (*)())Actor_SetHorizontalPositionWithTerrain, 66, px(168),
           px(328));
-    if (object->x.fixed >> 20 == 10 && object->z.fixed >> 20 == 20) {
+    if (FIELD_CELL(object->x.fixed) == 10 &&
+        FIELD_CELL(object->z.fixed) == 20) {
       Event_Start();
       Event_ResolvePendingActions(0);
       FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
@@ -544,8 +547,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 void Izumo_RevealTheStoneCircle(void) {
   struct Actor *object = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 x = object->x.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
 
   GameFlag_Set(FLAG_REVEALING);
   if (GameFlag_Get(FLAG_STONE_IN_PLACE)) {
@@ -818,7 +821,7 @@ struct ActorPlacement gIzumo_ActorPlacements[] = {
     ACTOR_PLACEMENT(118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 568, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(122, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 248, 0, 464, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 344, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(125, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 424, 0, 600, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_UZUME, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 424, 0, 600, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(126, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 488, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(127, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 360, 0, 392, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(117, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 117, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -841,7 +844,7 @@ struct ActorPlacement gIzumo_ActorPlacementsOnceTheSerpentIsSlain[] = {
     ACTOR_PLACEMENT(118, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 568, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(122, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 472, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 344, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(125, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 424, 0, 568, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_UZUME, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 424, 0, 568, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(126, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 488, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(127, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 360, 0, 392, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(117, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 117, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -853,8 +856,8 @@ struct ActorPlacement gIzumo_ActorPlacementsOnceTheSerpentIsSlain[] = {
     ACTOR_PLACEMENT(124, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 472, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(124, CONDITION_ALWAYS, (s32)gIzumo_FourthSpinnerScript, 232, 0, 456, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(124, CONDITION_ALWAYS, (s32)gIzumo_FifthSpinnerScript, 328, 0, 504, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(125, CONDITION_ALWAYS, (s32)gIzumo_SixthSpinnerScript, 336, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(29, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_UZUME, CONDITION_ALWAYS, (s32)gIzumo_SixthSpinnerScript, 336, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_SUSA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on

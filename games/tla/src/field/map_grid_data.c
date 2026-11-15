@@ -630,7 +630,7 @@ const struct MapResources gMaps[] = {
     {794, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_locked_doors
     {795, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_red_key
     {796, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_cracked_floor
-    {797, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_7
+    {797, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_whorl
     {798, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_blue_key
     {799, 787, {788, 789, 790}, 791}, // jupiter_lighthouse_room_phaetons_blade_chest
     {800, 801, {779, 780, 781}, 782}, // jupiter_lighthouse_room_m

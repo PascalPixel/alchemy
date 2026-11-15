@@ -241,8 +241,8 @@ void MadraCatacombs_DropPillarIntoHole(void) {
   struct Actor *object = Actor_GetById(ACTOR_HOLE_PILLAR);
   s32 z;
 
-  if ((object->x.fixed >> 20) == 40) {
-    z = object->z.fixed >> 20;
+  if ((FIELD_CELL(object->x.fixed)) == 40) {
+    z = FIELD_CELL(object->z.fixed);
     if (z == 13) {
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -263,7 +263,8 @@ void MadraCatacombs_FinishMovingPushedPillar(void) {
   struct Actor *object = Actor_GetById(ACTOR_PUSHED_PILLAR);
 
   Actor_PlaceMovedBlock();
-  if ((object->x.fixed >> 20) == 44 && (object->z.fixed >> 20) == 26)
+  if ((FIELD_CELL(object->x.fixed)) == 44 &&
+      (FIELD_CELL(object->z.fixed)) == 26)
     Event_SetFlag(FLAG_MADRA_CATACOMBS_PILLAR_PLACED);
 }
 
@@ -407,7 +408,8 @@ void MadraCatacombs_ShakeBookshelf(void) {
 
 void MadraCatacombs_SettleClimbablePillar(struct Actor *object) {
   HeldActor_RaiseCell();
-  if ((object->x.fixed >> 20) == 35 && (object->z.fixed >> 20) == 17)
+  if ((FIELD_CELL(object->x.fixed)) == 35 &&
+      (FIELD_CELL(object->z.fixed)) == 17)
     Event_SetFlag(FLAG_MADRA_CATACOMBS_CLIMBABLE_PILLAR_PLACED);
 }
 
@@ -503,7 +505,7 @@ void MadraCatacombs_EnterDoorway(void) {
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
   Actor_SetSpeed(party->leaderActorId, 0.5);
-  cell = object->x.fixed >> 16;
+  cell = FIELD_PIXEL(object->x.fixed);
   Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x.fixed,
                       object->y.fixed, object->z.fixed);
   FieldActor_WaitForMove(object);
@@ -533,7 +535,7 @@ void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 mode,
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   if (mode == 1) {
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
-    cell = object->x.fixed >> 16;
+    cell = FIELD_PIXEL(object->x.fixed);
     Actor_SetMoveTarget(object, ((8 - cell % 16) << 16) + object->x.fixed,
                         object->y.fixed, object->z.fixed);
     FieldActor_WaitForMove(object);
@@ -849,8 +851,8 @@ struct ActorPlacement gMadraCatacombs_Placements[] = {
 
 struct ActorPlacement gMadraCatacombs_EntrancePlacements[] = {
     ACTOR_PLACEMENT(250, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -858,8 +860,8 @@ struct ActorPlacement gMadraCatacombs_EntrancePlacements[] = {
 };
 
 struct ActorPlacement gMadraCatacombs_ChampaTunnelPlacements[] = {
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 794, 0, 236, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };

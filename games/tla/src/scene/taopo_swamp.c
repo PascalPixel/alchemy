@@ -323,7 +323,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
   struct FieldSprite *sprite, *splashSprite, *sparkSprite;
   s32 i, x, z, k, zero;
 
-  if (actor->x.fixed >> 20 != 12)
+  if (FIELD_CELL(actor->x.fixed) != 12)
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -414,7 +414,8 @@ void TaopoSwamp_DigHoleUnderfoot(void) {
   TileCopies_CopyTouchedCells_(76, 70, 14, 8, 14, 37, 0);
   if (Event_GetFlag(0xf99) == 0) {
     Actor_SetPosition(64, 264, 664);
-    if (leader->x.fixed >> 20 == 16 && leader->z.fixed >> 20 == 41) {
+    if (FIELD_CELL(leader->x.fixed) == 16 &&
+        FIELD_CELL(leader->z.fixed) == 41) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
@@ -455,13 +456,13 @@ void TaopoSwamp_PushPillarOverVent(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (id == 9) {
-    if (object->x.fixed >> 20 == 17) {
+    if (FIELD_CELL(object->x.fixed) == 17) {
       object->z.fixed += px(1);
       Vent_SetGust(2, 0x80000);
       Event_SetFlag(FLAG_TAOPO_SWAMP_WEST_PILLAR_OVER_VENT);
     }
   } else if (id == 10) {
-    if (object->x.fixed >> 20 == 29) {
+    if (FIELD_CELL(object->x.fixed) == 29) {
       object->z.fixed += px(1);
       Vent_SetGust(8, 0x80000);
       Event_SetFlag(FLAG_TAOPO_SWAMP_EAST_PILLAR_OVER_VENT);
@@ -577,7 +578,7 @@ void TaopoSwamp_BlowFlowerOffLedge(void) {
 void TaopoSwamp_DropPillarIntoGap(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (id == ACTOR_GAP_PILLAR && object->x.fixed >> 20 == 16) {
+  if (id == ACTOR_GAP_PILLAR && FIELD_CELL(object->x.fixed) == 16) {
     Actor_WaitToLand(ACTOR_GAP_PILLAR);
     MapGrid_CopyCellAttributes(15, 26, 1, 1, 16, 26);
     Event_SetFlag(FLAG_TAOPO_SWAMP_PILLAR_IN_GAP);
@@ -624,8 +625,8 @@ void TaopoSwamp_ShatterIcePillar(s32 id) {
   Event_ClearFlag(FLAG_SCENE_TEMP_22);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   object = Actor_Get(id);
-  if (object->x.fixed >> 20 == leader->x.fixed >> 20 &&
-      object->z.fixed >> 20 == leader->z.fixed >> 20) {
+  if (FIELD_CELL(object->x.fixed) == FIELD_CELL(leader->x.fixed) &&
+      FIELD_CELL(object->z.fixed) == FIELD_CELL(leader->z.fixed)) {
     Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, 16);
@@ -678,8 +679,8 @@ void TaopoSwamp_ShatterDripIcePillar(s32 id) {
   GameFlag_SetByte(0x230, 0);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   object = Actor_Get(id);
-  if (object->x.fixed >> 20 == leader->x.fixed >> 20 &&
-      object->z.fixed >> 20 == leader->z.fixed >> 20) {
+  if (FIELD_CELL(object->x.fixed) == FIELD_CELL(leader->x.fixed) &&
+      FIELD_CELL(object->z.fixed) == FIELD_CELL(leader->z.fixed)) {
     Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, 16);
@@ -716,7 +717,7 @@ void TaopoSwamp_CoolLavaRock(s32 a, s32 id) {
 void TaopoSwamp_PushLavaRockIn(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (object->x.fixed >> 20 == 7) {
+  if (FIELD_CELL(object->x.fixed) == 7) {
     Actor_SetAnimation(id, 3);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
@@ -739,7 +740,7 @@ void TaopoSwamp_CoolPillarRock(s32 a, s32 id) {
 void TaopoSwamp_PushPillarRockIn(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (object->z.fixed >> 20 == 16) {
+  if (FIELD_CELL(object->z.fixed) == 16) {
     Actor_SetAnimation(id, 3);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
@@ -897,7 +898,7 @@ void TaopoSwamp_CoolChestRock(s32 a, s32 id) {
 void TaopoSwamp_PushChestRockIn(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (object->z.fixed >> 20 == 21) {
+  if (FIELD_CELL(object->z.fixed) == 21) {
     Actor_SetAnimation(id, 3);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
@@ -920,7 +921,7 @@ void TaopoSwamp_CoolExitRock(s32 a, s32 id) {
 void TaopoSwamp_PushExitRockIn(s32 a, s32 id) {
   struct Actor *object = Actor_Get(id);
 
-  if (object->x.fixed >> 20 == 31) {
+  if (FIELD_CELL(object->x.fixed) == 31) {
     Actor_SetAnimation(id, 3);
     object->collisionFlags = 0;
     object->priorityFlags |= 2;
@@ -2196,8 +2197,8 @@ struct ActorPlacement gTaopoSwampPillarGapActorPlacements[] = {
 };
 
 struct ActorPlacement gTaopoSwampDripsActorPlacements[] = {
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 200, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 440, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
@@ -2207,13 +2208,13 @@ struct ActorPlacement gTaopoSwampTremorActorPlacements[] = {
     ACTOR_PLACEMENT(292, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 248, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(292, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 248, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 296, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 312, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 360, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 376, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 296, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 312, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 360, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 376, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(328, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 384, 0, 320, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(328, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 416, 0, 336, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(328, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 368, 0, 352, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(328, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 416, 0, 336, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(328, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 368, 0, 352, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(328, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 248, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };

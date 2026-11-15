@@ -121,6 +121,13 @@ struct ActorPlacement {
   u8 flags;
 };
 
+/// ActorPlacement.flags: the actor takes the previous actor's sprite resource
+/// instead of loading its own, when both are single sprites.
+#define ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE 0x01
+/// ActorPlacement.flags: x is the number of a scene point to stand on, not a
+/// position (Scene_FindActorPlacement).
+#define ACTOR_PLACEMENT_AT_SCENE_POINT 0x02
+
 /// One row of a scene's actor placements, its spot in plain pixels.
 #define ACTOR_PLACEMENT(sprite, condition, movement, x, y, z, facing,          \
                         talkFacing, flags)                                     \

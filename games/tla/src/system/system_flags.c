@@ -80,7 +80,7 @@ u32 GameFlag_Toggle(s32 flag) {
 }
 
 /// Returns the whole byte `flag` is in, a counter kept among the flags.
-u8 GameFlag_GetByte(s32 flag) {
+s32 GameFlag_GetByte(s32 flag) {
   flag = GAME_FLAG_BYTE(flag);
   return gGameFlagBytes[flag];
 }

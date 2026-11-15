@@ -217,7 +217,7 @@ void JupiterLighthouse_SpawnSparks(void) {
 
   i = 0;
   do {
-    object = (FieldActor_Create(0x2a0, 0, 0, 0));
+    object = (FieldActor_Create(SPRITE_PARTICLE, 0, 0, 0));
 
     object->motionFlags = 0;
     object->priorityFlags = 0;

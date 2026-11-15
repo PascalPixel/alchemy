@@ -94,8 +94,9 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
     spriteId = Party_GetCharacterSprite(entry->sprite);
     actor = Actor_Lookup(actorIndex);
     if (actor == NULL) {
-      // Flag 2: x is the number of a scene point to stand on.
-      if (entry->flags & 2) {
+      // ACTOR_PLACEMENT_AT_SCENE_POINT: x is the number of a scene point to
+      // stand on.
+      if (entry->flags & ACTOR_PLACEMENT_AT_SCENE_POINT) {
         s32 position[3];
 
         position[0] = (s32)actor;
@@ -106,8 +107,9 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       } else {
         actor = Actor_CreateFar(spriteId, entry->x, entry->y, entry->z);
       }
-      // Flag 1: share the previous actor's sprite resource.
-      if (entry->flags & 1) {
+      // ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE: share the previous actor's
+      // sprite resource.
+      if (entry->flags & ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE) {
         struct Actor *previous = Actor_Lookup(actorIndex - 1);
 
         if (previous->spriteStorageKind == 1 && actor->spriteStorageKind == 1) {

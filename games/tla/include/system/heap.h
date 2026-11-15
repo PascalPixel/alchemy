@@ -94,7 +94,7 @@ struct HeapSlots {
   struct BattlePresentationTransition *battleBackground;
   /// The dice games' sprites, or a field Psynergy's canvas map.
   u16 *canvasMap;
-  void *unkb8;
+  void *unusedAfterCanvasMap; ///< no code allocates this slot
   /// A second routine as ramCode, released before it: always a
   /// BattleEffect_BuildBlitter routine, the second of a pair.
   void *ramCodePaired;

@@ -1339,7 +1339,7 @@ void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   if (width == 1) {
     object = Actor_Get(gMainRoutineWork.leaderActorId);
-    cell = object->x.fixed >> 16;
+    cell = FIELD_PIXEL(object->x.fixed);
     FieldActor_SetMoveTargetFixed(object,
                                   ((8 - cell % 16) << 16) + object->x.fixed,
                                   object->y.fixed, object->z.fixed);
@@ -1378,7 +1378,7 @@ void Prox_ClimbStairs(void) {
   s32 id;
 
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  cell = object->x.fixed >> 16;
+  cell = FIELD_PIXEL(object->x.fixed);
   FieldActor_SetMoveTargetFixed(object,
                                 ((8 - cell % 16) << 16) + object->x.fixed,
                                 object->y.fixed, object->z.fixed - px(4));

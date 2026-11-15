@@ -391,7 +391,8 @@ s32 Save_LoadFileSummaries(void) {
     slot = Save_FindLatestSector(group);
     if (slot < SAVE_SECTOR_COUNT) {
       ReadFlash(slot, 0, (u8 *)summary, sizeof(*summary));
-      ReadFlash(slot + 1, 16, summary->unk38, sizeof(summary->unk38));
+      ReadFlash(slot + 1, 16, (u8 *)&summary->secondPartPlayTime,
+                sizeof(summary->secondPartPlayTime));
       count++;
     }
     summary++;
@@ -413,7 +414,8 @@ s32 Save_LoadExtraSummary(void) {
   index = Save_FindLatestSector(SAVE_PART_EXTRA);
   if (index < SAVE_SECTOR_COUNT) {
     ReadFlash(index, 0, (u8 *)summary, sizeof(*summary));
-    ReadFlash(index + 1, 0x110, work->extra.unk38, sizeof(work->extra.unk38));
+    ReadFlash(index + 1, 0x110, (u8 *)&work->extra.secondPartPlayTime,
+              sizeof(work->extra.secondPartPlayTime));
     return 1;
   }
   return 0;

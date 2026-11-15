@@ -176,14 +176,6 @@ struct EncounterWork {
 extern u8 Data_02018000__battle[] __asm__("Data_02018000");
 #define Data_02018000 Data_02018000__battle
 
-/* VIEW(battle): routine GameFlag_GetByte as s32 GameFlag_GetByte(s32 flag);
- * game/game_flags.h has u8 GameFlag_GetByte(s32 flag); tried as the
- * definition's u8 GameFlag_GetByte(s32 flag), which the object already
- * declares, it does not compile in tla-ja (make modern):
- * games/tla/include/gamepak/far_call/window.h:19:42: note: expected 'struct
- * RenderInput *' but argument is of type 's32' {aka 'int'}. */
-s32 GameFlag_GetByte__battle(s32 flag) __asm__("GameFlag_GetByte");
-#define GameFlag_GetByte GameFlag_GetByte__battle
 void ActorSystem_InitializeFar(s32 mode);
 void Sound_LoadReverbCode(s32 preset);
 

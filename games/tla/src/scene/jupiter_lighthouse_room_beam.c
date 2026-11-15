@@ -59,7 +59,7 @@
 /// bridge.
 #define FLAG_BRIDGE_BLOCK_RAISED 0xa03
 
-enum JupiterLighthouseRoom2ActorId {
+enum JupiterLighthouseRoomBeamActorId {
   /// The four grey blocks that hover once the lighthouse is activated.
   ACTOR_FIRST_HOVERING_BLOCK = ACTOR_FIRST_PLACED,
   ACTOR_LAST_HOVERING_BLOCK = ACTOR_FIRST_HOVERING_BLOCK + 3,
@@ -364,7 +364,7 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
   Actor_Get(id)->priorityFlags |= 1;
   party = &gMainRoutineWork;
   Actor_Get(party->leaderActorId)->priorityFlags |= 1;
-  if (object->x.fixed >> 20 == 20 && object->z.fixed >> 20 == 39)
+  if (FIELD_CELL(object->x.fixed) == 20 && FIELD_CELL(object->z.fixed) == 39)
     FieldActor_SetSpritePriority(id, 3);
   if (object->groundHeight !=
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed)) {
@@ -375,7 +375,7 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
       System_Wait(1);
     Event_PlaySound(SE_THUMP);
   }
-  if (object->x.fixed >> 20 == 20 && object->z.fixed >> 20 == 39) {
+  if (FIELD_CELL(object->x.fixed) == 20 && FIELD_CELL(object->z.fixed) == 39) {
     Event_SetFlag(FLAG_ENERGY_BLOCK_IN_GAP);
     Actor_SetSpriteFlags(Actor_Get(id), 0);
     FieldActor_SetSpritePriority(id, 3);
@@ -407,7 +407,7 @@ void JupiterLighthouse_RaiseBridgeBlock(s32 unused, s32 id) {
   s32 i;
 
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) &&
-      object->x.fixed >> 20 == 18 && object->z.fixed >> 20 == 6) {
+      FIELD_CELL(object->x.fixed) == 18 && FIELD_CELL(object->z.fixed) == 6) {
     object->motionFlags = 0;
     for (i = 15; i >= 0; i--) {
       object->y.fixed += px(2);
@@ -460,7 +460,7 @@ void JupiterLighthouse_SpawnBeamMotes(void) {
   struct Actor *object;
 
   for (i = 0, phase = 0; i != 22; i++, phase += 5) {
-    object = (FieldActor_Create(672, 0, 0, 0));
+    object = (FieldActor_Create(SPRITE_PARTICLE, 0, 0, 0));
     object->motionFlags = 0;
     object->priorityFlags = 0;
     object->speedLimit = (Random16() << 2) + 0x60000;
@@ -784,14 +784,14 @@ u32 gSceneExits[] = {
 
 struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 104, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 104, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 104, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 104, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 104, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 104, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 104, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 104, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 104, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 600, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 600, FACING_SOUTHEAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 728, FACING_SOUTHWEST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 728, FACING_SOUTHEAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 600, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 728, FACING_SOUTHWEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 728, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(428, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 648, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };

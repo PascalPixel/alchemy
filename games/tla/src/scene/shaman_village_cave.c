@@ -126,7 +126,7 @@ void ShamanVillageCave_StartMovingPillar(void) {
 /// the shortcut (flag 0x9a8).
 void ShamanVillageCave_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
-  s32 x = object->x.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
 
   if (x == 38) {
     Event_SetFlag(0x9a8);

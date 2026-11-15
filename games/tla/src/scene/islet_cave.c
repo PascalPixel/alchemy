@@ -477,8 +477,8 @@ void IsletCave_PlaceLogByCellLeft(s32 id, s32 a, s32 b, s32 x, s32 z,
       Actor_SetPosition(id, x, z);
     Actor_SetSpritePriority(id, 3);
     object->priorityFlags |= 2;
-    MapGrid_CopyCellAttributes(a, b, 3, 1, (object->x.fixed >> 20) - 1,
-                               object->z.fixed >> 20);
+    MapGrid_CopyCellAttributes(a, b, 3, 1, (FIELD_CELL(object->x.fixed)) - 1,
+                               FIELD_CELL(object->z.fixed));
   }
 }
 
@@ -493,8 +493,8 @@ void IsletCave_PlaceLogByCellAbove(s32 id, s32 a, s32 bArg, s32 x, s32 z,
       Actor_SetPosition(id, x, z);
     object = Actor_GetById(id);
     object->priorityFlags |= 2;
-    MapGrid_CopyCellAttributes(a, bArg, 1, 3, object->x.fixed >> 20,
-                               (object->z.fixed >> 20) - 1);
+    MapGrid_CopyCellAttributes(a, bArg, 1, 3, FIELD_CELL(object->x.fixed),
+                               (FIELD_CELL(object->z.fixed)) - 1);
   }
 }
 
@@ -616,7 +616,7 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
     IsletCave_RideLog(logId, dx, 0);                                           \
     wait(2);                                                                   \
     Map_CopyCellAttributeRect(fromX >> 20, (fromZ >> 20) - 1, 1, 3,            \
-                              Actor_GetById(logId)->x.fixed >> 20,             \
+                              FIELD_CELL(Actor_GetById(logId)->x.fixed),       \
                               (fromZ >> 20) - 1);                              \
     Map_CopyCellAttributeRect(0, 0, 1, 3, fromX >> 20, (fromZ >> 20) - 1);     \
     flagCall(flag);                                                            \
@@ -646,9 +646,9 @@ void IsletCave_RideSecondLogEast(void) {
   IsletCave_RideLog(ACTOR_SECOND_LOG, 112, 0);
   IsletCave_RideLog(ACTOR_SECOND_LOG, 96, 0);
   wait(2);
-  Map_CopyCellAttributeRect(fromX >> 20, (fromZ >> 20) - 1, 1, 3,
-                            Actor_GetById(ACTOR_SECOND_LOG)->x.fixed >> 20,
-                            (fromZ >> 20) - 1);
+  Map_CopyCellAttributeRect(
+      fromX >> 20, (fromZ >> 20) - 1, 1, 3,
+      FIELD_CELL(Actor_GetById(ACTOR_SECOND_LOG)->x.fixed), (fromZ >> 20) - 1);
   Map_CopyCellAttributeRect(0, 0, 1, 3, fromX >> 20, (fromZ >> 20) - 1);
   GameFlag_Clear(FLAG_SCENE_TEMP_81);
 }
@@ -660,9 +660,9 @@ void IsletCave_RideSecondLogWest(void) {
   IsletCave_RideLog(ACTOR_SECOND_LOG, -112, 0);
   IsletCave_RideLog(ACTOR_SECOND_LOG, -96, 0);
   wait(2);
-  Map_CopyCellAttributeRect(fromX >> 20, (fromZ >> 20) - 1, 1, 3,
-                            Actor_GetById(ACTOR_SECOND_LOG)->x.fixed >> 20,
-                            (fromZ >> 20) - 1);
+  Map_CopyCellAttributeRect(
+      fromX >> 20, (fromZ >> 20) - 1, 1, 3,
+      FIELD_CELL(Actor_GetById(ACTOR_SECOND_LOG)->x.fixed), (fromZ >> 20) - 1);
   Map_CopyCellAttributeRect(0, 0, 1, 3, fromX >> 20, (fromZ >> 20) - 1);
   GameFlag_Set(FLAG_SCENE_TEMP_81);
 }
@@ -704,8 +704,9 @@ void IsletCave_RideSeventhLogNorth(void) {
   IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, -128);
   wait(2);
   column = (column >> 20) - 1;
-  MapGrid_CopyCellAttributes(column, fromRow, 3, 1, column,
-                             Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed >> 20);
+  MapGrid_CopyCellAttributes(
+      column, fromRow, 3, 1, column,
+      FIELD_CELL(Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed));
   Map_CopyCellAttributeRect(0, 0, 3, 1, column, fromRow);
   GameFlag_Set(FLAG_SCENE_TEMP_86);
 }
@@ -722,8 +723,9 @@ void IsletCave_RideSeventhLogSouth(void) {
   wait(2);
   column = (column >> 20) - 1;
   fromRow >>= 20;
-  MapGrid_CopyCellAttributes(column, fromRow, 3, 1, column,
-                             Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed >> 20);
+  MapGrid_CopyCellAttributes(
+      column, fromRow, 3, 1, column,
+      FIELD_CELL(Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed));
   Map_CopyCellAttributeRect(0, 0, 3, 1, column, fromRow);
   GameFlag_Clear(FLAG_SCENE_TEMP_86);
 }
@@ -857,15 +859,15 @@ u32 gSceneExits[] = {
 struct ActorPlacement gIsletCave_Placements[] = {
     ACTOR_PLACEMENT(170, 0x9cf, (s32)gIsletCave_SentinelScript, 184, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 152, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 216, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 176, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 176, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 152, 0, 224, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 216, 0, 224, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 256, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 256, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 304, FACING_NORTH, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 304, FACING_NORTH, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 216, 0, 144, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 176, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 176, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 152, 0, 224, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 216, 0, 224, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 256, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 256, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 304, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 304, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     {SCENE_TABLE_END},
 };
 

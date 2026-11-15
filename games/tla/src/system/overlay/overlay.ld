@@ -449,16 +449,16 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_2.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_beam.o"(.text)
         "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_2.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_beam.o"(.data)
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_2.o"(.bss)
+        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_beam.o"(.bss)
     }
 }
 #elif OVERLAY == 0x69c
@@ -467,17 +467,17 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_3.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_erinyes_tunic_chest.o"(.text)
         "*/imports.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_3.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_erinyes_tunic_chest.o"(.data)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_3.o"(.data.late)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_erinyes_tunic_chest.o"(.data.late)
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_3.o"(.bss)
+        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_erinyes_tunic_chest.o"(.bss)
     }
 }
 #elif OVERLAY == 0x69d
@@ -486,16 +486,16 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_4.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_locked_doors.o"(.text)
         "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_4.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_locked_doors.o"(.data)
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_4.o"(.bss)
+        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_locked_doors.o"(.bss)
     }
 }
 #elif OVERLAY == 0x69e
@@ -504,16 +504,16 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_5.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_red_key.o"(.text)
         "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_5.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_red_key.o"(.data)
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_5.o"(.bss)
+        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_red_key.o"(.bss)
     }
 }
 #elif OVERLAY == 0x69f
@@ -540,17 +540,17 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_7.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_whorl.o"(.text)
         "*/imports.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_7.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_whorl.o"(.data)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_7.o"(.data.late)
+        "*/games/tla/src/scene/jupiter_lighthouse_whorl.o"(.data.late)
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_7.o"(.bss)
+        "*/games/tla/src/scene/bss/jupiter_lighthouse_whorl.o"(.bss)
     }
 }
 #elif OVERLAY == 0x6a1
@@ -559,17 +559,17 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_8.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_blue_key.o"(.text)
         "*/imports.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_8.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_blue_key.o"(.data)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_8.o"(.data.late)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_blue_key.o"(.data.late)
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_8.o"(.bss)
+        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_blue_key.o"(.bss)
     }
 }
 #elif OVERLAY == 0x6a2
@@ -578,16 +578,16 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/tla/src/scene/entry.o"(.text)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_9.o"(.text)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_phaetons_blade_chest.o"(.text)
         "*/imports.o"(.text)
         "*/games/tla/src/graphics/field/cached_a.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_b.o"(.rodata)
         "*/games/tla/src/graphics/field/cached_c.o"(.rodata)
-        "*/games/tla/src/scene/jupiter_lighthouse_room_9.o"(.data)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_phaetons_blade_chest.o"(.data)
     }
     .bss :
     {
-        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_9.o"(.bss)
+        "*/games/tla/src/scene/bss/jupiter_lighthouse_room_phaetons_blade_chest.o"(.bss)
     }
 }
 #elif OVERLAY == 0x6a3

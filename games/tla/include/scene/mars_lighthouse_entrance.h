@@ -106,7 +106,7 @@ void MarsLighthouseEntrance_MeltIceInPath(void);
 
 void MarsLighthouseEntrance_ClearFireballRow(void);
 
-void MarsLighthouseEntrance_StartPoundIceCone(void);
+void MarsLighthouseEntrance_StartPoundIceCone(s32 mode, s32 index);
 
 void MarsLighthouseEntrance_CheckIce(void);
 

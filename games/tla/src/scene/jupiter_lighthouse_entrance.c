@@ -111,7 +111,8 @@ void JupiterLighthouse_CycloneUncoversTheSpot(void) {
   Call7(TileCopies_CopyTouchedCells, 0x38, 0, 3, 3, 0x4f, 0x19, 1);
   if (!Event_GetFlag(0xfe2)) {
     Actor_SetPosition(64, 280, 440);
-    if (leader->x.fixed >> 20 == 17 && leader->z.fixed >> 20 == 27) {
+    if (FIELD_CELL(leader->x.fixed) == 17 &&
+        FIELD_CELL(leader->z.fixed) == 27) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
@@ -307,7 +308,7 @@ u32 gSceneExits[] = {
 
 struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 360, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 360, FACING_SOUTHEAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 360, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     {SCENE_TABLE_END},
 };
 

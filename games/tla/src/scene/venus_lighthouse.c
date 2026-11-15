@@ -410,7 +410,7 @@ void VenusLighthouse_RepelLeader(void) {
   Actor_SetSpriteColor(Actor_GetById(leader), SPRITE_COLOR_GREY);
   actor->velocityY = px(4);
   Actor_SetSpeed(leader, 4);
-  if (actor->z.fixed >> 20 <= 54) {
+  if (FIELD_CELL(actor->z.fixed) <= 54) {
     Actor_GetById(leader)->steeringFlags &= ~ACTOR_FACES_MOTION;
     z = 210;
   } else {
@@ -471,7 +471,7 @@ void VenusLighthouse_SinkStatue(void) {
   obj = Actor_Get(ACTOR_MOVED_STATUE);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (obj->x.fixed >> 20 == 42) {
+  if (FIELD_CELL(obj->x.fixed) == 42) {
     FieldEvent_Wait(30);
     Event_PlaySound(SE_THUMP);
     obj->motionFlags = 0;

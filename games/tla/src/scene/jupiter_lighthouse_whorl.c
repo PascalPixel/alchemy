@@ -144,8 +144,8 @@ void JupiterLighthouse_CloseDoor(void) {
 void JupiterLighthouse_CheckBlockOnCell(void) {
   struct Actor *object = Actor_Get(ACTOR_BUTTON_PILLAR);
 
-  if (!Event_GetFlag(FLAG_BUTTON_PILLAR_PLACED) && object->x.fixed >> 20 == 8 &&
-      object->z.fixed >> 20 == 37) {
+  if (!Event_GetFlag(FLAG_BUTTON_PILLAR_PLACED) &&
+      FIELD_CELL(object->x.fixed) == 8 && FIELD_CELL(object->z.fixed) == 37) {
     Event_SetFlag(FLAG_BUTTON_PILLAR_PLACED);
     JupiterLighthouse_OpenDoor(1);
   }
@@ -186,9 +186,9 @@ s32 JupiterLighthouse_FindBlockGap(void) {
   first = Actor_Get(ACTOR_FIRST_PATH_BLOCK);
   second = Actor_Get(ACTOR_SECOND_PATH_BLOCK);
   gap = 1;
-  x = first->x.fixed >> 20;
+  x = FIELD_CELL(first->x.fixed);
   gap = -gap;
-  z = first->z.fixed >> 20;
+  z = FIELD_CELL(first->z.fixed);
   if (x == 35 && z == 15 &&
       !Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1))) {
     Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0));
@@ -204,8 +204,8 @@ s32 JupiterLighthouse_FindBlockGap(void) {
     Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0));
     gap = 4;
   }
-  x = second->x.fixed >> 20;
-  z = second->z.fixed >> 20;
+  x = FIELD_CELL(second->x.fixed);
+  z = FIELD_CELL(second->z.fixed);
   if (x == 35 && z == 15 &&
       !Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0))) {
     Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1));
@@ -293,8 +293,8 @@ s32 JupiterLighthouse_IsOnWestPath(struct Actor *actor) {
   s32 i;
 
   for (i = 0; gJupiterLighthouse_WestPathCells[i][0] != -1; i++) {
-    if (gJupiterLighthouse_WestPathCells[i][0] == actor->x.fixed >> 20 &&
-        gJupiterLighthouse_WestPathCells[i][1] == actor->z.fixed >> 20)
+    if (gJupiterLighthouse_WestPathCells[i][0] == FIELD_CELL(actor->x.fixed) &&
+        gJupiterLighthouse_WestPathCells[i][1] == FIELD_CELL(actor->z.fixed))
       return 1;
   }
   return 0;
@@ -446,7 +446,8 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   }
   if (id != ACTOR_THIRD_PATH_BLOCK)
     return;
-  if (object->x.fixed >> 20 == 8 && *(s32 *)&object->z.fixed >> 20 == 12) {
+  if (FIELD_CELL(object->x.fixed) == 8 &&
+      FIELD_CELL(*(s32 *)&object->z.fixed) == 12) {
     Event_SetFlag(FLAG_THIRD_BLOCK_IN_GAP);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_THIRD_PATH_BLOCK), 0);
     Event_Wait(30);
@@ -592,11 +593,11 @@ void JupiterLighthouse_JumpOrPushBlock(void) {
   FieldVector_AddPolarOffset(16, facing, position);
   x = position[0] >> 20;
   z = position[2] >> 20;
-  if (first->y.fixed == 0 && x == first->x.fixed >> 20 &&
-      z == first->z.fixed >> 20)
+  if (first->y.fixed == 0 && x == FIELD_CELL(first->x.fixed) &&
+      z == FIELD_CELL(first->z.fixed))
     found = 1;
-  if (second->y.fixed == 0 && x == second->x.fixed >> 20 &&
-      z == second->z.fixed >> 20)
+  if (second->y.fixed == 0 && x == FIELD_CELL(second->x.fixed) &&
+      z == FIELD_CELL(second->z.fixed))
     found = 1;
   if (found == 0) {
     if (x == 35 && z == 15 &&
@@ -1128,11 +1129,11 @@ LATE_DATA struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(340, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 564, 0, 712, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 216, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 264, FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 264, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 376, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 376, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 376, FACING_EAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 376, FACING_EAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 264, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 376, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 376, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 376, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 376, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 600, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(406, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 136, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(428, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),

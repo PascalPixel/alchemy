@@ -51,7 +51,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   slot = scene->particles;
   count = 23;
   do {
-    FieldParticle_Initialize(slot, 672, position.x, position.z);
+    FieldParticle_Initialize(slot, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(slot, FieldEffect_RunAngledApproachPhases);
     FieldParticle_SetActorMode(slot, 7);
     Animation_ApplyChildValuesToRecordFar(slot->object, Random_Below(7));

@@ -475,9 +475,9 @@ void WorldMap_BoardShip(void) {
   gMainRoutineWork.movementMode = 7;
   gMainRoutineWork.ownerOverride = 1;
   Event_SetFlag(0x176);
-  gMainRoutineWork.savedX = ship->x.fixed;
-  gMainRoutineWork.savedZ = ship->z.fixed;
-  gMainRoutineWork.savedFacing = ship->facing;
+  gMainRoutineWork.shipX = ship->x.fixed;
+  gMainRoutineWork.shipZ = ship->z.fixed;
+  gMainRoutineWork.shipFacing = ship->facing;
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Import_ActorSelectAnimation(leader, 6);
   System_Wait(6);
@@ -555,9 +555,9 @@ void WorldMap_LeaveShip(void) {
     gMainRoutineWork.movementMode = 1;
     gMainRoutineWork.ownerOverride = 0;
     Event_ClearFlag(0x176);
-    gMainRoutineWork.savedX = ship->x.fixed;
-    gMainRoutineWork.savedZ = ship->z.fixed;
-    gMainRoutineWork.savedFacing = ship->facing;
+    gMainRoutineWork.shipX = ship->x.fixed;
+    gMainRoutineWork.shipZ = ship->z.fixed;
+    gMainRoutineWork.shipFacing = ship->facing;
     flags = leader->motionFlags;
     leader->x.fixed = ship->x.fixed;
     leader->y.fixed = px(4);
@@ -598,9 +598,9 @@ void WorldMap_GoAboard(void) {
     WorldMap_SetUpShip();
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  gMainRoutineWork.savedX = leader->x.fixed;
-  gMainRoutineWork.savedZ = leader->z.fixed;
-  gMainRoutineWork.savedFacing = 0;
+  gMainRoutineWork.shipX = leader->x.fixed;
+  gMainRoutineWork.shipZ = leader->z.fixed;
+  gMainRoutineWork.shipFacing = 0;
   gMainRoutineWork.ownerOverride = 0;
   Event_ClearFlag(0x176);
   Event_PlaySound(SE_MAP_EXIT);
@@ -799,12 +799,12 @@ s32 Scene_Initialize(void) {
 
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 &&
       GameFlag_Get(FLAG_SHIP_SAILABLE) != 0 &&
-      gMainRoutineWork.ownerOverride == 0 && gMainRoutineWork.savedX != 0) {
+      gMainRoutineWork.ownerOverride == 0 && gMainRoutineWork.shipX != 0) {
     struct Actor *ship = Actor_GetById(ACTOR_SHIP);
 
-    ship->x.fixed = gMainRoutineWork.savedX;
-    ship->z.fixed = gMainRoutineWork.savedZ;
-    ship->facing = gMainRoutineWork.savedFacing;
+    ship->x.fixed = gMainRoutineWork.shipX;
+    ship->z.fixed = gMainRoutineWork.shipZ;
+    ship->facing = gMainRoutineWork.shipFacing;
     ship->timer = 0;
     ship->userValue = 0;
   }
@@ -2965,12 +2965,12 @@ LATE_DATA struct ActorPlacement gWorldMapActorPlacements[] = {
                     0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0,
                     0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(221, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
-                    FACING_NORTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LOHO_WORKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    0, 0, 0, FACING_NORTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(154, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
                     FACING_EAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(221, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
-                    FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LOHO_WORKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+                    0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0,
                     FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_LONG_DARK_HAIR, IF_FLAG_SET(0xa76),
@@ -3045,8 +3045,9 @@ LATE_DATA struct ActorPlacement gWorldMap_DriftPlacements[] = {
 };
 
 LATE_DATA struct ActorPlacement gWorldMap_FirstVoyagePlacements[] = {
-    ACTOR_PLACEMENT(9, CONDITION_ALWAYS, (s32)gWorldMap_TileSpriteScript, 10640,
-                    0, 9075, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WINGED_SHIP_SMALL, CONDITION_ALWAYS,
+                    (s32)gWorldMap_TileSpriteScript, 10640, 0, 9075,
+                    FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10550,
                     0, 8682, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 10550,

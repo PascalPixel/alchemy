@@ -6,10 +6,10 @@
 /// second step (JupiterLighthouse_StepOnCrackedTile) to the floor below. Stairs
 /// lead on to room m and back to the hall below the aerie.
 ///
-/// The cracked tiles' code is in jupiter_lighthouse_room_8/, in two parts the
-/// shared field effect objects link between, and the tables the scene's getters
-/// return are in data/jupiter_lighthouse_room_8.c, which the overlay links
-/// after the field's cached pictures.
+/// The cracked tiles' code is in jupiter_lighthouse_room_blue_key/, in two
+/// parts the shared field effect objects link between, and the tables the
+/// scene's getters return are in data/jupiter_lighthouse_room_blue_key.c, which
+/// the overlay links after the field's cached pictures.
 
 #include "shared/tables.h"
 #include "flags.h"
@@ -135,7 +135,7 @@ void JupiterLighthouse_DropBlockIntoHole(s32 unused, s32 id) {
   s32 y;
   s32 floor;
 
-  if (object->x.fixed >> 20 == 6 && object->z.fixed >> 20 == 14) {
+  if (FIELD_CELL(object->x.fixed) == 6 && FIELD_CELL(object->z.fixed) == 14) {
     Event_SetFlag(FLAG_PILLAR_DROPPED);
     System_Wait(10);
     Event_PlaySound(SE_HEAVY_IMPACT);

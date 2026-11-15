@@ -327,13 +327,15 @@ void MagmaRockInside_MarkBlockCells(u16 *ids) {
     object = Actor_Get(*ids);
     blocked = &object->riseEnabled;
     *blocked = 0;
-    if (MapCell_Get(0, object->x.fixed >> 20, object->z.fixed >> 20) & 0x40) {
+    if (MapCell_Get(0, FIELD_CELL(object->x.fixed),
+                    FIELD_CELL(object->z.fixed)) &
+        0x40) {
       map = Ram_HeapSlots->mapGrid;
       if (map == NULL)
         return;
       cells = &map->layers[2].cells;
       z = (object->z.fixed - object->y.fixed) >> 20;
-      x = object->x.fixed >> 20;
+      x = FIELD_CELL(object->x.fixed);
       cell = *cells;
       cell += x + ((z + 1) << 7);
       cell->collisionCode = 255;
@@ -515,8 +517,8 @@ void MagmaRockInside_BlockMovedPillar(void) {
       object->layer = 0;
     }
   }
-  x = object->x.fixed >> 20;
-  z = object->z.fixed >> 20;
+  x = FIELD_CELL(object->x.fixed);
+  z = FIELD_CELL(object->z.fixed);
   scene = gMainRoutineWork.next;
   if (scene == SCENE_MAGMA_ROCK_INSIDE_2) {
     if (z == 16)
@@ -737,13 +739,13 @@ inner:
   other = gFieldWork->actors[id];
   if (other->script == 0)
     goto skip;
-  if (source->x.fixed >> 20 == other->x.fixed >> 20 &&
-      source->y.fixed >> 20 == other->y.fixed >> 20 &&
-      source->z.fixed >> 20 == other->z.fixed >> 20)
+  if (FIELD_CELL(source->x.fixed) == FIELD_CELL(other->x.fixed) &&
+      FIELD_CELL(source->y.fixed) == FIELD_CELL(other->y.fixed) &&
+      FIELD_CELL(source->z.fixed) == FIELD_CELL(other->z.fixed))
     goto skip;
   if (Position_FlatDistance(&other->x.fixed, position) > 8)
     goto skip;
-  if (other->y.fixed >> 20 != position[1] >> 20)
+  if (FIELD_CELL(other->y.fixed) != position[1] >> 20)
     goto skip;
   if (*(s16 *)(*(u8 **)((u8 *)other->sprite + 40)) == 272)
     goto end;
@@ -1505,8 +1507,8 @@ void MagmaRockInside_OpenStairs(void) {
 
 void MagmaRockInside_TrackStepCell(void) {
   struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
-  s32 x = object->x.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
   s32 key = (x << 16) + z;
   s32 last;
   s32 value;
@@ -1549,9 +1551,9 @@ void MagmaRockInside_StartStepCells(void) {
 /// source.
 void MagmaRockInside_StampStepCell(void) {
   struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
-  s32 x = object->x.fixed >> 20;
-  s32 y = object->y.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 y = FIELD_CELL(object->y.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
   s32 key = (x << 16) + z;
 
   if (key != gMagmaRockInside_LastStepCell) {
@@ -1571,9 +1573,9 @@ void MagmaRockInside_StampStepCell(void) {
 /// As MagmaRockInside_StampStepCell, stamping the cells kept at (71, 72).
 void MagmaRockInside_StampOtherStepCell(void) {
   struct Actor *object = Actor_Get(FieldParty_GetLeaderActor());
-  s32 x = object->x.fixed >> 20;
-  s32 y = object->y.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 y = FIELD_CELL(object->y.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
   s32 key = (x << 16) + z;
 
   if (key != gMagmaRockInside_LastStepCell) {
@@ -1638,7 +1640,8 @@ void MagmaRockInside_StepOnMarker(void) {
   s32 cell, row = 54;
 
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  cell = MapCell_Get(2, leader->x.fixed >> 20, leader->z.fixed >> 20);
+  cell =
+      MapCell_Get(2, FIELD_CELL(leader->x.fixed), FIELD_CELL(leader->z.fixed));
   work += 0x16a;
   // From 54 in two steps: as one expression the constants fold into
   // 858 - 4 * counter.
@@ -1915,7 +1918,7 @@ burst:
   REG_BLDALPHA = 0x1008;
   wait(30);
   for (i = 0; i != 16; i++) {
-    spark = FieldActor_Create(672, second->x.fixed, second->y.fixed,
+    spark = FieldActor_Create(SPRITE_PARTICLE, second->x.fixed, second->y.fixed,
                               second->z.fixed);
     Event_PlaySound(SE_SPARKS);
     spark->timer = (Random16() & 0x7fff) + 0x8000;
@@ -1947,7 +1950,7 @@ burst:
   i = 2;
 column:
   riser =
-      FieldActor_Create(672, second->x.fixed,
+      FieldActor_Create(SPRITE_PARTICLE, second->x.fixed,
                         second->y.fixed + i * px(1) - px(8), second->z.fixed);
   riser->timer = Random16();
   riser->userValue = 0x800;
@@ -2197,12 +2200,12 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
   } while (0);
   object = arg;
   owner = Actor_Get(party->leaderActorId);
-  ownerY = owner->y.fixed >> 16;
-  y = object->y.fixed >> 16;
+  ownerY = FIELD_PIXEL(owner->y.fixed);
+  y = FIELD_PIXEL(object->y.fixed);
   flags = &object->priorityFlags;
 
-  if (ownerY != y ||
-      (s16)(owner->z.fixed >> 16) < (s16)(object->z.fixed >> 16)) {
+  if (ownerY != y || (s16)(FIELD_PIXEL(owner->z.fixed)) <
+                         (s16)(FIELD_PIXEL(object->z.fixed))) {
     *flags = 1;
   } else {
     *flags = 0;

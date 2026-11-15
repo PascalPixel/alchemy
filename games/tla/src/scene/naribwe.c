@@ -382,8 +382,9 @@ void Naribwe_HideStone(void);
                       FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),             \
       {307, CONDITION_ALWAYS, (s32)gNaribwe_IvyAnimation, px(40), 0, px(168),  \
        FACING_SOUTH, 2, 0},                                                    \
-      ACTOR_PLACEMENT(407, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 376, \
-                      FACING_SOUTH, TALK_FACING_KEEP, 0),                      \
+      ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS,                 \
+                      MOVEMENT_TYPE_STAND, 360, 0, 376, FACING_SOUTH,          \
+                      TALK_FACING_KEEP, 0),                                    \
       ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 376, \
                       FACING_SOUTH, TALK_FACING_KEEP, 0),                      \
       ACTOR_PLACEMENT(201, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 168, \

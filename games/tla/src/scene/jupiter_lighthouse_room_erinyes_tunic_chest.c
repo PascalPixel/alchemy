@@ -7,10 +7,10 @@
 /// leads on (JupiterLighthouse_LeaveByCyclone).
 ///
 /// The cracked tiles' code is in
-/// jupiter_lighthouse_room_3/, in two parts the shared field effect objects
-/// link between, and the tables the scene's getters return are in
-/// data/jupiter_lighthouse_room_3.c, which the overlay links after the field's
-/// cached pictures.
+/// jupiter_lighthouse_room_erinyes_tunic_chest/, in two parts the shared field
+/// effect objects link between, and the tables the scene's getters return are
+/// in data/jupiter_lighthouse_room_erinyes_tunic_chest.c, which the overlay
+/// links after the field's cached pictures.
 
 #include "system/system.h"
 #include "system/io_write.h"
@@ -117,7 +117,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 void JupiterLighthouse_DrawLogBelowLedge(struct Actor *object) {
-  if (object->x.fixed >> 20 == 14 && object->z.fixed >> 20 == 12)
+  if (FIELD_CELL(object->x.fixed) == 14 && FIELD_CELL(object->z.fixed) == 12)
     Actor_SetSpritePriorityDirect(object, 2);
 }
 
@@ -130,7 +130,7 @@ void JupiterLighthouse_PushLogOffTheLedge(void) {
   object->update = (void (*)(void))JupiterLighthouse_DrawLogBelowLedge;
   if (PushTarget_FindSlide(&target))
     PushTarget_PushFill(target);
-  if (object->x.fixed >> 20 == 16 && object->z.fixed >> 20 == 12 &&
+  if (FIELD_CELL(object->x.fixed) == 16 && FIELD_CELL(object->z.fixed) == 12 &&
       Event_GetFlag(FLAG_LOG_OFF_LEDGE) == 0) {
     Event_SetFlag(FLAG_LOG_OFF_LEDGE);
     FieldActor_SetSpritePriority(ACTOR_LEDGE_LOG, 3);
@@ -157,11 +157,11 @@ void JupiterLighthouse_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
   s32 placed = 0;
   s32 i;
-  if (object->x.fixed >> 20 == 20 && object->z.fixed >> 20 == 36) {
+  if (FIELD_CELL(object->x.fixed) == 20 && FIELD_CELL(object->z.fixed) == 36) {
     Event_SetFlag(FLAG_LEFT_PILLAR_IN_GAP);
     placed = 1;
   }
-  if (object->x.fixed >> 20 == 32 && object->z.fixed >> 20 == 36) {
+  if (FIELD_CELL(object->x.fixed) == 32 && FIELD_CELL(object->z.fixed) == 36) {
     Event_SetFlag(FLAG_RIGHT_PILLAR_IN_GAP);
     placed = 1;
   }
@@ -743,10 +743,10 @@ LATE_DATA struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(312, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 680, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 680, FACING_SOUTHEAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 840, FACING_SOUTHWEST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 840, FACING_SOUTHEAST, TALK_FACING_KEEP, 1),
-    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 840, FACING_SOUTHEAST, TALK_FACING_KEEP, 1),
+    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 680, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 840, FACING_SOUTHWEST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 840, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(341, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 840, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     {SCENE_TABLE_END},
 };
 

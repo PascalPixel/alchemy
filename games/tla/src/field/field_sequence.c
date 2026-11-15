@@ -36,15 +36,6 @@
 #include "field_sequence_speakers.c"
 #include "field_sequence_heading.c"
 
-/* VIEW(event_commands): routine GameFlag_GetByte as u8 GameFlag_GetByte(s32
- * flag); field/event.h has s32 GameFlag_GetByte(s32 flag); tried as the
- * definition's u8 GameFlag_GetByte(s32 flag), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/include/game/game_flags.h:16: conflicting types for
- * `GameFlag_GetByte'. */
-u8 GameFlag_GetByte__event_commands(s32 flag) __asm__("GameFlag_GetByte");
-#define GameFlag_GetByte GameFlag_GetByte__event_commands
-// The event commands read the game flags through the view above.
 #include "game/game_flags.h"
 
 // The object's functions its parts call before their definitions.

@@ -423,7 +423,6 @@
 	export TrialRoad_CopyTouchedCells, Cyclone_CopyTouchedCellsFar
 	export MadraInteriors_CountAnswer, Event_CountAnswerFar
 	export EasternAlhafra_InitializeRockSprite, EffectSprite_InitFar
-	export VenusLighthouseEntrance_InitGlowSprite, EffectSprite_InitFar
 	export EffectSprite_Init, EffectSprite_InitFar
 	export Exit_StartStairsUp, Exit_StartStairsUpFar
 	export Import_EffectSpriteDraw, EffectSprite_DrawFar

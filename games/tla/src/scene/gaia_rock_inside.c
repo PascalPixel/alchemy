@@ -694,7 +694,8 @@ void GaiaRockInside_CycloneClearsHallBushes(void) {
     MapGrid_CopyCellAttributes(36, 23, 1, 1, 38, 25);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    if (leader->x.fixed >> 20 == 38 && leader->z.fixed >> 20 == 25) {
+    if (FIELD_CELL(leader->x.fixed) == 38 &&
+        FIELD_CELL(leader->z.fixed) == 25) {
       Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 16, 0);
@@ -1000,7 +1001,8 @@ void GaiaRockInside_ReadSusasMind(void) {
 extern u32 gGaiaRockInside_SparkScript[];
 
 void GaiaRockInside_SpawnSpark(struct Orbiter *source) {
-  struct Actor *t0 = FieldActor_Create(0x2a0, source->x, source->y, source->z);
+  struct Actor *t0 =
+      FieldActor_Create(SPRITE_PARTICLE, source->x, source->y, source->z);
 
   t0->scaleY = 0x6666;
   t0->scaleX = 0x6666;
@@ -1949,8 +1951,8 @@ void GaiaRockInside_SetPlatformMode(u32 id, s8 mode) {
   object->acceleration = px(1) / 16;
   object->speedLimit = px(1);
   object->y.fixed = px(16);
-  object->timer = object->x.fixed >> 16;
-  object->userValue = object->z.fixed >> 16;
+  object->timer = FIELD_PIXEL(object->x.fixed);
+  object->userValue = FIELD_PIXEL(object->z.fixed);
   Actor_SetAnimation(id, mode);
 }
 
@@ -2567,8 +2569,9 @@ s32 Scene_Initialize(void) {
         struct Actor *ownerActor = Actor_GetById(*owner);
 
         if (ownerActor != NULL)
-          Actor_SetDestinationById(ACTOR_KRADEN, ownerActor->x.fixed >> 16,
-                                   ownerActor->z.fixed >> 16);
+          Actor_SetDestinationById(ACTOR_KRADEN,
+                                   FIELD_PIXEL(ownerActor->x.fixed),
+                                   FIELD_PIXEL(ownerActor->z.fixed));
       }
       Actor_WaitForMoveById(ACTOR_KRADEN);
       Actor_SetPosition(ACTOR_KRADEN, 0, 0);
@@ -3789,9 +3792,9 @@ struct ActorPlacement gGaiaRockInside_Placements[] = {
 struct ActorPlacement gGaiaRockInside_LairPlacements[] = {
     ACTOR_PLACEMENT(148, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 328, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(398, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(29, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SUSA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(323, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SLATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3807,7 +3810,7 @@ struct ActorPlacement gGaiaRockInside_FirstAltarActorPlacements[] = {
     ACTOR_PLACEMENT(388, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 688, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STUMP, CONDITION_ALWAYS, (s32)gGaiaRockInside_RockScript, 920, 0, 360, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STUMP, CONDITION_ALWAYS, (s32)gGaiaRockInside_RockScript, 952, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(385, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 496, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ALTAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 496, 0, 728, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(397, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
@@ -3815,8 +3818,8 @@ struct ActorPlacement gGaiaRockInside_FirstAltarActorPlacements[] = {
 struct ActorPlacement gGaiaRockInside_TwinAltarsActorPlacements[] = {
     ACTOR_PLACEMENT(388, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 352, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(388, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 352, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(385, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 528, 0, 384, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(385, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 672, 0, 384, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ALTAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 528, 0, 384, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ALTAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 672, 0, 384, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(397, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
@@ -3836,13 +3839,13 @@ struct ActorPlacement gGaiaRockInside_PlatformsActorPlacements[] = {
 
 struct ActorPlacement gGaiaRockInside_AltarActorPlacements[] = {
     ACTOR_PLACEMENT(388, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 400, 0, 368, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(385, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 336, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ALTAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 336, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(372, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 648, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(378, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(378, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(378, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(397, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(385, CONDITION_ALWAYS, (s32)gGaiaRockInside_IdleScript, 704, 0, 384, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ALTAR, CONDITION_ALWAYS, (s32)gGaiaRockInside_IdleScript, 704, 0, 384, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_GANGWAY, CONDITION_ALWAYS, (s32)gGaiaRockInside_IdleScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };

@@ -156,8 +156,8 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 terrain, s32 height);
 /// cell, the object's terrain and the terrain height in half cells, 4 lower or
 /// higher.
 void TundariaTower_SetColumnCell(struct Actor *object) {
-  s32 x = object->x.fixed >> 20;
-  s32 z = object->z.fixed >> 20;
+  s32 x = FIELD_CELL(object->x.fixed);
+  s32 z = FIELD_CELL(object->z.fixed);
   s32 attr0 = MapCell_GetAttributes(0, x, z);
   s32 attr2 = MapCell_GetAttributes(2, x, z);
   s32 height =
@@ -492,8 +492,9 @@ void TundariaTower_ShrinkIceColumn(s32 phase, s32 step) {
     object->scaleY = Q16_ONE;
     GameFlag_Set(object->timer);
     TundariaTower_SetColumnCell(Actor_GetById(effectWork[13]));
-    MapGrid_CopyCellPictureIndicesRect(67, 23, (object->x.fixed >> 20) + 64,
-                                       object->z.fixed >> 20, 1, 1);
+    MapGrid_CopyCellPictureIndicesRect(67, 23,
+                                       (FIELD_CELL(object->x.fixed)) + 64,
+                                       FIELD_CELL(object->z.fixed), 1, 1);
     object->z.fixed = 0;
     object->y.fixed = 0;
     object->x.fixed = 0;
@@ -541,8 +542,8 @@ void TundariaTower_LiftPillar(void) {
 
     Actor_LiftTargetBlock(gTundariaTowerLiftPillarsPillars);
     object = *(struct Actor **)((u8 *)work + 0xcbc);
-    object->timer =
-        ((object->x.fixed >> 20) << 8) | ((object->z.fixed >> 20) & 0xff);
+    object->timer = ((FIELD_CELL(object->x.fixed)) << 8) |
+                    ((FIELD_CELL(object->z.fixed)) & 0xff);
   } else if (party->next == SCENE_TUNDARIA_TOWER_BURST_BROOCH) {
     Actor_LiftTargetBlock(gTundariaTowerBurstBroochPillar);
   }
@@ -561,14 +562,14 @@ void TundariaTower_SlidePillar(s32 unused, s32 actorArg) {
   object = *(struct Actor **)(work + 0xcbc);
   Event_Start();
   Event_ResolvePendingActions(0);
-  dx = (object->x.fixed >> 20) - (object->timer >> 8);
-  dz = (object->z.fixed >> 20) - (object->timer & 0xff);
+  dx = (FIELD_CELL(object->x.fixed)) - (object->timer >> 8);
+  dz = (FIELD_CELL(object->z.fixed)) - (object->timer & 0xff);
   object->speedLimit = px(1) / 2;
-  while ((MapCell_GetAttributes(1, (object->x.fixed >> 20) + dx,
-                                (object->z.fixed >> 20) + dz) >>
+  while ((MapCell_GetAttributes(1, (FIELD_CELL(object->x.fixed)) + dx,
+                                (FIELD_CELL(object->z.fixed)) + dz) >>
           8) == 50 &&
-         (MapCell_GetAttributes(2, (object->x.fixed >> 20) + dx,
-                                (object->z.fixed >> 20) + dz) >>
+         (MapCell_GetAttributes(2, (FIELD_CELL(object->x.fixed)) + dx,
+                                (FIELD_CELL(object->z.fixed)) + dz) >>
           8) != 255) {
     Actor_SetMoveTarget(object, (dx << 20) + object->x.fixed, object->y.fixed,
                         (dz << 20) + object->z.fixed);
@@ -619,7 +620,8 @@ void TundariaTower_EndRevealIcyWall(void) {
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     MapGrid_CopyCellPictureIndicesRect(39, 100, 53, 100, 3, 3);
     MapGrid_CopyCellAttributes(43, 41, 3, 3, 53, 37);
-    if (Actor_GetById(gMainRoutineWork.leaderActorId)->z.fixed >> 20 == 38) {
+    if (FIELD_CELL(Actor_GetById(gMainRoutineWork.leaderActorId)->z.fixed) ==
+        38) {
       s16 angle = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
       s32 owner = gMainRoutineWork.leaderActorId;
 
@@ -638,7 +640,7 @@ void TundariaTower_RevealIcyWall(void) {
   if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
     MapGrid_CopyCellPictureIndicesRect(43, 100, 53, 100, 3, 3);
     MapGrid_CopyCellAttributes(43, 37, 3, 3, 53, 37);
-    if (Actor_GetById(gMainRoutineWork.leaderActorId)->z.fixed >> 20 > 38)
+    if (FIELD_CELL(Actor_GetById(gMainRoutineWork.leaderActorId)->z.fixed) > 38)
       MapCell_SetAttributes(0, 54, 37, 0x1f00);
     else
       MapCell_SetAttributes(0, 54, 39, 0x1f00);

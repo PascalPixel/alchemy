@@ -92,7 +92,6 @@ struct BattleObj;
 struct Actor;
 struct ParticleChild;
 struct PendingEvent;
-struct PlacementTable;
 struct ScaledSprite;
 struct SceneCueRule;
 struct WorldMapWork;

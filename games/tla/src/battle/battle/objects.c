@@ -70,7 +70,7 @@ void BattleUnit_BuildStatusFlags(s32 id, struct BattleObj *output) {
 /// Cycles the status icon over the slot's conditions every 80 frames, and
 /// switches at once when the shown condition ends.
 void BattleStatusIcon_Cycle(struct BattleObj *slot) {
-  struct StatusIconEntry *icon;
+  struct AnimationEntry *icon;
   struct StatusIconRecord *rec;
   struct MotionObject *owner;
   s32 anim;
@@ -121,10 +121,10 @@ void BattleStatusIcon_Cycle(struct BattleObj *slot) {
 
       if (anim >= 0 && changed != 0) {
         handle = ResourceMetadata_RegisterFar(rec, anim);
-        slot->animationEntry = (struct SpriteEntry *)handle;
+        slot->animationEntry = (struct AnimationEntry *)handle;
         if (handle == -1)
           slot->animationEntry = 0;
-        icon = (struct StatusIconEntry *)slot->animationEntry;
+        icon = (struct AnimationEntry *)slot->animationEntry;
         if (icon != 0) {
           icon->priority = 3;
           SpriteAnimation_StartFar(icon, 0);
@@ -203,7 +203,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
   struct BattleObj *battleObject;
   struct MotionObject *object;
   struct TlaSpriteRecord *record;
-  struct SpriteEntry *entry;
+  struct AnimationEntry *entry;
   struct TlaSpriteRecord **records;
   s32 spriteId;
   s32 releasedUnitId;
@@ -274,16 +274,16 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         object->records = record;
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
         entry = record->entries[0];
-        entry->palette = battleObject->palette;
+        entry->param = battleObject->palette;
         entry->priority = 1;
         if ((spriteId = battleObject->overlay) != 0) {
-          entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(record,
-                                                                     spriteId);
+          entry = (struct AnimationEntry *)ResourceMetadata_RegisterFar(
+              record, spriteId);
           entry->priority = 1;
         }
         if ((spriteId = battleObject->animation) != 0) {
-          entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(record,
-                                                                     spriteId);
+          entry = (struct AnimationEntry *)ResourceMetadata_RegisterFar(
+              record, spriteId);
           battleObject->animationEntry = entry;
           SpriteAnimation_StartFar(entry, 0);
           entry->priority = 3;
@@ -291,8 +291,8 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         if ((spriteId = battleObject->effect) != 0) {
           if (record->width == 32)
             spriteId = 687;
-          entry = (struct SpriteEntry *)ResourceMetadata_RegisterFar(record,
-                                                                     spriteId);
+          entry = (struct AnimationEntry *)ResourceMetadata_RegisterFar(
+              record, spriteId);
           battleObject->effectEntry = entry;
           entry->priority = 0;
           record->flags = 0;
@@ -319,6 +319,8 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
   }
 }
 
+/// Spawns the battle objects of the units in list, ended by 0xff, refreshing
+/// those that exist when refresh is set.
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh) {
   BattleObject_SpawnObjectsForList(list, refresh, 1);
 }
@@ -336,6 +338,8 @@ void ResetMotionRecordGroup(void *owner) {
   }
 }
 
+/// Returns a unit's battle object, through its place, or null for a unit with
+/// no place.
 static inline struct BattleObj *BattleObject_GetInline(s32 unitId) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   struct BattleObj *objects = battle->slots;
@@ -382,7 +386,7 @@ void BattleObject_UpdateSpritePriorities(void) {
           struct TlaSpriteRecord *record = GetMotionRecord(object, 0);
 
           if (record != 0) {
-            struct SpriteEntry *effect;
+            struct AnimationEntry *effect;
             s32 effectPriority = 0;
 
             if (object->y != 0)
@@ -500,6 +504,8 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
   }
 }
 
+/// Returns a unit's battle object, through its place in BattleWork.placement,
+/// or null for a unit with no place.
 static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id) {
   u8 *work = (u8 *)Ram_HeapSlots->battleWork;
   struct BattleObj *slots = ((struct BattleWork *)work)->slots;
@@ -512,6 +518,8 @@ static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id) {
   return &slots[work[id]];
 }
 
+/// Frees the enemy sprite slots a unit holds and marks its actor for release at
+/// the end of the action. Returns 0.
 s32 BattleObject_MarkForRelease(s32 objectId) {
   struct BattleObj *slot;
 
@@ -521,6 +529,7 @@ s32 BattleObject_MarkForRelease(s32 objectId) {
   return 0;
 }
 
+/// Releases the actor of every battle object marked for release.
 void BattleMotion_DestroyAllSlotObjects(void) {
   s32 no;
   s32 i;
@@ -630,6 +639,8 @@ void BattleCamera_SetDefaultView(void) {
   Iwram_TransformVector(&transfer, (s32 *)state);
 }
 
+/// Returns a unit's battle object, through its place, or null for a unit with
+/// no place.
 struct BattleObj *BattleObject_Get(s32 objectId) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   struct BattleObj *slots = work->slots;

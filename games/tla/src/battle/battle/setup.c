@@ -143,12 +143,14 @@ s32 Battle_ShiftVramTiles(void) {
   return Iwram_ClearWordsEntry((void *)0x0600028c, 20);
 }
 
+/// An HBlank handler: clears BG0's vertical scroll from the line it fires on.
 void BattleTransition_ClearBg0Vofs(void) {
   u32 zero = 0;
 
   REG_BG0VOFS = zero;
 }
 
+/// Does nothing.
 void Party_ReservedNoOp5B14(s32 value) {}
 
 /// Clears the party's battle-only states, and works their stats out again, as a

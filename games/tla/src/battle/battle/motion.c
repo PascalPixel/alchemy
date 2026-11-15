@@ -233,6 +233,8 @@ void BattleMotion_RestartLeap(s32 id) {
 #undef Actor_SetMoveTargetFar
 #undef Actor_SelectAnimationFar
 
+/// Does nothing; BattleMotion_ApplyPairMidpoint, its only caller, passes it a
+/// position and a distance.
 void BattleMotion_MidpointNoOp(void *position, s32 speed) {}
 
 /// Unused: works out the point halfway between two units and hands it to a
@@ -274,23 +276,24 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
 
   SET_POSITION(&pos, (x1 + x2) / 2, 0, (z1 + z2) / 2);
 
+  /// Does nothing; BattleMotion_ApplyPairMidpoint, its only caller, passes it a
+  /// position and a distance.
   BattleMotion_MidpointNoOp(&pos, 0x1000);
 }
 
 /// Plays the hit flash on unit id's sprite and waits ten frames. Only a
 /// single-sprite actor takes it. Nothing in the source calls it.
 void BattleMotion_PlayHitFlash(s32 slot) {
-  struct SlotEffectEntry *entry =
-      (struct SlotEffectEntry *)BattleObject_Get(slot);
-  u8 *effect;
+  struct BattleObj *battleObject = BattleObject_Get(slot);
+  struct AnimationEntry *effect;
 
-  if (entry->object != NULL) {
-    if ((entry->object->kind & 0xf) == 1) {
-      effect =
-          (u8 *)ResourceMetadata_RegisterFar(entry->object->resource, 0x29f);
+  if (battleObject->object != NULL) {
+    if ((battleObject->object->recordStorageKind & 0xf) == 1) {
+      effect = (struct AnimationEntry *)ResourceMetadata_RegisterFar(
+          battleObject->object->records, 0x29f);
       if (effect != NULL) {
         SpriteAnimation_StartFar(effect, 1);
-        effect[6] = 3;
+        effect->priority = 3;
       }
       wait(10);
     }

@@ -76,7 +76,7 @@ s32 LinkBattle_SendParty(void) {
   u8 *buffer;
   struct BattleWork *work;
   s32 j;
-  struct LinkOfferList *list;
+  struct DjinnRecoveryList *list;
   s32 size;
   s32 count;
   s32 i;
@@ -113,7 +113,7 @@ s32 LinkBattle_SendParty(void) {
   do {
     Iwram_CopyWordsEntry(buffer, Djinn_GetRecoveryTableFar(0), size);
   } while (0);
-  list = &((struct LinkOfferTable *)buffer)->list;
+  list = &((struct DjinnRecoveryTable *)buffer)->list;
   for (j = 0; j < list->count;) {
     list->entries[j].unitId = work->opponentSlots[list->entries[j].unitId];
     j++;
@@ -320,6 +320,7 @@ s32 BattleParty_AssignOpponentSlots(void) {
   }
 }
 
+/// Clears the first 16 words of the link transfer's payload.
 void Battle_ClearSerialTransferPayload(void) {
   Iwram_ClearWordsEntry(gSerialTransfer.payload, 16);
 }

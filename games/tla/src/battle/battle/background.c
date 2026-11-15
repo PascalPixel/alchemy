@@ -112,6 +112,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
   BattleTransition_BuildTilemap((void *)BG_SCREEN_BLOCK(31));
 }
 
+/// Allocates the zoomed background's scanline work.
 void BattleBackground_Init(void) {
   void *block = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SCANLINES, 0x2a0);
   struct BattlePresentationTransition *work = Ram_HeapSlots->battleBackground;
@@ -123,13 +124,14 @@ void BattleBackground_Init(void) {
   work->mode = 0;
 }
 
+/// Frees the zoomed background's scanline work.
 void BattleBackground_Free(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_SCANLINES);
 }
 
-// Loads a battle backdrop: its picture decoded into BG VRAM, its palette
-// (darkened by level steps of 1/60 when level is not negative), the tile
-// table and tilemap, and the HBlank scroll the first time.
+/// Loads a battle background: its picture decoded into BG VRAM, its palette
+/// darkened by level steps of 1/60 (none when level is negative), its tile
+/// table and tilemap, and the HBlank scroll the first time.
 void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   struct BattlePresentationTransition *view = Ram_HeapSlots->battleBackground;
   u8 *data = Resource_GetTableEntry(resource);
@@ -171,6 +173,9 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
     REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
 }
 
+/// Builds the zoomed background's next page for a zoom of scale about centerX
+/// and centerY, shifted by offsetX and offsetY, and shows it: below a zoom of 1
+/// the plane lies flat, from 1 it wraps and turns with the camera.
 void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
                            s32 scale) {
   struct BattleBackgroundView *view =
@@ -392,6 +397,7 @@ UNUSED void Battle_BrightenAllLayers(void) {
   REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN;
 }
 
+/// Returns the 16.16 product of a and b.
 s32 Battle_MulQ16(s32 a, s32 b) { return Iwram_MulQ16(a, b); }
 
 struct BattleTransitionEntry {
@@ -440,6 +446,7 @@ void Shop_InitializeWork(void);
 s32 Inn_RoomPrice(s32 innId);
 void Shop_ReleaseWork(void);
 
+/// Unused: returns value divided by 16.
 s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 
 // What Select picks: another value in the Japanese release.
@@ -690,11 +697,11 @@ extern const u8 gElementGlow_StarSizes[];
 extern const s32 gElementGlow_StarPictures[];
 extern const s32 Data_08129830[];
 
-// One frame of the star field: sixteen sparks fall in toward the centre
-// along a damped spiral and shrink as they near it; while the field is
-// young (24 frames) a spark that dies is born again on a random ring.
-// Then three rings drift outward through their four frames. The canvas
-// is marked ready for the transfer callback at the end.
+/// Steps the star field behind a summon one frame: its sparks spiral in
+/// towards the centre along a damped spiral and shrink as they near it; while
+/// the field is young (24 frames) a spark that dies is born again on a random
+/// ring. Then three rings drift outward through their four frames. The canvas
+/// is marked ready for the transfer at the end.
 void ElementGlow_UpdateStarField(void) {
   s32 j;
   s32 frame;
@@ -799,6 +806,8 @@ void ElementGlow_UpdateStarField(void) {
 
 s32 ColorBuffer_ScaleThreeQuarters(void *source, void *destination, s32 size);
 
+/// Copies the star field's canvas into BG character block 1 at three quarters
+/// of its brightness once the field marks it ready.
 s32 ElementGlow_UploadStarField(void) {
   void *source = Ram_HeapSlots->battleCanvas;
   u8 *context = Ram_HeapSlots->battleEffect;
@@ -825,10 +834,12 @@ s32 BattleEffect_LoadBlitterFar(s32 slot, s32 modeAndFlags);
 s32 BattleEffect_BuildBlitterFar(s32 slot, s32 source, s32 destination,
                                  s32 flags, s32 mode);
 
+/// Returns the x of the point at angle and radius from the origin.
 static __inline__ s32 PolarX(s32 angle, s32 radius) {
   return Iwram_MulQ16(Trig_Cos(angle), radius);
 }
 
+/// Returns the y of the point at angle and radius from the origin.
 static __inline__ s32 PolarY(s32 angle, s32 radius) {
   return Iwram_MulQ16(Trig_Sin(angle), radius);
 }
@@ -954,10 +965,10 @@ void BattleEffect_RunElementBurstFar(struct BattlePresentationWork *launch);
 void BattleEffect_StartElementStreaksFar(s32 mode);
 void BattleEffect_EndElementStreaksFar(void);
 
-// Plays a unit's element effect in one of four ways: 0, the star field
-// around the unit while the backdrop darkens over 25 frames (45 frames);
-// 1, the prepared canvas scene of the kind, centred on the unit (40
-// frames); 2, the ice fleck burst; 3, the gathering burst.
+/// Plays a unit's element glow in one of four ways, and returns when it is
+/// over: 0, the star field around the unit while the backdrop darkens over 25
+/// frames (45 frames); 1, the prepared canvas scene of the kind, centred on the
+/// unit (40 frames); 2, the ice fleck burst; 3, the gathering burst.
 void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
   struct ScreenPoint position;
   struct ScreenPoint position2;

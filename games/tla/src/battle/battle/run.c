@@ -112,6 +112,9 @@ void Battle_PlayFormChange(s32 value) {
   BattleEffect_RunFormChangeFar(&request, value);
 }
 
+/// Returns the first of the Djinn tutorial's messages: the second set's
+/// (MsgDjinnGiveTutorialB) while flag 0x175 is set, as Up held when Echo's
+/// tutorial begins sets it.
 s32 Tutorial_GetDjinnGiveMessage(void) {
   if (GameFlag_Get(0x175))
     return (s32)MsgDjinnGiveTutorialB;
@@ -179,8 +182,10 @@ s32 GameFlag_GetByte__battle(s32 flag) __asm__("GameFlag_GetByte");
 #define GameFlag_GetByte GameFlag_GetByte__battle
 void ActorSystem_InitializeFar(s32 mode);
 void Sound_LoadReverbCode(s32 preset);
-struct BattleSortedUnitEntry;
 
+/// Fights the battle against the enemy formation enemyGroup, from the opening
+/// to the end. Returns the number of enemies defeated when the party won or the
+/// link broke, BATTLE_OUTCOME_FLED or BATTLE_OUTCOME_LOST.
 s32 Battle_Run(s32 enemyGroup) {
   struct BattleCamera *camera;
   struct EncounterWork *battle;
@@ -333,8 +338,7 @@ s32 Battle_Run(s32 enemyGroup) {
     if (GameFlag_Get(FLAG_AUTO_BATTLE) == 0)
       actionCount = Battle_GatherActions(battle->actions);
     else
-      actionCount = AutoBattle_BuildActions(
-          (struct BattleSortedUnitEntry *)battle->actions);
+      actionCount = AutoBattle_BuildActions(battle->actions);
     battle->promptSlot = VramCache_AllocEntry(128);
     PartyStatus_DrawFar(battle->partyStatus);
     if (actionCount < 0)
@@ -541,6 +545,9 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
   return count;
 }
 
+/// Lists the party's reserve members, those past the fourth (none in a link
+/// battle), into owners when it is not null, puts each on the party's side and
+/// returns how many there are.
 s32 BattleParty_PrepareReserveOwners(u16 *owners) {
   s32 count;
   s32 index;

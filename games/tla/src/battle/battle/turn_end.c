@@ -5,6 +5,7 @@
 
 #include "../battle_internal.h"
 #include "sounds.h"
+#include "djinn_ids.h"
 #include "gamepak/far_call/game.h"
 #include "module/battle/presentation.h"
 #include "module/battle/presentation.h"
@@ -46,6 +47,8 @@ s32 BattleUnit_CountDownAttackStage(s32 unitId) {
   return 0;
 }
 
+/// Counts down a Defense change and returns 1 when it ends; a lowered Defense
+/// may recover early.
 s32 BattleUnit_CountDownDefenseStage(s32 unitId) {
   struct BattleUnit *state = Unit_Get(unitId);
 
@@ -65,6 +68,8 @@ s32 BattleUnit_CountDownDefenseStage(s32 unitId) {
   return 0;
 }
 
+/// Counts down a Resistance change and returns 1 when it ends; a lowered
+/// Resistance may recover early.
 s32 BattleUnit_CountDownResistanceStage(s32 unitId) {
   struct BattleUnit *state = Unit_Get(unitId);
 
@@ -85,6 +90,7 @@ s32 BattleUnit_CountDownResistanceStage(s32 unitId) {
   return 0;
 }
 
+/// Counts down delusion and returns 1 when it ends, early or not.
 s32 BattleUnit_CountDownDelusion(s32 unitId) {
   struct BattleUnit *state = Unit_Get(unitId);
   if (state->delusion != 0) {
@@ -99,6 +105,7 @@ s32 BattleUnit_CountDownDelusion(s32 unitId) {
   return 0;
 }
 
+/// Counts down confusion and returns 1 when it ends, early or not.
 s32 BattleUnit_CountDownConfusion(s32 unitId) {
   struct BattleUnit *state = Unit_Get(unitId);
   if ((u8)state->confusion != 0) {
@@ -113,6 +120,7 @@ s32 BattleUnit_CountDownConfusion(s32 unitId) {
   return 0;
 }
 
+/// Counts down charm and returns 1 when it ends, early or not.
 s32 BattleUnit_CountDownCharm(s32 unitId) {
   struct BattleUnit *state = Unit_Get(unitId);
   if (state->charm != 0) {
@@ -127,6 +135,7 @@ s32 BattleUnit_CountDownCharm(s32 unitId) {
   return 0;
 }
 
+/// Counts down a stun and returns 1 when it ends, early or not.
 s32 BattleUnit_CountDownStun(s32 unitId) {
   struct BattleUnit *state = Unit_Get(unitId);
   if (state->stun != 0) {
@@ -141,6 +150,7 @@ s32 BattleUnit_CountDownStun(s32 unitId) {
   return 0;
 }
 
+/// Counts down sleep and returns 1 when it ends, early or not.
 s32 BattleUnit_CountDownSleep(s32 unitId) {
   struct BattleUnit *state = Unit_Get(unitId);
   if (state->sleep != 0) {
@@ -193,6 +203,9 @@ s32 BattleUnit_CountDownPsynergySeal(s32 id) {
   return expired;
 }
 
+/// While Regenerate lasts, heals the unit by a tenth of its max HP for each
+/// turn it has left and one more, shown in playback; then counts it down and
+/// returns 1 when it runs out.
 s32 BattleUnit_CountDownRegenerate(s32 id) {
   struct BattleUnit *unit = Unit_Get(id);
   u8 *count = &unit->regenerate;
@@ -212,16 +225,16 @@ s32 BattleUnit_CountDownRegenerate(s32 id) {
       hp = max;
     gain = hp - before;
     if (gain != 0) {
-      BattlePlayback_Push(0, id);
+      BattlePlayback_Push(PLAYBACK_UNIT_NAME, id);
       if (hp == unit->hpMax) {
-        BattlePlayback_Push(4, (u32)&MsgHpFull);
+        BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgHpFull);
       } else {
         {
-          u32 opcode = 1;
+          u32 opcode = PLAYBACK_NUMBER;
 
           BattlePlayback_Push(opcode, gain);
         }
-        BattlePlayback_Push(4, (u32)&MsgHpRecover);
+        BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgHpRecover);
       }
       unit->hp = hp;
       Unit_RecalculateGaugesFar(id);
@@ -233,6 +246,7 @@ s32 BattleUnit_CountDownRegenerate(s32 id) {
   return 0;
 }
 
+/// Counts down Reflect and returns 1 when it runs out; it never ends early.
 s32 BattleUnit_CountDownReflect(s32 id) {
   u8 *value = (u8 *)&((struct BattleUnit *)Unit_Get(id))->reflect;
   if (*value != 0) {
@@ -262,7 +276,7 @@ s32 BattleUnit_CountDownAgilityStage(s32 id) {
 /// Brings the party's recovering Djinn one turn nearer, setting each that is
 /// ready, and returns 1 when any was set.
 s32 DjinnRecovery_CountDown(void) {
-  struct PlacementList *list;
+  struct DjinnRecoveryList *list;
   struct DjinnRecoveryEntry *timedEntry;
   struct DjinnRecoveryEntry *expiredEntry;
   s32 index;
@@ -326,7 +340,7 @@ void Battle_TurnEndNoOp(void) {}
 /// "... is set to ...!" Returns 1 when a count fell, 2 when one was Set, else
 /// 0.
 s32 DjinnRecovery_CountDownSide(s32 side) {
-  struct PlacementList *list;
+  struct DjinnRecoveryList *list;
   struct DjinnRecoveryEntry *timedEntry;
   struct DjinnRecoveryEntry *entry;
   s32 result = 0;
@@ -362,12 +376,14 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
           result = 2;
           BattlePlayback_Reset();
           BattlePlayback_SchedulePhase(30);
-          BattlePlayback_Push(0, id);
-          BattlePlayback_Push(3, entry->element * 20 + entry->index + 300);
-          BattlePlayback_Push(14, 175);
-          BattlePlayback_Push(10, 0);
-          BattlePlayback_Push(4, (u32)&MsgDjinnIsSet);
-          BattlePlayback_Push(11, id);
+          BattlePlayback_Push(PLAYBACK_UNIT_NAME, id);
+          BattlePlayback_Push(PLAYBACK_ABILITY_NAME,
+                              entry->element * DJINN_PER_ELEMENT +
+                                  entry->index + ABILITY_FLINT);
+          BattlePlayback_Push(PLAYBACK_SOUND, SE_NOTE_HIGH);
+          BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
+          BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgDjinnIsSet);
+          BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, id);
           if (BattleUnit_IsListed(id)) {
             Actor_SelectAnimationFar(
                 (struct Actor *)BattleObject_Get(id)->object, 3);
@@ -439,20 +455,23 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
     BattleMessage_WaitForAdvance();                                            \
   }
 
+/// Ends a turn: counts down the recovering Djinn and sets those recovered, then
+/// gives each unit its regeneration and counts down its stat changes and
+/// statuses, showing each that ends.
 void Battle_ProcessTurnEnd(void) {
   struct BattleWork *battle;
   s32 side;
   s32 sideCount;
   s32 count;
   s32 recoveryIndex;
-  struct TurnEndList *list;
+  struct DjinnRecoveryList *list;
   struct DjinnRecoveryEntry *timedEntry;
   struct DjinnRecoveryEntry *expiredEntry;
 
   battle = Ram_HeapSlots->battleWork;
   sideCount = (battle->isLink != 0) + 1;
   for (side = 0; side < sideCount; side++) {
-    list = &((struct TurnEndTable *)Djinn_GetRecoveryTableFar(side))->list;
+    list = &Djinn_GetRecoveryTableFar(side)->list;
     recoveryIndex = 0;
     timedEntry = list->entries;
     if (recoveryIndex < list->count) {
@@ -477,13 +496,14 @@ void Battle_ProcessTurnEnd(void) {
           if (BattleObject_Get(unitId) != 0) {
             BattlePlayback_Reset();
             BattlePlayback_SchedulePhase(30);
-            BattlePlayback_Push(0, unitId);
-            BattlePlayback_Push(3, expiredEntry->element * 20 +
-                                       expiredEntry->index + 300);
-            BattlePlayback_Push(14, 175);
-            BattlePlayback_Push(10, 0);
-            BattlePlayback_Push(4, (u32)&MsgDjinnIsSet);
-            BattlePlayback_Push(11, unitId);
+            BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
+            BattlePlayback_Push(PLAYBACK_ABILITY_NAME,
+                                expiredEntry->element * DJINN_PER_ELEMENT +
+                                    expiredEntry->index + ABILITY_FLINT);
+            BattlePlayback_Push(PLAYBACK_SOUND, SE_NOTE_HIGH);
+            BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
+            BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgDjinnIsSet);
+            BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
             Sound_PlayFar(SE_POWER_UP);
             if (BattleUnit_IsListed(unitId)) {
               Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, 3);
@@ -596,7 +616,12 @@ void Battle_ProcessTurnEnd(void) {
   }
 }
 
-void Battle_ApplyActionExtras(s32 unitId, s32 all, s32 announce) {
+/// Djinnfest, Fugue, Djinn Blast, Djinn Storm and Djinn Stun: puts one of the
+/// unit's set Djinn at random on standby (every one, when all is set), or, when
+/// none is set, drains one that could be set so it must recover. Djinn Stun's
+/// announce shows MsgDjinnOnStandby; the others show MsgDjinnDrained or
+/// MsgAllDjinnDrained.
+void BattleUnit_DrainDjinn(s32 unitId, s32 all, s32 announce) {
   u8 elements[10];
   u8 indices[10];
   s32 shown;
@@ -607,8 +632,8 @@ void Battle_ApplyActionExtras(s32 unitId, s32 all, s32 announce) {
   s32 i;
   s32 owner;
   s32 recoveryTurn;
-  struct PlacementList *list;
-  struct PlacementList *pending;
+  struct DjinnRecoveryList *list;
+  struct DjinnRecoveryList *pending;
 
   shown = 0;
 again:
@@ -651,9 +676,10 @@ again:
       DjinnRecovery_AddStandbyFar(unitId, element, djinni);
       Djinn_PutOnStandbyFar(unitId, element, djinni);
       if (announce) {
-        BattlePlayback_Push(0, unitId);
-        BattlePlayback_Push(3, element * 20 + djinni + 300);
-        BattlePlayback_Push(4, (u32)&MsgDjinnOnStandby);
+        BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
+        BattlePlayback_Push(PLAYBACK_ABILITY_NAME, element * DJINN_PER_ELEMENT +
+                                                       djinni + ABILITY_FLINT);
+        BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgDjinnOnStandby);
         return;
       }
     } else if (announce) {
@@ -698,17 +724,18 @@ again:
 
     if (!shown) {
       shown = 1;
-      BattlePlayback_Push(0, unitId);
+      BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
       if (!all) {
         s32 message;
 
-        BattlePlayback_Push(3, element * 20 + djinni + 300);
+        BattlePlayback_Push(PLAYBACK_ABILITY_NAME, element * DJINN_PER_ELEMENT +
+                                                       djinni + ABILITY_FLINT);
         message = (u32)&MsgDjinnDrained;
         if (unitId < 0 || unitId > ALLY_MAX)
           message++;
-        BattlePlayback_Push(4, message);
+        BattlePlayback_Push(PLAYBACK_MESSAGE, message);
       } else {
-        BattlePlayback_Push(4, (u32)&MsgAllDjinnDrained);
+        BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgAllDjinnDrained);
       }
     }
     if (all)
@@ -716,12 +743,15 @@ again:
   }
 }
 
+/// Ends one unit's action: its Djinn on standby are taken off its set, the
+/// Djinn a summon used begin to recover, and the unit takes its summon's power
+/// boost, the haunt's damage, poison and the Grim Reaper.
 void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
   u32 unitId;
   struct BattleUnit *unit;
   s32 battleContinues;
   s32 counts[4];
-  struct PlacementList *list;
+  struct DjinnRecoveryList *list;
   s32 strongestElement;
   s32 recoveryTurn;
 
@@ -746,7 +776,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
   {
     s32 i;
     s32 owner;
-    struct PlacementList *pending;
+    struct DjinnRecoveryList *pending;
 
     pending =
         &Djinn_GetRecoveryTableFar(

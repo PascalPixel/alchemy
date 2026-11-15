@@ -414,8 +414,8 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
     wait(2);
     wait(4);
     wait(10);
-    BattlePlayback_Push(0, plan->targetIds[0]);
-    BattlePlayback_Push(4, (u32)&MsgNimblyDodgesBlow);
+    BattlePlayback_Push(PLAYBACK_UNIT_NAME, plan->targetIds[0]);
+    BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgNimblyDodgesBlow);
     BattlePlayback_RunAll();
     BattleMotion_ReturnToSpot(work.actors[0]);
   } else {
@@ -592,8 +592,9 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
     }
   } else if (itemDefinition->useType == 2) {
     if ((Battle_RandomFar() & 7) == 0) {
-      BattlePlayback_Push(2, unit->inventory[selection->parameter]);
-      BattlePlayback_Push(4, (u32)&MsgItemBroke);
+      BattlePlayback_Push(PLAYBACK_ITEM_NAME,
+                          unit->inventory[selection->parameter]);
+      BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgItemBroke);
       Inventory_BreakFar(selection->unitId, selection->parameter);
       BattlePlayback_RunAll();
     }
@@ -719,10 +720,10 @@ s32 BattleStaging_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   }
   if (plan->failure != 0) {
     if (plan->failure == 1) {
-      BattlePlayback_Push(0, plan->unitId);
-      BattlePlayback_Push(4, (u32)&MsgPsynergyBlocked);
+      BattlePlayback_Push(PLAYBACK_UNIT_NAME, plan->unitId);
+      BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgPsynergyBlocked);
     } else {
-      BattlePlayback_Push(4, (u32)&MsgCastLacksPp);
+      BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgCastLacksPp);
     }
     BattlePlayback_RunAll();
     BattleBackground_RestorePalette();

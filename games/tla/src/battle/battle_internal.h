@@ -280,26 +280,22 @@ void Sprite_RemoveAnimationFar(void *state, s32 handle);
 #include "battle_type.h"
 #include "field/sprite.h"
 
-struct BattleSortedUnitEntry {
-  u16 unitId;
-  u16 unk02;
-  s16 value;
-  s16 width;
-  s16 mode;
-  s16 priority;
-  u8 unk0c[4];
-};
-
+/// A unit's sprite as BattleMotion_PlayFall reads it: its first animation.
 struct BattleObjectAnimation {
   u8 unk00[0x28];
   struct AnimationEntry *entry;
 };
 
+/// A unit's HP and PP as ScriptedBattle_SaveUnits keeps them.
 struct SnapshotVitals {
   u16 hp;
   u16 pp;
 };
 
+/// What ScriptedBattle_SaveUnits keeps of the five units of the scripted
+/// battles between them: whether each was listed, the first three's summon
+/// boosts, and the last two's HP and PP. The statuses between them are
+/// SnapshotCopy's.
 struct Snapshot {
   u8 listed[8];
   u8 tags[3][4];
@@ -307,6 +303,8 @@ struct Snapshot {
   struct SnapshotVitals vitals[5];
 };
 
+/// A unit as the scripted battles' snapshot reads it: its HP and PP, its summon
+/// boosts, and the 25 status bytes from its curse to its challenge.
 struct SnapshotUnit {
   u8 unk00[0x38];
   s16 hp;
@@ -316,10 +314,14 @@ struct SnapshotUnit {
   u8 snapshot[25];
 };
 
+/// A unit's 25 status bytes, from its curse to its challenge, kept between the
+/// scripted battles.
 struct SnapshotCopy {
   u8 bytes[25];
 };
 
+/// A row of the debug parameter sets: a party member, its level, its Djinn of
+/// each element, its equipped items and two Psynergy it learns.
 struct DebugPartyEntry {
   s8 owner;
   u8 level;
@@ -329,37 +331,14 @@ struct DebugPartyEntry {
   u16 unk16;
 };
 
-struct LinkOfferEntry {
-  u8 unk00[2];
-  u8 unitId;
-  u8 unk03;
-};
-
-struct LinkOfferList {
-  struct LinkOfferEntry entries[72];
-  s32 count;
-};
-
-struct LinkOfferTable {
-  u8 unk00[8];
-  struct LinkOfferList list;
-};
-
-struct SlotEffectObject {
-  u8 unk00[0x50];
-  void *resource;
-  u8 kind;
-};
-
-struct SlotEffectEntry {
-  struct SlotEffectObject *object;
-};
-
+/// A unit's sprite as BattleMotion reads it: its scale.
 struct SlotMotionRecord {
   u8 unk00[12];
   s32 height;
 };
 
+/// A unit's sprite as the status icon reads it: its width, which picks the icon
+/// set, and the flag that redraws it.
 struct StatusIconRecord {
   u8 unk00[0x14];
   u8 width;
@@ -367,11 +346,8 @@ struct StatusIconRecord {
   u8 dirty;
 };
 
-struct StatusIconEntry {
-  u8 unk00[6];
-  u8 priority;
-};
-
+/// A unit's sprite as BattleObject_Make builds it: its image, scale, width,
+/// redraw flag and outline flags, and its animations.
 struct TlaSpriteRecord {
   struct AnimationSpritePart image;
   s32 scale;
@@ -381,19 +357,23 @@ struct TlaSpriteRecord {
   u8 dirty;
   u8 flags;
   u8 unk1b[13];
-  struct SpriteEntry *entries[1];
+  struct AnimationEntry *entries[1];
 };
 
+/// A sprite as ResetMotionRecordGroup reads it: its four animations.
 struct AnimationEntryGroup {
   u8 unk00[0x28];
   struct AnimationEntry *entries[4];
 };
 
+/// A unit's sprite as the battle reads its scale.
 struct MotionRecordScale {
   u8 unk00[0xc];
   s32 scale;
 };
 
+/// The form change effect's command, as Battle_PlayFormChange fills it for
+/// enemy 128.
 struct BattleFxRequest {
   s32 field00;
   s32 field04;
@@ -412,25 +392,9 @@ struct Layout {
   s16 field[6];
 };
 
-struct ActionTargets {
-  u8 actorId;
-  u8 count;
-  u8 unk02;
-  u8 ids[14];
-  u8 stateA[14];
-  u8 stateB[14];
-  u8 stateC[14];
-  u8 stateD[14];
-  u16 value4a;
-  s32 abilityId;
-  s32 value50;
-  s32 value54;
-  s32 presentationFlags;
-  s32 unk5c;
-  s32 extra;
-  s32 unk64;
-};
-
+/// The battle work past BattleWork's members, as the staging reads it: the
+/// backdrop's brightness and background, the plan of the action being played,
+/// the flag that skips its playback, and how the acting unit is shown.
 struct DispatchBattleWork {
   u8 unk000[0x66c];
   s32 brightness;
@@ -444,12 +408,8 @@ struct DispatchBattleWork {
   u8 actorMode;
 };
 
-struct EscapeTransition {
-  s32 targetYaw;
-  s32 unk04[3];
-  s32 active;
-};
-
+/// The packet the two consoles exchange each turn of a link battle: how many
+/// actions follow, a random check, and the random seed both sides then use.
 struct BattleLinkedActionState {
   s32 count;
   s32 check;
@@ -560,14 +520,20 @@ enum BattleCastKind {
 #define EFFECT_SUMMON 0x8000 ///< BattleEffect_RunSummonFar, acting unit's view
 #define EFFECT_ON_DOWNED 0x10000 ///< shown on downed targets too (revivals)
 
+/// The scripted battles' snapshot (ScriptedBattle_SaveUnits).
 extern struct Snapshot Data_0200ff58;
 
+/// The five units' status bytes within the snapshot.
 extern struct SnapshotCopy Data_0200ff6c[];
 
+/// The last two units' HP and PP within the snapshot.
 extern struct SnapshotVitals Data_0200ffec[];
 
+/// The five units the scripted battles of formations 74 to 76 carry over:
+/// Felix, Piers and Jenna, and the first two enemies.
 extern u8 gScriptedBattle_Units[];
 
+/// The debug parameter sets DebugParameterSet_Load loads, a party member a row.
 extern struct DebugPartyEntry gDebug_ParameterSets[];
 
 // A knocked-back unit's motion by variant (BattleMotion_Knockback), as The
@@ -581,18 +547,19 @@ extern const s32 gBattleKnockback_VelocityY[]; ///< upward velocity
 extern const s32 gBattleKnockback_DistancePercent[]; ///< distance, in percent
                                                      ///< of the anchor's x
 
+/// The tilt the battle camera adds while commands are chosen
+/// (BattleCamera_ApplyTransform).
 extern const s32 gBattleCamera_CommandMatrix[];
 
+/// The script a battle object starts with: none.
 extern const s32 gBattleObject_EmptyScript[];
 
+/// The order enemies of a fixed formation take from the centre out: 0, -1, 1,
+/// -2, 2 and on.
 extern const s8 gBattleParty_CenterOrderOffsets[];
 
-extern const u16 gData_081287d4[];
-
-extern const u16 gData_081287e2[];
-
-extern const u16 gData_081287f0[];
-
+/// Each character's battle sprite for each weapon kind
+/// (BattleUnit_GetWeaponSprite).
 extern const u16 gBattleUnit_WeaponAnimationsIsaac[];
 
 extern const u16 gBattleUnit_WeaponAnimationsGaret[];
@@ -603,7 +570,11 @@ extern const u16 gBattleUnit_WeaponAnimationsMia[];
 
 extern const u16 gBattleUnit_WeaponAnimationsJenna[];
 
-extern struct BattlePresentationTransition *gTransitionWork;
+extern const u16 gBattleUnit_WeaponAnimationsFelix[];
+
+extern const u16 gBattleUnit_WeaponAnimationsSheba[];
+
+extern const u16 gBattleUnit_WeaponAnimationsPiers[];
 
 u32 BattleSprite_GetAttackHop(u32 index);
 u32 BattleSprite_GetEffectHeight(u32 index);

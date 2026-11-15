@@ -551,6 +551,7 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   return 1;
 }
 
+/// Waits until the battle message has typed out, then marks it done.
 void BattleMessage_WaitForTyping(void) {
   while (!Message_AllTypedFar())
     wait(1);
@@ -575,6 +576,7 @@ s32 BattleObject_DestroyTemporaryObject(s32 arg0) {
   }
 }
 
+/// Grants the Djinn bonus for the rest of the action.
 void BattlePlayback_GrantDjinnBonus(struct BattleEventFlagWork *runtime,
                                     u32 operand) {
   runtime->flags |= 1;
@@ -958,11 +960,11 @@ power_end:
 
   // Abilities that knock the target's Djinn to standby.
   if (abilityId == ABILITY_DJINNFEST || abilityId == ABILITY_FUGUE)
-    Battle_ApplyActionExtras(targetId, 0, 0);
+    BattleUnit_DrainDjinn(targetId, 0, 0);
   if (abilityId == ABILITY_DJINN_BLAST || abilityId == ABILITY_DJINN_STORM)
-    Battle_ApplyActionExtras(targetId, 1, 0);
+    BattleUnit_DrainDjinn(targetId, 1, 0);
   if (abilityId == ABILITY_DJINN_STUN)
-    Battle_ApplyActionExtras(targetId, 1, 1);
+    BattleUnit_DrainDjinn(targetId, 1, 1);
 
   // Whether the effect lands: a roll made when the action was built, or
   // one made now, less likely the farther the target is.
@@ -2630,6 +2632,8 @@ done:
   return 0;
 }
 
+/// Unused: makes three empty DMA3 transfers after a multiplication whose result
+/// it drops.
 void Dma_StopAllThenRunHook(void) {
   Math_UnsignedMulHigh(5, 0);
   Dma_Set(0, 0, DMA_COPY_WORDS(0), REG_DMA3);

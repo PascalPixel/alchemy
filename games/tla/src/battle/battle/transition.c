@@ -208,6 +208,7 @@ void BattleTransition_DrawRows(void) {
   }
 }
 
+/// An HBlank handler: clears BG0's vertical scroll from the line it fires on.
 void BattleTransition_ResetBg0Scroll(void) {
   u32 zero = 0;
 
@@ -216,6 +217,10 @@ void BattleTransition_ResetBg0Scroll(void) {
 
 #define DMA3 ((volatile u32 *)0x040000d4)
 
+/// Opens the battle against formation kind with arg enemies: the curtain
+/// opening, then each enemy announced (formations 74 to 76 and 638 wait a
+/// second instead); for formations 78 to 80 the shattering opening over the
+/// Serpent's stars.
 void BattleTransition_Run(s32 arg, s32 kind) {
   struct BattlePresentationWork work;
   u16 owners[14];

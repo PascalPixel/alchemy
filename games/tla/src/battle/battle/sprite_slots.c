@@ -27,6 +27,7 @@ void BattleUnit_ListAllAndSubmit(void) {
   BattleActor_SpawnObjectsForList(list, 0);
 }
 
+/// Returns the palette of a unit's battle object.
 s32 BattleMotion_GetSlotPalette(s32 id) {
   return BattleObject_Get(id)->palette;
 }
@@ -153,10 +154,11 @@ s32 BattleUnit_GetWeaponKind(s32 key) {
   return result;
 }
 
-/// The value of the owner's equipped weapon from its class's table, or 0.
+/// Returns the battle sprite of a character holding its equipped weapon, from
+/// that character's table by the weapon's kind, or 0 with no weapon.
 s32 BattleUnit_GetWeaponSprite(s32 owner) {
-  struct OwnerInventoryState *unit = Unit_Get(owner);
-  s32 slot = Inventory_FindEquippedFar(owner, 1);
+  struct BattleUnit *unit = Unit_Get(owner);
+  s32 slot = Inventory_FindEquippedFar(owner, EQUIP_WEAPON);
   s32 result = 0;
 
   if (slot >= 0) {
@@ -164,30 +166,30 @@ s32 BattleUnit_GetWeaponSprite(s32 owner) {
 
     index = BattleUnit_GetWeaponKind(unit->inventory[slot] &
                                      INVENTORY_ITEM_ID_MASK);
-    switch (unit->classId) {
+    switch (unit->enemyId) {
     case ISAAC:
-      result = gData_081287d4[index];
-      break;
-    case GARET:
-      result = gData_081287e2[index];
-      break;
-    case IVAN:
-      result = gData_081287f0[index];
-      break;
-    case MIA:
       result = gBattleUnit_WeaponAnimationsIsaac[index];
       break;
-    case JENNA:
+    case GARET:
       result = gBattleUnit_WeaponAnimationsGaret[index];
       break;
-    case FELIX:
+    case IVAN:
       result = gBattleUnit_WeaponAnimationsIvan[index];
       break;
-    case SHEBA:
+    case MIA:
       result = gBattleUnit_WeaponAnimationsMia[index];
       break;
-    case PIERS:
+    case JENNA:
       result = gBattleUnit_WeaponAnimationsJenna[index];
+      break;
+    case FELIX:
+      result = gBattleUnit_WeaponAnimationsFelix[index];
+      break;
+    case SHEBA:
+      result = gBattleUnit_WeaponAnimationsSheba[index];
+      break;
+    case PIERS:
+      result = gBattleUnit_WeaponAnimationsPiers[index];
       break;
     }
   }

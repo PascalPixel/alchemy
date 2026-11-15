@@ -39,7 +39,7 @@ u32 BattleUnit_IsListed(u32 unitId) {
 /// counts when it is not null.
 s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   u16 unitIds[8];
-  struct PlacementList *list;
+  struct DjinnRecoveryList *list;
   s32 unitCount;
   s32 standbyCount;
   s32 recoveryIndex;
@@ -91,6 +91,9 @@ s32 Battle_GetUnitAtPlace__presentation(s32 tag) __asm__(
     "Battle_GetUnitAtPlace");
 #define Battle_GetUnitAtPlace Battle_GetUnitAtPlace__presentation
 
+/// Announces the action and builds it for its targets, paying its PP or Djinn.
+/// Returns 0 to stage it, ACTION_REPORTED when it failed with its message
+/// shown, or ACTION_NOTHING_TO_SHOW.
 s32 BattleActionRun_Build(struct BattleActionRecord *request,
                           struct BattlePlan *plan) {
   struct BattleUnit *actor = Unit_Get(request->unitId);

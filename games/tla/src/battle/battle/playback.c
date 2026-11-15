@@ -10,6 +10,8 @@
 #include "gamepak/far_call/field.h"
 #include "module/window/screens.h"
 
+/// Starts playback of the action's targets when the effect's blow lands, with
+/// cue as the hit's sound (0 keeps the one set); later calls change nothing.
 void BattlePlayback_Start(s32 cue) {
   struct BattleEventState *ev;
 
@@ -23,6 +25,8 @@ void BattlePlayback_Start(s32 cue) {
   }
 }
 
+/// Empties the playback queue and plays the commands queued next, after frames
+/// frames, with no targets to resolve.
 s32 BattlePlayback_SchedulePhase(s32 frames) {
   struct BattleWork *work;
   struct BattleEventState *ev;
@@ -392,6 +396,7 @@ void BattlePlayback_Run(void) {
   }
 }
 
+/// Stops playback and empties the playback queue.
 u32 BattlePlayback_Reset(void) {
   struct BattleEventState *events;
   struct BattleWork *work;

@@ -114,6 +114,8 @@ s32 BattleFlee_CheckSuccess(void) {
   return escaped;
 }
 
+/// Builds the party's commands for the turn into entries and returns how many
+/// there are, or -1 when none could be chosen.
 s32 Battle_BuildUnitActions(struct BattleActionRecord *entries) {
   void *buffer = Heap_AllocEwram(17);
   s32 count = Battle_CollectPartyCommandsFar(entries, buffer, 0);
@@ -125,6 +127,8 @@ s32 Battle_BuildUnitActions(struct BattleActionRecord *entries) {
   return result;
 }
 
+/// The enemies' actions for the turn, in a shuffled order; none act when the
+/// party struck first. Returns how many there are.
 s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
   u16 unitIds[14];
   s32 entryCount = 0;
@@ -208,6 +212,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
   return entryCount;
 }
 
+/// Swaps two actions of the turn's order.
 static inline void BattleAction_Swap(struct BattleActionRecord *a,
                                      struct BattleActionRecord *b) {
   struct BattleActionRecord temporary;

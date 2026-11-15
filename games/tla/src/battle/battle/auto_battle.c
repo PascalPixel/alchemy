@@ -11,55 +11,60 @@
 
 /// Auto battle: gives every living unit a plain attack and sorts them into
 /// action order. Returns how many actions there are.
-s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries) {
-  struct BattleSortedUnitEntry swap;
-  u16 unitIds[14];
-  s32 firstCount;
+s32 AutoBattle_BuildActions(struct BattleActionRecord *entries) {
+  struct BattleActionRecord swap;
+  u16 unitIds[UNIT_MAX];
+  s32 partyCount;
   s32 count = 0;
-  s32 secondCount;
-  s32 priorityRange;
+  s32 enemyCount;
+  s32 targetRange;
   s32 index;
-  struct BattleSortedUnitEntry *entry;
+  struct BattleActionRecord *entry;
   struct BattleUnit *unit;
 
-  firstCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
-  for (index = 0; index != 4; index++)
+  // The party's actions. The four lookups' results are never used.
+  partyCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
+  for (index = 0; index != PARTY_BATTLE_SIZE; index++)
     Unit_Get(index);
-  for (index = 0; index < firstCount; index++) {
+  for (index = 0; index < partyCount; index++) {
     s32 unitId = unitIds[index];
 
     unit = Unit_Get(unitId);
     entry = &entries[index];
     entry->unitId = unitId;
-    entry->value = unit->agi;
-    entry->width = 0;
-    entry->mode = 0;
-    entry->priority = 0x80;
+    entry->priority = unit->agi;
+    entry->command = COMMAND_ATTACK;
+    entry->parameter = 0;
+    entry->target = FIRST_ENEMY_UNIT;
     count++;
   }
-  secondCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, unitIds);
-  entry = &entries[firstCount];
-  priorityRange = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, NULL);
-  for (index = 0; index < secondCount; index++) {
+  // The enemies attack a random party member, replaced when the action plays if
+  // it is down.
+  enemyCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, unitIds);
+  entry = &entries[partyCount];
+  targetRange = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, NULL);
+  for (index = 0; index < enemyCount; index++) {
     s32 unitId = unitIds[index];
 
     unit = Unit_Get(unitId);
     entry->unitId = unitId;
-    entry->value = unit->agi >> 1;
-    if (entry->value != 0)
-      entry->value += (u32)(Random16() * unit->agi) >> 16;
-    entry->width = 0;
-    entry->mode = 0;
-    entry->priority = (u32)(Random16() * priorityRange) >> 16;
+    entry->priority = unit->agi >> 1;
+    if (entry->priority != 0)
+      entry->priority += (u32)(Random16() * unit->agi) >> 16;
+    entry->command = COMMAND_ATTACK;
+    entry->parameter = 0;
+    entry->target = (u32)(Random16() * targetRange) >> 16;
     count++;
     entry++;
   }
+  // Bubble the faster units forward.
+  // BUG: one pass short of a full sort; with two actions nothing is sorted.
   for (index = count - 2; index > 0; index--) {
     s32 swaps = 0;
     s32 pos;
 
     for (pos = count - 1; pos > 0; pos--) {
-      if (entries[pos].value > entries[pos - 1].value) {
+      if ((s16)entries[pos].priority > (s16)entries[pos - 1].priority) {
         Dma_Set(&entries[pos], &swap, DMA_COPY_WORDS(4), REG_DMA3);
         Dma_Set(&entries[pos - 1], &entries[pos], DMA_COPY_WORDS(4), REG_DMA3);
         Dma_Set(&swap, &entries[pos - 1], DMA_COPY_WORDS(4), REG_DMA3);
@@ -72,15 +77,18 @@ s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries) {
   return count;
 }
 
+/// Turns the battle camera while L or R is held, a 128th of a turn each
+/// frame, and redraws the zoomed background unless a transition
+/// holds it.
 void BattleCamera_AdjustByShoulderKeys(void) {
   struct BattleCamera *cam = Ram_HeapSlots->cameraWork;
   struct BattlePresentationTransition *trans = Ram_HeapSlots->battleBackground;
 
   if ((gInput.held & KEY_L) != 0) {
-    cam->yaw += 512;
+    cam->yaw += TRIG_TURN / 128;
   }
   if ((gInput.held & KEY_R) != 0) {
-    cam->yaw -= 512;
+    cam->yaw -= TRIG_TURN / 128;
   }
   if (trans->flag == 0) {
     BattleCamera_SetRange(px(120), px(120), 0, 0, Q16_ONE);

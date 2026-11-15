@@ -11,7 +11,7 @@
 struct BattleActionRecord;
 struct BattlePlan;
 struct BattlePresentationWork;
-struct BattleSortedUnitEntry;
+struct BattleActionRecord;
 
 struct CastAnimationEntry {
   u8 unk00[5];
@@ -39,7 +39,7 @@ s32 BattleUnit_ListLivingIds(s32 groups, u16 *dst);
 void BattleObject_UpdateSpritePriorities(void);
 void Battle_TurnStartNoOp(void);
 s32 Battle_GatherActions(struct BattleActionRecord *actions);
-s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries);
+s32 AutoBattle_BuildActions(struct BattleActionRecord *entries);
 s32 BattleStaging_DispatchAction(struct BattleActionRecord *action, s32 delay);
 s32 AutoBattle_RunAction(struct BattleActionRecord *action);
 s32 Battle_FindUnitPlace(u32 id);

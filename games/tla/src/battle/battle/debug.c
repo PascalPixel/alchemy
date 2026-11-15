@@ -19,9 +19,9 @@ UNUSED void DebugBattle_RunForever(void) {
 }
 
 /// After the scripted battles of enemy groups 74 and 75, snapshots the five
-/// units of gScriptedBattle_Units that fought (units 4, 7 and 5, and enemies
-/// 128 and 129) for ScriptedBattle_RestoreUnits to bring back when groups 75
-/// and 76 begin.
+/// units of gScriptedBattle_Units that fought (Felix, Piers and Jenna, and
+/// enemies 128 and 129) for ScriptedBattle_RestoreUnits to bring back when
+/// groups 75 and 76 begin.
 void ScriptedBattle_SaveUnits(void) {
   s32 j;
   struct Snapshot *snap = &Data_0200ff58;
@@ -142,6 +142,9 @@ void ScriptedBattle_RestoreUnits(void) {
 
 void Unit_UpdateClassFar(s32 owner);
 
+/// Debug: replaces the party with parameter set number preset, each member at
+/// its level with its Djinn, abilities and equipped items. Returns 1 when the
+/// table ends before that set.
 s32 DebugParameterSet_Load(s32 preset) {
   s32 nextDjinn[4];
   void *state;
@@ -227,6 +230,9 @@ void Battle_DebugStartNoOp(void) {}
 
 extern u8 gDebugTextEnabled;
 
+/// Debug: the battle test menu, which never returns. It fights encounter 69
+/// again and again with auto battle on, unless Down is held at the start to
+/// open the chooser of encounter and parameter set.
 void DebugBattle_RunMenu(void) {
   s32 startModeSet = 0;
   s32 down = gInput.held & KEY_DOWN;

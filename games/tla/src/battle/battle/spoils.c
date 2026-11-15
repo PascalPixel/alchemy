@@ -61,6 +61,8 @@ void BattleSpoils_Clear(void) {
 #define FIRST_DIGIT_COUNT 9
 #endif
 
+/// Returns the first digit among the first 14 characters of s, counted from 1,
+/// or FIRST_DIGIT_COUNT when there is none.
 s32 String_FindFirstDigit(u8 *s) {
   s32 i;
 
@@ -71,6 +73,8 @@ s32 String_FindFirstDigit(u8 *s) {
   return FIRST_DIGIT_COUNT;
 }
 
+/// Returns an enemy's coins with the Djinn bonus: its own, plus a six-sided die
+/// for every ten levels and one more, at least 30 percent of its own.
 static __inline__ s32 BattleEnemy_CalculateCoinReward(struct BattleUnit *unit,
                                                       u16 *reward) {
   s32 rollIndex;
@@ -87,6 +91,8 @@ static __inline__ s32 BattleEnemy_CalculateCoinReward(struct BattleUnit *unit,
   return bonus + base;
 }
 
+/// Returns an enemy's experience with the Djinn bonus: its own plus a
+/// four-sided die for every ten levels and one more, at least 30 percent more.
 static __inline__ s32
 BattleEnemy_CalculateExperienceReward(struct BattleUnit *unit, u16 *reward) {
   s32 rollIndex;

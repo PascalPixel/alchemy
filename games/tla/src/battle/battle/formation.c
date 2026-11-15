@@ -385,6 +385,7 @@ next_object:
     goto scan_objects;
 }
 
+/// Returns the class of a random member of the formation that may appear.
 s32 BattleFormation_GetRandomMember(s32 recordId) {
   s32 *choicesBase;
   s32 choices[5];
@@ -419,6 +420,9 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
   return choices[(Random16() * count) >> 16];
 }
 
+/// Builds the battle's enemies from a formation and returns how many there are:
+/// each member its fewest times and at random up to its most while the sprite
+/// slots hold them, laid out as the formation says.
 s32 BattleFormation_BuildEnemyList(s32 recordId) {
   u16 *enemyClasses;
   struct FormationBattleWork *battle;
@@ -631,6 +635,8 @@ s32 BattleSprite_GetPalette(s32 index) {
   return gSummon_EntryTable[index].layoutBits1;
 }
 
+/// Returns 1 for a small class, which takes one enemy sprite slot instead of
+/// two and stands closer to its neighbours; 0 out of range.
 s32 BattleSprite_IsSmall(s32 index) {
 
   s32 result;
@@ -667,12 +673,16 @@ u32 BattleSprite_GetAttackHop(u32 index) {
   return value ? value : 0;
 }
 
+/// Returns 1 for a class whose blow lands with a heavier impact; 0 out of
+/// range.
 s32 BattleSprite_HasHeavyImpact(s32 index) {
   if ((u32)index > 386)
     return 0;
   return gSummon_EntryTable[index].layoutBit0;
 }
 
+/// Returns the height an animation is drawn at over a class, in pixels, or 0
+/// for its size's default; 0 out of range.
 u32 BattleSprite_GetEffectHeight(u32 index) {
   u8 *table;
   u32 offset;

@@ -42,7 +42,7 @@ void Battle_TurnStartNoOp(void) {}
 /// The plan of an extra action queued for the turn's end (command 10): ability
 /// 403, Daedalus, from a random unit of the queuing side against every unit
 /// of the other, staged as a summon (0x8000 | 26).
-void BattleStaging_PlanDaedalus(u16 *source, struct ActionTargets *targets) {
+void BattleStaging_PlanDaedalus(u16 *source, struct BattlePlan *plan) {
   u16 ids[10];
   s32 count;
   s32 i;
@@ -52,83 +52,84 @@ void BattleStaging_PlanDaedalus(u16 *source, struct ActionTargets *targets) {
   if (source[0] > ALLY_MAX)
     side = 1;
   count = BattleUnit_ListLivingIds(side, ids);
-  Iwram_ClearWordsEntry(targets, sizeof *targets);
+  // The plan and BattleWork.skipPlayback after it.
+  Iwram_ClearWordsEntry(plan, sizeof(*plan) + sizeof(s32));
   own = 0;
   if (source[0] <= ALLY_MAX)
     own = 1;
   own = Battle_GetUnitAtPlace(BattleAI_ChooseRandomTarget(own));
-  targets->value50 = 2;
-  targets->value54 = 14;
+  plan->element = ELEMENT_MARS;
+  plan->staging = 14;
   {
     s32 half = source[3];
-    u16 *value;
+    s16 *value;
 
-    value = &targets->value4a;
-    targets->actorId = own;
+    value = &plan->command;
+    plan->unitId = own;
     *value = half;
   }
   for (i = 0; i < count; i++) {
-    targets->ids[i] = ids[i];
-    targets->stateA[i] = 0;
-    targets->stateB[i] = 1;
-    targets->stateC[i] = 0;
-    targets->stateD[i] = 1;
+    plan->targetIds[i] = ids[i];
+    plan->targetOffset[i] = 0;
+    plan->targetMultiplier[i] = 1;
+    plan->targetCritical[i] = 0;
+    plan->targetHit[i] = 1;
   }
-  targets->count = count;
-  targets->abilityId = 403;
-  targets->presentationFlags = 0x801a;
+  plan->targetCount = count;
+  plan->abilityId = ABILITY_403;
+  plan->battleEffect = EFFECT_SUMMON | 26;
 }
 
 /// The plan of command 12: ability 103, High Impact, from the acting unit
 /// on every living unit of its own side.
-void BattleStaging_PlanHighImpact(struct ActionTargets *targets) {
+void BattleStaging_PlanHighImpact(struct BattlePlan *plan) {
   u16 ids[10];
   s32 count;
   s32 i;
   s32 side = 1;
 
-  if (targets->actorId > ALLY_MAX)
+  if (plan->unitId > ALLY_MAX)
     side = 2;
   count = BattleUnit_ListLivingIds(side, ids);
   for (i = 0; i < count; i++) {
-    targets->ids[i] = ids[i];
-    targets->stateA[i] = 0;
-    targets->stateB[i] = 1;
-    targets->stateC[i] = 0;
-    targets->stateD[i] = 1;
+    plan->targetIds[i] = ids[i];
+    plan->targetOffset[i] = 0;
+    plan->targetMultiplier[i] = 1;
+    plan->targetCritical[i] = 0;
+    plan->targetHit[i] = 1;
   }
-  targets->count = count;
-  targets->abilityId = 103;
-  targets->presentationFlags = 0x10b5;
+  plan->targetCount = count;
+  plan->abilityId = ABILITY_HIGH_IMPACT;
+  plan->battleEffect = 1 << EFFECT_VARIANT_SHIFT | 181;
 }
 
 /// The plan of command 13: ability 298, Aurora Field, over the acting unit's
 /// whole side, reserves included for the party.
-void BattleStaging_PlanAuroraField(struct ActionTargets *targets) {
+void BattleStaging_PlanAuroraField(struct BattlePlan *plan) {
   u16 ids[10];
   s32 count;
   s32 i;
 
-  if (targets->actorId <= ALLY_MAX) {
+  if (plan->unitId <= ALLY_MAX) {
     count = BattleParty_PrepareMembers(ids);
     count += BattleParty_PrepareReserveOwners(&ids[count]);
   } else {
     count = BattleUnit_ListIds(2, ids);
   }
   for (i = 0; i < count; i++) {
-    targets->ids[i] = ids[i];
-    targets->stateA[i] = 0;
-    targets->stateB[i] = 1;
-    targets->stateC[i] = 0;
-    targets->stateD[i] = 1;
+    plan->targetIds[i] = ids[i];
+    plan->targetOffset[i] = 0;
+    plan->targetMultiplier[i] = 1;
+    plan->targetCritical[i] = 0;
+    plan->targetHit[i] = 1;
   }
   {
     s32 zero = 0;
 
-    targets->abilityId = 298;
-    targets->count = count;
-    targets->presentationFlags = 0x120b6;
-    targets->extra = zero;
+    plan->abilityId = ABILITY_AURORA_FIELD;
+    plan->targetCount = count;
+    plan->battleEffect = EFFECT_ON_DOWNED | 2 << EFFECT_VARIANT_SHIFT | 182;
+    plan->hauntDamage = zero;
   }
 }
 
@@ -194,8 +195,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     wait(delay);
   }
   if (request->command == COMMAND_DAEDALUS) {
-    BattleStaging_PlanDaedalus((u16 *)request,
-                               (struct ActionTargets *)&battle->plan);
+    BattleStaging_PlanDaedalus((u16 *)request, &battle->plan);
     /* FAKEMATCH(dead): an empty once-only block after the call. */
     do {
     } while (0);
@@ -220,6 +220,10 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       BattleStaging_RunAttack(&battle->plan, 2);
       break;
     case STAGING_SUMMON:
+      /// Plays a summon or a full-screen Psynergy: the unit glows in its
+      /// element and the other side fades out while the effect plays, then
+      /// everyone fades back in. STAGING_HIDE_ACTOR hides the unit too, as the
+      /// summons do.
       BattleStaging_HideField(&battle->plan, STAGING_HIDE_ACTOR);
       break;
     case STAGING_FULL_SCREEN:
@@ -293,12 +297,12 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
         break;
       if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) == 0)
         break;
-      BattleStaging_PlanHighImpact((struct ActionTargets *)&battle->plan);
+      BattleStaging_PlanHighImpact(&battle->plan);
       BattleStaging_RunPsynergyCast(&battle->plan, CAST_DJINNI);
       break;
     case STAGING_IRIS:
       BattleStaging_HideField(&battle->plan, STAGING_HIDE_ACTOR);
-      BattleStaging_PlanAuroraField((struct ActionTargets *)&battle->plan);
+      BattleStaging_PlanAuroraField(&battle->plan);
       BattleStaging_RunPsynergyCast(&battle->plan, CAST_DJINNI);
       break;
     case STAGING_FLEE:
@@ -330,6 +334,9 @@ finish:
   return fled;
 }
 
+/// Fills a battle effect command from an action run: its kind and strength, the
+/// user and the targets still standing, or all of them for an effect that
+/// revives.
 void BattleStaging_BuildTargetList(struct BattlePlan *plan,
                                    struct BattlePresentationWork *effect) {
   s16 *outputTarget;
@@ -373,8 +380,8 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
 /// 7 times in 10. Returns 1 when the party got away.
 s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   s32 completed;
-  struct EscapeTransition *presentation =
-      (struct EscapeTransition *)Ram_HeapSlots->battleBackground;
+  struct BattlePresentationTransition *presentation =
+      Ram_HeapSlots->battleBackground;
   u32 aid = plan->unitId;
   struct BattleWork *scene = Ram_HeapSlots->battleWork;
   // Default: 0 until the party branch copies completed.
@@ -492,10 +499,10 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
 
   if (plan->failure != 0) {
     if (plan->failure == 1) {
-      BattlePlayback_Push(0, plan->unitId);
-      BattlePlayback_Push(4, (u32)&MsgPsynergyBlocked);
+      BattlePlayback_Push(PLAYBACK_UNIT_NAME, plan->unitId);
+      BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgPsynergyBlocked);
     } else {
-      BattlePlayback_Push(4, (u32)&MsgCastLacksPp);
+      BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgCastLacksPp);
     }
     BattlePlayback_RunAll();
     BattleBackground_RestorePalette();

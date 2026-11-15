@@ -42,7 +42,10 @@ stats, class, Djinn, Psynergy and items. The eight playable characters each
 have one from the first moment of a new game, long before most of them
 join. An enemy's is filled in from its row of the enemy table when a
 battle starts. Both sides being the same thing is what lets one set of
-rules serve the party and the monsters alike.
+rules serve the party and the monsters alike. The Broken Seal has all eight,
+Felix, Sheba and Piers among them, though their rows of growth curves and
+starting equipment are empty, and Jenna's holds other numbers than The
+Lost Age gives her ([How the two games relate](../../../tla/sequel.md)).
 
 The Djinn the party fights are the exception that proves it. Their units
 are put on the party's side, because the battle only greys out, dissolves

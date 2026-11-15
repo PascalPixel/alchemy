@@ -82,19 +82,16 @@ struct BobPairObject;
 /// it stands and the command it stands for. menu_titles.c loads it,
 /// battle_command_row.c runs the row.
 struct BattleCommandRowIcon {
-  u8 unk00[4];
-  u8 y;
-  u8 objMode : 2; ///< 3: double-size affine
-  u8 high05 : 6;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u8 unk08[4];
-  u16 resource;
-  u16 unused;
-  s32 positionX;
-  s32 positionY;
-  s32 kind;
+  /// The icon as a 32x32 sprite, drawn only while it is selected (pulsing);
+  /// the others show as tiles of BG1.
+  struct MenuSprite sprite;
+  /// resource: the VRAM cache entry its sprite's tiles go into, one 1 KB
+  /// entry that every icon of the row shares, reloaded with the selected
+  /// icon. unused is never read.
+  u16 resource, unused;
+  /// Screen pixels: the sprite's top left before the pulse moves it.
+  s32 positionX, positionY;
+  s32 kind; ///< its command: MsgCommandName + kind names it
 };
 
 /// The pulsing icon's transform: its scale, 8.8 fixed point, and angle.

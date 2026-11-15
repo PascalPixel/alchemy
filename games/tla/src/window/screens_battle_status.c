@@ -1081,12 +1081,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       sprite = statusSprites;
       slot = statusSlots;
       for (i = 0, entry = gVramCacheEntries, iconX = 112; i <= 10; i++) {
-        sprite->oam.word.attr01 =
-            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-        /* FAKEMATCH(dead): an empty once-only block. */
-        do {
-        } while (0);
-        sprite->oam.word.attr23 = 0;
+        MenuSprite_Initialize(*sprite, OBJ_SIZE_16X16 |
+                                           OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
         sprite->oam.f.tile = entry[*slot++].offset >> 5;
         sprite->oam.f.x = iconX;
         sprite->oam.f.y = (s16)statusWindow->y * 8 + 8;
@@ -1102,12 +1098,8 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         for (i = 0, iconEntry = gVramCacheEntries, sprite = iconSprites,
             iconRow = 0;
              i <= 3; i++) {
-          sprite->oam.word.attr01 =
-              OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-          /* FAKEMATCH(dead): an empty once-only block. */
-          do {
-          } while (0);
-          sprite->oam.word.attr23 = 0;
+          MenuSprite_Initialize(
+              *sprite, OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT));
           sprite->oam.f.tile = iconEntry[iconSlots[i]].offset >> 5;
           if (page == 3)
             sprite->oam.f.x = 24;

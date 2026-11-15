@@ -484,27 +484,15 @@ typedef struct {
 /// from tile index * 16 (BattleCommandRow_LoadIconTiles), and into the row's
 /// shared VRAM cache entry for its 32x32 sprite, which BattleCommandRow_Run
 /// shows only for the selected icon.
-void BattleCommandRow_LoadIcon(u8 *base, s32 index, u32 value) {
-  u8 *entry;
-  s32 offset;
-  s32 store_offset;
-  s32 load_offset;
+void BattleCommandRow_LoadIcon(struct BattleCommandRowWork *work, s32 index,
+                               u32 icon) {
+  struct BattleCommandRowIcon *entry = &work->entries[index];
 
-  offset = index * 28;
-  entry = base + offset + 0x104;
-  BattleCommandRow_LoadIconTiles((struct GlyphPalette *)base, value,
-                                 index * 16);
-  store_offset = offset + 0x11C;
-  *(u32 *)(base + store_offset) = value;
-  /* FAKEMATCH(dead): the sprite's shape and its cleared attributes 2 and 3 in a
-   * once-only block. */
-  do {
-    *(u32 *)(entry + 4) = 0x80002000;
-    *(u32 *)(entry + 8) = 0;
-  } while (0);
-  load_offset = offset + 0x110;
-  ((CharacterCell *)(entry + 8))->code =
-      Resource_LoadIndexedIntoBuffer(*(u16 *)(base + load_offset), value);
+  BattleCommandRow_LoadIconTiles((struct GlyphPalette *)work, icon, index * 16);
+  work->entries[index].kind = icon;
+  MenuSprite_Initialize(entry->sprite, OBJ_SIZE_32X32 | OBJ_256_COLORS);
+  entry->sprite.oam.f.tile =
+      Resource_LoadIndexedIntoBuffer(work->entries[index].resource, icon);
 }
 
 /// Puts BG1 behind the other layers (priority 3). The command row runs it as

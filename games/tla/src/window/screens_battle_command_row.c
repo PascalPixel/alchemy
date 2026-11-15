@@ -227,16 +227,16 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
       struct BattleCommandRowIcon *entry = &selectionUi->entries[entryIndex];
 
       if (entryIndex == selectionUi->selectedIndex) {
-        entry->affineIndex = selectionUi->affineIndex;
-        entry->objMode = 3;
-        entry->x = entry->positionX + pulseScale * 7 / 512 - 14;
-        entry->y = entry->positionY + pulseScale * 3 / 256 - 20;
+        entry->sprite.oam.f.affineIndex = selectionUi->affineIndex;
+        entry->sprite.oam.f.affine = 3;
+        entry->sprite.oam.f.x = entry->positionX + pulseScale * 7 / 512 - 14;
+        entry->sprite.oam.f.y = entry->positionY + pulseScale * 3 / 256 - 20;
         Oam_AddSpriteAtDepth(entry, OAM_DEPTH_WINDOW + 1);
       } else {
-        entry->x = entry->positionX;
-        entry->y = entry->positionY;
-        entry->affineIndex = 0;
-        entry->objMode = 0;
+        entry->sprite.oam.f.x = entry->positionX;
+        entry->sprite.oam.f.y = entry->positionY;
+        entry->sprite.oam.f.affineIndex = 0;
+        entry->sprite.oam.f.affine = 0;
       }
     }
 

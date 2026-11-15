@@ -363,7 +363,8 @@ void Actor_SetAnimationSpeedById(s32 actorId, s32 steps) {
 void Actor_WaitForAnimationChange(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
   struct Sprite *sprite;
-  /* FAKEMATCH(volatile): saved lives in a 4-byte stack frame. */
+  // DEAD: saved lives in a word on the stack, which nothing here needs; the
+  // ROM keeps its str and the ldr of each compare.
   volatile u32 saved;
   s32 elapsedFrames;
 

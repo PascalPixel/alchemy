@@ -365,8 +365,8 @@ void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
 
     options.priority = 0;
     options.type = SPRITE_BLUE_CRYSTAL;
-    options.startScaleX = options.startScaleY = 0x10000;
-    options.targetScaleX = options.targetScaleY = 0x8000;
+    options.startScaleX = options.startScaleY = Q16_ONE;
+    options.targetScaleX = options.targetScaleY = Q16_ONE / 2;
     options.rotation = (Random16() & 15) << 12;
     FieldEffect_Spawn(object->x.fixed,
                       object->y.fixed - index * 3 * px(1) + px(16),
@@ -421,7 +421,7 @@ next:
       object->velocityZ = Iwram_MulQ16(radius * 8, Trig_Cos(angle));
       object->velocityX = Iwram_MulQ16(radius * 8, Math_Sin(angle));
       object->acceleration = 0;
-      object->gravity = 0x547a;
+      object->gravity = px(33) / 100;
       object->scaleX = scale;
       object->scaleY = scale;
       object->bounce = Q16_ONE / 2;
@@ -851,7 +851,7 @@ void MarsLighthouseEntrance_FallIntoHole(s32 arg) {
 next:
   if (i == 5)
     Event_PlaySound(SE_DUST_PUFF);
-  actor->scaleX -= 0x400;
+  actor->scaleX -= Q16_ONE / 64;
   actor->scaleY -= 0x300;
   actor->y.fixed -= 0x9999;
   System_Wait(1);
@@ -937,7 +937,7 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
 next:
   if (i == 5)
     Event_PlaySound(SE_DUST_PUFF);
-  leader->scaleX -= 0x400;
+  leader->scaleX -= Q16_ONE / 64;
   leader->scaleY -= 0x300;
   leader->y.fixed -= 0x9999;
   System_Wait(1);
@@ -1038,8 +1038,8 @@ void MarsLighthouseEntrance_FlingIceCone(struct Actor *actor) {
     actor->velocityY = px(4);
   if (actor->timer > 9) {
     actor->x.fixed += px(4);
-    actor->scaleX -= 0x800;
-    actor->scaleY -= 0x800;
+    actor->scaleX -= Q16_ONE / 32;
+    actor->scaleY -= Q16_ONE / 32;
   }
   if (actor->timer == 32) {
     actor->x.fixed = 0;
@@ -1832,7 +1832,7 @@ void MarsLighthouseEntrance_ScatterCrumbs(struct Actor *actor) {
       object->velocityY = angle * 4 + px(2);
       object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));
       object->velocityX = Iwram_MulQ16(radius, Trig_Sin(angle));
-      object->gravity = 0x547a;
+      object->gravity = px(33) / 100;
       object->scaleX = scale;
       object->scaleY = scale;
       object->acceleration = 0;
@@ -2217,7 +2217,7 @@ void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
   for (x = 0; x < 40; x++) {
     if (x == 5)
       Event_PlaySound(SE_DUST_PUFF);
-    object->scaleX -= 0x400;
+    object->scaleX -= Q16_ONE / 64;
     object->scaleY -= 0x300;
     object->y.fixed -= 0x9999;
     System_Wait(1);
@@ -2260,8 +2260,8 @@ void MarsLighthouseEntrance_LandFromCrack(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = 0xa3d7;
-  options.startScaleY = 0xa3d7;
+  options.startScaleX = Q16_ONE * 16 / 25;
+  options.startScaleY = Q16_ONE * 16 / 25;
   i = 0;
 next:
   {

@@ -726,7 +726,7 @@ void MarsLighthouseRoomF_ScatterRubble(s32 id) {
         object->acceleration = 0;
         object->scaleX = scale;
         object->scaleY = scale;
-        object->gravity = 0x547a;
+        object->gravity = px(33) / 100;
         object->velocityX = vx;
         object->bounce = Q16_ONE / 2;
       }
@@ -2300,7 +2300,7 @@ void MarsLighthouseRoomF_ScatterCrumbs(struct Actor *actor) {
       object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));
       object->velocityX = Iwram_MulQ16(radius, Trig_Sin(angle));
       object->acceleration = 0;
-      object->gravity = 0x547a;
+      object->gravity = px(33) / 100;
       object->scaleX = scale;
       object->scaleY = scale;
       object->bounce = Q16_ONE / 2;

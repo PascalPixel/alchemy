@@ -1892,8 +1892,8 @@ void MagmaRockInside_SpawnSpark(struct Actor *source) {
   struct Actor *object = Create(SPRITE_PARTICLE, source->x.fixed,
                                 source->y.fixed, source->z.fixed);
 
-  object->scaleY = 0x6666;
-  object->scaleX = 0x6666;
+  object->scaleY = Q16_ONE * 2 / 5;
+  object->scaleX = Q16_ONE * 2 / 5;
   object->motionFlags = 0;
   FieldActor_SetSpriteColor(object, 10);
   Scene_SetActorSpritePriority(object, 1);
@@ -2051,8 +2051,8 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
   PaletteFade_SetTarget(PALETTE_TINT_WARM, 1);
   PaletteFade_StartInterpolation(60);
   first->motionFlags = 0;
-  first->acceleration = 0x3333;
-  first->speedLimit = 0x3333;
+  first->acceleration = px(1) / 5;
+  first->speedLimit = px(1) / 5;
   Actor_SetScript(a, gMagmaRockInside_BlazeCasterScript);
   Event_PlaySound(SE_TABLET_RISE);
   Event_Wait(45);
@@ -2067,7 +2067,7 @@ burst:
   object->x.fixed += ((Random16() & 31) - 16) << 16;
   object->y.fixed += ((Random16() & 15) - 8) << 16;
   object->speedLimit = px(8);
-  object->acceleration = 0x3333;
+  object->acceleration = px(1) / 5;
   object->motionFlags = 0;
   FieldActor_SetSpriteColor(object, 10);
   Scene_SetActorSpritePriority(object, 1);
@@ -2110,8 +2110,8 @@ burst:
     if (i == 3) {
       Actor_SetSpriteColorById(b, 256);
       second->motionFlags = noMotion;
-      second->acceleration = 0x3333;
-      second->speedLimit = 0x3333;
+      second->acceleration = px(1) / 5;
+      second->speedLimit = px(1) / 5;
       Actor_SetScript(b, script);
     }
     wait(8);
@@ -2864,7 +2864,7 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
       Actor_StartScript(effect, gMagmaRockInside_RubbleScript);
-      effect->scaleY = effect->scaleX = 0xb333;
+      effect->scaleY = effect->scaleX = Q16_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {
         effect->velocity.x = Iwram_MulQ16(Trig_Cos(i << 13), 0x13333);
@@ -2875,7 +2875,7 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
       }
       effect->velocity.y = -(((Random16() << 14) >> 16) + 0x6000);
       effect->spin = ((Random16() << 9) >> 16) - 0x100;
-      effect->scaleRateX = -0x800;
+      effect->scaleRateX = -Q16_ONE / 32;
       effect->scaleRateY = -0x600;
       effect->update = Effect_AdvanceMotionAtLeaderPriority;
     }

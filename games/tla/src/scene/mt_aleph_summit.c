@@ -255,8 +255,8 @@ void MtAlephSummit_ScatterDustRing(s32 radius, u32 count) {
 
   object = Actor_Get(ACTOR_ALEX);
   options.update = FieldEffect_AdvanceMotion;
-  options.startScaleX = 0xcccc;
-  options.startScaleY = 0xcccc;
+  options.startScaleX = Q16_ONE * 4 / 5;
+  options.startScaleY = Q16_ONE * 4 / 5;
   options.priority = ((struct FieldSprite *)object->sprite)->priority;
   i = 0;
 next:
@@ -699,7 +699,7 @@ s32 Scene_Initialize(void) {
     slots = (struct HeapSlots *)Ram_HeapSlots->mapGrid;
     MapGrid_SetShake(16, 16, 1);
     j = 0;
-    scale = -0x1e000;
+    scale = -Q16_ONE * 15 / 8;
   L16:
     if (j == 20)
       Actor_SetAnimation(ACTOR_WISE_ONE, 7);
@@ -718,7 +718,7 @@ s32 Scene_Initialize(void) {
     ACTOR(8)->z.fixed += px(1);
     System_Wait(1);
     j++;
-    scale += 0x1000;
+    scale += Q16_ONE / 16;
     if (j != 128)
       goto L16;
     Event_PlaySound(SOUND_FADE_OUT_BGM);

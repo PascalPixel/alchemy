@@ -401,8 +401,8 @@ void SeaOfTime_RideCurrent(void) {
       Event_PlaySound(SE_CURRENT);
     spark.priority = 2;
     spark.palette = 7;
-    spark.startScaleX = 0xcccc;
-    spark.startScaleY = 0xcccc;
+    spark.startScaleX = Q16_ONE * 4 / 5;
+    spark.startScaleY = Q16_ONE * 4 / 5;
     c = Trig_Cos(object->facing);
     {
       s32 sine = Trig_Sin(object->facing);
@@ -495,8 +495,8 @@ void SeaOfTime_FollowChannel(void) {
         }
         spark.priority = 2;
         spark.palette = 7;
-        spark.startScaleX = 0x16666;
-        spark.startScaleY = 0x13333;
+        spark.startScaleX = Q16_ONE * 7 / 5;
+        spark.startScaleY = Q16_ONE * 6 / 5;
         cosine = Trig_Cos(actor->facing);
         sine = Trig_Sin(actor->facing);
         pos[0] = cosine * 12;
@@ -805,8 +805,8 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
     if ((gFrameCount & 3) == 0) {
       options.priority = 2;
       options.palette = 7;
-      options.startScaleX = 0x16666;
-      options.startScaleY = 0x13333;
+      options.startScaleX = Q16_ONE * 7 / 5;
+      options.startScaleY = Q16_ONE * 6 / 5;
       cosine = Trig_Cos(actor->facing);
       sine = Trig_Sin(actor->facing);
       sides[0] = cosine * 12;
@@ -873,8 +873,8 @@ void SeaOfTime_UpdateSpray(struct Actor *object) {
   if (even == 0) {
     s32 dx = ((Random16() & 31) << 16) + -0xe0000;
 
-    spark.startScaleX = 0xb333;
-    spark.startScaleY = 0xb333;
+    spark.startScaleX = Q16_ONE * 7 / 10;
+    spark.startScaleY = Q16_ONE * 7 / 10;
     spark.palette = 7;
     spark.priority = 1;
     FieldEffect_Spawn(
@@ -998,8 +998,8 @@ next:
       s32 offsetZ = (z & mask) << 16;
       s32 offsetX = (x & mask) << 16;
 
-      rain.startScaleX = 0x18000;
-      rain.startScaleY = 0x18000;
+      rain.startScaleX = Q16_ONE * 3 / 2;
+      rain.startScaleY = Q16_ONE * 3 / 2;
       rain.palette = 7;
       rain.priority = 1;
       FieldEffect_Spawn(offsetX + px(336), 0, offsetZ + px(176), 0, px(1), 0,
@@ -1198,17 +1198,17 @@ void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   Event_PlaySound(SE_CLATTER);
   MapGrid_SetShake(0, 16, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  spark.startScaleX = 0x13333;
-  spark.startScaleY = 0x18000;
+  spark.startScaleX = Q16_ONE * 6 / 5;
+  spark.startScaleY = Q16_ONE * 3 / 2;
   spark.priority = 1;
   spark.type = SPRITE_SPLASH;
   FieldEffect_Spawn(
       px, 0, pz, 0, 0, 0,
       EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY, &spark);
-  Actor_GetById(actor)->scaleY = 0x1999;
+  Actor_GetById(actor)->scaleY = Q16_ONE / 10;
   SeaOfTime_PlaceRock(x, z, actor);
   for (i = 0; i != 10; i++) {
-    Actor_GetById(actor)->scaleY += 0x1999;
+    Actor_GetById(actor)->scaleY += Q16_ONE / 10;
     Event_Wait(1);
   }
   Actor_GetById(actor)->scaleY = Q16_ONE;
@@ -1265,8 +1265,8 @@ void SeaOfTime_Open(void) {
       s32 x = Random16();
       s32 y = Random16();
 
-      params.startScaleX = 0xcccc;
-      params.startScaleY = 0xcccc;
+      params.startScaleX = Q16_ONE * 4 / 5;
+      params.startScaleY = Q16_ONE * 4 / 5;
       params.priority = 1;
       params.palette = 7;
       x &= mask;
@@ -1284,8 +1284,8 @@ void SeaOfTime_Open(void) {
     s32 x = Random16();
     s32 y = Random16();
 
-    burst.startScaleX = 0x18000;
-    burst.startScaleY = 0x18000;
+    burst.startScaleX = Q16_ONE * 3 / 2;
+    burst.startScaleY = Q16_ONE * 3 / 2;
     burst.palette = 7;
     burst.priority = 1;
     x &= mask;

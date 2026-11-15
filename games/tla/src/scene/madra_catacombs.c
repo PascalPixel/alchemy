@@ -687,7 +687,7 @@ void MadraCatacombs_SetUpTabletRoom(void) {
   struct Actor *right = Actor_GetById(ACTOR_RIGHT_DOOR);
 
   left->scaleX = Q16_ONE * 5 / 4;
-  right->scaleX = -0x14000;
+  right->scaleX = -Q16_ONE * 5 / 4;
   left->motionFlags = 0;
   right->motionFlags = 0;
   left->y.fixed = 0;

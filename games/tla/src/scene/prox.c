@@ -1266,8 +1266,8 @@ void Actor_Release(struct RisingObject *object);
 void Prox_RisePuff(struct RisingObject *object) {
   object->x += object->drift << 8;
   object->y += px(1) / 2;
-  object->scaleX += 0x51e;
-  object->scaleY += 0x51e;
+  object->scaleX += Q16_ONE / 50;
+  object->scaleY += Q16_ONE / 50;
   object->drift += 2;
   if (--object->life == 0)
     Actor_Release(object);

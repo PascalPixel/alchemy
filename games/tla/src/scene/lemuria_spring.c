@@ -1086,7 +1086,7 @@ s32 LemuriaSpring_RunToss(s32 side) {
     if (gLemuriaSpring_TossFrame == 16) {
       Actor_SetAnimation(gMainRoutineWork.leaderActorId, 39);
       ride->hold = 0;
-      ride->velocity.x = 0x14ccc;
+      ride->velocity.x = px(13) / 10;
       ride->velocity.y = px(4);
       ride->velocity.z = -px(2);
       ride->trail[0].x = px(120);

@@ -725,7 +725,7 @@ void Loho_OpenDoorAndEnter(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  i = 8;
+  i = ACTOR_FIRST_PLACED;
 loop:
   {
     struct Actor *object = Actor_GetById(i);
@@ -734,7 +734,7 @@ loop:
       object->motionFlags = 0;
   }
   i++;
-  if ((u32)i <= 63)
+  if ((u32)i < FIELD_TREASURE_ACTOR)
     goto loop;
   work = (u8 *)&((struct FieldWork *)work)->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);

@@ -210,7 +210,7 @@ void MarsLighthouseAerie_Throb(struct Actor *object) {
 
   if (scale > 0x10000) {
     object->scaleX = scale - 0x800;
-    object->scaleY -= 0x400;
+    object->scaleY -= Q16_ONE / 64;
   }
   timer = &object->riseCounter;
   if (*timer != 0) {
@@ -319,8 +319,8 @@ void MarsLighthouseAerie_SetUpBeacon(void) {
   object = Actor_Get(ACTOR_BEACON_GLOW);
   object->motionFlags = ACTOR_FLOATS;
   object->y.fixed = px(112);
-  object->scaleX = 0x14ccc;
-  object->scaleY = 0x14ccc;
+  object->scaleX = Q16_ONE * 13 / 10;
+  object->scaleY = Q16_ONE * 13 / 10;
   Actor_SetSpriteColorMode(object, 5);
   Actor_SetSpriteFlags(object, 0);
   object->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
@@ -1080,8 +1080,8 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetPosition(ACTOR_MIA, 0, 0);
   System_Wait(1);
   actor = Actor_Get(ACTOR_DOOM_DRAGON);
-  actor->scaleX = 0x1000;
-  actor->scaleY = 0x1000;
+  actor->scaleX = Q16_ONE / 16;
+  actor->scaleY = Q16_ONE / 16;
   Actor_SetPosition(ACTOR_DOOM_DRAGON, 512, 280);
   System_Wait(1);
   motionFlags = &actor->motionFlags;
@@ -1467,8 +1467,8 @@ L_0200a47a:
   actor = Actor_Get(ACTOR_FREED_KYLE);
   actor->update = NULL;
   System_Wait(1);
-  actor->scaleX = 0x10000;
-  actor->scaleY = 0x10000;
+  actor->scaleX = Q16_ONE;
+  actor->scaleY = Q16_ONE;
   Actor_RunRepeatedMotion(ACTOR_FREED_KYLE, 2);
   Event_ShowMessage(ACTOR_FREED_KYLE, 0);
   Actor_ShowEmote(ACTOR_ISAAC_STAND_IN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1494,13 +1494,13 @@ L_0200a47a:
   actor = Actor_Get(ACTOR_FREED_JENNAS_MOTHER);
   actor->update = NULL;
   System_Wait(1);
-  actor->scaleX = 0x10000;
-  actor->scaleY = 0x10000;
+  actor->scaleX = Q16_ONE;
+  actor->scaleY = Q16_ONE;
   actor = Actor_Get(ACTOR_FREED_JENNAS_FATHER);
   actor->update = NULL;
   System_Wait(1);
-  actor->scaleX = 0x10000;
-  actor->scaleY = 0x10000;
+  actor->scaleX = Q16_ONE;
+  actor->scaleY = Q16_ONE;
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FREED_JENNAS_FATHER, 1);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_FREED_JENNAS_FATHER, 0);
@@ -1853,7 +1853,7 @@ void Orbs_SpawnRising(void) {
 
     random = Random16();
     effect = (struct OrbitEffect *)FieldActor_Create(
-        0x2a0, center->x.fixed,
+        SPRITE_PARTICLE, center->x.fixed,
         (s32)((u32)(random << 8) >> 16 << 16) + center->y.fixed - px(28),
         center->z.fixed);
   } else {
@@ -1861,7 +1861,7 @@ void Orbs_SpawnRising(void) {
 
     random = Random16();
     effect = (struct OrbitEffect *)FieldActor_Create(
-        0x2a0, center->x.fixed,
+        SPRITE_PARTICLE, center->x.fixed,
         (s32)((u32)(random << 6) >> 16 << 16) + center->y.fixed - px(28),
         center->z.fixed);
   }
@@ -2074,8 +2074,8 @@ void MarsLighthouseAerie_LightBeacon(void) {
     object->retainSpriteCache = 1;
     object->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpriteFlags(created, 0);
-    object->speedLimit = 0x6666;
-    object->acceleration = 0xccc;
+    object->speedLimit = px(2) / 5;
+    object->acceleration = px(1) / 20;
     object->gravity = px(1) / 2;
     block = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
     Item_LoadIcon(ITEM_MARS_STAR);
@@ -2106,14 +2106,14 @@ void MarsLighthouseAerie_LightBeacon(void) {
   MapGrid_SetShake(1, 1, 1);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_BOTTOM), 7);
   bottomBeam = Actor_Get(ACTOR_BEAM_BOTTOM);
-  bottomBeam->scaleX = 0x1999;
-  bottomBeam->scaleY = 0xffff0000;
+  bottomBeam->scaleX = Q16_ONE / 10;
+  bottomBeam->scaleY = -Q16_ONE;
   bottomBeam->motionFlags = zero;
   FieldActor_SetPositionAndResetMotion(bottomBeam, px(512), px(64), px(204));
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_LOWER), 7);
   lowerBeam = Actor_Get(ACTOR_BEAM_LOWER);
-  lowerBeam->scaleX = 0x1999;
-  lowerBeam->scaleY = 0xffff0000;
+  lowerBeam->scaleX = Q16_ONE / 10;
+  lowerBeam->scaleY = -Q16_ONE;
   lowerBeam->motionFlags = zero;
   FieldActor_SetPositionAndResetMotion(lowerBeam, px(512), px(96), px(204));
   Task_AddFrame(Orbs_SpawnRising, TASK_PASS_VBLANK);
@@ -2141,19 +2141,19 @@ void MarsLighthouseAerie_LightBeacon(void) {
   Actor_Get(ACTOR_BEAM_LOWER)->y.fixed = -px(24);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_MIDDLE), 7);
   middleBeam = Actor_Get(ACTOR_BEAM_MIDDLE);
-  middleBeam->scaleY = 0xffff0000;
+  middleBeam->scaleY = -Q16_ONE;
   middleBeam->scaleX = (Actor_Get(ACTOR_BEAM_BOTTOM)->scaleX);
   middleBeam->motionFlags = zero;
   FieldActor_SetPositionAndResetMotion(middleBeam, px(512), px(8), px(204));
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_UPPER), 7);
   upperBeam = Actor_Get(ACTOR_BEAM_UPPER);
-  upperBeam->scaleY = 0xffff0000;
+  upperBeam->scaleY = -Q16_ONE;
   upperBeam->scaleX = (Actor_Get(ACTOR_BEAM_BOTTOM)->scaleX);
   upperBeam->motionFlags = zero;
   FieldActor_SetPositionAndResetMotion(upperBeam, px(512), px(40), px(204));
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_TOP), 7);
   topBeam = Actor_Get(ACTOR_BEAM_TOP);
-  topBeam->scaleY = 0xffff0000;
+  topBeam->scaleY = -Q16_ONE;
   topBeam->scaleX = (Actor_Get(ACTOR_BEAM_BOTTOM)->scaleX);
   topBeam->motionFlags = zero;
   FieldActor_SetPositionAndResetMotion(topBeam, px(512), px(72), px(204));
@@ -2198,7 +2198,7 @@ void MarsLighthouseAerie_LightBeacon(void) {
   System_Wait(120);
   MapGrid_SetShake(1, 1, 1);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  Actor_Get(ACTOR_BEAM_BOTTOM)->scaleY = 0x51e;
+  Actor_Get(ACTOR_BEAM_BOTTOM)->scaleY = Q16_ONE / 50;
   Actor_SetScript(ACTOR_BEAM_LOWER, gMarsLighthouseAerie_BeamShootUpScript);
   Actor_SetScript(ACTOR_BEAM_MIDDLE, gMarsLighthouseAerie_BeamShootUpScript);
   Actor_SetScript(ACTOR_BEAM_UPPER, gMarsLighthouseAerie_BeamShootUpScript);
@@ -2297,7 +2297,8 @@ L_0200bcea:
   Message_ShowCentered(message, 1);
   FieldPsynergy_StopMindReadWave();
   MarsLighthouseAerie_StopLookingAround(ACTOR_MIA);
-  Actor_FaceDirectionAndWait(24579, FACING_SOUTH);
+  Actor_FaceDirectionAndWait(
+      SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_RIGHT | ACTOR_MIA, FACING_SOUTH);
   ((struct OverlayActor *)Actor_Get(ACTOR_MIA))->update = NULL;
   // Read as a word, so the store to the actor before it may alias.
   later =
@@ -2531,8 +2532,8 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   FieldActor_SetSpritePriority(ACTOR_BEAM_BOTTOM, 2);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BEAM_BOTTOM), 7);
   actor = Actor_Get(ACTOR_BEAM_BOTTOM);
-  ((struct Actor *)actor)->scaleY = 0xffff0000;
-  ((struct Actor *)actor)->scaleX = 0x1999;
+  ((struct Actor *)actor)->scaleY = -Q16_ONE;
+  ((struct Actor *)actor)->scaleX = Q16_ONE / 10;
   ((struct Actor *)actor)->motionFlags = 0;
   ((struct Actor *)actor)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   FieldActor_SetPositionAndResetMotion(actor, px(512), px(64), px(204));

@@ -174,14 +174,14 @@ void Madra_EnterDoor(void) {
   work = Ram_HeapSlots->fieldWork;
   Event_Start();
   Event_ResolvePendingActions(0);
-  id = 8;
+  id = ACTOR_FIRST_PLACED;
 next:
   object = Actor_GetById(id);
   if (object != NULL) {
     object->motionFlags = 0;
   }
   id++;
-  if (id < 64)
+  if (id < FIELD_TREASURE_ACTOR)
     goto next;
   trigger = &work->stepTrigger;
   index = *trigger - 1;

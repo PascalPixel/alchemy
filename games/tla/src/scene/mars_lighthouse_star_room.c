@@ -220,7 +220,7 @@ next:
       object->velocityZ = Iwram_MulQ16(radius * 8, Trig_Cos(angle));
       object->velocityX = Iwram_MulQ16(radius * 8, Math_Sin(angle));
       object->acceleration = 0;
-      object->gravity = 0x547a;
+      object->gravity = px(33) / 100;
       object->scaleX = scale;
       object->scaleY = scale;
       object->bounce = Q16_ONE / 2;
@@ -249,8 +249,8 @@ void MarsLighthouseStarRoom_WestFireballCracksIce(void) {
     object->x.fixed = object->homeX << 16;
     object->z.fixed = object->homeZ << 16;
     if (Event_GetFlag(FLAG_DRAGON_ICE_CRACKED) == 0) {
-      object->scaleX = 0x9999;
-      object->scaleY = 0x9999;
+      object->scaleX = Q16_ONE * 3 / 5;
+      object->scaleY = Q16_ONE * 3 / 5;
     }
   }
 }
@@ -360,7 +360,7 @@ s32 Scene_Initialize(void) {
       if (!Event_GetFlag(FLAG_MARS_LIGHTHOUSE_THAWED)) {
         FieldActor_SetSpritePriority(ACTOR_AGATIO_DRAGON, 3);
         FieldActor_SetSpritePriority(ACTOR_KARST_DRAGON, 3);
-        Actor_GetById(ACTOR_KARST_DRAGON)->scaleX = 0xffff0000;
+        Actor_GetById(ACTOR_KARST_DRAGON)->scaleX = -Q16_ONE;
       }
       if (Event_GetFlag(FLAG_FLAME_DRAGONS_BEATEN)) {
         MarsLighthouseStarRoom_ClearDragonIce();
@@ -1765,7 +1765,7 @@ void MarsLighthouseStarRoom_ScatterCrumbs(struct Actor *actor) {
       radius <<= 3;
       object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));
       velocity = Iwram_MulQ16(radius, Trig_Sin(angle));
-      object->gravity = 0x547a;
+      object->gravity = px(33) / 100;
       object->scaleX = scale;
       object->scaleY = scale;
       object->velocityX = velocity;

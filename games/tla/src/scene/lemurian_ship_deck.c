@@ -74,7 +74,7 @@ void LemurianShipDeck_EnterCabin(void) {
 
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    i = 8;
+    i = ACTOR_FIRST_PLACED;
   loop:
     {
       struct Actor *object = Actor_Get(i);
@@ -85,7 +85,7 @@ void LemurianShipDeck_EnterCabin(void) {
       }
     }
     i++;
-    if (i <= 63)
+    if (i < FIELD_TREASURE_ACTOR)
       goto loop;
     if (!Event_GetFlag(FLAG_SCENE_TEMP_01)) {
       Event_PlaySound(SE_DOOR_OPEN);

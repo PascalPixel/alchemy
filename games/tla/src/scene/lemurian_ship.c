@@ -269,13 +269,13 @@ void LemurianShip_OpenDoor(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   found = 0;
-  i = 8;
+  i = ACTOR_FIRST_PLACED;
 nextActor:
   object = ((struct Actor *)Actor_GetById(i));
   if (object != NULL)
     object->motionFlags = 0;
   i++;
-  if (i < 64)
+  if (i < FIELD_TREASURE_ACTOR)
     goto nextActor;
   entry = (u8 *)gLemurianShip_Doors;
   i = 0;
@@ -319,13 +319,13 @@ void LemurianShip_OpenLowerDoor(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   found = 0;
-  i = 8;
+  i = ACTOR_FIRST_PLACED;
 nextActor:
   object = ((struct Actor *)Actor_GetById(i));
   if (object != NULL)
     object->motionFlags = 0;
   i++;
-  if (i < 64)
+  if (i < FIELD_TREASURE_ACTOR)
     goto nextActor;
   entry = (u8 *)gLemurianShip_LowerDoors;
   i = 0;

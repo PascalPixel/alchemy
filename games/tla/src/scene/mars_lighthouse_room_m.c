@@ -1728,7 +1728,7 @@ void MarsLighthouseRoomM_ScatterCrumbs(struct Actor *actor) {
       radius <<= 3;
       object->velocityZ = Iwram_MulQ16(radius, Trig_Cos(angle));
       velocity = Iwram_MulQ16(radius, Trig_Sin(angle));
-      object->gravity = 0x547a;
+      object->gravity = px(33) / 100;
       object->scaleX = scale;
       object->scaleY = scale;
       sprite = object->sprite;

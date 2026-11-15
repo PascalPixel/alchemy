@@ -1240,8 +1240,8 @@ void MagmaRock_AmplifyBurst(void) {
   opt = &options;
   opt->kind = 1;
   opt->palette = 14;
-  opt->scaleX = 0xcccc;
-  opt->scaleY = 0xcccc;
+  opt->scaleX = Q16_ONE * 4 / 5;
+  opt->scaleY = Q16_ONE * 4 / 5;
   i = 0;
 first:
   {
@@ -1260,7 +1260,7 @@ first:
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   gMainRoutineWork.movementMode = 0;
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  leader->gravity = 0xcccc;
+  leader->gravity = px(4) / 5;
   leader->bounce = 0;
   Event_Wait(1);
   leader->facing = FACING_NORTH;
@@ -1534,8 +1534,8 @@ void MagmaRock_LaunchLeader(void) {
   FieldEvent_Wait(24);
   options.palette = 7;
   options.update = FieldEffect_AdvanceMotion;
-  options.scaleX = 0xcccc;
-  options.scaleY = 0xcccc;
+  options.scaleX = Q16_ONE * 4 / 5;
+  options.scaleY = Q16_ONE * 4 / 5;
   i = 0;
 loop:
   angle = i << 12;
@@ -2205,7 +2205,7 @@ void MagmaRock_SpawnRubble(s32 spread) {
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
       Actor_StartScript(effect, gMagmaRock_RubbleScript);
-      effect->scaleY = effect->scaleX = 0xb333;
+      effect->scaleY = effect->scaleX = Q16_ONE * 7 / 10;
       effect->sprite->priority = 1;
       if (spread != 0) {
         effect->velocity.x = Iwram_MulQ16(Trig_Cos(i << 13), 0x13333);
@@ -2216,7 +2216,7 @@ void MagmaRock_SpawnRubble(s32 spread) {
       }
       effect->velocity.y = -(((Random16() << 14) >> 16) + 0x6000);
       effect->spin = ((Random16() << 9) >> 16) - 0x100;
-      effect->scaleRateX = -0x800;
+      effect->scaleRateX = -Q16_ONE / 32;
       effect->scaleRateY = -0x600;
       effect->update = Effect_AdvanceMotionAtLeaderPriority;
     }

@@ -710,7 +710,7 @@ void Settlements_EnterCave(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  i = 8;
+  i = ACTOR_FIRST_PLACED;
 loop:
   {
     struct Actor *object = Actor_Get(i);
@@ -719,7 +719,7 @@ loop:
       object->motionFlags = 0;
   }
   i++;
-  if (i <= 63)
+  if (i < FIELD_TREASURE_ACTOR)
     goto loop;
   if (gMainRoutineWork.next == SCENE_HESPERIA_SETTLEMENT)
     MapGrid_CopyCellsTo(33, 30, 23, 14, 1, 2);
@@ -1058,8 +1058,8 @@ void Settlements_SplashCrate(s32 id) {
   struct Actor *object = Actor_Get(id);
 
   spawn.kind = 0x115;
-  spawn.scaleX = 0xcccc;
-  spawn.scaleY = 0xcccc;
+  spawn.scaleX = Q16_ONE * 4 / 5;
+  spawn.scaleY = Q16_ONE * 4 / 5;
   spawn.speed = px(1);
   spawn.acceleration = px(1);
   spawn.script = gSettlements_SmokeScript;

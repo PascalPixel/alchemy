@@ -150,6 +150,7 @@ void MercuryLighthouse_SpawnMotes(void) {
 /// "We're in Imil! We're at the base of Mercury Lighthouse!"
 void MercuryLighthouse_HearVoices(void) {
   struct Actor *actor;
+  u8 delay;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -193,16 +194,13 @@ void MercuryLighthouse_HearVoices(void) {
   // "I don't know. They've been standing here telling everyone to leave..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_OLD_MAN, 0);
   actor = Actor_GetById(ACTOR_OLD_MAN);
-  actor->riseCounter = ((Random16() * 80) >> 16) + 40;
+  delay = ((Random16() * 80) >> 16) + 40;
+  actor->riseCounter = delay;
   actor->blockMarked = 0;
   actor->update = (void (*)(void))MercuryLighthouse_LookAround;
   actor = Actor_GetById(ACTOR_OLD_WOMAN);
-  {
-    /* FAKEMATCH(temporary): the timer's + 40 comes before its address. */
-    u8 timer = ((Random16() * 80) >> 16) + 40;
-
-    actor->riseCounter = timer;
-  }
+  delay = ((Random16() * 80) >> 16) + 40;
+  actor->riseCounter = delay;
   actor->blockMarked = 2;
   actor->update = (void (*)(void))MercuryLighthouse_LookAround;
   FieldPsynergy_StartMindReadWave(ACTOR_VOICES_SOURCE, ACTOR_VOICES_TARGET);

@@ -603,10 +603,6 @@ s32 Scene_PrepareMap(void) { return 0; }
 void MadraCatacombs_SetUpVillage(void) {
   s32 a;
   s32 b;
-  s32 x;
-  s32 y;
-  s32 z;
-  struct Actor *object;
 
   Event_ClearFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED);
   Actor_SetSpritePriority(ACTOR_VILLAGE_CHEST, 3);
@@ -620,15 +616,8 @@ void MadraCatacombs_SetUpVillage(void) {
   Actor_DisableById(ACTOR_HOLE_PILLAR);
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_HOLE_FILLED) != 0) {
     MapGrid_CopyCellAttributes(41, 13, 2, 1, 39, 13);
-    object = Actor_GetById(ACTOR_HOLE_PILLAR);
-    x = 162;
-    z = 216;
-    x <<= 18;
-    y = 0;
-    /* FAKEMATCH(barrier): x, y and z held at an empty asm, the second of the
-     * pair above. */
-    __asm__("" : "+r"(x), "+r"(y), "+r"(z));
-    Actor_SetPositionAndResetMotion(object, x, y, z << 16);
+    FieldActor_SetPositionAndResetMotion(Actor_GetById(ACTOR_HOLE_PILLAR),
+                                         px(648), 0, px(216));
   }
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_PILLAR_PLACED) != 0)
     Actor_SetPosition(ACTOR_PUSHED_PILLAR, 712, 424);

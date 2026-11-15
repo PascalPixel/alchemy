@@ -520,9 +520,8 @@ void MagmaRock_PlaceVolley(u16 id, s16 first, s16 side) {
   object->z.fixed = Actor_Get(linked)->z.fixed;
   Scene_SetActorSpritePriority(object, 2);
   HALF_AT(object, 102) = first;
-  /* FAKEMATCH(temporary): the byte is computed before its address. */
   facing = side ^ 1;
-  BYTE_AT(object, 98) = facing;
+  object->riseCounter = facing;
   object->update = (void *)MagmaRock_RollMagmaRock;
   next = left + 1;
   flags = &object->motionFlags;
@@ -1242,6 +1241,9 @@ void MagmaRock_PushPillarEast(void) {
   s32 *cell = position;
   struct Actor *object;
   u8 *terrainId;
+  s32 x;
+  s32 z;
+  s32 height;
 
   cell[0] = leader->x.fixed + px(16);
   cell[1] = leader->y.fixed;
@@ -1249,14 +1251,10 @@ void MagmaRock_PushPillarEast(void) {
   object = Actor_FindInCell(cell, leader);
   MagmaRockInside_ClearBlockCells(object);
   terrainId = &object->layer;
-  {
-    /* FAKEMATCH(temporary): the three values held in locals. */
-    s32 x = object->x.fixed >> 20;
-    s32 z = object->z.fixed >> 20;
-    s32 height = object->groundHeight >> 19;
-
-    MagmaRockInside_SetCellShape(*terrainId, x, z, height);
-  }
+  x = object->x.fixed >> 20;
+  z = object->z.fixed >> 20;
+  height = object->groundHeight >> 19;
+  MagmaRockInside_SetCellShape(*terrainId, x, z, height);
   MapGrid_CopyCellAttributes(79, 46, 2, 1, 79, 36);
   MagmaRockInside_PushBlockOnto();
   *terrainId = 0;
@@ -1276,6 +1274,9 @@ void MagmaRock_PushPillarWest(void) {
   s32 position[3];
   struct Actor *object;
   u8 *terrainId;
+  s32 x;
+  s32 z;
+  s32 height;
 
   position[0] = leader->x.fixed - px(16);
   position[1] = leader->y.fixed;
@@ -1283,14 +1284,10 @@ void MagmaRock_PushPillarWest(void) {
   object = Actor_FindInCell(position, leader);
   MagmaRockInside_ClearBlockCells(object);
   terrainId = &object->layer;
-  {
-    /* FAKEMATCH(temporary): the three values held in locals. */
-    s32 x = object->x.fixed >> 20;
-    s32 z = object->z.fixed >> 20;
-    s32 height = object->groundHeight >> 19;
-
-    MagmaRockInside_SetCellShape(*terrainId, x, z, height);
-  }
+  x = object->x.fixed >> 20;
+  z = object->z.fixed >> 20;
+  height = object->groundHeight >> 19;
+  MagmaRockInside_SetCellShape(*terrainId, x, z, height);
   MapGrid_CopyCellAttributes(94, 44, 5, 1, 99, 38);
   MagmaRockInside_PushBlockOnto();
   *terrainId = 0;
@@ -2134,16 +2131,12 @@ void MagmaRock_SpawnRubble(s32 spread) {
   struct FieldEffect *effect;
   u32 frame = 0;
   u32 i = 0;
+  s32 y;
 
   do {
-    {
-      /* FAKEMATCH(temporary): y held in a local. */
-      s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
-
-      effect = (struct FieldEffect *)FieldActor_Create(
-          285, (i << 17) + leader->x.fixed - px(8), y - 0x20000,
-          leader->z.fixed);
-    }
+    y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
+    effect = (struct FieldEffect *)FieldActor_Create(
+        285, (i << 17) + leader->x.fixed - px(8), y - 0x20000, leader->z.fixed);
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;

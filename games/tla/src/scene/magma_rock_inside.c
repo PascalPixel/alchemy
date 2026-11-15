@@ -966,7 +966,6 @@ void MagmaRockInside_DrainLava(void) {
   }
   i = 0;
 burst:
-  /* FAKEMATCH(temporary): burstRandom holding the first call's value. */
   burstRandom = Random16();
   mask = 31;
   /* FAKEMATCH(barrier): the empty asm clobbering sfp. */
@@ -1037,7 +1036,6 @@ rise:
     if ((t & 3) == 0) {
       i = 0;
     spark:
-      /* FAKEMATCH(temporary): sparkRandom holding the call's value. */
       sparkRandom = Random16();
       sparkPosition = position;
       sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
@@ -1078,7 +1076,6 @@ rise:
   lastOptions->startScaleX = 0x1cccc;
   i = 0;
 last:
-  /* FAKEMATCH(temporary): sparkRandom holding the call's value. */
   sparkRandom = Random16();
   sparkPosition = position;
   sparkPosition[0] = baseX + ((sparkRandom % 48) << 16);
@@ -1512,6 +1509,7 @@ void MagmaRockInside_TrackStepCell(void) {
   s32 key = (x << 16) + z;
   s32 last;
   s32 value;
+  s32 trigger;
   struct FieldWork *work;
 
   if (object->velocityX != 0 || object->velocityZ != 0)
@@ -1530,10 +1528,8 @@ void MagmaRockInside_TrackStepCell(void) {
   work = Ram_HeapSlots->fieldWork;
   value = MapCell_Get(2, x, z) >> 8;
   if (value != 0) {
-    /* FAKEMATCH(temporary): the value plus 200 held in delay before the store.
-     */
-    s32 delay = value + 200;
-    work->raisedTrigger = delay;
+    trigger = value + 200;
+    work->raisedTrigger = trigger;
   }
 }
 
@@ -2658,16 +2654,12 @@ void MagmaRockInside_SpawnRubble(s32 spread) {
   struct FieldEffect *effect;
   u32 frame = 0;
   u32 i = 0;
+  s32 y;
 
   do {
-    {
-      /* FAKEMATCH(temporary): y held in a local. */
-      s32 y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
-
-      effect = (struct FieldEffect *)FieldActor_Create(
-          285, (i << 17) + leader->x.fixed - px(8), y - 0x20000,
-          leader->z.fixed);
-    }
+    y = leader->y.fixed - (((Random16() * 14) >> 16) << 16);
+    effect = (struct FieldEffect *)FieldActor_Create(
+        285, (i << 17) + leader->x.fixed - px(8), y - 0x20000, leader->z.fixed);
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
       effect->motionFlags = 0;

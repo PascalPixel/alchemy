@@ -1898,6 +1898,7 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
   struct Actor *object;
   struct MarsLighthouseAerieSprite *sprite;
   s32 angle;
+  u8 phase;
 
   switch (gMarsLighthouseAerie_BeaconFireFrame) {
   case 0:
@@ -1966,12 +1967,8 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
       object->timer = angle;
       zero = 0;
       object->userValue = 0;
-      {
-        /* FAKEMATCH(temporary): the byte held in a local. */
-        u8 phase = Random16() >> 13;
-
-        ((u8 *)object)[98] = phase;
-      }
+      phase = Random16() >> 13;
+      object->riseCounter = phase;
       object->update = MarsLighthouseAerie_OrbitBeaconFire;
       object->speedLimit = Math_Sin(Random16() * 0xffff >> 20) * 24;
       object->speedLimit = anchor->speedLimit >> 16;

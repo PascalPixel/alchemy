@@ -535,7 +535,6 @@ void MarsLighthouseRoomM_StepTowardDoorway(s32 state) {
   if ((state ^ gMarsLighthouseRoomM_DoorwayStep) & 1)
     Event_PlaySound(SE_560);
   gMarsLighthouseRoomM_DoorwayStep = state;
-  /* FAKEMATCH(temporary): the low bit held in a local. */
   odd = state & 1;
   flash = (u16 *)&gMarsLighthouseRoomM_DoorwayBlendTarget;
   next = state - 20;
@@ -967,10 +966,7 @@ void MarsLighthouseRoomM_ReadWindInscription(void) {
 void MarsLighthouseRoomM_SpawnRubble(s32 x, s32 z, s32 kind) {
   struct Actor *object;
 
-  /* FAKEMATCH(temporary): z shifted ahead of the call. */
-  z <<= 16;
-  object = (struct Actor *)Import_ActorCreate(403, x << 16, 0, z);
-
+  object = FieldActor_Create(403, px(x), 0, px(z));
   if (object != 0) {
     Actor_SetSpriteFlags(object, 0);
     Actor_SelectAnimation(object, 3);

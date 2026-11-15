@@ -49,7 +49,7 @@ struct ResourceSprite {
   u8 flags;
   u8 count;
   u32 shadowAttributes[3];
-  struct AnimationEntry *entries[4];
+  struct SpriteAnimation *entries[4];
 };
 
 #undef SpriteAnimation_Alloc
@@ -123,7 +123,7 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
 }
 
 /// Returns the buffer loaded into the sprite picture cache with this tag, or 0.
-s32 Animation_LookupValueByKey(s32 key) {
+s32 SpritePictureCache_FindByTag(s32 key) {
   struct ObjectSystemWork *work = Ram_HeapSlots->actorSystem;
   u32 no;
   struct ResourceSlot *p;
@@ -165,33 +165,33 @@ struct ActorSpriteView__resource_slot {
   u8 value1a;
   u8 count;
   u8 unk1c[0x0c];
-  struct AnimationEntry *entries[4];
+  struct SpriteAnimation *entries[4];
 };
-/* VIEW(resource_slot): routine InitializeAnimationObjects as s32
- * InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state);
- * actor_view.h has s32 InitializeAnimationObjects(struct ActorSpriteView *);
- * tried as the definition's s32 InitializeAnimationObjects(struct
+/* VIEW(resource_slot): routine Sprite_ResetAnimations as s32
+ * Sprite_ResetAnimations(struct ActorSpriteView__resource_slot *state);
+ * actor_view.h has s32 Sprite_ResetAnimations(struct ActorSpriteView *);
+ * tried as the definition's s32 Sprite_ResetAnimations(struct
  * ActorSpriteView__resource_slot *state), which the object already declares, it
  * does not compile in tla-ja: games/tla/src/field/field/sprite_animation.c:157:
- * conflicting types for `InitializeAnimationObjects'. */
+ * conflicting types for `Sprite_ResetAnimations'. */
 s32 InitializeAnimationObjects__resource_slot(
     struct ActorSpriteView__resource_slot
-        *state) __asm__("InitializeAnimationObjects");
-#define InitializeAnimationObjects InitializeAnimationObjects__resource_slot
+        *state) __asm__("Sprite_ResetAnimations");
+#define Sprite_ResetAnimations InitializeAnimationObjects__resource_slot
 /// Resets each sprite animation of a sprite from its animation's metadata: its
 /// facing kind, pictures, scripts and codec, with no picture shown and no
 /// script running.
-s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state) {
+s32 Sprite_ResetAnimations(struct ActorSpriteView__resource_slot *state) {
   s32 index;
-  struct AnimationEntry **slot;
+  struct SpriteAnimation **slot;
 
   index = 0;
   if (index < state->count) {
     slot = state->entries;
     do {
-      struct AnimationEntry *object = *slot++;
+      struct SpriteAnimation *object = *slot++;
       struct AnimationMetadata *metadata =
-          Resource_GetMetadataRecordFar(object->animId);
+          Resource_GetMetadataRecordFar(object->animationId);
       void **pictures;
       u8 **animation;
 
@@ -208,7 +208,7 @@ s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state) {
 
       pictures = metadata->pictures;
       if (pictures == 0)
-        pictures = (void **)Animation_LookupValueByKey(object->animId);
+        pictures = (void **)SpritePictureCache_FindByTag(object->animationId);
 
       object->kind = metadata->drawKind;
       animation = metadata->animation;
@@ -224,7 +224,7 @@ s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state) {
       object->mode = metadata->pictureCodec;
       object->picture = 0xff;
       object->script = 0;
-      object->pos = 0;
+      object->scriptOffset = 0;
     } while (++index < state->count);
   }
 
@@ -233,18 +233,18 @@ s32 InitializeAnimationObjects(struct ActorSpriteView__resource_slot *state) {
 
 /// Resets a sprite animation from its metadata: its pictures, scripts, codec
 /// and drawing kind, with no script running and no picture shown.
-void SpriteAnimation_Reset(struct AnimationEntry *work) {
+void SpriteAnimation_Reset(struct SpriteAnimation *work) {
   s32 value;
   s32 z;
   s32 animation;
   struct AnimationMetadata *info;
 
   if (work != NULL) {
-    info = Resource_GetMetadataRecordFar(work->animId);
+    info = Resource_GetMetadataRecordFar(work->animationId);
     if (info->width != 0) {
       value = info->pictures;
       if (value == 0)
-        value = Animation_LookupValueByKey(work->animId);
+        value = SpritePictureCache_FindByTag(work->animationId);
       z = 0;
       work->kind = info->drawKind;
       work->script = (u8 *)z;
@@ -254,28 +254,28 @@ void SpriteAnimation_Reset(struct AnimationEntry *work) {
       animation = info->animation;
       work->pictures = (void **)value;
       work->scripts = (u8 **)animation;
-      work->pos = z;
+      work->scriptOffset = z;
       work->mode = info->pictureCodec;
       work->picture = 0xff;
     }
   }
 }
 
-/* VIEW(resource_slot): routine ResourceMetadata_Register as s32
- * ResourceMetadata_Register(struct MetadataSlotState *state, s32 id);
- * actor_view.h has s32 ResourceMetadata_Register(struct ActorSpriteView *,
- * s32); tried as the definition's s32 ResourceMetadata_Register(struct
+/* VIEW(resource_slot): routine Sprite_AddAnimation as s32
+ * Sprite_AddAnimation(struct MetadataSlotState *state, s32 id);
+ * actor_view.h has s32 Sprite_AddAnimation(struct ActorSpriteView *,
+ * s32); tried as the definition's s32 Sprite_AddAnimation(struct
  * MetadataSlotState *state, s32 id), which the object already declares, it does
  * not compile in tla-ja: games/tla/src/field/field/sprite_animation.c:248:
- * conflicting types for `ResourceMetadata_Register'. */
+ * conflicting types for `Sprite_AddAnimation'. */
 s32 ResourceMetadata_Register__resource_slot(
     struct MetadataSlotState *state,
-    s32 id) __asm__("ResourceMetadata_Register");
-#define ResourceMetadata_Register ResourceMetadata_Register__resource_slot
+    s32 id) __asm__("Sprite_AddAnimation");
+#define Sprite_AddAnimation ResourceMetadata_Register__resource_slot
 /// Adds a sprite animation of animation id to a sprite, in the first of its
 /// four slots that is free; returns it, 0 when none could be taken, or -1 when
 /// all four are in use.
-s32 ResourceMetadata_Register(struct MetadataSlotState *state, s32 id) {
+s32 Sprite_AddAnimation(struct MetadataSlotState *state, s32 id) {
   s32 value = state->slots[0];
   s32 index = 0;
   s32 *slot;
@@ -361,42 +361,42 @@ void Sprite_RemoveAnimationAt(struct MetadataSlotState *state, u32 no) {
 
 /// Starts animation no on a sprite animation when its metadata has it; with
 /// bit 7 of no set it keeps the place and timer of the script already running.
-void SpriteAnimation_Start(struct AnimationEntry *work, s32 no) {
+void SpriteAnimation_Start(struct SpriteAnimation *work, s32 no) {
   s32 hi;
   struct AnimationMetadata *info;
   s32 value;
 
   hi = 0x80 & no;
   if (work->scripts != 0) {
-    info = Resource_GetMetadataRecordFar(work->animId);
+    info = Resource_GetMetadataRecordFar(work->animationId);
     if (no < info->animationCount) {
       value = (s32)work->scripts[no];
       work->kind = info->drawKind;
       work->script = (u8 *)value;
       work->step = 0x10;
       if (hi == 0) {
-        work->pos = hi;
+        work->scriptOffset = hi;
         work->timer = hi;
       }
     }
   }
 }
 
-/* VIEW(resource_slot): routine Animation_ApplyChildArgument as s32
- * Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
- * actor_view.h has s32 Animation_ApplyChildArgument(struct ActorSpriteView *,
- * s32); tried as the definition's s32 Animation_ApplyChildArgument(struct
+/* VIEW(resource_slot): routine Sprite_StartAnimation as s32
+ * Sprite_StartAnimation(struct AnimationGroup *state, s32 flags);
+ * actor_view.h has s32 Sprite_StartAnimation(struct ActorSpriteView *,
+ * s32); tried as the definition's s32 Sprite_StartAnimation(struct
  * AnimationGroup *state, s32 flags), which the object already declares, it does
  * not compile in tla-ja: games/tla/src/field/field/sprite_animation.c:360:
- * conflicting types for `Animation_ApplyChildArgument'. */
+ * conflicting types for `Sprite_StartAnimation'. */
 s32 Animation_ApplyChildArgument__resource_slot(
     struct AnimationGroup *state,
-    s32 flags) __asm__("Animation_ApplyChildArgument");
-#define Animation_ApplyChildArgument Animation_ApplyChildArgument__resource_slot
+    s32 flags) __asm__("Sprite_StartAnimation");
+#define Sprite_StartAnimation Animation_ApplyChildArgument__resource_slot
 /// Starts animation flags & 0x7f on every sprite animation of a sprite (bit 7
 /// keeps each sprite animation's place and timer), unless the sprite plays it
 /// already.
-s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags) {
+s32 Sprite_StartAnimation(struct AnimationGroup *state, s32 flags) {
   s32 highBit;
   s32 index;
 
@@ -408,7 +408,7 @@ s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags) {
     goto test_entry;
   entry_loop:
     {
-      struct AnimationEntry *entry = state->entries[index];
+      struct SpriteAnimation *entry = state->entries[index];
       struct AnimationMetadata *metadata;
       s32 selectedAnimation;
 
@@ -417,7 +417,7 @@ s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags) {
       if (entry->scripts == 0)
         goto next_entry;
 
-      metadata = Resource_GetMetadataRecordFar(entry->animId);
+      metadata = Resource_GetMetadataRecordFar(entry->animationId);
       if (flags >= metadata->animationCount)
         goto next_entry;
 
@@ -426,7 +426,7 @@ s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags) {
       entry->script = (u8 *)selectedAnimation;
       entry->step = 0x10;
       if (highBit == 0) {
-        entry->pos = 0;
+        entry->scriptOffset = 0;
         entry->timer = 0;
       }
       if (index == 0) {
@@ -467,19 +467,19 @@ s32 Sprite_SetAnimationTimers(struct ChildGroup *group, s32 value) {
   return 0;
 }
 
-/* VIEW(resource_slot): routine Animation_ApplyChildValue as void
- * Animation_ApplyChildValue(struct ChildGroup *group, s32 value); actor_view.h
- * has void Animation_ApplyChildValue(struct ActorSpriteView *, s32); tried as
- * the definition's void Animation_ApplyChildValue(struct ChildGroup *group, s32
+/* VIEW(resource_slot): routine Sprite_SetAnimationSpeed as void
+ * Sprite_SetAnimationSpeed(struct ChildGroup *group, s32 value); actor_view.h
+ * has void Sprite_SetAnimationSpeed(struct ActorSpriteView *, s32); tried as
+ * the definition's void Sprite_SetAnimationSpeed(struct ChildGroup *group, s32
  * value), which the object already declares, it does not compile in tla-ja:
  * games/tla/src/field/field/sprite_animation.c:440: conflicting types for
- * `Animation_ApplyChildValue'. */
+ * `Sprite_SetAnimationSpeed'. */
 void Animation_ApplyChildValue__resource_slot(
-    struct ChildGroup *group, s32 value) __asm__("Animation_ApplyChildValue");
-#define Animation_ApplyChildValue Animation_ApplyChildValue__resource_slot
+    struct ChildGroup *group, s32 value) __asm__("Sprite_SetAnimationSpeed");
+#define Sprite_SetAnimationSpeed Animation_ApplyChildValue__resource_slot
 /// Sets the timer step, the animation speed, of each playing sprite animation
 /// of a sprite (16 is normal speed).
-void Animation_ApplyChildValue(struct ChildGroup *group, s32 value) {
+void Sprite_SetAnimationSpeed(struct ChildGroup *group, s32 value) {
   s32 i;
 
   for (i = 0; i < group->count; i++) {
@@ -503,23 +503,23 @@ void ActorSystem_Configure(s32 mode) {
   if (mode == 3) {
     sprites = HeapSlot_AllocEwram(HEAP_SLOT_SPRITES,
                                   ANIMATION_OBJECT_COUNT *
-                                      sizeof(struct AnimationObject));
+                                      sizeof(struct Sprite));
     layers = HeapSlot_AllocEwram(HEAP_SLOT_SPRITE_ANIMATIONS,
                                  ANIMATION_OBJECT_COUNT *
-                                     sizeof(struct AnimationEntry));
+                                     sizeof(struct SpriteAnimation));
   } else {
     sprites =
         HeapSlot_Alloc(HEAP_SLOT_SPRITES,
-                       ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
+                       ANIMATION_OBJECT_COUNT * sizeof(struct Sprite));
     layers =
         HeapSlot_Alloc(HEAP_SLOT_SPRITE_ANIMATIONS,
-                       ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
+                       ANIMATION_OBJECT_COUNT * sizeof(struct SpriteAnimation));
   }
   Palette_LoadBasicSpriteColors();
   Dma_Fill32Cell(zero, 0, sprites,
-                 ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
+                 ANIMATION_OBJECT_COUNT * sizeof(struct Sprite));
   Dma_Fill32Cell(zero, 0, layers,
-                 ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
+                 ANIMATION_OBJECT_COUNT * sizeof(struct SpriteAnimation));
   VramCache_Load(93, 128, gActor_ShadowTiles);
   RamCode_LoadSlot(HEAP_SLOT_PICTURE_UPLOADER, Render_CopyStridedCode,
                    Render_CopyStridedCodeSize);
@@ -538,11 +538,11 @@ void VramBlock_Load93(void) {
 
 /// Takes a free sprite animation and starts it on animation id's first
 /// animation.
-struct AnimationEntry *SpriteAnimation_Alloc(s32 id) {
+struct SpriteAnimation *SpriteAnimation_Alloc(s32 id) {
   struct AnimationMetadata *metadata;
-  struct AnimationEntry *entry;
-  struct AnimationEntry *found;
-  struct AnimationEntry *object;
+  struct SpriteAnimation *entry;
+  struct SpriteAnimation *found;
+  struct SpriteAnimation *object;
   s32 i;
   void **pictures;
   u8 **animation;
@@ -568,9 +568,9 @@ struct AnimationEntry *SpriteAnimation_Alloc(s32 id) {
       pictures = (void **)*(s32 *)&metadata->pictures;
 #endif
       object = found;
-      object->animId = id;
+      object->animationId = id;
       if (pictures == 0)
-        pictures = (void **)Animation_LookupValueByKey(id);
+        pictures = (void **)SpritePictureCache_FindByTag(id);
 
       animation = metadata->animation;
       object->scripts = animation;
@@ -578,9 +578,9 @@ struct AnimationEntry *SpriteAnimation_Alloc(s32 id) {
       object->mode = metadata->pictureCodec;
       object->picture = 0xff;
       object->script = animation[0];
-      object->pos = 0;
+      object->scriptOffset = 0;
       object->kind = metadata->drawKind;
-      object->param = 0;
+      object->colorMode = 0;
     }
   }
   return object;
@@ -588,7 +588,7 @@ struct AnimationEntry *SpriteAnimation_Alloc(s32 id) {
 
 // Resources: clear an animation record.
 
-/// Zeroes one AnimationEntry; does nothing for NULL.
+/// Zeroes one SpriteAnimation; does nothing for NULL.
 void SpriteAnimation_Clear(void *dst) {
   if (dst != 0) {
     volatile u32 zero;
@@ -596,7 +596,7 @@ void SpriteAnimation_Clear(void *dst) {
     zero = 0;
     Dma_Set(&zero, dst,
             ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16) |
-                (sizeof(struct AnimationEntry) / 4),
+                (sizeof(struct SpriteAnimation) / 4),
             REG_DMA3);
   }
 }
@@ -689,7 +689,7 @@ struct ResourceObject *Sprite_Create(s32 id) {
   *attribute++ = 0;
   *attribute++ = 0x6000;
   *attribute = (gVramCacheEntries[93].offset >> 5) | 0x800;
-  if (ResourceMetadata_Register(sprite, id) == -1) {
+  if (Sprite_AddAnimation(sprite, id) == -1) {
     /* FAKEMATCH(dead): a store of the byte it reloads. */
     freeSprite->dirty = freeSprite->dirty;
   }

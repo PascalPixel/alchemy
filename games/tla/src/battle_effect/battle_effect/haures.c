@@ -95,7 +95,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     work->sprites[12 + i] = sprite;
     if (sprite != NULL) {
       sprite->nextFrame = 0;
-      Animation_ApplyChildArgumentFar(sprite, 0);
+      Sprite_StartAnimationFar(sprite, 0);
       {
         struct FieldSprite *added = work->sprites[12 + i];
 
@@ -109,7 +109,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     work->sprites[16 + i] = sprite;
     if (sprite != NULL) {
       sprite->nextFrame = 0;
-      Animation_ApplyChildArgumentFar(sprite, 0);
+      Sprite_StartAnimationFar(sprite, 0);
       {
         struct FieldSprite *added = work->sprites[16 + i];
 
@@ -318,7 +318,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
                 } else if (p->variant <= 23) {
                   wingPlace[0] = p->x;
                   wingPlace[2] = p->y;
-                  Animation_ApplyChildArgumentFar(work->sprites[12 + (i & 1)],
+                  Sprite_StartAnimationFar(work->sprites[12 + (i & 1)],
                                                   (p->variant / 6) & 3);
                   Render_ApplyProjectedPlacementFar(work->sprites[12 + (i & 1)],
                                                     wingPlace,

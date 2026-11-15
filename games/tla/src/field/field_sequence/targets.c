@@ -32,13 +32,13 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
 
   best = -1;
   bestDist = 32;
-  src = ObjectTable_Get(id);
+  src = Actor_Lookup(id);
   if (src != 0) {
     for (i = 0; i <= 80; i++) {
       if (i == id)
         continue;
 
-      obj = ObjectTable_Get(i);
+      obj = Actor_Lookup(i);
       if (obj == 0 || (obj->collisionFlags & 8) != 0)
         continue;
 
@@ -83,10 +83,10 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
   return best;
 }
 
-/// Returns the row of gData_080eff28 for a field Psynergy kind: its range,
+/// Returns the row of gFieldPsynergy_Reach for a field Psynergy kind: its range,
 /// height and facing width. A kind not found returns the -1 terminator.
 const struct FieldPsynergyReach *Field_GetPsynergyReach(s32 id) {
-  const struct FieldPsynergyReach *entry = gData_080eff28;
+  const struct FieldPsynergyReach *entry = gFieldPsynergy_Reach;
 
   while (entry->fieldPsynergy != -1 && id != entry->fieldPsynergy)
     entry++;
@@ -127,8 +127,8 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
   s32 diff;
   s32 angle;
 
-  self = ObjectTable_Get(selfId);
-  other = ObjectTable_Get(otherId);
+  self = Actor_Lookup(selfId);
+  other = Actor_Lookup(otherId);
   if (self == 0 || other == 0 || (other->collisionFlags & 8) != 0)
     return -1;
 

@@ -417,7 +417,7 @@ nextSpark:
   Actor_SetScript(18, (s32)gLoho_SecondMinerStepsUp);
   Actor_SetSpeed(17, 0.4);
   Actor_SetScript(17, (s32)gLoho_ThirdMinerStepsUp);
-  Actor_RefreshSelectorById(16);
+  Actor_WaitForScriptEndById(16);
   Actor_FaceDirectionAndWait(16, FACING_SOUTHWEST);
   Event_Wait(10);
   Actor_FaceDirectionAndWait(16, FACING_WEST);
@@ -436,8 +436,8 @@ nextSpark:
   Event_Wait(60);
   // "Yeah, I saw one anchored off the beach!"
   Event_ShowMessage(16, 0);
-  Actor_RefreshSelectorById(17);
-  Actor_RefreshSelectorById(18);
+  Actor_WaitForScriptEndById(17);
+  Actor_WaitForScriptEndById(18);
   Actor_FaceEachOther(17, 18, 0);
   Event_Wait(20);
   goto askCannon;
@@ -477,9 +477,9 @@ crewLeaves:
   Actor_WalkByAndWait(17, 0, 24);
   Actor_FaceDirection(17, FACING_EAST, 0);
   Actor_FaceDirection(18, FACING_NORTH_NORTHEAST, 0);
-  Actor_RefreshSelectorById(16);
+  Actor_WaitForScriptEndById(16);
   Actor_SetScript(16, (s32)gLoho_FirstMinerFetchesCannon);
-  Actor_RefreshSelectorById(16);
+  Actor_WaitForScriptEndById(16);
   Actor_FaceDirection(18, FACING_NORTH, 0);
   Actor_FaceDirection(17, FACING_EAST, 0);
   Actor_FaceDirection(16, FACING_SOUTHWEST, 0);
@@ -494,7 +494,7 @@ crewLeaves:
   Actor_SetScript(16, (s32)gLoho_FirstMinerReturns);
   Actor_WaitForMoveById(17);
   Actor_WaitForMoveById(18);
-  Actor_RefreshSelectorById(16);
+  Actor_WaitForScriptEndById(16);
   Actor_FaceDirectionAndWait(16, FACING_EAST);
   Actor_SetSpeed(16, 0.3);
   Actor_SetSpeed(17, 0.3);
@@ -504,7 +504,7 @@ crewLeaves:
   t226 = Actor_GetById(20);
   t226->motionFlags = 0;
   Actor_SetScript(20, (s32)gLoho_ForemanComes);
-  Actor_RefreshSelectorById(20);
+  Actor_WaitForScriptEndById(20);
   Actor_SetSpeed(20, 0.3);
   FieldCamera_SetSpeed(0.3);
   FieldCamera_MoveTo(460, CAMERA_KEEP, 350, 1);
@@ -803,7 +803,7 @@ s32 Scene_PrepareMap(void) {
 
 // clang-format off
 u32 gLoho_FirstMinerGoesToWall[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_XZ(px(539), px(327)),
     SC_SYNC,
     SC_MOVE_XZ(px(583), px(327)),
@@ -820,33 +820,33 @@ u32 gLoho_FirstMinerGoesToWall[] = {
     SC_SYNC,
     SC_MOVE_XZ(px(570), px(278)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_SOUTHWEST),
     SC_END,
 };
 
 s32 gLoho_SecondMinerStepsUp[] = {
     SC_WAIT(50),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(px(4), 0, px(-40)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 s32 gLoho_ThirdMinerStepsUp[] = {
     SC_WAIT(70),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(0, 0, px(-40)),
     SC_SYNC,
     SC_MOVE_XZ(px(512), px(303)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 u32 gLoho_FirstMinerWalksBack[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(570), 0, px(248)),
     SC_SYNC,
     SC_MOVE(px(583), 0, px(248)),
@@ -866,17 +866,17 @@ u32 gLoho_FirstMinerFetchesCannon[] = {
     SC_SYNC,
     SC_MOVE_XZ(px(554), px(332)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 u32 gLoho_FirstMinerReturns[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_XZ(px(472), px(331)),
     SC_SYNC,
     SC_MOVE_XZ(px(472), px(361)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
@@ -884,11 +884,11 @@ s32 gLoho_ForemanComes[] = {
     SC_MOVE_BY(0, px(2), 0),
     SC_SYNC,
     SC_END,
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(1),
     SC_END,
     SC_WAIT(5),
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_SET(SW_SCALE_X, -0x10000),
     SC_END,
 };
@@ -908,10 +908,10 @@ u32 gLoho_VillagerPaces[] = {
 };
 
 u32 gLoho_VillagerReturns[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(128), 0, px(120)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_LABEL(1),
     SC_WAIT(50),
     SC_SET(SW_FACING, FACING_WEST),
@@ -927,19 +927,19 @@ u32 gLoho_VillagerReturns[] = {
 
 u32 gLoho_VillagerMovesWest[] = {                                                               
       SC_SET(SW_SPEED, 0xe666),                                                
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_MOVE(px(128), 0, px(144)),                                      
       SC_SYNC,                                                                 
-      SC_ARG(1),                                                               
+      SC_ANIMATION(1),                                                               
       SC_END,                                                                  
   };
 
 u32 gLoho_VillagerMovesNorth[] = {                                                               
       SC_SET(SW_SPEED, 0xe666),                                                
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_MOVE(px(159), 0, px(128)),                                      
       SC_SYNC,                                                                 
-      SC_ARG(1),                                                               
+      SC_ANIMATION(1),                                                               
       SC_END,                                                                  
   };
 

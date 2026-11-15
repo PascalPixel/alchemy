@@ -5,25 +5,25 @@
 #include "static_assert.h"
 
 struct MotionObject;
-struct AnimationEntry;
+struct SpriteAnimation;
 
 /// A unit's place on the battlefield: its sprite object, resources and
 /// animations, its anchor spot and scale, and the conditions it shows.
-struct BattleObj {
+struct BattleObject {
   struct MotionObject *object; ///< NULL once released
   u16 resource;                ///< the unit's sprite
   u16 overlay;                 ///< a second sprite drawn over it; 0 for none
   u16 animation; ///< the status icon's animation shown; 0 for none
-  u16 effect;    ///< an effect sprite drawn with the unit
+  u16 shadow;    ///< the shadow sprite drawn under the unit
   s32 anchorX;   ///< 16.16 fixed-point pixels
   s32 anchorZ;   ///< 16.16 fixed-point pixels
   s32 palette;   ///< the unit sprite's colour mode, an enum SpriteColorMode
   s32 scale;     ///< 16.16 fixed point, 0x10000 full size
-  u16 activeConditions;                  ///< a bit per status with an icon
+  u16 activeStatuses;                    ///< a bit per status with an icon
   u8 selectedCondition;                  ///< the status whose icon is shown
   s8 cycleTimer;                         ///< frames until the next status icon
-  struct AnimationEntry *animationEntry; ///< the status icon's sprite, or NULL
-  struct AnimationEntry *effectEntry;    ///< the effect sprite, or NULL
+  struct SpriteAnimation *animationEntry; ///< the status icon's sprite, or NULL
+  struct SpriteAnimation *shadowEntry;    ///< the shadow sprite, or NULL
   /// Set by BattleObject_MarkForRelease: the object is released with the
   /// others.
   s16 active;
@@ -76,11 +76,11 @@ struct BattleSpoils {
   u16 items[4];
 };
 
-STATIC_ASSERT(sizeof(struct BattleObj) == 0x2c);
-STATIC_ASSERT(offsetof(struct BattleObj, anchorX) == 0x0c);
-STATIC_ASSERT(offsetof(struct BattleObj, activeConditions) == 0x1c);
-STATIC_ASSERT(offsetof(struct BattleObj, cycleTimer) == 0x1f);
-STATIC_ASSERT(offsetof(struct BattleObj, active) == 0x28);
+STATIC_ASSERT(sizeof(struct BattleObject) == 0x2c);
+STATIC_ASSERT(offsetof(struct BattleObject, anchorX) == 0x0c);
+STATIC_ASSERT(offsetof(struct BattleObject, activeStatuses) == 0x1c);
+STATIC_ASSERT(offsetof(struct BattleObject, cycleTimer) == 0x1f);
+STATIC_ASSERT(offsetof(struct BattleObject, active) == 0x28);
 
 STATIC_ASSERT(sizeof(struct BattleActionRecord) == 0x10);
 STATIC_ASSERT(offsetof(struct BattleActionRecord, priority) == 0x04);

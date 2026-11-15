@@ -18,13 +18,13 @@ struct MenuFlagWork {
   u8 busy;
 };
 
-/// A row of gData_080eff28, as Cybele reads its id.
+/// A row of gFieldPsynergy_Reach, as Cybele reads its id.
 struct DescriptorEntry {
   s16 id;
   u8 unk02[6];
 };
 
-extern struct DescriptorEntry gData_080eff28[];
+extern struct DescriptorEntry gFieldPsynergy_Reach[];
 
 /// Writes the canvas's tile map for BG2, then closes the canvas layer.
 void BattleEffect_InitializeTilemapAndFlushQueue(void) {
@@ -173,9 +173,9 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
       {
         u8 left = gCybele_ObjectPoses[pose * 2];
 
-        Animation_ApplyChildArgumentFar(work->sprites[3], left);
+        Sprite_StartAnimationFar(work->sprites[3], left);
       }
-      Animation_ApplyChildArgumentFar(work->sprites[4],
+      Sprite_StartAnimationFar(work->sprites[4],
                                       gCybele_ObjectPoses[pose * 2 + 1]);
     }
 
@@ -388,7 +388,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     if (frame >= 161 && frame <= 223) {
       for (i = 0; i != args->targetCount; i++) {
         if (frame > i * 8 + 160) {
-          struct BattleObj *slot = BattleObject_GetFar(args->targets[i]);
+          struct BattleObject *slot = BattleObject_GetFar(args->targets[i]);
           struct MotionObject *object = slot->object;
           void *record;
           s32 n;
@@ -398,7 +398,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
             object->y = px(128);
           object->verticalMotionStrength = 0;
           for (n = 0; (record = GetMotionRecordFar(slot->object, n)) != 0; n++)
-            Animation_ApplyChildArgumentFar(record, 5);
+            Sprite_StartAnimationFar(record, 5);
         }
       }
     }

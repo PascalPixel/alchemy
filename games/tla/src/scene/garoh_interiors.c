@@ -471,12 +471,12 @@ void GarohInteriors_WakeAtInn(void) {
   Event_SetMessageId((s32)MsgGarohInteriors34);
   // "You folks didn't sleep much last night... You don't look like you..."
   Event_ShowMessageThenWait(ACTOR_INN_ATTENDANT, 0, 10);
-  Motion_SetVarCbAndRefresh(ACTOR_INNKEEPER, 2);
+  Actor_RunRepeatedMotion(ACTOR_INNKEEPER, 2);
   Event_Wait(20);
   // "Master Maha told us all about you. Don't you worry about the bill. It's
   // on us."
   Event_ShowMessageThenWait(ACTOR_INNKEEPER, 0, 10);
-  Motion_SetModeAndWaitAnimation(ACTOR_INNKEEPER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_INNKEEPER, ANIM_NOD);
   Event_Wait(30);
   // "Farewell, friends."
   Event_ShowMessageThenWait(ACTOR_INNKEEPER, 0, 10);

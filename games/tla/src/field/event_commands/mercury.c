@@ -85,9 +85,9 @@ void Djinn_RunMercuryJoinEffect(s32 arg) {
   wait(30);
   djinni->visible = 0;
   Sound_PlayFar(SE_NOTE_LOW);
-  Motion_SetVarCbAndRefresh(arg, 1);
+  Actor_RunRepeatedMotion(arg, 1);
   Sound_PlayFar(SE_NOTE_HIGH);
-  Motion_SetVarCbAndRefresh(arg, 1);
+  Actor_RunRepeatedMotion(arg, 1);
   wait(20);
   Sound_PlayFar(SE_JUMP);
   Actor_Jump(arg, 3, 14);

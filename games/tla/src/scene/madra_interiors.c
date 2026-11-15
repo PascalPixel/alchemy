@@ -474,7 +474,7 @@ void MadraInteriors_SetUpJail(void) {
 
 extern u32 gMadraInteriors_InterrogatorsLeave[];
 void FieldCamera_WaitForArrival();
-void BattleEffect_LoadActionEffectResources();
+void FieldPsynergy_LoadResources();
 void FieldPsynergy_SetupActorPair();
 void BattleEffect_StopMainActor();
 
@@ -582,7 +582,7 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_ACCUSING_INTERROGATOR, 0, 10);
   Actor_WalkToAndWait(ACTOR_FELIX, 396, 869);
   FieldActor_LaunchFromLeader(ACTOR_JAIL_KRADEN, 25, 19, FACING_NORTH);
-  FieldActor_RefreshSelectorById(ACTOR_JAIL_KRADEN);
+  FieldActor_WaitForScriptEndById(ACTOR_JAIL_KRADEN);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_JAIL_KRADEN, FACING_WEST, 0);
   FieldEvent_Wait(20);
@@ -669,9 +669,9 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_PIERS, 0, 16);
-  BattleEffect_LoadActionEffectResources(ABILITY_FROST, 1);
+  FieldPsynergy_LoadResources(ABILITY_FROST, 1);
   FieldPsynergy_SetupActorPair(ACTOR_PIERS, ACTOR_JAIL_PUDDLE);
-  EventObject_Initialize();
+  FieldPsynergy_StartCast();
   Actor_ShowEmote(ACTOR_STERN_INTERROGATOR, EMOTE_IN_FRONT | EMOTE_QUESTION,
                   30);
   Actor_FaceActor(ACTOR_STERN_INTERROGATOR, ACTOR_PIERS, 0);
@@ -681,7 +681,7 @@ void MadraInteriors_InterrogatePiers(void) {
   Actor_SetScript(ACTOR_STERN_INTERROGATOR, gMadraInteriors_InterrogatorLifted);
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
-  BattleEffect_CleanupSceneObjects();
+  FieldPsynergy_End();
   // "Oh! That was Psynergy!"
   FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
   FieldActor_Stop(ACTOR_STERN_INTERROGATOR);
@@ -697,7 +697,7 @@ void MadraInteriors_InterrogatePiers(void) {
   Actor_SetDestinationOffset(ACTOR_STERN_INTERROGATOR, -8, 0);
   Actor_SetScript(ACTOR_STERN_INTERROGATOR,
                   gMadraInteriors_InterrogatorTopples);
-  FieldActor_RefreshSelectorById(ACTOR_STERN_INTERROGATOR);
+  FieldActor_WaitForScriptEndById(ACTOR_STERN_INTERROGATOR);
   Event_PlaySound(SE_LANDING_THUD);
   FieldEvent_Wait(60);
   object7 = Actor_Get(ACTOR_STERN_INTERROGATOR);
@@ -773,7 +773,7 @@ void MadraInteriors_InterrogatePiers(void) {
   FieldEvent_Wait(40);
   FieldActor_Stop(ACTOR_FELIX);
   FieldActor_Stop(ACTOR_JAIL_KRADEN);
-  FieldActor_RefreshSelectorById(ACTOR_ACCUSING_INTERROGATOR);
+  FieldActor_WaitForScriptEndById(ACTOR_ACCUSING_INTERROGATOR);
   Actor_SetPosition(ACTOR_STERN_INTERROGATOR, 0, 0);
   Actor_SetPosition(ACTOR_ACCUSING_INTERROGATOR, 0, 0);
   Actor_SetAnimation(ACTOR_JAIL_PUDDLE, 6);
@@ -869,12 +869,12 @@ void MadraInteriors_MindReadPiers(void) {
 /// Unused: Piers' Psynergy at actor 8 alone, as the interrogation plays it;
 /// nothing calls it.
 UNUSED void MadraInteriors_PiersUsesPsynergy(void) {
-  BattleEffect_LoadActionEffectResources(ABILITY_FROST, 1);
+  FieldPsynergy_LoadResources(ABILITY_FROST, 1);
   FieldPsynergy_SetupActorPair(7, 8);
-  EventObject_Initialize();
+  FieldPsynergy_StartCast();
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
-  BattleEffect_CleanupSceneObjects();
+  FieldPsynergy_End();
   return;
 }
 
@@ -952,16 +952,16 @@ void MadraInteriors_GiveHealingFungus(void) {
   FieldEvent_Wait(60);
   Actor_SetScript(ACTOR_MUSHROOM_LOVER,
                   (s32)gMadraInteriors_OldManWalksToBackRoom);
-  FieldActor_RefreshSelectorById(ACTOR_MUSHROOM_LOVER);
+  FieldActor_WaitForScriptEndById(ACTOR_MUSHROOM_LOVER);
   FieldEvent_Wait(120);
   Actor_SetScript(ACTOR_MUSHROOM_COOK, (s32)gMadraInteriors_WifeComesBack);
   FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_MUSHROOM_COOK);
   FieldEvent_Wait(60);
   Actor_SetScript(ACTOR_MUSHROOM_LOVER, (s32)gMadraInteriors_OldManComesBack);
   Actor_SetScript(ACTOR_CHAR, (s32)gMadraInteriors_CharFollows);
-  FieldActor_RefreshSelectorById(ACTOR_MUSHROOM_LOVER);
-  FieldActor_RefreshSelectorById(ACTOR_MUSHROOM_COOK);
-  FieldActor_RefreshSelectorById(ACTOR_CHAR);
+  FieldActor_WaitForScriptEndById(ACTOR_MUSHROOM_LOVER);
+  FieldActor_WaitForScriptEndById(ACTOR_MUSHROOM_COOK);
+  FieldActor_WaitForScriptEndById(ACTOR_CHAR);
   Actor_RunRepeatedMotion(ACTOR_MUSHROOM_COOK, 2);
   FieldEvent_Wait(20);
   // "I don't know if you want a pet, but this is all we can offer. Take..."
@@ -1345,7 +1345,7 @@ void MadraInteriors_AskToStayLonger(void) {
 /// The old couple's walks into their back room and out again, Char hopping
 /// after them, as they fetch the Djinni for the Healing Fungus.
 u32 gMadraInteriors_WifeWalksToBackRoom[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_XZ(px(356), px(72)),
     SC_SYNC,
     SC_MOVE(px(324), 0, px(73)),
@@ -1356,10 +1356,10 @@ u32 gMadraInteriors_WifeWalksToBackRoom[] = {
 
 /// The leader's script as the old man passes: one step aside.
 u32 gMadraInteriors_LeaderStepsAside[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_XZ(px(339), px(111)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTH),
@@ -1368,7 +1368,7 @@ u32 gMadraInteriors_LeaderStepsAside[] = {
 
 /// The mushroom lover's script off to the back room to fetch Char.
 u32 gMadraInteriors_OldManWalksToBackRoom[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_XZ(px(356), px(72)),
     SC_SYNC,
     SC_MOVE(px(324), 0, px(73)),
@@ -1379,14 +1379,14 @@ u32 gMadraInteriors_OldManWalksToBackRoom[] = {
 
 /// The mushroom cook's script back to her place.
 u32 gMadraInteriors_WifeComesBack[] = {                                                               
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_POSITION(px(327), 0, px(71)),                                 
       SC_SET(SW_FACING, FACING_EAST),                                          
       SC_MOVE(px(352), 0, px(72)),                                     
       SC_SYNC,                                                                 
       SC_MOVE_XZ(px(373), px(109)),                                     
       SC_SYNC,                                                                 
-      SC_ARG(1),                                                               
+      SC_ANIMATION(1),                                                               
       SC_SET(SW_FACING, FACING_NORTH),                                         
       SC_WAIT(10),                                                             
       SC_SET(SW_FACING, FACING_SOUTHWEST),                                     
@@ -1398,14 +1398,14 @@ u32 gMadraInteriors_WifeComesBack[] = {
 
 /// The mushroom lover's script back from the back room with Char.
 u32 gMadraInteriors_OldManComesBack[] = {                                                               
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_POSITION(px(327), 0, px(71)),                                 
       SC_SET(SW_FACING, FACING_EAST),                                          
       SC_MOVE(px(352), 0, px(72)),                                     
       SC_SYNC,                                                                 
       SC_MOVE_XZ(px(373), px(97)),                                     
       SC_SYNC,                                                                 
-      SC_ARG(1),                                                               
+      SC_ANIMATION(1),                                                               
       SC_SET(SW_FACING, FACING_NORTH),                                         
       SC_WAIT(10),                                                             
       SC_SET(SW_FACING, FACING_SOUTHWEST),                                     
@@ -1418,14 +1418,14 @@ u32 gMadraInteriors_OldManComesBack[] = {
 /// Char's script once the old man gives him to the party: he follows the
 /// leader.
 u32 gMadraInteriors_CharFollows[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_POSITION(px(327), px(24), px(71)),
     SC_SET(SW_FACING, FACING_EAST),
     SC_MOVE(px(352), 0, px(72)),
     SC_SYNC,
     SC_MOVE_XZ(px(373), px(97)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_SOUTHWEST),
@@ -1811,10 +1811,10 @@ struct Trigger gMadraInteriors_TriggersOnReturn[] = {
 
 /// The interrogators walk out of the jail once Piers has been questioned.
 u32 gMadraInteriors_InterrogatorsLeave[] = {                                                               
-      SC_ARG(2), SC_MOVE(px(408), 0, px(872)),                           
+      SC_ANIMATION(2), SC_MOVE(px(408), 0, px(872)),                           
       SC_SYNC,   SC_MOVE(px(408), 0, px(904)),                           
       SC_SYNC,   SC_MOVE(px(408), 0, px(920)),                           
-      SC_SYNC,   SC_ARG(1),                                                    
+      SC_SYNC,   SC_ANIMATION(1),                                                    
       SC_END,                                                                  
   };
 

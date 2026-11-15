@@ -1173,7 +1173,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   void JupiterLighthouse_HealParty(s32 clearStatus) {
     s32 count;
     s32 n;
-    struct BattleUnit *member;
+    struct Unit *member;
     s16 maxHp;
 
     count = Party_CountMembers();
@@ -1325,23 +1325,23 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   FieldEvent_Wait(30);
   Actor_SetScript(29, (s32)gJupiterLighthouse_AgatioRetreatsScript);
   Actor_SetScript(28, (s32)gJupiterLighthouse_AgatioRetreatsScript);
-  FieldActor_RefreshSelectorById(29);
+  FieldActor_WaitForScriptEndById(29);
   Actor_Get(29)->priorityFlags |= 64;
   Actor_Get(27)->priorityFlags |= 64;
   Actor_Get(28)->priorityFlags |= 64;
   Actor_Get(29)->motionFlags = 2;
   Actor_SetScript(29, (s32)gJupiterLighthouse_KarstRetreatsScript);
-  FieldActor_RefreshSelectorById(27);
+  FieldActor_WaitForScriptEndById(27);
   Actor_SetScript(27, (s32)gJupiterLighthouse_KarstRetreatsScript);
-  FieldActor_RefreshSelectorById(28);
+  FieldActor_WaitForScriptEndById(28);
   Actor_SetScript(28, (s32)gJupiterLighthouse_KarstRetreatsScript);
-  FieldActor_RefreshSelectorById(29);
+  FieldActor_WaitForScriptEndById(29);
   Actor_WalkToAndWait(29, 311, 256);
   Actor_FaceDirection(29, FACING_SOUTH, 0);
-  FieldActor_RefreshSelectorById(27);
+  FieldActor_WaitForScriptEndById(27);
   Actor_WalkToAndWait(27, 332, 266);
   Actor_FaceDirection(27, FACING_SOUTH, 0);
-  FieldActor_RefreshSelectorById(28);
+  FieldActor_WaitForScriptEndById(28);
   Actor_WalkToAndWait(28, 290, 266);
   Actor_FaceDirection(28, FACING_SOUTH, 0);
   Actor_Get(29)->priorityFlags |= 32;
@@ -1547,9 +1547,9 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_SetScript(ACTOR_IVAN, (s32)gJupiterLighthouse_IvanLeavesScript);
   Actor_SetScript(ACTOR_MIA, (s32)gJupiterLighthouse_IvanLeavesScript);
   Actor_SetScript(ACTOR_GARET, (s32)gJupiterLighthouse_IvanLeavesScript);
-  FieldActor_RefreshSelectorById(ACTOR_IVAN);
-  FieldActor_RefreshSelectorById(ACTOR_MIA);
-  FieldActor_RefreshSelectorById(ACTOR_GARET);
+  FieldActor_WaitForScriptEndById(ACTOR_IVAN);
+  FieldActor_WaitForScriptEndById(ACTOR_MIA);
+  FieldActor_WaitForScriptEndById(ACTOR_GARET);
   EventCamera_FollowActor(ACTOR_ISAAC, 1);
   FieldActor_WatchAndSetScript(ACTOR_FELIX, 0);
   FieldActor_WatchAndSetScript(ACTOR_PIERS, 0);
@@ -1571,7 +1571,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_WalkToAndWait(ACTOR_ISAAC, 617, 312);
   Actor_Get(ACTOR_ISAAC)->motionFlags = 2;
   Actor_SetScript(ACTOR_ISAAC, (s32)gJupiterLighthouse_AgatioFliesScript);
-  FieldActor_RefreshSelectorById(ACTOR_ISAAC);
+  FieldActor_WaitForScriptEndById(ACTOR_ISAAC);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
   FieldEvent_Wait(30);
   Actor_Get(ACTOR_ISAAC)->priorityFlags |= 32;
@@ -1629,18 +1629,18 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_SetScript(ACTOR_SHEBA, v_r5);
   Actor_SetScript(ACTOR_JENNA, v_r5);
   Actor_SetScript(30, v_r5);
-  FieldActor_RefreshSelectorById(ACTOR_PIERS);
-  FieldActor_RefreshSelectorById(ACTOR_SHEBA);
-  FieldActor_RefreshSelectorById(ACTOR_JENNA);
-  FieldActor_RefreshSelectorById(30);
+  FieldActor_WaitForScriptEndById(ACTOR_PIERS);
+  FieldActor_WaitForScriptEndById(ACTOR_SHEBA);
+  FieldActor_WaitForScriptEndById(ACTOR_JENNA);
+  FieldActor_WaitForScriptEndById(30);
   EventCamera_FollowActor(ACTOR_FELIX, 1);
   Actor_WalkByAndWait(ACTOR_FELIX, -16, 0);
   Actor_SetScript(ACTOR_FELIX, (s32)gJupiterLighthouse_AgatioRetreatsScript);
-  FieldActor_RefreshSelectorById(ACTOR_FELIX);
+  FieldActor_WaitForScriptEndById(ACTOR_FELIX);
   Actor_Get(ACTOR_FELIX)->priorityFlags |= 64;
   Actor_Get(29)->motionFlags = two;
   Actor_SetScript(ACTOR_FELIX, (s32)gJupiterLighthouse_KarstRetreatsScript);
-  FieldActor_RefreshSelectorById(ACTOR_FELIX);
+  FieldActor_WaitForScriptEndById(ACTOR_FELIX);
   Actor_WalkToAndWait(ACTOR_FELIX, 311, 256);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
   FieldEvent_Wait(10);
@@ -1885,7 +1885,7 @@ void JupiterLighthouse_WeBeatThem(void) {
   Actor_SetScript(27, gJupiterLighthouse_AgatioRetreatsScript);
   FieldEvent_Wait(30);
   Actor_SetScript(28, gJupiterLighthouse_AgatioRetreatsScript);
-  FieldActor_RefreshSelectorById(29);
+  FieldActor_WaitForScriptEndById(29);
   t166 = (s32)Actor_Get(29);
   FIELD_AT((t166 + 0x23), u8, 0) = (FIELD_AT((t166 + 0x23), u8, 0) | 0x40);
   t167 = (s32)Actor_Get(27);
@@ -1895,17 +1895,17 @@ void JupiterLighthouse_WeBeatThem(void) {
   t169 = (s32)Actor_Get(29);
   FIELD_AT((t169 + 0x55), u8, 0) = 2;
   Actor_SetScript(29, gJupiterLighthouse_KarstRetreatsScript);
-  FieldActor_RefreshSelectorById(27);
+  FieldActor_WaitForScriptEndById(27);
   Actor_SetScript(27, gJupiterLighthouse_KarstRetreatsScript);
-  FieldActor_RefreshSelectorById(28);
+  FieldActor_WaitForScriptEndById(28);
   Actor_SetScript(28, gJupiterLighthouse_KarstRetreatsScript);
-  FieldActor_RefreshSelectorById(29);
+  FieldActor_WaitForScriptEndById(29);
   Actor_WalkToAndWait(29, 311, 256);
   Actor_FaceDirection(29, FACING_SOUTH, 0);
-  FieldActor_RefreshSelectorById(27);
+  FieldActor_WaitForScriptEndById(27);
   Actor_WalkToAndWait(27, 332, 266);
   Actor_FaceDirection(27, FACING_SOUTH, 0);
-  FieldActor_RefreshSelectorById(28);
+  FieldActor_WaitForScriptEndById(28);
   Actor_WalkToAndWait(28, 290, 266);
   Actor_FaceDirection(28, FACING_SOUTH, 0);
   t184 = (s32)Actor_Get(29);
@@ -2038,9 +2038,9 @@ void JupiterLighthouse_WeBeatThem(void) {
   W_Actor_EnableActionAndSetCallback(3,
                                      (s32)gJupiterLighthouse_IvanLeavesScript);
   Actor_SetScript(ACTOR_GARET, gJupiterLighthouse_IvanLeavesScript);
-  FieldActor_RefreshSelectorById(ACTOR_IVAN);
-  FieldActor_RefreshSelectorById(ACTOR_MIA);
-  FieldActor_RefreshSelectorById(ACTOR_GARET);
+  FieldActor_WaitForScriptEndById(ACTOR_IVAN);
+  FieldActor_WaitForScriptEndById(ACTOR_MIA);
+  FieldActor_WaitForScriptEndById(ACTOR_GARET);
   EventCamera_FollowActor(ACTOR_ISAAC, 1);
   FieldActor_WatchAndSetScript(ACTOR_FELIX, 0);
   FieldActor_WatchAndSetScript(ACTOR_PIERS, 0);
@@ -2063,7 +2063,7 @@ void JupiterLighthouse_WeBeatThem(void) {
   t325 = (s32)Actor_Get(ACTOR_ISAAC);
   FIELD_AT((t325 + 0x55), u8, 0) = 2;
   Actor_SetScript(ACTOR_ISAAC, gJupiterLighthouse_AgatioFliesScript);
-  FieldActor_RefreshSelectorById(ACTOR_ISAAC);
+  FieldActor_WaitForScriptEndById(ACTOR_ISAAC);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
   FieldEvent_Wait(30);
   t330 = (s32)Actor_Get(ACTOR_ISAAC);
@@ -2119,20 +2119,20 @@ void JupiterLighthouse_WeBeatThem(void) {
   Actor_SetScript(ACTOR_SHEBA, gJupiterLighthouse_IvanLeavesScript);
   Actor_SetScript(ACTOR_JENNA, gJupiterLighthouse_IvanLeavesScript);
   Actor_SetScript(30, gJupiterLighthouse_IvanLeavesScript);
-  FieldActor_RefreshSelectorById(ACTOR_PIERS);
-  FieldActor_RefreshSelectorById(ACTOR_SHEBA);
-  FieldActor_RefreshSelectorById(ACTOR_JENNA);
-  FieldActor_RefreshSelectorById(30);
+  FieldActor_WaitForScriptEndById(ACTOR_PIERS);
+  FieldActor_WaitForScriptEndById(ACTOR_SHEBA);
+  FieldActor_WaitForScriptEndById(ACTOR_JENNA);
+  FieldActor_WaitForScriptEndById(30);
   EventCamera_FollowActor(ACTOR_FELIX, 1);
   Actor_WalkByAndWait(ACTOR_FELIX, -16, 0);
   Actor_SetScript(ACTOR_FELIX, gJupiterLighthouse_AgatioRetreatsScript);
-  FieldActor_RefreshSelectorById(ACTOR_FELIX);
+  FieldActor_WaitForScriptEndById(ACTOR_FELIX);
   t381 = (s32)Actor_Get(ACTOR_FELIX);
   FIELD_AT((t381 + 0x23), u8, 0) = (FIELD_AT((t381 + 0x23), u8, 0) | 0x40);
   t382 = (s32)Actor_Get(29);
   FIELD_AT((t382 + 0x55), u8, 0) = 2;
   Actor_SetScript(ACTOR_FELIX, gJupiterLighthouse_KarstRetreatsScript);
-  FieldActor_RefreshSelectorById(ACTOR_FELIX);
+  FieldActor_WaitForScriptEndById(ACTOR_FELIX);
   Actor_WalkToAndWait(ACTOR_FELIX, 311, 256);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
   FieldEvent_Wait(10);
@@ -2891,7 +2891,7 @@ LATE_DATA u32 gJupiterLighthouse_IvanLeavesScript[] = {
 LATE_DATA u32 gJupiterLighthouse_AgatioRetreatsScript[] = {
     SC_SET(SW_SPEED, 0x10000),
     SC_SET(SW_ACCEL, 0x10000),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(480), px(72), px(360)),
     SC_SYNC,
     SC_MOVE(px(456), px(72), px(360)),
@@ -2902,12 +2902,12 @@ LATE_DATA u32 gJupiterLighthouse_AgatioRetreatsScript[] = {
     SC_SYNC,
     SC_MOVE(px(409), px(32), px(312)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 LATE_DATA s32 gJupiterLighthouse_KarstRetreatsScript[] = {                                                               
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_SET(SW_SPEED, 0x38000),                                               
       SC_SET(SW_ACCEL, 0x10000),                                               
       SC_MOVE(px(409), px(32), px(312)),                            
@@ -2941,12 +2941,12 @@ LATE_DATA s32 gJupiterLighthouse_KarstRetreatsScript[] = {
       SC_CALL(JupiterLighthouse_JumpAndHide),                                                  
       SC_SYNC,                                                                 
       SC_CALL(JupiterLighthouse_ShowSprite),                                                  
-      SC_ARG(1),                                                               
+      SC_ANIMATION(1),                                                               
       SC_END,                                                                  
   };
 
 LATE_DATA s32 gJupiterLighthouse_AgatioFliesScript[] = {                                                               
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_SET(SW_SPEED, 0x38000),                                               
       SC_SET(SW_ACCEL, 0x10000),                                               
       SC_MOVE(px(616), px(32), px(312)),                            
@@ -2980,7 +2980,7 @@ LATE_DATA s32 gJupiterLighthouse_AgatioFliesScript[] = {
       SC_CALL(JupiterLighthouse_JumpAndHide),                                                  
       SC_SYNC,                                                                 
       SC_CALL(JupiterLighthouse_ShowSprite),                                                  
-      SC_ARG(1),                                                               
+      SC_ANIMATION(1),                                                               
       SC_END,                                                                  
   };
 
@@ -3026,7 +3026,7 @@ LATE_DATA s32 gJupiterLighthouse_BeaconRisesScript[] = {
 LATE_DATA s32 gJupiterLighthouse_BeaconSparkScript[] = {
     SC_SET(SW_SCALE_X, 0xcccc),
     SC_SET(SW_SCALE_Y, 0xcccc),
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_LABEL(1),
     SC_ADD(SW_Y, px(-1)),
     SC_WAIT(1),

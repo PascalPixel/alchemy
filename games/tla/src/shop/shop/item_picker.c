@@ -59,7 +59,7 @@ s32 Forge_SelectItem(s32 unitId) { return Shop_SelectSell(unitId); }
 /// item was taken, else -1.
 s32 Forge_OfferItem(s32 unitId, s32 slot) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   u32 inventoryEntry = unit->inventory[slot];
   s32 itemId;
   s32 condition;
@@ -221,7 +221,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
   struct RenderInput *nameWindow;
   struct ShopWork *shop;
   struct RenderInput *priceWindow;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 slot;
   s32 inventoryCount;
   s32 redraw;
@@ -377,7 +377,7 @@ s32 ItemPicker_SelectItem(s32 unitId) {
 /// Called by ItemPicker_SelectItem each time the cursor moves.
 void ItemPicker_DrawItem(struct RenderInput *window, s32 unitId, s32 slot) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   u32 inventoryEntry = unit->inventory[slot];
   s32 quantity = (inventoryEntry >> INVENTORY_QUANTITY_SHIFT) + 1;
@@ -509,7 +509,7 @@ void ItemIconGrid_LoadItems(u16 *items, s32 count, s32 mode) {
 /// five to a row, 16 pixels apart.
 void ItemIconGrid_ShowInventory(struct RenderInput *window, s32 x, s32 y,
                                 s32 unitId) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   s32 left = (s16)window->x * 8 + x + 8;
   s32 top = (s16)window->y * 8 + y + 8;
   s32 i;

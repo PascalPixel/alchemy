@@ -9,7 +9,7 @@
 #include "field_particle.h"
 #include "effect_sprite.h"
 
-struct AnimationObject;
+struct Sprite;
 union FieldObject;
 
 /// A field object as an arc effect's caster: its facing, its animation records
@@ -18,7 +18,7 @@ struct ArcEffectObject {
   u8 unk00[6];
   u16 angle; ///< 1/65536 turns
   u8 unk08[0x48];
-  struct AnimationObject *records;
+  struct Sprite *records;
   u8 unk54[0x10];
   s16 phase; ///< 1 spins the caster
   s16 step;  ///< frames since the arcs started

@@ -6,7 +6,7 @@
 
 enum { BATTLE_PLAYBACK_CAPACITY = 64 };
 
-/// BattleEventState.phase: how far BattlePlayback_Run has got through the
+/// BattlePlaybackWork.phase: how far BattlePlayback_Run has got through the
 /// plan's targets.
 enum BattlePlaybackPhase {
   BATTLE_PLAYBACK_PHASE_IDLE = 0, ///< paused until the effect resumes it
@@ -18,17 +18,17 @@ enum BattlePlaybackPhase {
 
 /// The battle event queue: up to 64 events, each an opcode (enum
 /// BattlePlaybackCommand) and one operand, in the order they play.
-struct BattleEventQueue {
+struct BattlePlaybackQueue {
   u8 opcodes[BATTLE_PLAYBACK_CAPACITY];
   u32 operands[BATTLE_PLAYBACK_CAPACITY];
   s32 targetIndex; ///< the plan's next target to resolve
   s32 count;       ///< events queued
 };
 
-STATIC_ASSERT(sizeof(struct BattleEventQueue) == 0x148);
-STATIC_ASSERT(offsetof(struct BattleEventQueue, operands) == 0x040);
-STATIC_ASSERT(offsetof(struct BattleEventQueue, targetIndex) == 0x140);
-STATIC_ASSERT(offsetof(struct BattleEventQueue, count) == 0x144);
+STATIC_ASSERT(sizeof(struct BattlePlaybackQueue) == 0x148);
+STATIC_ASSERT(offsetof(struct BattlePlaybackQueue, operands) == 0x040);
+STATIC_ASSERT(offsetof(struct BattlePlaybackQueue, targetIndex) == 0x140);
+STATIC_ASSERT(offsetof(struct BattlePlaybackQueue, count) == 0x144);
 
 /// The battle events BattlePlayback_Push queues, each with one operand, for
 /// BattlePlayback_Run (or BattlePlayback_RunAll) to play in order. The

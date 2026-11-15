@@ -55,7 +55,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   message = (s16)work->message;
   localId &= 0xfff;
   x = 0;
-  object = ObjectTable_Get(localId);
+  object = Actor_Lookup(localId);
   work->speaker = localId;
   y = 0;
   found = 0;
@@ -77,7 +77,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
       }
     } else if (localId <= 7) {
       sprite = localId;
-      object = ObjectTable_Get(Party_GetLeaderActor());
+      object = Actor_Lookup(Party_GetLeaderActor());
       if (work->mode == 3) {
         Render_ProjectPoint((u8 *)object + 8, pos);
         x = pos[0] >> 3;
@@ -267,7 +267,7 @@ void Event_ShowSpeakerMessage(s32 speaker) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   speaker &= 0xfff;
-  ObjectTable_Get(speaker);
+  Actor_Lookup(speaker);
   work->speaker = speaker;
   if (work->fastForward == 0) {
     s32 px = pos.x;
@@ -423,7 +423,7 @@ void FieldCamera_FollowActor(s32 id, s32 flag) {
   struct FieldWork *work;
   struct MapWork *map;
 
-  obj = ObjectTable_Get(id);
+  obj = Actor_Lookup(id);
   work = Ram_HeapSlots->fieldWork;
   target = work->camera;
   map = Ram_HeapSlots->mapGrid;

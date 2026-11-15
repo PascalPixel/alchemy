@@ -9,13 +9,13 @@ FarCall_FieldTable:
 	export Render_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement
 	export Render_ApplyProjectedPlacementAtDepthFar, Render_ApplyProjectedPlacementAtDepth
 	export Render_PlaceProjectedSpriteFar, Render_PlaceProjectedSprite
-	export InitializeAnimationObjectsFar, InitializeAnimationObjects
-	export Animation_ApplyChildArgumentFar, Animation_ApplyChildArgument
+	export Sprite_ResetAnimationsFar, Sprite_ResetAnimations
+	export Sprite_StartAnimationFar, Sprite_StartAnimation
 	export Sprite_SetAnimationTimersFar, Sprite_SetAnimationTimers
 	export Sprite_CreateFar, Sprite_Create
 	export Sprite_DestroyFar, Sprite_Destroy
 	export Render_PlaceSpritePartPairFar, Render_PlaceSpritePartPair
-	export ResourceMetadata_RegisterFar, ResourceMetadata_Register
+	export Sprite_AddAnimationFar, Sprite_AddAnimation
 	export Sprite_RemoveAnimationFar, Sprite_RemoveAnimation
 	export Sprite_RemoveAnimationAtFar, Sprite_RemoveAnimationAt
 	export SpriteAnimation_ClearFar, SpriteAnimation_Clear
@@ -44,7 +44,7 @@ FarCall_FieldTable:
 	export WorldMap_UpdateCurrentTileBlockFar, WorldMap_UpdateCurrentTileBlock
 	export WorldMap_LoadGraphicsFar, WorldMap_LoadGraphics
 	export Actor_StartIdleFar, Actor_StartIdle
-	export Actor_WaitForCommandEndFar, Actor_WaitForCommandEnd
+	export Actor_WaitForScriptEndFar, Actor_WaitForScriptEnd
 	export Actor_SetMoveTargetFar, Actor_SetMoveTarget
 	export Actor_WaitForMoveFar, Actor_WaitForMove
 	export MapGrid_GetScreenRelativePositionFar, MapGrid_GetScreenRelativePosition
@@ -55,8 +55,8 @@ FarCall_FieldTable:
 	export Map_ApplySetFlagEditsFar, Map_ApplySetFlagEdits
 	export Map_SetFlagAndApplyEditsFar, Map_SetFlagAndApplyEdits
 	export Map_SetFlagAndApplyAttributeEditsFar, Map_SetFlagAndApplyAttributeEdits
-	export Map_ClearLayerEntryFlagFar, Map_ClearLayerEntryFlag
-	export Map_SetLayerEntryFlagFar, Map_SetLayerEntryFlag
+	export TilesetAnim_ResumeFar, TilesetAnim_Resume
+	export TilesetAnim_PauseFar, TilesetAnim_Pause
 	export BlendScript_ResumeFar, BlendScript_Resume
 	export BlendScript_SuspendFar, BlendScript_Suspend
 	export BlendScript_StartFar, BlendScript_Start
@@ -93,7 +93,7 @@ FarCall_FieldTable:
 	export WorldMap_GetBattleEnvironmentFar, WorldMap_GetBattleEnvironment
 	export SpritePictureCache_LoadFar, SpritePictureCache_Load
 	export MapGrid_SetCellBehaviorAtFar, MapGrid_SetCellBehaviorAt
-	export Animation_ApplyChildValueFar, Animation_ApplyChildValue
+	export Sprite_SetAnimationSpeedFar, Sprite_SetAnimationSpeed
 	export SpriteColor_RemapPixelsFar, SpriteColor_RemapPixels
 	export TilesetAnim_SuspendAllFar, TilesetAnim_SuspendAll
 	export TilesetAnim_ResumeAllFar, TilesetAnim_ResumeAll

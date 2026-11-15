@@ -40,7 +40,7 @@ void Event_Wait(s32 frames) {
 /// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
 /// or the climbing pose (12) while the leader is on a climbable wall.
 void Leader_StopMoving(void) {
-  struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
+  struct Actor *object = Actor_Lookup(Party_GetLeaderActor());
   object->speedLimit = Q16_ONE;
   object->acceleration = px(1) / 2;
   object->targetX = TARGET_UNSET;
@@ -108,7 +108,7 @@ struct Actor *Event_RunObjectHookAndWait(s32 object) {
   Event_EmptyObjectHook();
   Actor_ResetForLeader(object);
   wait(1);
-  return ObjectTable_Get(Party_GetLeaderActor());
+  return Actor_Lookup(Party_GetLeaderActor());
 }
 
 /// Spawns the actors of an actor placement table after the last actor in use.
@@ -164,7 +164,7 @@ void Party_ClearUnusableShortcuts(void) {
 /// Takes unit out of the party, fully restoring its HP and PP and curing its
 /// poison.
 void Party_RemoveMemberRestored(s32 unit) {
-  struct BattleUnit *vitals;
+  struct Unit *vitals;
   s32 partyIndex;
   s32 partyCount;
   s32 survivingMembers;
@@ -313,7 +313,7 @@ void Inventory_ReservedNoOp(void) {}
 /// Waits, at most 90 frames, for an actor's animation to stop being animation:
 /// the actor has finished a one-off animation such as a nod.
 void Actor_WaitForAnimationEnd(s32 objectId, s32 value) {
-  struct Actor *obj = ObjectTable_Get(objectId);
+  struct Actor *obj = Actor_Lookup(objectId);
 
   if (obj != 0 && obj->spriteStorageKind == 1) {
     s32 cnt = 0;
@@ -366,13 +366,13 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   answer = YesNoMenu_RunFar(useBottom, *(s16 *)(work + 0xcb0),
                             *(s16 *)(work + 0xcb2), *(s16 *)(work + 0xcb4));
   if (answer != 0) {
-    Actor_SetModeById(actor, 4);
+    Actor_SetAnimationById(actor, 4);
     Portrait_CloseWindowFar(sprite);
     Message_CloseFinishedWindowsFar();
     if (gMainRoutineWork.messageSpeed != 2)
       Actor_WaitForAnimationEnd(actor, 4);
   } else {
-    Actor_SetModeById(actor, 3);
+    Actor_SetAnimationById(actor, 3);
     Portrait_CloseWindowFar(sprite);
     Message_CloseFinishedWindowsFar();
     if (gMainRoutineWork.messageSpeed != 2)

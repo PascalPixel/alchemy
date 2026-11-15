@@ -378,7 +378,7 @@ void WorldMap_SetUpShip(void) {
   if (pp < count) {
   loop:
     // One member's PP.
-    pp += ((struct BattleUnit *)Unit_Get(gMainRoutineWork.party[i]))->pp;
+    pp += ((struct Unit *)Unit_Get(gMainRoutineWork.party[i]))->pp;
     i++;
     if (i < count)
       goto loop;
@@ -917,7 +917,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
       asm volatile("" : "+l"(a3));
       Actor_LaunchFromLeader(23, 16, 0, a3);
     }
-    Actor_RefreshSelectorById(23);
+    Actor_WaitForScriptEndById(23);
     Actor_FaceDirectionAndWait(23, west);
     east = 0x4000;
     Event_Wait(10);
@@ -1014,7 +1014,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
       s32 worldMap = SCENE_WORLD_MAP;
 
       FieldEvent_SetAfterBattleDestination(worldMap, 73);
-      Party_SetFields1f2And1f4(worldMap, 74);
+      Event_SetDefeatDestination(worldMap, 74);
     }
     WorldMap_ReloadPendingAreaGraphics();
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -1291,9 +1291,9 @@ void WorldMap_DeliverLohoCannon(void) {
   FieldEvent_Wait(40);
   Actor_SetScript(17, gData_02004e58);
   Actor_SetScript(18, gData_02004e88);
-  FieldActor_RefreshSelectorById(16);
-  FieldActor_RefreshSelectorById(17);
-  FieldActor_RefreshSelectorById(18);
+  FieldActor_WaitForScriptEndById(16);
+  FieldActor_WaitForScriptEndById(17);
+  FieldActor_WaitForScriptEndById(18);
   WorldMap_ReloadPendingAreaGraphics();
   FieldEvent_Wait(30);
   FieldEffect_ScheduleRatioTransition(0x10000, 6);
@@ -1421,7 +1421,7 @@ void WorldMap_MeetEcho(void) {
     Event_ShowMessageAndWait(9, 0);
     FieldActor_ShowEmote(owner, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
     Event_ShowMessageAndWait(9, 0);
-    Motion_SetVarCbAndRefresh(owner, 2);
+    Actor_RunRepeatedMotion(owner, 2);
     Event_ShowMessageAndWait(9, 0);
     Actor_Jump(9, 2, 30);
     Event_ShowMessageAndWait(9, 0);
@@ -1432,7 +1432,7 @@ void WorldMap_MeetEcho(void) {
       wait(1);
       i--;
     }
-    Actor_SetModeById(owner, 1);
+    Actor_SetAnimationById(owner, 1);
     Event_ShowMessageAndWait(9, 0);
     djinni->motionFlags = 2;
     djinni->velocityY = 0;
@@ -1443,11 +1443,11 @@ void WorldMap_MeetEcho(void) {
       wait(1);
       i--;
     }
-    Actor_SetModeById(owner, 22);
+    Actor_SetAnimationById(owner, 22);
     Event_ShowMessageAndWait(9, 0);
     Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Actor_FaceActorById(9, owner, 0);
-    Motion_SetVarCbAndRefresh(9, 2);
+    Actor_RunRepeatedMotion(9, 2);
     Event_ShowMessageAndWait(9, 0);
     Actor_Jump(9, 2, 30);
     FieldMessage_ShowAtActor(9, 0);
@@ -1473,7 +1473,7 @@ void WorldMap_MeetEcho(void) {
         goto plead;
       }
     }
-    Actor_SetModeById(owner, 22);
+    Actor_SetAnimationById(owner, 22);
     Actor_Jump(9, 2, 20);
     Actor_Jump(9, 4, 20);
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgIMSo));
@@ -1504,12 +1504,12 @@ void WorldMap_MeetEcho(void) {
   WorldMap_Freeze();
   Actor_FaceActorById(9, owner, 0);
   Actor_FaceActorById(owner, 9, 0);
-  Actor_SetModeById(owner, 22);
+  Actor_SetAnimationById(owner, 22);
   Event_SetMessageId(TUTORIAL_MESSAGE(MsgSeeWeDjinn));
   Actor_Jump(9, 2, 20);
   Actor_Jump(9, 2, 20);
   Event_ShowMessageAndWait(9, 0);
-  Motion_SetVarCbAndRefresh(9, 2);
+  Actor_RunRepeatedMotion(9, 2);
   Event_ShowMessageAndWait(9, 0);
   Sound_Play(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
@@ -1525,8 +1525,8 @@ void WorldMap_MeetEcho(void) {
   FieldMessage_ShowAtActor(9, 0);
   if (Event_AskYesNoWithActorAnimation(owner, 0) != 1)
     goto refused;
-  Actor_SetModeById(owner, 22);
-  Motion_SetVarCbAndRefresh(9, 2);
+  Actor_SetAnimationById(owner, 22);
+  Actor_RunRepeatedMotion(9, 2);
   Event_SetMessageId(TUTORIAL_MESSAGE(MsgHmmmmDoYou));
   FieldMessage_ShowAtActor(9, 0);
   if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
@@ -1538,7 +1538,7 @@ tutorial:
   WorldMap_ReloadPendingAreaGraphics();
   return;
 refused:
-  Actor_SetModeById(owner, 22);
+  Actor_SetAnimationById(owner, 22);
   Event_SetMessageId(TUTORIAL_MESSAGE(MsgWellThatS));
   Actor_Jump(9, 2, 20);
   Actor_Jump(9, 2, 20);
@@ -2486,7 +2486,7 @@ void Func_02004634(struct Actor *parent) {
       child->timer = 0;
       child->watchedActor = parent;
       if (sprite != NULL) {
-        Animation_ApplyChildArgument(sprite, 0);
+        Sprite_StartAnimation(sprite, 0);
         sprite->nextFrame = 0;
         VramCache_FreeEntry(sprite->vramBlock);
         sprite->vramBlock = work->vramBlock;
@@ -2839,7 +2839,7 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(3, Daila1, 9, 0x873),
     SCENE_EXIT(2, Daila2, 8),
     SCENE_EXIT(3, Daila2, 9),
-    SCENE_EXIT(4, KandoreanTemple8, 1),
+    SCENE_EXIT(4, KandoreanTempleGate, 1),
     SCENE_EXIT(5, ShrineOfTheSeaGod1, 3),
     SCENE_EXIT(6, DehkanPlateau1, 1),
     SCENE_EXIT(7, DehkanPlateau3, 6),
@@ -2855,12 +2855,12 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(17, YampiDesert1, 1),
     SCENE_EXIT(18, YampiDesert8, 2),
     SCENE_EXIT(19, YampiDesert9, 2),
-    SCENE_EXIT(20, Alhafra1, 9),
+    SCENE_EXIT(20, Alhafra, 9),
     SCENE_EXIT(21, GondowanCliffs, 1),
     SCENE_EXIT(22, GondowanCliffs, 2),
     SCENE_EXIT(23, Naribwe, 6),
     SCENE_EXIT(25, KibomboMountains2, 1),
-    SCENE_EXIT(26, KibomboMountains1, 1),
+    SCENE_EXIT(26, KibomboMountainsWaft, 1),
     SCENE_EXIT_UNLESS(27, Kibombo4, 1, 0x8ff),
     SCENE_EXIT_UNLESS(27, Kibombo1, 1, EXIT_FLAG_NONE),
     SCENE_EXIT(28, Islets1, 1),
@@ -2875,7 +2875,7 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(37, AquaRock1, 1),
     SCENE_EXIT(38, Izumo, 1),
     SCENE_EXIT(39, GaiaRock1, 5),
-    SCENE_EXIT(40, Champa1, 9),
+    SCENE_EXIT(40, Champa, 9),
     SCENE_EXIT(41, AnkohlRuins7, 1),
     SCENE_EXIT(42, SeaOfTime1, 1),
     SCENE_EXIT(43, SeaOfTime2, 5),
@@ -2888,7 +2888,7 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(50, Settlements7, 1),
     SCENE_EXIT(51, MagmaRock1, 1),
     SCENE_EXIT(52, AttekaInlet1, 1),
-    SCENE_EXIT(53, AttekaInlet2, 2),
+    SCENE_EXIT(53, AttekaInletGeode, 2),
     SCENE_EXIT(54, Contigo1, 1),
     SCENE_EXIT(55, JupiterLighthouseEntrance, 1),
     SCENE_EXIT(56, ShamanVillageCave, 1),

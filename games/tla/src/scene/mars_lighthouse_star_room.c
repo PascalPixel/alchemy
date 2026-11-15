@@ -316,7 +316,7 @@ s32 Scene_Initialize(void) {
   Event_SetFlag(FLAG_IN_MARS_LIGHTHOUSE);
   Ride_Create();
   FlameThrowers_Start(0, 0, 0, 88);
-  if (scene == (s32)&SceneId_MarsLighthouseStarRoom1) {
+  if (scene == (s32)&SceneId_MarsLighthouseStarRoom) {
     FieldEffect_StartBlankOverlay(0);
     if (Event_GetFlag(FLAG_MARS_LIGHTHOUSE_THAWED)) {
       // The ice is gone from the hall.
@@ -440,7 +440,7 @@ void MarsLighthouseStarRoom_WakeFlameDragons(void) {
   Actor_SetAnimation(ACTOR_KARST_DRAGON, 4);
   FieldEvent_Wait(60);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-  FieldEvent_SetAfterBattleDestination((s32)&SceneId_MarsLighthouseStarRoom1,
+  FieldEvent_SetAfterBattleDestination((s32)&SceneId_MarsLighthouseStarRoom,
                                        ENTRANCE_AFTER_BATTLE);
   gMainRoutineWork.battleBackground = SCENE_GONDOWAN_CLIFFS_HIDEOUT;
   Field_RequestBattleFromEncounterTable(102, 0);
@@ -1678,10 +1678,10 @@ s32 Ride_GetEntryFlags(s32 index) {
 
 #include "shared/ride_set_slot.h"
 
-/* VIEW(ride_handle): routine Unit_Get as struct BattleUnit *Unit_Get(s32
+/* VIEW(ride_handle): routine Unit_Get as struct Unit *Unit_Get(s32
  * owner); scene/mars_lighthouse_star_room has void *Unit_Get(s32 owner); not
  * tried: Unit_Get's declaration holds a FAKEMATCH tag. */
-struct BattleUnit *Unit_Get__ride_handle(s32 owner) __asm__("Unit_Get");
+struct Unit *Unit_Get__ride_handle(s32 owner) __asm__("Unit_Get");
 #define Unit_Get Unit_Get__ride_handle
 
 #include "shared/party_take_fall_damage.h"
@@ -1786,7 +1786,7 @@ s32 MarsLighthouseStarRoom_IsSliding(void) {
   return ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->active;
 }
 
-struct Sprite {
+struct SpriteView {
   u8 unk00[4];
   u16 y : 8;
   u16 affine : 2;
@@ -1849,8 +1849,8 @@ void MarsLighthouseStarRoom_ScatterCrumbs(struct Actor *actor) {
       s32 angle, radius;
       u32 sum;
       s32 scale;
-      struct Sprite *sprite;
-      struct Sprite *source;
+      struct SpriteView *sprite;
+      struct SpriteView *source;
       s32 velocity;
 
       angle = Random16();
@@ -2542,11 +2542,11 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(MarsLighthouseStarRoom1),
-    SCENE_EXIT(1, MarsLighthouseStarRoom1, 2),
-    SCENE_EXIT(2, MarsLighthouseStarRoom1, 1),
-    SCENE_EXIT(3, MarsLighthouseStarRoom1, 4),
-    SCENE_EXIT(4, MarsLighthouseStarRoom1, 3),
+    SCENE_EXITS(MarsLighthouseStarRoom),
+    SCENE_EXIT(1, MarsLighthouseStarRoom, 2),
+    SCENE_EXIT(2, MarsLighthouseStarRoom, 1),
+    SCENE_EXIT(3, MarsLighthouseStarRoom, 4),
+    SCENE_EXIT(4, MarsLighthouseStarRoom, 3),
     SCENE_EXIT(5, MarsLighthouseEntrance7, 5),
     SCENE_EXIT(6, MarsLighthouseEntrance6, 6),
     SCENE_EXIT(7, MarsLighthouseEntrance7, 7),

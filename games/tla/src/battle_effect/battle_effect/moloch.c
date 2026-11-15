@@ -1168,7 +1168,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
     // The crystal: sixteen sprites, the sparks and the first motes.
     if (frame == 176) {
       u8 *colors;
-      struct VramBlockCacheEntry *table;
+      struct VramCacheEntry *table;
 
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(63));
       EFFECT_PRESENT_CANVAS(work);

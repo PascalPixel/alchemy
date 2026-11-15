@@ -53,11 +53,11 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
   for (i = 0; i < PSYNERGY_SLOTS && newGrid[i].encodedAction != 0; i++) {
     if (Ability_Get(newGrid[i].encodedAction)->flags &
         ACTION_USABLE_IN_BATTLE) {
-      out[count] = newGrid[i].encodedAction & OWNER_ACTION_ID_MASK;
+      out[count] = newGrid[i].encodedAction & PSYNERGY_ABILITY_MASK;
       count++;
       for (j = 0; j < PSYNERGY_SLOTS; j++) {
         if (((newGrid[i].encodedAction ^ oldGrid[j].encodedAction) &
-             OWNER_ACTION_ID_MASK) == 0)
+             PSYNERGY_ABILITY_MASK) == 0)
           break;
       }
       if (j == PSYNERGY_SLOTS) {
@@ -71,12 +71,12 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
         ACTION_USABLE_IN_BATTLE) {
       for (j = 0; j < PSYNERGY_SLOTS; j++) {
         if (((oldGrid[i].encodedAction ^ newGrid[j].encodedAction) &
-             OWNER_ACTION_ID_MASK) == 0)
+             PSYNERGY_ABILITY_MASK) == 0)
           break;
       }
       if (j == PSYNERGY_SLOTS) {
         lostCount++;
-        out[count] = (oldGrid[i].encodedAction & OWNER_ACTION_ID_MASK) |
+        out[count] = (oldGrid[i].encodedAction & PSYNERGY_ABILITY_MASK) |
                      DJINN_PREVIEW_ABILITY_LOST;
         count++;
       }
@@ -163,8 +163,8 @@ s32 WindowSprite_CreateAbilityIcon(struct RenderInput *input, s32 x, s32 y,
 struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *window,
                                                  s32 member, s32 encodedDjinn,
                                                  s32 page, s32 *pageCount) {
-  struct BattleUnit *unit;
-  struct BattleUnit *savedUnit;
+  struct Unit *unit;
+  struct Unit *savedUnit;
   struct BattleAct *ability;
   s16 *numberText;
   s32 oldHp;

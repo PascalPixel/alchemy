@@ -119,7 +119,7 @@ s32 Field_UsePsynergy(u32 code) {
     Unit_AddPpFar(userId, -ppCost);
   }
   if (group == 23) {
-    object = ObjectTable_Get(Party_GetLeaderActor());
+    object = Actor_Lookup(Party_GetLeaderActor());
     if (MapGrid_IsSandCell(object->x.fixed, object->z.fixed, object->layer) ==
         0) {
       before = NULL;
@@ -139,7 +139,7 @@ s32 Field_UsePsynergy(u32 code) {
       GameFlag_Clear(0x141);
     }
   }
-  BattleEffect_LoadActionEffectResources(abilityId, 0);
+  FieldPsynergy_LoadResources(abilityId, 0);
   event->psynergyActing = 1;
   {
     u32 zero = 0;
@@ -161,7 +161,7 @@ s32 Field_UsePsynergy(u32 code) {
     effect[35] = 0;
   }
   FieldPsynergy_SetupActorPair(Party_GetLeaderActor(), target);
-  EventObject_Initialize();
+  FieldPsynergy_StartCast();
   Field_RunPsynergyEvent(before, userId, target);
   if (GameFlag_Get(0x140)) {
     if (GameFlag_Get(0x141))
@@ -181,7 +181,7 @@ s32 Field_UsePsynergy(u32 code) {
   if (GameFlag_Get(0x140))
     FieldPsynergy_FinishMindRead();
   event->psynergyActing = 0;
-  BattleEffect_CleanupSceneObjects();
+  FieldPsynergy_End();
   GameFlag_Clear(0x140);
   GameFlag_Clear(0x141);
   return 0;
@@ -213,7 +213,7 @@ s32 Field_RunPsynergyEvent(struct PendingEvent *event, s32 mode, s32 target) {
 
 /// Returns whether the scene has a trigger for the field Psynergy kind on what
 /// it would act on (Scene_SelectPsynergyTarget), at any stage.
-s32 BattleEffect_HasMatchingEvent5(s32 fieldPsynergy) {
+s32 Scene_HasPsynergyTrigger(s32 fieldPsynergy) {
   u16 kind = fieldPsynergy;
   s32 result = (s32)Scene_FindPsynergyTrigger(0xf0000005, kind,
                                               Scene_SelectPsynergyTarget(kind));
@@ -222,7 +222,7 @@ s32 BattleEffect_HasMatchingEvent5(s32 fieldPsynergy) {
 }
 
 /// Returns whether the scene has an event for item and what the leader faces.
-u32 BattleEffect_HasTrigger(u16 item) {
+u32 Scene_HasItemTrigger(u16 item) {
   s32 result;
 
   result = (s32)Field_FindItemTrigger(item);

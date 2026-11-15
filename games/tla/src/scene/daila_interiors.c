@@ -486,7 +486,7 @@ void DailaInteriors_TalkCaughtPracticing(void) {
   // "Er... Aheh heh... You... weren't watching, were you?"
   Event_ShowMessageAndWait(ACTOR_PRACTISING_PERFORMER, 0);
   FieldEvent_Wait(30);
-  Actor_SetModeById(ACTOR_PRACTISING_PERFORMER, 3);
+  Actor_SetAnimationById(ACTOR_PRACTISING_PERFORMER, 3);
   FieldEvent_Wait(30);
   // "I was just practicing for the show we're putting on tonight."
   Event_ShowMessageAndWait(ACTOR_PRACTISING_PERFORMER, 0);
@@ -640,7 +640,7 @@ s32 DailaInteriors_GiveItem(s32 item, s32 unused) {
   return owner;
 }
 
-void Map_SetLayerEntryFlag(s32 mode);
+void TilesetAnim_Pause(s32 mode);
 
 void Actor_SetItemIcon(struct Actor *object, s32 item);
 void FlagBlock_PlaceAll(const s16 *flags);
@@ -659,9 +659,9 @@ s32 Scene_Initialize(void) {
       Scene_FadeInAndClearFlag();
     } else {
       if (GameFlag_Get(FLAG_TAVI_RESCUED)) {
-        Actor_SetModeById(ACTOR_RIKI, 5);
+        Actor_SetAnimationById(ACTOR_RIKI, 5);
         Actor_SetSpriteFlags(Actor_GetById(ACTOR_RIKI), 0);
-        Actor_SetModeById(ACTOR_TAVI, 5);
+        Actor_SetAnimationById(ACTOR_TAVI, 5);
         Actor_SetSpriteFlags(Actor_GetById(ACTOR_TAVI), 0);
       }
       Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
@@ -704,7 +704,7 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_2 &&
       GameFlag_Get(FLAG_TAVI_RESCUED)) {
-    Map_SetLayerEntryFlag(0);
+    TilesetAnim_Pause(0);
     MapGrid_CopyCells(29, 33, 10, 6, 10, 12);
   }
   return 0;

@@ -26,8 +26,8 @@
 s32 GameFlag_Get(s32 flag);
 void GameFlag_Clear(s32 flag);
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
-void Animation_ApplyChildArgument(void *animation, s32 value);
-u8 *ResourceMetadata_Register(void *animation, s32 id);
+void Sprite_StartAnimation(void *animation, s32 value);
+u8 *Sprite_AddAnimation(void *animation, s32 id);
 void FieldCamera_MoveWithinMapBounds(s32 x, s32 a, s32 z, s32 b);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
@@ -494,7 +494,7 @@ void AquaRock_StopFlashing(struct Actor *object) {
   object->update = 0;
 }
 
-void Map_SetLayerEntryFlag(s32 layer);
+void TilesetAnim_Pause(s32 layer);
 
 /// Toggles flag 0xa68 and with it which of two layer pairs is shown: four
 /// rounds of a random colour value, then one pair's blend scripts and layer
@@ -526,20 +526,20 @@ void AquaRock_DouseWaterStone(s32 unused, s32 id) {
     GameFlag_Set(0xa68);
     MapGrid_CopyCells(64, 64, 1, 2, 51, 82);
     MapGrid_CopyCells(66, 64, 1, 2, 115, 18);
-    Map_SetLayerEntryFlag(5);
-    Map_SetLayerEntryFlag(6);
-    Map_ClearLayerEntryFlag(7);
-    Map_ClearLayerEntryFlag(8);
+    TilesetAnim_Pause(5);
+    TilesetAnim_Pause(6);
+    TilesetAnim_Resume(7);
+    TilesetAnim_Resume(8);
     object->update = (void (*)(void))AquaRock_StopFlashing;
     AquaRock_SetCellMarkerAnchor(26);
   } else {
     GameFlag_Clear(0xa68);
     MapGrid_CopyCells(65, 64, 1, 2, 51, 82);
     MapGrid_CopyCells(67, 64, 1, 2, 115, 18);
-    Map_SetLayerEntryFlag(7);
-    Map_SetLayerEntryFlag(8);
-    Map_ClearLayerEntryFlag(5);
-    Map_ClearLayerEntryFlag(6);
+    TilesetAnim_Pause(7);
+    TilesetAnim_Pause(8);
+    TilesetAnim_Resume(5);
+    TilesetAnim_Resume(6);
     object->update = (void (*)(void))AquaRock_StopFlashing;
     AquaRock_SetCellMarkerAnchor(0);
   }
@@ -1028,10 +1028,10 @@ s32 Scene_Initialize(void) {
     for (id = 15; id <= 23; id++)
       Actor_SetSpritePriority(id, 1);
     Actor_GetById(15)->retainSpriteCache = 2;
-    Actor_SetModeById(15, 3);
+    Actor_SetAnimationById(15, 3);
     for (id = 16; id <= 23; id++) {
-      Actor_SetModeById(id, 1);
-      Actor_SetModeById(id, 0);
+      Actor_SetAnimationById(id, 1);
+      Actor_SetAnimationById(id, 0);
     }
     if (GameFlag_Get(0x950))
       Actor_SetPosition(25, 520, 584);
@@ -1049,10 +1049,10 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(0xa68)) {
       AquaRock_SetCellMarkerAnchor(26);
       AquaRock_SetSparkleAnchor(26);
-      Map_SetLayerEntryFlag(5);
-      Map_SetLayerEntryFlag(6);
-      Map_ClearLayerEntryFlag(7);
-      Map_ClearLayerEntryFlag(8);
+      TilesetAnim_Pause(5);
+      TilesetAnim_Pause(6);
+      TilesetAnim_Resume(7);
+      TilesetAnim_Resume(8);
       Actor_GetById(26)->update = AquaRock_StopFlashing;
     }
     Actor_SetSpritePriority(26, 1);
@@ -1085,12 +1085,12 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(48, 32, 1, 1, 46, 32);
     if (GameFlag_Get(FLAG_SCENE_TEMP_23))
       MapGrid_CopyCellAttributes(44, 44, 1, 1, 46, 44);
-    Actor_SetModeById(12, 2);
+    Actor_SetAnimationById(12, 2);
     if (GameFlag_Get(0x951)) {
       Actor_SetPosition(12, 856, 840);
       MapGrid_CopyCellAttributes(54, 58, 1, 1, 53, 52);
     }
-    Actor_SetModeById(13, 2);
+    Actor_SetAnimationById(13, 2);
     if (GameFlag_Get(0x952)) {
       Actor_SetPosition(13, 856, 936);
       MapGrid_CopyCellAttributes(54, 58, 1, 1, 53, 58);
@@ -1102,10 +1102,10 @@ s32 Scene_Initialize(void) {
         AquaRock_SetCellMarkerAnchor(14);
         AquaRock_SetSparkleAnchor(14);
       } else {
-        Map_SetLayerEntryFlag(7);
-        Map_SetLayerEntryFlag(8);
-        Map_ClearLayerEntryFlag(5);
-        Map_ClearLayerEntryFlag(6);
+        TilesetAnim_Pause(7);
+        TilesetAnim_Pause(8);
+        TilesetAnim_Resume(5);
+        TilesetAnim_Resume(6);
       }
       Actor_SetSpriteFlags(Actor_GetById(14), 0);
     } else {
@@ -1151,7 +1151,7 @@ void AquaRock_SpawnSplash(struct Actor *object) {
     Actor_StartScript(child, gAquaRock_SplashScript);
     child->motionFlags = 0;
     if (sprite != 0) {
-      Animation_ApplyChildArgument(sprite, 1);
+      Sprite_StartAnimation(sprite, 1);
       sprite->nextFrame = 0;
       sprite->priority = parentSprite->priority;
     }
@@ -1224,7 +1224,7 @@ void AquaRock_SetMoaiFace(s32 id) {
   struct Actor *object = Actor_GetById(id);
 
   if (object != 0) {
-    u8 *meta = ResourceMetadata_Register(object->sprite, 0x17d);
+    u8 *meta = Sprite_AddAnimation(object->sprite, 0x17d);
 
     meta[5] = 0;
     meta[6] = 0;
@@ -1276,7 +1276,7 @@ void AquaRock_EnterSparklingPassage(s32 entrance) {
   leader->update = (void (*)(void))Actor_EmitMist;
   leader->motionFlags = 0;
   leader->speedLimit = 0x3333;
-  Actor_SetModeById(*owner, 2);
+  Actor_SetAnimationById(*owner, 2);
   Actor_SetDestinationOffsetById(*owner, 0, -8);
   Actor_WaitForMoveById(*owner);
   Actor_SetSpriteColor(Actor_GetById(*owner), 9);
@@ -1573,20 +1573,20 @@ u32 gFieldEffect_LongScript[] = {
 s32 gAquaRock_DriftScript[] = {
     SC_CALL((s32)AquaRock_StartDrifter),
     SC_LABEL(1),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_CALL((s32)AquaRock_PickRandomSpot),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(120),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_CALL((s32)AquaRock_PickRandomSpot),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(20),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_CALL((s32)AquaRock_PickRandomSpot),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(180),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
@@ -1596,20 +1596,20 @@ s32 gAquaRock_SlowDriftScript[] = {
     SC_CALL((s32)AquaRock_StartDrifter),
     SC_LABEL(1),
     SC_WAIT(60),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_CALL((s32)AquaRock_PickRandomSpot),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(120),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_CALL((s32)AquaRock_PickRandomSpot),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(15),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_CALL((s32)AquaRock_PickRandomSpot),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(180),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,

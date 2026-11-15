@@ -338,7 +338,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
     work->sprites[i] = obj;
     if (obj) {
       obj->unk1a = 0;
-      Animation_ApplyChildArgumentFar(obj, i % 3);
+      Sprite_StartAnimationFar(obj, i % 3);
       ((struct JudgmentObject *)work->sprites[i])->priority = 0;
     }
   }

@@ -1975,7 +1975,7 @@ s32 Ride_GetEntryFlags(s32 index) {
  * object already declares, it does not compile in tla-ja:
  * games/tla/src/scene/shared/party_take_fall_damage.h:12: request for member
  * `hp' in something not a structure or union. */
-struct BattleUnit *Unit_Get__ride(s32 owner) __asm__("Unit_Get");
+struct Unit *Unit_Get__ride(s32 owner) __asm__("Unit_Get");
 #define Unit_Get Unit_Get__ride
 
 #include "shared/party_take_fall_damage.h"
@@ -2214,7 +2214,7 @@ s32 MarsLighthouseRoomF_IsSliding(void) {
   return ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->active;
 }
 
-struct Sprite {
+struct SpriteView {
   u8 unk00[4];
   u16 y : 8;
   u16 affine : 2;
@@ -2279,8 +2279,8 @@ void MarsLighthouseRoomF_ScatterCrumbs(struct Actor *actor) {
       s32 angle, radius;
       u32 sum;
       s32 scale;
-      struct Sprite *sprite;
-      struct Sprite *source;
+      struct SpriteView *sprite;
+      struct SpriteView *source;
 
       angle = Random16();
       radius = Random16();

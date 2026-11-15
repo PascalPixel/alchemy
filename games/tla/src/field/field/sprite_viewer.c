@@ -64,9 +64,9 @@ restart:
         (i & 1))
       part = 1;
     sprite = Sprite_Create(layers[0].spriteId + part + (part << 12));
-    ResourceMetadata_Register(sprite, layers[1].spriteId);
-    ResourceMetadata_Register(sprite, layers[2].spriteId);
-    ResourceMetadata_Register(sprite, layers[3].spriteId);
+    Sprite_AddAnimation(sprite, layers[1].spriteId);
+    Sprite_AddAnimation(sprite, layers[2].spriteId);
+    Sprite_AddAnimation(sprite, layers[3].spriteId);
     sprite->flags = shadowsEnabled;
   }
   for (i = 0; i < 4; i++) {

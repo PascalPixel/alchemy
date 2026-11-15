@@ -25,8 +25,8 @@
 #include "text/msg_ids.h"
 
 void Actor_SetSpriteColorMode(struct Actor *object, s32 value);
-void Animation_ApplyChildArgument(void *animation, s32 value);
-u8 *ResourceMetadata_Register(void *animation, s32 id);
+void Sprite_StartAnimation(void *animation, s32 value);
+u8 *Sprite_AddAnimation(void *animation, s32 id);
 s32 VramCache_FindFreeEntry(void);
 void Irq_SetHandler(s32 a, s32 b, void *callback);
 void Actor_StartScript(struct Actor *object, const void *data);
@@ -188,7 +188,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return gApojiiIslands_Room1Placements;
   if (scene == SCENE_APOJII_ISLANDS_3)
     return gApojiiIslands_Room3Placements;
-  if (scene == SCENE_APOJII_ISLANDS_2)
+  if (scene == SCENE_APOJII_ISLANDS_HAZE)
     return gApojiiIslands_Room2Placements;
   return gApojiiIslands_Placements;
 }
@@ -531,7 +531,7 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gApojiiIslands_Room1Triggers;
   if (scene == SCENE_APOJII_ISLANDS_3)
     return gApojiiIslands_Room3Triggers;
-  if (scene == SCENE_APOJII_ISLANDS_2)
+  if (scene == SCENE_APOJII_ISLANDS_HAZE)
     return gApojiiIslands_Room2Triggers;
   return gApojiiIslands_Triggers;
 }
@@ -632,7 +632,7 @@ s32 Scene_Initialize(void) {
   *effect = 0x202;
   party = &gMainRoutineWork;
   scene = party->next;
-  if (scene == SCENE_APOJII_ISLANDS_2) {
+  if (scene == SCENE_APOJII_ISLANDS_HAZE) {
     ApojiiIslands_InitializeRoom2();
   } else if (scene == SCENE_APOJII_ISLANDS_1) {
     FieldTask_AddFrame(ApojiiIslands_CycleSeaColors, TASK_PASS_VBLANK);
@@ -683,7 +683,7 @@ void ApojiiIslands_SpawnSplash(struct Actor *object) {
     Actor_StartScript(child, gApojiiIslands_SplashScript);
     child->motionFlags = 0;
     if (sprite != NULL) {
-      Animation_ApplyChildArgument(sprite, 1);
+      Sprite_StartAnimation(sprite, 1);
       sprite->nextFrame = 0;
       sprite->priority = parent->priority;
     }
@@ -799,7 +799,7 @@ void ApojiiIslands_DrawCellMarkers(void) {
   // source keeps its load and a store to the stack that nothing reads.
   s32 viewY = map->origin[1];
   struct CellMarkers *table = &gApojiiIslands_CellMarkers;
-  struct VramBlockCacheEntry *entry = &gVramCacheEntries[table->block];
+  struct VramCacheEntry *entry = &gVramCacheEntries[table->block];
   u32 tile = entry->offset >> 5;
   u32 offset = entry->offset;
   struct CellMarker *record;
@@ -1057,21 +1057,21 @@ s32 gApojiiIslands_PaceScript[] = {
     SC_SET(SW_ACCEL, Q16(0.2)),
     SC_SET(SW_SPEED, Q16(0.6)),
     SC_LABEL(1),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(296), 0, px(136)),
     SC_SYNC,
     SC_MOVE(px(296), 0, px(104)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(60),
     SC_WAIT(10),
     SC_WAIT(60),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(296), 0, px(136)),
     SC_SYNC,
     SC_MOVE(px(280), 0, px(136)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(60),
     SC_WAIT(10),
     SC_WAIT(60),
@@ -1087,8 +1087,8 @@ struct SceneEntrance gSceneEntrances[] = {
 u32 gSceneExits[] = {
     SCENE_EXITS(ApojiiIslands1),
     SCENE_EXIT_UNLESS(1, WorldMap, 36, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, ApojiiIslands2, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, ApojiiIslands2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, ApojiiIslandsHaze, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, ApojiiIslandsHaze, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, ApojiiIslands3, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, ApojiiIslands3, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, ApojiiIslands3, 3, EXIT_FLAG_NONE),
@@ -1103,7 +1103,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(4, ApojiiIslands1, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, ApojiiIslands1, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, Islets5, 2, EXIT_FLAG_NONE),
-    SCENE_EXITS(ApojiiIslands2),
+    SCENE_EXITS(ApojiiIslandsHaze),
     SCENE_EXIT_UNLESS(1, ApojiiIslands1, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, ApojiiIslands1, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, ApojiiIslandsCave, 3, EXIT_FLAG_NONE),

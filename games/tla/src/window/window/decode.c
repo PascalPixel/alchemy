@@ -361,7 +361,7 @@ s32 Message_Decode(s32 script, s32 clear) {
   s32 argument;
   s32 magnitude;
   u32 length;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   u8 *numberText;
   u8 *nameBytes;
   u16 *nameOutput;
@@ -617,7 +617,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_PROTAGONIST_NAME:
             nameBytes =
-                ((struct BattleUnit *)Unit_Get(gMainRoutineWork.leaderActorId))
+                ((struct Unit *)Unit_Get(gMainRoutineWork.leaderActorId))
                     ->name;
             nameOutput = name;
             i = 0;
@@ -632,7 +632,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ARGUMENT_ACTOR_NAME:
             no = decode(messageReader) - 1;
-            nameBytes = ((struct BattleUnit *)Unit_Get(MessageArgument_Lookup(
+            nameBytes = ((struct Unit *)Unit_Get(MessageArgument_Lookup(
                              MESSAGE_ARGUMENT_ACTOR, clear)))
                             ->name;
             nameOutput = name;
@@ -648,7 +648,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ACTOR_NAME:
             argument = decode(messageReader) - 1;
-            nameBytes = ((struct BattleUnit *)Unit_Get(argument))->name;
+            nameBytes = ((struct Unit *)Unit_Get(argument))->name;
             nameOutput = name;
             j = 0;
             do {
@@ -905,7 +905,7 @@ s32 Message_Decode(s32 script, s32 clear) {
   s32 message;
   s32 value;
   u32 length;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   u8 *numberText;
   u8 *nameBytes;
   u16 *nameOutput;
@@ -1061,7 +1061,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_PROTAGONIST_NAME:
             nameBytes =
-                ((struct BattleUnit *)Unit_Get(gMainRoutineWork.leaderActorId))
+                ((struct Unit *)Unit_Get(gMainRoutineWork.leaderActorId))
                     ->name;
             nameOutput = name;
             i = 0;
@@ -1102,7 +1102,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_ACTOR_NAME:
             argument = decode(messageReader) - 1;
-            nameBytes = ((struct BattleUnit *)Unit_Get(argument))->name;
+            nameBytes = ((struct Unit *)Unit_Get(argument))->name;
             nameOutput = name;
             j = 0;
             do {

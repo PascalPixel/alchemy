@@ -170,7 +170,7 @@ extern s16 gMarsLighthouseRoomM_DoorwayBlendTarget;
 extern s16 gMarsLighthouseRoomM_Doorway;
 extern s16 gMarsLighthouseRoomM_DoorwayStep;
 void Map_CopyPalette(s32 scene, s32 a1);
-u32 Map_ClearLayerEntryFlag(struct FieldSprite *sprite, u32 frame);
+u32 TilesetAnim_Resume(struct FieldSprite *sprite, u32 frame);
 
 void FieldEffect_StartBlankOverlay(void);
 
@@ -772,14 +772,14 @@ s32 Scene_Initialize(void) {
  * `MarsLighthouseRoomM_ShowFlame'. */
 extern s32
 MarsLighthouseRoomM_ShowFlame__s0b64() __asm__("MarsLighthouseRoomM_ShowFlame");
-/* VIEW(mars_lighthouse_room_m): routine Map_ClearLayerEntryFlag as void
- * Map_ClearLayerEntryFlag(s32 value); module/scene/scene.h has u32
- * Map_ClearLayerEntryFlag(struct FieldSprite *sprite, u32 frame); tried as the
- * definition's void Map_ClearLayerEntryFlag(u32 no), it does not compile in
+/* VIEW(mars_lighthouse_room_m): routine TilesetAnim_Resume as void
+ * TilesetAnim_Resume(s32 value); module/scene/scene.h has u32
+ * TilesetAnim_Resume(struct FieldSprite *sprite, u32 frame); tried as the
+ * definition's void TilesetAnim_Resume(u32 no), it does not compile in
  * tla-ja: games/tla/src/scene/mars_lighthouse_room_m.c:673: conflicting types
- * for `Map_ClearLayerEntryFlag'. */
+ * for `TilesetAnim_Resume'. */
 extern void
-Map_ClearLayerEntryFlag__s0b64(s32 value) __asm__("Map_ClearLayerEntryFlag");
+Map_ClearLayerEntryFlag__s0b64(s32 value) __asm__("TilesetAnim_Resume");
 void Weather_StartRain(s32 a);
 
 static __inline__ void SetBlend(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
@@ -1573,10 +1573,10 @@ s32 Ride_GetEntryFlags(s32 index) {
 
 #include "shared/ride_set_slot.h"
 
-/* VIEW(s2118): routine Unit_Get as struct BattleUnit *Unit_Get(s32 owner);
+/* VIEW(s2118): routine Unit_Get as struct Unit *Unit_Get(s32 owner);
  * item_icon.h has void *Unit_Get(s32 owner); not tried: Unit_Get's declaration
  * holds a FAKEMATCH tag. */
-struct BattleUnit *Unit_Get__s2118(s32 owner) __asm__("Unit_Get");
+struct Unit *Unit_Get__s2118(s32 owner) __asm__("Unit_Get");
 #define Unit_Get Unit_Get__s2118
 
 #include "shared/party_take_fall_damage.h"
@@ -1684,7 +1684,7 @@ s32 MarsLighthouseRoomM_IsSliding(void) {
   return ((struct FlameHitWork *)(gInventorySnapshot + 0x188))->active;
 }
 
-struct Sprite {
+struct SpriteView {
   u8 unk00[4];
   u16 y : 8;
   u16 affine : 2;
@@ -1745,8 +1745,8 @@ void MarsLighthouseRoomM_ScatterCrumbs(struct Actor *actor) {
       s32 angle, radius;
       u32 sum;
       s32 scale;
-      struct Sprite *sprite;
-      struct Sprite *source;
+      struct SpriteView *sprite;
+      struct SpriteView *source;
       s32 velocity;
 
       angle = Random16();
@@ -2021,8 +2021,8 @@ u32 gSceneExits[] = {
     SCENE_EXIT(3, MarsLighthouseRoomF1, 4),
     SCENE_EXIT(4, MarsLighthouseRoomF3, 15),
     SCENE_EXITS(MarsLighthouseRoomM1),
-    SCENE_EXIT(1, MarsLighthouseAerie1, 1),
-    SCENE_EXIT(2, MarsLighthouseEntrance2, 2),
+    SCENE_EXIT(1, MarsLighthouseAerie, 1),
+    SCENE_EXIT(2, MarsLighthouseEntranceFugue, 2),
     SCENE_EXIT(3, MarsLighthouseRoomM5, 1),
     SCENE_EXIT(4, MarsLighthouseRoomM2, 1),
     SCENE_EXIT(5, MarsLighthouseRoomM4, 1),

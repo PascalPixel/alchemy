@@ -6,7 +6,7 @@
 #include "sounds.h"
 
 /// The burst shower's styles, its mode argument
-/// (BattleEffect_RunProjectileVolleyB): The Broken Seal's eight, then this
+/// (BattleEffect_RunBurstShower): The Broken Seal's eight, then this
 /// game's, each named for the effect that plays it.
 enum BurstShowerMode {
   BURST_SHOWER_MODE_FLASH,
@@ -74,117 +74,117 @@ void BattleEffect_ArmBg1HBlankDma(void) {
 /// Abilities: Fire Breath, Salamander, Cerberus, Wyvern, Chimera, Macetail,
 /// Fire Dragon, Flame Breath.
 void BattleEffect_RunFireBreath(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_FLASH);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_FLASH);
 }
 
 /// Abilities: Toxic Breath.
 void BattleEffect_RunToxicBreath(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_TOXIC_BREATH);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_TOXIC_BREATH);
 }
 
 /// Abilities: Water Breath, Aqua Breath.
 void BattleEffect_RunWaterBreath(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_SPRAY);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_SPRAY);
 }
 
 /// Abilities: Dark Breath.
 void BattleEffect_RunDarkBreath(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_GREY);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_GREY);
 }
 
 /// Abilities: Acid Breath.
 void BattleEffect_RunAcidBreath(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_PINK);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_PINK);
 }
 
 /// Abilities: Storm Breath.
 void BattleEffect_RunStormBreath(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_LIGHTNING);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_LIGHTNING);
 }
 
 /// Storm Breath as its second, stronger row (power 220 against 190) casts it.
 ///
 /// Abilities: Storm Breath.
 void BattleEffect_RunStormBreathStrong(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args,
+  BattleEffect_RunBurstShower(args,
                                     BURST_SHOWER_MODE_STORM_BREATH_STRONG);
 }
 
 /// Abilities: Evil Blessing.
 void BattleEffect_RunEvilBlessing(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_FACES);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_FACES);
 }
 
 /// Abilities: Darksol Gasp.
 void BattleEffect_RunDarksolGasp(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_DARKSOL_GASP);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_DARKSOL_GASP);
 }
 
 /// Abilities: Deadly Gas.
 void BattleEffect_RunDeadlyGas(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_DJINNI);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_DJINNI);
 }
 
 /// Abilities: Petra.
 void BattleEffect_RunPetra(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_PETRA);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_PETRA);
 }
 
 /// Abilities: Char.
 void BattleEffect_RunChar(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_CHAR);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_CHAR);
 }
 
 /// Abilities: Fury.
 void BattleEffect_RunFury(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_FURY);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_FURY);
 }
 
 /// Abilities: Fugue.
 void BattleEffect_RunFugue(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_FUGUE);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_FUGUE);
 }
 
 /// Abilities: Sand Breath.
 void BattleEffect_RunSandBreath(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_SAND_BREATH);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_SAND_BREATH);
 }
 
 /// Abilities: Desert Gasp.
 void BattleEffect_RunDesertGasp(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_DESERT_GASP);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_DESERT_GASP);
 }
 
 /// Abilities: Black Ice.
 void BattleEffect_RunBlackIce(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_BLACK_ICE);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_BLACK_ICE);
 }
 
 /// Abilities: Typhoon Blow.
 void BattleEffect_RunTyphoonBlow(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_TYPHOON_BLOW);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_TYPHOON_BLOW);
 }
 
 /// Abilities: Djinnfest.
 void BattleEffect_RunDjinnfest(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_DJINNFEST);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_DJINNFEST);
 }
 
 /// Abilities: Heat Kiss.
 void BattleEffect_RunHeatKiss(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_HEAT_KISS);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_HEAT_KISS);
 }
 
 /// Fire Dance as the Staff unleashes it.
 ///
 /// Abilities: Fire Dance.
 void BattleEffect_RunFireDanceUnleash(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_FIRE_DANCE_UNLEASH);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_FIRE_DANCE_UNLEASH);
 }
 
 /// Abilities: Gravel Blow.
 void BattleEffect_RunGravelBlow(struct BattleEffectParams *args) {
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_GRAVEL_BLOW);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_GRAVEL_BLOW);
 }
 
 /// From the user's action pose, the second projectile volley's shots fly at
@@ -197,7 +197,7 @@ void BattleEffect_RunAgingGas(struct BattleEffectParams *args) {
   object = (struct Actor *)BattleObject_GetFar(args->user)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_AGING_GAS);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_AGING_GAS);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
@@ -211,11 +211,11 @@ void BattleEffect_RunFireDance(struct BattleEffectParams *args) {
   object = (struct Actor *)BattleObject_GetFar(args->user)->object;
   Actor_SelectAnimationFar(object, 2);
   Actor_SetAnimationSpeedFar(object, 0x30);
-  BattleEffect_RunProjectileVolleyB(args, BURST_SHOWER_MODE_FIRE_DANCE);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_FIRE_DANCE);
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
-// BattleEffect_RunProjectileVolleyB, the body behind the 22 wrappers
+// BattleEffect_RunBurstShower, the body behind the 22 wrappers
 // above (23 effect kinds, modes 0-24).
 
 // Each frame a shot launched each frame from the user toward one target
@@ -238,7 +238,7 @@ void BattleEffect_RunFireDance(struct BattleEffectParams *args) {
 /// out after 24 frames (32 in modes 9 and 17); from frame 16 the targets
 /// are hit four frames apart and recoil; the blend fades out over the last
 /// eight frames.
-void BattleEffect_RunProjectileVolleyB(struct BattleEffectParams *args,
+void BattleEffect_RunBurstShower(struct BattleEffectParams *args,
                                        u32 mode) {
   void *canvas;
   struct BattleEffectWork *work;

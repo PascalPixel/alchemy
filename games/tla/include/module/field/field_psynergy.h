@@ -11,7 +11,7 @@
 #include "field/field_psynergy_work.h"
 
 struct Actor;
-struct AnimationEntry;
+struct SpriteAnimation;
 struct ArcEffectObject__launch;
 
 struct ArcEntry {
@@ -72,7 +72,7 @@ struct LaunchScene {
 /// A composite sprite, as far as this reads it.
 struct OrbTargetSprite {
   u8 unk00[0x28];
-  struct AnimationEntry *entries[4];
+  struct SpriteAnimation *entries[4];
 };
 
 enum OrbKind {

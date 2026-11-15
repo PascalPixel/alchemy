@@ -348,7 +348,7 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
   objectId = 0;
   activeObjectId = &gMainRoutineWork.haltedActor;
   do {
-    object = ObjectTable_Get(objectId);
+    object = Actor_Lookup(objectId);
     if (objectId != *activeObjectId && object != NULL &&
         object != excludedObject) {
       object->paused = groupMode;

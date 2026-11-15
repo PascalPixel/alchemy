@@ -51,7 +51,7 @@ void FieldPsynergy_StartCloak(void) {
   struct CloakCaster *caster =
       ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
   struct CloakSprite *sprite = caster->sprite;
-  struct AnimationEntry *entry = sprite->entries[0];
+  struct SpriteAnimation *entry = sprite->entries[0];
   u32 n;
   void (*check)(void);
   s32 order;
@@ -61,7 +61,7 @@ void FieldPsynergy_StartCloak(void) {
   caster->hook = 0;
 
   for (n = 0; n < 10; n++) {
-    entry->param = CLOAK_FLICKER_PALETTE;
+    entry->colorMode = CLOAK_FLICKER_PALETTE;
     sprite->dirty = 1;
     sprite->blend = 2;
     wait(2);
@@ -72,7 +72,7 @@ void FieldPsynergy_StartCloak(void) {
 
   order = TASK_PASS_VBLANK;
   sprite->blend = 2;
-  entry->param = 0;
+  entry->colorMode = 0;
   sprite->dirty = 1;
   check = FieldEffect_CheckCloakTile;
   Task_Add(check, order);

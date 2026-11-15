@@ -356,7 +356,7 @@ extern u32 gData_02001000__screens __asm__("gSceneLocalState");
 s32 Save_BuildFileSummary(void) {
   u16 owners[14];
   struct SaveSummary *summary;
-  struct BattleUnit *owner;
+  struct Unit *owner;
   u8 *source;
   u8 *destination;
   u32 *word;
@@ -773,7 +773,7 @@ void FileList_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
         (struct FieldSprite *)Sprite_CreateFar(descriptor->party[i]);
 
     if (object != 0) {
-      Animation_ApplyChildArgumentFar(object, 1);
+      Sprite_StartAnimationFar(object, 1);
       object->nextFrame = 0;
       object->priority = 0;
     }

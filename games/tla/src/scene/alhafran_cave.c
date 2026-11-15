@@ -366,7 +366,7 @@ void AlhafranCave_SetUpCave(void) {
   object->y.fixed = 0;
   MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0, 4);
   FlagBlock_PlaceAllMarkingEdges(gAlhafranCave_Puddles);
-  Actor_SetActionCallback(Actor_Get(ACTOR_CAVE_PUDDLE), 9);
+  Actor_SetMovementType(Actor_Get(ACTOR_CAVE_PUDDLE), 9);
   if (!Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     /* FAKEMATCH(wrapper): the three calls forwarded through
      * MapGrid_CopyCellPictureCellsRect_. */
@@ -553,7 +553,7 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_SetAnimationAndWait(ACTOR_EOLEO, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_EOLEO, FACING_SOUTH_SOUTHEAST, 0);
-  FieldActor_RefreshSelectorById(ACTOR_JAILER);
+  FieldActor_WaitForScriptEndById(ACTOR_JAILER);
   Actor_FaceDirection(ACTOR_CHAUCHA, FACING_EAST, 0);
   FieldCamera_MoveTo(744, CAMERA_KEEP, 272, 1);
   FieldCamera_WaitForArrival();
@@ -804,12 +804,12 @@ void AlhafranCave_ChauchaAndEoleoVisit(void) {
   Actor_FaceDirection(ACTOR_CREWMAN_BLAMING_THE_PARTY, FACING_SOUTH_SOUTHEAST,
                       0);
   Actor_FaceDirection(ACTOR_BRIGGS, FACING_SOUTH_SOUTHEAST, 0);
-  FieldActor_RefreshSelectorById(ACTOR_EOLEO);
+  FieldActor_WaitForScriptEndById(ACTOR_EOLEO);
   FieldActor_Stop(ACTOR_JAILER);
   FieldActor_Stop(ACTOR_FELIX);
   Actor_SetPosition(ACTOR_CHAUCHA, 0, 0);
   Actor_SetPosition(ACTOR_EOLEO, 0, 0);
-  Actor_SetActionCallback(Actor_Get(ACTOR_JAILER), 9);
+  Actor_SetMovementType(Actor_Get(ACTOR_JAILER), 9);
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   Event_End();
 }
@@ -833,21 +833,21 @@ s16 gAlhafranCave_Puddles[] = {
 };
 
 s32 gAlhafranCave_GuardStepsAsideScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(px(16), 0, 0),
     SC_SYNC,
     SC_MOVE_BY(0, 0, -px(60)),
     SC_SYNC,
     SC_MOVE_BY(-px(4), 0, 0),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(1),
     SC_END,
 };
 
 u32 gAlhafranCave_VisitorsLeaveScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(780), 0, px(288)),
     SC_SYNC,
     SC_MOVE_BY(0, 0, px(12)),
@@ -872,7 +872,7 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(AlhafranCave),
-    SCENE_EXIT_UNLESS(1, Alhafra1, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, Alhafra, 12, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AlhafranCave, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, AlhafranCave, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, AlhafraJail, 6, EXIT_FLAG_NONE),
@@ -880,7 +880,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS(AlhafraJail),
     SCENE_EXIT_UNLESS(6, AlhafranCave, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, AlhafranCave, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, Alhafra1, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, Alhafra, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, AlhafraJail, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, AlhafraJail, 9, EXIT_FLAG_NONE),
     SCENE_EXITS_END,

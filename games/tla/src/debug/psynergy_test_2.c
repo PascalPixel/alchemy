@@ -83,7 +83,7 @@ void PsynergyTest2_PoundTarget(s32 mode) {
 void PsynergyTest2_IgnoreTremor(void) {}
 
 /// Grind on actor 9 puts it in mode 3.
-void PsynergyTest2_GrindActor(void) { Actor_SetModeById(9, 3); }
+void PsynergyTest2_GrindActor(void) { Actor_SetAnimationById(9, 3); }
 
 /// Burst on cell 50 copies in the broken wall, a 1 by 2 block from (49, 1),
 /// cell behaviors and all.

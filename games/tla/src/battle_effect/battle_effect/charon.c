@@ -185,8 +185,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   u8 *source;
   s32 t;
   struct SpriteObject__f175f74 **sprites;
-  struct VramBlockCacheEntry *slots;
-  struct VramBlockCacheEntry *objectSlots;
+  struct VramCacheEntry *slots;
+  struct VramCacheEntry *objectSlots;
   s32 cell;
   s32 phase;
   s32 halfCell;
@@ -601,7 +601,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         {
           struct SpriteObject__f175f74 *object =
               EffectSprite_CreateWithTiles(64, 64, 0xc0000000, 0xe000);
-          struct VramBlockCacheEntry *tileSlots;
+          struct VramCacheEntry *tileSlots;
 
           work->objects[12] = object;
           object->priority = 3;

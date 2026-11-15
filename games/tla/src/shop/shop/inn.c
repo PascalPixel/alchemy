@@ -29,7 +29,7 @@ s32 Inn_RoomPrice(s32 innId) {
   guestCount = 0;
   pricePerGuest = gInn_PricesPerGuest[innId];
   for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
-    if (((struct BattleUnit *)Unit_Get(shop->partyMemberIds[memberIndex]))
+    if (((struct Unit *)Unit_Get(shop->partyMemberIds[memberIndex]))
             ->hp != 0)
       guestCount++;
   }
@@ -107,7 +107,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   s16 partyMemberIds[8];
   s32 memberCount;
   s32 memberIndex;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct FieldWork *field;
 
   memberCount = Party_ListMembersFar(partyMemberIds);

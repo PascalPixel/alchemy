@@ -43,7 +43,7 @@ u32 Party_GetAverageLevel(void) {
     return 0;
   for (i = 0; i < partySize; i++)
     totalLevels +=
-        ((struct BattleUnit *)Unit_Get(gMainRoutineWork.party[i]))->level;
+        ((struct Unit *)Unit_Get(gMainRoutineWork.party[i]))->level;
   totalLevels /= partySize;
   return totalLevels;
 }
@@ -90,7 +90,7 @@ void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 /// and battle stat levels; its HP and PP keep their share of a new maximum.
 void Unit_Calculate(s32 unitId) {
   struct StatWork *stats;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 index, effectIndex, elementIndex;
   s32 value;
   s32 lighthouse;
@@ -404,7 +404,7 @@ void GameFlag_RefreshLureCap(void) {
   GameFlag_Clear(FLAG_LURE_CAP);
   partySize = Party_CountMembers();
   for (member = 0; member < partySize; member++) {
-    struct BattleUnit *unit = Unit_Get(gMainRoutineWork.party[member]);
+    struct Unit *unit = Unit_Get(gMainRoutineWork.party[member]);
     s32 slot;
 
     for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
@@ -424,7 +424,7 @@ void GameFlag_RefreshLureCap(void) {
 
 /// Returns the unit's PP over its maximum PP, in 16.16; 0 with no maximum.
 static __inline__ s32 Owner_GetPpRatio(s32 owner) {
-  struct BattleUnit *unit = Unit_Get(owner);
+  struct Unit *unit = Unit_Get(owner);
 
   if (unit->ppMax <= 0)
     return 0;
@@ -441,7 +441,7 @@ s32 Party_GetPpRatio(void) {
   if (count == 0)
     return 0;
   for (i = 0; i < count; i++) {
-    struct BattleUnit *unit = Unit_Get(gMainRoutineWork.party[i]);
+    struct Unit *unit = Unit_Get(gMainRoutineWork.party[i]);
 
     pp += unit->pp;
     max += unit->ppMax;
@@ -563,7 +563,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   Dma_Fill32Cell(zero, 0, gGameFlagBytes, 128 * 4);
   gSceneLocalState[4] = 0xff;
   Dma_Fill32Cell(zero, 0, gCharacterUnits,
-                 (PIERS + 1) * sizeof(struct BattleUnit));
+                 (PIERS + 1) * sizeof(struct Unit));
   Party_InitializeCharacters();
   gMainRoutineWork.aKeys = KEY_A;
   gMainRoutineWork.bKeys = KEY_B;
@@ -605,21 +605,21 @@ void MainRoutineWork_InitializeDefaults(void) {
   gIdleFrames = 0;
   gSaveSlot = -1;
   gMainRoutineWork.unk284[2] = gData_02003860;
-  gMainRoutineWork.unk13d[0] = 4;
-  gMainRoutineWork.unk13d[1] = 4;
-  gMainRoutineWork.unk13d[2] = 4;
-  gMainRoutineWork.unk13d[3] = 8;
-  gMainRoutineWork.unk13d[4] = 8;
-  gMainRoutineWork.unk13d[5] = 8;
-  gMainRoutineWork.unk13d[6] = 16;
-  gMainRoutineWork.unk13d[7] = 16;
-  gMainRoutineWork.unk13d[8] = 16;
-  gMainRoutineWork.unk13d[9] = 32;
-  gMainRoutineWork.unk13d[10] = 32;
-  gMainRoutineWork.unk13d[11] = 32;
-  gMainRoutineWork.unk13d[12] = 64;
-  gMainRoutineWork.unk13d[13] = 64;
-  gMainRoutineWork.unk13d[14] = 64;
+  gMainRoutineWork.prizeWeights[0] = 4;
+  gMainRoutineWork.prizeWeights[1] = 4;
+  gMainRoutineWork.prizeWeights[2] = 4;
+  gMainRoutineWork.prizeWeights[3] = 8;
+  gMainRoutineWork.prizeWeights[4] = 8;
+  gMainRoutineWork.prizeWeights[5] = 8;
+  gMainRoutineWork.prizeWeights[6] = 16;
+  gMainRoutineWork.prizeWeights[7] = 16;
+  gMainRoutineWork.prizeWeights[8] = 16;
+  gMainRoutineWork.prizeWeights[9] = 32;
+  gMainRoutineWork.prizeWeights[10] = 32;
+  gMainRoutineWork.prizeWeights[11] = 32;
+  gMainRoutineWork.prizeWeights[12] = 64;
+  gMainRoutineWork.prizeWeights[13] = 64;
+  gMainRoutineWork.prizeWeights[14] = 64;
 
   // Two tables in the space after gRareItemStock's ITEM_COUNTER_COUNT
   // counters: 32 rows of eight random numbers 0 to 4, 12 bytes apart, and a
@@ -672,7 +672,7 @@ void Party_GivePiersDjinn(void) {
 void Party_RestoreHpPp(s32 cureConditions) {
   s32 partySize;
   s32 partyIndex;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
@@ -698,7 +698,7 @@ void Party_RestorePpOfLitElements(void) {
   u8 unitId;
   s32 elementGroup;
   s32 restorePp;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
@@ -730,7 +730,7 @@ void Party_RestorePpOfLitElements(void) {
 /// Writes the element and index of unit's last Djinni and returns 0, or
 /// returns -1 when it has none.
 s32 Unit_FindLastDjinn(s32 unit, s32 *element_out, s32 *index_out) {
-  u32 *sets = ((struct BattleUnit *)Unit_Get(unit))->djinnHeld;
+  u32 *sets = ((struct Unit *)Unit_Get(unit))->djinnHeld;
   s32 element = -1;
   s32 index = -1;
   s32 i;
@@ -768,7 +768,7 @@ void Party_BalanceDjinn(void) {
 
     for (i = 0; i < count; i++) {
       s32 owner = gMainRoutineWork.party[i];
-      struct BattleUnit *unit = Unit_Get(owner);
+      struct Unit *unit = Unit_Get(owner);
       u8 *counts;
       s32 j;
 
@@ -819,7 +819,7 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
   u8 *flags = save + SAVE_IMAGE_GAME_FLAGS;
   struct MainRoutineWork *party =
       (struct MainRoutineWork *)(save + SAVE_IMAGE_MAIN_ROUTINE_WORK);
-  struct BattleUnit *units = (struct BattleUnit *)(save + SAVE_IMAGE_UNITS);
+  struct Unit *units = (struct Unit *)(save + SAVE_IMAGE_UNITS);
   struct MainRoutineWork *state;
   u8 name[16];
   s32 i;
@@ -869,10 +869,10 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
   j = MIA +
       1; // A local reused for a second value: Isaac's party, the units moved.
   for (i = 0; i < (s32)j; i++) {
-    struct BattleUnit *unit = Unit_Get(i);
+    struct Unit *unit = Unit_Get(i);
 
     memcpy(name, &units[i], sizeof(units->name));
-    Iwram_CopyWordsEntry(unit, &units[i], sizeof(struct BattleUnit));
+    Iwram_CopyWordsEntry(unit, &units[i], sizeof(struct Unit));
     memcpy(unit, name, sizeof(units->name));
     if (byPassword == 0)
       unit->enemyId = unit->id;
@@ -898,7 +898,7 @@ void DataTransfer_Apply(u8 *save, s32 byPassword) {
 void ClearData_Apply(u8 *save) {
   struct MainRoutineWork *party =
       (struct MainRoutineWork *)(save + SAVE_IMAGE_MAIN_ROUTINE_WORK);
-  struct BattleUnit *units = (struct BattleUnit *)(save + SAVE_IMAGE_UNITS);
+  struct Unit *units = (struct Unit *)(save + SAVE_IMAGE_UNITS);
   u8 unused[16]; // Unused: gives the stack frame its 16 bytes.
   s32 i;
   s32 count;
@@ -912,8 +912,8 @@ void ClearData_Apply(u8 *save) {
                        gMainRoutineWork.windowBrightness);
   count = PIERS + 1;
   for (i = 0; i < count; i++) {
-    struct BattleUnit *unit = Unit_Get(i);
-    struct BattleUnit *saved = &units[i];
+    struct Unit *unit = Unit_Get(i);
+    struct Unit *saved = &units[i];
 
     unit->baseHp = saved->baseHp;
     unit->basePp = saved->basePp;
@@ -1100,7 +1100,7 @@ void DataTransfer_GiveDefaultDjinn(void) {
 /// Recomputes the HP and PP gauges of `unitId` from its current HP and PP, so
 /// that Unit_Calculate keeps the same fractions.
 void Unit_RecalculateGauges(s32 unitId) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   unit = Unit_Get(unitId);
   Unit_UpdateGauges(unit);
@@ -1123,7 +1123,7 @@ static inline s32 Unit_ClampGaugeValue(s32 value, s32 maximum) {
 /// Each sets the unit's HP or PP, clamped to 0 and its maximum, and recomputes
 /// its HP and PP gauges.
 #define UNIT_DEFINE_SET(name, field, maximum)                                  \
-  void name(struct BattleUnit *unit, s32 value) {                              \
+  void name(struct Unit *unit, s32 value) {                              \
     s32 clamped;                                                               \
                                                                                \
     clamped = Unit_ClampGaugeValue(value, unit->maximum);                      \
@@ -1138,7 +1138,7 @@ UNIT_DEFINE_SET(Unit_SetPp, pp, ppMax)
 /// maximum, recomputes its gauges and returns the new value, as `type`.
 #define UNIT_DEFINE_ADD(type, name, field, maximum)                            \
   type name(s32 unitId, s32 delta) {                                           \
-    struct BattleUnit *unit = Unit_Get(unitId);                                \
+    struct Unit *unit = Unit_Get(unitId);                                \
     s32 current = unit->field;                                                 \
     s32 limit = unit->maximum;                                                 \
     s32 value = current + delta;                                               \

@@ -112,7 +112,7 @@ extern struct ActorPlacement gKibomboMountains_Room2Placements[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_KIBOMBO_MOUNTAINS_1)
+  if (scene == SCENE_KIBOMBO_MOUNTAINS_WAFT)
     return gKibomboMountains_Room1Placements;
   if (scene == SCENE_KIBOMBO_MOUNTAINS_2)
     return gKibomboMountains_Room2Placements;
@@ -340,7 +340,7 @@ extern s16 gKibomboMountains_Room3Triggers[];
 const u8 *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_KIBOMBO_MOUNTAINS_1)
+  if (scene == SCENE_KIBOMBO_MOUNTAINS_WAFT)
     return gKibomboMountains_Room1Triggers;
   if (scene == SCENE_KIBOMBO_MOUNTAINS_2)
     return gKibomboMountains_Room2Triggers;
@@ -367,7 +367,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = EVENT_WORK_VALUE;
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 0x20;
   scene = gMainRoutineWork.next;
-  if (scene == SCENE_KIBOMBO_MOUNTAINS_1) {
+  if (scene == SCENE_KIBOMBO_MOUNTAINS_WAFT) {
     Actor_SetSpritePriority(18, 1);
     Actor_SetSpritePriority(19, 1);
     Actor_SetSpriteFlags(Actor_GetById(19), 0);
@@ -734,9 +734,9 @@ extern u32 gKibomboMountains_FirstLookoutScript[];
 
 // clang-format off
 u32 gKibomboMountains_RaisedPillarScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_END,
-    SC_ARG(0),
+    SC_ANIMATION(0),
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, px(24)),
     SC_END,
@@ -748,7 +748,7 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(KibomboMountains1),
+    SCENE_EXITS(KibomboMountainsWaft),
     SCENE_EXIT_UNLESS(1, WorldMap, 26, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, KibomboMountains2, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, KibomboMountains2, 3, EXIT_FLAG_NONE),
@@ -758,13 +758,13 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(7, KibomboMountains3, 3, EXIT_FLAG_NONE),
     SCENE_EXITS(KibomboMountains2),
     SCENE_EXIT_UNLESS(1, WorldMap, 25, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, KibomboMountains1, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, KibomboMountains1, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, KibomboMountains1, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, KibomboMountainsWaft, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, KibomboMountainsWaft, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, KibomboMountainsWaft, 4, EXIT_FLAG_NONE),
     SCENE_EXITS(KibomboMountains3),
-    SCENE_EXIT_UNLESS(1, KibomboMountains1, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, KibomboMountains1, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, KibomboMountains1, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, KibomboMountainsWaft, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, KibomboMountainsWaft, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, KibomboMountainsWaft, 7, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -781,15 +781,15 @@ u32 gKibomboMountains_PatrolScript[] = {
     SC_SET(SW_SPEED, 0x8000),
     SC_SET(SW_ACCEL, 0x1999),
     SC_SET(SW_COLLISION, 129),
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(30),
     SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
-    SC_ARG(4),
+    SC_ANIMATION(4),
     SC_WAIT(90),
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(30),
     SC_SET(SW_FACING, FACING_SOUTH),
-    SC_ARG(4),
+    SC_ANIMATION(4),
     SC_WAIT(90),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -798,23 +798,23 @@ u32 gKibomboMountains_LowerGuardPatrolScript[] = {
       SC_SET(SW_SPEED, 0x8000),                                                
       SC_SET(SW_ACCEL, 0x1999),                                                
       SC_SET(SW_COLLISION, 129),                                               
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_MOVE(px(856), 0, px(584)),                                      
       SC_SYNC,                                                                 
-      SC_ARG(1),                                                               
+      SC_ANIMATION(1),                                                               
       SC_WAIT(3),                                                              
       SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),                       
       SC_WAIT(30),                                                             
-      SC_ARG(4),                                                               
+      SC_ANIMATION(4),                                                               
       SC_WAIT(90),                                                             
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_MOVE(px(792), 0, px(584)),                                      
       SC_SYNC,                                                                 
-      SC_ARG(1),                                                               
+      SC_ANIMATION(1),                                                               
       SC_WAIT(3),                                                              
       SC_SET(SW_FACING, FACING_SOUTH),                                         
       SC_WAIT(30),                                                             
-      SC_ARG(4),                                                               
+      SC_ANIMATION(4),                                                               
       SC_WAIT(90),                                                             
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
@@ -828,7 +828,7 @@ u32 gKibomboMountains_DogPatrolScript[] = {
     SC_SET(SW_SPEED, 0x14000),
     SC_SET(SW_ACCEL, 0x4000),
     SC_SET(SW_COLLISION, 129),
-    SC_ARG(3),
+    SC_ANIMATION(3),
     SC_SET(SW_VELOCITY_Y, px(3)),
     SC_MOVE(px(760), 0, px(488)),
     SC_SYNC,
@@ -892,23 +892,23 @@ u32 gKibomboMountains_FirstLookoutScript[] = {
       SC_SET(SW_SPEED, 0x8000),                                                
       SC_SET(SW_ACCEL, 0x1999),                                                
       SC_SET(SW_COLLISION, 129),                                               
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_MOVE(px(184), 0, px(296)),                                      
       SC_SYNC,                                                                 
-      SC_ARG(1),                                                               
+      SC_ANIMATION(1),                                                               
       SC_WAIT(3),                                                              
       SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),                       
       SC_WAIT(30),                                                             
-      SC_ARG(4),                                                               
+      SC_ANIMATION(4),                                                               
       SC_WAIT(90),                                                             
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_MOVE(px(248), 0, px(296)),                                      
       SC_SYNC,                                                                 
-      SC_ARG(1),                                                               
+      SC_ANIMATION(1),                                                               
       SC_WAIT(3),                                                              
       SC_SET(SW_FACING, FACING_SOUTH),                                         
       SC_WAIT(30),                                                             
-      SC_ARG(4),                                                               
+      SC_ANIMATION(4),                                                               
       SC_WAIT(90),                                                             
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
@@ -917,23 +917,23 @@ u32 gKibomboMountains_SecondLookoutScript[] = {
       SC_SET(SW_SPEED, 0x8000),                                                
       SC_SET(SW_ACCEL, 0x1999),                                                
       SC_SET(SW_COLLISION, 129),                                               
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_MOVE(px(248), 0, px(448)),                                      
       SC_SYNC,                                                                 
-      SC_ARG(1),                                                               
+      SC_ANIMATION(1),                                                               
       SC_WAIT(3),                                                              
       SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),                       
       SC_WAIT(30),                                                             
-      SC_ARG(4),                                                               
+      SC_ANIMATION(4),                                                               
       SC_WAIT(90),                                                             
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_MOVE(px(264), 0, px(448)),                                      
       SC_SYNC,                                                                 
-      SC_ARG(1),                                                               
+      SC_ANIMATION(1),                                                               
       SC_WAIT(3),                                                              
       SC_SET(SW_FACING, FACING_SOUTH),                                         
       SC_WAIT(30),                                                             
-      SC_ARG(4),                                                               
+      SC_ANIMATION(4),                                                               
       SC_WAIT(90),                                                             
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };

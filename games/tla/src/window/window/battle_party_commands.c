@@ -103,8 +103,8 @@ s32 BattleParty_ChooseReserve(s32 slot) {
           redraw = 1;
         }
         if (redraw) {
-          struct BattleObj *from;
-          struct BattleObj *to;
+          struct BattleObject *from;
+          struct BattleObject *to;
           struct Actor *object;
           struct Actor *place;
 
@@ -164,7 +164,7 @@ s32 BattleParty_SplitChoosers(u16 *ready, struct BattleActionRecord **cursor,
   s32 action;
 
   for (i = 0; i < count; i++) {
-    struct BattleUnit *unit = Unit_Get(unitIds[i]);
+    struct Unit *unit = Unit_Get(unitIds[i]);
 
     for (action = 0; action < unit->actionsPerTurn; action++) {
       if (unit->sleep != 0 || unit->confusion != 0 || unit->charm != 0 ||

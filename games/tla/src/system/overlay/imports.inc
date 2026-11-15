@@ -71,8 +71,8 @@
 	export Import_ActorStartScript, Actor_StartScriptFar
 	export GameFlag_SetByte, GameFlag_SetByteFar
 	export SpriteAnimation_Clear, SpriteAnimation_ClearFar
-	export Animation_ApplyChildArgument, Animation_ApplyChildArgumentFar
-	export ResourceMetadata_Register, ResourceMetadata_RegisterFar
+	export Sprite_StartAnimation, Sprite_StartAnimationFar
+	export Sprite_AddAnimation, Sprite_AddAnimationFar
 	export Import_ActorSelectAnimation, Actor_SelectAnimationFar
 	export Actor_SelectAnimation, Actor_SelectAnimationFar
 	export Actor_SetAnimationSpeed, Actor_SetAnimationSpeedFar
@@ -90,8 +90,8 @@
 	export MapGrid_PlayMapEdit, MapGrid_PlayMapEditFar
 	export MapGrid_CopyCellPictureIndicesRect, MapGrid_CopyCellPictureIndicesRectFar
 	export WorldMap_SetWindowCellTile, WorldMap_SetWindowCellTileFar
-	export Map_ClearLayerEntryFlag, Map_ClearLayerEntryFlagFar
-	export Map_SetLayerEntryFlag, Map_SetLayerEntryFlagFar
+	export TilesetAnim_Resume, TilesetAnim_ResumeFar
+	export TilesetAnim_Pause, TilesetAnim_PauseFar
 	export BlendScript_Resume, BlendScript_ResumeFar
 	export WorldMap_SetWindowCellTileAndDraw, WorldMap_SetWindowCellTileAndDrawFar
 	export BlendScript_Suspend, BlendScript_SuspendFar
@@ -124,7 +124,7 @@
 	export WorldMap_GetCollision, WorldMap_GetCollisionFar
 	export TilesetAnim_ResumeAll, TilesetAnim_ResumeAllFar
 	export Import_MapGridSetCellHeight, MapGrid_SetCellHeightFar
-	export Animation_ApplyChildValue, Animation_ApplyChildValueFar
+	export Sprite_SetAnimationSpeed, Sprite_SetAnimationSpeedFar
 	export MapGrid_GetTerrainKind, MapGrid_GetTerrainKindFar
 	export Actor_HasArrived, Actor_HasArrivedFar
 	export Import_FieldCheckSpheresOverlap, Field_CheckSpheresOverlapFar
@@ -245,10 +245,10 @@
 	export Party_LearnAbility, Party_LearnAbilityFar
 	export Event_PickUpItem, Event_PickUpItemFar
 	export Actor_GetById, Actor_GetByIdFar
-	export ObjectTable_DestroyById, ObjectTable_DestroyByIdFar
+	export Actor_ReleaseById, Actor_ReleaseByIdFar
 	export Actor_SetSpeedParameters, Actor_SetSpeedParametersFar
 	export Actor_SetMovementTypeById, Actor_SetMovementTypeByIdFar
-	export Actor_RefreshSelectorById, Actor_RefreshSelectorByIdFar
+	export Actor_WaitForScriptEndById, Actor_WaitForScriptEndByIdFar
 	export Actor_Stop, Actor_StopFar
 	export Actor_SetMovementTypeAndWaitById, Actor_SetMovementTypeAndWaitByIdFar
 	export Actor_SetDestinationById, Actor_SetDestinationByIdFar
@@ -261,13 +261,13 @@
 	export Actor_SetHorizontalPositionWithTerrain, Actor_SetHorizontalPositionWithTerrainFar
 	export Actor_SetHorizontalPositionAndAngleWithTerrain, Actor_SetHorizontalPositionAndAngleWithTerrainFar
 	export Actor_MoveToObject, Actor_MoveToObjectFar
-	export Actor_SetModeById, Actor_SetModeByIdFar
-	export Actor_SetActionById, Actor_SetActionByIdFar
-	export Motion_SetModeAndWaitAnimation, Motion_SetModeAndWaitAnimationFar
+	export Actor_SetAnimationById, Actor_SetAnimationByIdFar
+	export Actor_SetAnimationSpeedById, Actor_SetAnimationSpeedByIdFar
+	export Actor_SetAnimationAndWait, Actor_SetAnimationAndWaitFar
 	export Actor_WaitForAnimationChange, Actor_WaitForAnimationChangeFar
 	export Actor_Jump, Actor_JumpFar
 	export Actor_StartRepeatedMotion, Actor_StartRepeatedMotionFar
-	export Motion_SetVarCbAndRefresh, Motion_SetVarCbAndRefreshFar
+	export Actor_RunRepeatedMotion, Actor_RunRepeatedMotionFar
 	export Actor_JumpDownLedge, Actor_JumpDownLedgeFar
 	export Actor_FaceActorById, Actor_FaceActorByIdFar
 	export Actor_TurnToFaceEachOther, Actor_TurnToFaceEachOtherFar
@@ -305,7 +305,7 @@
 	export Event_SetAfterBattleDestination, Event_SetAfterBattleDestinationFar
 	export Event_LeaveFor, Event_LeaveForFar
 	export Import_LeaderStopMoving, Leader_StopMovingFar
-	export Party_SetFields1f2And1f4, Party_SetFields1f2And1f4Far
+	export Event_SetDefeatDestination, Event_SetDefeatDestinationFar
 	export Field_FindNearbyTalkTarget, Field_FindNearbyTalkTargetFar
 	export Field_FindNearbyPsynergyTarget, Field_FindNearbyPsynergyTargetFar
 	export Scene_TalkToActor, Scene_TalkToActorFar
@@ -324,11 +324,11 @@
 	export ItemDisplay_ShowItem, ItemDisplay_ShowItemFar
 	export Actor_ReturnHome, Actor_ReturnHomeFar
 	export WorldMap_Freeze, WorldMap_FreezeFar
-	export ObjectEvent_PlaceOnGround, ObjectEvent_PlaceOnGroundFar
+	export TreasureSpot_SetActorPosition, TreasureSpot_SetActorPositionFar
 	export LineScroll_InitWave, LineScroll_InitWaveFar
 	export ItemDisplay_ShowPicture, ItemDisplay_ShowPictureFar
 	export Title_ShowIntro, Title_ShowIntroFar
-	export ObjectTable_Get, ObjectTable_GetFar
+	export Actor_Lookup, Actor_LookupFar
 	export FieldEffect_StartBlankOverlay, FieldEffect_StartBlankOverlayFar
 	export WorldMap_ReloadPendingAreaGraphics, WorldMap_ReloadPendingAreaGraphicsFar
 	export Title_ShowNintendoLogo, Title_ShowNintendoLogoFar
@@ -337,13 +337,13 @@
 	export FieldPsynergy_FadeFromCastColor, FieldPsynergy_FadeFromCastColorFar
 	export FieldPsynergy_RunHandler, FieldPsynergy_RunHandlerFar
 	export Event_ResolveAllPendingActions, Event_ResolveAllPendingActionsFar
-	export BattleEffect_LoadActionEffectResources, BattleEffect_LoadActionEffectResourcesFar
+	export FieldPsynergy_LoadResources, FieldPsynergy_LoadResourcesFar
 	export Import_FieldPsynergySetupActorPair, FieldPsynergy_SetupActorPairFar
 	export FieldPsynergy_SetupActorPair, FieldPsynergy_SetupActorPairFar
 	export Import_BattleEffectStopMainActor, BattleEffect_StopMainActorFar
 	export BattleEffect_StopMainActor, BattleEffect_StopMainActorFar
-	export BattleEffect_CleanupSceneObjects, BattleEffect_CleanupSceneObjectsFar
-	export EventObject_Initialize, EventObject_InitializeFar
+	export FieldPsynergy_End, FieldPsynergy_EndFar
+	export FieldPsynergy_StartCast, FieldPsynergy_StartCastFar
 	export Event_ResolvePendingActions, Event_ResolvePendingActionsFar
 	export SummonTablet_PlayRunes, SummonTablet_PlayRunesFar
 	export Sprite_ShareVramCacheEntry, Sprite_ShareVramCacheEntryFar
@@ -375,7 +375,7 @@
 	export Idejima_CountAnswer, Event_CountAnswerFar
 	export ObjectTable_Snapshot, ObjectTable_SnapshotFar
 	export Actor_Spawn, Actor_SpawnFar
-	export Actor_SetActionCallback, Actor_SetActionCallbackFar
+	export Actor_SetMovementType, Actor_SetMovementTypeFar
 	export Event_WaitForZoomTransition, Event_WaitForZoomTransitionFar
 	export Scene_QueueMusic, Scene_QueueMusicFar
 	export Event_NoOp, Event_NoOpFar
@@ -433,7 +433,7 @@
 	export BattleEffect_GetObjectPriority, BattleEffect_GetObjectPriorityFar
 	export Import_MadPlantLeapAtLeader, MadPlant_LeapAtLeaderFar
 	export EndingPicture_Start, EndingPicture_StartFar
-	export Event_PlayCueNearFocus, Event_PlayCueNearFocusFar
+	export Actor_PlaySoundInView, Actor_PlaySoundInViewFar
 	export MapGrid_GetAttributeBAt, MapGrid_GetAttributeBAtFar
 	export BattleEffect_GetObjectDepth, BattleEffect_GetObjectDepthFar
 	export Field_StartColorTransition, Field_StartColorTransitionFar

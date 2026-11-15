@@ -80,7 +80,7 @@ void Camera_WorldToScreen(s32 *position);
 /// the player, flattened to three quarters of its height.
 void HoverGlow_Update(void) {
   struct HoverWork *work = Ram_HeapSlots->battleEffect;
-  struct Actor *player = ObjectTable_Get(Party_GetLeaderActor());
+  struct Actor *player = Actor_Lookup(Party_GetLeaderActor());
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u16 *palette;
   s32 position[3];

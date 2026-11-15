@@ -4,7 +4,7 @@
 #include "edition.h"
 #include "static_assert.h"
 
-/// BattleUnit.side: which side a unit fights on, if it is in the battle.
+/// Unit.side: which side a unit fights on, if it is in the battle.
 enum BattleUnitPresence {
   BATTLE_UNIT_ABSENT = 0,
   BATTLE_UNIT_ENEMY = 1,

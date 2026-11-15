@@ -199,7 +199,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
   if (scene == SCENE_TAOPO_SWAMP_2)
     return gTaopoSwamp_Room2Placements;
-  if (scene == SCENE_TAOPO_SWAMP_4)
+  if (scene == SCENE_TAOPO_SWAMP_FLOWER)
     return gTaopoSwamp_Room4Placements;
   if (scene == SCENE_TAOPO_SWAMP_5)
     return gTaopoSwamp_Room5Placements;
@@ -231,10 +231,10 @@ struct ActorSpriteView;
 struct ChildGroup;
 
 extern u32 gTaopoSwamp_SplashFades[];
-s32 Animation_ApplyChildArgument(struct AnimationGroup *state, s32 flags);
+s32 Sprite_StartAnimation(struct AnimationGroup *state, s32 flags);
 void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record,
                                         u32 value);
-void Animation_ApplyChildValue(struct ChildGroup *group, s32 value);
+void Sprite_SetAnimationSpeed(struct ChildGroup *group, s32 value);
 
 // When actor id stands at x 12, inside an event: the actor drops in place, then
 // for 25 frames throws splashes, then two sparks, and sets flag 0x8e5.
@@ -274,11 +274,11 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
         Actor_StartScript(splash, gTaopoSwamp_SplashFades);
         splash->motionFlags = 0;
         if (splashSprite != 0) {
-          ((s32 (*)())Animation_ApplyChildArgument)(splashSprite, 1);
+          ((s32 (*)())Sprite_StartAnimation)(splashSprite, 1);
           splashSprite->nextFrame = k;
           splashSprite->priority = sprite->priority;
           Animation_ApplyChildValuesToRecord(splashSprite, 13);
-          Animation_ApplyChildValue(splashSprite, 8);
+          Sprite_SetAnimationSpeed(splashSprite, 8);
         }
       }
     }
@@ -302,7 +302,7 @@ void TaopoSwamp_SinkPillar(s32 unused, s32 id) {
       }
       spark->layer = 1;
       if (sparkSprite != 0) {
-        Animation_ApplyChildArgument(sparkSprite, 2);
+        Sprite_StartAnimation(sparkSprite, 2);
         sparkSprite->nextFrame = zero;
         sparkSprite->priority = 2;
       }
@@ -912,7 +912,7 @@ const struct Trigger *Scene_GetTriggers(void) {
     return (const struct Trigger *)gTaopoSwamp_Room2Triggers;
   if (scene == SCENE_TAOPO_SWAMP_3)
     return (const struct Trigger *)gTaopoSwamp_Room3Triggers;
-  if (scene == SCENE_TAOPO_SWAMP_4)
+  if (scene == SCENE_TAOPO_SWAMP_FLOWER)
     return (const struct Trigger *)gTaopoSwamp_Room4Triggers;
   if (scene == SCENE_TAOPO_SWAMP_5)
     return (const struct Trigger *)gTaopoSwamp_Room5Triggers;
@@ -1231,7 +1231,7 @@ s32 Scene_Initialize(void) {
       Actor_SetWideSprite(64, 1);
     if (!Event_GetFlag(FLAG_AREA_TEMP_01))
       Actor_SetWideSprite(65, 1);
-  } else if (scene == SCENE_TAOPO_SWAMP_4) {
+  } else if (scene == SCENE_TAOPO_SWAMP_FLOWER) {
     FieldEffect_StartBlankOverlay(0);
     if (!Event_GetFlag(FLAG_AREA_TEMP_10))
       Actor_SetPosition(8, 0, 0);
@@ -1424,7 +1424,7 @@ s32 Scene_Initialize(void) {
       Actor_SetWideSprite(64, 1);
     if (!Event_GetFlag(FLAG_AREA_TEMP_01))
       Actor_SetWideSprite(65, 1);
-  } else if (scene == SCENE_TAOPO_SWAMP_4) {
+  } else if (scene == SCENE_TAOPO_SWAMP_FLOWER) {
     *effect = 516;
     FieldEffect_StartBlankOverlay(0);
     if (!Event_GetFlag(FLAG_AREA_TEMP_10))
@@ -1736,7 +1736,7 @@ void TaopoSwamp_SinkInMud(void) {
       spark->motionFlags = 0;
       spark->layer = 1;
       if (sparkSprite != 0) {
-        Animation_ApplyChildArgument(sparkSprite, 2);
+        Sprite_StartAnimation(sparkSprite, 2);
         sparkSprite->nextFrame = 0;
         sparkSprite->priority = 2;
       }
@@ -1960,7 +1960,7 @@ u8 gTaopoSwamp_Room7HoleVents[] = {
 // clang-format off
 u32 gTaopoSwamp_PuffSteamScript[] = {
     SC_SET(SW_MOTION, 0),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_LABEL(1),
     SC_ADD(SW_Y, px(1)),
     SC_WAIT(1),
@@ -2036,21 +2036,21 @@ u32 gSceneExits[] = {
     SCENE_EXIT(7, TaopoSwamp5, 3),
     SCENE_EXIT(8, TaopoSwamp3, 9),
     SCENE_EXIT(9, TaopoSwamp3, 8),
-    SCENE_EXITS(TaopoSwamp4),
+    SCENE_EXITS(TaopoSwampFlower),
     SCENE_EXIT(1, TaopoSwamp5, 1),
     SCENE_EXIT(2, TaopoSwamp5, 4),
     SCENE_EXITS(TaopoSwamp5),
-    SCENE_EXIT(1, TaopoSwamp4, 1),
+    SCENE_EXIT(1, TaopoSwampFlower, 1),
     SCENE_EXIT(2, TaopoSwamp3, 6),
     SCENE_EXIT(3, TaopoSwamp3, 7),
-    SCENE_EXIT(4, TaopoSwamp4, 2),
-    SCENE_EXIT(10, TaopoSwamp4, 10),
-    SCENE_EXIT(11, TaopoSwamp4, 11),
-    SCENE_EXIT(12, TaopoSwamp4, 12),
-    SCENE_EXIT(13, TaopoSwamp4, 13),
-    SCENE_EXIT(14, TaopoSwamp4, 14),
-    SCENE_EXIT(15, TaopoSwamp4, 15),
-    SCENE_EXIT(16, TaopoSwamp4, 16),
+    SCENE_EXIT(4, TaopoSwampFlower, 2),
+    SCENE_EXIT(10, TaopoSwampFlower, 10),
+    SCENE_EXIT(11, TaopoSwampFlower, 11),
+    SCENE_EXIT(12, TaopoSwampFlower, 12),
+    SCENE_EXIT(13, TaopoSwampFlower, 13),
+    SCENE_EXIT(14, TaopoSwampFlower, 14),
+    SCENE_EXIT(15, TaopoSwampFlower, 15),
+    SCENE_EXIT(16, TaopoSwampFlower, 16),
     SCENE_EXITS(TaopoSwamp6),
     SCENE_EXIT(1, TaopoSwamp7, 1),
     SCENE_EXIT(4, TaopoSwamp2, 4),

@@ -28,8 +28,8 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
     s32 i;
 
     for (i = 0; i < ELEMENT_COUNT; i++)
-      output[i] = source[offsetof(struct BattleUnit, djinnActiveCounts) -
-                         offsetof(struct BattleUnit, djinnHeld) + i] *
+      output[i] = source[offsetof(struct Unit, djinnActiveCounts) -
+                         offsetof(struct Unit, djinnHeld) + i] *
                   10;
     if (record <= PIERS) {
       const struct CharacterDefinition *definition =
@@ -45,7 +45,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
 /// Returns how strongly a unit is attuned to `element`, its whole element level
 /// (a tenth of what Unit_GetElementLevels counts), and 0 for `ELEMENT_NONE`.
 s32 Unit_GetElementLevel(s32 unitId, s32 element) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   s32 levels[ELEMENT_COUNT];
   s32 result = 0;
 
@@ -59,7 +59,7 @@ s32 Unit_GetElementLevel(s32 unitId, s32 element) {
 /// Returns the element an enemy attacks with, from its element preset; an id
 /// past the table's end reads the first preset.
 s32 Enemy_GetAttackElement(void *state) {
-  struct BattleUnit *unit = state;
+  struct Unit *unit = state;
   u8 preset = Enemy_GetDefinition(unit->enemyId)->elementPreset;
   const struct EnemyElementPreset *table;
   u32 offset;
@@ -76,7 +76,7 @@ s32 Enemy_GetAttackElement(void *state) {
 /// its preset, a character's from its element levels.
 void Unit_CalculateBaseElements(s32 unitId,
                                 struct BattleElementStats *destination) {
-  struct BattleUnit *state = Unit_Get(unitId);
+  struct Unit *state = Unit_Get(unitId);
   u32 index;
   s32 levels[ELEMENT_COUNT];
   s32 i;
@@ -211,7 +211,7 @@ struct ClassDefinition *Class_GetDefinition(s32 classId) {
 /// Works out a character's class again after its Djinn or its class-changing
 /// item change, then its Psynergy list and its base elements.
 void Unit_UpdateClass(s32 unitId) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
 
   unit->classId =
       Class_Determine(unit->enemyId, unit->djinnHeld,

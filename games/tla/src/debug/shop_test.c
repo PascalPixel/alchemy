@@ -482,7 +482,7 @@ void GameFlag_RefreshLureCap(void);
 /// curses and envenoms Jenna, and breaks the first item of use type 2 each of
 /// Felix and Jenna holds. Talking to ACTOR_AFFLICTIONS.
 void ShopTest_DamageAndAfflictParty(void) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct ItemDefinition *item;
   s32 i;
 
@@ -587,14 +587,14 @@ s32 Scene_Initialize(void) {
 
   *effect = 256;
   party->messageSpeed = 2;
-  Actor_SetModeById(ACTOR_SANCTUM_MESSAGES, 5);
-  Actor_SetModeById(ACTOR_WEAPON_SHOP_MESSAGES, 5);
-  Actor_SetModeById(ACTOR_ARMOR_SHOP_MESSAGES, 5);
-  Actor_SetModeById(ACTOR_ITEM_SHOP_MESSAGES, 5);
-  Actor_SetModeById(30, 6);
-  Actor_SetModeById(31, 6);
-  Actor_SetModeById(32, 6);
-  Actor_SetModeById(33, 6);
+  Actor_SetAnimationById(ACTOR_SANCTUM_MESSAGES, 5);
+  Actor_SetAnimationById(ACTOR_WEAPON_SHOP_MESSAGES, 5);
+  Actor_SetAnimationById(ACTOR_ARMOR_SHOP_MESSAGES, 5);
+  Actor_SetAnimationById(ACTOR_ITEM_SHOP_MESSAGES, 5);
+  Actor_SetAnimationById(30, 6);
+  Actor_SetAnimationById(31, 6);
+  Actor_SetAnimationById(32, 6);
+  Actor_SetAnimationById(33, 6);
   if (party->entrance == 99)
     Party_AddIsaacsParty();
   return 0;
@@ -614,7 +614,7 @@ void ShopTest_AdjustPartyLevels(s32 levels) {
     u16 owner = owners[i++];
 
     Unit_LevelUpTo(owner,
-                   ((struct BattleUnit *)Unit_Get(owner))->level + levels);
+                   ((struct Unit *)Unit_Get(owner))->level + levels);
     Unit_Calculate(owner);
   }
 }

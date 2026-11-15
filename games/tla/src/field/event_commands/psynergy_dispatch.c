@@ -285,8 +285,8 @@ void Actor_ApplyRandomChildValues(struct Actor *owner) {
   struct CompositeAnimation *target;
   s32 initialCount;
   s32 count;
-  struct AnimationEntry **entry;
-  struct AnimationEntry *current;
+  struct SpriteAnimation **entry;
+  struct SpriteAnimation *current;
   u32 frame;
   s32 value;
 
@@ -303,7 +303,7 @@ void Actor_ApplyRandomChildValues(struct Actor *owner) {
           current = *entry++;
           value = frame % 6;
           count--;
-          current->param = value;
+          current->colorMode = value;
         } while (count != 0);
       }
       target->dirty = 1;

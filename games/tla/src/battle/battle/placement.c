@@ -11,7 +11,7 @@
 /// Resets a battle object, making its actor when it has none: nine tenths
 /// size, the anchors cleared unless keep is set, no sprite, animation, shadow
 /// or status, turned half a turn, visible, then the empty script.
-void BattleObject_Reset(struct BattleObj *actor, s32 keep) {
+void BattleObject_Reset(struct BattleObject *actor, s32 keep) {
   struct MotionObject *object;
   s32 facingAngle;
   s32 zero;
@@ -33,10 +33,10 @@ void BattleObject_Reset(struct BattleObj *actor, s32 keep) {
   actor->resource = 0;
   actor->overlay = 0;
   actor->animation = 0;
-  actor->effect = 0;
+  actor->shadow = 0;
   actor->animationEntry = 0;
-  actor->activeConditions = 0;
-  actor->effectEntry = 0;
+  actor->activeStatuses = 0;
+  actor->shadowEntry = 0;
   actor->active = 0;
   actor->selectedCondition = 0;
   actor->fading = 0;
@@ -50,13 +50,13 @@ void BattleObject_Reset(struct BattleObj *actor, s32 keep) {
 
 /// Creates the battle object of a unit at (x, y) on the battlefield: its
 /// sprite, palette, size and weapon, turned to face the centre.
-void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
+void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
   s32 fixedZ;
   s32 palette;
   s32 sprite;
   s32 registeredSprite;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct MotionObject *object;
   s32 facingAngle;
   s32 weaponSprite;
@@ -110,7 +110,7 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
 
   // The units drawn larger or smaller than their sprites, in 16.16.
   actor->scale = Q16_ONE;
-  actor->effect = SPRITE_BATTLE_SHADOW;
+  actor->shadow = SPRITE_BATTLE_SHADOW;
 
   switch (unit->enemyId) {
   case ISAAC:
@@ -350,7 +350,7 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_MOAPA_3:
     // XXX: which shadow Moapa takes; the sprite table's row 685 rendered would
     // say.
-    actor->effect = 685;
+    actor->shadow = 685;
     actor->scale = Q16_ONE * 23 / 20;
     break;
   case ENEMY_KNIGHT:
@@ -411,7 +411,7 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   weaponSprite = BattleUnit_GetWeaponSprite(unitId);
   actor->animation = 0;
   actor->animationEntry = 0;
-  actor->effectEntry = 0;
+  actor->shadowEntry = 0;
   actor->active = 0;
   actor->overlay = weaponSprite;
   actor->fading = 0;
@@ -481,7 +481,7 @@ void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
 
     xPositions[index] = ENEMY_COLUMN_X;
     if (index != 0) {
-      struct BattleUnit *actor;
+      struct Unit *actor;
       u32 enemy;
 
       spacing = ENEMY_SPACING_EMPTY;
@@ -504,7 +504,7 @@ void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
     zPositions[index] = z;
     spacing = ENEMY_SPACING_EMPTY;
     if (!IS_PLACEHOLDER_ID(actorIds[index])) {
-      struct BattleUnit *actor = Unit_Get(actorIds[index]);
+      struct Unit *actor = Unit_Get(actorIds[index]);
 
       spacing = BattleSprite_IsSmall(actor->enemyId) ? ENEMY_SPACING_SMALL
                                                      : ENEMY_SPACING_LARGE;
@@ -520,7 +520,7 @@ s32 Enemy_GetFreeUnitId(void) {
 
   for (enemySlot = 0; enemySlot < ENEMY_BATTLE_SIZE; enemySlot++) {
     unitId = enemySlot + FIRST_ENEMY_UNIT;
-    if (((struct BattleUnit *)Unit_Get(unitId))->side == BATTLE_UNIT_ABSENT)
+    if (((struct Unit *)Unit_Get(unitId))->side == BATTLE_UNIT_ABSENT)
       break;
   }
   if (enemySlot == ENEMY_BATTLE_SIZE)
@@ -560,7 +560,7 @@ void Enemy_Update(void) {
     s32 id = unitIds[i];
 
     if (id != BATTLE_UNIT_REMOVED) {
-      struct BattleObj *object = BattleObject_Get(id);
+      struct BattleObject *object = BattleObject_Get(id);
 
       object->anchorX = px(x[i]);
       object->anchorZ = px(z[i]);

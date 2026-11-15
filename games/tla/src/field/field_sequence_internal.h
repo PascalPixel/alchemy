@@ -71,7 +71,7 @@
 #include "module/system/system.h"
 #include "gamepak/far_call/field.h"
 
-extern const struct FieldPsynergyReach gData_080eff28[];
+extern const struct FieldPsynergyReach gFieldPsynergy_Reach[];
 
 // The object's functions its parts call before their definitions.
 

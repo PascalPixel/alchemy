@@ -122,7 +122,7 @@ s32 Actor_MoveByKeys(struct Actor *object) {
 s32 Actor_CrossRope(struct Actor *object) {
   struct FieldPosition position;
   s32 collisionFlags;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   struct RopeWork *rope;
   s32 bestDistance;
   s32 value;
@@ -252,7 +252,7 @@ static inline void TurnToward(struct Actor *object, u16 angle) {
 s32 Actor_CrossTightrope(struct Actor *object) {
   struct FieldPosition position;
   s32 collisionFlags;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 argument;
   struct TightropeWork *tightrope;
   struct TightropeNode *best;
@@ -548,7 +548,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         effect->scaleX = 0x4ccc;
         effect->scaleY = 0x4ccc;
         if (sprite != NULL) {
-          Animation_ApplyChildArgument(sprite, 2);
+          Sprite_StartAnimation(sprite, 2);
           sprite->flags = 0;
           sprite->priority = 0;
         }
@@ -732,7 +732,7 @@ counted:
       if (sprite != NULL) {
         struct Unk_ClimbEventWork *work = Ram_HeapSlots->fieldWork;
 
-        Animation_ApplyChildArgument(sprite, 1);
+        Sprite_StartAnimation(sprite, 1);
         sprite->flags = 0;
         // DEAD: overwritten by the next line.
         sprite->priority = 2;
@@ -911,7 +911,7 @@ update_object:
       ((struct Unk0802a124Actor *)ripple)->unk63 = 100;
       ripple->motionFlags = collision;
       if (rippleSprite != 0) {
-        Animation_ApplyChildArgument(rippleSprite, 1);
+        Sprite_StartAnimation(rippleSprite, 1);
         rippleSprite->flags = collision;
         rippleSprite->priority = 2;
         rippleSprite->priority = 1;

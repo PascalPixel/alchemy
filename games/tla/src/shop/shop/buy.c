@@ -475,9 +475,9 @@ void Shop_DrawParty(struct RenderInput *window, s32 selected, s32 itemId) {
 
       if (figure != NULL) {
         if (first + i == selected)
-          Animation_ApplyChildArgumentFar(figure, 30);
+          Sprite_StartAnimationFar(figure, 30);
         else
-          Animation_ApplyChildArgumentFar(figure, 1);
+          Sprite_StartAnimationFar(figure, 1);
         shop->partyMemberScale[i] = Q16_ONE;
         if (!Item_IsCompatibleWithUnitFar(unitId, itemId))
           shop->partyMemberScale[i] = Q16_ONE * 4 / 5;
@@ -494,7 +494,7 @@ void Shop_DrawParty(struct RenderInput *window, s32 selected, s32 itemId) {
 void Shop_DrawEquipComparison(struct RenderInput *window, s32 unitId,
                               s32 itemId) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 replacedItemId = -1;
   s32 previewSlot;
@@ -564,7 +564,7 @@ void Shop_DrawEquipComparison(struct RenderInput *window, s32 unitId,
 /// Shows how many of the item the party member already carries and the party
 /// member's inventory icons.
 void Shop_DrawCarriedItem(struct RenderInput *window, s32 unitId, s32 itemId) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 slot;
 
   unit = Unit_Get(unitId);
@@ -588,7 +588,7 @@ void Shop_DrawCarriedItem(struct RenderInput *window, s32 unitId, s32 itemId) {
 /// Returns the count (1 for other items), or -1 when cancelled.
 s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
   struct ShopWork *shop;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct ItemDefinition *item;
   s32 carriedQuantity;
   s32 quantityLimit;
@@ -795,7 +795,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
 /// it was equipped.
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   u32 inventoryEntry = unit->inventory[slot];
   s32 itemId;
   struct ItemDefinition *item;
@@ -852,7 +852,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
 /// Offers to sell the item the new one replaced, unless there is none or it is
 /// a Psynergy item or indispensable. Returns 1 when it offered.
 s32 Shop_SellOld(s32 unitId, s32 slot) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 itemId;
   u32 inventoryEntry;
 

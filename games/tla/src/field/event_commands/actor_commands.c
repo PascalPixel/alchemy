@@ -13,7 +13,7 @@ struct Actor *Actor_GetById(u32 objectId);
 /// Clears an actor's destination, puts it under script control and
 /// stands it still.
 void Actor_ClearDestinationAndStand(u32 objectId) {
-  struct Actor *object = ObjectTable_Get(objectId);
+  struct Actor *object = Actor_Lookup(objectId);
 
   if (object != NULL) {
     object->targetX = TARGET_UNSET;
@@ -28,7 +28,7 @@ void Actor_ClearDestinationAndStand(u32 objectId) {
 /// (TRIG_TURN a full turn; Actor_StepAngle), then the event waits the given
 /// number of frames.
 void Actor_FaceDirectionById(s32 objectId, s32 angle, s32 frames) {
-  struct Actor *object = ObjectTable_Get(objectId);
+  struct Actor *object = Actor_Lookup(objectId);
 
   if (object != NULL) {
     object->timer = angle;
@@ -38,12 +38,12 @@ void Actor_FaceDirectionById(s32 objectId, s32 angle, s32 frames) {
 }
 
 void Actor_FaceDirectionAndRefreshById(s32 objectId, s32 angle) {
-  struct Actor *object = ObjectTable_Get(objectId);
+  struct Actor *object = Actor_Lookup(objectId);
 
   if (object != NULL) {
     object->timer = angle;
     Actor_StartScriptFar(object, (u32)gActor_StepAngleScript);
-    Actor_RefreshSelectorById(objectId);
+    Actor_WaitForScriptEndById(objectId);
   }
 }
 
@@ -51,7 +51,7 @@ void Actor_FaceDirectionAndRefreshById(s32 objectId, s32 angle) {
 /// actor's sprite and its shadow, which then no longer follow its depth
 /// (clears priorityFlags bit 0).
 void Actor_SetSpritePriority(u32 objectId, s32 priority) {
-  struct Actor *object = ObjectTable_Get(objectId);
+  struct Actor *object = Actor_Lookup(objectId);
 
   if (object != NULL && (object->spriteStorageKind & 0xF) == 1) {
     struct FieldSprite *sprite = object->sprite;

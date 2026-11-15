@@ -147,7 +147,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     work->sprites[i] = object;
     if (object != 0) {
       object->flags = 0;
-      Animation_ApplyChildArgumentFar(object, i / 4);
+      Sprite_StartAnimationFar(object, i / 4);
       ((struct RockObject *)work->sprites[i])->part[0].priority = 1;
     }
   }
@@ -366,9 +366,9 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
 /// Takes the first free animation entry of the 64 and clears it for use. With
 /// none free it clears the entry at address 0.
-struct AnimationEntry *AnimationObject_AllocateEmpty(void) {
-  struct AnimationEntry *entry = Ram_HeapSlots->spriteAnimations;
-  struct AnimationEntry *found = NULL;
+struct SpriteAnimation *AnimationObject_AllocateEmpty(void) {
+  struct SpriteAnimation *entry = Ram_HeapSlots->spriteAnimations;
+  struct SpriteAnimation *found = NULL;
   s32 i = 0;
   void *none = NULL;
 
@@ -380,19 +380,19 @@ struct AnimationEntry *AnimationObject_AllocateEmpty(void) {
     i++;
     entry++;
   }
-  found->animId = 0;
+  found->animationId = 0;
   found->scripts = NULL;
   found->pictures = NULL;
   found->script = none;
   found->mode = 0;
   found->picture = 0;
-  found->pos = 0;
+  found->scriptOffset = 0;
   found->kind = 1;
-  found->param = 0;
+  found->colorMode = 0;
   return found;
 }
 
-struct AnimationEntry;
+struct SpriteAnimation;
 
 /// An effect sprite as Gaia searches them: its attributes and OAM word.
 struct EffectSprite {
@@ -420,13 +420,13 @@ struct EffectSprite {
   s32 unk1c;
   s32 unk20;
   s32 unk24;
-  struct AnimationEntry *entry;
+  struct SpriteAnimation *entry;
   u8 moreEntries[0x0c];
 };
 
 /// Makes an effect sprite with tiles of its own in object VRAM: a free VRAM
 /// cache entry and the first free effect sprite of the 64, as
-/// EffectSprite_Acquire takes, set up for Animation_ApplyChildArgumentFar. The
+/// EffectSprite_Acquire takes, set up for Sprite_StartAnimationFar. The
 /// Lost Age's own.
 void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
                                    s32 flags) {
@@ -437,7 +437,7 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
   struct ObjectSystemWork *objects;
   s32 size;
   s32 tile;
-  struct VramBlockCacheEntry *entries;
+  struct VramCacheEntry *entries;
 
   while (i <= 63) {
     if (sprite->width == 0) {
@@ -475,7 +475,7 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
   sprite->offsetX = 0;
   sprite->count = 1;
   sprite->flags = 0;
-  Animation_ApplyChildArgumentFar(sprite, 0);
+  Sprite_StartAnimationFar(sprite, 0);
 
   objects = Ram_HeapSlots->actorSystem;
   size = sprite->width * sprite->height;

@@ -292,7 +292,7 @@ struct SceneEntrance gSceneEntrances[] = {
 u32 gSceneExits[] = {
     SCENE_EXITS(MercuryLighthouse),
     SCENE_EXIT(2, MercuryLighthouse, 2),
-    SCENE_EXIT(3, MarsLighthouseAerie1, 5),
+    SCENE_EXIT(3, MarsLighthouseAerie, 5),
     SCENE_EXIT(9, MercuryLighthouse, 2),
     SCENE_EXITS_END,
 };

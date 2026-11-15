@@ -220,7 +220,7 @@ const struct Trigger *Scene_GetActorPlacements(void) {
     return (const struct Trigger *)gTundariaTower_Room2Placements;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_3)
     return (const struct Trigger *)gTundariaTower_Room3Placements;
-  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_4)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_REFLUX)
     return (const struct Trigger *)gTundariaTower_Room4Placements;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_5)
     return (const struct Trigger *)gTundariaTower_Room5Placements;
@@ -498,15 +498,15 @@ void TundariaTower_JumpDownSlide(void) {
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   leader->facing = FACING_SOUTH;
   Event_Wait(10);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, 22);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 22);
   Event_Wait(30);
   FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Motion_SetVarCbAndRefresh(gMainRoutineWork.leaderActorId, 2);
+  Actor_RunRepeatedMotion(gMainRoutineWork.leaderActorId, 2);
   Event_Wait(20);
   leader->facing = FACING_NORTH;
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, 5);
-  Actor_SetActionById(gMainRoutineWork.leaderActorId, 24);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 5);
+  Actor_SetAnimationSpeedById(gMainRoutineWork.leaderActorId, 24);
   Event_Wait(40);
   MapGrid_SetCellHeight(0x1300000, 0x3900000, 0, -12);
   Actor_GetById(gMainRoutineWork.leaderActorId)->bounce = 0;
@@ -687,7 +687,7 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gTundariaTower_Room2Triggers;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_3)
     return gTundariaTower_Room3Triggers;
-  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_4)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_REFLUX)
     return gTundariaTower_Room4Triggers;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_5)
     return gTundariaTower_Room5Triggers;
@@ -838,7 +838,7 @@ void TundariaTower_LandFromSlide(void) {
   Sound_Play(SE_THUMP);
   FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, 22);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 22);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
@@ -905,7 +905,7 @@ s32 Scene_Initialize(void) {
       }
       break;
     }
-  } else if (scene == SCENE_TUNDARIA_TOWER_4) {
+  } else if (scene == SCENE_TUNDARIA_TOWER_REFLUX) {
     switch (gMainRoutineWork.entrance) {
     case 6:
     case 7:
@@ -1285,7 +1285,7 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
   TundariaTower_SetPillarMode3(8);
   TundariaTower_SetPillarMode3(9);
   TundariaTower_SetPillarMode3(10);
-  Actor_SetModeById(9, 0);
+  Actor_SetAnimationById(9, 0);
   wait(1);
   Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
   Actor_SetHorizontalPositionWithTerrain(9, 0, 0);
@@ -1756,7 +1756,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(2, TundariaTower3, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, TundariaTower3, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, TundariaTower3, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, TundariaTower4, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, TundariaTowerReflux, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, TundariaTower3, 11, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, TundariaTower3, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, TundariaTower3, 12, EXIT_FLAG_NONE),
@@ -1764,25 +1764,25 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(10, TundariaTower3, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, TundariaTower3, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(12, TundariaTower3, 8, EXIT_FLAG_NONE),
-    SCENE_EXITS(TundariaTower4),
+    SCENE_EXITS(TundariaTowerReflux),
     SCENE_EXIT_UNLESS(1, TundariaTower5, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, TundariaTower3, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, TundariaTower5, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, TundariaTower5, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, TundariaTower4, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, TundariaTower4, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, TundariaTowerReflux, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, TundariaTowerReflux, 5, EXIT_FLAG_NONE),
     SCENE_EXITS(TundariaTower5),
     SCENE_EXIT_UNLESS(1, TundariaTower5, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, TundariaTower4, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, TundariaTowerReflux, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, TundariaTower5, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, TundariaTower5, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, TundariaTower4, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, TundariaTower4, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, TundariaTowerReflux, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, TundariaTowerReflux, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, TundariaTower6, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, TundariaTower5, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, TundariaTower6, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, TundariaTower6, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, TundariaTower4, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, TundariaTowerReflux, 7, EXIT_FLAG_NONE),
     SCENE_EXITS(TundariaTower6),
     SCENE_EXIT_UNLESS(1, TundariaTower5, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, TundariaTower5, 9, EXIT_FLAG_NONE),

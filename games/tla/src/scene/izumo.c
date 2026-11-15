@@ -410,7 +410,7 @@ void Izumo_StopThePartyToThankThem(void) {
   Event_ShowMessageAndWait(32, 0);
   Actor_FaceActorById(gMainRoutineWork.leaderActorId, 32, 0);
   FieldEvent_Wait(30);
-  Actor_SetModeById(32, 4);
+  Actor_SetAnimationById(32, 4);
   FieldEvent_Wait(30);
   // "I owe you much for your help, but I didn't have any way to thank you..."
   Event_ShowMessageAndWait(32, 0);
@@ -419,7 +419,7 @@ void Izumo_StopThePartyToThankThem(void) {
   Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 30);
   // "And then I thought of something."
   Event_ShowMessageAndWait(32, 0);
-  Actor_SetModeById(32, 3);
+  Actor_SetAnimationById(32, 3);
   FieldEvent_Wait(15);
   // "You're a warrior, and warriors need weapons. Wouldn't you agree?"
   Value2((s32 (*)())FieldMessage_ShowAtActor, 32, 0);
@@ -454,7 +454,7 @@ void Izumo_TellTheCloudBrandLegend(void) {
   // "Long ago, the Great Serpent of Mikage would sleep with its body..."
   Event_ShowMessageAndWait(32, 0);
   Actor_FaceActorById(32, gMainRoutineWork.leaderActorId, 0);
-  Actor_SetModeById(32, 3);
+  Actor_SetAnimationById(32, 3);
   FieldEvent_Wait(30);
   // "Where its tail fell, the Cloud Brand lay hidden. That's the legend..."
   Event_ShowMessageAndWait(32, 0);
@@ -462,11 +462,11 @@ void Izumo_TellTheCloudBrandLegend(void) {
   FieldEvent_Wait(30);
   // "The serpent was once the sword's protector, but it lost the sword..."
   Event_ShowMessageAndWait(32, 0);
-  Actor_SetModeById(32, 4);
+  Actor_SetAnimationById(32, 4);
   FieldEvent_Wait(30);
   // "Anyway, maybe you want to go check out the dragon again... I left..."
   Event_ShowMessageAndWait(32, 0);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   FieldEvent_Wait(15);
   Actor_ShowEmoteById(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "Well, I've said what I came to say. I'm going back to Kushinada."
@@ -475,9 +475,9 @@ void Izumo_TellTheCloudBrandLegend(void) {
   FieldEvent_Wait(15);
   // "I hope you are successful in your quest."
   Event_ShowMessageAndWait(32, 0);
-  Actor_SetModeById(32, 3);
+  Actor_SetAnimationById(32, 3);
   FieldEvent_Wait(15);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   FieldEvent_Wait(30);
   Actor_SetSpeedParameters(32, 0x3333, 0x1999);
   Actor_GetById(32)->motionFlags = 0;
@@ -521,13 +521,13 @@ s32 Scene_Initialize(void) {
   Actor_PlaceBlocks(gIzumo_MovableStones);
   if (GameFlag_Get(FLAG_SERPENT_SLAIN)) {
     BYTE_AT(Actor_GetById(15), 90) = 2;
-    Actor_SetModeById(25, 5);
-    Actor_SetModeById(26, 5);
-    Actor_SetModeById(27, 5);
-    Actor_SetModeById(28, 5);
-    Actor_SetModeById(29, 6);
-    Actor_SetModeById(30, 6);
-    Actor_SetModeById(31, 5);
+    Actor_SetAnimationById(25, 5);
+    Actor_SetAnimationById(26, 5);
+    Actor_SetAnimationById(27, 5);
+    Actor_SetAnimationById(28, 5);
+    Actor_SetAnimationById(29, 6);
+    Actor_SetAnimationById(30, 6);
+    Actor_SetAnimationById(31, 5);
     if (gMainRoutineWork.entrance == 8 &&
         GameFlag_Get(FLAG_IZUMO_RECOGNIZED_THE_HEROES) &&
         !GameFlag_Get(FLAG_STOPPED_TO_THANK_THE_PARTY) &&
@@ -589,7 +589,7 @@ void Izumo_DescendIntoTheRuins(void) {
 #endif
   Actor_SetDestinationOffsetById(ACTOR_FELIX, 0, 16);
   Actor_WaitForMoveById(ACTOR_FELIX);
-  Actor_SetModeById(ACTOR_FELIX, 13);
+  Actor_SetAnimationById(ACTOR_FELIX, 13);
   FieldEvent_Wait(14);
   Izumo_SetExitRequest(value);
 }

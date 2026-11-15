@@ -33,7 +33,7 @@ void Teleport_PlayWhirl(void) {
   s32 position[3];
   struct TeleportWhirlWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
-  struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
+  struct Actor *object = Actor_Lookup(Party_GetLeaderActor());
   struct WhirlSpark *spark;
   struct EffectSprite *sprite;
   s32 next;
@@ -170,7 +170,7 @@ void Teleport_PlaySparks(void) {
   struct SparkWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
   s32 owner = Party_GetLeaderActor();
-  struct Actor *object = ObjectTable_Get(Party_GetLeaderActor());
+  struct Actor *object = Actor_Lookup(Party_GetLeaderActor());
   struct FieldPsynergyParticle *particle;
   struct EffectSprite *sprite;
   s32 state;
@@ -318,6 +318,6 @@ void FieldPsynergy_TeleportOnTarget(void) {}
 /// Teleport: raises FIELD_RAISED_TRIGGER_TELEPORT, which shows the picture of
 /// the whole world for the player to choose where to go.
 void FieldPsynergy_Teleport(void) {
-  ObjectTable_Get(Party_GetLeaderActor());
+  Actor_Lookup(Party_GetLeaderActor());
   gFieldWork->raisedTrigger = FIELD_RAISED_TRIGGER_TELEPORT;
 }

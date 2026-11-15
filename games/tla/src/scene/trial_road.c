@@ -81,7 +81,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return gTrialRoad_Room1Placements[pattern & 7];
   if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_3)
     return gTrialRoad_Room3Placements;
-  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_4)
+  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_GASP)
     return gTrialRoad_Room4Placements;
   if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_2)
     return gTrialRoad_Room2Placements;
@@ -1043,7 +1043,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
     return;
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, 8);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 8);
   Event_Wait(6);
   object->speedLimit = px(1) / 2;
   object->acceleration = 0x3333;
@@ -1053,12 +1053,12 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   Actor_SelectAnimation(object, mode);
   Actor_SetMoveTarget(object, (toX << 20) + px(8), 0, z = (toZ << 20) + px(8));
   Event_Wait(6);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.2);
   Actor_SetDestinationOffsetById(gMainRoutineWork.leaderActorId, dx << 3,
                                  dz << 3);
   Event_Wait(24);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_STAND);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
   Actor_WaitForMove(object);
   if (toX <= 17) {
     Actor_SelectAnimation(object, 1);
@@ -1337,7 +1337,7 @@ void TrialRoad_ChallengeMoapa(void) {
   do {
   } while (0);
   Event_SetAfterBattleDestination(SCENE_TRIAL_ROAD_2, 4);
-  Party_SetFields1f2And1f4(SCENE_TRIAL_ROAD_2, 5);
+  Event_SetDefeatDestination(SCENE_TRIAL_ROAD_2, 5);
   Field_RequestBattleFromEncounterTable(13, 4 - count);
 }
 
@@ -1366,7 +1366,7 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gTrialRoad_Room1Triggers[pattern & 7];
   if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_3)
     return gTrialRoad_Room3Triggers;
-  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_4)
+  if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_GASP)
     return gTrialRoad_Room4Triggers;
   if (gMainRoutineWork.next == SCENE_TRIAL_ROAD_2)
     return gTrialRoad_Room2Triggers;
@@ -1786,7 +1786,7 @@ s32 Scene_Initialize(void) {
   }
   if (scene == SCENE_TRIAL_ROAD_3)
     TrialRoad_SetUpCave();
-  if (scene == SCENE_TRIAL_ROAD_4)
+  if (scene == SCENE_TRIAL_ROAD_GASP)
     TrialRoad_SetUpPoolRoom();
   if (scene == SCENE_TRIAL_ROAD_2) {
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
@@ -1870,21 +1870,21 @@ void TrialRoad_UpdateRival(void) {
     case 601:
       Sound_Play(SE_CHEST_OPEN);
       if (state->mirrored != 0) {
-        Actor_SetModeById(9, 6);
+        Actor_SetAnimationById(9, 6);
         if (state->rivalTimer > 600)
-          Actor_SetModeById(10, 6);
+          Actor_SetAnimationById(10, 6);
       } else {
-        Actor_SetModeById(11, 6);
+        Actor_SetAnimationById(11, 6);
         if (state->rivalTimer > 600)
-          Actor_SetModeById(12, 6);
+          Actor_SetAnimationById(12, 6);
       }
       break;
     case 655:
       Sound_Play(SE_CHEST_CLOSE);
       if (state->mirrored != 0)
-        Actor_SetModeById(10, 5);
+        Actor_SetAnimationById(10, 5);
       else
-        Actor_SetModeById(12, 5);
+        Actor_SetAnimationById(12, 5);
       break;
     case 653:
     case 708:
@@ -1894,9 +1894,9 @@ void TrialRoad_UpdateRival(void) {
     case 710:
       Sound_Play(SE_CHEST_CLOSE);
       if (state->mirrored != 0)
-        Actor_SetModeById(9, 5);
+        Actor_SetAnimationById(9, 5);
       else
-        Actor_SetModeById(11, 5);
+        Actor_SetAnimationById(11, 5);
       break;
     case 70:
     case 730:
@@ -2130,7 +2130,7 @@ s32 Scene_PrepareMap(void) {
       }
     }
   } else if (scene == SCENE_TRIAL_ROAD_3) {
-  } else if (scene == SCENE_TRIAL_ROAD_4) {
+  } else if (scene == SCENE_TRIAL_ROAD_GASP) {
   } else if (scene == SCENE_TRIAL_ROAD_2 && GameFlag_Get(2559) &&
              !GameFlag_Get(FLAG_AREA_TEMP_85)) {
     if (gTrialRoadState->mirrored != 0)
@@ -2580,8 +2580,8 @@ void TrialRoad_ShowTraps(void) {
   // "Why?"
   Event_ShowMessageAndWait(ACTOR_FELIX, 0);
   Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightToChestScript);
-  Actor_RefreshSelectorById(13);
-  Actor_SetModeById(13, 1);
+  Actor_WaitForScriptEndById(13);
+  Actor_SetAnimationById(13, 1);
   Event_Wait(10);
   Actor_SetSpeed(13, 0.25);
   OBJECT_BYTE(Actor_GetById(13), 0x5a) &= ~1;
@@ -2590,7 +2590,7 @@ void TrialRoad_ShowTraps(void) {
   OBJECT_BYTE(Actor_GetById(13), 0x5a) |= 1;
   Event_Wait(20);
   Actor_SetSpeed(13, 2);
-  Actor_SetModeById(13, 5);
+  Actor_SetAnimationById(13, 5);
   Actor_SetDestinationOffset(13, 0, -40);
   Actor_WaitForMoveById(13);
   Sound_Play(SE_CURSE);
@@ -2604,17 +2604,17 @@ void TrialRoad_ShowTraps(void) {
   Event_Wait(60);
   Actor_FaceDirectionById(13, FACING_SOUTH, 0);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(13, 4);
+  Actor_SetAnimationAndWait(13, 4);
   // "The door is triggered only when the treasure chests are filled to..."
   Event_ShowMessageAndWait(8, 0);
   Actor_FaceDirection(13, FACING_NORTHWEST, 0);
-  Motion_SetModeAndWaitAnimation(13, 3);
+  Actor_SetAnimationAndWait(13, 3);
   Event_Wait(10);
   Actor_SetSpeed(13, 1);
   Actor_WalkByAndWait(13, -16, -16);
   Actor_FaceDirection(13, FACING_WEST, 0);
   Sound_Play(SE_CHEST_OPEN);
-  Actor_SetModeById(9, 6);
+  Actor_SetAnimationById(9, 6);
   Event_Wait(30);
   // "Try putting heavier items, like weapons and tools, into the chests..."
   Event_ShowMessageAndWait(8, 0);
@@ -2622,14 +2622,14 @@ void TrialRoad_ShowTraps(void) {
   Actor_FaceDirection(13, FACING_NORTH, 0);
   Event_Wait(40);
   Sound_Play(SE_CHEST_CLOSE);
-  Actor_SetModeById(9, 5);
+  Actor_SetAnimationById(9, 5);
   Event_Wait(20);
   Sound_Play(SE_ITEM_BREAK);
   MapGrid_CopyCellsLayered(127, 3, 1, 2, 48, 3);
   Map_CopyCellAttributeRect(0, 127, 1, 1, 14, 8);
   Event_Wait(20);
   Actor_SetMovementTypeById(13, gTrialRoad_LeftKnightLeavesScript);
-  Actor_RefreshSelectorById(13);
+  Actor_WaitForScriptEndById(13);
   Sound_Play(SE_MAP_EXIT);
   // "If you reach the door after your opponents do, you will be at a..."
   Event_ShowMessageAndWait(8, 0);
@@ -2641,26 +2641,26 @@ void TrialRoad_ShowTraps(void) {
   // "Stand on the switch, and the number of chests you need to fill will..."
   Event_ShowMessageAndWait(8, 0);
   Actor_FaceDirection(14, FACING_NORTHEAST, 0);
-  Motion_SetModeAndWaitAnimation(14, 3);
+  Actor_SetAnimationAndWait(14, 3);
   Event_Wait(10);
   Actor_SetSpeed(14, 1);
   Actor_WalkByAndWait(14, 16, -16);
   Actor_FaceDirectionById(14, FACING_EAST, 0);
   Sound_Play(SE_CHEST_OPEN);
-  Actor_SetModeById(11, 6);
-  Actor_SetModeById(12, 6);
+  Actor_SetAnimationById(11, 6);
+  Actor_SetAnimationById(12, 6);
   Event_Wait(30);
   Actor_WalkToAndWait(14, 350, 168);
   Actor_FaceDirection(14, FACING_NORTH, 0);
   Event_Wait(40);
   Sound_Play(SE_CHEST_CLOSE);
-  Actor_SetModeById(11, 5);
+  Actor_SetAnimationById(11, 5);
   Event_Wait(40);
   Actor_WalkToAndWait(14, 364, 168);
   Actor_FaceDirectionById(14, FACING_NORTH, 0);
   Event_Wait(40);
   Sound_Play(SE_CHEST_CLOSE);
-  Actor_SetModeById(12, 5);
+  Actor_SetAnimationById(12, 5);
   Event_Wait(20);
   Sound_Play(SE_ITEM_BREAK);
   MapGrid_CopyCellsLayered(127, 3, 1, 2, 53, 3);
@@ -2668,7 +2668,7 @@ void TrialRoad_ShowTraps(void) {
   Event_Wait(30);
   Actor_FaceDirectionById(14, FACING_NORTHWEST, 0);
   Event_Wait(10);
-  Motion_SetModeAndWaitAnimation(14, 3);
+  Actor_SetAnimationAndWait(14, 3);
   // "If you are last to each of the four doors, you will lose eight items..."
   Event_ShowMessageAndWait(8, 0);
   FieldCamera_MoveWithinMapBounds(px(408), -1, px(120), 1);
@@ -2676,7 +2676,7 @@ void TrialRoad_ShowTraps(void) {
   // "If Trial Road proves too much for you, press this button."
   Event_ShowMessageAndWait(8, 0);
   Actor_SetMovementTypeById(14, gTrialRoad_RightKnightLeavesScript);
-  Actor_RefreshSelectorById(14);
+  Actor_WaitForScriptEndById(14);
   // "This ends the battle, though. A true hero would not surrender so easily."
   Event_ShowMessageAndWait(8, 0);
   Import_EventSetExitRequest(10);
@@ -3564,12 +3564,12 @@ void TrialRoad_DrawProgress(void) {
   }
   if ((gFrameCount & 15) < 5)
     return;
-  actor = ObjectTable_Get(work->a);
+  actor = Actor_Lookup(work->a);
   if (actor != NULL) {
     MARKER(+work->fade * 6 + work->scrollX - 19,
            -work->fade * 6 - work->scrollX + 232, 0, 10);
   }
-  actor = ObjectTable_Get(work->b);
+  actor = Actor_Lookup(work->b);
   if (actor == NULL || actor->x.fixed == 0)
     return;
   {
@@ -3747,7 +3747,7 @@ u32 gTrialRoad_RightKnightEntersScript[] = {
     SC_SET(SW_ACCEL, Q16(1)),
     SC_SET(SW_X, px(312)),
     SC_SET(SW_Z, px(680)),
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_MOVE(px(312), 0, px(632)),
     SC_SYNC,
     SC_MOVE(px(344), 0, px(616)),
@@ -3766,7 +3766,7 @@ u32 gTrialRoad_LeftKnightEntersScript[] = {
     SC_SET(SW_ACCEL, Q16(1)),
     SC_SET(SW_X, px(232)),
     SC_SET(SW_Z, px(680)),
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_MOVE(px(232), 0, px(632)),
     SC_SYNC,
     SC_MOVE(px(200), 0, px(616)),
@@ -3785,7 +3785,7 @@ u32 gTrialRoad_LeftKnightToChestScript[] = {
     SC_SET(SW_ACCEL, Q16(1)),
     SC_SET(SW_X, px(120)),
     SC_SET(SW_Z, px(296)),
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_MOVE(px(120), 0, px(216)),
     SC_SYNC,
     SC_MOVE(px(136), 0, px(200)),
@@ -3802,7 +3802,7 @@ u32 gTrialRoad_LeftKnightToChestScript[] = {
 u32 gTrialRoad_LeftKnightLeavesScript[] = {
     SC_SET(SW_SPEED, Q16(1.5)),
     SC_SET(SW_ACCEL, Q16(1)),
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_MOVE(px(216), 0, px(168)),
     SC_SYNC,
     SC_MOVE(px(232), 0, px(152)),
@@ -3819,10 +3819,10 @@ u32 gTrialRoad_RightKnightToChestsScript[] = {
     SC_SET(SW_ACCEL, Q16(0.5)),
     SC_SET(SW_X, px(344)),
     SC_SET(SW_Z, px(184)),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(312), 0, px(168)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(2),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(2),
@@ -3835,7 +3835,7 @@ u32 gTrialRoad_RightKnightToChestsScript[] = {
 u32 gTrialRoad_RightKnightLeavesScript[] = {
     SC_SET(SW_SPEED, Q16(1.5)),
     SC_SET(SW_ACCEL, Q16(1)),
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_MOVE(px(376), 0, px(200)),
     SC_SYNC,
     SC_MOVE(px(472), 0, px(200)),
@@ -3844,7 +3844,7 @@ u32 gTrialRoad_RightKnightLeavesScript[] = {
     SC_SYNC,
     SC_MOVE(px(488), 0, px(136)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(2),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(2),
@@ -3912,8 +3912,8 @@ LAST_DATA u32 gSceneExits[] = {
     SCENE_EXIT(1, TrialRoad3, 2),
     SCENE_EXIT(2, TrialRoad3, 1),
     SCENE_EXIT(3, TrialRoad2, 3),
-    SCENE_EXIT(4, TrialRoad4, 1),
-    SCENE_EXITS(TrialRoad4),
+    SCENE_EXIT(4, TrialRoadGasp, 1),
+    SCENE_EXITS(TrialRoadGasp),
     SCENE_EXIT(1, TrialRoad3, 4),
     SCENE_EXITS(TrialRoad2),
     SCENE_EXIT(1, TrialRoad1, 33),

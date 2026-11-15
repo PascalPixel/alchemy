@@ -624,7 +624,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_2)
     return gYampiDesertCave_Room2Placements;
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_3)
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL)
     return gYampiDesertCave_Room3Placements;
   return gYampiDesertCave_Placements;
 }
@@ -683,7 +683,7 @@ void YampiDesertCave_StartMovingPillar(s32 unused, s32 id) {
     MapGrid_CopyCellAttributes(98, 3, 3, 3, 97, row);
     MapGrid_CopyCellAttributes(33, 12, 1, 1, 34, row);
   }
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_3) {
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
     if (id == 12) {
       MapGrid_CopyCellAttributes(102, 15, 1, 1, 103, 15);
       MapGrid_CopyCellAttributes(43, 14, 1, 1, 39, 16);
@@ -718,7 +718,7 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
       MapGrid_CopyCellAttributes(32, 13, 1, 1, 34, row);
     }
   }
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_3) {
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
     if (id == 12) {
       s32 column;
 
@@ -750,7 +750,7 @@ void YampiDesertCave_CastSand(void) {
     MapGrid_CopyCellAttributes(55, 71, 4, 1, 43, 70);
     MapGrid_CopyCellAttributes(43, 71, 4, 1, 55, 71);
   }
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_3) {
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
     MapGrid_CopyCellAttributes(110, 45, 5, 2, 90, 50);
     MapGrid_CopyCellAttributes(113, 47, 2, 1, 90, 52);
     MapGrid_CopyCellAttributes(107, 48, 3, 2, 90, 53);
@@ -765,7 +765,7 @@ void YampiDesertCave_EndSand(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 0;
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_1)
     MapGrid_CopyCellAttributes(43, 70, 4, 1, 55, 71);
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_3) {
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
     MapGrid_CopyCellAttributes(90, 50, 5, 2, 110, 45);
     MapGrid_CopyCellAttributes(90, 52, 2, 1, 113, 47);
     MapGrid_CopyCellAttributes(90, 53, 3, 2, 107, 48);
@@ -890,7 +890,7 @@ void YampiDesertCave_ScoopTreasure(s32 a) { Event_DigUpTreasure(a, 64, 0x302); }
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_2)
     return gYampiDesertCave_Room2Triggers;
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_3)
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL)
     return gYampiDesertCave_Room3Triggers;
   return gYampiDesertCave_Triggers;
 }
@@ -949,7 +949,7 @@ s32 Scene_Initialize(void) {
     if (!Event_GetFlag(FLAG_AREA_TEMP_02))
       Actor_SetWideSprite(64, 1);
   }
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_3) {
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_CRYSTAL) {
     if ((u16)(gMainRoutineWork.entrance - 3) <= 2) {
       REG_BG1CNT &= ~3;
       REG_BG1CNT |= 1;
@@ -1076,31 +1076,31 @@ struct SceneEntrance gSceneEntrances[] = {
 u32 gSceneExits[] = {
     SCENE_EXITS(YampiDesertCave1),
     SCENE_EXIT(1, YampiDesert8, 4),
-    SCENE_EXIT(2, YampiDesertCave3, 1),
+    SCENE_EXIT(2, YampiDesertCaveCrystal, 1),
     SCENE_EXIT(3, YampiDesertCave1, 6),
     SCENE_EXIT(4, YampiDesertCave1, 5),
     SCENE_EXIT(5, YampiDesertCave1, 4),
     SCENE_EXIT(6, YampiDesertCave1, 3),
-    SCENE_EXIT(7, YampiDesertCave3, 8),
+    SCENE_EXIT(7, YampiDesertCaveCrystal, 8),
     SCENE_EXIT(8, YampiDesertCave2, 1),
     SCENE_EXITS(YampiDesertCave2),
     SCENE_EXIT(1, YampiDesertCave1, 8),
     SCENE_EXIT(2, YampiDesertCave2, 17),
-    SCENE_EXIT(14, YampiDesertCave3, 13),
-    SCENE_EXIT(15, YampiDesertCave3, 12),
-    SCENE_EXIT(16, YampiDesertCave3, 11),
+    SCENE_EXIT(14, YampiDesertCaveCrystal, 13),
+    SCENE_EXIT(15, YampiDesertCaveCrystal, 12),
+    SCENE_EXIT(16, YampiDesertCaveCrystal, 11),
     SCENE_EXIT(17, YampiDesertCave2, 2),
-    SCENE_EXITS(YampiDesertCave3),
+    SCENE_EXITS(YampiDesertCaveCrystal),
     SCENE_EXIT(1, YampiDesertCave1, 2),
-    SCENE_EXIT(2, YampiDesertCave3, 3),
-    SCENE_EXIT(3, YampiDesertCave3, 2),
-    SCENE_EXIT(4, YampiDesertCave3, 7),
-    SCENE_EXIT(5, YampiDesertCave3, 6),
-    SCENE_EXIT(6, YampiDesertCave3, 5),
-    SCENE_EXIT(7, YampiDesertCave3, 4),
+    SCENE_EXIT(2, YampiDesertCaveCrystal, 3),
+    SCENE_EXIT(3, YampiDesertCaveCrystal, 2),
+    SCENE_EXIT(4, YampiDesertCaveCrystal, 7),
+    SCENE_EXIT(5, YampiDesertCaveCrystal, 6),
+    SCENE_EXIT(6, YampiDesertCaveCrystal, 5),
+    SCENE_EXIT(7, YampiDesertCaveCrystal, 4),
     SCENE_EXIT(8, YampiDesertCave1, 7),
-    SCENE_EXIT(9, YampiDesertCave3, 10),
-    SCENE_EXIT(10, YampiDesertCave3, 9),
+    SCENE_EXIT(9, YampiDesertCaveCrystal, 10),
+    SCENE_EXIT(10, YampiDesertCaveCrystal, 9),
     SCENE_EXIT(11, YampiDesertCave2, 16),
     SCENE_EXIT(12, YampiDesertCave2, 15),
     SCENE_EXIT(13, YampiDesertCave2, 14),

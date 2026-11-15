@@ -114,7 +114,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   s32 psynergyCount;
   s32 itemCount;
   s32 keys;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 i;
   s32 j;
   struct BattleMenuWork *navigation;
@@ -984,7 +984,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 
       if ((u32)cursor.helpEntry >= 14) {
         s32 statusKind = statusKinds[cursor.helpEntry - 14];
-        struct BattleUnit *savedUnit;
+        struct Unit *savedUnit;
         s32 attackDelta;
         s32 defenseDelta;
         s32 agilityDelta;

@@ -13,7 +13,7 @@
 /// Rolls whether a stat change or status with five turns or fewer left ends
 /// early, at `luck * 3 - turns * 5 + bias` percent, and returns 1 when it does.
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
-  struct BattleUnit *state = Unit_Get(unitId);
+  struct Unit *state = Unit_Get(unitId);
 
   if (turns <= 5) {
     s32 threshold = ((state->luck * 3 - turns * 5) + bias) * 0x28f;
@@ -26,7 +26,7 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
 /// Counts down an Attack change and returns 1 when it ends; a lowered Attack
 /// may recover early.
 s32 BattleUnit_CountDownAttackStage(s32 unitId) {
-  struct BattleUnit *state = Unit_Get(unitId);
+  struct Unit *state = Unit_Get(unitId);
 
   if (state->attackTurns != 0) {
     s32 zero;
@@ -50,7 +50,7 @@ s32 BattleUnit_CountDownAttackStage(s32 unitId) {
 /// Counts down a Defense change and returns 1 when it ends; a lowered Defense
 /// may recover early.
 s32 BattleUnit_CountDownDefenseStage(s32 unitId) {
-  struct BattleUnit *state = Unit_Get(unitId);
+  struct Unit *state = Unit_Get(unitId);
 
   if (state->defenseTurns != 0) {
     state->defenseTurns--;
@@ -71,7 +71,7 @@ s32 BattleUnit_CountDownDefenseStage(s32 unitId) {
 /// Counts down a Resistance change and returns 1 when it ends; a lowered
 /// Resistance may recover early.
 s32 BattleUnit_CountDownResistanceStage(s32 unitId) {
-  struct BattleUnit *state = Unit_Get(unitId);
+  struct Unit *state = Unit_Get(unitId);
 
   if (state->resistanceTurns != 0) {
     state->resistanceTurns--;
@@ -92,7 +92,7 @@ s32 BattleUnit_CountDownResistanceStage(s32 unitId) {
 
 /// Counts down delusion and returns 1 when it ends, early or not.
 s32 BattleUnit_CountDownDelusion(s32 unitId) {
-  struct BattleUnit *state = Unit_Get(unitId);
+  struct Unit *state = Unit_Get(unitId);
   if (state->delusion != 0) {
     state->delusion--;
     if (state->delusion == 0)
@@ -107,7 +107,7 @@ s32 BattleUnit_CountDownDelusion(s32 unitId) {
 
 /// Counts down confusion and returns 1 when it ends, early or not.
 s32 BattleUnit_CountDownConfusion(s32 unitId) {
-  struct BattleUnit *state = Unit_Get(unitId);
+  struct Unit *state = Unit_Get(unitId);
   if ((u8)state->confusion != 0) {
     (*(u8 *)&state->confusion)--;
     if (state->confusion == 0)
@@ -122,7 +122,7 @@ s32 BattleUnit_CountDownConfusion(s32 unitId) {
 
 /// Counts down charm and returns 1 when it ends, early or not.
 s32 BattleUnit_CountDownCharm(s32 unitId) {
-  struct BattleUnit *state = Unit_Get(unitId);
+  struct Unit *state = Unit_Get(unitId);
   if (state->charm != 0) {
     state->charm--;
     if (state->charm == 0)
@@ -137,7 +137,7 @@ s32 BattleUnit_CountDownCharm(s32 unitId) {
 
 /// Counts down a stun and returns 1 when it ends, early or not.
 s32 BattleUnit_CountDownStun(s32 unitId) {
-  struct BattleUnit *state = Unit_Get(unitId);
+  struct Unit *state = Unit_Get(unitId);
   if (state->stun != 0) {
     state->stun--;
     if (state->stun == 0)
@@ -152,7 +152,7 @@ s32 BattleUnit_CountDownStun(s32 unitId) {
 
 /// Counts down sleep and returns 1 when it ends, early or not.
 s32 BattleUnit_CountDownSleep(s32 unitId) {
-  struct BattleUnit *state = Unit_Get(unitId);
+  struct Unit *state = Unit_Get(unitId);
   if (state->sleep != 0) {
     state->sleep--;
     if (state->sleep == 0)
@@ -165,7 +165,7 @@ s32 BattleUnit_CountDownSleep(s32 unitId) {
   return 0;
 }
 
-/// Counts down both seals in BattleUnit.psySeal and returns 1 when the last
+/// Counts down both seals in Unit.psySeal and returns 1 when the last
 /// ends; only Bind's, once Luff's is gone, may end early.
 s32 BattleUnit_CountDownPsynergySeal(s32 id) {
   s32 next;
@@ -173,7 +173,7 @@ s32 BattleUnit_CountDownPsynergySeal(s32 id) {
   u8 remaining;
   s32 turns;
   s32 packed;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   unit = Unit_Get(id);
   packed = unit->psySeal;
@@ -207,7 +207,7 @@ s32 BattleUnit_CountDownPsynergySeal(s32 id) {
 /// turn it has left and one more, shown in playback; then counts it down and
 /// returns 1 when it runs out.
 s32 BattleUnit_CountDownRegenerate(s32 id) {
-  struct BattleUnit *unit = Unit_Get(id);
+  struct Unit *unit = Unit_Get(id);
   u8 *count = &unit->regenerate;
 
   if (*count != 0) {
@@ -248,7 +248,7 @@ s32 BattleUnit_CountDownRegenerate(s32 id) {
 
 /// Counts down Reflect and returns 1 when it runs out; it never ends early.
 s32 BattleUnit_CountDownReflect(s32 id) {
-  u8 *value = (u8 *)&((struct BattleUnit *)Unit_Get(id))->reflect;
+  u8 *value = (u8 *)&((struct Unit *)Unit_Get(id))->reflect;
   if (*value != 0) {
     (*value)--;
     if (*value == 0) {
@@ -261,7 +261,7 @@ s32 BattleUnit_CountDownReflect(s32 id) {
 /// Counts down an Agility change and returns 1 when it runs out; it never ends
 /// early.
 s32 BattleUnit_CountDownAgilityStage(s32 id) {
-  struct BattleUnit *unit = Unit_Get(id);
+  struct Unit *unit = Unit_Get(id);
   u8 *value = &unit->agilityTurns;
   if (*value != 0) {
     (*value)--;
@@ -291,7 +291,7 @@ s32 DjinnRecovery_CountDown(void) {
     timedEntry = list->entries;
     do {
       if (timedEntry->turns > 0 &&
-          ((struct BattleUnit *)Unit_Get(timedEntry->unitId))->hp != 0) {
+          ((struct Unit *)Unit_Get(timedEntry->unitId))->hp != 0) {
         timedEntry->turns--;
       }
       index++;
@@ -353,7 +353,7 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
     timedEntry = list->entries;
     do {
       if (timedEntry->turns > 0 && BattleUnit_IsListed(timedEntry->unitId) &&
-          ((struct BattleUnit *)Unit_Get(timedEntry->unitId))->hp != 0) {
+          ((struct Unit *)Unit_Get(timedEntry->unitId))->hp != 0) {
         timedEntry->turns--;
         result = 1;
       }
@@ -379,7 +379,7 @@ s32 DjinnRecovery_CountDownSide(s32 side) {
           BattlePlayback_Push(PLAYBACK_UNIT_NAME, id);
           BattlePlayback_Push(PLAYBACK_ABILITY_NAME,
                               entry->element * DJINN_PER_ELEMENT +
-                                  entry->index + ABILITY_FLINT);
+                                  entry->index + ABILITY_DJINNI_FIRST);
           BattlePlayback_Push(PLAYBACK_SOUND, SE_NOTE_HIGH);
           BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
           BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgDjinnIsSet);
@@ -478,7 +478,7 @@ void Battle_ProcessTurnEnd(void) {
       do {
         if (timedEntry->turns > 0 &&
             BattleObject_Get(timedEntry->unitId) != 0 &&
-            ((struct BattleUnit *)Unit_Get(timedEntry->unitId))->hp != 0) {
+            ((struct Unit *)Unit_Get(timedEntry->unitId))->hp != 0) {
           timedEntry->turns--;
         }
         recoveryIndex++;
@@ -499,7 +499,7 @@ void Battle_ProcessTurnEnd(void) {
             BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
             BattlePlayback_Push(PLAYBACK_ABILITY_NAME,
                                 expiredEntry->element * DJINN_PER_ELEMENT +
-                                    expiredEntry->index + ABILITY_FLINT);
+                                    expiredEntry->index + ABILITY_DJINNI_FIRST);
             BattlePlayback_Push(PLAYBACK_SOUND, SE_NOTE_HIGH);
             BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
             BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgDjinnIsSet);
@@ -547,7 +547,7 @@ void Battle_ProcessTurnEnd(void) {
         s32 hpAmount;
         s32 ppAmount;
         s32 unitId = unitIds[unitIndex];
-        struct BattleUnit *unit = Unit_Get(unitId);
+        struct Unit *unit = Unit_Get(unitId);
 
         unit->equipBonus[1] = 0;
         if (unit->ready != 0) {
@@ -678,7 +678,7 @@ again:
       if (announce) {
         BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
         BattlePlayback_Push(PLAYBACK_ABILITY_NAME, element * DJINN_PER_ELEMENT +
-                                                       djinni + ABILITY_FLINT);
+                                                       djinni + ABILITY_DJINNI_FIRST);
         BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgDjinnOnStandby);
         return;
       }
@@ -729,7 +729,7 @@ again:
         s32 message;
 
         BattlePlayback_Push(PLAYBACK_ABILITY_NAME, element * DJINN_PER_ELEMENT +
-                                                       djinni + ABILITY_FLINT);
+                                                       djinni + ABILITY_DJINNI_FIRST);
         message = (u32)&MsgDjinnDrained;
         if (unitId < 0 || unitId > ALLY_MAX)
           message++;
@@ -748,7 +748,7 @@ again:
 /// boost, the haunt's damage, poison and the Grim Reaper.
 void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
   u32 unitId;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 battleContinues;
   s32 counts[4];
   struct DjinnRecoveryList *list;
@@ -819,11 +819,11 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
     }
   }
   if (battleContinues != 0) {
-    struct BattleUnit *before;
+    struct Unit *before;
     s32 i;
 
-    before = Heap_AllocEwram(sizeof(struct BattleUnit));
-    Iwram_CopyWordsEntry(before, unit, sizeof(struct BattleUnit));
+    before = Heap_AllocEwram(sizeof(struct Unit));
+    Iwram_CopyWordsEntry(before, unit, sizeof(struct Unit));
     for (i = 0; i <= 3; i++) {
       if (counts[i] > 4)
         counts[i] = 4;

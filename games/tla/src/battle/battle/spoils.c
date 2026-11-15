@@ -75,7 +75,7 @@ s32 String_FindFirstDigit(u8 *s) {
 
 /// Returns an enemy's coins with the Djinn bonus: its own, plus a six-sided die
 /// for every ten levels and one more, at least 30 percent of its own.
-static __inline__ s32 BattleEnemy_CalculateCoinReward(struct BattleUnit *unit,
+static __inline__ s32 BattleEnemy_CalculateCoinReward(struct Unit *unit,
                                                       u16 *reward) {
   s32 rollIndex;
   s32 bonus = 0;
@@ -94,7 +94,7 @@ static __inline__ s32 BattleEnemy_CalculateCoinReward(struct BattleUnit *unit,
 /// Returns an enemy's experience with the Djinn bonus: its own plus a
 /// four-sided die for every ten levels and one more, at least 30 percent more.
 static __inline__ s32
-BattleEnemy_CalculateExperienceReward(struct BattleUnit *unit, u16 *reward) {
+BattleEnemy_CalculateExperienceReward(struct Unit *unit, u16 *reward) {
   s32 rollIndex;
   s32 bonus = 0;
   s32 base;
@@ -115,7 +115,7 @@ BattleEnemy_CalculateExperienceReward(struct BattleUnit *unit, u16 *reward) {
 /// String_FindFirstDigit's first digit of their names, alternating slots, with
 /// a count up to 2) and sets the seen flag only for enemy ids below 0x200.
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   const struct EnemyDefinition *enemy;
   struct DefeatBattleWork *battle;
   struct DefeatSpoils *spoils;
@@ -204,7 +204,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   return 0;
 }
 
-#define ACTION_ID_MASK OWNER_ACTION_ID_MASK
+#define ACTION_ID_MASK PSYNERGY_ABILITY_MASK
 
 /// Hands out the spoils after a victory: experience to each party member still
 /// standing, with every level gained, then the coins, then the items best
@@ -216,8 +216,8 @@ void Battle_AwardSpoils(void) {
   s32 count;
   s32 i;
   s32 unitId;
-  struct BattleUnit *unit;
-  struct BattleUnit *backup;
+  struct Unit *unit;
+  struct Unit *backup;
   s32 cnt;
   u32 learned;
   s32 j;
@@ -239,7 +239,7 @@ void Battle_AwardSpoils(void) {
   list = units;
   living = BattleUnit_ListLiving(1, list);
   count = BattleUnit_ListLivingWithReserve(1, list);
-  backup = Heap_AllocEwram(sizeof(struct BattleUnit));
+  backup = Heap_AllocEwram(sizeof(struct Unit));
   for (i = 0; i < count; i++) {
     unitId = list[i];
     unit = Unit_Get(unitId);
@@ -247,7 +247,7 @@ void Battle_AwardSpoils(void) {
       unit->experience += (u32)spoils->experience >> 1;
     else
       unit->experience += spoils->experience;
-    while (Iwram_CopyWordsEntry(backup, unit, sizeof(struct BattleUnit)),
+    while (Iwram_CopyWordsEntry(backup, unit, sizeof(struct Unit)),
            Unit_TryLevelUpFar(unitId, gains) != 0) {
       Sound_PlayFar(MUS_LEVEL_UP);
       MessageArgument_ClearAllFar();

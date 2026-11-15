@@ -50,7 +50,7 @@ extern u8 gResourceSlot_ConversionTables[][256];
 /// The window font's 16 colours, loaded as BG palette 15
 /// (Window_LoadGraphics).
 extern const u16 gWindow_Palette[];
-s32 Animation_LookupValueByKey(s32 key);
+s32 SpritePictureCache_FindByTag(s32 key);
 #ifndef OWN_CountRemainingErasedFlashBytes
 s32 CountRemainingErasedFlashBytes(u8 *ptr);
 #endif
@@ -62,7 +62,7 @@ void StartFlashTimer(u8 index);
 #endif
 void PartyStatus_Close(void);
 
-struct BattleObj;
+struct BattleObject;
 struct Actor;
 
 /// A battle object's sprite as its motion code reads it: the flags at byte 9.
@@ -86,8 +86,8 @@ extern const u8 Resource_PatchThumbBranch[];
 /// The compiler library's call through r3, which the IWRAM-resident code's
 /// callers use to run code copied to RAM.
 s32 _call_via_r3(s32, u8 *, u8, s32);
-struct AnimationEntry;
-struct AnimationEntry *SpriteAnimation_Alloc(s32 id);
+struct SpriteAnimation;
+struct SpriteAnimation *SpriteAnimation_Alloc(s32 id);
 s32 BattleEffect_FindMatchingEvent(s32, s32, void *);
 void BattleMotion_ApplyVariantMotion(s32 id, s32 variant);
 #ifndef OWN_BattleMotion_ApproachTarget
@@ -95,8 +95,8 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travel_divisor,
                                  s32 initial_velocity_y);
 #endif
 #ifndef OWN_BattleMotion_InterpolatePosition
-void BattleMotion_InterpolatePosition(struct BattleObj *start_slot,
-                                      struct BattleObj *end_slot, s32 progress);
+void BattleMotion_InterpolatePosition(struct BattleObject *start_slot,
+                                      struct BattleObject *end_slot, s32 progress);
 #endif
 void LuckyDice_Run(void);
 void Actor_WaitForValue16Far(struct Actor *);

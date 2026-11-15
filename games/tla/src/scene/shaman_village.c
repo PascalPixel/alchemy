@@ -1801,7 +1801,7 @@ void ShamanVillage_CheckTrialEntry(void) {
 // The portrait mode task: reads its command script, eases the portrait's scale,
 // blend and position, and queues its sprites.
 
-struct Sprite {
+struct SpriteView {
   u32 words[3];
 };
 
@@ -1811,7 +1811,7 @@ extern s16 gShamanVillage_LetteringSpeedFrom;
 /// scale, blend and position, and queues its sprites.
 void ShamanVillage_RunLettering(void) {
   u32 *write = gShamanVillage_LetteringSprites;
-  struct Sprite *sprite = (struct Sprite *)write;
+  struct SpriteView *sprite = (struct SpriteView *)write;
   s32 tile =
       gVramCacheEntries[gShamanVillage_LetteringVramEntry[0]].offset >> 5;
   u32 flags;
@@ -2948,10 +2948,10 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 u32 gShamanVillage_WalkToLeftStartScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(184), 0, px(216)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_SET(SW_BYTE_63, 1),
@@ -2960,10 +2960,10 @@ u32 gShamanVillage_WalkToLeftStartScript[] = {
 };
 
 u32 gShamanVillage_WalkToRightStartScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(264), 0, px(216)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_SET(SW_BYTE_63, 1),
@@ -2972,10 +2972,10 @@ u32 gShamanVillage_WalkToRightStartScript[] = {
 };
 
 u32 gShamanVillage_KradenStandsByRodScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(152), 0, px(264)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
     SC_WAIT(10),
@@ -2983,10 +2983,10 @@ u32 gShamanVillage_KradenStandsByRodScript[] = {
 };
 
 u32 gShamanVillage_PiersStandsByRodScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(136), 0, px(264)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(10),
@@ -2994,10 +2994,10 @@ u32 gShamanVillage_PiersStandsByRodScript[] = {
 };
 
 u32 gShamanVillage_JennaStandsByRodScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(104), 0, px(264)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(10),
@@ -3005,10 +3005,10 @@ u32 gShamanVillage_JennaStandsByRodScript[] = {
 };
 
 u32 gShamanVillage_ShebaStandsByRodScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(88), 0, px(264)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(10),
@@ -3016,57 +3016,57 @@ u32 gShamanVillage_ShebaStandsByRodScript[] = {
 };
 
 u32 gShamanVillage_MoapaLeavesHouseScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(120), 0, px(252)),
     SC_SYNC,
     SC_MOVE(px(252), 0, px(252)),
     SC_SYNC,
     SC_MOVE(px(252), 0, px(120)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 u32 gShamanVillage_GuardLeavesHouseScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(136), 0, px(252)),
     SC_SYNC,
     SC_MOVE(px(252), 0, px(252)),
     SC_SYNC,
     SC_MOVE(px(252), 0, px(120)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
 u32 gShamanVillage_OtherGuardLeavesHouseScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(104), 0, px(252)),
     SC_SYNC,
     SC_MOVE(px(252), 0, px(252)),
     SC_SYNC,
     SC_MOVE(px(252), 0, px(120)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_BYTE_63, 1),
     SC_END,
 };
 
 u32 gShamanVillage_RejoinLeaderAtHouseScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(120), 0, px(264)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_CMD_03,
     SC_END,
 };
 
 u32 gShamanVillage_KradenWatchesShebaScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(136), 0, px(552)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_WAIT(10),
@@ -3074,10 +3074,10 @@ u32 gShamanVillage_KradenWatchesShebaScript[] = {
 };
 
 u32 gShamanVillage_LeaderWatchesShebaScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(184), 0, px(536)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(10),
@@ -3085,10 +3085,10 @@ u32 gShamanVillage_LeaderWatchesShebaScript[] = {
 };
 
 u32 gShamanVillage_JennaWatchesShebaScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(152), 0, px(536)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTHEAST),
     SC_WAIT(10),
@@ -3096,10 +3096,10 @@ u32 gShamanVillage_JennaWatchesShebaScript[] = {
 };
 
 u32 gShamanVillage_PiersWatchesShebaScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(200), 0, px(552)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(10),
@@ -3107,7 +3107,7 @@ u32 gShamanVillage_PiersWatchesShebaScript[] = {
 };
 
 u32 gShamanVillage_HeadForTrialRoadScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(216), 0, px(564)),
     SC_SYNC,
     SC_MOVE(px(216), 0, px(470)),
@@ -3116,16 +3116,16 @@ u32 gShamanVillage_HeadForTrialRoadScript[] = {
     SC_SYNC,
     SC_MOVE(px(168), 0, px(380)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_BYTE_63, 1),
     SC_END,
 };
 
 u32 gShamanVillage_RejoinLeaderAtSandScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(184), 0, px(536)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_CMD_03,
     SC_WAIT(1),

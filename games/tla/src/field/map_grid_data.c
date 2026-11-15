@@ -303,7 +303,7 @@ const ScriptCommandFn gActorScript_CommandTable[54] = {
     Actor_UpdateWalkingControl,               // 0x24 SC_WALK
     Field_CheckConfiguredKeysAndCount,        // 0x25 SC_KEY_COUNT
     ActorScript_Release,                      // 0x26 SC_FREE
-    ActorScript_SetAnimation,                 // 0x27 SC_ARG
+    ActorScript_SetAnimation,                 // 0x27 SC_ANIMATION
     ActorScript_Nop,                          // 0x28 SC_NOP
     ActorScript_PlaySound,                    // 0x29 SC_SE
     ActorScript_PlaySoundInView,              // 0x2a SC_CALL_WITH

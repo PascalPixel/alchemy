@@ -159,7 +159,7 @@ void Daila_EnterDoor(void) {
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
   Sound_Play(123);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, 2);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 2);
   Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -6);
   Event_Wait(10);
   Import_EventSetExitRequest(work->stepTrigger);

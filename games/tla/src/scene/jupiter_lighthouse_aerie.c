@@ -1241,7 +1241,7 @@ s32 gPaletteCycleFrame = -1;
 s32 gPaletteCyclePausesInEvents = 1;
 
 s32 gJupiterLighthouse_BeamScript[] = {
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(12),
     SC_FREE,
 };

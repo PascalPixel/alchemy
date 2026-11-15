@@ -13,7 +13,7 @@
 /// Starts playback of the action's targets when the effect's blow lands, with
 /// cue as the hit's sound (0 keeps the one set); later calls change nothing.
 void BattlePlayback_Start(s32 cue) {
-  struct BattleEventState *ev;
+  struct BattlePlaybackWork *ev;
 
   ev = &Ram_HeapSlots->battleWork->events;
   if (ev->phase == BATTLE_PLAYBACK_PHASE_IDLE) {
@@ -29,7 +29,7 @@ void BattlePlayback_Start(s32 cue) {
 /// frames, with no targets to resolve.
 s32 BattlePlayback_SchedulePhase(s32 frames) {
   struct BattleWork *work;
-  struct BattleEventState *ev;
+  struct BattlePlaybackWork *ev;
 
   work = Ram_HeapSlots->battleWork;
   ev = &work->events;
@@ -60,7 +60,7 @@ struct ArrowSprite__presentation {
 /// The battle's playback as BattlePlayback_Run reads it: the queue, its phase,
 /// event and timer, the advance arrow, the unit acting, and the hit's sound.
 struct PlaybackEvents {
-  struct BattleEventQueue queue;
+  struct BattlePlaybackQueue queue;
   s32 phase;
   s32 eventIndex;
   s32 timer;
@@ -183,7 +183,7 @@ void BattlePlayback_Run(void) {
             events->timer = 0;
             break;
           case PLAYBACK_DEFEAT: {
-            struct BattleUnit *unit;
+            struct Unit *unit;
             void *record;
             s32 recordIndex;
 
@@ -197,9 +197,9 @@ void BattlePlayback_Run(void) {
                                       recordIndex)) != 0;
                  recordIndex++) {
               if (unit->side != 1)
-                Animation_ApplyChildArgumentFar(record, 4);
+                Sprite_StartAnimationFar(record, 4);
               else
-                Animation_ApplyChildArgumentFar(record, 5);
+                Sprite_StartAnimationFar(record, 5);
             }
             if (unit->side == 1) {
               events->phase = 11;
@@ -211,7 +211,7 @@ void BattlePlayback_Run(void) {
             PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus);
             break;
           case PLAYBACK_REFRESH_UNIT: {
-            struct BattleObj *slot;
+            struct BattleObject *slot;
 
             BattleUnit_BuildStatusFlags(
                 events->queue.operands[eventIndex],
@@ -281,7 +281,7 @@ void BattlePlayback_Run(void) {
         events->timer |= 1;
       if (events->timer & 1) {
         if (events->timer & 2) {
-          struct BattleObj *slot;
+          struct BattleObject *slot;
 
           selection[0] = BATTLE_UNIT_LIST_END;
           slot = BattleObject_Get(events->actorId);
@@ -306,7 +306,7 @@ void BattlePlayback_Run(void) {
 
         if (events->timer == 0 && events->flags != 0) {
           s32 kind = BattleSprite_GetDefeatSound(
-              ((struct BattleUnit *)Unit_Get(events->actorId))->enemyId);
+              ((struct Unit *)Unit_Get(events->actorId))->enemyId);
 
           if (kind >= 0) {
             kind--;
@@ -320,7 +320,7 @@ void BattlePlayback_Run(void) {
           events->timer = 0;
         if (events->timer == 0) {
           s32 kind = BattleSprite_GetDefeatSound(
-              ((struct BattleUnit *)Unit_Get(events->actorId))->enemyId);
+              ((struct Unit *)Unit_Get(events->actorId))->enemyId);
 
           if (kind >= 0)
             Sound_PlayFar(146 + kind);
@@ -358,7 +358,7 @@ void BattlePlayback_Run(void) {
         return;
       }
       if (events->timer > 4) {
-        struct BattleObj *slot;
+        struct BattleObject *slot;
         void *record;
         s32 count;
         s32 step;
@@ -402,7 +402,7 @@ void BattlePlayback_Run(void) {
 
 /// Stops playback and empties the playback queue.
 u32 BattlePlayback_Reset(void) {
-  struct BattleEventState *events;
+  struct BattlePlaybackWork *events;
   struct BattleWork *work;
 
   work = Ram_HeapSlots->battleWork;
@@ -421,7 +421,7 @@ u32 BattlePlayback_Reset(void) {
 /// never showed the damage.
 s32 BattlePlayback_WaitForReady(void) {
   s32 state;
-  struct BattleEventState *events;
+  struct BattlePlaybackWork *events;
 
   events = &Ram_HeapSlots->battleWork->events;
   state = events->phase;

@@ -22,7 +22,7 @@
 /// items, rewards and elements. A Djinni fought is put on the party's side
 /// (README.md, "The unit"). Returns 0 for an id out of range.
 s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   const struct EnemyDefinition *enemy;
   u16 name[15];
   s32 i;

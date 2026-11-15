@@ -142,7 +142,7 @@ void Alhafra_OpenDoorAndEnter(struct DoorStep *step, s32 countdown,
   MapGrid_PlayMapEdit(step->script, step->x, step->z);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 2;
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
   Event_Wait(10);
   Import_EventSetExitRequest(countdown);
@@ -273,7 +273,7 @@ void Alhafra_GiveBreadToHungryBoy(void) {
   Event_ShowMessageThenWait(ACTOR_HUNGRY_BOY, 0, 10);
   // "The kid ate the bread."
   Event_ShowMessageThenWait(-1, 0, 10);
-  Actor_SetModeById(ACTOR_HUNGRY_BOY, ANIM_STAND);
+  Actor_SetAnimationById(ACTOR_HUNGRY_BOY, ANIM_STAND);
   Actor_Jump(ACTOR_HUNGRY_BOY, 6, 15);
   Actor_Jump(ACTOR_HUNGRY_BOY, 6, 23);
   // "Oh, wow, I feel so much better! Look at how much energy I've got now!"
@@ -296,10 +296,10 @@ void Alhafra_TalkToHungryBoy(s32 id) {
   } else {
     Event_SetMessageId(MsgAlhafra70);
     Event_Wait(10);
-    Motion_SetModeAndWaitAnimation(id, 3);
+    Actor_SetAnimationAndWait(id, 3);
     // "Geez, mister, I don't know how I can repay you..."
     Event_ShowMessageThenWait(id, 0, 10);
-    Motion_SetVarCbAndRefresh(id, 2);
+    Actor_RunRepeatedMotion(id, 2);
     // "Wait, I've got it! Do you like...adventures?"
     FieldMessage_ShowAtActor(id, 0);
     Event_Wait(10);
@@ -326,14 +326,14 @@ void Alhafra_FindGoldCoins(void) {
   FieldCamera_MoveWithinMapBounds(px(560), -1, px(496), 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
-  Motion_SetVarCbAndRefresh(ACTOR_GOLD_COIN_FINDER, 2);
+  Actor_RunRepeatedMotion(ACTOR_GOLD_COIN_FINDER, 2);
   Event_Wait(10);
   // "Why, look at this!"
   FieldEvent_ShowMessageThenWait(ACTOR_GOLD_COIN_FINDER, 0, 10);
   Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_HUSBAND, FACING_EAST, 0);
   Actor_FaceDirection(31, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_CHILD, FACING_SOUTHWEST, 0);
-  Actor_SetModeById(ACTOR_GOLD_COIN_FINDER, 5);
+  Actor_SetAnimationById(ACTOR_GOLD_COIN_FINDER, 5);
   Sound_Play(MUS_LEVEL_UP);
   gMainRoutineWork.leaderActorId = 0x1d;
   ItemDisplay_ShowItem(0, 3);
@@ -345,7 +345,7 @@ void Alhafra_FindGoldCoins(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_GOLD_COIN_FINDERS_HUSBAND, 0, 10);
   Actor_FaceDirectionById(ACTOR_GOLD_COIN_FINDER, FACING_WEST, 0);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(ACTOR_GOLD_COIN_FINDER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GOLD_COIN_FINDER, ANIM_NOD);
   Event_Wait(20);
   Actor_ShowEmoteById(ACTOR_GOLD_COIN_FINDERS_CHILD,
                       EMOTE_IN_FRONT | EMOTE_SMILE, 30);
@@ -354,24 +354,24 @@ void Alhafra_FindGoldCoins(void) {
   Actor_ShowEmoteById(ACTOR_GOLD_COIN_FINDER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Actor_FaceDirection(ACTOR_GOLD_COIN_FINDER, FACING_SOUTH, 0);
   Event_Wait(20);
-  Motion_SetVarCbAndRefresh(ACTOR_GOLD_COIN_FINDER, 2);
+  Actor_RunRepeatedMotion(ACTOR_GOLD_COIN_FINDER, 2);
   Event_Wait(10);
   // "Oh! Well, it's not too much... It's only 5 coins."
   FieldEvent_ShowMessageThenWait(ACTOR_GOLD_COIN_FINDER, 0, 10);
-  Motion_SetVarCbAndRefresh(ACTOR_GOLD_COIN_FINDERS_CHILD, 2);
+  Actor_RunRepeatedMotion(ACTOR_GOLD_COIN_FINDERS_CHILD, 2);
   Event_Wait(10);
   // "That's great, though! We can use it to buy some food!"
   FieldEvent_ShowMessageThenWait(ACTOR_GOLD_COIN_FINDERS_CHILD, 0, 10);
   Actor_FaceDirectionById(ACTOR_GOLD_COIN_FINDER, FACING_EAST, 0);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(ACTOR_GOLD_COIN_FINDER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GOLD_COIN_FINDER, ANIM_NOD);
   Event_Wait(20);
   FieldActor_Jump(31, 6, 15);
   FieldActor_Jump(31, 6, 23);
   // "I'm going to start looking, too!"
   FieldEvent_ShowMessageThenWait(31, 0, 10);
   Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_CHILD, FACING_EAST, 0);
-  Motion_SetModeAndWaitAnimation(ACTOR_GOLD_COIN_FINDERS_CHILD, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_GOLD_COIN_FINDERS_CHILD, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(31, FACING_SOUTH, 0);
   Actor_SetAnimation(31, 6);
@@ -413,7 +413,7 @@ void Alhafra_FatherLetsPartyToCave(s32 actor) {
       Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
       Actor_FaceDirectionById(actor, FACING_SOUTHEAST, 0);
       Event_Wait(20);
-      Motion_SetModeAndWaitAnimation(actor, 3);
+      Actor_SetAnimationAndWait(actor, 3);
       Event_Wait(10);
       Event_ShowMessageAndWait(actor, 0);
     }
@@ -482,12 +482,12 @@ s32 Scene_Initialize(void) {
     Actor_SetSpritePriority(30, 3);
     Actor_SetSpritePriority(31, 3);
     Actor_SetSpritePriority(12, 3);
-    Actor_SetActionCallback(Actor_GetById(26), 9);
+    Actor_SetMovementType(Actor_GetById(26), 9);
     if (!GameFlag_Get(FLAG_HUNGRY_BOY_FED))
-      Actor_SetModeById(27, 5);
+      Actor_SetAnimationById(27, 5);
     if (GameFlag_Get(FLAG_GOLD_COINS_FOUND)) {
-      Actor_SetModeById(30, 6);
-      Actor_SetModeById(31, 6);
+      Actor_SetAnimationById(30, 6);
+      Actor_SetAnimationById(31, 6);
     }
     if (GameFlag_Get(FLAG_LET_INTO_CAVE)) {
       Actor_SetPosition(12, 56, 328);
@@ -503,9 +503,9 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_LOOKOUT_LEFT))
       Actor_SetHorizontalPositionWithTerrain(25, 0, 0);
     FlagBlock_PlaceAllMarkingEdges((s32)&gAlhafra_Puddles);
-    Actor_SetActionCallback(Actor_GetById(26), 9);
-    Actor_SetActionCallback(Actor_GetById(27), 9);
-    Actor_SetActionCallback(Actor_GetById(28), 9);
+    Actor_SetMovementType(Actor_GetById(26), 9);
+    Actor_SetMovementType(Actor_GetById(27), 9);
+    Actor_SetMovementType(Actor_GetById(28), 9);
   }
   return 0;
 }
@@ -591,7 +591,7 @@ void Alhafra_MadransArrive(s32 a0) {
   FieldCamera_WaitForArrival();
   Actor_WalkBy(ACTOR_FIRST_MADRAN_SOLDIER, 0, -96);
   Actor_WalkByAndWait(ACTOR_SECOND_MADRAN_SOLDIER, 0, -96);
-  Actor_SetModeById(ACTOR_FIRST_MADRAN_SOLDIER, ANIM_STAND);
+  Actor_SetAnimationById(ACTOR_FIRST_MADRAN_SOLDIER, ANIM_STAND);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_WEST, 0);
@@ -618,7 +618,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_WaitForMoveById(ACTOR_PARCHED_MADRAN);
   Actor_FaceDirectionById(ACTOR_PARCHED_MADRAN, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(10);
-  Motion_SetVarCbAndRefresh(ACTOR_FIRST_MADRAN_SOLDIER, 2);
+  Actor_RunRepeatedMotion(ACTOR_FIRST_MADRAN_SOLDIER, 2);
   Event_Wait(10);
   // "Where's the Elder?"
   FieldEvent_ShowMessageThenWait(ACTOR_FIRST_MADRAN_SOLDIER, 0, 10);
@@ -627,7 +627,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_FaceDirection(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
                       FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(40);
-  Motion_SetVarCbAndRefresh(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 2);
+  Actor_RunRepeatedMotion(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 2);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, FACING_NORTH, 0);
   Event_Wait(20);
@@ -637,7 +637,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_NORTHEAST, 0);
   Event_Wait(20);
   Actor_SetAnimation(ACTOR_FIRST_MADRAN_SOLDIER, ANIM_NOD);
-  Motion_SetModeAndWaitAnimation(ACTOR_SECOND_MADRAN_SOLDIER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_MADRAN_SOLDIER, ANIM_NOD);
   Event_Wait(10);
   Actor_WalkBy(ACTOR_PARCHED_MADRAN, 32, -48);
   Actor_WalkByAndWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 32, -48);
@@ -655,26 +655,26 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(20);
   Actor_WalkByAndWait(ACTOR_WEARY_MADRAN, 0, -32);
   Event_Wait(1);
-  Actor_SetModeById(ACTOR_WEARY_MADRAN, 5);
+  Actor_SetAnimationById(ACTOR_WEARY_MADRAN, 5);
   Event_Wait(90);
-  Motion_SetVarCbAndRefresh(ACTOR_WEARY_MADRAN, 2);
+  Actor_RunRepeatedMotion(ACTOR_WEARY_MADRAN, 2);
   Event_Wait(20);
   // "I'm fine... I feel like I could walk 500 more!"
   FieldEvent_ShowMessageThenWait(ACTOR_WEARY_MADRAN, 0, 10);
   Actor_WalkByAndWaitById(ACTOR_WEARY_MADRAN, 0, -16);
   Event_Wait(1);
-  Actor_SetModeById(ACTOR_WEARY_MADRAN, 5);
+  Actor_SetAnimationById(ACTOR_WEARY_MADRAN, 5);
   Event_Wait(60);
   Actor_WalkByAndWait(ACTOR_WEARY_MADRAN, 8, -32);
   Actor_FaceDirection(ACTOR_WEARY_MADRAN, FACING_SOUTH, 0);
   Event_Wait(1);
-  Actor_SetModeById(ACTOR_WEARY_MADRAN, 5);
+  Actor_SetAnimationById(ACTOR_WEARY_MADRAN, 5);
   Event_Wait(30);
   Actor_SetPosition(ACTOR_MADRAS_MAYOR, 392, 872);
   Actor_SetPosition(ACTOR_MADRAS_ELDER, 408, 872);
   Actor_WalkBy(ACTOR_MADRAS_MAYOR, 0, -32);
   Actor_WalkByAndWait(ACTOR_MADRAS_ELDER, 0, -32);
-  Actor_SetModeById(ACTOR_MADRAS_MAYOR, ANIM_STAND);
+  Actor_SetAnimationById(ACTOR_MADRAS_MAYOR, ANIM_STAND);
   Event_Wait(1);
   Actor_SetAnimation(ACTOR_MADRAS_ELDER, 5);
   FieldActor_WatchAndSetScript(ACTOR_FIRST_MADRAN_SOLDIER, 30);
@@ -700,7 +700,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_WalkByAndWait(ACTOR_MADRAS_MAYOR, 0, -32);
   Actor_WalkByAndWaitById(ACTOR_MADRAS_MAYOR, -32, 0);
   Event_Wait(10);
-  Motion_SetVarCbAndRefresh(ACTOR_MADRAS_MAYOR, 2);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
   Event_Wait(10);
   // "Madra's a pretty big place, but this town is huge!"
   FieldEvent_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
@@ -710,7 +710,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_ShowEmote(ACTOR_MADRAS_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   Actor_FaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_EAST, 0);
   Event_Wait(20);
-  Motion_SetVarCbAndRefresh(ACTOR_MADRAS_ELDER, 2);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_ELDER, 2);
   Event_Wait(20);
   // "We're here to bring in Briggs the Champa."
   FieldEvent_ShowMessageThenWait(ACTOR_MADRAS_ELDER, 0, 10);
@@ -722,9 +722,9 @@ void Alhafra_MadransArrive(s32 a0) {
   // "I know that!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_MAYOR, 0,
                                  10);
-  Actor_SetModeById(ACTOR_MADRAS_ELDER, ANIM_STAND);
+  Actor_SetAnimationById(ACTOR_MADRAS_ELDER, ANIM_STAND);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(ACTOR_MADRAS_ELDER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_ELDER, ANIM_NOD);
   Event_Wait(10);
   // "Then we should go straight to speak with Alhafra's mayor."
   Event_ShowMessageThenWait(ACTOR_MADRAS_ELDER, 0, 10);
@@ -733,7 +733,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_Stop(ACTOR_MADRAN_WAITING_FOR_THE_ELDER);
   Actor_Stop(ACTOR_WEARY_MADRAN);
   Actor_Stop(ACTOR_PARCHED_MADRAN);
-  Actor_SetModeById(ACTOR_MADRAS_ELDER, 5);
+  Actor_SetAnimationById(ACTOR_MADRAS_ELDER, 5);
   Event_Wait(50);
   Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_NORTHEAST, 0);
@@ -760,7 +760,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(20);
   // "Look, Briggs is obviously not here, and besides, we already know..."
   FieldEvent_ShowMessageThenWait(ACTOR_SECOND_MADRAN_SOLDIER, 0, 10);
-  Actor_SetModeById(ACTOR_MADRAS_ELDER, ANIM_STAND);
+  Actor_SetAnimationById(ACTOR_MADRAS_ELDER, ANIM_STAND);
   Event_Wait(10);
   Actor_ShowEmoteById(ACTOR_MADRAS_ELDER, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Actor_FaceDirection(ACTOR_MADRAS_ELDER, FACING_WEST, 0);
@@ -801,11 +801,11 @@ void Alhafra_MadransArrive(s32 a0) {
   Event_Wait(50);
   Actor_FaceDirection(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, FACING_WEST, 0);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, ANIM_NOD);
   Event_Wait(10);
   // "It looks like they suffered a good deal of damage..."
   FieldEvent_ShowMessageThenWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 0, 10);
-  Motion_SetVarCbAndRefresh(ACTOR_MADRAS_ELDER, 2);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_ELDER, 2);
   Event_Wait(20);
   Actor_FaceDirectionById(ACTOR_MADRAS_ELDER, FACING_EAST, 0);
   Event_Wait(20);
@@ -818,11 +818,11 @@ void Alhafra_MadransArrive(s32 a0) {
   FieldEvent_ShowMessageThenWait(ACTOR_WEARY_MADRAN, 0, 10);
   Actor_FaceDirection(ACTOR_MADRAS_ELDER, FACING_WEST, 0);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(ACTOR_MADRAS_ELDER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_ELDER, ANIM_NOD);
   Event_Wait(10);
   // "So if you really needed a boat, the only way to get one would be to..."
   FieldEvent_ShowMessageThenWait(ACTOR_MADRAS_ELDER, 0, 10);
-  Motion_SetVarCbAndRefresh(ACTOR_MADRAS_MAYOR, 2);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_MAYOR, 2);
   Event_Wait(10);
   // "...Which means the pirates must still be here, trying to get a boat!"
   FieldEvent_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
@@ -833,17 +833,17 @@ void Alhafra_MadransArrive(s32 a0) {
   FieldActor_Jump(ACTOR_FIRST_MADRAN_SOLDIER, 6, 23);
   // "So, you think we've actually caught up with Briggs?"
   FieldEvent_ShowMessageThenWait(ACTOR_FIRST_MADRAN_SOLDIER, 0, 10);
-  Motion_SetModeAndWaitAnimation(ACTOR_SECOND_MADRAN_SOLDIER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_MADRAN_SOLDIER, ANIM_NOD);
   Event_Wait(10);
   // "No doubt about it!"
   FieldEvent_ShowMessageThenWait(ACTOR_SECOND_MADRAN_SOLDIER, 0, 10);
-  Motion_SetVarCbAndRefresh(ACTOR_MADRAS_ELDER, 2);
+  Actor_RunRepeatedMotion(ACTOR_MADRAS_ELDER, 2);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_SOUTHEAST, 0);
   // "That's why I want to meet the mayor of Alhafra before the Champa..."
   FieldEvent_ShowMessageThenWait(ACTOR_MADRAS_ELDER, 0, 10);
-  Motion_SetModeAndWaitAnimation(ACTOR_MADRAS_MAYOR, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_MAYOR, ANIM_NOD);
   Event_Wait(10);
   // "Oh yeah... I get it now. In that case, let's go see Alhafra's mayor..."
   FieldEvent_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
@@ -863,12 +863,12 @@ void Alhafra_MadransArrive(s32 a0) {
   // "Where would we find the mayor of Alhafra?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MADRAS_MAYOR, 0,
                                  10);
-  Motion_SetVarCbAndRefresh(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 2);
+  Actor_RunRepeatedMotion(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 2);
   Event_Wait(10);
   gFieldWork->fastForward = 0;
   // "Uh... The mayor?"
   FieldEvent_ShowMessageThenWait(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 0, 10);
-  Motion_SetModeAndWaitAnimation(ACTOR_MADRAS_MAYOR, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_MAYOR, ANIM_NOD);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_MADRAS_ELDER, 0.5);
   Actor_SetSpeed(ACTOR_MADRAS_MAYOR, 0.5);
@@ -952,7 +952,7 @@ void Alhafra_MadransArrive(s32 a0) {
         32, (s32)gAlhafra_SecondSoldierFollowsFromCell20Script);
   }
   Event_Wait(300);
-  Actor_RefreshSelectorById(ACTOR_WEARY_MADRAN);
+  Actor_WaitForScriptEndById(ACTOR_WEARY_MADRAN);
   Event_Wait(50);
   FieldCamera_MoveTo(248, CAMERA_KEEP, 664, 1);
   FieldCamera_WaitForArrival();
@@ -961,9 +961,9 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_FaceDirectionById(ACTOR_ALHAFRAN_GIVING_DIRECTIONS,
                           FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, ANIM_NOD);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(ACTOR_MADRAS_MAYOR, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_MADRAS_MAYOR, ANIM_NOD);
   Event_Wait(20);
   Actor_WalkByAndWait(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, -16, 0);
   Actor_FaceDirectionById(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, FACING_EAST, 0);
@@ -981,7 +981,7 @@ void Alhafra_MadransArrive(s32 a0) {
   Actor_SetAnimation(ACTOR_FIRST_MADRAN_SOLDIER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SECOND_MADRAN_SOLDIER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_PARCHED_MADRAN, 3);
-  Motion_SetModeAndWaitAnimation(ACTOR_WEARY_MADRAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_WEARY_MADRAN, ANIM_NOD);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_MADRAS_ELDER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_NORTH, 0);
@@ -1059,7 +1059,7 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
     Event_OpenMessage(ACTOR_LOOKOUT, 0);
     if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
       Event_Wait(30);
-      Motion_SetVarCbAndRefresh(ACTOR_LOOKOUT, 2);
+      Actor_RunRepeatedMotion(ACTOR_LOOKOUT, 2);
       Event_Wait(20);
       Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
       gFieldWork->message = (gFieldWork->message + 1);
@@ -1074,7 +1074,7 @@ void Alhafra_LookoutSeesMadrasMayor(s32 a0) {
     Actor_GetById(ACTOR_FELIX)->steeringFlags |= 1;
     Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
     Event_Wait(20);
-    Motion_SetModeAndWaitAnimation(ACTOR_LOOKOUT, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_LOOKOUT, ANIM_NOD);
     Event_Wait(10);
     Actor_FaceDirectionById(ACTOR_LOOKOUT, FACING_NORTHEAST, 0);
     Event_Wait(70);
@@ -1116,7 +1116,7 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(Alhafra1),
+    SCENE_EXITS(Alhafra),
     SCENE_EXIT_UNLESS(1, AlhafraInteriors, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AlhafraInteriors, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, AlhafraInteriors, 5, EXIT_FLAG_NONE),
@@ -1124,7 +1124,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(7, AlhafraInteriors, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, AlhafraJail, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, WorldMap, 20, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, EasternAlhafra1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, EasternAlhafra, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(12, AlhafranCave, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(14, AlhafraManor, 1, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
@@ -1531,25 +1531,25 @@ struct Trigger gAlhafra_TriggersOnceTheMastIsCleared[] = {
 };
 
 s32 gAlhafra_OfficialStepsBackScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(0, 0, -px(8)),
     SC_SYNC,
     SC_MOVE_BY(px(32), 0, -px(32)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(1),
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_END,
 };
 
 u32 gAlhafra_PasserbyWalksOffScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(552), 0, px(808)),
     SC_SYNC,
     SC_MOVE(px(536), 0, px(760)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_END,
 };
 
@@ -1576,14 +1576,14 @@ u32 gAlhafra_FirstMadranFollowsFromCell21Script[] = {
   };
 
 u32 gAlhafra_FirstSoldierFollowsFromCell21Script[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(408), 0, px(760)),
     SC_SYNC,
     SC_MOVE(px(408), 0, px(680)),
     SC_SYNC,
     SC_MOVE(px(264), 0, px(680)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };
@@ -1594,7 +1594,7 @@ u32 gAlhafra_ElderFollowsFromCell21Script[] = {
   };
 
 u32 gAlhafra_SecondSoldierFollowsFromCell21Script[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(px(16), 0, 0),
     SC_SYNC,
     SC_MOVE(px(408), 0, px(760)),
@@ -1609,7 +1609,7 @@ u32 gAlhafra_SecondSoldierFollowsFromCell21Script[] = {
     SC_SYNC,
     SC_MOVE(px(264), 0, px(696)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };
@@ -1621,7 +1621,7 @@ u32 gAlhafra_SecondMadranFollowsFromCell21Script[] = {
   };
 
 s32 gAlhafra_PasserbyLeadsFromCell20Script[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(0, 0, -px(16)),
     SC_SYNC,
     SC_MOVE_BY(-px(16), 0, 0),
@@ -1632,52 +1632,52 @@ s32 gAlhafra_PasserbyLeadsFromCell20Script[] = {
     SC_SYNC,
     SC_MOVE(px(248), 0, px(632)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };
 
 u32 gAlhafra_MayorFollowsFromCell20Script[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(328), 0, px(808)),
     SC_SYNC,
     SC_MOVE(px(248), 0, px(808)),
     SC_SYNC,
     SC_MOVE(px(248), 0, px(664)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };
 
 u32 gAlhafra_OfficialFollowsFromCell20Script[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(328), 0, px(808)),
     SC_SYNC,
     SC_MOVE(px(264), 0, px(808)),
     SC_SYNC,
     SC_MOVE(px(264), 0, px(664)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };
 
 u32 gAlhafra_FirstMadranFollowsFromCell20Script[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(328), 0, px(808)),
     SC_SYNC,
     SC_MOVE(px(248), 0, px(808)),
     SC_SYNC,
     SC_MOVE(px(248), 0, px(680)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };
 
 u32 gAlhafra_ElderFollowsFromCell20Script[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(0, 0, px(16)),
     SC_SYNC,
     SC_MOVE(px(328), 0, px(808)),
@@ -1686,13 +1686,13 @@ u32 gAlhafra_ElderFollowsFromCell20Script[] = {
     SC_SYNC,
     SC_MOVE(px(248), 0, px(696)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };
 
 u32 gAlhafra_SecondSoldierFollowsFromCell20Script[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(0, 0, px(16)),
     SC_SYNC,
     SC_MOVE(px(328), 0, px(808)),
@@ -1701,13 +1701,13 @@ u32 gAlhafra_SecondSoldierFollowsFromCell20Script[] = {
     SC_SYNC,
     SC_MOVE(px(264), 0, px(680)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };
 
 u32 gAlhafra_FirstSoldierFollowsFromCell20Script[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(0, 0, px(32)),
     SC_SYNC,
     SC_MOVE(px(328), 0, px(808)),
@@ -1716,13 +1716,13 @@ u32 gAlhafra_FirstSoldierFollowsFromCell20Script[] = {
     SC_SYNC,
     SC_MOVE(px(264), 0, px(696)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };
 
 s32 gAlhafra_SecondMadranFollowsFromCell20Script[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(-px(20), 0, px(32)),
     SC_SYNC,
     SC_MOVE(px(328), 0, px(808)),
@@ -1731,7 +1731,7 @@ s32 gAlhafra_SecondMadranFollowsFromCell20Script[] = {
     SC_SYNC,
     SC_MOVE(px(256), 0, px(712)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_END,
 };

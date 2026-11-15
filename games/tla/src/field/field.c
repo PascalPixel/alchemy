@@ -28,10 +28,10 @@
 #include "field/map_grid.c"
 #include "field/world_map.c"
 
-#undef InitializeAnimationObjects
-#undef ResourceMetadata_Register
-#undef Animation_ApplyChildArgument
-#undef Animation_ApplyChildValue
+#undef Sprite_ResetAnimations
+#undef Sprite_AddAnimation
+#undef Sprite_StartAnimation
+#undef Sprite_SetAnimationSpeed
 #undef Render_ApplyProjectedPlacementAtDepth
 
 #include "field/tile_animation.c"

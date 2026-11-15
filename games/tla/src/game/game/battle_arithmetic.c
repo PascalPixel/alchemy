@@ -115,7 +115,7 @@ s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
 /// enemy's comes from its kind, a character's from its equipped weapon.
 s32 Item_GetEquippedElement(s32 unitId) {
   const struct ItemDefinition *item;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   unit = Unit_Get(unitId);
   if (unit->classId == CLASS_NONE)
@@ -128,7 +128,7 @@ s32 Item_GetEquippedElement(s32 unitId) {
 
 /// Returns the unleash chance, in percent, that a unit's equipment adds
 /// (EQUIP_EFFECT_ADD_UNLEASH_CHANCE).
-s32 Equipment_GetUnleashRateBonus(struct BattleUnit *unit) {
+s32 Equipment_GetUnleashRateBonus(struct Unit *unit) {
   s32 chanceBonus;
   s32 inventorySlot;
   s32 effectIndex;
@@ -151,7 +151,7 @@ s32 Equipment_GetUnleashRateBonus(struct BattleUnit *unit) {
 
 /// Rolls whether a character's weapon unleashes, 5 percent a point of its
 /// chance. Returns the unleash action, or 1 for a plain attack.
-s32 RollWeaponUnleash(struct BattleUnit *owner) {
+s32 RollWeaponUnleash(struct Unit *owner) {
   struct ItemDefinition *item;
   s32 rate;
 
@@ -258,7 +258,7 @@ s32 Enemy_IsSeaCreature(s32 enemyId) {
 /// Returns 1 when the unit is weak to effect `effectId`: one of three listed
 /// for its enemy kind (EnemyDefinition.weakEffects) or class
 /// (ClassDefinition.weakEffects). Called by Battle_RollEffectSuccess.
-s32 BattleAbility_IsWeakToEffect(const struct BattleUnit *target,
+s32 BattleAbility_IsWeakToEffect(const struct Unit *target,
                                  s32 effectId) {
   const u8 *entries;
   s32 i;
@@ -306,7 +306,7 @@ s32 Battle_IsReviveEffect(s32 effectId) {
 s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
                              s32 effectId, s32 successScale) {
   u8 *state = Unit_Get(target);
-  struct BattleUnit *unit = (struct BattleUnit *)state;
+  struct Unit *unit = (struct Unit *)state;
   s32 attempts = 1;
   s32 score;
   s32 attempt;
@@ -337,7 +337,7 @@ s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
   goto check_restore;
 check_restore_others:
   if (unit->stun == 0 && unit->sleep == 0 &&
-      state[(u32)&((struct BattleUnit *)0)->psySeal] == 0 &&
+      state[(u32)&((struct Unit *)0)->psySeal] == 0 &&
       unit->grimReaper == 0) {
     return 0;
   }
@@ -345,7 +345,7 @@ check_restore_others:
 check_restore:
   if (effectId == ABILITY_EFFECT_RESTORE) {
     if (unit->delusion == 0 &&
-        state[(u32)&((struct BattleUnit *)0)->confusion] == 0 &&
+        state[(u32)&((struct Unit *)0)->confusion] == 0 &&
         unit->charm == 0) {
       goto check_restore_others;
     }
@@ -361,7 +361,7 @@ restore_checked:
   if (effectId == ABILITY_EFFECT_CURE_ALL && *poison == 0 && *delusion == 0 &&
       *confusion == 0 && *charm == 0 && *stun == 0 && *sleep == 0 &&
       unit->psySeal == 0 && unit->grimReaper == 0 &&
-      state[(u32)&((struct BattleUnit *)0)->haunt] == 0) {
+      state[(u32)&((struct Unit *)0)->haunt] == 0) {
     return 0;
   }
 

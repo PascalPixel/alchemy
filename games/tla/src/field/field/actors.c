@@ -30,20 +30,20 @@
 
 /// Waits, at most 90 frames, for a sprite's animation to change or for its
 /// first layer's script to reach code 241.
-void Animation_WaitForTrackEnd(struct AnimationObject *sprite) {
+void Animation_WaitForTrackEnd(struct Sprite *sprite) {
   u8 animation = sprite->lastNo;
-  struct AnimationEntry *entry = sprite->entries[0];
+  struct SpriteAnimation *entry = sprite->entries[0];
   s32 i;
 
   if (sprite != NULL) {
     i = 0;
-    if (entry->script[entry->pos] != 241) {
+    if (entry->script[entry->scriptOffset] != 241) {
       do {
         wait(1);
         i++;
         if (i > 89)
           break;
-        if (entry->script[entry->pos] == 241)
+        if (entry->script[entry->scriptOffset] == 241)
           break;
       } while (sprite->lastNo == animation);
     }
@@ -202,17 +202,17 @@ void ActorSystem_ReservedNoOpB(void) {}
 // Objects: create and release field objects, and render them each frame.
 
 struct ActorSpriteView;
-#define Animation_ApplyChildArgument Animation_ApplyChildArgument
+#define Sprite_StartAnimation Sprite_StartAnimation
 struct ActorSpriteView;
-#define Animation_ApplyChildValue Animation_ApplyChildValue
+#define Sprite_SetAnimationSpeed Sprite_SetAnimationSpeed
 struct ActorSpriteView;
-#define InitializeAnimationObjects InitializeAnimationObjects
+#define Sprite_ResetAnimations Sprite_ResetAnimations
 struct ActorSpriteView;
-#define ResourceMetadata_Register ResourceMetadata_Register
-#undef ResourceMetadata_Register
-#undef InitializeAnimationObjects
-#undef Animation_ApplyChildValue
-#undef Animation_ApplyChildArgument
+#define Sprite_AddAnimation Sprite_AddAnimation
+#undef Sprite_AddAnimation
+#undef Sprite_ResetAnimations
+#undef Sprite_SetAnimationSpeed
+#undef Sprite_StartAnimation
 
 /// Returns an unused object (one without a script) from the 64 slots, or 0
 /// if none is free.
@@ -348,7 +348,7 @@ void Actor_StartScript(struct Actor *object, const s32 *script) {
 }
 
 /// Starts animation argument on an actor's sprite, or on each of the four
-/// sprites of a group (Animation_ApplyChildArgument).
+/// sprites of a group (Sprite_StartAnimation).
 void Actor_SelectAnimation(struct Actor *object, s32 argument) {
   struct ActorSpriteView **items;
   struct ActorSpriteView *item;
@@ -357,7 +357,7 @@ void Actor_SelectAnimation(struct Actor *object, s32 argument) {
   if (object != 0) {
     switch (object->spriteStorageKind & 0xf) {
     case 1:
-      Animation_ApplyChildArgument(((struct ActorSpriteView *)object->sprite),
+      Sprite_StartAnimation(((struct ActorSpriteView *)object->sprite),
                                    argument);
       break;
     case 2:
@@ -366,7 +366,7 @@ void Actor_SelectAnimation(struct Actor *object, s32 argument) {
       do {
         item = *items++;
         if (item != 0)
-          Animation_ApplyChildArgument(item, argument);
+          Sprite_StartAnimation(item, argument);
         count--;
       } while (count >= 0);
       break;
@@ -384,7 +384,7 @@ void Actor_SetAnimationSpeed(struct Actor *object, s32 value) {
   if (object != 0) {
     switch (object->spriteStorageKind & 0xf) {
     case 1:
-      Animation_ApplyChildValue(((struct ActorSpriteView *)object->sprite),
+      Sprite_SetAnimationSpeed(((struct ActorSpriteView *)object->sprite),
                                 value);
       return;
     case 2:
@@ -393,7 +393,7 @@ void Actor_SetAnimationSpeed(struct Actor *object, s32 value) {
       do {
         child = *children++;
         if (child != 0)
-          Animation_ApplyChildValue(child, value);
+          Sprite_SetAnimationSpeed(child, value);
         count--;
       } while (count >= 0);
       break;
@@ -411,9 +411,9 @@ void Actor_SetAnimationAndSpeed(struct Actor *object, s32 argument, s32 value) {
   if (object != 0) {
     switch (object->spriteStorageKind & 0xf) {
     case 1:
-      Animation_ApplyChildArgument(((struct ActorSpriteView *)object->sprite),
+      Sprite_StartAnimation(((struct ActorSpriteView *)object->sprite),
                                    argument);
-      Animation_ApplyChildValue(((struct ActorSpriteView *)object->sprite),
+      Sprite_SetAnimationSpeed(((struct ActorSpriteView *)object->sprite),
                                 value);
       break;
     case 2:
@@ -421,8 +421,8 @@ void Actor_SetAnimationAndSpeed(struct Actor *object, s32 argument, s32 value) {
       for (count = 3; count >= 0; count--) {
         item = *items++;
         if (item != 0) {
-          Animation_ApplyChildArgument(item, argument);
-          Animation_ApplyChildValue(item, value);
+          Sprite_StartAnimation(item, argument);
+          Sprite_SetAnimationSpeed(item, value);
         }
       }
       break;
@@ -444,8 +444,8 @@ void Actor_SetFirstSpriteAnimation(struct Actor *object, s32 index) {
   if (object != NULL && (object->spriteStorageKind & 0xf) == 1) {
     child = ((struct ActorSpriteView *)object->sprite);
     if (index >= 0) {
-      child->entries[0]->animId = index;
-      InitializeAnimationObjects(child);
+      child->entries[0]->animationId = index;
+      Sprite_ResetAnimations(child);
     }
   }
 }
@@ -456,7 +456,7 @@ void Actor_RegisterSpriteMetadata(struct Actor *object, s32 value) {
   if (object != 0 && (object->spriteStorageKind & 0xf) == 1) {
     struct ActorSpriteView *child = ((struct ActorSpriteView *)object->sprite);
     if (value >= 0)
-      ResourceMetadata_Register(child, value);
+      Sprite_AddAnimation(child, value);
   }
 }
 
@@ -541,7 +541,7 @@ void Actor_StartCamera(struct Actor *object, struct Actor *watched) {
 /// Waits until the actor's script reaches SC_END, at most 600 frames; it
 /// returns as soon as the script idles, and after the limit whether or not it
 /// has.
-void Actor_WaitForCommandEnd(struct Actor *object) {
+void Actor_WaitForScriptEnd(struct Actor *object) {
   s32 cnt = 0;
 
   if (object->script != 0 &&

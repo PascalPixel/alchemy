@@ -58,7 +58,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
        (s16)placementSprite != -1 && slot <= 63;
        entry++, placementSprite = entry->sprite) {
     struct Actor *actor;
-    struct AnimationObject *sprite;
+    struct Sprite *sprite;
     s32 condition;
     s32 spriteId;
 
@@ -90,7 +90,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
         continue;
     }
     spriteId = Party_GetCharacterSprite(entry->sprite);
-    actor = ObjectTable_Get(actorIndex);
+    actor = Actor_Lookup(actorIndex);
     if (actor == NULL) {
       // Flag 2: x is the number of a scene point to stand on.
       if (entry->flags & 2) {
@@ -106,7 +106,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       }
       // Flag 1: share the previous actor's sprite resource.
       if (entry->flags & 1) {
-        struct Actor *previous = ObjectTable_Get(actorIndex - 1);
+        struct Actor *previous = Actor_Lookup(actorIndex - 1);
 
         if (previous->spriteStorageKind == 1 && actor->spriteStorageKind == 1) {
           u8 spriteSlot;
@@ -132,7 +132,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       // apart, so actors placed together do not move in step.
       if (actor->spriteStorageKind == 1 && sprite != NULL) {
         for (i = 0; i < sprite->count; i++) {
-          struct AnimationEntry *layer = sprite->entries[i];
+          struct SpriteAnimation *layer = sprite->entries[i];
 
           if (layer != NULL)
             layer->timer = (Random16() * 5) >> 15;
@@ -141,7 +141,7 @@ void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot) {
       }
       actor->facing = entry->facing;
       actor->collisionFlags = 1;
-      Actor_SetActionCallback(actor, entry->behavior);
+      Actor_SetMovementType(actor, entry->behavior);
       ((struct SpawnActor *)actor)->homeX = actor->x.fixed / Q16_ONE;
       ((struct SpawnActor *)actor)->homeZ = actor->z.fixed / Q16_ONE;
       // An actor placement with a height is lifted half a pixel more and
@@ -189,7 +189,7 @@ s32 ScenePoint_GetPosition(s32 id, s32 *position) {
 /// is one, and empties the slot.
 void Actor_ReleaseAtIndex(u32 actorIndex) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = ObjectTable_Get(actorIndex);
+  struct Actor *actor = Actor_Lookup(actorIndex);
 
   if (actor != NULL) {
     Actor_ReleaseFar(actor);
@@ -197,7 +197,7 @@ void Actor_ReleaseAtIndex(u32 actorIndex) {
   }
 }
 
-u8 *ResourceMetadata_RegisterFar(void *resource, s32 id);
+u8 *Sprite_AddAnimationFar(void *resource, s32 id);
 
 /// Creates a scene's actors on entering it, as The Broken Seal's
 /// Actor_ResetForLeader does: the party leader where the main routine's work
@@ -287,7 +287,7 @@ void Actor_ResetForLeader(s32 table) {
   camera->groundHeight = object->groundHeight;
   Actor_StartCameraFar(camera, object);
   if (work->mode == 3) {
-    u8 *effect = ResourceMetadata_RegisterFar(object->sprite, 266);
+    u8 *effect = Sprite_AddAnimationFar(object->sprite, 266);
 
     effect[5] = 15;
     effect[6] = 9;
@@ -350,7 +350,7 @@ void ObjectTable_Clear(void) {
 }
 
 /// Returns the actor in slot objectId (below 192), or NULL.
-struct Actor *ObjectTable_Get(u32 objectId) {
+struct Actor *Actor_Lookup(u32 objectId) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   if (objectId > 0xbf)
@@ -376,7 +376,7 @@ void ObjectTable_Snapshot(void) {
   s32 limit = 80;
 
   for (i = 0; i < limit; i++) {
-    object = ObjectTable_Get(i);
+    object = Actor_Lookup(i);
     if (object == NULL)
       continue;
     *indices++ = i;
@@ -423,7 +423,7 @@ void Actor_Restore(void) {
   count = 0;
   index = *indices++;
   while (index != 255) {
-    object = ObjectTable_Get(index);
+    object = Actor_Lookup(index);
     if (object != NULL) {
       sprite = object->sprite;
       Dma_Set(copy, object, DMA_COPY_WORDS(sizeof(struct Actor) / 4), REG_DMA3);

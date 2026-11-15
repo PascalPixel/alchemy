@@ -1124,7 +1124,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 s32 gSettlements_BobScript[] = {
-    SC_ARG(3),
+    SC_ANIMATION(3),
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, -px(16)),
     SC_CALL((s32)Settlements_ClearSpriteFlags),
@@ -1132,7 +1132,7 @@ s32 gSettlements_BobScript[] = {
 };
 
 u32 gSettlements_SmokeScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_END,
 };
 

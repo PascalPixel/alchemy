@@ -79,7 +79,7 @@ s32 BattleDjinnMenu_Run(s32 member) {
   s32 redrawList;
 #endif
   struct BattleMenuWork *navigation;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct DjinnRecoveryList *list;
   struct RenderInput *listWindow;
   struct RenderInput *iconWindow;

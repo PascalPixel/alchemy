@@ -31,11 +31,11 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
   scene = Ram_HeapSlots->fieldEffectWork;
   Shop_SaveAndTintFieldPaletteFar(0x20118c);
   Sound_PlayFar(SE_NOTE_LOW);
-  Motion_SetVarCbAndRefresh(id, 1);
+  Actor_RunRepeatedMotion(id, 1);
   Sound_PlayFar(SE_NOTE_MID);
-  Motion_SetVarCbAndRefresh(id, 1);
+  Actor_RunRepeatedMotion(id, 1);
   Sound_PlayFar(SE_NOTE_HIGH);
-  Motion_SetVarCbAndRefresh(id, 1);
+  Actor_RunRepeatedMotion(id, 1);
   wait(20);
 
   // Spin, then leap high.
@@ -79,7 +79,7 @@ void Djinn_RunJupiterJoinEffect(s32 id) {
 
 /// Per-frame update: makes an actor pulse, switching its scale between the two
 /// values of gBattleEffect_PulseScales every 4 frames.
-void BattleEffect_SetObjectAlternatingWords(u8 *object) {
+void FieldEffect_PulseActorScale(u8 *object) {
   u32 *vblankCount = &gVBlankCount;
   u32 *table;
   u32 index;
@@ -160,7 +160,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->limitTurnStep = state;
     effect->state++;
 
-    ((struct AnimationObject *)effect->object)->image.priority =
+    ((struct Sprite *)effect->object)->image.priority =
         owner->sprite->image.priority;
     effect->flags = 0;
     effect->age = 0;
@@ -168,7 +168,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
       Sound_PlayFar(SE_HEAVY_IMPACT);
   } else if (state == 1) {
     if ((s16)effect->age == 3) {
-      ((struct AnimationObject *)effect->object)->image.priority = 0;
+      ((struct Sprite *)effect->object)->image.priority = 0;
       effect->flags = 4;
     }
     if (FieldParticle_HasPendingTarget(effect) == 0)
@@ -177,7 +177,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     if (FieldParticle_HasPendingTarget(effect) == 0) {
       effect->originX = effect->x;
       effect->originZ = effect->z;
-      ((struct AnimationObject *)effect->object)->image.priority = 0;
+      ((struct Sprite *)effect->object)->image.priority = 0;
       effect->flags = 4;
       effect->render = 0;
       effect->state++;

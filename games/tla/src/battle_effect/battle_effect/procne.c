@@ -43,7 +43,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   s32 frame;
   u8 *graphics;
   struct MotionObject *object;
-  struct BattleObj *context;
+  struct BattleObject *context;
   struct Particle *point;
   struct Particle *spark;
   struct Particle *mark;
@@ -651,10 +651,10 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
     for (frame = 0; frame != 208; frame++) {
       if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 48 && frame <= 159) {
         if (mode == DRAGON_FIRE_TIAMAT) {
-          Animation_ApplyChildArgumentFar(work->sprites[0], 8);
-          Animation_ApplyChildArgumentFar(work->sprites[1], 9);
-          Animation_ApplyChildArgumentFar(work->sprites[3], 10);
-          Animation_ApplyChildArgumentFar(work->sprites[4], 11);
+          Sprite_StartAnimationFar(work->sprites[0], 8);
+          Sprite_StartAnimationFar(work->sprites[1], 9);
+          Sprite_StartAnimationFar(work->sprites[3], 10);
+          Sprite_StartAnimationFar(work->sprites[4], 11);
         }
         for (i = 0; i != args->targetCount; i++) {
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_RED_TINT,
@@ -858,16 +858,16 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       }
       if (mode == DRAGON_FIRE_TIAMAT) {
         if (frame == 128) {
-          Animation_ApplyChildArgumentFar(work->sprites[0], 8);
-          Animation_ApplyChildArgumentFar(work->sprites[1], 9);
-          Animation_ApplyChildArgumentFar(work->sprites[3], 10);
-          Animation_ApplyChildArgumentFar(work->sprites[4], 11);
+          Sprite_StartAnimationFar(work->sprites[0], 8);
+          Sprite_StartAnimationFar(work->sprites[1], 9);
+          Sprite_StartAnimationFar(work->sprites[3], 10);
+          Sprite_StartAnimationFar(work->sprites[4], 11);
         }
         if (frame == 176) {
-          Animation_ApplyChildArgumentFar(work->sprites[0], 0);
-          Animation_ApplyChildArgumentFar(work->sprites[1], 1);
-          Animation_ApplyChildArgumentFar(work->sprites[3], 3);
-          Animation_ApplyChildArgumentFar(work->sprites[4], 4);
+          Sprite_StartAnimationFar(work->sprites[0], 0);
+          Sprite_StartAnimationFar(work->sprites[1], 1);
+          Sprite_StartAnimationFar(work->sprites[3], 3);
+          Sprite_StartAnimationFar(work->sprites[4], 4);
         }
         if (alternate == 1)
           BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT_ALTERNATE,

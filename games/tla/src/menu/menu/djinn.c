@@ -925,7 +925,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
   struct DjinnMenuBackdrop *backdrop = menu->backdrop;
   s32 helpWindow = menu->helpWindow;
   s32 listWindow = menu->listWindow;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 window;
   u32 redraw = 4;
   s32 i;
@@ -1542,7 +1542,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 /// Lists owned Djinn by element and index, marking those that are set.
 /// For element -1, entries also encode their party member.
 s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element) {
-  struct BattleUnit *unit = Unit_Get(memberId);
+  struct Unit *unit = Unit_Get(memberId);
   s32 count = 0;
   s32 elementIndex;
   s32 djinnIndex;
@@ -1667,8 +1667,8 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
   s32 firstElement = 0;
   // One constant for its whole life: the closing copy's size.
   s32 size;
-  struct BattleUnit *unit;
-  struct BattleUnit *originalUnit;
+  struct Unit *unit;
+  struct Unit *originalUnit;
   s32 giveElement;
   s32 giveIndex;
   s32 giveSet;
@@ -1688,8 +1688,8 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
   takeElement = menu->pairElement[addPairSlot];
   takeIndex = menu->pairIndex[addPairSlot];
   takeSet = menu->pairEntries[addPairSlot] & 0x8000;
-  originalUnit = Heap_Alloc(sizeof(struct BattleUnit));
-  Iwram_CopyWordsEntry(originalUnit, unit, sizeof(struct BattleUnit));
+  originalUnit = Heap_Alloc(sizeof(struct Unit));
+  Iwram_CopyWordsEntry(originalUnit, unit, sizeof(struct Unit));
 
   if (page == 0) {
     if (previewMode == 3) {
@@ -1907,7 +1907,7 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
     ((struct WindowWork *)Ram_HeapSlots->windowWork)->dirty = 1;
   }
 
-  size = sizeof(struct BattleUnit);
+  size = sizeof(struct Unit);
   if (page == 0)
     Portrait_CreateFar(ownerId, 0, side, window, 0, 0);
   Iwram_CopyWordsEntry(unit, originalUnit, size);

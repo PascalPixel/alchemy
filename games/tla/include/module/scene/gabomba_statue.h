@@ -7,7 +7,6 @@
 #include "types.h"
 
 struct Actor;
-struct Sprite;
 
 struct Unk02004d48 {
   u8 unk00[8];

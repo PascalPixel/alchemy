@@ -125,6 +125,5 @@ void BattleEffect_ArmBg2AffineHBlankDma(void);
 /// Steps the background palette fade.
 void Palette_StepFadeTransfer(void);
 struct BattleEffectParams;
-void BattleEffect_RunBurstShower(struct BattleEffectParams *effect, s32 mode);
 
 #endif

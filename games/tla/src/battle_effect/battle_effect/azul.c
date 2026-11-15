@@ -434,7 +434,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
     }
     if (frame == 10 || frame == 186) {
       for (i = 0; i != args->targetCount; i++) {
-        struct BattleObj *slot = BattleObject_GetFar(args->targets[i]);
+        struct BattleObject *slot = BattleObject_GetFar(args->targets[i]);
         s32 *actor = slot->object;
         void *record;
 
@@ -444,7 +444,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         if (frame == 10) {
           for (j = 0; (record = GetMotionRecordFar(slot->object, j)) != 0;
                j++) {
-            Sprite_RemoveAnimationFar(record, (s32)slot->effectEntry);
+            Sprite_RemoveAnimationFar(record, (s32)slot->shadowEntry);
           }
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_BLUE_TINT,
                                    POSE_DAMAGE, i, 8);

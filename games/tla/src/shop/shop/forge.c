@@ -55,7 +55,7 @@ s32 Forge_RollResult(s32 itemId) {
 
 /// Returns 1 when the party member carries anything the forge takes.
 s32 Forge_UnitHasMaterial(s32 unitId) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   u16 *inventory;
   s32 slot;
 

@@ -36,7 +36,7 @@ s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 void FieldPsynergy_WatchSandGround(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
-  struct Actor *object = ObjectTable_Get(party->leaderActorId);
+  struct Actor *object = Actor_Lookup(party->leaderActorId);
   s32 reason = 0;
 
   if ((s8)party->unk2c3 != 0)

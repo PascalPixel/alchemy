@@ -165,7 +165,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
 
   i = 0;
   if (i < count) {
-    struct BattleUnit *unit;
+    struct Unit *unit;
     u8 *cursor;
     s32 remaining;
 
@@ -221,7 +221,7 @@ void BattleParty_ClearGuards(void) {
   count += BattleUnit_ListIds(2, ids + count);
   if (count > 0) {
     do {
-      struct BattleUnit *unit = Unit_Get(*id++);
+      struct Unit *unit = Unit_Get(*id++);
 
       unit->defendLevel = 0;
       unit->immobile = 0;
@@ -291,7 +291,7 @@ void BattleSummon_UpdateAvailability(void) {
       s32 partySlot;
 
       for (partySlot = 0; partySlot < partySize; partySlot++) {
-        struct BattleUnit *member = Unit_Get(partyMembers[partySlot]);
+        struct Unit *member = Unit_Get(partyMembers[partySlot]);
 
         totals[element] += member->djinnOwnedCounts[element];
       }

@@ -20,7 +20,7 @@ s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
   menu = Ram_HeapSlots->menuWork;
   itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
   item = Item_GetDirectFar(itemId);
-  useResult = Ability_ApplyToTargets(OWNER_ACTION_ID_MASK & item->abilityId,
+  useResult = Ability_ApplyToTargets(PSYNERGY_ABILITY_MASK & item->abilityId,
                                      memberId, targetId, 1);
   if (useResult != -1) {
     item = Item_GetDirectFar(unit->inventory[slot]);
@@ -47,8 +47,8 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                            s32 fixedScale) {
   struct BattleAct *effect;
   struct ItemMenuWork *menu;
-  struct BattleUnit *target;
-  struct BattleUnit *caster;
+  struct Unit *target;
+  struct Unit *caster;
   s32 partyResultShown;
   s32 changed;
   u8 targetIndex;
@@ -132,7 +132,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         randomAdjust = 1 - randomAdjust;
       }
 
-      switch (effectId & OWNER_ACTION_ID_MASK) {
+      switch (effectId & PSYNERGY_ABILITY_MASK) {
       case 0x104:
         target->baseHp += amount + randomAdjust;
         messageOffset = 0x10;

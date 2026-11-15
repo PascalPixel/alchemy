@@ -257,7 +257,7 @@ s32 Party_GetCharacterSpriteFar(s32 id);
 /// passes between.
 void Menu_CreatePairEntryObjects(s32 first, s32 second) {
   struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuWork;
-  struct AnimationObject *figure;
+  struct Sprite *figure;
   s32 id;
   s32 i;
 
@@ -277,7 +277,7 @@ void Menu_CreatePairEntryObjects(s32 first, s32 second) {
       menu->memberSpriteIds[i] = id;
       figure = Sprite_CreateFar(Party_GetCharacterSpriteFar(id));
       if (figure != NULL) {
-        Animation_ApplyChildArgumentFar(figure, 1);
+        Sprite_StartAnimationFar(figure, 1);
         figure->image.priority = 0;
         ((u8 *)figure)[26] = 0;
       }
@@ -307,7 +307,7 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
     menu->memberSpriteIds[i] = owners[first + i];
     object = Sprite_CreateFar(Party_GetCharacterSpriteFar(owners[first + i]));
     if (object != NULL) {
-      Animation_ApplyChildArgumentFar(object, 1);
+      Sprite_StartAnimationFar(object, 1);
       ((s8 *)object)[9] &= -13;
       object[26] = 0;
     }
@@ -371,7 +371,7 @@ void DjinnFigures_UpdateTopRow(void) {
   if (menu->figuresShown == 0)
     return;
   for (i = 0; i <= 3; i++) {
-    struct AnimationObject *figure = menu->figures[i];
+    struct Sprite *figure = menu->figures[i];
 
     if (figure != NULL) {
       s32 placeY = 0x00728000 - (menu->memberY[i] << 15);
@@ -419,7 +419,7 @@ void DjinnFigures_InitializeTopRow(void) {
   for (i = 0; i < 4; i++) {
     object = Sprite_CreateFar(gDjinnFigures_SpriteIds[i]);
     if (object != NULL) {
-      Animation_ApplyChildArgumentFar(object, 2);
+      Sprite_StartAnimationFar(object, 2);
       object[9] &= -13;
     }
     menu->figures[i] = object;
@@ -458,7 +458,7 @@ void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation) {
   }
   object = Sprite_CreateFar(gDjinnFigures_SpriteIds[kind]);
   if (object != NULL) {
-    Animation_ApplyChildArgumentFar(object, animation);
+    Sprite_StartAnimationFar(object, animation);
     object[9] &= -13;
   }
   menu->figures[index] = object;
@@ -591,7 +591,7 @@ void MenuPanel_DrawEntryList(struct RenderInput *panel, s32 x, s32 y,
 /// Fills ailments[0..4] with party member memberId's statuses:
 /// down (only when requested is 1), poison or venom, curse and haunt.
 s32 StatusScreen_BuildAvailability(u8 *output, s32 requested, s32 id) {
-  struct BattleUnit *state;
+  struct Unit *state;
   s32 i;
   s32 zero;
   s32 count;

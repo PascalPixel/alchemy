@@ -60,7 +60,7 @@ s32 Enemy_HasSpriteRoom(s32 classId) {
 s32 EnemySprite_LoadIntoSlots(s32 unit) {
   s32 pass;
   struct BattleWork *table = Ram_HeapSlots->battleWork;
-  struct BattleUnit *actor = Unit_Get(unit);
+  struct Unit *actor = Unit_Get(unit);
   s32 singleSlot = BattleSprite_IsSmall(actor->enemyId);
   /* FAKEMATCH(temporary): result cleared a halfword at a time. */
   union {
@@ -157,7 +157,7 @@ s32 BattleUnit_GetWeaponKind(s32 key) {
 /// Returns the battle sprite of a character holding its equipped weapon, from
 /// that character's table by the weapon's kind, or 0 with no weapon.
 s32 BattleUnit_GetWeaponSprite(s32 owner) {
-  struct BattleUnit *unit = Unit_Get(owner);
+  struct Unit *unit = Unit_Get(owner);
   s32 slot = Inventory_FindEquippedFar(owner, EQUIP_WEAPON);
   s32 result = 0;
 

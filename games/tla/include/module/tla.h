@@ -11,7 +11,7 @@
 #include "module/scene/scene.h"
 #include "system/ram_buffer.h"
 
-struct AnimationEntry;
+struct SpriteAnimation;
 struct RenderInput;
 struct WindowSprite;
 

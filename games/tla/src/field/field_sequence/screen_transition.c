@@ -72,9 +72,9 @@ void Leader_StepAwayFromNearbyActor(void) {
   s32 dz;
   s32 i;
 
-  leader = ObjectTable_Get(Party_GetLeaderActor());
+  leader = Actor_Lookup(Party_GetLeaderActor());
   for (i = 0; i <= 15; i++) {
-    other = ObjectTable_Get(i + 64);
+    other = Actor_Lookup(i + 64);
     dx = leader->x.fixed - other->x.fixed;
     dz = leader->z.fixed - other->z.fixed;
     if (dx > -0x100000 && dx < 0x100000)
@@ -245,7 +245,7 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
     return;
 
   {
-    struct Actor *found = ObjectTable_Get(Party_GetLeaderActor());
+    struct Actor *found = Actor_Lookup(Party_GetLeaderActor());
     actor->acceleration = Q16_ONE;
     actor->speedLimit = px(2);
     actor->motionFlags = 0;
@@ -267,7 +267,7 @@ void ItemDisplay_ShowPicture(struct Actor *object, s32 flags) {
   struct Actor *owner;
 
   if (object != 0) {
-    owner = ObjectTable_Get(Party_GetLeaderActor());
+    owner = Actor_Lookup(Party_GetLeaderActor());
     if (flags & 1) {
       Actor_SetSpriteFlagsFar(object, 0);
       Actor_StartScriptFar(object, gFieldEffect_ParticleEmitterScript);
@@ -305,7 +305,7 @@ struct EffectVisual__rising {
 /// Shows the picture of item 36 pixels above the party leader for 80 frames;
 /// flags bit 0 adds sparkles and bit 1 raises it as a found item.
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
-  struct Actor *owner = ObjectTable_Get(Party_GetLeaderActor());
+  struct Actor *owner = Actor_Lookup(Party_GetLeaderActor());
   u8 *buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   struct Actor *object = Actor_CreateFar(
       489, owner->x.fixed, owner->y.fixed + 0x240000, owner->z.fixed);
@@ -417,7 +417,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
       continue;
     if (SceneItem_FindPosition(id, result))
       continue;
-    object = ObjectEvent_GetObject(i + 64);
+    object = TreasureSpot_GetActor(i + 64);
     if (object == NULL)
       continue;
     // A tile event's object holds its map cell, marked by this value.
@@ -698,7 +698,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     viewInverse = &map->viewX;
     ax = viewInverse[0] & 0xffff0000;
     cameraY = viewInverse[1] & 0xffff0000;
-    object = ObjectTable_Get(Party_GetLeaderActor());
+    object = Actor_Lookup(Party_GetLeaderActor());
     centerX = (object->x.fixed - ax) / Q16_ONE;
     centerY = ((object->z.fixed - object->y.fixed) - cameraY) / Q16_ONE - 16;
     *scanlineData++ = state->active;
@@ -789,7 +789,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     viewLeader = &map->viewX;
     ax = viewLeader[0] & 0xffff0000;
     cameraY = viewLeader[1] & 0xffff0000;
-    object = ObjectTable_Get(Party_GetLeaderActor());
+    object = Actor_Lookup(Party_GetLeaderActor());
     centerX = (object->x.fixed - ax) / Q16_ONE;
     centerY = ((object->z.fixed - object->y.fixed) - cameraY) / Q16_ONE - 16;
     *scanlineData++ = state->mask;
@@ -827,7 +827,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     viewLeaderLow = &map->viewX;
     ax = viewLeaderLow[0] & 0xffff0000;
     cameraY = viewLeaderLow[1] & 0xffff0000;
-    object = ObjectTable_Get(Party_GetLeaderActor());
+    object = Actor_Lookup(Party_GetLeaderActor());
     centerX = (object->x.fixed - ax) / Q16_ONE;
     centerY = ((object->z.fixed - object->y.fixed) - cameraY) / Q16_ONE - 8;
     *scanlineData++ = state->mask;
@@ -1900,7 +1900,7 @@ void FieldEffect_StartFadeOverlay(void *object) {
   Io_Write16(31, &REG_BLDY);
   Dma_Fill32Cell(fill, 0, work, 28);
   if (object == NULL)
-    object = ObjectTable_Get(gMainRoutineWork.leaderActorId);
+    object = Actor_Lookup(gMainRoutineWork.leaderActorId);
   work[6] = (u32)object;
 }
 
@@ -1972,7 +1972,7 @@ void FieldEffect_StartBlankOverlay(s32 object) {
   Task_Add(BlankOverlay_DrawMarks, 0x480);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   if (object == 0)
-    object = ObjectTable_Get(gMainRoutineWork.leaderActorId);
+    object = Actor_Lookup(gMainRoutineWork.leaderActorId);
   *(s32 *)(work + 24) = object;
 }
 
@@ -2033,8 +2033,8 @@ void EffectSprite_InitFromSlot94Blended(struct EffectSprite *sprite, s32 a,
 
 /// Returns the speaker definition of sprite id from gSpeakerDefinitions, or its
 /// last entry (the 244th), the default, when there is none.
-struct BattleFxDefinition *Speaker_FindDefinition(u32 id) {
-  struct BattleFxDefinition *entry = gSpeakerDefinitions;
+struct SpeakerDefinition *Speaker_FindDefinition(u32 id) {
+  struct SpeakerDefinition *entry = gSpeakerDefinitions;
   u32 index = 0;
 
   if (entry->id != id) {
@@ -2052,7 +2052,7 @@ struct BattleFxDefinition *Speaker_FindDefinition(u32 id) {
 /// that actor has no animated sprite or its sprite-id pointer is absent.
 s32 Speaker_GetActorSprite(u32 objectId) {
   struct BattleRenderObject *object =
-      (struct BattleRenderObject *)ObjectTable_Get(objectId);
+      (struct BattleRenderObject *)Actor_Lookup(objectId);
 
   if (object->kind != 1 || object->animation == NULL ||
       object->animation->value28 == NULL) {

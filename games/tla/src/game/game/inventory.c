@@ -13,7 +13,7 @@ struct ItemDefinition *Item_GetDirect(s32 item) {
 /// Returns whether the character can equip the item: the bit of its equipMask
 /// for who the unit is, and 0 for anyone past PIERS.
 s32 Item_CanUnitEquipDirect(s32 unitId, s32 itemId) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   struct ItemDefinition *item = Item_GetDirect(itemId);
   s32 equipMask = item->equipMask;
 
@@ -59,7 +59,7 @@ s32 Item_GetEquipmentGroup(s32 itemId) {
 /// Returns how many of the item in `slot` the unit carries (0 for an empty
 /// slot). The entry stores one less than the count.
 s32 Inventory_GetQuantity(s32 unitId, s32 slot) {
-  u32 entry = ((struct BattleUnit *)Unit_Get(unitId))->inventory[slot];
+  u32 entry = ((struct Unit *)Unit_Get(unitId))->inventory[slot];
 
   if ((entry & INVENTORY_ITEM_ID_MASK) == 0)
     return 0;
@@ -69,7 +69,7 @@ s32 Inventory_GetQuantity(s32 unitId, s32 slot) {
 /// Counts filled inventory slots up to the first empty slot; the inventory is
 /// kept closed up, so this is how many items the unit carries.
 s32 Inventory_Count(s32 unitId) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   s32 count;
 
   for (count = 0; count < INVENTORY_SLOTS; count++) {
@@ -115,7 +115,7 @@ s32 PartyInventory_CountFreeSlots(void) {
 /// the first free slot. A full matching stack fails immediately, even if
 /// another slot is free.
 s32 Inventory_AddItem(s32 unitId, s32 itemId) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   const struct ItemDefinition *item = Item_GetDirect(itemId);
   s32 slot;
 
@@ -191,7 +191,7 @@ s32 PartyInventory_FindRoom(s32 itemId) {
 /// Returns the first slot holding `itemId` (any quantity, equipped or not), or
 /// -1.
 s32 Inventory_Find(s32 unitId, s32 itemId) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   s32 slot;
 
   for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
@@ -226,7 +226,7 @@ s32 PartyInventory_FindMember(s32 itemId) {
 /// and stats. Returns 0, -1 when the unit cannot equip it, or -2 when the item
 /// it would replace is cursed on.
 s32 Inventory_Equip(s32 unitId, s32 slot) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   u32 inventoryEntry = unit->inventory[slot];
   struct ItemDefinition *item;
   u8 type;
@@ -263,7 +263,7 @@ s32 Inventory_Equip(s32 unitId, s32 slot) {
 
 /// Returns the slot of the equipped item of `type`, or -1.
 s32 Inventory_FindEquipped(s32 unitId, s32 type) {
-  struct BattleUnit *base = Unit_Get(unitId);
+  struct Unit *base = Unit_Get(unitId);
   s32 index;
   const struct ItemDefinition *item;
 
@@ -280,7 +280,7 @@ s32 Inventory_FindEquipped(s32 unitId, s32 type) {
 }
 
 /// Returns the definition of the unit's equipped item of `type`, or NULL.
-struct ItemDefinition *Inventory_GetEquippedDefinition(struct BattleUnit *unit,
+struct ItemDefinition *Inventory_GetEquippedDefinition(struct Unit *unit,
                                                        s32 type) {
   s32 slot;
   struct ItemDefinition *item;
@@ -297,7 +297,7 @@ struct ItemDefinition *Inventory_GetEquippedDefinition(struct BattleUnit *unit,
 }
 
 /// Returns the id of the unit's equipped item of `type`, or 0.
-s32 Inventory_GetEquippedItem(struct BattleUnit *unit, s32 type) {
+s32 Inventory_GetEquippedItem(struct Unit *unit, s32 type) {
   s32 slot;
 
   for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
@@ -315,7 +315,7 @@ s32 Inventory_GetEquippedItem(struct BattleUnit *unit, s32 type) {
 /// Empties an inventory slot outright, closes the inventory up and
 /// recalculates the unit; returns 2, as Inventory_Remove does for a last item.
 s32 Inventory_ClearSlot(s32 unitId, s32 slot) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
 
   unit->inventory[slot] = 0;
   Inventory_CompactSlots((s16 *)unit->inventory);
@@ -327,7 +327,7 @@ s32 Inventory_ClearSlot(s32 unitId, s32 slot) {
 /// The Psynergy list is not rebuilt, so a removed item's Psynergy stays listed
 /// until something rebuilds it.
 s32 Inventory_Remove(s32 unitId, s32 slot) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   u16 item = unit->inventory[slot];
   s32 result = INVENTORY_REMOVE_EMPTY_SLOT;
 
@@ -348,7 +348,7 @@ s32 Inventory_Remove(s32 unitId, s32 slot) {
 /// Removes one item as Inventory_Remove does, and puts a rare item back into
 /// circulation (its counter goes up by one) for the shops to sell.
 s32 Inventory_Discard(s32 unitId, s32 slot) {
-  s32 item = ((struct BattleUnit *)Unit_Get(unitId))->inventory[slot];
+  s32 item = ((struct Unit *)Unit_Get(unitId))->inventory[slot];
   s32 removalResult = Inventory_Remove(unitId, slot);
 
   if (removalResult != INVENTORY_REMOVE_EMPTY_SLOT) {
@@ -361,7 +361,7 @@ s32 Inventory_Discard(s32 unitId, s32 slot) {
 /// Returns whether the item in `slot` may be taken off: 0 yes, 1 it is equipped
 /// and cannot be unequipped, 8 the slot is empty.
 s32 Inventory_CheckUnequip(s32 unitId, s32 slot) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   s32 entry = unit->inventory[slot];
   s32 itemId;
   struct ItemDefinition *item;
@@ -385,7 +385,7 @@ s32 Inventory_CheckUnequip(s32 unitId, s32 slot) {
 /// slot is empty, or bit 2 the item is indispensable and bit 1 it is equipped
 /// and cannot be taken off.
 s32 Inventory_CheckDiscard(s32 unitId, s32 slot) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   s32 raw = unit->inventory[slot];
   s32 itemId;
   struct ItemDefinition *item;
@@ -430,7 +430,7 @@ s32 PartyInventory_Discard(s32 itemId) {
 
 /// Marks the item in `slot` broken; returns -1 for an empty slot.
 s32 Inventory_Break(s32 unitId, s32 slot) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
 
   if (unit->inventory[slot] == 0)
     return -1;
@@ -440,7 +440,7 @@ s32 Inventory_Break(s32 unitId, s32 slot) {
 
 /// Clears the broken mark of the item in `slot`; returns -1 for an empty slot.
 s32 Inventory_Repair(s32 unitId, s32 slot) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
 
   if (unit->inventory[slot] == 0)
     return -1;
@@ -503,7 +503,7 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
 /// Counts matching nonstackable items, or the quantity in the first matching
 /// stack.
 s32 Inventory_CountItem(s32 unitId, s32 itemId) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   s32 count = 0;
   s32 slot;
 

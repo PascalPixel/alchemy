@@ -435,19 +435,19 @@ void Garoh_WerewolfPeersFromCrevice(void) {
   s32 facing;
 
   void Garoh_OpenCrevice(s32 id) {
-    BattleEffect_LoadActionEffectResources(ABILITY_REVEAL, 1);
+    FieldPsynergy_LoadResources(ABILITY_REVEAL, 1);
     FieldPsynergy_SetupActorPair(id, 0);
     FieldPsynergy_RunHandler(1);
     BattleEffect_StopMainActor();
-    BattleEffect_CleanupSceneObjects();
+    FieldPsynergy_End();
   }
 
   void Garoh_CloseCrevice(s32 id) {
-    BattleEffect_LoadActionEffectResources(ABILITY_REVEAL, 1);
+    FieldPsynergy_LoadResources(ABILITY_REVEAL, 1);
     FieldPsynergy_SetupActorPair(id, 0);
     FieldPsynergy_RunHandler(3);
     BattleEffect_StopMainActor();
-    BattleEffect_CleanupSceneObjects();
+    FieldPsynergy_End();
   }
 
   flag = Event_GetFlag(FLAG_WEREWOLF_PEERED_OUT);
@@ -960,12 +960,12 @@ void Garoh_PuffFrom(s32 id) {
 
 #define DEFINE_GAROH_PLAY_EFFECT(name, n1, n2)                                 \
   void name(s32 actor) {                                                       \
-    BattleEffect_LoadActionEffectResources(ABILITY_REVEAL, 1);                 \
+    FieldPsynergy_LoadResources(ABILITY_REVEAL, 1);                 \
     FieldPsynergy_SetupActorPair(actor, 0);                                    \
     FieldPsynergy_RunHandler(n1);                                              \
     MapGrid_CopyCellsLayered(n2, 5, 3, 3, 19, 5);                              \
     BattleEffect_StopMainActor();                                              \
-    BattleEffect_CleanupSceneObjects();                                        \
+    FieldPsynergy_End();                                        \
   }
 
 DEFINE_GAROH_PLAY_EFFECT(Garoh_OpenCaveCrevice, 1, 44)

@@ -96,7 +96,7 @@ s32 Battle_GetUnitAtPlace__presentation(s32 tag) __asm__(
 /// shown, or ACTION_NOTHING_TO_SHOW.
 s32 BattleActionRun_Build(struct BattleActionRecord *request,
                           struct BattlePlan *plan) {
-  struct BattleUnit *actor = Unit_Get(request->unitId);
+  struct Unit *actor = Unit_Get(request->unitId);
   struct ActionRunBattleWork *battle =
       (struct ActionRunBattleWork *)Ram_HeapSlots->battleWork;
   s32 selectedTargetId;
@@ -157,7 +157,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
               if (targetId == BATTLE_UNIT_REMOVED)
                 continue;
               if (!includeDowned &&
-                  ((struct BattleUnit *)Unit_Get(targetId))->hp == 0)
+                  ((struct Unit *)Unit_Get(targetId))->hp == 0)
                 continue;
               plan->targetMultiplier[targetCount] = 1;
               plan->targetOffset[targetCount] = place - aimedPlace;
@@ -170,7 +170,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
               if (targetId == BATTLE_UNIT_REMOVED)
                 continue;
               if (!includeDowned &&
-                  ((struct BattleUnit *)Unit_Get(targetId))->hp == 0)
+                  ((struct Unit *)Unit_Get(targetId))->hp == 0)
                 continue;
               plan->targetMultiplier[targetCount] = 1;
               plan->targetOffset[targetCount] = place - aimedPlace;
@@ -476,7 +476,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   } break;
 
   case COMMAND_DJINN:
-    abilityId = Djinn_GetDefinitionHeaderFar(DJINN_ELEMENT(request->parameter),
+    abilityId = Djinn_GetAbilityIdFar(DJINN_ELEMENT(request->parameter),
                                              DJINN_INDEX(request->parameter));
     if (!Djinn_IsSetFar(request->unitId, DJINN_ELEMENT(request->parameter),
                         DJINN_INDEX(request->parameter))) {
@@ -586,7 +586,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   }
 
   if (abilityId == ABILITY_ATTACK) {
-    struct BattleUnit *target = Unit_Get(plan->targetIds[0]);
+    struct Unit *target = Unit_Get(plan->targetIds[0]);
 
     plan->abilityId = ABILITY_ATTACK;
     plan->element = Item_GetEquippedElementFar(request->unitId);

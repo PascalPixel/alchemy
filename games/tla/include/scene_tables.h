@@ -83,7 +83,7 @@ struct SceneEntrance {
 };
 
 /// An exit table's header word: the scene whose exits follow, named by its
-/// name (`SCENE_EXITS(Alhafra1)`). The table is read by Scene_TakeExit as the
+/// name (`SCENE_EXITS(Alhafra)`). The table is read by Scene_TakeExit as the
 /// scene ends, with the exit kind it ended on.
 #define SCENE_EXITS(scene) ((u32)&SceneId_##scene)
 /// One exit: exit kind `exit` leads to `entrance` of the scene `scene`.
@@ -111,7 +111,7 @@ struct ActorPlacement {
   s16 sprite;    ///< the actor's sprite; -1 ends the table
   s16 condition; ///< CONDITION_ALWAYS (-1), or a flag condition
   /// A movement type (enum MovementType) or an actor script, for
-  /// Actor_SetActionCallback.
+  /// Actor_SetMovementType.
   s32 behavior;
   s32 x;         ///< 16.16 fixed-point pixels
   s32 y;         ///< 16.16 fixed-point pixels
@@ -128,7 +128,7 @@ struct ActorPlacement {
    Q16(z), facing,    talkFacing, flags}
 
 /// The movement types an actor placement's behavior can name, which
-/// Actor_SetActionCallback turns into scripts: The Broken Seal's first six,
+/// Actor_SetMovementType turns into scripts: The Broken Seal's first six,
 /// and its reset script moved to 10. Types 7, 8, 9 and 11 are scripts of
 /// The Lost Age's own.
 enum MovementType {
@@ -235,7 +235,7 @@ enum ExitStyle {
 
 /// What an examine trigger is on, EXAMINE_TRIGGER()'s control bits 8..4,
 /// as The Broken Seal's, with the pond added. Target n shows message
-/// MsgKey0dc4 + n, "<leader> checked the ...", as the leader checks it, unless
+/// MsgTileChecked + n, "<leader> checked the ...", as the leader checks it, unless
 /// the trigger has subject bit 10; target 0 shows nothing.
 enum ExamineTarget {
   EXAMINE_SILENT = 0,

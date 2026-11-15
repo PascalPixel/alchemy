@@ -531,7 +531,7 @@ enum ProjectileVolleyMode {
 
 // The declarations the parts share.
 
-struct AnimationEntry;
+struct SpriteAnimation;
 struct BattleEffectParams;
 struct ScreenPoint;
 struct Particle;
@@ -621,7 +621,7 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY);
 void Camera_ApplyVerticalShake(s32 range);
 
 // gaia.c
-struct AnimationEntry *AnimationObject_AllocateEmpty(void);
+struct SpriteAnimation *AnimationObject_AllocateEmpty(void);
 
 // spider_web.c
 // Builds a blitter in a heap slot: BattleEffect_BuildBlitter(slot, 7, 7,
@@ -751,7 +751,7 @@ struct PoolEntry *Render_AllocateModelList(s32 count);
 void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 
 // Routines of other banks the parts call.
-void Animation_ApplyChildArgumentFar(void *object, s32 value);
+void Sprite_StartAnimationFar(void *object, s32 value);
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void BattleBackground_LoadFar(s32 layer, s32 resource, s32 mode);
 void BattleBackground_SetModeFar(s32 mode, s32 background, s32 speed);

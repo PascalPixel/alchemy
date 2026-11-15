@@ -211,7 +211,7 @@ s32 Menu_SelectCoinsOrMedals();
 #define TOSS_WINDOW_WIDTH 9
 #endif
 
-#define WEIGHT(i) ((s8)gMainRoutineWork.unk13d[i])
+#define WEIGHT(i) ((s8)gMainRoutineWork.prizeWeights[i])
 
 /// The toss: the party picks what to throw and how many, the coins fly, and
 /// what lands in the spring wins its prize, as in Tolbi's spring game.
@@ -407,7 +407,7 @@ toss:
         LemuriaSpring_GivePrize((s32)minusOne);
       } else {
         for (prize = 0; prize < result * 3 + 3; prize++)
-          total += (s8)gMainRoutineWork.unk13d[prize];
+          total += (s8)gMainRoutineWork.prizeWeights[prize];
         prizeRoll = (u32)(Random16() * total) >> 16;
         for (prize = 0; prize < 15; prize++) {
           prizeRoll -= WEIGHT(prize);
@@ -418,7 +418,7 @@ toss:
           prize = 14;
         LemuriaSpring_GivePrize(gLemuriaSpring_MedalPrizes[prize]);
         if (WEIGHT(prize) > 1)
-          gMainRoutineWork.unk13d[prize] = WEIGHT(prize) / 2;
+          gMainRoutineWork.prizeWeights[prize] = WEIGHT(prize) / 2;
       }
     }
   }

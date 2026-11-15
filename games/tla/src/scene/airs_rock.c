@@ -231,7 +231,7 @@ void AirsRock_ExamineWindStone(void) {
   Event_End();
 }
 
-s32 Map_ClearLayerEntryFlag();
+s32 TilesetAnim_Resume();
 
 /// Walking into the rock's door: it opens and the leader goes inside.
 void AirsRock_EnterTheRock(void) {
@@ -239,7 +239,7 @@ void AirsRock_EnterTheRock(void) {
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(64, 64, 83, 35, 1, 2);
-  Map_ClearLayerEntryFlag(0);
+  TilesetAnim_Resume(0);
   FieldEvent_Wait(45);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_WalkTo(gMainRoutineWork.leaderActorId, 312, 680);
@@ -987,7 +987,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
           8 ==
       212) {
   end:
-    Event_PlayCueNearFocus(shot, cue);
+    Actor_PlaySoundInView(shot, cue);
     ((struct Shot *)shot)->unk63 = 0;
     shot->update = 0;
     if (shot->facing == 0xc000)
@@ -1061,7 +1061,7 @@ void AirsRock_StatueBreathesWhirlwind(struct Actor *object) {
     return;
   if (object->timer == 240) {
     if (!Event_GetFlag(FLAG_RIDING_WHIRLWIND))
-      Event_PlayCueNearFocus(object, 202);
+      Actor_PlaySoundInView(object, 202);
     if (object->facing == 0xc000) {
       position.x = object->x.fixed;
       position.z = object->z.fixed;
@@ -1980,20 +1980,20 @@ const s32 *gFieldEffect_DurationScripts[] = {
 
 s32 gAirsRock_WindStoneScript[] = {
     SC_SET(SW_SCALE_Y, 0x18000),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_CALL((s32)AirsRock_ClearScriptedActorSpriteFlags),
     SC_END,
 };
 
 u32 gAirsRock_WhirlwindFadesScript[] = {
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(12),
     SC_FREE,
 };
 
 u32 gAirsRock_WhirlwindRisesScript[] = {
     SC_WAIT(60),
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(12),
     SC_FREE,
 };

@@ -782,7 +782,7 @@ void StaffCredit_SpawnGrowingPair(struct Actor *parent) {
       child->timer = 0;
       child->watchedActor = parent;
       if (sprite != NULL) {
-        Animation_ApplyChildArgument((struct ActorSpriteView *)sprite, 0);
+        Sprite_StartAnimation((struct ActorSpriteView *)sprite, 0);
         sprite->nextFrame = 0;
         VramCache_FreeEntry(sprite->vramBlock);
         sprite->vramBlock = work->vramBlock;

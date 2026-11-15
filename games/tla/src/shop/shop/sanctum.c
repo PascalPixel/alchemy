@@ -16,7 +16,7 @@
 /// `unitId`: 20 a level to revive, 10 to cure poison, 50 to exorcise and 10 a
 /// level to remove a curse.
 s32 Sanctum_ServicePrice(s32 unitId, s32 serviceKind) {
-  u8 level = ((struct BattleUnit *)Unit_Get(unitId))->level;
+  u8 level = ((struct Unit *)Unit_Get(unitId))->level;
   s32 donation = 0;
 
   if (serviceKind == SANCTUM_SERVICE_REVIVE) {
@@ -34,7 +34,7 @@ s32 Sanctum_ServicePrice(s32 unitId, s32 serviceKind) {
 /// Returns 1 when a party member needs the service: down for a revive, poisoned
 /// for a cure, haunted for an exorcism, cursed for removing a curse.
 s32 Sanctum_NeedsService(s32 unitId, s32 serviceKind) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   s32 eligible = 0;
 
   if ((serviceKind == SANCTUM_SERVICE_REVIVE && unit->hp <= 0) ||
@@ -340,7 +340,7 @@ s32 Sanctum_RunPartyService(void) {
 /// Gives the party member the service: full HP for a revive, the poison or the
 /// haunting lifted, or every cursed item it wears taken off.
 void Sanctum_ApplyService(s32 unitId, s32 serviceKind) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   unit = Unit_Get(unitId);
   if (serviceKind == SANCTUM_SERVICE_REVIVE) {
@@ -396,9 +396,9 @@ void Sanctum_HighlightMembers(struct RenderInput *window, s32 selected) {
 
       if (shop->partyMemberIcons[i] != 0) {
         if (first + i == selected)
-          Animation_ApplyChildArgumentFar(shop->partyMemberIcons[i], 30);
+          Sprite_StartAnimationFar(shop->partyMemberIcons[i], 30);
         else
-          Animation_ApplyChildArgumentFar(shop->partyMemberIcons[i], 1);
+          Sprite_StartAnimationFar(shop->partyMemberIcons[i], 1);
         shop->partyMemberScale[i] = Q16_ONE;
         if (!Sanctum_NeedsService(unitId, serviceKind))
           shop->partyMemberScale[i] = Q16_ONE * 7 / 10;
@@ -489,7 +489,7 @@ void Sanctum_UpdateBurst(void) {
                                           (Random16() * 7) >> 16);
 }
 
-void Animation_ApplyChildValueFar(void *object, s32 arg);
+void Sprite_SetAnimationSpeedFar(void *object, s32 arg);
 
 /// Plays the service's burst on a party member's icon: its tune, the colours
 /// tinted, and 18 sparkles flying in around the icon as it changes colour.
@@ -507,7 +507,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Sound_PlayFar(gSanctum_ServiceTunes[shop->action]);
   Shop_SaveAndTintFieldPalette(0x00202108);
-  Animation_ApplyChildValueFar(shop->partyMemberIcons[member], 0);
+  Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member], 0);
   wait(20);
   taskPriority = 0x480;
   Task_Add(Sanctum_UpdateBurst, taskPriority);
@@ -574,7 +574,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   }
 
   Task_Remove(Sanctum_UpdateBurst);
-  Animation_ApplyChildValueFar(shop->partyMemberIcons[member], 16);
+  Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member], 16);
   Shop_RestoreFieldPalette();
   wait(30);
   shop->cursor.anchor->motion = savedCursorMode;

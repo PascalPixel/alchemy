@@ -1462,7 +1462,7 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
     }
     for (i = 0; i != 4; i++) {
       s16 *stats =
-          &((struct BattleUnit *)Unit_Get(gClear_ImportedUnits[i]))->baseHp;
+          &((struct Unit *)Unit_Get(gClear_ImportedUnits[i]))->baseHp;
       s32 at = i * 8;
 
 #define WORD (*(u32 *)((u8 *)packedStats + at))
@@ -1485,7 +1485,7 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
   }
 
   for (i = 0; i != 4; i++) {
-    struct BattleUnit *unit = Unit_Get(gClear_ImportedUnits[i]);
+    struct Unit *unit = Unit_Get(gClear_ImportedUnits[i]);
 
     *(u8 *)&unit->level = levelBits >> (i * 7) & 0x7f;
 #if TLA_PATCH_1
@@ -1495,7 +1495,7 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
 
   Djinn_GetRecoveryTable(0)->list.count = 0;
   for (i = 0; i != 4; i++) {
-    struct BattleUnit *unit = Unit_Get(gClear_ImportedUnits[i]);
+    struct Unit *unit = Unit_Get(gClear_ImportedUnits[i]);
 
     for (n = 0; n != 4; n++)
       Iwram_ClearWordsEntry(unit->djinnHeld, 40);
@@ -1525,7 +1525,7 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
     position = 39;
     bit = 0;
     for (i = 0; i != 4; i++) {
-      struct BattleUnit *unit = Unit_Get(gClear_ImportedUnits[i]);
+      struct Unit *unit = Unit_Get(gClear_ImportedUnits[i]);
 
       for (n = 0; n != 15; n++) {
         unit->inventory[n] =
@@ -1542,7 +1542,7 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
     position = 107;
     bit = -1;
     for (i = 0; i != 4; i++) {
-      struct BattleUnit *unit = Unit_Get(gClear_ImportedUnits[i]);
+      struct Unit *unit = Unit_Get(gClear_ImportedUnits[i]);
 
       for (m = 0; m != 23; m++) {
         j = 0;
@@ -1620,7 +1620,7 @@ s32 Clear_PackPartyData(s32 unused, s32 mode, u8 *out) {
   i = 0;
   pos = 4;
   for (; i != 4; i++) {
-    struct BattleUnit *unit = Unit_Get(gClear_PackedUnits[i]);
+    struct Unit *unit = Unit_Get(gClear_PackedUnits[i]);
     struct UnitBaseStats *base = (struct UnitBaseStats *)&unit->baseHp;
     s32 value;
 
@@ -1683,7 +1683,7 @@ s32 Clear_PackPartyData(s32 unused, s32 mode, u8 *out) {
     pos = 39;
     bit = 0;
     for (i = 0; i != 4; i++) {
-      struct BattleUnit *unit = Unit_Get(gClear_PackedUnits[i]);
+      struct Unit *unit = Unit_Get(gClear_PackedUnits[i]);
 
       for (n = 0; n != 15; n++) {
         u16 item = unit->inventory[n] & 0x1ff;
@@ -1701,7 +1701,7 @@ s32 Clear_PackPartyData(s32 unused, s32 mode, u8 *out) {
     pos = 107;
     bit = -1;
     for (i = 0; i != 4; i++) {
-      struct BattleUnit *unit = Unit_Get(gClear_PackedUnits[i]);
+      struct Unit *unit = Unit_Get(gClear_PackedUnits[i]);
 
       for (m = 0; m != 23; m++) {
         s32 count = 0;

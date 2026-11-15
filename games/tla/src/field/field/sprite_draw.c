@@ -95,7 +95,7 @@ struct LayeredSprite {
   u8 flags;
   u8 count;
   struct AnimationSpritePart shadow;
-  struct AnimationEntry *entries[4];
+  struct SpriteAnimation *entries[4];
 };
 
 /// Advances a sprite's animations by one frame, picks each sprite animation's
@@ -108,7 +108,7 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
   struct ObjectSystemColours *system;
   DrawFn decodePicture;
   s32 decoderWasLoaded;
-  struct AnimationEntry *layer;
+  struct SpriteAnimation *layer;
   u8 *pixels;
   u8 *unpacked;
   void *decoded;
@@ -147,21 +147,21 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
       continue;
   read_command:
     if ((s16)layer->timer <= 0) {
-      picture = layer->script[layer->pos++];
-      arg = layer->script[layer->pos++];
+      picture = layer->script[layer->scriptOffset++];
+      arg = layer->script[layer->scriptOffset++];
       switch (picture) {
       case 254:
         SpriteAnimation_Start(layer, arg);
         obj->lastNo = arg;
         break;
       case 253:
-        layer->pos = arg;
+        layer->scriptOffset = arg;
         break;
       case 252:
         Sound_PlayFar(arg);
         break;
       case 241:
-        layer->pos -= 2;
+        layer->scriptOffset -= 2;
         picture = layer->pictureBase;
         goto select_direction;
       case 240:
@@ -280,11 +280,11 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
       if (layer->mode == 1) {
         Decompress_TaggedLz(layer->pictures[layer->picture], pixels);
       } else if (layer->mode == 3) {
-        if (layer->param != 0) {
+        if (layer->colorMode != 0) {
           unpacked = Heap_Alloc(0x400);
           decodePicture(
               Decompress_Lz(layer->pictures[layer->picture], unpacked), pixels,
-              layer->param);
+              layer->colorMode);
           Heap_Release(unpacked);
         } else {
           decoded = Iwram_Decompress(layer->pictures[layer->picture], pixels);
@@ -292,7 +292,7 @@ s32 Sprite_ComposePicture(struct LayeredSprite *obj, u32 dir) {
             decodePicture(decoded, pixels, 0);
         }
       } else {
-        decodePicture(layer->pictures[layer->picture], pixels, layer->param);
+        decodePicture(layer->pictures[layer->picture], pixels, layer->colorMode);
       }
     }
 
@@ -746,7 +746,7 @@ void Render_PlaceProjectedSprite(struct LayeredSprite *sprite, s32 *point,
 void Animation_ApplyChildValueToFirst(struct ActorSpriteView *record,
                                       u32 value) {
   if (record != NULL) {
-    record->entries[0]->param = value;
+    record->entries[0]->colorMode = value;
     record->dirty = 1;
   }
 }
@@ -757,8 +757,8 @@ void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *record,
 
   if (record != NULL) {
     for (i = 0; i < record->count; i++) {
-      if (record->entries[i]->param != 15)
-        record->entries[i]->param = value;
+      if (record->entries[i]->colorMode != 15)
+        record->entries[i]->colorMode = value;
     }
     record->dirty = 1;
   }

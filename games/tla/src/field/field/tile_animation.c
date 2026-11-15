@@ -325,7 +325,7 @@ void TilesetAnim_Update(void) {
 }
 
 /// Resumes tileset animation no by clearing its paused byte.
-void Map_ClearLayerEntryFlag(u32 no) {
+void TilesetAnim_Resume(u32 no) {
   struct MapWork *state = Ram_HeapSlots->mapGrid;
   struct MapAnimation *anim = &state->anim[no];
 
@@ -333,7 +333,7 @@ void Map_ClearLayerEntryFlag(u32 no) {
 }
 
 /// Pauses tileset animation no by setting its paused byte.
-void Map_SetLayerEntryFlag(u32 no) {
+void TilesetAnim_Pause(u32 no) {
   struct MapWork *state = Ram_HeapSlots->mapGrid;
   struct MapAnimation *anim = &state->anim[no];
 

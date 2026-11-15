@@ -24,18 +24,18 @@ static inline void Actor_FaceEachOther(s32 actorId, s32 other, s32 frames) {
 
 /// Switches an actor to an animation of its sprite.
 static inline void Actor_SetAnimation(s32 actorId, s32 animation) {
-  Actor_SetModeById(actorId, animation);
+  Actor_SetAnimationById(actorId, animation);
 }
 
-/// Actor_SetAnimation as the events that take Actor_SetModeById for a routine
+/// Actor_SetAnimation as the events that take Actor_SetAnimationById for a routine
 /// returning int make the call.
 static inline void FieldActor_SetAnimation(s32 actorId, s32 animation) {
 #ifdef UBFIX
-  Actor_SetModeById(actorId, animation);
+  Actor_SetAnimationById(actorId, animation);
 #else
-  // UB: Actor_SetModeById returns nothing, but these calls are made as to a
+  // UB: Actor_SetAnimationById returns nothing, but these calls are made as to a
   // routine returning int, which moves their argument registers.
-  ((s32 (*)(u32, s32))Actor_SetModeById)(actorId, animation);
+  ((s32 (*)(u32, s32))Actor_SetAnimationById)(actorId, animation);
 #endif
 }
 
@@ -112,33 +112,21 @@ static inline void Actor_SetPositionAndFacing(s32 actorId, s32 fixed_x,
                                                  facing);
 }
 
-/// Switches an actor to an animation and holds the event until it has played
-/// (Motion_SetModeAndWaitAnimation).
-static inline void Actor_SetAnimationAndWait(s32 actorId, s32 animation) {
-  Motion_SetModeAndWaitAnimation(actorId, animation);
-}
-
 /// Actor_SetAnimationAndWait as the events that take
-/// Motion_SetModeAndWaitAnimation for a routine returning int make the call.
+/// Actor_SetAnimationAndWait for a routine returning int make the call.
 static inline void FieldActor_SetAnimationAndWait(s32 actorId, s32 animation) {
 #ifdef UBFIX
-  Motion_SetModeAndWaitAnimation(actorId, animation);
+  Actor_SetAnimationAndWait(actorId, animation);
 #else
-  // UB: Motion_SetModeAndWaitAnimation returns nothing, but these calls are
+  // UB: Actor_SetAnimationAndWait returns nothing, but these calls are
   // made as to a routine returning int, which moves their argument registers.
-  ((s32 (*)(u32, s32))Motion_SetModeAndWaitAnimation)(actorId, animation);
+  ((s32 (*)(u32, s32))Actor_SetAnimationAndWait)(actorId, animation);
 #endif
 }
 
 /// Actor_Jump, from an event.
 static inline void FieldActor_Jump(s32 actorId, s32 speed, s32 frames) {
   Actor_Jump(actorId, speed, frames);
-}
-
-/// Runs an actor's repeated motion count times and holds the event until it
-/// ends (Motion_SetVarCbAndRefresh).
-static inline void Actor_RunRepeatedMotion(s32 actorId, s32 count) {
-  Motion_SetVarCbAndRefresh(actorId, count);
 }
 
 /// Actor_SetSpritePriority, from an event.
@@ -185,9 +173,9 @@ static inline void FieldActor_SetPositionAndResetMotion(struct Actor *actor,
   Actor_SetPositionAndResetMotion(actor, fixed_x, fixed_y, fixed_z);
 }
 
-/// Actor_RefreshSelectorById, from an event.
-static inline void FieldActor_RefreshSelectorById(s32 actorId) {
-  Actor_RefreshSelectorById(actorId);
+/// Actor_WaitForScriptEndById, from an event.
+static inline void FieldActor_WaitForScriptEndById(s32 actorId) {
+  Actor_WaitForScriptEndById(actorId);
 }
 
 /// Sets a sprite param of an actor's sprite (Actor_SetSpriteColor).
@@ -239,12 +227,6 @@ static inline void FieldEvent_SetAfterBattleDestination(s32 sceneId,
   Event_SetAfterBattleDestination(sceneId, entrance);
 }
 
-/// Sets where the party goes if it loses the event's battle
-/// (Party_SetFields1f2And1f4).
-static inline void Event_SetDefeatDestination(s32 sceneId, s32 entrance) {
-  Party_SetFields1f2And1f4(sceneId, entrance);
-}
-
 /// Adds a Djinni to the party (Djinn_JoinParty).
 static inline void FieldDjinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   Djinn_JoinParty(slot, element, djinn);
@@ -289,11 +271,6 @@ static inline void FieldMapGrid_WaitForShakeToSettle(void) {
 /// The cell behavior of the cell at (x, y) (MapGrid_GetCellBehaviorAt).
 static inline s32 FieldMapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y) {
   return MapGrid_GetCellBehaviorAt(layer, x, y);
-}
-
-/// Sets how fast an actor's animation runs (Actor_SetActionById).
-static inline void Actor_SetAnimationSpeedById(s32 actorId, s32 steps) {
-  Actor_SetActionById(actorId, steps);
 }
 
 /// Draws an item's icon into an actor's sprite, or blanks it

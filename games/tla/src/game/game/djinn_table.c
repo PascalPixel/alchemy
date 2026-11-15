@@ -11,7 +11,7 @@
 /// The 80 Djinn, 20 of each element in element order.
 const struct DjinnDefinition gDjinn_DefinitionTable[] = {
     [DJINNI_FLINT] = {
-        .abilityId = ABILITY_FLINT,
+        .abilityId = ABILITY_DJINNI_FIRST,
         .hp = 8,
         .pp = 4,
         .atk = 3,

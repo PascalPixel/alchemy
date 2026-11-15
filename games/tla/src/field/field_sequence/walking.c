@@ -195,7 +195,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   struct Actor *leader = WorldMap_Unfreeze();
   s16 previousHp[8];
   struct MapCell *tile;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 partyHurt;
   u32 partyCount;
   u32 i;
@@ -214,7 +214,7 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
   partyCount = Party_CountMembersFar();
   for (i = 0; i < partyCount; i++)
     previousHp[i] =
-        ((struct BattleUnit *)Unit_Get(gMainRoutineWork.party[i]))->hp;
+        ((struct Unit *)Unit_Get(gMainRoutineWork.party[i]))->hp;
 
   if (*((s8 *)work + 0x18a) == 3) {
     tile = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) +
@@ -335,7 +335,7 @@ void Party_AddHp(s32 amount, s32 scaled) {
   s32 count;
   s32 i;
   s32 value;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   if (amount < 0) {
     PaletteFade_SetSource(0x1ff, 0);
     PaletteFade_StartInterpolation(4);
@@ -380,7 +380,7 @@ s32 Party_ApplyPoisonDamage(void) {
     remaining = count;
 
     do {
-      struct BattleUnit *object = Unit_Get(*entry);
+      struct Unit *object = Unit_Get(*entry);
       s32 amount;
 
       switch (object->poison) {

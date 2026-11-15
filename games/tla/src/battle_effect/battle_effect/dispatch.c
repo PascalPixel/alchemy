@@ -187,7 +187,7 @@ void BattleEffect_SelectLivingTargets(struct BattleEffectParams *party) {
   s32 i;
 
   for (i = 0; i != party->targetCount; i++) {
-    if (((struct BattleUnit *)Unit_Get(party->targets[i]))->hp > 0)
+    if (((struct Unit *)Unit_Get(party->targets[i]))->hp > 0)
       list[count++] = party->targets[i];
   }
   list[count] = 0xff;

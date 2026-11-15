@@ -172,7 +172,7 @@ void Actor_SetWideSprite(u32 objectId, s32 mode) {
   struct Actor *object;
   struct ObjectSprite__field_sequence *sprite;
 
-  object = ObjectTable_Get(objectId);
+  object = Actor_Lookup(objectId);
   if (object == 0)
     return;
   if (mode == 0) {
@@ -194,7 +194,7 @@ void Actor_SetSquareSprite(u32 objectId) {
   struct Actor *object;
   struct ObjectSprite__field_sequence *sprite;
 
-  object = ObjectTable_Get(objectId);
+  object = Actor_Lookup(objectId);
   if (object == 0)
     return;
   sprite = object->sprite;
@@ -212,7 +212,7 @@ s32 Actor_GetSpriteShape(u32 objectId) {
   struct ObjectSprite__field_sequence *sprite;
   s32 shape = 0;
 
-  object = ObjectTable_Get(objectId);
+  object = Actor_Lookup(objectId);
   if (object != 0) {
     sprite = object->sprite;
     if (sprite != 0)
@@ -226,7 +226,7 @@ s32 Actor_GetSpriteShape(u32 objectId) {
 void Actor_ReturnHome(s32 mode, u32 objectId, s32 flag) {
   struct ActorScriptView *object;
 
-  object = (struct ActorScriptView *)ObjectTable_Get(objectId);
+  object = (struct ActorScriptView *)Actor_Lookup(objectId);
   if (object == 0)
     return;
   if (mode == 1)
@@ -247,7 +247,7 @@ void Actor_ShakeAngle(u32 objectId) {
   s32 angle;
   s32 i;
 
-  object = ObjectTable_Get(objectId);
+  object = Actor_Lookup(objectId);
   if (object == 0)
     return;
   angle = object->facing;
@@ -267,8 +267,8 @@ void Actor_ShakeAngle(u32 objectId) {
 
 /// Closes the chest of the actor again (its item could not be carried), with
 /// SE_CHEST_CLOSE, and waits 12 frames.
-void ObjectEvent_SetMode5WithCue(u32 objectId) {
-  Actor_SelectAnimationFar(ObjectTable_Get(objectId), 5);
+void TreasureSpot_CloseChest(u32 objectId) {
+  Actor_SelectAnimationFar(Actor_Lookup(objectId), 5);
   Sound_PlayFar(SE_CHEST_CLOSE);
   wait(12);
 }
@@ -276,10 +276,10 @@ void ObjectEvent_SetMode5WithCue(u32 objectId) {
 /// Makes the chest of the actor jump up as a mimic: after 18 frames it takes
 /// animation 7, plays SE_ENEMY_CRY and gets an upward velocity of 8 pixels a
 /// frame, its shadow shown.
-void ObjectEvent_Spring(u32 objectId) {
+void TreasureSpot_LaunchMimic(u32 objectId) {
   struct Actor *object;
 
-  object = ObjectTable_Get(objectId);
+  object = Actor_Lookup(objectId);
   wait(18);
   Actor_SelectAnimationFar(object, 7);
   Sound_PlayFar(SE_ENEMY_CRY);
@@ -290,27 +290,27 @@ void ObjectEvent_Spring(u32 objectId) {
 }
 
 /// Opens the chest of the actor with SE_CHEST_OPEN, and waits 12 frames.
-void ObjectEvent_SetMode4WithCue(u32 objectId) {
-  Actor_SelectAnimationFar(ObjectTable_Get(objectId), 4);
+void TreasureSpot_OpenChest(u32 objectId) {
+  Actor_SelectAnimationFar(Actor_Lookup(objectId), 4);
   Sound_PlayFar(SE_CHEST_OPEN);
   wait(12);
 }
 
 /// Shows the chest of the actor open, with no sound.
-void ObjectEvent_SetMode2(u32 objectId) {
-  Actor_SelectAnimationFar(ObjectTable_Get(objectId), 2);
+void TreasureSpot_ShowOpened(u32 objectId) {
+  Actor_SelectAnimationFar(Actor_Lookup(objectId), 2);
 }
 
 /// Gives the actor animation 6 with SE_CHEST_OPEN, and waits 12 frames.
 void ObjectEvent_SetMode6WithCue(u32 objectId) {
-  Actor_SelectAnimationFar(ObjectTable_Get(objectId), 6);
+  Actor_SelectAnimationFar(Actor_Lookup(objectId), 6);
   Sound_PlayFar(SE_CHEST_OPEN);
   wait(12);
 }
 
 /// Returns the actor, or NULL.
-struct Actor *ObjectEvent_GetObject(u32 objectId) {
-  return ObjectTable_Get(objectId);
+struct Actor *TreasureSpot_GetActor(u32 objectId) {
+  return Actor_Lookup(objectId);
 }
 
 /// Releases the actor and empties its slot.
@@ -318,10 +318,10 @@ void ObjectEvent_Remove(u32 objectId) { Actor_ReleaseAtIndex(objectId); }
 
 /// Moves the actor to (x, z) on the ground, 16.16 pixels; -1 keeps its home
 /// (homeX, homeZ) on that axis.
-void ObjectEvent_PlaceOnGround(u32 objectId, s32 x, s32 z) {
+void TreasureSpot_SetActorPosition(u32 objectId, s32 x, s32 z) {
   struct ActorScriptView *object;
 
-  object = (struct ActorScriptView *)ObjectTable_Get(objectId);
+  object = (struct ActorScriptView *)Actor_Lookup(objectId);
   if (object == 0)
     return;
   if (x == -1)

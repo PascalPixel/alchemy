@@ -10,7 +10,7 @@
 #include "field/world_map_marker.h"
 
 struct Actor;
-struct AnimationEntry;
+struct SpriteAnimation;
 struct Effect04Vector;
 struct EffectVector;
 
@@ -45,7 +45,7 @@ struct CloakSprite {
   u8 dirty; // redraw the parts
   u8 blend; // 2 draws the caster half transparent, 1 shows it plainly
   u8 unk1b[0x0d];
-  struct AnimationEntry *entries[4];
+  struct SpriteAnimation *entries[4];
 };
 
 struct CloakCaster {
@@ -139,7 +139,7 @@ s32 PartyInventory_FindRoomFar(s32 item);
 s32 ItemPicker_RunToDropFar(s32 *member, s32 *slot);
 
 void FieldEffect_AdvanceHueCycle(void);
-void BattleEffect_SetCallbackWhenTargetUnset(struct Actor *object);
+void FieldEffect_ReleaseOnArrival(struct Actor *object);
 void Actor_SetSpritePalette(void *object, s32 value);
 
 void FieldParticle_Initialize(struct FieldParticle *effect, s32 kind, s32 x,
@@ -224,8 +224,8 @@ void BattleEffect_WaitForArcGroups(void);
 
 void BattleEffect_EndArcEffect(void);
 
-void BattleEffect_CleanupSceneObjects(void);
-void EventObject_Initialize(void);
+void FieldPsynergy_End(void);
+void FieldPsynergy_StartCast(void);
 
 void Djinn_ResolvePending(s32 shown);
 

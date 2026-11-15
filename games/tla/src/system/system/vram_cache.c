@@ -115,7 +115,7 @@ s32 VramCache_FreeBlocks(s32 id) {
 /// Frees a cache entry and the VRAM it holds; returns -1 for an index out of
 /// range.
 s32 VramCache_FreeEntry(u32 resourceIndex) {
-  struct VramBlockCacheEntry *entry = &gVramCacheEntries[resourceIndex];
+  struct VramCacheEntry *entry = &gVramCacheEntries[resourceIndex];
 
   if (resourceIndex >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
@@ -148,7 +148,7 @@ s32 VramCache_ReleaseVram(u32 resourceIndex) {
 /// its blocks when the size is unchanged (src 0 loads nothing, -1 clears);
 /// returns the tile number, or 0 when it does not fit.
 s32 VramCache_Load(u32 no, u32 size, const void *src) {
-  struct VramBlockCacheEntry *entry;
+  struct VramCacheEntry *entry;
   s32 offset;
   void *dst;
 
@@ -194,7 +194,7 @@ void VramCache_Reset(void) {
   for (; count <= limit; count++)
     *marker++ = VRAM_BLOCK_OWNER_FREE;
   {
-    struct VramBlockCacheEntry *entry = gVramCacheEntries;
+    struct VramCacheEntry *entry = gVramCacheEntries;
 
     count = 0;
     do {
@@ -211,7 +211,7 @@ void VramCache_Reset(void) {
 s32 VramCache_FindFreeEntry(void) {
   s32 ret = VRAM_CACHE_ENTRY_COUNT;
   s32 no;
-  struct VramBlockCacheEntry *entry = gVramCacheEntries;
+  struct VramCacheEntry *entry = gVramCacheEntries;
 
   for (no = 0; no < VRAM_CACHE_ENTRY_COUNT; no++, entry++) {
     if (entry->offset == VRAM_CACHE_OFFSET_FREE) {

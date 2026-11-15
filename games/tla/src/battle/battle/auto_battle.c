@@ -20,7 +20,7 @@ s32 AutoBattle_BuildActions(struct BattleActionRecord *entries) {
   s32 targetRange;
   s32 index;
   struct BattleActionRecord *entry;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   // The party's actions. The four lookups' results are never used.
   partyCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
@@ -101,7 +101,7 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
   struct BattlePresentationTransition *transition;
   s32 unitId;
   s32 yaw;
-  struct BattleUnit *actor;
+  struct Unit *actor;
 
   unitId = action->unitId;
   actor = Unit_Get(unitId);
@@ -195,7 +195,7 @@ s32 BattleFlee_PlayRun(struct BattleActionRecord *action) {
 s32 AutoBattle_ShowDefend(s16 *script) {
   s32 objectId;
   s32 result;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   objectId = *script;
   unit = Unit_Get(objectId);
@@ -276,13 +276,13 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
     u32 count = BattleUnit_ListLiving(2, visibleUnits);
     for (index = 0; livingCount != count; index++) {
       u32 unit = index + 0x80;
-      if (((struct BattleUnit *)Unit_Get(unit))->hp > 0)
+      if (((struct Unit *)Unit_Get(unit))->hp > 0)
         visibleUnits[livingCount++] = unit;
     }
   } else {
     u32 count = BattleUnit_ListLiving(1, visibleUnits);
     for (index = 0; livingCount != count; index++) {
-      if (((struct BattleUnit *)Unit_Get(index))->hp > 0)
+      if (((struct Unit *)Unit_Get(index))->hp > 0)
         visibleUnits[livingCount++] = index;
     }
   }
@@ -416,7 +416,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
     s32 j;
 
     for (j = 0; j != animation->count - 1; j++)
-      work.params[i][j] = animation->entries[j]->param;
+      work.params[i][j] = animation->entries[j]->colorMode;
   }
   work.kind = 0;
   work.variant = 0;
@@ -444,8 +444,8 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
 void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
                             u8 *context) {
   u8 localContext[4];
-  struct BattleUnit *character;
-  struct BattleObj *slot;
+  struct Unit *character;
+  struct BattleObject *slot;
 
   if (context == 0) {
     context = localContext;
@@ -499,13 +499,13 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
 /// and marks its battle object for release (BattleObject_MarkForRelease).
 void BattleMotion_PlayFall(s32 unitId) {
   struct BattleObjectAnimation *animation;
-  struct AnimationEntry *entry;
+  struct SpriteAnimation *entry;
 
-  if (((struct BattleUnit *)Unit_Get(unitId))->hp <= 0) {
+  if (((struct Unit *)Unit_Get(unitId))->hp <= 0) {
     animation = BattleObject_Get(unitId)->object->records;
-    Animation_ApplyChildArgumentFar(animation, 5);
+    Sprite_StartAnimationFar(animation, 5);
     entry = animation->entry;
-    entry->param = 6;
+    entry->colorMode = 6;
     entry->picture = 0xff;
     wait(4);
     SpriteDissolve_RunFar(animation);
@@ -521,7 +521,7 @@ s32 BattleAbility_ReplaceDefeated(const struct BattleActionRecord *action) {
   s32 livingCount;
 
   targetId = action->target;
-  if (((struct BattleUnit *)Unit_Get(targetId))->hp != 0) {
+  if (((struct Unit *)Unit_Get(targetId))->hp != 0) {
     return targetId;
   }
 

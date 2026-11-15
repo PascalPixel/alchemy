@@ -66,10 +66,10 @@ STATIC_ASSERT(offsetof(struct MotionObject, recordStorageKind) == 0x54);
 STATIC_ASSERT(offsetof(struct MotionObject, update) == 0x6c);
 
 s32 BattleObject_MarkForRelease(s32 objectId);
-struct BattleObj *BattleObject_Get(s32 objectId);
+struct BattleObject *BattleObject_Get(s32 objectId);
 /// Returns a unit's battle object, or null for a unit with no place
 /// (BattleObject_Get).
-struct BattleObj *BattleObject_GetFar(s32 objectId);
+struct BattleObject *BattleObject_GetFar(s32 objectId);
 void *GetMotionRecord(struct MotionObject *object, s32 record_index);
 
 #endif

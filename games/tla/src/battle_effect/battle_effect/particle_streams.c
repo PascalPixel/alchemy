@@ -17,13 +17,13 @@ enum ParticleStreamsMode {
 /// unless the unit is one of four enemies, the actor leaps back to 130-193% of
 /// its anchor's x, then takes mode 5.
 void BattleEffect_StartActorMotionRandomDistance(s32 id) {
-  struct BattleObj *slot;
+  struct BattleObject *slot;
   struct MotionObject *object;
   u32 enemy;
 
   slot = BattleObject_GetFar(id);
   object = slot->object;
-  enemy = ((struct BattleUnit *)Unit_Get(id))->enemyId;
+  enemy = ((struct Unit *)Unit_Get(id))->enemyId;
   if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
     s32 percent = (Random16() & 63) + 130;
 
@@ -746,7 +746,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       work->sprites[i] = flame;
       if (flame != 0) {
         flame->flags = 0;
-        Animation_ApplyChildArgumentFar(flame, 2);
+        Sprite_StartAnimationFar(flame, 2);
         ((struct FxAnimObject *)work->sprites[i])->priority = 3;
       }
     }

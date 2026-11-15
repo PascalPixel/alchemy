@@ -273,7 +273,7 @@ s32 Scene_Initialize(void) {
     ruffian->facing = FACING_SOUTH;
     Actor_FallOverWithAnimationById(ACTOR_WAITING_RUFFIAN, FACING_SOUTH, 0);
     FieldActor_SetSpritePriority(ACTOR_WAITING_RUFFIAN, 3);
-    Actor_SetActionCallback(Actor_Get(ACTOR_WAITING_RUFFIAN), 8);
+    Actor_SetMovementType(Actor_Get(ACTOR_WAITING_RUFFIAN), 8);
   }
   return 0;
 }
@@ -1742,7 +1742,7 @@ struct Trigger gSceneEvents[] = {
 u32 gVenusLighthouseEntrance_BirdLands[] = {
     SC_SYNC,
     SC_WAIT(1),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_WAIT(4),
     SC_SET(SW_MOTION, 3),
     SC_SET(SW_VELOCITY_Y, 0),

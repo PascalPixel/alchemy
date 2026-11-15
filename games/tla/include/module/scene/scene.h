@@ -1019,7 +1019,7 @@ extern char ResourceId_GlowDisc;
 
 extern char ResourceId_LogoOnBlack;
 
-void EventObject_Initialize(void);
+void FieldPsynergy_StartCast(void);
 
 void EasternAlhafraShip_CountAnswer();
 

@@ -82,7 +82,7 @@ void Sound_Play(s32 sound);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void MapGrid_PlayMapEdit(const void *steps, s32 x, s32 y);
-void ObjectEvent_PlaceOnGround(u32 actorId, s32 x, s32 z);
+void TreasureSpot_SetActorPosition(u32 actorId, s32 x, s32 z);
 void Actor_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);
 void Actor_WalkByAndWaitById(u32 objectId, s32 x_offset, s32 z_offset);
 void Event_ShowMessageThenWait(s32 speaker, s32 flags, s32 frames);
@@ -102,7 +102,7 @@ void Event_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg, s32 extra,
 void Actor_SetMovementTypeById(s32 actorId, const void *script);
 void Actor_SetMovementTypeAndWaitById(s32 actorId, const void *script);
 void Actor_TurnToFaceEachOther(s32 actorId, s32 other, s32 frames);
-void Actor_SetModeById(u32 actorId, s32 animation);
+void Actor_SetAnimationById(u32 actorId, s32 animation);
 void Actor_ReturnHome(s32 mode, u32 actorId, s32 flag);
 void PaletteFade_StartInterpolation(s32 frames);
 void Icon_DrawItem(s32 item);
@@ -123,16 +123,16 @@ void wait(s32 frames);
 void Actor_FaceDirectionAndRefreshById(s32 actorId, s32 angle);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 actorId, s32 x, s32 z,
                                                     s32 angle);
-void Motion_SetModeAndWaitAnimation(s32 actorId, s32 animation);
+void Actor_SetAnimationAndWait(s32 actorId, s32 animation);
 void Actor_Jump(s32 actorId, s32 speed, s32 frames);
-void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
+void Actor_RunRepeatedMotion(u32 objectId, s32 variant);
 void Actor_SetSpritePriority(u32 actorId, s32 priority);
 void Actor_StartRepeatedMotion(u32 objectId, s32 variant);
 void Actor_WatchAndSetScript(s32 actorId, s32 watchedActorId);
 void Actor_WaitForMoveById(s32 actorId);
 void FieldCamera_FollowActor(s32 id, s32 flag);
 void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
-void Actor_RefreshSelectorById(u32 actorId);
+void Actor_WaitForScriptEndById(u32 actorId);
 void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
 void Actor_Stop(s32 actorId);
 void Import_EventSetExitRequest(s32 countdown);
@@ -141,7 +141,7 @@ s32 PartyInventory_FindMember(s32 item_id);
 void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset);
 s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 flags);
 void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance);
-void Party_SetFields1f2And1f4(s32 sceneId, s32 entrance);
+void Event_SetDefeatDestination(s32 sceneId, s32 entrance);
 void Djinn_JoinParty(s32 slot, s32 element, s32 djinn);
 void FieldPsynergy_StartMindReadWave(s32 x, s32 y);
 struct Actor *FieldCamera_GetActor(void);
@@ -152,7 +152,7 @@ void Field_RequestDjinnBattle(s32 actorId, s32 djinni);
 void Event_AddPartyMember(s32 unit, s32 announce);
 void MapGrid_WaitForShakeToSettle(void);
 s32 MapGrid_GetCellBehaviorAt(s32 layer, s32 x, s32 y);
-void Actor_SetActionById(s32 actorId, s32 steps);
+void Actor_SetAnimationSpeedById(s32 actorId, s32 steps);
 void Actor_ShowItemIconById(s32 actorId, s32 item);
 void Actor_SetItemIcon(struct Actor *actor, s32 item);
 void WorldMap_SetWindowCellTileAndDraw(s32 x, s32 y, s32 px, s32 py);
@@ -387,7 +387,7 @@ static inline void MapGrid_AnimateCells(const u16 *steps, s32 destinationX,
 /// Moves a treasure spot's actor to a point on the ground.
 static inline void TreasureSpot_SetPosition(s32 object, s32 fixed_x,
                                             s32 fixed_z) {
-  ObjectEvent_PlaceOnGround(object, fixed_x, fixed_z);
+  TreasureSpot_SetActorPosition(object, fixed_x, fixed_z);
 }
 
 /// Lines an actor up with the middle of its column, then walks it

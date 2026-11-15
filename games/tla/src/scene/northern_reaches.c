@@ -516,7 +516,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, s32 *position,
 
 s32 gNorthernReaches_ShipAtRest[] = {
     SC_CALL((s32)NorthernReaches_ResetAnimationFrame),
-    SC_ARG(7),
+    SC_ANIMATION(7),
     SC_END,
 };
 

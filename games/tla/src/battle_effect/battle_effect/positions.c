@@ -81,7 +81,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
   u8 *sheet;
   s32 *camera;
   s32 kind;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   BlitterPair draw;
   struct MotionObject *target;
   s32 half;
@@ -540,13 +540,13 @@ void BattleEffect_RunCriticalHit(struct BattleEffectParams *args) {
 /// only posed.
 void BattleEffect_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                    s32 speedLimit, s32 velocityY, s32 percent) {
-  struct BattleObj *slot;
+  struct BattleObject *slot;
   struct MotionObject *object;
   u32 enemy;
 
   slot = BattleObject_GetFar(id);
   object = slot->object;
-  enemy = ((struct BattleUnit *)Unit_Get(id))->enemyId;
+  enemy = ((struct Unit *)Unit_Get(id))->enemyId;
   if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
     object->acceleration = acceleration;
     object->speedLimit = speedLimit;

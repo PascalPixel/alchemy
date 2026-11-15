@@ -17,7 +17,7 @@ extern const u8 gActor_WaitScript[];
 /// it creates effect object 264 at the object and links it, mode 1 keeping it
 /// as the object's resource and mode 2 running gActor_WaitScript on it.
 void FieldEffect_SetAttached(s32 actorId, s32 flags) {
-  struct LinkedEffectObject *object = ObjectTable_Get(actorId);
+  struct LinkedEffectObject *object = Actor_Lookup(actorId);
   struct LinkedEffectObject *child;
   struct LinkedEffectVisual *visual;
   s32 mode;
@@ -179,7 +179,7 @@ void Actor_WatchActor(struct Actor *object, struct Actor *target) {
 
 /// Gives the object the party leader's display layer.
 s32 Actor_TakeLeaderLayer(struct Actor *object) {
-  struct Actor *leader = ObjectTable_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   s32 layer = ((struct ObjectLayerAnimation *)leader->sprite)->layer;
 
   if ((object->spriteStorageKind & 0xf) == 1) {
@@ -206,7 +206,7 @@ extern const u8 gMovementType_ClearChildScript[];
 
 /// Starts an actor's movement type: an enum MovementType, or any other value as
 /// the actor script to run itself.
-void Actor_SetActionCallback(struct Actor *object, s32 kind) {
+void Actor_SetMovementType(struct Actor *object, s32 kind) {
   switch (kind) {
   case 1:
     kind = (s32)gMovementType_StandScript;
@@ -560,7 +560,7 @@ s32 Field_ClimbDown(void) {
     Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, gridX, gridZ);
     leader->speedLimit = px(1);
     Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, 0xc000, 0);
-    Actor_RefreshSelectorById(gMainRoutineWork.leaderActorId);
+    Actor_WaitForScriptEndById(gMainRoutineWork.leaderActorId);
     leader->steeringFlags = 1;
     leader->motionFlags = 0;
     spriteFlags &= 0xfe;
@@ -734,7 +734,7 @@ struct RopeNode *Rope_FindNodeNear(s32 *position) {
 /// Hops the leader onto the nearest tied rope node, to cross the rope (render
 /// mode 3); returns 0 when none is in reach.
 s32 Leader_StepOntoRope(void) {
-  struct Actor *leader = ObjectTable_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   struct FieldSprite *sprite = leader->sprite;
   struct RopeNode *node = Rope_FindNodeNear(&leader->x.fixed);
   u8 *flags;
@@ -764,7 +764,7 @@ s32 Leader_StepOntoRope(void) {
 /// Hops the leader off a tied rope a cell in the direction the pad holds,
 /// when that cell is open; returns 0 otherwise.
 s32 Leader_StepOffRope(void) {
-  struct Actor *leader = ObjectTable_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   struct FieldSprite *sprite = leader->sprite;
   s32 position[3];
   u32 angle;
@@ -839,7 +839,7 @@ struct TightropeNode *Tightrope_FindNodeNear(s32 *position) {
 /// when none is in reach.
 s32 Leader_StepOntoTightrope(void) {
   struct MainRoutineWork *work = &gMainRoutineWork;
-  struct Actor *leader = ObjectTable_Get(work->leaderActorId);
+  struct Actor *leader = Actor_Lookup(work->leaderActorId);
   struct FieldSprite *sprite = leader->sprite;
   struct TightropeNode *node = Tightrope_FindNodeNear(&leader->x.fixed);
   u8 *flags;
@@ -869,7 +869,7 @@ s32 Leader_StepOntoTightrope(void) {
 /// Hops the leader off a tightrope a cell in the direction the pad holds, when
 /// that cell is open; returns 0 otherwise.
 s32 Leader_StepOffTightrope(void) {
-  struct Actor *leader = ObjectTable_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   struct FieldSprite *sprite = leader->sprite;
   s32 position[3];
   u32 angle;

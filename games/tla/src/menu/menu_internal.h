@@ -330,9 +330,9 @@ STATIC_ASSERT(offsetof(struct PsynergyMenuWork, mode) == 0x26c);
 
 // The menu object's functions its parts call before their definitions, or
 // with declarations of their own that disagree.
-void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window);
-void Text_DrawStatComparison(const struct BattleUnit *alt,
-                             const struct BattleUnit *base, s32 work);
+void StatusPanel_DrawHpPp(struct Unit *unit, s32 window);
+void Text_DrawStatComparison(const struct Unit *alt,
+                             const struct Unit *base, s32 work);
 void Text_DrawMessageAsTilesFar(s32 message, struct RenderInput *window, s32 x,
                                 s32 y);
 
@@ -352,7 +352,7 @@ void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count);
 s32 Menu_MoveGridCursor(s32 *selection, s32 count, s32 columns);
 void Resource_LoadByModeIntoSlotFar(s32 mode, s32 id, s32 slot, s32 flags);
 extern u8 MsgShortcutHelp[];
-void Animation_ApplyChildArgumentFar(void *object, s32 argument);
+void Sprite_StartAnimationFar(void *object, s32 argument);
 void Link_DrawPageArrowsFar(s32 addr);
 void Menu_UpdateEntryObjectTransforms(void);
 void Input_ResetKeyRepeat(void);
@@ -368,7 +368,7 @@ void WindowSprite_PrepareForRedrawFar(s32 window);
 s32 Message_AllTypedFar(void);
 void DjinnFigures_SetSlotPhase(s32 index, s32 scale);
 void DjinnFigures_SetSlotPosition(s32 slot, s32 x, s32 y);
-void Render_ApplyProjectedPlacementAtDepthFar(struct AnimationObject *object,
+void Render_ApplyProjectedPlacementAtDepthFar(struct Sprite *object,
                                               struct SpritePlacement *position,
                                               struct SpriteScale *scale,
                                               s32 depth, s32 mode);

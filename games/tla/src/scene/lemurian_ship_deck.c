@@ -139,7 +139,7 @@ DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateColors12To15, 15, 12)
 
 DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateColors4To9, 9, 4)
 
-void Map_ClearLayerEntryFlag(s32 a);
+void TilesetAnim_Resume(s32 a);
 
 /// Arriving by entrance 99: the screen opens and two of the map's layer entries
 /// are cleared in turn.
@@ -150,10 +150,10 @@ void LemurianShipDeck_ShowArrival(void) {
   FieldTask_AddFrame(LemurianShipDeck_RotateColors4To9, TASK_PASS_VBLANK);
   Event_WaitTransitionFrames();
   FieldEvent_Wait(60);
-  Map_ClearLayerEntryFlag(13);
+  TilesetAnim_Resume(13);
   FieldEvent_Wait(60);
   FieldEvent_Wait(60);
-  Map_ClearLayerEntryFlag(14);
+  TilesetAnim_Resume(14);
   Event_End();
 }
 
@@ -1189,10 +1189,10 @@ s16 gLemurianShipDeck_Puddles[] = {
 };
 
 u32 gLemurianShipDeck_ReachPiersShipScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(263), 0, px(176)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_CMD_03,
     SC_WAIT(1),
@@ -1200,10 +1200,10 @@ u32 gLemurianShipDeck_ReachPiersShipScript[] = {
 };
 
 u32 gLemurianShipDeck_ReturnToShipScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(368), 0, px(448)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(10),

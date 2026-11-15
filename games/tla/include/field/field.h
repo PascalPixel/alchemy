@@ -36,7 +36,7 @@ s32 Party_ShowJoinedMessageFar(s32 event_id, s32 value);
 s32 Party_ShowPairJoinedMessageFar(s32 first, s32 second);
 s32 Field_CheckSpheresOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b);
 
-struct AnimationObject;
+struct Sprite;
 struct ScreenPoint;
 struct Particle;
 struct Actor;
@@ -55,20 +55,20 @@ extern s32 gLinkLobby_SlotValues[];
 extern const u8 gActor_BlinkSpriteColors[4];
 extern const u8 gActor_StepAngleScript[];
 extern u16 gScript_MainScript[];
-s32 Animation_InitializeObjects(struct AnimationObject *);
+s32 Animation_InitializeObjects(struct Sprite *);
 void Actor_SetBlendMode(struct Actor *object, u32 value);
-void AnimationObject_SetActiveTimerSteps(struct AnimationObject *, s32);
+void AnimationObject_SetActiveTimerSteps(struct Sprite *, s32);
 s32 PaletteFade_SetTargetFar(s32, s32);
 void FieldPsynergy_FinishMindRead(void);
 void FieldPsynergy_Dispatch(void);
-void BattleEffect_LoadActionEffectResources(s32 action, s32 flags);
+void FieldPsynergy_LoadResources(s32 action, s32 flags);
 void FieldPsynergy_Run(void);
 void BattleEffect_SelectBattleCue(s32 row, s32 column);
 void FieldPsynergy_SetupActorPair(s32 actor, s32 target);
 s32 PaletteFade_StartInterpolationFar(s32);
 s32 BattleMotion_ProjectScaledPositionFar(s32, s32 *);
 struct BattleEffectParams;
-void BattleEffect_RunBurstScene(struct BattleEffectParams *effect, s32 variant);
+void BattleEffect_RunFlurry(struct BattleEffectParams *effect, s32 variant);
 void BattleEffect_StopMainActor(void);
 struct ActorPlacement;
 void Event_SpawnObjectTable(struct ActorPlacement *entry, s32 slot);
@@ -77,7 +77,7 @@ void Field_StartPaletteTransition(s32 mode);
 void FieldPsynergy_RunHandler(s32 kind);
 void FieldPsynergy_RunExtraHandler(void);
 
-s32 Event_PlayCueNearFocusFar(struct Actor *interpreter, s32 value);
+s32 Actor_PlaySoundInViewFar(struct Actor *interpreter, s32 value);
 void Actor_ReleaseAtIndex(u32 actorIndex);
 void Actor_SetSquareSprite(u32 objectId);
 void BattleEffect_DropObjectAtAnchor(s32 actorId);
@@ -85,7 +85,7 @@ void SuperLuckyDice_Run(void);
 void GameFlag_RefreshLureCapFar(void);
 void MapGrid_CenterOnFollowedPointFar(void);
 s32 MapGrid_GetTerrainHeightFar(u8, s32, s32);
-void Motion_SetVarCbAndRefresh(u32 objectId, s32 variant);
+void Actor_RunRepeatedMotion(u32 objectId, s32 variant);
 s32 Actor_IsTargetUnset(struct Actor *object);
 #ifndef OWN_Actor_SetPartAttribute
 void Actor_SetSpriteColor(struct Actor *object, s32 attribute);
@@ -113,7 +113,7 @@ void AreaNameWindow_HideFar(void);
 s32 Window_IsClosedFar(s32);
 
 /// How far a field Psynergy reaches from its caster, one row a kind in
-/// gData_080eff28, ended by -1: Field_MeasurePsynergyHeight and
+/// gFieldPsynergy_Reach, ended by -1: Field_MeasurePsynergyHeight and
 /// Field_MeasurePsynergyReach read it.
 struct FieldPsynergyReach {
   s16 fieldPsynergy; ///< enum FieldPsynergy; -1 ends the table

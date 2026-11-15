@@ -107,7 +107,7 @@ void Champa_OpenDoorAndEnter(const void *warp, s32 door, s32 mode) {
   Event_End();
 }
 
-void Map_ClearLayerEntryFlag(s32 a);
+void TilesetAnim_Resume(s32 a);
 
 void Champa_EnterDoor(s32 door) {
   s32 *table = gChampa_Doors;
@@ -116,7 +116,7 @@ void Champa_EnterDoor(s32 door) {
     *(void **)((u8 *)Actor_Get(gMainRoutineWork.leaderActorId) + 108) =
         Champa_ShrinkIntoDoorway;
   if (door == 7) {
-    Map_ClearLayerEntryFlag(8);
+    TilesetAnim_Resume(8);
     Champa_OpenDoorAndEnter(table, 7, 1);
   } else {
     Champa_OpenDoorAndEnter(table + 2, door, 0);
@@ -217,7 +217,7 @@ void Champa_TalkToPracticingBoy(s32 actor) {
   // "Eoleo, Briggs's son, has a really strange ability... I'll bet if I..."
   Event_ShowMessage(actor, 0);
   Actor_FaceDirectionAndWait(actor, FACING_EAST);
-  Actor_SetActionCallback(object, 8);
+  Actor_SetMovementType(object, 8);
 }
 
 void Champa_TellOfBriggsTreasure(s32 actor) {
@@ -508,7 +508,7 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = 0x100;
   Task_AddFrame((s32)Champa_RotatePaletteColors, TASK_PASS_FRAME);
-  Map_SetLayerEntryFlag(8);
+  TilesetAnim_Pause(8);
   Actor_SetSpriteFlags(((s32)Actor_Get(10)), 0);
   Actor_SetSpriteFlags(((s32)Actor_Get(11)), 0);
   FieldActor_SetSpritePriority(13, 3);
@@ -516,13 +516,13 @@ s32 Scene_Initialize(void) {
   Actor_Get(23)->scaleY = Q16_ONE / 2;
   Tightrope_Initialize();
   Tightrope_Place(0, 8, 9);
-  Map_SetLayerEntryFlag(3);
+  TilesetAnim_Pause(3);
   if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
     FieldActor_SetSpritePriority(20, 2);
     FieldActor_SetSpritePriority(21, 3);
     FieldActor_SetSpritePriority(22, 3);
     FieldActor_SetSpritePriority(19, 3);
-    Actor_SetActionCallback(Actor_Get(18), 9);
+    Actor_SetMovementType(Actor_Get(18), 9);
     if (Event_GetFlag(FLAG_SAILORS_SPOTTED_FELIX)) {
       Actor_SetPosition(32, 0, 0);
       Actor_SetPosition(33, 0, 0);
@@ -1374,7 +1374,7 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(Champa1),
+    SCENE_EXITS(Champa),
     SCENE_EXIT_UNLESS(1, ChampaInteriors, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, ChampaInteriors, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, ChampaInteriors, 3, EXIT_FLAG_NONE),

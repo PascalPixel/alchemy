@@ -346,12 +346,12 @@ void Import_FieldPsynergySetupActorPair(s32 owner, u16 value);
 void MagmaRock_PlayBurst(s16 value) {
   struct MainRoutineWork *party;
 
-  BattleEffect_LoadActionEffectResources(ABILITY_BURST, 1);
+  FieldPsynergy_LoadResources(ABILITY_BURST, 1);
   party = &gMainRoutineWork;
   Import_FieldPsynergySetupActorPair(party->leaderActorId, value);
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
-  BattleEffect_CleanupSceneObjects();
+  FieldPsynergy_End();
 }
 
 struct MagmaRockEffectParams {
@@ -427,7 +427,7 @@ struct MagmaRockEffectConfig {
   u8 unk20[8];
 };
 
-void Event_PlayCueNearFocus(struct Actor *object, s32 value);
+void Actor_PlaySoundInView(struct Actor *object, s32 value);
 
 /// Every fourth frame, spawns effect 403 at the object with a random z offset
 /// and z velocity.
@@ -444,7 +444,7 @@ void MagmaRock_TrailEmbers(struct Actor *object) {
     config.kind = 2;
     config.data = gMagmaRock_EmberScript;
     if ((frame & 15) == 0 && !Event_GetFlag(FLAG_SCENE_TEMP_60))
-      Event_PlayCueNearFocus(object, 136);
+      Actor_PlaySoundInView(object, 136);
     dz = ((Random16() & 15) - 8) << 15;
     velocityZ = ((Random16() & 31) - 16) << 12;
     z = object->z.fixed;
@@ -944,9 +944,9 @@ void MagmaRock_RaiseFlameTop(union FieldObject *object) {
 #undef PART_Y
 #undef EFFECT_Y
 
-void Event_PlayCueNearFocus(struct Actor *object, s32 a);
+void Actor_PlaySoundInView(struct Actor *object, s32 a);
 
-struct AnimationEntry;
+struct SpriteAnimation;
 
 /// The sprite as Sprite_Create fills it, laid out as vram_block_93.c
 /// declares it.
@@ -967,7 +967,7 @@ struct ResourceSprite {
   u8 flags;
   u8 count;
   u32 shadowAttributes[3];
-  struct AnimationEntry *entries[4];
+  struct SpriteAnimation *entries[4];
 };
 
 void MagmaRock_BurnStatue(struct Actor *object) {
@@ -975,7 +975,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
   s32 type = 0x15f;
 
   if ((gFrameCount & 15) == 0)
-    Event_PlayCueNearFocus(object, 136);
+    Actor_PlaySoundInView(object, 136);
   FieldActor_SetSpriteColor(object, 10);
   if (object->timer <= 31) {
     u32 phase = gFrameCount & 3;
@@ -1002,7 +1002,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
     s32 id;
     s32 i;
 
-    Event_PlayCueNearFocus(object, 144);
+    Actor_PlaySoundInView(object, 144);
     parts[0] = (FieldActor_Create(type, object->x.fixed + px(1),
                                   object->y.fixed + px(32), object->z.fixed));
     for (i = 1; i != 4; i++) {
@@ -1153,7 +1153,7 @@ void MagmaRock_ClearLedgeBehavior(void) {
   Event_ClearFlag(FLAG_SCENE_TEMP_12);
 }
 
-void Actor_SetActionById(s32 id, s32 action);
+void Actor_SetAnimationSpeedById(s32 id, s32 action);
 /* VIEW(s1c00): routine FieldCamera_MoveToActor as void
  * FieldCamera_MoveToActor(s32 a, s32 b); event.h has s32
  * FieldCamera_MoveToActor(s32 actorId, s32 pan); tried as the definition's void
@@ -1179,7 +1179,7 @@ void MagmaRock_AmplifyBurst(void) {
   Event_PlaySound(SE_IMPACT);
   FieldActor_SetSpriteColor(Actor_GetById(gMainRoutineWork.leaderActorId), 6);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 10);
-  Actor_SetActionById(gMainRoutineWork.leaderActorId, 32);
+  Actor_SetAnimationSpeedById(gMainRoutineWork.leaderActorId, 32);
   opt = &options;
   opt->kind = 1;
   opt->palette = 14;
@@ -1550,7 +1550,7 @@ struct LayeredSprite {
   u8 flags;
   u8 count;
   struct AnimationSpritePart shadow;
-  struct AnimationEntry *entries[4];
+  struct SpriteAnimation *entries[4];
 };
 
 static inline void AttachPart(struct Actor *part, struct Actor *anchor,
@@ -2405,7 +2405,7 @@ s32 gPushLeaderSteps[] = {
   };
 
 u32 gMagmaRock_EmberScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_WAIT(18),
     SC_CMD_03,
     SC_WAIT(1),
@@ -2414,7 +2414,7 @@ u32 gMagmaRock_EmberScript[] = {
 };
 
 u32 gMagmaRock_FlameEmberScript[] = {
-    SC_ARG(3),
+    SC_ANIMATION(3),
     SC_WAIT(23),
     SC_CMD_03,
     SC_WAIT(1),

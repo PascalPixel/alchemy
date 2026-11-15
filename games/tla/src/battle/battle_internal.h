@@ -122,13 +122,13 @@
 #define SPRITE_BATTLE_PIERS 521
 #define SPRITE_ISAAC_MACHETE 635
 #define SPRITE_GARET_MACHETE 637
-/// The shadow sprite under a unit (BattleObj.effect).
+/// The shadow sprite under a unit (BattleObject.shadow).
 #define SPRITE_BATTLE_SHADOW 686
 
 // Far calls the parts make, each passing its own view of the record:
-// ResourceMetadata_Register and SpriteAnimation_Start (field.c, resource_slot/)
+// Sprite_AddAnimation and SpriteAnimation_Start (field.c, resource_slot/)
 // take the metadata slot state and the animation entry.
-s32 ResourceMetadata_RegisterFar(void *state, s32 id);
+s32 Sprite_AddAnimationFar(void *state, s32 id);
 void Sprite_RemoveAnimationFar(void *state, s32 handle);
 
 #include "battle_type.h"
@@ -137,7 +137,7 @@ void Sprite_RemoveAnimationFar(void *state, s32 handle);
 /// A unit's sprite as BattleMotion_PlayFall reads it: its first animation.
 struct BattleObjectAnimation {
   u8 unk00[0x28];
-  struct AnimationEntry *entry;
+  struct SpriteAnimation *entry;
 };
 
 /// A unit's HP and PP as ScriptedBattle_SaveUnits keeps them.
@@ -211,13 +211,13 @@ struct TlaSpriteRecord {
   u8 dirty;
   u8 flags;
   u8 unk1b[13];
-  struct AnimationEntry *entries[1];
+  struct SpriteAnimation *entries[1];
 };
 
 /// A sprite as ResetMotionRecordGroup reads it: its four animations.
 struct AnimationEntryGroup {
   u8 unk00[0x28];
-  struct AnimationEntry *entries[4];
+  struct SpriteAnimation *entries[4];
 };
 
 /// A unit's sprite as the battle reads its scale.

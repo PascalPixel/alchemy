@@ -36,11 +36,11 @@ struct Actor *Import_ActorCreate(s32 type, s32 x, s32 y, s32 z);
 void Actor_SelectAnimation(struct Actor *object, s32 mode);
 void Actor_Release(struct Actor *object);
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
-void Actor_SetModeById(u32 actorId, s32 animation);
+void Actor_SetAnimationById(u32 actorId, s32 animation);
 void FieldPsynergy_RunHandler(s32 type);
 void FieldCamera_WaitForArrival(void);
 void Import_EventSetExitRequest(s32 countdown);
-void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
+void FieldPsynergy_LoadResources(s32 a, s32 b);
 void BattleEffect_StopMainActor(void);
 
 void Field_TryJumpForward(void);
@@ -84,7 +84,7 @@ void Actor_SetMovementTypeAndWaitById(s32 actor, const void *callback);
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 flags);
 void FieldEffect_SetAttached(s32 actor, s32 emote);
 void Actor_Jump(s32 actor, s32 speed, s32 frames);
-void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
+void Actor_SetAnimationAndWait(s32 actor, s32 mode);
 void Actor_WaitForMoveById(s32 actor);
 void Event_AddPartyMember(s32 actor, s32 value);
 

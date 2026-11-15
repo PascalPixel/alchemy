@@ -133,8 +133,8 @@ void ScriptedBattle_RestoreUnits(void) {
       unit->snapshot[23] = copies->bytes[23];
       unit->snapshot[24] = copies->bytes[24];
       if (i > 2) {
-        Unit_SetHpFar((struct BattleUnit *)unit, snap->vitals[i].hp);
-        Unit_SetPpFar((struct BattleUnit *)unit, Data_0200ff58.vitals[i].pp);
+        Unit_SetHpFar((struct Unit *)unit, snap->vitals[i].hp);
+        Unit_SetPpFar((struct Unit *)unit, Data_0200ff58.vitals[i].pp);
       }
     }
   }

@@ -126,7 +126,7 @@ enum DehkanPlateau5ActorId {
 
 /// The sixth room, where Cannon is cornered behind the Pound pillar and
 /// fights.
-enum DehkanPlateau6ActorId {
+enum DehkanPlateauCannonActorId {
   ACTOR_ROOM6_POUND_PILLAR = ACTOR_FIRST_PLACED,
   ACTOR_ROOM6_CRUMBLING_PILLAR,
   ACTOR_ROOM6_FIRST_COVER,
@@ -259,7 +259,7 @@ const u8 *Scene_GetActorPlacements(void) {
     return gDehkanPlateau_Room4Placements;
   if (scene == SCENE_DEHKAN_PLATEAU_5)
     return gDehkanPlateau_Room5Placements;
-  if (scene == SCENE_DEHKAN_PLATEAU_6)
+  if (scene == SCENE_DEHKAN_PLATEAU_CANNON)
     return gDehkanPlateau_Room6Placements;
   return gDehkanPlateau_Placements;
 }
@@ -277,7 +277,7 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gDehkanPlateau_Room4Triggers;
   if (scene == SCENE_DEHKAN_PLATEAU_5)
     return gDehkanPlateau_Room5Triggers;
-  if (scene == SCENE_DEHKAN_PLATEAU_6)
+  if (scene == SCENE_DEHKAN_PLATEAU_CANNON)
     return gDehkanPlateau_Room6Triggers;
   return gDehkanPlateau_Triggers;
 }
@@ -359,7 +359,7 @@ void DehkanPlateau_SetActorsHidden(s32 show) {
     Actors_SetHidden(show, ACTOR_ROOM3_FIRST_COVER, ROOM3_COVER_COUNT);
   else if (scene == SCENE_DEHKAN_PLATEAU_4)
     Actors_SetHidden(show, ACTOR_ROOM4_FIRST_COVER, ROOM4_COVER_COUNT);
-  else if (scene == SCENE_DEHKAN_PLATEAU_6)
+  else if (scene == SCENE_DEHKAN_PLATEAU_CANNON)
     Actors_SetHidden(show, ACTOR_ROOM6_FIRST_COVER, ROOM6_COVER_COUNT);
 }
 
@@ -756,7 +756,7 @@ void DehkanPlateau_StepOnCrack(void) {
         Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
       }
     }
-    Actor_SetModeById(gMainRoutineWork.leaderActorId, 28);
+    Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 28);
     Event_Wait(16);
     for (cellX = 0; (u32)cellX <= 39; cellX++) {
       if (cellX == 5)
@@ -1134,7 +1134,7 @@ void DehkanPlateau_SinkPoundedPillar(void) {
     object->scaleY += -0x1f00;
   if (work->active != 0) {
     MapGrid_CopyCellAttributes(27, 8, 1, 1, 27, 9);
-    Actor_SetModeById(ACTOR_ROOM3_POUND_PILLAR, 4);
+    Actor_SetAnimationById(ACTOR_ROOM3_POUND_PILLAR, 4);
     object->priorityFlags |= 2;
     object->collisionFlags &= ~1;
     object->scaleY = Q16_ONE;
@@ -1144,14 +1144,14 @@ void DehkanPlateau_SinkPoundedPillar(void) {
 
 /// Cannon casts Pound on the third room's Pound pillar.
 void DehkanPlateau_CannonCastsPound(void) {
-  BattleEffect_LoadActionEffectResources(ABILITY_POUND, 1);
+  FieldPsynergy_LoadResources(ABILITY_POUND, 1);
   Task_Add__events_g(DehkanPlateau_SinkPoundedPillar, 0x480);
   FieldPsynergy_SetupActorPair(ACTOR_ROOM3_CANNON, ACTOR_ROOM3_POUND_PILLAR);
-  EventObject_Initialize();
+  FieldPsynergy_StartCast();
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   Task_Remove(DehkanPlateau_SinkPoundedPillar);
-  BattleEffect_CleanupSceneObjects();
+  FieldPsynergy_End();
 }
 
 #include "../field/field_effect/advance_motion.c"
@@ -1178,7 +1178,7 @@ void DehkanPlateau_CrumblePillar(s32 id, s32 center, s32 flag) {
   Sound_Play(SE_CHEST_CLOSE);
   Actor_SetSpriteColor(Actor_GetById(id), 7);
   wait(2);
-  Actor_SetModeById(id, 0);
+  Actor_SetAnimationById(id, 0);
   Actor_SetSpriteColor(Actor_GetById(id), 7);
   wait(4);
   Actor_SetSpriteColor(Actor_GetById(id), 0);
@@ -1315,7 +1315,7 @@ void DehkanPlateau_CannonPoundsLeaderThrough(void) {
   leader->motionFlags = 0;
   Actor_SetSpritePriority(ACTOR_ROOM5_CANNON, 3);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, 28);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 28);
   Event_Wait(16);
   for (i = 0; i < 40; i++) {
     if (i == 5)
@@ -1373,15 +1373,15 @@ extern void Task_Add__events_i(void (*func)(void),
 
 /// Cannon casts Pound on the leader in the fifth room.
 void DehkanPlateau_CannonCastsPoundOnLeader(void) {
-  BattleEffect_LoadActionEffectResources(ABILITY_POUND, 1);
+  FieldPsynergy_LoadResources(ABILITY_POUND, 1);
   Task_Add__events_i(DehkanPlateau_PoundLeaderThrough, 0x480);
   FieldPsynergy_SetupActorPair(ACTOR_ROOM5_CANNON,
                                gMainRoutineWork.leaderActorId);
-  EventObject_Initialize();
+  FieldPsynergy_StartCast();
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   Task_Remove(DehkanPlateau_PoundLeaderThrough);
-  BattleEffect_CleanupSceneObjects();
+  FieldPsynergy_End();
 }
 
 void Actor_TakePlaceOf(struct Actor *object, struct Actor *other);
@@ -1496,7 +1496,7 @@ void DehkanPlateau_CannonCornered(void) {
                       40);
   Actor_FaceDirectionAndRefreshById(ACTOR_ROOM6_CANNON, FACING_EAST);
   Event_Wait(20);
-  Motion_SetVarCbAndRefresh(ACTOR_ROOM6_CANNON, 3);
+  Actor_RunRepeatedMotion(ACTOR_ROOM6_CANNON, 3);
   Actor_FaceDirectionAndWait(ACTOR_ROOM6_CANNON, FACING_WEST);
   Actor_WatchAndSetScript(ACTOR_ROOM6_CANNON, gMainRoutineWork.leaderActorId);
   FieldEffect_SetAttached(ACTOR_ROOM6_CANNON,
@@ -1555,7 +1555,7 @@ s32 Scene_Initialize(void) {
     DehkanPlateau_InitializeRoom4();
   else if (scene == SCENE_DEHKAN_PLATEAU_5)
     DehkanPlateau_InitializeRoom5();
-  else if (scene == SCENE_DEHKAN_PLATEAU_6)
+  else if (scene == SCENE_DEHKAN_PLATEAU_CANNON)
     DehkanPlateau_InitializeRoom6();
   return 0;
 }
@@ -1709,11 +1709,11 @@ void DehkanPlateau_InitializeRoom3(void) {
 
     Actor_SetPositionAndFacing(ACTOR_ROOM3_CANNON, px(424), px(104), angle);
   }
-  Actor_SetModeById(ACTOR_ROOM3_POUND_PILLAR, 3);
+  Actor_SetAnimationById(ACTOR_ROOM3_POUND_PILLAR, 3);
   if (GameFlag_Get(FLAG_CANNON_POUNDED_PILLAR) != 0) {
     object = Actor_GetById(ACTOR_ROOM3_POUND_PILLAR);
     MapGrid_CopyCellAttributes(27, 8, 1, 1, 27, 9);
-    Actor_SetModeById(ACTOR_ROOM3_POUND_PILLAR, 4);
+    Actor_SetAnimationById(ACTOR_ROOM3_POUND_PILLAR, 4);
     object->priorityFlags |= 2;
     object->collisionFlags &= ~1;
     GameFlag_Set(FLAG_ROOM3_PILLAR_POUNDED);
@@ -1878,7 +1878,7 @@ loop:
   Sound_Play(SE_THUMP);
   FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, 49);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 49);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
@@ -1887,7 +1887,7 @@ loop:
   leader->gravity = px(1);
   leader->bounce = Q16_ONE / 4;
   Event_Wait(10);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_STAND);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
   gFieldWork->transition = 0x204;
   Event_End();
 }
@@ -2303,39 +2303,39 @@ u32 gSceneExits[] = {
     SCENE_EXIT(43, DehkanPlateau4, 41),
     SCENE_EXITS(DehkanPlateau5),
     SCENE_EXIT(1, DehkanPlateau3, 3),
-    SCENE_EXIT(2, DehkanPlateau6, 1),
-    SCENE_EXIT(3, DehkanPlateau6, 2),
+    SCENE_EXIT(2, DehkanPlateauCannon, 1),
+    SCENE_EXIT(3, DehkanPlateauCannon, 2),
     SCENE_EXIT(4, DehkanPlateau3, 4),
     SCENE_EXIT(5, DehkanPlateau3, 5),
-    SCENE_EXIT(6, DehkanPlateau6, 3),
+    SCENE_EXIT(6, DehkanPlateauCannon, 3),
     SCENE_EXIT(7, DehkanPlateau5, 10),
     SCENE_EXIT(8, DehkanPlateau5, 9),
     SCENE_EXIT(9, DehkanPlateau5, 8),
     SCENE_EXIT(10, DehkanPlateau5, 7),
-    SCENE_EXIT(18, DehkanPlateau6, 8),
-    SCENE_EXIT(19, DehkanPlateau6, 9),
-    SCENE_EXIT(20, DehkanPlateau6, 10),
-    SCENE_EXIT(21, DehkanPlateau6, 11),
-    SCENE_EXIT(22, DehkanPlateau6, 12),
-    SCENE_EXIT(23, DehkanPlateau6, 13),
-    SCENE_EXIT(24, DehkanPlateau6, 14),
-    SCENE_EXIT(25, DehkanPlateau6, 15),
-    SCENE_EXIT(26, DehkanPlateau6, 16),
-    SCENE_EXIT(27, DehkanPlateau6, 17),
-    SCENE_EXIT(28, DehkanPlateau6, 18),
-    SCENE_EXIT(29, DehkanPlateau6, 19),
-    SCENE_EXIT(30, DehkanPlateau6, 20),
-    SCENE_EXIT(31, DehkanPlateau6, 21),
-    SCENE_EXIT(32, DehkanPlateau6, 22),
-    SCENE_EXIT(33, DehkanPlateau6, 23),
-    SCENE_EXITS(DehkanPlateau6),
+    SCENE_EXIT(18, DehkanPlateauCannon, 8),
+    SCENE_EXIT(19, DehkanPlateauCannon, 9),
+    SCENE_EXIT(20, DehkanPlateauCannon, 10),
+    SCENE_EXIT(21, DehkanPlateauCannon, 11),
+    SCENE_EXIT(22, DehkanPlateauCannon, 12),
+    SCENE_EXIT(23, DehkanPlateauCannon, 13),
+    SCENE_EXIT(24, DehkanPlateauCannon, 14),
+    SCENE_EXIT(25, DehkanPlateauCannon, 15),
+    SCENE_EXIT(26, DehkanPlateauCannon, 16),
+    SCENE_EXIT(27, DehkanPlateauCannon, 17),
+    SCENE_EXIT(28, DehkanPlateauCannon, 18),
+    SCENE_EXIT(29, DehkanPlateauCannon, 19),
+    SCENE_EXIT(30, DehkanPlateauCannon, 20),
+    SCENE_EXIT(31, DehkanPlateauCannon, 21),
+    SCENE_EXIT(32, DehkanPlateauCannon, 22),
+    SCENE_EXIT(33, DehkanPlateauCannon, 23),
+    SCENE_EXITS(DehkanPlateauCannon),
     SCENE_EXIT(1, DehkanPlateau5, 2),
     SCENE_EXIT(2, DehkanPlateau5, 3),
     SCENE_EXIT(3, DehkanPlateau5, 6),
-    SCENE_EXIT(40, DehkanPlateau6, 41),
-    SCENE_EXIT(41, DehkanPlateau6, 40),
-    SCENE_EXIT(42, DehkanPlateau6, 43),
-    SCENE_EXIT(43, DehkanPlateau6, 42),
+    SCENE_EXIT(40, DehkanPlateauCannon, 41),
+    SCENE_EXIT(41, DehkanPlateauCannon, 40),
+    SCENE_EXIT(42, DehkanPlateauCannon, 43),
+    SCENE_EXIT(43, DehkanPlateauCannon, 42),
     SCENE_EXITS_END,
 };
 

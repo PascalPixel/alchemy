@@ -16,7 +16,7 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
   event->encounter = Encounter_GetFormationAtSlot(row, column);
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     Encounter_ResolveWorldMapZoneAndBackdrop(
-        &ObjectTable_Get(Party_GetLeaderActor())->x.fixed);
+        &Actor_Lookup(Party_GetLeaderActor())->x.fixed);
   BattleEffect_SelectBattleCue(row, column);
 }
 
@@ -61,7 +61,7 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   work->encounter = Encounter_GetDjinnFormation(djinn);
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
     Encounter_ResolveWorldMapZoneAndBackdrop(
-        &ObjectTable_Get(Party_GetLeaderActor())->x.fixed);
+        &Actor_Lookup(Party_GetLeaderActor())->x.fixed);
   BattleEffect_SelectBattleCue(0, 0);
 }
 
@@ -74,7 +74,7 @@ void Event_SetAfterBattleDestination(s32 sceneId, s32 entrance) {
 
 /// Sets the defeat destination (gMainRoutineWork.defeatScene and
 /// defeatEntrance), where the party goes if it loses the coming battle.
-void Party_SetFields1f2And1f4(s32 sceneId, s32 entrance) {
+void Event_SetDefeatDestination(s32 sceneId, s32 entrance) {
   gMainRoutineWork.defeatScene = sceneId;
   gMainRoutineWork.defeatEntrance = entrance;
 }
@@ -145,7 +145,7 @@ struct EventWork1cc {
 
 /// Plays sound when the actor is in view: within 152 pixels across and 112 up
 /// or down the screen of the actor the camera follows.
-void Event_PlayCueNearFocus(struct Actor *actor, s32 sound) {
+void Actor_PlaySoundInView(struct Actor *actor, s32 sound) {
   struct Actor *focus = gFieldWork->camera;
 
   if (actor == 0 || focus == 0)

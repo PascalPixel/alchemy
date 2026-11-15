@@ -593,7 +593,7 @@ void Caverns_WalkIntoPassage(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_FELIX), 0);
   Actor_SetDestinationOffsetById(ACTOR_FELIX, 0, 16);
   Actor_WaitForMoveById(ACTOR_FELIX);
-  Actor_SetModeById(ACTOR_FELIX, 13);
+  Actor_SetAnimationById(ACTOR_FELIX, 13);
   Sound_Play(SE_MAP_EXIT);
   Event_Wait(14);
   Import_EventSetExitRequest(value);

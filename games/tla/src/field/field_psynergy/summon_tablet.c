@@ -200,8 +200,8 @@ void SummonTablet_PlayRunes(s32 targetId) {
   struct MoteWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct MoteWork));
   s32 ownerId = Party_GetLeaderActor();
-  struct Actor *owner = ObjectTable_Get(ownerId);
-  struct Actor *target = ObjectTable_Get(targetId);
+  struct Actor *owner = Actor_Lookup(ownerId);
+  struct Actor *target = Actor_Lookup(targetId);
   s32 state;
   s32 moteEntry;
   s32 sparkEntry;

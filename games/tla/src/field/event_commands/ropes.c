@@ -184,8 +184,8 @@ struct RopeNode *Rope_AllocNode(void) {
 void Rope_Tie(s32 index, s32 id, s32 other) {
   struct RopeWork *work = ROPE_WORK;
   s32 priority = 2;
-  struct Actor *first = ObjectTable_Get(id);
-  struct Actor *second = ObjectTable_Get(other);
+  struct Actor *first = Actor_Lookup(id);
+  struct Actor *second = Actor_Lookup(other);
 
   if (first != NULL && second != NULL) {
     struct RopeSlot *slot;
@@ -268,8 +268,8 @@ s32 Rope_LayTied(s32 index, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2) {
 
 /// Redraws rope index between posts from and to, bowed by mode.
 void Rope_SwingBetween(s32 index, s32 from, s32 to, s32 mode) {
-  struct Actor *a = ObjectTable_Get(from);
-  struct Actor *b = ObjectTable_Get(to);
+  struct Actor *a = Actor_Lookup(from);
+  struct Actor *b = Actor_Lookup(to);
 
   if (a != NULL && b != NULL)
     Rope_LayBowed(index, a->x.fixed, a->y.fixed + 0x80000, a->z.fixed,
@@ -317,8 +317,8 @@ s32 Rope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ,
 void Rope_Coil(s32 index, s32 firstId, s32 secondId) {
   struct RopeWork *work = ROPE_WORK;
   s32 priority = 2;
-  struct Actor *first = ObjectTable_Get(firstId);
-  struct Actor *second = ObjectTable_Get(secondId);
+  struct Actor *first = Actor_Lookup(firstId);
+  struct Actor *second = Actor_Lookup(secondId);
 
   if (first != NULL && second != NULL) {
     struct RopeSlot *slot;
@@ -401,8 +401,8 @@ extern s32 gRope_LashPhase;
 /// post.
 void Rope_Lash(s32 index, s32 fromId, s32 toId) {
   struct RopeWork *work = ROPE_WORK;
-  struct Actor *from = ObjectTable_Get(fromId);
-  struct Actor *to = ObjectTable_Get(toId);
+  struct Actor *from = Actor_Lookup(fromId);
+  struct Actor *to = Actor_Lookup(toId);
 
   if (from != NULL && to != NULL) {
     s32 toX = to->x.fixed;
@@ -539,8 +539,8 @@ void Rope_Untie(s32 index, s32 fromId, s32 toId) {
   struct Actor *to;
 
   work = ROPE_WORK;
-  from = ObjectTable_Get(fromId);
-  to = ObjectTable_Get(toId);
+  from = Actor_Lookup(fromId);
+  to = Actor_Lookup(toId);
 
   if (from != NULL && to != NULL) {
     work->recoilFrom = from;
@@ -895,8 +895,8 @@ struct TightropeNode *Tightrope_AllocNode(void) {
 /// shows both posts with it (animation 4).
 void Tightrope_Place(s32 slotNo, s32 firstId, s32 secondId) {
   struct TightropeWork *work = TIGHTROPE_WORK;
-  struct Actor *first = ObjectTable_Get(firstId);
-  struct Actor *second = ObjectTable_Get(secondId);
+  struct Actor *first = Actor_Lookup(firstId);
+  struct Actor *second = Actor_Lookup(secondId);
 
   if (first != NULL && second != NULL) {
     struct TightropeSlot *slot = &work->slots[slotNo];
@@ -954,8 +954,8 @@ s32 Tightrope_Lay(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
 
 /// Redraws tightrope index between posts from and to, sagging by mode.
 void Tightrope_WobbleBetween(s32 index, s32 from, s32 to, s32 mode) {
-  struct Actor *a = ObjectTable_Get(from);
-  struct Actor *b = ObjectTable_Get(to);
+  struct Actor *a = Actor_Lookup(from);
+  struct Actor *b = Actor_Lookup(to);
 
   if (a != NULL && b != NULL)
     Tightrope_LayBowed(index, a->x.fixed, a->y.fixed + 0x80000, a->z.fixed,
@@ -995,8 +995,8 @@ s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
 /// Unused: nothing refers to it. Rope_Coil for a tightrope.
 void Tightrope_Coil(s32 index, s32 from, s32 to) {
   struct TightropeWork *work = TIGHTROPE_WORK;
-  struct Actor *a = ObjectTable_Get(from);
-  struct Actor *b = ObjectTable_Get(to);
+  struct Actor *a = Actor_Lookup(from);
+  struct Actor *b = Actor_Lookup(to);
 
   if (a != NULL && b != NULL) {
     struct TightropeSlot *slot = &work->slots[index];
@@ -1053,8 +1053,8 @@ extern s32 gTightrope_LashPhase;
 /// Unused: nothing refers to it. Rope_Lash for a tightrope, without the
 /// short rope's fall.
 void Tightrope_Lash(s32 arg, s32 firstId, s32 secondId) {
-  struct Actor *first = ObjectTable_Get(firstId);
-  struct Actor *second = ObjectTable_Get(secondId);
+  struct Actor *first = Actor_Lookup(firstId);
+  struct Actor *second = Actor_Lookup(secondId);
 
   if (first != NULL && second != NULL) {
     Tightrope_Throw(arg, first->x.fixed, first->y.fixed + 0x80000,
@@ -1155,8 +1155,8 @@ void Tightrope_Untie(s32 arg, s32 firstId, s32 secondId) {
   struct Actor *second;
 
   work = TIGHTROPE_WORK;
-  first = ObjectTable_Get(firstId);
-  second = ObjectTable_Get(secondId);
+  first = Actor_Lookup(firstId);
+  second = Actor_Lookup(secondId);
 
   if (first != NULL && second != NULL) {
     work->recoilFrom = first;

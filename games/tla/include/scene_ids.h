@@ -38,13 +38,13 @@ extern char SceneId_Daila1;
 extern char SceneId_Daila2;
 #define SCENE_DAILA_2 ((s32)&SceneId_Daila2)
 /// The Kandorean Temple's room of the east and west lifts.
-extern char SceneId_KandoreanTemple1;
-#define SCENE_KANDOREAN_TEMPLE_1 ((s32)&SceneId_KandoreanTemple1)
+extern char SceneId_KandoreanTempleLifts;
+#define SCENE_KANDOREAN_TEMPLE_LIFTS ((s32)&SceneId_KandoreanTempleLifts)
 extern char SceneId_KandoreanTemple2;
 #define SCENE_KANDOREAN_TEMPLE_2 ((s32)&SceneId_KandoreanTemple2)
 /// The Kandorean Temple room where the Chestbeaters are fought.
-extern char SceneId_KandoreanTemple3;
-#define SCENE_KANDOREAN_TEMPLE_3 ((s32)&SceneId_KandoreanTemple3)
+extern char SceneId_KandoreanTempleChestbeaters;
+#define SCENE_KANDOREAN_TEMPLE_CHESTBEATERS ((s32)&SceneId_KandoreanTempleChestbeaters)
 extern char SceneId_KandoreanTemple4;
 #define SCENE_KANDOREAN_TEMPLE_4 ((s32)&SceneId_KandoreanTemple4)
 extern char SceneId_KandoreanTemple5;
@@ -52,21 +52,21 @@ extern char SceneId_KandoreanTemple5;
 extern char SceneId_KandoreanTemple6;
 #define SCENE_KANDOREAN_TEMPLE_6 ((s32)&SceneId_KandoreanTemple6)
 /// The Kandorean Temple room where Fog is fought.
-extern char SceneId_KandoreanTemple7;
-#define SCENE_KANDOREAN_TEMPLE_7 ((s32)&SceneId_KandoreanTemple7)
+extern char SceneId_KandoreanTempleFog;
+#define SCENE_KANDOREAN_TEMPLE_FOG ((s32)&SceneId_KandoreanTempleFog)
 /// The Kandorean Temple's gate, where its students and guard stand.
-extern char SceneId_KandoreanTemple8;
-#define SCENE_KANDOREAN_TEMPLE_8 ((s32)&SceneId_KandoreanTemple8)
+extern char SceneId_KandoreanTempleGate;
+#define SCENE_KANDOREAN_TEMPLE_GATE ((s32)&SceneId_KandoreanTempleGate)
 /// Poi's hall, where Lash is received.
-extern char SceneId_KandoreanTemple9;
-#define SCENE_KANDOREAN_TEMPLE_9 ((s32)&SceneId_KandoreanTemple9)
+extern char SceneId_KandoreanTemplePoi;
+#define SCENE_KANDOREAN_TEMPLE_POI ((s32)&SceneId_KandoreanTemplePoi)
 extern char SceneId_YampiDesert1;
 #define SCENE_YAMPI_DESERT_1 ((s32)&SceneId_YampiDesert1)
 extern char SceneId_YampiDesert2;
 #define SCENE_YAMPI_DESERT_2 ((s32)&SceneId_YampiDesert2)
 /// The Yampi Desert scene where Blitz is fought.
-extern char SceneId_YampiDesert3;
-#define SCENE_YAMPI_DESERT_3 ((s32)&SceneId_YampiDesert3)
+extern char SceneId_YampiDesertBlitz;
+#define SCENE_YAMPI_DESERT_BLITZ ((s32)&SceneId_YampiDesertBlitz)
 extern char SceneId_YampiDesert4;
 #define SCENE_YAMPI_DESERT_4 ((s32)&SceneId_YampiDesert4)
 extern char SceneId_YampiDesert5;
@@ -90,8 +90,8 @@ extern char SceneId_YampiDesertCave1;
 extern char SceneId_YampiDesertCave2;
 #define SCENE_YAMPI_DESERT_CAVE_2 ((s32)&SceneId_YampiDesertCave2)
 /// The Yampi Desert cave room where Crystal is fought.
-extern char SceneId_YampiDesertCave3;
-#define SCENE_YAMPI_DESERT_CAVE_3 ((s32)&SceneId_YampiDesertCave3)
+extern char SceneId_YampiDesertCaveCrystal;
+#define SCENE_YAMPI_DESERT_CAVE_CRYSTAL ((s32)&SceneId_YampiDesertCaveCrystal)
 extern char SceneId_AirsRock1;
 #define SCENE_AIRS_ROCK_1 ((s32)&SceneId_AirsRock1)
 extern char SceneId_AirsRock2;
@@ -107,8 +107,8 @@ extern char SceneId_AirsRockInside3;
 extern char SceneId_AirsRockInside4;
 #define SCENE_AIRS_ROCK_INSIDE_4 ((s32)&SceneId_AirsRockInside4)
 /// The room inside Air's Rock with the tablet that teaches Reveal.
-extern char SceneId_AirsRockInside5;
-#define SCENE_AIRS_ROCK_INSIDE_5 ((s32)&SceneId_AirsRockInside5)
+extern char SceneId_AirsRockInsideRevealTablet;
+#define SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET ((s32)&SceneId_AirsRockInsideRevealTablet)
 extern char SceneId_AirsRockInside6;
 #define SCENE_AIRS_ROCK_INSIDE_6 ((s32)&SceneId_AirsRockInside6)
 extern char SceneId_AirsRockInside7;
@@ -118,11 +118,11 @@ extern char SceneId_AirsRockInside8;
 extern char SceneId_AirsRockInside9;
 #define SCENE_AIRS_ROCK_INSIDE_9 ((s32)&SceneId_AirsRockInside9)
 /// The room inside Air's Rock with a Psynergy Stone.
-extern char SceneId_AirsRockInside10;
-#define SCENE_AIRS_ROCK_INSIDE_10 ((s32)&SceneId_AirsRockInside10)
+extern char SceneId_AirsRockInsidePsynergyStone;
+#define SCENE_AIRS_ROCK_INSIDE_PSYNERGY_STONE ((s32)&SceneId_AirsRockInsidePsynergyStone)
 /// Alhafra itself, the town's one outdoor scene.
-extern char SceneId_Alhafra1;
-#define SCENE_ALHAFRA_1 ((s32)&SceneId_Alhafra1)
+extern char SceneId_Alhafra;
+#define SCENE_ALHAFRA ((s32)&SceneId_Alhafra)
 extern char SceneId_AlhafraInteriors;
 #define SCENE_ALHAFRA_INTERIORS ((s32)&SceneId_AlhafraInteriors)
 extern char SceneId_SeaOfTime1;
@@ -182,8 +182,8 @@ extern char SceneId_Garoh5;
 extern char SceneId_AlhafraManor;
 #define SCENE_ALHAFRA_MANOR ((s32)&SceneId_AlhafraManor)
 /// Eastern Alhafra, where Briggs's ship lies.
-extern char SceneId_EasternAlhafra1;
-#define SCENE_EASTERN_ALHAFRA_1 ((s32)&SceneId_EasternAlhafra1)
+extern char SceneId_EasternAlhafra;
+#define SCENE_EASTERN_ALHAFRA ((s32)&SceneId_EasternAlhafra)
 extern char SceneId_EasternAlhafraShip;
 #define SCENE_EASTERN_ALHAFRA_SHIP ((s32)&SceneId_EasternAlhafraShip)
 extern char SceneId_AlhafranCave;
@@ -213,8 +213,8 @@ extern char SceneId_GabombaStatue1;
 extern char SceneId_GabombaStatue2;
 #define SCENE_GABOMBA_STATUE_2 ((s32)&SceneId_GabombaStatue2)
 /// The room inside the Gabomba Statue where Steel is fought.
-extern char SceneId_GabombaStatue3;
-#define SCENE_GABOMBA_STATUE_3 ((s32)&SceneId_GabombaStatue3)
+extern char SceneId_GabombaStatueSteel;
+#define SCENE_GABOMBA_STATUE_STEEL ((s32)&SceneId_GabombaStatueSteel)
 extern char SceneId_GabombaStatue4;
 #define SCENE_GABOMBA_STATUE_4 ((s32)&SceneId_GabombaStatue4)
 extern char SceneId_GabombaStatue5;
@@ -250,8 +250,8 @@ extern char SceneId_GaiaRockInside4;
 extern char SceneId_GaiaRockInside5;
 #define SCENE_GAIA_ROCK_INSIDE_5 ((s32)&SceneId_GaiaRockInside5)
 /// Champa itself, the town's one outdoor scene.
-extern char SceneId_Champa1;
-#define SCENE_CHAMPA_1 ((s32)&SceneId_Champa1)
+extern char SceneId_Champa;
+#define SCENE_CHAMPA ((s32)&SceneId_Champa)
 extern char SceneId_MagmaRock1;
 #define SCENE_MAGMA_ROCK_1 ((s32)&SceneId_MagmaRock1)
 extern char SceneId_MagmaRock2;
@@ -263,8 +263,8 @@ extern char SceneId_MagmaRockInside1;
 extern char SceneId_MagmaRockInside2;
 #define SCENE_MAGMA_ROCK_INSIDE_2 ((s32)&SceneId_MagmaRockInside2)
 /// The room inside Magma Rock where Fury is fought.
-extern char SceneId_MagmaRockInside3;
-#define SCENE_MAGMA_ROCK_INSIDE_3 ((s32)&SceneId_MagmaRockInside3)
+extern char SceneId_MagmaRockInsideFury;
+#define SCENE_MAGMA_ROCK_INSIDE_FURY ((s32)&SceneId_MagmaRockInsideFury)
 extern char SceneId_MagmaRockInside4;
 #define SCENE_MAGMA_ROCK_INSIDE_4 ((s32)&SceneId_MagmaRockInside4)
 extern char SceneId_MagmaRockInside5;
@@ -274,8 +274,8 @@ extern char SceneId_MagmaRockInside6;
 extern char SceneId_MagmaRockInside7;
 #define SCENE_MAGMA_ROCK_INSIDE_7 ((s32)&SceneId_MagmaRockInside7)
 /// The room inside Magma Rock with the tablet that teaches Blaze.
-extern char SceneId_MagmaRockInside8;
-#define SCENE_MAGMA_ROCK_INSIDE_8 ((s32)&SceneId_MagmaRockInside8)
+extern char SceneId_MagmaRockInsideBlazeTablet;
+#define SCENE_MAGMA_ROCK_INSIDE_BLAZE_TABLET ((s32)&SceneId_MagmaRockInsideBlazeTablet)
 extern char SceneId_TundariaTower1;
 #define SCENE_TUNDARIA_TOWER_1 ((s32)&SceneId_TundariaTower1)
 extern char SceneId_TundariaTower2;
@@ -283,8 +283,8 @@ extern char SceneId_TundariaTower2;
 extern char SceneId_TundariaTower3;
 #define SCENE_TUNDARIA_TOWER_3 ((s32)&SceneId_TundariaTower3)
 /// The Tundaria Tower room where Reflux is fought.
-extern char SceneId_TundariaTower4;
-#define SCENE_TUNDARIA_TOWER_4 ((s32)&SceneId_TundariaTower4)
+extern char SceneId_TundariaTowerReflux;
+#define SCENE_TUNDARIA_TOWER_REFLUX ((s32)&SceneId_TundariaTowerReflux)
 extern char SceneId_TundariaTower5;
 #define SCENE_TUNDARIA_TOWER_5 ((s32)&SceneId_TundariaTower5)
 extern char SceneId_TundariaTower6;
@@ -304,8 +304,8 @@ extern char SceneId_ShrineOfTheSeaGod3;
 extern char SceneId_ShrineOfTheSeaGod4;
 #define SCENE_SHRINE_OF_THE_SEA_GOD_4 ((s32)&SceneId_ShrineOfTheSeaGod4)
 /// The Shrine of the Sea God room where Breath is chased and fought.
-extern char SceneId_ShrineOfTheSeaGod5;
-#define SCENE_SHRINE_OF_THE_SEA_GOD_5 ((s32)&SceneId_ShrineOfTheSeaGod5)
+extern char SceneId_ShrineOfTheSeaGodBreath;
+#define SCENE_SHRINE_OF_THE_SEA_GOD_BREATH ((s32)&SceneId_ShrineOfTheSeaGodBreath)
 extern char SceneId_ShrineOfTheSeaGod6;
 #define SCENE_SHRINE_OF_THE_SEA_GOD_6 ((s32)&SceneId_ShrineOfTheSeaGod6)
 extern char SceneId_ShrineOfTheSeaGod7;
@@ -333,8 +333,8 @@ extern char SceneId_DehkanPlateau4;
 extern char SceneId_DehkanPlateau5;
 #define SCENE_DEHKAN_PLATEAU_5 ((s32)&SceneId_DehkanPlateau5)
 /// The Dehkan Plateau scene where Cannon is met and fought.
-extern char SceneId_DehkanPlateau6;
-#define SCENE_DEHKAN_PLATEAU_6 ((s32)&SceneId_DehkanPlateau6)
+extern char SceneId_DehkanPlateauCannon;
+#define SCENE_DEHKAN_PLATEAU_CANNON ((s32)&SceneId_DehkanPlateauCannon)
 extern char SceneId_LemurianShipDeck1;
 #define SCENE_LEMURIAN_SHIP_DECK_1 ((s32)&SceneId_LemurianShipDeck1)
 extern char SceneId_LemurianShipDeck2;
@@ -342,21 +342,21 @@ extern char SceneId_LemurianShipDeck2;
 extern char SceneId_Madra;
 #define SCENE_MADRA ((s32)&SceneId_Madra)
 /// The Kibombo Mountains scene where Waft is fought.
-extern char SceneId_KibomboMountains1;
-#define SCENE_KIBOMBO_MOUNTAINS_1 ((s32)&SceneId_KibomboMountains1)
+extern char SceneId_KibomboMountainsWaft;
+#define SCENE_KIBOMBO_MOUNTAINS_WAFT ((s32)&SceneId_KibomboMountainsWaft)
 extern char SceneId_KibomboMountains2;
 #define SCENE_KIBOMBO_MOUNTAINS_2 ((s32)&SceneId_KibomboMountains2)
 extern char SceneId_KibomboMountains3;
 #define SCENE_KIBOMBO_MOUNTAINS_3 ((s32)&SceneId_KibomboMountains3)
 /// The Islet Cave room where Meld is fought.
-extern char SceneId_IsletCave1;
-#define SCENE_ISLET_CAVE_1 ((s32)&SceneId_IsletCave1)
+extern char SceneId_IsletCaveMeld;
+#define SCENE_ISLET_CAVE_MELD ((s32)&SceneId_IsletCaveMeld)
 /// The Islet Cave room where Serac is fought.
-extern char SceneId_IsletCave2;
-#define SCENE_ISLET_CAVE_2 ((s32)&SceneId_IsletCave2)
+extern char SceneId_IsletCaveSerac;
+#define SCENE_ISLET_CAVE_SERAC ((s32)&SceneId_IsletCaveSerac)
 /// The Islet Cave room where the Sentinel waits.
-extern char SceneId_IsletCave3;
-#define SCENE_ISLET_CAVE_3 ((s32)&SceneId_IsletCave3)
+extern char SceneId_IsletCaveSentinel;
+#define SCENE_ISLET_CAVE_SENTINEL ((s32)&SceneId_IsletCaveSentinel)
 extern char SceneId_Yallam1;
 #define SCENE_YALLAM_1 ((s32)&SceneId_Yallam1)
 extern char SceneId_Yallam2;
@@ -364,8 +364,8 @@ extern char SceneId_Yallam2;
 extern char SceneId_ApojiiIslands1;
 #define SCENE_APOJII_ISLANDS_1 ((s32)&SceneId_ApojiiIslands1)
 /// The Apojii Islands scene where Haze joins the party.
-extern char SceneId_ApojiiIslands2;
-#define SCENE_APOJII_ISLANDS_2 ((s32)&SceneId_ApojiiIslands2)
+extern char SceneId_ApojiiIslandsHaze;
+#define SCENE_APOJII_ISLANDS_HAZE ((s32)&SceneId_ApojiiIslandsHaze)
 extern char SceneId_ApojiiIslands3;
 #define SCENE_APOJII_ISLANDS_3 ((s32)&SceneId_ApojiiIslands3)
 extern char SceneId_ApojiiIslandsCave;
@@ -373,8 +373,8 @@ extern char SceneId_ApojiiIslandsCave;
 extern char SceneId_AquaRockInside1;
 #define SCENE_AQUA_ROCK_INSIDE_1 ((s32)&SceneId_AquaRockInside1)
 /// The room inside Aqua Rock with the tablet that teaches Parch.
-extern char SceneId_AquaRockInside10;
-#define SCENE_AQUA_ROCK_INSIDE_10 ((s32)&SceneId_AquaRockInside10)
+extern char SceneId_AquaRockInsideParchTablet;
+#define SCENE_AQUA_ROCK_INSIDE_PARCH_TABLET ((s32)&SceneId_AquaRockInsideParchTablet)
 extern char SceneId_IzumoInteriors;
 #define SCENE_IZUMO_INTERIORS ((s32)&SceneId_IzumoInteriors)
 extern char SceneId_Izumo;
@@ -384,8 +384,8 @@ extern char SceneId_IzumoRuinsFirstRoom;
 extern char SceneId_IzumoRuinsSecondRoom;
 #define SCENE_IZUMO_RUINS_SECOND_ROOM ((s32)&SceneId_IzumoRuinsSecondRoom)
 /// The room inside Aqua Rock where Steam is fought.
-extern char SceneId_AquaRockInside2;
-#define SCENE_AQUA_ROCK_INSIDE_2 ((s32)&SceneId_AquaRockInside2)
+extern char SceneId_AquaRockInsideSteam;
+#define SCENE_AQUA_ROCK_INSIDE_STEAM ((s32)&SceneId_AquaRockInsideSteam)
 extern char SceneId_AquaRockInside3;
 #define SCENE_AQUA_ROCK_INSIDE_3 ((s32)&SceneId_AquaRockInside3)
 extern char SceneId_AquaRockInside4;
@@ -395,8 +395,8 @@ extern char SceneId_AquaRockInside5;
 extern char SceneId_AquaRockInside6;
 #define SCENE_AQUA_ROCK_INSIDE_6 ((s32)&SceneId_AquaRockInside6)
 /// The room inside Aqua Rock with a Psynergy Stone.
-extern char SceneId_AquaRockInside7;
-#define SCENE_AQUA_ROCK_INSIDE_7 ((s32)&SceneId_AquaRockInside7)
+extern char SceneId_AquaRockInsidePsynergyStone;
+#define SCENE_AQUA_ROCK_INSIDE_PSYNERGY_STONE ((s32)&SceneId_AquaRockInsidePsynergyStone)
 extern char SceneId_AquaRockInside8;
 #define SCENE_AQUA_ROCK_INSIDE_8 ((s32)&SceneId_AquaRockInside8)
 extern char SceneId_AquaRockInside9;
@@ -404,8 +404,8 @@ extern char SceneId_AquaRockInside9;
 extern char SceneId_AttekaInlet1;
 #define SCENE_ATTEKA_INLET_1 ((s32)&SceneId_AttekaInlet1)
 /// The Atteka Inlet scene where Cyclone uncovers Geode.
-extern char SceneId_AttekaInlet2;
-#define SCENE_ATTEKA_INLET_2 ((s32)&SceneId_AttekaInlet2)
+extern char SceneId_AttekaInletGeode;
+#define SCENE_ATTEKA_INLET_GEODE ((s32)&SceneId_AttekaInletGeode)
 extern char SceneId_Prox1;
 #define SCENE_PROX_1 ((s32)&SceneId_Prox1)
 extern char SceneId_Prox2;
@@ -429,13 +429,13 @@ extern char SceneId_Caverns4;
 extern char SceneId_MarsLighthouseEntrance1;
 #define SCENE_MARS_LIGHTHOUSE_ENTRANCE_1 ((s32)&SceneId_MarsLighthouseEntrance1)
 /// The Mars Lighthouse room where Fugue is fought.
-extern char SceneId_MarsLighthouseEntrance2;
-#define SCENE_MARS_LIGHTHOUSE_ENTRANCE_2 ((s32)&SceneId_MarsLighthouseEntrance2)
+extern char SceneId_MarsLighthouseEntranceFugue;
+#define SCENE_MARS_LIGHTHOUSE_ENTRANCE_FUGUE ((s32)&SceneId_MarsLighthouseEntranceFugue)
 extern char SceneId_MarsLighthouseEntrance3;
 #define SCENE_MARS_LIGHTHOUSE_ENTRANCE_3 ((s32)&SceneId_MarsLighthouseEntrance3)
 /// The Mars Lighthouse room where Balm is fought.
-extern char SceneId_MarsLighthouseEntrance4;
-#define SCENE_MARS_LIGHTHOUSE_ENTRANCE_4 ((s32)&SceneId_MarsLighthouseEntrance4)
+extern char SceneId_MarsLighthouseEntranceBalm;
+#define SCENE_MARS_LIGHTHOUSE_ENTRANCE_BALM ((s32)&SceneId_MarsLighthouseEntranceBalm)
 extern char SceneId_MarsLighthouseEntrance5;
 #define SCENE_MARS_LIGHTHOUSE_ENTRANCE_5 ((s32)&SceneId_MarsLighthouseEntrance5)
 extern char SceneId_MarsLighthouseEntrance6;
@@ -443,9 +443,9 @@ extern char SceneId_MarsLighthouseEntrance6;
 extern char SceneId_MarsLighthouseEntrance7;
 #define SCENE_MARS_LIGHTHOUSE_ENTRANCE_7 ((s32)&SceneId_MarsLighthouseEntrance7)
 /// Mars Lighthouse's room of the Mars Star.
-extern char SceneId_MarsLighthouseStarRoom1;
-#define SCENE_MARS_LIGHTHOUSE_STAR_ROOM_1                                      \
-  ((s32)&SceneId_MarsLighthouseStarRoom1)
+extern char SceneId_MarsLighthouseStarRoom;
+#define SCENE_MARS_LIGHTHOUSE_STAR_ROOM                                      \
+  ((s32)&SceneId_MarsLighthouseStarRoom)
 extern char SceneId_MarsLighthouseRoomM1;
 #define SCENE_MARS_LIGHTHOUSE_ROOM_M_1 ((s32)&SceneId_MarsLighthouseRoomM1)
 extern char SceneId_MarsLighthouseRoomM2;
@@ -467,8 +467,8 @@ extern char SceneId_MarsLighthouseRoomF4;
 extern char SceneId_MarsLighthouseRoomM6;
 #define SCENE_MARS_LIGHTHOUSE_ROOM_M_6 ((s32)&SceneId_MarsLighthouseRoomM6)
 /// Mars Lighthouse's aerie, where the Doom Dragon is faced.
-extern char SceneId_MarsLighthouseAerie1;
-#define SCENE_MARS_LIGHTHOUSE_AERIE_1 ((s32)&SceneId_MarsLighthouseAerie1)
+extern char SceneId_MarsLighthouseAerie;
+#define SCENE_MARS_LIGHTHOUSE_AERIE ((s32)&SceneId_MarsLighthouseAerie)
 extern char SceneId_TreasureIsle1;
 #define SCENE_TREASURE_ISLE_1 ((s32)&SceneId_TreasureIsle1)
 extern char SceneId_TreasureIsle2;
@@ -476,8 +476,8 @@ extern char SceneId_TreasureIsle2;
 extern char SceneId_TreasureIsle3;
 #define SCENE_TREASURE_ISLE_3 ((s32)&SceneId_TreasureIsle3)
 /// The Treasure Isle room where Gale is fought.
-extern char SceneId_TreasureIsle4;
-#define SCENE_TREASURE_ISLE_4 ((s32)&SceneId_TreasureIsle4)
+extern char SceneId_TreasureIsleGale;
+#define SCENE_TREASURE_ISLE_GALE ((s32)&SceneId_TreasureIsleGale)
 extern char SceneId_TreasureIsle5;
 #define SCENE_TREASURE_ISLE_5 ((s32)&SceneId_TreasureIsle5)
 extern char SceneId_Kibombo1;
@@ -495,8 +495,8 @@ extern char SceneId_Kibombo6;
 extern char SceneId_GabombaCatacombs1;
 #define SCENE_GABOMBA_CATACOMBS_1 ((s32)&SceneId_GabombaCatacombs1)
 /// The Gabomba Catacombs room where Mud is fought.
-extern char SceneId_GabombaCatacombs2;
-#define SCENE_GABOMBA_CATACOMBS_2 ((s32)&SceneId_GabombaCatacombs2)
+extern char SceneId_GabombaCatacombsMud;
+#define SCENE_GABOMBA_CATACOMBS_MUD ((s32)&SceneId_GabombaCatacombsMud)
 extern char SceneId_GabombaCatacombs3;
 #define SCENE_GABOMBA_CATACOMBS_3 ((s32)&SceneId_GabombaCatacombs3)
 extern char SceneId_GabombaCatacombs4;
@@ -518,8 +518,8 @@ extern char SceneId_ShamanVillage6;
 extern char SceneId_LemurianShip1;
 #define SCENE_LEMURIAN_SHIP_1 ((s32)&SceneId_LemurianShip1)
 /// The Lemurian Ship's hold, where the Aqua Hydra is fought.
-extern char SceneId_LemurianShip2;
-#define SCENE_LEMURIAN_SHIP_2 ((s32)&SceneId_LemurianShip2)
+extern char SceneId_LemurianShipAquaHydra;
+#define SCENE_LEMURIAN_SHIP_AQUA_HYDRA ((s32)&SceneId_LemurianShipAquaHydra)
 extern char SceneId_YallamInteriors1;
 #define SCENE_YALLAM_INTERIORS_1 ((s32)&SceneId_YallamInteriors1)
 extern char SceneId_YallamInteriors2;
@@ -531,8 +531,8 @@ extern char SceneId_TaopoSwamp2;
 extern char SceneId_TaopoSwamp3;
 #define SCENE_TAOPO_SWAMP_3 ((s32)&SceneId_TaopoSwamp3)
 /// The Taopo Swamp scene where Flower is fought.
-extern char SceneId_TaopoSwamp4;
-#define SCENE_TAOPO_SWAMP_4 ((s32)&SceneId_TaopoSwamp4)
+extern char SceneId_TaopoSwampFlower;
+#define SCENE_TAOPO_SWAMP_FLOWER ((s32)&SceneId_TaopoSwampFlower)
 extern char SceneId_TaopoSwamp5;
 #define SCENE_TAOPO_SWAMP_5 ((s32)&SceneId_TaopoSwamp5)
 extern char SceneId_TaopoSwamp6;
@@ -560,8 +560,8 @@ extern char SceneId_ChampaCliffCaves2;
 extern char SceneId_ChampaCliffCaves3;
 #define SCENE_CHAMPA_CLIFF_CAVES_3 ((s32)&SceneId_ChampaCliffCaves3)
 /// The Champa cliff cave where the Avimander is fought and the Trident taken.
-extern char SceneId_ChampaCliffCaves4;
-#define SCENE_CHAMPA_CLIFF_CAVES_4 ((s32)&SceneId_ChampaCliffCaves4)
+extern char SceneId_ChampaCliffCavesAvimander;
+#define SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER ((s32)&SceneId_ChampaCliffCavesAvimander)
 extern char SceneId_AnkohlRuins1;
 #define SCENE_ANKOHL_RUINS_1 ((s32)&SceneId_AnkohlRuins1)
 extern char SceneId_AnkohlRuins2;
@@ -620,8 +620,8 @@ extern char SceneId_TrialRoad2;
 extern char SceneId_TrialRoad3;
 #define SCENE_TRIAL_ROAD_3 ((s32)&SceneId_TrialRoad3)
 /// The Trial Road scene where Gasp is fought.
-extern char SceneId_TrialRoad4;
-#define SCENE_TRIAL_ROAD_4 ((s32)&SceneId_TrialRoad4)
+extern char SceneId_TrialRoadGasp;
+#define SCENE_TRIAL_ROAD_GASP ((s32)&SceneId_TrialRoadGasp)
 extern char SceneId_JupiterLighthouseEntrance;
 #define SCENE_JUPITER_LIGHTHOUSE_ENTRANCE                                      \
   ((s32)&SceneId_JupiterLighthouseEntrance)
@@ -644,8 +644,8 @@ extern char SceneId_JupiterLighthouseRoom5;
 extern char SceneId_JupiterLighthouseRoom6;
 #define SCENE_JUPITER_LIGHTHOUSE_ROOM_6 ((s32)&SceneId_JupiterLighthouseRoom6)
 /// The Jupiter Lighthouse room where Whorl is fought.
-extern char SceneId_JupiterLighthouseRoom7;
-#define SCENE_JUPITER_LIGHTHOUSE_ROOM_7 ((s32)&SceneId_JupiterLighthouseRoom7)
+extern char SceneId_JupiterLighthouseWhorl;
+#define SCENE_JUPITER_LIGHTHOUSE_WHORL ((s32)&SceneId_JupiterLighthouseWhorl)
 extern char SceneId_JupiterLighthouseRoom8;
 #define SCENE_JUPITER_LIGHTHOUSE_ROOM_8 ((s32)&SceneId_JupiterLighthouseRoom8)
 extern char SceneId_JupiterLighthouseRoom9;

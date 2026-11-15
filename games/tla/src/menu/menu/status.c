@@ -849,7 +849,7 @@ void StatusScreen_ShowMemberProgressMessage(void *window, s32 help, s32 full) {
     help++;
   if (help == 1) {
     u8 *owner = menu + 0x216;
-    struct BattleUnit *state = Unit_Get(*owner);
+    struct Unit *state = Unit_Get(*owner);
 
     if (state->level == 99)
       help = 8;
@@ -892,7 +892,7 @@ s32 Unit_GetElementLevelFar(s32 ownerId, s32 element);
 /// not cleared first.
 void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
   struct StatusScreenWork *menu = Ram_HeapSlots->menuWork;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 element;
   s32 djinnRow;
   s32 keepDrawn;
@@ -982,7 +982,7 @@ extern const u8 gMenu_PpString[];
 /// and Luck on the right.
 void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
   struct ItemMenuWork *menu;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   menu = Ram_HeapSlots->menuWork;
   unit = Unit_Get(owner);
@@ -1145,7 +1145,7 @@ void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused) {
 #undef RANGE_ICON_TILE
 
 // The psynergy menu work block, as this function reads it.
-#define ACTION_ID_MASK OWNER_ACTION_ID_MASK
+#define ACTION_ID_MASK PSYNERGY_ABILITY_MASK
 
 // The Japanese page lists six abilities rather than five, a row higher, and
 // says where the chosen ability can be used in short lines stacked at the
@@ -1293,7 +1293,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 
 // The psynergy menu work block, as this function reads it.
 #define PSY_LIST_OFFSET 0x1c4
-#define ACT_ID_MASK OWNER_ACTION_ID_MASK
+#define ACT_ID_MASK PSYNERGY_ABILITY_MASK
 #define OWNER_CLASS_MSG_OFFSET 0x129
 #define OWNER_LEVEL_OFFSET 15
 
@@ -1662,7 +1662,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
 /// "no items", then the member's name, Attack and Defense.
 s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct MenuResult *state) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   u16 *inventoryEntry;
   s32 firstEntry;
   u32 rowCount;
@@ -1733,7 +1733,7 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct MenuResult *state) {
 
 s32 ItemMenu_SelectItem(void) {
   struct ItemMenuWork *menu;
-  struct BattleUnit *owner;
+  struct Unit *owner;
   s32 result;
   s32 window;
   s32 refresh;

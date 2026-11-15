@@ -13,7 +13,7 @@
 /// position[1]; an animated object is raised by its frame box. Returns -1 when
 /// the object does not exist.
 s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
-  struct Actor *object = ObjectTable_Get(actorId);
+  struct Actor *object = Actor_Lookup(actorId);
 #ifdef UBFIX
   struct MapWork *map;
 #else
@@ -83,7 +83,7 @@ void Field_StartEncounterTransition(s32 unused) {
   }
 }
 
-void *ResourceMetadata_RegisterFar(void *, s32);
+void *Sprite_AddAnimationFar(void *, s32);
 
 /// The Broken Seal's Exit_PrepareAnimation for any actor: centres actor id on
 /// its cell at the cell's south edge, stops it, hides its shadow and plays
@@ -97,11 +97,11 @@ void Exit_PrepareActorAnimation(s32 id, s32 side) {
   struct ContextEffect *effect;
   s32 mode;
 
-  object = ObjectTable_Get(id);
+  object = Actor_Lookup(id);
   context = object->sprite;
   mode = (side != 1);
   mode = 26 - mode;
-  effect = ResourceMetadata_RegisterFar(context, 267);
+  effect = Sprite_AddAnimationFar(context, 267);
   zero = 0;
   // Through a byte pointer: as context->flags the kind is set first.
   *&context->flags = zero;
@@ -132,9 +132,9 @@ void Exit_PrepareAnimation(s32 animation) {
 
   party = &gMainRoutineWork;
   mode = animation;
-  object = ObjectTable_Get(party->leaderActorId);
+  object = Actor_Lookup(party->leaderActorId);
   context = object->sprite;
-  effect = ResourceMetadata_RegisterFar(context, 267);
+  effect = Sprite_AddAnimationFar(context, 267);
   zero = 0;
   context->flags = zero;
   /* FAKEMATCH(dead): an empty once-only loop. */
@@ -171,9 +171,9 @@ void Exit_StartStairsDown(void) {
 /// extra sprite animation (sprite 267) and walks 8 pixels south.
 void Entrance_EndArrivalAnimation(s32 mode) {
   s32 zero;
-  struct Actor *obj = ObjectTable_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *obj = Actor_Lookup(gMainRoutineWork.leaderActorId);
   struct ContextSprite *ctx = obj->sprite;
-  struct ContextEffectEntry *eff = ResourceMetadata_RegisterFar(ctx, 0x10b);
+  struct ContextEffectEntry *eff = Sprite_AddAnimationFar(ctx, 0x10b);
 
   zero = 0;
   ctx->flags = zero;
@@ -224,7 +224,7 @@ s32 Entrance_PlayArrival(void) {
 
         GameFlag_Clear(flag);
         id = gMainRoutineWork.leaderActorId;
-        object = ObjectTable_Get(id);
+        object = Actor_Lookup(id);
         object->y.fixed += px(160);
         FieldCamera_MoveWithinMapBounds(-1, -1, -1, 0);
         while (object->y.fixed + object->velocityY > object->groundHeight) {
@@ -245,9 +245,9 @@ s32 Entrance_PlayArrival(void) {
 /// The exit of kind 0x50: gives the leader's sprite a layer of sprite 268,
 /// drawn transparent (SPRITE_COLOR_HIDDEN).
 void Func_080d5fd4(void) {
-  struct Actor *object = ObjectTable_Get(gMainRoutineWork.leaderActorId);
+  struct Actor *object = Actor_Lookup(gMainRoutineWork.leaderActorId);
   u8 *metadata =
-      ResourceMetadata_RegisterFar(*(void **)((u8 *)object + 0x50), 268);
+      Sprite_AddAnimationFar(*(void **)((u8 *)object + 0x50), 268);
 
   metadata[5] = 15;
 }

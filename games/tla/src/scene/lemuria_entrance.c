@@ -232,7 +232,7 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
   LemuriaEntrance_ShowPortraitLine(7, 250);
   LemuriaEntrance_ShowPortraitLine(4, 90);
   LemuriaEntrance_ShowPortraitLine(7, 250);
-  FieldActor_RefreshSelectorById(8);
+  FieldActor_WaitForScriptEndById(8);
   FieldEvent_Wait(10);
   work = Ram_HeapSlots->fieldWork;
   work->transitionFrames = 30;
@@ -285,7 +285,7 @@ u32 gLemuriaEntrance_ShipSailsOut[] = {
 
 s32 gLemuriaEntrance_ShipAtRest[] = {
     SC_CALL(LemuriaEntrance_ResetAnimationFrame),
-    SC_ARG(7),
+    SC_ANIMATION(7),
     SC_END,
 };
 

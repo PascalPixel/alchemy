@@ -62,7 +62,7 @@
 #define SC_WALK 0x24
 #define SC_KEY_COUNT 0x25 ///< Check the configured keys.
 #define SC_FREE 0x26      ///< release the object
-#define SC_ARG(v) 0x27, (v)
+#define SC_ANIMATION(v) 0x27, (v)
 #define SC_NOP(v) 0x28, (v) ///< Skip its operand.
 #define SC_SE(n) 0x29, (n)  ///< a sound effect
 #define SC_CALL_WITH(v) 0x2a, (v)

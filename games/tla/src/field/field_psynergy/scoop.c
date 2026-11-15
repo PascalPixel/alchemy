@@ -491,7 +491,7 @@ void Scoop_DigUpItem(void) {
   struct ScoopWork *work = Ram_HeapSlots->battleEffect;
   struct Actor *anchor;
   struct FieldWork *event;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct Actor *object;
   s32 item;
   s32 id = 79;

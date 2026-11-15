@@ -602,12 +602,12 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       FieldEvent_Wait(60);
       FieldActor_SetSpritePriority(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 3);
       FieldActor_SetSpritePriority(ACTOR_SAILOR_EAGER_TO_JOIN, 3);
-      FieldActor_RefreshSelectorById(ACTOR_SAILOR_EAGER_TO_JOIN);
+      FieldActor_WaitForScriptEndById(ACTOR_SAILOR_EAGER_TO_JOIN);
       FieldActor_Stop(ACTOR_FELIX);
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       Actor_SetPosition(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 0);
       Event_PlaySound(SE_MAP_EXIT);
-      FieldActor_RefreshSelectorById(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE);
+      FieldActor_WaitForScriptEndById(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE);
       Actor_SetPosition(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0, 0);
       Event_PlaySound(SE_MAP_EXIT);
       FieldEvent_Wait(10);
@@ -618,7 +618,7 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
 
 // clang-format off
 u32 gAlhafraInteriors_TravelersWalkOffScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(520), 0, px(328)),
     SC_SYNC,
     SC_MOVE(px(520), 0, px(312)),
@@ -635,11 +635,11 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(AlhafraInteriors),
-    SCENE_EXIT_UNLESS(1, Alhafra1, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Alhafra1, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, Alhafra1, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, Alhafra1, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, Alhafra1, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, Alhafra, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, Alhafra, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, Alhafra, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, Alhafra, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, Alhafra, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(20, AlhafraInteriors, 20, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(21, AlhafraInteriors, 21, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(22, AlhafraInteriors, 22, EXIT_FLAG_NONE),

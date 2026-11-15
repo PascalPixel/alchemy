@@ -42,11 +42,11 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   Actor_FaceDirectionById(djinniId, 0x4000, 0);
   wait(20);
   Sound_PlayFar(SE_NOTE_LOW);
-  Motion_SetVarCbAndRefresh(djinniId, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlayFar(SE_NOTE_MID);
-  Motion_SetVarCbAndRefresh(djinniId, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlayFar(SE_NOTE_HIGH);
-  Motion_SetVarCbAndRefresh(djinniId, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   wait(20);
   Sound_PlayFar(SE_SPIN);
   djinni->update = FieldEffect_AdvanceAngleWithRamp;
@@ -108,7 +108,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   }
 
   wait(60);
-  leader->update = BattleEffect_SetObjectAlternatingWords;
+  leader->update = FieldEffect_PulseActorScale;
   wait(100);
 
   // Every spark still in use goes (state 5).

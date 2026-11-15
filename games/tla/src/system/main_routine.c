@@ -126,7 +126,7 @@ void Scene_TakeExit(s32 exitId) {
 /// was left (WorldMap_SetReturnLeavingScene). As The Broken Seal's, with no
 /// childhood healing.
 void Scene_ReturnFromSequence(s32 result) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s16 sceneId;
   s16 entrance;
 

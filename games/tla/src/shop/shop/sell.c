@@ -110,7 +110,7 @@ s32 Shop_SelectSell(s32 unitId) {
   struct ShopWork *shop;
   struct RenderInput *nameWindow;
   struct RenderInput *priceWindow;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 inventoryCount;
   s32 slot;
   struct RenderInput *window;
@@ -285,7 +285,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   s32 selection;
   struct ItemDefinition *item;
   struct ShopWork *shop;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   shop = Ram_HeapSlots->menuWork;
   unit = Unit_Get(unitId);
@@ -316,7 +316,7 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
 
   shop = Ram_HeapSlots->menuWork;
   {
-    struct BattleUnit *unit = Unit_Get(unitId);
+    struct Unit *unit = Unit_Get(unitId);
     s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
     struct ItemDefinition *item = Item_GetDirectFar(itemId);
     u8 rare = item->flags & ITEM_RARE;

@@ -53,7 +53,7 @@ struct TremorSprite {
 // needs a name in directory.s before this adopts.
 extern char ResourceId_ShakeTiles;
 
-void Animation_ApplyChildValueFar(void *sprite, s32 value);
+void Sprite_SetAnimationSpeedFar(void *sprite, s32 value);
 
 /// Sways the view from side to side around the chosen object, as kind 19 does
 /// with no object: the swing grows from 2 to 12 pixels, holds 40 frames,
@@ -103,7 +103,7 @@ void FieldPsynergy_TremorOnTarget(void) {
   }
   BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
   if (target != NULL && targetSprite != NULL) {
-    Animation_ApplyChildValueFar(targetSprite, 0);
+    Sprite_SetAnimationSpeedFar(targetSprite, 0);
     FieldPsynergy_DecodePicture(targetSprite->pictures, work->picture,
                                 targetSprite->width * targetSprite->height);
   }
@@ -183,7 +183,7 @@ void FieldPsynergy_TremorOnTarget(void) {
   } while (state != SWAY_DONE);
 
   if (target != NULL && targetSprite != NULL) {
-    Animation_ApplyChildValueFar(targetSprite, 16);
+    Sprite_SetAnimationSpeedFar(targetSprite, 16);
     ((struct TremorSprite *)target->sprite)->unk19 = 1;
   }
   ViewMove_End();

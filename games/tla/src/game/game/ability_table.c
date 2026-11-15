@@ -2072,7 +2072,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .range = 1,
         .power = 20,
     },
-    [ABILITY_FLINT] = {
+    [ABILITY_DJINNI_FIRST] = {
         .targetMode = ABILITY_TARGET_FOES,
         .flags = ABILITY_USABLE_IN_BATTLE | ABILITY_FORMULA_ATTACK_MULTIPLIED,
         .range = 1,

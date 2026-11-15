@@ -91,7 +91,7 @@ void BattleEffect_UpdateAllEffectSlots(void) {
 /// fieldEffectWork): its kind, the free VRAM it starts with, the map's shake
 /// to restore, and whether the place is lit. While another field Psynergy is
 /// resolving, only the ability and kind are set.
-void BattleEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
+void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldEffectWork *work;
@@ -160,10 +160,10 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
 
   scene = Ram_HeapSlots->fieldEffectWork;
   scene->firstActorId = userId;
-  user = ObjectTable_Get((s16)userId);
+  user = Actor_Lookup((s16)userId);
   scene->secondActorId = targetId;
   scene->mainActor = user;
-  target = ObjectTable_Get((s16)targetId);
+  target = Actor_Lookup((s16)targetId);
   scene->angle = (user->facing + TRIG_TURN / 8) &
                  TRIG_TURN * 3 / 4; // Round to four directions.
   scene->angle8 = (user->facing + TRIG_TURN / 16) & 0xe000;
@@ -181,7 +181,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
     scene->savedCallback = target->update;
     scene->savedScript = target->script;
     scene->savedPalette =
-        ((struct AnimationObject *)target->sprite)->entries[0]->param;
+        ((struct Sprite *)target->sprite)->entries[0]->colorMode;
     scene->x = target->x.fixed;
     scene->z = target->z.fixed;
     scene->y = target->y.fixed;
@@ -196,7 +196,7 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
 /// Starts casting: the caster takes its casting pose (animation 20) and stops,
 /// flashes with a sound, and the ability's name is announced; with flag 0x140
 /// set the caster takes animation 21 and keeps its glow.
-void EventObject_Initialize(void) {
+void FieldPsynergy_StartCast(void) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *object = work->mainActor;
@@ -252,7 +252,7 @@ void BattleEffect_StopMainActor(void) {
 /// Ends a field Psynergy: frees the field effect sprites still in use and,
 /// unless another is being resolved, waits for the swelling arcs to end,
 /// restores the map's shake and releases the work.
-void BattleEffect_CleanupSceneObjects(void) {
+void FieldPsynergy_End(void) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s8 *block = Ram_HeapSlots->paletteFade;

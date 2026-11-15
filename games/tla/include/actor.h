@@ -164,20 +164,20 @@ void Actor_SetPositionAndResetMotion(struct Actor *object, s32 x, s32 y, s32 z);
 void Actor_MoveHalfwayTowardTarget(struct Actor *object);
 void Actor_MoveHalfwayTowardTargetCopy(struct Actor *object);
 
-struct Actor *ObjectTable_Get(u32 objectId);
+struct Actor *Actor_Lookup(u32 objectId);
 void Actor_StartIdleFar(struct Actor *);
 void Actor_SetMoveTargetFar(struct Actor *, s32, s32, s32);
 /// Waits up to 600 frames for a field object's movement target to be unset.
 void Actor_WaitForMoveFar(struct Actor *);
 /// Switches every sprite of an actor, one or a group of four, to an animation.
 void Actor_SelectAnimationFar(struct Actor *, s32);
-void Actor_WaitForCommandEndFar(struct Actor *);
-void Actor_SetActionCallback(struct Actor *, s32);
+void Actor_WaitForScriptEndFar(struct Actor *);
+void Actor_SetMovementType(struct Actor *, s32);
 void Actor_SetSpritePriority(u32, s32);
 void OverlayObject_WaitUntilIdle(struct Actor *object);
 void Actor_WaitForAnimationChange(u32);
-void Actor_SetModeById(u32, s32);
-void Actor_RefreshSelectorById(u32);
+void Actor_SetAnimationById(u32, s32);
+void Actor_WaitForScriptEndById(u32);
 void Sound_PlayFar(s32);
 
 extern const u8 gActor_FaceWatchedScript[];

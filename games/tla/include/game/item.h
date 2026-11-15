@@ -7,7 +7,7 @@
 #include "static_assert.h"
 #include "edition.h"
 
-struct BattleUnit;
+struct Unit;
 
 /// An inventory entry's parts, and a unit's slot count.
 /// bits: 15..11 quantity | 10 broken | 9 equipped | 8..0 item id
@@ -22,7 +22,7 @@ enum InventoryEncoding {
   INVENTORY_QUANTITY_SHIFT = 11,
   INVENTORY_QUANTITY_STEP = 0x800, ///< one more in the stack
   INVENTORY_QUANTITY_MASK = 0xf800,
-  INVENTORY_SLOTS = 15 ///< BattleUnit.inventory's entries
+  INVENTORY_SLOTS = 15 ///< Unit.inventory's entries
 };
 
 /// What Inventory_Remove and Inventory_Discard return.
@@ -41,7 +41,7 @@ enum InventoryRemoveResult {
 
 /// The bits of ItemDefinition.flags.
 enum ItemFlags {
-  ITEM_CURSED = 1, ///< equipping it curses the wearer (BattleUnit.curse)
+  ITEM_CURSED = 1, ///< equipping it curses the wearer (Unit.curse)
   /// Once equipped it cannot be taken off, or dropped while worn.
   ITEM_CANNOT_UNEQUIP = 2,
   /// A rare item: the rare weapons and armour, keys and the other
@@ -202,12 +202,12 @@ STATIC_ASSERT(offsetof(struct ItemDefinition, abilityId) == 0x28);
 /// Returns an item's definition.
 struct ItemDefinition *Item_GetDirectFar(s32 item);
 struct ItemDefinition *Item_GetDirect(s32 item);
-s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner);
-s32 RollWeaponUnleash(struct BattleUnit *owner);
+s32 Equipment_GetUnleashRateBonus(struct Unit *owner);
+s32 RollWeaponUnleash(struct Unit *owner);
 
 /// Rolls whether a character's weapon unleashes, 5 percent a point of its
 /// chance.
-s32 RollWeaponUnleashFar(struct BattleUnit *owner);
+s32 RollWeaponUnleashFar(struct Unit *owner);
 /// Returns whether the character's class may equip the item, 0 for any unit
 /// past the eight characters (Item_CanUnitEquipDirect).
 s32 Item_CanUnitEquip(s32 unit, s32 item);

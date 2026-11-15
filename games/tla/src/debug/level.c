@@ -137,7 +137,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Raises one party member's level by amount, then recalculates that unit.
 void IncreaseItemAndLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
   Unit_LevelUpTo(ownerId,
-                 ((struct BattleUnit *)Unit_Get(ownerId))->level + amount);
+                 ((struct Unit *)Unit_Get(ownerId))->level + amount);
   Unit_Calculate(ownerId);
 }
 
@@ -166,7 +166,7 @@ static inline u32 Input_PressedFenced(u32 mask) {
 /// levels with a jingle (sound 93), A one level (sound 91). B closes the
 /// window and recalculates the original four heroes.
 void IncreaseItemAndLevel_RunLevelEditor(void) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   void *window;
   s32 redraw;
   s32 messageId;
@@ -583,8 +583,8 @@ void IncreaseItemAndLevel_RunMotionTest(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_SetModeById(ACTOR_PORTRAIT_BROWSER, 2);
-  Actor_SetModeById(ACTOR_LEVEL_EDITOR, 4);
+  Actor_SetAnimationById(ACTOR_PORTRAIT_BROWSER, 2);
+  Actor_SetAnimationById(ACTOR_LEVEL_EDITOR, 4);
   Actor_WaitForAnimationChange(ACTOR_PORTRAIT_BROWSER);
   x = 156;
   z = 208;

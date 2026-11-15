@@ -134,7 +134,7 @@ struct BattleEffectWatchedObject *Actor_ShowEmoteById(s32 resourceId, s32 flags,
     Sound_PlayFar(SE_CHIME);
   }
 
-  resource = ObjectTable_Get(resourceId);
+  resource = Actor_Lookup(resourceId);
   if (resource != 0) {
     object = Actor_CreateFar(488, resource->x, resource->y, resource->z);
 

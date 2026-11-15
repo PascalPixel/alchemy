@@ -205,7 +205,7 @@ const u8 *Scene_GetExitRegions(void) {
     return gGabombaStatue_Room1Regions;
   if (scene == SCENE_GABOMBA_STATUE_2)
     return gGabombaStatue_Room2Regions;
-  if (scene == SCENE_GABOMBA_STATUE_3)
+  if (scene == SCENE_GABOMBA_STATUE_STEEL)
     return gGabombaStatue_Room3Regions;
   if (scene == SCENE_GABOMBA_STATUE_4)
     return gGabombaStatue_Room4Regions;
@@ -339,7 +339,7 @@ const u8 *Scene_GetActorPlacements(void) {
     table = gGabombaStatue_Room1Placements;
   else if (scene == SCENE_GABOMBA_STATUE_2)
     table = gGabombaStatue_Room2Placements;
-  else if (scene == SCENE_GABOMBA_STATUE_3)
+  else if (scene == SCENE_GABOMBA_STATUE_STEEL)
     table = gGabombaStatue_Room3Placements;
   else if (scene == SCENE_GABOMBA_STATUE_4)
     table = gGabombaStatue_Room4Placements;
@@ -908,7 +908,7 @@ const u8 *Scene_GetTriggers(void) {
     table = gGabombaStatue_Room1Triggers;
   else if (scene == SCENE_GABOMBA_STATUE_2)
     table = gGabombaStatue_Room2Triggers;
-  else if (scene == SCENE_GABOMBA_STATUE_3)
+  else if (scene == SCENE_GABOMBA_STATUE_STEEL)
     table = gGabombaStatue_Room3Triggers;
   else if (scene == SCENE_GABOMBA_STATUE_4)
     table = gGabombaStatue_Room4Triggers;
@@ -934,7 +934,7 @@ void GabombaStatue_DropIntoHole(s32 x, s32 z) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, x, z);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
-  FieldActor_RefreshSelectorById(gMainRoutineWork.leaderActorId);
+  FieldActor_WaitForScriptEndById(gMainRoutineWork.leaderActorId);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 13);
   FieldActor_SetMoveTargetFixed(object, x << 16, px(-12), z << 16);
@@ -1080,7 +1080,7 @@ void GabombaStatue_JumpDownHole(void) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 472, 144);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
-  FieldActor_RefreshSelectorById(gMainRoutineWork.leaderActorId);
+  FieldActor_WaitForScriptEndById(gMainRoutineWork.leaderActorId);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 13);
   FieldActor_SetMoveTarget(leader, 472, 0, 156);
@@ -1444,7 +1444,7 @@ void GabombaStatue_TurnCogs(s32 direction) {
       MapGrid_CopyCellAttributes(23, 21, 1, 3, 23, 9);
     else if (direction == -1)
       MapGrid_CopyCellAttributes(24, 21, 1, 3, 23, 9);
-  } else if (scene == SCENE_GABOMBA_STATUE_3) {
+  } else if (scene == SCENE_GABOMBA_STATUE_STEEL) {
     GabombaStatue_SetCogTurn(8, direction, 0);
     GabombaStatue_SetCogTurn(15, direction, 1);
     GabombaStatue_SetCogTurn(20, direction, 2);
@@ -1621,7 +1621,7 @@ void GabombaStatue_FocusEnergies(void) {
                   gGabombaStatue_LeaderFocusScript);
   Actor_SetScript(ACTOR_JENNA, gGabombaStatue_JennaFocusScript);
   Actor_SetScript(ACTOR_PIERS, gGabombaStatue_PiersFocusScript);
-  FieldActor_RefreshSelectorById(23);
+  FieldActor_WaitForScriptEndById(23);
   FieldEvent_Wait(20);
   FieldCamera_SetSpeed(1.2);
   FieldCamera_MoveTo(434, CAMERA_KEEP, 286, 1);
@@ -2047,7 +2047,7 @@ s32 Scene_Initialize(void) {
   } else if (scene == SCENE_GABOMBA_STATUE_2) {
     MapGrid_CopyCellAttributes(15, 68, 8, 3, 15, 4);
     GabombaStatue_InitializeRoom2();
-  } else if (scene == SCENE_GABOMBA_STATUE_3) {
+  } else if (scene == SCENE_GABOMBA_STATUE_STEEL) {
     GabombaStatue_InitializeRoom3();
   } else if (scene == SCENE_GABOMBA_STATUE_5) {
     GabombaStatue_InitializeRoom5();
@@ -2241,7 +2241,7 @@ L_0200b84a:
 L_0200b856:
 }
 
-struct Sprite {
+struct SpriteView {
   u8 b0, b1, b2, b3, b4;
   u8 mode : 2;
   u8 b5rest : 6;
@@ -2265,7 +2265,7 @@ struct SceneState {
   s16 statuesReady;
   u8 unk172[2];
   s32 statueOffset;
-  struct Sprite oam[10];
+  struct SpriteView oam[10];
 };
 
 extern struct SceneState gSceneState__s2394 __asm__("gSceneState");
@@ -2889,7 +2889,7 @@ void GabombaStatue_PoundTile(s32 mode) {
 }
 
 void GabombaStatue_SetTileMode(s32 mode) {
-  Actor_SetModeById(gSceneState.firstId, mode);
+  Actor_SetAnimationById(gSceneState.firstId, mode);
 }
 
 /// Turns every raised tile a quarter turn.
@@ -2985,7 +2985,7 @@ void GabombaStatue_DrawFloatingTiles(void) {
   s32 affine = 0;
   s32 *scroll = (s32 *)((u8 *)Ram_HeapSlots->mapGrid + 0xe4);
   struct SceneState *state = &gSceneState;
-  struct Sprite *oam = state->oam;
+  struct SpriteView *oam = state->oam;
   s32 scrollX = scroll[0] & 0xffff0000;
   s32 scrollZ = scroll[1] & 0xffff0000;
   u16 tile = gVramCacheEntries[state->tileEntry].offset >> 5;
@@ -3368,7 +3368,7 @@ struct ClockWork {
   u8 old[8];
   u8 now[8];
   u8 digit[8];
-  struct Sprite oam[8];
+  struct SpriteView oam[8];
   s32 tileEntry;
   s32 timer;
   u8 ringing;
@@ -3430,7 +3430,7 @@ void GabombaStatue_DrawClock(void) {
   u8 *old = clock->tiles;
   u8 *now = clock->digits;
   u32 tile = gVramCacheEntries[clock->tileEntry].offset >> 5;
-  struct Sprite *oam = clock->oam;
+  struct SpriteView *oam = clock->oam;
   s32 *timer = &clock->timer;
   struct AffineTransform effect;
   s32 plain, scaled, i;
@@ -3648,25 +3648,25 @@ LATE_DATA s32 gGabombaStatue_CogDirection = 0;
 
 LATE_DATA u32 gGabombaStatue_LeaderFocusScript[] =                                                                 
       {                                                                        
-          SC_ARG(2), SC_MOVE(px(472), 0, px(184)), SC_SYNC, SC_ARG(1),   
+          SC_ANIMATION(2), SC_MOVE(px(472), 0, px(184)), SC_SYNC, SC_ANIMATION(1),   
           SC_END,                                                              
   };
 
 LATE_DATA u32 gGabombaStatue_JennaFocusScript[] = {                                                               
-      SC_ARG(2),  SC_MOVE(px(488), 0, px(176)), SC_SYNC,    SC_ARG(1),  
+      SC_ANIMATION(2),  SC_MOVE(px(488), 0, px(176)), SC_SYNC,    SC_ANIMATION(1),  
       SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(1), SC_END,     
   };
 
 LATE_DATA u32 gGabombaStatue_PiersFocusScript[] = {                                                               
-      SC_ARG(2),  SC_MOVE(px(456), 0, px(176)), SC_SYNC,    SC_ARG(1),  
+      SC_ANIMATION(2),  SC_MOVE(px(456), 0, px(176)), SC_SYNC,    SC_ANIMATION(1),  
       SC_WAIT(1), SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(1), SC_END,     
   };
 
 LATE_DATA u32 gGabombaStatue_KradenFocusScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(464), 0, px(208)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_SOUTH_SOUTHWEST),
     SC_WAIT(1),
@@ -3674,12 +3674,12 @@ LATE_DATA u32 gGabombaStatue_KradenFocusScript[] = {
 };
 
 LATE_DATA u32 gGabombaStatue_KradenPointsScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(432), 0, px(286)),
     SC_SYNC,
     SC_MOVE(px(432), 0, px(312)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
     SC_WAIT(1),
@@ -3701,12 +3701,12 @@ LATE_DATA s32 gGabombaStatue_GirlsStepBackScript[] = {
   };
 
 LATE_DATA u32 gGabombaStatue_JennaWatchesScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(472), 0, px(308)),
     SC_SYNC,
     SC_MOVE(px(440), 0, px(312)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(1),
@@ -3714,12 +3714,12 @@ LATE_DATA u32 gGabombaStatue_JennaWatchesScript[] = {
 };
 
 LATE_DATA u32 gGabombaStatue_ShebaWatchesScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(472), 0, px(308)),
     SC_SYNC,
     SC_MOVE(px(460), 0, px(312)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_SOUTH_SOUTHWEST),
     SC_WAIT(1),
@@ -3786,10 +3786,10 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(2, GabombaStatue2, 1),
     SCENE_EXITS(GabombaStatue2),
     SCENE_EXIT(1, GabombaStatue1, 2),
-    SCENE_EXIT(2, GabombaStatue3, 1),
-    SCENE_EXIT(3, GabombaStatue3, 2),
-    SCENE_EXIT(4, GabombaStatue3, 3),
-    SCENE_EXITS(GabombaStatue3),
+    SCENE_EXIT(2, GabombaStatueSteel, 1),
+    SCENE_EXIT(3, GabombaStatueSteel, 2),
+    SCENE_EXIT(4, GabombaStatueSteel, 3),
+    SCENE_EXITS(GabombaStatueSteel),
     SCENE_EXIT(1, GabombaStatue2, 2),
     SCENE_EXIT(2, GabombaStatue2, 3),
     SCENE_EXIT(3, GabombaStatue2, 4),
@@ -3797,12 +3797,12 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(5, GabombaStatue4, 2),
     SCENE_EXIT(6, GabombaStatue4, 3),
     SCENE_EXITS(GabombaStatue4),
-    SCENE_EXIT(1, GabombaStatue3, 4),
-    SCENE_EXIT(2, GabombaStatue3, 5),
-    SCENE_EXIT(3, GabombaStatue3, 6),
+    SCENE_EXIT(1, GabombaStatueSteel, 4),
+    SCENE_EXIT(2, GabombaStatueSteel, 5),
+    SCENE_EXIT(3, GabombaStatueSteel, 6),
     SCENE_EXIT(4, GabombaStatue5, 1),
-    SCENE_EXIT(5, GabombaStatue3, 7),
-    SCENE_EXIT(6, GabombaStatue3, 8),
+    SCENE_EXIT(5, GabombaStatueSteel, 7),
+    SCENE_EXIT(6, GabombaStatueSteel, 8),
     SCENE_EXITS(GabombaStatue5),
     SCENE_EXIT(1, GabombaStatue4, 4),
     SCENE_EXIT(2, GabombaStatueChamber1, 1),
@@ -4089,7 +4089,7 @@ LATE_DATA u8 gGabombaStatue_TurnedPieces[] = {
 };
 
 LATE_DATA u32 gGabombaStatue_TileRiseScript[] = {
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, 0xa00),
     SC_ADD(SW_SCALE_Y, 0xa00),
@@ -4104,7 +4104,7 @@ LATE_DATA u32 gGabombaStatue_TileRiseScript[] = {
 };
 
 LATE_DATA s32 gGabombaStatue_TileFallScript[] = {
-    SC_ARG(0),
+    SC_ANIMATION(0),
     SC_SET(SW_SCALE_X, 0x20000),
     SC_SET(SW_SCALE_Y, 0x20000),
     SC_LABEL(1),

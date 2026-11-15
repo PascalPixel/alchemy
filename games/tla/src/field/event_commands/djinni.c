@@ -69,9 +69,9 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   Event_Start();
   wait(10);
   Sound_PlayFar(SE_NOTE_LOW);
-  Motion_SetVarCbAndRefresh(djinniId, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   Sound_PlayFar(SE_NOTE_HIGH);
-  Motion_SetVarCbAndRefresh(djinniId, 1);
+  Actor_RunRepeatedMotion(djinniId, 1);
   wait(10);
   back = dir + 0x8000;
   Actor_FaceDirectionById(djinniId, back, 0);
@@ -87,7 +87,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni->gravity = px(1) / 4;
   djinni->velocityY = px(9) / 2;
   wait(33);
-  ((struct AnimationObject *)djinni->sprite)->image.priority = 0;
+  ((struct Sprite *)djinni->sprite)->image.priority = 0;
 #if TLA_PATCH_1
   Sound_PlayFar(SE_JUMP);
 #endif
@@ -101,7 +101,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   djinni->update = NULL;
   djinni->facing = back;
-  sprite = ((struct AnimationObject *)djinni->sprite)->entries[0]->animId;
+  sprite = ((struct Sprite *)djinni->sprite)->entries[0]->animationId;
   tint = 9;
   if (sprite == 243)
     tint = 2;
@@ -125,7 +125,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       copy->steeringFlags |= 1;
       copy->update = (void (*)(void))Actor_MoveHalfwayTowardTarget;
       copy->facing = djinni->facing;
-      ((struct AnimationObject *)copy->sprite)->image.priority = 0;
+      ((struct Sprite *)copy->sprite)->image.priority = 0;
       Actor_SetSpriteColorModeFar(copy, tint);
       Actor_SelectAnimationFar(copy, 0);
       Actor_SetSpriteFlagsFar(copy, 0);
@@ -155,7 +155,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni->targetZ = TARGET_UNSET;
   djinni->targetY = TARGET_UNSET;
   Actor_SelectAnimationFar(djinni, 0);
-  ((struct AnimationObject *)djinni->sprite)->image.priority = 2;
+  ((struct Sprite *)djinni->sprite)->image.priority = 2;
 #if TLA_PATCH_1
   djinni->gravity = px(1);
 #endif
@@ -237,7 +237,7 @@ void Djinn_RestoreActorAfterBattle(void) {
 
         if (desc == NULL || desc->scene - 48 != scene - 300)
           continue;
-        obj = ObjectTable_Get(id);
+        obj = Actor_Lookup(id);
         if (obj == NULL)
           continue;
         if (flags == 0) {
@@ -245,7 +245,7 @@ void Djinn_RestoreActorAfterBattle(void) {
           obj->motionFlags = 3;
           Actor_SetPositionAndResetMotionFar(obj, desc->x, desc->y, desc->z);
         } else {
-          struct Actor *selection = ObjectTable_Get(*owner);
+          struct Actor *selection = Actor_Lookup(*owner);
 
           Actor_SetPositionAndResetMotionFar(obj, selection->x.fixed,
                                              selection->y.fixed,

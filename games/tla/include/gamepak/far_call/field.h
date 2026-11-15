@@ -10,7 +10,7 @@
 void WorldMap_LoadGraphicsFar(s32 x, s32 z);
 /// Sets up the map animation work for map mode.
 void ActorSystem_InitializeFar(s32 mode);
-void Animation_ApplyChildArgumentFar(void *, s32);
+void Sprite_StartAnimationFar(void *, s32);
 /// The height of the ground at (px, pz) (16.16 pixels) on the given layer, less
 /// base.
 s32 MapGrid_GetTerrainHeightAboveFar(s32 x, s32 z, s32 layer);

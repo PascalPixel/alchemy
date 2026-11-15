@@ -303,25 +303,25 @@ void Idejima_WakeSheba(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Motion_SetVarCbAndRefresh(ACTOR_SHEBA, 2);
+  Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   Event_SetMessageId(MsgIdejimaSecondGroan);
   // "Ohhh..."
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 40);
   // "Nnng."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-  Actor_SetModeById(ACTOR_SHEBA, 18);
+  Actor_SetAnimationById(ACTOR_SHEBA, 18);
   // "The wave!"
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   MapGrid_CopyCellAttributes(38, 31, 2, 1, 14, 40);
   Actor_GetById(ACTOR_SHEBA)->motionFlags = 3;
   Actor_Jump(ACTOR_SHEBA, 4, 0);
-  Actor_SetModeById(ACTOR_SHEBA, ANIM_STAND);
+  Actor_SetAnimationById(ACTOR_SHEBA, ANIM_STAND);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_SHEBA), 1);
   Event_Wait(20);
   Actor_TurnToFaceEachOther(ACTOR_SHEBA, gMainRoutineWork.leaderActorId, 0);
   // "What happened to the tidal wave?"
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 20);
   // "I thought we were done for, but we're all fine..."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
@@ -333,10 +333,10 @@ void Idejima_WakeSheba(void) {
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_FaceActorById(ACTOR_SHEBA, gMainRoutineWork.leaderActorId, 0);
   Event_Wait(20);
-  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   // "That tidal wave turned out to be a stroke of luck!"
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-  Motion_SetModeAndWaitAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   // "I wonder where we are..."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.6);
@@ -344,7 +344,7 @@ void Idejima_WakeSheba(void) {
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 20);
   // "We should take a look around!"
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-  Actor_SetModeById(ACTOR_SHEBA, ANIM_WALK);
+  Actor_SetAnimationById(ACTOR_SHEBA, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestinationById(ACTOR_SHEBA, leader->x.part[0].pixel,
@@ -401,7 +401,7 @@ void Idejima_CatchUpWithFelix(void) {
     Actor_WalkToAndWait(ACTOR_KRADEN, 212, 680);
     Actor_WalkToAndWait(ACTOR_KRADEN, 192, 712);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
-    FieldActor_RefreshSelectorById(ACTOR_KRADEN);
+    FieldActor_WaitForScriptEndById(ACTOR_KRADEN);
     Actor_RunScriptAndWait(ACTOR_KRADEN, gIdejima_StretchScript);
     FieldActor_Jump(ACTOR_KRADEN, 4, 20);
     // "You weren't planning on leaving me, were you?"
@@ -461,7 +461,7 @@ void Idejima_CatchUpWithFelix(void) {
     Actor_WalkToAndWait(ACTOR_JENNA, 212, 680);
     Actor_WalkToAndWait(ACTOR_JENNA, 192, 712);
     Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
-    FieldActor_RefreshSelectorById(ACTOR_JENNA);
+    FieldActor_WaitForScriptEndById(ACTOR_JENNA);
     Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     FieldActor_Jump(ACTOR_JENNA, 4, 20);
     // "How could you!?"
@@ -521,14 +521,14 @@ void Idejima_CatchUpWithFelix(void) {
     MapGrid_CopyCellAttributes(38, 31, 2, 1, 14, 40);
     Actor_GetById(ACTOR_SHEBA)->motionFlags = 3;
     Actor_Jump(ACTOR_SHEBA, 4, 0);
-    Actor_SetModeById(ACTOR_SHEBA, ANIM_STAND);
+    Actor_SetAnimationById(ACTOR_SHEBA, ANIM_STAND);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_SHEBA), 1);
     Event_Wait(20);
     Actor_SetSpeed(ACTOR_SHEBA, 1.6);
     Actor_WalkToAndWait(ACTOR_SHEBA, 212, 680);
     Actor_WalkToAndWait(ACTOR_SHEBA, 192, 712);
     Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
-    FieldActor_RefreshSelectorById(ACTOR_SHEBA);
+    FieldActor_WaitForScriptEndById(ACTOR_SHEBA);
     // "Aren't you worried about me in the slightest?"
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
     Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
@@ -544,14 +544,14 @@ void Idejima_CatchUpWithFelix(void) {
                         EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
     // "Oh, don't give me that sad face... You know I can't stay mad at you..."
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-    Actor_SetModeById(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationById(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
     // "After all, you did save me, Felix. I won't soon forget that..."
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-    Motion_SetModeAndWaitAnimation(ACTOR_SHEBA, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
     // "But don't leave me behind like that again, OK?"
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-    Actor_SetModeById(ACTOR_KRADEN, ANIM_NOD);
-    Motion_SetModeAndWaitAnimation(gMainRoutineWork.leaderActorId, ANIM_NOD);
+    Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
+    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
     Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 40);
     Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 40);
     Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
@@ -560,16 +560,16 @@ void Idejima_CatchUpWithFelix(void) {
     Actor_ShowEmoteById(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
     // "What's out here, anyway?"
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-    Motion_SetModeAndWaitAnimation(gMainRoutineWork.leaderActorId,
+    Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId,
                                    ANIM_SHAKE_HEAD);
-    Motion_SetModeAndWaitAnimation(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     // "That's what we were about to find out!"
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-    Motion_SetModeAndWaitAnimation(ACTOR_SHEBA, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
     // "Let's get started, then!"
     Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
-    Actor_SetModeById(ACTOR_KRADEN, ANIM_NOD);
-    Motion_SetModeAndWaitAnimation(ACTOR_KRADEN, ANIM_NOD);
+    Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Actor_SetScript(ACTOR_KRADEN, (s32)gIdejima_JoinTheLeaderScript);
     Actor_RunScriptAndWait(ACTOR_SHEBA, (s32)gIdejima_JoinTheLeaderScript);
     Event_AddPartyMember(ACTOR_SHEBA, 1);
@@ -725,7 +725,7 @@ void Idejima_RunAlexDeparture(void) {
   Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
-  FieldActor_RefreshSelectorById(ACTOR_SHEBA);
+  FieldActor_WaitForScriptEndById(ACTOR_SHEBA);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
@@ -1303,7 +1303,7 @@ void Idejima_RideTheTidalWave(void) {
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_Get(ACTOR_SHEBA)->steeringFlags |= 1;
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
-  FieldActor_RefreshSelectorById(ACTOR_SHEBA);
+  FieldActor_WaitForScriptEndById(ACTOR_SHEBA);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   FieldEvent_Wait(40);
   FieldActor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_SHEBA);
@@ -1353,7 +1353,7 @@ void Idejima_RideTheTidalWave(void) {
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Event_ShowMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
-  FieldActor_RefreshSelectorById(ACTOR_SHEBA);
+  FieldActor_WaitForScriptEndById(ACTOR_SHEBA);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   FieldEvent_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
@@ -1361,7 +1361,7 @@ void Idejima_RideTheTidalWave(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
-  FieldActor_RefreshSelectorById(ACTOR_SHEBA);
+  FieldActor_WaitForScriptEndById(ACTOR_SHEBA);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
   FieldEvent_ShowMessageThenWait(ACTOR_SHEBA, 0, 20);
   Actor_RunRepeatedMotion(gMainRoutineWork.leaderActorId, 2);
@@ -1371,7 +1371,7 @@ void Idejima_RideTheTidalWave(void) {
   Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
-  FieldActor_RefreshSelectorById(ACTOR_SHEBA);
+  FieldActor_WaitForScriptEndById(ACTOR_SHEBA);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_ShowEmote(gMainRoutineWork.leaderActorId,
@@ -1440,7 +1440,7 @@ void Idejima_RideTheTidalWave(void) {
   Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
-  FieldActor_RefreshSelectorById(ACTOR_SHEBA);
+  FieldActor_WaitForScriptEndById(ACTOR_SHEBA);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | SPEAKER_PORTRAIT_LEFT | ACTOR_SHEBA,
                     0);
   Actor_FaceDirection(ACTOR_KRADEN, a3000, 0);
@@ -1696,26 +1696,26 @@ void Idejima_PlaceTheSleepers(void) {
 
 // clang-format off
 u32 gIdejima_KradenToTheShipScript[] = {                                                               
-      SC_ARG(2), SC_MOVE(px(216), 0, px(172)),                           
+      SC_ANIMATION(2), SC_MOVE(px(216), 0, px(172)),                           
       SC_SYNC,   SC_MOVE(px(264), 0, px(164)),                           
-      SC_SYNC,   SC_ARG(1),                                                    
+      SC_SYNC,   SC_ANIMATION(1),                                                    
       SC_END,                                                                  
   };
 
 u32 gIdejima_JennaToTheShipScript[] = {                                                               
-      SC_ARG(2), SC_MOVE(px(216), 0, px(182)),                           
+      SC_ANIMATION(2), SC_MOVE(px(216), 0, px(182)),                           
       SC_SYNC,   SC_MOVE(px(242), 0, px(164)),                           
-      SC_SYNC,   SC_ARG(1),                                                    
+      SC_SYNC,   SC_ANIMATION(1),                                                    
       SC_END,                                                                  
   };
 
 u32 gIdejima_AlexLeadsTheWayScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(224), 0, px(172)),
     SC_SYNC,
     SC_MOVE(px(392), 0, px(172)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(1),
@@ -1723,14 +1723,14 @@ u32 gIdejima_AlexLeadsTheWayScript[] = {
 };
 
 u32 gIdejima_KradenFollowsAlexScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(224), 0, px(172)),
     SC_SYNC,
     SC_MOVE(px(304), 0, px(172)),
     SC_SYNC,
     SC_MOVE(px(336), 0, px(192)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(1),
@@ -1747,28 +1747,28 @@ u32 gIdejima_JennaFollowsAlexScript[] = {
 
 u32 gIdejima_KradenRunsToFelixScript[] =                                                                 
       {                                                                        
-          SC_ARG(2), SC_MOVE(px(420), 0, px(200)), SC_SYNC, SC_ARG(1),   
+          SC_ANIMATION(2), SC_MOVE(px(420), 0, px(200)), SC_SYNC, SC_ANIMATION(1),   
           SC_END,                                                              
   };
 
 u32 gIdejima_JennaRunsToFelixScript[] =                                                                 
       {                                                                        
-          SC_ARG(2), SC_MOVE(px(408), 0, px(232)), SC_SYNC, SC_ARG(1),   
+          SC_ANIMATION(2), SC_MOVE(px(408), 0, px(232)), SC_SYNC, SC_ANIMATION(1),   
           SC_END,                                                              
   };
 
 u32 gIdejima_JennaToTheShoreScript[] = {                                                               
-      SC_ARG(2),   SC_MOVE(px(424), 0, px(200)), SC_SYNC,     SC_ARG(1), 
+      SC_ANIMATION(2),   SC_MOVE(px(424), 0, px(200)), SC_SYNC,     SC_ANIMATION(1), 
       SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
   };
 
 u32 gIdejima_ShebaToTheShoreScript[] = {                                                               
-      SC_ARG(2),   SC_MOVE(px(408), 0, px(228)), SC_SYNC,     SC_ARG(1), 
+      SC_ANIMATION(2),   SC_MOVE(px(408), 0, px(228)), SC_SYNC,     SC_ANIMATION(1), 
       SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
   };
 
 u32 gIdejima_KradenToTheShoreScript[] = {                                                               
-      SC_ARG(2),   SC_MOVE(px(400), 0, px(214)), SC_SYNC,     SC_ARG(1), 
+      SC_ANIMATION(2),   SC_MOVE(px(400), 0, px(214)), SC_SYNC,     SC_ANIMATION(1), 
       SC_WAIT(1), SC_SET(SW_FACING, FACING_EAST),     SC_WAIT(1), SC_END,    
   };
 
@@ -1809,10 +1809,10 @@ s32 gIdejima_StretchScript[] = {
 u32 gIdejima_KradenStepsAsideScript[] = {
     SC_POSITION(px(152), 0, px(756)),
     SC_WAIT(1),
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(146), 0, px(736)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_NORTHEAST),
     SC_WAIT(1),
@@ -1820,20 +1820,20 @@ u32 gIdejima_KradenStepsAsideScript[] = {
 };
 
 u32 gIdejima_JoinTheLeaderScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(152), 0, px(756)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_CMD_03,
     SC_WAIT(1),
     SC_END,
 };
 
 u32 gIdejima_GoAfterAlexScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(104), 0, px(728)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_CMD_03,
     SC_WAIT(1),
     SC_END,

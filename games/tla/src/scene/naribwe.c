@@ -267,7 +267,7 @@ void Naribwe_RevealStone(void) {
 }
 
 void Naribwe_HideStone(void) {
-  ObjectEvent_PlaceOnGround(65, 0, 0);
+  TreasureSpot_SetActorPosition(65, 0, 0);
   Actor_SetPosition(27, 104, 104);
 }
 
@@ -371,19 +371,19 @@ s16 gNaribwe_UnusedList[] = {
 
 /// The braziers burn, the fire's flames rising above them.
 u32 gNaribwe_BrazierBurns[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_END,
 };
 
 u32 gNaribwe_FlameRises[] = {
-    SC_ARG(0),
+    SC_ANIMATION(0),
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, px(24)),
     SC_END,
 };
 
 u32 gNaribwe_IvyAnimation[] = {
-    SC_ARG(3),
+    SC_ANIMATION(3),
     SC_END,
 };
 

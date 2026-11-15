@@ -76,7 +76,7 @@ struct TriggerView *Scene_FindTrigger(s32 kind, s32 target) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TriggerView *trigger = work->triggers;
   s32 flags;
-  u32 facing = ObjectTable_Get(gMainRoutineWork.leaderActorId)->facing;
+  u32 facing = Actor_Lookup(gMainRoutineWork.leaderActorId)->facing;
 
   flags = trigger->flags;
   while (flags != -1) {
@@ -239,11 +239,11 @@ s32 Scene_TalkToActor(s32 id) {
       busy = &((u8 *)object)[91];
       *busy = 1;
       if (silent == 0)
-        FieldMessage_ShowFar(found + (s32)&MsgKey0dc4, 1);
+        FieldMessage_ShowFar(found + (s32)&MsgTileChecked, 1);
       if (gMainRoutineWork.next == SCENE_VENUS_LIGHTHOUSE && noHint == 0 &&
           !GameFlag_Get(flag)) {
         MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_ITEM);
-        FieldMessage_ShowFar((s32)&MsgKey15b5, 1);
+        FieldMessage_ShowFar((s32)&MsgChestAlreadyOpen, 1);
       }
       if (!GameFlag_IsConditionActive(flag))
         goto empty;
@@ -251,31 +251,31 @@ s32 Scene_TalkToActor(s32 id) {
         if (contents == 0)
           ObjectEvent_SetMode6WithCue(index);
         else
-          ObjectEvent_SetMode4WithCue(index);
+          TreasureSpot_OpenChest(index);
       }
       if (type == CONTAINER_MIMIC)
-        ObjectEvent_SetMode4WithCue(index);
+        TreasureSpot_OpenChest(index);
       if (type == CONTAINER_PSYNERGY_STONE) {
-        struct Actor *trap = ObjectEvent_GetObject(index);
+        struct Actor *trap = TreasureSpot_GetActor(index);
 
         trap->update = ItemDisplay_EmitSparkles;
         ItemDisplay_RaiseAboveLeader(trap);
         Sound_PlayFar(MUS_TREASURE_FOUND);
         MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_NUMBER);
-        FieldMessage_ShowFar((s32)&MsgKey0e17, 3);
+        FieldMessage_ShowFar((s32)&MsgGotPsynergyStone, 3);
         Party_AddPp(1999, 0);
         PartyStatus_CreateWindowFar(1);
         Sound_PlayFar(SE_RECOVERY);
         if (Party_CountMembersFar() == 1)
-          FieldMessage_ShowFar((s32)&MsgKey0e17 + 6, 1);
+          FieldMessage_ShowFar((s32)&MsgGotPsynergyStone + 6, 1);
         else
-          FieldMessage_ShowFar((s32)&MsgKey0e17 + 1, 1);
+          FieldMessage_ShowFar((s32)&MsgGotPsynergyStone + 1, 1);
         PartyStatus_CloseFar();
         trap->update = NULL;
         Actor_SelectAnimationFar(trap, 2);
         Sound_PlayFar(SE_GLITTER);
         Event_Wait(30);
-        FieldMessage_ShowFar((s32)&MsgKey0e19, 1);
+        FieldMessage_ShowFar((s32)&MsgPsynergyStoneDisappeared, 1);
         ObjectEvent_Remove(index);
         if (flag != -1)
           GameFlag_Set(flag);
@@ -295,7 +295,7 @@ s32 Scene_TalkToActor(s32 id) {
       }
       if (type == CONTAINER_MIMIC) {
         work = Ram_HeapSlots->fieldWork;
-        ObjectEvent_Spring(index);
+        TreasureSpot_LaunchMimic(index);
         if (flag != -1)
           gMainRoutineWork.pendingDjinni = flag | CONDITION_FLAG_SET;
         if (contents > 7)
@@ -305,26 +305,26 @@ s32 Scene_TalkToActor(s32 id) {
         gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
         BattleEffect_SelectBattleCue(104, contents);
         Sound_PlayFar(gMainRoutineWork.battleMusic);
-        FieldMessage_ShowFar((s32)&MsgKey0e1a, 1);
+        FieldMessage_ShowFar((s32)&MsgChestWasMimic, 1);
         goto done;
       }
       if (type == CONTAINER_POND)
-        FieldMessage_ShowFar((s32)&MsgKey0de5, 1);
+        FieldMessage_ShowFar((s32)&MsgSomethingInTheShallows, 1);
       if (Actor_GetSpriteShape(index)) {
-        FieldMessage_ShowFar((s32)&MsgKey0e1c, 1);
+        FieldMessage_ShowFar((s32)&MsgSomethingBuriedHere, 1);
         if (Party_FindOwnerWithActionFar(ABILITY_SCOOP) != -1)
           gFieldWork->fieldMenu = 1;
         goto done;
       }
       if (contents & 0x8000) {
         if (type == CONTAINER_BURIED) {
-          shown = ObjectEvent_GetObject(index);
+          shown = TreasureSpot_GetActor(index);
           shown->update = ItemDisplay_EmitSparkles;
         } else {
           shown = BattleEffect_StartRandomParticleEmitter(index, 0);
           wait(30);
           if (type == CONTAINER_CHEST)
-            ObjectEvent_SetMode2(index);
+            TreasureSpot_ShowOpened(index);
         }
         ItemDisplay_RaiseAboveLeader(shown);
         Sound_PlayFar(MUS_TREASURE_FOUND);
@@ -348,7 +348,7 @@ s32 Scene_TalkToActor(s32 id) {
         goto empty;
       }
       if (type == CONTAINER_BURIED) {
-        shown = ObjectEvent_GetObject(index);
+        shown = TreasureSpot_GetActor(index);
         shown->update = ItemDisplay_EmitSparkles;
       } else {
         shown = BattleEffect_StartRandomParticleEmitter(index, contents);
@@ -362,11 +362,11 @@ s32 Scene_TalkToActor(s32 id) {
         if (type != 131)
           Actor_ReleaseIfPresent(shown);
         if (type == CONTAINER_CHEST)
-          ObjectEvent_SetMode5WithCue(index);
+          TreasureSpot_CloseChest(index);
         goto done;
       }
       if (type == CONTAINER_CHEST)
-        ObjectEvent_SetMode2(index);
+        TreasureSpot_ShowOpened(index);
       ItemDisplay_RaiseAboveLeader(shown);
       Sound_PlayFar(MUS_TREASURE_FOUND);
       MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_ITEM);
@@ -389,7 +389,7 @@ s32 Scene_TalkToActor(s32 id) {
       result = 0;
       goto done;
     empty:
-      FieldMessage_ShowFar(found + (s32)&MsgKey0def, 1);
+      FieldMessage_ShowFar(found + (s32)&MsgTileResult, 1);
     done:
       *busy = 0;
       Event_End();
@@ -444,7 +444,7 @@ s32 Scene_TalkToActor(s32 id) {
       if ((s8)placement->talkFacing == 3) {
         object->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
         object->steeringFlags |= 1;
-        Actor_SetActionCallback(object, (s32)gActor_FaceWatchedScript);
+        Actor_SetMovementType(object, (s32)gActor_FaceWatchedScript);
       } else if ((s8)placement->talkFacing == 1) {
         object->timer = savedAngle;
         Actor_StartScriptFar(object, gActor_StepAngleScript);
@@ -597,15 +597,15 @@ s32 Field_RunPushCell(s32 attributes) {
 // The search command. Collision codes 242 to 247 show their pair of messages
 // from gField_ExamineTriggerMessageOffsets; otherwise the search event (kind 3)
 // of the cell runs: its "checked the ..." message, then its message or
-// callback, or the matching "found nothing" message. MsgKey0dc4 is the base of
-// the "X checked the Y..." lines, MsgKey0def the base of the "found nothing"
+// callback, or the matching "found nothing" message. MsgTileChecked is the base of
+// the "X checked the Y..." lines, MsgTileResult the base of the "found nothing"
 // lines.
 
 /// The search command. Collision codes 242 to 247 show their pair of messages
 /// from gField_ExamineTriggerMessageOffsets; otherwise the search event (kind
 /// 3) of the cell runs: its "checked the ..." message, then its message or
-/// callback, or the matching "found nothing" message. MsgKey0dc4 is the base of
-/// the "X checked the Y..." lines, MsgKey0def the base of the "found nothing"
+/// callback, or the matching "found nothing" message. MsgTileChecked is the base of
+/// the "X checked the Y..." lines, MsgTileResult the base of the "found nothing"
 /// lines.
 s32 Field_ExamineCell(s32 id) {
   struct Trigger *event;
@@ -621,8 +621,8 @@ s32 Field_ExamineCell(s32 id) {
     Leader_StopMoving();
     // id, no longer needed, holds the pair's message number.
     id = gField_ExamineTriggerMessageOffsets[index];
-    FieldMessage_ShowFar(id + (s32)&MsgKey0dc4, 1);
-    FieldMessage_ShowFar(id + (s32)&MsgKey0def, 1);
+    FieldMessage_ShowFar(id + (s32)&MsgTileChecked, 1);
+    FieldMessage_ShowFar(id + (s32)&MsgTileResult, 1);
     return 0;
   }
   event = Scene_FindTrigger(3, id);
@@ -633,7 +633,7 @@ s32 Field_ExamineCell(s32 id) {
     kind = (flags >> 4) & 31;
     if (!(event->subject & 0x400) && kind != 0) {
       Leader_StopMoving();
-      FieldMessage_ShowFar(kind + (s32)&MsgKey0dc4, 1);
+      FieldMessage_ShowFar(kind + (s32)&MsgTileChecked, 1);
       GameFlag_Set(FLAG_NOTHING_HAPPENS);
     } else {
       GameFlag_Clear(FLAG_NOTHING_HAPPENS);
@@ -647,7 +647,7 @@ s32 Field_ExamineCell(s32 id) {
     if (GameFlag_IsConditionActive(condition))
       ((void (*)(s32))event->value)(gMainRoutineWork.leaderActorId);
     if (GameFlag_Get(FLAG_NOTHING_HAPPENS))
-      FieldMessage_ShowFar(kind + (s32)&MsgKey0def, 1);
+      FieldMessage_ShowFar(kind + (s32)&MsgTileResult, 1);
     goto done;
   message:
     if (GameFlag_IsConditionActive(condition))
@@ -655,8 +655,8 @@ s32 Field_ExamineCell(s32 id) {
     else
       FieldMessage_ShowFar((s32)&MsgButFoundNothing, 1);
   } else {
-    FieldMessage_ShowFar((s32)&MsgKey0dc4 + 5, 1);
-    FieldMessage_ShowFar((s32)&MsgKey0def + 5, 1);
+    FieldMessage_ShowFar((s32)&MsgTileChecked + 5, 1);
+    FieldMessage_ShowFar((s32)&MsgTileResult + 5, 1);
   }
 done:
   GameFlag_Clear(FLAG_NOTHING_HAPPENS);

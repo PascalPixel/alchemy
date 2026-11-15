@@ -17,7 +17,7 @@ void Party_TakeFallDamage(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   for (i = 0; i < count; i++) {
     struct MainRoutineWork *main = &gMainRoutineWork;
-    struct BattleUnit *unit = Unit_Get(main->party[i]);
+    struct Unit *unit = Unit_Get(main->party[i]);
 
     if (unit->hp > 0) {
       work->survivorCount++;

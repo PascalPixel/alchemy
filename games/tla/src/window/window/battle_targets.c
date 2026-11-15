@@ -106,7 +106,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct TargetPoint namePosition;
   struct TargetPoint markerPosition;
   struct AffineTransform effect;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct BattleWork *battle;
   struct RenderInput *window;
   struct RenderInput *conditionWindow;
@@ -137,7 +137,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   struct TargetTrack *track;
   struct SelectionSprite *marker;
   struct SelectionSprite *firstSprite;
-  struct BattleUnit *target;
+  struct Unit *target;
 
   battle = Ram_HeapSlots->battleWork;
   targetCount = 0;
@@ -174,7 +174,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     if (spread != 255 && kind != 0) {
       found = 0;
       for (j = 0; j < targetCount; j++) {
-        struct BattleUnit *candidate;
+        struct Unit *candidate;
 
         if (candidateIds[j] == 254)
           continue;
@@ -226,7 +226,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   while (
       candidateIds[targetIndex] == BATTLE_UNIT_REMOVED ||
       (GameFlag_Get(FLAG_LINK_BATTLE) && mode == 1 &&
-       ((struct BattleUnit *)Unit_Get(candidateIds[targetIndex]))->hp == 0)) {
+       ((struct Unit *)Unit_Get(candidateIds[targetIndex]))->hp == 0)) {
     targetIndex = targetIndex + targetCount - 1;
     targetIndex %= targetCount;
   }

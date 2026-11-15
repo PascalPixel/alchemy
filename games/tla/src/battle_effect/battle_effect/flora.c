@@ -816,14 +816,14 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
 /// four enemies, the actor steps 15 pixels further from x = 0 on its
 /// anchor's side, its y velocity growing by 0x28000 while y is under 10.
 void BattleEffect_StartActorMotionOutward(s32 id) {
-  struct BattleObj *slot;
+  struct BattleObject *slot;
   struct MotionObject *object;
   u32 enemy;
   s32 x;
 
   slot = BattleObject_GetFar(id);
   object = slot->object;
-  enemy = ((struct BattleUnit *)Unit_Get(id))->enemyId;
+  enemy = ((struct Unit *)Unit_Get(id))->enemyId;
   if (enemy != 357 && enemy != 369 && enemy != 373 && enemy != 376) {
     object->acceleration = px(2);
     object->speedLimit = px(8);

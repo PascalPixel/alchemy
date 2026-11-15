@@ -364,7 +364,7 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, s32 destX,
 void Actor_SetMovementTypeById(s32 actor, const void *callback);
 void Actor_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void Actor_WalkToAndWaitById(s32 actor, s32 x, s32 z);
-void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
+void Actor_SetAnimationAndWait(s32 actor, s32 mode);
 void Actor_SetMoveTarget(struct Actor *actor, s32 x, s32 y, s32 z);
 void Actor_WaitForMove(struct Actor *actor);
 /* VIEW(floor): routine Actor_ShowEmoteById as void Actor_ShowEmoteById(s32
@@ -388,7 +388,7 @@ void VenusLighthouse_RepelLeader(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetMovementTypeById(leader, gVenusLighthouse_LeaderFlashes);
-  Actor_RefreshSelectorById(leader);
+  Actor_WaitForScriptEndById(leader);
   Actor_SetSpriteColor(Actor_GetById(leader), 6);
   actor->velocityY = px(4);
   Actor_SetSpeed(leader, 4);
@@ -406,9 +406,9 @@ void VenusLighthouse_RepelLeader(void) {
   Actor_SetSpriteColor(actor, 0);
   actor->update = VenusLighthouse_EmitRisingParticles;
   Actor_ShowEmoteById__floor(leader, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Motion_SetModeAndWaitAnimation(leader, 4);
+  Actor_SetAnimationAndWait(leader, 4);
   Actor_SetSpriteColor(Actor_GetById(leader), 0);
-  Motion_SetModeAndWaitAnimation(leader, 4);
+  Actor_SetAnimationAndWait(leader, 4);
 
   /* FAKEMATCH(dead): an empty once-only block. */
   do {
@@ -541,15 +541,15 @@ s32 VenusLighthouse_Idle(void) { return 0; }
 
 /// Felix casts Move on the statue.
 void VenusLighthouse_FelixMovesStatue(void) {
-  BattleEffect_LoadActionEffectResources(ABILITY_MOVE, 1);
+  FieldPsynergy_LoadResources(ABILITY_MOVE, 1);
   FieldPsynergy_SetupActorPair(4, ACTOR_MOVED_STATUE);
   ((struct SetupWork *)Ram_HeapSlots->fieldEffectWork)->idle =
       VenusLighthouse_Idle;
-  EventObject_Initialize();
+  FieldPsynergy_StartCast();
   FieldEvent_Wait(10);
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
-  BattleEffect_CleanupSceneObjects();
+  FieldPsynergy_End();
 }
 
 // The Japanese form; from patch 1, the form below also saves this scene and

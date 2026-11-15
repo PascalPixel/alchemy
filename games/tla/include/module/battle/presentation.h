@@ -85,7 +85,7 @@ struct BattleBackdropWork {
 };
 
 struct SavedBattleObj {
-  struct BattleObj object;
+  struct BattleObject object;
   u32 *buffer;
   u8 unitId;
   u8 single;
@@ -175,7 +175,7 @@ struct FormationBattleWork {
   u8 unk41;
   u8 battleType;
   u8 unk43[0x825];
-  u8 unk868;
+  u8 forceField;
 };
 
 struct AnimationRecord {

@@ -38,7 +38,7 @@
 /// The Grim Reaper's countdown.
 #define CURSE_TURNS 7
 
-/// BattleUnit.psySeal: Bind's seal lasts seven turns and may end sooner; Luff's
+/// Unit.psySeal: Bind's seal lasts seven turns and may end sooner; Luff's
 /// lasts two and never ends early.
 #define PSY_SEAL_BIND 7
 #define PSY_SEAL_LUFF 16
@@ -269,9 +269,9 @@ s32 BattleAI_ChooseTarget(s32 userId, struct BattleAct *action) {
   s32 unitIds[6];
   s32 targetPositions[6];
   struct BattleWork *turnOrder;
-  struct BattleUnit *unit;
-  struct BattleUnit *nextUnit;
-  struct BattleUnit *thisUnit;
+  struct Unit *unit;
+  struct Unit *nextUnit;
+  struct Unit *thisUnit;
   s32 candidateCount;
   s32 targetIndex;
   s32 targetCount;
@@ -349,7 +349,7 @@ s32 BattleAI_ChooseTarget(s32 userId, struct BattleAct *action) {
     return TARGET_PICK_NONE;
 
   if (action->targetMode == ABILITY_TARGET_FOES && action->range == 1 &&
-      Enemy_GetDefinitionFar(((struct BattleUnit *)Unit_Get(userId))->enemyId)
+      Enemy_GetDefinitionFar(((struct Unit *)Unit_Get(userId))->enemyId)
               ->targetStrategy != TARGET_STRATEGY_RANDOM &&
       (u32)((action->flags & ABILITY_FORMULA_MASK) - ABILITY_FORMULA_ATTACK) <=
           ABILITY_FORMULA_DAMAGE - ABILITY_FORMULA_ATTACK) {
@@ -363,7 +363,7 @@ s32 BattleAI_ChooseTarget(s32 userId, struct BattleAct *action) {
         thisUnit = Unit_Get(unitIds[innerIndex]);
         nextUnit = Unit_Get(unitIds[innerIndex + 1]);
         if (Enemy_GetDefinitionFar(
-                ((struct BattleUnit *)Unit_Get(userId))->enemyId)
+                ((struct Unit *)Unit_Get(userId))->enemyId)
                 ->targetStrategy == TARGET_STRATEGY_MOST_HP) {
           value = thisUnit->hp;
           nextValue = nextUnit->hp;
@@ -424,7 +424,7 @@ s32 BattleAI_ChooseTarget(s32 userId, struct BattleAct *action) {
 /// Clears every status and stat change of a unit that goes down and works out
 /// its stats again.
 void BattleUnit_ClearStatuses(s32 unitId) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s8 *boost;
   s32 element;
   u8 zero;
@@ -561,8 +561,8 @@ void BattleMessage_WaitForTyping(void) {
 /// Takes an enemy out of the battle at once, one that leaves rather than falls.
 s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
   // UB: declared s32 but returns no value; no caller reads it.
-  struct BattleUnit *creature;
-  struct BattleObj *runtime;
+  struct Unit *creature;
+  struct BattleObject *runtime;
 
   creature = Unit_Get(unitId);
   if (creature->side == 1) {
@@ -585,8 +585,8 @@ void BattlePlayback_GrantDjinnBonus(struct BattleEventFlagWork *runtime,
 /// Runs the queued battle events in order, then resets the queue.
 u32 BattlePlayback_RunAll(void) {
   struct BattleWork *work;
-  struct BattleEventState *runtime;
-  struct BattleEventQueue *queue;
+  struct BattlePlaybackWork *runtime;
+  struct BattlePlaybackQueue *queue;
   s32 i;
 
   work = Ram_HeapSlots->battleWork;
@@ -663,7 +663,7 @@ u32 BattlePlayback_RunAll(void) {
 /// Queues one playback command with its operand, and returns the opcode.
 /// Nothing checks the queue's capacity.
 void BattlePlayback_Push(u32 opcode, u32 operand) {
-  struct BattleEventQueue *queue = &Ram_HeapSlots->battleWork->events.queue;
+  struct BattlePlaybackQueue *queue = &Ram_HeapSlots->battleWork->events.queue;
   u32 index = queue->count;
 
   queue->opcodes[index] = opcode;
@@ -692,7 +692,7 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// Returns 1 for a unit no blow may fell, which is left 1 HP: Agatio and Karst
 /// in their first battle.
 s32 BattleUnit_KeepsOneHp(s32 unitId) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
 
   if (unit->enemyId == ENEMY_AGATIO || unit->enemyId == ENEMY_KARST)
     return 1;
@@ -806,7 +806,7 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
 s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
   struct BattleAct *ability;
   s32 abilityId;
-  struct BattleUnit *actor;
+  struct Unit *actor;
   s32 unitId;
   s32 element;
   s32 elementBonus; // elemental power less resistance
@@ -823,7 +823,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
   s32 affinity;    // -1 a resisted element, 1 a weakness, else 0
   // A copy of the target as it was, to measure each stat's change; a heap
   // block freed at the end.
-  struct BattleUnit *savedTarget;
+  struct Unit *savedTarget;
   s32 elementPower; // the user's power in the ability's element
   s32 hp;
   s32 drained;
@@ -832,7 +832,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
   s16 *command;
   u8 targetId;
   s8 *rm;
-  struct BattleUnit *target;
+  struct Unit *target;
   u32 actionIndex;
   s32 value;
   s32 amount; // the damage, or the HP or PP restored
@@ -852,7 +852,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
   leaveOneHp = 0;
   skipDamage = 0;
   affinity = 0;
-  unitSize = sizeof(struct BattleUnit);
+  unitSize = sizeof(struct Unit);
   savedTarget = Heap_Alloc(unitSize);
 
   // Meld and Mold strike with the stats of the unit that joins the user.
@@ -888,7 +888,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
   case ENEMY_POSEIDON:
   case ENEMY_POSEIDON_2:
   case ENEMY_POSEIDON_3:
-    if (abilityId != ABILITY_TRIDENT && battle->unk868 != 0 &&
+    if (abilityId != ABILITY_TRIDENT && battle->forceField != 0 &&
         ARE_OPPONENTS(unitId, targetId)) {
       BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, targetId);
       BattlePlayback_Push(PLAYBACK_UNIT_NAME, targetId);
@@ -1045,10 +1045,10 @@ power_end:
       // (the anchors are 16.16 fixed point).
       Enemy_Update();
       {
-        struct BattleObj *battleObject;
+        struct BattleObject *battleObject;
 
         battleObject = BattleObject_Get(newUnitId);
-        BattleObject_Make((struct BattleObj *)battleObject, newUnitId,
+        BattleObject_Make((struct BattleObject *)battleObject, newUnitId,
                           battleObject->anchorX / Q16_ONE,
                           battleObject->anchorZ / Q16_ONE);
       }
@@ -1152,10 +1152,10 @@ power_end:
 
           attack = actor->atk;
           if (abilityId == ABILITY_MELD || abilityId == ABILITY_MOLD) {
-            attack = ((struct BattleUnit *)Unit_Get(plan->unitId))->atk;
+            attack = ((struct Unit *)Unit_Get(plan->unitId))->atk;
             if (abilityId == ABILITY_MELD)
               attack +=
-                  ((struct BattleUnit *)Unit_Get(plan->actorId2))->atk / 4;
+                  ((struct Unit *)Unit_Get(plan->actorId2))->atk / 4;
           }
           amount = Battle_CalculateAttackDamageFar(attack, defense, power,
                                                    elementBonus);
@@ -1575,10 +1575,10 @@ power_end:
   }
 
   // The Trident breaks Poseidon's force field.
-  if (battle->unk868 != 0 && abilityId == ABILITY_TRIDENT) {
+  if (battle->forceField != 0 && abilityId == ABILITY_TRIDENT) {
     BattlePlayback_Push(PLAYBACK_UNIT_NAME, targetId);
     PUSH_MESSAGE(MsgFieldBroken);
-    battle->unk868 = 0;
+    battle->forceField = 0;
   }
   // 6. The added effect; each message after the first pushes the name again.
   // Shine's falls on the targets after its first.
@@ -2223,7 +2223,7 @@ power_end:
 
     case ABILITY_EFFECT_CEASE_FIRE:
       PUSH_MESSAGE(MsgAllResting);
-      battle->unk047 = 1;
+      battle->ceaseFire = 1;
       break;
 
     // Gale blows the target out of the battle, as one that flees.
@@ -2249,8 +2249,8 @@ done:
   if (plan->command != COMMAND_DJINN_COUNTER &&
       (s8)target->equipBonus[1] != 0 &&
       ability->targetMode == ABILITY_TARGET_FOES && target->hp != 0) {
-    battle->unk858 = targetId;
-    battle->unk85c = unitId;
+    battle->counterUnitId = targetId;
+    battle->counterTargetId = unitId;
   }
 
   // Damage wakes a sleeping target one time in four, unless it fell asleep this
@@ -2302,7 +2302,7 @@ u32 Ability_IsPsynergy(s32 abilityId) {
 /// target worth the ability. Called with retry 0 for each enemy as the turn is
 /// built and with retry 1 when it acts (BattleStaging_DispatchAction).
 s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   u32 selection;
   struct AIState *selectionMemory;
   const struct EnemyDefinition *enemy;

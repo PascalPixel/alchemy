@@ -19,7 +19,7 @@
 
 /* VIEW(presentation): routine BattleObject_Reset as void BattleObject_Reset();
  * the definition has another declaration; tried as the definition's void
- * BattleObject_Reset(struct BattleObj *actor, s32 keep), it does not compile in
+ * BattleObject_Reset(struct BattleObject *actor, s32 keep), it does not compile in
  * tla-ja: games/tla/src/battle/battle/motion_graphics.c:150: too few arguments
  * to function `BattleObject_Reset'. */
 void BattleObject_Reset__presentation() __asm__("BattleObject_Reset");
@@ -33,7 +33,7 @@ struct SavedBattleObj *
 BattleMotion_CallBeast(struct BattlePlan *plan,
                        struct BattlePresentationWork *work) {
   s32 single;
-  struct BattleObj *battleObject;
+  struct BattleObject *battleObject;
   struct SavedBattleObj *saved;
   u16 ids[14];
   struct MotionObject *object;
@@ -319,7 +319,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
   void *object;
   struct AttackAnimation *animation;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s16 criticalPair[3];
   s32 critical;
   struct BattlePresentationTransition *view;
@@ -332,7 +332,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
   s32 index;
   s32 zoomOnCritical;
   u32 actorId;
-  struct BattleObj *battleObject;
+  struct BattleObject *battleObject;
 
   view = Ram_HeapSlots->battleBackground;
   actorId = plan->unitId;
@@ -382,16 +382,16 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
       plan->actorId2 != (work.actors[0] & 0x80)) {
     object = BattleObject_Get(plan->actorId2);
 
-    animation = GetMotionRecord(((struct BattleObj *)object)->object, 0);
+    animation = GetMotionRecord(((struct BattleObject *)object)->object, 0);
     frames = SpriteAnimation_SumCommandLengthsFar(
         animation->entries[0]->animationId, 2, 1);
     BattleMotion_ApproachTarget(
         plan->actorId2, work.actors[0], frames,
         BattleSprite_GetAttackHop(
-            ((struct BattleUnit *)Unit_Get(plan->actorId2))->enemyId)
+            ((struct Unit *)Unit_Get(plan->actorId2))->enemyId)
             << 16);
     Actor_SetAnimationSpeedFar(
-        (struct Actor *)((struct BattleObj *)object)->object, 16);
+        (struct Actor *)((struct BattleObject *)object)->object, 16);
   }
   Actor_SetAnimationSpeedFar(
       (struct Actor *)BattleObject_Get(work.actor)->object, 16);
@@ -497,7 +497,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
   struct MotionObject *object;
   s32 targetOrFadeIndex;
   s32 inventoryEntry;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct ItemDefinition *itemDefinition;
   struct BattlePresentationTransition *transition =
       (struct BattlePresentationTransition *)Ram_HeapSlots->battleBackground;
@@ -512,7 +512,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
   BattleStaging_BuildTargetList(plan, &work);
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   {
-    struct BattleObj *slot = BattleObject_Get(work.actor);
+    struct BattleObject *slot = BattleObject_Get(work.actor);
     struct BattleWork *battle;
     u8 *mode;
 
@@ -800,7 +800,7 @@ s32 BattleObject_RemoveFromLists(s32 id) {
 
   // Ally formation.
   work = Ram_HeapSlots->battleWork;
-  ((struct BattleUnit *)Unit_Get(id))->side = BATTLE_UNIT_ABSENT;
+  ((struct Unit *)Unit_Get(id))->side = BATTLE_UNIT_ABSENT;
   for (i = 0;; i++) {
     unit = work->partyUnits[i];
     if (unit == id) {
@@ -837,18 +837,18 @@ removed:
 /// pixel. id: unit ID.
 void BattleMotion_ShowDowned(s32 id) {
   void *recs[4];
-  struct BattleUnit *unit;
-  struct AnimationObject *rec;
-  struct AnimationEntry *ent;
+  struct Unit *unit;
+  struct Sprite *rec;
+  struct SpriteAnimation *ent;
   s32 n;
 
   unit = Unit_Get(id);
   n = 0;
   while ((rec = GetMotionRecord(BattleObject_Get(id)->object, n)) != 0) {
     if (unit->side != BATTLE_UNIT_ENEMY)
-      Animation_ApplyChildArgumentFar(rec, 4);
+      Sprite_StartAnimationFar(rec, 4);
     else
-      Animation_ApplyChildArgumentFar(rec, 5);
+      Sprite_StartAnimationFar(rec, 5);
     n++;
   }
 
@@ -857,7 +857,7 @@ void BattleMotion_ShowDowned(s32 id) {
     while ((rec = GetMotionRecord(BattleObject_Get(id)->object, n)) != 0) {
       ent = rec->entries[0];
       recs[n] = rec;
-      ent->param = 6;
+      ent->colorMode = 6;
       ent->picture = 0xff;
       n++;
     }

@@ -1231,7 +1231,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
 /// Sends a unit back to its place (its anchor) with a hop.
 void BattleEffect_InitializeRisingObject(s32 slot) {
-  struct BattleObj *context = BattleObject_GetFar(slot);
+  struct BattleObject *context = BattleObject_GetFar(slot);
   struct Actor *object = context->object;
 
   object->acceleration = px(2);
@@ -1250,8 +1250,8 @@ void BattleEffect_InitializeRisingObject(s32 slot) {
 /// given frames.
 void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames,
                                     s32 rate) {
-  struct BattleObj *slot = BattleObject_GetFar(id);
-  struct BattleObj *targetSlot = BattleObject_GetFar(targetId);
+  struct BattleObject *slot = BattleObject_GetFar(id);
+  struct BattleObject *targetSlot = BattleObject_GetFar(targetId);
   struct Actor *obj = (struct Actor *)slot->object;
   struct Actor *target = (struct Actor *)targetSlot->object;
   s32 diffX = target->x.fixed - obj->x.fixed;

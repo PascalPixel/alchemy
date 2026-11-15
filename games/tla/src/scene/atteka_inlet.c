@@ -1,7 +1,7 @@
 /// @file
 /// Atteka Inlet, where the party's ship lies on the southern continent, in two
 /// scenes that share this overlay: the harbour with the ship
-/// (SceneId_AttekaInlet1) and the shore beside it (SceneId_AttekaInlet2). Piers
+/// (SceneId_AttekaInlet1) and the shore beside it (SceneId_AttekaInletGeode). Piers
 /// asks whether to set sail (AttekaInlet_AskPiersToSetSail). After Jupiter
 /// Lighthouse the shipwrights stop the party to see their handiwork fly
 /// (AttekaInlet_ShipwrightsStopTheParty), Hamma shows the ship's new wings
@@ -76,7 +76,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
       return gAttekaInlet_HarbourActorPlacementsOnceWinged;
     return gAttekaInlet_HarbourActorPlacements;
   }
-  if (scene == SCENE_ATTEKA_INLET_2) {
+  if (scene == SCENE_ATTEKA_INLET_GEODE) {
     if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO))
       return gAttekaInlet_ShoreActorPlacementsOnceWinged;
     return gAttekaInlet_ShoreActorPlacements;
@@ -91,7 +91,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
   if (scene == SCENE_ATTEKA_INLET_1)
     return gAttekaInlet_HarbourTriggers;
-  if (scene == SCENE_ATTEKA_INLET_2)
+  if (scene == SCENE_ATTEKA_INLET_GEODE)
     return gAttekaInlet_ShoreTriggers;
   return gAttekaInlet_Triggers;
 }
@@ -110,7 +110,7 @@ void AttekaInlet_AskPiersToSetSail(void) {
   FieldMessage_ShowAtActor(18, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
-    Actor_SetModeById(18, 3);
+    Actor_SetAnimationById(18, 3);
     // "Then, to sea we go!"
     Event_ShowMessageAndWait(18, 0);
     gMainRoutineWork.ownerOverride = 1;
@@ -124,7 +124,7 @@ void AttekaInlet_AskPiersToSetSail(void) {
     // "Please don't rush on my account. Let's enjoy our stay."
     Event_ShowMessageAndWait(18, 0);
     Actor_SetSpeed(18, 1.6);
-    Actor_SetModeById(18, 2);
+    Actor_SetAnimationById(18, 2);
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (object != NULL)
       Actor_SetDestinationById(18, *(s16 *)((u8 *)object + 10),
@@ -178,7 +178,7 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
     // "I want to see our handiwork take flight. Don't you, buddy?"
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | 9, 0);
     Actor_FaceDirectionAndWait(10, FACING_NORTH_NORTHWEST);
-    Actor_SetModeById(10, 3);
+    Actor_SetAnimationById(10, 3);
     // "I want to! Boy, do I want to!"
     Event_ShowMessageAndWait(10, 0);
     Actor_FaceDirectionById(10, FACING_EAST, 0);
@@ -227,13 +227,13 @@ void AttekaInlet_HammaShowsTheWings(void) {
     FieldCamera_WaitForArrival();
     Event_Wait(20);
     Actor_FaceDirectionAndWait(23, FACING_SOUTH_SOUTHEAST);
-    Motion_SetModeAndWaitAnimation(23, 3);
+    Actor_SetAnimationAndWait(23, 3);
     // "Now that you have been given wings, all obstacles in your path will..."
     Event_ShowMessageAndWait(23, 0);
     Actor_ShowEmote(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "However, it is not the wings alone that grant your ship the power of..."
     Event_ShowMessageAndWait(23, 0);
-    Actor_SetModeById(23, 4);
+    Actor_SetAnimationById(23, 4);
     // "Psynergy is the force that powers the Wings of Anemos."
     Event_ShowMessageAndWait(23, 0);
     // "If the ship is to fly, you will need to focus the power of your..."
@@ -244,10 +244,10 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Actor_FaceDirectionAndWait(23, FACING_SOUTH_SOUTHEAST);
     // "Now is the time to make use of the powers you acquired there."
     Event_ShowMessageAndWait(23, 0);
-    Motion_SetModeAndWaitAnimation(23, 3);
+    Actor_SetAnimationAndWait(23, 3);
     // "Now... Use the power of Hover to raise your ship!"
     Event_ShowMessageAndWait(23, 0);
-    Actor_SetModeById(23, 4);
+    Actor_SetAnimationById(23, 4);
     // "At first, you may not want to move your ship too high or too far..."
     Event_ShowMessageAndWait(23, 0);
     Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
@@ -258,7 +258,7 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
     // "But your quest should not demand much more of you..."
     Event_ShowMessageAndWait(23, 0);
-    Motion_SetModeAndWaitAnimation(23, 3);
+    Actor_SetAnimationAndWait(23, 3);
     // "Now, be confident and set sail!"
     Event_ShowMessageAndWait(23, 0);
     Actor_SetSpeed(23, 0.8);
@@ -267,7 +267,7 @@ void AttekaInlet_HammaShowsTheWings(void) {
     Event_Wait(1);
     Actor_GetById(23)->steeringFlags |= 1;
     Actor_FaceDirectionAndRefreshById(23, FACING_SOUTH_SOUTHEAST);
-    Motion_SetModeAndWaitAnimation(23, 3);
+    Actor_SetAnimationAndWait(23, 3);
     // "All of Contigo is watching... Show them your power, and make your..."
     Event_ShowMessageAndWait(23, 0);
     GameFlag_Set(FLAG_HAMMA_SHOWED_THE_WINGS);
@@ -296,7 +296,7 @@ void AttekaInlet_PiersAsksToSetSail(void) {
   FieldMessage_ShowAtActor(18, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
-    Actor_SetModeById(18, 3);
+    Actor_SetAnimationById(18, 3);
     // "Then, to sea we go!"
     Event_ShowMessageAndWait(18, 0);
     gMainRoutineWork.ownerOverride = 1;
@@ -310,7 +310,7 @@ void AttekaInlet_PiersAsksToSetSail(void) {
     // "Please don't rush on my account. Let's enjoy our stay."
     Event_ShowMessageAndWait(18, 0);
     Actor_SetSpeed(18, 1.6);
-    Actor_SetModeById(18, 2);
+    Actor_SetAnimationById(18, 2);
     object = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (object != NULL)
       Actor_SetDestinationById(18, *(s16 *)((u8 *)object + 10),
@@ -411,13 +411,13 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Actor_ShowEmote(24, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   // "I'm supposed to deliver this to Isaac... It's not too late, is it?"
   Event_ShowMessageAndWait(24, 0);
-  Motion_SetModeAndWaitAnimation(23, 3);
+  Actor_SetAnimationAndWait(23, 3);
   Actor_FaceDirectionAndRefreshById(24, angle);
   Actor_GetById(24)->steeringFlags &= ~1;
   Actor_WalkToAndWait(24, 520, 384);
   Event_Wait(1);
   Actor_GetById(24)->steeringFlags |= 1;
-  Motion_SetVarCbAndRefresh(24, 2);
+  Actor_RunRepeatedMotion(24, 2);
   Actor_SetHorizontalPositionWithTerrain(65, px(520), px(380));
   wait(1);
   Actor_GetById(24)->steeringFlags &= ~1;
@@ -426,7 +426,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Actor_GetById(24)->steeringFlags |= 1;
   Event_Wait(10);
   Actor_FaceDirection(24, FACING_NORTH_NORTHWEST, 10);
-  Motion_SetModeAndWaitAnimation(24, 3);
+  Actor_SetAnimationAndWait(24, 3);
   Actor_WalkToAndWait(24, 520, 434);
   FieldCamera_MoveWithinMapBounds(px(512), -1, px(348), 1);
   Actor_WalkToAndWait(24, 504, 460);
@@ -437,10 +437,10 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   // "He was quite upset that you hadn't returned to visit him so that he..."
   Event_ShowMessageAndWait(23, 0);
-  Actor_SetModeById(23, 3);
+  Actor_SetAnimationById(23, 3);
   // "So he requested that I take this with me to Atteka."
   Event_ShowMessageAndWait(23, 0);
-  Motion_SetModeAndWaitAnimation(23, 3);
+  Actor_SetAnimationAndWait(23, 3);
   Actor_ShowEmoteById(23, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   // "It is a gift of thanks from Master Hammet. Take it, please."
   Event_ShowMessageAndWait(23, 0);
@@ -509,7 +509,7 @@ void AttekaInlet_OpenDoorAndEnter(void) {
   Event_ResolvePendingActions(0);
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -4);
   Event_Wait(8);
@@ -523,7 +523,7 @@ s32 Scene_Initialize(void) {
 
   if (scene == SCENE_ATTEKA_INLET_1)
     AttekaInlet_SetUpTheHarbour();
-  else if (scene == SCENE_ATTEKA_INLET_2)
+  else if (scene == SCENE_ATTEKA_INLET_GEODE)
     AttekaInlet_SetUpTheShore();
   return 0;
 }
@@ -612,14 +612,14 @@ struct SceneEntrance gSceneEntrances[] = {
 u32 gSceneExits[] = {
     SCENE_EXITS(AttekaInlet1),
     SCENE_EXIT(1, LemurianShip1, 1),
-    SCENE_EXIT(2, AttekaInlet2, 1),
-    SCENE_EXIT(3, AttekaInlet2, 5),
+    SCENE_EXIT(2, AttekaInletGeode, 1),
+    SCENE_EXIT(3, AttekaInletGeode, 5),
     SCENE_EXIT(4, WorldMap, 52),
-    SCENE_EXITS(AttekaInlet2),
+    SCENE_EXITS(AttekaInletGeode),
     SCENE_EXIT(1, AttekaInlet1, 2),
     SCENE_EXIT(2, WorldMap, 53),
     SCENE_EXIT(3, Contigo2, 21),
-    SCENE_EXIT(4, AttekaInlet2, 4),
+    SCENE_EXIT(4, AttekaInletGeode, 4),
     SCENE_EXIT(5, AttekaInlet1, 3),
     SCENE_EXIT(6, WorldMap, 53),
     SCENE_EXITS_END,

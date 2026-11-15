@@ -6,7 +6,7 @@
 
 #include "types.h"
 
-struct BattleUnit;
+struct Unit;
 struct EnemyDefinition;
 /// Level up one level at a time until the target, recalculating stats each
 /// time.
@@ -18,7 +18,7 @@ void Unit_LearnPsynergyFar(s32 owner, s32 action);
 /// type it replaces.
 s32 Inventory_EquipFar(s32 owner, s32 slot);
 /// Returns the id of the unit's equipped item of `type`, or 0.
-s32 Inventory_GetEquippedItemFar(struct BattleUnit *unit, s32 slot);
+s32 Inventory_GetEquippedItemFar(struct Unit *unit, s32 slot);
 /// Returns 1 when the unit holds the Djinni and it can be set.
 s32 Djinn_CanSetFar(s32 owner, s32 element, s32 djinn);
 /// Returns the slot of the equipped item of `type`, or -1.
@@ -31,7 +31,7 @@ u32 *DjinnRecovery_AddStandbyFar(u32 owner, u32 element, u32 djinn);
 s32 Item_GetEquippedElementFar(s32 unitId);
 /// Returns the unleash chance, in percent, that a unit's equipment adds
 /// (EQUIP_EFFECT_ADD_UNLEASH_CHANCE).
-s32 Equipment_GetUnleashRateBonusFar(struct BattleUnit *owner);
+s32 Equipment_GetUnleashRateBonusFar(struct Unit *owner);
 /// Gives the item to the first party member with room.
 s32 PartyInventory_AddFar(s32 item);
 /// Returns the definition of enemy selector.
@@ -94,7 +94,7 @@ u32 BuildStamp_GetTimeFar();
 void MainRoutineWork_InitializeDefaultsFar(void);
 /// Returns the ability ID used when the Djinni is unleashed
 /// (Djinn_GetAbilityId).
-s32 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
+s32 Djinn_GetAbilityIdFar(s32 element, s32 index);
 /// Returns how many of the item in `slot` the unit carries (0 for an empty
 /// slot).
 s32 Inventory_GetQuantityFar(s32 member, s32 slot);
@@ -106,7 +106,7 @@ s32 Inventory_CheckDiscardFar(s32 unitId, s32 slot);
 s32 Inventory_CheckUnequipFar(s32 unitId, s32 slot);
 /// Sets the unit's PP, clamped to 0..ppMax, and recomputes its HP and PP
 /// gauges.
-void Unit_SetPpFar(struct BattleUnit *unit, s32 pp);
+void Unit_SetPpFar(struct Unit *unit, s32 pp);
 /// Returns the class series of a character whose strongest element is
 /// `primaryElement` and second `secondaryElement`, from the 4 by 4 table.
 void Class_GetSeriesFar(s32 value);

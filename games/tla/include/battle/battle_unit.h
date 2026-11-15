@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_UNIT_H
 
 /// @file
-/// BattleUnit, a party member's or enemy's battle state, with the elements,
+/// Unit, a party member's or enemy's battle state, with the elements,
 /// abilities and actions it uses.
 
 #include "edition.h"
@@ -11,10 +11,10 @@
 enum {
   BATTLE_ACTION_SIZE = 0x10,
   BATTLE_UNIT_SIZE = 0x14c,
-  OWNER_ACTION_ID_MASK = 0x3fff
+  PSYNERGY_ABILITY_MASK = 0x3fff
 };
 
-/// An entry in a unit's action list: the action's id (OWNER_ACTION_ID_MASK)
+/// An entry in a unit's action list: the action's id (PSYNERGY_ABILITY_MASK)
 /// and marks for an action its class or an equipped item gave.
 struct OwnerActionSlot {
   /// bits: 15 from the class | 14 from an equipped item | 13..0 action id.
@@ -174,7 +174,7 @@ enum AbilityEffect {
   ABILITY_EFFECT_VANISH = 79,     ///< Haze: DEFEND_VANISHED
   /// Gasp: Curse, rolled three times (Battle_RollEffectSuccess).
   ABILITY_EFFECT_CURSE_THREE_ROLLS = 80,
-  /// Lull: "Everybody is resting!" (BattleWork.unk047).
+  /// Lull: "Everybody is resting!" (BattleWork.ceaseFire).
   ABILITY_EFFECT_CEASE_FIRE = 81,
   /// Gale: an enemy blown out of the battle, as one that flees.
   ABILITY_EFFECT_BLOW_AWAY = 82,
@@ -190,10 +190,10 @@ enum AbilityEffect {
   ABILITY_EFFECT_CALL_QUEUED = 87,
   ABILITY_EFFECT_TOTAL_DEFENSE_2 = 88, ///< Guard Aura: as Total Defense
   ABILITY_EFFECT_VENGEANCE = 89,       ///< Vengeance
-  /// Raiden's Wrath: lands only on a dragon (gBattle_Effect90Classes), and
+  /// Raiden's Wrath: lands only on a dragon (gEnemy_DragonIds), and
   /// ignores its Defense.
   ABILITY_EFFECT_SLAY_DRAGON = 90,
-  /// Trident: lands only on a sea creature (gBattle_Effect91Classes), and
+  /// Trident: lands only on a sea creature (gEnemy_SeaCreatureIds), and
   /// ignores its Defense.
   ABILITY_EFFECT_SLAY_SEA_CREATURE = 91
 };
@@ -223,7 +223,7 @@ enum BattleActionUse {
   ACTION_USABLE_IN_BATTLE = 0x80 ///< can be used in battle
 };
 
-/// The curse bits of BattleUnit.curse, as The Broken Seal's Unit.curse.
+/// The curse bits of Unit.curse, as The Broken Seal's Unit.curse.
 enum CurseFlag {
   CURSE_BOUND = 0x01,      ///< the unit is bound: one action in four is lost
   CURSE_ITEM = 0x02,       ///< a cursed item is equipped
@@ -233,7 +233,7 @@ enum CurseFlag {
   CURSE_REMOVABLE = 0x08
 };
 
-/// BattleUnit.classId of an enemy, which has no class of its own.
+/// Unit.classId of an enemy, which has no class of its own.
 #define CLASS_NONE 0
 
 /// The last party unit id: ids 0 to 7, one for each character, ISAAC to PIERS.
@@ -251,11 +251,11 @@ enum CurseFlag {
 /// length of a unit list such as BattleUnit_ListIds fills.
 #define UNIT_MAX (PARTY_UNIT_COUNT + ENEMY_BATTLE_SIZE)
 
-/// BattleUnit.poison: poisoned, or deadly poisoned.
+/// Unit.poison: poisoned, or deadly poisoned.
 #define POISON_NORMAL 1
 #define POISON_VENOM 2
 
-/// BattleUnit.defendLevel, 0 for no guard: each guard effect raises it to its
+/// Unit.defendLevel, 0 for no guard: each guard effect raises it to its
 /// own level and no lower (BattleAbility_ApplyToTarget). Defend and Granite
 /// halve the damage, Shade cuts it to two fifths, Total Defense, Flash and
 /// Guard Aura to a tenth (REDUCE_BY_GUARD), and Haze leaves the unit untouched.
@@ -266,7 +266,7 @@ enum CurseFlag {
 
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
 /// Djinn and ailments.
-struct BattleUnit {
+struct Unit {
   u8 name[0x0f];      ///< one byte a character, ending in 0
   u8 level;           ///< 1 to 99 for a character
   s16 baseHp;         ///< before equipment, Djinn and class (Unit_Calculate)
@@ -383,26 +383,26 @@ STATIC_ASSERT(offsetof(struct BattleAct, type0c) == 0x0c);
 
 STATIC_ASSERT(sizeof(struct OwnerActionSlot) == 4);
 STATIC_ASSERT(sizeof(struct BattleElementStats) == 4);
-STATIC_ASSERT(sizeof(struct BattleUnit) == BATTLE_UNIT_SIZE);
-STATIC_ASSERT(offsetof(struct BattleUnit, baseHp) == 0x10);
-STATIC_ASSERT(offsetof(struct BattleUnit, baseAttack) == 0x18);
-STATIC_ASSERT(offsetof(struct BattleUnit, psynergy) == 0x58);
-STATIC_ASSERT(offsetof(struct BattleUnit, djinnHeld) == 0xf8);
-STATIC_ASSERT(offsetof(struct BattleUnit, djinnSet) == 0x108);
-STATIC_ASSERT(offsetof(struct BattleUnit, rewards) == 0x120);
-STATIC_ASSERT(offsetof(struct BattleUnit, hp) == 0x038);
-STATIC_ASSERT(offsetof(struct BattleUnit, baseElement) == 0x024);
-STATIC_ASSERT(offsetof(struct BattleUnit, level) == 0x00f);
-STATIC_ASSERT(offsetof(struct BattleUnit, element) == 0x048);
-STATIC_ASSERT(offsetof(struct BattleUnit, ready) == 0x144);
-STATIC_ASSERT(offsetof(struct BattleUnit, inventory) == 0x0d8);
-STATIC_ASSERT(offsetof(struct BattleUnit, djinnOwnedCounts) == 0x118);
-STATIC_ASSERT(offsetof(struct BattleUnit, djinnActiveCounts) == 0x11c);
-STATIC_ASSERT(offsetof(struct BattleUnit, defendLevel) == 0x12b);
-STATIC_ASSERT(offsetof(struct BattleUnit, charm) == 0x13a);
-STATIC_ASSERT(offsetof(struct BattleUnit, haunt) == 0x140);
+STATIC_ASSERT(sizeof(struct Unit) == BATTLE_UNIT_SIZE);
+STATIC_ASSERT(offsetof(struct Unit, baseHp) == 0x10);
+STATIC_ASSERT(offsetof(struct Unit, baseAttack) == 0x18);
+STATIC_ASSERT(offsetof(struct Unit, psynergy) == 0x58);
+STATIC_ASSERT(offsetof(struct Unit, djinnHeld) == 0xf8);
+STATIC_ASSERT(offsetof(struct Unit, djinnSet) == 0x108);
+STATIC_ASSERT(offsetof(struct Unit, rewards) == 0x120);
+STATIC_ASSERT(offsetof(struct Unit, hp) == 0x038);
+STATIC_ASSERT(offsetof(struct Unit, baseElement) == 0x024);
+STATIC_ASSERT(offsetof(struct Unit, level) == 0x00f);
+STATIC_ASSERT(offsetof(struct Unit, element) == 0x048);
+STATIC_ASSERT(offsetof(struct Unit, ready) == 0x144);
+STATIC_ASSERT(offsetof(struct Unit, inventory) == 0x0d8);
+STATIC_ASSERT(offsetof(struct Unit, djinnOwnedCounts) == 0x118);
+STATIC_ASSERT(offsetof(struct Unit, djinnActiveCounts) == 0x11c);
+STATIC_ASSERT(offsetof(struct Unit, defendLevel) == 0x12b);
+STATIC_ASSERT(offsetof(struct Unit, charm) == 0x13a);
+STATIC_ASSERT(offsetof(struct Unit, haunt) == 0x140);
 
-STATIC_ASSERT(offsetof(struct BattleUnit, enemyId) == 0x14a);
+STATIC_ASSERT(offsetof(struct Unit, enemyId) == 0x14a);
 
 /// Clamps a gauge ratio to 0..0x4000, where 0x4000 means full.
 static __inline__ s32 Vitals_Clamp(s32 ratio) {
@@ -428,6 +428,6 @@ static __inline__ s32 Vitals_Clamp(s32 ratio) {
       (unit)->ppGauge = 1;                                                     \
   } while (0)
 
-extern struct BattleUnit gCharacterUnits[];
+extern struct Unit gCharacterUnits[];
 
 #endif

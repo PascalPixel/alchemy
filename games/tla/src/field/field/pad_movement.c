@@ -175,7 +175,7 @@ update_object:
         ripple->motionFlags = collision;
         ripple->layer = 1;
         if (rippleSprite != 0) {
-          Animation_ApplyChildArgument(rippleSprite, 1);
+          Sprite_StartAnimation(rippleSprite, 1);
           rippleSprite->flags = collision;
           rippleSprite->objectMode = 1;
           rippleSprite->priority = 2;
@@ -697,7 +697,7 @@ update_object:
         ripple->motionFlags = 0;
         ripple->layer = kind;
         if (rippleSprite != 0) {
-          Animation_ApplyChildArgument(rippleSprite, 2);
+          Sprite_StartAnimation(rippleSprite, 2);
           rippleSprite->flags = 0;
           rippleSprite->objectMode = 0;
           rippleSprite->priority = 2;
@@ -909,7 +909,7 @@ update_object:
           ripple->motionFlags = 0;
           ripple->layer = kind;
           if (rippleSprite != 0) {
-            Animation_ApplyChildArgument(rippleSprite, 1);
+            Sprite_StartAnimation(rippleSprite, 1);
             rippleSprite->flags = 0;
             rippleSprite->objectMode = 1;
             rippleSprite->priority = 2;

@@ -109,7 +109,7 @@ void WorldPicture_Release(void) {
 void WorldPicture_PlaceLeaderAt(s32 x, s32 z) {
   s32 owner = Party_GetLeaderActor();
   s32 *camera = *(s32 **)Ram_HeapSlots->mapGrid;
-  struct Actor *object = ObjectTable_Get(owner);
+  struct Actor *object = Actor_Lookup(owner);
 
   if (object != NULL) {
     x >>= 16;
@@ -135,7 +135,7 @@ void WorldPicture_GetLeaderPoint(s32 *screenX, s32 *screenY) {
 
   GameFlag_Clear(0x11e);
   if (state->mode == 3) {
-    object = ObjectTable_Get(leader);
+    object = Actor_Lookup(leader);
     if (object == 0)
       return;
     x = *(s16 *)(object + 10);

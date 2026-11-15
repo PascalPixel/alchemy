@@ -40,7 +40,7 @@ extern u8 gInventorySnapshot[];
 /// snapshot is held.
 void InventorySnapshot_Save(void) {
   u16 *save;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s16 *inventory;
   s32 unitId;
   s32 slot;
@@ -98,7 +98,7 @@ void InventorySnapshot_Restore(void) {
 
   if (*src++ == INVENTORY_SNAPSHOT_SENTINEL) {
     for (unitId = FELIX; unitId <= PIERS; unitId++) {
-      u16 *dst = ((struct BattleUnit *)Unit_Get(unitId))->inventory;
+      u16 *dst = ((struct Unit *)Unit_Get(unitId))->inventory;
       s32 slot;
 
       for (slot = INVENTORY_SLOTS - 1; slot >= 0; slot--)

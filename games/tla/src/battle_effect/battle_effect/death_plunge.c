@@ -14,8 +14,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;
   DrawRectangle draw[2];
-  struct BattleObj *first;
-  struct BattleObj *second;
+  struct BattleObject *first;
+  struct BattleObject *second;
   struct Actor *user;
   struct Actor *target;
   s32 percent;

@@ -133,7 +133,7 @@ const u8 *Scene_GetActorPlacements(void) {
     return gTreasureIsle_Room2Placements;
   if (scene == SCENE_TREASURE_ISLE_3)
     return gTreasureIsle_Room3Placements;
-  if (scene == SCENE_TREASURE_ISLE_4)
+  if (scene == SCENE_TREASURE_ISLE_GALE)
     return gTreasureIsle_Room4Placements;
   if (scene == SCENE_TREASURE_ISLE_5)
     return gTreasureIsle_Room5Placements;
@@ -313,7 +313,7 @@ void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
     if (id == 10 && object->x.fixed >> 19 == 83)
       Event_SetFlag(FLAG_AREA_TEMP_09);
   }
-  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_4) {
+  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_GALE) {
     if (id == 8 && object->x.fixed >> 19 == 87)
       Event_SetFlag(FLAG_AREA_TEMP_0D);
   }
@@ -420,7 +420,7 @@ const u8 *Scene_GetTriggers(void) {
     return gTreasureIsle_Room2Triggers;
   if (scene == SCENE_TREASURE_ISLE_3)
     return gTreasureIsle_Room3Triggers;
-  if (scene == SCENE_TREASURE_ISLE_4)
+  if (scene == SCENE_TREASURE_ISLE_GALE)
     return gTreasureIsle_Room4Triggers;
   if (scene == SCENE_TREASURE_ISLE_5)
     return gTreasureIsle_Room5Triggers;
@@ -522,7 +522,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_AREA_TEMP_0C))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room3SpikyRocks, 2);
   }
-  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_4) {
+  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_GALE) {
     if (Event_GetFlag(FLAG_AREA_TEMP_0D))
       Actor_SetPosition(8, 696, 600);
     Tightrope_Place(0, 17, 18);
@@ -647,23 +647,23 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(2, TreasureIsle2, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, TreasureIsle3, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, TreasureIsle3, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, TreasureIsle4, 1, EXIT_FLAG_NONE),
-    SCENE_EXITS(TreasureIsle4),
+    SCENE_EXIT_UNLESS(5, TreasureIsleGale, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(TreasureIsleGale),
     SCENE_EXIT_UNLESS(1, TreasureIsle3, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, TreasureIsle4, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, TreasureIsle4, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, TreasureIsle4, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, TreasureIsle4, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, TreasureIsleGale, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, TreasureIsleGale, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, TreasureIsleGale, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, TreasureIsleGale, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, TreasureIsle5, 1, EXIT_FLAG_NONE),
     SCENE_EXITS(TreasureIsle5),
-    SCENE_EXIT_UNLESS(1, TreasureIsle4, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, TreasureIsleGale, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, TreasureIsle5, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, TreasureIsle5, 2, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 u32 gTreasureIsle_PostStill[] = {
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_END,
 };

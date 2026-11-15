@@ -54,7 +54,7 @@ FarCall_GameTable:
 	export Djinn_TransferFar, Djinn_Transfer
 	export Summon_ListLearnedFar, Summon_ListLearned
 	export SummonDefinition_Get, SummonDefinition_GetNear
-	export Djinn_GetDefinitionHeaderFar, Djinn_GetAbilityId
+	export Djinn_GetAbilityIdFar, Djinn_GetAbilityId
 	export Unit_LevelUpToFar, Unit_LevelUpTo
 	export Unit_GetElementLevelFar, Unit_GetElementLevel
 	export DjinnRecovery_CountStandbyFar, DjinnRecovery_CountStandby

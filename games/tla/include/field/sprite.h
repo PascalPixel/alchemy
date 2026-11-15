@@ -10,7 +10,7 @@
 #include "static_assert.h"
 #include "graphics/render_placement.h"
 
-/// AnimationEntry.param: how Render_DecodePicture colours a layer's pixels.
+/// SpriteAnimation.param: how Render_DecodePicture colours a layer's pixels.
 /// Modes 1 to 6 and 9 to 11 run them through a 256-byte table (the five
 /// gResourceSlot_ConversionTables, then the four gSpriteColorRemapTables
 /// ones); the solid modes paint every drawn pixel one colour of the basic
@@ -34,21 +34,21 @@ enum SpriteColorMode {
 
 /// One animation layer of a sprite: its animation id, pictures, running script
 /// and timer.
-struct AnimationEntry {
-  s16 animId; ///< the sprite id whose metadata and pictures it uses
+struct SpriteAnimation {
+  s16 animationId; ///< the sprite id whose metadata and pictures it uses
   /// Time left on the current picture in sixteenths of a frame, read signed:
   /// each timed command adds its argument times 16, each frame takes off step.
   u16 timer;
   /// The facing table its pictures follow (from the metadata, or
   /// animation command 240).
   u8 kind;
-  u8 param;        ///< SpriteColorMode its pixels are drawn with
+  u8 colorMode;    ///< SpriteColorMode its pixels are drawn with
   u8 priority;     ///< drawing order 0 to 3 among the layers; above 3 not drawn
   u8 mode;         ///< picture codec: 1 type-01, 3 LZ, anything else raw
   void **pictures; ///< picture pointers, from the metadata or a resource slot
   u8 **scripts;    ///< the metadata's command scripts, one per animation number
   u8 *script;      ///< the running script; null once command 239 ends it
-  u8 pos;          ///< byte offset of the next command in script
+  u8 scriptOffset; ///< byte offset of the next command in script
   u8 step;         ///< taken off timer each frame; 16 is normal speed
   u8 picture; ///< picture shown, pictureBase plus the facing offset; 255 none
   u8 pictureBase; ///< picture the script chose, before facing; 255 blank
@@ -103,7 +103,7 @@ struct AnimationSpritePart {
 
 /// An animated sprite: its image, scale, rotation, size, its shadow and up to
 /// four sprite animations.
-struct AnimationObject {
+struct Sprite {
   struct AnimationSpritePart image;
   s32 scale; ///< 16.16 fixed point, Q16_ONE full size
   u8 slot;   ///< VRAM cache entry holding its tiles
@@ -126,17 +126,17 @@ struct AnimationObject {
   u8 count; ///< layers in use, up to the last one present
   /// Its shadow, shown while flags bit 0 is set.
   struct AnimationSpritePart shadow;
-  struct AnimationEntry *entries[4]; ///< its layers; empty ones null
+  struct SpriteAnimation *entries[4]; ///< its layers; empty ones null
 };
 
-STATIC_ASSERT(sizeof(struct AnimationEntry) == 0x18);
+STATIC_ASSERT(sizeof(struct SpriteAnimation) == 0x18);
 STATIC_ASSERT(sizeof(struct AnimationSpritePart) == 0x0c);
-STATIC_ASSERT(offsetof(struct AnimationObject, scale) == 0x0c);
-STATIC_ASSERT(offsetof(struct AnimationObject, rotation) == 0x12);
-STATIC_ASSERT(offsetof(struct AnimationObject, width) == 0x14);
-STATIC_ASSERT(offsetof(struct AnimationObject, shadow) == 0x1c);
-STATIC_ASSERT(sizeof(struct AnimationObject) == 0x38);
-STATIC_ASSERT(offsetof(struct AnimationObject, entries) == 0x28);
+STATIC_ASSERT(offsetof(struct Sprite, scale) == 0x0c);
+STATIC_ASSERT(offsetof(struct Sprite, rotation) == 0x12);
+STATIC_ASSERT(offsetof(struct Sprite, width) == 0x14);
+STATIC_ASSERT(offsetof(struct Sprite, shadow) == 0x1c);
+STATIC_ASSERT(sizeof(struct Sprite) == 0x38);
+STATIC_ASSERT(offsetof(struct Sprite, entries) == 0x28);
 
 /// Animation numbers of a person's sprite, for Actor_SetAnimation. A sprite
 /// that is not a person (a bird, a dragon, a pillar) numbers its own.

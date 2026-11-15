@@ -334,7 +334,7 @@ struct RenderInput *SettingsMenu_Open(void) {
 #define SETTINGS_HEADING 8
 #endif
 
-extern u8 MsgKey113b[], MsgKey1141[], MsgKey1144[], MsgKey1146[], MsgKey1161[];
+extern u8 MsgMessageSpeedSlow[], MsgSpeechOff[], MsgAutoSleepOff[], MsgWindowColorHelp[], MsgKey1161[];
 extern const u8 gOptionMenu_FirstColorPresets[],
     gOptionMenu_SecondColorPresets[];
 
@@ -434,15 +434,15 @@ s32 SettingsMenu_Run(void) {
       y = (s16)settingsWindow->y * 8 + 20;
       MenuCursor_SetFar(&work->marker[1], x, y, 1);
 
-      x = work->option[2] + (s32)MsgKey113b;
+      x = work->option[2] + (s32)MsgMessageSpeedSlow;
       Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
                                 40, FIRST_CHOICE_RIGHT, 48);
       Text_DrawMessageAsTiles(x, settingsWindow, CHOICE_X, 40);
-      x = work->option[3] + (s32)MsgKey1141;
+      x = work->option[3] + (s32)MsgSpeechOff;
       Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
                                 64, CHOICE_RIGHT, 72);
       Text_DrawMessageAsTiles(x, settingsWindow, CHOICE_X, 64);
-      x = work->option[4] + (s32)MsgKey1144;
+      x = work->option[4] + (s32)MsgAutoSleepOff;
       Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
                                 88, CHOICE_RIGHT, 96);
       Text_DrawMessageAsTiles(x, settingsWindow, CHOICE_X, 88);
@@ -458,7 +458,7 @@ s32 SettingsMenu_Run(void) {
         y += 8;
       MenuCursor_SetFar(&work->cursor, x, y, 3);
       WindowSprite_ClearList(helpWindow);
-      Text_DrawMessage(selectedOption + (s32)MsgKey1146, (s32)helpWindow, 0, 0);
+      Text_DrawMessage(selectedOption + (s32)MsgWindowColorHelp, (s32)helpWindow, 0, 0);
     }
     MenuTitle_Bob(pair);
     wait(1);

@@ -374,7 +374,7 @@ void Actor_VanishInSparks(s32 objectId) {
   s32 entry;
   s32 tiles;
   s32 spawning;
-  struct Actor *object = ObjectTable_Get(objectId);
+  struct Actor *object = Actor_Lookup(objectId);
   s32 depth = BattleEffect_GetObjectDepth(object);
   s32 angle = (u16)object->facing;
   struct WhirlSpark *spark;
@@ -610,7 +610,7 @@ void FieldParticle_SetPosition(struct FieldParticle *effect, s32 x, s32 z) {
 
 /// Sets the animation of a field effect sprite.
 void FieldParticle_SetActorMode(struct FieldParticle *effect, s32 mode) {
-  Animation_ApplyChildArgumentFar(effect->object, mode);
+  Sprite_StartAnimationFar(effect->object, mode);
 }
 
 /// Gives a field effect sprite its per-frame callback, starting at state 0.

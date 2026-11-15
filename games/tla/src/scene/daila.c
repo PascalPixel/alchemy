@@ -118,7 +118,7 @@ void Daila_EnterDoor(void) {
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
   Sound_Play(SE_MAP_EXIT);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -6);
   Event_Wait(10);
   Import_EventSetExitRequest(work->stepTrigger);
@@ -265,7 +265,7 @@ void Daila_TaviAndRikiAreHome(s32 keeper) {
 static inline void Actor_JoinLeader(s32 actor) {
   struct Actor *leader;
 
-  Actor_SetModeById(actor, 2);
+  Actor_SetAnimationById(actor, 2);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestinationById(actor, leader->x.part[0].pixel,
@@ -325,7 +325,7 @@ void Daila_MeetAlex(void) {
   Event_Wait(30);
   Actor_FaceActorById(ACTOR_SHEBA, ACTOR_KRADEN, 0);
   Event_Wait(30);
-  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(30);
   // "That's what Kraden said..."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
@@ -339,7 +339,7 @@ void Daila_MeetAlex(void) {
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Event_Wait(30);
   Actor_FaceActorById(ACTOR_SHEBA, ACTOR_ALEX, 0);
-  Actor_SetModeById(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationById(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   Event_Wait(60);
   // "Unfortunately, there are none to be had."
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
@@ -355,7 +355,7 @@ void Daila_MeetAlex(void) {
   // "Is that where you're going?"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Event_Wait(30);
-  Actor_SetModeById(ACTOR_ALEX, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_ALEX, ANIM_NOD);
   Event_Wait(30);
   // "Yes. Madra may have boats available. That would be the most logical..."
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
@@ -381,15 +381,15 @@ void Daila_MeetAlex(void) {
     // "Ah. Felix doesn't think it's a good idea."
     Event_ShowMessageAndWait(ACTOR_ALEX, 0);
     Event_Wait(60);
-    Motion_SetVarCbAndRefresh(ACTOR_JENNA, 1);
+    Actor_RunRepeatedMotion(ACTOR_JENNA, 1);
     Actor_FaceActorById(ACTOR_JENNA, ACTOR_ALEX, 0);
     // "You seem awfully pleased about that..."
     Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   }
-  Actor_SetModeById(ACTOR_ALEX, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationById(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
-  Motion_SetVarCbAndRefresh(ACTOR_SHEBA, 1);
+  Actor_RunRepeatedMotion(ACTOR_SHEBA, 1);
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Event_Wait(60);
@@ -401,7 +401,7 @@ void Daila_MeetAlex(void) {
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Event_Wait(60);
-  Actor_SetModeById(ACTOR_ALEX, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_ALEX, ANIM_NOD);
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
   Actor_WalkToAndWait(ACTOR_ALEX, 504, 328);
@@ -429,7 +429,7 @@ void Daila_MeetAlex(void) {
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Event_Wait(60);
-  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(60);
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Event_Wait(60);
@@ -439,9 +439,9 @@ void Daila_MeetAlex(void) {
   Event_Wait(30);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Event_Wait(60);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_NOD);
-  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
-  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(120);
   Actor_JoinLeader(ACTOR_JENNA);
   Actor_JoinLeader(ACTOR_SHEBA);
@@ -535,7 +535,7 @@ s16 gDailaInteriors_PillarFrozenFlags[] = {
 
 s32 gDaila_FallenOldManScript[] = {
     SC_SET(SW_COLLISION, 131),
-    SC_ARG(0),
+    SC_ANIMATION(0),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, -Q16_ONE / 4),
     SC_ADD(SW_SCALE_Y, Q16_ONE / 8),
@@ -582,7 +582,7 @@ u32 gDaila_PuddleChildScript[] = {
     SC_SET(SW_ACCEL, Q16(0.2)),
     SC_SET(SW_GRAVITY, 6553),
     SC_SET(SW_SPEED, Q16(0.4)),
-    SC_ARG(0),
+    SC_ANIMATION(0),
     SC_LABEL(1),
     SC_SET(SW_Y, px(4)),
     SC_WAIT(30),

@@ -503,7 +503,7 @@ void Lemuria_DrinkFromSpring(void) {
 void Lemuria_OfferSpringLuck(void) {
   if (Event_GetFlag(FLAG_LEMURIA_SPRING_LUCK_TRIED)) {
     Actor_FaceActor(30, gMainRoutineWork.leaderActorId, 0);
-    FieldActor_RefreshSelectorById(30);
+    FieldActor_WaitForScriptEndById(30);
     FieldEvent_SetMessageId((s32)MsgYouLookLike);
     // "You look like you're in for a spell of good luck. After all, your..."
     Event_ShowMessage(30, 0);
@@ -515,7 +515,7 @@ void Lemuria_OfferSpringLuck(void) {
   FieldEvent_SetMessageId((s32)MsgDoYouWish);
   Actor_ShowEmote(30, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Actor_FaceActor(30, gMainRoutineWork.leaderActorId, 0);
-  FieldActor_RefreshSelectorById(30);
+  FieldActor_WaitForScriptEndById(30);
   FieldEvent_Wait(5);
   // "Do you wish to test your luck at the Spring of Lemuria?"
   Event_OpenMessage(30, 0);
@@ -1109,7 +1109,7 @@ extern s16 gLemuria_ThirdDoorOpening[];
 
 // clang-format off
 u32 gLemuria_FirstWalkerPaces[] = {                                                               
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_SET(SW_SPEED, 0x10000),                                               
       SC_SET(SW_ACCEL, 0x10000),                                               
       SC_LABEL(1),                                                             
@@ -1125,7 +1125,7 @@ u32 gLemuria_FirstWalkerPaces[] = {
   };
 
 u32 gLemuria_SecondWalkerPaces[] = {                                                               
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_SET(SW_SPEED, 0x10000),                                               
       SC_SET(SW_ACCEL, 0x10000),                                               
       SC_LABEL(1),                                                             

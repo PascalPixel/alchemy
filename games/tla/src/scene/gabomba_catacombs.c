@@ -355,7 +355,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   FieldCamera_MoveTo(168, CAMERA_KEEP, 158, 1);
   Sound_Play(MUS_JUPITER_LIGHTHOUSE);
   Event_Wait(60);
-  Actor_SetModeById(8, 2);
+  Actor_SetAnimationById(8, 2);
   Sound_Play(SE_576);
   Event_Wait(60);
   Event_SetMessageId((s32)MsgByReachingThis);
@@ -391,7 +391,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   // "By reaching this place, you have proven your power."
   Event_ShowMessageAndWait(9, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   TALK();
   Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -424,16 +424,16 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Event_Wait(60);
   TALK();
   Event_Wait(40);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_NOD);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Event_Wait(40);
-  Actor_SetModeById(9, 3);
+  Actor_SetAnimationById(9, 3);
   // "Akafubu has not honed his own powers, and the fault lies with him..."
   Event_ShowMessageAndWait(9, 0);
-  Actor_SetModeById(8, 2);
+  Actor_SetAnimationById(8, 2);
   TALK();
   Event_Wait(30);
-  Actor_SetModeById(8, 4);
-  Actor_SetModeById(9, 2);
+  Actor_SetAnimationById(8, 4);
+  Actor_SetAnimationById(9, 2);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestinationById(9, leader->x.part[0].pixel,
@@ -472,7 +472,7 @@ extern struct Trigger gGabombaCatacombs_Triggers[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_1)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room1Placements;
-  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_2)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_MUD)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room2Placements;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_3)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room3Placements;
@@ -486,7 +486,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_1)
     return gGabombaCatacombs_Room1Triggers;
-  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_2)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_MUD)
     return gGabombaCatacombs_Room2Triggers;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_3)
     return gGabombaCatacombs_Room3Triggers;
@@ -523,7 +523,7 @@ s32 Scene_Initialize(void) {
     }
   }
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
-      gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_2 &&
+      gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_MUD &&
       gMainRoutineWork.entrance > 2)
     Actor_DepartInRing(gMainRoutineWork.leaderActorId);
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_3) {
@@ -586,15 +586,15 @@ u32 gGabombaCatacombs_Room1Regions[] = {
 u32 gSceneExits[] = {
     SCENE_EXITS(GabombaCatacombs1),
     SCENE_EXIT(1, GabombaStatueChamber3, 2),
-    SCENE_EXIT(2, GabombaCatacombs2, 1),
-    SCENE_EXIT(3, GabombaCatacombs2, 3),
-    SCENE_EXIT(4, GabombaCatacombs2, 4),
-    SCENE_EXIT(5, GabombaCatacombs2, 5),
-    SCENE_EXITS(GabombaCatacombs2),
+    SCENE_EXIT(2, GabombaCatacombsMud, 1),
+    SCENE_EXIT(3, GabombaCatacombsMud, 3),
+    SCENE_EXIT(4, GabombaCatacombsMud, 4),
+    SCENE_EXIT(5, GabombaCatacombsMud, 5),
+    SCENE_EXITS(GabombaCatacombsMud),
     SCENE_EXIT(1, GabombaCatacombs1, 2),
     SCENE_EXIT(2, GabombaCatacombs3, 1),
     SCENE_EXITS(GabombaCatacombs3),
-    SCENE_EXIT(1, GabombaCatacombs2, 2),
+    SCENE_EXIT(1, GabombaCatacombsMud, 2),
     SCENE_EXIT(2, GabombaCatacombs5, 1),
     SCENE_EXITS(GabombaCatacombs4),
     SCENE_EXIT(1, GabombaCatacombs5, 2),

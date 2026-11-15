@@ -262,7 +262,7 @@ counted:
     s32 action;
 
     action = 9;
-    if (((struct BattleUnit *)Unit_Get(gMainRoutineWork.leaderActorId))->hp ==
+    if (((struct Unit *)Unit_Get(gMainRoutineWork.leaderActorId))->hp ==
         0)
       action = 22;
     Actor_SelectAnimation(object, action);
@@ -398,12 +398,12 @@ void Actor_SpawnWaterSplash(struct Actor *object, s32 mode) {
     Actor_StartScript(created, gActor_SplashScript);
     created->motionFlags = 0;
     if (child != NULL) {
-      Animation_ApplyChildArgument((struct ActorSpriteView *)child, 1);
+      Sprite_StartAnimation((struct ActorSpriteView *)child, 1);
       child->value1a = 0;
       child->layer = sprite->layer;
       if (mode == 2) {
         Animation_ApplyChildValuesToRecord((struct ActorSpriteView *)child, 13);
-        Animation_ApplyChildValue((struct ActorSpriteView *)child, 8);
+        Sprite_SetAnimationSpeed((struct ActorSpriteView *)child, 8);
       }
     }
   }
@@ -656,7 +656,7 @@ counted:
     s32 action;
 
     action = 9;
-    if (((struct BattleUnit *)Unit_Get(gMainRoutineWork.leaderActorId))->hp ==
+    if (((struct Unit *)Unit_Get(gMainRoutineWork.leaderActorId))->hp ==
         0)
       action = 22;
     Actor_SelectAnimation(object, action);
@@ -746,13 +746,13 @@ counted:
       effect->priorityFlags = 2;
       effect->motionFlags = collision;
       if (effectSprite != NULL) {
-        Animation_ApplyChildArgument(effectSprite, 1);
+        Sprite_StartAnimation(effectSprite, 1);
         effectSprite->flags = collision;
         effectSprite->rotation = footprintAngle + TRIG_TURN / 4;
         effectSprite->priority = 3;
       }
       if (*(s16 *)&object->userValue == 2) {
-        Animation_ApplyChildArgument(effectSprite, 2);
+        Sprite_StartAnimation(effectSprite, 2);
         object->userValue = collision;
       }
       if (*(s16 *)&object->userValue != 0)

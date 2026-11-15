@@ -194,9 +194,9 @@ s32 Shop_OpenDebugShop(void) {
   Inventory_EquipFar(
       ISAAC, Inventory_AddItemFar(ISAAC, INVENTORY_BROKEN | ITEM_MURAMASA));
   Inventory_AddItemFar(IVAN, ITEM_BONE);
-  ((struct BattleUnit *)Unit_Get(MIA))->poison = 1;
-  ((struct BattleUnit *)Unit_Get(JENNA))->poison = 1;
-  ((struct BattleUnit *)Unit_Get(IVAN))->haunt = 1;
+  ((struct Unit *)Unit_Get(MIA))->poison = 1;
+  ((struct Unit *)Unit_Get(JENNA))->poison = 1;
+  ((struct Unit *)Unit_Get(IVAN))->haunt = 1;
   Shop_Run(0, 30);
   return 0;
 }

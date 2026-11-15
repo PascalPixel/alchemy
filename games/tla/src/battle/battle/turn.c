@@ -60,7 +60,7 @@ void BattleUnit_ResetGuardLevels(void) {
 
   count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, (u16 *)ids);
   for (index = 0; index < count; index++) {
-    struct BattleUnit *actor;
+    struct Unit *actor;
 
     actor = Unit_Get(ids[index]);
     actor->defendLevel = 0;
@@ -87,18 +87,18 @@ s32 BattleFlee_CheckSuccess(void) {
     escaped = 1;
   } else {
     levelTotal = 0;
-    chance = 5000 + (escapeState->unk046 * 2000);
+    chance = 5000 + (escapeState->fleeFailures * 2000);
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
       levelTotal +=
-          ((struct BattleUnit *)Unit_Get((s32)livingUnits[unitIndex]))->level;
+          ((struct Unit *)Unit_Get((s32)livingUnits[unitIndex]))->level;
     }
     chance += __divsi3(levelTotal * 500, livingCount);
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
     levelTotal = 0;
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
       levelTotal +=
-          ((struct BattleUnit *)Unit_Get((s32)livingUnits[unitIndex]))->level;
+          ((struct Unit *)Unit_Get((s32)livingUnits[unitIndex]))->level;
     }
     chance -= __divsi3(levelTotal * 500, livingCount);
     if ((chance > 0) &&
@@ -106,7 +106,7 @@ s32 BattleFlee_CheckSuccess(void) {
         ((u32)((u32)(10000 * Random16()) >> 16) < (u32)chance)) {
       escaped = 1;
     }
-    escapeState->unk046++;
+    escapeState->fleeFailures++;
   }
   if (gMainRoutineWork.battleType == BATTLE_TYPE_NO_ESCAPE) {
     escaped = 0;
@@ -163,7 +163,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
   for (shuffleOrUnitIndex = 0; shuffleOrUnitIndex < unitCount;
        shuffleOrUnitIndex++) {
     s32 unitId = unitIds[shuffleOrUnitIndex];
-    struct BattleUnit *unit = Unit_Get(unitId);
+    struct Unit *unit = Unit_Get(unitId);
     s32 copyIndex;
 
     for (copyIndex = 0; copyIndex < unit->actionsPerTurn; copyIndex++) {
@@ -236,7 +236,7 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
       struct BattleAct *action;
 
       Unit_Get(entry->unitId);
-      action = Ability_Get(Djinn_GetDefinitionHeaderFar(
+      action = Ability_Get(Djinn_GetAbilityIdFar(
           (entry->parameter) >> 8 & 15, entry->parameter & 0xff));
       if (action->effect == 72 || action->effect == 76 ||
           action->effect == 79 || action->effect == 74 ||
@@ -469,7 +469,7 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
 /// failure.
 /// acts: action list, up to 20 entries.
 s32 Battle_GatherActions(struct BattleActionRecord *acts) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct BattleWork *work;
   u8 *mode;
   s32 cnt;

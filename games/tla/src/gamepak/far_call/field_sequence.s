@@ -22,10 +22,10 @@ FarCall_OverworldTable:
 	export Event_PickUpItemFar, Event_PickUpItem
 	export Party_LearnAbilityFar, Party_LearnAbility
 	export Actor_GetByIdFar, Actor_GetById
-	export ObjectTable_DestroyByIdFar, ObjectTable_DestroyById
+	export Actor_ReleaseByIdFar, Actor_ReleaseById
 	export Actor_SetSpeedParametersFar, Actor_SetSpeedParameters
 	export Actor_SetMovementTypeByIdFar, Actor_SetMovementTypeById
-	export Actor_RefreshSelectorByIdFar, Actor_RefreshSelectorById
+	export Actor_WaitForScriptEndByIdFar, Actor_WaitForScriptEndById
 	export Actor_StopFar, Actor_Stop
 	export Actor_SetMovementTypeAndWaitByIdFar, Actor_SetMovementTypeAndWaitById
 	export Actor_SetDestinationByIdFar, Actor_SetDestinationById
@@ -39,13 +39,13 @@ FarCall_OverworldTable:
 	export Actor_SetHorizontalPositionAndAngleWithTerrainFar, Actor_SetHorizontalPositionAndAngleWithTerrain
 	export Actor_SetPositionWithTerrainFar, Actor_SetPositionWithTerrain
 	export Actor_MoveToObjectFar, Actor_MoveToObject
-	export Actor_SetModeByIdFar, Actor_SetModeById
-	export Actor_SetActionByIdFar, Actor_SetActionById
-	export Motion_SetModeAndWaitAnimationFar, Motion_SetModeAndWaitAnimation
+	export Actor_SetAnimationByIdFar, Actor_SetAnimationById
+	export Actor_SetAnimationSpeedByIdFar, Actor_SetAnimationSpeedById
+	export Actor_SetAnimationAndWaitFar, Actor_SetAnimationAndWait
 	export Actor_WaitForAnimationChangeFar, Actor_WaitForAnimationChange
 	export Actor_JumpFar, Actor_Jump
 	export Actor_StartRepeatedMotionFar, Actor_StartRepeatedMotion
-	export Motion_SetVarCbAndRefreshFar, Motion_SetVarCbAndRefresh
+	export Actor_RunRepeatedMotionFar, Actor_RunRepeatedMotion
 	export Actor_JumpDownLedgeFar, Actor_JumpDownLedge
 	export Actor_FaceActorByIdFar, Actor_FaceActorById
 	export Actor_TurnToFaceEachOtherFar, Actor_TurnToFaceEachOther
@@ -87,7 +87,7 @@ FarCall_OverworldTable:
 	export Field_RequestBattleFromEncounterTableFar, Field_RequestBattleFromEncounterTable
 	export Field_RequestDjinnBattleFar, Field_RequestDjinnBattle
 	export Event_SetAfterBattleDestinationFar, Event_SetAfterBattleDestination
-	export Party_SetFields1f2And1f4Far, Party_SetFields1f2And1f4
+	export Event_SetDefeatDestinationFar, Event_SetDefeatDestination
 	export Event_LeaveForFar, Event_LeaveFor
 	export Actor_GetScreenPositionFar, Actor_GetScreenPosition
 	export Actor_GetTriggerCellAheadOfCurrentFar, Actor_GetTriggerCellAheadOfCurrent
@@ -129,11 +129,11 @@ FarCall_OverworldTable:
 	export FieldEffect_PlayCueAndStartEmitterOnTargetFar, FieldEffect_PlayCueAndStartEmitterOnTarget
 	export ItemDisplay_ShowPictureFar, ItemDisplay_ShowPicture
 	export ItemDisplay_ShowItemFar, ItemDisplay_ShowItem
-	export ObjectEvent_GetObjectFar, ObjectEvent_GetObject
-	export ObjectEvent_SetMode4WithCueFar, ObjectEvent_SetMode4WithCue
-	export ObjectEvent_SetMode5WithCueFar, ObjectEvent_SetMode5WithCue
-	export ObjectEvent_SetMode2Far, ObjectEvent_SetMode2
-	export ObjectEvent_PlaceOnGroundFar, ObjectEvent_PlaceOnGround
+	export TreasureSpot_GetActorFar, TreasureSpot_GetActor
+	export TreasureSpot_OpenChestFar, TreasureSpot_OpenChest
+	export TreasureSpot_CloseChestFar, TreasureSpot_CloseChest
+	export TreasureSpot_ShowOpenedFar, TreasureSpot_ShowOpened
+	export TreasureSpot_SetActorPositionFar, TreasureSpot_SetActorPosition
 	export ObjectEvent_RemoveFar, ObjectEvent_Remove
 	export Leader_StepAwayFromNearbyActorFar, Leader_StepAwayFromNearbyActor
 	export Actor_SetWideSpriteFar, Actor_SetWideSprite
@@ -143,7 +143,7 @@ FarCall_OverworldTable:
 	export Actor_ResetForLeaderFar, Actor_ResetForLeader
 	export Event_SpawnObjectTableFar, Event_SpawnObjectTable
 	export Actor_ReleaseAtIndexFar, Actor_ReleaseAtIndex
-	export ObjectTable_GetFar, ObjectTable_Get
+	export Actor_LookupFar, Actor_Lookup
 	export ScenePoint_GetPositionFar, ScenePoint_GetPosition
 	export FieldEffect_StartFadeOverlayFar, FieldEffect_StartFadeOverlay
 	export FadeOverlay_SuspendFar, FadeOverlay_Suspend
@@ -152,11 +152,11 @@ FarCall_OverworldTable:
 	export BlankOverlay_SuspendFar, BlankOverlay_Suspend
 	export BlankOverlay_ResumeFar, BlankOverlay_Resume
 	export FieldPsynergy_RunHandlerFar, FieldPsynergy_RunHandler
-	export BattleEffect_LoadActionEffectResourcesFar, BattleEffect_LoadActionEffectResources
+	export FieldPsynergy_LoadResourcesFar, FieldPsynergy_LoadResources
 	export FieldPsynergy_SetupActorPairFar, FieldPsynergy_SetupActorPair
 	export BattleEffect_StopMainActorFar, BattleEffect_StopMainActor
-	export BattleEffect_CleanupSceneObjectsFar, BattleEffect_CleanupSceneObjects
-	export EventObject_InitializeFar, EventObject_Initialize
+	export FieldPsynergy_EndFar, FieldPsynergy_End
+	export FieldPsynergy_StartCastFar, FieldPsynergy_StartCast
 	export FieldPsynergy_FadeToCastColorFar, FieldPsynergy_FadeToCastColor
 	export FieldPsynergy_FadeFromCastColorFar, FieldPsynergy_FadeFromCastColor
 	export Event_ResolveAllPendingActionsFar, Event_ResolveAllPendingActions
@@ -165,8 +165,8 @@ FarCall_OverworldTable:
 	export FieldPsynergy_StopMindReadWaveFar, FieldPsynergy_StopMindReadWave
 	export FieldPsynergy_GreyMindReadPaletteFar, FieldPsynergy_GreyMindReadPalette
 	export FieldPsynergy_RestoreMindReadPaletteFar, FieldPsynergy_RestoreMindReadPalette
-	export BattleEffect_HasMatchingEvent5Far, BattleEffect_HasMatchingEvent5
-	export BattleEffect_HasTriggerFar, BattleEffect_HasTrigger
+	export Scene_HasPsynergyTriggerFar, Scene_HasPsynergyTrigger
+	export Scene_HasItemTriggerFar, Scene_HasItemTrigger
 	export Sprite_ShareVramCacheEntryFar, Sprite_ShareVramCacheEntry
 	export BattleBackground_GetSelectedFar, BattleBackground_GetSelected
 	export FieldEffect_SpawnMoveHandFar, FieldEffect_SpawnMoveHand
@@ -212,7 +212,7 @@ FarCall_OverworldTable:
 	export Heading_ShowFar, Heading_Show
 	export Event_WaitTwoSecondsOrPressFar, Event_WaitTwoSecondsOrPress
 	export Heading_CloseFar, Heading_Close
-	export Actor_SetActionCallbackFar, Actor_SetActionCallback
+	export Actor_SetMovementTypeFar, Actor_SetMovementType
 	export Scene_QueueMusicFar, Scene_QueueMusic
 	export Event_NoOpFar, Event_NoOp
 	export Scene_PlayQueuedMusicFar, Scene_PlayQueuedMusic
@@ -292,12 +292,12 @@ EffectSprite_InitFromSlot94BlendedFar:
 	.4byte EffectSprite_InitFromSlot94Blended
 	export Actor_ApplyRandomChildValuesFar, Actor_ApplyRandomChildValues
 @ Why assembly: 8-byte far-call veneers: ldr r4, the target's word, bx r4.
-	.global Event_PlayCueNearFocusFar
+	.global Actor_PlaySoundInViewFar
 	.thumb_func
-Event_PlayCueNearFocusFar:
+Actor_PlaySoundInViewFar:
 	ldr r4, [pc, #0]
 	bx r4
-	.4byte Event_PlayCueNearFocus
+	.4byte Actor_PlaySoundInView
 	export Cyclone_CopyTouchedCellsFar, Cyclone_CopyTouchedCells
 	.global Teleport_PlayWhirlFar
 	.thumb_func

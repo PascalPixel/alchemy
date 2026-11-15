@@ -96,7 +96,7 @@ void BattleEffect_TintBattler(s32 setId, s32 objectValue, s32 groupValue,
         }
       }
       if (groupValue != -1)
-        Animation_ApplyChildArgumentFar(group, groupValue);
+        Sprite_StartAnimationFar(group, groupValue);
     }
     groupIndex++;
   }

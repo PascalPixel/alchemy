@@ -109,7 +109,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   struct BattleAction *commandsOut;
   s32 forcedCount;
   struct BattleAction *command;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 target;
   s32 actorId;
   s32 commandKind;
@@ -329,7 +329,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 #ifdef UBFIX
       unit = Unit_Get(actorId);
 #else
-      unit = (struct BattleUnit *)(s32)((s64 (*)(s32))Unit_Get)(actorId);
+      unit = (struct Unit *)(s32)((s64 (*)(s32))Unit_Get)(actorId);
 #endif
       {
         struct BattleMenuWork *navigation = NAVIGATION;
@@ -602,7 +602,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         element = (parameter >> 8) & 15;
         index = parameter & 255;
         if (Djinn_IsSetFar(actorId, element, index) != 0) {
-          ability = Ability_Get(Djinn_GetDefinitionHeaderFar(element, index));
+          ability = Ability_Get(Djinn_GetAbilityIdFar(element, index));
           cost = ability->range;
           commandWindow = Window_Create(11, 17, 10, 3, 6);
           COMMAND_ICON_X(state) = 64;

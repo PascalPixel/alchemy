@@ -155,11 +155,11 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
   struct ItemDefinition *def;
   u32 item;
   struct ItemMenuWork *state;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct RenderInput *window;
   s32 ailmentRows;
   s32 value;
-  struct BattleUnit *backup;
+  struct Unit *backup;
   u8 ailments[8];
 
   created = 0;
@@ -233,8 +233,8 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
       Text_DrawMessageAsTilesFar(MESSAGE_CANNOT_EQUIP, window, 16, 48);
       break;
     }
-    backup = Heap_Alloc(sizeof(struct BattleUnit));
-    Iwram_CopyWordsEntry(backup, unit, sizeof(struct BattleUnit));
+    backup = Heap_Alloc(sizeof(struct Unit));
+    Iwram_CopyWordsEntry(backup, unit, sizeof(struct Unit));
     if (state->equipPreview) {
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
       Unit_UpdateClassFar(owner);
@@ -245,7 +245,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
     Window_SetTilemapEntryFar((s32)window, 0xf12a, 3, 5, 0);
     value = unit->classId + MESSAGE_CLASS_NAME;
     Text_DrawMessageAsTilesFar(value, window, 0, 48);
-    Iwram_CopyWords(unit, backup, sizeof(struct BattleUnit));
+    Iwram_CopyWords(unit, backup, sizeof(struct Unit));
     Heap_Release(backup);
     break;
   case STATUS_PANEL_EXPERIENCE:
@@ -269,15 +269,15 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
                                  STATUS_PANEL_CANNOT_EQUIP_X, 48);
       break;
     }
-    backup = Heap_Alloc(sizeof(struct BattleUnit));
-    Iwram_CopyWordsEntry(backup, unit, sizeof(struct BattleUnit));
+    backup = Heap_Alloc(sizeof(struct Unit));
+    Iwram_CopyWordsEntry(backup, unit, sizeof(struct Unit));
     if (state->equipPreview)
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
     else
       Inventory_EquipFar(owner, slot);
     Unit_CalculateFar(owner);
     Text_DrawStatComparison(unit, backup, (s32)window);
-    Iwram_CopyWords(unit, backup, sizeof(struct BattleUnit));
+    Iwram_CopyWords(unit, backup, sizeof(struct Unit));
     Heap_Release(backup);
     break;
   case STATUS_PANEL_LEARN: {
@@ -286,7 +286,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
     s32 i;
 
     for (i = 0; i < 32; i++) {
-      if ((unit->psynergy[i].encodedAction & OWNER_ACTION_ID_MASK) ==
+      if ((unit->psynergy[i].encodedAction & PSYNERGY_ABILITY_MASK) ==
           psynergy) {
         known = 1;
         break;
@@ -390,7 +390,7 @@ void Text_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
 /// unit:   the character whose figures are drawn
 /// window: the window to draw in, its struct RenderInput pointer held as an
 ///         s32
-void StatusPanel_DrawHpPp(struct BattleUnit *unit, s32 window) {
+void StatusPanel_DrawHpPp(struct Unit *unit, s32 window) {
   // Each figure in turn, as an s16. Read straight from unit, the figures
   // compile differently.
   s16 value;
@@ -450,8 +450,8 @@ s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
 /// Writes Attack, Defense and Agility into a status window as they are now
 /// (before), and beside each one that changes its new value (after) with an up
 /// or down arrow: the equipment preview.
-void Text_DrawStatComparison(const struct BattleUnit *alt,
-                             const struct BattleUnit *base, s32 work) {
+void Text_DrawStatComparison(const struct Unit *alt,
+                             const struct Unit *base, s32 work) {
   Text_DrawMessageAsTilesFar((s32)MsgPanelStatLabel, (struct RenderInput *)work,
                              0, 32);
   Text_DrawNumberAtOffsetFar(base->atk, 3, work, 16, 40);
@@ -575,7 +575,7 @@ void Menu_PlacePartyFigures(void) {
 
   count = (u16)Party_CountMembersFar();
   for (i = 0; i < count; i++) {
-    struct AnimationObject *figure = menu->tabSprites[i];
+    struct Sprite *figure = menu->tabSprites[i];
     s32 placeY = 0x00728000 - (menu->rowPositions[i] << 15);
 
     if (figure != 0) {

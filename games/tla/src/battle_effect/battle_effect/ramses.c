@@ -56,7 +56,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     work->sprites[9 + i] = sprite;
     if (sprite != 0) {
       sprite->flags = 0;
-      Animation_ApplyChildArgumentFar(sprite, i % 3);
+      Sprite_StartAnimationFar(sprite, i % 3);
       ((struct FxAnimObject *)work->sprites[9 + i])->priority = 1;
     }
   }

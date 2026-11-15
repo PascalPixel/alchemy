@@ -355,7 +355,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       velocity.x = -px(20);
       velocity.y = 0;
       for (i = 0; i != ZAGAN_PARTS; i++) {
-        Animation_ApplyChildArgumentFar(work->sprites[i], i + 12);
+        Sprite_StartAnimationFar(work->sprites[i], i + 12);
       }
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
       Iwram_FillWordsEntry((void *)(BG_PLTT + 96), 256, 0x7fff7fff);
@@ -429,7 +429,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
                                  1, 0);
       work->shakeFrames = 16;
       for (i = 0; i != ZAGAN_PARTS - 1; i++) {
-        Animation_ApplyChildArgumentFar(work->sprites[i], i + 24);
+        Sprite_StartAnimationFar(work->sprites[i], i + 24);
       }
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }

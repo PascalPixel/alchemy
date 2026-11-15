@@ -152,7 +152,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
   struct BattlePresentationTransition *view;
   struct DispatchBattleWork *battle;
   struct BattleCamera *camera;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   u16 actingUnit[2];
   s32 fled;
   s32 result;
@@ -257,7 +257,7 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       battle->plan.unitId = battle->plan.actorId2;
       battle->plan.actorId2 = swap;
       battle->plan.battleEffect = BattleUnit_GetPartyAttackEffect(
-          ((struct BattleUnit *)Unit_Get(battle->plan.unitId))->enemyId);
+          ((struct Unit *)Unit_Get(battle->plan.unitId))->enemyId);
       if (((battle->plan.unitId ^ battle->plan.targetIds[0]) >> 7) == 0) {
         MessageArgument_PushFar(battle->plan.unitId, MESSAGE_ARGUMENT_ACTOR);
         if (battle->plan.unitId == battle->plan.targetIds[0])
@@ -353,7 +353,7 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
     outputTarget = effect->actors;
     do {
       if (BattleUnit_IsListed(*inputTarget) &&
-          (((struct BattleUnit *)Unit_Get(*inputTarget))->hp != 0 ||
+          (((struct Unit *)Unit_Get(*inputTarget))->hp != 0 ||
            (plan->battleEffect & 0x10000))) {
         *outputTarget++ = *inputTarget;
         livingTargets++;
@@ -401,7 +401,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
       s32 index = BattleUnit_ListLiving(1, (u16 *)unitIds) - 1;
 
       while (index != -1) {
-        struct BattleUnit *unit = Unit_Get(unitIds[index]);
+        struct Unit *unit = Unit_Get(unitIds[index]);
 
         if (unit->stun == 0 && unit->sleep == 0) {
           BattleMotion_SetupEscapeObject(unitIds[index]);

@@ -374,7 +374,7 @@ s32 ActorScript_ToggleFlagAndTest(struct Actor *interpreter) {
   return 1;
 }
 
-/// SC_ARG(v): switches the actor's sprites to animation v.
+/// SC_ANIMATION(v): switches the actor's sprites to animation v.
 s32 ActorScript_SetAnimation(struct Actor *interpreter) {
   Actor_SelectAnimation(interpreter,
                         interpreter->script[interpreter->scriptCursor + 1]);
@@ -403,9 +403,9 @@ s32 ActorScript_PlaySound(struct Actor *interpreter) {
 }
 
 /// SC_CALL_WITH(n): plays sound n when the actor is in view of the camera
-/// (Event_PlayCueNearFocus).
+/// (Actor_PlaySoundInView).
 s32 ActorScript_PlaySoundInView(struct Actor *interpreter) {
-  Event_PlayCueNearFocusFar(interpreter,
+  Actor_PlaySoundInViewFar(interpreter,
                             interpreter->script[interpreter->scriptCursor + 1]);
   interpreter->scriptCursor += 2;
   return 1;
@@ -1287,7 +1287,7 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
     s32 action;
 
     action = 9;
-    if (((struct BattleUnit *)Unit_Get(gMainRoutineWork.leaderActorId))->hp ==
+    if (((struct Unit *)Unit_Get(gMainRoutineWork.leaderActorId))->hp ==
         0)
       action = 22;
     Actor_SelectAnimation(actor, action);

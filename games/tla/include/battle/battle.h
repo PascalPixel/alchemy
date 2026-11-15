@@ -11,7 +11,7 @@
 struct BattleActionRecord;
 struct BattleEffectParams;
 struct BattlePlan;
-struct BattleUnit;
+struct Unit;
 struct Actor;
 struct MotionObject;
 struct FieldParticle;
@@ -24,9 +24,9 @@ extern const s8 gBattlePlacement_StepPairs[];
 extern u8 gEncounter_AreaEntryTable[];
 extern u16 gBattleUnit_WeaponKinds[];
 s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot);
-struct BattleObj;
+struct BattleObject;
 #ifndef OWN_BattleObject_Make
-void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y);
+void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y);
 #endif
 #ifndef OWN_BattleActor_SpawnObjectsForList
 void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh);
@@ -82,15 +82,15 @@ void Actor_SetPositionAndResetMotionFar(struct Actor *object, s32 x, s32 y,
 /// Sets the timer step of every sprite of an actor (16 is normal speed).
 void Actor_SetAnimationSpeedFar(struct Actor *object, s32 value);
 /// Sets the unit's HP, kept between 0 and its maximum, and updates its gauges.
-void Unit_SetHpFar(struct BattleUnit *, s32);
+void Unit_SetHpFar(struct Unit *, s32);
 void MessageArgument_ClearAllFar(void);
 void BattleMessage_CloseFar(void);
 void UpdateRisingParticleBurst(void *object);
 
-struct AnimationObject;
+struct Sprite;
 struct BattleActionRecord;
 struct PaletteFade;
-struct BattleObj;
+struct BattleObject;
 struct Actor;
 struct ParticleChild;
 struct PendingEvent;
@@ -117,7 +117,7 @@ extern const u8 gColorBuffer_FadeStep1Map[32];
 extern const u8 gColorBuffer_FadeStep2Map[32];
 extern const u8 gColorBuffer_FadeStep3Map[32];
 extern struct WorldMapWork gWorldMapWork;
-s32 AnimationObject_SelectAnimationFar(struct AnimationObject *, s32);
+s32 AnimationObject_SelectAnimationFar(struct Sprite *, s32);
 struct ActionDescriptor;
 struct ActionDescriptor *Scene_FindActorPlacement(s32 id);
 s32 BattleObject_RemoveFromLists(s32);
@@ -125,11 +125,11 @@ void PaletteFade_SetSource(s32 value, s32 mode);
 void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half);
 void FieldPsynergy_WhirlwindOnTarget(void);
 u16 Encounter_GetFormationAtSlot(s32 arg0, s32 arg1);
-s32 BattleEffect_HasMatchingEvent5(s32 effectId);
+s32 Scene_HasPsynergyTrigger(s32 effectId);
 void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity);
 void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *);
-void BattleEffect_RunProjectileVolleyB(struct BattleEffectParams *effect,
+void BattleEffect_RunBurstShower(struct BattleEffectParams *effect,
                                        u32 mode);
 void BattleEffect_RunSparkGroups(struct BattleEffectParams *effect, s32 kind);
 void FieldEffect_SnapScaleToFull(struct Actor *object);
@@ -141,7 +141,7 @@ void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
                                     s32 travelDivisor, s32 initialVelocityY);
 void BattleMotion_DestroyAllSlotObjects(void);
 void BattleObject_ReleaseSpriteSlots(s32 objectId);
-void BattleMotion_ReturnObjectToSpot(struct BattleObj *slot);
+void BattleMotion_ReturnObjectToSpot(struct BattleObject *slot);
 void BattleObject_SetColorMode(struct MotionObject *object, s32 value);
 void PaletteFade_Update(void);
 s32 BattleParty_PrepareReserveOwners(u16 *owners);

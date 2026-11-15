@@ -7,7 +7,7 @@
 
 struct BattleAct *Ability_GetDirect(s32 abilityId);
 /// Returns a unit's record, a party member's or an enemy's.
-struct BattleUnit *Unit_GetFar(s32 unitId);
+struct Unit *Unit_GetFar(s32 unitId);
 /// Returns the definition of an ability by its low 14 bits, the first for an id
 /// past the table (Ability_GetDirect); every bank reads abilities so.
 struct BattleAct *Ability_Get(s32 abilityId);

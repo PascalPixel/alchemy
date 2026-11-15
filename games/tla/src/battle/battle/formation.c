@@ -26,7 +26,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 
     candidateOrUnitIndex = unitCount;
     do {
-      u8 level = ((struct BattleUnit *)Unit_Get(*unitCursor))->level;
+      u8 level = ((struct Unit *)Unit_Get(*unitCursor))->level;
 
       candidateOrUnitIndex--;
       unitCursor++;
@@ -230,7 +230,7 @@ struct UnitBaseStats__presentation {
 /// base block, then recalculates its stats.
 void BattleUnit_Strengthen(s32 unitId) {
   struct UnitBaseStats__presentation *saved = Heap_AllocEwram(36);
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   s32 value;
   s32 floor;
 
@@ -347,7 +347,7 @@ s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
 /// Gives the first enemy of the class on the field the first letter (0),
 /// appended to its name, once a second of its class arrives.
 s32 BattleEnemy_LetterFirstOfKind(s32 enemyId) {
-  struct BattleUnit *summon;
+  struct Unit *summon;
   s32 objectIndex;
   s32 slot;
   s32 nextSlot;
@@ -577,7 +577,7 @@ assign_enemy:
   {
     s32 suffixCode =
         BattleEnemy_ClaimNameLetter(enemyClasses[memberOrEnemyIndex], 1);
-    struct BattleUnit *unit;
+    struct Unit *unit;
     s32 enemyId;
 
     if (suffixCode & ENEMY_LETTER_FIRST_TOO)
@@ -591,14 +591,14 @@ assign_enemy:
                               levelAdjustment);
     else if (!GameFlag_Get(FLAG_MONSTER_BATTLE) && GameFlag_Get(0x2e))
       BattleUnit_Strengthen(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
-    battle->unk868 = 0;
+    battle->forceField = 0;
     enemyId = unit->enemyId;
     switch (enemyId) {
     case ENEMY_POSEIDON:
     case ENEMY_POSEIDON_2:
     case ENEMY_POSEIDON_3:
       if (!GameFlag_Get(FLAG_MONSTER_BATTLE))
-        battle->unk868 = 1;
+        battle->forceField = 1;
       break;
     }
   }

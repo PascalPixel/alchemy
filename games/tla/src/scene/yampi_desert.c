@@ -104,10 +104,10 @@ s32 Event_AskYesNoAndShowResponse(s32 speaker, s32 flags);
 void Actor_DisableById(s32 actor);
 void Field_RequestDjinnBattle(s32 a, s32 b);
 void FieldEffect_StartBlankOverlay(s32 value);
-void BattleEffect_LoadActionEffectResources(s32 a, s32 b);
+void FieldPsynergy_LoadResources(s32 a, s32 b);
 void FieldPsynergy_SetupActorPair(s32 a, s32 b);
 void BattleEffect_StopMainActor(void);
-void BattleEffect_CleanupSceneObjects(void);
+void FieldPsynergy_End(void);
 void Scene_QueueMusic(s32 cue);
 void Rope_Initialize(void);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
@@ -400,7 +400,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
       return gYampiDesert_Room2PlacementsAfterMeeting;
     return gYampiDesert_Room2Placements;
   }
-  if (scene == SCENE_YAMPI_DESERT_3)
+  if (scene == SCENE_YAMPI_DESERT_BLITZ)
     return gYampiDesert_Room3Placements;
   if (scene == SCENE_YAMPI_DESERT_4)
     return gYampiDesert_Room4Placements;
@@ -443,7 +443,7 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gYampiDesert_Room1Triggers;
   if (scene == SCENE_YAMPI_DESERT_2)
     return gYampiDesert_Room2Triggers;
-  if (scene == SCENE_YAMPI_DESERT_3)
+  if (scene == SCENE_YAMPI_DESERT_BLITZ)
     return gYampiDesert_Room3Triggers;
   if (scene == SCENE_YAMPI_DESERT_4)
     return gYampiDesert_Room4Triggers;
@@ -481,11 +481,11 @@ void YampiDesert_TalkToTraveler(void) {
 /// be a way through the desert.
 void YampiDesert_ElderRefusesToQuit(void) {
   Event_SetMessageId((s32)MsgCanTWe);
-  Actor_SetModeById(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 4);
+  Actor_SetAnimationById(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 4);
   // "Can't we just forget about Briggs?"
   Event_ShowMessageAndWait(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 0);
   Scene_ArmCallback(ACTOR_ELDER, FACING_WEST, 20);
-  Actor_SetModeById(ACTOR_ELDER, 4);
+  Actor_SetAnimationById(ACTOR_ELDER, 4);
   // "No. I'm not about to quit looking for him."
   Event_ShowMessageAndWait(ACTOR_ELDER, 0);
   Actor_FaceDirectionById(ACTOR_ELDER, FACING_EAST, 20);
@@ -572,7 +572,7 @@ void YampiDesert_StepOntoStakeTops(void) {
   u16 *list = NULL;
   u8 *grid = gMapShapeGrid;
 
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_3)
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_BLITZ)
     list = gYampiDesert_Room3Stakes;
   else if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_4)
     list = gYampiDesert_Room4Stakes;
@@ -613,7 +613,7 @@ void YampiDesert_StepOffStakeTops(void) {
   u16 *list = NULL;
   u8 *grid = gMapShapeGrid;
 
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_3)
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_BLITZ)
     list = gYampiDesert_Room3Stakes;
   else if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_4)
     list = gYampiDesert_Room4Stakes;
@@ -709,7 +709,7 @@ void YampiDesert_CastSand(void) {
   scene = gMainRoutineWork.next;
   if (scene == SCENE_YAMPI_DESERT_1)
     YampiDesert_BlockPoundedStakes((u16 *)gYampiDesert_Room1Stakes);
-  else if (scene == SCENE_YAMPI_DESERT_3)
+  else if (scene == SCENE_YAMPI_DESERT_BLITZ)
     YampiDesert_BlockPoundedStakes((u16 *)gYampiDesert_Room3Stakes);
   else if (scene == SCENE_YAMPI_DESERT_4)
     YampiDesert_BlockPoundedStakes((u16 *)gYampiDesert_Room4Stakes);
@@ -726,7 +726,7 @@ void YampiDesert_EndSand(void) {
   scene = gMainRoutineWork.next;
   if (scene == SCENE_YAMPI_DESERT_1)
     YampiDesert_UnblockStakes((u16 *)gYampiDesert_Room1Stakes);
-  else if (scene == SCENE_YAMPI_DESERT_3)
+  else if (scene == SCENE_YAMPI_DESERT_BLITZ)
     YampiDesert_UnblockStakes((u16 *)gYampiDesert_Room3Stakes);
   else if (scene == SCENE_YAMPI_DESERT_4)
     YampiDesert_UnblockStakes((u16 *)gYampiDesert_Room4Stakes);
@@ -988,9 +988,9 @@ loop_3:
   FieldEvent_Wait(20);
   FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, 27);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 27);
   FieldEvent_Wait(30);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, 28);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 28);
   FieldEvent_Wait(10);
   Sound_Play(SE_DUST_PUFF);
   i = 0;
@@ -1248,8 +1248,8 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Actor_FaceDirection(ACTOR_ELDER, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_MAYOR, FACING_SOUTH_SOUTHWEST, 20);
   Actor_Jump(ACTOR_MAYOR, 4, 40);
-  Motion_SetModeAndWaitAnimation(ACTOR_ELDER, 3);
-  Motion_SetModeAndWaitAnimation(ACTOR_MAYOR, 3);
+  Actor_SetAnimationAndWait(ACTOR_ELDER, 3);
+  Actor_SetAnimationAndWait(ACTOR_MAYOR, 3);
   Actor_WatchAndSetScript(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 14);
   Actor_WatchAndSetScript(ACTOR_TRAVELER_SEEKING_EVIDENCE, 14);
   Actor_WatchAndSetScript(ACTOR_DIZZY_TRAVELER, 14);
@@ -1277,12 +1277,12 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
                       20);
   // "Maybe... Maybe we can get through the desert after all!"
   Event_ShowMessageAndWait(ACTOR_TRAVELER_SEEKING_EVIDENCE, 0);
-  Motion_SetModeAndWaitAnimation(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 3);
+  Actor_SetAnimationAndWait(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 3);
   // "We can find a way through to Alhafra!"
   Event_ShowMessageAndWait(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 0);
   Actor_Jump(ACTOR_DIZZY_TRAVELER, 4, 0);
   Actor_FaceDirection(ACTOR_DIZZY_TRAVELER, FACING_EAST, 0);
-  Actor_SetModeById(ACTOR_DIZZY_TRAVELER, 4);
+  Actor_SetAnimationById(ACTOR_DIZZY_TRAVELER, 4);
   // "I don't care where we go, as long as it's cool."
   Event_ShowMessageAndWait(ACTOR_DIZZY_TRAVELER, 0);
   Actor_FaceDirection(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, FACING_WEST, 0);
@@ -1299,12 +1299,12 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   Actor_FaceDirection(ACTOR_PARCHED_TRAVELER, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_ELDER, FACING_WEST, 20);
-  Actor_SetModeById(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 3);
-  Actor_SetModeById(ACTOR_TRAVELER_SEEKING_EVIDENCE, 3);
-  Actor_SetModeById(ACTOR_DIZZY_TRAVELER, 3);
-  Actor_SetModeById(ACTOR_PARCHED_TRAVELER, 3);
-  Actor_SetModeById(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 3);
-  Motion_SetModeAndWaitAnimation(ACTOR_ELDER, 3);
+  Actor_SetAnimationById(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 3);
+  Actor_SetAnimationById(ACTOR_TRAVELER_SEEKING_EVIDENCE, 3);
+  Actor_SetAnimationById(ACTOR_DIZZY_TRAVELER, 3);
+  Actor_SetAnimationById(ACTOR_PARCHED_TRAVELER, 3);
+  Actor_SetAnimationById(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 3);
+  Actor_SetAnimationAndWait(ACTOR_ELDER, 3);
   Actor_SetSpeedFixed(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 0x19999, 0xcccc);
   Actor_SetSpeedFixed(ACTOR_TRAVELER_SEEKING_EVIDENCE, 0x19999, 0xcccc);
   Actor_SetSpeedFixed(ACTOR_DIZZY_TRAVELER, 0x19999, 0xcccc);
@@ -1373,13 +1373,13 @@ void YampiDesert_SeeTravelersAbove(s32 p0) {
   }
   Call4((void (*)())Actor_SetHorizontalPositionAndAngleWithTerrain, 14,
         0x1e90000, 0x1400000, angle);
-  Actor_SetModeById(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 1);
-  Actor_SetModeById(ACTOR_TRAVELER_SEEKING_EVIDENCE, 1);
-  Actor_SetModeById(ACTOR_DIZZY_TRAVELER, 1);
-  Actor_SetModeById(ACTOR_PARCHED_TRAVELER, 1);
-  Actor_SetModeById(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 1);
-  Actor_SetModeById(ACTOR_ELDER, 1);
-  Actor_SetModeById(ACTOR_MAYOR, 1);
+  Actor_SetAnimationById(ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, 1);
+  Actor_SetAnimationById(ACTOR_TRAVELER_SEEKING_EVIDENCE, 1);
+  Actor_SetAnimationById(ACTOR_DIZZY_TRAVELER, 1);
+  Actor_SetAnimationById(ACTOR_PARCHED_TRAVELER, 1);
+  Actor_SetAnimationById(ACTOR_TRAVELER_WHO_WOULD_TURN_BACK, 1);
+  Actor_SetAnimationById(ACTOR_ELDER, 1);
+  Actor_SetAnimationById(ACTOR_MAYOR, 1);
   GameFlag_Set(FLAG_YAMPI_DESERT_TRAVELERS_MET);
   GameFlag_Set(FLAG_YAMPI_DESERT_ELDER_INSISTED);
   Event_End();
@@ -1436,7 +1436,7 @@ void YampiDesert_DropScoopGem(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, 28);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 28);
   object = YampiDesert_CreateScoopGem();
   PartyInventory_GiveItem(ITEM_SCOOP_GEM, 0);
   if (object != 0) {
@@ -1444,7 +1444,7 @@ void YampiDesert_DropScoopGem(void) {
     wait(1);
     Actor_Release(object);
   }
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_STAND);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
   GameFlag_Set(FLAG_KING_SCORPION_BEATEN);
   Event_End();
 }
@@ -1633,7 +1633,7 @@ void YampiDesert_TrackUpperLevel(void) {
     gMainRoutineWork.unk2c3 = 1;
   else
     gMainRoutineWork.unk2c3 = 0;
-  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_3) {
+  if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_BLITZ) {
     Actor_SetSpritePriority(STAKE(10),
                             ((struct FieldSprite *)leader->sprite)->priority);
     x = leader->x.fixed;
@@ -2036,14 +2036,14 @@ void YampiDesert_OpenScoopHole(void) {
 
 /// The trapped King Scorpion digs its way out with Scoop.
 void YampiDesert_ScorpionUsesScoop(void) {
-  BattleEffect_LoadActionEffectResources(ABILITY_SCOOP, 1);
+  FieldPsynergy_LoadResources(ABILITY_SCOOP, 1);
   Scene_TaskAdd(YampiDesert_OpenScoopHole, 0x480);
   FieldPsynergy_SetupActorPair(21, -1);
-  EventObject_Initialize();
+  FieldPsynergy_StartCast();
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   Task_Remove(YampiDesert_OpenScoopHole);
-  BattleEffect_CleanupSceneObjects();
+  FieldPsynergy_End();
 }
 
 #include "shared/actor_hide.h"
@@ -2091,11 +2091,11 @@ void YampiDesert_ClimbOut(struct Actor *object, s32 x, s32 z, s32 mode) {
   Actor_WalkToAndWaitById(party->leaderActorId, x, z);
   Actor_FaceDirectionAndRefreshById(party->leaderActorId, FACING_NORTH);
   Actor_SetSpriteFlags(Actor_GetById(party->leaderActorId), 0);
-  Actor_SetModeById(party->leaderActorId, 13);
+  Actor_SetAnimationById(party->leaderActorId, 13);
   Actor_SetMoveTarget(object, object->x.fixed, object->y.fixed - px(10),
                       object->z.fixed);
   Actor_WaitForMove(object);
-  Actor_SetModeById(party->leaderActorId, 10);
+  Actor_SetAnimationById(party->leaderActorId, 10);
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -2184,7 +2184,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   Sound_Play(SE_THUMP);
   FieldEffect_SetAttached(party->leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Motion_SetModeAndWaitAnimation(party->leaderActorId, 49);
+  Actor_SetAnimationAndWait(party->leaderActorId, 49);
   Sound_Play(SE_DUST_PUFF);
   actor8->motionFlags = 3;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_KING_SCORPION), 1);
@@ -2194,7 +2194,7 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   Actor_FaceDirectionById(party->leaderActorId, TRIG_TURN * 3 / 4, 0);
   FieldEvent_Wait(40);
   Sound_Play(SE_BEAST_CRY);
-  Actor_SetModeById(ACTOR_KING_SCORPION, 3);
+  Actor_SetAnimationById(ACTOR_KING_SCORPION, 3);
   FieldEvent_Wait(20);
   actor8->velocityY = Q16_ONE * 8;
   actor8->gravity = 0xe666;
@@ -2217,7 +2217,7 @@ s32 Scene_Initialize(void) {
     YampiDesert_SetUpRoom1();
   else if (scene == SCENE_YAMPI_DESERT_2)
     YampiDesert_SetUpRoom2();
-  else if (scene == SCENE_YAMPI_DESERT_3)
+  else if (scene == SCENE_YAMPI_DESERT_BLITZ)
     YampiDesert_SetUpRoom3();
   else if (scene == SCENE_YAMPI_DESERT_4)
     YampiDesert_SetUpRoom4();
@@ -2321,7 +2321,7 @@ void YampiDesert_ReadyStake(s32 id) {
   Actor_GetById(id)->priorityFlags |= 2;
   Actor_SetSpritePriority(id, 3);
   Actor_DisableById(id);
-  Actor_SetModeById(id, 2);
+  Actor_SetAnimationById(id, 2);
 }
 
 /// Sets up the fourth room: its stakes, and the King Scorpion until it has been
@@ -2841,7 +2841,7 @@ u32 gYampiDesert_SlideDust[] = {
 #undef ARRIVE_OR
 #undef MAIN_ROUTINE_WORK_U16
 #undef PIXELS__s3910
-#undef Motion_SetModeAndWaitAnimation
+#undef Actor_SetAnimationAndWait
 #undef Actor_SetMovementTypeAndWaitById
 #undef gYampiDesert_FinderRunsAhead
 #undef gYampiDesert_TravelersFollow
@@ -2963,13 +2963,13 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(1, YampiDesert1, 2),
     SCENE_EXIT(2, YampiDesert6, 1),
     SCENE_EXIT(3, YampiDesert11, 1),
-    SCENE_EXIT(4, YampiDesert3, 1),
+    SCENE_EXIT(4, YampiDesertBlitz, 1),
     SCENE_EXIT(5, YampiDesert11, 3),
-    SCENE_EXITS(YampiDesert3),
+    SCENE_EXITS(YampiDesertBlitz),
     SCENE_EXIT(1, YampiDesert2, 4),
     SCENE_EXIT(2, YampiDesert4, 1),
     SCENE_EXITS(YampiDesert4),
-    SCENE_EXIT(1, YampiDesert3, 2),
+    SCENE_EXIT(1, YampiDesertBlitz, 2),
     SCENE_EXIT(2, YampiDesert4, 3),
     SCENE_EXIT(3, YampiDesert4, 2),
     SCENE_EXIT(4, YampiDesert5, 1),

@@ -327,8 +327,8 @@ void BattleTransition_Run(s32 arg, s32 kind) {
     ownerCount += BattleParty_PrepareReserveOwners(owners + ownerCount);
     for (i = 0; i != ownerCount; i++) {
       s32 id = owners[i];
-      struct BattleObj *battleObject = BattleObject_Get(id);
-      u16 enemyId = ((struct BattleUnit *)Unit_Get(id))->enemyId;
+      struct BattleObject *battleObject = BattleObject_Get(id);
+      u16 enemyId = ((struct Unit *)Unit_Get(id))->enemyId;
 
       if (enemyId != ENEMY_FUSION_DRAGON && enemyId != ENEMY_DOOM_DRAGON &&
           enemyId != ENEMY_DOOM_DRAGON_5 && enemyId != ENEMY_DOOM_DRAGON_8)

@@ -1842,7 +1842,7 @@ void Yallam_TalkAboutSongCircles(void);
 extern s32 gYallam_PillarShadowSunk[];
 
 s32 gYallam_PillarRaised[] = {
-    SC_ARG(3),
+    SC_ANIMATION(3),
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, px(2)),
     SC_CALL((s32)Yallam_HideSprite),

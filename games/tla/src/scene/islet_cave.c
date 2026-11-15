@@ -275,9 +275,9 @@ extern struct Trigger gIsletCave_Room3Triggers[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_ISLET_CAVE_1)
+  if (scene == SCENE_ISLET_CAVE_MELD)
     return gIsletCave_Room1Placements;
-  if (scene == SCENE_ISLET_CAVE_2)
+  if (scene == SCENE_ISLET_CAVE_SERAC)
     return gIsletCave_Room2Placements;
   return gIsletCave_Placements;
 }
@@ -285,9 +285,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_ISLET_CAVE_2)
+  if (scene == SCENE_ISLET_CAVE_SERAC)
     return gIsletCave_Room2Triggers;
-  if (scene == SCENE_ISLET_CAVE_3)
+  if (scene == SCENE_ISLET_CAVE_SENTINEL)
     return gIsletCave_Room3Triggers;
   return gIsletCave_Triggers;
 }
@@ -394,7 +394,7 @@ loop:
 
     MapGrid_AnimateCells(gIsletCave_Doors[index].steps, x, position[1]);
   }
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_WALK);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, -4);
   Event_Wait(6);
@@ -416,17 +416,17 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 521;
   FieldEffect_StartBlankOverlay(0);
   scene = gMainRoutineWork.next;
-  if (scene == SCENE_ISLET_CAVE_1) {
+  if (scene == SCENE_ISLET_CAVE_MELD) {
     IsletCave_PlaceLogs();
     Palette_SetColors(gIsletCave_PaletteSlots, gIsletCave_PaletteColors,
                       gIsletCave_DimColors, gIsletCave_CycleSlots);
-  } else if (scene == SCENE_ISLET_CAVE_3) {
+  } else if (scene == SCENE_ISLET_CAVE_SENTINEL) {
     Actor_SetSpriteFlags(Actor_GetById(9), 0);
     if (gMainRoutineWork.entrance == 2) {
       Actor_SetHorizontalPositionWithTerrain(8, 0, 0);
       GameFlag_Set(0x9cf);
     }
-  } else if (scene == SCENE_ISLET_CAVE_2) {
+  } else if (scene == SCENE_ISLET_CAVE_SERAC) {
     if (GameFlag_Get(FLAG_DJINNI(DJINNI_SERAC)) ||
         GameFlag_Get(FLAG_DJINNI_HIDING(DJINNI_SERAC))) {
       GameFlag_Set(FLAG_SCENE_TEMP_30);
@@ -437,12 +437,12 @@ s32 Scene_Initialize(void) {
   } else {
     goto other;
   }
-  if (gMainRoutineWork.next == SCENE_ISLET_CAVE_2)
+  if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SERAC)
     goto fade;
 other:
-  if (gMainRoutineWork.next == SCENE_ISLET_CAVE_3) {
+  if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SENTINEL) {
   fade:
-    if (gMainRoutineWork.next == SCENE_ISLET_CAVE_2)
+    if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SERAC)
       dim = (gMainRoutineWork.entrance - 3) / 2;
     else
       dim = 3;
@@ -491,8 +491,8 @@ void IsletCave_PlaceLogByCellAbove(s32 id, s32 a, s32 bArg, s32 x, s32 z,
 
 /// A log the leader steps onto rocks under him.
 void IsletCave_SettleLog(s32 arg0) {
-  Actor_SetModeById(arg0, 1);
-  Actor_SetModeById(arg0, 2);
+  Actor_SetAnimationById(arg0, 1);
+  Actor_SetAnimationById(arg0, 2);
   return;
 }
 
@@ -777,7 +777,7 @@ void IsletCave_SentinelAwaits(void) {
                              FIELD_AT((u8 *)object, s16, 18));
   }
   Event_Wait(20);
-  FieldEvent_SetAfterBattleDestination(SCENE_ISLET_CAVE_3, 2);
+  FieldEvent_SetAfterBattleDestination(SCENE_ISLET_CAVE_SENTINEL, 2);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   cue = 0x67;
   /* FAKEMATCH(barrier): the asm on the first argument loads it before the
@@ -849,30 +849,30 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(IsletCave1),
+    SCENE_EXITS(IsletCaveMeld),
     SCENE_EXIT_UNLESS(1, Islets5, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, IsletCave1, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, IsletCave1, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, IsletCave1, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, IsletCave1, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, IsletCave1, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, IsletCave1, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, IsletCave2, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, IsletCave1, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, IsletCave1, 9, EXIT_FLAG_NONE),
-    SCENE_EXITS(IsletCave2),
-    SCENE_EXIT_UNLESS(1, IsletCave1, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, IsletCave2, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, IsletCave2, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, IsletCave2, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, IsletCave2, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, IsletCave2, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, IsletCave2, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, IsletCave2, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, IsletCave2, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, IsletCave3, 1, EXIT_FLAG_NONE),
-    SCENE_EXITS(IsletCave3),
-    SCENE_EXIT_UNLESS(1, IsletCave2, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, IsletCaveMeld, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, IsletCaveMeld, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, IsletCaveMeld, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, IsletCaveMeld, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, IsletCaveMeld, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, IsletCaveMeld, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, IsletCaveSerac, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, IsletCaveMeld, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, IsletCaveMeld, 9, EXIT_FLAG_NONE),
+    SCENE_EXITS(IsletCaveSerac),
+    SCENE_EXIT_UNLESS(1, IsletCaveMeld, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, IsletCaveSerac, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, IsletCaveSerac, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, IsletCaveSerac, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, IsletCaveSerac, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, IsletCaveSerac, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, IsletCaveSerac, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, IsletCaveSerac, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, IsletCaveSerac, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, IsletCaveSentinel, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(IsletCaveSentinel),
+    SCENE_EXIT_UNLESS(1, IsletCaveSerac, 10, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

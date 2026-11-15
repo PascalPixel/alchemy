@@ -120,11 +120,11 @@ void AlhafraManor_GrumbleAboutTheMayor(void) {
   Actor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
   // "Darn that mayor..."
   Event_ShowMessageThenWait(18, 0, 10);
-  Motion_SetVarCbAndRefresh(18, 2);
+  Actor_RunRepeatedMotion(18, 2);
   Event_Wait(10);
   // "I thought he'd get that mast fixed up for us right away..."
   Event_ShowMessageThenWait(18, 0, 10);
-  Motion_SetModeAndWaitAnimation(18, 4);
+  Actor_SetAnimationAndWait(18, 4);
   // "I'm starting to think the mayor of Alhafra never planned on..."
   Event_ShowMessageThenWait(18, 0, 10);
   Event_End();
@@ -144,15 +144,15 @@ void AlhafraManor_DefendTheMayor(void) {
   Actor_FaceDirectionById(8, FACING_EAST, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
   Event_Wait(10);
-  Motion_SetVarCbAndRefresh(8, 2);
+  Actor_RunRepeatedMotion(8, 2);
   Event_Wait(10);
   // "I'm sure the mayor has his reasons for halting repairs on the..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
-  Motion_SetModeAndWaitAnimation(8, 3);
+  Actor_SetAnimationAndWait(8, 3);
   Event_Wait(10);
   // "The mayor feels that Madra should only get back what was stolen from..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
-  Motion_SetVarCbAndRefresh(8, 2);
+  Actor_RunRepeatedMotion(8, 2);
   Event_Wait(10);
   // "But now, it seems the Madrans are getting the better end of the deal..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
@@ -162,11 +162,11 @@ void AlhafraManor_DefendTheMayor(void) {
   Event_Wait(10);
   // "The mayor thinks it unfair that Madra should benefit while Alhafra..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
-  Motion_SetVarCbAndRefresh(8, 2);
+  Actor_RunRepeatedMotion(8, 2);
   Event_Wait(10);
   // "That's why he's keeping the pirates' money and using it to repair..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
-  Motion_SetModeAndWaitAnimation(8, 4);
+  Actor_SetAnimationAndWait(8, 4);
   // "If Madra wants their boat fixed, then they can just pay us to have..."
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | 8, 0, 10);
   Event_End();
@@ -184,11 +184,11 @@ void AlhafraManor_TellOfTheEasternSea(void) {
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)&MsgAlhafraManor24);
   Event_Wait(20);
-  Motion_SetVarCbAndRefresh(9, 2);
+  Actor_RunRepeatedMotion(9, 2);
   Event_Wait(10);
   // "Briggs tells me there are huge towns on a continent that lies across..."
   Event_ShowMessageThenWait(9, 0, 10);
-  Motion_SetModeAndWaitAnimation(9, 3);
+  Actor_SetAnimationAndWait(9, 3);
   Event_Wait(10);
   // "He tells me that, by trading with one another, all of these towns..."
   Event_ShowMessageThenWait(9, 0, 10);
@@ -206,14 +206,14 @@ void AlhafraManor_TellOfTheEasternSea(void) {
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   // "Felix, Briggs told me you and your friends fought with great strength."
   Event_ShowMessageThenWait(9, 0, 10);
-  Motion_SetModeAndWaitAnimation(9, 4);
+  Actor_SetAnimationAndWait(9, 4);
   // "If you could lend me that strength, we would need not fear any pirates."
   Event_ShowMessageThenWait(9, 0, 10);
-  Motion_SetModeAndWaitAnimation(9, 3);
+  Actor_SetAnimationAndWait(9, 3);
   Event_Wait(10);
   // "So if you'd just be willing to help us out, our town could begin..."
   Event_ShowMessageThenWait(9, 0, 10);
-  Motion_SetVarCbAndRefresh(9, 2);
+  Actor_RunRepeatedMotion(9, 2);
   Event_Wait(10);
   // "What do you say? Do we have a deal?" Yes: "Great! Why don't you just stay
   // here in Alhafra..." No: "Ah, such a pity that you don't see the
@@ -291,7 +291,7 @@ void AlhafraManor_CountAnswer(void);
   {                                                                            \
     struct Actor *leader_;                                                     \
     Actor_SetSpeed((id), 1.2);                                                 \
-    Actor_SetModeById((id), 2);                                                \
+    Actor_SetAnimationById((id), 2);                                                \
     leader_ = Actor_GetById(gMainRoutineWork.leaderActorId);                   \
     if (leader_ != 0)                                                          \
       Actor_SetDestinationById((id), leader_->x.part[0].pixel,                 \
@@ -322,17 +322,17 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(10);
-  Motion_SetModeAndWaitAnimation(13, 3);
+  Actor_SetAnimationAndWait(13, 3);
   Event_Wait(20);
   // "Thank you again, Mayor. You keep a fine house."
   Event_ShowMessageThenWait(13, 0, 10);
-  Motion_SetModeAndWaitAnimation(9, 4);
+  Actor_SetAnimationAndWait(9, 4);
   // "Don't be silly. You've done us a great deed."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "It was the least I could do."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
-  Motion_SetVarCbAndRefresh(ACTOR_SHEBA, 2);
+  Actor_RunRepeatedMotion(ACTOR_SHEBA, 2);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHEAST, 0);
   Event_Wait(20);
@@ -340,7 +340,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
   Actor_FaceDirectionById(ACTOR_JENNA, FACING_SOUTHWEST, 0);
   Event_Wait(30);
-  Motion_SetModeAndWaitAnimation(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   Event_Wait(20);
   // "I agree... He's being way too nice for me not to be a little..."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0, 10);
@@ -359,10 +359,10 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
   Event_Wait(30);
-  Actor_SetModeById(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
-  Motion_SetModeAndWaitAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationById(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(9, 3);
+  Actor_SetAnimationAndWait(9, 3);
   Event_Wait(20);
   // "I see!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
@@ -372,7 +372,7 @@ void AlhafraManor_BriggsEscapes(void) {
   PaletteFade_ApplyTarget(0x10002, 0);
   PaletteFade_StartInterpolation(40);
   Event_WaitTransitionFrames();
-  Motion_SetModeAndWaitAnimation(9, 3);
+  Actor_SetAnimationAndWait(9, 3);
   Event_Wait(20);
   Actor_ShowEmote(13, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_FaceDirectionById(ACTOR_SHEBA, FACING_EAST, 0);
@@ -405,10 +405,10 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_SetAttachedEffect(ACTOR_JENNA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(60);
-  Motion_SetModeAndWaitAnimation(9, 3);
+  Actor_SetAnimationAndWait(9, 3);
   Event_Wait(30);
   Actor_ShowEmoteById(9, EMOTE_IN_FRONT | EMOTE_HEART, 50);
-  Motion_SetModeAndWaitAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   Actor_Jump(ACTOR_FELIX, 6, 15);
@@ -480,7 +480,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_ShowEmote(9, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "What, were you asleep while this was going on?"
   Event_ShowMessageThenWait(9, 0, 10);
-  Motion_SetModeAndWaitAnimation(11, 4);
+  Actor_SetAnimationAndWait(11, 4);
   // "Don't... Don't be silly!"
   Event_ShowMessageThenWait(11, 0, 10);
   Actor_ShowEmote(8, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
@@ -531,27 +531,27 @@ void AlhafraManor_BriggsEscapes(void) {
   // "That's no good..."
   Event_ShowMessageThenWait(12, 0, 10);
   Event_Wait(10);
-  Motion_SetVarCbAndRefresh(8, 2);
+  Actor_RunRepeatedMotion(8, 2);
   Event_Wait(10);
   // "What are you standing around for!? Search the area! Find Briggs at once!"
   Event_ShowMessageThenWait(12, 0, 10);
   Actor_FaceDirectionById(11, FACING_EAST, 0);
   Actor_FaceDirectionById(12, FACING_EAST, 0);
   Event_Wait(30);
-  Motion_SetVarCbAndRefresh(11, 2);
+  Actor_RunRepeatedMotion(11, 2);
   Event_Wait(10);
   // "It...might not be quite that easy..."
   Event_ShowMessageThenWait(11, 0, 10);
   Actor_FaceDirection(11, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(12, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(35);
-  Motion_SetVarCbAndRefresh(12, 2);
+  Actor_RunRepeatedMotion(12, 2);
   Event_Wait(10);
   // "He is a pirate, after all... A famous one!"
   Event_ShowMessageThenWait(12, 0, 10);
-  Motion_SetModeAndWaitAnimation(11, 3);
+  Actor_SetAnimationAndWait(11, 3);
   Event_Wait(30);
-  Motion_SetModeAndWaitAnimation(12, 3);
+  Actor_SetAnimationAndWait(12, 3);
   Event_Wait(30);
   Actor_ShowEmoteById(8, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   // "Enough of that! Move it!"
@@ -566,7 +566,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_WaitForMoveById(11);
   Actor_SetHorizontalPositionWithTerrain(11, 0, 0);
   Event_Wait(30);
-  Motion_SetModeAndWaitAnimation(9, 4);
+  Actor_SetAnimationAndWait(9, 4);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHEAST, 0);
@@ -614,7 +614,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionById(13, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(35);
-  Motion_SetVarCbAndRefresh(9, 2);
+  Actor_RunRepeatedMotion(9, 2);
   Event_Wait(10);
   // "So, don't just stand there! Return the favor and find me Briggs!"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 9, 0, 10);
@@ -631,7 +631,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Sound_Play(SOUND_FADE_OUT_BGM);
   Actor_FaceDirectionById(8, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
-  Motion_SetModeAndWaitAnimation(8, 3);
+  Actor_SetAnimationAndWait(8, 3);
   Event_Wait(20);
   Actor_WalkByById(9, 0, 24);
   Actor_WalkByAndWait(8, -16, 16);
@@ -662,19 +662,19 @@ void AlhafraManor_BriggsEscapes(void) {
   if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
     AlhafraManor_CountAnswer();
     Event_Wait(30);
-    Motion_SetModeAndWaitAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
+    Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
     // "Don't feel like you have to do them any favors!"
     Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
     (gFieldWork->message)++;
   } else {
     Event_Wait(40);
-    Motion_SetModeAndWaitAnimation(ACTOR_SHEBA, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
     Event_Wait(10);
     (gFieldWork->message)++;
     // "That's right! Why should we help the mayor, after the way he treated..."
     Event_ShowMessageThenWait(ACTOR_SHEBA, 0, 10);
   }
-  Motion_SetModeAndWaitAnimation(13, 3);
+  Actor_SetAnimationAndWait(13, 3);
   Event_Wait(10);
   // "Felix can decide for himself what to do..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 13, 0, 10);
@@ -684,14 +684,14 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_ShowEmoteById(13, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "At the very least, I want to go see the sailing ship now that it's..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 13, 0, 10);
-  Motion_SetModeAndWaitAnimation(13, 3);
+  Actor_SetAnimationAndWait(13, 3);
   Event_Wait(10);
   // "Let's just go outside and take a quick look."
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 13, 0, 10);
-  Actor_SetModeById(ACTOR_FELIX, ANIM_NOD);
-  Actor_SetModeById(ACTOR_SHEBA, ANIM_NOD);
-  Actor_SetModeById(ACTOR_JENNA, ANIM_NOD);
-  Motion_SetModeAndWaitAnimation(ACTOR_PIERS, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_FELIX, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(25);
   WALK_TO_LEADER(7);
   WALK_TO_LEADER(5);
@@ -719,7 +719,7 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(AlhafraManor),
-    SCENE_EXIT_UNLESS(1, Alhafra1, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, Alhafra, 14, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AlhafraManor, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, AlhafraManor, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, AlhafraManor, 9, EXIT_FLAG_NONE),

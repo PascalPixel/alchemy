@@ -213,9 +213,9 @@ void PsynergyTest_IgnoreTalk(void) {}
 /// Raises Felix, Jenna and Sheba ten levels. Examining cell 11.
 void PsynergyTest_RaisePartyLevels(void) {
   Message_ShowCentered((s32)MsgYouWentUp, 1);
-  Unit_LevelUpTo(FELIX, ((struct BattleUnit *)Unit_Get(FELIX))->level + 10);
-  Unit_LevelUpTo(JENNA, ((struct BattleUnit *)Unit_Get(JENNA))->level + 10);
-  Unit_LevelUpTo(SHEBA, ((struct BattleUnit *)Unit_Get(SHEBA))->level + 10);
+  Unit_LevelUpTo(FELIX, ((struct Unit *)Unit_Get(FELIX))->level + 10);
+  Unit_LevelUpTo(JENNA, ((struct Unit *)Unit_Get(JENNA))->level + 10);
+  Unit_LevelUpTo(SHEBA, ((struct Unit *)Unit_Get(SHEBA))->level + 10);
 }
 
 /// Gives 777,777 coins and ten each of Game Tickets and Lucky Medals.
@@ -247,12 +247,12 @@ void PsynergyTest_DamageAndAfflictParty(void) {
   Unit_AddPp(JENNA, -40);
   Unit_AddPp(SHEBA, -35);
   state = Unit_Get(FELIX);
-  state[offsetof(struct BattleUnit, poison)] = 1;
-  state += offsetof(struct BattleUnit, haunt);
+  state[offsetof(struct Unit, poison)] = 1;
+  state += offsetof(struct Unit, haunt);
   *state = 1;
   state = Unit_Get(JENNA);
-  state[offsetof(struct BattleUnit, curse)] = 1;
-  state[offsetof(struct BattleUnit, poison)] = 2;
+  state[offsetof(struct Unit, curse)] = 1;
+  state[offsetof(struct Unit, poison)] = 2;
   Unit_Calculate(FELIX);
   Unit_Calculate(JENNA);
   Unit_Calculate(SHEBA);

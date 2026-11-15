@@ -1562,8 +1562,8 @@ void Prox_GiveThanksForBeacon(void) {
 }
 
 void Actor_SetWideSprite(s32 id, s32 wide);
-void Map_ClearLayerEntryFlag(s32 layer);
-void Map_SetLayerEntryFlag(u32 layer);
+void TilesetAnim_Resume(s32 layer);
+void TilesetAnim_Pause(u32 layer);
 void FieldEffect_StartBlankOverlay(s32 a);
 void Weather_StartRain(s32 a);
 
@@ -1599,13 +1599,13 @@ s32 Scene_Initialize(void) {
       REG_BLDALPHA = 0xc08;
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
       Task_Add(Prox_PuffFromRoofs, TASK_PASS_VBLANK);
-      Map_SetLayerEntryFlag(0);
-      Map_SetLayerEntryFlag(1);
-      Map_ClearLayerEntryFlag(2);
-      Map_ClearLayerEntryFlag(3);
-      Map_ClearLayerEntryFlag(4);
-      Map_ClearLayerEntryFlag(5);
-      Map_ClearLayerEntryFlag(6);
+      TilesetAnim_Pause(0);
+      TilesetAnim_Pause(1);
+      TilesetAnim_Resume(2);
+      TilesetAnim_Resume(3);
+      TilesetAnim_Resume(4);
+      TilesetAnim_Resume(5);
+      TilesetAnim_Resume(6);
     }
     scene = gMainRoutineWork.next;
     if (scene == SCENE_PROX_2) {
@@ -1931,7 +1931,7 @@ void Prox_SayFarewell(void) {
     Actor_RunScriptAndWait(11, (s32)gProx_KradenWalksSouth);
     Actor_ShowEmote(11, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
     Actor_FaceDirection(11, FACING_NORTH_NORTHWEST, 0);
-    FieldActor_RefreshSelectorById(ACTOR_JENNA);
+    FieldActor_WaitForScriptEndById(ACTOR_JENNA);
     Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_GARET, FACING_EAST, 40);
     Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
@@ -2104,11 +2104,11 @@ void Prox_SayFarewell(void) {
     Actor_SetAnimation(11, 9);
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, 0x21);
     Actor_SetAnimation(ACTOR_ISAAC, 0x28);
-    Map_SetLayerEntryFlag(2);
-    Map_SetLayerEntryFlag(3);
-    Map_SetLayerEntryFlag(4);
-    Map_SetLayerEntryFlag(5);
-    Map_SetLayerEntryFlag(6);
+    TilesetAnim_Pause(2);
+    TilesetAnim_Pause(3);
+    TilesetAnim_Pause(4);
+    TilesetAnim_Pause(5);
+    TilesetAnim_Pause(6);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
     FieldEvent_Wait(40);
     PaletteFade_ApplyTarget(0x10009, 0);
@@ -2375,10 +2375,10 @@ u32 gProx_ThirdChildRuns[] = {
   };
 
 u32 gProx_KradenStepsUpToPuelle[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(176), 0, px(154)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTH_NORTHWEST),
     SC_WAIT(10),
@@ -2386,10 +2386,10 @@ u32 gProx_KradenStepsUpToPuelle[] = {
 };
 
 u32 gProx_IsaacStepsUpToPuelle[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(160), 0, px(154)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(10),
@@ -2397,10 +2397,10 @@ u32 gProx_IsaacStepsUpToPuelle[] = {
 };
 
 u32 gProx_StepBackFromPuelle[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(144), 0, px(154)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_CMD_03,
     SC_WAIT(1),
@@ -2839,10 +2839,10 @@ struct Trigger gProx_Room6Triggers[] = {
 };
 
 u32 gProx_IsaacStepsForward[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(120), 0, px(196)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(10),
@@ -2850,10 +2850,10 @@ u32 gProx_IsaacStepsForward[] = {
 };
 
 u32 gProx_KradenStepsForward[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(152), 0, px(196)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_SOUTH_SOUTHWEST),
     SC_WAIT(10),
@@ -2861,10 +2861,10 @@ u32 gProx_KradenStepsForward[] = {
 };
 
 u32 gProx_SecondParentWalksSouth[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(136), 0, px(348)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_CMD_03,
     SC_WAIT(1),
@@ -2872,10 +2872,10 @@ u32 gProx_SecondParentWalksSouth[] = {
 };
 
 u32 gProx_ThirdParentWalksSouth[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(152), 0, px(348)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_CMD_03,
     SC_WAIT(1),
@@ -2883,12 +2883,12 @@ u32 gProx_ThirdParentWalksSouth[] = {
 };
 
 u32 gProx_LeftFileWalksSouth[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(136), 0, px(248)),
     SC_SYNC,
     SC_MOVE(px(136), 0, px(348)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_CMD_03,
     SC_WAIT(1),
@@ -2896,12 +2896,12 @@ u32 gProx_LeftFileWalksSouth[] = {
 };
 
 u32 gProx_RightFileWalksSouth[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(152), 0, px(248)),
     SC_SYNC,
     SC_MOVE(px(152), 0, px(348)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_CMD_03,
     SC_WAIT(1),
@@ -2909,30 +2909,30 @@ u32 gProx_RightFileWalksSouth[] = {
 };
 
 u32 gProx_GaretWalksSouth[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(152), 0, px(248)),
     SC_SYNC,
     SC_MOVE(px(152), 0, px(272)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_END,
 };
 
 u32 gProx_JennaWalksSouth[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(168), 0, px(272)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_END,
 };
 
 u32 gProx_IsaacWalksSouth[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(120), 0, px(220)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_SOUTHEAST),
     SC_WAIT(5),
@@ -2946,10 +2946,10 @@ u32 gProx_IsaacWalksSouth[] = {
 };
 
 u32 gProx_LeaderWalksSouth[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(140), 0, px(220)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_SOUTHWEST),
     SC_WAIT(5),
@@ -2963,19 +2963,19 @@ u32 gProx_LeaderWalksSouth[] = {
 };
 
 u32 gProx_KradenWalksSouth[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(152), 0, px(240)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(10),
     SC_END,
 };
 
 u32 gProx_JennaRunsAhead[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(168), 0, px(348)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_CMD_03,
     SC_WAIT(1),
@@ -2983,10 +2983,10 @@ u32 gProx_JennaRunsAhead[] = {
 };
 
 u32 gProx_GaretRunsAhead[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(152), 0, px(348)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_CMD_03,
     SC_WAIT(1),

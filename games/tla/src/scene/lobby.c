@@ -564,8 +564,8 @@ check:
   return result;
 }
 
-void Map_ClearLayerEntryFlag(s32 layer);
-void Map_SetLayerEntryFlag(s32 layer);
+void TilesetAnim_Resume(s32 layer);
+void TilesetAnim_Pause(s32 layer);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 struct Window *Message_OpenWindow(const u8 *message, s32 x, s32 y, s32 flags);
 
@@ -633,9 +633,9 @@ s32 LinkLobby_EnterBattle(void) {
   if (!failed) {
     buf = HeapSlot_AllocEwram(HEAP_SLOT_ENEMY_UNITS, 0x7c8);
     Task_Remove(LinkLobby_PollPeerReady);
-    Map_ClearLayerEntryFlag(5);
+    TilesetAnim_Resume(5);
     wait(8);
-    Map_SetLayerEntryFlag(5);
+    TilesetAnim_Pause(5);
     if (Event_GetFlag(FLAG_MONSTER_BATTLE)) {
       Actor_FaceActor(8, gMainRoutineWork.leaderActorId, 0);
       Event_SetMessageId((s32)MsgGoodLuck2);
@@ -656,9 +656,9 @@ s32 LinkLobby_EnterBattle(void) {
       if (LinkLobby_ExchangePartyRecords() < 0) {
         Actor_SetSpeed(ACTOR_FELIX, 1);
         Actor_WalkTo(ACTOR_FELIX, 216, 200);
-        Map_ClearLayerEntryFlag(5);
+        TilesetAnim_Resume(5);
         wait(8);
-        Map_SetLayerEntryFlag(5);
+        TilesetAnim_Pause(5);
         Actor_WaitForMoveById(ACTOR_FELIX);
         HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
         LinkLobby_WriteSlotValue(0);
@@ -683,10 +683,10 @@ s32 LinkLobby_EnterBattle(void) {
     scene = SCENE_LOBBY;
     if (set) {
       Event_SetAfterBattleDestination(scene, 8);
-      Party_SetFields1f2And1f4(scene, 9);
+      Event_SetDefeatDestination(scene, 9);
     } else {
       Event_SetAfterBattleDestination(scene, 10);
-      Party_SetFields1f2And1f4(scene, 11);
+      Event_SetDefeatDestination(scene, 11);
     }
     gMainRoutineWork.battleType = BATTLE_TYPE_LINK;
     Field_RequestBattleFromEncounterTable(1, 1);
@@ -1252,7 +1252,7 @@ extern u8 gIdleSleepEnabled;
 s32 LinkLobby_PollPeerReady(void);
 void LinkLobby_InitializeSerial(void);
 void Serial_Initialize(void);
-void Map_SetLayerEntryFlag(s32 entry);
+void TilesetAnim_Pause(s32 entry);
 void Party_RestoreHpPp(s32 value);
 void Sound_LoadReverbCode(s32 preset);
 void LinkLobby_WriteSlotValue(s32 value);
@@ -1285,7 +1285,7 @@ s32 LinkLobby_Initialize(void) {
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);
   LinkLobby_WriteSlotValue(4);
   wait(1);
-  Map_SetLayerEntryFlag(5);
+  TilesetAnim_Pause(5);
   {
     u16 *name = gData_02003a74;
 

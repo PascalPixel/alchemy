@@ -11,7 +11,7 @@
 /// past the table gives the first. Every bank reads an ability through its far
 /// call, Ability_Get.
 struct AbilityDefinition *Ability_GetDirect(s32 abilityId) {
-  u32 entryIndex = abilityId & OWNER_ACTION_ID_MASK;
+  u32 entryIndex = abilityId & PSYNERGY_ABILITY_MASK;
 
   // BUG: id ABILITY_COUNT, one past the table, is let through.
 #ifdef BUGFIX
@@ -42,10 +42,10 @@ s32 Party_FindOwnerWithAction(s32 action) {
 /// events that check whether a party member knows a Psynergy
 /// (Party_CheckShortcut).
 s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   struct OwnerActionSlot *entry;
   s32 index = 0;
-  s32 actionMask = OWNER_ACTION_ID_MASK;
+  s32 actionMask = PSYNERGY_ABILITY_MASK;
 
   entry = unit->psynergy;
   do {
@@ -63,7 +63,7 @@ s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
 /// order, then come its class's Psynergy up to its level and its equipped
 /// items' Psynergy, while the list has room.
 s32 Owner_UpdateClassActions(s32 owner) {
-  struct BattleUnit *st;
+  struct Unit *st;
   u16 *ability;
   struct ClassDefinition *cls;
   struct ItemDefinition *def;
@@ -125,7 +125,7 @@ s32 Owner_UpdateClassActions(s32 owner) {
     if (def->useType != ITEM_USE_TEACHES)
       continue;
     for (i = 0; i < PSYNERGY_SLOTS; i++) {
-      if ((ability[i * 2] & OWNER_ACTION_ID_MASK) == def->abilityId)
+      if ((ability[i * 2] & PSYNERGY_ABILITY_MASK) == def->abilityId)
         break;
     }
     if (i != PSYNERGY_SLOTS)
@@ -158,13 +158,13 @@ s32 Owner_UpdateClassActions(s32 owner) {
 /// permanent by clearing its marks), then rebuilds its list. Returns the
 /// action's place in the list, or -1 when the list is full.
 s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
-  struct BattleUnit *state = Unit_Get(stateIndex);
-  s32 key = value & OWNER_ACTION_ID_MASK;
+  struct Unit *state = Unit_Get(stateIndex);
+  s32 key = value & PSYNERGY_ABILITY_MASK;
   s32 found = -1;
   s32 index;
 
   for (index = 0; index <= 30; index++) {
-    s32 masked = state->psynergy[index].encodedAction & OWNER_ACTION_ID_MASK;
+    s32 masked = state->psynergy[index].encodedAction & PSYNERGY_ABILITY_MASK;
 
     if ((masked ^ key) == 0) {
       state->psynergy[index].encodedAction = masked;
@@ -219,7 +219,7 @@ const struct CharacterDefinition *Character_GetDefinition(s32 index) {
 /// starting equipment equipped, class and elements worked out, and levels
 /// raised to their starting level.
 void Party_InitializeCharacters(void) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   const struct CharacterDefinition *character;
   u16 nameBuf[16];
   s32 unitId;
@@ -281,7 +281,7 @@ UNUSED void Unit_LevelNoOp(void) {}
 /// Returns the experience a character needs for `level`: 0 below level 1, and
 /// -1 for an enemy or a level past UNIT_LEVEL_MAX.
 u32 Unit_GetExperienceForLevel(s32 unitId, s32 level) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
 
   if (unit->classId != CLASS_NONE) {
     if (level <= 0) {
@@ -302,7 +302,7 @@ u32 Unit_GetExperienceForLevel(s32 unitId, s32 level) {
 /// then rebuilds its Psynergy and stats. The gains go to `gains`, which is
 /// returned.
 struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct LevelUpWork *work;
   u32 requiredExperience;
   s16 growthBand;
@@ -391,7 +391,7 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains) {
 /// Levels the character up once if its experience reaches the next level, and
 /// returns gains, or NULL.
 struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   unit = Unit_Get(unitId);
   if ((unit->experience >=
@@ -407,7 +407,7 @@ struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains) {
 void Unit_LevelUpTo(s32 unitId, s32 targetLevel) {
   // Each level's gains are discarded.
   struct LevelUpResult gains;
-  s32 currentLevel = ((struct BattleUnit *)Unit_Get(unitId))->level;
+  s32 currentLevel = ((struct Unit *)Unit_Get(unitId))->level;
 
   while (currentLevel < targetLevel) {
     Unit_LevelUp(unitId, &gains);

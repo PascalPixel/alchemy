@@ -420,14 +420,14 @@ void GaiaRock_SwingVineHarder(void) {
   slot->value04 += 128;
 }
 
-void Event_PlayCueNearFocus(struct Actor *object, s32 a);
+void Actor_PlaySoundInView(struct Actor *object, s32 a);
 
 void GaiaRock_StatueBlowsWind(void) {
   struct Actor *object = Actor_Get(17);
   u8 phase = gFrameCount;
 
   if (phase == 0) {
-    Event_PlayCueNearFocus(object, 202);
+    Actor_PlaySoundInView(object, 202);
     object =
         Actor_Spawn(0x118, object->x.fixed, object->y.fixed, object->z.fixed);
     if (object != NULL) {
@@ -501,7 +501,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(20, 798, 800);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 49, 49);
       Map_CopyCellAttributeRect(53, 52, 1, 1, 50, 49);
-      Actor_SetModeById(20, 5);
+      Actor_SetAnimationById(20, 5);
       if (!Event_GetFlag(0xa61)) {
         Event_StartScreenTransition();
         Event_WaitTransitionFrames();
@@ -839,7 +839,7 @@ s32 gGaiaRock_WindScript[] = {
     SC_SET(SW_SCALE_X, 0x1b333),
     SC_SET(SW_SCALE_Y, 0x14ccc),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(6),
     SC_CALL(GaiaRock_StartVineSwing),
     SC_WAIT(2),

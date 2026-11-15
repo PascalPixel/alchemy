@@ -9,8 +9,8 @@
 #include "battle/battle_action.h"
 
 /// The battle event queue and the state of its playback.
-struct BattleEventState {
-  struct BattleEventQueue queue;
+struct BattlePlaybackWork {
+  struct BattlePlaybackQueue queue;
   s32 phase;       ///< enum BattlePlaybackPhase, or a message phase
   s32 eventIndex;  ///< the next queued event to play
   s32 timer;       ///< frames to wait
@@ -20,8 +20,8 @@ struct BattleEventState {
   s32 flags;       ///< cleared when playback starts
 };
 
-STATIC_ASSERT(sizeof(struct BattleEventState) == 0x170);
-STATIC_ASSERT(offsetof(struct BattleEventState, pendingCue) == 0x168);
+STATIC_ASSERT(sizeof(struct BattlePlaybackWork) == 0x170);
+STATIC_ASSERT(offsetof(struct BattlePlaybackWork, pendingCue) == 0x168);
 
 /// The battle's own work: its enemies, units and their objects, the turn's
 /// actions, the background palette and the events.
@@ -47,8 +47,10 @@ struct BattleWork {
   u8 challengeFlag;
   u8 isLink;      ///< 1 in a link battle
   u8 firstStrike; ///< who strikes first: 1 the party, 2 the enemies
-  u8 unk046;
-  u8 unk047; ///< set with MsgAllResting (ability effect 81)
+  /// Failed tries to flee this battle; each adds 2000 to the chance
+  /// (BattleFlee_CheckSuccess).
+  u8 fleeFailures;
+  u8 ceaseFire; ///< set by Lull with MsgAllResting, "Everybody is resting!"
   /// For each party unit, its slot as a link opponent's enemy, minus 128;
   /// a mark for none.
   u8 opponentSlots[8];
@@ -60,7 +62,7 @@ struct BattleWork {
   s16 partyUnits[7]; ///< ends with 0xff
   s16 enemyIds[7];   ///< ends with 0xff
   u8 placement[16];  ///< each unit's index in slots; 0xff for none
-  struct BattleObj slots[14];
+  struct BattleObject slots[14];
   struct BattleActionRecord actions[20]; ///< the actions chosen for the turn
   u8 unk42c[0x124];                      ///< not named by TLA code
   struct BattleSpoils spoils;            ///< what the battle has won so far
@@ -82,18 +84,18 @@ struct BattleWork {
   /// Scheduling the event playback clears its byte at 0x67d (written as
   /// unk670[0x0d]).
   u8 unk67a[0x6a];
-  struct BattleEventState events;
+  struct BattlePlaybackWork events;
   u8 unk854[4]; ///< not named by TLA code
-  /// The target and the actor of a hit on a unit whose equipBonus[1] is set,
-  /// as one draft stores them.
+  /// The unit ready to counterattack (ABILITY_EFFECT_COUNTER) that was just
+  /// struck, and the opponent that struck it.
   ///@{
-  s32 unk858;
-  s32 unk85c;
+  s32 counterUnitId;
+  s32 counterTargetId;
   ///@}
   u8 unk860[8]; ///< not named by TLA code
-  /// 1 for an enemy of id 101 to 103 while flag 0x173 is clear; one draft's
-  /// ability check reads it.
-  u8 unk868;
+  /// Poseidon's force field: 1 for an enemy of id 101 to 103 while flag 0x173
+  /// is clear; until the Trident lands, MsgFieldProtects turns abilities away.
+  u8 forceField;
 };
 
 STATIC_ASSERT(offsetof(struct BattleWork, partyStatus) == 0x041);
@@ -111,7 +113,7 @@ STATIC_ASSERT(offsetof(struct BattleWork, queueCount) == 0x56b);
 STATIC_ASSERT(offsetof(struct BattleWork, highlightStep) == 0x676);
 STATIC_ASSERT(offsetof(struct BattleWork, highlightMode) == 0x678);
 STATIC_ASSERT(offsetof(struct BattleWork, events) == 0x6e4);
-STATIC_ASSERT(offsetof(struct BattleWork, unk868) == 0x868);
+STATIC_ASSERT(offsetof(struct BattleWork, forceField) == 0x868);
 
 struct LinkRuntimeState;
 

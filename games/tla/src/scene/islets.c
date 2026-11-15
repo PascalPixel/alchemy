@@ -552,7 +552,7 @@ void Islets_TradeWithBird(void) {
     given = FieldActor_Create(489, leader->x.fixed, leader->y.fixed + px(24),  \
                               leader->z.fixed);                                \
     if (given != 0) {                                                          \
-      Actor_SetModeById(gMainRoutineWork.leaderActorId, 28);                   \
+      Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 28);                   \
       given->motionFlags = off;                                                \
       Actor_SetItemIcon(given, ITEM_MILK);                                     \
       Event_Wait(20);                                                          \
@@ -563,7 +563,7 @@ void Islets_TradeWithBird(void) {
     PartyInventory_GiveItem(ITEM_MILK, 0);                                     \
     if (given != 0) {                                                          \
       Actor_Release(given);                                                    \
-      Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_STAND);           \
+      Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);           \
     }                                                                          \
     FieldPsynergy_GreyMindReadPalette();                                       \
     GameFlag_Set(0xaa3);                                                       \
@@ -703,7 +703,7 @@ void Islets_TradeWithCow(void) {
     // "I've been feeling so low lately... I long to feel the utter joy..."
     Event_ShowMessageAndWait(10, 0);
   }
-  Actor_SetModeById(10, 4);
+  Actor_SetAnimationById(10, 4);
   Event_End();
 }
 #undef STEP
@@ -2760,7 +2760,7 @@ u32 gIslets_Room1WanderScript[] = {
 };
 
 u32 gIslets_GullScript[] = {
-    SC_ARG(4),
+    SC_ANIMATION(4),
     SC_SET(SW_SPEED, 0xcccc),
     SC_SET(SW_ACCEL, 0x3333),
     SC_SET(SW_Y, px(64)),
@@ -2785,7 +2785,7 @@ u32 gIslets_GullScript[] = {
 };
 
 u32 gIslets_PenguinsHopScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(234), 0, px(240)),
     SC_SYNC,
     SC_MOVE(px(276), 0, px(222)),
@@ -2802,7 +2802,7 @@ u32 gIslets_PenguinsHopScript[] = {
 };
 
 s32 gIslets_BirdFliesBackScript[] = {
-    SC_ARG(3),
+    SC_ANIMATION(3),
     SC_SE(152),
     SC_SET(SW_VELOCITY_Y, px(4)),
     SC_MOVE_BY(0, 0, px(-16)),
@@ -2823,7 +2823,7 @@ s32 gIslets_BirdFliesBackScript[] = {
     SC_SET(SW_VELOCITY_Y, px(4)),
     SC_MOVE(px(280), 0, px(856)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(1),
@@ -2831,7 +2831,7 @@ s32 gIslets_BirdFliesBackScript[] = {
 };
 
 s32 gIslets_BirdFliesOffScript[] = {
-    SC_ARG(3),
+    SC_ANIMATION(3),
     SC_SE(152),
     SC_SET(SW_VELOCITY_Y, px(4)),
     SC_MOVE_BY(0, 0, px(16)),
@@ -2852,7 +2852,7 @@ s32 gIslets_BirdFliesOffScript[] = {
     SC_SET(SW_VELOCITY_Y, px(4)),
     SC_MOVE(px(280), 0, px(856)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(1),
@@ -2878,10 +2878,10 @@ u32 gIslets_TurtleSwimsScript[] = {
   };
 
 u32 gIslets_TurtleTurnsScript[] = {                                                               
-      SC_ARG(2), SC_MOVE(px(248), 0, px(686)),                           
+      SC_ANIMATION(2), SC_MOVE(px(248), 0, px(686)),                           
       SC_SYNC,   SC_MOVE(px(248), 0, px(768)),                           
       SC_SYNC,   SC_MOVE(px(176), 0, px(777)),                           
-      SC_SYNC,   SC_ARG(1),                                                    
+      SC_SYNC,   SC_ANIMATION(1),                                                    
       SC_END,                                                                  
   };
 
@@ -2897,10 +2897,10 @@ u32 gIslets_GeorgeWalksScript[] = {
   };
 
 u32 gIslets_TurtleWalksScript[] = {                                                               
-      SC_ARG(2), SC_MOVE(px(248), 0, px(768)),                           
+      SC_ANIMATION(2), SC_MOVE(px(248), 0, px(768)),                           
       SC_SYNC,   SC_MOVE(px(248), 0, px(686)),                           
       SC_SYNC,   SC_MOVE(px(240), 0, px(600)),                           
-      SC_SYNC,   SC_ARG(1),                                                    
+      SC_SYNC,   SC_ANIMATION(1),                                                    
       SC_END,                                                                  
   };
 
@@ -2954,7 +2954,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT(2, ApojiiIslands3, 6),
     SCENE_EXIT(3, Islets5, 4),
     SCENE_EXIT(4, Islets5, 3),
-    SCENE_EXIT(5, IsletCave1, 1),
+    SCENE_EXIT(5, IsletCaveMeld, 1),
     SCENE_EXITS_END,
 };
 

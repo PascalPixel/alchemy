@@ -11,8 +11,8 @@
 /// Returns the unit of unitId: ISAAC to PIERS the characters, the six from
 /// FIRST_ENEMY_UNIT the enemies of the current battle; NULL for anything else.
 void *Unit_Get(s32 owner) {
-  struct BattleUnit *states;
-  struct BattleUnit *unit;
+  struct Unit *states;
+  struct Unit *unit;
 
   if ((u32)owner <= PIERS) {
     states = gCharacterUnits;

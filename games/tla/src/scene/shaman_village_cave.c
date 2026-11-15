@@ -783,7 +783,7 @@ struct Trigger gSceneEvents[] = {
 
 /// The beaten gladiators walk out of the cave, one after another.
 u32 gShamanVillageCave_GladiatorLeaves[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_XZ(px(232), px(227)),
     SC_SYNC,
     SC_MOVE_XZ(px(217), px(243)),

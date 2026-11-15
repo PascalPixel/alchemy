@@ -390,8 +390,8 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   gJupiterLighthouse_PulseStep = 1;
   FieldEvent_Wait(30);
   gJupiterLighthouse_PulseStep = 0;
-  FieldActor_RefreshSelectorById(ACTOR_LOWER_BEAM);
-  FieldActor_RefreshSelectorById(ACTOR_UPPER_BEAM);
+  FieldActor_WaitForScriptEndById(ACTOR_LOWER_BEAM);
+  FieldActor_WaitForScriptEndById(ACTOR_UPPER_BEAM);
   Actor_GetById(ACTOR_LOWER_BEAM)->scaleX = 0;
   Actor_GetById(ACTOR_UPPER_BEAM)->scaleX = 0;
   PaletteFade_ApplyTarget(0x10000, 0);
@@ -630,7 +630,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPositionAndFacing(ACTOR_ALEX, px(64), px(225), angle);
   }
   Actor_PlaceBlocks(gJupiterLighthouse_Room5Blocks);
-  Actor_SetActionCallback(Actor_Get(64), 9);
+  Actor_SetMovementType(Actor_Get(64), 9);
   object = Actor_Get(ACTOR_LOWER_BEAM);
   object->scaleX = 0;
   object->motionFlags = 0;
@@ -1219,7 +1219,7 @@ struct ActorPlacement gActorPlacements[] = {
 u32 gOrbScript[] = {                                                               
       SC_SET(SW_SCALE_X, 0xcccc),                                              
       SC_SET(SW_SCALE_Y, 0xcccc),                                              
-      SC_ARG(1),                                                               
+      SC_ANIMATION(1),                                                               
       SC_LABEL(1),                                                             
       SC_ADD(SW_Y, px(1)),                                                 
       SC_WAIT(1),                                                              
@@ -1276,7 +1276,7 @@ u32 gPaletteCyclePausesInEvents[] = {
 };
 
 s32 gJupiterLighthouse_OrbScript[] = {
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(12),
     SC_FREE,
 };

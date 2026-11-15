@@ -70,7 +70,7 @@ s32 Item_MatchesFilter(s32 filter, s32 item_id) {
 const struct Trigger *Field_FindItemTrigger(s32 source) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   const struct Trigger *trigger = work->triggers;
-  s32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
+  s32 facing = Actor_Lookup(Party_GetLeaderActor())->facing;
   s32 selected = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
   s32 collision;
 
@@ -119,7 +119,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 itemId;
   s32 actor;
   s32 actorMask;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   const struct Trigger *trigger;
   s32 j;
   s32 i;
@@ -215,11 +215,11 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       MessageArgument_PushFar(actor, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
       FieldMessage_ShowFar((s32)&MsgActorUsesItem, 1);
-      BattleEffect_LoadActionEffectResources(actionId, 0);
+      FieldPsynergy_LoadResources(actionId, 0);
       runtime->psynergyActing = 1;
       FieldPsynergy_Run();
       runtime->psynergyActing = 0;
-      BattleEffect_CleanupSceneObjects();
+      FieldPsynergy_End();
 
       if (Item_GetDirectFar(itemId)->useType & 1)
         GameFlag_Set(FLAG_ITEM_USED_UP);
@@ -242,7 +242,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 s32 Scene_SelectPsynergyTarget(s32 kind) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TriggerEvent *event = work->triggers;
-  u32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
+  u32 facing = Actor_Lookup(Party_GetLeaderActor())->facing;
   s32 focused = Field_GetCollisionAheadOfLeader();
   s32 special = Field_GetCollisionUnderLeader();
   s32 best = 9999;
@@ -314,7 +314,7 @@ struct TriggerEvent *Scene_FindPsynergyTrigger(s32 filter, s32 kind,
                                                s32 selector) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct TriggerEvent *event = work->triggers;
-  u32 facing = ObjectTable_Get(Party_GetLeaderActor())->facing;
+  u32 facing = Actor_Lookup(Party_GetLeaderActor())->facing;
   s32 flags;
 
   if (selector == -1)
@@ -381,12 +381,12 @@ s32 Field_RunPsynergyEndEvents(u32 packed) {
     if (selector != -1 && (selector & 0x100))
       target = selector & 255;
   }
-  BattleEffect_LoadActionEffectResources(action, 0);
+  FieldPsynergy_LoadResources(action, 0);
   FieldPsynergy_SetupActorPair(Party_GetLeaderActor(), target);
   Field_RunPsynergyEvent(first, mode, target);
   FieldPsynergy_RunExtraHandler();
   BattleEffect_StopMainActor();
   Field_RunPsynergyEvent(second, mode, target);
-  BattleEffect_CleanupSceneObjects();
+  FieldPsynergy_End();
   return 0;
 }

@@ -87,7 +87,7 @@ enum GatewayCaveActorId {
 
 extern u32 gSceneExits[];
 
-void Actor_SetActionCallback(struct Actor *object, s32 a);
+void Actor_SetMovementType(struct Actor *object, s32 a);
 void SuhallaGate_AfterPunchAntBattle(void);
 void Actor_FallOverById(s32 id, s32 a);
 void Actor_FallOverWithAnimationById(s32 id, s32 a, s32 b);
@@ -155,7 +155,7 @@ void SuhallaGate_SetUpRoad(void) {
   if (Event_GetFlag(FLAG_SUHALLA_GATE_RUFFIAN_BEATEN)) {
     Actor_SetPosition(ACTOR_ROAD_RUFFIAN, 456, 312);
     Actor_FallOverWithAnimationById(ACTOR_ROAD_RUFFIAN, FACING_SOUTH, 0);
-    Actor_SetActionCallback(Actor_GetById(ACTOR_ROAD_RUFFIAN), 8);
+    Actor_SetMovementType(Actor_GetById(ACTOR_ROAD_RUFFIAN), 8);
   }
 }
 
@@ -272,7 +272,7 @@ void SuhallaGate_RuffianSpotsParty(void) {
   Event_ShowMessageThenWait(ACTOR_ROAD_RUFFIAN, 0, 10);
   Actor_WalkToAndWait(ACTOR_ROAD_RUFFIAN, 456, 312);
   Event_SetAfterBattleDestination(SCENE_SUHALLA_GATE_1, ENTRANCE_AFTER_BATTLE);
-  Party_SetFields1f2And1f4(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
+  Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
                            ENTRANCE_VENUS_LIGHTHOUSE_DEFEAT);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(9, 1);
@@ -337,7 +337,7 @@ void SuhallaGate_FightPunchAnt(void) {
                          owner->z.part[0].pixel);
   Event_Wait(20);
   Event_SetAfterBattleDestination(SCENE_SUHALLA_GATE_3, ENTRANCE_AFTER_BATTLE);
-  Party_SetFields1f2And1f4(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
+  Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
                            ENTRANCE_VENUS_LIGHTHOUSE_DEFEAT);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(9, 3);

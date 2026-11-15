@@ -31,7 +31,7 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    struct BattleUnit *unit = Unit_Get(gMainRoutineWork.party[partyIndex]);
+    struct Unit *unit = Unit_Get(gMainRoutineWork.party[partyIndex]);
 
     if (unit->djinnOwnedCounts[element] <= 9) {
       s32 ownedDjinn = 0;
@@ -57,7 +57,7 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
 /// Gives a Djinni to a unit. Returns -1 when the unit holds ten of the element
 /// or has it already.
 s32 Djinn_Give(s32 unitId, s32 element, s32 djinnIndex) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
 
   if (unit->djinnOwnedCounts[element] > 9)
     return -1;
@@ -71,7 +71,7 @@ s32 Djinn_Give(s32 unitId, s32 element, s32 djinnIndex) {
 /// Returns 1 when the unit holds the Djinni and it can be set: not set, not
 /// recovering and not held by a summon.
 s32 Djinn_CanSet(s32 unitId, s32 element, s32 djinnIndex) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   struct DjinnRecoveryList *list;
   s32 entryIndex;
   s32 recoveryTurns;
@@ -103,7 +103,7 @@ s32 Djinn_CanSet(s32 unitId, s32 element, s32 djinnIndex) {
 
 /// Returns 1 when the Djinni is set on the unit.
 u32 Djinn_IsSet(s32 unitId, s32 element, s32 djinnIndex) {
-  s32 set = ((struct BattleUnit *)Unit_Get(unitId))->djinnSet[element] &
+  s32 set = ((struct Unit *)Unit_Get(unitId))->djinnSet[element] &
             (1 << djinnIndex);
 
   return NONZERO(set);
@@ -112,7 +112,7 @@ u32 Djinn_IsSet(s32 unitId, s32 element, s32 djinnIndex) {
 /// Sets a ready Djinni on the unit, counts it and works out the unit's class
 /// again. Returns 1 when it was set.
 s32 Djinn_Set(s32 unitId, s32 element, s32 djinnIndex) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   s32 isReady = Djinn_CanSet(unitId, element, djinnIndex);
 
   if (isReady != 0) {
@@ -129,7 +129,7 @@ s32 Djinn_Set(s32 unitId, s32 element, s32 djinnIndex) {
 /// Takes a set Djinni off the unit and works out its class again. Returns 1
 /// when it was set.
 u32 Djinn_PutOnStandby(s32 unitId, s32 element, s32 djinnIndex) {
-  struct BattleUnit *unit = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
   u32 wasActive = Djinn_IsSet(unitId, element, djinnIndex);
 
   if (wasActive != 0) {
@@ -182,7 +182,7 @@ u32 *DjinnRecovery_AddStandby(u32 unitId, u32 element, u32 djinnIndex) {
 /// Moves a Djinni from one unit to another, set or on standby as it was.
 /// Returns -1 when it cannot.
 s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
-  struct BattleUnit *sourceUnit = Unit_Get(source);
+  struct Unit *sourceUnit = Unit_Get(source);
   u32 wasActive;
 
   if ((sourceUnit->djinnHeld[element] & (1 << djinnIndex)) != 0) {
@@ -242,7 +242,7 @@ u16 Djinn_GetAbilityId(u32 group, u32 index) {
 /// Returns how many Djinn of element `index` the unit holds, or of every
 /// element for -1.
 s32 Owner_SumDjinnCounts(s32 unitId, s32 index) {
-  struct BattleUnit *unit;
+  struct Unit *unit;
   s32 result;
 
   unit = Unit_Get(unitId);
@@ -266,7 +266,7 @@ s32 Party_SumDjinnCounts(s32 element) {
   s32 i;
 
   for (i = 0; i < partySize; i++) {
-    struct BattleUnit *unit = Unit_Get(unitIds[i]);
+    struct Unit *unit = Unit_Get(unitIds[i]);
 
     if (element == -1) {
       djinnCount += unit->djinnOwnedCounts[0];

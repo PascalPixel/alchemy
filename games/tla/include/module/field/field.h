@@ -12,7 +12,7 @@
 #include "system/sprite_metadata.h"
 #include "tla_edition.h"
 
-struct AnimationObject;
+struct Sprite;
 struct RenderInput;
 struct ScriptOperands;
 struct SpritePlacement;
@@ -357,7 +357,7 @@ struct CompositeAnimation {
   u8 unk1a;
   u8 count;
   u8 unk1c[0x0c];
-  struct AnimationEntry *entries[4];
+  struct SpriteAnimation *entries[4];
 };
 
 /// unk26a from main_routine_work.h.
@@ -485,7 +485,7 @@ struct EffectOwner {
   u8 unk00[8];
   struct EffectVector position;
   u8 unk14[0x3c];
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 };
 
 struct OrbitPosition {
@@ -811,7 +811,7 @@ struct AnimationGroup {
   u8 unk19[2];
   u8 count;
   u8 unk1c[0x0c];
-  struct AnimationEntry *entries[4];
+  struct SpriteAnimation *entries[4];
 };
 
 extern const u8 gData_081ba30c[];
@@ -866,7 +866,7 @@ extern u8 Grid_DrawOutlineCodeSize[];
 
 extern const u8 gSpriteColorShadeTables[];
 
-void SpriteAnimation_Start(struct AnimationEntry *work, s32 no);
+void SpriteAnimation_Start(struct SpriteAnimation *work, s32 no);
 
 u8 *Decompress_Lz(const u8 *source, u8 *destination);
 
@@ -910,12 +910,12 @@ s32 Field_UsePsynergy(u32 code);
 s16 *SceneItem_GetRows(void);
 void Field_PlaceTreasureSpots(void);
 s32 Actor_GetSpriteShape(u32 objectId);
-void ObjectEvent_SetMode5WithCue(u32 objectId);
-void ObjectEvent_Spring(u32 objectId);
-void ObjectEvent_SetMode4WithCue(u32 objectId);
-void ObjectEvent_SetMode2(u32 objectId);
+void TreasureSpot_CloseChest(u32 objectId);
+void TreasureSpot_LaunchMimic(u32 objectId);
+void TreasureSpot_OpenChest(u32 objectId);
+void TreasureSpot_ShowOpened(u32 objectId);
 void ObjectEvent_SetMode6WithCue(u32 objectId);
-struct Actor *ObjectEvent_GetObject(u32 objectId);
+struct Actor *TreasureSpot_GetActor(u32 objectId);
 void ObjectEvent_Remove(u32 objectId);
 
 void Camera_ResetViewDefaults(void);

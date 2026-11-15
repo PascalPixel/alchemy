@@ -1403,8 +1403,8 @@ void EasternAlhafra_WorkersTellMayor(void) {
   Actor_SetSpeed(29, 3);
   Actor_SetScript(28, gEasternAlhafra_FirstWorkerCheerScript);
   Actor_SetScript(29, gEasternAlhafra_SecondWorkerCheerScript);
-  FieldActor_RefreshSelectorById(28);
-  FieldActor_RefreshSelectorById(29);
+  FieldActor_WaitForScriptEndById(28);
+  FieldActor_WaitForScriptEndById(29);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(28, 2);
   // "I'm telling you, Mayor, I saw it with my own eyes! ...I mean, I..."
@@ -1430,12 +1430,12 @@ void EasternAlhafra_WorkersTellMayor(void) {
   Actor_WalkByAndWait(27, 64, 0);
   Actor_WalkTo(25, 168, 616);
   Actor_WalkToAndWait(27, 184, 616);
-  FieldActor_RefreshSelectorById(25);
+  FieldActor_WaitForScriptEndById(25);
   Actor_SetAnimation(25, 1);
   Actor_FaceDirection(25, FACING_NORTHEAST, 0);
   Actor_FaceDirection(27, FACING_NORTHEAST, 0);
-  FieldActor_RefreshSelectorById(28);
-  FieldActor_RefreshSelectorById(29);
+  FieldActor_WaitForScriptEndById(28);
+  FieldActor_WaitForScriptEndById(29);
   FieldEvent_Wait(20);
   FieldActor_StartRepeatedMotion(25, 3);
   Actor_SetAttachedEffect(25, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1920,7 +1920,7 @@ scroll:
   FieldEvent_Wait(30);
   Event_End();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Event_SetDestination(SCENE_EASTERN_ALHAFRA_1, 99);
+  Event_SetDestination(SCENE_EASTERN_ALHAFRA, 99);
 }
 
 /// The scene that opens with MsgWhatYouLet; either answer to each of its two
@@ -2196,9 +2196,9 @@ void EasternAlhafra_MayorFindsShipGone(void) {
   Actor_SetScript(31, (s32)gEasternAlhafra_RunOffScript);
   FieldEvent_Wait(15);
   Actor_SetScript(30, (s32)gEasternAlhafra_RunOffScript);
-  FieldActor_RefreshSelectorById(25);
+  FieldActor_WaitForScriptEndById(25);
   Actor_FaceDirectionById(26, FACING_SOUTH_SOUTHWEST, 0);
-  FieldActor_RefreshSelectorById(30);
+  FieldActor_WaitForScriptEndById(30);
   FieldEvent_Wait(20);
   EventCamera_FollowActor(ACTOR_FELIX, 1);
   FieldCamera_WaitForArrival();
@@ -2627,8 +2627,8 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(EasternAlhafra1),
-    SCENE_EXIT_UNLESS(1, Alhafra1, 11, EXIT_FLAG_NONE),
+    SCENE_EXITS(EasternAlhafra),
+    SCENE_EXIT_UNLESS(1, Alhafra, 11, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, EasternAlhafraShip, 1, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
@@ -2771,7 +2771,7 @@ u8 gEasternAlhafra_WaveTableIndex[] = {
 };
 
 s32 gEasternAlhafra_FirstWorkerCheerScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(0, 0, px(8)),
     SC_SYNC,
     SC_MOVE_BY(px(16), 0, px(16)),
@@ -2780,52 +2780,52 @@ s32 gEasternAlhafra_FirstWorkerCheerScript[] = {
     SC_SYNC,
     SC_MOVE_BY(0, 0, -px(16)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(1),
     SC_END,
 };
 
 s32 gEasternAlhafra_SecondWorkerCheerScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(px(32), 0, px(32)),
     SC_SYNC,
     SC_MOVE_BY(px(16), 0, -px(16)),
     SC_SYNC,
     SC_MOVE_BY(px(2), 0, -px(6)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(1),
     SC_END,
 };
 
 u32 gEasternAlhafra_FirstWorkerRunScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(px(48), 0, 0),
     SC_SYNC,
     SC_MOVE(px(168), 0, px(584)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTHEAST),
     SC_WAIT(1),
     SC_END,
 };
 
 u32 gEasternAlhafra_SecondWorkerRunScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE_BY(px(48), 0, 0),
     SC_SYNC,
     SC_MOVE(px(184), 0, px(584)),
     SC_SYNC,
-    SC_ARG(1),
+    SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_NORTHEAST),
     SC_WAIT(1),
     SC_END,
 };
 
 s32 gEasternAlhafra_RunOffScript[] = {
-    SC_ARG(2),
+    SC_ANIMATION(2),
     SC_MOVE(px(152), 0, px(640)),
     SC_SYNC,
     SC_MOVE_BY(-px(80), 0, 0),

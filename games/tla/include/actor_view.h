@@ -5,8 +5,8 @@
 #include "system/system.h"
 #include "actor.h"
 
-struct AnimationObject;
-struct AnimationEntry;
+struct Sprite;
+struct SpriteAnimation;
 
 /// An actor's sprite as the actor setters write it: the same
 /// bytes as FieldSprite.
@@ -25,7 +25,7 @@ struct ActorSpriteView {
   u8 value1a; ///< the sprite flags (FieldSprite.nextFrame)
   u8 count;   ///< layers in use
   u8 unk1c[0x0c];
-  struct AnimationEntry *entries[4]; ///< its layers; empty ones null
+  struct SpriteAnimation *entries[4]; ///< its layers; empty ones null
 };
 
 struct FieldSprite;
@@ -46,7 +46,7 @@ struct ActorView {
     struct ActorSpriteView *child;     ///< kind 1
     struct ActorSpriteView **children; ///< kind 2
     struct FieldSprite *sprite;        ///< kind 1
-    struct AnimationObject *animation;
+    struct Sprite *animation;
   } target;
   u8 kind;     ///< 1 one sprite, 2 a group of sprites
   u8 unk55[2]; ///< motion flags and arrival axis; not named here
@@ -62,10 +62,10 @@ struct ActorView {
   void (*update)(struct ActorView *object); ///< per-frame hook
 };
 
-s32 Animation_ApplyChildArgument(struct ActorSpriteView *, s32);
-void Animation_ApplyChildValue(struct ActorSpriteView *, s32);
-s32 InitializeAnimationObjects(struct ActorSpriteView *);
-s32 ResourceMetadata_Register(struct ActorSpriteView *, s32);
+s32 Sprite_StartAnimation(struct ActorSpriteView *, s32);
+void Sprite_SetAnimationSpeed(struct ActorSpriteView *, s32);
+s32 Sprite_ResetAnimations(struct ActorSpriteView *);
+s32 Sprite_AddAnimation(struct ActorSpriteView *, s32);
 void Actor_StartScript(struct Actor *, const s32 *);
 void Actor_SetSpriteFlagsFar(struct Actor *object, u32 flags);
 void Animation_ApplyChildValuesToRecord(struct ActorSpriteView *, u32);

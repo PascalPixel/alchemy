@@ -57,7 +57,7 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(ChampaSanctum),
-    SCENE_EXIT_UNLESS(1, Champa1, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, Champa, 7, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

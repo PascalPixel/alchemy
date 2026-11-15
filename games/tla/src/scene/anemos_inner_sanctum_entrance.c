@@ -236,7 +236,7 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
   if (MapGrid_GetCellBehaviorAt(object->layer, object->x.fixed,
                                 object->z.fixed) != 77)
     return;
-  Actor_SetModeById(gMainRoutineWork.leaderActorId, ANIM_STAND);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_STAND);
 #if TLA_PATCH_1
   FieldActor_SetMoveTargetFixed(object, (object->x.fixed & 0xfff00000) + px(8),
                                 object->y.fixed,

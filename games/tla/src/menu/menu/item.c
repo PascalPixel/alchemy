@@ -182,8 +182,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   s32 done;
   s32 selection;
   s32 ret;
-  struct BattleUnit *source;
-  struct BattleUnit *target;
+  struct Unit *source;
+  struct Unit *target;
   struct ItemMenuWork *menu;
   struct ItemDefinition *item;
   void *sourceCopy;
@@ -260,7 +260,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->completionFlag = 1;
       }
       if (command == 0) {
-        if (BattleEffect_HasTriggerFar(menu->selectedItems[0] &
+        if (Scene_HasItemTriggerFar(menu->selectedItems[0] &
                                        INVENTORY_ITEM_ID_MASK) != 0) {
           done = 1;
           *ownerOut = menu->sideMember[0];
@@ -687,7 +687,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       break;
 
     case 11:
-      ((struct BattleUnit *)Unit_Get(menu->sideMember[0]))
+      ((struct Unit *)Unit_Get(menu->sideMember[0]))
           ->inventory[menu->selectedSlots[0]] &= 0xfdff;
       Unit_RefreshPsynergyFar(menu->sideMember[0]);
       Unit_CalculateFar(menu->sideMember[0]);
@@ -963,7 +963,7 @@ s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items) {
   s32 result;
   u8 sortMode;
   s32 showEquipment;
-  struct BattleUnit *owner;
+  struct Unit *owner;
   void *window;
 
   count = menu->sideCount[0];
@@ -1235,9 +1235,9 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
       if (owner != -1) {
         if (Item_CanUnitEquip(owner,
                               menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK))
-          Animation_ApplyChildArgumentFar(menu->memberSprites[i], 3);
+          Sprite_StartAnimationFar(menu->memberSprites[i], 3);
         else
-          Animation_ApplyChildArgumentFar(menu->memberSprites[i], 1);
+          Sprite_StartAnimationFar(menu->memberSprites[i], 1);
       }
     }
   }
@@ -1250,7 +1250,7 @@ void EquipmentMenu_StopCompatibilityIndicators(void) {
   s8 i;
 
   for (i = 0; i < menu->partyCount; i++)
-    Animation_ApplyChildArgumentFar(menu->memberSprites[i], 1);
+    Sprite_StartAnimationFar(menu->memberSprites[i], 1);
   Task_Remove(EquipmentMenu_UpdateCompatibilityIndicators);
 }
 
@@ -1397,7 +1397,7 @@ void ItemMenu_RefreshMember(s32 ownerId, s32 mode) {
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 style = 0;
-  struct BattleUnit *unit = Unit_Get(owner);
+  struct Unit *unit = Unit_Get(owner);
   s32 entry = unit->inventory[slot];
   s32 previewSlot;
   void *buffer;
@@ -1731,7 +1731,7 @@ s32 ItemMenu_ChooseCommand(void) {
 #define COMMAND_AVAILABLE 1
 
 s32 Item_ClassifyUseMode(s32 owner, s32 item);
-s32 BattleEffect_HasTriggerFar(s32 item);
+s32 Scene_HasItemTriggerFar(s32 item);
 
 /// Fills commandStates (indexed by ItemMenuCommand) with
 /// ITEM_COMMAND_STATE_AVAILABLE or _DISABLED for the selected item: Use for
@@ -1787,7 +1787,7 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
     }
   }
 
-  if (BattleEffect_HasTriggerFar(menu->selectedItems[0] &
+  if (Scene_HasItemTriggerFar(menu->selectedItems[0] &
                                  INVENTORY_ITEM_ID_MASK) != 0)
     commandStates[0] = COMMAND_AVAILABLE;
 
@@ -1871,7 +1871,7 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
   masked &= 0x1ff;
   itemData = Item_GetDirectFar(masked);
 
-  if (BattleEffect_HasTriggerFar(masked) != 0) {
+  if (Scene_HasItemTriggerFar(masked) != 0) {
     return 0;
   }
 
@@ -2909,7 +2909,7 @@ s32 ItemMenu_RunList(s32 pane) {
   s32 result;
   s32 redraw;
   s32 done;
-  struct BattleUnit *owner;
+  struct Unit *owner;
   s32 previous;
   struct WindowSprite *icon;
   s32 work[5];
@@ -2961,7 +2961,7 @@ s32 ItemMenu_RunList(s32 pane) {
           icon->sentinel = 250;
         }
         for (i = 0; i < menu->partyCount; i++)
-          Animation_ApplyChildArgumentFar(menu->memberSprites[i], 1);
+          Sprite_StartAnimationFar(menu->memberSprites[i], 1);
       }
 
       if ((gFrameCount & 31) == 0) {
@@ -2971,7 +2971,7 @@ s32 ItemMenu_RunList(s32 pane) {
               Item_CanUnitEquip(slot, INVENTORY_ITEM_ID_MASK &
                                           menu->items[state.selectedIndex]) !=
                   0)
-            Animation_ApplyChildArgumentFar(menu->memberSprites[i], 3);
+            Sprite_StartAnimationFar(menu->memberSprites[i], 3);
         }
       }
 

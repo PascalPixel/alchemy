@@ -84,7 +84,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   s32 firstEntry;
   s32 drawnRow;
   s32 cursorHandle;
-  struct BattleUnit *unit;
+  struct Unit *unit;
   struct RenderInput *messageWindow;
   s32 iconCount;
   s32 preferredRow;

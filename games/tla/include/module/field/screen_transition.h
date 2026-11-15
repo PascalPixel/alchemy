@@ -10,7 +10,7 @@
 
 struct ObjectAnimationState;
 
-struct BattleFxDefinition {
+struct SpeakerDefinition {
   u16 id;
   u8 value;
   u8 flags;
@@ -85,7 +85,7 @@ struct MapLayerFlags {
   u16 flags;
 };
 
-extern struct BattleFxDefinition gSpeakerDefinitions[];
+extern struct SpeakerDefinition gSpeakerDefinitions[];
 
 extern const u8 gFieldEffect_ParticleEmitterScript[];
 

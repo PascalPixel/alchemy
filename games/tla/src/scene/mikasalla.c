@@ -84,7 +84,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMikasalla_TunnelPlacements;
 }
 
-void Map_SetLayerEntryFlag(s32 a);
+void TilesetAnim_Pause(s32 a);
 
 void Mikasalla_ClimbDownLadder(void);
 
@@ -193,9 +193,9 @@ void Mikasalla_DigUpLadder(void) {
 /// return.
 void Mikasalla_CastParch(void) {
   if (Event_GetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED) == 0) {
-    Map_SetLayerEntryFlag(0);
-    Map_SetLayerEntryFlag(1);
-    Map_SetLayerEntryFlag(2);
+    TilesetAnim_Pause(0);
+    TilesetAnim_Pause(1);
+    TilesetAnim_Pause(2);
     MapGrid_CopyCellsTo(56, 46, 30, 46, 16, 16);
     MapGrid_CopyCellsTo(56, 174, 30, 174, 16, 16);
     MapGrid_CopyCells(28, 23, 16, 16, 15, 23);
@@ -228,9 +228,9 @@ s32 Scene_PrepareMap(void) {
   Actor_GetById(party->leaderActorId)->priorityFlags |= 0x20;
   if (party->next == SCENE_MIKASALLA_2) {
     if (Event_GetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED)) {
-      Map_SetLayerEntryFlag(0);
-      Map_SetLayerEntryFlag(1);
-      Map_SetLayerEntryFlag(2);
+      TilesetAnim_Pause(0);
+      TilesetAnim_Pause(1);
+      TilesetAnim_Pause(2);
       MapGrid_CopyCellsTo(56, 46, 30, 46, 16, 16);
       MapGrid_CopyCellsTo(56, 174, 30, 174, 16, 16);
       MapGrid_CopyCells(28, 23, 16, 16, 15, 23);
@@ -412,10 +412,10 @@ s32 gMikasalla_ChickenPaces[] = {
       SC_SET(SW_ACCEL, 0x3333),                                                
       SC_SET(SW_SPEED, 0x9999),                                                    
       SC_LABEL(1),                                                             
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_MOVE(px(120), 0, px(648)),                                      
       SC_SYNC,                                                                 
-      SC_ARG(1),                                                               
+      SC_ANIMATION(1),                                                               
       SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
       SC_ADD(SW_FACING, -0x8000),                                              
       SC_ADD(SW_SCALE_X, -0x4000),                                             
@@ -454,10 +454,10 @@ s32 gMikasalla_ChickenPaces[] = {
       SC_ADD(SW_SCALE_X, 0x1000),                                              
       SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(4),                                                              
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_MOVE(px(72), 0, px(648)),                                      
       SC_SYNC,                                                                 
-      SC_ARG(1),                                                               
+      SC_ANIMATION(1),                                                               
       SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
       SC_ADD(SW_FACING, -0x8000),                                              
       SC_ADD(SW_SCALE_X, -0x4000),                                             
@@ -506,10 +506,10 @@ s32 gMikasalla_SheepPaces[] = {
       SC_SET(SW_ACCEL, 0x3333),                                                
       SC_SET(SW_SPEED, 0x4ccc),                                                    
       SC_LABEL(1),                                                             
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_MOVE(px(88), 0, px(680)),                                      
       SC_SYNC,                                                                 
-      SC_ARG(1),                                                               
+      SC_ANIMATION(1),                                                               
       SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
       SC_ADD(SW_FACING, -0x8000),                                              
       SC_ADD(SW_SCALE_X, -0x4000),                                             
@@ -548,10 +548,10 @@ s32 gMikasalla_SheepPaces[] = {
       SC_ADD(SW_SCALE_X, 0x1000),                                              
       SC_ADD(SW_SCALE_Y, -Q16_ONE / 32),                                               
       SC_WAIT(4),                                                              
-      SC_ARG(2),                                                               
+      SC_ANIMATION(2),                                                               
       SC_MOVE(px(120), 0, px(680)),                                      
       SC_SYNC,                                                                 
-      SC_ARG(1),                                                               
+      SC_ANIMATION(1),                                                               
       SC_WAIT(20), /* A half turn; FACING_WEST names a heading, not a turn. */ 
       SC_ADD(SW_FACING, -0x8000),                                              
       SC_ADD(SW_SCALE_X, -0x4000),                                             

@@ -182,7 +182,7 @@ void FieldPsynergy_Whirlwind(void) {
     s32 animation;
 
     kind = ORB_ORBITING;
-    animation = sprite->entries[0]->animId;
+    animation = sprite->entries[0]->animationId;
     if (animation == TARGET_ANIMATION_A)
       kind = ORB_WANDER;
     if (animation == TARGET_ANIMATION_B)
@@ -438,16 +438,16 @@ void FieldPsynergy_UpdateHaltedActor(struct ActorView *object) {
 /// first animation's param in gMainRoutineWork.
 void FieldPsynergy_HaltActor(s32 id) {
   struct ActorView *object;
-  struct AnimationEntry *entry;
+  struct SpriteAnimation *entry;
 
-  object = ObjectTable_Get(id);
+  object = Actor_Lookup(id);
   if (object != NULL) {
     gMainRoutineWork.pausedUpdate = (u32)object->update;
     gMainRoutineWork.pausedPose = 0;
     if (object->kind == 1) {
       entry = object->target.animation->entries[0];
       if (entry != NULL) {
-        gMainRoutineWork.pausedPose = entry->param;
+        gMainRoutineWork.pausedPose = entry->colorMode;
       }
     }
     object->update = FieldPsynergy_UpdateHaltedActor;
@@ -458,7 +458,7 @@ void FieldPsynergy_HaltActor(s32 id) {
 
 /// Resumes actor id with the update and param kept by FieldPsynergy_HaltActor.
 void FieldPsynergy_ResumeHaltedActor(s32 id) {
-  struct ActorView *object = ObjectTable_Get(id);
+  struct ActorView *object = Actor_Lookup(id);
 
   if (object != NULL) {
     if (object->update == FieldPsynergy_UpdateHaltedActor) {
@@ -1047,7 +1047,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct ArcObject *source) {
     object->scaleX = 0x6666;
     if (sprite == NULL)
       continue;
-    Animation_ApplyChildArgumentFar(sprite, 0);
+    Sprite_StartAnimationFar(sprite, 0);
     sprite->animation = zero;
     VramCache_FreeEntry(sprite->resource);
     sprite->resource = *(u16 *)(work + 0x710);

@@ -77,7 +77,7 @@ void FieldCamera_MoveWithinMapBounds(s32 requestedX, s32 requestedY,
 /// The event command "camera move to actor": FieldCamera_MoveWithinMapBounds to
 /// the actor's x and z.
 void FieldCamera_MoveToActorById(s32 id, s32 use_setter) {
-  struct Actor *obj = ObjectTable_Get(id);
+  struct Actor *obj = Actor_Lookup(id);
 
   if (obj != NULL)
     FieldCamera_MoveWithinMapBounds(obj->x.fixed, -1, obj->z.fixed, use_setter);
@@ -85,7 +85,7 @@ void FieldCamera_MoveToActorById(s32 id, s32 use_setter) {
 
 /// As FieldCamera_MoveToActorById, to the actor's height too.
 void FieldCamera_MoveToActor(s32 id, s32 use_setter) {
-  struct Actor *obj = ObjectTable_Get(id);
+  struct Actor *obj = Actor_Lookup(id);
 
   if (obj != NULL)
     FieldCamera_MoveWithinMapBounds(obj->x.fixed, obj->y.fixed, obj->z.fixed,

@@ -154,7 +154,7 @@ void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride) {
   } while (y != h);
 }
 
-typedef struct Sprite {
+typedef struct DaedalusSprite {
   u8 unk00[8];
   u16 tile : 10;
   u16 priority : 2;

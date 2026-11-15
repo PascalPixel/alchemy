@@ -122,7 +122,7 @@ void FieldPsynergy_GrindOnTarget(void) {
     particle++;
   }
   if (child != NULL && animation != NULL && isWaterObject == 1) {
-    Animation_ApplyChildValueFar(animation, 0);
+    Sprite_SetAnimationSpeedFar(animation, 0);
     FieldPsynergy_DecodePicture(animation->tiles, picture,
                                 animation->width * animation->height);
   }

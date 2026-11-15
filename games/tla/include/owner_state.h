@@ -6,9 +6,9 @@
 #include "battle/battle_side.h"
 #include "static_assert.h"
 
-/// A view of struct BattleUnit: its inventory, and as classId who the unit is
-/// (BattleUnit.enemyId). The item menus and the debug battle still read it;
-/// the game object reads struct BattleUnit.
+/// A view of struct Unit: its inventory, and as classId who the unit is
+/// (Unit.enemyId). The item menus and the debug battle still read it;
+/// the game object reads struct Unit.
 struct OwnerInventoryState {
   u8 unk000[0xd8];
   u16 inventory[15];
@@ -16,13 +16,13 @@ struct OwnerInventoryState {
   u16 classId;
 };
 
-/// A view of struct BattleUnit's Psynergy list (BattleUnit.psynergy).
+/// A view of struct Unit's Psynergy list (Unit.psynergy).
 struct OwnerActionState {
   u8 unk000[0x58];
   struct OwnerActionSlot actionSlots[32];
 };
 
-/// The Djinn held and set, each a word an element (BattleUnit.djinnHeld and
+/// The Djinn held and set, each a word an element (Unit.djinnHeld and
 /// djinnSet), read as one array of eight.
 union OwnerDjinnFlags {
   struct {
@@ -32,7 +32,7 @@ union OwnerDjinnFlags {
   u32 slots[8];
 };
 
-/// The Djinn held and set, counted by element (BattleUnit.djinnOwnedCounts and
+/// The Djinn held and set, counted by element (Unit.djinnOwnedCounts and
 /// djinnActiveCounts), read as one array of eight.
 union OwnerDjinnCounts {
   struct {
@@ -42,7 +42,7 @@ union OwnerDjinnCounts {
   u8 slots[8];
 };
 
-/// A view of struct BattleUnit's Djinn: the flags and counts of those held
+/// A view of struct Unit's Djinn: the flags and counts of those held
 /// and set.
 struct OwnerDjinnState {
   u8 unk000[0xf8];
@@ -92,12 +92,12 @@ enum ClassSeries {
 #define UNIT_HP_REGEN_MAX 10000
 #define UNIT_PP_REGEN_MAX 200
 
-/// A full HP or PP gauge (BattleUnit.hpGauge, ppGauge): the gauge is the
+/// A full HP or PP gauge (Unit.hpGauge, ppGauge): the gauge is the
 /// current value over the maximum in 2.14 fixed point.
 #define UNIT_GAUGE_SHIFT 14
 #define UNIT_GAUGE_FULL (1 << UNIT_GAUGE_SHIFT)
 
-/// How many actions a unit's list holds (BattleUnit.psynergy), and how
+/// How many actions a unit's list holds (Unit.psynergy), and how
 /// many a class teaches (ClassDefinition.abilities).
 #define PSYNERGY_SLOTS 32
 /// How many actions a class can teach (ClassDefinition.abilities).

@@ -4,8 +4,8 @@ gField_ExamineTriggerMessageOffsets:
 	.byte 2, 3, 13, 8, 30, 31
 @ How far each field Psynergy reaches (struct FieldPsynergyReach): its kind,
 @ range and height in pixels and width in 1/65536 turns; -1 ends it.
-	.global gData_080eff28
-gData_080eff28:
+	.global gFieldPsynergy_Reach
+gFieldPsynergy_Reach:
 	.2byte 3, 16, 8, 6144
 	.2byte 6, 16, 8, 6144
 	.2byte 7, 16, 8, 6144

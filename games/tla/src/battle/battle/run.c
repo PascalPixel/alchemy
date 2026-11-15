@@ -39,8 +39,8 @@ void BattleParty_SwapInReserves(void) {
   for (i = 0; i < count; i++) {
     s32 unit = work->partyUnits[i];
     s32 id = reserves[i];
-    struct BattleObj *from = BattleObject_Get(unit);
-    struct BattleObj *to = BattleObject_Get(id);
+    struct BattleObject *from = BattleObject_Get(unit);
+    struct BattleObject *to = BattleObject_Get(id);
     struct MotionObject *object = to->object;
     struct MotionObject *place = from->object;
 
@@ -92,7 +92,7 @@ void Battle_ChangeEnemyForm(s32 id) {
   work->enemyIds[1] = BATTLE_UNIT_LIST_END;
   Enemy_Update();
   object = (s32 *)BattleObject_Get(128);
-  BattleObject_Make((struct BattleObj *)object, 128, object[3] / Q16_ONE,
+  BattleObject_Make((struct BattleObject *)object, 128, object[3] / Q16_ONE,
                     object[4] / Q16_ONE);
   BattleObject_Put();
 }
@@ -538,7 +538,7 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
 
     if (owners != 0)
       *owners++ = owner;
-    ((struct BattleUnit *)Unit_Get(owner))->side = 2;
+    ((struct Unit *)Unit_Get(owner))->side = 2;
   }
 
   if (owners != 0)
@@ -566,7 +566,7 @@ s32 BattleParty_PrepareReserveOwners(u16 *owners) {
 
     if (owners != 0)
       *owners++ = owner;
-    ((struct BattleUnit *)Unit_Get(owner))->side = 2;
+    ((struct Unit *)Unit_Get(owner))->side = 2;
   }
 
   if (owners != 0)
@@ -592,7 +592,7 @@ s32 BattleEnemy_List(s16 *unit_ids) {
     id = 0x80;
     limit += 0x80;
     for (; id < limit; id++) {
-      if (((struct BattleUnit *)Unit_Get(id))->side != 0) {
+      if (((struct Unit *)Unit_Get(id))->side != 0) {
         *output = id;
         listed++;
         output++;
@@ -618,7 +618,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   s32 unitId;
   s16 hp;
   s32 activeCount;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   output = unitIds;
   livingCount = 0;
@@ -635,7 +635,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
       do {
         unitId = *member;
         member += 1;
-        hp = ((struct BattleUnit *)Unit_Get(unitId))->hp;
+        hp = ((struct Unit *)Unit_Get(unitId))->hp;
         if (hp > 0) {
           if (output != NULL) {
             *output = unitId;
@@ -684,7 +684,7 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
   s32 unitId;
   s16 hp;
   s32 count;
-  struct BattleUnit *unit;
+  struct Unit *unit;
 
   output = unitIds;
   livingCount = 0;
@@ -702,7 +702,7 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
       do {
         unitId = *member;
         member += 1;
-        hp = ((struct BattleUnit *)Unit_Get(unitId))->hp;
+        hp = ((struct Unit *)Unit_Get(unitId))->hp;
         if (hp > 0) {
           if (output != NULL) {
             *output = unitId;
@@ -780,7 +780,7 @@ s32 BattleUnit_ListLivingIds(s32 groups, u16 *dst) {
   if (groups & 1) {
     for (i = 0; order->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
       if (order->partyUnits[i] != BATTLE_UNIT_REMOVED &&
-          ((struct BattleUnit *)Unit_Get(order->partyUnits[i]))->hp != 0) {
+          ((struct Unit *)Unit_Get(order->partyUnits[i]))->hp != 0) {
         if (dst != NULL)
           *dst++ = order->partyUnits[i];
         count++;
@@ -790,7 +790,7 @@ s32 BattleUnit_ListLivingIds(s32 groups, u16 *dst) {
   if (groups & 2) {
     for (i = 0; order->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
       if (order->enemyIds[i] != BATTLE_UNIT_REMOVED &&
-          ((struct BattleUnit *)Unit_Get(order->enemyIds[i]))->hp != 0) {
+          ((struct Unit *)Unit_Get(order->enemyIds[i]))->hp != 0) {
         if (dst != NULL)
           *dst++ = order->enemyIds[i];
         count++;

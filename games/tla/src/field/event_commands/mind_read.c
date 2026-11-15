@@ -109,7 +109,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
         object->acceleration = 0xa3d7;
         object->facing = ArcTan2(from.z - to.z, from.x - to.x);
         object->update =
-            (void (*)(void))BattleEffect_SetCallbackWhenTargetUnset;
+            (void (*)(void))FieldEffect_ReleaseOnArrival;
         sprite->palette = 0;
         sprite->mode = 1;
         Actor_SetMoveTargetFar(object, from.x, from.y, from.z);
@@ -181,7 +181,7 @@ void FieldEffect_AdvanceHueCycle(void) {
 
 /// Per-frame update: once the actor has arrived (no target left on any axis),
 /// releases it through gBattleEffect_UntargetedObjectScript.
-void BattleEffect_SetCallbackWhenTargetUnset(struct Actor *target) {
+void FieldEffect_ReleaseOnArrival(struct Actor *target) {
   s32 tx;
   s32 ty;
 
@@ -698,7 +698,7 @@ void FieldPsynergy_WatchLeaderDistance(void) {
 
   work = Ram_HeapSlots->fieldWork;
   party = &gMainRoutineWork;
-  actor = ObjectTable_Get(party->leaderActorId);
+  actor = Actor_Lookup(party->leaderActorId);
   if (work->effectTimerRunning != 0) {
     timer = &work->revealFrames;
     if (*timer != 0)
@@ -1699,7 +1699,7 @@ struct EventWork__f0de21c {
 /// stand on a tile Cloak can hide on, requests CLOAK_END (0x2092).
 void FieldEffect_CheckCloakTile(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
-  struct Actor *leader = ObjectTable_Get(Party_GetLeaderActor());
+  struct Actor *leader = Actor_Lookup(Party_GetLeaderActor());
 
   if (MapGrid_IsCloakCell(leader->x.fixed, leader->z.fixed, leader->layer) == 0)
     event->psynergy = 0x2092;
@@ -1715,7 +1715,7 @@ void FieldPsynergy_EndCloak(void) {
   struct CloakCaster *caster =
       ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->mainActor;
   struct CloakSprite *sprite = caster->sprite;
-  struct AnimationEntry *entry = sprite->entries[0];
+  struct SpriteAnimation *entry = sprite->entries[0];
   u32 i;
 
   Sound_PlayFar(SE_CAST);
@@ -1725,7 +1725,7 @@ void FieldPsynergy_EndCloak(void) {
 
   // Blink between the flicker palette half transparent and solid...
   for (i = 0; i < 5; ++i) {
-    entry->param = CLOAK_FLICKER_PALETTE;
+    entry->colorMode = CLOAK_FLICKER_PALETTE;
     sprite->blend = 2;
     sprite->dirty = 1;
     wait(2);
@@ -1736,11 +1736,11 @@ void FieldPsynergy_EndCloak(void) {
 
   // ...then between the flicker palette and the caster's own.
   for (i = 0; i < 5; ++i) {
-    entry->param = CLOAK_FLICKER_PALETTE;
+    entry->colorMode = CLOAK_FLICKER_PALETTE;
     sprite->blend = 0;
     sprite->dirty = 1;
     wait(2);
-    entry->param = 0;
+    entry->colorMode = 0;
     sprite->dirty = 1;
     wait(2);
   }

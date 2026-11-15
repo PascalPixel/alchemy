@@ -284,7 +284,7 @@ void DebugWarp_Arafura2(void) {
 
     party->secondShortcut = 141;
   }
-  Event_SetDestinationFar(SCENE_ALHAFRA_1, 1);
+  Event_SetDestinationFar(SCENE_ALHAFRA, 1);
 }
 
 /// Preset 2, "Energy Sample": does nothing.
@@ -300,7 +300,7 @@ void DebugWarp_Arafura3(void) {
 
     party->secondShortcut = 141;
   }
-  Event_SetDestinationFar(SCENE_EASTERN_ALHAFRA_1, 1);
+  Event_SetDestinationFar(SCENE_EASTERN_ALHAFRA, 1);
 }
 
 /// Preset 4, "CHAMPA2": the Trident's three prongs, and Briggs sailed from
@@ -315,7 +315,7 @@ void DebugWarp_Champa2(void) {
 
     party->secondShortcut = 141;
   }
-  Event_SetDestinationFar(SCENE_CHAMPA_1, 9);
+  Event_SetDestinationFar(SCENE_CHAMPA, 9);
 }
 
 /// Preset 5, "Kaoru Special4": four story flags set. To the Shaman Village.
@@ -341,12 +341,12 @@ void DebugWarp_KaoruSpecial3(void) {
 
 /// Preset 7, "Kaoru Special2": to the Mars Lighthouse aerie.
 void DebugWarp_KaoruSpecial2(void) {
-  Event_SetDestinationFar(SCENE_MARS_LIGHTHOUSE_AERIE_1, 1);
+  Event_SetDestinationFar(SCENE_MARS_LIGHTHOUSE_AERIE, 1);
 }
 
 /// Preset 8, "Kaoru Special1": to the Mars Lighthouse's star room.
 void DebugWarp_KaoruSpecial1(void) {
-  Event_SetDestinationFar((s32)&SceneId_MarsLighthouseStarRoom1, 20);
+  Event_SetDestinationFar((s32)&SceneId_MarsLighthouseStarRoom, 20);
 }
 
 /// The debug warp menu's per-frame task: moves the cursor.
@@ -655,14 +655,14 @@ done:
       }
     }
     pp = 500;
-    ((struct BattleUnit *)Unit_Get(4))->pp = pp;
-    ((struct BattleUnit *)Unit_Get(5))->pp = pp;
-    ((struct BattleUnit *)Unit_Get(6))->pp = pp;
-    ((struct BattleUnit *)Unit_Get(7))->pp = pp;
-    ((struct BattleUnit *)Unit_Get(4))->ppMax = pp;
-    ((struct BattleUnit *)Unit_Get(5))->ppMax = pp;
-    ((struct BattleUnit *)Unit_Get(6))->ppMax = pp;
-    ((struct BattleUnit *)Unit_Get(7))->ppMax = pp;
+    ((struct Unit *)Unit_Get(4))->pp = pp;
+    ((struct Unit *)Unit_Get(5))->pp = pp;
+    ((struct Unit *)Unit_Get(6))->pp = pp;
+    ((struct Unit *)Unit_Get(7))->pp = pp;
+    ((struct Unit *)Unit_Get(4))->ppMax = pp;
+    ((struct Unit *)Unit_Get(5))->ppMax = pp;
+    ((struct Unit *)Unit_Get(6))->ppMax = pp;
+    ((struct Unit *)Unit_Get(7))->ppMax = pp;
   }
   return result;
 }

@@ -56,7 +56,7 @@ struct MainRoutineWork {
   /// The weights of the spring game's 15 prizes, as ☀️'s prizeWeights: three
   /// each of 4, 8, 16, 32 and 64 on a new game; Lemuria's spring halves a
   /// prize's weight each time it is won.
-  u8 unk13d[15];
+  u8 prizeWeights[15];
   u8 unk14c[0x94]; ///< not named by ⚓️ code
   s16 next;
   s16 entrance;

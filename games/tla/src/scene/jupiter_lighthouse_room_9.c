@@ -323,7 +323,7 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(JupiterLighthouseRoom9),
-    SCENE_EXIT(1, JupiterLighthouseRoom7, 1),
+    SCENE_EXIT(1, JupiterLighthouseWhorl, 1),
     SCENE_EXIT(2, JupiterLighthouseRoom9, 3),
     SCENE_EXIT(3, JupiterLighthouseRoom9, 2),
     SCENE_EXIT(4, JupiterLighthouseAerie, 4),
@@ -401,7 +401,7 @@ s32 gPaletteCycleFrame = -1;
 s32 gPaletteCyclePausesInEvents = 1;
 
 s32 gWhirlwindEndScript[] = {
-    SC_ARG(5),
+    SC_ANIMATION(5),
     SC_WAIT(12),
     SC_FREE,
 };

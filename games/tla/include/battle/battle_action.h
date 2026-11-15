@@ -64,7 +64,9 @@ struct BattleActionRecord {
   s16 parameter; ///< the command's ability, item or Djinni
   s16 target;    ///< the aimed unit's id
   s16 range;     ///< the action's range
-  s16 unk0e;     ///< which of the unit's actions this turn it is, from 0
+  /// Which of the unit's actions this turn it is, from 0: Poseidon's and the
+  /// Doom Dragon's forms choose each by it (BattleAI_ChooseAction).
+  s16 turnAction;
 };
 
 /// A battle's spoils so far: coins, experience, enemies defeated and up to
@@ -102,13 +104,13 @@ STATIC_ASSERT(sizeof(struct BattleSpoils) == 0x1c);
 /// BattleActionRecord, read with its fields unsigned.
 struct BattleAction {
   u16 unitId;
-  u16 unk02;
+  u16 slot;
   s16 priority;
   u16 command;
   u16 parameter;
   u16 target;
   u16 range;
-  u16 unk0e;
+  u16 turnAction;
 };
 
 #endif

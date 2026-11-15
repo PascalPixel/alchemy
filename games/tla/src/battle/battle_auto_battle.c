@@ -501,13 +501,13 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
 /// For a unit whose HP has run out: plays its falling effect to the last frame
 /// and marks its battle object for release (BattleObject_MarkForRelease).
 void BattleMotion_PlayFall(s32 unitId) {
-  struct BattleObjectAnimation *animation;
+  struct Sprite *animation;
   struct SpriteAnimation *entry;
 
   if (Unit_Get(unitId)->hp <= 0) {
     animation = BattleObject_Get(unitId)->object->records;
     Sprite_StartAnimationFar(animation, POSE_DAMAGE);
-    entry = animation->entry;
+    entry = animation->entries[0];
     entry->colorMode = SPRITE_COLOR_GREY;
     entry->picture = 0xFF;
     wait(4);

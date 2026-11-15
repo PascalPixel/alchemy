@@ -305,13 +305,13 @@ void BattleMotion_PlayHitFlash(s32 slot) {
 /// Projection_ScaledUnit and SelectionMenu_Draw.
 s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen) {
   struct MotionObject *object = BattleObject_Get(slot)->object;
-  struct SlotMotionRecord *record = GetMotionRecord(object, 0);
+  struct Sprite *record = GetMotionRecord(object, 0);
   s32 scale;
   // Unused: gives the stack frame its 12 bytes.
   UNUSED s32 unused[3];
 
   BattleCamera_ApplyTransform();
-  scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->height);
+  scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->scale);
   screen[1] -= Iwram_MulQ16(scale, BattleUnit_GetEffectHeight(slot) >> 16);
   return 0;
 }
@@ -322,11 +322,11 @@ s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen) {
 /// place the target cursor.
 s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
   struct MotionObject *object = BattleObject_Get(slot)->object;
-  struct SlotMotionRecord *record = GetMotionRecord(object, 0);
+  struct Sprite *record = GetMotionRecord(object, 0);
   s32 scale;
 
   BattleCamera_ApplyTransform();
-  scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->height);
+  scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->scale);
   if (BattleSprite_IsSmall(*(u16 *)((u8 *)Unit_Get(slot) + 0x14a)) != 0)
     screen[1] -= Iwram_MulQ16(scale, 24);
   else

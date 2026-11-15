@@ -2364,12 +2364,13 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
   if (unit->enemyId == ENEMY_POSEIDON) {
     selectionMemory =
         (struct AIState *)&((struct BattleWork *)Ram_HeapSlots->battleWork)
-            ->aiStates[request->unk0e];
-    if (request->unk0e == 1)
+            ->aiStates[request->turnAction];
+    if (request->turnAction == 1)
       enemy = Enemy_GetDefinitionFar(ENEMY_POSEIDON_2);
   } else if (unit->enemyId == ENEMY_DOOM_DRAGON) {
-    selectionMemory = (struct AIState *)&AI_BATTLE->aiStates[request->unk0e];
-    switch (request->unk0e) {
+    selectionMemory =
+        (struct AIState *)&AI_BATTLE->aiStates[request->turnAction];
+    switch (request->turnAction) {
     case 1:
       AI_BATTLE->actingAnimation = 6;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_3);
@@ -2384,8 +2385,9 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
       break;
     }
   } else if (unit->enemyId == ENEMY_DOOM_DRAGON_5) {
-    selectionMemory = (struct AIState *)&AI_BATTLE->aiStates[request->unk0e];
-    switch (request->unk0e) {
+    selectionMemory =
+        (struct AIState *)&AI_BATTLE->aiStates[request->turnAction];
+    switch (request->turnAction) {
     case 1:
       AI_BATTLE->actingAnimation = 6;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_7);
@@ -2396,8 +2398,9 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
       break;
     }
   } else if (unit->enemyId == ENEMY_DOOM_DRAGON_8) {
-    selectionMemory = (struct AIState *)&AI_BATTLE->aiStates[request->unk0e];
-    if (request->unk0e == 1) {
+    selectionMemory =
+        (struct AIState *)&AI_BATTLE->aiStates[request->turnAction];
+    if (request->turnAction == 1) {
       AI_BATTLE->actingAnimation = 3;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_9);
     }

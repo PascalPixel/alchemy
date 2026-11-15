@@ -171,7 +171,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
       entry->unitId = unitId;
       agility = unit->agi;
       entry->priority = agility;
-      entry->unk0e = copyIndex;
+      entry->turnAction = copyIndex;
       if (unit->actionsPerTurn == 4) {
         if (copyIndex == 0)
           ;

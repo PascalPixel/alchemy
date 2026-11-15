@@ -74,7 +74,7 @@ void BattleUnit_BuildStatusFlags(s32 id, struct BattleObject *output) {
 /// switches at once when the shown condition ends.
 void BattleStatusIcon_Cycle(struct BattleObject *slot) {
   struct SpriteAnimation *icon;
-  struct StatusIconRecord *rec;
+  struct Sprite *rec;
   struct MotionObject *owner;
   s32 anim;
   s32 handle;
@@ -205,9 +205,9 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
   s32 unitId;
   struct BattleObject *battleObject;
   struct MotionObject *object;
-  struct TlaSpriteRecord *record;
+  struct Sprite *record;
   struct SpriteAnimation *entry;
-  struct TlaSpriteRecord **records;
+  struct Sprite **records;
   s32 spriteId;
   s32 releasedUnitId;
   u8 boxY;
@@ -248,13 +248,13 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         (battleObject->resource & 0xfff) == 579 ||
         (battleObject->resource & 0xfff) == 581 ||
         (battleObject->resource & SPRITE_ID_MASK) == 583) {
-      records = (struct TlaSpriteRecord **)Ram_HeapSlots->actorSystem->unk08 +
+      records = (struct Sprite **)Ram_HeapSlots->actorSystem->unk08 +
                 Ram_HeapSlots->actorSystem->count;
       spriteId = battleObject->resource;
       object->recordStorageKind = 2;
       object->records = records;
       Iwram_ClearWordsEntry(records, 16);
-      record = (struct TlaSpriteRecord *)Sprite_CreateFar(spriteId);
+      record = (struct Sprite *)Sprite_CreateFar(spriteId);
       if (record != 0) {
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
         boxY = Resource_GetMetadataRecordFarFar(spriteId)->boxY;
@@ -263,16 +263,14 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         records++;
       }
       record->flags = 0;
-      record = (struct TlaSpriteRecord *)Sprite_CreateFar(spriteId +
-                                                          SPRITE_SECOND_PART);
+      record = (struct Sprite *)Sprite_CreateFar(spriteId + SPRITE_SECOND_PART);
       if (record != 0) {
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
         *records = record;
       }
       record->flags = 0;
     } else {
-      record =
-          (struct TlaSpriteRecord *)Sprite_CreateFar(battleObject->resource);
+      record = (struct Sprite *)Sprite_CreateFar(battleObject->resource);
       if (record != 0) {
         object->recordStorageKind = 1;
         object->records = record;
@@ -331,7 +329,7 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh) {
 
 /// Detaches the scripts from the four sprite entries of one sprite.
 void ResetMotionRecordGroup(void *owner) {
-  struct AnimationEntryGroup *object = owner;
+  struct Sprite *object = owner;
   s32 i;
 
   if (object != NULL) {
@@ -370,8 +368,8 @@ void BattleObject_UpdateSpritePriorities(void) {
   s32 unitIndex;
   s32 recordIndex;
   struct MotionObject *object;
-  struct TlaSpriteRecord *record;
-  struct TlaSpriteRecord **records;
+  struct Sprite *record;
+  struct Sprite **records;
 
   partyCount = BattleUnit_ListIds(1, unitIds);
   enemyCount = BattleUnit_ListIds(2, &unitIds[partyCount]);
@@ -387,7 +385,7 @@ void BattleObject_UpdateSpritePriorities(void) {
         object = slot->object;
         BattleStatusIcon_Cycle(slot);
         if (slot->shadowEntry != 0) {
-          struct TlaSpriteRecord *record = GetMotionRecord(object, 0);
+          struct Sprite *record = GetMotionRecord(object, 0);
 
           if (record != 0) {
             struct SpriteAnimation *effect;
@@ -436,7 +434,7 @@ void BattleObject_UpdateSpritePriorities(void) {
       case 2:
         records = object->records;
         for (recordIndex = 0; recordIndex < 4; recordIndex++) {
-          struct TlaSpriteRecord *part = *records++;
+          struct Sprite *part = *records++;
 
           if (part != 0) {
             record = part;
@@ -464,7 +462,7 @@ void BattleObject_UpdateSpritePriorities(void) {
       case 2:
         records = object->records;
         for (recordIndex = 0; recordIndex < 4; recordIndex++) {
-          struct TlaSpriteRecord *part = *records++;
+          struct Sprite *part = *records++;
 
           if (part != 0) {
             record = part;
@@ -582,7 +580,7 @@ UNREAD_RESULT BattleCamera_ApplyTransform(void) {
 /// Projects a battle object's position to the screen, in projected.
 s32 BattleMotion_ProjectPosition(s32 id, s32 *projected) {
   struct MotionObject *object = BattleObject_FindSlot(id)->object;
-  struct MotionRecordScale *record = GetMotionRecord(object, 0);
+  struct Sprite *record = GetMotionRecord(object, 0);
   s32 position[3];
   s32 scaled;
 

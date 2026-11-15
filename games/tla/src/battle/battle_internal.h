@@ -147,12 +147,6 @@ void Sprite_RemoveAnimationFar(void *state, s32 handle);
 #include "battle/battle_type.h"
 #include "field/sprite.h"
 
-/// A unit's sprite as BattleMotion_PlayFall reads it: its first animation.
-struct BattleObjectAnimation {
-  u8 unk00[0x28];
-  struct SpriteAnimation *entry;
-};
-
 /// A unit's HP and PP as ScriptedBattle_SaveUnits keeps them.
 struct SnapshotVitals {
   u16 hp;
@@ -196,47 +190,6 @@ struct DebugPartyEntry {
   u16 items[6];
   u16 actions[2];
   u16 unk16;
-};
-
-/// A unit's sprite as BattleMotion reads it: its scale.
-struct SlotMotionRecord {
-  u8 unk00[12];
-  s32 height;
-};
-
-/// A unit's sprite as the status icon reads it: its width, which picks the icon
-/// set, and the flag that redraws it.
-struct StatusIconRecord {
-  u8 unk00[0x14];
-  u8 width;
-  u8 unk15[4];
-  u8 dirty;
-};
-
-/// A unit's sprite as BattleObject_Make builds it: its image, scale, width,
-/// redraw flag and outline flags, and its animations.
-struct TlaSpriteRecord {
-  struct AnimationSpritePart image;
-  s32 scale;
-  u8 unk10[4];
-  u8 width;
-  u8 unk15[4];
-  u8 dirty;
-  u8 flags;
-  u8 unk1b[13];
-  struct SpriteAnimation *entries[1];
-};
-
-/// A sprite as ResetMotionRecordGroup reads it: its four animations.
-struct AnimationEntryGroup {
-  u8 unk00[0x28];
-  struct SpriteAnimation *entries[4];
-};
-
-/// A unit's sprite as the battle reads its scale.
-struct MotionRecordScale {
-  u8 unk00[0xc];
-  s32 scale;
 };
 
 /// The packet the two consoles exchange each turn of a link battle: how many

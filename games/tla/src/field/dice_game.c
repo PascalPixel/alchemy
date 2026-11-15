@@ -102,29 +102,29 @@ void SuperLuckyDice_ResetViewDefaults(void) {
 s32 SuperLuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                      s32 count) {
   s32 remaining;
-  u32 mask_red;
-  u32 mask_green;
-  u32 mask_blue;
+  u32 redMask;
+  u32 greenMask;
+  u32 blueMask;
   u32 pixel;
   u32 red;
   u32 green;
   u32 blue;
 
   if (count > 0) {
-    mask_red = 0x1f;
-    mask_green = 0x3e0;
-    mask_blue = 0x7c00;
+    redMask = RGB(31, 0, 0);
+    greenMask = RGB(0, 31, 0);
+    blueMask = RGB(0, 0, 31);
     remaining = count;
     do {
       pixel = *source;
-      red = pixel & mask_red;
-      green = pixel & mask_green;
-      blue = mask_blue & pixel;
+      red = pixel & redMask;
+      green = pixel & greenMask;
+      blue = blueMask & pixel;
       red *= scale;
       green *= scale;
       blue *= scale;
-      pixel = ((red >> 16) & mask_red) | ((green >> 16) & mask_green);
-      pixel |= (blue >> 16) & mask_blue;
+      pixel = ((red >> 16) & redMask) | ((green >> 16) & greenMask);
+      pixel |= (blue >> 16) & blueMask;
       *destination = pixel;
       source++;
       destination++;
@@ -143,16 +143,16 @@ void SuperLuckyDice_BrightenColors(u16 *source, u16 *destination, u32 count,
 
   add = ((-Trig_Cos(angle)) * 16 >> 16) + 16;
   for (i = 0; i != count; i++) {
-    s32 r = (*source & 31) + add;
-    s32 g = ((*source >> 5) & 31) + add;
-    s32 b = ((*source >> 10) & 31) + add;
+    s32 r = RGB_RED(*source) + add;
+    s32 g = RGB_GREEN(*source) + add;
+    s32 b = RGB_BLUE(*source) + add;
 
-    if (r > 31)
-      r = 31;
-    if (g > 31)
-      g = 31;
-    if (b > 31)
-      b = 31;
+    if (r > RGB_LEVEL_MAX)
+      r = RGB_LEVEL_MAX;
+    if (g > RGB_LEVEL_MAX)
+      g = RGB_LEVEL_MAX;
+    if (b > RGB_LEVEL_MAX)
+      b = RGB_LEVEL_MAX;
     *destination = (b << 10) | (g << 5) | r;
     source++;
     destination++;
@@ -552,12 +552,12 @@ void SuperLuckyDice_Run(void) {
     dst = spritePalette + 176;
     src = (u16 *)resourceAddress;
     for (index = 0; index != 16; index++) {
-      blue = ((*src >> 10) & 31) + 4;
-      red = (*src & 31) + 4;
-      if (red > 31)
-        red = 31;
-      if (blue > 31)
-        blue = 31;
+      blue = RGB_BLUE(*src) + 4;
+      red = RGB_RED(*src) + 4;
+      if (red > RGB_LEVEL_MAX)
+        red = RGB_LEVEL_MAX;
+      if (blue > RGB_LEVEL_MAX)
+        blue = RGB_LEVEL_MAX;
       *dst = (red << 10) | (red << 5) | blue;
       src++;
       dst++;
@@ -1144,12 +1144,12 @@ void SuperLuckyDice_Run(void) {
           dst = spritePalette + 224;
           src = (u16 *)resourceAddress;
           for (index = 0; index != 16; index++) {
-            blue = ((*src >> 10) & 31) + 4;
-            red = (*src & 31) + 4;
-            if (red > 31)
-              red = 31;
-            if (blue > 31)
-              blue = 31;
+            blue = RGB_BLUE(*src) + 4;
+            red = RGB_RED(*src) + 4;
+            if (red > RGB_LEVEL_MAX)
+              red = RGB_LEVEL_MAX;
+            if (blue > RGB_LEVEL_MAX)
+              blue = RGB_LEVEL_MAX;
             *dst = (blue << 10) | (red << 5) | blue;
             src++;
             dst++;

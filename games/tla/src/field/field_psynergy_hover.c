@@ -37,16 +37,16 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
   blue = wave[(phase + 64) % 96] + bias;
   if (red < 0)
     red = 0;
-  if (red > 31)
-    red = 31;
+  if (red > RGB_LEVEL_MAX)
+    red = RGB_LEVEL_MAX;
   if (green < 0)
     green = 0;
-  if (green > 31)
-    green = 31;
+  if (green > RGB_LEVEL_MAX)
+    green = RGB_LEVEL_MAX;
   if (blue < 0)
     blue = 0;
-  if (blue > 31)
-    blue = 31;
+  if (blue > RGB_LEVEL_MAX)
+    blue = RGB_LEVEL_MAX;
   return (blue << 10) | (green << 5) | red;
 }
 

@@ -1687,7 +1687,7 @@ void FieldPsynergy_Arrow(void) {
   work->start[0] = scene->mainActor->x.fixed;
   work->start[1] = scene->mainActor->y.fixed;
   work->start[2] = scene->mainActor->z.fixed;
-  blue = 31 << 10;
+  blue = RGB_LEVEL_MAX << 10;
   work->target[0] = scene->mainActor->x.fixed;
   work->target[1] = scene->mainActor->y.fixed;
   work->target[2] = scene->mainActor->z.fixed;

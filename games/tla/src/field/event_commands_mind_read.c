@@ -153,7 +153,7 @@ s32 FieldEffect_HueChannelRamp(s16 hue) {
   if (angle < 60) {
     level = angle * 31 / 60;
   } else if (angle < 180) {
-    level = 31;
+    level = RGB_LEVEL_MAX;
   } else if (angle < 240) {
     level = (240 - angle) * 31 / 60;
   }

@@ -55,9 +55,9 @@ redraw:
     p += 32;
     *p = (value & 31) + HEX_DIGIT;
     p += 32;
-    *p = ((value >> 5) & 31) + HEX_DIGIT;
+    *p = RGB_GREEN(value) + HEX_DIGIT;
     p += 32;
-    *p = ((value >> 10) & 31) + HEX_DIGIT;
+    *p = RGB_BLUE(value) + HEX_DIGIT;
     map++;
   }
   wait(1);

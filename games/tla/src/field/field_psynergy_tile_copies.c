@@ -135,8 +135,8 @@ void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
 void Cyclone_PlotArc(s32 radius, s32 angle, u16 *offsets, u8 *pixels) {
   s32 i;
 
-  if (radius > 31)
-    radius = 31;
+  if (radius > RGB_LEVEL_MAX)
+    radius = RGB_LEVEL_MAX;
   for (i = 0; i <= 29; i++) {
     s32 x = ((radius * Trig_Cos(angle)) >> 16) + 32;
     s32 y = ((radius * Trig_Sin(angle)) >> 16) + 32;

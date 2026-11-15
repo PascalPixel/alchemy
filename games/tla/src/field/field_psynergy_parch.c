@@ -217,14 +217,14 @@ loaded:
       blue = Trig_Sin(((frame / 4 + i) << 11) + 0x4800);
       blue = (blue * 10 >> 16) + 12;
       red = add + 28;
-      if (red > 31)
-        red = 31;
+      if (red > RGB_LEVEL_MAX)
+        red = RGB_LEVEL_MAX;
       green += add;
-      if (green > 31)
-        green = 31;
+      if (green > RGB_LEVEL_MAX)
+        green = RGB_LEVEL_MAX;
       blue += add;
-      if (blue > 31)
-        blue = 31;
+      if (blue > RGB_LEVEL_MAX)
+        blue = RGB_LEVEL_MAX;
       do { // once-only block: the listing schedules the store with it
         packed = (blue << 10) | (green << 5) | red;
         ((u16 *)OBJ_PLTT)[255 - i] = packed;

@@ -223,7 +223,7 @@ void FieldPsynergy_Cyclone(void) {
   owner->update = BattleEffect_SpinObject;
   owner->timer = owner->facing;
   palette = (u16 *)&OBJ_PLTT_COLOR(14, 0);
-  blue = 31 << 10;
+  blue = RGB_LEVEL_MAX << 10;
   for (j = 0; j < 16; j++) {
     c = j + 16;
     /* FAKEMATCH(dead): an empty once-only loop. */

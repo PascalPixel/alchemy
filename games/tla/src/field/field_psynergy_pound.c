@@ -44,7 +44,7 @@ void FieldPsynergy_UpdatePound(void) {
     frames = &canvas->drawnFrames;
     base = 9;
     base <<= 16;
-    blue = 0x7c00;
+    blue = RGB(0, 0, 31);
   palette:
     red = Trig_Sin((((((u32)*frames >> 1) + i) << 16) + base) >> 5) * 12;
     green = Trig_Sin((((((u32)*frames >> 1) + i) << 16) + base) >> 5) * 12;

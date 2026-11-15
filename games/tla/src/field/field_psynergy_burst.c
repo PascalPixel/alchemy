@@ -58,8 +58,8 @@ void FieldPsynergy_UpdateBurst(void) {
     palette = (volatile u16 *)&OBJ_PLTT_COLOR(14, 0);
     i = 0;
     frames = &canvas->drawnFrames;
-    red = 31;
-    blue = 31 << 10;
+    red = RGB_LEVEL_MAX;
+    blue = RGB_LEVEL_MAX << 10;
     for (; i <= 31; i++) {
       s32 green =
           (((Trig_Sin((((u32)*frames >> 1) + i << 16) + 0x90000 >> 5) * 12) >>

@@ -5,6 +5,7 @@
 /// the script command table and the work value handlers.
 
 #include "types.h"
+#include "system/io_reg.h"
 #include "field/field_bank.h"
 #include "field/curve.h"
 #include "field/script_operands.h"
@@ -71,7 +72,9 @@ const u8 gWorldMap_TerrainBehaviorTable[80] = {
 
 /// Eight colours (BGR555).
 const u16 gSpriteViewer_BackdropColors[8] = {
-    0x0000, 0x7c00, 0x03e0, 0x001f, 0x1ce7, 0x3def, 0x7fff, 0x000f,
+    RGB(0, 0, 0),    RGB(0, 0, 31),   RGB(0, 31, 0),
+    RGB(31, 0, 0),   RGB(7, 7, 7),    RGB(15, 15, 15),
+    RGB(31, 31, 31), RGB(15, 0, 0),
 };
 
 /// Stops for a number from 0 to 715 that steps by one or skips: a skip

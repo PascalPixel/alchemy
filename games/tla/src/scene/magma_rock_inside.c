@@ -1052,7 +1052,7 @@ void MagmaRockInside_RaiseLava(void) {
   u32 i;
   u32 row;
 
-  /* FAKEMATCH(dead): srcX and srcZ start from a zero only combine sees. */
+  /* FAKEMATCH(dead): srcX and srcZ start from a 0 only combine sees. */
   srcX = ((u32)layer & 3) >> 2;
   srcZ = ((u32)layer & 7) >> 3;
   // t holds 212 for a set flag, then the frame count.

@@ -1649,14 +1649,12 @@ s32 Scene_Initialize(void) {
   s32 other, rise;
   s32 offset;
   s32 priorityBit, destinationX, destinationColumn, width;
-  u8 zero;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   work = &gMainRoutineWork;
   work->retreatScene = SCENE_MAGMA_ROCK_SLIDE;
   work->retreatEntrance = 1;
   scene = work->next;
-  zero = 0;
   if (scene == SCENE_MAGMA_ROCK_SLIDE) {
     priorityBit = 32;
     Actor_GetById(work->leaderActorId)->priorityFlags |= priorityBit;
@@ -1679,8 +1677,8 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
       actor = Actor_GetById(ACTOR_SLIDE_STATUE_FLAME);
       actor->x.fixed += px(1);
-      actor->motionFlags = zero;
-      actor->collisionFlags = zero;
+      actor->motionFlags = 0;
+      actor->collisionFlags = 0;
       actor->groundHeight = actor->y.fixed += px(24);
       Actor_SetSpriteFlags(actor, 0);
     }
@@ -1726,24 +1724,24 @@ s32 Scene_Initialize(void) {
         s32 id;
 
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
-          Actor_GetById(ACTOR_STATUE_PAIR_A_EAST)->motionFlags = zero;
+          Actor_GetById(ACTOR_STATUE_PAIR_A_EAST)->motionFlags = 0;
           rise = 0x500000;
           Actor_GetById(ACTOR_STATUE_PAIR_A_EAST)->y.fixed += rise;
-          Actor_GetById(ACTOR_STATUE_PAIR_A_WEST)->motionFlags = zero;
+          Actor_GetById(ACTOR_STATUE_PAIR_A_WEST)->motionFlags = 0;
           Actor_GetById(ACTOR_STATUE_PAIR_A_WEST)->y.fixed += rise;
           MagmaRock_PlaceVolley(ACTOR_MAGMA_ROCK_A, ACTOR_STATUE_PAIR_A_EAST,
                                 0);
-          Actor_GetById(ACTOR_STATUE_PAIR_B_EAST)->motionFlags = zero;
+          Actor_GetById(ACTOR_STATUE_PAIR_B_EAST)->motionFlags = 0;
           rise = 0xa00000;
           Actor_GetById(ACTOR_STATUE_PAIR_B_EAST)->y.fixed += rise;
-          Actor_GetById(ACTOR_STATUE_PAIR_B_WEST)->motionFlags = zero;
+          Actor_GetById(ACTOR_STATUE_PAIR_B_WEST)->motionFlags = 0;
           Actor_GetById(ACTOR_STATUE_PAIR_B_WEST)->y.fixed += rise;
           MagmaRock_PlaceVolley(ACTOR_MAGMA_ROCK_B, ACTOR_STATUE_PAIR_B_EAST,
                                 1);
-          Actor_GetById(ACTOR_STATUE_PAIR_C_EAST)->motionFlags = zero;
+          Actor_GetById(ACTOR_STATUE_PAIR_C_EAST)->motionFlags = 0;
           rise = 0xf00000;
           Actor_GetById(ACTOR_STATUE_PAIR_C_EAST)->y.fixed += rise;
-          Actor_GetById(ACTOR_STATUE_PAIR_C_WEST)->motionFlags = zero;
+          Actor_GetById(ACTOR_STATUE_PAIR_C_WEST)->motionFlags = 0;
           Actor_GetById(ACTOR_STATUE_PAIR_C_WEST)->y.fixed += rise;
           MagmaRock_PlaceVolley(ACTOR_MAGMA_ROCK_C, ACTOR_STATUE_PAIR_C_EAST,
                                 0);
@@ -1756,15 +1754,15 @@ s32 Scene_Initialize(void) {
           actor = Actor_GetById(ACTOR_MIDDLE_FLAME_A);
           other = 0x10000;
           actor->x.fixed += other;
-          actor->motionFlags = zero;
-          actor->collisionFlags = zero;
+          actor->motionFlags = 0;
+          actor->collisionFlags = 0;
           rise = 0x180000;
           actor->groundHeight = actor->y.fixed += rise;
           Actor_SetSpriteFlags(actor, 0);
           actor = Actor_GetById(ACTOR_MIDDLE_FLAME_B);
           actor->x.fixed += other;
-          actor->motionFlags = zero;
-          actor->collisionFlags = zero;
+          actor->motionFlags = 0;
+          actor->collisionFlags = 0;
           actor->groundHeight = actor->y.fixed += rise;
           Actor_SetSpriteFlags(actor, 0);
         }
@@ -1800,15 +1798,15 @@ s32 Scene_Initialize(void) {
           actor = Actor_GetById(ACTOR_UPPER_FLAME_A);
           other = 0x10000;
           actor->x.fixed += other;
-          actor->motionFlags = zero;
-          actor->collisionFlags = zero;
+          actor->motionFlags = 0;
+          actor->collisionFlags = 0;
           rise = 0x180000;
           actor->groundHeight = actor->y.fixed += rise;
           Actor_SetSpriteFlags(actor, 0);
           actor = Actor_GetById(ACTOR_UPPER_FLAME_B);
           actor->x.fixed += other;
-          actor->motionFlags = zero;
-          actor->collisionFlags = zero;
+          actor->motionFlags = 0;
+          actor->collisionFlags = 0;
           actor->groundHeight = actor->y.fixed += rise;
           Actor_SetSpriteFlags(actor, 0);
         }
@@ -1823,8 +1821,8 @@ s32 Scene_Initialize(void) {
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(ACTOR_TOP_FLAME);
           actor->x.fixed += px(1);
-          actor->motionFlags = zero;
-          actor->collisionFlags = zero;
+          actor->motionFlags = 0;
+          actor->collisionFlags = 0;
           actor->groundHeight = actor->y.fixed += px(24);
           Actor_SetSpriteFlags(actor, 0);
         }
@@ -2209,34 +2207,31 @@ void MagmaRock_SpawnDustRing(void) {
   s32 state;
   u32 i;
   s32 angle;
-  u8 zero;
 
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   if (leader == 0)
     return;
-  zero = 0;
   state = 0;
   for (i = 0; i <= 16; i++) {
     effect = (struct FieldEffect *)FieldActor_Create(
         285, leader->x.fixed, leader->y.fixed, leader->z.fixed);
     if (effect != 0) {
       state = Sprite_ShareVramCacheEntry(effect->sprite, state);
-      zero = 0;
-      effect->motionFlags = zero;
-      effect->collisionFlags = zero;
+      effect->motionFlags = 0;
+      effect->collisionFlags = 0;
       Actor_SetSpriteFlags((struct Actor *)effect, 0);
       Actor_SelectAnimation(effect, 2);
       Actor_StartScript(effect, gMagmaRock_DustScript);
       angle = i << 12;
       effect->velocity.x = Trig_Cos(angle);
-      effect->velocity.y = zero;
+      effect->velocity.y = 0;
       effect->velocity.z = Math_Sin(angle);
       effect->velocity.x += effect->velocity.x >> 1;
       effect->velocity.x += (Random_Below(0xc000)) - 0x6000;
       effect->velocity.z += (Random_Below(0x6000)) - 0x3000;
       effect->spin = (Random_Below(0x1000)) - 0x800;
-      effect->scaleRateX = zero;
-      effect->scaleRateY = zero;
+      effect->scaleRateX = 0;
+      effect->scaleRateY = 0;
       effect->update = Effect_AdvanceMotionAtLeaderPriority;
       effect->sprite->priority =
           ((struct FieldSprite *)leader->sprite)->priority;

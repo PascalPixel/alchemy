@@ -2186,10 +2186,9 @@ void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
   MapGrid_CopyCells(event->x, event->z + 2, 1, 1, x, z);
   FieldEvent_Wait(12);
   {
-    u32 zero = 0;
 
     object->facing = FACING_SOUTH;
-    object->motionFlags = zero;
+    object->motionFlags = 0;
   }
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   {

@@ -608,11 +608,10 @@ void SeaOfTime_CountLaps(void) {
     }
   }
   if (gSeaOfTime_LapCount == gSeaOfTime_LapsNeeded[(u16)index]) {
-    s32 zero = 0;
 
     work->raisedTrigger = RAISED_START_WAVES;
-    gSeaOfTime_LapCount = zero;
-    gSeaOfTime_LapTurn = zero;
+    gSeaOfTime_LapCount = 0;
+    gSeaOfTime_LapTurn = 0;
   }
 }
 

@@ -264,9 +264,8 @@ void Naribwe_EnterDoor(void) {
 
     if (actor != NULL) {
       u8 *flags = &actor->motionFlags;
-      s32 zero = 0;
 
-      *flags = zero;
+      *flags = 0;
     }
   }
   trigger = &work->stepTrigger;

@@ -393,7 +393,6 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
                           anchor->y.fixed + offset + px(8), anchor->z.fixed);
     offset = (offset / px(6)) << 16;
     if (object != NULL) {
-      u8 zero;
 
       sprite = object->sprite;
       Actor_StartScript(object, gMarsLighthouseAerie_BeaconFlameScript);
@@ -403,10 +402,9 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
       object->timer = angle;
       object->userValue = phase;
       object->update = MarsLighthouseAerie_SwingBeaconFlame;
-      zero = 0;
       object->watchedActor = anchor;
       object->speedLimit = Math_Sin((offset & 0xfffff) >> 4) * 24 >> 16;
-      ((u8 *)sprite)[26] = zero;
+      ((u8 *)sprite)[26] = 0;
       sprite->layer =
           ((struct MarsLighthouseAerieSprite *)anchor->sprite)->layer;
     }
@@ -1943,7 +1941,6 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
                                    0x80000,
                                anchor->z.fixed);
     if (object != NULL) {
-      u8 zero;
       s32 mask;
 
       sprite = object->sprite;
@@ -1952,14 +1949,13 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
       object->motionFlags = 0;
       angle = Random16() & 0xffff000;
       object->timer = angle;
-      zero = 0;
       object->userValue = 0;
       phase = Random16() >> 13;
       object->riseCounter = phase;
       object->update = MarsLighthouseAerie_OrbitBeaconFire;
       object->speedLimit = Math_Sin(Random16() * 0xffff >> 20) * 24;
       object->speedLimit = anchor->speedLimit >> 16;
-      sprite->unk1a = zero;
+      sprite->unk1a = 0;
       mask = -13;
       ((u8 *)sprite)[9] = (((u8 *)sprite)[9] & mask) | 4;
     }

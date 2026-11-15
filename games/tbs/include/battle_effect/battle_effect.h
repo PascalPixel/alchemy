@@ -2,6 +2,7 @@
 #define ALCHEMY_BATTLE_EFFECT_H
 
 #include "types.h"
+#include "fixed_math.h"
 #include "battle/battle_effect_work.h"
 #include "battle/blitter.h"
 #include "graphics/render_placement.h"
@@ -244,8 +245,6 @@ typedef struct {
 /// Clips overflow on all four sides.
 #define EFFECT_CLIP_BOUNDS (BLITTER_CLIP_X | BLITTER_CLIP_Y)
 
-/// The whole pixels of a 16.16 value.
-#define Q_16_16_TO_INT(v) ((s32)(v) >> 16)
 /// The whole pixels of a stored 16.16 value, read as its upper halfword, as
 /// the impact burst, Neptune and the spark groups' ring flashes read them.
 // UB: the s32 is read through an s16.

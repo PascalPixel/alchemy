@@ -28,7 +28,7 @@ enum {
 /// stays taken.
 s32 Save_InitializeWork(void) {
   struct SaveWork *work;
-  struct SaveSectorHeader headerStorage;
+  u32 buffer[4];
   struct SaveSectorHeader *header;
   u32 index;
 
@@ -54,10 +54,9 @@ s32 Save_InitializeWork(void) {
     work->partId[index] = SAVE_PART_NONE;
     work->counter[index] = 0;
     status = Save_ReadSector(index);
-    START_DMA(&work->slot, &headerStorage, DMA_COPY_WORDS(4));
+    START_DMA(&work->slot, buffer, DMA_COPY_WORDS(4));
     WAIT_DMA();
-    /* FAKEMATCH(temporary): header holds &headerStorage. */
-    header = &headerStorage;
+    header = (struct SaveSectorHeader *)buffer;
 
     // Not a save sector, or one for no part, or a damaged one: it stays free.
     if (Save_CompareBytes(header->signature, (u8 *)gSave_Signature, 7) != 0)

@@ -110,8 +110,8 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
 
         // A pillar rises and sinks along a sine, once, twice or three times by
         // variant.
-        height = Q_16_16_TO_INT(heights.column[column] *
-                                Trig_Sin((frame - riseFrame) << 10));
+        height = WHOLE_PIXELS(heights.column[column] *
+                              Trig_Sin((frame - riseFrame) << 10));
         if (height < 0)
           height = -height;
         top = 112 - height;

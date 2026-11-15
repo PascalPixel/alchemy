@@ -165,10 +165,10 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
           s32 y;
 
           x = screen.x +
-              Q_16_16_TO_INT(
+              WHOLE_PIXELS(
                   (Trig_Sin(spark->velocityX + i * (TRIG_TURN / 3)) * 8));
           y = screen.y +
-              Q_16_16_TO_INT(
+              WHOLE_PIXELS(
                   (Trig_Cos(spark->velocityX + i * (TRIG_TURN / 3)) * 8));
           spark->velocityX += TRIG_TURN / 128;
           draw[0](canvas, work->sheet + i * PICTURE_BYTES(SKULL),

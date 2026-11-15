@@ -257,8 +257,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
           if (spark->variant > 5) {
             draw[work->args->side](
                 canvas, (work->sheet + BURST_SHOWER_PICTURES),
-                Q_16_16_TO_INT(spark->x) - DEMON_FACE_WIDTH / 2,
-                Q_16_16_TO_INT(spark->y) - DEMON_FACE_HEIGHT / 2,
+                WHOLE_PIXELS(spark->x) - DEMON_FACE_WIDTH / 2,
+                WHOLE_PIXELS(spark->y) - DEMON_FACE_HEIGHT / 2,
                 DEMON_FACE_WIDTH, DEMON_FACE_HEIGHT);
           }
         } else if (mode == BURST_SHOWER_MODE_DJINNI) {
@@ -266,8 +266,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
             draw[0](canvas,
                     (work->sheet + BURST_SHOWER_PICTURES) +
                         ((spark->variant / 4) << 11),
-                    Q_16_16_TO_INT(spark->x) - FLASH_BURST_WIDTH / 2,
-                    Q_16_16_TO_INT(spark->y) - FLASH_BURST_HEIGHT / 2,
+                    WHOLE_PIXELS(spark->x) - FLASH_BURST_WIDTH / 2,
+                    WHOLE_PIXELS(spark->y) - FLASH_BURST_HEIGHT / 2,
                     FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           }
         } else if (mode != BURST_SHOWER_MODE_LIGHTNING) {
@@ -275,8 +275,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
             draw[0](canvas,
                     (work->sheet + BURST_SHOWER_PICTURES) +
                         ((spark->variant / 4) << 11),
-                    Q_16_16_TO_INT(spark->x) - FLASH_BURST_WIDTH / 2,
-                    Q_16_16_TO_INT(spark->y) - FLASH_BURST_HEIGHT / 2,
+                    WHOLE_PIXELS(spark->x) - FLASH_BURST_WIDTH / 2,
+                    WHOLE_PIXELS(spark->y) - FLASH_BURST_HEIGHT / 2,
                     FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           }
         }

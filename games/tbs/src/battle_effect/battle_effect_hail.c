@@ -78,8 +78,8 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       s32 y;
 
       orbit = frame << 11;
-      x = Q_16_16_TO_INT(-Trig_Sin(orbit) * 4) + screenX / 2 - 10;
-      y = Q_16_16_TO_INT(Trig_Cos(orbit) * 2) + screenY - 22;
+      x = WHOLE_PIXELS(-Trig_Sin(orbit) * 4) + screenX / 2 - 10;
+      y = WHOLE_PIXELS(Trig_Cos(orbit) * 2) + screenY - 22;
       // Never true: the loop ends at frame 63.
       if (frame > 69)
         y = (y - frame * 2) + 138;
@@ -105,16 +105,15 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
         height = gHail_PictureHeights[picture];
         draw[i & 1](canvas,
                     work->sheet + HAIL_CHIP_PICTURES + gHail_Pictures[picture],
-                    Q_16_16_TO_INT(chip->x) - width / 2,
-                    Q_16_16_TO_INT(chip->y) - height / 2, width, height);
+                    WHOLE_PIXELS(chip->x) - width / 2,
+                    WHOLE_PIXELS(chip->y) - height / 2, width, height);
 #else
-        draw[i & 1](canvas,
-                    work->sheet + HAIL_CHIP_PICTURES + gHail_Pictures[picture],
-                    Q_16_16_TO_INT(chip->x) -
-                        (width = gHail_PictureWidths[picture]) / 2,
-                    Q_16_16_TO_INT(chip->y) -
-                        (height = gHail_PictureHeights[picture]) / 2,
-                    width, height);
+        draw[i & 1](
+            canvas, work->sheet + HAIL_CHIP_PICTURES + gHail_Pictures[picture],
+            WHOLE_PIXELS(chip->x) - (width = gHail_PictureWidths[picture]) / 2,
+            WHOLE_PIXELS(chip->y) -
+                (height = gHail_PictureHeights[picture]) / 2,
+            width, height);
 #endif
         Particle_AdvanceWithGravity3D(chip, 63, px(1) / 16);
       }
@@ -211,8 +210,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
     // The Djinni circles above the user, then rises away.
     if (work->args->prelude == 1) {
       s32 angle = frame << 11;
-      s32 x = Q_16_16_TO_INT(-Trig_Sin(angle) * 4) + screenX / 2 - 10;
-      s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * 2) + screenY - 22;
+      s32 x = WHOLE_PIXELS(-Trig_Sin(angle) * 4) + screenX / 2 - 10;
+      s32 y = WHOLE_PIXELS(Trig_Cos(angle) * 2) + screenY - 22;
 
       if (frame > 16)
         y = y - frame * 2 + 32;

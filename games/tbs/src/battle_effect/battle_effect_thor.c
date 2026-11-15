@@ -213,7 +213,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         SET_VECTOR(point, px(points[i][0] - 96), 0, px(points[i][1] - 96));
         Projection_Point(point, &screen[i]);
         screen[i].x = (screen[i].x >> 17) + 64;
-        screen[i].y = Q_16_16_TO_INT(screen[i].y) + 60;
+        screen[i].y = WHOLE_PIXELS(screen[i].y) + 60;
       }
       for (i = 0; i != 3; i++) {
         dotCount = count * 2 - i * 48 - 256;
@@ -265,7 +265,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         point[2] = -(Trig_Cos(i << 9) * 96);
         Projection_Point(point, &screen[0]);
         screen[0].x = (screen[0].x >> 17) + 64;
-        screen[0].y = Q_16_16_TO_INT(screen[0].y) + 60;
+        screen[0].y = WHOLE_PIXELS(screen[0].y) + 60;
         drawAlt(canvas,
                 work->sheet +
                     (level * MOTE_SET_BYTES +
@@ -440,9 +440,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         {
           s32 radius = (Random16() & 7) + 8;
           s32 angle = Random16() & TRIG_ANGLE_MASK;
-          moteX = Q_16_16_TO_INT(Trig_Sin(angle) * radius);
+          moteX = WHOLE_PIXELS(Trig_Sin(angle) * radius);
           mirrorX = moteX + 72;
-          moteY = 32 - Q_16_16_TO_INT(Trig_Cos(angle) * radius);
+          moteY = 32 - WHOLE_PIXELS(Trig_Cos(angle) * radius);
         }
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_LIGHTEN);
@@ -505,8 +505,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
             if (spark->y > px(120)) {
               spark->velocityY = -spark->velocityY / 2;
             } else if (spark->x >= 0 && spark->x < px(127) && spark->y >= 0) {
-              s32 x = Q_16_16_TO_INT(spark->x);
-              s32 y = Q_16_16_TO_INT(spark->y);
+              s32 x = WHOLE_PIXELS(spark->x);
+              s32 y = WHOLE_PIXELS(spark->y);
               s32 dotSize = spark->variant / 16 + 1;
               EFFECT_DRAW_MOTE(draw, canvas, sprites, x, y, dotSize);
             }
@@ -534,9 +534,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         for (i = 0, thorScreenX = thorX >> 17; i != 3; i++) {
           s32 glint = i & 3;
           s32 angle = Random16() & TRIG_ANGLE_MASK;
-          s32 x = Q_16_16_TO_INT(Trig_Sin(angle) * 8) + thorScreenX -
+          s32 x = WHOLE_PIXELS(Trig_Sin(angle) * 8) + thorScreenX -
                   (gBattleEffect_GlintPictureWidths[glint] >> 1);
-          s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * 40) -
+          s32 y = WHOLE_PIXELS(Trig_Cos(angle) * 40) -
                   (gBattleEffect_GlintPictureHeights[glint] >> 1);
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                               EFFECT_CLIP_BOUNDS |

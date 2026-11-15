@@ -257,8 +257,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
 
         if (puff->variant >= 0) {
           draw[0](canvas, work->sheet + ((puff->variant >> 2) << 11),
-                  Q_16_16_TO_INT(puff->x) - FLASH_BURST_WIDTH / 2,
-                  Q_16_16_TO_INT(puff->y) - FLASH_BURST_HEIGHT / 2,
+                  WHOLE_PIXELS(puff->x) - FLASH_BURST_WIDTH / 2,
+                  WHOLE_PIXELS(puff->y) - FLASH_BURST_HEIGHT / 2,
                   FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           puff->x += puff->velocityX * dir;
           puff->y += puff->velocityY;
@@ -275,8 +275,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
       s32 size = 1;
 
       if (spark->variant >= 0) {
-        draw[1](canvas, gTiamat_SparkPixels, Q_16_16_TO_INT(spark->x),
-                Q_16_16_TO_INT(spark->y) - size, size, size * 2);
+        draw[1](canvas, gTiamat_SparkPixels, WHOLE_PIXELS(spark->x),
+                WHOLE_PIXELS(spark->y) - size, size, size * 2);
         spark->x += spark->velocityX * dir;
         spark->y += spark->velocityY;
         spark->velocityY += -px(1) / 64;
@@ -295,8 +295,8 @@ void BattleEffect_RunDragonFire(struct BattleEffectParams *args, s32 mode) {
           u8 size = gTiamat_EmberSizes[i & 3];
 
           draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                  Q_16_16_TO_INT(ember->x) - size / 2,
-                  Q_16_16_TO_INT(ember->y) - size, size, size * 2);
+                  WHOLE_PIXELS(ember->x) - size / 2,
+                  WHOLE_PIXELS(ember->y) - size, size, size * 2);
           ember->x += ember->velocityX * dir;
           ember->y += ember->velocityY;
           if (frame > DRAGON_FIRE_BREATH_FRAME) {

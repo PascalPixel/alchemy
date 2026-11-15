@@ -371,8 +371,8 @@ static void VenusLighthouseAerie_JumpToNextPlatform(void) {
     actor->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
     Actor_SetSpriteFlags(actor, 0);
     Actor_MoveToAndWait(ACTOR_PARTY_LEADER,
-                        FIELD_PIXEL(destination.coordinates[0]),
-                        FIELD_PIXEL(destination.coordinates[2]));
+                        WHOLE_PIXELS(destination.coordinates[0]),
+                        WHOLE_PIXELS(destination.coordinates[2]));
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     actor->motionFlags = flags;
@@ -3077,7 +3077,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   center = (Actor_Get(23));
   grid = gMapGridWork[0];
   drift = px(Random_Below(48));
-  if ((s16)(FIELD_PIXEL(grid->view[1])) <= 129) {
+  if ((s16)(WHOLE_PIXELS(grid->view[1])) <= 129) {
     if (gFrameCount & 1) {
       Actor_SetPosition(ACTOR_BEACON_ORB, 304, 164);
       Actor_Get(ACTOR_BEACON_ORB)->scaleX = Q16_ONE;

@@ -170,8 +170,8 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 
         if (frame >= i + 72 && thorn->y < px(104)) {
           s32 pictureIndex = (frame + i) / 4 % 5;
-          s32 x = Q_16_16_TO_INT(thorn->x);
-          s32 y = Q_16_16_TO_INT(thorn->y);
+          s32 x = WHOLE_PIXELS(thorn->x);
+          s32 y = WHOLE_PIXELS(thorn->y);
           u8 *picture = work->sheet + gCybele_ThornPictures[pictureIndex];
           u32 width = gCybele_ThornWidths[pictureIndex];
           u32 tall;
@@ -265,7 +265,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           s32 pictureIndex = i % 5;
 
           draw[0](canvas, work->sheet + gCybele_ChipPictures[pictureIndex],
-                  Q_16_16_TO_INT(chip->x), Q_16_16_TO_INT(chip->y),
+                  WHOLE_PIXELS(chip->x), WHOLE_PIXELS(chip->y),
                   gCybele_ChipWidths[pictureIndex],
                   gCybele_ChipHeights[pictureIndex]);
           chip->x += chip->velocityX;

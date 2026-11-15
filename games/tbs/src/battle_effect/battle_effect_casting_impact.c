@@ -413,7 +413,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           scrollPos = px(8);
           scrollSpeed = -px(12);
         }
-        REG_BG2X = Q_16_16_TO_INT(scrollPos) << 8;
+        REG_BG2X = WHOLE_PIXELS(scrollPos) << 8;
       }
     }
     if (mode == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
@@ -787,9 +787,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
             s32 imageX;
             s32 imageY;
             s32 drawFlags;
-            imageX = Q_16_16_TO_INT(Trig_Sin(angle) << 3) + targetPos.x / 2 -
+            imageX = WHOLE_PIXELS(Trig_Sin(angle) << 3) + targetPos.x / 2 -
                      gBattleEffect_GlintPictureWidths[image] / 2;
-            imageY = Q_16_16_TO_INT(Trig_Cos(angle) << 5) -
+            imageY = WHOLE_PIXELS(Trig_Cos(angle) << 5) -
                      gBattleEffect_GlintPictureHeights[image] / 2;
             EFFECT_RELEASE_BLITTERS();
             drawFlags = Random16();
@@ -937,10 +937,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         s32 sway;
         // Condemn's reaper and crescent.
         Trig_Sin(frame * (TRIG_TURN / 128));
-        sway = Q_16_16_TO_INT(Trig_Cos(frame * (TRIG_TURN / 128)) << 2);
+        sway = WHOLE_PIXELS(Trig_Cos(frame * (TRIG_TURN / 128)) << 2);
         // targetPos.y is in whole pixels, so the shift leaves 0 for any
         // target on the screen: the pictures stand at a fixed height.
-        imageY = Q_16_16_TO_INT(targetPos.y) + sway + 16;
+        imageY = WHOLE_PIXELS(targetPos.y) + sway + 16;
         if (frame <= 3) {
           blitters[0](canvas, work->sheet,
                       CASTING_IMPACT_PICTURE_X(work->args->side, 0),
@@ -998,7 +998,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         if (frame > 6) {
           scrollSpeed = (scrollSpeed * 48) / 64;
         }
-        REG_BG2X = Q_16_16_TO_INT(scrollPos) << 8;
+        REG_BG2X = WHOLE_PIXELS(scrollPos) << 8;
         {
           s32 fade;
           fade = frame - 16;

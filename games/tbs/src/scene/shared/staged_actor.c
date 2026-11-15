@@ -181,10 +181,10 @@ static struct Actor *Scene_FindActorRegion(s32 *direction, s32 *slot,
       if (kind == gPushedActor_FootprintKinds[j]) {
         s32 x, z, left, top, right, bottom;
         *footprint = j;
-        x = ((FIELD_PIXEL(player->x.fixed)) +
-             (FIELD_PIXEL(gPushedActor_DirectionSteps[*direction]))) >>
+        x = ((WHOLE_PIXELS(player->x.fixed)) +
+             (WHOLE_PIXELS(gPushedActor_DirectionSteps[*direction]))) >>
             4;
-        z = ((FIELD_PIXEL(player->z.fixed)) +
+        z = ((WHOLE_PIXELS(player->z.fixed)) +
              (s16)gPushedActor_DirectionSteps[*direction]) >>
             4;
         left = (actor->x.part[0].pixel +

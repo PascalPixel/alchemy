@@ -160,8 +160,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
           s32 life;
           s32 y;
 
-          y = Q_16_16_TO_INT(flash->y);
-          x = Q_16_16_TO_INT(flash->x) +
+          y = WHOLE_PIXELS(flash->y);
+          x = WHOLE_PIXELS(flash->x) +
               gRagnarok_StrikeColumns[work->args->side][col];
           life = flash->variant;
           if (life >= 0 && life <= 17) {
@@ -199,8 +199,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
               if ((x >= 0 && x < px(127)) && y >= 0) {
                 u8 *picture;
                 s32 lane;
-                s32 drawY = Q_16_16_TO_INT(y);
-                s32 drawX = Q_16_16_TO_INT(x);
+                s32 drawY = WHOLE_PIXELS(y);
+                s32 drawX = WHOLE_PIXELS(x);
 
                 size = spark->variant / 5 + 1;
                 lane = i & 1;

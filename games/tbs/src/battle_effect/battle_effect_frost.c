@@ -95,7 +95,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
                        mote->z * Trig_Cos(mote->x));
             Projection_Point(xyz, &screen);
             screen.x = (screen.x >> 17) + 64;
-            screen.y = Q_16_16_TO_INT(screen.y) + 60;
+            screen.y = WHOLE_PIXELS(screen.y) + 60;
             // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
             width = gFrost_MoteWidths[picture];
@@ -198,7 +198,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           s32 picture = i % 8;
 
           pair[1](canvas, work->sheet + gFrost_ChipPictures[picture],
-                  Q_16_16_TO_INT(chip->x), Q_16_16_TO_INT(chip->y),
+                  WHOLE_PIXELS(chip->x), WHOLE_PIXELS(chip->y),
                   gFrost_ChipWidths[picture], gFrost_ChipHeights[picture]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
@@ -210,8 +210,8 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           highest = chip->y;
       }
     }
-    lowest = Q_16_16_TO_INT(lowest);
-    highest = Q_16_16_TO_INT(highest);
+    lowest = WHOLE_PIXELS(lowest);
+    highest = WHOLE_PIXELS(highest);
     if (highest <= lowest)
       highest = lowest + 1;
 
@@ -241,14 +241,14 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 #ifdef UBFIX
           size = gBattleEffect_SparkleSizes[picture];
           pair[1](canvas, sparkleSheet + gBattleEffect_SparklePictures[picture],
-                  Q_16_16_TO_INT(sparkle->velocityX) - (size >> 1),
-                  Q_16_16_TO_INT(sparkle->velocityY) - (size >> 1) - rise, size,
+                  WHOLE_PIXELS(sparkle->velocityX) - (size >> 1),
+                  WHOLE_PIXELS(sparkle->velocityY) - (size >> 1) - rise, size,
                   size);
 #else
           pair[1](canvas, sparkleSheet + gBattleEffect_SparklePictures[picture],
-                  Q_16_16_TO_INT(sparkle->velocityX) -
+                  WHOLE_PIXELS(sparkle->velocityX) -
                       ((size = gBattleEffect_SparkleSizes[picture]) >> 1),
-                  Q_16_16_TO_INT(sparkle->velocityY) - (size >> 1) - rise, size,
+                  WHOLE_PIXELS(sparkle->velocityY) - (size >> 1) - rise, size,
                   size);
 #endif
         }

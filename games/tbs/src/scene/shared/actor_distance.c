@@ -7,9 +7,9 @@
 /// and read on through the y and z that follow it, as an actor holds them.
 // UB: an actor's x, y and z are separate members, read here as an array.
 UNUSED static s32 Position_Distance(const s32 *first, const s32 *second) {
-  s32 deltaX = FIELD_PIXEL(*first++ - *second++);
-  s32 deltaY = FIELD_PIXEL(*first++ - *second++);
-  s32 deltaZ = FIELD_PIXEL(*first - *second);
+  s32 deltaX = WHOLE_PIXELS(*first++ - *second++);
+  s32 deltaY = WHOLE_PIXELS(*first++ - *second++);
+  s32 deltaZ = WHOLE_PIXELS(*first - *second);
 
   return Iwram_Sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
 }

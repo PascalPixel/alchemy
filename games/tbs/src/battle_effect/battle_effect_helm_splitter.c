@@ -128,8 +128,8 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
           spark->velocityY = -spark->velocityY / 2;
         } else if ((spark->x >= 0 && spark->x <= px(127) - 1) &&
                    spark->y >= 0) {
-          s32 sx = Q_16_16_TO_INT(spark->x);
-          s32 sy = Q_16_16_TO_INT(spark->y);
+          s32 sx = WHOLE_PIXELS(spark->x);
+          s32 sy = WHOLE_PIXELS(spark->y);
 
           draw[0](canvas,
                   work->sheet + HELM_SPLITTER_STAR_PICTURES +
@@ -300,14 +300,14 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
       width = gHelmSplitter_ImpactBurstPictureWidths[picture];
       height = gHelmSplitter_ImpactBurstPictureHeights[picture];
       maxBlend(canvas, work->sheet + gHelmSplitter_ImpactBurstPictures[picture],
-               Q_16_16_TO_INT(x) - (width >> 1),
-               Q_16_16_TO_INT(y) - (height >> 1), width, height);
+               WHOLE_PIXELS(x) - (width >> 1), WHOLE_PIXELS(y) - (height >> 1),
+               width, height);
 #else
       maxBlend(
           canvas, work->sheet + gHelmSplitter_ImpactBurstPictures[picture],
-          Q_16_16_TO_INT(x) -
+          WHOLE_PIXELS(x) -
               ((width = gHelmSplitter_ImpactBurstPictureWidths[picture]) >> 1),
-          Q_16_16_TO_INT(y) -
+          WHOLE_PIXELS(y) -
               ((height = gHelmSplitter_ImpactBurstPictureHeights[picture]) >>
                1),
           width, height);

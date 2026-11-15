@@ -140,9 +140,9 @@ s32 Field_CheckSpheresOverlap(s32 *firstPosition, s32 radiusA,
       (const struct FieldPosition *)secondPosition;
   const s32 *firstCoordinate = &firstPoint->x;
   const s32 *secondCoordinate = &secondPoint->x;
-  s32 dx = FIELD_PIXEL(*firstCoordinate++ - *secondCoordinate++);
-  s32 dy = FIELD_PIXEL(*firstCoordinate++ - *secondCoordinate++);
-  s32 dz = FIELD_PIXEL(*firstCoordinate - *secondCoordinate);
+  s32 dx = WHOLE_PIXELS(*firstCoordinate++ - *secondCoordinate++);
+  s32 dy = WHOLE_PIXELS(*firstCoordinate++ - *secondCoordinate++);
+  s32 dz = WHOLE_PIXELS(*firstCoordinate - *secondCoordinate);
   s32 radius = radiusA + radiusB;
 
   // The bound is 64 pixels in 16.16, the units before the shift, but dx and dz

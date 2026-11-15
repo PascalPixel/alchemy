@@ -196,8 +196,8 @@ void ActorSystem_ProjectSprites(void) {
   // The camera's heading over the ground, from the eye's offset from the
   // target in whole pixels; each sprite's facing is drawn relative to it, so
   // a sprite keeps its world heading as the camera turns.
-  angle = (s16)ArcTan2(FIELD_PIXEL(eye->x - target->x),
-                       FIELD_PIXEL(eye->z - target->z));
+  angle = (s16)ArcTan2(WHOLE_PIXELS(eye->x - target->x),
+                       WHOLE_PIXELS(eye->z - target->z));
   system->used = 0;
   Transform_Reset();
   // Under the fixed view matrix every sprite also faces an eighth of a turn

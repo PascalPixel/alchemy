@@ -117,7 +117,7 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 
     if (frame <= 95) {
       s32 x = ((Trig_Sin(frame << 11) * (64 - frame * 2)) >> 17) + 96;
-      s32 y = Q_16_16_TO_INT(Trig_Cos(frame << 11) * (64 - frame * 2)) + 60;
+      s32 y = WHOLE_PIXELS(Trig_Cos(frame << 11) * (64 - frame * 2)) + 60;
 
       blit[1](canvas, work->sheet, x - SMALL_DJINNI_WIDTH / 2,
               y - MERCURY_SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
@@ -149,8 +149,8 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
       if (mote->variant != -1) {
         s32 size = mote->variant / 16 + 2;
 
-        EFFECT_DRAW_MOTE(blit[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
-                         Q_16_16_TO_INT(mote->y), size);
+        EFFECT_DRAW_MOTE(blit[1], canvas, sheet, WHOLE_PIXELS(mote->x),
+                         WHOLE_PIXELS(mote->y), size);
         Particle_AdvanceWithGravity2D(mote, 62, px(1) / 8);
         mote->variant--;
       }
@@ -213,7 +213,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
 
       if (frame <= 95) {
         s32 x = (Trig_Sin(angle) * (64 - frame * 2)) >> 17;
-        s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * (64 - frame * 2));
+        s32 y = WHOLE_PIXELS(Trig_Cos(angle) * (64 - frame * 2));
 
         blit[0](canvas, work->sheet, x + 86, y + 28, SMALL_DJINNI_WIDTH,
                 SMALL_DJINNI_HEIGHT);
@@ -256,8 +256,8 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
         if (mote->variant != -1) {
           s32 size = mote->variant / 16 + 1;
 
-          EFFECT_DRAW_MOTE(blit[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
-                           Q_16_16_TO_INT(mote->y), size);
+          EFFECT_DRAW_MOTE(blit[1], canvas, sheet, WHOLE_PIXELS(mote->x),
+                           WHOLE_PIXELS(mote->y), size);
           Particle_AdvanceWithGravity2D(mote, 62, px(1) / 8);
           mote->variant--;
         }
@@ -340,8 +340,8 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   do {
     // The Djinni sways from side to side as it drops.
     if (frame <= 79) {
-      s32 x = Q_16_16_TO_INT(Trig_Sin(angle) * 24);
-      s32 y = Q_16_16_TO_INT(Trig_Cos(angle) * (64 - frame * 2));
+      s32 x = WHOLE_PIXELS(Trig_Sin(angle) * 24);
+      s32 y = WHOLE_PIXELS(Trig_Cos(angle) * (64 - frame * 2));
 
       draw[1](canvas, work->sheet, x + 22, y + 29, SMALL_DJINNI_WIDTH,
               VENUS_SMALL_DJINNI_HEIGHT);
@@ -385,8 +385,8 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
       if (mote->variant != -1) {
         s32 size = mote->variant / 16 + 2;
 
-        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, Q_16_16_TO_INT(mote->x),
-                         Q_16_16_TO_INT(mote->y), size);
+        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, WHOLE_PIXELS(mote->x),
+                         WHOLE_PIXELS(mote->y), size);
         Particle_AdvanceWithGravity2D(mote, 62, px(1) / 8);
         mote->variant--;
       }
@@ -440,8 +440,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   do {
     s32 angle = index << 11;
 
-    step->x = Q_16_16_TO_INT(Trig_Sin(angle) * 24);
-    step->y = Q_16_16_TO_INT(Trig_Cos(angle) * 4) + 52;
+    step->x = WHOLE_PIXELS(Trig_Sin(angle) * 24);
+    step->y = WHOLE_PIXELS(Trig_Cos(angle) * 4) + 52;
     if (index & 1)
       step->x = 32 - step->x;
     else
@@ -526,8 +526,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
         s32 x;
 
         size = (index & 1) + 3;
-        x = Q_16_16_TO_INT(step->x) + Q_16_16_TO_INT(Trig_Sin(step->z) * 4);
-        EFFECT_DRAW_MOTE(blitters[1], canvas, sheet, x, Q_16_16_TO_INT(step->y),
+        x = WHOLE_PIXELS(step->x) + WHOLE_PIXELS(Trig_Sin(step->z) * 4);
+        EFFECT_DRAW_MOTE(blitters[1], canvas, sheet, x, WHOLE_PIXELS(step->y),
                          size);
         Particle_AdvanceWithGravity2D(step, PARTICLE_DAMPING_NONE, -px(1) / 8);
         step->z += TRIG_TURN / 32;

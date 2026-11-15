@@ -203,8 +203,8 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args,
         if (mote->variant >= 0) {
           s32 size = (mote->variant >> 3) + 2;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, Q_16_16_TO_INT(mote->x),
-                           Q_16_16_TO_INT(mote->y), size);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, WHOLE_PIXELS(mote->x),
+                           WHOLE_PIXELS(mote->y), size);
           Particle_AdvanceWithGravity2D(mote, 60, 0);
           mote->variant--;
         }
@@ -568,10 +568,10 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
       // The prelude's small Djinni circles, then rises away.
       if (work->args->prelude == 1) {
-        s32 x = Q_16_16_TO_INT(-Trig_Sin(frame * (TRIG_TURN / 32)) * 4) +
+        s32 x = WHOLE_PIXELS(-Trig_Sin(frame * (TRIG_TURN / 32)) * 4) +
                 screenX / 2 - 10;
-        s32 y = Q_16_16_TO_INT(Trig_Cos(frame * (TRIG_TURN / 32)) * 2) +
-                screenY - 24;
+        s32 y =
+            WHOLE_PIXELS(Trig_Cos(frame * (TRIG_TURN / 32)) * 2) + screenY - 24;
 
         if (frame > 69)
           y = y - frame * 2 + 138;
@@ -851,8 +851,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         if (particle->variant > 0) {
           s32 size = (particle->variant >> 3) + 1;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, Q_16_16_TO_INT(particle->x),
-                           Q_16_16_TO_INT(particle->y), size);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, WHOLE_PIXELS(particle->x),
+                           WHOLE_PIXELS(particle->y), size);
           Particle_AdvanceWithGravity2D(particle, 60, px(1) / 16);
           if (particle->y > px(112))
             particle->velocityY = -particle->velocityY / 2;
@@ -868,8 +868,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
         if (particle->variant > 0) {
           s32 size = (particle->variant >> 4) + 1;
 
-          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, Q_16_16_TO_INT(particle->x),
-                           Q_16_16_TO_INT(particle->y), size);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sheet, WHOLE_PIXELS(particle->x),
+                           WHOLE_PIXELS(particle->y), size);
           Particle_AdvanceWithGravity2D(particle, 60, -px(1) / 4);
           particle->variant--;
         }

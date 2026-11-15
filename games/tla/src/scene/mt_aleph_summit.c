@@ -90,12 +90,12 @@ void MtAlephSummit_StepColorsToward(u16 *colors, u16 *target, s32 count) {
     return;
 next:
   {
-    s32 to_r = *target & 31;
-    s32 to_g = (*target >> 5) & 31;
-    s32 to_b = (*target >> 10) & 31;
-    s32 r = *colors & 31;
-    s32 g = (*colors >> 5) & 31;
-    s32 b = (*colors >> 10) & 31;
+    s32 to_r = RGB_RED(*target);
+    s32 to_g = RGB_GREEN(*target);
+    s32 to_b = RGB_BLUE(*target);
+    s32 r = RGB_RED(*colors);
+    s32 g = RGB_GREEN(*colors);
+    s32 b = RGB_BLUE(*colors);
 
     if (r < to_r)
       r++;
@@ -109,7 +109,7 @@ next:
       b++;
     else if (b > to_b)
       b--;
-    *colors = b << 10 | g << 5 | r;
+    *colors = RGB(r, g, b);
   }
   i++;
   target++;
@@ -128,22 +128,22 @@ void MtAlephSummit_ShiftColors(u16 *colors, s32 count, s32 delta) {
   if (count == 0)
     return;
 loop:
-  r = (*colors & 0x1f) + delta;
-  g = ((*colors >> 5) & 0x1f) + delta;
-  b = ((*colors >> 10) & 0x1f) + delta;
-  if (r > 31)
-    r = 31;
+  r = RGB_RED(*colors) + delta;
+  g = RGB_GREEN(*colors) + delta;
+  b = RGB_BLUE(*colors) + delta;
+  if (r > RGB_LEVEL_MAX)
+    r = RGB_LEVEL_MAX;
   if (r < 0)
     r = 0;
-  if (g > 31)
-    g = 31;
+  if (g > RGB_LEVEL_MAX)
+    g = RGB_LEVEL_MAX;
   if (g < 0)
     g = 0;
-  if (b > 31)
-    b = 31;
+  if (b > RGB_LEVEL_MAX)
+    b = RGB_LEVEL_MAX;
   if (b < 0)
     b = 0;
-  *colors++ = (b << 10) | (g << 5) | r;
+  *colors++ = RGB(r, g, b);
   i++;
   if (i != count)
     goto loop;
@@ -159,23 +159,23 @@ void MtAlephSummit_PulseColors(void) {
 
 next:
   {
-    s32 r = (*src & 31) + delta;
-    s32 g = ((*src >> 5) & 31) + delta;
-    s32 b = ((*src >> 10) & 31) + delta;
+    s32 r = RGB_RED(*src) + delta;
+    s32 g = RGB_GREEN(*src) + delta;
+    s32 b = RGB_BLUE(*src) + delta;
 
-    if (r > 31)
-      r = 31;
+    if (r > RGB_LEVEL_MAX)
+      r = RGB_LEVEL_MAX;
     if (r < 0)
       r = 0;
-    if (g > 31)
-      g = 31;
+    if (g > RGB_LEVEL_MAX)
+      g = RGB_LEVEL_MAX;
     if (g < 0)
       g = 0;
-    if (b > 31)
-      b = 31;
+    if (b > RGB_LEVEL_MAX)
+      b = RGB_LEVEL_MAX;
     if (b < 0)
       b = 0;
-    *dst = b << 10 | g << 5 | r;
+    *dst = RGB(r, g, b);
   }
   i++;
   src++;
@@ -343,20 +343,20 @@ s32 Scene_Initialize(void) {
   L3:
     c = *color;
     r = RGB_RED(c);
-    g = ((u16)c >> 5) & 31;
-    b = ((u16)c >> 10) & 31;
+    g = RGB_GREEN((u16)c);
+    b = RGB_BLUE((u16)c);
     r += j;
     g += j / 16;
     b -= j;
-    if (r > 31)
-      r = 31;
-    if (g > 31)
-      g = 31;
+    if (r > RGB_LEVEL_MAX)
+      r = RGB_LEVEL_MAX;
+    if (g > RGB_LEVEL_MAX)
+      g = RGB_LEVEL_MAX;
     if (b < 8)
       b = 8;
-    if (b > 31)
-      b = 31;
-    *out = (b << 10) | (g << 5) | r;
+    if (b > RGB_LEVEL_MAX)
+      b = RGB_LEVEL_MAX;
+    *out = RGB(r, g, b);
     color++;
     out++;
     i++;

@@ -1137,7 +1137,7 @@ void SeaOfTime_AnimateSea(void) {
           red = 18;
           gSeaOfTime_RedPulseStep[0] = 1;
         } else if ((u16)sum > 31) {
-          red = 31;
+          red = RGB_LEVEL_MAX;
           gSeaOfTime_RedPulseStep[0] = -1;
         }
       } else {

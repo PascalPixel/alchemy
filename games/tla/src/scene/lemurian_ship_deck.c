@@ -742,8 +742,8 @@ void LemurianShipDeck_EmitSparkle(void) {
       FieldActor_Create(SPRITE_GLINT, position[0], position[1], position[2]);
   if (object != NULL) {
     object->motionFlags = 0;
-    *(s32 *)((u8 *)object + 0x30) = 0x20000;
-    *(s32 *)((u8 *)object + 0x34) = 0x8000;
+    object->speedLimit = px(2);
+    object->acceleration = px(1) / 2;
     Actor_SetSpriteFlags(object, 0);
     Actor_SelectAnimation(object, 0);
     FieldActor_SetMoveTarget(object, 360, 64, 424);

@@ -124,6 +124,13 @@ enum LemurianShipEngineRoomActorId {
 #define FLAG_JELLY_FLED FLAG_SCENE_TEMP_01 ///< the frightened jelly ran
 #define FLAG_RIGHT_PILLAR_SUNK FLAG_SCENE_TEMP_02
 #define FLAG_LEFT_PILLAR_SUNK FLAG_SCENE_TEMP_03
+
+/// The pillar room's raised triggers: a pillar's puddle has dried, and the
+/// pillar rises.
+enum LemurianShipRaisedTrigger {
+  RAISED_RIGHT_PILLAR = 200,
+  RAISED_LEFT_PILLAR
+};
 #define FLAG_RIGHT_PILLAR_FULL FLAG_SCENE_TEMP_04 ///< Douse filled it
 #define FLAG_LEFT_PILLAR_FULL FLAG_SCENE_TEMP_05
 #define FLAG_LIFT_LOWERED FLAG_SCENE_TEMP_07
@@ -678,11 +685,11 @@ void LemurianShip_FightAquaHydra(void) {
   Actor_RunRepeatedMotion(ACTOR_HOLD_JELLY_F, 2);
   Event_Wait(20);
   Event_PlaySound(SE_BEAST_CRY);
-  LemurianShip_LeapIntoHydra(9);
-  LemurianShip_LeapIntoHydra(10);
-  LemurianShip_LeapIntoHydra(11);
-  LemurianShip_LeapIntoHydra(12);
-  LemurianShip_LeapIntoHydra(13);
+  LemurianShip_LeapIntoHydra(ACTOR_HOLD_JELLY_B);
+  LemurianShip_LeapIntoHydra(ACTOR_HOLD_JELLY_C);
+  LemurianShip_LeapIntoHydra(ACTOR_HOLD_JELLY_D);
+  LemurianShip_LeapIntoHydra(ACTOR_HOLD_JELLY_E);
+  LemurianShip_LeapIntoHydra(ACTOR_HOLD_JELLY_F);
   Actor_WaitForMoveById(ACTOR_HOLD_JELLY_F);
   Actor_SetPosition(ACTOR_HOLD_JELLY_B, 0, 0);
   Actor_SetPosition(ACTOR_HOLD_JELLY_C, 0, 0);
@@ -916,29 +923,29 @@ void LemurianShip_KeepSixJellyRoomPuddles(void) {
   Actor_SetSpritePriority(ACTOR_LIFT_PUDDLE, 3);
   ((struct Actor *)Actor_GetById(ACTOR_LIFT_PUDDLE))->priorityFlags &=
       ~ACTOR_PRIORITY_UNDERFOOT;
-  LemurianShip_SetUpPuddle(16);
-  LemurianShip_SetUpPuddle(17);
-  LemurianShip_SetUpPuddle(18);
-  LemurianShip_SetUpPuddle(19);
-  LemurianShip_SetUpPuddle(20);
+  LemurianShip_SetUpPuddle(ACTOR_SIX_JELLY_ROOM_PUDDLE_A);
+  LemurianShip_SetUpPuddle(ACTOR_SIX_JELLY_ROOM_PUDDLE_B);
+  LemurianShip_SetUpPuddle(ACTOR_SIX_JELLY_ROOM_PUDDLE_C);
+  LemurianShip_SetUpPuddle(ACTOR_SIX_JELLY_ROOM_PUDDLE_D);
+  LemurianShip_SetUpPuddle(ACTOR_SIX_JELLY_ROOM_PUDDLE_E);
 }
 
 void LemurianShip_KeepSevenJellyRoomPuddles(void) {
-  LemurianShip_SetUpPuddle(16);
-  LemurianShip_SetUpPuddle(17);
-  LemurianShip_SetUpPuddle(18);
-  LemurianShip_SetUpPuddle(19);
-  LemurianShip_SetUpPuddle(20);
-  LemurianShip_SetUpPuddle(22);
+  LemurianShip_SetUpPuddle(ACTOR_SEVEN_JELLY_ROOM_PUDDLE_A);
+  LemurianShip_SetUpPuddle(ACTOR_SEVEN_JELLY_ROOM_PUDDLE_B);
+  LemurianShip_SetUpPuddle(ACTOR_SEVEN_JELLY_ROOM_PUDDLE_C);
+  LemurianShip_SetUpPuddle(ACTOR_SEVEN_JELLY_ROOM_PUDDLE_D);
+  LemurianShip_SetUpPuddle(ACTOR_SEVEN_JELLY_ROOM_PUDDLE_E);
+  LemurianShip_SetUpPuddle(ACTOR_SEVEN_JELLY_ROOM_PUDDLE_G);
 }
 
 void LemurianShip_KeepPillarRoomPuddles(void) {
 #if !TLA_PATCH_1
-  LemurianShip_SetUpPuddle(10);
-  LemurianShip_SetUpPuddle(11);
+  LemurianShip_SetUpPuddle(ACTOR_RIGHT_PILLAR_PUDDLE);
+  LemurianShip_SetUpPuddle(ACTOR_LEFT_PILLAR_PUDDLE);
 #else
-  LemurianShip_SetUpLowPuddle(10);
-  LemurianShip_SetUpLowPuddle(11);
+  LemurianShip_SetUpLowPuddle(ACTOR_RIGHT_PILLAR_PUDDLE);
+  LemurianShip_SetUpLowPuddle(ACTOR_LEFT_PILLAR_PUDDLE);
 #endif
 }
 
@@ -977,14 +984,14 @@ void LemurianShip_WatchPillarPuddles(void) {
   if (Event_GetFlag(FLAG_RIGHT_PILLAR_SUNK)) {
     object = ((struct Actor *)Actor_GetById(ACTOR_RIGHT_PILLAR_PUDDLE));
     if ((object->x.fixed | object->z.fixed) == 0) {
-      work->raisedTrigger = 200;
+      work->raisedTrigger = RAISED_RIGHT_PILLAR;
       Actor_SetAnimation(ACTOR_RIGHT_PILLAR, 1);
     }
   }
   if (Event_GetFlag(FLAG_LEFT_PILLAR_SUNK)) {
     object = ((struct Actor *)Actor_GetById(ACTOR_LEFT_PILLAR_PUDDLE));
     if ((object->x.fixed | object->z.fixed) == 0) {
-      work->raisedTrigger = 201;
+      work->raisedTrigger = RAISED_LEFT_PILLAR;
       Actor_SetAnimation(ACTOR_LEFT_PILLAR, 1);
     }
   }
@@ -1000,8 +1007,8 @@ void LemurianShip_DrawLightToOrb(void) {
                                                position[1], position[2]));
   if (object != NULL) {
     object->motionFlags = 0;
-    *(s32 *)((u8 *)object + 0x30) = 0x20000;
-    *(s32 *)((u8 *)object + 0x34) = 0x8000;
+    object->speedLimit = px(2);
+    object->acceleration = px(1) / 2;
     Actor_SetSpriteFlags(object, 0);
     Actor_SelectAnimation(object, 0);
     FieldActor_SetMoveTarget(object, 808, 8, 140);
@@ -1282,10 +1289,12 @@ void LemurianShip_SetUpTwoJellyRoom(void) {
   }
   FlagBlock_PlaceAll(gLemurianShip_TwoJellyRoomPuddles);
   if (Event_GetFlag(FLAG_JELLY_MELTING)) {
-    LemurianShip_MeltJellyIntoPuddle(8, 10);
+    LemurianShip_MeltJellyIntoPuddle(ACTOR_TWO_JELLY_ROOM_JELLY_A,
+                                     ACTOR_TWO_JELLY_ROOM_PUDDLE_A);
     Event_ClearFlag(FLAG_JELLY_MELTING);
   } else if (Event_GetFlag((FLAG_JELLY_MELTING + 1))) {
-    LemurianShip_MeltJellyIntoPuddle(9, 11);
+    LemurianShip_MeltJellyIntoPuddle(ACTOR_TWO_JELLY_ROOM_JELLY_B,
+                                     ACTOR_TWO_JELLY_ROOM_PUDDLE_B);
     Event_ClearFlag((FLAG_JELLY_MELTING + 1));
   }
 }
@@ -1314,7 +1323,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
       ->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Actor_PlaceBlocks(gLemurianShip_Crate);
   ((struct Actor *)Actor_GetById(ACTOR_SIX_JELLY_ROOM_CRATE))->priorityFlags |=
-      32;
+      ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SetSpritePriority(ACTOR_SIX_JELLY_ROOM_CRATE, 1);
   ((struct Actor *)Actor_GetById(ACTOR_SIX_JELLY_ROOM_JELLY_A))
       ->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
@@ -1340,7 +1349,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
       MapGrid_CopyCellAttributes(102, 16, 3, 2, 110, 4);
       MapGrid_CopyCellAttributes(50, 0, 3, 1, 50, 4);
     } else {
-      RAISE(15, px(824), px(72))
+      RAISE(ACTOR_LIFT_PUDDLE, px(824), px(72))
       MapGrid_CopyCellsTo(72, 68, 50, 64, 3, 3);
       MapGrid_CopyCellAttributes(106, 16, 3, 2, 110, 4);
       MapGrid_CopyCellAttributes(50, 1, 3, 1, 50, 4);
@@ -1354,11 +1363,11 @@ void LemurianShip_SetUpSixJellyRoom(void) {
     MapGrid_CopyCellAttributes(42, 0, 1, 1, 46, 5);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 45, 5);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 47, 5);
-    RAISE(16, px(744), px(88))
+    RAISE(ACTOR_SIX_JELLY_ROOM_PUDDLE_A, px(744), px(88))
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 3)))
       Actor_SetPosition(ACTOR_SIX_JELLY_ROOM_JELLY_B, 0, 0);
   } else {
-    LemurianShip_SetUpRaisedJelly(10);
+    LemurianShip_SetUpRaisedJelly(ACTOR_SIX_JELLY_ROOM_JELLY_B);
   }
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + 4))) {
     struct Actor *block =
@@ -1369,13 +1378,13 @@ void LemurianShip_SetUpSixJellyRoom(void) {
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 48, 9);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 47, 10);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 47, 8);
-    RAISE(17, px(760), px(152))
+    RAISE(ACTOR_SIX_JELLY_ROOM_PUDDLE_B, px(760), px(152))
     if (FIELD_CELL(block->x.fixed) == 47 && FIELD_CELL(block->z.fixed) == 8)
       Actor_PlaceBlocks(gLemurianShip_Crate);
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 4)))
       Actor_SetPosition(ACTOR_SIX_JELLY_ROOM_JELLY_C, 0, 0);
   } else {
-    LemurianShip_SetUpRaisedJelly(11);
+    LemurianShip_SetUpRaisedJelly(ACTOR_SIX_JELLY_ROOM_JELLY_C);
   }
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + 5))) {
     struct Actor *block =
@@ -1388,21 +1397,21 @@ void LemurianShip_SetUpSixJellyRoom(void) {
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 50, 7);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 48, 7);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 49, 8);
-    RAISE(18, px(792), px(120))
+    RAISE(ACTOR_SIX_JELLY_ROOM_PUDDLE_C, px(792), px(120))
     if ((x == 48 && z == 7) || (x == 49 && z == 8))
       Actor_PlaceBlocks(gLemurianShip_Crate);
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 5)))
       Actor_SetPosition(ACTOR_SIX_JELLY_ROOM_JELLY_D, 0, 0);
   } else {
-    LemurianShip_SetUpRaisedJelly(12);
+    LemurianShip_SetUpRaisedJelly(ACTOR_SIX_JELLY_ROOM_JELLY_D);
   }
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + 6))) {
     MapGrid_CopyCellAttributes(42, 0, 1, 1, 51, 7);
-    RAISE(19, px(824), px(120))
+    RAISE(ACTOR_SIX_JELLY_ROOM_PUDDLE_D, px(824), px(120))
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 6)))
       Actor_SetPosition(ACTOR_SIX_JELLY_ROOM_JELLY_E, 0, 0);
   } else {
-    LemurianShip_SetUpRaisedJelly(13);
+    LemurianShip_SetUpRaisedJelly(ACTOR_SIX_JELLY_ROOM_JELLY_E);
   }
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + 7))) {
     MapGrid_CopyCellAttributes(42, 0, 1, 1, 51, 9);
@@ -1410,31 +1419,37 @@ void LemurianShip_SetUpSixJellyRoom(void) {
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 50, 9);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 52, 9);
     MapGrid_CopyCellAttributes(43, 0, 1, 1, 51, 10);
-    RAISE(20, px(824), px(152))
+    RAISE(ACTOR_SIX_JELLY_ROOM_PUDDLE_E, px(824), px(152))
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 7)))
       Actor_SetPosition(ACTOR_SIX_JELLY_ROOM_JELLY_F, 0, 0);
   } else {
-    LemurianShip_SetUpRaisedJelly(14);
+    LemurianShip_SetUpRaisedJelly(ACTOR_SIX_JELLY_ROOM_JELLY_F);
   }
   FlagBlock_PlaceAll(gLemurianShip_SixJellyRoomPuddles);
   Task_Add(LemurianShip_KeepSixJellyRoomPuddles, TASK_PASS_VBLANK);
   if (Event_GetFlag((FLAG_JELLY_MELTING + 2))) {
-    LemurianShip_MeltJellyIntoPuddle(9, 15);
+    LemurianShip_MeltJellyIntoPuddle(ACTOR_SIX_JELLY_ROOM_JELLY_A,
+                                     ACTOR_LIFT_PUDDLE);
     Event_ClearFlag((FLAG_JELLY_MELTING + 2));
   } else if (Event_GetFlag((FLAG_JELLY_MELTING + 3))) {
-    LemurianShip_MeltJellyIntoPuddle(10, 16);
+    LemurianShip_MeltJellyIntoPuddle(ACTOR_SIX_JELLY_ROOM_JELLY_B,
+                                     ACTOR_SIX_JELLY_ROOM_PUDDLE_A);
     Event_ClearFlag((FLAG_JELLY_MELTING + 3));
   } else if (Event_GetFlag((FLAG_JELLY_MELTING + 4))) {
-    LemurianShip_MeltJellyIntoPuddle(11, 17);
+    LemurianShip_MeltJellyIntoPuddle(ACTOR_SIX_JELLY_ROOM_JELLY_C,
+                                     ACTOR_SIX_JELLY_ROOM_PUDDLE_B);
     Event_ClearFlag((FLAG_JELLY_MELTING + 4));
   } else if (Event_GetFlag((FLAG_JELLY_MELTING + 5))) {
-    LemurianShip_MeltJellyIntoPuddle(12, 18);
+    LemurianShip_MeltJellyIntoPuddle(ACTOR_SIX_JELLY_ROOM_JELLY_D,
+                                     ACTOR_SIX_JELLY_ROOM_PUDDLE_C);
     Event_ClearFlag((FLAG_JELLY_MELTING + 5));
   } else if (Event_GetFlag((FLAG_JELLY_MELTING + 6))) {
-    LemurianShip_MeltJellyIntoPuddle(13, 19);
+    LemurianShip_MeltJellyIntoPuddle(ACTOR_SIX_JELLY_ROOM_JELLY_E,
+                                     ACTOR_SIX_JELLY_ROOM_PUDDLE_D);
     Event_ClearFlag((FLAG_JELLY_MELTING + 6));
   } else if (Event_GetFlag((FLAG_JELLY_MELTING + 7))) {
-    LemurianShip_MeltJellyIntoPuddle(14, 20);
+    LemurianShip_MeltJellyIntoPuddle(ACTOR_SIX_JELLY_ROOM_JELLY_F,
+                                     ACTOR_SIX_JELLY_ROOM_PUDDLE_E);
     Event_ClearFlag((FLAG_JELLY_MELTING + 7));
   }
   if (gMainRoutineWork.entrance == 26 &&
@@ -1489,7 +1504,7 @@ void LemurianShip_SetUpSevenJellyRoom(void) {
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 8)))
       Actor_SetPosition(ACTOR_SEVEN_JELLY_ROOM_JELLY_A, 0, 0);
   } else {
-    LemurianShip_SetUpJelly(9);
+    LemurianShip_SetUpJelly(ACTOR_SEVEN_JELLY_ROOM_JELLY_A);
   }
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + 9))) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 53, 32);
@@ -1501,7 +1516,7 @@ void LemurianShip_SetUpSevenJellyRoom(void) {
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 9)))
       Actor_SetPosition(ACTOR_SEVEN_JELLY_ROOM_JELLY_B, 0, 0);
   } else {
-    LemurianShip_SetUpJelly(10);
+    LemurianShip_SetUpJelly(ACTOR_SEVEN_JELLY_ROOM_JELLY_B);
   }
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + 10))) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 43, 37);
@@ -1513,7 +1528,7 @@ void LemurianShip_SetUpSevenJellyRoom(void) {
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 10)))
       Actor_SetPosition(ACTOR_SEVEN_JELLY_ROOM_JELLY_C, 0, 0);
   } else {
-    LemurianShip_SetUpJelly(11);
+    LemurianShip_SetUpJelly(ACTOR_SEVEN_JELLY_ROOM_JELLY_C);
   }
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + 11))) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 48, 37);
@@ -1525,7 +1540,7 @@ void LemurianShip_SetUpSevenJellyRoom(void) {
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 11)))
       Actor_SetPosition(ACTOR_SEVEN_JELLY_ROOM_JELLY_D, 0, 0);
   } else {
-    LemurianShip_SetUpJelly(12);
+    LemurianShip_SetUpJelly(ACTOR_SEVEN_JELLY_ROOM_JELLY_D);
   }
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + 12))) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 50, 37);
@@ -1537,7 +1552,7 @@ void LemurianShip_SetUpSevenJellyRoom(void) {
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 12)))
       Actor_SetPosition(ACTOR_SEVEN_JELLY_ROOM_JELLY_E, 0, 0);
   } else {
-    LemurianShip_SetUpJelly(13);
+    LemurianShip_SetUpJelly(ACTOR_SEVEN_JELLY_ROOM_JELLY_E);
   }
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + 14))) {
     MapGrid_CopyCellAttributes(44, 0, 1, 1, 48, 43);
@@ -1549,27 +1564,33 @@ void LemurianShip_SetUpSevenJellyRoom(void) {
     if (!Event_GetFlag((FLAG_JELLY_MELTING + 14)))
       Actor_SetPosition(ACTOR_SEVEN_JELLY_ROOM_JELLY_G, 0, 0);
   } else {
-    LemurianShip_SetUpJelly(15);
+    LemurianShip_SetUpJelly(ACTOR_SEVEN_JELLY_ROOM_JELLY_G);
   }
   FlagBlock_PlaceAll(gLemurianShip_SevenJellyRoomPuddles);
   FieldTask_AddFrame(LemurianShip_KeepSevenJellyRoomPuddles, TASK_PASS_VBLANK);
   if (Event_GetFlag((FLAG_JELLY_MELTING + 8))) {
-    LemurianShip_MeltJellyIntoPuddle(9, 16);
+    LemurianShip_MeltJellyIntoPuddle(ACTOR_SEVEN_JELLY_ROOM_JELLY_A,
+                                     ACTOR_SEVEN_JELLY_ROOM_PUDDLE_A);
     Event_ClearFlag((FLAG_JELLY_MELTING + 8));
   } else if (Event_GetFlag((FLAG_JELLY_MELTING + 9))) {
-    LemurianShip_MeltJellyIntoPuddle(10, 17);
+    LemurianShip_MeltJellyIntoPuddle(ACTOR_SEVEN_JELLY_ROOM_JELLY_B,
+                                     ACTOR_SEVEN_JELLY_ROOM_PUDDLE_B);
     Event_ClearFlag((FLAG_JELLY_MELTING + 9));
   } else if (Event_GetFlag((FLAG_JELLY_MELTING + 10))) {
-    LemurianShip_MeltJellyIntoPuddle(11, 18);
+    LemurianShip_MeltJellyIntoPuddle(ACTOR_SEVEN_JELLY_ROOM_JELLY_C,
+                                     ACTOR_SEVEN_JELLY_ROOM_PUDDLE_C);
     Event_ClearFlag((FLAG_JELLY_MELTING + 10));
   } else if (Event_GetFlag((FLAG_JELLY_MELTING + 11))) {
-    LemurianShip_MeltJellyIntoPuddle(12, 19);
+    LemurianShip_MeltJellyIntoPuddle(ACTOR_SEVEN_JELLY_ROOM_JELLY_D,
+                                     ACTOR_SEVEN_JELLY_ROOM_PUDDLE_D);
     Event_ClearFlag((FLAG_JELLY_MELTING + 11));
   } else if (Event_GetFlag((FLAG_JELLY_MELTING + 12))) {
-    LemurianShip_MeltJellyIntoPuddle(13, 20);
+    LemurianShip_MeltJellyIntoPuddle(ACTOR_SEVEN_JELLY_ROOM_JELLY_E,
+                                     ACTOR_SEVEN_JELLY_ROOM_PUDDLE_E);
     Event_ClearFlag((FLAG_JELLY_MELTING + 12));
   } else if (Event_GetFlag((FLAG_JELLY_MELTING + 14))) {
-    LemurianShip_MeltJellyIntoPuddle(15, 22);
+    LemurianShip_MeltJellyIntoPuddle(ACTOR_SEVEN_JELLY_ROOM_JELLY_G,
+                                     ACTOR_SEVEN_JELLY_ROOM_PUDDLE_G);
     Event_ClearFlag((FLAG_JELLY_MELTING + 14));
   }
 }
@@ -2126,8 +2147,8 @@ struct Trigger gLemurianShip_PillarRoomTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_ACTS), 11, (FLAG_PUDDLE_FROZEN + 1), EVENT(LemurianShip_ShowLeftPillarPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_RIGHT_PILLAR_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT(LemurianShip_FreezeTwoJellyRoomPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_LEFT_PILLAR_PUDDLE, (FLAG_PUDDLE_FROZEN + 1), EVENT(LemurianShip_FreezeTwoJellyRoomPuddle)},
-    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(LemurianShip_RaiseRightPillar)},
-    {TRIGGER_RAISED, 201, CONDITION_ALWAYS, EVENT(LemurianShip_RaiseLeftPillar)},
+    {TRIGGER_RAISED, RAISED_RIGHT_PILLAR, CONDITION_ALWAYS, EVENT(LemurianShip_RaiseRightPillar)},
+    {TRIGGER_RAISED, RAISED_LEFT_PILLAR, CONDITION_ALWAYS, EVENT(LemurianShip_RaiseLeftPillar)},
     {TRIGGER_TABLE_END},
 };
 

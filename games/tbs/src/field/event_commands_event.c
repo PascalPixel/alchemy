@@ -91,7 +91,7 @@ void Event_Start(void) {
   // Every event starts with no name window and normal waits.
   runtime->choiceMessage = 0;
   runtime->choiceWidth = 0;
-  runtime->transitionFrames = 16;
+  runtime->transitionFrames = MAP_TRANSITION_FRAMES;
   runtime->fastForward = 0;
   runtime->unusedAfterMessage = 0xFFFF;
   runtime->unusedBeforeCamera[0] = -1;

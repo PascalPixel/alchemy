@@ -62,7 +62,7 @@ s32 FieldSequence_Run(s32 entrance) {
   // The default fade is from the backdrop colour over 16 frames; the scene's
   // initialization may choose another.
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  work->transitionFrames = 16;
+  work->transitionFrames = MAP_TRANSITION_FRAMES;
   work->transitionActive = 0;
   // Field_UpdateWalking scales the leader's speed by this (16.16) into the
   // distance counted towards PP, Djinn recovery and poison: Q16_ONE / 160

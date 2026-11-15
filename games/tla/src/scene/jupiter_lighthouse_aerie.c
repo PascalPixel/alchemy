@@ -67,6 +67,9 @@ enum JupiterLighthouseAerieActorId {
 };
 
 extern s32 gPaletteCycleFrame;
+
+/// Sets the counter, its value built as a word.
+static inline void Counter_Set(s32 value) { gPaletteCycleFrame = value; }
 extern s32 gPaletteCyclePausesInEvents;
 extern u16 gPaletteCycleColors[];
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -416,10 +419,7 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
                          (void *)&BG_PLTT_COLOR(13, 0), 32);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
-    /* FAKEMATCH(temporary): a local holding 0. */
-    s32 zero = 0;
-
-    gPaletteCycleFrame = zero;
+    Counter_Set(0);
     Task_Add(PaletteCycle_Step, TASK_PASS_VBLANK);
   } else {
     Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),

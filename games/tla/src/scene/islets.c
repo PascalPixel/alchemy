@@ -1411,14 +1411,7 @@ void Islets_StartPushingCrate(void) {
   *z0 = object->z.fixed;
   object = Actor_Get(ACTOR_CRATE_B);
   gIslets_SecondCrateX = x1 = object->x.fixed;
-  {
-    /* FAKEMATCH(pin): object 13's z in r2. */
-    register s32 z asm("r2");
-
-    z = object->z.fixed;
-    gIslets_SecondCrateZ = z;
-    z1 = z;
-  }
+  gIslets_SecondCrateZ = z1 = object->z.fixed;
   if (*x0 >> 20 == 7 && *z0 >> 20 == 29 && x1 >> 20 == 7 && z1 >> 20 == 28)
     Islets_SetCellCollision(*x0, *z0, 2, 0);
   if (gIslets_FirstCrateX >> 20 == 12 && gIslets_FirstCrateZ >> 20 == 25 &&
@@ -2064,153 +2057,65 @@ void Islets_InitializePier(void) {
     MapGrid_CopyCellAttributes(5, 2, 1, 2, 5, 28);
 }
 
+struct MapLayerBits {
+  u8 unk00[23];
+  u8 unk17Low : 2;
+  u8 priority : 2;
+  u8 unk17High : 4;
+};
+
+void Islets_StartPaletteCycle(void);
+
+void Islets_InitializeTurtle(void) {
+  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
+  s32 done;
+
+  Event_Start();
+  FieldEvent_ResolvePendingActions(0);
+  ((struct MapLayerBits *)map)->priority = 1;
+  if (gMainRoutineWork.entrance == 2)
+    Event_ClearFlag(FLAG_SHOW_AREA_NAME);
+  Islets_StartPaletteCycle();
+  PaletteCycle_Add(3, 12, 5, 4);
+  PaletteCycle_Add(4, 12, 5, 4);
+  if (Event_GetFlag(0xaa5) &&
+      (done = Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) == 0) {
+    Actor_SetPosition(10, 280, 468);
+    Actor_Get(10)->motionFlags = done;
+    {
+      s32 a1 = 0x1280000;
+
+      Actor_SetPositionFixed(ACTOR_LONESOME_GEORGE, a1, px(452));
+    }
+  }
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_LONESOME_GEORGE), 0);
+  Actor_SetSpriteFlags(Actor_Get(11), 0);
+  Actor_SetSpriteFlags(Actor_Get(12), 0);
+  FieldTask_AddFrame(Islets_SetLedgeBlocksByHeight, TASK_PASS_VBLANK);
+  if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
+    Event_SetFlag(FLAG_SCENE_TEMP_17);
+    if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
+      {
+        s32 a3 = 0x4000;
+
+        Actor_SetPositionAndFacing(ACTOR_LONESOME_GEORGE, px(152), px(768), a3);
+      }
+      Actor_SetPosition(10, 176, 777);
+      System_Wait(1);
+    }
+  }
+  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
+    s32 entrance = gMainRoutineWork.entrance;
+
+    if (entrance == 3) {
+      Islets_ArriveAtSecretSpot();
+    } else if (entrance == 4) {
+      Islets_ArriveBackAtIsland();
 #if TLA_PATCH_1
-
-struct MapLayerBits {
-  u8 unk00[23];
-  u8 unk17Low : 2;
-  u8 priority : 2;
-  u8 unk17High : 4;
-};
-
-void Islets_StartPaletteCycle(void);
-/* VIEW(islets): routine PaletteCycle_Add as void PaletteCycle_Add(s32 a, s32 b,
- * s32 c, s32 d); graphics/palette_snapshots.h has s32 PaletteCycle_Add(s16
- * bank, s16 index, s16 delay, s16 count); tried as the definition's s32
- * PaletteCycle_Add(s16 bank, s16 index, s16 delay, s16 count), which the object
- * already declares, Islets_InitializeTurtle moves: 2 of 145 instructions in
- * tla-en. */
-void PaletteCycle_Add__islets(s32 a, s32 b, s32 c,
-                              s32 d) __asm__("PaletteCycle_Add");
-
-void Islets_InitializeTurtle(void) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
-  s32 done;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  ((struct MapLayerBits *)map)->priority = 1;
-  if (gMainRoutineWork.entrance == 2)
-    Event_ClearFlag(FLAG_SHOW_AREA_NAME);
-  Islets_StartPaletteCycle();
-  {
-    s32 a1 = 12;
-    s32 a2 = 5;
-    s32 a3 = 4;
-    s32 a0 = 3;
-
-    /* FAKEMATCH(barrier): the native loads the first argument last. */
-    asm volatile("" : "+l"(a1), "+l"(a2), "+l"(a3));
-    PaletteCycle_Add__islets(a0, a1, a2, a3);
-  }
-  PaletteCycle_Add__islets(4, 12, 5, 4);
-  if (Event_GetFlag(0xaa5) &&
-      (done = Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) == 0) {
-    Actor_SetPosition(10, 280, 468);
-    Actor_Get(10)->motionFlags = done;
-    {
-      s32 a1 = 0x1280000;
-
-      Actor_SetPositionFixed(ACTOR_LONESOME_GEORGE, a1, px(452));
-    }
-  }
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_LONESOME_GEORGE), 0);
-  Actor_SetSpriteFlags(Actor_Get(11), 0);
-  Actor_SetSpriteFlags(Actor_Get(12), 0);
-  FieldTask_AddFrame(Islets_SetLedgeBlocksByHeight, TASK_PASS_VBLANK);
-  if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
-    Event_SetFlag(FLAG_SCENE_TEMP_17);
-    if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-      {
-        s32 a3 = 0x4000;
-
-        Actor_SetPositionAndFacing(ACTOR_LONESOME_GEORGE, px(152), px(768), a3);
-      }
-      Actor_SetPosition(10, 176, 777);
-      System_Wait(1);
-    }
-  }
-  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    s32 entrance = gMainRoutineWork.entrance;
-
-    if (entrance == 3) {
-      Islets_ArriveAtSecretSpot();
-    } else if (entrance == 4) {
-      Islets_ArriveBackAtIsland();
     } else if (entrance != 5) {
-      Event_StartScreenTransition();
-      Event_WaitTransitionFrames();
-      Islets_StartWaterShimmer();
-    }
-  } else {
-    Event_StartScreenTransition();
-    Event_WaitTransitionFrames();
-    Islets_StartWaterShimmer();
-  }
-  Event_End();
-}
-
 #else
-
-// The Japanese release's older form.
-
-struct MapLayerBits {
-  u8 unk00[23];
-  u8 unk17Low : 2;
-  u8 priority : 2;
-  u8 unk17High : 4;
-};
-
-void Islets_StartPaletteCycle(void);
-s32 PaletteCycle_Add__islets(s16 bank, s16 index, s16 delay,
-                             s16 count) __asm__("PaletteCycle_Add");
-
-void Islets_InitializeTurtle(void) {
-  u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
-  s32 done;
-
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  ((struct MapLayerBits *)map)->priority = 1;
-  if (gMainRoutineWork.entrance == 2)
-    Event_ClearFlag(FLAG_SHOW_AREA_NAME);
-  Islets_StartPaletteCycle();
-  PaletteCycle_Add__islets(3, 12, 5, 4);
-  PaletteCycle_Add__islets(4, 12, 5, 4);
-  if (Event_GetFlag(0xaa5) &&
-      (done = Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) == 0) {
-    Actor_SetPosition(10, 280, 468);
-    Actor_Get(10)->motionFlags = done;
-    {
-      s32 a1 = 0x1280000;
-
-      Actor_SetPositionFixed(ACTOR_LONESOME_GEORGE, a1, px(452));
-    }
-  }
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_LONESOME_GEORGE), 0);
-  Actor_SetSpriteFlags(Actor_Get(11), 0);
-  Actor_SetSpriteFlags(Actor_Get(12), 0);
-  FieldTask_AddFrame(Islets_SetLedgeBlocksByHeight, TASK_PASS_VBLANK);
-  if ((u16)(gMainRoutineWork.entrance - 4) <= 1) {
-    Event_SetFlag(FLAG_SCENE_TEMP_17);
-    if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-      {
-        s32 a3 = 0x4000;
-
-        Actor_SetPositionAndFacing(ACTOR_LONESOME_GEORGE, px(152), px(768), a3);
-      }
-      Actor_SetPosition(10, 176, 777);
-      System_Wait(1);
-    }
-  }
-  if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-    s32 entrance = gMainRoutineWork.entrance;
-
-    if (entrance == 3) {
-      Islets_ArriveAtSecretSpot();
-    } else if (entrance == 4) {
-      Islets_ArriveBackAtIsland();
     } else {
+#endif
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
       Islets_StartWaterShimmer();
@@ -2222,8 +2127,6 @@ void Islets_InitializeTurtle(void) {
   }
   Event_End();
 }
-
-#endif
 
 s32 Scene_PrepareMap(void) { return 0; }
 

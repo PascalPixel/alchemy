@@ -1,11 +1,11 @@
 /// @file
 /// Daila's interiors, in two scenes that share this overlay.
 ///
-/// DailaInteriors1 is the village's houses, shops and inn, with other tables
-/// once Tavi is rescued (FLAG_TAVI_RESCUED). DailaInteriors2 is the sanctuary
-/// of the Sea God, where Frost raises three puddles into pillars of ice
-/// (Scene_RaiseHeldActor, gDailaInteriors_PillarFrozenFlags) up to the Sea
-/// God's Tear (DailaInteriors_TakeSeaGodsTear), and where, once Tavi is
+/// DailaInteriorsHouses is the village's houses, shops and inn, with other
+/// tables once Tavi is rescued (FLAG_TAVI_RESCUED). DailaInteriorsSanctum is
+/// the sanctuary of the Sea God, where Frost raises three puddles into pillars
+/// of ice (Scene_RaiseHeldActor, gDailaInteriors_PillarFrozenFlags) up to the
+/// Sea God's Tear (DailaInteriors_TakeSeaGodsTear), and where, once Tavi is
 /// rescued, the drained floor opens the way on (Scene_Initialize).
 
 #include "shared/tables.h"
@@ -46,8 +46,8 @@ void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 destX, s32 destY, s32 width,
 /// Reads a game flag.
 static inline s32 Daila_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
 
-/// The houses, shops and inn of DailaInteriors1, numbering the rows its two
-/// placement tables share.
+/// The houses, shops and inn of DailaInteriorsHouses, numbering the rows its
+/// two placement tables share.
 enum DailaInteriorsActorId {
   /// Riki's parents, in the house by entrance 1, scolding the boy who took his
   /// father's fishing pole.
@@ -172,7 +172,7 @@ const void *Scene_GetExits(void) {
 }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_2)
+  if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_SANCTUM)
     return gDailaInteriors2Placements;
   if (GameFlag_Get(FLAG_TAVI_RESCUED))
     return gDailaInteriors1PlacementsOnceTaviIsRescued;
@@ -256,7 +256,7 @@ extern struct Trigger gDailaInteriors1Events[];
 const struct Trigger *Scene_GetTriggers(void) {
   s32 flag = GameFlag_Get(FLAG_TAVI_RESCUED);
   struct MainRoutineWork *party = &gMainRoutineWork;
-  s32 id = SCENE_DAILA_INTERIORS_2;
+  s32 id = SCENE_DAILA_INTERIORS_SANCTUM;
 
   if (flag) {
     if (party->next == id)
@@ -654,7 +654,7 @@ s32 Scene_Initialize(void) {
   s32 value = 0x209;
 
   *effect = value;
-  if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_1) {
+  if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_HOUSES) {
     if (gMainRoutineWork.entrance == 7) {
       Scene_FadeInAndClearFlag();
     } else {
@@ -670,7 +670,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpritePriority(ACTOR_ARMOR_MERCHANT, 2);
       Actor_GetById(ACTOR_ARMOR_MERCHANT)->collisionFlags |= 4;
     }
-  } else if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_2) {
+  } else if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_SANCTUM) {
     map = (struct DailaMapWork *)Ram_HeapSlots->mapGrid;
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -702,7 +702,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_2 &&
+  if (gMainRoutineWork.next == SCENE_DAILA_INTERIORS_SANCTUM &&
       GameFlag_Get(FLAG_TAVI_RESCUED)) {
     TilesetAnim_Pause(0);
     MapGrid_CopyCells(29, 33, 10, 6, 10, 12);
@@ -787,7 +787,7 @@ struct SceneEntrance gSceneEntrances[] = {
 // clang-format off
 /// Where the houses' doors lead, before Tavi is rescued, out into Daila1.
 s32 gDailaInteriorsExits[] = {
-    SCENE_EXITS(DailaInteriors1),
+    SCENE_EXITS(DailaInteriorsHouses),
     SCENE_EXIT_UNLESS(1, Daila1, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, Daila1, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, Daila1, 3, EXIT_FLAG_NONE),
@@ -795,14 +795,14 @@ s32 gDailaInteriorsExits[] = {
     SCENE_EXIT_UNLESS(5, Daila1, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, Daila1, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, Islets3, 3, EXIT_FLAG_NONE),
-    SCENE_EXITS(DailaInteriors2),
+    SCENE_EXITS(DailaInteriorsSanctum),
     SCENE_EXIT_UNLESS(1, Daila1, 7, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 /// Where the houses' doors lead once Tavi is rescued, out into Daila2.
 s32 gDailaInteriorsExitsOnceTaviIsRescued[] = {
-    SCENE_EXITS(DailaInteriors1),
+    SCENE_EXITS(DailaInteriorsHouses),
     SCENE_EXIT_UNLESS(1, Daila2, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, Daila2, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, Daila2, 3, EXIT_FLAG_NONE),
@@ -810,7 +810,7 @@ s32 gDailaInteriorsExitsOnceTaviIsRescued[] = {
     SCENE_EXIT_UNLESS(5, Daila2, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, Daila2, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, Islets3, 3, EXIT_FLAG_NONE),
-    SCENE_EXITS(DailaInteriors2),
+    SCENE_EXITS(DailaInteriorsSanctum),
     SCENE_EXIT_UNLESS(1, Daila2, 7, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };

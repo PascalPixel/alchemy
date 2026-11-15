@@ -211,7 +211,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return gTaopoSwamp_Room9Placements;
   if (scene == SCENE_TAOPO_SWAMP_10)
     return gTaopoSwamp_Room10Placements;
-  if (scene == SCENE_TAOPO_SWAMP_11)
+  if (scene == SCENE_TAOPO_SWAMP_STAR_DUST)
     return gTaopoSwamp_Room11Placements;
   return gTaopoSwamp_Placements;
 }
@@ -910,7 +910,7 @@ const struct Trigger *Scene_GetTriggers(void) {
     return (const struct Trigger *)gTaopoSwamp_Room1Triggers;
   if (scene == SCENE_TAOPO_SWAMP_2)
     return (const struct Trigger *)gTaopoSwamp_Room2Triggers;
-  if (scene == SCENE_TAOPO_SWAMP_3)
+  if (scene == SCENE_TAOPO_SWAMP_TEAR_STONES)
     return (const struct Trigger *)gTaopoSwamp_Room3Triggers;
   if (scene == SCENE_TAOPO_SWAMP_FLOWER)
     return (const struct Trigger *)gTaopoSwamp_Room4Triggers;
@@ -926,7 +926,7 @@ const struct Trigger *Scene_GetTriggers(void) {
     return (const struct Trigger *)gTaopoSwamp_Room9Triggers;
   if (scene == SCENE_TAOPO_SWAMP_10)
     return (const struct Trigger *)gTaopoSwamp_Room10Triggers;
-  if (scene == SCENE_TAOPO_SWAMP_11)
+  if (scene == SCENE_TAOPO_SWAMP_STAR_DUST)
     return (const struct Trigger *)gTaopoSwamp_Room11Triggers;
   return (const struct Trigger *)gTaopoSwamp_Triggers;
 }
@@ -1226,7 +1226,7 @@ s32 Scene_Initialize(void) {
     Task_Add(TaopoSwamp_DripAtRandom, TASK_PASS_VBLANK);
     ((s8 *)map)[23] = (((s8 *)map)[23] & ~12) | 8;
     gDecodeFillByte = 93;
-  } else if (scene == SCENE_TAOPO_SWAMP_3) {
+  } else if (scene == SCENE_TAOPO_SWAMP_TEAR_STONES) {
     if (!Event_GetFlag(FLAG_AREA_TEMP_00))
       Actor_SetWideSprite(64, 1);
     if (!Event_GetFlag(FLAG_AREA_TEMP_01))
@@ -1355,7 +1355,7 @@ s32 Scene_Initialize(void) {
         Actor_SetAnimation(10, 0);
       }
     }
-  } else if (scene == SCENE_TAOPO_SWAMP_11) {
+  } else if (scene == SCENE_TAOPO_SWAMP_STAR_DUST) {
     if (!Event_GetFlag(FLAG_AREA_TEMP_40)) {
       Event_SetFlag(FLAG_AREA_TEMP_41);
     } else {
@@ -1418,7 +1418,7 @@ s32 Scene_Initialize(void) {
     Task_Add(TaopoSwamp_DripAtRandom, TASK_PASS_VBLANK);
     ((s8 *)map)[23] = (((s8 *)map)[23] & ~12) | 8;
     gDecodeFillByte = 93;
-  } else if (scene == SCENE_TAOPO_SWAMP_3) {
+  } else if (scene == SCENE_TAOPO_SWAMP_TEAR_STONES) {
     *effect = 516;
     if (!Event_GetFlag(FLAG_AREA_TEMP_00))
       Actor_SetWideSprite(64, 1);
@@ -1556,7 +1556,7 @@ s32 Scene_Initialize(void) {
         Actor_SetAnimation(10, 0);
       }
     }
-  } else if (scene == SCENE_TAOPO_SWAMP_11) {
+  } else if (scene == SCENE_TAOPO_SWAMP_STAR_DUST) {
     *effect = 516;
     if (!Event_GetFlag(FLAG_AREA_TEMP_40)) {
       Event_SetFlag(FLAG_AREA_TEMP_41);
@@ -2026,23 +2026,23 @@ u32 gSceneExits[] = {
     SCENE_EXITS(TaopoSwamp2),
     SCENE_EXIT(1, TaopoSwamp1, 2),
     SCENE_EXIT(2, TaopoSwamp1, 3),
-    SCENE_EXIT(3, TaopoSwamp3, 3),
+    SCENE_EXIT(3, TaopoSwampTearStones, 3),
     SCENE_EXIT(4, TaopoSwamp6, 4),
-    SCENE_EXIT(5, TaopoSwamp3, 5),
-    SCENE_EXITS(TaopoSwamp3),
+    SCENE_EXIT(5, TaopoSwampTearStones, 5),
+    SCENE_EXITS(TaopoSwampTearStones),
     SCENE_EXIT(3, TaopoSwamp2, 3),
     SCENE_EXIT(5, TaopoSwamp2, 5),
     SCENE_EXIT(6, TaopoSwamp5, 2),
     SCENE_EXIT(7, TaopoSwamp5, 3),
-    SCENE_EXIT(8, TaopoSwamp3, 9),
-    SCENE_EXIT(9, TaopoSwamp3, 8),
+    SCENE_EXIT(8, TaopoSwampTearStones, 9),
+    SCENE_EXIT(9, TaopoSwampTearStones, 8),
     SCENE_EXITS(TaopoSwampFlower),
     SCENE_EXIT(1, TaopoSwamp5, 1),
     SCENE_EXIT(2, TaopoSwamp5, 4),
     SCENE_EXITS(TaopoSwamp5),
     SCENE_EXIT(1, TaopoSwampFlower, 1),
-    SCENE_EXIT(2, TaopoSwamp3, 6),
-    SCENE_EXIT(3, TaopoSwamp3, 7),
+    SCENE_EXIT(2, TaopoSwampTearStones, 6),
+    SCENE_EXIT(3, TaopoSwampTearStones, 7),
     SCENE_EXIT(4, TaopoSwampFlower, 2),
     SCENE_EXIT(10, TaopoSwampFlower, 10),
     SCENE_EXIT(11, TaopoSwampFlower, 11),
@@ -2070,18 +2070,18 @@ u32 gSceneExits[] = {
     SCENE_EXIT(5, TaopoSwamp8, 4),
     SCENE_EXITS(TaopoSwamp10),
     SCENE_EXIT(1, TaopoSwamp8, 1),
-    SCENE_EXIT(2, TaopoSwamp11, 2),
+    SCENE_EXIT(2, TaopoSwampStarDust, 2),
     SCENE_EXIT(3, TaopoSwamp9, 3),
     SCENE_EXIT(4, TaopoSwamp9, 4),
     SCENE_EXITS(TaopoSwamp9),
     SCENE_EXIT(3, TaopoSwamp10, 3),
     SCENE_EXIT(4, TaopoSwamp10, 4),
-    SCENE_EXITS(TaopoSwamp11),
+    SCENE_EXITS(TaopoSwampStarDust),
     SCENE_EXIT(2, TaopoSwamp10, 2),
-    SCENE_EXIT(3, TaopoSwamp11, 4),
-    SCENE_EXIT(4, TaopoSwamp11, 3),
-    SCENE_EXIT(5, TaopoSwamp11, 6),
-    SCENE_EXIT(6, TaopoSwamp11, 5),
+    SCENE_EXIT(3, TaopoSwampStarDust, 4),
+    SCENE_EXIT(4, TaopoSwampStarDust, 3),
+    SCENE_EXIT(5, TaopoSwampStarDust, 6),
+    SCENE_EXIT(6, TaopoSwampStarDust, 5),
     SCENE_EXITS_END,
 };
 

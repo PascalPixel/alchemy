@@ -24,10 +24,10 @@ Field_AquaRockInside8:
 	.incbin "games/tla/src/map/aqua_rock_inside_8/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_AquaRockInside8_ANIMATION:
-	.incbin "games/tla/src/map/aqua_rock_inside_1/animation.script.lz"
+	.incbin "games/tla/src/map/aqua_rock_inside_water_of_life_chest/animation.script.lz"
 	.balign 4, 0
 .LField_AquaRockInside8_BLEND:
-	.incbin "games/tla/src/map/aqua_rock_inside_1/blend.script.lz"
+	.incbin "games/tla/src/map/aqua_rock_inside_water_of_life_chest/blend.script.lz"
 	.balign 4, 0
 .LField_AquaRockInside8_SCENE:
 	.incbin "games/tla/src/map/aqua_rock_inside_8/scene.scene.lz"

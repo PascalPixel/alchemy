@@ -269,7 +269,7 @@ void Event_SetDestinationFar__window(s32 scene, s32 entrance) __asm__(
 void DebugWarp_Jupiter(void) {
   Inventory_AddItemFar(FELIX, ITEM_RED_KEY);
   Inventory_AddItemFar(FELIX, ITEM_BLUE_KEY);
-  Event_SetDestinationFar(SCENE_JUPITER_LIGHTHOUSE_ROOM_4, 4);
+  Event_SetDestinationFar(SCENE_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS, 4);
 }
 
 /// Preset 1, "Arafura2": Briggs caught and the mayor at the ship, Alhafra's
@@ -324,7 +324,7 @@ void DebugWarp_KaoruSpecial4(void) {
   GameFlag_Set(0x94c);
   GameFlag_Set(0x9e1);
   GameFlag_Set(0x94f);
-  Event_SetDestinationFar(SCENE_SHAMAN_VILLAGE_4, 30);
+  Event_SetDestinationFar(SCENE_SHAMAN_VILLAGE_INN, 30);
 }
 
 /// Preset 6, "Kaoru Special3": seven story flags set, saving barred. To Prox.

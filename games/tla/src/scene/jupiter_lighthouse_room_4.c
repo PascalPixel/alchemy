@@ -624,20 +624,20 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(JupiterLighthouseRoom4),
-    SCENE_EXIT(1, JupiterLighthouseRoom5, 1),
-    SCENE_EXIT(2, JupiterLighthouseRoom3, 2),
-    SCENE_EXIT(3, JupiterLighthouseRoom4, 4),
-    SCENE_EXIT(4, JupiterLighthouseRoom4, 3),
-    SCENE_EXIT(5, JupiterLighthouseRoom4, 6),
-    SCENE_EXIT(6, JupiterLighthouseRoom4, 5),
-    SCENE_EXIT(7, JupiterLighthouseRoom4, 8),
-    SCENE_EXIT(8, JupiterLighthouseRoom4, 7),
+    SCENE_EXITS(JupiterLighthouseRoomLockedDoors),
+    SCENE_EXIT(1, JupiterLighthouseRoomRedKey, 1),
+    SCENE_EXIT(2, JupiterLighthouseRoomErinyesTunicChest, 2),
+    SCENE_EXIT(3, JupiterLighthouseRoomLockedDoors, 4),
+    SCENE_EXIT(4, JupiterLighthouseRoomLockedDoors, 3),
+    SCENE_EXIT(5, JupiterLighthouseRoomLockedDoors, 6),
+    SCENE_EXIT(6, JupiterLighthouseRoomLockedDoors, 5),
+    SCENE_EXIT(7, JupiterLighthouseRoomLockedDoors, 8),
+    SCENE_EXIT(8, JupiterLighthouseRoomLockedDoors, 7),
     SCENE_EXIT(9, JupiterLighthouseRoomM, 9),
     SCENE_EXIT(10, JupiterLighthouseRoomM, 10),
-    SCENE_EXIT(11, JupiterLighthouseRoom4, 11),
-    SCENE_EXIT(12, JupiterLighthouseRoom3, 12),
-    SCENE_EXIT(13, JupiterLighthouseRoom3, 13),
+    SCENE_EXIT(11, JupiterLighthouseRoomLockedDoors, 11),
+    SCENE_EXIT(12, JupiterLighthouseRoomErinyesTunicChest, 12),
+    SCENE_EXIT(13, JupiterLighthouseRoomErinyesTunicChest, 13),
     SCENE_EXITS_END,
 };
 

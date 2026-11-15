@@ -24,10 +24,10 @@ Field_GaiaRockInside5:
 	.incbin "games/tla/src/map/gaia_rock_inside_5/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_GaiaRockInside5_ANIMATION:
-	.incbin "games/tla/src/map/gaia_rock_inside_2/animation.script.lz"
+	.incbin "games/tla/src/map/gaia_rock_inside_first_altar/animation.script.lz"
 	.balign 4, 0
 .LField_GaiaRockInside5_BLEND:
-	.incbin "games/tla/src/map/gaia_rock_inside_3/blend.script.lz"
+	.incbin "games/tla/src/map/gaia_rock_inside_twin_altars/blend.script.lz"
 	.balign 4, 0
 .LField_GaiaRockInside5_SCENE:
 	.incbin "games/tla/src/map/gaia_rock_inside_5/scene.scene.lz"

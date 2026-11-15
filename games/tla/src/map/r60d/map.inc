@@ -15,7 +15,7 @@ Resource_Data60D:
 	.incbin "games/tla/src/map/r60d/cell_pictures.delta1.lz"
 	.balign 4, 0
 .LResource_Data60D_SHAPES:
-	.incbin "games/tla/src/map/anemos_inner_sanctum_4/shapes.table.lz"
+	.incbin "games/tla/src/map/anemos_inner_sanctum_orihalcon_chest/shapes.table.lz"
 	.balign 4, 0
 .LResource_Data60D_GRID:
 	.incbin "games/tla/src/map/r60d/map.grid.lz"
@@ -24,7 +24,7 @@ Resource_Data60D:
 	.incbin "games/tla/src/map/r60d/shape_grid.plane.lz"
 	.balign 4, 0
 .LResource_Data60D_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LResource_Data60D_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

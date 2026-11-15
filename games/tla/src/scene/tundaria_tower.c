@@ -1,6 +1,7 @@
 /// @file
 /// Tundaria Tower, the frozen tower that holds the Center Prong, in seven rooms
-/// that share this overlay (SceneId_TundariaTower1 to SceneId_TundariaTower7).
+/// that share this overlay (SceneId_TundariaTower1 to
+/// SceneId_TundariaTowerBurstBrooch).
 ///
 /// In the first hall (room 2) Parch dries the water left and right of the
 /// doors, and the Center Prong lies frozen in a crystal that only Burst
@@ -201,7 +202,7 @@ extern u32 gTundariaTower_Room7Regions[];
 const struct ActorPlacement *Scene_GetExitRegions(void) {
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_6)
     return (const struct ActorPlacement *)gTundariaTower_Room6Regions;
-  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_7)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_BURST_BROOCH)
     return (const struct ActorPlacement *)gTundariaTower_Room7Regions;
   return 0;
 }
@@ -216,7 +217,7 @@ extern struct ActorPlacement gTundariaTower_Room6Placements[];
 extern struct ActorPlacement gTundariaTower_Room7Placements[];
 
 const struct Trigger *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_2)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_CENTER_PRONG)
     return (const struct Trigger *)gTundariaTower_Room2Placements;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_3)
     return (const struct Trigger *)gTundariaTower_Room3Placements;
@@ -226,7 +227,7 @@ const struct Trigger *Scene_GetActorPlacements(void) {
     return (const struct Trigger *)gTundariaTower_Room5Placements;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_6)
     return (const struct Trigger *)gTundariaTower_Room6Placements;
-  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_7)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_BURST_BROOCH)
     return (const struct Trigger *)gTundariaTower_Room7Placements;
   return (const struct Trigger *)gTundariaTower_Room2Placements;
 }
@@ -525,7 +526,7 @@ void TundariaTower_LiftPillar(void) {
     object = *(struct Actor **)((u8 *)work + 0xcbc);
     object->timer =
         ((object->x.fixed >> 20) << 8) | ((object->z.fixed >> 20) & 0xff);
-  } else if (party->next == SCENE_TUNDARIA_TOWER_7) {
+  } else if (party->next == SCENE_TUNDARIA_TOWER_BURST_BROOCH) {
     Actor_LiftTargetBlock(gTundariaTower_Room7Pillar);
   }
 }
@@ -683,7 +684,7 @@ void TundariaTower_BurstIcyWall(s32 mode, s32 cue) {
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_1)
     return gTundariaTower_Room1Triggers;
-  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_2)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_CENTER_PRONG)
     return gTundariaTower_Room2Triggers;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_3)
     return gTundariaTower_Room3Triggers;
@@ -693,7 +694,7 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gTundariaTower_Room5Triggers;
   if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_6)
     return gTundariaTower_Room6Triggers;
-  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_7)
+  if (gMainRoutineWork.next == SCENE_TUNDARIA_TOWER_BURST_BROOCH)
     return gTundariaTower_Room7Triggers;
   return gTundariaTower_Room2Triggers;
 }
@@ -869,7 +870,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x204;
   scene = gMainRoutineWork.next;
   if (scene == SCENE_TUNDARIA_TOWER_1) {
-  } else if (scene == SCENE_TUNDARIA_TOWER_2) {
+  } else if (scene == SCENE_TUNDARIA_TOWER_CENTER_PRONG) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
@@ -983,7 +984,7 @@ s32 Scene_Initialize(void) {
         TundariaTower_LandFromSlide();
       break;
     }
-  } else if (scene == SCENE_TUNDARIA_TOWER_7) {
+  } else if (scene == SCENE_TUNDARIA_TOWER_BURST_BROOCH) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     if (GameFlag_Get(FLAG_ICY_WALL_BURST)) {
       MapGrid_CopyCellsTo(13, 26, 13, 16, 3, 3);
@@ -1731,26 +1732,26 @@ u32 gTundariaTower_Room7Regions[] = {
 u32 gSceneExits[] = {
     SCENE_EXITS(TundariaTower1),
     SCENE_EXIT_UNLESS(1, WorldMap, 46, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, TundariaTower2, 1, EXIT_FLAG_NONE),
-    SCENE_EXITS(TundariaTower2),
+    SCENE_EXIT_UNLESS(2, TundariaTowerCenterProng, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(TundariaTowerCenterProng),
     SCENE_EXIT_UNLESS(1, TundariaTower1, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, TundariaTower2, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, TundariaTower2, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, TundariaTower2, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, TundariaTowerCenterProng, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, TundariaTowerCenterProng, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, TundariaTowerCenterProng, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, TundariaTower6, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, TundariaTower2, 16, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, TundariaTower2, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, TundariaTower2, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, TundariaTower2, 18, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, TundariaTowerCenterProng, 16, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, TundariaTowerCenterProng, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, TundariaTowerCenterProng, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, TundariaTowerCenterProng, 18, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, TundariaTower3, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, TundariaTower2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, TundariaTowerCenterProng, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(12, TundariaTower6, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(13, TundariaTower2, 15, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(14, TundariaTower2, 17, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(15, TundariaTower2, 13, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(16, TundariaTower2, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(17, TundariaTower2, 14, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(18, TundariaTower2, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(13, TundariaTowerCenterProng, 15, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(14, TundariaTowerCenterProng, 17, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(15, TundariaTowerCenterProng, 13, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(16, TundariaTowerCenterProng, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(17, TundariaTowerCenterProng, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(18, TundariaTowerCenterProng, 9, EXIT_FLAG_NONE),
     SCENE_EXITS(TundariaTower3),
     SCENE_EXIT_UNLESS(1, TundariaTower3, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, TundariaTower3, 7, EXIT_FLAG_NONE),
@@ -1760,7 +1761,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(6, TundariaTower3, 11, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, TundariaTower3, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, TundariaTower3, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, TundariaTower2, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, TundariaTowerCenterProng, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, TundariaTower3, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, TundariaTower3, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(12, TundariaTower3, 8, EXIT_FLAG_NONE),
@@ -1786,15 +1787,15 @@ u32 gSceneExits[] = {
     SCENE_EXITS(TundariaTower6),
     SCENE_EXIT_UNLESS(1, TundariaTower5, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, TundariaTower5, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, TundariaTower7, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, TundariaTower2, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, TundariaTower2, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, TundariaTower7, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, TundariaTowerBurstBrooch, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, TundariaTowerCenterProng, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, TundariaTowerCenterProng, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, TundariaTowerBurstBrooch, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, TundariaTower6, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, TundariaTower6, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, TundariaTower5, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, TundariaTower6, 10, EXIT_FLAG_NONE),
-    SCENE_EXITS(TundariaTower7),
+    SCENE_EXITS(TundariaTowerBurstBrooch),
     SCENE_EXIT_UNLESS(1, TundariaTower6, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, TundariaTower6, 3, EXIT_FLAG_NONE),
     SCENE_EXITS_END,

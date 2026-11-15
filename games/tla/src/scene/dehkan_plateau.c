@@ -249,15 +249,15 @@ extern struct Trigger gDehkanPlateau_Room6Triggers[];
 const u8 *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_DEHKAN_PLATEAU_1)
+  if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
     return gDehkanPlateau_Room1Placements;
-  if (scene == SCENE_DEHKAN_PLATEAU_2)
+  if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
     return gDehkanPlateau_Room2Placements;
   if (scene == SCENE_DEHKAN_PLATEAU_3)
     return gDehkanPlateau_Room3Placements;
   if (scene == SCENE_DEHKAN_PLATEAU_4)
     return gDehkanPlateau_Room4Placements;
-  if (scene == SCENE_DEHKAN_PLATEAU_5)
+  if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
     return gDehkanPlateau_Room5Placements;
   if (scene == SCENE_DEHKAN_PLATEAU_CANNON)
     return gDehkanPlateau_Room6Placements;
@@ -267,15 +267,15 @@ const u8 *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_DEHKAN_PLATEAU_1)
+  if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
     return gDehkanPlateau_Room1Triggers;
-  if (scene == SCENE_DEHKAN_PLATEAU_2)
+  if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
     return gDehkanPlateau_Room2Triggers;
   if (scene == SCENE_DEHKAN_PLATEAU_3)
     return gDehkanPlateau_Room3Triggers;
   if (scene == SCENE_DEHKAN_PLATEAU_4)
     return gDehkanPlateau_Room4Triggers;
-  if (scene == SCENE_DEHKAN_PLATEAU_5)
+  if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
     return gDehkanPlateau_Room5Triggers;
   if (scene == SCENE_DEHKAN_PLATEAU_CANNON)
     return gDehkanPlateau_Room6Triggers;
@@ -351,9 +351,9 @@ void Actors_SetHidden(s32 show, s32 first, u32 count);
 void DehkanPlateau_SetActorsHidden(s32 show) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_DEHKAN_PLATEAU_1)
+  if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
     Actors_SetHidden(show, ACTOR_ROOM1_FIRST_COVER, ROOM1_COVER_COUNT);
-  else if (scene == SCENE_DEHKAN_PLATEAU_2)
+  else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
     Actors_SetHidden(show, ACTOR_ROOM2_FIRST_COVER, ROOM2_COVER_COUNT);
   else if (scene == SCENE_DEHKAN_PLATEAU_3)
     Actors_SetHidden(show, ACTOR_ROOM3_FIRST_COVER, ROOM3_COVER_COUNT);
@@ -623,10 +623,10 @@ extern s32 gDehkanPlateau_CrackZ;
 
 #define SCENE(name) ((s32)&SceneId_##name)
 
-/// Steps onto a listed cell in rooms 1, 2, 3 and 5 (SceneId_DehkanPlateau1 to
-/// Room5): either falls through to exit work->stepTrigger or opens the cell and
-/// sets its flag. cellX is reused for the doubled index and the fall's frame
-/// count.
+/// Steps onto a listed cell in rooms 1, 2, 3 and 5
+/// (SceneId_DehkanPlateauFullMetalVestChest to Room5): either falls through to
+/// exit work->stepTrigger or opens the cell and sets its flag. cellX is reused
+/// for the doubled index and the fall's frame count.
 void DehkanPlateau_StepOnCrack(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -635,11 +635,11 @@ void DehkanPlateau_StepOnCrack(void) {
   s32 n, flag;
   u16 *record, *next;
 
-  if (gMainRoutineWork.next == SCENE(DehkanPlateau1)) {
+  if (gMainRoutineWork.next == SCENE(DehkanPlateauFullMetalVestChest)) {
     n = work->stepTrigger - 11;
     flag = work->stepTrigger + 0x235;
     record = &gDehkanPlateau_Room1Cracks[n][1];
-  } else if (gMainRoutineWork.next == SCENE(DehkanPlateau2)) {
+  } else if (gMainRoutineWork.next == SCENE(DehkanPlateauThemisAxeChest)) {
     n = work->stepTrigger - 14;
     flag = work->stepTrigger + 0x232;
     record = &gDehkanPlateau_Room2Cracks[n][1];
@@ -647,7 +647,7 @@ void DehkanPlateau_StepOnCrack(void) {
     n = work->stepTrigger - 12;
     flag = work->stepTrigger + 0x234;
     record = &gDehkanPlateau_Room3Cracks[n][1];
-  } else if (gMainRoutineWork.next == SCENE(DehkanPlateau5)) {
+  } else if (gMainRoutineWork.next == SCENE(DehkanPlateauPoundCube)) {
     n = work->stepTrigger - 18;
     flag = work->stepTrigger + 0x22e;
     record = &gDehkanPlateau_Room5Cracks[n][1];
@@ -675,11 +675,11 @@ void DehkanPlateau_StepOnCrack(void) {
     {
       s16 scene = gMainRoutineWork.next;
       y = *record++;
-      if (scene == SCENE(DehkanPlateau1))
+      if (scene == SCENE(DehkanPlateauFullMetalVestChest))
         MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room1CrackPictures[2],
                                            gDehkanPlateau_Room1CrackPictures[3],
                                            x, y, 1, 1);
-      else if (scene == SCENE(DehkanPlateau2))
+      else if (scene == SCENE(DehkanPlateauThemisAxeChest))
         MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room2CrackPictures[2],
                                            gDehkanPlateau_Room2CrackPictures[3],
                                            x, y, 1, 1);
@@ -687,7 +687,7 @@ void DehkanPlateau_StepOnCrack(void) {
         MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room3CrackPictures[2],
                                            gDehkanPlateau_Room3CrackPictures[3],
                                            x, y, 1, 1);
-      else if (scene == SCENE(DehkanPlateau5))
+      else if (scene == SCENE(DehkanPlateauPoundCube))
         MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room5CrackPictures[2],
                                            gDehkanPlateau_Room5CrackPictures[3],
                                            x, y, 1, 1);
@@ -698,7 +698,7 @@ void DehkanPlateau_StepOnCrack(void) {
     toZ = record[1];
     {
       s16 scene = gMainRoutineWork.next;
-      if (scene == SCENE(DehkanPlateau1)) {
+      if (scene == SCENE(DehkanPlateauFullMetalVestChest)) {
         {
           s32 srcX = gDehkanPlateau_Room1HolePictures[cellX],
               srcY = gDehkanPlateau_Room1HolePictures[cellX + 1], width = 1,
@@ -706,7 +706,7 @@ void DehkanPlateau_StepOnCrack(void) {
           MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
                                              height);
         }
-      } else if (scene == SCENE(DehkanPlateau2)) {
+      } else if (scene == SCENE(DehkanPlateauThemisAxeChest)) {
         {
           s32 srcX = gDehkanPlateau_Room2HolePictures[cellX],
               srcY = gDehkanPlateau_Room2HolePictures[cellX + 1], width = 1,
@@ -722,7 +722,7 @@ void DehkanPlateau_StepOnCrack(void) {
           MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
                                              height);
         }
-      } else if (scene == SCENE(DehkanPlateau5)) {
+      } else if (scene == SCENE(DehkanPlateauPoundCube)) {
         if ((n == 0 && GameFlag_Get(FLAG_SCENE_TEMP_41)) ||
             (n == 11 && GameFlag_Get(FLAG_SCENE_TEMP_4C))) {
           s32 srcX = gDehkanPlateau_Room5HolePictures[8],
@@ -744,12 +744,12 @@ void DehkanPlateau_StepOnCrack(void) {
     Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
     {
       s16 scene = gMainRoutineWork.next;
-      if (scene == SCENE(DehkanPlateau1)) {
+      if (scene == SCENE(DehkanPlateauFullMetalVestChest)) {
         Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
-      } else if (scene == SCENE(DehkanPlateau2) ||
+      } else if (scene == SCENE(DehkanPlateauThemisAxeChest) ||
                  scene == SCENE(DehkanPlateau3)) {
         Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
-      } else if (scene == SCENE(DehkanPlateau5)) {
+      } else if (scene == SCENE(DehkanPlateauPoundCube)) {
         if (gDehkanPlateau_PoundCube != NULL)
           ((struct FieldSprite *)gDehkanPlateau_PoundCube->sprite)->priority =
               3;
@@ -778,11 +778,11 @@ void DehkanPlateau_StepOnCrack(void) {
     x = *record;
     {
       s16 scene = gMainRoutineWork.next;
-      if (scene == SCENE(DehkanPlateau1))
+      if (scene == SCENE(DehkanPlateauFullMetalVestChest))
         MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room1CrackPictures[0],
                                            gDehkanPlateau_Room1CrackPictures[1],
                                            x, y, 1, 1);
-      else if (scene == SCENE(DehkanPlateau2))
+      else if (scene == SCENE(DehkanPlateauThemisAxeChest))
         MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room2CrackPictures[0],
                                            gDehkanPlateau_Room2CrackPictures[1],
                                            x, y, 1, 1);
@@ -790,7 +790,7 @@ void DehkanPlateau_StepOnCrack(void) {
         MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room3CrackPictures[0],
                                            gDehkanPlateau_Room3CrackPictures[1],
                                            x, y, 1, 1);
-      else if (scene == SCENE(DehkanPlateau5))
+      else if (scene == SCENE(DehkanPlateauPoundCube))
         MapGrid_CopyCellPictureIndicesRect(gDehkanPlateau_Room5CrackPictures[0],
                                            gDehkanPlateau_Room5CrackPictures[1],
                                            x, y, 1, 1);
@@ -800,7 +800,8 @@ void DehkanPlateau_StepOnCrack(void) {
     GameFlag_Set(FLAG_STANDING_ON_OPENED_CRACK);
     {
       s16 scene = gMainRoutineWork.next;
-      if (scene == SCENE(DehkanPlateau5) || scene == SCENE(DehkanPlateau3)) {
+      if (scene == SCENE(DehkanPlateauPoundCube) ||
+          scene == SCENE(DehkanPlateau3)) {
         gDehkanPlateau_CrackX = leader->x.fixed >> 20;
         gDehkanPlateau_CrackZ = leader->z.fixed >> 20;
       }
@@ -1534,7 +1535,7 @@ void DehkanPlateau_LeaveRoom(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (gMainRoutineWork.next == SCENE_DEHKAN_PLATEAU_1)
+  if (gMainRoutineWork.next == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
     Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -1545,15 +1546,15 @@ void DehkanPlateau_LeaveRoom(void) {
 s32 Scene_Initialize(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_DEHKAN_PLATEAU_1)
+  if (scene == SCENE_DEHKAN_PLATEAU_FULL_METAL_VEST_CHEST)
     DehkanPlateau_InitializeRoom1();
-  else if (scene == SCENE_DEHKAN_PLATEAU_2)
+  else if (scene == SCENE_DEHKAN_PLATEAU_THEMIS_AXE_CHEST)
     DehkanPlateau_InitializeRoom2();
   else if (scene == SCENE_DEHKAN_PLATEAU_3)
     DehkanPlateau_InitializeRoom3();
   else if (scene == SCENE_DEHKAN_PLATEAU_4)
     DehkanPlateau_InitializeRoom4();
-  else if (scene == SCENE_DEHKAN_PLATEAU_5)
+  else if (scene == SCENE_DEHKAN_PLATEAU_POUND_CUBE)
     DehkanPlateau_InitializeRoom5();
   else if (scene == SCENE_DEHKAN_PLATEAU_CANNON)
     DehkanPlateau_InitializeRoom6();
@@ -2238,14 +2239,14 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(DehkanPlateau1),
+    SCENE_EXITS(DehkanPlateauFullMetalVestChest),
     SCENE_EXIT(1, WorldMap, 6),
     SCENE_EXIT(2, DehkanPlateau4, 1),
     SCENE_EXIT(3, DehkanPlateau4, 2),
     SCENE_EXIT(4, DehkanPlateau4, 4),
-    SCENE_EXIT(5, DehkanPlateau2, 1),
-    SCENE_EXIT(6, DehkanPlateau1, 7),
-    SCENE_EXIT(7, DehkanPlateau1, 6),
+    SCENE_EXIT(5, DehkanPlateauThemisAxeChest, 1),
+    SCENE_EXIT(6, DehkanPlateauFullMetalVestChest, 7),
+    SCENE_EXIT(7, DehkanPlateauFullMetalVestChest, 6),
     SCENE_EXIT(11, DehkanPlateau4, 11),
     SCENE_EXIT(12, DehkanPlateau4, 12),
     SCENE_EXIT(13, DehkanPlateau4, 13),
@@ -2260,13 +2261,13 @@ u32 gSceneExits[] = {
     SCENE_EXIT(22, DehkanPlateau4, 22),
     SCENE_EXIT(23, DehkanPlateau4, 23),
     SCENE_EXIT(24, DehkanPlateau4, 24),
-    SCENE_EXITS(DehkanPlateau2),
-    SCENE_EXIT(1, DehkanPlateau1, 5),
+    SCENE_EXITS(DehkanPlateauThemisAxeChest),
+    SCENE_EXIT(1, DehkanPlateauFullMetalVestChest, 5),
     SCENE_EXIT(2, DehkanPlateau4, 6),
     SCENE_EXIT(3, DehkanPlateau4, 5),
     SCENE_EXIT(4, DehkanPlateau3, 1),
-    SCENE_EXIT(5, DehkanPlateau2, 6),
-    SCENE_EXIT(6, DehkanPlateau2, 5),
+    SCENE_EXIT(5, DehkanPlateauThemisAxeChest, 6),
+    SCENE_EXIT(6, DehkanPlateauThemisAxeChest, 5),
     SCENE_EXIT(15, DehkanPlateau4, 25),
     SCENE_EXIT(16, DehkanPlateau4, 26),
     SCENE_EXIT(17, DehkanPlateau4, 27),
@@ -2276,11 +2277,11 @@ u32 gSceneExits[] = {
     SCENE_EXIT(21, DehkanPlateau4, 31),
     SCENE_EXIT(14, DehkanPlateau4, 60),
     SCENE_EXITS(DehkanPlateau3),
-    SCENE_EXIT(1, DehkanPlateau2, 4),
+    SCENE_EXIT(1, DehkanPlateauThemisAxeChest, 4),
     SCENE_EXIT(2, DehkanPlateau4, 3),
-    SCENE_EXIT(3, DehkanPlateau5, 1),
-    SCENE_EXIT(4, DehkanPlateau5, 4),
-    SCENE_EXIT(5, DehkanPlateau5, 5),
+    SCENE_EXIT(3, DehkanPlateauPoundCube, 1),
+    SCENE_EXIT(4, DehkanPlateauPoundCube, 4),
+    SCENE_EXIT(5, DehkanPlateauPoundCube, 5),
     SCENE_EXIT(6, WorldMap, 7),
     SCENE_EXIT(7, DehkanPlateau3, 8),
     SCENE_EXIT(8, DehkanPlateau3, 7),
@@ -2288,30 +2289,30 @@ u32 gSceneExits[] = {
     SCENE_EXIT(13, DehkanPlateau4, 33),
     SCENE_EXIT(14, DehkanPlateau4, 34),
     SCENE_EXIT(15, DehkanPlateau4, 35),
-    SCENE_EXIT(16, DehkanPlateau5, 36),
-    SCENE_EXIT(17, DehkanPlateau5, 37),
+    SCENE_EXIT(16, DehkanPlateauPoundCube, 36),
+    SCENE_EXIT(17, DehkanPlateauPoundCube, 37),
     SCENE_EXITS(DehkanPlateau4),
-    SCENE_EXIT(1, DehkanPlateau1, 2),
-    SCENE_EXIT(2, DehkanPlateau1, 3),
+    SCENE_EXIT(1, DehkanPlateauFullMetalVestChest, 2),
+    SCENE_EXIT(2, DehkanPlateauFullMetalVestChest, 3),
     SCENE_EXIT(3, DehkanPlateau3, 2),
-    SCENE_EXIT(4, DehkanPlateau1, 4),
-    SCENE_EXIT(5, DehkanPlateau2, 3),
-    SCENE_EXIT(6, DehkanPlateau2, 2),
+    SCENE_EXIT(4, DehkanPlateauFullMetalVestChest, 4),
+    SCENE_EXIT(5, DehkanPlateauThemisAxeChest, 3),
+    SCENE_EXIT(6, DehkanPlateauThemisAxeChest, 2),
     SCENE_EXIT(40, DehkanPlateau4, 42),
     SCENE_EXIT(41, DehkanPlateau4, 43),
     SCENE_EXIT(42, DehkanPlateau4, 40),
     SCENE_EXIT(43, DehkanPlateau4, 41),
-    SCENE_EXITS(DehkanPlateau5),
+    SCENE_EXITS(DehkanPlateauPoundCube),
     SCENE_EXIT(1, DehkanPlateau3, 3),
     SCENE_EXIT(2, DehkanPlateauCannon, 1),
     SCENE_EXIT(3, DehkanPlateauCannon, 2),
     SCENE_EXIT(4, DehkanPlateau3, 4),
     SCENE_EXIT(5, DehkanPlateau3, 5),
     SCENE_EXIT(6, DehkanPlateauCannon, 3),
-    SCENE_EXIT(7, DehkanPlateau5, 10),
-    SCENE_EXIT(8, DehkanPlateau5, 9),
-    SCENE_EXIT(9, DehkanPlateau5, 8),
-    SCENE_EXIT(10, DehkanPlateau5, 7),
+    SCENE_EXIT(7, DehkanPlateauPoundCube, 10),
+    SCENE_EXIT(8, DehkanPlateauPoundCube, 9),
+    SCENE_EXIT(9, DehkanPlateauPoundCube, 8),
+    SCENE_EXIT(10, DehkanPlateauPoundCube, 7),
     SCENE_EXIT(18, DehkanPlateauCannon, 8),
     SCENE_EXIT(19, DehkanPlateauCannon, 9),
     SCENE_EXIT(20, DehkanPlateauCannon, 10),
@@ -2329,9 +2330,9 @@ u32 gSceneExits[] = {
     SCENE_EXIT(32, DehkanPlateauCannon, 22),
     SCENE_EXIT(33, DehkanPlateauCannon, 23),
     SCENE_EXITS(DehkanPlateauCannon),
-    SCENE_EXIT(1, DehkanPlateau5, 2),
-    SCENE_EXIT(2, DehkanPlateau5, 3),
-    SCENE_EXIT(3, DehkanPlateau5, 6),
+    SCENE_EXIT(1, DehkanPlateauPoundCube, 2),
+    SCENE_EXIT(2, DehkanPlateauPoundCube, 3),
+    SCENE_EXIT(3, DehkanPlateauPoundCube, 6),
     SCENE_EXIT(40, DehkanPlateauCannon, 41),
     SCENE_EXIT(41, DehkanPlateauCannon, 40),
     SCENE_EXIT(42, DehkanPlateauCannon, 43),

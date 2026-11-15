@@ -24,7 +24,7 @@ Field_KandoreanTemplePoi:
 	.incbin "games/tla/src/map/kandorean_temple_poi/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_KandoreanTemplePoi_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_KandoreanTemplePoi_BLEND:
 	.incbin "games/tla/src/map/kandorean_temple_poi/blend.script.lz"

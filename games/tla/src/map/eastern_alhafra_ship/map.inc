@@ -24,10 +24,10 @@ Field_EasternAlhafraShip:
 	.incbin "games/tla/src/map/eastern_alhafra_ship/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_EasternAlhafraShip_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_EasternAlhafraShip_BLEND:
-	.incbin "games/tla/src/map/daila_interiors_1/blend.script.lz"
+	.incbin "games/tla/src/map/daila_interiors_houses/blend.script.lz"
 	.balign 4, 0
 .LField_EasternAlhafraShip_SCENE:
 	.incbin "games/tla/src/map/eastern_alhafra_ship/scene.scene.lz"

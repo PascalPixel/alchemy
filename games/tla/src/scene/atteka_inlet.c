@@ -618,7 +618,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS(AttekaInletGeode),
     SCENE_EXIT(1, AttekaInlet1, 2),
     SCENE_EXIT(2, WorldMap, 53),
-    SCENE_EXIT(3, Contigo2, 21),
+    SCENE_EXIT(3, ContigoShops, 21),
     SCENE_EXIT(4, AttekaInletGeode, 4),
     SCENE_EXIT(5, AttekaInlet1, 3),
     SCENE_EXIT(6, WorldMap, 53),

@@ -98,7 +98,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
   if (scene == SCENE_YALLAM_INTERIORS_1)
     return gYallamInteriors_Room1Placements;
-  if (scene == SCENE_YALLAM_INTERIORS_2)
+  if (scene == SCENE_YALLAM_INTERIORS_SHOPS)
     return gYallamInteriors_Room2Placements;
   return gYallamInteriors_Placements;
 }
@@ -209,7 +209,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
   if (scene == SCENE_YALLAM_INTERIORS_1)
     return gYallamInteriors_Room1Triggers;
-  if (scene == SCENE_YALLAM_INTERIORS_2)
+  if (scene == SCENE_YALLAM_INTERIORS_SHOPS)
     return gYallamInteriors_Room2Triggers;
   return gYallamInteriors_Triggers;
 }
@@ -547,7 +547,7 @@ s32 Scene_Initialize(void) {
                          0);
     Actor_SetSpritePriority(11, 2);
   }
-  if (gMainRoutineWork.next == SCENE_YALLAM_INTERIORS_2) {
+  if (gMainRoutineWork.next == SCENE_YALLAM_INTERIORS_SHOPS) {
     FieldEffect_StartBlankOverlay(0);
     Actor_SetSpritePriority(12, 2);
     ((struct YallamInteriorsObject *)Actor_GetById(12))->collisionFlags |= 4;
@@ -620,7 +620,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(2, Yallam1, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, Yallam1, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, Yallam1, 4, EXIT_FLAG_NONE),
-    SCENE_EXITS(YallamInteriors2),
+    SCENE_EXITS(YallamInteriorsShops),
     SCENE_EXIT_UNLESS(1, Yallam1, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, Yallam1, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, Yallam1, 5, EXIT_FLAG_NONE),

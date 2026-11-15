@@ -320,9 +320,9 @@ void ShamanVillage_MeetAroma(void) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_SHAMAN_VILLAGE_5)
+  if (scene == SCENE_SHAMAN_VILLAGE_SHOP)
     return gShamanVillage_Room5Entrances;
-  if (scene == SCENE_SHAMAN_VILLAGE_6)
+  if (scene == SCENE_SHAMAN_VILLAGE_SANCTUM)
     return gShamanVillage_Room6Entrances;
   return gShamanVillage_Entrances;
 }
@@ -357,18 +357,18 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
   if (scene == SCENE_SHAMAN_VILLAGE_1)
     return gShamanVillage_Room1Placements;
-  if (scene == SCENE_SHAMAN_VILLAGE_3)
+  if (scene == SCENE_SHAMAN_VILLAGE_AROMA)
     return gShamanVillage_Room3Placements;
   if (scene == SCENE_SHAMAN_VILLAGE_2) {
     if (Event_GetFlag(FLAG_MOAPA_BEATEN))
       gShamanVillage_Room2Placements.field16 = 1;
     return &gShamanVillage_Room2Placements;
   }
-  if (scene == SCENE_SHAMAN_VILLAGE_4)
+  if (scene == SCENE_SHAMAN_VILLAGE_INN)
     return gShamanVillage_Room4Placements;
-  if (scene == SCENE_SHAMAN_VILLAGE_5)
+  if (scene == SCENE_SHAMAN_VILLAGE_SHOP)
     return gShamanVillage_Room5Placements;
-  if (scene == SCENE_SHAMAN_VILLAGE_6)
+  if (scene == SCENE_SHAMAN_VILLAGE_SANCTUM)
     return gShamanVillage_Room6Placements;
   return gShamanVillage_Placements;
 }
@@ -725,15 +725,15 @@ const struct Trigger *Scene_GetTriggers(void) {
 
   if (scene == SCENE_SHAMAN_VILLAGE_1)
     return gShamanVillage_Room1Triggers;
-  if (scene == SCENE_SHAMAN_VILLAGE_3)
+  if (scene == SCENE_SHAMAN_VILLAGE_AROMA)
     return gShamanVillage_Room3Triggers;
   if (scene == SCENE_SHAMAN_VILLAGE_2)
     return gShamanVillage_Room2Triggers;
-  if (scene == SCENE_SHAMAN_VILLAGE_4)
+  if (scene == SCENE_SHAMAN_VILLAGE_INN)
     return gShamanVillage_Room4Triggers;
-  if (scene == SCENE_SHAMAN_VILLAGE_5)
+  if (scene == SCENE_SHAMAN_VILLAGE_SHOP)
     return gShamanVillage_Room5Triggers;
-  if (scene == SCENE_SHAMAN_VILLAGE_6)
+  if (scene == SCENE_SHAMAN_VILLAGE_SANCTUM)
     return gShamanVillage_Room6Triggers;
   return gShamanVillage_Triggers;
 }
@@ -2609,13 +2609,13 @@ s32 Scene_Initialize(void) {
 
   if (scene == SCENE_SHAMAN_VILLAGE_1)
     ShamanVillage_SetUpVillage();
-  else if (scene == SCENE_SHAMAN_VILLAGE_3)
+  else if (scene == SCENE_SHAMAN_VILLAGE_AROMA)
     ShamanVillage_SetUpRoom3();
   else if (scene == SCENE_SHAMAN_VILLAGE_2)
     ShamanVillage_SetUpRoom2();
-  else if (scene == SCENE_SHAMAN_VILLAGE_4)
+  else if (scene == SCENE_SHAMAN_VILLAGE_INN)
     ShamanVillage_SetUpRoom4();
-  else if (scene == SCENE_SHAMAN_VILLAGE_6)
+  else if (scene == SCENE_SHAMAN_VILLAGE_SANCTUM)
     ShamanVillage_SetUpRoom6();
   return 0;
 }
@@ -3227,52 +3227,52 @@ u32 gSceneExits[] = {
     SCENE_EXITS(ShamanVillage1),
     SCENE_EXIT(1, TrialRoad1, 31),
     SCENE_EXIT(2, TrialRoad1, 32),
-    SCENE_EXIT(3, ShamanVillage3, 1),
+    SCENE_EXIT(3, ShamanVillageAroma, 1),
     SCENE_EXIT(10, TrialRoad1, 50),
     SCENE_EXIT(11, TrialRoad1, 31),
     SCENE_EXIT(12, TrialRoad1, 32),
-    SCENE_EXITS(ShamanVillage3),
+    SCENE_EXITS(ShamanVillageAroma),
     SCENE_EXIT(1, ShamanVillage1, 3),
     SCENE_EXIT(2, ShamanVillage2, 8),
     SCENE_EXIT(3, ShamanVillage2, 11),
-    SCENE_EXIT(4, ShamanVillage5, 17),
+    SCENE_EXIT(4, ShamanVillageShop, 17),
     SCENE_EXIT(5, ShamanVillage2, 14),
     SCENE_EXIT(6, ShamanVillage2, 9),
     SCENE_EXITS(ShamanVillage2),
     SCENE_EXIT(1, WorldMap, 58),
-    SCENE_EXIT(2, ShamanVillage5, 15),
-    SCENE_EXIT(3, ShamanVillage5, 16),
-    SCENE_EXIT(4, ShamanVillage4, 6),
-    SCENE_EXIT(5, ShamanVillage4, 8),
-    SCENE_EXIT(6, ShamanVillage4, 11),
-    SCENE_EXIT(7, ShamanVillage4, 13),
-    SCENE_EXIT(8, ShamanVillage3, 2),
-    SCENE_EXIT(9, ShamanVillage3, 6),
-    SCENE_EXIT(10, ShamanVillage6, 6),
-    SCENE_EXIT(11, ShamanVillage3, 3),
-    SCENE_EXIT(12, ShamanVillage4, 3),
-    SCENE_EXIT(13, ShamanVillage4, 1),
-    SCENE_EXIT(14, ShamanVillage3, 5),
-    SCENE_EXITS(ShamanVillage4),
+    SCENE_EXIT(2, ShamanVillageShop, 15),
+    SCENE_EXIT(3, ShamanVillageShop, 16),
+    SCENE_EXIT(4, ShamanVillageInn, 6),
+    SCENE_EXIT(5, ShamanVillageInn, 8),
+    SCENE_EXIT(6, ShamanVillageInn, 11),
+    SCENE_EXIT(7, ShamanVillageInn, 13),
+    SCENE_EXIT(8, ShamanVillageAroma, 2),
+    SCENE_EXIT(9, ShamanVillageAroma, 6),
+    SCENE_EXIT(10, ShamanVillageSanctum, 6),
+    SCENE_EXIT(11, ShamanVillageAroma, 3),
+    SCENE_EXIT(12, ShamanVillageInn, 3),
+    SCENE_EXIT(13, ShamanVillageInn, 1),
+    SCENE_EXIT(14, ShamanVillageAroma, 5),
+    SCENE_EXITS(ShamanVillageInn),
     SCENE_EXIT(1, ShamanVillage2, 13),
-    SCENE_EXIT(2, ShamanVillage4, 4),
+    SCENE_EXIT(2, ShamanVillageInn, 4),
     SCENE_EXIT(3, ShamanVillage2, 12),
-    SCENE_EXIT(4, ShamanVillage4, 2),
-    SCENE_EXIT(5, ShamanVillage4, 9),
+    SCENE_EXIT(4, ShamanVillageInn, 2),
+    SCENE_EXIT(5, ShamanVillageInn, 9),
     SCENE_EXIT(6, ShamanVillage2, 4),
-    SCENE_EXIT(7, ShamanVillage4, 10),
+    SCENE_EXIT(7, ShamanVillageInn, 10),
     SCENE_EXIT(8, ShamanVillage2, 5),
-    SCENE_EXIT(9, ShamanVillage4, 5),
-    SCENE_EXIT(10, ShamanVillage4, 7),
+    SCENE_EXIT(9, ShamanVillageInn, 5),
+    SCENE_EXIT(10, ShamanVillageInn, 7),
     SCENE_EXIT(11, ShamanVillage2, 6),
-    SCENE_EXIT(12, ShamanVillage4, 14),
+    SCENE_EXIT(12, ShamanVillageInn, 14),
     SCENE_EXIT(13, ShamanVillage2, 7),
-    SCENE_EXIT(14, ShamanVillage4, 12),
-    SCENE_EXITS(ShamanVillage5),
+    SCENE_EXIT(14, ShamanVillageInn, 12),
+    SCENE_EXITS(ShamanVillageShop),
     SCENE_EXIT(15, ShamanVillage2, 2),
     SCENE_EXIT(16, ShamanVillage2, 3),
-    SCENE_EXIT(17, ShamanVillage3, 4),
-    SCENE_EXITS(ShamanVillage6),
+    SCENE_EXIT(17, ShamanVillageAroma, 4),
+    SCENE_EXITS(ShamanVillageSanctum),
     SCENE_EXIT(6, ShamanVillage2, 10),
     SCENE_EXITS_END,
 };

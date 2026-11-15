@@ -24,7 +24,7 @@ Field_MarsLighthouseEntrance1:
 	.incbin "games/tla/src/map/mars_lighthouse_entrance_1/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_MarsLighthouseEntrance1_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_MarsLighthouseEntrance1_SCENE:
 	.incbin "games/tla/src/map/mars_lighthouse_entrance_1/scene.scene.lz"

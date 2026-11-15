@@ -15,13 +15,13 @@ Field_TestScenes7:
 	.incbin "games/tla/src/map/map_000/cell_pictures.delta0.lz"
 	.balign 4, 0
 .LField_TestScenes7_SHAPES:
-	.incbin "games/tla/src/map/anemos_inner_sanctum_5/shapes.table.lz"
+	.incbin "games/tla/src/map/anemos_inner_sanctum_guardian/shapes.table.lz"
 	.balign 4, 0
 .LField_TestScenes7_GRID:
 	.incbin "games/tla/src/map/test_scenes_7/map.grid.lz"
 	.balign 4, 0
 .LField_TestScenes7_SHAPE_GRID:
-	.incbin "games/tla/src/map/anemos_inner_sanctum_5/shape_grid.plane.lz"
+	.incbin "games/tla/src/map/anemos_inner_sanctum_guardian/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_TestScenes7_SCENE:
 	.incbin "games/tla/src/map/map_000/scene.scene.lz"

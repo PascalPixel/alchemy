@@ -24,7 +24,7 @@ Field_VenusLighthouseEntrance:
 	.incbin "games/tla/src/map/venus_lighthouse_entrance/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_VenusLighthouseEntrance_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_VenusLighthouseEntrance_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

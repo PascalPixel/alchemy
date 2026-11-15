@@ -28,7 +28,7 @@ Field_Naribwe:
 	.incbin "games/tla/src/map/naribwe/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Naribwe_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_Naribwe_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

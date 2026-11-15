@@ -34,11 +34,11 @@ Field_LemurianShipDeck1:
 	.global Tileset_LemurianShipDeck1TilesA
 Tileset_LemurianShipDeck1TilesA:
 	.incbin "games/tla/src/graphics/tileset/lemurian_ship_deck_1/tiles_a.4bpp.mtf"
-	.byte 0xa7, 0xe6	@ PACKER: left in the buffer by Tileset_SeaOfTime2TilesD+0x1f0a
+	.byte 0xa7, 0xe6	@ PACKER: left in the buffer by Tileset_SeaOfTimeToLemuriaTilesD+0x1f0a
 	.global Tileset_LemurianShipDeck1TilesB
 Tileset_LemurianShipDeck1TilesB:
 	.incbin "games/tla/src/graphics/tileset/lemurian_ship_deck_1/tiles_b.4bpp.mtf"
-	.byte 0x12	@ PACKER: left in the buffer by Tileset_SeaOfTime2TilesD+0x2363
+	.byte 0x12	@ PACKER: left in the buffer by Tileset_SeaOfTimeToLemuriaTilesD+0x2363
 	.global Tileset_LemurianShipDeck1TilesC
 Tileset_LemurianShipDeck1TilesC:
 	.incbin "games/tla/src/graphics/tileset/lemurian_ship_deck_1/tiles_c.4bpp.mtf"

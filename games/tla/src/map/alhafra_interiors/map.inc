@@ -31,7 +31,7 @@ Field_AlhafraInteriors:
 	.incbin "games/tla/src/map/mikasalla_interiors/animation.script.lz"
 	.balign 4, 0
 .LField_AlhafraInteriors_BLEND:
-	.incbin "games/tla/src/map/daila_interiors_1/blend.script.lz"
+	.incbin "games/tla/src/map/daila_interiors_houses/blend.script.lz"
 	.balign 4, 0
 .LField_AlhafraInteriors_SCENE:
 	.ifeq EDITION_INTERNATIONAL

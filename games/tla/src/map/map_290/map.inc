@@ -24,7 +24,7 @@ Field_Map290:
 	.incbin "games/tla/src/map/map_290/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Map290_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_Map290_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"
@@ -38,7 +38,7 @@ Tileset_Set119Palette:
 	.global Tileset_Set119TilesA
 Tileset_Set119TilesA:
 	.incbin "games/tla/src/graphics/tileset/set_119/tiles_a.4bpp.mtf"
-	.byte 0x5a, 0x33, 0xa4	@ PACKER: left in the buffer by Tileset_Caverns2TilesA+0x2651
+	.byte 0x5a, 0x33, 0xa4	@ PACKER: left in the buffer by Tileset_CavernsOseniaTilesA+0x2651
 	.global Tileset_Set119TilesB
 Tileset_Set119TilesB:
 	.incbin "games/tla/src/graphics/tileset/set_119/tiles_b.4bpp.mtf"

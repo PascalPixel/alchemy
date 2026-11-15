@@ -24,7 +24,7 @@ Field_JupiterLighthouseBasement1:
 	.incbin "games/tla/src/map/jupiter_lighthouse_basement_1/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_JupiterLighthouseBasement1_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_JupiterLighthouseBasement1_SCENE:
 	.incbin "games/tla/src/map/jupiter_lighthouse_basement_1/scene.scene.lz"

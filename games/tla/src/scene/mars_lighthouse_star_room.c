@@ -2539,10 +2539,10 @@ u32 gSceneExits[] = {
     SCENE_EXIT(2, MarsLighthouseStarRoom, 1),
     SCENE_EXIT(3, MarsLighthouseStarRoom, 4),
     SCENE_EXIT(4, MarsLighthouseStarRoom, 3),
-    SCENE_EXIT(5, MarsLighthouseEntrance7, 5),
-    SCENE_EXIT(6, MarsLighthouseEntrance6, 6),
-    SCENE_EXIT(7, MarsLighthouseEntrance7, 7),
-    SCENE_EXIT(8, MarsLighthouseEntrance6, 8),
+    SCENE_EXIT(5, MarsLighthouseEntranceSolBladeChest, 5),
+    SCENE_EXIT(6, MarsLighthouseEntranceValkyrieMailChest, 6),
+    SCENE_EXIT(7, MarsLighthouseEntranceSolBladeChest, 7),
+    SCENE_EXIT(8, MarsLighthouseEntranceValkyrieMailChest, 8),
     SCENE_EXITS_END,
 };
 

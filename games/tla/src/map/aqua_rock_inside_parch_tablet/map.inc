@@ -27,7 +27,7 @@ Field_AquaRockInsideParchTablet:
 	.incbin "games/tla/src/map/aqua_rock_inside_parch_tablet/animation.script.lz"
 	.balign 4, 0
 .LField_AquaRockInsideParchTablet_BLEND:
-	.incbin "games/tla/src/map/aqua_rock_inside_1/blend.script.lz"
+	.incbin "games/tla/src/map/aqua_rock_inside_water_of_life_chest/blend.script.lz"
 	.balign 4, 0
 .LField_AquaRockInsideParchTablet_SCENE:
 	.incbin "games/tla/src/map/aqua_rock_inside_parch_tablet/scene.scene.lz"

@@ -2,10 +2,10 @@
 /// The Mars Lighthouse's central hall and the ways to its four towers, in six
 /// rooms that share this overlay.
 ///
-/// In the hall (SceneId_MarsLighthouseRoomM1) four inscriptions name the
-/// peoples who ruled earth, water, fire and wind, and the great dragon statue
-/// speaks: without the Mars Star it sends the party away; with it, once the
-/// lighthouse has turned to fire, it bids them set the four spirits aflame.
+/// In the hall (SceneId_MarsLighthouseRoomMInscriptions) four inscriptions name
+/// the peoples who ruled earth, water, fire and wind, and the great dragon
+/// statue speaks: without the Mars Star it sends the party away; with it, once
+/// the lighthouse has turned to fire, it bids them set the four spirits aflame.
 /// Four ledges in the rain (M2 to M5) lead from the hall to the four towers,
 /// and each tower comes out on a beacon ledge (M6), where Blaze lights its
 /// element's flame. With all four lit the statue says the heavens await, the
@@ -299,9 +299,9 @@ void Event_WaitTransitionFrames(void);
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_6)
+  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME)
     return gMarsLighthouseRoomM_Room6Placements;
-  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_1)
+  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS)
     return gMarsLighthouseRoomM_Room1Placements;
   return gMarsLighthouseRoomM_Placements;
 }
@@ -651,13 +651,13 @@ void MarsLighthouseRoomM_TeleportToAerie(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_6)
+  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME)
     return gMarsLighthouseRoomM_Room6Triggers;
-  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_1)
+  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS)
     return gMarsLighthouseRoomM_Room1Triggers;
   if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_2 ||
       scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_3 ||
-      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_4 ||
+      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_ALASTORS_HOOD_CHEST ||
       scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_5)
     return gMarsLighthouseRoomM_Room5Triggers;
   return gMarsLighthouseRoomM_Triggers;
@@ -690,8 +690,8 @@ s32 Scene_Initialize(void) {
                         (s32)gMarsLighthouseRoomM_FadeColorsFrom,
                         (s32)gMarsLighthouseRoomM_FadeColorsTo,
                         (s32)gMarsLighthouseRoomM_FadeOrder);
-  if (scene != SCENE_MARS_LIGHTHOUSE_ROOM_M_6 &&
-      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_1) {
+  if (scene != SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME &&
+      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
     gFieldWork->transition = 0x204;
     if ((u32)(entrance - 1) <= 1 || entrance == 8 || entrance == 10 ||
@@ -792,15 +792,15 @@ s32 Scene_PrepareMap(void) {
   s32 entrance = gMainRoutineWork.entrance;
   struct Actor *object;
 
-  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_6 ||
+  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME ||
       scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_2 ||
       scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_3 ||
-      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_4 ||
+      scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_ALASTORS_HOOD_CHEST ||
       scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_5) {
     Weather_StartRain(1);
     SetBlend(1, 0x10000, 0x40000, 0x20000, 0x10000, 0x8000, 0x4000);
   }
-  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_6) {
+  if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME) {
     switch (entrance) {
     case ENTRANCE_FROM_VENUS_TOWER:
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_LEDGE_TORCH), SPRITE_COLOR_GRB);
@@ -836,7 +836,7 @@ s32 Scene_PrepareMap(void) {
     object->motionFlags = 0;
     object->z.fixed = px(104);
     FieldTask_AddFrame(MarsLighthouseRoomM_CycleLedgeFlame, TASK_PASS_VBLANK);
-  } else if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_1) {
+  } else if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS) {
     if (entrance == 1 || entrance == 2 || entrance == 8 || entrance == 10 ||
         entrance == 12 || entrance == 14) {
       Ride_Create();
@@ -2008,37 +2008,37 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(MarsLighthouseRoomM6),
+    SCENE_EXITS(MarsLighthouseRoomMFlame),
     SCENE_EXIT(1, MarsLighthouseRoomF4, 5),
     SCENE_EXIT(2, MarsLighthouseRoomF2, 8),
     SCENE_EXIT(3, MarsLighthouseRoomF1, 4),
     SCENE_EXIT(4, MarsLighthouseRoomF3, 15),
-    SCENE_EXITS(MarsLighthouseRoomM1),
+    SCENE_EXITS(MarsLighthouseRoomMInscriptions),
     SCENE_EXIT(1, MarsLighthouseAerie, 1),
     SCENE_EXIT(2, MarsLighthouseEntranceFugue, 2),
     SCENE_EXIT(3, MarsLighthouseRoomM5, 1),
     SCENE_EXIT(4, MarsLighthouseRoomM2, 1),
-    SCENE_EXIT(5, MarsLighthouseRoomM4, 1),
+    SCENE_EXIT(5, MarsLighthouseRoomMAlastorsHoodChest, 1),
     SCENE_EXIT(6, MarsLighthouseRoomM3, 1),
-    SCENE_EXIT(7, MarsLighthouseRoomM1, 8),
-    SCENE_EXIT(8, MarsLighthouseRoomM1, 7),
-    SCENE_EXIT(9, MarsLighthouseRoomM1, 10),
-    SCENE_EXIT(10, MarsLighthouseRoomM1, 9),
-    SCENE_EXIT(11, MarsLighthouseRoomM1, 12),
-    SCENE_EXIT(12, MarsLighthouseRoomM1, 11),
-    SCENE_EXIT(13, MarsLighthouseRoomM1, 14),
-    SCENE_EXIT(14, MarsLighthouseRoomM1, 13),
+    SCENE_EXIT(7, MarsLighthouseRoomMInscriptions, 8),
+    SCENE_EXIT(8, MarsLighthouseRoomMInscriptions, 7),
+    SCENE_EXIT(9, MarsLighthouseRoomMInscriptions, 10),
+    SCENE_EXIT(10, MarsLighthouseRoomMInscriptions, 9),
+    SCENE_EXIT(11, MarsLighthouseRoomMInscriptions, 12),
+    SCENE_EXIT(12, MarsLighthouseRoomMInscriptions, 11),
+    SCENE_EXIT(13, MarsLighthouseRoomMInscriptions, 14),
+    SCENE_EXIT(14, MarsLighthouseRoomMInscriptions, 13),
     SCENE_EXITS(MarsLighthouseRoomM2),
-    SCENE_EXIT(1, MarsLighthouseRoomM1, 4),
+    SCENE_EXIT(1, MarsLighthouseRoomMInscriptions, 4),
     SCENE_EXIT(2, MarsLighthouseRoomF2, 1),
     SCENE_EXITS(MarsLighthouseRoomM3),
-    SCENE_EXIT(1, MarsLighthouseRoomM1, 6),
+    SCENE_EXIT(1, MarsLighthouseRoomMInscriptions, 6),
     SCENE_EXIT(2, MarsLighthouseRoomF3, 1),
-    SCENE_EXITS(MarsLighthouseRoomM4),
-    SCENE_EXIT(1, MarsLighthouseRoomM1, 5),
+    SCENE_EXITS(MarsLighthouseRoomMAlastorsHoodChest),
+    SCENE_EXIT(1, MarsLighthouseRoomMInscriptions, 5),
     SCENE_EXIT(2, MarsLighthouseRoomF1, 1),
     SCENE_EXITS(MarsLighthouseRoomM5),
-    SCENE_EXIT(1, MarsLighthouseRoomM1, 3),
+    SCENE_EXIT(1, MarsLighthouseRoomMInscriptions, 3),
     SCENE_EXIT(2, MarsLighthouseRoomF4, 1),
     SCENE_EXITS_END,
 };

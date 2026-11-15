@@ -584,11 +584,11 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(AnemosInnerSanctumEntrance),
-    SCENE_EXIT_UNLESS(1, Contigo4, 23, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, AnemosInnerSanctum1, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Contigo4, 22, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Contigo4, 24, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, AnemosInnerSanctum4, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, ContigoGeoglyph, 23, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AnemosInnerSanctumDragonSkinChest, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, ContigoGeoglyph, 22, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, ContigoGeoglyph, 24, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, AnemosInnerSanctumOrihalconChest, 5, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

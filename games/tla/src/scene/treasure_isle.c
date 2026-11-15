@@ -131,11 +131,11 @@ const u8 *Scene_GetActorPlacements(void) {
 
   if (scene == SCENE_TREASURE_ISLE_2)
     return gTreasureIsle_Room2Placements;
-  if (scene == SCENE_TREASURE_ISLE_3)
+  if (scene == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST)
     return gTreasureIsle_Room3Placements;
   if (scene == SCENE_TREASURE_ISLE_GALE)
     return gTreasureIsle_Room4Placements;
-  if (scene == SCENE_TREASURE_ISLE_5)
+  if (scene == SCENE_TREASURE_ISLE_GUARDIAN)
     return gTreasureIsle_Room5Placements;
   return gTreasureIsle_Placements;
 }
@@ -309,7 +309,7 @@ void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
     if (id == 11 && object->x.fixed >> 19 == 85 && object->z.fixed >> 19 == 83)
       TreasureIsle_RaiseLastSpikyRock();
   }
-  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_3) {
+  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST) {
     if (id == 10 && object->x.fixed >> 19 == 83)
       Event_SetFlag(FLAG_AREA_TEMP_09);
   }
@@ -418,11 +418,11 @@ const u8 *Scene_GetTriggers(void) {
 
   if (scene == SCENE_TREASURE_ISLE_2)
     return gTreasureIsle_Room2Triggers;
-  if (scene == SCENE_TREASURE_ISLE_3)
+  if (scene == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST)
     return gTreasureIsle_Room3Triggers;
   if (scene == SCENE_TREASURE_ISLE_GALE)
     return gTreasureIsle_Room4Triggers;
-  if (scene == SCENE_TREASURE_ISLE_5)
+  if (scene == SCENE_TREASURE_ISLE_GUARDIAN)
     return gTreasureIsle_Room5Triggers;
   return (const u8 *)gTreasureIsle_Room1Triggers;
 }
@@ -510,7 +510,7 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_AREA_TEMP_07))
       TreasureIsle_SetSpikyRock(gTreasureIsle_Room2SpikyRocks, 4);
   }
-  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_3) {
+  if (gMainRoutineWork.next == SCENE_TREASURE_ISLE_JESTERS_ARMLET_CHEST) {
     Task_AddFrame(TreasureIsle_CycleWaterColors, TASK_PASS_VBLANK);
     Tightrope_Place(0, 8, 9);
     if (Event_GetFlag(FLAG_AREA_TEMP_09))
@@ -640,25 +640,25 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(1, TreasureIsle1, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, TreasureIsle2, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, TreasureIsle2, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, TreasureIsle3, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, TreasureIsle3, 2, EXIT_FLAG_NONE),
-    SCENE_EXITS(TreasureIsle3),
+    SCENE_EXIT_UNLESS(4, TreasureIsleJestersArmletChest, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, TreasureIsleJestersArmletChest, 2, EXIT_FLAG_NONE),
+    SCENE_EXITS(TreasureIsleJestersArmletChest),
     SCENE_EXIT_UNLESS(1, TreasureIsle2, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, TreasureIsle2, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, TreasureIsle3, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, TreasureIsle3, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, TreasureIsleJestersArmletChest, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, TreasureIsleJestersArmletChest, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, TreasureIsleGale, 1, EXIT_FLAG_NONE),
     SCENE_EXITS(TreasureIsleGale),
-    SCENE_EXIT_UNLESS(1, TreasureIsle3, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, TreasureIsleJestersArmletChest, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, TreasureIsleGale, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, TreasureIsleGale, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, TreasureIsleGale, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, TreasureIsleGale, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, TreasureIsle5, 1, EXIT_FLAG_NONE),
-    SCENE_EXITS(TreasureIsle5),
+    SCENE_EXIT_UNLESS(6, TreasureIsleGuardian, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(TreasureIsleGuardian),
     SCENE_EXIT_UNLESS(1, TreasureIsleGale, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, TreasureIsle5, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, TreasureIsle5, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, TreasureIsleGuardian, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, TreasureIsleGuardian, 2, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

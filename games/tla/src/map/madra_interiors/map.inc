@@ -27,7 +27,7 @@ Field_MadraInteriors:
 	.incbin "games/tla/src/map/madra_interiors/animation.script.lz"
 	.balign 4, 0
 .LField_MadraInteriors_BLEND:
-	.incbin "games/tla/src/map/daila_interiors_1/blend.script.lz"
+	.incbin "games/tla/src/map/daila_interiors_houses/blend.script.lz"
 	.balign 4, 0
 .LField_MadraInteriors_SCENE:
 	.incbin "games/tla/src/map/madra_interiors/scene.scene.lz"

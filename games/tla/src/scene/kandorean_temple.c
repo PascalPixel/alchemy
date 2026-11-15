@@ -102,8 +102,8 @@ enum KandoreanTempleChestbeaterRoomActorId {
   ACTOR_EAST_CHESTBEATER
 };
 
-/// The vent room's actors (SceneId_KandoreanTemple4), numbering the rows of
-/// gKandoreanTemple_VentRoomPlacements.
+/// The vent room's actors (SceneId_KandoreanTemplePillar), numbering the rows
+/// of gKandoreanTemple_VentRoomPlacements.
 enum KandoreanTempleVentRoomActorId {
   /// The pillar Move pushes onto either platform to hold it down.
   ACTOR_VENT_ROOM_PILLAR = ACTOR_FIRST_PLACED,
@@ -426,7 +426,7 @@ void *Scene_GetActorPlacements(void) {
     return gKandoreanTemple_LiftRoomPlacements;
   if (scene == SCENE_KANDOREAN_TEMPLE_CHESTBEATERS)
     return gKandoreanTemple_ChestbeaterRoomPlacements;
-  if (scene == SCENE_KANDOREAN_TEMPLE_4)
+  if (scene == SCENE_KANDOREAN_TEMPLE_PILLAR)
     return gKandoreanTemple_VentRoomPlacements;
   if (scene == SCENE_KANDOREAN_TEMPLE_FOG)
     return gKandoreanTemple_FogRoomPlacements;
@@ -500,15 +500,15 @@ void *Scene_GetTriggers(void) {
 
   if (scene == SCENE_KANDOREAN_TEMPLE_LIFTS)
     return gKandoreanTemple_LiftRoomEvents;
-  if (scene == SCENE_KANDOREAN_TEMPLE_2)
+  if (scene == SCENE_KANDOREAN_TEMPLE_MIMIC)
     return gKandoreanTemple_Room2Events;
   if (scene == SCENE_KANDOREAN_TEMPLE_CHESTBEATERS)
     return gKandoreanTemple_ChestbeaterRoomEvents;
-  if (scene == SCENE_KANDOREAN_TEMPLE_4)
+  if (scene == SCENE_KANDOREAN_TEMPLE_PILLAR)
     return gKandoreanTemple_VentRoomEvents;
   if (scene == SCENE_KANDOREAN_TEMPLE_5)
     return gKandoreanTemple_Room5Events;
-  if (scene == SCENE_KANDOREAN_TEMPLE_6)
+  if (scene == SCENE_KANDOREAN_TEMPLE_STEAM)
     return gKandoreanTemple_Room6Events;
   if (scene == SCENE_KANDOREAN_TEMPLE_FOG)
     return gKandoreanTemple_FogRoomEvents;
@@ -1932,15 +1932,15 @@ s32 Scene_Initialize(void) {
   scene = gMainRoutineWork.next;
   if (scene == SCENE_KANDOREAN_TEMPLE_LIFTS)
     KandoreanTemple_StartLiftRoom();
-  else if (scene == SCENE_KANDOREAN_TEMPLE_2)
+  else if (scene == SCENE_KANDOREAN_TEMPLE_MIMIC)
     KandoreanTemple_StartRoom2();
   else if (scene == SCENE_KANDOREAN_TEMPLE_CHESTBEATERS)
     KandoreanTemple_StartChestbeaterRoom();
-  else if (scene == SCENE_KANDOREAN_TEMPLE_4)
+  else if (scene == SCENE_KANDOREAN_TEMPLE_PILLAR)
     KandoreanTemple_StartVentRoom();
   else if (scene == SCENE_KANDOREAN_TEMPLE_5)
     KandoreanTemple_StartRoom5();
-  else if (scene == SCENE_KANDOREAN_TEMPLE_6)
+  else if (scene == SCENE_KANDOREAN_TEMPLE_STEAM)
     KandoreanTemple_StartRoom6();
   else if (scene == SCENE_KANDOREAN_TEMPLE_FOG)
     KandoreanTemple_StartFogRoom();
@@ -3418,35 +3418,35 @@ u32 gSceneExits[] = {
     SCENE_EXITS(KandoreanTempleLifts),
     SCENE_EXIT(1, KandoreanTempleFog, 1),
     SCENE_EXIT(2, KandoreanTempleFog, 3),
-    SCENE_EXIT(3, KandoreanTemple6, 1),
-    SCENE_EXIT(4, KandoreanTemple4, 2),
-    SCENE_EXIT(5, KandoreanTemple4, 5),
-    SCENE_EXIT(6, KandoreanTemple4, 3),
-    SCENE_EXIT(7, KandoreanTemple4, 4),
-    SCENE_EXITS(KandoreanTemple2),
+    SCENE_EXIT(3, KandoreanTempleSteam, 1),
+    SCENE_EXIT(4, KandoreanTemplePillar, 2),
+    SCENE_EXIT(5, KandoreanTemplePillar, 5),
+    SCENE_EXIT(6, KandoreanTemplePillar, 3),
+    SCENE_EXIT(7, KandoreanTemplePillar, 4),
+    SCENE_EXITS(KandoreanTempleMimic),
     SCENE_EXIT(1, KandoreanTemplePoi, 9),
     SCENE_EXIT(2, KandoreanTempleFog, 4),
     SCENE_EXIT(3, KandoreanTempleChestbeaters, 1),
     SCENE_EXIT(4, KandoreanTempleFog, 2),
     SCENE_EXITS(KandoreanTempleChestbeaters),
-    SCENE_EXIT(1, KandoreanTemple2, 3),
+    SCENE_EXIT(1, KandoreanTempleMimic, 3),
     SCENE_EXIT(2, KandoreanTemplePoi, 8),
-    SCENE_EXITS(KandoreanTemple4),
-    SCENE_EXIT(1, KandoreanTemple6, 2),
+    SCENE_EXITS(KandoreanTemplePillar),
+    SCENE_EXIT(1, KandoreanTempleSteam, 2),
     SCENE_EXIT(2, KandoreanTempleLifts, 4),
     SCENE_EXIT(3, KandoreanTempleLifts, 5),
     SCENE_EXIT(4, KandoreanTempleLifts, 6),
     SCENE_EXITS(KandoreanTemple5),
     SCENE_EXIT(1, KandoreanTempleGate, 3),
     SCENE_EXIT(2, KandoreanTempleGate, 4),
-    SCENE_EXITS(KandoreanTemple6),
+    SCENE_EXITS(KandoreanTempleSteam),
     SCENE_EXIT(1, KandoreanTempleLifts, 3),
-    SCENE_EXIT(2, KandoreanTemple4, 1),
+    SCENE_EXIT(2, KandoreanTemplePillar, 1),
     SCENE_EXITS(KandoreanTempleFog),
     SCENE_EXIT(1, KandoreanTempleLifts, 1),
-    SCENE_EXIT(2, KandoreanTemple2, 4),
+    SCENE_EXIT(2, KandoreanTempleMimic, 4),
     SCENE_EXIT(3, KandoreanTempleLifts, 2),
-    SCENE_EXIT(4, KandoreanTemple2, 2),
+    SCENE_EXIT(4, KandoreanTempleMimic, 2),
     SCENE_EXITS(KandoreanTempleGate),
     SCENE_EXIT(1, WorldMap, 4),
     SCENE_EXIT(2, KandoreanTemplePoi, 1),
@@ -3461,7 +3461,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT(6, KandoreanTemplePoi, 7),
     SCENE_EXIT(7, KandoreanTemplePoi, 6),
     SCENE_EXIT(8, KandoreanTempleChestbeaters, 2),
-    SCENE_EXIT(9, KandoreanTemple2, 1),
+    SCENE_EXIT(9, KandoreanTempleMimic, 1),
     SCENE_EXIT(13, KandoreanTemplePoi, 13),
     SCENE_EXIT(14, KandoreanTemplePoi, 14),
     SCENE_EXITS_END,

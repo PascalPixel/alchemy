@@ -27,7 +27,7 @@ Field_GaiaRockInside4:
 	.incbin "games/tla/src/map/gaia_rock_inside_4/animation.script.lz"
 	.balign 4, 0
 .LField_GaiaRockInside4_BLEND:
-	.incbin "games/tla/src/map/gaia_rock_inside_2/blend.script.lz"
+	.incbin "games/tla/src/map/gaia_rock_inside_first_altar/blend.script.lz"
 	.balign 4, 0
 .LField_GaiaRockInside4_SCENE:
 	.incbin "games/tla/src/map/gaia_rock_inside_4/scene.scene.lz"

@@ -24,7 +24,7 @@ Field_AnkohlRuins7:
 	.incbin "games/tla/src/map/ankohl_ruins_7/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_AnkohlRuins7_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_AnkohlRuins7_SCENE:
 	.incbin "games/tla/src/map/ankohl_ruins_7/scene.scene.lz"

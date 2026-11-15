@@ -199,17 +199,17 @@ extern u32 gGabombaStatue_Room5Regions[];
 const u8 *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_GABOMBA_STATUE_7)
+  if (scene == SCENE_GABOMBA_STATUE_PINION)
     return gGabombaStatue_Room7Regions;
-  if (scene == SCENE_GABOMBA_STATUE_1)
+  if (scene == SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST)
     return gGabombaStatue_Room1Regions;
-  if (scene == SCENE_GABOMBA_STATUE_2)
+  if (scene == SCENE_GABOMBA_STATUE_ELIXIR_CHEST)
     return gGabombaStatue_Room2Regions;
   if (scene == SCENE_GABOMBA_STATUE_STEEL)
     return gGabombaStatue_Room3Regions;
-  if (scene == SCENE_GABOMBA_STATUE_4)
+  if (scene == SCENE_GABOMBA_STATUE_TURNTABLE)
     return gGabombaStatue_Room4Regions;
-  if (scene == SCENE_GABOMBA_STATUE_5)
+  if (scene == SCENE_GABOMBA_STATUE_COGS)
     return gGabombaStatue_Room5Regions;
   return NULL;
 }
@@ -335,19 +335,19 @@ const u8 *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
   const u8 *table = gGabombaStatue_Placements;
 
-  if (scene == SCENE_GABOMBA_STATUE_1)
+  if (scene == SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST)
     table = gGabombaStatue_Room1Placements;
-  else if (scene == SCENE_GABOMBA_STATUE_2)
+  else if (scene == SCENE_GABOMBA_STATUE_ELIXIR_CHEST)
     table = gGabombaStatue_Room2Placements;
   else if (scene == SCENE_GABOMBA_STATUE_STEEL)
     table = gGabombaStatue_Room3Placements;
-  else if (scene == SCENE_GABOMBA_STATUE_4)
+  else if (scene == SCENE_GABOMBA_STATUE_TURNTABLE)
     table = gGabombaStatue_Room4Placements;
-  else if (scene == SCENE_GABOMBA_STATUE_5)
+  else if (scene == SCENE_GABOMBA_STATUE_COGS)
     table = gGabombaStatue_Room5Placements;
-  else if (scene == SCENE_GABOMBA_STATUE_6)
+  else if (scene == SCENE_GABOMBA_STATUE_ARROWS)
     table = gGabombaStatue_Room6Placements;
-  else if (scene == SCENE_GABOMBA_STATUE_7)
+  else if (scene == SCENE_GABOMBA_STATUE_PINION)
     table = gGabombaStatue_Room7Placements;
   return table;
 }
@@ -633,9 +633,9 @@ void GabombaStatue_EndRide(struct Actor *object) {
 /// (GabombaStatue_FindCogUnder finds the one under it, 360 forward and 361
 /// back): it stays within 2 pixels of the platform's x and is carried along z
 /// by the speed in gGabombaStatue_CogDirection; past 20 pixels from the
-/// platform it steps off (GabombaStatue_HopOffCog). In GabombaStatue4 at cell
-/// (28, 15) or (30, 15) it ends the ride (GabombaStatue_EndRide) and runs exit
-/// 5 or 6 (Import_EventSetExitRequest).
+/// platform it steps off (GabombaStatue_HopOffCog). In GabombaStatueTurntable
+/// at cell (28, 15) or (30, 15) it ends the ride (GabombaStatue_EndRide) and
+/// runs exit 5 or 6 (Import_EventSetExitRequest).
 void GabombaStatue_RideRollingCog(void) {
   struct Actor *actor, *platform;
   s32 speed, d, sign, x, z, platformZ, offset;
@@ -686,7 +686,7 @@ void GabombaStatue_RideRollingCog(void) {
     }
     GabombaStatue_HopOffCog(actor, 0, (sign * 3) << 18, 0x20000);
   }
-  if (gMainRoutineWork.next != SCENE_GABOMBA_STATUE_4)
+  if (gMainRoutineWork.next != SCENE_GABOMBA_STATUE_TURNTABLE)
     return;
   x = actor->x.fixed >> 20;
   if (actor->z.fixed >> 20 != 15)
@@ -904,19 +904,19 @@ const u8 *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
   const u8 *table = gGabombaStatue_Triggers;
 
-  if (scene == SCENE_GABOMBA_STATUE_1)
+  if (scene == SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST)
     table = gGabombaStatue_Room1Triggers;
-  else if (scene == SCENE_GABOMBA_STATUE_2)
+  else if (scene == SCENE_GABOMBA_STATUE_ELIXIR_CHEST)
     table = gGabombaStatue_Room2Triggers;
   else if (scene == SCENE_GABOMBA_STATUE_STEEL)
     table = gGabombaStatue_Room3Triggers;
-  else if (scene == SCENE_GABOMBA_STATUE_4)
+  else if (scene == SCENE_GABOMBA_STATUE_TURNTABLE)
     table = gGabombaStatue_Room4Triggers;
-  else if (scene == SCENE_GABOMBA_STATUE_5)
+  else if (scene == SCENE_GABOMBA_STATUE_COGS)
     table = gGabombaStatue_Room5Triggers;
-  else if (scene == SCENE_GABOMBA_STATUE_6)
+  else if (scene == SCENE_GABOMBA_STATUE_ARROWS)
     table = gGabombaStatue_Room6Triggers;
-  else if (scene == SCENE_GABOMBA_STATUE_7)
+  else if (scene == SCENE_GABOMBA_STATUE_PINION)
     table = gGabombaStatue_Room7Triggers;
   return table;
 }
@@ -1140,9 +1140,9 @@ DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(GabombaStatue_PinionCarriesLeaderWest, 440,
                                      184)
 
 void GabombaStatue_SetActorsHidden(s32 show) {
-  if (gMainRoutineWork.next == SCENE_GABOMBA_STATUE_1)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST)
     Actors_SetHidden(show, 8, 1);
-  else if (gMainRoutineWork.next == SCENE_GABOMBA_STATUE_2)
+  else if (gMainRoutineWork.next == SCENE_GABOMBA_STATUE_ELIXIR_CHEST)
     Actors_SetHidden(show, 29, 2);
 }
 
@@ -1434,7 +1434,7 @@ void GabombaStatue_TurnCogs(s32 direction) {
 
   gGabombaStatue_CogDirection = direction;
   scene = gMainRoutineWork.next;
-  if (scene == SCENE_GABOMBA_STATUE_2) {
+  if (scene == SCENE_GABOMBA_STATUE_ELIXIR_CHEST) {
     GabombaStatue_SetCogTurn(14, direction, 0);
     GabombaStatue_SetCogTurn(21, direction, 1);
     GabombaStatue_SetCogTurn(26, direction, 2);
@@ -1450,23 +1450,23 @@ void GabombaStatue_TurnCogs(s32 direction) {
     GabombaStatue_SetCogTurn(20, direction, 2);
     GabombaStatue_SetCogTurn(25, direction, 3);
     GabombaStatue_SetCogTurn(29, direction, 4);
-  } else if (scene == SCENE_GABOMBA_STATUE_4) {
+  } else if (scene == SCENE_GABOMBA_STATUE_TURNTABLE) {
     GabombaStatue_SetCogTurn(8, direction, 0);
     GabombaStatue_SetCogTurn(21, direction, 1);
     GabombaStatue_SetCogTurn(29, direction, 2);
     GabombaStatue_SetCogTurn(35, direction, 3);
     GabombaStatue_SetCogTurn(38, direction, 4);
-  } else if (scene == SCENE_GABOMBA_STATUE_5) {
+  } else if (scene == SCENE_GABOMBA_STATUE_COGS) {
     GabombaStatue_SetCogTurn(10, direction, 0);
     GabombaStatue_SetCogTurn(12, direction, 1);
     if (direction == 0)
       MapGrid_CopyCellAttributes(34, 12, 1, 3, 27, 12);
     else if (direction == -1)
       MapGrid_CopyCellAttributes(35, 12, 1, 3, 27, 12);
-  } else if (scene == SCENE_GABOMBA_STATUE_6) {
+  } else if (scene == SCENE_GABOMBA_STATUE_ARROWS) {
     Actor_SetAnimation(13, 5);
     Actor_SetSpriteFlags(Actor_Get(13), 0);
-  } else if (scene == SCENE_GABOMBA_STATUE_7) {
+  } else if (scene == SCENE_GABOMBA_STATUE_PINION) {
     GabombaStatue_SetCogTurn(8, direction, 0);
     GabombaStatue_SetCogTurn(9, direction, 1);
     GabombaStatue_SetCogTurn(10, direction, 2);
@@ -2031,7 +2031,7 @@ s32 Scene_Initialize(void) {
   s16 scene;
 
   gFieldWork->transition = 521;
-  if (gMainRoutineWork.next != SCENE_GABOMBA_STATUE_1) {
+  if (gMainRoutineWork.next != SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_03))
       GabombaStatue_TurnCogs(0);
     else if (Event_GetFlag(FLAG_GABOMBA_COGS_TURNED_BACK))
@@ -2042,25 +2042,25 @@ s32 Scene_Initialize(void) {
   }
   Actor_Get(FieldParty_GetLeaderActor())->priorityFlags |= 0x20;
   scene = gMainRoutineWork.next;
-  if (scene == SCENE_GABOMBA_STATUE_1) {
+  if (scene == SCENE_GABOMBA_STATUE_BONE_ARMLET_CHEST) {
     GabombaStatue_InitializeRoom1();
-  } else if (scene == SCENE_GABOMBA_STATUE_2) {
+  } else if (scene == SCENE_GABOMBA_STATUE_ELIXIR_CHEST) {
     MapGrid_CopyCellAttributes(15, 68, 8, 3, 15, 4);
     GabombaStatue_InitializeRoom2();
   } else if (scene == SCENE_GABOMBA_STATUE_STEEL) {
     GabombaStatue_InitializeRoom3();
-  } else if (scene == SCENE_GABOMBA_STATUE_5) {
+  } else if (scene == SCENE_GABOMBA_STATUE_COGS) {
     GabombaStatue_InitializeRoom5();
-  } else if (scene == SCENE_GABOMBA_STATUE_6) {
+  } else if (scene == SCENE_GABOMBA_STATUE_ARROWS) {
     GabombaStatue_InitializeRoom6();
-  } else if (scene == SCENE_GABOMBA_STATUE_7) {
+  } else if (scene == SCENE_GABOMBA_STATUE_PINION) {
     GabombaStatue_InitializeRoom7();
   }
   return 0;
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_GABOMBA_STATUE_7 &&
+  if (gMainRoutineWork.next == SCENE_GABOMBA_STATUE_PINION &&
       gMainRoutineWork.entrance == 1 &&
       !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Event_ClearFlag(FLAG_GABOMBA_COGS_TURNED_BACK);
@@ -3777,36 +3777,36 @@ LATE_DATA u32 gGabombaStatue_Room5Regions[] = {
 };
 
 LATE_DATA u32 gSceneExits[] = {
-    SCENE_EXITS(GabombaStatue7),
+    SCENE_EXITS(GabombaStatuePinion),
     SCENE_EXIT_UNLESS(1, Kibombo2, 3, 0x86b),
     SCENE_EXIT_UNLESS(1, Kibombo5, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, GabombaStatue1, 1, EXIT_FLAG_NONE),
-    SCENE_EXITS(GabombaStatue1),
-    SCENE_EXIT(1, GabombaStatue7, 2),
-    SCENE_EXIT(2, GabombaStatue2, 1),
-    SCENE_EXITS(GabombaStatue2),
-    SCENE_EXIT(1, GabombaStatue1, 2),
+    SCENE_EXIT_UNLESS(2, GabombaStatueBoneArmletChest, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(GabombaStatueBoneArmletChest),
+    SCENE_EXIT(1, GabombaStatuePinion, 2),
+    SCENE_EXIT(2, GabombaStatueElixirChest, 1),
+    SCENE_EXITS(GabombaStatueElixirChest),
+    SCENE_EXIT(1, GabombaStatueBoneArmletChest, 2),
     SCENE_EXIT(2, GabombaStatueSteel, 1),
     SCENE_EXIT(3, GabombaStatueSteel, 2),
     SCENE_EXIT(4, GabombaStatueSteel, 3),
     SCENE_EXITS(GabombaStatueSteel),
-    SCENE_EXIT(1, GabombaStatue2, 2),
-    SCENE_EXIT(2, GabombaStatue2, 3),
-    SCENE_EXIT(3, GabombaStatue2, 4),
-    SCENE_EXIT(4, GabombaStatue4, 1),
-    SCENE_EXIT(5, GabombaStatue4, 2),
-    SCENE_EXIT(6, GabombaStatue4, 3),
-    SCENE_EXITS(GabombaStatue4),
+    SCENE_EXIT(1, GabombaStatueElixirChest, 2),
+    SCENE_EXIT(2, GabombaStatueElixirChest, 3),
+    SCENE_EXIT(3, GabombaStatueElixirChest, 4),
+    SCENE_EXIT(4, GabombaStatueTurntable, 1),
+    SCENE_EXIT(5, GabombaStatueTurntable, 2),
+    SCENE_EXIT(6, GabombaStatueTurntable, 3),
+    SCENE_EXITS(GabombaStatueTurntable),
     SCENE_EXIT(1, GabombaStatueSteel, 4),
     SCENE_EXIT(2, GabombaStatueSteel, 5),
     SCENE_EXIT(3, GabombaStatueSteel, 6),
-    SCENE_EXIT(4, GabombaStatue5, 1),
+    SCENE_EXIT(4, GabombaStatueCogs, 1),
     SCENE_EXIT(5, GabombaStatueSteel, 7),
     SCENE_EXIT(6, GabombaStatueSteel, 8),
-    SCENE_EXITS(GabombaStatue5),
-    SCENE_EXIT(1, GabombaStatue4, 4),
+    SCENE_EXITS(GabombaStatueCogs),
+    SCENE_EXIT(1, GabombaStatueTurntable, 4),
     SCENE_EXIT(2, GabombaStatueChamber1, 1),
-    SCENE_EXITS(GabombaStatue6),
+    SCENE_EXITS(GabombaStatueArrows),
     SCENE_EXIT(1, GabombaStatueChamber1, 2),
     SCENE_EXIT(10, Kibombo6, 10),
     SCENE_EXIT(11, Kibombo6, 11),

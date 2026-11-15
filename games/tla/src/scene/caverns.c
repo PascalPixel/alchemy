@@ -1,12 +1,12 @@
 /// @file
 /// The four caverns that each keep a Summon tablet, in four scenes that share
-/// this overlay: Indra Cavern west of the Lemurian ship (SceneId_Caverns1),
+/// this overlay: Indra Cavern west of the Lemurian ship (SceneId_CavernsIndra),
 /// where Lash and Move reach Zagan's tablet; Osenia Cavern north of Mikasalla
-/// (Caverns2), where Scoop opens the way to Megaera's
-/// (Caverns_ScoopOseniaPassage); Atteka Cavern (Caverns3), where Parch dries
-/// the water before Coatlicue's (Caverns_ParchAttekaWater); and Angara Cavern
-/// north of Loho (Caverns4), where two grey blocks are carried and stacked to
-/// reach Haurus's (Caverns_StartMovingAngaraBlock,
+/// (CavernsOsenia), where Scoop opens the way to Megaera's
+/// (Caverns_ScoopOseniaPassage); Atteka Cavern (CavernsAtteka), where Parch
+/// dries the water before Coatlicue's (Caverns_ParchAttekaWater); and Angara
+/// Cavern north of Loho (CavernsAngara), where two grey blocks are carried and
+/// stacked to reach Haurus's (Caverns_StartMovingAngaraBlock,
 /// Caverns_FinishMovingAngaraBlock).
 #include "types.h"
 #include "system/io_reg.h"
@@ -119,7 +119,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const s16 *Scene_GetExitRegions(void) {
   const s16 *result = NULL;
 
-  if (gMainRoutineWork.next == SCENE_CAVERNS_2)
+  if (gMainRoutineWork.next == SCENE_CAVERNS_OSENIA)
     result = gCaverns_OseniaRegions;
   return result;
 }
@@ -129,9 +129,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_CAVERNS_1)
+  if (scene == SCENE_CAVERNS_INDRA)
     return gCaverns_IndraPlacements;
-  if (scene == SCENE_CAVERNS_4)
+  if (scene == SCENE_CAVERNS_ANGARA)
     return gCaverns_AngaraPlacements;
   return gCaverns_Placements;
 }
@@ -458,20 +458,20 @@ void Caverns_FinishMovingAngaraBlock(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_CAVERNS_1)
+  if (scene == SCENE_CAVERNS_INDRA)
     return gCaverns_IndraTriggers;
-  if (scene == SCENE_CAVERNS_3)
+  if (scene == SCENE_CAVERNS_ATTEKA)
     return gCaverns_AttekaTriggers;
-  if (scene == SCENE_CAVERNS_4)
+  if (scene == SCENE_CAVERNS_ANGARA)
     return gCaverns_AngaraTriggers;
   return gCaverns_OseniaTriggers;
 }
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x204;
-  if (gMainRoutineWork.next == SCENE_CAVERNS_1)
+  if (gMainRoutineWork.next == SCENE_CAVERNS_INDRA)
     Caverns_InitializeIndra();
-  if (gMainRoutineWork.next == SCENE_CAVERNS_4)
+  if (gMainRoutineWork.next == SCENE_CAVERNS_ANGARA)
     Caverns_InitializeAngara();
   return 0;
 }
@@ -479,11 +479,11 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_CAVERNS_2)
+  if (scene == SCENE_CAVERNS_OSENIA)
     Caverns_PrepareOsenia();
-  else if (scene == SCENE_CAVERNS_3)
+  else if (scene == SCENE_CAVERNS_ATTEKA)
     Caverns_PrepareAtteka();
-  else if (scene == SCENE_CAVERNS_4)
+  else if (scene == SCENE_CAVERNS_ANGARA)
     Caverns_PrepareAngara();
   return 0;
 }
@@ -734,26 +734,26 @@ s16 gCaverns_OseniaRegions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(Caverns2),
+    SCENE_EXITS(CavernsOsenia),
     SCENE_EXIT_UNLESS(1, WorldMap, 82, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Caverns2, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Caverns2, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Caverns2, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, Caverns2, 3, EXIT_FLAG_NONE),
-    SCENE_EXITS(Caverns1),
+    SCENE_EXIT_UNLESS(2, CavernsOsenia, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, CavernsOsenia, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, CavernsOsenia, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, CavernsOsenia, 3, EXIT_FLAG_NONE),
+    SCENE_EXITS(CavernsIndra),
     SCENE_EXIT_UNLESS(1, WorldMap, 83, EXIT_FLAG_NONE),
-    SCENE_EXITS(Caverns3),
+    SCENE_EXITS(CavernsAtteka),
     SCENE_EXIT_UNLESS(5, WorldMap, 88, EXIT_FLAG_NONE),
-    SCENE_EXITS(Caverns4),
+    SCENE_EXITS(CavernsAngara),
     SCENE_EXIT_UNLESS(1, WorldMap, 89, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Caverns4, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Caverns4, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Caverns4, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, Caverns4, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, Caverns4, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, Caverns4, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, Caverns4, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, Caverns4, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, CavernsAngara, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, CavernsAngara, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, CavernsAngara, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, CavernsAngara, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, CavernsAngara, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, CavernsAngara, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, CavernsAngara, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, CavernsAngara, 8, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

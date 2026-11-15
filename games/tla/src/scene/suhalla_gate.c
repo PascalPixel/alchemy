@@ -3,12 +3,14 @@
 /// to Idejima, while Alex holds back the soldiers behind them. Its three rooms
 /// share this overlay:
 ///
-/// - The road past the gate (SceneId_SuhallaGate1), where a Ruffian spots the
+/// - The road past the gate (SceneId_SuhallaGateHouse), where a Ruffian spots
+/// the
 ///   two and fights them (SuhallaGate_RuffianSpotsParty).
-/// - The cliffs (SceneId_SuhallaGate2), whose two vines lead down to the
+/// - The cliffs (SceneId_SuhallaGateAmbush), whose two vines lead down to the
 ///   crevice where three Ruffians wait in ambush
 ///   (SuhallaGate_RuffiansAmbushParty).
-/// - The Gateway Cave (SceneId_SuhallaGate3), where a Punch Ant hops out at the
+/// - The Gateway Cave (SceneId_SuhallaGatePsynergyStone), where a Punch Ant
+/// hops out at the
 ///   two before the Psynergy Stone (SuhallaGate_PunchAntHopsFromWest and
 ///   SuhallaGate_PunchAntHopsFromEast), and whose far end leads to Idejima.
 ///
@@ -68,7 +70,7 @@ enum SuhallaGateCliffsActorId {
   /// The first of five actors drawn with sprite 299 and moved by movement
   /// type 7, each given its own animation as the party enters.
   // XXX: what the five actors of sprite 299 are; a render of
-  // SceneId_SuhallaGate2
+  // SceneId_SuhallaGateAmbush
   // would settle it.
   ACTOR_CLIFFS_SPRITE_299_FIRST = ACTOR_FIRST_PLACED,
   /// The three Ruffians of the ambush, west to east as they line up.
@@ -117,9 +119,9 @@ void SuhallaGate_FightDew(void) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_SUHALLA_GATE_2)
+  if (scene == SCENE_SUHALLA_GATE_AMBUSH)
     return gSuhallaGate_CliffsEntrances;
-  if (scene == SCENE_SUHALLA_GATE_3)
+  if (scene == SCENE_SUHALLA_GATE_PSYNERGY_STONE)
     return gSuhallaGate_CaveEntrances;
   return gSuhallaGate_RoadEntrances;
 }
@@ -131,9 +133,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_SUHALLA_GATE_2)
+  if (scene == SCENE_SUHALLA_GATE_AMBUSH)
     return gSuhallaGate_CliffsPlacements;
-  if (scene == SCENE_SUHALLA_GATE_1)
+  if (scene == SCENE_SUHALLA_GATE_HOUSE)
     return gSuhallaGate_RoadPlacements;
   return gSuhallaGate_CavePlacements;
 }
@@ -141,9 +143,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_SUHALLA_GATE_2)
+  if (scene == SCENE_SUHALLA_GATE_AMBUSH)
     return gSuhallaGate_CliffsTriggers;
-  if (scene == SCENE_SUHALLA_GATE_3)
+  if (scene == SCENE_SUHALLA_GATE_PSYNERGY_STONE)
     return gSuhallaGate_CaveTriggers;
   return gSuhallaGate_RoadTriggers;
 }
@@ -199,11 +201,11 @@ s32 Scene_Initialize(void) {
   work = Ram_HeapSlots->fieldWork;
   work->transition = 256;
   scene = gMainRoutineWork.next;
-  if (scene == SCENE_SUHALLA_GATE_1)
+  if (scene == SCENE_SUHALLA_GATE_HOUSE)
     SuhallaGate_SetUpRoad();
-  else if (scene == SCENE_SUHALLA_GATE_2)
+  else if (scene == SCENE_SUHALLA_GATE_AMBUSH)
     SuhallaGate_SetUpCliffs();
-  else if (scene == SCENE_SUHALLA_GATE_3)
+  else if (scene == SCENE_SUHALLA_GATE_PSYNERGY_STONE)
     SuhallaGate_SetUpCave();
   return 0;
 }
@@ -271,7 +273,8 @@ void SuhallaGate_RuffianSpotsParty(void) {
   // "Who cares! I can handle some girl and her grandpa!"
   Event_ShowMessageThenWait(ACTOR_ROAD_RUFFIAN, 0, 10);
   Actor_WalkToAndWait(ACTOR_ROAD_RUFFIAN, 456, 312);
-  Event_SetAfterBattleDestination(SCENE_SUHALLA_GATE_1, ENTRANCE_AFTER_BATTLE);
+  Event_SetAfterBattleDestination(SCENE_SUHALLA_GATE_HOUSE,
+                                  ENTRANCE_AFTER_BATTLE);
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
                              ENTRANCE_VENUS_LIGHTHOUSE_DEFEAT);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
@@ -318,7 +321,7 @@ void SuhallaGate_RuffiansAmbushParty(void) {
   Actor_SetAnimationAndWait(ACTOR_WEST_RUFFIAN, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MIDDLE_RUFFIAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_EAST_RUFFIAN, ANIM_NOD);
-  FieldEvent_SetAfterBattleDestination(SCENE_SUHALLA_GATE_2,
+  FieldEvent_SetAfterBattleDestination(SCENE_SUHALLA_GATE_AMBUSH,
                                        ENTRANCE_AFTER_BATTLE);
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
                              ENTRANCE_VENUS_LIGHTHOUSE_DEFEAT);
@@ -336,7 +339,8 @@ void SuhallaGate_FightPunchAnt(void) {
     Actor_SetDestination(ACTOR_PUNCH_ANT, owner->x.part[0].pixel,
                          owner->z.part[0].pixel);
   Event_Wait(20);
-  Event_SetAfterBattleDestination(SCENE_SUHALLA_GATE_3, ENTRANCE_AFTER_BATTLE);
+  Event_SetAfterBattleDestination(SCENE_SUHALLA_GATE_PSYNERGY_STONE,
+                                  ENTRANCE_AFTER_BATTLE);
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
                              ENTRANCE_VENUS_LIGHTHOUSE_DEFEAT);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
@@ -522,20 +526,20 @@ struct SceneEntrance gSuhallaGate_CaveEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(SuhallaGate1),
-    SCENE_EXIT(2, SuhallaGate2, 1),
-    SCENE_EXIT(4, SuhallaGate2, 4),
+    SCENE_EXITS(SuhallaGateHouse),
+    SCENE_EXIT(2, SuhallaGateAmbush, 1),
+    SCENE_EXIT(4, SuhallaGateAmbush, 4),
     SCENE_EXIT(5, VenusLighthouseEntrance, 2),
-    SCENE_EXITS(SuhallaGate2),
-    SCENE_EXIT(1, SuhallaGate1, 2),
-    SCENE_EXIT(2, SuhallaGate2, 3),
-    SCENE_EXIT(3, SuhallaGate2, 2),
-    SCENE_EXIT(4, SuhallaGate1, 4),
-    SCENE_EXIT(5, SuhallaGate3, 1),
-    SCENE_EXITS(SuhallaGate3),
-    SCENE_EXIT(1, SuhallaGate2, 5),
-    SCENE_EXIT(2, SuhallaGate3, 3),
-    SCENE_EXIT(3, SuhallaGate3, 2),
+    SCENE_EXITS(SuhallaGateAmbush),
+    SCENE_EXIT(1, SuhallaGateHouse, 2),
+    SCENE_EXIT(2, SuhallaGateAmbush, 3),
+    SCENE_EXIT(3, SuhallaGateAmbush, 2),
+    SCENE_EXIT(4, SuhallaGateHouse, 4),
+    SCENE_EXIT(5, SuhallaGatePsynergyStone, 1),
+    SCENE_EXITS(SuhallaGatePsynergyStone),
+    SCENE_EXIT(1, SuhallaGateAmbush, 5),
+    SCENE_EXIT(2, SuhallaGatePsynergyStone, 3),
+    SCENE_EXIT(3, SuhallaGatePsynergyStone, 2),
     SCENE_EXIT(4, Idejima, 11),
     SCENE_EXITS_END,
 };

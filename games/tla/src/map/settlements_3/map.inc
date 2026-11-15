@@ -15,7 +15,7 @@ Field_Settlements3:
 	.incbin "games/tla/src/map/settlements_3/cell_pictures.delta2.lz"
 	.balign 4, 0
 .LField_Settlements3_SHAPES:
-	.incbin "games/tla/src/map/yampi_desert_cave_1/shapes.table.lz"
+	.incbin "games/tla/src/map/yampi_desert_cave_water_of_life_chest/shapes.table.lz"
 	.balign 4, 0
 .LField_Settlements3_GRID:
 	.incbin "games/tla/src/map/settlements_3/map.grid.lz"
@@ -24,7 +24,7 @@ Field_Settlements3:
 	.incbin "games/tla/src/map/settlements_3/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Settlements3_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_Settlements3_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

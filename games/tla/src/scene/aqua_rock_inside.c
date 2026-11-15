@@ -307,11 +307,11 @@ extern struct ActorPlacement gAquaRockInside_Room10Placements[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_AQUA_ROCK_INSIDE_1)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST)
     return gAquaRockInside_Room1Placements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_STEAM)
     return gAquaRockInside_Room2Placements;
-  if (scene == SCENE_AQUA_ROCK_INSIDE_3)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_AQUARIUS_STONE)
     return gAquaRockInside_Room3Placements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_4)
     return gAquaRockInside_Room4Placements;
@@ -323,7 +323,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return gAquaRockInside_Room7Placements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_8)
     return gAquaRockInside_Room8Placements;
-  if (scene == SCENE_AQUA_ROCK_INSIDE_9)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_TEAR_STONE)
     return gAquaRockInside_Room9Placements;
   if (scene == SCENE_AQUA_ROCK_INSIDE_PARCH_TABLET)
     return gAquaRockInside_Room10Placements;
@@ -1395,11 +1395,11 @@ extern struct Trigger gAquaRockInside_Room10Triggers[];
 const u8 *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_AQUA_ROCK_INSIDE_1)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST)
     return gAquaRockInside_Room1Triggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_STEAM)
     return gAquaRockInside_Room2Triggers;
-  if (scene == SCENE_AQUA_ROCK_INSIDE_3)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_AQUARIUS_STONE)
     return gAquaRockInside_Room3Triggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_4)
     return gAquaRockInside_Room4Triggers;
@@ -1411,7 +1411,7 @@ const u8 *Scene_GetTriggers(void) {
     return gAquaRockInside_Room7Triggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_8)
     return gAquaRockInside_Room8Triggers;
-  if (scene == SCENE_AQUA_ROCK_INSIDE_9)
+  if (scene == SCENE_AQUA_ROCK_INSIDE_TEAR_STONE)
     return gAquaRockInside_Room9Triggers;
   if (scene == SCENE_AQUA_ROCK_INSIDE_PARCH_TABLET)
     return gAquaRockInside_Room10Triggers;
@@ -1522,7 +1522,7 @@ s32 Scene_Initialize(void) {
   struct Actor *object;
 
   gFieldWork->transition = 0x204;
-  if (scene == SCENE_AQUA_ROCK_INSIDE_1) {
+  if (scene == SCENE_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_30)) {
       AquaRockInside_SetMoaiFace(8);
       Actor_SetAnimation(8, 3);
@@ -1552,7 +1552,7 @@ s32 Scene_Initialize(void) {
       object->y.fixed = 0;
       object->groundHeight = 0;
     }
-  } else if (scene == SCENE_AQUA_ROCK_INSIDE_3) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_AQUARIUS_STONE) {
     if (entrance == 7)
       Leader_RiseFromWater();
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_4) {
@@ -1604,7 +1604,7 @@ s32 Scene_Initialize(void) {
     object->update = (void (*)(void))AquaRockInside_SplashBeneath;
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) && entrance == 13)
       AquaRockInside_FallThroughWater();
-  } else if (scene == SCENE_AQUA_ROCK_INSIDE_9) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_TEAR_STONE) {
     if (GameFlag_Get(FLAG_SCENE_TEMP_4B)) {
       FieldActor_SetSpriteColor(Actor_GetById(9), 5);
       AquaRockInside_SetMoaiFace(9);
@@ -1655,7 +1655,7 @@ s32 Scene_PrepareMap(void) {
 
   ((struct MapBits *)Ram_HeapSlots->mapGrid)->mode = 1;
   AquaRockInside_StartPillars();
-  if (scene == SCENE_AQUA_ROCK_INSIDE_1) {
+  if (scene == SCENE_AQUA_ROCK_INSIDE_WATER_OF_LIFE_CHEST) {
     if ((u32)(entrance - 3) <= 1 || entrance == 6 || entrance == 8) {
       AquaRockInside_AddSpouts(33, 0, -2);
     } else if (entrance == 5 || entrance == 7) {
@@ -1714,7 +1714,7 @@ s32 Scene_PrepareMap(void) {
     actor->motionFlags = 0;
     actor->groundHeight = 0;
     actor->y.fixed = 0;
-  } else if (scene == SCENE_AQUA_ROCK_INSIDE_3) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_AQUARIUS_STONE) {
     FieldEffect_StartBlankOverlay(0);
     Actor_SetSpriteFlags((s32)Actor_GetById(9), 0);
     Actor_SetSpriteFlags((s32)Actor_GetById(10), 0);
@@ -1832,7 +1832,7 @@ s32 Scene_PrepareMap(void) {
     AquaRockInside_AddSpouts(33, 0, -2);
     Tightrope_Initialize();
     Tightrope_Place(0, 8, 9);
-  } else if (scene == SCENE_AQUA_ROCK_INSIDE_9) {
+  } else if (scene == SCENE_AQUA_ROCK_INSIDE_TEAR_STONE) {
     if ((u32)(entrance - 3) <= 1) {
       Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
       Value3((s32 (*)())AquaRockInside_AddPillar, 10, 6, 4);
@@ -2684,30 +2684,30 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 };
 
 LATE_DATA u32 gSceneExits[] = {
-    SCENE_EXITS(AquaRockInside1),
+    SCENE_EXITS(AquaRockInsideWaterOfLifeChest),
     SCENE_EXIT(1, AquaRockInside8, 1),
-    SCENE_EXIT(2, AquaRockInside1, 3),
-    SCENE_EXIT(3, AquaRockInside1, 2),
-    SCENE_EXIT(4, AquaRockInside1, 5),
-    SCENE_EXIT(5, AquaRockInside1, 4),
-    SCENE_EXIT(6, AquaRockInside1, 7),
-    SCENE_EXIT(7, AquaRockInside1, 6),
-    SCENE_EXIT(8, AquaRockInside1, 9),
-    SCENE_EXIT(9, AquaRockInside1, 8),
+    SCENE_EXIT(2, AquaRockInsideWaterOfLifeChest, 3),
+    SCENE_EXIT(3, AquaRockInsideWaterOfLifeChest, 2),
+    SCENE_EXIT(4, AquaRockInsideWaterOfLifeChest, 5),
+    SCENE_EXIT(5, AquaRockInsideWaterOfLifeChest, 4),
+    SCENE_EXIT(6, AquaRockInsideWaterOfLifeChest, 7),
+    SCENE_EXIT(7, AquaRockInsideWaterOfLifeChest, 6),
+    SCENE_EXIT(8, AquaRockInsideWaterOfLifeChest, 9),
+    SCENE_EXIT(9, AquaRockInsideWaterOfLifeChest, 8),
     SCENE_EXIT(10, AquaRockInside4, 2),
-    SCENE_EXIT(11, AquaRockInside3, 1),
+    SCENE_EXIT(11, AquaRockInsideAquariusStone, 1),
     SCENE_EXITS(AquaRockInsideSteam),
     SCENE_EXIT(1, AquaRockInsidePsynergyStone, 1),
     SCENE_EXIT(2, AquaRockInsideSteam, 3),
     SCENE_EXIT(3, AquaRockInsideSteam, 2),
     SCENE_EXIT(4, AquaRockInside8, 5),
-    SCENE_EXIT(5, AquaRockInside3, 2),
-    SCENE_EXIT(6, AquaRockInside3, 8),
+    SCENE_EXIT(5, AquaRockInsideAquariusStone, 2),
+    SCENE_EXIT(6, AquaRockInsideAquariusStone, 8),
     SCENE_EXIT(7, AquaRockInsideSteam, 8),
     SCENE_EXIT(8, AquaRockInsideSteam, 7),
-    SCENE_EXIT(9, AquaRockInside3, 6),
-    SCENE_EXITS(AquaRockInside3),
-    SCENE_EXIT(1, AquaRockInside1, 11),
+    SCENE_EXIT(9, AquaRockInsideAquariusStone, 6),
+    SCENE_EXITS(AquaRockInsideAquariusStone),
+    SCENE_EXIT(1, AquaRockInsideWaterOfLifeChest, 11),
     SCENE_EXIT(2, AquaRockInsideSteam, 5),
     SCENE_EXIT(3, AquaRockInsideParchTablet, 1),
     SCENE_EXIT(4, AquaRockInside4, 4),
@@ -2717,10 +2717,10 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(8, AquaRockInsideSteam, 6),
     SCENE_EXITS(AquaRockInside4),
     SCENE_EXIT(1, AquaRock1, 4),
-    SCENE_EXIT(2, AquaRockInside1, 10),
-    SCENE_EXIT(3, AquaRockInside9, 2),
-    SCENE_EXIT(4, AquaRockInside3, 4),
-    SCENE_EXIT(5, AquaRockInside3, 5),
+    SCENE_EXIT(2, AquaRockInsideWaterOfLifeChest, 10),
+    SCENE_EXIT(3, AquaRockInsideTearStone, 2),
+    SCENE_EXIT(4, AquaRockInsideAquariusStone, 4),
+    SCENE_EXIT(5, AquaRockInsideAquariusStone, 5),
     SCENE_EXIT(6, AquaRockInside5, 6),
     SCENE_EXIT(7, AquaRockInside4, 8),
     SCENE_EXIT(8, AquaRockInside4, 7),
@@ -2746,28 +2746,28 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(10, AquaRockInside6, 11),
     SCENE_EXIT(11, AquaRockInside6, 10),
     SCENE_EXIT(12, AquaRockInside5, 7),
-    SCENE_EXIT(13, AquaRock2, 1),
+    SCENE_EXIT(13, AquaRockMistSabreChest, 1),
     SCENE_EXITS(AquaRockInsidePsynergyStone),
     SCENE_EXIT(1, AquaRockInsideSteam, 1),
     SCENE_EXIT(2, AquaRockInside8, 3),
     SCENE_EXIT(3, AquaRockInside8, 2),
-    SCENE_EXIT(4, AquaRockInside3, 7),
+    SCENE_EXIT(4, AquaRockInsideAquariusStone, 7),
     SCENE_EXITS(AquaRockInside8),
-    SCENE_EXIT(1, AquaRockInside1, 1),
+    SCENE_EXIT(1, AquaRockInsideWaterOfLifeChest, 1),
     SCENE_EXIT(2, AquaRockInsidePsynergyStone, 3),
     SCENE_EXIT(3, AquaRockInsidePsynergyStone, 2),
     SCENE_EXIT(4, AquaRockInside4, 9),
     SCENE_EXIT(5, AquaRockInsideSteam, 4),
-    SCENE_EXIT(6, AquaRockInside9, 4),
-    SCENE_EXIT(7, AquaRockInside9, 3),
-    SCENE_EXIT(8, AquaRockInside9, 1),
-    SCENE_EXITS(AquaRockInside9),
+    SCENE_EXIT(6, AquaRockInsideTearStone, 4),
+    SCENE_EXIT(7, AquaRockInsideTearStone, 3),
+    SCENE_EXIT(8, AquaRockInsideTearStone, 1),
+    SCENE_EXITS(AquaRockInsideTearStone),
     SCENE_EXIT(1, AquaRockInside8, 8),
     SCENE_EXIT(2, AquaRockInside4, 3),
     SCENE_EXIT(3, AquaRockInside8, 7),
     SCENE_EXIT(4, AquaRockInside8, 6),
     SCENE_EXITS(AquaRockInsideParchTablet),
-    SCENE_EXIT(1, AquaRockInside3, 3),
+    SCENE_EXIT(1, AquaRockInsideAquariusStone, 3),
     SCENE_EXITS_END,
 };
 

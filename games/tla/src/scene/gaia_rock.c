@@ -77,9 +77,9 @@ extern u32 gGaiaRock_CrateScript[];
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct ActorPlacement *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_1)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_SUSA)
     return (const struct ActorPlacement *)gGaiaRock_Room1Regions;
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_2)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS)
     return (const struct ActorPlacement *)gGaiaRock_Room2Regions;
   return 0;
 }
@@ -87,11 +87,11 @@ const struct ActorPlacement *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct Trigger *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_1)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_SUSA)
     return (const struct Trigger *)gGaiaRock_Room1Placements;
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_2)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS)
     return (const struct Trigger *)gGaiaRock_Room2Placements;
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_3)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_DANCING_IDOL)
     return (const struct Trigger *)gGaiaRock_Room3Placements;
   return (const struct Trigger *)gGaiaRock_Placements;
 }
@@ -292,9 +292,9 @@ void GaiaRock_MindReadSusa(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_1)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_SUSA)
     return gGaiaRock_Room1Triggers;
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_2)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS)
     return gGaiaRock_Room2Triggers;
   return gGaiaRock_Triggers;
 }
@@ -458,10 +458,10 @@ s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
   gFieldWork->transition = SCREEN_EFFECT;
-  gMainRoutineWork.retreatScene = SCENE_GAIA_ROCK_1;
+  gMainRoutineWork.retreatScene = SCENE_GAIA_ROCK_SUSA;
   gMainRoutineWork.retreatEntrance = 5;
   Actor_GetById(Party_GetLeaderActor())->priorityFlags |= 32;
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_1) {
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_SUSA) {
     Task_Add((s32)GaiaRock_StatueBlowsWind, TASK_PASS_VBLANK);
     Call2((void (*)())HangingVine_Place, 8, 1);
     Call2((void (*)())HangingVine_Place, 9, 1);
@@ -518,7 +518,7 @@ s32 Scene_Initialize(void) {
         Event_End();
       }
     }
-  } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_2) {
+  } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS) {
     Call2((void (*)())HangingVine_Place, 8, 1);
     Call2((void (*)())HangingVine_Place, 9, 1);
     Call2((void (*)())HangingVine_Place, 10, 1);
@@ -538,7 +538,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_AREA_TEMP_02)) {
       GaiaRock_PlaceStatue(19, 0x30a0000, -0x770000, 0x1a80000);
     }
-  } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_3) {
+  } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_DANCING_IDOL) {
     actor = Actor_GetById(64);
     if (actor != 0) {
       Actor_SetPosition(64, 0, 0);
@@ -554,7 +554,7 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_2 &&
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS &&
       (u16)(gMainRoutineWork.entrance - 3) <= 1) {
     s32 *layer = (s32 *)&Ram_HeapSlots->mapGrid->layers[1];
 
@@ -699,19 +699,19 @@ u32 gGaiaRock_Room2Regions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(GaiaRock1),
-    SCENE_EXIT_UNLESS(1, GaiaRock2, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, GaiaRock1, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, GaiaRock1, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, GaiaRockInside2, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(GaiaRockSusa),
+    SCENE_EXIT_UNLESS(1, GaiaRockStatueSpots, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, GaiaRockSusa, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, GaiaRockSusa, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, GaiaRockInsideFirstAltar, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, WorldMap, 39, EXIT_FLAG_NONE),
-    SCENE_EXITS(GaiaRock2),
-    SCENE_EXIT_UNLESS(1, GaiaRock1, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, GaiaRock2, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, GaiaRock2, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, GaiaRock3, 1, EXIT_FLAG_NONE),
-    SCENE_EXITS(GaiaRock3),
-    SCENE_EXIT_UNLESS(1, GaiaRock2, 4, EXIT_FLAG_NONE),
+    SCENE_EXITS(GaiaRockStatueSpots),
+    SCENE_EXIT_UNLESS(1, GaiaRockSusa, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, GaiaRockStatueSpots, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, GaiaRockStatueSpots, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, GaiaRockDancingIdol, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(GaiaRockDancingIdol),
+    SCENE_EXIT_UNLESS(1, GaiaRockStatueSpots, 4, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

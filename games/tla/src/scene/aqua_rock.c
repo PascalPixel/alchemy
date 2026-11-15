@@ -211,7 +211,7 @@ const u8 *Scene_GetExitRegions(void) {
 
   if (scene == SCENE_AQUA_ROCK_1)
     return gAquaRock_Room1Regions;
-  if (scene == SCENE_AQUA_ROCK_2)
+  if (scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST)
     return gAquaRock_Room2Regions;
   return 0;
 }
@@ -285,7 +285,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
   if (scene == SCENE_AQUA_ROCK_1)
     return gAquaRock_Room1Placements;
-  if (scene == SCENE_AQUA_ROCK_2)
+  if (scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST)
     return gAquaRock_Room2Placements;
   return gAquaRock_Placements;
 }
@@ -821,7 +821,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
   if (scene == SCENE_AQUA_ROCK_1)
     return gAquaRock_Room1Triggers;
-  if (scene == SCENE_AQUA_ROCK_2)
+  if (scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST)
     return gAquaRock_Room2Triggers;
   return gAquaRock_Triggers;
 }
@@ -1077,7 +1077,7 @@ s32 Scene_Initialize(void) {
     AquaRock_SetUpStreams();
     if (gMainRoutineWork.entrance == 4)
       AquaRock_ArriveFromPassage();
-  } else if (scene == SCENE_AQUA_ROCK_2) {
+  } else if (scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST) {
     Actor_SetSpriteFlags(Actor_GetById(14), 0);
     if (GameFlag_Get(FLAG_SCENE_TEMP_21))
       MapGrid_CopyCellAttributes(42, 32, 1, 1, 44, 32);
@@ -1682,17 +1682,17 @@ LATE_DATA s16 gAquaRock_Room2Regions[] = {
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(AquaRock1),
     SCENE_EXIT(1, WorldMap, 37),
-    SCENE_EXIT(2, AquaRock2, 2),
-    SCENE_EXIT(3, AquaRock2, 3),
+    SCENE_EXIT(2, AquaRockMistSabreChest, 2),
+    SCENE_EXIT(3, AquaRockMistSabreChest, 3),
     SCENE_EXIT(4, AquaRockInside4, 1),
-    SCENE_EXIT(6, AquaRock2, 6),
+    SCENE_EXIT(6, AquaRockMistSabreChest, 6),
     SCENE_EXIT(77, ApojiiIslands1, 1),
-    SCENE_EXITS(AquaRock2),
+    SCENE_EXITS(AquaRockMistSabreChest),
     SCENE_EXIT(1, AquaRockInside6, 13),
     SCENE_EXIT(2, AquaRock1, 2),
     SCENE_EXIT(3, AquaRock1, 3),
-    SCENE_EXIT(4, AquaRock2, 5),
-    SCENE_EXIT(5, AquaRock2, 4),
+    SCENE_EXIT(4, AquaRockMistSabreChest, 5),
+    SCENE_EXIT(5, AquaRockMistSabreChest, 4),
     SCENE_EXIT(7, AquaRock1, 7),
     SCENE_EXITS_END,
 };

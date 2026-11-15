@@ -27,7 +27,7 @@ Field_NaribweInteriors:
 	.incbin "games/tla/src/map/naribwe_interiors/animation.script.lz"
 	.balign 4, 0
 .LField_NaribweInteriors_BLEND:
-	.incbin "games/tla/src/map/daila_interiors_1/blend.script.lz"
+	.incbin "games/tla/src/map/daila_interiors_houses/blend.script.lz"
 	.balign 4, 0
 .LField_NaribweInteriors_SCENE:
 	.incbin "games/tla/src/map/naribwe_interiors/scene.scene.lz"

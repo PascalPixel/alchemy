@@ -38,7 +38,7 @@ Tileset_Islets1Palette:
 	.global Tileset_Islets1TilesA
 Tileset_Islets1TilesA:
 	.incbin "games/tla/src/graphics/tileset/islets_1/tiles_a.4bpp.mtf"
-	.byte 0x4d, 0x25	@ PACKER: left in the buffer by Tileset_GabombaCatacombs1TilesA+0x2a36
+	.byte 0x4d, 0x25	@ PACKER: left in the buffer by Tileset_GabombaCatacombsTeleportersTilesA+0x2a36
 	.global Tileset_Islets1TilesB
 Tileset_Islets1TilesB:
 	.incbin "games/tla/src/graphics/tileset/islets_1/tiles_b.4bpp.mtf"

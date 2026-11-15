@@ -1208,7 +1208,7 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 };
 
 LATE_DATA u32 gSceneExits[] = {                                                        
-      SCENE_EXITS(JupiterLighthouseWhorl),         SCENE_EXIT(1, JupiterLighthouseRoom9, 1),   SCENE_EXIT(2, JupiterLighthouseWhorl, 3),   
+      SCENE_EXITS(JupiterLighthouseWhorl),         SCENE_EXIT(1, JupiterLighthouseRoomPhaetonsBladeChest, 1),   SCENE_EXIT(2, JupiterLighthouseWhorl, 3),   
       SCENE_EXIT(3, JupiterLighthouseWhorl, 2),    SCENE_EXIT(4, JupiterLighthouseWhorl, 5),   SCENE_EXIT(5, JupiterLighthouseWhorl, 4),   
       SCENE_EXIT(6, JupiterLighthouseWhorl, 7),   SCENE_EXIT(7, JupiterLighthouseWhorl, 6),  SCENE_EXIT(8, JupiterLighthouseRoomM, 8),   
       SCENE_EXIT(9, JupiterLighthouseWhorl, 10),   SCENE_EXIT(10, JupiterLighthouseWhorl, 9), SCENE_EXIT(11, JupiterLighthouseWhorl, 12), 

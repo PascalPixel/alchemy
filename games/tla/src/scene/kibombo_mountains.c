@@ -114,7 +114,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
   if (scene == SCENE_KIBOMBO_MOUNTAINS_WAFT)
     return gKibomboMountains_Room1Placements;
-  if (scene == SCENE_KIBOMBO_MOUNTAINS_2)
+  if (scene == SCENE_KIBOMBO_MOUNTAINS_DISK_AXE_CHEST)
     return gKibomboMountains_Room2Placements;
   return gKibomboMountains_Placements;
 }
@@ -342,7 +342,7 @@ const u8 *Scene_GetTriggers(void) {
 
   if (scene == SCENE_KIBOMBO_MOUNTAINS_WAFT)
     return gKibomboMountains_Room1Triggers;
-  if (scene == SCENE_KIBOMBO_MOUNTAINS_2)
+  if (scene == SCENE_KIBOMBO_MOUNTAINS_DISK_AXE_CHEST)
     return gKibomboMountains_Room2Triggers;
   if (scene == SCENE_KIBOMBO_MOUNTAINS_3)
     return gKibomboMountains_Room3Triggers;
@@ -405,7 +405,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(13, 0, 0);
     else
       Actor_GetById(13)->scaleY = Q16_ONE * 5 / 4;
-  } else if (scene == SCENE_KIBOMBO_MOUNTAINS_2) {
+  } else if (scene == SCENE_KIBOMBO_MOUNTAINS_DISK_AXE_CHEST) {
     Actor_SetSpritePriority(8, 1);
     Actor_SetSpritePriority(9, 1);
     Rope_Initialize();
@@ -593,7 +593,7 @@ void KibomboMountains_GuardsTurnPartyBack(void) {
 /// on this visit.
 void KibomboMountains_SendPartyBack(void) {
   s32 moved = Event_GetFlag(FLAG_TURNED_BACK);
-  s32 scene = SCENE_KIBOMBO_MOUNTAINS_2;
+  s32 scene = SCENE_KIBOMBO_MOUNTAINS_DISK_AXE_CHEST;
 
   if (moved)
     Event_SetDestination(scene, 9);
@@ -750,13 +750,13 @@ struct SceneEntrance gSceneEntrances[] = {
 u32 gSceneExits[] = {
     SCENE_EXITS(KibomboMountainsWaft),
     SCENE_EXIT_UNLESS(1, WorldMap, 26, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, KibomboMountains2, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, KibomboMountains2, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, KibomboMountains2, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, KibomboMountainsDiskAxeChest, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, KibomboMountainsDiskAxeChest, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, KibomboMountainsDiskAxeChest, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, KibomboMountains3, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, KibomboMountains3, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, KibomboMountains3, 3, EXIT_FLAG_NONE),
-    SCENE_EXITS(KibomboMountains2),
+    SCENE_EXITS(KibomboMountainsDiskAxeChest),
     SCENE_EXIT_UNLESS(1, WorldMap, 25, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, KibomboMountainsWaft, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, KibomboMountainsWaft, 3, EXIT_FLAG_NONE),

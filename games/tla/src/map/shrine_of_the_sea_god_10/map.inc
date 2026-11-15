@@ -39,7 +39,7 @@ Tileset_ShrineOfTheSeaGod10Palette:
 	.global Tileset_ShrineOfTheSeaGod10TilesA
 Tileset_ShrineOfTheSeaGod10TilesA:
 	.incbin "games/tla/src/graphics/tileset/shrine_of_the_sea_god_10/tiles_a.4bpp.mtf"
-	.byte 0x86	@ PACKER: left in the buffer by Tileset_ShrineOfTheSeaGod8TilesA+0x239f
+	.byte 0x86	@ PACKER: left in the buffer by Tileset_ShrineOfTheSeaGodSeaGodsTearTilesA+0x239f
 	.global Tileset_ShrineOfTheSeaGod10TilesB
 Tileset_ShrineOfTheSeaGod10TilesB:
 	.incbin "games/tla/src/graphics/tileset/shrine_of_the_sea_god_10/tiles_b.4bpp.mtf"

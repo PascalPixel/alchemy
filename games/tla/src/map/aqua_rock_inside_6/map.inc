@@ -27,7 +27,7 @@ Field_AquaRockInside6:
 	.incbin "games/tla/src/map/aqua_rock_inside_6/animation.script.lz"
 	.balign 4, 0
 .LField_AquaRockInside6_BLEND:
-	.incbin "games/tla/src/map/aqua_rock_inside_1/blend.script.lz"
+	.incbin "games/tla/src/map/aqua_rock_inside_water_of_life_chest/blend.script.lz"
 	.balign 4, 0
 .LField_AquaRockInside6_SCENE:
 	.incbin "games/tla/src/map/aqua_rock_inside_6/scene.scene.lz"

@@ -196,9 +196,9 @@ extern s16 gAirsRock_Regions[];
 s16 *Scene_GetExitRegions(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_AIRS_ROCK_1)
+  if (scene == SCENE_AIRS_ROCK_STORM_BRAND_CHEST)
     return gAirsRock_Room1Regions;
-  if (scene == SCENE_AIRS_ROCK_2)
+  if (scene == SCENE_AIRS_ROCK_ENTRANCE)
     return gAirsRock_Room2Regions;
   return gAirsRock_Regions;
 }
@@ -208,9 +208,9 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_AIRS_ROCK_1)
+  if (scene == SCENE_AIRS_ROCK_STORM_BRAND_CHEST)
     return gAirsRock_Room1Placements;
-  if (scene == SCENE_AIRS_ROCK_2)
+  if (scene == SCENE_AIRS_ROCK_ENTRANCE)
     return gAirsRock_Room2Placements;
   return gAirsRock_Placements;
 }
@@ -348,9 +348,9 @@ void AirsRock_ClimbLedge(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_AIRS_ROCK_1)
+  if (scene == SCENE_AIRS_ROCK_STORM_BRAND_CHEST)
     return gAirsRock_Room1Triggers;
-  if (scene == SCENE_AIRS_ROCK_2)
+  if (scene == SCENE_AIRS_ROCK_ENTRANCE)
     return gAirsRock_Room2Triggers;
   return gAirsRock_Triggers;
 }
@@ -1638,10 +1638,10 @@ s32 Scene_Initialize(void) {
   volatile struct DmaRegisters *dma;
 
   gFieldWork->transition = 516;
-  gMainRoutineWork.retreatScene = SCENE_AIRS_ROCK_1;
+  gMainRoutineWork.retreatScene = SCENE_AIRS_ROCK_STORM_BRAND_CHEST;
   gMainRoutineWork.retreatEntrance = 1;
   LEADER()->priorityFlags |= 32;
-  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_1) {
+  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_STORM_BRAND_CHEST) {
     switch (gMainRoutineWork.entrance) {
     case 2:
     case 3:
@@ -1695,7 +1695,7 @@ s32 Scene_Initialize(void) {
       Actor_SetSpriteColor(Actor_GetById(8), 6);
     }
   }
-  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_2) {
+  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_ENTRANCE) {
     switch (gMainRoutineWork.entrance) {
     case 3:
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
@@ -1762,7 +1762,7 @@ s32 Scene_Initialize(void) {
       break;
     }
   }
-  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_3) {
+  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_FUJIN_SHIELD_CHEST) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
@@ -2051,37 +2051,37 @@ s16 gAirsRock_Regions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(AirsRock1),
+    SCENE_EXITS(AirsRockStormBrandChest),
     SCENE_EXIT_UNLESS(1, WorldMap, 16, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, AirsRock2, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, AirsRock2, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, AirsRock2, 3, EXIT_FLAG_NONE),
-    SCENE_EXITS(AirsRock2),
-    SCENE_EXIT_UNLESS(1, AirsRock1, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, AirsRock1, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, AirsRock1, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AirsRockEntrance, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, AirsRockEntrance, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, AirsRockEntrance, 3, EXIT_FLAG_NONE),
+    SCENE_EXITS(AirsRockEntrance),
+    SCENE_EXIT_UNLESS(1, AirsRockStormBrandChest, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AirsRockStormBrandChest, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, AirsRockStormBrandChest, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, AirsRockInside1, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, AirsRock2, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, AirsRock2, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, AirsRock2, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, AirsRock2, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, AirsRock3, 1, EXIT_FLAG_NONE),
-    SCENE_EXITS(AirsRock3),
-    SCENE_EXIT_UNLESS(1, AirsRock2, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, AirsRock3, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, AirsRock3, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, AirsRock3, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, AirsRock3, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, AirsRock3, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, AirsRock3, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, AirsRock3, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, AirsRock3, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, AirsRock3, 8, FLAG_AIRS_ROCK_FOG_CLEARED),
-    SCENE_EXIT_UNLESS(11, AirsRock3, 9, FLAG_AIRS_ROCK_FOG_CLEARED),
-    SCENE_EXIT_UNLESS(10, AirsRock3, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, AirsRock3, 13, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(12, AirsRock3, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(13, AirsRock3, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, AirsRockEntrance, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, AirsRockEntrance, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, AirsRockEntrance, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, AirsRockEntrance, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, AirsRockFujinShieldChest, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(AirsRockFujinShieldChest),
+    SCENE_EXIT_UNLESS(1, AirsRockEntrance, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AirsRockFujinShieldChest, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, AirsRockFujinShieldChest, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, AirsRockFujinShieldChest, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, AirsRockFujinShieldChest, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, AirsRockFujinShieldChest, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, AirsRockFujinShieldChest, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, AirsRockFujinShieldChest, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, AirsRockFujinShieldChest, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, AirsRockFujinShieldChest, 8, FLAG_AIRS_ROCK_FOG_CLEARED),
+    SCENE_EXIT_UNLESS(11, AirsRockFujinShieldChest, 9, FLAG_AIRS_ROCK_FOG_CLEARED),
+    SCENE_EXIT_UNLESS(10, AirsRockFujinShieldChest, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, AirsRockFujinShieldChest, 13, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, AirsRockFujinShieldChest, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(13, AirsRockFujinShieldChest, 11, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(14, AirsRockInside2, 1, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };

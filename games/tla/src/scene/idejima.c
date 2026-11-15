@@ -1611,7 +1611,7 @@ s32 Scene_Initialize(void) {
   case 4: {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    party->restartScene = SCENE_DAILA_INTERIORS_2;
+    party->restartScene = SCENE_DAILA_INTERIORS_SANCTUM;
     party->restartEntrance = 1;
   }
     Idejima_PlaceTheSleepers();

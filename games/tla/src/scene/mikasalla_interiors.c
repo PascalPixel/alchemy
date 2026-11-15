@@ -32,7 +32,7 @@
 /// the party leaves the area.
 #define FLAG_MIKASALLA_GALAHAD_MET_THIS_VISIT FLAG_AREA_TEMP_41
 
-/// Mikasalla's houses and inn (MikasallaInteriors1), by the rows of
+/// Mikasalla's houses and inn (MikasallaInteriorsHouses), by the rows of
 /// gMikasallaInteriors_InnPlacements.
 enum MikasallaInteriorsActorId {
   /// The family of the late explorer: his son, his widow, and the grandson who
@@ -54,9 +54,9 @@ enum MikasallaInteriorsActorId {
   ACTOR_GALAHAD
 };
 
-/// The sanctums (MikasallaInteriors2): Mikasalla's, by entrance 1, and those of
-/// the Apojii Islands, by entrance 5, and Yallam, by entrance 4, which this
-/// scene also holds; by the rows of gMikasallaInteriors_SanctumPlacements.
+/// The sanctums (MikasallaInteriorsSanctum): Mikasalla's, by entrance 1, and
+/// those of the Apojii Islands, by entrance 5, and Yallam, by entrance 4, which
+/// this scene also holds; by the rows of gMikasallaInteriors_SanctumPlacements.
 enum MikasallaInteriorsSanctumActorId {
   ACTOR_MIKASALLA_HEALER = ACTOR_FIRST_PLACED,
   ACTOR_APOJII_HEALER,
@@ -92,7 +92,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_2)
+  if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_SANCTUM)
     return gMikasallaInteriors_SanctumPlacements;
   return gMikasallaInteriors_InnPlacements;
 }
@@ -125,7 +125,7 @@ s32 MikasallaInteriors_ReadApojiiHealersMind(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_2)
+  if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_SANCTUM)
     return gMikasallaInteriors_SanctumTriggers;
   return gMikasallaInteriors_InnTriggers;
 }
@@ -257,7 +257,7 @@ void MikasallaInteriors_TalkToYallamHealer(s32 actor) {
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x209;
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x20;
-  if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_1) {
+  if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_HOUSES) {
     if (gMainRoutineWork.entrance == 5)
       Scene_FadeInAndClearFlag();
     else if (!Event_GetFlag(0x821) ||
@@ -269,7 +269,7 @@ s32 Scene_Initialize(void) {
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_GALAHAD), 4);
     return 0;
   }
-  if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_2) {
+  if (gMainRoutineWork.next == SCENE_MIKASALLA_INTERIORS_SANCTUM) {
     s32 entrance = gMainRoutineWork.entrance;
 
     if (entrance == 1) {
@@ -409,13 +409,13 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(MikasallaInteriors1),
+    SCENE_EXITS(MikasallaInteriorsHouses),
     SCENE_EXIT_UNLESS(1, Mikasalla1, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, Mikasalla1, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, Mikasalla1, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, Mikasalla1, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, Islets2, 2, EXIT_FLAG_NONE),
-    SCENE_EXITS(MikasallaInteriors2),
+    SCENE_EXITS(MikasallaInteriorsSanctum),
     SCENE_EXIT_UNLESS(1, Mikasalla1, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, ApojiiIslands1, 9, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, Yallam1, 8, EXIT_FLAG_NONE),

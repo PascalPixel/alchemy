@@ -1062,14 +1062,14 @@ void AirsRockInside_UpdateVentPuff(struct Actor *object) {
     object->speedLimit = -object->speedLimit >> 1;
     object->z.fixed = leader->z.fixed - px(8);
   }
-  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_3) {
+  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST) {
     other = Actor_GetById(8);
     if (Position_FlatDistance(&other->x.fixed, pos) <= 8) {
       object->speedLimit = -object->speedLimit >> 1;
       object->riseBaseY = 0;
       object->z.fixed = other->z.fixed - px(8);
     }
-  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_8) {
+  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
     for (i = 0; i != 3; i++) {
       struct Actor *other2 = Actor_GetById(i + 12);
 #define other other2
@@ -1125,7 +1125,7 @@ void AirsRockInside_PuffVents(void) {
   if ((frame & 6) != 0)
     return;
   scene = gMainRoutineWork.next;
-  if (scene == SCENE_AIRS_ROCK_INSIDE_3) {
+  if (scene == SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST) {
     s32 x;
 
     if ((frame & 1) &&
@@ -1134,7 +1134,7 @@ void AirsRockInside_PuffVents(void) {
     else
       x = 0x1180000;
     AirsRockInside_PuffVent(x, 0, 0x2680000);
-  } else if (scene == SCENE_AIRS_ROCK_INSIDE_8) {
+  } else if (scene == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
     if (frame & 1) {
       if (Actor_GetById(gMainRoutineWork.leaderActorId)->z.fixed >> 19 > 41) {
         if (Actor_GetById(gMainRoutineWork.leaderActorId)->x.fixed >> 19 <= 44)
@@ -1314,16 +1314,16 @@ void AirsRockInside_BlowGust(void) {
   }
   carried = 0;
   while (Actor_HasArrived(gust) == 0) {
-    if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_6) {
+    if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
       object = Actor_GetById(8);
       if (gust->x.fixed >> 19 == object->x.fixed >> 19 && carried == 0)
         PICK_UP(object, 0x270025);
-    } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_8) {
+    } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
       object = Actor_GetById(9);
       if (gust->x.fixed >> 20 == object->x.fixed >> 20 &&
           gust->z.fixed >> 20 == object->z.fixed >> 20 && carried == 0)
         PICK_UP(object, 0x290069);
-    } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_9) {
+    } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
       object = Actor_GetById(10);
       if (gust->x.fixed >> 20 == object->x.fixed >> 20 &&
           gust->z.fixed >> 20 == object->z.fixed >> 20 && carried == 0)
@@ -1353,11 +1353,11 @@ void AirsRockInside_BlowGust(void) {
     object->priorityFlags &= ~6;
     Actor_SetSpriteFlags(object, 1);
     Scene_SetActorSpritePriority(object, 2);
-    if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_6) {
+    if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
       object->groundHeight = 0xffe00000;
       Call6(Map_CopyCellAttributeRect, 19, 16, 1, 1, 19, 18);
       GameFlag_Set(FLAG_AIRS_ROCK_STATUE_MOVED);
-    } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_8) {
+    } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
       Call6(Map_CopyCellAttributeRect, 19, 38, 1, 1, 20, 38);
       OverlayObject_WaitUntilIdle(object);
       wait(1);
@@ -1366,7 +1366,7 @@ void AirsRockInside_BlowGust(void) {
       object->groundHeight = 0;
       object->y.fixed = 0;
       MapGrid_SetCellHeight(0x1400000, 0x3400000, 0, 4);
-    } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_9) {
+    } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
       OverlayObject_WaitUntilIdle(object);
       wait(1);
       OverlayObject_WaitUntilIdle(object);
@@ -1418,7 +1418,8 @@ void AirsRockInside_BlowGust(void) {
           MapGrid_CopyCellPictureIndicesRect(21, 88, 24, 89, 1, 2);
           Map_CopyCellAttributeRect(23, 92, 2, 1, 23, 89);
           Map_CopyCellAttributeRect(18, 33, 2, 1, 23, 25);
-        } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_7) {
+        } else if (gMainRoutineWork.next ==
+                   SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
           cell.x = gust->x.fixed >> 20;
           cell.z = ((gust->z.fixed - gust->y.fixed) >> 20) + 64;
           if (hit == 0) {
@@ -1433,7 +1434,8 @@ void AirsRockInside_BlowGust(void) {
             Call6(Map_CopyCellAttributeRect, 38, 98, 1, 1, 38, 99);
             Call6(Map_CopyCellAttributeRect, 38, 35, 1, 1, 38, 37);
           }
-        } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_9) {
+        } else if (gMainRoutineWork.next ==
+                   SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
           GameFlag_Set(FLAG_AREA_TEMP_06);
           cell.x = gust->x.fixed >> 20;
           Call6(MapGrid_CopyCellPictureIndicesRect, 15, 80, cell.x, 77, 1, 3);
@@ -1481,7 +1483,7 @@ shrink:
       Call6(Map_CopyCellAttributeRect, 0x30, 88, 1, 1, 31, 89);
       GameFlag_Clear(FLAG_AREA_TEMP_01);
     }
-  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_6) {
+  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
     if (hit == 5) {
       SHAKE();
       Call6(MapGrid_CopyCellPictureIndicesRect, 79, 0x40, 0x20, 79, 5, 7);
@@ -1559,19 +1561,19 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return gAirsRockInside_Room1Placements;
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_2)
     return gAirsRockInside_Room2Placements;
-  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_3)
+  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST)
     return gAirsRockInside_Room3Placements;
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_4)
     return gAirsRockInside_Room4Placements;
   if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET)
     return gAirsRockInside_Room5Placements;
-  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_6)
+  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST)
     return gAirsRockInside_Room6Placements;
-  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_7)
+  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES)
     return gAirsRockInside_Room7Placements;
-  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_8)
+  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP)
     return gAirsRockInside_Room8Placements;
-  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_9)
+  if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST)
     return gAirsRockInside_Room9Placements;
   return gAirsRockInside_Placements;
 }
@@ -1635,13 +1637,13 @@ void AirsRockInside_StampCellUnderLeader(void) {
   gAirsRockInside_StampedHeight = 2;
   scene = gMainRoutineWork.next;
   if (scene == SCENE_AIRS_ROCK_INSIDE_1 || scene == SCENE_AIRS_ROCK_INSIDE_2 ||
-      scene == SCENE_AIRS_ROCK_INSIDE_3) {
+      scene == SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST) {
     gAirsRockInside_StampedX = x;
     gAirsRockInside_StampedZ = z - y + 64;
   } else if (scene == SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET ||
-             scene == SCENE_AIRS_ROCK_INSIDE_6 ||
-             scene == SCENE_AIRS_ROCK_INSIDE_7 ||
-             scene == SCENE_AIRS_ROCK_INSIDE_9) {
+             scene == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST ||
+             scene == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES ||
+             scene == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
     gAirsRockInside_StampedX = x + 64;
     gAirsRockInside_StampedZ = z - y;
   }
@@ -1671,7 +1673,7 @@ void AirsRockInside_StampOtherCellUnderLeader(void) {
     gAirsRockInside_StampedX = x;
     gAirsRockInside_StampedZ = z - y + 64;
   } else if (scene == SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET ||
-             scene == SCENE_AIRS_ROCK_INSIDE_6) {
+             scene == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
     gAirsRockInside_StampedX = x + 64;
     gAirsRockInside_StampedZ = z - y;
   }
@@ -2010,17 +2012,17 @@ void AirsRockInside_StartPushingPillar(void) {
     Actor_LiftTargetBlock(gAirsRockInside_Room1Pillars);
   } else if (scene == SCENE_AIRS_ROCK_INSIDE_2) {
     Actor_LiftTargetBlock(gAirsRockInside_Room2Pillars);
-  } else if (scene == SCENE_AIRS_ROCK_INSIDE_3) {
+  } else if (scene == SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST) {
     Actor_LiftTargetBlock(gAirsRockInside_Room3Pillars);
   } else if (scene == SCENE_AIRS_ROCK_INSIDE_4) {
     Actor_LiftTargetBlock(gAirsRockInside_Room4Pillars);
-  } else if (scene == SCENE_AIRS_ROCK_INSIDE_7) {
+  } else if (scene == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
     ClearLayer2Shape(0x2600000, 0x1500000);
     MapGrid_SetCellHeight(0x2700000, 0x1500000, 2, 0);
     Actor_LiftTargetBlock(gAirsRockInside_Room7Pillars);
-  } else if (scene == SCENE_AIRS_ROCK_INSIDE_8) {
+  } else if (scene == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
     Actor_LiftTargetBlock(gAirsRockInside_Room8Pillars);
-  } else if (scene == SCENE_AIRS_ROCK_INSIDE_9) {
+  } else if (scene == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
     Actor_GetById(10)->timer = 0;
     Actor_LiftTargetBlock(gAirsRockInside_Room9Pillars);
   }
@@ -2031,10 +2033,10 @@ void AirsRockInside_StartPushingPillar(void) {
 /// After the pushed object (the event work's object at 0xcbc) comes to rest:
 /// if it stopped above the ground it drops onto it with cue 188; then, by
 /// room, the place where it stopped sets the flag for that pillar's spot
-/// (AirsRockInside1 to 4 and 9), in AirsRockInside7 marks two cells and shows
-/// objects 13 and 14 by where objects 9, 10 and 11 stand, and in
-/// AirsRockInside8 and 9 sets or clears the flags of the spots along its rows
-/// and redraws the pillars' cells (MapCell_SetAttributes).
+/// (AirsRockInside1 to 4 and 9), in AirsRockInsidePairedStatues marks two cells
+/// and shows objects 13 and 14 by where objects 9, 10 and 11 stand, and in
+/// AirsRockInsideFaceWarp and 9 sets or clears the flags of the spots along its
+/// rows and redraws the pillars' cells (MapCell_SetAttributes).
 void AirsRockInside_FinishPushingPillar(void) {
   struct Actor *pushed = *(struct Actor **)(EVENT_WORK + 0xcbc);
   s32 x, z;
@@ -2062,7 +2064,8 @@ void AirsRockInside_FinishPushingPillar(void) {
       GameFlag_Set(FLAG_AIRS_ROCK_SECOND_ROOM_WEST_PILLAR_PLACED);
     else if (x == 41 && z == 49)
       GameFlag_Set(FLAG_AIRS_ROCK_SECOND_ROOM_EAST_PILLAR_PLACED);
-  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_3) {
+  } else if (gMainRoutineWork.next ==
+             SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST) {
     if (x == 33 && z == 79)
       GameFlag_Set(FLAG_AIRS_ROCK_THIRD_ROOM_FIRST_PILLAR_PLACED);
     else if (x == 77 && z == 71)
@@ -2072,7 +2075,7 @@ void AirsRockInside_FinishPushingPillar(void) {
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_4) {
     if (x == 81 && z == 37)
       GameFlag_Set(FLAG_AIRS_ROCK_FOURTH_ROOM_PILLAR_PLACED);
-  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_7) {
+  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
     Call4((void (*)())MapGrid_SetCellHeight, 0x2600000, 0x1500000, 2, -4);
     Call4((void (*)())MapGrid_SetCellHeight, 0x2700000, 0x1500000, 2, -4);
     if (x == 43 && z == 87)
@@ -2091,7 +2094,7 @@ void AirsRockInside_FinishPushingPillar(void) {
       else
         ((u8 *)Actor_GetById(14))[99] = 0;
     }
-  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_8) {
+  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
     if (x == 35 && z == 59)
       GameFlag_Set(FLAG_AIRS_ROCK_EIGHTH_ROOM_FIRST_PILLAR_PLACED);
     if (x == 45 && z == 105)
@@ -2112,7 +2115,7 @@ void AirsRockInside_FinishPushingPillar(void) {
                           Actor_GetById(8)->z.fixed >> 20, 0);
     MapCell_SetAttributes(2, Actor_GetById(9)->x.fixed >> 20,
                           Actor_GetById(9)->z.fixed >> 20, 0);
-  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_9) {
+  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
     if (x == 45 && z == 33)
       GameFlag_Set(FLAG_AIRS_ROCK_NINTH_ROOM_PILLAR_PLACED);
     MapCell_SetAttributes(2, Actor_GetById(10)->x.fixed >> 20,
@@ -2946,19 +2949,19 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gAirsRockInside_Room1Triggers;
   if (scene == SCENE_AIRS_ROCK_INSIDE_2)
     return gAirsRockInside_Room2Triggers;
-  if (scene == SCENE_AIRS_ROCK_INSIDE_3)
+  if (scene == SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST)
     return gAirsRockInside_Room3Triggers;
   if (scene == SCENE_AIRS_ROCK_INSIDE_4)
     return gAirsRockInside_Room4Triggers;
   if (scene == SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET)
     return gAirsRockInside_Room5Triggers;
-  if (scene == SCENE_AIRS_ROCK_INSIDE_6)
+  if (scene == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST)
     return gAirsRockInside_Room6Triggers;
-  if (scene == SCENE_AIRS_ROCK_INSIDE_7)
+  if (scene == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES)
     return gAirsRockInside_Room7Triggers;
-  if (scene == SCENE_AIRS_ROCK_INSIDE_8)
+  if (scene == SCENE_AIRS_ROCK_INSIDE_FACE_WARP)
     return gAirsRockInside_Room8Triggers;
-  if (scene == SCENE_AIRS_ROCK_INSIDE_9)
+  if (scene == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST)
     return gAirsRockInside_Room9Triggers;
   if (scene == SCENE_AIRS_ROCK_INSIDE_PSYNERGY_STONE)
     return gAirsRockInside_Room10Triggers;
@@ -3275,7 +3278,8 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == 3 &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       AirsRockInside_RiseOnLift();
-  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_3) {
+  } else if (gMainRoutineWork.next ==
+             SCENE_AIRS_ROCK_INSIDE_CLARITY_CIRCLET_CHEST) {
     AirsRockInside_StartRestoringCells();
     Scene_QueueMusic(SE_245);
     REG_BLDALPHA = 0xc08;
@@ -3349,7 +3353,7 @@ s32 Scene_Initialize(void) {
     Actor_GetById(8)->groundHeight = px(16);
     object->y.fixed = px(16);
     Actor_SetMovementType(Actor_GetById(8), 9);
-  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_6) {
+  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
     AirsRockInside_StartRestoringCells();
     Tightrope_Initialize();
     Tightrope_Place(0, 11, 12);
@@ -3375,7 +3379,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(8)->groundHeight = 0xffe00000;
       Call6(Map_CopyCellAttributeRect, 19, 16, 1, 1, 19, 18);
     }
-  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_7) {
+  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_PAIRED_STATUES) {
     AirsRockInside_StartRestoringCells();
     one = 1;
     ((u8 *)Actor_GetById(12))[98] = one;
@@ -3400,7 +3404,7 @@ s32 Scene_Initialize(void) {
       Call6(Map_CopyCellAttributeRect, 38, 98, 1, 1, 38, 99);
       Call6(Map_CopyCellAttributeRect, 38, 35, 1, 1, 38, 37);
     }
-  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_8) {
+  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_FACE_WARP) {
     Scene_QueueMusic(SE_245);
     REG_BLDALPHA = 0xc08;
     REG_BLDCNT = 0x3f10;
@@ -3424,7 +3428,7 @@ s32 Scene_Initialize(void) {
     else
       AirsRockInside_WakeStatue(Actor_GetById(11), 8, 0);
     Actor_SetSpriteFlags(Actor_GetById(11), 0);
-  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_9) {
+  } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_COINS_CHEST) {
     AirsRockInside_StartRestoringCells();
     if (GameFlag_Get(FLAG_AIRS_ROCK_NINTH_ROOM_PILLAR_PLACED))
       Call3(Actor_SetHorizontalPositionWithTerrain, 9, px(360), px(264));
@@ -3648,45 +3652,45 @@ s16 gAirsRockInside_Room1Entrances[] = {
 u32 gSceneExits[] = {
     SCENE_EXITS(AirsRockInside1),
     SCENE_EXIT_UNLESS(1, AirsRockInside2, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, AirsRockInside3, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AirsRockInsideClarityCircletChest, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, AirsRockInside4, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, AirsRockInside6, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, AirsRockInsideElixirChest, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, AirsRockInside1, 12, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, AirsRockInsidePsynergyStone, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, AirsRockInsidePsynergyStone, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, AirsRockInside7, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, AirsRockInside8, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, AirsRock2, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, AirsRockInsidePairedStatues, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, AirsRockInsideFaceWarp, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, AirsRockEntrance, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, AirsRockInside1, 14, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(12, AirsRockInside1, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(13, AirsRockInside1, 13, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(14, AirsRockInside9, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(14, AirsRockInsideCoinsChest, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(15, AirsRockInsideRevealTablet, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(16, AirsRockInside2, 3, EXIT_FLAG_NONE),
     SCENE_EXITS(AirsRockInside2),
-    SCENE_EXIT_UNLESS(1, AirsRock3, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, AirsRockFujinShieldChest, 14, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AirsRockInside1, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, AirsRockInside1, 11, EXIT_FLAG_NONE),
-    SCENE_EXITS(AirsRockInside3),
+    SCENE_EXITS(AirsRockInsideClarityCircletChest),
     SCENE_EXIT_UNLESS(1, AirsRockInside1, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AirsRockInside4, 1, EXIT_FLAG_NONE),
     SCENE_EXITS(AirsRockInside4),
-    SCENE_EXIT_UNLESS(1, AirsRockInside3, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, AirsRockInside6, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, AirsRockInside9, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, AirsRockInsideClarityCircletChest, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, AirsRockInsideElixirChest, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, AirsRockInsideCoinsChest, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, AirsRockInside1, 3, EXIT_FLAG_NONE),
     SCENE_EXITS(AirsRockInsideRevealTablet),
     SCENE_EXIT_UNLESS(1, AirsRockInside1, 16, EXIT_FLAG_NONE),
-    SCENE_EXITS(AirsRockInside6),
+    SCENE_EXITS(AirsRockInsideElixirChest),
     SCENE_EXIT_UNLESS(1, AirsRockInside4, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AirsRockInside1, 4, EXIT_FLAG_NONE),
-    SCENE_EXITS(AirsRockInside7),
+    SCENE_EXITS(AirsRockInsidePairedStatues),
     SCENE_EXIT_UNLESS(1, AirsRockInside1, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, AirsRockInside8, 2, EXIT_FLAG_NONE),
-    SCENE_EXITS(AirsRockInside8),
+    SCENE_EXIT_UNLESS(2, AirsRockInsideFaceWarp, 2, EXIT_FLAG_NONE),
+    SCENE_EXITS(AirsRockInsideFaceWarp),
     SCENE_EXIT_UNLESS(1, AirsRockInside1, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, AirsRockInside7, 2, EXIT_FLAG_NONE),
-    SCENE_EXITS(AirsRockInside9),
+    SCENE_EXIT_UNLESS(2, AirsRockInsidePairedStatues, 2, EXIT_FLAG_NONE),
+    SCENE_EXITS(AirsRockInsideCoinsChest),
     SCENE_EXIT_UNLESS(1, AirsRockInside4, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, AirsRockInside1, 15, EXIT_FLAG_NONE),
     SCENE_EXITS(AirsRockInsidePsynergyStone),

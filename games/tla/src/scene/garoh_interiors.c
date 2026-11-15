@@ -1,8 +1,9 @@
 /// @file
 /// Garoh's houses, in three scenes that share this overlay: the inn, where
 /// the weapon and armor merchants keep their counters
-/// (SceneId_GarohInteriors1), the house of the item merchant
-/// (SceneId_GarohInteriors2) and the sanctum (SceneId_GarohInteriors3).
+/// (SceneId_GarohInteriorsHouses), the house of the item merchant
+/// (SceneId_GarohInteriorsShop) and the sanctum
+/// (SceneId_GarohInteriorsSanctum).
 ///
 /// Garoh is first seen on a night of the full moon (FLAG_GAROH_NIGHT), when
 /// its people hide that they are werewolves: the merchants sell only claws and
@@ -107,11 +108,11 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_GAROH_INTERIORS_1)
+  if (scene == SCENE_GAROH_INTERIORS_HOUSES)
     return gGarohInteriors_InnActorPlacements;
-  if (scene == SCENE_GAROH_INTERIORS_2)
+  if (scene == SCENE_GAROH_INTERIORS_SHOP)
     return gGarohInteriors_HouseActorPlacements;
-  if (scene == SCENE_GAROH_INTERIORS_3)
+  if (scene == SCENE_GAROH_INTERIORS_SANCTUM)
     return gGarohInteriors_SanctumActorPlacements;
   return gGarohInteriors_NoActorPlacements;
 }
@@ -362,14 +363,14 @@ void GarohInteriors_AskAboutReveal(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s32 shared = GameFlag_Get(FLAG_GAROH_SECRET_SHARED);
   struct MainRoutineWork *party = &gMainRoutineWork;
-  s32 room1 = SCENE_GAROH_INTERIORS_1;
+  s32 room1 = SCENE_GAROH_INTERIORS_HOUSES;
   s32 scene;
 
   if (shared) {
     scene = party->next;
     if (scene == room1)
       return gGarohInteriors_InnMorningTriggers;
-    if (scene == SCENE_GAROH_INTERIORS_2)
+    if (scene == SCENE_GAROH_INTERIORS_SHOP)
       return gGarohInteriors_HouseMorningTriggers;
   } else {
     scene = party->next;
@@ -378,10 +379,10 @@ const struct Trigger *Scene_GetTriggers(void) {
         return gGarohInteriors_InnMorningTriggers;
       return gGarohInteriors_InnNightTriggers;
     }
-    if (scene == SCENE_GAROH_INTERIORS_2)
+    if (scene == SCENE_GAROH_INTERIORS_SHOP)
       return gGarohInteriors_HouseNightTriggers;
   }
-  if (scene == SCENE_GAROH_INTERIORS_3)
+  if (scene == SCENE_GAROH_INTERIORS_SANCTUM)
     return gGarohInteriors_SanctumTriggers;
   return gGarohInteriors_DoorTriggers;
 }
@@ -392,7 +393,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 521;
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.next == SCENE_GAROH_INTERIORS_1) {
+  if (gMainRoutineWork.next == SCENE_GAROH_INTERIORS_HOUSES) {
     if (GameFlag_Get(FLAG_GAROH_SECRET_SHARED) ||
         gMainRoutineWork.entrance == 99) {
       Actor_SetPosition(ACTOR_DISAPPOINTED_TRAVELERS_BED, 0, 0);
@@ -489,18 +490,18 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(GarohInteriors1),
+    SCENE_EXITS(GarohInteriorsHouses),
     SCENE_EXIT_UNLESS(1, Garoh1, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, Garoh1, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, Garoh1, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, Garoh1, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, Garoh4, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, Garoh4, 8, EXIT_FLAG_NONE),
-    SCENE_EXITS(GarohInteriors2),
+    SCENE_EXITS(GarohInteriorsShop),
     SCENE_EXIT_UNLESS(3, Garoh4, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, Garoh1, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, Garoh4, 6, EXIT_FLAG_NONE),
-    SCENE_EXITS(GarohInteriors3),
+    SCENE_EXITS(GarohInteriorsSanctum),
     SCENE_EXIT_UNLESS(2, Garoh1, 6, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };

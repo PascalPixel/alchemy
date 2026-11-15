@@ -575,9 +575,9 @@ extern s32 gGaiaRockInside_PlatformDownScript[];
 
 /// Return the table for the current room.
 const void *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_2)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_FIRST_ALTAR)
     return gGaiaRockInside_Room2Placements;
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_3)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_TWIN_ALTARS)
     return gGaiaRockInside_Room3Placements;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_4)
     return gGaiaRockInside_Room4Placements;
@@ -1433,7 +1433,7 @@ void GaiaRockInside_ChallengeSerpent(void) {
      */
     do {
     } while (0);
-    scene = SCENE_GAIA_ROCK_INSIDE_1;
+    scene = SCENE_GAIA_ROCK_INSIDE_MAZE;
     FieldEvent_SetAfterBattleDestination(scene, 10);
     if (FieldPartyInventory_FindMember(ITEM_DANCING_IDOL) != -1) {
       if (count == 0)
@@ -1928,9 +1928,9 @@ extern struct Trigger gGaiaRockInside_Room5Triggers[];
 
 /// Returns the current room's table.
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_2)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_FIRST_ALTAR)
     return gGaiaRockInside_Room2Triggers;
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_3)
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_TWIN_ALTARS)
     return gGaiaRockInside_Room3Triggers;
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_4)
     return gGaiaRockInside_Room4Triggers;
@@ -2232,7 +2232,7 @@ s32 Scene_Initialize(void) {
 
   work = &gMainRoutineWork;
   gFieldWork->transition = 516;
-  if (work->next == SCENE_GAIA_ROCK_INSIDE_1) {
+  if (work->next == SCENE_GAIA_ROCK_INSIDE_MAZE) {
     early = &work->entrance;
     if (work->entrance > 8) {
       C2(Actor_SetSpriteFlags, Actor_GetById(8), 0);
@@ -2718,7 +2718,7 @@ s32 Scene_Initialize(void) {
       C2(WorldMap_SetReturnLeavingScene, room->next, *entrance);
       Event_End();
     }
-  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_2) {
+  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_FIRST_ALTAR) {
     s32 mask = 32;
     s32 low;
     s32 high;
@@ -2753,7 +2753,7 @@ s32 Scene_Initialize(void) {
   } else if (work->next == SCENE_GAIA_ROCK_INSIDE_4) {
     if (Test(0xa63))
       C1(GaiaRockInside_StartPlatforms, 1);
-  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_3) {
+  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_TWIN_ALTARS) {
     struct Actor *object;
     struct Actor *other;
 
@@ -2929,7 +2929,7 @@ s32 Scene_Initialize(void) {
 
   work = &gMainRoutineWork;
   gFieldWork->transition = 516;
-  if (work->next == SCENE_GAIA_ROCK_INSIDE_1) {
+  if (work->next == SCENE_GAIA_ROCK_INSIDE_MAZE) {
     early = &work->entrance;
     if (work->entrance > 8) {
       C2(Actor_SetSpriteFlags, Actor_GetById(8), 0);
@@ -3417,7 +3417,7 @@ s32 Scene_Initialize(void) {
          (s16)room->restartEntrance);
       Event_End();
     }
-  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_2) {
+  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_FIRST_ALTAR) {
     s32 mask = 32;
     s32 low;
     s32 high;
@@ -3452,7 +3452,7 @@ s32 Scene_Initialize(void) {
   } else if (work->next == SCENE_GAIA_ROCK_INSIDE_4) {
     if (Test(0xa63))
       C1(GaiaRockInside_StartPlatforms, 1);
-  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_3) {
+  } else if (work->next == SCENE_GAIA_ROCK_INSIDE_TWIN_ALTARS) {
     struct Actor *object;
     struct Actor *other;
 
@@ -3599,7 +3599,7 @@ void GaiaRockInside_SwayPlatformDown__platforms(void) __asm__(
   GaiaRockInside_SwayPlatformDown__platforms
 
 s32 Scene_PrepareMap(void) {
-  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_1) {
+  if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_MAZE) {
     u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
 
     if (gMainRoutineWork.entrance <= 4) {
@@ -3672,7 +3672,7 @@ s32 Scene_PrepareMap(void) {
                       24);
       BlendScript_Start((u16 *)(Ram_MapCollision + 0x1e00));
     }
-  } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_2) {
+  } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_FIRST_ALTAR) {
     switch (gMainRoutineWork.entrance) {
     case 1:
     case 2:
@@ -4349,38 +4349,38 @@ u32 gGaiaRockInside_Regions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(GaiaRockInside1),
-    SCENE_EXIT(1, GaiaRockInside1, 4),
-    SCENE_EXIT(2, GaiaRockInside1, 3),
-    SCENE_EXIT(3, GaiaRockInside1, 2),
-    SCENE_EXIT(4, GaiaRockInside1, 1),
-    SCENE_EXIT(9, GaiaRockInside2, 4),
+    SCENE_EXITS(GaiaRockInsideMaze),
+    SCENE_EXIT(1, GaiaRockInsideMaze, 4),
+    SCENE_EXIT(2, GaiaRockInsideMaze, 3),
+    SCENE_EXIT(3, GaiaRockInsideMaze, 2),
+    SCENE_EXIT(4, GaiaRockInsideMaze, 1),
+    SCENE_EXIT(9, GaiaRockInsideFirstAltar, 4),
     SCENE_EXIT(21, GaiaRockInside5, 4),
-    SCENE_EXIT(22, GaiaRockInside3, 3),
-    SCENE_EXIT(23, GaiaRockInside3, 3),
-    SCENE_EXIT(24, GaiaRockInside3, 3),
-    SCENE_EXIT(250, GaiaRockInside2, 4),
-    SCENE_EXIT(251, GaiaRockInside1, 9),
-    SCENE_EXITS(GaiaRockInside2),
-    SCENE_EXIT(1, GaiaRock1, 4),
-    SCENE_EXIT(2, GaiaRockInside2, 3),
-    SCENE_EXIT(3, GaiaRockInside2, 2),
-    SCENE_EXIT(4, GaiaRockInside1, 1),
-    SCENE_EXIT(5, GaiaRockInside2, 6),
-    SCENE_EXIT(6, GaiaRockInside2, 5),
+    SCENE_EXIT(22, GaiaRockInsideTwinAltars, 3),
+    SCENE_EXIT(23, GaiaRockInsideTwinAltars, 3),
+    SCENE_EXIT(24, GaiaRockInsideTwinAltars, 3),
+    SCENE_EXIT(250, GaiaRockInsideFirstAltar, 4),
+    SCENE_EXIT(251, GaiaRockInsideMaze, 9),
+    SCENE_EXITS(GaiaRockInsideFirstAltar),
+    SCENE_EXIT(1, GaiaRockSusa, 4),
+    SCENE_EXIT(2, GaiaRockInsideFirstAltar, 3),
+    SCENE_EXIT(3, GaiaRockInsideFirstAltar, 2),
+    SCENE_EXIT(4, GaiaRockInsideMaze, 1),
+    SCENE_EXIT(5, GaiaRockInsideFirstAltar, 6),
+    SCENE_EXIT(6, GaiaRockInsideFirstAltar, 5),
     SCENE_EXIT(7, GaiaRockInside4, 1),
-    SCENE_EXIT(8, GaiaRockInside2, 9),
-    SCENE_EXIT(9, GaiaRockInside2, 8),
+    SCENE_EXIT(8, GaiaRockInsideFirstAltar, 9),
+    SCENE_EXIT(9, GaiaRockInsideFirstAltar, 8),
     SCENE_EXIT(10, GaiaRockInside4, 2),
-    SCENE_EXITS(GaiaRockInside3),
+    SCENE_EXITS(GaiaRockInsideTwinAltars),
     SCENE_EXIT(1, GaiaRockInside4, 3),
     SCENE_EXIT(2, GaiaRockInside5, 7),
     SCENE_EXIT(3, GaiaRockInside5, 6),
-    SCENE_EXIT(20, GaiaRockInside1, 20),
+    SCENE_EXIT(20, GaiaRockInsideMaze, 20),
     SCENE_EXITS(GaiaRockInside4),
-    SCENE_EXIT(1, GaiaRockInside2, 10),
-    SCENE_EXIT(2, GaiaRockInside2, 7),
-    SCENE_EXIT(3, GaiaRockInside3, 1),
+    SCENE_EXIT(1, GaiaRockInsideFirstAltar, 10),
+    SCENE_EXIT(2, GaiaRockInsideFirstAltar, 7),
+    SCENE_EXIT(3, GaiaRockInsideTwinAltars, 1),
     SCENE_EXITS(GaiaRockInside5),
     SCENE_EXIT(1, GaiaRockInside5, 2),
     SCENE_EXIT(2, GaiaRockInside5, 1),
@@ -4388,10 +4388,10 @@ u32 gSceneExits[] = {
     SCENE_EXIT(4, GaiaRockInside5, 3),
     SCENE_EXIT(5, GaiaRockInside5, 6),
     SCENE_EXIT(6, GaiaRockInside5, 5),
-    SCENE_EXIT(7, GaiaRockInside3, 2),
-    SCENE_EXIT(8, GaiaRockInside3, 3),
-    SCENE_EXIT(9, GaiaRockInside3, 6),
-    SCENE_EXIT(20, GaiaRockInside1, 20),
+    SCENE_EXIT(7, GaiaRockInsideTwinAltars, 2),
+    SCENE_EXIT(8, GaiaRockInsideTwinAltars, 3),
+    SCENE_EXIT(9, GaiaRockInsideTwinAltars, 6),
+    SCENE_EXIT(20, GaiaRockInsideMaze, 20),
     SCENE_EXITS_END,
 };
 

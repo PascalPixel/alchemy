@@ -24,7 +24,7 @@ Field_KandoreanTempleGate:
 	.incbin "games/tla/src/map/kandorean_temple_gate/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_KandoreanTempleGate_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_KandoreanTempleGate_SCENE:
 	.incbin "games/tla/src/map/kandorean_temple_gate/scene.scene.lz"

@@ -460,7 +460,7 @@ void GabombaCatacombs_TalkToStatue(void) {
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_1)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TELEPORTERS)
     return (const struct SceneRegion *)gGabombaCatacombs_Room1Regions;
   return 0;
 }
@@ -470,13 +470,13 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern struct Trigger gGabombaCatacombs_Triggers[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_1)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TELEPORTERS)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room1Placements;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_MUD)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room2Placements;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_3)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room3Placements;
-  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_4)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room4Placements;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_5)
     return (const struct ActorPlacement *)gGabombaCatacombs_Room5Placements;
@@ -484,13 +484,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_1)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TELEPORTERS)
     return gGabombaCatacombs_Room1Triggers;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_MUD)
     return gGabombaCatacombs_Room2Triggers;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_3)
     return gGabombaCatacombs_Room3Triggers;
-  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_4)
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON)
     return gGabombaCatacombs_Room4Triggers;
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_5)
     return gGabombaCatacombs_Room5Triggers;
@@ -503,7 +503,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 #define CATACOMBS_SCREEN_EFFECT 516
 #endif
 
-extern char SceneId_GabombaStatue7, SceneId_GabombaStatueChamber1;
+extern char SceneId_GabombaStatuePinion, SceneId_GabombaStatueChamber1;
 void FieldEffect_StartBlankOverlay(s32 a);
 
 s32 Scene_Initialize(void) {
@@ -512,10 +512,10 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = CATACOMBS_SCREEN_EFFECT;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_1 &&
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TELEPORTERS &&
       (entrance = gMainRoutineWork.entrance) == 1) {
     if (GameFlag_Get(0xa27)) {
-      gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_7;
+      gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_PINION;
       gMainRoutineWork.retreatEntrance = entrance;
     } else if (GameFlag_Get(0xa28)) {
       gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_CHAMBER_1;
@@ -545,7 +545,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_5 &&
       GameFlag_Get(FLAG_SCENE_TEMP_00))
     MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
-  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_4 &&
+  if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON &&
       GameFlag_Get(0x9ce) && !GameFlag_Get(0xf93) &&
       !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     statue = Actor_GetById(64);
@@ -584,23 +584,23 @@ u32 gGabombaCatacombs_Room1Regions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(GabombaCatacombs1),
-    SCENE_EXIT(1, GabombaStatueChamber3, 2),
+    SCENE_EXITS(GabombaCatacombsTeleporters),
+    SCENE_EXIT(1, GabombaStatueChamberWitchDoctor, 2),
     SCENE_EXIT(2, GabombaCatacombsMud, 1),
     SCENE_EXIT(3, GabombaCatacombsMud, 3),
     SCENE_EXIT(4, GabombaCatacombsMud, 4),
     SCENE_EXIT(5, GabombaCatacombsMud, 5),
     SCENE_EXITS(GabombaCatacombsMud),
-    SCENE_EXIT(1, GabombaCatacombs1, 2),
+    SCENE_EXIT(1, GabombaCatacombsTeleporters, 2),
     SCENE_EXIT(2, GabombaCatacombs3, 1),
     SCENE_EXITS(GabombaCatacombs3),
     SCENE_EXIT(1, GabombaCatacombsMud, 2),
     SCENE_EXIT(2, GabombaCatacombs5, 1),
-    SCENE_EXITS(GabombaCatacombs4),
+    SCENE_EXITS(GabombaCatacombsTomegathericon),
     SCENE_EXIT(1, GabombaCatacombs5, 2),
     SCENE_EXITS(GabombaCatacombs5),
     SCENE_EXIT(1, GabombaCatacombs3, 2),
-    SCENE_EXIT(2, GabombaCatacombs4, 1),
+    SCENE_EXIT(2, GabombaCatacombsTomegathericon, 1),
     SCENE_EXITS_END,
 };
 

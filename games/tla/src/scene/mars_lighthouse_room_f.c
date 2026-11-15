@@ -3395,10 +3395,10 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(MarsLighthouseRoomF1),
-    SCENE_EXIT(1, MarsLighthouseRoomM4, 2),
+    SCENE_EXIT(1, MarsLighthouseRoomMAlastorsHoodChest, 2),
     SCENE_EXIT(2, MarsLighthouseRoomF1, 3),
     SCENE_EXIT(3, MarsLighthouseRoomF1, 2),
-    SCENE_EXIT(4, MarsLighthouseRoomM6, 3),
+    SCENE_EXIT(4, MarsLighthouseRoomMFlame, 3),
     SCENE_EXITS(MarsLighthouseRoomF2),
     SCENE_EXIT(1, MarsLighthouseRoomM2, 2),
     SCENE_EXIT(2, MarsLighthouseRoomF2, 3),
@@ -3407,7 +3407,7 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(5, MarsLighthouseRoomF2, 4),
     SCENE_EXIT(6, MarsLighthouseRoomF2, 7),
     SCENE_EXIT(7, MarsLighthouseRoomF2, 6),
-    SCENE_EXIT(8, MarsLighthouseRoomM6, 2),
+    SCENE_EXIT(8, MarsLighthouseRoomMFlame, 2),
     SCENE_EXIT(9, MarsLighthouseRoomF2, 9),
     SCENE_EXITS(MarsLighthouseRoomF3),
     SCENE_EXIT(1, MarsLighthouseRoomM3, 2),
@@ -3424,7 +3424,7 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(12, MarsLighthouseRoomF3, 11),
     SCENE_EXIT(13, MarsLighthouseRoomF3, 14),
     SCENE_EXIT(14, MarsLighthouseRoomF3, 13),
-    SCENE_EXIT(15, MarsLighthouseRoomM6, 4),
+    SCENE_EXIT(15, MarsLighthouseRoomMFlame, 4),
     SCENE_EXIT(16, MarsLighthouseRoomF3, 16),
     SCENE_EXITS(MarsLighthouseRoomF4),
     SCENE_EXIT(1, MarsLighthouseRoomM5, 2),
@@ -3438,7 +3438,7 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(13, MarsLighthouseRoomF4, 12),
     SCENE_EXIT(14, MarsLighthouseRoomF4, 15),
     SCENE_EXIT(15, MarsLighthouseRoomF4, 14),
-    SCENE_EXIT(5, MarsLighthouseRoomM6, 1),
+    SCENE_EXIT(5, MarsLighthouseRoomMFlame, 1),
     SCENE_EXITS_END,
 };
 

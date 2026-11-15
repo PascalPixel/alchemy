@@ -24,7 +24,7 @@ Field_AnemosInnerSanctum2:
 	.incbin "games/tla/src/map/anemos_inner_sanctum_2/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_AnemosInnerSanctum2_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_AnemosInnerSanctum2_SCENE:
 	.incbin "games/tla/src/map/anemos_inner_sanctum_2/scene.scene.lz"

@@ -6,9 +6,9 @@
 /// Pengus for a Pretty Stone (Islets_PengusGivesPrettyStone); N Osenia Islet
 /// (Islets3), whose cow trades Milk for the Red Cloth (Islets_TradeWithCow);
 /// SE Angara Islet (Islets4), whose bird trades the Red Cloth for the Pretty
-/// Stone (Islets_TradeWithBird); and the Sea of Time Islet (Islets5), where
-/// Lonesome George takes the Li'l Turtle and carries the party to his secret
-/// spot (Islets_GiveTurtle, Islets_ArriveAtSecretSpot).
+/// Stone (Islets_TradeWithBird); and the Sea of Time Islet (IsletsTurtle),
+/// where Lonesome George takes the Li'l Turtle and carries the party to his
+/// secret spot (Islets_GiveTurtle, Islets_ArriveAtSecretSpot).
 #include "system/task.h"
 #include "flags.h"
 #include "item_ids.h"
@@ -234,7 +234,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return gIslets_Room3Placements;
   if (scene == SCENE_ISLETS_4)
     return gIslets_Room4Placements;
-  if (scene == SCENE_ISLETS_5) {
+  if (scene == SCENE_ISLETS_TURTLE) {
     if (Event_GetFlag(0xaa5))
       gIslets_Room5Placements[1].talkFacing = 1;
     return gIslets_Room5Placements;
@@ -280,7 +280,7 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gIslets_Room3Triggers;
   if (scene == SCENE_ISLETS_4)
     return gIslets_Room4Triggers;
-  if (scene == SCENE_ISLETS_5)
+  if (scene == SCENE_ISLETS_TURTLE)
     return gIslets_Room5Triggers;
   return gIslets_Triggers;
 }
@@ -1804,7 +1804,7 @@ s32 Scene_Initialize(void) {
     Islets_InitializeRoom3();
   else if (scene == SCENE_ISLETS_4)
     Islets_InitializeRoom4();
-  else if (scene == SCENE_ISLETS_5)
+  else if (scene == SCENE_ISLETS_TURTLE)
     Islets_InitializeRoom5();
   return 0;
 }
@@ -2939,21 +2939,21 @@ u32 gSceneExits[] = {
     SCENE_EXIT(2, ChampaInteriors, 9),
     SCENE_EXITS(Islets2),
     SCENE_EXIT(1, WorldMap, 29),
-    SCENE_EXIT(2, MikasallaInteriors1, 5),
+    SCENE_EXIT(2, MikasallaInteriorsHouses, 5),
     SCENE_EXIT(3, Islets2, 1),
     SCENE_EXITS(Islets3),
     SCENE_EXIT(1, WorldMap, 30),
     SCENE_EXIT(2, WorldMap, 80),
-    SCENE_EXIT(3, DailaInteriors1, 7),
+    SCENE_EXIT(3, DailaInteriorsHouses, 7),
     SCENE_EXIT(4, WorldMap, 81),
     SCENE_EXITS(Islets4),
     SCENE_EXIT(10, WorldMap, 31),
     SCENE_EXIT(11, ChampaInteriors, 8),
-    SCENE_EXITS(Islets5),
+    SCENE_EXITS(IsletsTurtle),
     SCENE_EXIT(1, WorldMap, 32),
     SCENE_EXIT(2, ApojiiIslands3, 6),
-    SCENE_EXIT(3, Islets5, 4),
-    SCENE_EXIT(4, Islets5, 3),
+    SCENE_EXIT(3, IsletsTurtle, 4),
+    SCENE_EXIT(4, IsletsTurtle, 3),
     SCENE_EXIT(5, IsletCaveMeld, 1),
     SCENE_EXITS_END,
 };

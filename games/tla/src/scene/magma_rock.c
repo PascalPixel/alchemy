@@ -1,7 +1,7 @@
 /// @file
 /// Magma Rock, outside and on its slopes, where the party climbs to the Magma
 /// Ball the diggers of Loho need for their cannon, in three rooms that share
-/// this overlay (SceneId_MagmaRock1 to SceneId_MagmaRock3).
+/// this overlay (SceneId_MagmaRock1 to SceneId_MagmaRockStatue).
 #include "../field/actor_set_sprite_priority.c"
 #include "resource_ids.h"
 
@@ -225,9 +225,9 @@ extern s16 gMagmaRock_Room2Regions[];
 extern s16 gMagmaRock_Room3Regions[];
 
 const struct SceneEntrance *Scene_GetExitRegions(void) {
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_2)
+  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST)
     return (const struct SceneEntrance *)gMagmaRock_Room2Regions;
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_3)
+  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_STATUE)
     return (const struct SceneEntrance *)gMagmaRock_Room3Regions;
   return (const struct SceneEntrance *)gMagmaRock_Regions;
 }
@@ -242,7 +242,7 @@ extern struct ActorPlacement gMagmaRock_Room2TopPlacements[];
 extern struct ActorPlacement gMagmaRock_Room3Placements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_2) {
+  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
     if (gMainRoutineWork.entrance <= 3)
       return gMagmaRock_Room2LowerPlacements;
     if (gMainRoutineWork.entrance <= 8)
@@ -251,7 +251,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
       return gMagmaRock_Room2UpperPlacements;
     return gMagmaRock_Room2TopPlacements;
   }
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_3)
+  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_STATUE)
     return gMagmaRock_Room3Placements;
   return gMagmaRock_Placements;
 }
@@ -266,7 +266,7 @@ void MagmaRock_UnblockMovedPillar(void) {
     MapGrid_CopyCellAttributes(98, 18, 4, 3, 78, 21);
     MapGrid_CopyCellAttributes(98, 24, 4, 3, 78, 24);
     Actor_LiftTargetBlock(gMagmaRock_Room1Pillars);
-  } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_2) {
+  } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
     if (gMainRoutineWork.entrance <= 3) {
       Actor_LiftTargetBlock(gMagmaRock_Room2LowerPillars);
     } else if (gMainRoutineWork.entrance <= 7) {
@@ -302,7 +302,7 @@ s32 MagmaRock_BlockMovedPillar(void) {
     MapGrid_CopyCellAttributes(98, 21, 4, 3, 78, 21);
     MapGrid_CopyCellAttributes(98, 27, 4, 3, 78, 24);
     Blocks_MarkCells(gMagmaRock_Room1Pillars);
-  } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_2) {
+  } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
     if (gMainRoutineWork.entrance <= 3) {
       Blocks_MarkCells(gMagmaRock_Room2LowerPillars);
     } else if (gMainRoutineWork.entrance <= 8) {
@@ -323,7 +323,7 @@ s32 MagmaRock_BlockMovedPillar(void) {
       Event_SetFlag(0x8d6);
     else if (x == 16 && z == 22)
       Event_SetFlag(0x8d5);
-  } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_2) {
+  } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
     if (gMainRoutineWork.entrance <= 3) {
       if (x == 27 && z == 33)
         Event_SetFlag(0x8d7);
@@ -621,7 +621,7 @@ void MagmaRock_TargetStatue(s32 mode) {
   s16 *table = gMagmaRock_Room1Statues;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  if (party->next == SCENE_MAGMA_ROCK_2) {
+  if (party->next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
     if (party->entrance <= 3)
       table = gMagmaRock_Room2LowerStatues;
     else if (party->entrance <= 8)
@@ -630,7 +630,7 @@ void MagmaRock_TargetStatue(s32 mode) {
       table = gMagmaRock_Room2UpperStatues;
     else
       table = gMagmaRock_Room2TopStatues;
-  } else if (party->next == SCENE_MAGMA_ROCK_3) {
+  } else if (party->next == SCENE_MAGMA_ROCK_STATUE) {
     table = gMagmaRock_Room3Statues;
   }
   if (mode == 2) {
@@ -1047,7 +1047,8 @@ void MagmaRock_BurnStatue(struct Actor *object) {
     if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_1) {
       id = MagmaRock_LookUpCellStatue(object->x.fixed, object->z.fixed,
                                       gMagmaRock_Room1Statues);
-    } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_2) {
+    } else if (gMainRoutineWork.next ==
+               SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
       s16 entrance = gMainRoutineWork.entrance;
       s32 x = object->x.fixed;
       s32 z = object->z.fixed;
@@ -1087,7 +1088,7 @@ void MagmaRock_BurnStatue(struct Actor *object) {
                                                                                \
       if (scene == SCENE_MAGMA_ROCK_1)                                         \
         work->target = Actor_Get(n1);                                          \
-      else if (scene == SCENE_MAGMA_ROCK_2)                                    \
+      else if (scene == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST)                \
         work->target = Actor_Get(n2);                                          \
       MagmaRock_BurstStatue(mode, cue);                                        \
     }                                                                          \
@@ -1410,7 +1411,7 @@ extern struct Trigger gMagmaRock_Room2TopTriggers[];
 extern struct Trigger gMagmaRock_Room3Triggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_2) {
+  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
     if (gMainRoutineWork.entrance <= 3)
       return gMagmaRock_Room2LowerTriggers;
     if (gMainRoutineWork.entrance <= 8)
@@ -1419,7 +1420,7 @@ const struct Trigger *Scene_GetTriggers(void) {
       return gMagmaRock_Room2UpperTriggers;
     return gMagmaRock_Room2TopTriggers;
   }
-  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_3)
+  if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_STATUE)
     return gMagmaRock_Room3Triggers;
   return gMagmaRock_Triggers;
 }
@@ -1659,7 +1660,7 @@ s32 Scene_Initialize(void) {
       goto move;
     }
     goto settle;
-  } else if (scene == SCENE_MAGMA_ROCK_2) {
+  } else if (scene == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
     owner = &work->leaderActorId;
     Actor_GetById(*owner)->priorityFlags |= 32;
     entrance = &work->entrance;
@@ -1817,7 +1818,7 @@ s32 Scene_Initialize(void) {
     settle:
       MagmaRock_LandLeader();
     }
-  } else if (scene == SCENE_MAGMA_ROCK_3) {
+  } else if (scene == SCENE_MAGMA_ROCK_STATUE) {
     if (Event_GetFlag(0x8dc)) {
       Actor_SetPosition(8, 0, 0);
       value3 = 42;
@@ -2521,32 +2522,32 @@ s16 gMagmaRock_Room3Regions[] = {
 u32 gSceneExits[] = {
     SCENE_EXITS(MagmaRock1),
     SCENE_EXIT(1, WorldMap, 51),
-    SCENE_EXIT(2, MagmaRockInside7, 11),
-    SCENE_EXIT(3, MagmaRock2, 16),
-    SCENE_EXIT(4, MagmaRock2, 17),
-    SCENE_EXITS(MagmaRock2),
-    SCENE_EXIT(1, MagmaRock2, 9),
-    SCENE_EXIT(2, MagmaRock2, 10),
-    SCENE_EXIT(3, MagmaRock2, 4),
-    SCENE_EXIT(4, MagmaRock2, 3),
-    SCENE_EXIT(5, MagmaRock3, 1),
-    SCENE_EXIT(6, MagmaRock3, 2),
-    SCENE_EXIT(7, MagmaRock2, 14),
-    SCENE_EXIT(8, MagmaRock3, 2),
-    SCENE_EXIT(9, MagmaRock2, 1),
-    SCENE_EXIT(10, MagmaRock2, 2),
-    SCENE_EXIT(11, MagmaRock2, 13),
-    SCENE_EXIT(12, MagmaRock2, 15),
-    SCENE_EXIT(13, MagmaRock2, 11),
-    SCENE_EXIT(14, MagmaRock2, 7),
-    SCENE_EXIT(15, MagmaRock2, 12),
+    SCENE_EXIT(2, MagmaRockInsideEmberStone, 11),
+    SCENE_EXIT(3, MagmaRockSalamanderTailChest, 16),
+    SCENE_EXIT(4, MagmaRockSalamanderTailChest, 17),
+    SCENE_EXITS(MagmaRockSalamanderTailChest),
+    SCENE_EXIT(1, MagmaRockSalamanderTailChest, 9),
+    SCENE_EXIT(2, MagmaRockSalamanderTailChest, 10),
+    SCENE_EXIT(3, MagmaRockSalamanderTailChest, 4),
+    SCENE_EXIT(4, MagmaRockSalamanderTailChest, 3),
+    SCENE_EXIT(5, MagmaRockStatue, 1),
+    SCENE_EXIT(6, MagmaRockStatue, 2),
+    SCENE_EXIT(7, MagmaRockSalamanderTailChest, 14),
+    SCENE_EXIT(8, MagmaRockStatue, 2),
+    SCENE_EXIT(9, MagmaRockSalamanderTailChest, 1),
+    SCENE_EXIT(10, MagmaRockSalamanderTailChest, 2),
+    SCENE_EXIT(11, MagmaRockSalamanderTailChest, 13),
+    SCENE_EXIT(12, MagmaRockSalamanderTailChest, 15),
+    SCENE_EXIT(13, MagmaRockSalamanderTailChest, 11),
+    SCENE_EXIT(14, MagmaRockSalamanderTailChest, 7),
+    SCENE_EXIT(15, MagmaRockSalamanderTailChest, 12),
     SCENE_EXIT(16, MagmaRock1, 3),
     SCENE_EXIT(17, MagmaRock1, 4),
-    SCENE_EXITS(MagmaRock3),
-    SCENE_EXIT(1, MagmaRock2, 5),
-    SCENE_EXIT(2, MagmaRock2, 8),
+    SCENE_EXITS(MagmaRockStatue),
+    SCENE_EXIT(1, MagmaRockSalamanderTailChest, 5),
+    SCENE_EXIT(2, MagmaRockSalamanderTailChest, 8),
     SCENE_EXIT(3, MagmaRockInside2, 8),
-    SCENE_EXIT(4, MagmaRock2, 6),
+    SCENE_EXIT(4, MagmaRockSalamanderTailChest, 6),
     SCENE_EXITS_END,
 };
 

@@ -3048,7 +3048,7 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(11, JupiterLighthouseRoom6, 1),
     SCENE_EXIT(12, JupiterLighthouseRoom6, 2),
     SCENE_EXIT(13, JupiterLighthouseRoom6, 3),
-    SCENE_EXIT(14, JupiterLighthouseRoom9, 4),
+    SCENE_EXIT(14, JupiterLighthouseRoomPhaetonsBladeChest, 4),
     SCENE_EXITS_END,
 };
 

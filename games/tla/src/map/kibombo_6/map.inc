@@ -24,10 +24,10 @@ Field_Kibombo6:
 	.incbin "games/tla/src/map/kibombo_6/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Kibombo6_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_Kibombo6_BLEND:
-	.incbin "games/tla/src/map/gabomba_statue_6/blend.script.lz"
+	.incbin "games/tla/src/map/gabomba_statue_arrows/blend.script.lz"
 	.balign 4, 0
 .LField_Kibombo6_SCENE:
 	.incbin "games/tla/src/map/kibombo_6/scene.scene.lz"
@@ -42,7 +42,7 @@ Tileset_Kibombo6TilesA:
 	.global Tileset_Kibombo6TilesB
 Tileset_Kibombo6TilesB:
 	.incbin "games/tla/src/graphics/tileset/kibombo_6/tiles_b.4bpp.mtf"
-	.byte 0x4d, 0xcb, 0x82	@ PACKER: left in the buffer by Tileset_GabombaStatue7TilesA+0x1479
+	.byte 0x4d, 0xcb, 0x82	@ PACKER: left in the buffer by Tileset_GabombaStatuePinionTilesA+0x1479
 	.global Tileset_Kibombo6TilesC
 Tileset_Kibombo6TilesC:
 	.incbin "games/tla/src/graphics/tileset/kibombo_6/tiles_c.4bpp.mtf"

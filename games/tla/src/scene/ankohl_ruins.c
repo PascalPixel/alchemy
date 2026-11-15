@@ -1,7 +1,7 @@
 /// @file
 /// The Ankohl Ruins, whose old ruins hold the Left Prong behind the Sand
 /// puzzles, in seven rooms that share this overlay (SceneId_AnkohlRuins1 to
-/// SceneId_AnkohlRuins8).
+/// SceneId_AnkohlRuinsLeftProng).
 #include "../field/actor_set_sprite_priority.c"
 #include "field/actor_script.h"
 #include "fixed_math.h"
@@ -97,7 +97,7 @@ extern u32 gAnkohlRuins_Room2Regions[];
 const struct ActorPlacement *Scene_GetExitRegions(void) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_5)
     return (const struct ActorPlacement *)gAnkohlRuins_Room1Regions;
-  if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_8)
+  if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_LEFT_PRONG)
     return (const struct ActorPlacement *)gAnkohlRuins_Room2Regions;
   return 0;
 }
@@ -209,7 +209,7 @@ extern struct ActorPlacement gAnkohlRuins_Room8Placements[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_1)
     return gAnkohlRuins_Room1Placements;
-  if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_2)
+  if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_THANATOS_MACE_CHEST)
     return gAnkohlRuins_Room2Placements;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_3)
     return gAnkohlRuins_Room3Placements;
@@ -217,9 +217,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return gAnkohlRuins_Room4Placements;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_5)
     return gAnkohlRuins_Room5Placements;
-  if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_6)
+  if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_SAND_DOORS)
     return gAnkohlRuins_Room6Placements;
-  if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_8)
+  if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_LEFT_PRONG)
     return gAnkohlRuins_Room8Placements;
   return gAnkohlRuins_Placements;
 }
@@ -628,7 +628,7 @@ void AnkohlRuins_FinishPushing(s32 a, s32 id) {
 void AnkohlRuins_WhirlwindOnOvergrowth(s32 a, s32 id) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_1)
     Event_SetFlag(id + 0x97f);
-  if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_2)
+  if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_THANATOS_MACE_CHEST)
     Event_SetFlag(id + 0x995);
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_4)
     Event_SetFlag(id + 0x996);
@@ -1187,7 +1187,7 @@ void AnkohlRuins_EndReveal(void) { GameFlag_Clear(FLAG_SCENE_TEMP_05); }
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_1)
     return gAnkohlRuins_Room1Triggers;
-  if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_2)
+  if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_THANATOS_MACE_CHEST)
     return gAnkohlRuins_Room2Triggers;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_3)
     return gAnkohlRuins_Room3Triggers;
@@ -1195,9 +1195,9 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gAnkohlRuins_Room4Triggers;
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_5)
     return gAnkohlRuins_Room5Triggers;
-  if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_6)
+  if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_SAND_DOORS)
     return gAnkohlRuins_Room6Triggers;
-  if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_8)
+  if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_LEFT_PRONG)
     return gAnkohlRuins_Room8Triggers;
   return gAnkohlRuins_Triggers;
 }
@@ -1313,7 +1313,7 @@ s32 Scene_Initialize(s32 a0) {
       Actor_SetPosition(8, 72, 88);
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
     }
-  } else if (scene == SCENE_ANKOHL_RUINS_2) {
+  } else if (scene == SCENE_ANKOHL_RUINS_THANATOS_MACE_CHEST) {
     if (GameFlag_Get(0x99e))
       Actor_SetPosition(9, 0, 0);
     if (GameFlag_Get(0x99f))
@@ -1442,7 +1442,7 @@ s32 Scene_Initialize(s32 a0) {
     task:
       Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_VBLANK);
     }
-  } else if (scene == SCENE_ANKOHL_RUINS_6) {
+  } else if (scene == SCENE_ANKOHL_RUINS_SAND_DOORS) {
     s16 *entrance = &work->entrance;
 
     if (work->entrance <= 4)
@@ -1503,7 +1503,7 @@ s32 Scene_Initialize(s32 a0) {
       FieldEvent_Wait(1);
       MapGrid_CenterOnFollowedPoint();
     }
-  } else if (scene == SCENE_ANKOHL_RUINS_8) {
+  } else if (scene == SCENE_ANKOHL_RUINS_LEFT_PRONG) {
     object = Actor_GetById(64);
     if (object != NULL) {
       object->motionFlags = 0;
@@ -1586,7 +1586,7 @@ s32 Scene_Initialize(s32 a0) {
       Actor_SetPosition(8, 72, 88);
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
     }
-  } else if (scene == SCENE_ANKOHL_RUINS_2) {
+  } else if (scene == SCENE_ANKOHL_RUINS_THANATOS_MACE_CHEST) {
     if (GameFlag_Get(0x99e))
       Actor_SetPosition(9, 0, 0);
     if (GameFlag_Get(0x99f))
@@ -1708,7 +1708,7 @@ s32 Scene_Initialize(s32 a0) {
     task:
       Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_VBLANK);
     }
-  } else if (scene == SCENE_ANKOHL_RUINS_6) {
+  } else if (scene == SCENE_ANKOHL_RUINS_SAND_DOORS) {
     s16 *entrance = &work->entrance;
 
     if (work->entrance <= 4)
@@ -1769,7 +1769,7 @@ s32 Scene_Initialize(s32 a0) {
       FieldEvent_Wait(1);
       MapGrid_CenterOnFollowedPoint();
     }
-  } else if (scene == SCENE_ANKOHL_RUINS_8) {
+  } else if (scene == SCENE_ANKOHL_RUINS_LEFT_PRONG) {
     object = Actor_GetById(64);
     if (object != NULL) {
       object->motionFlags = 0;
@@ -1867,7 +1867,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT(4, AnkohlRuins1, 6),
     SCENE_EXIT(5, AnkohlRuins1, 3),
     SCENE_EXIT(6, AnkohlRuins1, 4),
-    SCENE_EXIT(7, AnkohlRuins2, 1),
+    SCENE_EXIT(7, AnkohlRuinsThanatosMaceChest, 1),
     SCENE_EXIT(8, AnkohlRuins1, 12),
     SCENE_EXIT(9, AnkohlRuins1, 10),
     SCENE_EXIT(10, AnkohlRuins1, 9),
@@ -1876,7 +1876,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT(13, AnkohlRuins1, 20),
     SCENE_EXIT(14, AnkohlRuins1, 21),
     SCENE_EXIT(15, AnkohlRuins1, 22),
-    SCENE_EXIT(16, AnkohlRuins6, 23),
+    SCENE_EXIT(16, AnkohlRuinsSandDoors, 23),
     SCENE_EXIT(17, AnkohlRuins1, 24),
     SCENE_EXIT(18, AnkohlRuins1, 25),
     SCENE_EXIT(19, AnkohlRuins5, 26),
@@ -1889,34 +1889,34 @@ u32 gSceneExits[] = {
     SCENE_EXIT(29, AnkohlRuins1, 31),
     SCENE_EXIT(30, AnkohlRuins1, 27),
     SCENE_EXIT(31, AnkohlRuins1, 29),
-    SCENE_EXIT(32, AnkohlRuins2, 3),
-    SCENE_EXIT(33, AnkohlRuins2, 2),
-    SCENE_EXITS(AnkohlRuins2),
+    SCENE_EXIT(32, AnkohlRuinsThanatosMaceChest, 3),
+    SCENE_EXIT(33, AnkohlRuinsThanatosMaceChest, 2),
+    SCENE_EXITS(AnkohlRuinsThanatosMaceChest),
     SCENE_EXIT(1, AnkohlRuins1, 7),
     SCENE_EXIT(2, AnkohlRuins1, 33),
     SCENE_EXIT(3, AnkohlRuins1, 32),
-    SCENE_EXIT(4, AnkohlRuins6, 28),
+    SCENE_EXIT(4, AnkohlRuinsSandDoors, 28),
     SCENE_EXIT(6, AnkohlRuins3, 9),
     SCENE_EXIT(7, AnkohlRuins3, 4),
     SCENE_EXIT(10, AnkohlRuins3, 3),
-    SCENE_EXIT(11, AnkohlRuins2, 12),
-    SCENE_EXIT(12, AnkohlRuins2, 11),
-    SCENE_EXIT(14, AnkohlRuins2, 15),
-    SCENE_EXIT(15, AnkohlRuins2, 14),
-    SCENE_EXIT(16, AnkohlRuins2, 17),
-    SCENE_EXIT(17, AnkohlRuins2, 16),
+    SCENE_EXIT(11, AnkohlRuinsThanatosMaceChest, 12),
+    SCENE_EXIT(12, AnkohlRuinsThanatosMaceChest, 11),
+    SCENE_EXIT(14, AnkohlRuinsThanatosMaceChest, 15),
+    SCENE_EXIT(15, AnkohlRuinsThanatosMaceChest, 14),
+    SCENE_EXIT(16, AnkohlRuinsThanatosMaceChest, 17),
+    SCENE_EXIT(17, AnkohlRuinsThanatosMaceChest, 16),
     SCENE_EXIT(18, AnkohlRuins4, 13),
     SCENE_EXIT(19, AnkohlRuins4, 10),
     SCENE_EXITS(AnkohlRuins3),
     SCENE_EXIT(1, AnkohlRuins4, 1),
     SCENE_EXIT(2, AnkohlRuins4, 9),
-    SCENE_EXIT(3, AnkohlRuins2, 10),
-    SCENE_EXIT(4, AnkohlRuins2, 7),
+    SCENE_EXIT(3, AnkohlRuinsThanatosMaceChest, 10),
+    SCENE_EXIT(4, AnkohlRuinsThanatosMaceChest, 7),
     SCENE_EXIT(5, AnkohlRuins3, 8),
     SCENE_EXIT(6, AnkohlRuins3, 10),
-    SCENE_EXIT(7, AnkohlRuins6, 1),
+    SCENE_EXIT(7, AnkohlRuinsSandDoors, 1),
     SCENE_EXIT(8, AnkohlRuins3, 5),
-    SCENE_EXIT(9, AnkohlRuins2, 6),
+    SCENE_EXIT(9, AnkohlRuinsThanatosMaceChest, 6),
     SCENE_EXIT(10, AnkohlRuins3, 6),
     SCENE_EXIT(11, AnkohlRuins4, 5),
     SCENE_EXIT(12, AnkohlRuins4, 6),
@@ -1927,13 +1927,13 @@ u32 gSceneExits[] = {
     SCENE_EXIT(4, AnkohlRuins5, 7),
     SCENE_EXIT(5, AnkohlRuins3, 11),
     SCENE_EXIT(6, AnkohlRuins3, 12),
-    SCENE_EXIT(7, AnkohlRuins6, 4),
+    SCENE_EXIT(7, AnkohlRuinsSandDoors, 4),
     SCENE_EXIT(8, AnkohlRuins4, 11),
     SCENE_EXIT(9, AnkohlRuins3, 2),
-    SCENE_EXIT(10, AnkohlRuins2, 19),
+    SCENE_EXIT(10, AnkohlRuinsThanatosMaceChest, 19),
     SCENE_EXIT(11, AnkohlRuins4, 8),
-    SCENE_EXIT(12, AnkohlRuins6, 3),
-    SCENE_EXIT(13, AnkohlRuins2, 18),
+    SCENE_EXIT(12, AnkohlRuinsSandDoors, 3),
+    SCENE_EXIT(13, AnkohlRuinsThanatosMaceChest, 18),
     SCENE_EXIT(14, AnkohlRuins4, 3),
     SCENE_EXIT(15, AnkohlRuins5, 4),
     SCENE_EXIT(16, AnkohlRuins5, 3),
@@ -1947,21 +1947,21 @@ u32 gSceneExits[] = {
     SCENE_EXIT(6, AnkohlRuins5, 5),
     SCENE_EXIT(7, AnkohlRuins4, 4),
     SCENE_EXIT(8, AnkohlRuins4, 2),
-    SCENE_EXIT(9, AnkohlRuins6, 2),
+    SCENE_EXIT(9, AnkohlRuinsSandDoors, 2),
     SCENE_EXIT(10, AnkohlRuins5, 11),
     SCENE_EXIT(11, AnkohlRuins5, 10),
-    SCENE_EXIT(12, AnkohlRuins8, 1),
+    SCENE_EXIT(12, AnkohlRuinsLeftProng, 1),
     SCENE_EXIT(13, AnkohlRuins4, 17),
     SCENE_EXIT(20, AnkohlRuins4, 20),
     SCENE_EXIT(26, AnkohlRuins1, 19),
-    SCENE_EXITS(AnkohlRuins6),
+    SCENE_EXITS(AnkohlRuinsSandDoors),
     SCENE_EXIT(1, AnkohlRuins3, 7),
     SCENE_EXIT(2, AnkohlRuins5, 9),
     SCENE_EXIT(3, AnkohlRuins4, 12),
     SCENE_EXIT(4, AnkohlRuins4, 7),
     SCENE_EXIT(23, AnkohlRuins1, 16),
-    SCENE_EXIT(28, AnkohlRuins2, 4),
-    SCENE_EXITS(AnkohlRuins8),
+    SCENE_EXIT(28, AnkohlRuinsThanatosMaceChest, 4),
+    SCENE_EXITS(AnkohlRuinsLeftProng),
     SCENE_EXIT(1, AnkohlRuins5, 12),
     SCENE_EXITS_END,
 };

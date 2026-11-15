@@ -24,7 +24,7 @@ Field_YampiDesertCaveCrystal:
 	.incbin "games/tla/src/map/yampi_desert_cave_crystal/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_YampiDesertCaveCrystal_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_YampiDesertCaveCrystal_SCENE:
 	.incbin "games/tla/src/map/yampi_desert_cave_crystal/scene.scene.lz"

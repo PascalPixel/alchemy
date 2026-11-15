@@ -1382,10 +1382,10 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(5, ChampaInteriors, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, ChampaInteriors, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, ChampaSanctum, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, ChampaCliffCaves1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, ChampaCliffCavesBriggs, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, WorldMap, 40, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, ChampaCliffCaves2, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, ChampaCliffCaves3, 19, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, ChampaCliffCavesObaba, 19, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

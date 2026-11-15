@@ -73,7 +73,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
   if (scene == SCENE_GABOMBA_STATUE_CHAMBER_1)
     return gGabombaStatueChamber_Room1Placements;
-  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_3)
+  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR)
     return gGabombaStatueChamber_Room3Placements;
   return gGabombaStatueChamber_Placements;
 }
@@ -83,9 +83,9 @@ const struct Trigger *Scene_GetTriggers(void) {
 
   if (scene == SCENE_GABOMBA_STATUE_CHAMBER_1)
     return gGabombaStatueChamber_Room1Triggers;
-  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_2)
+  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_LIFT)
     return gGabombaStatueChamber_Room2Triggers;
-  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_3)
+  if (scene == SCENE_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR)
     return gGabombaStatueChamber_Room3Triggers;
   return gGabombaStatueChamber_Triggers;
 }
@@ -983,9 +983,9 @@ s32 Scene_Initialize(void) {
   scene = gMainRoutineWork.next;
   if (scene == SCENE_GABOMBA_STATUE_CHAMBER_1)
     GabombaStatueChamber_InitializeRoom1();
-  else if (scene == SCENE_GABOMBA_STATUE_CHAMBER_2)
+  else if (scene == SCENE_GABOMBA_STATUE_CHAMBER_LIFT)
     GabombaStatueChamber_InitializeRoom2();
-  else if (scene == SCENE_GABOMBA_STATUE_CHAMBER_3)
+  else if (scene == SCENE_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR)
     GabombaStatueChamber_InitializeRoom3();
   return 0;
 }
@@ -1082,7 +1082,7 @@ void GabombaStatueChamber_InitializeRoom3(void) {
     if (GameFlag_Get(0xa27)) {
       /* FAKEMATCH(temporary): the scene id through a local, which issues its
        * literal load first. */
-      scene = &SceneId_GabombaStatue7;
+      scene = &SceneId_GabombaStatuePinion;
       gMainRoutineWork.retreatScene = (s32)scene;
       gMainRoutineWork.retreatEntrance = 1;
     } else if (GameFlag_Get(0xa28)) {
@@ -1175,17 +1175,17 @@ u32 gGabombaStatueChamber_Room1Regions[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(GabombaStatueChamber1),
-    SCENE_EXIT_UNLESS(1, GabombaStatue5, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, GabombaStatue6, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, GabombaStatueCogs, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, GabombaStatueArrows, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, Kibombo2, 4, 0x86b),
     SCENE_EXIT_UNLESS(3, Kibombo5, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, GabombaStatueChamber2, 1, EXIT_FLAG_NONE),
-    SCENE_EXITS(GabombaStatueChamber2),
+    SCENE_EXIT_UNLESS(4, GabombaStatueChamberLift, 1, EXIT_FLAG_NONE),
+    SCENE_EXITS(GabombaStatueChamberLift),
     SCENE_EXIT(1, GabombaStatueChamber1, 4),
-    SCENE_EXIT(2, GabombaStatueChamber3, 1),
-    SCENE_EXITS(GabombaStatueChamber3),
-    SCENE_EXIT(1, GabombaStatueChamber2, 2),
-    SCENE_EXIT(2, GabombaCatacombs1, 1),
+    SCENE_EXIT(2, GabombaStatueChamberWitchDoctor, 1),
+    SCENE_EXITS(GabombaStatueChamberWitchDoctor),
+    SCENE_EXIT(1, GabombaStatueChamberLift, 2),
+    SCENE_EXIT(2, GabombaCatacombsTeleporters, 1),
     SCENE_EXIT(3, Kibombo3, 9),
     SCENE_EXITS_END,
 };

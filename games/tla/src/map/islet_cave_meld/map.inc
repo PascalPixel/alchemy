@@ -27,7 +27,7 @@ Field_IsletCaveMeld:
 	.incbin "games/tla/src/map/islet_cave_meld/animation.script.lz"
 	.balign 4, 0
 .LField_IsletCaveMeld_BLEND:
-	.incbin "games/tla/src/map/yampi_desert_1/blend.script.lz"
+	.incbin "games/tla/src/map/yampi_desert_guardian_ring_chest/blend.script.lz"
 	.balign 4, 0
 .LField_IsletCaveMeld_SCENE:
 	.incbin "games/tla/src/map/islet_cave_meld/scene.scene.lz"

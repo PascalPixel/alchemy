@@ -24,7 +24,7 @@ Field_GabombaStatueChamber1:
 	.incbin "games/tla/src/map/gabomba_statue_chamber_1/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_GabombaStatueChamber1_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_GabombaStatueChamber1_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

@@ -850,7 +850,7 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(IsletCaveMeld),
-    SCENE_EXIT_UNLESS(1, Islets5, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, IsletsTurtle, 5, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, IsletCaveMeld, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, IsletCaveMeld, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, IsletCaveMeld, 5, EXIT_FLAG_NONE),

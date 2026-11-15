@@ -24,7 +24,7 @@ Field_MadraCatacombs2:
 	.incbin "games/tla/src/map/madra_catacombs_2/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_MadraCatacombs2_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_MadraCatacombs2_BLEND:
 	.incbin "games/tla/src/map/madra_catacombs_2/blend.script.lz"
@@ -37,7 +37,7 @@ Tileset_MadraCatacombs2Palette:
 	.global Tileset_MadraCatacombs2TilesA
 Tileset_MadraCatacombs2TilesA:
 	.incbin "games/tla/src/graphics/tileset/madra_catacombs_2/tiles_a.4bpp.mtf"
-	.byte 0xdf	@ PACKER: left in the buffer by Tileset_MadraCatacombs1TilesA+0x1f5b
+	.byte 0xdf	@ PACKER: left in the buffer by Tileset_MadraCatacombsEntranceTilesA+0x1f5b
 	.global Tileset_MadraCatacombs2TilesB
 Tileset_MadraCatacombs2TilesB:
 	.incbin "games/tla/src/graphics/tileset/madra_catacombs_2/tiles_b.4bpp.mtf"

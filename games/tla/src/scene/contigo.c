@@ -458,9 +458,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
   if (scene == SCENE_CONTIGO_1)
     return gContigo_Room1Placements;
-  if (scene == SCENE_CONTIGO_4)
+  if (scene == SCENE_CONTIGO_GEOGLYPH)
     return gContigo_Room4Placements;
-  if (scene == SCENE_CONTIGO_2) {
+  if (scene == SCENE_CONTIGO_SHOPS) {
     if (gMainRoutineWork.entrance == 4) {
       if (GameFlag_Get(0x9b2) != 0)
         return gContigo_Room2Placements;
@@ -470,7 +470,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     }
     return gContigo_Room2PlacementsBeforeReunion;
   }
-  if (scene == SCENE_CONTIGO_3)
+  if (scene == SCENE_CONTIGO_LUCKY_DICE)
     return gContigo_Room3Placements;
   return gContigo_Placements;
 }
@@ -484,14 +484,14 @@ const struct Trigger *Scene_GetTriggers(void) {
 
   if (scene == SCENE_CONTIGO_1)
     return gContigo_Room1Triggers;
-  if (scene == SCENE_CONTIGO_4)
+  if (scene == SCENE_CONTIGO_GEOGLYPH)
     return gContigo_Room4Triggers;
-  if (scene == SCENE_CONTIGO_2) {
+  if (scene == SCENE_CONTIGO_SHOPS) {
     if (gMainRoutineWork.entrance == 4)
       return gContigo_Room2ReunionTriggers;
     return gContigo_Room2Triggers;
   }
-  if (scene == SCENE_CONTIGO_3)
+  if (scene == SCENE_CONTIGO_LUCKY_DICE)
     return gContigo_Room3Triggers;
   return gContigo_Triggers;
 }
@@ -977,7 +977,7 @@ void Contigo_TeleportOut(void) {
   Teleport_PlaySparks();
 
   gMainRoutineWork.teleportState = 2;
-  Event_SetDestination(SCENE_ANEMOS_INNER_SANCTUM_1, 99);
+  Event_SetDestination(SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST, 99);
   Event_Wait(40);
   Contigo_StopPaletteCycle();
 }
@@ -1246,7 +1246,7 @@ void Contigo_SendToLuckyWheels(s32 spoken) {
   GameFlag_Set(0x9e5);
   wait(1);
   Event_LeaveFor(508, 0);
-  Event_SetAfterBattleDestination(SCENE_CONTIGO_3, 20);
+  Event_SetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE, 20);
 }
 
 struct ContigoTopicState {
@@ -1305,7 +1305,7 @@ void Contigo_SendToLuckyDice(void) {
     GameFlag_Set(0x9e5);
     wait(1);
     Event_LeaveFor(509, 0);
-    Event_SetAfterBattleDestination(SCENE_CONTIGO_3, 19);
+    Event_SetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE, 19);
   } else {
     gFieldWork->message++;
     // "No? Oh, well. Who's next?"
@@ -1343,7 +1343,7 @@ void Contigo_SendToSuperLuckyDice(void) {
     GameFlag_Set(0x9e5);
     wait(1);
     Event_LeaveFor(SEQUENCE_SUPER_DICE, 0);
-    Event_SetAfterBattleDestination(SCENE_CONTIGO_3, 18);
+    Event_SetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE, 18);
   } else {
     gFieldWork->message++;
     // "Oh really? That's a shame!"
@@ -2179,11 +2179,11 @@ s32 Scene_Initialize(void) {
 
   if (scene == SCENE_CONTIGO_1)
     Contigo_InitializeRoom1();
-  else if (scene == SCENE_CONTIGO_4)
+  else if (scene == SCENE_CONTIGO_GEOGLYPH)
     Contigo_InitializeRoom4();
-  else if (scene == SCENE_CONTIGO_2)
+  else if (scene == SCENE_CONTIGO_SHOPS)
     Contigo_InitializeRoom2();
-  else if (scene == SCENE_CONTIGO_3)
+  else if (scene == SCENE_CONTIGO_LUCKY_DICE)
     Contigo_InitializeRoom3();
   return 0;
 }
@@ -2873,23 +2873,23 @@ struct SceneEntrance gSceneEntrances[] = {
 u32 gSceneExits[] = {
     SCENE_EXITS(Contigo1),
     SCENE_EXIT(1, WorldMap, 54),
-    SCENE_EXIT(2, Contigo2, 1),
-    SCENE_EXIT(3, Contigo2, 2),
-    SCENE_EXIT(4, Contigo3, 10),
-    SCENE_EXIT(5, Contigo2, 7),
-    SCENE_EXIT(6, Contigo3, 8),
-    SCENE_EXIT(7, Contigo3, 9),
-    SCENE_EXIT(8, Contigo2, 5),
-    SCENE_EXIT(9, Contigo2, 6),
-    SCENE_EXIT(10, Contigo2, 3),
-    SCENE_EXIT(11, Contigo2, 4),
-    SCENE_EXIT(12, Contigo4, 21),
-    SCENE_EXITS(Contigo4),
+    SCENE_EXIT(2, ContigoShops, 1),
+    SCENE_EXIT(3, ContigoShops, 2),
+    SCENE_EXIT(4, ContigoLuckyDice, 10),
+    SCENE_EXIT(5, ContigoShops, 7),
+    SCENE_EXIT(6, ContigoLuckyDice, 8),
+    SCENE_EXIT(7, ContigoLuckyDice, 9),
+    SCENE_EXIT(8, ContigoShops, 5),
+    SCENE_EXIT(9, ContigoShops, 6),
+    SCENE_EXIT(10, ContigoShops, 3),
+    SCENE_EXIT(11, ContigoShops, 4),
+    SCENE_EXIT(12, ContigoGeoglyph, 21),
+    SCENE_EXITS(ContigoGeoglyph),
     SCENE_EXIT(21, Contigo1, 12),
     SCENE_EXIT(22, AnemosInnerSanctumEntrance, 3),
     SCENE_EXIT(23, AnemosInnerSanctumEntrance, 1),
     SCENE_EXIT(24, AnemosInnerSanctumEntrance, 4),
-    SCENE_EXITS(Contigo2),
+    SCENE_EXITS(ContigoShops),
     SCENE_EXIT(1, Contigo1, 2),
     SCENE_EXIT(2, Contigo1, 3),
     SCENE_EXIT(3, Contigo1, 10),
@@ -2898,7 +2898,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT(6, Contigo1, 9),
     SCENE_EXIT(7, Contigo1, 5),
     SCENE_EXIT(21, AttekaInletGeode, 3),
-    SCENE_EXITS(Contigo3),
+    SCENE_EXITS(ContigoLuckyDice),
     SCENE_EXIT(8, Contigo1, 6),
     SCENE_EXIT(9, Contigo1, 7),
     SCENE_EXIT(10, Contigo1, 4),

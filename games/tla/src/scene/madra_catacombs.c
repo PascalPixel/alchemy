@@ -172,9 +172,9 @@ extern struct Trigger gMadraCatacombs_Triggers[];
 void MadraCatacombs_SetUpRoomBelowBookshelf(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_4)
+  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_STONE_DOOR)
     return gMadraCatacombs_Room4Entrances;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_5)
+  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
     return gMadraCatacombs_Room5Entrances;
   return gMadraCatacombs_Entrances;
 }
@@ -190,29 +190,29 @@ const s16 *Scene_GetExitRegions(void) {
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_1)
+  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_ENTRANCE)
     return gMadraCatacombs_Room1Placements;
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_3)
     return gMadraCatacombs_Room3Placements;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_5)
+  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
     return gMadraCatacombs_Room5Placements;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_6)
+  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_TABLET)
     return gMadraCatacombs_Room6Placements;
   return gMadraCatacombs_Placements;
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_1)
+  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_ENTRANCE)
     return gMadraCatacombs_Room1Triggers;
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_2)
     return gMadraCatacombs_Room2Triggers;
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_3)
     return gMadraCatacombs_Room3Triggers;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_4)
+  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_STONE_DOOR)
     return gMadraCatacombs_Room4Triggers;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_5)
+  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
     return gMadraCatacombs_Room5Triggers;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_6)
+  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_TABLET)
     return gMadraCatacombs_Room6Triggers;
   return gMadraCatacombs_Triggers;
 }
@@ -583,15 +583,15 @@ DEFINE_LEAVE_BLOCKED_WAY(MadraCatacombs_LeaveBlockedTunnel, 8)
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 0x204;
-  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_1)
+  if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_ENTRANCE)
     MadraCatacombs_SetUpVillage();
   else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_3)
     MadraCatacombs_SetUpChampaTunnel();
-  else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_4)
+  else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_STONE_DOOR)
     MadraCatacombs_SetUpRoomBelowBookshelf();
-  else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_5)
+  else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
     MadraCatacombs_SetUpBookshelfRoom();
-  else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_6)
+  else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_TABLET)
     MadraCatacombs_SetUpTabletRoom();
   return 0;
 }
@@ -800,11 +800,11 @@ s16 gMadraCatacombs_LadderRoomRegions[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(MadraCatacombs1),
-    SCENE_EXIT(1, MadraCatacombs5, 8),
-    SCENE_EXIT(2, MadraCatacombs4, 7),
+    SCENE_EXITS(MadraCatacombsEntrance),
+    SCENE_EXIT(1, MadraCatacombsBookshelf, 8),
+    SCENE_EXIT(2, MadraCatacombsStoneDoor, 7),
     SCENE_EXIT(3, MadraCatacombs3, 1),
-    SCENE_EXIT(4, MadraCatacombs4, 13),
+    SCENE_EXIT(4, MadraCatacombsStoneDoor, 13),
     SCENE_EXIT(5, MadraCatacombs3, 6),
     SCENE_EXITS(MadraCatacombs2),
     SCENE_EXIT(1, Madra, 15),
@@ -812,42 +812,42 @@ u32 gSceneExits[] = {
     SCENE_EXIT(3, Madra, 16),
     SCENE_EXIT(4, MadraCatacombs3, 4),
     SCENE_EXITS(MadraCatacombs3),
-    SCENE_EXIT(1, MadraCatacombs1, 3),
+    SCENE_EXIT(1, MadraCatacombsEntrance, 3),
     SCENE_EXIT(2, MadraCatacombs3, 3),
     SCENE_EXIT(3, MadraCatacombs3, 2),
     SCENE_EXIT(4, MadraCatacombs2, 4),
     SCENE_EXIT(5, MadraCatacombs3, 8),
-    SCENE_EXIT(6, MadraCatacombs1, 5),
+    SCENE_EXIT(6, MadraCatacombsEntrance, 5),
     SCENE_EXIT(7, MadraCatacombs2, 2),
     SCENE_EXIT(8, MadraCatacombs3, 5),
-    SCENE_EXITS(MadraCatacombs4),
-    SCENE_EXIT(1, MadraCatacombs5, 1),
-    SCENE_EXIT(2, MadraCatacombs4, 11),
-    SCENE_EXIT(3, MadraCatacombs4, 9),
-    SCENE_EXIT(4, MadraCatacombs5, 2),
-    SCENE_EXIT(5, MadraCatacombs6, 4),
-    SCENE_EXIT(6, MadraCatacombs6, 1),
-    SCENE_EXIT(7, MadraCatacombs1, 2),
-    SCENE_EXIT(8, MadraCatacombs4, 12),
-    SCENE_EXIT(9, MadraCatacombs4, 3),
-    SCENE_EXIT(10, MadraCatacombs5, 7),
-    SCENE_EXIT(11, MadraCatacombs4, 2),
-    SCENE_EXIT(12, MadraCatacombs4, 8),
-    SCENE_EXIT(13, MadraCatacombs1, 4),
-    SCENE_EXITS(MadraCatacombs5),
-    SCENE_EXIT(1, MadraCatacombs4, 1),
-    SCENE_EXIT(2, MadraCatacombs4, 4),
-    SCENE_EXIT(3, MadraCatacombs5, 5),
-    SCENE_EXIT(4, MadraCatacombs5, 6),
-    SCENE_EXIT(5, MadraCatacombs5, 3),
-    SCENE_EXIT(6, MadraCatacombs5, 4),
-    SCENE_EXIT(7, MadraCatacombs4, 10),
-    SCENE_EXIT(8, MadraCatacombs1, 1),
-    SCENE_EXITS(MadraCatacombs6),
-    SCENE_EXIT(1, MadraCatacombs4, 6),
-    SCENE_EXIT(2, MadraCatacombs6, 3),
-    SCENE_EXIT(3, MadraCatacombs6, 2),
-    SCENE_EXIT(4, MadraCatacombs4, 5),
+    SCENE_EXITS(MadraCatacombsStoneDoor),
+    SCENE_EXIT(1, MadraCatacombsBookshelf, 1),
+    SCENE_EXIT(2, MadraCatacombsStoneDoor, 11),
+    SCENE_EXIT(3, MadraCatacombsStoneDoor, 9),
+    SCENE_EXIT(4, MadraCatacombsBookshelf, 2),
+    SCENE_EXIT(5, MadraCatacombsTablet, 4),
+    SCENE_EXIT(6, MadraCatacombsTablet, 1),
+    SCENE_EXIT(7, MadraCatacombsEntrance, 2),
+    SCENE_EXIT(8, MadraCatacombsStoneDoor, 12),
+    SCENE_EXIT(9, MadraCatacombsStoneDoor, 3),
+    SCENE_EXIT(10, MadraCatacombsBookshelf, 7),
+    SCENE_EXIT(11, MadraCatacombsStoneDoor, 2),
+    SCENE_EXIT(12, MadraCatacombsStoneDoor, 8),
+    SCENE_EXIT(13, MadraCatacombsEntrance, 4),
+    SCENE_EXITS(MadraCatacombsBookshelf),
+    SCENE_EXIT(1, MadraCatacombsStoneDoor, 1),
+    SCENE_EXIT(2, MadraCatacombsStoneDoor, 4),
+    SCENE_EXIT(3, MadraCatacombsBookshelf, 5),
+    SCENE_EXIT(4, MadraCatacombsBookshelf, 6),
+    SCENE_EXIT(5, MadraCatacombsBookshelf, 3),
+    SCENE_EXIT(6, MadraCatacombsBookshelf, 4),
+    SCENE_EXIT(7, MadraCatacombsStoneDoor, 10),
+    SCENE_EXIT(8, MadraCatacombsEntrance, 1),
+    SCENE_EXITS(MadraCatacombsTablet),
+    SCENE_EXIT(1, MadraCatacombsStoneDoor, 6),
+    SCENE_EXIT(2, MadraCatacombsTablet, 3),
+    SCENE_EXIT(3, MadraCatacombsTablet, 2),
+    SCENE_EXIT(4, MadraCatacombsStoneDoor, 5),
     SCENE_EXITS_END,
 };
 

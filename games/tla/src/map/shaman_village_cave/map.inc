@@ -24,7 +24,7 @@ Field_ShamanVillageCave:
 	.incbin "games/tla/src/map/shaman_village_cave/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_ShamanVillageCave_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_ShamanVillageCave_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

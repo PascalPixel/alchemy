@@ -24,7 +24,7 @@ Field_IzumoRuinsFirstRoom:
 	.incbin "games/tla/src/map/izumo_ruins_first_room/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_IzumoRuinsFirstRoom_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_IzumoRuinsFirstRoom_SCENE:
 	.incbin "games/tla/src/map/izumo_ruins_first_room/scene.scene.lz"

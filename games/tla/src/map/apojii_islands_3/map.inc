@@ -27,7 +27,7 @@ Field_ApojiiIslands3:
 	.incbin "games/tla/src/map/yallam_interiors/animation.script.lz"
 	.balign 4, 0
 .LField_ApojiiIslands3_BLEND:
-	.incbin "games/tla/src/map/daila_interiors_1/blend.script.lz"
+	.incbin "games/tla/src/map/daila_interiors_houses/blend.script.lz"
 	.balign 4, 0
 .LField_ApojiiIslands3_SCENE:
 	.incbin "games/tla/src/map/apojii_islands_3/scene.scene.lz"

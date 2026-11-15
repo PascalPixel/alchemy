@@ -27,7 +27,7 @@ Field_GarohInteriors:
 	.incbin "games/tla/src/map/mikasalla_interiors/animation.script.lz"
 	.balign 4, 0
 .LField_GarohInteriors_BLEND:
-	.incbin "games/tla/src/map/daila_interiors_1/blend.script.lz"
+	.incbin "games/tla/src/map/daila_interiors_houses/blend.script.lz"
 	.balign 4, 0
 .LField_GarohInteriors_SCENE:
 	.incbin "games/tla/src/map/garoh_interiors/scene.scene.lz"

@@ -386,11 +386,11 @@ s16 gMikasalla_TunnelRegions[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(Mikasalla1),
-    SCENE_EXIT_UNLESS(1, MikasallaInteriors1, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, MikasallaInteriors1, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, MikasallaInteriors1, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, MikasallaInteriors1, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, MikasallaInteriors2, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, MikasallaInteriorsHouses, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, MikasallaInteriorsHouses, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, MikasallaInteriorsHouses, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, MikasallaInteriorsHouses, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, MikasallaInteriorsSanctum, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, WorldMap, 14, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, Mikasalla1, 9, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, Mikasalla1, 10, EXIT_FLAG_NONE),

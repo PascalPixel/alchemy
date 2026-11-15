@@ -27,7 +27,7 @@ Field_TundariaTower3:
 	.incbin "games/tla/src/map/tundaria_tower_3/animation.script.lz"
 	.balign 4, 0
 .LField_TundariaTower3_BLEND:
-	.incbin "games/tla/src/map/tundaria_tower_2/blend.script.lz"
+	.incbin "games/tla/src/map/tundaria_tower_center_prong/blend.script.lz"
 	.balign 4, 0
 .LField_TundariaTower3_SCENE:
 	.incbin "games/tla/src/map/tundaria_tower_3/scene.scene.lz"

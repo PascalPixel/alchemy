@@ -35,7 +35,7 @@ Field_TaopoSwamp10:
 	.incbin "games/tla/src/map/taopo_swamp_10/animation.script.lz"
 	.balign 4, 0
 .LField_TaopoSwamp10_BLEND:
-	.incbin "games/tla/src/map/yampi_desert_1/blend.script.lz"
+	.incbin "games/tla/src/map/yampi_desert_guardian_ring_chest/blend.script.lz"
 	.balign 4, 0
 .LField_TaopoSwamp10_SCENE:
 	.ifeq EDITION_INTERNATIONAL

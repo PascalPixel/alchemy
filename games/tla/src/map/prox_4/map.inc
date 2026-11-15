@@ -27,7 +27,7 @@ Field_Prox4:
 	.incbin "games/tla/src/map/settlements_8/animation.script.lz"
 	.balign 4, 0
 .LField_Prox4_BLEND:
-	.incbin "games/tla/src/map/daila_interiors_1/blend.script.lz"
+	.incbin "games/tla/src/map/daila_interiors_houses/blend.script.lz"
 	.balign 4, 0
 .LField_Prox4_SCENE:
 	.incbin "games/tla/src/map/prox_4/scene.scene.lz"

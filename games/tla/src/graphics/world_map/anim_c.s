@@ -2,7 +2,7 @@
 @ World map C has no animated tiles.
 	.global Resource_Data1AD
 Resource_Data1AD:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.ifdef TLA_EDITION_JA
 	.byte 0x0e, 0x40	@ PACKER: unused post-stream residue; Decompress_TaggedLz uses decoded RAM and output length; writer unknown
 	.else

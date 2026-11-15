@@ -487,7 +487,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition = 521;
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |= 32;
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.next == SCENE_MADRA_INTERIORS_1) {
+  if (gMainRoutineWork.next == SCENE_MADRA_INTERIORS_HOUSES) {
     event = Ram_HeapSlots->fieldWork;
     event->unkd4c = 3;
     if (!Event_GetFlag(0x821)) {
@@ -1441,21 +1441,21 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(MadraInteriors1),
+    SCENE_EXITS(MadraInteriorsHouses),
     SCENE_EXIT_UNLESS(1, Madra, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, Madra, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, MadraInteriors1, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, MadraInteriors1, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, MadraInteriorsHouses, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, MadraInteriorsHouses, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(5, Madra, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, MadraInteriors1, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, MadraInteriors1, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, MadraInteriorsHouses, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, MadraInteriorsHouses, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, Madra, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, Madra, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, Madra, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, MadraInteriors1, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(12, MadraInteriors1, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(13, MadraInteriors1, 14, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(14, MadraInteriors1, 13, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, MadraInteriorsHouses, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(12, MadraInteriorsHouses, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(13, MadraInteriorsHouses, 14, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(14, MadraInteriorsHouses, 13, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(15, Madra, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(20, Madra, 9, EXIT_FLAG_NONE),
     SCENE_EXITS(MadraInteriors2),

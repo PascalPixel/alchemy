@@ -24,7 +24,7 @@ Field_Garoh4:
 	.incbin "games/tla/src/map/garoh_4/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Garoh4_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_Garoh4_BLEND:
 	.incbin "games/tla/src/map/garoh_4/blend.script.lz"

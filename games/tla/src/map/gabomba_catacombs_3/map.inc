@@ -24,10 +24,10 @@ Field_GabombaCatacombs3:
 	.incbin "games/tla/src/map/gabomba_catacombs_3/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_GabombaCatacombs3_ANIMATION:
-	.incbin "games/tla/src/map/shrine_of_the_sea_god_8/animation.script.lz"
+	.incbin "games/tla/src/map/shrine_of_the_sea_god_sea_gods_tear/animation.script.lz"
 	.balign 4, 0
 .LField_GabombaCatacombs3_BLEND:
-	.incbin "games/tla/src/map/shrine_of_the_sea_god_8/blend.script.lz"
+	.incbin "games/tla/src/map/shrine_of_the_sea_god_sea_gods_tear/blend.script.lz"
 	.balign 4, 0
 .LField_GabombaCatacombs3_SCENE:
 	.incbin "games/tla/src/map/gabomba_catacombs_3/scene.scene.lz"

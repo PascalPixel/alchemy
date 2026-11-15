@@ -128,9 +128,9 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
     work->lit = 1;
   if (gMainRoutineWork.mapId == SCENE_TUNDARIA_TOWER_1)
     work->lit = 1;
-  if (gMainRoutineWork.mapId == SCENE_TUNDARIA_TOWER_2)
+  if (gMainRoutineWork.mapId == SCENE_TUNDARIA_TOWER_CENTER_PRONG)
     work->lit = 1;
-  if (gMainRoutineWork.mapId == SCENE_TUNDARIA_TOWER_7)
+  if (gMainRoutineWork.mapId == SCENE_TUNDARIA_TOWER_BURST_BROOCH)
     work->lit = 1;
   if (gMainRoutineWork.mapId == SCENE_JUPITER_LIGHTHOUSE_AERIE)
     work->lit = 1;

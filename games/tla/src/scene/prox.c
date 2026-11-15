@@ -401,7 +401,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   scene = gMainRoutineWork.next;
   if (scene == SCENE_PROX_2)
     return gProx_Room2Placements;
-  if (scene == SCENE_PROX_3) {
+  if (scene == SCENE_PROX_MOLD) {
     if (Event_GetFlag(FLAG_MARS_BEACON_LIT))
       return gProx_Room3PlacementsOnceLit;
     return gProx_Room3Placements;
@@ -445,7 +445,7 @@ const u8 *Scene_GetTriggers(void) {
     return gProx_Room1Triggers;
   if (scene == SCENE_PROX_2)
     return gProx_Room2Triggers;
-  if (scene == SCENE_PROX_3)
+  if (scene == SCENE_PROX_MOLD)
     return gProx_Room3Triggers;
   if (scene == SCENE_PROX_4)
     return gProx_Room4Triggers;
@@ -1140,7 +1140,7 @@ void Prox_PuffFromRoofs(void) {
     }
     if (((gFrameCount + 40) & 63) == 0)
       Prox_AddPuff(336 << 16, 42 << 16, 362 << 16);
-  } else if (scene == SCENE_PROX_3) {
+  } else if (scene == SCENE_PROX_MOLD) {
     if ((gFrameCount & 63) == 0)
       Prox_AddPuff(568 << 16, 104 << 16, 296 << 16);
   }
@@ -1613,7 +1613,7 @@ s32 Scene_Initialize(void) {
       if (!Event_GetFlag(FLAG_DIG_SPOT_SCOOPED))
         Actor_SetWideSprite(64, 1);
       Prox_InitializeRoom2();
-    } else if (scene == SCENE_PROX_3) {
+    } else if (scene == SCENE_PROX_MOLD) {
       Prox_InitializeRoom3();
     }
     if (Event_GetFlag(FLAG_STORM_RAGING)) {
@@ -2425,10 +2425,10 @@ u32 gSceneExits[] = {
     SCENE_EXIT(6, Prox4, 5),
     SCENE_EXIT(7, Prox4, 2),
     SCENE_EXIT(8, Prox6, 7),
-    SCENE_EXIT(9, Prox3, 2),
+    SCENE_EXIT(9, ProxMold, 2),
     SCENE_EXIT(10, Prox5, 9),
-    SCENE_EXIT(11, Prox3, 1),
-    SCENE_EXITS(Prox3),
+    SCENE_EXIT(11, ProxMold, 1),
+    SCENE_EXITS(ProxMold),
     SCENE_EXIT(1, Prox2, 11),
     SCENE_EXIT(2, Prox2, 9),
     SCENE_EXIT(3, WorldMap, 63),
@@ -2440,7 +2440,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT(4, Prox2, 5),
     SCENE_EXIT(5, Prox2, 6),
     SCENE_EXIT(6, Prox5, 7),
-    SCENE_EXIT(7, Prox3, 4),
+    SCENE_EXIT(7, ProxMold, 4),
     SCENE_EXIT(8, Prox2, 2),
     SCENE_EXIT(9, Prox5, 8),
     SCENE_EXIT(10, Prox2, 4),

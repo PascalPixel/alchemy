@@ -27,7 +27,7 @@ Field_YampiDesertBlitz:
 	.incbin "games/tla/src/map/yampi_desert_blitz/animation.script.lz"
 	.balign 4, 0
 .LField_YampiDesertBlitz_BLEND:
-	.incbin "games/tla/src/map/yampi_desert_1/blend.script.lz"
+	.incbin "games/tla/src/map/yampi_desert_guardian_ring_chest/blend.script.lz"
 	.balign 4, 0
 .LField_YampiDesertBlitz_SCENE:
 	.incbin "games/tla/src/map/yampi_desert_blitz/scene.scene.lz"

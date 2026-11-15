@@ -189,7 +189,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 extern struct ActorPlacement gSeaOfTime_Placements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_2)
+  if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_TO_LEMURIA)
     return gSeaOfTime_Room2Placements;
   return gSeaOfTime_Placements;
 }
@@ -927,7 +927,7 @@ next:
   Actor_SelectAnimation(object, 1);
   Event_Wait(40);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-  Event_SetAfterBattleDestination(SCENE_SEA_OF_TIME_2, 4);
+  Event_SetAfterBattleDestination(SCENE_SEA_OF_TIME_TO_LEMURIA, 4);
   Field_RequestBattleFromEncounterTable(12, 6);
   Event_End();
 }
@@ -982,7 +982,7 @@ DEFINE_LEAVE_BY_EXIT(SeaOfTime_LeaveByExit4, 4)
 DEFINE_LEAVE_BY_EXIT(SeaOfTime_LeaveByExit5, 5)
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_1)
+  if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_WHIRLPOOL)
     return gSeaOfTime_Room1Triggers;
   if (gMainRoutineWork.entrance <= 4)
     return gSeaOfTime_EntranceTriggers;
@@ -1256,7 +1256,7 @@ void SeaOfTime_Open(void) {
 /// frame callback.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 256;
-  if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_1) {
+  if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_WHIRLPOOL) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 1;
     Dma_Set((const void *)0x05000062, gSeaOfTime_SavedColors.colors,
@@ -1277,7 +1277,7 @@ s32 Scene_Initialize(void) {
       } while (i != 14);
       Task_Add(SeaOfTime_TrackWaves, TASK_PASS_VBLANK);
     }
-  } else if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_2) {
+  } else if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_TO_LEMURIA) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 0;
     if (gMainRoutineWork.entrance <= 4) {
@@ -1385,17 +1385,17 @@ struct SceneEntrance gSceneEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(SeaOfTime1),
+    SCENE_EXITS(SeaOfTimeWhirlpool),
     SCENE_EXIT_UNLESS(1, WorldMap, 42, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, SeaOfTime2, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, SeaOfTime1, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, SeaOfTimeToLemuria, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, SeaOfTimeWhirlpool, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, LemurianShipDeck1, 20, EXIT_FLAG_NONE),
-    SCENE_EXITS(SeaOfTime2),
-    SCENE_EXIT_UNLESS(1, SeaOfTime1, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, SeaOfTime2, 6, EXIT_FLAG_NONE),
+    SCENE_EXITS(SeaOfTimeToLemuria),
+    SCENE_EXIT_UNLESS(1, SeaOfTimeWhirlpool, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, SeaOfTimeToLemuria, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, WorldMap, 44, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, WorldMap, 43, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, SeaOfTime2, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, SeaOfTimeToLemuria, 2, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

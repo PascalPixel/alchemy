@@ -24,7 +24,7 @@ Field_DehkanPlateau3:
 	.incbin "games/tla/src/map/dehkan_plateau_3/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_DehkanPlateau3_ANIMATION:
-	.incbin "games/tla/src/map/kandorean_temple_2/animation.script.lz"
+	.incbin "games/tla/src/map/kandorean_temple_mimic/animation.script.lz"
 	.balign 4, 0
 .LField_DehkanPlateau3_BLEND:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"

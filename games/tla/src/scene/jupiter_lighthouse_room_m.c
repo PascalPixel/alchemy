@@ -224,14 +224,14 @@ void JupiterLighthouse_FlashSky(void) {
 
     *enabled = 0;
   }
-  REG_DISPCNT &= ~0x100;
-  Io_Write16(0x400, &REG_BG0CNT);
+  REG_DISPCNT &= ~DISPCNT_BG0_ON;
+  Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
   buffer = Heap_Alloc(0x800);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningTiles),
                       buffer);
-  Dma_Set(buffer, (void *)(0x06000000), DMA_COPY_WORDS(512), REG_DMA3);
+  Dma_Set(buffer, (void *)VRAM, DMA_COPY_WORDS(512), REG_DMA3);
   Heap_Release(buffer);
-  Dma_Fill16(0, (void *)0x06002000, 0x800);
+  Dma_Fill16(0, (void *)(VRAM + 0x2000), 0x800);
   buffer = Heap_Alloc(128);
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_LightningMap),
                       buffer);
@@ -240,12 +240,12 @@ void JupiterLighthouse_FlashSky(void) {
     *p++ &= 0xfcff;
   p = buffer;
   for (i = 0; i != 16; i++) {
-    Dma_Set(p, (void *)(0x06002000 + (i << 6)), DMA_COPY_WORDS(2), REG_DMA3);
+    Dma_Set(p, (void *)(VRAM + 0x2000 + (i << 6)), DMA_COPY_WORDS(2), REG_DMA3);
     p += 4;
   }
   Heap_Release(buffer);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  REG_BLDCNT = 0x3f41;
+  REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   gBgScroll[0].x = -104;
   gBgScroll[0].y = 16;
   System_Wait(30);
@@ -256,7 +256,7 @@ void JupiterLighthouse_FlashSky(void) {
   PaletteFade_ApplySource(RGB_WHITE, 0);
   PaletteFade_ApplyTarget(0x10003, 0);
   PaletteFade_Interpolate(8);
-  REG_DISPCNT |= 0x100;
+  REG_DISPCNT |= DISPCNT_BG0_ON;
   Event_PlaySound(SE_CLATTER);
   MapGrid_SetShake(5, 7, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
@@ -281,7 +281,7 @@ void JupiterLighthouse_FlashSky(void) {
                          gMainRoutineWork.windowBrightness);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-  REG_DISPCNT |= 0x100;
+  REG_DISPCNT |= DISPCNT_BG0_ON;
   gBgScroll[0].x = 0;
   gBgScroll[0].y = 0;
   System_Wait(1);

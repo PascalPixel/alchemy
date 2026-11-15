@@ -481,7 +481,7 @@ s32 Scene_Initialize(void) {
   work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   FieldActor_SetSpritePriority(ACTOR_FIRST_BEAM_PILLAR, 3);
   FieldActor_SetSpritePriority(ACTOR_SECOND_BEAM_PILLAR, 3);
-  Io_Write16(0x3f06, &REG_BLDCNT);
+  Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(0x1000, &REG_BLDALPHA);
   BattleEffect_FillOverlayTiles(0);
   Call4((void (*)())EffectSprite_InitFromSlot94Blended,

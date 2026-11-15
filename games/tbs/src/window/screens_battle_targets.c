@@ -238,14 +238,14 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     firstSprite->x = selectedPosition.x - 8;
     firstSprite->y = (u8)(selectedPosition.y - 16);
     Oam_AddSpriteAtDepth(firstSprite, OAM_DEPTH_WINDOW);
-    // The other markers' scale in 8.8: 176 (0.69 times) beside an aimed one,
-    // full size when the action takes every unit.
+    // The other markers' scale: 11/16 beside an aimed one, full size when the
+    // action takes every unit.
     if (spread == ABILITY_RANGE_ALL) {
-      effect.scaleX = 256;
-      effect.scaleY = 256;
+      effect.scaleX = Q_8_8(1);
+      effect.scaleY = Q_8_8(1);
     } else {
-      effect.scaleX = 176;
-      effect.scaleY = 176;
+      effect.scaleX = Q_8_8(11.0 / 16);
+      effect.scaleY = Q_8_8(11.0 / 16);
     }
     effect.angle = 0;
 #if !TBS_PATCH_4
@@ -688,8 +688,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       pressed = 0;
       if (gBattleMenuWork->tutorialDelay == 0) {
         gBattleMenuWork->tutorialDelay = 60;
-        repeated = 1;
-        pressed = 1;
+        repeated = KEY_A;
+        pressed = KEY_A;
       } else {
         gBattleMenuWork->tutorialDelay--;
       }

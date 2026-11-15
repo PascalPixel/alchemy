@@ -378,8 +378,8 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
 /// Steps a scaling sprite's animation (WINDOW_SPRITE_MOTION_SWELL to
 /// WINDOW_SPRITE_MOTION_SHRINK_HALF) and sets its affine scale for this frame.
 void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
-  // Scales are 8.8 fixed point: 256 is the sprite's own size.
-  s32 scale = 256;
+  // Scales are 8.8 fixed point: Q_8_8(1) is the sprite's own size.
+  s32 scale = Q_8_8(1);
   struct CursorSprite *sprite = SPRITE_CELL(windowSprite);
   struct AffineTransform effect;
 
@@ -402,7 +402,7 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
           1;
     break;
   }
-  if (scale == 256) {
+  if (scale == Q_8_8(1)) {
     sprite->affineIndex = 0;
     sprite->affine = 0;
     sprite->x = windowSprite->x;
@@ -414,7 +414,7 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
     sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
     // Larger than its size the sprite needs the double-size affine mode (3),
     // whose 32x32 area starts 8 pixels up and left; smaller, plain affine (1).
-    if (scale > 256) {
+    if (scale > Q_8_8(1)) {
       sprite->affine = 3;
       // x is read through a pointer to its own type.
       sprite->x = *(u16 *)&windowSprite->x - 8;
@@ -491,8 +491,8 @@ void WindowSprite_UpdateAll(void) {
           sprite->y = windowSprite->y;
           break;
         }
-        effect.scaleX = 512;
-        effect.scaleY = 512;
+        effect.scaleX = Q_8_8(2);
+        effect.scaleY = Q_8_8(2);
         effect.angle = 0;
         sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
         sprite->affine = 3;
@@ -503,8 +503,8 @@ void WindowSprite_UpdateAll(void) {
       case WINDOW_SPRITE_MOTION_SPIN:
         // animationStep is the angle, 65536 a turn: 768 a frame, a turn in
         // about 85 frames, while the sprite circles its place.
-        effect.scaleX = 256;
-        effect.scaleY = 256;
+        effect.scaleX = Q_8_8(1);
+        effect.scaleY = Q_8_8(1);
         windowSprite->animationStep += 768;
         effect.angle = windowSprite->animationStep;
         sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
@@ -550,10 +550,10 @@ void WindowSprite_UpdateAll(void) {
             gWindowSprite_BounceOffsets[windowSprite->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_PULSE:
-        // 1.25 times (320 in 8.8) for animationStep frames, then its own size.
+        // 1.25 times for animationStep frames, then its own size.
         if (windowSprite->animationStep != 0) {
-          effect.scaleX = 320;
-          effect.scaleY = 320;
+          effect.scaleX = Q_8_8(1.25);
+          effect.scaleY = Q_8_8(1.25);
           effect.angle = 0;
           sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
           sprite->affine = 3;

@@ -149,9 +149,9 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
           // Fall through.
         case 11:
         case 12:
-        case 17:
+        case TEXT_ACTOR_NAME:
 #if LANGUAGE != LANGUAGE_JAPANESE
-        case 29:
+        case TEXT_ARTICLE_CLASS:
 #endif
           text++;
           break;

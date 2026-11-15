@@ -198,8 +198,9 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
     glyphWidth = *glyphRows++;
   } else {
 #if LANGUAGE == LANGUAGE_JAPANESE
-    glyphWidth = 10;
-    glyphRows = (const u16 *)(gFont_KanjiGlyphs + (character - 256) * 24);
+    glyphWidth = KANJI_WIDTH;
+    glyphRows =
+        (const u16 *)(gFont_KanjiGlyphs + (character - 256) * KANJI_GLYPH_SIZE);
 #else
     glyphRows = (const u16 *)((const u8 *)gFont_Glyphs + (character - 32) * 32);
     glyphWidth = *glyphRows;

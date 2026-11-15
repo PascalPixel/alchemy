@@ -113,7 +113,17 @@ enum {
   /// its line's top.
   TEXT_LINE_SPACING = 10,
   TEXT_WINDOW_STATE = 15, ///< the next entry is the window animation to run
-  TEXT_END_ALT = 30,      ///< ends the text as TEXT_END does
+  /// MESSAGE_ACTOR_NAME as Message_DecodeRaw keeps it, unexpanded: the next
+  /// entry names the unit, and drawing and measuring skip both.
+  TEXT_ACTOR_NAME = 17,
+  /// MESSAGE_ARTICLE_CLASS as Message_DecodeRaw keeps it outside Japanese, at
+  /// the head of an item or class name: drawing skips it and its class.
+  TEXT_ARTICLE_CLASS = 29,
+  // XXX: codes 11 and 12 (one operand), 14 (two) and 28 (one) reach decoded
+  // text with their operands, which drawing and measuring skip, but no
+  // message of any edition uses them. A message that did, or Camelot's name
+  // for them, would name them.
+  TEXT_END_ALT = 30, ///< ends the text as TEXT_END does
   /// The message runs the codes below it as control codes and draws the rest.
   TEXT_COMMANDS = 31,
   TEXT_SPACE = 32,

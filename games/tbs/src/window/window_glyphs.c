@@ -37,7 +37,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   work = WINDOW_WORK;
   secondIndex = (code << 8) >> 16;
   code &= 255;
-  Iwram_ClearWords(pixels, 384);
+  Iwram_ClearWords(pixels, sizeof(pixels));
   // While WindowWork.mindRead is set, the text is colour 8 with no shadow.
   if (work->mindRead != 0) {
     shadowColour = 0;
@@ -96,7 +96,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
 /// text colour over a shadow, or with an outline when WindowWork.outline is 1,
 /// with the kana mark in the code's top two bits above its top right.
 s32 Text_DrawGlyphPair(u32 code, u32 *out) {
-  u8 pixels[256];
+  u8 pixels[GLYPH_BUFFER_WIDTH * GLYPH_BUFFER_WIDTH];
   struct WindowWork *work;
   const u8 *glyph;
   const u8 *markGlyph;
@@ -127,10 +127,11 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
     width = ((const struct FontGlyph *)glyph)->width;
     glyph = (const u8 *)((const struct FontGlyph *)glyph)->rows;
   } else {
-    glyph = gFont_KanjiGlyphs + (code - 256) * 24;
-    width = 10;
+    glyph = gFont_KanjiGlyphs +
+            (code - (TEXT_LAST_FONT_CODE + 1)) * KANJI_GLYPH_SIZE;
+    width = KANJI_WIDTH;
   }
-  Iwram_ClearWords(pixels, 256);
+  Iwram_ClearWords(pixels, sizeof(pixels));
   if (work->mindRead != 0) {
     shadowColour = 0;
     colour = 8;
@@ -230,7 +231,7 @@ s32 Text_GetWideStringWidth(u16 *text) {
         width += FONT_GLYPH(glyphIndex)->width;
       }
     } else {
-      width += 10;
+      width += KANJI_WIDTH;
 #endif
     }
     code = *cursor;
@@ -308,9 +309,9 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
         // Fall through.
       case 11:
       case 12:
-      case 17:
+      case TEXT_ACTOR_NAME:
 #if LANGUAGE != LANGUAGE_JAPANESE
-      case 29:
+      case TEXT_ARTICLE_CLASS:
 #endif
         text++;
         break;
@@ -426,9 +427,9 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
         case TEXT_LINE_SPACING:
         case 11:
         case 12:
-        case 17:
+        case TEXT_ACTOR_NAME:
 #if LANGUAGE != LANGUAGE_JAPANESE
-        case 29:
+        case TEXT_ARTICLE_CLASS:
 #endif
           text++;
           break;
@@ -449,8 +450,11 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
   work->dirty = 1;
 }
 
-/// Writes value as decimal text into buffer (14 bytes) and returns where the
-/// text starts.
+/// The digits String_FormatNumber writes, in buffer[1] to [12].
+#define NUMBER_DIGITS 12
+
+/// Writes value as decimal text into buffer (NUMBER_DIGITS + 2 bytes) and
+/// returns where the text starts.
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
   s32 offset;
   s32 value;
@@ -468,22 +472,22 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
     value = 0U - value;
   }
 
-  // Twelve digits in buffer[1] to [12], then spaces for the leading zeros
-  // (the last digit stays) and the sign in front; buffer[13] ends the text.
+  // The digits, then spaces for the leading zeros (the last digit stays) and
+  // the sign in front; the byte after them ends the text.
   buffer[0] = ' ';
-  for (offset = 12; offset != 0; offset--) {
+  for (offset = NUMBER_DIGITS; offset != 0; offset--) {
     buffer[offset] = value % 10 + '0';
     value = value / 10;
   }
 
   offset = 0;
-  buffer[13] = offset;
+  buffer[NUMBER_DIGITS + 1] = offset;
   spaceCharacter = ' ';
   offset = 1;
   minusCharacter = '-';
-  for (leading = buffer; offset != 13; leading++, offset++) {
+  for (leading = buffer; offset != NUMBER_DIGITS + 1; leading++, offset++) {
     if (leading[1] == '0') {
-      if (offset != 12)
+      if (offset != NUMBER_DIGITS)
         leading[1] = spaceCharacter;
     } else {
       if (negative != 0)
@@ -498,7 +502,7 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
       trim = buffer;
       do {
         offset++;
-        if (offset == 12)
+        if (offset == NUMBER_DIGITS)
           break;
         trim++;
       } while (*trim == ' ');
@@ -506,7 +510,7 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
     return buffer + offset;
   }
 
-  if (width < 0 || width > 12)
-    width = 12;
-  return buffer + 13 - width;
+  if (width < 0 || width > NUMBER_DIGITS)
+    width = NUMBER_DIGITS;
+  return buffer + NUMBER_DIGITS + 1 - width;
 }

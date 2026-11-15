@@ -324,8 +324,8 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       held = 0;
       if (navigation->tutorialDelay == 0) {
         navigation->tutorialDelay = 60;
-        repeated = 1;
-        pressed = 1;
+        repeated = KEY_A;
+        pressed = KEY_A;
       } else {
         navigation->tutorialDelay--;
       }

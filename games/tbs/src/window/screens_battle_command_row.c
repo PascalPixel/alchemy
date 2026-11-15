@@ -94,11 +94,11 @@ s32 BattleCommandRow_Run(s32 mode) {
                               selectionUi->commandKinds[entryIndex]);
   }
   selectionUi->iconCount = entryIndex;
-  selectionUi->affine.scaleX = 320;
-  selectionUi->affine.scaleY = 304;
+  selectionUi->affine.scaleX = Q_8_8(1.25);
+  selectionUi->affine.scaleY = Q_8_8(19.0 / 16);
   selectionUi->affine.angle = 0;
-  // Icons 24 pixels apart on line 136 (tile row 17), the last ending by the
-  // name window.
+  // Icons 24 pixels apart on the command row's top line, the last ending by
+  // the name window.
   entryIndex = 0;
   if (entryIndex < selectionUi->iconCount) {
     do {
@@ -107,14 +107,14 @@ s32 BattleCommandRow_Run(s32 mode) {
       selectionUi->entries[entryIndex].positionX = x + 155;
       if (mode != COMMAND_ROW_PARTY)
         selectionUi->entries[entryIndex].positionX = x + WINDOW_X * 8 - 5;
-      selectionUi->entries[entryIndex].positionY = 136;
+      selectionUi->entries[entryIndex].positionY = COMMAND_ROW_TOP * 8;
       entryIndex++;
     } while (entryIndex < selectionUi->iconCount);
   }
   // BG1 shows the icons: behind the other layers above line 136, in front
   // from there down (CommandRow_PutBg1Behind).
   Task_Add(CommandRow_PutBg1Behind, TASK_PASS_VBLANK);
-  Irq_SetHandler(IRQ_VCOUNT, 136, CommandRow_PutBg1InFront);
+  Irq_SetHandler(IRQ_VCOUNT, COMMAND_ROW_TOP * 8, CommandRow_PutBg1InFront);
 
   for (;;) {
     // 304 to 336 in 8.8 (1.19 to 1.31 times), over 16 frames.
@@ -230,9 +230,9 @@ s32 BattleCommandRow_Run(s32 mode) {
         if (navigation->commandActor == 1) {
           if (selectionUi->commandKinds[selectionUi->selectedIndex] ==
               COMMAND_ICON_DEFEND)
-            keys = repeat = 1;
+            keys = repeat = KEY_A;
           else
-            keys = repeat = 32;
+            keys = repeat = KEY_LEFT;
           navigation->tutorialDelay = 30;
         } else if (navigation->commandActor == 0) {
           s32 kind = selectionUi->commandKinds[selectionUi->selectedIndex];
@@ -250,16 +250,16 @@ s32 BattleCommandRow_Run(s32 mode) {
               navigation->tutorialStep++;
               navigation->tutorialDelay = 45;
             } else {
-              keys = repeat = 1;
+              keys = repeat = KEY_A;
               navigation->tutorialDelay = 200;
             }
           } else {
-            keys = repeat = 16;
+            keys = repeat = KEY_RIGHT;
             navigation->tutorialDelay = 40;
           }
         } else {
           navigation->tutorialDelay = 60;
-          keys = repeat = 1;
+          keys = repeat = KEY_A;
         }
       } else {
         navigation->tutorialDelay--;

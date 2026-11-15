@@ -212,7 +212,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     case TEXT_COLOR:
     case TEXT_LINE_SPACING:
     case TEXT_WINDOW_STATE:
-    case 17:
+    case TEXT_ACTOR_NAME:
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     case TEXT_OUTLINE:
@@ -411,7 +411,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     case TEXT_COLOR:
     case TEXT_LINE_SPACING:
     case TEXT_WINDOW_STATE:
-    case 17:
+    case TEXT_ACTOR_NAME:
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       break;
     case TEXT_OUTLINE:

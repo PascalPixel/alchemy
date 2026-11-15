@@ -2701,7 +2701,7 @@ void Gauge_Update(void) {
     s32 y = screen[1] - 32;
 
     *oam++ = 0;
-    *oam++ = (y | (x << 16)) | attributes;
+    *oam++ = (y | OBJ_X(x)) | attributes;
   }
   *oam = tile | OBJ_PRIORITY(1);
   Oam_AddSpriteAtDepthClamped(gGauge_Sprite, OAM_DEPTH_FRONT);

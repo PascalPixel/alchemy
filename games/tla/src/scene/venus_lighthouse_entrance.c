@@ -1392,7 +1392,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     for (i = 0, y = 0; i < 16 && y < work->height - 8; i++, y += 16) {
       state = &work->states[i];
       state->x = work->x;
-      state->y = work->y + (y << 16) + 0x80000;
+      state->y = work->y + px(y) + 0x80000;
       state->z = work->z;
       sprite = &work->sprites[i];
       state->frame++;
@@ -1404,7 +1404,7 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
     if (i <= 15) {
       state = &work->states[i];
       state->x = work->x;
-      state->y = work->y + (work->height << 16);
+      state->y = work->y + px(work->height);
       state->z = work->z;
       state->frame++;
       state->y +=
@@ -1559,7 +1559,7 @@ void VenusLighthouseEntrance_StartDust(void) {
     s32 zero = 0;
     work->next = zero;
   }
-  Task_AddFrame(VenusLighthouseEntrance_UpdateDust, (s32)(0x480));
+  Task_AddFrame(VenusLighthouseEntrance_UpdateDust, TASK_PASS_VBLANK);
 }
 
 void VenusLighthouseEntrance_StopDust(void) {

@@ -2968,8 +2968,8 @@ void TrialRoad_DrawFountains(void) {
       sy &= 0xff;
       cursor = entry;
       *cursor++ = 0;
-      *cursor++ = sy | (x << 16) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
-      *cursor = (tile + frame) | 0x800;
+      *cursor++ = sy | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+      *cursor = (tile + frame) | OBJ_PRIORITY(2);
       Oam_AddSpriteAtDepth(entry, depth);
       entry += 3;
       count++;
@@ -2994,8 +2994,8 @@ void TrialRoad_DrawFountains(void) {
     sy &= 0xff;
     cursor = entry;
     *cursor++ = 0;
-    *cursor++ = sy | (x << 16) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
-    *cursor = (tile + frame - 32) | 0x800;
+    *cursor++ = sy | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+    *cursor = (tile + frame - 32) | OBJ_PRIORITY(2);
     Oam_AddSpriteAtDepth(entry, depth);
     entry += 3;
     count++;
@@ -3655,12 +3655,12 @@ void TrialRoad_DrawProgress(void) {
     }
     for (i = 0; i < 4 && y < 160; i++) {
       *cursor++ = 0;
-      *cursor++ = y | (x << 16) | flip | OBJ_SIZE_16X32;
+      *cursor++ = y | OBJ_X(x) | flip | OBJ_SIZE_16X32;
       *cursor++ = tile | (OBJ_PALETTE(14) | OBJ_PRIORITY(1));
       Oam_AddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
       word = y + 32;
       *cursor++ = 0;
-      *cursor++ = word | (x << 16) | flip | OBJ_SIZE_16X8;
+      *cursor++ = word | OBJ_X(x) | flip | OBJ_SIZE_16X8;
       *cursor++ = (tile + 8) | (OBJ_PALETTE(14) | OBJ_PRIORITY(1));
       Oam_AddSpriteAtDepth(entry++, OAM_DEPTH_FRONT);
       y += 36;

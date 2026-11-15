@@ -177,7 +177,7 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   h = (ABS(i) + ABS(gYampiDesertCave_LogFootprints[kind * 4 + 3])) >> 4;
   x = (object->x.fixed + (gYampiDesertCave_LogFootprints[kind * 4] << 16)) >>
       20;
-  z = (object->z.fixed + (i << 16)) >> 20;
+  z = FIELD_CELL(object->z.fixed + px(i));
   i = map->layers[1].offsetX >> 20;
   az = map->layers[1].offsetY >> 20;
   bx = map->layers[2].offsetX;

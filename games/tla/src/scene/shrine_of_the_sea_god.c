@@ -1089,7 +1089,8 @@ void ShrineOfTheSeaGod_TopplePillarIntoWater(void) {
   leader->motionFlags = 3;
   Actor_SetSpritePriority(ACTOR_GREAT_HALL_TOPPLING_PILLAR, 3);
   stone->priorityFlags |= 2;
-  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepCrossroadsPillarWithLeader, 0x480);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepCrossroadsPillarWithLeader,
+                     TASK_PASS_VBLANK);
   do
     wait(1);
   while (leader->velocityY != 0);
@@ -1170,7 +1171,8 @@ void ShrineOfTheSeaGod_ToppleFirstPillar(void) {
   leader->motionFlags = 3;
   Actor_SetSpritePriority(ACTOR_FIRST_TOPPLING_PILLAR, 3);
   pillar->priorityFlags |= 2;
-  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepFirstPillarWithLeader, 0x480);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepFirstPillarWithLeader,
+                     TASK_PASS_VBLANK);
   ShrineOfTheSeaGod_LandPillarAsLogs(leader, 0);
   Actor_SetSpritePriority(ACTOR_PILLAR_ROOM_SECOND_PILLAR, 1);
   Actor_GetById(ACTOR_PILLAR_ROOM_SECOND_PILLAR)->priorityFlags &= ~2;
@@ -1221,7 +1223,8 @@ void ShrineOfTheSeaGod_ToppleSecondPillar(void) {
   leader->motionFlags = 3;
   Actor_SetSpritePriority(ACTOR_SECOND_TOPPLING_PILLAR, 3);
   pillar->priorityFlags |= 2;
-  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepSecondPillarWithLeader, 0x480);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepSecondPillarWithLeader,
+                     TASK_PASS_VBLANK);
   ShrineOfTheSeaGod_LandPillarAsLogs(leader, 2);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 1);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.6, 0.1);
@@ -1948,7 +1951,7 @@ void ShrineOfTheSeaGod_InitializeRope(void) {
   ShrineOfTheSeaGod_SetUpFlatProp(ACTOR_HALL_FIRST_LOG);
   ShrineOfTheSeaGod_SetUpFlatProp(ACTOR_HALL_SECOND_LOG);
   Map_SetUpperLevelWading(map);
-  FieldTask_AddFrame(ShrineOfTheSeaGod_TrackUpperLevel, 0x480);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_TrackUpperLevel, TASK_PASS_VBLANK);
   Rope_Initialize();
   Rope_Place(0, FLAG_ROPE_TIED, 10, 11);
   if (GameFlag_Get(FLAG_RIKI_GAVE_UP)) {
@@ -1979,7 +1982,7 @@ void ShrineOfTheSeaGod_InitializePlankBridge(void) {
   Actor_SetSpritePriority(ACTOR_SIDE_ROOM_PILLAR, 3);
   Actor_PlaceBlocks(gShrineOfTheSeaGod_MovableActors);
   ShrineOfTheSeaGod_LightTorch();
-  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepFlameOnTorch, 0x480);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepFlameOnTorch, TASK_PASS_VBLANK);
   Actor_DisableById(ACTOR_SIDE_ROOM_RIKI);
   Actor_DisableById(12);
   Actor_GetById(12)->motionFlags = 0;
@@ -1995,7 +1998,7 @@ void ShrineOfTheSeaGod_InitializePlankBridge(void) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_SIDE_ROOM_RIKI), 1);
     Actor_GetById(ACTOR_SIDE_ROOM_RIKI)->collisionFlags = 1;
   }
-  FieldTask_AddFrame(ShrineOfTheSeaGod_TrackRikiSide, 0x480);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_TrackRikiSide, TASK_PASS_VBLANK);
 }
 
 /// Sets up the great hall: its pillars, the toppled one in the water, the
@@ -2018,7 +2021,7 @@ void ShrineOfTheSeaGod_InitializeCrossroads(void) {
   Actor_SetSpritePriority(ACTOR_GREAT_HALL_FOURTH_PILLAR, 1);
   Actor_SetSpritePriority(ACTOR_GREAT_HALL_PILLAR_STUMP, 1);
   Actor_SetSpritePriority(ACTOR_GREAT_HALL_TOPPLING_PILLAR, 1);
-  FieldTask_AddFrame(ShrineOfTheSeaGod_LayerCrossroadsProps, 0x480);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_LayerCrossroadsProps, TASK_PASS_VBLANK);
   if (GameFlag_Get(FLAG_CROSSROADS_PILLAR_TOPPLED)) {
     ShrineOfTheSeaGod_ObjSetPos(block, px(408), -(px(13)), px(336));
     ((struct FieldSprite *)block->sprite)->rotation = 0x1000;
@@ -2047,7 +2050,7 @@ void ShrineOfTheSeaGod_InitializeFootprints(void) {
   if (GameFlag_Get(FLAG_DJINNI_RAN_PAST) == 0)
     ShrineOfTheSeaGod_PlaceFootprints();
   Map_SetUpperLevelWading(map);
-  FieldTask_AddFrame(ShrineOfTheSeaGod_TrackUpperLevel, 0x480);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_TrackUpperLevel, TASK_PASS_VBLANK);
 }
 
 /// Sets up the ledge room: the pillar, the puddles, frozen or not, the torch,
@@ -2072,10 +2075,10 @@ void ShrineOfTheSeaGod_InitializeBreath(void) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 10, 18);
   if (GameFlag_Get(FLAG_THIRD_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 10, 17);
-  FieldTask_AddFrame(ShrineOfTheSeaGod_LayerPuddles, 0x480);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_LayerPuddles, TASK_PASS_VBLANK);
   Actor_PlaceBlocks(gShrineOfTheSeaGod_MovableActors);
   ShrineOfTheSeaGod_LightTorch();
-  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepFlameOnTorch, 0x480);
+  FieldTask_AddFrame(ShrineOfTheSeaGod_KeepFlameOnTorch, TASK_PASS_VBLANK);
   if (GameFlag_Get(FLAG_DJINNI(DJINNI_BREATH)) ||
       GameFlag_Get(FLAG_FIGHTING_BREATH)) {
     GameFlag_Set(FLAG_DJINNI_CHASE_OVER);

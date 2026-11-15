@@ -1148,8 +1148,10 @@ void YampiDesert_RevealMedalSpot(void) {
   if (object != 0) {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     Actor_SetPosition(ACTOR_HIDDEN_TREASURE, 288, 240);
-    if ((leader->x.fixed + px(8)) >> 20 == (object->x.fixed + px(8)) >> 20 &&
-        (leader->z.fixed + px(8)) >> 20 == (object->z.fixed + px(8)) >> 20)
+    if (FIELD_CELL(leader->x.fixed + px(8)) ==
+            FIELD_CELL(object->x.fixed + px(8)) &&
+        FIELD_CELL(leader->z.fixed + px(8)) ==
+            FIELD_CELL(object->z.fixed + px(8)))
       Actor_SetPosition(gMainRoutineWork.leaderActorId, 288, 256);
   }
 }
@@ -1777,7 +1779,7 @@ void YampiDesert_SetUpPsynergyStoneScorpion(void) {
   struct Actor *object;
   struct Actor **followed;
 
-  Scene_TaskAdd(YampiDesert_PlayScorpionRumble, 0x480);
+  Scene_TaskAdd(YampiDesert_PlayScorpionRumble, TASK_PASS_VBLANK);
   followed = &gYampiDesert_SandRipple;
   object = Actor_GetById(ACTOR_PSYNERGY_STONE_ROOM_SAND_RIPPLE);
   object->priorityFlags |= 2;
@@ -1878,7 +1880,7 @@ void YampiDesert_SetUpKingScorpionScorpion(void) {
   struct Actor *object;
   struct Actor **followed;
 
-  Scene_TaskAdd(YampiDesert_PlayScorpionRumble, 0x480);
+  Scene_TaskAdd(YampiDesert_PlayScorpionRumble, TASK_PASS_VBLANK);
   followed = &gYampiDesert_SandRipple;
   object = Actor_GetById(ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE);
   object->priorityFlags |= 2;
@@ -2015,7 +2017,7 @@ void YampiDesert_SetUpTrappedScorpion(void) {
     YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
                                      px(232), px(168), angle);
   } else {
-    Scene_TaskAdd(YampiDesert_PlayScorpionRumble, 0x480);
+    Scene_TaskAdd(YampiDesert_PlayScorpionRumble, TASK_PASS_VBLANK);
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       YampiDesert_SetPositionAndFacing(ACTOR_KING_SCORPION_ROOM_KING_SCORPION,
                                        px(200), px(264), 0);
@@ -2036,7 +2038,7 @@ void YampiDesert_OpenScoopHole(void) {
 /// The trapped King Scorpion digs its way out with Scoop.
 void YampiDesert_ScorpionUsesScoop(void) {
   FieldPsynergy_LoadResources(ABILITY_SCOOP, 1);
-  Scene_TaskAdd(YampiDesert_OpenScoopHole, 0x480);
+  Scene_TaskAdd(YampiDesert_OpenScoopHole, TASK_PASS_VBLANK);
   FieldPsynergy_SetupActorPair(21, -1);
   FieldPsynergy_StartCast();
   FieldPsynergy_RunHandler(1);
@@ -2305,8 +2307,8 @@ void YampiDesert_SetUpBlitz(void) {
     YampiDesert_StepOntoStakeTops();
     wait(10);
   }
-  Scene_TaskAdd(YampiDesert_TrackUpperLevel, 0x480);
-  Scene_TaskAdd(YampiDesert_MatchStakePriority, 0x480);
+  Scene_TaskAdd(YampiDesert_TrackUpperLevel, TASK_PASS_VBLANK);
+  Scene_TaskAdd(YampiDesert_MatchStakePriority, TASK_PASS_VBLANK);
 }
 
 /// Sets up a stake: behind the leader, disabled, in its standing animation.
@@ -2482,7 +2484,7 @@ void YampiDesert_SetUpBlowMaceChest(void) {
   Scene_QueueMusic(SE_KIRIN);
   YampiDesert_PlaceStakes(gYampiDesertBlowMaceChestStakes);
   YampiDesert_SetUpBlowMaceChestSlideActors();
-  Scene_TaskAdd(YampiDesert_UpdateSandSlide, 0x480);
+  Scene_TaskAdd(YampiDesert_UpdateSandSlide, TASK_PASS_VBLANK);
 }
 
 /// Places each stake of a room's list, sunk if Pound has sunk it.
@@ -2609,13 +2611,13 @@ void YampiDesert_UpdateRisingSand(void) {
     if (rider == NULL)
       continue;
     if (entry->height == 0) {
-      rider->y.fixed = object->y.fixed + -0x100000;
+      rider->y.fixed = object->y.fixed + -px(16);
     } else {
       s32 wave;
 
       entry->phase += 0x1000;
       wave = Iwram_MulQ16(0x20000, Trig_Sin(entry->phase)) + -0xe0000;
-      rider->y.fixed = object->y.fixed + (entry->height << 16) + wave;
+      rider->y.fixed = object->y.fixed + px(entry->height) + wave;
     }
     rider->x.fixed = object->x.fixed;
     rider->z.fixed = object->z.fixed;
@@ -2656,10 +2658,10 @@ void YampiDesert_DrawRisingSand(void) {
     if (count > 79)
       goto next;
     x = object->x.fixed - viewX;
-    y = object->y.fixed + (h << 16) - originY;
+    y = object->y.fixed + px(h) - originY;
     z = object->z.fixed - viewZ - originY;
     sy = z - y;
-    x = (x >> 16) - 8;
+    x = FIELD_PIXEL(x) - 8;
     sy = (sy >> 16) - 16;
     depth = ((y + z) >> 16) + 58;
     if ((u32)(x + 15) > 334 || sy <= -16 || sy > 239)
@@ -2668,8 +2670,8 @@ void YampiDesert_DrawRisingSand(void) {
     sy &= 255;
     p = oam;
     *p++ = 0;
-    *p++ = sy | x << 16 | 0x40002000;
-    *p = (tile + frame) | 0x800;
+    *p++ = sy | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+    *p = (tile + frame) | OBJ_PRIORITY(2);
     Oam_AddSpriteAtDepthClamped(oam, depth);
     oam += 3;
     count++;
@@ -2681,10 +2683,10 @@ void YampiDesert_DrawRisingSand(void) {
     if (count > 79)
       continue;
     x = object->x.fixed - viewX;
-    y = object->y.fixed + (entry->height << 16) - originY;
+    y = object->y.fixed + px(entry->height) - originY;
     z = object->z.fixed - viewZ - originY;
     sy = z - y;
-    x = (x >> 16) - 8;
+    x = FIELD_PIXEL(x) - 8;
     sy = ((sy + Math_MulQ16(-0x20000, Trig_Sin(entry->phase)) + -0x20000) >>
           16) -
          4;
@@ -2695,8 +2697,8 @@ void YampiDesert_DrawRisingSand(void) {
     sy &= 255;
     p = oam;
     *p++ = 0;
-    *p++ = sy | x << 16 | 0x40002000;
-    *p = (tile + frame - 32) | 0x800;
+    *p++ = sy | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
+    *p = (tile + frame - 32) | OBJ_PRIORITY(2);
     Oam_AddSpriteAtDepthClamped(oam, depth);
     oam += 3;
     count++;

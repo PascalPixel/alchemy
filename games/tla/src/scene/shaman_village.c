@@ -1993,7 +1993,7 @@ commands:
       if ((u32)(x + 152) < 304) {
         x = left & 511;
         *write++ = 0;
-        *write++ = (x << 16) | y | flags | (matrix << 25) | LETTERING_OBJ_MODE;
+        *write++ = OBJ_X(x) | y | flags | (matrix << 25) | LETTERING_OBJ_MODE;
         *write++ = LETTERING_ATTRIBUTES | tile;
         Oam_AddSpriteAtDepth(sprite++, 236);
       }
@@ -2010,7 +2010,7 @@ commands:
       if ((u32)(x + 152) < 304) {
         x = left & 511;
         *write++ = 0;
-        *write++ = (x << 16) | y | flags | (matrix << 25) | LETTERING_OBJ_MODE;
+        *write++ = OBJ_X(x) | y | flags | (matrix << 25) | LETTERING_OBJ_MODE;
         *write++ =
             LETTERING_ATTRIBUTES | (tile + gShamanVillage_LetteringTileOffset);
         Oam_AddSpriteAtDepth(sprite++, 236);
@@ -2029,7 +2029,7 @@ commands:
       if ((u32)(x + 152) < 304) {
         x = left & 511;
         *write++ = 0;
-        *write++ = (x << 16) | y | flags | (matrix << 25) | LETTERING_OBJ_MODE;
+        *write++ = OBJ_X(x) | y | flags | (matrix << 25) | LETTERING_OBJ_MODE;
         *write++ =
             LETTERING_ATTRIBUTES | (tile + gShamanVillage_LetteringTileOffset);
         Oam_AddSpriteAtDepth(sprite++, 236);
@@ -2046,7 +2046,7 @@ commands:
     if ((u32)(pos + 120) < 304) {
       x = left & 511;
       *write++ = 0;
-      *write++ = (x << 16) | y | flags | (matrix << 25) | LETTERING_OBJ_MODE;
+      *write++ = OBJ_X(x) | y | flags | (matrix << 25) | LETTERING_OBJ_MODE;
       *write++ =
           LETTERING_ATTRIBUTES | (tile + gShamanVillage_LetteringTileOffset);
       Oam_AddSpriteAtDepth(sprite, 236);
@@ -2060,7 +2060,7 @@ commands:
     if ((u32)(pos + 152) < 304) {
       x = left & 511;
       *write++ = 0;
-      *write++ = (x << 16) | y | flags | (matrix << 25) | LETTERING_OBJ_MODE;
+      *write++ = OBJ_X(x) | y | flags | (matrix << 25) | LETTERING_OBJ_MODE;
       *write++ =
           LETTERING_ATTRIBUTES | (tile + gShamanVillage_LetteringTileOffset);
       Oam_AddSpriteAtDepth(sprite, 236);
@@ -2856,8 +2856,8 @@ void ShamanVillage_SetUpVillage(void) {
     ShamanVillage_GrowVine();
   REG_BLDALPHA = 0xc08;
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-  FieldTask_AddFrame(ShamanVillage_LayerVillageActors, 0x480);
-  FieldTask_AddFrame(ShamanVillage_PuffChimneySmoke, 0x480);
+  FieldTask_AddFrame(ShamanVillage_LayerVillageActors, TASK_PASS_VBLANK);
+  FieldTask_AddFrame(ShamanVillage_PuffChimneySmoke, TASK_PASS_VBLANK);
 }
 
 void ShamanVillage_SetUpInn(void) {

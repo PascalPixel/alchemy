@@ -476,7 +476,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
     FieldActor_SetMoveTargetFixed(pusher, destinationX, pusher->y.fixed,
                                   destinationZ);
   }
-  Actor_SelectAnimation(pusher, 27);
+  Actor_SelectAnimation(pusher, ANIM_LEADER_WALK_BACKWARDS);
   {
     destinationX =
         ((log->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &

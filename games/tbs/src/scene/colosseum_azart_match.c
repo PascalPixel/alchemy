@@ -395,7 +395,7 @@ static void ColosseumAzartMatch_MoveActorPairByOffset(s32 actorId, s32 dx,
     leader->acceleration = px(1) / 2;
     FieldActor_SetMoveTargetFixed(leader, x, leader->y.fixed, z);
   }
-  Actor_SelectAnimation(leader, 27);
+  Actor_SelectAnimation(leader, ANIM_LEADER_WALK_BACKWARDS);
   {
     x = ((actor->x.fixed + px(dx)) & FIELD_CELL_MASK) + px(8);
     z = ((actor->z.fixed + px(dz)) & FIELD_CELL_MASK) + px(8);

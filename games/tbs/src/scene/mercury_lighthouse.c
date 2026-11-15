@@ -192,6 +192,10 @@ static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem);
 
 /// MercuryLighthouseLower: Mia, the statue that blocks her and the pipe pieces
 /// that join the channels.
+/// Mia kneeling with her hands together, as she senses someone inside the
+/// lighthouse (mia.png's frame 76).
+enum { ANIM_MIA_KNEEL = 16 };
+
 enum MercuryLighthouseLowerActorId {
   ACTOR_STATUE_BLOCKING_MIA = ACTOR_FIRST_PLACED,
   /// Move pushes the pipe pieces (SPRITE_PIPE_WEST_EAST for the first two,
@@ -1354,7 +1358,7 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   Actor_WalkToAndWait(ACTOR_MIA, 840, 648);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Actor_FaceDirection(ACTOR_MIA, FACING_WEST, 20);
-  Actor_SetAnimation(ACTOR_MIA, 16);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_MIA_KNEEL);
   Actor_Get(ACTOR_MIA)->scaleX = -Q16_ONE;
   Event_Wait(20);
   // "Someone is here..."
@@ -1530,7 +1534,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
       Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
       Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
     }
-    Actor_SetAnimation(ACTOR_MIA, 16);
+    Actor_SetAnimation(ACTOR_MIA, ANIM_MIA_KNEEL);
     Event_Wait(30);
     Actor_RunRepeatedMotion(ACTOR_MIA, 1);
     Event_Wait(20);
@@ -2522,7 +2526,7 @@ s32 Scene_Initialize(void) {
       if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA)) {
         if (!GameFlag_Get(FLAG_MIA_SENSED_SOMEONE_INSIDE)) {
           Actor_FaceDirection(ACTOR_MIA, FACING_EAST, 0);
-          Actor_SetAnimation(ACTOR_MIA, 16);
+          Actor_SetAnimation(ACTOR_MIA, ANIM_MIA_KNEEL);
         } else {
           Actor_SetPosition(ACTOR_MIA, 840, 632);
           Actor_FaceDirection(ACTOR_MIA, FACING_NORTH, 0);
@@ -2567,7 +2571,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(60);
-  Actor_SetAnimation(ACTOR_MIA, 16);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_MIA_KNEEL);
   Event_Wait(50);
   Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);
   // "Do you have business in the lighthouse, too?"
@@ -2612,7 +2616,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Event_Wait(20);
   // "I thought so..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
-  Actor_SetAnimation(ACTOR_MIA, 16);
+  Actor_SetAnimation(ACTOR_MIA, ANIM_MIA_KNEEL);
   // "I am sure there will be more places ahead that I cannot pass..."
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 20);
   Actor_SetAnimation(ACTOR_MIA, ANIM_STAND);

@@ -1464,8 +1464,8 @@ again:
         s32 fade[4];
         s32 w;
 
-        memcpy(wobble, Data_080f0f34, sizeof(wobble));
-        memcpy(fade, Data_080f0f54, sizeof(fade));
+        memcpy(wobble, gArrow_WobbleAngles, sizeof(wobble));
+        memcpy(fade, gArrow_WobbleFades, sizeof(fade));
         w = wobble[work->timer & 7];
         sprite->angle = scene->angle8 + w * fade[work->timer / 8] / (TRIG_TURN);
       }
@@ -1586,8 +1586,8 @@ again:
         s32 x = (s16)FIELD_PIXEL(motion->x);
         s32 y = (s16)FIELD_PIXEL(motion->y);
 
-        BattleEffect_DrawCanvasBlock(Data_080eda0c + (motion->delay & 1) * 64,
-                                     x, y, 8, 8);
+        BattleEffect_DrawCanvasBlock(
+            gArrow_GlintPixels + (motion->delay & 1) * 64, x, y, 8, 8);
         BattleEffect_IntegrateVector2(&motion->x, 60, 0);
       }
       motion->delay++;

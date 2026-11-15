@@ -51,14 +51,14 @@ gBattleEffect_RandomChildValues:
 	.byte 0, 0, 1, 2, 3, 4, 5, 6
 
 @ Read by FieldPsynergy_UpdateArrow: eight offsets in 16.16 fixed point
-	.global Data_080f0f34
-Data_080f0f34:
+	.global gArrow_WobbleAngles
+gArrow_WobbleAngles:
 	.4byte 0x1000, 0, -0x1000, -0x2000
 	.4byte -0x3000, -0x2000, -0x1000, 0
 
 @ Read by FieldPsynergy_UpdateArrow: four values in 16.16 fixed point
-	.global Data_080f0f54
-Data_080f0f54:
+	.global gArrow_WobbleFades
+gArrow_WobbleFades:
 	.4byte 0xd000, 0x9000, 0x5000, 0x3000
 
 @ Read by FieldPsynergy_GatherNearbyCells: 21 {x, y} cell offsets within two of a centre,
@@ -74,24 +74,24 @@ gFieldPsynergy_NearbyCellOffsets:
 
 @ The four colours (BGR555) FieldPsynergy_Blaze passes to
 @ Field_StartColorTransition
-	.global Data_080f0f90
-Data_080f0f90:
+	.global gBlaze_TintColors
+gBlaze_TintColors:
 	.4byte 0x1090, 0x304c, 0x098c, 0x2942
 
 @ The 16 colours FieldPsynergy_UpdateBurst writes to OBJ palettes 14 and 15
-	.global Data_080f0fa0
-Data_080f0fa0:
+	.global gBurst_SparkPalette
+gBurst_SparkPalette:
 	.incbin "games/tla/src/field/fxpal.gbapal"
 
 @ Item ids; Scoop_DigUpItem picks one of the 16 at random
-	.global gData_080f0fc0
-gData_080f0fc0:
+	.global gScoop_DugItems
+gScoop_DugItems:
 	.2byte 0xb4, 0xb4, 0xb4, 0xb4, 0xbb, 0xbb, 0xbb, 0xe2
 	.2byte 0xe2, 0xe3, 0xe3, 0xe4, 0xe4, 0xe4, 0xb5, 0xb5
 
 @ Read by HoverGlow_GetColor: 32 steps down from 31, 32 zeros and 32 steps up
-	.global gData_080f0fe0
-gData_080f0fe0:
+	.global gHoverGlow_Levels
+gHoverGlow_Levels:
 	.byte 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16
 	.byte 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
 	.byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -102,8 +102,8 @@ gData_080f0fe0:
 @ Read by SummonTablet_PlayRunes: an object script that sets the scale to 1 and
 @ then squashes and stretches it for ever, as the variant motion scripts
 @ (gActor_VariantScripts) do; work 9 is the x scale, 10 the y
-	.global Data_080f1040
-Data_080f1040:
+	.global gSummonTablet_SquashScript
+gSummonTablet_SquashScript:
 	.4byte 0x16, 9, 0x10000		@ set
 	.4byte 0x16, 10, 0x10000	@ set
 	.4byte 0x80010000		@ label 1

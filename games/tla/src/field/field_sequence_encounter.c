@@ -80,16 +80,16 @@ void Encounter_SelectMapZones(s32 search) {
 /// encounters in render mode 8, render mode 7 reads the second rule table,
 /// and a rule's flag must be set for it to apply.
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
-  struct TerrainRule *rule = gData_080eedbc;
+  struct TerrainRule *rule = gWorldMap_EncounterRules;
   s32 behavior;
   u32 kind;
   s32 zone;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
-  if (party->movementMode == 8)
+  if (party->movementMode == LEADER_MOVEMENT_FLYING_SHIP)
     return 0;
-  if (party->movementMode == 7)
-    rule = gData_080eef34;
+  if (party->movementMode == LEADER_MOVEMENT_SHIP)
+    rule = gWorldMap_ShipEncounterRules;
   behavior = WorldMap_GetBattleEnvironmentFar(position, (s32 *)&kind);
   kind %= 20;
   zone = 0;

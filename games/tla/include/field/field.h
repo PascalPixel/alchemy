@@ -289,7 +289,8 @@ struct Reel {
 /// shades, and its transfer to the screen.
 struct ReelEffectWork {
   struct Particle particles[REEL_TITLE_LETTERS];
-  u8 unkAfterParticles[0x700 - REEL_TITLE_LETTERS * sizeof(struct Particle)];
+  /// No code names it.
+  u8 unusedAfterParticles[0x700 - REEL_TITLE_LETTERS * sizeof(struct Particle)];
   u16 bgShade[0x100];
   u16 objShade[0x100];
   u8 unusedAfterObjShade[0x7780 - 0xb00]; ///< no code names it
@@ -313,7 +314,7 @@ struct WorldMapCell {
   u32 tile : 24; ///< low halfword: the cell picture
   /// Passed to WorldMap_UpdateRegionTint; region / 10 picks the graphics set.
   u32 region : 6;
-  u32 unk1e : 2;
+  u32 unusedHigh : 2; ///< no code names them
 };
 
 /// A map cell's terrain kind, as The Broken Seal's enum TerrainKind: the low

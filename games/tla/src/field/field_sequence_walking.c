@@ -240,8 +240,8 @@ void Field_UpdateWalking(u32 layer, s32 x, s32 y, s32 z) {
     work->pushCell = attributes;
 
   if ((gMainRoutineWork.movementMode <= 1 ||
-       gMainRoutineWork.movementMode == 6 ||
-       gMainRoutineWork.movementMode == 7) &&
+       gMainRoutineWork.movementMode == LEADER_MOVEMENT_SHIP_ON_MAP ||
+       gMainRoutineWork.movementMode == LEADER_MOVEMENT_SHIP) &&
       leader != NULL && leader->targetX != TARGET_UNSET) {
     zone = 0;
     speed = leader->speedLimit;

@@ -4,8 +4,8 @@
 	.macro scene id:req, flag:req
 	.2byte 0x4000 | \id, \flag
 	.endm
-	.global Data_080f2204
-Data_080f2204:
+	.global gSceneItems
+gSceneItems:
 	scene 5, -1
 	.2byte 0x80, 0, 0x0f00, 180
 	scene 8, -1

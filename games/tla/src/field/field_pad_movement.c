@@ -35,7 +35,7 @@ s32 Actor_MoveOnWorldMap(struct Actor *object) {
   s32 terrainCollision;
   s32 speed;
   s32 targetCameraYaw;
-  struct WorldCamera *camera;
+  struct WorldMapView *camera;
   s32 yawStep;
   struct PlayerSprite *playerSprite;
   struct Actor *ripple;
@@ -146,7 +146,7 @@ update_object:
       object->timer--;
   }
 
-  camera = (struct WorldCamera *)Ram_HeapSlots->mapGrid;
+  camera = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   targetCameraYaw = gWorldMap_KeyYaws[(gInput.held >> 4) & 15];
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
   if (yawStep > 0x200)
@@ -527,7 +527,7 @@ s32 Actor_SailOnWorldMap(struct Actor *object) {
   s32 terrain;
   s32 speed;
   s32 targetCameraYaw;
-  struct WorldCamera *camera;
+  struct WorldMapView *camera;
   s32 yawStep;
   struct Actor *ripple;
   struct PlayerSprite *rippleSprite;
@@ -688,7 +688,7 @@ update_object:
     object->facing += difference;
   }
 
-  camera = (struct WorldCamera *)Ram_HeapSlots->mapGrid;
+  camera = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   targetCameraYaw = gWorldMap_KeyYaws[(gInput.held >> 4) & 15];
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
   if (yawStep > 0x200)
@@ -742,7 +742,7 @@ s32 Actor_FlyOnWorldMap(struct Actor *object) {
   s32 terrain;
   s32 speed;
   s32 targetCameraYaw;
-  struct WorldCamera *camera;
+  struct WorldMapView *camera;
   s32 yawStep;
   struct Actor *ripple;
   struct PlayerSprite *rippleSprite;
@@ -901,7 +901,7 @@ update_object:
     object->facing += difference;
   }
 
-  camera = (struct WorldCamera *)Ram_HeapSlots->mapGrid;
+  camera = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   targetCameraYaw = Iwram_MulQ16(gWorldMap_KeyYaws[(gInput.held >> 4) & 15],
                                  object->y.fixed / 4 + 0x10000);
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;

@@ -8,6 +8,7 @@
 #include "field/field.h"
 #include "system/system.h"
 #include "field/scene_call.h"
+#include "field/field_sequence.h"
 
 extern const u8 gActor_WaitScript[];
 
@@ -345,9 +346,9 @@ s32 Field_TryJumpForward(void) {
   s32 canJump;
   s32 i;
 
-  if (gMainRoutineWork.movementMode == 2)
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS)
     return result;
-  if (gMainRoutineWork.movementMode == 3)
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_ROPE)
     return result;
   if ((angle + FACING_STEP) & TRIG_TURN / 8) // not facing a quarter turn
     return result;
@@ -522,7 +523,7 @@ s32 Field_ClimbDown(void) {
   Event_Start();
   if (leader->spriteStorageKind == 1)
     spriteFlags = ((struct Sprite *)leader->sprite)->flags;
-  if (gMainRoutineWork.movementMode == 0) {
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
     struct Actor *entry;
     struct MapCell *cell;
     struct MapCell *south;
@@ -576,7 +577,7 @@ s32 Field_ClimbDown(void) {
     Actor_SetMoveTargetFar(leader, px(gridX), leader->y.fixed - px(16),
                            px(gridZ) + 0x100000);
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-    gMainRoutineWork.movementMode = 2;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
     leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
   } else {
     // Let go of the wall and fall.
@@ -587,7 +588,7 @@ s32 Field_ClimbDown(void) {
     spriteFlags |= 1;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Event_Wait(6);
-    gMainRoutineWork.movementMode = 0;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
     leader->steeringFlags = 1;
     leader->facing = TRIG_TURN * 3 / 4;
     leader->timer = 0;
@@ -617,7 +618,7 @@ s32 Field_ClimbUp(void) {
   Event_Start();
   if (leader->spriteStorageKind == 1)
     spriteFlags = ((struct Sprite *)leader->sprite)->flags;
-  if (gMainRoutineWork.movementMode == 0) {
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
     struct MapCell *cell;
     struct MapCell *north;
     s32 cellX = gridX >> 4;
@@ -659,7 +660,7 @@ s32 Field_ClimbUp(void) {
     leader->velocityY = result;
     Actor_SelectAnimationFar(leader, 12);
     wait(4);
-    gMainRoutineWork.movementMode = 2;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
     leader->steeringFlags = 1;
     wait(8);
     leader->z.fixed = (leader->z.fixed & FIELD_CELL_MASK) + 0x80000;
@@ -692,7 +693,7 @@ s32 Field_ClimbUp(void) {
     spriteFlags |= 1;
     Actor_SetSpriteFlagsFar(leader, spriteFlags);
     Event_Wait(4);
-    gMainRoutineWork.movementMode = 0;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
     leader->steeringFlags = 1;
     leader->timer = 0;
     leader->userValue = 0;
@@ -764,7 +765,7 @@ s32 Leader_StepOntoRope(void) {
   leader->priorityFlags = *flags & ~1;
   sprite->flags = 0;
   sprite->image.priority = 1;
-  gMainRoutineWork.movementMode = 3;
+  gMainRoutineWork.movementMode = LEADER_MOVEMENT_ROPE;
   return 1;
 }
 
@@ -805,7 +806,7 @@ s32 Leader_StepOffRope(void) {
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);
   sprite->image.priority = leader->savedSpritePriority;
-  gMainRoutineWork.movementMode = 0;
+  gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
   return 1;
 }
 
@@ -869,7 +870,7 @@ s32 Leader_StepOntoTightrope(void) {
   leader->priorityFlags = *flags & ~1;
   sprite->flags = 0;
   sprite->image.priority = 1;
-  work->movementMode = 4;
+  work->movementMode = LEADER_MOVEMENT_TIGHTROPE;
   return 1;
 }
 
@@ -909,6 +910,6 @@ s32 Leader_StepOffTightrope(void) {
   Actor_SetMoveTargetFar(leader, position[0], position[1], position[2]);
   Actor_WaitForMoveFar(leader);
   sprite->image.priority = leader->savedSpritePriority;
-  gMainRoutineWork.movementMode = 0;
+  gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
   return 1;
 }

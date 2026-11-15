@@ -247,13 +247,13 @@ void Actor_ResetForLeader(s32 table) {
   object->userValue = 0;
   if (work->mode == 3) {
     if (gMainRoutineWork.ownerOverride != 0)
-      gMainRoutineWork.movementMode = 7;
+      gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP;
     else
-      gMainRoutineWork.movementMode = 1;
+      gMainRoutineWork.movementMode = LEADER_MOVEMENT_WORLD_MAP;
   } else if (gMainRoutineWork.ownerOverride != 0) {
-    gMainRoutineWork.movementMode = 6;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP_ON_MAP;
   } else {
-    gMainRoutineWork.movementMode = 0;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
     /* FAKEMATCH(barrier): an empty asm after the store. */
     asm("");
     cell = Ram_HeapSlots->mapGrid->layers[object->layer].cells +
@@ -261,7 +261,7 @@ void Actor_ResetForLeader(s32 table) {
     above = cell - 128;
     if (gMainRoutineWork.y != 0 && (cell->attributeB & 0x40) &&
         (above->attributeB & 0x40)) {
-      gMainRoutineWork.movementMode = 2;
+      gMainRoutineWork.movementMode = LEADER_MOVEMENT_KEYS;
       height = MapGrid_GetTerrainHeightFar(0, object->x.fixed,
                                            object->z.fixed - px(16)) -
                0x200000;

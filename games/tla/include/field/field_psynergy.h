@@ -141,10 +141,10 @@ extern const u8 gFieldEffect_ArcSparkTiles[];
 
 void Actor_WaitForTrackEndFar(struct Actor *object);
 
-extern const s32 Data_080f0f34[8];
-extern const s32 Data_080f0f54[4];
+extern const s32 gArrow_WobbleAngles[8];
+extern const s32 gArrow_WobbleFades[4];
 
-extern const u8 Data_080eda0c[];
+extern const u8 gArrow_GlintPixels[];
 
 extern const s8 gFieldPsynergy_NearbyCellOffsets[];
 

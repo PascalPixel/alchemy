@@ -163,9 +163,9 @@ struct MapRegion {
 
 extern const struct SceneMusicEntry gScene_EncounterRules[];
 
-extern struct TerrainRule gData_080eedbc[];
+extern struct TerrainRule gWorldMap_EncounterRules[];
 
-extern struct TerrainRule gData_080eef34[];
+extern struct TerrainRule gWorldMap_ShipEncounterRules[];
 
 extern const struct EncounterZone gEncounter_EnemyGroupTable[];
 
@@ -183,7 +183,7 @@ extern const s16 gEncounter_BattleMusic[];
 
 extern u8 gMapSceneBoundsOffset[];
 
-extern s16 Data_080f2204[];
+extern s16 gSceneItems[];
 
 extern const u8 gField_ExamineTriggerMessageOffsets[];
 

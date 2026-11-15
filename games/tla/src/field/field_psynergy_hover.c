@@ -8,10 +8,11 @@
 #include "sounds.h"
 #include "macros.h"
 #include "field/field_event.h"
+#include "field/field_sequence.h"
 
 /// A cycle of 96 colour levels (31 down to 0, 32 at 0, then 0 up to 31),
 /// read a third of a turn apart for red, green and blue.
-extern const u8 gData_080f0fe0[];
+extern const u8 gHoverGlow_Levels[];
 
 /// The colour of Hover's glow (HoverGlow_Update) for a step of
 /// its 24-step cycle and a brightness level (7 is neutral): three channels of
@@ -28,7 +29,7 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
   const u8 *wave;
 
   step = (counter + 12) % 24;
-  wave = gData_080f0fe0;
+  wave = gHoverGlow_Levels;
   phase = step * 4;
   redLevel = wave[(s16)(phase % 96)];
   bias = level - 7;
@@ -250,7 +251,7 @@ void FieldPsynergy_Hover(void) {
     player->motionFlags = 4;
     player->y.fixed = player->groundHeight + 0x248000;
     player->gravity = px(3);
-    gMainRoutineWork.movementMode = 10;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_HOVER;
     work->fading = 1;
     event->glowHeld = 1;
     event->glow = 112;
@@ -268,7 +269,7 @@ void FieldPsynergy_EndHover(void) {
   Actor_SetPositionAndResetMotionFar(object, object->x.fixed, object->y.fixed,
                                      object->z.fixed);
   object->motionFlags = 3;
-  gMainRoutineWork.movementMode = 0;
+  gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
   for (i = 0; i < 60; i++) {
     if (object->y.fixed <= object->groundHeight)
       break;

@@ -19,12 +19,12 @@ void Actor_SnapToTerrain(void *object) {
   actor->groundHeight = groundHeight;
 }
 
-/// The current scene's rows of the scene item table (Data_080f2204): those
+/// The current scene's rows of the scene item table (gSceneItems): those
 /// after the first header for this scene whose flag is -1 or not yet set, or
 /// NULL.
 s16 *SceneItem_GetRows(void) {
   s32 scene = gMainRoutineWork.next;
-  s16 *p = Data_080f2204;
+  s16 *p = gSceneItems;
   s16 *found = NULL;
   s32 header;
   s32 flag;

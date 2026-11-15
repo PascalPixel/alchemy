@@ -773,7 +773,7 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *object) {
   s32 terrainCollision;
   s32 speed;
   s32 targetCameraYaw;
-  struct WorldCamera *camera;
+  struct WorldMapView *camera;
   s32 yawStep;
   struct PlayerSprite *playerSprite;
   struct Actor *ripple;
@@ -885,7 +885,7 @@ update_object:
       (*timer)--;
   }
 
-  camera = (struct WorldCamera *)Ram_HeapSlots->mapGrid;
+  camera = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   targetCameraYaw = gWorldMap_KeyYaws[(gInput.held >> 4) & 15];
   yawStep = (s16)(targetCameraYaw - camera->yaw) / 8;
   if (yawStep > 0x200)

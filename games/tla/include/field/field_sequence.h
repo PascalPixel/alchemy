@@ -12,7 +12,27 @@
 
 struct Actor;
 
-/// A window transition's shape: SCENE_TRANSITION(TRANSITION_WINDOW, mode)'s
+/// How the leader moves (MainRoutineWork.movementMode): which actor script
+/// Actor_StartRenderModeScript runs for it.
+enum LeaderMovementMode {
+  /// Walking: the pad moves the leader on a layered map.
+  LEADER_MOVEMENT_WALK = 0,
+  LEADER_MOVEMENT_WORLD_MAP = 1, ///< walking on the World Map
+  /// Only the configured keys are checked; the leader is moved by others.
+  LEADER_MOVEMENT_KEYS = 2,
+  LEADER_MOVEMENT_ROPE = 3,        ///< crossing a tied rope
+  LEADER_MOVEMENT_TIGHTROPE = 4,   ///< crossing a tightrope
+  LEADER_MOVEMENT_SAND = 5,        ///< as sand, by Sand, on a layered map
+  LEADER_MOVEMENT_SHIP_ON_MAP = 6, ///< the ship on a layered map
+  LEADER_MOVEMENT_SHIP = 7,        ///< the ship on the World Map
+  LEADER_MOVEMENT_FLYING_SHIP = 8, ///< the winged ship on the World Map
+  LEADER_MOVEMENT_WORLD_SAND = 9,  ///< as sand on the World Map
+  LEADER_MOVEMENT_HOVER = 10,      ///< hovering, by Hover
+  LEADER_MOVEMENT_WALKING = 11,    ///< gActor_WalkingScript's
+  LEADER_MOVEMENT_NONE = 12        ///< the idle script: it does not move
+};
+
+/// A window transition's shape): SCENE_TRANSITION(TRANSITION_WINDOW, mode)'s
 /// low byte, which ScreenTransition_UpdateScanlineTable draws.
 enum WindowTransitionMode {
   WINDOW_TRANSITION_BARS = 0,   ///< a bar on each line, at random

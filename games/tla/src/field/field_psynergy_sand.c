@@ -15,6 +15,7 @@
 #include "field/field_sequence_event.h"
 #include "field/field_psynergy_work.h"
 #include "system/main_routine_work.h"
+#include "field/field_sequence.h"
 
 /// Sand's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the leader's picture and
 /// the copy it sinks into the ground, the grains of sand thrown up round it and
@@ -43,7 +44,7 @@ void FieldPsynergy_WatchSandGround(void) {
     reason = 1;
   if (MapGrid_IsSandCell(object->x.fixed, object->z.fixed, object->layer) == 0)
     reason = 2;
-  if (party->movementMode == 5 && object->userValue != 0 &&
+  if (party->movementMode == LEADER_MOVEMENT_SAND && object->userValue != 0 &&
       object->timer == 0) {
     s32 x;
     s32 z;
@@ -360,10 +361,10 @@ void FieldPsynergy_EndSand(void) {
       FieldCamera_FollowActor(effect->firstActorId, 1);
       Sound_PlayFar(SE_SAND_EMERGE);
       if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
-        gMainRoutineWork.movementMode = 1;
+        gMainRoutineWork.movementMode = LEADER_MOVEMENT_WORLD_MAP;
         *motionFlags = 2;
       } else {
-        gMainRoutineWork.movementMode = 0;
+        gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
         *motionFlags = 3;
       }
       if (event->standing == 0)
@@ -497,9 +498,9 @@ void FieldPsynergy_Sand(void) {
     wait(1);
   }
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
-    gMainRoutineWork.movementMode = 9;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_WORLD_SAND;
   else
-    gMainRoutineWork.movementMode = 5;
+    gMainRoutineWork.movementMode = LEADER_MOVEMENT_SAND;
   owner->timer = 0;
   owner->userValue = 0;
   event->unkd4a = 3;

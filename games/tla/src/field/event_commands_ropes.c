@@ -134,7 +134,7 @@ void Rope_Update(void) {
   s32 i = 0;
 
   if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) && event->blockedSteps > 12) {
-    if (gMainRoutineWork.movementMode == 0) {
+    if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WALK) {
       s32 target = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
 
       if (target != -1) {
@@ -145,7 +145,7 @@ void Rope_Update(void) {
             Rope_IsLeaderAtEnd(work->slots[i].first, work->slots[i].second))
           event->raisedTrigger = 0xfc85;
       }
-    } else if (gMainRoutineWork.movementMode == 3) {
+    } else if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_ROPE) {
       event->raisedTrigger = 0xfc86;
     }
   }
@@ -844,7 +844,7 @@ void Tightrope_Update(void) {
   if (!GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) && event->blockedSteps > 12) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    if (party->movementMode == 0) {
+    if (party->movementMode == LEADER_MOVEMENT_WALK) {
       s32 target = Field_FindNearbyTalkTarget(party->leaderActorId);
 
       if (target != -1) {
@@ -856,7 +856,7 @@ void Tightrope_Update(void) {
             Rope_IsLeaderAtEnd(work->slots[i].first, work->slots[i].second))
           event->raisedTrigger = 0xfc83;
       }
-    } else if (party->movementMode == 4) {
+    } else if (party->movementMode == LEADER_MOVEMENT_TIGHTROPE) {
       event->raisedTrigger = 0xfc84;
     }
   }

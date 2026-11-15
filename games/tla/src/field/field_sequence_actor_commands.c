@@ -459,11 +459,11 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
     switch (Random16() & 1) {
     case 1:
       Actor_SelectAnimationFar(actor, 2);
-      Actor_StartScriptFar(actor, Data_080f085c);
+      Actor_StartScriptFar(actor, gDustPuff_LongScript);
       break;
     default:
       Actor_SelectAnimationFar(actor, 1);
-      Actor_StartScriptFar(actor, Data_080f0874);
+      Actor_StartScriptFar(actor, gDustPuff_ShortScript);
       break;
     }
 

@@ -13,6 +13,7 @@
 #include "field/field.h"
 #include "field/object.h"
 #include "window/window.h"
+#include "field/field_sequence.h"
 
 /// Debug only: while debug mode is on, R makes every event wait (Event_Wait)
 /// end at once and L restores normal waits.
@@ -48,7 +49,7 @@ void Leader_StopMoving(void) {
   object->targetZ = TARGET_UNSET;
   object->velocityX = 0;
   object->velocityZ = 0;
-  if (gMainRoutineWork.movementMode == 2)
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS)
     Actor_SelectAnimationFar(object, 12);
   else
     Actor_SelectAnimationFar(object, 1);

@@ -475,10 +475,10 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
 }
 
 struct Unit *Unit_Get(u32 unitId);
-extern const u16 gData_080f0fc0[];
+extern const u16 gScoop_DugItems[];
 
 /// Object 79 at the anchor, fetched or spawned (kind 489), takes a random item
-/// id from gData_080f0fc0's sixteen (0x8001 when PartyInventory_FindRoomFar
+/// id from gScoop_DugItems's sixteen (0x8001 when PartyInventory_FindRoomFar
 /// finds no room) or, past 0xc000 of the roll, a 0x8000-flagged value scaled
 /// by the unit's level, and is handed to BattleEffect_DropObjectAtAnchor.
 void Scoop_DigUpItem(void) {
@@ -503,7 +503,7 @@ void Scoop_DigUpItem(void) {
     event->actors[id] = object;
   }
   if (Random16() < 0xc000) {
-    item = gData_080f0fc0[(Random16() * 16) >> 16];
+    item = gScoop_DugItems[(Random16() * 16) >> 16];
     if (PartyInventory_FindRoomFar(item) == -1)
       item = 0x8001;
   } else {

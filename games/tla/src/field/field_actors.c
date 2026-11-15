@@ -26,6 +26,7 @@
 #include "field/sprite.h"
 #include "field/field.h"
 #include "field/script_operands.h"
+#include "field/field_sequence.h"
 
 /// Waits, at most 90 frames, for a sprite's animation to change or for its
 /// first layer's script to reach code 241.
@@ -447,50 +448,50 @@ void Actor_StartApproachWatched(struct Actor *actor, s32 watchedActorHandle) {
 }
 
 /// Starts the dispatch script for gMainRoutineWork's render mode, waiting a
-/// frame first in mode 9.
+/// frame first for sand on the World Map.
 void Actor_StartRenderModeScript(struct Actor *object) {
   const s32 *script;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   switch (party->movementMode) {
-  case 0:
+  case LEADER_MOVEMENT_WALK:
     script = gActor_PlayerScript;
     break;
-  case 1:
+  case LEADER_MOVEMENT_WORLD_MAP:
     script = gActor_WorldMapScript;
     break;
-  case 2:
+  case LEADER_MOVEMENT_KEYS:
     script = gActor_KeysScript;
     break;
-  case 3:
+  case LEADER_MOVEMENT_ROPE:
     script = gActor_RopeScript;
     break;
-  case 4:
+  case LEADER_MOVEMENT_TIGHTROPE:
     script = gActor_TightropeScript;
     break;
-  case 5:
+  case LEADER_MOVEMENT_SAND:
     script = gActor_SandScript;
     break;
-  case 6:
+  case LEADER_MOVEMENT_SHIP_ON_MAP:
     script = gActor_SailOnMapScript;
     break;
-  case 7:
+  case LEADER_MOVEMENT_SHIP:
     script = gActor_SailScript;
     break;
-  case 8:
+  case LEADER_MOVEMENT_FLYING_SHIP:
     script = gActor_FlyScript;
     break;
-  case 9:
+  case LEADER_MOVEMENT_WORLD_SAND:
     wait(1);
     script = gActor_SandOnWorldMapScript;
     break;
-  case 10:
+  case LEADER_MOVEMENT_HOVER:
     script = gActor_HoverScript;
     break;
-  case 11:
+  case LEADER_MOVEMENT_WALKING:
     script = gActor_WalkingScript;
     break;
-  case 12:
+  case LEADER_MOVEMENT_NONE:
     script = gActorScript_EndScript;
     break;
   default:

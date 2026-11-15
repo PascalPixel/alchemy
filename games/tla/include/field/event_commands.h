@@ -124,8 +124,8 @@ struct SparklePicture {
   u16 tile;
 };
 
-extern const s32 Data_080f085c[];
-extern const s32 Data_080f0874[];
+extern const s32 gDustPuff_LongScript[];
+extern const s32 gDustPuff_ShortScript[];
 
 s32 PartyInventory_FindRoomFar(s32 item);
 
@@ -431,7 +431,6 @@ struct EffectChild {
 
 extern const u8 gBattleEffect_HeavyImpactScript[];
 
-extern const u8 gData_080f0e58[];
 extern u8 gAnim_ChildPaletteCycle[];
 
 struct Actor *ActorScript_FindOverlappingEntryFar(struct Actor *object,

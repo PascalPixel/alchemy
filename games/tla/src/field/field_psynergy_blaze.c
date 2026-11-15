@@ -14,7 +14,7 @@
 
 #include "sprite_ids.h"
 
-extern const s32 Data_080f0f90[];
+extern const s32 gBlaze_TintColors[];
 
 void Field_StartColorTransition(s32 frames, s32 color);
 
@@ -70,7 +70,7 @@ void FieldPsynergy_Blaze(void) {
     if (kind == 3)
       look = 3;
   }
-  Field_StartColorTransition(8, Data_080f0f90[look]);
+  Field_StartColorTransition(8, gBlaze_TintColors[look]);
   work->mode = 0;
   if (scene->enabled != 0) {
     work->origin[0] = scene->x;

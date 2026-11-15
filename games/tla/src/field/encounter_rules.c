@@ -4,8 +4,10 @@
 #include "types.h"
 
 // clang-format off
-// Two world map encounter tables: two keys, flag (-1 always), value; key -1 ends.
-const s16 gData_080eedbc[][4] = {
+// The World Map's encounter rules, on foot and then aboard the ship
+// (movement mode 7): terrain kind, battle environment, flag (-1 always) and
+// the encounter zone; a kind of -1 ends each.
+const s16 gWorldMap_EncounterRules[][4] = {
     { 1, 4, -1, 14 },
     { 1, 7, -1, 14 },
     { 1, 1, -1, 14 },
@@ -54,7 +56,7 @@ const s16 gData_080eedbc[][4] = {
     { 16, 12, -1, 79 },
     { -1, 0, 0, 0 },
 };
-const s16 gData_080eef34[][4] = {
+const s16 gWorldMap_ShipEncounterRules[][4] = {
     { 7, 8, -1, 52 },
     { 8, 8, -1, 77 },
     { 9, 8, -1, 52 },

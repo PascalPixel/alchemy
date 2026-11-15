@@ -1275,7 +1275,7 @@ void FieldPsynergy_Force(void) {
     if (copy != NULL) {
       wait(3);
       Actor_SetMoveTargetFar(copy, pos.x, pos.y, pos.z);
-      Actor_StartScriptFar(copy, gData_080f0e58);
+      Actor_StartScriptFar(copy, gBattleEffect_SharedParticleScript + 1);
     }
   }
 

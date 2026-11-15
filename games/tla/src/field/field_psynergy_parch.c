@@ -376,12 +376,12 @@ void Canvas_PlotPolarPixel(s32 unused, s32 radius, s32 angle, s32 color) {
       63 - FIELD_PIXEL(Iwram_MulQ16(Trig_Sin(angle), radius)), color);
 }
 
-extern const u16 gData_080f39c4[];
+extern const u16 gParch_PictureTiles[];
 
 /// Copy a 16x16 image to the BG map, clipping cells outside the 30x20-tile
 /// screen.
 void BgMap_DrawClipped16x16(s32 x, s32 y) {
-  const u16 *tiles = gData_080f39c4;
+  const u16 *tiles = gParch_PictureTiles;
   s32 row;
   s32 column;
   s32 sx;

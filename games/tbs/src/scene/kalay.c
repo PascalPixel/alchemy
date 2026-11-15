@@ -1159,7 +1159,7 @@ s32 Scene_Initialize(void) {
 /// Sets up Kalay.
 static void Kalay_PrepareTown(void) {
   OrbitingMapActor *nut;
-  u8 *heap;
+  GlyphTransfer *glyph;
   OrbitingMapActorSprite *sprite;
 
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
@@ -1190,9 +1190,9 @@ static void Kalay_PrepareTown(void) {
     nut->mode = 0;
     nut->y = px(10);
     nut->visible = 1;
-    heap = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+    glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(ITEM_NUT);
-    VramCache_Load(sprite->palette, 128, heap + 1024);
+    VramCache_Load(sprite->palette, 128, glyph->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     nut->orbitAngle = 0;
     nut->orbitCenterX = nut->x;

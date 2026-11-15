@@ -2938,7 +2938,7 @@ static struct Actor *ShipRooms_PlaceAnchorCharm(void) {
   s32 set = Event_GetFlag(FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN);
   struct Actor *actor;
   struct Sprite *sprite;
-  u8 *buffer;
+  GlyphTransfer *glyph;
 
   if (set != 0) {
     return gShipRooms_AnchorObject;
@@ -2950,9 +2950,9 @@ static struct Actor *ShipRooms_PlaceAnchorCharm(void) {
   sprite->count = set;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
-  buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Icon_DrawItem(ITEM_ANCHOR_CHARM);
-  VramCache_Load(sprite->slot, 128, buffer + 1024);
+  VramCache_Load(sprite->slot, 128, glyph->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   GameFlag_Set(FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN);
   gShipRooms_AnchorObject = actor;

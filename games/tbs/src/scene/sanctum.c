@@ -1884,7 +1884,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
                                   s32 fixedZ) {
   struct Actor *icon;
   struct Sprite *sprite;
-  u8 *transferBuffer;
+  GlyphTransfer *glyph;
   u32 frame;
 
   icon = FieldActor_Create(SPRITE_BLANK, fixedX, fixedY, fixedZ);
@@ -1900,10 +1900,9 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
       sprite->image.palette = 0;
       icon->velocityY = px(2);
       icon->gravity = px(1) / 4;
-      transferBuffer =
-          HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+      glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
       Icon_DrawItem(item);
-      VramCache_Load(sprite->slot, 128, transferBuffer + 1024);
+      VramCache_Load(sprite->slot, 128, glyph->tiles);
       HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       for (frame = 0; frame < 60; frame++) {
         if (icon->velocityY >= -255 && icon->velocityY <= 255)

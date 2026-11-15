@@ -89,6 +89,13 @@
 #include "system/vram_cache.h"
 #include "text/msg_ids.h"
 
+/// The heat gauge's picture, 36 tiles in two columns of 18; its tile buffer
+/// holds two, the bar and then the frame laid over it.
+#define HEAT_GAUGE_TILE_BYTES (36 * TILE_SIZE_4BPP)
+/// The heat gauge's levels: the party's steps scaled from 0 to
+/// HEAT_GAUGE_LEVELS by the area's hazard limit.
+#define HEAT_GAUGE_LEVELS 120
+
 /// The VRAM cache entry holding the gauge's tiles.
 s16 gHeatGauge_VramSlot BSS_DATA ALIGNED(16);
 u8 gLamakanDesert_UnusedAfterGaugeSlot[14] BSS_DATA;
@@ -97,7 +104,7 @@ u8 gLamakanDesert_UnusedAfterGaugeSlot[14] BSS_DATA;
 struct MenuSprite gHeatGauge_Sprites[5] BSS_DATA;
 u8 gLamakanDesert_UnusedAfterGaugeSprites[20] BSS_DATA;
 /// The gauge's decoded tiles, which each frame's drawing starts from.
-u8 gHeatGauge_TileBuffer[2304] BSS_DATA;
+u8 gHeatGauge_TileBuffer[2 * HEAT_GAUGE_TILE_BYTES] BSS_DATA;
 /// 1 while the gauge is held on screen (HeatGauge_SetHeld).
 s16 gHeatGauge_Held BSS_DATA;
 
@@ -1026,7 +1033,7 @@ static void HeatGauge_Draw(void) {
     }
   }
 
-  buffer = Heap_Alloc(2304);
+  buffer = Heap_Alloc(sizeof(gHeatGauge_TileBuffer));
   Dma_Set(gHeatGauge_Palette, buffer, DMA_COPY_HALFWORDS(16), REG_DMA3);
   colors = (s16 *)buffer + 6;
   color = colors;
@@ -1040,7 +1047,7 @@ static void HeatGauge_Draw(void) {
     red += level / 3;
     blue = blue - level / 6 + 20;
     if (level > 60 && (gFrameCount & 1)) {
-      green += level * 64 / 120 - 32;
+      green += level * 64 / HEAT_GAUGE_LEVELS - 32;
     }
     if (red > RGB_LEVEL_MAX) {
       red = RGB_LEVEL_MAX;
@@ -1059,10 +1066,10 @@ static void HeatGauge_Draw(void) {
   IoWriteQueue_Store32((u32)palette++, *word++);
   IoWriteQueue_Store32((u32)palette++, *word++);
 
-  gHeatGaugeLevel =
-      gMainRoutineWork.hazardSteps * 120 / gMainRoutineWork.hazardLimit;
-  if (gHeatGaugeLevel > 118) {
-    gHeatGaugeFlash = 119;
+  gHeatGaugeLevel = gMainRoutineWork.hazardSteps * HEAT_GAUGE_LEVELS /
+                    gMainRoutineWork.hazardLimit;
+  if (gHeatGaugeLevel >= HEAT_GAUGE_LEVELS - 1) {
+    gHeatGaugeFlash = HEAT_GAUGE_LEVELS - 1;
   }
   if (gHeatGaugeFlash != 0) {
     gHeatGaugeLevel = gHeatGaugeFlash;
@@ -1074,11 +1081,12 @@ static void HeatGauge_Draw(void) {
 
   // The gauge's tiles, two 8-pixel columns of 4-bit pixels: fill the bar from
   // its top down to the heat level, then close it with the top's first row.
-  Dma_Set(gHeatGauge_TileBuffer, buffer, DMA_COPY_WORDS(576), REG_DMA3);
-  if (gHeatGaugeFlash <= 118) {
+  Dma_Set(gHeatGauge_TileBuffer, buffer,
+          DMA_COPY_WORDS(sizeof(gHeatGauge_TileBuffer) / 4), REG_DMA3);
+  if (gHeatGaugeFlash < HEAT_GAUGE_LEVELS - 1) {
     pixels = (u32 *)buffer + 20;
     {
-      u32 fill = 0xeeeeeeee;
+      u32 fill = PIXELS_4BPP(14);
 
       for (i = 12; i < 128 - gHeatGaugeLevel; i++) {
         pixels[8] = fill;
@@ -1093,8 +1101,8 @@ static void HeatGauge_Draw(void) {
   }
   // Lay the frame's opaque pixels over the bar.
   bar = buffer;
-  frame = buffer + 1152;
-  for (i = 0; i < 1152; i++) {
+  frame = buffer + HEAT_GAUGE_TILE_BYTES;
+  for (i = 0; i < HEAT_GAUGE_TILE_BYTES; i++) {
     u8 pixel = *frame++;
 
     if (pixel != 0) {
@@ -1102,7 +1110,7 @@ static void HeatGauge_Draw(void) {
     }
     bar++;
   }
-  VramCache_Load(gHeatGauge_VramSlot, 1152, buffer);
+  VramCache_Load(gHeatGauge_VramSlot, HEAT_GAUGE_TILE_BYTES, buffer);
 
   // Four 16x32 sprites down the screen's left edge and the 16x16 cap at the
   // gauge's foot.
@@ -1130,7 +1138,7 @@ static void HeatGauge_Draw(void) {
 void HeatGauge_Start(void) {
   FieldDecompress_TaggedLz(gHeatGauge_Tiles, gHeatGauge_TileBuffer);
   gHeatGauge_VramSlot = VramCache_FindFreeEntry();
-  VramCache_Load(gHeatGauge_VramSlot, 1152, 0);
+  VramCache_Load(gHeatGauge_VramSlot, HEAT_GAUGE_TILE_BYTES, 0);
   gHeatGaugeSlide = 0;
   gHeatGauge_Held = 0;
   Task_AddFrame(HeatGauge_Draw, TASK_PASS_FRAME - 10);

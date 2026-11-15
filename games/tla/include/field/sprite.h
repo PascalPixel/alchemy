@@ -196,6 +196,13 @@ enum ActorAnimation {
   /// ANIM_STAND's idle with more glances to each side, as when the leader's
   /// step is blocked.
   ANIM_LEADER_LOOK_AROUND = 9,
+  ANIM_LEADER_CLIMB = 10, ///< climbing a wall, seen from behind
+  /// Stepping off the top of a ladder onto the ground above.
+  ANIM_LEADER_CLIMB_OVER_TOP = 11,
+  ANIM_LEADER_CLING = 12, ///< still on a wall, seen from behind
+  /// ANIM_LEADER_CLIMB_OVER_TOP played backwards: stepping from the top of a
+  /// ladder onto its rungs.
+  ANIM_LEADER_CLIMB_DOWN_FROM_TOP = 13,
   ANIM_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
   /// The arrivals and leavings of the animated exits, each four frames of the
   /// leader turning: an arrival grows from a small figure seen side-on to full

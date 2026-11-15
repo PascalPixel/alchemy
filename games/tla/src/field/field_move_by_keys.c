@@ -638,7 +638,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   collision |= PLAYER_STEP_BLOCKED_BY_MAP;
   // Up against a face more than 8 pixels high: start climbing it.
   if ((gInput.held & KEY_UP) && groundAhead > y + px(8)) {
-    cellX = (position.x & FIELD_CELL_MASK) + 0x80000;
+    cellX = (position.x & FIELD_CELL_MASK) + px(8);
     cellZ = (position.z & FIELD_CELL_MASK) + 0xfff80000;
 
     if (MapGrid_IsClimbableCellFar(cellX, cellZ, 2)) {
@@ -654,7 +654,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   }
   // Down at a drop: climb down the face south of the cell.
   if (gInput.held & KEY_DOWN) {
-    cellX = (actor->x.fixed & FIELD_CELL_MASK) + 0x80000;
+    cellX = (actor->x.fixed & FIELD_CELL_MASK) + px(8);
     cellZ = (actor->z.fixed & FIELD_CELL_MASK) + 0x180000;
 
     if (MapGrid_GetTerrainHeight(*terrainId, cellX, cellZ) < y &&

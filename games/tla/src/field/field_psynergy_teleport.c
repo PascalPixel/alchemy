@@ -200,7 +200,7 @@ void Teleport_PlaySparks(void) {
     particle->timer = -1;
   }
   wait(10);
-  Actor_FaceDirectionById(owner, 0x4000, 0);
+  Actor_FaceDirectionById(owner, FACING_SOUTH, 0);
   wait(20);
   Actor_SelectAnimationFar(object, 28);
   object->update = Actor_ApplyRandomChildValues;

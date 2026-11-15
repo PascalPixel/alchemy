@@ -335,7 +335,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
       break;
     case 2:
       if (timer == 0) {
-        Actor_FaceDirectionById(ownerId, 0x4000, 0);
+        Actor_FaceDirectionById(ownerId, FACING_SOUTH, 0);
         break;
       }
       if (owner->script[owner->scriptCursor] == 17) {

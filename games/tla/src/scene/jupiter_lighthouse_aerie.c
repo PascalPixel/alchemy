@@ -1004,76 +1004,12 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *object, u32 value);
 
-void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                       s32 velocityZ, u32 flags,
-                       const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct FieldEffect *effect;
-  struct FieldSprite *sprite;
-  const s32 *script;
-
-  if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = ((struct FieldEffect *)Import_ActorCreate(options->type, x, y, z));
-  else
-    effect =
-        ((struct FieldEffect *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z));
-  if (effect == 0)
-    return;
-
-  sprite = effect->sprite;
-  Import_ActorSelectAnimation(effect, (flags + 1) & EFFECT_SCRIPT_MASK);
-  Actor_StartScript(effect,
-                    gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
-  effect->motionFlags = 0;
-  Actor_SetSpriteFlags(effect, 0);
-  effect->update = FieldEffect_UpdateMotionScaleAndSpin;
-  effect->velocity.x = velocityX;
-  effect->velocity.y = velocityY;
-  effect->velocity.z = velocityZ;
-  Scene_SetActorSpritePriority(effect,
-                               ((struct FieldSprite *)party->sprite)->priority);
-  effect->scaleRateX = 0;
-  effect->scaleRateY = 0;
-  effect->spin = 0;
-
-  if ((flags & 0xffff0000) == 0 || options == 0)
-    return;
-  if ((flags & EFFECT_USE_PALETTE) != 0)
-    FieldActor_SetSpriteColor(effect, options->palette);
-  if ((flags & EFFECT_USE_PRIORITY) != 0) {
-    effect->priorityFlags &= ~1;
-    Scene_SetActorSpritePriority(effect, options->priority);
-  }
-  if ((flags & EFFECT_USE_START_SCALE) != 0) {
-    effect->scaleX = options->startScaleX;
-    effect->scaleY = options->startScaleY;
-  }
-  if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
-    s32 target;
-    s32 frames;
-
-    script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
-    target = options->targetScaleX;
-    frames = script[3];
-    if ((flags & EFFECT_USE_START_SCALE) != 0) {
-      effect->scaleRateX = (target - effect->scaleX) / frames;
-      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
-    } else {
-      effect->scaleRateX = (target - Q16_ONE) / frames;
-      effect->scaleRateY = (options->targetScaleY - Q16_ONE) / script[3];
-    }
-  }
-  if ((flags & EFFECT_USE_SCRIPT) != 0) {
-    Import_ActorSelectAnimation(effect, 1);
-    Actor_StartScript(effect, options->script);
-  }
-  if ((flags & EFFECT_USE_ROTATION) != 0)
-    sprite->rotation = options->rotation;
-  if ((flags & EFFECT_USE_SPIN) != 0)
-    effect->spin = options->spin;
-  if ((flags & EFFECT_USE_UPDATE) != 0)
-    effect->update = options->update;
-}
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SET_MODE Import_ActorSelectAnimation
+#define EFFECT_SET_SCRIPT Actor_StartScript
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+#include "../field/field_effect_spawn.c"
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"

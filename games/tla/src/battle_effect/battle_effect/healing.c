@@ -5,15 +5,35 @@
 #include "../battle_effect_internal.h"
 #include "sounds.h"
 
-DEFINE_EFFECT_KIND(BattleEffect_RunPly, BattleEffect_RunHealingMotes, 0)
+/// Abilities: Ply, Ply Well, Pure Ply, Herb,
+/// Nut, Vial, Potion,
+/// Soothing Water, Pixie, Faery, Weird Nymph, Succubus,
+/// Earnest Ply, Fizz.
+void BattleEffect_RunPly(struct BattleEffectParams *args) {
+  BattleEffect_RunHealingMotes(args, 0);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunWish, BattleEffect_RunHealingMotes, 1)
+/// Abilities: Wish, Wish Well, Pure Wish, Mist Potion, Elder
+/// Wood, Estre Wood, Regenerate, Reflect, Spritz.
+void BattleEffect_RunWish(struct BattleEffectParams *args) {
+  BattleEffect_RunHealingMotes(args, 1);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunCure, BattleEffect_RunHealingMotes, 2)
+/// Abilities: Cure, Cure Well, Potent Cure, Corn, Flower,
+/// Worms.
+void BattleEffect_RunCure(struct BattleEffectParams *args) {
+  BattleEffect_RunHealingMotes(args, 2);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunSpring, BattleEffect_RunHealingMotes, 8)
+/// Abilities: Spring.
+void BattleEffect_RunSpring(struct BattleEffectParams *args) {
+  BattleEffect_RunHealingMotes(args, 8);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunBreath, BattleEffect_RunHealingMotes, 9)
+/// Abilities: Breath.
+void BattleEffect_RunBreath(struct BattleEffectParams *args) {
+  BattleEffect_RunHealingMotes(args, 9);
+}
 
 /// Sparkles twinkle around each target, four more a frame, and go out one by
 /// one instead of closing in.
@@ -27,20 +47,40 @@ void BattleEffect_RunCurePoison(struct BattleEffectParams *args) {
   BattleEffect_RunHealingMotes(args, 4);
 }
 
-DEFINE_EFFECT_KIND(BattleEffect_RunHealingMotesMode4,
-                   BattleEffect_RunHealingMotes, 4)
+/// Unused: no ability's effect names it.
+void BattleEffect_RunHealingMotesMode4(struct BattleEffectParams *args) {
+  BattleEffect_RunHealingMotes(args, 4);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunTonic, BattleEffect_RunHealingMotes, 5)
+/// Abilities: Tonic.
+void BattleEffect_RunTonic(struct BattleEffectParams *args) {
+  BattleEffect_RunHealingMotes(args, 5);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunSalt, BattleEffect_RunHealingMotes, 7)
+/// Abilities: Salt.
+void BattleEffect_RunSalt(struct BattleEffectParams *args) {
+  BattleEffect_RunHealingMotes(args, 7);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunPsyCrystal, BattleEffect_RunHealingMotes, 6)
+/// Abilities: Psy Crystal, Adept Ring, Ember.
+void BattleEffect_RunPsyCrystal(struct BattleEffectParams *args) {
+  BattleEffect_RunHealingMotes(args, 6);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunEther, BattleEffect_RunHealingMotes, 10)
+/// Abilities: Ether.
+void BattleEffect_RunEther(struct BattleEffectParams *args) {
+  BattleEffect_RunHealingMotes(args, 10);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunAura, BattleEffect_RunHealingMotes, 11)
+/// Abilities: Aura, Healing Aura, Cool Aura, Manticore.
+void BattleEffect_RunAura(struct BattleEffectParams *args) {
+  BattleEffect_RunHealingMotes(args, 11);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunEddy, BattleEffect_RunHealingMotes, 12)
+/// Abilities: Eddy.
+void BattleEffect_RunEddy(struct BattleEffectParams *args) {
+  BattleEffect_RunHealingMotes(args, 12);
+}
 
 /// Motes of light scattered around each target swirl in towards it.
 ///

@@ -927,10 +927,14 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
 }
 
 /// Abilities: Heavy Divide.
-DEFINE_EFFECT_KIND(BattleEffect_RunHeavyDivide, BattleEffect_RunHeavyBlow, 0)
+void BattleEffect_RunHeavyDivide(struct BattleEffectParams *args) {
+  BattleEffect_RunHeavyBlow(args, 0);
+}
 
 /// Abilities: Strong Hit.
-DEFINE_EFFECT_KIND(BattleEffect_RunStrongHit, BattleEffect_RunHeavyBlow, 1)
+void BattleEffect_RunStrongHit(struct BattleEffectParams *args) {
+  BattleEffect_RunHeavyBlow(args, 1);
+}
 #undef BLITTER
 #undef ROCKS
 #undef SPARK_OFFSET

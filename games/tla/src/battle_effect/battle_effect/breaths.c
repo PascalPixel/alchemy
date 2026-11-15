@@ -461,10 +461,14 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
 }
 
 /// Abilities: Human Hunt.
-DEFINE_EFFECT_KIND(BattleEffect_RunHumanHunt, BattleEffect_RunCrescentSlash, 0)
+void BattleEffect_RunHumanHunt(struct BattleEffectParams *args) {
+  BattleEffect_RunCrescentSlash(args, 0);
+}
 
 /// Abilities: Echo Cut.
-DEFINE_EFFECT_KIND(BattleEffect_RunEchoCut, BattleEffect_RunCrescentSlash, 1)
+void BattleEffect_RunEchoCut(struct BattleEffectParams *args) {
+  BattleEffect_RunCrescentSlash(args, 1);
+}
 
 // Does nothing and gives no value: inlined with its value ignored, it leaves
 // only a clobber of the return register, an insn with no code.

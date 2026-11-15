@@ -46,13 +46,19 @@ void BattleEffect_FetchRectangleBlitters(s32 flip, void **out) {
 }
 
 /// Abilities: Revive, Water of Life, Lich; Quartz.
-DEFINE_EFFECT_KIND(BattleEffect_RunRevive, BattleEffect_RunDjinnBeams, 0)
+void BattleEffect_RunRevive(struct BattleEffectParams *args) {
+  BattleEffect_RunDjinnBeams(args, 0);
+}
 
 /// Abilities: Dew.
-DEFINE_EFFECT_KIND(BattleEffect_RunDew, BattleEffect_RunDjinnBeams, 1)
+void BattleEffect_RunDew(struct BattleEffectParams *args) {
+  BattleEffect_RunDjinnBeams(args, 1);
+}
 
 /// Abilities: Spark.
-DEFINE_EFFECT_KIND(BattleEffect_RunSpark, BattleEffect_RunDjinnBeams, 2)
+void BattleEffect_RunSpark(struct BattleEffectParams *args) {
+  BattleEffect_RunDjinnBeams(args, 2);
+}
 
 // The pictures in the work sheet, after the beam (EarthWallSheet).
 #define PIC_MOTE 0x2710  ///< the crescent motes, 24 x 24
@@ -254,35 +260,54 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 mode) {
 }
 
 /// Abilities: Mad Spatter.
-DEFINE_EFFECT_KIND(BattleEffect_RunMadSpatter, BattleEffect_RunLobbedShells, 4)
+void BattleEffect_RunMadSpatter(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, 4);
+}
 
 /// Abilities: Mud.
-DEFINE_EFFECT_KIND(BattleEffect_RunMud, BattleEffect_RunLobbedShells, 7)
+void BattleEffect_RunMud(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, 7);
+}
 
 /// Abilities: Decompose.
-DEFINE_EFFECT_KIND(BattleEffect_RunDecompose, BattleEffect_RunLobbedShells, 5)
+void BattleEffect_RunDecompose(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, 5);
+}
 
 /// Abilities: Bone Chiller.
-DEFINE_EFFECT_KIND(BattleEffect_RunBoneChiller, BattleEffect_RunLobbedShells, 0)
+void BattleEffect_RunBoneChiller(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, 0);
+}
 
 /// Abilities: Sticky Goo.
-DEFINE_EFFECT_KIND(BattleEffect_RunStickyGoo, BattleEffect_RunLobbedShells, 1)
+void BattleEffect_RunStickyGoo(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, 1);
+}
 
 /// Abilities: Poison Ink.
-DEFINE_EFFECT_KIND(BattleEffect_RunPoisonInk, BattleEffect_RunLobbedShells, 6)
+void BattleEffect_RunPoisonInk(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, 6);
+}
 
 /// Abilities: Sticky Poison.
-DEFINE_EFFECT_KIND(BattleEffect_RunStickyPoison, BattleEffect_RunLobbedShells,
-                   2)
+void BattleEffect_RunStickyPoison(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, 2);
+}
 
 /// Abilities: Rotten Blood.
-DEFINE_EFFECT_KIND(BattleEffect_RunRottenBlood, BattleEffect_RunLobbedShells, 3)
+void BattleEffect_RunRottenBlood(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, 3);
+}
 
 /// Abilities: Rising Venom.
-DEFINE_EFFECT_KIND(BattleEffect_RunRisingVenom, BattleEffect_RunLobbedShells, 8)
+void BattleEffect_RunRisingVenom(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, 8);
+}
 
 /// Abilities: Formic Acid.
-DEFINE_EFFECT_KIND(BattleEffect_RunFormicAcid, BattleEffect_RunLobbedShells, 9)
+void BattleEffect_RunFormicAcid(struct BattleEffectParams *args) {
+  BattleEffect_RunLobbedShells(args, 9);
+}
 
 // The shots live in the map buffer, 16 for each target, and the bursts
 // after them, 32 for each target.

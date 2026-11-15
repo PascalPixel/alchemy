@@ -210,34 +210,54 @@ void BattleEffect_RunDjinniSign(struct BattleEffectParams *args, s32 mode) {
 }
 
 /// Abilities: Gasp.
-DEFINE_EFFECT_KIND(BattleEffect_RunGasp, BattleEffect_RunGaspFamily, 0)
+void BattleEffect_RunGasp(struct BattleEffectParams *args) {
+  BattleEffect_RunGaspFamily(args, 0);
+}
 
 /// Abilities: Reflux.
-DEFINE_EFFECT_KIND(BattleEffect_RunReflux, BattleEffect_RunGaspFamily, 2)
+void BattleEffect_RunReflux(struct BattleEffectParams *args) {
+  BattleEffect_RunGaspFamily(args, 2);
+}
 
 /// Abilities: Djinn Counter.
-DEFINE_EFFECT_KIND(BattleEffect_RunDjinnCounter, BattleEffect_RunGaspFamily, 3)
+void BattleEffect_RunDjinnCounter(struct BattleEffectParams *args) {
+  BattleEffect_RunGaspFamily(args, 3);
+}
 
 /// Abilities: Counter-rush.
-DEFINE_EFFECT_KIND(BattleEffect_RunCounterRush, BattleEffect_RunGaspFamily, 7)
+void BattleEffect_RunCounterRush(struct BattleEffectParams *args) {
+  BattleEffect_RunGaspFamily(args, 7);
+}
 
 /// Abilities: Mold.
-DEFINE_EFFECT_KIND(BattleEffect_RunMold, BattleEffect_RunGaspFamily, 4)
+void BattleEffect_RunMold(struct BattleEffectParams *args) {
+  BattleEffect_RunGaspFamily(args, 4);
+}
 
 /// Abilities: Meld.
-DEFINE_EFFECT_KIND(BattleEffect_RunMeld, BattleEffect_RunGaspFamily, 4)
+void BattleEffect_RunMeld(struct BattleEffectParams *args) {
+  BattleEffect_RunGaspFamily(args, 4);
+}
 
 /// Abilities: Shine.
-DEFINE_EFFECT_KIND(BattleEffect_RunShine, BattleEffect_RunGaspFamily, 5)
+void BattleEffect_RunShine(struct BattleEffectParams *args) {
+  BattleEffect_RunGaspFamily(args, 5);
+}
 
 /// Abilities: Lull.
-DEFINE_EFFECT_KIND(BattleEffect_RunLull, BattleEffect_RunGaspFamily, 6)
+void BattleEffect_RunLull(struct BattleEffectParams *args) {
+  BattleEffect_RunGaspFamily(args, 6);
+}
 
 /// Abilities: Demon Eye.
-DEFINE_EFFECT_KIND(BattleEffect_RunDemonEye, BattleEffect_RunGaspFamily, 8)
+void BattleEffect_RunDemonEye(struct BattleEffectParams *args) {
+  BattleEffect_RunGaspFamily(args, 8);
+}
 
 /// Abilities: Emu, Call Demon, Claw Slash, Mega Slash, Vital Moon.
-DEFINE_EFFECT_KIND(BattleEffect_RunEmu, BattleEffect_RunGaspFamily, 9)
+void BattleEffect_RunEmu(struct BattleEffectParams *args) {
+  BattleEffect_RunGaspFamily(args, 9);
+}
 
 /// Abilities: Call Dullahan, Formina Sage.
 void BattleEffect_RunCallDullahan(struct BattleEffectParams *args) {
@@ -245,19 +265,29 @@ void BattleEffect_RunCallDullahan(struct BattleEffectParams *args) {
 }
 
 /// Abilities: Beat Dance.
-DEFINE_EFFECT_KIND(BattleEffect_RunBeatDance, BattleEffect_RunGaspFamily, 11)
+void BattleEffect_RunBeatDance(struct BattleEffectParams *args) {
+  BattleEffect_RunGaspFamily(args, 11);
+}
 
 /// Abilities: Clarion Cry.
-DEFINE_EFFECT_KIND(BattleEffect_RunClarionCry, BattleEffect_RunGaspFamily, 14)
+void BattleEffect_RunClarionCry(struct BattleEffectParams *args) {
+  BattleEffect_RunGaspFamily(args, 14);
+}
 
 /// Abilities: Element Swap.
-DEFINE_EFFECT_KIND(BattleEffect_RunElementSwap, BattleEffect_RunGaspFamily, 12)
+void BattleEffect_RunElementSwap(struct BattleEffectParams *args) {
+  BattleEffect_RunGaspFamily(args, 12);
+}
 
 /// Abilities: Psy Boost.
-DEFINE_EFFECT_KIND(BattleEffect_RunPsyBoost, BattleEffect_RunGaspFamily, 15)
+void BattleEffect_RunPsyBoost(struct BattleEffectParams *args) {
+  BattleEffect_RunGaspFamily(args, 15);
+}
 
 /// Abilities: Cage.
-DEFINE_EFFECT_KIND(BattleEffect_RunCage, BattleEffect_RunGaspFamily, 13)
+void BattleEffect_RunCage(struct BattleEffectParams *args) {
+  BattleEffect_RunGaspFamily(args, 13);
+}
 #undef BLITTER
 #undef DJINNI_OFFSET
 #undef CRYSTAL_OFFSET

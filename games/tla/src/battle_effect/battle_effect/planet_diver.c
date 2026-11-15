@@ -238,18 +238,24 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
 }
 
 /// Abilities: Demon Night.
-DEFINE_EFFECT_KIND(BattleEffect_RunDemonNight, BattleEffect_RunGatheringLights,
-                   0)
+void BattleEffect_RunDemonNight(struct BattleEffectParams *args) {
+  BattleEffect_RunGatheringLights(args, 0);
+}
 
 /// Abilities: Rumble.
-DEFINE_EFFECT_KIND(BattleEffect_RunRumble, BattleEffect_RunGatheringLights, 1)
+void BattleEffect_RunRumble(struct BattleEffectParams *args) {
+  BattleEffect_RunGatheringLights(args, 1);
+}
 
 /// Abilities: Haunting.
-DEFINE_EFFECT_KIND(BattleEffect_RunHaunting, BattleEffect_RunGatheringLights, 2)
+void BattleEffect_RunHaunting(struct BattleEffectParams *args) {
+  BattleEffect_RunGatheringLights(args, 2);
+}
 
 /// Abilities: Thorny Grave.
-DEFINE_EFFECT_KIND(BattleEffect_RunThornyGrave, BattleEffect_RunGatheringLights,
-                   3)
+void BattleEffect_RunThornyGrave(struct BattleEffectParams *args) {
+  BattleEffect_RunGatheringLights(args, 3);
+}
 
 #define MOTES_PER_TARGET 128
 #define MOTE_CELL (20 * 32)

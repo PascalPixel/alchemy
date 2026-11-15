@@ -386,8 +386,12 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
 }
 
 /// Abilities: Rime.
-DEFINE_EFFECT_KIND(BattleEffect_RunRime, BattleEffect_RunDjinniSign, 0)
+void BattleEffect_RunRime(struct BattleEffectParams *args) {
+  BattleEffect_RunDjinniSign(args, 0);
+}
 
 /// Abilities: Haze.
-DEFINE_EFFECT_KIND(BattleEffect_RunHaze, BattleEffect_RunDjinniSign, 1)
+void BattleEffect_RunHaze(struct BattleEffectParams *args) {
+  BattleEffect_RunDjinniSign(args, 1);
+}
 #undef BLITTER

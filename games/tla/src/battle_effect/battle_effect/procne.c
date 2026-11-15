@@ -527,10 +527,14 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 }
 
 /// Abilities: Dragon Driver.
-DEFINE_EFFECT_KIND(BattleEffect_RunDragonDriver, BattleEffect_RunDragonFire, 1)
+void BattleEffect_RunDragonDriver(struct BattleEffectParams *args) {
+  BattleEffect_RunDragonFire(args, 1);
+}
 
 /// Abilities: Tiamat.
-DEFINE_EFFECT_KIND(BattleEffect_RunTiamat, BattleEffect_RunDragonFire, 0)
+void BattleEffect_RunTiamat(struct BattleEffectParams *args) {
+  BattleEffect_RunDragonFire(args, 0);
+}
 
 #undef FORMATION_RESOURCE
 

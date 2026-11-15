@@ -423,11 +423,14 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
 }
 
 /// Abilities: Planet Diver.
-DEFINE_EFFECT_KIND(BattleEffect_RunPlanetDiver, BattleEffect_RunLeapingStrike,
-                   0)
+void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
+  BattleEffect_RunLeapingStrike(args, 0);
+}
 
 /// Abilities: Planetary.
-DEFINE_EFFECT_KIND(BattleEffect_RunPlanetary, BattleEffect_RunLeapingStrike, 1)
+void BattleEffect_RunPlanetary(struct BattleEffectParams *args) {
+  BattleEffect_RunLeapingStrike(args, 1);
+}
 
 #define LEAP_FRAMES 88
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x6000))

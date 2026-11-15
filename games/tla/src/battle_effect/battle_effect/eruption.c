@@ -6,10 +6,14 @@
 #include "sounds.h"
 
 /// Abilities: Smoke Bomb, Sleep Bomb.
-DEFINE_EFFECT_KIND(BattleEffect_RunSmokeBomb, BattleEffect_RunEruption, 1)
+void BattleEffect_RunSmokeBomb(struct BattleEffectParams *args) {
+  BattleEffect_RunEruption(args, 1);
+}
 
 /// Abilities: Blast, Mad Blast, Fiery Blast.
-DEFINE_EFFECT_KIND(BattleEffect_RunBlast, BattleEffect_RunEruption, 0)
+void BattleEffect_RunBlast(struct BattleEffectParams *args) {
+  BattleEffect_RunEruption(args, 0);
+}
 
 #define MOTE_SHEET 0x3200 ///< the mote pictures in the sheet
 

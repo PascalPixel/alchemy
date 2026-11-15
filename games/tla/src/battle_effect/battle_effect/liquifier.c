@@ -331,7 +331,10 @@ void BattleEffect_RunCanvasModeByCount(struct BattleEffectParams *args) {
     BattleEffect_RunCanvasBurst(args, 1);
 }
 
-DEFINE_EFFECT_KIND(BattleEffect_RunShred, BattleEffect_RunCanvasBurst, 0)
+/// Abilities: Fog, Shred.
+void BattleEffect_RunShred(struct BattleEffectParams *args) {
+  BattleEffect_RunCanvasBurst(args, 0);
+}
 
 /// From the user's action pose, a glowing ball flies to the targets' midpoint
 /// and bursts.

@@ -267,16 +267,24 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
 }
 
 /// Abilities: Bramble Card.
-DEFINE_EFFECT_KIND(BattleEffect_RunBrambleCard, BattleEffect_RunElementCards, 0)
+void BattleEffect_RunBrambleCard(struct BattleEffectParams *args) {
+  BattleEffect_RunElementCards(args, 0);
+}
 
 /// Abilities: Frost Card.
-DEFINE_EFFECT_KIND(BattleEffect_RunFrostCard, BattleEffect_RunElementCards, 1)
+void BattleEffect_RunFrostCard(struct BattleEffectParams *args) {
+  BattleEffect_RunElementCards(args, 1);
+}
 
 /// Abilities: Flame Card.
-DEFINE_EFFECT_KIND(BattleEffect_RunFlameCard, BattleEffect_RunElementCards, 2)
+void BattleEffect_RunFlameCard(struct BattleEffectParams *args) {
+  BattleEffect_RunElementCards(args, 2);
+}
 
 /// Abilities: Thunder Card.
-DEFINE_EFFECT_KIND(BattleEffect_RunThunderCard, BattleEffect_RunElementCards, 3)
+void BattleEffect_RunThunderCard(struct BattleEffectParams *args) {
+  BattleEffect_RunElementCards(args, 3);
+}
 
 // The four cards, as the wrappers pass them.
 enum {
@@ -683,16 +691,24 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
 }
 
 /// Abilities: Sleep Card.
-DEFINE_EFFECT_KIND(BattleEffect_RunSleepCard, BattleEffect_RunCards, 0)
+void BattleEffect_RunSleepCard(struct BattleEffectParams *args) {
+  BattleEffect_RunCards(args, 0);
+}
 
 /// Abilities: Baffle Card.
-DEFINE_EFFECT_KIND(BattleEffect_RunBaffleCard, BattleEffect_RunCards, 1)
+void BattleEffect_RunBaffleCard(struct BattleEffectParams *args) {
+  BattleEffect_RunCards(args, 1);
+}
 
 /// Abilities: Death Card.
-DEFINE_EFFECT_KIND(BattleEffect_RunDeathCard, BattleEffect_RunCards, 2)
+void BattleEffect_RunDeathCard(struct BattleEffectParams *args) {
+  BattleEffect_RunCards(args, 2);
+}
 
 /// Abilities: Sword Card.
-DEFINE_EFFECT_KIND(BattleEffect_RunSwordCard, BattleEffect_RunCards, 3)
+void BattleEffect_RunSwordCard(struct BattleEffectParams *args) {
+  BattleEffect_RunCards(args, 3);
+}
 #undef BLITTER
 #undef SPARKS
 #undef SPARK_COUNT

@@ -171,7 +171,9 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
 }
 
 /// Abilities: Beam, Cycle Beam, Searing Beam.
-DEFINE_EFFECT_KIND(BattleEffect_RunBeam, BattleEffect_RunBreaths, 0)
+void BattleEffect_RunBeam(struct BattleEffectParams *args) {
+  BattleEffect_RunBreaths(args, 0);
+}
 
 /// Abilities: Rolling Flame.
 void BattleEffect_RunRollingFlame(struct BattleEffectParams *args) {
@@ -186,7 +188,9 @@ void BattleEffect_RunGhostSoldier(struct BattleEffectParams *args) {
 }
 
 /// Abilities: Blast Breath.
-DEFINE_EFFECT_KIND(BattleEffect_RunBlastBreath, BattleEffect_RunBreaths, 3)
+void BattleEffect_RunBlastBreath(struct BattleEffectParams *args) {
+  BattleEffect_RunBreaths(args, 3);
+}
 #undef BLITTER
 #undef SPARKS
 #undef SPARK_COUNT

@@ -169,10 +169,14 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
 
 /// Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb
 ///.
-DEFINE_EFFECT_KIND(BattleEffect_RunNova, BattleEffect_RunSparkGroups, 0)
+void BattleEffect_RunNova(struct BattleEffectParams *args) {
+  BattleEffect_RunSparkGroups(args, 0);
+}
 
 /// Abilities: Dynamite, Angry Mine.
-DEFINE_EFFECT_KIND(BattleEffect_RunDynamite, BattleEffect_RunSparkGroups, 1)
+void BattleEffect_RunDynamite(struct BattleEffectParams *args) {
+  BattleEffect_RunSparkGroups(args, 1);
+}
 
 #define FLASH_POINTS 16 ///< flash points kept for each group
 #define FLASH_DRAWN 12  ///< of which the first 12 are drawn

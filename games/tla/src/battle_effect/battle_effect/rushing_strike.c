@@ -650,10 +650,14 @@ void BattleEffect_RunBruteForce(struct BattleEffectParams *args) {
 }
 
 /// Abilities: Onslaught.
-DEFINE_EFFECT_KIND(BattleEffect_RunOnslaught, BattleEffect_RunRushingStrike, 2)
+void BattleEffect_RunOnslaught(struct BattleEffectParams *args) {
+  BattleEffect_RunRushingStrike(args, 2);
+}
 
 /// Abilities: Headbutt.
-DEFINE_EFFECT_KIND(BattleEffect_RunHeadbutt, BattleEffect_RunRushingStrike, 3)
+void BattleEffect_RunHeadbutt(struct BattleEffectParams *args) {
+  BattleEffect_RunRushingStrike(args, 3);
+}
 
 /// Abilities: Stun Muscle.
 void BattleEffect_RunStunMuscle(struct BattleEffectParams *args) {

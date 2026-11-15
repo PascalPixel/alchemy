@@ -608,11 +608,14 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
 }
 
 /// The particle streams in mode 0.
-DEFINE_EFFECT_KIND(BattleEffect_RunMeteor, BattleEffect_RunParticleStreams, 0)
+void BattleEffect_RunMeteor(struct BattleEffectParams *args) {
+  BattleEffect_RunParticleStreams(args, 0);
+}
 
 /// The particle streams in mode 1.
-DEFINE_EFFECT_KIND(BattleEffect_RunOuterSpace, BattleEffect_RunParticleStreams,
-                   1)
+void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
+  BattleEffect_RunParticleStreams(args, 1);
+}
 
 #undef EMBERS
 

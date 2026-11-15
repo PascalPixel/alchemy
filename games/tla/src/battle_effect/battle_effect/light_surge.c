@@ -314,19 +314,29 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
 }
 
 /// Abilities: Whorl.
-DEFINE_EFFECT_KIND(BattleEffect_RunWhorl, BattleEffect_RunWaterColumn, 0)
+void BattleEffect_RunWhorl(struct BattleEffectParams *args) {
+  BattleEffect_RunWaterColumn(args, 0);
+}
 
 /// Abilities: Gale.
-DEFINE_EFFECT_KIND(BattleEffect_RunGale, BattleEffect_RunWaterColumn, 1)
+void BattleEffect_RunGale(struct BattleEffectParams *args) {
+  BattleEffect_RunWaterColumn(args, 1);
+}
 
 /// Abilities: Lethe Albion.
-DEFINE_EFFECT_KIND(BattleEffect_RunLetheAlbion, BattleEffect_RunWaterColumn, 2)
+void BattleEffect_RunLetheAlbion(struct BattleEffectParams *args) {
+  BattleEffect_RunWaterColumn(args, 2);
+}
 
 /// Abilities: Poison Flow.
-DEFINE_EFFECT_KIND(BattleEffect_RunPoisonFlow, BattleEffect_RunWaterColumn, 3)
+void BattleEffect_RunPoisonFlow(struct BattleEffectParams *args) {
+  BattleEffect_RunWaterColumn(args, 3);
+}
 
 /// Abilities: Raging Flood.
-DEFINE_EFFECT_KIND(BattleEffect_RunRagingFlood, BattleEffect_RunWaterColumn, 4)
+void BattleEffect_RunRagingFlood(struct BattleEffectParams *args) {
+  BattleEffect_RunWaterColumn(args, 4);
+}
 #undef BLITTER
 #undef LIGHT_SURGE_FRAMES
 #undef SURGE_BOLTS

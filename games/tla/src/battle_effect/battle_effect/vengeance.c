@@ -575,13 +575,20 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
  * of the object has, it does not compile in tla-ja:
  * games/tla/src/battle_effect/battle_effect/vengeance.c:881: structure has no
  * member named `size'. */
-DEFINE_EFFECT_KIND(BattleEffect_RunPurgatory, BattleEffect_RunGeyser, 0)
+/// Abilities: Purgatory.
+void BattleEffect_RunPurgatory(struct BattleEffectParams *args) {
+  BattleEffect_RunGeyser(args, 0);
+}
 
 /// Abilities: Djinn Blast.
-DEFINE_EFFECT_KIND(BattleEffect_RunDjinnBlast, BattleEffect_RunGeyser, 2)
+void BattleEffect_RunDjinnBlast(struct BattleEffectParams *args) {
+  BattleEffect_RunGeyser(args, 2);
+}
 
 /// Abilities: Djinn Storm.
-DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStorm, BattleEffect_RunGeyser, 1)
+void BattleEffect_RunDjinnStorm(struct BattleEffectParams *args) {
+  BattleEffect_RunGeyser(args, 1);
+}
 
 #define GEYSER_FRAMES 54
 #define GEYSER_DRAW_FRAMES 40
@@ -812,10 +819,14 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
 }
 
 /// Abilities: Djinn Stun.
-DEFINE_EFFECT_KIND(BattleEffect_RunDjinnStun, BattleEffect_RunStarSwarm, 0)
+void BattleEffect_RunDjinnStun(struct BattleEffectParams *args) {
+  BattleEffect_RunStarSwarm(args, 0);
+}
 
 /// Abilities: Mystic Call.
-DEFINE_EFFECT_KIND(BattleEffect_RunMysticCall, BattleEffect_RunStarSwarm, 1)
+void BattleEffect_RunMysticCall(struct BattleEffectParams *args) {
+  BattleEffect_RunStarSwarm(args, 1);
+}
 
 #define STARS_PER_TARGET 64 ///< each target's slice of the star buffer
 #define STAR_TOTAL 384

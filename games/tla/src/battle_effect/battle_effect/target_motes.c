@@ -18,19 +18,40 @@ void BattleEffect_RunTaint(struct BattleEffectParams *args) {
   BattleEffect_RunTargetMotes(args, 1);
 }
 
-DEFINE_EFFECT_KIND(BattleEffect_RunPoisonGel, BattleEffect_RunTargetMotes, 1)
+/// Abilities: Poison Gel.
+void BattleEffect_RunPoisonGel(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetMotes(args, 1);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunDelude, BattleEffect_RunTargetMotes, 2)
+/// Abilities: Delude, Confuse, Mist, Mucous Gel.
+void BattleEffect_RunDelude(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetMotes(args, 2);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunParalyze, BattleEffect_RunTargetMotes, 3)
+/// Abilities: Paralyze.
+void BattleEffect_RunParalyze(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetMotes(args, 3);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunHeartrender, BattleEffect_RunTargetMotes, 4)
+/// Abilities: Heartrender.
+void BattleEffect_RunHeartrender(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetMotes(args, 4);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunMysticFlame, BattleEffect_RunTargetMotes, 5)
+/// Abilities: Mystic Flame.
+void BattleEffect_RunMysticFlame(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetMotes(args, 5);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunDemonFire, BattleEffect_RunTargetMotes, 7)
+/// Abilities: Demonfire.
+void BattleEffect_RunDemonFire(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetMotes(args, 7);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunDrown, BattleEffect_RunTargetMotes, 6)
+/// Abilities: Drown.
+void BattleEffect_RunDrown(struct BattleEffectParams *args) {
+  BattleEffect_RunTargetMotes(args, 6);
+}
 
 #define MOTE_MAX 512
 

@@ -40,73 +40,120 @@ void BattleEffect_ArmBg1HBlankDma(void) {
 #define Actor_SetAnimationSpeedFar                                             \
   ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunFireBreath,
-                   BattleEffect_RunProjectileVolleyB, 0)
+/// Abilities: Fire Breath, Salamander, Cerberus, Wyvern, Chimera, Macetail,
+/// Fire Dragon, Flame Breath.
+void BattleEffect_RunFireBreath(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 0);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunToxicBreath,
-                   BattleEffect_RunProjectileVolleyB, 12)
+/// Abilities: Toxic Breath.
+void BattleEffect_RunToxicBreath(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 12);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunWaterBreath,
-                   BattleEffect_RunProjectileVolleyB, 2)
+/// Abilities: Water Breath, Aqua Breath.
+void BattleEffect_RunWaterBreath(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 2);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunDarkBreath,
-                   BattleEffect_RunProjectileVolleyB, 6)
+/// Abilities: Dark Breath.
+void BattleEffect_RunDarkBreath(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 6);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunAcidBreath,
-                   BattleEffect_RunProjectileVolleyB, 3)
+/// Abilities: Acid Breath.
+void BattleEffect_RunAcidBreath(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 3);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunStormBreath,
-                   BattleEffect_RunProjectileVolleyB, 5)
+/// Abilities: Storm Breath.
+void BattleEffect_RunStormBreath(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 5);
+}
 
 /// Storm Breath as its second, stronger row (power 220 against 190) casts it.
 ///
 /// Abilities: Storm Breath.
-DEFINE_EFFECT_KIND(BattleEffect_RunStormBreathStrong,
-                   BattleEffect_RunProjectileVolleyB, 23)
+void BattleEffect_RunStormBreathStrong(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 23);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunEvilBlessing,
-                   BattleEffect_RunProjectileVolleyB, 7)
+/// Abilities: Evil Blessing.
+void BattleEffect_RunEvilBlessing(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 7);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunDarksolGasp,
-                   BattleEffect_RunProjectileVolleyB, 21)
+/// Abilities: Darksol Gasp.
+void BattleEffect_RunDarksolGasp(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 21);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunDeadlyGas, BattleEffect_RunProjectileVolleyB,
-                   4)
+/// Abilities: Deadly Gas.
+void BattleEffect_RunDeadlyGas(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 4);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunPetra, BattleEffect_RunProjectileVolleyB, 8)
+/// Abilities: Petra.
+void BattleEffect_RunPetra(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 8);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunChar, BattleEffect_RunProjectileVolleyB, 24)
+/// Abilities: Char.
+void BattleEffect_RunChar(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 24);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunFury, BattleEffect_RunProjectileVolleyB, 22)
+/// Abilities: Fury.
+void BattleEffect_RunFury(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 22);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunFugue, BattleEffect_RunProjectileVolleyB, 9)
+/// Abilities: Fugue.
+void BattleEffect_RunFugue(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 9);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunSandBreath,
-                   BattleEffect_RunProjectileVolleyB, 13)
+/// Abilities: Sand Breath.
+void BattleEffect_RunSandBreath(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 13);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunDesertGasp,
-                   BattleEffect_RunProjectileVolleyB, 14)
+/// Abilities: Desert Gasp.
+void BattleEffect_RunDesertGasp(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 14);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunBlackIce, BattleEffect_RunProjectileVolleyB,
-                   15)
+/// Abilities: Black Ice.
+void BattleEffect_RunBlackIce(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 15);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunTyphoonBlow,
-                   BattleEffect_RunProjectileVolleyB, 16)
+/// Abilities: Typhoon Blow.
+void BattleEffect_RunTyphoonBlow(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 16);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunDjinnfest, BattleEffect_RunProjectileVolleyB,
-                   17)
+/// Abilities: Djinnfest.
+void BattleEffect_RunDjinnfest(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 17);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunHeatKiss, BattleEffect_RunProjectileVolleyB,
-                   18)
+/// Abilities: Heat Kiss.
+void BattleEffect_RunHeatKiss(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 18);
+}
 
 /// Fire Dance as the Staff unleashes it.
 ///
 /// Abilities: Fire Dance.
-DEFINE_EFFECT_KIND(BattleEffect_RunFireDanceUnleash,
-                   BattleEffect_RunProjectileVolleyB, 19)
+void BattleEffect_RunFireDanceUnleash(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 19);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunGravelBlow,
-                   BattleEffect_RunProjectileVolleyB, 20)
+/// Abilities: Gravel Blow.
+void BattleEffect_RunGravelBlow(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolleyB(args, 20);
+}
 
 /// From the user's action pose, the second projectile volley's shots fly at
 /// each target.

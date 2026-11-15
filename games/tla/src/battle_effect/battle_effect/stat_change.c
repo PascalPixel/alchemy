@@ -7,40 +7,65 @@
 
 /// Abilities: Impact, High Impact, Demon Spear, Angel Spear; Forge
 ///; Kindle; kind 46 is used by no ability.
-DEFINE_EFFECT_KIND(BattleEffect_RunImpact, BattleEffect_RunStatBoost, 0)
+void BattleEffect_RunImpact(struct BattleEffectParams *args) {
+  BattleEffect_RunStatBoost(args, 0);
+}
 
 /// Abilities: Guard, Protect, Guardian, Protector; Corona.
-DEFINE_EFFECT_KIND(BattleEffect_RunGuard, BattleEffect_RunStatBoost, 1)
+void BattleEffect_RunGuard(struct BattleEffectParams *args) {
+  BattleEffect_RunStatBoost(args, 1);
+}
 
 /// Abilities: Iron.
-DEFINE_EFFECT_KIND(BattleEffect_RunIron, BattleEffect_RunStatBoost, 6)
+void BattleEffect_RunIron(struct BattleEffectParams *args) {
+  BattleEffect_RunStatBoost(args, 6);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunStatBoostMode7, BattleEffect_RunStatBoost, 7)
+/// Unused: no ability's effect names it.
+void BattleEffect_RunStatBoostMode7(struct BattleEffectParams *args) {
+  BattleEffect_RunStatBoost(args, 7);
+}
 
 /// Abilities: Ward, Resist, Magic Shell, Magic Shield; Breeze (kind
 /// 215).
-DEFINE_EFFECT_KIND(BattleEffect_RunWard, BattleEffect_RunStatBoost, 2)
+void BattleEffect_RunWard(struct BattleEffectParams *args) {
+  BattleEffect_RunStatBoost(args, 2);
+}
 
 /// Abilities: Steam.
-DEFINE_EFFECT_KIND(BattleEffect_RunSteam, BattleEffect_RunStatBoost, 11)
+void BattleEffect_RunSteam(struct BattleEffectParams *args) {
+  BattleEffect_RunStatBoost(args, 11);
+}
 
 /// Abilities: Granite.
-DEFINE_EFFECT_KIND(BattleEffect_RunGranite, BattleEffect_RunStatBoost, 3)
+void BattleEffect_RunGranite(struct BattleEffectParams *args) {
+  BattleEffect_RunStatBoost(args, 3);
+}
 
 /// Abilities: Flash.
-DEFINE_EFFECT_KIND(BattleEffect_RunFlash, BattleEffect_RunStatBoost, 5)
+void BattleEffect_RunFlash(struct BattleEffectParams *args) {
+  BattleEffect_RunStatBoost(args, 5);
+}
 
 /// Abilities: Shade.
-DEFINE_EFFECT_KIND(BattleEffect_RunShade, BattleEffect_RunStatBoost, 8)
+void BattleEffect_RunShade(struct BattleEffectParams *args) {
+  BattleEffect_RunStatBoost(args, 8);
+}
 
 /// Abilities: Guard Aura.
-DEFINE_EFFECT_KIND(BattleEffect_RunGuardAura, BattleEffect_RunStatBoost, 12)
+void BattleEffect_RunGuardAura(struct BattleEffectParams *args) {
+  BattleEffect_RunStatBoost(args, 12);
+}
 
 /// Abilities: Zephyr.
-DEFINE_EFFECT_KIND(BattleEffect_RunZephyr, BattleEffect_RunStatBoost, 4)
+void BattleEffect_RunZephyr(struct BattleEffectParams *args) {
+  BattleEffect_RunStatBoost(args, 4);
+}
 
 /// Abilities: Coal.
-DEFINE_EFFECT_KIND(BattleEffect_RunCoal, BattleEffect_RunStatBoost, 9)
+void BattleEffect_RunCoal(struct BattleEffectParams *args) {
+  BattleEffect_RunStatBoost(args, 9);
+}
 
 /// Effect kind 182: the stat boost's mode 10 (a burst with no gathering
 /// lights), with no prelude Djinni and the fade step cleared.

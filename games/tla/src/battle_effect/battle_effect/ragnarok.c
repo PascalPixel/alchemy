@@ -245,11 +245,14 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 }
 
 /// Abilities: Titan Blade.
-DEFINE_EFFECT_KIND(BattleEffect_RunTitanBlade, BattleEffect_RunFallingSword, 0)
+void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
+  BattleEffect_RunFallingSword(args, 0);
+}
 
 /// Abilities: Acheron's Grief.
-DEFINE_EFFECT_KIND(BattleEffect_RunAcheronsGrief, BattleEffect_RunFallingSword,
-                   1)
+void BattleEffect_RunAcheronsGrief(struct BattleEffectParams *args) {
+  BattleEffect_RunFallingSword(args, 1);
+}
 
 #undef FLASH_SHEET
 

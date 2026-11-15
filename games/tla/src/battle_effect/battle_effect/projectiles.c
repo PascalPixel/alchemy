@@ -321,22 +321,35 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
 #define Actor_SetAnimationSpeedFar                                             \
   ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
-DEFINE_EFFECT_KIND(BattleEffect_RunSlash, BattleEffect_RunProjectileVolley, 0)
+/// Abilities: Slash, Wind Slash, Sonic Slash.
+void BattleEffect_RunSlash(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, 0);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunShuriken, BattleEffect_RunProjectileVolley,
-                   1)
+/// Abilities: Shuriken.
+void BattleEffect_RunShuriken(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, 1);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunCrazyVoice, BattleEffect_RunProjectileVolley,
-                   2)
+/// Abilities: Crazy Voice.
+void BattleEffect_RunCrazyVoice(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, 2);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunWingFlutter,
-                   BattleEffect_RunProjectileVolley, 3)
+/// Abilities: Wing Flutter.
+void BattleEffect_RunWingFlutter(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, 3);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunWingStroke, BattleEffect_RunProjectileVolley,
-                   11)
+/// Abilities: Wing Stroke.
+void BattleEffect_RunWingStroke(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, 11);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunWingBeat, BattleEffect_RunProjectileVolley,
-                   4)
+/// Abilities: Wing Beat.
+void BattleEffect_RunWingBeat(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, 4);
+}
 
 /// From the user's action pose, one large comet in ice colours flies at each
 /// target and bursts into 80 sparks.
@@ -366,7 +379,10 @@ void BattleEffect_RunHeatWave(struct BattleEffectParams *args) {
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
-DEFINE_EFFECT_KIND(BattleEffect_RunSleet, BattleEffect_RunProjectileVolley, 7)
+/// Abilities: Sleet.
+void BattleEffect_RunSleet(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, 7);
+}
 
 /// From the user's action pose, sixty ice chips stream at each target, one a
 /// frame, scattered up and down, without knocking it back.
@@ -424,21 +440,30 @@ void BattleEffect_RunDiamondDust(struct BattleEffectParams *args) {
   Actor_SetAnimationSpeedFar(object, 0x10);
 }
 
-DEFINE_EFFECT_KIND(BattleEffect_RunBeastNeedle,
-                   BattleEffect_RunProjectileVolley, 15)
+/// Abilities: Beast Needle.
+void BattleEffect_RunBeastNeedle(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, 15);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunPoisonSting,
-                   BattleEffect_RunProjectileVolley, 16)
+/// Abilities: Poison Sting.
+void BattleEffect_RunPoisonSting(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, 16);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunStunSting, BattleEffect_RunProjectileVolley,
-                   17)
+/// Abilities: Stun Sting.
+void BattleEffect_RunStunSting(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, 17);
+}
 
 /// Kind 402: Ice Breath and Blue Dragon.
-DEFINE_EFFECT_KIND(BattleEffect_RunIceBlessing,
-                   BattleEffect_RunProjectileVolley, 10)
+void BattleEffect_RunIceBlessing(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, 10);
+}
 
-DEFINE_EFFECT_KIND(BattleEffect_RunChillBreath,
-                   BattleEffect_RunProjectileVolley, 18)
+/// Abilities: Chill Breath.
+void BattleEffect_RunChillBreath(struct BattleEffectParams *args) {
+  BattleEffect_RunProjectileVolley(args, 18);
+}
 
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 

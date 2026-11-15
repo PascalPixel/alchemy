@@ -304,10 +304,8 @@ void ShopTest_EditPartyNames(void) {
     NameEntry_EditMemberName(i);
 }
 
-/// Adds an item to a member's inventory.
-static __inline__ void Inventory_AddItemAgain(s32 owner, s32 item) {
-  /* FAKEMATCH(wrapper): the call forwarded through an inline where the next
-   * call adds the same item. */
+/// Adds an item to a member's inventory, from an event.
+static inline void Event_GiveItemTo(s32 item, s32 owner) {
   Inventory_AddItem(owner, item);
 }
 
@@ -320,41 +318,41 @@ void ShopTest_GiveEquipmentTestStock(void) {
   FieldMessage_Show((s32)MsgYouGotTreasure, 1);
   gMainRoutineWork.coins = 777777;
   for (i = 9; i >= 0; i--) {
-    Inventory_AddItem(FELIX, ITEM_GAME_TICKET);
-    Inventory_AddItem(FELIX, ITEM_LUCKY_MEDAL);
+    Event_GiveItemTo(ITEM_GAME_TICKET, FELIX);
+    Event_GiveItemTo(ITEM_LUCKY_MEDAL, FELIX);
   }
-  Inventory_AddItem(FELIX, ITEM_HERMES_WATER);
-  Inventory_AddItem(FELIX, ITEM_HALT_GEM);
-  Inventory_AddItem(FELIX, ITEM_MYTHRIL_BAG);
-  Inventory_AddItem(FELIX, ITEM_MURAMASA);
-  Inventory_AddItem(FELIX, ITEM_FAIRY_RING);
-  Inventory_AddItem(FELIX, ITEM_MYTHRIL_BAG_JUPITER_STAR);
-  Inventory_AddItem(JENNA, ITEM_SMOKE_BOMB);
-  Inventory_AddItem(JENNA, ITEM_SLEEP_BOMB);
-  Inventory_AddItem(JENNA, ITEM_DRAGONS_EYE);
-  Inventory_AddItem(JENNA, ITEM_ANCHOR_CHARM);
-  Inventory_AddItem(JENNA, ITEM_BONE);
-  Inventory_AddItem(JENNA, ITEM_MYSTIC_DRAUGHT);
-  Inventory_AddItem(JENNA, ITEM_HEALING_RING);
-  Inventory_AddItem(SHEBA, ITEM_BLACK_CRYSTAL);
-  Inventory_AddItem(SHEBA, ITEM_FUR_BOOTS);
-  Inventory_AddItem(SHEBA, ITEM_RUNNING_SHIRT);
-  Inventory_AddItemAgain(SHEBA, ITEM_TEAR_STONE);
-  Inventory_AddItemAgain(SHEBA, ITEM_TEAR_STONE);
-  Inventory_AddItem(SHEBA, ITEM_TEAR_STONE);
-  Inventory_AddItem(SHEBA, ITEM_SALAMANDER_TAIL);
-  Inventory_AddItem(SHEBA, ITEM_MYTHRIL_SILVER);
-  Inventory_AddItemAgain(SHEBA, ITEM_RUSTY_SWORD);
-  Inventory_AddItem(SHEBA, ITEM_RUSTY_SWORD);
-  Inventory_AddItem(SHEBA, ITEM_RUSTY_ROBBERS_BLADE);
-  Inventory_AddItem(SHEBA, ITEM_RUSTY_PIRATES_SABRE);
-  Inventory_AddItem(PIERS, ITEM_WATER_OF_LIFE);
-  Inventory_AddItem(PIERS, ITEM_ORB_OF_FORCE);
-  Inventory_AddItem(PIERS, ITEM_DOUSE_DROP);
-  Inventory_AddItem(PIERS, ITEM_FROST_JEWEL);
-  Inventory_AddItem(PIERS, ITEM_LIFTING_GEM);
-  Inventory_AddItem(PIERS, ITEM_HALT_GEM);
-  Inventory_AddItem(PIERS, ITEM_CATCH_BEADS);
+  Event_GiveItemTo(ITEM_HERMES_WATER, FELIX);
+  Event_GiveItemTo(ITEM_HALT_GEM, FELIX);
+  Event_GiveItemTo(ITEM_MYTHRIL_BAG, FELIX);
+  Event_GiveItemTo(ITEM_MURAMASA, FELIX);
+  Event_GiveItemTo(ITEM_FAIRY_RING, FELIX);
+  Event_GiveItemTo(ITEM_MYTHRIL_BAG_JUPITER_STAR, FELIX);
+  Event_GiveItemTo(ITEM_SMOKE_BOMB, JENNA);
+  Event_GiveItemTo(ITEM_SLEEP_BOMB, JENNA);
+  Event_GiveItemTo(ITEM_DRAGONS_EYE, JENNA);
+  Event_GiveItemTo(ITEM_ANCHOR_CHARM, JENNA);
+  Event_GiveItemTo(ITEM_BONE, JENNA);
+  Event_GiveItemTo(ITEM_MYSTIC_DRAUGHT, JENNA);
+  Event_GiveItemTo(ITEM_HEALING_RING, JENNA);
+  Event_GiveItemTo(ITEM_BLACK_CRYSTAL, SHEBA);
+  Event_GiveItemTo(ITEM_FUR_BOOTS, SHEBA);
+  Event_GiveItemTo(ITEM_RUNNING_SHIRT, SHEBA);
+  Event_GiveItemTo(ITEM_TEAR_STONE, SHEBA);
+  Event_GiveItemTo(ITEM_TEAR_STONE, SHEBA);
+  Event_GiveItemTo(ITEM_TEAR_STONE, SHEBA);
+  Event_GiveItemTo(ITEM_SALAMANDER_TAIL, SHEBA);
+  Event_GiveItemTo(ITEM_MYTHRIL_SILVER, SHEBA);
+  Event_GiveItemTo(ITEM_RUSTY_SWORD, SHEBA);
+  Event_GiveItemTo(ITEM_RUSTY_SWORD, SHEBA);
+  Event_GiveItemTo(ITEM_RUSTY_ROBBERS_BLADE, SHEBA);
+  Event_GiveItemTo(ITEM_RUSTY_PIRATES_SABRE, SHEBA);
+  Event_GiveItemTo(ITEM_WATER_OF_LIFE, PIERS);
+  Event_GiveItemTo(ITEM_ORB_OF_FORCE, PIERS);
+  Event_GiveItemTo(ITEM_DOUSE_DROP, PIERS);
+  Event_GiveItemTo(ITEM_FROST_JEWEL, PIERS);
+  Event_GiveItemTo(ITEM_LIFTING_GEM, PIERS);
+  Event_GiveItemTo(ITEM_HALT_GEM, PIERS);
+  Event_GiveItemTo(ITEM_CATCH_BEADS, PIERS);
   Party_RemoveMember(ISAAC);
   Party_RemoveMember(GARET);
   Party_RemoveMember(IVAN);

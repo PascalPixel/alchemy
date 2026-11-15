@@ -101,9 +101,8 @@ walkNext:
   flags = &entry->collisionFlags;
 overlap:
   if (entry->script != NULL && (1 & *flags) && entry != object) {
-    /* FAKEMATCH(wrapper): the overlap call goes through Value4. */
-    if (Value4((s32 (*)())Field_CheckSpheresOverlap, (s32)&entry->x.fixed,
-               radius, (s32)position, entry->radius - 2) >= 0)
+    if (Event_CheckSpheresOverlap(&entry->x.fixed, radius, position,
+                                  entry->radius - 2) >= 0)
       goto blocked;
   }
   j++;

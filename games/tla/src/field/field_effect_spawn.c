@@ -3,9 +3,10 @@
 /// Broken Seal's EFFECT_SPAWN (scene/shared/field_effect_spawn.h) with default
 /// type 285. The including file names its overlay's copy and the imports it
 /// calls: EFFECT_SPAWN, EFFECT_CREATE, EFFECT_SET_MODE, EFFECT_SET_SCRIPT and
-/// EFFECT_SCRIPTS. Copies that also define EFFECT_SPRITE_PRIORITY give the
-/// sprite the requested priority themselves before
-/// Scene_SetActorSpritePriority, as overlays 663, 664, 66b, 679 and 67b do.
+/// EFFECT_SCRIPTS. Copies that also define EFFECT_SPRITE_PRIORITY create the
+/// actor as an event does (FieldActor_Create) and give the sprite the requested
+/// priority themselves before Scene_SetActorSpritePriority, as overlays 663,
+/// 664, 66b, 679 and 67b do.
 #include "types.h"
 #include "system/main_routine_work.h"
 #include "field/field_sprite.h"
@@ -27,12 +28,6 @@
 extern struct FieldEffect *
 Actor_GetById__spawn(s32 id) __asm__("Actor_GetById");
 extern struct Actor *EFFECT_CREATE(s32 type, s32 x, s32 y, s32 z);
-#ifdef EFFECT_SPRITE_PRIORITY
-static inline struct FieldEffect *Effect_CreateActor(s32 type, s32 x, s32 y,
-                                                     s32 z) {
-  return (struct FieldEffect *)EFFECT_CREATE(type, x, y, z);
-}
-#endif
 /* VIEW(spawn): routine EFFECT_SET_MODE as void EFFECT_SET_MODE(struct
  * FieldEffect *effect, s32 mode); field/field.h has void
  * Actor_SelectAnimation(struct Actor *object, s32 argument); not tried:
@@ -60,12 +55,10 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   u32 start;
 
 #ifdef EFFECT_SPRITE_PRIORITY
-  /* FAKEMATCH(wrapper): the create call forwarded through Effect_CreateActor.
-   */
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = Effect_CreateActor(options->type, x, y, z);
+    effect = (struct FieldEffect *)FieldActor_Create(options->type, x, y, z);
   else
-    effect = Effect_CreateActor(285, x, y, z);
+    effect = (struct FieldEffect *)FieldActor_Create(285, x, y, z);
 #else
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = (struct FieldEffect *)EFFECT_CREATE(options->type, x, y, z);

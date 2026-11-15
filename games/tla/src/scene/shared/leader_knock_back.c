@@ -5,8 +5,8 @@
 /// Mars Lighthouse rooms keep a copy; each includes this file as text after
 /// defining KNOCK_BACK, its name, and the names its copy calls:
 /// KNOCK_BACK_TAKE_DAMAGE, KNOCK_BACK_BLINK, the update hook while they are
-/// thrown, KNOCK_BACK_SET_ANIMATION, KNOCK_BACK_CELL_ATTRIBUTE,
-/// KNOCK_BACK_CHECK_COLLISION and KNOCK_BACK_SPHERES_OVERLAP.
+/// thrown, KNOCK_BACK_SET_ANIMATION, KNOCK_BACK_CELL_ATTRIBUTE and
+/// KNOCK_BACK_CHECK_COLLISION.
 
 void KNOCK_BACK(void) {
   struct MainRoutineWork *main = &gMainRoutineWork;
@@ -98,12 +98,11 @@ void KNOCK_BACK(void) {
         radius = actor->radius - 2;
         other = Ram_HeapSlots->actors;
         flags = &other->collisionFlags;
-        /* FAKEMATCH(wrapper): the overlap test forwarded through Value4. */
         for (i = 0; i <= 63; i++, flags += 128, other++) {
           if (other->script != 0 && (*flags & 1) && other != actor &&
-              Value4((s32 (*)())KNOCK_BACK_SPHERES_OVERLAP,
-                     (s32)&other->x.fixed, radius, (s32)&position,
-                     other->radius - 2) >= 0) {
+              Event_CheckSpheresOverlap(&other->x.fixed, radius,
+                                        (s32 *)&position,
+                                        other->radius - 2) >= 0) {
             System_Wait(1);
             goto done;
           }

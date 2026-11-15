@@ -92,6 +92,7 @@ void TundariaTower_StartEffectScript(struct FieldEffect *effect,
 
 #include "shared/tundaria_tower.h"
 #include "shared/tables.h"
+#include "shared/event_check_spheres_overlap.h"
 
 #define FLAG_LEFT_WATER_PARCHED 0x942
 #define FLAG_RIGHT_WATER_PARCHED 0x943

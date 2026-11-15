@@ -25,6 +25,7 @@
 #include "system/field_effect.h"
 #include "field/event_inline.h"
 #include "shared/tables.h"
+#include "shared/event_check_spheres_overlap.h"
 #include "system/ram_buffer.h"
 #include "field/field_sequence_event.h"
 #include "field/actor.h"

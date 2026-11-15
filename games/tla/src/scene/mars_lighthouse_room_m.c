@@ -49,6 +49,7 @@
 #include "system/vector3.h"
 #include "fixed_math.h"
 #include "shared/tables.h"
+#include "shared/event_check_spheres_overlap.h"
 #include "graphics/display_transition.h"
 #include "window/item_icon.h"
 #include "field/map_grid.h"
@@ -1515,7 +1516,6 @@ s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
 #define KNOCK_BACK_SET_ANIMATION Actor_SelectAnimation
 #define KNOCK_BACK_CELL_ATTRIBUTE MapGrid_GetCellAttributeLowNibbleOrBump
 #define KNOCK_BACK_CHECK_COLLISION MapGrid_CheckCollision
-#define KNOCK_BACK_SPHERES_OVERLAP Field_CheckSpheresOverlap
 #include "shared/leader_knock_back.c"
 #undef KNOCK_BACK
 #undef KNOCK_BACK_TAKE_DAMAGE
@@ -1523,7 +1523,6 @@ s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
 #undef KNOCK_BACK_SET_ANIMATION
 #undef KNOCK_BACK_CELL_ATTRIBUTE
 #undef KNOCK_BACK_CHECK_COLLISION
-#undef KNOCK_BACK_SPHERES_OVERLAP
 
 /// Hit by the flames, the leader is knocked back.
 void MarsLighthouseRoomM_KnockBackIfHit(void) {

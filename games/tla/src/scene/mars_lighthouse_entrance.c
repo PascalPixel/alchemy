@@ -63,6 +63,7 @@
 #include "system/heap_release.h"
 #include "field/cell_target.h"
 #include "shared/tables.h"
+#include "shared/event_check_spheres_overlap.h"
 #include "field/field_effect.h"
 #include "system/dma.h"
 #include "field/actor_script.h"
@@ -1642,7 +1643,6 @@ extern u8 gInventorySnapshot[];
 #define KNOCK_BACK_SET_ANIMATION Actor_SelectAnimation
 #define KNOCK_BACK_CELL_ATTRIBUTE MapGrid_GetCellAttributeLowNibbleOrBump
 #define KNOCK_BACK_CHECK_COLLISION MapGrid_CheckCollision
-#define KNOCK_BACK_SPHERES_OVERLAP Field_CheckSpheresOverlap
 #include "shared/leader_knock_back.c"
 #undef KNOCK_BACK
 #undef KNOCK_BACK_TAKE_DAMAGE
@@ -1650,7 +1650,6 @@ extern u8 gInventorySnapshot[];
 #undef KNOCK_BACK_SET_ANIMATION
 #undef KNOCK_BACK_CELL_ATTRIBUTE
 #undef KNOCK_BACK_CHECK_COLLISION
-#undef KNOCK_BACK_SPHERES_OVERLAP
 
 /// Hit by the flames, the leader is knocked back.
 void MarsLighthouseEntrance_KnockBackIfHit(void) {

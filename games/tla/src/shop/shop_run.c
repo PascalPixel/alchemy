@@ -62,7 +62,7 @@ void Shop_InitializeWork(void) {
   Event_ResolveAllPendingActionsFar();
   Dma_Fill32(0, shop, sizeof(struct ShopWork));
   // The hand cursor's glides take 12 frames until a screen changes it
-  shop->mode = 12;
+  shop->mode = SHOP_CURSOR_ENTER_FRAMES;
   shop->partyMemberCount = Party_ListMembersFar(shop->partyMemberIds);
   Palette_LoadIconsIntoHighlightFar();
   // Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite
@@ -121,7 +121,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   s32 action = 0;
 
   if (stockRow >= ShopStock_GetRowCount() || stockRow < 0)
-    stockRow = 0;
+    stockRow = SHOP_STOCK_ROW_EMPTY;
   // Seed this place's artifact stock before creating the shop UI.
   ShopStock_AddArtifacts(stockRow);
   Shop_InitializeWork();
@@ -277,7 +277,6 @@ s32 Shop_AskYesNo(s32 choice) {
   struct WindowSprite **cursorSlot =
       &((struct ShopWork *)Ram_HeapSlots->menuWork)->cursor.anchor;
   u8 savedCursorMode = (*cursorSlot)->motion;
-
   Icon_PrepareActorFar(*cursorSlot);
   choice = YesNoMenu_RunAtFar(SHOP_CONFIRM_MENU_X, 5, choice);
   (*cursorSlot)->motion = savedCursorMode;
@@ -293,7 +292,6 @@ s32 Sanctum_AskYesNo(s32 choice) {
   struct WindowSprite **cursorSlot =
       &((struct ShopWork *)Ram_HeapSlots->menuWork)->cursor.anchor;
   u8 savedCursorMode = (*cursorSlot)->motion;
-
   Icon_PrepareActorFar(*cursorSlot);
   choice = YesNoMenu_RunAtFar(7, 7, choice);
   (*cursorSlot)->motion = savedCursorMode;

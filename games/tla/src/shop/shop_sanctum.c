@@ -48,17 +48,13 @@ s32 Sanctum_NeedsService(s32 unitId, s32 serviceKind) {
 
 /// Counts party members who need the service in shop->action.
 s32 Sanctum_CountMembersInNeed(void) {
-  struct ShopWork *shop;
-  s32 eligibleCount;
-  s32 serviceKind;
+  struct ShopWork *shop = Ram_HeapSlots->menuWork;
+  s32 eligibleCount = 0;
+  s32 serviceKind = shop->action;
   s32 memberIndex;
 
-  shop = Ram_HeapSlots->menuWork;
-  eligibleCount = 0;
-  serviceKind = shop->action;
   for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
-    if (Sanctum_NeedsService(shop->partyMemberIds[memberIndex], serviceKind) !=
-        0)
+    if (Sanctum_NeedsService(shop->partyMemberIds[memberIndex], serviceKind))
       eligibleCount++;
   }
   return eligibleCount;
@@ -351,12 +347,13 @@ void Sanctum_ApplyService(s32 unitId, s32 serviceKind) {
   } else if (serviceKind == SANCTUM_SERVICE_REPEL_EVIL) {
     unit->haunt = 0;
   } else if (serviceKind == SANCTUM_SERVICE_REMOVE_CURSE) {
-    s32 slot;
+    s32 inventorySlot;
 
-    for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
-      if (unit->inventory[slot] & INVENTORY_EQUIPPED) {
-        if (Item_GetDirectFar(unit->inventory[slot])->flags & ITEM_CURSED) {
-          unit->inventory[slot] ^= INVENTORY_EQUIPPED;
+    for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
+      if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
+        if (Item_GetDirectFar(unit->inventory[inventorySlot])->flags &
+            ITEM_CURSED) {
+          unit->inventory[inventorySlot] ^= INVENTORY_EQUIPPED;
           Unit_CalculateFar(unitId);
         }
       }

@@ -13,7 +13,7 @@ s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
   struct ItemMenuWork *menu;
   s32 useResult;
   s32 itemId;
-  struct OwnerInventoryState *unit;
+  struct Unit *unit;
   struct ItemDefinition *item;
 
   unit = Unit_Get(memberId);
@@ -24,13 +24,13 @@ s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
                                      memberId, targetId, 1);
   if (useResult != -1) {
     item = Item_GetDirectFar(unit->inventory[slot]);
-    if (item->useType == 1) {
+    if (item->useType == ITEM_USE_CONSUMED) {
       Inventory_RemoveFar(memberId, slot);
       menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
     }
-    if (item->useType == 4) {
-      if (itemId == 184)
-        itemId = 185;
+    if (item->useType == ITEM_USE_EMPTIES) {
+      if (itemId == ITEM_HERMES_WATER)
+        itemId = ITEM_EMPTY_BOTTLE;
       unit->inventory[slot] = itemId;
     }
     useResult = 0;
@@ -71,20 +71,20 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
   /* FAKEMATCH(dead): the dead test loads effect->range ahead of the count
    * guard. */
-  if (effect->range == 0xff && partyResultShown != 0)
-    messageOffset = 3;
+  if (effect->range == ABILITY_RANGE_ALL && partyResultShown != 0)
+    messageOffset = ITEM_USE_RESULT_PARTY_HP_RECOVERED;
 
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++) {
-    if (effect->range == 0xff) {
+    if (effect->range == ABILITY_RANGE_ALL) {
       targetId = (u16)menu->memberIds[targetIndex];
       target = Unit_Get(targetId);
     }
 
     amount = effect->power;
-    switch (effect->flags & 0xf) {
+    switch (effect->flags & ABILITY_FORMULA_MASK) {
     case BATTLE_DAMAGE_HP_HEAL:
       if (fixedScale == 0) {
-        if (effect->element != 4) {
+        if (effect->element != ELEMENT_NONE) {
           s32 elementIndex;
 
           caster = Unit_Get(sourceId);
@@ -97,32 +97,32 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
 
       if (target->hp <= 0) {
         if (partyResultShown == 0)
-          messageOffset = 2;
+          messageOffset = ITEM_USE_RESULT_HP_NOT_RECOVERED;
       } else {
         if (target->hp == target->hpMax) {
           if (partyResultShown == 0)
-            messageOffset = 4;
+            messageOffset = ITEM_USE_RESULT_HP_FULL;
         } else {
           target->hp += amount;
           if (target->hp > target->hpMax) {
             amount -= target->hp - target->hpMax;
             target->hp = target->hpMax;
             if (partyResultShown == 0)
-              messageOffset = 0;
+              messageOffset = ITEM_USE_RESULT_HP_FULLY_RECOVERED;
           } else if (partyResultShown == 0) {
-            messageOffset = 1;
+            messageOffset = ITEM_USE_RESULT_HP_RECOVERED;
           }
           Unit_RecalculateGaugesFar(targetId);
           changed = 1;
-          if (effect->range == 0xff) {
+          if (effect->range == ABILITY_RANGE_ALL) {
             partyResultShown = 1;
-            messageOffset = 3;
+            messageOffset = ITEM_USE_RESULT_PARTY_HP_RECOVERED;
           }
         }
       }
       break;
 
-    case 9:
+    case ABILITY_FORMULA_NO_POWER:
       randomAdjust = (Random16() * 4) >> 16;
       if (randomAdjust == 0) {
         randomAdjust = -1;
@@ -133,36 +133,36 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
 
       switch (effectId & PSYNERGY_ABILITY_MASK) {
-      case 0x104:
+      case ABILITY_POWER_BREAD:
         target->baseHp += amount + randomAdjust;
-        messageOffset = 0x10;
+        messageOffset = ITEM_USE_RESULT_MAX_HP_UP;
         changed = 1;
         break;
-      case 0x105:
+      case ABILITY_COOKIE:
         target->basePp += amount + randomAdjust;
-        messageOffset = 0x11;
+        messageOffset = ITEM_USE_RESULT_MAX_PP_UP;
         changed = 1;
         break;
-      case 0x108:
+      case ABILITY_MINT:
         target->baseAgility += amount + randomAdjust;
-        messageOffset = 0x12;
+        messageOffset = ITEM_USE_RESULT_AGILITY_UP;
         changed = 1;
         break;
-      case 0x109:
+      case ABILITY_LUCKY_PEPPER:
         target->baseLuck += amount;
-        messageOffset = 0x13;
+        messageOffset = ITEM_USE_RESULT_LUCK_UP;
         changed = 1;
         break;
-      case 0x106:
+      case ABILITY_APPLE:
         target->baseAttack += amount + randomAdjust;
         MessageArgument_PushFar(3, MESSAGE_ARGUMENT_NUMBER);
-        messageOffset = 0x14;
+        messageOffset = ITEM_USE_RESULT_ATTACK_UP;
         changed = 1;
         break;
-      case 0x107:
+      case ABILITY_HARD_NUT:
         target->baseDefense += amount + randomAdjust;
         MessageArgument_PushFar(4, MESSAGE_ARGUMENT_NUMBER);
-        messageOffset = 0x15;
+        messageOffset = ITEM_USE_RESULT_DEFENSE_UP;
         changed = 1;
         break;
       }
@@ -171,68 +171,68 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case BATTLE_DAMAGE_PP_HEAL:
       if (target->pp == target->ppMax) {
         if (partyResultShown == 0)
-          messageOffset = 7;
+          messageOffset = ITEM_USE_RESULT_PP_FULL;
       } else {
         target->pp += amount;
         if (target->pp > target->ppMax) {
           amount -= target->pp - target->ppMax;
           target->pp = target->ppMax;
           if (partyResultShown == 0)
-            messageOffset = 5;
+            messageOffset = ITEM_USE_RESULT_PP_FULLY_RECOVERED;
         } else if (partyResultShown == 0) {
-          messageOffset = 6;
+          messageOffset = ITEM_USE_RESULT_PP_RECOVERED;
         }
         Unit_RecalculateGaugesFar(targetId);
         changed = 1;
-        if (effect->range == 0xff) {
+        if (effect->range == ABILITY_RANGE_ALL) {
           partyResultShown = 1;
-          messageOffset = 8;
+          messageOffset = ITEM_USE_RESULT_PARTY_PP_RECOVERED;
         }
       }
       break;
 
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 10:
+    case ABILITY_FORMULA_EFFECT:
+    case ABILITY_FORMULA_ATTACK:
+    case ABILITY_FORMULA_ATTACK_MULTIPLIED:
+    case ABILITY_FORMULA_DAMAGE:
+    case ABILITY_FORMULA_ENEMY_DAMAGE:
+    case ABILITY_FORMULA_EFFECT_ONLY:
+    case ABILITY_FORMULA_SUMMON:
+    case ABILITY_FORMULA_PP_DAMAGE:
       break;
     }
 
     switch (effect->effect) {
-    case 1:
+    case ABILITY_EFFECT_RESTORE_HP:
       if (target->hp <= 0 || target->hp == target->hpMax) {
         if (partyResultShown == 0)
-          messageOffset = 2;
+          messageOffset = ITEM_USE_RESULT_HP_NOT_RECOVERED;
       } else {
         target->hp += amount;
         if (target->hp > target->hpMax) {
           target->hp = target->hpMax;
           if (partyResultShown == 0)
-            messageOffset = 0;
+            messageOffset = ITEM_USE_RESULT_HP_FULLY_RECOVERED;
         } else if (partyResultShown == 0) {
-          messageOffset = 1;
+          messageOffset = ITEM_USE_RESULT_HP_RECOVERED;
         }
         Unit_RecalculateGaugesFar(targetId);
         changed = 1;
       }
       break;
 
-    case 2:
+    case ABILITY_EFFECT_RESTORE_PP:
       if (target->pp == target->ppMax) {
         if (partyResultShown == 0)
-          messageOffset = 7;
+          messageOffset = ITEM_USE_RESULT_PP_FULL;
       } else {
         target->pp += amount;
         if (target->pp > target->ppMax) {
           target->pp = target->ppMax;
           if (partyResultShown == 0)
-            messageOffset = 5;
+            messageOffset = ITEM_USE_RESULT_PP_FULLY_RECOVERED;
         } else if (partyResultShown == 0) {
-          messageOffset = 6;
+          messageOffset = ITEM_USE_RESULT_PP_RECOVERED;
         }
         Unit_RecalculateGaugesFar(targetId);
         changed = 1;
@@ -245,9 +245,9 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         Unit_RecalculateGaugesFar(targetId);
         changed = 1;
         if (partyResultShown == 0)
-          messageOffset = 0xc;
+          messageOffset = ITEM_USE_RESULT_REVIVED;
       } else if (partyResultShown == 0) {
-        messageOffset = 0xd;
+        messageOffset = ITEM_USE_RESULT_NOT_DOWN;
       }
       break;
 
@@ -256,9 +256,9 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         target->hp = target->hpMax / 2;
         Unit_RecalculateGaugesFar(targetId);
         if (partyResultShown == 0)
-          messageOffset = 0xc;
+          messageOffset = ITEM_USE_RESULT_REVIVED;
       } else if (partyResultShown == 0) {
-        messageOffset = 0xd;
+        messageOffset = ITEM_USE_RESULT_NOT_DOWN;
       }
       break;
 
@@ -267,9 +267,9 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         target->hp = target->hpMax * 7 / 10;
         Unit_RecalculateGaugesFar(targetId);
         if (partyResultShown == 0)
-          messageOffset = 0xc;
+          messageOffset = ITEM_USE_RESULT_REVIVED;
       } else if (partyResultShown == 0) {
-        messageOffset = 0xd;
+        messageOffset = ITEM_USE_RESULT_NOT_DOWN;
       }
       break;
 
@@ -278,14 +278,14 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
         target->poison = 0;
         changed = 1;
         if (partyResultShown == 0)
-          messageOffset = 0xa;
+          messageOffset = ITEM_USE_RESULT_POISON_PURGED;
       } else if (partyResultShown == 0) {
-        messageOffset = 0xb;
+        messageOffset = ITEM_USE_RESULT_NOT_POISONED;
       }
       break;
     }
 
-    if (effect->range != 0xff)
+    if (effect->range != ABILITY_RANGE_ALL)
       break;
   }
 
@@ -311,30 +311,41 @@ s32 Item_PlayUseAnimation(s32 item) {
 /// formula 1 twice; otherwise effects 1, 2, 31 and 32 play nothing, effect 5
 /// sound 82, effect 3 sound 84, and every other effect sound 91.
 s32 Ability_PlayUseAnimation(s32 action) {
-  u8 *definition = Ability_Get(action);
+  s32 animationType;
+  u32 targetType;
+  struct AbilityDefinition *actionDefinition;
 
-  switch (definition[1] & 15) {
-  case 1:
+  actionDefinition = Ability_Get(action);
+  animationType = ABILITY_FORMULA_MASK & actionDefinition->flags;
+  switch (animationType) {
+  case ABILITY_FORMULA_HEAL_HP:
+    // With no break the recovery sound is started twice, both times on music
+    // player 2 (gSongTable's row for it), which Sound_Play never swaps for
+    // another: the second start restarts the first before the sound driver
+    // mixes a frame, so it is heard once.
     Sound_PlayReturnOne(SE_RECOVERY);
-  case 11:
+    // Fall through.
+  case ABILITY_FORMULA_HEAL_PP:
     Sound_PlayReturnOne(SE_RECOVERY);
-    break;
+    return;
   default:
-    switch (definition[3]) {
-    case 1:
-    case 2:
-    case 31:
-    case 32:
-      break;
-    case 5:
+    targetType = actionDefinition->effect;
+    switch (targetType) {
+    case ABILITY_EFFECT_REVIVE:
       Sound_PlayReturnOne(MUS_REVIVE);
-      break;
-    case 3:
+      return;
+    case ABILITY_EFFECT_CURE_POISON:
       Sound_PlayReturnOne(MUS_CURE);
-      break;
+      return;
     default:
       Sound_PlayReturnOne(MUS_JINGLE_SMALL);
-      break;
+
+    // The HP and PP restores no ability has (ability_table.c).
+    case ABILITY_EFFECT_RESTORE_HP:
+    case ABILITY_EFFECT_RESTORE_PP:
+    case ABILITY_EFFECT_DRAIN_HP:
+    case ABILITY_EFFECT_DRAIN_PP:
+      return;
     }
     break;
   }

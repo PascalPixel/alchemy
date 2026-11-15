@@ -423,7 +423,7 @@ void ItemIconGrid_Draw(void) {
     u16 *iconSlot = shop->iconSlots;
     s32 i;
 
-    for (i = ICON_COUNT - 1; i >= 0; i--) {
+    for (i = INVENTORY_SLOTS - 1; i >= 0; i--) {
       if (*iconSlot++ != ICON_NONE)
         Oam_AddSpriteAtDepth(sprite, 240);
       sprite++;
@@ -436,7 +436,7 @@ void ItemIconGrid_Initialize(void) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
   s32 i;
 
-  for (i = ICON_COUNT - 1; i >= 0; i--)
+  for (i = INVENTORY_SLOTS - 1; i >= 0; i--)
     shop->iconSlots[i] = ICON_NONE;
   {
     s32 hidden = 0;
@@ -451,7 +451,7 @@ void ItemIconGrid_Release(void) {
   s32 i;
 
   Task_Remove(ItemIconGrid_Draw);
-  for (i = 0; i < ICON_COUNT; i++) {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     if (shop->iconSlots[i] != ICON_NONE)
       VramCache_FreeEntry(shop->iconSlots[i]);
   }
@@ -481,14 +481,14 @@ void ItemIconGrid_LoadItems(u16 *items, s32 count, s32 mode) {
   s32 entry;
   s32 i;
 
-  for (i = 0; i < ICON_COUNT; i++) {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     if (shop->iconSlots[i] != ICON_NONE) {
       VramCache_FreeEntry(shop->iconSlots[i]);
       shop->iconSlots[i] = ICON_NONE;
     }
   }
   sprite = shop->iconSprites;
-  for (i = 0; i < ICON_COUNT && i != count; i++, sprite++) {
+  for (i = 0; i < INVENTORY_SLOTS && i != count; i++, sprite++) {
     if (items[i] != 0) {
       entry = VramCache_FindFreeEntry();
       if (entry < VRAM_CACHE_ENTRY_COUNT) {
@@ -514,8 +514,8 @@ void ItemIconGrid_ShowInventory(struct RenderInput *window, s32 x, s32 y,
   s32 top = (s16)window->y * 8 + y + 8;
   s32 i;
 
-  ItemIconGrid_LoadItems(unit->inventory, ICON_COUNT, 27);
-  for (i = 0; i < ICON_COUNT; i++)
+  ItemIconGrid_LoadItems(unit->inventory, INVENTORY_SLOTS, 27);
+  for (i = 0; i < INVENTORY_SLOTS; i++)
     ItemIconGrid_SetPosition(i, left + i % SHOP_INVENTORY_COLUMNS * 16,
                              top + i / SHOP_INVENTORY_COLUMNS * 16);
   ItemIconGrid_SetVisible(1);

@@ -26,20 +26,18 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
 /// Counts down an Attack change and returns 1 when it ends; a lowered Attack
 /// may recover early.
 s32 BattleUnit_CountDownAttackStage(s32 unitId) {
-  struct Unit *state = Unit_Get(unitId);
+  struct Unit *unit = Unit_Get(unitId);
 
-  if (state->attackTurns != 0) {
-    s32 zero;
-    state->attackTurns--;
-    zero = 0;
-    if ((s8)state->attackTurns == 0) {
-      state->attackStage = zero;
+  if (unit->attackTurns != 0) {
+    unit->attackTurns--;
+    if (unit->attackTurns == 0) {
+      unit->attackStage = 0;
       return 1;
     }
-    if (state->attackStage < 0) {
-      if (BattleUnit_RollCounterEarlyEnd(unitId, state->attackTurns, 30) != 0) {
-        state->attackStage = zero;
-        state->attackTurns = zero;
+    if (unit->attackStage < 0) {
+      if (BattleUnit_RollCounterEarlyEnd(unitId, unit->attackTurns, 30) != 0) {
+        unit->attackStage = 0;
+        unit->attackTurns = 0;
         return 1;
       }
     }
@@ -167,40 +165,38 @@ s32 BattleUnit_CountDownSleep(s32 unitId) {
 
 /// Counts down both seals in Unit.psySeal and returns 1 when the last
 /// ends; only Bind's, once Luff's is gone, may end early.
-s32 BattleUnit_CountDownPsynergySeal(s32 id) {
-  s32 next;
-  s32 expired;
+s32 BattleUnit_CountDownPsynergySeal(s32 unitId) {
+  s32 decremented;
   u8 remaining;
   s32 turns;
-  s32 packed;
+  s32 sealCounter;
   struct Unit *unit;
 
-  unit = Unit_Get(id);
-  packed = unit->psySeal;
-  turns = packed & 0xFF;
+  unit = Unit_Get(unitId);
+  sealCounter = unit->psySeal;
+  turns = sealCounter & 0xFF;
   if (turns != 0) {
-    if ((u32)turns > 7U) {
+    // In the byte, adding 0xf8 is -8 and adding 0xff is -1.
+    if (turns > 7U) {
       turns += 0xF8;
       unit->psySeal = turns;
-      packed = turns;
+      sealCounter = turns;
     }
-    if (packed & 7) {
-      next = packed + 0xFF;
-      unit->psySeal = next;
-      packed = next;
+    if (sealCounter & 7) {
+      decremented = sealCounter + 0xFF;
+      unit->psySeal = decremented;
+      sealCounter = decremented;
     }
-    expired = 1;
-    remaining = packed;
+    remaining = sealCounter;
     if (remaining == 0)
-      return expired;
-    if ((u32)remaining <= 7U &&
-        BattleUnit_RollCounterEarlyEnd(id, unit->psySeal, 0x1E) != 0) {
+      return 1;
+    if (remaining <= 7U &&
+        BattleUnit_RollCounterEarlyEnd(unitId, unit->psySeal, 30) != 0) {
       unit->psySeal = 0U;
       return 1;
     }
   }
-  expired = 0;
-  return expired;
+  return 0;
 }
 
 /// While Regenerate lasts, heals the unit by a tenth of its max HP for each
@@ -247,11 +243,11 @@ s32 BattleUnit_CountDownRegenerate(s32 id) {
 }
 
 /// Counts down Reflect and returns 1 when it runs out; it never ends early.
-s32 BattleUnit_CountDownReflect(s32 id) {
-  u8 *value = (u8 *)&Unit_Get(id)->reflect;
-  if (*value != 0) {
-    (*value)--;
-    if (*value == 0) {
+s32 BattleUnit_CountDownReflect(s32 unitId) {
+  u8 *turns = &Unit_Get(unitId)->reflect;
+  if (*turns != 0) {
+    (*turns)--;
+    if (*turns == 0) {
       return 1;
     }
   }
@@ -260,12 +256,12 @@ s32 BattleUnit_CountDownReflect(s32 id) {
 
 /// Counts down an Agility change and returns 1 when it runs out; it never ends
 /// early.
-s32 BattleUnit_CountDownAgilityStage(s32 id) {
-  struct Unit *unit = Unit_Get(id);
-  u8 *value = &unit->agilityTurns;
-  if (*value != 0) {
-    (*value)--;
-    if (*value == 0) {
+s32 BattleUnit_CountDownAgilityStage(s32 unitId) {
+  struct Unit *unit = Unit_Get(unitId);
+  u8 *turns = &unit->agilityTurns;
+  if (*turns != 0) {
+    (*turns)--;
+    if (*turns == 0) {
       unit->agilityStage = 0;
       return 1;
     }
@@ -276,43 +272,32 @@ s32 BattleUnit_CountDownAgilityStage(s32 id) {
 /// Brings the party's recovering Djinn one turn nearer, setting each that is
 /// ready, and returns 1 when any was set.
 s32 DjinnRecovery_CountDown(void) {
-  struct DjinnRecoveryList *list;
-  struct DjinnRecoveryEntry *timedEntry;
-  struct DjinnRecoveryEntry *expiredEntry;
-  s32 index;
-  s32 removed;
-  s32 initialCount;
+  struct DjinnRecoveryList *list =
+      &Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->list;
+  s32 removed = 0;
+  s32 i;
 
-  list = &Djinn_GetRecoveryTableFar(0)->list;
-  initialCount = list->count;
-  index = 0;
-  removed = 0;
-  if (index < initialCount) {
-    timedEntry = list->entries;
-    do {
-      if (timedEntry->turns > 0 && Unit_Get(timedEntry->unitId)->hp != 0) {
-        timedEntry->turns--;
-      }
-      index++;
-      timedEntry++;
-    } while (index < list->count);
+  for (i = 0; i < list->count; i++) {
+    struct DjinnRecoveryEntry *entry = &list->entries[i];
+
+    if (entry->turns > 0 && Unit_Get(entry->unitId)->hp != 0)
+      entry->turns--;
   }
-  index = 0;
-  if (index < list->count) {
-    expiredEntry = list->entries;
-    do {
-      if (expiredEntry->turns == 0) {
-        u8 id = expiredEntry->unitId;
+  // Removing an entry moves the next one into its place, so i advances only
+  // past entries that stay.
+  for (i = 0; i < list->count;) {
+    struct DjinnRecoveryEntry *entry = &list->entries[i];
 
-        Djinn_SetFar(id, expiredEntry->element, expiredEntry->index);
-        DjinnRecovery_RemoveFar(id, expiredEntry->element, expiredEntry->index);
-        Unit_CalculateFar(id);
-        removed = 1;
-      } else {
-        expiredEntry++;
-        index++;
-      }
-    } while (index < list->count);
+    if (entry->turns == 0) {
+      u8 unitId = entry->unitId;
+
+      Djinn_SetFar(unitId, entry->element, entry->index);
+      DjinnRecovery_RemoveFar(unitId, entry->element, entry->index);
+      Unit_CalculateFar(unitId);
+      removed = 1;
+    } else {
+      i++;
+    }
   }
   return removed;
 }
@@ -320,13 +305,10 @@ s32 DjinnRecovery_CountDown(void) {
 /// Runs DjinnRecovery_CountDown twenty times, which sets every recovering
 /// Djinni of a party member with HP; those on standby stay so. Returns 0.
 s32 DjinnRecovery_CountDownTwenty(void) {
-  s32 turns;
+  s32 turn;
 
-  turns = 19;
-  do {
-    turns--;
+  for (turn = 0; turn < 20; turn++)
     DjinnRecovery_CountDown();
-  } while (turns >= 0);
   return 0;
 }
 
@@ -505,7 +487,8 @@ void Battle_ProcessTurnEnd(void) {
             BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
             Sound_PlayFar(SE_POWER_UP);
             if (BattleUnit_IsListed(unitId)) {
-              Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, 3);
+              Actor_SelectAnimationFar(BattleObject_Get(unitId)->object,
+                                       POSE_CAST);
               Actor_SetAnimationSpeedFar(
                   (struct Actor *)BattleObject_Get(unitId)->object, 32);
             }
@@ -515,7 +498,7 @@ void Battle_ProcessTurnEnd(void) {
                                     expiredEntry->index);
             Unit_CalculateFar(unitId);
             if (BattleUnit_IsListed(unitId))
-              ElementGlow_Play(unitId, element, 3, 0);
+              ElementGlow_Play(unitId, element, GLOW_BURST, 0);
             BattlePlayback_WaitForReady();
           }
         } else {
@@ -525,7 +508,8 @@ void Battle_ProcessTurnEnd(void) {
       } while (recoveryIndex < list->count);
     }
   }
-  BattleBackground_SetMode(2, Ram_HeapSlots->battleWork->background, 0);
+  BattleBackground_SetMode(BATTLE_BACKGROUND_ZOOMED,
+                           Ram_HeapSlots->battleWork->background, 0);
   {
     s32 *groupList;
     struct BattleGroupOrder order = gBattleParty_TurnEndSideOrder;
@@ -534,8 +518,8 @@ void Battle_ProcessTurnEnd(void) {
     s32 unitIndex;
 
     if (battle->isLink != 0 && battle->linkSide != 0) {
-      order.group[0] = 2;
-      order.group[1] = 1;
+      order.group[0] = BATTLE_SIDE_MASK_ENEMIES;
+      order.group[1] = BATTLE_SIDE_MASK_PARTY;
     }
     groupList = order.group;
     for (group = 0; group <= 1; group++) {
@@ -751,7 +735,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
   u32 unitId;
   struct Unit *unit;
   s32 battleContinues;
-  s32 counts[4];
+  s32 counts[ELEMENT_COUNT];
   struct DjinnRecoveryList *list;
   s32 strongestElement;
   s32 recoveryTurn;
@@ -771,7 +755,8 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
       }
     }
   }
-  if (BattleUnit_ListLiving(1, 0) != 0 && BattleUnit_ListLiving(2, 0) != 0) {
+  if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, 0) != 0 &&
+      BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) != 0) {
     battleContinues = 1;
   }
   {
@@ -784,7 +769,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
              unitId > ALLY_MAX &&
              ((struct BattleWork *)Ram_HeapSlots->battleWork)->isLink != 0)
              ->list;
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < ELEMENT_COUNT; i++) {
       counts[i] = 0;
     }
     for (;;) {
@@ -840,16 +825,16 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
         BattlePlayback_SchedulePhase(25);
         BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
         BattlePlayback_Push(PLAYBACK_NUMBER, gain);
-        BattlePlayback_Push(PLAYBACK_SOUND, 175);
+        BattlePlayback_Push(PLAYBACK_SOUND, SE_NOTE_HIGH);
         // Messages 3285 to 3288, 3232, 3240, 3185, 3191 and 3188 in English;
         // all but MsgGoesDown still need their names in the PO catalogs.
         BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgEarthPowerUp + i);
         BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, unitId);
         Sound_PlayFar(SE_POWER_UP);
-        Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, 3);
+        Actor_SelectAnimationFar(BattleObject_Get(unitId)->object, POSE_CAST);
         Actor_SetAnimationSpeedFar(
             (struct Actor *)BattleObject_Get(unitId)->object, 32);
-        ElementGlow_Play(unitId, i, 2, -1);
+        ElementGlow_Play(unitId, i, GLOW_PILLAR, -1);
         BattlePlayback_WaitForReady();
       }
     }
@@ -892,9 +877,9 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
       BattlePlayback_Push(PLAYBACK_NUMBER, damage);
       BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgPoisonDamage);
       if (*poison != 0) {
-        state->events.pendingCue = 134;
+        state->events.pendingCue = SE_HEAVY_IMPACT;
       } else {
-        state->events.pendingCue = 133;
+        state->events.pendingCue = SE_IMPACT;
       }
       if (Unit_AddHpFar(unitId, -damage) == 0) {
         if (BattleUnit_KeepsOneHp(unitId)) {

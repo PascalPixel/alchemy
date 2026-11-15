@@ -15,6 +15,7 @@
 #include "macros.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
+#include "window/window.h"
 #include "system/io_write_queue.h"
 #include "system/iwram_call.h"
 #include "system/heap_release.h"
@@ -59,7 +60,7 @@ struct OamEntry {
   u32 affine : 2;
   u32 mode : 2;
   u32 mosaic : 1;
-  u32 colors256 : 1;
+  u32 fullColor : 1;
   u32 shape : 2;
   u32 x : 9;
   u32 matrix : 5;
@@ -75,10 +76,10 @@ struct OamEntry {
 /// the lighthouse scroll starts.
 struct TitleLogoState {
   s16 phase;
-  s16 frame; ///< index into gData_081a8378 (5 halfwords a frame)
+  s16 frame; ///< index into gTitleIntro_GullFrames (5 halfwords a frame)
   s16 timer;
-  s16 step; ///< index into gData_081a84e6 (3 halfwords a step); the scale in
-            ///< phase 1
+  s16 step; ///< index into gTitleIntro_GullPath (3 halfwords a step); the scale
+            ///< in phase 1
   s16 delay;
   s16 white;
   s16 back;
@@ -97,7 +98,7 @@ struct TitleSprite {
 
 /// The title screen's state, in heap slot 172.
 struct TitleScreenWork {
-  u8 unk00[16];
+  u8 unused[16]; ///< no code names it
   struct TitleSprite sprites[8];
 };
 
@@ -131,10 +132,10 @@ void TitleIntro_LoadPictureTiles(void) {
 
   REG_DISPCNT = 0;
   source = Resource_GetTableEntry((s32)&ResourceId_Data018);
-  Dma_Set(source, (void *)BG_PLTT, DMA_COPY_WORDS(0x200 / 4), REG_DMA3);
+  Dma_Set(source, (void *)BG_PLTT, DMA_COPY_WORDS(BG_PLTT_SIZE / 4), REG_DMA3);
   BG_PLTT[0] = 0;
   cells = Ram_MapCellBuffer;
-  Resource_DecodeByteLzInRam(source + 0x200, cells);
+  Resource_DecodeByteLzInRam(source + BG_PLTT_SIZE, cells);
   Dma_Set(cells, (void *)BG_CHAR_BLOCK(0),
           DMA_COPY_WORDS(DATA018_TILE_BYTES / 4), REG_DMA3);
 }
@@ -174,10 +175,14 @@ s32 Title_RunScrollStep(struct TitleScrollStep *step) {
   return 1;
 }
 
-#define TITLE_STEP(f, s0, s1, s2, s3, m0, m1, m2, m3)                          \
-  (step.frames = (f), step.speed[0] = (s0), step.speed[1] = (s1),              \
-   step.speed[2] = (s2), step.speed[3] = (s3), step.mask[0] = (m0),            \
-   step.mask[1] = (m1), step.mask[2] = (m2), step.mask[3] = (m3),              \
+/// One step of the intro picture's scroll: for `duration` frames, BG1 and BG2
+/// move by their dy and dx each frame whose count has none of its mask's bits.
+#define TITLE_STEP(duration, bg1Dy, bg1Dx, bg2Dy, bg2Dx, bg1DyMask, bg1DxMask, \
+                   bg2DyMask, bg2DxMask)                                       \
+  (step.frames = (duration), step.speed[0] = (bg1Dy), step.speed[1] = (bg1Dx), \
+   step.speed[2] = (bg2Dy), step.speed[3] = (bg2Dx),                           \
+   step.mask[0] = (bg1DyMask), step.mask[1] = (bg1DxMask),                     \
+   step.mask[2] = (bg2DyMask), step.mask[3] = (bg2DxMask),                     \
    Title_RunScrollStep(&step))
 
 /// Shows the intro's picture of step mode (0 to 2) and runs its scroll steps;
@@ -192,28 +197,28 @@ s32 TitleIntro_ScrollPicture(s32 mode) {
   REG_DISPCNT = 0;
   map = (u16 *)BG_SCREEN_BLOCK(31);
   tile = 0;
-  for (j = 0; j < 16; j++) {
-    for (i = 0; i < 32; i++) {
+  for (j = 0; j < BG_SCREEN_WIDTH / 2; j++) {
+    for (i = 0; i < BG_SCREEN_WIDTH; i++) {
       *map++ = tile++;
     }
   }
   tile = 0;
-  for (; j < 32; j++) {
-    for (i = 0; i < 32; i++) {
+  for (; j < BG_SCREEN_WIDTH; j++) {
+    for (i = 0; i < BG_SCREEN_WIDTH; i++) {
       *map++ = tile++;
     }
   }
   map = (u16 *)BG_SCREEN_BLOCK(30);
   tile = 0;
-  for (j = 0; j < 16; j++) {
-    for (i = 0; i < 32; i++) {
-      *map++ = tile++ | 0x1000;
+  for (j = 0; j < BG_SCREEN_WIDTH / 2; j++) {
+    for (i = 0; i < BG_SCREEN_WIDTH; i++) {
+      *map++ = tile++ | BG_TILE_PALETTE(1);
     }
   }
   tile = 0;
-  for (; j < 32; j++) {
-    for (i = 0; i < 32; i++) {
-      *map++ = tile++ | 0x1000;
+  for (; j < BG_SCREEN_WIDTH; j++) {
+    for (i = 0; i < BG_SCREEN_WIDTH; i++) {
+      *map++ = tile++ | BG_TILE_PALETTE(1);
     }
   }
   REG_BG1CNT = BGCNT_PRIORITY(2) | BGCNT_SCREEN_BASE(31);
@@ -297,7 +302,7 @@ s32 TitleIntro_ScrollPicture(s32 mode) {
       if (Title_WaitOrPress(1))
         return 0;
     }
-    TitlePaletteFade_SetTarget(RGB(31, 31, 31), PALETTES_ALL);
+    TitlePaletteFade_SetTarget(RGB_WHITE, PALETTES_ALL);
     TitlePaletteFade_Start(1);
     if (Title_WaitOrPress(2)) {
       ScreenFade_Wait();
@@ -326,14 +331,14 @@ s32 TitleIntro_ShowCard(void) {
   REG_DISPCNT = 0;
   map = (u16 *)BG_SCREEN_BLOCK(29);
   tile = 0;
-  for (row = 0; row < 20; row++) {
+  for (row = 0; row < DISPLAY_TILE_HEIGHT; row++) {
     if (row >= 9 && row < 9 + NUMBERED_ROWS) {
-      for (i = 0; i < 32; i++) {
-        *map++ = tile++ | 0x2000;
+      for (i = 0; i < BG_SCREEN_WIDTH; i++) {
+        *map++ = tile++ | BG_TILE_PALETTE(2);
       }
     } else {
-      for (i = 0; i < 32; i++)
-        *map++ = 0x2000;
+      for (i = 0; i < BG_SCREEN_WIDTH; i++)
+        *map++ = BG_TILE_PALETTE(2);
     }
   }
   REG_BG3CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(29);
@@ -375,29 +380,29 @@ s32 TitleIntro_ShowBlendedCard(void) {
   REG_DISPCNT = 0;
   map = (u16 *)BG_SCREEN_BLOCK(29);
   tile = FIRST_TILE;
-  for (row = 0; row < 20; row++) {
+  for (row = 0; row < DISPLAY_TILE_HEIGHT; row++) {
     if (row >= 7 && row <= 9) {
-      for (i = 0; i < 32; i++) {
-        *map++ = tile++ | 0x3000;
+      for (i = 0; i < BG_SCREEN_WIDTH; i++) {
+        *map++ = tile++ | BG_TILE_PALETTE(3);
       }
     } else if (row == 10 || row == 11) {
-      for (i = 0; i < 32; i++)
-        *map++ = 0x3060;
+      for (i = 0; i < BG_SCREEN_WIDTH; i++)
+        *map++ = BG_TILE_PALETTE(3) | 96;
     } else {
-      for (i = 0; i < 32; i++)
-        *map++ = 0x3040;
+      for (i = 0; i < BG_SCREEN_WIDTH; i++)
+        *map++ = BG_TILE_PALETTE(3) | 64;
     }
   }
   map = (u16 *)BG_SCREEN_BLOCK(28);
   tile = FIRST_TILE + 96;
-  for (row = 0; row < 20; row++) {
+  for (row = 0; row < DISPLAY_TILE_HEIGHT; row++) {
     if (row == 10 || row == 11) {
-      for (i = 0; i < 32; i++) {
-        *map++ = tile++ | 0x3000;
+      for (i = 0; i < BG_SCREEN_WIDTH; i++) {
+        *map++ = tile++ | BG_TILE_PALETTE(3);
       }
     } else {
-      for (i = 0; i < 32; i++)
-        *map++ = 0x3040;
+      for (i = 0; i < BG_SCREEN_WIDTH; i++)
+        *map++ = BG_TILE_PALETTE(3) | 64;
     }
   }
   REG_BG3CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(2) | BGCNT_SCREEN_BASE(29);
@@ -413,8 +418,8 @@ s32 TitleIntro_ShowBlendedCard(void) {
   TitlePaletteFade_Start(40);
   if (Title_WaitOrPress(60))
     return 0;
-  for (i = 1; i <= 16; i++) {
-    REG_BLDALPHA = i | 0x1000;
+  for (i = 1; i <= BLEND_WEIGHT_MAX; i++) {
+    REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
     if (Title_WaitOrPress(3))
       return 0;
   }
@@ -426,6 +431,12 @@ s32 TitleIntro_ShowBlendedCard(void) {
     return 0;
   return 1;
 }
+
+/// A row of the tall picture's 256-colour tiles, streamed in as it scrolls:
+/// the screen's width in tiles.
+#define LIGHTHOUSE_ROW_BYTES (DISPLAY_TILE_WIDTH * 64)
+/// The map entry of the blank tile beside each streamed row.
+#define LIGHTHOUSE_BLANK_TILE 511
 
 /// Scrolls the intro's tall picture from one position to another: each step
 /// moves it by the scroll's step and waits its frames, streams in the next map
@@ -444,14 +455,15 @@ s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
       if (Title_WaitOrPress(s->frames))
         goto fail;
       if (s->scroll > 0) {
-        Dma_Set(s->src, s->dst, 0x840001e0, REG_DMA3);
-        s->src += 0x780;
-        s->dst += 0x780;
-        for (j = 0; j < 30; j++)
+        Dma_Set(s->src, s->dst, DMA_COPY_WORDS(LIGHTHOUSE_ROW_BYTES / 4),
+                REG_DMA3);
+        s->src += LIGHTHOUSE_ROW_BYTES;
+        s->dst += LIGHTHOUSE_ROW_BYTES;
+        for (j = 0; j < DISPLAY_TILE_WIDTH; j++)
           *s->cursor++ = s->tile++;
-        *s->cursor++ = 0x1ff;
-        *s->cursor++ = 0x1ff;
-        if (++s->rows == 32) {
+        *s->cursor++ = LIGHTHOUSE_BLANK_TILE;
+        *s->cursor++ = LIGHTHOUSE_BLANK_TILE;
+        if (++s->rows == BG_SCREEN_WIDTH) {
           s->dst = (u8 *)BG_CHAR_BLOCK(0);
           s->rows = 0;
           s->tile = 0;
@@ -462,7 +474,7 @@ s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
       s->scroll += s->step;
       gBgScroll[1].y += s->step;
       if (timers->white != 0 && --timers->white == 1) {
-        TitlePaletteFade_SetTarget(RGB(31, 31, 31), PALETTES_ALL);
+        TitlePaletteFade_SetTarget(RGB_WHITE, PALETTES_ALL);
         TitlePaletteFade_Start(10);
       }
       if (timers->back != 0 && --timers->back == 1) {
@@ -481,13 +493,14 @@ s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
         s->rows--;
         if (s->rows == 0) {
           s->rows = 1;
-          Dma_Set(s->src, s->dst, 0x840001e0, REG_DMA3);
-          s->src -= 0x780;
-          s->dst -= 0x780;
-          for (j = 0; j < 30; j++)
+          Dma_Set(s->src, s->dst, DMA_COPY_WORDS(LIGHTHOUSE_ROW_BYTES / 4),
+                  REG_DMA3);
+          s->src -= LIGHTHOUSE_ROW_BYTES;
+          s->dst -= LIGHTHOUSE_ROW_BYTES;
+          for (j = 0; j < DISPLAY_TILE_WIDTH; j++)
             *s->cursor++ = s->tile++;
-          s->cursor -= 30;
-          s->tile -= 30;
+          s->cursor -= DISPLAY_TILE_WIDTH;
+          s->tile -= DISPLAY_TILE_WIDTH;
         }
         s->scroll -= 8;
       }
@@ -510,7 +523,7 @@ void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y) {
   Dma_Fill32(0, &oam, sizeof(oam));
   oam.shape = 0;
   oam.size = 3;
-  oam.colors256 = 1;
+  oam.fullColor = 1;
   oam.mode = 1;
   oam.affine = 3;
   oam.tile = tile;
@@ -536,15 +549,14 @@ void Title_PlaceLogoPiece(s32 tile, s32 x, u32 y) {
 #define LOGO_RIGHT_X 140
 #endif
 
-extern s16 gData_081a8378[];
-extern s16 gData_081a84e6[];
+extern s16 gTitleIntro_GullFrames[];
+extern s16 gTitleIntro_GullPath[];
 
 #define LOAD_LOGO_TILES(id)                                                    \
   {                                                                            \
     u8 *buffer = Data_02026800;                                                \
     Resource_DecodeByteLzInRam(Resource_GetTableEntry((s32)&(id)), buffer);    \
-    Dma_Set(buffer, (void *)OBJ_VRAM0, (DMA_ENABLE | DMA_32BIT) << 16 | 0xc00, \
-            REG_DMA3);                                                         \
+    Dma_Set(buffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(3072), REG_DMA3);        \
   }
 
 /// The logo's per-frame task while the lighthouse scrolls: places its pieces
@@ -567,26 +579,26 @@ void TitleIntro_UpdateLogo(void) {
   volatile u16 *matrix;
 
   logo = Ram_HeapSlots->titleIntro;
-  Dma_Fill32Cell(fill, 0, (void *)OAM, 0x400);
+  Dma_Fill32Cell(fill, 0, (void *)OAM, OAM_SIZE);
   if (logo->phase == 0) {
     if (logo->timer == 0) {
-      if (gData_081a8378[logo->frame + 5] != -1)
+      if (gTitleIntro_GullFrames[logo->frame + 5] != -1)
         logo->frame += 5;
-      logo->timer = gData_081a8378[logo->frame + 2];
+      logo->timer = gTitleIntro_GullFrames[logo->frame + 2];
     } else {
       logo->timer--;
     }
     if (logo->delay == 0) {
       logo->step += 3;
-      logo->delay = gData_081a84e6[logo->step + 2];
+      logo->delay = gTitleIntro_GullPath[logo->step + 2];
     } else {
       logo->delay--;
     }
-    x = gData_081a84e6[logo->step];
+    x = gTitleIntro_GullPath[logo->step];
     if (x == -1) {
       Dma_Set(Resource_GetTableEntry((s32)&ResourceId_Data01B),
-              (void *)OBJ_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
-              REG_DMA3);
+              (void *)OBJ_PLTT,
+              (DMA_ENABLE | DMA_32BIT) << 16 | (BG_PLTT_SIZE / 4), REG_DMA3);
       LOAD_LOGO_TILES(ResourceId_Data01C);
       logo->phase = 1;
       logo->frame = 1;
@@ -594,23 +606,23 @@ void TitleIntro_UpdateLogo(void) {
       logo->step = 160;
       logo->delay = 0;
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG1;
-      REG_BLDALPHA = BLEND_ALPHA(1, 16);
+      REG_BLDALPHA = BLEND_ALPHA(1, BLEND_WEIGHT_MAX);
       return;
     }
-    tile = gData_081a8378[logo->frame];
-    rows = gData_081a8378[logo->frame + 1];
-    offsetX = gData_081a8378[logo->frame + 3];
-    offsetY = gData_081a8378[logo->frame + 4];
+    tile = gTitleIntro_GullFrames[logo->frame];
+    rows = gTitleIntro_GullFrames[logo->frame + 1];
+    offsetX = gTitleIntro_GullFrames[logo->frame + 3];
+    offsetY = gTitleIntro_GullFrames[logo->frame + 4];
     left = x + offsetX - 28;
-    top = gData_081a84e6[logo->step + 1] + offsetY;
+    top = gTitleIntro_GullPath[logo->step + 1] + offsetY;
     for (row = 0; row < rows; row++) {
       for (column = 0; column < 8; column++) {
         Dma_Fill32Cell(fill, 0, &sprite, sizeof(sprite));
         sprite.tile = tile + column + row * 8;
         sprite.x = left + column * 8;
         sprite.y = top + row * 8;
-        Dma_Set(&sprite, (u8 *)OAM + (row * 8 + column) * 8,
-                (DMA_ENABLE | DMA_32BIT) << 16 | 2, REG_DMA3);
+        Dma_Set(&sprite, (u8 *)OAM + (row * 8 + column) * 8, DMA_COPY_WORDS(2),
+                REG_DMA3);
       }
     }
   } else if (logo->phase == 1) {
@@ -620,7 +632,7 @@ void TitleIntro_UpdateLogo(void) {
     Title_PlaceLogoPiece(128, LOGO_MIDDLE_X, y);
     pieceX = LOGO_RIGHT_X - (logo->step - 256) / 4;
     Title_PlaceLogoPiece(256, pieceX, y);
-    matrix = (volatile u16 *)0x07000006;
+    matrix = (volatile u16 *)((u8 *)OAM + 6);
     *matrix = logo->step;
     matrix += 4;
     *matrix = 0;
@@ -632,11 +644,11 @@ void TitleIntro_UpdateLogo(void) {
       if (logo->step > 256)
         logo->step = 256;
     }
-    if (logo->frame < 16) {
+    if (logo->frame < BLEND_WEIGHT_MAX) {
       logo->timer++;
       if (logo->timer % 3 == 0) {
         logo->frame++;
-        REG_BLDALPHA = logo->frame | 0x1000;
+        REG_BLDALPHA = BLEND_ALPHA(logo->frame, BLEND_WEIGHT_MAX);
       }
       if (logo->timer == 8)
         LOAD_LOGO_TILES(ResourceId_Data01D)
@@ -669,30 +681,28 @@ s32 TitleIntro_ShowLighthouse(void) {
 
   logo = HeapSlot_Alloc(HEAP_SLOT_TITLE_INTRO, 112);
   REG_DISPCNT = 0;
-  Dma_Fill32Cell(fill, 0, (void *)OAM, 0x400);
+  Dma_Fill32Cell(fill, 0, (void *)OAM, OAM_SIZE);
   source = Resource_GetTableEntry((s32)&ResourceId_IntroGullSprites);
   buffer = gMapGridCellBuffer;
   source += 32;
   Resource_DecodeByteLzInRam(source, buffer);
-  Dma_Set(buffer, (void *)OBJ_VRAM0, (DMA_ENABLE | DMA_32BIT) << 16 | 0x1b00,
-          REG_DMA3);
+  Dma_Set(buffer, (void *)OBJ_VRAM0, DMA_COPY_WORDS(6912), REG_DMA3);
   wait(1);
   source = Resource_GetTableEntry((s32)&ResourceId_IntroLighthousePicture);
-  Dma_Set(source, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
-          REG_DMA3);
-  *(u16 *)BG_PLTT = 0x7fff;
+  Dma_Set(source, (void *)BG_PLTT,
+          (DMA_ENABLE | DMA_32BIT) << 16 | (BG_PLTT_SIZE / 4), REG_DMA3);
+  *(u16 *)BG_PLTT = RGB_WHITE;
   wait(1);
-  source += 0x200;
+  source += BG_PLTT_SIZE;
   Resource_DecodeByteLzInRam(source, buffer);
-  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0),
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
+  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(9600), REG_DMA3);
   wait(1);
 
   map = (u16 *)BG_SCREEN_BLOCK(31);
   tile = 0;
   q16One = 0x10000;
-  for (row = 0; row < 20; row++) {
-    for (i = 29; i >= 0; i--) {
+  for (row = 0; row < DISPLAY_TILE_HEIGHT; row++) {
+    for (i = DISPLAY_TILE_WIDTH - 1; i >= 0; i--) {
       /* FAKEMATCH(temporary): the old tile kept in number, the step spelt on
        * the high halfword. */
       number = tile;
@@ -700,8 +710,8 @@ s32 TitleIntro_ShowLighthouse(void) {
       *map = number;
       map++;
     }
-    *map++ = 0x1ff;
-    *map++ = 0x1ff;
+    *map++ = LIGHTHOUSE_BLANK_TILE;
+    *map++ = LIGHTHOUSE_BLANK_TILE;
   }
   REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
   REG_BLDCNT = 0;
@@ -711,7 +721,7 @@ s32 TitleIntro_ShowLighthouse(void) {
     gBgScroll[i].x = 0;
   }
   Dma_Set((void *)BG_PLTT, Ram_HeapSlots->paletteFade,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
+          (DMA_ENABLE | DMA_32BIT) << 16 | (BG_PLTT_SIZE / 4), REG_DMA3);
   wait(1);
   TitlePaletteFade_SetTarget(q16One, PALETTES_ALL);
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG1_ON | DISPCNT_OBJ_ON;
@@ -741,7 +751,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   if (map)
     goto stopped;
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_IntroGullSprites),
-          (void *)OBJ_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+          (void *)OBJ_PLTT, DMA_COPY_WORDS(8), REG_DMA3);
   logo->phase = 0;
   logo->frame = -5;
   logo->timer = 0;
@@ -765,7 +775,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   i = TitleIntro_ScrollLighthouse(&scroll);
   if (i)
     goto stopped;
-  TitlePaletteFade_SetTarget(RGB(31, 31, 31), PALETTES_ALL);
+  TitlePaletteFade_SetTarget(RGB_WHITE, PALETTES_ALL);
   TitlePaletteFade_Start(20);
   scroll.limit = 0;
   scroll.step = -5;
@@ -778,7 +788,7 @@ stopped:
   TitlePaletteFade_Start(10);
   wait(10);
 done:
-  Dma_Fill32Cell(fill, 0, (void *)OAM, 0x400);
+  Dma_Fill32Cell(fill, 0, (void *)OAM, OAM_SIZE);
   Task_Remove(TitleIntro_UpdateLogo);
   HeapSlot_Release(HEAP_SLOT_TITLE_INTRO);
   wait(1);
@@ -861,6 +871,9 @@ s32 TitleIntro_Run(void) {
 // the German one, laid out for its longer prompt, loads eight prompt tiles and
 // draws two rows of three sprites from y 116.
 
+/// Each logo and title resource begins with its 224 colours.
+#define LOGO_PALETTE_BYTES (224 * 2)
+
 /// The title screen: fades to white, shows Title_ScreenPicture on BG2 (its
 /// map numbered from tile 0x1a0, two blank columns a row) and, with prompt
 /// set, loads the five prompt sprites. After the fade from white it holds 660
@@ -868,10 +881,10 @@ s32 TitleIntro_Run(void) {
 /// sprites blink by gTitle_PromptBlendLevels's levels, and A or Start ends it
 /// early, returning 1 (else 0).
 s32 Title_ShowIntro(s32 prompt) {
-  s32 blankTile = 0x1ff;
+  s32 blankTile = 511;
   s32 result = 0;
-  struct TitleScreenWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_TITLE_INTRO, 0x70);
+  struct TitleScreenWork *work = HeapSlot_AllocEwram(
+      HEAP_SLOT_TITLE_INTRO, sizeof(struct TitleScreenWork));
   u8 *data;
   u16 *tilemap;
   u16 tile;
@@ -888,14 +901,15 @@ s32 Title_ShowIntro(s32 prompt) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   gBgScroll[2].y = result;
   data = Resource_GetTableEntry((s32)&ResourceId_TitleScreenPicture);
-  Dma_Set(data, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
-  Decompress_TaggedLz(data + 448, Ram_MapCellBuffer);
+  Dma_Set(data, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4),
+          REG_DMA3);
+  Decompress_TaggedLz(data + LOGO_PALETTE_BYTES, Ram_MapCellBuffer);
   Dma_Set(Ram_MapCellBuffer, (void *)BG_SCREEN_BLOCK(13), DMA_COPY_WORDS(9600),
           REG_DMA3);
   tile = 416;
   tilemap = (u16 *)BG_SCREEN_BLOCK(6);
-  for (i = 0; i < 20; i++) {
-    for (j = 0; j < 30; j++)
+  for (i = 0; i < DISPLAY_TILE_HEIGHT; i++) {
+    for (j = 0; j < DISPLAY_TILE_WIDTH; j++)
       *tilemap++ = tile++;
     *tilemap++ = blankTile;
     *tilemap++ = blankTile;
@@ -917,7 +931,7 @@ s32 Title_ShowIntro(s32 prompt) {
 
       *spriteWords++ = 0;
       sprite++;
-      *spriteWords++ = 0x40004000;
+      *spriteWords++ = OBJ_SIZE_32X8;
       *spriteWords = vramBlock;
     }
     HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
@@ -927,9 +941,9 @@ s32 Title_ShowIntro(s32 prompt) {
   REG_DISPCNT =
       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   if (prompt != 0)
-    holdFrames = 5400;
+    holdFrames = 90 * FRAMES_PER_SECOND;
   else
-    holdFrames = 660;
+    holdFrames = 11 * FRAMES_PER_SECOND;
   for (i = 0; i < holdFrames; i++) {
     // The Japanese edition blinks the prompt from the first frame.
     if (!TLA_PATCH_1 || i > 120) {
@@ -964,7 +978,7 @@ s32 Title_ShowIntro(s32 prompt) {
         REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG0 |
                      BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
                      BLDCNT_TGT2_BD;
-        REG_BLDALPHA = (16 - level) * 256 + level;
+        REG_BLDALPHA = (BLEND_WEIGHT_MAX - level) * 256 + level;
       }
       if (gInput.pressed & (KEY_A | KEY_START)) {
         result = 1;
@@ -1009,15 +1023,16 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   result = 0;
   gBgScroll[2].y = result;
   data = Resource_GetTableEntry(resource);
-  Dma_Set(data, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
-  Decompress_TaggedLz(data + 448, Ram_MapCellBuffer);
+  Dma_Set(data, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4),
+          REG_DMA3);
+  Decompress_TaggedLz(data + LOGO_PALETTE_BYTES, Ram_MapCellBuffer);
   Dma_Set(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(1), DMA_COPY_WORDS(9600),
           REG_DMA3);
   // Pad the 30-tile picture to the hardware map's 32-tile row width.
   tile = 256;
   map = (u16 *)BG_SCREEN_BLOCK(6);
-  for (y = 0; y < 20; y++) {
-    for (x = 0; x < 30; x++)
+  for (y = 0; y < DISPLAY_TILE_HEIGHT; y++) {
+    for (x = 0; x < DISPLAY_TILE_WIDTH; x++)
       *map++ = tile++;
     *map++ = blank;
     *map++ = blank;
@@ -1034,7 +1049,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   if (mode == 0) {
     ScreenFade_FromBlack(1);
     ScreenFade_Wait();
-    for (y = 0; y < 120; y++) {
+    for (y = 0; y < 2 * FRAMES_PER_SECOND; y++) {
       if (gInput.pressed & (KEY_A | KEY_START)) {
         result = -1;
         break;
@@ -1043,7 +1058,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
     }
     return result;
   }
-  for (y = 0; y < 60; y++) {
+  for (y = 0; y < FRAMES_PER_SECOND; y++) {
     if (gInput.pressed & (KEY_A | KEY_START)) {
       result = -1;
       break;
@@ -1053,10 +1068,10 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   if (result != 0)
     ScreenFade_FromBlack(8);
   else
-    ScreenFade_FromBlack(60);
+    ScreenFade_FromBlack(FRAMES_PER_SECOND);
   ScreenFade_Wait();
   if (result == 0) {
-    for (y = 0; y < 180; y++) {
+    for (y = 0; y < 3 * FRAMES_PER_SECOND; y++) {
       if (gInput.pressed & (KEY_A | KEY_START)) {
         result = -1;
         break;
@@ -1067,7 +1082,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   if (result != 0)
     ScreenFade_ToBlack(8);
   else
-    ScreenFade_ToBlack(60);
+    ScreenFade_ToBlack(FRAMES_PER_SECOND);
   ScreenFade_Wait();
   return result;
 }
@@ -1094,29 +1109,28 @@ s32 Title_ShowCamelotLogo(void) {
   buffer = Resource_GetTableEntry(resource);
   Decompress_TaggedLz(buffer, Ram_MapCellBuffer);
   buffer = Ram_MapCellBuffer;
-  Dma_Set(buffer, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x1c0 / 4,
+  Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(LOGO_PALETTE_BYTES / 4),
           REG_DMA3);
-  buffer += 0x1c0;
+  buffer += LOGO_PALETTE_BYTES;
   Dma_Set(buffer, (void *)BG_SCREEN_BLOCK(6),
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x800 / 4, REG_DMA3);
-  buffer += 0x800;
-  Dma_Set(buffer, BG_CHAR_BLOCK(1), (DMA_ENABLE | DMA_32BIT) << 16 | 0x4000 / 4,
-          REG_DMA3);
-  buffer += 0x4000;
+          DMA_COPY_WORDS(BG_SCREEN_SIZE / 4), REG_DMA3);
+  buffer += BG_SCREEN_SIZE;
+  Dma_Set(buffer, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(BG_CHAR_SIZE / 4), REG_DMA3);
+  buffer += BG_CHAR_SIZE;
   for (i = 0; i < 4; i++) {
     gBgScroll[i].y = 0;
     gBgScroll[i].x = 0;
   }
-  Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
+  Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   Window_LoadGraphics();
   DebugText_Clear();
   ScreenFade_FromWhite(1);
   ScreenFade_Wait();
   REG_DISPCNT =
       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-  for (i = 0; i < 120; i++) {
-    Dma_Set(((gFrameCount >> 3) & 3) * 1024 + buffer, BG_CHAR_BLOCK(1) + 0x100,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 0x340 / 4, REG_DMA3);
+  for (i = 0; i < 2 * FRAMES_PER_SECOND; i++) {
+    Dma_Set(((gFrameCount >> 3) & 3) * 1024 + buffer, BG_CHAR_BLOCK(1) + 256,
+            DMA_COPY_WORDS(832 / 4), REG_DMA3);
     if (gInput.pressed & (KEY_A | KEY_START))
       break;
     wait(1);
@@ -1187,8 +1201,10 @@ void TitlePaletteFade_Update(void) {
   }
   work->page ^= 1;
   bank = work->packed[work->page];
-  IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)bank, DMA_COPY_WORDS(128));
-  IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(bank + 256), DMA_COPY_WORDS(128));
+  IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)bank,
+                      DMA_COPY_WORDS(BG_PLTT_SIZE / 4));
+  IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(bank + BG_PLTT_COLORS),
+                      DMA_COPY_WORDS(BG_PLTT_SIZE / 4));
 }
 
 /// Tints 512 source colours into destination components (three per colour, each
@@ -1211,11 +1227,11 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
   if (mode == PALETTE_TINT_FROM_SOURCE)
     mode = *source;
   if (selectedPalettes == PALETTES_BG) {
-    colorCount = 256;
+    colorCount = BG_PLTT_COLORS;
   } else if (selectedPalettes == PALETTES_OBJECTS) {
-    destination += 768;
-    source += 256;
-    colorCount = 256;
+    destination += 3 * BG_PLTT_COLORS;
+    source += BG_PLTT_COLORS;
+    colorCount = BG_PLTT_COLORS;
   }
 
   if (mode < PALETTE_TINT_FROM_SOURCE) {
@@ -1241,9 +1257,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     case PALETTE_TINT_SEPIA:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
-        red = colorWork & 31;
-        green = (colorWork >> 5) & 31;
-        blue = (colorWork >> 10) & 31;
+        red = RGB_RED(colorWork);
+        green = RGB_GREEN(colorWork);
+        blue = RGB_BLUE(colorWork);
         colorWork = Iwram_SignedDivide(red + green + blue, 10);
         red = colorWork * 4 + 5;
         blue = colorWork * 3 + 5;
@@ -1268,9 +1284,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     case PALETTE_TINT_WARM:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
-        red = colorWork & 31;
-        green = (colorWork >> 5) & 31;
-        blue = (colorWork >> 10) & 31;
+        red = RGB_RED(colorWork);
+        green = RGB_GREEN(colorWork);
+        blue = RGB_BLUE(colorWork);
         red -= (u32)red >> 1;
         green -= green / 3;
         red += 6;
@@ -1288,9 +1304,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     case PALETTE_TINT_MUTED:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
-        red = colorWork & 31;
-        green = (colorWork >> 5) & 31;
-        blue = (colorWork >> 10) & 31;
+        red = RGB_RED(colorWork);
+        green = RGB_GREEN(colorWork);
+        blue = RGB_BLUE(colorWork);
         if (red < 10)
           red = 10;
         if (green < 16)
@@ -1318,9 +1334,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
         s32 mean;
 
         colorWork = *source++;
-        red = colorWork & 31;
-        green = (colorWork >> 5) & 31;
-        blue = (colorWork >> 10) & 31;
+        red = RGB_RED(colorWork);
+        green = RGB_GREEN(colorWork);
+        blue = RGB_BLUE(colorWork);
         mean = TitlePaletteFade_ClampComponent((red + green + blue) / 3);
         red = (red >> 1) + mean;
         green = (green >> 1) + mean;
@@ -1337,9 +1353,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     case PALETTE_TINT_RED:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
-        green = (colorWork >> 5) & 31;
-        red = colorWork & 31;
-        blue = (colorWork >> 10) & 31;
+        green = RGB_GREEN(colorWork);
+        red = RGB_RED(colorWork);
+        blue = RGB_BLUE(colorWork);
         red += ((green >> 3) + (blue >> 3));
         red = TitlePaletteFade_ClampComponent(red);
         green -= green / 3;
@@ -1353,9 +1369,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     case PALETTE_TINT_WARM_DARK:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
-        red = colorWork & 31;
-        green = (colorWork >> 5) & 31;
-        blue = (colorWork >> 10) & 31;
+        red = RGB_RED(colorWork);
+        green = RGB_GREEN(colorWork);
+        blue = RGB_BLUE(colorWork);
         red -= (u32)red >> 1;
         green -= green / 3;
         red += 6;
@@ -1384,9 +1400,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     u32 tintGreen;
     u32 tintBlue;
 
-    tintRed = mode & 31;
-    tintGreen = (mode >> 5) & 31;
-    tintBlue = (mode >> 10) & 31;
+    tintRed = RGB_RED(mode);
+    tintGreen = RGB_GREEN(mode);
+    tintBlue = RGB_BLUE(mode);
     for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
       colorWork = *source++;
       red = ((colorWork << 11) & 0xf800);
@@ -1413,14 +1429,14 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     s32 clampedGreen;
     s32 clampedBlue;
 
-    tintRed = mode & 31;
-    tintGreen = (mode >> 5) & 31;
-    tintBlue = (mode >> 10) & 31;
+    tintRed = RGB_RED(mode);
+    tintGreen = RGB_GREEN(mode);
+    tintBlue = RGB_BLUE(mode);
     for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
       colorWork = *source++;
-      red = colorWork & 31;
-      green = (colorWork >> 5) & 31;
-      blue = (colorWork >> 10) & 31;
+      red = RGB_RED(colorWork);
+      green = RGB_GREEN(colorWork);
+      blue = RGB_BLUE(colorWork);
       colorWork = Iwram_SignedDivide((red + green + blue) << 4,
                                      tintRed + tintGreen + tintBlue);
       tintedRed = Iwram_MulQ16(((colorWork * tintRed) >> 4) << 16,
@@ -1521,8 +1537,8 @@ void TitlePaletteFade_Start(s32 frames) {
 
 /// Clamps a five-bit colour channel to 0..31.
 s32 TitlePaletteFade_ClampComponent(s32 value) {
-  if (value > 31)
-    return 31;
+  if (value > RGB_LEVEL_MAX)
+    return RGB_LEVEL_MAX;
   if (value < 0)
     value = 0;
   return value;

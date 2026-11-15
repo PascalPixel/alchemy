@@ -114,7 +114,7 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
   if (action->unitId > 4)
     yaw = -0x2000;
   else
-    yaw = 0x2000;
+    yaw = YAW_PARTY_ACTION;
   transition->targetYaw = yaw;
   transition->frames = 60;
   MessageArgument_ClearAllFar();
@@ -151,11 +151,11 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
 }
 
 /// Returns 0 for a party member's or an enemy's unit id, -1 for any other.
-s32 BattleObject_IsValidId(u32 objectId) {
-  if (objectId <= ALLY_MAX) {
+s32 BattleObject_IsValidId(u32 unitId) {
+  if (unitId <= ALLY_MAX) {
     return 0;
   }
-  if (objectId - 128 <= 5) {
+  if (unitId - FIRST_ENEMY_UNIT < ENEMY_BATTLE_SIZE) {
     return 0;
   }
   return -1;
@@ -164,29 +164,22 @@ s32 BattleObject_IsValidId(u32 objectId) {
 /// Auto battle: the party tries to run, and gets away 15 times in 16. Returns 1
 /// when it got away.
 s32 BattleFlee_PlayRun(struct BattleActionRecord *action) {
-  s16 party_members[14];
-  s32 party_size;
-  s32 animated;
-  s32 member_slot;
+  s16 partyMembers[UNIT_MAX];
+  s32 partySize;
+  s32 memberSlot;
 
   (void)action;
-  if (((u32)(Random16() << 4) >> 16) != 0) {
-    party_size =
-        BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, (u16 *)party_members);
-    animated = 0;
-    if (party_size != 0) {
-      member_slot = 0;
-      do {
-        BattleMotion_SetupEscapeObject(party_members[member_slot]);
-        animated++;
-        wait(8);
-        member_slot++;
-      } while (animated != party_size);
+  // The roll's top four bits: flee unless all are clear, 15 in 16.
+  if (((Random16() << 4) >> 16) != 0) {
+    partySize = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, partyMembers);
+    for (memberSlot = 0; memberSlot != partySize; memberSlot++) {
+      BattleMotion_SetupEscapeObject(partyMembers[memberSlot]);
+      wait(8);
     }
     wait(22);
     return 1;
   }
-  BattleMessage_ShowAndWaitFar((s32)MsgCannotEscape);
+  BattleMessage_ShowAndWaitFar(MsgCannotEscape);
   return 0;
 }
 
@@ -220,7 +213,7 @@ s32 AutoBattle_ShowDefend(s16 *script) {
 /// REG_BLDCNT and REG_BLDALPHA and the actors' colour modes, and leaves the
 /// battle objects readied again.
 s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
-  u16 visibleUnits[14];
+  u16 visibleUnits[UNIT_MAX];
   struct BattlePresentationWork context;
   s32 actorId;
   s32 targetId;
@@ -250,37 +243,37 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   actorRecord = BattleObject_Get(actorId)->object;
 
   if (targetId >= 0 && targetId <= ALLY_MAX) {
-    sideCount = BattleUnit_ListLiving(2, visibleUnits);
-    sideStart = 0x80;
+    sideCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, visibleUnits);
+    sideStart = FIRST_ENEMY_UNIT;
   } else {
-    sideCount = BattleUnit_ListLiving(1, visibleUnits);
+    sideCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, visibleUnits);
     sideStart = 0;
   }
 
   for (index = 0; index != sideCount; index++) {
     if (index + sideStart == actorId)
-      Actor_SelectAnimationFar((struct Actor *)actorRecord, 3);
+      Actor_SelectAnimationFar((struct Actor *)actorRecord, POSE_CAST);
   }
 
   wait(30);
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++)
-    BattleHighlight_SetSpriteMode(index + sideStart, 1);
-  for (index = 0; index != 16; index++) {
-    REG_BLDALPHA = (16 - index) | 0x1000;
+    BattleHighlight_SetSpriteMode(index + sideStart, SPRITE_SEMI_TRANSPARENT);
+  for (index = 0; index != BLEND_WEIGHT_MAX; index++) {
+    REG_BLDALPHA = (BLEND_WEIGHT_MAX - index) | 0x1000;
     wait(1);
   }
-  PartyStatus_DrawFar(9);
+  PartyStatus_DrawFar(PARTY_STATUS_CLOSED);
 
-  if (targetId > 0x7f) {
-    u32 count = BattleUnit_ListLiving(2, visibleUnits);
+  if (targetId > (FIRST_ENEMY_UNIT - 1)) {
+    u32 count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, visibleUnits);
     for (index = 0; livingCount != count; index++) {
-      u32 unit = index + 0x80;
+      u32 unit = index + FIRST_ENEMY_UNIT;
       if (Unit_Get(unit)->hp > 0)
         visibleUnits[livingCount++] = unit;
     }
   } else {
-    u32 count = BattleUnit_ListLiving(1, visibleUnits);
+    u32 count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, visibleUnits);
     for (index = 0; livingCount != count; index++) {
       if (Unit_Get(index)->hp > 0)
         visibleUnits[livingCount++] = index;
@@ -295,23 +288,23 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
     context.actors[index] = visibleUnits[index];
   context.count = livingCount;
   if (targetId >= 0 && targetId <= ALLY_MAX)
-    context.side = 1;
+    context.side = EFFECT_SIDE_PARTY;
   else
-    context.side = 0;
+    context.side = EFFECT_SIDE_ENEMIES;
   BattleEffect_RunSummonFar((s32 *)&context);
 
   wait(10);
   BattleObject_Put();
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++)
-    BattleHighlight_SetSpriteMode(index + sideStart, 1);
-  for (index = 0; index != 16; index++) {
+    BattleHighlight_SetSpriteMode(index + sideStart, SPRITE_SEMI_TRANSPARENT);
+  for (index = 0; index != BLEND_WEIGHT_MAX; index++) {
     REG_BLDALPHA = index | 0x1000;
     wait(1);
   }
   for (index = 0; index != sideCount; index++)
-    BattleHighlight_SetSpriteMode(index + sideStart, 0);
-  BattleCamera_SetView(0, 0, 0, 0x64);
+    BattleHighlight_SetSpriteMode(index + sideStart, SPRITE_OPAQUE);
+  BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
   wait(3);
   return 0;
 }
@@ -349,9 +342,9 @@ s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
 
   work.count = 1;
   if ((u16)work.actors[0] <= ALLY_MAX)
-    work.side = 1;
+    work.side = EFFECT_SIDE_PARTY;
   else
-    work.side = 0;
+    work.side = EFFECT_SIDE_ENEMIES;
   work.flags = 0;
 
   wait(4);
@@ -393,21 +386,24 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   work.firstTarget = action->target;
   if (BattleObject_IsValidId(work.actor) < 0)
     return -1;
-  if (work.firstTarget > 127)
-    work.count = BattleUnit_ListLiving(2, (u16 *)work.actors);
+  if (work.firstTarget > (FIRST_ENEMY_UNIT - 1))
+    work.count =
+        BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, (u16 *)work.actors);
   else
-    work.count = BattleUnit_ListLiving(1, (u16 *)work.actors);
-  PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
+    work.count =
+        BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, (u16 *)work.actors);
+  PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus &
+                      ~PARTY_STATUS_SHOW_PP);
   object = BattleObject_Get(work.actor)->object;
-  Actor_SelectAnimationFar((struct Actor *)object, 3);
+  Actor_SelectAnimationFar((struct Actor *)object, POSE_CAST);
   Actor_SetAnimationSpeedFar((struct Actor *)object, 16);
   if ((u16)action->target <= ALLY_MAX) {
-    work.side = 1;
-    BattleUnit_ListLiving(1, (u16 *)work.actors);
+    work.side = EFFECT_SIDE_PARTY;
+    BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, (u16 *)work.actors);
     work.count = 1;
   } else {
-    work.side = 0;
-    BattleUnit_ListLiving(2, (u16 *)work.actors);
+    work.side = EFFECT_SIDE_ENEMIES;
+    BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, (u16 *)work.actors);
     work.count = 1;
   }
   for (i = 0; i != work.count; i++) {
@@ -418,18 +414,18 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
     for (j = 0; j != animation->count - 1; j++)
       work.params[i][j] = animation->entries[j]->colorMode;
   }
-  work.kind = 0;
+  work.kind = ELEMENT_VENUS;
   work.variant = 0;
   BattleEffect_RunElementPillarFar(&work);
-  work.kind = 1;
+  work.kind = ELEMENT_MERCURY;
   BattleEffect_RunElementPillarFar(&work);
-  work.kind = 2;
+  work.kind = ELEMENT_MARS;
   BattleEffect_RunElementPillarFar(&work);
-  work.kind = 3;
+  work.kind = ELEMENT_JUPITER;
   BattleEffect_RunElementPillarFar(&work);
   work.kind = 0;
   BattleEffect_RunFromTableFar(&work);
-  Actor_SelectAnimationFar((struct Actor *)object, 1);
+  Actor_SelectAnimationFar((struct Actor *)object, POSE_STANDING);
   /* FAKEMATCH(dead): an empty once-only loop. */
   do {
   } while (0);
@@ -461,8 +457,8 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
     character->hp = 0;
 
   slot = BattleObject_Get(unitId);
-  Actor_SelectAnimationFar((struct Actor *)slot->object, 5);
-  PartyStatus_DrawFar(0);
+  Actor_SelectAnimationFar((struct Actor *)slot->object, POSE_DAMAGE);
+  PartyStatus_DrawFar(PARTY_STATUS_HP_ONLY);
   MessageArgument_ClearAllFar();
 
   if (unitId <= ALLY_MAX) {
@@ -492,31 +488,35 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   }
 
   slot = BattleObject_Get(unitId);
-  Actor_SelectAnimationFar((struct Actor *)slot->object, 1);
+  Actor_SelectAnimationFar((struct Actor *)slot->object, POSE_STANDING);
 }
 
 /// For a unit whose HP has run out: plays its falling effect to the last frame
 /// and marks its battle object for release (BattleObject_MarkForRelease).
 void BattleMotion_PlayFall(s32 unitId) {
-  struct BattleObjectAnimation *animation;
+  struct Sprite *animation;
   struct SpriteAnimation *entry;
 
   if (Unit_Get(unitId)->hp <= 0) {
     animation = BattleObject_Get(unitId)->object->records;
-    Sprite_StartAnimationFar(animation, 5);
-    entry = animation->entry;
-    entry->colorMode = 6;
-    entry->picture = 0xff;
+    Sprite_StartAnimationFar(animation, POSE_DAMAGE);
+    entry = animation->entries[0];
+    entry->colorMode = SPRITE_COLOR_GREY;
+    entry->picture = 0xFF;
     wait(4);
     SpriteDissolve_RunFar(animation);
     BattleObject_MarkForRelease(unitId);
   }
 }
 
+/// BattleAbility_ReplaceDefeated's result when the target's side is all down,
+/// which the battle's end comes before.
+#define TARGET_SIDE_DEFEATED 256
+
 /// Returns the action's target, or a random living unit of its side when the
 /// target is down; 0x100 when none is left.
 s32 BattleAbility_ReplaceDefeated(const struct BattleActionRecord *action) {
-  s16 livingUnits[14];
+  s16 livingUnits[UNIT_MAX];
   s32 targetId;
   s32 livingCount;
 
@@ -525,14 +525,14 @@ s32 BattleAbility_ReplaceDefeated(const struct BattleActionRecord *action) {
     return targetId;
   }
 
-  if (targetId > 0x7F) {
+  if (targetId > (FIRST_ENEMY_UNIT - 1)) {
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
   } else {
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);
   }
 
   if (livingCount == 0) {
-    return 0x100;
+    return TARGET_SIDE_DEFEATED;
   }
 
   return livingUnits[(u32)(Random16() * livingCount) >> 16];

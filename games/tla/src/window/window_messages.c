@@ -74,14 +74,14 @@ void Message_DecodeRaw(s32 message, u16 *text, s32 capacity) {
       value = decode(&reader) + delta;
 #endif
       break;
-    case 8:
-    case 9:
-    case 10:
+    case MESSAGE_TEXT_COLOR:
+    case MESSAGE_TEXT_EFFECT:
+    case MESSAGE_LINE_SPACING:
     case 11:
     case 12:
-    case 15:
+    case MESSAGE_WINDOW_EFFECT:
 #if defined(DECODE_EUROPEAN)
-    case 29:
+    case MESSAGE_ARTICLE_CLASS:
 #endif
       capacity--;
       if (capacity <= 0)
@@ -222,9 +222,9 @@ void MessageArgument_ClearAll(void) {
 
   do {
     work->argumentValues[no] = 0;
-    work->argumentKinds[no] = 0;
+    work->argumentKinds[no] = MESSAGE_ARGUMENT_NONE;
     no++;
-  } while (no != 8);
+  } while (no != MESSAGE_ARGUMENT_COUNT);
 }
 
 /// Inserts value of type kind in a free entry; does nothing if the table is
@@ -232,10 +232,10 @@ void MessageArgument_ClearAll(void) {
 void MessageArgument_Push(u32 value, u32 kind) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u32 no = 0;
-  u32 limit = 8;
+  u32 limit = MESSAGE_ARGUMENT_COUNT;
 
   do {
-    if (work->argumentKinds[no] == 0) {
+    if (work->argumentKinds[no] == MESSAGE_ARGUMENT_NONE) {
       work->argumentValues[no] = value;
       work->argumentKinds[no] = kind;
       break;
@@ -251,12 +251,12 @@ u32 MessageArgument_Lookup(u32 kind, u32 clear) {
   u32 index;
   u32 value = 0;
 
-  for (index = 0; index < 8; index++) {
+  for (index = 0; index < MESSAGE_ARGUMENT_COUNT; index++) {
     if (work->argumentKinds[index] == kind) {
       value = work->argumentValues[index];
       if (clear != 0) {
         work->argumentValues[index] = 0;
-        work->argumentKinds[index] = 0;
+        work->argumentKinds[index] = MESSAGE_ARGUMENT_NONE;
       }
       break;
     }
@@ -366,9 +366,9 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
   entry = Message_Decode(message, 1);
   if (work->textBuffer[entry] != 0) {
     Text_GetMessageSize(message, &x, &y, (u32 *)&width, (u32 *)&height);
-    x = (30 - width) >> 1;
+    x = (DISPLAY_TILE_WIDTH - width) >> 1;
     y = ((15 - height) >> 1) + yOffset;
-    if (mode != 0)
+    if (mode != CENTERED_MESSAGE_BARE)
       window = Window_Create(x, y, width, height, 0);
     else {
       window = Window_Create(x, y, 0, 0, WINDOW_FLAG_INSTANT);
@@ -380,7 +380,7 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
     else {
       while (Message_AllTyped() == 0)
         wait(1);
-      if (mode != 0) {
+      if (mode != CENTERED_MESSAGE_BARE) {
         Window_Close(window, 0);
         while (Window_IsClosed(window) == 0)
           wait(1);
@@ -438,11 +438,6 @@ void Text_PlotGlyphRows(u16 *rows, u8 *dst, s32 color) {
 void Text_PlotGlyphRows(u16 *rows, u8 *dst, s32 color);
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-
-/// The first kanji's code; the codes below it are the font's glyphs.
-#define KANJI_FIRST_CODE 256
-/// Every kanji is drawn 10 pixels wide.
-#define KANJI_WIDTH 10
 
 /// Draws a character on the canvas at (x, row) with its shadow and returns its
 /// width: a font glyph, or a kanji from KANJI_FIRST_CODE on, with the mark its

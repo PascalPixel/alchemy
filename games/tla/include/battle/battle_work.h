@@ -8,16 +8,39 @@
 #include "system/ram_buffer.h"
 #include "battle/battle_action.h"
 
+/// One OAM entry in a sprite list: the arrow that waits for the player to
+/// advance a battle message. The playback pushes it each frame it waits
+/// (Oam_AddSpriteAtDepth), and the three halfwords after the link are OAM
+/// attributes 0 to 2 as bit-fields.
+struct AdvanceArrowSprite {
+  /// The depth slot's next entry, set by Oam_AddSpriteAtDepth.
+  struct AdvanceArrowSprite *next;
+  u16 y : 8;     ///< pixels; bobs with a sine of the frame count
+  u16 flags : 8; ///< attribute 0's high byte: 0xa0, a tall 256-colour sprite
+  u16 x : 9;     ///< pixels
+  /// Attribute 1's flip and size bits; 0, which with the tall shape is 8 by
+  /// 16 pixels.
+  u16 size : 7;
+  u16 tile : 10; ///< the arrow picture's VRAM tile, reloaded each frame
+  /// Attribute 2's priority (bits 1..0) and palette (bits 5..2); 0 here.
+  u16 palette : 6;
+  /// OAM's fourth halfword, the affine parameter slot; cleared with the tile
+  /// word each frame.
+  u16 affineParam;
+};
+
 /// The battle event queue and the state of its playback.
 struct BattlePlaybackWork {
   struct BattlePlaybackQueue queue;
-  s32 phase;       ///< enum BattlePlaybackPhase, or a message phase
-  s32 eventIndex;  ///< the next queued event to play
-  s32 timer;       ///< frames to wait
-  u8 unk154[0x14]; ///< not named by TLA code
-  s16 pendingCue;  ///< hit sound, played on the next hit
-  s16 unk16a;      ///< while nonzero, a resumed phase keeps pendingCue
-  s32 flags;       ///< cleared when playback starts
+  s32 phase;      ///< enum BattlePlaybackPhase, or a message phase
+  s32 eventIndex; ///< the next queued event to play
+  s32 timer;      ///< frames to wait
+  struct AdvanceArrowSprite arrow; ///< the advance arrow
+  s32 arrowResource; ///< the arrow's resource entry; -1 until it is shown
+  s32 unitId;        ///< the unit of the hit or defeat being played
+  s16 pendingCue;    ///< hit sound, played on the next hit
+  s16 unk16a;        ///< while nonzero, a resumed phase keeps pendingCue
+  s32 flags;         ///< cleared when playback starts
 };
 
 STATIC_ASSERT(sizeof(struct BattlePlaybackWork) == 0x170);
@@ -26,15 +49,38 @@ STATIC_ASSERT(offsetof(struct BattlePlaybackWork, pendingCue) == 0x168);
 /// The most actions a turn's queue holds.
 enum { BATTLE_ACTION_CAPACITY = 20 };
 
+struct Window;
+
+/// The battle message, as far as its offset in the window:
+/// the advance arrow is drawn at the window's corner plus this offset.
+struct BattleMessageOffset {
+  struct Window *window; ///< Message.window; not named here
+  u16 x;                 ///< 1/256 pixels
+  u16 y;                 ///< 1/256 pixels
+};
+
+/// The battle message window: its window, its message and whether the
+/// next message is marked.
+struct BattleMessageWork {
+  struct Window *window;              ///< the message window
+  struct BattleMessageOffset *offset; ///< its message
+  s32 marked; ///< set by PLAYBACK_MARK; passed to the next message
+};
+
+STATIC_ASSERT(sizeof(struct BattleMessageOffset) == 8);
+STATIC_ASSERT(sizeof(struct BattleMessageWork) == 12);
+
 /// The battle's own work: its enemies, units and their objects, the turn's
 /// actions, the background palette and the events.
 struct BattleWork {
   s32 formation;      ///< the encounter's enemy formation
   s16 spriteSlots[6]; ///< the unit in each enemy sprite slot, 0 when free
   // XXX: The Broken Seal's enemyKinds (u16[6]: the kinds of enemy, for the
-  // letters that tell two of a kind apart); declared so,
-  // BattleParty_ChooseReserve compiles otherwise. Its readers' code would
-  // settle the type.
+  // letters that tell two of a kind apart), which BattleEnemy_RecordDefeat
+  // reads so, as does BattleEnemy_ClaimNameLetter through its
+  // SummonChargeState view; declared so, or as a union with these bytes,
+  // BattleParty_ChooseReserve allocates its registers otherwise (r8 for the
+  // reserve list in place of a stack slot).
   u8 unk010[12];
   u32 nameLetterMasks[6];    ///< for each kind, the name letters already given
   s8 lastNameLetter[6];      ///< for each kind, the last name letter given
@@ -70,14 +116,6 @@ struct BattleWork {
       actions[BATTLE_ACTION_CAPACITY]; ///< the actions chosen for the turn
   u8 unk42c[0x124];                    ///< not named by TLA code
   struct BattleSpoils spoils;          ///< what the battle has won so far
-  /// A queue of two enemies to call in (an ability of effect 87): their
-  /// classes and name letters, its head and its length.
-  ///@{
-  u16 queuedSummons[2];
-  u8 queuedCharges[2];
-  s8 queueHead;
-  s8 queueCount;
-  ///@}
   u16 palette[128]; ///< the backdrop's colours, before scaling
   s32 brightness;   ///< the backdrop's brightness, 16.16, 0x10000 full
   /// Its first halfword is the battle background passed to the palette fade.
@@ -134,8 +172,8 @@ STATIC_ASSERT(offsetof(struct BattleWork, placement) == 0x074);
 STATIC_ASSERT(offsetof(struct BattleWork, slots) == 0x084);
 STATIC_ASSERT(offsetof(struct BattleWork, actions) == 0x2ec);
 STATIC_ASSERT(offsetof(struct BattleWork, spoils) == 0x550);
-STATIC_ASSERT(offsetof(struct BattleWork, queuedSummons) == 0x564);
-STATIC_ASSERT(offsetof(struct BattleWork, queueCount) == 0x56b);
+STATIC_ASSERT(offsetof(struct BattleWork, spoils.queuedSummons) == 0x564);
+STATIC_ASSERT(offsetof(struct BattleWork, spoils.queueCount) == 0x56b);
 STATIC_ASSERT(offsetof(struct BattleWork, highlightStep) == 0x676);
 STATIC_ASSERT(offsetof(struct BattleWork, highlightMode) == 0x678);
 STATIC_ASSERT(offsetof(struct BattleWork, events) == 0x6e4);

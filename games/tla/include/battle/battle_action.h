@@ -43,8 +43,8 @@ enum BattleCommand {
   COMMAND_ABILITY = 4, ///< an enemy's ability
   COMMAND_DJINN = 5,
   COMMAND_SUMMON = 6,
-  COMMAND_DEFEND2 = 7, ///< an enemy's Total Defense (effect 47)
-  COMMAND_NONE = 8,    ///< nothing this turn
+  COMMAND_TOTAL_DEFENSE = 7, ///< an enemy's Total Defense (effect 47)
+  COMMAND_NONE = 8,          ///< nothing this turn
   /// The Djinn Counter (ability 299) a unit strikes back with, outside the
   /// turn order (Battle_Run queues it for BattleWork.pendingUnit).
   COMMAND_DJINN_COUNTER = 9,
@@ -64,7 +64,9 @@ struct BattleActionRecord {
   s16 parameter; ///< the command's ability, item or Djinni
   s16 target;    ///< the aimed unit's id
   s16 range;     ///< the action's range
-  s16 unk0e;     ///< which of the unit's actions this turn it is, from 0
+  /// Which of the unit's actions this turn it is, from 0: Poseidon's and the
+  /// Doom Dragon's forms choose each by it (BattleAI_ChooseAction).
+  s16 turnAction;
 };
 
 /// A battle's spoils so far: coins, experience, enemies defeated and up to
@@ -74,6 +76,15 @@ struct BattleSpoils {
   s32 experience;
   s32 defeated; ///< enemies defeated
   u16 items[4];
+  /// The two enemies last felled (BattleEnemy_RecordDefeat), which Regen Dance
+  /// (ABILITY_EFFECT_CALL_QUEUED) calls back: their enemy ids and name letters,
+  /// the place of the last felled and how many there are.
+  ///@{
+  u16 queuedSummons[2];
+  u8 queuedLetters[2];
+  s8 queueHead;
+  s8 queueCount;
+  ///@}
 };
 
 STATIC_ASSERT(sizeof(struct BattleObject) == 0x2c);
@@ -87,19 +98,19 @@ STATIC_ASSERT(offsetof(struct BattleActionRecord, priority) == 0x04);
 STATIC_ASSERT(offsetof(struct BattleActionRecord, command) == 0x06);
 STATIC_ASSERT(offsetof(struct BattleActionRecord, parameter) == 0x08);
 STATIC_ASSERT(offsetof(struct BattleActionRecord, target) == 0x0a);
-STATIC_ASSERT(sizeof(struct BattleSpoils) == 0x14);
+STATIC_ASSERT(sizeof(struct BattleSpoils) == 0x1c);
 
 /// A unit's chosen action as the party's command menus write it: the
 /// BattleActionRecord, read with its fields unsigned.
 struct BattleAction {
   u16 unitId;
-  u16 unk02;
+  u16 slot;
   s16 priority;
   u16 command;
   u16 parameter;
   u16 target;
   u16 range;
-  u16 unk0e;
+  u16 turnAction;
 };
 
 #endif

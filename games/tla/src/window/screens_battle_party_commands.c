@@ -13,28 +13,24 @@
 /// 5 revive, 6 cure all ailments.
 /// act: ability data.
 s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
-  s32 val;
-  s32 type;
-  s32 kind;
-  u8 effect;
+  s32 abilityKind;
+  s32 targetKind;
 
-  kind = 0;
-  type = act->flags & 15;
-  if (type == 1) // Restore HP.
-    kind = 1;
-  if (type == 11) // Restore PP.
-    kind = 2;
-  val = (s8)act->effect;
-  effect = val;
-  if (effect == 3) // Cure poison.
-    kind = 3;
-  if (effect == 4) // Cure an ailment.
-    kind = 4;
-  if (effect == 64) // Cure all ailments.
-    kind = 6;
-  if (Battle_IsReviveEffectFar(act->effect) != 0) // Revive.
-    kind = 5;
-  return kind;
+  targetKind = TARGET_HINT_NONE;
+  abilityKind = act->flags & ABILITY_FORMULA_MASK;
+  if (abilityKind == ABILITY_FORMULA_HEAL_HP)
+    targetKind = TARGET_HINT_HP;
+  if (abilityKind == ABILITY_FORMULA_HEAL_PP)
+    targetKind = TARGET_HINT_PP;
+  if (act->effect == ABILITY_EFFECT_CURE_POISON)
+    targetKind = TARGET_HINT_CURE_POISON;
+  if (act->effect == ABILITY_EFFECT_RESTORE)
+    targetKind = TARGET_HINT_RESTORE;
+  if (act->effect == ABILITY_EFFECT_CURE_ALL)
+    targetKind = TARGET_HINT_CURE_ALL;
+  if (Battle_IsReviveEffectFar(act->effect) != 0)
+    targetKind = TARGET_HINT_REVIVE;
+  return targetKind;
 }
 
 /// Lets the player choose which reserve member takes a party slot in battle,

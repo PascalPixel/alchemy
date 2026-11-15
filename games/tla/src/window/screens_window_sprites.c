@@ -45,13 +45,13 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 flags,
 struct WindowSprite *WindowSprite_CreateFromResource(s32 mode, s32 resource,
                                                      struct RenderInput *window,
                                                      s32 x, s32 y) {
-  s32 no;
+  s32 slot;
 
-  no = Resource_LoadByMode(mode, resource);
-  if (no < 0) {
+  slot = Resource_LoadByMode(mode, resource);
+  if (slot < 0) {
     return NULL;
   }
-  return WindowSprite_Create(no, OUTPUT_SIZE_16X16, window, x, y);
+  return WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
 }
 
 /// Copies icon `icon` (with `layers` passed on to the copier) into a free VRAM
@@ -59,16 +59,16 @@ struct WindowSprite *WindowSprite_CreateFromResource(s32 mode, s32 resource,
 struct WindowSprite *WindowSprite_CreateLoaded(s32 icon, s32 layers,
                                                struct RenderInput *window,
                                                s32 x, s32 y) {
-  s32 no;
-  struct WindowSprite *result;
+  s32 slot;
+  struct WindowSprite *sprite;
 
-  no = VramCache_FindFreeEntry();
-  result = NULL;
-  if (no != 0x60) {
-    Icon_CopyResourceToSlot(icon, layers, no);
-    result = WindowSprite_Create(no, OUTPUT_SIZE_16X16, window, x, y);
+  slot = VramCache_FindFreeEntry();
+  sprite = NULL;
+  if (slot != VRAM_CACHE_ENTRY_COUNT) {
+    Icon_CopyResourceToSlot(icon, layers, slot);
+    sprite = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
   }
-  return result;
+  return sprite;
 }
 
 /// Builds a 16x16 icon from frame pattern 1 with overlay pattern `icon` drawn
@@ -111,14 +111,14 @@ struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
 
     current = state->resourceIds[1];
     side = 1;
-    if (current != 999) {
+    if (current != PORTRAIT_SLOT_EMPTY) {
       side = 0;
-      if (state->resourceIds[0] != 999)
+      if (state->resourceIds[0] != PORTRAIT_SLOT_EMPTY)
         return object;
     }
   }
 
-  slot = 14 + side;
+  slot = PORTRAIT_PALETTE + side;
   Icon_LoadWithPalette(id, position, &first, &second, slot, 0);
   object = WindowSprite_Create(first, OUTPUT_SIZE_32X32,
                                (struct RenderInput *)window, x, y);
@@ -200,7 +200,7 @@ void ScanlineWindow_FillSpans(void *dst) {
 
 /// Fills the top-left `width` x `height` tiles of WINDOW_TILEMAP_VRAM, 32 tiles
 /// wide, with the tilemap entry `value`.
-void BgScreen_FillRect(s32 unused0, s32 unused1, u32 width, u32 height,
+void BgScreen_FillRect(s32 unusedA, s32 unusedB, u32 width, u32 height,
                        s32 value) {
   u32 row = 0;
   s16 *dst = (s16 *)BG_SCREEN_BLOCK(4);

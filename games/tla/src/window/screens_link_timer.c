@@ -9,16 +9,9 @@
 #include "window/screens.h"
 #include "window/window.h"
 
-#define COUNTDOWN_START_FRAMES 900
-#define FRAMES_PER_SECOND 60
+#define COUNTDOWN_START_FRAMES (15 * FRAMES_PER_SECOND)
 
-/* VIEW(menus): variable gLinkPeerSignatures as struct LinkSignature
- * gLinkPeerSignatures[]; heap_slots.h has u16 gLinkPeerSignatures[][12]; tried
- * as the rest of the object declares it, it does not compile in tla-ja:
- * games/tla/src/window/screens_link_timer.c:82: `gLinkPeerSignatures__menus'
- * undeclared (first use in this function). */
-extern struct LinkSignature
-    gLinkPeerSignatures__menus[] __asm__("gLinkPeerSignatures");
+#include "system/heap_slots.h"
 
 /// A task while the party's commands are chosen (Battle_CollectPartyCommands):
 /// eases the battle view a third of the way to BattleMenuWork.targetViewOffset
@@ -31,7 +24,7 @@ void UpdateLinkSessionCountdown(void) {
   struct BattleWork *runtime;
   struct MenuSprite *entry;
   u8 *active;
-  struct LinkSignature *signature;
+  u16 *signature;
   s32 target;
   s32 current;
   s32 difference;
@@ -63,7 +56,7 @@ void UpdateLinkSessionCountdown(void) {
     i = 2;
     do {
       if (*active++ != 0)
-        Oam_AddSpriteAtDepth(entry, 240);
+        Oam_AddSpriteAtDepth(entry, OAM_DEPTH_WINDOW);
       i--;
       entry++;
     } while (i >= 0);
@@ -79,9 +72,9 @@ void UpdateLinkSessionCountdown(void) {
     goto done;
 
   signature_tail:
-    if (signature->v != 'V')
+    if (signature[6] != 'V')
       goto signature_done;
-    if (signature->s != 'S')
+    if (signature[7] != 'S')
       goto signature_done;
     state->timer = COUNTDOWN_START_FRAMES;
     timer = state->timer;
@@ -91,10 +84,10 @@ void UpdateLinkSessionCountdown(void) {
     timer = state->timer;
     if (timer >= 0)
       goto timer_ready;
-    signature = &gLinkPeerSignatures__menus[runtime->linkSide ^ 1];
-    if (signature->e != 'E')
+    signature = gLinkPeerSignatures[runtime->linkSide ^ 1];
+    if (signature[4] != 'E')
       goto signature_done;
-    if (signature->d == 'D')
+    if (signature[5] == 'D')
       goto signature_tail;
 
   signature_done:

@@ -46,10 +46,13 @@ enum {
   MESSAGE_END_WAIT = 2,   ///< kept as TEXT_WAIT_KEY: a button closes the window
   MESSAGE_LINE_BREAK = 3, ///< kept as TEXT_NEWLINE
   MESSAGE_TEXT_COLOR = 8, ///< kept with its operand as TEXT_COLOR
-  MESSAGE_TEXT_EFFECT = 9, ///< kept with its operand as TEXT_OUTLINE
+  MESSAGE_TEXT_EFFECT = 9,   ///< kept with its operand as TEXT_OUTLINE
+  MESSAGE_LINE_SPACING = 10, ///< kept with its operand as TEXT_LINE_SPACING
   /// German: a counted noun; Italian: a gender ending; Spanish and French: the
   /// plural suffix
   MESSAGE_LOCALIZED_WORD = 13,
+  /// Kept with its operand as TEXT_WINDOW_STATE: the window animation to run.
+  MESSAGE_WINDOW_EFFECT = 15,
   /// The name of the unit gMainRoutineWork.leaderActorId names.
   MESSAGE_PROTAGONIST_NAME = 16,
   MESSAGE_ACTOR_NAME = 17, ///< the name of the unit its operand names
@@ -471,7 +474,8 @@ s32 Message_Decode(s32 script, s32 clear) {
             code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED &&
             previousCode <= 256 && previousCode > 127 &&
             previousCode != TEXT_MARK_VOICED &&
-            previousCode != TEXT_MARK_SEMIVOICED && previousCode != 32 &&
+            previousCode != TEXT_MARK_SEMIVOICED &&
+            previousCode != TEXT_SPACE &&
             previousCode != TEXT_JAPANESE_MIDDLE_DOT &&
             previousCode != TEXT_JAPANESE_FULL_STOP &&
             previousCode != TEXT_JAPANESE_COMMA) {
@@ -480,13 +484,14 @@ s32 Message_Decode(s32 script, s32 clear) {
 #endif
 
         if (code > 31 && code != MESSAGE_EM_DASH) {
-          if (work->haltingSpeech != 0 && (code == 32 || decodedCount > 10)) {
+          if (work->haltingSpeech != 0 &&
+              (code == TEXT_SPACE || decodedCount > 10)) {
             TEXT_APPEND(entry, writePosition, '.');
             TEXT_APPEND(entry, writePosition, '.');
             TEXT_APPEND(entry, writePosition, '.');
             overflow = 1;
             if (decodedCount > 10)
-              code = 32;
+              code = TEXT_SPACE;
           }
           if (code == '"') {
             quote ^= 1;
@@ -840,9 +845,6 @@ s32 Message_Decode(s32 script, s32 clear) {
 
 #if LANGUAGE == LANGUAGE_JAPANESE
 
-/// The window work's menuState while BattleMessage_Open decodes a message.
-#define WINDOW_BATTLE_MESSAGE 2
-
 // An enemy's id is 8 above its name's place after MsgEnemyName.
 
 extern u8 MsgWaitingForOpponent[];
@@ -928,7 +930,7 @@ s32 Message_Decode(s32 script, s32 clear) {
       code = (u32)decode(messageReader);
 
       if (overflow != 0) {
-        if (code < 32) {
+        if (code < TEXT_SPACE) {
           switch (code) {
           case MESSAGE_ARGUMENT_CLASS_NAME:
             MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
@@ -981,7 +983,8 @@ s32 Message_Decode(s32 script, s32 clear) {
             code != TEXT_MARK_VOICED && code != TEXT_MARK_SEMIVOICED &&
             previousCode <= 256 && previousCode > 127 &&
             previousCode != TEXT_MARK_VOICED &&
-            previousCode != TEXT_MARK_SEMIVOICED && previousCode != 32 &&
+            previousCode != TEXT_MARK_SEMIVOICED &&
+            previousCode != TEXT_SPACE &&
             previousCode != TEXT_JAPANESE_MIDDLE_DOT &&
             previousCode != TEXT_JAPANESE_FULL_STOP &&
             previousCode != TEXT_JAPANESE_COMMA) {
@@ -993,14 +996,15 @@ s32 Message_Decode(s32 script, s32 clear) {
             TEXT_APPEND(entry, writePosition, (u16)code);
           }
           // The ellipsis here is three of code 165, then code 161.
-          if (work->haltingSpeech != 0 && (code == 32 || decodedCount > 10)) {
+          if (work->haltingSpeech != 0 &&
+              (code == TEXT_SPACE || decodedCount > 10)) {
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_MIDDLE_DOT);
             TEXT_APPEND(entry, writePosition, TEXT_JAPANESE_FULL_STOP);
             overflow = 1;
             if (decodedCount > 10)
-              code = 32;
+              code = TEXT_SPACE;
           }
           TEXT_APPEND(entry, writePosition, (u16)code);
           lineStart = 0;
@@ -1073,7 +1077,7 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_ARGUMENT_ACTOR_NAME:
             unit =
                 Unit_Get(MessageArgument_Lookup(MESSAGE_ARGUMENT_ACTOR, clear));
-            if (work->battleMode != 0 &&
+            if (work->battleMode != WINDOW_FIELD &&
                 (unit->enemyId == ENEMY_MYSTERY_MAN ||
                  unit->enemyId == ENEMY_MYSTERY_WOMAN)) {
               message = MSG_MYSTERY_MAN;
@@ -1160,7 +1164,6 @@ s32 Message_Decode(s32 script, s32 clear) {
 #undef ITEM_PLURAL_NAME_OFFSET
 #undef SUFFIX_START
 #undef POSSESSIVE_COUNT
-#undef WINDOW_BATTLE_MESSAGE
 #undef ENEMY_MYSTERY_MAN
 #undef ENEMY_MYSTERY_WOMAN
 #undef MSG_MYSTERY_MAN

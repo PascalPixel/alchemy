@@ -43,58 +43,31 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 
 #define OBJ_VRAM 0x06010000
 
-/* VIEW(f11e3ac): tag struct ArrowSprite as struct ArrowSprite__presentation;
- * scene/shared.h has another definition; not tried: struct ArrowSprite__f11e3ac
- * was not found. */
-struct ArrowSprite__presentation {
-  void *next;
-  u16 y : 8;
-  u16 flags : 8;
-  u16 x : 9;
-  u16 size : 7;
-  u16 tile : 10;
-  u16 palette : 6;
-  u16 affineParam;
-};
+// BattlePlayback_Run's waits, in BattlePlaybackWork.phase beside the phases
+// BATTLE_PLAYBACK_PHASE_ names.
+#define PLAY_MESSAGE 3      ///< waits for the message, then for the player
+#define PLAY_ADVANCE 5      ///< shows the arrow and waits for the player
+#define PLAY_HIT 10         ///< flashes the unit that was hit
+#define PLAY_FELLED 11      ///< greys a fallen enemy and dissolves it
+#define PLAY_MESSAGE_ADD 13 ///< waits for the message, then goes straight on
 
-/// The battle's playback as BattlePlayback_Run reads it: the queue, its phase,
-/// event and timer, the advance arrow, the unit acting, and the hit's sound.
-struct PlaybackEvents {
-  struct BattlePlaybackQueue queue;
-  s32 phase;
-  s32 eventIndex;
-  s32 timer;
-  struct ArrowSprite__presentation arrow;
-  s32 arrowResource;
-  s32 actorId;
-  s16 pendingCue;
-  s16 unk16a;
-  s32 flags;
-};
-
-/// The battle work as BattlePlayback_Run reads it: the advance arrow's tiles,
-/// the plan of the action being played and the playback.
-struct PlaybackBattleWork {
-  u8 unk000[0x54];
-  s32 arrowTiles;
-  u8 unk058[0x67c - 0x58];
-  struct BattlePlan plan;
-  u8 unk6e0[4];
-  struct PlaybackEvents events;
-};
+/// PLAY_FELLED's timer from here counts the Djinn bonus's colour cycle, kept
+/// apart from the counts of the fall itself (0 to 36).
+#define FELLED_FLASH 1024
+/// The Djinn bonus's colour cycle lasts 30 frames.
+#define FELLED_FLASH_FRAMES 30
 
 /// Plays the action's targets one at a time: resolves each with
 /// BattleAbility_ApplyToTarget, then plays what it queued over the frames that
 /// follow, without waiting.
 void BattlePlayback_Run(void) {
   u16 selection[2];
-  struct AnimationRecord *records[4];
-  struct BattleMessageDisplay *display;
-  struct PlaybackBattleWork *battle =
-      (struct PlaybackBattleWork *)Ram_HeapSlots->battleWork;
-  struct PlaybackEvents *events = &battle->events;
+  struct Sprite *records[4];
+  struct BattleMessageWork *display;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattlePlaybackWork *events = &battle->events;
 
-  void BattleSprite_ClearTiles(struct AnimationRecord * record, s32 unused) {
+  void BattleSprite_ClearTiles(struct Sprite * record, s32 unused) {
     u8 *tiles = (u8 *)OBJ_VRAM + gVramCacheEntries[record->slot].offset;
 
     Iwram_ClearWordsEntry(tiles, record->width * record->height);
@@ -144,27 +117,29 @@ void BattlePlayback_Run(void) {
                                     MESSAGE_ARGUMENT_NUMBER);
             break;
           case PLAYBACK_ITEM_NAME:
-            MessageArgument_PushFar(events->queue.operands[eventIndex] & 0x1ff,
+            MessageArgument_PushFar(events->queue.operands[eventIndex] &
+                                        INVENTORY_ITEM_ID_MASK,
                                     MESSAGE_ARGUMENT_ITEM);
             break;
           case PLAYBACK_ABILITY_NAME:
-            MessageArgument_PushFar(events->queue.operands[eventIndex] & 0x3fff,
+            MessageArgument_PushFar(events->queue.operands[eventIndex] &
+                                        PSYNERGY_ABILITY_MASK,
                                     MESSAGE_ARGUMENT_ABILITY);
             break;
           case PLAYBACK_MARK:
-            ((struct BattleMessageDisplay *)Ram_HeapSlots->battleMessage)
-                ->marked = 1;
+            ((struct BattleMessageWork *)Ram_HeapSlots->battleMessage)->marked =
+                1;
             break;
           case PLAYBACK_MESSAGE:
             if ((s32)events->queue.operands[eventIndex] >= 0)
               BattleMessage_OpenFar(events->queue.operands[eventIndex]);
-            events->phase = 3;
+            events->phase = PLAY_MESSAGE;
             gInput.pendingPressed = 0;
             break;
           case PLAYBACK_MESSAGE_NO_WAIT:
             if ((s32)events->queue.operands[eventIndex] >= 0)
               BattleMessage_OpenFar(events->queue.operands[eventIndex]);
-            events->phase = 13;
+            events->phase = PLAY_MESSAGE_ADD;
             break;
           case PLAYBACK_CLEAR_ARGUMENTS:
             MessageArgument_ClearAllFar();
@@ -176,10 +151,10 @@ void BattlePlayback_Run(void) {
           case PLAYBACK_HIT:
             if (events->pendingCue > 0)
               Sound_PlayFar(events->pendingCue);
-            events->actorId = events->queue.operands[eventIndex];
-            Actor_SelectAnimationFar(BattleObject_Get(events->actorId)->object,
-                                     5);
-            events->phase = 10;
+            events->unitId = events->queue.operands[eventIndex];
+            Actor_SelectAnimationFar(BattleObject_Get(events->unitId)->object,
+                                     POSE_DAMAGE);
+            events->phase = PLAY_HIT;
             events->timer = 0;
             break;
           case PLAYBACK_DEFEAT: {
@@ -187,22 +162,21 @@ void BattlePlayback_Run(void) {
             void *record;
             s32 recordIndex;
 
-            events->actorId = events->queue.operands[eventIndex];
-            BattleEnemy_RecordDefeat(events->actorId, events->flags);
-            BattleUnit_ClearStatuses(events->actorId);
-            unit = Unit_Get(events->actorId);
-            for (recordIndex = 0;
-                 (record =
-                      GetMotionRecord(BattleObject_Get(events->actorId)->object,
-                                      recordIndex)) != 0;
+            events->unitId = events->queue.operands[eventIndex];
+            BattleEnemy_RecordDefeat(events->unitId, events->flags);
+            BattleUnit_ClearStatuses(events->unitId);
+            unit = Unit_Get(events->unitId);
+            for (recordIndex = 0; (record = GetMotionRecord(
+                                       BattleObject_Get(events->unitId)->object,
+                                       recordIndex)) != 0;
                  recordIndex++) {
               if (unit->side != 1)
-                Sprite_StartAnimationFar(record, 4);
+                Sprite_StartAnimationFar(record, POSE_PARTY_HELD);
               else
-                Sprite_StartAnimationFar(record, 5);
+                Sprite_StartAnimationFar(record, POSE_ENEMY_DOWN);
             }
             if (unit->side == 1) {
-              events->phase = 11;
+              events->phase = PLAY_FELLED;
               events->timer = 0;
             }
             break;
@@ -232,51 +206,53 @@ void BattlePlayback_Run(void) {
       }
       if (events->phase == BATTLE_PLAYBACK_PHASE_DISPATCH)
         events->phase = BATTLE_PLAYBACK_PHASE_RESOLVE_TARGET;
-    } else if (events->phase == 3 || events->phase == 13) {
+    } else if (events->phase == PLAY_MESSAGE ||
+               events->phase == PLAY_MESSAGE_ADD) {
       if (Message_AllTypedFar() == 0)
         return;
-      if (events->phase == 13) {
+      if (events->phase == PLAY_MESSAGE_ADD) {
         events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
         events->timer = 0;
       } else {
-        events->phase = 5;
+        events->phase = PLAY_ADVANCE;
         events->arrowResource = -1;
         events->timer = gVBlankCount;
       }
-    } else if (events->phase == 5) {
-      struct ArrowSprite__presentation *prompt = &events->arrow;
+    } else if (events->phase == PLAY_ADVANCE) {
+      struct AdvanceArrowSprite *prompt = &events->arrow;
       u8 *arrowTiles = gBattleMessage_AdvanceArrowTiles;
       s32 pictureTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
-      struct BattleMessageDisplay *display =
-          (struct BattleMessageDisplay *)Ram_HeapSlots->battleMessage;
-      struct MessageWindow *window = display->window;
-      struct MessageOffset *offset = display->offset;
+      struct BattleMessageWork *display =
+          (struct BattleMessageWork *)Ram_HeapSlots->battleMessage;
+      struct Window *window = display->window;
+      struct BattleMessageOffset *offset = display->offset;
       s32 x = 0;
 
       if (events->arrowResource == -1)
         events->arrowResource = battle->arrowTiles;
       MessageArgument_ClearAllFar();
-      IoWriteQueue_ClearBits16(0x0400004a, 4);
-      IoWriteQueue_SetBits16(0x0400004a, 16);
+      IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
+      IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
       ((u32 *)prompt)[1] = 0xa000;
       ((u32 *)prompt)[2] = x;
       /* FAKEMATCH(barrier): an empty asm after x is stored. */
       asm("");
       prompt->tile = VramCache_Reload(events->arrowResource, pictureTiles);
-      x = window->x * 8 + (offset->x >> 8) + 4;
+      x = (s16)window->x * 8 + (offset->x >> 8) + 4;
       prompt->x = x;
-      prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
+      prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + (s16)window->y * 8 +
                   (offset->y >> 8) + 6;
       if ((gInput.held & KEY_B) || (gInput.pendingPressed & KEY_ADVANCE) ||
-          ((u32)(gVBlankCount - events->timer) > 10 && (gInput.held & 0x303))) {
+          ((u32)(gVBlankCount - events->timer) > 10 &&
+           (gInput.held & KEY_ADVANCE))) {
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
         events->timer = 0;
       } else {
-        Oam_AddSpriteAtDepth(prompt, 240);
+        Oam_AddSpriteAtDepth(prompt, OAM_DEPTH_WINDOW);
         return;
       }
-    } else if (events->phase == 10) {
+    } else if (events->phase == PLAY_HIT) {
       if (gLastFrameVBlanks)
         events->timer |= 1;
       if (events->timer & 1) {
@@ -284,14 +260,14 @@ void BattlePlayback_Run(void) {
           struct BattleObject *slot;
 
           selection[0] = BATTLE_UNIT_LIST_END;
-          slot = BattleObject_Get(events->actorId);
+          slot = BattleObject_Get(events->unitId);
           BattleObject_SetColorMode(
-              slot->object, BattleMotion_GetSlotPalette(events->actorId));
+              slot->object, BattleMotion_GetSlotPalette(events->unitId));
         } else {
-          selection[0] = events->actorId;
+          selection[0] = events->unitId;
           selection[1] = BATTLE_UNIT_LIST_END;
-          BattleObject_SetColorMode(BattleObject_Get(events->actorId)->object,
-                                    7);
+          BattleObject_SetColorMode(BattleObject_Get(events->unitId)->object,
+                                    SPRITE_COLOR_WHITE);
         }
         PartyStatus_HighlightMembersFar(selection);
       }
@@ -300,60 +276,60 @@ void BattlePlayback_Run(void) {
         return;
       events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
       events->timer = 0;
-    } else if (events->phase == 11) {
-      if (events->timer == 0 || events->timer >= 0x400) {
-        s32 colorMode = 6;
+    } else if (events->phase == PLAY_FELLED) {
+      if (events->timer == 0 || events->timer >= FELLED_FLASH) {
+        s32 colorMode = SPRITE_COLOR_GREY;
 
         if (events->timer == 0 && events->flags != 0) {
           s32 kind =
-              BattleSprite_GetDefeatSound(Unit_Get(events->actorId)->enemyId);
+              BattleSprite_GetDefeatSound(Unit_Get(events->unitId)->enemyId);
 
           if (kind >= 0) {
             kind--;
             if (kind < 0)
               kind = 0;
-            Sound_PlayFar(146 + kind);
+            Sound_PlayFar(SE_ENEMY_CRY + kind);
           }
-          events->timer = 0x400;
+          events->timer = FELLED_FLASH;
         }
-        if (events->timer > 0x400 + 30 - 1)
+        if (events->timer > FELLED_FLASH + FELLED_FLASH_FRAMES - 1)
           events->timer = 0;
         if (events->timer == 0) {
           s32 kind =
-              BattleSprite_GetDefeatSound(Unit_Get(events->actorId)->enemyId);
+              BattleSprite_GetDefeatSound(Unit_Get(events->unitId)->enemyId);
 
           if (kind >= 0)
-            Sound_PlayFar(146 + kind);
+            Sound_PlayFar(SE_ENEMY_CRY + kind);
         }
-        if (events->timer >= 0x400)
-          colorMode = (events->timer - 0x400) / 8 % 5 + 1;
-        if (colorMode == 6 || (events->timer & 7) == 0) {
-          struct MotionRecord *record;
+        if (events->timer >= FELLED_FLASH)
+          colorMode = (events->timer - FELLED_FLASH) / 8 % 5 + SPRITE_COLOR_GRB;
+        if (colorMode == SPRITE_COLOR_GREY || (events->timer & 7) == 0) {
+          struct Sprite *record;
           s32 recordIndex;
-          struct MotionRecord **slot;
+          struct Sprite **slot;
           s32 lastFrameMask;
 
-          for (recordIndex = 0, slot = (struct MotionRecord **)records,
+          for (recordIndex = 0, slot = (struct Sprite **)records,
               lastFrameMask = 0xff;
                (record =
-                    GetMotionRecord(BattleObject_Get(events->actorId)->object,
+                    GetMotionRecord(BattleObject_Get(events->unitId)->object,
                                     recordIndex)) != 0;
                recordIndex++) {
-            struct ChildEntry *child;
+            struct SpriteAnimation *child;
             u8 previousFrame;
 
             *slot++ = record;
             child = record->entries[0];
-            previousFrame = child->frame;
+            previousFrame = child->picture;
             child->colorMode = colorMode;
-            child->frame = previousFrame | lastFrameMask;
+            child->picture = previousFrame | lastFrameMask;
           }
         }
         events->timer++;
         return;
       }
       if (events->timer == 4) {
-        BattleObject_RemoveFromLists(events->actorId);
+        BattleObject_RemoveFromLists(events->unitId);
         events->timer++;
         return;
       }
@@ -364,7 +340,7 @@ void BattlePlayback_Run(void) {
         s32 step;
         s32 base;
 
-        slot = BattleObject_Get(events->actorId);
+        slot = BattleObject_Get(events->unitId);
         slot->fading = 1;
         for (count = 0; (record = GetMotionRecord(slot->object, count)) != 0;
              count++)
@@ -376,7 +352,7 @@ void BattlePlayback_Run(void) {
 
           for (recordIndex = 0; recordIndex < count; recordIndex++)
             BattleSprite_ClearTiles(records[recordIndex], 0);
-          BattleObject_MarkForRelease(events->actorId);
+          BattleObject_MarkForRelease(events->unitId);
           events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
           events->timer = 0;
           return;

@@ -32,7 +32,7 @@
 /// (Summon_ListLearnedFar, DjinnRecoveryTable.summonMask), four to a page,
 /// those `standby` can pay for first, each with its Djinn cost by element, the
 /// others in TEXT_COLOR_RED.
-s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
+s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
   struct QueuedSprite cursorStorage;
   struct MenuSprite sprites[4];
   u8 learnedSummons[33];
@@ -95,7 +95,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     do {
     } while (0);
     sprite = &sprites[index];
-    sprites[index].oam.word.attr01 = 0x40000000;
+    sprites[index].oam.word.attr01 = OBJ_SIZE_16X16;
     sprites[index].oam.word.attr23 = t;
     sprite->oam.f.x = (s16)window->x * 8 + 8;
     t = (s16)window->y;
@@ -144,7 +144,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   orderedSummons[orderedCount] = SUMMON_END;
 
   for (;;) {
-    /* FAKEMATCH(temporary): cur holds &cursorStorage. */
+    /* LEFTOVER(template): cur holds &cursorStorage, as BattlePsynergyMenu_Run's
+     * iconSprite holds its cursor. */
     cur = &cursorStorage;
 
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
@@ -154,7 +155,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
         /* FAKEMATCH(barrier): an empty asm on x. */
         asm("" : "=r"(x) : "0"(x));
         Window_HighlightRect(x, (s16)window->y + drawnRow * 2 + 1,
-                             window->width - 2, 1, 15);
+                             window->width - 2, 1, WINDOW_PALETTE);
       }
       Text_FillCanvasBackground();
       {
@@ -184,12 +185,14 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
           s32 element;
 
           for (element = 0; element <= 3; element++) {
-            Window_SetTilemapEntry(counts, element + 0x5001, element * 2, 0, 0);
+            Window_SetTilemapEntry(counts, element + ELEMENT_ICON_TILE,
+                                   element * 2, 0, 0);
             if (standby[element] > 9)
               tile = standby[element] + 0xf196;
             else
               tile = (standby[element] + '0') | 0xf000;
-            Window_SetTilemapEntry(counts, tile, element * 2 + 1, 0, 0);
+            Window_SetTilemapEntry(counts, tile, element * 2 + 1, 0,
+                                   GLYPH_DRAW_CHARACTER);
           }
         }
         {
@@ -206,8 +209,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
               if (summon->djinnRequired[element] > standby[element])
                 break;
             }
-            affordable = element == 4;
-            Ability_LoadGlyph(summon->nameMessageId & 0x3fff, 0,
+            affordable = element == ELEMENT_COUNT;
+            Ability_LoadGlyph(summon->nameMessageId & ACTION_ID_MASK, 0,
                               &iconSlots[index], &glyph, 1);
             y = index * 2;
             sprites[index].oam.f.tile = glyph;
@@ -218,10 +221,11 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
                                     window, 16, index * 16);
             for (element = 0; element <= 3; element++) {
               if (summon->djinnRequired[element] != 0) {
-                Window_SetTilemapEntry(window, element + 0x5001,
+                Window_SetTilemapEntry(window, element + ELEMENT_ICON_TILE,
                                        col * 2 + SUMMON_COST_X, y, 0);
                 Window_PutGlyph(window, summon->djinnRequired[element] + '0',
-                                col * 2 + SUMMON_COST_X + 1, y, 0);
+                                col * 2 + SUMMON_COST_X + 1, y,
+                                GLYPH_DRAW_CHARACTER);
                 col++;
               }
             }
@@ -239,35 +243,32 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
 
       if (count > 4) {
         for (index = 0; index < (count + 3) / 4; index++) {
-          tile = index + 0xf301;
+          tile = index + LIST_TILE_PAGE_NUMBER;
           if (index == firstEntry / 4)
-            tile = index + 0xf30b;
+            tile = index + LIST_TILE_PAGE_NUMBER_LIT;
           Window_SetTilemapEntry(
               window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
         }
       }
       Window_HighlightRect((s16)window->x + 1,
                            (s16)window->y + selectedRow * 2 + 1,
-                           window->width - 2, 1, 14);
+                           window->width - 2, 1, HIGHLIGHT_PALETTE);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }
 
     for (index = 0; index <= 3; index++) {
       if (visibleSummons[index] != 0)
-        Oam_AddSpriteAtDepth(&sprites[index], 240);
+        Oam_AddSpriteAtDepth(&sprites[index], OAM_DEPTH_WINDOW);
     }
 
-    cursorPosition.x = (s16)window->x * 8 - 2;
-    cursorPosition.y = (selectedRow * 2 + (s16)window->y) * 8 + 20;
-    ((u32 *)cur)[1] = 0x40000000;
-    ((u32 *)cur)[2] = 0;
+    MENU_PLACE_CURSOR(cursorPosition, window, selectedRow, 2, cur);
     cur->oam.index =
         VramCache_Reload((u16)cursorHandle, gResource_FixedBlockBTiles);
     cur->oam.x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     cur->oam.y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     sprite = (struct MenuSprite *)&cursorStorage;
-    Oam_AddSpriteAtDepth(sprite, 242);
+    Oam_AddSpriteAtDepth(sprite, OAM_DEPTH_WINDOW + 2);
 
     {
       s32 element, tile, blink;
@@ -284,15 +285,16 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
 
     if (count > 4) {
       for (index = 0; index < (count + 3) / 4; index++) {
-        tile = index + 0xf301;
+        tile = index + LIST_TILE_PAGE_NUMBER;
         if ((gFrameCount & 15) <= 11 && index == firstEntry / 4)
-          tile = index + 0xf30b;
+          tile = index + LIST_TILE_PAGE_NUMBER_LIT;
         Window_SetTilemapEntry(
             window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
       }
-      Window_SetTilemapEntry(window, 0xf334,
+      Window_SetTilemapEntry(window, LIST_TILE_PAGES_LEFT,
                              window->width - (count + 3) / 4 - 3, -1, 0);
-      Window_SetTilemapEntry(window, 0xf335, window->width - 2, -1, 0);
+      Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
+                             -1, 0);
       do {
         work->dirty |= 2 << ((u32)((s16)window->y - 1) >> 2);
       } while (0);
@@ -311,8 +313,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
       pressed = 0;
       if (navigation->tutorialDelay == 0) {
         navigation->tutorialDelay = 120;
-        repeated = 1;
-        pressed = 1;
+        repeated = KEY_A;
+        pressed = KEY_A;
       } else {
         navigation->tutorialDelay--;
       }

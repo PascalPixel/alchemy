@@ -135,8 +135,8 @@ void BattleStaging_PlanAuroraField(struct BattlePlan *plan) {
 
 /// Sends every battler back to its spot.
 void BattleParty_ReturnAllToSpots(void) {
-  u16 ids[14];
-  s32 count = BattleUnit_ListIds(3, ids);
+  u16 ids[UNIT_MAX];
+  s32 count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, ids);
   s32 i;
 
   for (i = 0; i < count; i++)
@@ -248,14 +248,14 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       u8 swap = battle->plan.targetIds[0];
 
       battle->events.unk16a = 1;
-      battle->plan.targetIds[0] = battle->plan.actorId2;
+      battle->plan.targetIds[0] = battle->plan.partnerId;
       battle->skipPlayback = 1;
       BattleStaging_RunPsynergyCast(&battle->plan, CAST_DJINNI);
       battle->skipPlayback = 0;
       battle->plan.targetIds[0] = swap;
       swap = battle->plan.unitId;
-      battle->plan.unitId = battle->plan.actorId2;
-      battle->plan.actorId2 = swap;
+      battle->plan.unitId = battle->plan.partnerId;
+      battle->plan.partnerId = swap;
       battle->plan.battleEffect = BattleUnit_GetPartyAttackEffect(
           Unit_Get(battle->plan.unitId)->enemyId);
       if (((battle->plan.unitId ^ battle->plan.targetIds[0]) >> 7) == 0) {
@@ -269,8 +269,8 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
           &battle->plan,
           battle->plan.abilityId == ABILITY_MELD ? ATTACK_WITH_PARTNER : 0);
       swap = battle->plan.unitId;
-      battle->plan.unitId = battle->plan.actorId2;
-      battle->plan.actorId2 = swap;
+      battle->plan.unitId = battle->plan.partnerId;
+      battle->plan.partnerId = swap;
       break;
     }
     case STAGING_DJINN_RECOVERY: {
@@ -387,15 +387,16 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
 
   if (aid <= ALLY_MAX) {
     partyMode = completed;
-    if (scene->firstStrike != 2)
+    if (scene->firstStrike != FIRST_STRIKE_ENEMIES)
       partyMode = 1;
 
     if (!partyMode) {
       BattleMessage_ShowAndWaitFar((s32)MsgNoEscape);
       BattleMessage_WaitForAdvance();
     } else {
-      s16 unitIds[14];
-      s32 index = BattleUnit_ListLiving(1, (u16 *)unitIds) - 1;
+      s16 unitIds[UNIT_MAX];
+      s32 index =
+          BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, (u16 *)unitIds) - 1;
 
       while (index != -1) {
         struct Unit *unit = Unit_Get(unitIds[index]);
@@ -412,7 +413,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
     s16 event[2];
 
     event[0] = plan->unitId;
-    event[1] = 0xff;
+    event[1] = BATTLE_UNIT_LIST_END;
     BattleMotion_SetupEscapeObject(event[0]);
     wait(8);
     BattleObject_RemoveFromLists(plan->unitId);
@@ -430,7 +431,7 @@ s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
 /// the other side fades out while the effect plays, then everyone fades back
 /// in. STAGING_HIDE_ACTOR hides the unit too, as the summons do.
 s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
-  u16 units[14];
+  u16 units[UNIT_MAX];
   struct BattlePresentationWork work;
   u32 actor;
   u32 target;
@@ -443,7 +444,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   BattleStaging_BuildTargetList(plan, &work);
   actor = plan->unitId;
   target = plan->targetIds[0];
-  if (plan->battleEffect & 0x8000) {
+  if (plan->battleEffect & EFFECT_SUMMON) {
     struct BattlePresentationTransition *view = Ram_HeapSlots->battleBackground;
 
     if (actor <= ALLY_MAX)
@@ -463,12 +464,13 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   }
 
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
-  PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus & ~1);
+  PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus &
+                      ~PARTY_STATUS_SHOW_PP);
   object = BattleObject_Get(actor)->object;
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   list = units;
   i = 0;
-  count = BattleUnit_ListIds(3, list);
+  count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, list);
   for (; i != count; i++) {
     if (units[i] == BATTLE_UNIT_REMOVED)
       continue;
@@ -476,7 +478,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       u32 unit = units[i];
 
       if ((target <= ALLY_MAX) != (unit <= ALLY_MAX))
-        BattleHighlight_SetSpriteMode(unit, 1);
+        BattleHighlight_SetSpriteMode(unit, SPRITE_SEMI_TRANSPARENT);
     } else {
       Actor_SelectAnimationFar((struct Actor *)object,
                                Ram_HeapSlots->battleWork->actingAnimation);
@@ -484,17 +486,17 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   }
   if (!(mode & 2)) {
     Sound_PlayFar(SE_CAST);
-    ElementGlow_Play(work.actor, plan->element, 0, 0);
+    ElementGlow_Play(work.actor, plan->element, GLOW_STAR_FIELD, 0);
   }
-  if (mode & 1)
-    BattleHighlight_SetSpriteMode(actor, 1);
-  for (i = 0; i != 16; i++) {
-    REG_BLDALPHA = (16 - i) | 0x1000;
+  if (mode & STAGING_HIDE_ACTOR)
+    BattleHighlight_SetSpriteMode(actor, SPRITE_SEMI_TRANSPARENT);
+  for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
+    REG_BLDALPHA = (BLEND_WEIGHT_MAX - i) | 0x1000;
     wait(1);
   }
 
-  if (plan->failure != 0) {
-    if (plan->failure == 1) {
+  if (plan->failure != ACTION_FAILURE_NONE) {
+    if (plan->failure == ACTION_FAILURE_SEALED) {
       BattlePlayback_Push(PLAYBACK_UNIT_NAME, plan->unitId);
       BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgPsynergyBlocked);
     } else {
@@ -508,7 +510,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       u32 unit = units[i];
 
       if (unit == actor) {
-        if (!(mode & 1))
+        if (!(mode & STAGING_HIDE_ACTOR))
           units[kept++] = actor;
       } else if ((target <= ALLY_MAX) == (unit <= ALLY_MAX)) {
         units[kept++] = unit;
@@ -520,30 +522,30 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       units[i] = plan->targetIds[i];
     units[i] = BATTLE_UNIT_LIST_END;
     for (i = 0; i != work.count; i++) {
-      struct CastAnimation *animation =
+      struct Sprite *animation =
           GetMotionRecord(BattleObject_Get(work.actors[i])->object, 0);
       u32 child;
 
       for (child = 0; child != animation->count - 1; child++)
-        work.params[i][child] = animation->entries[child]->param;
+        work.params[i][child] = animation->entries[child]->colorMode;
     }
-    if (plan->battleEffect & 0x8000) {
+    if (plan->battleEffect & EFFECT_SUMMON) {
       if (target <= ALLY_MAX)
         work.side = 1;
       else
         work.side = 0;
     } else {
       if (plan->targetIds[0] <= ALLY_MAX)
-        work.side = 1;
+        work.side = EFFECT_SIDE_PARTY;
       else
-        work.side = 0;
+        work.side = EFFECT_SIDE_ENEMIES;
     }
-    if (plan->battleEffect & 0x20000)
+    if (plan->battleEffect & EFFECT_OTHER_SIDE)
       work.side ^= 1;
     Task_Add(BattlePlayback_Run, TASK_PASS_VBLANK);
-    if (plan->battleEffect & 0x8000)
+    if (plan->battleEffect & EFFECT_SUMMON)
       BattleEffect_RunSummonFar((s32 *)&work);
-    else if (plan->battleEffect & 0x4000)
+    else if (plan->battleEffect & EFFECT_BY_ID_RANGE)
       BattleEffect_RunByIdRangeFar(&work);
     else
       BattleEffect_RunFromTableFar(&work);
@@ -551,7 +553,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   }
 
   BattleObject_Put();
-  count = BattleUnit_ListIds(3, units);
+  count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, units);
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (i = 0; i != count; i++) {
     u32 unit;
@@ -562,15 +564,15 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       continue;
     unit = units[i];
     if ((target <= ALLY_MAX) != (unit <= ALLY_MAX))
-      BattleHighlight_SetSpriteMode(unit, 1);
+      BattleHighlight_SetSpriteMode(unit, SPRITE_SEMI_TRANSPARENT);
   }
-  for (i = 0; i != 16; i++) {
+  for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
     REG_BLDALPHA = i | 0x1000;
     wait(1);
   }
   for (i = 0; i != count; i++)
-    BattleHighlight_SetSpriteMode(units[i], 0);
-  BattleCamera_SetView(0, 0, 0, 100);
+    BattleHighlight_SetSpriteMode(units[i], SPRITE_OPAQUE);
+  BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
   wait(1);
   return 0;
 }
@@ -579,14 +581,14 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
 /// With no targets, only waits for the message to advance.
 /// plan: action and target information.
 s32 BattleStaging_RunActorEntries(struct BattlePlan *plan, s32 unused) {
-  s32 i;
+  s32 targetIndex;
 
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   if (plan->targetCount == 0) {
     BattleMessage_WaitForAdvance();
   } else {
-    for (i = 0; i < plan->targetCount; i++) {
-      BattleAbility_ApplyToTarget(plan, i);
+    for (targetIndex = 0; targetIndex < plan->targetCount; targetIndex++) {
+      BattleAbility_ApplyToTarget(plan, targetIndex);
       BattlePlayback_RunAll();
     }
   }

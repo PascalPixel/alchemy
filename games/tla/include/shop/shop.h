@@ -74,4 +74,7 @@ void ItemIconGrid_Release(void);
 void ItemIconGrid_ShowInventory(struct RenderInput *window, s32 x, s32 y,
                                 s32 unitId);
 
+/// The frames the hand cursor takes to glide into a newly opened list.
+#define SHOP_CURSOR_ENTER_FRAMES 12
+
 #endif

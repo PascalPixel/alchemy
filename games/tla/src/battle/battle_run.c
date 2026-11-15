@@ -97,19 +97,20 @@ void Battle_ChangeEnemyForm(s32 id) {
   BattleObject_Put();
 }
 
-/// Plays the form change effect of enemy group value (78 to 80) on enemy 128.
+/// Plays the form change effect of enemy group value (78 to 80) on the first
+/// enemy.
 void Battle_PlayFormChange(s32 value) {
-  struct BattleFxRequest request;
+  struct BattlePresentationWork request;
 
-  request.field10 = 0;
-  request.field08 = 128;
-  request.field0c = 0;
-  request.field14 = 1;
-  request.field24 = 128;
-  request.field04 = 0;
-  request.field00 = 0;
-  request.field18 = 0;
-  BattleEffect_RunFormChangeFar(&request, value);
+  request.initialValue = 0;
+  request.actor = FIRST_ENEMY_UNIT;
+  request.firstTarget = 0;
+  request.count = 1;
+  request.actors[0] = FIRST_ENEMY_UNIT;
+  request.side = 0;
+  request.kind = 0;
+  request.variant = 0;
+  BattleEffect_RunFormChangeFar((struct BattleFxRequest *)&request, value);
 }
 
 /// Returns the first of the Djinn tutorial's messages: the second set's
@@ -218,7 +219,7 @@ s32 Battle_Run(s32 enemyGroup) {
   transition->flag = 1;
   transition->unk18 = 0;
   transition->unk1c = 0;
-  *(volatile u16 *)0x04000000 = 1;
+  *(volatile u16 *)0x04000000 = DISPCNT_MODE_1;
   GameFlag_Set(FLAG_IN_BATTLE);
   GameFlag_Set(0x169);
   Transform_Reset();
@@ -243,22 +244,16 @@ s32 Battle_Run(s32 enemyGroup) {
 
   if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
     battle->twoSided = 1;
-    /* FAKEMATCH(dead): an empty once-only block after the twoSided store. */
-    do {
-    } while (0);
-    gMainRoutineWork.battleType = BATTLE_TYPE_LINK;
+    Battle_SetType(BATTLE_TYPE_LINK);
   }
   if (battle->twoSided != 0) {
-    /* FAKEMATCH(dead): the seed's store in a once-only block. */
-    do {
-      gBattleRandomSeed = 0;
-    } while (0);
+    Battle_SetRandomSeed(0);
     for (linkWaitFrames = 0;;) {
-      if ((gLinkStatus & 3) == 3)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) == LINK_BOTH_CONNECTED)
         break;
       wait(1);
       linkWaitFrames++;
-      if (linkWaitFrames > 24) {
+      if (linkWaitFrames > LINK_MAX_MISSED_FRAMES) {
         battle->linkPaused = 1;
         break;
       }
@@ -288,17 +283,17 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleUnit_RefreshPlacement();
   DjinnRecovery_Reconcile();
   BattleSummon_UpdateAvailability();
-  if (*(u16 *)Djinn_GetRecoveryTableFar(0) != 0)
-    battle->partyStatus = 3;
+  if (*(u16 *)Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY) != 0)
+    battle->partyStatus = PARTY_STATUS_SUMMONS;
   else
     battle->partyStatus = 1;
   if (enemyGroup == 75 || enemyGroup == 76)
     ScriptedBattle_RestoreUnits();
-  PartyStatus_CreateWindowFar(9);
+  PartyStatus_CreateWindowFar(PARTY_STATUS_CLOSED);
   BattleCamera_SetDefaultView();
   BattleObject_Put();
   BattleBackground_Init();
-  BattleBackground_Load(1, battle->background, 0);
+  BattleBackground_Load(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   BattleCamera_SetRange(px(160), px(80), 0, 0, Q16_ONE * 2);
   BattleCamera_SetView(0, 0, 0, 190);
   Party_ReservedNoOp5B14(1);
@@ -306,16 +301,16 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleSpoils_Clear();
   battle->promptSlot = VramCache_AllocEntry(128);
 
-  battle->encounterMode = 0;
+  battle->encounterMode = FIRST_STRIKE_NONE;
   if (GameFlag_Get(FLAG_DJINN_LESSON) != 0) {
-    battle->encounterMode = 1;
+    battle->encounterMode = FIRST_STRIKE_PARTY;
   } else if (gMainRoutineWork.battleType == BATTLE_TYPE_NORMAL) {
     if ((Battle_RandomFar() & 15) == 0)
-      battle->encounterMode = 1;
+      battle->encounterMode = FIRST_STRIKE_PARTY;
     else if ((Battle_RandomFar() & 31) == 0)
       battle->encounterMode = 2;
   } else if (gMainRoutineWork.battleType == BATTLE_TYPE_LOST) {
-    battle->encounterMode = 2;
+    battle->encounterMode = FIRST_STRIKE_ENEMIES;
   }
   BattleTransition_Run(enemyCount, enemyGroup);
   transition->flag = 0;
@@ -327,11 +322,11 @@ s32 Battle_Run(s32 enemyGroup) {
       BattleParty_SwapInReserves();
     Battle_TurnStartNoOp();
     BattleSummon_UpdateAvailability();
-    if (*(u16 *)Djinn_GetRecoveryTableFar(0) != 0)
-      battle->partyStatus = 3;
+    if (*(u16 *)Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY) != 0)
+      battle->partyStatus = PARTY_STATUS_SUMMONS;
     else
-      battle->partyStatus = 1;
-    transition->targetYaw = 0x2800;
+      battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
+    transition->targetYaw = TRIG_TURN * 5 / 32;
     transition->frames = 60;
     PartyStatus_DrawFar(battle->partyStatus);
 
@@ -362,9 +357,9 @@ s32 Battle_Run(s32 enemyGroup) {
         goto party_lost;
       if (BattleUnit_ListLivingWithReserve(1, 0) == 0)
         goto party_lost;
-      if (BattleUnit_ListLiving(1, 0) == 0)
+      if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, 0) == 0)
         break;
-      if (BattleUnit_ListLiving(2, 0) == 0) {
+      if (BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, 0) == 0) {
         if (enemyGroup == 78 || enemyGroup == 79) {
           Battle_PlayFormChange(enemyGroup++);
           break;
@@ -374,7 +369,7 @@ s32 Battle_Run(s32 enemyGroup) {
         if (actingUnit <= ALLY_MAX && battle->defeated == 1) {
           /* FAKEMATCH(barrier): an empty asm before the defeatState store. */
           asm("");
-          battle->defeatState = 3;
+          battle->defeatState = DEFEAT_BY_PARTY_MEMBER;
         }
         goto won;
       }
@@ -414,7 +409,7 @@ s32 Battle_Run(s32 enemyGroup) {
 #endif
     battle->extraCount = battle->nextExtraCount;
     battle->nextExtraCount = 0;
-    battle->encounterMode = 0;
+    battle->encounterMode = FIRST_STRIKE_NONE;
     Battle_TurnEndNoOp();
     Battle_ProcessTurnEnd();
     BattleMotion_DestroyAllSlotObjects();
@@ -452,11 +447,11 @@ won_scripted:
         Sound_PlayFar(MUS_VICTORY);
       if (battle->defeated != 0) {
         Sound_PlayFar(MUS_VICTORY);
-        if (battle->defeatState <= 1) {
-          BattleUnit_SetFar(128, battle->enemyClasses[battle->firstDefeated],
-                            26);
+        if (battle->defeatState <= DEFEAT_SEVERAL) {
+          BattleUnit_SetFar(FIRST_ENEMY_UNIT,
+                            battle->enemyClasses[battle->firstDefeated], 26);
           MessageArgument_ClearAllFar();
-          MessageArgument_PushFar(128, MESSAGE_ARGUMENT_ACTOR);
+          MessageArgument_PushFar(FIRST_ENEMY_UNIT, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(battle->defeatState + (s32)MsgDowned);
           BattleMessage_WaitForAdvance();
         }
@@ -475,7 +470,7 @@ aborted:
 aborted_scripted:
   Battle_ClearSerialTransferPayload();
   Task_SuspendAll(0);
-  *(volatile u16 *)0x04000000 = 1;
+  *(volatile u16 *)0x04000000 = DISPCNT_MODE_1;
   result = battle->defeated;
   GameFlag_Set(FLAG_AREA_TEMP_E8);
   goto finished;
@@ -513,7 +508,7 @@ finished:
   BattleParty_ResetActiveRuntimeFields();
   Battle_TurnEndNoOp();
   DjinnRecovery_CountDown();
-  gMainRoutineWork.battleType = BATTLE_TYPE_NORMAL;
+  Battle_SetType(BATTLE_TYPE_NORMAL);
   Task_Remove(BattleObject_UpdateSpritePriorities);
   BattleBackground_Free();
   return result;
@@ -526,9 +521,9 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
   s32 count;
   s32 index;
 
-  limit = 4;
+  limit = PARTY_BATTLE_SIZE;
   if (Ram_HeapSlots->battleWork->isLink != 0)
-    limit = 3;
+    limit = LINK_PARTY_SIZE;
 
   count = Party_CountMembersFar();
   if (count > limit)
@@ -543,7 +538,7 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
   }
 
   if (owners != 0)
-    *owners = 0xff;
+    *owners = BATTLE_UNIT_LIST_END;
   return count;
 }
 
@@ -571,7 +566,7 @@ s32 BattleParty_PrepareReserveOwners(u16 *owners) {
   }
 
   if (owners != 0)
-    *owners = 0xff;
+    *owners = BATTLE_UNIT_LIST_END;
   return count;
 }
 
@@ -585,7 +580,7 @@ s32 BattleEnemy_List(s16 *unit_ids) {
 
   output = unit_ids;
   listed = 0;
-  limit = 6;
+  limit = ENEMY_BATTLE_SIZE;
   count = 0;
   if (output != NULL) {
     if (GameFlag_Get(FLAG_LINK_BATTLE) != 0)
@@ -600,7 +595,7 @@ s32 BattleEnemy_List(s16 *unit_ids) {
       }
     }
     count = listed;
-    *output = 0xff;
+    *output = BATTLE_UNIT_LIST_END;
   }
   return count;
 }
@@ -623,9 +618,9 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
 
   output = unitIds;
   livingCount = 0;
-  enemyCapacity = 6;
+  enemyCapacity = ENEMY_BATTLE_SIZE;
   if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
-    enemyCapacity = 3;
+    enemyCapacity = LINK_PARTY_SIZE;
   }
   if (sideMask & BATTLE_SIDE_MASK_PARTY) {
     base = activeMembers;
@@ -649,8 +644,8 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
     }
   }
   if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
-    remaining = 0x80;
-    enemyLimit = enemyCapacity + 0x80;
+    remaining = FIRST_ENEMY_UNIT;
+    enemyLimit = enemyCapacity + FIRST_ENEMY_UNIT;
     if (remaining < enemyLimit) {
       do {
         unit = Unit_Get(remaining);
@@ -666,7 +661,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
     }
   }
   if (output != NULL) {
-    *output = 0xFF;
+    *output = BATTLE_UNIT_LIST_END;
   }
   return livingCount;
 }
@@ -689,9 +684,9 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
 
   output = unitIds;
   livingCount = 0;
-  enemyCapacity = 6;
+  enemyCapacity = ENEMY_BATTLE_SIZE;
   if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
-    enemyCapacity = 3;
+    enemyCapacity = LINK_PARTY_SIZE;
   }
   if (sideMask & BATTLE_SIDE_MASK_PARTY) {
     base = members;
@@ -716,8 +711,8 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
     }
   }
   if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
-    remaining = 0x80;
-    enemyLimit = enemyCapacity + 0x80;
+    remaining = FIRST_ENEMY_UNIT;
+    enemyLimit = enemyCapacity + FIRST_ENEMY_UNIT;
     if (remaining < enemyLimit) {
       do {
         unit = Unit_Get(remaining);
@@ -733,40 +728,40 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
     }
   }
   if (output != NULL) {
-    *output = 0xFF;
+    *output = BATTLE_UNIT_LIST_END;
   }
   return livingCount;
 }
 
 /// Lists the units in the battle on the sides in sideMask, standing or not, and
 /// returns how many.
-s32 BattleUnit_ListIds(s32 groups, u16 *dst) {
-  struct BattleWork *order;
+s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds) {
+  struct BattleWork *battle;
   s32 count;
   s32 i;
 
-  order = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   count = 0;
-  if (groups & 1) {
-    for (i = 0; order->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
-      if (order->partyUnits[i] != BATTLE_UNIT_REMOVED) {
-        if (dst != NULL)
-          *dst++ = order->partyUnits[i];
+  if (sideMask & BATTLE_SIDE_MASK_PARTY) {
+    for (i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (battle->partyUnits[i] != BATTLE_UNIT_REMOVED) {
+        if (unitIds != NULL)
+          *unitIds++ = battle->partyUnits[i];
         count++;
       }
     }
   }
-  if (groups & 2) {
-    for (i = 0; order->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
-      if (order->enemyIds[i] != BATTLE_UNIT_REMOVED) {
-        if (dst != NULL)
-          *dst++ = order->enemyIds[i];
+  if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
+    for (i = 0; battle->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (battle->enemyIds[i] != BATTLE_UNIT_REMOVED) {
+        if (unitIds != NULL)
+          *unitIds++ = battle->enemyIds[i];
         count++;
       }
     }
   }
-  if (dst != NULL)
-    *dst = 255;
+  if (unitIds != NULL)
+    *unitIds = BATTLE_UNIT_LIST_END;
   return count;
 }
 
@@ -778,7 +773,7 @@ s32 BattleUnit_ListLivingIds(s32 groups, u16 *dst) {
 
   order = Ram_HeapSlots->battleWork;
   count = 0;
-  if (groups & 1) {
+  if (groups & BATTLE_SIDE_MASK_PARTY) {
     for (i = 0; order->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
       if (order->partyUnits[i] != BATTLE_UNIT_REMOVED &&
           Unit_Get(order->partyUnits[i])->hp != 0) {
@@ -788,7 +783,7 @@ s32 BattleUnit_ListLivingIds(s32 groups, u16 *dst) {
       }
     }
   }
-  if (groups & 2) {
+  if (groups & BATTLE_SIDE_MASK_ENEMIES) {
     for (i = 0; order->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
       if (order->enemyIds[i] != BATTLE_UNIT_REMOVED &&
           Unit_Get(order->enemyIds[i])->hp != 0) {
@@ -799,6 +794,6 @@ s32 BattleUnit_ListLivingIds(s32 groups, u16 *dst) {
     }
   }
   if (dst != NULL)
-    *dst = 255;
+    *dst = BATTLE_UNIT_LIST_END;
   return count;
 }

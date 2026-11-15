@@ -11,6 +11,13 @@
 #include "battle/presentation.h"
 #include "system/system_bank.h"
 
+/// Lines outside the plane read the padded map in this screen block.
+#define BACKGROUND_PADDED_SCREEN 31
+/// The screen lines the plane covers, 0 to 135, above the status window.
+#define BACKGROUND_PLANE_LINES 136
+/// The plane's top lines, left off except while commands are chosen.
+#define BACKGROUND_PLANE_HIDDEN_LINES 16
+
 /// Sets the palette brightness. Level 0 transfers the original colours
 /// unchanged.
 void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
@@ -37,11 +44,13 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
   } while (0);
 
   if (level == 0) {
-    Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0), DMA_COPY_HALFWORDS(128),
-            REG_DMA3);
+    Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0),
+            DMA_COPY_HALFWORDS(BATTLE_BG_PALETTE_COLORS), REG_DMA3);
   } else {
-    ColorBuffer_Scale(palette, (u16 *)(BG_PLTT + 6 * 16),
-                      screen->brightness = 0x10000 - level * 1092, 128);
+    ColorBuffer_Scale(palette, (u16 *)&BG_PLTT_COLOR(6, 0),
+                      screen->brightness =
+                          Q16_ONE - level * BACKGROUND_LEVEL_STEP,
+                      BATTLE_BG_PALETTE_COLORS);
   }
   {
     u32 saved = *slot;
@@ -57,28 +66,28 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
   struct BattleBackgroundView *transition =
       (struct BattleBackgroundView *)Ram_HeapSlots->battleBackground;
 
-  if (transition->mode == 0)
+  if (transition->mode == BATTLE_BACKGROUND_NONE)
     Task_Add(BattleBackground_ShowZoomedPage, 0xcff);
   transition->mode = mode;
 
-  if (mode == 1)
+  if (mode == BATTLE_BACKGROUND_FIXED)
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT,
                         BGCNT_SCREEN_BASE(31) | BGCNT_256_COLORS |
                             BGCNT_PRIORITY(3),
                         IO_WRITE_16);
 
-  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
   *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
 
-  if (fade == 0x80) {
+  if (fade == BATTLE_BACKGROUND_FADE_RESTORE) {
     struct BattleWork *work;
     u16 *palette;
 
     work = Ram_HeapSlots->battleWork;
     palette = work->palette;
-    Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0), DMA_COPY_HALFWORDS(128),
-            REG_DMA3);
+    Dma_Set(palette, (void *)&BG_PLTT_COLOR(6, 0),
+            DMA_COPY_HALFWORDS(BATTLE_BG_PALETTE_COLORS), REG_DMA3);
   } else if (fade != 0) {
     struct BattleWork *work;
     u16 *source;
@@ -87,12 +96,12 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
 
     work = Ram_HeapSlots->battleWork;
     source = work->palette;
-    destination = (u16 *)(BG_PLTT + 6 * 16);
+    destination = (u16 *)&BG_PLTT_COLOR(6, 0);
 
-    for (i = 0; i != 128; i++) {
-      s32 red = source[i] & 31;
-      s32 green = (source[i] >> 5) & 31;
-      s32 blue = (source[i] >> 10) & 31;
+    for (i = 0; i != BG_PLTT_COLORS / 2; i++) {
+      s32 red = RGB_RED(source[i]);
+      s32 green = RGB_GREEN(source[i]);
+      s32 blue = RGB_BLUE(source[i]);
 
       if (red > fade)
         red -= fade;
@@ -110,7 +119,8 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
     }
   }
   Graphics_BuildSequentialTileTable((void *)BG_SCREEN_BLOCK(7));
-  BattleTransition_BuildTilemap((void *)BG_SCREEN_BLOCK(31));
+  BattleTransition_BuildTilemap(
+      (void *)BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
 }
 
 /// Allocates the zoomed background's scanline work.
@@ -118,10 +128,7 @@ void BattleBackground_Init(void) {
   void *block = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SCANLINES, 0x2a0);
   struct BattlePresentationTransition *work = Ram_HeapSlots->battleBackground;
 
-  /* FAKEMATCH(dead): an empty once-only loop after the work's load. */
-  do {
-  } while (0);
-  Iwram_FillWordsEntry(block, 0x2a0, 0);
+  IWRAM_FILL_WORDS(block, 0x2a0, 0);
   work->mode = 0;
 }
 
@@ -136,8 +143,7 @@ void BattleBackground_Free(void) {
 void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   struct BattlePresentationTransition *view = Ram_HeapSlots->battleBackground;
   u8 *data = Resource_GetTableEntry(resource);
-  struct BattleBackdropWork *session =
-      (struct BattleBackdropWork *)Ram_HeapSlots->battleWork;
+  struct BattleWork *session = (struct BattleWork *)Ram_HeapSlots->battleWork;
   ModelDecoder decode;
   u16 *palette;
 
@@ -156,12 +162,13 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   }
   Heap_Release(decode);
   palette = session->palette;
-  Dma_Set(data, palette, 0x84000040, REG_DMA3);
+  Dma_Set(data, palette, DMA_COPY_WORDS(64), REG_DMA3);
   if (level >= 0)
-    ColorBuffer_Scale(palette, (u16 *)(BG_PLTT + 6 * 16),
+    ColorBuffer_Scale(palette, (u16 *)&BG_PLTT_COLOR(6, 0),
                       session->brightness = 0x10000 - level * 1092, 128);
   if (session->keepBackdropPalette == 0) {
-    Dma_Set((void *)OBJ_PLTT, (void *)(BG_PLTT + 5 * 16), 0x80000010, REG_DMA3);
+    Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+            DMA_COPY_HALFWORDS(16), REG_DMA3);
     *(u16 *)(BG_PLTT + 94) = *(u16 *)(BG_PLTT + 244);
   }
   Graphics_BuildSequentialTileTable((void *)BG_SCREEN_BLOCK(7));
@@ -198,14 +205,16 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   wrap = 0;
   ratio = Q16_ONE;
   if (scale >= ratio) {
-    wrap = 0x2000;
+    wrap = BGCNT_WRAP;
     horizon = 0x6800 + -(s16)camera->yaw * 3;
   }
   if (scanlines == NULL)
     return;
-  if ((view->mode == 1 || view->secondMode == 1) && view->busy == 0)
+  if ((view->mode == BATTLE_BACKGROUND_FIXED ||
+       view->secondMode == BATTLE_BACKGROUND_FIXED) &&
+      view->busy == 0)
     gBgScroll[1].x = horizon >> 8;
-  if (view->mode != 2)
+  if (view->mode != BATTLE_BACKGROUND_ZOOMED)
     return;
   line = scanlines->lines[scanlines->page ^ 1];
   ratio = Iwram_RatioMulQ14(scale, ratio);
@@ -223,16 +232,16 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
       (Iwram_RatioMulQ14((s16)affine->pd, 0x4000 - affine->y) >> 16) + 1;
   scanline = 0;
   if (!GameFlag_Get(FLAG_CHOOSING_COMMANDS)) {
-    for (; scanline < 16; scanline++)
+    for (; scanline < BACKGROUND_PLANE_HIDDEN_LINES; scanline++)
       *line++ = 0x3f8e;
   }
-  if (groundEndLine > 136)
-    groundEndLine = 136;
+  if (groundEndLine > BACKGROUND_PLANE_LINES)
+    groundEndLine = BACKGROUND_PLANE_LINES;
   for (; scanline < groundEndLine; scanline++)
     *line++ = wrap | 0x478a;
-  for (; scanline < 136; scanline++)
+  for (; scanline < BACKGROUND_PLANE_LINES; scanline++)
     *line++ = wrap | 0x478e;
-  for (; scanline < 160; scanline++)
+  for (; scanline < DISPLAY_HEIGHT; scanline++)
     *line++ = 0x3f8e;
   scanlines->page ^= 1;
 }
@@ -262,7 +271,7 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   pos[1] = depth;
   pos[2] = y;
   sourceBounds[0] = 0;
-  alpha = 0xc000;
+  alpha = Q16_ONE * 3 / 4;
   sourceBounds[1] = 0;
   sourceBounds[2] = 0;
 
@@ -276,14 +285,16 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   renderBounds[1] = 0;
   renderBounds[2] = scene->distance;
   Iwram_TransformVector(renderBounds, scene->eye);
-  gProjection.centerX = 120;
-  gProjection.centerY = 120;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Transform_Reset();
   Transform_SetLookAt(scene->eye, pos);
   Render_ProjectPoint(sourceBounds, measuredBounds);
 
-  BattleCamera_SetRange(px(120), px(120), (120 - measuredBounds[0]) << 8,
-                        (120 - measuredBounds[1]) << 8, scale);
+  BattleCamera_SetRange(
+      px(BATTLE_PROJECTION_CENTER_X), px(BATTLE_PROJECTION_CENTER_Y),
+      (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
+      (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
   half = scale * 0xff;
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
@@ -311,7 +322,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   pos[1] = depth;
   pos[2] = y;
   sourceBounds[0] = 0;
-  alpha = 0xc000;
+  alpha = Q16_ONE * 3 / 4;
   sourceBounds[1] = 0;
   sourceBounds[2] = 0;
 
@@ -331,14 +342,16 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
     renderBounds[2] = span;
     Iwram_TransformVectorEntry(renderBounds, camera);
   }
-  gProjection.centerX = 120;
-  gProjection.centerY = 120;
+  gProjection.centerX = BATTLE_PROJECTION_CENTER_X;
+  gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Transform_Reset();
   Transform_SetLookAt(scene->eye, pos);
   Render_ProjectPoint(sourceBounds, measuredBounds);
 
-  BattleCamera_SetRange(px(120), px(120), (120 - measuredBounds[0]) << 8,
-                        (120 - measuredBounds[1]) << 8, scale);
+  BattleCamera_SetRange(
+      px(BATTLE_PROJECTION_CENTER_X), px(BATTLE_PROJECTION_CENTER_Y),
+      (BATTLE_PROJECTION_CENTER_X - measuredBounds[0]) << 8,
+      (BATTLE_PROJECTION_CENTER_Y - measuredBounds[1]) << 8, scale);
   half = scale * 0xff;
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
@@ -370,10 +383,10 @@ void BattleBackground_FadeAlphaOut(void) {
   s32 step;
 
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BD;
-  for (step = 1; step <= 16; step += 2) {
+  for (step = 1; step <= BLEND_WEIGHT_MAX; step += 2) {
     // Arithmetic on BLEND_ALPHA, not the macro's | form, which changes the
     // code.
-    REG_BLDALPHA = BLEND_ALPHA(16, 16) - step;
+    REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX) - step;
     wait(1);
   }
 }
@@ -387,8 +400,8 @@ void BattleBackground_FadeAlphaIn(void) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BD;
   // Arithmetic on BLEND_ALPHA, not the macro's | form, which changes the
   // code.
-  for (step = 1; step <= 16; step += 2) {
-    REG_BLDALPHA = step + BLEND_ALPHA(0, 16);
+  for (step = 1; step <= BLEND_WEIGHT_MAX; step += 2) {
+    REG_BLDALPHA = step + BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
     wait(1);
   }
 }
@@ -531,25 +544,26 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
 
 /// Makes every unit's graphics but except's translucent (OBJ mode 1).
 /// except: unit ID to leave unchanged.
-void BattleHighlight_SetOtherSpriteModes(s32 except) {
-  s16 list[14];
-  s32 cnt = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, list);
-  s32 i;
+void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
+  s16 unitIds[UNIT_MAX];
+  s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
+  s32 unitIndex;
 
-  for (i = 0; i < cnt; i++) {
-    if (list[i] != except)
-      BattleHighlight_SetSpriteMode(list[i], 1);
+  for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
+    if (unitIds[unitIndex] != selectedUnitId)
+      BattleHighlight_SetSpriteMode(unitIds[unitIndex],
+                                    SPRITE_SEMI_TRANSPARENT);
   }
 }
 
 /// Restores normal rendering (OBJ mode 0) for all units.
 void BattleHighlight_ClearAllSpriteModes(void) {
-  s16 list[14];
-  s32 cnt = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, list);
-  s32 i;
+  s16 unitIds[UNIT_MAX];
+  s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
+  s32 unitIndex;
 
-  for (i = 0; i < cnt; i++)
-    BattleHighlight_SetSpriteMode(list[i], 0);
+  for (unitIndex = 0; unitIndex < unitCount; unitIndex++)
+    BattleHighlight_SetSpriteMode(unitIds[unitIndex], SPRITE_OPAQUE);
 }
 
 // Steps the battle highlight's blend.
@@ -567,31 +581,34 @@ void BattleBackground_StepHighlightBlend(void) {
     if (battle->highlightMode == HIGHLIGHT_FADE_IN) {
       u32 level = battle->highlightStep >> 1;
 
-      if (level > 16)
-        level = 16;
+      if (level > BLEND_WEIGHT_MAX)
+        level = BLEND_WEIGHT_MAX;
       REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
-      REG_BLDALPHA = ((0x10 - level) << 8) | level;
+      REG_BLDALPHA = ((BLEND_WEIGHT_MAX - level) << 8) | level;
       battle->highlightStep++;
     } else if (battle->highlightMode == HIGHLIGHT_FADE_OUT) {
       u32 level = battle->highlightStep >> 1;
 
-      if (level > 16)
-        level = 16;
+      if (level > BLEND_WEIGHT_MAX)
+        level = BLEND_WEIGHT_MAX;
       REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
-      REG_BLDALPHA = (level << 8) | (0x10 - level);
+      REG_BLDALPHA = (level << 8) | (BLEND_WEIGHT_MAX - level);
       battle->highlightStep++;
     } else if (battle->highlightMode == HIGHLIGHT_PULSE) {
       REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
       REG_BLDALPHA = (gBattleHighlight_BlendRamp[battle->highlightStep] << 8) |
-                     (0x10 - gBattleHighlight_BlendRamp[battle->highlightStep]);
-      battle->highlightStep = ((battle->highlightStep + 1) & 0xf) |
-                              (battle->highlightStep > 14 ? 0x10 : 0);
+                     (BLEND_WEIGHT_MAX -
+                      gBattleHighlight_BlendRamp[battle->highlightStep]);
+      battle->highlightStep =
+          ((battle->highlightStep + 1) & 0xf) |
+          (battle->highlightStep > 14 ? BLEND_WEIGHT_MAX : 0);
     } else if (battle->highlightMode != HIGHLIGHT_OFF) {
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
-      REG_BLDALPHA = BLEND_ALPHA(16, 0);
+      REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
       REG_BLDY = gBattleHighlight_BlendRamp[battle->highlightStep];
-      battle->highlightStep = ((battle->highlightStep + 1) & 0xf) |
-                              (battle->highlightStep > 14 ? 0x10 : 0);
+      battle->highlightStep =
+          ((battle->highlightStep + 1) & 0xf) |
+          (battle->highlightStep > 14 ? BLEND_WEIGHT_MAX : 0);
     }
   }
 }
@@ -600,7 +617,7 @@ void BattleBackground_StepHighlightBlend(void) {
 /// the others taking the other blend, or with HIGHLIGHT_OFF stops the
 /// highlight.
 void BattleHighlight_SetModes(u16 *actors, s32 mode) {
-  s16 activeActors[14];
+  s16 activeActors[UNIT_MAX];
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   u32 count;
   u32 i;
@@ -616,7 +633,7 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
     battle->highlightMode = mode;
     battle->highlightStep = 0;
     REG_BLDY = 0;
-    Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
+    Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
 
     count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, (u16 *)activeActors);
     for (i = 0; i < count; i++)
@@ -660,12 +677,21 @@ struct Ring {
   s32 age;
 };
 
+/// The star field's sparks and rings, and the frames in which a spent spark
+/// starts again.
+#define STAR_FIELD_SPARKS 16
+#define STAR_FIELD_RINGS 3
+#define STAR_FIELD_SPAWN_FRAMES 25
+#define STAR_FIELD_SIZE 128 ///< the canvas's width and height in pixels
+#define STAR_FIELD_CENTER (STAR_FIELD_SIZE / 2)
+#define STAR_FIELD_RING_SIZE 32
+
 /// The star field's work: the canvas sheet, sixteen sparks, three rings, the
 /// frames counted, whether the canvas is ready, and its centre.
 struct SparkWork {
-  u8 sheet[0x11c0];
-  struct Spark sparks[16];
-  struct Ring rings[3];
+  u8 sheet[4544];
+  struct Spark sparks[STAR_FIELD_SPARKS];
+  struct Ring rings[STAR_FIELD_RINGS];
   s32 frames;
   s32 ready;
   s32 originX;
@@ -676,11 +702,11 @@ struct SparkWork {
 typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
                          s32 height);
 
-// The star tables: each frame's size and sheet offset, and
-// the ring's four frames.
+// The star tables: each picture's size and sheet offset, and the ring's four
+// pictures.
 extern const u8 gElementGlow_StarSizes[];
 extern const s32 gElementGlow_StarPictures[];
-extern const s32 Data_08129830[];
+extern const s32 gElementGlow_RingPictures[];
 
 /// Steps the star field behind a summon one frame: its sparks spiral in
 /// towards the centre along a damped spiral and shrink as they near it; while
@@ -717,7 +743,7 @@ void ElementGlow_UpdateStarField(void) {
   work = (struct SparkWork *)Ram_HeapSlots->battleEffect;
   work->ready = 0;
   draw = (DrawFunc)Ram_HeapSlots->ramCode;
-  for (i = 0; i < 16; i++) {
+  for (i = 0; i < STAR_FIELD_SPARKS; i++) {
     spark = &work->sparks[i];
     life = spark->life;
     if (life != 0) {
@@ -732,7 +758,7 @@ void ElementGlow_UpdateStarField(void) {
         mul = Iwram_MulQ16;
         pos = spark->pos;
         for (k = 2; k >= 0; k--) {
-          step = mul(mul(-*pos >> 8, scale), 0x13000);
+          step = mul(mul(-*pos >> 8, scale), Q16_ONE * 19 / 16);
           pos[3] = pos[3] - (pos[3] >> 7) + step;
           *pos += pos[3];
           pos++;
@@ -740,9 +766,9 @@ void ElementGlow_UpdateStarField(void) {
       }
       life = spark->life;
     }
-    if (life == 0 && work->frames <= 24) {
+    if (life == 0 && work->frames < STAR_FIELD_SPAWN_FRAMES) {
       angle = Random16();
-      radius = Random16() + 0x10000;
+      radius = Random16() + Q16_ONE;
       half = radius >> 1;
       spark->pos[0] = Iwram_MulQ16(Trig_Cos(angle), half);
       spark->pos[1] = Iwram_MulQ16(Trig_Sin(angle), half);
@@ -757,8 +783,8 @@ void ElementGlow_UpdateStarField(void) {
       life = spark->life = (radius >> 13) + 1;
     }
     if (life != 0) {
-      x = (spark->pos[0] >> 10) + 64;
-      y = (spark->pos[1] >> 10) + 64;
+      x = (spark->pos[0] >> 10) + STAR_FIELD_CENTER;
+      y = (spark->pos[1] >> 10) + STAR_FIELD_CENTER;
       frame = life;
       if (frame < 0)
         frame = 0;
@@ -770,7 +796,7 @@ void ElementGlow_UpdateStarField(void) {
     }
   }
   draw = (DrawFunc)Ram_HeapSlots->ramCodePaired;
-  for (ring = work->rings, j = 2; j >= 0; j--, ring++) {
+  for (ring = work->rings, j = STAR_FIELD_RINGS - 1; j >= 0; j--, ring++) {
     ring->x += ring->velX;
     ring->y += ring->velY;
     ringX = ring->x >> 10;
@@ -781,8 +807,10 @@ void ElementGlow_UpdateStarField(void) {
       /* FAKEMATCH(dead): an empty once-only block after the age's store. */
       do {
       } while (0);
-      draw(dest, (u8 *)work + Data_08129830[phase], ringX + 48, ringY + 48, 32,
-           32);
+      draw(dest, (u8 *)work + gElementGlow_RingPictures[phase],
+           ringX + STAR_FIELD_CENTER - STAR_FIELD_RING_SIZE / 2,
+           ringY + STAR_FIELD_CENTER - STAR_FIELD_RING_SIZE / 2,
+           STAR_FIELD_RING_SIZE, STAR_FIELD_RING_SIZE);
     }
   }
   work->frames++;
@@ -836,14 +864,13 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   struct Ring *ring;
   s32 i;
   u8 *data;
-  s32 zero;
 
-  ((s32 *)Ram_HeapSlots->battleBackground)[2] = 1;
+  ((s32 *)Ram_HeapSlots->battleBackground)[2] = BATTLE_BACKGROUND_FIXED;
   work = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
   HeapSlot_Alloc(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
-  for (i = 0; i < 16; i++) {
+  for (i = 0; i < STAR_FIELD_SPARKS; i++) {
     s32 angle = Random16();
-    u32 radius = Random16() + 0x10000;
+    u32 radius = Random16() + Q16_ONE;
     u32 half = radius >> 1;
 
     spark = &work->sparks[i];
@@ -859,7 +886,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
     spark->pos[5] = 0;
     spark->life = (radius >> 13) + 1;
   }
-  for (i = 0; i < 3; i++) {
+  for (i = 0; i < STAR_FIELD_RINGS; i++) {
     s32 radius = 0x1000;
     s32 angle;
 
@@ -874,37 +901,36 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
   work->frames = 0;
   work->ready = 0;
   work->originPending = 0;
-  Iwram_ClearWordsEntry(Ram_HeapSlots->battleCanvas, 0x4000);
+  Iwram_ClearWordsEntry(Ram_HeapSlots->battleCanvas,
+                        STAR_FIELD_SIZE * STAR_FIELD_SIZE);
   data = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
   Iwram_CopyWordsEntry((void *)BG_PLTT, data, 128);
   data += 128;
   Decompress_TaggedLz(data, work);
   switch (mode) {
-  case 0:
+  case ELEMENT_VENUS:
     data = Resource_GetTableEntry((s32)&ResourceId_YellowPaletteB);
     break;
-  case 1:
+  case ELEMENT_MERCURY:
     data = Resource_GetTableEntry((s32)&ResourceId_BlueRingSheet);
     break;
-  case 2:
+  case ELEMENT_MARS:
     data = Resource_GetTableEntry((s32)&ResourceId_RedPaletteC);
     break;
   default:
     data = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteD);
     break;
   }
-  Dma_Set(data, (void *)BG_PLTT, 0x84000000 | 32, REG_DMA3);
-  /* FAKEMATCH(dead): a once-only block. */
-  do {
-    zero = 0;
-    REG_BG2X = zero;
-    REG_BG2Y = zero;
-  } while (0);
-  Io_Write16(0x100, &REG_BG2PA);
+  Dma_Set(data, (void *)BG_PLTT, DMA_COPY_WORDS(32), REG_DMA3);
+  Io_Write32(0, &REG_BG2X);
+  Io_Write32(0, &REG_BG2Y);
+  Io_Write16(Q_8_8(1), &REG_BG2PA);
   Io_Write16(0, &REG_BG2PB);
   Io_Write16(0, &REG_BG2PC);
-  Io_Write16(0x100, &REG_BG2PD);
-  /* FAKEMATCH(dead): a never-taken five-argument call. */
+  Io_Write16(Q_8_8(1), &REG_BG2PD);
+  /* LEFTOVER(frame): the twin's five-argument BattleEffect_BuildBlitterFar,
+   * never taken here: of the 8 bytes the ROM's frame reserves (sub sp, #8),
+   * no instruction addresses sp+0 to sp+3, the call's fifth argument. */
   if (0)
     BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
   BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE, 0x03);
@@ -918,7 +944,7 @@ s32 ElementGlow_InitializeStarField(s32 mode) {
 /// ElementGlow_Play once mode 0's field has played. Returns Task_Remove's
 /// result, which the caller does not read.
 s32 ElementGlow_End(s32 unused) {
-  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), 0x4000);
+  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), BG_CHAR_SIZE);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   HeapSlot_Release(HEAP_SLOT_BATTLE_CANVAS);
@@ -942,10 +968,10 @@ void BattleEffect_EndElementStreaksFar(void);
 /// frames (45 frames); 1, the prepared canvas scene of the kind, centred on the
 /// unit (40 frames); 2, the ice fleck burst; 3, the gathering burst.
 void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
-  struct ScreenPoint position;
-  struct ScreenPoint position2;
-  struct BattlePresentationWork launch;
-  struct BattlePresentationWork launch2;
+  struct ScreenPoint starPosition;
+  struct ScreenPoint streakPosition;
+  struct BattlePresentationWork pillarLaunch;
+  struct BattlePresentationWork burstLaunch;
   s32 origin[2];
   struct BattleWork *session = Ram_HeapSlots->battleWork;
   volatile u16 *ime;
@@ -955,64 +981,70 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
   struct ScreenPoint *pos;
 
   wait(1);
-  BattleBackground_SetMode(1, session->background, 0);
-  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), 0x4000);
-  IoWriteQueue_Store16(0x04000000, 0x3741);
-  IoWriteQueue_Store16(0x0400000c, 0x784);
-  IoWriteQueue_Store16(0x04000050, 0x3f44);
+  BattleBackground_SetMode(BATTLE_BACKGROUND_FIXED, session->background, 0);
+  Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), BG_CHAR_SIZE);
+  IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
+                                              DISPCNT_BG0_ON | DISPCNT_BG1_ON |
+                                              DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                                              DISPCNT_WIN0_ON);
+  IoWriteQueue_Store16((u32)&REG_BG2CNT, 0x784);
+  IoWriteQueue_Store16((u32)&REG_BLDCNT,
+                       BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   wait(1);
-  Io_Write16(240, &REG_WIN0H);
+  Io_Write16(DISPLAY_WIDTH, &REG_WIN0H);
   Io_Write16(0x1088, &REG_WIN0V);
   Io_Write16(WININ_WIN0_ALL, &REG_WININ);
   Io_Write16(WINOUT_WIN01_BG0 | WINOUT_WIN01_OBJ, &REG_WINOUT);
-  if (mode == 0) {
-    IoWriteQueue_Store16(0x04000052, 0x100e);
+  if (mode == GLOW_STAR_FIELD) {
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA, 0x100e);
     ElementGlow_InitializeStarField(kind);
-    for (frame = 0, pos = &position; frame <= 44; frame++) {
+    for (frame = 0, pos = &starPosition; frame <= 44; frame++) {
       brightness = &session->brightness;
       ime = &REG_IME;
       work = (struct SparkWork *)Ram_HeapSlots->battleEffect;
       if (frame <= 24)
-        ColorBuffer_Scale(session->palette, (u16 *)(BG_PLTT + 6 * 16),
-                          *brightness = 0x10000 - frame * 1092, 128);
+        ColorBuffer_Scale(session->palette, (u16 *)&BG_PLTT_COLOR(6, 0),
+                          *brightness = Q16_ONE - frame * BACKGROUND_LEVEL_STEP,
+                          BATTLE_BG_PALETTE_COLORS);
       BattleMotion_ProjectScaledPosition(unit, (s32 *)pos);
-      work->originX = (64 - pos->x) << 8;
-      work->originY = (64 - pos->y) << 8;
-      IO_WRITE_QUEUE_PUSH_IME(ime, 0x04000028, (u32)&work->originX, 0x84000002);
+      work->originX = (STAR_FIELD_CENTER - pos->x) << 8;
+      work->originY = (STAR_FIELD_CENTER - pos->y) << 8;
+      IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, (u32)&work->originX,
+                              DMA_COPY_WORDS(2));
       work->originPending = 1;
       wait(1);
     }
     ElementGlow_End(kind);
-  } else if (mode == 1) {
+  } else if (mode == GLOW_STREAKS) {
     BattleEffect_StartElementStreaksFar(kind);
     for (frame = 0; frame < 40; frame++) {
-      BattleMotion_ProjectScaledPosition(unit, (s32 *)&position2);
-      origin[0] = (64 - position2.x) << 8;
-      origin[1] = (64 - position2.y) << 8;
-      IO_WRITE_QUEUE_PUSH(0x04000028, (u32)origin, 0x84000002);
+      BattleMotion_ProjectScaledPosition(unit, (s32 *)&streakPosition);
+      origin[0] = (STAR_FIELD_CENTER - streakPosition.x) << 8;
+      origin[1] = (STAR_FIELD_CENTER - streakPosition.y) << 8;
+      IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, (u32)origin, DMA_COPY_WORDS(2));
       wait(1);
     }
     BattleEffect_EndElementStreaksFar();
-  } else if (mode == 2) {
-    launch.flags = 0;
-    launch.kind = kind;
-    launch.variant = variant;
-    launch.actor = unit;
-    launch.actors[0] = unit;
-    launch.firstTarget = unit;
-    launch.count = 1;
-    launch.initialValue = 1;
-    BattleEffect_RunElementPillarFar(&launch);
+  } else if (mode == GLOW_PILLAR) {
+    pillarLaunch.flags = 0;
+    pillarLaunch.kind = kind;
+    pillarLaunch.variant = variant;
+    pillarLaunch.actor = unit;
+    pillarLaunch.actors[0] = unit;
+    pillarLaunch.firstTarget = unit;
+    pillarLaunch.count = 1;
+    pillarLaunch.initialValue = 1;
+    BattleEffect_RunElementPillarFar(&pillarLaunch);
   } else {
-    launch2.flags = 0;
-    launch2.kind = kind;
-    launch2.variant = 0;
-    launch2.actor = unit;
-    launch2.firstTarget = unit;
-    launch2.actors[0] = unit;
-    launch2.count = 1;
-    launch2.initialValue = 1;
-    BattleEffect_RunElementBurstFar(&launch2);
+    burstLaunch.flags = 0;
+    burstLaunch.kind = kind;
+    burstLaunch.variant = 0;
+    burstLaunch.actor = unit;
+    burstLaunch.firstTarget = unit;
+    burstLaunch.actors[0] = unit;
+    burstLaunch.count = 1;
+    burstLaunch.initialValue = 1;
+    BattleEffect_RunElementBurstFar(&burstLaunch);
   }
 }
 
@@ -1030,7 +1062,7 @@ void Irq_RemoveVCountHandler(void) { Irq_SetHandler(IRQ_VCOUNT, 0, 0); }
 /// player has met (flag 0x608 + id, or all with flag 0x174); -1 for an empty
 /// formation, -2 when one present kind is unmet, -3 when none counts.
 s32 BattleFormation_AverageLevel(s32 recordId) {
-  struct BattleFormationRecord *record;
+  struct Formation *record;
   const struct EnemyDefinition *enemy;
   u32 memberIndex;
   s32 enemyId;
@@ -1041,18 +1073,18 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
 
   enemyCount = 0;
   levelTotal = 0;
-  record = &gBattleFormation_Records[recordId];
-  for (memberIndex = 0; memberIndex < 5; memberIndex++) {
+  record = &gFormations[recordId];
+  for (memberIndex = 0; memberIndex < FORMATION_MEMBERS; memberIndex++) {
     if (record->minimumCounts[memberIndex] != 0)
       break;
   }
-  if (memberIndex == 5)
+  if (memberIndex == FORMATION_MEMBERS)
     return -1;
-  for (memberIndex = 0; memberIndex < 5; memberIndex++) {
+  for (memberIndex = 0; memberIndex < FORMATION_MEMBERS; memberIndex++) {
     if (record->maximumCounts[memberIndex] == 0)
       continue;
     enemyId = record->memberIds[memberIndex];
-    enemy = Enemy_GetDefinitionFar(enemyId + 8);
+    enemy = Enemy_GetDefinitionFar(enemyId + ENEMY_ID_FIRST);
     if (enemy == 0)
       continue;
     if (!GameFlag_Get(FLAG_MONSTER_BATTLE_ANY_ENEMY) &&

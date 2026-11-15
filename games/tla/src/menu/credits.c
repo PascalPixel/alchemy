@@ -80,10 +80,51 @@ extern u8 BattleEffect_Expand2CodeSize[];
 #include "gamepak/far_call/window.h"
 #include "system/system_bank.h"
 #include "system/ram_buffer.h"
+#include "fixed_math.h"
+#include "window/window.h"
+#include "flags.h"
 #include "resource_ids.h"
 #include "field/flag_call.h"
 
 extern u8 gDebugTextEnabled;
+
+// Credits text uses six 32-pixel sprites across each 192-pixel line, drawn into
+// a ring of 32 lines of sprite tiles.
+#define CREDITS_LINE_PIXELS 192
+#define CREDITS_VISIBLE_ROWS 16
+#define CREDITS_COLUMNS 6
+#define CREDITS_RING_ROWS 32
+#define CREDITS_LINE_TILES 24 ///< A line's 4bpp tiles, 192 / 8.
+#define CREDITS_RING_TILES (CREDITS_RING_ROWS * CREDITS_LINE_TILES)
+#define CREDITS_RING_BYTES (CREDITS_RING_TILES * TILE_SIZE_4BPP)
+/// A line's raster: nine rows of 256 one-byte pixels, the ninth for the
+/// shadow below the eighth.
+#define CREDITS_BUFFER_BYTES 2304
+#define CREDITS_RASTER_STRIDE 256
+/// OAM entries 0 to 23: the opaque strips above and below the text.
+#define CREDITS_BORDER_SPRITES 24
+/// The whole OAM: the borders, 96 text sprites and 8 parked off screen.
+#define CREDITS_OAM_ENTRIES 128
+/// The ring line a scroll line is drawn into, sixteen rows below the top.
+#define CREDITS_RING_LINE(line)                                                \
+  ((((line) + CREDITS_VISIBLE_ROWS) & (CREDITS_RING_ROWS - 1)) *               \
+   CREDITS_LINE_TILES)
+/// The scene flag that says a credits line was drawn before, so the next one
+/// starts from its shadow row.
+#define FLAG_CREDITS_LINE_DRAWN FLAG_SCENE_TEMP_00
+
+// The ending's scrolling pictures: a map buffer of 15 columns, each a strip of
+// 4 KB copied into its own 2 KB screen block, 31 rows of 64 bytes at a time.
+#define ENDING_PICTURE_COLUMNS 15
+#define ENDING_PICTURE_STRIP_BYTES 4096
+#define ENDING_PICTURE_SCREEN_BYTES BG_SCREEN_SIZE
+#define ENDING_PICTURE_ROWS 31
+#define ENDING_PICTURE_ROW_BYTES 64
+/// A row's offset wrapped into its screen block.
+#define ENDING_PICTURE_WRAP(offset)                                            \
+  ((offset) & (ENDING_PICTURE_SCREEN_BYTES - 1))
+/// The fade-in's frames, four to each blend step.
+#define ENDING_PICTURE_FADE_FRAMES (BLEND_WEIGHT_MAX * 4)
 
 /// Fills 30K bytes of 256-colour characters with colour 1 and clears 128
 /// palette colours.
@@ -100,13 +141,13 @@ void Credits_ClearBuffer(s32 alternate) {
   // Use a solid pixel in the palette being cleared, producing an opaque
   // black layer for the next crossfade.
   if (alternate == 0) {
-    fillColor = 0x01010101;
+    fillColor = PIXELS_8BPP(1);
     tileDestination = (u32)BG_CHAR_BLOCK(0);
     paletteDestination = (u32)BG_PLTT;
   } else {
-    fillColor = 0x81818181;
+    fillColor = PIXELS_8BPP(129);
     tileDestination = (u32)BG_CHAR_BLOCK(2);
-    paletteDestination = (u32)&BG_PLTT[128];
+    paletteDestination = (u32)&BG_PLTT_COLOR(8, 0);
   }
   Dma_Fill32Cell(dmaFill, fillColor, (void *)tileDestination, 30720);
   Dma_Fill32Cell(dmaFill, 0, (void *)paletteDestination, 256);
@@ -144,9 +185,9 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
     tileDestination = (void *)BG_CHAR_BLOCK(0);
     paletteDestination = (u32)BG_PLTT;
   } else {
-    paletteOffset = 0x80808080;
+    paletteOffset = PIXELS_8BPP(128);
     tileDestination = (void *)BG_CHAR_BLOCK(2);
-    paletteDestination = (u32)&BG_PLTT[128];
+    paletteDestination = (u32)&BG_PLTT_COLOR(8, 0);
   }
   RamCode_Load(decoder, BattleEffect_ExpandCode, BattleEffect_ExpandCodeSize);
   decoder(resourceData + 256, tileDestination, paletteOffset);
@@ -154,9 +195,9 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
 
   for (i = 0; i < 128; i++) {
     u16 color = *(const s16 *)resourceData;
-    s32 blue = (color >> 10) & 0x1f;
-    s32 green = (color >> 5) & 0x1f;
-    s32 red = color & 0x1f;
+    s32 blue = RGB_BLUE(color);
+    s32 green = RGB_GREEN(color);
+    s32 red = RGB_RED(color);
     s32 sum = (green * 2 + red) * 2 + blue;
 
     resourceData += 2;
@@ -176,7 +217,7 @@ void Credits_BuildBackgroundTilemap(u32 *table) {
   u32 value;
   u32 step;
 
-  value = 0x01ff01ff;
+  value = 0x01FF01FF;
   step = 0x10000;
   for (i = 0; i < 32; i++)
     *table++ = value;
@@ -243,14 +284,14 @@ s32 Credits_Run(s32 mode) {
 
       Credits_LoadBackground(gDisplayScroll_SlideResources[slide],
                              (slide & 1) ^ 1);
-      for (step = 1; step <= 16; step++) {
+      for (step = 1; step <= BLEND_WEIGHT_MAX; step++) {
         if (slide & 1) {
-          s32 t = 16;
+          s32 t = BLEND_WEIGHT_MAX;
           s32 hi = step << 8;
           s32 r = t - step;
           REG_BLDALPHA = hi | r;
         } else
-          REG_BLDALPHA = ((16 - step) << 8) | step;
+          REG_BLDALPHA = ((BLEND_WEIGHT_MAX - step) << 8) | step;
         for (frame = 0; frame <= 3; frame++) {
           if (gInput.held & KEY_START)
             goto done;
@@ -292,23 +333,25 @@ done:
 /// every fourth frame, and every frame but those while B is held.
 void Credits_UpdateCrawlSprites(void) {
   u32 fine = gDisplayScroll_Position & 7;
-  u32 tile = (((s16)gDisplayScroll_Position / 8) & 31) * 24;
-  u32 *words = (u32 *)(gDisplayScroll_Objects + 24);
+  u32 tile = (((s16)gDisplayScroll_Position / 8) & (CREDITS_RING_ROWS - 1)) *
+             CREDITS_LINE_TILES;
+  u32 *words = (u32 *)(gDisplayScroll_Objects + CREDITS_BORDER_SPRITES);
   s32 row;
 
-  for (row = 0; row < 16; row++) {
+  for (row = 0; row < CREDITS_VISIBLE_ROWS; row++) {
     s32 column;
 
-    for (column = 0; column < 6; column++) {
+    for (column = 0; column < CREDITS_COLUMNS; column++) {
       *words++ =
-          (row * 8 + 16 - fine) | ((column * 32 + 24) << 16) | 0x40004000;
+          (row * 8 + 16 - fine) | ((column * 32 + 24) << 16) | OBJ_SIZE_32X8;
       *words++ = tile;
       tile += 4;
-      if (tile == 768)
+      if (tile == CREDITS_RING_TILES)
         tile = 0;
     }
   }
-  Dma_Set(gDisplayScroll_Objects, (void *)OAM, 0x84000100, (u32 *)0x040000d4);
+  Dma_Set(gDisplayScroll_Objects, (void *)OAM, DMA_COPY_WORDS(OAM_SIZE / 4),
+          REG_DMA3);
 
   if (gDisplayScroll_Busy == 1 && (gInput.held & (KEY_A | KEY_B))) {
     gDisplayScroll_Busy = 0;
@@ -341,7 +384,7 @@ void Credits_DrawEnteringCrawlLine(void) {
       gDisplayScroll_LastPosition = current;
       line = (s16)((s16)gDisplayScroll_Position / 8);
       gDisplayScroll_Busy = DisplayScroll_DrawMessageLine(
-          line / 2 + first - 1, ((line + 16) & 31) * 24, 1);
+          line / 2 + first - 1, CREDITS_RING_LINE(line), 1);
     }
   }
 }
@@ -355,54 +398,56 @@ void Credits_InitCrawlSprites(void) {
   u32 i;
   u32 j;
 
-  void *objects = Heap_AllocEwram(128 * sizeof(struct DisplayScrollObject));
+  void *objects =
+      Heap_AllocEwram(CREDITS_OAM_ENTRIES * sizeof(struct DisplayScrollObject));
   void **cell = (void **)&gDisplayScroll_Objects;
   *cell = objects;
   fill = 0;
   Dma_Set((void *)&fill, (void *)OBJ_VRAM0,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (0x6000 / 4),
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
+              (CREDITS_RING_BYTES / 4),
           REG_DMA3);
-  fill = 0x11111111;
-  Dma_Set((void *)&fill, (void *)(OBJ_VRAM0 + 0x6000),
+  fill = PIXELS_4BPP(1);
+  Dma_Set((void *)&fill, (void *)(OBJ_VRAM0 + CREDITS_RING_BYTES),
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 64, REG_DMA3);
 
   entry = *(u32 **)cell;
   {
-    u32 attr = 0x80004000;
+    u32 attr = OBJ_SIZE_32X16;
     for (i = 0; i < 8; i++) {
       u32 *q = entry;
 
       *q++ = (i << 21) | attr;
-      *q = 0x300;
+      *q = CREDITS_RING_TILES;
       entry += 2;
     }
   }
   {
-    u32 attr = 0x80004088;
+    u32 attr = 136 | OBJ_SIZE_32X16;
     for (i = 0; i < 8; i++) {
       u32 *q = entry;
 
       *q++ = (i << 21) | attr;
-      *q = 0x300;
+      *q = CREDITS_RING_TILES;
       entry += 2;
     }
   }
   {
-    u32 attr = 0x40004098;
+    u32 attr = 152 | OBJ_SIZE_32X8;
     for (i = 0; i < 8; i++) {
       u32 *q = entry;
 
       *q++ = (i << 21) | attr;
-      *q = 0x300;
+      *q = CREDITS_RING_TILES;
       entry += 2;
     }
   }
-  for (i = 0; i < 16; i++) {
-    for (j = 0; j < 6; j++) {
+  for (i = 0; i < CREDITS_VISIBLE_ROWS; i++) {
+    for (j = 0; j < CREDITS_COLUMNS; j++) {
       u32 *q = entry;
       u32 tile = (i * 3) * 8 + j * 4;
 
-      *q++ = (i * 8 + 16) | ((j * 32 + 24) << 16) | 0x40004000;
+      *q++ = (i * 8 + 16) | ((j * 32 + 24) << 16) | OBJ_SIZE_32X8;
       *q = tile;
       entry += 2;
     }
@@ -411,7 +456,7 @@ void Credits_InitCrawlSprites(void) {
     u32 *q = entry;
 
     *q++ = 0x00c000c0;
-    *q = 0x300;
+    *q = CREDITS_RING_TILES;
     entry += 2;
   }
   gDisplayScroll_Position = 0;
@@ -419,8 +464,8 @@ void Credits_InitCrawlSprites(void) {
   gDisplayScroll_Busy = 0;
   Task_Add(Credits_UpdateCrawlSprites, TASK_PASS_FRAME);
   Task_Add(Credits_DrawEnteringCrawlLine, TASK_PASS_VBLANK);
-  for (i = 0; i < 32; i++)
-    Credits_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
+  for (i = 0; i < CREDITS_RING_ROWS; i++)
+    Credits_DrawLine(gDisplayScroll_LineTable[0], i * CREDITS_LINE_TILES, 1);
 }
 
 /// Draws one line of the credits' scrolling text: the message is drawn into a
@@ -440,7 +485,7 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align) {
   s32 row;
   s32 offset;
 
-  canvas = Heap_AllocEwram(0x900);
+  canvas = Heap_AllocEwram(CREDITS_BUFFER_BYTES);
   // BUG: the clear, and the packing loop's reads below, cover 0xc00 bytes of
   // a 0x900-byte allocation.
   Iwram_ClearWords(canvas, 0xc00);
@@ -475,25 +520,25 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align) {
 void Credits_UpdateTextSprites(void) {
   u32 frame = gDisplayScroll_Position;
   u32 fine = frame & 7;
-  s32 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
-  u32 *entry = (u32 *)(gDisplayScroll_Objects + 24);
+  s32 tile = (((s16)frame / 8) & (CREDITS_RING_ROWS - 1)) * CREDITS_LINE_TILES;
+  u32 *entry = (u32 *)(gDisplayScroll_Objects + CREDITS_BORDER_SPRITES);
   s32 row;
 
-  for (row = 0; row <= 15; row++) {
+  for (row = 0; row < CREDITS_VISIBLE_ROWS; row++) {
     s32 col;
 
-    for (col = 0; col < 6; col++) {
+    for (col = 0; col < CREDITS_COLUMNS; col++) {
       u32 *q = entry;
 
-      *q++ = (row * 8 + 16 - fine) | ((col * 32 + 24) << 16) | 0x40004000;
+      *q++ = (row * 8 + 16 - fine) | ((col * 32 + 24) << 16) | OBJ_SIZE_32X8;
       entry += 2;
       *q = tile;
       tile += 4;
-      if (tile == 0x300)
+      if (tile == CREDITS_RING_TILES)
         tile = 0;
     }
   }
-  Dma_Set(gDisplayScroll_Objects, OAM, DMA_COPY_WORDS(256), REG_DMA3);
+  Dma_Set(gDisplayScroll_Objects, OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
   if (gVBlankCount % 3 == 0)
     gDisplayScroll_Position++;
 }
@@ -513,15 +558,15 @@ void Credits_DrawEnteringLine(void) {
   if (gDisplayScroll_Busy != 0) {
     gDisplayScroll_Busy++;
     Credits_DrawLine(gDisplayScroll_LineTable[0],
-                     ((position / 8 + 16) & 31) * 24, 1);
+                     CREDITS_RING_LINE(position / 8), 1);
   } else if (position / 8 != gDisplayScroll_LastPosition / 8) {
     gDisplayScroll_LastPosition = current;
     text = gDisplayScroll_LineTable[line];
     if (text == (const u8 *)255) {
       gDisplayScroll_Busy = 1;
-      Credits_DrawLine(gDisplayScroll_LineTable[0], ((line + 16) & 31) * 24, 1);
+      Credits_DrawLine(gDisplayScroll_LineTable[0], CREDITS_RING_LINE(line), 1);
     } else {
-      gDisplayScroll_Busy = Credits_DrawLine(text, ((line + 16) & 31) * 24, 1);
+      gDisplayScroll_Busy = Credits_DrawLine(text, CREDITS_RING_LINE(line), 1);
     }
   }
 }
@@ -553,58 +598,60 @@ void Credits_InitTextSpritesAtPage(s32 page) {
   gDisplayScroll_Position = i * 8;
 
   {
-    void *objects = Heap_AllocEwram(128 * sizeof(struct DisplayScrollObject));
+    void *objects = Heap_AllocEwram(CREDITS_OAM_ENTRIES *
+                                    sizeof(struct DisplayScrollObject));
     void **cell = (void **)&gDisplayScroll_Objects;
 
     *cell = objects;
     fill = 0;
     Dma_Set((void *)&fill, (void *)OBJ_VRAM0,
-            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (0x6000 / 4),
+            (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
+                (CREDITS_RING_BYTES / 4),
             REG_DMA3);
-    fill = 0x11111111;
-    Dma_Set((void *)&fill, (void *)(OBJ_VRAM0 + 0x6000),
+    fill = PIXELS_4BPP(1);
+    Dma_Set((void *)&fill, (void *)(OBJ_VRAM0 + CREDITS_RING_BYTES),
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 64, REG_DMA3);
     entry = *(u32 **)cell;
   }
   {
-    u32 attr = 0x80004000;
+    u32 attr = OBJ_SIZE_32X16;
 
     for (i = 0; i < 8; i++) {
       u32 *q = entry;
 
       *q++ = (i << 21) | attr;
-      *q = 0x300;
+      *q = CREDITS_RING_TILES;
       entry += 2;
     }
   }
   {
-    u32 attr = 0x80004088;
+    u32 attr = 136 | OBJ_SIZE_32X16;
 
     for (i = 0; i < 8; i++) {
       u32 *q = entry;
 
       *q++ = (i << 21) | attr;
-      *q = 0x300;
+      *q = CREDITS_RING_TILES;
       entry += 2;
     }
   }
   {
-    u32 attr = 0x40004098;
+    u32 attr = 152 | OBJ_SIZE_32X8;
 
     for (i = 0; i < 8; i++) {
       u32 *q = entry;
 
       *q++ = (i << 21) | attr;
-      *q = 0x300;
+      *q = CREDITS_RING_TILES;
       entry += 2;
     }
   }
-  for (i = 0; i < 16; i++) {
-    for (j = 0; j < 6; j++) {
+  for (i = 0; i < CREDITS_VISIBLE_ROWS; i++) {
+    for (j = 0; j < CREDITS_COLUMNS; j++) {
       u32 *q = entry;
       u32 tile = (i * 3) * 8 + j * 4;
 
-      *q++ = (i * 8 + 16) | ((j * 32 + 24) << 16) | 0x40004000;
+      *q++ = (i * 8 + 16) | ((j * 32 + 24) << 16) | OBJ_SIZE_32X8;
       *q = tile;
       entry += 2;
     }
@@ -613,15 +660,15 @@ void Credits_InitTextSpritesAtPage(s32 page) {
     u32 *q = entry;
 
     *q++ = 0x00c000c0;
-    *q = 0x300;
+    *q = CREDITS_RING_TILES;
     entry += 2;
   }
   gDisplayScroll_LastPosition = 0;
   gDisplayScroll_Busy = 0;
   Task_Add(Credits_UpdateTextSprites, TASK_PASS_FRAME);
   Task_Add(Credits_DrawEnteringLine, TASK_PASS_VBLANK);
-  for (i = 0; i < 32; i++)
-    Credits_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
+  for (i = 0; i < CREDITS_RING_ROWS; i++)
+    Credits_DrawLine(gDisplayScroll_LineTable[0], i * CREDITS_LINE_TILES, 1);
 }
 
 /// Ends the scrolling credits: blanks the tile ring, removes their two tasks
@@ -630,19 +677,15 @@ void Credits_StopTextSprites(void) {
   s32 i;
   u32 *objects;
 
-  for (i = 0; i < 32; i++)
-    Credits_DrawLine(gDisplayScroll_LineTable[0], i * 24, 1);
+  for (i = 0; i < CREDITS_RING_ROWS; i++)
+    Credits_DrawLine(gDisplayScroll_LineTable[0], i * CREDITS_LINE_TILES, 1);
   Task_Remove(Credits_UpdateTextSprites);
   Task_Remove(Credits_DrawEnteringLine);
   objects = (u32 *)gDisplayScroll_Objects;
-  for (i = 0; i != 0x100; i++)
+  for (i = 0; i != CREDITS_OAM_ENTRIES * 2; i++)
     *objects++ = 0;
-  Dma_Set(gDisplayScroll_Objects, OAM, DMA_COPY_WORDS(256), REG_DMA3);
+  Dma_Set(gDisplayScroll_Objects, OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
 }
-
-#define CREDITS_LINE_PIXELS 192
-#define CREDITS_BUFFER_BYTES 2304
-#define CREDITS_RASTER_STRIDE 256
 
 /// A credits tile's row of 4 bytes in object VRAM.
 #define OBJ_TILE_ROW(tile, row)                                                \
@@ -675,12 +718,14 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   if (text == NULL)
     return -1;
   // The ninth raster row holds the shadow below this line.
-  if (!GameFlag_Get(0x200)) {
+  if (!GameFlag_Get(FLAG_CREDITS_LINE_DRAWN)) {
     Iwram_FillWordsEntry(linePixels, CREDITS_BUFFER_BYTES, 0);
-    GameFlag_Set(0x200);
+    GameFlag_Set(FLAG_CREDITS_LINE_DRAWN);
   } else {
-    Iwram_CopyWords(linePixels, linePixels + 2048, 256);
-    Iwram_FillWordsEntry(linePixels + 256, 2048, 0);
+    Iwram_CopyWords(linePixels, linePixels + 8 * CREDITS_RASTER_STRIDE,
+                    CREDITS_RASTER_STRIDE);
+    Iwram_FillWordsEntry(linePixels + CREDITS_RASTER_STRIDE,
+                         8 * CREDITS_RASTER_STRIDE, 0);
   }
 
   // Measure the line in the credits font, then choose where it starts.
@@ -688,8 +733,8 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   sourceBytes = text;
   textAdvance = 0;
   while ((sourceValue = *sourceBytes++) != 0) {
-    if (sourceValue > 31)
-      textAdvance += gCredits_GlyphWidths[sourceValue - 32];
+    if (sourceValue >= ' ')
+      textAdvance += gCredits_GlyphWidths[sourceValue - ' '];
   }
   if (alignment == 2)
     startX = lineWidth - textAdvance;
@@ -700,8 +745,8 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   sourceBytes = text;
   textAdvance = 0;
   while ((sourceValue = *text++) != 0) {
-    if (sourceValue > 31) {
-      glyphIndex = sourceValue - 32;
+    if (sourceValue >= ' ') {
+      glyphIndex = sourceValue - ' ';
       sourceBytes = font + glyphIndex * 8;
       destination = linePixels + startX + textAdvance;
       for (row = 0; row < 8; row++) {
@@ -709,7 +754,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
         glyphMask = 0x80;
         for (columnIndex = 7; columnIndex >= 0; columnIndex--) {
           if (glyphBits & glyphMask) {
-            destination[257] = 1;
+            destination[CREDITS_RASTER_STRIDE + 1] = 1;
             destination[0] = 15;
           }
           destination++;
@@ -718,7 +763,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
         destination += CREDITS_RASTER_STRIDE - 8;
       }
       glyphWidth = 1;
-      if (sourceValue > 31)
+      if (sourceValue >= ' ')
         glyphWidth = gCredits_GlyphWidths[glyphIndex];
       textAdvance += glyphWidth;
     }
@@ -745,13 +790,13 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
 
     // A tile's eight rows of 4 bytes, each a 256-pixel raster row apart.
     OBJ_TILE_ROW(tileIndex, 0) = words[0];
-    OBJ_TILE_ROW(tileIndex, 1) = words[64];
-    OBJ_TILE_ROW(tileIndex, 2) = words[128];
-    OBJ_TILE_ROW(tileIndex, 3) = words[192];
-    OBJ_TILE_ROW(tileIndex, 4) = words[256];
-    OBJ_TILE_ROW(tileIndex, 5) = words[320];
-    OBJ_TILE_ROW(tileIndex, 6) = words[384];
-    OBJ_TILE_ROW(tileIndex, 7) = words[448];
+    OBJ_TILE_ROW(tileIndex, 1) = words[1 * (CREDITS_RASTER_STRIDE / 4)];
+    OBJ_TILE_ROW(tileIndex, 2) = words[2 * (CREDITS_RASTER_STRIDE / 4)];
+    OBJ_TILE_ROW(tileIndex, 3) = words[3 * (CREDITS_RASTER_STRIDE / 4)];
+    OBJ_TILE_ROW(tileIndex, 4) = words[4 * (CREDITS_RASTER_STRIDE / 4)];
+    OBJ_TILE_ROW(tileIndex, 5) = words[5 * (CREDITS_RASTER_STRIDE / 4)];
+    OBJ_TILE_ROW(tileIndex, 6) = words[6 * (CREDITS_RASTER_STRIDE / 4)];
+    OBJ_TILE_ROW(tileIndex, 7) = words[7 * (CREDITS_RASTER_STRIDE / 4)];
   }
   Heap_Release(linePixels);
   return 0;
@@ -782,17 +827,17 @@ void EndingPicture_CopyMap(const u8 *source, u8 *destination, s32 position) {
 
     *word = position << 16;
   }
-  for (column = 0; column < 15; column++) {
+  for (column = 0; column < ENDING_PICTURE_COLUMNS; column++) {
     from = (position / 8) << 6;
-    offset = start & 0x7ff;
-    for (row = 0; row < 31; row++) {
+    offset = ENDING_PICTURE_WRAP(start);
+    for (row = 0; row < ENDING_PICTURE_ROWS; row++) {
       Dma_Set(source + from, destination + offset, DMA_COPY_WORDS(16),
               REG_DMA3);
-      from += 64;
-      offset = (offset + 64) & 0x7ff;
+      from += ENDING_PICTURE_ROW_BYTES;
+      offset = ENDING_PICTURE_WRAP(offset + ENDING_PICTURE_ROW_BYTES);
     }
-    source += 0x1000;
-    destination += 0x800;
+    source += ENDING_PICTURE_STRIP_BYTES;
+    destination += ENDING_PICTURE_SCREEN_BYTES;
   }
 }
 
@@ -813,15 +858,15 @@ void EndingPicture_Scroll(void) {
   u32 offset;
   s32 i;
 
-  if (gEndingPicture_FadeFrames < 64) {
+  if (gEndingPicture_FadeFrames < ENDING_PICTURE_FADE_FRAMES) {
     s32 t = (s16)++gEndingPicture_FadeFrames / 4;
     s32 alpha;
 
     if (gEndingPicture_Block & 1) {
-      alpha = ((16 - t) << 8) | t;
+      alpha = ((BLEND_WEIGHT_MAX - t) << 8) | t;
       REG_BLDALPHA = alpha;
     } else {
-      alpha = (t << 8) | (16 - t);
+      alpha = (t << 8) | (BLEND_WEIGHT_MAX - t);
       REG_BLDALPHA = alpha;
     }
   }
@@ -855,7 +900,7 @@ void EndingPicture_Scroll(void) {
       gEndingPicture_MapScroll += d;
     }
   }
-  if ((gEndingPicture_Scroll ^ old) & 0x80000) {
+  if ((gEndingPicture_Scroll ^ old) & px(8)) {
     source = gEndingPicture_Map;
     destination = (u8 *)BG_CHAR_BLOCK(0);
     start = (gEndingPicture_MapScroll >> 19) << 6;
@@ -863,20 +908,24 @@ void EndingPicture_Scroll(void) {
       destination = (u8 *)BG_CHAR_BLOCK(2);
     scroll = gEndingPicture_Scroll;
     if (scroll > old) {
-      from = (((u32)scroll >> 19) << 6) + 0x780;
-      offset = (start + 0x780) & 0x7ff;
-      for (i = 0; i < 15; i++) {
-        Dma_Set(source + from, destination + offset, 0x84000010, REG_DMA3);
-        source += 0x1000;
-        destination += 0x800;
+      from = (((u32)scroll >> 19) << 6) +
+             (ENDING_PICTURE_ROWS - 1) * ENDING_PICTURE_ROW_BYTES;
+      offset = ENDING_PICTURE_WRAP(start + (ENDING_PICTURE_ROWS - 1) *
+                                               ENDING_PICTURE_ROW_BYTES);
+      for (i = 0; i < ENDING_PICTURE_COLUMNS; i++) {
+        Dma_Set(source + from, destination + offset, DMA_COPY_WORDS(16),
+                REG_DMA3);
+        source += ENDING_PICTURE_STRIP_BYTES;
+        destination += ENDING_PICTURE_SCREEN_BYTES;
       }
     } else {
       from = ((u32)gEndingPicture_Scroll >> 19) << 6;
-      offset = start & 0x7ff;
-      for (i = 0; i < 15; i++) {
-        Dma_Set(source + from, destination + offset, 0x84000010, REG_DMA3);
-        source += 0x1000;
-        destination += 0x800;
+      offset = ENDING_PICTURE_WRAP(start);
+      for (i = 0; i < ENDING_PICTURE_COLUMNS; i++) {
+        Dma_Set(source + from, destination + offset, DMA_COPY_WORDS(16),
+                REG_DMA3);
+        source += ENDING_PICTURE_STRIP_BYTES;
+        destination += ENDING_PICTURE_SCREEN_BYTES;
       }
     }
   }
@@ -934,16 +983,15 @@ static inline void CopyScrollMap(const u8 *source, u8 *destination,
   start = (gEndingPicture_MapScroll >> 19) << 6;
   gScrollTarget = gEndingPicture_Row = position;
   gEndingPicture_Scroll = position << 16;
-  for (column = 0; column < 15; column++) {
-    u8 *to = destination + column * 0x800;
-    const u8 *strip = source + column * 0x1000;
+  for (column = 0; column < ENDING_PICTURE_COLUMNS; column++) {
+    u8 *to = destination + column * ENDING_PICTURE_SCREEN_BYTES;
+    const u8 *strip = source + column * ENDING_PICTURE_STRIP_BYTES;
     from = (position / 8) << 6;
-    offset = start & 0x7ff;
-    for (row = 0; row < 31; row++) {
-      Dma_Set(strip + from, to + offset, 0x84000010,
-              (volatile u32 *)0x040000d4);
-      from += 64;
-      offset = (offset + 64) & 0x7ff;
+    offset = ENDING_PICTURE_WRAP(start);
+    for (row = 0; row < ENDING_PICTURE_ROWS; row++) {
+      Dma_Set(strip + from, to + offset, DMA_COPY_WORDS(16), REG_DMA3);
+      from += ENDING_PICTURE_ROW_BYTES;
+      offset = ENDING_PICTURE_WRAP(offset + ENDING_PICTURE_ROW_BYTES);
     }
   }
 }
@@ -966,13 +1014,13 @@ void EndingPicture_Show(s32 resource, u8 *map, s32 position) {
 
   if (resource == 0) {
     if (gEndingPicture_Block != 0) {
-      word = 0x01010101;
+      word = PIXELS_8BPP(1);
       tiles = (u8 *)BG_CHAR_BLOCK(0);
       palette = (u16 *)BG_PLTT;
     } else {
-      word = 0x81818181;
+      word = PIXELS_8BPP(129);
       tiles = (u8 *)BG_CHAR_BLOCK(2);
-      palette = (u16 *)(BG_PLTT + 8 * 16);
+      palette = (u16 *)&BG_PLTT_COLOR(8, 0);
     }
     Dma_Fill32Cell(cell, word, map, 0xf000);
     Dma_Fill32Cell(cell, 0, palette, 0x100);
@@ -981,16 +1029,16 @@ void EndingPicture_Show(s32 resource, u8 *map, s32 position) {
       tiles = (u8 *)BG_CHAR_BLOCK(0);
       palette = (u16 *)BG_PLTT;
     } else {
-      fill = 0x80808080;
+      fill = PIXELS_8BPP(128);
       tiles = (u8 *)BG_CHAR_BLOCK(2);
-      palette = (u16 *)(BG_PLTT + 8 * 16);
+      palette = (u16 *)&BG_PLTT_COLOR(8, 0);
     }
-    Dma_Fill32Cell(cell, 0, tiles, 0x800);
+    Dma_Fill32Cell(cell, 0, tiles, ENDING_PICTURE_SCREEN_BYTES);
     data = Resource_GetTableEntry(resource);
     RamCode_Load(code, BattleEffect_Expand2Code, BattleEffect_Expand2CodeSize);
     code(data + 0x100, map, fill);
     Heap_Release(code);
-    IO_WRITE_QUEUE_PUSH((u32)palette, (u32)data, 0x84000040);
+    IO_WRITE_QUEUE_PUSH((u32)palette, (u32)data, DMA_COPY_WORDS(64));
   }
   gEndingPicture_Map = map;
   CopyScrollMap(map, tiles, position);

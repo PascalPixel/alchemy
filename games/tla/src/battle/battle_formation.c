@@ -7,13 +7,20 @@
 #include "field/flag_call.h"
 #include "battle/presentation.h"
 
+/// The most formations a monster battle chooses among.
+#define FORMATION_POOL_SIZE 32
+/// How far above the party's level a monster battle's formation may be.
+#define FORMATION_LEVEL_MARGIN 3
+
 /// Keeps up to thirty-two eligible formations near the party's adjusted
 /// average level, chooses one randomly and returns its level adjustment
 /// through outMargin. It first sets flags from others, clears the enemy flags
-/// of Data_08130c5c, sets flags 71, 230 and 117, and searches 660 formations.
+/// of gBattleFormation_LevelMatchedEnemies, sets flags 71, 230 and 117, and
+/// searches every formation.
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   s32 matchCount = 0;
-  struct FormationCandidate *pool = Heap_AllocEwram(128);
+  struct FormationCandidate *pool =
+      Heap_AllocEwram(FORMATION_POOL_SIZE * sizeof *pool);
   u16 party[8];
   s32 targetLevel = 0;
   s32 unitCount = BattleParty_PrepareMembers(party);
@@ -38,10 +45,10 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   targetLevel += (s8)GameFlag_GetByte(0x3f8);
   if (targetLevel <= 0)
     targetLevel = 1;
-  if (targetLevel > 99)
-    targetLevel = 99;
+  if (targetLevel > UNIT_LEVEL_MAX)
+    targetLevel = UNIT_LEVEL_MAX;
 
-  for (candidateOrUnitIndex = 0; candidateOrUnitIndex <= 31;
+  for (candidateOrUnitIndex = 0; candidateOrUnitIndex < FORMATION_POOL_SIZE;
        candidateOrUnitIndex++)
     pool[candidateOrUnitIndex].score = -1;
 
@@ -65,20 +72,22 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 
   for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex <= 86;
        candidateOrUnitIndex++)
-    GameFlag_Clear(Data_08130c5c[candidateOrUnitIndex] + 0x600);
+    GameFlag_Clear(ENEMY_DEFEATED_FLAG(
+        gBattleFormation_LevelMatchedEnemies[candidateOrUnitIndex]));
   GameFlag_Set(71);
   GameFlag_Set(230);
   GameFlag_Set(117);
 
-  for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex < 660;
+  for (candidateOrUnitIndex = 0; (u32)candidateOrUnitIndex < FORMATION_COUNT;
        candidateOrUnitIndex++) {
     s32 score = BattleFormation_AverageLevel(candidateOrUnitIndex);
 
-    if (score >= 0 && score <= targetLevel + 3) {
+    if (score >= 0 && score <= targetLevel + FORMATION_LEVEL_MARGIN) {
       s32 lowestIndex = -1;
       s32 lowestLevel;
 
-      for (lowestLevel = 999, poolIndex = 0; poolIndex <= 31; poolIndex++) {
+      for (lowestLevel = 999, poolIndex = 0; poolIndex < FORMATION_POOL_SIZE;
+           poolIndex++) {
         if (pool[poolIndex].score < lowestLevel) {
           lowestLevel = pool[poolIndex].score;
           lowestIndex = poolIndex;
@@ -93,8 +102,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
     }
   }
 
-  if (matchCount > 32)
-    matchCount = 32;
+  if (matchCount > FORMATION_POOL_SIZE)
+    matchCount = FORMATION_POOL_SIZE;
 
   if (matchCount != 0) {
     struct FormationCandidate *chosen = &pool[(matchCount * Random16()) >> 16];
@@ -110,10 +119,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   return result;
 }
 
-/* VIEW(f11e3ac): tag struct OwnerStats as struct OwnerStats__presentation;
- * scene/shared.h has another definition; not tried: struct OwnerStats__f11e3ac
- * was not found. */
-struct OwnerStats__presentation {
+/// A unit's calculated stats as BattleEnemy_AdjustLevel reads them.
+struct OwnerStats {
   s16 maxHp;
   s16 maxPp;
   s16 hp;
@@ -122,32 +129,35 @@ struct OwnerStats__presentation {
   u16 def;
   u16 agi;
   u8 luck;
-  u8 unk0f[5];
+  u8 actionsPerTurn;
+  u8 hpRegen;
+  u8 ppRegen;
+  u8 unused[2]; ///< no code names it
   struct OwnerElementStats element[4];
 };
 
 /// A unit as BattleEnemy_AdjustLevel reads it: its level and its stats.
 struct OwnerState {
-  u8 unk00[15];
+  u8 name[15]; ///< not read here
   u8 level;
-  struct OwnerStats__presentation stats;
+  struct OwnerStats stats;
 };
 
 /// Raises an enemy by levels, The Broken Seal's BattleEnemy_AdjustLevel with
 /// HP capped at 16383 instead of 9999. Returns nothing, though declared s32 as
 /// there.
 s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
-  struct OwnerStats__presentation *base;
+  struct OwnerStats *base;
   struct OwnerState *state;
-  struct OwnerStats__presentation *stats;
+  struct OwnerStats *stats;
   s32 value;
   s32 floor;
   s32 i;
 
-  base = Heap_AllocEwram(sizeof(struct OwnerStats__presentation));
+  base = Heap_AllocEwram(sizeof(struct OwnerStats));
   state = Unit_Get(owner);
   stats = &state->stats;
-  Iwram_CopyWordsEntry(base, stats, sizeof(struct OwnerStats__presentation));
+  Iwram_CopyWordsEntry(base, stats, sizeof(struct OwnerStats));
 
   value = stats->maxHp;
   value += __divsi3(levels * 97, 10);
@@ -197,7 +207,7 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
     value = 999;
   state->stats.agi = value;
 
-  for (i = 0; i < 4; i++) {
+  for (i = 0; i < ELEMENT_COUNT; i++) {
     value = state->stats.element[i].power + levels * 15;
     floor = __divsi3(base->element[i].power * 7, 10);
     if (value < floor)
@@ -212,24 +222,11 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   Heap_Release(base);
 }
 
-/* VIEW(f11e3ac): tag struct UnitBaseStats as struct
- * UnitBaseStats__presentation; scene/shared.h has another definition; not
- * tried: struct UnitBaseStats__f11e3ac was not found. */
-struct UnitBaseStats__presentation {
-  s16 hp;
-  s16 pp;
-  s16 hpGauge;
-  s16 ppGauge;
-  u16 attack;
-  u16 defense;
-  u8 unk0c[24];
-};
-
 /// Raises a unit's base HP by half and base Attack and Defense by a quarter (at
 /// least 7/10 of the old values, at most 16383 and 999), from a copy of its
 /// base block, then recalculates its stats.
 void BattleUnit_Strengthen(s32 unitId) {
-  struct UnitBaseStats__presentation *saved = Heap_AllocEwram(36);
+  struct UnitBaseStats *saved = Heap_AllocEwram(36);
   struct Unit *unit = Unit_Get(unitId);
   s32 value;
   s32 floor;
@@ -288,7 +285,7 @@ s32 BattleEnemy_ClaimNameLetter(s32 no, s32 n) {
     if (w->channels[i] < 0) {
       w->channels[i] = 1;
       w->usedMasks[i] = 3;
-      return 0x8001;
+      return ENEMY_LETTER_FIRST_TOO | 1;
     }
     for (; retry <= 31; retry++) {
       w->channels[i] = (w->channels[i] + 1) % CH_CNT;
@@ -322,7 +319,7 @@ s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
   s32 classId;
 
   actor = Unit_Get(actorId);
-  if (actor->unavailable != 0)
+  if (actor->unavailable != CLASS_NONE)
     return;
 
   classId = actor->classId;
@@ -357,7 +354,7 @@ s32 BattleEnemy_LetterFirstOfKind(s32 enemyId) {
   objectIndex = 0;
   marker = LIST_MARKER_CHAR;
 scan_objects:
-  summon = Unit_Get(objectIndex + 0x80);
+  summon = Unit_Get(objectIndex + FIRST_ENEMY_UNIT);
   occupied = summon->side;
   if (occupied != 1)
     goto next_object;
@@ -389,8 +386,8 @@ next_object:
 /// Returns the class of a random member of the formation that may appear.
 s32 BattleFormation_GetRandomMember(s32 recordId) {
   s32 *choicesBase;
-  s32 choices[5];
-  struct BattleFormationRecord *record;
+  s32 choices[FORMATION_MEMBERS];
+  struct Formation *record;
   s32 *choiceCursor;
   u8 *maximumCount;
   u16 *memberId;
@@ -398,10 +395,10 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
   u32 count;
 
   count = 0;
-  if ((u32)recordId >= 660)
+  if ((u32)recordId >= FORMATION_COUNT)
     recordId = 1;
 
-  record = &gBattleFormation_Records[recordId];
+  record = &gFormations[recordId];
   choicesBase = choices;
   memberId = record->memberIds;
   maximumCount = record->maximumCounts;
@@ -426,15 +423,15 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
 /// slots hold them, laid out as the formation says.
 s32 BattleFormation_BuildEnemyList(s32 recordId) {
   u16 *enemyClasses;
-  struct FormationBattleWork *battle;
-  struct BattleFormationRecord *record;
+  struct BattleWork *battle;
+  struct Formation *record;
   s32 freeSpriteSlots;
   s32 enemyCount;
   s32 levelAdjustment;
-  u16 listBuffer[14];
-  s32 extraCounts[5];
-  s32 memberCounts[5];
-  s32 memberOrder[5];
+  u16 listBuffer[UNIT_MAX];
+  s32 extraCounts[FORMATION_MEMBERS];
+  s32 memberCounts[FORMATION_MEMBERS];
+  s32 memberOrder[FORMATION_MEMBERS];
   s32 changed;
   s32 additionalRoom;
   s32 spriteSlots;
@@ -445,22 +442,22 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   u32 memberOrEnemyIndex;
   s32 memberIndex;
 
-  battle = (struct FormationBattleWork *)Ram_HeapSlots->battleWork;
+  battle = (struct BattleWork *)Ram_HeapSlots->battleWork;
   levelAdjustment = 0;
   // Through a byte pointer, which keeps the level adjustment stored first.
-  *(u8 *)&battle->unk40 = 0;
+  *(u8 *)&battle->enemyKindCount = 0;
   enemyClasses = listBuffer;
   if (GameFlag_Get(FLAG_MONSTER_BATTLE))
     recordId = BattleFormation_SelectLevelMatchedCandidate(&levelAdjustment);
-  if ((u32)recordId >= 660)
+  if ((u32)recordId >= FORMATION_COUNT)
     recordId = 1;
-  record = &gBattleFormation_Records[recordId];
+  record = &gFormations[recordId];
   for (memberIndex = 0;
        memberIndex <= 4 && record->minimumCounts[memberIndex] == 0;
        memberIndex++)
     ;
-  if (memberIndex == 5)
-    record = &gBattleFormation_Records[1];
+  if (memberIndex == FORMATION_MEMBERS)
+    record = &gFormations[1];
 
   freeSpriteSlots = 6;
   enemyCount = 0;
@@ -502,7 +499,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     changed = 0;
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4;
          memberOrEnemyIndex++) {
-      classId = record->memberIds[memberOrEnemyIndex] + 8;
+      classId = record->memberIds[memberOrEnemyIndex] + ENEMY_ID_FIRST;
       if (extraCounts[memberOrEnemyIndex] != 0) {
         spriteSlots = 2 - (BattleSprite_IsSmall(classId) != 0);
         if (spriteSlots > freeSpriteSlots) {
@@ -517,9 +514,9 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     }
   } while (changed);
 
-  battle->battleType = record->unk14[0];
-  switch (battle->battleType) {
-  case 0:
+  battle->layout = record->layout;
+  switch (battle->layout) {
+  case FORMATION_LAYOUT_SHUFFLED:
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4; memberOrEnemyIndex++)
       memberOrder[memberOrEnemyIndex] = memberOrEnemyIndex;
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 9;
@@ -537,10 +534,10 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
       s32 slot = memberOrder[memberOrEnemyIndex];
 
       for (copyIndex = 0; copyIndex < memberCounts[slot]; copyIndex++)
-        enemyClasses[enemyCount++] = record->memberIds[slot] + 8;
+        enemyClasses[enemyCount++] = record->memberIds[slot] + ENEMY_ID_FIRST;
     }
     break;
-  case 1:
+  case FORMATION_LAYOUT_INTERLEAVED:
     for (;;) {
       remainingKinds = 0;
       for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4;
@@ -551,7 +548,8 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
       if (remainingKinds == 0)
         break;
       spriteSlots = memberOrder[(Random16() * remainingKinds) >> 16];
-      enemyClasses[enemyCount++] = record->memberIds[spriteSlots] + 8;
+      enemyClasses[enemyCount++] =
+          record->memberIds[spriteSlots] + ENEMY_ID_FIRST;
       memberCounts[spriteSlots]--;
     }
     break;
@@ -559,14 +557,17 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4;
          memberOrEnemyIndex++) {
       for (copies = 0; copies < memberCounts[memberOrEnemyIndex]; copies++)
-        enemyClasses[enemyCount++] = record->memberIds[memberOrEnemyIndex] + 8;
+        enemyClasses[enemyCount++] =
+            record->memberIds[memberOrEnemyIndex] + ENEMY_ID_FIRST;
     }
     break;
   }
   enemyClasses[enemyCount] = 0;
-  battle->firstDefeated = 6;
-  battle->defeatState = 0;
-  for (memberOrEnemyIndex = 128; memberOrEnemyIndex < 134; memberOrEnemyIndex++)
+  battle->firstDefeated = ENEMY_BATTLE_SIZE;
+  battle->defeatState = DEFEAT_ONE;
+  for (memberOrEnemyIndex = FIRST_ENEMY_UNIT;
+       memberOrEnemyIndex < (FIRST_ENEMY_UNIT + ENEMY_BATTLE_SIZE);
+       memberOrEnemyIndex++)
     Iwram_ClearWordsEntry(Unit_Get(memberOrEnemyIndex), BATTLE_UNIT_SIZE);
 
   memberOrEnemyIndex = 0;
@@ -614,7 +615,7 @@ assigned:
 /// Returns the class's defeat-sound kind, 0 to 4, or -1 for none; a fallen
 /// enemy's sound is SE_ENEMY_CRY plus it. Reads any index unchecked.
 u32 BattleSprite_GetDefeatSound(s32 index) {
-  u32 kind = gSummon_EntryTable[index].layoutKind;
+  u32 kind = gSummon_EntryTable[index].defeatSound;
 
   if ((s32)kind > 4)
     kind = -1U;
@@ -633,7 +634,7 @@ s32 BattleSprite_GetSprite(s32 index) {
 s32 BattleSprite_GetPalette(s32 index) {
   if ((u32)index > 386)
     return gSummon_EntryTable[0].animation;
-  return gSummon_EntryTable[index].layoutBits1;
+  return gSummon_EntryTable[index].palette;
 }
 
 /// Returns 1 for a small class, which takes one enemy sprite slot instead of
@@ -646,7 +647,7 @@ s32 BattleSprite_IsSmall(s32 index) {
   if ((u32)index > 386)
     return 0;
   result = 0;
-  flags = gSummon_EntryTable[index].spriteBit0;
+  flags = gSummon_EntryTable[index].isSmall;
   if (flags)
     result = 1;
   return result;
@@ -659,7 +660,7 @@ u32 BattleSprite_GetAttackEffect(u32 index) {
 
   if (index > 386)
     return 1;
-  value = gSummon_EntryTable[index].spriteBits1;
+  value = gSummon_EntryTable[index].attackEffect;
   return value ? value : 1;
 }
 
@@ -670,7 +671,7 @@ u32 BattleSprite_GetAttackHop(u32 index) {
 
   if (index > 386)
     return 0;
-  value = gSummon_EntryTable[index].spriteBits5;
+  value = gSummon_EntryTable[index].attackHop;
   return value ? value : 0;
 }
 
@@ -679,7 +680,7 @@ u32 BattleSprite_GetAttackHop(u32 index) {
 s32 BattleSprite_HasHeavyImpact(s32 index) {
   if ((u32)index > 386)
     return 0;
-  return gSummon_EntryTable[index].layoutBit0;
+  return gSummon_EntryTable[index].heavyImpact;
 }
 
 /// Returns the height an animation is drawn at over a class, in pixels, or 0

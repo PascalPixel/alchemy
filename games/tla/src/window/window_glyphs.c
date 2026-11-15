@@ -12,11 +12,12 @@
 #define GLYPH_PIXELS_SIZE (16 * 24)
 #endif
 
+/// Every kanji is drawn 10 pixels wide.
+#define KANJI_WIDTH 10
+
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 /// The first kanji's code; the codes below it are the font's glyphs.
 #define KANJI_FIRST_CODE 256
-/// Every kanji is drawn 10 pixels wide.
-#define KANJI_WIDTH 10
 #endif
 
 /// Draws a character, and a second one when the code carries it in bits 8 to
@@ -85,7 +86,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
     colour = work->colour;
   }
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-  if (work->outline == 1) {
+  if (work->outline == TEXT_STYLE_OUTLINED) {
     Iwram_ExpandBitRuns(glyph, pixels + 49, shadowColour);
     Iwram_ExpandBitRuns(glyph, pixels + 50, shadowColour);
     if (mark != NULL) {
@@ -124,7 +125,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
     Iwram_ExpandBitRuns(glyph, pixels + 32, colour);
   }
   if ((u16)secondIndex != 0) {
-    glyph = (const u8 *)&gFont_Glyphs[-32] + ((u16)secondIndex << 5);
+    glyph = (const u8 *)&gFont_Glyphs[-TEXT_SPACE] + ((u16)secondIndex << 5);
     secondWidth = *(const s16 *)glyph;
     glyph += 2;
     if (work->outline == 1) {
@@ -188,35 +189,34 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
 /// higher characters take ten. Voicing marks 0xde and 0xdf add no width.
 s32 Text_GetWideStringWidth(u16 *text) {
   s32 width;
-  u16 *p;
-  u32 c;
+  u16 *cursor;
+  u32 code;
 #if !defined(WIDE_WIDTH_FIXED)
-  u32 idx;
+  u32 glyphIndex;
 #endif
 
-  c = *text;
+  code = *text;
   width = 0;
-  p = text + 1;
-  if (c != 0) {
-    do {
-      if (c == 0x20) {
-        width += 4;
-      } else if (c <= 0xffU) {
+  cursor = text + 1;
+  while (code != 0) {
+    if (code == TEXT_SPACE) {
+      width += 4;
+    } else if (code <= TEXT_LAST_FONT_CODE) {
 #if defined(WIDE_WIDTH_FIXED)
-        width += 10;
+      width += 10;
 #else
-        idx = c - 0xde;
-        if (idx > 1U) {
-          idx += 0xbe; // The font starts at character 0x20.
-          width += FONT_GLYPH(idx)->width;
-        }
-      } else {
-        width += 10;
-#endif
+      glyphIndex = code - TEXT_MARK_VOICED;
+      if (glyphIndex > 1U) {
+        // The font starts at the space.
+        glyphIndex += TEXT_MARK_VOICED - TEXT_SPACE;
+        width += FONT_GLYPH(glyphIndex)->width;
       }
-      c = *p;
-      p += 1;
-    } while (c != 0);
+    } else {
+      width += KANJI_WIDTH;
+#endif
+    }
+    code = *cursor;
+    cursor += 1;
   }
   return width;
 }
@@ -244,7 +244,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
   for (;;) {
     c = *text++;
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-    if (c > 0xff)
+    if (c > TEXT_LAST_FONT_CODE)
       c = 0x40;
 #endif
     if (c == 0)
@@ -255,34 +255,34 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
     if (c <= 30 || c == 176) {
 #endif
       switch (c) {
-      case 8:
+      case TEXT_COLOR:
         work->colour = *text;
         text++;
         break;
-      case 9:
+      case TEXT_OUTLINE:
         work->outline = *text;
         text++;
         break;
-      case 10:
+      case TEXT_LINE_SPACING:
         work->lineSpacing = *text;
         text++;
         break;
-      case 7:
+      case TEXT_COLORS_RESET:
         Text_ResetStyle();
         break;
-      case 3:
+      case TEXT_NEWLINE:
         x = start;
-        y += 15;
+        y += TEXT_LINE_HEIGHT;
         break;
       case 14:
-      case 15:
+      case TEXT_WINDOW_STATE:
       case 28:
         text++;
       case 11:
       case 12:
-      case 17:
+      case TEXT_ACTOR_NAME:
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-      case 29:
+      case TEXT_ARTICLE_CLASS:
 #endif
         text++;
         break;
@@ -299,15 +299,15 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
         text++;
       }
 #else
-      if ((window->flags & 8) == 0) {
+      if ((window->flags & WINDOW_FLAG_TEXT_CANVAS) == 0) {
         next = *text;
 #if TLA_PATCH_4
-        if (c > 32 && next > 32) {
-          s16 pairWidth =
-              gFont_Glyphs[c - 32].width + gFont_Glyphs[next - 32].width;
+        if (c > TEXT_SPACE && next > TEXT_SPACE) {
+          s16 pairWidth = gFont_Glyphs[c - TEXT_SPACE].width +
+                          gFont_Glyphs[next - TEXT_SPACE].width;
 
           // Outlined text joins only pairs one pixel narrower.
-          if (work->outline == 1) {
+          if (work->outline == TEXT_STYLE_OUTLINED) {
             if ((u16)pairWidth <= 14) {
               c |= next << 8;
               text++;
@@ -318,9 +318,9 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
           }
         }
 #else
-        if (c > 32 && next > 32 &&
-            (u16)(gFont_Glyphs[c - 32].width + gFont_Glyphs[next - 32].width) <=
-                15) {
+        if (c > TEXT_SPACE && next > TEXT_SPACE &&
+            (u16)(gFont_Glyphs[c - TEXT_SPACE].width +
+                  gFont_Glyphs[next - TEXT_SPACE].width) <= 15) {
           c |= next << 8;
           text++;
         }
@@ -386,34 +386,34 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
       if (c <= 30 || c == 176) {
 #endif
         switch (c) {
-        case 3:
+        case TEXT_NEWLINE:
           x = start;
           y++;
           break;
         case 14:
-        case 15:
+        case TEXT_WINDOW_STATE:
         case 28:
           text++;
-        case 7:
-        case 8:
-        case 9:
-        case 10:
+        case TEXT_COLORS_RESET:
+        case TEXT_COLOR:
+        case TEXT_OUTLINE:
+        case TEXT_LINE_SPACING:
         case 11:
         case 12:
-        case 17:
+        case TEXT_ACTOR_NAME:
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-        case 29:
+        case TEXT_ARTICLE_CLASS:
 #endif
           text++;
           break;
         }
       } else {
-        Window_PutGlyph(window, c, x, y, 0);
+        Window_PutGlyph(window, c, x, y, GLYPH_DRAW_CHARACTER);
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
         x++;
 #else
-        if ((u16)(c - 0xde) > 1)
+        if ((u16)(c - TEXT_MARK_VOICED) > 1)
           x++;
 #endif
       }
@@ -423,6 +423,9 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
 }
 
 u32 Math_UnsignedMulHigh(u32 a, u32 b);
+
+/// The digits String_FormatNumber writes, in buffer[1] to [12].
+#define NUMBER_DIGITS 12
 
 /// Writes value as decimal text into buffer (14 bytes) and returns where the
 /// text starts. With width 0 the number has no padding and a minus sign when
@@ -448,19 +451,19 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
 
   // Twelve digits, then spaces for the leading zeros and the sign in front.
   buffer[0] = ' ';
-  for (offset = 12; offset != 0; offset--) {
+  for (offset = NUMBER_DIGITS; offset != 0; offset--) {
     buffer[offset] = Math_UnsignedMulHighAdd(value, 0x1999999a, -10) + '0';
     value = Math_UnsignedMulHigh(value, 0x1999999a);
   }
 
   offset = 0;
-  buffer[13] = offset;
+  buffer[NUMBER_DIGITS + 1] = offset;
   spaceCharacter = ' ';
   offset = 1;
   minusCharacter = '-';
-  for (leading = buffer; offset != 13; leading++, offset++) {
+  for (leading = buffer; offset != NUMBER_DIGITS + 1; leading++, offset++) {
     if (leading[1] == '0') {
-      if (offset != 12)
+      if (offset != NUMBER_DIGITS)
         leading[1] = spaceCharacter;
     } else {
       if (negative != 0)
@@ -475,7 +478,7 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
       trim = buffer;
       do {
         offset++;
-        if (offset == 12)
+        if (offset == NUMBER_DIGITS)
           break;
         trim++;
       } while (*trim == ' ');
@@ -483,14 +486,12 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
     return buffer + offset;
   }
 
-  if ((u32)width > 12)
-    width = 12;
-  return buffer + 13 - width;
+  if ((u32)width > NUMBER_DIGITS)
+    width = NUMBER_DIGITS;
+  return buffer + NUMBER_DIGITS + 1 - width;
 }
 
 #undef Iwram_ExpandBitRuns
 #undef GLYPH_PIXELS_SIZE
-#undef KANJI_FIRST_CODE
-#undef KANJI_WIDTH
 #undef WIDE_WIDTH_FIXED
 #undef FONT_GLYPH

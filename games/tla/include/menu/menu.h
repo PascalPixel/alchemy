@@ -1,17 +1,42 @@
-#ifndef MENU_H
-#define MENU_H
+#ifndef ALCHEMY_MENU_H
+#define ALCHEMY_MENU_H
 
 /// @file
-/// MENU
+/// The menus' list orders, sign strings and routines.
 
 #include "types.h"
 #include "edition.h"
 
+// The item menu's sort orders (gMenu_ListOrder*): one byte per group, an
+// item type, with LIST_ORDER_EQUIPPED for only the equipped items of that
+// type, ending with LIST_ORDER_END.
+#define LIST_ORDER_TYPE_MASK 0x7f
+#define LIST_ORDER_EQUIPPED 0x80
+#define LIST_ORDER_END 0xff
+
+/// The item menu's four sort orders (ItemMenu_Sort), which
+/// L + A cycles through in this order.
+enum ListSort {
+  /// The equipped items, the items that are not equipment, then the other
+  /// equipment (gMenu_ListOrderEquippedThenItems).
+  LIST_SORT_EQUIPPED_THEN_ITEMS = 0,
+  /// The equipped items, the other equipment, then the rest
+  /// (gMenu_ListOrderEquippedThenEquipment).
+  LIST_SORT_EQUIPPED_THEN_EQUIPMENT = 1,
+  LIST_SORT_EQUIPMENT_FIRST = 2, ///< gMenu_ListOrderEquipmentFirst
+  /// The items that are not equipment first (gMenu_ListOrderItemsFirst).
+  LIST_SORT_ITEMS_FIRST = 3,
+  LIST_SORT_COUNT = 4
+};
+
+/// The rows a page of the item and Psynergy lists shows.
+#define LIST_PAGE_SIZE 5
+
 extern u8 gStatusScreen_CursorWidths[];
-extern u8 gMenu_ListOrderDefault[];
-extern u8 gMenu_ListOrderMode0[];
-extern u8 gMenu_ListOrderMode1[];
-extern u8 gMenu_ListOrderMode2[];
+extern u8 gMenu_ListOrderItemsFirst[];
+extern u8 gMenu_ListOrderEquippedThenItems[];
+extern u8 gMenu_ListOrderEquippedThenEquipment[];
+extern u8 gMenu_ListOrderEquipmentFirst[];
 extern u8 gMenu_MinusSignString;
 extern u8 gMenu_PlusSignString;
 extern s8 gMenu_TopEntryCommandByPosition[];
@@ -50,8 +75,8 @@ s32 Party_ListMembersFar(s16 *);
 s32 Party_SumDjinnCountsFar(s32);
 #ifndef OWN_WindowSprite_CreateFromResourceFar
 struct WindowSprite *
-WindowSprite_CreateFromResourceFar(s32 arg0, s32 arg1, struct RenderInput *arg2,
-                                   s32 arg3, s32 arg4);
+WindowSprite_CreateFromResourceFar(s32 mode, s32 resource,
+                                   struct RenderInput *window, s32 x, s32 y);
 #endif
 void SelectionMenu_StopDrawing(void);
 void *String_FormatPlayTime(s32, u8 *);
@@ -61,9 +86,9 @@ void Icon_PrepareActor(struct WindowSprite *icon);
 void MenuArrow_Create(struct Actor_0801c0dc *obj, s32 *slot);
 #endif
 #ifndef OWN_UiTextResource_SetPosition
-void MenuArrow_SetPosition(struct Obj *obj, s32 arg1, s32 arg2);
+void MenuArrow_SetPosition(struct Obj *obj, s32 x, s32 y);
 #endif
-void Window_SetTilemapEntryFar(s32, s32, s32, s32, s32);
+void Window_SetTilemapEntryFar(s32 window, s32 value, s32 x, s32 y, u32 mode);
 
 extern const u8 gMenu_ColonString[];
 extern const u8 gMenu_HexDigitsString[];

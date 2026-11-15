@@ -47,7 +47,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
   u32 spacingX = work->glyphSpacing;
   u32 spacingY = work->lineSpacing;
 
-  if (mode != 1 && (window->flags & 8) != 0) {
+  if (mode != 1 && (window->flags & WINDOW_FLAG_TEXT_CANVAS) != 0) {
 #if LANGUAGE == LANGUAGE_JAPANESE
     u8 *font = NULL;
     GlyphRoutine draw;
@@ -111,23 +111,23 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     index = (output - work->outputs) * 4;
     output->motion = WINDOW_SPRITE_MOTION_STILL;
     output->kind = 0;
-    if (mode == 1) {
+    if (mode == GLYPH_DRAW_PAGE_ARROW) {
       width = 1;
       output->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;
     } else {
       switch (work->outline) {
-      case 3:
+      case TEXT_STYLE_SHAKE:
         output->motion = WINDOW_SPRITE_MOTION_SHAKE;
         break;
-      case 4:
+      case TEXT_STYLE_POP:
         output->motion = WINDOW_SPRITE_MOTION_POP;
         output->animStep = 8;
         break;
-      case 5:
+      case TEXT_STYLE_SPIN:
         output->motion = WINDOW_SPRITE_MOTION_SPIN;
         output->animStep = 0;
         break;
-      case 2:
+      case TEXT_STYLE_WOBBLE:
         output->motion = WINDOW_SPRITE_MOTION_WOBBLE;
         output->animStep = 0;
         break;
@@ -146,15 +146,16 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
 
     if ((u8)output->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
       sprite = &output->sprite;
-      if (work->glyphResource == 99)
+      if (work->glyphResource == NO_GLYPH_RESOURCE)
         work->glyphResource = VramCache_FindFreeEntry();
       sprite->oam.x = (window->x << 3) + ((window->width - 2) << 3) + ARROW_X;
       sprite->oam.y = (window->y << 3) + ((window->height - 2) << 3) + ARROW_Y;
     } else {
       u16 *attr;
 
-      Dma_Set(tiles, (void *)(0x06010000 + (work->glyphTiles + index) * 32),
-              0x84000020, (volatile u32 *)0x040000d4);
+      Dma_Set(tiles,
+              (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * TILE_SIZE_4BPP),
+              DMA_COPY_WORDS(32), (volatile u32 *)0x040000d4);
       attr = (u16 *)&output->sprite.oam;
       if (work->battleMode & 4)
         *attr++ = (y + (spacingY >> 1) + window->y * 8 + GLYPH_Y) | 0x400;
@@ -219,7 +220,7 @@ s32 Glyph_DrawAsSprite(struct Window *window, s32 character, s32 x, s32 y) {
   output->kind = 0;
   width = Text_DrawGlyphPair(character, tiles);
   Dma_Set(tiles, (void *)(0x06010000 + (work->glyphTiles + index) * 32),
-          0x84000020, REG_DMA3);
+          DMA_COPY_WORDS(32), REG_DMA3);
   ((u16 *)&output->sprite.oam)[0] =
       y + (spacingY >> 1) + window->y * 8 + GLYPH_SPRITE_OFFSET_Y;
   ((u16 *)&output->sprite.oam)[1] =
@@ -384,19 +385,11 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     x++;
     y++;
 #endif
-    pos = ((s16)win->y + y) * 32 + ((s16)win->x + x);
-    if (pos < 32 * 20)
+    pos = ((s16)win->y + y) * BG_SCREEN_WIDTH + ((s16)win->x + x);
+    if (pos < BG_SCREEN_WIDTH * DISPLAY_TILE_HEIGHT)
       *(u16 *)((u32)tilemap + (pos << 1)) = WINDOW_TILE(tile);
   }
 }
-
-enum {
-  TILEMAP_ENTRY_PLAIN,
-  TILEMAP_ENTRY_NONE,
-  TILEMAP_ENTRY_PALETTE_14,
-  TILEMAP_ENTRY_PALETTE_15,
-  TILEMAP_ENTRY_PALETTE_1
-};
 
 #define TILEMAP_WIDTH 32
 #define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
@@ -421,14 +414,14 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
     return;
 
   switch (mode) {
-  case TILEMAP_ENTRY_PALETTE_15:
-    palette = 0xf000;
+  case TILEMAP_ENTRY_WINDOW:
+    palette = BG_TILE_PALETTE(WINDOW_PALETTE);
     break;
-  case TILEMAP_ENTRY_PALETTE_14:
-    palette = 0xe000;
+  case TILEMAP_ENTRY_HIGHLIGHT:
+    palette = BG_TILE_PALETTE(HIGHLIGHT_PALETTE);
     break;
-  case TILEMAP_ENTRY_PALETTE_1:
-    palette = 0x1000;
+  case TILEMAP_ENTRY_ICON:
+    palette = BG_TILE_PALETTE(1);
     break;
   default:
     palette = 0;
@@ -439,9 +432,9 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
   switch (mode) {
   case TILEMAP_ENTRY_NONE:
     return;
-  case TILEMAP_ENTRY_PALETTE_14:
-  case TILEMAP_ENTRY_PALETTE_15:
-  case TILEMAP_ENTRY_PALETTE_1:
+  case TILEMAP_ENTRY_HIGHLIGHT:
+  case TILEMAP_ENTRY_WINDOW:
+  case TILEMAP_ENTRY_ICON:
     index = ((s16)window->y + y) * TILEMAP_WIDTH + ((s16)window->x + x);
     if ((u32)index >= TILEMAP_ENTRIES)
       return;
@@ -475,7 +468,7 @@ extern u16 gWindowSprite_BounceScales[];
 /// Steps a scaling sprite's animation (WINDOW_SPRITE_MOTION_SWELL to
 /// WINDOW_SPRITE_MOTION_SHRINK_HALF) and sets its affine scale for this frame.
 void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
-  s32 scale = 256;
+  s32 scale = Q_8_8(1);
   struct OutputSprite *sprite = (struct OutputSprite *)&windowSprite->sprite;
   struct AffineTransform effect;
 
@@ -583,7 +576,7 @@ void WindowSprite_UpdateAll(void) {
     struct AnimOutput *output;
     u32 phase;
 
-    if (!(window->flags & 1))
+    if (!(window->flags & WINDOW_FLAG_OPEN))
       continue;
     output = (struct AnimOutput *)window->sprites.head;
     while (phase = (gVBlankCount >> 2) & 7, output != NULL) {
@@ -591,7 +584,7 @@ void WindowSprite_UpdateAll(void) {
 
       switch (output->active) {
       case WINDOW_SPRITE_MOTION_PAGE_ARROW:
-        if (work->glyphResource != 0x60) {
+        if (work->glyphResource != VRAM_CACHE_ENTRY_COUNT) {
           const u8 *tiles = &gWindowSprite_PageArrowTiles[phase * 128];
 
           sprite->tile = VramCache_Load(work->glyphResource, 128, tiles);
@@ -619,8 +612,8 @@ void WindowSprite_UpdateAll(void) {
         break;
       case WINDOW_SPRITE_MOTION_POP:
         if (output->animStep != 0) {
-          effect.packed.scaleX = 512;
-          effect.packed.scaleY = 512;
+          effect.packed.scaleX = Q_8_8(2);
+          effect.packed.scaleY = Q_8_8(2);
           effect.packed.angle = 0;
           sprite->affineIndex = OamMatrix_AllocFromTransform(&effect.plain);
           sprite->affine = 3;
@@ -635,16 +628,18 @@ void WindowSprite_UpdateAll(void) {
         }
         break;
       case WINDOW_SPRITE_MOTION_SPIN:
-        effect.plain.scaleX = 256;
-        effect.plain.scaleY = 256;
+        effect.plain.scaleX = Q_8_8(1);
+        effect.plain.scaleY = Q_8_8(1);
         output->animStep += 768;
         effect.plain.angle = output->animStep;
         sprite->affineIndex = OamMatrix_AllocFromTransform(&effect.plain);
         sprite->affine = 1;
-        sprite->x =
-            output->x - (Trig_Sin(effect.plain.angle + 0xe800) >> 14) - 2;
-        sprite->y =
-            output->y - (Trig_Cos(effect.plain.angle + 0x6800) >> 14) - 2;
+        sprite->x = output->x -
+                    (Trig_Sin(effect.plain.angle + TRIG_TURN * 29 / 32) >> 14) -
+                    2;
+        sprite->y = output->y -
+                    (Trig_Cos(effect.plain.angle + TRIG_TURN * 13 / 32) >> 14) -
+                    2;
         break;
       case WINDOW_SPRITE_MOTION_WOBBLE:
         if (gVBlankCount & 1)

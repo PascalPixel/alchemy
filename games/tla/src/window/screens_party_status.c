@@ -8,6 +8,9 @@
 #include "window/screens.h"
 #include "window/window.h"
 
+/// The party status window's column a party member, in tiles.
+#define PARTY_STATUS_COLUMN_WIDTH 6
+
 /// Sizes the party status window by the party: a column of six tiles a party
 /// member (four at most outside battle), one more row with flag 1 and five more
 /// columns with flag 2, against the screen's right edge.
@@ -19,7 +22,7 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
   s32 width;
   s32 x;
 
-  if (work->battleMode != 0) {
+  if (work->battleMode != WINDOW_FIELD) {
     n = BattleParty_PrepareMembersFar(0);
     height = 3;
   } else {
@@ -27,14 +30,14 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
     if ((u32)n > 4)
       n = 4;
   }
-  if (flags & 1)
+  if (flags & PARTY_STATUS_SHOW_PP)
     height++;
   else
     flags &= -3;
 
-  n *= 6;
+  n *= PARTY_STATUS_COLUMN_WIDTH;
   width = n + 1;
-  if (flags & 2)
+  if (flags & PARTY_STATUS_SHOW_DJINN)
     width = n + 6;
 
   x = 30;
@@ -149,21 +152,23 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
   u32 pixels;
   u32 result;
 
-  if (canvas->battleMode == 0) {
+  if (canvas->battleMode == WINDOW_FIELD) {
     Dma_Set((const void *)Palette_GetBasicSpriteColors(),
-            (void *)&BG_PLTT_COLOR(14, 0), 0x80000010, REG_DMA3);
-    BG_PLTT_COLOR(14, 14) = BG_PLTT_COLOR(15, 4);
+            (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 0),
+            DMA_COPY_HALFWORDS(16), REG_DMA3);
+    BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR) =
+        BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   }
   x += (s16)window->x;
   y += (s16)window->y;
   for (i = 0; i < 5; i++, x++) {
-    id = canvas->tilemap[0][y * 32 + x];
-    light = 0x22222222;
-    dark = 0xcccccccc;
-    id &= 0x3ff;
+    id = canvas->tilemap[0][y * BG_SCREEN_WIDTH + x];
+    light = PIXELS_4BPP(2);
+    dark = PIXELS_4BPP(12);
+    id &= TILE_NUMBER_MASK;
     if (value > 7) {
-      light = 0x88888888;
-      dark = 0xdddddddd;
+      light = PIXELS_4BPP(8);
+      dark = PIXELS_4BPP(13);
     } else if (value >= 0) {
       light <<= value * 4;
       light |= 0x88888888U >> (32 - value * 4);
@@ -190,12 +195,7 @@ s32 PartyStatus_DrawBars(struct RenderInput *window, s32 x, s32 y, s32 value) {
   }
 }
 
-#define PARTY_STATUS_KEEP_FLAGS -1
-#define PARTY_STATUS_SHOW_PP 1
-#define PARTY_STATUS_SHOW_DJINN 2
-#define PARTY_STATUS_CLOSED 9
 #define PARTY_STATUS_DJINN_WIDTH 5
-#define PARTY_STATUS_COLUMN_WIDTH 6
 
 /* VIEW(screens): routine BattleDjinn_CountStandbyFar as s32
  * BattleDjinn_CountStandbyFar(s32 a, u8 *counts); window/window.h has
@@ -223,7 +223,7 @@ void PartyStatus_Draw(s32 flags) {
   u16 members[5];
   u8 standbyDjinn[4];
 
-  if (work->battleMode != 0) {
+  if (work->battleMode != WINDOW_FIELD) {
     count = BattleParty_PrepareMembersFar(0);
     y = -1;
     for (i = 0; i < count; i++) {
@@ -245,7 +245,7 @@ void PartyStatus_Draw(s32 flags) {
     flags = layout->flags;
   if (!(flags & PARTY_STATUS_SHOW_PP))
     flags &= ~PARTY_STATUS_SHOW_DJINN;
-  if (work->battleMode == 0 || Func_08118130__screens(0, 0) == 0)
+  if (work->battleMode == WINDOW_FIELD || Func_08118130__screens(0, 0) == 0)
     flags &= ~PARTY_STATUS_SHOW_DJINN;
   if (flags == PARTY_STATUS_CLOSED) {
     Window_EraseBorderRect(layout->x, layout->y, layout->width, layout->height);
@@ -281,12 +281,12 @@ void PartyStatus_Draw(s32 flags) {
       Text_SetColor(TEXT_COLOR_YELLOW);
     else
       Text_SetColor(TEXT_COLOR_WHITE);
-    work->textPalette = 14;
-    if (work->battleMode != 0)
-      work->textPalette = 5;
+    work->textPalette = HIGHLIGHT_PALETTE;
+    if (work->battleMode != WINDOW_FIELD)
+      work->textPalette = BASIC_COLORS_PALETTE;
     Text_DrawPrefixedNumberAtOffset(
         hp, window, (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8 + 8, 0);
-    work->textPalette = 15;
+    work->textPalette = WINDOW_PALETTE;
     Text_DrawStringAtOffset(unit->name, (struct RenderInput *)window,
                             (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
     Text_SetColor(TEXT_COLOR_WHITE);
@@ -300,9 +300,9 @@ void PartyStatus_Draw(s32 flags) {
                            barLength);
     }
     if (flags & PARTY_STATUS_SHOW_PP) {
-      work->textPalette = 14;
-      if (work->battleMode != 0)
-        work->textPalette = 5;
+      work->textPalette = HIGHLIGHT_PALETTE;
+      if (work->battleMode != WINDOW_FIELD)
+        work->textPalette = BASIC_COLORS_PALETTE;
       Text_DrawPrefixedNumberAtOffset(unit->pp, window,
                                       (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8,
                                       y * 8 + 16, 1);
@@ -317,9 +317,9 @@ void PartyStatus_Draw(s32 flags) {
       }
     }
   }
-  work->textPalette = 15;
+  work->textPalette = WINDOW_PALETTE;
 
-  if (work->battleMode != 0 && (flags & PARTY_STATUS_SHOW_DJINN)) {
+  if (work->battleMode != WINDOW_FIELD && (flags & PARTY_STATUS_SHOW_DJINN)) {
     s32 row = y;
 
     /* FAKEMATCH(dead): i set to a 0 never read. */
@@ -333,7 +333,8 @@ void PartyStatus_Draw(s32 flags) {
     Window_SetTilemapEntry(window, 0x5004, 2, row + 1, 0);
     if (standbyDjinn[0] > 9 || standbyDjinn[1] > 9 || standbyDjinn[2] > 9 ||
         standbyDjinn[3] > 9)
-      Dma_Set(Data_080aa1b8, (void *)0x06003400, 0x84000048, REG_DMA3);
+      Dma_Set(gPartyStatus_DigitTiles, (void *)0x06003400, DMA_COPY_WORDS(72),
+              REG_DMA3);
     Window_SetTilemapEntry(window, DJINN_COUNT_TILE(standbyDjinn[0]), 1, row,
                            0);
     Window_SetTilemapEntry(window, DJINN_COUNT_TILE(standbyDjinn[1]), 3, row,
@@ -353,10 +354,6 @@ void PartyStatus_Close(void) {
 }
 
 #undef TILE_ROW_FROM_BOTTOM
-#undef PARTY_STATUS_KEEP_FLAGS
-#undef PARTY_STATUS_SHOW_PP
-#undef PARTY_STATUS_SHOW_DJINN
-#undef PARTY_STATUS_CLOSED
 #undef PARTY_STATUS_DJINN_WIDTH
 #undef PARTY_STATUS_COLUMN_WIDTH
 #undef DJINN_COUNT_TILE

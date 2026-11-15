@@ -466,20 +466,24 @@ void BattleUnit_ClearStatuses(s32 unitId) {
   BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
 }
 
+/// The advance arrow's attribute 0: a 256-colour, semi-transparent tall
+/// sprite; with attribute 1's size 0 it is 8 by 16 pixels.
+#define ADVANCE_ARROW_ATTR0 0xa400
+
 /// Waits for the player to advance a battle message: once the window has
 /// finished printing, shows the bobbing arrow at its corner until B is held,
 /// or A, B, L or R is pressed (or held, after 16 frames), then plays the
 /// cursor sound. The Broken Seal's BattleMessage_WaitForAdvance, with the
 /// message window read from its heap slot.
 void BattleMessage_WaitForAdvance(void) {
-  struct AdvanceSprite *prompt;
-  struct AdvanceSprite promptStorage;
+  struct AdvanceArrowSprite *prompt;
+  struct AdvanceArrowSprite promptStorage;
   s32 frame;
   s32 tileSlot;
   s32 pictureTiles;
   s32 sheet;
-  struct AdvanceWindow *window;
-  struct AdvanceOffset *offset;
+  struct Window *window;
+  struct BattleMessageOffset *offset;
 
   while (!Message_AllTypedFar())
     wait(1);
@@ -490,19 +494,19 @@ void BattleMessage_WaitForAdvance(void) {
   for (frame = 0;; frame++) {
     // Cycle the eight pictures, one every four frames.
     pictureTiles = ((gFrameCount >> 2) & 7) * 128 + sheet;
-    window = ((struct AdvanceDisplay *)Ram_HeapSlots->battleMessage)->window;
-    offset = ((struct AdvanceDisplay *)Ram_HeapSlots->battleMessage)->offset;
-    IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
-    IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
-    Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
-    ((u32 *)prompt)[1] = 0xa400;
+    window = ((struct BattleMessageWork *)Ram_HeapSlots->battleMessage)->window;
+    offset = ((struct BattleMessageWork *)Ram_HeapSlots->battleMessage)->offset;
+    IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
+    IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
+    Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
+    ((u32 *)prompt)[1] = ADVANCE_ARROW_ATTR0;
     ((u32 *)prompt)[2] = 0;
     prompt->tile = VramCache_Reload(tileSlot, pictureTiles);
-    prompt->x = window->x * 8 + (offset->x >> 8) + 4;
+    prompt->x = (s16)window->x * 8 + (offset->x >> 8) + 4;
     // Bob up and down by up to 2 pixels, once every 16 frames.
-    prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
+    prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + (s16)window->y * 8 +
                 (offset->y >> 8) + 6;
-    Oam_AddSpriteAtDepth(prompt, 240);
+    Oam_AddSpriteAtDepth(prompt, OAM_DEPTH_WINDOW);
     // A held advance key counts only after 16 frames, so one still held from
     // the previous message does not skip this one.
     if ((gInput.held & KEY_B) || (gInput.pressed & KEY_ADVANCE) ||
@@ -532,15 +536,15 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);
   while (1) {
-    IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
-    IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
-    Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
-    ((s32 *)prompt)[1] = 0x40000000;
+    IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
+    IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
+    Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
+    ((s32 *)prompt)[1] = OBJ_SIZE_16X16;
     ((s32 *)prompt)[2] = 0;
     prompt->tile = VramCache_Reload(tileSlot, pointerTiles);
     prompt->x = position.x + ((gFrameCount & 4) >> 1) - 4;
     prompt->y = position.y - ((gFrameCount & 4) >> 2) - 8;
-    Oam_AddSpriteAtDepth(prompt, 240);
+    Oam_AddSpriteAtDepth(prompt, OAM_DEPTH_WINDOW);
     if (gInput.pressed & KEY_ADVANCE)
       break;
     wait(1);
@@ -576,7 +580,7 @@ s32 BattleObject_DestroyTemporaryObject(s32 unitId) {
 }
 
 /// Grants the Djinn bonus for the rest of the action.
-void BattlePlayback_GrantDjinnBonus(struct BattleEventFlagWork *runtime,
+void BattlePlayback_GrantDjinnBonus(struct BattlePlaybackWork *runtime,
                                     u32 operand) {
   runtime->flags |= 1;
 }
@@ -609,15 +613,15 @@ u32 BattlePlayback_RunAll(void) {
         MessageArgument_PushFar(queue->operands[i], MESSAGE_ARGUMENT_NUMBER);
         break;
       case PLAYBACK_ITEM_NAME:
-        MessageArgument_PushFar(queue->operands[i] & 0x1ff,
+        MessageArgument_PushFar(queue->operands[i] & INVENTORY_ITEM_ID_MASK,
                                 MESSAGE_ARGUMENT_ITEM);
         break;
       case PLAYBACK_ABILITY_NAME:
-        MessageArgument_PushFar(queue->operands[i] & 0x3fff,
+        MessageArgument_PushFar(queue->operands[i] & PSYNERGY_ABILITY_MASK,
                                 MESSAGE_ARGUMENT_ABILITY);
         break;
       case PLAYBACK_MARK:
-        ((struct BattleDisplayFlags *)Ram_HeapSlots->battleMessage)->marked = 1;
+        ((struct BattleMessageWork *)Ram_HeapSlots->battleMessage)->marked = 1;
         break;
       case PLAYBACK_CLEAR_ARGUMENTS:
         MessageArgument_ClearAllFar();
@@ -858,7 +862,7 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
   // BUG: abilityId is tested before it is read from the plan, so this sees
   // whatever the register held.
   if (abilityId == ABILITY_MELD || abilityId == ABILITY_MOLD)
-    unitId = plan->actorId2;
+    unitId = plan->partnerId;
   else
     unitId = plan->unitId;
   targetId = plan->targetIds[slot];
@@ -1002,9 +1006,9 @@ power_end:
       else
         classId = ENEMY_SEA_FIGHTER;
     } else if (ability->effect == ABILITY_EFFECT_CALL_QUEUED) {
-      if (battle->queueCount != 0) {
-        classId = battle->queuedSummons[battle->queueHead];
-        suffix = battle->queuedCharges[battle->queueHead];
+      if (battle->spoils.queueCount != 0) {
+        classId = battle->spoils.queuedSummons[battle->spoils.queueHead];
+        suffix = battle->spoils.queuedLetters[battle->spoils.queueHead];
       } else
         hit = 0;
     }
@@ -1018,8 +1022,8 @@ power_end:
       }
       BattleUnit_SetFar(newUnitId, classId, suffix & ENEMY_LETTER_MASK);
       if (ability->effect == ABILITY_EFFECT_CALL_QUEUED) {
-        battle->queueCount--;
-        battle->queueHead = (battle->queueHead + 1) % 2;
+        battle->spoils.queueCount--;
+        battle->spoils.queueHead = (battle->spoils.queueHead + 1) % 2;
       }
       // A Star Magician's ball takes the place nearest the middle; any other
       // newcomer fills a removed enemy's place, or is appended.
@@ -1153,7 +1157,7 @@ power_end:
           if (abilityId == ABILITY_MELD || abilityId == ABILITY_MOLD) {
             attack = Unit_Get(plan->unitId)->atk;
             if (abilityId == ABILITY_MELD)
-              attack += Unit_Get(plan->actorId2)->atk / 4;
+              attack += Unit_Get(plan->partnerId)->atk / 4;
           }
           amount = Battle_CalculateAttackDamageFar(attack, defense, power,
                                                    elementBonus);
@@ -1673,24 +1677,42 @@ power_end:
       s32 maxu;
       s32 maxv;
       s32 heal;
+#ifndef UBFIX
       u16 *pt;
+#endif
 
-      /* FAKEMATCH(temporary): a pointer walked down from hp to hpMax reads each
-       * stat twice. */
+      // UB: a pointer walks from hp down past it to hpMax, reading each stat
+      // twice, unsigned and signed; the member reads behind UBFIX share one
+      // load each.
+#ifdef UBFIX
+      old = (u16)target->hp;
+      heal = target->hp;
+#else
       pt = (u16 *)&target->hp;
       old = *pt--;
       heal = *(s16 *)(pt + 1);
+#endif
       if (ability->effect == ABILITY_EFFECT_HEAL_HP_40) {
         s32 m;
 
+#ifdef UBFIX
+        maxu = (u16)target->hpMax;
+        m = target->hpMax;
+#else
         pt--;
         maxu = *pt--;
         m = *(s16 *)(pt + 1);
+#endif
         heal += m * 2 / 5;
       } else if (ability->effect == ABILITY_EFFECT_HEAL_HP_70) {
+#ifdef UBFIX
+        maxu = (u16)target->hpMax;
+        maxv = target->hpMax;
+#else
         pt--;
         maxu = *pt--;
         maxv = *(s16 *)(pt + 1);
+#endif
         heal += maxv * 7 / 10;
       } else if (ability->effect == ABILITY_EFFECT_HEAL_HP_50) {
         maxu = (u16)target->hpMax;
@@ -1698,9 +1720,14 @@ power_end:
         /* FAKEMATCH(barrier): an empty asm on maxu. */
         asm("" : "+r"(maxu));
       } else {
+#ifdef UBFIX
+        maxu = (u16)target->hpMax;
+        maxv = target->hpMax;
+#else
         pt--;
         maxu = *pt--;
         maxv = *(s16 *)(pt + 1);
+#endif
         if (ability->effect == ABILITY_EFFECT_HEAL_HP_60) {
           s32 p = maxv * 60;
           heal += p / 100;
@@ -1733,26 +1760,44 @@ power_end:
       s32 maxv;
       s32 heal;
       s32 maxu;
+#ifndef UBFIX
       u16 *pt;
+#endif
 
-      /* FAKEMATCH(temporary): a pointer walked down from pp to ppMax reads each
-       * stat twice. */
+      // UB: a pointer walks from pp down past it to ppMax, reading each stat
+      // twice, unsigned and signed; the member reads behind UBFIX share one
+      // load each.
+#ifdef UBFIX
+      old = (u16)target->pp;
+      heal = target->pp;
+#else
       pt = (u16 *)&target->pp;
       old = *pt--;
       heal = *(s16 *)(pt + 1);
+#endif
       if (ability->effect == ABILITY_EFFECT_HEAL_PP_10) {
         maxv = target->ppMax;
         maxu = (u16)target->ppMax;
         heal += (s16)maxv / 10;
       } else if (ability->effect == ABILITY_EFFECT_HEAL_PP_30) {
+#ifdef UBFIX
+        maxu = (u16)target->ppMax;
+        maxv = target->ppMax;
+#else
         pt--;
         maxu = *pt--;
         maxv = *(s16 *)(pt + 1);
+#endif
         heal += maxv * 3 / 10;
       } else {
+#ifdef UBFIX
+        maxu = (u16)target->ppMax;
+        maxv = target->ppMax;
+#else
         pt--;
         maxu = *pt--;
         maxv = *(s16 *)(pt + 1);
+#endif
         heal += maxv * 7 / 100;
       }
       if (heal > (s16)maxu)
@@ -2287,13 +2332,13 @@ done:
 u32 Ability_IsPsynergy(s32 abilityId) {
   u8 pp;
 
-  if (abilityId == 126) // Psy Drain.
+  if (abilityId == ABILITY_PSY_DRAIN)
     return 1;
   pp = Ability_Get(abilityId)->ppCost;
-  return (u32)((0 - pp) | pp) >> 31; // 1 if pp is nonzero.
+  return pp != 0;
 }
 
-#define AI_BATTLE ((struct AIBattleWork *)Ram_HeapSlots->battleWork)
+#define AI_BATTLE ((struct BattleWork *)Ram_HeapSlots->battleWork)
 
 /// Chooses an enemy's action: one of the eight in its definition, picked by its
 /// action strategy, with an item instead where its item mask says so, and a
@@ -2315,7 +2360,7 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
   s32 opponentTarget;
   s32 allyIsParty;
   s32 opponentIsParty;
-  struct AIBattleWork *battle;
+  struct BattleWork *battle;
   struct ItemDefinition *item;
   s32 useItem;
   s8 strategyKind;
@@ -2363,42 +2408,45 @@ s32 BattleAI_ChooseAction(struct BattleActionRecord *request, s32 retry) {
   enemy = Enemy_GetDefinitionFar(unit->enemyId);
   if (unit->enemyId == ENEMY_POSEIDON) {
     selectionMemory =
-        (struct AIState *)&((struct AIBattleWork *)Ram_HeapSlots->battleWork)
-            ->aiStates[request->unk0e];
-    if (request->unk0e == 1)
+        (struct AIState *)&((struct BattleWork *)Ram_HeapSlots->battleWork)
+            ->aiStates[request->turnAction];
+    if (request->turnAction == 1)
       enemy = Enemy_GetDefinitionFar(ENEMY_POSEIDON_2);
   } else if (unit->enemyId == ENEMY_DOOM_DRAGON) {
-    selectionMemory = (struct AIState *)&AI_BATTLE->aiStates[request->unk0e];
-    switch (request->unk0e) {
+    selectionMemory =
+        (struct AIState *)&AI_BATTLE->aiStates[request->turnAction];
+    switch (request->turnAction) {
     case 1:
-      AI_BATTLE->unk869 = 6;
+      AI_BATTLE->actingAnimation = 6;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_3);
       break;
     case 2:
-      AI_BATTLE->unk869 = 3;
+      AI_BATTLE->actingAnimation = 3;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_2);
       break;
     case 3:
-      AI_BATTLE->unk869 = 7;
+      AI_BATTLE->actingAnimation = 7;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_4);
       break;
     }
   } else if (unit->enemyId == ENEMY_DOOM_DRAGON_5) {
-    selectionMemory = (struct AIState *)&AI_BATTLE->aiStates[request->unk0e];
-    switch (request->unk0e) {
+    selectionMemory =
+        (struct AIState *)&AI_BATTLE->aiStates[request->turnAction];
+    switch (request->turnAction) {
     case 1:
-      AI_BATTLE->unk869 = 6;
+      AI_BATTLE->actingAnimation = 6;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_7);
       break;
     case 2:
-      AI_BATTLE->unk869 = 3;
+      AI_BATTLE->actingAnimation = 3;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_6);
       break;
     }
   } else if (unit->enemyId == ENEMY_DOOM_DRAGON_8) {
-    selectionMemory = (struct AIState *)&AI_BATTLE->aiStates[request->unk0e];
-    if (request->unk0e == 1) {
-      AI_BATTLE->unk869 = 3;
+    selectionMemory =
+        (struct AIState *)&AI_BATTLE->aiStates[request->turnAction];
+    if (request->turnAction == 1) {
+      AI_BATTLE->actingAnimation = 3;
       enemy = Enemy_GetDefinitionFar(ENEMY_DOOM_DRAGON_9);
     }
   } else if (unit->enemyId == ENEMY_DULLAHAN) {
@@ -2495,7 +2543,7 @@ select_again:
       request->target = Battle_FindUnitPlace(request->unitId);
       break;
     case ABILITY_EFFECT_TOTAL_DEFENSE:
-      request->command = COMMAND_DEFEND2;
+      request->command = COMMAND_TOTAL_DEFENSE;
       request->target = Battle_FindUnitPlace(request->unitId);
       break;
     case ABILITY_EFFECT_FLEE:
@@ -2512,7 +2560,7 @@ select_again:
     if (retry == 0) {
       switch (request->command) {
       case COMMAND_DEFEND:
-      case COMMAND_DEFEND2:
+      case COMMAND_TOTAL_DEFENSE:
         break;
       default:
         goto done;
@@ -2532,7 +2580,8 @@ select_again:
     command = request->command;
     if (command == COMMAND_FLEE && (u8)unit->challenge != 0)
       goto next_candidate;
-    if (retry != 0 && (command == COMMAND_DEFEND || command == COMMAND_DEFEND2))
+    if (retry != 0 &&
+        (command == COMMAND_DEFEND || command == COMMAND_TOTAL_DEFENSE))
       goto next_candidate;
 
     if (command == COMMAND_ABILITY) {
@@ -2601,11 +2650,12 @@ select_again:
                                    ? ENEMY_REFRESH_BALL
                                    : ENEMY_SEA_FIGHTER))
         break;
-      battle = (struct AIBattleWork *)Ram_HeapSlots->battleWork;
+      battle = (struct BattleWork *)Ram_HeapSlots->battleWork;
       if (ability->effect == ABILITY_EFFECT_CALL_QUEUED) {
-        if (battle->queueCount == 0)
+        if (battle->spoils.queueCount == 0)
           break;
-        if (!Enemy_HasSpriteRoom(battle->queuedSummons[battle->queueHead]))
+        if (!Enemy_HasSpriteRoom(
+                battle->spoils.queuedSummons[battle->spoils.queueHead]))
           break;
       }
       request->target = Battle_FindUnitPlace(request->unitId);

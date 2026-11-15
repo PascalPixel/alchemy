@@ -93,6 +93,8 @@ enum AbilityTarget {
 /// effects no code here reads.
 enum AbilityEffect {
   ABILITY_EFFECT_NONE = 0,
+  ABILITY_EFFECT_RESTORE_HP = 1,         ///< restores HP (the item menu's use)
+  ABILITY_EFFECT_RESTORE_PP = 2,         ///< restores PP (the item menu's use)
   ABILITY_EFFECT_CURE_POISON = 3,        ///< Cure Poison, Antidote
   ABILITY_EFFECT_RESTORE = 4,            ///< Restore, Elixir
   ABILITY_EFFECT_REVIVE = 5,             ///< Revive, Water of Life: full HP
@@ -128,15 +130,15 @@ enum AbilityEffect {
   ABILITY_EFFECT_HALVE_DEFENSE = 35,     ///< Torch
   /// A 1 in 64 to 1 in 4 chance of an ability's critical hit, rolled by
   /// BattleCommand_BuildPlan.
-  ABILITY_EFFECT_CRITICAL_1_IN_64 = 36,
-  ABILITY_EFFECT_CRITICAL_1_IN_32 = 37,
-  ABILITY_EFFECT_CRITICAL_1_IN_16 = 38,
-  ABILITY_EFFECT_CRITICAL_1_IN_8 = 39,
-  ABILITY_EFFECT_CRITICAL_1_IN_4 = 40,
+  ABILITY_EFFECT_CRITICAL_A = 36,
+  ABILITY_EFFECT_CRITICAL_B = 37,
+  ABILITY_EFFECT_CRITICAL_C = 38,
+  ABILITY_EFFECT_CRITICAL_D = 39,
+  ABILITY_EFFECT_CRITICAL_E = 40,
   /// A chance of a double or triple blow, rolled by BattleCommand_BuildPlan.
-  ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 = 41,
+  ABILITY_EFFECT_DOUBLE_BLOW_RARE = 41,
   ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4 = 42, ///< Double Fang, Twin Beaks
-  ABILITY_EFFECT_TRIPLE_BLOW_1_IN_8 = 43,
+  ABILITY_EFFECT_TRIPLE_BLOW_RARE = 43,
   ABILITY_EFFECT_TRIPLE_BLOW_1_IN_4 = 44, ///< Swift Strike
   ABILITY_EFFECT_THREATEN = 45,           ///< Contain, Threaten, Tremble
   ABILITY_EFFECT_DEFEND = 46,             ///< Defend, Granite
@@ -268,6 +270,12 @@ enum CurseFlag {
 
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
 /// Djinn and ailments.
+/// Unit ids from 128 are the enemies'.
+#define FIRST_ENEMY_UNIT 128
+
+/// How many actions a unit's list holds (Unit.psynergy).
+#define PSYNERGY_SLOTS 32
+
 struct Unit {
   u8 name[0x0f];      ///< one byte a character, ending in 0
   u8 level;           ///< 1 to 99 for a character
@@ -282,7 +290,7 @@ struct Unit {
   u8 baseActionCount; ///< actions a turn before equipment
   u8 baseHpRegen;     ///< HP regained each turn before equipment
   u8 basePpRegen;     ///< PP regained each turn before equipment
-  u8 unk022[2];       ///< Not named by any TLA C.
+  u8 baseUnused[2];   ///< no code names it
   /// Power and resistance before equipment and stages: an enemy's from its
   /// element preset, a character's from its element levels
   /// (Unit_CalculateBaseElements).
@@ -298,17 +306,17 @@ struct Unit {
   u8 actionsPerTurn; ///< actions each turn (Unit_Calculate)
   u8 hpRegen;        ///< HP regained at each turn's end
   u8 ppRegen;        ///< PP regained at each turn's end
-  u8 unk046[2];      ///< Not named by any TLA C.
+  u8 unused[2];      ///< no code names it, as baseUnused
   /// Power and resistance in each element after equipment, element levels
   /// and Resistance stages (Unit_Calculate).
   struct BattleElementStats element[4];
   /// The action list: Psynergy taught for good, then the class's and the
   /// equipment's. An empty entry is 0.
-  struct PsynergyEntry psynergy[32];
+  struct PsynergyEntry psynergy[PSYNERGY_SLOTS];
   /// Items held, one entry each: bits 15..11 quantity | 10 broken |
   /// 9 equipped | 8..0 item id (INVENTORY_*). An empty entry is 0.
   u16 inventory[15];
-  u8 unk0f6[2]; ///< Not named by any TLA C.
+  u8 paddingBeforeDjinn[2]; ///< up to the word djinnHeld starts on
   /// The Djinn held, one bit per Djinni (by its index) in each element's word.
   u32 djinnHeld[4];
   /// The Djinn set, one bit per Djinni.
@@ -367,11 +375,11 @@ struct Unit {
   u8 equipBonus[2];
   /// The extra action: 2 when cast, down one at each turn's end.
   u8 ready;
-  u8 immobile;     ///< set by ABILITY_EFFECT_GROUND
-  u8 agilityTurns; ///< the Agility change's turns left, 5 when cast
-  s8 agilityStage; ///< the Agility stage, -4 to 8 (twice the Agility)
-  s8 challenge;    ///< set by the challenge effect
-  u8 unk149;       ///< Not named by any TLA C.
+  u8 immobile;             ///< set by ABILITY_EFFECT_GROUND
+  u8 agilityTurns;         ///< the Agility change's turns left, 5 when cast
+  s8 agilityStage;         ///< the Agility stage, -4 to 8 (twice the Agility)
+  s8 challenge;            ///< set by the challenge effect
+  u8 paddingBeforeEnemyId; ///< up to the halfword enemyId starts on
   /// Who the unit is: an enemy's id (BattleUnit_Set), or a character's id
   /// (copied from id at a new game) for Unit_UpdateClass and the experience
   /// table.
@@ -431,5 +439,8 @@ static __inline__ s32 Vitals_Clamp(s32 ratio) {
   } while (0)
 
 extern struct Unit gCharacterUnits[];
+
+/// A unit's name buffer: 14 characters and the 0 that ends them.
+#define UNIT_NAME_SIZE 15
 
 #endif

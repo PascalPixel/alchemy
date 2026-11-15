@@ -9,10 +9,40 @@
 #include "system/io_reg.h"
 #include "window/window_tile.h"
 #include "window/message_argument.h"
+#include "window/message_speed.h"
 #include "edition.h"
+#include "graphics/oam.h"
 #include "graphics/output.h"
 #include "graphics/uiflow.h"
 #include "static_assert.h"
+
+// The display's sizes and the screen block, palette and sprite words the
+// windows and menus build, as The Broken Seal's io_reg.h names them.
+/// The screen's size in 8-pixel tiles.
+#define DISPLAY_TILE_WIDTH (DISPLAY_WIDTH / 8)
+#define DISPLAY_TILE_HEIGHT (DISPLAY_HEIGHT / 8)
+#define BG_PLTT_COLORS (BG_PLTT_SIZE / 2) ///< the background's 256 colours
+/// Colours in one 16-colour palette.
+#define PALETTE_COLORS 16
+/// Tiles in a row of a screen block, whose map is 32 tiles square.
+#define BG_SCREEN_WIDTH 32
+/// A screen block entry's 16-colour palette, in its top four bits.
+#define BG_TILE_PALETTE(n) ((n) << 12)
+/// A blend weight's full strength: BLEND_ALPHA(BLEND_WEIGHT_MAX, 0) shows only
+/// the top layer.
+#define BLEND_WEIGHT_MAX 16
+/// A sprite's x, 0 to 511, in the high half of its attribute word.
+#define OBJ_X(x) ((x) << 16)
+/// How a sprite is drawn (OBJ_MODE).
+enum ObjMode {
+  OBJ_MODE_NORMAL = 0,
+  OBJ_MODE_SEMI_TRANSPARENT = 1, ///< blended as BLDCNT's first target
+  OBJ_MODE_WINDOW = 2            ///< drawn into the OBJ window, not shown
+};
+/// The frames the game runs each second, one each VBlank.
+#define FRAMES_PER_SECOND 60
+/// The brightest colour, every channel at its highest level.
+#define RGB_WHITE RGB(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX)
 
 enum { UI_WINDOW_COUNT = 12, UI_OUTPUT_COUNT = 64 };
 
@@ -40,18 +70,17 @@ struct WindowWork {
   struct WindowSprite outputs[UI_OUTPUT_COUNT];
   struct WindowSpriteList freeOutputs; ///< the outputs not in any window
   u8 textTileState[0x100];             ///< per text tile
-  u16 lineSpacing;             ///< the current channel's, copied in to draw
-  u16 unknownAfterLineSpacing; ///< set to 1 with the text style; not read
-  u16 outline;                 ///< the current channel's, copied in to draw
-  u16 colour;                  ///< the current channel's, copied in to draw
+  u16 lineSpacing;            ///< the current channel's, copied in to draw
+  u16 unusedAfterLineSpacing; ///< set to 1 with the text style; not read
+  u16 outline;                ///< the current channel's, copied in to draw
+  u16 colour;                 ///< the current channel's, copied in to draw
   u16 textBuffer[UI_TEXT_ENTRY_COUNT]; ///< decoded text, a ring of codes
-  u16 glyphSpacing;     ///< 9 with the text style, as ☀️'s letterSpacing
-  u16 textBufferEnd;    ///< where the next code goes in textBuffer
-  u16 lastMessageStart; ///< where the last decoded message began in textBuffer
-  u16 glyphResource;    ///< VRAM cache slot of the page arrow; 99 when none
-  u16 glyphTiles;       ///< first sprite tile of the glyph sheet (picture 95)
-  u8 unknownBeforeValues[2]; ///< not named by ⚓️ code
-  u32 argumentValues[8];     ///< message argument values (MessageArgument_Push)
+  u16 glyphSpacing;      ///< 9 with the text style, as ☀️'s letterSpacing
+  u16 textBufferEnd;     ///< where the next code goes in textBuffer
+  u16 lastMessageStart;  ///< where the last decoded message began in textBuffer
+  u16 glyphResource;     ///< VRAM cache slot of the page arrow; 99 when none
+  u16 glyphTiles;        ///< first sprite tile of the glyph sheet (picture 95)
+  u32 argumentValues[8]; ///< message argument values (MessageArgument_Push)
   u16 argumentKinds[8];  ///< the MESSAGE_ARGUMENT_ kind of each; 0 when free
   u16 resourceIds[2];    ///< picture shown in each portrait slot; 999 when free
   u16 outputIds[2];      ///< VRAM cache slot of each portrait slot's picture
@@ -64,7 +93,6 @@ struct WindowWork {
   /// Nonzero lets a tall message fit in 32 pixels, its channel then placing
   /// glyphs by y / 320 (UiChannelSlot.unk26).
   s8 textMode;
-  u8 unk138d[3]; ///< not named by ⚓️ code
 };
 
 STATIC_ASSERT(offsetof(struct WindowWork, tilemap) == 8);
@@ -98,6 +126,12 @@ STATIC_ASSERT(sizeof(struct WindowWork) == 0x1190);
 /// WindowWork.glyphResource while the page arrow has no VRAM cache slot.
 #define NO_GLYPH_RESOURCE 99
 
+/// The window tiles text is drawn into: TEXT_TILES from TEXT_TILE_FIRST, and
+/// with WindowWork.extraTextTiles as many more from TEXT_EXTRA_TILE_FIRST.
+#define TEXT_TILE_FIRST 128
+#define TEXT_TILES 128
+#define TEXT_EXTRA_TILE_FIRST 512
+
 /// The last character code the window's text tiles cover, as ☀️'s.
 #define TEXT_LAST_FONT_CODE 255
 
@@ -121,7 +155,7 @@ void Message_CloseFinishedWindows(void);
 
 s32 Message_AllTyped(void);
 
-void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
+void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y);
 
 // The text canvas tiles in VRAM: 120 4bpp tiles from tile 296, enough for the
 // interior of a full-width window six tiles tall.
@@ -133,11 +167,113 @@ void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 /// copies the work block's tilemap to.
 #define WINDOW_TILEMAP_VRAM ((u8 *)0x06002000)
 
-/// The window palette's background colour, behind its text.
+/// The sprite palette of portrait slot 0; slot 1 uses the next.
+#define PORTRAIT_PALETTE 14
+
+/// The BG palette of the windows and their text, the UI palette.
+#define WINDOW_PALETTE 15
+
+/// The BG palette the menus keep for their selected row or page: a copy of
+/// WINDOW_PALETTE with its background lightened (Palette_LightenHighlight),
+/// which the item icons borrow.
+#define HIGHLIGHT_PALETTE 14
+/// The window palette's background colour, behind its text; in
+/// HIGHLIGHT_PALETTE, the selected row's.
 #define WINDOW_BACKGROUND_COLOR 4
 /// Eight 4bpp pixels of WINDOW_BACKGROUND_COLOR, for filling the text canvas
 /// or a tile a word at a time.
 #define TEXT_CANVAS_BACKGROUND_WORD 0x44444444
+/// The colour that text drawn in a palette other than WINDOW_PALETTE stands
+/// on; the menus copy WINDOW_BACKGROUND_COLOR into it.
+#define TEXT_BACKGROUND_COLOR 14
+/// The BG palette that battle and the Djinn menu fill with the first basic
+/// sprite palette, its TEXT_BACKGROUND_COLOR the window background: the element
+/// icons and the coloured numbers are drawn in it.
+#define BASIC_COLORS_PALETTE 5
+
+// The two page arrows beside a paged list's page numbers, in the menus and
+// the File Screen: tiles 296 and 297 of character block 0, which
+// Link_DrawPageArrows slides back and forth each frame, and their
+// tilemap entries.
+#define PAGE_ARROW_TILE 296
+#define PAGE_ARROW_VRAM                                                        \
+  ((s32)BG_CHAR_BLOCK(0) + PAGE_ARROW_TILE * TILE_SIZE_4BPP)
+#define PAGE_ARROW_LEFT WINDOW_TILE(PAGE_ARROW_TILE)
+#define PAGE_ARROW_RIGHT WINDOW_TILE(PAGE_ARROW_TILE + 1)
+
+/// How Window_SetTilemapEntry writes its value: as it is, not at all, or as a
+/// tile in one of three palettes.
+enum TilemapEntryMode {
+  TILEMAP_ENTRY_PLAIN = 0,
+  TILEMAP_ENTRY_NONE = 1,
+  TILEMAP_ENTRY_HIGHLIGHT = 2, ///< in HIGHLIGHT_PALETTE
+  TILEMAP_ENTRY_WINDOW = 3,    ///< in WINDOW_PALETTE
+  /// In palette 1, which the Status screens fill with the basic sprite
+  /// colours for their element icons.
+  TILEMAP_ENTRY_ICON = 4
+};
+
+/// The window map entry of the first element icon, in BASIC_COLORS_PALETTE;
+/// the four elements follow it in order (enum Element).
+#define ELEMENT_ICON_TILE (BG_TILE_PALETTE(BASIC_COLORS_PALETTE) | 1)
+
+/// The command icons (ResourceId_CommandIcons), each drawn with the command
+/// name of the same number (MsgCommandName + icon).
+enum CommandIcon {
+  COMMAND_ICON_ATTACK = 0,
+  COMMAND_ICON_PSYNERGY = 1,
+  COMMAND_ICON_ITEM = 2,
+  COMMAND_ICON_DEFEND = 3,
+  COMMAND_ICON_FLEE = 4,
+  COMMAND_ICON_YES = 5,
+  COMMAND_ICON_NO = 6,
+  COMMAND_ICON_STATUS = 7,
+  COMMAND_ICON_CHECK = 8,
+  COMMAND_ICON_USE = 9,
+  COMMAND_ICON_GIVE = 10,
+  COMMAND_ICON_DROP = 11,
+  COMMAND_ICON_SPEAK = 12,
+  COMMAND_ICON_EQUIP = 13,
+  COMMAND_ICON_FIGHT = 14,
+  COMMAND_ICON_DJINN = 15,
+  COMMAND_ICON_SUMMON = 16,
+  COMMAND_ICON_BUY = 17,
+  COMMAND_ICON_SELL = 18,
+  COMMAND_ICON_ARTIFACTS = 19,
+  COMMAND_ICON_REPAIR = 20,
+  COMMAND_ICON_NEW_GAME = 21,
+  COMMAND_ICON_CONTINUE = 22,
+  COMMAND_ICON_COPY = 23,
+  COMMAND_ICON_ERASE = 24,
+  COMMAND_ICON_REVIVE = 25,
+  COMMAND_ICON_CURE_POISON = 26,
+  COMMAND_ICON_REPEL_EVIL = 27,
+  COMMAND_ICON_REMOVE_CURSE = 28,
+  COMMAND_ICON_BATTLE = 29,
+  COMMAND_ICON_SEND = 30,
+  COMMAND_ICON_UPDATE = 31,
+  COMMAND_ICON_COINS = 32,
+  COMMAND_ICON_LUCKY_MEDALS = 33,
+  // The settings menu's choices and the Pause menu's entries
+  // (gOptionMenu_SpeedIcons to gOptionMenu_SleepIcons), whose command names
+  // are placeholders.
+  COMMAND_ICON_SPEED_SLOW = 34,
+  COMMAND_ICON_SPEED_NORMAL = 35,
+  COMMAND_ICON_SPEED_FAST = 36,
+  COMMAND_ICON_SPEECH_OFF = 37,
+  COMMAND_ICON_SPEECH_ON = 38,
+  COMMAND_ICON_AUTO_SLEEP_OFF = 39,
+  COMMAND_ICON_AUTO_SLEEP_ON = 40,
+  COMMAND_ICON_SAVE_QUEST = 41,
+  COMMAND_ICON_SLEEP = 42,
+  COMMAND_ICON_CHANGE_SETTINGS = 43,
+  COMMAND_ICON_PASSWORD = 44,
+  COMMAND_ICON_LINK = 45,
+  COMMAND_ICON_GOLD = 46,
+  COMMAND_ICON_SILVER = 47,
+  COMMAND_ICON_BRONZE = 48,
+  COMMAND_ICON_SWITCH = 49
+};
 
 /// Two copies of a tilemap entry, for filling a run of entries a word at a
 /// time.
@@ -313,7 +449,7 @@ void Portrait_CloseWindow(s32 id);
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width);
 
 void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2, u32 y2);
-void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y);
+void Text_DrawStringInWindow(u8 *text, s32 window, u32 x, u32 y);
 void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y);
 
 void MessageArgument_Push(u32 value, u32 kind);
@@ -325,5 +461,95 @@ extern const u8 gResource_FixedBlockBTiles[];
 void Text_FillCanvasBackground(void);
 
 void PartyStatus_OpenAndWait(void);
+
+// The layers ItemIcon_Compose draws over an item's icon.
+#define ICON_BASE 1            ///< the base under the icon
+#define ICON_COUNT_ABOVE_ONE 2 ///< the count, unless it is 1
+#define ICON_COUNT 4           ///< the count, always
+/// Mark 1, the cross, on an item with INVENTORY_BROKEN.
+#define ICON_BROKEN 8
+/// Mark 0, the equip mark, on an item with INVENTORY_EQUIPPED.
+#define ICON_EQUIPPED 16
+/// Mark 2 on a cursed item that cannot be unequipped (ITEM_CURSED and
+/// ITEM_CANNOT_UNEQUIP) when its code has INVENTORY_EQUIPPED.
+#define ICON_ARTIFACT 32
+
+/// An action's id in its encoded list entry, below its flags.
+#define ACTION_ID_MASK 0x3fff
+
+/// The party status window's flags (PartyStatus_Draw,
+/// PartyStatus_CreateWindow): one column of six tiles per party member
+/// (name, HP and, when shown, PP with a bar under each), and in battle an
+/// optional five-tile column of standby Djinn counts on its left.
+enum PartyStatusFlag {
+  PARTY_STATUS_HP_ONLY = 0,     ///< names and HP
+  PARTY_STATUS_SHOW_PP = 1,     ///< add the PP row
+  PARTY_STATUS_SHOW_DJINN = 2,  ///< add the Djinn column (needs the PP row)
+  PARTY_STATUS_CLOSED = 9,      ///< erase the window
+  PARTY_STATUS_KEEP_FLAGS = -1, ///< redraw with the flags it has
+  /// BattleWork.partyStatus while the party cannot summon.
+  PARTY_STATUS_NO_SUMMONS = PARTY_STATUS_SHOW_PP,
+  /// BattleWork.partyStatus while it can, drawn only while a Djinni is on
+  /// standby.
+  PARTY_STATUS_SUMMONS = PARTY_STATUS_SHOW_PP | PARTY_STATUS_SHOW_DJINN
+};
+
+/// Where the windows are drawn (WindowWork.battleMode).
+enum WindowBattleMode {
+  WINDOW_FIELD = 0,  ///< on the field; the field setup clears the block
+  WINDOW_BATTLE = 1, ///< in battle, from WindowSystem_InitBattle
+  /// In battle, while BattleMessage_Open decodes a battle message: the
+  /// Japanese decoder then sets names off with spaces and style codes.
+  WINDOW_BATTLE_MESSAGE = 2,
+};
+
+/// WindowWork.portraitPictures of a free portrait slot, as Portrait_ClearSlots
+/// writes it.
+#define PORTRAIT_SLOT_EMPTY 999
+
+/// The window FieldMessage_ShowCentered shows its message in.
+enum CenteredMessageMode {
+  /// No frame or size: it opens and closes at once.
+  CENTERED_MESSAGE_BARE = 0,
+  /// A zooming window sized to the message, waited for as it closes.
+  CENTERED_MESSAGE_WINDOW = 1
+};
+
+/// The flags FieldMessage_Show takes.
+enum FieldMessageFlag {
+  FIELD_MESSAGE_ZOOM = 1, ///< the window zooms open and shut
+  FIELD_MESSAGE_WAITING_FOR_SOUND =
+      2,                            ///< the window work is busy while it shows
+  FIELD_MESSAGE_KEEP_OPEN = 4,      ///< the window is left open
+  FIELD_MESSAGE_LOWER = 8,          ///< 4 tiles below the top rows' centre
+  FIELD_MESSAGE_HOLD_UPLOAD = 0x20, ///< the tilemap upload is held off
+  FIELD_MESSAGE_LOWEST = 0x40       ///< 12 tiles below the top rows' centre
+};
+
+/// The Pause menu's entries, as PauseMenu_Choose returns them
+/// (counted from Save your quest even when only Change settings shows).
+enum PauseMenuEntry {
+  PAUSE_MENU_SAVE_QUEST = 0,
+  PAUSE_MENU_SLEEP = 1,
+  PAUSE_MENU_CHANGE_SETTINGS = 2
+};
+
+/// Depth slots of Oam_AddSpriteAtDepth: a higher slot is drawn in front. The
+/// windows' sprites, icons and cursors take the slots from OAM_DEPTH_WINDOW up,
+/// in front of the field's and the battle's.
+#define OAM_DEPTH_WINDOW 240
+#define OAM_DEPTH_FRONT 255
+
+#define WINDOW_HUE_COUNT 24 ///< "Window color" takes 0 to 23
+
+/// The brightness that adds nothing to the hue's colour.
+#define WINDOW_BRIGHTNESS_NEUTRAL 7
+
+/// Steps round gPaletteGlow_WaveTable's colour wheel; each hue is four.
+#define WINDOW_COLOR_WHEEL_STEPS 96
+
+/// How many levels HIGHLIGHT_PALETTE lightens each channel of
+/// WINDOW_BACKGROUND_COLOR by (Palette_LightenHighlight).
+#define HIGHLIGHT_LIGHTEN_STEPS 9
 
 #endif

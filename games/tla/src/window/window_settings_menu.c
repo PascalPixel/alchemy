@@ -41,23 +41,27 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   s16 blue;
   s16 offset;
 
-  step = ((phase + 12) % 24) * 4;
-  offset = brightness - 7;
-  red = gPaletteGlow_WaveTable[(step % 96)] + offset;
-  green = gPaletteGlow_WaveTable[(step + 32) % 96] + offset;
-  blue = gPaletteGlow_WaveTable[(step + 64) % 96] + offset;
+  step = ((phase + WINDOW_HUE_COUNT / 2) % WINDOW_HUE_COUNT) * 4;
+  offset = brightness - WINDOW_BRIGHTNESS_NEUTRAL;
+  red = gPaletteGlow_WaveTable[(step % WINDOW_COLOR_WHEEL_STEPS)] + offset;
+  green = gPaletteGlow_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS / 3) %
+                                 WINDOW_COLOR_WHEEL_STEPS] +
+          offset;
+  blue = gPaletteGlow_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS * 2 / 3) %
+                                WINDOW_COLOR_WHEEL_STEPS] +
+         offset;
   if (red < 0)
     red = 0;
-  if (red > 31)
-    red = 31;
+  if (red > RGB_LEVEL_MAX)
+    red = RGB_LEVEL_MAX;
   if (green < 0)
     green = 0;
-  if (green > 31)
-    green = 31;
+  if (green > RGB_LEVEL_MAX)
+    green = RGB_LEVEL_MAX;
   if (blue < 0)
     blue = 0;
-  if (blue > 31)
-    blue = 31;
+  if (blue > RGB_LEVEL_MAX)
+    blue = RGB_LEVEL_MAX;
   rgb[0] = red;
   rgb[1] = green;
   rgb[2] = blue;
@@ -74,8 +78,8 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
 /// markers, animates the marker of the slider in use, and pulses the chosen
 /// setting's icon.
 void SettingsMenu_AnimateCursors(void) {
-  s32 src0;
-  s32 src1;
+  s32 firstMarkerPicture;
+  s32 secondMarkerPicture;
   s32 selection;
   struct OptionMenuWork *work;
 
@@ -86,20 +90,22 @@ void SettingsMenu_AnimateCursors(void) {
   MenuCursor_MoveTowardTargetFar(&work->marker[1]);
 
   if (selection == 0) {
-    src0 = (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorPictures;
+    firstMarkerPicture =
+        (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorPictures;
   } else {
-    src0 = (s32)&ResourceId_ShopCursorPictures;
+    firstMarkerPicture = (s32)&ResourceId_ShopCursorPictures;
   }
   VramCache_Load((u8)work->marker[0].sprite->index, 0x100,
-                 Resource_GetTableEntry(src0));
+                 Resource_GetTableEntry(firstMarkerPicture));
 
   if (selection == 1) {
-    src1 = (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorPictures;
+    secondMarkerPicture =
+        (work->cursorFrame & 7) + (s32)&ResourceId_ShopCursorPictures;
   } else {
-    src1 = (s32)&ResourceId_ShopCursorPictures;
+    secondMarkerPicture = (s32)&ResourceId_ShopCursorPictures;
   }
   VramCache_Load((u8)work->marker[1].sprite->index, 0x100,
-                 Resource_GetTableEntry(src1));
+                 Resource_GetTableEntry(secondMarkerPicture));
 
   if (selection > 1)
     WindowSprite_Pulse(
@@ -168,6 +174,9 @@ void SettingsMenu_Release(void) {
 #define OPTION_SLIDER_X 140
 #define OPTION_CHOICE_X 84
 #endif
+
+/// The pixels a settings slider's marker runs across, from OPTION_SLIDER_X.
+#define OPTION_SLIDER_WIDTH 60
 
 extern const u8 gResource_FixedBlockBTiles[];
 extern const u8 gSettingsMenu_SliderTiles[];
@@ -239,18 +248,20 @@ struct RenderInput *SettingsMenu_Open(void) {
   x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     Dma_Set(Data_080aa0e8, (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0),
-            0x80000020, REG_DMA3);
+            DMA_COPY_HALFWORDS(32), REG_DMA3);
     VramCache_Load(x, 256, gSettingsMenu_SliderTiles);
     y = 0;
-    out = WindowSprite_Create(x, 0x40004000, win, OPTION_SLIDER_X - 6, y);
+    out = WindowSprite_Create(x, OUTPUT_SIZE_32X8, win, OPTION_SLIDER_X - 6, y);
     out->sprite.oam.palette = SLIDER_PALETTE;
-    out = WindowSprite_Create(x, 0x40004000, win, OPTION_SLIDER_X + 26, y);
+    out =
+        WindowSprite_Create(x, OUTPUT_SIZE_32X8, win, OPTION_SLIDER_X + 26, y);
     out->sprite.oam.index += 4;
     out->sprite.oam.palette = SLIDER_PALETTE;
     y = 16;
-    out = WindowSprite_Create(x, 0x40004000, win, OPTION_SLIDER_X - 6, y);
+    out = WindowSprite_Create(x, OUTPUT_SIZE_32X8, win, OPTION_SLIDER_X - 6, y);
     out->sprite.oam.palette = 15;
-    out = WindowSprite_Create(x, 0x40004000, win, OPTION_SLIDER_X + 26, y);
+    out =
+        WindowSprite_Create(x, OUTPUT_SIZE_32X8, win, OPTION_SLIDER_X + 26, y);
     out->sprite.oam.index += 4;
     out->sprite.oam.palette = 15;
   }
@@ -258,7 +269,7 @@ struct RenderInput *SettingsMenu_Open(void) {
   x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
-    out = WindowSprite_Create(x, 0x40000000, win, 0, 0);
+    out = WindowSprite_Create(x, OUTPUT_SIZE_16X16, win, 0, 0);
     out->sprite.oam.palette256 = 1;
     work->marker[0].sprite = out;
     x = (s16)win->x * 8 + OPTION_SLIDER_X;
@@ -270,7 +281,7 @@ struct RenderInput *SettingsMenu_Open(void) {
   x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
-    out = WindowSprite_Create(x, 0x40000000, win, 0, 0);
+    out = WindowSprite_Create(x, OUTPUT_SIZE_16X16, win, 0, 0);
     out->sprite.oam.palette256 = 1;
     work->marker[1].sprite = out;
     x = (s16)win->x * 8 + OPTION_SLIDER_X;
@@ -396,7 +407,7 @@ s32 SettingsMenu_Run(void) {
 
       for (i = 0; i <= 2; i++) {
         icon = work->choiceIcons[0][i];
-        icon->sentinel = 0xfb;
+        icon->sentinel = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(icon);
         resourceIndex = (u8)work->choiceIcons[0][i]->index;
         dimmed = 0;
@@ -406,7 +417,7 @@ s32 SettingsMenu_Run(void) {
       }
       for (i = 0; i <= 1; i++) {
         icon = work->choiceIcons[1][i];
-        icon->sentinel = 0xfb;
+        icon->sentinel = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(icon);
         resourceIndex = (u8)work->choiceIcons[1][i]->index;
         dimmed = 0;
@@ -416,7 +427,7 @@ s32 SettingsMenu_Run(void) {
       }
       for (i = 0; i <= 1; i++) {
         icon = work->choiceIcons[2][i];
-        icon->sentinel = 0xfb;
+        icon->sentinel = OAM_DEPTH_FRONT - 4;
         Icon_PrepareActorFar(icon);
         resourceIndex = (u8)work->choiceIcons[2][i]->index;
         dimmed = 0;
@@ -426,11 +437,11 @@ s32 SettingsMenu_Run(void) {
       }
 
       x = (s16)settingsWindow->x * 8 + SLIDER_X;
-      x += (*hue * 60) / work->optionCount[0];
+      x += (*hue * OPTION_SLIDER_WIDTH) / work->optionCount[0];
       y = (s16)settingsWindow->y * 8 + 4;
       MenuCursor_SetFar(&work->marker[0], x, y, 1);
       x = (s16)settingsWindow->x * 8 + SLIDER_X;
-      x += (*brightness * 60) / work->optionCount[1];
+      x += (*brightness * OPTION_SLIDER_WIDTH) / work->optionCount[1];
       y = (s16)settingsWindow->y * 8 + 20;
       MenuCursor_SetFar(&work->marker[1], x, y, 1);
 
@@ -464,7 +475,7 @@ s32 SettingsMenu_Run(void) {
     MenuTitle_Bob(pair);
     wait(1);
 
-    if (PRESSED & 4) {
+    if (PRESSED & KEY_SELECT) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       work->preset++;
       redraw = 1;
@@ -479,7 +490,7 @@ s32 SettingsMenu_Run(void) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
-    if (PRESSED & 2) {
+    if (PRESSED & KEY_B) {
       result = -1;
       Sound_PlayFar(SE_MENU_CANCEL);
       break;
@@ -564,6 +575,11 @@ extern const s8 gMenu_WorkspaceIcons[];
 
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 
+#define PAUSE_MENU_ROWS 3        ///< Save your quest, Sleep and Change settings
+#define PAUSE_MENU_DEBUG_ROWS 3  ///< the entries added in debug mode
+#define PAUSE_MENU_ROW_HEIGHT 24 ///< pixels, 3 tiles
+#define PAUSE_MENU_TEXT_X 48     ///< pixels into the window, after the icons
+
 /// Opens the Pause menu's window with its entries (Save your quest, Sleep,
 /// Change settings, and the debug entries in debug mode; only Change settings
 /// while FLAG_IN_BATTLE_ARENA is set), their icons and the cursor.
@@ -579,21 +595,21 @@ struct RenderInput *PauseMenu_Open(void) {
   s32 msg;
   s32 i;
 
-  rows = 3;
+  rows = PAUSE_MENU_ROWS;
   work = Ram_HeapSlots->settingsMenu;
   settingsOnly = GameFlag_Get(FLAG_IN_BATTLE_ARENA);
   first = 0;
   if (settingsOnly != 0) {
     rows = 1;
-    first = 2;
+    first = PAUSE_MENU_CHANGE_SETTINGS;
   }
   if (gDebugMode != 0)
-    rows += 3;
+    rows += PAUSE_MENU_DEBUG_ROWS;
   top = 8 - rows;
   height = rows * 3 + 1;
-  if (top + height > 19) {
+  if (top + height > (DISPLAY_TILE_HEIGHT - 1)) {
     top = 1;
-    height = 19;
+    height = DISPLAY_TILE_HEIGHT - 1;
   }
   win = Window_Create(5, top, 20, height, WINDOW_FLAG_INSTANT);
   for (i = 1; i < rows; i++)
@@ -601,29 +617,30 @@ struct RenderInput *PauseMenu_Open(void) {
   y = 4;
   if (settingsOnly == 0) {
     msg = (s32)MsgSaveYourQuest;
-    Text_DrawMessage(msg, (s32)win, 48, 4);
+    Text_DrawMessage(msg, (s32)win, PAUSE_MENU_TEXT_X, 4);
     msg++;
-    Text_DrawMessage(msg, (s32)win, 48, 28);
-    y = 52;
+    Text_DrawMessage(msg, (s32)win, PAUSE_MENU_TEXT_X,
+                     4 + PAUSE_MENU_ROW_HEIGHT);
+    y = 4 + 2 * PAUSE_MENU_ROW_HEIGHT;
   }
-  Text_DrawMessage((s32)MsgChangeSettings, (s32)win, 48, y);
-  y += 24;
+  Text_DrawMessage((s32)MsgChangeSettings, (s32)win, PAUSE_MENU_TEXT_X, y);
+  y += PAUSE_MENU_ROW_HEIGHT;
   if (gDebugMode != 0) {
     msg = (s32)MsgRoughMenu;
-    Text_DrawMessage(msg, (s32)win, 48, y);
-    y += 24;
-    Text_DrawMessage(msg + 1, (s32)win, 48, y);
-    y += 24;
+    Text_DrawMessage(msg, (s32)win, PAUSE_MENU_TEXT_X, y);
+    y += PAUSE_MENU_ROW_HEIGHT;
+    Text_DrawMessage(msg + 1, (s32)win, PAUSE_MENU_TEXT_X, y);
+    y += PAUSE_MENU_ROW_HEIGHT;
     msg += 2;
-    Text_DrawMessage(msg, (s32)win, 48, y);
+    Text_DrawMessage(msg, (s32)win, PAUSE_MENU_TEXT_X, y);
   }
   work->cursor.sprite = WindowSprite_Create(
-      Resource_LoadFixedBlockBIntoFreeSlot(), 0x40000000, win, 0, 0);
+      Resource_LoadFixedBlockBIntoFreeSlot(), OUTPUT_SIZE_16X16, win, 0, 0);
   y = -4;
   for (i = 0; i < rows; i++) {
     work->icon[i] =
         CommandIcon_Create(gMenu_WorkspaceIcons[first + i], 0, win, 12, y);
-    y += 24;
+    y += PAUSE_MENU_ROW_HEIGHT;
   }
   return win;
 }
@@ -678,7 +695,7 @@ s32 PauseMenu_Choose(s32 initial) {
 
   redraw = -1;
   selected = initial;
-  rows = 3;
+  rows = PAUSE_MENU_ROWS;
   settingsOnly = GameFlag_Get(FLAG_IN_BATTLE_ARENA);
   first = 0;
   PauseMenu_Initialize();
@@ -688,10 +705,10 @@ s32 PauseMenu_Choose(s32 initial) {
   pair = MenuTitle_Create(7, window, 40, HEADING_Y);
   if (settingsOnly != 0) {
     rows = 1;
-    first = 2;
+    first = PAUSE_MENU_CHANGE_SETTINGS;
   }
   if (gDebugMode != 0)
-    rows += 3;
+    rows += PAUSE_MENU_DEBUG_ROWS;
   for (;;) {
     if (redraw != 0) {
       selected = (selected + rows) % rows;
@@ -702,7 +719,7 @@ s32 PauseMenu_Choose(s32 initial) {
         pauseIcons = gMenu_WorkspaceIcons;
         do {
           icon = work->icon[i];
-          icon->sentinel = 251;
+          icon->sentinel = OAM_DEPTH_FRONT - 4;
           Icon_PrepareActorFar(icon);
           resourceIndex = (u8)icon->index;
           dimmed = 0;
@@ -725,7 +742,7 @@ s32 PauseMenu_Choose(s32 initial) {
     }
     MenuTitle_Bob(pair);
     wait(1);
-    if (KEYS_PRESSED & 1) {
+    if (KEYS_PRESSED & KEY_A) {
       result = selected;
       Sound_PlayFar(SE_MENU_CONFIRM);
       break;

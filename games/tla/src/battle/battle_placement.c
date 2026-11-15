@@ -435,7 +435,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   facingAngle = ArcTan2(y / 8, x) + TRIG_TURN / 2;
   object->angle = facingAngle;
   object->unk59 = 3;
-  object->motionFlags = 2;
+  object->motionFlags = ACTOR_FALLS;
   if (unit->classId == CLASS_NONE) {
     object->scaleX = Q16_ONE * 13 / 10;
     object->scaleY = Q16_ONE * 13 / 10;

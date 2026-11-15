@@ -25,9 +25,9 @@ void BattleCamera_Update(void) {
   u32 linkId;
 
   if (Ram_HeapSlots->battleWork->isLink != 0) {
-    if ((gLinkStatus & 3) != 3) {
+    if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
       Ram_HeapSlots->battleWork->linkMisses++;
-      if (Ram_HeapSlots->battleWork->linkMisses > 24) {
+      if (Ram_HeapSlots->battleWork->linkMisses > LINK_MAX_MISSED_FRAMES) {
         Ram_HeapSlots->battleWork->linkPaused = 1;
       }
     } else {
@@ -105,33 +105,35 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
 /// Fills the battle's two unit lists: the party in its order, and the enemies
 /// left to right, or for a fixed formation out from the centre.
 void BattleUnit_Collect(void) {
-  u16 buf[14];
+  u16 unitIds[UNIT_MAX];
   struct BattleWork *battle;
   s32 count;
   s32 i;
-  s32 index;
-  s32 kind;
+  s32 position;
+  s32 formation;
 
   battle = Ram_HeapSlots->battleWork;
-  count = BattleParty_PrepareMembers(buf);
+  count = BattleParty_PrepareMembers(unitIds);
   for (i = 0; i < count; i++)
-    battle->partyUnits[i] = buf[i];
+    battle->partyUnits[i] = unitIds[i];
   battle->partyUnits[count] = BATTLE_UNIT_LIST_END;
 
-  count = BattleEnemy_List(buf);
-  kind = battle->layout;
-  if (kind >= 0) {
-    if (kind <= 1) {
+  // The shuffled and interleaved formations keep the enemies in unit order; the
+  // others put the first in the centre and the rest either side of it.
+  count = BattleEnemy_List(unitIds);
+  formation = battle->layout;
+  if (formation >= FORMATION_LAYOUT_SHUFFLED) {
+    if (formation <= FORMATION_LAYOUT_INTERLEAVED) {
       for (i = 0; i < count; i++)
-        battle->enemyIds[i] = buf[i];
-      goto done;
+        battle->enemyIds[i] = unitIds[i];
+      goto placed;
     }
   }
   for (i = 0; i < count; i++) {
-    index = gBattleParty_CenterOrderOffsets[i] + count / 2;
-    battle->enemyIds[index] = buf[i];
+    position = gBattleParty_CenterOrderOffsets[i] + count / 2;
+    battle->enemyIds[position] = unitIds[i];
   }
-done:
+placed:
   battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 
@@ -248,7 +250,7 @@ void DjinnRecovery_Reconcile(void) {
     for (element = 0; element <= 3; element++) {
       for (djinn = 0; djinn <= 19; djinn++) {
         if (Djinn_CanSetFar(owner, element, djinn) != 0) {
-          list = &(Djinn_GetRecoveryTableFar(owner > 7))->list;
+          list = &(Djinn_GetRecoveryTableFar(owner > ALLY_MAX))->list;
           for (i = 0; i < list->count; i++) {
             if (element == list->entries[i].element &&
                 djinn == list->entries[i].index)
@@ -275,7 +277,7 @@ void DjinnRecovery_Reconcile(void) {
 /// only while a Djinni is on standby. Writes the party recovery table's
 /// availableMask.
 void BattleSummon_UpdateAvailability(void) {
-  u8 totals[4];
+  u8 totals[ELEMENT_COUNT];
   u16 partyMembers[10];
   s32 partySize;
   s32 element;
@@ -320,13 +322,13 @@ void BattleSummon_UpdateAvailability(void) {
         } while (*total >= *required);
       }
 
-      if (elementsMet == 4)
+      if (elementsMet == ELEMENT_COUNT)
         availableMask |= 1u << element;
     }
     element++;
   } while (element <= 15);
 
-  Djinn_GetRecoveryTableFar(0)->summonMask = availableMask;
+  Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->summonMask = availableMask;
 }
 
 /// An empty function, right after BattleSummon_UpdateAvailability.

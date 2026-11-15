@@ -63,7 +63,7 @@ s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
   s32 slot;
 
   slot = VramCache_FindFreeEntry();
-  if (slot != 0x60) {
+  if (slot != VRAM_CACHE_ENTRY_COUNT) {
     Icon_LoadResourceIntoSlot(resourceId, slot);
     WindowSprite_CreateFar(slot, OUTPUT_SIZE_16X16, window, x, y);
   }
@@ -524,7 +524,8 @@ void MenuIcon_LoadSlots(void) {
       u32 *attributes;
 
       /* FAKEMATCH(temporary): the table read at a byte offset of its own. */
-      Resource_LoadByModeIntoSlotFar(8, *(u16 *)(offset + (u32)ids), entry, 0);
+      Resource_LoadByModeIntoSlotFar(ICON_KIND_PATTERN,
+                                     *(u16 *)(offset + (u32)ids), entry, 0);
       attributes = (u32 *)&slot->attr;
       *attributes++ = OUTPUT_SIZE_16X16;
       *attributes = 0;
@@ -588,38 +589,36 @@ void MenuPanel_DrawEntryList(struct RenderInput *panel, s32 x, s32 y,
 
 /// Fills ailments[0..4] with party member memberId's statuses:
 /// down (only when requested is 1), poison or venom, curse and haunt.
-s32 StatusScreen_BuildAvailability(u8 *output, s32 requested, s32 id) {
-  struct Unit *state;
-  s32 i;
-  s32 zero;
+s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId) {
+  struct Unit *unit;
+  s32 ailmentIndex;
   s32 count;
-  s32 mode;
+  s32 poison;
 
-  state = Unit_Get(id);
-  zero = 0;
-  for (i = 4; i >= 0; i--)
-    output[i] = zero;
+  unit = Unit_Get(memberId);
+  for (ailmentIndex = 4; ailmentIndex >= 0; ailmentIndex--)
+    ailments[ailmentIndex] = 0;
 
   count = 0;
-  if (state->hp == 0 && requested == 1) {
-    output[0] = requested;
+  if (unit->hp == 0 && requested == 1) {
+    ailments[CHARACTER_DOWN] = requested;
     count = 1;
   }
 
-  mode = state->poison;
-  if (mode != 0) {
-    if (mode == 1)
-      output[1] = mode;
+  poison = unit->poison;
+  if (poison != 0) {
+    if (poison == 1) // poison; any other value is venom
+      ailments[CHARACTER_POISON] = poison;
     else
-      output[2] = 1;
+      ailments[CHARACTER_VENOM] = 1;
     count++;
   }
-  if (state->curse != 0) {
-    output[3] = 1;
+  if (unit->curse != 0) {
+    ailments[CHARACTER_CURSE] = 1;
     count++;
   }
-  if (state->haunt != 0) {
-    output[4] = 1;
+  if (unit->haunt != 0) {
+    ailments[CHARACTER_HAUNT] = 1;
     count++;
   }
   return count;

@@ -146,7 +146,7 @@ void Unit_UpdateClassFar(s32 owner);
 /// its level with its Djinn, abilities and equipped items. Returns 1 when the
 /// table ends before that set.
 s32 DebugParameterSet_Load(s32 preset) {
-  s32 nextDjinn[4];
+  s32 nextDjinn[ELEMENT_COUNT];
   void *state;
   s32 owner;
   s32 done;
@@ -167,7 +167,7 @@ s32 DebugParameterSet_Load(s32 preset) {
   Djinn_GetRecoveryTableFar(0)->list.count = done;
 
   set = 0;
-  for (i = 0; i < 4; i++)
+  for (i = 0; i < ELEMENT_COUNT; i++)
     nextDjinn[i] = 0;
 
   for (row = 0;; row++) {
@@ -192,26 +192,26 @@ s32 DebugParameterSet_Load(s32 preset) {
     Party_AddMemberFar(owner);
     Unit_LevelUpToFar(owner, gDebug_ParameterSets[row].level);
     state = Unit_Get(owner);
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < ELEMENT_COUNT; i++) {
       ((struct OwnerDjinnState *)state)->counts.banks.owned[i] = 0;
       ((struct OwnerDjinnState *)state)->counts.banks.active[i] = 0;
       ((struct OwnerDjinnState *)state)->flags.banks.owned[i] = 0;
       ((struct OwnerDjinnState *)state)->flags.banks.active[i] = 0;
     }
-    for (i = 0; i < 32; i++)
+    for (i = 0; i < PSYNERGY_SLOTS; i++)
       *(u16 *)&((struct OwnerActionState *)state)->actionSlots[i] = 0;
     for (i = 0; i < 2; i++) {
       if (gDebug_ParameterSets[row].actions[i] != 0)
         Unit_LearnPsynergyFar(owner, gDebug_ParameterSets[row].actions[i]);
     }
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < ELEMENT_COUNT; i++) {
       for (j = 0; j < gDebug_ParameterSets[row].djinnCounts[i]; j++) {
         Djinn_GiveFar(owner, i, (nextDjinn[i] + 7) % 18);
         Djinn_SetFar(owner, i, (nextDjinn[i] + 7) % 18);
         nextDjinn[i]++;
       }
     }
-    for (i = 0; i < 16; i++)
+    for (i = 0; i < (INVENTORY_SLOTS + 1); i++)
       Inventory_RemoveFar(owner, 0);
     for (i = 0; i < 6; i++) {
       if (gDebug_ParameterSets[row].items[i] != 0)

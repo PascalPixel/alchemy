@@ -12,35 +12,33 @@
 // Seal's 9 bits; its callers would settle it.
 /// Returns an item's rank among the spoils: an indispensable item first, then a
 /// rare one, then the higher item id; 0 for none.
-u32 BattleSpoils_RankItem(u32 value) {
-  u32 bank = 0;
-  u32 base = value & 0x1ff;
-  if (base == 0)
+u32 BattleSpoils_RankItem(u32 inventoryEntry) {
+  u32 priority = 0;
+  u32 itemId = inventoryEntry & INVENTORY_ITEM_ID_MASK;
+  if (itemId == 0)
     return 0;
   {
-    u8 flags = Item_GetDirectFar(base)->flags;
+    u8 flags = Item_GetDirectFar(itemId)->flags;
 
-    if (flags & 8)
-      bank = 1;
-    bank <<= 1;
-    if (flags & 4)
-      bank++;
-    bank <<= 9;
-    bank += base;
+    if (flags & ITEM_INDISPENSABLE)
+      priority = 1;
+    priority <<= 1;
+    if (flags & ITEM_RARE)
+      priority++;
+    priority <<= 9;
+    priority += itemId;
   }
-  return bank;
+  return priority;
 }
 
 /// Empties the battle's spoils and the party's pending item. Called by
 /// Battle_Run.
 void BattleSpoils_Clear(void) {
-  struct BattleWork *battle;
-  struct BattleSpoils *spoils;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct BattleSpoils *spoils = &battle->spoils;
   u16 *items;
   s32 index;
 
-  battle = Ram_HeapSlots->battleWork;
-  spoils = &battle->spoils;
   gMainRoutineWork.pendingItem = 0;
   spoils->coins = 0;
   spoils->experience = 0;
@@ -117,8 +115,8 @@ static __inline__ s32 BattleEnemy_CalculateExperienceReward(struct Unit *unit,
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   struct Unit *unit;
   const struct EnemyDefinition *enemy;
-  struct DefeatBattleWork *battle;
-  struct DefeatSpoils *spoils;
+  struct BattleWork *battle;
+  struct BattleSpoils *spoils;
   s32 itemOrClassIndex;
   s32 dropShift;
   s32 classSlot;
@@ -129,38 +127,42 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   s32 classIndex;
 
   unit = Unit_Get(unitId);
-  battle = (struct DefeatBattleWork *)Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   spoils = &battle->spoils;
   if (unitId >= 0 && unitId < 8)
     return -1;
-  if (unit->classId != 0)
+  if (unit->classId != CLASS_NONE)
     return -2;
-  slot = spoils->lastSlot = (spoils->lastSlot + 1) % 2;
-  spoils->lastEnemyIds[slot] = unit->enemyId;
-  spoils->lastDigits[slot] = String_FindFirstDigit((u8 *)unit);
-  if (spoils->lastCount <= 1)
-    spoils->lastCount++;
+  // Queued for Regen Dance: the name letter is the first digit of the name.
+  slot = spoils->queueHead = (spoils->queueHead + 1) % 2;
+  spoils->queuedSummons[slot] = unit->enemyId;
+  spoils->queuedLetters[slot] = String_FindFirstDigit((u8 *)unit);
+  if (spoils->queueCount <= 1)
+    spoils->queueCount++;
   classSlot = 0;
   classIndex = 0;
-  if (battle->enemyClasses[0] != unit->enemyId) {
+  if (((u16 *)battle->unk010)[0] != unit->enemyId) {
     do {
-      if (++classIndex > 5)
+      if (++classIndex > (ENEMY_BATTLE_SIZE - 1))
         break;
-    } while (battle->enemyClasses[classIndex] != unit->enemyId);
+    } while (((u16 *)battle->unk010)[classIndex] != unit->enemyId);
   }
-  if (classIndex != 6)
+  if (classIndex != ENEMY_BATTLE_SIZE)
     classSlot = classIndex;
+  // The first class to fall names the victory message.
+  // XXX (no evidence): whether DEFEAT_BY_PARTY_MEMBER was meant; no state is 2,
+  // so the test never fails.
   if (battle->defeatState != 2) {
     if (classSlot < battle->firstDefeated)
       battle->firstDefeated = classSlot;
     if (spoils->defeated)
-      battle->defeatState = 1;
+      battle->defeatState = DEFEAT_SEVERAL;
   }
   spoils->defeated++;
   if (GameFlag_Get(FLAG_MONSTER_BATTLE))
     return 0;
   if (unit->enemyId < 0x200)
-    GameFlag_Set(unit->enemyId + 0x600);
+    GameFlag_Set(ENEMY_DEFEATED_FLAG(unit->enemyId));
   enemy = Enemy_GetDefinitionFar(unit->enemyId);
   if (djinnBonus != 0) {
     if (enemy->coins != 0)
@@ -187,7 +189,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
       dropShift -= 2;
     if (dropShift < 0)
       dropShift = 0;
-    if ((0x20000 >> dropShift) > (Battle_RandomFar() & 0xffff)) {
+    if ((Q16_ONE * 2 >> dropShift) > (Battle_RandomFar() & 0xffff)) {
       lowestSlot = -1;
       lowestItemPriority = 0x40000000;
       for (itemOrClassIndex = 0; itemOrClassIndex <= 3; itemOrClassIndex++) {
@@ -203,8 +205,6 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   }
   return 0;
 }
-
-#define ACTION_ID_MASK PSYNERGY_ABILITY_MASK
 
 /// Hands out the spoils after a victory: experience to each party member still
 /// standing, with every level gained, then the coins, then the items best
@@ -238,7 +238,7 @@ void Battle_AwardSpoils(void) {
   }
   list = units;
   living = BattleUnit_ListLiving(1, list);
-  count = BattleUnit_ListLivingWithReserve(1, list);
+  count = BattleUnit_ListLivingWithReserve(BATTLE_SIDE_MASK_PARTY, list);
   backup = Heap_AllocEwram(sizeof(struct Unit));
   for (i = 0; i < count; i++) {
     unitId = list[i];
@@ -257,14 +257,14 @@ void Battle_AwardSpoils(void) {
       // "<name> is now a level N ..."
       BattleMessage_ShowAndWaitFar((s32)MsgLevelUp);
       BattleMessage_WaitForAdvance();
-      for (cnt = 0; cnt < 32; cnt++) {
+      for (cnt = 0; cnt < PSYNERGY_SLOTS; cnt++) {
         learned = unit->psynergy[cnt].encodedAction;
         if ((learned & ACTION_ID_MASK) && (learned >> 15)) {
-          for (j = 0; j < 32; j++) {
+          for (j = 0; j < PSYNERGY_SLOTS; j++) {
             if (learned == backup->psynergy[j].encodedAction)
               break;
           }
-          if (j == 32) {
+          if (j == PSYNERGY_SLOTS) {
             MessageArgument_ClearAllFar();
             MessageArgument_PushFar(unit->classId, MESSAGE_ARGUMENT_CLASS);
             MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
@@ -347,4 +347,3 @@ void Battle_AwardSpoils(void) {
 }
 #undef FIRST_DIGIT_BASE
 #undef FIRST_DIGIT_COUNT
-#undef ACTION_ID_MASK

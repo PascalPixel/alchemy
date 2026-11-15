@@ -57,7 +57,7 @@ void BattleMotion_SetupEscapeObject(s32 objectId) {
   object->autoFaceMotion = 0;
   Actor_StartIdleFar(object);
   Actor_SetMoveTargetFar(object, slot->anchorX * 3, 0, slot->anchorZ);
-  Actor_SelectAnimationFar(object, 1);
+  Actor_SelectAnimationFar(object, POSE_STANDING);
 }
 
 /// Sends the actor of startSlot leaping progress percent of the way toward
@@ -80,7 +80,7 @@ void BattleMotion_LeapToward(struct Actor **startSlot, struct Actor **endSlot,
   start->bounce = 0;
   start->steeringFlags = 1;
   Actor_SetMoveTargetFar(start, x, 0, z);
-  Actor_SelectAnimationFar(start, 2);
+  Actor_SelectAnimationFar(start, POSE_LEAP);
 }
 
 /// Sends a unit's actor back to its spot. Nothing in the source calls it.
@@ -138,7 +138,7 @@ void BattleMotion_LeapBack(s32 objectId) {
     mul = Iwram_MulQ16;
     Actor_SetMoveTargetFar(object, mul(anchor, 0x14ccc), 0, slot->anchorZ);
   }
-  Actor_SelectAnimationFar(object, 5);
+  Actor_SelectAnimationFar(object, POSE_DAMAGE);
 }
 
 /// Sends a battle object back by its variant's distance and speed, with a hop
@@ -174,7 +174,7 @@ void BattleMotion_ApplyKnockback(s32 id, s32 variant) {
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  Actor_SelectAnimationFar(object, 5);
+  Actor_SelectAnimationFar(object, POSE_DAMAGE);
 }
 
 /// The actor walks three quarters of the way to its target, at a speed that
@@ -208,7 +208,7 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   object->speedLimit = dist;
   object->snapToTarget = 1;
 
-  if (object->motionFlags & 4)
+  if (object->motionFlags & ACTOR_FLOATS)
     object->velocityY = initialVelocityY;
   object->velocityY = initialVelocityY;
   object->verticalMotionStrength = 0xab85;
@@ -216,7 +216,7 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   Actor_StartIdleFar(object);
   if (dist != 0)
     Actor_SetMoveTargetFar(object, x, 0, z);
-  Actor_SelectAnimationFar(object, 2);
+  Actor_SelectAnimationFar(object, POSE_LEAP);
 }
 
 /// Restarts unit id's motion in its leap (animation 2). Nothing in the source
@@ -226,7 +226,7 @@ void BattleMotion_RestartLeap(s32 id) {
 
   object = BattleObject_Get(id)->object;
   Actor_StartIdleFar(object);
-  Actor_SelectAnimationFar(object, 2);
+  Actor_SelectAnimationFar(object, POSE_LEAP);
 }
 
 #undef Actor_StartIdleFar
@@ -288,7 +288,7 @@ void BattleMotion_PlayHitFlash(s32 slot) {
   if (battleObject->object != NULL) {
     if ((battleObject->object->recordStorageKind & 0xf) == 1) {
       effect = (struct SpriteAnimation *)Sprite_AddAnimationFar(
-          battleObject->object->records, 0x29f);
+          battleObject->object->records, SPRITE_STAR_BURST);
       if (effect != NULL) {
         SpriteAnimation_StartFar(effect, 1);
         effect->priority = 3;
@@ -305,13 +305,13 @@ void BattleMotion_PlayHitFlash(s32 slot) {
 /// Projection_ScaledUnit and SelectionMenu_Draw.
 s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen) {
   struct MotionObject *object = BattleObject_Get(slot)->object;
-  struct SlotMotionRecord *record = GetMotionRecord(object, 0);
+  struct Sprite *record = GetMotionRecord(object, 0);
   s32 scale;
   // Unused: gives the stack frame its 12 bytes.
   UNUSED s32 unused[3];
 
   BattleCamera_ApplyTransform();
-  scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->height);
+  scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->scale);
   screen[1] -= Iwram_MulQ16(scale, BattleUnit_GetEffectHeight(slot) >> 16);
   return 0;
 }
@@ -322,11 +322,11 @@ s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen) {
 /// place the target cursor.
 s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
   struct MotionObject *object = BattleObject_Get(slot)->object;
-  struct SlotMotionRecord *record = GetMotionRecord(object, 0);
+  struct Sprite *record = GetMotionRecord(object, 0);
   s32 scale;
 
   BattleCamera_ApplyTransform();
-  scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->height);
+  scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->scale);
   if (BattleSprite_IsSmall(*(u16 *)((u8 *)Unit_Get(slot) + 0x14a)) != 0)
     screen[1] -= Iwram_MulQ16(scale, 24);
   else

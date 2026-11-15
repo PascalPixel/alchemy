@@ -43,9 +43,9 @@ struct WindowSprite *MenuTitle_Create(s32 group, struct RenderInput *input,
 
   MenuTitle_Load(group, index);
   first = WindowSprite_Create(index, OUTPUT_SIZE_32X16, input, x, y);
-  first->sentinel = 0xFD;
+  first->sentinel = OAM_DEPTH_FRONT - 2;
   second = WindowSprite_Create(index, OUTPUT_SIZE_32X16, input, x + 32, y);
-  second->sentinel = 0xFD;
+  second->sentinel = OAM_DEPTH_FRONT - 2;
   second->sprite.oam.index += 8;
   return first;
 }
@@ -97,11 +97,11 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
 
   index = VramCache_FindFreeEntry();
   entity = NULL;
-  if (index != 0x60) {
+  if (index != VRAM_CACHE_ENTRY_COUNT) {
     CommandIcon_Load(icon, index, remap);
     entity = WindowSprite_Create(index, OUTPUT_SIZE_32X32, window, x, y);
     entity->sprite.oam.palette256 = 1;
-    entity->sentinel = 0xfb;
+    entity->sentinel = OAM_DEPTH_FRONT - 4;
   }
   return entity;
 }
@@ -124,7 +124,7 @@ void WindowSprite_Pulse(struct Object *obj) {
     obj->mode21 = 3;
     obj->pos22 = obj->src6 + 0xfff0;
     obj->out20 = obj->src8 + 0xf0;
-    obj->out15 = 0xfc;
+    obj->out15 = OAM_DEPTH_FRONT - 3;
   }
 }
 
@@ -152,7 +152,7 @@ s32 Menu_BuildLocalizedPatternTiles(void) {
       u32 *tile = (u32 *)(set * 0x180 + n * 0x40 + 0x06006280);
       s32 x;
 
-      Iwram_FillWordsEntry(tile, 64, 0x44444444);
+      Iwram_FillWordsEntry(tile, 64, TEXT_CANVAS_BACKGROUND_WORD);
       for (x = 1; x <= 7; x++) {
         s32 mi = n;
 
@@ -165,8 +165,8 @@ s32 Menu_BuildLocalizedPatternTiles(void) {
             mi = 0;
           }
         }
-        tile[x] = XorWord(tile[x], gMenu_BarPatternRows[mi].word0);
-        tile[x + 8] = XorWord(tile[x + 8], gMenu_BarPatternRows[mi].word1);
+        tile[x] = XorWord(tile[x], gMenu_BarPatternRows[mi].firstTile);
+        tile[x + 8] = XorWord(tile[x + 8], gMenu_BarPatternRows[mi].secondTile);
       }
     }
   }
@@ -184,7 +184,7 @@ int Window_DrawThreeTileColumn(s32 window, s32 x, s32 y, s32 pattern,
   s32 tile_offset = pattern * 2;
   s32 tile = tile_offset + 0xF315;
 
-  Window_SetTilemapEntry((struct Window *)window, 0x400 | tile, x, y, 0);
+  Window_SetTilemapEntry((struct Window *)window, TILE_HFLIP | tile, x, y, 0);
   Window_SetTilemapEntry((struct Window *)window, tile_offset + 0xF314, x + 1,
                          y, 0);
   Window_SetTilemapEntry((struct Window *)window, tile, x + 2, y, 0);
@@ -195,45 +195,45 @@ int Window_DrawThreeTileColumn(s32 window, s32 x, s32 y, s32 pattern,
 /// shows wherever the moved pixel is colour 0.
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift) {
-  s32 neg;
-  s32 rshift;
-  s32 lshift;
-  s32 i;
+  s32 oppositeShift;
+  s32 rightShift;
+  s32 leftShift;
+  s32 row;
 
-  neg = -shift;
-  i = 0;
-  rshift = neg * 4;
-  lshift = shift * 4;
+  oppositeShift = -shift;
+  row = 0;
+  rightShift = oppositeShift * 4;
+  leftShift = shift * 4;
 
   do {
     u32 result;
     u32 shifted;
     u32 fallback;
-    s32 j;
+    s32 pixel;
 
     shifted = *second++;
     result = 0;
     fallback = *first++;
     if (shift < 0)
-      shifted >>= rshift;
+      shifted >>= rightShift;
     else
-      shifted <<= lshift;
+      shifted <<= leftShift;
 
-    j = 7;
+    pixel = 7;
     do {
       result <<= 4;
       if (shifted > 0x0FFFFFFF)
         result += shifted >> 28;
       else
         result += fallback >> 28;
-      j--;
+      pixel--;
       shifted <<= 4;
       fallback <<= 4;
-    } while (j >= 0);
+    } while (pixel >= 0);
 
     *output++ = result;
-    i++;
-  } while (i <= 7);
+    row++;
+  } while (row <= 7);
 }
 
 /// Draws the two page arrows (gPageArrowTiles) into the two tiles at
@@ -285,41 +285,44 @@ void BattleStatus_DrawPageArrows(s32 offset) {
 /// colour 1 drawn as colour 10, then unchanged.
 void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
   s32 bank = 0;
-  s32 palOffset = 0;
-  s32 dstBank = 0;
+  s32 paletteOffset = 0;
+  s32 destinationBank = 0;
 
+  // bank 0 writes from byte 0, bank 1 from (4 + 1) << 6 = 320, just after
+  // the first ten tiles of 32 bytes. Each "row" is one tile.
   do {
     s32 row = 0;
-    s32 dstOffset = (dstBank + bank) << 6;
+    s32 destinationOffset = (destinationBank + bank) << 6;
 
     do {
-      u16 *out = (u16 *)((u8 *)dst + dstOffset);
-      u16 *src = (u16 *)((u8 *)0x06000600 + (row << 5));
-      s32 col = 0;
+      u16 *output = (u16 *)((u8 *)dst + destinationOffset);
+      u16 *source =
+          (u16 *)(BG_CHAR_BLOCK(0) + '0' * TILE_SIZE_4BPP + (row << 5));
+      s32 column = 0;
 
       do {
-        u32 packed = *src++;
-        u32 dec = 0;
+        u32 packed = *source++;
+        u32 expanded = 0;
         s32 nibble = 0;
 
         do {
-          u32 color = gGraphics_ExpandNibbleTable[(packed & 15) + palOffset]
+          u32 color = gGraphics_ExpandNibbleTable[(packed & 15) + paletteOffset]
                       << (nibble * 4);
           nibble++;
           packed >>= 4;
-          dec |= color;
+          expanded |= color;
         } while (nibble <= 3);
 
-        col++;
-        *out++ = dec;
-      } while (col <= 15);
+        column++;
+        *output++ = expanded;
+      } while (column <= 15);
 
       row++;
-      dstOffset += 32;
+      destinationOffset += 32;
     } while (row <= 9);
 
-    palOffset += 16;
-    dstBank += 4;
+    paletteOffset += 16;
+    destinationBank += 4;
     bank++;
   } while (bank <= 1);
 }
@@ -330,11 +333,11 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
 /// returns the entry's first tile.
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   s32 result;
-  u8 *work;
+  GlyphTransfer *work;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
   Icon_DrawMisc(resource);
-  result = VramCache_Reload(index, (s32)(work + 0x400));
+  result = VramCache_Reload(index, (s32)work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
@@ -344,11 +347,12 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
 /// cache entry `index` with it and returns the entry's first tile.
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
-  u8 *work;
+  GlyphTransfer *work;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
-  ItemIcon_Compose(resource, 0x1a);
-  result = VramCache_Reload(index, (s32)(work + 0x400));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
+  ItemIcon_Compose(resource,
+                   ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN);
+  result = VramCache_Reload(index, (s32)work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return result;
 }
@@ -357,17 +361,17 @@ s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
 /// slot 17, reloads VRAM cache entry `index` with it and returns the entry's
 /// first tile.
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
-  s32 out;
-  s32 cur;
-  s32 ret;
-  u8 *work;
+  s32 tile;
+  s32 slot;
+  s32 result;
+  GlyphTransfer *work;
 
-  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
-  cur = index;
-  Ability_LoadGlyph(resource, 0, &cur, &out, 1);
-  ret = VramCache_Reload(index, (s32)(work + 0x400));
+  work = HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(*work));
+  slot = index;
+  Ability_LoadGlyph(resource, 0, &slot, &tile, 1);
+  result = VramCache_Reload(index, (s32)work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
-  return ret;
+  return result;
 }
 
 s32 Portrait_Load(u32 entry, s32 slot) {
@@ -480,27 +484,15 @@ typedef struct {
 /// from tile index * 16 (BattleCommandRow_LoadIconTiles), and into the row's
 /// shared VRAM cache entry for its 32x32 sprite, which BattleCommandRow_Run
 /// shows only for the selected icon.
-void BattleCommandRow_LoadIcon(u8 *base, s32 index, u32 value) {
-  u8 *entry;
-  s32 offset;
-  s32 store_offset;
-  s32 load_offset;
+void BattleCommandRow_LoadIcon(struct BattleCommandRowWork *work, s32 index,
+                               u32 icon) {
+  struct BattleCommandRowIcon *entry = &work->entries[index];
 
-  offset = index * 28;
-  entry = base + offset + 0x104;
-  BattleCommandRow_LoadIconTiles((struct GlyphPalette *)base, value,
-                                 index * 16);
-  store_offset = offset + 0x11C;
-  *(u32 *)(base + store_offset) = value;
-  /* FAKEMATCH(dead): the sprite's shape and its cleared attributes 2 and 3 in a
-   * once-only block. */
-  do {
-    *(u32 *)(entry + 4) = 0x80002000;
-    *(u32 *)(entry + 8) = 0;
-  } while (0);
-  load_offset = offset + 0x110;
-  ((CharacterCell *)(entry + 8))->code =
-      Resource_LoadIndexedIntoBuffer(*(u16 *)(base + load_offset), value);
+  BattleCommandRow_LoadIconTiles((struct GlyphPalette *)work, icon, index * 16);
+  work->entries[index].kind = icon;
+  MenuSprite_Initialize(entry->sprite, OBJ_SIZE_32X32 | OBJ_256_COLORS);
+  entry->sprite.oam.f.tile =
+      Resource_LoadIndexedIntoBuffer(work->entries[index].resource, icon);
 }
 
 /// Puts BG1 behind the other layers (priority 3). The command row runs it as
@@ -533,7 +525,7 @@ void CommandRow_PutBg1InFront(void) {
 /// handler at line 136. Nothing calls it.
 UNUSED void Graphics_InstallBg1VCountHandler(void) {
   Io_Write16(0, &REG_BG0VOFS);
-  Irq_SetHandler(2, 136, CommandRow_PutBg1InFront);
+  Irq_SetHandler(IRQ_VCOUNT, 136, CommandRow_PutBg1InFront);
 }
 
 #undef Resource_DecodeByteLzInRam

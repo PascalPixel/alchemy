@@ -1,14 +1,32 @@
-#ifndef BATTLE_H
-#define BATTLE_H
+#ifndef ALCHEMY_BATTLE_H
+#define ALCHEMY_BATTLE_H
 
 /// @file
-/// BATTLE
+/// The battle bank's routines and globals, as the other banks see them.
 
 #include "types.h"
 #include "edition.h"
 #include "system/vector3.h"
 #include "battle/battle_type.h"
 #include "field/sprite.h"
+
+/// A battle unit's sprites' OBJ mode, as BattleHighlight_SetSpriteMode
+/// sets it: faded units are semi-transparent, and the battle's blends act on
+/// them.
+enum BattleSpriteMode { SPRITE_OPAQUE, SPRITE_SEMI_TRANSPARENT };
+
+/// The glows ElementGlow_Play plays about a unit in its element.
+enum BattleElementGlow {
+  /// The star field gathering on the unit while the background darkens: a
+  /// cast.
+  GLOW_STAR_FIELD,
+  GLOW_STREAKS, ///< the element's streaks: an enemy's cast
+  GLOW_PILLAR,  ///< the element's pillar, at a strength: a summon's boost
+  GLOW_BURST    ///< the element's burst: a Djinni set
+};
+
+/// BattleCamera_SetView's zoom, in percent, for the battle's usual view.
+#define BATTLE_ZOOM_NORMAL 100
 
 struct BattleActionRecord;
 struct BattleEffectParams;
@@ -126,7 +144,7 @@ s32 BattleObject_RemoveFromLists(s32);
 void PaletteFade_SetSource(s32 value, s32 mode);
 void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half);
 void FieldPsynergy_WhirlwindOnTarget(s32 unused);
-u16 Encounter_GetFormationAtSlot(s32 arg0, s32 arg1);
+u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot);
 s32 Scene_HasPsynergyTrigger(s32 effectId);
 void BattleEffect_IntegrateVector2(s32 *vector, s32 damping, s32 gravity);
 void BattleEffect_IntegrateVector3(s32 *vector, s32 damping, s32 gravity);
@@ -188,6 +206,8 @@ void PartyStatus_DrawFar(s32 mode);
 enum BattlePose {
   POSE_ENEMY_HELD = 0, ///< an enemy asleep, stunned or held
   POSE_STANDING = 1,
+  POSE_LEAP = 2,       ///< running up to a target and leaping
+  POSE_CAST = 3,       ///< a hand raised to cast or use an item
   POSE_PARTY_HELD = 4, ///< asleep, stunned or held; also a downed member
   POSE_DAMAGE = 5,     ///< taking damage
   POSE_ENEMY_DOWN = 5  ///< a downed enemy stays in its damage pose
@@ -197,18 +217,6 @@ struct BattleActionRecord;
 struct BattlePlan;
 struct BattlePresentationWork;
 struct BattleActionRecord;
-
-struct CastAnimationEntry {
-  u8 unk00[5];
-  u8 param;
-};
-
-struct CastAnimation {
-  u8 unk00[27];
-  u8 count;
-  u8 unk1c[12];
-  struct CastAnimationEntry *entries[1];
-};
 
 s32 AutoBattle_ShowDefend(s16 *);
 s32 BattleStaging_RunUnitAction(s16 *);

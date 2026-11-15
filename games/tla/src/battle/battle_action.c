@@ -51,7 +51,7 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   sideMask = BATTLE_SIDE_MASK_PARTY;
   if (unitId > ALLY_MAX)
     sideMask = BATTLE_SIDE_MASK_ENEMIES;
-  unitCount = BattleUnit_ListIds(sideMask, (u16 *)unitIds);
+  unitCount = BattleUnit_ListIds(sideMask, unitIds);
   enemySide = DJINN_RECOVERY_PARTY;
   if (unitId > ALLY_MAX)
     enemySide = DJINN_RECOVERY_OPPONENT;
@@ -59,21 +59,17 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   if (counts != 0)
     for (i = ELEMENT_COUNT - 1; i >= 0; i--)
       counts[i] = 0;
-  recoveryIndex = 0;
-  if (list->count != 0) {
-    do {
-      if (list->entries[recoveryIndex].turns == DJINN_RECOVERY_AFTER_BATTLE) {
-        for (i = 0; i < unitCount; i++)
-          if (unitIds[i] == list->entries[recoveryIndex].unitId)
-            break;
-        if (i != unitCount) {
-          if (counts != 0)
-            counts[list->entries[recoveryIndex].element]++;
-          standbyCount++;
-        }
+  for (recoveryIndex = 0; recoveryIndex != list->count; recoveryIndex++) {
+    if (list->entries[recoveryIndex].turns == DJINN_RECOVERY_AFTER_BATTLE) {
+      for (i = 0; i < unitCount; i++)
+        if (unitIds[i] == list->entries[recoveryIndex].unitId)
+          break;
+      if (i != unitCount) {
+        if (counts != 0)
+          counts[list->entries[recoveryIndex].element]++;
+        standbyCount++;
       }
-      recoveryIndex++;
-    } while (recoveryIndex != list->count);
+    }
   }
   return standbyCount;
 }
@@ -82,23 +78,13 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
 /// names each list's fourteenth entry apart.
 #define TARGET_MAX 14
 
-/* VIEW(presentation): routine Battle_GetUnitAtPlace as s32
- * Battle_GetUnitAtPlace(s32 tag); battle/battle has s16
- * Battle_GetUnitAtPlace(s32 slot) {; tried as the definition's s16
- * Battle_GetUnitAtPlace(s32 slot), BattleActionRun_Build moves: 4 of 1601
- * instructions in tla-ja. */
-s32 Battle_GetUnitAtPlace__presentation(s32 tag) __asm__(
-    "Battle_GetUnitAtPlace");
-#define Battle_GetUnitAtPlace Battle_GetUnitAtPlace__presentation
-
 /// Announces the action and builds it for its targets, paying its PP or Djinn.
 /// Returns 0 to stage it, ACTION_REPORTED when it failed with its message
 /// shown, or ACTION_NOTHING_TO_SHOW.
 s32 BattleActionRun_Build(struct BattleActionRecord *request,
                           struct BattlePlan *plan) {
   struct Unit *actor = Unit_Get(request->unitId);
-  struct ActionRunBattleWork *battle =
-      (struct ActionRunBattleWork *)Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = (struct BattleWork *)Ram_HeapSlots->battleWork;
   s32 selectedTargetId;
   s32 abilityId;
 
@@ -202,7 +188,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   plan->targetCount = 0;
   plan->battleEffect = 0;
   plan->failure = ACTION_FAILURE_NONE;
-  plan->actorId2 = request->unitId;
+  plan->partnerId = request->unitId;
   plan->element = ELEMENT_NONE;
   MessageArgument_ClearAllFar();
   if (actor->hp == 0)
@@ -373,13 +359,13 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     MessageArgument_PushFar(actor->inventory[request->parameter],
                             MESSAGE_ARGUMENT_ITEM);
-    if (item->useType == 2 || item->useType == 0) {
+    if (item->useType == ITEM_USE_MAY_BREAK || item->useType == ITEM_USE_FREE) {
       switch (item->type) {
-      case 1:
-      case 3:
-      case 6:
+      case ITEM_TYPE_WEAPON:
+      case ITEM_TYPE_SHIELD:
+      case ITEM_TYPE_PSYNERGY:
       case 7:
-      case 8:
+      case ITEM_TYPE_RING:
         BattleMessage_ShowAndWaitFar((s32)&MsgActorRaisesItem);
         break;
       default:
@@ -392,7 +378,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   } break;
 
   case COMMAND_DEFEND:
-  case COMMAND_DEFEND2:
+  case COMMAND_TOTAL_DEFENSE:
     MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     BattleMessage_ShowAndWaitFar((s32)&MsgActorDefends);
     return ACTION_REPORTED;
@@ -491,19 +477,21 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         BattlePlayback_Reset();
         BattlePlayback_SchedulePhase(30);
         BattlePlayback_Push(PLAYBACK_UNIT_NAME, request->unitId);
-        BattlePlayback_Push(PLAYBACK_ABILITY_NAME,
-                            DJINN_ELEMENT(request->parameter) * 20 +
-                                DJINN_INDEX(request->parameter) + 300);
-        BattlePlayback_Push(PLAYBACK_SOUND, 175);
+        BattlePlayback_Push(
+            PLAYBACK_ABILITY_NAME,
+            DJINN_ELEMENT(request->parameter) * DJINN_PER_ELEMENT +
+                DJINN_INDEX(request->parameter) + ABILITY_DJINNI_FIRST);
+        BattlePlayback_Push(PLAYBACK_SOUND, SE_NOTE_HIGH);
         BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
         BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgDjinnIsSet);
         BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, request->unitId);
         Sound_PlayFar(SE_POWER_UP);
-        Actor_SelectAnimationFar(BattleObject_Get(request->unitId)->object, 3);
+        Actor_SelectAnimationFar(BattleObject_Get(request->unitId)->object,
+                                 POSE_CAST);
         Actor_SetAnimationSpeedFar(
             (struct Actor *)BattleObject_Get(request->unitId)->object, 32);
-        ElementGlow_Play(request->unitId, DJINN_ELEMENT(request->parameter), 3,
-                         0);
+        ElementGlow_Play(request->unitId, DJINN_ELEMENT(request->parameter),
+                         GLOW_BURST, 0);
         BattlePlayback_WaitForReady();
         return ACTION_NOTHING_TO_SHOW;
       }
@@ -534,19 +522,19 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     const struct SummonDefinition *summon;
     struct DjinnRecoveryListDraft *list;
     s32 side;
-    u8 counts[4];
+    u8 counts[ELEMENT_COUNT];
     s32 index;
 
     summon = SummonDefinition_Get(request->parameter);
     BattleDjinn_CountStandby(
-        ((struct ActionRunBattleWork *)Ram_HeapSlots->battleWork)->twoSided
+        ((struct BattleWork *)Ram_HeapSlots->battleWork)->isLink
             ? request->unitId
             : 0,
         counts);
-    side = 0;
+    side = DJINN_RECOVERY_PARTY;
     if ((u16)request->unitId > ALLY_MAX &&
-        ((struct ActionRunBattleWork *)Ram_HeapSlots->battleWork)->twoSided)
-      side = 1;
+        ((struct BattleWork *)Ram_HeapSlots->battleWork)->isLink)
+      side = DJINN_RECOVERY_OPPONENT;
     list = (struct DjinnRecoveryListDraft *)((u8 *)Djinn_GetRecoveryTableFar(
                                                  side) +
                                              8);
@@ -577,8 +565,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     }
     if (abilityId == ABILITY_DAEDALUS) {
       if ((u16)request->unitId > ALLY_MAX)
-        battle->summonedMask |= 1 << battle->summonCount;
-      battle->summonCount++;
+        battle->nextDaedalusFromEnemies |= 1 << battle->nextDaedalusStrikes;
+      battle->nextDaedalusStrikes++;
     }
   } break;
   }
@@ -626,9 +614,9 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     plan->element = ability->element;
     plan->battleEffect = 0;
     if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
-        ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
+        ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
         ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4 ||
-        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_1_IN_8 ||
+        ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_RARE ||
         ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_1_IN_4 ||
         ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_60 ||
         ability->effect == 89) {
@@ -648,13 +636,13 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
             ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_60)
           chance = 153;
-        else if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
-                 ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_1_IN_8)
+        else if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
+                 ability->effect == ABILITY_EFFECT_TRIPLE_BLOW_RARE)
           chance = 32;
         else
           chance = 64;
         if (ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_60 ||
-            ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_8 ||
+            ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_RARE ||
             ability->effect == ABILITY_EFFECT_DOUBLE_BLOW_1_IN_4)
           amount = 1;
         else
@@ -664,24 +652,24 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
             plan->targetMultiplier[index] += amount;
         }
       }
-    } else if (ability->effect >= ABILITY_EFFECT_CRITICAL_1_IN_64 &&
-               ability->effect <= ABILITY_EFFECT_CRITICAL_1_IN_4) {
+    } else if (ability->effect >= ABILITY_EFFECT_CRITICAL_A &&
+               ability->effect <= ABILITY_EFFECT_CRITICAL_E) {
       s32 mask;
 
       switch (ability->effect) {
-      case ABILITY_EFFECT_CRITICAL_1_IN_64:
+      case ABILITY_EFFECT_CRITICAL_A:
         mask = 63;
         break;
-      case ABILITY_EFFECT_CRITICAL_1_IN_32:
+      case ABILITY_EFFECT_CRITICAL_B:
         mask = 31;
         break;
-      case ABILITY_EFFECT_CRITICAL_1_IN_16:
+      case ABILITY_EFFECT_CRITICAL_C:
         mask = 15;
         break;
-      case ABILITY_EFFECT_CRITICAL_1_IN_8:
+      case ABILITY_EFFECT_CRITICAL_D:
         mask = 7;
         break;
-      case ABILITY_EFFECT_CRITICAL_1_IN_4:
+      case ABILITY_EFFECT_CRITICAL_E:
       default:
         mask = 3;
         break;
@@ -711,15 +699,15 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       }
     }
     if (abilityId == ABILITY_MELD) {
-      plan->actorId2 = BattleUnit_FindStrongestAlly(plan->unitId);
+      plan->partnerId = BattleUnit_FindStrongestAlly(plan->unitId);
     } else if (abilityId == ABILITY_MOLD) {
       s32 tries = 0;
 
-      plan->actorId2 = plan->targetIds[0];
+      plan->partnerId = plan->targetIds[0];
       do {
         plan->targetIds[0] = Battle_GetUnitAtPlace(
-            BattleAI_ChooseRandomTarget(plan->actorId2 <= ALLY_MAX));
-        if (plan->targetIds[0] != plan->actorId2)
+            BattleAI_ChooseRandomTarget(plan->partnerId <= ALLY_MAX));
+        if (plan->targetIds[0] != plan->partnerId)
           break;
       } while (++tries <= 9);
     }

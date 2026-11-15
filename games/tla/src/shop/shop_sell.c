@@ -299,7 +299,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
     savedX = shop->cursor.targetX;
     savedY = shop->cursor.targetY;
     shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-    shop->mode = 12;
+    shop->mode = SHOP_CURSOR_ENTER_FRAMES;
     MenuCursor_Place(NULL, SHOP_QUANTITY_CURSOR_X, 48);
     result = Shop_SelectQuantity(0, selection, price);
     wait(1);

@@ -67,11 +67,14 @@ void BattleUnit_BuildStatusFlags(s32 id, struct BattleObject *output) {
 
 #define ICON_MAX 14 ///< the kinds of icon
 
+/// The frames each status icon shows before the next one's turn.
+#define ICON_CYCLE_FRAMES 80
+
 /// Cycles the status icon over the slot's conditions every 80 frames, and
 /// switches at once when the shown condition ends.
 void BattleStatusIcon_Cycle(struct BattleObject *slot) {
   struct SpriteAnimation *icon;
-  struct StatusIconRecord *rec;
+  struct Sprite *rec;
   struct MotionObject *owner;
   s32 anim;
   s32 handle;
@@ -100,7 +103,7 @@ void BattleStatusIcon_Cycle(struct BattleObject *slot) {
         slot->selectedCondition = anim;
         changed = 1;
       }
-      slot->cycleTimer = 80;
+      slot->cycleTimer = ICON_CYCLE_FRAMES;
     } else {
       changed = 1;
     }
@@ -147,7 +150,7 @@ void BattleObject_UpdatePose(s32 id) {
   s32 value;
 
   state = Unit_Get(id);
-  value = 1;
+  value = POSE_STANDING;
   if (state->hp != 0) {
     if (state->sleep != 0 || state->stun != 0 || state->immobile != 0)
       value = (state->side != 1) * 4;
@@ -202,17 +205,17 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
   s32 unitId;
   struct BattleObject *battleObject;
   struct MotionObject *object;
-  struct TlaSpriteRecord *record;
+  struct Sprite *record;
   struct SpriteAnimation *entry;
-  struct TlaSpriteRecord **records;
+  struct Sprite **records;
   s32 spriteId;
   s32 releasedUnitId;
   u8 boxY;
 
   if (releaseOthers) {
-    for (unitIndex = 0; unitIndex < 14; unitIndex++) {
+    for (unitIndex = 0; unitIndex < UNIT_MAX; unitIndex++) {
       if (!BattlePlacement_ContainsId(unitIds, unitIndex)) {
-        releasedUnitId = unitIndex + 120;
+        releasedUnitId = unitIndex + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
         if (unitIndex <= ALLY_MAX)
           releasedUnitId = unitIndex;
         ReleaseBattleObjectRecords(releasedUnitId);
@@ -222,8 +225,8 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
   if (gTasksRunning == 0)
     wait(1);
 
-  for (unitIndex = 0;
-       unitIndex < 14 && (unitId = unitIds[unitIndex]) != BATTLE_UNIT_LIST_END;
+  for (unitIndex = 0; unitIndex < UNIT_MAX &&
+                      (unitId = unitIds[unitIndex]) != BATTLE_UNIT_LIST_END;
        unitIndex++) {
     if (unitId == BATTLE_UNIT_REMOVED)
       continue;
@@ -244,14 +247,14 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         (battleObject->resource & 0xfff) == 585 ||
         (battleObject->resource & 0xfff) == 579 ||
         (battleObject->resource & 0xfff) == 581 ||
-        (battleObject->resource & 0xfff) == 583) {
-      records = (struct TlaSpriteRecord **)Ram_HeapSlots->actorSystem->unk08 +
+        (battleObject->resource & SPRITE_ID_MASK) == 583) {
+      records = (struct Sprite **)Ram_HeapSlots->actorSystem->unk08 +
                 Ram_HeapSlots->actorSystem->count;
       spriteId = battleObject->resource;
       object->recordStorageKind = 2;
       object->records = records;
       Iwram_ClearWordsEntry(records, 16);
-      record = (struct TlaSpriteRecord *)Sprite_CreateFar(spriteId);
+      record = (struct Sprite *)Sprite_CreateFar(spriteId);
       if (record != 0) {
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
         boxY = Resource_GetMetadataRecordFarFar(spriteId)->boxY;
@@ -260,15 +263,14 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         records++;
       }
       record->flags = 0;
-      record = (struct TlaSpriteRecord *)Sprite_CreateFar(spriteId + 0x2001);
+      record = (struct Sprite *)Sprite_CreateFar(spriteId + SPRITE_SECOND_PART);
       if (record != 0) {
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
         *records = record;
       }
       record->flags = 0;
     } else {
-      record =
-          (struct TlaSpriteRecord *)Sprite_CreateFar(battleObject->resource);
+      record = (struct Sprite *)Sprite_CreateFar(battleObject->resource);
       if (record != 0) {
         object->recordStorageKind = 1;
         object->records = record;
@@ -290,7 +292,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
         }
         if ((spriteId = battleObject->shadow) != 0) {
           if (record->width == 32)
-            spriteId = 687;
+            spriteId = SPRITE_BATTLE_SHADOW_NARROW;
           entry = (struct SpriteAnimation *)Sprite_AddAnimationFar(record,
                                                                    spriteId);
           battleObject->shadowEntry = entry;
@@ -311,7 +313,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses,
             (object = battleObject->object) != 0)
           BattleObject_UpdatePose(spriteId);
         unitIndex++;
-        if (unitIndex >= 14 ||
+        if (unitIndex >= UNIT_MAX ||
             (spriteId = unitIds[unitIndex]) == BATTLE_UNIT_LIST_END)
           break;
       }
@@ -326,14 +328,14 @@ void BattleActor_SpawnObjectsForList(s16 *list, s32 refresh) {
 }
 
 /// Detaches the scripts from the four sprite entries of one sprite.
-void ResetMotionRecordGroup(void *owner) {
-  struct AnimationEntryGroup *object = owner;
-  s32 i;
+void ResetMotionRecordGroup(void *recordGroup) {
+  struct Sprite *record = recordGroup;
+  s32 entryIndex;
 
-  if (object != NULL) {
-    for (i = 0; i < 4; i++) {
-      if (object->entries[i] != NULL)
-        object->entries[i]->script = NULL;
+  if (record != NULL) {
+    for (entryIndex = 0; entryIndex < 4; entryIndex++) {
+      if (record->entries[entryIndex] != NULL)
+        record->entries[entryIndex]->script = NULL;
     }
   }
 }
@@ -358,7 +360,7 @@ static inline struct BattleObject *BattleObject_GetInline(s32 unitId) {
 /// front.
 void BattleObject_UpdateSpritePriorities(void) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
-  u16 unitIds[14];
+  u16 unitIds[UNIT_MAX];
   struct MotionObject *objects[14];
   s32 partyCount;
   s32 enemyCount;
@@ -366,8 +368,8 @@ void BattleObject_UpdateSpritePriorities(void) {
   s32 unitIndex;
   s32 recordIndex;
   struct MotionObject *object;
-  struct TlaSpriteRecord *record;
-  struct TlaSpriteRecord **records;
+  struct Sprite *record;
+  struct Sprite **records;
 
   partyCount = BattleUnit_ListIds(1, unitIds);
   enemyCount = BattleUnit_ListIds(2, &unitIds[partyCount]);
@@ -383,7 +385,7 @@ void BattleObject_UpdateSpritePriorities(void) {
         object = slot->object;
         BattleStatusIcon_Cycle(slot);
         if (slot->shadowEntry != 0) {
-          struct TlaSpriteRecord *record = GetMotionRecord(object, 0);
+          struct Sprite *record = GetMotionRecord(object, 0);
 
           if (record != 0) {
             struct SpriteAnimation *effect;
@@ -432,7 +434,7 @@ void BattleObject_UpdateSpritePriorities(void) {
       case 2:
         records = object->records;
         for (recordIndex = 0; recordIndex < 4; recordIndex++) {
-          struct TlaSpriteRecord *part = *records++;
+          struct Sprite *part = *records++;
 
           if (part != 0) {
             record = part;
@@ -460,7 +462,7 @@ void BattleObject_UpdateSpritePriorities(void) {
       case 2:
         records = object->records;
         for (recordIndex = 0; recordIndex < 4; recordIndex++) {
-          struct TlaSpriteRecord *part = *records++;
+          struct Sprite *part = *records++;
 
           if (part != 0) {
             record = part;
@@ -578,7 +580,7 @@ UNREAD_RESULT BattleCamera_ApplyTransform(void) {
 /// Projects a battle object's position to the screen, in projected.
 s32 BattleMotion_ProjectPosition(s32 id, s32 *projected) {
   struct MotionObject *object = BattleObject_FindSlot(id)->object;
-  struct MotionRecordScale *record = GetMotionRecord(object, 0);
+  struct Sprite *record = GetMotionRecord(object, 0);
   s32 position[3];
   s32 scaled;
 
@@ -648,7 +650,7 @@ struct BattleObject *BattleObject_Get(s32 objectId) {
     objectId -= 0x78;
   }
   index = objectId;
-  if (work->placement[index] == 0xFF) {
+  if (work->placement[index] == BATTLE_OBJECT_NONE) {
     return NULL;
   }
   return &slots[work->placement[index]];

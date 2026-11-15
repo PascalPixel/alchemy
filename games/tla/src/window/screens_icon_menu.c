@@ -60,30 +60,10 @@
 
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 
-/* VIEW(menus): variable gLinkStatus as u16 gLinkStatus; serial.h has volatile
- * u16 gLinkStatus; tried as the rest of the object declares it, it does not
- * compile in tla-ja: games/tla/src/window/screens_icon_menu.c:182:
- * `gLinkStatus__menus' undeclared (first use in this function). */
-extern u16 gLinkStatus__menus __asm__("gLinkStatus");
-/* VIEW(battle_party_commands): variable gLinkPeerSignatures as extern u16
- * gLinkPeerSignatures[][12]; countdown has extern struct LinkSignature
- * gLinkPeerSignatures[]; tried as the rest of the object declares it, it does
- * not compile in tla-ja: games/tla/src/window/screens_icon_menu.c:172:
- * `gLinkPeerSignatures__battle_party_commands' undeclared (first use in this
- * function). */
-extern u16 gLinkPeerSignatures__battle_party_commands[][12] __asm__(
-    "gLinkPeerSignatures");
+#include "system/heap_slots.h"
+#include "system/serial.h"
 
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
-/* VIEW(menus): routine BattleDjinnMenu_Run as s32 BattleDjinnMenu_Run(s32
- * member, s32 unused); window/screens has s32 BattleDjinnMenu_Run(s32 member)
- * {; tried as the definition's s32 BattleDjinnMenu_Run(s32 member), it does not
- * compile in tla-ja: games/tla/src/window/screens_icon_menu.c:588: too many
- * arguments to function `BattleDjinnMenu_Run'. */
-s32 BattleDjinnMenu_Run__menus(s32 member,
-                               s32 unused) __asm__("BattleDjinnMenu_Run");
-#define BattleDjinnMenu_Run BattleDjinnMenu_Run__menus
-
 #define SET_CURSOR(page_, row_, preferred_)                                    \
   do {                                                                         \
     NAVIGATION->page = (page_);                                                \
@@ -124,7 +104,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   void Battle_DrawPartyPanelsWithEmptyList(void) {
     u16 data[2];
 
-    data[0] = 255;
+    data[0] = BATTLE_UNIT_LIST_END;
     PartyStatus_HighlightMembers(data);
     BattleHighlight_SetModesFar(data, HIGHLIGHT_SELECTED);
   }
@@ -138,11 +118,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   parameter = 0;
   largeIconSlot = VramCache_AllocEntry(1024);
   smallIconSlot = VramCache_AllocEntry(512);
-  state = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MENU, 272);
+  state =
+      HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_MENU, sizeof(struct BattleMenuWork));
   // Default: set again before each round's forced actions.
   forcedCount = 0;
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
-  Graphics_ExpandVramTilesByColorTable((u16 *)BG_SCREEN_BLOCK(12));
+  Graphics_ExpandVramTilesByColorTable(
+      (u16 *)(BG_CHAR_BLOCK(0) + LIST_PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
   Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
   Menu_BuildLocalizedPatternTiles();
   state->swappedUnit = -1;
@@ -152,7 +134,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     s32 k;
 
     for (k = 0; k < 8; k++)
-      state->chosenDjinn[k] = 0x80000000;
+      state->chosenDjinn[k] = BATTLE_MENU_NO_DJINNI;
     for (k = 0; k < 3; k++)
       state->iconShown[k] = 0;
     state->targetViewOffset = 0;
@@ -175,15 +157,14 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       signature[7] = 'T';
       missedLinkFrames = 0;
       for (;;) {
-        u16 *peerSignature =
-            gLinkPeerSignatures__battle_party_commands[battle->linkSide ^ 1];
+        u16 *peerSignature = gLinkPeerSignatures[battle->linkSide ^ 1];
 
         if (battle->linkPaused != 0) {
           commandCount = -1;
           state->linkTimer = 0;
           break;
         }
-        if ((gLinkStatus__menus & 3) != 3) {
+        if ((gLinkStatus & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH) {
           if (++missedLinkFrames > 24) {
             commandCount = -1;
             state->linkTimer = 0;
@@ -228,7 +209,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     if (commandCount >= 0)
       mode = BattleCommandRow_Run(0, commandCount);
     else
-      mode = 14;
+      mode = COMMAND_ICON_FIGHT;
 
     // B on the party's row: undo the last reserve swap.
     if (mode == -1) {
@@ -258,7 +239,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       continue;
     }
     // Command 49: choose a party place, then the reserve member for it.
-    if (mode == 49) {
+    if (mode == COMMAND_ICON_SWITCH) {
       Sound_PlayFar(SE_MENU_CONFIRM);
     choose_place:
       mode = BattleTarget_RunSelection(0, 2, 1, 8);
@@ -273,15 +254,15 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     }
     // Status: the summary screens of the party and the reserve, or in the
     // debug build with Start held the enemies'.
-    if (mode == 7) {
+    if (mode == COMMAND_ICON_STATUS) {
       u16 *block = Heap_Alloc(18);
       s32 side;
       s32 count;
 
       if (gDebugMode != 0 && (gInput.held & KEY_START))
-        side = 2;
+        side = BATTLE_SIDE_MASK_ENEMIES;
       else
-        side = 1;
+        side = BATTLE_SIDE_MASK_PARTY;
       count = BattleUnit_ListIdsFar(side, block);
       if (side == 1)
         count += BattleParty_PrepareReserveOwnersFar(block + count);
@@ -291,7 +272,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       continue;
     }
     // Flee: one command 99 for the party, first in the round.
-    if (mode == 4) {
+    if (mode == COMMAND_ICON_FLEE) {
       s32 refused = Battle_RefuseFlee();
 
       if (refused != 0)
@@ -301,12 +282,12 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       command->unitId = actors[0];
       forcedCount = refused;
       command->priority = 0x7ffe;
-      command->command = 99;
+      command->command = COMMAND_FLEE;
       command->parameter = refused;
       command->target = 256;
       break;
     }
-    if (mode != 14)
+    if (mode != COMMAND_ICON_FIGHT)
       break;
     Sound_PlayFar(SE_CAST);
     commandIndex = 0;
@@ -338,12 +319,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         navigation->commandActor = actorId;
         navigation->commandSelection[1] = 0;
         iconSprite = &navigation->icons[2];
-        iconSprite->oam.word.attr01 = 0x80000400;
+        iconSprite->oam.word.attr01 =
+            OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.tile = Portrait_Load(unit->enemyId, smallIconSlot);
         iconSprite->oam.f.x = ACTOR_ICON_X;
-        iconSprite->oam.f.y = 0x80;
-        iconSprite->oam.f.palette = 14;
+        iconSprite->oam.f.y = 128;
+        iconSprite->oam.f.palette = PORTRAIT_PALETTE;
         state->iconShown[2] = 1;
       }
 
@@ -353,10 +335,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         struct BattleMenuWork *navigation = NAVIGATION;
 
         navigation->iconShown[0] = 0;
-        navigation->chosenDjinn[commandIndex] = 0x80000000;
+        navigation->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
       }
       signatureHeader[0] = actorId;
-      signatureHeader[1] = 255;
+      signatureHeader[1] = BATTLE_UNIT_LIST_END;
       BattleHighlight_SetModesFar(signatureHeader, HIGHLIGHT_SELECTED);
       PartyStatus_HighlightMembers(signatureHeader);
       wait(1);
@@ -385,12 +367,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         struct MenuSprite *iconSprite = &navigation->icons[0];
 
         if (navigation->timer == 0)
-          mode = 3;
+          mode = COMMAND_ICON_DEFEND;
         iconSprite->oam.word.attr23 = 0;
-        iconSprite->oam.word.attr01 = 0x80002400;
+        iconSprite->oam.word.attr01 = OBJ_SIZE_32X32 | OBJ_256_COLORS |
+                                      OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.f.tile =
             Resource_LoadIndexedIntoBuffer(largeIconSlot, mode);
-        if (mode == 15)
+        if (mode == COMMAND_ICON_DJINN)
           iconSprite->oam.f.x = 128;
         else
           iconSprite->oam.f.x = 96;
@@ -399,22 +382,22 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
 
       switch (mode) {
-      case 0:
+      case COMMAND_ICON_ATTACK:
         commandWindow = Window_Create(11, 17, 11, 3, 6);
         Text_DrawMessageAsTiles((s32)MsgCommandName, commandWindow,
                                 ATTACK_NAME_X, 0);
         COMMAND_ICON_X(state) = 64;
         Sound_PlayFar(SE_MENU_CONFIRM);
-        mode = BattleTarget_RunSelection(actorId, 1, 1, 0);
+        mode = BattleTarget_RunSelection(actorId, 1, 1, TARGET_HINT_NONE);
         Window_Close(commandWindow, 1);
         if (mode == -1)
           goto mark_visible;
-        commandKind = 0;
+        commandKind = COMMAND_ATTACK;
         target = mode;
         command->range = 1;
         break;
 
-      case 1: {
+      case COMMAND_ICON_PSYNERGY: {
         s32 k;
         struct MenuSprite *iconSprite;
         struct BattleAct *ability;
@@ -435,18 +418,19 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         COMMAND_ICON_X(state) = PSYNERGY_MENU_ICON_X;
         cnt = 0;
         k = 0;
-        entryValue = unit->psynergy[k].encodedAction & 0x3fff;
+        entryValue = unit->psynergy[k].encodedAction & PSYNERGY_ABILITY_MASK;
         if (entryValue != 0) {
           do {
-            if (Ability_Get(entryValue)->flags & 0x80) {
+            if (Ability_Get(entryValue)->flags & ABILITY_USABLE_IN_BATTLE) {
               pick[cnt] = k;
               list[cnt] = entryValue;
               cnt++;
             }
             k++;
-            if (k == 32)
+            if (k == PSYNERGY_SLOTS)
               break;
-            entryValue = unit->psynergy[k].encodedAction & 0x3fff;
+            entryValue =
+                unit->psynergy[k].encodedAction & PSYNERGY_ABILITY_MASK;
           } while (entryValue != 0);
         }
         pick[cnt] = 0;
@@ -454,7 +438,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         mode = BattlePsynergyMenu_Run(actorId, list, cnt);
         if (mode == -1)
           goto mark_visible;
-        parameter = unit->psynergy[pick[mode]].encodedAction & 0x3fff;
+        parameter =
+            unit->psynergy[pick[mode]].encodedAction & PSYNERGY_ABILITY_MASK;
         ability = Ability_Get(parameter);
         cost = ability->range;
         iconSprite = &state->icons[1];
@@ -462,7 +447,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         work = (struct WindowWork *)Ram_HeapSlots->windowWork;
         commandWindow = Window_Create(8, 17, 18, 3, 6);
         COMMAND_ICON_X(state) = 40;
-        iconSprite->oam.word.attr01 = 0x40000400;
+        iconSprite->oam.word.attr01 =
+            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
@@ -471,7 +457,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         iconSprite->oam.f.tile =
             Resource_LoadIndexedEntryToBuffer(parameter, handle);
         state->iconShown[1] = 1;
-        work->textPalette = 5;
+        work->textPalette = BASIC_COLORS_PALETTE;
         if (ability->ppCost > unit->pp)
           Text_SetColor(TEXT_COLOR_RED);
         else if (unit->psySeal != 0)
@@ -479,14 +465,14 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Text_DrawMessageAsTiles(parameter + (s32)MsgAbilityName, commandWindow,
                                 16, 0);
         Text_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
-        work->textPalette = 15;
+        work->textPalette = WINDOW_PALETTE;
         Text_SetColor(TEXT_COLOR_WHITE);
         Window_SetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL, 11, 0, 0);
         Window_SetTilemapEntry(commandWindow, WINDOW_TILE_PP_LABEL_END, 12, 0,
                                0);
-        if (ability->element != 4)
-          Window_SetTilemapEntry(commandWindow, ability->element + 0x5001, 15,
-                                 0, 0);
+        if (ability->element != ELEMENT_NONE)
+          Window_SetTilemapEntry(
+              commandWindow, ability->element + ELEMENT_ICON_TILE, 15, 0, 0);
         command->range = cost;
         Sound_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(actorId, ability->targetMode, cost,
@@ -496,12 +482,12 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Window_Close(commandWindow, 1);
         if (mode == -1)
           goto psynergy_menu;
-        commandKind = 1;
+        commandKind = COMMAND_PSYNERGY;
         target = mode;
         break;
       }
 
-      case 16: {
+      case COMMAND_ICON_SUMMON: {
         const struct SummonDefinition *summon;
         struct BattleAct *ability;
         struct MenuSprite *iconSprite;
@@ -518,7 +504,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         PartyStatus_HighlightMembers(signatureHeader);
         if (mode == -1)
           goto mark_visible;
-        commandKind = 6;
+        commandKind = COMMAND_SUMMON;
         parameter = mode;
         wait(1);
         iconSprite = &state->icons[1];
@@ -534,14 +520,15 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         }
         ok = j == 4;
         COMMAND_ICON_X(state) = SUMMON_CHOSEN_ICON_X;
-        ((u32 *)&iconSprite->oam)[0] = 0x40000400;
+        ((u32 *)&iconSprite->oam)[0] =
+            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         ((u32 *)&iconSprite->oam)[1] = 0;
         /* FAKEMATCH(barrier): counted as 4 bytes. */
         __asm__ volatile("");
         iconSprite->oam.f.x = (s16)commandWindow->x * 8 + 8;
         iconSprite->oam.f.y = (s16)commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile = Resource_LoadIndexedEntryToBuffer(
-            summon->nameMessageId & 0x3fff, summonIconSlot);
+            summon->nameMessageId & ACTION_ID_MASK, summonIconSlot);
         state->iconShown[1] = 1;
         if (ok == 0)
           Text_SetColor(TEXT_COLOR_RED);
@@ -550,10 +537,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                                 commandWindow, 16, 0);
         for (j = 0; j <= 3; j++) {
           if (summon->djinnRequired[j] != 0) {
-            Window_SetTilemapEntry(commandWindow, j + 0x5001,
+            Window_SetTilemapEntry(commandWindow, j + ELEMENT_ICON_TILE,
                                    n * 2 + SUMMON_COST_X, 0, 0);
             Window_PutGlyph(commandWindow, summon->djinnRequired[j] + '0',
-                            n * 2 + SUMMON_COST_X + 1, 0, 0);
+                            n * 2 + SUMMON_COST_X + 1, 0, GLYPH_DRAW_CHARACTER);
             n++;
           }
         }
@@ -581,7 +568,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         break;
       }
 
-      case 15: {
+      case COMMAND_ICON_DJINN: {
         struct BattleAct *ability;
         s32 cost;
         s32 element;
@@ -591,7 +578,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         SET_CURSOR(0, 0, 0);
       djinn_menu:
         COMMAND_ICON_X(state) = DJINN_MENU_ICON_X;
-        NAVIGATION->chosenDjinn[commandIndex] = 0x80000000;
+        NAVIGATION->chosenDjinn[commandIndex] = BATTLE_MENU_NO_DJINNI;
         mode = BattleDjinnMenu_Run(actorId, 1);
         command->range = 0;
         if (mode == -1)
@@ -606,8 +593,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           cost = ability->range;
           commandWindow = Window_Create(11, 17, 10, 3, 6);
           COMMAND_ICON_X(state) = 64;
-          Window_SetTilemapEntry(commandWindow, element + 0x5001, 0, 0, 0);
-          Text_DrawMessageAsTiles(element * 20 + index + (s32)MsgDjinnName,
+          Window_SetTilemapEntry(commandWindow, element + ELEMENT_ICON_TILE, 0,
+                                 0, 0);
+          Text_DrawMessageAsTiles(element * DJINN_PER_ELEMENT + index +
+                                      (s32)MsgDjinnName,
                                   commandWindow, 16, 0);
           command->range = cost;
           wait(1);
@@ -633,14 +622,16 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         commandWindow = Window_Create(11, 17, 10, 3, 6);
         COMMAND_ICON_X(state) = 64;
         Text_SetColor(TEXT_COLOR_RED);
-        Window_SetTilemapEntry(commandWindow, element + 0x5001, 0, 0, 0);
-        Text_DrawMessageAsTiles(element * 20 + index + (s32)MsgDjinnName,
+        Window_SetTilemapEntry(commandWindow, element + ELEMENT_ICON_TILE, 0, 0,
+                               0);
+        Text_DrawMessageAsTiles(element * DJINN_PER_ELEMENT + index +
+                                    (s32)MsgDjinnName,
                                 commandWindow, 16, 0);
         Text_SetColor(TEXT_COLOR_WHITE);
         command->range = 1;
         wait(1);
         Sound_PlayFar(SE_MENU_CONFIRM);
-        mode = BattleTarget_RunSelection(actorId, 4, 0, 7);
+        mode = BattleTarget_RunSelection(actorId, 4, 0, TARGET_HINT_SET_DJINNI);
         Window_Close(commandWindow, 1);
         if (mode == -1)
           goto djinn_menu;
@@ -648,7 +639,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         break;
       }
 
-      case 2: {
+      case COMMAND_ICON_ITEM: {
         s32 k;
         struct MenuSprite *iconSprite;
         struct BattleAct *ability;
@@ -711,7 +702,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         handle = VramCache_AllocEntry(128);
         commandWindow = Window_Create(9, 17, ITEM_WINDOW_WIDTH, 3, 6);
         COMMAND_ICON_X(state) = 48;
-        iconSprite->oam.word.attr01 = 0x40000400;
+        iconSprite->oam.word.attr01 =
+            OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         /* FAKEMATCH(barrier): counted as 4 bytes. */
         __asm__ volatile("");
         iconSprite->oam.word.attr23 = 0;
@@ -733,13 +725,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         Window_Close(commandWindow, 1);
         if (mode == -1)
           goto item_menu;
-        commandKind = 2;
+        commandKind = COMMAND_ITEM;
         target = mode;
         break;
       }
 
-      case 3:
-        commandKind = 3;
+      case COMMAND_ICON_DEFEND:
+        commandKind = COMMAND_DEFEND;
         break;
       }
 
@@ -810,14 +802,13 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       state->timerWindow = NULL;
     }
     for (;;) {
-      u16 *peerSignature =
-          gLinkPeerSignatures__battle_party_commands[link->linkSide ^ 1];
+      u16 *peerSignature = gLinkPeerSignatures[link->linkSide ^ 1];
 
       if (link->linkPaused != 0) {
         commandCount = -1;
         break;
       }
-      if ((gLinkStatus__menus & 3) != 3) {
+      if ((gLinkStatus & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH) {
         mode++;
         if (mode > 24) {
           commandCount = -1;
@@ -1160,12 +1151,12 @@ void CommandIcon_LoadIntoSlot(s32 slot, s32 index) {
 /// is on the bottom icon row; a layout routine places the final row. The
 /// icon's number (ResourceId_CommandIcons) is also its command name's
 /// (MsgCommandName + icon). Its VRAM slot is taken unchecked.
-void IconMenu_AddIcon(s32 no) {
+void IconMenu_AddIcon(s32 icon) {
   struct IconMenuWork *work;
   struct IconMenuEntry *entry;
   s16 index;
   s32 slot;
-  s32 flags;
+  s32 y = 136;
 
   work = Ram_HeapSlots->iconMenu;
   index = work->count;
@@ -1173,12 +1164,11 @@ void IconMenu_AddIcon(s32 no) {
     work->count++;
     entry = &work->entries[index];
     slot = VramCache_FindFreeEntry();
-    CommandIcon_LoadIntoSlot(slot, no);
+    CommandIcon_LoadIntoSlot(slot, icon);
     entry->x = index * 24 + 32;
-    flags = 136;
-    entry->y = flags;
+    entry->y = y;
     entry->slot = slot;
-    work->commandIcons[index] = no;
+    work->commandIcons[index] = icon;
   }
 }
 
@@ -1260,12 +1250,12 @@ s32 FieldMenu_SelectCommand(s32 selection) {
   }
 
   IconMenu_Open();
-  IconMenu_AddIcon(1);
+  IconMenu_AddIcon(COMMAND_ICON_PSYNERGY);
   if (group == 0) {
-    IconMenu_AddIcon(15);
+    IconMenu_AddIcon(COMMAND_ICON_DJINN);
   }
-  IconMenu_AddIcon(2);
-  IconMenu_AddIcon(7);
+  IconMenu_AddIcon(COMMAND_ICON_ITEM);
+  IconMenu_AddIcon(COMMAND_ICON_STATUS);
   IconMenu_Center(17, SELECT_MENU_WIDTH, 0);
   ret = IconMenu_Run(selection);
   IconMenu_Close();
@@ -1286,10 +1276,10 @@ s32 FieldMenu_SelectCommand(s32 selection) {
 s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   PartyStatus_OpenAndWait();
   IconMenu_Open();
-  IconMenu_AddIcon(1);
-  IconMenu_AddIcon(0xF);
-  IconMenu_AddIcon(2);
-  IconMenu_AddIcon(7);
+  IconMenu_AddIcon(COMMAND_ICON_PSYNERGY);
+  IconMenu_AddIcon(COMMAND_ICON_DJINN);
+  IconMenu_AddIcon(COMMAND_ICON_ITEM);
+  IconMenu_AddIcon(COMMAND_ICON_STATUS);
   // Only Japanese centres the entries before selecting.
 #if LANGUAGE == LANGUAGE_JAPANESE
   IconMenu_Center(17, SELECT_MENU_WIDTH, 0);
@@ -1326,24 +1316,24 @@ s32 FileList_SelectAction(void) {
     return 0;
   if (type == 3)
     group = 1;
-  else if (type == 103)
+  else if (type == SAVE_SCAN_ALL_CLEARED + 3)
     group = 2;
-  else if (type > 100)
+  else if (type > SAVE_SCAN_ALL_CLEARED)
     group = 3;
   else
     initial = 1;
   IconMenu_Open();
   if (group == 0 || group == 3)
-    IconMenu_AddIcon(21);
+    IconMenu_AddIcon(COMMAND_ICON_NEW_GAME);
   if (group <= 1)
-    IconMenu_AddIcon(22);
+    IconMenu_AddIcon(COMMAND_ICON_CONTINUE);
   if (group == 0 || group == 3)
-    IconMenu_AddIcon(23);
-  IconMenu_AddIcon(24);
+    IconMenu_AddIcon(COMMAND_ICON_COPY);
+  IconMenu_AddIcon(COMMAND_ICON_ERASE);
   if (gData_020036d8 != 0)
-    IconMenu_AddIcon(29);
+    IconMenu_AddIcon(COMMAND_ICON_BATTLE);
   if (gData_02005350 != 0)
-    IconMenu_AddIcon(31);
+    IconMenu_AddIcon(COMMAND_ICON_UPDATE);
   IconMenu_Center(17, SAVE_SLOT_MENU_WIDTH, 0);
   ret = IconMenu_Run(initial);
   IconMenu_Close();
@@ -1426,12 +1416,12 @@ void Menu_DrawModeIndicator(void) {
 
 #if LANGUAGE == LANGUAGE_FRENCH
   if (*shown != *current) {
-    if (*current == 0) {
+    if (*current == TRANSFER_METHOD_PASSWORD) {
       WindowSprite_ClearList(state->lowerWindow);
       Text_DrawMessage((s32)MsgPasswordTransferHelp, state->lowerWindow, 8, 4);
       Text_DrawMessage((s32)MsgPasswordTransferHelp + 1, state->lowerWindow, 0,
                        16);
-    } else if (*shown == 0) {
+    } else if (*shown == TRANSFER_METHOD_PASSWORD) {
       WindowSprite_ClearList(state->lowerWindow);
       Text_DrawMessage((s32)MsgCableTransferHelp, state->lowerWindow, 0, 4);
       Text_DrawMessage((s32)MsgCableTransferHelp + 1, state->lowerWindow, 0,
@@ -1583,16 +1573,16 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   mode &= 1;
   IconMenu_Open();
   work = Ram_HeapSlots->iconMenu;
-  if (mode == 0) {
-    IconMenu_AddIcon(44);
-    IconMenu_AddIcon(45);
+  if (mode == RESOURCE_LAYOUT_TRANSFER_METHOD) {
+    IconMenu_AddIcon(COMMAND_ICON_PASSWORD);
+    IconMenu_AddIcon(COMMAND_ICON_LINK);
   } else {
-    IconMenu_AddIcon(46);
-    IconMenu_AddIcon(47);
-    IconMenu_AddIcon(48);
+    IconMenu_AddIcon(COMMAND_ICON_GOLD);
+    IconMenu_AddIcon(COMMAND_ICON_SILVER);
+    IconMenu_AddIcon(COMMAND_ICON_BRONZE);
   }
   IconMenu_Center(17, ENTRY_WIDTH, 0);
-  if (mode != 0) {
+  if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
     Task_Add(Menu_DrawModeLabel, TASK_PASS_VBLANK - 10);
     work->previousMode = 0xffff;
     window = Window_Create(PASSWORD_UPPER_X, 0, PASSWORD_UPPER_WIDTH, 4,
@@ -1629,7 +1619,7 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
                                       7, WINDOW_FLAG_INSTANT);
   }
   result = IconMenu_Run(0);
-  if (mode != 0)
+  if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD)
     Task_Remove(Menu_DrawModeLabel);
   else
     Task_Remove(Menu_DrawModeIndicator);
@@ -1652,10 +1642,10 @@ s32 Menu_SelectShopCommand(s32 selection) {
   s32 ret;
 
   IconMenu_Open();
-  IconMenu_AddIcon(0x11);
-  IconMenu_AddIcon(0x12);
-  IconMenu_AddIcon(0x13);
-  IconMenu_AddIcon(0x14);
+  IconMenu_AddIcon(COMMAND_ICON_BUY);
+  IconMenu_AddIcon(COMMAND_ICON_SELL);
+  IconMenu_AddIcon(COMMAND_ICON_ARTIFACTS);
+  IconMenu_AddIcon(COMMAND_ICON_REPAIR);
 #if (LANGUAGE == LANGUAGE_GERMAN)
   IconMenu_Center(17, 8, 0); // Name window width.
 #elif (LANGUAGE != LANGUAGE_JAPANESE)
@@ -1673,10 +1663,10 @@ s32 Menu_SelectSanctumService(s32 selection) {
   s32 ret;
 
   IconMenu_Open();
-  IconMenu_AddIcon(0x19);
-  IconMenu_AddIcon(0x1A);
-  IconMenu_AddIcon(0x1B);
-  IconMenu_AddIcon(0x1C);
+  IconMenu_AddIcon(COMMAND_ICON_REVIVE);
+  IconMenu_AddIcon(COMMAND_ICON_CURE_POISON);
+  IconMenu_AddIcon(COMMAND_ICON_REPEL_EVIL);
+  IconMenu_AddIcon(COMMAND_ICON_REMOVE_CURSE);
 #if (LANGUAGE != LANGUAGE_JAPANESE)
   IconMenu_Center(17, 10, 0);
 #else
@@ -1692,44 +1682,44 @@ s32 Menu_SelectSanctumService(s32 selection) {
 /// message: first name message, or 0 for command names.
 /// w: name window width, or 3 if zero.
 /// selection: initial selection.
-s32 YesNoMenu_Run(s32 low, s32 message, s32 w, s32 selection) {
+s32 YesNoMenu_Run(s32 bottom, s32 message, s32 labelWidth, s32 selection) {
   s32 row;
 
   row = 0;
 
   IconMenu_Open();
 
-  if (w == 0) {
-    w = 3;
+  if (labelWidth == 0) {
+    labelWidth = 3;
   }
-  if (low != 0) {
+  if (bottom != 0) {
     row = 17;
   }
 
-  IconMenu_AddIcon(5);
-  IconMenu_AddIcon(6);
-  IconMenu_Center(row, w, message);
+  IconMenu_AddIcon(COMMAND_ICON_YES);
+  IconMenu_AddIcon(COMMAND_ICON_NO);
+  IconMenu_Center(row, labelWidth, message);
 
   selection = IconMenu_Run(selection);
   IconMenu_Close();
   if (selection == -1) {
-    selection = 1;
+    selection = NO;
   }
   return selection;
 }
 
 /// Selects Yes or No at (x, y). Cancel returns 1 (No).
 s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection) {
-  s32 message = (s32)MsgCommandYes;
+  s32 message = MsgCommandYes;
 
   IconMenu_Open();
-  IconMenu_AddIcon(5);
-  IconMenu_AddIcon(6);
+  IconMenu_AddIcon(COMMAND_ICON_YES);
+  IconMenu_AddIcon(COMMAND_ICON_NO);
   IconMenu_LayoutIcons(x, y, 3, message);
   selection = IconMenu_Run(selection);
   IconMenu_Close();
   if (selection == -1) {
-    selection = 1;
+    selection = NO;
   }
   return selection;
 }
@@ -1754,15 +1744,15 @@ s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection) {
 /// Selects coins or medals from icons 0x20 and 0x21, centred on row 17.
 /// selection: initial selection. Returns the selected position.
 s32 Menu_SelectCoinsOrMedals(s32 selection) {
-  s32 ret;
+  s32 result;
 
   IconMenu_Open();
-  IconMenu_AddIcon(0x20);
-  IconMenu_AddIcon(0x21);
+  IconMenu_AddIcon(COMMAND_ICON_COINS);
+  IconMenu_AddIcon(COMMAND_ICON_LUCKY_MEDALS);
   IconMenu_Center(17, PAIR_WIDTH, 0);
-  ret = IconMenu_Run(selection);
+  result = IconMenu_Run(selection);
   IconMenu_Close();
-  return ret;
+  return result;
 }
 
 /// Schedules the debug scene and entrance selector;

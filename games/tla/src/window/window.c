@@ -82,19 +82,16 @@ struct BobPairObject;
 /// it stands and the command it stands for. menu_titles.c loads it,
 /// battle_command_row.c runs the row.
 struct BattleCommandRowIcon {
-  u8 unk00[4];
-  u8 y;
-  u8 objMode : 2; ///< 3: double-size affine
-  u8 high05 : 6;
-  u16 x : 9;
-  u16 affineIndex : 5;
-  u16 size : 2;
-  u8 unk08[4];
-  u16 resource;
-  u16 unused;
-  s32 positionX;
-  s32 positionY;
-  s32 kind;
+  /// The icon as a 32x32 sprite, drawn only while it is selected (pulsing);
+  /// the others show as tiles of BG1.
+  struct MenuSprite sprite;
+  /// resource: the VRAM cache entry its sprite's tiles go into, one 1 KB
+  /// entry that every icon of the row shares, reloaded with the selected
+  /// icon. unused is never read.
+  u16 resource, unused;
+  /// Screen pixels: the sprite's top left before the pulse moves it.
+  s32 positionX, positionY;
+  s32 kind; ///< its command: MsgCommandName + kind names it
 };
 
 /// The pulsing icon's transform: its scale, 8.8 fixed point, and angle.
@@ -117,17 +114,6 @@ struct BattleCommandRowWork {
   s32 selectedIndex;
   s32 drawnIndex;
   s32 commandKinds[6];
-};
-
-/// The battle menu's navigation work (heap slot 57).
-struct CommandRowWindowWork {
-  u8 unk00[3];
-  u8 dirty;
-  u8 unk04;
-  u8 flags05;
-  u8 holdTilemapUpload;
-  u8 unk07;
-  u16 tilemap[0x400];
 };
 
 /// A unit as the summary screen reads it.
@@ -208,8 +194,8 @@ struct BobPairObject {
 /// A row of gMenu_BarPatternRows: the two words a menu bar's tile pair is
 /// XORed with (Menu_BuildLocalizedPatternTiles).
 struct BarPatternRow {
-  u32 word0;
-  u32 word1;
+  u32 firstTile;
+  u32 secondTile;
 };
 
 /// The name entry screen's cursors: the hand on the keyboard and the caret
@@ -258,7 +244,7 @@ extern const u8 gWindow_PairBobOffsets[];
 
 extern const struct BarPatternRow gMenu_BarPatternRows[];
 
-extern const u8 Data_080aa1b8[];
+extern const u8 gPartyStatus_DigitTiles[];
 
 extern const u8 gWindow_ProgressBarRows[];
 
@@ -318,19 +304,6 @@ struct WindowBuffer {
   struct WindowLine lines[160];
 };
 
-/// The partner console's link signature (gLinkPeerSignatures) as the timer
-/// reads it: halfwords 4 to 7 read "EDVS" once the partner has chosen its
-/// commands (Battle_CollectPartyCommands), which starts this side's
-/// countdown.
-struct LinkSignature {
-  u8 padding000[8];
-  u16 e;
-  u16 d;
-  u16 v;
-  u16 s;
-  u8 padding010[8];
-};
-
 extern u8 gWorkspace_ItemTitle[];
 extern u8 gWorkspace_EnergyTitle[];
 extern u8 gWorkspace_StatusTitle[];
@@ -347,5 +320,3 @@ extern s8 gMenu_SaveSlotActionByPosition[];
 #include "screens_debug_destinations.c"
 #include "screens_debug_flags.c"
 #include "screens_pause_menu.c"
-
-#undef BattleDjinnMenu_Run

@@ -8,6 +8,11 @@
 #include "resource_ids.h"
 #include "sounds.h"
 
+/// Window_UpdateOrCreate: keep an existing window as it is, without redrawing
+/// its saved rectangle. The low byte of the flags is the window style.
+#define WINDOW_KEEP_EXISTING 0x100
+#define WINDOW_STYLE_MASK 0xff
+
 /// @file
 /// The pieces the menu screens share: windows, the status panel, numbers,
 /// icons, the party figures, the hand cursor, paged lists, palettes, the
@@ -58,28 +63,28 @@ void WindowSprite_RedrawSavedRectFar(struct Window *window);
 /// redrawing its saved rectangle unless flags has 0x100 set.
 /// flags: the low 8 bits select the window type.
 s32 Window_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 w, s32 h, s32 flags) {
-  s32 cur;
+  struct Window *window;
   s32 style;
 
-  cur = *handle;
-  if (cur != 0) {
-    if (0x100 & flags) {
+  window = *handle;
+  if (window != 0) {
+    if (WINDOW_KEEP_EXISTING & flags) {
       return 0;
     }
-    WindowSprite_RedrawSavedRectFar((struct Window *)cur);
+    WindowSprite_RedrawSavedRectFar(window);
     return 0;
   }
-  style = flags & 0xff;
-  *handle = (s32)Window_CreateFar(x, y, w, h, style);
+  style = flags & WINDOW_STYLE_MASK;
+  *handle = Window_CreateFar(x, y, w, h, style);
   return 1;
 }
 
 /// Closes *handle's window if present, then sets the handle to NULL.
 /// Although declared with one argument, the caller's second argument stays in
 /// r1 and reaches Window_CloseFar.
-void Window_CloseIfOpen(void **handle, s32 mode) {
+void Window_CloseIfOpen(void **handle, s32 style) {
   if (*handle != NULL) {
-    Window_CloseFar(*handle, mode);
+    Window_CloseFar(*handle, style);
     *handle = NULL;
   }
 }
@@ -90,11 +95,9 @@ void Window_CloseIfOpen(void **handle, s32 mode) {
 // panel's two lines: the note above the Psynergy's name.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define STATUS_PANEL_NAME_X 40
-#define DRAW_LEVEL_LABEL Text_DrawStringInWindowFar
 #define STATUS_PANEL_CANNOT_EQUIP_X 16
 #else
 #define STATUS_PANEL_NAME_X 32
-#define DRAW_LEVEL_LABEL Text_DrawStringAtOffsetFar
 #define STATUS_PANEL_CANNOT_EQUIP_X 0
 #endif
 #if LANGUAGE == LANGUAGE_SPANISH
@@ -169,8 +172,8 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
   item = unit->inventory[slot];
   def = Item_GetDirectFar(item & INVENTORY_ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
-    created =
-        Window_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 13, 12, 0x102);
+    created = Window_UpdateOrCreate((s32 *)&state->statusWindow, 0, 5, 13, 12,
+                                    WINDOW_KEEP_EXISTING | 2);
   window = state->statusWindow;
 
   if (!(mode & STATUS_PANEL_LOWER_ONLY)) {
@@ -181,29 +184,29 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
     Text_DrawStringAtOffsetFar(unit->name, (s32)window, STATUS_PANEL_NAME_X, 0);
     StatusScreen_BuildAvailability(ailments, 1, owner);
     ailmentRows = 0;
-    if (ailments[1]) {
+    if (ailments[CHARACTER_POISON]) {
       Text_DrawMessageAsTilesFar(MESSAGE_POISON_LABEL, window,
                                  STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
-    if (ailments[2]) {
+    if (ailments[CHARACTER_VENOM]) {
       Text_DrawMessageAsTilesFar(MESSAGE_VENOM_LABEL, window,
                                  STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
-    if (ailments[3]) {
+    if (ailments[CHARACTER_CURSE]) {
       Text_DrawMessageAsTilesFar(MESSAGE_CURSE_LABEL, window,
                                  STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
-    if (ailments[4]) {
+    if (ailments[CHARACTER_HAUNT]) {
       Text_DrawMessageAsTilesFar(MESSAGE_HAUNT_LABEL, window,
                                  STATUS_PANEL_NAME_X, ailmentRows * 8 + 8);
       ailmentRows++;
     }
     if (ailmentRows < 2) {
       value = unit->level;
-      DRAW_LEVEL_LABEL((u8 *)gStatusPanel_LvString, (s32)window, 40, 16);
+      MENU_DRAW_STATUS_LABEL((u8 *)gStatusPanel_LvString, (s32)window, 40, 16);
       Text_DrawNumberInWindowFar(value, 4, (s32)window, 56, 16);
     }
   }
@@ -286,7 +289,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
     s32 known = 0;
     s32 i;
 
-    for (i = 0; i < 32; i++) {
+    for (i = 0; i < PSYNERGY_SLOTS; i++) {
       if ((unit->psynergy[i].encodedAction & PSYNERGY_ABILITY_MASK) ==
           psynergy) {
         known = 1;
@@ -448,6 +451,10 @@ void StatusPanel_DrawHpPp(struct Unit *unit, s32 window) {
 s32 Icon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y,
                                s32 variant);
 
+/// The stat arrows: the up and down arrow sprites the menu loads into its two
+/// sprite picture cache slots (Resource_LoadPairedBlocks).
+enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
+
 /// Writes Attack, Defense and Agility into a status window as they are now
 /// (before), and beside each one that changes its new value (after) with an up
 /// or down arrow: the equipment preview.
@@ -459,9 +466,9 @@ void Text_DrawStatComparison(const struct Unit *alt, const struct Unit *base,
   if (alt->atk != base->atk) {
     Text_DrawNumberAtOffsetFar(alt->atk, 3, work, 64, 40);
     if (alt->atk > base->atk) {
-      Icon_CreateStatChangeArrow(work, 44, 36, 0);
+      Icon_CreateStatChangeArrow(work, 44, 36, STAT_ARROW_UP);
     } else {
-      Icon_CreateStatChangeArrow(work, 44, 36, 1);
+      Icon_CreateStatChangeArrow(work, 44, 36, STAT_ARROW_DOWN);
     }
   }
   Text_DrawMessageAsTilesFar((s32)MsgPanelDefenseLabel,
@@ -470,9 +477,9 @@ void Text_DrawStatComparison(const struct Unit *alt, const struct Unit *base,
   if (alt->def != base->def) {
     Text_DrawNumberAtOffsetFar(alt->def, 3, work, 64, 56);
     if (alt->def > base->def) {
-      Icon_CreateStatChangeArrow(work, 44, 52, 0);
+      Icon_CreateStatChangeArrow(work, 44, 52, STAT_ARROW_UP);
     } else {
-      Icon_CreateStatChangeArrow(work, 44, 52, 1);
+      Icon_CreateStatChangeArrow(work, 44, 52, STAT_ARROW_DOWN);
     }
   }
   Text_DrawMessageAsTilesFar((s32)MsgAgilityLabel, (struct RenderInput *)work,
@@ -481,9 +488,9 @@ void Text_DrawStatComparison(const struct Unit *alt, const struct Unit *base,
   if (alt->agi != base->agi) {
     Text_DrawNumberAtOffsetFar(alt->agi, 3, work, 64, 72);
     if (alt->agi > base->agi) {
-      Icon_CreateStatChangeArrow(work, 44, 68, 0);
+      Icon_CreateStatChangeArrow(work, 44, 68, STAT_ARROW_UP);
     } else {
-      Icon_CreateStatChangeArrow(work, 44, 68, 1);
+      Icon_CreateStatChangeArrow(work, 44, 68, STAT_ARROW_DOWN);
     }
   }
 }
@@ -681,7 +688,7 @@ void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
   s32 index;
 
   index = 0;
-  slot = (struct WindowSprite **)((u8 *)Ram_HeapSlots->menuWork + 0x4c);
+  slot = ((struct PsynergyMenuWork *)Ram_HeapSlots->menuWork)->entryIcons;
   scan = slot;
   do {
     if (*scan++ != NULL) {
@@ -689,37 +696,37 @@ void PsynergyMenu_RefreshMemberEntries(s32 originX, s32 originY, s32 columns) {
     }
     index++;
     slot++;
-  } while (index <= 0x1F);
+  } while (index < MENU_ENTRY_ICONS);
 }
 
 /// Places the icon in *slot at grid cell index (0 above 31) of a grid of
 /// 16x16 cells, columns wide, from (originX, originY), and shows it.
 void PsynergyMenu_PositionMemberEntry(struct WindowSprite **slot, s32 index,
                                       s32 originX, s32 originY, s32 columns) {
-  struct WindowSprite *object;
+  struct WindowSprite *icon;
 
-  if (index > 0x1F) {
+  if (index > MENU_ENTRY_ICONS - 1) {
     index = 0;
   }
-  object = *slot;
-  object->y = (index / columns) * 0x10 + originY;
-  object->x = (index % columns) * 0x10 + originX;
-  Icon_PrepareActor(object);
+  icon = *slot;
+  icon->y = (index / columns) * 16 + originY;
+  icon->x = (index % columns) * 16 + originX;
+  Icon_PrepareActor(icon);
 }
 
 /// Places item i (or 0 if above 15) in a grid with cols columns of
 /// 24x16-pixel cells.
 /// x0, y0: top left of the grid.
-void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 i, s32 x0, s32 y0,
-                        s32 cols) {
-  struct WindowSprite *obj;
+void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 slotIndex, s32 originX,
+                        s32 originY, s32 columns) {
+  struct WindowSprite *icon;
 
-  if (i > 15)
-    i = 0;
-  obj = *slot;
-  obj->y = i / cols * 16 + y0;
-  obj->x = i % cols * 24 + x0;
-  Icon_PrepareActor(obj);
+  if (slotIndex > 15)
+    slotIndex = 0;
+  icon = *slot;
+  icon->y = slotIndex / columns * 16 + originY;
+  icon->x = slotIndex % columns * 24 + originX;
+  Icon_PrepareActor(icon);
 }
 
 /// Lays the inventory's 15 item icons out five to a row from (116, y): y is
@@ -727,27 +734,27 @@ void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 i, s32 x0, s32 y0,
 void ItemMenu_RefreshEntry(s32 layout) {
   struct WindowSprite **slot;
   struct WindowSprite **scan;
-  struct WindowSprite *object;
+  struct WindowSprite *icon;
   s32 index;
   s32 originY;
-  s32 base;
+  struct ItemMenuWork *menu;
 
-  base = (s32)Ram_HeapSlots->menuWork;
-  originY = 0x38;
+  menu = Ram_HeapSlots->menuWork;
+  originY = 56;
   if (layout != 1) {
-    originY = 0x28;
+    originY = 40;
   }
-  slot = (struct WindowSprite **)(base + 0x4c);
+  slot = menu->entryIcons;
   index = 0;
   scan = slot;
   do {
-    object = *scan++;
-    if (object != NULL) {
-      ItemMenu_PlaceIcon(slot, index, 0x74, originY, 5);
+    icon = *scan++;
+    if (icon != NULL) {
+      ItemMenu_PlaceIcon(slot, index, 116, originY, MENU_ITEM_GRID_COLUMNS);
     }
     index++;
     slot++;
-  } while (index <= 0xE);
+  } while (index < INVENTORY_SLOTS);
 }
 
 void Text_GetMessageSizeFar(s32 message, s32 *left, s32 *top, s32 *width,
@@ -771,7 +778,7 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
   if (y != -1) {
     Text_GetMessageSizeFar(message, &left, &top, &width, &height);
     if (Window_UpdateOrCreate((s32 *)&menu->modalWindow, x, y, width, height,
-                              0x102) == 0)
+                              WINDOW_KEEP_EXISTING | 2) == 0)
       Window_SetBounds(menu->modalWindow, x, y, width, height);
     window = menu->modalWindow;
   } else {
@@ -795,7 +802,7 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
              !(gInput.pressed & KEY_START));
     WindowSprite_ClearListFar(window);
   } else {
-    GameFlag_Set(337);
+    GameFlag_Set(FLAG_MENU_INFO_KEPT);
   }
   menu->completionFlag = 1;
   menu->sideIcons[0]->motion = ICON_SHOWN;
@@ -820,49 +827,52 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
   s32 i;
   s32 count;
   s32 best;
-  s32 best_slot;
-  s32 sorted_count;
+  s32 bestSlot;
+  s32 sortedCount;
   s32 value;
 
-  best_slot = 0;
-  sorted_count = 0;
+  bestSlot = 0;
+  sortedCount = 0;
   Menu_CopyListOrder(mode, order);
 
-  for (i = 0; i < 15; i++)
+  for (i = 0; i < INVENTORY_SLOTS; i++)
     items[i] = inventory[i];
 
   count = 0;
-  for (i = 0; i < 15; i++) {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     if (items[i] != 0)
       count++;
   }
 
-  for (i = count; i < 15; i++)
+  for (i = count; i < INVENTORY_SLOTS; i++)
     sorted[i] = 0;
 
+  // One pass for each entry of the order: move its items across, the highest
+  // id first, until none is left.
   pass = 0;
-  while (order[pass] != 0xff) {
+  while (order[pass] != LIST_ORDER_END) {
     for (;;) {
       best = 0;
       for (i = 0; i < count; i++) {
         if (items[i] == 0)
           continue;
         item = Item_GetDirectFar(items[i]);
-        if ((order[pass] & 0x7f) != item->type)
+        if ((order[pass] & LIST_ORDER_TYPE_MASK) != item->type)
           continue;
-        if ((order[pass] & 0x80) && (items[i] & INVENTORY_EQUIPPED) == 0)
+        if ((order[pass] & LIST_ORDER_EQUIPPED) &&
+            (items[i] & INVENTORY_EQUIPPED) == 0)
           continue;
         value = items[i] & INVENTORY_ITEM_ID_MASK;
         if (best < value) {
-          best_slot = i;
+          bestSlot = i;
           best = value;
         }
       }
       if (best == 0)
         break;
-      sorted[sorted_count] = items[best_slot];
-      items[best_slot] = 0;
-      sorted_count++;
+      sorted[sortedCount] = items[bestSlot];
+      items[bestSlot] = 0;
+      sortedCount++;
     }
     pass++;
   }
@@ -872,35 +882,35 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
   return 1;
 }
 
-/// Copies the order table for modes 0-2, or the default table, into order.
-/// Tables end with 0xff; at most 32 bytes are copied, the terminator
-/// included.
+/// Copies the list order of mode (enum ListSort; any other mode takes
+/// LIST_SORT_ITEMS_FIRST's) into order, up to and including its LIST_ORDER_END
+/// and at most 32 bytes.
 void Menu_CopyListOrder(s32 mode, u8 *order) {
   u8 *src;
   s32 n;
 
-  src = gMenu_ListOrderDefault;
+  src = gMenu_ListOrderItemsFirst;
   switch (mode) {
-  case 0:
-    src = gMenu_ListOrderMode0;
+  case LIST_SORT_EQUIPPED_THEN_ITEMS:
+    src = gMenu_ListOrderEquippedThenItems;
     break;
-  case 1:
-    src = gMenu_ListOrderMode1;
+  case LIST_SORT_EQUIPPED_THEN_EQUIPMENT:
+    src = gMenu_ListOrderEquippedThenEquipment;
     break;
-  case 2:
-    src = gMenu_ListOrderMode2;
+  case LIST_SORT_EQUIPMENT_FIRST:
+    src = gMenu_ListOrderEquipmentFirst;
     break;
   }
   *order = *src;
   n = 0;
-  if (*order != 0xff) {
+  if (*order != LIST_ORDER_END) {
     do {
       if (++n > 31)
         break;
       src++;
       order++;
       *order = *src;
-    } while (*order != 0xff);
+    } while (*order != LIST_ORDER_END);
   }
 }
 
@@ -923,7 +933,7 @@ s32 PagedList_HandleInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   result = -1;
   if (count == 0)
     goto done;
-  Link_DrawPageArrowsFar(0x06002500);
+  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   pages = __divsi3(count, pageSize);
   if (__modsi3(count, pageSize) != 0)
     pages++;
@@ -997,28 +1007,26 @@ void Palette_LightenHighlight(s32 paletteNumber) {
   u32 green;
   u32 blue;
 
-  Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette, DMA_COPY_HALFWORDS(16),
-          REG_DMA3);
-  Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette, DMA_COPY_WORDS(8),
-          REG_DMA3);
-  blue = palette[4] >> 10;
-  green = (palette[4] >> 5) & 31;
-  red = palette[4] & 31;
-  blue += 9;
-  if (blue > 31)
-    blue = 31;
-  green += 9;
-  if (green > 31)
-    green = 31;
-  red += 9;
-  if (red > 31)
-    red = 31;
-  palette[4] = RGB(red, green, blue);
+  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
+  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
+          DMA_COPY_WORDS(8), REG_DMA3);
+  blue = palette[WINDOW_BACKGROUND_COLOR] >> 10;
+  green = (palette[WINDOW_BACKGROUND_COLOR] >> 5) & 31;
+  red = palette[WINDOW_BACKGROUND_COLOR] & 31;
+  blue += HIGHLIGHT_LIGHTEN_STEPS;
+  if (blue > RGB_LEVEL_MAX)
+    blue = RGB_LEVEL_MAX;
+  green += HIGHLIGHT_LIGHTEN_STEPS;
+  if (green > RGB_LEVEL_MAX)
+    green = RGB_LEVEL_MAX;
+  red += HIGHLIGHT_LIGHTEN_STEPS;
+  if (red > RGB_LEVEL_MAX)
+    red = RGB_LEVEL_MAX;
+  palette[WINDOW_BACKGROUND_COLOR] = RGB(red, green, blue);
 }
 
 #define PAGE_LABEL_FIRST 49
-#define PAGE_CAP_LEFT 0xf128
-#define PAGE_CAP_RIGHT 0xf129
 
 /// Draws a paged list's page numbers on the top border of window, ending at
 /// tile rightEdge: one digit per page between the page arrows, selectedPage in
@@ -1038,18 +1046,18 @@ void PagedList_DrawPageNumbers(s32 window, s32 itemCount, s32 pageSize,
 
   x -= pageCount;
   if (pageCount > 1) {
-    Window_SetTilemapEntryFar(window, PAGE_CAP_LEFT, x - 1, -1, 0);
+    Window_SetTilemapEntryFar(window, PAGE_ARROW_LEFT, x - 1, -1, 0);
 
     for (page = 0; page < pageCount; page++) {
       if (page == selectedPage)
-        Window_SetTilemapEntryFar(window, tile, x, -1, 2);
+        Window_SetTilemapEntryFar(window, tile, x, -1, TILEMAP_ENTRY_HIGHLIGHT);
       else
-        Window_SetTilemapEntryFar(window, tile, x, -1, 3);
+        Window_SetTilemapEntryFar(window, tile, x, -1, TILEMAP_ENTRY_WINDOW);
       tile++;
       x++;
     }
 
-    Window_SetTilemapEntryFar(window, PAGE_CAP_RIGHT, x, -1, 0);
+    Window_SetTilemapEntryFar(window, PAGE_ARROW_RIGHT, x, -1, 0);
   }
 }
 
@@ -1064,15 +1072,15 @@ void Render_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
     width += x;
     x = 0;
   }
-  if (x + width > 29) {
-    width = 30 - x;
+  if (x + width > (DISPLAY_TILE_WIDTH - 1)) {
+    width = DISPLAY_TILE_WIDTH - x;
   }
   if (y < 0) {
     height += y;
     y = 0;
   }
   if (y + height > 29) {
-    height = 20 - y;
+    height = DISPLAY_TILE_HEIGHT - y;
   }
   if (width > 0 && height > 0) {
     do {
@@ -1096,7 +1104,8 @@ void Render_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
 void Palette_LoadIconsIntoHighlight(void) {
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
           DMA_COPY_HALFWORDS(16), REG_DMA3);
-  Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),
+  Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR),
+          (void *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, TEXT_BACKGROUND_COLOR),
           DMA_COPY_HALFWORDS(1), REG_DMA3);
 }
 
@@ -1108,7 +1117,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
   struct WindowSprite *icon;
   s32 i;
 
-  for (i = 0; i < 32; i++) {
+  for (i = 0; i < MENU_ENTRY_ICONS; i++) {
     icon = menu->entryIcons[i];
     if (icon != NULL)
       icon->motion = WINDOW_SPRITE_MOTION_HIDDEN;
@@ -1126,12 +1135,12 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, s32 window, s32 x, s32 y) {
 
 /// Writes the party's coins and the "Coins" label into window: the info
 /// window of the Item and Psynergy screens' party member choice.
-void Menu_DrawCoins(s32 work) {
-  Text_DrawNumberAtOffsetFar(gMainRoutineWork.coins, 7, work, 8, 0);
-  Text_DrawMessageAsTilesFar((s32)MsgCoinsLabel, (struct RenderInput *)work,
-                             0x40, 0);
-#if (LANGUAGE == LANGUAGE_JAPANESE)
-  Window_DrawDividerLineFar(work, 12, 0, 12, 2);
+void Menu_DrawCoins(s32 window) {
+  Text_DrawNumberAtOffsetFar(gMainRoutineWork.coins, 7, window, 8, 0);
+  Text_DrawMessageAsTilesFar(MsgCoinsLabel, window, 64, 0);
+  // Only the Japanese editions draw a vertical divider at tile column 12.
+#if LANGUAGE == LANGUAGE_JAPANESE
+  Window_DrawDividerLineFar(window, 12, 0, 12, 2);
 #endif
 }
 
@@ -1195,13 +1204,16 @@ void Menu_StopWatchingStart(void) {
 }
 
 /// Draws the next text in TEXT_COLOR_NORMAL.
-void UiPalette_SetColor15(void) { Text_SetColorFar(TEXT_COLOR_NORMAL); }
+UNUSED void UiPalette_SetNormalColor(void) {
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
+}
 
 /// Draws the next text in TEXT_COLOR_RED.
-void UiPalette_SetColor2(void) { Text_SetColorFar(TEXT_COLOR_RED); }
+UNUSED void UiPalette_SetRedColor(void) { Text_SetColorFar(TEXT_COLOR_RED); }
 
 /// Draws the next text in TEXT_COLOR_YELLOW.
-void UiPalette_SetColor4(void) { Text_SetColorFar(TEXT_COLOR_YELLOW); }
+UNUSED void UiPalette_SetYellowColor(void) {
+  Text_SetColorFar(TEXT_COLOR_YELLOW);
+}
 
-#undef DRAW_LEVEL_LABEL
 #undef STATUS_PANEL_LEARN_NOTE_Y

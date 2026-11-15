@@ -26,12 +26,12 @@ void AreaNameWindow_Show(void) {
   resource = Area_GetNameIndexFar(state->next, state->entrance) +
              (s32)&MsgDebugAreaName;
   Text_GetMessageSize(resource, &x, &y, &width, &height);
-  x = (30 - width) >> 1;
+  x = (DISPLAY_TILE_WIDTH - width) >> 1;
   y = (10 - height) >> 1;
   window = Window_Create(x, y, width, height, WINDOW_FLAG_INSTANT);
   work->noticeWindow = window;
   Text_DrawMessage(resource, (s32)window, 0, 0);
-  work->noticeFrames = 90;
+  work->noticeFrames = AREA_NAME_WINDOW_FRAMES;
   Task_Add(AreaNameWindow_Update, TASK_PASS_VBLANK);
 }
 

@@ -141,7 +141,8 @@ void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
   u16 *cursor = &canvas->tilemap[y][x];
   u32 row;
 
-  if (width <= 1 || height <= 1 || width > 30 || height > 30)
+  if (width <= 1 || height <= 1 || width > DISPLAY_TILE_WIDTH ||
+      height > DISPLAY_TILE_WIDTH)
     return;
   Window_ClearTextTilesInRect(x, y, width, height);
   if (canvas->mindRead != 0)
@@ -154,14 +155,14 @@ void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
     *cursor++ = WINDOW_TILE_BORDER_ROUND_CORNER | TILE_HFLIP;
   else
     *cursor++ = WINDOW_TILE_BORDER_TOP_RIGHT;
-  cursor += 32 - width;
+  cursor += BG_SCREEN_WIDTH - width;
   for (row = 1; row < height - 1; row++) {
     *cursor++ = WINDOW_TILE_BORDER_LEFT;
     if (width != 2)
       cursor = Memory_FillHalfwordsDma(
           cursor, WINDOW_TILE_PAIR(WINDOW_TILE_WINDOW_FILL), width - 2);
     *cursor++ = WINDOW_TILE_BORDER_RIGHT;
-    cursor += 32 - width;
+    cursor += BG_SCREEN_WIDTH - width;
   }
   if (canvas->mindRead != 0)
     *cursor++ = WINDOW_TILE_BORDER_ROUND_CORNER | TILE_VFLIP;
@@ -216,9 +217,10 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
   u32 row;
   u32 column;
 
-  if (width <= 1 || height <= 1 || width > 30 || height > 30)
+  if (width <= 1 || height <= 1 || width > DISPLAY_TILE_WIDTH ||
+      height > DISPLAY_TILE_WIDTH)
     return;
-  cursor += 32;
+  cursor += BG_SCREEN_WIDTH;
   if (fullWidth == 0) {
     for (row = 1; row < height - 1; row++) {
       cursor++;
@@ -227,14 +229,14 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
             (TEXT_CANVAS_FIRST_TILE - 1 + row + (column - 1) * (height - 2)) &
             0xfff);
       cursor++;
-      cursor += 32 - width;
+      cursor += BG_SCREEN_WIDTH - width;
     }
   } else {
     for (row = 1; row < height - 1; row++) {
       for (column = 0; column < width; column++)
         *cursor++ = WINDOW_TILE(
             (TEXT_CANVAS_FIRST_TILE - 1 + row + column * (height - 2)) & 0xfff);
-      cursor += 32 - width;
+      cursor += BG_SCREEN_WIDTH - width;
     }
   }
   canvas->dirty = 1;
@@ -270,10 +272,10 @@ void Text_ResetStyle(void) {
   struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
   state->colour = 15;
-  state->lineSpacing = 10;
+  state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->glyphSpacing = 9;
-  state->outline = 0;
-  state->unknownAfterLineSpacing = 1;
+  state->outline = TEXT_STYLE_PLAIN;
+  state->unusedAfterLineSpacing = 1;
 }
 
 void WindowSystem_Update(void);
@@ -286,8 +288,8 @@ void WindowSystem_StartFieldUpdate(void) {
 
   state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
   state->glyphSpacing = 9;
-  state->lineSpacing = 10;
-  state->outline = 0;
+  state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
+  state->outline = TEXT_STYLE_PLAIN;
   state->colour = 15;
   state->textBufferEnd = 0;
   Task_Add(WindowSystem_Update, TASK_PASS_VBLANK);
@@ -305,8 +307,8 @@ void WindowSystem_StartBattleUpdate(s32 initialize) {
   if (initialize != 0)
     state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
   state->glyphSpacing = 9;
-  state->lineSpacing = 10;
-  state->outline = 0;
+  state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
+  state->outline = TEXT_STYLE_PLAIN;
   state->colour = 15;
   state->textBufferEnd = 0;
   if (initialize != 0)
@@ -353,9 +355,9 @@ void BattleMessage_Open(s32 message) {
   // cursor.
   result = 0;
   // The menu state reads 2 while the message decodes.
-  work->battleMode = 2;
+  work->battleMode = WINDOW_BATTLE_MESSAGE;
   entry = Message_Decode(message, 1);
-  work->battleMode = 1;
+  work->battleMode = WINDOW_BATTLE;
   if (work->textBuffer[entry] != 0) {
     previous = slot->window;
     if (previous == NULL) {
@@ -462,13 +464,13 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   if (width == 0 && height == 0)
     return NULL;
   if (!(packed & 1))
-    flags |= 2;
+    flags |= WINDOW_FLAG_INSTANT;
   if (packed & 8)
-    flags |= 8;
+    flags |= WINDOW_FLAG_TEXT_CANVAS;
   if (packed & 16)
-    flags |= 128;
+    flags |= WINDOW_FLAG_ANCHOR_BOTTOM;
   if (packed & 32)
-    flags |= 256;
+    flags |= WINDOW_FLAG_FIXED_X;
   window = Window_Create(x, y, width, height, flags);
   if (window == NULL)
     return NULL;
@@ -508,9 +510,9 @@ void FieldMessage_Show(s32 no, s32 flags) {
   s32 rows;
 
   y = x = 0;
-  release = flags & 1;
+  release = flags & FIELD_MESSAGE_ZOOM;
 
-  if (flags & 2) {
+  if (flags & FIELD_MESSAGE_WAITING_FOR_SOUND) {
     *(u8 *)(base + TEXT_WORK_TAIL + 5) = 1;
   }
 
@@ -521,9 +523,9 @@ void FieldMessage_Show(s32 no, s32 flags) {
   x = margin >> 1;
   y = (12 - rows) >> 1;
 
-  if (flags & 8) {
+  if (flags & FIELD_MESSAGE_LOWER) {
     y = y + 4;
-  } else if (flags & 0x40) {
+  } else if (flags & FIELD_MESSAGE_LOWEST) {
     y = y + 12;
   } else {
     s32 dy;
@@ -544,11 +546,11 @@ void FieldMessage_Show(s32 no, s32 flags) {
       wait(1);
     }
 
-    if (flags & 0x20) {
+    if (flags & FIELD_MESSAGE_HOLD_UPLOAD) {
       Ram_HeapSlots->windowWork[6] = 1;
     }
 
-    if (!(flags & 4)) {
+    if (!(flags & FIELD_MESSAGE_KEEP_OPEN)) {
       Window_Close(work, release);
       while (Window_IsClosed(work) == 0) {
         wait(1);

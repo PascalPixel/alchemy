@@ -1562,8 +1562,8 @@ gElementGlow_StarPictures:
 	.global gElementGlow_StarSizes
 gElementGlow_StarSizes:
 	.byte 1, 2, 3, 4, 4, 4, 4, 0
-	.global Data_08129830
-Data_08129830:
+	.global gElementGlow_RingPictures
+gElementGlow_RingPictures:
 	.4byte 0x04e, 0x44e, 0x84e, 0xc4e
 @ Two lists of pairs, each terminated by -1.
 	.2byte 0, 0
@@ -2095,7 +2095,7 @@ gDebug_ParameterSets:
 	.global gBattleObject_EmptyScript
 gBattleObject_EmptyScript:
 	.4byte 17
-@ Resource ID | slot << 9, terminated by 0xffff.
+@ A weapon's item id, its kind (enum BattleWeaponKind) above bit 9; 0xffff ends it.
 	.global gBattleUnit_WeaponKinds
 gBattleUnit_WeaponKinds:
 	.2byte 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008
@@ -2151,8 +2151,8 @@ gBattleTransition_CurtainTiles:
 	.include "games/tla/src/battle/highlight_ramp.s"
 	.4byte 1, 38
 @ 660 enemy formations.
-	.global gBattleFormation_Records
-gBattleFormation_Records:
+	.global gFormations
+gFormations:
 	.2byte 0, 0, 0, 0, 0; .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	.2byte 4, 0, 0, 0, 0; .byte 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
 	.2byte 5, 0, 0, 0, 0; .byte 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
@@ -2813,8 +2813,10 @@ gBattleFormation_Records:
 	.2byte 357, 0, 0, 0, 0; .byte 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
 	.2byte 358, 0, 0, 0, 0; .byte 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
 	.2byte 359, 0, 0, 0, 0; .byte 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0
-	.global Data_08130c5c
-Data_08130c5c:
+@ The 87 enemies whose defeated flags a monster battle clears before it picks a
+@ formation (BattleFormation_SelectLevelMatchedCandidate), and a 0 after.
+	.global gBattleFormation_LevelMatchedEnemies
+gBattleFormation_LevelMatchedEnemies:
 	.2byte 0x009, 0x00a, 0x00b, 0x00c, 0x00d, 0x00e, 0x00f, 0x010
 	.2byte 0x011, 0x012, 0x013, 0x014, 0x015, 0x016, 0x017, 0x018
 	.2byte 0x019, 0x01a, 0x01b, 0x01c, 0x01d, 0x01e, 0x01f, 0x020

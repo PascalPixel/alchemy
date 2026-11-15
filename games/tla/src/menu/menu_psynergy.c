@@ -7,6 +7,13 @@
 #include "flags.h"
 #include "sounds.h"
 
+#define PSYNERGY_PROMPT_TILES_SIZE 8192
+
+/// A Psynergy shortcut, and the field's Psynergy request packed the same way:
+/// its party member above bit 10, the Psynergy's id below.
+#define PSYNERGY_SHORTCUT_MEMBER_SHIFT 10
+#define PSYNERGY_SHORTCUT_ID_MASK 0x3ff
+
 s32 PsynergyMenu_IsActionRestricted(s32 no);
 
 s32 PsynergyMenu_RunSteps(s32 *ownerOut, s32 *targetOut, s32 *itemOut);
@@ -45,8 +52,8 @@ s32 PsynergyMenu_Run(void) {
   screen->partyCount = Party_ListMembersFar(screen->memberIds);
   ItemMenu_Initialize(0, 3, 0, 7);
   screen->questionWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
-  Palette_LightenHighlight(14);
-  Link_DrawPageArrowsFar((void *)0x06002500);
+  Palette_LightenHighlight(HIGHLIGHT_PALETTE);
+  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
 
   Menu_StartWatchingStart();
   result = PsynergyMenu_RunSteps(&owner, &target, &item);
@@ -55,8 +62,8 @@ s32 PsynergyMenu_Run(void) {
     struct FieldWork *event = Ram_HeapSlots->fieldWork;
     u16 request;
 
-    Ability_Get(0x3fff & screen->selectedItems[0]);
-    request = item | (owner << 10);
+    Ability_Get(PSYNERGY_ABILITY_MASK & screen->selectedItems[0]);
+    request = item | (owner << PSYNERGY_SHORTCUT_MEMBER_SHIFT);
     event->psynergy = request;
   }
 
@@ -69,7 +76,8 @@ s32 PsynergyMenu_Run(void) {
 #if TLA_PATCH_2
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
-  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), savedTiles, 0x2000);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), savedTiles,
+                  PSYNERGY_PROMPT_TILES_SIZE);
   Ram_HeapSlots->windowWork[6] = 0;
   Heap_Release(savedTiles);
   wait(1);
@@ -83,6 +91,10 @@ s32 PsynergyMenu_Run(void) {
 }
 
 s32 Scene_HasPsynergyTriggerFar(s32 type);
+
+/// PsynergyMenuWork.flags: the Psynergy list shows the shortcut help (Select
+/// held).
+#define PSYNERGY_MENU_SHORTCUT_HELP 2
 
 #define MENU_TARGET_WHOLE_PARTY 9 ///< memberIds[1] for the whole party
 
@@ -170,17 +182,9 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
     case PSYNERGY_STEP_LIST:
       wait(1);
       Unit_Get(menu->memberIds[0]);
-      step = PSYNERGY_STEP_MEMBER;
-      if (menu->psynergyCount != 0) {
-        {
-          struct PsynergyMenuWork *savedWork = menu;
-
-          /* FAKEMATCH(dead): menu cleared and restored under a false test. */
-          if (done)
-            menu = NULL;
-          if (done)
-            menu = savedWork;
-        }
+      if (menu->psynergyCount == 0) {
+        step = PSYNERGY_STEP_MEMBER;
+      } else {
         switch (menu->mode) {
         case PSYNERGY_MODE_USE:
           ItemMenu_DrawMessage(0, (s32)MsgPsynergyChooseAbility);
@@ -193,7 +197,8 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
           break;
         }
         ItemMenu_PositionCategory();
-        StatusPanel_Draw(menu->statusWindow, menu->memberIds[0], 0, 0);
+        StatusPanel_Draw(menu->statusWindow, menu->memberIds[0], 0,
+                         STATUS_PANEL_EXPERIENCE);
         chosenAction = PsynergyMenu_RunList(0);
         step = PSYNERGY_STEP_MEMBER;
         if (chosenAction != -1) {
@@ -260,30 +265,14 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
         chosenTarget = MENU_TARGET_WHOLE_PARTY;
       }
       if (useResult != -1) {
-        u32 entry = menu->sideAction[0];
-        u32 mask;
-
-        mask = PSYNERGY_ABILITY_MASK;
-        mask &= entry;
-        action = Ability_Get(mask);
+        action = Ability_Get(menu->sideAction[0] & PSYNERGY_ABILITY_MASK);
         Unit_AddPpFar(menu->memberIds[0], -action->ppCost);
       }
       Unit_CalculateFar(menu->memberIds[0]);
       if (useResult != -1) {
-        void *window;
-        s32 target = menu->memberIds[1];
-
-        /* FAKEMATCH(temporary): the target read before the window. */
-        window = menu->statusWindow;
-        StatusPanel_Draw(window, target, 0, 0);
-        {
-          u32 entry = menu->sideAction[0];
-          u32 mask;
-
-          mask = PSYNERGY_ABILITY_MASK;
-          mask &= entry;
-          Ability_PlayUseAnimation(mask);
-        }
+        StatusPanel_Draw(menu->statusWindow, menu->memberIds[1], 0,
+                         STATUS_PANEL_EXPERIENCE);
+        Ability_PlayUseAnimation(menu->sideAction[0] & PSYNERGY_ABILITY_MASK);
         WindowSprite_ClearListFar(menu->infoWindow);
         ItemMenu_ShowMessage(menu->useResult + (s32)MsgItemUseResult, 0, -1);
       } else {
@@ -318,24 +307,19 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
   return useResult;
 }
 
-/// How the selected psynergy is used: 0 acts at once, 1 picks a target,
-/// 2 cannot be used here.
 /// Says how the selected Psynergy is used from the menu: 0 on the field once
 /// the menu closes (the scene has an event for its field Psynergy,
 /// fieldPsynergy, and what the leader faces), 2 on the whole party (range
 /// 0xff), 1 on one chosen party member when its target mode is 2, and 0
 /// otherwise.
 s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
-  struct PsynergyMenuWork *menu;
   struct BattleAct *psynergy;
   s32 diff;
   s32 ret;
-  /* FAKEMATCH(pin): the action fixed to r3. */
-  register u32 action asm("r3");
 
-  menu = Ram_HeapSlots->menuWork;
-  action = menu->sideAction[0];
-  psynergy = Ability_Get(0x3fff & action);
+  psynergy = Ability_Get(
+      PSYNERGY_ABILITY_MASK &
+      ((struct PsynergyMenuWork *)Ram_HeapSlots->menuWork)->sideAction[0]);
   if (Scene_HasPsynergyTriggerFar(psynergy->fieldEffect) != 0)
     return 0;
   ret = 2;
@@ -380,7 +364,8 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
 
   unit = Unit_Get(menu->memberTable[memberIndex]);
   actions = menu->psynergies;
-  menu->psynergyCount = PsynergyMenu_CollectActions(unit, actions, 2);
+  menu->psynergyCount =
+      PsynergyMenu_CollectActions(unit, actions, PSYNERGY_LIST_FIELD);
   result = PsynergyMenu_SelectMember(menu->memberTable, actions);
   icon = menu->sideIcon[partySlot];
   Icon_PrepareActor(icon);
@@ -506,7 +491,8 @@ void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId) {
   menu = Ram_HeapSlots->menuWork;
   owner = Unit_Get(ownerId);
   psynergies = menu->psynergies;
-  menu->psynergyCount = PsynergyMenu_CollectActions(owner, psynergies, 2);
+  menu->psynergyCount =
+      PsynergyMenu_CollectActions(owner, psynergies, PSYNERGY_LIST_FIELD);
   WindowSprite_RedrawSavedRectFar(menu->psynergyWindow);
   PsynergyMenu_RefreshMemberEntries(0x6c, 0x20, 8);
   PsynergyMenu_DrawPsynergyIcons(psynergies);
@@ -609,7 +595,7 @@ s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
 /// Sets the L or R Psynergy shortcut (enum PsynergyShortcut):
 /// memberId << 10 | the Psynergy's id. Returns 1.
 s32 PsynergyMenu_SetShortcut(s32 kind, s32 id, s32 second) {
-  u32 packed = (kind << 10) | (id & 0x3fff);
+  u32 packed = (kind << PSYNERGY_SHORTCUT_MEMBER_SHIFT) | (id & 0x3fff);
 
   if (second == 0)
     gMainRoutineWork.firstShortcut = packed;
@@ -678,14 +664,16 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
     wide = 0;
 #endif
   if (gMainRoutineWork.firstShortcut != 0) {
-    MessageArgument_PushFar(gMainRoutineWork.firstShortcut & 0x3ff,
+    MessageArgument_PushFar(gMainRoutineWork.firstShortcut &
+                                PSYNERGY_SHORTCUT_ID_MASK,
                             MESSAGE_ARGUMENT_ABILITY);
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 4, window, 0, 0);
 #if TLA_PATCH_2
     if (!wide)
 #endif
-      Text_DrawStringAtOffsetFar(
-          (s32)Unit_Get(gMainRoutineWork.firstShortcut >> 10), window, 80, 0);
+      Text_DrawStringAtOffsetFar((s32)Unit_Get(gMainRoutineWork.firstShortcut >>
+                                               PSYNERGY_SHORTCUT_MEMBER_SHIFT),
+                                 window, 80, 0);
   } else {
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 2, window, 0, 0);
   }
@@ -699,14 +687,17 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
     wide = 0;
 #endif
   if (gMainRoutineWork.secondShortcut != 0) {
-    MessageArgument_PushFar(gMainRoutineWork.secondShortcut & 0x3ff,
+    MessageArgument_PushFar(gMainRoutineWork.secondShortcut &
+                                PSYNERGY_SHORTCUT_ID_MASK,
                             MESSAGE_ARGUMENT_ABILITY);
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 5, window, 0, 8);
 #if TLA_PATCH_2
     if (!wide)
 #endif
       Text_DrawStringAtOffsetFar(
-          (s32)Unit_Get(gMainRoutineWork.secondShortcut >> 10), window, 80, 8);
+          (s32)Unit_Get(gMainRoutineWork.secondShortcut >>
+                        PSYNERGY_SHORTCUT_MEMBER_SHIFT),
+          window, 80, 8);
   } else {
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 3, window, 0, 8);
   }
@@ -736,8 +727,9 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
       Text_DrawStringInWindowFar(gMenu_ShortcutLColonString, window, 0, 0);
       Text_DrawMessageAsTilesFar((s32)name, window, 16, 0);
     }
-    Text_DrawStringAtOffsetFar(
-        (s32)Unit_Get(gMainRoutineWork.firstShortcut >> 10), window, 80, 0);
+    Text_DrawStringAtOffsetFar((s32)Unit_Get(gMainRoutineWork.firstShortcut >>
+                                             PSYNERGY_SHORTCUT_MEMBER_SHIFT),
+                               window, 80, 0);
   } else {
     Text_DrawStringInWindowFar(gMenu_ShortcutLColonString, window, 0, 0);
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 2, window, 24, 0);
@@ -753,8 +745,9 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
       Text_DrawStringInWindowFar(gMenu_ShortcutRColonString, window, 0, 8);
       Text_DrawMessageAsTilesFar((s32)name, window, 16, 8);
     }
-    Text_DrawStringAtOffsetFar(
-        (s32)Unit_Get(gMainRoutineWork.secondShortcut >> 10), window, 80, 8);
+    Text_DrawStringAtOffsetFar((s32)Unit_Get(gMainRoutineWork.secondShortcut >>
+                                             PSYNERGY_SHORTCUT_MEMBER_SHIFT),
+                               window, 80, 8);
   } else {
     Text_DrawStringInWindowFar(gMenu_ShortcutRColonString, window, 0, 8);
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetR + 3, window, 24, 8);
@@ -781,22 +774,21 @@ struct PsynergyEntryMenu {
 /// Loads each listed Psynergy's icon into its icon sprite (32 entries) and
 /// hides the icons of empty entries.
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
-  s32 remaining;
-  struct PsynergyEntryIcon **icons;
+  s32 i;
+  struct WindowSprite **icons;
   u16 *p;
   s32 psynergyId;
 
-  icons = ((struct PsynergyEntryMenu *)Ram_HeapSlots->menuWork)->entryIcons;
+  icons = ((struct PsynergyMenuWork *)Ram_HeapSlots->menuWork)->entryIcons;
   p = psynergies;
-  remaining = 31;
-  do {
+  for (i = 0; i < PSYNERGY_SLOTS; i++) {
     psynergyId = *p++;
     if (psynergyId != 0) {
-      Resource_LoadByModeIntoSlotFar(4, psynergyId, (*icons)->slot, 0);
+      Resource_LoadByModeIntoSlotFar(ICON_KIND_ABILITY, psynergyId,
+                                     (u8)(*icons)->index, 0);
     }
     icons++;
-    remaining--;
-  } while (remaining >= 0);
+  }
   Menu_HideEmptyEntryIcons(psynergies);
 }
 
@@ -818,7 +810,7 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
   if (mode == 1) {
     for (i = 0; i < 32; i++) {
       if (unit->psynergy[i].encodedAction != 0) {
-        if (Ability_Get(unit->psynergy[i].encodedAction & 0x3fff)
+        if (Ability_Get(unit->psynergy[i].encodedAction & PSYNERGY_ABILITY_MASK)
                 ->fieldEffect != 0) {
           actions[count] = unit->psynergy[i].encodedAction;
           count++;
@@ -828,7 +820,8 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
   } else {
     for (i = 0; i < 32; i++) {
       if (unit->psynergy[i].encodedAction != 0) {
-        ability = Ability_Get(unit->psynergy[i].encodedAction & 0x3fff);
+        ability = Ability_Get(unit->psynergy[i].encodedAction &
+                              PSYNERGY_ABILITY_MASK);
         if (ability->fieldEffect != 0 || (ability->flags & 0x40) != 0) {
           actions[count] = unit->psynergy[i].encodedAction;
           count++;
@@ -838,7 +831,8 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
     if (mode != 2) {
       for (i = 0; i < 32; i++) {
         if (unit->psynergy[i].encodedAction != 0) {
-          ability = Ability_Get(unit->psynergy[i].encodedAction & 0x3fff);
+          ability = Ability_Get(unit->psynergy[i].encodedAction &
+                                PSYNERGY_ABILITY_MASK);
           if (ability->fieldEffect == 0 && (ability->flags & 0x40) == 0) {
             actions[count] = unit->psynergy[i].encodedAction;
             count++;
@@ -870,10 +864,10 @@ s32 PsynergyMenu_BuildPagedList(struct MenuResult *result, s32 index) {
   if ((selectedIndex + 1) > entryCount) {
     selectedIndex = entryCount - 1;
   }
-  page = selectedIndex / 5;
-  row = selectedIndex % 5;
-  pageCount = entryCount / 5;
-  if (entryCount % 5 != 0) {
+  page = selectedIndex / LIST_PAGE_SIZE;
+  row = selectedIndex % LIST_PAGE_SIZE;
+  pageCount = entryCount / LIST_PAGE_SIZE;
+  if (entryCount % LIST_PAGE_SIZE != 0) {
     pageCount++;
   }
   result->ownerState = ownerState;
@@ -898,7 +892,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
   s32 row;
 
   menu = Ram_HeapSlots->menuWork;
-  combined = state->page * 5;
+  combined = state->page * LIST_PAGE_SIZE;
   combined += state->row;
   state->selectedIndex = combined;
 
@@ -936,10 +930,10 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
   do {
     if (row == state->row) {
       Render_SetTilemapFlagRect(menu->psynergyWindow, 1, row * 2 + 1, 14, 1,
-                                14);
+                                HIGHLIGHT_PALETTE);
     } else {
       Render_SetTilemapFlagRect(menu->psynergyWindow, 1, row * 2 + 1, 14, 1,
-                                15);
+                                WINDOW_PALETTE);
     }
     row++;
   } while (row <= 4);
@@ -982,21 +976,22 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
   WindowSprite_RedrawSavedRectFar(window);
   Window_DrawDividerLineFar(window, 0, 11, 16, 11);
 
-  if (2 & *(u16 *)((u8 *)menu + 0x21c)) {
+  if (PSYNERGY_MENU_SHORTCUT_HELP & *(u16 *)((u8 *)menu + 0x21c)) {
     Text_DrawMessageAsTilesFar((s32)MsgShortcutSetL - 1, window, 0, 88);
   } else {
     Text_DrawMessageAsTilesFar((s32)MsgArrangeItemsHelp + 2, window, HELP_X,
                                88);
   }
 
-  firstEntry = state->page * 5;
+  firstEntry = state->page * LIST_PAGE_SIZE;
   visibleCount = (u8)(state->entryCount - firstEntry);
-  if (visibleCount > 5) {
-    visibleCount = 5;
+  if (visibleCount > LIST_PAGE_SIZE) {
+    visibleCount = LIST_PAGE_SIZE;
   }
 
-  Menu_SetPageIcons(5, firstEntry, window, PAGE_X, 0x22);
-  PagedList_DrawPageNumbers(window, state->entryCount, 5, state->page, 15);
+  Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, PAGE_X, 0x22);
+  PagedList_DrawPageNumbers(window, state->entryCount, LIST_PAGE_SIZE,
+                            state->page, 15);
   Text_DrawMessageAsTilesFar((s32)MsgPsynergyChooseTarget + 2, window,
                              HEADING_X, 0);
 
@@ -1005,20 +1000,23 @@ s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
     cursor = firstEntry * 2 + 0x1c4;
     do {
       owner = Unit_Get(menu->memberIds[0]);
-      ability = Ability_Get(0x3fff & *(const u16 *)(cursor + (s32)menu));
+      ability = Ability_Get(PSYNERGY_ABILITY_MASK &
+                            *(const u16 *)(cursor + (s32)menu));
 
       if (ability->ppCost > owner->pp) {
         Text_SetColorFar(TEXT_COLOR_RED);
       } else if (PsynergyMenu_IsActionRestricted(
-                     0x3fff & *(const u16 *)(cursor + (s32)menu)) != 0) {
+                     PSYNERGY_ABILITY_MASK &
+                     *(const u16 *)(cursor + (s32)menu)) != 0) {
         Text_SetColorFar(TEXT_COLOR_YELLOW);
       } else {
         Text_SetColorFar(TEXT_COLOR_NORMAL);
       }
 
-      Text_DrawMessageAsTilesFar((0x3fff & *(const u16 *)(cursor + (s32)menu)) +
-                                     (s32)MsgAbilityName,
-                                 window, NAME_X, row * 16 + 8);
+      Text_DrawMessageAsTilesFar(
+          (PSYNERGY_ABILITY_MASK & *(const u16 *)(cursor + (s32)menu)) +
+              (s32)MsgAbilityName,
+          window, NAME_X, row * 16 + 8);
       Text_DrawNumberAtOffsetFar(ability->ppCost, 2, window, 104, row * 16 + 8);
       Text_SetColorFar(TEXT_COLOR_NORMAL);
 
@@ -1077,12 +1075,12 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
 
   while (done == 0 && !GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     owner = Unit_Get(menu->memberIds[paneIndex]);
-    if (menu->mode != 0)
-      menu->psynergyCount =
-          PsynergyMenu_CollectActions(owner, menu->psynergies, 1);
+    if (menu->mode != PSYNERGY_MODE_USE)
+      menu->psynergyCount = PsynergyMenu_CollectActions(
+          owner, menu->psynergies, PSYNERGY_LIST_SHORTCUTS);
     else
-      menu->psynergyCount =
-          PsynergyMenu_CollectActions(owner, menu->psynergies, 2);
+      menu->psynergyCount = PsynergyMenu_CollectActions(owner, menu->psynergies,
+                                                        PSYNERGY_LIST_FIELD);
     PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
     PsynergyMenu_BuildPagedList(&state, paneIndex);
     changed = 1;
@@ -1110,18 +1108,18 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
           icon = menu->entryIcons[state.selectedIndex];
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
           icon->animStep = 0;
-          icon->sentinel = 250;
+          icon->sentinel = OAM_DEPTH_FRONT - 5;
         }
         for (i = 0; i < menu->memberCount; i++)
-          Sprite_StartAnimationFar(menu->tabSprites[i], 1);
+          Sprite_StartAnimationFar(menu->tabSprites[i], ANIM_STAND);
       }
 
       wait(1);
       previous = state.selectedIndex;
 
       if ((gInput.held & KEY_SELECT) == 0)
-        moved = PagedList_HandleInput(0, state.entryCount, 5, &state.row,
-                                      &state.page);
+        moved = PagedList_HandleInput(0, state.entryCount, LIST_PAGE_SIZE,
+                                      &state.row, &state.page);
       else
         moved = -1;
       if (moved == 1) {
@@ -1133,7 +1131,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       if (moved == -1)
         changed = 0;
 
-      if (menu->mode == 0) {
+      if (menu->mode == PSYNERGY_MODE_USE) {
         if ((gInput.pressed & KEY_SELECT) && shortcutHelp == 0) {
           ability = Ability_Get(menu->psynergies[state.selectedIndex] &
                                 PSYNERGY_ABILITY_MASK);
@@ -1142,14 +1140,14 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
           } else {
             Sound_PlayFar(SE_NOTE_MID);
             shortcutHelp = 1;
-            menu->flags |= 2;
+            menu->flags |= PSYNERGY_MENU_SHORTCUT_HELP;
             Window_ClearInteriorTilesFar(window, 0, 88, 120, 96);
             Text_DrawMessageAsTilesFar(MsgShortcutHelp, window, 0, 88);
           }
         }
         if ((gInput.held & KEY_SELECT) == 0 && shortcutHelp == 1) {
           shortcutHelp = 0;
-          menu->flags &= ~2;
+          menu->flags &= ~PSYNERGY_MENU_SHORTCUT_HELP;
           Window_ClearInteriorTilesFar(window, 0, 88, 120, 96);
           Text_DrawMessageAsTilesFar(MsgChangeCharacterHelp, window,
                                      CHANGE_HELP_X, 88);
@@ -1157,7 +1155,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
       }
 
       if (gInput.pressed & KEY_A) {
-        if (menu->mode != 0) {
+        if (menu->mode != PSYNERGY_MODE_USE) {
           Sound_PlayFar(SE_PSYNERGY_START);
           result = menu->psynergies[state.selectedIndex];
           done = 1;
@@ -1193,7 +1191,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
           (gInput.held & KEY_SELECT) == 0) {
         member = menu->tabIndex[paneIndex];
         ownerCount = menu->memberCount;
-        listMode = menu->mode != 0 ? 1 : 2;
+        listMode = menu->mode != PSYNERGY_MODE_USE ? PSYNERGY_LIST_SHORTCUTS
+                                                   : PSYNERGY_LIST_FIELD;
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         menu->selectedIndexByMember[menu->memberIds[paneIndex]] =
             state.selectedIndex;
@@ -1214,7 +1213,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         menu->pageArrows[0]->motion = ICON_HIDDEN;
         menu->pageArrows[1]->motion = ICON_HIDDEN;
         wait(1);
-        StatusPanel_Draw(menu->statusWindow, menu->memberTable[member], 0, 0);
+        StatusPanel_Draw(menu->statusWindow, menu->memberTable[member], 0,
+                         STATUS_PANEL_EXPERIENCE);
         PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberTable[member]);
         break;
       }
@@ -1229,7 +1229,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
                        menu->psynergies[state.selectedIndex], 0) != 0) {
           Sound_PlayFar(SE_PSYNERGY_START);
           result = menu->psynergies[state.selectedIndex];
-          menu->mode = 1;
+          menu->mode = PSYNERGY_MODE_SET_L;
           done = 1;
           break;
         }
@@ -1245,7 +1245,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
                        menu->psynergies[state.selectedIndex], 1) != 0) {
           Sound_PlayFar(SE_PSYNERGY_START);
           result = menu->psynergies[state.selectedIndex];
-          menu->mode = 2;
+          menu->mode = PSYNERGY_MODE_SET_R;
           done = 1;
           break;
         }
@@ -1253,7 +1253,7 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
     }
   }
 
-  menu->flags &= ~2;
+  menu->flags &= ~PSYNERGY_MENU_SHORTCUT_HELP;
   Icon_PrepareActor(menu->entryGridCursor);
   menu->sideRow[paneIndex] = state.selectedIndex;
   menu->selectedIndexByMember[menu->memberIds[paneIndex]] = state.selectedIndex;
@@ -1267,16 +1267,14 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
 #undef CURSOR_X
 #undef CHANGE_HELP_X
 
-s32 PsynergyMenu_IsActionRestricted(s32 no) {
-  u8 *action = Ability_Get((u32)(no << 18) >> 18);
-  u32 flags;
+s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
+  // Mask the unsigned entry without overflowing a signed left shift.
+  struct AbilityDefinition *action =
+      Ability_Get(((u32)actionEntry << 18) >> 18);
 
-  if (action[6] == 0) {
-    flags = action[1] & 0xc0;
-    no = 1;
-    if (flags != 0xc0)
-      return no;
-  }
-  no = 0;
-  return no;
+  if (action->fieldPsynergy != 0 ||
+      (action->flags & (ABILITY_USABLE_IN_FIELD | ABILITY_USABLE_IN_BATTLE)) ==
+          (ABILITY_USABLE_IN_FIELD | ABILITY_USABLE_IN_BATTLE))
+    return 0;
+  return 1;
 }

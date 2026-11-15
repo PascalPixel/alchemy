@@ -10,6 +10,7 @@
 #include "types.h"
 #include "sprite_ids.h"
 #include "ability_ids.h"
+#include "djinn_ids.h"
 #include "game/owner_state.h"
 #include "system/input.h"
 #include "system/main_routine_work.h"
@@ -21,6 +22,7 @@
 #include "system/serial.h"
 #include "text/msg_ids.h"
 #include "battle/battle_side.h"
+#include "battle/battle_effect_params.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "battle/battle.h"
@@ -92,6 +94,22 @@
 #define ENEMY_LETTER_FIRST_TOO 0x8000
 #define ENEMY_LETTER_MASK 0x7fff
 
+/// The length of a unit's name, its terminator excluded.
+#define UNIT_NAME_LENGTH 14
+
+/// In a link battle each console sends LINK_PARTY_SIZE places, at most three
+/// party members (LinkBattle_SendParty), and the opponent's take the first
+/// three enemy ids from FIRST_ENEMY_UNIT.
+#define LINK_PARTY_SIZE 3
+
+/// gLinkStatus: both consoles are connected.
+#define LINK_BOTH_CONNECTED 3
+
+/// The frames a link battle tolerates without a connection before it gives
+/// up: a count above it pauses the battle (BattleWork.linkPaused) or fails
+/// the sync or transfer under way (battle_link.c, battle_turn.c).
+#define LINK_MAX_MISSED_FRAMES 24
+
 /// BattleAI_ChooseTarget's results when it picks no one: the side it
 /// may target lists no one, or no one there is worth the ability.
 #define TARGET_PICK_SIDE_EMPTY -2
@@ -107,6 +125,19 @@
 /// BattleUnit_RefreshPlacement fills the list with it.
 #define BATTLE_OBJECT_NONE 0xff
 
+// BattleWork.defeatState: whether the last enemy fell alone, or with others
+// before it, or a party member's action ended the battle with a single
+// defeat. The messages are "has been downed!" and "'s party goes down!",
+// MsgDowned plus the state; DEFEAT_BY_PARTY_MEMBER shows neither.
+#define DEFEAT_ONE 0
+#define DEFEAT_SEVERAL 1
+#define DEFEAT_BY_PARTY_MEMBER 3
+
+/// The game flag of an enemy the party has defeated, set by
+/// BattleEnemy_RecordDefeat outside the monster battles; the monster battles
+/// choose only formations of defeated enemies (BattleFormation_AverageLevel).
+#define ENEMY_DEFEATED_FLAG(classId) ((classId) + 0x600)
+
 // Far calls the parts make, each passing its own view of the record:
 // Sprite_AddAnimation and SpriteAnimation_Start (field.c, resource_slot/)
 // take the metadata slot state and the animation entry.
@@ -115,12 +146,6 @@ void Sprite_RemoveAnimationFar(void *state, s32 handle);
 
 #include "battle/battle_type.h"
 #include "field/sprite.h"
-
-/// A unit's sprite as BattleMotion_PlayFall reads it: its first animation.
-struct BattleObjectAnimation {
-  u8 unk00[0x28];
-  struct SpriteAnimation *entry;
-};
 
 /// A unit's HP and PP as ScriptedBattle_SaveUnits keeps them.
 struct SnapshotVitals {
@@ -165,62 +190,6 @@ struct DebugPartyEntry {
   u16 items[6];
   u16 actions[2];
   u16 unk16;
-};
-
-/// A unit's sprite as BattleMotion reads it: its scale.
-struct SlotMotionRecord {
-  u8 unk00[12];
-  s32 height;
-};
-
-/// A unit's sprite as the status icon reads it: its width, which picks the icon
-/// set, and the flag that redraws it.
-struct StatusIconRecord {
-  u8 unk00[0x14];
-  u8 width;
-  u8 unk15[4];
-  u8 dirty;
-};
-
-/// A unit's sprite as BattleObject_Make builds it: its image, scale, width,
-/// redraw flag and outline flags, and its animations.
-struct TlaSpriteRecord {
-  struct AnimationSpritePart image;
-  s32 scale;
-  u8 unk10[4];
-  u8 width;
-  u8 unk15[4];
-  u8 dirty;
-  u8 flags;
-  u8 unk1b[13];
-  struct SpriteAnimation *entries[1];
-};
-
-/// A sprite as ResetMotionRecordGroup reads it: its four animations.
-struct AnimationEntryGroup {
-  u8 unk00[0x28];
-  struct SpriteAnimation *entries[4];
-};
-
-/// A unit's sprite as the battle reads its scale.
-struct MotionRecordScale {
-  u8 unk00[0xc];
-  s32 scale;
-};
-
-/// The form change effect's command, as Battle_PlayFormChange fills it for
-/// enemy 128.
-struct BattleFxRequest {
-  s32 field00;
-  s32 field04;
-  s32 field08;
-  s32 field0c;
-  s32 field10;
-  s32 field14;
-  s32 field18;
-  u8 unk1c[8];
-  s16 field24;
-  u8 unk26[0x32];
 };
 
 /// The packet the two consoles exchange each turn of a link battle: how many
@@ -300,7 +269,7 @@ enum BattleStaging {
   STAGING_ENEMY_CAST = 8,
   STAGING_FULL_SCREEN = 9, ///< Gaia, Rockfall, Procne and their kin
   /// Meld ("Launch a powerful team strike.") and Mold: a second unit
-  /// (BattlePlan.actorId2) strikes as the Djinni is unleashed.
+  /// (BattlePlan.partnerId) strikes as the Djinni is unleashed.
   STAGING_TEAM_STRIKE = 10,
   STAGING_DJINN_RECOVERY = 11, ///< Eddy: "Speed up Djinn recovery time."
   STAGING_MEGAERA = 12,        ///< the summon, then High Impact on its side
@@ -316,7 +285,7 @@ enum BattleStaging {
 /// summons do.
 #define STAGING_HIDE_ACTOR 1
 
-/// BattleStaging_RunAttack's mode bit for Meld: BattlePlan.actorId2 runs in
+/// BattleStaging_RunAttack's mode bit for Meld: BattlePlan.partnerId runs in
 /// beside the attacker.
 #define ATTACK_WITH_PARTNER 32
 
@@ -334,6 +303,13 @@ enum BattleCastKind {
 #define EFFECT_BY_ID_RANGE 0x4000 ///< BattleEffect_RunByIdRangeFar
 #define EFFECT_SUMMON 0x8000 ///< BattleEffect_RunSummonFar, acting unit's view
 #define EFFECT_ON_DOWNED 0x10000 ///< shown on downed targets too (revivals)
+/// Plays the effect on the side opposite its targets. Unused: no entry of
+/// gAbilityBattleEffects in either game sets it and no code adds it.
+#define EFFECT_OTHER_SIDE 0x20000
+/// The camera takes the other side's view (an enemy's cast a view of its
+/// own), or turns right round.
+#define EFFECT_VIEW_ACROSS 0x40000
+#define EFFECT_VIEW_REVERSED 0x80000
 
 /// The scripted battles' snapshot (ScriptedBattle_SaveUnits).
 extern struct Snapshot Data_0200ff58;
@@ -394,5 +370,32 @@ extern const u16 gBattleUnit_WeaponAnimationsPiers[];
 u32 BattleSprite_GetAttackHop(u32 index);
 u32 BattleSprite_GetEffectHeight(u32 index);
 s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
+
+/// The colours in BATTLE_BG_PALETTE, eight palettes of 16.
+#define BATTLE_BG_PALETTE_COLORS (8 * 16)
+
+/// The battle background's darkening step (BattleBackground_SetPaletteLevel,
+/// BattleBackground_Load, the element glow): each level takes 1092 from the
+/// 16.16 brightness, so level 60 is almost black.
+#define BACKGROUND_LEVEL_STEP 1092
+
+/// BattleActionRecord.target of a held unit's lost action (COMMAND_NONE, from
+/// Battle_BuildEnemyActions): as a place code, place 0 of the other side, the
+/// party's for an enemy and the enemies' for a party member.
+#define TARGET_NONE_ENEMY PLACE_PARTY
+
+/// Io_Write16 for a 32-bit register, as The Broken Seal's io_write.h has it.
+#ifndef Io_Write32
+#define Io_Write32(v, reg) Io_Write16(v, reg)
+#endif
+
+/// Sets the kind of battle the next one is, as every write to it does. The
+/// name is ours, as in The Broken Seal (main_routine_work.h there).
+#ifndef Battle_SetType
+#define Battle_SetType(mode)                                                   \
+  do {                                                                         \
+    gMainRoutineWork.battleType = (mode);                                      \
+  } while (0)
+#endif
 
 #endif

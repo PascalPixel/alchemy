@@ -60,15 +60,6 @@ void WindowSprite_InitializeFreeList(void) {
   work->freeOutputs.tailLink = &next->next;
 }
 
-typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
-
-/// Fills size bytes at dst with value through fill.
-static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size,
-                                u32 value) {
-  /* FAKEMATCH(wrapper): the fill called through this inline. */
-  return fill(dst, size, value);
-}
-
 /// Sets up the window system for the field (and the other screens outside
 /// battle): allocates and clears the work block, blanks the tilemap, frees
 /// every window sprite and starts the two per-frame tasks, the tilemap upload
@@ -81,9 +72,9 @@ void WindowSystem_InitField(void) {
   Iwram_ClearWordsEntry(work, sizeof(struct WindowWork));
   work->dirty = 1;
   work->glyphResource = 99;
-  work->textPalette = 15;
-  FillWords(Iwram_FillWordsEntry, work->tilemap, sizeof(work->tilemap),
-            WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
+  work->textPalette = WINDOW_PALETTE;
+  Iwram_FillWords(work->tilemap, sizeof(work->tilemap),
+                  WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
   WindowSprite_InitializeFreeList();
   Portrait_ClearSlots();
   Task_Add((s32)WindowSystem_UploadTilemap, TASK_PASS_FRAME);
@@ -109,7 +100,7 @@ void WindowSystem_InitBattle(s32 kind) {
   work->dirty = 1;
   work->glyphResource = 99;
   work->battleMode = 1;
-  work->textPalette = 15;
+  work->textPalette = WINDOW_PALETTE;
   Iwram_FillWordsEntry(work->tilemap, sizeof(work->tilemap),
                        WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
   WindowSprite_InitializeFreeList();
@@ -167,12 +158,12 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   tile = 240;
   bottom = y + height;
   tile <<= 8;
-  if (bottom > 20)
-    height = 20 - y;
+  if (bottom > DISPLAY_TILE_HEIGHT)
+    height = DISPLAY_TILE_HEIGHT - y;
   if (width <= 1)
     width = 2;
-  if (width > 30)
-    width = 30;
+  if (width > DISPLAY_TILE_WIDTH)
+    width = DISPLAY_TILE_WIDTH;
   if (height <= 1)
     height = 2;
   if (height > 30)
@@ -199,7 +190,7 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
         } while (column < width);
       }
       row++;
-      cursor += 32 - width;
+      cursor += BG_SCREEN_WIDTH - width;
     } while (row < height);
   }
   canvas->dirty = 1;
@@ -351,10 +342,10 @@ void Window_Close(struct Window *work, s32 release) {
 
 /// Clears a window's contents: redraws it empty and releases the render
 /// window sprites it carries. A text canvas window is left alone.
-void WindowSprite_PrepareForRedraw(struct Window *work) {
-  if (!(WINDOW_FLAG_TEXT_CANVAS & work->flags)) {
-    WindowSprite_RedrawSavedRect(work);
-    WindowSprite_ClearList(work);
+void WindowSprite_PrepareForRedraw(struct Window *window) {
+  if (!(WINDOW_FLAG_TEXT_CANVAS & window->flags)) {
+    WindowSprite_RedrawSavedRect(window);
+    WindowSprite_ClearList(window);
   }
 }
 
@@ -366,14 +357,15 @@ void WindowSprite_RedrawSavedRect(struct Window *window) {
 
 /// Releases every window sprite in a list and empties it. sprites is the list,
 /// or a window (whose sprite list comes first); NULL is ignored.
-void WindowSprite_ClearList(void *work) {
-  struct WindowSpriteList *list = work;
+void WindowSprite_ClearList(void *sprites) {
+  struct WindowSpriteList *list = sprites;
   struct WindowSprite *node;
   struct WindowSprite *next;
 
   next = NULL;
   if (list != NULL) {
     node = list->head;
+    // Detach the chain before returning its nodes to the shared free pool.
     list->tailLink = &list->head;
     list->head = next;
     while (node != NULL) {
@@ -426,11 +418,11 @@ void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
   ((s32 (*)(s32, s32, u32, u32))Window_ClearTextTilesInRect)(left, top, width,
                                                              height);
 #endif
-  tiles = work->tilemap[0] + top * 32 + left;
+  tiles = work->tilemap[0] + top * BG_SCREEN_WIDTH + left;
   for (row = 0; row < height; row++) {
     for (left = 0; left < width; left++)
       *tiles++ = WINDOW_TILE_WINDOW_FILL;
-    tiles += 32 - width;
+    tiles += BG_SCREEN_WIDTH - width;
   }
   work->dirty = 1;
 }
@@ -480,7 +472,7 @@ void WindowSprite_Release(struct WindowSprite *entry) {
     if ((u8)entry->kind == 2) {
       u8 *dst = (u8 *)Ram_HeapSlots->windowWork;
       s32 idx = entry->sprite.oam.palette * 2 + UI_PALETTE_OWNER_OFFSET;
-      *(u16 *)(dst + idx) = 0x3E7;
+      *(u16 *)(dst + idx) = PORTRAIT_SLOT_EMPTY;
     }
   }
   entry->motion = 0;
@@ -498,7 +490,7 @@ struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
   struct UiChannelSlot *found = NULL;
   u32 i;
 
-  for (i = 0; i != 3; i++, render++) {
+  for (i = 0; i != MESSAGE_COUNT; i++, render++) {
     if (render->work == NULL) {
       found = render;
       break;
@@ -511,19 +503,19 @@ struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
     found->y = y << 8;
     found->entry = entry;
     found->colour = 15;
-    found->lineSpacing = 10;
+    found->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
     found->countdown = 0;
-    found->outline = 0;
+    found->outline = TEXT_STYLE_PLAIN;
     found->ended = 0;
     found->unk26 = 0;
     found->flags = flags;
     if (work->textMode != 0 && spacing != NULL)
       found->unk26 = spacing[3];
     if (spacing != NULL) {
-      for (i = 0; i < 4; i++)
+      for (i = 0; i < MESSAGE_LINE_COUNT; i++)
         found->spacing[i] = *spacing++;
     } else {
-      for (i = 0; i < 4; i++)
+      for (i = 0; i < MESSAGE_LINE_COUNT; i++)
         found->spacing[i] = 0;
     }
     found->line = 0;
@@ -550,7 +542,7 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
 
   slot = UI_WORK->channels;
   selected = 0;
-  for (index = 0; index != 3; slot++, index++) {
+  for (index = 0; index != MESSAGE_COUNT; slot++, index++) {
     if (slot->work == 0 || slot->work->state != 0) {
       selected = slot;
       break;
@@ -592,23 +584,20 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
     do {
       index++;
       *spacing++ = zero;
-    } while (index < 4);
+    } while (index < MESSAGE_LINE_COUNT);
   }
   return selected;
 }
 
 /// Clears the text canvas to transparent.
 s32 Text_ClearCanvas(void) {
-  s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWordsEntry;
-
-  return fill(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, 0);
+  return Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, 0);
 }
 
 /// Fills the text canvas with the window background colour (4).
 void Text_FillCanvasBackground(void) {
-  s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWordsEntry;
-
-  fill(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, TEXT_CANVAS_BACKGROUND_WORD);
+  return Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE,
+                         TEXT_CANVAS_BACKGROUND_WORD);
 }
 
 /// Resets the pen and text style of the first idle message, clearing the canvas
@@ -619,7 +608,7 @@ void Message_ResetIdle(void) {
   struct UiChannelSlot *selection = 0;
   s32 i;
 
-  for (i = 0; i != 3; slot++, i++) {
+  for (i = 0; i != MESSAGE_COUNT; slot++, i++) {
     if (slot->work == 0 || slot->work->state != 0) {
       selection = slot;
       break;
@@ -633,8 +622,8 @@ void Message_ResetIdle(void) {
     selection->x = 0;
     selection->countdown = 0;
     selection->colour = 0xF;
-    selection->outline = 0;
-    selection->lineSpacing = 0xA;
+    selection->outline = TEXT_STYLE_PLAIN;
+    selection->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   }
 }
 

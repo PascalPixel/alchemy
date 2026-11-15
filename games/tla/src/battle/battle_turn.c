@@ -42,7 +42,7 @@ void BattleCamera_SetCommandView(s32 pos) {
   result = Iwram_RatioMulQ14(px(969), Q16_ONE * 3 / 4);
   Projection_Set(0, result, px(1938));
 
-  gProjection.centerY = pos + 120;
+  gProjection.centerY = pos + BATTLE_PROJECTION_CENTER_Y;
   secondary->active = one;
   BattleCamera_SetRange(px(120), px(118 - pos), 0, 8 << 8, Q16_ONE * 2);
   secondary->flag = one;
@@ -54,17 +54,17 @@ void BattleCamera_SetCommandView(s32 pos) {
 /// Ends every unit's guard (Defend and the like) and recalculates its stats.
 /// Clears every unit's defendLevel.
 void BattleUnit_ResetGuardLevels(void) {
-  u16 ids[14];
+  u16 unitIds[UNIT_MAX];
   s32 count;
-  s32 index;
+  s32 unitIndex;
 
-  count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, (u16 *)ids);
-  for (index = 0; index < count; index++) {
-    struct Unit *actor;
+  count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
+  for (unitIndex = 0; unitIndex < count; unitIndex++) {
+    struct Unit *unit;
 
-    actor = Unit_Get(ids[index]);
-    actor->defendLevel = 0;
-    Unit_CalculateFar(ids[index]);
+    unit = Unit_Get(unitIds[unitIndex]);
+    unit->defendLevel = 0;
+    Unit_CalculateFar(unitIds[unitIndex]);
   }
 }
 
@@ -128,7 +128,7 @@ s32 Battle_BuildUnitActions(struct BattleActionRecord *entries) {
 /// The enemies' actions for the turn, in a shuffled order; none act when the
 /// party struck first. Returns how many there are.
 s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
-  u16 unitIds[14];
+  u16 unitIds[UNIT_MAX];
   s32 entryCount = 0;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 unitCount;
@@ -137,7 +137,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
   if (battle->firstStrike == FIRST_STRIKE_PARTY)
     return 0;
 
-  unitCount = BattleUnit_ListLiving(2, unitIds);
+  unitCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, unitIds);
   if (unitCount == 0)
     return 0;
 
@@ -171,7 +171,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
       entry->unitId = unitId;
       agility = unit->agi;
       entry->priority = agility;
-      entry->unk0e = copyIndex;
+      entry->turnAction = copyIndex;
       if (unit->actionsPerTurn == 4) {
         if (copyIndex == 0)
           ;
@@ -193,9 +193,9 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
       }
 
       if (unit->sleep != 0 || unit->stun != 0) {
-        entry->command = 8;
+        entry->command = COMMAND_NONE;
         entry->parameter = 0;
-        entry->target = 0x100;
+        entry->target = TARGET_NONE_ENEMY;
       } else {
         BattleAI_ChooseAction(entry, 0);
       }
@@ -230,7 +230,7 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
   for (i = 0; i < count; i++) {
     struct BattleActionRecord *entry = &entries[i];
 
-    if (entry->command == 5) {
+    if (entry->command == COMMAND_DJINN) {
       struct BattleAct *action;
 
       Unit_Get(entry->unitId);
@@ -239,7 +239,7 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
       if (action->effect == 72 || action->effect == 76 ||
           action->effect == 79 || action->effect == 74 ||
           action->effect == 46 || action->effect == 47 ||
-          action->effect == 88 || action->effect == 53) {
+          action->effect == 88 || action->effect == ABILITY_EFFECT_GROUND) {
         u32 priority = entry->priority;
 
         entry->priority = priority + 10000;
@@ -258,6 +258,11 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
   } while (swapped != 0);
 }
 
+/// The link sends in packets of 20 bytes (the header is one), and a transfer
+/// may take 300 frames.
+#define LINK_PACKET_BYTES 20
+#define LINK_TRANSFER_TIMEOUT 300
+
 /// Link battle: exchanges the turn's actions with the other console and appends
 /// the opponent's, their units and targets seen from this side. Returns how
 /// many were received, or -1 when the exchange fails.
@@ -272,18 +277,18 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
   s32 LinkBattle_SendActions(void) {
     s32 timeout;
     s32 disconnected;
-    s32 status = Serial_StartSend(state, 20);
+    s32 status = Serial_StartSend(state, LINK_PACKET_BYTES);
 
     disconnected = 0;
-    timeout = 300;
+    timeout = LINK_TRANSFER_TIMEOUT;
     if (status == -1)
       return status;
     while (Serial_GetActiveTransfers()) {
       wait(1);
       if (--timeout < 0)
         return -1;
-      if ((gLinkStatus & 3) != 3) {
-        if (++disconnected > 24)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++disconnected > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
         disconnected = 0;
@@ -297,8 +302,8 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
         wait(1);
         if (--timeout < 0)
           return -1;
-        if ((gLinkStatus & 3) != 3) {
-          if (++disconnected > 24)
+        if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+          if (++disconnected > LINK_MAX_MISSED_FRAMES)
             return -1;
         } else {
           disconnected = 0;
@@ -314,23 +319,23 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
     s32 status = Serial_StartReceive(state);
 
     disconnected = 0;
-    timeout = 300;
+    timeout = LINK_TRANSFER_TIMEOUT;
     if (status == -1)
       return status;
     while (Serial_GetActiveTransfers()) {
-      if (gSerialReceivedSize > 20)
+      if (gSerialReceivedSize > LINK_PACKET_BYTES)
         return -1;
       wait(1);
       if (--timeout < 0)
         return -1;
-      if ((gLinkStatus & 3) != 3) {
-        if (++disconnected > 24)
+      if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+        if (++disconnected > LINK_MAX_MISSED_FRAMES)
           return -1;
       } else {
         disconnected = 0;
       }
     }
-    if (gSerialReceivedSize != 20)
+    if (gSerialReceivedSize != LINK_PACKET_BYTES)
       return -1;
     result = state->count;
     if (state->count) {
@@ -343,8 +348,8 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
         wait(1);
         if (--timeout < 0)
           return -1;
-        if ((gLinkStatus & 3) != 3) {
-          if (++disconnected > 24)
+        if ((gLinkStatus & LINK_BOTH_CONNECTED) != LINK_BOTH_CONNECTED) {
+          if (++disconnected > LINK_MAX_MISSED_FRAMES)
             return -1;
         } else {
           disconnected = 0;
@@ -376,7 +381,7 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
       state->count = count;
       state->check = Battle_RandomFar();
       IRQ_LOCK(saved);
-      gBattleRandomSeed = state->seed = gRandomSeed;
+      Battle_SetRandomSeed(state->seed = gRandomSeed);
       IRQ_UNLOCK(saved);
       if (LinkBattle_SendActions() < 0 || LinkBattle_ReceiveActions() < 0)
         goto fail;
@@ -390,7 +395,7 @@ s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
         goto fail;
       if (Battle_RandomFar() != state->check)
         goto fail;
-      gBattleRandomSeed = state->seed;
+      Battle_SetRandomSeed(state->seed);
     }
 
     for (index = 0; index < result; index++) {
@@ -414,51 +419,42 @@ fail:
 /// Copies BG palettes 15 to 14 and 5 to 4, adjusting brightness.
 /// offset: amount added to each RGB component, clamped to 0-31.
 void Palette_CopyWithBrightnessOffset(s32 offset) {
-  s32 n;
-  s32 paletteNumber;
-  s32 col;
-  s32 mask;
-  s32 idx;
+  s32 bank;
+  s32 source = WINDOW_PALETTE;
+  s32 i;
 
-  paletteNumber = 15;
-  n = 0;
-  mask = 31;
-  do {
-    for (col = 0; col <= 15; col++) {
-      u32 color;
-      s32 b;
-      s32 g;
-      s32 r;
-      s32 val;
+  // Palettes 15 and 5, each into the palette before it, 14 and 4.
+  for (bank = 0; bank < 2; bank++) {
+    for (i = 0; i < PALETTE_COLORS; i++) {
+      s32 index = source * PALETTE_COLORS + i;
+      u32 color = ((u16 *)BG_PLTT)[index];
+      s32 blue = RGB_BLUE(color);
+      s32 green = RGB_GREEN(color);
+      s32 red = RGB_RED(color);
+      s32 adjusted;
 
-      idx = paletteNumber * 16 + col;
-      color = ((u16 *)BG_PLTT)[idx];
-      b = (color >> 10) & mask;
-      g = (color >> 5) & mask;
-      r = color & mask;
-      b += offset;
-      g += offset;
-      r += offset;
-      if (b > 31)
-        b = 31;
-      if (g > 31)
-        g = 31;
-      if (r > 31)
-        r = 31;
-      if (b < 0)
-        b = 0;
-      if (g < 0)
-        g = 0;
-      if (r < 0)
-        r = 0;
-      val = b << 10;
-      val |= g << 5;
-      val |= r;
-      ((s16 *)0x04ffffe0)[idx] = val; // Into the preceding palette.
+      blue += offset;
+      green += offset;
+      red += offset;
+      if (blue > RGB_LEVEL_MAX)
+        blue = RGB_LEVEL_MAX;
+      if (green > RGB_LEVEL_MAX)
+        green = RGB_LEVEL_MAX;
+      if (red > RGB_LEVEL_MAX)
+        red = RGB_LEVEL_MAX;
+      if (blue < 0)
+        blue = 0;
+      if (green < 0)
+        green = 0;
+      if (red < 0)
+        red = 0;
+      adjusted = blue << 10;
+      adjusted |= green << 5;
+      adjusted |= red;
+      ((u16 *)BG_PLTT)[index - PALETTE_COLORS] = adjusted;
     }
-    n++;
-    paletteNumber = 5;
-  } while (n <= 1);
+    source = 5;
+  }
 }
 
 /// Builds this turn's actions and sorts them by descending priority: the
@@ -479,7 +475,7 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
     struct BattleActionRecord *rec = work->actions;
     u32 n;
 
-    for (n = 0; n < 20; n++) {
+    for (n = 0; n < BATTLE_ACTION_CAPACITY; n++) {
       rec[n].unitId = BATTLE_UNIT_LIST_END;
       rec[n].priority = 0x8000; // Lowest priority.
     }
@@ -529,9 +525,10 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
 
     i = cnt;
     do {
-      if (act->command == 3 || act->command == 7) {
+      if (act->command == COMMAND_DEFEND ||
+          act->command == COMMAND_TOTAL_DEFENSE) {
         unit = Unit_Get(act->unitId);
-        unit->defendLevel = act->command == 3 ? 1 : 3;
+        unit->defendLevel = act->command == COMMAND_DEFEND ? DEFEND_NORMAL : 3;
       }
       act++;
       i--;
@@ -545,38 +542,37 @@ finish:
   return cnt;
 }
 
-/// Returns the unit ID at a formation position.
-/// slot: low 4 bits are the position; 0x80 selects the enemy formation.
-s16 Battle_GetUnitAtPlace(s32 slot) {
-  struct BattleWork *work = Ram_HeapSlots->battleWork;
+/// Returns the unit id at a list place, 0x80 set for the enemies' list.
+s32 Battle_GetUnitAtPlace(s32 taggedPlace) {
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
 
-  if ((slot & 0x80) != 0)
-    return work->enemyIds[slot & 0xf];
-  return work->partyUnits[slot & 0xf];
+  if ((taggedPlace & 0x80) != 0)
+    return battle->enemyIds[taggedPlace & 0xf];
+  return battle->partyUnits[taggedPlace & 0xf];
 }
 
 /// Returns a unit's formation position, or -1 if absent.
 /// Allies use 0x100 | position; enemies use 0x180 | position.
 /// id: unit ID (0-7 allies, all others enemies).
-s32 Battle_FindUnitPlace(u32 id) {
-  struct BattleWork *work = Ram_HeapSlots->battleWork;
-  s32 i;
-  s16 unit;
+s32 Battle_FindUnitPlace(u32 unitId) {
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  s32 placeIndex;
+  s16 listedUnit;
 
-  if (id <= ALLY_MAX) {
-    for (i = 0;; i++) {
-      unit = work->partyUnits[i];
-      if (unit == BATTLE_UNIT_LIST_END)
+  if (unitId <= ALLY_MAX) {
+    for (placeIndex = 0;; placeIndex++) {
+      listedUnit = battle->partyUnits[placeIndex];
+      if (listedUnit == BATTLE_UNIT_LIST_END)
         return -1;
-      if (unit != BATTLE_UNIT_REMOVED && unit == id)
-        return i | 0x100;
+      if (listedUnit != BATTLE_UNIT_REMOVED && listedUnit == unitId)
+        return placeIndex | PLACE_PARTY;
     }
   }
-  for (i = 0;; i++) {
-    unit = work->enemyIds[i];
-    if (unit == BATTLE_UNIT_LIST_END)
+  for (placeIndex = 0;; placeIndex++) {
+    listedUnit = battle->enemyIds[placeIndex];
+    if (listedUnit == BATTLE_UNIT_LIST_END)
       return -1;
-    if (unit != BATTLE_UNIT_REMOVED && unit == id)
-      return i | 0x180;
+    if (listedUnit != BATTLE_UNIT_REMOVED && listedUnit == unitId)
+      return placeIndex | PLACE_ENEMY;
   }
 }

@@ -1463,8 +1463,6 @@ void YampiDesert_RippleFollowsScorpion(void) {
 #undef OBJ
 #undef MOVE_LEADER_TO
 
-#define FIELD32(object, offset) (*(s32 *)((u8 *)(object) + (offset)))
-
 struct Actor *Actor_GetById(u32 objectId);
 void Actor_StartScript(struct Actor *object, const void *script);
 s32 Trig_Sin(s32 angle);
@@ -1482,7 +1480,7 @@ void YampiDesert_SlideLeader(struct Actor *object, s32 dx, s32 dz) {
           object->z.fixed);
 
       if (dust != NULL) {
-        struct DustSprite *sprite;
+        struct Sprite *sprite;
 
         dust->motionFlags = odd;
         dust->collisionFlags = odd;
@@ -1490,25 +1488,20 @@ void YampiDesert_SlideLeader(struct Actor *object, s32 dx, s32 dz) {
         Actor_SelectAnimation(dust, 1);
         Actor_StartScript(dust, gYampiDesert_SlideDust);
         sprite = dust->sprite;
-        sprite->mode = 1;
-        /* FAKEMATCH(dead): an empty once-only block after the sprite store
-         * keeps gInput's address load after it. */
-        do {
-        } while (0);
+        sprite->image.priority = 1;
         if (gInput.held != 0) {
-          FIELD32(dust, 68) = Trig_Cos(((Random16() << 3) >> 16) << 14) + dx;
-          FIELD32(dust, 76) = Trig_Sin(((Random16() << 3) >> 16) << 14) + dz;
+          dust->bounce = Trig_Cos(((Random16() << 3) >> 16) << 14) + dx;
+          dust->riseBaseY = Trig_Sin(((Random16() << 3) >> 16) << 14) + dz;
           if (gInput.held & KEY_B) {
-            FIELD32(dust, 68) += dx;
-            FIELD32(dust, 76) += dz;
+            dust->bounce += dx;
+            dust->riseBaseY += dz;
           }
         } else {
-          FIELD32(dust, 68) =
-              (Trig_Cos(((Random16() << 3) >> 16) << 14) >> 1) + dx;
-          FIELD32(dust, 76) =
+          dust->bounce = (Trig_Cos(((Random16() << 3) >> 16) << 14) >> 1) + dx;
+          dust->riseBaseY =
               (Trig_Sin(((Random16() << 3) >> 16) << 14) >> 1) + dz;
         }
-        FIELD32(dust, 72) = 0;
+        dust->gravity = 0;
         dust->timer = ((Random16() << 9) >> 16) - 256;
         dust->speedLimit = 0;
         dust->acceleration = 0;
@@ -2137,8 +2130,6 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *leader = Actor_GetById(party->leaderActorId);
   struct Actor *actor8 = Actor_GetById(ACTOR_KING_SCORPION);
-  /* FAKEMATCH(wrapper): the camera, walk and speed calls forwarded through
-   * call.h's Call3 and Call4. */
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2154,12 +2145,10 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   leader->bounce = 0;
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_KING_SCORPION), 0);
   {
-    // The angle is held in a local; as a literal argument, its constant is
-    // built last.
-    s32 angle = TRIG_TURN / 4;
+    s32 angle = FACING_SOUTH;
 
-    Call4(Actor_SetHorizontalPositionAndAngleWithTerrain, 8, px(232), px(148),
-          angle);
+    Call4(Actor_SetHorizontalPositionAndAngleWithTerrain, ACTOR_KING_SCORPION,
+          px(232), px(148), angle);
   }
   actor8->motionFlags = 0;
   actor8->y.fixed = px(130);
@@ -2396,19 +2385,11 @@ void YampiDesert_SetUpTreasurePit(void) {
     Actor_SetWideSprite(ACTOR_HIDDEN_TREASURE, 0);
 }
 
-/// Stores a halfword.
-static inline void Scene_StoreU16(u16 *field, s32 value) {
-  /* FAKEMATCH(wrapper): through the inline the value is a word constant built
-   * after the field's address. */
-  *field = value;
-}
-
 /// The setup of the Trainer's Whip chest's room. Entered at entrance 4 (not in
-/// the Japanese edition), it sets gMainRoutineWork's pair at 0x260 to the room
+/// the Japanese edition), it sets where Retreat returns the party to the room
 /// whose flag is set.
 void YampiDesert_SetUpTrainersWhipChest(void) {
   struct Actor *object = Actor_GetById(ACTOR_HIDDEN_TREASURE);
-  s32 scene;
 
   Scene_QueueMusic(SE_KIRIN);
   Rope_Initialize();
@@ -2430,17 +2411,14 @@ void YampiDesert_SetUpTrainersWhipChest(void) {
 #if TLA_PATCH_1
   else if (gMainRoutineWork.entrance == 4) {
     if (GameFlag_Get(FLAG_YAMPI_DESERT_ENTERED_BY_GUARDIAN_RING_CHEST)) {
-      scene = SCENE_YAMPI_DESERT_GUARDIAN_RING_CHEST;
-      gMainRoutineWork.retreatScene = scene;
-      Scene_StoreU16(&gMainRoutineWork.retreatEntrance, 1);
+      gMainRoutineWork.retreatScene = SCENE_YAMPI_DESERT_GUARDIAN_RING_CHEST;
+      gMainRoutineWork.retreatEntrance = 1;
     } else if (GameFlag_Get(FLAG_YAMPI_DESERT_ENTERED_BY_TRAINERS_WHIP_CHEST)) {
-      scene = SCENE_YAMPI_DESERT_TRAINERS_WHIP_CHEST;
-      gMainRoutineWork.retreatScene = scene;
-      Scene_StoreU16(&gMainRoutineWork.retreatEntrance, 2);
+      gMainRoutineWork.retreatScene = SCENE_YAMPI_DESERT_TRAINERS_WHIP_CHEST;
+      gMainRoutineWork.retreatEntrance = 2;
     } else if (GameFlag_Get(FLAG_YAMPI_DESERT_ENTERED_BY_MEDAL_SPOT)) {
-      scene = SCENE_YAMPI_DESERT_MEDAL_SPOT;
-      gMainRoutineWork.retreatScene = scene;
-      Scene_StoreU16(&gMainRoutineWork.retreatEntrance, 2);
+      gMainRoutineWork.retreatScene = SCENE_YAMPI_DESERT_MEDAL_SPOT;
+      gMainRoutineWork.retreatEntrance = 2;
     }
   }
 #endif
@@ -2514,7 +2492,6 @@ loop:
   if (entry[0] != 0xffff)
     goto loop;
 }
-#undef FIELD32
 #undef WALK
 #undef ARRIVE
 #undef WALK_ON
@@ -2693,7 +2670,6 @@ void YampiDesert_DrawRisingSand(void) {
     z = object->z.fixed - viewZ - originY;
     sy = z - y;
     x = (x >> 16) - 8;
-    /* FAKEMATCH(wrapper): forwarded. */
     sy = ((sy + Math_MulQ16(-0x20000, Trig_Sin(entry->phase)) + -0x20000) >>
           16) -
          4;
@@ -2819,7 +2795,6 @@ u32 gYampiDesert_SlideDust[] = {
 
 #undef OBJ
 #undef MOVE_LEADER_TO
-#undef FIELD32
 #undef WALK
 #undef ARRIVE
 #undef WALK_ON

@@ -1062,16 +1062,9 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_Wait(10);
     // "But don't worry... We're just going to give you a little sample of..."
     FieldEvent_ShowMessageThenWait(ACTOR_BANDIT, 0, 5);
-    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-    /* FAKEMATCH(dead): the native loads the scene's id after this store. */
-    do {
-    } while (0);
-    {
-      s32 worldMap = SCENE_WORLD_MAP;
-
-      FieldEvent_SetAfterBattleDestination(worldMap, 73);
-      Event_SetDefeatDestination(worldMap, 74);
-    }
+    Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
+    FieldEvent_SetAfterBattleDestination(SCENE_WORLD_MAP, 73);
+    Event_SetDefeatDestination(SCENE_WORLD_MAP, 74);
     WorldMap_ReloadPendingAreaGraphics();
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
     Field_RequestBattleFromEncounterTable(102, 3);

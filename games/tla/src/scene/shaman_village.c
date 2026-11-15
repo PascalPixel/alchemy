@@ -333,14 +333,6 @@ void BattleEffect_SetObjectUpdateMode(struct Actor *object, s32 value);
 void Scene_PlayMusic(void);
 void InventorySnapshot_Save(void);
 
-#define SHAMAN_VILLAGE_EMOTE(actor, emote, frames)                             \
-  {                                                                            \
-    /* FAKEMATCH(pin): the emote pinned to r1. */                              \
-    register s32 emote_ __asm__("r1") = (emote);                               \
-    s32 frames_ = (frames);                                                    \
-    Actor_ShowEmoteById((actor), emote_, frames_);                             \
-  }
-
 // ---- this overlay
 
 void ShamanVillage_BlowAwaySand(void);
@@ -1465,11 +1457,11 @@ void ShamanVillage_MeetMoapa(void) {
   Event_Wait(1);
   ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
       ->steeringFlags |= 1;
-  SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20)
+  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   // "Who have we here? Strangers in Shaman Village? What is your purpose..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_MOAPA, 0);
   Actor_StartRepeatedMotion(ACTOR_EAST_GUARD, 1);
-  SHAMAN_VILLAGE_EMOTE(17, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0)
+  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   // "Shaman Village does not appreciate intruders."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_EAST_GUARD, 0);
   Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 1);
@@ -1537,7 +1529,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 120, 264);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 28);
   rod = ShamanVillage_CreateRodIcon();
-  SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20)
+  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_SetSpeed(ACTOR_MOAPA, 2.4);
   Actor_WalkToAndWait(ACTOR_MOAPA, 120, 242);
   Event_PlaySound(MUS_TUNDARIA_TOWER);
@@ -1562,7 +1554,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_SetScript(ACTOR_PIERS, gShamanVillage_PiersStandsByRodScript);
   Actor_SetScript(ACTOR_JENNA, gShamanVillage_JennaStandsByRodScript);
   Actor_SetScript(ACTOR_SHEBA, gShamanVillage_ShebaStandsByRodScript);
-  SHAMAN_VILLAGE_EMOTE(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0)
+  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_SetSpeed(ACTOR_EAST_GUARD, 1.2);
   Actor_WalkToAndWait(ACTOR_EAST_GUARD, 136, 232);
   // "We thought it was lost forever... It once belonged to the great Hoabna."
@@ -1574,7 +1566,7 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
   // "He vowed to care for the sacred treasure of Contigo, the Hover..."
   Event_ShowMessage(ACTOR_MOAPA, 0);
-  SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 20)
+  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   // "Have you outlanders come to claim the Hover Jade?"
   Event_ShowMessage(ACTOR_MOAPA, 0);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
@@ -1585,19 +1577,19 @@ void ShamanVillage_ShowShamansRod(void) {
   Actor_SetSpeed(ACTOR_MOAPA, 0.8);
   Actor_WalkToAndWait(ACTOR_MOAPA, 120, 252);
   Event_Wait(40);
-  SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 20)
+  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_WalkToAndWait(ACTOR_MOAPA, 136, 252);
   Actor_FaceDirection(ACTOR_MOAPA, FACING_SOUTH, 20);
-  SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 40)
+  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_WalkToAndWait(ACTOR_MOAPA, 104, 252);
   Actor_FaceDirection(ACTOR_MOAPA, FACING_SOUTH, 20);
-  SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 20)
+  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   Actor_WalkToAndWait(ACTOR_MOAPA, 152, 252);
   Actor_FaceDirection(ACTOR_MOAPA, FACING_SOUTH, 20);
-  SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 40)
+  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Actor_WalkToAndWait(ACTOR_MOAPA, 88, 252);
   Actor_FaceDirection(ACTOR_MOAPA, FACING_SOUTH, 40);
-  SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 80)
+  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
   Actor_WalkToAndWait(ACTOR_MOAPA, 120, 252);
   Actor_WalkToAndWait(ACTOR_MOAPA, 120, 242);
   Actor_FaceDirectionAndWait(ACTOR_MOAPA, FACING_SOUTH);
@@ -1613,7 +1605,7 @@ void ShamanVillage_ShowShamansRod(void) {
   // "But...we brought you the Shaman's Rod... What's stopping you from..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_MOAPA, FACING_SOUTHEAST, 0);
-  SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20)
+  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "Hoabna handed the Hover Jade down from generation to generation for..."
   Event_ShowMessage(ACTOR_MOAPA, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
@@ -1628,11 +1620,11 @@ void ShamanVillage_ShowShamansRod(void) {
   // "That's preposterous! We returned your rod! We've come so far already!"
   Event_ShowMessage(ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_MOAPA, FACING_SOUTHWEST, 0);
-  SHAMAN_VILLAGE_EMOTE(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0)
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   // "What difference does it make if we're from Contigo or not!?"
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
-  SHAMAN_VILLAGE_EMOTE(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20)
+  FieldActor_ShowEmote(7, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "Make no mistake about it. We are the intended recipients of the..."
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirection(ACTOR_MOAPA, FACING_SOUTHEAST, 0);
@@ -1643,7 +1635,7 @@ void ShamanVillage_ShowShamansRod(void) {
   FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
   // "No. You ask the impossible."
   Event_ShowMessage(ACTOR_MOAPA, 0);
-  SHAMAN_VILLAGE_EMOTE(17, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20)
+  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20);
   Actor_FaceDirectionAndWait(ACTOR_EAST_GUARD, FACING_SOUTHWEST);
   // "What about...the test? Would that be a bad idea, Moapa?"
   Event_ShowMessage(ACTOR_EAST_GUARD, 0);
@@ -1835,7 +1827,7 @@ void ShamanVillage_CheckTrialEntry(void) {
   EVENT_WORK->message++;
   if (remaining != 0) {
   refuse:
-    SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 20)
+    FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MOAPA, 0);
     ShamanVillage_StepBackFromTrial();
   } else {
@@ -2233,7 +2225,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirectionAndWait(ACTOR_MOAPA, FACING_NORTHWEST);
   // "Her?"
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MOAPA, 0);
-  SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0)
+  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirectionAndWait(ACTOR_MOAPA, FACING_NORTH);
   // "She's the one that did it? But she's...just a girl!"
   Event_ShowMessage(ACTOR_MOAPA, 0);
@@ -2251,21 +2243,21 @@ void ShamanVillage_ShebaClearsSand(void) {
   Event_ShowMessage(ACTOR_MOAPA, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
-  SHAMAN_VILLAGE_EMOTE(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20)
+  FieldActor_ShowEmote(5, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTHEAST);
   // "What? Why not?"
   Event_ShowMessage(ACTOR_JENNA, 0);
   Actor_FaceDirectionAndWait(ACTOR_MOAPA, FACING_NORTHWEST);
   // "This was just a test to see if you earned the right to take the test..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MOAPA, 0);
-  SHAMAN_VILLAGE_EMOTE(18, EMOTE_IN_FRONT | EMOTE_QUESTION, 40)
+  FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   // "So, there's more that they have to do before you'll give them the stone?"
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   Actor_SetAnimationAndWait(ACTOR_MOAPA, 3);
   Actor_FaceDirectionAndWait(ACTOR_MOAPA, FACING_NORTH);
   // "You will have to reach the end of Trial Road."
   Event_ShowMessage(ACTOR_MOAPA, 0);
-  SHAMAN_VILLAGE_EMOTE(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0)
+  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_EAST_GUARD, FACING_SOUTHWEST);
@@ -2275,7 +2267,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_StartRepeatedMotion(ACTOR_WEST_GUARD, 1);
   // "I thought that only the chosen hero could travel the road..."
   Event_ShowMessage(ACTOR_WEST_GUARD, 0);
-  SHAMAN_VILLAGE_EMOTE(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0)
+  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 20);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_SOUTH);
   // "What, are you saying I can't be the chosen hero?"
@@ -2284,7 +2276,7 @@ void ShamanVillage_ShebaClearsSand(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   // "The heroes have always been men, ever since the time of Hoabna. It..."
   Event_ShowMessage(ACTOR_MOAPA, 0);
-  SHAMAN_VILLAGE_EMOTE(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0)
+  FieldActor_ShowEmote(6, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Actor_Jump(ACTOR_SHEBA, 2, 10);
   Actor_Jump(ACTOR_SHEBA, 4, 10);
   // "I don't like your attitude, mister! I can be every bit as heroic as..."
@@ -2336,10 +2328,10 @@ void ShamanVillage_ShebaClearsSand(void) {
   Actor_FaceDirection(ACTOR_MOAPA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTHWEST, 0);
-  SHAMAN_VILLAGE_EMOTE(18, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20)
+  FieldActor_ShowEmote(18, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "If we reach the end of Trial Road, won't our names join the ranks of..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  SHAMAN_VILLAGE_EMOTE(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 0)
+  FieldActor_ShowEmote(17, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   FieldActor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   // "Kraden's right... It shouldn't matter if a girl does it... All that..."
@@ -2350,7 +2342,7 @@ void ShamanVillage_ShebaClearsSand(void) {
   // "If you give us the chance, we will prove it to you."
   Event_ShowMessage(ACTOR_PIERS, 0);
   Actor_FaceDirection(ACTOR_MOAPA, FACING_NORTHEAST, 0);
-  SHAMAN_VILLAGE_EMOTE(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20)
+  FieldActor_ShowEmote(15, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
   // "Unless you're afraid that a girl like me might become your town's..."
   Event_ShowMessage(ACTOR_SHEBA, 0);
@@ -2837,19 +2829,8 @@ void ShamanVillage_SetUpVillage(void) {
     ShamanVillage_GrowVine();
   REG_BLDALPHA = 0xc08;
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-  {
-    s32 priority = 0x480;
-
-    /* FAKEMATCH(barrier): the empty asm holds r0 until the priority is
-     * complete. */
-    __asm__("" : "+l"(priority) : : "r0");
-    Task_Add(ShamanVillage_LayerVillageActors, priority);
-  }
-  {
-    s32 priority = 0x480;
-
-    Task_Add(ShamanVillage_PuffChimneySmoke, priority);
-  }
+  FieldTask_AddFrame(ShamanVillage_LayerVillageActors, 0x480);
+  FieldTask_AddFrame(ShamanVillage_PuffChimneySmoke, 0x480);
 }
 
 void ShamanVillage_SetUpInn(void) {
@@ -3764,7 +3745,6 @@ u32 gDriftScene_SpawnScript[] = {
     SC_RELEASE,
 };
 #undef TLA_SHAMAN_VILLAGE_H
-#undef SHAMAN_VILLAGE_EMOTE
 #undef WORD_AT
 #undef OBJ14_BYTE
 #undef gShamanVillageVillageActorPlacements

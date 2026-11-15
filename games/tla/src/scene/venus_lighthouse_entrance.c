@@ -169,22 +169,8 @@ void VenusLighthouseEntrance_RunWithDustTrail(s32 actor) {
   VenusLighthouseEntrance_StartDust();
   object->update = VenusLighthouseEntrance_TrailDust;
   object->priorityFlags = 0;
-  {
-    s32 a = actor;
-    /* FAKEMATCH(pin): the 96 pinned to r1. */
-    register s32 dx asm("r1") = 96;
-    /* FAKEMATCH(pin): the -96 pinned to r2, the same call's second. */
-    register s32 dz asm("r2") = -96;
-
-    Actor_WalkByAndWaitById(a, dx, dz);
-  }
-  {
-    /* FAKEMATCH(pin): the arguments pinned in order. */
-    register s32 a asm("r0") = actor;
-    s32 dx = -96;
-
-    Actor_WalkByAndWaitById(a, dx, 96);
-  }
+  Actor_WalkByAndWait(actor, 96, -96);
+  Actor_WalkByAndWait(actor, -96, 96);
   object->update = 0;
   object->priorityFlags = 1;
   FieldEvent_Wait(30);
@@ -919,13 +905,13 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   FieldEvent_Wait(10);
   FieldActor_SetSpritePriority(ACTOR_DOUBTING_SOLDIER, 3);
   Actor_SetSpeed(ACTOR_DOUBTING_SOLDIER, 2);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) &= 254;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &= 254;
   Actor_WalkToAndWait(ACTOR_DOUBTING_SOLDIER, 456, 424);
   FieldEvent_Wait(1);
   /* FAKEMATCH(dead): an empty once-only block ends CSE's block. */
   do {
   } while (0);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) |= 1;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= 1;
   Actor_FaceDirection(ACTOR_DOUBTING_SOLDIER, FACING_SOUTHWEST, 0);
   Actor_SetSpeed(ACTOR_DOUBTING_SOLDIER, 1);
   FieldEvent_Wait(20);
@@ -939,10 +925,10 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST, 0);
   Actor_SetSpeed(ACTOR_SOLDIER_CAPTAIN, 1);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_SOLDIER_CAPTAIN)) + 90) &= 254;
+  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags &= 254;
   Actor_WalkToAndWait(ACTOR_SOLDIER_CAPTAIN, 456, 440);
   FieldEvent_Wait(1);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_SOLDIER_CAPTAIN)) + 90) |= 1;
+  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags |= 1;
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "Let's go meet them together, shall we?"
@@ -961,14 +947,14 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_DOUBTING_SOLDIER, 0.5);
   Actor_SetSpeed(ACTOR_SOLDIER_CAPTAIN, 0.5);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) &= 254;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &= 254;
   Actor_WalkToAndWait(ACTOR_DOUBTING_SOLDIER, 488, 424);
   FieldEvent_Wait(1);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) |= 1;
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_SOLDIER_CAPTAIN)) + 90) &= 254;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= 1;
+  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags &= 254;
   Actor_WalkToAndWait(ACTOR_SOLDIER_CAPTAIN, 488, 440);
   FieldEvent_Wait(1);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_SOLDIER_CAPTAIN)) + 90) |= 1;
+  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags |= 1;
   Actor_WalkToAndWait(ACTOR_ALEX, 456, 432);
   Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 0);
   FieldEvent_Wait(10);
@@ -983,12 +969,12 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Actor_SetAttachedEffect(ACTOR_SOLDIER_CAPTAIN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) &= 254;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags &= 254;
   Actor_WalkToAndWait(ACTOR_DOUBTING_SOLDIER, 504, 424);
   FieldEvent_Wait(1);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_DOUBTING_SOLDIER)) + 90) |= 1;
+  Actor_GetById(ACTOR_DOUBTING_SOLDIER)->steeringFlags |= 1;
   Actor_SetPosition(ACTOR_DOUBTING_SOLDIER, 0, 0);
-  *(u8 *)(((u8 *)Actor_GetById(ACTOR_SOLDIER_CAPTAIN)) + 90) &= 254;
+  Actor_GetById(ACTOR_SOLDIER_CAPTAIN)->steeringFlags &= 254;
   Actor_WalkToAndWait(ACTOR_SOLDIER_CAPTAIN, 504, 440);
   FieldEvent_Wait(1);
   {
@@ -1127,7 +1113,7 @@ void VenusLighthouseEntrance_RuffianWaitsForBackup(void) {
   Actor_SetAnimation(ACTOR_WAITING_RUFFIAN, ANIM_STAND);
   FieldEvent_SetAfterBattleDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE, 99);
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE, 98);
-  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Field_RequestBattleFromEncounterTable(9, 0);
   Event_End();
 }

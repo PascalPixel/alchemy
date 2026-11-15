@@ -157,8 +157,6 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   s32 w, h, x, z;
   s32 az;
   s32 bx, bz;
-  s32 toX, toZ, fromX, fromZ;
-  s32 layer1X, layer1Z;
 
   i = 0;
   if ((u16)sprite != gYampiDesertCave_LogSprites[i]) {
@@ -187,17 +185,9 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   az = map->layers[1].offsetY >> 20;
   bx = map->layers[2].offsetX;
   bz = map->layers[2].offsetY;
-  /* FAKEMATCH(temporary): the first call's last two arguments held in locals.
-   */
-  layer1X = (u16)i + x;
-  layer1Z = (u16)az + z;
-  MapGrid_CopyCellAttributes(x, z, w, h, layer1X, layer1Z);
-  /* FAKEMATCH(temporary): the second call's arguments held in locals. */
-  fromX = (u16)(bx >> 20) + x;
-  fromZ = (u16)(bz >> 20) + z;
-  toX = x + 64;
-  toZ = z + 64;
-  MapGrid_CopyCellAttributes(fromX, fromZ, w, h, toX, toZ);
+  MapGrid_CopyCellAttributes(x, z, w, h, (u16)i + x, (u16)az + z);
+  MapGrid_CopyCellAttributes((u16)(bx >> 20) + x, (u16)(bz >> 20) + z, w, h,
+                             x + 64, z + 64);
   Map_FillCellRectByte2(0, x, z, w, h, 255);
   Map_FillCellRectByte2(2, x, z, w, h, 255);
   return 1;
@@ -212,9 +202,12 @@ extern s32 gPushLeaderSteps[];
 struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
                                             s32 *kind);
 
-static inline s32 YampiDesertCave_CheckCollision(struct Actor *object,
-                                                 s32 *position) {
-  return MapGrid_CheckCollision(object, position);
+/// What MapGrid_CheckCollision says of a step to a position: the system call
+/// layer's inline, as The Broken Seal's system_call.h has it, which this
+/// game's does not yet.
+static inline s32 FieldActor_CheckMovementCollision(struct Actor *actor,
+                                                    s32 *position) {
+  return MapGrid_CheckCollision(actor, position);
 }
 
 /// Finds how far a pushed object can slide in the leader's direction, probing
@@ -260,8 +253,7 @@ s32 YampiDesertCave_FindLogSlide(s32 *position) {
   row:
     probe[0] = position[0] + (gYampiDesertCave_LogFootprints[offset] << 16);
     for (i = 0; i < w; i++) {
-      /* FAKEMATCH(wrapper): the call through YampiDesertCave_CheckCollision. */
-      if (YampiDesertCave_CheckCollision(object, probe) == 2)
+      if (FieldActor_CheckMovementCollision(object, probe) == 2)
         goto hit;
       probe[0] += 0x100000;
     }
@@ -946,13 +938,8 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
     Actor_SetDestination(ACTOR_VALUKAR, leader->x.part[0].pixel,
                          leader->z.part[0].pixel);
   Event_Wait(20);
-  /* FAKEMATCH(dead): a once-only block around the first two stores keeps the
-   * call's first argument ahead of the scene store's address, where without it
-   * the argument follows the store. */
-  do {
-    gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_VALUKAR_BEATEN);
-    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-  } while (0);
+  gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_VALUKAR_BEATEN);
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   // XXX: the battle backdrop is resource 88, the lava cave's
   // (Battle_LavaCaveBackdrop), a link-time number; SceneId_AirsRockInside4 is
   // 88 too and stands in until resource_directory.s names the backdrop.

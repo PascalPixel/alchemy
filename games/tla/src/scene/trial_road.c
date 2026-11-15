@@ -1382,7 +1382,7 @@ void TrialRoad_CutMadPlantBushes(void) {
   if (!Event_GetFlag(0x9b9)) {
     Import_MadPlantLeapAtLeader(249, 72, 152);
     gMainRoutineWork.pendingDjinni = IF_FLAG_SET(0x9b9);
-    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+    Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     Field_RequestBattleFromEncounterTable(106, 4);
   }
 }
@@ -2548,11 +2548,10 @@ void TrialRoad_BeatMoapa(void) {
   PartyInventory_Discard(65);
   Party_GiveItem(ITEM_HOVER_JADE, 0);
   Actor_FaceActor(ACTOR_FELIX, 8, 0);
-  OBJECT_BYTE(Actor_GetById(ACTOR_MOAPA), 0x5a) &= ~1;
+  Actor_GetById(ACTOR_MOAPA)->steeringFlags &= ~1;
   Actor_WalkToAndWait(ACTOR_MOAPA, TrialRoad_MirrorCellX(35), 264);
   Event_Wait(1);
-  /* FAKEMATCH(signature): the byte typed as a whole-byte bit-field. */
-  ((struct ActorSolid *)Actor_GetById(ACTOR_MOAPA))->solid |= 1;
+  Actor_GetById(ACTOR_MOAPA)->steeringFlags |= 1;
   Event_Wait(20);
   FieldActor_ShowEmote(ACTOR_MOAPA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 10);
   // "After many years, the vow that Hoabna made to Yegelos has at last..."
@@ -2665,10 +2664,10 @@ void TrialRoad_ShowTraps(void) {
   Actor_SetAnimationById(ACTOR_WEST_GUARD, 1);
   Event_Wait(10);
   Actor_SetSpeed(ACTOR_WEST_GUARD, 0.25);
-  OBJECT_BYTE(Actor_GetById(ACTOR_WEST_GUARD), 0x5a) &= ~1;
+  Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags &= ~1;
   Actor_WalkByAndWaitById(ACTOR_WEST_GUARD, 0, 8);
   Event_Wait(1);
-  OBJECT_BYTE(Actor_GetById(ACTOR_WEST_GUARD), 0x5a) |= 1;
+  Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags |= 1;
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_WEST_GUARD, 2);
   Actor_SetAnimationById(ACTOR_WEST_GUARD, 5);
@@ -2678,10 +2677,10 @@ void TrialRoad_ShowTraps(void) {
   MapGrid_SetShake(2, 4, 1);
   Actor_GetById(ACTOR_WEST_GUARD)->velocityY = px(4);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  OBJECT_BYTE(Actor_GetById(ACTOR_WEST_GUARD), 0x5a) &= ~1;
+  Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags &= ~1;
   Actor_WalkByAndWaitById(ACTOR_WEST_GUARD, 0, 16);
   Event_Wait(1);
-  ((struct ActorSolid *)Actor_GetById(ACTOR_WEST_GUARD))->solid |= 1;
+  Actor_GetById(ACTOR_WEST_GUARD)->steeringFlags |= 1;
   Event_Wait(60);
   Actor_FaceDirectionById(ACTOR_WEST_GUARD, FACING_SOUTH, 0);
   Event_Wait(20);
@@ -3197,10 +3196,7 @@ void TrialRoad_DriftRubble(union FieldObject *object) {
   effect->velocity.x = velocityX - velocityX / 18;
   effect->velocity.z = velocityZ - velocityZ / 16;
   {
-    /* FAKEMATCH(temporary): the x scale rate read into a block temporary. */
-    s32 rate = effect->scaleRateX;
-
-    effect->scaleX += rate;
+    effect->scaleX += effect->scaleRateX;
   }
   sprite = effect->sprite;
   effect->scaleY += effect->scaleRateY;
@@ -3690,12 +3686,8 @@ void TrialRoad_StartRival(s32 mirrored) {
   struct TrialRoadReplay *state = (struct TrialRoadReplay *)gSceneState;
 
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
-    /* FAKEMATCH(temporary): a local reads the work value before the three
-     * stores. */
-    s32 rivalId = (u16)work->rivalId;
-
     state->mirrored = mirrored;
-    state->id = rivalId;
+    state->id = work->rivalId;
     state->still = 0;
   }
   Task_Add(TrialRoad_MoveRival, TASK_PASS_VBLANK + 5);

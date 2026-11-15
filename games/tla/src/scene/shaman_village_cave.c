@@ -421,11 +421,7 @@ void ShamanVillageCave_MeetColossoFans(void) {
   Actor_SetDestinationOffset(ACTOR_NAVAMPA, -16, 24);
   Actor_SetDestinationOffset(ACTOR_SATRAGE, -16, 24);
   FieldActor_WaitForMoveById(ACTOR_SATRAGE);
-  /* FAKEMATCH(dead): the once-only block loads gMainRoutineWork before its
-   * offset is built. */
-  do {
-    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-  } while (0);
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   FieldEvent_SetAfterBattleDestination(SCENE_SHAMAN_VILLAGE_CAVE, 20);
   Event_SetDefeatDestination(SCENE_SHAMAN_VILLAGE_CAVE, 21);
   Field_RequestBattleFromEncounterTable(102, 2);
@@ -435,15 +431,7 @@ void ShamanVillageCave_MeetColossoFans(void) {
 void ShamanVillageCave_FightGladiators(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  {
-    struct MainRoutineWork *party = &gMainRoutineWork;
-
-    party->battleType = BATTLE_TYPE_NO_ESCAPE;
-    /* FAKEMATCH(dead): the empty once-only block's loop note ends the
-     * scheduling block after the store. */
-    do {
-    } while (0);
-  }
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   FieldEvent_SetAfterBattleDestination(SCENE_SHAMAN_VILLAGE_CAVE, 20);
   Event_SetDefeatDestination(SCENE_SHAMAN_VILLAGE_CAVE, 21);
   Field_RequestBattleFromEncounterTable(102, 2);

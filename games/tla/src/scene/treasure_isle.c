@@ -438,7 +438,7 @@ void TreasureIsle_MeetWaterGuardian(void) {
   }
   FieldEvent_Wait(20);
   gMainRoutineWork.pendingDjinni = 0x19bb;
-  gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Field_RequestBattleFromEncounterTable(0x67, 0);
 }
 

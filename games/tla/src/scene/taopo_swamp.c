@@ -435,7 +435,7 @@ void TaopoSwamp_StartMadPlantBattle(void) {
     MadPlant_LeapAtLeader_(249, 344, 648);
     gMainRoutineWork.pendingDjinni =
         IF_FLAG_SET(FLAG_TAOPO_SWAMP_MAD_PLANT_BEATEN);
-    gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
+    Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     Field_RequestBattleFromEncounterTable(106, 1);
   }
 }

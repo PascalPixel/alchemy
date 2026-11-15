@@ -209,6 +209,13 @@ STATIC_ASSERT(sizeof(struct MainRoutineWork) == 0x2e0);
 
 /// The game's state (system/ewram.s).
 extern struct MainRoutineWork gMainRoutineWork;
+
+/// Sets how the next battle starts (an enum BattleType).
+#define Battle_SetType(mode)                                                   \
+  do {                                                                         \
+    gMainRoutineWork.battleType = (mode);                                      \
+  } while (0)
+
 s32 Party_CountMembers(void);
 s32 Party_ListMembers(s16 *owners);
 void Unit_LevelUpTo(s32 owner, s32 level);

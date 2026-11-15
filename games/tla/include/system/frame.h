@@ -17,7 +17,7 @@ extern u16 gFrameVBlanks;
 /// gFrameVBlanks as the last frame left it; the text typing paces itself by
 /// it.
 extern u16 gLastFrameVBlanks;
-extern u32 gCpuLoadTimer;
+extern u32 gCpuLoadTimer; ///< frames gCpuLoadPeak is still held
 /// The highest CPU load in the last 30 frames: the scanline the frame's work
 /// ended on, plus 256 for each VBlank it overran.
 extern u32 gCpuLoadPeak;
@@ -28,15 +28,16 @@ extern u8 gIdleSleepEnabled;
 extern volatile u16 gIdleFrames;
 extern volatile u8 gSleepRequested;
 extern u8 gDebugMode;
-extern u8 gDebugPaused;
+extern u8 gDebugPaused; ///< the debug pause is on
 /// Set by the keypad interrupt; wait() performs the soft reset.
 extern u8 gResetRequested;
 /// Written by the soft reset just before it restarts the cartridge, and
 /// cleared by System_Initialize; nothing else reads it.
 extern u32 gCartridgeResetMarker;
 extern u32 gFrameCount;
-extern u32 gPlayTimeFrames;
+extern u32 gPlayTimeFrames; ///< the play time clock, in frames
 
+/// Stops the sound DMA and its timer.
 void Sound_SuspendDirectSoundFar(void);
 
 extern u32 gVBlankCount;

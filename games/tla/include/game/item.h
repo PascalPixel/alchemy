@@ -199,11 +199,14 @@ STATIC_ASSERT(offsetof(struct ItemDefinition, element) == 0x14);
 STATIC_ASSERT(offsetof(struct ItemDefinition, effects) == 0x18);
 STATIC_ASSERT(offsetof(struct ItemDefinition, abilityId) == 0x28);
 
+/// Returns an item's definition.
 struct ItemDefinition *Item_GetDirectFar(s32 item);
 struct ItemDefinition *Item_GetDirect(s32 item);
 s32 Equipment_GetUnleashRateBonus(struct BattleUnit *owner);
 s32 RollWeaponUnleash(struct BattleUnit *owner);
 
+/// Rolls whether a character's weapon unleashes, 5 percent a point of its
+/// chance.
 s32 RollWeaponUnleashFar(struct BattleUnit *owner);
 /// Returns whether the character's class may equip the item, 0 for any unit
 /// past the eight characters (Item_CanUnitEquipDirect).

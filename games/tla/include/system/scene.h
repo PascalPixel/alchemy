@@ -30,6 +30,8 @@ struct FieldPosition {
   s32 z;
 };
 
+/// The running scene's overlay, loaded into this EWRAM at each scene change;
+/// its code opens with its entry table.
 extern void *gOverlayArea[];
 
 #endif

@@ -13,7 +13,8 @@ struct Window;
 extern u8 gScreenFadeToWhite;
 // volatile: ScreenFade_Update, which the VBlank handler runs, clears it at the
 // fade's end while ScreenFade_Wait waits on it, so it is no device.
-extern volatile u8 gScreenFadeVBlanks;
+extern volatile u8
+    gScreenFadeVBlanks; ///< the fade's length in VBlanks, 0 when idle
 extern u8 gScreenFadeVBlanksLeft;
 /// The BLDCNT first-target layers the screen fade covers (the low six bits).
 extern u16 gScreenFadeLayers;
@@ -21,7 +22,7 @@ extern u16 gScreenFadeLayers;
 extern u8 gScreenFadeStartLevel;
 // volatile: ScreenFade_Start sets it for ScreenFade_Update, which the VBlank
 // handler runs, so it is no device.
-extern volatile u8 gScreenFadeTargetLevel;
+extern volatile u8 gScreenFadeTargetLevel; ///< the brightness the fade ends at
 extern u8 gRomShiftedTilePair[];
 /// Transform_BuildLookAt's ARM dot product, seven words it copies onto its
 /// stack to run.
@@ -64,6 +65,8 @@ void FileList_UpdatePulse(void);
 void Transform_Reset(void);
 s32 Text_ClearCanvas(void);
 s32 BattleUnit_ListIdsFar(s32 side, s32 group);
+/// Reloads the portrait picture for the key into a portrait slot with that
+/// slot's palette (14 + slot), reusing the slot's VRAM cache entry.
 void Portrait_ReloadFar(s32 a, s32 b, s32 c);
 void Icon_DrawMisc(u32 index);
 s32 Icon_CopyResourceToSlot(s32 arg0, s32 arg1, s32 arg2);
@@ -125,10 +128,15 @@ void Text_DrawStringAtOffsetFar(const u8 *text, s32 window, s32 offsetX,
 void Text_DrawStringInWindowFar(u8 *text, s32 window, u32 x, u32 y);
 #endif
 void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
+/// Draws a divider from (x1, y1) to (x2, y2), one of which must agree, joining
+/// it to the frame and divider tiles already on the tilemap.
 void Window_DrawDividerLineFar(s32, s32, s32, s32, s32);
 void WindowSprite_UpdateAll(void);
 void WindowSystem_StartBattleUpdate(s32 kind);
+/// Sets the text colour (0 to 15) of drawn text.
 s32 Text_SetColorFar(s32 color);
+/// Decompresses resource `resourceId` and loads its first `size` bytes into
+/// VRAM cache entry `entryId`.
 void VramBlock_LoadResourceFar(s32 entry_id, s32 mode, s32 resourceId);
 
 /// The colour index Render_DecodePicture paints every pixel of a layer drawn

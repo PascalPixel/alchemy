@@ -15,7 +15,7 @@
 #define SC_LABEL(n) (s32)(0x80000000 | (n) << 16) ///< a jump target
 #define SC_TO(n) (s32)(0xc0000000 | (n) << 16)    ///< jump to label n
 #define SC_TOP 0                                  ///< jump to the first word
-#define SC_FOREVER 0xffff
+#define SC_FOREVER 0xffff ///< An SC_LOOP count that never runs out
 
 #define SC_WAIT(n) 0x00, (n)                     ///< wait n frames
 #define SC_SYNC 0x01                             ///< wait to arrive
@@ -30,13 +30,13 @@
 #define SC_MOVE_LOCAL(a, b) 0x08, (a), (b)
 #define SC_WANDER(a, b, c) 0x09, (a), (b), (c)
 #define SC_WANDER_HOME(a, b, c) 0x0a, (a), (b), (c)
-#define SC_APPROACH_WATCHED 0x0b
-#define SC_CAMERA 0x0c                 ///< follow the leader
+#define SC_APPROACH_WATCHED 0x0b ///< Follow the watched actor to 16 pixels.
+#define SC_CAMERA 0x0c           ///< follow the leader
 #define SC_LOOP(n, to) 0x0d, (n), (to) ///< repeat up to n times
-#define SC_JUMP(to) 0x0e, (to)
-#define SC_IF(to) 0x0f, (to)    ///< if the result is true
-#define SC_IFNOT(to) 0x10, (to) ///< if the result is false
-#define SC_END 0x11             ///< return to the main script
+#define SC_JUMP(to) 0x0e, (to)         ///< Jump to label to.
+#define SC_IF(to) 0x0f, (to)           ///< if the result is true
+#define SC_IFNOT(to) 0x10, (to)        ///< if the result is false
+#define SC_END 0x11                    ///< return to the main script
 #define SC_FLAG_CHECK(f) 0x12, (f)
 #define SC_FLAG_ON(f) 0x13, (f)
 #define SC_FLAG_OFF(f) 0x14, (f)
@@ -46,10 +46,10 @@
 #define SC_SPEED(speed) SC_SET(SW_SPEED, Q16(speed))
 /// Set the acceleration, in pixels a frame each frame.
 #define SC_ACCELERATION(acceleration) SC_SET(SW_ACCEL, Q16(acceleration))
-#define SC_ADD(w, v) 0x17, (w), (v)
-#define SC_CMP(w, v) 0x18, (w), (v)
-#define SC_PLAYER 0x19 ///< key control
-#define SC_WORLD 0x1a
+#define SC_ADD(w, v) 0x17, (w), (v) ///< Add to a work value.
+#define SC_CMP(w, v) 0x18, (w), (v) ///< Test whether work value w equals v.
+#define SC_PLAYER 0x19              ///< key control
+#define SC_WORLD 0x1a               ///< World map control
 #define SC_CMD_1B 0x1b
 #define SC_ROPE 0x1c
 #define SC_TIGHTROPE 0x1d
@@ -60,15 +60,15 @@
 #define SC_WORLD_SAND 0x22
 #define SC_HOVER 0x23
 #define SC_WALK 0x24
-#define SC_KEY_COUNT 0x25
-#define SC_FREE 0x26 ///< release the object
+#define SC_KEY_COUNT 0x25 ///< Check the configured keys.
+#define SC_FREE 0x26      ///< release the object
 #define SC_ARG(v) 0x27, (v)
-#define SC_NOP(v) 0x28, (v)
-#define SC_SE(n) 0x29, (n) ///< a sound effect
+#define SC_NOP(v) 0x28, (v) ///< Skip its operand.
+#define SC_SE(n) 0x29, (n)  ///< a sound effect
 #define SC_CALL_WITH(v) 0x2a, (v)
 #define SC_GOTO(script) 0x2b, (s32)(script) ///< continue in another script
-#define SC_HIDE_SPRITES 0x2c
-#define SC_SHOW_SPRITE 0x2d
+#define SC_HIDE_SPRITES 0x2c ///< Hide the sprites (ACTOR_SPRITE_NONE).
+#define SC_SHOW_SPRITE 0x2d  ///< Show one sprite (ACTOR_SPRITE_ONE).
 /// Call fn with the actor each frame until it returns zero.
 #define SC_CALL(fn) 0x2e, (s32)(fn)
 #define SC_CAMERA_IN_BOUNDS 0x2f

@@ -6,6 +6,7 @@
 
 #include "types.h"
 
+/// Returns the music Sound_Play last chose.
 s32 Sound_GetCurrentBgmFar(void);
 void Sound_UpdateBgmRampsFar(void);
 void Sound_InitializeFar(void);

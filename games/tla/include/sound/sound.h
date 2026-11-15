@@ -137,6 +137,7 @@ extern u16 gCurrentBgm;
 /// One bit for each sound id, set once the sound has played (SoundFlag_Set);
 /// the link lobby offers only the tunes heard.
 extern u8 gSoundFlags[];
+/// Returns nonzero while a jingle holds the music.
 s32 Sound_GetBgmRestoreDelayFar(void);
 void Sound_WaitForJingle(void);
 

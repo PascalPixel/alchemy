@@ -112,6 +112,7 @@ void Scene_PlayMusic(void);
 
 s32 Battle_RunFar(s32 entrance);
 
+/// Plays Lucky Wheels (LuckyWheels_Start).
 s32 LuckyWheels_StartFar(s32 entrance);
 
 s32 SuperLuckyDice_StartFar(s32 entrance);
@@ -121,6 +122,7 @@ void Scene_LoadOverlay(s32 unused);
 
 extern const u8 gString_HexDigits[];
 
+/// Where the debug text writes next on its screen in BG0.
 extern u16 *gDebugTextCursor;
 
 extern const u8 Resource_DecodeHalfwordLzCode[];
@@ -154,6 +156,7 @@ s32 Save_InvalidateSector(s32 index);
 u32 Save_SelectWriteSector(s32 partId);
 u32 Save_GetLatestCounter(s32 partId);
 
+/// The cartridge's first byte, as the link places it (rom_header.s).
 extern const u8 Rom_Start[];
 
 void System_CopyBuildStamp(void);

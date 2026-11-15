@@ -7,8 +7,11 @@
 #include "types.h"
 
 struct WindowSprite;
+/// Turns an icon's window sprite on and copies its screen position into its OAM
+/// attributes, with no affine matrix.
 void Icon_PrepareActorFar(struct WindowSprite *object);
 void ItemMenu_DrawItemDetailsFar(void *window, s32 item);
+/// Describes an item (an inventory entry) in window, one 8-pixel row a line.
 void ItemMenu_DrawItemDetailsWithCountFar(void *window, s32 item, s32 count);
 void Palette_LoadIconsIntoHighlightFar(void);
 void Menu_PlaceOwnerEntryObjectsFar(void *window, s32 a, s32 b);

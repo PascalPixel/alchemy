@@ -96,6 +96,9 @@ struct WindowSprite *WindowSprite_Create(s32 no, s32 flags,
                                          struct RenderInput *input, s32 offsetX,
                                          s32 offsetY);
 
+/// Takes a free window output, writes its OAM attributes at the window's
+/// position offset by (offsetX, offsetY) pixels and appends it to the window's
+/// list.
 struct WindowSprite *WindowSprite_CreateFar(s32 resource, s32 flags,
                                             struct RenderInput *window, s32 x,
                                             s32 y);

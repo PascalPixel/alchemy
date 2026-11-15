@@ -6,6 +6,7 @@
 
 #include "types.h"
 
+/// Plays Lucky Dice (LuckyDice_Start).
 s32 LuckyDice_StartFar(s32 entrance);
 
 #endif

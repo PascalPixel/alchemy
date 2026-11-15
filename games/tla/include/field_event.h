@@ -39,10 +39,13 @@ s32 Import_PartyGetLeaderActor(void);
 struct Actor *Import_ActorGet(s32 actor);
 void Import_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
 void Import_ActorCenterAndWalk(s32 actor, s32 priority, s32 dz);
+/// Switches an actor's sprite to an ActorAnimation (Actor_SetAnimationById).
 void Import_ActorSetAnimation(s32 actor, s32 animation);
 void Import_ActorSetSpritePriority(s32 actor, s32 priority);
 void Import_ActorReturnHome(s32 mode, s32 actor, s32 flag);
 s32 Import_GameFlagIsSet(s32 flag);
+/// Sets a game flag (GameFlag_Set), for the scenes whose calls compile only as
+/// calls of a void routine.
 void Import_GameFlagSet(s32 flag);
 void Import_ShopRun(s32 shop, s32 keeper);
 void Import_SoundPlay(s32 cue);

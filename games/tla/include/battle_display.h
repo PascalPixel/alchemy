@@ -115,6 +115,8 @@ s32 BattleObject_IsValidId(u32 objectId);
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 mode);
 void BattleHighlight_SetSpriteMode(s32 actor, s32 mode);
 void BattleObject_Put(void);
+/// Runs one of the large battle effects, the summons and the scenes of a few
+/// abilities.
 void BattleEffect_RunSummonFar(s32 *context);
 /// Copies the canvas to VRAM when a transfer is pending.
 void BattleEffect_ProcessPendingGraphicsTransfer(

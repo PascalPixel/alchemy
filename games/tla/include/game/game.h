@@ -109,9 +109,13 @@ extern const struct EnemyDefinition gEnemy_Definitions[];
 /// n & 7 of byte GAME_FLAG_BYTE(n).
 extern u8 gGameFlagBytes[];
 void DjinnRecovery_CountDownTwentyFar(void);
+/// Gives a Djinni to a unit.
 s32 Djinn_GiveFar(s32, s32, s32);
 void Party_ClearUnusableShortcutsFar(void);
+/// Gives a unit one item, joining its first matching stack (up to 30) or taking
+/// the first free slot.
 s32 Inventory_AddItemFar(s32, s32);
+/// Takes one item out of slot, closing up the inventory when it was the last.
 s32 Inventory_RemoveFar(s32 owner, s32 slot);
 void Unit_CalculateBaseElements(s32 owner_id,
                                 struct BattleElementStats *elements);
@@ -119,6 +123,7 @@ s32 Class_Determine(s32 classId, u32 *djinn, s32 item);
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 *output);
 void Unit_RefreshPsynergy(s32);
 s32 Owner_UpdateClassActions(s32 owner_id);
+/// Expands message into buffer without an upper length bound.
 void Message_DecodeRawUnboundedFar(s32, u16 *);
 
 /// How many summons there are (summon_table.c), and the number that ends a

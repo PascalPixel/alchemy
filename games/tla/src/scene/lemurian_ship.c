@@ -24,6 +24,19 @@
 #include "system/system.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "scene_ids.h"
+#include "scene/lemurian_ship.h"
+#include "scene/scene.h"
+#include "system/main_routine_work.h"
+#include "system/ram_buffer.h"
+#include "field/field_sprite.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
+#include "version.h"
+#include "macros.h"
+#include "field/actor_script.h"
+#include "item_ids.h"
+#include "text/msg_ids.h"
 
 /// The Lemurian Ship's room of two jellies, by the rows of
 /// gLemurianShip_TwoJellyRoomPlacements.
@@ -103,18 +116,6 @@ enum LemurianShipPillarRoomActorId {
 enum LemurianShipEngineRoomActorId {
   ACTOR_ENGINE_ROOM_KRADEN = ACTOR_FIRST_PLACED
 };
-#include "scene_ids.h"
-#include "scene/lemurian_ship.h"
-#include "scene/scene.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "field/field_sprite.h"
-#include "field/event_inline.h"
-#include "system/frame.h"
-#include "version.h"
-#include "macros.h"
-#include "field/actor_script.h"
-#include "item_ids.h"
 
 #define FLAG_JELLIES_BEATEN 0x930 ///< the first of sixteen, by jelly number
 #define FLAG_AQUA_HYDRA_BEATEN (FLAG_JELLIES_BEATEN + 15)
@@ -165,8 +166,6 @@ u8 *Scene_GetExitRegions(void) {
 }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-#include "text/msg_ids.h"
 
 void Event_Start(void);
 void Event_End(void);
@@ -1713,8 +1712,6 @@ void LemurianShip_SetUpEngineRoom(void) {
   if (Event_GetFlag(FLAG_SHIP_ENGINE_RUNNING) == 0)
     LemurianShip_SetBlackCrystal();
 }
-
-#include "text/msg_ids.h"
 
 // clang-format off
 s32 gLemurianShip_IntoPassage[] = {                                                               

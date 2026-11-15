@@ -25,6 +25,7 @@
 #include "window/window.h"
 #include "graphics/uiflow.h"
 #include "field/actor_script.h"
+#include "text/msg_ids.h"
 
 extern s32 gLemuriaEntrance_ShipSailsOut[];
 /// The way in's actors, by the rows of gActorPlacements.
@@ -60,8 +61,6 @@ void LemuriaEntrance_ShowPortraitLine(s32 speaker, s32 frames);
 void LemuriaEntrance_ShebaAsksPiersAge(void);
 
 extern s32 gLemuriaEntrance_ShipAtRest[];
-
-#include "text/msg_ids.h"
 
 /// Grind has broken up the rock in the way.
 #define FLAG_ROCK_GROUND_AWAY 0x909

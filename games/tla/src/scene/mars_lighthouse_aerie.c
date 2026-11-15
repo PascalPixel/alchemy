@@ -54,6 +54,7 @@
 #include "fixed_math.h"
 #include "scene/sparkle.h"
 #include "scene/orbit.h"
+#include "text/msg_ids.h"
 
 /// Set as the party leaves the Mercury Lighthouse at the end: the beacon's
 /// fire burns at the aerie from then on.
@@ -129,14 +130,6 @@ enum {
 #ifndef TLA_MARS_LIGHTHOUSE_AERIE_H
 #define TLA_MARS_LIGHTHOUSE_AERIE_H
 
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "system/frame.h"
-#include "field/actor.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "field/scene_tables.h"
-
 struct Trigger;
 
 u32 Random16(void);
@@ -171,8 +164,6 @@ extern u16 gPaletteCycle_Step;
 s32 List_CountEntries(u16 *list);
 
 #endif
-
-#include "text/msg_ids.h"
 
 extern u32 gMarsLighthouseAerie_BeaconFlameFrame;
 void Map_CopyPalette(s32 scene, s32 a1);
@@ -1882,8 +1873,6 @@ void Orbs_SpawnRising(void) {
 
 #include "../field/actor_park_record.c"
 
-#include "text/msg_ids.h"
-
 void MarsLighthouseAerie_HaltIvan(void);
 void FieldCamera_WaitForArrival();
 void Teleport_PlayWhirl(void);
@@ -3113,8 +3102,6 @@ void MarsLighthouseAerie_StartRisingRings(struct Actor *object,
 void MarsLighthouseAerie_EndRisingRings(struct Actor *object) {
   object->riseCounter = 1;
 }
-
-#include "text/msg_ids.h"
 
 void Scene_LeaveByExit(void);
 void MarsLighthouseAerie_FaceDoomDragon(void);

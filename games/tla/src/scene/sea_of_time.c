@@ -7,12 +7,12 @@
 /// SeaOfTime_GrindLastRock) until it crosses to Lemuria
 /// (SeaOfTime_CrossToLemuria).
 
-#include "../field/actor_set_sprite_priority.c"
 #include "sprite_ids.h"
 #include "graphics/palette_buffers.h"
 #include "system/task.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "../field/actor_set_sprite_priority.c"
 
 #include "../field/actor_prepare.c"
 #include "flags.h"
@@ -26,6 +26,21 @@
 #include "field/actor.h"
 #include "field/map_grid.h"
 #include "system/field_effect.h"
+#include "field/field_sequence_event.h"
+#include "field/event_commands.h"
+#include "scene/scene.h"
+#include "field/scene_tables.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "system/math_table.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "scene_ids.h"
+#include "system/main_routine_work.h"
+#include "system/io_reg.h"
+#include "text/msg_ids.h"
 
 struct SeaOfTimeSprite {
   u8 unk00[0x1a];
@@ -53,28 +68,6 @@ void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor);
 void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor);
 
 static inline s32 SeaOfTime_Cos(s32 angle) { return Trig_Cos(angle); }
-#include "field/field_sequence_event.h"
-#include "field/event_commands.h"
-#include "scene/scene.h"
-#include "types.h"
-#include "field/scene_tables.h"
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "scene_ids.h"
-#include "field/actor.h"
-#include "system/ram_buffer.h"
-#include "field/event_inline.h"
-#include "system/frame.h"
-#include "system/field_effect.h"
-#include "system/iwram_call.h"
-#include "system/main_routine_work.h"
-#include "system/io_reg.h"
 
 struct Actor *Scene_CreateImportedActor(s32 x, s32 y, s32 z, s32 type) {
   struct Actor *object = Import_ActorCreate(type, x, y, z);
@@ -527,8 +520,6 @@ void SeaOfTime_FollowChannel(void) {
   }
   Event_End();
 }
-
-#include "text/msg_ids.h"
 
 extern u16 gSeaOfTime_LapCount;
 extern s16 gSeaOfTime_LapTurn;

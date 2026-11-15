@@ -47,11 +47,34 @@
 #include "field/actor.h"
 #include "field/flag_call.h"
 #include "field/event_inline.h"
+#include "field/map_grid.h"
+#include "version.h"
+#include "system/iwram_call.h"
+#include "system/input.h"
+#include "macros.h"
+#include "system/dma.h"
+#include "system/io_reg.h"
+#include "field/field_event.h"
+#include "system/frame.h"
+#include "field/field_sprite.h"
+#include "system/field_effect.h"
+#include "field/call.h"
+#include "field/field_coordinate.h"
+#include "battle/battle_unit.h"
+#include "field/event_commands.h"
+#include "system/vector3.h"
+#include "fixed_math.h"
+#include "system/heap_release.h"
+#include "window/item_icon.h"
+#include "field/cell_target.h"
+#include "field/field_effect.h"
+#include "graphics/vram_tab.h"
+#include "system/task.h"
+#include "field/actor_script.h"
+#include "system/io_write.h"
+#include "scene/airs_rock.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
-#define S16_AT(base, offset) (*(s16 *)((u8 *)(base) + (offset)))
-#define U16_AT(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
 #define FLAG_JUPITER_STATUE_BLOCKS_FLAMES 0xa37
 #define FLAG_VENUS_STATUE_BLOCKS_FLAMES 0xa38
@@ -168,26 +191,6 @@ enum {
   ACTOR_HIDDEN_FLAME_THROWER_C
 };
 
-struct SceneWork {
-  u8 unk000[0x166];
-  u16 unk166;
-  u8 unk168[0x44];
-  s32 unk1ac;
-  u8 unk1b0[0xb88];
-  u8 unkd38;
-};
-
-struct MapLayer {
-  u8 unk00[0x30];
-  u8 *cells;
-  u8 unk34[4];
-};
-
-struct MapLayers {
-  u8 unk000[0x108];
-  struct MapLayer layers[3];
-};
-
 /// Where a pushed object comes to rest, read by the push that follows.
 struct PushTarget {
   s32 x; ///< 16.16 fixed-point pixels
@@ -222,35 +225,8 @@ void MarsLighthouseRoomF_RouteFireThroughPipes(void);
 void MarsLighthouseRoomF_ScatterRubble(s32 id);
 void MarsLighthouseRoomF_ShootFireballAtWall(void);
 
-#include "version.h"
-#include "system/iwram_call.h"
-#include "system/input.h"
-#include "macros.h"
 #include "shared/jupiter_lighthouse_aerie.h"
-#include "system/dma.h"
-#include "system/io_reg.h"
-#include "system/ram_buffer.h"
-#include "field/field_event.h"
-#include "field/actor.h"
-#include "system/main_routine_work.h"
-#include "system/frame.h"
-#include "field/field_sprite.h"
-#include "system/field_effect.h"
-#include "field/call.h"
-#include "field/field_coordinate.h"
-#include "field/field_sequence_event.h"
-#include "battle/battle_unit.h"
-#include "field/event_commands.h"
-#include "system/vector3.h"
-#include "fixed_math.h"
-#include "system/heap_release.h"
-#include "window/item_icon.h"
-#include "field/cell_target.h"
 #include "shared/tables.h"
-#include "field/field_effect.h"
-#include "graphics/vram_tab.h"
-#include "system/task.h"
-#include "field/actor_script.h"
 
 struct EffectOptions;
 struct LightOam;
@@ -969,7 +945,7 @@ void MarsLighthouseRoomF_PushPipeOrJump(void) {
     table = gMarsLighthouseRoomF_JumpAnglesByKey;
     angle = *(s16 *)((u8 *)table + (((*keys >> 4) & 15) << 1));
     if (angle != -1) {
-      struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapGrid;
+      struct MapWork *map = Ram_HeapSlots->mapGrid;
       struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
       s32 position[3];
       s32 x;
@@ -983,7 +959,7 @@ void MarsLighthouseRoomF_PushPipeOrJump(void) {
       z = FIELD_CELL(position[2]);
       cells = Ram_MapCellBuffer;
       if (map != NULL)
-        cells = map->layers[2].cells;
+        cells = (u8 *)map->layers[2].cells;
       cells += (x + (z << 7)) << 2;
       if (cells[2] != 255)
         Field_TryJumpForward();
@@ -1001,10 +977,10 @@ void Leader_SlideOnIceFromEdge(void);
 /// A frozen puddle is solid ground.
 void MarsLighthouseRoomF_FreezePuddle(s32 id) {
   struct Actor *object = Actor_Get(id);
-  struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 row = FIELD_CELL(object->z.fixed) << 7;
   s32 x = object->x.fixed;
-  u8 *cell = map->layers[2].cells;
+  u8 *cell = (u8 *)map->layers[2].cells;
   s32 offset = FIELD_CELL(x) + row;
 
   cell += offset << 2;
@@ -1015,10 +991,10 @@ void MarsLighthouseRoomF_FreezePuddle(s32 id) {
 /// A thawed puddle is water again.
 void MarsLighthouseRoomF_MeltPuddle(s32 id) {
   struct Actor *object = Actor_Get(id);
-  struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapGrid;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 row = FIELD_CELL(object->z.fixed) << 7;
   s32 x = object->x.fixed;
-  u8 *cell = map->layers[2].cells;
+  u8 *cell = (u8 *)map->layers[2].cells;
   s32 offset = FIELD_CELL(x) + row;
 
   cell += offset << 2;
@@ -1393,8 +1369,6 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
   }
 }
 
-#include "field/event_inline.h"
-
 #include "shared/actor_raise_from_cell.h"
 
 /// Unused here: the Jupiter Lighthouse's whirlwind carries the leader up.
@@ -1658,21 +1632,7 @@ UNUSED void JupiterLighthouse_PlaceRaisedActors(void) {
 
 #include "shared/actor_is_beside.h"
 
-#define MapLayer MapLayer__s1e20
-#define SceneWork SceneWork__s1e20
-#define Camera_SetBounds Camera_SetBounds__s1e20
 #include "shared/mars_lighthouse_entrance_room.h"
-#undef Camera_SetBounds
-/* VIEW(s1e20): static Camera_SetBounds as Camera_SetBounds__s1e20; room.h has
- * static inline void FieldCamera_MoveToFixed(s32 x, s32 y, s32 z, s32
- * use_setter) { FieldCamera_MoveWithinMapBounds(x, y, z, use_setter); }; not
- * tried: Camera_SetBounds__s1e20 was not found. */
-#undef SceneWork
-/* VIEW(s1e20): tag struct SceneWork as struct SceneWork__s1e20; room.h has
- * another definition; not tried: struct SceneWork__s1e20 was not found. */
-#undef MapLayer
-/* VIEW(s1e20): tag struct MapLayer as struct MapLayer__s1e20; room.h has
- * another definition; not tried: struct MapLayer__s1e20 was not found. */
 
 #include "shared/ride_update_carried.h"
 
@@ -2342,12 +2302,6 @@ void Actor_HoldDuringEvent(struct Actor *object) {
 #undef position
 #undef WORK
 
-#define MapLayer MapLayer__s2f80
-#include "field/map_grid.h"
-#undef MapLayer
-/* VIEW(s2f80): tag struct MapLayer as struct MapLayer__s2f80; room.h has
- * another definition; not tried: struct MapLayer__s2f80 was not found. */
-
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
 /// The ride work as a rolling actor reads it when it reaches the leader:
@@ -2512,8 +2466,6 @@ void Actor_Attach(s32 id, s32 target, s32 kind, s32 a3, const void *script) {
   object->update = Actor_HoldDuringEvent;
 }
 
-#include "field/event_inline.h"
-
 void Actor_RollAndCrumble(struct Actor *actor);
 
 void Actor_LaunchAhead(struct Actor *self) {
@@ -2571,10 +2523,8 @@ s32 Actor_Park(struct Actor *object) {
 #undef position
 #undef WORK
 #undef MapLayer
-#undef SceneWork
 #undef Camera_SetBounds
 #undef Ride_SetEntry
-#include "field/event_inline.h"
 
 void Actor_StartScript(struct Actor *object, const void *script);
 extern s32 gFieldEffect_DurationScripts[];
@@ -2667,13 +2617,11 @@ extern struct CellTarget gCrackedTiles;
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
-#include "system/io_write.h"
 #include "shared/cracked_tile_fall.h"
 
 #include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
-#include "field/event_inline.h"
 
 static __inline__ void CamBounds(s32 x, s32 y, s32 z, s32 mode) {
   FieldCamera_MoveToFixed(x, y, z, mode);
@@ -2816,8 +2764,8 @@ s32 PushTarget_FillFootprint(s32 id) {
 
 void Map_FillCellRectByte2(s32 layer, s32 x, s32 z, u32 width, u32 height,
                            s32 value) {
-  struct MapLayers *map = (struct MapLayers *)Ram_HeapSlots->mapGrid;
-  u8 *cells = map->layers[layer].cells;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
+  u8 *cells = (u8 *)map->layers[layer].cells;
   u32 row;
   u32 column;
 
@@ -2940,12 +2888,6 @@ void PushTarget_Push(struct PushTarget target) {
 
 #include "shared/actor_stop_at_push_target.h"
 #undef ABS
-
-#define MapLayer MapLayer__s5048
-#include "field/map_grid.h"
-#undef MapLayer
-/* VIEW(s5048): tag struct MapLayer as struct MapLayer__s5048; room.h has
- * another definition; not tried: struct MapLayer__s5048 was not found. */
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
@@ -3407,8 +3349,6 @@ s32 gPushLeaderSteps[] = {
 
 #undef ABS
 #undef MapLayer
-
-#include "scene/airs_rock.h"
 
 void MarsLighthouseRoomF_JumpGapOrPushStone(void);
 void MarsLighthouseRoomF_FillGapsWithStones(void);

@@ -33,6 +33,7 @@
 #include "field/scene_call.h"
 #include "window/window.h"
 #include "field/field_sprite.h"
+#include "text/msg_ids.h"
 
 /// Set once the worker has popped up out of the hole for this visit.
 #define FLAG_MADRA_WORKER_SEEN_AT_HOLE FLAG_SCENE_TEMP_80
@@ -144,8 +145,6 @@ extern s16 gMadra_DoorOpening[];
 extern s16 gMadra_CavernHomeDoorOpening[];
 
 void FieldCamera_WaitForArrival(void);
-
-#include "text/msg_ids.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

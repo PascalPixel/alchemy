@@ -56,6 +56,9 @@
 #include "field/field_effect.h"
 #include "field/actor_script.h"
 #include "field/sprite.h"
+#include "tla_edition.h"
+#include "text/msg_ids.h"
+#include "system/io_write.h"
 
 /// A sprite with no tiles of its own: the code loads an item's icon into it,
 /// or the frame of another sprite.
@@ -159,14 +162,6 @@ void MarsLighthouseStarRoom_EndBlazeOnStatue(void) {}
 #ifndef TLA_MARS_LIGHTHOUSE_STAR_ROOM_H
 #define TLA_MARS_LIGHTHOUSE_STAR_ROOM_H
 
-#include "types.h"
-#include "system/system.h"
-#include "system/ram_buffer.h"
-#include "field/field_sequence_event.h"
-#include "field/actor.h"
-#include "field/event_inline.h"
-#include "system/input.h"
-
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 
 s32 Trig_Cos(s32 angle);
@@ -175,9 +170,6 @@ void Actor_SetupScriptedPart(struct Actor *object, s32 priority);
 static __inline__ struct Actor *ObjectCreate_(s32 kind, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
-#include "system/main_routine_work.h"
-#include "field/field_sprite.h"
-#include "tla_edition.h"
 
 void Actor_StartScript(struct Actor *object, const void *script);
 void Actor_SetAnimationSpeed(struct Actor *object, s32 value);
@@ -661,8 +653,6 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
     Event_PlaySound(SE_CLICK);
   }
 }
-
-#include "text/msg_ids.h"
 
 void Event_Start(void);
 void Event_End(void);
@@ -2089,7 +2079,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 // one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
-#include "system/io_write.h"
 #include "shared/cracked_tile_fall.h"
 
 #include "../field/field_effect_advance_motion.c"
@@ -2156,8 +2145,6 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
     gFieldWork->transition = effect;
   }
 }
-
-#include "text/msg_ids.h"
 
 void MarsLighthouseStarRoom_ExamineStatue(void);
 

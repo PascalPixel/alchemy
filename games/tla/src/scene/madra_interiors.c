@@ -30,6 +30,7 @@
 #include "field/field_sequence_event.h"
 #include "field/actor_script.h"
 #include "djinn_ids.h"
+#include "text/msg_ids.h"
 
 /// Set once the old man of the mushroom house has been given the Healing
 /// Fungus and has traded Char for it.
@@ -156,8 +157,6 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-#include "text/msg_ids.h"
-
 extern struct ActorPlacement gMadraInteriors_Placements[];
 extern struct ActorPlacement gMadraInteriors_PlacementsOnReturn[];
 extern struct ActorPlacement gMadraInteriors_JailPlacements[];
@@ -172,8 +171,6 @@ void Event_End(void);
 void Sanctum_Run(s32 actor);
 void Inn_CheckIn(s32 slot, s32 actor);
 void MadraInteriors_InterrogatePiers(void);
-
-#include "text/msg_ids.h"
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_MADRA_INTERIORS_CAVERN_HOMES)

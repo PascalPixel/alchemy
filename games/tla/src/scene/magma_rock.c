@@ -2,8 +2,8 @@
 /// Magma Rock, outside and on its slopes, where the party climbs to the Magma
 /// Ball the diggers of Loho need for their cannon, in three rooms that share
 /// this overlay (SceneId_MagmaRockSlide to SceneId_MagmaRockStatue).
-#include "../field/actor_set_sprite_priority.c"
 #include "resource_ids.h"
+#include "../field/actor_set_sprite_priority.c"
 
 #include "../field/actor_prepare.c"
 
@@ -40,6 +40,17 @@
 #include "field/call.h"
 #include "fixed_math.h"
 #include "scene/falling_rocks.h"
+#include "field/sprite.h"
+#include "field/object.h"
+#include "scene/mars_lighthouse_star_room.h"
+#include "field/field_sprite.h"
+#include "graphics/resource.h"
+#include "system/heap_release.h"
+#include "field/field_effect.h"
+#include "field/particle.h"
+#include "system/task.h"
+#include "field/actor_script.h"
+#include "text/msg_ids.h"
 
 // Each pushed pillar's flag keeps it where it was pushed: two on the slide,
 // one on each of the Salamander Tail room's lower, middle and upper levels and
@@ -121,17 +132,7 @@ enum MagmaRockSalamanderTailTopActorId {
   ACTOR_TOP_PILLAR_B,
   ACTOR_TOP_FLAME = ACTOR_FIRST_PLACED + 5
 };
-#include "field/sprite.h"
-#include "field/object.h"
-#include "scene/mars_lighthouse_star_room.h"
 #include "shared/tables.h"
-#include "field/field_sprite.h"
-#include "graphics/resource.h"
-#include "system/heap_release.h"
-#include "field/field_effect.h"
-#include "field/particle.h"
-#include "system/task.h"
-#include "field/actor_script.h"
 
 struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z, s32 kind) {
   struct Actor *object = (FieldActor_Create(kind, x, y, z));
@@ -198,8 +199,6 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 #ifndef TLA_MAGMA_ROCK_H
 #define TLA_MAGMA_ROCK_H
 
-#include "types.h"
-
 struct Actor;
 
 struct MagmaRockWork {
@@ -257,7 +256,6 @@ void Blocks_MarkCells(u16 *ids) {
 // For each id of a list ended by 0xffff: settles the object on its ground,
 // copies the cell under it, and blocks the cells ahead of and behind it on a
 // cell with attribute bit 6.
-#include "text/msg_ids.h"
 
 /// For each id of a list ended by 0xffff: settles the object on its ground,
 /// copies the cell under it, and blocks the cells ahead of and behind it on a

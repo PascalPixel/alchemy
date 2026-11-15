@@ -29,6 +29,7 @@
 #include "field/actor_script.h"
 #include "field/sprite.h"
 #include "djinn_ids.h"
+#include "text/msg_ids.h"
 
 /// Set once Scoop has dug up the ladder down to the tunnels by the sheep; the
 /// village redraws it on every visit.
@@ -332,8 +333,6 @@ void Mikasalla_StepOntoLadderAhead(void) {
   Actor_WalkToAndWait(ACTOR_FELIX, 424, 99);
   Mikasalla_ClimbDownLadder();
 }
-
-#include "text/msg_ids.h"
 
 // clang-format off
 /// The doors' cell animations: most doors, the third door's own cells, and

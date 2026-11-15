@@ -57,6 +57,8 @@
 #include "macros.h"
 #include "field/actor_script.h"
 #include "field/sprite.h"
+#include "text/msg_ids.h"
+#include "system/input.h"
 
 /// All four flames lit: the floor before the statue has broken open.
 #define FLAG_WAY_TO_AERIE_OPEN 0xa31
@@ -165,8 +167,6 @@ void MarsLighthouseRoomM_HearDragonStatue(void);
 
 extern s32 gMarsLighthouseRoomM_StatueScript[];
 
-#include "text/msg_ids.h"
-
 void Actor_Release(void *handle);
 void FieldCamera_MoveToActorById(s32 a, s32 b);
 void FieldCamera_WaitForArrival(void);
@@ -219,18 +219,6 @@ void MarsLighthouseRoomM_ShowFlame(s32 id, s32 value) {
 
 #ifndef TLA_MARS_LIGHTHOUSE_ROOM_M_H
 #define TLA_MARS_LIGHTHOUSE_ROOM_M_H
-
-#include "types.h"
-#include "system/system.h"
-#include "field/scene_tables.h"
-#include "field/actor.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "field/map_grid.h"
-#include "system/input.h"
-#include "system/iwram_call.h"
-#include "text/msg_ids.h"
-#include "system/frame.h"
 
 struct MarsLighthouseRoomMVector {
   s32 x;

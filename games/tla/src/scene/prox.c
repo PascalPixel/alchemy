@@ -9,12 +9,12 @@
 /// parents and meets Puelle. After the ending the storm is over, the children
 /// play tag, the people give thanks for the beacon and the party says its
 /// farewell at the south gate before the credits.
-#include "../field/actor_set_sprite_priority.c"
 #include "sprite_ids.h"
 #include "graphics/palette_buffers.h"
 #include "resource_ids.h"
 #include "field/sprite.h"
 #include "field/actor_script.h"
+#include "../field/actor_set_sprite_priority.c"
 
 #include "../field/field_effect_move.c"
 #include "types.h"
@@ -39,6 +39,21 @@
 #include "system/system.h"
 #include "field/scene_tables.h"
 #include "scene_ids.h"
+#include "field/call.h"
+#include "system/input.h"
+#include "system/frame.h"
+#include "system/heap_release.h"
+#include "window/item_icon.h"
+#include "scene/magma_rock.h"
+#include "field/particle.h"
+#include "graphics/resource.h"
+#include "system/io_reg.h"
+#include "field/field_event.h"
+#include "fixed_math.h"
+#include "system/iwram_call.h"
+#include "system/task.h"
+#include "text/msg_ids.h"
+#include "scene/falling_rocks.h"
 
 /// The south gate on the farewell, by the rows of
 /// gProx_SouthGateFarewellPlacements; the party's rows go to their party
@@ -174,19 +189,6 @@ enum ProxCaveHomesActorId {
 
 /// The caves: one old man, who fears for Weyard (Prox_FearForWeyard).
 enum ProxCavesActorId { ACTOR_OLD_MAN_FEARING_FOR_WEYARD = ACTOR_FIRST_PLACED };
-#include "field/call.h"
-#include "system/input.h"
-#include "system/frame.h"
-#include "system/heap_release.h"
-#include "window/item_icon.h"
-#include "scene/magma_rock.h"
-#include "field/particle.h"
-#include "graphics/resource.h"
-#include "system/io_reg.h"
-#include "field/field_event.h"
-#include "fixed_math.h"
-#include "system/iwram_call.h"
-#include "system/task.h"
 
 #define FLAG_HEARD_OF_PARENTS 0x9c0 ///< overheard the talk of freeing them
 #define FLAG_CLAN_SPOKE_OF_LIGHTHOUSE 0x9c1
@@ -305,11 +307,6 @@ void Prox_MercuryDjinniJoins(void) {
 /// Overlay 6A8's scene layer: the declarations its scenes share and the
 /// inline helpers some of their calls go through, as overlay 694's do.
 
-#include "types.h"
-#include "system/main_routine_work.h"
-#include "system/ram_buffer.h"
-#include "field/field_sequence_event.h"
-
 #define EVENT_WORK gFieldWork
 
 #endif
@@ -402,8 +399,6 @@ extern u32 gFieldEffect_MediumScript[];
 
 /// Puffs rise from the roofs of the village while the storm is over.
 void Prox_PuffFromRoofs(void);
-
-#include "text/msg_ids.h"
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
@@ -2410,8 +2405,6 @@ void Leader_SetSlideStopped(s32 a0) { gSlideOnIce_Stopped = a0; }
 
 #include "shared/leader_slide_on_ice_ahead.h"
 
-#include "scene/falling_rocks.h"
-
 void EffectSprite_DrawAtWorldPosition(struct ParticleSprite *sprite,
                                       struct Particle *particle);
 void BattleEffect_StepVector3(struct Particle *particle, s32 unk1, s32 step);
@@ -2477,8 +2470,6 @@ UNUSED void Prox_EndFallingRocks(void) {
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
-
-#include "text/msg_ids.h"
 
 void Prox_MoldJoins(void);
 void Prox_AskAboutIgloos(void);

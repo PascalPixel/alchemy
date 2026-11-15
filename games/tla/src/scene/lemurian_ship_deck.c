@@ -190,8 +190,6 @@ void LemurianShipDeck_BobDeck(void) {
   gLemurianShipDeck_BobPhase += TRIG_TURN / 128;
 }
 
-#include "text/msg_ids.h"
-
 struct Actor;
 
 extern s32 gLemurianShipDeck_FirstCrewLooksAround[];

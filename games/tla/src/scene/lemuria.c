@@ -14,6 +14,27 @@
 #include "system/main_routine_work.h"
 #include "field/event_inline.h"
 #include "field/scene_tables.h"
+#include "scene_ids.h"
+#include "field/call.h"
+#include "battle/battle.h"
+#include "field/field.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "system/math_table.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "system/dma.h"
+#include "system/frame.h"
+#include "system/io_reg.h"
+#include "field/map_grid.h"
+#include "field/field_sequence_event.h"
+#include "field/actor_view.h"
+#include "field/actor_script.h"
+#include "text/msg_ids.h"
+#include "field/sprite.h"
+#include "field/field_psynergy_work.h"
+#include "ability_ids.h"
 
 /// Lemuria, by the rows of gActorPlacements; Piers' row goes to his party
 /// slot.
@@ -55,27 +76,6 @@ enum LemuriaActorId {
   ACTOR_MAN_AT_THE_SPRING, ///< Lemuria_OfferSpringLuck
   ACTOR_SPRING             ///< Lemuria_DrinkFromSpring
 };
-#include "scene_ids.h"
-#include "field/call.h"
-#include "battle/battle.h"
-#include "field/field.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "system/dma.h"
-#include "system/frame.h"
-#include "system/io_reg.h"
-#include "field/map_grid.h"
-#include "field/field_sequence_event.h"
-#include "field/actor_view.h"
-#include "field/actor_script.h"
-#include "text/msg_ids.h"
-#include "field/sprite.h"
-#include "field/field_psynergy_work.h"
-#include "ability_ids.h"
 
 /// Set once the party has taken the test of luck offered at the Spring of
 /// Lemuria (Lemuria_OfferSpringLuck).

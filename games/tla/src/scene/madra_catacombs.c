@@ -31,6 +31,7 @@
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
+#include "text/msg_ids.h"
 
 /// The ropes Lash ties, the tunnel's and the village's, which stay tied until
 /// the party leaves.
@@ -155,8 +156,6 @@ void MadraCatacombs_RockChestWithBookshelf(void);
 void MadraCatacombs_LeaveBlockedVillage(void);
 
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
-
-#include "text/msg_ids.h"
 
 struct Actor *Leader_FindActorAhead(void);
 void Actor_PlaceMovedBlock(void);

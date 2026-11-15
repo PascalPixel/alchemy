@@ -66,6 +66,8 @@
 #include "field/field_effect.h"
 #include "system/dma.h"
 #include "field/actor_script.h"
+#include "system/frame.h"
+#include "text/msg_ids.h"
 
 #define FLAG_TELEPORTED_ONCE 0xa36
 /// Grind on the dead end cracked the ice sheet a floor below.
@@ -168,11 +170,6 @@ enum MarsLighthouseEntranceValkyrieMailChestActorId {
 #ifndef TLA_MARS_LIGHTHOUSE_ENTRANCE_RIDE_H
 #define TLA_MARS_LIGHTHOUSE_ENTRANCE_RIDE_H
 
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "system/frame.h"
-#include "field/actor.h"
-
 /// The ride work seen from one flame thrower's entry: the work's header, then
 /// the entry, as the getters below index it.
 struct RideRow {
@@ -273,8 +270,6 @@ s32 MapCell_Swap(u32 layer, s32 x, s32 y, s32 value) {
 }
 
 #include "../field/actor_set_sprite_priority.c"
-
-#include "text/msg_ids.h"
 
 void MapGrid_SetCellHeight();
 void Teleport_PlayWhirl(void);

@@ -32,6 +32,7 @@
 #include "system/task.h"
 #include "system/input.h"
 #include "scene_ids.h"
+#include "text/msg_ids.h"
 
 extern u16 gData_02003a74[];
 
@@ -212,8 +213,6 @@ s32 LinkLobby_PollPeerReady(void) {
     work->raisedTrigger = 2;
   return result;
 }
-
-#include "text/msg_ids.h"
 
 extern s32 gLinkLobby_CallFrames;
 

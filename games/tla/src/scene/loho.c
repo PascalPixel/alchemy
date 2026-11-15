@@ -31,6 +31,7 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "text/msg_ids.h"
+#include "djinn_ids.h"
 
 /// Loho, by the rows of gLoho_TownPlacements. Each digger is named for what he
 /// says before the cannon breaches the wall.
@@ -71,7 +72,6 @@ enum LohoInteriorsActorId {
   ACTOR_INNKEEPER,
   ACTOR_BEARDED_MAN_ON_THE_CANNON ///< Loho_TalkAboutCannon
 };
-#include "djinn_ids.h"
 
 /// The Golem Core under the rock, dug up.
 #define FLAG_GOLEM_CORE_DUG 0xff7

@@ -7,17 +7,22 @@
 #include "sprite_ids.h"
 #include "field/field_work.h"
 #include "flags.h"
+#include "text/msg_ids.h"
+#include "system/ram_buffer.h"
+#include "field/actor.h"
+#include "system/main_routine_work.h"
+#include "field/scene_tables.h"
+#include "field/event_inline.h"
+#include "field/field.h"
+#include "field/sprite.h"
+#include "field/actor_script.h"
+#include "fixed_math.h"
 
 /// The villager has asked where the party comes from.
 #define FLAG_ASKED_WHERE_FROM 0x85e
 
 /// The villager has asked about the Kibombo expedition.
 #define FLAG_ASKED_ABOUT_EXPEDITION 0x85d
-#include "text/msg_ids.h"
-#include "system/ram_buffer.h"
-#include "field/actor.h"
-#include "system/main_routine_work.h"
-#include "field/scene_tables.h"
 
 /// Naribwe, by the rows of the village's placements (the same before and
 /// after the return from Kibombo); the last row goes to Isaac's party slot.
@@ -53,12 +58,7 @@ enum NaribweActorId {
   ACTOR_PILGRIM,
   ACTOR_STONE ///< Naribwe_HideStone, Naribwe_RevealStone
 };
-#include "field/event_inline.h"
-#include "field/field.h"
 #include "shared/tables.h"
-#include "field/sprite.h"
-#include "field/actor_script.h"
-#include "fixed_math.h"
 
 extern u32 gSceneExits[];
 
@@ -335,8 +335,6 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 // Naribwe's data: its scripts, door, placements and triggers.
-
-#include "text/msg_ids.h"
 
 void Naribwe_PrepareBlaze(void);
 void Naribwe_AskAboutKibomboExpedition(void);

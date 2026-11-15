@@ -4,11 +4,11 @@
 /// that drain it, the pillars pushed into it, Fury the Djinni, and deep inside
 /// the tablet where Jenna learns Blaze and the flames Blaze moves.
 
-#include "../field/actor_set_sprite_priority.c"
 #include "sprite_ids.h"
 #include "graphics/palette_buffers.h"
 #include "djinn_ids.h"
 #include "scene/falling_rocks.h"
+#include "../field/actor_set_sprite_priority.c"
 
 #include "../field/actor_prepare.c"
 
@@ -24,6 +24,35 @@
 #include "system/frame.h"
 #include "field/event_inline.h"
 #include "field/map_grid.h"
+#include "field/field_sequence_event.h"
+#include "field/field.h"
+#include "field/field_coordinate.h"
+#include "field/object.h"
+#include "scene/mars_lighthouse_aerie.h"
+#include "scene/scene.h"
+#include "system/scene.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "system/math_table.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "system/io_reg.h"
+#include "system/field_effect.h"
+#include "macros.h"
+#include "field/field_sprite.h"
+#include "field/call.h"
+#include "edition.h"
+#include "system/heap_release.h"
+#include "window/item_icon.h"
+#include "field/field_effect.h"
+#include "field/particle.h"
+#include "graphics/resource.h"
+#include "system/task.h"
+#include "field/actor_script.h"
+#include "fixed_math.h"
+#include "text/msg_ids.h"
 
 extern struct MapCell gMapGridCellBuffer[];
 
@@ -43,46 +72,9 @@ void Actor_DisableById(s32 id);
 static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(kind, x, y, z);
 }
-#include "types.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "field/field_sequence_event.h"
-#include "field/field.h"
-#include "field/field_coordinate.h"
-#include "field/object.h"
-#include "scene/mars_lighthouse_aerie.h"
-#include "scene/scene.h"
-#include "system/scene.h"
-#include "system/ram_buffer.h"
-#include "field/map_grid.h"
-#include "field/actor.h"
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/scene_tables.h"
-#include "system/io_reg.h"
-#include "system/frame.h"
-#include "system/field_effect.h"
-#include "macros.h"
-#include "field/field_sprite.h"
-#include "field/call.h"
-#include "edition.h"
 #include "shared/trial_road.h"
 #include "shared/tables.h"
-#include "system/iwram_call.h"
-#include "system/heap_release.h"
-#include "window/item_icon.h"
-#include "field/field_effect.h"
-#include "field/particle.h"
-#include "graphics/resource.h"
 #include "shared/tundaria_tower.h"
-#include "system/task.h"
-#include "field/actor_script.h"
-#include "fixed_math.h"
 
 // The lava rises in three parts of the volcano, each when a statue's fire is
 // Burst into its lava fall, and drains when the floor switch beside it is
@@ -354,8 +346,6 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 
 void MagmaRockInside_BurstStatue(s32 mode, s32 cue);
-
-#include "text/msg_ids.h"
 
 void Actor_LiftTargetBlock(s16 *cells);
 void Actor_PlaceMovedBlock(void);
@@ -1953,7 +1943,6 @@ s32 MagmaRockInside_OrbitParent(struct SparkOrbiter *object) {
 
 // Moves around in a circle.
 #include "shared/orbit_update.h"
-
 
 #include "shared/actor_aim_at_watched.h"
 

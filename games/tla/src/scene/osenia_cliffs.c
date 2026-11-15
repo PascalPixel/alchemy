@@ -25,6 +25,7 @@
 #include "system/main_routine_work.h"
 #include "system/frame.h"
 #include "scene/scene.h"
+#include "text/msg_ids.h"
 
 extern u32 gOseniaCliffs_PaletteCycleStep[];
 
@@ -133,8 +134,6 @@ void OseniaCliffs_CyclePalette(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-#include "text/msg_ids.h"
 
 u32 gOseniaCliffs_PaletteCycleStep[] = {
     0,

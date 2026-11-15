@@ -22,6 +22,16 @@
 #include "system/system.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/field_sequence_event.h"
+#include "scene/scene.h"
+#include "field/event_inline.h"
+#include "system/main_routine_work.h"
+#include "field/actor.h"
+#include "version.h"
+#include "field/call.h"
+#include "system/ram_buffer.h"
+#include "item_ids.h"
+#include "text/msg_ids.h"
 
 /// Naribwe's houses, by the rows of gActorPlacements.
 enum NaribweInteriorsActorId {
@@ -46,15 +56,6 @@ enum NaribweInteriorsActorId {
   ACTOR_FORTUNE_FLAME,
   ACTOR_FORTUNE_SMOKE
 };
-#include "field/field_sequence_event.h"
-#include "scene/scene.h"
-#include "field/event_inline.h"
-#include "system/main_routine_work.h"
-#include "field/actor.h"
-#include "version.h"
-#include "field/call.h"
-#include "system/ram_buffer.h"
-#include "item_ids.h"
 
 extern struct Trigger gNaribweInteriors_Triggers[];
 extern struct Trigger gNaribweInteriors_TriggersOnReturn[];
@@ -85,8 +86,6 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
-
-#include "text/msg_ids.h"
 
 /// "The items that one carries are filled with one's hopes and desires."
 s32 NaribweInteriors_MindReadFortuneTeller(void) {

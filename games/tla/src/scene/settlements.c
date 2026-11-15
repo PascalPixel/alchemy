@@ -4,14 +4,48 @@
 /// Settlement (4 to 6), with its vine, crate and Tinder; Kalt Island (7 and 8),
 /// with its apple, frozen river and Gel; and SW Atteka Islet (9 and 10), whose
 /// pillar and crate go over the falls, and its boulder and Jupiter Djinni.
-#include "../field/actor_set_sprite_priority.c"
 #include "sprite_ids.h"
 #include "system/task.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
 #include "djinn_ids.h"
+#include "../field/actor_set_sprite_priority.c"
 
 #include "../field/field_effect_move.c"
+#include "flags.h"
+#include "item_ids.h"
+#include "types.h"
+#include "system/ram_buffer.h"
+#include "field/actor.h"
+#include "system/main_routine_work.h"
+#include "field/scene_tables.h"
+#include "system/iwram_call.h"
+#include "scene_ids.h"
+#include "field/event_inline.h"
+#include "system/frame.h"
+#include "field/field_event.h"
+#include "field/field.h"
+#include "graphics/palette_snapshots.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "system/math_table.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "system/io_reg.h"
+#include "version.h"
+#include "system/io_write_queue.h"
+#include "system/irq_lock.h"
+#include "field/map_grid.h"
+#include "system/io_write.h"
+#include "system/field_effect.h"
+#include "field/field_effect.h"
+#include "scene/scene.h"
+#include "field/field_sequence_event.h"
+#include "field/call.h"
+#include "system/input.h"
+#include "text/msg_ids.h"
 
 #define EFFECT_SPAWN FieldEffect_Spawn
 #define EFFECT_CREATE Import_ActorCreate
@@ -22,8 +56,6 @@
 
 #undef EFFECT_SPAWN
 
-#include "flags.h"
-
 /// The apple, taken.
 #define FLAG_APPLE_TAKEN 0xf5d
 /// Kalt Island's rope, tied by Lash, for this visit.
@@ -31,12 +63,6 @@
 
 /// The bush on the Gondowan Settlement's stairs is cut.
 #define FLAG_STAIRS_BUSH_CUT 0xa60
-#include "item_ids.h"
-#include "types.h"
-#include "system/ram_buffer.h"
-#include "field/actor.h"
-#include "system/main_routine_work.h"
-#include "field/scene_tables.h"
 
 /// The Gondowan Settlement, by the rows of
 /// gSettlements_GondowanSettlementPlacements.
@@ -113,15 +139,10 @@ enum AttekaIsletHousesActorId {
   /// "There's nothing to the west..."
   ACTOR_ISLANDER_ON_THE_WEST = ACTOR_FIRST_PLACED
 };
-#include "system/iwram_call.h"
-#include "scene_ids.h"
-#include "field/event_inline.h"
 
 s32 Trig_Cos(s32 angle);
 
 extern u8 MsgSettlementsDontTellMeYoureHere[];
-
-#include "system/frame.h"
 
 extern s16 gSettlements_FallsObjects[];
 
@@ -161,35 +182,6 @@ extern u32 gSettlements_GondowanSettlementCaveRegions[];
 static __inline__ void Window(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g) {
   TileCopies_CopyTouchedCells(a, b, c, d, e, f, g);
 }
-#include "field/field_event.h"
-#include "field/field.h"
-#include "types.h"
-#include "graphics/palette_snapshots.h"
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/scene_tables.h"
-#include "system/main_routine_work.h"
-#include "system/io_reg.h"
-#include "version.h"
-#include "system/ram_buffer.h"
-#include "system/iwram_call.h"
-#include "system/io_write_queue.h"
-#include "system/irq_lock.h"
-#include "field/map_grid.h"
-#include "system/io_write.h"
-#include "system/field_effect.h"
-#include "field/actor.h"
-#include "field/event_inline.h"
-#include "field/field_effect.h"
-#include "scene/scene.h"
-#include "field/field_sequence_event.h"
-#include "field/call.h"
-#include "system/input.h"
 #include "shared/tables.h"
 
 extern s16 gSlideOnIce_AnglesByKey[];
@@ -1133,8 +1125,6 @@ s32 Field_CheckSpheresOverlap(s32 *a, s32 aRadius, s32 *b, s32 bRadius);
 void Settlements_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #include "shared/leader_slide_on_ice_ahead.h"
-
-#include "text/msg_ids.h"
 
 void Settlements_MeetGel(void);
 void Settlements_MeetLostJupiterDjinni(void);

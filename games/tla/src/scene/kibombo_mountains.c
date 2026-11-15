@@ -8,6 +8,30 @@
 #include "flags.h"
 #include "sprite_ids.h"
 #include "djinn_ids.h"
+#include "item_ids.h"
+#include "field/field.h"
+#include "types.h"
+#include "field/actor.h"
+#include "system/main_routine_work.h"
+#include "field/event_inline.h"
+#include "field/field_sequence_event.h"
+#include "scene/scene.h"
+#include "battle/battle.h"
+#include "game/game.h"
+#include "graphics/graphics.h"
+#include "system/math_table.h"
+#include "menu/menu.h"
+#include "sound/sound.h"
+#include "system/system.h"
+#include "field/scene_tables.h"
+#include "field/field_event.h"
+#include "scene_ids.h"
+#include "system/iwram_call.h"
+#include "field/call.h"
+#include "system/ram_buffer.h"
+#include "version.h"
+#include "field/actor_script.h"
+#include "text/msg_ids.h"
 
 /// Once the message of the Gabomba is carried the Kibombo let the party pass:
 /// the guards and the dog are gone.
@@ -33,30 +57,7 @@
 #define FLAG_SPROUT_GROWN FLAG_SCENE_TEMP_22
 #define FLAG_DOG_PILLAR_DROPPED FLAG_SCENE_TEMP_23
 #define FLAG_GUARD_CRATE_DROPPED FLAG_SCENE_TEMP_24
-#include "item_ids.h"
-#include "field/field.h"
-#include "types.h"
-#include "field/actor.h"
-#include "system/main_routine_work.h"
-#include "field/event_inline.h"
-#include "field/field_sequence_event.h"
-#include "scene/scene.h"
-#include "battle/battle.h"
-#include "game/game.h"
-#include "graphics/graphics.h"
-#include "system/math_table.h"
-#include "menu/menu.h"
-#include "sound/sound.h"
-#include "system/system.h"
-#include "field/scene_tables.h"
-#include "field/field_event.h"
-#include "scene_ids.h"
-#include "system/iwram_call.h"
-#include "field/call.h"
-#include "system/ram_buffer.h"
-#include "version.h"
 #include "shared/tables.h"
-#include "field/actor_script.h"
 
 /// The room where Waft hides above the guards, by the rows of
 /// gKibomboMountains_WaftPlacements.
@@ -156,8 +157,6 @@ extern s32 gKibomboMountains_SecondLookoutScript[];
 void KibomboMountains_StepBeforeLowerGuard(void);
 
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
-
-#include "text/msg_ids.h"
 
 void Field_TryJumpForward(void);
 
@@ -791,7 +790,6 @@ void KibomboMountains_StepSouthOfDog(void) {
 }
 
 #undef EVENT_WORK_VALUE
-#include "text/msg_ids.h"
 
 void KibomboMountains_FightWaft(void);
 void Pillar_SetMoved(void);

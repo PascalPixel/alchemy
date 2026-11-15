@@ -18,6 +18,24 @@
 #include "system/system.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "system/ram_buffer.h"
+#include "system/io_reg.h"
+#include "field/event_inline.h"
+#include "field/field_sequence_event.h"
+#include "scene/scene.h"
+#include "window/window.h"
+#include "graphics/text_render.h"
+#include "graphics/uiflow.h"
+#include "system/main_routine_work.h"
+#include "version.h"
+#include "edition.h"
+#include "system/input.h"
+#include "field/actor.h"
+#include "field/call.h"
+#include "system/iwram_call.h"
+#include "system/vector3.h"
+#include "system/task.h"
+#include "text/msg_ids.h"
 
 /// The spring's actors, as The Broken Seal numbers Tolbi's spring, by the
 /// rows of gActorPlacements.
@@ -53,23 +71,6 @@ enum LemuriaSpringActorId {
 /// The actor that draws toss->trail[n] of a tossed coin or medal, n from 1.
 #define LEMURIA_SPRING_COIN_TRAIL(n) (ACTOR_LEMURIA_SPRING_COIN_SHADOW - (n))
 #define LEMURIA_SPRING_MEDAL_TRAIL(n) (ACTOR_LEMURIA_SPRING_MEDAL_SHADOW - (n))
-#include "system/ram_buffer.h"
-#include "system/io_reg.h"
-#include "field/event_inline.h"
-#include "field/field_sequence_event.h"
-#include "scene/scene.h"
-#include "window/window.h"
-#include "graphics/text_render.h"
-#include "graphics/uiflow.h"
-#include "system/main_routine_work.h"
-#include "version.h"
-#include "edition.h"
-#include "system/input.h"
-#include "field/actor.h"
-#include "field/call.h"
-#include "system/iwram_call.h"
-#include "system/vector3.h"
-#include "system/task.h"
 
 s32 LemuriaSpring_RunSpringGame(void);
 
@@ -95,8 +96,6 @@ void LemuriaSpring_SetSpriteStorageKind(s32 actor, s32 active);
 
 s32 Party_RestoreHpPp();
 s32 Class_GetSeries();
-
-#include "text/msg_ids.h"
 
 extern struct SpringTossMotion gLemuriaSpring_Toss;
 extern struct SpringObstacle gLemuriaSpring_Obstacles[];
@@ -202,8 +201,6 @@ s32 Scene_Initialize(void) {
   }
   return 0;
 }
-
-#include "text/msg_ids.h"
 
 s32 Scene_PrepareMap(void) { return 0; }
 

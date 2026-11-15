@@ -2,38 +2,8 @@
 /// The summit of Mt. Aleph, at the end of the game: the Golden Sun forms over
 /// the mountain, Alex claims its power, and the scene's colours and dust follow
 /// what happens.
-#include "../field/actor_set_sprite_priority.c"
-
-/// The summit, by the rows of gActorPlacements.
-enum MtAlephSummitActorId {
-  ACTOR_ALEX = ACTOR_FIRST_PLACED,
-  ACTOR_WISE_ONE ///< "I am called the Wise One..."
-};
-
-/// The summit's ways in, each a stretch of the ending; any other entrance
-/// waits on the summit for A before the credits begin, and B starts the wait
-/// over.
-enum {
-  /// Alex sees the Golden Sun begin to form and climbs toward it, between the
-  /// credits' first two stretches.
-  ENTRANCE_GOLDEN_SUN_FORMS = 2,
-  /// Alex takes the Golden Sun's power and the Wise One shows him its limits,
-  /// after the lighthouses' beacons.
-  ENTRANCE_ALEX_TAKES_THE_POWER = 3,
-  /// Unused: goes straight on to the credits' entrance 72.
-  ENTRANCE_SKIP_TO_CREDITS = 10
-};
-
-#include "../field/field_effect_move.c"
-
-/// The background colours the palette fade keeps, palettes 0 to 13, and the
-/// fade's three channels of one 16-colour palette.
-#define FADED_BG_COLORS (14 * PALETTE_COLORS)
-#define PALETTE_CHANNELS (3 * PALETTE_COLORS)
-
 #include "system/task.h"
 #include "graphics/palette_buffers.h"
-#include "shared/tables.h"
 #include "types.h"
 #include "system/main_routine_work.h"
 #include "field/field_sprite.h"
@@ -66,6 +36,37 @@ enum {
 #include "field/field_effect.h"
 #include "scene/scene.h"
 #include "scene/event_layer.h"
+#include "text/msg_ids.h"
+#include "../field/actor_set_sprite_priority.c"
+
+/// The summit, by the rows of gActorPlacements.
+enum MtAlephSummitActorId {
+  ACTOR_ALEX = ACTOR_FIRST_PLACED,
+  ACTOR_WISE_ONE ///< "I am called the Wise One..."
+};
+
+/// The summit's ways in, each a stretch of the ending; any other entrance
+/// waits on the summit for A before the credits begin, and B starts the wait
+/// over.
+enum {
+  /// Alex sees the Golden Sun begin to form and climbs toward it, between the
+  /// credits' first two stretches.
+  ENTRANCE_GOLDEN_SUN_FORMS = 2,
+  /// Alex takes the Golden Sun's power and the Wise One shows him its limits,
+  /// after the lighthouses' beacons.
+  ENTRANCE_ALEX_TAKES_THE_POWER = 3,
+  /// Unused: goes straight on to the credits' entrance 72.
+  ENTRANCE_SKIP_TO_CREDITS = 10
+};
+
+#include "../field/field_effect_move.c"
+
+/// The background colours the palette fade keeps, palettes 0 to 13, and the
+/// fade's three channels of one 16-colour palette.
+#define FADED_BG_COLORS (14 * PALETTE_COLORS)
+#define PALETTE_CHANNELS (3 * PALETTE_COLORS)
+
+#include "shared/tables.h"
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -258,8 +259,6 @@ struct Trigger gSceneEvents[] = {
 #include "../field/field_effect_advance_motion.c"
 
 // The summit's events: the Golden Sun's formation and what follows it.
-
-#include "text/msg_ids.h"
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,

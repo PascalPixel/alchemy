@@ -230,8 +230,6 @@ struct WaterWork {
   u16 levels[4];
 };
 
-void AquaRockInside_SetPillarHeight(u32 index, s32 height);
-
 void AquaRockInside_WaitToLand(struct Actor *object);
 
 void Leader_RiseFromWater(void);
@@ -483,15 +481,11 @@ void AquaRockInside_DouseWaterOfLifeChestEastMoai(s32 unused, s32 id) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_556);
+  // AquaRockInside_SetPillarHeight, defined below, is called with no prototype
+  // in scope.
   for (i = 0; i <= 31; i++) {
     AquaRockInside_SetPillarsHeight(i << 16);
-    {
-      /* FAKEMATCH(pin): the zero pinned to r1, set before the column is copied
-       * to r0. */
-      register s32 height asm("r1") = 0;
-
-      AquaRockInside_SetPillarHeight(column, height);
-    }
+    AquaRockInside_SetPillarHeight(column, 0);
     layer->offsetY += px(1);
     System_Wait(4);
   }
@@ -1559,9 +1553,6 @@ extern u16 gAquaRockInside_FirstOutletLevels[];
 extern u16 gAquaRockInside_SecondOutletSpots[];
 extern u32 gAquaRockInside_SecondOutletLevels[];
 
-s32 AquaRockInside_SetUpOutlets(const u8 *a, const u8 *b,
-                                void (*handler)(void));
-
 /// Aqua Rock's entry setup: in each room it shows the statues already filled by
 /// their flags (or dims those still empty), opens what the story has opened and
 /// arms the room's water and cell handlers by entrance.
@@ -1633,6 +1624,8 @@ s32 Scene_Initialize(void) {
     }
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST) {
     if ((u32)(entrance - 5) <= 1) {
+      // AquaRockInside_SetUpOutlets, defined below, is called with no prototype
+      // in scope.
       AquaRockInside_SetUpOutlets(gAquaRockInside_FirstOutletSpots,
                                   gAquaRockInside_FirstOutletLevels,
                                   AquaRockInside_UpdateVents);
@@ -2508,19 +2501,6 @@ void Vent_Puff(s32 *position, s32 base) {
 
 #include "shared/vents_update.h"
 
-/* VIEW(s3844): routine AquaRockInside_SetUpOutlets as void
- * AquaRockInside_SetUpOutlets(const u16 *spots, const u16 *levels, void
- * (*handler)(void)); games/tla/src/scene/aqua_rock_inside/s1620 has s32
- * AquaRockInside_SetUpOutlets(const u8 *a, const u8 *b, void (*handler)(void));
- * tried as the definition's void AquaRockInside_SetUpOutlets(const u16 *spots,
- * const u16 *levels, void(*handler) (void)), which the object already declares,
- * it does not compile in tla-ja (aqua_rock_inside.c):
- * games/tla/src/scene/aqua_rock_inside.c:2382: conflicting types for
- * `AquaRockInside_SetUpOutlets'. */
-void AquaRockInside_SetUpOutlets__vents(
-    const u16 *spots, const u16 *levels,
-    void (*handler)(void)) __asm__("AquaRockInside_SetUpOutlets");
-#define AquaRockInside_SetUpOutlets AquaRockInside_SetUpOutlets__vents
 void AquaRockInside_SetUpOutlets(const u16 *spots, const u16 *levels,
                                  void (*handler)(void)) {
   struct WaterWork *work = (struct WaterWork *)(gInventorySnapshot + 0x188);
@@ -2724,7 +2704,6 @@ u32 gWaterDropScript[] = {
 };
 // clang-format on
 
-#undef AquaRockInside_SetUpOutlets
 #undef VENT_TOUCHING
 #undef VENT_BOUNCE
 #undef EFFECT_SPAWN

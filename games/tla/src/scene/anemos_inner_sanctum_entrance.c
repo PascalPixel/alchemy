@@ -92,7 +92,6 @@ extern s32 gAnemosInnerSanctumEntrance_GlowShrinksScript[];
 extern s32 gAnemosInnerSanctumEntrance_ShadowScript[];
 extern s8 gAnemosInnerSanctumEntrance_StatueOrder[];
 void AnemosInnerSanctumEntrance_StartLightSprites(void);
-void LightSprites_Add(s32 id, s32 value);
 void AnemosInnerSanctumEntrance_SetLightLevel(u16 value);
 void AnemosInnerSanctumEntrance_OpenTheWay(void);
 
@@ -328,14 +327,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 
-static __inline__ void SetObjectValue(s32 id, s32 value) {
-  /* FAKEMATCH(pin): the value pinned to r1, which the ROM loads before the id
-   * (movs r1. */
-  register s32 v asm("r1") = value;
-
-  LightSprites_Add(id, v);
-}
-
 /// Sets the event route to 0x204. In the first room, gives the six statues
 /// their values and priority bits, and under flag 0x200 runs
 /// AnemosInnerSanctumEntrance_PlaceStatues. Under flag 0x201, runs a screen
@@ -345,12 +336,13 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance) {
     AnemosInnerSanctumEntrance_StartLightSprites();
     AnemosInnerSanctumEntrance_SetLightLevel(2);
-    SetObjectValue(ACTOR_STATUE_A, 0);
-    SetObjectValue(ACTOR_STATUE_B, 1);
-    SetObjectValue(ACTOR_STATUE_C, 2);
-    SetObjectValue(ACTOR_STATUE_D, 3);
-    SetObjectValue(ACTOR_STATUE_E, 128);
-    SetObjectValue(ACTOR_STATUE_F, 129);
+    // LightSprites_Add, defined below, is called with no prototype in scope.
+    LightSprites_Add(ACTOR_STATUE_A, 0);
+    LightSprites_Add(ACTOR_STATUE_B, 1);
+    LightSprites_Add(ACTOR_STATUE_C, 2);
+    LightSprites_Add(ACTOR_STATUE_D, 3);
+    LightSprites_Add(ACTOR_STATUE_E, 128);
+    LightSprites_Add(ACTOR_STATUE_F, 129);
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x40;
     Actor_GetById(ACTOR_STATUE_A)->priorityFlags |= 0xc0;
     Actor_GetById(ACTOR_STATUE_B)->priorityFlags |= 0x80;

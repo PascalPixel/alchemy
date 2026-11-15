@@ -313,12 +313,10 @@ void FieldPsynergy_Cyclone(void) {
     work->to[2] = event->cycloneLiftZ << 16;
     Task_Add(Cyclone_LiftLeader, TASK_PASS_VBLANK);
     while (work->state != FIELD_PSYNERGY_FINISHED) {
-      /* FAKEMATCH(barrier): an empty asm that opens the wait loop. */
-      asm("");
       if (frame == 30)
         FieldPsynergy_RunTouchedEvents();
-      wait(1);
       frame++;
+      wait(1);
     }
     Task_Remove(Cyclone_LiftLeader);
     if (effect->childOption == 0)
@@ -346,12 +344,10 @@ void FieldPsynergy_Cyclone(void) {
     Task_Add(Cyclone_CarryLeader, TASK_PASS_VBLANK);
     frame = 0;
     while (work->state != FIELD_PSYNERGY_FINISHED) {
-      /* FAKEMATCH(barrier): an empty asm that opens the wait loop. */
-      asm("");
       if (frame == 30)
         FieldPsynergy_RunTouchedEvents();
-      wait(1);
       frame++;
+      wait(1);
     }
     Task_Remove(Cyclone_CarryLeader);
     for (i = 0; i < 16; i++) {

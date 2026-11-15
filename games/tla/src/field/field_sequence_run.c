@@ -58,7 +58,7 @@ s32 FieldSequence_Run(void) {
   s32 *leaderId;
   s32 *steps;
   s16 *entrance;
-  u16 *turn;
+  u16 *layer;
   s8 *pending;
   s32 code;
   s32 mode;
@@ -234,14 +234,14 @@ s32 FieldSequence_Run(void) {
   leaderId = &gMainRoutineWork.leaderActorId;
   steps = &gMainRoutineWork.encounterSteps;
   entrance = &gMainRoutineWork.entrance;
-  turn = &gMainRoutineWork.layer;
+  layer = &gMainRoutineWork.layer;
   for (;;) {
     GameFlag_Set(FLAG_FIELD_HANDLING_REQUESTS);
     leader = WorldMap_Unfreeze();
     Actor_StartIdleFar(leader);
     SET_POSITION(party, leader->x.fixed, 0, leader->z.fixed);
     party->heading = leader->facing;
-    *turn = leader->layer;
+    *layer = leader->layer;
     while (Field_CountRequests() != 0) {
       if (work->exit != 0) {
         result = work->exit;
@@ -614,7 +614,7 @@ s32 Field_PlaceAtEntrance(void) {
   s32 xFixed;
   u8 *cursor = gData_0202e000;
   s32 *angle;
-  u16 *turn;
+  u16 *layer;
   s32 entrance = work->entrance;
   s32 height;
   s32 x;
@@ -630,14 +630,14 @@ s32 Field_PlaceAtEntrance(void) {
 
   cursor = gData_0202e000 + (u16)Stream_ReadU16(&cursor);
   angle = &gMainRoutineWork.heading;
-  turn = &gMainRoutineWork.layer;
+  layer = &gMainRoutineWork.layer;
   for (;; cursor += 6) {
     if (*(s8 *)cursor == -1) {
       *angle = 0x4000;
       {
-        /* FAKEMATCH(temporary): the zero in a local of its own. */
-        s32 zero = 0;
-        *turn = zero;
+        u32 cleared = 0;
+
+        *layer = cleared;
       }
       return 0;
     }
@@ -654,7 +654,7 @@ s32 Field_PlaceAtEntrance(void) {
         gMainRoutineWork.x = xFixed;
         gMainRoutineWork.z = zFixed;
         *angle = (flags & 15) << 12;
-        *turn = 0;
+        *layer = 0;
         if (flags & 16)
           gMainRoutineWork.y = px(8);
       }

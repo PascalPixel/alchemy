@@ -427,15 +427,9 @@ void FieldPsynergy_Scoop(void) {
         stage = 1;
       if (frame == 50)
         stage = 2;
-      {
-        /* FAKEMATCH(barrier): frame copied through an empty asm. */
-        s32 frameCopy;
-
-        asm("" : "=r"(frameCopy) : "0"(frame));
-        scene->stage = stage;
-        scene->frame = frame;
-        Field_RunPsynergyEvent(pending, stage, frameCopy);
-      }
+      scene->stage = stage;
+      scene->frame = frame;
+      Field_RunPsynergyEvent(pending, stage, frame);
       frame++;
     }
     Field_RunPsynergyEvent(pending, 999, frame);

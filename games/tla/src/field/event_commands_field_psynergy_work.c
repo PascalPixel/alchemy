@@ -199,8 +199,6 @@ void FieldPsynergy_StartCast(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *object = work->mainActor;
   s32 ability = work->action;
-  s32 zero;
-  s8 sound;
 
   Actor_SelectAnimationFar(object, 20);
   object->targetX = object->x.fixed;
@@ -209,9 +207,7 @@ void FieldPsynergy_StartCast(void) {
   object->velocityY = 0;
   object->targetZ = object->z.fixed;
   object->velocityZ = 0;
-  sound = work->visible;
-  zero = 0;
-  if (sound != 0) {
+  if (work->visible != 0) {
     Sound_PlayFar(SE_POWER_UP);
     BattleEffect_SetObjectUpdateMode(object, 1);
   }
@@ -221,7 +217,7 @@ void FieldPsynergy_StartCast(void) {
     MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
     FieldMessage_ShowFar((s32)&MsgBlank2, work->messageMode);
     Actor_SetOthersPaused(object, 0, 16);
-    work->messageShown = zero;
+    work->messageShown = 0;
   }
   if (GameFlag_Get(FLAG_PLAY_PSYNERGY_CAST)) {
     if (work->visible != 0)

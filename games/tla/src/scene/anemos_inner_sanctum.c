@@ -47,24 +47,36 @@ struct Actor;
 struct CellTarget;
 struct CellTargetEntry;
 
+/// An actor as the spiral mover keeps its spiral: its own place, the fall,
+/// step, height, centre, radius, angle and spin in the actor's motion fields.
 struct Mover {
-  u8 pad00[8];
+  const s32 *script;
+  s16 scriptCursor;
+  u16 facing;
   s32 x;
   s32 y;
   s32 z;
   s32 fall;
-  u8 pad18[24];
+  s32 scaleX, scaleY;
+  u16 collisionRadius;
+  u8 layer;
+  u8 priorityFlags;
+  s32 velocityX, velocityY, velocityZ;
   s32 step;
   s32 height;
-  u8 pad38[12];
+  s32 targetX, targetY, targetZ;
   s32 originX;
   s32 originZ;
   s32 radius;
-  u8 pad50[5];
+  void *sprite;
+  u8 spriteStorageKind;
   u8 motionFlags;
-  u8 pad56[12];
+  u8 arrivalAxis, conditionResult, snapToTarget, collisionFlags;
+  u8 steeringFlags, paused, retainSpriteCache, repeatCount;
+  s16 wait;
+  u8 refused, frozen;
   u8 part; ///< the palette of its sparks
-  u8 pad63;
+  u8 riseEnabled;
   s16 angle;
   s16 spin;
 };

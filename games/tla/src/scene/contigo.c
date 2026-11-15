@@ -24,6 +24,17 @@
 /// Force has freed Shine from the ground it was stuck in.
 #define FLAG_SHINE_FREED 0x9e7
 
+/// Set as the party leaves the dice hall for one of its games, so that the
+/// hall greets it on its way back by the game's entrance.
+#define FLAG_LEFT_FOR_A_GAME 0x9e5
+
+/// The dice hall's ways back from its games.
+enum ContigoDiceHallEntrance {
+  ENTRANCE_FROM_SUPER_LUCKY_DICE = 18,
+  ENTRANCE_FROM_LUCKY_DICE,
+  ENTRANCE_FROM_LUCKY_WHEELS
+};
+
 /// The village's people and Djinn (gContigo_VillagePlacements).
 enum ContigoVillageActorId {
   /// "The Anemos blood in our veins often brings about strange..."
@@ -1325,10 +1336,11 @@ void Contigo_SendToLuckyWheels(s32 spoken) {
   // "Step right up and enjoy yourself."
   Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
-  GameFlag_Set(0x9e5);
+  GameFlag_Set(FLAG_LEFT_FOR_A_GAME);
   wait(1);
-  Event_LeaveFor(508, 0);
-  Event_SetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE, 20);
+  Event_LeaveFor(SEQUENCE_SLOTS, 0);
+  Event_SetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE,
+                                  ENTRANCE_FROM_LUCKY_WHEELS);
 }
 
 struct ContigoTopicState {
@@ -1384,10 +1396,11 @@ void Contigo_SendToLuckyDice(void) {
     // "OK! Then take the dice."
     Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
-    GameFlag_Set(0x9e5);
+    GameFlag_Set(FLAG_LEFT_FOR_A_GAME);
     wait(1);
-    Event_LeaveFor(509, 0);
-    Event_SetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE, 19);
+    Event_LeaveFor(SEQUENCE_DICE, 0);
+    Event_SetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE,
+                                    ENTRANCE_FROM_LUCKY_DICE);
   } else {
     gFieldWork->message++;
     // "No? Oh, well. Who's next?"
@@ -1422,10 +1435,11 @@ void Contigo_SendToSuperLuckyDice(void) {
     // "OK, then let 'em roll!"
     Event_ShowMessageAndWait(ACTOR_SUPER_LUCKY_DICE_HOST, 0);
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
-    GameFlag_Set(0x9e5);
+    GameFlag_Set(FLAG_LEFT_FOR_A_GAME);
     wait(1);
     Event_LeaveFor(SEQUENCE_SUPER_DICE, 0);
-    Event_SetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE, 18);
+    Event_SetAfterBattleDestination(SCENE_CONTIGO_LUCKY_DICE,
+                                    ENTRANCE_FROM_SUPER_LUCKY_DICE);
   } else {
     gFieldWork->message++;
     // "Oh really? That's a shame!"
@@ -2444,10 +2458,10 @@ void Contigo_InitializeLuckyDice(void) {
       ((struct Actor *)Actor_GetById(ACTOR_SUPER_LUCKY_DICE_HOST)), 0);
   Actor_SetSpriteColor(
       ((struct Actor *)Actor_GetById(ACTOR_SUPER_LUCKY_DICE_GUIDE)), 3);
-  if (!Event_GetFlag(0x9e5))
+  if (!Event_GetFlag(FLAG_LEFT_FOR_A_GAME))
     return;
-  GameFlag_Clear(0x9e5);
-  if (gMainRoutineWork.entrance == 18) {
+  GameFlag_Clear(FLAG_LEFT_FOR_A_GAME);
+  if (gMainRoutineWork.entrance == ENTRANCE_FROM_SUPER_LUCKY_DICE) {
     diff = gMainRoutineWork.coins - *(s32 *)gSceneState;
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -2471,7 +2485,7 @@ void Contigo_InitializeLuckyDice(void) {
       Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
     }
     Event_End();
-  } else if (gMainRoutineWork.entrance == 19) {
+  } else if (gMainRoutineWork.entrance == ENTRANCE_FROM_LUCKY_DICE) {
     diff = gMainRoutineWork.coins - *(s32 *)gSceneState;
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -2495,7 +2509,7 @@ void Contigo_InitializeLuckyDice(void) {
       Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
     }
     Event_End();
-  } else if (gMainRoutineWork.entrance == 20) {
+  } else if (gMainRoutineWork.entrance == ENTRANCE_FROM_LUCKY_WHEELS) {
     list = ((struct ContigoPrizes *)&gMainRoutineWork)->list;
     Event_Start();
     Event_ResolvePendingActions(0);

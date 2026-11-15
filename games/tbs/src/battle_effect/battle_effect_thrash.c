@@ -5,7 +5,7 @@
 #include "battle_effect_internal.h"
 
 /// One 120x120 picture of a flashing strike.
-#define FLASHING_STRIKE_PICTURE_BYTES (120 * 120)
+#define FLASHING_STRIKE_PICTURE_BYTES (SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE)
 
 /// The flashing strike's modes (BattleEffect_RunFlashingStrike): which two
 /// RevealMask resources it shows.
@@ -97,12 +97,14 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   Sound_PlayFar(SE_POWER_UP);
   for (frame = 0; frame != 21; frame++) {
     if (frame <= 3)
-      draw[0](canvas, work->imageStorage, 0, 0, 120, 120);
+      draw[0](canvas, work->imageStorage, 0, 0, SLASH_PICTURE_SIZE,
+              SLASH_PICTURE_SIZE);
     else if (frame <= 7)
       draw[0](canvas, work->imageStorage + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
               120, 120);
     else if (frame <= 11)
-      draw[0](canvas, Ram_MapGridCellBuffer, 0, 0, 120, 120);
+      draw[0](canvas, Ram_MapGridCellBuffer, 0, 0, SLASH_PICTURE_SIZE,
+              SLASH_PICTURE_SIZE);
     else if (frame <= 15)
       draw[0](canvas, Ram_MapGridCellBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0,
               0, 120, 120);

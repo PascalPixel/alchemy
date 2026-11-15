@@ -7,13 +7,13 @@
 /// Packs a picture to half width, keeping every second byte.
 void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
   s32 row = 0;
-  s32 rows = 288;
+  s32 rows = YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT;
   s32 offset = 0;
 
   do {
     s32 x;
 
-    for (x = 0; x != 40; x++) {
+    for (x = 0; x != YELLOW_ORB_WIDTH; x++) {
       dst[offset / 2 + x / 2] = src[offset + x];
     }
     offset += stride;
@@ -22,7 +22,8 @@ void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
 }
 
 #define RUSHING_STRIKE_SPARK_COUNT 64
-#define RUSHING_STRIKE_RING_BYTES (20 * 48) ///< one 20x48 ring picture
+#define RUSHING_STRIKE_RING_BYTES                                              \
+  PICTURE_BYTES(YELLOW_ORB_PACKED) ///< one ring picture
 
 /// The rushing strike's sparks' palettes (BattleEffect_RunRushingStrike), each
 /// named for the effect that plays it.
@@ -107,7 +108,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
 
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, work->sheet, 1, 0);
-  BattleEffect_PackTileRows(work->sheet, (u8 *)cells, 40, 288);
+  BattleEffect_PackTileRows(work->sheet, (u8 *)cells, YELLOW_ORB_WIDTH,
+                            YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT);
   Resource_LoadAndDecompress(RESOURCE_BLUE_BURST_SHEET, work->sheet, 1, 1);
   switch (mode) {
   case RUSHING_STRIKE_BONE_CHARGE:

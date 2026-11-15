@@ -103,8 +103,6 @@ enum CastingImpact {
 #define CASTING_IMPACT_STREAK_HEIGHT 72
 /// The impact orb's pictures, packed at half width, after the streak's.
 #define CASTING_IMPACT_ORB_PICTURES (6 * PICTURE_BYTES(CASTING_IMPACT_STREAK))
-#define CASTING_IMPACT_ORB_WIDTH 20
-#define CASTING_IMPACT_ORB_HEIGHT 48
 /// The Djinni's picture, in Ram_MapGridCellBuffer after the impact's own.
 #define CASTING_IMPACT_DJINNI_WIDTH 20
 #define CASTING_IMPACT_DJINNI_HEIGHT 40
@@ -218,7 +216,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, work, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, pictures, 1, 0);
   BattleEffect_PackTileRows(pictures, work->sheet + CASTING_IMPACT_ORB_PICTURES,
-                            40, 288);
+                            YELLOW_ORB_WIDTH,
+                            YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT);
   if (mode == CASTING_IMPACT_IMPACT_SCORCH ||
       mode == CASTING_IMPACT_IMPACT_BARRAGE) {
     Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, pictures, 1, 0);
@@ -693,10 +692,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         if (frame >= 4 && frame <= 15) {
           blitters[1](canvas,
                       work->sheet +
-                          (frame - 4) / 2 * PICTURE_BYTES(CASTING_IMPACT_ORB) +
+                          (frame - 4) / 2 * PICTURE_BYTES(YELLOW_ORB_PACKED) +
                           CASTING_IMPACT_ORB_PICTURES,
                       targetPos.x / 2 - 8, casterPos.y - 24,
-                      CASTING_IMPACT_ORB_WIDTH, CASTING_IMPACT_ORB_HEIGHT);
+                      YELLOW_ORB_PACKED_WIDTH, YELLOW_ORB_PACKED_HEIGHT);
         }
         EFFECT_VIEW_FROM_CAMERA(camera);
         if (frame > 3) {

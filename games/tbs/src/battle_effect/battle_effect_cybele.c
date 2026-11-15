@@ -13,11 +13,17 @@
 
 /// The vine pictures in the thorn vine sheet, below a tip at 0; the flowers,
 /// thorns and sparks follow.
+#define CYBELE_VINE_WIDTH 24
+#define CYBELE_VINE_TIP_HEIGHT 8
+#define CYBELE_VINE_STEM_HEIGHT 64
+/// YellowRingSheet's ring, drawn as two mirrored halves.
+#define CYBELE_RING_HALF_WIDTH 20
+#define CYBELE_RING_HALF_HEIGHT 24
 enum ThornVineSheetPicture {
-  /// 24x64
-  CYBELE_VINE_STEM = 24 * 8,
-  /// a thinner vine: its 24x8 tip, then its 24x64 stem
-  CYBELE_THIN_VINE = CYBELE_VINE_STEM + 24 * 64
+  CYBELE_VINE_STEM = CYBELE_VINE_WIDTH * CYBELE_VINE_TIP_HEIGHT,
+  /// a thinner vine: its tip, then its stem
+  CYBELE_THIN_VINE = CYBELE_VINE_STEM +
+      CYBELE_VINE_WIDTH * CYBELE_VINE_STEM_HEIGHT
 };
 
 /// Cybele drops in at the right and thorns fly from her mouth; flowering
@@ -206,22 +212,24 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           for (wrap = top; wrap > 184; wrap -= 64)
             ;
           if (wrap <= 119)
-            draw[i & 1](canvas, sheet, vine->x, vine->y - wrap - 8, 24, 8);
+            draw[i & 1](canvas, sheet, vine->x,
+                        vine->y - wrap - CYBELE_VINE_TIP_HEIGHT,
+                        CYBELE_VINE_WIDTH, CYBELE_VINE_TIP_HEIGHT);
           for (k = 0; k != 3; k++) {
             s32 y = vine->y - wrap + k * 64;
             s32 skip = 0;
-            s32 rows = 64;
+            s32 rows = CYBELE_VINE_STEM_HEIGHT;
 
             if (y >= -64) {
               if (y < 0) {
-                skip = -y * 24;
-                rows = y + 64;
+                skip = -y * CYBELE_VINE_WIDTH;
+                rows = y + CYBELE_VINE_STEM_HEIGHT;
                 y = 0;
               }
               if (y + rows > vine->y)
                 rows -= y + rows - vine->y;
               draw[i & 1](canvas, sheet + skip + CYBELE_VINE_STEM, vine->x, y,
-                          24, rows);
+                          CYBELE_VINE_WIDTH, rows);
             }
           }
           if ((i & 1) != 0) {
@@ -433,10 +441,15 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
           SET_VECTOR(point, actor->x.fixed, 0, actor->z.fixed);
           Projection_Point(point, &screen);
           screen.x >>= 1;
-          draw[0](canvas, work->sheet + pictureIndex * (20 * 24), screen.x - 20,
-                  screen.y - 24, 20, 24);
-          draw[1](canvas, work->sheet + pictureIndex * (20 * 24), screen.x,
-                  screen.y - 24, 20, 24);
+          draw[0](canvas,
+                  work->sheet + pictureIndex * PICTURE_BYTES(CYBELE_RING_HALF),
+                  screen.x - CYBELE_RING_HALF_WIDTH,
+                  screen.y - CYBELE_RING_HALF_HEIGHT, CYBELE_RING_HALF_WIDTH,
+                  CYBELE_RING_HALF_HEIGHT);
+          draw[1](canvas,
+                  work->sheet + pictureIndex * PICTURE_BYTES(CYBELE_RING_HALF),
+                  screen.x, screen.y - CYBELE_RING_HALF_HEIGHT,
+                  CYBELE_RING_HALF_WIDTH, CYBELE_RING_HALF_HEIGHT);
         }
         if (frame >= start + 6) {
           for (j = 0; j != 5; j++) {

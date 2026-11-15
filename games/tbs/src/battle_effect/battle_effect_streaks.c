@@ -66,6 +66,11 @@ UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
   BattleEffect_RunStreakVolley(args, STREAKS_STYLE_LIME);
 }
 
+/// FiveModeImage's streaks: three animation frames, each six pictures that
+/// grow; the lower half is the upper drawn flipped.
+#define STREAK_WIDTH 20
+#define STREAK_HEIGHT 40
+#define STREAK_FRAME_BYTES (6 * PICTURE_BYTES(STREAK))
 #define STREAKS_SPACING 6       ///< frames between streaks
 #define STREAKS_FLIGHT 24       ///< frames from user to target
 #define STREAKS_TARGET_DELAY 32 ///< frames between targets
@@ -181,17 +186,23 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
               if (step > 5)
                 step = 5;
               if (STREAKS_VALUE(mode, STREAKS_ANIMATE)) {
-                u8 *picture = &work->sheet[step * 800 + frame / 2 % 3 * 4800];
+                u8 *picture = &work->sheet[step * PICTURE_BYTES(STREAK) +
+                                           frame / 2 % 3 * STREAK_FRAME_BYTES];
 
-                drawUpper(canvas, picture, position.x - 10, position.y - 40, 20,
-                          40);
-                drawLower(canvas, picture, position.x - 10, position.y, 20, 40);
+                drawUpper(canvas, picture, position.x - STREAK_WIDTH / 2,
+                          position.y - STREAK_HEIGHT, STREAK_WIDTH,
+                          STREAK_HEIGHT);
+                drawLower(canvas, picture, position.x - STREAK_WIDTH / 2,
+                          position.y, STREAK_WIDTH, STREAK_HEIGHT);
               } else {
-                u8 *picture = &work->sheet[step * 800 + 2 * 4800];
+                u8 *picture = &work->sheet[step * PICTURE_BYTES(STREAK) +
+                                           2 * STREAK_FRAME_BYTES];
 
-                drawUpper(canvas, picture, position.x - 10, position.y - 40, 20,
-                          40);
-                drawLower(canvas, picture, position.x - 10, position.y, 20, 40);
+                drawUpper(canvas, picture, position.x - STREAK_WIDTH / 2,
+                          position.y - STREAK_HEIGHT, STREAK_WIDTH,
+                          STREAK_HEIGHT);
+                drawLower(canvas, picture, position.x - STREAK_WIDTH / 2,
+                          position.y, STREAK_WIDTH, STREAK_HEIGHT);
               }
               Particle_AdvanceWithGravity3D(streak, PARTICLE_DAMPING_NONE, 0);
               streak->variant++;

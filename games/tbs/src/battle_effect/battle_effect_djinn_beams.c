@@ -4,9 +4,11 @@
 
 #include "battle_effect_internal.h"
 
-#define DJINN_BEAMS_MOTE_PICTURES                                              \
-  10000 ///< the motes (CrescentMoonSheet, 24x24)
-#define DJINN_BEAMS_DJINNI_PICTURE 26048 ///< the Djinni (40x40)
+/// The motes (CrescentMoonSheet), then the Djinni.
+#define DJINN_BEAMS_MOTE_PICTURES 10000
+#define DJINN_BEAMS_MOTE_WIDTH 24
+#define DJINN_BEAMS_MOTE_HEIGHT 24
+#define DJINN_BEAMS_DJINNI_PICTURE 26048
 
 /// Motes drift down over each target and a column of light falls on it, in the
 /// Venus Djinni's colours; with a prelude, a Venus Djinni appears first.
@@ -143,9 +145,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
             draw[i & 1](canvas,
                         work->sheet +
                             gDjinnBeams_MotePictures[mote->variant / 8 & 7] *
-                                (24 * 24) +
+                                PICTURE_BYTES(DJINN_BEAMS_MOTE) +
                             DJINN_BEAMS_MOTE_PICTURES,
-                        screenPosition.x - 12, screenPosition.y - 12, 24, 24);
+                        screenPosition.x - DJINN_BEAMS_MOTE_WIDTH / 2,
+                        screenPosition.y - DJINN_BEAMS_MOTE_HEIGHT / 2,
+                        DJINN_BEAMS_MOTE_WIDTH, DJINN_BEAMS_MOTE_HEIGHT);
             mote->y -= px(1);
             mote->variant++;
           }

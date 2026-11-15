@@ -112,6 +112,9 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectParams *args, s32 mode) {
 }
 
 #define SPIDER_WEB_FRAMES 63
+/// SpiderWebSheet's quarter of the web, drawn four times mirrored.
+#define SPIDER_WEB_QUARTER_WIDTH 32
+#define SPIDER_WEB_QUARTER_HEIGHT 32
 
 /// A spider web spreads over the targets in four mirrored quarters.
 ///
@@ -145,21 +148,29 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(124 - (frame << 1));
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_TRANSPARENT);
-    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 41, 32, 32);
+    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 41,
+                                        SPIDER_WEB_QUARTER_WIDTH,
+                                        SPIDER_WEB_QUARTER_HEIGHT);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_TRANSPARENT);
-    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 64, 41, 32, 32);
+    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 64, 41,
+                                        SPIDER_WEB_QUARTER_WIDTH,
+                                        SPIDER_WEB_QUARTER_HEIGHT);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                         COMPOSITE_TRANSPARENT);
-    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 72, 32, 32);
+    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 72,
+                                        SPIDER_WEB_QUARTER_WIDTH,
+                                        SPIDER_WEB_QUARTER_HEIGHT);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                         COMPOSITE_TRANSPARENT);
-    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 64, 72, 32, 32);
+    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 64, 72,
+                                        SPIDER_WEB_QUARTER_WIDTH,
+                                        SPIDER_WEB_QUARTER_HEIGHT);
     HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(SE_CRACK);

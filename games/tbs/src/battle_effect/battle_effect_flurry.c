@@ -118,10 +118,10 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
 
   Resource_LoadAndDecompress(RESOURCE_YELLOW_ORB_SHEET, work->sheet, 1, 0);
-  for (row = 0; row != 288; row++) {
-    for (col = 0; col != 40; col++) {
-      s32 src = row * 40 + col;
-      s32 dst = row * 20 + col / 2 + FLURRY_FLASH_PICTURES;
+  for (row = 0; row != YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT; row++) {
+    for (col = 0; col != YELLOW_ORB_WIDTH; col++) {
+      s32 src = row * YELLOW_ORB_WIDTH + col;
+      s32 dst = row * YELLOW_ORB_PACKED_WIDTH + col / 2 + FLURRY_FLASH_PICTURES;
 
       work->sheet[dst] = work->sheet[src];
     }
@@ -200,18 +200,24 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
         if ((i & 3) <= 1 ||
             gFlurry_Styles[mode][FLURRY_ARC_SHEET] == FLURRY_ARCS) {
           if (work->args->side == EFFECT_SIDE_ENEMIES)
-            draw[i & 1](canvas, work->sheet + step * (48 * 72),
-                        targetPos.x / 2 - 16, targetPos.y - 40, 48, 72);
+            draw[i & 1](canvas, work->sheet + step * PICTURE_BYTES(BLUE_ARC),
+                        targetPos.x / 2 - 16, targetPos.y - 40, BLUE_ARC_WIDTH,
+                        BLUE_ARC_HEIGHT);
           else
-            draw[i & 1](canvas, work->sheet + step * (48 * 72),
-                        targetPos.x / 2 - 32, targetPos.y - 40, 48, 72);
+            draw[i & 1](canvas, work->sheet + step * PICTURE_BYTES(BLUE_ARC),
+                        targetPos.x / 2 - 32, targetPos.y - 40, BLUE_ARC_WIDTH,
+                        BLUE_ARC_HEIGHT);
         } else {
           if (work->args->side == EFFECT_SIDE_ENEMIES)
-            draw[i & 1](canvas, FLURRY_WAVE_PICTURES + step * (48 * 16),
-                        targetPos.x / 2 - 16, actorPos.y - 8, 48, 16);
+            draw[i & 1](canvas,
+                        FLURRY_WAVE_PICTURES + step * PICTURE_BYTES(WAVE),
+                        targetPos.x / 2 - 16, actorPos.y - WAVE_HEIGHT / 2,
+                        WAVE_WIDTH, WAVE_HEIGHT);
           else
-            draw[i & 1](canvas, FLURRY_WAVE_PICTURES + step * (48 * 16),
-                        targetPos.x / 2 - 32, actorPos.y - 8, 48, 16);
+            draw[i & 1](canvas,
+                        FLURRY_WAVE_PICTURES + step * PICTURE_BYTES(WAVE),
+                        targetPos.x / 2 - 32, actorPos.y - WAVE_HEIGHT / 2,
+                        WAVE_WIDTH, WAVE_HEIGHT);
         }
       }
       if (frame == start + 2) {
@@ -236,9 +242,13 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
       }
       if (frame >= start + 2 && frame < start + 14)
         draw[0](canvas,
-                work->sheet + ((frame - start - 2) / 2) * (20 * 48) +
+                work->sheet +
+                    ((frame - start - 2) / 2) *
+                        PICTURE_BYTES(YELLOW_ORB_PACKED) +
                     FLURRY_FLASH_PICTURES,
-                targetPos.x / 2 - 10, targetPos.y - 24, 20, 48);
+                targetPos.x / 2 - YELLOW_ORB_PACKED_WIDTH / 2,
+                targetPos.y - YELLOW_ORB_PACKED_HEIGHT / 2,
+                YELLOW_ORB_PACKED_WIDTH, YELLOW_ORB_PACKED_HEIGHT);
     }
     EFFECT_RELEASE_BLITTERS();
 

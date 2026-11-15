@@ -309,6 +309,21 @@ enum RedCrescentPicture {
 #define BLUE_FLAME_COLUMN_HEIGHT 104
 #define BLUE_FLAME_SPLASH_WIDTH 34
 #define BLUE_FLAME_SPLASH_HEIGHT 65
+/// WaveSheet's six pictures, BlueArcSheetA and B's six, and YellowOrbSheet's.
+#define WAVE_WIDTH 48
+#define WAVE_HEIGHT 16
+#define BLUE_ARC_WIDTH 48
+#define BLUE_ARC_HEIGHT 72
+#define YELLOW_ORB_WIDTH 40
+#define YELLOW_ORB_HEIGHT 48
+/// The yellow orb as BattleEffect_PackTileRows packs it, every second byte.
+#define YELLOW_ORB_PACKED_WIDTH (YELLOW_ORB_WIDTH / 2)
+#define YELLOW_ORB_PACKED_HEIGHT YELLOW_ORB_HEIGHT
+#define YELLOW_ORB_PICTURES 6
+/// The slash pictures as wide and tall as the canvas's view: StarBurstSheet's,
+/// CrescentSheet's and the reveal masks.
+#define SLASH_PICTURE_SIZE 120
+
 /// LightningPillarSheet's pillar, in two pictures.
 #define LIGHTNING_PILLAR_WIDTH 48
 #define LIGHTNING_PILLAR_HEIGHT 112

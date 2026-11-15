@@ -11,6 +11,10 @@ enum {
   FROST_FRAME   ///< the frame the motes burst
 };
 
+/// The ice mounds' pictures in IceChipSheet are all as wide; their heights are
+/// gFrost_MoundHeights.
+#define FROST_MOUND_WIDTH 32
+
 /// Motes of ice spiral down and in while mounds of ice spring up; at the burst
 /// the motes spread and rise, chips fly up and sparkles rise.
 ///
@@ -140,28 +144,28 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
             height = gFrost_MoundHeights[picture];
             pair[1](canvas, work->sheet + gFrost_MoundPictures[picture],
                     gFrost_MoundSpots[i][FROST_MOUND_X],
-                    gFrost_MoundSpots[i][FROST_MOUND_FOOT] - height, 32,
-                    height);
+                    gFrost_MoundSpots[i][FROST_MOUND_FOOT] - height,
+                    FROST_MOUND_WIDTH, height);
 #else
             pair[1](canvas, work->sheet + gFrost_MoundPictures[picture],
                     gFrost_MoundSpots[i][FROST_MOUND_X],
                     gFrost_MoundSpots[i][FROST_MOUND_FOOT] -
                         (height = gFrost_MoundHeights[picture]),
-                    32, height);
+                    FROST_MOUND_WIDTH, height);
 #endif
           } else {
 #ifdef UBFIX
             height = gFrost_MoundHeights[picture];
             pair[0](canvas, work->sheet + gFrost_MoundPictures[picture],
                     gFrost_MoundSpots[i][FROST_MOUND_X],
-                    gFrost_MoundSpots[i][FROST_MOUND_FOOT] - height, 32,
-                    height);
+                    gFrost_MoundSpots[i][FROST_MOUND_FOOT] - height,
+                    FROST_MOUND_WIDTH, height);
 #else
             pair[0](canvas, work->sheet + gFrost_MoundPictures[picture],
                     gFrost_MoundSpots[i][FROST_MOUND_X],
                     gFrost_MoundSpots[i][FROST_MOUND_FOOT] -
                         (height = gFrost_MoundHeights[picture]),
-                    32, height);
+                    FROST_MOUND_WIDTH, height);
 #endif
           }
         }

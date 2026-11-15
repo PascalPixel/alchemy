@@ -6,11 +6,16 @@
 
 #define DRAGON_CLOUD_FRAMES 150
 #define DRAGON_CLOUD_STRIKE_FRAME 83 ///< the flame strikes the first target
-#define DRAGON_CLOUD_TRAIL_PICTURE_BYTES (24 * 39) ///< bytes in each trail copy
+#define DRAGON_CLOUD_TRAIL_WIDTH 24
+#define DRAGON_CLOUD_TRAIL_HEIGHT 39
+#define DRAGON_CLOUD_TRAIL_PICTURE_BYTES                                       \
+  PICTURE_BYTES(DRAGON_CLOUD_TRAIL) ///< bytes in each trail copy
 #define DRAGON_CLOUD_FIRST_EMBER 8  ///< the first ember in work->particles
 #define DRAGON_CLOUD_FIRST_FLASH 48 ///< the first flash in work->particles
-/// The trail picture, after the five 24x48 flames.
-#define DRAGON_CLOUD_TRAIL_PICTURE (5 * 24 * 48)
+/// FirePillarSheetB: five flames, then the trail picture.
+#define DRAGON_CLOUD_FLAME_WIDTH 24
+#define DRAGON_CLOUD_FLAME_HEIGHT 48
+#define DRAGON_CLOUD_TRAIL_PICTURE (5 * PICTURE_BYTES(DRAGON_CLOUD_FLAME))
 #define DRAGON_CLOUD_PUFF_PICTURES 15360 ///< the puff pictures in the sheet
 #define DRAGON_CLOUD_PUFFS 8             ///< puffs, particles 0 to 7
 #define DRAGON_CLOUD_EMBERS 40  ///< embers, from DRAGON_CLOUD_FIRST_EMBER
@@ -168,10 +173,12 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           draw[0](canvas,
                   &work->sheet[DRAGON_CLOUD_TRAIL_PICTURE +
                                (j - 10) * DRAGON_CLOUD_TRAIL_PICTURE_BYTES],
-                  trail[j].x, trail[j].y, 24, 39);
+                  trail[j].x, trail[j].y, DRAGON_CLOUD_TRAIL_WIDTH,
+                  DRAGON_CLOUD_TRAIL_HEIGHT);
         else
           draw[0](canvas, &work->sheet[DRAGON_CLOUD_TRAIL_PICTURE], trail[j].x,
-                  trail[j].y, 24, 39);
+                  trail[j].y, DRAGON_CLOUD_TRAIL_WIDTH,
+                  DRAGON_CLOUD_TRAIL_HEIGHT);
       }
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
@@ -197,8 +204,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       lift = drift / 4 + 2;
       trail[0].x = position.x - 12;
       trail[0].y = position.y - 20;
-      draw[0](canvas, &work->sheet[lift * (24 * 48)], trail[0].x - 6,
-              trail[0].y - 2, 24, 48);
+      draw[0](canvas, &work->sheet[lift * PICTURE_BYTES(DRAGON_CLOUD_FLAME)],
+              trail[0].x - 6, trail[0].y - 2, DRAGON_CLOUD_FLAME_WIDTH,
+              DRAGON_CLOUD_FLAME_HEIGHT);
     }
     if (frame == DRAGON_CLOUD_STRIKE_FRAME) {
       work->shakeFrames = 8;
@@ -224,8 +232,11 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           if (i > 47) {
             if (ember->variant <= 11) {
               draw[0](canvas,
-                      Ram_MapGridCellBuffer + ember->variant / 2 * (32 * 64),
-                      position.x - 16, position.y - 32, 32, 64);
+                      Ram_MapGridCellBuffer +
+                          ember->variant / 2 * PICTURE_BYTES(FLASH_BURST),
+                      position.x - FLASH_BURST_WIDTH / 2,
+                      position.y - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
+                      FLASH_BURST_HEIGHT);
               ember->variant++;
             }
           } else {

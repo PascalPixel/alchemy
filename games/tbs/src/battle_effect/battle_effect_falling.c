@@ -26,6 +26,9 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 /// A falling shard or bolt keeps falling while its y, in eighths of a pixel, is
 /// at most this.
 #define FALLING_LAND_Y (80 * 8 - 1)
+/// IceShardSheet: the shard, then its shatter, each picture 32x32.
+#define ICE_SHARD_WIDTH 32
+#define ICE_SHARD_HEIGHT 32
 
 /// Ice shards rain down diagonally onto the targets' side of the field and
 /// shatter into puffs of sparkle, flashing and shaking each target as they
@@ -123,7 +126,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
         s32 y = shard->y / 8;
 
         draw[work->args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0](
-            canvas, work->sheet, x, y, 32, 32);
+            canvas, work->sheet, x, y, ICE_SHARD_WIDTH, ICE_SHARD_HEIGHT);
         if (shard->y <= FALLING_LAND_Y) { // above y 80
           if (work->args->side == EFFECT_SIDE_ENEMIES)
             shard->x -= 64;
@@ -147,8 +150,10 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
         if (shard->variant >= 1 && shard->variant <= 14) {
           draw[work->args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0](
-              canvas, work->sheet + 32 * 32 + ((shard->variant / 3) << 10), x,
-              y, 32, 32);
+              canvas,
+              work->sheet + PICTURE_BYTES(ICE_SHARD) +
+                  ((shard->variant / 3) << 10),
+              x, y, ICE_SHARD_WIDTH, ICE_SHARD_HEIGHT);
         }
         if (shard->variant >= 9 && shard->variant <= 11) {
           for (k = 0; k != FALLING_SHARD_PUFF_COUNT; k++) {
@@ -208,9 +213,15 @@ struct BoltSparkBuffer {
 /// Ram_MapGridCellBuffer seen as Douse's struct BoltSparkBuffer.
 #define FALLING_BOLT_SPARKS ((struct BoltSparkBuffer *)Ram_MapGridCellBuffer)
 
+/// BlueBeamSheet after the motes: the falling drop and its flash, then the
+/// burst.
+#define DOUSE_DROP_WIDTH 24
+#define DOUSE_DROP_HEIGHT 24
+#define DOUSE_BURST_PICTURE_WIDTH 42
+#define DOUSE_BURST_PICTURE_HEIGHT 42
 #define DOUSE_FALLING_PICTURE (2 * MOTE_SET_BYTES)
-#define DOUSE_FLASH_PICTURE (DOUSE_FALLING_PICTURE + 24 * 24)
-#define DOUSE_BURST_PICTURE (DOUSE_FLASH_PICTURE + 24 * 24)
+#define DOUSE_FLASH_PICTURE (DOUSE_FALLING_PICTURE + PICTURE_BYTES(DOUSE_DROP))
+#define DOUSE_BURST_PICTURE (DOUSE_FLASH_PICTURE + PICTURE_BYTES(DOUSE_DROP))
 
 /// Blue bolts streak down diagonally onto the targets' side of the field, each
 /// bursting into a fountain of falling sparks where it lands, while the targets
@@ -303,7 +314,8 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
       x = bolt->x / 8;
       y = bolt->y / 8;
       if (bolt->variant == -1) {
-        drawBolt(canvas, work->sheet + DOUSE_FALLING_PICTURE, x, y, 24, 24);
+        drawBolt(canvas, work->sheet + DOUSE_FALLING_PICTURE, x, y,
+                 DOUSE_DROP_WIDTH, DOUSE_DROP_HEIGHT);
         if (bolt->y <= FALLING_LAND_Y) {
           if (work->args->side == EFFECT_SIDE_ENEMIES)
             bolt->x -= 32;
@@ -338,10 +350,11 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
         }
       } else {
         if (bolt->variant >= 0 && bolt->variant <= 3)
-          drawBolt(canvas, work->sheet + DOUSE_FLASH_PICTURE, x, y, 24, 24);
+          drawBolt(canvas, work->sheet + DOUSE_FLASH_PICTURE, x, y,
+                   DOUSE_DROP_WIDTH, DOUSE_DROP_HEIGHT);
         else if (bolt->variant <= 7)
-          drawBolt(canvas, work->sheet + DOUSE_BURST_PICTURE, x - 9, y - 9, 42,
-                   42);
+          drawBolt(canvas, work->sheet + DOUSE_BURST_PICTURE, x - 9, y - 9,
+                   DOUSE_BURST_PICTURE_WIDTH, DOUSE_BURST_PICTURE_HEIGHT);
         if (bolt->variant <= 14)
           bolt->variant++;
       }

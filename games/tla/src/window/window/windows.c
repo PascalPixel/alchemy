@@ -62,12 +62,17 @@ void WindowSprite_InitializeFreeList(void) {
 
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
+/// Fills size bytes at dst with value through fill.
 static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size,
                                 u32 value) {
   /* FAKEMATCH(wrapper): the fill called through this inline. */
   return fill(dst, size, value);
 }
 
+/// Sets up the window system for the field (and the other screens outside
+/// battle): allocates and clears the work block, blanks the tilemap, frees
+/// every window sprite and starts the two per-frame tasks, the tilemap upload
+/// and the window update.
 void WindowSystem_InitField(void) {
   struct WindowWork *work;
 
@@ -85,6 +90,8 @@ void WindowSystem_InitField(void) {
   WindowSystem_StartFieldUpdate();
 }
 
+/// Sets up the window system for battle, as WindowSystem_InitField does for the
+/// field.
 void WindowSystem_InitBattle(s32 kind) {
   struct WindowWork *work;
   s32 i;
@@ -119,6 +126,8 @@ void WindowSystem_InitBattle(s32 kind) {
   }
 }
 
+/// The tilemap upload, a VBlank-pass task: copies each 256-byte band of the
+/// tilemap (four tile rows) marked in the dirty bits to VRAM.
 void WindowSystem_UploadTilemap(void) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u32 flags;
@@ -146,6 +155,8 @@ void WindowSystem_UploadTilemap(void) {
   }
 }
 
+/// Erases a window's rectangle of the tilemap (x, y, width and height in tiles)
+/// and frees the text tiles it showed.
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u16 *cursor = &canvas->tilemap[y][x];
@@ -285,6 +296,7 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
   return found;
 }
 
+/// Waits until a zooming window has finished opening or closing.
 void Window_WaitZoom(void *work) {
   if (!(WINDOW_FLAG_INSTANT & ((struct Window *)work)->flags) &&
       (((struct Window *)work)->duration != 0)) {
@@ -297,6 +309,7 @@ void Window_WaitZoom(void *work) {
 void WindowSprite_PrepareForRedraw(struct Window *work);
 void WindowSprite_RedrawSavedRect(struct Window *window);
 
+/// Closes a window: clears its contents and remembers its last rectangle.
 void Window_Close(struct Window *work, s32 release) {
   u16 zero;
 
@@ -336,6 +349,8 @@ void Window_Close(struct Window *work, s32 release) {
   }
 }
 
+/// Clears a window's contents: redraws it empty and releases the render
+/// window sprites it carries. A text canvas window is left alone.
 void WindowSprite_PrepareForRedraw(struct Window *work) {
   if (!(WINDOW_FLAG_TEXT_CANVAS & work->flags)) {
     WindowSprite_RedrawSavedRect(work);
@@ -343,11 +358,14 @@ void WindowSprite_PrepareForRedraw(struct Window *work) {
   }
 }
 
+/// Redraws a window empty, its border and fill, at its current rectangle.
 void WindowSprite_RedrawSavedRect(struct Window *window) {
   Window_DrawBorder((s16)window->x, (s16)window->y, window->width,
                     window->height);
 }
 
+/// Releases every window sprite in a list and empties it. sprites is the list,
+/// or a window (whose sprite list comes first); NULL is ignored.
 void WindowSprite_ClearList(void *work) {
   struct WindowSpriteList *list = work;
   struct WindowSprite *node;
@@ -368,9 +386,9 @@ void WindowSprite_ClearList(void *work) {
 
 #define UI_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
 
-// Clears an area of a window's interior to the window fill. left, top, right
-// and bottom are pixels inside the window, and the area covers every tile
-// they touch.
+/// Clears an area of a window's interior to the window fill. left, top, right
+/// and bottom are pixels inside the window, and the area covers every tile they
+/// touch.
 void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
                                u32 right, u32 bottom) {
   struct WindowWork *work;
@@ -423,6 +441,8 @@ void Window_ClearInteriorTiles(const struct Window *window, u32 left, u32 top,
 #define UI_PALETTE_OWNER_OFFSET 0x1160
 #endif
 
+/// Points a list's tail link back at its last sprite, after the list has been
+/// edited by hand.
 void WindowSprite_UpdateListTail(struct WindowSpriteList *list) {
   struct WindowSprite *node = list->head;
   struct WindowSprite **tail = &list->head;
@@ -434,6 +454,7 @@ void WindowSprite_UpdateListTail(struct WindowSpriteList *list) {
   list->tailLink = tail;
 }
 
+/// Adds a window sprite to the end of a list; NULL lists are ignored.
 void WindowSprite_AppendToList(struct WindowSpriteList *list,
                                struct WindowSprite *node) {
   if (list != NULL) {
@@ -450,6 +471,8 @@ void WindowSprite_AppendToList(struct WindowSpriteList *list,
   }
 }
 
+/// Frees a window sprite: returns it to the free list, releases its VRAM cache
+/// entry unless it is a glyph, and for a portrait frees its palette slot too.
 void WindowSprite_Release(struct WindowSprite *entry) {
   WindowSprite_ReleaseFree(entry);
   if ((u8)entry->kind != 0) {
@@ -463,6 +486,11 @@ void WindowSprite_Release(struct WindowSprite *entry) {
   entry->motion = 0;
 }
 
+/// Starts a free message typing the decoded text that begins at entry into
+/// window, with the pen at pixel (x, y). spacing gives each of four lines an
+/// extra gap between characters, in 1/256 pixels (or none for NULL), and is
+/// copied, so the caller's array need not outlive the call; flags is kept with
+/// the message (nonzero keeps the window's size from page to page).
 struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
                                     s32 y, u16 *spacing, s32 flags) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
@@ -583,6 +611,8 @@ void Text_FillCanvasBackground(void) {
   fill(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, TEXT_CANVAS_BACKGROUND_WORD);
 }
 
+/// Resets the pen and text style of the first idle message, clearing the canvas
+/// when the message still has a window.
 void Message_ResetIdle(void) {
   struct UiChannelSlot *slot =
       ((struct WindowWork *)Ram_HeapSlots->windowWork)->channels;

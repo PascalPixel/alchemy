@@ -12,6 +12,9 @@
 
 void SceneTransform_SetPosition(s32 *position);
 
+/// Runs each frame of a battle: pauses a link battle whose connection is lost,
+/// turns the camera a sixteenth of the way toward its target yaw, places it,
+/// and refreshes the background's zoom.
 void BattleCamera_Update(void) {
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
   struct BattlePresentationTransition *transition =
@@ -88,17 +91,19 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   }
 
   BattleMessage_CloseFar();
-  if (battle->firstStrike == 1) {
+  if (battle->firstStrike == FIRST_STRIKE_PARTY) {
     MessageArgument_ClearAllFar();
     BattleMessage_ShowAndWaitFar((s32)MsgPartyStrikesFirst);
     BattleMessage_WaitForAdvance();
-  } else if (battle->firstStrike == 2) {
+  } else if (battle->firstStrike == FIRST_STRIKE_ENEMIES) {
     MessageArgument_ClearAllFar();
     BattleMessage_ShowAndWaitFar((s32)MsgPartySurprised);
     BattleMessage_WaitForAdvance();
   }
 }
 
+/// Fills the battle's two unit lists: the party in its order, and the enemies
+/// left to right, or for a fixed formation out from the centre.
 void BattleUnit_Collect(void) {
   u16 buf[14];
   struct BattleWork *battle;
@@ -138,14 +143,18 @@ s32 Battle_ShiftVramTiles(void) {
   return Iwram_ClearWordsEntry((void *)0x0600028c, 20);
 }
 
+/// An HBlank handler: clears BG0's vertical scroll from the line it fires on.
 void BattleTransition_ClearBg0Vofs(void) {
   u32 zero = 0;
 
   REG_BG0VOFS = zero;
 }
 
+/// Does nothing.
 void Party_ReservedNoOp5B14(s32 value) {}
 
+/// Clears the party's battle-only states, and works their stats out again, as a
+/// battle ends.
 s32 BattleParty_ResetActiveRuntimeFields(void) {
   u16 owners[10];
   s32 count;
@@ -273,9 +282,7 @@ void BattleSummon_UpdateAvailability(void) {
   u32 availableMask;
 
   partySize = BattleParty_PrepareMembers(partyMembers);
-  availableMask = ((struct BattleSummonState *)Djinn_GetRecoveryTableFar(0))
-                      ->availableMask &
-                  0xffff0000;
+  availableMask = Djinn_GetRecoveryTableFar(0)->summonMask & 0xffff0000;
 
   element = 0;
   do {
@@ -319,8 +326,7 @@ void BattleSummon_UpdateAvailability(void) {
     element++;
   } while (element <= 15);
 
-  ((struct BattleSummonState *)Djinn_GetRecoveryTableFar(0))->availableMask =
-      availableMask;
+  Djinn_GetRecoveryTableFar(0)->summonMask = availableMask;
 }
 
 /// An empty function, right after BattleSummon_UpdateAvailability.

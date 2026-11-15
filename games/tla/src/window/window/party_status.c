@@ -208,6 +208,9 @@ Func_08118130__screens(s32 a,
 
 #define DJINN_COUNT_TILE(n) ((n) > 9 ? (n) + 0xf196 : ((n) + '0') | 0xf000)
 
+/// Draws the party status window with `flags` (see PARTY_STATUS_*): each party
+/// member's name, HP and optionally PP with their bars, and in battle the
+/// standby Djinn of each element.
 void PartyStatus_Draw(s32 flags) {
   struct PartyStatusWindow *layout = Ram_HeapSlots->partyStatus;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
@@ -343,6 +346,7 @@ void PartyStatus_Draw(s32 flags) {
   work->holdTilemapUpload = 0;
 }
 
+/// Closes the party status window and frees its heap block.
 void PartyStatus_Close(void) {
   Window_Close(*(void **)Ram_HeapSlots->partyStatus, 1);
   HeapSlot_Release(HEAP_SLOT_PARTY_STATUS);

@@ -53,25 +53,6 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   return 0;
 }
 
-struct MenuFlagWork {
-  u8 unk000[0x506];
-  u8 busy;
-};
-
-struct FxGroup {
-  u8 unk00[32];
-  struct Actor *objects[8];
-  u16 values[8];
-  s32 count;
-};
-
-struct DescriptorEntry {
-  s16 id;
-  u8 unk02[6];
-};
-
-extern struct DescriptorEntry gData_080eff28[];
-
 /// Copies one 4bpp tile of BG character block 0 to another, each given as a
 /// tilemap entry whose palette and flip bits are ignored. The battle lists copy
 /// tiles 24 and 25 (as entries `0xf018` and `0xf019`) to tiles 512, 513, 528
@@ -103,13 +84,6 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
 #define MENU_TEXT_COPY Message_DecodeRaw
 #endif
 
-struct ItemMenuWork {
-  u8 unk00[3];
-  u8 dirty;
-  u8 unk04[2];
-  u8 holdTilemapUpload;
-};
-
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 #define ITEM_BROKEN 0x400
 
@@ -120,8 +94,13 @@ struct ItemMenuWork {
     (sprite).oam.word.attr23 = 0;                                              \
   } while (0)
 
+/// The battle item list for unit `member`: `count` inventory entries (ended by
+/// 0), five to a page, each with its icon and name: plain when usable,
+/// TEXT_COLOR_YELLOW when Item_ClassifyUseAbility refuses it, TEXT_COLOR_RED
+/// when broken; the window above names the one under the cursor
+/// (MsgItemPlainName), or says it cannot be used in battle.
 s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
-  struct ItemMenuWork *work;
+  struct WindowWork *work;
   s32 drawnFirstEntry;
   s32 drawnRow;
   s32 cursorHandle;
@@ -148,7 +127,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   s32 iconSlots[5];
   struct MenuSprite sprites[5];
 
-  work = (struct ItemMenuWork *)Ram_HeapSlots->windowWork;
+  work = Ram_HeapSlots->windowWork;
   drawnFirstEntry = -1;
   drawnRow = -1;
   cursorHandle = VramCache_AllocEntry(128);

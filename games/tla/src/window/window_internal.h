@@ -61,7 +61,6 @@
 #include "battle_work.h"
 #include "system/irq_lock.h"
 #include "battle/battle_side.h"
-#include "battle/b5_context.h"
 #include "system/save.h"
 #include "owner_state.h"
 #include "field_sprite.h"
@@ -79,6 +78,10 @@
 #include "graphics/display_transition.h"
 #include "scene_call.h"
 #include "field/sprite.h"
+
+/// The window animation a message can start (its window-state code): the
+/// window's frame flashes as it swells, for the message's countdown.
+#define WINDOW_ANIMATION_SWELL 4
 
 // Window animation lengths.
 #define WINDOW_OPEN_FRAMES 8
@@ -151,5 +154,9 @@ void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y);
 void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y);
 s16 DebugSceneSelect_Run(void);
 s32 DebugSceneSelect_HandleRowInput(s32 arg, s16 value, s16 *sub, s16 *mode);
+
+/// The battle lists' two page arrow tiles in VRAM, tiles 820 and 821, which
+/// Link_DrawPageArrows draws each frame.
+#define LIST_PAGE_ARROW_VRAM ((s32)BG_CHAR_BLOCK(0) + 820 * TILE_SIZE_4BPP)
 
 #endif

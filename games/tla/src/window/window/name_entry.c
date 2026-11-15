@@ -127,6 +127,9 @@ void Window_SetTilemapFlagRect(const struct Window *object, s32 x, s32 y,
   }
 }
 
+/// Loads the pointing hand cursor's tiles (128 bytes) into
+/// a free VRAM slot and returns the slot, which the caller frees with
+/// VramCache_FreeEntry.
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   s32 slot;
 
@@ -135,15 +138,19 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   return slot;
 }
 
+/// Loads the UI icon tiles into VRAM cache entry slot.
 void Resource_CopyFixedBlockB(s32 slot) {
   VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiIconTiles);
 }
 
+/// Loads the UI's fixed block A tiles into VRAM cache entry slot.
 void Resource_CopyFixedBlockA(s32 slot) {
   VramBlock_LoadResourceFar(slot, 0x80, (s32)&ResourceId_UiFixedBlockATiles);
 }
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
+/// Puts the string `str` into the UI's text entries and returns its width in
+/// pixels.
 s32 Text_SetString(const u8 *str) {
   struct WindowWork *work;
   u16 *dst;
@@ -167,6 +174,10 @@ s32 Text_SetString(const u8 *str) {
   return width;
 }
 
+/// Draws the name being entered, `name`, at the top left of `window`,
+/// followed in TEXT_COLOR_RED by an underscore for each of the
+/// NAME_MAX_LETTERS places still free: the loop fills the text to 7 bytes,
+/// the name and the two-byte colour code before the underscores.
 void NameEntry_DrawName(s32 output, u8 *input) {
   u8 text[20];
   s32 length = 0;
@@ -267,6 +278,9 @@ void MenuCursor_SetPositionImmediateFar(void *cursor, s32 x, s32 y);
 // command key turns to the other kana page. It also returns without waiting
 // for every button to be released, which the later editions added.
 #if LANGUAGE == LANGUAGE_JAPANESE
+/// The name entry screen for party member `member`: the player types a name of
+/// up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or Start,
+/// which jumps there).
 s32 NameEntry_EditMemberName(s32 member) {
   struct Window *nameWindow;
   s32 result = 0;

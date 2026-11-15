@@ -8,10 +8,9 @@
 #include "module/battle/battle.h"
 #include "module/system/system.h"
 
-/// Resets a battle actor, making its object when it has none: scale 0xe666,
-/// the anchors cleared unless keep is set, no sprite, animation, effect or
-/// state, facing ArcTan2(0, 0) + 0x8000, visible, then the actor object
-/// script.
+/// Resets a battle object, making its actor when it has none: nine tenths
+/// size, the anchors cleared unless keep is set, no sprite, animation, shadow
+/// or status, turned half a turn, visible, then the empty script.
 void BattleObject_Reset(struct BattleObj *actor, s32 keep) {
   struct MotionObject *object;
   s32 facingAngle;
@@ -49,6 +48,8 @@ void BattleObject_Reset(struct BattleObj *actor, s32 keep) {
   Actor_StartScriptFar((struct Actor *)object, gBattleObject_EmptyScript);
 }
 
+/// Creates the battle object of a unit at (x, y) on the battlefield: its
+/// sprite, palette, size and weapon, turned to face the centre.
 void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
   s32 fixedZ;
@@ -67,7 +68,9 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   palette = 0;
   registeredSprite = EnemySprite_LoadIntoSlots(unitId);
 
-  if (unit->classId == 0) {
+  // The sprite: an enemy's from its class, a party member's by character; a
+  // character on the enemy side, a link opponent, takes palette 1.
+  if (unit->classId == CLASS_NONE) {
     sprite = BattleSprite_GetSprite(unit->enemyId);
     if (registeredSprite == 0)
       palette = BattleSprite_GetPalette(unit->enemyId);
@@ -76,37 +79,38 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   } else {
     switch (unit->enemyId) {
     case ISAAC:
-      sprite = 490;
+      sprite = SPRITE_BATTLE_ISAAC;
       break;
     case GARET:
-      sprite = 495;
+      sprite = SPRITE_BATTLE_GARET;
       break;
     case MIA:
-      sprite = 504;
+      sprite = SPRITE_BATTLE_MIA;
       break;
     case IVAN:
-      sprite = 500;
+      sprite = SPRITE_BATTLE_IVAN;
       break;
     case FELIX:
-      sprite = 508;
+      sprite = SPRITE_BATTLE_FELIX;
       break;
     case SHEBA:
-      sprite = 517;
+      sprite = SPRITE_BATTLE_SHEBA;
       break;
     case PIERS:
-      sprite = 521;
+      sprite = SPRITE_BATTLE_PIERS;
       break;
     case JENNA:
     default:
-      sprite = 513;
+      sprite = SPRITE_BATTLE_JENNA;
       break;
     }
     if ((u32)unitId > ALLY_MAX)
       palette = 1;
   }
 
+  // The units drawn larger or smaller than their sprites, in 16.16.
   actor->scale = Q16_ONE;
-  actor->effect = 686;
+  actor->effect = SPRITE_BATTLE_SHADOW;
 
   switch (unit->enemyId) {
   case ISAAC:
@@ -133,266 +137,268 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   case SHEBA:
     actor->scale = Q16_ONE * 9 / 10;
     break;
-  case 234:
+  case ENEMY_SLIME:
     actor->scale = Q16_ONE * 9 / 10;
     break;
-  case 235:
+  case ENEMY_SLIME_2:
     actor->scale = Q16_ONE * 9 / 10;
     break;
-  case 236:
+  case ENEMY_OOZE:
     actor->scale = Q16_ONE * 9 / 10;
     break;
-  case 237:
+  case ENEMY_SLIME_BEAST:
     actor->scale = Q16_ONE * 9 / 10;
     break;
-  case 291:
+  case ENEMY_KILLER_APE:
     actor->scale = Q16_ONE * 8 / 5;
     break;
-  case 302:
+  case ENEMY_MANTICORE:
     actor->scale = Q16_ONE * 31 / 20;
     break;
-  case 339:
+  case ENEMY_LIVING_STATUE:
     actor->scale = Q16_ONE * 6 / 5;
     break;
-  case 340:
+  case ENEMY_HYDROS_STATUE:
     actor->scale = Q16_ONE * 8 / 5;
     break;
-  case 333:
+  case ENEMY_ANT_LION:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case 347:
+  case ENEMY_TRET:
     actor->scale = Q16_ONE * 9 / 5;
     break;
-  case 358:
+  case ENEMY_DEADBEARD:
     actor->scale = Q16_ONE * 9 / 5;
     break;
-  case 245:
+  case ENEMY_BANDIT:
     actor->scale = Q16_ONE;
     break;
-  case 246:
+  case ENEMY_THIEF:
     actor->scale = Q16_ONE * 9 / 10;
     break;
-  case 385:
+  case ENEMY_BANDIT_2:
     actor->scale = Q16_ONE;
     break;
-  case 386:
+  case ENEMY_THIEF_2:
     actor->scale = Q16_ONE * 9 / 10;
     break;
-  case 348:
+  case ENEMY_KRAKEN:
     actor->scale = Q16_ONE * 17 / 10;
     break;
-  case 357:
+  case ENEMY_FUSION_DRAGON:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case 359:
+  case ENEMY_MIMIC:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case 360:
+  case ENEMY_MIMIC_2:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case 361:
+  case ENEMY_MIMIC_3:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case 362:
+  case ENEMY_MIMIC_4:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case 363:
+  case ENEMY_MIMIC_5:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case 364:
+  case ENEMY_MIMIC_6:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case 365:
+  case ENEMY_MIMIC_7:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case 366:
+  case ENEMY_MIMIC_8:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case 367:
+  case ENEMY_MIMIC_9:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case 263:
+  case ENEMY_TROLL:
     actor->scale = Q16_ONE * 6 / 5;
     break;
-  case 264:
+  case ENEMY_CAVE_TROLL:
     actor->scale = Q16_ONE * 6 / 5;
     break;
-  case 297:
+  case ENEMY_ORC_CAPTAIN:
     actor->scale = Q16_ONE;
     break;
-  case 298:
+  case ENEMY_ORC_LORD:
     actor->scale = Q16_ONE * 5 / 4;
     break;
-  case 305:
+  case ENEMY_KOBOLD:
     actor->scale = Q16_ONE * 9 / 10;
     break;
-  case 307:
+  case ENEMY_HOBGOBLIN:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case 311:
+  case ENEMY_GRYPHON:
     actor->scale = Q16_ONE * 13 / 10;
     break;
-  case 323:
+  case ENEMY_CHIMERA:
     actor->scale = Q16_ONE * 6 / 5;
     break;
-  case 341:
+  case ENEMY_AZART:
     actor->scale = Q16_ONE * 21 / 20;
     break;
-  case 342:
+  case ENEMY_AZART_2:
     actor->scale = Q16_ONE * 21 / 20;
     break;
-  case 343:
+  case ENEMY_SATRAGE:
     actor->scale = Q16_ONE * 11 / 10;
     break;
-  case 344:
+  case ENEMY_SATRAGE_2:
     actor->scale = Q16_ONE * 11 / 10;
     break;
-  case 345:
+  case ENEMY_NAVAMPA:
     actor->scale = Q16_ONE * 6 / 5;
     break;
-  case 346:
+  case ENEMY_NAVAMPA_2:
     actor->scale = Q16_ONE * 6 / 5;
     break;
-  case 336:
+  case ENEMY_TOADONPA:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case 349:
+  case ENEMY_TORNADO_LIZARD:
     actor->scale = Q16_ONE * 6 / 5;
     break;
-  case 350:
+  case ENEMY_STORM_LIZARD:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case 351:
+  case ENEMY_TEMPEST_LIZARD:
     actor->scale = Q16_ONE * 31 / 20;
     break;
-  case 268:
+  case ENEMY_RECLUSE:
     actor->scale = Q16_ONE * 5 / 4;
     break;
-  case 318:
+  case ENEMY_CERBERUS:
     actor->scale = Q16_ONE * 5 / 4;
     break;
-  case 281:
-  case 282:
-  case 283:
-  case 352:
-  case 353:
-  case 354:
-  case 355:
-  case 356:
+  case ENEMY_SIREN:
+  case ENEMY_SUCCUBUS:
+  case ENEMY_NIGHTMARE:
+  case ENEMY_MYSTERY_MAN:
+  case ENEMY_SATUROS:
+  case ENEMY_SATUROS_2:
+  case ENEMY_MYSTERY_WOMAN:
+  case ENEMY_MENARDI:
     actor->scale = Q16_ONE * 9 / 10;
     break;
-  case 68:
-  case 69:
-  case 70:
+  case ENEMY_RUFFIAN:
+  case ENEMY_RUFFIAN_2:
+  case ENEMY_RUFFIAN_3:
     actor->scale = Q16_ONE * 19 / 20;
     break;
-  case 218:
-  case 219:
-  case 220:
-  case 221:
-  case 222:
-  case 223:
+  case ENEMY_DULLAHAN:
+  case ENEMY_DULLAHAN_2:
+  case ENEMY_DULLAHAN_3:
+  case ENEMY_SENTINEL:
+  case ENEMY_SENTINEL_2:
+  case ENEMY_SENTINEL_3:
     actor->scale = Q16_ONE * 13 / 10;
     break;
-  case 209:
-  case 210:
-  case 211:
+  case ENEMY_VALUKAR:
+  case ENEMY_VALUKAR_2:
+  case ENEMY_VALUKAR_3:
     actor->scale = Q16_ONE * 29 / 20;
     break;
-  case 91:
-  case 92:
-  case 93:
-  case 94:
-  case 95:
-  case 96:
-  case 97:
+  case ENEMY_SERPENT:
+  case ENEMY_SERPENT_2:
+  case ENEMY_SERPENT_3:
+  case ENEMY_SERPENT_4:
+  case ENEMY_SERPENT_5:
+  case ENEMY_SERPENT_6:
+  case ENEMY_SERPENT_7:
     actor->scale = Q16_ONE * 11 / 10;
     break;
-  case 101:
-  case 102:
-  case 103:
+  case ENEMY_POSEIDON:
+  case ENEMY_POSEIDON_2:
+  case ENEMY_POSEIDON_3:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case 88:
+  case ENEMY_AQUA_HYDRA:
     actor->scale = Q16_ONE * 3 / 2;
     break;
-  case 89:
-  case 90:
+  case ENEMY_HYDRA:
+  case ENEMY_PYRODRA:
     actor->scale = Q16_ONE * 11 / 10;
     break;
-  case 117:
-  case 149:
+  case ENEMY_WILD_WOLF:
+  case ENEMY_DINO:
     actor->scale = Q16_ONE * 23 / 20;
     break;
-  case 118:
-  case 150:
+  case ENEMY_DIRE_WOLF:
+  case ENEMY_DINOX:
     actor->scale = Q16_ONE * 6 / 5;
     break;
-  case 119:
-  case 151:
+  case ENEMY_WHITE_WOLF:
+  case ENEMY_DINOSAURUS:
     actor->scale = Q16_ONE * 5 / 4;
     break;
-  case 176:
-  case 177:
-  case 178:
+  case ENEMY_SEA_DRAGON:
+  case ENEMY_TURTLE_DRAGON:
+  case ENEMY_OCEAN_DRAGON:
     actor->scale = Q16_ONE * 5 / 4;
     break;
-  case 78:
-  case 79:
+  case ENEMY_DEVIL_SCORPION:
+  case ENEMY_SAND_SCORPION:
     actor->scale = Q16_ONE * 3 / 4;
     break;
-  case 104:
-  case 105:
-  case 106:
+  case ENEMY_MOAPA:
+  case ENEMY_MOAPA_2:
+  case ENEMY_MOAPA_3:
+    // XXX: which shadow Moapa takes; the sprite table's row 685 rendered would
+    // say.
     actor->effect = 685;
     actor->scale = Q16_ONE * 23 / 20;
     break;
-  case 107:
-  case 108:
-  case 109:
+  case ENEMY_KNIGHT:
+  case ENEMY_KNIGHT_2:
+  case ENEMY_KNIGHT_3:
     actor->scale = Q16_ONE * 101 / 100;
     break;
-  case 80:
+  case ENEMY_BRIGGS:
     actor->scale = Q16_ONE * 5 / 4;
     break;
-  case 81:
-  case 82:
-  case 83:
-  case 197:
-  case 198:
-  case 199:
-  case 206:
-  case 207:
-  case 208:
+  case ENEMY_SEA_FIGHTER:
+  case ENEMY_CHAMPA_2:
+  case ENEMY_CHAMPA_3:
+  case ENEMY_MINOTAURUS:
+  case ENEMY_MINOS_WARRIOR:
+  case ENEMY_MINOS_KNIGHT:
+  case ENEMY_AKA_MANAH:
+  case ENEMY_DRUJ:
+  case ENEMY_AESHMA:
     actor->scale = Q16_ONE * 11 / 10;
     break;
-  case 194:
+  case ENEMY_FLAME_DRAGON:
     actor->scale = Q16_ONE * 5 / 4;
     break;
-  case 195:
+  case ENEMY_FLAME_DRAGON_2:
     actor->scale = Q16_ONE;
     break;
-  case 158:
-  case 159:
-  case 160:
+  case ENEMY_PIXIE:
+  case ENEMY_FAERY:
+  case ENEMY_WEIRD_NYPMH:
     actor->scale = Q16_ONE * 4 / 5;
     break;
-  case 378:
-  case 379:
-  case 380:
-  case 381:
+  case ENEMY_REFRESH_BALL:
+  case ENEMY_THUNDER_BALL:
+  case ENEMY_ANGER_BALL:
+  case ENEMY_GUARDIAN_BALL:
     actor->scale = Q16_ONE * 4 / 5;
     break;
-  case 74:
-  case 75:
-  case 76:
-  case 98:
-  case 265:
-  case 331:
-  case 332:
-  case 369:
-  case 373:
-  case 376:
+  case ENEMY_CHESTBEATER:
+  case ENEMY_WILD_GORILLA:
+  case ENEMY_CRAZY_GORILLA:
+  case ENEMY_AVIMANDER:
+  case ENEMY_BRUTAL_TROLL:
+  case ENEMY_LIZARD_FIGHTER:
+  case ENEMY_LIZARD_KING:
+  case ENEMY_DOOM_DRAGON:
+  case ENEMY_DOOM_DRAGON_5:
+  case ENEMY_DOOM_DRAGON_8:
     actor->scale = Q16_ONE * 7 / 5;
     break;
   }
@@ -410,24 +416,29 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   actor->overlay = weaponSprite;
   actor->fading = 0;
   actor->visible = 0;
-  if (unit->enemyId <= 1 && Inventory_GetEquippedItemFar(unit, 1) == 15) {
-    if (unit->enemyId == 0) {
-      sprite = 635;
+  // Isaac and Garet draw a Machete as part of their own sprite, with no
+  // weapon overlay.
+  if (unit->enemyId <= GARET &&
+      Inventory_GetEquippedItemFar(unit, EQUIP_WEAPON) == ITEM_MACHETE) {
+    if (unit->enemyId == ISAAC) {
+      sprite = SPRITE_ISAAC_MACHETE;
       actor->resource = sprite;
     } else {
-      sprite = 637;
+      sprite = SPRITE_GARET_MACHETE;
       actor->resource = sprite;
     }
     actor->overlay = 0;
   }
 
+  // Face the centre of the battlefield; enemies are drawn at 1.3 times their
+  // size.
   facingAngle = ArcTan2(y / 8, x) + TRIG_TURN / 2;
   object->angle = facingAngle;
   object->unk59 = 3;
   object->motionFlags = 2;
-  if (unit->classId == 0) {
-    object->scaleX = 0x14ccc;
-    object->scaleY = 0x14ccc;
+  if (unit->classId == CLASS_NONE) {
+    object->scaleX = Q16_ONE * 13 / 10;
+    object->scaleY = Q16_ONE * 13 / 10;
   } else {
     object->scaleX = Q16_ONE;
     object->scaleY = Q16_ONE;
@@ -435,83 +446,105 @@ void BattleObject_Make(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   Actor_StartScriptFar((struct Actor *)object, gBattleObject_EmptyScript);
 }
 
-void BattlePlacement_GetStepPair(s32 index, s32 *x, s32 *y) {
-  index *= 2;
-  *x = gBattlePlacement_StepPairs[index];
-  *y = gBattlePlacement_StepPairs[index + 1];
+/// Unused: reads the battlefield position of a party place.
+void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
+  partyPlace *= 2;
+  *x = gBattlePlacement_StepPairs[partyPlace];
+  *y = gBattlePlacement_StepPairs[partyPlace + 1];
 }
 
-/// Lays out the actors of a summon in a column: each stands at x = -80
-/// (nearer, at -50, for a few large enemies) and z steps down by half the
-/// width of each actor on either side, centred on the column's middle.
-/// Actors 254 and 255 are 25 wide; others are 27 when their summon entry is
-/// flagged and 38 when not.
+/// BattleWork.enemyIds of an enemy that left the battle, and of a place
+/// held for one: unit ids 254 and 255 in the list.
+#define IS_PLACEHOLDER_ID(id) ((u16)((id) - BATTLE_UNIT_REMOVED) <= 1)
+
+/// The enemies' column, in pixels from the battlefield's centre, and the
+/// nearer place the Kraken, the Fusion Dragon and the Serpent take.
+#define ENEMY_COLUMN_X (-80)
+#define ENEMY_COLUMN_NEAR_X (-50)
+/// Pixels of the column a large enemy, a small one and an empty place take.
+#define ENEMY_SPACING_LARGE 38
+#define ENEMY_SPACING_SMALL 27
+#define ENEMY_SPACING_EMPTY 25
+
+/// Lays out count enemies in a column left of the centre, spaced by their size,
+/// from a rough estimate of the column's length.
 void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
                                    s32 *zPositions) {
   s32 totalSpacing = count <= 4 ? 30 : 27;
   s32 z = ((count - 1) * totalSpacing) / 2;
   s32 index;
 
+  // z starts half a line's estimated length up and steps down by half of
+  // each enemy's spacing before it (none for the first) and half after it.
   for (index = 0; index != count; index++) {
     u32 spacing = 0;
 
-    xPositions[index] = -80;
+    xPositions[index] = ENEMY_COLUMN_X;
     if (index != 0) {
       struct BattleUnit *actor;
       u32 enemy;
 
-      spacing = 25;
-      if ((u16)(actorIds[index] - 254) > 1) {
+      spacing = ENEMY_SPACING_EMPTY;
+      if (!IS_PLACEHOLDER_ID(actorIds[index])) {
         actor = Unit_Get(actorIds[index]);
-        spacing = BattleSprite_IsSmall(actor->enemyId) ? 27 : 38;
+        spacing = BattleSprite_IsSmall(actor->enemyId) ? ENEMY_SPACING_SMALL
+                                                       : ENEMY_SPACING_LARGE;
         enemy = actor->enemyId;
-        if (enemy == 357 || enemy == 348 || enemy == 91 || enemy == 92 ||
-            enemy == 93 || enemy == 94 || enemy == 95 || enemy == 96 ||
-            enemy == 97) {
-          xPositions[index] = -50;
+        // The first place keeps ENEMY_COLUMN_X whatever its enemy.
+        if (enemy == ENEMY_FUSION_DRAGON || enemy == ENEMY_KRAKEN ||
+            enemy == ENEMY_SERPENT || enemy == ENEMY_SERPENT_2 ||
+            enemy == ENEMY_SERPENT_3 || enemy == ENEMY_SERPENT_4 ||
+            enemy == ENEMY_SERPENT_5 || enemy == ENEMY_SERPENT_6 ||
+            enemy == ENEMY_SERPENT_7) {
+          xPositions[index] = ENEMY_COLUMN_NEAR_X;
         }
       }
     }
     z -= spacing / 2;
     zPositions[index] = z;
-    spacing = 25;
-    if ((u16)(actorIds[index] - 254) > 1) {
+    spacing = ENEMY_SPACING_EMPTY;
+    if (!IS_PLACEHOLDER_ID(actorIds[index])) {
       struct BattleUnit *actor = Unit_Get(actorIds[index]);
 
-      spacing = BattleSprite_IsSmall(actor->enemyId) ? 27 : 38;
+      spacing = BattleSprite_IsSmall(actor->enemyId) ? ENEMY_SPACING_SMALL
+                                                     : ENEMY_SPACING_LARGE;
     }
     z -= spacing / 2;
   }
 }
 
+/// Returns the id of the first free enemy unit, or -1 when all six are taken.
 s32 Enemy_GetFreeUnitId(void) {
-  s32 i;
-  s32 id;
+  s32 enemySlot;
+  s32 unitId;
 
-  for (i = 0; i <= 5; i++) {
-    id = i + 0x80;
-    if (((u8 *)Unit_Get(id))[0x12A] == 0)
+  for (enemySlot = 0; enemySlot < ENEMY_BATTLE_SIZE; enemySlot++) {
+    unitId = enemySlot + FIRST_ENEMY_UNIT;
+    if (((struct BattleUnit *)Unit_Get(unitId))->side == BATTLE_UNIT_ABSENT)
       break;
   }
-  if (i == 6)
+  if (enemySlot == ENEMY_BATTLE_SIZE)
     return -1;
-  return id;
+  return unitId;
 }
 
-// Enemy_Update: this game skips leading empty slots (254) and lays out up to
-// the last live one.
-
+/// Lays the enemies out again and moves each one's battle object anchor to its
+/// new place, as The Broken Seal's BattlePlacement_RelayoutEnemies; this game
+/// skips the removed places before the first enemy, and lays out up to the last
+/// one still there.
 void Enemy_Update(void) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
-  u16 unitIds[14];
-  s32 x[6];
-  s32 z[6];
+  u16 unitIds[UNIT_MAX];
+  s32 x[ENEMY_BATTLE_SIZE];
+  s32 z[ENEMY_BATTLE_SIZE];
   s32 last = -1;
   s32 count = 0;
   s32 i;
   s32 total;
 
-  for (i = 0; i < 6 && work->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
+  for (i = 0;
+       i < ENEMY_BATTLE_SIZE && work->enemyIds[i] != BATTLE_UNIT_LIST_END;
+       i++) {
     if (work->enemyIds[i] == BATTLE_UNIT_REMOVED) {
       if (count == 0)
         continue;
@@ -529,17 +562,18 @@ void Enemy_Update(void) {
     if (id != BATTLE_UNIT_REMOVED) {
       struct BattleObj *object = BattleObject_Get(id);
 
-      object->anchorX = x[i] << 16;
-      object->anchorZ = z[i] << 16;
+      object->anchorX = px(x[i]);
+      object->anchorZ = px(z[i]);
     }
   }
 }
 
-/// Places every unit of the battle again, the reserve party members too.
+/// Places every unit at the start of a battle and creates its battle object at
+/// its spot, the reserve party members too.
 void BattleUnit_RefreshPlacement(void) {
-  u16 ids[14];
-  s32 x[6];
-  s32 z[6];
+  u16 ids[UNIT_MAX];
+  s32 x[ENEMY_BATTLE_SIZE];
+  s32 z[ENEMY_BATTLE_SIZE];
   s32 count;
   s32 i;
   s32 place;
@@ -554,11 +588,17 @@ void BattleUnit_RefreshPlacement(void) {
   work = Ram_HeapSlots->battleWork;
   count = BattleParty_PrepareMembers(ids);
   count += BattleParty_PrepareReserveOwners(ids + count);
-  value = 0xff;
-  for (i = 13; i >= 0; i--)
+  // placement[0..7] is each party unit id's place and placement[8..13] the
+  // enemy places, numbered 8 to 13.
+  value = BATTLE_OBJECT_NONE;
+  for (i = UNIT_MAX - 1; i >= 0; i--)
     work->placement[i] = value;
-  for (n = 5, p = &work->placement[13], value = 13; n >= 0; n--, value--)
+  for (n = ENEMY_BATTLE_SIZE - 1, p = &work->placement[UNIT_MAX - 1],
+      value = UNIT_MAX - 1;
+       n >= 0; n--, value--)
     *p-- = value;
+
+  // The party, at its fixed spots in pixels (gBattlePlacement_StepPairs).
   for (i = 0; i < count; place++, i++) {
     s32 id = ids[i];
 
@@ -567,7 +607,9 @@ void BattleUnit_RefreshPlacement(void) {
                       gBattlePlacement_StepPairs[place * 2],
                       gBattlePlacement_StepPairs[place * 2 + 1]);
   }
-  for (i = 0; i < 6 && work->enemyIds[i] != BATTLE_UNIT_LIST_END; i++)
+  // The enemies, laid out by size.
+  for (i = 0;
+       i < ENEMY_BATTLE_SIZE && work->enemyIds[i] != BATTLE_UNIT_LIST_END; i++)
     ids[i] = work->enemyIds[i];
   count = i;
   BattlePlacement_LayoutEnemies(ids, count, x, z);
@@ -579,22 +621,20 @@ void BattleUnit_RefreshPlacement(void) {
   }
 }
 
-/// Returns 1 if the unit at this formation position is in the list.
-/// list: unit IDs, terminated by 0xff, at most 14 entries.
-/// no: formation position (0-7 allies, 8-13 enemies).
-s32 BattlePlacement_ContainsId(s16 *list, s32 no) {
+/// Returns 1 if the unit at place is in list.
+s32 BattlePlacement_ContainsId(s16 *list, s32 place) {
   u32 i;
 
-  if (no > 7)
-    no += 120; // Enemy unit IDs start at 128.
+  if (place > ALLY_MAX)
+    place += FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
   i = 0;
   do {
-    u16 id = *list++;
+    u16 unitId = *list++;
 
-    if (id == BATTLE_UNIT_LIST_END)
+    if (unitId == BATTLE_UNIT_LIST_END)
       break;
-    if (id == no)
+    if (unitId == place)
       return 1;
-  } while (++i < 14);
+  } while (++i < UNIT_MAX);
   return 0;
 }

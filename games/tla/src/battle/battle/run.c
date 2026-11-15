@@ -112,6 +112,9 @@ void Battle_PlayFormChange(s32 value) {
   BattleEffect_RunFormChangeFar(&request, value);
 }
 
+/// Returns the first of the Djinn tutorial's messages: the second set's
+/// (MsgDjinnGiveTutorialB) while flag 0x175 is set, as Up held when Echo's
+/// tutorial begins sets it.
 s32 Tutorial_GetDjinnGiveMessage(void) {
   if (GameFlag_Get(0x175))
     return (s32)MsgDjinnGiveTutorialB;
@@ -122,6 +125,7 @@ s32 Tutorial_GetDjinnGiveMessage(void) {
  * module/tla.h has another definition; tried with the definition the rest of
  * the object has, it does not compile in tla-ja:
  * games/tla/include/module/tla.h:98: redefinition of `struct EncounterWork'. */
+/// The battle work as Battle_Run reads it.
 #define EncounterWork EncounterWork__battle
 struct EncounterWork {
   s32 enemyGroup;
@@ -179,8 +183,10 @@ s32 GameFlag_GetByte__battle(s32 flag) __asm__("GameFlag_GetByte");
 #define GameFlag_GetByte GameFlag_GetByte__battle
 void ActorSystem_InitializeFar(s32 mode);
 void Sound_LoadReverbCode(s32 preset);
-struct BattleSortedUnitEntry;
 
+/// Fights the battle against the enemy formation enemyGroup, from the opening
+/// to the end. Returns the number of enemies defeated when the party won or the
+/// link broke, BATTLE_OUTCOME_FLED or BATTLE_OUTCOME_LOST.
 s32 Battle_Run(s32 enemyGroup) {
   struct BattleCamera *camera;
   struct EncounterWork *battle;
@@ -333,8 +339,7 @@ s32 Battle_Run(s32 enemyGroup) {
     if (GameFlag_Get(FLAG_AUTO_BATTLE) == 0)
       actionCount = Battle_GatherActions(battle->actions);
     else
-      actionCount = AutoBattle_BuildActions(
-          (struct BattleSortedUnitEntry *)battle->actions);
+      actionCount = AutoBattle_BuildActions(battle->actions);
     battle->promptSlot = VramCache_AllocEntry(128);
     PartyStatus_DrawFar(battle->partyStatus);
     if (actionCount < 0)
@@ -513,6 +518,8 @@ finished:
   return result;
 }
 
+/// Lists the party members who fight, three in a link battle, into unitIds when
+/// it is not null, and returns how many.
 s32 BattleParty_PrepareMembers(u16 *owners) {
   s32 limit;
   s32 count;
@@ -539,6 +546,9 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
   return count;
 }
 
+/// Lists the party's reserve members, those past the fourth (none in a link
+/// battle), into owners when it is not null, puts each on the party's side and
+/// returns how many there are.
 s32 BattleParty_PrepareReserveOwners(u16 *owners) {
   s32 count;
   s32 index;
@@ -564,6 +574,7 @@ s32 BattleParty_PrepareReserveOwners(u16 *owners) {
   return count;
 }
 
+/// Lists the enemy units present and returns how many, 0 when unitIds is null.
 s32 BattleEnemy_List(s16 *unit_ids) {
   s16 *output;
   s32 count;
@@ -593,6 +604,8 @@ s32 BattleEnemy_List(s16 *unit_ids) {
   return count;
 }
 
+/// Lists the units still standing on the sides in sideMask, party first, into
+/// unitIds when it is not null, and returns how many.
 s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   u16 activeMembers[8];
   u16 *base;
@@ -724,6 +737,8 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
   return livingCount;
 }
 
+/// Lists the units in the battle on the sides in sideMask, standing or not, and
+/// returns how many.
 s32 BattleUnit_ListIds(s32 groups, u16 *dst) {
   struct BattleWork *order;
   s32 count;

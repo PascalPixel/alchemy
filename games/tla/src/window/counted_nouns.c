@@ -7,25 +7,25 @@
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
 extern const s8 gArticle_Empty[];
-extern const u8 gText_NumberWord0[];
-extern const u8 gText_NumberWord1[];
-extern const u8 gText_NumberWord2[];
-extern const u8 gText_NumberWord3[];
-extern const u8 gText_NumberWord4[];
-extern const u8 gText_NumberWord5[];
-extern const u8 gText_NumberWord6[];
-extern const u8 gText_NumberWord7[];
-extern const u8 gText_NumberWord8[];
-extern const u8 gText_NumberWord9[];
+extern const u8 gLocalizedWord_Battles[];
+extern const u8 gLocalizedWord_Battle[];
+extern const u8 gLocalizedWord_Tickets[];
+extern const u8 gLocalizedWord_Ticket[];
+extern const u8 gLocalizedWord_Rounds[];
+extern const u8 gLocalizedWord_Round[];
+extern const u8 gLocalizedWord_Coins[];
+extern const u8 gLocalizedWord_Coin[];
+extern const u8 gLocalizedWord_Points[];
+extern const u8 gLocalizedWord_Point[];
 
 /// {singular, plural}: window.c reads [(kind & 7) * 2 + plural]
 // clang-format off
-const u8 *const gText_NumberWords[16] = {
-    gText_NumberWord9, gText_NumberWord8, // Punkt, Punkte
-    gText_NumberWord7, gText_NumberWord6, // Münze, Münzen
-    gText_NumberWord5, gText_NumberWord4, // Runde, Runden
-    gText_NumberWord3, gText_NumberWord2, // Ticket, Tickets
-    gText_NumberWord1, gText_NumberWord0, // Kampf, Käpfe (as the ROM spells it)
+const u8 *const gLocalizedWord_CountedNouns[16] = {
+    gLocalizedWord_Point, gLocalizedWord_Points, // Punkt, Punkte
+    gLocalizedWord_Coin, gLocalizedWord_Coins, // Münze, Münzen
+    gLocalizedWord_Round, gLocalizedWord_Rounds, // Runde, Runden
+    gLocalizedWord_Ticket, gLocalizedWord_Tickets, // Ticket, Tickets
+    gLocalizedWord_Battle, gLocalizedWord_Battles, // Kampf, Käpfe (as the ROM spells it)
     (const u8 *)gArticle_Empty, (const u8 *)gArticle_Empty,
     (const u8 *)gArticle_Empty, (const u8 *)gArticle_Empty,
     (const u8 *)gArticle_Empty, 0,

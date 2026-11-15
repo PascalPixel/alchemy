@@ -143,7 +143,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   forcedCount = 0;
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable((u16 *)BG_SCREEN_BLOCK(12));
-  Link_DrawPageArrows(0x06006680);
+  Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
   Menu_BuildLocalizedPatternTiles();
   state->swappedUnit = -1;
   state->lastTarget = -1;
@@ -864,8 +864,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 /// icon on the lines it overhangs (below a row at the top, above one at the
 /// bottom, whose lines are 136 to 159).
 void IconMenu_DrawIcons(void) {
-  struct ResourceMenuWork *work;
-  struct ResourceMenuEntry *sprite;
+  struct IconMenuWork *work;
+  struct IconMenuEntry *sprite;
   struct AffineTransform effect;
   s32 scale;
   s32 matrix;
@@ -1035,16 +1035,16 @@ void IconMenu_Close(void) {
 /// label is message resourceBase + position when the layout set a
 /// resourceBase, else the icon's command name (MsgCommandName + its icon).
 s32 IconMenu_Run(s32 initial) {
-  struct ResourceMenuWork *work = Ram_HeapSlots->iconMenu;
+  struct IconMenuWork *work = Ram_HeapSlots->iconMenu;
   s32 resource;
 
   work->selection = initial;
 redraw:
   WindowSprite_PrepareForRedraw(work->window);
-  if (work->resourceBase != 0)
-    resource = work->resourceBase + work->selection;
+  if (work->labelBase != 0)
+    resource = work->labelBase + work->selection;
   else
-    resource = work->resourceIds[work->selection] + (s32)MsgCommandName;
+    resource = work->commandIcons[work->selection] + (s32)MsgCommandName;
   Text_DrawMessageAsTiles(resource, work->window, 0, 0);
   for (;;) {
     wait(1);
@@ -1076,6 +1076,7 @@ redraw:
   }
 }
 
+/// Returns the distance between lhs and rhs, reusing their supplied difference.
 static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs) {
   if (diff >= 0)
     return diff;
@@ -1100,7 +1101,7 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
   s32 step;
   s32 delay;
   const u8 *table;
-  struct MenuSelectionState *state;
+  struct IconMenuWork *state;
 
   state = Ram_HeapSlots->iconMenu;
   step = 1;
@@ -1111,14 +1112,14 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
   pos = start;
 
   for (;;) {
-    WindowSprite_PrepareForRedraw(state->work);
-    resourceBase = state->resourceBase;
+    WindowSprite_PrepareForRedraw(state->window);
+    resourceBase = state->labelBase;
     if (resourceBase != 0) {
       resourceId = resourceBase + state->selection;
     } else {
-      resourceId = state->resourceIds[state->selection] + (s32)MsgCommandName;
+      resourceId = state->commandIcons[state->selection] + (s32)MsgCommandName;
     }
-    Text_DrawMessageAsTiles(resourceId, state->work, 0, 0);
+    Text_DrawMessageAsTiles(resourceId, state->window, 0, 0);
 
     cur = state->selection;
     table = gMenu_SelectionStepDelays;
@@ -1160,8 +1161,8 @@ void CommandIcon_LoadIntoSlot(s32 slot, s32 index) {
 /// icon's number (ResourceId_CommandIcons) is also its command name's
 /// (MsgCommandName + icon). Its VRAM slot is taken unchecked.
 void IconMenu_AddIcon(s32 no) {
-  struct ResourceMenuWork *work;
-  struct ResourceMenuEntry *entry;
+  struct IconMenuWork *work;
+  struct IconMenuEntry *entry;
   s16 index;
   s32 slot;
   s32 flags;
@@ -1177,7 +1178,7 @@ void IconMenu_AddIcon(s32 no) {
     flags = 136;
     entry->y = flags;
     entry->slot = slot;
-    work->resourceIds[index] = no;
+    work->commandIcons[index] = no;
   }
 }
 
@@ -1187,19 +1188,19 @@ void IconMenu_AddIcon(s32 no) {
 /// wide and 3 tall, follows them; the centring counts two thirds of the
 /// window's width.
 void IconMenu_Center(s32 row, s32 width, s32 resourceBase) {
-  struct ResourceMenuWork *menu = Ram_HeapSlots->iconMenu;
+  struct IconMenuWork *menu = Ram_HeapSlots->iconMenu;
   s32 x;
   s32 i;
   s32 count;
 
   width += 2;
   menu->width = width;
-  menu->resourceBase = resourceBase;
+  menu->labelBase = resourceBase;
   menu->row = row;
   count = menu->count;
   x = 15 - (count * 3 + menu->width * 2 / 3) / 2;
   for (i = 0; i < menu->count; i++) {
-    struct ResourceMenuEntry *entry = &menu->entries[i];
+    struct IconMenuEntry *entry = &menu->entries[i];
 
     entry->x = x * 8;
     entry->y = row * 8;
@@ -1211,15 +1212,15 @@ void IconMenu_Center(s32 row, s32 width, s32 resourceBase) {
 /// Lays the entries out in a row three cells apart from x, on row y, and
 /// opens the menu's window after them.
 void IconMenu_LayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase) {
-  struct ResourceMenuWork *work;
+  struct IconMenuWork *work;
   s32 i;
-  struct ResourceMenuEntry *entry;
+  struct IconMenuEntry *entry;
   s16 *widthp;
 
   work = Ram_HeapSlots->iconMenu;
   widthp = &work->width;
   *widthp = width + 2;
-  work->resourceBase = resourceBase;
+  work->labelBase = resourceBase;
   work->row = y;
   for (i = 0; i < work->count; i++) {
     entry = &work->entries[i];
@@ -1230,6 +1231,7 @@ void IconMenu_LayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase) {
   work->window = Window_Create(x, y, *widthp, 3, WINDOW_FLAG_INSTANT);
 }
 
+/// Returns table[index].
 static __inline__ s32 TableGet(s8 *table, s32 index) { return table[index]; }
 
 /// Builds the field command menu, omitting Djinn when none are owned.
@@ -1279,7 +1281,9 @@ s32 FieldMenu_SelectCommand(s32 selection) {
   return ret;
 }
 
-s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1) {
+/// Opens the field command menu and animates from start to the command's icon.
+/// Returns the final icon position after closing the menu.
+s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   PartyStatus_OpenAndWait();
   IconMenu_Open();
   IconMenu_AddIcon(1);
@@ -1290,10 +1294,10 @@ s32 Menu_AnimateSelectionToEntry(s32 arg0, s32 arg1) {
 #if LANGUAGE == LANGUAGE_JAPANESE
   IconMenu_Center(17, SELECT_MENU_WIDTH, 0);
 #endif
-  arg1 = IconMenu_AnimateTo(arg0, arg1 - 1);
+  command = IconMenu_AnimateTo(start, command - 1);
   IconMenu_Close();
   PartyStatus_CloseWithMenu();
-  return arg1;
+  return command;
 }
 
 /// Offers the actions the files allow (plus two optional entries
@@ -1366,38 +1370,38 @@ s32 FileList_SelectAction(void) {
 /// writes the mode's lines of text. The area starts at x 8 and ends at
 /// LABEL_RIGHT; a mode past 2 draws nothing.
 void Menu_DrawModeLabel(void) {
-  struct MenuModeLabelState *state = Ram_HeapSlots->iconMenu;
+  struct IconMenuWork *state = Ram_HeapSlots->iconMenu;
 
-  if (state->previousMode != state->mode) {
-    state->previousMode = state->mode;
-    Window_ClearInteriorTiles(state->window, 8, 40, LABEL_RIGHT, 80);
+  if (state->previousMode != state->selection) {
+    state->previousMode = state->selection;
+    Window_ClearInteriorTiles(state->lowerWindow, 8, 40, LABEL_RIGHT, 80);
 
-    switch (state->mode) {
+    switch (state->selection) {
     case 0: {
       s32 text = (s32)MsgPasswordLevel;
 
-      Text_DrawMessageAsTiles(text, state->window, 8, 40);
-      Text_DrawMessageAsTiles(text + 1, state->window, 8, 48);
-      Text_DrawMessageAsTiles(text + 2, state->window, 8, 56);
-      Text_DrawMessageAsTiles(text + 3, state->window, 8, 64);
+      Text_DrawMessageAsTiles(text, state->lowerWindow, 8, 40);
+      Text_DrawMessageAsTiles(text + 1, state->lowerWindow, 8, 48);
+      Text_DrawMessageAsTiles(text + 2, state->lowerWindow, 8, 56);
+      Text_DrawMessageAsTiles(text + 3, state->lowerWindow, 8, 64);
       text += 4;
-      Text_DrawMessageAsTiles(text, state->window, 8, 72);
+      Text_DrawMessageAsTiles(text, state->lowerWindow, 8, 72);
       break;
     }
     case 1: {
       s32 text = (s32)MsgPasswordLevel;
 
-      Text_DrawMessageAsTiles(text, state->window, 8, 40);
-      Text_DrawMessageAsTiles(text + 1, state->window, 8, 48);
+      Text_DrawMessageAsTiles(text, state->lowerWindow, 8, 40);
+      Text_DrawMessageAsTiles(text + 1, state->lowerWindow, 8, 48);
       text += 2;
-      Text_DrawMessageAsTiles(text, state->window, 8, 56);
+      Text_DrawMessageAsTiles(text, state->lowerWindow, 8, 56);
       break;
     }
     case 2: {
       s32 text = (s32)MsgPasswordLevel;
 
-      Text_DrawMessageAsTiles(text++, state->window, 8, 40);
-      Text_DrawMessageAsTiles(text, state->window, 8, 48);
+      Text_DrawMessageAsTiles(text++, state->lowerWindow, 8, 40);
+      Text_DrawMessageAsTiles(text, state->lowerWindow, 8, 48);
       break;
     }
     }
@@ -1416,7 +1420,7 @@ void Menu_DrawModeLabel(void) {
 /// as the cable; French clears the window with WindowSprite_ClearList and
 /// redraws only when the description changes.
 void Menu_DrawModeIndicator(void) {
-  struct ResourceMenuWork *state = Ram_HeapSlots->iconMenu;
+  struct IconMenuWork *state = Ram_HeapSlots->iconMenu;
   s16 *shown = &state->previousMode;
   s16 *current = &state->selection;
 
@@ -1570,7 +1574,7 @@ void Menu_DrawModeIndicator(void) {
 /// help windows and the icon menu. Returns the place
 /// chosen, or -1 when cancelled. The Send screens run it (scene/file_screen.c).
 s32 IconMenu_ChooseSendOption(s32 mode) {
-  struct ResourceMenuWork *work;
+  struct IconMenuWork *work;
   struct Window *window;
   s32 msg;
   struct Window **upper;

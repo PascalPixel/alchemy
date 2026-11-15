@@ -38,6 +38,8 @@ s32 Message_Start__screens() __asm__("Message_Start");
 #define Message_Start Message_Start__screens
 #endif
 
+/// Shows that a Djinni joined a party member while the join jingle (MUS_JOINED)
+/// plays, until it ends or A, B, L or R is pressed.
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 name;
@@ -112,6 +114,8 @@ s32 Party_GetMemberPortraitSprite(u32 index) {
   return gCharacter_SpriteTable[index];
 }
 
+/// Shows that a party member joined the party while the join jingle
+/// (MUS_JOINED) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowJoinedMessage(s32 member) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct Window *window = NULL;
@@ -161,6 +165,8 @@ void Party_ShowJoinedMessage(s32 member) {
   }
 }
 
+/// Shows that two party members joined the party while the join jingle (sound
+/// 81) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct Window *window;
@@ -274,7 +280,8 @@ void Summon_ShowLearnedMessage(s32 summon) {
   work->dirty = 1;
   work->speakerVoiceSound = 0;
   work->speakerVoiceCountdown = 0;
-  MessageArgument_Push(Data_0805f676[summon & 31], MESSAGE_ARGUMENT_ABILITY);
+  MessageArgument_Push(gSummon_Abilities[summon & 31],
+                       MESSAGE_ARGUMENT_ABILITY);
   entries = Message_DecodeMode1((s32)MsgCanNowSummon);
   // UB: five of Message_Start's six arguments, as above; the flags are the
   // stack word resource takes, which nothing sets. UBFIX passes 0.
@@ -295,9 +302,10 @@ void Summon_ShowLearnedMessage(s32 summon) {
                          TO_SUMMON_WINDOW_HEIGHT, 0);
   if (window == NULL)
     return;
-  MessageArgument_Push(Data_0805f676[summon & 31], MESSAGE_ARGUMENT_ABILITY);
+  MessageArgument_Push(gSummon_Abilities[summon & 31],
+                       MESSAGE_ARGUMENT_ABILITY);
   entries = Message_DecodeMode1((s32)MsgToSummon);
-  djinn = (const u8 *)SummonDefinition_Get(summon) + 4;
+  djinn = SummonDefinition_Get(summon)->djinnRequired;
   for (i = 0; i < 4; i++)
     counts[i] = djinn[i];
   for (n = 0; n < 2; n++) {

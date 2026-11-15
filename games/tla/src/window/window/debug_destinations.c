@@ -38,7 +38,7 @@ s16 DebugSceneSelect_Run(void) {
   s32 resource;
   s16 mode;
   s16 secondary;
-  struct TextObject object;
+  struct MenuSprite object;
   s16 primary;
   struct Work *work;
   s16 result;

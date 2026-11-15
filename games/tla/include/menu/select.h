@@ -16,7 +16,7 @@ struct SelectionSprite {
   u8 colors : 1;
   u8 shape : 2;
   u16 x : 9;
-  u16 param : 5;
+  u16 matrix : 5; ///< the affine matrix
   u16 size : 2;
   u16 tile : 10;
   u16 priority : 2;
@@ -47,13 +47,36 @@ struct SelectionNode {
   struct SelectionSprite sprite;
 };
 
-/// The selection screen: the row of icons the player picks from.
+/// The kinds of icon the selection screen lists (SelectionNode.kind) and
+/// Resource_LoadByMode loads.
+enum IconKind {
+  ICON_KIND_NONE = 0,    ///< a free selection icon entry
+  ICON_KIND_COMMAND = 1, ///< a command's icon, from its number
+  ICON_KIND_ITEM = 2,    ///< an item's icon
+  ICON_KIND_ABILITY = 4, ///< a Psynergy's icon, from its ability number
+  ICON_KIND_YES_NO = 6   ///< a yes or no command, drawn as a command
+};
+
+/// The entries of SelectionScreen.records.
+enum SelectionRecord {
+  SELECTION_RECORD_ROW = 2,    ///< the first of the row's seven icons
+  SELECTION_RECORD_CHOSEN = 9, ///< the first of the five icons chosen
+  SELECTION_RECORD_HAND = 14,  ///< the pointing hand
+  SELECTION_RECORD_LARGE_ICON = 15,
+  SELECTION_RECORD_COUNT = 16
+};
+
+/// The selection screen (HEAP_SLOT_SELECTION_MENU): the row of icons the player
+/// picks from, with arrows at each end and a pointing hand over the chosen
+/// target.
 struct SelectionScreen {
-  struct SelectionNode records[16];
-  struct AffineTransform transform;
-  struct SelectionNode *head; ///< the first icon of the row
-  struct SelectionNode *path; ///< the icons chosen so far
-  struct Window *window;      ///< the window naming the chosen entry
+  /// 0 and 1 the arrows at the row's ends, 2 to 8 the row's icons, 9 to 13 the
+  /// icons chosen so far, 14 the pointing hand and 15 the large icon.
+  struct SelectionNode records[SELECTION_RECORD_COUNT];
+  struct AffineTransform transform; ///< a zooming icon's scale
+  struct SelectionNode *head;       ///< the first icon of the row
+  struct SelectionNode *path;       ///< the icons chosen so far
+  struct Window *window;            ///< the window naming the chosen entry
   /// The listed entries, up to 16.
   ///@{
   u16 kinds[16];
@@ -74,6 +97,10 @@ struct SelectionScreen {
   u16 locked;
   u8 unk3ba[42]; ///< not named by ⚓️ code
 };
+
+/// SelectionScreen.status: the cursor stepping, or the row shown.
+#define NODE_STATUS_SCROLLING 33
+#define NODE_STATUS_SHOWN 1
 
 STATIC_ASSERT(sizeof(struct SelectionSprite) == 0x0c);
 STATIC_ASSERT(sizeof(struct SelectionNode) == 0x34);

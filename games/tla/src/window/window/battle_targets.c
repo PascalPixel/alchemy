@@ -34,14 +34,6 @@ extern const u8 gOwnerStatus_PvString[];
 s32 System_GetLanguage(void);
 #endif
 
-/* VIEW(menus): routine Unit_Get as struct BattleUnit *Unit_Get(s32 unit); the
- * definition has s32 BattleParty_ChooseReserve(s32 slot) { u16 owners[6]; u16
- * selected[2]; struct BattleWork *battle; s32 count; count =
- * BattleParty_PrepareReserveOwners...; tried as the definition's void
- * *Unit_Get(s32 owner), which the object already declares, it does not compile
- * in tla-ja: games/tla/src/window/window/battle_targets.c:228: invalid type
- * argument of `->'. */
-extern struct BattleUnit *Unit_Get__menus(s32 unit) __asm__("Unit_Get");
 /* VIEW(menus): routine Oam_AddSpriteAtDepth as s32 Oam_AddSpriteAtDepth(void
  * *sprite, s32 depth); task.h has void Oam_AddSpriteAtDepth(void *entry, s32
  * priority); tried as the definition's void Oam_AddSpriteAtDepth(void *entry,
@@ -104,7 +96,7 @@ Oam_AddSpriteAtDepth__menus(void *sprite,
 
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 candidateIds[8];
-  struct TargetSprite cursorSprites[6];
+  struct SelectionSprite cursorSprites[6];
   struct TargetTrack cursorTracks[6];
   struct TargetPoint actorPosition;
   u16 spreadActorIds[14];
@@ -113,9 +105,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 targetName[15];
   struct TargetPoint namePosition;
   struct TargetPoint markerPosition;
-  struct TargetAffine effect;
+  struct AffineTransform effect;
   struct BattleUnit *unit;
-  struct TargetBattle *battle;
+  struct BattleWork *battle;
   struct RenderInput *window;
   struct RenderInput *conditionWindow;
   s32 targetIndex;
@@ -143,8 +135,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   s32 repeated;
   s32 result;
   struct TargetTrack *track;
-  struct TargetSprite *marker;
-  struct TargetSprite *firstSprite;
+  struct SelectionSprite *marker;
+  struct SelectionSprite *firstSprite;
   struct BattleUnit *target;
 
   battle = Ram_HeapSlots->battleWork;
@@ -155,30 +147,30 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   conditionWindow = (struct RenderInput *)((u32)(u16)selection >> 16);
   if (spread == 0)
     spread = 1;
-  if (mode == 2 || mode == 4)
+  if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
     NAVIGATION->targetViewOffset = -2;
   else
     NAVIGATION->targetViewOffset = 16;
   for (i = 0; i < 6; i++)
     cursorTracks[i].flags = 0;
   targetIndex = -1;
-  if (mode == 2) {
-    for (i = 0; i <= 5 && battle->partyUnits[i] != 255; i++) {
+  if (mode == ABILITY_TARGET_ALLIES) {
+    for (i = 0; i <= 5 && battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
       candidateIds[targetCount] = battle->partyUnits[i];
       targetCount++;
     }
-  } else if (mode == 4) {
+  } else if (mode == ABILITY_TARGET_SELF) {
     candidateIds[0] = selection;
     targetCount = 1;
   } else {
-    for (i = 0; i <= 5 && battle->enemyIds[i] != 255; i++) {
+    for (i = 0; i <= 5 && battle->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
       candidateIds[targetCount] = battle->enemyIds[i];
       targetCount++;
     }
   }
   candidateIds[targetCount] = 255;
   candidateCount = targetCount;
-  if (mode == 2) {
+  if (mode == ABILITY_TARGET_ALLIES) {
     if (spread != 255 && kind != 0) {
       found = 0;
       for (j = 0; j < targetCount; j++) {
@@ -186,7 +178,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 
         if (candidateIds[j] == 254)
           continue;
-        candidate = Unit_Get__menus(candidateIds[j]);
+        candidate = Unit_Get(candidateIds[j]);
         switch (kind) {
         case 5:
           if (candidate->hp == 0) {
@@ -231,9 +223,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   }
   if (targetIndex < 0)
     targetIndex = (targetCount - 1) / 2;
-  while (candidateIds[targetIndex] == 254 ||
-         (GameFlag_Get(FLAG_LINK_BATTLE) && mode == 1 &&
-          Unit_Get__menus(candidateIds[targetIndex])->hp == 0)) {
+  while (
+      candidateIds[targetIndex] == BATTLE_UNIT_REMOVED ||
+      (GameFlag_Get(FLAG_LINK_BATTLE) && mode == 1 &&
+       ((struct BattleUnit *)Unit_Get(candidateIds[targetIndex]))->hp == 0)) {
     targetIndex = targetIndex + targetCount - 1;
     targetIndex %= targetCount;
   }
@@ -340,7 +333,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       // The (u32) compares the stored id unsigned, as the bytes do.
       if ((u32)(NAVIGATION->lastTarget = candidateIds[targetIndex]) <= 7) {
         if (spread != 255 && kind != 0) {
-          unit = Unit_Get__menus(candidateIds[targetIndex]);
+          unit = Unit_Get(candidateIds[targetIndex]);
           BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
                                                      &selectedPosition);
           if (conditionWindow != NULL)
@@ -556,7 +549,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
         }
       } else if (spread != 255) {
-        target = Unit_Get__menus(candidateIds[targetIndex]);
+        target = Unit_Get(candidateIds[targetIndex]);
         BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
                                                    &namePosition);
         TARGET_BOB(namePosition.y);

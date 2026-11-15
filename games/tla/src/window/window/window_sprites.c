@@ -40,36 +40,42 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 flags,
   return output;
 }
 
-struct WindowSprite *WindowSprite_CreateFromResource(s32 arg0, s32 arg1,
-                                                     struct RenderInput *arg2,
-                                                     s32 arg3, s32 arg4) {
+/// Loads resource `resource` in loading mode `mode` into a VRAM slot and shows
+/// it as a 16x16 sprite at (x, y) in `window`.
+struct WindowSprite *WindowSprite_CreateFromResource(s32 mode, s32 resource,
+                                                     struct RenderInput *window,
+                                                     s32 x, s32 y) {
   s32 no;
 
-  no = Resource_LoadByMode(arg0, arg1);
+  no = Resource_LoadByMode(mode, resource);
   if (no < 0) {
     return NULL;
   }
-  return WindowSprite_Create(no, OUTPUT_SIZE_16X16, arg2, arg3, arg4);
+  return WindowSprite_Create(no, OUTPUT_SIZE_16X16, window, x, y);
 }
 
-struct WindowSprite *WindowSprite_CreateLoaded(s32 arg0, s32 arg1,
-                                               struct RenderInput *arg2,
-                                               s32 arg3, s32 arg4) {
+/// Copies icon `icon` (with `layers` passed on to the copier) into a free VRAM
+/// slot and shows it as a 16x16 sprite at (x, y) in `window`.
+struct WindowSprite *WindowSprite_CreateLoaded(s32 icon, s32 layers,
+                                               struct RenderInput *window,
+                                               s32 x, s32 y) {
   s32 no;
   struct WindowSprite *result;
 
   no = VramCache_FindFreeEntry();
   result = NULL;
   if (no != 0x60) {
-    Icon_CopyResourceToSlot(arg0, arg1, no);
-    result = WindowSprite_Create(no, OUTPUT_SIZE_16X16, arg2, arg3, arg4);
+    Icon_CopyResourceToSlot(icon, layers, no);
+    result = WindowSprite_Create(no, OUTPUT_SIZE_16X16, window, x, y);
   }
   return result;
 }
 
-struct WindowSprite *WindowSprite_CreateWithTransform(s32 arg0,
-                                                      struct RenderInput *arg1,
-                                                      s32 arg2, s32 arg3) {
+/// Builds a 16x16 icon from frame pattern 1 with overlay pattern `icon` drawn
+/// over it, and shows it at (x, y) in `window` on draw layer 251.
+struct WindowSprite *
+WindowSprite_CreateWithTransform(s32 icon, struct RenderInput *window, s32 x,
+                                 s32 y) {
   s32 count;
   s32 unused;
   struct WindowSprite *result;
@@ -78,8 +84,8 @@ struct WindowSprite *WindowSprite_CreateWithTransform(s32 arg0,
   if (count == 0x60) {
     return NULL;
   }
-  Icon_BuildCommandIconTiles(arg0, 1, &count, &unused, 1);
-  result = WindowSprite_Create(count, OUTPUT_SIZE_16X16, arg1, arg2, arg3);
+  Icon_BuildCommandIconTiles(icon, 1, &count, &unused, 1);
+  result = WindowSprite_Create(count, OUTPUT_SIZE_16X16, window, x, y);
   result->sentinel = 251;
   return result;
 }
@@ -88,7 +94,7 @@ struct WindowSprite *WindowSprite_CreateWithTransform(s32 arg0,
 /// one (resource id 999) when the side is 2 or more, and creates its output
 /// with that side's palette (14 + side).
 struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
-                                     s32 arg3, s32 arg4, s32 arg5) {
+                                     s32 window, s32 x, s32 y) {
   struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct WindowSprite *object = 0;
   s32 first;
@@ -115,7 +121,7 @@ struct WindowSprite *Portrait_Create(s32 objectKind, s32 position, s32 side,
   slot = 14 + side;
   Icon_LoadWithPalette(id, position, &first, &second, slot, 0);
   object = WindowSprite_Create(first, OUTPUT_SIZE_32X32,
-                               (struct RenderInput *)arg3, arg4, arg5);
+                               (struct RenderInput *)window, x, y);
   if (object != 0) {
     object->sprite.oam.palette = slot;
     object->kind = 2;
@@ -192,6 +198,8 @@ void ScanlineWindow_FillSpans(void *dst) {
   }
 }
 
+/// Fills the top-left `width` x `height` tiles of WINDOW_TILEMAP_VRAM, 32 tiles
+/// wide, with the tilemap entry `value`.
 void BgScreen_FillRect(s32 unused0, s32 unused1, u32 width, u32 height,
                        s32 value) {
   u32 row = 0;

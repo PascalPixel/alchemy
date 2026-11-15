@@ -263,6 +263,8 @@ void *String_FormatPlayTime(s32 frames, u8 *out) {
   return out;
 }
 
+/// Returns the first save file whose summary shows it empty (level 0), or
+/// 999 when all three are in use. The summaries must be loaded.
 u32 Save_FindFreeFile(void) {
   struct SaveWorkspace *work = Ram_HeapSlots->saveWork;
   struct SaveSummary *p;
@@ -276,6 +278,9 @@ u32 Save_FindFreeFile(void) {
   return 999;
 }
 
+/// Returns how many save files there are, leaving out those whose summary has
+/// its send flag set when flag is nonzero, or -9 when the backup memory cannot
+/// be read. It opens and releases the save workspace itself.
 s32 Save_CountFilesExcludingSent(s32 flag) {
   s32 i;
   s32 cnt;
@@ -343,6 +348,11 @@ s32 Save_ScanFileSummaries(void) {
 extern u32 gData_02001000__screens __asm__("gSceneLocalState");
 
 // Builds the save header.
+/// Prepares the save buffer for writing: stamps the main routine's work with
+/// the time and options, then fills the file summary shown on the file menus
+/// (the leader's name, level and class, the play time, area, coins, Djinn of
+/// each element, the party, the send flag and how many of game flags 48-127 are
+/// set) and its checksum, the sum of the 968 words from gGameFlagBytes on.
 s32 Save_BuildFileSummary(void) {
   u16 owners[14];
   struct SaveSummary *summary;
@@ -411,6 +421,8 @@ s32 Save_BuildFileSummary(void) {
 
 s32 Save_ReadPart(s32 partId, void *buffer);
 
+/// Writes both halves of the save buffer, as they are, to save file `file`.
+/// Returns 0, or a SAVE_ERROR_* after showing its message.
 s32 Save_WriteFile(s32 file) {
   s32 result = 0;
 
@@ -753,7 +765,7 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
 
 void FileList_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
                                struct SaveSummary *descriptor) {
-  struct ObjectRowWork *state = Ram_HeapSlots->menuWork;
+  struct FileListWork *state = Ram_HeapSlots->menuWork;
   s32 i;
 
   for (i = 0; i < 4 && descriptor->party[i] != -1; i++) {
@@ -766,16 +778,17 @@ void FileList_ShowPartySprites(struct RenderInput *origin, s32 x, s32 y,
       object->priority = 0;
     }
 
-    state->icons[i] = object;
-    state->x[i] = (x + (s16)origin->x + i * 3) * 8 + 0x10;
-    state->y[i] = (y + (s16)origin->y) * 8 + 0x10;
-    state->scale[i] = Q16_ONE;
+    state->partyMemberIcons[i] = object;
+    state->partyMemberX[i] = (x + (s16)origin->x + i * 3) * 8 + 0x10;
+    state->partyMemberY[i] = (y + (s16)origin->y) * 8 + 0x10;
+    state->partyMemberScale[i] = Q16_ONE;
   }
 
   Task_Add(FileList_PlacePartySprites, TASK_PASS_VBLANK);
 }
 
-void Menu_ClearFirstObjectRowAndScheduleUpdate(void) {
+/// Stops placing the party sprites of the file list and releases them.
+void FileList_HidePartySprites(void) {
   u8 *base = (u8 *)Ram_HeapSlots->menuWork;
   s32 offset;
   s32 zero;
@@ -797,22 +810,23 @@ void Menu_ClearFirstObjectRowAndScheduleUpdate(void) {
   } while (count >= 0);
 }
 
+/// A task: draws each party sprite of the file list at its place and scale for
+/// this frame.
 void FileList_PlacePartySprites(void) {
-  struct ObjectRowState *state =
-      (struct ObjectRowState *)Ram_HeapSlots->menuWork;
+  struct FileListWork *state = (struct FileListWork *)Ram_HeapSlots->menuWork;
   s32 source[2];
   s32 request[4];
   s32 index = 0;
   s32 handle;
 
   while (1) {
-    handle = (s32)state->objects[index];
+    handle = (s32)state->partyMemberIcons[index];
     if (handle != 0) {
-      source[0] = state->scale[index];
-      source[1] = state->scale[index];
-      request[0] = state->x[index] << 16;
-      request[1] = 0x01f40000;
-      request[2] = (state->y[index] << 16) + 0x01f40000;
+      source[0] = state->partyMemberScale[index];
+      source[1] = state->partyMemberScale[index];
+      request[0] = px(state->partyMemberX[index]);
+      request[1] = px(500);
+      request[2] = px(state->partyMemberY[index]) + px(500);
       request[3] = 0;
       Render_ApplyProjectedPlacementFar((struct ScaledSprite *)handle, request,
                                         source, 0x4000);
@@ -824,27 +838,17 @@ void FileList_PlacePartySprites(void) {
   }
 }
 
-// Saves: draw the recorded Djinn counts in a row, one per element. The first
-// section was written as draw_four_numbers_in_row.c.
-
-/// Draws four two-digit numbers 24 pixels apart at y = 16.
-/// win: destination; nothing is drawn if zero.
-void FileList_DrawDjinnCounts(struct RenderInput *win, struct NumberRow *row) {
+/// Draws a saved game's Djinn of each element, four two-digit numbers 24 pixels
+/// apart at y = 16, into win; nothing when win is null.
+void FileList_DrawDjinnCounts(struct RenderInput *win,
+                              struct SaveSummary *summary) {
   s32 i;
 
   if (win != 0) {
     for (i = 0; i < 4; i++)
-      Text_DrawNumberAtOffset(row->values[i], 2, win, i * 24, 16);
+      Text_DrawNumberAtOffset((s8)summary->djinn[i], 2, win, i * 24, 16);
   }
 }
-
-//--------------------------------------------------------------------------
-
-// draw_character_summary.c
-
-// Saves: draw the recorded name, level, class, coins, and play time.
-
-//--------------------------------------------------------------------------
 
 #define Text_DrawStringAtOffset                                                \
   ((void (*)(void *, s32, s32, s32))Text_DrawStringAtOffset)
@@ -1056,7 +1060,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
         wait(1);
         if (partyWindow == NULL)
           partyWindow = Window_Create(16, 10, 13, 3, WINDOW_FLAG_INSTANT);
-        Menu_ClearFirstObjectRowAndScheduleUpdate();
+        FileList_HidePartySprites();
         FileList_ShowPartySprites((struct RenderInput *)partyWindow, 0, 0,
                                   &save->summary[selectedFile]);
         wait(1);
@@ -1067,9 +1071,8 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
             0) {
           if (djinnWindow == NULL)
             djinnWindow = Window_Create(16, 14, 13, 5, WINDOW_FLAG_INSTANT);
-          FileList_DrawDjinnCounts(
-              (struct RenderInput *)djinnWindow,
-              (struct NumberRow *)&save->summary[selectedFile]);
+          FileList_DrawDjinnCounts((struct RenderInput *)djinnWindow,
+                                   &save->summary[selectedFile]);
           DjinnFigures_SetShownFar(1);
         } else {
           DjinnFigures_SetShownFar(0);
@@ -1080,7 +1083,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
         WindowColor_Apply(gMainRoutineWork.windowHue,
                           gMainRoutineWork.windowBrightness);
         DjinnFigures_SetShownFar(0);
-        Menu_ClearFirstObjectRowAndScheduleUpdate();
+        FileList_HidePartySprites();
         Window_Close(djinnWindow, 2);
         Window_Close(partyWindow, 2);
         Window_Close(summaryWindow, 2);
@@ -1130,7 +1133,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     }
   }
   DjinnFigures_ReleaseTopRowFar();
-  Menu_ClearFirstObjectRowAndScheduleUpdate();
+  FileList_HidePartySprites();
   Window_Close(djinnWindow, 2);
   Window_Close(partyWindow, 2);
   Window_Close(summaryWindow, 2);

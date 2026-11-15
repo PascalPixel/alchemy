@@ -6,13 +6,8 @@
 #include "sounds.h"
 #include "module/window/screens.h"
 
-struct WindowTiles {
-  u8 unk00[3];
-  u8 dirty; ///< bits: one per four tile rows, from bit 1
-  u8 unk04[4];
-  u16 cells[32][32];
-};
-
+/// Opens a message at (x, y), waits for its text to finish, and returns its
+/// window so the caller can hold it open for a separate prompt.
 s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
   s32 result;
 
@@ -33,7 +28,7 @@ s32 Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 #define WINDOW_WORK ((struct CommandRowWindowWork *)Ram_HeapSlots->windowWork)
 
-extern struct BgScrollPair gBgScroll[];
+#include "bg_scroll.h"
 #include "system/main_routine_work.h"
 
 /// Runs a battle command row: the commands as icons along the bottom of the
@@ -46,14 +41,14 @@ extern struct BgScrollPair gBgScroll[];
 /// COMMAND_ROW_PARTY is the party's row at the start of a turn: Fight, Flee
 /// and Status. COMMAND_ROW_MEMBER, as any other mode, is a party member's row:
 /// Attack, Psynergy, Djinn once the party's Djinn are enough for a summon
-/// (BattleSummonState.availableMask), Summon while any Djinni is on standby,
+/// (DjinnRecoveryTable.summonMask), Summon while any Djinni is on standby,
 /// Item and Defend. Each row remembers its choice in
 /// BattleMenuWork.commandSelection. While the Djinn tutorial runs, the row
 /// presses the keys for the player.
 s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
   u8 party[4];
   struct CommandRowWindowWork *work;
-  struct CommandRowWork *selectionUi;
+  struct BattleCommandRowWork *selectionUi;
   struct BattleMenuWork *battleMenu;
   struct BattleMenuWork *navigation;
   s32 stripDirty;
@@ -218,7 +213,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
     selectionUi->affineIndex =
         OamMatrix_AllocFromTransform(&selectionUi->affine);
     for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++) {
-      struct CommandRowIcon *entry = &selectionUi->entries[entryIndex];
+      struct BattleCommandRowIcon *entry = &selectionUi->entries[entryIndex];
 
       if (entryIndex == selectionUi->selectedIndex) {
         entry->affineIndex = selectionUi->affineIndex;
@@ -345,7 +340,7 @@ s32 BattleCommandRow_Run(s32 mode, s32 fleeAllowed) {
 }
 
 void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt) {
-  struct WindowTiles *tiles = (struct WindowTiles *)Ram_HeapSlots->windowWork;
+  struct WindowWork *tiles = Ram_HeapSlots->windowWork;
 
   alt &= 1;
   alt <<= 12;
@@ -367,7 +362,7 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt) {
 
   if (width > 0 && height > 0) {
     do {
-      u16 *p = &tiles->cells[y][x];
+      u16 *p = &tiles->tilemap[y][x];
       s32 col = width;
 
       if (col != 0) {

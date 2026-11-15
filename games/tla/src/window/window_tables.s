@@ -101,9 +101,11 @@ gDjinn_ElementSprites:
 	.global gCharacter_SpriteTable
 gCharacter_SpriteTable:
 	.2byte 0, 1, 2, 3, 4, 5, 6, 7
-@ Values shown by party message 0x32, indexed by the low five bits
-	.global Data_0805f676
-Data_0805f676:
+@ The ability of each summon, by its number (Summon_ShowLearnedMessage names
+@ it): Venus, Mercury, Mars, Jupiter, Ramses and on; then a byte for each
+@ summon's element, which nothing reads by this name.
+	.global gSummon_Abilities
+gSummon_Abilities:
 	.2byte 0x17c, 0x184, 0x18c, 0x196, 0x17d, 0x185, 0x18d, 0x197
 	.2byte 0x17e, 0x186, 0x18e, 0x198, 0x17f, 0x187, 0x18f, 0x199
 	.2byte 0x180, 0x190, 0x19a, 0x188, 0x191, 0x181, 0x19b, 0x189

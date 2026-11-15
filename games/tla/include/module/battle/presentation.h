@@ -51,16 +51,6 @@ struct BattlePresentationWork;
 
 typedef void (*ModelDecoder)(const void *source, void *destination);
 
-struct PlacementList {
-  struct DjinnRecoveryEntry entries[72];
-  s32 count;
-};
-
-struct PlacementTable {
-  u8 padding[8];
-  struct PlacementList list;
-};
-
 struct ActionRunBattleWork {
   u8 unk000[0x44];
   u8 twoSided;
@@ -310,16 +300,6 @@ struct AIBattleWork {
   u32 aiStates[4];
 };
 
-struct TurnEndList {
-  struct DjinnRecoveryEntry entries[72];
-  s32 count;
-};
-
-struct TurnEndTable {
-  u8 padding[8];
-  struct TurnEndList list;
-};
-
 struct BattleGroupOrder {
   s32 group[2];
 };
@@ -366,6 +346,6 @@ extern char ResourceId_SerpentStarsBackdrop;
 
 extern const struct BattleGroupOrder gBattleParty_TurnEndSideOrder;
 
-void Battle_ApplyActionExtras(s32 unitId, s32 all, s32 announce);
+void BattleUnit_DrainDjinn(s32 unitId, s32 all, s32 announce);
 
 #endif

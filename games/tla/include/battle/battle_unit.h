@@ -87,10 +87,10 @@ enum AbilityTarget {
 };
 
 /// BattleAct.effect: what an ability does besides its damage or healing,
-/// applied by BattleTarget_Execute unless noted. Each is named for the
+/// applied by BattleAbility_ApplyToTarget unless noted. Each is named for the
 /// abilities that have it (actions.tsv, with their English names and
-/// descriptions). Sidestep (48) and Crazy Voice (52) have effects no code here
-/// reads.
+/// descriptions). Sidestep (48), Crazy Voice (52) and Vengeance (89) have
+/// effects no code here reads.
 enum AbilityEffect {
   ABILITY_EFFECT_NONE = 0,
   ABILITY_EFFECT_CURE_POISON = 3,        ///< Cure Poison, Antidote
@@ -160,7 +160,42 @@ enum AbilityEffect {
   ABILITY_EFFECT_ACT_TWICE = 66,          ///< Kite
   ABILITY_EFFECT_SEAL_2_TURNS = 67,       ///< Luff
   ABILITY_EFFECT_TRIPLE_BLOW_60 = 68,     ///< Sonic Smash
-  ABILITY_EFFECT_PSY_LEECH = 69           ///< Psy Leech
+  ABILITY_EFFECT_PSY_LEECH = 69,          ///< Psy Leech
+  ABILITY_EFFECT_HEAL_HP_50 = 70,         ///< Crystal: half of max HP
+  ABILITY_EFFECT_HEAL_HP_70 = 71,         ///< Spring
+  ABILITY_EFFECT_SHIELD = 72,             ///< Shade: DEFEND_SHIELD
+  ABILITY_EFFECT_REVIVE_60 = 73,          ///< Balm, Spark: 60% of max HP
+  ABILITY_EFFECT_COUNTER = 74,            ///< Reflux, Counter-rush
+  /// Shine: the first target takes the damage, the others are deluded.
+  ABILITY_EFFECT_DAZZLE = 75,
+  ABILITY_EFFECT_HEAL_HP_40 = 76, ///< Breath
+  ABILITY_EFFECT_HEAL_PP_10 = 77, ///< Aroma
+  ABILITY_EFFECT_HEAL_PP_30 = 78, ///< Ether
+  ABILITY_EFFECT_VANISH = 79,     ///< Haze: DEFEND_VANISHED
+  /// Gasp: Curse, rolled three times (Battle_RollEffectSuccess).
+  ABILITY_EFFECT_CURSE_THREE_ROLLS = 80,
+  /// Lull: "Everybody is resting!" (BattleWork.unk047).
+  ABILITY_EFFECT_CEASE_FIRE = 81,
+  /// Gale: an enemy blown out of the battle, as one that flees.
+  ABILITY_EFFECT_BLOW_AWAY = 82,
+  ABILITY_EFFECT_GROUND_2 = 83, ///< Ulysses: as Ground
+  /// Catastrophe: the target also loses a tenth of its max PP.
+  ABILITY_EFFECT_PP_LOSS_10 = 84,
+  /// Fire Puppet: Paralyze, rolled three times (Battle_RollEffectSuccess).
+  ABILITY_EFFECT_STUN_THREE_ROLLS = 85,
+  /// Clarion Cry, Mystic Call: a Sea Fighter called in, or a Star Magician's
+  /// ball.
+  ABILITY_EFFECT_CALL_REINFORCEMENT = 86,
+  /// Regen Dance: the next enemy of BattleWork.queuedSummons called in.
+  ABILITY_EFFECT_CALL_QUEUED = 87,
+  ABILITY_EFFECT_TOTAL_DEFENSE_2 = 88, ///< Guard Aura: as Total Defense
+  ABILITY_EFFECT_VENGEANCE = 89,       ///< Vengeance
+  /// Raiden's Wrath: lands only on a dragon (gBattle_Effect90Classes), and
+  /// ignores its Defense.
+  ABILITY_EFFECT_SLAY_DRAGON = 90,
+  /// Trident: lands only on a sea creature (gBattle_Effect91Classes), and
+  /// ignores its Defense.
+  ABILITY_EFFECT_SLAY_SEA_CREATURE = 91
 };
 
 /// An ability's definition, a row of gAbilityDefinitions: its
@@ -204,8 +239,30 @@ enum CurseFlag {
 /// The last party unit id: ids 0 to 7, one for each character, ISAAC to PIERS.
 #define ALLY_MAX 7
 
-/// BattleUnit.defendLevel set by Defend, when no guard effect has set one.
+/// Party unit ids: one for each character, ISAAC to PIERS.
+#define PARTY_UNIT_COUNT (ALLY_MAX + 1)
+
+/// The party fights four at a time, three in a link battle; six enemies at
+/// most, three in a link battle.
+#define PARTY_BATTLE_SIZE 4
+#define ENEMY_BATTLE_SIZE 6
+
+/// The most units in a battle, every party unit and the most enemies: the
+/// length of a unit list such as BattleUnit_ListIds fills.
+#define UNIT_MAX (PARTY_UNIT_COUNT + ENEMY_BATTLE_SIZE)
+
+/// BattleUnit.poison: poisoned, or deadly poisoned.
+#define POISON_NORMAL 1
+#define POISON_VENOM 2
+
+/// BattleUnit.defendLevel, 0 for no guard: each guard effect raises it to its
+/// own level and no lower (BattleAbility_ApplyToTarget). Defend and Granite
+/// halve the damage, Shade cuts it to two fifths, Total Defense, Flash and
+/// Guard Aura to a tenth (REDUCE_BY_GUARD), and Haze leaves the unit untouched.
 #define DEFEND_NORMAL 1
+#define DEFEND_SHIELD 2
+#define DEFEND_TOTAL 3
+#define DEFEND_VANISHED 4
 
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
 /// Djinn and ailments.

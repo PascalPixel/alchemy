@@ -28,6 +28,10 @@
 #define NAVIGATION ((struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork)
 #define SUMMON_END 32
 
+/// The battle summon list: the summons the party holds enough Djinn for
+/// (Summon_ListLearnedFar, DjinnRecoveryTable.summonMask), four to a page,
+/// those `standby` can pay for first, each with its Djinn cost by element, the
+/// others in TEXT_COLOR_RED.
 s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   struct QueuedSprite cursorStorage;
   struct MenuSprite sprites[4];
@@ -39,7 +43,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   s32 glyph;
   s32 count;
   struct RenderInput *window;
-  struct SummonMenuWork *work;
+  struct WindowWork *work;
   s32 drawnRow;
   s32 drawnFirstEntry;
   s32 selectedRow;
@@ -65,7 +69,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   s32 result;
   s32 index;
 
-  work = (struct SummonMenuWork *)Ram_HeapSlots->windowWork;
+  work = Ram_HeapSlots->windowWork;
   drawnRow = -1;
   drawnFirstEntry = -1;
   cursorHandle = (s16)VramCache_AllocEntry(128);

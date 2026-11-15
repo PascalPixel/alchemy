@@ -62,6 +62,7 @@
 #include "battle/battle_random.h"
 #include "system/irq_lock.h"
 #include "battle/battle_event.h"
+#include "battle/first_strike.h"
 #include "module/battle/battle.h"
 #include "module/system/system.h"
 #include "system/io_write_queue.h"
@@ -74,7 +75,6 @@
 #include "battle/range_falloff.h"
 #include "battle/battle_effect.h"
 #include "graphics/vram_tab.h"
-#include "battle/b5_context.h"
 #include "game/owner_value.h"
 #include "bg_scroll.h"
 #include "system/irq.h"
@@ -82,6 +82,193 @@
 #include "system/transform.h"
 #include "field/particle.h"
 #include "battle_formation.h"
+#include "enemy_ids.h"
+#include "item_ids.h"
+
+/// BattleEnemy_ClaimNameLetter returns the letter in ENEMY_LETTER_MASK, with
+/// ENEMY_LETTER_FIRST_TOO set for the second enemy of a class: its callers then
+/// give the first one its letter too (BattleEnemy_LetterFirstOfKind) before
+/// passing the letter to BattleUnit_SetFar.
+#define ENEMY_LETTER_FIRST_TOO 0x8000
+#define ENEMY_LETTER_MASK 0x7fff
+
+/// The most actions BattleWork.actions holds for a turn.
+#define BATTLE_ACTION_CAPACITY 20
+
+/// BattleAI_ChooseTarget's results when it picks no one: the side it
+/// may target lists no one, or no one there is worth the ability.
+#define TARGET_PICK_SIDE_EMPTY -2
+#define TARGET_PICK_NONE -1
+
+/// The list place codes the target pickers return (targeting.c,
+/// Battle_FindUnitPlace): a place in the party's list or the enemies',
+/// or'd with the side's tag.
+#define PLACE_PARTY 0x100
+#define PLACE_ENEMY 0x180
+
+/// BattleWork.placement of a unit with no place on the battlefield:
+/// BattleUnit_RefreshPlacement fills the list with it.
+#define BATTLE_OBJECT_NONE 0xff
+
+/// The party's battle sprites, and Isaac's and Garet's while they hold a
+/// Machete, drawn as part of it (BattleObject_Make).
+#define SPRITE_BATTLE_ISAAC 490
+#define SPRITE_BATTLE_GARET 495
+#define SPRITE_BATTLE_IVAN 500
+#define SPRITE_BATTLE_MIA 504
+#define SPRITE_BATTLE_FELIX 508
+#define SPRITE_BATTLE_JENNA 513
+#define SPRITE_BATTLE_SHEBA 517
+#define SPRITE_BATTLE_PIERS 521
+#define SPRITE_ISAAC_MACHETE 635
+#define SPRITE_GARET_MACHETE 637
+/// The shadow sprite under a unit (BattleObj.effect).
+#define SPRITE_BATTLE_SHADOW 686
+
+/// Enemy ids the battle tests, each named from the English release
+/// (MsgEnemyName plus the id less ENEMY_ID_FIRST). Rows that share a name take
+/// _2 onwards in row order, as the game itself numbers some of them ("Serpent
+/// 6").
+enum BattleEnemyId {
+  ENEMY_RUFFIAN = 68,
+  ENEMY_RUFFIAN_2 = 69,
+  ENEMY_RUFFIAN_3 = 70,
+  ENEMY_CHESTBEATER = 74,
+  ENEMY_WILD_GORILLA = 75,
+  ENEMY_CRAZY_GORILLA = 76,
+  ENEMY_DEVIL_SCORPION = 78,
+  ENEMY_SAND_SCORPION = 79,
+  ENEMY_BRIGGS = 80,
+  ENEMY_SEA_FIGHTER = 81,
+  ENEMY_CHAMPA_2 = 82,
+  ENEMY_CHAMPA_3 = 83,
+  ENEMY_AQUA_HYDRA = 88,
+  ENEMY_HYDRA = 89,
+  ENEMY_PYRODRA = 90,
+  ENEMY_SERPENT = 91,
+  ENEMY_SERPENT_2 = 92,
+  ENEMY_SERPENT_3 = 93,
+  ENEMY_SERPENT_4 = 94,
+  ENEMY_SERPENT_5 = 95,
+  ENEMY_SERPENT_6 = 96,
+  ENEMY_SERPENT_7 = 97,
+  ENEMY_AVIMANDER = 98,
+  ENEMY_POSEIDON = 101,
+  ENEMY_POSEIDON_2 = 102,
+  ENEMY_POSEIDON_3 = 103,
+  ENEMY_MOAPA = 104,
+  ENEMY_MOAPA_2 = 105,
+  ENEMY_MOAPA_3 = 106,
+  ENEMY_KNIGHT = 107,
+  ENEMY_KNIGHT_2 = 108,
+  ENEMY_KNIGHT_3 = 109,
+  ENEMY_AGATIO = 110,
+  ENEMY_AGATIO_2 = 111,
+  ENEMY_AGATIO_3 = 112,
+  ENEMY_KARST = 113,
+  ENEMY_KARST_2 = 114,
+  ENEMY_KARST_3 = 115,
+  ENEMY_WILD_WOLF = 117,
+  ENEMY_DIRE_WOLF = 118,
+  ENEMY_WHITE_WOLF = 119,
+  ENEMY_DINO = 149,
+  ENEMY_DINOX = 150,
+  ENEMY_DINOSAURUS = 151,
+  ENEMY_PIXIE = 158,
+  ENEMY_FAERY = 159,
+  ENEMY_WEIRD_NYPMH = 160,
+  ENEMY_STAR_MAGICIAN = 164,
+  ENEMY_SEA_DRAGON = 176,
+  ENEMY_TURTLE_DRAGON = 177,
+  ENEMY_OCEAN_DRAGON = 178,
+  ENEMY_FLAME_DRAGON = 194,
+  ENEMY_FLAME_DRAGON_2 = 195,
+  ENEMY_MINOTAURUS = 197,
+  ENEMY_MINOS_WARRIOR = 198,
+  ENEMY_MINOS_KNIGHT = 199,
+  ENEMY_AKA_MANAH = 206,
+  ENEMY_DRUJ = 207,
+  ENEMY_AESHMA = 208,
+  ENEMY_VALUKAR = 209,
+  ENEMY_VALUKAR_2 = 210,
+  ENEMY_VALUKAR_3 = 211,
+  ENEMY_DULLAHAN = 218,
+  ENEMY_DULLAHAN_2 = 219,
+  ENEMY_DULLAHAN_3 = 220,
+  ENEMY_SENTINEL = 221,
+  ENEMY_SENTINEL_2 = 222,
+  ENEMY_SENTINEL_3 = 223,
+  ENEMY_SLIME = 234,
+  ENEMY_SLIME_2 = 235,
+  ENEMY_OOZE = 236,
+  ENEMY_SLIME_BEAST = 237,
+  ENEMY_BANDIT = 245,
+  ENEMY_THIEF = 246,
+  ENEMY_TROLL = 263,
+  ENEMY_CAVE_TROLL = 264,
+  ENEMY_BRUTAL_TROLL = 265,
+  ENEMY_RECLUSE = 268,
+  ENEMY_SIREN = 281,
+  ENEMY_SUCCUBUS = 282,
+  ENEMY_NIGHTMARE = 283,
+  ENEMY_KILLER_APE = 291,
+  ENEMY_ORC_CAPTAIN = 297,
+  ENEMY_ORC_LORD = 298,
+  ENEMY_MANTICORE = 302,
+  ENEMY_KOBOLD = 305,
+  ENEMY_HOBGOBLIN = 307,
+  ENEMY_GRYPHON = 311,
+  ENEMY_CERBERUS = 318,
+  ENEMY_CHIMERA = 323,
+  ENEMY_LIZARD_FIGHTER = 331,
+  ENEMY_LIZARD_KING = 332,
+  ENEMY_ANT_LION = 333,
+  ENEMY_TOADONPA = 336,
+  ENEMY_LIVING_STATUE = 339,
+  ENEMY_HYDROS_STATUE = 340,
+  ENEMY_AZART = 341,
+  ENEMY_AZART_2 = 342,
+  ENEMY_SATRAGE = 343,
+  ENEMY_SATRAGE_2 = 344,
+  ENEMY_NAVAMPA = 345,
+  ENEMY_NAVAMPA_2 = 346,
+  ENEMY_TRET = 347,
+  ENEMY_KRAKEN = 348,
+  ENEMY_TORNADO_LIZARD = 349,
+  ENEMY_STORM_LIZARD = 350,
+  ENEMY_TEMPEST_LIZARD = 351,
+  ENEMY_MYSTERY_MAN = 352,
+  ENEMY_SATUROS = 353,
+  ENEMY_SATUROS_2 = 354,
+  ENEMY_MYSTERY_WOMAN = 355,
+  ENEMY_MENARDI = 356,
+  ENEMY_FUSION_DRAGON = 357,
+  ENEMY_DEADBEARD = 358,
+  ENEMY_MIMIC = 359,
+  ENEMY_MIMIC_2 = 360,
+  ENEMY_MIMIC_3 = 361,
+  ENEMY_MIMIC_4 = 362,
+  ENEMY_MIMIC_5 = 363,
+  ENEMY_MIMIC_6 = 364,
+  ENEMY_MIMIC_7 = 365,
+  ENEMY_MIMIC_8 = 366,
+  ENEMY_MIMIC_9 = 367,
+  ENEMY_DOOM_DRAGON = 369,
+  ENEMY_DOOM_DRAGON_2 = 370,
+  ENEMY_DOOM_DRAGON_3 = 371,
+  ENEMY_DOOM_DRAGON_4 = 372,
+  ENEMY_DOOM_DRAGON_5 = 373,
+  ENEMY_DOOM_DRAGON_6 = 374,
+  ENEMY_DOOM_DRAGON_7 = 375,
+  ENEMY_DOOM_DRAGON_8 = 376,
+  ENEMY_DOOM_DRAGON_9 = 377,
+  ENEMY_REFRESH_BALL = 378,
+  ENEMY_THUNDER_BALL = 379,
+  ENEMY_ANGER_BALL = 380,
+  ENEMY_GUARDIAN_BALL = 381,
+  ENEMY_BANDIT_2 = 385,
+  ENEMY_THIEF_2 = 386
+};
 
 // Far calls the parts make, each passing its own view of the record:
 // ResourceMetadata_Register and SpriteAnimation_Start (field.c, resource_slot/)
@@ -92,26 +279,22 @@ void Sprite_RemoveAnimationFar(void *state, s32 handle);
 #include "battle_type.h"
 #include "field/sprite.h"
 
-struct BattleSortedUnitEntry {
-  u16 unitId;
-  u16 unk02;
-  s16 value;
-  s16 width;
-  s16 mode;
-  s16 priority;
-  u8 unk0c[4];
-};
-
+/// A unit's sprite as BattleMotion_PlayFall reads it: its first animation.
 struct BattleObjectAnimation {
   u8 unk00[0x28];
   struct AnimationEntry *entry;
 };
 
+/// A unit's HP and PP as ScriptedBattle_SaveUnits keeps them.
 struct SnapshotVitals {
   u16 hp;
   u16 pp;
 };
 
+/// What ScriptedBattle_SaveUnits keeps of the five units of the scripted
+/// battles between them: whether each was listed, the first three's summon
+/// boosts, and the last two's HP and PP. The statuses between them are
+/// SnapshotCopy's.
 struct Snapshot {
   u8 listed[8];
   u8 tags[3][4];
@@ -119,6 +302,8 @@ struct Snapshot {
   struct SnapshotVitals vitals[5];
 };
 
+/// A unit as the scripted battles' snapshot reads it: its HP and PP, its summon
+/// boosts, and the 25 status bytes from its curse to its challenge.
 struct SnapshotUnit {
   u8 unk00[0x38];
   s16 hp;
@@ -128,10 +313,14 @@ struct SnapshotUnit {
   u8 snapshot[25];
 };
 
+/// A unit's 25 status bytes, from its curse to its challenge, kept between the
+/// scripted battles.
 struct SnapshotCopy {
   u8 bytes[25];
 };
 
+/// A row of the debug parameter sets: a party member, its level, its Djinn of
+/// each element, its equipped items and two Psynergy it learns.
 struct DebugPartyEntry {
   s8 owner;
   u8 level;
@@ -141,37 +330,14 @@ struct DebugPartyEntry {
   u16 unk16;
 };
 
-struct LinkOfferEntry {
-  u8 unk00[2];
-  u8 unitId;
-  u8 unk03;
-};
-
-struct LinkOfferList {
-  struct LinkOfferEntry entries[72];
-  s32 count;
-};
-
-struct LinkOfferTable {
-  u8 unk00[8];
-  struct LinkOfferList list;
-};
-
-struct SlotEffectObject {
-  u8 unk00[0x50];
-  void *resource;
-  u8 kind;
-};
-
-struct SlotEffectEntry {
-  struct SlotEffectObject *object;
-};
-
+/// A unit's sprite as BattleMotion reads it: its scale.
 struct SlotMotionRecord {
   u8 unk00[12];
   s32 height;
 };
 
+/// A unit's sprite as the status icon reads it: its width, which picks the icon
+/// set, and the flag that redraws it.
 struct StatusIconRecord {
   u8 unk00[0x14];
   u8 width;
@@ -179,11 +345,8 @@ struct StatusIconRecord {
   u8 dirty;
 };
 
-struct StatusIconEntry {
-  u8 unk00[6];
-  u8 priority;
-};
-
+/// A unit's sprite as BattleObject_Make builds it: its image, scale, width,
+/// redraw flag and outline flags, and its animations.
 struct TlaSpriteRecord {
   struct AnimationSpritePart image;
   s32 scale;
@@ -193,19 +356,23 @@ struct TlaSpriteRecord {
   u8 dirty;
   u8 flags;
   u8 unk1b[13];
-  struct SpriteEntry *entries[1];
+  struct AnimationEntry *entries[1];
 };
 
+/// A sprite as ResetMotionRecordGroup reads it: its four animations.
 struct AnimationEntryGroup {
   u8 unk00[0x28];
   struct AnimationEntry *entries[4];
 };
 
+/// A unit's sprite as the battle reads its scale.
 struct MotionRecordScale {
   u8 unk00[0xc];
   s32 scale;
 };
 
+/// The form change effect's command, as Battle_PlayFormChange fills it for
+/// enemy 128.
 struct BattleFxRequest {
   s32 field00;
   s32 field04;
@@ -219,35 +386,9 @@ struct BattleFxRequest {
   u8 unk26[0x32];
 };
 
-struct Layout {
-  u8 pad[4];
-  s16 field[6];
-};
-
-struct BattleSpriteSlots {
-  s32 enemyGroup;
-  s16 spriteSlots[6];
-};
-
-struct ActionTargets {
-  u8 actorId;
-  u8 count;
-  u8 unk02;
-  u8 ids[14];
-  u8 stateA[14];
-  u8 stateB[14];
-  u8 stateC[14];
-  u8 stateD[14];
-  u16 value4a;
-  s32 abilityId;
-  s32 value50;
-  s32 value54;
-  s32 presentationFlags;
-  s32 unk5c;
-  s32 extra;
-  s32 unk64;
-};
-
+/// The battle work past BattleWork's members, as the staging reads it: the
+/// backdrop's brightness and background, the plan of the action being played,
+/// the flag that skips its playback, and how the acting unit is shown.
 struct DispatchBattleWork {
   u8 unk000[0x66c];
   s32 brightness;
@@ -261,18 +402,8 @@ struct DispatchBattleWork {
   u8 actorMode;
 };
 
-struct EscapeTransition {
-  s32 targetYaw;
-  s32 unk04[3];
-  s32 active;
-};
-
-struct BattleEscapeState {
-  u8 reserved00[0x45];
-  u8 guaranteed;
-  u8 failedAttempts;
-};
-
+/// The packet the two consoles exchange each turn of a link battle: how many
+/// actions follow, a random check, and the random seed both sides then use.
 struct BattleLinkedActionState {
   s32 count;
   s32 check;
@@ -383,14 +514,20 @@ enum BattleCastKind {
 #define EFFECT_SUMMON 0x8000 ///< BattleEffect_RunSummonFar, acting unit's view
 #define EFFECT_ON_DOWNED 0x10000 ///< shown on downed targets too (revivals)
 
+/// The scripted battles' snapshot (ScriptedBattle_SaveUnits).
 extern struct Snapshot Data_0200ff58;
 
+/// The five units' status bytes within the snapshot.
 extern struct SnapshotCopy Data_0200ff6c[];
 
+/// The last two units' HP and PP within the snapshot.
 extern struct SnapshotVitals Data_0200ffec[];
 
+/// The five units the scripted battles of formations 74 to 76 carry over:
+/// Felix, Piers and Jenna, and the first two enemies.
 extern u8 gScriptedBattle_Units[];
 
+/// The debug parameter sets DebugParameterSet_Load loads, a party member a row.
 extern struct DebugPartyEntry gDebug_ParameterSets[];
 
 // A knocked-back unit's motion by variant (BattleMotion_Knockback), as The
@@ -404,18 +541,19 @@ extern const s32 gBattleKnockback_VelocityY[]; ///< upward velocity
 extern const s32 gBattleKnockback_DistancePercent[]; ///< distance, in percent
                                                      ///< of the anchor's x
 
+/// The tilt the battle camera adds while commands are chosen
+/// (BattleCamera_ApplyTransform).
 extern const s32 gBattleCamera_CommandMatrix[];
 
+/// The script a battle object starts with: none.
 extern const s32 gBattleObject_EmptyScript[];
 
+/// The order enemies of a fixed formation take from the centre out: 0, -1, 1,
+/// -2, 2 and on.
 extern const s8 gBattleParty_CenterOrderOffsets[];
 
-extern const u16 gData_081287d4[];
-
-extern const u16 gData_081287e2[];
-
-extern const u16 gData_081287f0[];
-
+/// Each character's battle sprite for each weapon kind
+/// (BattleUnit_GetWeaponSprite).
 extern const u16 gBattleUnit_WeaponAnimationsIsaac[];
 
 extern const u16 gBattleUnit_WeaponAnimationsGaret[];
@@ -426,7 +564,11 @@ extern const u16 gBattleUnit_WeaponAnimationsMia[];
 
 extern const u16 gBattleUnit_WeaponAnimationsJenna[];
 
-extern struct BattlePresentationTransition *gTransitionWork;
+extern const u16 gBattleUnit_WeaponAnimationsFelix[];
+
+extern const u16 gBattleUnit_WeaponAnimationsSheba[];
+
+extern const u16 gBattleUnit_WeaponAnimationsPiers[];
 
 u32 BattleSprite_GetAttackHop(u32 index);
 u32 BattleSprite_GetEffectHeight(u32 index);

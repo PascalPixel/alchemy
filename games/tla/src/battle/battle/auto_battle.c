@@ -9,55 +9,62 @@
 #include "gamepak/far_call/battle_effect.h"
 #include "gamepak/far_call/window.h"
 
-s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries) {
-  struct BattleSortedUnitEntry swap;
-  u16 unitIds[14];
-  s32 firstCount;
+/// Auto battle: gives every living unit a plain attack and sorts them into
+/// action order. Returns how many actions there are.
+s32 AutoBattle_BuildActions(struct BattleActionRecord *entries) {
+  struct BattleActionRecord swap;
+  u16 unitIds[UNIT_MAX];
+  s32 partyCount;
   s32 count = 0;
-  s32 secondCount;
-  s32 priorityRange;
+  s32 enemyCount;
+  s32 targetRange;
   s32 index;
-  struct BattleSortedUnitEntry *entry;
+  struct BattleActionRecord *entry;
   struct BattleUnit *unit;
 
-  firstCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
-  for (index = 0; index != 4; index++)
+  // The party's actions. The four lookups' results are never used.
+  partyCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, unitIds);
+  for (index = 0; index != PARTY_BATTLE_SIZE; index++)
     Unit_Get(index);
-  for (index = 0; index < firstCount; index++) {
+  for (index = 0; index < partyCount; index++) {
     s32 unitId = unitIds[index];
 
     unit = Unit_Get(unitId);
     entry = &entries[index];
     entry->unitId = unitId;
-    entry->value = unit->agi;
-    entry->width = 0;
-    entry->mode = 0;
-    entry->priority = 0x80;
+    entry->priority = unit->agi;
+    entry->command = COMMAND_ATTACK;
+    entry->parameter = 0;
+    entry->target = FIRST_ENEMY_UNIT;
     count++;
   }
-  secondCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, unitIds);
-  entry = &entries[firstCount];
-  priorityRange = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, NULL);
-  for (index = 0; index < secondCount; index++) {
+  // The enemies attack a random party member, replaced when the action plays if
+  // it is down.
+  enemyCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, unitIds);
+  entry = &entries[partyCount];
+  targetRange = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, NULL);
+  for (index = 0; index < enemyCount; index++) {
     s32 unitId = unitIds[index];
 
     unit = Unit_Get(unitId);
     entry->unitId = unitId;
-    entry->value = unit->agi >> 1;
-    if (entry->value != 0)
-      entry->value += (u32)(Random16() * unit->agi) >> 16;
-    entry->width = 0;
-    entry->mode = 0;
-    entry->priority = (u32)(Random16() * priorityRange) >> 16;
+    entry->priority = unit->agi >> 1;
+    if (entry->priority != 0)
+      entry->priority += (u32)(Random16() * unit->agi) >> 16;
+    entry->command = COMMAND_ATTACK;
+    entry->parameter = 0;
+    entry->target = (u32)(Random16() * targetRange) >> 16;
     count++;
     entry++;
   }
+  // Bubble the faster units forward.
+  // BUG: one pass short of a full sort; with two actions nothing is sorted.
   for (index = count - 2; index > 0; index--) {
     s32 swaps = 0;
     s32 pos;
 
     for (pos = count - 1; pos > 0; pos--) {
-      if (entries[pos].value > entries[pos - 1].value) {
+      if ((s16)entries[pos].priority > (s16)entries[pos - 1].priority) {
         Dma_Set(&entries[pos], &swap, DMA_COPY_WORDS(4), REG_DMA3);
         Dma_Set(&entries[pos - 1], &entries[pos], DMA_COPY_WORDS(4), REG_DMA3);
         Dma_Set(&swap, &entries[pos - 1], DMA_COPY_WORDS(4), REG_DMA3);
@@ -70,21 +77,26 @@ s32 AutoBattle_BuildActions(struct BattleSortedUnitEntry *entries) {
   return count;
 }
 
+/// Turns the battle camera while L or R is held, a 128th of a turn each
+/// frame, and redraws the zoomed background unless a transition
+/// holds it.
 void BattleCamera_AdjustByShoulderKeys(void) {
   struct BattleCamera *cam = Ram_HeapSlots->cameraWork;
   struct BattlePresentationTransition *trans = Ram_HeapSlots->battleBackground;
 
   if ((gInput.held & KEY_L) != 0) {
-    cam->yaw += 512;
+    cam->yaw += TRIG_TURN / 128;
   }
   if ((gInput.held & KEY_R) != 0) {
-    cam->yaw -= 512;
+    cam->yaw -= TRIG_TURN / 128;
   }
   if (trans->flag == 0) {
     BattleCamera_SetRange(px(120), px(120), 0, 0, Q16_ONE);
   }
 }
 
+/// Auto battle: plays one action, a defeated target replaced by a living unit
+/// of its side. Returns 1 when the party got away, -1 when the unit is down.
 s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
   struct BattlePresentationTransition *transition;
   s32 unitId;
@@ -138,6 +150,7 @@ s32 AutoBattle_RunAction(struct BattleActionRecord *action) {
   return 0;
 }
 
+/// Returns 0 for a party member's or an enemy's unit id, -1 for any other.
 s32 BattleObject_IsValidId(u32 objectId) {
   if (objectId <= ALLY_MAX) {
     return 0;
@@ -148,6 +161,8 @@ s32 BattleObject_IsValidId(u32 objectId) {
   return -1;
 }
 
+/// Auto battle: the party tries to run, and gets away 15 times in 16. Returns 1
+/// when it got away.
 s32 BattleFlee_PlayRun(struct BattleActionRecord *action) {
   s16 party_members[14];
   s32 party_size;
@@ -175,6 +190,8 @@ s32 BattleFlee_PlayRun(struct BattleActionRecord *action) {
   return 0;
 }
 
+/// Auto battle: shows that a standing unit is defending. The message is
+/// `<unit> is defending`. Returns -1 for an invalid unit id, 0 otherwise.
 s32 AutoBattle_ShowDefend(s16 *script) {
   s32 objectId;
   s32 result;
@@ -422,6 +439,8 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   return 0;
 }
 
+/// Unused auto battle damage: takes damage HP from a unit and shows it, with "A
+/// bitter blow!" or "A critical hit!" first when showMessage is set.
 void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
                             u8 *context) {
   u8 localContext[4];
@@ -476,6 +495,8 @@ void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
   Actor_SelectAnimationFar((struct Actor *)slot->object, 1);
 }
 
+/// For a unit whose HP has run out: plays its falling effect to the last frame
+/// and marks its battle object for release (BattleObject_MarkForRelease).
 void BattleMotion_PlayFall(s32 unitId) {
   struct BattleObjectAnimation *animation;
   struct AnimationEntry *entry;
@@ -492,6 +513,8 @@ void BattleMotion_PlayFall(s32 unitId) {
   }
 }
 
+/// Returns the action's target, or a random living unit of its side when the
+/// target is down; 0x100 when none is left.
 s32 BattleAbility_ReplaceDefeated(const struct BattleActionRecord *action) {
   s16 livingUnits[14];
   s32 targetId;

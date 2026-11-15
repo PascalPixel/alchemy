@@ -90,7 +90,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
   struct SummaryOam statusSprites[11];
   struct SummaryOam iconSprites[4];
   struct SummaryOam nameSprite;
-  struct SummaryCursor cursor;
+  struct StatusCursor cursor;
   s32 iconSlots[4];
   u16 figureList[2];
   u16 spawnList[2];
@@ -390,7 +390,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     }
 
     if (cursor.group == 0) {
-      const struct SummaryStatCursor *stop;
+      const struct BattleSummaryStatCursor *stop;
       s32 k = cursor.groupPositions[cursor.group];
 
       if (hasDjinn == 0)
@@ -682,15 +682,15 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             djinnList[djinnCount] = (element << 8) | bit;
             djinnCount++;
           } else if (unit->djinnHeld[element] & (1 << bit)) {
-            struct SummaryRecoveryList *recovery =
-                &((struct SummaryRecovery *)Djinn_GetRecoveryTableFar(
-                      (u32)member > 7))
+            struct DjinnRecoveryList *recovery =
+                &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
+                      (u32)member > ALLY_MAX))
                      ->list;
             s32 k;
             s32 value;
 
             for (k = 0; k < recovery->count &&
-                        !(recovery->entries[k].owner == member &&
+                        !(recovery->entries[k].unitId == member &&
                           recovery->entries[k].element == element &&
                           recovery->entries[k].index == bit);
                  k++)

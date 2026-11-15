@@ -6,26 +6,32 @@
 #include "flags.h"
 #include "sounds.h"
 
+/// Returns (arg0 + arg1) modulo arg1: arg0 wrapped into 0 to arg1 - 1 when it
+/// is at least -arg1.
 s32 Menu_GetModuloOfSum(s32 arg0, s32 arg1) { return (arg0 + arg1) % arg1; }
 
-s32 Menu_SetFirstActorRowCoordinates(s32 arg0) {
+/// Places the four party figures over their Djinn columns, 56 pixels apart
+/// from x 32, at screen y 61 plus yOffset. Returns that y.
+s32 Menu_SetFirstActorRowCoordinates(s32 yOffset) {
   u8 *current;
   s32 value;
   s32 count;
   current = (u8 *)Ram_HeapSlots->menuWork + 0x118;
-  arg0 += 0x3D;
+  yOffset += 0x3D;
   value = 0x20;
   count = 3;
   do {
     count--;
     *(s16 *)current = value;
-    *(s16 *)(current + 0x10) = arg0;
+    *(s16 *)(current + 0x10) = yOffset;
     value += 0x38;
     current += 2;
   } while (count >= 0);
-  return arg0;
+  return yOffset;
 }
 
+/// Returns the Djinn tutorial's message on giving a Djinni: the second set's
+/// while flag 0x175 is set.
 s32 Menu_GetDjinnGiveMessage(void) {
   if (GameFlag_Get(0x175))
     return (s32)MsgDjinnGiveTutorialB;
@@ -740,6 +746,8 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   }
 }
 
+/// Window_SetRectPalette on a rectangle of window's interior, (x, y) and its
+/// size in tiles from the interior's corner.
 void Window_SetInteriorRectPalette(struct RenderInput *panel, s32 x, s32 y,
                                    s32 width, s32 height, s32 palette) {
   Window_SetRectPalette((s16)panel->x + x + 1, (s16)panel->y + y + 1, width,
@@ -909,6 +917,7 @@ s32 Menu_GetModuloOfSum(s32 value, s32 count) __attribute__((const));
       wait(1);                                                                 \
   } while (0)
 
+/// The Djinn list's chooser.
 s32 DjinnMenu_SelectDjinn(s32 mode) {
   s8 columnFlags[8];
   u8 requiresTrade[16];
@@ -1530,6 +1539,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 
 #define DJINN_ENTRY_SET (-0x8000)
 
+/// Lists owned Djinn by element and index, marking those that are set.
+/// For element -1, entries also encode their party member.
 s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element) {
   struct BattleUnit *unit = Unit_Get(memberId);
   s32 count = 0;

@@ -6,6 +6,8 @@
 
 extern char ResourceId_WindowTiles;
 
+/// Draws window tile pattern over the tile of tilemap entry *entry, with its
+/// colours mapped through remap (0 leaves a pixel as it was).
 void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
                                u8 *remap) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
@@ -96,6 +98,9 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
 extern char ResourceId_WindowTiles;
 extern const u8 gText_ColourPens[];
 
+/// Draws a string of 16-bit character codes with the window font into tiles of
+/// their own, starting x pixels into the first tile, and points tiles (and the
+/// same entries in mirror) at them.
 s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   // Unused: gives the stack frame its 32 extra bytes.
   UNUSED u32 reserve[8];
@@ -268,6 +273,8 @@ s32 Text_DrawStringAsTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x) {
   return count;
 }
 
+/// Frees the text tiles under a tilemap rectangle (x, y, width and height in
+/// tiles) for reuse: their taken and shown bits are cleared.
 void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
   u8 *base = Ram_HeapSlots->windowWork;
   u16 *cursor = &((struct WindowWork *)base)->tilemap[y][x];
@@ -291,6 +298,8 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
   }
 }
 
+/// Marks the text tiles the tilemap shows, and frees those it no longer shows:
+/// a tile taken but not marked shown (attribute exactly 1).
 void Window_MarkVisibleTextTiles(void) {
   u8 *base = Ram_HeapSlots->windowWork;
   u32 alternate = ((struct WindowWork *)base)->extraTextTiles;
@@ -318,6 +327,8 @@ void Window_MarkVisibleTextTiles(void) {
   }
 }
 
+/// The window work as Text_UseExtraTiles reads it: whether text may take the
+/// second range of tiles, and the state of each text tile.
 struct WindowTileWork {
   u8 unk000[2];
   u8 alt;
@@ -325,6 +336,9 @@ struct WindowTileWork {
   u8 table[256];
 };
 
+/// Frees the text tiles of the second range (attributes 128 to 255, tiles 512
+/// to 639), and with alt set lets text tiles take that range too; the first
+/// range's tiles keep their state.
 void Text_UseExtraTiles(s32 alt) {
   struct WindowTileWork *work =
       (struct WindowTileWork *)Ram_HeapSlots->windowWork;
@@ -526,17 +540,19 @@ void Text_SetStyle(s32 value) {
 void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                                  s32 y);
 
-void Text_DrawMessage(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+/// Decodes a message and draws it into a text canvas window at pixel (x, y),
+/// all at once.
+void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y) {
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u16 *counter = &canvas->textBufferEnd;
   s32 zero = 0;
 
   *counter = zero;
-  Message_Decode(arg0, 1);
+  Message_Decode(message, 1);
   canvas->textBuffer[*counter] = zero;
   *counter = (*counter + 1) & (UI_TEXT_ENTRY_COUNT - 1);
-  Text_DrawWideStringAtOffset(canvas->textBuffer, (struct Window *)arg1, arg2,
-                              arg3);
+  Text_DrawWideStringAtOffset(canvas->textBuffer, (struct Window *)window, x,
+                              y);
 }
 
 /// Decodes a message and draws it as tiles in a window at pixel (offsetX,
@@ -574,7 +590,9 @@ void Text_DrawMessageAsTiles(s32 character, struct RenderInput *position,
   }
 }
 
-void Text_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3) {
+/// Draws a byte string into a text canvas window at pixel (x, y). The
+/// 256-halfword scratch requires at most 255 input bytes before the terminator.
+void Text_DrawString(u8 *text, s32 window, s32 x, s32 y) {
   u16 *buffer = Heap_AllocEwram(0x200);
   u16 *output = buffer;
 
@@ -584,10 +602,12 @@ void Text_DrawString(u8 *text, s32 arg1, s32 arg2, s32 arg3) {
     output++;
   }
   *output = 0;
-  Text_DrawWideStringAtOffset(buffer, (struct Window *)arg1, arg2, arg3);
+  Text_DrawWideStringAtOffset(buffer, (struct Window *)window, x, y);
   Heap_Release(buffer);
 }
 
+/// Draws a byte string as tiles in window work at pixel (offsetX, offsetY) of
+/// its interior.
 void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
                              s32 offsetY) {
   u16 *buffer;
@@ -624,7 +644,9 @@ void Text_DrawStringAtOffset(u8 *text, struct RenderInput *work, s32 offsetX,
 
 u8 *String_FormatNumber(u8 *output, s32 value, s32 width);
 
-void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
+/// Draws a byte string into a window's tilemap at pixel (x, y) of its interior,
+/// rounded down to tiles.
+void Text_DrawStringInWindow(u8 *text, s32 window, u32 x, u32 y) {
   u16 *buffer = Heap_AllocEwram(0x200);
   u16 *output = buffer;
 
@@ -636,7 +658,7 @@ void Text_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
   x >>= 3;
   *output = 0;
   y >>= 3;
-  Text_DrawWideStringInWindow((s16 *)buffer, (struct Window *)arg1, x, y);
+  Text_DrawWideStringInWindow((s16 *)buffer, (struct Window *)window, x, y);
   Heap_Release(buffer);
 }
 
@@ -649,6 +671,8 @@ void Text_DrawNumber(s32 value, s32 width, s32 output, s32 x, s32 y) {
   Text_DrawString(String_FormatNumber(data, pinned, width), output, x, y);
 }
 
+/// Draws a number (width as String_FormatNumber) as tiles in a window at pixel
+/// (x, y) of its interior.
 void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work,
                              s32 x, s32 y) {
   u8 data[16];
@@ -657,6 +681,8 @@ void Text_DrawNumberAtOffset(s32 value, s32 width, struct RenderInput *work,
   Text_DrawStringAtOffset(String_FormatNumber(data, pinned, width), work, x, y);
 }
 
+/// Draws a number (width as String_FormatNumber) into a window's tilemap at
+/// pixel (x, y) of its interior.
 void Text_DrawNumberInWindow(s32 value, s32 width, s32 output, s32 x, s32 y) {
   u8 data[16];
   s32 pinned = value;

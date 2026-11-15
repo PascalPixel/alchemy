@@ -51,6 +51,8 @@ void BattleCamera_SetCommandView(s32 pos) {
 
 #define Unit_CalculateFar ((void (*)(u16))Unit_CalculateFar)
 
+/// Ends every unit's guard (Defend and the like) and recalculates its stats.
+/// Clears every unit's defendLevel.
 void BattleUnit_ResetGuardLevels(void) {
   u16 ids[14];
   s32 count;
@@ -66,38 +68,45 @@ void BattleUnit_ResetGuardLevels(void) {
   }
 }
 
+/// Rolls whether the party gets away: 50 percent, 20 more for each failed
+/// attempt, and 5 for each level the party's average is above the enemies'. A
+/// party that struck first always gets away, and no one from a battle that
+/// forbids it. Returns 1 when the party gets away.
 s32 BattleFlee_CheckSuccess(void) {
   s32 escaped;
-  s16 livingUnits[14];
+  s16 livingUnits[UNIT_MAX];
   s32 livingCount;
   s32 levelTotal;
   s32 unitIndex;
   s32 chance;
-  struct BattleEscapeState *escapeState;
+  struct BattleWork *escapeState;
 
   escaped = 0;
-  escapeState = (struct BattleEscapeState *)Ram_HeapSlots->battleWork;
-  if (escapeState->guaranteed == 1) {
+  escapeState = Ram_HeapSlots->battleWork;
+  if (escapeState->firstStrike == FIRST_STRIKE_PARTY) {
     escaped = 1;
   } else {
     levelTotal = 0;
-    chance = 0x1388 + (escapeState->failedAttempts * 0x7D0);
+    chance = 5000 + (escapeState->unk046 * 2000);
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, livingUnits);
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
-      levelTotal += ((u8 *)Unit_Get((s32)livingUnits[unitIndex]))[0x0f];
+      levelTotal +=
+          ((struct BattleUnit *)Unit_Get((s32)livingUnits[unitIndex]))->level;
     }
-    chance += __divsi3(levelTotal * 0x1F4, livingCount);
+    chance += __divsi3(levelTotal * 500, livingCount);
     livingCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, livingUnits);
     levelTotal = 0;
     for (unitIndex = 0; unitIndex < livingCount; unitIndex++) {
-      levelTotal += ((u8 *)Unit_Get((s32)livingUnits[unitIndex]))[0x0f];
+      levelTotal +=
+          ((struct BattleUnit *)Unit_Get((s32)livingUnits[unitIndex]))->level;
     }
-    chance -= __divsi3(levelTotal * 0x1F4, livingCount);
+    chance -= __divsi3(levelTotal * 500, livingCount);
     if ((chance > 0) &&
-        ((u32)((u32)(0x2710 * Random16()) >> 0x10) < (u32)chance)) {
+        // A roll from 0 to 9999 against the chance.
+        ((u32)((u32)(10000 * Random16()) >> 16) < (u32)chance)) {
       escaped = 1;
     }
-    escapeState->failedAttempts++;
+    escapeState->unk046++;
   }
   if (gMainRoutineWork.battleType == BATTLE_TYPE_NO_ESCAPE) {
     escaped = 0;
@@ -105,6 +114,8 @@ s32 BattleFlee_CheckSuccess(void) {
   return escaped;
 }
 
+/// Builds the party's commands for the turn into entries and returns how many
+/// there are, or -1 when none could be chosen.
 s32 Battle_BuildUnitActions(struct BattleActionRecord *entries) {
   void *buffer = Heap_AllocEwram(17);
   s32 count = Battle_CollectPartyCommandsFar(entries, buffer, 0);
@@ -116,6 +127,8 @@ s32 Battle_BuildUnitActions(struct BattleActionRecord *entries) {
   return result;
 }
 
+/// The enemies' actions for the turn, in a shuffled order; none act when the
+/// party struck first. Returns how many there are.
 s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
   u16 unitIds[14];
   s32 entryCount = 0;
@@ -123,7 +136,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
   s32 unitCount;
   s32 shuffleOrUnitIndex;
 
-  if (battle->firstStrike == 1)
+  if (battle->firstStrike == FIRST_STRIKE_PARTY)
     return 0;
 
   unitCount = BattleUnit_ListLiving(2, unitIds);
@@ -138,7 +151,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
     unitIds[second] = swap;
   }
 
-  if (battle->firstStrike == 2) {
+  if (battle->firstStrike == FIRST_STRIKE_ENEMIES) {
     s32 limit = ((Random16() * 5) >> 16) + 1;
 
     if (limit <= 1)
@@ -191,7 +204,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
 
       entryCount++;
 
-      if (battle->firstStrike == 2)
+      if (battle->firstStrike == FIRST_STRIKE_ENEMIES)
         break;
     }
   }
@@ -199,6 +212,7 @@ s32 Battle_BuildEnemyActions(struct BattleActionRecord *entries) {
   return entryCount;
 }
 
+/// Swaps two actions of the turn's order.
 static inline void BattleAction_Swap(struct BattleActionRecord *a,
                                      struct BattleActionRecord *b) {
   struct BattleActionRecord temporary;
@@ -246,6 +260,9 @@ void BattleActionOrder_Sort(struct BattleActionRecord *entries, s32 count) {
   } while (swapped != 0);
 }
 
+/// Link battle: exchanges the turn's actions with the other console and appends
+/// the opponent's, their units and targets seen from this side. Returns how
+/// many were received, or -1 when the exchange fails.
 s32 Battle_AppendLinkedActions(struct BattleActionRecord *actions, s32 count) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   s32 result = 0;
@@ -479,13 +496,14 @@ s32 Battle_GatherActions(struct BattleActionRecord *acts) {
   BattleMessage_CloseFar();
 
   // Ally commands (unavailable when enemies strike first).
-  if (*mode != 2) {
+  if (*mode != FIRST_STRIKE_ENEMIES) {
     cnt = Battle_BuildUnitActions(acts);
     if (cnt < 0)
       goto finish;
     // A failed escape gives enemies the same advantage as striking first.
-    if (cnt != 0 && acts[0].command == 99 && BattleFlee_CheckSuccess() == 0)
-      *mode = 2;
+    if (cnt != 0 && acts[0].command == COMMAND_FLEE &&
+        BattleFlee_CheckSuccess() == 0)
+      *mode = FIRST_STRIKE_ENEMIES;
   } else {
     cnt = 0;
   }

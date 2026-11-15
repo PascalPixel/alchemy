@@ -126,6 +126,7 @@ struct OwnerStats__presentation {
   struct OwnerElementStats element[4];
 };
 
+/// A unit as BattleEnemy_AdjustLevel reads it: its level and its stats.
 struct OwnerState {
   u8 unk00[15];
   u8 level;
@@ -267,6 +268,9 @@ void BattleUnit_Strengthen(s32 unitId) {
 #define CH_CNT 9
 #endif
 
+/// Gives an enemy of the class its name letter, which tells it from others of
+/// its kind: digits abroad and the alphabet in Japanese. Returns -1 when five
+/// classes are already listed.
 s32 BattleEnemy_ClaimNameLetter(s32 no, s32 n) {
   struct SummonChargeState *w;
   s32 num;
@@ -306,6 +310,7 @@ s32 BattleEnemy_ClaimNameLetter(s32 no, s32 n) {
 
 #define LIST_MARKER_CHAR SUMMON_CHANNEL_MARKER
 
+/// Frees a departing enemy's name letter for the next of its class.
 s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
   struct SummonChargeState *state =
       (struct SummonChargeState *)Ram_HeapSlots->battleWork;
@@ -339,6 +344,8 @@ s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
   state->usedMasks[index] &= ~(1 << bit);
 }
 
+/// Gives the first enemy of the class on the field the first letter (0),
+/// appended to its name, once a second of its class arrives.
 s32 BattleEnemy_LetterFirstOfKind(s32 enemyId) {
   struct BattleUnit *summon;
   s32 objectIndex;
@@ -379,6 +386,7 @@ next_object:
     goto scan_objects;
 }
 
+/// Returns the class of a random member of the formation that may appear.
 s32 BattleFormation_GetRandomMember(s32 recordId) {
   s32 *choicesBase;
   s32 choices[5];
@@ -413,6 +421,9 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
   return choices[(Random16() * count) >> 16];
 }
 
+/// Builds the battle's enemies from a formation and returns how many there are:
+/// each member its fewest times and at random up to its most while the sprite
+/// slots hold them, laid out as the formation says.
 s32 BattleFormation_BuildEnemyList(s32 recordId) {
   u16 *enemyClasses;
   struct FormationBattleWork *battle;
@@ -569,21 +580,23 @@ assign_enemy:
     struct BattleUnit *unit;
     s32 enemyId;
 
-    if (suffixCode & 0x8000)
+    if (suffixCode & ENEMY_LETTER_FIRST_TOO)
       BattleEnemy_LetterFirstOfKind(enemyClasses[memberOrEnemyIndex]);
-    BattleUnit_SetFar(memberOrEnemyIndex + 128,
-                      enemyClasses[memberOrEnemyIndex], suffixCode & 0x7fff);
-    unit = Unit_Get(memberOrEnemyIndex + 128);
+    BattleUnit_SetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
+                      enemyClasses[memberOrEnemyIndex],
+                      suffixCode & ENEMY_LETTER_MASK);
+    unit = Unit_Get(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
     if (levelAdjustment != 0)
-      BattleEnemy_AdjustLevel(memberOrEnemyIndex + 128, levelAdjustment);
+      BattleEnemy_AdjustLevel(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
+                              levelAdjustment);
     else if (!GameFlag_Get(FLAG_MONSTER_BATTLE) && GameFlag_Get(0x2e))
-      BattleUnit_Strengthen(memberOrEnemyIndex + 128);
+      BattleUnit_Strengthen(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
     battle->unk868 = 0;
     enemyId = unit->enemyId;
     switch (enemyId) {
-    case 101:
-    case 102:
-    case 103:
+    case ENEMY_POSEIDON:
+    case ENEMY_POSEIDON_2:
+    case ENEMY_POSEIDON_3:
       if (!GameFlag_Get(FLAG_MONSTER_BATTLE))
         battle->unk868 = 1;
       break;
@@ -598,6 +611,8 @@ assigned:
   return memberOrEnemyIndex;
 }
 
+/// Returns the class's defeat-sound kind, 0 to 4, or -1 for none; a fallen
+/// enemy's sound is SE_ENEMY_CRY plus it. Reads any index unchecked.
 u32 BattleSprite_GetDefeatSound(s32 index) {
   u32 kind = gSummon_EntryTable[index].layoutKind;
 
@@ -606,18 +621,23 @@ u32 BattleSprite_GetDefeatSound(s32 index) {
   return kind;
 }
 
+/// Returns the class's battle sprite, row 0's for a class out of range.
 s32 BattleSprite_GetSprite(s32 index) {
   if ((u32)index > 386)
     return gSummon_EntryTable[0].animation;
   return gSummon_EntryTable[index].animation;
 }
 
+/// Returns the class's sprite palette. For a class out of range it returns row
+/// 0's sprite, not a palette.
 s32 BattleSprite_GetPalette(s32 index) {
   if ((u32)index > 386)
     return gSummon_EntryTable[0].animation;
   return gSummon_EntryTable[index].layoutBits1;
 }
 
+/// Returns 1 for a small class, which takes one enemy sprite slot instead of
+/// two and stands closer to its neighbours; 0 out of range.
 s32 BattleSprite_IsSmall(s32 index) {
 
   s32 result;
@@ -632,6 +652,8 @@ s32 BattleSprite_IsSmall(s32 index) {
   return result;
 }
 
+/// Returns the battle effect a class's plain attack shows, 1 for none or out of
+/// range.
 u32 BattleSprite_GetAttackEffect(u32 index) {
   u16 value;
 
@@ -641,6 +663,8 @@ u32 BattleSprite_GetAttackEffect(u32 index) {
   return value ? value : 1;
 }
 
+/// Returns how high a class hops as it runs up to attack, in pixels; 0 out of
+/// range.
 u32 BattleSprite_GetAttackHop(u32 index) {
   u16 value;
 
@@ -650,12 +674,16 @@ u32 BattleSprite_GetAttackHop(u32 index) {
   return value ? value : 0;
 }
 
+/// Returns 1 for a class whose blow lands with a heavier impact; 0 out of
+/// range.
 s32 BattleSprite_HasHeavyImpact(s32 index) {
   if ((u32)index > 386)
     return 0;
   return gSummon_EntryTable[index].layoutBit0;
 }
 
+/// Returns the height an animation is drawn at over a class, in pixels, or 0
+/// for its size's default; 0 out of range.
 u32 BattleSprite_GetEffectHeight(u32 index) {
   u8 *table;
   u32 offset;

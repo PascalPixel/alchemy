@@ -20,11 +20,16 @@
 extern struct LinkSignature
     gLinkPeerSignatures__menus[] __asm__("gLinkPeerSignatures");
 
+/// A task while the party's commands are chosen (Battle_CollectPartyCommands):
+/// eases the battle view a third of the way to BattleMenuWork.targetViewOffset
+/// each frame (a pixel at least), draws the sprites of BattleMenuWork.icons
+/// that are shown (the chosen command's and ability's icons, the party member's
+/// portrait) and slides the page arrows.
 void UpdateLinkSessionCountdown(void) {
-  struct LinkCountdownState *state =
-      (struct LinkCountdownState *)Ram_HeapSlots->battleMenuWork;
-  struct LinkRuntimeState *runtime;
-  struct CountdownDisplayEntry *entry;
+  struct BattleMenuWork *state =
+      (struct BattleMenuWork *)Ram_HeapSlots->battleMenuWork;
+  struct BattleWork *runtime;
+  struct MenuSprite *entry;
   u8 *active;
   struct LinkSignature *signature;
   s32 target;
@@ -38,8 +43,8 @@ void UpdateLinkSessionCountdown(void) {
   s32 i;
 
   if (state != 0) {
-    target = state->targetOffset;
-    current = state->currentOffset;
+    target = state->targetViewOffset;
+    current = state->viewOffset;
     if (target != current) {
       difference = target - current;
       step = __divsi3(difference, 3);
@@ -49,12 +54,12 @@ void UpdateLinkSessionCountdown(void) {
           step = 1;
       }
       newOffset = current + step;
-      state->currentOffset = newOffset;
+      state->viewOffset = newOffset;
       BattleCamera_SetCommandViewFar(newOffset);
     }
 
-    entry = state->entries;
-    active = state->entryActive;
+    entry = state->icons;
+    active = state->iconShown;
     i = 2;
     do {
       if (*active++ != 0)
@@ -62,13 +67,13 @@ void UpdateLinkSessionCountdown(void) {
       i--;
       entry++;
     } while (i >= 0);
-    Link_DrawPageArrows(0x06006680);
+    Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
 
-    if (state->enabled == 0)
+    if (state->linkTimer == 0)
       goto done;
 
-    runtime = (struct LinkRuntimeState *)Ram_HeapSlots->battleWork;
-    if (runtime->paused == 0)
+    runtime = Ram_HeapSlots->battleWork;
+    if (runtime->linkPaused == 0)
       goto load_timer;
     state->timer = 0;
     goto done;
@@ -86,7 +91,7 @@ void UpdateLinkSessionCountdown(void) {
     timer = state->timer;
     if (timer >= 0)
       goto timer_ready;
-    signature = &gLinkPeerSignatures__menus[runtime->side ^ 1];
+    signature = &gLinkPeerSignatures__menus[runtime->linkSide ^ 1];
     if (signature->e != 'E')
       goto signature_done;
     if (signature->d == 'D')
@@ -97,8 +102,8 @@ void UpdateLinkSessionCountdown(void) {
       goto done;
 
   timer_ready:
-    if (state->displayHandle == 0 && state->secondaryHandle == 0) {
-      state->displayHandle = Link_CreateCountdownLabelWindow();
+    if (state->timerWindow == 0 && state->timerHidden == 0) {
+      state->timerWindow = (void *)Link_CreateCountdownLabelWindow();
       timer = state->timer;
     }
 
@@ -114,8 +119,8 @@ void UpdateLinkSessionCountdown(void) {
     if (seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
       Sound_PlayFar(SE_TRIPLE_TONE_LOW);
 
-    if (state->displayHandle != 0)
-      Text_DrawNumberInWindow(seconds, 2, state->displayHandle, 16, 8);
+    if (state->timerWindow != 0)
+      Text_DrawNumberInWindow(seconds, 2, (s32)state->timerWindow, 16, 8);
   }
 
 done:

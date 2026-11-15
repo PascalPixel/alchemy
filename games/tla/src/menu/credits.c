@@ -87,30 +87,29 @@ extern u8 gDebugTextEnabled;
 
 /// Fills 30K bytes of 256-colour characters with colour 1 and clears 128
 /// palette colours.
-/// alt: 0 selects the first half (VRAM 0x06000000, palette colours 0-127);
+/// @param alternate 0 selects the first half (VRAM 0x06000000, palette colours
+/// 0-127);
 ///      1 selects the second (VRAM 0x06008000, colours 128-255, fill colour
 ///      129).
-void Credits_ClearBuffer(s32 alt) {
-  u32 v;
-  u32 vram;
-  u32 pal;
-  volatile u32 fill;
+void Credits_ClearBuffer(s32 alternate) {
+  u32 fillColor;
+  u32 tileDestination;
+  u32 paletteDestination;
+  volatile u32 dmaFill;
 
-  if (alt == 0) {
-    v = 0x01010101;
-    vram = 0x06000000;
-    pal = 0x05000000;
+  // Use a solid pixel in the palette being cleared, producing an opaque
+  // black layer for the next crossfade.
+  if (alternate == 0) {
+    fillColor = 0x01010101;
+    tileDestination = (u32)BG_CHAR_BLOCK(0);
+    paletteDestination = (u32)BG_PLTT;
   } else {
-    v = 0x81818181;
-    vram = 0x06008000;
-    pal = 0x05000100;
+    fillColor = 0x81818181;
+    tileDestination = (u32)BG_CHAR_BLOCK(2);
+    paletteDestination = (u32)&BG_PLTT[128];
   }
-  fill = v;
-  Dma_Set((const void *)&fill, (void *)vram,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 7680, REG_DMA3);
-  fill = 0;
-  Dma_Set((const void *)&fill, (void *)pal,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 64, REG_DMA3);
+  Dma_Fill32Cell(dmaFill, fillColor, (void *)tileDestination, 30720);
+  Dma_Fill32Cell(dmaFill, 0, (void *)paletteDestination, 256);
 }
 
 /* VIEW(credits): variable gWaitForFlashWrite as u16 gWaitForFlashWrite[];
@@ -143,11 +142,11 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
   if (alternate == 0) {
     paletteOffset = 0;
     tileDestination = (void *)BG_CHAR_BLOCK(0);
-    paletteDestination = 0x05000000;
+    paletteDestination = (u32)BG_PLTT;
   } else {
     paletteOffset = 0x80808080;
     tileDestination = (void *)BG_CHAR_BLOCK(2);
-    paletteDestination = 0x05000100;
+    paletteDestination = (u32)&BG_PLTT[128];
   }
   RamCode_Load(decoder, BattleEffect_ExpandCode, BattleEffect_ExpandCodeSize);
   decoder(resourceData + 256, tileDestination, paletteOffset);
@@ -191,6 +190,8 @@ void Credits_BuildBackgroundTilemap(u32 *table) {
     *table++ = 0;
 }
 
+/// A VBlank task of the credits: drifts both pictures together, keeping their
+/// horizontal offsets aligned throughout the crossfade.
 void Credits_ScrollBackgrounds(void) {
   if ((gVBlankCount & 3) == 0) {
     u32 decrement = 0xffff;
@@ -362,7 +363,7 @@ void Credits_InitCrawlSprites(void) {
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (0x6000 / 4),
           REG_DMA3);
   fill = 0x11111111;
-  Dma_Set((void *)&fill, (void *)0x06016000,
+  Dma_Set((void *)&fill, (void *)(OBJ_VRAM0 + 0x6000),
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 64, REG_DMA3);
 
   entry = *(u32 **)cell;
@@ -453,14 +454,14 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align) {
   for (i = 0; i <= 23; i++) {
     u32 *column = (u32 *)canvas + i;
 
-    tiles = (u32 *)((slot + i) * 32 + 0x06010000);
+    tiles = (u32 *)((slot + i) * 32 + OBJ_VRAM0);
     for (row = 0; row < 8; row++) {
       *tiles++ = column[row * 24];
     }
   }
   for (offset = slot * 32, top = (u32 *)(canvas + 0x300), j = 0; j <= 23;
        j++, offset += 32, top++) {
-    tiles = (u32 *)(offset + 0x06010300);
+    tiles = (u32 *)(offset + OBJ_VRAM0 + 0x300);
     for (row = 0; row < 8; row++) {
       *tiles++ = top[row * 24];
     }
@@ -469,6 +470,8 @@ s32 DisplayScroll_DrawMessageLine(s32 message, s32 slot, s32 align) {
   return busy;
 }
 
+/// A VBlank task added by Credits_InitTextSprites: maps the visible sixteen
+/// rows onto the tile ring and uploads their sprites.
 void Credits_UpdateTextSprites(void) {
   u32 frame = gDisplayScroll_Position;
   u32 fine = frame & 7;
@@ -559,7 +562,7 @@ void Credits_InitTextSpritesAtPage(s32 page) {
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (0x6000 / 4),
             REG_DMA3);
     fill = 0x11111111;
-    Dma_Set((void *)&fill, (void *)0x06016000,
+    Dma_Set((void *)&fill, (void *)(OBJ_VRAM0 + 0x6000),
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 64, REG_DMA3);
     entry = *(u32 **)cell;
   }
@@ -757,6 +760,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
 /// Unused: an empty function nothing calls, after the pool.
 UNUSED void Credits_ReservedNoOp(void) {}
 
+/// Sets the position the credits' scroll moves to.
 void SceneState_SetScrollTarget(u16 value) { gScrollTarget = value; }
 
 /// Copies 15 columns of a scrolling picture's map into a wrapping 2 KB
@@ -1033,7 +1037,7 @@ void EndingPicture_InitStrips(void) {
   entries = Heap_AllocEwram(0x120);
   gEndingPicture_Strips = entries;
   tile = VramCache_Load(slot, 0x200, 0);
-  Dma_Fill32(0x11111111, (void *)(0x06010000 + tile * 32), 0x200);
+  Dma_Fill32(0x11111111, (void *)(OBJ_VRAM0 + tile * 32), 0x200);
   words = (u32 *)gEndingPicture_Strips;
   for (i = 0; i < 8; i++) {
     *words++ = 0;

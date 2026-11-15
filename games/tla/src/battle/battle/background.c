@@ -112,6 +112,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
   BattleTransition_BuildTilemap((void *)BG_SCREEN_BLOCK(31));
 }
 
+/// Allocates the zoomed background's scanline work.
 void BattleBackground_Init(void) {
   void *block = HeapSlot_AllocEwram(HEAP_SLOT_BATTLE_SCANLINES, 0x2a0);
   struct BattlePresentationTransition *work = Ram_HeapSlots->battleBackground;
@@ -123,13 +124,14 @@ void BattleBackground_Init(void) {
   work->mode = 0;
 }
 
+/// Frees the zoomed background's scanline work.
 void BattleBackground_Free(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_SCANLINES);
 }
 
-// Loads a battle backdrop: its picture decoded into BG VRAM, its palette
-// (darkened by level steps of 1/60 when level is not negative), the tile
-// table and tilemap, and the HBlank scroll the first time.
+/// Loads a battle background: its picture decoded into BG VRAM, its palette
+/// darkened by level steps of 1/60 (none when level is negative), its tile
+/// table and tilemap, and the HBlank scroll the first time.
 void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   struct BattlePresentationTransition *view = Ram_HeapSlots->battleBackground;
   u8 *data = Resource_GetTableEntry(resource);
@@ -171,6 +173,9 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
     REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
 }
 
+/// Builds the zoomed background's next page for a zoom of scale about centerX
+/// and centerY, shifted by offsetX and offsetY, and shows it: below a zoom of 1
+/// the plane lies flat, from 1 it wraps and turns with the camera.
 void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
                            s32 scale) {
   struct BattleBackgroundView *view =
@@ -392,8 +397,10 @@ UNUSED void Battle_BrightenAllLayers(void) {
   REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN;
 }
 
+/// Returns the 16.16 product of a and b.
 s32 Battle_MulQ16(s32 a, s32 b) { return Iwram_MulQ16(a, b); }
 
+/// A transform as BattleTransition_InitializeEntries reads its first two words.
 struct BattleTransitionEntry {
   u32 value;
   u32 sum;
@@ -401,6 +408,8 @@ struct BattleTransitionEntry {
   u32 fieldc;
 };
 
+/// Unused: sets entries to the identity transform, then stores the first word's
+/// old value plus its new one in the second.
 void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
   u32 previous = entries[0].value;
 
@@ -408,26 +417,6 @@ void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
   Transform_SetIdentity(entries);
   entries[0].sum = previous + entries[0].value;
 }
-
-struct MenuFlagWork {
-  u8 unk000[0x506];
-  u8 busy;
-};
-
-struct FxGroup {
-  u8 unk00[32];
-  struct Actor *objects[8];
-  u16 values[8];
-  s32 count;
-};
-
-struct DescriptorEntry {
-  s16 id;
-  u8 unk02[6];
-};
-
-extern void *gOverlayArea[];
-extern struct DescriptorEntry gData_080eff28[];
 
 void BattleEffect_StartTiledCanvas(s32 mode);
 void BattleEffect_EndCanvasLayer(void);
@@ -438,6 +427,7 @@ void Shop_InitializeWork(void);
 s32 Inn_RoomPrice(s32 innId);
 void Shop_ReleaseWork(void);
 
+/// Unused: returns value divided by 16.
 s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 
 // What Select picks: another value in the Japanese release.
@@ -447,6 +437,8 @@ s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 #define DEBUG_VALUE_SELECT 544
 #endif
 
+/// The battle work as Battle_AdjustDebugValue reads it: the debug value at
+/// 0x854.
 struct DebugBattleWork {
   u8 unk000[0x854];
   s32 debugValue;
@@ -490,6 +482,8 @@ s32 Battle_AdjustDebugValue(s32 value) {
 
 // Battle presentation: toggle translucency on unit graphics.
 
+/// A part of a unit's sprite (its image, or its shadow at 0x1c) as the
+/// highlight reads its OBJ mode.
 struct ActorSpritePart {
   u8 unk00[4];
   u16 y : 8;
@@ -501,6 +495,7 @@ struct ActorSpritePart {
   u8 unk06[0x16];
 };
 
+/// A unit's sprite as the highlight reads it: its image and its shadow.
 struct ActorSpriteRecord {
   struct ActorSpritePart part[2];
 };
@@ -655,11 +650,15 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
   }
 }
 
+/// A spark of the star field behind a summon: its position and velocity, 16.16,
+/// and the frames it has left.
 struct Spark {
   s32 pos[6]; // x, y, z and their velocities, 16.16
   s32 life;
 };
 
+/// A ring of the star field leaving its centre: its place, its speed and its
+/// age.
 struct Ring {
   s32 x;
   s32 y;
@@ -668,6 +667,8 @@ struct Ring {
   s32 age;
 };
 
+/// The star field's work: the canvas sheet, sixteen sparks, three rings, the
+/// frames counted, whether the canvas is ready, and its centre.
 struct SparkWork {
   u8 sheet[0x11c0];
   struct Spark sparks[16];
@@ -688,11 +689,11 @@ extern const u8 gElementGlow_StarSizes[];
 extern const s32 gElementGlow_StarPictures[];
 extern const s32 Data_08129830[];
 
-// One frame of the star field: sixteen sparks fall in toward the centre
-// along a damped spiral and shrink as they near it; while the field is
-// young (24 frames) a spark that dies is born again on a random ring.
-// Then three rings drift outward through their four frames. The canvas
-// is marked ready for the transfer callback at the end.
+/// Steps the star field behind a summon one frame: its sparks spiral in
+/// towards the centre along a damped spiral and shrink as they near it; while
+/// the field is young (24 frames) a spark that dies is born again on a random
+/// ring. Then three rings drift outward through their four frames. The canvas
+/// is marked ready for the transfer at the end.
 void ElementGlow_UpdateStarField(void) {
   s32 j;
   s32 frame;
@@ -797,6 +798,8 @@ void ElementGlow_UpdateStarField(void) {
 
 s32 ColorBuffer_ScaleThreeQuarters(void *source, void *destination, s32 size);
 
+/// Copies the star field's canvas into BG character block 1 at three quarters
+/// of its brightness once the field marks it ready.
 s32 ElementGlow_UploadStarField(void) {
   void *source = Ram_HeapSlots->battleCanvas;
   u8 *context = Ram_HeapSlots->battleEffect;
@@ -823,10 +826,12 @@ s32 BattleEffect_LoadBlitterFar(s32 slot, s32 modeAndFlags);
 s32 BattleEffect_BuildBlitterFar(s32 slot, s32 source, s32 destination,
                                  s32 flags, s32 mode);
 
+/// Returns the x of the point at angle and radius from the origin.
 static __inline__ s32 PolarX(s32 angle, s32 radius) {
   return Iwram_MulQ16(Trig_Cos(angle), radius);
 }
 
+/// Returns the y of the point at angle and radius from the origin.
 static __inline__ s32 PolarY(s32 angle, s32 radius) {
   return Iwram_MulQ16(Trig_Sin(angle), radius);
 }
@@ -939,31 +944,22 @@ s32 ElementGlow_End(s32 unused) {
 /// Does nothing; nothing calls it.
 void ElementGlow_ReservedNoOp(void) {}
 
-// The parts of the battle work this effect uses.
-struct ElementSession {
-  u8 unk000[0x56c];
-  u16 palette[128];
-  s32 brightness;
-  u16 background;
-};
-
 s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen);
 void BattleEffect_RunElementBurstFar(struct BattlePresentationWork *launch);
 void BattleEffect_StartElementStreaksFar(s32 mode);
 void BattleEffect_EndElementStreaksFar(void);
 
-// Plays a unit's element effect in one of four ways: 0, the star field
-// around the unit while the backdrop darkens over 25 frames (45 frames);
-// 1, the prepared canvas scene of the kind, centred on the unit (40
-// frames); 2, the ice fleck burst; 3, the gathering burst.
+/// Plays a unit's element glow in one of four ways, and returns when it is
+/// over: 0, the star field around the unit while the backdrop darkens over 25
+/// frames (45 frames); 1, the prepared canvas scene of the kind, centred on the
+/// unit (40 frames); 2, the ice fleck burst; 3, the gathering burst.
 void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
   struct ScreenPoint position;
   struct ScreenPoint position2;
   struct BattlePresentationWork launch;
   struct BattlePresentationWork launch2;
   s32 origin[2];
-  struct ElementSession *session =
-      (struct ElementSession *)Ram_HeapSlots->battleWork;
+  struct BattleWork *session = Ram_HeapSlots->battleWork;
   volatile u16 *ime;
   struct SparkWork *work;
   s32 frame;

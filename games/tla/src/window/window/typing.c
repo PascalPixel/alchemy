@@ -27,9 +27,12 @@ void Text_ScrollCanvasUp(s32 step) {
 }
 
 s32 Message_Type(struct UiChannelSlot *channel);
-struct Window_0803cbf8;
-void Window_StepSwellEffect(struct Window_0803cbf8 *window);
+struct UiChannelSlot;
+void Window_StepSwellEffect(struct UiChannelSlot *window);
 
+/// The per-frame message update: each message whose window is fully open runs
+/// its window animation or types more text, and on the text's end marks the
+/// window done (state 1) or closes it.
 void Message_UpdateAll(void) {
   u8 *channel = (u8 *)Ram_HeapSlots->windowWork + 0x6b8;
   s32 channelNo = 0;
@@ -48,9 +51,9 @@ void Message_UpdateAll(void) {
         s32 kind;
 
         if (pending != 0) {
-          Window_StepSwellEffect((struct Window_0803cbf8 *)channel);
+          Window_StepSwellEffect(channel);
         } else {
-          kind = Message_Type((struct UiChannelSlot *)channel);
+          kind = Message_Type(channel);
           switch (kind) {
           case 8:
             *(u16 *)(*(u8 **)channel + 0x14) = one;

@@ -27,24 +27,27 @@ void BattleUnit_ListAllAndSubmit(void) {
   BattleActor_SpawnObjectsForList(list, 0);
 }
 
+/// Returns the palette of a unit's battle object.
 s32 BattleMotion_GetSlotPalette(s32 id) {
   return BattleObject_Get(id)->palette;
 }
 
-s32 Enemy_HasSpriteRoom(s32 arg0) {
+/// Returns 1 if an enemy of the class would find room among the enemy sprite
+/// slots, two side by side for a large one.
+s32 Enemy_HasSpriteRoom(s32 classId) {
   s32 retval;
   s32 i;
-  struct Layout *ptr;
+  struct BattleWork *battle;
 
-  retval = BattleSprite_IsSmall(arg0);
-  ptr = (struct Layout *)Ram_HeapSlots->battleWork;
+  retval = BattleSprite_IsSmall(classId);
+  battle = Ram_HeapSlots->battleWork;
   i = 0;
   for (; i < 6; i++) {
-    if (ptr->field[i] != 0)
+    if (battle->spriteSlots[i] != 0)
       continue;
     if (retval != 0)
       break;
-    if (i <= 4 && ptr->field[i + 1] == 0)
+    if (i <= 4 && battle->spriteSlots[i + 1] == 0)
       break;
   }
   return i != 6;
@@ -56,8 +59,7 @@ s32 Enemy_HasSpriteRoom(s32 arg0) {
 /// the sprite value below, or 0 when a load fails.
 s32 EnemySprite_LoadIntoSlots(s32 unit) {
   s32 pass;
-  struct BattleSpriteSlots *table =
-      (struct BattleSpriteSlots *)Ram_HeapSlots->battleWork;
+  struct BattleWork *table = Ram_HeapSlots->battleWork;
   struct BattleUnit *actor = Unit_Get(unit);
   s32 singleSlot = BattleSprite_IsSmall(actor->enemyId);
   /* FAKEMATCH(temporary): result cleared a halfword at a time. */
@@ -117,9 +119,10 @@ s32 EnemySprite_LoadIntoSlots(s32 unit) {
   return result.value;
 }
 
+/// Frees every enemy sprite slot unit unitId holds, unloading its sprite.
+/// Clears those BattleWork.spriteSlots.
 void BattleObject_ReleaseSpriteSlots(s32 value) {
-  struct BattleSpriteSlots *work =
-      (struct BattleSpriteSlots *)Ram_HeapSlots->battleWork;
+  struct BattleWork *work = Ram_HeapSlots->battleWork;
   s32 index;
 
   for (index = 0; index <= 5; index++) {
@@ -130,6 +133,8 @@ void BattleObject_ReleaseSpriteSlots(s32 value) {
   }
 }
 
+/// Returns the kind of the weapon whose item id is
+/// itemId, which picks a party member's weapon sprite.
 s32 BattleUnit_GetWeaponKind(s32 key) {
   s32 index;
   u32 value;
@@ -149,10 +154,11 @@ s32 BattleUnit_GetWeaponKind(s32 key) {
   return result;
 }
 
-/// The value of the owner's equipped weapon from its class's table, or 0.
+/// Returns the battle sprite of a character holding its equipped weapon, from
+/// that character's table by the weapon's kind, or 0 with no weapon.
 s32 BattleUnit_GetWeaponSprite(s32 owner) {
-  struct OwnerInventoryState *unit = Unit_Get(owner);
-  s32 slot = Inventory_FindEquippedFar(owner, 1);
+  struct BattleUnit *unit = Unit_Get(owner);
+  s32 slot = Inventory_FindEquippedFar(owner, EQUIP_WEAPON);
   s32 result = 0;
 
   if (slot >= 0) {
@@ -160,30 +166,30 @@ s32 BattleUnit_GetWeaponSprite(s32 owner) {
 
     index = BattleUnit_GetWeaponKind(unit->inventory[slot] &
                                      INVENTORY_ITEM_ID_MASK);
-    switch (unit->classId) {
+    switch (unit->enemyId) {
     case ISAAC:
-      result = gData_081287d4[index];
-      break;
-    case GARET:
-      result = gData_081287e2[index];
-      break;
-    case IVAN:
-      result = gData_081287f0[index];
-      break;
-    case MIA:
       result = gBattleUnit_WeaponAnimationsIsaac[index];
       break;
-    case JENNA:
+    case GARET:
       result = gBattleUnit_WeaponAnimationsGaret[index];
       break;
-    case FELIX:
+    case IVAN:
       result = gBattleUnit_WeaponAnimationsIvan[index];
       break;
-    case SHEBA:
+    case MIA:
       result = gBattleUnit_WeaponAnimationsMia[index];
       break;
-    case PIERS:
+    case JENNA:
       result = gBattleUnit_WeaponAnimationsJenna[index];
+      break;
+    case FELIX:
+      result = gBattleUnit_WeaponAnimationsFelix[index];
+      break;
+    case SHEBA:
+      result = gBattleUnit_WeaponAnimationsSheba[index];
+      break;
+    case PIERS:
+      result = gBattleUnit_WeaponAnimationsPiers[index];
       break;
     }
   }

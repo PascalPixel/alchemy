@@ -10,6 +10,9 @@
 extern char ResourceId_ItemMenuTilesA;
 extern char ResourceId_ItemMenuTilesB;
 
+/// Loads each menu icon resource whose cache slot was acquired: the Djinn
+/// menu's up and down arrows (djinn_arrow_up and djinn_arrow_down) into the
+/// work's resourceSlots[0] and [1], for Icon_DrawVariantWithTileOffset.
 void Resource_LoadPairedBlocksIfAvailable(void) {
   s32 firstSlot;
   s32 secondSlot;
@@ -29,6 +32,7 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
   }
 }
 
+/// Frees the two VRAM cache entries of the item menu's tiles.
 void Menu_ResetTwoResourceEntries(void) {
   struct ItemMenuWork *state = Ram_HeapSlots->menuWork;
 
@@ -36,6 +40,9 @@ void Menu_ResetTwoResourceEntries(void) {
   VramCache_FreeEntry((u16)state->resourceSlots[1]);
 }
 
+/// Decodes one icon into a temporary buffer and reloads its VRAM slot: the
+/// Psynergy icon of ability resourceId (Ability_LoadGlyphFar), built in 1544
+/// bytes of HEAP_SLOT_GLYPH_TRANSFER, which is released again.
 s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   s32 resourceInfo;
   s32 selectedSlot;
@@ -50,6 +57,9 @@ s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   return buffer;
 }
 
+/// Loads an icon into a free cache slot and creates its sprite when possible:
+/// ability resourceId's Psynergy icon at (x, y) of window, for the Djinn
+/// preview's Psynergy lists. Returns no value; callers ignore it.
 s32 Icon_CreateWithLoadedResource(struct RenderInput *window, s32 x, s32 y,
                                   s32 resourceId) {
   s32 slot;
@@ -116,6 +126,8 @@ s32 Icon_DrawVariantWithTileOffset(struct RenderInput *window, s32 x, s32 y,
   return 1;
 }
 
+/// Moves through the status grid's irregular rows and returns row * 9 + column.
+/// Nothing calls it.
 s32 Menu_MoveGridCursor(s32 *cursor, s32 count, s32 columns) {
   struct InputState *input = &gInput;
   s32 result = 0;
@@ -212,6 +224,8 @@ void Menu_HighlightPageEntry(s32 unused, s32 index, s32 count) {
   }
 }
 
+/// A VBlank task while the party figures show: places each party member's
+/// figure at its menu position and scale through the projected placement.
 void Menu_UpdateEntryObjectTransforms(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 scale[2];
@@ -272,6 +286,8 @@ void Menu_CreatePairEntryObjects(s32 first, s32 second) {
   }
 }
 
+/// Replaces the menu's party figures with up to four party members' figures,
+/// from party place first on, standing (animation 1), and counts the party.
 void Menu_CreateOwnerEntryObjects(s32 first) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   u16 owners[14];
@@ -299,6 +315,9 @@ void Menu_CreateOwnerEntryObjects(s32 first) {
   }
 }
 
+/// Creates the first four party members' figures in a row from tile (originX,
+/// originY) inside window, three tiles apart, and starts placing them each
+/// frame (Menu_UpdateEntryObjectTransforms).
 void Menu_PlaceOwnerEntryObjects(struct RenderInput *window, s32 originX,
                                  s32 originY) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
@@ -318,6 +337,7 @@ void Menu_PlaceOwnerEntryObjects(struct RenderInput *window, s32 originX,
   Task_Add(Menu_UpdateEntryObjectTransforms, TASK_PASS_VBLANK);
 }
 
+/// Destroys the menu's party figures and stops placing them.
 void Menu_ReleaseEntryObjects(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   void **objects = menu->memberSprites;
@@ -332,12 +352,16 @@ void Menu_ReleaseEntryObjects(void) {
   Task_Remove(Menu_UpdateEntryObjectTransforms);
 }
 
+/// Shows the Djinn figures of the top row (nonzero) or hides them (0).
 void DjinnFigures_SetShown(s32 hidden) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
   menu->figuresShown = hidden;
 }
 
+/// A VBlank task while the Djinn figures show: places each at its position,
+/// depth and scale; a positive scale eases a quarter of the way to full size
+/// each frame, a negative one holds at its size.
 void DjinnFigures_UpdateTopRow(void) {
   struct ItemMenuWork *menu = (struct ItemMenuWork *)Ram_HeapSlots->menuWork;
   struct SpriteScale scale;
@@ -377,6 +401,10 @@ void DjinnFigures_UpdateTopRow(void) {
 
 extern s32 gDjinnFigures_SpriteIds[];
 
+/// Replaces the four Djinn figures with one Djinni of each element
+/// (gDjinnFigures_SpriteIds) walking (animation 2), at (16, 200) until the
+/// screen moves them, and starts placing them each frame
+/// (DjinnFigures_UpdateTopRow).
 void DjinnFigures_InitializeTopRow(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s8 *object;
@@ -404,6 +432,7 @@ void DjinnFigures_InitializeTopRow(void) {
   Task_Add(DjinnFigures_UpdateTopRow, TASK_PASS_VBLANK);
 }
 
+/// Destroys the four Djinn figures and stops placing them.
 void DjinnFigures_ReleaseTopRow(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 i;
@@ -417,6 +446,8 @@ void DjinnFigures_ReleaseTopRow(void) {
   Task_Remove(DjinnFigures_UpdateTopRow);
 }
 
+/// Replaces Djinn figure index with a Djinni of element kind
+/// (gDjinnFigures_SpriteIds) playing animation.
 void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s8 *object;
@@ -433,6 +464,7 @@ void DjinnFigures_ReplaceSlot(s32 index, s32 kind, s32 animation) {
   menu->figures[index] = object;
 }
 
+/// Moves Djinn figure index to screen pixel (x, y), if it exists.
 void DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
@@ -442,6 +474,7 @@ void DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y) {
   }
 }
 
+/// Sets the depth Djinn figure index is drawn at, if it exists.
 void DjinnFigures_SetSlotDepth(s32 index, s32 frame) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
@@ -449,6 +482,8 @@ void DjinnFigures_SetSlotDepth(s32 index, s32 frame) {
     menu->figureDepths[index] = frame;
 }
 
+/// Sets Djinn figure index's scale, if it exists: positive grows towards full
+/// size, negative holds at its size.
 void DjinnFigures_SetSlotPhase(s32 index, s32 scale) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
@@ -456,6 +491,7 @@ void DjinnFigures_SetSlotPhase(s32 index, s32 scale) {
     menu->figureScales[index] = scale;
 }
 
+/// Queues the item menu's five menu icons for drawing while they show.
 void MenuIcon_PushSlots(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   struct IconSprite *slot;
@@ -552,6 +588,8 @@ void MenuPanel_DrawEntryList(struct RenderInput *panel, s32 x, s32 y,
     Text_DrawMessageAsTilesFar((s32)MsgStatusNameNormal, panel, x, y);
 }
 
+/// Fills ailments[0..4] with party member memberId's statuses:
+/// down (only when requested is 1), poison or venom, curse and haunt.
 s32 StatusScreen_BuildAvailability(u8 *output, s32 requested, s32 id) {
   struct BattleUnit *state;
   s32 i;

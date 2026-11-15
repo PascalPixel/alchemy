@@ -108,7 +108,7 @@ list a little each frame, while the battle effect goes on drawing
 
 For each target in turn, the rules decide the damage or healing and
 whether the ability's added effect, such as sleep or poison, takes hold
-(`BattleTarget_Execute`).
+(`BattleAbility_ApplyToTarget`).
 
 ### The ability kind
 

@@ -39,7 +39,7 @@ u32 BattleUnit_IsListed(u32 unitId) {
 /// counts when it is not null.
 s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   u16 unitIds[8];
-  struct PlacementList *list;
+  struct DjinnRecoveryList *list;
   s32 unitCount;
   s32 standbyCount;
   s32 recoveryIndex;
@@ -91,6 +91,9 @@ s32 Battle_GetUnitAtPlace__presentation(s32 tag) __asm__(
     "Battle_GetUnitAtPlace");
 #define Battle_GetUnitAtPlace Battle_GetUnitAtPlace__presentation
 
+/// Announces the action and builds it for its targets, paying its PP or Djinn.
+/// Returns 0 to stage it, ACTION_REPORTED when it failed with its message
+/// shown, or ACTION_NOTHING_TO_SHOW.
 s32 BattleActionRun_Build(struct BattleActionRecord *request,
                           struct BattlePlan *plan) {
   struct BattleUnit *actor = Unit_Get(request->unitId);
@@ -225,8 +228,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       if (id == BATTLE_UNIT_REMOVED)
         continue;
       if (Unit_AddHpFar(id, 0xc0000000) == 0) {
-        BattlePlayback_Push(BATTLE_EVENT_HIT, id);
-        BattlePlayback_Push(BATTLE_EVENT_DEFEAT, id);
+        BattlePlayback_Push(PLAYBACK_HIT, id);
+        BattlePlayback_Push(PLAYBACK_DEFEAT, id);
       }
     }
     BattlePlayback_RunAll();
@@ -489,14 +492,14 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         Unit_CalculateFar(request->unitId);
         BattlePlayback_Reset();
         BattlePlayback_SchedulePhase(30);
-        BattlePlayback_Push(BATTLE_EVENT_UNIT_NAME, request->unitId);
-        BattlePlayback_Push(BATTLE_EVENT_ABILITY_NAME,
+        BattlePlayback_Push(PLAYBACK_UNIT_NAME, request->unitId);
+        BattlePlayback_Push(PLAYBACK_ABILITY_NAME,
                             DJINN_ELEMENT(request->parameter) * 20 +
                                 DJINN_INDEX(request->parameter) + 300);
-        BattlePlayback_Push(BATTLE_EVENT_SOUND, 175);
-        BattlePlayback_Push(BATTLE_EVENT_DRAW_STATUS, 0);
-        BattlePlayback_Push(BATTLE_EVENT_MESSAGE, (u32)&MsgDjinnIsSet);
-        BattlePlayback_Push(BATTLE_EVENT_REFRESH_UNIT, request->unitId);
+        BattlePlayback_Push(PLAYBACK_SOUND, 175);
+        BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
+        BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgDjinnIsSet);
+        BattlePlayback_Push(PLAYBACK_REFRESH_UNIT, request->unitId);
         Sound_PlayFar(SE_POWER_UP);
         Actor_SelectAnimationFar(BattleObject_Get(request->unitId)->object, 3);
         Actor_SetAnimationSpeedFar(

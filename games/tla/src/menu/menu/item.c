@@ -9,6 +9,8 @@
 // Defined below or in later parts of the menu object.
 struct OwnerInventoryState;
 s32 ItemMenu_ChooseCommand(void);
+/// Copies the unit's items into the list items (32 entries), skipping empty
+/// slots and clearing the rest. Returns how many there are. mode is not used.
 s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
                           s32 mode);
 s32 ItemMenu_ConfirmDrop(s32 item);
@@ -874,6 +876,9 @@ void ItemMenu_HideTradedIcons(void) {
 
 void Menu_ReleaseEntryObjects(void);
 
+/// Closes the item menu: releases the party figures, hides the icons and the
+/// status panel's portrait (the work's cursor), and closes every window the
+/// menu opened.
 void ItemMenu_Close(void) {
   u8 *menu;
   u8 *cursor;
@@ -901,6 +906,8 @@ s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
                           s32 mode);
 s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items);
 
+/// Lets the player choose a party member in side (0 or 1), starting from the
+/// party member chosen last.
 s32 ItemMenu_SelectMember(s32 pane) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 result = 0;
@@ -1091,6 +1098,8 @@ s32 ItemMenu_IsStatRaisingItem(s32 item);
 
 void EquipmentMenu_StopCompatibilityIndicators(void);
 
+/// Chooses the party member to use or give the selected item (enum
+/// ItemTargetMode) to.
 s32 ItemMenu_SelectTarget(s32 mode) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 selection = menu->sideIndex[1];
@@ -1211,6 +1220,10 @@ s32 ItemMenu_SelectTarget(s32 mode) {
 
 #undef IN_STOCK_LABEL_X
 
+/// Task while ItemMenu_SelectTarget chooses a party member to use or give the
+/// item to, and while the command grid's cursor is on Give: every 32 frames,
+/// has each party figure nod (ANIM_NOD) if that party member can equip the
+/// item, or stand (ANIM_STAND) if not.
 void EquipmentMenu_UpdateCompatibilityIndicators(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s8 i;
@@ -1230,6 +1243,8 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
   }
 }
 
+/// Ends EquipmentMenu_UpdateCompatibilityIndicators: puts every party figure
+/// back to ANIM_STAND and removes the task.
 void EquipmentMenu_StopCompatibilityIndicators(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s8 i;
@@ -1239,17 +1254,20 @@ void EquipmentMenu_StopCompatibilityIndicators(void) {
   Task_Remove(EquipmentMenu_UpdateCompatibilityIndicators);
 }
 
+/// Returns 1 for the items that raise a stat for good (Apple, Hard Nut, Mint
+/// and Lucky Pepper), whose use shows the stats panel instead of HP and PP.
 s32 ItemMenu_IsStatRaisingItem(s32 itemId) {
   switch (itemId) {
-  case 193: // Apple
-  case 194: // Hard Nut
-  case 195: // Mint
-  case 196: // Lucky Pepper
+  case ITEM_APPLE:
+  case ITEM_HARD_NUT:
+  case ITEM_MINT:
+  case ITEM_LUCKY_PEPPER:
     return 1;
   }
   return 0;
 }
 
+/// Clears the message window and writes message into it.
 void ItemMenu_DrawMessage(s32 unused, s32 message) {
   struct ItemMenuWork *menu;
 
@@ -1258,6 +1276,8 @@ void ItemMenu_DrawMessage(s32 unused, s32 message) {
   Text_DrawMessageAsTilesFar(message, (s32)menu->questionWindow, 0, 0);
 }
 
+/// Hides the icon of each of the 32 list entries whose item is 0. Each of the
+/// 32 icon slots must hold a sprite (Menu_SpawnIconEntries).
 void Menu_HideEmptyEntryIcons(const u16 *items) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 slot;
@@ -1324,6 +1344,10 @@ s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items,
   return count;
 }
 
+/// Loads each listed item's icon into its item icon sprite, the first 15
+/// entries of inventoryEntries, and hides the icons of empty entries. iconStyle
+/// 0 draws the list's icons (ICON_KIND_ITEM); any other iconStyle the
+/// equipment view's.
 void ItemMenu_DrawIcons(u16 *items, s32 style) {
   s32 remaining;
   u16 *entries;
@@ -1348,6 +1372,8 @@ void ItemMenu_DrawIcons(u16 *items, s32 style) {
   Menu_HideEmptyEntryIcons(items);
 }
 
+/// Shows party member ownerId's items in the item window, laid out for layout
+/// mode (see ItemMenu_RefreshEntry), or "no items" when there are none.
 void ItemMenu_RefreshMember(s32 ownerId, s32 mode) {
   struct ItemMenuWork *menu;
   struct OwnerInventoryState *owner;
@@ -1364,6 +1390,10 @@ void ItemMenu_RefreshMember(s32 ownerId, s32 mode) {
     Text_DrawMessageAsTilesFar((s32)MsgItemMenuEmpty, menu->itemWindow, 8, 24);
 }
 
+/// Shows in the status panel what the item in owner's inventory slot would mean
+/// to party member target: for a usable item, target's status; for equipment,
+/// target's stats with it equipped; for a Psynergy item, the Psynergy it
+/// teaches.
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 style = 0;
@@ -1479,6 +1509,8 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   }
 }
 
+/// Makes room in memberId's inventory: if no slot is free, removes the whole
+/// stack in the first slot that is not equipped.
 s32 Inventory_RemoveFirstUnflagged(s32 owner) {
   struct OwnerInventoryState *state = Unit_Get(owner);
   s32 result = 0;
@@ -1540,6 +1572,9 @@ void ItemMenu_SetMessageWindowHeight7(void);
 void ItemMenu_DrawItemHead(void);
 void ItemMenu_DrawCommands(const s8 *commandStates, s32 window);
 
+/// The item command grid: Use, Equip and Details on the top row, Give, Remove
+/// and Drop below (grid index = row * 3 + column, as ItemMenuCommand counts
+/// them).
 s32 ItemMenu_ChooseCommand(void) {
   struct ItemMenuWork *menu;
   s8 commandStorage[6];
@@ -1827,6 +1862,7 @@ void ItemMenu_DrawCommands(const s8 *commandStates, s32 window) {
   Text_SetColorFar(TEXT_COLOR_NORMAL);
 }
 
+/// Says how memberId can use inventoryEntry from the item menu.
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
   s32 masked = itemId;
   void *itemData;
@@ -1878,6 +1914,9 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
 
 void Inventory_BreakFar(s32 owner, s32 slot);
 
+/// After the selected item is used: an item that may break (ITEM_USE_MAY_BREAK)
+/// breaks one time in eight, with the break sound and "It broke!" in the info
+/// window. Called only after a successful use on a chosen party member.
 void ItemMenu_TryBreak(void) {
   u8 *work = Ram_HeapSlots->menuWork;
   u32 item = *(u16 *)(work + 0x16c);
@@ -1897,6 +1936,8 @@ void ItemMenu_TryBreak(void) {
 
 void ItemMenu_DrawItemDetails(s32, s32);
 
+/// Opens the details window (top left, 13 by 10 tiles) and describes the item
+/// in side itemIndex there. Returns 1.
 s32 ItemMenu_OpenDetail(s32 itemIndex) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
@@ -2289,6 +2330,8 @@ void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count) {
 #define Text_DrawStringInWindowFar                                             \
   ((void (*)(u8 *, s32, s32, s32))Text_DrawStringInWindowFar)
 
+/// Writes a signed stat change at (x, y) of window: the number, with a plus or
+/// minus sign just before its first digit.
 void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y) {
   s32 digits;
   s32 magnitude;
@@ -2320,26 +2363,32 @@ void ItemMenu_DrawStat(s32 delta, s32 unused, s32 window, s32 x, s32 y) {
 
 #define ITEM_MENU ((struct ItemMenuWork *)Ram_HeapSlots->menuWork)
 
+/// Moves the item window to row 5 of the right-hand side.
 void ItemMenu_SetItemWindowRow5(void) {
   Window_SetBounds(ITEM_MENU->itemWindow, 13, 5, 17, 10);
 }
 
+/// Moves the item window to row 3 of the right-hand side.
 void ItemMenu_SetItemWindowRow3(void) {
   Window_SetBounds(ITEM_MENU->itemWindow, 13, 3, 17, 10);
 }
 
+/// Makes the message window, along the top right, 5 rows tall.
 void ItemMenu_SetMessageWindowHeight5(void) {
   Window_SetBounds(ITEM_MENU->questionWindow, 13, 0, 17, 5);
 }
 
+/// Makes the item menu's message window six tiles high.
 void ItemMenu_SetMessageWindowHeight6(void) {
   Window_SetBounds(ITEM_MENU->questionWindow, 13, 0, 17, 6);
 }
 
+/// Makes the item menu's message window seven tiles high.
 void ItemMenu_SetMessageWindowHeight7(void) {
   Window_SetBounds(ITEM_MENU->questionWindow, 13, 0, 17, 7);
 }
 
+/// Makes the item menu's message window three tiles high.
 void ItemMenu_SetMessageWindowHeight3(void) {
   Window_SetBounds(ITEM_MENU->questionWindow, 13, 0, 17, 3);
 }
@@ -2375,6 +2424,11 @@ extern const u8 gMenu_QuantityTiles[];
 
 void QuantityBar_FillFar(s32 value, s32 column, void *tiles);
 
+/// Asks how many of the selected item stack to give or drop: Left and Right
+/// choose a number from 1 to quantityRange (shown as baseQuantity + 1 up to
+/// baseQuantity + quantityRange on a dial of digit sprites), with the party
+/// member's remaining count and, when giving (dropMode 0), the receiver's new
+/// count beside their names.
 s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
                                 s32 dropMode) {
   s32 value = baseQuantity;
@@ -2473,6 +2527,8 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
 #undef CURSOR_X
 
 // Draws the selected item's icon, owner and item name in the heading.
+/// Shows the selected item at the top of the message window: its icon, its
+/// party member's name and its name.
 void ItemMenu_DrawItemHead(void) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
 
@@ -2600,6 +2656,8 @@ extern u8 MsgConfirmDrop[];
 
 extern u8 MsgYes[]; // the ☀️ twin's name
 
+/// After giving or trading the selected item to the party member in side 1,
+/// offers to equip it there, showing the stats it would give.
 s32 ItemMenu_ConfirmEquip(s32 unused) {
   s32 rows = 2;
   s32 selection = 0;
@@ -2721,7 +2779,7 @@ s32 ItemMenu_BuildPagedList(struct MenuResult *result, s32 index) {
 }
 
 /// Draws the selected item-list row's name and highlights only that row.
-s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *arg1,
+s32 ItemMenu_DrawItemDetailPage(s32 arg0, void *memberWork,
                                 struct MenuResult *state) {
   struct ItemMenuWork *menu;
   s32 page;

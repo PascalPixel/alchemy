@@ -187,7 +187,8 @@ done:
 #define GLYPH_SPRITE_OFFSET_Y (-2)
 #endif
 
-// The sprite cell at WindowSprite.sprite: a link, then the OAM words.
+/// The sprite of a glyph a window carries, as the glyph sprites read it: its
+/// render slot link, its OAM position and its tile.
 struct GlyphSprite {
   struct GlyphSprite *next;
   u16 y : 8;
@@ -401,6 +402,12 @@ enum {
 #define TILEMAP_WIDTH 32
 #define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
 
+/// Writes value into a window's tilemap at tile (x, y) of its interior, with
+/// the palette mode names (TILEMAP_ENTRY_), or as it is for
+/// TILEMAP_ENTRY_PLAIN; TILEMAP_ENTRY_NONE writes nothing. y -1 is the border's
+/// top row, where the menus put their page numbers and arrows
+/// (menu/menu_shared.c); a place beyond the bottom or right frame, or outside
+/// the tilemap, is ignored.
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
                             u32 mode) {
   u16 *map = ((struct WindowWork *)Ram_HeapSlots->windowWork)->tilemap[0];
@@ -451,6 +458,8 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
   }
 }
 
+/// A window sprite's queued sprite as WindowSprite_UpdateScaleAnimation reads
+/// it.
 struct OutputSprite {
   u32 link;
   u8 y;
@@ -464,6 +473,8 @@ struct OutputSprite {
 };
 extern u16 gWindowSprite_BounceScales[];
 
+/// Steps a scaling sprite's animation (WINDOW_SPRITE_MOTION_SWELL to
+/// WINDOW_SPRITE_MOTION_SHRINK_HALF) and sets its affine scale for this frame.
 void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
   s32 scale = 256;
   struct OutputSprite *sprite = (struct OutputSprite *)&windowSprite->sprite;
@@ -510,6 +521,8 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
   }
 }
 
+/// A window sprite's queued OAM attributes, as WindowSprite_UpdateAll writes
+/// them.
 struct AnimSprite {
   struct AnimSprite *next;
   u8 y;
@@ -526,6 +539,8 @@ struct AnimSprite {
   u16 palette : 4;
 };
 
+/// A window sprite as WindowSprite_UpdateAll reads it, its kind and motion
+/// unsigned.
 struct AnimOutput {
   struct AnimOutput *next;
   u8 kind;
@@ -539,6 +554,8 @@ struct AnimOutput {
   struct AnimSprite attr;
 };
 
+/// A pop's affine transform as WindowSprite_UpdateAll packs it: x and y scale
+/// and the angle.
 struct PopTransform {
   u32 scaleX : 16;
   u32 scaleY : 16;
@@ -551,6 +568,9 @@ extern const u8 gWindowSprite_CursorBobOffsets[];
 extern const s8 gWindowSprite_WobbleOffsets[][2];
 extern const s8 gUiSprite_BounceOffsets[];
 
+/// The per-frame sprite update: moves each sprite that an open window carries
+/// by its animation mode (WINDOW_SPRITE_MOTION_) and queues it for drawing, at
+/// its depth slot (WindowSprite.sentinel).
 void WindowSprite_UpdateAll(void) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct Window *window = work->windows;

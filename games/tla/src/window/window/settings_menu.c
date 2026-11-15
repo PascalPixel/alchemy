@@ -5,7 +5,11 @@
 #include "../window_internal.h"
 #include "fixed_math.h"
 #include "sounds.h"
+#include "window/settings_menu.h"
 
+/// Returns rgb with each channel scaled (16.16 fixed point) and clamped to 0 to
+/// 31, as a BGR555 colour. rgb holds three components, not an already packed
+/// palette word.
 u16 Color_ScaleComponents(s16 *rgb, s32 scale_r, s32 scale_g, s32 scale_b) {
   s32 r = rgb[0] * scale_r >> 16;
   s32 g = rgb[1] * scale_g >> 16;
@@ -65,39 +69,16 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   GLOW_COLOR_SET(10, Color_ScaleComponents(rgb, 0x13bbb, Q16_ONE, 0x17777));
 }
 
-struct OptionMarkerOutput {
-  u8 unk00[14];
-  u8 index;
-};
-
-union OptionCursor {
-  struct OptionMarkerOutput *output;
-  u8 data[0x10];
-};
-
-struct OptionWork {
-  u8 unk000[0x574];
-  u16 page;
-  u16 tint[3];
-  u16 cursorFrame;
-  u16 preset;
-  u8 unk580[0x14];
-  s8 option[5];
-  s8 optionCount[5];
-  u8 unk59e[6];
-  union OptionCursor cursor;
-  union OptionCursor marker[2];
-  u8 unk5d4[0x18];
-  void *frame[3][3];
-};
-
 extern char ResourceId_ShopCursorPictures;
 
+/// The settings menu's per-frame task: moves the cursor and the two slider
+/// markers, animates the marker of the slider in use, and pulses the chosen
+/// setting's icon.
 void SettingsMenu_AnimateCursors(void) {
   s32 src0;
   s32 src1;
   s32 selection;
-  struct OptionWork *work;
+  struct OptionMenuWork *work;
 
   work = Ram_HeapSlots->settingsMenu;
   selection = work->page;
@@ -110,7 +91,7 @@ void SettingsMenu_AnimateCursors(void) {
   } else {
     src0 = (s32)&ResourceId_ShopCursorPictures;
   }
-  VramCache_Load((u8)work->marker[0].output->index, 0x100,
+  VramCache_Load((u8)work->marker[0].sprite->index, 0x100,
                  Resource_GetTableEntry(src0));
 
   if (selection == 1) {
@@ -118,11 +99,12 @@ void SettingsMenu_AnimateCursors(void) {
   } else {
     src1 = (s32)&ResourceId_ShopCursorPictures;
   }
-  VramCache_Load((u8)work->marker[1].output->index, 0x100,
+  VramCache_Load((u8)work->marker[1].sprite->index, 0x100,
                  Resource_GetTableEntry(src1));
 
   if (selection > 1)
-    WindowSprite_Pulse(work->frame[selection - 2][work->option[selection]]);
+    WindowSprite_Pulse(
+        work->choiceIcons[selection - 2][work->option[selection]]);
   work->cursorFrame++;
 }
 
@@ -132,14 +114,15 @@ void SettingsMenu_AnimateCursors(void);
 /// settings into it with how many values each takes (24, 15, 3, 2 and 2), and
 /// starts its VBlank task. SettingsMenu_Release frees the block.
 void SettingsMenu_InitializeWork(void) {
-  struct OptionWork *work;
+  struct OptionMenuWork *work;
   volatile u32 zero;
 
-  work =
-      (struct OptionWork *)HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
+  work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
+                             sizeof(struct OptionMenuWork));
   zero = 0;
   Dma_Set((const void *)&zero, work,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (0x628 / 4),
+          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
+              (sizeof(struct OptionMenuWork) / 4),
           REG_DMA3);
   work->option[0] = gMainRoutineWork.windowHue;
   work->optionCount[0] = 24;
@@ -212,46 +195,20 @@ void *CommandIcon_Create__window(s32 frame, s32 flags,
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 void MenuCursor_SetPositionImmediateFar(void *object, s32 x, s32 y);
 
-struct OptionCursorMove {
-  struct WindowSprite *anchor;
-  u16 x;
-  u16 y;
-  s16 targetX;
-  s16 targetY;
-  s8 active;
-  s8 kind;
-};
-
-union OptionCursorMotion {
-  struct WindowSprite *output;
-  struct OptionCursorMove cursor;
-};
-
-struct WorkspaceWork {
-  u8 unk000[0x594];
-  s8 option[5];
-  s8 optionCount[5];
-  u8 unk59e[6];
-  union OptionCursorMotion cursor;
-  union OptionCursorMotion marker[2];
-  u8 unk5d4[0x18];
-  struct WindowSprite *frame[3][3];
-};
-
 /// Opens the settings menu's window: the labels, the hue and brightness
 /// sliders with their markers, the cursor and the setting icons. Returns the
 /// window. Its sprites belong to the window and go when it closes. A
 /// slider's marker stands option * 60 / count pixels right of
 /// OPTION_SLIDER_X.
 struct RenderInput *SettingsMenu_Open(void) {
-  struct WorkspaceWork *work;
+  struct OptionMenuWork *work;
   struct RenderInput *win;
   struct WindowSprite *out;
   s32 x;
   s32 y;
   s32 msg;
 
-  work = (struct WorkspaceWork *)Ram_HeapSlots->settingsMenu;
+  work = Ram_HeapSlots->settingsMenu;
   win = Window_Create(OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14,
                       WINDOW_FLAG_INSTANT);
   Window_DrawDividerLine((struct Window *)win, 0, 2, OPTION_DIVIDER_END, 2);
@@ -275,7 +232,7 @@ struct RenderInput *SettingsMenu_Open(void) {
 
   out = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(), 0x40000000,
                             win, 0, 0);
-  work->cursor.output = out;
+  work->cursor.sprite = out;
   x = (s16)win->x * 8;
   y = (s16)win->y * 8 + 12;
   MenuCursor_SetPositionImmediateFar(&work->cursor, x, y);
@@ -304,7 +261,7 @@ struct RenderInput *SettingsMenu_Open(void) {
     VramCache_Load(x, 256, 0);
     out = WindowSprite_Create(x, 0x40000000, win, 0, 0);
     out->sprite.oam.palette256 = 1;
-    work->marker[0].output = out;
+    work->marker[0].sprite = out;
     x = (s16)win->x * 8 + OPTION_SLIDER_X;
     x += __divsi3(work->option[0] * 60, work->optionCount[0]);
     y = (s16)win->y * 8 + 4;
@@ -316,7 +273,7 @@ struct RenderInput *SettingsMenu_Open(void) {
     VramCache_Load(x, 256, 0);
     out = WindowSprite_Create(x, 0x40000000, win, 0, 0);
     out->sprite.oam.palette256 = 1;
-    work->marker[1].output = out;
+    work->marker[1].sprite = out;
     x = (s16)win->x * 8 + OPTION_SLIDER_X;
     x += __divsi3(work->option[1] * 60, work->optionCount[1]);
     y = (s16)win->y * 8 + 20;
@@ -324,39 +281,24 @@ struct RenderInput *SettingsMenu_Open(void) {
   }
 
   y = 28;
-  work->frame[0][0] =
+  work->choiceIcons[0][0] =
       CommandIcon_Create(gOptionMenu_SpeedIcons[0], 0, win, OPTION_CHOICE_X, y);
-  work->frame[0][1] = CommandIcon_Create(gOptionMenu_SpeedIcons[1], 0, win,
-                                         OPTION_CHOICE_X + 24, y);
-  work->frame[0][2] = CommandIcon_Create(gOptionMenu_SpeedIcons[2], 0, win,
-                                         OPTION_CHOICE_X + 48, y);
+  work->choiceIcons[0][1] = CommandIcon_Create(gOptionMenu_SpeedIcons[1], 0,
+                                               win, OPTION_CHOICE_X + 24, y);
+  work->choiceIcons[0][2] = CommandIcon_Create(gOptionMenu_SpeedIcons[2], 0,
+                                               win, OPTION_CHOICE_X + 48, y);
   y = 52;
-  work->frame[1][0] =
+  work->choiceIcons[1][0] =
       CommandIcon_Create(gOptionMenu_SpeechIcons[0], 0, win, 100, y);
-  work->frame[1][1] =
+  work->choiceIcons[1][1] =
       CommandIcon_Create(gOptionMenu_SpeechIcons[1], 0, win, 124, y);
   y = 76;
-  work->frame[2][0] =
+  work->choiceIcons[2][0] =
       CommandIcon_Create(gOptionMenu_SleepIcons[0], 0, win, 100, y);
-  work->frame[2][1] =
+  work->choiceIcons[2][1] =
       CommandIcon_Create(gOptionMenu_SleepIcons[1], 0, win, 124, y);
   return win;
 }
-
-struct OptionScreen {
-  u8 unk000[0x574];
-  u16 page;
-  u8 unk576[8];
-  u16 preset;
-  u8 unk580[0x14];
-  s8 option[5];
-  s8 optionCount[5];
-  u8 unk59e[6];
-  u8 cursor[0x10];
-  u8 marker[2][0x10];
-  u8 unk5d4[0x18];
-  struct WindowSprite *choiceIcons[3][3];
-};
 
 // The layout that fits each language's text: the help window's column and
 // width in tiles, then, in pixels from the settings window's left, where the
@@ -409,8 +351,11 @@ void FieldMessage_Show(s32 message, s32 mode);
 
 #define PRESSED (((volatile struct InputState *)&gInput)->pressed)
 
+/// Runs the settings menu (window colour and brightness, message speed, speech,
+/// auto-sleep) until A or START keeps the settings (returns 0) or B drops them
+/// (returns -1).
 s32 SettingsMenu_Run(void) {
-  struct OptionScreen *work;
+  struct OptionMenuWork *work;
   struct RenderInput *settingsWindow;
   struct RenderInput *helpWindow;
   struct WindowSprite *pair;
@@ -483,11 +428,11 @@ s32 SettingsMenu_Run(void) {
       x = (s16)settingsWindow->x * 8 + SLIDER_X;
       x += (*hue * 60) / work->optionCount[0];
       y = (s16)settingsWindow->y * 8 + 4;
-      MenuCursor_SetFar(work->marker[0], x, y, 1);
+      MenuCursor_SetFar(&work->marker[0], x, y, 1);
       x = (s16)settingsWindow->x * 8 + SLIDER_X;
       x += (*brightness * 60) / work->optionCount[1];
       y = (s16)settingsWindow->y * 8 + 20;
-      MenuCursor_SetFar(work->marker[1], x, y, 1);
+      MenuCursor_SetFar(&work->marker[1], x, y, 1);
 
       x = work->option[2] + (s32)MsgKey113b;
       Window_ClearInteriorTiles((const struct Window *)settingsWindow, CHOICE_X,
@@ -511,7 +456,7 @@ s32 SettingsMenu_Run(void) {
       }
       if (selectedOption == 0)
         y += 8;
-      MenuCursor_SetFar(work->cursor, x, y, 3);
+      MenuCursor_SetFar(&work->cursor, x, y, 3);
       WindowSprite_ClearList(helpWindow);
       Text_DrawMessage(selectedOption + (s32)MsgKey1146, (s32)helpWindow, 0, 0);
     }
@@ -582,19 +527,13 @@ s32 SettingsMenu_Run(void) {
   return result;
 }
 
-struct ScreenPageWork {
-  u8 unk000[0x574];
-  u16 page;
-  u8 unk576[0x2e];
-  u8 panel[0x6c];
-  s32 values[1];
-};
-
+/// The Pause menu's per-frame task: moves the cursor and pulses the
+/// chosen entry's icon.
 void PauseMenu_AnimateCursor(void) {
-  struct ScreenPageWork *work = Ram_HeapSlots->settingsMenu;
+  struct OptionMenuWork *work = Ram_HeapSlots->settingsMenu;
 
-  MenuCursor_AdvanceFar((union OptionCursor *)work->panel);
-  WindowSprite_Pulse((void *)work->values[work->page]);
+  MenuCursor_AdvanceFar(&work->cursor);
+  WindowSprite_Pulse((void *)work->icon[work->page]);
 }
 
 /// Allocates the Pause menu's work block and starts its per-frame task.
@@ -603,9 +542,10 @@ void PauseMenu_AnimateCursor(void) {
 /// PauseMenu_Run opens the settings menu. The task runs in the
 /// frame pass.
 void PauseMenu_Initialize(void) {
-  void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU, 0x628);
+  void *work = HeapSlot_AllocEwram(HEAP_SLOT_SETTINGS_MENU,
+                                   sizeof(struct OptionMenuWork));
 
-  Dma_Fill32(0, work, 0x628);
+  Dma_Fill32(0, work, sizeof(struct OptionMenuWork));
   Task_Add(PauseMenu_AnimateCursor, TASK_PASS_VBLANK);
 }
 
@@ -616,13 +556,6 @@ void PauseMenu_Release(void) {
   HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
-struct WorkspaceScreen {
-  u8 unk000[0x5a4];
-  struct WindowSprite *cursor;
-  u8 unk5a8[0x68];
-  struct WindowSprite *icons[6];
-};
-
 extern u8 MsgSaveYourQuest[];
 extern u8 MsgChangeSettings[];
 extern u8 MsgRoughMenu[];
@@ -630,8 +563,11 @@ extern const s8 gMenu_WorkspaceIcons[];
 
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 
+/// Opens the Pause menu's window with its entries (Save your quest, Sleep,
+/// Change settings, and the debug entries in debug mode; only Change settings
+/// while FLAG_IN_BATTLE_ARENA is set), their icons and the cursor.
 struct RenderInput *PauseMenu_Open(void) {
-  struct WorkspaceScreen *work;
+  struct OptionMenuWork *work;
   s32 rows;
   s32 first;
   s32 settingsOnly;
@@ -680,11 +616,11 @@ struct RenderInput *PauseMenu_Open(void) {
     msg += 2;
     Text_DrawMessage(msg, (s32)win, 48, y);
   }
-  work->cursor = WindowSprite_Create(Resource_LoadFixedBlockBIntoFreeSlot(),
-                                     0x40000000, win, 0, 0);
+  work->cursor.sprite = WindowSprite_Create(
+      Resource_LoadFixedBlockBIntoFreeSlot(), 0x40000000, win, 0, 0);
   y = -4;
   for (i = 0; i < rows; i++) {
-    work->icons[i] =
+    work->icon[i] =
         CommandIcon_Create(gMenu_WorkspaceIcons[first + i], 0, win, 12, y);
     y += 24;
   }
@@ -698,14 +634,6 @@ struct RenderInput *PauseMenu_Open(void) {
 #else
 #define HEADING_Y (-24)
 #endif
-
-struct WorkspaceChoiceScreen {
-  u8 unk000[0x574];
-  u16 page;
-  u8 unk576[0x2e];
-  u8 cursor[0x6c];
-  struct WindowSprite *icons[6];
-};
 
 extern const s8 gMenu_WorkspaceIcons[];
 
@@ -745,7 +673,7 @@ s32 PauseMenu_Choose(s32 initial) {
   s32 top;
   const s8 *pauseIcons;
   struct WindowSprite *icon;
-  struct WorkspaceChoiceScreen *work;
+  struct OptionMenuWork *work;
 
   redraw = -1;
   selected = initial;
@@ -772,7 +700,7 @@ s32 PauseMenu_Choose(s32 initial) {
         j = first;
         pauseIcons = gMenu_WorkspaceIcons;
         do {
-          icon = work->icons[i];
+          icon = work->icon[i];
           icon->sentinel = 251;
           Icon_PrepareActorFar(icon);
           resourceIndex = (u8)icon->index;
@@ -789,9 +717,9 @@ s32 PauseMenu_Choose(s32 initial) {
       y = (s16)top;
       y = (selected * 3 + y) * 8 + 16;
       if (-1 == redraw)
-        MenuCursor_SetPositionImmediateFar(work->cursor, x, y);
+        MenuCursor_SetPositionImmediateFar(&work->cursor, x, y);
       else
-        MenuCursor_SetFar(work->cursor, x, y, 3);
+        MenuCursor_SetFar(&work->cursor, x, y, 3);
       redraw = 0;
     }
     MenuTitle_Bob(pair);

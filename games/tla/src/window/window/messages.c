@@ -110,6 +110,8 @@ s32 *Memory_ClearWordIfSet(s32 *p) {
   return p;
 }
 
+/// Closes every window: first the messages' windows, waiting until they have
+/// closed, then the windows opened directly, which it does not wait for.
 void Window_CloseAll(void) {
   struct WindowWork *state;
   struct UiChannelSlot *slot;
@@ -163,27 +165,17 @@ void Window_CloseAll(void) {
   }
 }
 
-struct Rect_0803cba8 {
-  u8 unk00[8];
-  u16 width;
-  u16 height;
-  s16 x;
-  s16 y;
-  u8 unk10[2];
-  u16 state;
-};
-
 extern char ResourceId_WindowBorderFlash;
 
 /// Loads frame `offset` of the flash border picture
 /// (ResourceId_WindowBorderFlash) into tiles 8 to 15 and draws the window's
 /// rectangle with it.
-void Window_ShowFlashFrame(struct Rect_0803cba8 **window, s32 offset) {
+void Window_ShowFlashFrame(struct Window **window, s32 offset) {
   u8 *source =
       (u8 *)Resource_GetTableEntry((s32)&ResourceId_WindowBorderFlash) + offset;
-  struct Rect_0803cba8 *rect = *window;
-  s32 x = rect->x;
-  s32 y = rect->y;
+  struct Window *rect = *window;
+  s32 x = (s16)rect->x;
+  s32 y = (s16)rect->y;
   s32 width = rect->width;
   s32 height = rect->height;
 
@@ -191,34 +183,32 @@ void Window_ShowFlashFrame(struct Rect_0803cba8 **window, s32 offset) {
   Window_DrawFlashBorder(x, y, width, height);
 }
 
-struct Window_0803cbf8 {
-  struct Rect_0803cba8 *rect;
-  u8 unk04[16];
-  u16 timer;
-};
+/// Steps a message's window animation (WINDOW_ANIMATION_SWELL): the frame
+/// flashes through the flash border's pictures as the countdown runs, the plain
+/// border returns two frames before its end, and the flash tiles are restored
+/// at the end.
+void Window_StepSwellEffect(struct UiChannelSlot *window) {
+  if (window->work->animation == WINDOW_ANIMATION_SWELL) {
+    if (window->countdown == 10)
+      Window_ShowFlashFrame(&window->work, 0x300);
+    else if (window->countdown == 9)
+      Window_ShowFlashFrame(&window->work, 0x200);
+    else if (window->countdown == 8)
+      Window_ShowFlashFrame(&window->work, 0x100);
+    else if (window->countdown == 6)
+      Window_ShowFlashFrame(&window->work, 0x200);
+    else if (window->countdown == 4)
+      Window_ShowFlashFrame(&window->work, 0x300);
+    if (window->countdown == 2) {
+      struct Window *rect = window->work;
 
-void Window_StepSwellEffect(struct Window_0803cbf8 *window) {
-  if (window->rect->state == 4) {
-    if (window->timer == 10)
-      Window_ShowFlashFrame(&window->rect, 0x300);
-    else if (window->timer == 9)
-      Window_ShowFlashFrame(&window->rect, 0x200);
-    else if (window->timer == 8)
-      Window_ShowFlashFrame(&window->rect, 0x100);
-    else if (window->timer == 6)
-      Window_ShowFlashFrame(&window->rect, 0x200);
-    else if (window->timer == 4)
-      Window_ShowFlashFrame(&window->rect, 0x300);
-    if (window->timer == 2) {
-      struct Rect_0803cba8 *rect = window->rect;
-
-      Window_DrawBorder(rect->x, rect->y, rect->width, rect->height);
+      Window_DrawBorder((s16)rect->x, (s16)rect->y, rect->width, rect->height);
     }
-    window->timer--;
-    if (window->timer == 0) {
+    window->countdown--;
+    if (window->countdown == 0) {
       Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowBorderFlash),
               (void *)0x06000100, DMA_COPY_WORDS(64), REG_DMA3);
-      window->rect->state = 0;
+      window->work->animation = 0;
     }
   }
 }
@@ -255,6 +245,8 @@ void MessageArgument_Push(u32 value, u32 kind) {
   } while (no != limit);
 }
 
+/// Returns the value of the first message argument of kind (MESSAGE_ARGUMENT_),
+/// or 0 when there is none.
 u32 MessageArgument_Lookup(u32 kind, u32 clear) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u32 index;
@@ -320,6 +312,8 @@ s32 Text_CheckTextDismissed(struct UiChannelSlot *ch) {
   return 0;
 }
 
+/// A window as Message_CloseFinishedWindows reads it: its state and flags, and
+/// its zoom stage and duration read as one word, nonzero while a zoom runs.
 struct UiWindowState {
   u8 unk00[0x14];
   u16 state;
@@ -327,6 +321,7 @@ struct UiWindowState {
   s32 pendingValue;
 };
 
+/// Closes each message's window whose text has ended, then waits ten frames.
 void Message_CloseFinishedWindows(void) {
   s32 slotIndex;
   struct UiChannelSlot *slot;
@@ -353,6 +348,9 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
 s32 Message_AllTyped(void);
 s32 Window_IsClosed(struct Window *window);
 
+/// Shows a message centred across the screen and in its top 15 rows (yOffset
+/// tiles lower) and waits until it is typed out, then closes it, in the window
+/// mode `mode` gives.
 void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
   struct WindowWork *work;
   struct Window *window;
@@ -588,6 +586,9 @@ s32 Text_DrawMessageToCanvas(s32 message, u8 *canvas) {
   return 0;
 }
 
+/// Points reader at the start of message (its compressed bits and first
+/// context), running the ARM lookup routine from a RAM copy, which it frees
+/// before returning.
 void Message_Find(struct TextReader *reader, s32 message) {
   void (*routine)(struct TextReader *, s32);
 
@@ -710,6 +711,8 @@ s32 Portrait_Create__window(s32 id, s32 kind, s32 slot, struct Window *window,
                             s32 x, s32 y) __asm__("Portrait_Create");
 #define Portrait_Create Portrait_Create__window
 
+/// Marks both portrait slots free (resource 999). Only the window system's
+/// setup calls it.
 void Portrait_ClearSlots(void) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 index = 0;
@@ -727,6 +730,8 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 flags);
 s32 Portrait_Create__window(s32 id, s32 kind, s32 slot, struct Window *window,
                             s32 x, s32 y) __asm__("Portrait_Create");
 
+/// Returns the portrait of a character (ids below 20) or another speaker's
+/// sprite (128 and up for those), or -1 when it has none.
 s32 Portrait_GetForSpeaker(u32 value) {
   s32 result = -1;
   s32 i = 0;
@@ -788,6 +793,9 @@ s32 Portrait_GetForSpeaker(u32 value) {
   return result;
 }
 
+/// Opens a portrait window at tile (x, y) showing the speaker's portrait.
+/// portraitOption is passed on through Portrait_Create to Icon_LoadWithPalette,
+/// which ignores it.
 struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
                                    s32 y) {
   struct Window *win;
@@ -813,6 +821,9 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
   return win;
 }
 
+/// Closes the portrait window showing speaker entry, if one is open, at once.
+/// portraitPictures selects the portrait slot, then portraitSprites identifies
+/// its window sprite, found as the first sprite of some window.
 void Portrait_CloseWindow(s32 id) {
   struct WindowWork *state;
   struct Window *work;

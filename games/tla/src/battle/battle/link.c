@@ -6,6 +6,9 @@
 #include "system/heap_slots.h"
 #include "module/battle/battle.h"
 
+/// Unused: receives the opponent's party into the enemy units, "Enemy" before
+/// each name, then its Djinn recovery list. Returns how many party members
+/// came.
 s32 LinkBattle_ReceiveParty(void) {
   u16 name_text[16];
   void *buffer;
@@ -67,11 +70,13 @@ s32 LinkBattle_ReceiveParty(void) {
 #define LINK_PARTY_UNIT_BYTES 340
 #define LINK_PARTY_OFFER_BYTES 340
 
+/// Unused: sends the party, then the Djinn recovery list, each unit under the
+/// id the opponent knows it by.
 s32 LinkBattle_SendParty(void) {
   u8 *buffer;
   struct BattleWork *work;
   s32 j;
-  struct LinkOfferList *list;
+  struct DjinnRecoveryList *list;
   s32 size;
   s32 count;
   s32 i;
@@ -108,7 +113,7 @@ s32 LinkBattle_SendParty(void) {
   do {
     Iwram_CopyWordsEntry(buffer, Djinn_GetRecoveryTableFar(0), size);
   } while (0);
-  list = &((struct LinkOfferTable *)buffer)->list;
+  list = &((struct DjinnRecoveryTable *)buffer)->list;
   for (j = 0; j < list->count;) {
     list->entries[j].unitId = work->opponentSlots[list->entries[j].unitId];
     j++;
@@ -121,6 +126,8 @@ s32 LinkBattle_SendParty(void) {
   Heap_Release(buffer);
 }
 
+/// Copies a name's first four characters, an underscore for each zero, and
+/// returns a pointer to the end. UB: the copy is on the stack; UBFIX keeps it.
 u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source) {
   u8 buffer[5];
   u8 *base = buffer;
@@ -298,6 +305,7 @@ s32 LinkBattle_SyncTurn(void) {
   return 0;
 }
 
+/// Records the unit id the link opponent knows each party member by.
 s32 BattleParty_AssignOpponentSlots(void) {
   u16 activeMembers[8];
   u8 *battleState = (u8 *)Ram_HeapSlots->battleWork;
@@ -312,6 +320,7 @@ s32 BattleParty_AssignOpponentSlots(void) {
   }
 }
 
+/// Clears the first 16 words of the link transfer's payload.
 void Battle_ClearSerialTransferPayload(void) {
   Iwram_ClearWordsEntry(gSerialTransfer.payload, 16);
 }

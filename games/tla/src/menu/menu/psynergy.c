@@ -397,6 +397,7 @@ void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId);
 
 s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner);
 
+/// The party member row of the Psynergy menu.
 s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
   struct PsynergyMenuWork *menu;
   s32 selection;
@@ -517,6 +518,7 @@ void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId) {
   }
 }
 
+/// Chooses the party member to use the selected Psynergy on.
 s32 PsynergyMenu_SelectTarget(s32 browseOnly) {
   struct PsynergyMenuWork *menu;
   s32 selection;
@@ -765,16 +767,21 @@ s32 PsynergyMenu_DrawShortcuts(s32 window, s32 owner) {
 
 #undef OWNER_NAME_WIDTH_LIMIT
 
+/// A Psynergy entry's icon sprite as the Psynergy menu reads its VRAM cache
+/// slot.
 struct PsynergyEntryIcon {
   u8 unk00[14];
   u8 slot;
 };
 
+/// The menu work as the Psynergy menu's icons read it: each entry's icon.
 struct PsynergyEntryMenu {
   u8 unk000[0x4c];
   struct PsynergyEntryIcon *entryIcons[32];
 };
 
+/// Loads each listed Psynergy's icon into its icon sprite (32 entries) and
+/// hides the icons of empty entries.
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
   s32 remaining;
   struct PsynergyEntryIcon **icons;

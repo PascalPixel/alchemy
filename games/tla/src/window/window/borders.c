@@ -134,6 +134,8 @@ u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count) {
 
 u16 *Memory_FillHalfwordsDma(u16 *destination, s32 value, s32 count);
 
+/// Draws an empty window: a border around a filled interior, at tile (x, y) of
+/// width by height tiles, and frees the text tiles the rectangle showed.
 void Window_DrawBorder(s32 x, s32 y, u32 width, u32 height) {
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u16 *cursor = &canvas->tilemap[y][x];
@@ -205,6 +207,8 @@ void Window_DrawFlashBorder(s32 x, s32 y, u32 width, u32 height) {
   canvas->dirty = 1;
 }
 
+/// Maps the text canvas tiles into the interior of a window at tile (x, y).
+/// With fullWidth set the canvas covers the side border columns too.
 void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
                                s32 fullWidth) {
   struct WindowWork *canvas = (struct WindowWork *)Ram_HeapSlots->windowWork;
@@ -250,6 +254,8 @@ s32 Message_AllTyped(void) {
   return 1;
 }
 
+/// Returns 1 when a window is fully closed (its slot free), and 0 while it is
+/// open or closing.
 s32 Window_IsClosed(struct Window *window) {
   if (window == NULL)
     return 1;
@@ -258,6 +264,8 @@ s32 Window_IsClosed(struct Window *window) {
   return 0;
 }
 
+/// Resets the text style glyphs are drawn with: colour 15, no outline, line
+/// spacing 10 and letter spacing 9.
 void Text_ResetStyle(void) {
   struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
@@ -270,6 +278,9 @@ void Text_ResetStyle(void) {
 
 void WindowSystem_Update(void);
 
+/// Reserves the glyph sprites' tiles, resets the text style, starts the ring of
+/// decoded text from its beginning and starts the per-frame window update
+/// (WindowSystem_Update).
 void WindowSystem_StartFieldUpdate(void) {
   struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
@@ -285,6 +296,9 @@ void WindowSystem_StartFieldUpdate(void) {
 void WindowSystem_Update(void);
 void WindowSystem_UpdateBattle(void);
 
+/// Resets the text style and starts the per-frame window update
+/// (WindowSystem_Update), reserving the glyph sprites' tiles first when
+/// initialize is set.
 void WindowSystem_StartBattleUpdate(s32 initialize) {
   struct WindowWork *state = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
@@ -420,6 +434,11 @@ void Message_SetDecodeFlags(u32 flags) {
 
 s32 Message_Decode(s32 key, s32 mode);
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
+/// Opens a window sized to a message near tile (x, y) and starts typing the
+/// message into it. packed holds the window options in its low bits (bit 0:
+/// zoom open rather than appear at once; bit 3: a text canvas; bit 4: keep the
+/// bottom edge; bit 5: keep the left edge) and the speaker's voice sound in
+/// bits 16 to 27.
 struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   s32 entry;
   u32 height;
@@ -473,6 +492,8 @@ s32 Party_GetLeaderActorFar(void);
 s32 Actor_GetScreenPositionFar(s32 object, s32 *out);
 s32 Message_AllTyped(void);
 
+/// Shows a message in a window centred on the screen, waits until it is typed
+/// out and closes it, as its flags say.
 void FieldMessage_Show(s32 no, s32 flags) {
   u8 *base = Ram_HeapSlots->windowWork;
   s32 release;
@@ -542,6 +563,8 @@ void FieldMessage_Show(s32 no, s32 flags) {
   wait(3);
 }
 
+/// The window system's per-frame task: windows, then messages, then sprite
+/// animation.
 void WindowSystem_Update(void) {
   Window_UpdateZooms();
   Message_UpdateAll();

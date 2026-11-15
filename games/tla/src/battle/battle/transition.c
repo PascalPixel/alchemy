@@ -137,6 +137,8 @@ void BattleTransition_UploadTileVariant(void) {
             (void *)BG_SCREEN_BLOCK(10), DMA_COPY_WORDS(8), REG_DMA3);
 }
 
+/// Advances the curtain opening by a frame: BG0 slides into place as the camera
+/// turns round to the party and zooms out.
 void BattleTransition_AdvanceTimer(void) {
   s32 scroll;
   struct BattleCamera *camera;
@@ -206,6 +208,7 @@ void BattleTransition_DrawRows(void) {
   }
 }
 
+/// An HBlank handler: clears BG0's vertical scroll from the line it fires on.
 void BattleTransition_ResetBg0Scroll(void) {
   u32 zero = 0;
 
@@ -214,6 +217,10 @@ void BattleTransition_ResetBg0Scroll(void) {
 
 #define DMA3 ((volatile u32 *)0x040000d4)
 
+/// Opens the battle against formation kind with arg enemies: the curtain
+/// opening, then each enemy announced (formations 74 to 76 and 638 wait a
+/// second instead); for formations 78 to 80 the shattering opening over the
+/// Serpent's stars.
 void BattleTransition_Run(s32 arg, s32 kind) {
   struct BattlePresentationWork work;
   u16 owners[14];
@@ -323,7 +330,8 @@ void BattleTransition_Run(s32 arg, s32 kind) {
       struct BattleObj *battleObject = BattleObject_Get(id);
       u16 enemyId = ((struct BattleUnit *)Unit_Get(id))->enemyId;
 
-      if (enemyId != 357 && enemyId != 369 && enemyId != 373 && enemyId != 376)
+      if (enemyId != ENEMY_FUSION_DRAGON && enemyId != ENEMY_DOOM_DRAGON &&
+          enemyId != ENEMY_DOOM_DRAGON_5 && enemyId != ENEMY_DOOM_DRAGON_8)
         battleObject->scale = Q16_ONE * 7 / 10;
     }
     IO_WRITE_QUEUE_PUSH(0x04000000, 0x6041, 0x20000);

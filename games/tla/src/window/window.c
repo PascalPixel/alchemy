@@ -43,12 +43,9 @@
 #include "window/debug.c"
 #include "window/text_tiles.c"
 
-#undef Unit_Get
 #undef Ability_Get
 #undef Portrait_Create
-#undef MenuSprite
 #undef CommandIcon_Create
-#undef ScreenPoint
 #undef Event_SetDestinationFar
 
 /* VIEW(screens): routine Text_DrawPrefixedNumberAtOffset as int
@@ -77,10 +74,14 @@ s32 Text_DrawWideStringInWindow__screens() __asm__(
 s32 Window_MapTextCanvasTiles__screens() __asm__("Window_MapTextCanvasTiles");
 #define Window_MapTextCanvasTiles Window_MapTextCanvasTiles__screens
 
-// The screens object's functions its parts call before their definitions.
+/// A sprite of the bobbing pair of the menu titles: its render slot link, its
+/// resting y and its y this frame.
 struct BobPairObject;
 
-struct CommandRowIcon {
+/// One icon of the command row (struct BattleCommandRowWork): its sprite, where
+/// it stands and the command it stands for. menu_titles.c loads it,
+/// battle_command_row.c runs the row.
+struct BattleCommandRowIcon {
   u8 unk00[4];
   u8 y;
   u8 objMode : 2; ///< 3: double-size affine
@@ -96,16 +97,19 @@ struct CommandRowIcon {
   s32 kind;
 };
 
+/// The pulsing icon's transform: its scale, 8.8 fixed point, and angle.
 struct CommandRowAffine {
   u16 scaleX;
   u16 scaleY;
   u16 angle;
 };
 
-struct CommandRowWork {
+/// The command row's work block: the icons' shared palette, up to six icons,
+/// the label window, the pulsing icon's transform and the selection.
+struct BattleCommandRowWork {
   u8 paletteSlots[256];
   s32 paletteCount;
-  struct CommandRowIcon entries[6];
+  struct BattleCommandRowIcon entries[6];
   void *window;
   s32 iconCount;
   struct CommandRowAffine affine;
@@ -124,16 +128,6 @@ struct CommandRowWindowWork {
   u8 holdTilemapUpload;
   u8 unk07;
   u16 tilemap[0x400];
-};
-
-struct BgScrollPair {
-  s16 x;
-  s16 y;
-};
-
-struct DjinnSlot {
-  u16 id;
-  u16 state;
 };
 
 /// A unit as the summary screen reads it.
@@ -158,12 +152,15 @@ struct SummaryOam {
   } oam;
 };
 
+/// Where the Status screen's cursor points, in pixels.
 struct SummaryPoint {
   s32 x;
   s32 y;
 };
 
-struct SummaryCursor {
+/// The Status screen's cursor: its place in each group, the help entry it
+/// shows and where it points.
+struct StatusCursor {
   s8 groupPositions[8];
   s32 helpEntry;
   s32 drawnHelpEntry;
@@ -173,7 +170,9 @@ struct SummaryCursor {
   s32 row;
 };
 
-struct SummaryStatCursor {
+/// A cursor stop among the Status screen's stats: its help entry, where the
+/// cursor points and the run of the row it highlights.
+struct BattleSummaryStatCursor {
   u8 entry;
   u8 column;
   u8 row;
@@ -183,40 +182,19 @@ struct SummaryStatCursor {
   u8 unk06[2];
 };
 
-struct SummaryCursorStop {
+/// A cursor stop on the Status screen's equipment or statuses: its help
+/// entry and where the cursor points.
+struct BattleSummaryCursor {
   u8 entry;
   u8 column;
   u8 row;
   u8 unk03;
 };
 
-struct SummaryRecoveryEntry {
-  u8 element;
-  u8 index;
-  u8 owner;
-  s8 turns;
-};
-
-struct SummaryRecoveryList {
-  struct SummaryRecoveryEntry entries[72];
-  s32 count;
-};
-
-struct SummaryRecovery {
-  u8 unk000[8];
-  struct SummaryRecoveryList list;
-};
-
+/// A VRAM cache entry as the Status screen reads its tile offset.
 struct SummaryResourceEntry {
   u16 unk00;
   u16 offset;
-};
-
-struct SummonMenuWork {
-  u8 unk00[3];
-  u8 dirty;
-  u8 unk04[2];
-  u8 holdTilemapUpload;
 };
 
 struct BobPairObject {
@@ -227,43 +205,36 @@ struct BobPairObject {
   u8 y;
 };
 
+/// A row of gMenu_BarPatternRows: the two words a menu bar's tile pair is
+/// XORed with (Menu_BuildLocalizedPatternTiles).
 struct BarPatternRow {
   u32 word0;
   u32 word1;
 };
 
+/// The name entry screen's cursors: the hand on the keyboard and the caret
+/// under the name, each a window sprite moved as a NameCursorMotion.
 union NameCursor {
   struct WindowSprite *sprite;
   struct NameCursorMotion cursor;
 };
 
+/// The first two words of gMainRoutineWork as the save writes them: the build
+/// stamp and the play time.
 struct SaveGameWords {
   u32 buildStamp;
   u32 playTime;
 };
 
-struct ObjectRowWork {
+/// The menu work as the file list reads it, ShopWork's party row: the party
+/// sprites of the file under the cursor, where each stands and its scale.
+struct FileListWork {
   u8 unk000[0xf8];
-  void *icons[4];
+  void *partyMemberIcons[4]; ///< up to four party sprites, null for none
   u8 unk108[0x10];
-  s16 x[8];
-  s16 y[8];
-  s32 scale[4];
-};
-
-struct ObjectRowState {
-  u8 unk000[248];
-  void *objects[4];
-  u8 unk108[16];
-  s16 x[8];
-  s16 y[8];
-  s32 scale[4];
-};
-
-/// The portion of the file summary (SaveSummary) read here.
-struct NumberRow {
-  u8 unk00[0x28];
-  s8 values[4]; ///< Djinn count for each element.
+  s16 partyMemberX[8];     ///< pixels
+  s16 partyMemberY[8];     ///< pixels
+  s32 partyMemberScale[4]; ///< 16.16 fixed point, Q16_ONE full size
 };
 
 extern const u8 gDjinnMenu_BlinkTile[32];
@@ -272,31 +243,16 @@ extern u8 gDjinnMenu_ElementXOffsets[4];
 
 extern u8 gDjinnMenu_ElementYOffsets[4];
 
-extern u8 Msg_0d10[];
+extern const struct BattleSummaryStatCursor gOwnerStatus_StatCursors[];
 
-extern u8 Msg_0d11[];
+extern const struct BattleSummaryCursor gOwnerStatus_EquipmentCursors[];
 
-extern u8 Msg_0d12[];
-
-extern u8 Msg_0d13[];
-
-extern u8 Msg_0d15[];
-
-extern u8 Msg_0d16[];
-
-extern u8 Msg_0d17[];
-
-extern u8 Msg_0d19[];
-
-extern const struct SummaryStatCursor gOwnerStatus_StatCursors[];
-
-extern const struct SummaryCursorStop gOwnerStatus_EquipmentCursors[];
-
-extern const struct SummaryCursorStop gOwnerStatus_ConditionCursors[];
+extern const struct BattleSummaryCursor gOwnerStatus_ConditionCursors[];
 
 extern const u8 gOwnerStatus_LevelString[];
 
-extern const u16 Data_0805f676[];
+/// The ability of each summon, by its number.
+extern const u16 gSummon_Abilities[];
 
 extern const u8 gWindow_PairBobOffsets[];
 
@@ -333,18 +289,15 @@ extern u8 Tile_BuildCellPicturesCode[];
 #undef Text_DrawWideStringInWindow
 #undef Window_MapTextCanvasTiles
 
-struct TargetBattle {
-  u8 unk00[0x58];
-  s16 partyUnits[7];
-  s16 enemyIds[7];
-};
-
+/// A unit's place projected onto the screen, as the target cursor reads it.
 struct TargetPoint {
   s32 x;
   s32 y;
   s32 z;
 };
 
+/// One of the target cursor's markers: where it stands, whether it shows and
+/// which listed unit it marks.
 struct TargetTrack {
   u8 x;
   u8 y;
@@ -352,65 +305,23 @@ struct TargetTrack {
   s8 index;
 };
 
-struct TargetSprite {
-  u8 unk00[4];
-  u8 y;
-  u8 affine : 2;
-  u8 mode : 2;
-  u8 high05 : 4;
-  u16 x : 9;
-  u16 matrix : 5;
-  u16 size : 2;
-  u16 tile : 10;
-  u16 attr2high : 6;
-  u16 unk0a;
-};
-
-struct TargetAffine {
-  u16 scaleX;
-  u16 scaleY;
-  u16 angle;
-  u16 unk06;
-};
-
-struct TextObject {
-  u8 storage[12];
-};
-
+/// One line of a window's HDMA shape: its left edge and its span.
 struct WindowLine {
   u16 left;
   u16 span;
 };
 
+/// A page of the icon menu's window shape: one WindowLine for each of the
+/// screen's 160 lines.
 struct WindowBuffer {
   u8 unk000[4];
   struct WindowLine lines[160];
 };
 
-struct MenuSelectionState {
-  u8 padding000[0x78];
-  void *work;
-  u8 padding07c[8];
-  u8 resourceIds[8];
-  s16 selection;
-  s16 itemCount;
-  s16 field090;
-  s16 resourceBase;
-};
-
-struct MenuModeLabelState {
-  u8 unk00[0x7c];
-  void *window;
-  u8 unk80[0x0c];
-  s16 mode;
-  u8 unk8e[8];
-  s16 previousMode;
-};
-
-struct CountdownDisplayEntry {
-  u8 data[12];
-};
-
+/// The partner console's link signature (gLinkPeerSignatures) as the timer
+/// reads it: halfwords 4 to 7 read "EDVS" once the partner has chosen its
+/// commands (Battle_CollectPartyCommands), which starts this side's
+/// countdown.
 struct LinkSignature {
   u8 padding000[8];
   u16 e;
@@ -420,26 +331,6 @@ struct LinkSignature {
   u8 padding010[8];
 };
 
-struct LinkCountdownState {
-  struct CountdownDisplayEntry entries[3];
-  u8 entryActive[3];
-  u8 padding027;
-  s32 targetOffset;
-  s32 currentOffset;
-  u8 padding030[20];
-  s32 displayHandle;
-  s32 secondaryHandle;
-  s32 timer;
-  s32 enabled;
-};
-
-struct LinkRuntimeState {
-  u8 padding000[80];
-  u8 side;
-  u8 padding051;
-  u8 paused;
-};
-
 extern u8 gWorkspace_ItemTitle[];
 extern u8 gWorkspace_EnergyTitle[];
 extern u8 gWorkspace_StatusTitle[];
@@ -447,8 +338,6 @@ extern u8 gWorkspace_PageLabel[];
 extern u8 gWorkspace_RangeDash[];
 
 extern s8 gMenu_SaveSlotActionByPosition[];
-
-extern struct LinkCountdownState *gLinkCountdownWork;
 
 // The parts, in ROM order.
 #include "window/battle_targets.c"

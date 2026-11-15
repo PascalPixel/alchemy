@@ -230,9 +230,12 @@ s32 DebugFlagEditor_HandleInput(s32 window, s32 *page, s32 *cursor) {
   return 0;
 }
 
+/// Reserved menu entry. Nothing calls it.
 void Menu_ReservedNoOp(void) {}
 
-void Djinn_SetFoundFlagAndAdd(s32 arg0, s32 arg1, s32 arg2) {
-  GameFlag_Set((arg1 * 0x14) + arg2 + 0x30);
-  Djinn_GiveFar(arg0, arg1, arg2);
+/// Sets the Djinni's collected flag, then adds it to the specified party
+/// member. The flag is FLAG_DJINN_FIRST + DJINN_PER_ELEMENT * element + index.
+void Djinn_SetFoundFlagAndAdd(s32 member, s32 element, s32 index) {
+  GameFlag_Set((element * 0x14) + index + 0x30);
+  Djinn_GiveFar(member, element, index);
 }

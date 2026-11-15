@@ -2296,9 +2296,9 @@ void WorldMap_UpdateTransitionBlend(void) {
   IoWriteQueue_Store16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   if (gFrameCount & 2)
-    QueueBlend((u32)&REG_BLDALPHA, gWorldMapBlend | 12);
+    QueueBlend((u32)&REG_BLDALPHA, gWorldMapBlend | (BLEND_WEIGHT_MAX - 4));
   else
-    QueueBlend((u32)&REG_BLDALPHA, gWorldMapBlend | 16);
+    QueueBlend((u32)&REG_BLDALPHA, gWorldMapBlend | BLEND_WEIGHT_MAX);
 }
 
 static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
@@ -2308,8 +2308,11 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 /// Shakes the camera diagonally by one pixel every three frames.
 #include "shared/camera_jitter.h"
 
-#define PUSH_PICTURE(offset)                                                   \
-  IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)
+#define PUSH_PICTURE(frame)                                                    \
+  IO_WRITE_QUEUE_PUSH(                                                         \
+      PICTURE_MAP,                                                             \
+      (u32)(buffer + PICTURES_FIRST_FRAME + (frame) * PICTURES_FRAME_STRIDE),  \
+      DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4))
 
 void WorldMap_PlayLighthouseTransition(s32 mode) {
   u8 *buffer;
@@ -2329,52 +2332,55 @@ void WorldMap_PlayLighthouseTransition(s32 mode) {
   WorldMap_Freeze();
   buffer = Heap_AllocEwram(0x4000);
   Decompress_TaggedLz(gWorldMapPackedTiles, buffer);
-  Decompress_TaggedLz(gWorldMapPackedPictures, buffer + 0x1000);
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0),
-                      (u32)(gWorldMapPalettes + mode * 32), 0x80000010);
-  IO_WRITE_QUEUE_PUSH(0x06001000, (u32)buffer, 0x84000400);
+  Decompress_TaggedLz(gWorldMapPackedPictures,
+                      buffer + PICTURE_FIRST_TILE * TILE_SIZE_4BPP);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
+                      (u32)(gWorldMapPalettes + mode * PALETTE_COLORS * 2),
+                      DMA_COPY_HALFWORDS(PALETTE_COLORS));
+  IO_WRITE_QUEUE_PUSH(PICTURE_TILES, (u32)buffer,
+                      DMA_COPY_WORDS(PICTURE_FIRST_TILE * TILE_SIZE_4BPP / 4));
   Task_AddFrame(WorldMap_UpdateTransitionBlend, TASK_PASS_VBLANK);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_GLITTER);
   gWorldMapBlend = 0xe00;
-  PUSH_PICTURE(0x3480);
+  PUSH_PICTURE(6);
   FieldEvent_Wait(2);
   gWorldMapBlend = 0xd00;
-  PUSH_PICTURE(0x2e80);
+  PUSH_PICTURE(5);
   FieldEvent_Wait(2);
   gWorldMapBlend = 0xc00;
-  PUSH_PICTURE(0x2880);
+  PUSH_PICTURE(4);
   FieldEvent_Wait(2);
   gWorldMapBlend = 0xb00;
-  PUSH_PICTURE(0x2280);
+  PUSH_PICTURE(3);
   FieldEvent_Wait(2);
   gWorldMapBlend = 0xa00;
-  PUSH_PICTURE(0x1c80);
+  PUSH_PICTURE(2);
   FieldEvent_Wait(2);
   gWorldMapBlend = 0x900;
-  PUSH_PICTURE(0x1680);
+  PUSH_PICTURE(1);
   FieldEvent_Wait(2);
   gWorldMapBlend = 0x800;
-  PUSH_PICTURE(0x1080);
+  PUSH_PICTURE(0);
   FieldEvent_Wait(140);
-  PUSH_PICTURE(0x1680);
+  PUSH_PICTURE(1);
   FieldEvent_Wait(4);
-  PUSH_PICTURE(0x1c80);
+  PUSH_PICTURE(2);
   FieldEvent_Wait(4);
-  PUSH_PICTURE(0x2280);
+  PUSH_PICTURE(3);
   FieldEvent_Wait(4);
   gWorldMapBlend = 0x900;
-  PUSH_PICTURE(0x2880);
+  PUSH_PICTURE(4);
   FieldEvent_Wait(4);
   gWorldMapBlend = 0xa00;
-  PUSH_PICTURE(0x2e80);
+  PUSH_PICTURE(5);
   FieldEvent_Wait(4);
   gWorldMapBlend = 0xb00;
-  PUSH_PICTURE(0x3480);
+  PUSH_PICTURE(6);
   FieldEvent_Wait(4);
   gWorldMapBlend = 0xc00;
-  PUSH_PICTURE(0x3a80);
+  PUSH_PICTURE(7);
   if (mode == 1) {
     MapGrid_SetShake(2, 2, 1);
     Event_PlaySound(SE_RUMBLE);
@@ -2422,10 +2428,13 @@ void WorldMap_LoadTidalWave(void) {
   Decompress_TaggedLz(gWorldMapPackedTilesB, buffer);
   frames = buffer + 0x2000;
   Decompress_TaggedLz(gWorldMapPackedPicturesB, frames);
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0), (u32)gWorldMapPalettesB,
-                      0x80000010);
-  IO_WRITE_QUEUE_PUSH(0x06000000, (u32)buffer, 0x84000400);
-  IO_WRITE_QUEUE_PUSH(0x06001000, (u32)frames, 0x84000800);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
+                      (u32)gWorldMapPalettesB,
+                      DMA_COPY_HALFWORDS(PALETTE_COLORS));
+  IO_WRITE_QUEUE_PUSH(VRAM, (u32)buffer,
+                      DMA_COPY_WORDS(PICTURE_FIRST_TILE * TILE_SIZE_4BPP / 4));
+  IO_WRITE_QUEUE_PUSH(PICTURE_TILES, (u32)frames,
+                      DMA_COPY_WORDS(256 * TILE_SIZE_4BPP / 4));
   IoWriteQueue_Store16((u32)&REG_BLDCNT, 0x3f41);
   IoWriteQueue_Store16((u32)&REG_BLDALPHA, 0x1010);
   gBgScroll[0].x = 0;
@@ -2505,8 +2514,8 @@ void WorldMap_SpawnTwinSparks(struct Actor *parent) {
   s32 i;
 
   for (i = 0; i < 2; ++i) {
-    child = (FieldActor_Create(271, parent->x.fixed, parent->y.fixed,
-                               parent->z.fixed));
+    child = (FieldActor_Create(SPRITE_GOLDEN_RINGS, parent->x.fixed,
+                               parent->y.fixed, parent->z.fixed));
     pair[i] = child;
     if (child != NULL) {
       child->groundHeight = parent->groundHeight;
@@ -2552,53 +2561,56 @@ extern u8 gGauge_SourceTiles[][32];
 
 /// Redraws the gauge for `progress`.
 void Gauge_Draw(s32 progress) {
-  s32 level = ((progress * 30 + 0x8000) >> 16) + 1;
-  s32 kind = 0;
+  s32 level = ((progress * GAUGE_LEVELS + Q16_ONE / 2) >> 16) + 1;
+  s32 kind = GAUGE_EMPTY;
   s32 count, base, i;
 
   if (progress != 0)
-    kind = 100;
+    kind = GAUGE_SHOWN;
   if (level <= 15 && (gFrameCount & 15) <= 1)
-    kind = 200;
+    kind = GAUGE_LOW;
   if (level <= 7 && (gFrameCount & 7) <= 1)
-    kind = 200;
+    kind = GAUGE_LOW;
   if (kind + level == gGauge_Shown)
     return;
   gGauge_Shown = kind + level;
-  Iwram_ClearWords((s32)(gGauge_Tiles), (s32)(0x100));
+  Iwram_ClearWords((s32)(gGauge_Tiles), (s32)(GAUGE_SIZE));
   {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    if (kind == 0) {
-      copy(gGauge_Tiles, gGauge_SourceTiles[8], 0x80);
+    if (kind == GAUGE_EMPTY) {
+      copy(gGauge_Tiles, gGauge_SourceTiles[8], 4 * TILE_SIZE_4BPP);
       goto done;
     }
-    if (kind == 100)
-      copy(gGauge_Tiles, gGauge_SourceTiles[4], 0x80);
+    if (kind == GAUGE_SHOWN)
+      copy(gGauge_Tiles, gGauge_SourceTiles[4], 4 * TILE_SIZE_4BPP);
     else
-      copy(gGauge_Tiles, gGauge_SourceTiles[8], 0x80);
+      copy(gGauge_Tiles, gGauge_SourceTiles[8], 4 * TILE_SIZE_4BPP);
   }
   base = 0;
   count = level;
   if (count > 7) {
-    Iwram_CopyWordsEntry(gGauge_Tiles, gGauge_SourceTiles, 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles, gGauge_SourceTiles, TILE_SIZE_4BPP);
     base = 8;
     count -= 8;
   }
   if (level > 15) {
-    Iwram_CopyWordsEntry(gGauge_Tiles[1], gGauge_SourceTiles[1], 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles[1], gGauge_SourceTiles[1],
+                         TILE_SIZE_4BPP);
     count = level;
     base = 16;
     count -= 16;
   }
   if (level > 23) {
-    Iwram_CopyWordsEntry(gGauge_Tiles[2], gGauge_SourceTiles[2], 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles[2], gGauge_SourceTiles[2],
+                         TILE_SIZE_4BPP);
     count = level;
     base = 24;
     count -= 24;
   }
   if (level > 30) {
-    Iwram_CopyWordsEntry(gGauge_Tiles[3], gGauge_SourceTiles[3], 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles[3], gGauge_SourceTiles[3],
+                         TILE_SIZE_4BPP);
     base = 0;
     count = 0;
   }
@@ -2624,7 +2636,7 @@ void Gauge_Draw(s32 progress) {
     }
   }
 done:
-  Vram_Load(gGauge_Vram, 0x100, gGauge_Tiles);
+  Vram_Load(gGauge_Vram, GAUGE_SIZE, gGauge_Tiles);
 }
 
 /// The Psynergy gauge over the leader as the ship flies: while A or B is held
@@ -2645,7 +2657,7 @@ void Gauge_Update(void) {
     }
   }
   Gauge_Draw(Party_GetPpRatio());
-  attributes = 0x80004000;
+  attributes = OBJ_SIZE_32X16;
   Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x.fixed),
         (s32)(screen));
   {
@@ -2655,7 +2667,7 @@ void Gauge_Update(void) {
     *oam++ = 0;
     *oam++ = (y | (x << 16)) | attributes;
   }
-  *oam = tile | 0x400;
+  *oam = tile | OBJ_PRIORITY(1);
   Oam_AddSpriteAtDepthClamped(gGauge_Sprite, OAM_DEPTH_FRONT);
 }
 
@@ -2663,7 +2675,7 @@ void Gauge_Update(void) {
 void Gauge_Init(void) {
   Decompress_TaggedLz(gWorldMapPackedTilesC, gGauge_SourceTiles);
   gGauge_Vram = VramCache_FindFreeEntry();
-  Vram_Load(gGauge_Vram, 0x100, 0);
+  Vram_Load(gGauge_Vram, GAUGE_SIZE, 0);
   gGauge_Shown = -1;
   gGauge_Countdown = 10;
   Task_AddFrame(Gauge_Update, TASK_PASS_VBLANK - 10);

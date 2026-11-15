@@ -42,6 +42,20 @@
 #include "shared/tables.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "window/window.h"
+
+/// The beacon's work buffer: the glow's or the beams' tiles, then from
+/// BEACON_MAPS their maps.
+#define BEACON_BUFFER_SIZE 0x6000
+#define BEACON_MAPS 0x2000
+/// The glow is drawn as a 64-pixel square, one byte a pixel, in levels of
+/// light 1 to 15, each a colour of the picture palette.
+#define GLOW_GRID_SIZE 64
+#define GLOW_LEVEL_MAX (PALETTE_COLORS - 1)
+/// Two pixels of colour 1, the glow's darkest: the tiles' blank rows.
+#define GLOW_BLANK_PAIR 0x11
+/// The beams' brighter colours, in the palette after the picture's.
+#define BEAMS_LIGHT_PALETTE (PICTURE_PALETTE + 1)
 
 extern s32 gStaffCredit_BeamsLightPalette[];
 
@@ -78,9 +92,10 @@ void StaffCredit_BlendBeacon(void) {
   IoWriteQueue_Store16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   if ((gFrameCount & 2) && gStaffCredit_BlendSteady == 0) {
-    IoWriteQueue_Store16(alphaReg, gStaffCredit_BlendLevel | 15);
+    IoWriteQueue_Store16(alphaReg,
+                         gStaffCredit_BlendLevel | (BLEND_WEIGHT_MAX - 1));
   } else {
-    IoWriteQueue_Store16(alphaReg, gStaffCredit_BlendLevel | 16);
+    IoWriteQueue_Store16(alphaReg, gStaffCredit_BlendLevel | BLEND_WEIGHT_MAX);
   }
 }
 
@@ -91,23 +106,23 @@ void StaffCredit_StepPaletteColors(u16 *colors, s32 count, s32 red, s32 green,
   s32 i;
 
   for (i = 0; i != count; i++) {
-    s32 r = (*colors & 31) + red;
-    s32 g = (*colors >> 5 & 31) + green;
-    s32 b = (*colors >> 10 & 31) + blue;
+    s32 r = RGB_RED(*colors) + red;
+    s32 g = RGB_GREEN(*colors) + green;
+    s32 b = RGB_BLUE(*colors) + blue;
 
-    if (r > 31)
-      r = 31;
+    if (r > RGB_LEVEL_MAX)
+      r = RGB_LEVEL_MAX;
     if (r < 0)
       r = 0;
-    if (g > 31)
-      g = 31;
+    if (g > RGB_LEVEL_MAX)
+      g = RGB_LEVEL_MAX;
     if (g < 0)
       g = 0;
-    if (b > 31)
-      b = 31;
+    if (b > RGB_LEVEL_MAX)
+      b = RGB_LEVEL_MAX;
     if (b < 0)
       b = 0;
-    *colors++ = (b << 10) | (g << 5) | r;
+    *colors++ = RGB(r, g, b);
   }
 }
 
@@ -118,10 +133,10 @@ void StaffCredit_DrawGlowRings(u8 *grid, s32 count, s32 scale) {
   s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWordsEntry;
   s32 i = 0;
   // The corner the rings are centred on; each holds 63 for its whole life.
-  s32 cornerColumn = 63;
-  s32 cornerRow = 63;
+  s32 cornerColumn = GLOW_GRID_SIZE - 1;
+  s32 cornerRow = GLOW_GRID_SIZE - 1;
 
-  fill(grid, 0x1000, 0x01010101);
+  fill(grid, GLOW_GRID_SIZE * GLOW_GRID_SIZE, PIXELS_8BPP(1));
   if (count == 1)
     return;
   do {
@@ -131,14 +146,14 @@ void StaffCredit_DrawGlowRings(u8 *grid, s32 count, s32 scale) {
     s32 x = i;
     s32 error = i;
 
-    level = (Trig_Cos((i << 14) / last) * 15) >> 16;
-    level = level * scale / 0x10000;
-    if (level > 15)
-      level = 15;
+    level = (Trig_Cos((i << 14) / last) * GLOW_LEVEL_MAX) >> 16;
+    level = level * scale / Q16_ONE;
+    if (level > GLOW_LEVEL_MAX)
+      level = GLOW_LEVEL_MAX;
     if (level <= 0)
       level = 1;
     while (x >= y) {
-      s32 lastColumn = 63;
+      s32 lastColumn = GLOW_GRID_SIZE - 1;
       s32 column = cornerColumn - x;
       s32 row = cornerRow - y;
       u8 *cell;
@@ -178,11 +193,21 @@ static __inline__ void Camera_MoveWithinMapBounds_(s32 x, s32 z, s32 mode) {
   FieldCamera_MoveToFixed(x, -1, z, mode);
 }
 
-/// Flies the camera to a lit lighthouse and shows its beacon's glow, then flies
-/// back; stage 4 is the four beams meeting over Mt. Aleph.
+/// The lighthouses whose beacons the credits fly to, in the order they are
+/// shown, and last the four beams meeting over Mt. Aleph.
+enum BeaconStage {
+  BEACON_MARS,
+  BEACON_MERCURY,
+  BEACON_VENUS,
+  BEACON_JUPITER,
+  BEACON_BEAMS_MEET
+};
+
 /// The staff credits' one placed actor: the beacon atop Mars Lighthouse.
 enum { ACTOR_BEACON = ACTOR_FIRST_PLACED };
 
+/// Flies the camera to a lit lighthouse and shows its beacon's glow, then flies
+/// back; BEACON_BEAMS_MEET is the four beams meeting over Mt. Aleph.
 void StaffCredit_ShowBeacon(s32 stage) {
   struct WorldCamera *map = (struct WorldCamera *)Ram_HeapSlots->mapGrid;
   s32 palette;
@@ -199,25 +224,26 @@ void StaffCredit_ShowBeacon(s32 stage) {
   Event_ClearFlag(FLAG_KEEP_PARTY_POSITION);
   gFieldWork->transition = 0;
   palette = stage;
-  buffer = Heap_AllocEwram(0x6000);
+  buffer = Heap_AllocEwram(BEACON_BUFFER_SIZE);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_BEACON), 0);
-  if (stage == 4)
+  if (stage == BEACON_BEAMS_MEET)
     palette = 0;
   gBgScroll[0].y = 0;
   gBgScroll[0].x = 0;
-  Camera_MoveWithinMapBounds_(gStaffCredit_FlightStarts[stage][0] << 16,
-                              gStaffCredit_FlightStarts[stage][1] << 16, 0);
+  Camera_MoveWithinMapBounds_(px(gStaffCredit_FlightStarts[stage][0]),
+                              px(gStaffCredit_FlightStarts[stage][1]), 0);
   WorldMap_UpdateCurrentTileBlock();
   FieldEffect_ScheduleRatioTransition(gStaffCredit_StartZooms[stage], 1);
-  map->yaw = 0x1000;
-  map->unk11c = 0xd000;
-  Iwram_ClearWordsEntry((void *)0x050001c0, 32);
+  map->yaw = TRIG_TURN / 16;
+  map->unk11c = TRIG_TURN * 13 / 16;
+  Iwram_ClearWordsEntry((void *)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
+                        PALETTE_COLORS * 2);
   wait(1);
   Actor_GetById(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   gFieldWork->transitionFrames = 64;
   Event_StartScreenTransition();
-  Camera_MoveWithinMapBounds_(gStaffCredit_FlightEnds[stage][0] << 16,
-                              gStaffCredit_FlightEnds[stage][1] << 16, 1);
+  Camera_MoveWithinMapBounds_(px(gStaffCredit_FlightEnds[stage][0]),
+                              px(gStaffCredit_FlightEnds[stage][1]), 1);
   for (frame = 0; frame != gStaffCredit_FlightFrames[stage]; frame++) {
     {
       s32 length = gStaffCredit_FlightFrames[stage];
@@ -235,44 +261,53 @@ void StaffCredit_ShowBeacon(s32 stage) {
     wait(1);
   }
   WorldMap_Freeze();
-  if (stage == 4) {
-    u8 *frames = buffer + 0x2000;
+  if (stage == BEACON_BEAMS_MEET) {
+    u8 *frames = buffer + BEACON_MAPS;
 
     Decompress_TaggedLz(gStaffCredit_BeamsTiles, buffer);
     Decompress_TaggedLz(gStaffCredit_BeamsMaps, frames);
-    IO_WRITE_QUEUE_PUSH(0x06000000, (u32)buffer, 0x84000800);
-    IO_WRITE_QUEUE_PUSH(0x06002000, (u32)frames, 0x84000140);
+    IO_WRITE_QUEUE_PUSH(VRAM, (u32)buffer,
+                        DMA_COPY_WORDS(256 * TILE_SIZE_4BPP / 4));
+    IO_WRITE_QUEUE_PUSH(PICTURE_MAP, (u32)frames,
+                        DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4));
     grid = frames;
     wait(1);
   } else {
     u16 *tiles = (u16 *)buffer;
 
-    IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0),
-                        (u32)(gStaffCredit_BeaconPalettes + palette * 32),
-                        0x80000010);
+    IO_WRITE_QUEUE_PUSH(
+        (u32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
+        (u32)(gStaffCredit_BeaconPalettes + palette * PALETTE_COLORS * 2),
+        DMA_COPY_HALFWORDS(PALETTE_COLORS));
     {
       void (*clear)(void *, s32) = (void (*)(void *, s32))Iwram_ClearWordsEntry;
-      s32 size = 0x2000;
-      void *tilesAt = (void *)0x06001000;
+      s32 size = 256 * TILE_SIZE_4BPP;
+      void *tilesAt = (void *)PICTURE_TILES;
 
       clear(tilesAt, size);
     }
     wait(1);
     for (y = 0; y != 8; y++) {
       for (x = 0; x != 16; x++) {
-        s32 tile = y * 16 + x + 128;
+        s32 tile = y * 16 + x + PICTURE_FIRST_TILE;
 
-        tiles[y * 32 + x] = tile | (s16)0xe000;
-        tiles[y * 32 - x + 31] = tile | (s16)0xe400;
-        tiles[(15 - y) * 32 + x] = tile | (s16)0xe800;
-        tiles[(15 - y) * 32 - x + 31] = tile | (s16)0xec00;
+        tiles[y * 32 + x] = tile | (s16)BG_TILE_PALETTE(PICTURE_PALETTE);
+        tiles[y * 32 - x + 31] =
+            tile | (s16)(BG_TILE_PALETTE(PICTURE_PALETTE) | TILE_HFLIP);
+        tiles[(15 - y) * 32 + x] =
+            tile | (s16)(BG_TILE_PALETTE(PICTURE_PALETTE) | TILE_VFLIP);
+        tiles[(15 - y) * 32 - x + 31] =
+            tile |
+            (s16)(BG_TILE_PALETTE(PICTURE_PALETTE) | TILE_HFLIP | TILE_VFLIP);
       }
     }
     for (y = 0; y != 16; y++) {
       for (x = 0; x != 32; x++)
-        tiles[y * 32 + x + 0x200] = 0xe080;
+        tiles[y * 32 + x + 16 * BG_SCREEN_WIDTH] =
+            BG_TILE_PALETTE(PICTURE_PALETTE) | PICTURE_FIRST_TILE;
     }
-    IO_WRITE_QUEUE_PUSH(0x06002000, (u32)buffer, 0x80000400);
+    IO_WRITE_QUEUE_PUSH(PICTURE_MAP, (u32)buffer,
+                        DMA_COPY_HALFWORDS(BG_SCREEN_WIDTH * BG_SCREEN_WIDTH));
     wait(1);
   }
   Event_Start();
@@ -281,22 +316,25 @@ void StaffCredit_ShowBeacon(s32 stage) {
   Event_PlaySound(SE_GLITTER);
   for (frame = 0; frame != 172; frame++) {
     if (frame == 0) {
-      if (stage == 4) {
+      if (stage == BEACON_BEAMS_MEET) {
         gBgScroll[0].x = 8;
         gBgScroll[0].y = frame;
-        IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0),
-                            (u32)gStaffCredit_BeamsPalette, 0x80000010);
-        IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(15, 0),
-                            (u32)gStaffCredit_BeamsLightPalette, 0x80000010);
+        IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
+                            (u32)gStaffCredit_BeamsPalette,
+                            DMA_COPY_HALFWORDS(PALETTE_COLORS));
+        IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(BEAMS_LIGHT_PALETTE, 0),
+                            (u32)gStaffCredit_BeamsLightPalette,
+                            DMA_COPY_HALFWORDS(PALETTE_COLORS));
       } else {
         gBgScroll[0].x = gStaffCredit_GlowScrolls[stage][0];
         gBgScroll[0].y = gStaffCredit_GlowScrolls[stage][1];
-        IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0),
-                            (u32)(gStaffCredit_BeaconPalettes + palette * 32),
-                            0x80000010);
+        IO_WRITE_QUEUE_PUSH(
+            (u32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
+            (u32)(gStaffCredit_BeaconPalettes + palette * PALETTE_COLORS * 2),
+            DMA_COPY_HALFWORDS(PALETTE_COLORS));
       }
     }
-    if (stage == 4) {
+    if (stage == BEACON_BEAMS_MEET) {
       s32 zero;
 
       {
@@ -309,21 +347,20 @@ void StaffCredit_ShowBeacon(s32 stage) {
         zero = 0;
         top = camera[8];
         left = camera[9];
-        z = -0x1e0000;
-        x0 = -0x320000;
+        z = px(-30);
+        x0 = px(-50);
 
-        Actor_SetPositionFixed(ACTOR_BEACON, (top << 16) + x0,
-                               (left << 16) + z);
+        Actor_SetPositionFixed(ACTOR_BEACON, px(top) + x0, px(left) + z);
       }
       Actor_SetBlendMode(Actor_GetById(ACTOR_BEACON), 1);
       Actor_SetAnimation(ACTOR_BEACON, 0);
       Actor_GetById(ACTOR_BEACON)->scaleX = zero;
       Actor_GetById(ACTOR_BEACON)->scaleY = zero;
       if (frame > 22) {
-        s32 scale = (frame << 10) - 0x5400;
+        s32 scale = (frame << 10) - (21 << 10);
 
-        if (scale > 0x10000)
-          scale = 0x10000;
+        if (scale > Q16_ONE)
+          scale = Q16_ONE;
         Actor_GetById(ACTOR_BEACON)->scaleX = scale;
         Actor_GetById(ACTOR_BEACON)->scaleY = scale;
       }
@@ -331,34 +368,44 @@ void StaffCredit_ShowBeacon(s32 stage) {
         s32 step = frame / 4;
 
         if (step <= 6)
-          IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + step * 0x500 + 0x2000),
-                              0x84000140);
-        gStaffCredit_BlendLevel = 0xa00;
+          IO_WRITE_QUEUE_PUSH(
+              PICTURE_MAP,
+              (u32)(buffer + step * PICTURE_FRAME_SIZE + BEACON_MAPS),
+              DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4));
+        gStaffCredit_BlendLevel = BLEND_ALPHA(0, 10);
       }
       if (frame == 32) {
         gStaffCredit_BlendSteady = 1;
-        gStaffCredit_BlendLevel = 0xa00;
+        gStaffCredit_BlendLevel = BLEND_ALPHA(0, 10);
       }
       if (frame == 36)
-        gStaffCredit_BlendLevel = 0xb00;
+        gStaffCredit_BlendLevel = BLEND_ALPHA(0, 11);
       if (frame == 40)
-        gStaffCredit_BlendLevel = 0xc00;
+        gStaffCredit_BlendLevel = BLEND_ALPHA(0, 12);
       if (frame == 44)
-        gStaffCredit_BlendLevel = 0xd00;
+        gStaffCredit_BlendLevel = BLEND_ALPHA(0, 13);
       if (frame == 48)
-        gStaffCredit_BlendLevel = 0xe00;
+        gStaffCredit_BlendLevel = BLEND_ALPHA(0, 14);
       if (frame == 52)
-        gStaffCredit_BlendLevel = 0xf00;
+        gStaffCredit_BlendLevel = BLEND_ALPHA(0, 15);
       if (frame == 56)
-        gStaffCredit_BlendLevel = 0x1000;
+        gStaffCredit_BlendLevel = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
       if (frame == 70)
-        IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + 0x4300), 0x84000140);
+        IO_WRITE_QUEUE_PUSH(
+            PICTURE_MAP, (u32)(buffer + BEACON_MAPS + 7 * PICTURE_FRAME_SIZE),
+            DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4));
       if (frame == 72)
-        IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + 0x4800), 0x84000140);
+        IO_WRITE_QUEUE_PUSH(
+            PICTURE_MAP, (u32)(buffer + BEACON_MAPS + 8 * PICTURE_FRAME_SIZE),
+            DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4));
       if (frame == 74)
-        IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + 0x4d00), 0x84000140);
+        IO_WRITE_QUEUE_PUSH(
+            PICTURE_MAP, (u32)(buffer + BEACON_MAPS + 9 * PICTURE_FRAME_SIZE),
+            DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4));
       if (frame == 76)
-        IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + 0x5200), 0x84000140);
+        IO_WRITE_QUEUE_PUSH(
+            PICTURE_MAP, (u32)(buffer + BEACON_MAPS + 10 * PICTURE_FRAME_SIZE),
+            DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4));
       if (frame > 153) {
         gStaffCredit_BlendLevel = 0;
         StaffCredit_StepPaletteColors((u16 *)&BG_PLTT_COLOR(0, 0), 256, -2, -2,
@@ -372,7 +419,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
                                       1);
       }
     } else if (frame >= 0) {
-      grid = buffer + 0x2000;
+      grid = buffer + BEACON_MAPS;
 
       if (frame + 8 <= 63) {
         s32 offset = 0;
@@ -382,7 +429,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
         u8 *out;
         u8 *fill;
 
-        StaffCredit_DrawGlowRings(grid, frame + 8, 0x10000);
+        StaffCredit_DrawGlowRings(grid, frame + 8, Q16_ONE);
         by = 0;
         rowBase = 0;
         goto blockRowTest;
@@ -390,11 +437,11 @@ void StaffCredit_ShowBeacon(s32 stage) {
         bx = 0;
         fill = (u8 *)offset + (s32)buffer;
       blank:
-        *fill = 0x11;
+        *fill = GLOW_BLANK_PAIR;
         bx++;
         offset++;
         fill++;
-        if (bx != 256)
+        if (bx != 8 * TILE_SIZE_4BPP)
           goto blank;
         bx = 0;
         base = rowBase * 8;
@@ -418,7 +465,7 @@ void StaffCredit_ShowBeacon(s32 stage) {
         if (x != 4)
           goto pixelPair;
         row++;
-        i += 64;
+        i += GLOW_GRID_SIZE;
         if (row != 8)
           goto pixelRow;
         base += 8;
@@ -431,37 +478,40 @@ void StaffCredit_ShowBeacon(s32 stage) {
       blockRowTest:
         if (by != 8)
           goto blockRow;
-        IO_WRITE_QUEUE_PUSH(0x06001000, (u32)buffer, 0x84000400);
+        IO_WRITE_QUEUE_PUSH(
+            PICTURE_TILES, (u32)buffer,
+            DMA_COPY_WORDS(PICTURE_FIRST_TILE * TILE_SIZE_4BPP / 4));
       }
     }
-    if (stage != 4) {
+    if (stage != BEACON_BEAMS_MEET) {
       u16 *alpha = &gStaffCredit_BlendLevel;
-      u32 late = frame - 32;
+      u32 scrollFrames = frame - 32;
 
-      *alpha = frame <= 6 ? gStaffCredit_GlowFadeIn[frame % 6] : 0x1000;
-      gStaffCredit_BlendLevel = 0x1000;
+      *alpha = frame <= 6 ? gStaffCredit_GlowFadeIn[frame % 6]
+                          : BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
+      gStaffCredit_BlendLevel = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
       if (frame == 138)
         gStaffCredit_BlendSteady = 1;
       if (frame > 64 && (frame & 1))
-        StaffCredit_StepPaletteColors((u16 *)&BG_PLTT_COLOR(14, 0), 16, 1, 1,
-                                      1);
+        StaffCredit_StepPaletteColors((u16 *)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
+                                      16, 1, 1, 1);
       if (frame > 140)
-        StaffCredit_StepPaletteColors((u16 *)&BG_PLTT_COLOR(14, 0), 16, -2, -2,
-                                      -2);
-      if (late <= 95)
+        StaffCredit_StepPaletteColors((u16 *)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
+                                      16, -2, -2, -2);
+      if (scrollFrames <= 95)
         gBgScroll[0].y++;
     }
     wait(1);
   }
   FieldTask_Remove(StaffCredit_BlendBeacon);
-  if (stage != 4) {
+  if (stage != BEACON_BEAMS_MEET) {
     FieldCamera_SetSpeed(6);
     WorldMap_ReloadPendingAreaGraphics();
-    Camera_MoveWithinMapBounds_(gStaffCredit_FlightReturns[stage][0] << 16,
-                                gStaffCredit_FlightReturns[stage][1] << 16, 1);
-    FieldEffect_ScheduleRatioTransition(45875, 60);
+    Camera_MoveWithinMapBounds_(px(gStaffCredit_FlightReturns[stage][0]),
+                                px(gStaffCredit_FlightReturns[stage][1]), 1);
+    FieldEffect_ScheduleRatioTransition(Q16_ONE * 7 / 10, 60);
     for (frame = 0; frame != 124;) {
-      map->yaw += 0xffe0;
+      map->yaw -= 32;
       if (frame == 60) {
         gFieldWork->transitionFrames = 64;
         Event_FinishScreenTransition();
@@ -483,9 +533,21 @@ void StaffCredit_ShowBeacon(s32 stage) {
 
 void WorldMap_StartPlacedActors(void);
 
+/// The staff credits' entrances, each a stretch of the credits: the summit
+/// enters the first two, and each beacon's stretch enters the next.
+enum StaffCreditEntrance {
+  STAFF_CREDIT_OPENING,    ///< then back to the summit
+  STAFF_CREDIT_TO_BEACONS, ///< then on to the beacons
+  STAFF_CREDIT_MARS_BEACON,
+  STAFF_CREDIT_MERCURY_BEACON,
+  STAFF_CREDIT_VENUS_BEACON,
+  STAFF_CREDIT_JUPITER_BEACON,
+  STAFF_CREDIT_BEAMS_MEET ///< the four beams over Mt. Aleph, then the summit
+};
+
 /// Chooses where the credits go next by the entrance they were entered from:
-/// entrances 2 to 5 first show a lighthouse's beacon, entrance 6 the beams
-/// meeting, and each but the last runs the next stretch of credits.
+/// each beacon's entrance first shows its lighthouse's beacon, the last the
+/// beams meeting, and each but the last runs the next stretch of credits.
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
@@ -498,42 +560,42 @@ s32 Scene_Initialize(void) {
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
   WorldMap_StartPlacedActors();
   switch (gMainRoutineWork.entrance) {
-  case 0:
+  case STAFF_CREDIT_OPENING:
     Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
     StaffCredit_RunCredits(2);
     Event_SetDestination(SCENE_MT_ALEPH_SUMMIT, 2);
     break;
-  case 1:
+  case STAFF_CREDIT_TO_BEACONS:
     Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
     StaffCredit_RunCredits(3);
-    Event_SetDestination(SCENE_STAFF_CREDIT, 2);
+    Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_MARS_BEACON);
     break;
-  case 2:
-    StaffCredit_ShowBeacon(0);
+  case STAFF_CREDIT_MARS_BEACON:
+    StaffCredit_ShowBeacon(BEACON_MARS);
     Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
     StaffCredit_RunCredits(4);
-    Event_SetDestination(SCENE_STAFF_CREDIT, 3);
+    Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_MERCURY_BEACON);
     break;
-  case 3:
-    StaffCredit_ShowBeacon(1);
+  case STAFF_CREDIT_MERCURY_BEACON:
+    StaffCredit_ShowBeacon(BEACON_MERCURY);
     Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
     StaffCredit_RunCredits(5);
-    Event_SetDestination(SCENE_STAFF_CREDIT, 4);
+    Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_VENUS_BEACON);
     break;
-  case 4:
-    StaffCredit_ShowBeacon(2);
+  case STAFF_CREDIT_VENUS_BEACON:
+    StaffCredit_ShowBeacon(BEACON_VENUS);
     Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
     StaffCredit_RunCredits(6);
-    Event_SetDestination(SCENE_STAFF_CREDIT, 5);
+    Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_JUPITER_BEACON);
     break;
-  case 5:
-    StaffCredit_ShowBeacon(3);
+  case STAFF_CREDIT_JUPITER_BEACON:
+    StaffCredit_ShowBeacon(BEACON_JUPITER);
     Resource_ReservedNoOp((s32)&ResourceId_CreditsFarCalls);
     StaffCredit_RunCredits(7);
-    Event_SetDestination(SCENE_STAFF_CREDIT, 6);
+    Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_BEAMS_MEET);
     break;
-  case 6:
-    StaffCredit_ShowBeacon(4);
+  case STAFF_CREDIT_BEAMS_MEET:
+    StaffCredit_ShowBeacon(BEACON_BEAMS_MEET);
     Event_SetDestination(SCENE_MT_ALEPH_SUMMIT, 3);
     break;
   }
@@ -601,9 +663,11 @@ void StaffCredit_BlendPicture(void) {
   IoWriteQueue_Store16((u32)&REG_BLDCNT,
                        BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   if (gFrameCount & 2) {
-    IoWriteQueue_Store16(alphaRegister, gStaffCredit_PictureBlend | 12);
+    IoWriteQueue_Store16(alphaRegister,
+                         gStaffCredit_PictureBlend | (BLEND_WEIGHT_MAX - 4));
   } else {
-    IoWriteQueue_Store16(alphaRegister, gStaffCredit_PictureBlend | 16);
+    IoWriteQueue_Store16(alphaRegister,
+                         gStaffCredit_PictureBlend | BLEND_WEIGHT_MAX);
   }
 }
 
@@ -614,8 +678,11 @@ static inline void CameraMove(s32 x, s32 y, s32 z, s32 mode) {
 /// Shakes the camera diagonally by one pixel every three frames.
 #include "shared/camera_jitter.h"
 
-#define PUSH_PICTURE(offset)                                                   \
-  IO_WRITE_QUEUE_PUSH(0x06002000, (u32)(buffer + (offset)), 0x84000140)
+#define PUSH_PICTURE(frame)                                                    \
+  IO_WRITE_QUEUE_PUSH(                                                         \
+      PICTURE_MAP,                                                             \
+      (u32)(buffer + PICTURES_FIRST_FRAME + (frame) * PICTURES_FRAME_STRIDE),  \
+      DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4))
 
 UNUSED void StaffCredit_ShowPicture(s32 mode) {
   u8 *buffer;
@@ -637,9 +704,11 @@ UNUSED void StaffCredit_ShowPicture(s32 mode) {
   WorldMap_Freeze();
   buffer = Heap_AllocEwram(0x4000);
   Decompress_TaggedLz(gWorldMapPackedTiles, buffer);
-  Decompress_TaggedLz(gWorldMapPackedPictures, buffer + 0x1000);
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(14, 0),
-                      (u32)(gWorldMapPalettes + mode * 32), 0x80000010);
+  Decompress_TaggedLz(gWorldMapPackedPictures,
+                      buffer + PICTURE_FIRST_TILE * TILE_SIZE_4BPP);
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
+                      (u32)(gWorldMapPalettes + mode * PALETTE_COLORS * 2),
+                      DMA_COPY_HALFWORDS(PALETTE_COLORS));
   {
     struct IoWriteQueue *q = &gIoWriteQueue;
     u32 saved;
@@ -647,13 +716,13 @@ UNUSED void StaffCredit_ShowPicture(s32 mode) {
 
     IRQ_LOCK(saved);
     count = q->count;
-    if (count <= 31) {
+    if (count < (s32)ARRAY_COUNT(q->entries)) {
       u32 *entry = q->entries[count];
 
       *entry++ = (u32)buffer;
       q->count = count + 1;
-      *entry++ = 0x06001000;
-      *entry = 0x84000400;
+      *entry++ = PICTURE_TILES;
+      *entry = DMA_COPY_WORDS(PICTURE_FIRST_TILE * TILE_SIZE_4BPP / 4);
     }
     IRQ_UNLOCK(saved);
   }
@@ -661,54 +730,54 @@ UNUSED void StaffCredit_ShowPicture(s32 mode) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_GLITTER);
-  gStaffCredit_PictureBlend = 0xe00;
-  PUSH_PICTURE(0x3480);
+  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 14);
+  PUSH_PICTURE(6);
   FieldEvent_Wait(2);
-  gStaffCredit_PictureBlend = 0xd00;
-  PUSH_PICTURE(0x2e80);
+  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 13);
+  PUSH_PICTURE(5);
   FieldEvent_Wait(2);
-  gStaffCredit_PictureBlend = 0xc00;
-  PUSH_PICTURE(0x2880);
+  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 12);
+  PUSH_PICTURE(4);
   FieldEvent_Wait(2);
-  gStaffCredit_PictureBlend = 0xb00;
-  PUSH_PICTURE(0x2280);
+  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 11);
+  PUSH_PICTURE(3);
   FieldEvent_Wait(2);
-  gStaffCredit_PictureBlend = 0xa00;
-  PUSH_PICTURE(0x1c80);
+  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 10);
+  PUSH_PICTURE(2);
   FieldEvent_Wait(2);
-  gStaffCredit_PictureBlend = 0x900;
-  PUSH_PICTURE(0x1680);
+  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 9);
+  PUSH_PICTURE(1);
   FieldEvent_Wait(2);
-  gStaffCredit_PictureBlend = 0x800;
-  PUSH_PICTURE(0x1080);
+  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 8);
+  PUSH_PICTURE(0);
   FieldEvent_Wait(140);
-  PUSH_PICTURE(0x1680);
+  PUSH_PICTURE(1);
   FieldEvent_Wait(4);
-  PUSH_PICTURE(0x1c80);
+  PUSH_PICTURE(2);
   FieldEvent_Wait(4);
-  PUSH_PICTURE(0x2280);
+  PUSH_PICTURE(3);
   FieldEvent_Wait(4);
-  gStaffCredit_PictureBlend = 0x900;
-  PUSH_PICTURE(0x2880);
+  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 9);
+  PUSH_PICTURE(4);
   FieldEvent_Wait(4);
-  gStaffCredit_PictureBlend = 0xa00;
-  PUSH_PICTURE(0x2e80);
+  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 10);
+  PUSH_PICTURE(5);
   FieldEvent_Wait(4);
-  gStaffCredit_PictureBlend = 0xb00;
-  PUSH_PICTURE(0x3480);
+  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 11);
+  PUSH_PICTURE(6);
   FieldEvent_Wait(4);
-  gStaffCredit_PictureBlend = 0xc00;
-  PUSH_PICTURE(0x3a80);
+  gStaffCredit_PictureBlend = BLEND_ALPHA(0, 12);
+  PUSH_PICTURE(7);
   if (mode == 1) {
     MapGrid_SetShake(2, 2, 1);
     Event_PlaySound(SE_RUMBLE);
-    gStaffCredit_PictureBlend = 0xd00;
+    gStaffCredit_PictureBlend = BLEND_ALPHA(0, 13);
     FieldEvent_Wait(4);
-    gStaffCredit_PictureBlend = 0xe00;
+    gStaffCredit_PictureBlend = BLEND_ALPHA(0, 14);
     FieldEvent_Wait(4);
-    gStaffCredit_PictureBlend = 0xf00;
+    gStaffCredit_PictureBlend = BLEND_ALPHA(0, 15);
     FieldEvent_Wait(4);
-    gStaffCredit_PictureBlend = 0x1000;
+    gStaffCredit_PictureBlend = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
     FieldEvent_Wait(45);
     FieldTask_Remove(StaffCredit_BlendPicture);
     DebugText_Clear();
@@ -716,13 +785,13 @@ UNUSED void StaffCredit_ShowPicture(s32 mode) {
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, level);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   } else {
-    gStaffCredit_PictureBlend = 0xd00;
+    gStaffCredit_PictureBlend = BLEND_ALPHA(0, 13);
     FieldEvent_Wait(4);
-    gStaffCredit_PictureBlend = 0xe00;
+    gStaffCredit_PictureBlend = BLEND_ALPHA(0, 14);
     FieldEvent_Wait(4);
-    gStaffCredit_PictureBlend = 0xf00;
+    gStaffCredit_PictureBlend = BLEND_ALPHA(0, 15);
     FieldEvent_Wait(4);
-    gStaffCredit_PictureBlend = 0x1000;
+    gStaffCredit_PictureBlend = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
     FieldEvent_Wait(45);
     FieldTask_Remove(StaffCredit_BlendPicture);
     DebugText_Clear();
@@ -769,8 +838,8 @@ void StaffCredit_SpawnGrowingPair(struct Actor *parent) {
   s32 i;
 
   for (i = 0; i < 2; i++) {
-    child = (FieldActor_Create(271, parent->x.fixed, parent->y.fixed,
-                               parent->z.fixed));
+    child = (FieldActor_Create(SPRITE_GOLDEN_RINGS, parent->x.fixed,
+                               parent->y.fixed, parent->z.fixed));
     pair[i] = child;
     if (child != NULL) {
       child->groundHeight = parent->groundHeight;
@@ -814,53 +883,56 @@ extern s16 gGauge_Shown;
 extern u8 gGauge_Tiles[][32];
 
 void Gauge_Draw(s32 progress) {
-  s32 level = ((progress * 30 + 0x8000) >> 16) + 1;
-  s32 kind = 0;
+  s32 level = ((progress * GAUGE_LEVELS + Q16_ONE / 2) >> 16) + 1;
+  s32 kind = GAUGE_EMPTY;
   s32 count, base, i;
 
   if (progress != 0)
-    kind = 100;
+    kind = GAUGE_SHOWN;
   if (level <= 15 && (gFrameCount & 15) <= 1)
-    kind = 200;
+    kind = GAUGE_LOW;
   if (level <= 7 && (gFrameCount & 7) <= 1)
-    kind = 200;
+    kind = GAUGE_LOW;
   if (kind + level == gGauge_Shown)
     return;
   gGauge_Shown = kind + level;
-  Iwram_ClearWords((s32)(gGauge_Tiles), (s32)(0x100));
+  Iwram_ClearWords((s32)(gGauge_Tiles), (s32)(GAUGE_SIZE));
   {
     s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
 
-    if (kind == 0) {
-      copy(gGauge_Tiles, gGauge_SourceTiles[8], 0x80);
+    if (kind == GAUGE_EMPTY) {
+      copy(gGauge_Tiles, gGauge_SourceTiles[8], 4 * TILE_SIZE_4BPP);
       goto done;
     }
-    if (kind == 100)
-      copy(gGauge_Tiles, gGauge_SourceTiles[4], 0x80);
+    if (kind == GAUGE_SHOWN)
+      copy(gGauge_Tiles, gGauge_SourceTiles[4], 4 * TILE_SIZE_4BPP);
     else
-      copy(gGauge_Tiles, gGauge_SourceTiles[8], 0x80);
+      copy(gGauge_Tiles, gGauge_SourceTiles[8], 4 * TILE_SIZE_4BPP);
   }
   base = 0;
   count = level;
   if (count > 7) {
-    Iwram_CopyWordsEntry(gGauge_Tiles, gGauge_SourceTiles, 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles, gGauge_SourceTiles, TILE_SIZE_4BPP);
     base = 8;
     count -= 8;
   }
   if (level > 15) {
-    Iwram_CopyWordsEntry(gGauge_Tiles[1], gGauge_SourceTiles[1], 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles[1], gGauge_SourceTiles[1],
+                         TILE_SIZE_4BPP);
     count = level;
     base = 16;
     count -= 16;
   }
   if (level > 23) {
-    Iwram_CopyWordsEntry(gGauge_Tiles[2], gGauge_SourceTiles[2], 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles[2], gGauge_SourceTiles[2],
+                         TILE_SIZE_4BPP);
     count = level;
     base = 24;
     count -= 24;
   }
   if (level > 30) {
-    Iwram_CopyWordsEntry(gGauge_Tiles[3], gGauge_SourceTiles[3], 32);
+    Iwram_CopyWordsEntry(gGauge_Tiles[3], gGauge_SourceTiles[3],
+                         TILE_SIZE_4BPP);
     base = 0;
     count = 0;
   }
@@ -886,7 +958,7 @@ void Gauge_Draw(s32 progress) {
     }
   }
 done:
-  Vram_Load(gGauge_Vram, 0x100, gGauge_Tiles);
+  Vram_Load(gGauge_Vram, GAUGE_SIZE, gGauge_Tiles);
 }
 
 extern u32 gInput;
@@ -902,7 +974,7 @@ void Gauge_Update(void) {
   s32 screen[3];
   u32 attributes;
 
-  if ((gInput & 3) != 0 && Event_GetFlag(FLAG_MENU_OPEN) == 0 &&
+  if ((gInput & (KEY_A | KEY_B)) != 0 && Event_GetFlag(FLAG_MENU_OPEN) == 0 &&
       leader->y.fixed > px(4)) {
     if (--gGauge_Countdown <= 0) {
       Party_DrainPp(1);
@@ -910,7 +982,7 @@ void Gauge_Update(void) {
     }
   }
   Gauge_Draw(Party_GetPpRatio());
-  attributes = 0x80004000;
+  attributes = OBJ_SIZE_32X16;
   Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x.fixed),
         (s32)(screen));
   {
@@ -920,14 +992,14 @@ void Gauge_Update(void) {
     *oam++ = 0;
     *oam++ = (y | (x << 16)) | attributes;
   }
-  *oam = tile | 0x400;
+  *oam = tile | OBJ_PRIORITY(1);
   Oam_AddSpriteAtDepthClamped(gGauge_Sprite, OAM_DEPTH_FRONT);
 }
 
 void Gauge_Init(void) {
   Decompress_TaggedLz(gWorldMapPackedTilesC, gGauge_SourceTiles);
   gGauge_Vram = VramCache_FindFreeEntry();
-  Vram_Load(gGauge_Vram, 0x100, 0);
+  Vram_Load(gGauge_Vram, GAUGE_SIZE, 0);
   gGauge_Shown = -1;
   gGauge_Countdown = 10;
   Task_AddFrame(Gauge_Update, TASK_PASS_VBLANK - 10);

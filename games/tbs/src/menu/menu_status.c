@@ -146,7 +146,7 @@ s32 PartyMemberChooser_Run(void) {
   s32 finished = 0;
   s32 result = 0;
 
-  /* LEFTOVER(template): StatusScreen_RunPages's loop over its steps, with its
+  /* FAKEMATCH(dead): StatusScreen_RunPages's loop over its steps, with its
    * first step alone: it runs once. */
   while (!finished) {
     work->selectedSlots[0] = finished;

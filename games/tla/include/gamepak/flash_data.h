@@ -34,8 +34,8 @@ struct FlashType {
   } id;
 };
 
-/// Settings for each flash chip model (44 bytes), in flash_setup's field order
-/// from flashset.s.
+/// Settings for each flash chip model (44 bytes); flashsst.c, flashmx.c and
+/// flashat.c hold the chips'.
 struct FlashSetupInfo {
   u16 (*program)(u16 sector, u8 *source); ///< programs one sector
   u16 (*eraseChip)(void);                 ///< erases the whole chip
@@ -63,9 +63,18 @@ extern u16 *gFlashTimerReg;
 /// routines and timings with id 0 (pret's agb_flash calls it DefaultFlash).
 extern const struct FlashSetupInfo gFlash_ChipDefault;
 /// Atmel's entry, whose routines program and erase 4 KB sectors.
-extern struct FlashSetupInfo gFlash_ChipAtmel;
+extern const struct FlashSetupInfo gFlash_ChipAtmel;
 /// Atmel's own 128-byte sectors, which the Atmel routines work through; not
 /// in gFlash_Chips.
-extern struct FlashSetupInfo gFlash_ChipAtmelLayout;
+extern const struct FlashSetupInfo gFlash_ChipAtmelLayout;
+/// The SST chip's entry, which programs a sector again after erasing it if a
+/// write fails.
+extern const struct FlashSetupInfo Flash_ChipSst;
+/// The Macronix chip's entry.
+extern const struct FlashSetupInfo Flash_ChipMacronix;
+/// The Panasonic chip's entry.
+extern const struct FlashSetupInfo Flash_ChipPanasonic;
+/// The library's name and version, which nothing reads.
+extern const char Flash_Version[];
 
 #endif

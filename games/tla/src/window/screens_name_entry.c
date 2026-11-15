@@ -268,8 +268,8 @@ void Text_DrawString(u8 *text, s32 window, s32 x, s32 y);
 // not counted.
 #endif
 #if NAME_KEY_LABELS
-extern u8 gNameEntry_DeleteKeyLabel[];
-extern u8 gNameEntry_EndKeyLabel[];
+extern const u8 gNameEntry_DeleteKeyLabel[];
+extern const u8 gNameEntry_EndKeyLabel[];
 
 #endif
 

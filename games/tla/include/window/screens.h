@@ -9,6 +9,34 @@
 struct RenderInput;
 struct WindowSprite;
 
+/// A cursor stop among the Status screen's stats: its help entry, where the
+/// cursor points and the run of the row it highlights.
+struct BattleSummaryStatCursor {
+  u8 entry;
+  u8 column;
+  u8 row;
+  u8 highlightColumn;
+  u8 highlightRow;
+  u8 highlightWidth;
+  u8 reserved[2]; ///< 0 in every row
+};
+
+/// A cursor stop on the Status screen's equipment or statuses: its help
+/// entry and where the cursor points.
+struct BattleSummaryCursor {
+  u8 entry;
+  u8 column;
+  u8 row;
+  u8 reserved; ///< 0 in every row
+};
+
+/// A row of gMenu_BarPatternRows: the two words a menu bar's tile pair is
+/// XORed with (Menu_BuildLocalizedPatternTiles).
+struct BarPatternRow {
+  u32 firstTile;
+  u32 secondTile;
+};
+
 struct NameCursorMotion {
   struct WindowSprite *anchor;
   u16 x;

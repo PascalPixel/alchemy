@@ -1,5 +1,6 @@
 @ A 24 by 13 window tilemap holding a kana grid, in every edition, and the
-@ table of cell numbers that follows it.
+@ table of cell numbers that follows it. Why assembly: the clear scene's late
+@ data is word-aligned, and the table starts on a halfword after the tilemap.
 	.section .rodata
 	.balign 4
 	.global gClear_GridTilemap

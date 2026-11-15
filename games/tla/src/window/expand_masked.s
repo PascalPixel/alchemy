@@ -52,3 +52,9 @@ AlchemyUncreditedEnd_08038d92:
 	bne	.L_08038da0
 	pop	{r5, r6, r7, r8, r9, sl}
 	bx	lr
+@ The routine's constants, which it reads beside its code (add, pc).
+	.4byte	0x00ff00ff
+	.4byte	0x0000ffff
+	.4byte	0x11111111
+	.global Tile_ExpandMaskedEnd
+Tile_ExpandMaskedEnd:

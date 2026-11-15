@@ -1,8 +1,21 @@
 /// @file
-/// The title intro's colour channel curves, copies of The Broken Seal's
-/// gColorBuffer_ChannelCurve tables.
+/// The title intro's tables: the prompt's blend levels, then the colour
+/// channel curves, copies of The Broken Seal's gColorBuffer_ChannelCurve
+/// tables.
 
 #include "types.h"
+#include "system/frame.h"
+
+/// The prompt's blend level over its pulse of a second, as The Broken Seal
+/// has it.
+// clang-format off
+const u8 gTitle_PromptBlendLevels[FRAMES_PER_SECOND] = {
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+    16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+    16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+    15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+};
+// clang-format on
 
 /// Colour channel curves of the title's palette tints: each maps a 5-bit
 /// channel (0 to 31) to a palette fade channel, shifted up 10 bits, so 31 is

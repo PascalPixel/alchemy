@@ -354,20 +354,6 @@ void DebugWarp_Release(void) {
   HeapSlot_Release(HEAP_SLOT_SETTINGS_MENU);
 }
 
-/// One row of the debug warp menu: its name and what choosing it does.
-struct DebugWarpPreset {
-  const u8 *name;
-  // UB: the handlers return nothing; DebugWarp_Run calls them as returning
-  // s32.
-#ifdef UBFIX
-  void (*warp)(void);
-#else
-  s32 (*warp)(void);
-#endif
-};
-
-extern const struct DebugWarpPreset gDebugWarp_Presets[];
-
 /// Opens the debug warp menu's window: nine preset names 16 pixels apart,
 /// with a divider under each but the last.
 struct RenderInput *DebugWarp_Open(void) {
@@ -490,8 +476,6 @@ void DebugShortcut_DrawAbility(s32 ability, s32 window, s32 x, s32 y) {
   else
     Text_DrawStringInWindow((u8 *)gPauseMenu_Icons, window, x, y);
 }
-
-extern const s16 gDebugShortcut_Abilities[4][9];
 
 /// Opens the ability grid's window: eight dividers, then the four columns
 /// of gDebugShortcut_Abilities in nine rows, as DebugMenu_Open draws its grid.

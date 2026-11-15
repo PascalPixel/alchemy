@@ -500,6 +500,11 @@ void BattleEffect_RunChillBreath(struct BattleEffectParams *args) {
 #define CUE_FIRE 136
 #define CUE_IMPACT 132
 
+/// Where WindStreakSheet is decoded in the effect's pictures.
+#define PROJECTILE_VOLLEY_WIND_STREAK_PICTURES 0x2000
+/// Where MercuryDjinnSmallSheet is decoded in the effect's pictures.
+#define PROJECTILE_VOLLEY_MERCURY_DJINN_SMALL_PICTURES 0x65c0
+
 /// Shots fly from the user to each target and burst into a flash and sparks
 /// when they pass it. The hit sound plays at most once every 8 frames.
 void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
@@ -587,8 +592,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
       copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);
     }
-    Resource_LoadAndDecompress((s32)&ResourceId_WindStreakSheet,
-                               work->sheet + 0x2000, 1, 0);
+    Resource_LoadAndDecompress(
+        (s32)&ResourceId_WindStreakSheet,
+        work->sheet + PROJECTILE_VOLLEY_WIND_STREAK_PICTURES, 1, 0);
     if (mode == PROJECTILE_VOLLEY_CUTTING_EDGE) {
       void *palette = Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet);
       s32 (*copy)(void *, const void *, s32) = Iwram_CopyWordsEntry;
@@ -659,8 +665,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1,
                                1);
-    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
-                               work->sheet + 0x65c0, 1, 0);
+    Resource_LoadAndDecompress(
+        (s32)&ResourceId_MercuryDjinnSmallSheet,
+        work->sheet + PROJECTILE_VOLLEY_MERCURY_DJINN_SMALL_PICTURES, 1, 0);
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_FRAME);
@@ -835,10 +842,12 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                               BLITTER_ADDITIVE);
         draw[1] = DRAW_ALTERNATE;
         if (frame <= 3)
-          draw[1](canvas, work->sheet + 0x65c0, djinnX, djinnY,
-                  SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
-        draw[1](canvas, work->sheet + 0x65c0, djinnX, djinnY,
-                SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
+          draw[1](canvas,
+                  work->sheet + PROJECTILE_VOLLEY_MERCURY_DJINN_SMALL_PICTURES,
+                  djinnX, djinnY, SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
+        draw[1](canvas,
+                work->sheet + PROJECTILE_VOLLEY_MERCURY_DJINN_SMALL_PICTURES,
+                djinnX, djinnY, SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         RELEASE_DRAW_BLITTER();
       }
 

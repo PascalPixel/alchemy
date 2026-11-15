@@ -10,6 +10,9 @@ struct MeshTriangle;
 #define DOME_ROWS 16
 #define DOME_COLUMNS 16
 
+/// Where VenusDjinnSmallSheet is decoded in the effect's pictures.
+#define GEODE_VENUS_DJINN_SMALL_PICTURES 0x65c0
+
 /// The Venus Djinni tears up the battlefield itself: the screen is copied
 /// into a texture and peeled up into a spinning dome over the target as the
 /// palette fades, the Djinni flies across to it, and at frame 48 the dome
@@ -96,7 +99,8 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
     }
   }
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
-                             work->sheet + 0x65c0, 1, 1);
+                             work->sheet + GEODE_VENUS_DJINN_SMALL_PICTURES, 1,
+                             1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, work->sheet + 0x4710, 0,
                              0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -212,10 +216,10 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       } else {
         x = x / 2 - 20;
       }
-      blit[0](canvas, work->sheet + 0x65c0, x - 10, y - 48, SMALL_DJINNI_WIDTH,
-              SMALL_DJINNI_HEIGHT);
-      blit[0](canvas, work->sheet + 0x65c0, x - 10, y - 48, SMALL_DJINNI_WIDTH,
-              SMALL_DJINNI_HEIGHT);
+      blit[0](canvas, work->sheet + GEODE_VENUS_DJINN_SMALL_PICTURES, x - 10,
+              y - 48, SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
+      blit[0](canvas, work->sheet + GEODE_VENUS_DJINN_SMALL_PICTURES, x - 10,
+              y - 48, SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
     }
 
     // The battlefield peels up into a dome.

@@ -5,6 +5,11 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
+/// Where TornadoSheet is decoded in the effect's pictures.
+#define JUDGMENT_TORNADO_PICTURES 0x600
+/// Where OverlayImageA is decoded in the effect's pictures.
+#define JUDGMENT_OVERLAY_A_PICTURES 0x6000
+
 /// The battle wipes away to a violet sky where Judgment flies forward while
 /// motes gather into it; it bursts in a flash, and the blast falls on the land
 /// below and spreads in rings of light.
@@ -72,8 +77,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   zoom = 0x80000;
   Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, work->sheet, 1,
                              1);
-  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x600,
-                             1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
+                             work->sheet + JUDGMENT_TORNADO_PICTURES, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, gData_02014000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   pal = Resource_GetTableEntry((s32)&ResourceId_BlueCrescentSheet);
@@ -425,7 +430,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
                                  work->sheet + 0x4000, 1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageA,
-                                 work->sheet + 0x6000, 0, 0);
+                                 work->sheet + JUDGMENT_OVERLAY_A_PICTURES, 0,
+                                 0);
     }
     if (frame == 66) {
       volatile u16 *c = &BG_PLTT_COLOR(6, 0);
@@ -528,7 +534,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       DRAW_ALT_THROUGH(slot, 31, sheet, 59, top - 1, 24, 24);
     }
     if ((u32)(frame - 64) <= 1) {
-      draw[0](canvas, work->sheet + 0x6000, 52, 51, 16, 17);
+      draw[0](canvas, work->sheet + JUDGMENT_OVERLAY_A_PICTURES, 52, 51, 16,
+              17);
     }
     if ((u32)(frame - 66) <= 1) {
       /* FAKEMATCH(temporary): the width through a local set at both draws of
@@ -545,7 +552,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       draw[0](canvas, work->sheet + 0x64e8, d / 2 + 49, d + 38, 22, 44);
     }
     if ((u32)(frame - 78) <= 1) {
-      draw[0](canvas, work->sheet + 0x6000, 52, 51, 16, 17);
+      draw[0](canvas, work->sheet + JUDGMENT_OVERLAY_A_PICTURES, 52, 51, 16,
+              17);
     }
     if ((u32)(frame - 80) <= 1) {
       width = 24;

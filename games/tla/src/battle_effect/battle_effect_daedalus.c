@@ -224,6 +224,9 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 #define DECODE_BUFFER Ram_MapCellBuffer
 #define PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 
+/// Where FlashBurstSheet is decoded in the effect's pictures.
+#define DAEDALUS_FLASH_BURST_PICTURES 0x6c0
+
 /// Daedalus: over a forest the great machine rises into the sky among birds,
 /// turns and fires its rockets, and they fall on the foes in bursts of fire;
 /// then the second scene (BattleEffect_RunDaedalusAlt) plays.
@@ -493,7 +496,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
     ctl[4] = 1;
     Resource_LoadAndDecompress((s32)&ResourceId_Data0BA, work->frames, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                               work->frames + 0x6c0, 1, 0);
+                               work->frames + DAEDALUS_FLASH_BURST_PICTURES, 1,
+                               0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0BB, work->frames + 0x36c0,
                                0, 0);
     pixels = DECODE_BUFFER;

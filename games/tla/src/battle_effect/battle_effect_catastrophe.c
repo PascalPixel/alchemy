@@ -16,6 +16,9 @@ struct MeshVertex {
 #define OBJ_TILES(obj)                                                         \
   (0x06010000 + gVramCacheEntries[((struct Sprite *)(obj))->slot].offset)
 
+/// Where FlashBurstSheet is decoded in the effect's pictures.
+#define CATASTROPHE_FLASH_BURST_PICTURES 0x1800
+
 /// Catastrophe: over a red sky the chained demon in golden armour spreads its
 /// wings and drives down a sword of light; the blade's orb falls on the land
 /// far below and bursts in a ring and a white flash; then violet lightning
@@ -1312,7 +1315,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0,
                                0);
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                               work->sheet + 0x1800, 1, 0);
+                               work->sheet + CATASTROPHE_FLASH_BURST_PICTURES,
+                               1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, bolts, 1,
                                0);
     Render_BuildQuadStrip(Data_02012000, 4, 32, 11);
@@ -1410,7 +1414,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         q2 = Data_02016d00;
         for (i = 0; i != 64; i++, q2++) {
           if ((u32)q2->variant <= 11) {
-            blit[0](canvas, work->sheet + 0x1800 + (q2->variant / 2 << 11),
+            blit[0](canvas,
+                    work->sheet + CATASTROPHE_FLASH_BURST_PICTURES +
+                        (q2->variant / 2 << 11),
                     Q_16_16_UPPER_HALF(q2->x) - 16,
                     Q_16_16_UPPER_HALF(q2->y) - 32, FLASH_BURST_WIDTH,
                     FLASH_BURST_HEIGHT);

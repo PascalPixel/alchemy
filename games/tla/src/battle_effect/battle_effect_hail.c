@@ -9,6 +9,11 @@
 #define CHIPS ((struct Particle *)Ram_MapCellBuffer)
 #define CHIP_COUNT 64
 
+/// Where IceChipSheet is decoded in the effect's pictures.
+#define HAIL_ICE_CHIP_PICTURES 0x400
+/// Where MercuryDjinnSmallSheet is decoded in the effect's pictures.
+#define HAIL_MERCURY_DJINN_SMALL_PICTURES 0x65c0
+
 /// After a Mercury Djinni enters, ice chips burst out of the first target and
 /// waves of water rise along the bottom of the screen.
 ///
@@ -62,9 +67,10 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       REG_BLDALPHA = BLEND_ALPHA(64 - frame, BLEND_WEIGHT_MAX);
     if (frame == 1) {
       Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet,
-                                 work->sheet + 0x400, 1, 1);
-      Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
-                                 work->sheet + 0x65c0, 1, 0);
+                                 work->sheet + HAIL_ICE_CHIP_PICTURES, 1, 1);
+      Resource_LoadAndDecompress(
+          (s32)&ResourceId_MercuryDjinnSmallSheet,
+          work->sheet + HAIL_MERCURY_DJINN_SMALL_PICTURES, 1, 0);
     }
 
     // With its Djinn prelude, the Djinn hovers over the anchor.
@@ -79,11 +85,11 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       // Never true in 64 frames.
       if (frame > 69)
         y = (y - frame * 2) + 138;
-      blit[1](canvas, work->sheet + 0x65c0, x, y, SMALL_DJINNI_WIDTH,
-              SMALL_DJINNI_HEIGHT);
+      blit[1](canvas, work->sheet + HAIL_MERCURY_DJINN_SMALL_PICTURES, x, y,
+              SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
       if (frame <= 3)
-        blit[1](canvas, work->sheet + 0x65c0, x, y, SMALL_DJINNI_WIDTH,
-                SMALL_DJINNI_HEIGHT);
+        blit[1](canvas, work->sheet + HAIL_MERCURY_DJINN_SMALL_PICTURES, x, y,
+                SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
     }
 
     // Chip i flies from frame 4 + i / 4, through the two blitters in turn.
@@ -94,7 +100,8 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
         u32 height;
 
         cel = (chip->z / 128) & 3;
-        blit[i & 1](canvas, work->sheet + 0x400 + gHail_Pictures[cel],
+        blit[i & 1](canvas,
+                    work->sheet + HAIL_ICE_CHIP_PICTURES + gHail_Pictures[cel],
                     Q_16_16_UPPER_HALF(chip->x) -
                         (width = gHail_PictureWidths[cel]) / 2,
                     Q_16_16_UPPER_HALF(chip->y) -
@@ -161,6 +168,9 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 /// The chips' shapes and flips live in particles[32..63].
 #define FIRST_CHIP 32
 
+/// Where VenusDjinnSmallSheet is decoded in the effect's pictures.
+#define GROUND_VENUS_DJINN_SMALL_PICTURES 0x65c0
+
 /// After a Venus Djinni enters, six glowing portals leave the user, swirl and
 /// close in on the first target, each striking it as it arrives.
 ///
@@ -195,7 +205,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
-                             work->sheet + 0x65c0, 1, 1);
+                             work->sheet + GROUND_VENUS_DJINN_SMALL_PICTURES, 1,
+                             1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The rocks start at the caster, 66 high, flung out to the side away
@@ -239,10 +250,11 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
                               BLITTER_ADDITIVE);
         if (frame <= 3)
           ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-              canvas, work->sheet + 0x65c0, x, y, 20, 40);
+              canvas, work->sheet + GROUND_VENUS_DJINN_SMALL_PICTURES, x, y, 20,
+              40);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
-        draw[0](canvas, work->sheet + 0x65c0, x, y, SMALL_DJINNI_WIDTH,
-                SMALL_DJINNI_HEIGHT);
+        draw[0](canvas, work->sheet + GROUND_VENUS_DJINN_SMALL_PICTURES, x, y,
+                SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
       }
 
       // Every other frame each chip takes a new shape (3 to 8) and flip.

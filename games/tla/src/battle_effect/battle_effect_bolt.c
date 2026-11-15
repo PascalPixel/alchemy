@@ -17,6 +17,9 @@
 /// The second blitter, loaded again for each glint.
 #define DRAW_GLINT ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
 
+/// Where LightningBoltSheet is decoded in the effect's pictures.
+#define BOLT_LIGHTNING_BOLT_PICTURES 0xc56
+
 /// A bolt of lightning strikes each target in turn, and sparks fly up from
 /// where it lands while glints flicker there.
 ///
@@ -42,7 +45,7 @@ void BattleEffect_RunBolt(struct BattleEffectParams *args) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                             work->sheet + 0xc56, 1, 1);
+                             work->sheet + BOLT_LIGHTNING_BOLT_PICTURES, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   for (j = 0; j != SPARK_COUNT; j++)
     SPARKS[j].variant = 0;

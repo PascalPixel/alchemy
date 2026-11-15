@@ -4,6 +4,9 @@
 
 #include "battle_effect_internal.h"
 
+/// Where ParticleSpritesD is decoded in the effect's pictures.
+#define NEPTUNE_PARTICLE_SPRITES_D_PICTURES 0x4e20
+
 /// Under storm clouds Neptune leaps out of the sea in a burst of spray, light
 /// gathers at its head and a beam of light joins its head to the sky, with a
 /// splash there; then columns of water crash down on the targets, throwing up
@@ -91,7 +94,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
-                             work->sheet + 0x4e20, 0, 0);
+                             work->sheet + NEPTUNE_PARTICLE_SPRITES_D_PICTURES,
+                             0, 0);
   REG_DISPCNT = EFFECT_DISPCNT;
   REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = EFFECT_BLEND_ADD;

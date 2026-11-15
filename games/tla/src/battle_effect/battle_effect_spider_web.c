@@ -185,6 +185,11 @@ struct StripQuad;
 
 extern const struct Scale gUlysses_ShipScale;
 
+/// Where RuneCircleSheet is decoded in the effect's pictures.
+#define ULYSSES_RUNE_CIRCLE_PICTURES 0x2781
+/// Where YellowOrbSheet is decoded in the effect's pictures.
+#define ULYSSES_YELLOW_ORB_PICTURES 0x1e97
+
 /// Ulysses: the field goes dark, a ring of red runes opens and the robed
 /// Ulysses steps out of it, violet and then red fire pours from it over the
 /// foes, and it flares and fades.
@@ -327,7 +332,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
                  TASK_PASS_FRAME + 15);
         Task_Add(Display_ApplyBg2Affine, TASK_PASS_FRAME + 127);
         Resource_LoadAndDecompress((s32)&ResourceId_RuneCircleSheet,
-                                   work->sheet + 0x2781, 1, 0);
+                                   work->sheet + ULYSSES_RUNE_CIRCLE_PICTURES,
+                                   1, 0);
         loaded = 1;
       }
       gBgScroll[1].x = 0xff90;
@@ -447,7 +453,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
         Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,
                  TASK_PASS_FRAME + 15);
         Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet,
-                                   work->sheet + 0x1e97, 1, 0);
+                                   work->sheet + ULYSSES_YELLOW_ORB_PICTURES, 1,
+                                   0);
         loaded = 0;
       }
       REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
@@ -636,7 +643,9 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
         if (draw && (u32)(step->variant - 64) <= 11) {
           s32 k = ((step->variant - 64) / 2) % 6;
 
-          blit[1](canvas, work->sheet + 0x1e97 + k * PICTURE_BYTES(YELLOW_ORB),
+          blit[1](canvas,
+                  work->sheet + ULYSSES_YELLOW_ORB_PICTURES +
+                      k * PICTURE_BYTES(YELLOW_ORB),
                   anchor->x - 20, anchor->y - 24, YELLOW_ORB_WIDTH,
                   YELLOW_ORB_HEIGHT);
         }
@@ -674,7 +683,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       quadTexture.logWidth = 7;
       quadTexture.logHeight = 7;
       model->texture = &quadTexture;
-      quadTexture.pixels = work->sheet + 0x2781;
+      quadTexture.pixels = work->sheet + ULYSSES_RUNE_CIRCLE_PICTURES;
       model->kind = 7;
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->vertices = verts;

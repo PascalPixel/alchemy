@@ -227,6 +227,9 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 // line by line through an HBlank DMA table into a slanting band over the
 // targets. Deluge throws its droplets higher.
 
+/// Where BlueBeamSheet is decoded in the effect's pictures.
+#define DOUSE_BLUE_BEAM_PICTURES 0x604
+
 /// Blue bolts streak down diagonally onto the targets' side of the field, each
 /// bursting into a fountain of falling sparks where it lands, while the targets
 /// flash.
@@ -251,7 +254,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   // Set up the canvas, the drop pictures and the droplets.
   EFFECT_START_NARROW_CANVAS(0x2001);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
-                             work->sheet + 0x604, 1, 1);
+                             work->sheet + DOUSE_BLUE_BEAM_PICTURES, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet, 0,
                              0);
   BattleEffect_ConfigureEffectDisplay();
@@ -335,7 +338,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
       y = drop->y / 8;
       if (drop->variant == -1) {
         // Falling: draw the drop and move it on, or land it.
-        draw[0](canvas, work->sheet + 0x604, x, y, 24, 24);
+        draw[0](canvas, work->sheet + DOUSE_BLUE_BEAM_PICTURES, x, y, 24, 24);
         if (drop->y <= 0x27f) {
           if (args->side == EFFECT_SIDE_ENEMIES)
             drop->x -= 32;

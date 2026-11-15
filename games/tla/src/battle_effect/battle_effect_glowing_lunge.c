@@ -11,6 +11,9 @@
 #define SPARK_COUNT 64
 #define BURST_COUNT 16 ///< mode 5's flame bursts
 
+/// Where FlashBurstSheet is decoded in the effect's pictures.
+#define RUSHING_STRIKE_FLASH_BURST_PICTURES 0x800
+
 /// The user rushes at the first target; a ring flares where it hits and sparks
 /// scatter.
 void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
@@ -51,7 +54,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       work->sheet[0x400 + (31 - row) * 32 + column] =
           work->sheet[row * 32 + column];
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + 0x800, 1, 0);
+                             work->sheet + RUSHING_STRIKE_FLASH_BURST_PICTURES,
+                             1, 0);
   switch (mode) {
   case RUSHING_STRIKE_BONE_CHARGE:
     resource = (s32)&ResourceId_FirePillarSheetB;
@@ -225,8 +229,11 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
 
             EffectPosition_ProjectPoint(&burst->x, &screen);
             screen.x >>= 1;
-            draw[0](canvas, work->sheet + 0x800 + (cel << 11), screen.x - 16,
-                    screen.y - 32, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
+            draw[0](canvas,
+                    work->sheet + RUSHING_STRIKE_FLASH_BURST_PICTURES +
+                        (cel << 11),
+                    screen.x - 16, screen.y - 32, FLASH_BURST_WIDTH,
+                    FLASH_BURST_HEIGHT);
             BattleEffectKernels_IntegrateVector3(burst, 60, px(1) / 8);
             burst->variant++;
           }

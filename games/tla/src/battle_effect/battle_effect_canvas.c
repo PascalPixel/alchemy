@@ -15,6 +15,9 @@
 
 #define OBJ_TILES(obj) (0x06010000 + gVramCacheEntries[(obj)->slot].offset)
 
+/// Where TornadoSheet is decoded in the effect's pictures.
+#define ECLIPSE_TORNADO_PICTURES 0x2000
+
 /// Eclipse: after a flash the golden dragon (thirty-two sprites, its head one
 /// of them) looms over a blue sky while shafts of light fall about it; it
 /// breathes a blast of light that whites out the field, and the blast lands
@@ -274,7 +277,8 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
             work->particles[i].variant = i * -8;
           }
           Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
-                                     work->sheet + 0x2000, 1, 0);
+                                     work->sheet + ECLIPSE_TORNADO_PICTURES, 1,
+                                     0);
           Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
                                      work->sheet + 0x4000, 0, 0);
         }
@@ -379,8 +383,10 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
           BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7,
                                     gEclipse_GlintFlips[Random16() & 3] | 3, 1);
           ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-              canvas, work->sheet + 0x2000 + gBattleEffect_GlintPictures[t], x,
-              y, gBattleEffect_GlintPictureWidths[t],
+              canvas,
+              work->sheet + ECLIPSE_TORNADO_PICTURES +
+                  gBattleEffect_GlintPictures[t],
+              x, y, gBattleEffect_GlintPictureWidths[t],
               gBattleEffect_GlintPictureHeights[t]);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }

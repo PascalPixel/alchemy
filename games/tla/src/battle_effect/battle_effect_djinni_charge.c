@@ -8,6 +8,9 @@
 struct MeshTriangle;
 struct StripQuad;
 
+/// Where MarsDjinnSmallSheet is decoded in the effect's pictures.
+#define DJINNI_CHARGE_MARS_DJINN_SMALL_PICTURES 0x1000
+
 /// The body of Core (mode 0) and Cannon (mode 1): the Mars Djinni flies at
 /// the target. For Core it pulls back, then drives in and strikes four times
 /// before a glowing orb (a sphere of 8 by 8 vertices, its mesh built on the
@@ -74,8 +77,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
     work->particles[62].z = focus[2];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0,
                                0);
-    Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
-                               work->sheet + 0x1000, 1, 1);
+    Resource_LoadAndDecompress(
+        (s32)&ResourceId_MarsDjinnSmallSheet,
+        work->sheet + DJINNI_CHARGE_MARS_DJINN_SMALL_PICTURES, 1, 1);
     if (mode == DJINNI_CHARGE_CORE) {
       Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet, work->sheet, 1,
                                  1);
@@ -237,8 +241,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
       EffectPosition_ProjectPoint(focus, &screen);
       if (mode == DJINNI_CHARGE_CORE) {
         if (frame <= 73) {
-          blit[0](canvas, work->sheet + 0x1000, screen.x / 2 - 10,
-                  screen.y - 20, SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
+          blit[0](canvas, work->sheet + DJINNI_CHARGE_MARS_DJINN_SMALL_PICTURES,
+                  screen.x / 2 - 10, screen.y - 20, SMALL_DJINNI_WIDTH,
+                  SMALL_DJINNI_HEIGHT);
         } else if (frame <= 93) {
           blit[0](canvas,
                   work->sheet + 0x2000 +
@@ -247,8 +252,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
                   GLOW_ORB_HEIGHT);
         }
       } else if (frame <= 22) {
-        blit[0](canvas, work->sheet + 0x1000, screen.x / 2 - 10, screen.y - 20,
-                SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
+        blit[0](canvas, work->sheet + DJINNI_CHARGE_MARS_DJINN_SMALL_PICTURES,
+                screen.x / 2 - 10, screen.y - 20, SMALL_DJINNI_WIDTH,
+                SMALL_DJINNI_HEIGHT);
         if (mode == DJINNI_CHARGE_CANNON && frame > 1) {
           s32 picture = (frame / 4) & 3;
           s32 x;

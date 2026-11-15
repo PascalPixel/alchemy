@@ -185,6 +185,9 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
 #define DOTS_PER_BALL 32
 #define BALL_COUNT 8
 
+/// Where FlameballSheet is decoded in the effect's pictures.
+#define JUPITER_FLAMEBALL_PICTURES 0x320
+
 /// The Jupiter Djinni whirls by the caster, trailing pink, while eight pink
 /// flameballs fall from the top right onto the targets, 4 frames apart; each
 /// bursts into 32 motes and hits every target.
@@ -215,7 +218,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                              work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet,
-                             work->sheet + 0x320, 1, 0);
+                             work->sheet + JUPITER_FLAMEBALL_PICTURES, 1, 0);
   // Each transfer leaves 3/4 of the last frame behind as an afterimage.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
@@ -249,8 +252,8 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
     for (i = 0; i != BALL_COUNT; i++) {
       ball = &work->particles[i];
       if (frame >= i * 4 + 8 && ball->y <= 95) {
-        blit[0](canvas, work->sheet + 0x320, ball->x - 20, ball->y - 32,
-                FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
+        blit[0](canvas, work->sheet + JUPITER_FLAMEBALL_PICTURES, ball->x - 20,
+                ball->y - 32, FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
         ball->x -= 6;
         ball->y += 12;
         if (ball->y > 95) {
@@ -321,6 +324,9 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
 #define DOTS_PER_COLUMN 32
 #define COLUMN_COUNT 10
 
+/// Where BlueFlameSheet is decoded in the effect's pictures.
+#define VENUS_BLUE_FLAME_PICTURES 0x2f8
+
 /// The Venus Djinni drops in from above the targets, swaying and trailing
 /// yellow, while ten columns of yellow fire shoot up from the ground beneath
 /// them one after another, each bursting into motes and hitting every target.
@@ -357,7 +363,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet,
-                             work->sheet + 0x2f8, 1, 0);
+                             work->sheet + VENUS_BLUE_FLAME_PICTURES, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // Each column starts somewhere in the canvas's 64 pixels, on the ground.
@@ -447,6 +453,9 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
 #define PUFF_COUNT 9
 #define SPARKS_PER_PUFF 16
 
+/// Where GlowOrbSheet is decoded in the effect's pictures.
+#define MARS_GLOW_ORB_PICTURES 0x320
+
 /// A fireball blooms high over the targets and burns out, the Mars Djinni
 /// appears where it was and dives onto them, nine flames erupt in a row along
 /// the ground beneath them and embers stream up.
@@ -475,8 +484,8 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work->sheet,
                              1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet, work->sheet + 0x320,
-                             1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet,
+                             work->sheet + MARS_GLOW_ORB_PICTURES, 1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // The puffs sit on an oval, alternately left and right of the middle,
@@ -517,8 +526,9 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
     // The orb swells, a cel every four frames.
     if (frame <= 23)
       blit[0](canvas,
-              work->sheet + 0x320 + (frame / 4) * PICTURE_BYTES(GLOW_ORB), 40,
-              20, GLOW_ORB_WIDTH, GLOW_ORB_HEIGHT);
+              work->sheet + MARS_GLOW_ORB_PICTURES +
+                  (frame / 4) * PICTURE_BYTES(GLOW_ORB),
+              40, 20, GLOW_ORB_WIDTH, GLOW_ORB_HEIGHT);
     // The Djinn appears in the orb, then dives down to the left.
     if (frame == 20)
       Iwram_CopyWordsEntry(

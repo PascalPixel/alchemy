@@ -18,6 +18,9 @@
 #define STORM_LIGHTNING_FRAMES 128
 #define STORM_BOLTS 18
 
+/// Where ParticleSpritesC is decoded in the effect's pictures.
+#define THOR_PARTICLE_SPRITES_C_PICTURES 0x1800
+
 /// Thor. In the dusk part (STORM_DUSK_FRAMES, which A or B cuts
 /// short) a circle of 128 dots and three lines across it form over scrolling
 /// dusk clouds, turn, sink into the sky and send down a beam of light; in the
@@ -52,7 +55,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
   EFFECT_START_NARROW_CANVAS(0x2000);
   Resource_LoadAndDecompress((s32)&ResourceId_LightFanSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesC,
-                             work->sheet + 0x1800, 0, 0);
+                             work->sheet + THOR_PARTICLE_SPRITES_C_PICTURES, 0,
+                             0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
   // Eight copies of the dot pictures, each with its colour levels capped 7

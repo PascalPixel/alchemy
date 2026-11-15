@@ -16,6 +16,11 @@ struct Corner {
 #define FUME_FRAMES 50
 #define FUME_SEGMENTS 33
 
+/// Where FlashBurstSheet is decoded in the effect's pictures.
+#define FUME_FLASH_BURST_PICTURES 0x800
+/// Where ClawSlashSheet is decoded in the effect's pictures.
+#define FUME_CLAW_SLASH_PICTURES 0x4000
+
 /// A band of smoke arcs from the caster to the target (33 segments of two
 /// vertices each, a scrolling textured strip), its head growing 44 units a
 /// frame and its tail following from the level's start frame; a claw strikes
@@ -65,9 +70,9 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + 0x800, 1, 0);
+                             work->sheet + FUME_FLASH_BURST_PICTURES, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
-                             work->sheet + 0x4000, 1, 0);
+                             work->sheet + FUME_CLAW_SLASH_PICTURES, 1, 0);
   REG_BG2PA = Q_8_8(0.5);
   Render_BuildQuadStrip(Data_02012000, 4, 32, 32);
 
@@ -104,7 +109,8 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
       if ((u32)particle->variant <= 23) {
         if (particle->variant > 1) {
           blit.draw(canvas,
-                    work->sheet + 0x800 + ((particle->variant / 4) << 11),
+                    work->sheet + FUME_FLASH_BURST_PICTURES +
+                        ((particle->variant / 4) << 11),
                     Q_16_16_UPPER_HALF(particle->x) - 16,
                     Q_16_16_UPPER_HALF(particle->y) - 32, FLASH_BURST_WIDTH,
                     FLASH_BURST_HEIGHT);
@@ -216,7 +222,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
             texture.logWidth = 6;
             texture.logHeight = 6;
             model->scrollU = 0;
-            texture.pixels = work->sheet + 0x4000;
+            texture.pixels = work->sheet + FUME_CLAW_SLASH_PICTURES;
             Transform_ApplyTranslation(px(endX), px(endY), 0);
             Transform_ApplyRoll(TRIG_TURN / 4 - arc.head * 32);
             Transform_ApplyUniformScale(width * 28 / 32);

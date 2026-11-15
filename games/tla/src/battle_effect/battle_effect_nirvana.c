@@ -513,6 +513,9 @@ struct ProjectedPoint {
 #define VERTICES ((struct ModelVertex *)Ram_MapCellBuffer)
 #define MESH_BUFFER (Ram_MapCellBuffer + 0x2000)
 
+/// Where MercuryDjinnSheet is decoded in the effect's pictures.
+#define SERAC_MERCURY_DJINN_PICTURES 0x4000
+
 /// The Mercury Djinni drops onto the target, dust bursting where it lands;
 /// a spire of ice (a cone of 8 rings of 8 vertices, its mesh built on the
 /// first frame) grows up around the target in rings of mist while the
@@ -554,7 +557,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0CF, work->sheet + 0x400, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSheet,
-                             work->sheet + 0x4000, 1, 0);
+                             work->sheet + SERAC_MERCURY_DJINN_PICTURES, 1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet),
                        SHEET_PALETTE_BYTES);
@@ -726,8 +729,9 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
         point.y = px(60) - (frame << 17);
         point.depth = target->z + (Trig_Sin(frame << 9) << 5);
         Render_ProjectPoint(&point, &dropScreen);
-        blitters[1](canvas, work->sheet + 0x4000, dropScreen.x - 20,
-                    dropScreen.y - 30, DJINNI_WIDTH, DJINNI_HEIGHT);
+        blitters[1](canvas, work->sheet + SERAC_MERCURY_DJINN_PICTURES,
+                    dropScreen.x - 20, dropScreen.y - 30, DJINNI_WIDTH,
+                    DJINNI_HEIGHT);
       }
       if (frame == 4) {
         Sound_PlayFar(SE_SWITCH_MECHANISM);

@@ -12,6 +12,9 @@
 // A texture for the model kernels: its size as powers of two, then its
 // pixels.
 
+/// Where BladeSheet is decoded in the effect's pictures.
+#define LEGEND_BLADE_PICTURES 0x4000
+
 /// Legend: a fan of eight blades opens over the target for
 /// 50 frames while a rune, mirrored from one corner, rises and turns behind
 /// it. Then one sword for each step of the variant (variant + 1 in all, 16
@@ -55,8 +58,8 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_CornerRuneASheet, cells, 1, 1);
   Picture_MirrorIntoQuadrants(cells, work->sheet, 64, 64);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_BladeSheet, work->sheet + 0x4000,
-                             1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_BladeSheet,
+                             work->sheet + LEGEND_BLADE_PICTURES, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0E9, work->sheet + 0x5000, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
@@ -125,7 +128,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
 
         if (y > 24)
           height = 104 - y;
-        draw[0](canvas, work->sheet + 0x4000, x, y, 40, height);
+        draw[0](canvas, work->sheet + LEGEND_BLADE_PICTURES, x, y, 40, height);
         if (step->variant <= 12) {
           step->x += step->velocityX;
           step->y += step->velocityY;

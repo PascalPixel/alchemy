@@ -35,6 +35,11 @@ struct StripQuad;
   while (*(volatile u32 *)&(work)->vblanksSinceTransfer,                       \
          *(volatile u32 *)&(work)->vblanksSinceTransfer <= 1)
 
+/// Where VenusDjinnSheet is decoded in the effect's pictures.
+#define GASP_FAMILY_VENUS_DJINN_PICTURES 0x1000
+/// Where CornerGlowSheet is decoded in the effect's pictures.
+#define GASP_FAMILY_CORNER_GLOW_PICTURES 0x4000
+
 /// The shared body of sixteen abilities' effects, named for the first (its
 /// wrappers are in rime.c): Gasp (mode 0), Reflux (2), Djinn Counter (3), Mold
 /// and Meld (4), Shine (5), Lull (6), Counter-rush (7), Demon Eye (8), Emu and
@@ -96,7 +101,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                                FIGURE(work), 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSheet,
-                               work->sheet + 0x1000, 1, 0);
+                               work->sheet + GASP_FAMILY_VENUS_DJINN_PICTURES,
+                               1, 0);
     {
       s32 (*clear)(void *, s32) = Iwram_ClearWordsEntry;
 
@@ -133,16 +139,20 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   } else if (mode == GASP_MODE_ELEMENT_SWAP) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_CornerGlowSheet,
-                               work->sheet + 0x4000, 1, 1);
-    Picture_MirrorIntoQuadrants(work->sheet + 0x4000, work->sheet, 64, 64);
+                               work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
+                               1, 1);
+    Picture_MirrorIntoQuadrants(work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
+                                work->sheet, 64, 64);
     work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
     frames = 48;
   } else if (mode == GASP_MODE_PSY_BOOST) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_CornerGlowSheet,
-                               work->sheet + 0x4000, 1, 1);
-    Picture_MirrorIntoQuadrants(work->sheet + 0x4000, work->sheet, 64, 64);
+                               work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
+                               1, 1);
+    Picture_MirrorIntoQuadrants(work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
+                                work->sheet, 64, 64);
     work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     work->fadeStep = 0;
     frames = 48;
@@ -156,7 +166,8 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
                                FIGURE(work), 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, work->sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x4000,
+    Resource_LoadAndDecompress((s32)&ResourceId_Data0C9,
+                               work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
                                0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, cells, 0, 0);
     LOAD_BG_PALETTE(ResourceId_OrangePaletteB);
@@ -181,8 +192,10 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
     frames = 76;
   } else if (mode == GASP_MODE_DEMON_EYE) {
     Resource_LoadAndDecompress((s32)&ResourceId_CornerGlowSheet,
-                               work->sheet + 0x4000, 1, 1);
-    Picture_MirrorIntoQuadrants(work->sheet + 0x4000, work->sheet, 64, 64);
+                               work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
+                               1, 1);
+    Picture_MirrorIntoQuadrants(work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES,
+                                work->sheet, 64, 64);
     REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                  BGCNT_SCREEN_BASE(7);
     frames = 16;
@@ -620,7 +633,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
         model->shade = -16;
         texture.logWidth = 5;
         texture.logHeight = 2;
-        texture.pixels = work->sheet + 0x4000;
+        texture.pixels = work->sheet + GASP_FAMILY_CORNER_GLOW_PICTURES;
         model->texture = &texture;
         model->kind = 7;
         model->mesh = gGaspFamily_StreakMesh;

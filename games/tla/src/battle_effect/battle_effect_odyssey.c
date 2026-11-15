@@ -41,6 +41,9 @@ struct RenderModel__f190b74 {
   } look;
 };
 
+/// Where DustBlobSheet is decoded in the effect's pictures.
+#define ODYSSEY_DUST_BLOB_PICTURES 0x2f10
+
 /// 114 frames. The screen turns to a scrolling red haze
 /// with only the caster and the target on it (frame 2); two textured flashes
 /// rise from the caster, two claws strike the target from above and below
@@ -80,7 +83,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data102, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
-                             work->sheet + 0x2f10, 1, 0);
+                             work->sheet + ODYSSEY_DUST_BLOB_PICTURES, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   // The blitter faces the caster's side.
   if (args->side == EFFECT_SIDE_ENEMIES)

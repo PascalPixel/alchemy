@@ -17,6 +17,9 @@ struct StripQuad;
 // A ring of heat spins over the targets' middle and swells; from frame 56 a
 // pillar of flame (two mirrored halves) falls onto them, bursting into
 // sparks and embers when it lands, under a second, fading ring.
+/// Where FlashBurstSheet is decoded in the effect's pictures.
+#define RAGING_HEAT_FLASH_BURST_PICTURES 0x4000
+
 /// Raging Heat: a spinning ring of heat over the targets, and a pillar of
 /// flame that falls onto them and bursts into sparks and embers.
 void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
@@ -57,7 +60,8 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
   Picture_MirrorIntoQuadrants(buffer, work->sheet, 64, 64);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + 0x4000, 1, 0);
+                             work->sheet + RAGING_HEAT_FLASH_BURST_PICTURES, 1,
+                             0);
   Resource_LoadAndDecompress((s32)&ResourceId_PinkBurstSheet, buffer, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C2, TEXTURE_PIXELS, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -128,7 +132,8 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
           if ((u32)particle->variant <= 23) {
             if (particle->variant > 1) {
               draw[0](canvas,
-                      work->sheet + 0x4000 + ((particle->variant / 4) << 11),
+                      work->sheet + RAGING_HEAT_FLASH_BURST_PICTURES +
+                          ((particle->variant / 4) << 11),
                       Q_16_16_UPPER_HALF(particle->x) - 16,
                       Q_16_16_UPPER_HALF(particle->y) - 32, FLASH_BURST_WIDTH,
                       FLASH_BURST_HEIGHT);

@@ -153,6 +153,9 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
+/// Where FlashBurstSheet is decoded in the effect's pictures.
+#define PLUME_EDGE_FLASH_BURST_PICTURES 0x2000
+
 /// Plume Edge: the user dashes at the target, which a fan of white flashes
 /// throws back; a pillar of light scrolls up through it for half a second and
 /// then bursts into 256 sparks with a white flash of the whole canvas.
@@ -194,7 +197,8 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_FirePillarSheetA, work->sheet, 1,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + 0x2000, 1, 0);
+                             work->sheet + PLUME_EDGE_FLASH_BURST_PICTURES, 1,
+                             0);
   for (i = 0; i != 1024; i++)
     PARTICLES[i].variant = -1;
 
@@ -280,7 +284,8 @@ void BattleEffect_RunPlumeEdge(struct BattleEffectParams *args) {
         s32 picture = step->variant / 3;
 
         BattleEffectKernels_IntegrateVector2(step, 60, -px(1) / 8);
-        draw[0](canvas, work->sheet + 0x2000 + picture * 0x800,
+        draw[0](canvas,
+                work->sheet + PLUME_EDGE_FLASH_BURST_PICTURES + picture * 0x800,
                 Q_16_16_UPPER_HALF(step->x) - 16,
                 Q_16_16_UPPER_HALF(step->y) - 32, 32, 64);
       }
@@ -734,6 +739,9 @@ void BattleEffect_RunAroma(struct BattleEffectParams *args) {
 
 #define WAFT_SEGMENTS 33
 
+/// Where JupiterDjinnSmallSheet is decoded in the effect's pictures.
+#define WIND_FUNNEL_JUPITER_DJINN_SMALL_PICTURES 0x2000
+
 /// The body of Waft (mode 0) and Aroma (mode 1): the djinni appears over the
 /// caster, bobs and rises, while a funnel of wind (33 segments of two
 /// vertices, each frame's head copied down the tail) twists up from it; Waft
@@ -798,8 +806,9 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data0D3, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
-                             work->sheet + 0x2000, 1, 1);
+  Resource_LoadAndDecompress(
+      (s32)&ResourceId_JupiterDjinnSmallSheet,
+      work->sheet + WIND_FUNNEL_JUPITER_DJINN_SMALL_PICTURES, 1, 1);
   Render_BuildQuadStrip(Data_02010318, 4, 32, 32);
 
   for (frame = 0; frame != frames; frame++) {
@@ -854,8 +863,8 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
       if (frame > 7) {
         y = y - frame * 4 + 32;
       }
-      blit[0](canvas, work->sheet + 0x2000, x, y, SMALL_DJINNI_WIDTH,
-              SMALL_DJINNI_HEIGHT);
+      blit[0](canvas, work->sheet + WIND_FUNNEL_JUPITER_DJINN_SMALL_PICTURES, x,
+              y, SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
     }
 
     // The funnel's tail trails its head.
@@ -1002,6 +1011,9 @@ struct RenderModel__undead_sword {
 
 #define DIAMOND_BERG_FRAMES 148
 
+/// Where CrystalBitmapSheet is decoded in the effect's pictures.
+#define DIAMOND_BERG_CRYSTAL_BITMAP_PICTURES 20000
+
 /// An iceberg drops onto the target and is driven down in eight blows (every
 /// eighth frame from 31), each throwing eight shards; the last shatters it
 /// into a burst of light. Ripples of frost spread over the ground beneath.
@@ -1036,8 +1048,9 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 0);
   cells = gMapGridCellBuffer;
-  Resource_LoadAndDecompress((s32)&ResourceId_CrystalBitmapSheet, cells + 20000,
-                             1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_CrystalBitmapSheet,
+                             cells + DIAMOND_BERG_CRYSTAL_BITMAP_PICTURES, 1,
+                             1);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C1, cells, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0DA, cells + 0x1000, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);

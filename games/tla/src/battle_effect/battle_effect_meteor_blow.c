@@ -33,6 +33,9 @@ struct RenderModel__meteor_blow {
   u8 scrollV;
 };
 
+/// Where DustBlobSheet is decoded in the effect's pictures.
+#define METEOR_BLOW_DUST_BLOB_PICTURES 0x2000
+
 /// Meteor Blow.
 void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   u8 *canvas;
@@ -94,7 +97,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSetSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
-                             work->sheet + 0x2000, 1, 1);
+                             work->sheet + METEOR_BLOW_DUST_BLOB_PICTURES, 1,
+                             1);
   Iwram_CopyWordsEntry(sprites, work->sheet + 0x1c2, 30);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
@@ -272,7 +276,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       }
       texture.logWidth = 5;
       texture.logHeight = 5;
-      texture.pixels = work->sheet + 0x2000;
+      texture.pixels = work->sheet + METEOR_BLOW_DUST_BLOB_PICTURES;
       model->kind = 6;
       model->texture = &texture;
       model->mesh = triangles;

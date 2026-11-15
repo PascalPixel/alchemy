@@ -381,6 +381,9 @@ static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
 }
 
+/// Where FlashBurstSheet is decoded in the effect's pictures.
+#define CANVAS_BURST_FLASH_BURST_PICTURES 0x800
+
 /// The canvas burst family (its wrappers are above). A glowing ball (or
 /// in mode 0 a growing glow at the target, with sixteen rays that close on
 /// it) hits the target; at the hit the targets flash and recoil, sixteen
@@ -451,7 +454,8 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     SHEET_PALETTE_BYTES);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + 0x800, 1, 0);
+                             work->sheet + CANVAS_BURST_FLASH_BURST_PICTURES, 1,
+                             0);
 
   for (frame = 0; frame != frames; frame++) {
     EffectPosition_ProjectBattler(args->user, &from);
@@ -616,7 +620,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
           BattleEffectKernels_IntegrateVector2(flame, 60, 0);
           if ((u32)flame->variant <= 17)
             draw[0](canvas,
-                    work->sheet + 0x800 +
+                    work->sheet + CANVAS_BURST_FLASH_BURST_PICTURES +
                         (gCanvasBurst_FlamePictures[flame->variant / 3] << 11),
                     x - 16, y - 32, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           if (flame->variant > 0)

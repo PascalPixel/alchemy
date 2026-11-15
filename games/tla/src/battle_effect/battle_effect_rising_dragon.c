@@ -25,6 +25,9 @@ struct StripVertex {
   s8 unk3;
 };
 
+/// Where ClawSlashSheet is decoded in the effect's pictures.
+#define RISING_DRAGON_CLAW_SLASH_PICTURES 0x4000
+
 /// One dragon (two at a higher level: effect->variant + 1) of smoke rises
 /// from the caster and arcs onto the target, each a scrolling textured strip
 /// of 33 segments with a clawed head; each strikes ten frames after the
@@ -78,7 +81,8 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0,
                                0);
     Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
-                               work->sheet + 0x4000, 1, 1);
+                               work->sheet + RISING_DRAGON_CLAW_SLASH_PICTURES,
+                               1, 1);
     Iwram_CopyWordsEntry(
         (void *)BG_PLTT,
         Resource_GetTableEntry((s32)&ResourceId_BlueFlameSheet), 128);
@@ -283,7 +287,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
             texture.logHeight = 6;
             model->scrollU = 0;
             model->mesh = gBattleEffect_SquareMesh;
-            texture.pixels = work->sheet + 0x4000;
+            texture.pixels = work->sheet + RISING_DRAGON_CLAW_SLASH_PICTURES;
             Transform_ApplyTranslation(px(endX[i]), px(endY[i]), 0);
             Transform_ApplyRoll(0x3060 - (arcs[i * 2] << 5));
             Transform_ApplyUniformScale(20768);

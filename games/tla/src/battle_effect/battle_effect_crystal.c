@@ -9,6 +9,9 @@
 #define CRYSTAL_FRAMES 103
 #define CRYSTAL_SHARDS 32
 
+/// Where VenusDjinnSmallSheet is decoded in the effect's pictures.
+#define CRYSTAL_VENUS_DJINN_SMALL_PICTURES 0x65c0
+
 /// Abilities: Crystal.
 ///
 /// Sixteen shaded discs, 2 to 32 pixels across, are built in the map cell
@@ -51,7 +54,8 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
       DJINNI_ENTRANCE(ELEMENT_VENUS, args->side ^ 1, DJINNI_ANCHOR_TARGET_X),
       center, other);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
-                             work->sheet + 0x65c0, 1, 0);
+                             work->sheet + CRYSTAL_VENUS_DJINN_SMALL_PICTURES,
+                             1, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_BlastSheet),
                        SHEET_PALETTE_BYTES);
@@ -105,11 +109,11 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
 
         y += frame * 3;
 
-        draw[0](canvas, work->sheet + 0x65c0, x, y, SMALL_DJINNI_WIDTH,
-                SMALL_DJINNI_HEIGHT);
+        draw[0](canvas, work->sheet + CRYSTAL_VENUS_DJINN_SMALL_PICTURES, x, y,
+                SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         if (frame <= 3) {
-          draw[0](canvas, work->sheet + 0x65c0, x, y, SMALL_DJINNI_WIDTH,
-                  SMALL_DJINNI_HEIGHT);
+          draw[0](canvas, work->sheet + CRYSTAL_VENUS_DJINN_SMALL_PICTURES, x,
+                  y, SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
         }
       }
 

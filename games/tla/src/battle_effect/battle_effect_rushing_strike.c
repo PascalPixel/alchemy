@@ -11,6 +11,9 @@
 #define STAR_DROPS 192
 #define DROPS ((struct Particle *)Ram_MapCellBuffer)
 
+/// Where FlashBurstSheet is decoded in the effect's pictures.
+#define STAR_MINE_FLASH_BURST_PICTURES 0x4000
+
 /// Six stars (a 24 by 48 picture mirrored both ways from the sheet's two
 /// halves) are thrown from the caster, each one at a target in turn; from
 /// frame 8 * i + 11 each is drawn toward its target and bursts once it has
@@ -62,7 +65,8 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
     }
   }
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + 0x4000, 1, 0);
+                             work->sheet + STAR_MINE_FLASH_BURST_PICTURES, 1,
+                             0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
@@ -187,7 +191,8 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
       if ((u32)particle->variant <= 23) {
         if (particle->variant > 1) {
           blitters[0](canvas,
-                      work->sheet + 0x4000 + ((particle->variant / 4) << 11),
+                      work->sheet + STAR_MINE_FLASH_BURST_PICTURES +
+                          ((particle->variant / 4) << 11),
                       Q_16_16_UPPER_HALF(particle->x) - 16,
                       Q_16_16_UPPER_HALF(particle->y) - 32, FLASH_BURST_WIDTH,
                       FLASH_BURST_HEIGHT);
@@ -241,6 +246,11 @@ struct CornerRow {
 #define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 0x4000))
 
 #define SEGMENTS 33
+
+/// Where FlashBurstSheet is decoded in the effect's pictures.
+#define RISING_DRAGON_ENEMY_FLASH_BURST_PICTURES 0x800
+/// Where ClawSlashSheet is decoded in the effect's pictures.
+#define RISING_DRAGON_ENEMY_CLAW_SLASH_PICTURES 0x4000
 
 /// The dragon bursts up under the target and carries it into the sky: the
 /// backdrop changes to a red haze scrolling past as the target is lifted,
@@ -300,10 +310,12 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   EffectPosition_ProjectBattler(args->targets[0], &target);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeBandSheet, work->sheet, 1,
                              1);
-  Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + 0x800, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_ClawSlashSheet,
-                             work->sheet + 0x4000, 1, 0);
+  Resource_LoadAndDecompress(
+      (s32)&ResourceId_FlashBurstSheet,
+      work->sheet + RISING_DRAGON_ENEMY_FLASH_BURST_PICTURES, 1, 0);
+  Resource_LoadAndDecompress(
+      (s32)&ResourceId_ClawSlashSheet,
+      work->sheet + RISING_DRAGON_ENEMY_CLAW_SLASH_PICTURES, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   REG_BG2PA = Q_8_8(0.5);
   Render_BuildQuadStrip(strip, 4, 32, 32);
@@ -514,7 +526,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       tex->logHeight = 6;
       model->mesh = gBattleEffect_SquareMesh;
       model->scrollU = zero;
-      tex->pixels = work->sheet + 0x4000;
+      tex->pixels = work->sheet + RISING_DRAGON_ENEMY_CLAW_SLASH_PICTURES;
       Transform_ApplyTranslation(px(target.x - 124), px(height - 144), 0);
       Transform_ApplyRoll(TRIG_TURN / 4);
       Transform_ApplyAxisScale(0x19c40, 0x14e20, Q16_ONE);
@@ -559,7 +571,9 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
 
       if ((u32)picture <= 23) {
         if (picture > 1) {
-          blit[0](canvas, work->sheet + 0x800 + ((picture / 4) << 11),
+          blit[0](canvas,
+                  work->sheet + RISING_DRAGON_ENEMY_FLASH_BURST_PICTURES +
+                      ((picture / 4) << 11),
                   Q_16_16_UPPER_HALF(particle->x) - 16,
                   Q_16_16_UPPER_HALF(particle->y) - 32, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);

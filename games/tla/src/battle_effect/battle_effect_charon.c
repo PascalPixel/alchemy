@@ -36,6 +36,9 @@ extern const struct Scale gCharon_PulseScale;
 extern const struct Scale gCharon_RevealScale;
 extern const struct Scale gCharon_FinaleScale;
 
+/// Where ParticleSpritesD is decoded in the effect's pictures.
+#define CHARON_PARTICLE_SPRITES_D_PICTURES 0x2400
+
 /// Charon: over a red wasteland a violet whirlpool turns about a red dome that
 /// rises out of it; in a white flash among dark shards Charon appears and
 /// slashes across the vortex, and a black shadow sweeps from the left over the
@@ -475,7 +478,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             (u8 *)Resource_GetTableEntry((s32)&ResourceId_CrimsonBeastTiles);
         Iwram_FillWords(PLTT + 0x100, 0x180, 0x7fff7fff);
         source += 0x180;
-        Decompress_TaggedLz(source, work->sheet + 0x2400);
+        Decompress_TaggedLz(source,
+                            work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES);
         for (i = 0, objectSlots = gVramCacheEntries; i != 12; i++) {
           struct Sprite *object =
               EffectSprite_CreateWithTiles(32, 32, 0x80002000, 0);
@@ -483,13 +487,16 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           object->image.priority = 3;
           OBJECTS[i] = object;
           Iwram_CopyWords(OBJ_VRAM + objectSlots[object->slot].offset,
-                          work->sheet + 0x2400 + i * 0x400, 0x400);
+                          work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES +
+                              i * 0x400,
+                          0x400);
         }
         source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_WhiteWispsTiles);
         Iwram_CopyWords(PLTT + 0x1e0, source, 32);
         Iwram_FillWords(PLTT + 0x1e0, 32, 0x7fff7fff);
         source += 32;
-        Decompress_TaggedLz(source, work->sheet + 0x2400);
+        Decompress_TaggedLz(source,
+                            work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES);
         {
           struct Sprite *object =
               EffectSprite_CreateWithTiles(64, 64, 0xc0000000, 0xe000);
@@ -503,7 +510,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 
             // vram holds the base, then the destination.
             vram += tileSlots[object->slot].offset;
-            Iwram_CopyWords(vram, work->sheet + 0x2400, 0x800);
+            Iwram_CopyWords(
+                vram, work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES, 0x800);
           }
           object = EffectSprite_CreateWithTiles(64, 64, 0xc0002000, 0);
           OBJECTS[13] = object;
@@ -513,9 +521,11 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         }
         source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_EffectPalette00);
         Iwram_CopyWords(PLTT, source, SHEET_PALETTE_BYTES);
-        Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
-                                   work->sheet + 0x2400, 0, 0);
-        Iwram_CopyWords(glyphs, work->sheet + 0x2400, 0x302);
+        Resource_LoadAndDecompress(
+            (s32)&ResourceId_ParticleSpritesD,
+            work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES, 0, 0);
+        Iwram_CopyWords(
+            glyphs, work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES, 0x302);
         Resource_LoadAndDecompress((s32)&ResourceId_CurseSealSheet,
                                    work->sheet + 0x1000, 1, 1);
         posX = 144 << 15;
@@ -996,7 +1006,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
         source = (u8 *)Resource_GetTableEntry((s32)&ResourceId_Data0B5);
         source += 32;
-        Decompress_TaggedLz(source, work->sheet + 0x2400);
+        Decompress_TaggedLz(source,
+                            work->sheet + CHARON_PARTICLE_SPRITES_D_PICTURES);
         for (y = 0; y != 80; y++) {
           for (x = 0; x != 184; x += 2) {
             u16 *dst =

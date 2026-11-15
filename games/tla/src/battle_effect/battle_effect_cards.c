@@ -8,6 +8,9 @@
 #define CARD (gMapGridCellBuffer + 0x603e)
 #define CARD_NOISE (CARD + 0x800)
 
+/// Where PaletteRampImage is decoded in the effect's pictures.
+#define CARDS_PALETTE_RAMP_PICTURES 0x2580
+
 /// The four cards (Sleep, Baffle, Death and Sword Card): a card flies from
 /// the user to above the targets' middle for 48 frames, spinning upright and
 /// growing, the background scrolling with it as far as it can. Then it shows
@@ -85,7 +88,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_SwordCardSheet, CARD, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_DaggerSheet, work->sheet, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_PaletteRampImage,
-                               work->sheet + 0x2580, 0, 0);
+                               work->sheet + CARDS_PALETTE_RAMP_PICTURES, 0, 0);
     for (i = 1; i != 8; i++) {
       for (j = 0; j != 696; j++) {
         s32 shade = work->sheet[0x2580 + j];
@@ -371,7 +374,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
           cell = i % 4 * 3 + (step->variant + time) / 8 % 3;
           draw[0](
               canvas,
-              work->sheet + 0x2580 +
+              work->sheet + CARDS_PALETTE_RAMP_PICTURES +
                   (fade * 696 + gStatChange_ShardPictures[cell]),
               overflow + Q_16_16_UPPER_HALF(step->x) -
                   gStatChange_ShardWidths[cell] / 2,

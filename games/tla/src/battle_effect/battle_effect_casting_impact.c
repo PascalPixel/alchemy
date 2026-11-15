@@ -194,6 +194,15 @@ enum CastingImpact {
 /// The flame Forcible Arm and Truncheon Fist drop.
 #define FALLING_FLAME_WIDTH 32
 
+/// Where SmokeSheet is decoded in the effect's pictures.
+#define CASTING_IMPACT_SMOKE_PICTURES 0x1809
+/// Where FlashBurstSheet is decoded in the effect's pictures.
+#define CASTING_IMPACT_FLASH_BURST_PICTURES 0xd80
+/// Where RuneSheet is decoded in the effect's pictures.
+#define CASTING_IMPACT_RUNE_PICTURES 0x1000
+/// Where BoulderPicture is decoded in the effect's pictures.
+#define CASTING_IMPACT_BOULDER_PICTURES 0x2000
+
 /// Gathers sparks around the caster, launches the Djinni and draws the
 /// impact on the first target.
 void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
@@ -299,8 +308,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                buffer + GLINT_SET_BYTES, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_STUN_CLOUD) {
     Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, buffer, 1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, buffer + 0x1809, 1,
-                               0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
+                               buffer + CASTING_IMPACT_SMOKE_PICTURES, 1, 0);
   } else if (kind == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
     Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, buffer, 1, 1);
   } else if (kind == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
@@ -344,14 +353,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
              kind == CASTING_IMPACT_IMPACT_DINOX ||
              kind == CASTING_IMPACT_IMPACT_TERRIBLE_BITE) {
     Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage, buffer, 0, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, buffer + 0xd80,
-                               1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+                               buffer + CASTING_IMPACT_FLASH_BURST_PICTURES, 1,
+                               0);
   } else if (kind == CASTING_IMPACT_IMPACT_FLASH_FORCE) {
     s32 k;
     s32 i;
 
-    Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, buffer + 0x1000, 1,
-                               0);
+    Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet,
+                               buffer + CASTING_IMPACT_RUNE_PICTURES, 1, 0);
     Iwram_ClearWords(buffer, 0x1000);
     for (i = 0; i != 48; i++) {
       for (k = 0; k != 24; k++) {
@@ -374,8 +384,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     }
   } else if (kind == CASTING_IMPACT_IMPACT_MOTHER_EARTH) {
     Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, buffer, 1, 1);
-    Resource_LoadAndDecompress((s32)&ResourceId_BoulderPicture, buffer + 0x2000,
-                               1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BoulderPicture,
+                               buffer + CASTING_IMPACT_BOULDER_PICTURES, 1, 1);
   } else if (kind == CASTING_IMPACT_IMPACT_VEIN_TAP) {
     REG_BLDALPHA = BLEND_ALPHA(16, 12);
   } else if (kind == CASTING_IMPACT_IMPACT_ICE_CRUSH) {
@@ -1337,7 +1347,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               EffectPosition_ProjectPoint(p, point);
               point[0] = point[0] / 2;
               drawFuncs.draw[1](screen,
-                                buffer + 0x1809 + m * PICTURE_BYTES(SMOKE_PUFF),
+                                buffer + CASTING_IMPACT_SMOKE_PICTURES +
+                                    m * PICTURE_BYTES(SMOKE_PUFF),
                                 point[0] - SMOKE_PUFF_WIDTH / 2,
                                 point[1] - SMOKE_PUFF_HEIGHT / 2,
                                 SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
@@ -1627,11 +1638,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                 half = life / 2;
                 EffectPosition_ProjectPoint(p, point);
                 point[0] = point[0] / 2;
-                drawFuncs.draw[0](
-                    screen, buffer + 0xd80 + half * PICTURE_BYTES(FLASH_BURST),
-                    point[0] - FLASH_BURST_WIDTH / 2,
-                    point[1] - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
-                    FLASH_BURST_HEIGHT);
+                drawFuncs.draw[0](screen,
+                                  buffer + CASTING_IMPACT_FLASH_BURST_PICTURES +
+                                      half * PICTURE_BYTES(FLASH_BURST),
+                                  point[0] - FLASH_BURST_WIDTH / 2,
+                                  point[1] - FLASH_BURST_HEIGHT / 2,
+                                  FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
                 BattleEffectKernels_IntegrateVector3(p, 64, px(1) / 16);
                 p->variant++;
               }
@@ -1992,7 +2004,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         if (frame == 0) {
           struct Particle *p;
           Resource_LoadAndDecompress((s32)&ResourceId_BoulderPicture,
-                                     buffer + 0x2000, 1, 1);
+                                     buffer + CASTING_IMPACT_BOULDER_PICTURES,
+                                     1, 1);
           REG_BLDALPHA = BLEND_ALPHA(16, 4);
           EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
           REG_BG2PA = Q_8_8(1);
@@ -2022,7 +2035,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             x = target[0] - (14 - frame) * 3 * 2;
             y = target[1] - (14 - frame) * 3 * 4 + 24;
           }
-          drawFuncs.draw[0](screen, buffer + 0x2000, 32, y - 32, 64, 64);
+          drawFuncs.draw[0](screen, buffer + CASTING_IMPACT_BOULDER_PICTURES,
+                            32, y - 32, 64, 64);
           REG_BG2X = (64 - x) << 8;
         } else {
           for (; i != 32; i++, particle++) {

@@ -12,6 +12,9 @@ struct StripQuad;
 /// function are constants built from the fixed buffer, not their own symbols.
 #define MAP_CELLS ((s8 (*)[2][4])Ram_MapCellBuffer)
 
+/// Where JupiterDjinnSmallSheet is decoded in the effect's pictures.
+#define WATER_COLUMN_JUPITER_DJINN_SMALL_PICTURES 0x2000
+
 /// The water-column scene shared by Whorl (0), Gale (1), Lethe Albion (2),
 /// Poison Flow (3) and Raging Flood (4): a twisting funnel of water (or wind)
 /// rises around the target, with spray, bubbles and a burst.
@@ -116,8 +119,9 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_Data0D3, work->sheet, 0, 0);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
-                             work->sheet + 0x2000, 1, 1);
+  Resource_LoadAndDecompress(
+      (s32)&ResourceId_JupiterDjinnSmallSheet,
+      work->sheet + WATER_COLUMN_JUPITER_DJINN_SMALL_PICTURES, 1, 1);
   if (mode == WATER_COLUMN_POISON_FLOW) {
     Iwram_CopyWordsEntry(
         palette, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet), 128);
@@ -197,8 +201,10 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
 
           pos[2] = point[2];
           EffectPosition_ProjectPoint(pos, (struct ScreenPoint *)out);
-          blit[0](canvas, work->sheet + 0x2000, out[0] / 2 - 10, out[1] - 20,
-                  SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
+          blit[0](canvas,
+                  work->sheet + WATER_COLUMN_JUPITER_DJINN_SMALL_PICTURES,
+                  out[0] / 2 - 10, out[1] - 20, SMALL_DJINNI_WIDTH,
+                  SMALL_DJINNI_HEIGHT);
         }
       }
       if (frame > 7) {

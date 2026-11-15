@@ -22,6 +22,9 @@ struct RenderModel__megiddo {
   u8 scrollV;
 };
 
+/// Where DustBlobSheet is decoded in the effect's pictures.
+#define MEGIDDO_DUST_BLOB_PICTURES 0x2400
+
 /// Megiddo: the caster rises in a column of light, a winged figure gathers
 /// above and dives in a storm of feathers and rings onto the target.
 ///
@@ -140,7 +143,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       Resource_LoadAndDecompress((s32)&ResourceId_Data103, work->sheet + 0x1000,
                                  1, 1);
       Resource_LoadAndDecompress((s32)&ResourceId_DustBlobSheet,
-                                 work->sheet + 0x2400, 1, 0);
+                                 work->sheet + MEGIDDO_DUST_BLOB_PICTURES, 1,
+                                 0);
       Graphics_LoadGreyRamp();
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       if (!args->side) {
@@ -399,7 +403,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
 
       t->logWidth = 5;
       t->logHeight = 5;
-      t->pixels = work->sheet + 0x2400;
+      t->pixels = work->sheet + MEGIDDO_DUST_BLOB_PICTURES;
       model->kind = 7;
       model->mesh = meshB;
       tint = -24;

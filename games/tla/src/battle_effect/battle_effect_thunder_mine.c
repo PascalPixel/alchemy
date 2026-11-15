@@ -10,6 +10,9 @@ struct StripQuad;
 /// The sparks, after the map cells.
 #define BOLT_SPARKS ((struct Particle *)gData_02014000)
 
+/// Where TornadoSheet is decoded in the effect's pictures.
+#define BOLT_TRAIL_TORNADO_PICTURES 0x800
+
 /// The body of Thunder Mine (mode 0) and Earth Force (mode 1): a ball of
 /// light (Thunder Mine) or a falling rock's glow (Earth Force) crosses to the
 /// target, trailed by 40 spinning bolts, and grows; when it arrives the
@@ -51,8 +54,8 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   radius = 0;
-  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet + 0x800,
-                             1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
+                             work->sheet + BOLT_TRAIL_TORNADO_PICTURES, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, buffer, 1, 1);
   if (mode == BOLT_TRAIL_EARTH_FORCE) {
@@ -206,7 +209,9 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
         } while (0);
         BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, flags, 1);
         ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-            canvas, work->sheet + 0x800 + gBattleEffect_GlintPictures[cell],
+            canvas,
+            work->sheet + BOLT_TRAIL_TORNADO_PICTURES +
+                gBattleEffect_GlintPictures[cell],
             flashX, flashY, gBattleEffect_GlintPictureWidths[cell],
             gBattleEffect_GlintPictureHeights[cell]);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
@@ -295,6 +300,13 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
 #define PICTURES (Ram_MapCellBuffer + 0x4000)
 extern const struct Scale gMegaera_UnitScale;
 
+/// Where FlashBurstSheet is decoded in the effect's pictures.
+#define MEGAERA_FLASH_BURST_PICTURES 0x3800
+/// Where LightningBoltSheet is decoded in the effect's pictures.
+#define MEGAERA_LIGHTNING_BOLT_PICTURES 0xc56
+/// Where SparkleDots is decoded in the effect's pictures.
+#define MEGAERA_SPARKLE_DOTS_PICTURES 0x2e16
+
 /// Two bolts of lightning fall at frames 0 and 16, each with a burst of
 /// sparks; a whirl of flame turns over the field from 64 while smoke rises,
 /// and at 108 Megaera (eleven objects) swoops in across the targets in a
@@ -325,15 +337,15 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
   rects = blitters;
   BattleEffect_FetchRectangleBlitters(0, (void **)rects);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             work->sheet + 0x3800, 1, 0);
+                             work->sheet + MEGAERA_FLASH_BURST_PICTURES, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_WhirlBeamSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, pictures, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                             pictures + 0xc56, 1, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, pictures + 0x2e16, 0,
-                             0);
+                             pictures + MEGAERA_LIGHTNING_BOLT_PICTURES, 1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots,
+                             pictures + MEGAERA_SPARKLE_DOTS_PICTURES, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   for (i = 0; i != 64; i++) {
     work->particles[i].variant = -1;
@@ -650,6 +662,11 @@ struct StripQuad;
 #define VOID_BEAM_FRAMES 88
 #define BEAM_SEGMENTS 10
 
+/// Where CometSheetB is decoded in the effect's pictures.
+#define VOID_BEAM_COMET_B_PICTURES 0x1000
+/// Where RuneSheet is decoded in the effect's pictures.
+#define VOID_BEAM_RUNE_PICTURES 0x1000
+
 /// A hexagon of motes is traced, side by side, around the caster while a
 /// ring of 64 gathers behind; at frame 72 a beam (a 32-line gradient,
 /// repeated ten times) shoots from the caster toward the targets' side,
@@ -683,8 +700,8 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
-  Resource_LoadAndDecompress((s32)&ResourceId_CometSheetB, work->sheet + 0x1000,
-                             1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_CometSheetB,
+                             work->sheet + VOID_BEAM_COMET_B_PICTURES, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
   // The motes, one shade dimmer.
@@ -699,7 +716,8 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
       sprites[i] = pixel;
     }
   }
-  Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, buffer + 0x1000, 1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet,
+                             buffer + VOID_BEAM_RUNE_PICTURES, 1, 0);
   Iwram_ClearWordsEntry(buffer, 0x1000);
 
   // The beam's head: the rune, mirrored to 48 columns.
@@ -862,9 +880,10 @@ void BattleEffect_RunVoidBeam(struct BattleEffectParams *args) {
                     32);
             draw[1](canvas, work->sheet + 0x1a20, segment.x, segment.y, 32, 32);
           } else if (frame <= 81) {
-            draw[0](canvas, work->sheet + 0x1000, segment.x, segment.y - 36, 32,
-                    36);
-            draw[1](canvas, work->sheet + 0x1000, segment.x, segment.y, 32, 36);
+            draw[0](canvas, work->sheet + VOID_BEAM_COMET_B_PICTURES, segment.x,
+                    segment.y - 36, 32, 36);
+            draw[1](canvas, work->sheet + VOID_BEAM_COMET_B_PICTURES, segment.x,
+                    segment.y, 32, 36);
           }
         }
         row = work->sheet + 0x1a20;

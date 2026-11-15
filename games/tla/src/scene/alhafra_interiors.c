@@ -72,6 +72,67 @@ void Event_StartScreenTransition(void);
 
 // ---- this overlay
 
+/// Alhafra's houses' people, numbering the rows of all three placement tables:
+/// the same row is the same person in each, put out of sight (-56, -56) while
+/// away. The tables part only in their last rows.
+enum AlhafraInteriorsActorId {
+  ACTOR_ITEM_MERCHANT = ACTOR_FIRST_PLACED,
+  /// The sanctum's healer, who tells of Garoh's curse.
+  ACTOR_HEALER,
+  /// "I don't care if it WAS broken! The mayor shouldn't have up and sold..."
+  ACTOR_WOMAN_ANGRY_AT_THE_SALE,
+  /// "Those guys who bought the boat looked kinda shabby..."
+  ACTOR_WOMAN_ON_THE_BOAT_BUYERS,
+  /// The couple taking in neighbors whose house the tidal wave destroyed, and
+  /// their two guests, the old man who keeps asking for tea and his wife.
+  ACTOR_HOST,
+  ACTOR_HOSTESS,
+  ACTOR_DEMANDING_GUEST,
+  ACTOR_DEMANDING_GUESTS_WIFE,
+  ACTOR_INNKEEPER,
+  /// "You see how full our inn is? You'd think we'd be making money..."
+  ACTOR_INN_HELPER,
+  /// The townsfolk lodged at the inn.
+  /// "The town ought to give money to all the people who suffered..."
+  ACTOR_MAN_ASKING_FOR_COMPENSATION,
+  /// "I can't believe the innkeeper is renting out more rooms..."
+  ACTOR_WOMAN_ON_THE_CRAMMED_ROOMS,
+  /// "The innkeeper told me to use only the cheapest ingredients..."
+  ACTOR_INN_COOK,
+  /// "The innkeeper serves his paying guests better meals than we Alhafrans"
+  ACTOR_MAN_ON_THE_MEALS,
+  /// "We're all guests in the same inn, so why is my meal so awful?"
+  ACTOR_WOMAN_ON_THE_MEALS,
+  /// "Ohhh... I'm hungry... My tummy hurts..."
+  ACTOR_HUNGRY_CHILD,
+  /// "I don't think I've had a bite of meat or fish..."
+  ACTOR_CHILD_MISSING_MEAT,
+  /// The family crowded into one room.
+  /// "I'll never forgive the mayor for failing to come to our aid..."
+  ACTOR_MAN_ANGRY_AT_THE_MAYOR,
+  /// "Our guests are very upset with the mayor."
+  ACTOR_WOMAN_WORRIED_ABOUT_HER_GUESTS,
+  /// "My pop's been lookin' around, an' he says the mayor keeps all his
+  /// treasure..."
+  ACTOR_BOY_ON_THE_MAYORS_TREASURE,
+  /// "Why do we all have to be cooped up in such a small room?"
+  ACTOR_CHILD_COOPED_UP,
+  /// "We all have to bear the discomfort of this place..."
+  ACTOR_MAN_BEARING_THE_DISCOMFORT,
+  /// Who eyes the warrior next door: "...so suave and handsome."
+  ACTOR_WOMAN_EYEING_THE_WARRIOR,
+  /// Alex, in the room next door, until the mast is cleared.
+  ACTOR_ALEX
+};
+
+/// The last rows of gAlhafraInteriors_ActorPlacementsOnceTheMastIsCleared:
+/// two sailors in Alex's room, one telling the other of Crossbone Isle.
+enum AlhafraInteriorsSailorsActorId {
+  ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE = ACTOR_ALEX,
+  /// "If he's looking for a pirate crew, he can count me in!"
+  ACTOR_SAILOR_EAGER_TO_JOIN
+};
+
 extern struct ActorPlacement gActorPlacements[];
 extern struct ActorPlacement
     gAlhafraInteriors_ActorPlacementsOnceBriggsIsCaught[];
@@ -81,6 +142,8 @@ extern struct Trigger gAlhafraInteriors_Triggers[];
 extern struct Trigger gAlhafraInteriors_TriggersOnceBriggsIsCaught[];
 extern struct Trigger gAlhafraInteriors_TriggersOnceTheMastIsCleared[];
 
+/// The houses' people: before Briggs is caught, after, and once the mast is
+/// cleared.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED))
     return gAlhafraInteriors_ActorPlacementsOnceTheMastIsCleared;
@@ -104,36 +167,36 @@ void AlhafraInteriors_MeetAlex(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors31);
-  FieldCamera_MoveToActorById(31, 1);
+  FieldCamera_MoveToActorById(ACTOR_ALEX, 1);
   Actor_WalkToAndWait(ACTOR_FELIX, 452, 335);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   FieldCamera_WaitForArrival();
-  Actor_FaceDirection(31, FACING_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST, 0);
   FieldEvent_Wait(20);
   // "So, you've finally come."
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_ALEX, 0, 10);
   FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
-  Actor_SetAnimationAndWait(31, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
   FieldEvent_Wait(10);
   // "I had suspected we might run into each other again, since we both..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_ALEX, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(31, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
   // "Unfortunately, the only boat this town possesses has already been sold."
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
-  Actor_RunRepeatedMotion(31, 2);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_ALEX, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
   FieldEvent_Wait(10);
   // "I will be resting here in Alhafra a bit longer. I have traveled long..."
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
-  Actor_SetAnimationAndWait(31, 3);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_ALEX, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
   FieldEvent_Wait(10);
   // "Perhaps we can get along at least until we both depart."
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | 31, 0, 10);
-  Actor_FaceDirection(31, FACING_NORTH, 0);
+  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_ALEX, 0, 10);
+  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH, 0);
   FieldEvent_Wait(20);
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
@@ -202,47 +265,49 @@ void AlhafraInteriors_GuestsAskForTea(void) {
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 152, 328);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors07);
-  Actor_FaceDirection(14, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_DEMANDING_GUEST, FACING_EAST, 0);
   FieldEvent_Wait(20);
   // "Aren't you thirsty, my dear?"
-  FieldEvent_ShowMessageThenWait(14, 0, 10);
-  Actor_FaceDirection(15, FACING_WEST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_DEMANDING_GUEST, 0, 10);
+  Actor_FaceDirection(ACTOR_DEMANDING_GUESTS_WIFE, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(15, 3);
+  Actor_SetAnimationAndWait(ACTOR_DEMANDING_GUESTS_WIFE, 3);
   FieldEvent_Wait(10);
   // "Oh, you're right, dear. I am!"
-  FieldEvent_ShowMessageThenWait(15, 0, 10);
-  Actor_SetSpeed(14, 0.5);
-  Actor_WalkByAndWait(14, -32, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_DEMANDING_GUESTS_WIFE, 0, 10);
+  Actor_SetSpeed(ACTOR_DEMANDING_GUEST, 0.5);
+  Actor_WalkByAndWait(ACTOR_DEMANDING_GUEST, -32, 0);
   FieldEvent_Wait(10);
   // "Sorry to bother you, but we'd like some tea."
-  FieldEvent_ShowMessageThenWait(14, 0, 10);
-  Actor_RunRepeatedMotion(13, 2);
+  FieldEvent_ShowMessageThenWait(ACTOR_DEMANDING_GUEST, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_HOSTESS, 2);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(13, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_HOSTESS, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(13, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Actor_ShowEmote(ACTOR_HOSTESS, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   // "Are you talking to me?!"
-  FieldEvent_ShowMessageThenWait(13, 0, 10);
-  FieldActor_StartRepeatedMotion(14, 3);
-  Actor_SetAttachedEffect(14, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  FieldActor_StartRepeatedMotion(15, 3);
-  Actor_SetAttachedEffect(15, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldEvent_ShowMessageThenWait(ACTOR_HOSTESS, 0, 10);
+  FieldActor_StartRepeatedMotion(ACTOR_DEMANDING_GUEST, 3);
+  Actor_SetAttachedEffect(ACTOR_DEMANDING_GUEST,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  FieldActor_StartRepeatedMotion(ACTOR_DEMANDING_GUESTS_WIFE, 3);
+  Actor_SetAttachedEffect(ACTOR_DEMANDING_GUESTS_WIFE,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
-  Actor_RunRepeatedMotion(13, 2);
+  Actor_RunRepeatedMotion(ACTOR_HOSTESS, 2);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(13, FACING_NORTH_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_HOSTESS, FACING_NORTH_NORTHWEST, 0);
   FieldEvent_Wait(10);
   // "If you want tea, you can go right ahead and fix it yourself!"
-  FieldEvent_ShowMessageThenWait(13, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_HOSTESS, 0, 10);
   FieldEvent_Wait(10);
-  Actor_WalkToAndWait(14, 152, 312);
+  Actor_WalkToAndWait(ACTOR_DEMANDING_GUEST, 152, 312);
   FieldEvent_Wait(10);
-  Actor_SetAnimation(15, 4);
-  Actor_SetAnimationAndWait(14, 4);
+  Actor_SetAnimation(ACTOR_DEMANDING_GUESTS_WIFE, 4);
+  Actor_SetAnimationAndWait(ACTOR_DEMANDING_GUEST, 4);
   FieldEvent_Wait(10);
-  Actor_FaceDirection(14, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_FaceDirection(15, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_DEMANDING_GUEST, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_DEMANDING_GUESTS_WIFE, FACING_SOUTH, 0);
   Event_End();
 }
 
@@ -252,7 +317,7 @@ void AlhafraInteriors_TalkToDemandingGuest(s32 a0) {
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriors08);
   // "Well! I say! It seems the lady of the house is no lady at all!"
   Event_ShowMessage(a0, 0);
-  Actor_FaceDirection(14, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_DEMANDING_GUEST, FACING_SOUTH_SOUTHEAST, 0);
 }
 
 /// Mind Read on Alex: he turns to the party and asks them to stop.
@@ -294,6 +359,7 @@ void AlhafraInteriors_AlexHearsOfBriggs(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
+/// The houses' triggers.
 const struct Trigger *Scene_GetTriggers(void) {
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED))
     return gAlhafraInteriors_TriggersOnceTheMastIsCleared;
@@ -304,42 +370,48 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 s32 BattleEffect_DrawSpriteAtWorldPosition();
 
-s32 AlhafraInteriors_DrawFirstGuestSprite(s32 a0) {
+/// The first guest's update: draws its extra sprite 12 pixels above it.
+s32 AlhafraInteriors_DrawFirstGuestSprite(struct Actor *guest) {
   BattleEffect_DrawSpriteAtWorldPosition(
-      (s32)gAlhafraInteriors_FirstGuestSprite, FIELD_AT(a0, s32, 8),
-      (FIELD_AT(a0, s32, 12) + 0xc0000), FIELD_AT(a0, s32, 16));
+      (s32)gAlhafraInteriors_FirstGuestSprite, guest->x.fixed,
+      guest->y.fixed + px(12), guest->z.fixed);
   return 0;
 }
 
-s32 AlhafraInteriors_DrawSecondGuestSprite(s32 a0) {
+/// The second guest's update: draws its extra sprite 8 pixels above it.
+s32 AlhafraInteriors_DrawSecondGuestSprite(struct Actor *guest) {
   BattleEffect_DrawSpriteAtWorldPosition(
-      (s32)gAlhafraInteriors_SecondGuestSprite, FIELD_AT(a0, s32, 8),
-      (FIELD_AT(a0, s32, 12) + 0x80000), FIELD_AT(a0, s32, 16));
+      (s32)gAlhafraInteriors_SecondGuestSprite, guest->x.fixed,
+      guest->y.fixed + px(8), guest->z.fixed);
   return 0;
 }
 
 // The Japanese edition sets no flag 0x200 by the leader's position and places
-// no actors 31 and 32.
+// neither sailor of the Crossbone Isle tale.
 #if TLA_PATCH_1
 void BattleEffect_FillOverlayTiles(s32 mode);
 void EffectSprite_InitFromSlot94();
 
+/// Sets up the houses: the guests' extra sprites, and once the mast is cleared
+/// the two sailors in Alex's room.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 521;
-  Actor_Get(16)->collisionFlags |= 4;
-  Actor_Get(16)->collisionFlags |= 16;
-  FieldActor_SetSpritePriority(9, 3);
-  FieldActor_SetSpritePriority(31, 3);
-  FieldActor_SetSpritePriority(14, 3);
-  FieldActor_SetSpritePriority(15, 3);
+  Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= 4;
+  Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= 16;
+  FieldActor_SetSpritePriority(ACTOR_HEALER, 3);
+  FieldActor_SetSpritePriority(ACTOR_ALEX, 3);
+  FieldActor_SetSpritePriority(ACTOR_DEMANDING_GUEST, 3);
+  FieldActor_SetSpritePriority(ACTOR_DEMANDING_GUESTS_WIFE, 3);
   BattleEffect_FillOverlayTiles(0);
   Call4(EffectSprite_InitFromSlot94, (s32)gAlhafraInteriors_FirstGuestSprite, 8,
         15, 0x40000000);
   Call4(EffectSprite_InitFromSlot94, (s32)gAlhafraInteriors_SecondGuestSprite,
         8, 15, 0x40000000);
   *(s32 *)(gAlhafraInteriors_SecondGuestSprite + 24) = 0x18000;
-  Actor_Get(14)->update = AlhafraInteriors_DrawFirstGuestSprite;
-  Actor_Get(15)->update = AlhafraInteriors_DrawSecondGuestSprite;
+  Actor_Get(ACTOR_DEMANDING_GUEST)->update =
+      AlhafraInteriors_DrawFirstGuestSprite;
+  Actor_Get(ACTOR_DEMANDING_GUESTS_WIFE)->update =
+      AlhafraInteriors_DrawSecondGuestSprite;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (Actor_Get(gMainRoutineWork.leaderActorId)->x.fixed >= px(512))
       Event_SetFlag(FLAG_SCENE_TEMP_00);
@@ -348,20 +420,20 @@ s32 Scene_Initialize(void) {
     if (Event_GetFlag(FLAG_SCENE_TEMP_00) &&
         Event_GetFlag(FLAG_ISAAC_CLEARED_CROSSBONE_ISLE) &&
         !Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE)) {
-      Actor_SetPosition(31, 376, 316);
-      Actor_SetPosition(32, 392, 344);
+      Actor_SetPosition(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 376, 316);
+      Actor_SetPosition(ACTOR_SAILOR_EAGER_TO_JOIN, 392, 344);
     } else {
-      Actor_SetPosition(31, 0, 0);
-      Actor_SetPosition(32, 0, 0);
+      Actor_SetPosition(ACTOR_ALEX, 0, 0);
+      Actor_SetPosition(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 0);
     }
   } else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     if (Event_GetFlag(FLAG_CHAMPA_MET_ALEX))
-      Actor_SetPosition(31, 0, 0);
+      Actor_SetPosition(ACTOR_ALEX, 0, 0);
   } else {
-    FieldActor_SetSpritePriority(24, 2);
-    FieldActor_SetSpritePriority(19, 3);
-    FieldActor_SetSpritePriority(28, 2);
-    FieldActor_SetSpritePriority(25, 3);
+    FieldActor_SetSpritePriority(ACTOR_CHILD_MISSING_MEAT, 2);
+    FieldActor_SetSpritePriority(ACTOR_WOMAN_ON_THE_CRAMMED_ROOMS, 3);
+    FieldActor_SetSpritePriority(ACTOR_CHILD_COOPED_UP, 2);
+    FieldActor_SetSpritePriority(ACTOR_MAN_ANGRY_AT_THE_MAYOR, 3);
   }
   return 0;
 }
@@ -369,36 +441,39 @@ s32 Scene_Initialize(void) {
 void BattleEffect_FillOverlayTiles(s32 mode);
 void EffectSprite_InitFromSlot94();
 
+/// Sets up the houses and the guests' extra sprites.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = 521;
-  Actor_Get(16)->collisionFlags |= 4;
-  Actor_Get(16)->collisionFlags |= 16;
-  FieldActor_SetSpritePriority(9, 3);
-  FieldActor_SetSpritePriority(31, 3);
-  FieldActor_SetSpritePriority(14, 3);
-  FieldActor_SetSpritePriority(15, 3);
+  Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= 4;
+  Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= 16;
+  FieldActor_SetSpritePriority(ACTOR_HEALER, 3);
+  FieldActor_SetSpritePriority(ACTOR_ALEX, 3);
+  FieldActor_SetSpritePriority(ACTOR_DEMANDING_GUEST, 3);
+  FieldActor_SetSpritePriority(ACTOR_DEMANDING_GUESTS_WIFE, 3);
   BattleEffect_FillOverlayTiles(0);
   Call4(EffectSprite_InitFromSlot94, (s32)gAlhafraInteriors_FirstGuestSprite, 8,
         15, 0x40000000);
   Call4(EffectSprite_InitFromSlot94, (s32)gAlhafraInteriors_SecondGuestSprite,
         8, 15, 0x40000000);
   *(s32 *)(gAlhafraInteriors_SecondGuestSprite + 24) = 0x18000;
-  Actor_Get(14)->update = AlhafraInteriors_DrawFirstGuestSprite;
-  Actor_Get(15)->update = AlhafraInteriors_DrawSecondGuestSprite;
+  Actor_Get(ACTOR_DEMANDING_GUEST)->update =
+      AlhafraInteriors_DrawFirstGuestSprite;
+  Actor_Get(ACTOR_DEMANDING_GUESTS_WIFE)->update =
+      AlhafraInteriors_DrawSecondGuestSprite;
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (!Event_GetFlag(FLAG_ISAAC_CLEARED_CROSSBONE_ISLE) ||
         Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE)) {
-      Actor_SetPosition(31, 0, 0);
-      Actor_SetPosition(32, 0, 0);
+      Actor_SetPosition(ACTOR_ALEX, 0, 0);
+      Actor_SetPosition(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 0);
     }
   } else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     if (Event_GetFlag(FLAG_CHAMPA_MET_ALEX))
-      Actor_SetPosition(31, 0, 0);
+      Actor_SetPosition(ACTOR_ALEX, 0, 0);
   } else {
-    FieldActor_SetSpritePriority(24, 2);
-    FieldActor_SetSpritePriority(19, 3);
-    FieldActor_SetSpritePriority(28, 2);
-    FieldActor_SetSpritePriority(25, 3);
+    FieldActor_SetSpritePriority(ACTOR_CHILD_MISSING_MEAT, 2);
+    FieldActor_SetSpritePriority(ACTOR_WOMAN_ON_THE_CRAMMED_ROOMS, 3);
+    FieldActor_SetSpritePriority(ACTOR_CHILD_COOPED_UP, 2);
+    FieldActor_SetSpritePriority(ACTOR_MAN_ANGRY_AT_THE_MAYOR, 3);
   }
   return 0;
 }
@@ -429,96 +504,111 @@ void AlhafraInteriors_OverhearCrossboneIsleTale(void) {
       FieldCamera_MoveTo(408, CAMERA_KEEP, 328, 1);
       FieldCamera_WaitForArrival();
       FieldEvent_Wait(10);
-      Actor_RunRepeatedMotion(31, 2);
+      Actor_RunRepeatedMotion(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 2);
       FieldEvent_Wait(5);
       // "Legends said that Crossbone Isle could be found in the middle of..."
-      FieldEvent_ShowMessageThenWait(31, 0, 5);
-      Actor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0,
+                                     5);
+      Actor_ShowEmote(ACTOR_SAILOR_EAGER_TO_JOIN,
+                      EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
       // "Ah... Crossbone Isle... Wait, did you say "could"? Is it not there..."
-      FieldEvent_ShowMessageThenWait(32, 0, 5);
-      Actor_ShowEmote(31, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
+      Actor_ShowEmote(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
+                      EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       // "Well, it's still there, but there's no point in going. Someone..."
-      FieldEvent_ShowMessageThenWait(31, 0, 5);
-      Actor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0,
+                                     5);
+      Actor_ShowEmote(ACTOR_SAILOR_EAGER_TO_JOIN, EMOTE_IN_FRONT | EMOTE_WINCE,
+                      30);
       // "What, he took all the treasure?"
-      FieldEvent_ShowMessageThenWait(32, 0, 5);
-      Actor_SetAnimationAndWait(31, 3);
+      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
+      Actor_SetAnimationAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 3);
       FieldEvent_Wait(10);
       // "Yeah. And apparently, he even defeated the ancient ghost pirate..."
-      FieldEvent_ShowMessageThenWait(31, 0, 5);
-      FieldActor_Jump(32, 6, 15);
-      FieldActor_Jump(32, 6, 23);
+      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0,
+                                     5);
+      FieldActor_Jump(ACTOR_SAILOR_EAGER_TO_JOIN, 6, 15);
+      FieldActor_Jump(ACTOR_SAILOR_EAGER_TO_JOIN, 6, 23);
       // "What about the stories that if you beat the ghost pirate, you..."
-      FieldEvent_ShowMessageThenWait(32, 0, 5);
-      Actor_SetAnimationAndWait(31, 3);
+      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
+      Actor_SetAnimationAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 3);
       FieldEvent_Wait(10);
       // "Well, you see, that means that Isaac is our leader now."
-      FieldEvent_ShowMessageThenWait(31, 0, 5);
-      Actor_ShowEmote(32, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0,
+                                     5);
+      Actor_ShowEmote(ACTOR_SAILOR_EAGER_TO_JOIN,
+                      EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
       // "Wow... just like that? I'll bet he's pretty tough."
-      FieldEvent_ShowMessageThenWait(32, 0, 5);
-      Actor_RunRepeatedMotion(31, 2);
+      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
+      Actor_RunRepeatedMotion(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 2);
       FieldEvent_Wait(5);
       // "No doubt. But you know, he must be a reliable guy, too..."
-      FieldEvent_ShowMessageThenWait(31, 0, 5);
-      Actor_SetAnimationAndWait(32, 3);
+      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0,
+                                     5);
+      Actor_SetAnimationAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, 3);
       FieldEvent_Wait(10);
       // "You think?"
-      FieldEvent_ShowMessageThenWait(32, 0, 5);
-      Actor_FaceDirectionAndWait(31, FACING_NORTH_NORTHEAST);
+      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
+      Actor_FaceDirectionAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
+                                 FACING_NORTH_NORTHEAST);
       FieldEvent_Wait(15);
       // "You'd have to be to beat that ghost. That's why we're looking for..."
-      FieldEvent_ShowMessageThenWait(31, 0, 5);
-      Actor_SetAnimationAndWait(32, 3);
+      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0,
+                                     5);
+      Actor_SetAnimationAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, 3);
       FieldEvent_Wait(10);
       // "If he's looking for a pirate crew, he can count me in!"
-      FieldEvent_ShowMessageThenWait(32, 0, 5);
-      Actor_FaceDirectionAndWait(31, FACING_SOUTH_SOUTHEAST);
+      FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
+      Actor_FaceDirectionAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
+                                 FACING_SOUTH_SOUTHEAST);
       FieldEvent_Wait(15);
-      Actor_SetAnimationAndWait(31, 3);
+      Actor_SetAnimationAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 3);
       FieldEvent_Wait(20);
-      Actor_SetAnimationAndWait(32, 3);
+      Actor_SetAnimationAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, 3);
       FieldEvent_Wait(20);
-      Actor_SetSpeed(31, 1);
-      Actor_SetSpeed(32, 1);
-      FieldActor_SetSpritePriority(31, 2);
-      FieldActor_SetSpritePriority(32, 2);
-      EventCamera_FollowActor(32, 1);
-      Actor_WalkTo(31, 394, 342);
+      Actor_SetSpeed(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 1);
+      Actor_SetSpeed(ACTOR_SAILOR_EAGER_TO_JOIN, 1);
+      FieldActor_SetSpritePriority(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 2);
+      FieldActor_SetSpritePriority(ACTOR_SAILOR_EAGER_TO_JOIN, 2);
+      EventCamera_FollowActor(ACTOR_SAILOR_EAGER_TO_JOIN, 1);
+      Actor_WalkTo(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 394, 342);
       FieldEvent_Wait(10);
-      Actor_WalkTo(32, 450, 346);
-      FieldActor_WaitForMoveById(31);
-      Actor_WalkTo(31, 450, 346);
-      FieldActor_WaitForMoveById(32);
-      Actor_WalkTo(32, 470, 328);
-      FieldActor_WaitForMoveById(31);
-      Actor_WalkTo(31, 470, 328);
-      FieldActor_WaitForMoveById(32);
-      Actor_WalkTo(32, 486, 328);
-      FieldActor_WaitForMoveById(32);
-      Actor_SetAnimation(32, 1);
-      Actor_FaceDirectionAndWait(32, FACING_EAST);
-      FieldActor_WaitForMoveById(31);
-      Actor_SetAnimation(31, 1);
-      Actor_FaceDirectionAndWait(31, FACING_EAST);
+      Actor_WalkTo(ACTOR_SAILOR_EAGER_TO_JOIN, 450, 346);
+      FieldActor_WaitForMoveById(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE);
+      Actor_WalkTo(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 450, 346);
+      FieldActor_WaitForMoveById(ACTOR_SAILOR_EAGER_TO_JOIN);
+      Actor_WalkTo(ACTOR_SAILOR_EAGER_TO_JOIN, 470, 328);
+      FieldActor_WaitForMoveById(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE);
+      Actor_WalkTo(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 470, 328);
+      FieldActor_WaitForMoveById(ACTOR_SAILOR_EAGER_TO_JOIN);
+      Actor_WalkTo(ACTOR_SAILOR_EAGER_TO_JOIN, 486, 328);
+      FieldActor_WaitForMoveById(ACTOR_SAILOR_EAGER_TO_JOIN);
+      Actor_SetAnimation(ACTOR_SAILOR_EAGER_TO_JOIN, 1);
+      Actor_FaceDirectionAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, FACING_EAST);
+      FieldActor_WaitForMoveById(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE);
+      Actor_SetAnimation(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 1);
+      Actor_FaceDirectionAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
+                                 FACING_EAST);
       Actor_WalkByAndWait(ACTOR_FELIX, 0, -16);
       Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
       FieldEvent_Wait(10);
-      Actor_SetScript(32, (s32)gAlhafraInteriors_TravelersWalkOffScript);
+      Actor_SetScript(ACTOR_SAILOR_EAGER_TO_JOIN,
+                      (s32)gAlhafraInteriors_TravelersWalkOffScript);
       FieldEvent_Wait(10);
-      Actor_SetScript(31, (s32)gAlhafraInteriors_TravelersWalkOffScript);
+      Actor_SetScript(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
+                      (s32)gAlhafraInteriors_TravelersWalkOffScript);
       FieldEvent_Wait(10);
       FieldActor_WatchAndSetScript(ACTOR_FELIX, 32);
       FieldEvent_Wait(60);
-      FieldActor_SetSpritePriority(31, 3);
-      FieldActor_SetSpritePriority(32, 3);
-      FieldActor_RefreshSelectorById(32);
+      FieldActor_SetSpritePriority(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 3);
+      FieldActor_SetSpritePriority(ACTOR_SAILOR_EAGER_TO_JOIN, 3);
+      FieldActor_RefreshSelectorById(ACTOR_SAILOR_EAGER_TO_JOIN);
       FieldActor_Stop(ACTOR_FELIX);
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-      Actor_SetPosition(32, 0, 0);
+      Actor_SetPosition(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 0);
       Event_PlaySound(SE_MAP_EXIT);
-      FieldActor_RefreshSelectorById(31);
-      Actor_SetPosition(31, 0, 0);
+      FieldActor_RefreshSelectorById(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE);
+      Actor_SetPosition(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0, 0);
       Event_PlaySound(SE_MAP_EXIT);
       FieldEvent_Wait(10);
       Event_End();
@@ -657,11 +747,11 @@ struct Trigger gAlhafraInteriors_Triggers[] = {
     {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
     {TRIGGER_EXIT, 24, CONDITION_ALWAYS, 24},
     {TRIGGER_EXIT, 25, CONDITION_ALWAYS, 25},
-    {TALK_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS,
      EVENT(AlhafraInteriors_TalkToItemMerchant)},
-    {TALK_TRIGGER_FACING(FACING_NORTH), 16, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_INNKEEPER, CONDITION_ALWAYS,
      EVENT(AlhafraInteriors_TalkToInnkeeper)},
-    {TALK_TRIGGER_FACING(FACING_NORTH), 9, CONDITION_ALWAYS,
+    {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_HEALER, CONDITION_ALWAYS,
      EVENT(AlhafraInteriors_TalkToHealer)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 214, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgAlhafraInteriors121))},
@@ -674,82 +764,103 @@ struct Trigger gAlhafraInteriors_Triggers[] = {
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgAlhafraInteriors125))},
     {TRIGGER_STEP, 30, FLAG_ALHAFRA_MET_ALEX, EVENT(AlhafraInteriors_MeetAlex)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors01)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors02)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriors03)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriors04)},
-    {TRIGGER_TALK, 14, FLAG_GUESTS_ASKED_FOR_TEA,
+    {TRIGGER_TALK, ACTOR_WOMAN_ANGRY_AT_THE_SALE, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors01)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_BOAT_BUYERS, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors02)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ANGRY_AT_THE_SALE,
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors03)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_BOAT_BUYERS,
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors04)},
+    {TRIGGER_TALK, ACTOR_DEMANDING_GUEST, FLAG_GUESTS_ASKED_FOR_TEA,
      EVENT(AlhafraInteriors_GuestsAskForTea)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1038, FLAG_GUESTS_ASKED_FOR_TEA,
      EVENT(AlhafraInteriors_GuestsAskForTea)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors05)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, EVENT(AlhafraInteriors_TalkToHostess)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_HOST, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors05)},
+    {TRIGGER_TALK, ACTOR_HOSTESS, CONDITION_ALWAYS,
+     EVENT(AlhafraInteriors_TalkToHostess)},
+    {TRIGGER_TALK, ACTOR_DEMANDING_GUEST, CONDITION_ALWAYS,
      EVENT(AlhafraInteriors_TalkToDemandingGuest)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors09)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_DEMANDING_GUESTS_WIFE, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors09)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOST, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors10)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOSTESS, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors11)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriors12)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriors13)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors14)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriors15)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors16)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors17)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors18)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors19)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors20)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors21)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors22)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors23)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors24)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors25)},
-    {TRIGGER_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors26)},
-    {TRIGGER_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors27)},
-    {TRIGGER_TALK, 28, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors28)},
-    {TRIGGER_TALK, 29, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors29)},
-    {TRIGGER_TALK, 30, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors30)},
-    {TRIGGER_TALK, 31, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors32)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DEMANDING_GUEST,
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors12)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DEMANDING_GUESTS_WIFE,
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors13)},
+    {TRIGGER_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors14)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT,
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors15)},
+    {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors16)},
+    {TRIGGER_TALK, ACTOR_INN_HELPER, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors17)},
+    {TRIGGER_TALK, ACTOR_MAN_ASKING_FOR_COMPENSATION, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors18)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_CRAMMED_ROOMS, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors19)},
+    {TRIGGER_TALK, ACTOR_INN_COOK, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors20)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_MEALS, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors21)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_MEALS, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors22)},
+    {TRIGGER_TALK, ACTOR_HUNGRY_CHILD, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors23)},
+    {TRIGGER_TALK, ACTOR_CHILD_MISSING_MEAT, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors24)},
+    {TRIGGER_TALK, ACTOR_MAN_ANGRY_AT_THE_MAYOR, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors25)},
+    {TRIGGER_TALK, ACTOR_WOMAN_WORRIED_ABOUT_HER_GUESTS, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors26)},
+    {TRIGGER_TALK, ACTOR_BOY_ON_THE_MAYORS_TREASURE, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors27)},
+    {TRIGGER_TALK, ACTOR_CHILD_COOPED_UP, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors28)},
+    {TRIGGER_TALK, ACTOR_MAN_BEARING_THE_DISCOMFORT, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors29)},
+    {TRIGGER_TALK, ACTOR_WOMAN_EYEING_THE_WARRIOR, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors30)},
+    {TRIGGER_TALK, ACTOR_ALEX, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors32)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors33)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_HELPER, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors34)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriors35)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriors36)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ASKING_FOR_COMPENSATION,
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors35)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_CRAMMED_ROOMS,
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors36)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_COOK, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors37)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriors38)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriors39)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_MEALS,
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors38)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_MEALS,
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors39)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HUNGRY_CHILD, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors40)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriors41)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriors42)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriors43)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriors44)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriors45)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriors46)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS,
-     MSGNO(MsgAlhafraInteriors47)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_MISSING_MEAT,
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors41)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ANGRY_AT_THE_MAYOR,
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors42)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WORRIED_ABOUT_HER_GUESTS,
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors43)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ON_THE_MAYORS_TREASURE,
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors44)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_COOPED_UP,
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors45)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_BEARING_THE_DISCOMFORT,
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors46)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_EYEING_THE_WARRIOR,
+     CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors47)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 1055, CONDITION_ALWAYS,
      EVENT(AlhafraInteriors_ReadAlexsMind)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgAlhafraInteriors49)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS,
+     MSGNO(MsgAlhafraInteriors49)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS,
      MSGNO(MsgAlhafraInteriors50)},
     {TRIGGER_TABLE_END},
 };

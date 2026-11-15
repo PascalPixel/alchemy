@@ -272,12 +272,12 @@ void BattleUnit_Strengthen(s32 unitId) {
 /// its kind: digits abroad and the alphabet in Japanese. Returns -1 when five
 /// classes are already listed.
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
-  struct BattleKindsView *battle;
+  struct BattleWork *battle;
   s32 classCount;
   s32 classIndex;
   s32 attempt;
 
-  battle = (struct BattleKindsView *)Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   classCount = battle->enemyKindCount;
   for (classIndex = 0; classIndex < classCount; classIndex++) {
     if (battle->enemyKinds[classIndex] == classId)
@@ -318,8 +318,7 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
 
 /// Frees a departing enemy's name letter for the next of its class.
 UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
-  struct BattleKindsView *battle =
-      (struct BattleKindsView *)Ram_HeapSlots->battleWork;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
   struct Unit *unit;
   s32 count = battle->enemyKindCount;
   s32 index;

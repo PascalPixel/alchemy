@@ -75,15 +75,12 @@ STATIC_ASSERT(sizeof(struct BattleMessageWork) == 12);
 struct BattleWork {
   s32 formation;      ///< the encounter's enemy formation
   s16 spriteSlots[6]; ///< the unit in each enemy sprite slot, 0 when free
-  // XXX: The Broken Seal's enemyKinds (u16[6]: the kinds of enemy, for the
-  // letters that tell two of a kind apart), which BattleEnemy_RecordDefeat
-  // reads so, as do Battle_Run and the name letters through struct
-  // BattleKindsView (battle_internal.h); declared so, or as a union with these
-  // bytes, BattleParty_ChooseReserve allocates its registers otherwise (r8 for
-  // the reserve list in place of a stack slot).
-  u8 enemyKindBytes[12];
-  u32 nameLetterMasks[6];    ///< for each kind, the name letters already given
-  s8 lastNameLetter[6];      ///< for each kind, the last name letter given
+  /// The kinds of enemy in the formation, for the letters that tell two of a
+  /// kind apart: five at most, where The Broken Seal keeps six.
+  u16 enemyKinds[5];
+  u16 kindsEnd;           ///< read only by the defeat search, as a sixth kind
+  u32 nameLetterMasks[6]; ///< for each kind, the name letters already given
+  s8 lastNameLetter[6];   ///< for each kind, the last name letter given
   u8 unusedAfterChannels[2]; ///< no code names it
   u16 firstDefeated;
   u16 defeatState;

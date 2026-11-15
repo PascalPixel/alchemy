@@ -282,10 +282,12 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 /* VIEW(world_map): routine Actor_SetSpriteColorMode as void
- * Actor_SetSpriteColorMode(struct Actor *object, s32 value); actor_view.h has
- * void Actor_SetSpriteColorMode(struct Actor *, u32); tried as the definition's
- * void Actor_SetSpriteColorMode(struct Actor *object, u32 value),
- * WorldMap_MeetEcho moves: 1 of 714 instructions in tla-ja. */
+ * Actor_SetSpriteColorMode(struct Actor *object, s32 value); field/actor_view.h
+ * has void Actor_SetSpriteColorMode(struct Actor *, u32); tried as the
+ * definition's void Actor_SetSpriteColorMode(struct Actor *object, u32 value),
+ * it compiles and moves 1 of 714 instructions in tla-ja (WorldMap_MeetEcho); as
+ * The Broken Seal's inline Actor_SetColorMode(struct Actor *, s32), 2 lines in
+ * every edition. */
 void Actor_SetSpriteColorMode__world_map(
     struct Actor *object, s32 value) __asm__("Actor_SetSpriteColorMode");
 #define Actor_SetSpriteColorMode Actor_SetSpriteColorMode__world_map

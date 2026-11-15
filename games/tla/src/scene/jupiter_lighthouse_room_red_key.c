@@ -277,7 +277,7 @@ static __inline__ void Bring(s32 id) {
   object = Actor_GetById(id);
   object->motionFlags = 0;
   object->priorityFlags |= 2;
-  object->scaleY = 0xffff0000;
+  object->scaleY = -Q16_ONE;
   object->scaleX = Q16_ONE / 10;
   Actor_SetMovementTypeById(id, gJupiterLighthouse_BringInScript);
 }

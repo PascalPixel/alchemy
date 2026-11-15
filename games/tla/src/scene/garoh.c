@@ -940,7 +940,7 @@ void Garoh_PuffAround(s32 objectId) {
     x += x / 3;
     vec.x = x;
     FieldEffect_Spawn(object->x.fixed, object->y.fixed, object->z.fixed, x,
-                      vec.y, z, 0x01000001, &params);
+                      vec.y, z, EFFECT_USE_UPDATE | 1, &params);
     angleStep += 2;
   } while (angleStep <= 16);
 }

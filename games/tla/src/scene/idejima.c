@@ -1121,7 +1121,7 @@ void Idejima_FindFelixAndSheba(void) {
   Actor_SetAnimation(ACTOR_SHEBA, 19);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SHEBA), 0);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 432, 234);
-  Actor_Get(gMainRoutineWork.leaderActorId)->scaleX = 0xffff0000;
+  Actor_Get(gMainRoutineWork.leaderActorId)->scaleX = -Q16_ONE;
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, 41);
   Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
   Actor_SetPosition(ACTOR_ALEX, 392, 172);

@@ -224,7 +224,7 @@ void GondowanCliffs_PushPillarIntoWater(s32 unk0, s32 id) {
       sprite->rotation -= 256;
       actor->x.fixed -=
           Trig_Cos(((struct FieldSprite *)actor->sprite)->rotation) / 2;
-      actor->targetX = 0x80000000;
+      actor->targetX = TARGET_UNSET;
     }
     actor->update = GondowanCliffs_RollPillar;
     Actor_SetSpeed(id, 3);

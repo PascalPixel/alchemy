@@ -560,9 +560,9 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         FieldEvent_Wait(60);
         *flags = 0;
         shadow->x.fixed = 0;
-        shadow->targetX = 0x80000000;
-        shadow->targetY = 0x80000000;
-        shadow->targetZ = 0x80000000;
+        shadow->targetX = TARGET_UNSET;
+        shadow->targetY = TARGET_UNSET;
+        shadow->targetZ = TARGET_UNSET;
 
         shadow->y.fixed = 0;
         shadow->z.fixed = 0;
@@ -577,9 +577,9 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         FieldActor_SetMoveTarget(star, 512, 92, 264);
         FieldActor_WaitForMove(star);
         star->x.fixed = 0;
-        star->targetX = 0x80000000;
-        star->targetY = 0x80000000;
-        star->targetZ = 0x80000000;
+        star->targetX = TARGET_UNSET;
+        star->targetY = TARGET_UNSET;
+        star->targetZ = TARGET_UNSET;
         star->y.fixed = 0;
         star->z.fixed = 0;
         star->velocityX = 0;
@@ -626,7 +626,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_BEAM_A), 0);
       FieldActor_SetSpriteColor(Actor_GetById(ACTOR_BEAM_A), 7);
       beamA = Actor_GetById(ACTOR_BEAM_A);
-      beamA->scaleY = 0xffff0000;
+      beamA->scaleY = -Q16_ONE;
       beamA->scaleX = Q16_ONE / 10;
       beamA->motionFlags = 0;
       beamA->x.fixed = px(512);
@@ -636,7 +636,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_BEAM_B), 0);
       FieldActor_SetSpriteColor(Actor_GetById(ACTOR_BEAM_B), 7);
       beamB = Actor_GetById(ACTOR_BEAM_B);
-      beamB->scaleY = 0xffff0000;
+      beamB->scaleY = -Q16_ONE;
       beamB->scaleX = Q16_ONE / 10;
       beamB->motionFlags = 0;
       beamB->x.fixed = px(512);

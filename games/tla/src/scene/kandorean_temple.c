@@ -178,6 +178,11 @@ enum KandoreanTemplePoisHallActorId {
   ACTOR_HALL_KRADEN
 };
 
+/// Poi's hall's story entrances: back from the floor below, where the rope
+/// still lies (KandoreanTemple_FindTheRopeOnTheFloor), and in through the cave
+/// to meet Poi (KandoreanTemple_MeetPoi).
+enum { ENTRANCE_ROPE_ON_THE_FLOOR = 13, ENTRANCE_THROUGH_THE_CAVE = 14 };
+
 /// The temple's scene and area flags, by the rooms that read them.
 enum {
   /// The leader stands on the lift room's west or east lift, or on the vent
@@ -760,7 +765,7 @@ void KandoreanTemple_PrepareLift(s32 id) {
 
 /// Sets a lift's column or a piece of one at rest, disabled.
 void KandoreanTemple_PrepareLiftBase(s32 id) {
-  *((u8 *)Actor_GetById(id) + 98) = 1;
+  Actor_GetById(id)->riseCounter = 1;
   Actor_SetSpritePriority(id, 2);
   Actor_DisableById(id);
 }
@@ -1021,7 +1026,7 @@ void KandoreanTemple_RunLeftVent(void) {
       goto count;
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     leader->y.fixed = statue->y.fixed + px(4);
-    leader->targetY = 0x80000000;
+    leader->targetY = TARGET_UNSET;
     leader->velocityY = 0;
     goto count;
   }
@@ -1167,7 +1172,7 @@ void KandoreanTemple_RunRightVent(void) {
       if (GameFlag_Get(FLAG_ON_EAST_LIFT)) {
         leader = Actor_GetById(gMainRoutineWork.leaderActorId);
         leader->y.fixed = statue->y.fixed + px(4);
-        leader->targetY = 0x80000000;
+        leader->targetY = TARGET_UNSET;
         leader->velocityY = 0;
       }
     } else if (t == 3000) {
@@ -1753,7 +1758,7 @@ void KandoreanTemple_ReceiveLash(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_GetActor()->motionFlags = 0;
-  ((void (*)())Actor_FaceDirectionById)(12, FACING_EAST);
+  ((void (*)())Actor_FaceDirectionById)(ACTOR_POI, FACING_EAST);
   Event_SetMessageId((s32)&MsgKandoreanTempleSecretOfLash);
   // "This is the power and the secret of our temple!"
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_POI, 0);
@@ -1791,8 +1796,8 @@ void KandoreanTemple_ReceiveLash(void) {
   FieldActor_Jump(ACTOR_POI, 4, 0);
   Actor_MoveToAndWait(ACTOR_POI, 444, 376);
   Actor_SetAnimation(ACTOR_POI, 7);
-  object->scaleX = 0xffff0000;
-  sprite->rotation = 0xe000;
+  object->scaleX = -Q16_ONE;
+  sprite->rotation = TRIG_TURN * 7 / 8;
   object->motionFlags = 0;
   object->y.fixed += px(4);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_POI), 0);
@@ -1927,7 +1932,7 @@ void KandoreanTemple_StartLiftRoom(void) {
   Actor_SetAnimationById(ACTOR_SECOND_TIGHTROPE_POLE, 4);
   Actor_SetAnimationById(ACTOR_SECOND_TIGHTROPE_OTHER_POLE, 4);
   Actor_PlaceBlocks(gKandoreanTemple_BlockActors);
-  REG_BLDALPHA = 0xc08;
+  REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   Scene_QueueMusic(SE_245);
   Task_Add(KandoreanTemple_BlowStream, TASK_PASS_VBLANK);
@@ -2046,7 +2051,7 @@ void KandoreanTemple_StartVentRoom(void) {
     Actor_SetPosition(ACTOR_VENT_ROOM_PILLAR, 216, 216);
   else if (GameFlag_Get(FLAG_PILLAR_ON_EAST_PLATFORM))
     Actor_SetPosition(ACTOR_VENT_ROOM_PILLAR, 376, 248);
-  REG_BLDALPHA = 0xc08;
+  REG_BLDALPHA = BLEND_ALPHA(8, 12);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   gKandoreanTemple_LeftVentBlowing = 0;
   gKandoreanTemple_RightVentBlowing = 0;
@@ -2136,7 +2141,9 @@ void KandoreanTemple_LandFromAbove(void) {
     velocity[0] += -0x6000;
     velocity[2] += (((Random16() * 3) << 13) >> 16) + -0x3000;
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-                      velocity[0], velocity[1], velocity[2], 0x01090001,
+                      velocity[0], velocity[1], velocity[2],
+                      EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                          EFFECT_USE_PALETTE | 1,
                       &options);
   }
   Sound_Play(SE_THUMP);
@@ -2594,7 +2601,7 @@ void KandoreanTemple_StartPoisHall(void) {
   Actor_SetAnimationById(ACTOR_SECOND_TESTED_STUDENT, 5);
   Task_Add(KandoreanTemple_MatchLiftPriority, TASK_PASS_VBLANK);
   if ((gMainRoutineWork.entrance >= 4 && gMainRoutineWork.entrance <= 6) ||
-      gMainRoutineWork.entrance == 14) {
+      gMainRoutineWork.entrance == ENTRANCE_THROUGH_THE_CAVE) {
     if (GameFlag_Get(FLAG_LASH_RECEIVED)) {
       s32 angle = FACING_SOUTH_SOUTHWEST;
 
@@ -2626,9 +2633,9 @@ void KandoreanTemple_StartPoisHall(void) {
   } else if (gMainRoutineWork.entrance == 6) {
     if (GameFlag_Get(FLAG_MET_POI) == 0)
       KandoreanTemple_PraiseTheLevitator();
-  } else if (gMainRoutineWork.entrance == 13) {
+  } else if (gMainRoutineWork.entrance == ENTRANCE_ROPE_ON_THE_FLOOR) {
     KandoreanTemple_FindTheRopeOnTheFloor();
-  } else if (gMainRoutineWork.entrance == 14) {
+  } else if (gMainRoutineWork.entrance == ENTRANCE_THROUGH_THE_CAVE) {
     if (GameFlag_Get(FLAG_MET_POI) == 0)
       KandoreanTemple_MeetPoi();
   }
@@ -3005,7 +3012,7 @@ void KandoreanTemple_MeetPoi(void) {
   // "Felix, am I imagining it, or does he seem perturbed?" Yes: "I am not
   // perturbed. Merely...surprised." No: "No one from outside the temple has
   // ever passed..."
-  Event_OpenMessage(16, 0);
+  Event_OpenMessage(ACTOR_HALL_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
     Actor_SetAnimationById(ACTOR_POI, ANIM_SHAKE_HEAD);
@@ -3064,7 +3071,8 @@ void KandoreanTemple_MeetPoi(void) {
   Actor_FaceDirection(ACTOR_HALL_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 20);
   // "Lash looks quite a bit like Psynergy, doesn't it?"
-  Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 16, 0);
+  Event_OpenMessage(
+      SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | ACTOR_HALL_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
     KandoreanTemple_PoiWalksUp();
@@ -3088,7 +3096,8 @@ void KandoreanTemple_MeetPoi(void) {
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_POI, 0);
   Actor_FaceDirection(ACTOR_HALL_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
-  Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | 16, 0);
+  Event_OpenMessage(
+      SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE | ACTOR_HALL_KRADEN, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
     Actor_SetAnimationById(ACTOR_POI, ANIM_NOD);
@@ -3111,8 +3120,8 @@ void KandoreanTemple_MeetPoi(void) {
   FieldCamera_MoveTo(424, 0, 400, 1);
   FieldCamera_SetSpeed(0.6);
   Actor_SetSpeed(ACTOR_POI, 0.6);
-  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, 12);
-  Actor_WatchAndSetScript(ACTOR_HALL_KRADEN, 12);
+  Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, ACTOR_POI);
+  Actor_WatchAndSetScript(ACTOR_HALL_KRADEN, ACTOR_POI);
   Actor_WalkToAndWait(ACTOR_POI, 488, 416);
   Actor_WalkToAndWait(ACTOR_POI, 472, 432);
   Actor_FaceDirection(ACTOR_POI, FACING_SOUTH_SOUTHWEST, 0);
@@ -3135,8 +3144,8 @@ void KandoreanTemple_MeetPoi(void) {
   Actor_Jump(ACTOR_POI, 4, 0);
   Actor_MoveToAndWait(ACTOR_POI, 492, 376);
   Actor_SetAnimationById(ACTOR_POI, 7);
-  object->scaleX = 0xffff0000;
-  sprite->rotation = 0xe000;
+  object->scaleX = -Q16_ONE;
+  sprite->rotation = TRIG_TURN * 7 / 8;
   object->motionFlags = 0;
   object->y.fixed += px(4);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_POI), 0);

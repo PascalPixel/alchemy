@@ -1010,12 +1010,10 @@ void EasternAlhafra_OverhearWorkers(void) {
 void EasternAlhafra_AskToHelpWithMast(void) {
   struct Actor *leader;
 
-  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) == 0) {
-    goto L_020097dc;
-  }
-  if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) != 0) {
-    goto L_020097dc;
-  }
+  if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) == 0)
+    goto done;
+  if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) != 0)
+    goto done;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgYouDoPlan);
@@ -1093,7 +1091,7 @@ void EasternAlhafra_AskToHelpWithMast(void) {
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   Event_End();
-L_020097dc:
+done:
   return;
 }
 

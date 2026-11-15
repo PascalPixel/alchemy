@@ -248,17 +248,6 @@ struct AirsRockInsideSpawn {
   void *update;
 };
 
-struct SparkBytes {
-  u8 unk00[0x62];
-  u8 unk62;
-  u8 unk63;
-};
-
-union SparkView {
-  struct Actor actor;
-  struct SparkBytes bytes;
-};
-
 extern struct ActorPlacement gAirsRockInside_Placements[];
 extern struct ActorPlacement gAirsRockInside_HallPlacements[];
 extern struct ActorPlacement gAirsRockInside_VialChestPlacements[];
@@ -2588,7 +2577,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
     spark->motionFlags = 0;
     spark->riseBaseY = 0x7a0000;
     spark->watchedActor = b;
-    ((union SparkView *)spark)->bytes.unk62 = (16 - i) * 8 + 15;
+    spark->riseCounter = (16 - i) * 8 + 15;
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
@@ -2613,8 +2602,8 @@ void AirsRockInside_ShebaLearnsReveal(s32 idA, s32 idB) {
         0x2a0, b->x.fixed, b->y.fixed + i * 65536 - px(8), b->z.fixed);
     spark->timer = Random16();
     spark->userValue = 0x800;
-    ((union SparkView *)spark)->bytes.unk62 = i;
-    ((union SparkView *)spark)->bytes.unk63 = 1;
+    spark->riseCounter = i;
+    spark->riseEnabled = 1;
     spark->bounce = spark->x.fixed;
     spark->riseBaseY = 0;
     spark->gravity = spark->z.fixed;

@@ -46,22 +46,25 @@
 struct Actor;
 struct CellTarget;
 struct CellTargetEntry;
-struct Work;
 
 struct Mover {
-  u8 unk00[8];
+  u8 pad00[8];
   s32 x;
   s32 y;
   s32 z;
   s32 fall;
-  u8 unk18[24];
+  u8 pad18[24];
   s32 step;
   s32 height;
-  u8 unk38[12];
+  u8 pad38[12];
   s32 originX;
   s32 originZ;
   s32 radius;
-  u8 unk50[20];
+  u8 pad50[5];
+  u8 motionFlags;
+  u8 pad56[12];
+  u8 part; ///< the palette of its sparks
+  u8 pad63;
   s16 angle;
   s16 spin;
 };
@@ -497,26 +500,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAnemosInnerSanctum_Placements;
 }
 
-struct Work {
-  u8 pad0[8];
-  struct Vector3 position;
-  s32 unk14;
-  u8 pad18[0x18];
-  s32 unk30;
-  s32 unk34;
-  u8 pad38[0x0c];
-  s32 unk44;
-  s32 unk48;
-  s32 unk4c;
-  u8 pad50[5];
-  u8 unk55;
-  u8 pad56[0x0c];
-  u8 unk62;
-  u8 pad63;
-  s16 unk64;
-  u16 unk66;
-};
-
 void Actor_StartScript();
 extern s32 gAnemosInnerSanctum_SparkScript[];
 
@@ -524,30 +507,30 @@ void AnemosInnerSanctum_SendSpark(from, to, part) struct Vector3 *from;
 struct Vector3 *to;
 s16 part;
 {
-  struct Work *actor;
+  struct Mover *actor;
   s32 x, z, distance;
 
-  actor = ((struct Work *)FieldActor_Create(SPRITE_PARTICLE, from->x, from->y,
-                                            from->z));
+  actor = ((struct Mover *)FieldActor_Create(SPRITE_PARTICLE, from->x, from->y,
+                                             from->z));
   x = (from->x - to->x) >> 16;
   z = (from->z - to->z) >> 16;
-  actor->unk64 = ArcTan2(from->z - to->z, from->x - to->x);
-  actor->unk66 = (((Random16() & 2) - 1) * (Random16() & 15)) << 8;
-  actor->unk62 = part;
-  actor->unk55 = 0;
-  actor->unk44 = to->x;
-  actor->unk48 = to->z;
+  actor->angle = ArcTan2(from->z - to->z, from->x - to->x);
+  actor->spin = (((Random16() & 2) - 1) * (Random16() & 15)) << 8;
+  actor->part = part;
+  actor->motionFlags = 0;
+  actor->originX = to->x;
+  actor->originZ = to->z;
   distance = px(Iwram_Sqrt(x * x + z * z));
-  actor->unk4c = distance;
-  actor->unk30 = distance / 16;
-  actor->unk34 = from->y;
-  actor->unk14 = (from->y - to->y) / 16;
+  actor->radius = distance;
+  actor->step = distance / 16;
+  actor->height = from->y;
+  actor->fall = (from->y - to->y) / 16;
   Actor_SetBlendMode(actor, 1);
   FieldActor_SetSpriteColor(actor, (u16)part);
   Scene_SetActorSpritePriority(actor, 2);
   Actor_SelectAnimation(actor, 7);
   Actor_SetSpriteFlags(actor, 0);
-  FieldVector_AddPolarOffsetFixed(actor->unk4c, actor->unk64, &actor->position);
+  FieldVector_AddPolarOffsetFixed(actor->radius, actor->angle, &actor->x);
   Actor_StartScript(actor, gAnemosInnerSanctum_SparkScript);
   AnemosInnerSanctum_SpiralMover(actor);
 }
@@ -1103,7 +1086,7 @@ extern s32 gAnemosInnerSanctum_DustScript[];
 /// z 248 it settles on its cell and clears FLAG_SCENE_TEMP_00; otherwise it
 /// repeats the leader's step, raising dust on each step, and stops where the
 /// cell kind under it is 52 or 51, setting the event work's unk16a to 201 or
-/// 200. unk4c and acceleration hold the leader's last x and z.
+/// 200. riseBaseY and acceleration hold the leader's last x and z.
 void AnemosInnerSanctum_FollowLeader(struct Actor *self) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 next[2];

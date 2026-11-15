@@ -24,7 +24,7 @@ struct Vector3;
 
 typedef s32 (*HandlerFn)(void);
 
-/// The actor word at 84 seen as bit fields, for one store (see Func_0200095c).
+/// The actor word at 84 seen as bit fields, for one store (AirsRock_BlowGust).
 struct MotionView {
   u8 pad[84];
   u32 kind : 8;
@@ -513,7 +513,7 @@ struct Sprite020012e4 {
   u16 unk12;
 };
 
-/// One object the beam reaches, as Func_020022e4 records it.
+/// One object the beam reaches, as FlameThrowers_Start records it.
 struct MarsLighthouseBeamTarget {
   u16 active;
   u16 index;
@@ -737,11 +737,6 @@ extern const u8 gField_Tiles64D[];
 extern u8 gField_CachedTilesB[];
 
 extern u8 gField_CachedTilesC[];
-
-// The scene's setup: places its actors, then plays what the entrance it was
-// reached by calls for.
-
-void Func_02001e80(s32 value);
 
 // The cell stampers keep their last cell and the block they copy.
 

@@ -23,7 +23,7 @@ void FieldParticle_InitializeFar(struct FieldParticle *effect, s32 mode, s32 x,
 void FieldParticle_SetCallbackFar(struct FieldParticle *effect,
                                   void (*callback)(struct FieldParticle *));
 void FieldParticle_SetActorModeFar(struct FieldParticle *effect, s32 value);
-void Event_SetDestinationFar(s16 primary, s16 secondary);
+void Event_SetDestinationFar(s32 scene, s32 entrance);
 void Event_ResolveAllPendingActionsFar(void);
 /// Returns the voice sound of sprite id's messages, its definition's value plus
 /// 0x100, or 0 for none (0xff) or with option 3 (gMainRoutineWork.speech) off.

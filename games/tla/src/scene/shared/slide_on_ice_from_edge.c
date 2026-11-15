@@ -21,8 +21,8 @@ void Leader_SlideOnIceFromEdge(void) {
   s32 *q;
   s32 *p;
 
-  /* FAKEMATCH(volatile): the stop flag read as a volatile s16, reread after
-   * each test and for lsls #16. */
+  // gSlideOnIce_Stopped is volatile: a task of the VBlank pass sets it while
+  // the slide waits (Leader_SetSlideStopped), and each test reads it again.
   object = Actor_Lookup(gMainRoutineWork.leaderActorId);
   gSlideOnIce_Stopped = 0;
 retry:

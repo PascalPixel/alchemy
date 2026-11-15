@@ -283,10 +283,11 @@ void Rope_SwingBetween(s32 index, s32 from, s32 to, s32 mode) {
                   b->x.fixed, b->y.fixed + toFIXED(8), b->z.fixed, mode);
 }
 
-/* VIEW(f0d8ff8): routine Trig_Atan as s16 Trig_Atan(s32 y, s32 x); f0d8740 has
- * s32 Trig_Atan(s32 y, s32 x); tried as the definition's s32 Trig_Atan(s32 x,
- * s32 y), which the object already declares, Rope_LayBowed moves: 1 of 120
- * instructions in tla-ja. */
+/* VIEW(ropes): routine Trig_Atan as s16 Trig_Atan(s32 y, s32 x);
+ * system/system.h has s32 Trig_Atan(s32 x, s32 y); tried as the definition's
+ * s32 Trig_Atan(s32 x, s32 y), which the object already declares, Rope_LayBowed
+ * moves: 1 of 120 instructions in every edition (the result leaves r0 as a
+ * halfword, which only a 16-bit return type copies so). */
 extern s16 Trig_Atan__f0d8ff8(s32 y, s32 x) __asm__("Trig_Atan");
 
 /// Lays a slot's chain of nodes along the line between two points, bowed

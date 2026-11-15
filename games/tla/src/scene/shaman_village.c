@@ -24,6 +24,7 @@
 #include "field/scene_tables.h"
 #include "game/game.h"
 #include "game/item.h"
+#include "graphics/output.h"
 #include "graphics/graphics.h"
 #include "graphics/resource.h"
 #include "graphics/vram_tab.h"

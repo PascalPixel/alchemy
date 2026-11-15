@@ -332,12 +332,6 @@ void LuckyDice_Run(void) {
    * LuckyDice_Run declares the same unused[8]; as without it, 42 of 2055
    * instructions differ in tla-en. */
   UNUSED s32 unused[8];
-  /* FAKEMATCH(volatile): four halfwords stored to sp+166..160 and each reloaded
-   * with ldrh. */
-  volatile u16 affineA;
-  volatile u16 affineB;
-  volatile u16 affineC;
-  volatile u16 affineD;
   s32 spinRate[DICE_COUNT];
   s32 flashTimer[DICE_COUNT];   // set on a win; nothing here reads it
   s32 luckyNumbers[DICE_COUNT]; // the two numbers shown at the top, never equal
@@ -986,11 +980,18 @@ void LuckyDice_Run(void) {
     }
 
     for (index = 0; index != DICE_RESULT_COUNT; index++) {
+      // The sprite's matrix, each element stored through its address: the four
+      // stay in the frame and are read back from it.
+      u16 affineA;
+      u16 affineB;
+      u16 affineC;
+      u16 affineD;
+
       affineScale = spriteDepth[index] / 2 + 128;
-      affineA = affineScale;
-      affineB = 0;
-      affineC = 0;
-      affineD = affineScale;
+      *&affineA = affineScale;
+      *&affineB = 0;
+      *&affineC = 0;
+      *&affineD = affineScale;
       sprites->oam[index * 4 + 0].attr2 |= affineA << 16;
       sprites->oam[index * 4 + 1].attr2 |= affineB << 16;
       sprites->oam[index * 4 + 2].attr2 |= affineC << 16;

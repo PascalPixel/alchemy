@@ -9,6 +9,7 @@
 /// Mythril Bag and set in the statue's face, the star turns the lighthouse
 /// back to fire and its ice is gone, here and in every room below.
 
+#include "graphics/output.h"
 #include "system/task.h"
 #include "graphics/palette_buffers.h"
 #include "sprite_ids.h"

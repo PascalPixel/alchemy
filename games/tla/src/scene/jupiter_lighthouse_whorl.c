@@ -798,8 +798,7 @@ extern s16 gLightSpritesLarge;
 
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
-void CrackedTile_Fall(struct CellTargetHead *table,
-                      struct CellTargetEntry *entry);
+void CrackedTile_Fall(struct CellTarget *table, struct CellTargetEntry *entry);
 
 extern s16 gLightSpriteCount;
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);

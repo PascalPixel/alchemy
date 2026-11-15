@@ -17,6 +17,7 @@
 /// the scene finishes his words if it is left before he has spoken.
 #define FLAG_FATHER_SEES_THE_STONE 0x95e
 #include "types.h"
+#include "graphics/output.h"
 #include "system/io_write.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"

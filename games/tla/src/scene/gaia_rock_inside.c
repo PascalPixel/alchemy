@@ -38,6 +38,7 @@
 #include "system/iwram_call.h"
 #include "system/frame.h"
 #include "system/io_reg.h"
+#include "system/io_write.h"
 #include "fixed_math.h"
 #include "field/actor_view.h"
 #include "field/map_grid.h"
@@ -334,14 +335,9 @@ void GaiaRockInside_JumpDownByAltar(void) {
 #include "../field/field_effect_advance_motion.c"
 #endif
 
-/* VIEW(gaia_rock_inside): routine Event_End as s32 Event_End(void);
- * scene/scene.h has void Event_End(void); two events return its value, which
- * the bytes need; not tried: Event_End's bound declaration was not found. */
-extern s32 Event_EndWithResult(void) __asm__("Event_End");
-
 // The Japanese edition has no form of this function here.
 #if TLA_PATCH_1
-s32 GaiaRockInside_RaiseDust(void) {
+void GaiaRockInside_RaiseDust(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 i;
   struct EffectOptions options;
@@ -398,7 +394,7 @@ s32 GaiaRockInside_RaiseDust(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  return Event_EndWithResult();
+  Event_End();
 }
 #endif
 
@@ -1209,10 +1205,9 @@ void BlendScript_Resume(void);
 /// Talking to the slate: Kraden urges Felix to touch it, the ground shakes and
 /// the slate teaches him Sand (GaiaRockInside_FelixLearnsSand), and Kraden
 /// walks back into the party.
-s32 GaiaRockInside_ReadSandTablet(void) {
+void GaiaRockInside_ReadSandTablet(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  /* FAKEMATCH(volatile): the blend level rereads through its slot. */
-  volatile u16 level;
+  u16 level;
   s32 message;
 
   Event_Start();
@@ -1252,7 +1247,8 @@ s32 GaiaRockInside_ReadSandTablet(void) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
   BlendScript_Suspend();
-  level = REG_BLDALPHA & 0xff;
+  Io_Read16(&REG_BLDALPHA, &level);
+  level &= 0xff;
   while (level != 0) {
     REG_BLDALPHA = level | BLEND_ALPHA(0, 16);
     level--;
@@ -1285,7 +1281,7 @@ s32 GaiaRockInside_ReadSandTablet(void) {
   FieldActor_WaitForMoveById(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
   FieldEvent_Wait(20);
-  return Event_EndWithResult();
+  Event_End();
 }
 
 void Effect_AdvanceMotionLocal(union FieldObject *object) {
@@ -1343,15 +1339,13 @@ void GaiaRockInside_RingOfDust(void) {
 void GaiaRockInside_RaiseSandTablet(void) {
   struct Actor *person;
   struct Actor *object;
-  /* FAKEMATCH(volatile): the form kept; as u16 level, 8 of 198 instructions
-   * differ in tla-en. */
-  volatile u16 level;
+  u16 level;
   s32 i;
 
   if (GameFlag_Get(FLAG_SAND_TABLET_RAISED) || GameFlag_Get(FLAG_LEARNED_SAND))
     return;
   person = Actor_Get(ACTOR_SAND_TABLET);
-  level = REG_BLDALPHA;
+  Io_Read16(&REG_BLDALPHA, &level);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   MapGrid_SetShakeFX(FIXED_ONE * 10, FIXED_ONE * 10, FIXED_ONE);

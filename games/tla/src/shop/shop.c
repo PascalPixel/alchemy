@@ -18,6 +18,7 @@
 ///                   ItemIconGrid_ShowInventory
 
 #include "shop_internal.h"
+#include "graphics/output.h"
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
 // parts").

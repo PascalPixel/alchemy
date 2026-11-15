@@ -12,6 +12,7 @@
 #include "field/field_sequence.h"
 #include "field/actor.h"
 #include "field/actor_script.h"
+#include "field/actor_view.h"
 #include "field/call.h"
 #include "field/event_commands.h"
 #include "field/event_inline.h"
@@ -283,16 +284,6 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/* VIEW(world_map): routine Actor_SetSpriteColorMode as void
- * Actor_SetSpriteColorMode(struct Actor *object, s32 value); field/actor_view.h
- * has void Actor_SetSpriteColorMode(struct Actor *, u32); tried as the
- * definition's void Actor_SetSpriteColorMode(struct Actor *object, u32 value),
- * it compiles and moves 1 of 714 instructions in tla-ja (WorldMap_MeetEcho); as
- * The Broken Seal's inline Actor_SetColorMode(struct Actor *, s32), 2 lines in
- * every edition. */
-void Actor_SetSpriteColorMode__world_map(
-    struct Actor *object, s32 value) __asm__("Actor_SetSpriteColorMode");
-#define Actor_SetSpriteColorMode Actor_SetSpriteColorMode__world_map
 u32 __umodsi3(u32 a, u32 b);
 
 #include "shared/tile_sprite_reset.h"
@@ -2296,7 +2287,6 @@ s32 WorldMap_SetPlacedActorTile(struct Actor *object) {
   return 1;
 }
 
-#undef Actor_SetSpriteColorMode
 #include "shared/world_map_objects.c"
 
 /// The ship's flicker and its sparks while it powers up (flight mode 1).
@@ -2806,7 +2796,6 @@ u32 gWorldMap_GlowColorModes[] = {
 #undef WORLD_MAP_TRY_ENCOUNTER
 #undef TUTORIAL_SET_MESSAGE
 #undef TUTORIAL_MESSAGE
-#undef Actor_SetSpriteColorMode
 
 void WorldMap_MeetIron(void);
 void WorldMap_BoardShip(void);

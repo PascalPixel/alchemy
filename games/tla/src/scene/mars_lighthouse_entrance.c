@@ -2151,7 +2151,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 #include "shared/cracked_tile_crack.h"
 
 /// A cracked tile gives way under the leader, who drops through it.
-void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
+void MarsLighthouseEntrance_DropThroughCrack(struct CellTarget *table,
+                                             struct CellTargetEntry *entry) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x;
   s32 z;
@@ -2159,12 +2160,12 @@ void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
 
   mask = 64;
   x = FIELD_CELL(object->x.fixed);
-  x |= (s16)(event->x & mask);
+  x |= (s16)(table->x & mask);
   z = FIELD_CELL(object->z.fixed);
-  z |= (s16)(event->z & mask);
+  z |= (s16)(table->z & mask);
   Leader_CenterInCell();
   Event_PlaySound(SE_SPLASH);
-  MapGrid_CopyCells(event->x, event->z + 2, 1, 1, x, z);
+  MapGrid_CopyCells(table->x, table->z + 2, 1, 1, x, z);
   FieldEvent_Wait(12);
   {
 
@@ -2180,7 +2181,7 @@ void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
     REG_WINOUT = winout;
   }
   REG_DISPCNT |= DISPCNT_OBJWIN_ON;
-  event->busy = 1;
+  table->shown = 1;
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
   FieldEvent_Wait(16);
   for (x = 0; x < 40; x++) {
@@ -2192,7 +2193,7 @@ void MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event) {
     System_Wait(1);
   }
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
-  event->busy = 0;
+  table->shown = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -2265,22 +2266,6 @@ next:
 }
 
 void GameFlag_SetByte(s32 flag, s32 value);
-/* VIEW(s42f8): routine MarsLighthouseEntrance_DropThroughCrack as this part
- * declared it; the joined file has another; typed as struct CellTarget (its
- * true argument), the leader's load waits on the store to its member, since
- * CellTarget holds a pointer and PushEvent only halfwords: 2 instructions move
- * in tla-en and tla-ja; tried as the definition's void
- * MarsLighthouseEntrance_DropThroughCrack(struct PushEvent *event), which the
- * object already declares, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_entrance.c:2095: too many arguments to
- * function `MarsLighthouseEntrance_DropThroughCrack'. */
-void MarsLighthouseEntrance_DropThroughCrack__s42f8(
-    struct CellTarget *work,
-    struct CellTargetEntry
-        *entry) __asm__("MarsLighthouseEntrance_DropThroughCrack");
-#define MarsLighthouseEntrance_DropThroughCrack                                \
-  MarsLighthouseEntrance_DropThroughCrack__s42f8
-
 s32 CrackedTiles_Step(void) {
   struct Actor *object = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(object->x.fixed);
@@ -3377,4 +3362,3 @@ s32 gFieldEffect_DurationScripts[] = {
     gFieldEffect_MediumScript,
     gFieldEffect_LongScript,
 };
-#undef MarsLighthouseEntrance_DropThroughCrack

@@ -6,6 +6,7 @@
 /// the end (AnemosInnerSanctum_SummonTheGuardian).
 #include "field/field_sequence.h"
 #include "field/map_grid.h"
+#include "graphics/output.h"
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "field/event_inline.h"

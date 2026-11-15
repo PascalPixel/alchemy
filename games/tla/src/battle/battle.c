@@ -14,6 +14,7 @@
 /// as BattleObject_Get left it, so it calls the routine through a view.
 
 #include "battle_internal.h"
+#include "graphics/output.h"
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
 // parts").

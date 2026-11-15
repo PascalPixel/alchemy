@@ -420,7 +420,7 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
   case TILEMAP_ENTRY_HIGHLIGHT:
     palette = BG_TILE_PALETTE(HIGHLIGHT_PALETTE);
     break;
-  case TILEMAP_ENTRY_ICONS:
+  case TILEMAP_ENTRY_ICON:
     palette = BG_TILE_PALETTE(1);
     break;
   default:
@@ -434,7 +434,7 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
     return;
   case TILEMAP_ENTRY_HIGHLIGHT:
   case TILEMAP_ENTRY_WINDOW:
-  case TILEMAP_ENTRY_ICONS:
+  case TILEMAP_ENTRY_ICON:
     index = ((s16)window->y + y) * TILEMAP_WIDTH + ((s16)window->x + x);
     if ((u32)index >= TILEMAP_ENTRIES)
       return;

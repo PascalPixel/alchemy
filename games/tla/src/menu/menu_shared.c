@@ -95,11 +95,9 @@ void Window_CloseIfOpen(void **handle, s32 mode) {
 // panel's two lines: the note above the Psynergy's name.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define STATUS_PANEL_NAME_X 40
-#define DRAW_LEVEL_LABEL Text_DrawStringInWindowFar
 #define STATUS_PANEL_CANNOT_EQUIP_X 16
 #else
 #define STATUS_PANEL_NAME_X 32
-#define DRAW_LEVEL_LABEL Text_DrawStringAtOffsetFar
 #define STATUS_PANEL_CANNOT_EQUIP_X 0
 #endif
 #if LANGUAGE == LANGUAGE_SPANISH
@@ -208,7 +206,7 @@ void StatusPanel_Draw(struct RenderInput *unused, s32 owner, s32 slot,
     }
     if (ailmentRows < 2) {
       value = unit->level;
-      DRAW_LEVEL_LABEL((u8 *)gStatusPanel_LvString, (s32)window, 40, 16);
+      MENU_DRAW_STATUS_LABEL((u8 *)gStatusPanel_LvString, (s32)window, 40, 16);
       Text_DrawNumberInWindowFar(value, 4, (s32)window, 56, 16);
     }
   }
@@ -1216,5 +1214,4 @@ UNUSED void UiPalette_SetYellowColor(void) {
   Text_SetColorFar(TEXT_COLOR_YELLOW);
 }
 
-#undef DRAW_LEVEL_LABEL
 #undef STATUS_PANEL_LEARN_NOTE_Y

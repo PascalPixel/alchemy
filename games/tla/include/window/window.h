@@ -212,7 +212,7 @@ enum TilemapEntryMode {
   TILEMAP_ENTRY_WINDOW = 3,    ///< in WINDOW_PALETTE
   /// In palette 1, which the Status screens fill with the basic sprite
   /// colours for their element icons.
-  TILEMAP_ENTRY_ICONS = 4
+  TILEMAP_ENTRY_ICON = 4
 };
 
 /// The window map entry of the first element icon, in BASIC_COLORS_PALETTE;

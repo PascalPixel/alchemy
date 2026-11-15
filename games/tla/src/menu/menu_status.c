@@ -19,6 +19,10 @@
 #define EQUIPPED_ICON_X 216
 #define EQUIPPED_ICON_Y(row) (EQUIPPED_ROW_Y(row) + 32)
 
+/// The status page's four element columns, 4 tiles apart from tile 15, where
+/// each element's icon stands; its figures end left of it.
+#define STATUS_ELEMENT_X(element) (((element) * 4 + 15) * 8)
+
 void StatusScreen_Initialize(s32 unusedA, s32 unusedB, s32 unusedC,
                              s32 unusedD);
 
@@ -887,13 +891,6 @@ void StatusScreen_ShowMemberProgressMessage(void *window, s32 help, s32 full) {
 
 #undef HELP_LENGTH
 
-// The Japanese edition draws the Lv label through Text_DrawStringInWindowFar.
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define DRAW_LEVEL_LABEL Text_DrawStringInWindowFar
-#else
-#define DRAW_LEVEL_LABEL Text_DrawStringAtOffsetFar
-#endif
-
 extern const u8 gMenu_LvString[];
 extern const u8 gMenu_SlashString[];
 
@@ -923,6 +920,8 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
   else
     hasDjinn = 0;
   unit = Unit_Get(ownerId);
+  // The Djinn row, in tiles: higher on the full page (mode 1), which has the
+  // elemental rows below it.
   if ((mode & 0xff) == 1)
     djinnRow = 7;
   else
@@ -934,66 +933,68 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
   if (keepDrawn == 0)
     Window_ClearInteriorTilesFar(window, 0, 40, 96, 96);
   MenuPanel_DrawEntryList(window, 0, 40, ailments);
-  if (menu->page == 3)
+  if (menu->page == STATUS_SCREEN_PAGE_CHOOSER)
     return;
   if (keepDrawn == 0) {
     wait(1);
     Window_ClearInteriorTilesFar(window, 64, 56, 224, 96);
   }
+  // The four element icons, then the Djinn counts and, in mode 1, the
+  // elemental levels, Power and Resist.
   Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (mode == 1 || hasDjinn == 1) {
-    Window_SetTilemapEntryFar(window, 1, 15, djinnRow, TILEMAP_ENTRY_ICONS);
-    Window_SetTilemapEntryFar(window, 2, 19, djinnRow, TILEMAP_ENTRY_ICONS);
-    Window_SetTilemapEntryFar(window, 3, 23, djinnRow, TILEMAP_ENTRY_ICONS);
-    Window_SetTilemapEntryFar(window, 4, 27, djinnRow, TILEMAP_ENTRY_ICONS);
+    Window_SetTilemapEntryFar(window, 1, 15, djinnRow, TILEMAP_ENTRY_ICON);
+    Window_SetTilemapEntryFar(window, 2, 19, djinnRow, TILEMAP_ENTRY_ICON);
+    Window_SetTilemapEntryFar(window, 3, 23, djinnRow, TILEMAP_ENTRY_ICON);
+    Window_SetTilemapEntryFar(window, 4, 27, djinnRow, TILEMAP_ENTRY_ICON);
   }
   if (hasDjinn)
-    Text_DrawMessageAsTilesFar(MsgDjinnLabel, window, 64, djinnRow * 8 + 8);
+    Text_DrawMessageAsTilesFar(MsgDjinnLabel, window, 64, (djinnRow + 1) * 8);
   if (mode == 1) {
     if (!hasDjinn)
       djinnRow--;
-    DRAW_LEVEL_LABEL(gMenu_LvString, window, 64, djinnRow * 8 + 16);
-    Text_DrawMessageAsTilesFar(MsgPowerLabel, window, 64, djinnRow * 8 + 24);
+    MENU_DRAW_STATUS_LABEL(gMenu_LvString, window, 64, (djinnRow + 2) * 8);
+    Text_DrawMessageAsTilesFar(MsgPowerLabel, window, 64, (djinnRow + 3) * 8);
     Text_DrawMessageAsTilesFar(MsgPowerLabel + 1, window, 64,
-                               djinnRow * 8 + 32);
+                               (djinnRow + 4) * 8);
   }
   for (element = 0; element <= 3; element++) {
     if (hasDjinn)
       Text_DrawNumberInWindowFar(unit->djinnOwnedCounts[element], 1, window,
-                                 element * 32 + 120, djinnRow * 8 + 8);
+                                 STATUS_ELEMENT_X(element), (djinnRow + 1) * 8);
     if ((mode & 0xff) == 1) {
       if (hasDjinn) {
         Text_DrawNumberInWindowFar(unit->djinnActiveCounts[element], 1, window,
-                                   element * 32 + 104, djinnRow * 8 + 8);
+                                   STATUS_ELEMENT_X(element) - 16,
+                                   (djinnRow + 1) * 8);
         Text_DrawStringInWindowFar(gMenu_SlashString, window,
-                                   element * 32 + 112, djinnRow * 8 + 8);
+                                   STATUS_ELEMENT_X(element) - 8,
+                                   (djinnRow + 1) * 8);
       }
       Text_DrawNumberInWindowFar(Unit_GetElementLevelFar(ownerId, element), 2,
-                                 window, element * 32 + 112, djinnRow * 8 + 16);
+                                 window, STATUS_ELEMENT_X(element) - 8,
+                                 (djinnRow + 2) * 8);
       Text_DrawNumberInWindowFar(unit->element[element].power, 3, window,
-                                 element * 32 + 104, djinnRow * 8 + 24);
+                                 STATUS_ELEMENT_X(element) - 16,
+                                 (djinnRow + 3) * 8);
       Text_DrawNumberInWindowFar(unit->element[element].resistance, 3, window,
-                                 element * 32 + 104, djinnRow * 8 + 32);
+                                 STATUS_ELEMENT_X(element) - 16,
+                                 (djinnRow + 4) * 8);
     }
   }
 }
 
-#undef DRAW_LEVEL_LABEL
-
 extern const u8 gMenu_HpString[];
 extern const u8 gMenu_PpString[];
 
-// The Japanese edition draws the Lv, HP and PP labels through
-// Text_DrawStringInWindowFar, and the four stats a digit wider, starting a
-// tile further left.
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define DRAW_STAT_LABEL Text_DrawStringInWindowFar
-#define STAT_DIGITS 4
-#define STAT_X 192
+// The stat column of the status page's top rows: three digits from 200 or
+// four from 192, both ending at pixel 224.
+#if LANGUAGE != LANGUAGE_JAPANESE
+#define STATUS_STAT_DIGITS 3
+#define STATUS_STAT_X 200
 #else
-#define DRAW_STAT_LABEL Text_DrawStringAtOffsetFar
-#define STAT_DIGITS 3
-#define STAT_X 200
+#define STATUS_STAT_DIGITS 4
+#define STATUS_STAT_X 192
 #endif
 
 /// Draws the top rows of party member memberId's status page into window: name,
@@ -1011,14 +1012,14 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
     Window_ClearInteriorTilesFar(window, 0, 0, 128, 40);
   Text_DrawStringAtOffsetFar(unit->name, window, 40, 0);
   Text_DrawMessageAsTilesFar(unit->classId + (s32)MsgClassName, window, 0, 32);
-  DRAW_STAT_LABEL(gMenu_LvString, window, 104, 0);
+  MENU_DRAW_STATUS_LABEL(gMenu_LvString, window, 104, 0);
   Text_SetColorFar(TEXT_COLOR_NORMAL);
   Text_DrawNumberInWindowFar(unit->level, 2, window, 128, 0);
-  DRAW_STAT_LABEL(gMenu_HpString, window, 40, 16);
+  MENU_DRAW_STATUS_LABEL(gMenu_HpString, window, 40, 16);
   Text_DrawNumberInWindowFar(unit->hp, 4, window, 72, 16);
   Text_DrawNumberInWindowFar(unit->hpMax, 4, window, 112, 16);
   Text_DrawStringInWindowFar(gMenu_SlashString, window, 104, 16);
-  DRAW_STAT_LABEL(gMenu_PpString, window, 40, 24);
+  MENU_DRAW_STATUS_LABEL(gMenu_PpString, window, 40, 24);
   Text_DrawNumberInWindowFar(unit->pp, 4, window, 72, 24);
   Text_DrawNumberInWindowFar(unit->ppMax, 4, window, 112, 24);
   Text_DrawStringInWindowFar(gMenu_SlashString, window, 104, 24);
@@ -1028,18 +1029,24 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
     wait(1);
     Window_ClearInteriorTilesFar(window, 144, 0, 224, 40);
   }
+  // The labels "Attack", "Defense", "Agility" and "Luck", 23 to 20 messages
+  // before "Exp".
   Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 23, window, 152, 0);
   Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 22, window, 152, 8);
   Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 21, window, 152, 16);
   Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 20, window, 152, 24);
-  Text_DrawNumberInWindowFar(unit->atk, STAT_DIGITS, window, STAT_X, 0);
-  Text_DrawNumberInWindowFar(unit->def, STAT_DIGITS, window, STAT_X, 8);
-  Text_DrawNumberInWindowFar(unit->agi, STAT_DIGITS, window, STAT_X, 16);
-  Text_DrawNumberInWindowFar(unit->luck, STAT_DIGITS, window, STAT_X, 24);
+  Text_DrawNumberInWindowFar(unit->atk, STATUS_STAT_DIGITS, window,
+                             STATUS_STAT_X, 0);
+  Text_DrawNumberInWindowFar(unit->def, STATUS_STAT_DIGITS, window,
+                             STATUS_STAT_X, 8);
+  Text_DrawNumberInWindowFar(unit->agi, STATUS_STAT_DIGITS, window,
+                             STATUS_STAT_X, 16);
+  Text_DrawNumberInWindowFar(unit->luck, STATUS_STAT_DIGITS, window,
+                             STATUS_STAT_X, 24);
 }
 
-#undef STAT_DIGITS
-#undef STAT_X
+#undef STATUS_STAT_DIGITS
+#undef STATUS_STAT_X
 
 // The rows one page of the list shows: Japanese fits six, the other editions
 // five.
@@ -1291,8 +1298,7 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
       ability = Ability_Get(menu->psynergies[base + row] & ACTION_ID_MASK);
       if (ability->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, ability->element + 1, 24,
-                                  row * 2 + FIRST_TILE_ROW,
-                                  TILEMAP_ENTRY_ICONS);
+                                  row * 2 + FIRST_TILE_ROW, TILEMAP_ENTRY_ICON);
         Render_SetTilemapFlagRect(window, 9, row * 2 + FIRST_TILE_ROW, 15, 1,
                                   WINDOW_PALETTE);
         Render_SetTilemapFlagRect(window, 25, row * 2 + FIRST_TILE_ROW, 3, 1,
@@ -1612,7 +1618,7 @@ s32 ItemMenu_DrawEquipPage(s32 window, s32 unused, struct MenuResult *state) {
       item = Item_GetDirectFar(mask);
       if (item->element != ELEMENT_NONE) {
         Window_SetTilemapEntryFar(window, item->element + 1, 27, row * 2 + 1,
-                                  TILEMAP_ENTRY_ICONS);
+                                  TILEMAP_ENTRY_ICON);
         Render_SetTilemapFlagRect(window, 14, row * 2 + 1, 13, 1,
                                   WINDOW_PALETTE);
       } else {

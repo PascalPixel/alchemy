@@ -1875,31 +1875,26 @@ void ItemMenu_DrawCommands(const s8 *commandStates, s32 window) {
 }
 
 /// Says how memberId can use inventoryEntry from the item menu.
-s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
-  s32 masked = itemId;
-  void *itemData;
-  s32 result = -1;
+s32 Item_ClassifyUseMode(s32 memberId, s32 inventoryEntry) {
+  s32 itemId = inventoryEntry;
+  struct ItemDefinition *item;
+  s32 result = ITEM_USE_MODE_UNUSABLE;
 
-  masked &= INVENTORY_ITEM_ID_MASK;
-  itemData = Item_GetDirectFar(masked);
+  itemId &= INVENTORY_ITEM_ID_MASK;
+  item = Item_GetDirectFar(itemId);
 
-  if (Scene_HasItemTriggerFar(masked) != 0) {
+  if (Scene_HasItemTriggerFar(itemId) != 0) {
     return ITEM_USE_MODE_FROM_FIELD;
   }
 
   {
-    u32 use = FIELD_AT_OFFSET(itemData, u16, 40);
-    void *abilityData;
-    u32 id;
+    struct AbilityDefinition *action = (struct AbilityDefinition *)Ability_Get(
+        item->abilityId & PSYNERGY_ABILITY_MASK);
 
-    id = 0x3fff;
-    id &= use;
-    abilityData = Ability_Get(id);
-
-    if (FIELD_AT_OFFSET(itemData, u16, 40) != 0) {
-      if (FIELD_AT_OFFSET(itemData, u8, 2) != ITEM_TYPE_NONE) {
-        if (FIELD_AT_OFFSET(itemData, u8, 12) != ITEM_USE_TEACHES) {
-          if (Item_CanUnitEquip(owner, masked) != 0) {
+    if (item->abilityId != 0) {
+      if (item->type != ITEM_TYPE_NONE) {
+        if (item->useType != ITEM_USE_TEACHES) {
+          if (Item_CanUnitEquip(memberId, itemId) != 0) {
             result = ITEM_USE_MODE_CHOOSE_MEMBER;
           }
         }
@@ -1909,14 +1904,15 @@ s32 Item_ClassifyUseMode(s32 owner, s32 itemId) {
 
       if (result == ITEM_USE_MODE_CHOOSE_MEMBER) {
         s32 mask = ABILITY_USABLE_IN_BATTLE;
-        u8 field1 = FIELD_AT_OFFSET(abilityData, u8, 1);
+        u8 flags = action->flags;
 
-        if ((field1 & ABILITY_USABLE_IN_FIELD) != 0) {
-          u8 field8 = FIELD_AT_OFFSET(abilityData, u8, 8);
-          result = (field8 == ABILITY_RANGE_ALL) ? ITEM_USE_MODE_WHOLE_PARTY
-                                                 : ITEM_USE_MODE_CHOOSE_MEMBER;
+        if ((flags & ABILITY_USABLE_IN_FIELD) != 0) {
+          u8 range = action->range;
+          result = (range == ABILITY_RANGE_ALL) ? ITEM_USE_MODE_WHOLE_PARTY
+                                                : ITEM_USE_MODE_CHOOSE_MEMBER;
         } else {
-          result = (field1 & mask) ? -1 : ITEM_USE_MODE_FROM_FIELD;
+          result = (flags & mask) ? ITEM_USE_MODE_UNUSABLE
+                                  : ITEM_USE_MODE_FROM_FIELD;
         }
       }
     }

@@ -296,18 +296,11 @@ void Mikasalla_StepOntoLadderFacingWest(void) {
   Mikasalla_ClimbDownLadder();
 }
 
-/// Stepping onto a ladder top facing south, the leader turns and climbs down.
-/// Turns actor 4, then runs Mikasalla_ClimbDownLadder.
+/// Stepping onto a ladder top facing south: Felix turns north and climbs down.
 void Mikasalla_TurnAndClimbDownLadder(void) {
-  s32 id, a;
-
   Event_Start();
   Event_ResolvePendingActions(0);
-  a = 192;
-  id = 4;
-  /* FAKEMATCH(barrier): the id held at an empty asm. */
-  __asm__ volatile("" : "+r"(id));
-  Actor_FaceDirectionById(id, a << 8, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Mikasalla_ClimbDownLadder();
 }
 

@@ -1317,16 +1317,14 @@ Actor_SetupScripted__s1b78(struct Actor *object,
 void Ride_SpawnSpark(s32 *position, s32 base, s32 mode) {
   struct Actor *object = ObjectCreate_(SPARK_SPRITE, position[0], position[1],
                                        position[2] - px(2));
-  s32 angle;
+  s32 spin;
 
   if (object != 0) {
     object->bounce = Trig_Cos(((u32)(Random16() * 0x3000) >> 16) + 0x3000);
     object->gravity = (u16)Random16();
     object->riseBaseY = (u16)(Random16() << 1) + base;
-    /* FAKEMATCH(temporary): the angle held in an s32 local keeps the zero
-     * extension and the pool word 0xffff8000. */
-    angle = (u16)Random16() - 0x8000;
-    object->timer = angle;
+    spin = (u16)Random16() - 0x8000;
+    object->timer = spin;
     Actor_SetupScripted__s1b78(object, 2);
     object->update = Ride_UpdateDrift;
     Actor_SetBlendMode(object, 1);
@@ -1423,12 +1421,8 @@ void FlameThrowers_Puff(void) {
     *mark = flag;
     if (state->unk_e != 0)
       *mark = GameFlag_Get(FLAG_MENU_OPEN);
-    dx = actor->x.fixed;
     dz = actor->z.fixed;
-    dx -= cameraX;
-    /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank.
-     */
-    asm("" : : "r"(dx));
+    dx = actor->x.fixed - cameraX;
     y = actor->y.fixed;
     dz -= cameraZ;
     y = dz - y;

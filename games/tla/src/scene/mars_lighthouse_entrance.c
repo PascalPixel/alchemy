@@ -557,35 +557,20 @@ void MarsLighthouseEntrance_TeleportFromRoom4(void) {
   Teleport_StopShimmer();
 }
 
-/// Sends object id from column 11 to x 152, then from column 10 to x 200,
-/// both at z 792, through Actor_SetMoveTarget.
-/// Move sends the statue sliding over the ice to the next stop.
+/// Move sends the statue sliding over the ice to its next stop: from cell
+/// column 11 to x 152, and from column 10 to x 200, both at z 792.
 void MarsLighthouseEntrance_SlideStatueOnIce(s32 unused, s32 id) {
   struct Actor *object = Actor_Get(id);
 
   if (object->x.fixed >> 20 == 11) {
-    s32 y;
-
     object->speedLimit = px(1) / 4;
     object->acceleration = px(1) / 8;
-    y = object->y.fixed;
-    Actor_SetMoveTarget(object, px(152), y, px(792));
+    FieldActor_SetMoveTargetFixed(object, px(152), object->y.fixed, px(792));
   }
   if (object->x.fixed >> 20 == 10) {
-    s32 y;
-
     object->speedLimit = px(1) / 4;
     object->acceleration = px(1) / 8;
-    y = object->y.fixed;
-    {
-      /* FAKEMATCH(pin): the actor pinned to r0 to keep the argument order. */
-      register struct Actor *self asm("r0") = object;
-      s32 x = 0xc80000;
-      /* FAKEMATCH(pin): z pinned to r3 to keep the argument order. */
-      register s32 z asm("r3") = 0x3180000;
-
-      Actor_SetMoveTarget(self, x, y, z);
-    }
+    FieldActor_SetMoveTargetFixed(object, px(200), object->y.fixed, px(792));
   }
 }
 
@@ -1502,12 +1487,8 @@ void FlameThrowers_Puff(void) {
     *mark = flag;
     if (state->unk_e != 0)
       *mark = GameFlag_Get(FLAG_MENU_OPEN);
-    dx = actor->x.fixed;
     dz = actor->z.fixed;
-    dx -= cameraX;
-    /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank.
-     */
-    asm("" : : "r"(dx));
+    dx = actor->x.fixed - cameraX;
     y = actor->y.fixed;
     dz -= cameraZ;
     y = dz - y;

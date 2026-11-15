@@ -124,42 +124,25 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 extern s16 gLemuriaPalace_GlowColors[];
 
-static inline u32 Frame_Mod6(u32 frame) {
-  /* FAKEMATCH(wrapper): the inline keeps gFrameCount's address out of a
-   * callee-saved register. */
-  return frame % 6;
-}
-
 /// Every sixth frame rotates colours 1-14 of background palette 12 by one
 /// place; every frame sets its colour 15 from a twelve-step glow.
 void LemuriaPalace_CycleGlowColors(void) {
-  /* FAKEMATCH(pin): the colour stays in r1. */
-  register s32 color asm("r1");
+  /* FAKEMATCH(temporary): one colour local for the rotated colour and the
+   * glow's. */
+  s32 color;
 
-  if (Frame_Mod6(gFrameCount) == 0) {
-    volatile u16 *palette;
-    /* FAKEMATCH(pin): the saved colour takes r1 and leaves r0 to the index. */
-    register s32 saved asm("r1");
+  if (gFrameCount % 6 == 0) {
     s32 index;
 
-    /* FAKEMATCH(pin): the read stays in r3. */
-    register s32 raw asm("r3") = *(volatile u16 *)&BG_PLTT_COLOR(12, 14);
-
-    /* FAKEMATCH(barrier): the barrier keeps the sign extension apart from the
-     * read. */
-    asm("" : "+r"(raw));
-    saved = (s16)raw;
+    color = (s16)BG_PLTT_COLOR(12, 14);
     index = 14;
-  loop:
-    palette = (volatile u16 *)&BG_PLTT_COLOR(12, 0);
-    palette[index] = (palette - 1)[index];
-    index--;
-    if (index != 1)
-      goto loop;
-    *(volatile u16 *)&BG_PLTT_COLOR(12, 1) = saved;
+    do {
+      BG_PLTT[12 * 16 + index] = BG_PLTT[12 * 16 + index - 1];
+    } while (--index != 1);
+    BG_PLTT_COLOR(12, 1) = color;
   }
   color = gLemuriaPalace_GlowColors[(gFrameCount >> 2) % 12];
-  *(volatile u16 *)&BG_PLTT_COLOR(12, 15) = color;
+  BG_PLTT_COLOR(12, 15) = color;
 }
 
 /// The room's setup: it schedules the palette cycle

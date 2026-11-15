@@ -394,6 +394,7 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
   struct Actor *object;
   struct MarsLighthouseAerieSprite *sprite;
   u32 phase;
+  s32 angle;
 
   if (anchor != NULL &&
       (phase = gMarsLighthouseAerie_BeaconFlameFrame & 15) == 0) {
@@ -408,12 +409,8 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
       Actor_StartScript(object, gMarsLighthouseAerie_BeaconFlameScript);
       FieldActor_SetSpriteColor(object, 10);
       object->motionFlags = phase;
-      {
-        /* FAKEMATCH(temporary): the masked value held in a local. */
-        s32 action = Random16() & 0x0ffff000;
-
-        object->timer = action;
-      }
+      angle = Random16() & 0xffff000;
+      object->timer = angle;
       object->userValue = phase;
       object->update = MarsLighthouseAerie_SwingBeaconFlame;
       zero = 0;
@@ -1837,12 +1834,6 @@ void Orbs_UpdateRising(struct Actor *self) {
   self->timer += -0x800;
 }
 
-static inline struct OrbitEffect *CreateOrbitEffect(s32 type, s32 x, s32 y,
-                                                    s32 z) {
-  /* FAKEMATCH(wrapper): the effect created through an inline. */
-  return (struct OrbitEffect *)Import_ActorCreate(type, x, y, z);
-}
-
 /// Every third frame, or every frame once the light has broken through, an orb
 /// starts to rise round the beacon's beam.
 void Orbs_SpawnRising(void) {
@@ -1858,18 +1849,18 @@ void Orbs_SpawnRising(void) {
     u32 random;
 
     random = Random16();
-    effect = CreateOrbitEffect(0x2a0, center->x.fixed,
-                               (s32)((u32)(random << 8) >> 16 << 16) +
-                                   center->y.fixed - px(28),
-                               center->z.fixed);
+    effect = (struct OrbitEffect *)FieldActor_Create(
+        0x2a0, center->x.fixed,
+        (s32)((u32)(random << 8) >> 16 << 16) + center->y.fixed - px(28),
+        center->z.fixed);
   } else {
     u32 random;
 
     random = Random16();
-    effect = CreateOrbitEffect(0x2a0, center->x.fixed,
-                               (s32)((u32)(random << 6) >> 16 << 16) +
-                                   center->y.fixed - px(28),
-                               center->z.fixed);
+    effect = (struct OrbitEffect *)FieldActor_Create(
+        0x2a0, center->x.fixed,
+        (s32)((u32)(random << 6) >> 16 << 16) + center->y.fixed - px(28),
+        center->z.fixed);
   }
   if (effect != 0) {
     sprite = effect->sprite;
@@ -1906,6 +1897,7 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
   s32 spawn = 0;
   struct Actor *object;
   struct MarsLighthouseAerieSprite *sprite;
+  s32 angle;
 
   switch (gMarsLighthouseAerie_BeaconFireFrame) {
   case 0:
@@ -1970,12 +1962,8 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
       Actor_StartScript(object, gMarsLighthouseAerie_BeaconSparkScript);
       FieldActor_SetSpriteColor(object, 1);
       object->motionFlags = 0;
-      {
-        /* FAKEMATCH(temporary): the masked value held in a local. */
-        s32 action = Random16() & 0x0ffff000;
-
-        object->timer = action;
-      }
+      angle = Random16() & 0xffff000;
+      object->timer = angle;
       zero = 0;
       object->userValue = 0;
       {

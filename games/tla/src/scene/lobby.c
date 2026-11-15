@@ -532,17 +532,11 @@ done:
 // In The Lost Age's store order.
 static __inline__ void Lobby_ResetTransferState(void) {
   struct SerialTransferState *state;
-  volatile u16 *ime;
   u32 saved;
   u32 zero;
 
   state = &gSerialTransfer;
-  ime = &REG_IME;
-  /* FAKEMATCH(dead): the IME exchange in a once-only block. */
-  do {
-    saved = *ime;
-    *ime = (u16)ime;
-  } while (0);
+  IRQ_LOCK(saved);
   zero = 0;
   state = &gSerialTransfer;
   state->status = 0x80;
@@ -552,7 +546,7 @@ static __inline__ void Lobby_ResetTransferState(void) {
   gSerialSendSize = zero;
   gSerialReceiveDestination = zero;
   gSerialReceivedSize = zero;
-  *ime = saved;
+  IRQ_UNLOCK(saved);
 }
 
 /// Exchanges the two parties. The parent sends first, and the child (area flag
@@ -1095,7 +1089,7 @@ void Event_Start(void);
  * conflicting types for `Actor_ShowEmoteById'. */
 extern void Actor_ShowEmoteById__talk(s32 actor, s32 animation,
                                       s32 flags) __asm__("Actor_ShowEmoteById");
-s32 Import_EventSetDestination(s32 scene, s32 entrance);
+void Import_EventSetDestination(s32 scene, s32 entrance);
 void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void FieldMessage_Show(s32 no, s32 flags);
 
@@ -1141,10 +1135,10 @@ s32 LinkLobby_TalkByProgress(s32 actor) {
 s32 LinkLobby_LeaveArena(void) {
   Serial_RemoveIrqHandlers();
   Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
-  /* FAKEMATCH(dead): the return in a once-only block. */
-  do {
-    return Import_EventSetDestination(SCENE_CLEAR, 1);
-  } while (0);
+  Import_EventSetDestination(SCENE_CLEAR, 1);
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// The visitors' talk, by whether the party has fought here (flag 0x206);
@@ -1249,7 +1243,6 @@ void MapGrid_CenterOnFollowedPoint(void);
 void MessageArgument_Push(s32 value, s32 digits);
 void Save_ProcessSelectedFile(void);
 void Event_End(void);
-s32 Import_EventSetDestination(s32 scene, s32 entrance);
 
 /// Saves and reports the link battle's results.
 s32 LinkLobby_SaveBattleResults(void) {

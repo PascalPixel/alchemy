@@ -1781,18 +1781,11 @@ UNUSED void Madra_StepOntoLadderFacingWest(void) {
   Madra_ClimbDownLadder();
 }
 
-/// Unused: the leader turns north on the spot and climbs down; no trigger runs
-/// it.
+/// Unused: Felix turns north on the spot and climbs down; no trigger runs it.
 UNUSED void Madra_TurnAndClimbDownLadder(void) {
-  s32 id, a;
-
   Event_Start();
   Event_ResolvePendingActions(0);
-  a = 192;
-  id = 4;
-  /* FAKEMATCH(barrier): the id held at an empty asm. */
-  __asm__ volatile("" : "+r"(id));
-  Actor_FaceDirectionById(id, a << 8, 0);
+  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Madra_ClimbDownLadder();
 }
 

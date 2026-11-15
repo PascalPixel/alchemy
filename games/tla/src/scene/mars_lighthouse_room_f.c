@@ -1526,11 +1526,6 @@ stop:
   }
 }
 
-static __inline__ s32 MulQ16(s32 a, s32 b) {
-  /* FAKEMATCH(wrapper): MulQ16 forwarded inline. */
-  return Iwram_MulQ16(a, b);
-}
-
 /// Unused here: a whirlwind starts from a gust.
 UNUSED struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   struct Vector3 position;
@@ -1538,7 +1533,7 @@ UNUSED struct GustObject *Whirlwind_Spawn(struct GustObject *source) {
   struct GustObject *object;
 
   Event_PlaySound(SE_WHIRLWIND);
-  position.x = source->x + MulQ16(0x80000, Trig_Cos(source->angle));
+  position.x = source->x + Math_MulQ16(0x80000, Trig_Cos(source->angle));
   position.z = source->z + Iwram_MulQ16(0x80000, Math_Sin(source->angle));
   object = (struct GustObject *)FieldActor_Create(280, position.x, source->y,
                                                   position.z);
@@ -1835,12 +1830,8 @@ void FlameThrowers_Puff(void) {
     *mark = flag;
     if (state->unk_e != 0)
       *mark = GameFlag_Get(FLAG_MENU_OPEN);
-    dx = actor->x.fixed;
     dz = actor->z.fixed;
-    dx -= cameraX;
-    /* FAKEMATCH(barrier): the empty asm on dx changes its allocation rank.
-     */
-    asm("" : : "r"(dx));
+    dx = actor->x.fixed - cameraX;
     y = actor->y.fixed;
     dz -= cameraZ;
     y = dz - y;

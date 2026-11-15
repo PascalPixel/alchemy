@@ -489,7 +489,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                        CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame == 70) {
-      BattleBackground_SetModeFar(1, (s32)&ResourceId_AerialViewBackdrop, 7);
+      BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
+                                  (s32)&ResourceId_AerialViewBackdrop, 7);
     }
     if (frame == JUDGMENT_SWEEP_BEACH) {
       cx = 112;

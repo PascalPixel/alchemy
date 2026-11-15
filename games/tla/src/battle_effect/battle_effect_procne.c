@@ -262,7 +262,8 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
         BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                  (s32)&ResourceId_VioletSkyBackdrop, 0);
-        BattleBackground_SetModeFar(1, (s32)&ResourceId_VioletSkyBackdrop, 8);
+        BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
+                                    (s32)&ResourceId_VioletSkyBackdrop, 8);
         BattleEffect_SelectLivingTargets(work->args);
         BattleEffect_SpawnObjects(COMETS, FORMATION_RESOURCE, 2);
         Resource_LoadAndDecompress((s32)&ResourceId_VioletCometSheet,

@@ -109,7 +109,7 @@ void BattleEffect_RunVengeance(struct BattleEffectParams *args) {
     store:
       tile = (tileY * 8 + tileX) * 2;
       entry = ((tile + 1) << 8) | tile;
-      *(volatile s16 *)(BG_SCREEN_BLOCK(7) + i) = entry;
+      *(volatile s16 *)((u8 *)BG_CANVAS_MAP + i) = entry;
     }
   }
   REG_BG2Y = -(40 << 8);

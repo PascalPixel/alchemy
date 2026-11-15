@@ -217,6 +217,20 @@ extern struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define BATTLE_VIEW_HEIGHT 120
 #define BATTLE_VIEW_BOTTOM (BATTLE_VIEW_TOP + BATTLE_VIEW_HEIGHT)
 
+/// BG2's map in screen block 7, where the canvas's tiles are laid out.
+#define BG_CANVAS_MAP ((volatile s16 *)BG_SCREEN_BLOCK(7))
+
+/// Writes one row of BG2's map for the canvas, two tiles at a time.
+#define EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset)                       \
+  for ((column) = 0; (column) != 8; (column)++, (offset) += 2) {               \
+    s32 tileIndex;                                                             \
+    s16 pair;                                                                  \
+                                                                               \
+    tileIndex = (row) * 16 + (column) * 2;                                     \
+    pair = ((tileIndex + 1) << 8) | tileIndex;                                 \
+    *(volatile s16 *)((u8 *)BG_CANVAS_MAP + (offset)) = pair;                  \
+  }
+
 /// Windows 0 and 1 both cover the battle view: the full width, lines 16 to
 /// 135.
 #define EFFECT_SET_BATTLE_WINDOWS()                                            \
@@ -988,7 +1002,7 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count);
 void Sprite_StartAnimationFar(void *object, s32 value);
 void BattleActor_SpawnObjectsForListFar(s16 *list, s32 mode);
 void BattleBackground_LoadFar(s32 mode, s32 resource, s32 level);
-void BattleBackground_SetModeFar(s32 mode, s32 background, s32 speed);
+void BattleBackground_SetModeFar(s32 mode, s32 resource, s32 speed);
 void BattleBackground_SetPaletteLevelFar(s32 background, s32 level);
 /// Turns the battle camera, over `frames` frames, to look at the point between
 /// two units.

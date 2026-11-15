@@ -64,12 +64,13 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 
   // Make BG2 a 128x128 canvas, as BattleEffect_StartCanvasLayer does.
   BattleEffect_ClearActorTimers();
-  view->secondMode = 1;
+  view->secondMode = BATTLE_BACKGROUND_FIXED;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_SetModeFar(1, BATTLE_BACKGROUND_ID(battle), 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED,
+                              BATTLE_BACKGROUND_ID(battle), 0);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
-  view->secondMode = 0;
+  view->secondMode = BATTLE_BACKGROUND_NONE;
   REG_BG2X = 0;
   REG_BG2Y = 0xfffff000;
   REG_BG2PA = Q_8_8(0.5);
@@ -354,7 +355,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                            TINT_KEEP, 0);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_SetModeFar(2, BATTLE_BACKGROUND_ID(battle), 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED,
+                              BATTLE_BACKGROUND_ID(battle), 0);
   wait(1);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
@@ -628,7 +630,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
 
   // Turn BG2 into a 128x128 canvas, one step a frame.
   BattleEffect_ConfigureEffectDisplay();
-  view->secondMode = 1;
+  view->secondMode = BATTLE_BACKGROUND_FIXED;
   wait(1);
   REG_BLDCNT = 0;
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -637,7 +639,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
                       IO_WRITE_HALFWORD);
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
   wait(1);
-  BattleBackground_SetModeFar(1, battle->background, 0);
+  BattleBackground_SetModeFar(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
@@ -651,7 +653,7 @@ void BattleEffect_StartElementStreaks(s32 kind) {
                           DISPCNT_WIN1_ON,
                       IO_WRITE_HALFWORD);
   BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
-  view->secondMode = 0;
+  view->secondMode = BATTLE_BACKGROUND_NONE;
   wait(1);
   BattleEffect_SetupCanvasWindows();
   REG_BG2PA = Q_8_8(1);

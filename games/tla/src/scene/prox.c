@@ -2437,25 +2437,12 @@ struct Rock {
   s32 timer;
 };
 
-/// A falling rock's sprite.
-struct RockSprite {
-  u8 unk00[5];
-  u8 unk05;
-  u8 unk06[2];
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unk0a[0x14];
-  u16 unk1e;
-  u8 unk20[8];
-};
-
 /// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
 /// ring that next walks round.
 struct RockWork {
   u8 tiles[0x500];
   struct Rock rocks[64];
-  struct RockSprite sprites[64];
+  struct EffectSprite sprites[64];
   s16 next;
   u16 tileBase;
   s16 resource;
@@ -2466,26 +2453,8 @@ struct RockWork {
 #include "shared/rocks_spawn.h"
 #undef FIELD_AT
 
-/* VIEW(s4254): tag struct RockSprite as struct RockSprite__s4254; prox.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/scene/prox.c:2106: structure has no
- * member named `unk05_5'. */
-struct RockSprite__s4254 {
-  u8 unk00[5];
-  u8 unk05_0 : 5;
-  u8 unk05_5 : 1;
-  u8 unk05_6 : 2;
-  u8 unk06[3];
-  u8 unk09_0 : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-  u8 unk0a[20];
-  u16 unk1e;
-  u8 unk20[8];
-};
-
-void Prox_InitRockSprite(struct RockSprite__s4254 *sprite, s32 width,
-                         s32 height, u32 attributes, s32 tile);
+void Prox_InitRockSprite(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
+                         u32 attributes, s32 tile);
 
 UNUSED void Prox_StartFallingRocks(void) {
   struct RockWork *work =
@@ -2494,7 +2463,7 @@ UNUSED void Prox_StartFallingRocks(void) {
   s32 tile;
   s32 i;
   struct Rock *rock;
-  struct RockSprite__s4254 *sprite;
+  struct EffectSprite *sprite;
 
   Decompress_TaggedLz(Resource_GetTableEntry((s32)&ResourceId_FallingRock),
                       work);
@@ -2506,10 +2475,10 @@ UNUSED void Prox_StartFallingRocks(void) {
   sprite = work->sprites;
   for (i = 63; i >= 0; i--, sprite++, rock++) {
     Prox_InitRockSprite(sprite, 8, 8, 0x40000000, tile);
-    sprite->unk05_5 = 1;
-    sprite->palette = 0;
-    sprite->priority = 0;
-    sprite->unk1e = 240;
+    sprite->oam.fullColor = 1;
+    sprite->oam.palette = 0;
+    sprite->oam.priority = 0;
+    sprite->depth = 240;
     rock->timer = -1;
   }
   {
@@ -2520,13 +2489,8 @@ UNUSED void Prox_StartFallingRocks(void) {
   FieldTask_AddFrame(Particles_UpdateFalling, TASK_PASS_VBLANK);
 }
 
-struct SparkWork {
-  u8 unk0000[0x1604];
-  s16 resource;
-};
-
 UNUSED void Prox_EndFallingRocks(void) {
-  struct SparkWork *work = Ram_HeapSlots->menuWork;
+  struct RockWork *work = Ram_HeapSlots->menuWork;
 
   FieldTask_Remove(Particles_UpdateFalling);
   VramCache_FreeEntry(work->resource);

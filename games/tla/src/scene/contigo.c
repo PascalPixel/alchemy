@@ -18,6 +18,7 @@
 #include "system/ram_buffer.h"
 #include "field/field_sequence_event.h"
 #include "text/msg_ids.h"
+#include "scene/sparkle.h"
 
 /// The party set out on the winged ship (as Atteka Inlet names it).
 #define FLAG_SET_OUT_WITH_WINGS 0x9b2
@@ -2534,21 +2535,6 @@ void Contigo_InitializeLuckyDice(void) {
 
 // The sparkle's update: raises two pairs of sprites over the object, each pair
 // starting when its counter is cleared, until both counters pass 31.
-
-/// The sparkle over an object: its two pairs of sprites, how far each pair has
-/// risen (from 0 to 31; 999 before it starts) and the pair to start next.
-struct SparkleWork {
-  struct EffectSprite sprites[4];
-  s16 heights[2];
-  s16 vramEntry;
-  s16 nextPair;
-  struct Actor *object;
-};
-
-struct CounterBits {
-  u8 low : 1;
-  u8 rest : 7;
-};
 
 void Actor_SetSpriteColorMode(struct Actor *, u32);
 s32 BattleEffect_GetObjectDepth(struct Actor *object);

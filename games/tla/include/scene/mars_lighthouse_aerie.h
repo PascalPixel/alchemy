@@ -7,8 +7,6 @@
 #include "types.h"
 
 struct Actor;
-struct SparkleSprite;
-struct SparkleSprite__s53e4;
 
 /// A halfword whose store may alias any read after it.
 union StoredHalfword {

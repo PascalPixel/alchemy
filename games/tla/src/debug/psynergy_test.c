@@ -41,6 +41,7 @@
 #include "game/game_bank.h"
 #include "scene/shared.h"
 #include "window/window.h"
+#include "scene/sparkle.h"
 
 // The room's flags: the four Scoop spots dug, the falling actor's item taken,
 // and which of his two spots the
@@ -83,7 +84,6 @@ void DebugBrowser_Icons();
 void Sanctum_Run();
 void Actor_SetSpriteColorMode(struct Actor *, u32);
 void Actor_ArriveInRing(s32 actor);
-void EffectSprite_Draw(struct SparkleSprite *sprite);
 s32 BattleEffect_GetObjectPriority(struct Actor *object);
 void Field_RequestBattleFromEncounterTable(s32, s32);
 void Event_PickUpItem(s32, s32, s32);
@@ -634,7 +634,7 @@ void PsynergyTest_UpdateRings(struct Actor *object) {
   s32 i, j;
   struct SparkleWork *work = (struct SparkleWork *)object->watchedActor;
   u8 *count = (u8 *)object + 99;
-  struct SparkleSprite *sprite;
+  struct EffectSprite *sprite;
 
   if (*count & 1)
     Actor_SetSpriteColorMode(
@@ -642,11 +642,11 @@ void PsynergyTest_UpdateRings(struct Actor *object) {
   if (((u8 *)object)[98] == 0) {
     if ((*count & 15) == 0) {
       Event_PlaySound(SE_RISING_RINGS);
-      work->unka0[work->unka6] = 0;
-      work->unka6 ^= 1;
+      work->heights[work->nextPair] = 0;
+      work->nextPair ^= 1;
     }
   } else if (((u8 *)object)[98] == 1) {
-    if (work->unka0[0] > 31 && work->unka0[1] > 31) {
+    if (work->heights[0] > 31 && work->heights[1] > 31) {
       Actor_SetSpriteColorMode(object, 0);
       VramCache_FreeEntry(work->vramEntry);
       object->update = 0;
@@ -655,34 +655,35 @@ void PsynergyTest_UpdateRings(struct Actor *object) {
   }
   (*count)++;
   for (i = 0; i < 2; i++) {
-    sine = Math_Sin(work->unka0[i] << 10);
-    if (work->unka0[i] >= 0) {
-      if (work->unka0[i] <= 31) {
+    sine = Math_Sin(work->heights[i] << 10);
+    if (work->heights[i] >= 0) {
+      if (work->heights[i] <= 31) {
         struct Vector3 *p = &position;
 
         SET_POSITION(p, object->x.fixed,
-                     object->y.fixed + (work->unka0[i] << 16), object->z.fixed);
+                     object->y.fixed + (work->heights[i] << 16),
+                     object->z.fixed);
         Camera_WorldToScreen(p);
         x = p->x;
         j = 0;
         z = p->z;
         sprite = &work->sprites[i * 2];
         for (; j <= 1; j++) {
-          sprite->unk0c = x;
-          sprite->unk10 = z;
-          sprite->unk14 = sine;
-          sprite->unk18 = sine;
+          sprite->x = x;
+          sprite->y = z;
+          sprite->scaleX = sine;
+          sprite->scaleY = sine;
           if (j == 0) {
-            sprite->unk1e = BattleEffect_GetObjectDepth(object) - 1;
+            sprite->depth = BattleEffect_GetObjectDepth(object) - 1;
           } else {
-            sprite->unk1e = BattleEffect_GetObjectDepth(object) + 1;
-            sprite->unk10 -= 0x10000;
-            sprite->unk18 = -sprite->unk18;
+            sprite->depth = BattleEffect_GetObjectDepth(object) + 1;
+            sprite->y -= 0x10000;
+            sprite->scaleY = -sprite->scaleY;
           }
           EffectSprite_Draw(sprite);
           sprite++;
         }
-        work->unka0[i]++;
+        work->heights[i]++;
       }
     }
   }
@@ -905,13 +906,10 @@ struct Trigger gSceneEvents[] = {
 
 // The rings' start and stop, which the ROM places after the tables.
 
-void EffectSprite_Init(struct SparkleSprite *sprite, s32 width, s32 height,
-                       u32 attributes, s32 tile);
-
 /// Starts an actor's rings, kept in `work`: loads their tiles and hooks
 /// PsynergyTest_UpdateRings to the actor.
 void PsynergyTest_StartRings(struct Actor *object, struct SparkleWork *work) {
-  struct SparkleSprite *sprite;
+  struct EffectSprite *sprite;
   s32 tile;
   s32 row;
   s32 col;
@@ -919,9 +917,9 @@ void PsynergyTest_StartRings(struct Actor *object, struct SparkleWork *work) {
 
   work->vramEntry = VramCache_FindFreeEntry();
   Vram_Load(work->vramEntry, 256, gPsynergyTest_RingTiles);
-  work->unka6 = 0;
-  work->unka0[0] = 999;
-  work->unka0[1] = 999;
+  work->nextPair = 0;
+  work->heights[0] = 999;
+  work->heights[1] = 999;
   work->object = object;
   ((u8 *)object)[0x62] = 0;
   ((u8 *)object)[0x63] = 0;
@@ -930,13 +928,13 @@ void PsynergyTest_StartRings(struct Actor *object, struct SparkleWork *work) {
   object->watchedActor = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     col = 1;
-    offset = (row * 2) * sizeof(struct SparkleSprite);
-    sprite = (struct SparkleSprite *)(offset + (s32)work);
+    offset = (row * 2) * sizeof(struct EffectSprite);
+    sprite = (struct EffectSprite *)(offset + (s32)work);
     for (; col >= 0; col--) {
       EffectSprite_Init(sprite, 16, 16, OBJ_SIZE_32X16, tile);
-      sprite->fullColor = 0;
-      sprite->palette = 0;
-      sprite->priority = BattleEffect_GetObjectPriority(object) & 3;
+      sprite->oam.fullColor = 0;
+      sprite->oam.palette = 0;
+      sprite->oam.priority = BattleEffect_GetObjectPriority(object);
       sprite++;
     }
   }

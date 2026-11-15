@@ -22,6 +22,8 @@
 #include "scene/mars_lighthouse_aerie.h"
 #include "scene/scene.h"
 #include "scene/shared.h"
+#include "field/object.h"
+#include "field/effect_sprite.h"
 #include "scene_ids.h"
 #include "field/event_commands.h"
 #include "battle/battle.h"
@@ -51,6 +53,7 @@
 #include "system/vector3.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "scene/sparkle.h"
 
 /// Set as the party leaves the Mercury Lighthouse at the end: the beacon's
 /// fire burns at the aerie from then on.
@@ -457,7 +460,6 @@ void MarsLighthouseAerie_StopLookingAround(s32 id) {
   Actor_FaceDirection(id, FACING_NORTH, 0);
 }
 
-struct SparkleWork;
 s32 Actor_ReleaseById();
 s32 Actor_MoveToObject();
 extern u32 gMarsLighthouseAerie_JennaApproachScript[];
@@ -1881,7 +1883,6 @@ void Orbs_SpawnRising(void) {
 
 #include "text/msg_ids.h"
 
-void BattleEffect_GetObjectPriority(void);
 void MarsLighthouseAerie_HaltIvan(void);
 void FieldCamera_WaitForArrival();
 void Teleport_PlayWhirl(void);
@@ -3015,7 +3016,7 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object) {
   s32 i, j;
   struct SparkleWork *work = (struct SparkleWork *)object->watchedActor;
   u8 *count = (u8 *)object + 99;
-  struct SparkleSprite *sprite;
+  struct EffectSprite *sprite;
 
   if (*count & 1)
     Actor_SetSpriteColorMode(
@@ -3023,11 +3024,11 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object) {
   if (((u8 *)object)[98] == 0) {
     if ((*count & 15) == 0) {
       Event_PlaySound(SE_RISING_RINGS);
-      work->unka0[work->unka6] = 0;
-      work->unka6 ^= 1;
+      work->heights[work->nextPair] = 0;
+      work->nextPair ^= 1;
     }
   } else if (((u8 *)object)[98] == 1) {
-    if (work->unka0[0] > 31 && work->unka0[1] > 31) {
+    if (work->heights[0] > 31 && work->heights[1] > 31) {
       Actor_SetSpriteColorMode(object, 0);
       VramCache_FreeEntry(work->vramEntry);
       object->update = NULL;
@@ -3036,13 +3037,13 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object) {
   }
   (*count)++;
   for (i = 0; i < 2; i++) {
-    sine = Math_Sin(work->unka0[i] << 10);
-    if (work->unka0[i] >= 0) {
-      if (work->unka0[i] <= 31) {
+    sine = Math_Sin(work->heights[i] << 10);
+    if (work->heights[i] >= 0) {
+      if (work->heights[i] <= 31) {
         struct Vector3 *p = &position;
 
         p->x = object->x.fixed;
-        p->y = object->y.fixed + (work->unka0[i] << 16);
+        p->y = object->y.fixed + (work->heights[i] << 16);
         p->z = object->z.fixed;
         Camera_WorldToScreen(p);
         x = p->x;
@@ -3050,72 +3051,31 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *object) {
         z = p->z;
         sprite = &work->sprites[i * 2];
         for (; j <= 1; j++) {
-          sprite->unk0c = x;
-          sprite->unk10 = z;
-          sprite->unk14 = sine;
-          sprite->unk18 = sine;
+          sprite->x = x;
+          sprite->y = z;
+          sprite->scaleX = sine;
+          sprite->scaleY = sine;
           if (j == 0) {
-            sprite->unk1e = BattleEffect_GetObjectDepth(object) - 1;
+            sprite->depth = BattleEffect_GetObjectDepth(object) - 1;
           } else {
-            sprite->unk1e = BattleEffect_GetObjectDepth(object) + 1;
-            sprite->unk10 -= 0x10000;
-            sprite->unk18 = -sprite->unk18;
+            sprite->depth = BattleEffect_GetObjectDepth(object) + 1;
+            sprite->y -= 0x10000;
+            sprite->scaleY = -sprite->scaleY;
           }
           EffectSprite_Draw(sprite);
           sprite++;
         }
-        work->unka0[i]++;
+        work->heights[i]++;
       }
     }
   }
 }
 #undef A
 
-/* VIEW(s53e4): tag struct SparkleSprite as struct SparkleSprite__s53e4; s3370.c
- * has another definition; tried with the definition the rest of the object has,
- * it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:2992: structure has no member
- * named `flag'. */
-struct SparkleSprite__s53e4 {
-  u8 unk00[5];
-  u8 attr5Low : 5;
-  u8 flag : 1;
-  u8 attr5High : 2;
-  u8 unk06[2];
-  u8 unk08;
-  u8 unk09 : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-  u8 unk0a[0x1e];
-};
-
-/* VIEW(s53e4): tag struct SparkleWork as struct SparkleWork__s53e4; s3370.c has
- * another definition; tried with the definition the rest of the object has, it
- * does not compile in tla-ja: games/tla/src/scene/mars_lighthouse_aerie.c:2983:
- * incompatible types in assignment. */
-struct SparkleWork__s53e4 {
-  struct SparkleSprite__s53e4 sprites[4];
-  u16 unka0;
-  u16 unka2;
-  s16 vramEntry;
-  u16 unka6;
-  struct Actor *object;
-};
-
-/* VIEW(s3370): routine BattleEffect_GetObjectPriority as s32
- * BattleEffect_GetObjectPriority(struct Actor *object); scene/scene.h has void
- * BattleEffect_GetObjectPriority(void); tried as the definition's s32
- * BattleEffect_GetObjectPriority(struct Actor *object), which the object
- * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/mars_lighthouse_aerie.c:3002: too many arguments to
- * function `BattleEffect_GetObjectPriority'. */
-extern s32 BattleEffect_GetObjectPriority__s3370(struct Actor *object) __asm__(
-    "BattleEffect_GetObjectPriority");
-
 /// Rings of light begin to rise round the actor.
 void MarsLighthouseAerie_StartRisingRings(struct Actor *object,
-                                          struct SparkleWork__s53e4 *work) {
-  struct SparkleSprite__s53e4 *sprite;
+                                          struct SparkleWork *work) {
+  struct EffectSprite *sprite;
   s32 tile;
   s32 row;
   s32 col;
@@ -3123,9 +3083,9 @@ void MarsLighthouseAerie_StartRisingRings(struct Actor *object,
 
   work->vramEntry = VramCache_FindFreeEntry();
   Vram_Load(work->vramEntry, 256, gMarsLighthouseAerie_RisingRingTiles);
-  work->unka6 = 0;
-  work->unka0 = 999;
-  work->unka2 = 999;
+  work->nextPair = 0;
+  work->heights[0] = 999;
+  work->heights[1] = 999;
   work->object = object;
   ((u8 *)object)[0x62] = 0;
   ((u8 *)object)[0x63] = 0;
@@ -3134,13 +3094,13 @@ void MarsLighthouseAerie_StartRisingRings(struct Actor *object,
   object->watchedActor = (struct Actor *)work;
   for (row = 0; row <= 1; row++) {
     col = 1;
-    offset = (row * 2) * sizeof(struct SparkleSprite__s53e4);
-    sprite = (struct SparkleSprite__s53e4 *)(offset + (s32)work);
+    offset = (row * 2) * sizeof(struct EffectSprite);
+    sprite = (struct EffectSprite *)(offset + (s32)work);
     for (; col >= 0; col--) {
       EffectSprite_Init(sprite, 16, 16, 0x80004000, tile);
-      sprite->flag = 0;
-      sprite->palette = 0;
-      sprite->priority = BattleEffect_GetObjectPriority__s3370(object) & 3;
+      sprite->oam.fullColor = 0;
+      sprite->oam.palette = 0;
+      sprite->oam.priority = BattleEffect_GetObjectPriority(object);
       sprite++;
     }
   }

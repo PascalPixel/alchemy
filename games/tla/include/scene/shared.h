@@ -17,38 +17,6 @@ struct SpriteAnimation;
 struct RenderInput;
 struct WindowSprite;
 
-struct SparkleSprite {
-  u8 unk00[5];
-  u8 attr5Low : 5;
-  u8 fullColor : 1;
-  u8 shape : 2;
-  u8 unk06[3];
-  u8 tileHigh : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-  u8 unk0a[2];
-  s32 unk0c;
-  s32 unk10;
-  s32 unk14;
-  s32 unk18;
-  u8 unk1c[2];
-  u16 unk1e;
-  u8 unk20[8];
-};
-
-struct SparkleWork {
-  struct SparkleSprite sprites[4];
-  s16 unka0[2];
-  s16 vramEntry;
-  s16 unka6;
-  struct Actor *object;
-};
-
-struct CounterBits {
-  u8 low : 1;
-  u8 rest : 7;
-};
-
 struct ParticleSprite {
   u8 unk0[8];
   u16 attr;
@@ -165,22 +133,6 @@ struct OrbitEffect {
   u16 unk66;
   u8 unk68[4];
   void (*update)(struct OrbitEffect *effect);
-};
-
-struct SparkSprite {
-  u8 unk00[4];
-  u8 y;
-  u8 low : 5;
-  u8 fullColor : 1;
-  u8 shape : 2;
-  u16 attr1;
-  u8 tile;
-  u8 tileHigh : 2;
-  u8 priority : 2;
-  u8 palette : 4;
-  u8 unk0a[0x14];
-  u16 depth;
-  u8 unk20[8];
 };
 
 struct WorldCamera {

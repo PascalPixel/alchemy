@@ -38,6 +38,7 @@
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "field/field_sprite.h"
+#include "field/effect_sprite.h"
 #include "field/call.h"
 #include "system/field_effect.h"
 #include "field/field_coordinate.h"
@@ -83,7 +84,6 @@ enum JupiterLighthouseRoomRedKeyActorId {
 struct Actor;
 struct CellTarget;
 struct CellTargetEntry;
-struct SparkSprite;
 
 enum {
   EFFECT_DEFAULT_TYPE = 285,
@@ -102,8 +102,8 @@ void JupiterLighthouse_UpdateSparkRing(void);
 
 void Actor_PlaceBlocks(void *data);
 
-void JupiterLighthouse_InitSparkSprite(struct SparkSprite *sprite, s32 width,
-                                       s32 height, s32 attributes, s32 tile);
+void JupiterLighthouse_InitSparkSprite(struct EffectSprite *sprite, s32 pivotX,
+                                       s32 pivotY, u32 attributes, s32 tile);
 
 extern s16 gLightSpriteTile;
 extern s16 gLightSpriteCount;
@@ -128,7 +128,6 @@ extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
 struct FieldEffect;
-struct SparkSprite__jupiter_lighthouse_room_red_key;
 
 void Actor_PlaceMovedBlock(void);
 extern u16 gPaletteCycleColors[];
@@ -136,8 +135,7 @@ extern u16 gPaletteCycleUnlitPalette[];
 extern u16 gPaletteCycleUnlitColors[];
 void MapGrid_SetAttributeBAt();
 void Import_ActorSelectAnimation(struct FieldEffect *effect, s32 mode);
-void JupiterLighthouse_DrawSparkSprite(
-    struct SparkSprite__jupiter_lighthouse_room_red_key *sprite);
+void JupiterLighthouse_DrawSparkSprite(struct EffectSprite *sprite);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -400,11 +398,6 @@ void JupiterLighthouse_ActivateTheLighthouse(void) {
   Event_PlaySound(MUS_PUZZLE_SOLVED);
   Sound_WaitForJingle();
 }
-
-struct SparkWork {
-  u8 unk0000[0x1d9c];
-  s16 resource;
-};
 
 extern s32 gPaletteCyclePausesInEvents;
 
@@ -811,36 +804,23 @@ struct Spark {
   s32 age;
 };
 
-/* VIEW(jupiter_lighthouse_room_red_key): tag struct SparkSprite as struct
- * SparkSprite__jupiter_lighthouse_room_red_key; scene/shared.h has another
- * definition; tried with the definition the rest of the object has, it does not
- * compile in tla-ja: games/tla/src/scene/jupiter_lighthouse_room_red_key.c:794:
- * structure has no member named `x'. */
-struct SparkSprite__jupiter_lighthouse_room_red_key {
-  u8 unk00[0x0c];
-  s32 x;
-  s32 z;
-  u8 unk14[0x14];
-};
-
-/* VIEW(s1230): tag struct SparkWork as struct SparkWork__s1230;
- * jupiter_lighthouse_room_red_key.c has another definition; tried with the
- * definition the rest of the object has, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_red_key.c:769: structure has no
- * member named `sparks'. */
-struct SparkWork__s1230 {
-  u8 unk0000[0x400];
+/// The spark ring in heap slot 220: the orbs' pictures, 96 sparks and their
+/// sprites, the ring's two ends and its VRAM entry.
+struct SparkWork {
+  u8 tiles[0x400];
   struct Spark sparks[96];
-  struct SparkSprite__jupiter_lighthouse_room_red_key sprites[96];
+  struct EffectSprite sprites[96];
   s32 from[3];
   s32 to[3];
   s16 next;
+  u16 tile;
+  s16 vramEntry;
 };
 
 void JupiterLighthouse_UpdateSparkRing(void) {
-  struct SparkWork__s1230 *work = Ram_HeapSlots->menuWork;
+  struct SparkWork *work = Ram_HeapSlots->menuWork;
   struct Spark *spark = work->sparks;
-  struct SparkSprite__jupiter_lighthouse_room_red_key *sprite = work->sprites;
+  struct EffectSprite *sprite = work->sprites;
   s32 position[3];
   s32 duration;
   s32 i;
@@ -863,35 +843,19 @@ void JupiterLighthouse_UpdateSparkRing(void) {
           work->from[2] + (work->to[2] - work->from[2]) * spark->age / duration;
       Camera_WorldToScreen(p);
       sprite->x = p[0];
-      sprite->z = p[2];
+      sprite->y = p[2];
       JupiterLighthouse_DrawSparkSprite(sprite);
       spark->age++;
     }
   }
 }
 
-/* VIEW(s1650): tag struct SparkWork as struct SparkWork__s1650;
- * games/tla/src/scene/jupiter_lighthouse_room_red_key has another definition;
- * tried with the definition the rest of the object has, it does not compile in
- * tla-ja: games/tla/src/scene/jupiter_lighthouse_room_red_key.c:830: structure
- * has no member named `sparks'. */
-struct SparkWork__s1650 {
-  u8 tiles[0x400];
-  struct Spark sparks[96];
-  struct SparkSprite sprites[96];
-  s32 from[3];
-  s32 to[3];
-  s16 next;
-  u16 tile;
-  s16 vramEntry;
-};
-
 /// Adds count sparks to the spark ring's 96 entries in heap slot 220, each
 /// with a random angle from 0x6000 across three quarters of a turn, the
 /// cosine and negated sine of it at 64 pixels as its direction, a random
 /// speed of 16 to 31 and an age of 0.
 void JupiterLighthouse_AddSparks(s32 count) {
-  struct SparkWork__s1650 *work = Ram_HeapSlots->menuWork;
+  struct SparkWork *work = Ram_HeapSlots->menuWork;
   struct Spark *spark;
   s32 angle;
   s32 i;
@@ -916,10 +880,10 @@ void JupiterLighthouse_AddSparks(s32 count) {
 }
 
 void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
-  struct SparkWork__s1650 *work =
-      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct SparkWork__s1650));
+  struct SparkWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct SparkWork));
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct SparkSprite *sprite;
+  struct EffectSprite *sprite;
   struct Spark *spark;
   s32 entry;
   s32 tile;
@@ -942,9 +906,9 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
   sprite = work->sprites;
   for (; i <= 95; i++, sprite++, spark++) {
     JupiterLighthouse_InitSparkSprite(sprite, 4, 4, 0, tile + (i & 15) * 2);
-    sprite->fullColor = 1;
-    sprite->palette = 0;
-    sprite->priority = BattleEffect_GetObjectPriority(leader) & 3;
+    sprite->oam.fullColor = 1;
+    sprite->oam.palette = 0;
+    sprite->oam.priority = BattleEffect_GetObjectPriority(leader);
     // Through a union, so this store may alias the age store after it.
     ((union {
        u16 v;
@@ -962,7 +926,7 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
 }
 
 void JupiterLighthouse_EndSparkRing(void) {
-  struct SparkWork__s1650 *work = Ram_HeapSlots->menuWork;
+  struct SparkWork *work = Ram_HeapSlots->menuWork;
 
   FieldTask_Remove(JupiterLighthouse_UpdateSparkRing);
   VramCache_FreeEntry(work->vramEntry);

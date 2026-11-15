@@ -1052,9 +1052,8 @@ void MagmaRockInside_RaiseLava(void) {
   u32 i;
   u32 row;
 
-  /* FAKEMATCH(dead): srcX and srcZ start from a 0 only combine sees. */
-  srcX = ((u32)layer & 3) >> 2;
-  srcZ = ((u32)layer & 7) >> 3;
+  srcX = 0;
+  srcZ = 0;
   // t holds 212 for a set flag, then the frame count.
   t = 0;
   effectOptions = &options;
@@ -1094,7 +1093,8 @@ void MagmaRockInside_RaiseLava(void) {
 burst:
   burstRandom = Random16();
   mask = 31;
-  /* FAKEMATCH(barrier): the empty asm clobbering sfp. */
+  /* FAKEMATCH(barrier): the form kept; as no asm, 66 of 537 instructions
+   * differ in tla-en. */
   asm("" : : : SFP_CLOBBER);
   burstPosition = position;
   burstPosition[0] = baseX + ((burstRandom & mask) << 16);
@@ -1385,7 +1385,8 @@ void MagmaRockInside_DrainLava(void) {
   FieldEvent_Wait(20);
   j = (u32)&gMainRoutineWork.leaderActorId;
   Actor_Get(*(s32 *)j)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  /* FAKEMATCH(temporary): the position's address held in a pointer. */
+  /* FAKEMATCH(temporary): the form kept; as position[] in place of p, 19 of
+   * 496 instructions differ in tla-en. */
   p = position;
   p[0] = (leader->x.fixed & FIELD_CELL_MASK) + px(8);
   p[1] = leader->y.fixed;

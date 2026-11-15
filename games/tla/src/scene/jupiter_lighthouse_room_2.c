@@ -115,7 +115,7 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
-void MapGrid_SetAttributeBAt(s32 actor);
+u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
 extern s32 gJupiterLighthouse_GlowPosition[3];
 extern const u8 gJupiterLighthouse_GlowSprite[];
 void EffectSprite_InitFromSlot94Blended(const void *script, s32 a, s32 b,
@@ -563,15 +563,6 @@ void JupiterLighthouse_LoadPalettes(s32 mode) {
 }
 
 void MapGrid_SetCellHeight();
-/* VIEW(jupiter_lighthouse_room_2): routine MapGrid_SetAttributeBAt as void
- * MapGrid_SetAttributeBAt(); scene/scene.h has void
- * MapGrid_SetAttributeBAt(s32 actor); tried as the definition's u8
- * MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value), which the object
- * already declares, it does not compile in tla-ja:
- * games/tla/src/scene/jupiter_lighthouse_room_2.c:535: too many arguments to
- * function `MapGrid_SetAttributeBAt'. */
-extern void
-MapGrid_SetAttributeBAt__room_2() __asm__("MapGrid_SetAttributeBAt");
 
 void Actor_RaiseFromCell(s32 id) {
   struct Actor *object;
@@ -587,7 +578,7 @@ void Actor_RaiseFromCell(s32 id) {
       Map_GetTerrainHeight(object->layer, object->x.fixed, object->z.fixed);
   MapGrid_SetCellHeight(object->x.fixed, object->z.fixed, 0,
                         (height >> 19) + 6);
-  MapGrid_SetAttributeBAt__room_2(object->x.fixed, object->z.fixed, 0, 128);
+  MapGrid_SetAttributeBAt(object->x.fixed, object->z.fixed, 0, 128);
 }
 
 #include "shared/whirlwind_carry_leader_lower.h"

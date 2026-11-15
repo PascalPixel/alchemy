@@ -103,7 +103,7 @@ extern s16 gLightSpritesLarge;
 extern s16 gLightSpritePriority;
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
-void Oam_AddSpriteAtDepthClamped(struct LightOam *oam, s32 depth);
+void Oam_AddSpriteAtDepthClamped(void *entry, s32 depth);
 
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
@@ -1069,15 +1069,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
     effect->update = options->update;
 }
 
-/* VIEW(s1e78): routine Oam_AddSpriteAtDepthClamped as cell_sprite.c declares
- * it; the joined file has another; tried as the definition's void
- * Oam_AddSpriteAtDepthClamped(void *entry, s32 slot), which the object already
- * declares, it does not compile in tla-ja:
- * games/tla/src/field/map_cell_sprite.c:20: conflicting types for
- * `Oam_AddSpriteAtDepthClamped'. */
-void Oam_AddSpriteAtDepthClamped__s1e78(void *entry, s32 priority) __asm__(
-    "Oam_AddSpriteAtDepthClamped");
-#define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped__s1e78
+#define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
 #include "shared/cracked_tiles_find.h"

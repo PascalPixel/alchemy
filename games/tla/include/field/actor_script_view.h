@@ -22,16 +22,16 @@ struct ActorScriptView {
   s32 groundHeight;                 ///< 16.16 fixed-point pixels
   u8 unusedAfterGroundHeight[0x0a]; ///< the x and y scales and the radius; not
                                     ///< named here
-  u8 layer;         ///< the map layer its ground height is read from
-  u8 unk23;         ///< Actor.priorityFlags; not named here
-  s32 velocityX;    ///< 16.16 fixed-point pixels per frame
-  s32 velocityY;    ///< 16.16 fixed-point pixels per frame
-  s32 velocityZ;    ///< 16.16 fixed-point pixels per frame
-  s32 speedLimit;   ///< 16.16 fixed-point pixels per frame
-  s32 acceleration; ///< 16.16 fixed-point pixels per frame, per frame
-  s32 targetX;      ///< 16.16 fixed-point pixels; 0x80000000 when unset
-  s32 targetY;      ///< 16.16 fixed-point pixels; 0x80000000 when unset
-  s32 targetZ;      ///< 16.16 fixed-point pixels; 0x80000000 when unset
+  u8 layer;            ///< the map layer its ground height is read from
+  u8 unusedAfterLayer; ///< Actor.priorityFlags; not named here
+  s32 velocityX;       ///< 16.16 fixed-point pixels per frame
+  s32 velocityY;       ///< 16.16 fixed-point pixels per frame
+  s32 velocityZ;       ///< 16.16 fixed-point pixels per frame
+  s32 speedLimit;      ///< 16.16 fixed-point pixels per frame
+  s32 acceleration;    ///< 16.16 fixed-point pixels per frame, per frame
+  s32 targetX;         ///< 16.16 fixed-point pixels; 0x80000000 when unset
+  s32 targetY;         ///< 16.16 fixed-point pixels; 0x80000000 when unset
+  s32 targetZ;         ///< 16.16 fixed-point pixels; 0x80000000 when unset
   u8 unusedAfterTargetZ[0x0c]; ///< bounce, gravity and a spare word; not named
                                ///< here
   void *animation; ///< its sprite, or its list of sprites, by animationKind

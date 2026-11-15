@@ -181,16 +181,16 @@ struct SpinVector {
 };
 
 struct ArcPicture {
-  u8 padding00[22];
+  u8 unused[22]; ///< no code names them
   u8 visible;
 };
 
 struct ArcSprite {
-  u8 padding00[5];
+  u8 unused[5]; ///< no code names them
   u8 flags05_0 : 5;
   u8 flags05_5 : 1;
   u8 layer : 2;
-  u8 padding06;
+  u8 unusedAfterLayer; ///< no code names it
   u8 flags07_0 : 6;
   u8 size : 2;
   union {
@@ -205,31 +205,31 @@ struct ArcSprite {
       u8 flags09_4 : 4;
     } byte;
   } attr;
-  u8 padding0c[4];
+  u8 unusedAfterAttr[4]; ///< no code names them
   u8 resource;
   u8 active : 1;
   u8 flags11_1 : 7;
-  u8 padding12[8];
+  u8 unusedB[8]; ///< no code names them
   u8 animation;
-  u8 padding1b[13];
+  u8 unusedAfterAnimation[13]; ///< no code names them
   struct ArcPicture *picture;
 };
 
 struct ArcObject {
-  u8 padding00[8];
+  u8 unused[8]; ///< no code names them
   s32 x;
   s32 y;
   s32 z;
   s32 unk14;
   s32 scaleX;
   s32 scaleY;
-  u8 padding20[0x30];
+  u8 unusedAfterScaleY[0x30]; ///< no code names them
   struct ArcSprite *sprite;
-  u8 padding54;
+  u8 unusedAfterSprite; ///< no code names it
   u8 unk55;
-  u8 padding56[0x0e];
+  u8 unusedB[0x0e]; ///< no code names them
   u16 unk64;
-  u8 padding66[2];
+  u8 unusedC[2]; ///< no code names them
   struct ArcObject *source;
   void *callback;
 };

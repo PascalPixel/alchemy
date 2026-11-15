@@ -29,7 +29,7 @@ void LineScroll_ArmDma(void) {
 
     control = dma[5];
     dma[5] = control & 0xc5ff; // Clear start timing and repeat.
-    dma[5] &= 0x7fff;          // Stop.
+    dma[5] &= ~DMA_ENABLE;
     target = dest;
     (void)dma[5];
   }

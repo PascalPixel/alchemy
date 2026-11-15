@@ -500,10 +500,10 @@ done:
  * games/tla/src/field/field_sequence_run.c:517: structure has no member named
  * `pos'. */
 struct Object__field_sequence {
-  u8 pad0[6];
+  u8 unused[6]; ///< no code names them
   u16 angle;
   struct EffectVector pos;
-  u8 pad1[14];
+  u8 unusedAfterPos[14]; ///< no code names them
   u8 kind;
 };
 

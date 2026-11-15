@@ -74,12 +74,12 @@ struct SceneEntrance {
   s16 y;            ///< pixels
   s16 z;            ///< pixels
   u16 facing;       ///< 1/65536 turns (enum Facing)
-  s16 unused1;
-  s16 cameraLeft;   ///< pixels, -1 for none
-  s16 cameraTop;    ///< pixels, -1 for none
-  s16 cameraRight;  ///< pixels, -1 for none
-  s16 cameraBottom; ///< pixels, -1 for none
-  s16 unused2;
+  s16 unusedAfterFacing;       ///< no code names it
+  s16 cameraLeft;              ///< pixels, -1 for none
+  s16 cameraTop;               ///< pixels, -1 for none
+  s16 cameraRight;             ///< pixels, -1 for none
+  s16 cameraBottom;            ///< pixels, -1 for none
+  s16 unusedAfterCameraBottom; ///< no code names it
 };
 
 /// An exit table's header word: the scene whose exits follow, named by its
@@ -192,10 +192,10 @@ struct Trigger {
 /// A trigger as the field reads it while the scene runs: the target is one
 /// byte.
 struct TriggerView {
-  s32 flags; ///< the low 4 bits are the kind (TRIGGER_KIND_MASK)
-  u8 value;  ///< the target (an actor id or a cell behavior)
-  u8 unused05;
-  s16 condition; ///< as for GameFlag_IsConditionActive
+  s32 flags;           ///< the low 4 bits are the kind (TRIGGER_KIND_MASK)
+  u8 value;            ///< the target (an actor id or a cell behavior)
+  u8 unusedAfterValue; ///< no code names it
+  s16 condition;       ///< as for GameFlag_IsConditionActive
   s32 result;
 };
 

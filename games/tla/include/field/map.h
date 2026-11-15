@@ -26,7 +26,7 @@ struct ReflectionAnimation {
 struct WorldMapBlock {
   u8 unused[2]; ///< no code names it
   u8 unk2;
-  u8 unk3;
+  u8 unusedB; ///< no code names it
 };
 
 struct WorldMover {

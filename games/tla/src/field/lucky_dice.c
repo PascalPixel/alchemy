@@ -110,9 +110,9 @@ void Camera_ResetViewDefaults(void) {
 }
 
 /// Unused: multiplies two 8.8 fixed-point values, rounding toward zero.
-s32 FixedPoint_Multiply8_8(s32 arg0, s32 arg1) {
-  s16 left = arg0;
-  s16 right = arg1;
+s32 Math_MulQ8(s32 a, s32 b) {
+  s16 left = a;
+  s16 right = b;
   s32 product;
   s32 adjusted;
   s32 multiplier;

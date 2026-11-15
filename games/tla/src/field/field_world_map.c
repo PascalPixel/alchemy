@@ -340,7 +340,7 @@ void WorldMap_ApplyAffinePage(void) {
   u32 nextDisplayControl;
 
   dma0[5] &= 0xc5ff;
-  dma0[5] &= 0x7fff;
+  dma0[5] &= ~DMA_ENABLE;
   (void)dma0[5];
   if (affinePages != NULL) {
     affineSource = (u32 *)affinePages[gFrameCount & 1];

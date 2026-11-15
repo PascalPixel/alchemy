@@ -12,8 +12,8 @@ struct HangingVineLink {
   s32 y;
   s32 z;
   u16 angle;
-  s8 kind; ///< 0 or 1: not drawn; else its picture, from 2
-  u8 unk13;
+  s8 kind;            ///< 0 or 1: not drawn; else its picture, from 2
+  u8 unusedAfterKind; ///< no code names it
   struct AnimationSpritePart sprite;
 };
 

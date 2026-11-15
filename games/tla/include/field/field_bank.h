@@ -343,10 +343,10 @@ struct ChainObject {
   s32 z;
   u8 unk14[0x3c];
   struct {
-    u8 unusedB[0x28]; ///< no code names it
+    u8 unused[0x28]; ///< no code names it
     s16 *entries[4];
   } *sprite;
-  u8 unk54;
+  u8 unusedB; ///< no code names it
   u8 motionFlags;
   u8 unusedAfterMotionFlags[3]; ///< no code names it
   u8 collisionFlags;

@@ -172,11 +172,11 @@ struct MapScrollWork {
   u8 unusedAfterFlags[0xe4 - 0x16]; ///< no code names it
   s32 viewX, viewY;
   s32 minX, minY, maxX, maxY;
-  u8 unusedB[5]; ///< no code names it
+  u8 unusedAfterUnusedAfterFlags[5]; ///< no code names it
   u8 unk101;
-  u8 unusedC[2]; ///< no code names it
+  u8 unusedB[2]; ///< no code names it
   u8 enabled[3];
-  u8 unk107;
+  u8 unusedAfterEnabled; ///< no code names it
   struct MapLayerScroll layers[3];
 };
 

@@ -366,9 +366,7 @@ void FieldPsynergy_StopMindReadWave(void) {
   HeapSlot_Release(HEAP_SLOT_MIND_READ);
 }
 
-#define BG_PLTT_COLOR(bank, color)                                             \
-  (*(volatile u16 *)(0x05000000 + ((bank) * 16 + (color)) * 2))
-#define GREY28 0x739c
+#define MIND_READ_GREY RGB(28, 28, 28)
 
 /// Gray BG palette 15 colors 1 and 3-12, then start line scrolling.
 void FieldPsynergy_GreyMindReadPalette(void) {
@@ -376,27 +374,27 @@ void FieldPsynergy_GreyMindReadPalette(void) {
 
   Ram_HeapSlots->windowWork[4] = 1;
   p = &BG_PLTT_COLOR(15, 1);
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 2;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 8;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p -= 8;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   p += 1;
-  *p = GREY28;
+  *p = MIND_READ_GREY;
   Task_Add((TaskFunc)FieldEffect_ArmBg0HBlankDma, TASK_PASS_FRAME - 20);
 }
 
@@ -405,8 +403,8 @@ void FieldPsynergy_RestoreMindReadPalette(void) {
   u8 *work = Ram_HeapSlots->windowWork;
 
   Task_Remove((TaskFunc)FieldEffect_ArmBg0HBlankDma);
-  BG_PLTT_COLOR(15, 1) = 0x7fff;  // White.
-  BG_PLTT_COLOR(15, 3) = 0;       // Black.
+  BG_PLTT_COLOR(15, 1) = RGB(31, 31, 31);
+  BG_PLTT_COLOR(15, 3) = RGB(0, 0, 0);
   BG_PLTT_COLOR(15, 11) = 0x294a; // Gray (10).
   BG_PLTT_COLOR(15, 12) = 0x5294; // Gray (20).
   WindowColor_ApplyFar(gMainRoutineWork.unusedAfterParty[5],

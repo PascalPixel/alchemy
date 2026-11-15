@@ -133,7 +133,7 @@ redraw:
         if (!(gInput.held & KEY_START))
           break;
         if (red == 0)
-          *colors = 0x7fff;
+          *colors = RGB(31, 31, 31);
         if (red == EDITOR_BLINK_FRAMES)
           *colors = value;
         if (red == EDITOR_BLINK_FRAMES * 2)

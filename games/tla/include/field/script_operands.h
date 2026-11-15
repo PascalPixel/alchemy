@@ -27,7 +27,7 @@ struct ScriptOperands {
   u32 scaleX;
   u32 scaleY;
   u16 radius;
-  u8 padding22[2];
+  u8 unusedAfterRadius[2]; ///< no code names them
   u32 velocityX;
   u32 velocityY;
   u32 velocityZ;

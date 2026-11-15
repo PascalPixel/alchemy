@@ -63,9 +63,9 @@ struct WhirlSpark {
   s32 x;
   s32 y;
   s32 z;
-  s32 angle; ///< 1/65536 turns
-  s32 unused10;
-  s32 radius; ///< 16.16 fixed-point pixels
+  s32 angle;            ///< 1/65536 turns
+  s32 unusedAfterAngle; ///< no code names it
+  s32 radius;           ///< 16.16 fixed-point pixels
   s32 age;
 };
 

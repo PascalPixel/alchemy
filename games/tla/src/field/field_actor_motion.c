@@ -66,7 +66,7 @@ struct MotionObject {
   u8 animationKind;
   u8 motionFlags;
   u8 arrivalAxis;
-  u8 unk57;
+  u8 unusedAfterArrivalAxis; ///< no code names it
   u8 snapToTarget;
   u8 collisionFlags;
   u8 actionFlags;

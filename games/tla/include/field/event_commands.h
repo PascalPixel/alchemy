@@ -442,7 +442,7 @@ struct OrbitingParticleVector {
 };
 
 struct OrbitingParticleChild {
-  u8 reserved00[35];
+  u8 unused[35]; ///< no code names them
   u8 flags;
 };
 
@@ -451,11 +451,11 @@ struct BurstParticleVector {
 };
 
 struct BurstParticleVisual {
-  u8 reserved00[5];
+  u8 unused[5]; ///< no code names them
   u8 flagsALow : 5;
   u8 flip : 1;
   u8 flagsAHigh : 2;
-  u8 reserved06;
+  u8 unusedAfterFlagsAHigh; ///< no code names it
   u8 flagsBLow : 6;
   u8 flagsBHigh : 2;
   union {
@@ -474,12 +474,12 @@ struct BurstParticleVisual {
 /// A sprite whose second part is 28 bytes in.
 struct BurstParticleVisualGroup {
   struct BurstParticleVisual primary;
-  u8 reserved0c[16];
+  u8 unusedAfterPrimary[16]; ///< no code names them
   struct BurstParticleVisual child;
 };
 
 struct BattleEffectScene {
-  u8 reserved00[4];
+  u8 unused[4]; ///< no code names them
   s32 x;
   s32 y;
   s32 z;
@@ -488,11 +488,11 @@ struct BattleEffectScene {
 };
 
 struct EffectChild {
-  u8 reserved00[12];
+  u8 unused[12]; ///< no code names them
   s32 y;
-  u8 reserved10[0x55 - 0x10];
+  u8 unusedAfterY[0x55 - 0x10]; ///< no code names them
   u8 flag;
-  u8 reserved56[0x6c - 0x56];
+  u8 unusedAfterFlag[0x6c - 0x56]; ///< no code names them
   void (*callback)(void);
 };
 
@@ -516,7 +516,7 @@ struct RadialBurstEffect {
   u16 scale;
   u8 unusedAfterScale[12]; ///< no code names it
   s8 state;
-  u8 unk41;
+  u8 unusedAfterState; ///< no code names it
   u8 enabled;
 };
 
@@ -541,23 +541,23 @@ struct ItemBreakFragmentPosition {
 };
 
 struct ItemBreakFragmentSource {
-  u8 reserved00[6];
-  u16 angle; ///< Facing angle (0x10000 is one turn).
+  u8 unused[6]; ///< no code names them
+  u16 angle;    ///< Facing angle (0x10000 is one turn).
   s32 x;
   s32 y;
   s32 z;
-  u8 reserved14[70];
+  u8 unusedAfterZ[70]; ///< no code names them
   u8 flag5a;
-  u8 reserved5b[13];
+  u8 unusedB[13];                         ///< no code names them
   struct ItemBreakFragmentSource *target; ///< Facing target.
 };
 
 struct ItemBreakFragmentObject {
-  u8 reserved00[72];
-  s32 field48; ///< Gravity (same offset as gravity).
-  u8 reserved4c[9];
-  u8 mode55; ///< Same offset as motionFlags.
-  u8 reserved56[8];
+  u8 unused[72]; ///< no code names them
+  s32 field48;   ///< Gravity (same offset as gravity).
+  u8 unusedB[9]; ///< no code names them
+  u8 mode55;     ///< Same offset as motionFlags.
+  u8 unusedC[8]; ///< no code names them
   u16 field5e;
 };
 

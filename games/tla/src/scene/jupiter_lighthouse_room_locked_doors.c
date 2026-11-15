@@ -192,8 +192,8 @@ void JupiterLighthouse_CircleTheMote(struct Actor *object) {
   s16 height = object->userValue;
 
   SET_ACTOR_POSITION(
-      object, Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + (px(232)),
-      (height * px(3)) - (px(120)), px(520));
+      object, Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + px(232),
+      (height * px(3)) - px(120), px(520));
   if ((s16)object->userValue == 1)
     Actor_SelectAnimation(object, 7);
   if ((s16)object->userValue == 38)
@@ -435,9 +435,9 @@ UNUSED s32 Actor_EmitRisingSparks(struct Actor *object) {
     options.startScaleX = Q16_ONE * 7 / 10;
     options.startScaleY = Q16_ONE * 7 / 10;
     options.palette = 14;
-    x = object->x.fixed + (((Random_Below(9)) - 4) << 16);
-    y = object->y.fixed + ((32 - (Random_Below(20))) << 16);
-    velocityY = (s32)((((Random_Below(5)) << 16) + 0x50000)) / 10;
+    x = object->x.fixed + px((Random_Below(9)) - 4);
+    y = object->y.fixed + px(32 - (Random_Below(20)));
+    velocityY = (s32)((px(Random_Below(5)) + 0x50000)) / 10;
     FieldEffect_Spawn(x, y, object->z.fixed, 0, velocityY, 0,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_START_SCALE,
@@ -526,13 +526,13 @@ void LightSprites_Draw(void) {
       y = actor->y.fixed - viewY + 0x80000;
       z = actor->z.fixed - viewZ - viewY;
       oy = z - y;
-      depth = ((y + z) >> 16) + 58;
+      depth = FIELD_PIXEL(y + z) + 58;
       big = gLightSpritesLarge;
       if (big == 0) {
         s32 x, sy;
         frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
+        x = FIELD_PIXEL(ox);
+        sy = FIELD_PIXEL(oy);
         ox = x - 8;
         oy = sy - 16;
         if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
@@ -552,8 +552,8 @@ void LightSprites_Draw(void) {
       } else {
         s32 x, sy;
         frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
+        x = FIELD_PIXEL(ox);
+        sy = FIELD_PIXEL(oy);
         ox = x - 8;
         oy = sy - 64;
         if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)

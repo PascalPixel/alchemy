@@ -326,7 +326,7 @@ void JupiterLighthouse_RaiseBeaconLight(void) {
     break;
   }
   if (spawn) {
-    rise = (Random_Below(80)) << 16;
+    rise = px(Random_Below(80));
     effect =
         FieldActor_Create(SPRITE_PARTICLE, center->x.fixed,
                           center->y.fixed - rise + 0xfff80000, center->z.fixed);
@@ -2062,7 +2062,7 @@ void JupiterLighthouse_FindObjectsInBeam(s32 *out, s32 zArg) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 slot;
 
-  z = 64 - (z >> 20);
+  z = 64 - FIELD_CELL(z);
   for (slot = 0; slot <= 63; slot++) {
     struct Actor *object = work->actors[slot];
 

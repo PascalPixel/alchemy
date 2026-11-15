@@ -622,9 +622,9 @@ s32 JupiterLighthouse_SparkBeam(struct Actor *object) {
     spark.startScaleX = Q16_ONE * 7 / 10;
     spark.startScaleY = Q16_ONE * 7 / 10;
     spark.palette = 14;
-    x = object->x.fixed + (((Random_Below(9)) - 4) << 16);
-    y = object->y.fixed + ((32 - (Random_Below(20))) << 16);
-    speed = (s32)(((Random_Below(5)) << 16) + 0x50000) / 10;
+    x = object->x.fixed + px((Random_Below(9)) - 4);
+    y = object->y.fixed + px(32 - (Random_Below(20)));
+    speed = (s32)(px(Random_Below(5)) + 0x50000) / 10;
     FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, frame, px(11), &spark);
   }
   return 0;

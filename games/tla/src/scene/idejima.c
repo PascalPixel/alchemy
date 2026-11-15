@@ -819,10 +819,11 @@ void Idejima_ComputeWaves(void) {
 
   for (i = 0; i != 160; i++) {
     s32 wave =
-        Math_Sin(((u8)gIdejima_WavePhase - i - (layer->y >> 16) + 160) << 9) +
+        Math_Sin(((u8)gIdejima_WavePhase - i - FIELD_PIXEL(layer->y) + 160)
+                 << 9) +
         0x10000;
 
-    line[i] = (layer->y >> 16) + (wave >> 15);
+    line[i] = FIELD_PIXEL(layer->y) + (wave >> 15);
   }
   gIdejima_WaveBuffer ^= 1;
   gIdejima_WavePhase++;

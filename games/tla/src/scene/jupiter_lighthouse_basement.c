@@ -345,10 +345,10 @@ s32 JupiterLighthouse_RaiseSparkles(struct Actor *object) {
     params.startScaleX = Q16_ONE * 7 / 10;
     params.startScaleY = Q16_ONE * 7 / 10;
     params.palette = 14;
-    x = object->x.fixed + (((Random_Below(9)) - 4) << 16);
-    y = object->y.fixed + ((32 - (Random_Below(20))) << 16);
+    x = object->x.fixed + px((Random_Below(9)) - 4);
+    y = object->y.fixed + px(32 - (Random_Below(20)));
     FieldEffect_Spawn(x, y, object->z.fixed, 0,
-                      (s32)(((Random_Below(5)) << 16) + px(5)) / 10, 0, px(11),
+                      (s32)(px(Random_Below(5)) + px(5)) / 10, 0, px(11),
                       &params);
   }
   return 0;
@@ -379,14 +379,14 @@ void LightSprites_Draw(void) {
       y = actor->y.fixed - viewY + 0x80000;
       z = actor->z.fixed - viewZ - viewY;
       oy = z - y;
-      depth = ((y + z) >> 16) + 58;
+      depth = FIELD_PIXEL(y + z) + 58;
       big = gLightSpriteLargeOam;
       big = gLightSpriteLargeOam;
       if (big == 0) {
         s32 x, sy;
         frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
+        x = FIELD_PIXEL(ox);
+        sy = FIELD_PIXEL(oy);
         ox = x - 8;
         oy = sy - 16;
         if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
@@ -406,8 +406,8 @@ void LightSprites_Draw(void) {
       } else {
         s32 x, sy;
         frame = actor->timer;
-        x = ox >> 16;
-        sy = oy >> 16;
+        x = FIELD_PIXEL(ox);
+        sy = FIELD_PIXEL(oy);
         ox = x - 8;
         oy = sy - 64;
         if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)

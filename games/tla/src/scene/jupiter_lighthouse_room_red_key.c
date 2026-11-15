@@ -783,9 +783,9 @@ s32 JupiterLighthouse_UpdateGust(struct Actor *object) {
   options.startScaleX = Q16_ONE * 7 / 10;
   options.startScaleY = Q16_ONE * 7 / 10;
   options.palette = 14;
-  x = object->x.fixed + (((s32)(Random_Below(9)) - 4) << 16);
-  y = object->y.fixed + ((32 - (s32)(Random_Below(20))) << 16);
-  speed = (((s32)(Random_Below(5)) << 16) + 0x50000) / 10;
+  x = object->x.fixed + px((s32)(Random_Below(9)) - 4);
+  y = object->y.fixed + px(32 - (s32)(Random_Below(20)));
+  speed = (px((s32)(Random_Below(5))) + 0x50000) / 10;
   FieldEffect_Spawn(x, y, object->z.fixed, 0, speed, phase,
                     EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                         EFFECT_USE_START_SCALE,

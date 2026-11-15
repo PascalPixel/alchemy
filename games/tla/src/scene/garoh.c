@@ -762,7 +762,7 @@ void Garoh_RaisePillar(s32 id, struct Actor *object) {
     s32 z;                                                                     \
                                                                                \
     raw = object->z.fixed;                                                     \
-    z = raw >> 20;                                                             \
+    z = FIELD_CELL(raw);                                                       \
     if (!Flag_IsSet(flag) && x == cellX && z == cellZ) {                       \
       Garoh_RaisePillar(actorId, object);                                      \
       Flag_Set(flag);                                                          \

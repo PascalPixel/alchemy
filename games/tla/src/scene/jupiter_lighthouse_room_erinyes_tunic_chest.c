@@ -283,8 +283,8 @@ void JupiterLighthouse_LoadPalettesZero(s32 mode) {
 #include "shared/whirlwind_carry_leader_lower.h"
 
 s32 Position_FlatDistance(s32 *a, s32 *b) {
-  s32 dx = (a[0] - b[0]) >> 16;
-  s32 dz = (a[2] - b[2]) >> 16;
+  s32 dx = FIELD_PIXEL(a[0] - b[0]);
+  s32 dz = FIELD_PIXEL(a[2] - b[2]);
   s32 dxsq = dx * dx;
   s32 dzsq = dz * dz;
 
@@ -349,8 +349,8 @@ s32 PushTarget_FillFootprint(s32 id) {
     return 0;
   width = (ABS(gPushFootprints[j][0]) + ABS(gPushFootprints[j][2])) >> 4;
   height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
-  x = (actor->x.fixed + (gPushFootprints[j][0] << 16)) >> 20;
-  z = (actor->z.fixed + (gPushFootprints[j][1] << 16)) >> 20;
+  x = FIELD_CELL(actor->x.fixed + px(gPushFootprints[j][0]));
+  z = FIELD_CELL(actor->z.fixed + px(gPushFootprints[j][1]));
   mapX = *(s32 *)(map + 328) >> 20;
   i = mapX; // i is reused to hold mapX.
   mapZ = *(s32 *)(map + 332) >> 20;
@@ -413,8 +413,8 @@ void PushTarget_PushFill(struct PushTarget target) {
   acceleration = leader->acceleration;
   from[0] = object->x.fixed;
   from[2] = object->z.fixed;
-  cell[0] = (object->x.fixed + (gPushFootprints[footprint][0] << 16)) >> 20;
-  cell[2] = (object->z.fixed + (gPushFootprints[footprint][1] << 16)) >> 20;
+  cell[0] = FIELD_CELL(object->x.fixed + px(gPushFootprints[footprint][0]));
+  cell[2] = FIELD_CELL(object->z.fixed + px(gPushFootprints[footprint][1]));
   width = (ABS(gPushFootprints[footprint][0]) +
            ABS(gPushFootprints[footprint][2])) >>
           4;
@@ -459,8 +459,8 @@ void PushTarget_PushFill(struct PushTarget target) {
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
                                        target.z);
   Actor_SelectAnimation(object, 1);
-  target.x = target.x + (gPushFootprints[footprint][0] << 16);
-  target.z = target.z + (gPushFootprints[footprint][1] << 16);
+  target.x = target.x + px(gPushFootprints[footprint][0]);
+  target.z = target.z + px(gPushFootprints[footprint][1]);
   target.x >>= 20;
   target.z >>= 20;
   originX = *(s32 *)(map + 328) >> 20;
@@ -469,8 +469,8 @@ void PushTarget_PushFill(struct PushTarget target) {
                              originX + target.x, originZ + target.z);
   Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
   Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
-  cell[0] = (from[0] + (gPushFootprints[footprint][0] << 16)) >> 20;
-  cell[2] = (from[2] + (gPushFootprints[footprint][1] << 16)) >> 20;
+  cell[0] = FIELD_CELL(from[0] + px(gPushFootprints[footprint][0]));
+  cell[2] = FIELD_CELL(from[2] + px(gPushFootprints[footprint][1]));
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);

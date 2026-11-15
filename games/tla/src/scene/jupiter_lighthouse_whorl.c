@@ -590,8 +590,8 @@ void JupiterLighthouse_JumpOrPushBlock(void) {
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
   FieldVector_AddPolarOffset(16, facing, position);
-  x = position[0] >> 20;
-  z = position[2] >> 20;
+  x = FIELD_CELL(position[0]);
+  z = FIELD_CELL(position[2]);
   if (first->y.fixed == 0 && x == FIELD_CELL(first->x.fixed) &&
       z == FIELD_CELL(first->z.fixed))
     found = 1;

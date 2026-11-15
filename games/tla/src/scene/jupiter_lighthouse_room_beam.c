@@ -437,7 +437,7 @@ void JupiterLighthouse_CircleTheBeam(struct Actor *object) {
   s16 height = object->userValue;
 
   SET_ACTOR_POSITION(
-      object, Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + (px(214)),
+      object, Iwram_MulQ16(Trig_Cos(angle), object->speedLimit) + px(214),
       (height * px(3)) + px(8), px(680));
   // Read signed, as the phase is above; the field is declared unsigned.
   if ((s16)object->userValue == 0)

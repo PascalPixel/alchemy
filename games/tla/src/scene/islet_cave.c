@@ -485,7 +485,7 @@ void IsletCave_PlaceLogByCellLeft(s32 id, s32 a, s32 b, s32 x, s32 z,
       Actor_SetPosition(id, x, z);
     Actor_SetSpritePriority(id, 3);
     object->priorityFlags |= 2;
-    MapGrid_CopyCellAttributes(a, b, 3, 1, (FIELD_CELL(object->x.fixed)) - 1,
+    MapGrid_CopyCellAttributes(a, b, 3, 1, FIELD_CELL(object->x.fixed) - 1,
                                FIELD_CELL(object->z.fixed));
   }
 }
@@ -502,7 +502,7 @@ void IsletCave_PlaceLogByCellAbove(s32 id, s32 a, s32 bArg, s32 x, s32 z,
     object = Actor_GetById(id);
     object->priorityFlags |= 2;
     MapGrid_CopyCellAttributes(a, bArg, 1, 3, FIELD_CELL(object->x.fixed),
-                               (FIELD_CELL(object->z.fixed)) - 1);
+                               FIELD_CELL(object->z.fixed) - 1);
   }
 }
 
@@ -572,14 +572,14 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   actor = Actor_GetById(actorId);
   Event_Start();
   Event_ResolvePendingActions(0);
-  x = ((leader->x.fixed + (dx << 16)) & 0xfff00000) + 0x80000;
-  z = ((leader->z.fixed + (dz << 16)) & 0xfff00000) + 0x80000;
+  x = ((leader->x.fixed + px(dx)) & FIELD_CELL_MASK) + 0x80000;
+  z = ((leader->z.fixed + px(dz)) & FIELD_CELL_MASK) + 0x80000;
   leader->speedLimit = px(1);
   leader->acceleration = px(1) / 2;
   Actor_SetMoveTarget(leader, x, leader->y.fixed, z);
   Actor_SelectAnimation(leader, 27);
-  x = ((actor->x.fixed + (dx << 16)) & 0xfff00000) + 0x80000;
-  z = ((actor->z.fixed + (dz << 16)) & 0xfff00000) + 0x80000;
+  x = ((actor->x.fixed + px(dx)) & FIELD_CELL_MASK) + 0x80000;
+  z = ((actor->z.fixed + px(dz)) & FIELD_CELL_MASK) + 0x80000;
   actor->speedLimit = px(1);
   actor->acceleration = px(1) / 2;
   Actor_SetMoveTarget(actor, x, actor->y.fixed, z);
@@ -605,10 +605,11 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
                                                                                \
     IsletCave_RideLog(logId, dx, 0);                                           \
     wait(2);                                                                   \
-    Map_CopyCellAttributeRect(fromX >> 20, (fromZ >> 20) - 1, 1, 3,            \
+    Map_CopyCellAttributeRect(FIELD_CELL(fromX), FIELD_CELL(fromZ) - 1, 1, 3,  \
                               FIELD_CELL(Actor_GetById(logId)->x.fixed),       \
-                              (fromZ >> 20) - 1);                              \
-    Map_CopyCellAttributeRect(0, 0, 1, 3, fromX >> 20, (fromZ >> 20) - 1);     \
+                              FIELD_CELL(fromZ) - 1);                          \
+    Map_CopyCellAttributeRect(0, 0, 1, 3, FIELD_CELL(fromX),                   \
+                              FIELD_CELL(fromZ) - 1);                          \
     flagCall(flag);                                                            \
   }
 
@@ -637,9 +638,11 @@ void IsletCave_RideSecondLogEast(void) {
   IsletCave_RideLog(ACTOR_SECOND_LOG, 96, 0);
   wait(2);
   Map_CopyCellAttributeRect(
-      fromX >> 20, (fromZ >> 20) - 1, 1, 3,
-      FIELD_CELL(Actor_GetById(ACTOR_SECOND_LOG)->x.fixed), (fromZ >> 20) - 1);
-  Map_CopyCellAttributeRect(0, 0, 1, 3, fromX >> 20, (fromZ >> 20) - 1);
+      FIELD_CELL(fromX), FIELD_CELL(fromZ) - 1, 1, 3,
+      FIELD_CELL(Actor_GetById(ACTOR_SECOND_LOG)->x.fixed),
+      FIELD_CELL(fromZ) - 1);
+  Map_CopyCellAttributeRect(0, 0, 1, 3, FIELD_CELL(fromX),
+                            FIELD_CELL(fromZ) - 1);
   GameFlag_Clear(FLAG_SCENE_TEMP_81);
 }
 
@@ -651,9 +654,11 @@ void IsletCave_RideSecondLogWest(void) {
   IsletCave_RideLog(ACTOR_SECOND_LOG, -96, 0);
   wait(2);
   Map_CopyCellAttributeRect(
-      fromX >> 20, (fromZ >> 20) - 1, 1, 3,
-      FIELD_CELL(Actor_GetById(ACTOR_SECOND_LOG)->x.fixed), (fromZ >> 20) - 1);
-  Map_CopyCellAttributeRect(0, 0, 1, 3, fromX >> 20, (fromZ >> 20) - 1);
+      FIELD_CELL(fromX), FIELD_CELL(fromZ) - 1, 1, 3,
+      FIELD_CELL(Actor_GetById(ACTOR_SECOND_LOG)->x.fixed),
+      FIELD_CELL(fromZ) - 1);
+  Map_CopyCellAttributeRect(0, 0, 1, 3, FIELD_CELL(fromX),
+                            FIELD_CELL(fromZ) - 1);
   GameFlag_Set(FLAG_SCENE_TEMP_81);
 }
 
@@ -693,7 +698,7 @@ void IsletCave_RideSeventhLogNorth(void) {
   IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, step);
   IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, -128);
   wait(2);
-  column = (column >> 20) - 1;
+  column = FIELD_CELL(column) - 1;
   MapGrid_CopyCellAttributes(
       column, fromRow, 3, 1, column,
       FIELD_CELL(Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed));
@@ -711,7 +716,7 @@ void IsletCave_RideSeventhLogSouth(void) {
   IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, 112);
   IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, 128);
   wait(2);
-  column = (column >> 20) - 1;
+  column = FIELD_CELL(column) - 1;
   fromRow >>= 20;
   MapGrid_CopyCellAttributes(
       column, fromRow, 3, 1, column,

@@ -604,7 +604,7 @@ extern u32 gJupiterLighthouse_KarstFightsScript[];
 #define PLACE(id, x, z, facing)                                                \
   {                                                                            \
     s32 facing_ = (facing);                                                    \
-    Actor_SetPositionAndFacing(id, (x) << 16, (z) << 16, facing_);             \
+    Actor_SetPositionAndFacing(id, px(x), px(z), facing_);                     \
   }
 
 /// Sets four actors' speeds, places them and starts their action scripts.

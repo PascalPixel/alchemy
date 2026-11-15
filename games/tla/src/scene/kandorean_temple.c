@@ -1371,9 +1371,9 @@ void KandoreanTemple_WatchVentPlatforms(void) {
 void KandoreanTemple_WatchLifts(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 x = leader->x.fixed;
-  s32 cellX = x >> 20;
+  s32 cellX = FIELD_CELL(x);
   s32 z = leader->z.fixed;
-  s32 cellZ = z >> 20;
+  s32 cellZ = FIELD_CELL(z);
   s32 riding = 0;
 
   if (leader->y.fixed > px(16))
@@ -1629,7 +1629,7 @@ void KandoreanTemple_FinishMovingBlock(void) {
 
 /// Move lifts the vent room's pillar, noting whether it leaves a platform.
 void KandoreanTemple_StartMovingPillar(void) {
-  if ((u32)((FIELD_CELL(Actor_GetById(ACTOR_VENT_ROOM_PILLAR)->x.fixed)) - 15) >
+  if ((u32)(FIELD_CELL(Actor_GetById(ACTOR_VENT_ROOM_PILLAR)->x.fixed) - 15) >
       6)
     GameFlag_Set(FLAG_PILLAR_LIFTED_OFF_PLATFORM);
   GameFlag_Set(FLAG_PILLAR_MOVING);

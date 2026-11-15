@@ -1985,8 +1985,8 @@ void GabombaStatue_SawEnergyFlow(void) {
   // "Here, look... It runs all the way over there!"
   Event_ShowMessage(ACTOR_JENNA, 0);
   GabombaStatue_FindFreeTileCell(&x, &z);
-  x = (x << 20) + (px(312));
-  z = (z << 20) + (px(184));
+  x = (x << 20) + px(312);
+  z = (z << 20) + px(184);
   spark = (FieldActor_Create(434, x, 0, z));
   spark->motionFlags |= 4;
   Actor_SetSpriteFlags(spark, 0);
@@ -2848,8 +2848,8 @@ void GabombaStatue_PoundTile(s32 mode) {
     return;
   state = &gSceneState;
   object = Actor_Get(*(s16 *)((u8 *)Ram_HeapSlots->fieldEffectWork + 26));
-  x = (FIELD_CELL(object->x.fixed)) - state->originX;
-  z = (FIELD_CELL(object->z.fixed)) - state->originZ;
+  x = FIELD_CELL(object->x.fixed) - state->originX;
+  z = FIELD_CELL(object->z.fixed) - state->originZ;
   {
     s32 kind = state->cells[z * CHANNEL_COLUMNS + x].kind;
 
@@ -2886,9 +2886,8 @@ void GabombaStatue_TurnTiles(s32 value) {
   for (id = state->firstId; id < state->endId; id++) {
     struct Actor *object = Actor_Get(id);
 
-    GabombaStatue_GetPiece((FIELD_CELL(object->x.fixed)) - state->originX,
-                           (FIELD_CELL(object->z.fixed)) - state->originZ,
-                           value);
+    GabombaStatue_GetPiece(FIELD_CELL(object->x.fixed) - state->originX,
+                           FIELD_CELL(object->z.fixed) - state->originZ, value);
   }
 }
 
@@ -2994,13 +2993,13 @@ void GabombaStatue_DrawFloatingTiles(void) {
       s32 pz = piece->z.fixed;
       s32 z = pz - scrollZ;
       s32 sy = z - y;
-      s32 depth = ((y + z) >> 16) + 58;
+      s32 depth = FIELD_PIXEL(y + z) + 58;
       s32 cellX = FIELD_CELL(px) - state->originX;
       s32 cellZ = FIELD_CELL(pz) - state->originZ;
       s32 kind = state->cells[cellZ * CHANNEL_COLUMNS + cellX].kind;
       u32 *p;
-      x = ((x >> 16) - 8) & 0x1ff;
-      sy = ((sy >> 16) - 8) & 255;
+      x = (FIELD_PIXEL(x) - 8) & 0x1ff;
+      sy = (FIELD_PIXEL(sy) - 8) & 255;
       p = (u32 *)oam;
       *p++ = 0;
       *p++ = sy | (x << 16) | 0x40002000;

@@ -311,7 +311,7 @@ void GondowanCliffs_TalkToDog(void) {
   out[1] = object->y.fixed;
   out[2] = object->z.fixed;
   FieldVector_AddPolarOffset(16, object->facing, out);
-  if ((position.x >> 20) == 119 && (position.z >> 20) == 45) {
+  if (FIELD_CELL(position.x) == 119 && FIELD_CELL(position.z) == 45) {
     gFieldWork->fieldMenu = 1;
   } else {
     Event_Start();
@@ -558,7 +558,7 @@ void Geysers_Update(void) {
       if (++entry->timer >= entry->period)
         entry->timer = 0;
     }
-    index = (FIELD_CELL(object->x.fixed)) + (FIELD_CELL(object->z.fixed)) * 128;
+    index = FIELD_CELL(object->x.fixed) + FIELD_CELL(object->z.fixed) * 128;
     terrain[index] = (u8)work->value + i;
     *collision = ((PIXEL_PART(object->y.fixed) + entry->height) / 8) << 8;
     cell = &cells[index];
@@ -580,7 +580,7 @@ void Geysers_Update(void) {
 
       entry->phase += 0x1000;
       wave = Iwram_MulQ16(0x20000, Trig_Sin(entry->phase)) + -0xe0000;
-      rider->y.fixed = object->y.fixed + (entry->height << 16) + wave;
+      rider->y.fixed = object->y.fixed + px(entry->height) + wave;
     }
     rider->x.fixed = object->x.fixed;
     rider->z.fixed = object->z.fixed;
@@ -623,12 +623,12 @@ void Geysers_Draw(void) {
     if (count > 79)
       goto next;
     x = actor->x.fixed - scrollX;
-    y = actor->y.fixed + (h << 16) - lift;
+    y = actor->y.fixed + px(h) - lift;
     z = actor->z.fixed - scrollZ - lift;
-    x = (x >> 16) - 8;
+    x = FIELD_PIXEL(x) - 8;
     screenY = z - y;
-    screenY = (screenY >> 16) - 16;
-    depth = ((y + z) >> 16) + 58;
+    screenY = FIELD_PIXEL(screenY) - 16;
+    depth = FIELD_PIXEL(y + z) + 58;
     if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
       goto next;
     x &= 511;
@@ -648,16 +648,16 @@ void Geysers_Draw(void) {
     if (count > 79)
       continue;
     x = actor->x.fixed - scrollX;
-    y = actor->y.fixed + (swing->height << 16) - lift;
+    y = actor->y.fixed + px(swing->height) - lift;
     z = actor->z.fixed - scrollZ - lift;
     screenY = z - y;
-    x = (x >> 16) - 8;
+    x = FIELD_PIXEL(x) - 8;
     /* FAKEMATCH(wrapper): forwarded. */
     screenY =
         ((screenY + Math_MulQ16(-0x20000, Trig_Sin(swing->phase)) + -0x20000) >>
          16) -
         4;
-    depth = ((y + z) >> 16) + 58;
+    depth = FIELD_PIXEL(y + z) + 58;
     if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
       continue;
     x &= 511;

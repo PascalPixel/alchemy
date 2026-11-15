@@ -293,8 +293,8 @@ s32 Kibombo_ShakeInPlace(struct Actor *object) {
 
     dx = -0x10000;
     dy = dx;
-    dx += (Random_Below(3)) << 16;
-    dy += (Random_Below(3)) << 16;
+    dx += px(Random_Below(3));
+    dy += px(Random_Below(3));
 
     Actor_SetPositionAndResetMotion(object, object->bounce + dx,
                                     object->gravity + dy, object->z.fixed);
@@ -2017,8 +2017,7 @@ void Kibombo_SpinSpark(struct Actor *actor) {
   radius = object->actor.riseBaseY;
   spin = (s16)object->actor.userValue;
   turn = *action;
-  Vector_AddPolarOffset((radius << 16) + wobble, turn * 3 * 256 + spin,
-                        &centre);
+  Vector_AddPolarOffset(px(radius) + wobble, turn * 3 * 256 + spin, &centre);
   object->actor.x.fixed = centre.x;
   object->actor.y.fixed = centre.y;
   object->actor.z.fixed = centre.z;
@@ -2274,7 +2273,7 @@ void Kibombo_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
   s32 x;
-  s32 px;
+  s32 pixelX;
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   Event_Start();
@@ -2283,8 +2282,8 @@ void Kibombo_EnterDoor(void) {
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   x = leader->x.fixed;
-  px = x >> 16;
-  Actor_SetMoveTarget(leader, ((8 - px % 16) << 16) + x, leader->y.fixed,
+  pixelX = FIELD_PIXEL(x);
+  Actor_SetMoveTarget(leader, px(8 - pixelX % 16) + x, leader->y.fixed,
                       leader->z.fixed);
   Actor_WaitForMove(leader);
   leader->facing = FACING_NORTH;

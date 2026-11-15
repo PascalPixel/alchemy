@@ -451,7 +451,7 @@ void GaiaRockInside_FlickerSpray(struct Actor *object) {
   s32 limit;
 
   bias = -0x800;
-  scale += (random << 12) >> 16;
+  scale += FIELD_PIXEL(random << 12);
   scale += bias;
   object->scaleX = scale;
   object->scaleY = object->scaleY + ((Random16() << 12) >> 16) + bias;
@@ -865,7 +865,8 @@ void GaiaRockInside_RestoreSusa(void) {
       gGaiaRockInside_SavedSusaZ != object->z.fixed) {
     s16 *savedZ = (s16 *)&gGaiaRockInside_SavedSusaZ;
 
-    Actor_WalkTo(ACTOR_SUSA, gGaiaRockInside_SavedSusaX >> 16, savedZ[1]);
+    Actor_WalkTo(ACTOR_SUSA, FIELD_PIXEL(gGaiaRockInside_SavedSusaX),
+                 savedZ[1]);
     FieldActor_WaitForMoveById(ACTOR_SUSA);
   }
   if (walker->script == gGaiaRockInside_SerpentThrowScript ||
@@ -1105,7 +1106,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_Wait(30);
   FieldCamera_SetSpeed(0.5);
-  FieldCamera_MoveWithinMapBounds(a->x.part[0].pixel << 16,
+  FieldCamera_MoveWithinMapBounds(px(a->x.part[0].pixel),
                                   a->y.part[0].pixel << 16,
                                   a->z.part[0].pixel << 16, 1);
   Sound_Play(SE_RUMBLE);
@@ -1128,8 +1129,8 @@ first:
     struct Spark *spark =
         ((void *)Import_ActorCreate(kind, a->x.fixed, a->y.fixed, a->z.fixed));
     Sound_Play(SE_GLITTER);
-    spark->x += ((Random16() & 31) - 16) << 16;
-    spark->y += ((Random16() & 15) - 8) << 16;
+    spark->x += px((Random16() & 31) - 16);
+    spark->y += px((Random16() & 15) - 8);
     spark->speedLimit = px(8);
     spark->acceleration = px(1) / 5;
     spark->motionFlags = 0;
@@ -1194,7 +1195,7 @@ second:
 third:
   {
     struct Spark *spark = ((void *)Import_ActorCreate(
-        kind, b->x.fixed, (i << 16) + b->y.fixed - px(8), b->z.fixed));
+        kind, b->x.fixed, px(i) + b->y.fixed - px(8), b->z.fixed));
     spark->action = Random16();
     spark->unk66 = 0x800;
     spark->unk62 = i;
@@ -1956,7 +1957,7 @@ void GaiaRockInside_SetPlatformMode(u32 id, s8 mode) {
 void GaiaRockInside_PlacePlatform(s32 id, s32 dx, s32 dz) {
   struct Actor *platform = Actor_GetById(id);
 
-  FieldActor_SetMoveTargetFixed(platform, ((dx << 4) + platform->timer) << 16,
+  FieldActor_SetMoveTargetFixed(platform, px((dx << 4) + platform->timer),
                                 platform->y.fixed,
                                 ((dz << 4) + platform->userValue) << 16);
 }
@@ -2407,7 +2408,7 @@ s32 Scene_Initialize(void) {
           if ((i & 1) == 0)
             dz = 8;
           shards[i] = (struct Actor *)Import_ActorCreate(
-              403, px(456) + (dx << 16), -px(32), px(358) + (dz << 16));
+              403, px(456) + px(dx), -px(32), px(358) + px(dz));
           Actor_SelectAnimation(shards[i], 2);
           Actor_SetSpriteFlags(shards[i], 0);
           Actor_StartScript(shards[i], gGaiaRockInside_SerpentSmokeScript);
@@ -3221,8 +3222,8 @@ void GaiaRockInside_DrawMazeRoom(void) {
 
     for (i = 1; i >= 0; i--, layer++) {
       /* FAKEMATCH(pin): x fixed to r2. */
-      register s32 x asm("r2") = layer->x >> 20;
-      s32 z = layer->z >> 20;
+      register s32 x asm("r2") = FIELD_CELL(layer->x);
+      s32 z = FIELD_CELL(layer->z);
 
       Map_CopyRawCellsRect(originX + x, originZ + z, 15, 10, x + 1, z + 1);
     }
@@ -3258,13 +3259,13 @@ void GaiaRockInside_SetMazeLayer(s32 layer, s32 keep) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *mapLayer = &map->layers[layer];
   u32 *cells = (u32 *)mapLayer->cells;
-  s32 width = (map->maxX - map->minX) >> 20;
-  s32 height = (map->maxZ - map->minZ) >> 20;
+  s32 width = FIELD_CELL(map->maxX - map->minX);
+  s32 height = FIELD_CELL(map->maxZ - map->minZ);
   u32 fill;
   u16 z;
   u16 x;
 
-  cells += ((map->minZ >> 20) << 7) + (map->minX >> 20);
+  cells += (FIELD_CELL(map->minZ) << 7) + FIELD_CELL(map->minX);
   fill = *cells;
   for (z = 0; z < height; z++) {
     u32 *cell = &cells[z * 128];

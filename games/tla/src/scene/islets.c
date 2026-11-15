@@ -1426,10 +1426,13 @@ void Islets_StartPushingCrate(void) {
   object = Actor_Get(ACTOR_CRATE_B);
   gIslets_SecondCrateX = x1 = object->x.fixed;
   gIslets_SecondCrateZ = z1 = object->z.fixed;
-  if (*x0 >> 20 == 7 && *z0 >> 20 == 29 && x1 >> 20 == 7 && z1 >> 20 == 28)
+  if (FIELD_CELL(*x0) == 7 && FIELD_CELL(*z0) == 29 && FIELD_CELL(x1) == 7 &&
+      FIELD_CELL(z1) == 28)
     Islets_SetCellCollision(*x0, *z0, 2, 0);
-  if (gIslets_FirstCrateX >> 20 == 12 && gIslets_FirstCrateZ >> 20 == 25 &&
-      gIslets_SecondCrateX >> 20 == 12 && gIslets_SecondCrateZ >> 20 == 26)
+  if (FIELD_CELL(gIslets_FirstCrateX) == 12 &&
+      FIELD_CELL(gIslets_FirstCrateZ) == 25 &&
+      FIELD_CELL(gIslets_SecondCrateX) == 12 &&
+      FIELD_CELL(gIslets_SecondCrateZ) == 26)
     Islets_SetCellCollision(gIslets_SecondCrateX, gIslets_SecondCrateZ, 2, 0);
 }
 
@@ -1442,7 +1445,8 @@ void Islets_FinishPushingCrate(void) {
   s32 secondZ = FIELD_CELL(second->z.fixed);
   s32 both;
 
-  if (gIslets_FirstCrateX >> 20 == 12 && gIslets_FirstCrateZ >> 20 == 24) {
+  if (FIELD_CELL(gIslets_FirstCrateX) == 12 &&
+      FIELD_CELL(gIslets_FirstCrateZ) == 24) {
     Islets_SetCellCollision(gIslets_FirstCrateX, gIslets_FirstCrateZ, 1, 21);
     Islets_SetCellCollision(gIslets_FirstCrateX, gIslets_FirstCrateZ, 2, 0);
   } else {
@@ -1450,7 +1454,8 @@ void Islets_FinishPushingCrate(void) {
 
     Islets_SetCellCollision(gIslets_FirstCrateX, *z, 3, 0);
   }
-  if (gIslets_SecondCrateX >> 20 == 7 && gIslets_SecondCrateZ >> 20 == 27) {
+  if (FIELD_CELL(gIslets_SecondCrateX) == 7 &&
+      FIELD_CELL(gIslets_SecondCrateZ) == 27) {
     Islets_SetCellCollision(gIslets_SecondCrateX, gIslets_SecondCrateZ, 1, 21);
     Islets_SetCellCollision(gIslets_SecondCrateX, gIslets_SecondCrateZ, 2, 0);
   } else {
@@ -1520,8 +1525,10 @@ void Islets_SaveCratePositions(void) {
   gIslets_SecondCrateZ = second->z.fixed;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (gIslets_FirstCrateX >> 20 == 7 && gIslets_FirstCrateZ >> 20 == 29 &&
-      gIslets_SecondCrateX >> 20 == 7 && gIslets_SecondCrateZ >> 20 == 28) {
+  if (FIELD_CELL(gIslets_FirstCrateX) == 7 &&
+      FIELD_CELL(gIslets_FirstCrateZ) == 29 &&
+      FIELD_CELL(gIslets_SecondCrateX) == 7 &&
+      FIELD_CELL(gIslets_SecondCrateZ) == 28) {
     ((u8 *)first)[0x62] = 0;
     ((void (*)())Islets_SetCellCollision)(gIslets_FirstCrateX,
                                           gIslets_FirstCrateZ, 2);
@@ -1625,8 +1632,7 @@ void Islets_OpenDoorAndEnter(void) {
   Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
   Actor_SetSpeed(party->leaderActorId, 0.5);
   FieldActor_SetMoveTargetFixed(
-      object,
-      ((8 - (FIELD_PIXEL(object->x.fixed)) % 16) << 16) + object->x.fixed,
+      object, px(8 - FIELD_PIXEL(object->x.fixed) % 16) + object->x.fixed,
       object->y.fixed, object->z.fixed);
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
@@ -1669,8 +1675,7 @@ void Islets_EnterDoor(void) {
   Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
   Actor_SetSpeed(party->leaderActorId, 0.5);
   FieldActor_SetMoveTargetFixed(
-      object,
-      ((8 - (FIELD_PIXEL(object->x.fixed)) % 16) << 16) + object->x.fixed,
+      object, px(8 - FIELD_PIXEL(object->x.fixed) % 16) + object->x.fixed,
       object->y.fixed, object->z.fixed);
   FieldActor_WaitForMove(object);
   object->facing = FACING_NORTH;
@@ -1863,8 +1868,8 @@ void Islets_StartIceberg(s32 id) {
 
 void Islets_MoveIceberg(s32 id, s32 column, s32 row) {
   struct Actor *object = Actor_Get(id);
-  s32 x = (column * 32 + object->timer) << 16;
-  s32 z = (row * 32 + (s16)object->userValue) << 16;
+  s32 x = px(column * 32 + object->timer);
+  s32 z = px(row * 32 + (s16)object->userValue);
 
   FieldActor_SetMoveTargetFixed(object, x, object->y.fixed, z);
 }
@@ -2305,8 +2310,8 @@ s32 PushTarget_FillFootprint(s32 id) {
   width = (Abs(a) + Abs(gPushFootprints[fromX][2])) >> 4;
   b = gPushFootprints[fromX][1];
   height = (Abs(b) + Abs(gPushFootprints[fromX][3])) >> 4;
-  x = actor->x.fixed + (a << 16);
-  z = actor->z.fixed + (b << 16);
+  x = actor->x.fixed + px(a);
+  z = actor->z.fixed + px(b);
   b = *(s32 *)(map + 0x148) >> 20;
   x >>= 20;
   z >>= 20;
@@ -2369,7 +2374,7 @@ s32 PushTarget_FindSlide(struct PushTarget *push) {
 
       offset = gPushLeaderSteps[direction];
       dx = offset & 0xffff0000;
-      dz = offset << 16;
+      dz = px(offset);
       push->callback = 0;
       steps = 0;
       layer = &object->layer;
@@ -2382,9 +2387,9 @@ s32 PushTarget_FindSlide(struct PushTarget *push) {
 
         index = kind * 4;
         /* FAKEMATCH(wrapper): the read through RowByte. */
-        cell.z = push->z + (RowByte(table, index + 1) << 16);
+        cell.z = push->z + px(RowByte(table, index + 1));
         for (j = 0; j < height; j++) {
-          cell.x = push->x + (gPushFootprints[0][index] << 16);
+          cell.x = push->x + px(gPushFootprints[0][index]);
           for (i = 0; i < width; i++) {
             /* FAKEMATCH(wrapper): the call through CallFunc_02003e2c. */
             if (CallFunc_02003e2c(object, &cell) == 2)
@@ -2490,8 +2495,8 @@ void PushTarget_Push(struct PushTarget target) {
   acceleration = leader->acceleration;
   from[0] = object->x.fixed;
   from[2] = object->z.fixed;
-  cell[0] = (object->x.fixed + (gPushFootprints[footprint][0] << 16)) >> 20;
-  cell[2] = (object->z.fixed + (gPushFootprints[footprint][1] << 16)) >> 20;
+  cell[0] = FIELD_CELL(object->x.fixed + px(gPushFootprints[footprint][0]));
+  cell[2] = FIELD_CELL(object->z.fixed + px(gPushFootprints[footprint][1]));
   width = (ABS(gPushFootprints[footprint][0]) +
            ABS(gPushFootprints[footprint][2])) >>
           4;
@@ -2536,8 +2541,8 @@ void PushTarget_Push(struct PushTarget target) {
   FieldActor_SetPositionAndResetMotion(object, target.x, object->y.fixed,
                                        target.z);
   Actor_SelectAnimation(object, 1);
-  target.x = target.x + (gPushFootprints[footprint][0] << 16);
-  target.z = target.z + (gPushFootprints[footprint][1] << 16);
+  target.x = target.x + px(gPushFootprints[footprint][0]);
+  target.z = target.z + px(gPushFootprints[footprint][1]);
   target.x >>= 20;
   target.z >>= 20;
   originX = *(s32 *)(map + 328) >> 20;
@@ -2546,8 +2551,8 @@ void PushTarget_Push(struct PushTarget target) {
                              originX + target.x, originZ + target.z);
   Map_FillCellRectByte2(0, target.x, target.z, width, height, 255);
   Map_FillCellRectByte2(2, target.x, target.z, width, height, 255);
-  cell[0] = (from[0] + (gPushFootprints[footprint][0] << 16)) >> 20;
-  cell[2] = (from[2] + (gPushFootprints[footprint][1] << 16)) >> 20;
+  cell[0] = FIELD_CELL(from[0] + px(gPushFootprints[footprint][0]));
+  cell[2] = FIELD_CELL(from[2] + px(gPushFootprints[footprint][1]));
   originX += cell[0];
   originZ += cell[2];
   MapGrid_CopyCellAttributes(originX, originZ, width, height, cell[0], cell[2]);

@@ -124,40 +124,10 @@ struct RuinObject {
   u8 resource;
 };
 
-/// A render job (the first of Render_AllocateModelList's entries).
-struct RenderJob {
-  s32 kind;
-  s32 next;
-  const void *faces;
-  void *vertices;
-  struct Texture *texture;
-  s32 fade;
-  s32 tail;
-};
-
 /// The map cell buffer holds WIN0's line table and then the splashes.
 struct DropSplashBuffer {
   u16 lines[160];
   struct Particle splashes[512];
-};
-
-/// The star's texture, 64x64 pixels.
-struct StarTexture {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 unk02 : 16;
-  u8 *pixels;
-};
-
-/// One model for the IWRAM renderer.
-struct ModelDraw {
-  s32 kind;
-  s32 next;
-  const void *model;
-  void *corners;
-  struct StarTexture *texture;
-  s32 unk14;
-  s32 tail;
 };
 
 extern const struct Scale gEclipse_Scales;

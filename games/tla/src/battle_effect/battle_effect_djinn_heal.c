@@ -26,13 +26,13 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   s32 anchor[3];
   s32 size[3];
   struct ScreenPoint pos;
-  struct Texture texture;
+  struct ModelTexture texture;
   s32 y;
   struct BattleEffectWork *work;
   struct Particle *quad;
   s32 x;
   s32 frame;
-  struct RenderJob *job;
+  struct RenderModel *job;
   void *vertices;
   void *canvas;
   // Unused: draws[1] gives the stack frame its 4 bytes.
@@ -165,13 +165,13 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
       fade = 0;
       if (frame > 55)
         fade = (56 - frame) * 8;
-      job->fade = fade;
+      job->shade = fade;
       texture.logWidth = 6;
       texture.logHeight = 6;
       texture.pixels = work->sheet + SHEET_TEXTURE;
       job->kind = MODEL_SHADED_MAX;
       job->texture = &texture;
-      job->faces = gBattleEffect_SquareMesh;
+      job->mesh = gBattleEffect_SquareMesh;
       job->vertices = vertices;
 
       for (i = 0; i != QUAD_COUNT; i++) {

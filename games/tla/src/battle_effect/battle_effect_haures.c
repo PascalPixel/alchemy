@@ -1007,9 +1007,9 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
 /// A mesh triangle: its three vertex numbers and their texture coordinates.
 struct MeshTriangle {
   u8 vertex[3];
-  u8 unk03;
+  u8 unusedA; ///< nothing reads or writes it
   u8 texCoord[3][2];
-  u8 unk0a[2];
+  u8 unusedB[2]; ///< nothing reads or writes them
 };
 
 /// Builds the mesh of an open cylinder, the band Coatlicue shows: two rings of

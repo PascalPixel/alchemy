@@ -16,7 +16,7 @@ struct StripQuad;
 struct FloraWork {
   u16 tiles[15];
   u16 phase[32];
-  u16 unk5e;
+  u16 padding;
   s32 x[32];
   s32 y[32];
   s32 vx[32];
@@ -840,25 +840,6 @@ void BattleEffect_StartActorMotionOutward(s32 id) {
 #define DAGGER_FALL_FRAME 80 ///< the daggers turn and fall on the target
 #define DAGGER_LAST_HIT 90
 
-/// A dagger's texture: log2 of its width and height in the first word (32x32
-/// here), then its pixels.
-struct DaggerTexture {
-  u32 logWidth : 8;
-  u32 logHeight : 8;
-  u32 rest : 16;
-  void *pixels;
-};
-
-/// One entry of the model list Flora draws its dagger with.
-struct RenderPrimitive {
-  s32 kind;
-  s32 unk04;
-  const void *faces;
-  void *vertices;
-  struct DaggerTexture *texture;
-  s32 unk14;
-};
-
 /// Crossed daggers. The canvas is moved over the target. Eight daggers rise
 /// spinning from below it, and the target is struck eight times, six frames
 /// apart from frame 20: each strike shakes the screen, flashes the target and
@@ -869,10 +850,10 @@ struct RenderPrimitive {
 /// Abilities: Sabre Dance.
 void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
-  struct DaggerTexture texture;
+  struct ModelTexture texture;
   struct ScreenPoint target;
   struct Particle *dagger;
-  struct RenderPrimitive *quad;
+  struct RenderModel *quad;
   void *vertices;
   s32 frame;
   s32 i;
@@ -934,13 +915,13 @@ void BattleEffect_RunSabreDance(struct BattleEffectParams *args) {
     // One textured quad, drawn once for each dagger.
     vertices = Heap_AllocEwram(32);
     quad = Render_AllocateModelList(1);
-    quad->unk14 = 0;
+    quad->shade = 0;
     texture.logWidth = 5;
     texture.logHeight = 5;
     quad->texture = &texture;
     texture.pixels = work->sheet;
     quad->kind = MODEL_SHADED;
-    quad->faces = gSabreDance_DaggerMesh;
+    quad->mesh = gSabreDance_DaggerMesh;
     quad->vertices = vertices;
     for (i = 0, dagger = work->particles; i != DAGGER_COUNT; i++, dagger++) {
       // The fall: from 48 pixels above the canvas, fanned out by angle and

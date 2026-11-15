@@ -200,7 +200,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint center;
   struct ScreenPoint position;
   BlitterPair draw;
-  struct StarTexture texture;
+  struct ModelTexture texture;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
@@ -693,16 +693,16 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     // over the target's middle (the canvas is cleared to colour 0x3f first).
     if (RECORD(mode, TARGET_STRIKE_FLAGS) & STRIKE_STAR) {
       void *corners = Heap_AllocEwram(32);
-      struct ModelDraw *model = Render_AllocateModelList(1);
+      struct RenderModel *model = Render_AllocateModelList(1);
 
-      model->unk14 = 0;
+      model->shade = 0;
       texture.logWidth = 6;
       texture.logHeight = 6;
       texture.pixels = work->sheet + 0x3200;
       model->kind = MODEL_SHADED_MAX;
-      model->model = gBattleEffect_SquareMesh;
+      model->mesh = gBattleEffect_SquareMesh;
       model->texture = &texture;
-      model->corners = corners;
+      model->vertices = corners;
       if (frame == 8)
         Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                              CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));

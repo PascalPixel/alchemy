@@ -515,7 +515,7 @@ struct IrisPoint {
   s32 y;
   s32 angle;
   s32 speed;
-  s32 unk10;
+  s32 unused; ///< cleared as the opening starts; nothing reads it
 };
 
 /// The opening's circle of light and its fifteen streaks, at 0x2ee0.
@@ -534,8 +534,7 @@ struct IrisScene {
       s16 yPixels;
     };
   };
-  s32 unk08;
-  s32 unk0c;
+  s32 unused[2]; ///< nothing reads or writes them
   union {
     s32 radius;
     struct {
@@ -1054,7 +1053,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         s->y = px(gIris_StreakY[i]);
         s->angle = gIris_StreakAngles[i];
         s->speed = gIris_StreakSpeeds[i];
-        s->unk10 = 0;
+        s->unused = 0;
         for (j = 1; j != 10; j++) {
           STREAK(i, j).x = px(150);
           STREAK(i, j).y = px(150);
@@ -2052,9 +2051,9 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
 /// buffer (in words) and its colour.
 struct SolidFace {
   s32 corner[3];
-  u8 unk0c[12];
+  u8 unread[12]; ///< the renderer skips them
   u8 color;
-  u8 unk19[3];
+  u8 padding[3];
 };
 
 /// Fills one scanline of the canvas (8x8 tiles, 16 to a row) from xa to xb,
@@ -2178,7 +2177,7 @@ void Render_FillMesh(s32 vertexCount, s32 faceCount) {
 /// (vertex index * 3), padded to an effect step's 28 bytes.
 struct MeshFace {
   s32 vertex[3];
-  s32 unk0c[4];
+  s32 padding[4];
 };
 
 #define DIFF_ABS(v) ((v) >= 0 ? (v) : -(v))
@@ -2393,9 +2392,9 @@ void Render_DrawTexturedMesh(s32 vertexCount, s32 faceCount, s32 (*uvs)[3][2],
 /// vertex buffer (in words) and the colour its edges are drawn in.
 struct WireFace {
   s32 corner[3];
-  u8 unk0c[12];
+  u8 unread[12]; ///< the renderer skips them
   u8 color;
-  u8 unk19[3];
+  u8 padding[3];
 };
 
 /// An unused wireframe renderer. Transforms the vertexCount points in the
@@ -2856,7 +2855,7 @@ void Render_ProjectVertices(struct ModelVertex *vertices,
 struct PoolEntry {
   s32 head;
   s32 next;
-  u8 unk08[16];
+  u8 unused[16]; ///< nothing reads or writes them
   s32 tail;
 };
 

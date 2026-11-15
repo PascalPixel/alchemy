@@ -25,19 +25,12 @@
     }                                                                          \
   }
 
-/// A burst cel's texture: log2 of its width and height in the first word
-/// (64x64 here), then its pixels.
-struct BurstTexture {
-  u32 size;
-  void *pixels;
-};
-
 /// Raises a mirrored wall at the first target's feet while the target glows.
 void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
-  struct BurstTexture texture;
+  struct ModelTexture texture;
   struct ScreenPoint target;
-  struct RenderPrimitive *quad;
+  struct RenderModel *quad;
   void *vertices;
   s32 frame;
   s32 cel;
@@ -104,13 +97,13 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *args, s32 mode) {
       if (frame < BURST_DRAW_FRAMES) {
         vertices = Heap_AllocEwram(32);
         quad = Render_AllocateModelList(1);
-        texture.size = (texture.size & ~0xff) | 6;
-        texture.size = (texture.size & ~0xff00) | 6 << 8;
+        texture.logWidth = 6;
+        texture.logHeight = 6;
         texture.pixels = work->sheet + cel * CEL_SIZE;
         quad->kind = MODEL_SHADED_MAX;
-        quad->faces = gBattleEffect_SquareMesh;
+        quad->mesh = gBattleEffect_SquareMesh;
         quad->texture = &texture;
-        quad->unk14 = gMirroredWall_BurstShades[mode];
+        quad->shade = gMirroredWall_BurstShades[mode];
         quad->vertices = vertices;
         Transform_Reset();
         Transform_ApplyTranslation(0, px(target.y - 58), 0);
@@ -155,11 +148,12 @@ void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride) {
 }
 
 typedef struct DaedalusSprite {
-  u8 unk00[8];
+  /// The part's link and its attributes 0 and 1, which the effect leaves alone.
+  u8 linkAndPosition[8];
   u16 tile : 10;
   u16 priority : 2;
   u16 palette : 4;
-  u8 unk0a[2];
+  u8 unusedAfterPalette[2];
   s32 scale;
   u8 slot;
   u8 cacheFlags;
@@ -175,16 +169,11 @@ typedef struct DaedalusSprite {
  * found. */
 /// A sprite's first ten bytes, its attribute 2 fields after eight others.
 struct SpriteAttributes {
-  u8 unk00[8];
+  u8 linkAndPosition[8];
   u16 tile : 10;
   u16 priority : 2;
   u16 palette : 4;
 };
-
-typedef struct VramSlot {
-  u16 unk0;
-  u16 offset;
-} VramSlot;
 
 /* VIEW(f17e698): tag struct SummonWork as struct SummonWork__f17e698;
  * ability_effects.c has another definition; tried with the definition the rest
@@ -193,20 +182,43 @@ typedef struct VramSlot {
  * member named `transferMode'. */
 struct SummonWork__f17e698 {
   struct Particle particles[48];
-  u8 unk0540[0x1c0];
+  struct Particle moreParticles[16]; ///< the work's last 16, unused here
+  /// The work's sheet, bg2xLines and the block after them, read as one run of
+  /// frames.
   u8 frames[0x7080];
   s32 transferMode;
   s32 transferValue;
-  u8 unk_7788[8];
+  s32 unused;
+  s32 frame;
   s32 scrollTimer;
   s32 scrollInterval;
   s32 scrollStepX;
   s32 scrollStepY;
-  u8 unk77a0[8];
+  s32 savedBg1X;
+  s32 savedBg1Y;
   s32 shakeFrames;
-  u8 unk77ac[0x30];
+  s32 cameraDelta;
+  s32 cameraPhase;
+  s32 fadeFrames;
+  s32 fadeStep;
+  u16 win0h;
+  u16 win0v;
+  u16 win1h;
+  u16 win1v;
+  u16 winin;
+  u16 winout;
+  u16 dispcnt;
+  u16 bldcnt;
+  u16 bldalpha;
+  u16 padding;
+  s32 bg2x;
+  s32 bg2y;
+  u16 bg2pa;
+  u16 bg2pd;
   Sprite *sprites[57];
-  u8 unk78c0[0x28];
+  void *moreSprites[7];
+  u8 actorTimers[8];
+  s32 vblanksSinceTransfer;
   s32 transferPending;
 };
 
@@ -1371,9 +1383,10 @@ extern const struct Scale gDaedalusAlt_SummonScale;
 #define DAEDALUS_FRAMES 108
 #define DAEDALUS_SPARKS 64
 
-/// The summoned object's display fields that the scene sets.
+/// The summoned object's display fields that the scene sets: a struct Sprite
+/// from its rotation on.
 struct SummonObject {
-  u8 unk00[18];
+  u8 imageScaleAndSlot[18]; ///< struct Sprite's fields before the rotation
   u16 rotation;
   u8 size[2];
   u8 offsetX;

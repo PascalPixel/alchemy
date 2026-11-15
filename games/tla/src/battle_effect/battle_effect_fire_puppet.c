@@ -22,19 +22,11 @@ struct RenderModel__f17bd88 {
   u8 scrollV;
 };
 
-/// The target's motion object, as the effect reads it.
-struct PuppetTarget {
-  u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 unk14;
-  s32 unk18;
-  s32 unk1c;
-};
-
 #define FIRE_PUPPET_FRAMES 103
 #define PUPPET_SEGMENTS 33
+/// The last particle keeps the target's position, and its scale in velocityX
+/// and velocityY.
+#define FIRE_PUPPET_SAVED_TARGET 63
 
 /// Where GhostSkullTexture is decoded in the effect's pictures.
 #define FIRE_PUPPET_GHOST_SKULL 0x4000
@@ -53,7 +45,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   s32 frame;
   u8 *sprites;
   s32 *camera;
-  struct PuppetTarget *target;
+  struct MotionObject *target;
   struct ScreenPoint pos;
   struct ModelTexture texture;
   struct RenderModel__f17bd88 *model;
@@ -79,11 +71,11 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   // Default: set for real below, when j reaches 32.
   endX = 0;
   endY = 0;
-  work->particles[63].x = target->x;
-  work->particles[63].y = target->y;
-  work->particles[63].z = target->z;
-  work->particles[63].velocityX = target->unk18;
-  work->particles[63].velocityY = target->unk1c;
+  work->particles[FIRE_PUPPET_SAVED_TARGET].x = target->x;
+  work->particles[FIRE_PUPPET_SAVED_TARGET].y = target->y;
+  work->particles[FIRE_PUPPET_SAVED_TARGET].z = target->z;
+  work->particles[FIRE_PUPPET_SAVED_TARGET].velocityX = target->scaleX;
+  work->particles[FIRE_PUPPET_SAVED_TARGET].velocityY = target->scaleY;
   Resource_LoadAndDecompress((s32)&ResourceId_Data0D3, work->sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F2,

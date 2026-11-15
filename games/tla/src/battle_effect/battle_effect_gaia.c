@@ -388,7 +388,8 @@ struct SpriteAnimation;
 /// A struct Sprite as Gaia searches and fills it: its OAM attributes and its
 /// shadow's written as words.
 struct SpriteWords {
-  s32 unk00;
+  s32 link; ///< the link to the next part at its depth, as
+            ///< AnimationSpritePart's
   s32 attributes;
   union {
     u32 word;
@@ -409,9 +410,10 @@ struct SpriteWords {
   u8 lastNoAndDirty[2];
   u8 flags;
   u8 count;
-  s32 unk1c;
-  s32 unk20;
-  s32 unk24;
+  /// The shadow's link, attributes 0 and 1, and attribute 2.
+  s32 shadowLink;
+  s32 shadowAttributes;
+  s32 shadowTile;
   struct SpriteAnimation *entry;
   u8 moreEntries[0x0c];
 };
@@ -452,13 +454,13 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
     *words = flags | tile | OBJ_PRIORITY(2);
   }
   {
-    s32 *p = &found->unk1c;
+    s32 *p = &found->shadowLink;
 
     *p = 0;
   }
-  found->unk20 = 0x6000;
+  found->shadowAttributes = 0x6000;
   entries = gVramCacheEntries;
-  found->unk24 = (((u16 *)entries)[187] >> 5) | 0x800;
+  found->shadowTile = (((u16 *)entries)[187] >> 5) | 0x800;
   sprite->entry = AnimationObject_AllocateEmpty();
   sprite->width = width;
   sprite->scale = Q16_ONE;
